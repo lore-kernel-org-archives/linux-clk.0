@@ -1,246 +1,238 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com [209.85.217.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86B60257820
-	for <linux-clk@vger.kernel.org>; Wed, 24 Sep 2025 07:17:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46F81280308
+	for <linux-clk@vger.kernel.org>; Wed, 24 Sep 2025 07:51:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758698242; cv=none; b=XoYgCacqb6Vqq3U0UKIkOyivAZJ5RM6B8gHFBG/U9tHDHmOVOmXyUISRDVzWppXuT5UBFEfbLiRoxQpg7153QVC84KgpWX8JM+xUfQPniPgsBGYvoiVlxiItV0dBoGtrC/K2zTMWJzRKJiGqo+ZxW3CZaqqHduB3wMAlLqf4nzk=
+	t=1758700294; cv=none; b=hYiZjOpcAJXiJu1k1o90eE/KYglJXMrb2F5y7buAiNcc8GRe0vFTNE3wRxRGin6FgikatPX98gIm/FN82JYQ6sydUfDcp5jwG/IP1pwICkALPl3/BsUVR8RKHh5sgScm7cvxw/YpHAcFIc1eYNbHx96e1KX1coq0mocTy0atND4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758698242; c=relaxed/simple;
-	bh=F2Cs9l23rLUaJsZ0gN4TAq/w4FxXrrg0yBY2WbgaIhs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=SayYuHfond6hPO1cuuX4Z8z11Gz9xVF20GIKvtAYs46RXLqrbAMqTsyhTuzM6zAsidTe9+41OeMaJIGyc7f/LsUWsELa81AK1rhz9kL816jedP2LRXxNCdndcBx5e23FfmNND0lvyhU4K5cgKaurtea9VdOkEKdNydCPOqlcgYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=KeptMmlZ; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="KeptMmlZ"
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58O4iDmr029478
-	for <linux-clk@vger.kernel.org>; Wed, 24 Sep 2025 07:17:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=ls5rHwUZzWoTdxASMbUR/S
-	efW8vGQPtUzSD9l0c8hi0=; b=KeptMmlZRVsaoF/vE0vORdfo7xj1UYD9qoHcG0
-	jfzBPKwKguwsdaascEBDyocLIDGrbUJ1ZDvscMW2A7BUmAiYRkB6kKJthZZvRbmF
-	gy/OAPC3X54vDjq4R3I4nucMVKw67X665FyjO5RqfhuMLqt/nwF4mFj9QzpwuuDb
-	8vzuct+2iCwHjLeGT39/fBS+lHrFLmNTXq+XGAzk9RQPwh4UvIeRXTXzoa36Ku+4
-	Jo5jB6ji5E/nB1J8tpKWfthGLvQN0RRXmtwXmQgPiOhKbNcqkNgR01h/8KRblRUY
-	Ql5nOaO2O4an/8Ff1Rov6ax3qaPf5Ua6LrheJRmKG5qkL/bw==
-Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 499n1fka43-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Wed, 24 Sep 2025 07:17:19 +0000 (GMT)
-Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-32ee157b9c9so5929648a91.2
-        for <linux-clk@vger.kernel.org>; Wed, 24 Sep 2025 00:17:19 -0700 (PDT)
+	s=arc-20240116; t=1758700294; c=relaxed/simple;
+	bh=aWLfvJIhJGUp5ivux4F05IzZUz29wUscuHa27oPNgME=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Z/kDFFvnAJWNGYSJdjvIviR2SYZ2TewJ/hhn/EGVaHDYQ+Q9xmcREkIcnOiGduyO6jkzv7dnyT9GrQPVcpq5vk1BnUWQdYcA3gfTOLp56Nn3cb6ZPCbp3ZwSRqQMzh6+MsYjK3HiyIzBCungwEVw4OnbPmMjIxmv56O1NmESwvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f54.google.com with SMTP id ada2fe7eead31-55784771e9dso2700124137.1
+        for <linux-clk@vger.kernel.org>; Wed, 24 Sep 2025 00:51:32 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758698238; x=1759303038;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1758700291; x=1759305091;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=ls5rHwUZzWoTdxASMbUR/SefW8vGQPtUzSD9l0c8hi0=;
-        b=dt7lB7Qpp/mvL1z++G6P47etsvleSmbzfiJeT0C1lKng2A21Wkgfw0OdXPrtk+hhUv
-         36nhOeCmrY/4FHNeFqDk87g/703xASIN7p+QaMOobGRmz/DR4B42sLwbFw6ej24iZnwD
-         kPNWsV7z8oMa3EIifPwwd68sp9jQ/LXgmZuw1XAVH32EAtvnc2loVY/T+R2BJqpFUNe8
-         MY3ANEKXn/r0F4qmLEs3qKzaKtAdI31F/TpuT4s281ZBZwa//7GpQL3dqAfkmoA0EbUj
-         qc+hloxhNoWL1oK5vCGoqZ/z2BGgzAGnniT6h8PyduWjeN0y7SrEspiqMXPsrGLeBBp6
-         AqxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVCIQIN7gy/ql3nvmJtT7nuejzzs2Z4jtBM+xZsvoE7rbdcs5RIGfaBevoFRvuviw4wP3GOmdbRfRA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyh8AFhEHG8jsBhJuDahpn7yRPFkpElQsyqja/X/+F/sWLVDjtH
-	ncFgHcJkTCluwG1p26UG52TpWfKuQwTkUNCf0hd47gOuHMt1QPjuSzNXUwYzFeN2RTyEZkL1arW
-	bMD5B3SOBZ7FtuOzVG1+o5l0uYFbfItMQc6G3CcuYrJaPqGchiVzYbjLjBIJmsZE=
-X-Gm-Gg: ASbGncu7XfMFYw4qIIbc3873firo6aM56iXDy0yM+tULqeZrHtCZ0uLWURETStSma94
-	XqjfHwh3HCrZa/j1cY3nwa4kXAoBIpaeosL9xep8oQMO6kQ/IeGxvJMHb6JwD+nGO9OXXFQQpbR
-	jRt0N09F2hqqMLd34AeQjt2MUmLOYT24PRrUGZ+SrHNKhdxAXrpOp3BJFAfoAGNNFSW+LoPg3iQ
-	ihrRCqCp7WnqpLQ5y8Xu/EQpUqCXTZV8F+CJZvWBZIKxOXZK6yKqKaxsyOeTZiMNOChgMWSA/tx
-	GL7rIeLbWE5RpyYGgoTATu5NUHcSCk5UcZLLNzmXxIz6hvCt6lSMCxcTbagREfsR
-X-Received: by 2002:a17:902:d2c1:b0:271:b6b3:71ef with SMTP id d9443c01a7336-27cc5de0f46mr76039125ad.43.1758698238136;
-        Wed, 24 Sep 2025 00:17:18 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE5XUsYYjc6Q3W5JjV2krvu6VsFrIBob/PbMRkyJHcUOVnrQacVEDwqlpsh6hVyvLfCUoMYfA==
-X-Received: by 2002:a17:902:d2c1:b0:271:b6b3:71ef with SMTP id d9443c01a7336-27cc5de0f46mr76038845ad.43.1758698237693;
-        Wed, 24 Sep 2025 00:17:17 -0700 (PDT)
-Received: from hu-tdas-hyd.qualcomm.com ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-26980310e41sm182846855ad.108.2025.09.24.00.17.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Sep 2025 00:17:17 -0700 (PDT)
-From: Taniya Das <taniya.das@oss.qualcomm.com>
-Date: Wed, 24 Sep 2025 12:47:08 +0530
-Subject: [PATCH] clk: qcom: gcc: Update the halt check flags for pipe
- clocks
+        bh=hh+Khf6unZqbzxNHEU+Ts8bq4BIxlEWA7Rzthe6aDww=;
+        b=vuzHYCy/JY6qJcgUXNs/C6FDyGMEa3o/zzcelsVFZNzvclFsJdp+40QXCa89WgdT19
+         xKCTzu4zYQkeREY2NbNhQXQecftae5tbazDaNwLxMM55HD+8nM/mtOubsrUXl0P6zAJ6
+         WCkru6MBDMegAsG/2hWfbWbGdPdTypuBsRyu8+Pe0vPL/Z92l8oxOdX1G0iRx6nStj1d
+         ZqrIZ3qbOr1napeVpD8s+fcGDH/B0xGFnK9zL0YuOknSegXjv6jr7twEAmKCfMwKO2O5
+         d7toc33dzyx/lKrSdQV12VkrYrk2b7uEJSDxkVuGSuAASPdcDxmHy96EWVfbaMgLfGgD
+         e8lg==
+X-Forwarded-Encrypted: i=1; AJvYcCWmN7N9aFGGwkA6JpgL++NFJtMj1NMMjwJdP/aeurueSnszW82RU090WT32Jw9McAuA3yIA3ItNeFY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYczh3RXd4S2+Oy1IyCVF0LBeUMYhxjhRwn28m6pJ7gXEbQ0WJ
+	HKxcOjMOsF4UjtWgrJnn5nKWsZs2Oj6gastsv4MYYNcoMQQMRPuSkrp1Uk4xBhba
+X-Gm-Gg: ASbGncvRxzHKl5Z0HgQMok4GyhbdxLpJyqLg9zWequctCDO2m/o3uj2LHfZqPHgnEHV
+	v/EcHPO51RG7ermi6U+9Udf1k1x9E/K3RXsh8+JMwkuwtcfYmUol6ZuTtAuOwYvLH96vZjaMu49
+	TTkf0E3DWpA5J0jXqeRwaTwD/9Senp9AGMK/chgcJdWLD8Pco0ZfANhSts+Pbheb1nJQu/Roifa
+	wWNFV098MCBY42L88/U1rX5x/7lvYt9Idxjz3cc4dAXO3zvKQzrxA2ha3MVI3UmynvFaiwpR5Ru
+	8zDk76KKXubSZfBmAqemt0mMiJSYDNZjByMMjfHcyYJ3+BizL/etnkvBMUwByoOfatTf/dC88G+
+	Bs/N+T6sH1pIpiM51ngDa28217s0MrEIgAQhyEcHpHxSkYjxS3lcSZN2MuCpD1e0VLmrZI/E=
+X-Google-Smtp-Source: AGHT+IFL/SRqBtpOyHu9vy+alUItWQB2paErCJc+WBkxB6U4dtAMgcUeLVrk3BBplFB6m+yLAyW+UQ==
+X-Received: by 2002:a05:6102:50a9:b0:521:b9f2:a5ca with SMTP id ada2fe7eead31-5a5769666edmr1849982137.13.1758700290962;
+        Wed, 24 Sep 2025 00:51:30 -0700 (PDT)
+Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com. [209.85.222.47])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-8f25b3cf97dsm1928431241.18.2025.09.24.00.51.30
+        for <linux-clk@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 24 Sep 2025 00:51:30 -0700 (PDT)
+Received: by mail-ua1-f47.google.com with SMTP id a1e0cc1a2514c-90dd3b43f8eso621466241.1
+        for <linux-clk@vger.kernel.org>; Wed, 24 Sep 2025 00:51:30 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXZ8WoQxlQ3kUaN3Yc+Jg3f/ICVfe3pOsEc25QAum3i8peyAnEDj4lDJwc074vW+dJsjG2goUtI9Xs=@vger.kernel.org
+X-Received: by 2002:a05:6102:6884:b0:569:93c9:b572 with SMTP id
+ ada2fe7eead31-5a57695d27dmr1659602137.9.1758700290135; Wed, 24 Sep 2025
+ 00:51:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250924-glymur_gcc_usb_fixes-v1-1-a90568723e64@oss.qualcomm.com>
-X-B4-Tracking: v=1; b=H4sIAPOa02gC/x3LWwqAIBBA0a3EfCeYFGVbiZCy0QZ64WAU0d6TP
- g+X+wBjIGRoswcCnsS0bwlFnoGdh82joCkZlFSV1KoUfrnXGIy31kQejaMLWTS6carQ0mlZQ1q
- PgH9IZ9e/7we6riZ/ZgAAAA==
-X-Change-ID: 20250924-glymur_gcc_usb_fixes-898f2190f907
-To: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Ajit Pandey <quic_ajipan@quicinc.com>,
-        Imran Shaik <quic_imrashai@quicinc.com>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Taniya Das <taniya.das@oss.qualcomm.com>
-X-Mailer: b4 0.15-dev-aa3f6
-X-Proofpoint-ORIG-GUID: 3kWbr-fB-x_bTMx--iIN4Kknm8poHVbO
-X-Proofpoint-GUID: 3kWbr-fB-x_bTMx--iIN4Kknm8poHVbO
-X-Authority-Analysis: v=2.4 cv=No/Rc9dJ c=1 sm=1 tr=0 ts=68d39aff cx=c_pps
- a=RP+M6JBNLl+fLTcSJhASfg==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=ZkscxO_R4YqFwkMorTkA:9
- a=QEXdDO2ut3YA:10 a=iS9zxrgQBfv6-_F4QbHw:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIwMDAzNyBTYWx0ZWRfXxkaskaFvrUYN
- Osz/rLryR0PWn8usOhY6oh6WB1FLl5GQZyU5OTo1d1TdQVVfMgyIQeea035Mzw0rK0337uhnKC2
- WIb6mdAOtvg95XGp6X2C8cOF01VtifCN7jh0iD3POyYEc/2sa2J09GXaM49Q9Ov4Sm079iF7Xja
- QKJUFgw0CeDIkXhiZvGrRMmijS3pNOynKzNFh397C4lsXRZ8qeLC6pZIEaNHJVgNjDuKnZ3ouk4
- nIxcFbSVglzPF8pk3CkPRVgot4262q1eRJ4hgHM049spd85ZBHtt42/jtlO3o8xHNHs0ONNrXo6
- +HYiFWwyn6XTe449DHuo01tjSrGDqtfTbRfFR+6dRjV7WDVK/OOoWxl+2RLDFtsY6x/6h6blejQ
- LLn+ZYDq
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-24_01,2025-09-22_05,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 spamscore=0 suspectscore=0 adultscore=0 malwarescore=0
- phishscore=0 bulkscore=0 priorityscore=1501 impostorscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509200037
+References: <20250923160524.1096720-1-cosmin-gabriel.tanislav.xa@renesas.com> <20250923160524.1096720-3-cosmin-gabriel.tanislav.xa@renesas.com>
+In-Reply-To: <20250923160524.1096720-3-cosmin-gabriel.tanislav.xa@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 24 Sep 2025 09:51:17 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVEDJZ6wdGZs_CDs=jLPV1u382o6=cZ1HfKQOffGf7jGw@mail.gmail.com>
+X-Gm-Features: AS18NWCUnOtI9sni6QIPbp0MqkmfhYYAKBnwNUuJbeyYXQXVL2FCMeoJiSjFxRk
+Message-ID: <CAMuHMdVEDJZ6wdGZs_CDs=jLPV1u382o6=cZ1HfKQOffGf7jGw@mail.gmail.com>
+Subject: Re: [PATCH 2/7] dt-bindings: iio: adc: document RZ/T2H and RZ/N2H ADC
+To: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, 
+	=?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, linux-iio@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-The pipe clocks for PCIE and USB are externally sourced and the should
-not be polled by the clock driver. Update the halt_check flags to 'SKIP'
-to disable polling for these clocks.
+Hi Cosmin,
 
-Fixes: efe504300a17 ("clk: qcom: gcc: Add support for Global Clock Controller")
-Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
----
- drivers/clk/qcom/gcc-glymur.c | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+On Tue, 23 Sept 2025 at 18:06, Cosmin Tanislav
+<cosmin-gabriel.tanislav.xa@renesas.com> wrote:
+> Document the A/D 12-Bit successive approximation converters found in the
+> Renesas RZ/T2H (R9A09G077) and RZ/N2H (R9A09G087) SoCs.
+>
+> RZ/T2H has two ADCs with 4 channels and one with 6.
+> RZ/N2H has two ADCs with 4 channels and one with 15.
+>
+> Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
 
-diff --git a/drivers/clk/qcom/gcc-glymur.c b/drivers/clk/qcom/gcc-glymur.c
-index 62059120f9720bbac03852c0368f4de3038a559c..d938e7dc5b66ec539c3264a2e212b3d6878b1fde 100644
---- a/drivers/clk/qcom/gcc-glymur.c
-+++ b/drivers/clk/qcom/gcc-glymur.c
-@@ -6760,7 +6760,7 @@ static struct clk_branch gcc_usb3_prim_phy_com_aux_clk = {
- 
- static struct clk_branch gcc_usb3_prim_phy_pipe_clk = {
- 	.halt_reg = 0x3f088,
--	.halt_check = BRANCH_HALT_DELAY,
-+	.halt_check = BRANCH_HALT_SKIP,
- 	.hwcg_reg = 0x3f088,
- 	.hwcg_bit = 1,
- 	.clkr = {
-@@ -6816,7 +6816,7 @@ static struct clk_branch gcc_usb3_sec_phy_com_aux_clk = {
- 
- static struct clk_branch gcc_usb3_sec_phy_pipe_clk = {
- 	.halt_reg = 0xe2078,
--	.halt_check = BRANCH_HALT_VOTED,
-+	.halt_check = BRANCH_HALT_SKIP,
- 	.hwcg_reg = 0xe2078,
- 	.hwcg_bit = 1,
- 	.clkr = {
-@@ -6872,7 +6872,7 @@ static struct clk_branch gcc_usb3_tert_phy_com_aux_clk = {
- 
- static struct clk_branch gcc_usb3_tert_phy_pipe_clk = {
- 	.halt_reg = 0xe1078,
--	.halt_check = BRANCH_HALT_VOTED,
-+	.halt_check = BRANCH_HALT_SKIP,
- 	.hwcg_reg = 0xe1078,
- 	.hwcg_bit = 1,
- 	.clkr = {
-@@ -6961,7 +6961,7 @@ static struct clk_branch gcc_usb4_0_master_clk = {
- 
- static struct clk_branch gcc_usb4_0_phy_p2rr2p_pipe_clk = {
- 	.halt_reg = 0x2b0f4,
--	.halt_check = BRANCH_HALT,
-+	.halt_check = BRANCH_HALT_SKIP,
- 	.clkr = {
- 		.enable_reg = 0x2b0f4,
- 		.enable_mask = BIT(0),
-@@ -6979,7 +6979,7 @@ static struct clk_branch gcc_usb4_0_phy_p2rr2p_pipe_clk = {
- 
- static struct clk_branch gcc_usb4_0_phy_pcie_pipe_clk = {
- 	.halt_reg = 0x2b04c,
--	.halt_check = BRANCH_HALT_VOTED,
-+	.halt_check = BRANCH_HALT_SKIP,
- 	.clkr = {
- 		.enable_reg = 0x62010,
- 		.enable_mask = BIT(11),
-@@ -7033,7 +7033,7 @@ static struct clk_branch gcc_usb4_0_phy_rx1_clk = {
- 
- static struct clk_branch gcc_usb4_0_phy_usb_pipe_clk = {
- 	.halt_reg = 0x2b0bc,
--	.halt_check = BRANCH_HALT_VOTED,
-+	.halt_check = BRANCH_HALT_SKIP,
- 	.hwcg_reg = 0x2b0bc,
- 	.hwcg_bit = 1,
- 	.clkr = {
-@@ -7196,7 +7196,7 @@ static struct clk_branch gcc_usb4_1_master_clk = {
- 
- static struct clk_branch gcc_usb4_1_phy_p2rr2p_pipe_clk = {
- 	.halt_reg = 0x2d118,
--	.halt_check = BRANCH_HALT,
-+	.halt_check = BRANCH_HALT_SKIP,
- 	.clkr = {
- 		.enable_reg = 0x2d118,
- 		.enable_mask = BIT(0),
-@@ -7214,7 +7214,7 @@ static struct clk_branch gcc_usb4_1_phy_p2rr2p_pipe_clk = {
- 
- static struct clk_branch gcc_usb4_1_phy_pcie_pipe_clk = {
- 	.halt_reg = 0x2d04c,
--	.halt_check = BRANCH_HALT_VOTED,
-+	.halt_check = BRANCH_HALT_SKIP,
- 	.clkr = {
- 		.enable_reg = 0x62010,
- 		.enable_mask = BIT(12),
-@@ -7268,7 +7268,7 @@ static struct clk_branch gcc_usb4_1_phy_rx1_clk = {
- 
- static struct clk_branch gcc_usb4_1_phy_usb_pipe_clk = {
- 	.halt_reg = 0x2d0e0,
--	.halt_check = BRANCH_HALT_VOTED,
-+	.halt_check = BRANCH_HALT_SKIP,
- 	.hwcg_reg = 0x2d0e0,
- 	.hwcg_bit = 1,
- 	.clkr = {
-@@ -7431,7 +7431,7 @@ static struct clk_branch gcc_usb4_2_master_clk = {
- 
- static struct clk_branch gcc_usb4_2_phy_p2rr2p_pipe_clk = {
- 	.halt_reg = 0xe00f8,
--	.halt_check = BRANCH_HALT,
-+	.halt_check = BRANCH_HALT_SKIP,
- 	.clkr = {
- 		.enable_reg = 0xe00f8,
- 		.enable_mask = BIT(0),
-@@ -7449,7 +7449,7 @@ static struct clk_branch gcc_usb4_2_phy_p2rr2p_pipe_clk = {
- 
- static struct clk_branch gcc_usb4_2_phy_pcie_pipe_clk = {
- 	.halt_reg = 0xe004c,
--	.halt_check = BRANCH_HALT_VOTED,
-+	.halt_check = BRANCH_HALT_SKIP,
- 	.clkr = {
- 		.enable_reg = 0x62010,
- 		.enable_mask = BIT(13),
-@@ -7503,7 +7503,7 @@ static struct clk_branch gcc_usb4_2_phy_rx1_clk = {
- 
- static struct clk_branch gcc_usb4_2_phy_usb_pipe_clk = {
- 	.halt_reg = 0xe00c0,
--	.halt_check = BRANCH_HALT_VOTED,
-+	.halt_check = BRANCH_HALT_SKIP,
- 	.hwcg_reg = 0xe00c0,
- 	.hwcg_bit = 1,
- 	.clkr = {
+Thanks for your patch!
 
----
-base-commit: ce7f1a983b074f6cf8609068088ca3182c569ee4
-change-id: 20250924-glymur_gcc_usb_fixes-898f2190f907
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/adc/renesas,r9a09g077-adc.yaml
+> @@ -0,0 +1,170 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/iio/adc/renesas,r9a09g077-adc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Renesas RZ/T2H / RZ/N2H ADC12
+> +
+> +maintainers:
+> +  - Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+> +
+> +description: |
+> +  A/D Converter block is a successive approximation analog-to-digital converter
+> +  with a 12-bit accuracy. Up to 15 analog input channels can be selected.
 
-Best regards,
--- 
-Taniya Das <taniya.das@oss.qualcomm.com>
+The documentation for several registers talks about bitmasks for ch0-ch15,
+so the actual hardware block supports up to 16 channels.
 
+> +  Conversions can be performed in single or continuous mode. Result of the ADC
+> +  is stored in a 16-bit data register corresponding to each channel.
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - renesas,r9a09g077-adc # RZ/T2H
+> +      - renesas,r9a09g087-adc # RZ/N2H
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    items:
+> +      - description: A/D scan end interrupt
+> +      - description: A/D scan end interrupt for Group B
+> +      - description: A/D scan end interrupt for Group C
+> +      - description: Window A compare match
+> +      - description: Window B compare match
+> +      - description: Compare match
+> +      - description: Compare mismatch
+> +
+> +  interrupt-names:
+> +    items:
+> +      - const: adi
+> +      - const: gbadi
+> +      - const: gcadi
+> +      - const: cmpai
+> +      - const: cmpbi
+> +      - const: wcmpm
+> +      - const: wcmpum
+> +
+> +  clocks:
+> +    items:
+> +      - description: converter clock
+
+Converter
+
+> +      - description: peripheral clock
+
+Peripheral
+
+> +
+> +  clock-names:
+> +    items:
+> +      - const: adclk
+> +      - const: pclk
+> +
+> +  power-domains:
+> +    maxItems: 1
+> +
+> +  renesas,max-channels:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description: |
+> +      Maximum number of channels supported by the ADC.
+> +      RZ/T2H has two ADCs with 4 channels and one with 6 channels.
+> +      RZ/N2H has two ADCs with 4 channels and one with 15 channels.
+
+According to the documentation, both SoCs have three instances?
+
+I agree with Connor that this should be dropped: the same information
+is available from the channel@N subnodes, and future SoCs could have
+gaps in the numbering.
+
+FTR, from a quick glance, it looks like this module is very similar
+to the ADC on RZ/A2M, so I hope we can reuse the driver for that SoC.
+
+> +patternProperties:
+> +  "^channel@[0-9a-e]$":
+
+0-9a-f
+
+> +    $ref: adc.yaml
+> +    type: object
+> +    description: The external channels which are connected to the ADC.
+> +
+> +    properties:
+> +      reg:
+> +        description: The channel number.
+> +        maximum: 14
+
+15
+But I don't think it is needed, as the dtc check for non-matching unit
+addresses and reg properties should already enforce this.
+
+> +
+> +    required:
+> +      - reg
+> +
+> +    additionalProperties: false
+> +
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: renesas,r9a09g077-adc
+> +    then:
+> +      properties:
+> +        renesas,max-channels:
+> +          enum: [4, 6]
+> +
+> +      patternProperties:
+> +        "^channel@[6-9a-e]$": false
+
+6-9a-f
+
+> +        "^channel@[0-5]$":
+> +          properties:
+> +            reg:
+> +              maximum: 5
+
+Not needed as per above.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
