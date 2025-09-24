@@ -1,119 +1,166 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E6D73054F8
-	for <linux-clk@vger.kernel.org>; Wed, 24 Sep 2025 15:33:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F4C6313E07
+	for <linux-clk@vger.kernel.org>; Wed, 24 Sep 2025 16:00:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758728032; cv=none; b=J1I2B2YjihtFmZezQDHKkL5xGVeuAaF77u4UpVip9ik5CMcMXLE2jlYbUY9NlF7cBPX2Ax1ZYfkAgnduGOD6Tr+cDq1i9Aa6eQy/h5y8sk4O3ZQxRknWF+SVUGjmOZNrxYwiLb3VhTKa44rgO2+iqbybyd70PVeRUfdMwt1HfeI=
+	t=1758729638; cv=none; b=kw2Z0uZh//XDFxqrSoaHX25yy7BufHZyyY9cblWIEL5i7Oo1vRb8jZTUncSnY1lQNte5nsfptUMi3/E1BsJdtRehYjxFoZbk9xpW7A3VnhuZJgisRKHDivrnZWJ/TRHLZwgXA95zNwUdRitGO37RqtPBzXeyT2g4xh5NkUVCDes=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758728032; c=relaxed/simple;
-	bh=wRch98PTr07OsPbOEWFR6ZR70W6lFXly25dnPdzBGHc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sUZR8YMikT7DrgFyT1TSZ1DpjnOryGb9LFcOgILj+Qpae0MbZ4PJtjv+1ddVuupjtyjcIZRnii2NRaL+fJg8OuzHZrFddMnrchHHv+dx4TQL+w5Kxdcor1ZgcnkL0Vi0O+OzIaXXLMgfAodNtfcsiV5AxAEFuY7UkPfUukUljMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FrVbhAZj; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1758729638; c=relaxed/simple;
+	bh=EzqOYSDHnxhTVVqSNHLim9jV2AkvqdmMs19BuE0MqXM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=gdaHsCJGfkmwfzVp8D8Ym2FDX6zWWE1MXKviFgPtAFliuTb0jNK6ALC4Pw1dvYS3RiCVtc7RjoSNcH0BmYI+8MPHqKcw4xmdsnxczKELUnbLIDUgEEAYX/XxqrIYZpXcDDTBHA0AepNuAu+rK4RX3redJHQEXqZkCwCPvThcUWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wilVXdMV; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FrVbhAZj"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758728030;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ic7zvcyBVtaZcEmsf3hW05wAfmOMNZ5JL2VpkYQoXsc=;
-	b=FrVbhAZjnj+3afecM9iyrE8dm4m7eM3bO9kNMWMYSajELoQ3LWp+5t/KXwf0DRetEtgIYJ
-	9tvyr63oCjkhBxIpB7FEQtNngbjeciwlUJtVZXsW0/6ERUDfM5c3Mh7rIcDIR9VY98+h3q
-	XauT2v1//eTopNsr1NuRTAn9tnroQxk=
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
- [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-122-1ax7o87HPTaAiv_4ld_NSw-1; Wed, 24 Sep 2025 11:33:48 -0400
-X-MC-Unique: 1ax7o87HPTaAiv_4ld_NSw-1
-X-Mimecast-MFC-AGG-ID: 1ax7o87HPTaAiv_4ld_NSw_1758728028
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-856d34460a3so2805785a.1
-        for <linux-clk@vger.kernel.org>; Wed, 24 Sep 2025 08:33:48 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wilVXdMV"
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3b9edf4cf6cso33685f8f.3
+        for <linux-clk@vger.kernel.org>; Wed, 24 Sep 2025 09:00:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1758729634; x=1759334434; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=LIYU8qrKCG63qfESQqAYHq2vCT+r9zxfWJIkv0fUrK4=;
+        b=wilVXdMVdq4ZV4sNBQsBkykwQP0JMH/It58wcyGBaXwpx9XY8fQXchSrTwtWk8/+s+
+         KTrHiiIJnYm1VjNt1axhI2fBtgSc5GpzdVujVK1xHFidAEdTTLT59USZxnNMrQsZ2x05
+         4IjpM5DdOAFwua0Q5eW4QB7UYj1+Mq5E+/VZsDA9hU/v+LO6MfgDXHVY2FC7bL/yEhPf
+         Bt3De+nxoE5lCa0n+gown1FqmW291v4XRAzmOfPhyh9hwji0noqx5LcFxJhfaDmOmdb7
+         /tmu//IwLeXtl6HxomYv+wbYn5xsvpr86tnm8nIydRdqYwz1bJzzETeJfrr84hv7/wV1
+         Thsg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758728028; x=1759332828;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ic7zvcyBVtaZcEmsf3hW05wAfmOMNZ5JL2VpkYQoXsc=;
-        b=WEWXijE0NCrPHifyKNqB7MPU+B8xvyJi3KbTsjImhV6AOUfPZdMzNJlYea3ARaHoFA
-         Hi6/1drAkopgcDWvFX8+gQQ97OSzkzGUmZuucaVr6B4iJLctzciKc31P+ehyp3Abzq5l
-         5UkvVfle1vrgBL6A0d6rlqGdtUb8hh4M2RvHwlesij58l8EJg6++1oMmauMnM1VdxgtS
-         qJp/P9ByKzhA8C7ZrR2Cq8raUk0TMOUTRczTcqC2U1gZi8x6gF3v6X3KmyqNpl7EqDZT
-         +l5se8PiOOueC9thsuzUREO9gb8enF8/9NQF4/rZv59pT91qHzo1OcNOJ896dysjv2ei
-         jhCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWuFWwrHb5BSC3BxBx87/uLonsoe3n93JMzjFeXkyNIXxhZ1q9iDB3QTa+S7geAm0Z6KWl7HwQJvGc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhQg4JIL+KiSNBVc2Bru0ltP94naOcszv2vUdCyfSOxh3kYGGf
-	wsdlJjNJhUS6CjavMoMc/j+6cIOdWWuacBq8zapr+gLlGcN+wICwqY3fzzBi3OcHmvX6COuDeWU
-	3pADodJ0QFsd9SPQvHhz01xotB+n4fGbHyEf0mL2RHEFAOttyybYhPSWfJcfl5Q==
-X-Gm-Gg: ASbGncsfZfGPJCJorb07l2xWWu6WJtMkof+pp2bAuVzTYCxnaJzy8670N7VgydjuvsF
-	MS6gNxrGLdOwDQwaRencOEuq/R6AseQD59lCvQu2BSKlkSv7PD74NCdO3xAF2lzYWgZ0fQ4pqz3
-	e83Vhy4uOafmP4iY4LwH1v+dTdHA2C7I+nuRXMMo2gDFTGPwqRHt1DPRkRDSDNhykMH40llmiWk
-	Q+xkeHeiepPbxMBlbid6H3BjsuW/n4EHao1gPSTiubsbrQ2M9j4w35G4FxR5ei7pBEjOrrdbu05
-	jAiaLDNtJI3zzymHQhefhzndmuPWKiPEvnktnKGTNYj9aUaNXy0wkVTjGMJSOOql3wF5xw==
-X-Received: by 2002:a05:620a:1a89:b0:828:1529:d028 with SMTP id af79cd13be357-85ae7cd4ac1mr7327085a.61.1758728028088;
-        Wed, 24 Sep 2025 08:33:48 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE7m0/cbnvCoTKElfyKlC9Akk8QQ848roxwkCAlIQudXokrBobnZdaunrFKeYAlTGXQPxdHhg==
-X-Received: by 2002:a05:620a:1a89:b0:828:1529:d028 with SMTP id af79cd13be357-85ae7cd4ac1mr7322385a.61.1758728027583;
-        Wed, 24 Sep 2025 08:33:47 -0700 (PDT)
-Received: from redhat.com ([2600:382:8504:5608:ca95:838:d4f0:316f])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8363198b0fbsm1167921585a.50.2025.09.24.08.33.45
+        d=1e100.net; s=20230601; t=1758729634; x=1759334434;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=LIYU8qrKCG63qfESQqAYHq2vCT+r9zxfWJIkv0fUrK4=;
+        b=wnWdDBRsBTeLvucws20m6TmICWf6DxMRdp7vZBFxvFekELObFzOt6L6ZbAG9G/V/32
+         XQPYNqwLhAJw4TclUxNmBqPbNiS3y/BwMSBSOPuEq81+eYzoc9yc6QUctjxi6UJe0wHO
+         FBUB0JhdLCjPoYT2iFXD/IybbvWb63/X/oIRdnh1Y5Mif+c7UjPb9/TbYnkRBvoIw16I
+         rLIDjdw2TNOLJlarT/tP8adEYwz17/nnF4gAbsQLe4PQQpepYdmvk1A1duNyUQyNkXHn
+         ylxDCj2Zp0z+r6kYnp+EZ6mOgeZlEYz+hJs8dLZIXqrf0OzxYkfPH4oysj0i6RUfnnCu
+         vb4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCX/7k8LjkuvbOWJCP7cqb66LdrQWP+PXATZcKQUq2EQGFSpbJO6GNgq8RGy5gjOi5e8djYxns4CebY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLSP7jvQ8808X11L6BLEPL58hHqf3rK9EGLeYv6X2o1mca1rhJ
+	BZVTWNDTddp/tmIFSBZT0a+qBY0qfPQFBZ6Ds/xp0XOESGWMJytKTG1HUUXFKvgd+LM=
+X-Gm-Gg: ASbGncvarIbEqPq5EnS4thagjv0X8aJix5CKvisq3tO5D8R+o+DeRTAvNHf7RJr3cqB
+	xNLY3HklEbqbSV2zbYacV8O3j9vlYMHuorxwaQ+k9NuSv+Ops13AqUvOa49PB3tK3FlTLvgpFZE
+	0MPf5qimG4w+lKHV2LLj8IVOFq18JQfATUvB0y+DNvScGlBt+GJErz/850qTEqIbv5iHlktNCiu
+	P0GeXlpHD/+2ZM3QoodM4QV4yKDqQdYPWEsGKNDu19iTGNVXb7HIrGzxrUzgfHQUXIiPmx+dHzJ
+	VC80YHJ5mgqgCWYspxhJzbot7zSaVcTMZCauEYxanojwk4G/tD/xdnyS7iUv91CU68rxb18CYfB
+	7sodnZqmz1PTvGy99jJrmhSAebA==
+X-Google-Smtp-Source: AGHT+IEr/xCPYlRIQOGy0m52/J9vkL4EaMZaXgIFMjJ6l8pxzmajhf9oWnQ5HbRALQAcj/6nHTpS4w==
+X-Received: by 2002:a05:6000:1a85:b0:406:5e66:ae65 with SMTP id ffacd0b85a97d-40e4d9c9f20mr466144f8f.60.1758729633869;
+        Wed, 24 Sep 2025 09:00:33 -0700 (PDT)
+Received: from [10.1.1.59] ([80.111.64.44])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e32bf95f6sm549345e9.2.2025.09.24.09.00.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Sep 2025 08:33:46 -0700 (PDT)
-Date: Wed, 24 Sep 2025 11:33:44 -0400
-From: Brian Masney <bmasney@redhat.com>
-To: Peng Fan <peng.fan@nxp.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	Marco Felsch <m.felsch@pengutronix.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"arm-scmi@vger.kernel.org" <arm-scmi@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v4 0/5] clk: Support spread spectrum and use it in
- clk-scmi
-Message-ID: <aNQPWO6pfA_3mmxf@redhat.com>
-References: <20250915-clk-ssc-version1-v4-0-5a2cee2f0351@nxp.com>
- <PAXPR04MB8459265997E9822F17AD2BC0881CA@PAXPR04MB8459.eurprd04.prod.outlook.com>
+        Wed, 24 Sep 2025 09:00:33 -0700 (PDT)
+Message-ID: <798600a43825818bcf828da7060f38105f7f3225.camel@linaro.org>
+Subject: Re: [PATCH v5 4/5] clk: samsung: add Exynos ACPM clock driver
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>,
+  Krzysztof Kozlowski	 <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Peter Griffin	 <peter.griffin@linaro.org>, Michael
+ Turquette <mturquette@baylibre.com>,  Stephen Boyd <sboyd@kernel.org>,
+ Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar
+ <alim.akhtar@samsung.com>,  Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Catalin Marinas	
+ <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-clk@vger.kernel.org, willmcvicker@google.com, kernel-team@android.com
+Date: Wed, 24 Sep 2025 17:00:31 +0100
+In-Reply-To: <20250924-acpm-clk-v5-4-4cca1fadd00d@linaro.org>
+References: <20250924-acpm-clk-v5-0-4cca1fadd00d@linaro.org>
+	 <20250924-acpm-clk-v5-4-4cca1fadd00d@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2-2 
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <PAXPR04MB8459265997E9822F17AD2BC0881CA@PAXPR04MB8459.eurprd04.prod.outlook.com>
-User-Agent: Mutt/2.2.14 (2025-02-20)
 
-On Wed, Sep 24, 2025 at 02:44:21PM +0000, Peng Fan wrote:
-> Hi Stephen,
-> 
-> > Subject: [PATCH v4 0/5] clk: Support spread spectrum and use it in clk-
-> > scmi
-> 
-> Since clk-scmi.c for spread spectrum support needs some big changes,
-> we may need to change scmi framework to make OEM extension
-> in an elegant way. This will needs some time.
-> 
-> To patch 1-4, do you think is it ok to be in linux tree without patch 5?
-> If yes, I will post V5 soon with your comments in patch 2 addressed.
-> Otherwise I have to carry patch 1-4 in future clk-scmi patches.
+Hi Tudor,
 
-This adds a new API, and there wouldn't be any users of it at this
-point. Personally, I think it should probably wait and be merged as
-one series. Unless there's another vendor that's ready to use this.
+On Wed, 2025-09-24 at 15:11 +0000, Tudor Ambarus wrote:
+> Add the Exynos ACPM clock driver. It provides support for clocks that
+> are controlled by firmware that implements the ACPM interface.
 
-Brian
+[...]
 
+> diff --git a/drivers/clk/samsung/clk-acpm.c b/drivers/clk/samsung/clk-acp=
+m.c
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..9e8354168a63b1427c2f3faf1=
+5e4e7955e924dc8
+> --- /dev/null
+> +++ b/drivers/clk/samsung/clk-acpm.c
+> @@ -0,0 +1,185 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Samsung Exynos ACPM protocol based clock driver.
+> + *
+> + * Copyright 2025 Linaro Ltd.
+> + */
+> +
+> +#include <linux/array_size.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/container_of.h>
+> +#include <linux/device/devres.h>
+> +#include <linux/device.h>
+> +#include <linux/err.h>
+> +#include <linux/firmware/samsung/exynos-acpm-protocol.h>
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/types.h>
+> +
+> +struct acpm_clk {
+> +	u32 id;
+> +	struct clk_hw hw;
+> +	unsigned int mbox_chan_id;
+> +	const struct acpm_handle *handle;
+> +};
+> +
+> +struct acpm_clk_variant {
+> +	const char *name;
+> +};
+> +
+> +struct acpm_clk_driver_data {
+> +	const struct acpm_clk_variant *clks;
+> +	unsigned int nr_clks;
+> +	unsigned int mbox_chan_id;
+> +};
+> +
+> +#define to_acpm_clk(clk) container_of(clk, struct acpm_clk, hw)
+> +
+> +#define ACPM_CLK(cname)					\
+> +	{						\
+> +		.name		=3D cname,		\
+> +	}
+> +
+> +static const struct acpm_clk_variant gs101_acpm_clks[] =3D {
+> +	ACPM_CLK("mif"),
+> +	ACPM_CLK("int"),
+> +	ACPM_CLK("cpucl0"),
+> +	ACPM_CLK("cpucl1"),
+> +	ACPM_CLK("cpucl2"),
+> +	ACPM_CLK("g3d"),
+> +	ACPM_CLK("g3dl2"),
+> +	ACPM_CLK("tpu"),
+> +	ACPM_CLK("intcam"),
+> +	ACPM_CLK("tnr"),
+> +	ACPM_CLK("cam"),
+> +	ACPM_CLK("mfc"),
+> +	ACPM_CLK("disp"),
+> +	ACPM_CLK("b0"),
+
+The last one should be 'bo' (bigocean), not b0.
+
+Cheers,
+Andre'
