@@ -1,104 +1,106 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CF15CA6F;
-	Wed, 24 Sep 2025 14:03:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B62120DD48;
+	Wed, 24 Sep 2025 14:04:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758722638; cv=none; b=un/b1sqEu9MjAx9Wu/14LJZt/dgmyYiL3yluFbsMgW39ZYLajMQEn5s8MqMxWWRgxKHbNoKlepLbVxAqDVsFQo7QQ6ZodhiEX9+5Am4cM0Wyk0nSLaHhhUYhqDZjPIHRZpLA13O9SGkTpnZJreGqk1tPUZwmvnfULgbEFJzkklk=
+	t=1758722672; cv=none; b=XN/ufHq3jsluqrC0nIxVujzk0LBgiZC0j1abzuT6BjUSMN9/hBwiAVYN08AkFv4x7iMNE4FVvZHCNaIXJCsQrRHLiieuVykHzhMgvxh0fT1tsXUbBck4RRmb5qI3jnwRX5OZoqRY8h4lFuFDHesvsen6bDI0n8KJMYNpvtskn3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758722638; c=relaxed/simple;
-	bh=uM6uSHTCjPtmI3Vzh1PPevWg0rMMV9zNEDAVmqFGGZw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DUMauiMPnJMB+hpVRM/jXBTVSSeozhMysG5ZQohx1VUfT5v3HK7koWBxrRGtZk0k3f0xNmqy8ga0cAR1Xi+XGzV6Iwv6TdFBDiuUWBMUlVPoZZCGj0AsQppVBl/wN8zPmNreV4NpBUbrhxWCjNc0nG4mq0RyT5lQ59wl+YhpOas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sJllzpq4; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1758722672; c=relaxed/simple;
+	bh=C0dwQH0lvkoovYckC7Dh3gPsVdizym4Fy3oXd1r+BM0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=MIC59GQuWrrFAHce1kVpDxNA0FjkePoUNHKNx6y9DdClWwyX8BM4AzaDoUK6sHX0K3rv6vveF8sUF2uJ1mOfMJ+DqUfQH8pdnSpkCnlzIabY7/RJqKitb5+8Ud1FpovhTG9icQqUHe4eR2YHqCNe5CI8io3gEq+bbMlQ6MLry9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YM9WnQK+; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sJllzpq4"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01256C4CEF0;
-	Wed, 24 Sep 2025 14:03:57 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YM9WnQK+"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCF83C4CEF4;
+	Wed, 24 Sep 2025 14:04:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758722638;
-	bh=uM6uSHTCjPtmI3Vzh1PPevWg0rMMV9zNEDAVmqFGGZw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sJllzpq4tR6nKD3tdPKsC7Asro+AUPMGKQItIJNnFv3n8cxUL9XcM+EFV2RrItwhY
-	 3nXj3OuDrF8+yWvyozb58DKmtJ47vJ4hqAUVcnIvZWfB35VE2WU4yEGXk/g9JPJHjv
-	 4Rq1uZKXZve+G4awVv9ynerQnOaynp6X7wB/BBKyFhqUgn8Mou+UkEFmrW1GKjUbC3
-	 vSgjyjb8V3QWi7hZ7LdxQbaL1BCRI41uZV/hMwBqR1sD/PpCUDs/0NCQ+zYAkynP9F
-	 anjcYsFg8AbwWAWHb37Vaa/hysBAeX+YhWgH7FZrpvpBKfo43hGbKv4Rc8cEoar9LP
-	 vo5h90Y2c7ADg==
-Date: Wed, 24 Sep 2025 09:03:47 -0500
-From: Rob Herring <robh@kernel.org>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Ryder Lee <ryder.lee@mediatek.com>,
-	Jianjun Wang <jianjun.wang@mediatek.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, linux-pci@vger.kernel.org,
-	upstream@airoha.com
-Subject: Re: [PATCH v2 1/4] dt-bindings: clock: mediatek: Fix wrong
- compatible list for hifsys YAML
-Message-ID: <20250924140347.GA1556090-robh@kernel.org>
-References: <20250923201244.952-1-ansuelsmth@gmail.com>
- <20250923201244.952-2-ansuelsmth@gmail.com>
+	s=k20201202; t=1758722671;
+	bh=C0dwQH0lvkoovYckC7Dh3gPsVdizym4Fy3oXd1r+BM0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=YM9WnQK+AJr/ajVZrg+1NUcxowpn3XbMi9WKFggm4MSi6Cy0Zzouy3LOjqj5gI0Dm
+	 vogvFe0FXq/b6yw6FPPkamHXmeC4QZ8QnA6RusKwGzsyRXWM/mN4WmIWuy1AQctIKe
+	 GoPwnM+j9hdS51BkjxdkksOPLhvoO3Mufy/SZaoZUJl/fzOkWsWTVjjaodoStG0dFA
+	 XTIaTaWVHA8hExTQpv8v+1ibJkwDCa/XqCCGbqbvCCd7gQ2tss1I4cN0GTF7KXsb9M
+	 rJ6aSH3wRt+zcfg0btve3j5IbgDWrUYJj0Ko/TpO+guNf/ElWH0zgPstnJjCAkp5eq
+	 pEPjFvJ+T/P7Q==
+From: Mark Brown <broonie@kernel.org>
+To: kernel@collabora.com, Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Ikjoon Jang <ikjn@chromium.org>, 
+ Enric Balletbo i Serra <eballetbo@kernel.org>, 
+ Chen-Yu Tsai <wenst@chromium.org>, Weiyi Lu <weiyi.lu@mediatek.com>, 
+ Eugen Hristev <eugen.hristev@linaro.org>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Julien Massot <jmassot@collabora.com>, 
+ Sean Wang <sean.wang@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
+ Julien Massot <julien.massot@collabora.com>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-mediatek@lists.infradead.org, linux-sound@vger.kernel.org, 
+ linux-gpio@vger.kernel.org
+In-Reply-To: <20250826-mtk-dtb-warnings-v3-0-20e89886a20e@collabora.com>
+References: <20250826-mtk-dtb-warnings-v3-0-20e89886a20e@collabora.com>
+Subject: Re: (subset) [PATCH v3 0/6] MediaTek devicetree/bindings warnings
+ sanitization second round
+Message-Id: <175872266654.1250098.18318654970419425506.b4-ty@kernel.org>
+Date: Wed, 24 Sep 2025 16:04:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250923201244.952-2-ansuelsmth@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-a9b2a
 
-On Tue, Sep 23, 2025 at 10:12:29PM +0200, Christian Marangi wrote:
-> While converting the hifsys to YAML schema, the "syscon" compatible was
-> dropped for the mt7623 and the mt2701 compatible.
+On Tue, 26 Aug 2025 09:39:33 +0200, Julien Massot wrote:
+> This patch series continues the effort to address Device Tree validation
+> warnings for MediaTek platforms, with a focus on MT8183. It follows the
+> initial cleanup series by Angelo
+> (https://www.spinics.net/lists/kernel/msg5780177.html).
+> 
+> The patches in this set eliminate several of the remaining warnings by
+> improving or converting DT bindings to DT schema, adding missing properties,
+> and updating device tree files accordingly.
+> 
+> [...]
 
-Is "syscon" really needed? AFAICT, the clock and reset drivers don't 
-need it.
+Applied to
 
-> 
-> Add back the compatible to mute DTBs warning on "make dtbs_check" and
-> reflect real state of the .dtsi.
-> 
-> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> ---
->  .../devicetree/bindings/clock/mediatek,mt2701-hifsys.yaml | 8 +++++---
->  1 file changed, 5 insertions(+), 3 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/mediatek,mt2701-hifsys.yaml b/Documentation/devicetree/bindings/clock/mediatek,mt2701-hifsys.yaml
-> index 9e7c725093aa..aa3345ea8283 100644
-> --- a/Documentation/devicetree/bindings/clock/mediatek,mt2701-hifsys.yaml
-> +++ b/Documentation/devicetree/bindings/clock/mediatek,mt2701-hifsys.yaml
-> @@ -16,13 +16,15 @@ maintainers:
->  properties:
->    compatible:
->      oneOf:
-> -      - enum:
-> -          - mediatek,mt2701-hifsys
-> -          - mediatek,mt7622-hifsys
-> +      - items:
-> +          - const: mediatek,mt2701-hifsys
-> +          - const: syscon
-> +      - const: mediatek,mt7622-hifsys
->        - items:
->            - enum:
->                - mediatek,mt7623-hifsys
->            - const: mediatek,mt2701-hifsys
-> +          - const: syscon
->  
->    reg:
->      maxItems: 1
-> -- 
-> 2.51.0
-> 
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+
+Thanks!
+
+[2/6] ASoC: dt-binding: Convert mt8183-afe-pcm to dt-schema
+      commit: 52aefc1e3c5fbdfdd216796fbe78443ae67e447f
+[5/6] dt-bindings: sound: Convert MT8183 DA7219 sound card to DT schema
+      commit: cf5be90ee4dfa3c38dc64fbcc4fb70fa0180b7b7
+[6/6] ASoC: dt-binding: Convert MediaTek mt8183-mt6358 to DT schema
+      commit: 82fd5dc99d63f948c59ac3b08137ef49125938bc
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
