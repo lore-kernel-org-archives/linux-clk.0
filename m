@@ -1,197 +1,412 @@
-Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11011005.outbound.protection.outlook.com [52.101.65.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 295DF306B39;
-	Wed, 24 Sep 2025 14:14:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.5
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758723256; cv=fail; b=MmqoEKwzyU68UAfoyqLvlCDJtzJdq/7lWDyi37tVYk0eY5Lxs0gPI22CQZKU/psftNn4S6q25i2EwDYPdoy3quF3kr4SJPT7hGJuFBxR0ddj3R5EnvLNP+iTcXY9hD2L2WrhSf1Ud++DD3seMYag7Nx84dpL4Ny8u8wQSe+mT+0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758723256; c=relaxed/simple;
-	bh=C14OYAc7cnZMJf20GUplVUGtSC1SKvqKVikb8C2YDuI=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=ALXPy02XtFaH5h8dy1aI3s+2q8T5BySbBl4lQVL2jboMTh8S9tH2NiIJWTUUB4/Y3Jvom1JU+Q9sv4z89UF9SPcQ42CxfzZAW8XskBEIoEcsW8YWRgQI+fF2a/m+Hu4qude6E1aPy9Too4R4qc20DZPYegIMM69hTNJ5Si46Rro=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=iPEuwlfM; arc=fail smtp.client-ip=52.101.65.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5B2D1F3BBB
+	for <linux-clk@vger.kernel.org>; Wed, 24 Sep 2025 14:34:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758724463; cv=none; b=Jrb9Ut25wx6yOngGyyBiPZiOOEn9tJxrG8xae4UWQ7/ZhI2FRqZWNO6Hd0COfmjficesPyz0uquphl5GBCIa7ITj3fsae3ozvyMBoau57cKJbmgC53ciqh7bcTzSnxUHySJtZPyZccMHKtDzmpHVH69jqA9zS9aY1/ySsbZKYjo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758724463; c=relaxed/simple;
+	bh=A9PimX6bUbgQ7SeUVDOv0qB4SMDat/5djDZWcI5N8yI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=RUNnlbxpgrDQeqR7uy6vd2PBF6SXsinOase3pbS8QeYiu+Br+8Rv20B9CE5PCBO5zvtyi7fawZpHfVyGshRVinhN9bv0747U86IXlaR6nwLpK/lGHNjt3e42gR+v1446l/FyxEOQv3Hwhi3MiIfq3H9IcaclVlZLSJ5MGPbH6IU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NhtjSPTV; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="iPEuwlfM"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Gh540P2aEH4axanDSETJ8NLoUoAiWZUh84Sn+t2ml+i331pSurZwpxJZmdwFOV8D+F8VT2e75pVA6HfM5HgJwtHAy9c1QwK6RuQmMampkDSEvUnX+CpSwU8rTPaKolnDkDQY+JCkjsxp63GDnew275QAoJL5AjchxC+VEf2rRRYkiUJqcsLY+MyzjOi1oVJQoe/ClkcZrZ4AX+E+IbdIFFY+zWwfZ8/Nj4psRhQjSvX/TnmhLGrlWMROz319nFI2CG46bexAKUBJyKa7WHXe9FzYSD6zn5QYkdiTubbDnROwRz8JWjI+1Xszb4o2uGq9VhFrZL/wuCCc+vuS2tiqdA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=C14OYAc7cnZMJf20GUplVUGtSC1SKvqKVikb8C2YDuI=;
- b=ejvlGX+MaOKfsg5AuOwEmLZIrOeemv9Z63/mk2v6ldUxkJgdXS5XOTSz17Pkyf737wjV9DycyxTDnFQH+Sq3zUKbuzykZg+cIVvGvr7qEzKCLzef+R/X/F1m+Q4eKoqXyJrQrlUxZicEUmt0YGqd3edYtcGqPgF7y6P4BngXBJ58/BRexQdKgQcwWeKKoPUNd0ZTKRCRnI1w9ULEujmixpCbor88MQl27x4TQvNQi7doBgEDW8XBzjrx8pK8BXxwqF2pBg+K9U30/jPHWyfKNNzNViQ68pEWBVc2b0c2/sDHAHndwbegPMCcMzjAhg+NfEZCRxWC+5QPrgf08GEGPQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=C14OYAc7cnZMJf20GUplVUGtSC1SKvqKVikb8C2YDuI=;
- b=iPEuwlfMgrsLhF5KVTOZcsnmC6km4kNlvWSlY3ecXSoMQCAjGoW5cICpE/47cup43qcbZk7SHhXEHM6FWY+EIKJC3+Z7lNU4ZVROWvk8CYGHr9f9mf2JK5bAQcXnYPBwWKEFcJNVGwMqvniwYj6ZV1A4+TVoxdN912Fyu8ea9PBx2QotROcl5Mz2j73/ucPholYpWGV2ggAah6YA0VfR5tN8+fCTrUVLFew2CPsV6sv2DIrT3ujZQWeQtWdbaFniQJSLcAM6AMFT5UIsM3uTHqnukuO1ktueZEoLrtB4r8DFk6zib1iXHo6zIFEzHdOkT13IrtaYy/rZIsHkfqY7xQ==
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
- by PAXPR04MB8718.eurprd04.prod.outlook.com (2603:10a6:102:21d::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.9; Wed, 24 Sep
- 2025 14:14:11 +0000
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630%4]) with mapi id 15.20.9160.008; Wed, 24 Sep 2025
- 14:14:11 +0000
-From: Peng Fan <peng.fan@nxp.com>
-To: Cristian Marussi <cristian.marussi@arm.com>, Sebin Francis
-	<sebin.francis@ti.com>
-CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@kernel.org>, Sudeep Holla <sudeep.holla@arm.com>, Marco Felsch
-	<m.felsch@pengutronix.de>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
-	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Brian Masney
-	<bmasney@redhat.com>, Dhruva Gole <d-gole@ti.com>, Dan Carpenter
-	<dan.carpenter@linaro.org>, Geert Uytterhoeven <geert@linux-m68k.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"arm-scmi@vger.kernel.org" <arm-scmi@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>
-Subject: RE: [PATCH v4 5/5] clk: scmi: Support Spread Spectrum for NXP i.MX95
-Thread-Topic: [PATCH v4 5/5] clk: scmi: Support Spread Spectrum for NXP i.MX95
-Thread-Index:
- AQHcJhsCzmRSrEp0oEyqjCzMN4tqC7SgpByAgAAO97CAAWsJAIAAIANwgAAPgwCAAAcZAIAAF/pA
-Date: Wed, 24 Sep 2025 14:14:11 +0000
-Message-ID:
- <PAXPR04MB84594DDFFE47E67552718F77881CA@PAXPR04MB8459.eurprd04.prod.outlook.com>
-References: <20250915-clk-ssc-version1-v4-0-5a2cee2f0351@nxp.com>
- <20250915-clk-ssc-version1-v4-5-5a2cee2f0351@nxp.com>
- <5f508f1d-2d08-4687-86cd-d1944caa0a49@ti.com>
- <PAXPR04MB8459CE9F22CD56A9BFDB5E78881DA@PAXPR04MB8459.eurprd04.prod.outlook.com>
- <082735e7-956b-4574-952e-06ba69db41f1@ti.com>
- <PAXPR04MB84590D5AAAB56ED7E1CBDE05881CA@PAXPR04MB8459.eurprd04.prod.outlook.com>
- <c34157c5-cd13-4e85-a9ee-22446111f633@ti.com> <aNPmydbv6Xm0Tj9B@pluto>
-In-Reply-To: <aNPmydbv6Xm0Tj9B@pluto>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PAXPR04MB8459:EE_|PAXPR04MB8718:EE_
-x-ms-office365-filtering-correlation-id: dc926516-d70d-4df8-8c75-08ddfb74a23a
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|366016|19092799006|376014|7416014|38070700021;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?KIDdcr2e2CFn7IfEkVzqGn1oVMaFfbvf2QatH0fNZMCrkL3d5lbg6iWx388B?=
- =?us-ascii?Q?36S7pJezpZ4V/tdCbSelLBXVrpYQz5/oG1gYS+1QLmMu7ms+XpaS4I0x9e7h?=
- =?us-ascii?Q?zAPeRH8aoDZaw5bhhw5gh2bs7i4L8GGpmYifVwjn4bn0pf6zz0Vgn+z1FLNT?=
- =?us-ascii?Q?8EXDvx+Fsdn4+0oozxVYcMSIi4sNeQOptUvbgKPkagTlnH0O3luS9Y2z3QPe?=
- =?us-ascii?Q?LXbsOwhh0YxqaY8y2vaUhmPz/cUM+NqxIEIsWHzsJVGaim925Spe5i5Xi6gN?=
- =?us-ascii?Q?d1F7RQliaxd1MC6YEBvCAu2Sz8QRIue9tyTXSDBsYZaLwaq9m9JC8pwb+95w?=
- =?us-ascii?Q?F3u2cLWPRjtNt6raEPnSuqEAb2xYgLAxiUvr+TUm4LD5hzz159LfuTlMAcEq?=
- =?us-ascii?Q?REa4k07NChchGUuT/ZFQoyEufVGVa1uOHq8OCD35eEjh/PFB/7TAdBiJDiga?=
- =?us-ascii?Q?+9IqwaitI/JLbbq2W5+YGQgKXOs53xmi9JGUbzJ+MYTMG3r+uytTv0uaXUEZ?=
- =?us-ascii?Q?IdKd21/qGrYXl9SaqrnI1fbAqgu9U4BmjqgX9ixKY/lXQRkDqoci62zrxpBZ?=
- =?us-ascii?Q?SN5jdogKWP8oIWGj0QOYfpngsOR+qwlodi3MheEM07yfEhfdAZzwW9V8f15b?=
- =?us-ascii?Q?mq9ww6WLp7Un8o6pptmu4q4h6F7Zor1UfxykZDY9nGq0Mw+6+4m553O7XAqk?=
- =?us-ascii?Q?Kp9YDXeups0B/LuYnotqn5BNUBSl6Z5tZq1uGVMMm0qXXnZ3eMXWo9ud2hQ7?=
- =?us-ascii?Q?nLi8uH2Y8a5IQDe8vi8oy1IlUmxnMQhluiKcawWpc/8wZCQHH8Cb5Pga3TU2?=
- =?us-ascii?Q?W5JuZdULfINRUtTbv+NpQgl42ojGmcxygg9XZKOLczd9bg89ArKcZ+ixOWJS?=
- =?us-ascii?Q?vq0yAhYa60whOuiXwAtQjWpeNxy+nXU9LUwR12kT4ls0IRxInNlgjNIJkB2A?=
- =?us-ascii?Q?5xp1Gb34iAr7BD8Dc41mnAQz02VyMpejaZQALPkeooit6eOBq7CLgs7rhNja?=
- =?us-ascii?Q?DBE8j1fqhGaEKjWS3D5X1jCX6k9WwO0FcGNdAzcpLqyylADq2TpBYnPXVB2O?=
- =?us-ascii?Q?5FS71w3AM+k9k1tSt8uuJTRsb/kuGFgDts6fN++qWd6IW1o55KR3qSeZoPzx?=
- =?us-ascii?Q?LDLD066XFBKcIYGEHulZ7VO1gWlttfDTenwCz0g2flJXe/7Y/jLMm+Fe8jvI?=
- =?us-ascii?Q?mQUVPNB9kmCjjKwbrpzTFj09AF5yuZOtv3/hKjbBOuOwRuhW9W43V7Kq9/Tq?=
- =?us-ascii?Q?1g976+Yq/bYZIqT/9dymoPC25qEuHoWOcZ4YSYHRfyoVygiFzUvX10c1K/28?=
- =?us-ascii?Q?rJcev/gzi/pTufv2aEEzT4Uk39ZnEn5YsQixCS8rs3Rr9MjACZL0diYR6Cdq?=
- =?us-ascii?Q?pBTGkuVK5D2g/faOmc5l3czrsL1egYa5t7zz47Wnz6CskA6D1ZSfDjp31AS8?=
- =?us-ascii?Q?OqODn01cctzh1zwBDSirs57L/siQQ0yaeRY/O9fEkFf1+JH65r51JPEPwGDh?=
- =?us-ascii?Q?FGu6kbtwxn8sjlM=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(19092799006)(376014)(7416014)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?CvYvFyB6h+t4G/ARSVwqjR4qTtxp4I+8GNQq00B88hH2MRaVDkK1sXGIJK47?=
- =?us-ascii?Q?5Y20GSX2MX0wfHUs31OyLBEGU3DQyb9h8xAGpyvtMbDzdaey1xyXQHfYUdSE?=
- =?us-ascii?Q?/JmpgbMIl0WjW3fFr6VCyGPJTfyxfD3pG/QU1UqD+Wbkz0no/iqGS+rMNfGk?=
- =?us-ascii?Q?CHNG85rnBlwU06HMGb6R1C2ryealLZjegAvv6Gi+nnaBogXV/B8ozalH8KSl?=
- =?us-ascii?Q?12FcRZHR5qHuUtZTZjjvtwWcK5uRezBuHXA1dsA/2W8WL03FVslJIsod6mIo?=
- =?us-ascii?Q?FlRHQQNMivLCzGyBfAdmfmVSn42t19Dn2VijtZUVJMlOsDE7u8jJPahb5cFg?=
- =?us-ascii?Q?hwItYrafq2ZAKTAPRjY3ftMnnOaoUhPAuS5CFX0MaoOGh3/WS53WA4emDZC7?=
- =?us-ascii?Q?e5jtuPXRUVxSj0JaI5wzpAbeoHaB2Q77gJKWOFwMtOVYDfp3lE4Di9pN2kJ8?=
- =?us-ascii?Q?8pChoiglZH7zNYpsl2o8xEmkF5ohS6zovUg0QHysYYjO/VQGqhA2iVzJljcH?=
- =?us-ascii?Q?mSmmCaqMkEUnrzgFpZAhFpTSPoD7HF6n/zAOyeEW1Kc7I+kGEyJzZCQIMs7c?=
- =?us-ascii?Q?vPgpFRjdErU6BeiR3er6DYwSPvMSvCs2EvffaFN03MojGYamSsUUWzg84a7l?=
- =?us-ascii?Q?79xVRVxqtBtIMsTtsDS7q7XCOlmjbSScdkw9+7wN3iSR+wRSc5gd9bhcVbsg?=
- =?us-ascii?Q?v9QhfYiQGbHUdSxNHEi03EG7JAQhL+yIwJNSYUL6DuIZBgKB5toUBzO84X+K?=
- =?us-ascii?Q?3qII5i/GDPaO9rS06g70uSjDT4oyUdOrsOIemgp+QETx3/mMfpPxuet1Fhs1?=
- =?us-ascii?Q?0EbC1mGOEYkAU7OxZNTyL+xHZgwpB9/fs5NFUV2EbG2x1ncsN4FhXO9dwH08?=
- =?us-ascii?Q?99X1+wRq4NZSPJM5+gJVVvsr4kBvDvbDY6QlJ365ZDnKaPCnX8Nd2l9e+t8E?=
- =?us-ascii?Q?p+DC+R+YEUjNOXkaxBmd+ZDTFB+X+wReIA0xz522UA558YkswhiGshauGsQP?=
- =?us-ascii?Q?21BifwsBZ9YS1zMsZwVavwe0gblb0inesw9b4z4B8wUtQDHZPPx/Bl105Rtf?=
- =?us-ascii?Q?ejfRUcCD33K3hrpPun+DnIr65lnww3wxJWOogmeW6ckJLmFoNgvbyI14fhke?=
- =?us-ascii?Q?sd69jWBLPO3GA6choLRcB/Swb+VboH6H48Adg2yNZSL2zK/bKDB6hurr0yWx?=
- =?us-ascii?Q?TxucmAKDLKwmBXQH9Y79NScNIvYi2XYFGyJ4C9L15FLTmZA9u1nmUFol8p6W?=
- =?us-ascii?Q?rmmc1gI8s7uE4oujzZT1T6s/S4VQsnxKVF+HhqlW2NLkvlFKdRsacv87bWx1?=
- =?us-ascii?Q?gYgho/09a6Zb926fGnhD0mrTvELCz8kUYYxE8md418ROB7csY2R8j9m0A8la?=
- =?us-ascii?Q?jXEncuIoo2JbIIB0ot2rLNowoHsLClocxuDTBNGCKCyo3LssU7jg4lJ/0a6b?=
- =?us-ascii?Q?X/efnmaAXZLXlsOX09kKBaRkxUHxVZQM93uAEU0JaZTBCcCucQdiQewf5yxy?=
- =?us-ascii?Q?YVd6/qSFIHBwMO2qRhN8p1q9wn0vzzCSCFuf+5VYZ9VgPG5OMYUNVaUq+DSw?=
- =?us-ascii?Q?WOvN2O4W2m4KYtjnjOg=3D?=
-Content-Type: text/plain; charset="us-ascii"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NhtjSPTV"
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3f1aff41e7eso5819042f8f.0
+        for <linux-clk@vger.kernel.org>; Wed, 24 Sep 2025 07:34:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758724459; x=1759329259; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=FGuldXcjqf8OihVldC7MI7YO4JLmIiQzrU/Ak4hlUT8=;
+        b=NhtjSPTVz6CE3h3aDhfNIovy3mbAnnxgziyM+bPBfvo9A2UwJeIfhBwFJDtXGaTWEe
+         uGonJrwJx/3c98ZVLPIW45eSjanFE/fd4KVxLDrNEd0DrewnmE28toJjmOFOZ7IWHpNk
+         553OmJb34FcS/+n4iF09QPaWghFXF2n3jSsgPLKhzZZf4tjajXVIAd+0ltstLtXmADTt
+         BjI/tHjmVZLVV2KQU4b1RMoKl+lrMQFVZDKN9T4u37KDxO0yfK5sDWEBVlpts4ozz0vN
+         GXwdYqERFvmHBcpzu0SbLi7h7bHhfF8JP1WFPxN4mQ/F/eRHa+Dy2VBNKgsQCtBhhda1
+         ztoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758724459; x=1759329259;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=FGuldXcjqf8OihVldC7MI7YO4JLmIiQzrU/Ak4hlUT8=;
+        b=Hq2e0dB+i8W/NMbOXamuYUb3Fj0gixaobsVt81q2kY5I/5XV3DZk6gFwK8ZO7auvFN
+         kwXq7xR3nhOPCunZk1v6aydg2XhxB1TJXFTShXKpYcXPLWjdcaak7kZuaTtJOwkvqkcG
+         oOxRKBVLx2FCAFOZVSHVQ/e8TttaSjmOkpK9hGHx5l0fovUdtd8cVQ5GzPew7jDAb14g
+         VrEPbr6/rSbZ4aJAYjuyRwBp+XfmpZaiUSJEso3Qs80etSuLLJoXy7A0QSZhBH9kADPZ
+         JmuhRjlN7jMUsVLVhZeWdqUn4Z4tu2GwTZy2/uwuQZF3IDg/d1aYv0EN7Wv53rm5+CBk
+         L23Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXOMuzYx+RKJ9BLIaoBD7XScFCLYzi15zvJNrI0ujn3DQAtWPG1y5xsuoLgwuoZBYhy2EGJHYkBNKI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNqSbTOk8NxwjkaXecOtdFZJO5BDXxmC5gXuEolTVl6zLsUEx1
+	dBI6OqQLJMULMZVWLmEbkMuwY7H1a/yB07llN4sv7yeVYIsMfgj86jtu
+X-Gm-Gg: ASbGncuULLmWIY0SALu53kjZHxBAT9yu5bri2QTnWXjyEpXaOwRLGZsi5p2kTzBOujf
+	pr5czkfTP7dZA7yaBIKF6RsmVd2zlYTsmzD+DSXX0jOC07W8BPAWpLFLi5zsa+ponwRRRsBj/sG
+	UnGVot2PcaGTyh3tBJ3f0q3/uN6OfpFfGicQDHo0Oid7UvyU0/UDJ1tJ8VqzqfLUSUAW83TdkE8
+	4pAnajLVwTZ2XOB6Kh4iEnysi3XnVhsuR5eN3Yn14jA5NEi2aauH6rcLjje3BhFiHBlDP4LCfE2
+	fpBnVT88fokktK04eSC7+ceZz6WlXJBmQZYeDaHXNZiFHL8wlKG1xBnhCglI+ITkvzmMkr8hBAu
+	SUnaaH97tLF7uETMONzWVaQ==
+X-Google-Smtp-Source: AGHT+IGLJblPflhmFCHt94DviBP9O/s0y5YTbBNNacFFsu0nA3nuXpOv6LIYJxuAR0FgwMMN3hA1gg==
+X-Received: by 2002:a05:6000:220f:b0:3ec:3cac:7dfd with SMTP id ffacd0b85a97d-40e44c3da28mr207611f8f.26.1758724458762;
+        Wed, 24 Sep 2025 07:34:18 -0700 (PDT)
+Received: from [10.5.0.2] ([45.94.208.78])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3ee0fbffaeasm28405985f8f.62.2025.09.24.07.34.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Sep 2025 07:34:18 -0700 (PDT)
+Message-ID: <404c05f20becd0fc8e3256425843187b40a3b625.camel@gmail.com>
+Subject: Re: [PATCH 3/7] iio: adc: add RZ/T2H / RZ/N2H ADC driver
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, David Lechner
+ <dlechner@baylibre.com>,  Nuno =?ISO-8859-1?Q?S=E1?=	 <nuno.sa@analog.com>,
+ Andy Shevchenko <andy@kernel.org>, Rob Herring	 <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley	
+ <conor+dt@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Magnus
+ Damm <magnus.damm@gmail.com>, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd	 <sboyd@kernel.org>, Lad Prabhakar
+ <prabhakar.mahadev-lad.rj@bp.renesas.com>, 	linux-iio@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, 	devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, 	linux-clk@vger.kernel.org
+Date: Wed, 24 Sep 2025 15:34:45 +0100
+In-Reply-To: <20250923160524.1096720-4-cosmin-gabriel.tanislav.xa@renesas.com>
+References: 
+	<20250923160524.1096720-1-cosmin-gabriel.tanislav.xa@renesas.com>
+	 <20250923160524.1096720-4-cosmin-gabriel.tanislav.xa@renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: dc926516-d70d-4df8-8c75-08ddfb74a23a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Sep 2025 14:14:11.2446
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 35zVaSG/JvSniGOtAsRcZFQGOt+Qz94BLHh++wXEz8w9GNDGdRf5fbEWTSe+9SdyNvnGm6VRdhVHdVCBVqLknQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB8718
 
-Hi Cristian,
+Hi Cosmin,
 
-> Subject: Re: [PATCH v4 5/5] clk: scmi: Support Spread Spectrum for
-> NXP i.MX95
->
-...
+Some comments/questions from me...
 =20
+On Tue, 2025-09-23 at 19:05 +0300, Cosmin Tanislav wrote:
+> Add support for the A/D 12-Bit successive approximation converters found
+> in the Renesas RZ/T2H (R9A09G077) and RZ/N2H (R9A09G087) SoCs.
 >=20
-> So yes the ideal solutiomn would be to extend in a generic way the
-> SCMI framework so that you can add in these cases custom handling of
-> vendor extensions for standard protocols (and then generalize the
-> current clk-scmi IMX support and add the new TI one...)...but I have not
-> thought about this and I certainly dont have enough bandwidth now to
-> work on this
-
-I see. So I get the point IMX SSC OEM is allowed, but need an elegant way
-to extend SCMI framework or extend clk-scmi.c in an elegant way to make
-it easier to support other platforms.=20
-
-...beside having already in the pipeline other stuff/fixes like
-> a proper fix for vendor drivers coex like Peng askes (rightly so a few
-> months ago)
-
-Thanks for working on that.
-
-I could continue give a look on this, if any suggestions, I would appreciat=
-e
-that.
-
-Thanks
-Peng
-
+> RZ/T2H has two ADCs with 4 channels and one with 6.
+> RZ/N2H has two ADCs with 4 channels and one with 15.
 >=20
-> Thanks,
-> Cristian
+> Conversions can be performed in single or continuous mode. Result of the
+> conversion is stored in a 16-bit data register corresponding to each
+> channel.
+>=20
+> The conversions can be started by a software trigger, a synchronous
+> trigger (from MTU or from ELC) or an asynchronous external trigger (from
+> ADTRGn# pin).
+>=20
+> Only single mode with software trigger is supported for now.
+>=20
+> Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+> ---
+> =C2=A0MAINTAINERS=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 1 +
+> =C2=A0drivers/iio/adc/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 10 ++
+> =C2=A0drivers/iio/adc/Makefile=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 1 +
+> =C2=A0drivers/iio/adc/rzt2h_adc.c | 328 +++++++++++++++++++++++++++++++++=
++++
+> =C2=A04 files changed, 340 insertions(+)
+> =C2=A0create mode 100644 drivers/iio/adc/rzt2h_adc.c
+>=20
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 07e0d37cf468..d550399dc390 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -21828,6 +21828,7 @@ L:	linux-iio@vger.kernel.org
+> =C2=A0L:	linux-renesas-soc@vger.kernel.org
+> =C2=A0S:	Supported
+> =C2=A0F:	Documentation/devicetree/bindings/iio/adc/renesas,r9a09g077-adc.=
+yaml
+> +F:	drivers/iio/adc/rzt2h_adc.c
+> =C2=A0
+> =C2=A0RENESAS RTCA-3 RTC DRIVER
+> =C2=A0M:	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
+> index 58a14e6833f6..cab5eeba48fe 100644
+> --- a/drivers/iio/adc/Kconfig
+> +++ b/drivers/iio/adc/Kconfig
+> @@ -1403,6 +1403,16 @@ config RZG2L_ADC
+> =C2=A0	=C2=A0 To compile this driver as a module, choose M here: the
+> =C2=A0	=C2=A0 module will be called rzg2l_adc.
+> =C2=A0
+> +config RZT2H_ADC
+> +	tristate "Renesas RZ/T2H / RZ/N2H ADC driver"
+> +	select IIO_ADC_HELPER
+> +	help
+> +	=C2=A0 Say yes here to build support for the ADC found in Renesas
+> +	=C2=A0 RZ/T2H / RZ/N2H SoCs.
+> +
+> +	=C2=A0 To compile this driver as a module, choose M here: the
+> +	=C2=A0 module will be called rzt2h_adc.
+> +
+> =C2=A0config SC27XX_ADC
+> =C2=A0	tristate "Spreadtrum SC27xx series PMICs ADC"
+> =C2=A0	depends on MFD_SC27XX_PMIC || COMPILE_TEST
+> diff --git a/drivers/iio/adc/Makefile b/drivers/iio/adc/Makefile
+> index d008f78dc010..ed647a734c51 100644
+> --- a/drivers/iio/adc/Makefile
+> +++ b/drivers/iio/adc/Makefile
+> @@ -123,6 +123,7 @@ obj-$(CONFIG_ROHM_BD79112) +=3D rohm-bd79112.o
+> =C2=A0obj-$(CONFIG_ROHM_BD79124) +=3D rohm-bd79124.o
+> =C2=A0obj-$(CONFIG_ROCKCHIP_SARADC) +=3D rockchip_saradc.o
+> =C2=A0obj-$(CONFIG_RZG2L_ADC) +=3D rzg2l_adc.o
+> +obj-$(CONFIG_RZT2H_ADC) +=3D rzt2h_adc.o
+> =C2=A0obj-$(CONFIG_SC27XX_ADC) +=3D sc27xx_adc.o
+> =C2=A0obj-$(CONFIG_SD_ADC_MODULATOR) +=3D sd_adc_modulator.o
+> =C2=A0obj-$(CONFIG_SOPHGO_CV1800B_ADC) +=3D sophgo-cv1800b-adc.o
+> diff --git a/drivers/iio/adc/rzt2h_adc.c b/drivers/iio/adc/rzt2h_adc.c
+> new file mode 100644
+> index 000000000000..d855a79b3d96
+> --- /dev/null
+> +++ b/drivers/iio/adc/rzt2h_adc.c
+> @@ -0,0 +1,328 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +#include <linux/bitfield.h>
+> +#include <linux/cleanup.h>
+> +#include <linux/completion.h>
+> +#include <linux/delay.h>
+> +#include <linux/iio/adc-helpers.h>
+> +#include <linux/iio/iio.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/io.h>
+> +#include <linux/iopoll.h>
+> +#include <linux/mod_devicetable.h>
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/pm_runtime.h>
+> +#include <linux/property.h>
+> +
+> +#define RZT2H_NAME			"rzt2h-adc"
+> +
+> +#define RZT2H_ADCSR_REG			0x00
+> +#define RZT2H_ADCSR_ADIE_MASK		BIT(12)
+> +#define RZT2H_ADCSR_ADCS_MASK		GENMASK(14, 13)
+> +#define RZT2H_ADCSR_ADCS_SINGLE		0b00
+> +#define RZT2H_ADCSR_ADST_MASK		BIT(15)
+> +
+> +#define RZT2H_ADANSA0_REG		0x04
+> +#define RZT2H_ADANSA0_CH_MASK(x)	BIT(x)
+> +
+> +#define RZT2H_ADDR_REG(x)		(0x20 + 0x2 * (x))
+> +
+> +#define RZT2H_ADCALCTL_REG		0x1f0
+> +#define RZT2H_ADCALCTL_CAL_MASK		BIT(0)
+> +#define RZT2H_ADCALCTL_CAL_RDY_MASK	BIT(1)
+> +#define RZT2H_ADCALCTL_CAL_ERR_MASK	BIT(2)
+> +
+> +#define RZT2H_ADC_MAX_CHANNELS		16
+> +#define RZT2H_ADC_VREF_MV		1800
+> +#define RZT2H_ADC_RESOLUTION		12
+> +
+> +struct rzt2h_adc {
+> +	void __iomem *base;
+> +	struct device *dev;
+> +
+> +	struct completion completion;
+> +	/* lock to protect against multiple access to the device */
+> +	struct mutex lock;
+> +
+> +	const struct iio_chan_spec *channels;
+> +	unsigned int num_channels;
+> +
+> +	u16 data[RZT2H_ADC_MAX_CHANNELS];
+> +};
+> +
+> +static void rzt2h_adc_start_stop(struct rzt2h_adc *adc, bool start,
+> +				 unsigned int conversion_type)
+> +{
+> +	u16 mask;
+> +	u16 reg;
+> +
+> +	reg =3D readw(adc->base + RZT2H_ADCSR_REG);
+> +
+> +	if (start) {
+> +		/* Set conversion type */
+> +		reg &=3D ~RZT2H_ADCSR_ADCS_MASK;
+> +		reg |=3D FIELD_PREP(RZT2H_ADCSR_ADCS_MASK, conversion_type);
+> +	}
+> +
+> +	/* Toggle end of conversion interrupt and start bit. */
+> +	mask =3D RZT2H_ADCSR_ADIE_MASK | RZT2H_ADCSR_ADST_MASK;
+> +	if (start)
+> +		reg |=3D mask;
+> +	else
+> +		reg &=3D ~mask;
+> +
+> +	writew(reg, adc->base + RZT2H_ADCSR_REG);
+> +}
+> +
+> +static void rzt2h_adc_start(struct rzt2h_adc *adc, unsigned int
+> conversion_type)
+> +{
+> +	rzt2h_adc_start_stop(adc, true, conversion_type);
+> +}
+> +
+> +static void rzt2h_adc_stop(struct rzt2h_adc *adc)
+> +{
+> +	rzt2h_adc_start_stop(adc, false, 0);
+> +}
+> +
+
+I'm not 100% convince the above two helpers add much value given the usage =
+they
+have. I do understand that they make things a bit more readable but still..=
+.
+
+rzt2h_adc_start_stop(adc, false/true, ...) is already fairly clear about it=
+'s
+happening. Dont't feel strong about it anyways so up to you.
+
+> +static int rzt2h_adc_read_single(struct rzt2h_adc *adc, unsigned int ch,=
+ int
+> *val)
+> +{
+> +	int ret;
+> +
+> +	ret =3D pm_runtime_resume_and_get(adc->dev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	guard(mutex)(&adc->lock);
+> +
+> +	reinit_completion(&adc->completion);
+> +
+> +	/* Enable a single channel */
+> +	writew(RZT2H_ADANSA0_CH_MASK(ch), adc->base + RZT2H_ADANSA0_REG);
+> +
+> +	rzt2h_adc_start(adc, RZT2H_ADCSR_ADCS_SINGLE);
+
+This is the only place where this is called. So we could just pass
+RZT2H_ADCSR_ADCS_SINGLE inside the function. Unless this will be extended i=
+n the
+near future?
+
+> +
+> +	/*
+> +	 * Datasheet Page 2770, Table 41.1:
+> +	 * 0.32us per channel when sample-and-hold circuits are not in use.
+> +	 */
+> +	ret =3D wait_for_completion_timeout(&adc->completion,
+> usecs_to_jiffies(1));
+> +	if (!ret) {
+> +		ret =3D -ETIMEDOUT;
+> +		goto disable;
+> +	}
+> +
+> +	*val =3D adc->data[ch];
+> +	ret =3D IIO_VAL_INT;
+> +
+> +disable:
+> +	rzt2h_adc_stop(adc);
+> +
+> +	pm_runtime_put_autosuspend(adc->dev);
+> +
+> +	return ret;
+> +}
+> +
+> +static void rzt2h_adc_set_cal(struct rzt2h_adc *adc, bool cal)
+> +{
+> +	u16 val;
+> +
+> +	val =3D readw(adc->base + RZT2H_ADCALCTL_REG);
+> +	if (cal)
+> +		val |=3D RZT2H_ADCALCTL_CAL_MASK;
+> +	else
+> +		val &=3D ~RZT2H_ADCALCTL_CAL_MASK;
+> +
+> +	writew(val, adc->base + RZT2H_ADCALCTL_REG);
+> +}
+> +
+> +static int rzt2h_adc_calibrate(struct rzt2h_adc *adc)
+> +{
+> +	u16 val;
+> +	int ret;
+> +
+> +	rzt2h_adc_set_cal(adc, true);
+> +
+> +	ret =3D read_poll_timeout(readw, val, val &
+> RZT2H_ADCALCTL_CAL_RDY_MASK,
+> +				200, 1000, true, adc->base +
+> RZT2H_ADCALCTL_REG);
+> +	if (ret) {
+> +		dev_err(adc->dev, "Calibration timed out: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	if (val & RZT2H_ADCALCTL_CAL_ERR_MASK) {
+> +		dev_err(adc->dev, "Calibration failed\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	rzt2h_adc_set_cal(adc, false);
+
+Should we disable calibrations in the error path (or right after
+read_poll_timeout()) or it does not really matter?
+
+> +
+> +	return 0;
+> +}
+> +
+> +static int rzt2h_adc_read_raw(struct iio_dev *indio_dev,
+> +			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct iio_chan_spec const *chan,
+> +			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int *val, int *val2, long mask)
+> +{
+> +	struct rzt2h_adc *adc =3D iio_priv(indio_dev);
+> +
+> +	switch (mask) {
+> +	case IIO_CHAN_INFO_RAW:
+> +		return rzt2h_adc_read_single(adc, chan->channel, val);
+> +	case IIO_CHAN_INFO_SCALE:
+> +		*val =3D RZT2H_ADC_VREF_MV;
+> +		*val2 =3D RZT2H_ADC_RESOLUTION;
+> +		return IIO_VAL_FRACTIONAL_LOG2;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +}
+> +
+> +static const struct iio_info rzt2h_adc_iio_info =3D {
+> +	.read_raw =3D rzt2h_adc_read_raw,
+> +};
+> +
+> +static irqreturn_t rzt2h_adc_isr(int irq, void *private)
+> +{
+> +	struct rzt2h_adc *adc =3D private;
+> +	unsigned long enabled_channels;
+> +	unsigned int ch;
+> +
+> +	enabled_channels =3D readw(adc->base + RZT2H_ADANSA0_REG);
+> +	if (!enabled_channels)
+> +		return IRQ_NONE;
+
+Is the above possible at all? In rzt2h_adc_read_single() we do write the sa=
+me
+register...
+
+> +
+> +	for_each_set_bit(ch, &enabled_channels, adc->num_channels)
+> +		adc->data[ch] =3D readw(adc->base + RZT2H_ADDR_REG(ch));
+> +
+
+Is there any particular reason for reading all enabled channels in the IRQ =
+when
+we kind of just care for one channel? If there's nothing non obvious happen=
+ing
+It seems that the IRQ could just do complete(...) and reading the result in=
+=20
+rzt2h_adc_read_single()
+
+- Nuno S=C3=A1
+
