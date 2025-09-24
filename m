@@ -1,40 +1,48 @@
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBACD4502F;
-	Wed, 24 Sep 2025 08:27:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FA982D77FA;
+	Wed, 24 Sep 2025 09:26:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758702430; cv=none; b=S42MUhdR6ZXEDuqOzJN7dcayCaIUAo0Hlxnx/Ujo6ELPWhHZ08Tgka2qpKbPD6RBscO1W6aBtcJP29ApdfSDpcRupEsjQYBiCxAM2c6vJ2edoCAZd2nPewO+FxINvkU5x6FnQyi86saLeF/StCEKVeOU3tVeb7cuwgLQ9KOMWwU=
+	t=1758705967; cv=none; b=F0kNJPdNeW6r6EZBOb2X+pRfqyNe6d1zrOzIhhAxpKI/zcMN6pJBAAs4r5g8rjngESjBAeEmBJWPBaXEo3JFU6n0Pa1FiHumwQoWjc7TPJbTKtxPu0tHS+u4rFdO/R20SSMN0ikruIbLFwrsijt5JugkVOsVbg6xvN9L8aaAQxQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758702430; c=relaxed/simple;
-	bh=6Wtt45GCrcyLE7Y+MjZ0xRGSIEip4Qk9mzL+4G6Noh8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tlm072pmX7L5aBigTR9KDe63aeoayTGkbE8N4ZJc9umwGCMhAad0EZHx7hMa8rov4rztv/ioqOMLCHXaQWRLE3okiF5l/9x/UZEGwTknH+ZGn8iVuUiOyNQQSPNAam3uU7FoDnz5euRHxqGnufDlbThrSUHG6DufR+EDXTfxyxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=C+eiHwu5; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1758705967; c=relaxed/simple;
+	bh=O1420aHBknukQsKxuj5XgurLeBAQtflzePdc5jeCqUA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=r36YSVszm/wFzKzEgV9PMMFT4qnBTCoAdudPyRagxi+UNcyfW3pHIpbNyfbPTvHvxDXLTDAGzXMgN/WdfNESkXvXK6RTCDl10FtfJnL1FUxve8+Hnn0npaPPGSCH37mJISirdmHxG2ORvuFS0qGxRmLJPGpHAB8ZFu4v1uxDgCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=BsH8sE9o; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="C+eiHwu5"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1758702427;
-	bh=6Wtt45GCrcyLE7Y+MjZ0xRGSIEip4Qk9mzL+4G6Noh8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=C+eiHwu5PH2XvRjUDDPKl/cjs3WlZViR0RFmhNVG5mu2kN+qHXOyf1R9JGqEk0vKz
-	 rBP+czHXptgenYuE6tUvFUROm644KdcAyJG1VoweCC0JoD+8EDLzbjHklWa5tSsJlx
-	 5pc2ovu1A6qBaTlOcZuI9/ilMvO/sZVLJw7JsB43UXBJr36dnEUWML2QDfjUG/fna9
-	 4n9fYhv+C+I58FqJKab3KsbpAgYGloWiT3p6RTple/pXyM9CM2VVHJDkWQxqKOk+MI
-	 yM/gw1AMS3m6MhXn44AimDZNqOGp14I7FSC/rpOW0tl37fqrKagIG4z2r3HJmfx16p
-	 F95p9XMb676EA==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 73B8017E068C;
-	Wed, 24 Sep 2025 10:27:06 +0200 (CEST)
-Message-ID: <9dd2fea8-f828-4298-97a2-10ef1c61799f@collabora.com>
-Date: Wed, 24 Sep 2025 10:27:05 +0200
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="BsH8sE9o"
+Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 58O9PXRa1670036;
+	Wed, 24 Sep 2025 04:25:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1758705933;
+	bh=iSdDHuNTbBGSV0Dxkyi9JWjhRYgamGr39a/WPf5G4Ms=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=BsH8sE9oRTYt0VY8L6tl0yYe7pp3QSlwbFtl+TGPOcosWaqHsYbIJW3HCMYZHkHTu
+	 7lMqkGrN1g6k9BFbjZLj6NoJQlxUerf/deYgqAyEGswaptTc5UEjeyOV7wkRbyYMO0
+	 KplMgOrJ6oEGOUgyLGoTfYQ4kgRgwBLpxyLVGFyU=
+Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
+	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 58O9PWva2336456
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Wed, 24 Sep 2025 04:25:32 -0500
+Received: from DLEE202.ent.ti.com (157.170.170.77) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 24
+ Sep 2025 04:25:32 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE202.ent.ti.com
+ (157.170.170.77) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Wed, 24 Sep 2025 04:25:32 -0500
+Received: from [172.24.233.14] (shark.dhcp.ti.com [172.24.233.14])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 58O9PRpR1784191;
+	Wed, 24 Sep 2025 04:25:28 -0500
+Message-ID: <082735e7-956b-4574-952e-06ba69db41f1@ti.com>
+Date: Wed, 24 Sep 2025 14:55:26 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -42,73 +50,77 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: clock: airoha: Add reset support to
- EN7523 clock binding
-To: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- Philipp Zabel <p.zabel@pengutronix.de>, Felix Fietkau <nbd@nbd.name>,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org
-Cc: Andreas Gnau <andreas.gnau@iopsys.eu>
-References: <20250924060509.1889131-1-mikhail.kshevetskiy@iopsys.eu>
- <20250924060509.1889131-2-mikhail.kshevetskiy@iopsys.eu>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Subject: Re: [PATCH v4 5/5] clk: scmi: Support Spread Spectrum for NXP i.MX95
+To: Peng Fan <peng.fan@nxp.com>, Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Sudeep Holla <sudeep.holla@arm.com>,
+        Cristian Marussi <cristian.marussi@arm.com>,
+        Marco Felsch
+	<m.felsch@pengutronix.de>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Brian Masney
+	<bmasney@redhat.com>
+CC: Dan Carpenter <dan.carpenter@linaro.org>,
+        Geert Uytterhoeven
+	<geert@linux-m68k.org>,
+        "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        "arm-scmi@vger.kernel.org"
+	<arm-scmi@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>
+References: <20250915-clk-ssc-version1-v4-0-5a2cee2f0351@nxp.com>
+ <20250915-clk-ssc-version1-v4-5-5a2cee2f0351@nxp.com>
+ <5f508f1d-2d08-4687-86cd-d1944caa0a49@ti.com>
+ <PAXPR04MB8459CE9F22CD56A9BFDB5E78881DA@PAXPR04MB8459.eurprd04.prod.outlook.com>
 Content-Language: en-US
-In-Reply-To: <20250924060509.1889131-2-mikhail.kshevetskiy@iopsys.eu>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Sebin Francis <sebin.francis@ti.com>
+In-Reply-To: <PAXPR04MB8459CE9F22CD56A9BFDB5E78881DA@PAXPR04MB8459.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Il 24/09/25 08:05, Mikhail Kshevetskiy ha scritto:
-> Introduce reset capability to EN7523 device-tree clock binding
-> documentation. Also this patch makes mandatory '#reset-cells'
-> property for EN7523 SoC dts.
+Hi Peng,
+
+On 23/09/25 17:27, Peng Fan wrote:
+> Hi Sebin,
 > 
-> Signed-off-by: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
-> ---
->   .../bindings/clock/airoha,en7523-scu.yaml     |  4 +-
->   .../dt-bindings/reset/airoha,en7523-reset.h   | 61 +++++++++++++++++++
->   2 files changed, 63 insertions(+), 2 deletions(-)
->   create mode 100644 include/dt-bindings/reset/airoha,en7523-reset.h
+>> Subject: Re: [PATCH v4 5/5] clk: scmi: Support Spread Spectrum for
+>> NXP i.MX95
+>>
+>>> --- a/include/linux/scmi_protocol.h
+>>> +++ b/include/linux/scmi_protocol.h
+>>> @@ -80,9 +80,14 @@ enum scmi_clock_oem_config {
+>>>        SCMI_CLOCK_CFG_DUTY_CYCLE = 0x1,
+>>>        SCMI_CLOCK_CFG_PHASE,
+>>>        SCMI_CLOCK_CFG_OEM_START = 0x80,
+>>> +     SCMI_CLOCK_CFG_IMX_SSC = 0x80,
+>>
+>> TI is also planning to implement the same in our upcoming platform. so
+>> can we use a generic ID instead of vender specfic message ID?
 > 
-> diff --git a/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml b/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
-> index fe2c5c1baf43..a0df16485300 100644
-> --- a/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
-> +++ b/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
-> @@ -53,6 +53,7 @@ required:
->     - compatible
->     - reg
->     - '#clock-cells'
-> +  - '#reset-cells'
+> I tried to push to new generic ID [1] in half a year ago, but in the end ARM
+> decided not to add generic ID for spread spectrum support.
+> 
+> To i.MX, it is too late to use a generic ID and waiting spec, i.MX firmware
+> has been public for quite some time and passed several external releases.
+> So I need to use what our firmware adds and spec allows: vendor
+> extension.
 
-I can't find any reason why #reset-cells should be a required property: this is a
-clock controller, it doesn't necessarily have to provide resets, and you don't
-necessarily have to use resets, so this shall not be a required property.
+Thanks for the quick response,
+Since this implementation is specific to i.MX, can you move this to a 
+vendor specific file, so that it will not break i.MX's firmware and TI 
+can implement SSC in TI specific file.
 
+> 
+> [1] https://lore.kernel.org/arm-scmi/Z8iKErarE0lHWxEy@pluto/
+> 
+> Regards,
+> Peng.
 
->   
->   allOf:
->     - if:
-> @@ -64,8 +65,6 @@ allOf:
->           reg:
->             minItems: 2
->   
-> -        '#reset-cells': false
-> -
->     - if:
->         properties:
->           compatible:
-> @@ -85,6 +84,7 @@ examples:
->         reg = <0x1fa20000 0x400>,
->               <0x1fb00000 0x1000>;
->         #clock-cells = <1>;
-> +      #reset-cells = <1>;
->       };
->   
->     - |
-
-Regards,
-Angelo
+Thanks
+Sebin
