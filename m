@@ -1,137 +1,81 @@
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1D632D979F
-	for <linux-clk@vger.kernel.org>; Wed, 24 Sep 2025 09:44:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01D612DCF73;
+	Wed, 24 Sep 2025 10:20:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758707097; cv=none; b=r2Q2DFuut7yTFelwBx8/+k/MrTDNwqKhi8wagsfQ25AXksKgH+8i2XbrfHpwFrObQ0351JN8NTv5WgjfpCQx87DZ6yFnejrTDdei39VMPyxEx72gO2Pn8Dt96xVCWf1pk3As4sXGKgwPmKldas0M4PYqtkJiP3jl5BwA0r25DaA=
+	t=1758709259; cv=none; b=Pa/Kkgry8N5ISPwu19wnRdGeCAEic0vBtl24j4bFsHi2UhIUaQcdNBfwk61zCgU3LDdbefETCqo1uvcsxsbSyclizPLKtPFcWGd9qnMufJsfgrnH+vbBMfD1SnMcDMJdZPk4KppaF+dXR06dYUL+a9smnsWxRhgUXm41Bju2nrg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758707097; c=relaxed/simple;
-	bh=2cljBbctUpov7EPp9dHLO/NTrzVDPxTc08Ag9XJ0xdk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=WqReR5I5FlT3qQG20Sis2/USocjhUupmi/z/w8Cb+WIsFIiPB0z+Wr8WFH2I1VovnuQCYc+3iKLy73jOBpqvTGQ4sIBAUFQ80r5lC4vQMFugwRMJ8AtcsvpLbLkAoQOgUsvmK2QLIJFSWGum/uyaKbVFIUbWcBmhmsjVtgXxo14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UYvH2jul; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1758709259; c=relaxed/simple;
+	bh=Gb7PLFsKmlEYtoQ+aSKKrwMrUf84Ic9+Nei/2tc1Lxk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ar3Katetkf/wgmABfhSnR4mxATDSbzGU/tVHolknkXGdmzTSNEetc4igJ78uW+VcLvpy06JtWsxWqqF6uHMFf6+lF6w5SDuJ40F7uzg87A5KpHxebW0eMHpbH2bI6it33yyvjtlMq2sAkvWVpLoir7WDetNWzpCJlIoDyrvc3cY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=PF3IuZuW; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UYvH2jul"
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3ee64bc6b85so4939778f8f.3
-        for <linux-clk@vger.kernel.org>; Wed, 24 Sep 2025 02:44:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758707089; x=1759311889; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8htGACZZYE1dIEbtDAUA+3P97IrmED7ZD9WcIPqTfx4=;
-        b=UYvH2julEtiVLHK5cq3xe1ZDrFicw+myAajPVWZSgqRPu7nbZcPbxrASYkrKMg/2ao
-         +tyXlZcSqUCL0jeVk2+PzgmwVq7ty9JnLVqJGAsFGFpMmTPZ9kVsjaPCtF4W/6UseHI8
-         lvnpXYibMv5KK0NYroHDZLnPE9FSu990CuLK0veA3huexyAGtkBW3M5SFuY9Y6c9KWwD
-         pi6BXTEqUtCUSMQ8UhTtPQMMSmFWMyCdQEolTAvkzTsiqzsw8ztPj01qIzQtLJfq7wYe
-         7zoM446lJV6Xmgyg3XqoOObCYvIebemVkfH2b8v0z29yEM7B5KKSBNEudP1l4p1YiCW6
-         qqUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758707089; x=1759311889;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8htGACZZYE1dIEbtDAUA+3P97IrmED7ZD9WcIPqTfx4=;
-        b=fVnxSarjzZlg/8CCjar5FBL7B/e/nuMZhAjsJciaZYc4BVLHOhotP3EN5mF2V66mLg
-         9JlaRXU+pNo3Hg0EClhR3OXizac3qTSJihki93wZyUcU15R1c/gT2nczzuJK1QBCVCOC
-         FZQ6Xq7yDyK3/CpZNzbMTOtRC6ZjNxVGGNKjxggxVbI4el07hZAiKhu8OSr+/gc7A1UP
-         hDos3zV6mXu1I7gcxSqMdosAXgzYcohIOpGtQKu6eOE+5wEqL8+fHGlwVA6zw5V/EEEq
-         rUWv7os7n4m7yJcbvNkLwNm54XUVnPj3EQEebVEZe1mDfmzh2k2qqhWHt2PObbGwRYzg
-         q9XA==
-X-Gm-Message-State: AOJu0YwJ0RK37EyNbq4J6Fi0Ilh/FHQ5YiKwhq3OQVXB5agOygoTMZDx
-	D+Z5lBR1kFG3uPqRs3Izbhkt86vwSUC1skcjrPv7DHMub10SsA8xbQ0Z7HmmWw==
-X-Gm-Gg: ASbGnctyABjaN1ILPO2OfMV4MRYFzsFJeZ5APij7jW4YBJXWd4nL4gmh2hzUpfGb0F6
-	ri0Q4WStl2RG9EdePHPWhbGx4Vo4SuEiY2KTKoCns+9PmzFpB+LMeyn0+38rQGQWLrrfslmcDku
-	aBApTfm6onw0hSLSCbUmHkvcZCrvX/yB2r+L2ZBe8kNwWXgs3Eg88MHzV84DIHeE0pv7F3O+QNa
-	tAac678Z0pdK4he12CZIxAtnGKtiBYACRFouAYCiWT3VGoMFlUO8LfaP1cfPsI2N9fLm5Gx3j+q
-	q7wqaTxGG3VwXiOhXgxsyIUSKPMcuO58TPBV8odg023kPieIz65ZNkU6htk0Bo6E3fzmm6S3ZpK
-	hYebX+jOhrmrwvhhODPnGfLfDAZ0QhwU030et/eCE9jRXLc8T+xXAKV6q44WN1TvKBc/ndg6IQj
-	l23nNCwv2o6z+bNQ==
-X-Google-Smtp-Source: AGHT+IFDGC5gILr6xmz9HYWmbPGf7fv1JpRWluY5ULikXOKvBqLdmUKtTk3mYXekw57q/HwxxJNkVQ==
-X-Received: by 2002:a05:6000:186c:b0:3f0:9bf0:a369 with SMTP id ffacd0b85a97d-405c6d1024dmr5131775f8f.14.1758707088783;
-        Wed, 24 Sep 2025 02:44:48 -0700 (PDT)
-Received: from localhost (2a02-8440-7503-805b-0076-f865-8f03-23d3.rev.sfr.net. [2a02:8440:7503:805b:76:f865:8f03:23d3])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3ee141e9cf7sm27213765f8f.12.2025.09.24.02.44.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Sep 2025 02:44:48 -0700 (PDT)
-From: =?utf-8?q?Cl=C3=A9ment_Le_Goffic?= <legoffic.clement@gmail.com>
-Date: Wed, 24 Sep 2025 11:44:42 +0200
-Subject: [PATCH v8 1/3] dt-bindings: stm32: stm32mp25: add
- `#access-controller-cells` property
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="PF3IuZuW"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1758709252;
+	bh=Gb7PLFsKmlEYtoQ+aSKKrwMrUf84Ic9+Nei/2tc1Lxk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=PF3IuZuW5KjDpZZnwN7rak4k2wlBmhb3VPhdsEay7moWOSeooNtZ4NPu3lTZctsiV
+	 bdf+jiRSVT+9ESuC4nzb36pg6sNIH4aSajXTTDWvKfv72/uzA91rqXtWIPSK8tM/n3
+	 IE0dnzApRzsUQznDaludnVVfwARWDTpPAcJZSwduUwobSYljpkX0O5rVWsvBqpldGi
+	 HYYVpko0B/4hBiCsoLkji/aT+MWkS6XsAITgkYSgJuUPQb8j19DPd/6/w8iYBv9Z9M
+	 Ym0a0OxraPSziLhT2wXQNk4u58EKDse5j+HiC83paBNuRfGbY0bclNi38EOZGqbBkQ
+	 lFbDUlAnuMD6w==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 9B34717E124A;
+	Wed, 24 Sep 2025 12:20:51 +0200 (CEST)
+Message-ID: <76a5e9ee-b8b3-4f7f-9410-9133263358bf@collabora.com>
+Date: Wed, 24 Sep 2025 12:20:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250924-b4-rcc-upstream-v8-1-b32d46f71a38@gmail.com>
-References: <20250924-b4-rcc-upstream-v8-0-b32d46f71a38@gmail.com>
-In-Reply-To: <20250924-b4-rcc-upstream-v8-0-b32d46f71a38@gmail.com>
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
- Alexandre Torgue <alexandre.torgue@foss.st.com>, 
- Gabriel Fernandez <gabriel.fernandez@foss.st.com>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-stm32@st-md-mailman.stormreply.com, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- =?utf-8?q?Cl=C3=A9ment_Le_Goffic?= <legoffic.clement@gmail.com>, 
- =?utf-8?q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>
-X-Mailer: b4 0.15-dev-0dae4
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] clk: en7523: Add reset-controller support for
+ EN7523 SoC
+To: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>, Felix Fietkau <nbd@nbd.name>,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org
+Cc: Andreas Gnau <andreas.gnau@iopsys.eu>
+References: <20250924060509.1889131-1-mikhail.kshevetskiy@iopsys.eu>
+ <20250924094112.1918444-1-mikhail.kshevetskiy@iopsys.eu>
+ <20250924094112.1918444-3-mikhail.kshevetskiy@iopsys.eu>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20250924094112.1918444-3-mikhail.kshevetskiy@iopsys.eu>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Clément Le Goffic <clement.legoffic@foss.st.com>
+Il 24/09/25 11:41, Mikhail Kshevetskiy ha scritto:
+> Introduce reset API support to EN7523 clock driver. EN7523 uses the
+> same reset logic as EN7581, so just reuse existing code. The patch
+> renames:
+>   * en7581_rst_ofs to en75xx_rst_ofs,
+>   * en7581_reset_register() to en75xx_reset_register()
+> because they are not en7581 specific.
 
-RCC is able to check the availability of a clock.
-Allow to query the RCC with a firewall ID.
+You ignored all of my comments (sent at v1) on this patch.
 
-Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
-Signed-off-by: Clément Le Goffic <legoffic.clement@gmail.com>
----
- Documentation/devicetree/bindings/clock/st,stm32mp25-rcc.yaml | 7 +++++++
- 1 file changed, 7 insertions(+)
+Regards,
+Angelo
 
-diff --git a/Documentation/devicetree/bindings/clock/st,stm32mp25-rcc.yaml b/Documentation/devicetree/bindings/clock/st,stm32mp25-rcc.yaml
-index 88e52f10d1ec..4d471e3d89bc 100644
---- a/Documentation/devicetree/bindings/clock/st,stm32mp25-rcc.yaml
-+++ b/Documentation/devicetree/bindings/clock/st,stm32mp25-rcc.yaml
-@@ -31,6 +31,11 @@ properties:
-   '#reset-cells':
-     const: 1
- 
-+  '#access-controller-cells':
-+    const: 1
-+    description:
-+      Contains the firewall ID associated to the peripheral.
-+
-   clocks:
-     items:
-       - description: CK_SCMI_HSE High Speed External oscillator (8 to 48 MHz)
-@@ -123,6 +128,7 @@ required:
-   - reg
-   - '#clock-cells'
-   - '#reset-cells'
-+  - '#access-controller-cells'
-   - clocks
- 
- additionalProperties: false
-@@ -136,6 +142,7 @@ examples:
-         reg = <0x44200000 0x10000>;
-         #clock-cells = <1>;
-         #reset-cells = <1>;
-+        #access-controller-cells = <1>;
-         clocks =  <&scmi_clk CK_SCMI_HSE>,
-                   <&scmi_clk CK_SCMI_HSI>,
-                   <&scmi_clk CK_SCMI_MSI>,
-
--- 
-2.43.0
-
+> 
+> Signed-off-by: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
+> ---
