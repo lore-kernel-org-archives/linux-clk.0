@@ -1,152 +1,59 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C45951C8630;
-	Wed, 24 Sep 2025 13:00:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9123C139579;
+	Wed, 24 Sep 2025 13:03:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758718805; cv=none; b=u/Lzm7FqjJXvHkZmjKBoEa3KbsBynzSbzt7/+rfCV9uyeoPLSIWTm717NsukHim4gKEruR5UntCdDhkT2tIls9px5m1j5V8x2EMpsGpdNWdg1tV8vvgBH0U2YdJh84H4dPZhO1lQbuPiQASAnTF+nrps5B6nS9NOvZW4I4XDpvc=
+	t=1758718994; cv=none; b=mXSyRQAQW4D2aonx67GOhpwkEEQKqcSSmXvkcPy6Foj8ImD8T95koobgUreZtXypG0sYbj5S+PCCPC3yQ6+b9BFkNnG1Bls/1hcDM3B6/tE6IeZXNcXk4p7GC7BDVf77SwUyxPWdNCTvb8the1c3d0Hv/Sb27r0qV1PMcncPt30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758718805; c=relaxed/simple;
-	bh=rYcNuhNICQ9oVzckWeSQB/D9K9FZwfeY6TIwX2DR+po=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D4y5TgD75UDOmEj4hcgfqwx543fGCG3VOPIPepXazQi//0o71ZyDKSU5L3NI7OWnF6qzEV5PWIbUBQZPtp+a/HkTCoRPEwZBorS5FTnRoYrpshQufz44ZTlVu3u5KJ/e+LVzf6fQfOw8TwS4D9gtB4JC5inFNmaXUCtbyn+p9O0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=foss.arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foss.arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 00617106F;
-	Wed, 24 Sep 2025 05:59:54 -0700 (PDT)
-Received: from bogus (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0A9E93F5A1;
-	Wed, 24 Sep 2025 05:59:58 -0700 (PDT)
-Date: Wed, 24 Sep 2025 13:59:56 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Cristian Marussi <cristian.marussi@arm.com>
-Cc: Sebin Francis <sebin.francis@ti.com>, Peng Fan <peng.fan@nxp.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Marco Felsch <m.felsch@pengutronix.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Brian Masney <bmasney@redhat.com>, Dhruva Gole <d-gole@ti.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"arm-scmi@vger.kernel.org" <arm-scmi@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v4 5/5] clk: scmi: Support Spread Spectrum for NXP i.MX95
-Message-ID: <20250924-versed-auspicious-bullmastiff-19de2e@sudeepholla>
-References: <20250915-clk-ssc-version1-v4-0-5a2cee2f0351@nxp.com>
- <20250915-clk-ssc-version1-v4-5-5a2cee2f0351@nxp.com>
- <5f508f1d-2d08-4687-86cd-d1944caa0a49@ti.com>
- <PAXPR04MB8459CE9F22CD56A9BFDB5E78881DA@PAXPR04MB8459.eurprd04.prod.outlook.com>
- <082735e7-956b-4574-952e-06ba69db41f1@ti.com>
- <PAXPR04MB84590D5AAAB56ED7E1CBDE05881CA@PAXPR04MB8459.eurprd04.prod.outlook.com>
- <c34157c5-cd13-4e85-a9ee-22446111f633@ti.com>
- <aNPmydbv6Xm0Tj9B@pluto>
+	s=arc-20240116; t=1758718994; c=relaxed/simple;
+	bh=xMq3AUxobbF3UqePYHoPl4poiHEHjtjH3amZN3psfes=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=K9aBHFYlD4A7KsjETwppNsFCN0g05RmcvgbEolJQLS2tlQ1OIfqpq2oyYtzRZg1e7ThLtyrfss4You8xOTP46KMzm577PcQf83G0YW+A+FpXWBvtq3fd6E3d7e4OpVg/fa1uOeDe3GiZMbqB8KBnTqg+RsHzQ16qTcP+ub1m3Jo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB887C4CEE7;
+	Wed, 24 Sep 2025 13:03:12 +0000 (UTC)
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] clk: renesas: cpg-lib: Remove unneeded semicolon
+Date: Wed, 24 Sep 2025 15:03:09 +0200
+Message-ID: <deb1537b5f96d991332db5c8088bae705f7e17e3.1758718886.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <aNPmydbv6Xm0Tj9B@pluto>
 
-Hi Cristian,
+Semicolons after end of function braces are not needed, remove them.
 
-On Wed, Sep 24, 2025 at 01:40:56PM +0100, Cristian Marussi wrote:
-> On Wed, Sep 24, 2025 at 05:45:32PM +0530, Sebin Francis wrote:
-> > Hi Peng,
-> 
-> Hi ,
-> 
-> > 
-> > On 24/09/25 17:13, Peng Fan wrote:
-> > > > Subject: Re: [PATCH v4 5/5] clk: scmi: Support Spread Spectrum for
-> > > > NXP i.MX95
-> > > ...
-> > > > > > >         SCMI_CLOCK_CFG_OEM_START = 0x80,
-> > > > > > > +     SCMI_CLOCK_CFG_IMX_SSC = 0x80,
-> > > > > > 
-> > > > > > TI is also planning to implement the same in our upcoming platform.
-> > > > > > so can we use a generic ID instead of vender specfic message ID?
-> > > > > 
-> > > > > I tried to push to new generic ID [1] in half a year ago, but in the
-> > > > > end ARM decided not to add generic ID for spread spectrum support.
-> > > > > 
-> > > > > To i.MX, it is too late to use a generic ID and waiting spec, i.MX
-> > > > > firmware has been public for quite some time and passed several
-> > > > external releases.
-> > > > > So I need to use what our firmware adds and spec allows: vendor
-> > > > > extension.
-> > > > 
-> > > > Thanks for the quick response,
-> > > > Since this implementation is specific to i.MX, can you move this to a
-> > > > vendor specific file, so that it will not break i.MX's firmware and TI can
-> > > > implement SSC in TI specific file.
-> > > 
-> > > i.MX has encountered issue with pinctrl-scmi.c and pinctrl-imx-scmi.c
-> > > both supports SCMI PINCTRL. Current linux scmi does not support
-> > > both drivers built in kernel image, because scmi devlink issue.
-> > >
-> 
-> Yes indeed, BUT the vendor protocol extensions mechanism was meant to
-> serve the development of vendor custom protocols and drivers, it was
-> NEVER meant really to allow multiple alternative drivers implementation
-> on top of the same standard protocols like it happened with pinctrl-imx-scmi...
->  
-> > > Sudeep said he would address the devlink issue in 6.19 cycle.
-> > > 
-> > > Given the current situation, I'm hesitant to introduce a new driver
-> > > saying clk-imx-scmi.c.
-> > >
-> 
-> Even if the devlink issues will be solved, in THIS case the problem is
-> handling custom vendor extensions inside a standard protocol, as it is
-> allowed in this case...
-> 
-> > > What I'm unclear about is whether moving to a vendor-specific file
-> > > implies creating a new driver (i.e., clk-imx-scmi.c), or if it could be
-> > > handled via a callback or another mechanism. Could you help
-> > > clarify the intended direction?
-> > 
-> > My intended was to handle it via callback or something similar, so that TI
-> > can its own callback for the TI's SSC implementation.
-> > 
-> 
-> This is exactly what is needed, the ability to extend with vendor
-> extensions callback the behavior of a standard protocol where
-> allowed....this is NOT currently supported and sincerely that was the
-> reason months ago I proposed initially that maybe we could have standardized
-> a new common clock extension SSC instead of using the OEM extensions since:
-> 
-> 1. it seemed a pretty generic operation
-> 2. any per-vendor extension callback of std protocol was NOT ready :P
-> 
-> ...then this proposal never went anywhere with ATG...AND now looking at
-> this thread I think that it is good at the end that we did NOT add a new
-> standard extended clock config instead of the IMX OEM, since now it
-> seems that TI wants its own non-compatible implementation...
-> 
-> So yes the ideal solutiomn would be to extend in a generic way the SCMI
-> framework so that you can add in these cases custom handling of vendor
-> extensions for standard protocols (and then generalize the current
-> clk-scmi IMX support and add the new TI one...)...but I have not thought
-> about this and I certainly dont have enough bandwidth now to work on
-> this...beside having already in the pipeline other stuff/fixes like
-> a proper fix for vendor drivers coex like Peng askes (rightly so a few
-> months ago)
-> 
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+To be queued in renesas-clk for v6.19.
 
-Thanks for the detailed response as usual 😄. I don't have much to add
-in case anyone is expecting different or more info from me.
+ drivers/clk/renesas/rcar-cpg-lib.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/clk/renesas/rcar-cpg-lib.c b/drivers/clk/renesas/rcar-cpg-lib.c
+index a45f8e7e9ab676f5..7b271de7037a13d9 100644
+--- a/drivers/clk/renesas/rcar-cpg-lib.c
++++ b/drivers/clk/renesas/rcar-cpg-lib.c
+@@ -35,7 +35,7 @@ void cpg_reg_modify(void __iomem *reg, u32 clear, u32 set)
+ 	val |= set;
+ 	writel(val, reg);
+ 	spin_unlock_irqrestore(&cpg_lock, flags);
+-};
++}
+ 
+ static int cpg_simple_notifier_call(struct notifier_block *nb,
+ 				    unsigned long action, void *data)
 -- 
-Regards,
-Sudeep
+2.43.0
+
