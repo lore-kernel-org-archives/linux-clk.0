@@ -1,176 +1,212 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEDFF284B58
-	for <linux-clk@vger.kernel.org>; Thu, 25 Sep 2025 14:20:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A62972E1F0E
+	for <linux-clk@vger.kernel.org>; Thu, 25 Sep 2025 15:17:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758810032; cv=none; b=Z5afWoZeYcR4G+IduiFxBO0vyfHLRWp+0j226Xuqd8kSxGtJJnMCu84Bzehc6WXFVN/BkMPjjkmUHfoOcnHkgntnoGpuD907X7arLsKGu6D6PmsQisRn5ipXXbt7NLqAuaWTDMxFAsPoegYWYtm1VSvigwReRasddLKnE/AdwhE=
+	t=1758813435; cv=none; b=h5NoJwn6saLM7ADXt6BtBuKVCTVVm0gl5pWCyZD5U9FroY4jc9uXLU5dTtaOInaqKZfa6XUenozTq5+5ao77WZHxHqIWfcrzR4+hvGFyl7nBBkpFY7SOqx1KYdQkn7BLrJZtilE07u10uEyotO6r1cbyxfBR0iWzYqpLtxeccRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758810032; c=relaxed/simple;
-	bh=9S5P/Bdj720bk805Gz5LUXF0wAlaDIZ4nUN2ksl9Ab0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hoHPp2HAicDkMvP0kwwAeTfbONzdAd0CYRWVwQ0vSAGbhF5Fi9PAhwsHIsyPhjSSOB1oW4Rr08cMweyA6RYDCP4b1AJ6ueDjUfv8y6r3yc9YkkTG+7y0BfCGNdpxTcFWY7CAWMeKPgdfZr3fA236HHNar1st0yw8h/QGENELr7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aKU7gyTm; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1758813435; c=relaxed/simple;
+	bh=EPmeZ+AxYQt1ZQC0Ek7FvFMD0viWXbKOiFp56gi1mFQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=uvDiZZ/vS1VAbI22fKbq4I4ktTYJaRwETTAuGvVOvxHFXkBgNrCFoitT6y2JnE495x78NDbWUd2T1qBpyHNPKtb5LsDWJzHgn0FhcEwl9kgLFeDtNPBNwxTOI6YaNklny70tPfhwj3ier8L1gQIDrHJY58v1X+DskSE0eahvcXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nhVbf6sv; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aKU7gyTm"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758810029;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jOKkbCQdz4s7kFS4NyoQHb7rePtHYRhLO7DwNkxy16c=;
-	b=aKU7gyTmsyEz6o5P8GwtqJIQ4YvAc82jlDU5QZ43dcPRnAvvgUC6aZpEE78DL9XiGCwyF3
-	GjNTNeNNqf7RfZx1hK9WqQUbYow+n1/FulGifs3nn4tGvQjKpVCJpXXytKbiO2wj0h8x6G
-	/9m6vuiDeyjepvfXSQSAkegz6GBs/rs=
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
- [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-392-4XuoXWQrMD6Xnw5TlbL_fw-1; Thu, 25 Sep 2025 10:20:28 -0400
-X-MC-Unique: 4XuoXWQrMD6Xnw5TlbL_fw-1
-X-Mimecast-MFC-AGG-ID: 4XuoXWQrMD6Xnw5TlbL_fw_1758810028
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4b5ecf597acso23286971cf.1
-        for <linux-clk@vger.kernel.org>; Thu, 25 Sep 2025 07:20:28 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nhVbf6sv"
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-57b7c83cc78so1016653e87.1
+        for <linux-clk@vger.kernel.org>; Thu, 25 Sep 2025 08:17:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758813432; x=1759418232; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7v32IEPJq83+rFpTKepQApZcwbjn1LGuorJ9QJ5gMjI=;
+        b=nhVbf6svSPK93SBpCUsW1QtYeCNo/XMUyoqZONzdN3kn2s2P1SghA8S/UtxjXYZ1gJ
+         sJ3+XPEBIXTVpGXF+sPe3SJPKUBJ4h7z2QVFf6NeH6oibE+XDdJBQUFuEpgGDX16L3+G
+         KwJFF2FRLqn/zo6VcUsgP9oO47C0JqBp55BndpGYDc0ccXsfx6PhKBOTyKuIWJbwjzvf
+         8ifunal0v8LMcUMupXrAvCBQtzw2Y3fktWbydKmj25hj9ijx3PtrVhDPwVZp0COAeLx4
+         txp6cfAnxs+J4ePWSUlr4JyBdC4z7CLBuMG/qnhoux+XjX6cXdYOywSMOn2DlABpS+eq
+         JZHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758810027; x=1759414827;
-        h=user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:mime-version:references:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1758813432; x=1759418232;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=jOKkbCQdz4s7kFS4NyoQHb7rePtHYRhLO7DwNkxy16c=;
-        b=hZyPl8AKRYR2myG0V8jNLKE4FMsUEw07QHPXcPHe+PERHuFViF6O6icd+EYr3CR4KZ
-         ZIwAPbdfCkY0S8hCaHlpO41KY03K510SYtbIH9QS5HYMvLTdsskOHWjDvJWgMp5FuEPh
-         Qz1LHLzxZ7XI40ciqKtR7WBRuvesTy/coH7YNzGVJR6NXRmQBwgjnFyrm496yQn511Mi
-         tIMiL3bDhXJa8E/svySvhAc2knWezMZMAn5QfEITbymFLzFpWuCdiSNetS8grutYvt4E
-         JwuMOd1FpC7syMWd1Sgfr/g/KgyGhjlEir3Zng2BJm3C4FTyjpLSyKZl+egUT1eH1k3T
-         DmBw==
-X-Forwarded-Encrypted: i=1; AJvYcCX3fP0giIExnLKeuVK2yiVuMFlejPycOZ3Oti+QOkTbLDOlPCUww3cLztnKcf+DcBqCP5zS+JUrFEc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIlzZJRjnUr4XHTGDLU06gPR7gw1uwV9OfcvfoWFmcme4/3ci9
-	fEDvvIaj5Ee078WI5FcbXToQItjJA33Bu0A8kc2RTy4TFExFks5ylUV8Wt+uM8Y1+1qqh4Ulxf2
-	GdXSyEBJ9XvV5WlKTnogvSvIV+aXjpNShZbjczOEkeEroJBYrWh84Ad14a8Pf6rrKZELIvA==
-X-Gm-Gg: ASbGncsFC7StOXWfd58KjR6VTmZoWK0opAYbaibwmyVfr3sj7I3RrC2Qtwiyq4sTrbs
-	X8jL7l5UVEI8YUtexlDwU6+uMXm3pArSrhmcDSupTH1WO9I1ENzlZYnv2YomJNCAvQyRFD3bs53
-	lMoJa1w/KnyICjuiv15+zzd15TRavw/NWsQSEZn8s17Te2ImwGlB4H9Vd39IOpRxst5j532nSjy
-	JTMSSina456Rj7Urym5dzmr0hFfJ1eYevSu3hqDxdXXFKcLne7v6kCiv7MPDgNxbr3oHLNqXVKr
-	7rBbaMyqn1797Tx/3MbnUriTsjxHNUXRVZPJNs0oM7Gtz35oE7jn0FvHjSndU5mSM5oIo0fOS2P
-	LslWR8NSRRUvsBOwPBywL0JYi+UDpHYs=
-X-Received: by 2002:a05:622a:5e07:b0:4da:7d53:c01f with SMTP id d75a77b69052e-4da7d53c586mr25949761cf.28.1758810027220;
-        Thu, 25 Sep 2025 07:20:27 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGzAMws7Y35IXPj3ULsxxU+kNGPjPFIvTWHEyCz1nsMPS1pfVod6yEtRsWbHOX7yetDXHZs8A==
-X-Received: by 2002:a05:622a:5e07:b0:4da:7d53:c01f with SMTP id d75a77b69052e-4da7d53c586mr25949321cf.28.1758810026700;
-        Thu, 25 Sep 2025 07:20:26 -0700 (PDT)
-Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4db1087267csm10756031cf.26.2025.09.25.07.20.24
+        bh=7v32IEPJq83+rFpTKepQApZcwbjn1LGuorJ9QJ5gMjI=;
+        b=WKbgH9J1DWTTqMln2hTaa0OC1X0f7/wWISitAOz+pMTC8od4OMk5VxDU5iRbpgUE7q
+         +f3gpcxE0KZMPMvrD1NGSm57V/w0rmcI9tRCZyFPhMy6iOOc04LUoMFjSn6r4IuS7Ej9
+         VsTf3qFvgXXPdY9cY3jrx/oyiDIr2mn+D2tuUeGeZEVvRTTz67l2vPPcMecE55EeYC5k
+         Cz9HXFuAFgr/cSKPtwnzzt3KPzveLN/znQo3oZUsGgDHc29GNrfBBHky7WmkcAZVf2p8
+         6KbMgsoGcvgjnqS5zc/wzMkOF3Sl4bxGbRv7JU8mExJMmB4lVL/+jPYdnZmic5padNI5
+         uIwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXsSc5+eC7bM9+TxlwsPk2zEVV+woGyZGZ/whCnmI/8cG3HdMkqJuYswM96VsADULu4HPlNpq2aGCs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXFOzttrNS1RbqADG7EWrAVz0NiqBQWrLu8G4zoxn6DEvEwfB9
+	N0cYr99Q8LtuEF7BoOGF3Rtez3pv8/f1EH3tWizfwr21NMUurOUmJ9TI
+X-Gm-Gg: ASbGncscaMtxEzUH+HfLFBk3Y7DQa6mstWc9k6mskrCIeSZdbReHaxPhB21gXMwBxgV
+	V8t0aunE/NT3nfX5FtUK+n7Y42FalnDZaFz6j1tcNUkNadY+UYAoK+zbwM9It+0D1oJaGzowcVH
+	KdbE5joFV9cjCk0rv+VsWPMytSdBNY/loxvWhAqqgto428IZKdGtBWGig7mugl+dVfPo5BmYoOx
+	/fuZu6ASsRRg+kvSF3AK4gWaNDdz4ydhv5RYQ3+uzCNEkO6ds+V94nrnxf0Nusxr3XJl7PVonan
+	3MX8FeahmsnyH/hlWepEue3ztRKbrQ3RZaLWSUW9od9XR3BaSKSiqPsU23GBMK+YNION/TK3fA7
+	LQzwdkWCdJDG3WA==
+X-Google-Smtp-Source: AGHT+IE3EnxRGgkHHyis8Weimvr/QO/NiYq/0dZgZmiN2yuGCI3D2oO1tpnAY+bLbNeA0ytCv5wrfw==
+X-Received: by 2002:a05:6512:3a93:b0:55f:3ae4:fe57 with SMTP id 2adb3069b0e04-58306abf6a1mr938344e87.20.1758813431368;
+        Thu, 25 Sep 2025 08:17:11 -0700 (PDT)
+Received: from xeon.. ([188.163.112.70])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-58313430496sm870084e87.27.2025.09.25.08.17.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Sep 2025 07:20:25 -0700 (PDT)
-Date: Thu, 25 Sep 2025 10:20:24 -0400
-From: Brian Masney <bmasney@redhat.com>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Russell King <linux@armlinux.org.uk>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH RFC v4 00/12] clk: add support for v1 / v2 clock rate
- negotiation and kunit tests
-Message-ID: <aNVPqHldkVzbyvix@redhat.com>
-References: <20250923-clk-tests-docs-v4-0-9205cb3d3cba@redhat.com>
- <20250925-eager-delectable-frog-fcbb5d@penduick>
+        Thu, 25 Sep 2025 08:17:10 -0700 (PDT)
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+To: David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Sowjanya Komatineni <skomatineni@nvidia.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Svyatoslav Ryhel <clamor95@gmail.com>,
+	=?UTF-8?q?Jonas=20Schw=C3=B6bel?= <jonasschwoebel@yahoo.de>,
+	Dmitry Osipenko <digetx@gmail.com>,
+	Charan Pedumuru <charan.pedumuru@gmail.com>,
+	Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>,
+	Aaron Kling <webgeek1234@gmail.com>,
+	Arnd Bergmann <arnd@arndb.de>
+Cc: dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-staging@lists.linux.dev
+Subject: [PATCH v3 00/22] tegra-video: add CSI support for Tegra20 and Tegra30
+Date: Thu, 25 Sep 2025 18:16:26 +0300
+Message-ID: <20250925151648.79510-1-clamor95@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250925-eager-delectable-frog-fcbb5d@penduick>
-User-Agent: Mutt/2.2.14 (2025-02-20)
 
-On Thu, Sep 25, 2025 at 02:14:14PM +0200, Maxime Ripard wrote:
-> On Tue, Sep 23, 2025 at 10:39:19AM -0400, Brian Masney wrote:
-> > The Common Clock Framework is expected to keep a clock’s rate stable
-> > after setting a new rate with:
-> > 
-> >     clk_set_rate(clk, NEW_RATE);
-> > 
-> > Clock consumers do not know about the clock hierarchy, sibling clocks,
-> > or the type of clocks involved. However, several longstanding issues
-> > affect how rate changes propagate through the clock tree when
-> > CLK_SET_RATE_PARENT is involved, and the parent's clock rate is changed:
-> > 
-> > - A clock in some cases can unknowingly change a sibling clock's rate.
-> >   More details about this particular case are documented at:
-> >   https://lore.kernel.org/linux-clk/20250528-clk-wip-v2-v2-2-0d2c2f220442@redhat.com/
-> > 
-> > - No negotiation is done with the sibling clocks, so an inappropriate
-> >   or less than ideal parent rate can be selected.
-> > 
-> > A selection of some real world examples of where this shows up is at
-> > [1]. DRM needs to run at precise clock rates, and this issue shows up
-> > there, however will also show up in other subsystems that require
-> > precise clock rates, such as sound.
-> > 
-> > An unknown subset of existing boards are unknowingly dependent on the
-> > existing behavior, so it's risky to change the way the rate negotiation
-> > logic is done in the clk core.
-> > 
-> > This series adds support for v1 and v2 rate negotiation logic to the clk
-> > core. When a child determines that a parent rate change needs to occur
-> > when the v2 logic is used, the parent negotiates with all nodes in that
-> > part of the clk subtree and picks the first rate that's acceptable to
-> > all nodes.
-> > 
-> > Kunit tests are introduced to illustrate the problem, and are updated
-> > later in the series to illustrate that the v2 negotiation logic works
-> > as expected, while keeping compatibility with v1.
-> > 
-> > I marked this as a RFC since Stephen asked me in a video call to not
-> > add a new member to struct clk_core, however I don't see how to do this
-> > any other way.
-> > 
-> > - The clk core doesn’t, and shouldn’t, know about the internal state the
-> >   various clk providers.
-> > - Child clks shouldn’t have to know the internal state of the parent clks.
-> > - Currently this information is not exposed in any way to the clk core.
-> 
-> I recall from that video call that Stephen asked:
-> 
-> - to indeed not introduce a new op
-> - to evaluate the change from top to bottom, but to set it bottom to top
-> - to evaluate the rate by letting child clocks expose an array of the
->   parent rates they would like, and to intersect all of them to figure
->   out the best parent rate.
-> 
-> It looks like you followed none of these suggestions, so explaining why
-> you couldn't implement them would be a great first step.
-> 
-> Also, you sent an RFC, on what would you like a comment exactly?
+Add support for MIPI CSI device found in Tegra20 and Tegra30 SoC along
+with a set of changes required for that.
 
-Stephen asked me to not introduce a new clk op, however I don't see a
-clean way to do this any other way. Personally, I think that we need a
-new clk op for this use case for the reasons I outlined on the cover
-letter. I am open for suggestions about alternative ways, and will
-gladly make modifications. This is why I marked this series as RFC.
-Patch 10 in this series is the main change of note here.
+---
+Changes in v2:
+- vi_sensor gated through csus
+- TEGRA30_CLK_CLK_MAX moved to clk-tegra30
+- adjusted commit titles and messages
+- clk_register_clkdev dropped from pad clock registration
+- removed tegra30-vi/vip and used tegra20 fallback
+- added separate csi schema for tegra20-csi and tegra30-csi
+- fixet number of VI channels
+- adjusted tegra_vi_out naming
+- fixed yuv_input_format to main_input_format
+- MIPI calibration refsctored for Tegra114+ and added support for
+  pre-Tegra114 to use CSI as a MIPI calibration device
+- switched ENOMEM to EBUSY
+- added check into tegra_channel_get_remote_csi_subdev
+- moved avdd-dsi-csi-supply into CSI
+- next_fs_sp_idx > next_fs_sp_value
+- removed host1x_syncpt_incr from framecounted syncpoint
+- csi subdev request moved before frame cycle
 
-Additionally, the presence of the new op is a convenient way to also
-signal to the clk core that these providers can use the v2 negotiation
-logic. Otherwise, we'll need to introduce a flag somewhere else if we
-want to support a v1/v2 negotiation logic across the clk tree.
+Changes in v3:
+- tegra20 and tegra30 csi schema merged
+- removed unneeded properties and requirements from schema
+- improved vendor specific properties description
+- added tegra20 csus parent mux
+- improved commit descriptions
+- redesigned MIPI-calibration to expose less SoC related data into header
+- commit "staging: media: tegra-video: csi: add support for SoCs with integrated
+  MIPI calibration" dropped as unneeded
+- improved tegra_channel_get_remote_device_subdev logic
+- avdd-dsi-csi-supply moved from vi to csi for p2597 and p3450-0000
+- software syncpoint counters switched to direct reading
+- adjusted planar formats offset calculation
+---
 
-As for 2), I negotiate the rate change from the top down. The new_rate
-is propagated in the same manner as what's done today in the clk core
-when a parent rate change occurs. I let it reuse the existing rate
-change code that's currently in the clk core to minimize the change
-that was introduced.
+Svyatoslav Ryhel (22):
+  clk: tegra: set CSUS as vi_sensor's gate for Tegra20, Tegra30 and
+    Tegra114
+  dt-bindings: clock: tegra30: Add IDs for CSI pad clocks
+  clk: tegra30: add CSI pad clock gates
+  dt-bindings: display: tegra: document Tegra30 VI and VIP
+  staging: media: tegra-video: expand VI and VIP support to Tegra30
+  staging: media: tegra-video: vi: adjust get_selection op check
+  staging: media: tegra-video: vi: add flip controls only if no source
+    controls are provided
+  staging: media: tegra-video: csi: move CSI helpers to header
+  gpu: host1x: convert MIPI to use operation function pointers
+  staging: media: tegra-video: vi: improve logic of source requesting
+  staging: media: tegra-video: csi: move avdd-dsi-csi-supply from VI to
+    CSI
+  arm64: tegra: move avdd-dsi-csi-supply into CSI node
+  staging: media: tegra-video: tegra20: set correct maximum width and
+    height
+  staging: media: tegra-video: tegra20: add support for second output of
+    VI
+  staging: media: tegra-video: tegra20: simplify format align
+    calculations
+  staging: media: tegra-video: tegra20: set VI HW revision
+  staging: media: tegra-video: tegra20: increase maximum VI clock
+    frequency
+  staging: media: tegra-video: tegra20: expand format support with
+    RAW8/10 and YUV422 1X16
+  staging: media: tegra-video: tegra20: adjust luma buffer stride
+  dt-bindings: display: tegra: document Tegra20 and Tegra30 CSI
+  ARM: tegra: add CSI nodes for Tegra20 and Tegra30
+  staging: media: tegra-video: add CSI support for Tegra20 and Tegra30
 
-Regarding the clock table in 3), it could be done with what's there,
-but there's the issue of the new clk_op. I posted this to get feedback
-about that since I think we should settle on the core changes.
+ .../display/tegra/nvidia,tegra20-csi.yaml     | 135 +++
+ .../display/tegra/nvidia,tegra20-vi.yaml      |  19 +-
+ .../display/tegra/nvidia,tegra20-vip.yaml     |   9 +-
+ arch/arm/boot/dts/nvidia/tegra20.dtsi         |  19 +-
+ arch/arm/boot/dts/nvidia/tegra30.dtsi         |  24 +-
+ .../arm64/boot/dts/nvidia/tegra210-p2597.dtsi |   4 +-
+ .../boot/dts/nvidia/tegra210-p3450-0000.dts   |   4 +-
+ drivers/clk/tegra/clk-tegra114.c              |   7 +-
+ drivers/clk/tegra/clk-tegra20.c               |  20 +-
+ drivers/clk/tegra/clk-tegra30.c               |  21 +-
+ drivers/gpu/drm/tegra/dsi.c                   |   1 +
+ drivers/gpu/host1x/Makefile                   |   1 +
+ drivers/gpu/host1x/dev.c                      |   2 +
+ drivers/gpu/host1x/dev.h                      |   2 +
+ drivers/gpu/host1x/mipi.c                     | 501 +----------
+ drivers/gpu/host1x/tegra114-mipi.c            | 483 ++++++++++
+ drivers/pinctrl/tegra/pinctrl-tegra20.c       |   7 +
+ drivers/staging/media/tegra-video/Makefile    |   1 +
+ drivers/staging/media/tegra-video/csi.c       |  66 +-
+ drivers/staging/media/tegra-video/csi.h       |  16 +
+ drivers/staging/media/tegra-video/tegra20.c   | 828 +++++++++++++++---
+ drivers/staging/media/tegra-video/vi.c        |  56 +-
+ drivers/staging/media/tegra-video/vi.h        |   9 +-
+ drivers/staging/media/tegra-video/video.c     |   8 +-
+ drivers/staging/media/tegra-video/vip.c       |   4 +-
+ include/dt-bindings/clock/tegra30-car.h       |   3 +-
+ include/linux/host1x.h                        |  10 -
+ include/linux/tegra-mipi-cal.h                |  56 ++
+ 28 files changed, 1648 insertions(+), 668 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-csi.yaml
+ create mode 100644 drivers/gpu/host1x/tegra114-mipi.c
+ create mode 100644 include/linux/tegra-mipi-cal.h
 
-Brian
+-- 
+2.48.1
 
