@@ -1,89 +1,76 @@
-Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1194F6FC3;
-	Thu, 25 Sep 2025 05:31:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4212510A1E;
+	Thu, 25 Sep 2025 07:55:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758778292; cv=none; b=TOTHfl2/nFYKGdnXOqYbByctOboTy+YSXAiKU2T9k2KNrHzbgpNx5WamTRz1aT+iQCDd9oMeCTevWB51Qq7Dm10FT6UvpDD67PgUAP40eJECkrB2NIYJ1FMWLrFaw+dB83gdZwFaS9vNs50MOHwvgDlEN8Exm+VjHsuLQdf6cb4=
+	t=1758786932; cv=none; b=A0WiTdNVHZpsYQCKEpeTxTGtIPhvAd72KjeHAwIVjVJ6xQO2o+WyLDfOS0Wp6IbLWYr/EdmxSSSvzpOuZGcYzsWkZMJoi3F76yzjhdVeiEqOIvgvS91udSTf0h5n+4EyzRpUL7aaRFfQV/bcE12ugVw8I4hI6W3AKvPl+ayPnXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758778292; c=relaxed/simple;
-	bh=MuMIWBOOKsTqjpiSXFq9YXCQld8+ryrFY/LjXvw78nY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KeIqFS3bJWhzMywAUa2lTIuYbPzU1gD601BlbXQfwfyKAynRbVgrY/cpzJSpn6Z0vCAAGrLHNUrBETVEej6gIHwuv/EOwucyiw60xYKi2QamTs7sxpoD3UKhTwg8VDamr3ZmI3/2p6VxVZPH4IH3KM5jJhsYXMHgBk4+GoJhZJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=r+gJW21t; dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=7H/Wq/K/; arc=none smtp.client-ip=5.75.144.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
+	s=arc-20240116; t=1758786932; c=relaxed/simple;
+	bh=KZSpW5WibJYJiM3luN+GARqCU01+Gmc6MgRNSf9Ixpc=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=myAeYPpkxWx/KxRE+lFnlNsShx2YI5WE2BG+KoqZSspzEI35a5RKxsOI52iXcKVS0Y0nvRNkHS23R5AS04DtWXhVTu4nCqoxc9wAG67qAZtJkX3NCxag3ARpOjWHL3cdKwmY/KK0cEvP6Wqev+g6wMcJ4dSTbZRR5T6/KKwNSb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=cF2wqmEu; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="r+gJW21t";
-	dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="7H/Wq/K/"
-DKIM-Signature: v=1; a=rsa-sha256; s=202507r; d=mainlining.org; c=relaxed/relaxed;
-	h=Message-ID:Subject:To:From:Date; t=1758778235; bh=15jVDoRkTQI4moI14kL6/Hu
-	HLvXXwZlH8CR70zusrGk=; b=r+gJW21tDHRnMFA6wikCcWjX1XVKMP+yliQIoP/+sFDwQcjEc+
-	c17V+Ls0IvmmBwvXnSn1HooMulkAFfDl5D3q2oAmS8jaN+HsOsMJUaXzFy2NKXL7dVBawT6redO
-	qazX5po5MKIGokKocr27/3LBlKGKiZzbf+IFjjYB1/2759M06356juEJC4zJil6SeIWgeV4WkP2
-	LFqGk/CERuHyjtHIVLdsuSTuYPyjh05MRy82E3Aqedd9MhvObD6/d7QjqaSuOjlxie/p+XVO30A
-	28hLM6fFESkdGY40N0+/rJU06NTKjOQg9MVXxFN1/EdRDz2+RnBvQ9MXTqD2xhakqOg==;
-DKIM-Signature: v=1; a=ed25519-sha256; s=202507e; d=mainlining.org; c=relaxed/relaxed;
-	h=Message-ID:Subject:To:From:Date; t=1758778235; bh=15jVDoRkTQI4moI14kL6/Hu
-	HLvXXwZlH8CR70zusrGk=; b=7H/Wq/K/fqu/IRvYGMkd8GhMTFzBbVCPVCga+abr+ROdi4TkbN
-	FFw1WO2QYYzw7U9buFGAZExo7VPOfP3/bHDQ==;
-Date: Thu, 25 Sep 2025 12:30:26 +0700
-From: Dang Huynh <dang.huynh@mainlining.org>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Manivannan Sadhasivam <mani@kernel.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Vinod Koul <vkoul@kernel.org>, 
-	Ulf Hansson <ulf.hansson@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
-	linux-arm-kernel@lists.infradead.org, linux-unisoc@lists.infradead.org, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
-	dmaengine@vger.kernel.org, linux-mmc@vger.kernel.org, linux-hardening@vger.kernel.org, 
-	Conor Dooley <conor.dooley@microchip.com>
-Subject: Re: [PATCH 00/10] RDA8810PL SD/MMC support
-Message-ID: <hrgwhmzmu5wpggk7aatuaxc5bnxmjvs4jthxicxekniux5jlbm@lre4gzt75wea>
-References: <20250919-rda8810pl-mmc-v1-0-d4f08a05ba4d@mainlining.org>
- <CAMRc=Mc4hO1LDumxAfkB1W6miTJXR1NUVAKBVarkwiF2yGvSLA@mail.gmail.com>
- <2wwi3ktbcuyp7y7mqplndvawagae5hdhcx3hn375kycoqtows6@xcww2237rxpe>
- <CAMRc=MdhQMR=-ayz+GfigUMVy+j1QNO3LguMoZYa5_+Es3E5Ow@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="cF2wqmEu"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1758786931; x=1790322931;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=KZSpW5WibJYJiM3luN+GARqCU01+Gmc6MgRNSf9Ixpc=;
+  b=cF2wqmEu94dczNWNgO0lH93JtUIqYkbEo/s7PfcIzzfgPMWJ4/yrqai7
+   2kFY347Pnzs8YGaQVza6F1AbMAJejP2SwYcccCbapVgbGw7avwfwufZdr
+   HsmOC2qPpAZgCrucjOKkMZlzEml6spKXQ0h/CM2//TGKfnYD4e0uamqP7
+   L0NKoCCM4xKZHO49+S6U3egSFTx9USSpiHw4ygYFzVFo8iIX0zsuSDpz/
+   TlXLjc/cp4OgC6XtlOTQXHF9Nht3Egx22uw2Iuh/gdqSpWAPNggHZknyG
+   bCGsDL3yhD4RugZLxUnFkGVsKKW1Nmz9/PxsGDkoPqsz2jgpFz0Z9XEo9
+   w==;
+X-CSE-ConnectionGUID: fGMKqrFESeeS1FymqtpKqA==
+X-CSE-MsgGUID: RY+ZcpCrSgu4aWC2XP+3/w==
+X-IronPort-AV: E=Sophos;i="6.18,292,1751266800"; 
+   d="scan'208";a="46968124"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 25 Sep 2025 00:55:29 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.58; Thu, 25 Sep 2025 00:55:04 -0700
+Received: from DEN-DL-M70577 (10.10.85.11) by chn-vm-ex01.mchp-main.com
+ (10.10.85.143) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
+ Transport; Thu, 25 Sep 2025 00:55:03 -0700
+Date: Thu, 25 Sep 2025 07:55:02 +0000
+From: Daniel Machon <daniel.machon@microchip.com>
+To: Robert Marko <robert.marko@sartura.hr>
+CC: <mturquette@baylibre.com>, <sboyd@kernel.org>,
+	<linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<claudiu.beznea@tuxon.dev>, <luka.perkov@sartura.hr>,
+	<benjamin.ryzman@canonical.com>
+Subject: Re: [PATCH] clk: lan966x: remove unused dt-bindings include
+Message-ID: <20250925075502.bb3yfk5y44mcdsw5@DEN-DL-M70577>
+References: <20250924202810.1641883-1-robert.marko@sartura.hr>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMRc=MdhQMR=-ayz+GfigUMVy+j1QNO3LguMoZYa5_+Es3E5Ow@mail.gmail.com>
+In-Reply-To: <20250924202810.1641883-1-robert.marko@sartura.hr>
 
-On Tue, Sep 23, 2025 at 09:48:41AM +0200, Bartosz Golaszewski wrote:
-> On Tue, Sep 23, 2025 at 5:45 AM Dang Huynh <dang.huynh@mainlining.org> wrote:
-> >
-> > On Mon, Sep 22, 2025 at 04:17:05PM +0200, Bartosz Golaszewski wrote:
-> > > On Thu, Sep 18, 2025 at 8:49 PM Dang Huynh via B4 Relay
-> > > <devnull+dang.huynh.mainlining.org@kernel.org> wrote:
-> > > >
-> > > > This patch series aims to add SDMMC driver and various drivers required
-> > > > for SDMMC controller to function.
-> > > >
-> > > > This also fixed a bug where all the GPIO switched from INPUT to OUTPUT
-> > > > after the GPIO driver probed or by reading the GPIO debugfs.
-> > > >
-> > > > This patch series is a split from [1] to ease the maintainers.
-> > > >
-> > >
-> > > This is still targeting at least 4 subsystems and isn't making the
-> > > merging any easier. Are there any build-time dependencies here? If
-> > > not, then split it further into small chunks targeting individual
-> > > subsystems and the relevant ARM SoC tree.
-> > The MMC driver depends on both the clock and the DMA driver.
-> >
+> In preparation for LAN969x support, all instances referring to defines in
+> the LAN966x specific header were dropped, so its safe to drop its inclusion
+> in the driver.
 > 
-> But is the dependency a build-time one or does the MMC DT node
-> reference clocks and the DMA engine by phandle? I assume it's the
-> latter in which case it's fine for them to go into next separately.
-Yeah, it's the latter. I'll submit a v3 in the future.
-> 
-> Bart
+> Signed-off-by: Robert Marko <robert.marko@sartura.hr>
+
+LGTM, but maybe next time, add a ref [1] to the preparation commit you mention.
+
+[1] https://lore.kernel.org/linux-clk/20240916-lan969x-clock-v1-3-0e150336074d@microchip.com/
+
+Reviewed-by: Daniel Machon <daniel.machon@microchip.com>
