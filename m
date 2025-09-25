@@ -1,66 +1,66 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDB5F2550BA
-	for <linux-clk@vger.kernel.org>; Thu, 25 Sep 2025 09:04:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A5EF2877CB
+	for <linux-clk@vger.kernel.org>; Thu, 25 Sep 2025 09:10:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758791091; cv=none; b=q760sLyO7D5/LNxPhkmgQX2gn7W+YwmKBTTOlMtvFpBPyfSP6WStn6kDsDPdAYvBJ9rtAqDWFktS0MnLCjaaULcC04rjdLcSI/N9E+Ijo1EJ+fFaQmYOAEwqDB0Q2fVI+TfFJIvb4WPpHvrO45dKbvmEtxFV9QLkrHxIX4O7DM8=
+	t=1758791424; cv=none; b=isGU7Mkrj+WKkvinusKlYcQaGT81d/KvJ0ru1FNFZ0o9vOM2y9atuqnuB4h3F/mBuQxo9TQg9qvuuxI7JArlI0kEVnX5K60Cfq1BSbjyPpzN5QLt2ICz6u/59u+9DDdOBrOhOTRqVh4gFEMCVCuYu0i1ABJXs6rdEBQjW9vbU1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758791091; c=relaxed/simple;
-	bh=GiwBbWtoB2tfwoPzjKROuEEggM8W+m2R48BbdsJ/qW8=;
+	s=arc-20240116; t=1758791424; c=relaxed/simple;
+	bh=L5XR6t5ZxwfG3rtP2YnGXIBz4GtqNch7l7akgqfMJNs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DemYfJb5DZbEItyvuowFiavb/lH6mOn4BvzP9CboQ6FePXcZOOX5ZvGGIyLvHUeh/lrAyvIE4FL+M7CbyW244cVY3/T6XKQOaObJ57YLI5VYWgxkRVHseCvwcOd50bNBh/+vm83ITDk3o/eU5DHY8/wFZFodvm5TPhfQ2Wq4LZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IanQIRNM; arc=none smtp.client-ip=209.85.128.49
+	 In-Reply-To:Content-Type; b=dGnTSjLxrhJqRNCNDt1Jmm09yWoPhrdv+oE33Brok7zoGBLBI8CWS0wKHLxw7YIZ8+b3KahMOkKVHGdaTIoOV/t/dt9aZvxuFL1w+KMtxDPxVpRZtf/RyxWuzFXUfGEZq6sgIhwPubWepeoE3SrQeu8c9zQ1t7RJyFtzNhZKyHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZNEVQhCi; arc=none smtp.client-ip=209.85.221.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IanQIRNM"
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-46e2e363118so6614045e9.0
-        for <linux-clk@vger.kernel.org>; Thu, 25 Sep 2025 02:04:49 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZNEVQhCi"
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3ef166e625aso605998f8f.2
+        for <linux-clk@vger.kernel.org>; Thu, 25 Sep 2025 02:10:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1758791088; x=1759395888; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1758791420; x=1759396220; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:content-language:from
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=52cJq27fTrRB0shrC+OriI/jG8WLskY0nr0nR3oM2xU=;
-        b=IanQIRNMwJ+YzYUAvzhZ0ZP0Q6vA5t/zs7D+UFw0RElRVvHyBz42ptgBmZgsBpCR0b
-         5WAwxzeoihbknb/6xyKg2NKO2jRWP52ED3kef/0wzaM4nBTvEHnZiUxQIEFIru2JsaaV
-         WBMPH1a8aP3uzFipNfxSV3T0C8tn5qZiTgcoNIDoVXL8Ed+XDwkI9xN5asN3Jmup7f9x
-         iF2NPAO1yS1p9ywqN1fSG1pUiOoe3tpcecuhmC+GGYINSRUo2BOy1vQ9tzrMwT5Q/Zfh
-         4pdHcs3gJywA6Hk/7EW+06JKCJQaSR9+uIgfGwLlCPutdXQihpMobPySGmzMTumrrkDK
-         9dfA==
+        bh=nMuA4DWC6qNeuux3AJTay/iyO89ifrzsRhDuGmNfotc=;
+        b=ZNEVQhCiUaS4rNzMkUfSwGh75tyS/xDug9nFLpBRlRh600+XKL5d4QkFikSRs6y0fU
+         nsd1nKRh1f+SBofkmrSphSxpGnVwOMti8pinY0Ahkk/nM4JyJYrb0FqUHZdBe26np63z
+         TaLFo/XsNaCjyL8hl9dnsE+/BRYHO4jPvPifKWcwbqk7yHG27TkkwAhUjrRzImj94t/j
+         g9izz81008mC0rtN6Ip7xjNgSN3RvxxCzwA0FhZSx2BISl3R/eO8BVbxytjl8vHLVlPY
+         Fi+UB9mLUQlUugtLCa268g9hEC35EdWyuBYRDckiZPOmyu7gMYYNjwzZvRNvtcc0lSL6
+         3WLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758791088; x=1759395888;
+        d=1e100.net; s=20230601; t=1758791420; x=1759396220;
         h=content-transfer-encoding:in-reply-to:content-language:from
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=52cJq27fTrRB0shrC+OriI/jG8WLskY0nr0nR3oM2xU=;
-        b=DaXvcwr/l0YnanhQut7ueSIO1ls1rqKNicTqDpuSoqeGp9myt5RdwmajWhMlx0FoTV
-         JTkC0pm/vwE/noTlLWeKMPyPz3q8NdD+u+/9WDmDHzTeSnHNUWPMezPW41LDAWGyRuQS
-         o56/H04R8hN/mgBBxig4/AoSQbV6EJX16nmLQHYupZNiN1i/MYbY7oZ6Jq1bXDV6Cyzm
-         fqB7PgTbgFPlm80CNGbnzczswqUPGwMACJM2SfEjlL3ETrhH+m21WscguhJ2edu8bDQX
-         gKf8zEoe0OfwXJHgAYh48aG95NTRnNiSgDP5VSp7lf4ExeBiTLumtZRJPCeuA6NdbkrD
-         3o0g==
-X-Forwarded-Encrypted: i=1; AJvYcCUfTlnOM7G0KptLLM8tVYkFz6RAHvYTWxVaYcx+9xXi/+r5DRI2NpaMTjJaOFjIMdf4Esn9LZyrhQ4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxfdltzG+POUlcPIlQPLRf74XSMe777m3rlVDcNMXDX82xcwVS9
-	qOvUwhaZVNAOnrvTas4JBwVYImAqSwQBgH1F9qd9YAIKTVmWMtajGec0EiDGQ8fQk0w=
-X-Gm-Gg: ASbGncs3459+9Bvrkz9sOI9Ub6SYc+K2YBeRZBqVTsYgtfMISEdXquKGhzSqnkNNXH7
-	sm61hPyHg1Smbe0aVPq/lBnFboJ4KTA6o9XAqHo2OhwaazWFcHl5nYPG8+i/l3+nZuT/il6ztmG
-	0uZo7jbB0YoMQsGTeguHHYksakkBh8RGU6fC+wnu8cGSDREQQYpn0rVZqvwaZlBWmSW4GYzAKIh
-	eK7vD+njrvYQ832mdSdwwhXYLt7y3mB98a+uqhJ23/6xwrVj/Wy8bb2LnkoRUzwr/4k1xtEwlJY
-	NyGmFbNU8MiS7nm3VHEHvts63NJveuJIJSg02+ItmZ3mgtG2plBpC11NkRKqxf895P5Xugee+MT
-	s6uoCWowAYb2bISChBqZ3px4JNM24afg/pPf1gHh6A+cech6LyLTKbtY2SdSTYpmghUIFqtRoz2
-	dXUggriI6dj6RTT76o2uMw
-X-Google-Smtp-Source: AGHT+IErNyAgA6Qo/uMNdIgcGBbOskM97JAo4kEppskCvZUmBIRp8NL7i5asdGJupVwWIHvszpenhQ==
-X-Received: by 2002:a05:600c:a43:b0:45b:7b54:881 with SMTP id 5b1f17b1804b1-46e329a0e5dmr26627875e9.1.1758791088108;
-        Thu, 25 Sep 2025 02:04:48 -0700 (PDT)
+        bh=nMuA4DWC6qNeuux3AJTay/iyO89ifrzsRhDuGmNfotc=;
+        b=AhkdzvZVP86E017wFPjyWItG8tBG2lohc3ra7nofzqSLfbdT8AhWWNGGWnt74j5/de
+         gtTxuHecFChQxYgbswVqtH1ckUe8N1/PZLqBijLel6RDe9pGtfjvhEA4RCuphG5PHH7/
+         e/ePwp79nFYtiT6OLhFzNixezK7RvhI1tW4ihgW0/siBaH6s1bi/HKXBuQ0JX/Mo+ckJ
+         oU8SrkFAjyARMsZr5DQVdg9ju+VbSNQnqcgFAgPCUSBcjkLli4lu7iHm6MZ89AjtrYh4
+         UBWNsxfxacpMeYnlMx5mjFsxXnwni9XC38FTb9ZsjVDH9sSTFsBDw26Co83+/32eeKtb
+         zAFg==
+X-Forwarded-Encrypted: i=1; AJvYcCW1P8RlIu11cAHSeQaKdB19YAPDnvhu/Y80geQMlFwAxwVrI++uBoOB633ZO20LXYjUHvpBkhgXG6A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdaXJlGX7RTKMVeJon6ovoN4SKrEMzFDQjqmS8SpJAeZg3b8t6
+	BNdez5EvRJvxr/4t+uxpxRcriRV2yujxFiSP7vl8hs/VUsP3n7SLyY0RQ9OCFO8jtRE=
+X-Gm-Gg: ASbGncuHqrEw1Rl4N5sQsv1zvbn7kVVwuxHhBH/ahHAKbEy/w/JUJnGuWTPCJFbwvTA
+	KBiX9epfNGspqaxxjNH6noPnZ66wSkKw+gpLKzZyeZI18dpIjyeQEo40qq+aPc0ad8E0vP6Frl9
+	kqQmsZA3eGbdRxmF5y5O0I6hXOfAvjSp9mOb9caW98qSK91uTNaFMl3HFgjFuGrjff0dS+7py86
+	X+Lpd6f/okNHF5thWs8D+tUbRrU8LDBSESgZDSlqB2Nu78hEA8nPJ41QHbR10w6gBfHCqtpdkKb
+	MH5kGjxkCSTt8J9YJGm4OeUHTxb99MdcLH61pybgCXaWmxYxiepTK/gTlFnw2qJMA7dOvtAyEN1
+	6QSvHvX3HmvCt9MMv1R71QOlw42MDFOmiMS2Dcuz9Aw4F/IWv7gk57sx1rKu+cpoMWRefLPEDVi
+	gzuhcZj0P4ZTqMxk7oFI+4
+X-Google-Smtp-Source: AGHT+IFDpMpHsFRgd6YSWfaUgP4h+TK2gackvhjt2ED62B1HXzzX5IdszOWCjQD2qcaPDSO7lAZ6/Q==
+X-Received: by 2002:a05:6000:2484:b0:3f1:2671:6d9e with SMTP id ffacd0b85a97d-40e497c346fmr2389638f8f.1.1758791420460;
+        Thu, 25 Sep 2025 02:10:20 -0700 (PDT)
 Received: from [192.168.0.19] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e2a9ac5basm80767955e9.7.2025.09.25.02.04.46
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e33b9e3bdsm27566255e9.2.2025.09.25.02.10.18
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 25 Sep 2025 02:04:47 -0700 (PDT)
-Message-ID: <19c66c0e-e784-4403-abae-c4cd92f4a150@linaro.org>
-Date: Thu, 25 Sep 2025 10:04:45 +0100
+        Thu, 25 Sep 2025 02:10:19 -0700 (PDT)
+Message-ID: <d18c5196-dd8e-47d6-87bd-de0ac94fbf3b@linaro.org>
+Date: Thu, 25 Sep 2025 10:10:18 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -68,8 +68,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/9] dt-bindings: clock: qcom: document the Kaanapali GPU
- Clock Controller
+Subject: Re: [PATCH 7/9] clk: qcom: camcc: Add support for camera clock
+ controller for Kaanapali
 To: Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
  Bjorn Andersson <andersson@kernel.org>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
@@ -91,187 +91,25 @@ Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
  tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com,
  yijie.yang@oss.qualcomm.com
 References: <20250924-knp-mmclk-v1-0-d7ea96b4784a@oss.qualcomm.com>
- <20250924-knp-mmclk-v1-5-d7ea96b4784a@oss.qualcomm.com>
+ <20250924-knp-mmclk-v1-7-d7ea96b4784a@oss.qualcomm.com>
 From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 Content-Language: en-US
-In-Reply-To: <20250924-knp-mmclk-v1-5-d7ea96b4784a@oss.qualcomm.com>
+In-Reply-To: <20250924-knp-mmclk-v1-7-d7ea96b4784a@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 25/09/2025 00:56, Jingyi Wang wrote:
-> From: Taniya Das <taniya.das@oss.qualcomm.com>
-> 
-> Add bindings documentation for the Kaanapali Graphics Clock and Graphics
-> power domain Controller.
-> 
-> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
-> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-> ---
->   .../bindings/clock/qcom,kaanapali-gxclkctl.yaml    | 63 ++++++++++++++++++++++
->   .../bindings/clock/qcom,sm8450-gpucc.yaml          |  2 +
->   include/dt-bindings/clock/qcom,kaanapali-gpucc.h   | 47 ++++++++++++++++
->   .../dt-bindings/clock/qcom,kaanapali-gxclkctl.h    | 12 +++++
->   4 files changed, 124 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,kaanapali-gxclkctl.yaml b/Documentation/devicetree/bindings/clock/qcom,kaanapali-gxclkctl.yaml
-> new file mode 100644
-> index 000000000000..31398aec839d
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/qcom,kaanapali-gxclkctl.yaml
-> @@ -0,0 +1,63 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/qcom,kaanapali-gxclkctl.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm Graphics power domain Controller on Kaanapali
-> +
-> +maintainers:
-> +  - Taniya Das <taniya.das@oss.qualcomm.com>
-> +
-> +description: |
-> +  Qualcomm graphics power domain control module provides the power
-> +  domains on Qualcomm SoCs. This module exposes the GDSC power domain
-> +  which helps the recovery of Graphics subsystem.
-> +
-> +  See also::
-> +    include/dt-bindings/clock/qcom,kaanapali-gxclkctl.h
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - qcom,kaanapali-gxclkctl
-> +
-> +  power-domains:
-> +    description:
-> +      Power domains required for the clock controller to operate
-> +    items:
-> +      - description: GFX power domain
-> +      - description: GMXC power domain
-> +      - description: GPUCC(CX) power domain
-> +
-> +  '#power-domain-cells':
-> +    const: 1
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - power-domains
-> +  - '#power-domain-cells'
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/power/qcom,rpmhpd.h>
-> +    soc {
-> +        #address-cells = <2>;
-> +        #size-cells = <2>;
-> +
-> +        clock-controller@3d68024 {
-> +            compatible = "qcom,kaanapali-gxclkctl";
-> +            reg = <0 0x3d68024 0x0 0x8>;
-> +            power-domains = <&rpmhpd RPMHPD_GFX>,
-> +                            <&rpmhpd RPMHPD_GMXC>,
-> +                            <&gpucc 0>;
-> +            #power-domain-cells = <1>;
-> +        };
-> +    };
-> +...
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8450-gpucc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8450-gpucc.yaml
-> index 44380f6f8136..6feaa32569f9 100644
-> --- a/Documentation/devicetree/bindings/clock/qcom,sm8450-gpucc.yaml
-> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8450-gpucc.yaml
-> @@ -14,6 +14,7 @@ description: |
->     domains on Qualcomm SoCs.
->   
->     See also::
-> +    include/dt-bindings/clock/qcom,kaanapali-gpucc.h
->       include/dt-bindings/clock/qcom,milos-gpucc.h
->       include/dt-bindings/clock/qcom,sar2130p-gpucc.h
->       include/dt-bindings/clock/qcom,sm4450-gpucc.h
-> @@ -26,6 +27,7 @@ description: |
->   properties:
->     compatible:
->       enum:
-> +      - qcom,kaanapali-gpucc
->         - qcom,milos-gpucc
->         - qcom,sar2130p-gpucc
->         - qcom,sm4450-gpucc
-> diff --git a/include/dt-bindings/clock/qcom,kaanapali-gpucc.h b/include/dt-bindings/clock/qcom,kaanapali-gpucc.h
-> new file mode 100644
-> index 000000000000..e8dc2009c71b
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/qcom,kaanapali-gpucc.h
-> @@ -0,0 +1,47 @@
-> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-> +/*
-> + * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
-> + */
-> +
-> +#ifndef _DT_BINDINGS_CLK_QCOM_GPU_CC_KAANAPALI_H
-> +#define _DT_BINDINGS_CLK_QCOM_GPU_CC_KAANAPALI_H
-> +
-> +/* GPU_CC clocks */
-> +#define GPU_CC_AHB_CLK						0
-> +#define GPU_CC_CB_CLK						1
-> +#define GPU_CC_CX_ACCU_SHIFT_CLK				2
-> +#define GPU_CC_CX_GMU_CLK					3
-> +#define GPU_CC_CXO_AON_CLK					4
-> +#define GPU_CC_CXO_CLK						5
-> +#define GPU_CC_DEMET_CLK					6
-> +#define GPU_CC_DPM_CLK						7
-> +#define GPU_CC_FF_CLK_SRC					8
-> +#define GPU_CC_FREQ_MEASURE_CLK					9
-> +#define GPU_CC_GMU_CLK_SRC					10
-> +#define GPU_CC_GPU_SMMU_VOTE_CLK				11
-> +#define GPU_CC_GX_ACCU_SHIFT_CLK				12
-> +#define GPU_CC_GX_GMU_CLK					13
-> +#define GPU_CC_HUB_AON_CLK					14
-> +#define GPU_CC_HUB_CLK_SRC					15
-> +#define GPU_CC_HUB_CX_INT_CLK					16
-> +#define GPU_CC_HUB_DIV_CLK_SRC					17
-> +#define GPU_CC_MEMNOC_GFX_CLK					18
-> +#define GPU_CC_PLL0						19
-> +#define GPU_CC_PLL0_OUT_EVEN					20
-> +#define GPU_CC_RSCC_HUB_AON_CLK					21
-> +#define GPU_CC_RSCC_XO_AON_CLK					22
-> +#define GPU_CC_SLEEP_CLK					23
-> +
-> +/* GPU_CC power domains */
-> +#define GPU_CC_CX_GDSC						0
-> +
-> +/* GPU_CC resets */
-> +#define GPU_CC_CB_BCR						0
-> +#define GPU_CC_CX_BCR						1
-> +#define GPU_CC_FAST_HUB_BCR					2
-> +#define GPU_CC_FF_BCR						3
-> +#define GPU_CC_GMU_BCR						4
-> +#define GPU_CC_GX_BCR						5
-> +#define GPU_CC_XO_BCR						6
-> +
-> +#endif
-> diff --git a/include/dt-bindings/clock/qcom,kaanapali-gxclkctl.h b/include/dt-bindings/clock/qcom,kaanapali-gxclkctl.h
-> new file mode 100644
-> index 000000000000..460e21881c4f
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/qcom,kaanapali-gxclkctl.h
-> @@ -0,0 +1,12 @@
-> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-> +/*
-> + * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
-> + */
-> +
-> +#ifndef _DT_BINDINGS_CLK_QCOM_GX_CLKCTL_KAANAPALI_H
-> +#define _DT_BINDINGS_CLK_QCOM_GX_CLKCTL_KAANAPALI_H
-> +
-> +/* GX_CLKCTL power domains */
-> +#define GX_CLKCTL_GX_GDSC				0
-> +
-> +#endif
-> 
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> +static u32 cam_cc_kaanapali_critical_cbcrs[] = {
+> +	0x21398, /* CAM_CC_DRV_AHB_CLK */
+> +	0x21390, /* CAM_CC_DRV_XO_CLK */
+> +	0x21364, /* CAM_CC_GDSC_CLK */
+> +	0x21368, /* CAM_CC_SLEEP_CLK */
+> +};
+
+How is this critical list decided ?
+
+For example why is the AHB clock critical but the CAMNOC and AXI clocks 
+not critical ?
+
+---
+bod
