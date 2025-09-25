@@ -1,147 +1,258 @@
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0578303C87
-	for <linux-clk@vger.kernel.org>; Thu, 25 Sep 2025 16:06:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 864DE15B971
+	for <linux-clk@vger.kernel.org>; Thu, 25 Sep 2025 16:49:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758816421; cv=none; b=SZSZsiYQTqaHJuraYsIw1+DcafJvkiDG7bJ4iMnJ6YTl1Ha77W6iJif47/vs3QsZmcOWsPRqpNOgVMc9uzRBcaaj1hCV6uImHPvSw4yJOCw1As9CAZx+HuVt5CzutGhaJIGVsqvy6bEn1sr9pq1nRRbd5TRqK6Su/vEvupyqNwY=
+	t=1758818948; cv=none; b=CZJatbpiWwdhGDg1EuLgVNCVQUPJMGaFlpxM1dH829jdIKStewETsmAPDyOLMsd9GgJhijKlLqis7ZWoUeXiDW80mv2uv2NHJs7FWgKL2t7T1uZURDYdTYl61YKfMdXF0DUHu9WqO55Wl8iRPg1NFsIpZ8csAq7Pba8Lyxe12hE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758816421; c=relaxed/simple;
-	bh=BpXsWsbIWOdqk7uF/WtIMG7A8mOG0ib8Ejk2jxL4vcY=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LhRi58wVk+bXf4cncWocia1x+i8c8WDqR66Qe5I5wjou8s6MWeH4oJRzmsYexDPe9TSKnFkvNvgniCTti8Tm1SIpTW3+ixycIxmQJ7iAHvJ4zojIpIwZE5F6ru4j69m0S6jqlemDLGtvTbOhZ5SzDdp8nsuRkhodb+DoRrlZdmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BIBV1NA/; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1758818948; c=relaxed/simple;
+	bh=gNw1pkFiRaQHAl1MkfJLhv8N2CuOl1RKJ3yRMg6djPE=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=L0o622CzUh7rC1gv8RdYQBB0JXhWVRh2fLtC4iclp7vt5l+YPxrwOmCAVAAvH5f6mNhdjh6FHbKkB9tNWch58RgVmUwUpRLOWBpeTeVsZMO17VoQDxK0vSvHgFErxkgnRx4ptY4a7/IswpM11gD/ds886WK8bvQN6yaZxWhexOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=WOPP3BAm; arc=none smtp.client-ip=212.227.15.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BIBV1NA/"
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3c68ac7e18aso683490f8f.2
-        for <linux-clk@vger.kernel.org>; Thu, 25 Sep 2025 09:06:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758816418; x=1759421218; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=v+lassDmCrGUqK1j75W06mPpLprXWJRC5SDVpvwTaVY=;
-        b=BIBV1NA/0JnyvO/lqOUBARKBtEQFtciN9/cKnCyRy+nfEteg8ShWM1CM0xBpmQPjVS
-         TX9JXzb3EH1MiuFbdcAU/a9RUEhOh3idfouUNu3l3dmKMTL+uU8s25cPK8JS3A/+8BZC
-         sEPoxzGcb7Q8Ogc8J5N7c7V2+T9+E5agCkrtt8heHUJcaaaMNwbpmDD0KkGTu7nBjdi/
-         kfcZ7KSDnT1GmohZbRgb1BLkLK91j784ooFeBT9B8lEvOfN9ezpBCGCEDWdxwIAHnti3
-         goVzJIiYEhEdExoRhKk+9xCbeEqA++P1nZKRygnH+vWBgixId0Hz3GSlEEEYtaC1T3va
-         HIjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758816418; x=1759421218;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=v+lassDmCrGUqK1j75W06mPpLprXWJRC5SDVpvwTaVY=;
-        b=rkQSRFBqTeaCfijdidPJypURhZPCFQvwnFMuZRdIx8ktQZjoBQpJc1ScVMVLFRLPDc
-         6e2wMc2fFU1DPqoQF4j2VC+NWdOfZKuuQGyh3QDzO1UVJ+xKdPT2obpyJEaWo7aqMtQc
-         x7rQoPkglBIKEM/MA4Qvaij3mLUlPpyCy44qjuv40pDTr2hQyrBn+6bQrzZIekUEdef0
-         ynzInLuze1ir1I9bW2Lle3ggUbjmvYt3fcMt2FY+Yfhv0ZeQj9DEOlp3EdID4c3SNtkc
-         Auf8wpQPAKvZ+xtap0+XESXiaNx2uU/Zd8DQgh9P0Cq6Uhdb+Je2jKJMm2RQJFlBKkJp
-         osSw==
-X-Forwarded-Encrypted: i=1; AJvYcCXSpmzs+YHd4+WmE9XRMI7Y7lijOavXm38d8NKVLXsFi89eYh77sj0CQSzoMBqWq0JFlg1HTeGWCf4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLezbSTPV7+DcW+9vkwAyegFET/GyYgswu3Zc9tvcJbxfza5uz
-	UW7vBDbmq8HYKQQyEIBBer60eCPFlOp4wFopSi76u4ZDFGiyg/f+rhQm
-X-Gm-Gg: ASbGncu6Xj87MHgwpfU0fNixGHDh6uo7Wz3fnC5cN6DpZRyU2dwtGriX8Y1bmmrpFHh
-	vEXgLxWclrFOrqCFtuN8YTiP9wIXK7442WIXp7eUUe4cxZoTZ327BlopRlsVwenkOw3Nk09OFSl
-	i9Ca6Vm4bnhiSLFLEmXXHwKaRdClipB0QxoUokxbXJyi4me5BDdB4m6A22DtUd+DWKADjcNCI5x
-	iz78GbZtqMIWfuLLdOhEbPdZSbAg3ZnvW3E9jte3Zx8Ej3lD8/3TLlDO2XBaMlcb0YH0RG8Kg4C
-	SvMzaW6Jkt4Pnps8SUgNfIHndfzw+IF3FUHomSdtpQMHCQs/UHDbWiuZxLlo0b3yu5PmST9Q/3m
-	n/IOnwtrF20LPG0lyDCavlzLgtfvil8y0EAOySDfoyx4kFU5EmzO4z9KV2q6577t45ovU+vbOBV
-	36PfjN
-X-Google-Smtp-Source: AGHT+IEHMIJU9u8ueZDndaal17u8mfKe0TgyHQU77XQdzJ/EbxOIGOMX4Q6Ld8eqXuhgbWlq5qhIfQ==
-X-Received: by 2002:a05:6000:2486:b0:3d4:f5c2:d805 with SMTP id ffacd0b85a97d-40e4458c89bmr4101481f8f.16.1758816417869;
-        Thu, 25 Sep 2025 09:06:57 -0700 (PDT)
-Received: from Ansuel-XPS. (host-95-249-236-54.retail.telecomitalia.it. [95.249.236.54])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e32c49541sm20807025e9.5.2025.09.25.09.06.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Sep 2025 09:06:56 -0700 (PDT)
-Message-ID: <68d568a0.050a0220.19f5c.8cb6@mx.google.com>
-X-Google-Original-Message-ID: <aNVonSpnm70dLOUL@Ansuel-XPS.>
-Date: Thu, 25 Sep 2025 18:06:53 +0200
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Rob Herring <robh@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Ryder Lee <ryder.lee@mediatek.com>,
-	Jianjun Wang <jianjun.wang@mediatek.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, linux-pci@vger.kernel.org,
-	upstream@airoha.com
-Subject: Re: [PATCH v2 1/4] dt-bindings: clock: mediatek: Fix wrong
- compatible list for hifsys YAML
-References: <20250923201244.952-1-ansuelsmth@gmail.com>
- <20250923201244.952-2-ansuelsmth@gmail.com>
- <20250924140347.GA1556090-robh@kernel.org>
+	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="WOPP3BAm"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
+	s=s31663417; t=1758818938; x=1759423738; i=wahrenst@gmx.net;
+	bh=qAB5fCbImxbWKqC5kSCNa6OVcD9HGKAsAhKkjlUJPf8=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:From:Subject:To:
+	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=WOPP3BAmkbuo0wRp1hV9Ckdht9sGCnSmNJpyVqith6weWcEBG9Fhq1MdxXgvHPy2
+	 kOE/MP7/SgM7dw/oT8MvF11W3jTkyU994rRpdupXZmMAIHZWDuWhsgO4S2dY8Bv90
+	 KaBVKdN//Rn/oa7eV3G8ckoVo1ztmCEU+CGC8xVXHsW8CcrumWmuDeA4ucgNAUsPM
+	 u6az/NvEVBhVhrbDB03PYc+4MGlbwcgSadoWumNKqWFiyDt0sHTBT3ZJV8sGppzak
+	 A0hB2h+Dut6kKqW2qsWnYRlCB1D6j8wlbJGxYoooeCpDL7kFxXMXobGCA9WrSfrvy
+	 bl37vfL0garf337kig==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.1.105] ([79.235.128.112]) by mail.gmx.net (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MCbEf-1vArYg3EOp-00Dz9h; Thu, 25
+ Sep 2025 18:48:57 +0200
+Message-ID: <2b1537c1-93e4-4c6c-8554-a2d877759201@gmx.net>
+Date: Thu, 25 Sep 2025 18:48:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250924140347.GA1556090-robh@kernel.org>
+User-Agent: Mozilla Thunderbird
+From: Stefan Wahren <wahrenst@gmx.net>
+Subject: Re: [PATCH v2 2/5] clk: bcm: rpi: Turn firmware clock on/off when
+ preparing/unpreparing
+To: Marek Szyprowski <m.szyprowski@samsung.com>,
+ =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Nicolas Saenz Julienne <nsaenz@kernel.org>,
+ Florian Fainelli <florian.fainelli@broadcom.com>,
+ Maxime Ripard <mripard@kernel.org>, Melissa Wen <mwen@igalia.com>,
+ Iago Toral Quiroga <itoral@igalia.com>, Dom Cobley <popcornmix@gmail.com>,
+ Dave Stevenson <dave.stevenson@raspberrypi.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, kernel-dev@igalia.com
+References: <20250731-v3d-power-management-v2-0-032d56b01964@igalia.com>
+ <20250731-v3d-power-management-v2-2-032d56b01964@igalia.com>
+ <CGME20250925075711eucas1p26efbb194311a6e22ab593a39b43e12c3@eucas1p2.samsung.com>
+ <727aa0c8-2981-4662-adf3-69cac2da956d@samsung.com>
+Content-Language: en-US
+In-Reply-To: <727aa0c8-2981-4662-adf3-69cac2da956d@samsung.com>
+Autocrypt: addr=wahrenst@gmx.net; keydata=
+ xjMEZ1dOJBYJKwYBBAHaRw8BAQdA7H2MMG3q8FV7kAPko5vOAeaa4UA1I0hMgga1j5iYTTvN
+ IFN0ZWZhbiBXYWhyZW4gPHdhaHJlbnN0QGdteC5uZXQ+wo8EExYIADcWIQT3FXg+ApsOhPDN
+ NNFuwvLLwiAwigUCZ1dOJAUJB4TOAAIbAwQLCQgHBRUICQoLBRYCAwEAAAoJEG7C8svCIDCK
+ JQ4BAP4Y9uuHAxbAhHSQf6UZ+hl5BDznsZVBJvH8cZe2dSZ6AQCNgoc1Lxw1tvPscuC1Jd1C
+ TZomrGfQI47OiiJ3vGktBc44BGdXTiQSCisGAQQBl1UBBQEBB0B5M0B2E2XxySUQhU6emMYx
+ f5QR/BrEK0hs3bLT6Hb9WgMBCAfCfgQYFggAJhYhBPcVeD4Cmw6E8M000W7C8svCIDCKBQJn
+ V04kBQkHhM4AAhsMAAoJEG7C8svCIDCKJxoA/i+kqD5bphZEucrJHw77ujnOQbiKY2rLb0pE
+ aHMQoiECAQDVbj827W1Yai/0XEABIr8Ci6a+/qZ8Vz6MZzL5GJosAA==
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:vK/3jwWQSWRm+cM68enplxHonquAxewZuzQT268aklvpjruAtRA
+ KfYwkQr7j+CVQlCPyu9j3CajO88+6q0fju/nZEsJLDfx9mu7VZdGJm01TOgvfTU8BVEVn3U
+ DXWo1jeA2ox6tGa9P2Y9bN3wXeFOPCC9zIyDQxg+9XZFVV1qKz1WELc1+0n4DelQ2ylSUvB
+ CXGG0mjAsgJ2F+SEkfPqw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:Jt7cFrm8MRI=;q5226w5oPvfS5DC1ArORjZUHGmX
+ 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
 
-On Wed, Sep 24, 2025 at 09:03:47AM -0500, Rob Herring wrote:
-> On Tue, Sep 23, 2025 at 10:12:29PM +0200, Christian Marangi wrote:
-> > While converting the hifsys to YAML schema, the "syscon" compatible was
-> > dropped for the mt7623 and the mt2701 compatible.
-> 
-> Is "syscon" really needed? AFAICT, the clock and reset drivers don't 
-> need it.
->
+Hi,
 
-Ok I also searched downstream and can't find any patch that would make
-use of syscon. Guess I will replace this patch with a patch that drop
-the syscon from the dts.
+Am 25.09.25 um 09:57 schrieb Marek Szyprowski:
+> On 31.07.2025 23:06, Ma=C3=ADra Canal wrote:
+>> Currently, when we prepare or unprepare RPi's clocks, we don't actually
+>> enable/disable the firmware clock. This means that
+>> `clk_disable_unprepare()` doesn't actually change the clock state at
+>> all, nor does it lowers the clock rate.
+>>
+>> >From the Mailbox Property Interface documentation [1], we can see that
+>> we should use `RPI_FIRMWARE_SET_CLOCK_STATE` to set the clock state
+>> off/on. Therefore, use `RPI_FIRMWARE_SET_CLOCK_STATE` to create a
+>> prepare and an unprepare hook for RPi's firmware clock.
+>>
+>> As now the clocks are actually turned off, some of them are now marked
+>> CLK_IS_CRITICAL, as those are required to be on during the whole system
+>> operation.
+>>
+>> Link:https://github.com/raspberrypi/firmware/wiki/Mailbox-property-inte=
+rface [1]
+>> Signed-off-by: Ma=C3=ADra Canal<mcanal@igalia.com>
+>>
+>> ---
+>>
+>> About the pixel clock: currently, if we actually disable the pixel
+>> clock during a hotplug, the system will crash. This happens in the
+>> RPi 4.
+>>
+>> The crash happens after we disabled the CRTC (thus, the pixel clock),
+>> but before the end of atomic commit tail. As vc4's pixel valve doesn't
+>> directly hold a reference to its clock =E2=80=93 we use the HDMI encode=
+r to
+>> manage the pixel clock =E2=80=93 I believe we might be disabling the cl=
+ock
+>> before we should.
+>>
+>> After this investigation, I decided to keep things as they current are:
+>> the pixel clock is never disabled, as fixing it would go out of
+>> the scope of this series.
+>> ---
+>>    drivers/clk/bcm/clk-raspberrypi.c | 56 +++++++++++++++++++++++++++++=
++++++++++-
+>>    1 file changed, 55 insertions(+), 1 deletion(-)
+> This patch landed recently in linux-next as commit 919d6924ae9b ("clk:
+> bcm: rpi: Turn firmware clock on/off when preparing/unpreparing"). In my
+> tests I found that it breaks booting of RaspberryPi3B+ board in ARM
+> 32bit mode. Surprisingly the same board in ARM 64bit mode correctly
+> boots a kernel compiled from the same source. The RPi3B+ board freezes
+> after loading the DRM modules (kernel compiled from arm/multi_v7_defconf=
+ig):
+thanks for spotting and bisecting this. Sorry, I only reviewed the=20
+changes and didn't had the time to test any affected board.
 
-> > 
-> > Add back the compatible to mute DTBs warning on "make dtbs_check" and
-> > reflect real state of the .dtsi.
-> > 
-> > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> > ---
-> >  .../devicetree/bindings/clock/mediatek,mt2701-hifsys.yaml | 8 +++++---
-> >  1 file changed, 5 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/clock/mediatek,mt2701-hifsys.yaml b/Documentation/devicetree/bindings/clock/mediatek,mt2701-hifsys.yaml
-> > index 9e7c725093aa..aa3345ea8283 100644
-> > --- a/Documentation/devicetree/bindings/clock/mediatek,mt2701-hifsys.yaml
-> > +++ b/Documentation/devicetree/bindings/clock/mediatek,mt2701-hifsys.yaml
-> > @@ -16,13 +16,15 @@ maintainers:
-> >  properties:
-> >    compatible:
-> >      oneOf:
-> > -      - enum:
-> > -          - mediatek,mt2701-hifsys
-> > -          - mediatek,mt7622-hifsys
-> > +      - items:
-> > +          - const: mediatek,mt2701-hifsys
-> > +          - const: syscon
-> > +      - const: mediatek,mt7622-hifsys
-> >        - items:
-> >            - enum:
-> >                - mediatek,mt7623-hifsys
-> >            - const: mediatek,mt2701-hifsys
-> > +          - const: syscon
-> >  
-> >    reg:
-> >      maxItems: 1
-> > -- 
-> > 2.51.0
-> > 
+I was able to reproduce this issue and the following workaround avoid=20
+the hang in my case:
 
--- 
-	Ansuel
+diff --git a/drivers/clk/bcm/clk-raspberrypi.c=20
+b/drivers/clk/bcm/clk-raspberrypi.c
+index 1a9162f0ae31..94fd4f6e2837 100644
+=2D-- a/drivers/clk/bcm/clk-raspberrypi.c
++++ b/drivers/clk/bcm/clk-raspberrypi.c
+@@ -137,6 +137,7 @@ raspberrypi_clk_variants[RPI_FIRMWARE_NUM_CLK_ID] =3D =
+{
+ =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 [RPI_FIRMWARE_V3D_CLK_ID] =3D =
+{
+ =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 .export =3D true,
+ =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 .maximize =3D true,
++=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 .flags =3D CLK_IS_CRITICAL,
+ =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 },
+ =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 [RPI_FIRMWARE_PIXEL_CLK_ID] =
+=3D {
+ =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 .export =3D true,
+
+The proper fix should be in the clock consumer drivers. I found that=20
+vc4_v3d doesn't ensure that the clock is enabled before accessing the=20
+registers. Unfortunately the following change doesn't fix the issue for=20
+me :-(
+
+diff --git a/drivers/gpu/drm/vc4/vc4_v3d.c b/drivers/gpu/drm/vc4/vc4_v3d.c
+index bb09df5000bd..5e43523732b4 100644
+=2D-- a/drivers/gpu/drm/vc4/vc4_v3d.c
++++ b/drivers/gpu/drm/vc4/vc4_v3d.c
+@@ -441,7 +441,7 @@ static int vc4_v3d_bind(struct device *dev, struct=20
+device *master, void *data)
+ =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 vc4->v3d =3D v3d;
+ =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 v3d->vc4 =3D vc4;
+
+-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 v3d->clk =3D devm_clk_get_optional(d=
+ev, NULL);
++=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 v3d->clk =3D devm_clk_get_optional_e=
+nabled(dev, NULL);
+ =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (IS_ERR(v3d->clk))
+ =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 return dev_err_probe(dev, PTR_ERR(v3d->clk), "Failed to=
+=20
+get V3D clock\n");
+
+Best regards
+
