@@ -1,149 +1,89 @@
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D992C2E764B
-	for <linux-clk@vger.kernel.org>; Thu, 25 Sep 2025 05:12:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1194F6FC3;
+	Thu, 25 Sep 2025 05:31:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758777134; cv=none; b=Himh0VywJ+V8e0fmHeiiQQmHNjpRRgOY/Vw8ogTVqZ+CGdkC6EUL2vFhnSFrku+ueX/AMgcFoBqTPP9Hl6hzN99OdFVvJYVf5L20FI3iXuVrOBbg2lSrq60fgADQj1CepyPFPZmGkFPGnrC4wY++FgiZi/E0oZhm0Onf5gsP2nU=
+	t=1758778292; cv=none; b=TOTHfl2/nFYKGdnXOqYbByctOboTy+YSXAiKU2T9k2KNrHzbgpNx5WamTRz1aT+iQCDd9oMeCTevWB51Qq7Dm10FT6UvpDD67PgUAP40eJECkrB2NIYJ1FMWLrFaw+dB83gdZwFaS9vNs50MOHwvgDlEN8Exm+VjHsuLQdf6cb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758777134; c=relaxed/simple;
-	bh=Avqr8HnGdjNpI0VeVV6+KaR/c1MaFhWxGMGichT1BEM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=P6fbV7G48WYWyr/X81PXlJ+QxBvlqkwdouno3PkyFXU15JYp2TUrFM7pzj2/t5Uli1gwNPKeD9uKV5oB/kxasIQej3iSKU12JloI3soMXPV189SPq9u+OIn31mXPMAyLrS9zkCQ//VGXy/QWGRt/dTgnXJ6apjOi50ElOh8UAC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=nU28CeLp; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+	s=arc-20240116; t=1758778292; c=relaxed/simple;
+	bh=MuMIWBOOKsTqjpiSXFq9YXCQld8+ryrFY/LjXvw78nY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KeIqFS3bJWhzMywAUa2lTIuYbPzU1gD601BlbXQfwfyKAynRbVgrY/cpzJSpn6Z0vCAAGrLHNUrBETVEej6gIHwuv/EOwucyiw60xYKi2QamTs7sxpoD3UKhTwg8VDamr3ZmI3/2p6VxVZPH4IH3KM5jJhsYXMHgBk4+GoJhZJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=r+gJW21t; dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=7H/Wq/K/; arc=none smtp.client-ip=5.75.144.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="nU28CeLp"
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-57eef777d3eso575720e87.1
-        for <linux-clk@vger.kernel.org>; Wed, 24 Sep 2025 22:12:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1758777130; x=1759381930; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PI+7onH5XvxEzfPDOfe7phWFijmEPWLyir8RpU4z3xc=;
-        b=nU28CeLpV3eJrARL1sawqaEIluYSWQ0NXR0cCY7/n8a+90o5RN82iRg7A1MJv3RKiu
-         G8bpugV25Q83uZrBHPWxe2q3Ew2vznwKOcozMTBXm5I+YbmmVvFQVPxmv6jVwsimMyfT
-         gTtZpgKKL4aYGEyNYAeKcMhddawCYR0mVtj1JJ4AZ3vuB5VdM6HCODnHLN3mG27ws5u8
-         1qPLR6fDl8EEruiKZF8SGdJChraqOrYt2smQnUMAImM1CjJaknrrt9Gv+2MSt0li4WBk
-         3iR7N6jdyeoJO9gSudiPUAFgiCW8O22c9BwlROZtCdiDQeNef8WgZczd34ciNPfDp0/H
-         G0mg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758777130; x=1759381930;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PI+7onH5XvxEzfPDOfe7phWFijmEPWLyir8RpU4z3xc=;
-        b=ViIhmPpB7poBSDqElcFM1dcV2h+i69rLBBZ01Rnd/PDrYwTkT7a3yQbytyzdT3+2Ct
-         vZBN8l/4onAbUrjfL2tEWLXTzsBzsqoUwXGf8RaY1Pjqsb2DhMD4GJs2xT+UC0b3dX/K
-         xbPY15cPDMkwz5tUwlGISMgMSQg3zU4RgDiaTLal7KzFKYbvcgsD6EWZOi7s9Q9MbhqJ
-         ByYbNyAQEl92JABvZRhbN2WwCycwq4BP7++xwHAL9vs0pYMDoX8LImdbE1BGUEP2H8MV
-         rh6s5Nr7BxAUdZwgPXpBFK9Bivf3JDDuiAXlWIrvSuX6U4ouj8Aq1bAVn8z/ZzFB9bzU
-         uXKw==
-X-Forwarded-Encrypted: i=1; AJvYcCWJN2AoTlTx+AosKh9r8leg7XZcU1J6qtD8UNpeBy0eFrdj4IeSC6k5zxggIj5dxC10R7hbusCiv3g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7twvqF6Rr2qM4gwhl5fsKgazlzJjswaxik4qJMPd00GXIRYCe
-	Eji6lXEs40NM/uFUZszd7Z8pi2+HsuAI9m8SEZBNn4+MDKP9Og+GHK4rreIIOxGmcYoAmSdJKPh
-	RY0CT+sVDQsMEYnhShODqOq/khuTRRx0rtg1PSQGYWA==
-X-Gm-Gg: ASbGnctUWG8XU5Y4DEt7gLS+As6YmnbHB0U7C9pJ58yZQg9dt228aWuoNfl71dFsKsC
-	qvBgeAsXMIqjvYy0LXAH3peppfWhvjEofcY+XAdl0w92LztEs4m56NngDJOnnlVj3SdUQypf1PJ
-	mV+g2/m4zx8euBCdsxtbQL+h7Wl0WP1GvZ7l8MZF51IWHXDNFdmUc8vw/zvuxWDwZodpo8rPT4m
-	daUuxNN
-X-Google-Smtp-Source: AGHT+IEktZxYjboDWNx3pIVxQ7MOelyp8TNGnFov7A2S6wtkwb7jZL+tldrXK8Tjm4TA2xHmbLoncH4PXr9GUwjTepk=
-X-Received: by 2002:a05:6512:2c08:b0:579:f4b3:bd2d with SMTP id
- 2adb3069b0e04-582d406c4f6mr540270e87.57.1758777129874; Wed, 24 Sep 2025
- 22:12:09 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="r+gJW21t";
+	dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="7H/Wq/K/"
+DKIM-Signature: v=1; a=rsa-sha256; s=202507r; d=mainlining.org; c=relaxed/relaxed;
+	h=Message-ID:Subject:To:From:Date; t=1758778235; bh=15jVDoRkTQI4moI14kL6/Hu
+	HLvXXwZlH8CR70zusrGk=; b=r+gJW21tDHRnMFA6wikCcWjX1XVKMP+yliQIoP/+sFDwQcjEc+
+	c17V+Ls0IvmmBwvXnSn1HooMulkAFfDl5D3q2oAmS8jaN+HsOsMJUaXzFy2NKXL7dVBawT6redO
+	qazX5po5MKIGokKocr27/3LBlKGKiZzbf+IFjjYB1/2759M06356juEJC4zJil6SeIWgeV4WkP2
+	LFqGk/CERuHyjtHIVLdsuSTuYPyjh05MRy82E3Aqedd9MhvObD6/d7QjqaSuOjlxie/p+XVO30A
+	28hLM6fFESkdGY40N0+/rJU06NTKjOQg9MVXxFN1/EdRDz2+RnBvQ9MXTqD2xhakqOg==;
+DKIM-Signature: v=1; a=ed25519-sha256; s=202507e; d=mainlining.org; c=relaxed/relaxed;
+	h=Message-ID:Subject:To:From:Date; t=1758778235; bh=15jVDoRkTQI4moI14kL6/Hu
+	HLvXXwZlH8CR70zusrGk=; b=7H/Wq/K/fqu/IRvYGMkd8GhMTFzBbVCPVCga+abr+ROdi4TkbN
+	FFw1WO2QYYzw7U9buFGAZExo7VPOfP3/bHDQ==;
+Date: Thu, 25 Sep 2025 12:30:26 +0700
+From: Dang Huynh <dang.huynh@mainlining.org>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Manivannan Sadhasivam <mani@kernel.org>, 
+	Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Vinod Koul <vkoul@kernel.org>, 
+	Ulf Hansson <ulf.hansson@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
+	linux-arm-kernel@lists.infradead.org, linux-unisoc@lists.infradead.org, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+	dmaengine@vger.kernel.org, linux-mmc@vger.kernel.org, linux-hardening@vger.kernel.org, 
+	Conor Dooley <conor.dooley@microchip.com>
+Subject: Re: [PATCH 00/10] RDA8810PL SD/MMC support
+Message-ID: <hrgwhmzmu5wpggk7aatuaxc5bnxmjvs4jthxicxekniux5jlbm@lre4gzt75wea>
+References: <20250919-rda8810pl-mmc-v1-0-d4f08a05ba4d@mainlining.org>
+ <CAMRc=Mc4hO1LDumxAfkB1W6miTJXR1NUVAKBVarkwiF2yGvSLA@mail.gmail.com>
+ <2wwi3ktbcuyp7y7mqplndvawagae5hdhcx3hn375kycoqtows6@xcww2237rxpe>
+ <CAMRc=MdhQMR=-ayz+GfigUMVy+j1QNO3LguMoZYa5_+Es3E5Ow@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250818040920.272664-1-apatel@ventanamicro.com>
- <20250818040920.272664-8-apatel@ventanamicro.com> <405a78ce-de03-382b-cab9-bb086e28505b@kernel.org>
-In-Reply-To: <405a78ce-de03-382b-cab9-bb086e28505b@kernel.org>
-From: Anup Patel <apatel@ventanamicro.com>
-Date: Thu, 25 Sep 2025 10:41:58 +0530
-X-Gm-Features: AS18NWCrNThCby3qXMZJBv9AykyLw-ADGqc2ECmLSjZN6XRRbEa6InFMj8l_zYI
-Message-ID: <CAK9=C2Vr4rgj8wfT+Ogow1H-7Lu=6XdWA2Qe++6523P76pMZzQ@mail.gmail.com>
-Subject: Re: [PATCH v10 07/24] mailbox: Add RISC-V SBI message proxy (MPXY)
- based mailbox driver
-To: Paul Walmsley <pjw@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jassi Brar <jassisinghbrar@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	"Rafael J . Wysocki" <rafael@kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
-	devicetree@vger.kernel.org, Andrew Jones <ajones@ventanamicro.com>, 
-	Alexandre Ghiti <alex@ghiti.fr>, Atish Patra <atish.patra@linux.dev>, 
-	Leyfoon Tan <leyfoon.tan@starfivetech.com>, Anup Patel <anup@brainfault.org>, 
-	linux-kernel@vger.kernel.org, Samuel Holland <samuel.holland@sifive.com>, 
-	linux-acpi@vger.kernel.org, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, linux-riscv@lists.infradead.org, 
-	Len Brown <lenb@kernel.org>, linux-clk@vger.kernel.org, 
-	Rahul Pathak <rpathak@ventanamicro.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMRc=MdhQMR=-ayz+GfigUMVy+j1QNO3LguMoZYa5_+Es3E5Ow@mail.gmail.com>
 
-Hi Paul,
-
-On Thu, Sep 25, 2025 at 5:57=E2=80=AFAM Paul Walmsley <pjw@kernel.org> wrot=
-e:
->
-> On Mon, 18 Aug 2025, Anup Patel wrote:
->
-> > Add a mailbox controller driver for the new SBI message proxy extension
-> > which is part of the SBI v3.0 specification.
-> > ---
-> >  drivers/mailbox/Kconfig               |  11 +
-> >  drivers/mailbox/Makefile              |   2 +
-> >  drivers/mailbox/riscv-sbi-mpxy-mbox.c | 994 ++++++++++++++++++++++++++
-> >  3 files changed, 1007 insertions(+)
-> >  create mode 100644 drivers/mailbox/riscv-sbi-mpxy-mbox.c
+On Tue, Sep 23, 2025 at 09:48:41AM +0200, Bartosz Golaszewski wrote:
+> On Tue, Sep 23, 2025 at 5:45 AM Dang Huynh <dang.huynh@mainlining.org> wrote:
 > >
-> > diff --git a/drivers/mailbox/riscv-sbi-mpxy-mbox.c b/drivers/mailbox/ri=
-scv-sbi-mpxy-mbox.c
-> > new file mode 100644
-> > index 000000000000..21404baa6df0
-> > --- /dev/null
-> > +++ b/drivers/mailbox/riscv-sbi-mpxy-mbox.c
->
-> [ ... ]
->
-> > +
-> > +static int mpxy_mbox_populate_channels(struct mpxy_mbox *mbox)
-> > +{
-> > +     u32 i, *channel_ids __free(kfree) =3D NULL;
-> > +     struct mpxy_mbox_channel *mchan;
-> > +     int rc;
-> > +
-> > +     /* Find-out of number of channels */
-> > +     rc =3D mpxy_get_channel_count(&mbox->channel_count);
-> > +     if (rc)
-> > +             return dev_err_probe(mbox->dev, rc, "failed to get number=
- of MPXY channels\n");
-> > +     if (!mbox->channel_count)
-> > +             return dev_err_probe(mbox->dev, -ENODEV, "no MPXY channel=
-s available\n");
-> > +
-> > +     /* Allocate and fetch all channel IDs */
-> > +     channel_ids =3D kcalloc(mbox->channel_count, sizeof(*channel_ids)=
-, GFP_KERNEL);
->
-> Should this be devm_kcalloc() ?
->
-
-The usage of channel_ids array is limited only to this function
-(mpxy_mbox_populate_channels()) hence we are using scoped
-kcalloc() so that channel_ids will be automatically freed when
-mpxy_mbox_populate_channels() returns.
-(Refer, "__free(kfree)" attribute in the channel_ids declaration)
-
-The scope of memory allocated using devm_kcalloc() is the entire
-lifespan of the device which is not needed for channel_ids.
-
-Regards,
-Anup
+> > On Mon, Sep 22, 2025 at 04:17:05PM +0200, Bartosz Golaszewski wrote:
+> > > On Thu, Sep 18, 2025 at 8:49 PM Dang Huynh via B4 Relay
+> > > <devnull+dang.huynh.mainlining.org@kernel.org> wrote:
+> > > >
+> > > > This patch series aims to add SDMMC driver and various drivers required
+> > > > for SDMMC controller to function.
+> > > >
+> > > > This also fixed a bug where all the GPIO switched from INPUT to OUTPUT
+> > > > after the GPIO driver probed or by reading the GPIO debugfs.
+> > > >
+> > > > This patch series is a split from [1] to ease the maintainers.
+> > > >
+> > >
+> > > This is still targeting at least 4 subsystems and isn't making the
+> > > merging any easier. Are there any build-time dependencies here? If
+> > > not, then split it further into small chunks targeting individual
+> > > subsystems and the relevant ARM SoC tree.
+> > The MMC driver depends on both the clock and the DMA driver.
+> >
+> 
+> But is the dependency a build-time one or does the MMC DT node
+> reference clocks and the DMA engine by phandle? I assume it's the
+> latter in which case it's fine for them to go into next separately.
+Yeah, it's the latter. I'll submit a v3 in the future.
+> 
+> Bart
