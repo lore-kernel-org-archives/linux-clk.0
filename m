@@ -1,144 +1,84 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1198721CA13;
-	Thu, 25 Sep 2025 13:12:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FEC0221558
+	for <linux-clk@vger.kernel.org>; Thu, 25 Sep 2025 13:14:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758805928; cv=none; b=h9DtGU6lAhewr1HMd0e4CDJQnR6PvQBJSaWAMcJXremkzpt975A+9Pd53ZwQsk5QbrYyOBuUr71HKQvamsCH4RmLHc5EBSVzsUwNpXBBJ92lXrfWVjOTzOv3ipsoQIkrmTwmmva/RHMnU0LRXTrQmfCM8bf56ftswlj+a5WiFFA=
+	t=1758806098; cv=none; b=MaVhcG1/7+HWMD5/JaWV5OTwQjd85taKQ6/FCGcp42Vdx0yQcXHEdCRRnp54JGTfGVSD0KIgOddcX5I7oRv0DZOdxeywlEVcjvzIwZQpArGv4X2XaRihI/aBni4QFemH/vXQzZDAvn6MuOfyTQP6We+Tju0J1poHnOEa+t03t0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758805928; c=relaxed/simple;
-	bh=hCbg+xH0PAFSHq/z2bdjQ4pq3+Cnx9PLmBUG/OA2ris=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a/EwxcNcO0Swac8FSlS2rAQpgkewADLNnLxDgb9V3trdvDSEhE2Z1410cse685TdtVgsIKt5vTDp8WpcpQbtff6KEmuU73OnG8FuX9KkHOqP04y/7gPYFrCIsWZ9Fc6Bvjoh6HvdK+HoKZYdWMkYnNcUson8XNbTDKB8CIC8u1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oAnizgjI; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1758806098; c=relaxed/simple;
+	bh=062M6/8j4NBzg2XWFjfBe/0J/9992fP3Zjk0wG8eK8s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kDoguZyYXBXL54NbU/Ev9AV4xOay1AzhWIlHWA0TBonheODWJTo+lUU3c9frkA1quZ3vXCEgjAfgv+EHt+y9D/lLa7ol3n6/CkG16tcqUVA7kBxUeD/7GtClYgSE+Jp/48EbYSEr8v6ykmikRt5faANXAlWXRgFovZzfEjeBTY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J3jlgsRY; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oAnizgjI"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D07E6C4CEF0;
-	Thu, 25 Sep 2025 13:12:05 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J3jlgsRY"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D7FDC113D0
+	for <linux-clk@vger.kernel.org>; Thu, 25 Sep 2025 13:14:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758805927;
-	bh=hCbg+xH0PAFSHq/z2bdjQ4pq3+Cnx9PLmBUG/OA2ris=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oAnizgjI5yWSwS247xUL1Al1T++xVE+5Ckc0md+K/OeloABVWqUpTznDhQP7Ha4FM
-	 z6iyGrVpaWU+VYgcG/8rsA1gQWAmWIyq4dgY7brtt1Vl5h16cutxxXRt+VAH90oVHq
-	 Hjt/xHdyJxnU770UqWU+ioF2kPwvCUU27LEDHkhTTaLf5x67Mzg80k4F30/nvaC5yy
-	 OWMFV0jXJYaKYDbfzzLesYN9ITDeHa7prYLFuwb587YSwMc40+UCxnx2w2t8scpj7t
-	 Ql0bdQc+wIHIAjbDCva1q0rEMfDeM1zWPquSqLTpDRARLjAUVUr3+sZrcQJPy0WTJO
-	 Mnwluuq3UnhrA==
-Date: Thu, 25 Sep 2025 08:12:04 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Taniya Das <taniya.das@oss.qualcomm.com>
-Cc: Bryan O'Donoghue <bod@kernel.org>, 
-	Jingyi Wang <jingyi.wang@oss.qualcomm.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, 
-	Jagadeesh Kona <quic_jkona@quicinc.com>, Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, linux-stm32@st-md-mailman.stormreply.com, 
-	linux-arm-kernel@lists.infradead.org, aiqun.yu@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com, 
-	trilok.soni@oss.qualcomm.com, yijie.yang@oss.qualcomm.com
-Subject: Re: [PATCH 2/9] dt-bindings: clock: sm8450-camcc: Remove sc8280xp
- camcc to from sm8450 camcc
-Message-ID: <g2e5ejykf6nteipzsybbjjjcdvko4yg664uxh57bi3ty3cljh4@5mv5ki2cqyg3>
-References: <20250924-knp-mmclk-v1-0-d7ea96b4784a@oss.qualcomm.com>
- <20250924-knp-mmclk-v1-2-d7ea96b4784a@oss.qualcomm.com>
- <a8ebec72-eee2-4a02-ac6b-57678aa7c50f@kernel.org>
- <1c90a127-4b39-4cad-9805-d4449990baa7@oss.qualcomm.com>
+	s=k20201202; t=1758806098;
+	bh=062M6/8j4NBzg2XWFjfBe/0J/9992fP3Zjk0wG8eK8s=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=J3jlgsRY0/E6Z4oiW+LnGS/HJQC3hSvvTz3GdG2WpmcNMywVtx5FgvBYswTN0y63A
+	 CY7WZCYcrAvR9n5JYYhPld9yuB0K9R3zwKH5JMCrQLvqq+Tpqc8+aJft2R8pZ/YDjO
+	 xKYKkvQlXMv2dLj6FRuMFAlZqaguPnpSCv/FmuQ7egNRDcziNADCPrnI0FfuG4fe6t
+	 SHS7/m5vr0YzA1bm5ZraTT9wnwijSpxEKS7+nwVNJ+wqNmkIf9zjXEKZm9xpVaJota
+	 ESagvtM5tb0GlYoHqxN4kwYAVVve2IhoFrMwNApJ1J2+O0RxOZpJx+Gqbiz0BfskDv
+	 kxT3RDlfI7/wA==
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2698384978dso7355985ad.0
+        for <linux-clk@vger.kernel.org>; Thu, 25 Sep 2025 06:14:58 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWj9u+Fpp+/bEqZKnlYnaeNZVKhPqLWZW1Pl1CNtEyz4qLFk8yVBnNy43AgKpMKxowXvNx1ZpWyGfo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQhG3nvHzwKGP2hYh1jiStzUHn1IW4epVQVi3LwzZ73+K13pCF
+	/kCBAG0y+PFBlVzKrp4ssDJqD0p7iYDB3v3RngIjhlIzp+HcTBBoYR3zMQ915n8nGzI7DfIDKzT
+	QrPmVMhHfpwLDz36iBRUdigKxfKUw3Jk=
+X-Google-Smtp-Source: AGHT+IEZTnk4r2+Yb8GhN2efY3oHv0w7Pj85s3V/DNwMNZqwPOEwouLCSWf6XxrASX7zuc/9JwLdyD/Xi3x6JTBBRwk=
+X-Received: by 2002:a17:902:ebca:b0:269:ba77:4eea with SMTP id
+ d9443c01a7336-27ed4a92b47mr39799145ad.46.1758806097880; Thu, 25 Sep 2025
+ 06:14:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1c90a127-4b39-4cad-9805-d4449990baa7@oss.qualcomm.com>
+References: <20250924-knp-mmclk-v1-0-d7ea96b4784a@oss.qualcomm.com> <20250924-knp-mmclk-v1-2-d7ea96b4784a@oss.qualcomm.com>
+In-Reply-To: <20250924-knp-mmclk-v1-2-d7ea96b4784a@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Date: Thu, 25 Sep 2025 22:14:44 +0900
+X-Gmail-Original-Message-ID: <CAJKOXPc2LwFCW8w5kDEZPAOPz1Y_ix0=jjUHQDHXW03wdcufsg@mail.gmail.com>
+X-Gm-Features: AS18NWCtGqOMFzAGGyQqpY8JXXlJLDCy6kxa6YEKNYiE0F2TiXpsp24xv7MAzJw
+Message-ID: <CAJKOXPc2LwFCW8w5kDEZPAOPz1Y_ix0=jjUHQDHXW03wdcufsg@mail.gmail.com>
+Subject: Re: [PATCH 2/9] dt-bindings: clock: sm8450-camcc: Remove sc8280xp
+ camcc to from sm8450 camcc
+To: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, 
+	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, Jagadeesh Kona <quic_jkona@quicinc.com>, 
+	"Bryan O'Donoghue" <bryan.odonoghue@linaro.org>, 
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Taniya Das <taniya.das@oss.qualcomm.com>, Konrad Dybcio <konradybcio@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, linux-stm32@st-md-mailman.stormreply.com, 
+	linux-arm-kernel@lists.infradead.org, aiqun.yu@oss.qualcomm.com, 
+	tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com, 
+	yijie.yang@oss.qualcomm.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Sep 25, 2025 at 02:14:01PM +0530, Taniya Das wrote:
-> 
-> 
-> On 9/25/2025 1:59 PM, Bryan O'Donoghue wrote:
-> > On 25/09/2025 00:56, Jingyi Wang wrote:
-> >> From: Taniya Das <taniya.das@oss.qualcomm.com>
-> >>
-> >> SC8280XP camcc only requires the MMCX power domain, unlike SM8450 camcc
-> >> which now supports both MMCX and MXC power domains. Hence move SC8280XP
-> >> camcc from SM8450.
-> >>
-> >> Fixes: 842fa7482915 ("dt-bindings: clock: qcom,sm8450-camcc: Move
-> >> sc8280xp camcc to sa8775p camcc")
-> >> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
-> >> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-> >> ---
-> >>   Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml | 1 -
-> >>   1 file changed, 1 deletion(-)
-> >>
-> >> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8450-
-> >> camcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8450-
-> >> camcc.yaml
-> >> index c1e06f39431e..dbfcc399f10b 100644
-> >> --- a/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
-> >> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
-> >> @@ -63,7 +63,6 @@ allOf:
-> >>           compatible:
-> >>             contains:
-> >>               enum:
-> >> -              - qcom,sc8280xp-camcc
-> >>                 - qcom,sm8450-camcc
-> >>                 - qcom,sm8550-camcc
-> >>       then:
-> >>
-> > 
-> > This is not a revert.
-> > 
-> > Where does the compat string go ?
-> > 
-> 
-> The compat is now part of
-> Documentation/devicetree/bindings/clock/qcom,sa8775p-camcc.yaml as part
-> of this commit "842fa7482915".
-> 
-> > You are missing the part where you move the compat string to where you
-> > think it should be...
-> > 
-> 
-> It was already moved as mentioned above.
-> 
+On Thu, 25 Sept 2025 at 08:57, Jingyi Wang <jingyi.wang@oss.qualcomm.com> wrote:
+>
+> From: Taniya Das <taniya.das@oss.qualcomm.com>
+>
+> SC8280XP camcc only requires the MMCX power domain, unlike SM8450 camcc
+> which now supports both MMCX and MXC power domains. Hence move SC8280XP
+> camcc from SM8450.
+>
+> Fixes: 842fa7482915 ("dt-bindings: clock: qcom,sm8450-camcc: Move sc8280xp camcc to sa8775p camcc")
 
-I'm sorry, but I don't see where you say this. 
+Trim your cc list. You do not have to send it to 50 people.
 
-The commit message is a verbatim copy of the first paragraph of commit
-'842fa7482915 ("dt-bindings: clock: qcom,sm8450-camcc: Move sc8280xp
-camcc to sa8775p camcc")', where that comment makes sense. But here's
-you're no longer moving something.
-
-Please help me understand what I'm missing.
-
-> > Also why is this patch appearing in a series about _adding_ Kanaapali to
-> > CAMCC ?
-> > 
-> 
-> This was to reduce less dependency on the series.
-> 
-
-Had you sent this patch last week, I would have merged it into v6.18 and
-there wouldn't have been any dependency.
-
-Regards,
-Bjorn
-
-> > NAK
-> > 
-> > ---
-> > bod
-> > 
-> 
-> -- 
-> Thanks,
-> Taniya Das
-> 
+The patch is obviously NAK, if you bothered to test it, you would see warnings
