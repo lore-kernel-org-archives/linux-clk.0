@@ -1,67 +1,67 @@
-Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
+Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 431B62BDC14
-	for <linux-clk@vger.kernel.org>; Thu, 25 Sep 2025 13:54:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78DDE28489C
+	for <linux-clk@vger.kernel.org>; Thu, 25 Sep 2025 13:55:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758808496; cv=none; b=R58GAmPnHXas58TlPetmw1ErKrDZffz1WZv9LzDynXEbxONX0mYM3Z19XzgSU+lQS865H5ABhJP90omA/qIKRuVWy5H8jh+vKYa71FX1F0XwS52MmLU4eC/3ixUYCmF+uqh2X8Kph73xXG2Ul0iW/Iu2YLvexKN612a79j6CURU=
+	t=1758808502; cv=none; b=Tysa2tY6aJ5IHynxOSVo2Ssbi+E2Een94KWrXBT6rnymjhjh2kCf8XMQP3sYizMu3mk3pu5MkqBktxMANTTtn8cmtweMXUFJhocct5VqfvCve7YDuhw4zxYacxxh3vMk0hQghdgnaNffAXuG3IQJmaw4L2C7fUZpAgxyaNrh5ss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758808496; c=relaxed/simple;
-	bh=Min9lnjKt/hlKTHKx8DHe+UjEz1oTNKYHDrlD//vrww=;
+	s=arc-20240116; t=1758808502; c=relaxed/simple;
+	bh=tEhBaBJnhQFO++GmUh6w8m63Mr6JSvoXu3wOHmq14e0=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=FpGwxPy2/LEXerHKM3fp9gFOuZ843iGNUA0WAHBFFdXA6vgE0V+iuQ2uOrOBo0r/k/20VbrfyPeqiVaQZmkxUrp4xzXy8FzvTixkCCEniq4dVoTSfWE2wYDIYdRohXRJgxqaDbn/IQxRrNEBf51/qULaoSPKVv/P/4CQtkisrno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S1LvN2ul; arc=none smtp.client-ip=209.85.219.51
+	 In-Reply-To:To:Cc; b=HPZw0EEs1j86PQQ6DaEkQAtp/uAYmAm+dnH0s/0OXzFUeZuO3l/XxvjIQr3GD+5fUs1lZrF9kPB6vacTubQdtthm9Bg0mB0fenLCiHHdmQW2qAVwkvwlnHxcYfh1bbT5qm0C1FdsqWBuayVoY+ZMG2Mc7U8zR26kYpVWvJSDeWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X+cODE8g; arc=none smtp.client-ip=209.85.219.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S1LvN2ul"
-Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-78393b4490cso7647476d6.0
-        for <linux-clk@vger.kernel.org>; Thu, 25 Sep 2025 06:54:53 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X+cODE8g"
+Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-78febbe521cso7152426d6.2
+        for <linux-clk@vger.kernel.org>; Thu, 25 Sep 2025 06:55:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758808493; x=1759413293; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1758808499; x=1759413299; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=NcH0HLOTSj/FtySm//oEeXI3qjx7RwnfgKjEtc013kc=;
-        b=S1LvN2ulyuYlC3JWx5P5dkUrvUIOGi9gQL/n8rTKAAcrRyMSLnFoSen2I6NFWmm6A9
-         EXjjsdoM17SO5e44MMD6uU2ZYn6rWgpyGarbUeLpB9nl9ihi1fKt6C9HqDyCeUnPVdi1
-         Y+1LLN8O5/jnpyRfOUwNwTPFjHajLABxQU8p/K+rnLLwOs5fmFdUHWCM1YjSo24Hx9OR
-         EVIOBfOGs2rr461N46M/3Xa95WPkUE4ujXu7cNkGFT9v1f9XzVn2+UFIQ9Hood1imnrP
-         r2YxhgCSqNkb9y5sW2wM6xRjIdBzGTw4cNUkw3eMXG9BPax2jsl0LsEqWpeWn235zc6G
-         WpGw==
+        bh=XVSYVBz+/C/3yUXq0+Xlzki5tMQiQIQTN1ASo1OgvYI=;
+        b=X+cODE8gpcyrA5FeL130iIoEK2/eyLm4jvpb2LplgGzizzyT5BcZY7Q/Mpmz1VoVAO
+         SJDNVPXmqsZMqD+NQb6+JkQUviwFh1qkH7cIOFoc/xah7Yo19jSz0GZP9qoOZsyu1Uiw
+         8I3n2Fdtzr+mEzFrqoXozNdzbpq0vZbBU8/dt3PWHB32wXAIVjoyNwZHTbWwu/btTQ6d
+         GCWZSbQZUYgU0yFAydilmIm+tQaeSkBeoHNKiDCoNsFFKu/o0odqaC3VHhrMoapxRWAX
+         H/90suxrOSxo151ZsRHOCms0ShPgsFRpVkfnIdH8MaE18pah7e+z3YhErUKAHvL0tQwe
+         lT4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758808493; x=1759413293;
+        d=1e100.net; s=20230601; t=1758808499; x=1759413299;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=NcH0HLOTSj/FtySm//oEeXI3qjx7RwnfgKjEtc013kc=;
-        b=SmNkrBzG9L3DfL5pV6bnMFmthiZLGukAEkj7ayiPU7gI9ngvBx6XrTbutork2ZBstv
-         DjWD2ZAWKBpy/F/o3HZBAx95V6RzKTrqQvVJ/WRebsBDxACJnywQke/vwBDZWYvD0INk
-         upeq+yEB97H2nHHsFxeEjadX3tvz5+j5nNdH+P008w/cvcEpi/gNkxtIprtbkMeUCyVz
-         DtfGzSMObqZVuOlx/3HpKc/04XM7l2NkplX7fLypD1pO0RlB6kRmNXZnfwAqFWI03/rb
-         jn02t97M1P+cp3/LBbwh+VVDanE1lX/RpgSrsFbUk8MzwxgShhIKR+NSz+OC7uRQFUye
-         bLZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWGucidaKsrWcvpz8OBlJ/x7tqn6oeDmxUYN8cUqps4Od8Y/psvmep1/cnstqAEdzCA5SrWSQSnwXw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7F44Zhjlt9CXxAtRO7aP9t4cnIpSlCipxeSW1Y2TPVC7WCXjQ
-	1QNssaEBCQAM+RZ0ixlWWBRebvHq3TEIQXbCFuI/BXYjb9O/76ChZYn+
-X-Gm-Gg: ASbGncvdGTtfH3fzfQMB/Fv4xsjGl6d+PvqGgPr/9HGnv8iWqHz/IaY+ZfASw/MLJOj
-	LDyV86xuA6VzpyIA9OCA+GN5h2WgH6fpCXyrWAooU8TGeFXd9OZdtthBcKWNgEotHqromDXYd2f
-	9/122gOtEkaYt9miCZfN8THtelmtaRw968gZ36muYWsmfXiFGiWw0eu3bqMhO+nR9AkvSBBw3gS
-	fjUd0+f/k6vVNvR+EecMSGzbpyoli6jt3Vh/ASta11QOWQoRwgsNiyXnTeNELCms3FgfSqHMAn1
-	SCORxfdJqQMenWF6JmkxftIynArXeqayLHkem7EnG6apXCLBWeWybuOE9bh1zksZ7eqBHH1XXOT
-	VfZpXmNov7X7Be7A/5GL8knDYuEXtYZP1kMDSrUOCa87NcHvkjhsuMMGjJKVj3Y85Vy0bbdfLvB
-	bS5JfiqidSKCj1sFAlNLVi8dZhyA1PiXKdDIHC4M7GW697Q3gxcHVx/IQSxqZ5x62PdWP8
-X-Google-Smtp-Source: AGHT+IFFa6JfDTmizjqmxfQvOyAEd2lLRtwY0ex2OgZ0+m8iJA/xUn2p1/EJZbMyBxylc7ieBx66XA==
-X-Received: by 2002:a05:6214:20e5:b0:786:50ca:73dd with SMTP id 6a1803df08f44-7fc40d25d17mr51916906d6.46.1758808492358;
-        Thu, 25 Sep 2025 06:54:52 -0700 (PDT)
+        bh=XVSYVBz+/C/3yUXq0+Xlzki5tMQiQIQTN1ASo1OgvYI=;
+        b=aglef8rXDIa+xUrgMMMCXQlvrWfiYZ2raPhzcFRqK32lndqZ8tqfFpHwS0NDQauOK6
+         lds6I2JNVhiUWv+Jd1/LmaPxOnupMRTFf56j0J4oV9uozmpXOZsXCvjForCK22JRfUZg
+         iTOwqj/vgW7TUd3P9QuZpSACiZgF7rUn2cXJBpxgYi6OfC6T/ILudLyk02giiKx2fRlF
+         cGOkSOh10gwTe/wtyES0zSEYh9gtthqi679H7pFoR8R7huuTO5BZkC86tlOXFAlR0rac
+         P+qdRHq4xIRHb/OuhBis/E0lZhJis8wuDaScuhYfToDa4urXVtxdJppxVpCnuRvDIeA/
+         Uqhw==
+X-Forwarded-Encrypted: i=1; AJvYcCXitDZWSZxGJjy1vXddTASQ8Aj4f2Yq8os+coV/69dDseTqyMEN3GfP7ZfiETVdEl9RFxiRKbPjESg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0lugnIXuSaNSSqQ8GhG0aFhvoLLuJhffDfsfEZq6+NOHAE0ie
+	7CQ6BGIOrODQs39YJFJ5UiPswYMzraGLqPLAI1ZmYvlQeaU9oz0ejuxM
+X-Gm-Gg: ASbGnctGW4fdl7/Xp6WWHoM/3N/hgIxLTsySoH4Rk030cXupPmUloVENtTq7M0/43SC
+	29AcNBR4UGMsJH/ZBgyq5vFAKr7wnU+rVDmVdn6A1GbSb71AiSWrD/E25hHrKZ7kk2JJcq+BF2R
+	5oEEGa5/xwNeHHzMGs0Nq+Lk4vcqIOliBC4qe2T8zEGoY9kMkSCtaL9VufzSK50S/4PQWA5hu5M
+	afXN5pgd77B20pMQisDGjHKflL5dQuwhdWCPQLHuLkdfYB5ZPepxJNfv2OquDdMjROYaHrK021q
+	6vXoo0zzcz0StGBGUrtwB/agg1Uh+xunwuqPi3CsDKdFdI8Lx5VE7zpEVNu0IqtgSgPsqhdFCao
+	HnNyyM4L6FH+XNaLhvQ8AQhqHyGMqzKntrQkoNFmcM3YmfKF5MLSr0LrgP/4EYSy+B9bww3r8PG
+	0lOXg3ubPm7pvnVaeGS1yE+cQCgnmBPCtQAQPI/fNBkYhriBx4AXPbKjLJy8iAa+hhenE3
+X-Google-Smtp-Source: AGHT+IEssEmLNZcem/aKdLWetF1Fs16YPcmtFsn6hozzBuZs4Wn/CLmfl+Df8wHKJRPpg5SfyGzrZA==
+X-Received: by 2002:ad4:5deb:0:b0:78e:c5c7:1209 with SMTP id 6a1803df08f44-7fc3e015bc2mr57974806d6.56.1758808499295;
+        Thu, 25 Sep 2025 06:54:59 -0700 (PDT)
 Received: from 137.1.168.192.in-addr.arpa ([2600:4808:6353:5c00:7c:b286:dba3:5ba8])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-80135968d5esm11536916d6.12.2025.09.25.06.54.47
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-80135968d5esm11536916d6.12.2025.09.25.06.54.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Sep 2025 06:54:51 -0700 (PDT)
+        Thu, 25 Sep 2025 06:54:58 -0700 (PDT)
 From: Tamir Duberstein <tamird@gmail.com>
-Date: Thu, 25 Sep 2025 09:53:54 -0400
-Subject: [PATCH v2 06/19] rust: cpufreq: replace `kernel::c_str!` with
+Date: Thu, 25 Sep 2025 09:53:55 -0400
+Subject: [PATCH v2 07/19] rust: device: replace `kernel::c_str!` with
  C-Strings
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -71,7 +71,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250925-core-cstr-cstrings-v2-6-78e0aaace1cd@gmail.com>
+Message-Id: <20250925-core-cstr-cstrings-v2-7-78e0aaace1cd@gmail.com>
 References: <20250925-core-cstr-cstrings-v2-0-78e0aaace1cd@gmail.com>
 In-Reply-To: <20250925-core-cstr-cstrings-v2-0-78e0aaace1cd@gmail.com>
 To: "Rafael J. Wysocki" <rafael@kernel.org>, 
@@ -111,13 +111,13 @@ Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
  Tamir Duberstein <tamird@gmail.com>
 X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openssh-sha256; t=1758808437; l=2379;
+X-Developer-Signature: v=1; a=openssh-sha256; t=1758808437; l=2297;
  i=tamird@gmail.com; h=from:subject:message-id;
- bh=Min9lnjKt/hlKTHKx8DHe+UjEz1oTNKYHDrlD//vrww=;
+ bh=tEhBaBJnhQFO++GmUh6w8m63Mr6JSvoXu3wOHmq14e0=;
  b=U1NIU0lHAAAAAQAAADMAAAALc3NoLWVkMjU1MTkAAAAgtYz36g7iDMSkY5K7Ab51ksGX7hJgs
  MRt+XVZTrIzMVIAAAAGcGF0YXR0AAAAAAAAAAZzaGE1MTIAAABTAAAAC3NzaC1lZDI1NTE5AAAA
- QO2LsZad4F+RVkixHdOcMhyCY96m5gE5v9iNO38GMhdV/J/W7PblbDJmxH/UCygnEMUNp04FBPV
- HU86loJ89jQs=
+ QFEkzUjb+lD/w38vqtw9O/htNaxJTX/sabnw4QloRojDdlHFE7uz1iz3IfwN44ls/ZjS7SJYOQu
+ /SzXo2WM/nAo=
 X-Developer-Key: i=tamird@gmail.com; a=openssh;
  fpr=SHA256:264rPmnnrb+ERkS7DDS3tuwqcJss/zevJRzoylqMsbc
 
@@ -127,64 +127,54 @@ C-String literals were added in Rust 1.77. Replace instances of
 Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 Reviewed-by: Benno Lossin <lossin@kernel.org>
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Acked-by: Danilo Krummrich <dakr@kernel.org>
 Signed-off-by: Tamir Duberstein <tamird@gmail.com>
 ---
- drivers/cpufreq/rcpufreq_dt.rs | 5 ++---
- rust/kernel/cpufreq.rs         | 3 +--
- 2 files changed, 3 insertions(+), 5 deletions(-)
+ rust/kernel/device.rs          | 4 +---
+ rust/kernel/device/property.rs | 6 +++---
+ 2 files changed, 4 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/cpufreq/rcpufreq_dt.rs b/drivers/cpufreq/rcpufreq_dt.rs
-index 7e1fbf9a091f..1120a8f5edd7 100644
---- a/drivers/cpufreq/rcpufreq_dt.rs
-+++ b/drivers/cpufreq/rcpufreq_dt.rs
-@@ -3,7 +3,6 @@
- //! Rust based implementation of the cpufreq-dt driver.
+diff --git a/rust/kernel/device.rs b/rust/kernel/device.rs
+index f3718da11871..242286162c8b 100644
+--- a/rust/kernel/device.rs
++++ b/rust/kernel/device.rs
+@@ -10,8 +10,6 @@
+ };
+ use core::{marker::PhantomData, ptr};
  
- use kernel::{
--    c_str,
-     clk::Clk,
-     cpu, cpufreq,
-     cpumask::CpumaskVar,
-@@ -56,7 +55,7 @@ impl opp::ConfigOps for CPUFreqDTDriver {}
+-#[cfg(CONFIG_PRINTK)]
+-use crate::c_str;
+ use crate::str::CStrExt as _;
  
- #[vtable]
- impl cpufreq::Driver for CPUFreqDTDriver {
--    const NAME: &'static CStr = c_str!("cpufreq-dt");
-+    const NAME: &'static CStr = c"cpufreq-dt";
-     const FLAGS: u16 = cpufreq::flags::NEED_INITIAL_FREQ_CHECK | cpufreq::flags::IS_COOLING_DEV;
-     const BOOST_ENABLED: bool = true;
- 
-@@ -201,7 +200,7 @@ fn register_em(policy: &mut cpufreq::Policy) {
-     OF_TABLE,
-     MODULE_OF_TABLE,
-     <CPUFreqDTDriver as platform::Driver>::IdInfo,
--    [(of::DeviceId::new(c_str!("operating-points-v2")), ())]
-+    [(of::DeviceId::new(c"operating-points-v2"), ())]
- );
- 
- impl platform::Driver for CPUFreqDTDriver {
-diff --git a/rust/kernel/cpufreq.rs b/rust/kernel/cpufreq.rs
-index 86c02e81729e..43ecdc56cb59 100644
---- a/rust/kernel/cpufreq.rs
-+++ b/rust/kernel/cpufreq.rs
-@@ -840,7 +840,6 @@ fn register_em(_policy: &mut Policy) {
- /// ```
- /// use kernel::{
- ///     cpufreq,
--///     c_str,
- ///     device::{Core, Device},
- ///     macros::vtable,
- ///     of, platform,
-@@ -853,7 +852,7 @@ fn register_em(_policy: &mut Policy) {
- ///
- /// #[vtable]
- /// impl cpufreq::Driver for SampleDriver {
--///     const NAME: &'static CStr = c_str!("cpufreq-sample");
-+///     const NAME: &'static CStr = c"cpufreq-sample";
- ///     const FLAGS: u16 = cpufreq::flags::NEED_INITIAL_FREQ_CHECK | cpufreq::flags::IS_COOLING_DEV;
- ///     const BOOST_ENABLED: bool = true;
- ///
+ pub mod property;
+@@ -378,7 +376,7 @@ unsafe fn printk(&self, klevel: &[u8], msg: fmt::Arguments<'_>) {
+             bindings::_dev_printk(
+                 klevel.as_ptr().cast::<crate::ffi::c_char>(),
+                 self.as_raw(),
+-                c_str!("%pA").as_char_ptr(),
++                c"%pA".as_char_ptr(),
+                 core::ptr::from_ref(&msg).cast::<crate::ffi::c_void>(),
+             )
+         };
+diff --git a/rust/kernel/device/property.rs b/rust/kernel/device/property.rs
+index 3a332a8c53a9..3eb3f36d66d0 100644
+--- a/rust/kernel/device/property.rs
++++ b/rust/kernel/device/property.rs
+@@ -178,11 +178,11 @@ pub fn property_count_elem<T: PropertyInt>(&self, name: &CStr) -> Result<usize>
+     /// # Examples
+     ///
+     /// ```
+-    /// # use kernel::{c_str, device::{Device, property::FwNode}, str::CString};
++    /// # use kernel::{device::{Device, property::FwNode}, str::CString};
+     /// fn examples(dev: &Device) -> Result {
+     ///     let fwnode = dev.fwnode().ok_or(ENOENT)?;
+-    ///     let b: u32 = fwnode.property_read(c_str!("some-number")).required_by(dev)?;
+-    ///     if let Some(s) = fwnode.property_read::<CString>(c_str!("some-str")).optional() {
++    ///     let b: u32 = fwnode.property_read(c"some-number").required_by(dev)?;
++    ///     if let Some(s) = fwnode.property_read::<CString>(c"some-str").optional() {
+     ///         // ...
+     ///     }
+     ///     Ok(())
 
 -- 
 2.51.0
