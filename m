@@ -1,258 +1,148 @@
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 864DE15B971
-	for <linux-clk@vger.kernel.org>; Thu, 25 Sep 2025 16:49:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFE2F1DE3DC;
+	Thu, 25 Sep 2025 18:33:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758818948; cv=none; b=CZJatbpiWwdhGDg1EuLgVNCVQUPJMGaFlpxM1dH829jdIKStewETsmAPDyOLMsd9GgJhijKlLqis7ZWoUeXiDW80mv2uv2NHJs7FWgKL2t7T1uZURDYdTYl61YKfMdXF0DUHu9WqO55Wl8iRPg1NFsIpZ8csAq7Pba8Lyxe12hE=
+	t=1758825191; cv=none; b=MGaL2C5GAD9CVSmmwlCr+Isi8X98gODhBvcSLW41oe9fX4mR+wpyUDfeYGLtxs9ZNK3uhNwig726QA4FikeEgYRbt+0jZx2zehL0oj4wV8AwtYx9CReU52ba3hmHwuakiJ313idC9AYNeSEQuy/zT46zO8n9dN3rcNCjHsT2vhY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758818948; c=relaxed/simple;
-	bh=gNw1pkFiRaQHAl1MkfJLhv8N2CuOl1RKJ3yRMg6djPE=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=L0o622CzUh7rC1gv8RdYQBB0JXhWVRh2fLtC4iclp7vt5l+YPxrwOmCAVAAvH5f6mNhdjh6FHbKkB9tNWch58RgVmUwUpRLOWBpeTeVsZMO17VoQDxK0vSvHgFErxkgnRx4ptY4a7/IswpM11gD/ds886WK8bvQN6yaZxWhexOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=WOPP3BAm; arc=none smtp.client-ip=212.227.15.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
+	s=arc-20240116; t=1758825191; c=relaxed/simple;
+	bh=LKG06+HbgIfwwZeYeC6t/w0EWDw3h0ZyjMODB/HrRXg=;
+	h=MIME-Version:Content-Type:Date:Message-ID:To:CC:Subject:From:
+	 References:In-Reply-To; b=nhqH2B7mnJObQuR8OnzZXuwMXt1YTVmG/EGWLRxTHTRFlGk6gxztxrQu6j+ak82MkN5sVF4jxruYq9qANOqOZRsEX8JNs8OkD1CkLEsRd2yzmjV5F194P2NHcTq8Umq2YkCtCfGouJCgBJ2yhlXhbkMwSSosOUCpGS+HJE13Odc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=mYzfNO0N; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="WOPP3BAm"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
-	s=s31663417; t=1758818938; x=1759423738; i=wahrenst@gmx.net;
-	bh=qAB5fCbImxbWKqC5kSCNa6OVcD9HGKAsAhKkjlUJPf8=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:From:Subject:To:
-	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=WOPP3BAmkbuo0wRp1hV9Ckdht9sGCnSmNJpyVqith6weWcEBG9Fhq1MdxXgvHPy2
-	 kOE/MP7/SgM7dw/oT8MvF11W3jTkyU994rRpdupXZmMAIHZWDuWhsgO4S2dY8Bv90
-	 KaBVKdN//Rn/oa7eV3G8ckoVo1ztmCEU+CGC8xVXHsW8CcrumWmuDeA4ucgNAUsPM
-	 u6az/NvEVBhVhrbDB03PYc+4MGlbwcgSadoWumNKqWFiyDt0sHTBT3ZJV8sGppzak
-	 A0hB2h+Dut6kKqW2qsWnYRlCB1D6j8wlbJGxYoooeCpDL7kFxXMXobGCA9WrSfrvy
-	 bl37vfL0garf337kig==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.1.105] ([79.235.128.112]) by mail.gmx.net (mrgmx005
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MCbEf-1vArYg3EOp-00Dz9h; Thu, 25
- Sep 2025 18:48:57 +0200
-Message-ID: <2b1537c1-93e4-4c6c-8554-a2d877759201@gmx.net>
-Date: Thu, 25 Sep 2025 18:48:56 +0200
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="mYzfNO0N"
+Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 58PIWcmG1982853;
+	Thu, 25 Sep 2025 13:32:38 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1758825158;
+	bh=YLhrPrJ/nxo/JR0QIrb3ulTfkmpHmQZXFDh+6QpJP+Y=;
+	h=Date:To:CC:Subject:From:References:In-Reply-To;
+	b=mYzfNO0NcLI02J71eFtQCotuLVhjtjaITQ1N4lrLwB6x2aQSYNwoqLLTCb8P5i4bg
+	 cZv9s/7o4VOR/0hcRC0Yn+BGQ/J+VPFQHzWAfeovWwWKLkKNIx6DPqNqCknC137cZt
+	 thznWX/1Eh2RDnpG3fwOY8W2rzLOK7/mxp9wVPrI=
+Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
+	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 58PIWbXk3402736
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Thu, 25 Sep 2025 13:32:37 -0500
+Received: from DFLE205.ent.ti.com (10.64.6.63) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 25
+ Sep 2025 13:32:37 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE205.ent.ti.com
+ (10.64.6.63) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Thu, 25 Sep 2025 13:32:37 -0500
+Received: from localhost (rs-desk.dhcp.ti.com [128.247.81.144])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 58PIWb6h001964;
+	Thu, 25 Sep 2025 13:32:37 -0500
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Stefan Wahren <wahrenst@gmx.net>
-Subject: Re: [PATCH v2 2/5] clk: bcm: rpi: Turn firmware clock on/off when
- preparing/unpreparing
-To: Marek Szyprowski <m.szyprowski@samsung.com>,
- =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Nicolas Saenz Julienne <nsaenz@kernel.org>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Maxime Ripard <mripard@kernel.org>, Melissa Wen <mwen@igalia.com>,
- Iago Toral Quiroga <itoral@igalia.com>, Dom Cobley <popcornmix@gmail.com>,
- Dave Stevenson <dave.stevenson@raspberrypi.com>,
- Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, kernel-dev@igalia.com
-References: <20250731-v3d-power-management-v2-0-032d56b01964@igalia.com>
- <20250731-v3d-power-management-v2-2-032d56b01964@igalia.com>
- <CGME20250925075711eucas1p26efbb194311a6e22ab593a39b43e12c3@eucas1p2.samsung.com>
- <727aa0c8-2981-4662-adf3-69cac2da956d@samsung.com>
-Content-Language: en-US
-In-Reply-To: <727aa0c8-2981-4662-adf3-69cac2da956d@samsung.com>
-Autocrypt: addr=wahrenst@gmx.net; keydata=
- xjMEZ1dOJBYJKwYBBAHaRw8BAQdA7H2MMG3q8FV7kAPko5vOAeaa4UA1I0hMgga1j5iYTTvN
- IFN0ZWZhbiBXYWhyZW4gPHdhaHJlbnN0QGdteC5uZXQ+wo8EExYIADcWIQT3FXg+ApsOhPDN
- NNFuwvLLwiAwigUCZ1dOJAUJB4TOAAIbAwQLCQgHBRUICQoLBRYCAwEAAAoJEG7C8svCIDCK
- JQ4BAP4Y9uuHAxbAhHSQf6UZ+hl5BDznsZVBJvH8cZe2dSZ6AQCNgoc1Lxw1tvPscuC1Jd1C
- TZomrGfQI47OiiJ3vGktBc44BGdXTiQSCisGAQQBl1UBBQEBB0B5M0B2E2XxySUQhU6emMYx
- f5QR/BrEK0hs3bLT6Hb9WgMBCAfCfgQYFggAJhYhBPcVeD4Cmw6E8M000W7C8svCIDCKBQJn
- V04kBQkHhM4AAhsMAAoJEG7C8svCIDCKJxoA/i+kqD5bphZEucrJHw77ujnOQbiKY2rLb0pE
- aHMQoiECAQDVbj827W1Yai/0XEABIr8Ci6a+/qZ8Vz6MZzL5GJosAA==
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:vK/3jwWQSWRm+cM68enplxHonquAxewZuzQT268aklvpjruAtRA
- KfYwkQr7j+CVQlCPyu9j3CajO88+6q0fju/nZEsJLDfx9mu7VZdGJm01TOgvfTU8BVEVn3U
- DXWo1jeA2ox6tGa9P2Y9bN3wXeFOPCC9zIyDQxg+9XZFVV1qKz1WELc1+0n4DelQ2ylSUvB
- CXGG0mjAsgJ2F+SEkfPqw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:Jt7cFrm8MRI=;q5226w5oPvfS5DC1ArORjZUHGmX
- 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
+Content-Type: text/plain; charset="UTF-8"
+Date: Thu, 25 Sep 2025 13:32:37 -0500
+Message-ID: <DD23HER39PNM.O17TMFNNWD37@ti.com>
+To: Maxime Ripard <mripard@kernel.org>, Randolph Sapp <rs@ti.com>
+CC: Kevin Hilman <khilman@kernel.org>, Michael Walle <mwalle@kernel.org>,
+        Frank Binns <frank.binns@imgtec.com>,
+        Matt Coster <matt.coster@imgtec.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Thomas Zimmermann
+	<tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter
+	<simona@ffwll.ch>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, "Nishanth Menon"
+	<nm@ti.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Tero Kristo
+	<kristo@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        "Michael
+ Turquette" <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Andrew
+ Davis <afd@ti.com>,
+        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH 2/3] clk: keystone: don't cache clock rate
+From: Randolph Sapp <rs@ti.com>
+X-Mailer: aerc 0.21.0-0-g5549850facc2
+References: <20250915143440.2362812-1-mwalle@kernel.org>
+ <20250915143440.2362812-3-mwalle@kernel.org> <7hv7lhp0e8.fsf@baylibre.com>
+ <DD1IXJDTBQ72.2XIEIIN0YA713@ti.com>
+ <20250925-elephant-of-absolute-prowess-a97fcd@penduick>
+In-Reply-To: <20250925-elephant-of-absolute-prowess-a97fcd@penduick>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hi,
+On Thu Sep 25, 2025 at 6:43 AM CDT, Maxime Ripard wrote:
+> On Wed, Sep 24, 2025 at 09:26:17PM -0500, Randolph Sapp wrote:
+>> On Wed Sep 17, 2025 at 10:24 AM CDT, Kevin Hilman wrote:
+>> > Michael Walle <mwalle@kernel.org> writes:
+>> >
+>> >> The TISCI firmware will return 0 if the clock or consumer is not
+>> >> enabled although there is a stored value in the firmware. IOW a call =
+to
+>> >> set rate will work but at get rate will always return 0 if the clock =
+is
+>> >> disabled.
+>> >> The clk framework will try to cache the clock rate when it's requeste=
+d
+>> >> by a consumer. If the clock or consumer is not enabled at that point,
+>> >> the cached value is 0, which is wrong.
+>> >
+>> > Hmm, it also seems wrong to me that the clock framework would cache a
+>> > clock rate when it's disabled.  On platforms with clocks that may have
+>> > shared management (eg. TISCI or other platforms using SCMI) it's
+>> > entirely possible that when Linux has disabled a clock, some other
+>> > entity may have changed it.
+>> >
+>> > Could another solution here be to have the clk framework only cache wh=
+en
+>> > clocks are enabled?
+>>=20
+>> So I looked into that. There are still about 34 clock operations that ar=
+e
+>> functionally uncached, but it does seem more logical than treating every=
+thing as
+>> uncached.
+>>=20
+>> Side note, why would someone even want to read the rate of an unprepared=
+ clock?
+>> I dumped some debug info for all the clocks tripping this new uncached p=
+ath.
+>> Seems weird that it's even happening this often. Even weirder that it's
+>> apparently happening 3 times to cpu0's core clock on the board I'm curre=
+ntly
+>> testing.
+>
+> The short, unsatisfying, answer is that the API explicitly allowed it so =
+far.
+>
+> It's also somewhat natural when you have a functional rate to set it up
+> before enabling it and the logic driven by it so that you would avoid a
+> rate change, or something like a cycle where you would enable, shut
+> down, reparent, enable the clock again.
+>
+> In such a case, we would either need the cache, or to read the rate, to
+> know if we have to change the clock rate in the first place.
+>
+> Maxime
 
-Am 25.09.25 um 09:57 schrieb Marek Szyprowski:
-> On 31.07.2025 23:06, Ma=C3=ADra Canal wrote:
->> Currently, when we prepare or unprepare RPi's clocks, we don't actually
->> enable/disable the firmware clock. This means that
->> `clk_disable_unprepare()` doesn't actually change the clock state at
->> all, nor does it lowers the clock rate.
->>
->> >From the Mailbox Property Interface documentation [1], we can see that
->> we should use `RPI_FIRMWARE_SET_CLOCK_STATE` to set the clock state
->> off/on. Therefore, use `RPI_FIRMWARE_SET_CLOCK_STATE` to create a
->> prepare and an unprepare hook for RPi's firmware clock.
->>
->> As now the clocks are actually turned off, some of them are now marked
->> CLK_IS_CRITICAL, as those are required to be on during the whole system
->> operation.
->>
->> Link:https://github.com/raspberrypi/firmware/wiki/Mailbox-property-inte=
-rface [1]
->> Signed-off-by: Ma=C3=ADra Canal<mcanal@igalia.com>
->>
->> ---
->>
->> About the pixel clock: currently, if we actually disable the pixel
->> clock during a hotplug, the system will crash. This happens in the
->> RPi 4.
->>
->> The crash happens after we disabled the CRTC (thus, the pixel clock),
->> but before the end of atomic commit tail. As vc4's pixel valve doesn't
->> directly hold a reference to its clock =E2=80=93 we use the HDMI encode=
-r to
->> manage the pixel clock =E2=80=93 I believe we might be disabling the cl=
-ock
->> before we should.
->>
->> After this investigation, I decided to keep things as they current are:
->> the pixel clock is never disabled, as fixing it would go out of
->> the scope of this series.
->> ---
->>    drivers/clk/bcm/clk-raspberrypi.c | 56 +++++++++++++++++++++++++++++=
-+++++++++-
->>    1 file changed, 55 insertions(+), 1 deletion(-)
-> This patch landed recently in linux-next as commit 919d6924ae9b ("clk:
-> bcm: rpi: Turn firmware clock on/off when preparing/unpreparing"). In my
-> tests I found that it breaks booting of RaspberryPi3B+ board in ARM
-> 32bit mode. Surprisingly the same board in ARM 64bit mode correctly
-> boots a kernel compiled from the same source. The RPi3B+ board freezes
-> after loading the DRM modules (kernel compiled from arm/multi_v7_defconf=
-ig):
-thanks for spotting and bisecting this. Sorry, I only reviewed the=20
-changes and didn't had the time to test any affected board.
+Thanks Maxime. I'll take this as a hint to stop digging for the moment. Rig=
+ht
+now, treating unprepared clocks as untrusted / uncached makes sense and
+shouldn't be too much of a performance issue.
 
-I was able to reproduce this issue and the following workaround avoid=20
-the hang in my case:
-
-diff --git a/drivers/clk/bcm/clk-raspberrypi.c=20
-b/drivers/clk/bcm/clk-raspberrypi.c
-index 1a9162f0ae31..94fd4f6e2837 100644
-=2D-- a/drivers/clk/bcm/clk-raspberrypi.c
-+++ b/drivers/clk/bcm/clk-raspberrypi.c
-@@ -137,6 +137,7 @@ raspberrypi_clk_variants[RPI_FIRMWARE_NUM_CLK_ID] =3D =
-{
- =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 [RPI_FIRMWARE_V3D_CLK_ID] =3D =
-{
- =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 .export =3D true,
- =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 .maximize =3D true,
-+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 .flags =3D CLK_IS_CRITICAL,
- =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 },
- =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 [RPI_FIRMWARE_PIXEL_CLK_ID] =
-=3D {
- =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 .export =3D true,
-
-The proper fix should be in the clock consumer drivers. I found that=20
-vc4_v3d doesn't ensure that the clock is enabled before accessing the=20
-registers. Unfortunately the following change doesn't fix the issue for=20
-me :-(
-
-diff --git a/drivers/gpu/drm/vc4/vc4_v3d.c b/drivers/gpu/drm/vc4/vc4_v3d.c
-index bb09df5000bd..5e43523732b4 100644
-=2D-- a/drivers/gpu/drm/vc4/vc4_v3d.c
-+++ b/drivers/gpu/drm/vc4/vc4_v3d.c
-@@ -441,7 +441,7 @@ static int vc4_v3d_bind(struct device *dev, struct=20
-device *master, void *data)
- =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 vc4->v3d =3D v3d;
- =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 v3d->vc4 =3D vc4;
-
--=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 v3d->clk =3D devm_clk_get_optional(d=
-ev, NULL);
-+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 v3d->clk =3D devm_clk_get_optional_e=
-nabled(dev, NULL);
- =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (IS_ERR(v3d->clk))
- =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 return dev_err_probe(dev, PTR_ERR(v3d->clk), "Failed to=
-=20
-get V3D clock\n");
-
-Best regards
-
+- Randolph
