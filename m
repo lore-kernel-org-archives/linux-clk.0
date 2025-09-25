@@ -1,66 +1,66 @@
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C24D6257844
-	for <linux-clk@vger.kernel.org>; Thu, 25 Sep 2025 09:01:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85E69219A7D
+	for <linux-clk@vger.kernel.org>; Thu, 25 Sep 2025 09:02:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758790903; cv=none; b=Cs3YOo44nf5mYI+Ib5r8Ekooq8AJDEDy/JbesewjIDgUvEb6vvJEAoePSofn0EwhP+4Ljch0ndExrA/9UKWQHmlhxRqAPfKOpFbCMGTcoK+4C+E6ys240YYf1Xeev+n0S4cUb4C2qwkx9uaC3E2wYUatzTQopLFfAiadQ9O1iHw=
+	t=1758790942; cv=none; b=GxLLqyXv45QImVDHDWnvshrhAVmWwXzlts0dGZxOagdxT1veSZeM7DQxcxER49g88Yyr84s3FhDseiCZO83cKfcsIxpTB2xzd/928M3B8hcYDJvs6lpYK8iX3fx1pySKxDPWuYhXfO6ieHFfOFRREoVvP/qWp2TKRd7W0+MxlY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758790903; c=relaxed/simple;
-	bh=yqstp8v0w5ZqvhHqs9nCFyjLloZ4iTt0o1sbH2L91Q0=;
+	s=arc-20240116; t=1758790942; c=relaxed/simple;
+	bh=TmD6NzhQIklOOJTQVpmQteSOnmmHjADGWKhNTP93vnE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Dg92Yp05903gC1KtLGISdc60Cm3ys7PWnW9gZQuMR7XbNtKJKQbqt+vRam0A/ltKYYavVoLuVKxsa3GFJtFcvUJBjjkIah5DBW3iGxbcFrh6fSy/nxg0MEZ9PsJ5SJpiWnyoIFx7xAFLggCW2DkpVHi/+jqq+zlFxSWRGHbAP7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KcBMAzOp; arc=none smtp.client-ip=209.85.128.50
+	 In-Reply-To:Content-Type; b=dYE8KJ9Ehw5m5iPcmuDFIrDr9E1v0OsH3bwAx13WAEHN50RvlCR1F/UmNsPA4BsfFHGTIbefPru5QSEgV2WLI9Sf/aPN/LrciPeeMuqlO4S9Khf0/x1Cer685pTkErGJNX5n26hNScV1Q0SjQVht+EiOgawEp6tddojfv2O1Eag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tAvmyMHk; arc=none smtp.client-ip=209.85.221.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KcBMAzOp"
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-46e23a6617dso6935115e9.0
-        for <linux-clk@vger.kernel.org>; Thu, 25 Sep 2025 02:01:41 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tAvmyMHk"
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3ecde0be34eso1079447f8f.1
+        for <linux-clk@vger.kernel.org>; Thu, 25 Sep 2025 02:02:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1758790900; x=1759395700; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1758790938; x=1759395738; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:content-language:from
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=yqstp8v0w5ZqvhHqs9nCFyjLloZ4iTt0o1sbH2L91Q0=;
-        b=KcBMAzOpgBkmgOocch8p8cFOUenehfx6DudKUPvCrNWWDmnJsQL7zcRP0O4lKi1irG
-         nkyiXaIwogYr91qhYclzydOPex9sLbNcQOAbB0cEtkxJpRvNeNb+4LtDObOnFyzV6N1F
-         GmILdP6DWfMDYHUr+JL/CMmZpCh7/aaXNE2tPaK+qkK5vlQQN72g8TB6nbT8Be9DgqyV
-         jVYRVBTFfRjjF3NL+7yAlnZ7bVgS54yZBEZb/0fku7IZyyFuKMT/pwMQGk340yOxPMXU
-         pyAOdZAWaAO6GXtHjXMTE4i9f9Cz2Kv/VmAET5PkDMVDRL8GmnxJAMAEG5uVCIcIGS3G
-         lFEg==
+        bh=5Qe3xfGFmIVMF6CqhJOdRE5h4PSOi9dIsttGyzx+Zh0=;
+        b=tAvmyMHkou0jqZn9MMiTAJqjDCGfxVmd/e1a1FvpkZdHfEKHJSERV8jLnZbuydHXov
+         aiD+MWOC/8tdUsvD4iVaHcBq5W+KB7wAU3MfNdudSZIq045nOHSxmgPDMFhMkTxIuExZ
+         rKr4AllHfqtUD0WoWf5mqvwnKDrFJifyKULIDalJLnl6iYlBC6XSqm72eIQuV07ct+qV
+         Jj24rsT/UaXDc7G/0ceqV8T47A7BtxjnIEElfmMPZ9oogNI9pLsOF2lm4HIdMW25GRld
+         ymvuctR6pdPeQGnCRiHQDZ0kXVug0GgQMUT/BZ7os9qACRmejVIJHB5vRSP8El+AcQB7
+         FOtg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758790900; x=1759395700;
+        d=1e100.net; s=20230601; t=1758790938; x=1759395738;
         h=content-transfer-encoding:in-reply-to:content-language:from
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yqstp8v0w5ZqvhHqs9nCFyjLloZ4iTt0o1sbH2L91Q0=;
-        b=BLCvka6Xo0RlCUDeJZhEEa11as4p8nW8bBhoE7fG8ek+z4+F/0nt1oJli4S1NV0gLv
-         qGmbt8Q6DYMfJdxXLbs9i+hID5Bll3EbOFqPkLr5Bfk6hDAxv9RpwFO5e5kOySiiIliM
-         78cf+K19pAelzTWpP3wcZoQ4hQqooz6NAliim7IgEK7Rr0rw3Vsof8rFZ62WVBpqBIF3
-         52Hhwaa7YWYW3x0LktJdhm/mkJgSFCHlkU477dVpAm1AZhZTcnUKU8A491Y1eQEHc0X9
-         Tu0nnH3WD14dtXMUrfJDIp4pIV16gJil7aUeXCbtYEm9R9h28iDRJwABWom2VC5PyivQ
-         uaeA==
-X-Forwarded-Encrypted: i=1; AJvYcCXKyVUTD1wTpHFa7wyq7KOXdX9AZVWi9vG4S9UgxgXPy4zGZZiu5CL36j/mWkp//EdwY8DcCwoU9kM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8zs6mL52+FXh15pk8jck5UNhrvat9KqT/3WQW7mnGUmsU6Pct
-	J0P8krzUC3flZAwZ0wqnuw0elORlUI0cIR722Q4D4yjCaP/oDAZhO5xL0aMFUNr7498=
-X-Gm-Gg: ASbGncuwb0Ubvx5OQ/OmMAKXWWZ0D4awWg7JAMe1Zt9Uaq0G7hivyNOv/9p+2mFKySy
-	/Qf8JTZSuar3PC943qQGB+CMvIpOYqehAX8XUHcU3Y9tyE5XNfeWqffg3DFNH4uTMHBG3x+91Aq
-	dLTasUfWCteKN6qJ/LF4C1rEqvpeGYL3Z3JlL1IixD2ByOcH1zl+IqyqNEur/OlkZaRneWNYrv6
-	qFENZFICAZ0NUdviNvr4BZZTZ9C7DqeZwnbTUbnxprgWIPbx3cHg2SaJNqPxFGLgN0WShkPk3kp
-	SESu5H4MTeLZFRvToc7QFZeovgAq6yy5CBBFYHAQNPi+vvSYklxt7Mrs758YoVkmUpZpkOYrf4b
-	hqyQDCy9wy6BEfx3Cy9I0ijr338SE2sXKR1kd9AZn9kc2+gF909pst7i5Eq3JF02JsbETxSRlNJ
-	pPnbbsy6bCw02LJwBTFrVTmHsWvnM7qEU=
-X-Google-Smtp-Source: AGHT+IFPH5bNTpMjVvNRN26DifPNLAFoSeAoicHRC1HEEH9oRvExzs+S4YeuHSGoOiaUNTFghFYSSQ==
-X-Received: by 2002:a05:600c:358e:b0:468:9798:1b4d with SMTP id 5b1f17b1804b1-46e329d1b47mr30509265e9.7.1758790900027;
-        Thu, 25 Sep 2025 02:01:40 -0700 (PDT)
+        bh=5Qe3xfGFmIVMF6CqhJOdRE5h4PSOi9dIsttGyzx+Zh0=;
+        b=k62SaQ9MCjT1PRXI9c0zyIaN+gEdDgfnjt0aMkmH9bsVoNAW91aAVZgWY3DoQE6tT0
+         RFrgNWwmJNC70kTa5nDTV1g9RsoOzL2x4WaETmUmHYgCmAbJKd+3ISCgftpUycRif6w1
+         M1FmwuSxgjKOSp6lkN2Io9yACa/tOnkU1QwrZhtdaiTgUlaaV2Iu8yin7vuEum7X9ouu
+         fmKJmVa6JTh0hwbTzK69GTkw3urHPYMPzllVqlACVWD/uB2kLgz5nC5/L3Py4y2CNIIY
+         p9EPAlTTBwMA267daTtJd7Q9p5OXNFMTA5EzEdapEPwa7ragc85NbH0g24OJSTLfKXJT
+         RUSg==
+X-Forwarded-Encrypted: i=1; AJvYcCVnoWBMxFm866H7EwKzOevFTlOkBAghl2bBW8+HZURyqS3hyWcToro1xeUviJSL+UcpIfOTU8dD3nw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKBLp6BG4pOzuFASKeK+ar7fwwolHWmABLdwriqhBDlP73bFne
+	TxVw/rQwFh3de3Qs8mNrcUQyfIsugPs2QVUNFs6M/IEBSl0bGTgVmNUu+A+L7DV0/oU=
+X-Gm-Gg: ASbGncthuMoSOyInQYWBiC/LDtRZIHhc1gklV5CJY7MEVE/PLMZ4frlnh+1c/u6hcqF
+	FplKaDJKl31NfzvM9+Ul5gFWp13WkFLSYn/uquC44Kbz+LnSTVemJePwAHG5JtLZDmO/+VT/pCk
+	NrhTFajRnqlsMptJGtwND8rxkG0FyStG44RKl0r17GZk6IoUMBDAcTvAD6qBvczUH//5fEOGsDS
+	CZvhqw5Rphi0rTVlinHR07iBfRWl4+ptBnwwgd+6RKx47oYBPZ/J/6C3qyloksZ4Hp/59IASS/M
+	gEo0sKP6VXUx86I3KfazeN7cZGCFApSvrTK6jIzmF7X8JFuA0x8dW1OKaON/PP9iXtV8ajCqd4N
+	diC02bluzrFJ8YTuxBUk3L2y6BFcVuZ/DlOFGG1+xC3eTUSE6SEdMuoUvrCV/YyE0GzCHi6GvJa
+	9q2Y1nSRwg1ozgSYl6R19X
+X-Google-Smtp-Source: AGHT+IG6omy3mi4l5IjwhwiD+yQndxiCA+tBSpwYG7hEz4IaSuBeLRkN2eEbLT+qy6PzJRqtHh6D9g==
+X-Received: by 2002:a05:6000:2dc1:b0:3d0:e221:892e with SMTP id ffacd0b85a97d-40f6617670dmr1826060f8f.27.1758790937794;
+        Thu, 25 Sep 2025 02:02:17 -0700 (PDT)
 Received: from [192.168.0.19] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-40fb7203b8asm2128929f8f.9.2025.09.25.02.01.38
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-40fb985e080sm2143861f8f.24.2025.09.25.02.02.16
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 25 Sep 2025 02:01:39 -0700 (PDT)
-Message-ID: <14df3870-6cb1-4e5d-9c4d-bb8acef8c594@linaro.org>
-Date: Thu, 25 Sep 2025 10:01:37 +0100
+        Thu, 25 Sep 2025 02:02:17 -0700 (PDT)
+Message-ID: <69e8c15d-108e-4832-849e-a23c7ddfe625@linaro.org>
+Date: Thu, 25 Sep 2025 10:02:15 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -68,10 +68,9 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/9] dt-bindings: clock: qcom: Add support for CAMCC for
- Kaanapali
-To: Taniya Das <quic_tdas@quicinc.com>,
- Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
+Subject: Re: [PATCH 4/9] dt-bindings: clock: qcom: Add Kaanapali video clock
+ controller
+To: Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
  Bjorn Andersson <andersson@kernel.org>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
  <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
@@ -92,25 +91,117 @@ Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
  tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com,
  yijie.yang@oss.qualcomm.com
 References: <20250924-knp-mmclk-v1-0-d7ea96b4784a@oss.qualcomm.com>
- <20250924-knp-mmclk-v1-3-d7ea96b4784a@oss.qualcomm.com>
- <4315205b-5320-4a8f-a707-45f5eb35ae51@linaro.org>
- <8c558ac3-541b-47c4-be4b-c9101997de7c@quicinc.com>
+ <20250924-knp-mmclk-v1-4-d7ea96b4784a@oss.qualcomm.com>
 From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 Content-Language: en-US
-In-Reply-To: <8c558ac3-541b-47c4-be4b-c9101997de7c@quicinc.com>
+In-Reply-To: <20250924-knp-mmclk-v1-4-d7ea96b4784a@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 25/09/2025 09:46, Taniya Das wrote:
->> BIST == Built In Self Test ?
->>
->> Can this not just be put into one camcc header ?
-> These are two different clock controllers CAMCC and CAM_BIST_MCLK they
-> should not be in the same header.
-
-BIST means Built In Self Test ?
-
-Is this really something to be upstreamed ?
-
----
-bod
+On 25/09/2025 00:56, Jingyi Wang wrote:
+> From: Taniya Das <taniya.das@oss.qualcomm.com>
+> 
+> Add device tree bindings for the video clock controller on Qualcomm
+> Kaanapali SoC.
+> 
+> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
+> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+> ---
+>   .../bindings/clock/qcom,sm8450-videocc.yaml        |  3 ++
+>   include/dt-bindings/clock/qcom,kaanapali-videocc.h | 58 ++++++++++++++++++++++
+>   2 files changed, 61 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
+> index b31bd8335529..e6beebd6a36e 100644
+> --- a/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
+> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
+> @@ -15,6 +15,7 @@ description: |
+>     domains on SM8450.
+>   
+>     See also:
+> +    include/dt-bindings/clock/qcom,kaanapali-videocc.h
+>       include/dt-bindings/clock/qcom,sm8450-videocc.h
+>       include/dt-bindings/clock/qcom,sm8650-videocc.h
+>       include/dt-bindings/clock/qcom,sm8750-videocc.h
+> @@ -22,6 +23,7 @@ description: |
+>   properties:
+>     compatible:
+>       enum:
+> +      - qcom,kaanapali-videocc
+>         - qcom,sm8450-videocc
+>         - qcom,sm8475-videocc
+>         - qcom,sm8550-videocc
+> @@ -61,6 +63,7 @@ allOf:
+>           compatible:
+>             contains:
+>               enum:
+> +              - qcom,kaanapali-videocc
+>                 - qcom,sm8450-videocc
+>                 - qcom,sm8550-videocc
+>                 - qcom,sm8750-videocc
+> diff --git a/include/dt-bindings/clock/qcom,kaanapali-videocc.h b/include/dt-bindings/clock/qcom,kaanapali-videocc.h
+> new file mode 100644
+> index 000000000000..cc0d41b895c9
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/qcom,kaanapali-videocc.h
+> @@ -0,0 +1,58 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+> +/*
+> + * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+> + */
+> +
+> +#ifndef _DT_BINDINGS_CLK_QCOM_VIDEO_CC_KAANAPALI_H
+> +#define _DT_BINDINGS_CLK_QCOM_VIDEO_CC_KAANAPALI_H
+> +
+> +/* VIDEO_CC clocks */
+> +#define VIDEO_CC_AHB_CLK					0
+> +#define VIDEO_CC_AHB_CLK_SRC					1
+> +#define VIDEO_CC_MVS0_CLK					2
+> +#define VIDEO_CC_MVS0_CLK_SRC					3
+> +#define VIDEO_CC_MVS0_FREERUN_CLK				4
+> +#define VIDEO_CC_MVS0_SHIFT_CLK					5
+> +#define VIDEO_CC_MVS0_VPP0_CLK					6
+> +#define VIDEO_CC_MVS0_VPP0_FREERUN_CLK				7
+> +#define VIDEO_CC_MVS0_VPP1_CLK					8
+> +#define VIDEO_CC_MVS0_VPP1_FREERUN_CLK				9
+> +#define VIDEO_CC_MVS0A_CLK					10
+> +#define VIDEO_CC_MVS0A_CLK_SRC					11
+> +#define VIDEO_CC_MVS0A_FREERUN_CLK				12
+> +#define VIDEO_CC_MVS0B_CLK					13
+> +#define VIDEO_CC_MVS0B_CLK_SRC					14
+> +#define VIDEO_CC_MVS0B_FREERUN_CLK				15
+> +#define VIDEO_CC_MVS0C_CLK					16
+> +#define VIDEO_CC_MVS0C_CLK_SRC					17
+> +#define VIDEO_CC_MVS0C_FREERUN_CLK				18
+> +#define VIDEO_CC_MVS0C_SHIFT_CLK				19
+> +#define VIDEO_CC_PLL0						20
+> +#define VIDEO_CC_PLL1						21
+> +#define VIDEO_CC_PLL2						22
+> +#define VIDEO_CC_PLL3						23
+> +#define VIDEO_CC_SLEEP_CLK					24
+> +#define VIDEO_CC_TS_XO_CLK					25
+> +#define VIDEO_CC_XO_CLK						26
+> +#define VIDEO_CC_XO_CLK_SRC					27
+> +
+> +/* VIDEO_CC power domains */
+> +#define VIDEO_CC_MVS0A_GDSC					0
+> +#define VIDEO_CC_MVS0_GDSC					1
+> +#define VIDEO_CC_MVS0_VPP1_GDSC					2
+> +#define VIDEO_CC_MVS0_VPP0_GDSC					3
+> +#define VIDEO_CC_MVS0C_GDSC					4
+> +
+> +/* VIDEO_CC resets */
+> +#define VIDEO_CC_INTERFACE_BCR					0
+> +#define VIDEO_CC_MVS0_BCR					1
+> +#define VIDEO_CC_MVS0_VPP0_BCR					2
+> +#define VIDEO_CC_MVS0_VPP1_BCR					3
+> +#define VIDEO_CC_MVS0A_BCR					4
+> +#define VIDEO_CC_MVS0C_CLK_ARES					5
+> +#define VIDEO_CC_MVS0C_BCR					6
+> +#define VIDEO_CC_MVS0_FREERUN_CLK_ARES				7
+> +#define VIDEO_CC_MVS0C_FREERUN_CLK_ARES				8
+> +#define VIDEO_CC_XO_CLK_ARES					9
+> +
+> +#endif
+> 
+Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
