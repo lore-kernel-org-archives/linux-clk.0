@@ -1,151 +1,176 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF77E2868A9;
-	Thu, 25 Sep 2025 14:07:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEDFF284B58
+	for <linux-clk@vger.kernel.org>; Thu, 25 Sep 2025 14:20:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758809234; cv=none; b=AAOZXBVKwnF28Iqno6yzxX+azSV8JVcIkvqMC8ZvRF67yM4X7FmaC0jy4Ri1IDnyeKY0n7anNShedK+blw90/n4i2rlhHveuC6f9EEhIwhjPuEJoMnpLfSJcMj08gV5NgH0vXabKTG3ehbl36Zgq7mXYeXqH8Q1KjhEegw1FOXk=
+	t=1758810032; cv=none; b=Z5afWoZeYcR4G+IduiFxBO0vyfHLRWp+0j226Xuqd8kSxGtJJnMCu84Bzehc6WXFVN/BkMPjjkmUHfoOcnHkgntnoGpuD907X7arLsKGu6D6PmsQisRn5ipXXbt7NLqAuaWTDMxFAsPoegYWYtm1VSvigwReRasddLKnE/AdwhE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758809234; c=relaxed/simple;
-	bh=fnZWzDDTTDEeBhEL/SWi3sXl1ujwKnlewazpL/KxiIY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=hZmKMlPapjgZURoyDnh6DeBjXWba3AEebn3nd7lIcbPxuV14u6rDhRew+9CUvWzCfIZR9o39wt4mZYgRoWpEGeSf0hRW7LwUOOdUGobk3Ntc6zQAo350i0adbCUHuMurV9FKpfxXrtPfIDGBWg09mGlnjUeZebiUFYk944Jz9Tk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=CS+lChZJ; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1758810032; c=relaxed/simple;
+	bh=9S5P/Bdj720bk805Gz5LUXF0wAlaDIZ4nUN2ksl9Ab0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hoHPp2HAicDkMvP0kwwAeTfbONzdAd0CYRWVwQ0vSAGbhF5Fi9PAhwsHIsyPhjSSOB1oW4Rr08cMweyA6RYDCP4b1AJ6ueDjUfv8y6r3yc9YkkTG+7y0BfCGNdpxTcFWY7CAWMeKPgdfZr3fA236HHNar1st0yw8h/QGENELr7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aKU7gyTm; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="CS+lChZJ"
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58PDRnxI027521;
-	Thu, 25 Sep 2025 14:06:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Y1yWgRltFJNThhSeNnr24vonmIf66fXtjWEcKmCdkMs=; b=CS+lChZJ/3LigltF
-	21d7Ze3D7cJC3e0M0F56KvN8TUXAH5xvkC5vnXgIM5+kpVYwvA8wEGgcrMLH3GQG
-	IPPHXbcdA1XwirNZ+yHCXnFi+tMpOCw6oKV+Ev/eI50fDgJdvNMXHsL/zJLWoud+
-	SZ8OmeLupJ4CxaGQ77Wo2qjOSAj5csNuAQuT52rd1L3lf2kyMW6cK4W2/evtd82f
-	Jr7S0JJnivqMXrfFhlVaWe37YoVgOQNXYZq0Qp4QgciPahQUVYxk6PjcqBMt5B6Q
-	0DyXp7UV9mbBncTuqe9HZ14GSjV50lSVVtRrHqjiWkU6QORUUgvO1l0iqjOXz59s
-	Nl04qg==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49cxup1j3v-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 25 Sep 2025 14:06:53 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 58PE6qUt023450
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 25 Sep 2025 14:06:52 GMT
-Received: from nsssdc-sh01-lnx.ap.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.24; Thu, 25 Sep 2025 07:06:46 -0700
-From: Luo Jie <quic_luoj@quicinc.com>
-Date: Thu, 25 Sep 2025 22:05:44 +0800
-Subject: [PATCH v6 10/10] arm64: defconfig: Build NSS clock controller
- driver for IPQ5424
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aKU7gyTm"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758810029;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jOKkbCQdz4s7kFS4NyoQHb7rePtHYRhLO7DwNkxy16c=;
+	b=aKU7gyTmsyEz6o5P8GwtqJIQ4YvAc82jlDU5QZ43dcPRnAvvgUC6aZpEE78DL9XiGCwyF3
+	GjNTNeNNqf7RfZx1hK9WqQUbYow+n1/FulGifs3nn4tGvQjKpVCJpXXytKbiO2wj0h8x6G
+	/9m6vuiDeyjepvfXSQSAkegz6GBs/rs=
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
+ [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-392-4XuoXWQrMD6Xnw5TlbL_fw-1; Thu, 25 Sep 2025 10:20:28 -0400
+X-MC-Unique: 4XuoXWQrMD6Xnw5TlbL_fw-1
+X-Mimecast-MFC-AGG-ID: 4XuoXWQrMD6Xnw5TlbL_fw_1758810028
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4b5ecf597acso23286971cf.1
+        for <linux-clk@vger.kernel.org>; Thu, 25 Sep 2025 07:20:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758810027; x=1759414827;
+        h=user-agent:in-reply-to:content-transfer-encoding
+         :content-disposition:mime-version:references:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jOKkbCQdz4s7kFS4NyoQHb7rePtHYRhLO7DwNkxy16c=;
+        b=hZyPl8AKRYR2myG0V8jNLKE4FMsUEw07QHPXcPHe+PERHuFViF6O6icd+EYr3CR4KZ
+         ZIwAPbdfCkY0S8hCaHlpO41KY03K510SYtbIH9QS5HYMvLTdsskOHWjDvJWgMp5FuEPh
+         Qz1LHLzxZ7XI40ciqKtR7WBRuvesTy/coH7YNzGVJR6NXRmQBwgjnFyrm496yQn511Mi
+         tIMiL3bDhXJa8E/svySvhAc2knWezMZMAn5QfEITbymFLzFpWuCdiSNetS8grutYvt4E
+         JwuMOd1FpC7syMWd1Sgfr/g/KgyGhjlEir3Zng2BJm3C4FTyjpLSyKZl+egUT1eH1k3T
+         DmBw==
+X-Forwarded-Encrypted: i=1; AJvYcCX3fP0giIExnLKeuVK2yiVuMFlejPycOZ3Oti+QOkTbLDOlPCUww3cLztnKcf+DcBqCP5zS+JUrFEc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyIlzZJRjnUr4XHTGDLU06gPR7gw1uwV9OfcvfoWFmcme4/3ci9
+	fEDvvIaj5Ee078WI5FcbXToQItjJA33Bu0A8kc2RTy4TFExFks5ylUV8Wt+uM8Y1+1qqh4Ulxf2
+	GdXSyEBJ9XvV5WlKTnogvSvIV+aXjpNShZbjczOEkeEroJBYrWh84Ad14a8Pf6rrKZELIvA==
+X-Gm-Gg: ASbGncsFC7StOXWfd58KjR6VTmZoWK0opAYbaibwmyVfr3sj7I3RrC2Qtwiyq4sTrbs
+	X8jL7l5UVEI8YUtexlDwU6+uMXm3pArSrhmcDSupTH1WO9I1ENzlZYnv2YomJNCAvQyRFD3bs53
+	lMoJa1w/KnyICjuiv15+zzd15TRavw/NWsQSEZn8s17Te2ImwGlB4H9Vd39IOpRxst5j532nSjy
+	JTMSSina456Rj7Urym5dzmr0hFfJ1eYevSu3hqDxdXXFKcLne7v6kCiv7MPDgNxbr3oHLNqXVKr
+	7rBbaMyqn1797Tx/3MbnUriTsjxHNUXRVZPJNs0oM7Gtz35oE7jn0FvHjSndU5mSM5oIo0fOS2P
+	LslWR8NSRRUvsBOwPBywL0JYi+UDpHYs=
+X-Received: by 2002:a05:622a:5e07:b0:4da:7d53:c01f with SMTP id d75a77b69052e-4da7d53c586mr25949761cf.28.1758810027220;
+        Thu, 25 Sep 2025 07:20:27 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGzAMws7Y35IXPj3ULsxxU+kNGPjPFIvTWHEyCz1nsMPS1pfVod6yEtRsWbHOX7yetDXHZs8A==
+X-Received: by 2002:a05:622a:5e07:b0:4da:7d53:c01f with SMTP id d75a77b69052e-4da7d53c586mr25949321cf.28.1758810026700;
+        Thu, 25 Sep 2025 07:20:26 -0700 (PDT)
+Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4db1087267csm10756031cf.26.2025.09.25.07.20.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Sep 2025 07:20:25 -0700 (PDT)
+Date: Thu, 25 Sep 2025 10:20:24 -0400
+From: Brian Masney <bmasney@redhat.com>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	Russell King <linux@armlinux.org.uk>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH RFC v4 00/12] clk: add support for v1 / v2 clock rate
+ negotiation and kunit tests
+Message-ID: <aNVPqHldkVzbyvix@redhat.com>
+References: <20250923-clk-tests-docs-v4-0-9205cb3d3cba@redhat.com>
+ <20250925-eager-delectable-frog-fcbb5d@penduick>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250925-qcom_ipq5424_nsscc-v6-10-7fad69b14358@quicinc.com>
-References: <20250925-qcom_ipq5424_nsscc-v6-0-7fad69b14358@quicinc.com>
-In-Reply-To: <20250925-qcom_ipq5424_nsscc-v6-0-7fad69b14358@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "Varadarajan
- Narayanan" <quic_varada@quicinc.com>,
-        Georgi Djakov <djakov@kernel.org>, "Rob
- Herring" <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        "Conor
- Dooley" <conor+dt@kernel.org>,
-        Anusha Rao <quic_anusha@quicinc.com>,
-        "Manikanta Mylavarapu" <quic_mmanikan@quicinc.com>,
-        Devi Priya
-	<quic_devipriy@quicinc.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        "Richard
- Cochran" <richardcochran@gmail.com>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski@linaro.org>,
-        <netdev@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <quic_kkumarcs@quicinc.com>, <quic_linchen@quicinc.com>,
-        <quic_leiwei@quicinc.com>, <quic_pavir@quicinc.com>,
-        <quic_suruchia@quicinc.com>, Luo Jie
-	<quic_luoj@quicinc.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1758809144; l=836;
- i=quic_luoj@quicinc.com; s=20250209; h=from:subject:message-id;
- bh=fnZWzDDTTDEeBhEL/SWi3sXl1ujwKnlewazpL/KxiIY=;
- b=SN/4xdbONLu/QOmtSKdVibONLiFW545wC0zLvg7ctC9vx6L6oA+HtF9N6hYFXDgQIgO6E9DLa
- z4hhqQcJEY9Ahvp7c5T+AROd2X/HMOcsh9ElhuMdGGxM6ShgYqzyeoh
-X-Developer-Key: i=quic_luoj@quicinc.com; a=ed25519;
- pk=pzwy8bU5tJZ5UKGTv28n+QOuktaWuriznGmriA9Qkfc=
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=B4a50PtM c=1 sm=1 tr=0 ts=68d54c7e cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=KKAkSRfTAAAA:8
- a=COk6AnOGAAAA:8 a=ikIlBLl75NxfxiEf-eQA:9 a=QEXdDO2ut3YA:10
- a=cvBusfyB2V15izCimMoJ:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI1MDA0MiBTYWx0ZWRfX2i28j8dI5x9+
- zzIBXBJ3RYgEpUkiHJEJS21SX3Rf90pdR5ziAFH0wnj0zgYDT0tumue27+GNRr2jW3JlwCLrhiu
- GQLzOUJxQRAKrDjjQNEIALhAkPT1yqdiA1SJDInF+5MZoWoMrfJIjqu/WVe2vajkP+aTqyOMrnj
- c8kvR8hsDRGqOorQfIlajoLQSWT8kfbmtYHFyXBU9pSfsurO/J16OHBehTBZz5usyZ0T28Ysw/H
- +UwdyutRwdfwe3mJz4OYoLjpTVSaAQTn0WJN8eVHtK00oGu3OBJvgYvoSbH9HQRfn+R4oZxhnic
- ML5kvtTbDgVc9+dk2JtCpRGBjdJg/sidcce5fDSDiJ8B+qTMk01Ow0afJ1jR+y9gYTqrP9OaHGl
- MYvEvKDr
-X-Proofpoint-GUID: UyHL3T9c1N6aC39EVs_ZnhiIydtZbQM8
-X-Proofpoint-ORIG-GUID: UyHL3T9c1N6aC39EVs_ZnhiIydtZbQM8
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-25_01,2025-09-25_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 impostorscore=0 suspectscore=0 priorityscore=1501 adultscore=0
- phishscore=0 clxscore=1015 spamscore=0 malwarescore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2509250042
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250925-eager-delectable-frog-fcbb5d@penduick>
+User-Agent: Mutt/2.2.14 (2025-02-20)
 
-NSS clock controller is needed for supplying clocks and resets to the
-networking blocks for the Ethernet functions on the IPQ5424 platforms.
+On Thu, Sep 25, 2025 at 02:14:14PM +0200, Maxime Ripard wrote:
+> On Tue, Sep 23, 2025 at 10:39:19AM -0400, Brian Masney wrote:
+> > The Common Clock Framework is expected to keep a clock’s rate stable
+> > after setting a new rate with:
+> > 
+> >     clk_set_rate(clk, NEW_RATE);
+> > 
+> > Clock consumers do not know about the clock hierarchy, sibling clocks,
+> > or the type of clocks involved. However, several longstanding issues
+> > affect how rate changes propagate through the clock tree when
+> > CLK_SET_RATE_PARENT is involved, and the parent's clock rate is changed:
+> > 
+> > - A clock in some cases can unknowingly change a sibling clock's rate.
+> >   More details about this particular case are documented at:
+> >   https://lore.kernel.org/linux-clk/20250528-clk-wip-v2-v2-2-0d2c2f220442@redhat.com/
+> > 
+> > - No negotiation is done with the sibling clocks, so an inappropriate
+> >   or less than ideal parent rate can be selected.
+> > 
+> > A selection of some real world examples of where this shows up is at
+> > [1]. DRM needs to run at precise clock rates, and this issue shows up
+> > there, however will also show up in other subsystems that require
+> > precise clock rates, such as sound.
+> > 
+> > An unknown subset of existing boards are unknowingly dependent on the
+> > existing behavior, so it's risky to change the way the rate negotiation
+> > logic is done in the clk core.
+> > 
+> > This series adds support for v1 and v2 rate negotiation logic to the clk
+> > core. When a child determines that a parent rate change needs to occur
+> > when the v2 logic is used, the parent negotiates with all nodes in that
+> > part of the clk subtree and picks the first rate that's acceptable to
+> > all nodes.
+> > 
+> > Kunit tests are introduced to illustrate the problem, and are updated
+> > later in the series to illustrate that the v2 negotiation logic works
+> > as expected, while keeping compatibility with v1.
+> > 
+> > I marked this as a RFC since Stephen asked me in a video call to not
+> > add a new member to struct clk_core, however I don't see how to do this
+> > any other way.
+> > 
+> > - The clk core doesn’t, and shouldn’t, know about the internal state the
+> >   various clk providers.
+> > - Child clks shouldn’t have to know the internal state of the parent clks.
+> > - Currently this information is not exposed in any way to the clk core.
+> 
+> I recall from that video call that Stephen asked:
+> 
+> - to indeed not introduce a new op
+> - to evaluate the change from top to bottom, but to set it bottom to top
+> - to evaluate the rate by letting child clocks expose an array of the
+>   parent rates they would like, and to intersect all of them to figure
+>   out the best parent rate.
+> 
+> It looks like you followed none of these suggestions, so explaining why
+> you couldn't implement them would be a great first step.
+> 
+> Also, you sent an RFC, on what would you like a comment exactly?
 
-All boards based on the IPQ5424 SoC will require this driver to be enabled.
+Stephen asked me to not introduce a new clk op, however I don't see a
+clean way to do this any other way. Personally, I think that we need a
+new clk op for this use case for the reasons I outlined on the cover
+letter. I am open for suggestions about alternative ways, and will
+gladly make modifications. This is why I marked this series as RFC.
+Patch 10 in this series is the main change of note here.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
----
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+Additionally, the presence of the new op is a convenient way to also
+signal to the clk core that these providers can use the v2 negotiation
+logic. Otherwise, we'll need to introduce a flag somewhere else if we
+want to support a v1/v2 negotiation logic across the clk tree.
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index acb6807d3461..013325255119 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -1379,6 +1379,7 @@ CONFIG_IPQ_GCC_5424=y
- CONFIG_IPQ_GCC_6018=y
- CONFIG_IPQ_GCC_8074=y
- CONFIG_IPQ_GCC_9574=y
-+CONFIG_IPQ_NSSCC_5424=m
- CONFIG_IPQ_NSSCC_9574=m
- CONFIG_MSM_GCC_8916=y
- CONFIG_MSM_MMCC_8994=m
+As for 2), I negotiate the rate change from the top down. The new_rate
+is propagated in the same manner as what's done today in the clk core
+when a parent rate change occurs. I let it reuse the existing rate
+change code that's currently in the clk core to minimize the change
+that was introduced.
 
--- 
-2.34.1
+Regarding the clock table in 3), it could be done with what's there,
+but there's the issue of the new clk_op. I posted this to get feedback
+about that since I think we should settle on the core changes.
+
+Brian
 
