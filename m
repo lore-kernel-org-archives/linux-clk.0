@@ -1,63 +1,63 @@
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35E8C2E5407
-	for <linux-clk@vger.kernel.org>; Thu, 25 Sep 2025 15:17:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0B122E7F06
+	for <linux-clk@vger.kernel.org>; Thu, 25 Sep 2025 15:17:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758813439; cv=none; b=R3d+qwAmQLii834E9gju2ao9ava+RrfaSGvHTyjVSNscxAbPe4aSeIBRlFJLEAtVc70wrVevoYqpJp1vinSY5w9IKeWEFWNC6zOIzPHoF0E5uzT65JVS7U54YWRctHZch0GsVaiKRoXDn8vVrDxWUmTN2SlpYBP6OOJGnae5+bI=
+	t=1758813441; cv=none; b=OaeKN3rDoubogwr+jlB8Qx0K5i3spet8Uf1j7oggZXR7M6+ckanj2TRWs2Nz8G0mmYYgShxczJqY/4EbLGyzhPJlXK36jg6owJCmmvtK7fA5rgxn6eyxw9Fe1rjTlP5v6m1pVPrz7QAe8XrEgylzFE0VLVNBtOhDo0tQTI1+VUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758813439; c=relaxed/simple;
-	bh=7dAHRT2r7ftPVN1rS5b3fLL9XXBwlAPnHlEMfM9TlgA=;
+	s=arc-20240116; t=1758813441; c=relaxed/simple;
+	bh=FZOaPk/XiWFhkp3zMB+0dvCF3erehg3z6+zK/HzLAY4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EtcBZbD1ZUzM00OkhlS2DTHf4TuMGIbO5QZA98YCrsUwpECRLtvtCbwwmvccz/Hn/CpaH+wejIyvsnhqN+YoV973jQ5v4crEyrcoAvLPEbXMbqVpDX+Xg63m8YbcMqioUjSGMYdLGXeg1vzhtrBvHWb0sfhVSkk9iOkbJL5UdsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CDr6X9VL; arc=none smtp.client-ip=209.85.167.48
+	 MIME-Version; b=vBrsFSxcazQt5sIr+9f/9/8vT+sLxJDhhzQ9KIVA+T5NDe7P+m0h+a2gCKAfgOIuR8GpGJzwIfEuPjMFms2LS4ysb2wqiDIvsRzQKNoimBNqtsK7CR6p9yk85eDfjNFAK7pqgbpmRBfgMc8kirJ7p4NHp7oNG/o5ysXHZx8Xf9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fKEfCl7A; arc=none smtp.client-ip=209.85.167.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CDr6X9VL"
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-57e8e67aa3eso3061170e87.1
-        for <linux-clk@vger.kernel.org>; Thu, 25 Sep 2025 08:17:17 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fKEfCl7A"
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5688ac2f39dso1245254e87.3
+        for <linux-clk@vger.kernel.org>; Thu, 25 Sep 2025 08:17:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758813435; x=1759418235; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1758813437; x=1759418237; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=C/43znEe061f/mLeX5mGh0JaDqN09K9lxSSjlK2dh/Q=;
-        b=CDr6X9VLqVd9Jf1udIg4rExPYE5xvc0Vw60gh4orvF/97AxXNsjBStbn5bwQPngaVm
-         BhBaoPjy/AWaTa2e64Tf+QS5r+1sfACLDfceDQulrtNO50nTIzKesqQhCx7ZsaYKXjsQ
-         pWmRSjoChJfHRSJXdnFsEKO/74zqtprgqZZm88N8ffPD/pLSVtjRnynu/pIUM886okyT
-         jV9f7BjqSirNNbkKHGMrEIXwXhEX0WA7vrULIi2EsnT0+YpUuDcOL2iT87t8tn8LITOG
-         VAp48VCRxJD3NFWQFQnbNMfuQ/h4JiNT7jI6TX+UlBnZw0gD/mJ++qCWalSIy5bh5iI6
-         S9xw==
+        bh=Pg0HJx9UF6cc43KSohy1sFUTcyD1/BLQvc4mTLXMxcE=;
+        b=fKEfCl7AVmJHQqhbtbf0R4rOqSa4No3ujMoQQUO4+qZ6MnivJ0ps65I9HNv38/87eC
+         lB+ITMbyBYmBuupoEKppIyNcezWWfZsqDIz54H+0Psl3L+OGm5KbZLfLpRrNxBj9IgdY
+         MOwGYtPbuT9wBz9E3iJl67ufMRzeWfRE3WCyRHXXndMipQNphpcuv8ip34fMD46Cw+i2
+         aEu4m+FcrjFbrnUEjm+8VuHonMRs1JRZfh5PVolg/zh/IAyJrIT9wDUYXfU6C578Q3gJ
+         fmoiimzEow/g7wz/tVP5OLh4ZTTbz6PGhRfq/drTYD0a2X+hxLurRH+WTSlm8BeYUsj+
+         taKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758813435; x=1759418235;
+        d=1e100.net; s=20230601; t=1758813437; x=1759418237;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=C/43znEe061f/mLeX5mGh0JaDqN09K9lxSSjlK2dh/Q=;
-        b=UieZSG2axPoPPpbLMO3gnU5IA8jcRYpywbY18UrB2s/UQtKovGKJmeM/AcNtohK5aZ
-         B7SSm63/pHD0IkFjG5ORLqmcr8lbMylbYGGqllnlbkzEor+ULHH4Bq3WUV/UZ/83mS20
-         QtelLMaADvyjB0lX6pZ4A4din11/AG+s+q1SDEo6E7L5OH8M5tsgtWe8psnqqnggBhGs
-         PngP/kTDoXnkVV1wkMjYEQclf2sDPYR8jMoUS+IpZahsOgrwoQXQuDtDy8Zy9bNViQmt
-         vajlTnU3Wx9BJb8wTlxbJ7l4IyzbuM+zvlN2Eb0Xw6wsmSvZhxKvJy0R5vm8H8H5ryiT
-         ZEHg==
-X-Forwarded-Encrypted: i=1; AJvYcCUEaJy0AfqsVFjznu6bseVOUg1PQQO1nzCC4q5zlp0ZAUlXLhiPnFE8t+FFhg4PwxvGKxNNB3b2Fxg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywk+fBFK5he4lt1pxwyb31BW2rEaxbK/2L4KTGNwn9l2nqhdHae
-	FhRQNvGSa1w/iYetn9/ToCuE9YmPIRH6xgyv/LwHn3mLhRCcDQKeBCe4
-X-Gm-Gg: ASbGncvHMs86B1PKh52S0BrSIv0uLxHrId7BHUnsSoBjpPfYFH05rN3w1pWuNZrwf8e
-	njCKWx/m2jrl1yBvoFlx8eOmf+bNa3RhqtyB8Wn2J0/yVf8T+DvwerlO7mjaINm0ftPTf6X+y1j
-	+/TC1jg1/uVYnxCrsXqRzLIXUb58LtC5NWVoamGVN9quKZ15+g432Eit2kDh77U1xd1dzyoUg2y
-	/sBRannjPHvZ0l78PEAEglvkClVLo4f4ib6dLB0URhHUc0lPfOz03Zciojx5QDuMfqmw8cC+NPi
-	TyIWKLHlSdfyXjFUO6tXLf489e7sOQpu/VK2yyw/NuzGWAv5jHSBvhAvvIv6Ce1w8nj5kPZXuNY
-	SCIOXWTBwGGXSxQUw29/oTzOQ
-X-Google-Smtp-Source: AGHT+IEZhoVTWc3JU2yVQQC2NvFxzQUmxQf+nrYtPw/ltnEPLZ7YBlNqTjchqSYHU9qwgFPB+3ThRA==
-X-Received: by 2002:a05:6512:10d4:b0:57e:2f8e:5f0c with SMTP id 2adb3069b0e04-58306406032mr1045775e87.15.1758813434918;
-        Thu, 25 Sep 2025 08:17:14 -0700 (PDT)
+        bh=Pg0HJx9UF6cc43KSohy1sFUTcyD1/BLQvc4mTLXMxcE=;
+        b=PtD1a2Vh7uW89JZrYPEhP0Uqps9PXPlDRWX3htQriKaJDexkm4By9aqanTDLzGMh6j
+         FBwXy9Z9bgeUnIxtFMrdDwoOMRH+RXK9HT0WLRr74Ra8FJzSIrLqD74KoGY2Awb3HuAd
+         SgZtfViDPxGPVRO1v+SHhabPF8Wi9qcbqdWCZHmD0v4DPwhVwZm/p86eULq6uBJdgqbY
+         AmyS8dDuMo/pVw7cZTR5RXOhocgJqv2w48Io38SjneLrQf6hZx3Hh7z+JdqEjQ09S0fp
+         1LSU8uJ/x17cyeJl8/RYEDP79neSx4ieYQAukOXp4bFtz2PBAZDNWGKR1kKgUsxAX3lP
+         Crqw==
+X-Forwarded-Encrypted: i=1; AJvYcCVFiC7Ma5opgX8VdDEbsE3Sfea5MD3iD6LUZAClMdUi8l5IuPNMV0/96GplzgMCyOqdgDBmtP2vicA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2lZ2/CbigCWGZgRDXb8iPrsI/LyrCa+In/ishnq66719GPTPW
+	7EewaYOjgHf/Y8d3/gAvthyKUHEIBpWCdSfiu81g3neLL5MTjCjMAIfV
+X-Gm-Gg: ASbGncsohUnh8iUr2B+ka0IHiIxJkRhn2Ron2KyHGwrDdBEQl19ueLZ236rEBn/r/d8
+	Tm4WbINYAaM80JuftZZhlXX3Q+Y/bCA5f88/fOf9MZI7p5T2vm9SkVwOTMEssNTcCs3gTDFDDAG
+	Y+QSqhzef5WKdalVym6fbumTSUEHdtxi3GyXB6acf7LWoYiwD5r9CSTki3SSuD2PmAZ6ggJzlZN
+	XBs/y/rKLHZ5WzuAaQozYPanxi0IQOOgzVUTG4RDvySnBQC/BMQGge/BM+icwb2b0LtghzqFAEw
+	ouGok545irYxuQI8VoLdz0oNkIsaKbCViYqso7C0/ymy4q/DkY/q8nXpCIyr8NSrQ0LwJWrQho/
+	oM6qe+qOwCol9dHiIuigcox+O
+X-Google-Smtp-Source: AGHT+IE0utS+jecb/LkEfFuQRpDoO+zVGhi+NkEAr1FLNmKoWaS6Wce1hEkVKYRO90wTwE672u05Dg==
+X-Received: by 2002:a05:6512:3e11:b0:57a:de0d:d9ce with SMTP id 2adb3069b0e04-582d2f273a4mr1035976e87.44.1758813436654;
+        Thu, 25 Sep 2025 08:17:16 -0700 (PDT)
 Received: from xeon.. ([188.163.112.70])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-58313430496sm870084e87.27.2025.09.25.08.17.13
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-58313430496sm870084e87.27.2025.09.25.08.17.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Sep 2025 08:17:14 -0700 (PDT)
+        Thu, 25 Sep 2025 08:17:16 -0700 (PDT)
 From: Svyatoslav Ryhel <clamor95@gmail.com>
 To: David Airlie <airlied@gmail.com>,
 	Simona Vetter <simona@ffwll.ch>,
@@ -93,9 +93,9 @@ Cc: dri-devel@lists.freedesktop.org,
 	linux-clk@vger.kernel.org,
 	linux-gpio@vger.kernel.org,
 	linux-staging@lists.linux.dev
-Subject: [PATCH v3 02/22] dt-bindings: clock: tegra30: Add IDs for CSI pad clocks
-Date: Thu, 25 Sep 2025 18:16:28 +0300
-Message-ID: <20250925151648.79510-3-clamor95@gmail.com>
+Subject: [PATCH v3 03/22] clk: tegra30: add CSI pad clock gates
+Date: Thu, 25 Sep 2025 18:16:29 +0300
+Message-ID: <20250925151648.79510-4-clamor95@gmail.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250925151648.79510-1-clamor95@gmail.com>
 References: <20250925151648.79510-1-clamor95@gmail.com>
@@ -107,42 +107,56 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Tegra30 has CSI pad clock enable bits embedded into PLLD/PLLD2 registers.
-Add ids for these clocks. Additionally, move TEGRA30_CLK_CLK_MAX into
-clk-tegra30 source.
+Tegra30 has CSI pad bits in both PLLD and PLLD2 clocks that are required
+for the correct work of the CSI block. Add CSI pad A and pad B clock gates
+with PLLD/PLLD2 parents, respectively. Add a plld2 spinlock, like one plld
+uses, to prevent simultaneous access since both the PLLDx and CSIx_PAD
+clocks use the same registers
 
 Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
 ---
- drivers/clk/tegra/clk-tegra30.c         | 1 +
- include/dt-bindings/clock/tegra30-car.h | 3 ++-
- 2 files changed, 3 insertions(+), 1 deletion(-)
+ drivers/clk/tegra/clk-tegra30.c | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
-index ca367184e185..ca738bc64615 100644
+index ca738bc64615..61fe527ee6c1 100644
 --- a/drivers/clk/tegra/clk-tegra30.c
 +++ b/drivers/clk/tegra/clk-tegra30.c
-@@ -53,6 +53,7 @@
- #define SYSTEM_CLK_RATE 0x030
+@@ -154,6 +154,7 @@ static unsigned long input_freq;
  
- #define TEGRA30_CLK_PERIPH_BANKS	5
-+#define TEGRA30_CLK_CLK_MAX		311
+ static DEFINE_SPINLOCK(cml_lock);
+ static DEFINE_SPINLOCK(pll_d_lock);
++static DEFINE_SPINLOCK(pll_d2_lock);
  
- #define PLLC_BASE 0x80
- #define PLLC_MISC 0x8c
-diff --git a/include/dt-bindings/clock/tegra30-car.h b/include/dt-bindings/clock/tegra30-car.h
-index f193663e6f28..763b81f80908 100644
---- a/include/dt-bindings/clock/tegra30-car.h
-+++ b/include/dt-bindings/clock/tegra30-car.h
-@@ -271,6 +271,7 @@
- #define TEGRA30_CLK_AUDIO3_MUX 306
- #define TEGRA30_CLK_AUDIO4_MUX 307
- #define TEGRA30_CLK_SPDIF_MUX 308
--#define TEGRA30_CLK_CLK_MAX 309
-+#define TEGRA30_CLK_CSIA_PAD 309
-+#define TEGRA30_CLK_CSIB_PAD 310
+ #define TEGRA_INIT_DATA_MUX(_name, _parents, _offset,	\
+ 			    _clk_num, _gate_flags, _clk_id)	\
+@@ -859,7 +860,7 @@ static void __init tegra30_pll_init(void)
  
- #endif	/* _DT_BINDINGS_CLOCK_TEGRA30_CAR_H */
+ 	/* PLLD2 */
+ 	clk = tegra_clk_register_pll("pll_d2", "pll_ref", clk_base, pmc_base, 0,
+-			    &pll_d2_params, NULL);
++			    &pll_d2_params, &pll_d2_lock);
+ 	clks[TEGRA30_CLK_PLL_D2] = clk;
+ 
+ 	/* PLLD2_OUT0 */
+@@ -1008,6 +1009,16 @@ static void __init tegra30_periph_clk_init(void)
+ 				    0, 48, periph_clk_enb_refcnt);
+ 	clks[TEGRA30_CLK_DSIA] = clk;
+ 
++	/* csia_pad */
++	clk = clk_register_gate(NULL, "csia_pad", "pll_d", CLK_SET_RATE_PARENT,
++				clk_base + PLLD_BASE, 26, 0, &pll_d_lock);
++	clks[TEGRA30_CLK_CSIA_PAD] = clk;
++
++	/* csib_pad */
++	clk = clk_register_gate(NULL, "csib_pad", "pll_d2", CLK_SET_RATE_PARENT,
++				clk_base + PLLD2_BASE, 26, 0, &pll_d2_lock);
++	clks[TEGRA30_CLK_CSIB_PAD] = clk;
++
+ 	/* csus */
+ 	clk = tegra_clk_register_periph_gate("csus", "vi_sensor", 0,
+ 					     clk_base, 0, TEGRA30_CLK_CSUS,
 -- 
 2.48.1
 
