@@ -1,38 +1,38 @@
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1FA42ED84A;
-	Thu, 25 Sep 2025 11:51:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE4112FBDE0;
+	Thu, 25 Sep 2025 11:55:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758801104; cv=none; b=rLIiqg/4eF9IcWUID6rv9A4zfzUEDjUG/KSfnCb/74b7M6v4sfR7W+K8XVbreejONxYp+kAHlH2rUuW9CipqUBzwLbl0Tj4u772JZ+alBlzs5BKH4LSWOKHo27+62G5E3SrPmReOKAUpqM2lxzJbQq1sTBCDaTOnCJOL6KnWsRQ=
+	t=1758801333; cv=none; b=cvC+RUSQGPz8uH1iPtWYtb1DfKIRG2umTTcjvavgs/pGm67UX68Us1eFWRQoTtsUmDQHvMG0jehvYKCEP8ptPW9YWx+Sx5tRo+Obkywyb+i2edXyQ7nZvzRMdDkgSceq6Px78k/j7KkYKqWblP03P1AjLfVoHGc/k8Uj9AgGKuc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758801104; c=relaxed/simple;
-	bh=nLHjkE5hAMTv1oaGUbSSFMNTVYmSwIDxixTqgDQXIjU=;
+	s=arc-20240116; t=1758801333; c=relaxed/simple;
+	bh=MRlI9180Q/DFwlnMHdN/JarBcXXlx5O04GKYHq2QuUg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EWTD4hX62mu6Zce24PrardlUD9SNAkeK7mx89uoV6SKQe8AOva/awaINrHD1Mmc/yUr/7cmWz4oJn5NVsdXd3/JQ/ajUJuLb4DUIpoLnnflaZncnjLF+hnfTnB/s104B5V3B1nPomzyFe91/LWHjuVWkC0ZnzOvD9RZiYxeQvac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=UuKt3ahY; arc=none smtp.client-ip=185.246.85.4
+	 MIME-Version:Content-Type; b=RwdqYc70q8IaANKmzzvPkhGtmZvTUHbM9cjqPXZJI6QzdRZb6T6BFmhCOthzC9TxYTslzU5kEY5CYiYoUWLJEsTv3p7PiOYhWZDQUhJMUGP4NB28vTucwPg9LXyc2u2hhvu6sdFXUe3wmMKBNd2j03PHaR2gwdVakr7sR3qhS8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=T0dHWffl; arc=none smtp.client-ip=185.246.84.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="UuKt3ahY"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="T0dHWffl"
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id C627B4E40DD3;
-	Thu, 25 Sep 2025 11:51:40 +0000 (UTC)
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 019801A0FC4;
+	Thu, 25 Sep 2025 11:55:30 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 969016062C;
-	Thu, 25 Sep 2025 11:51:40 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id C2200102F17C2;
-	Thu, 25 Sep 2025 13:51:37 +0200 (CEST)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id C4CD06062C;
+	Thu, 25 Sep 2025 11:55:29 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 5EAFD102F17C2;
+	Thu, 25 Sep 2025 13:55:25 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1758801099; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1758801328; h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=nLHjkE5hAMTv1oaGUbSSFMNTVYmSwIDxixTqgDQXIjU=;
-	b=UuKt3ahYgLfeGmya7N7uvliTPxrMU72Vm/+WXOMpD0FC23HafBetBxlk+3edEsUiAYND+M
-	iIRZKdMDS5GR59/TnJtUuBCfsbC3KwnCoDtVA0dxiS9wBi836FKqLBxNrBllwMBJ/EZxa0
-	GKk5k/NxJCHJxNxZe1GpkW2VBaukxFN6W2VEu3bqm9grAULhGuoOruvUH4TmH84HkLe31p
-	hB40yf79QIjXiz7trUGG6IkAVMqSevwn7+MqG1CszD7jRpCiqEP+g/h4iyioRkfXHGuCyj
-	ejhDAVJTRvTrtwIwBud1RVgHK/M1LxefekmTpGvJTnTesuZUXcc62zaNGjWqpQ==
+	bh=ymukxC68LYyLPsr3gKo3J1ZahiLqCMUdHsArUXmUEgE=;
+	b=T0dHWfflT/WIbK9+bsc28aoVoXXza3ZCVsS+Rm7SkCEdLQlQ0Zv0X+x1Vcpxw5jKmzuqET
+	dFEpoLNgrcEKVgfmTLIWzJuMGeW9jhaiI96hw669kVwXgEeA2F/S41FBpGiSXDzm8spzj+
+	pG/cZj2DQ0Z6MCK3/8uu2xEoH0wQOy7n4a3m9YBRgLZkJ1HlBL5Ajjf/Cs7pb0V+lF39HT
+	xM95VDJ2HNa1CDvINVAR9lF048DkLPxiXqrPFAlsS/4b6pqcDmlzAmKbI4v19MmnBbY++o
+	ds3nNxCTTMagiwIkU9yne1SSf2FIfRekFYA5AdkMd7onJWQTE7mi+X3KMLtAlw==
 From: =?UTF-8?B?QmVub8OudA==?= Monin <benoit.monin@bootlin.com>
 To: Conor Dooley <conor+dt@kernel.org>,
  Gregory CLEMENT <gregory.clement@bootlin.com>,
@@ -49,15 +49,15 @@ Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
  Tawfik Bayouk <tawfik.bayouk@mobileye.com>,
  Sari Khoury <sari.khoury@mobileye.com>
 Subject:
- Re: [PATCH 08/19] clk: divider: check divider validity for
- CLK_DIVIDER_EVEN_INTEGERS
-Date: Thu, 25 Sep 2025 13:51:37 +0200
-Message-ID: <6823295.MDQidcC6GM@benoit.monin>
-In-Reply-To: <175834534592.4354.10788427255141071676@lazor>
+ Re: [PATCH 09/19] clk: divider: check validity of flags when a table is
+ provided
+Date: Thu, 25 Sep 2025 13:55:24 +0200
+Message-ID: <2449016.cojqenx9y0@benoit.monin>
+In-Reply-To: <175834587624.4354.6026619740146574818@lazor>
 References:
  <20250903-clk-eyeq7-v1-0-3f5024b5d6e2@bootlin.com>
- <20250903-clk-eyeq7-v1-8-3f5024b5d6e2@bootlin.com>
- <175834534592.4354.10788427255141071676@lazor>
+ <20250903-clk-eyeq7-v1-9-3f5024b5d6e2@bootlin.com>
+ <175834587624.4354.6026619740146574818@lazor>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -68,20 +68,62 @@ Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="utf-8"
 X-Last-TLS-Session-Version: TLSv1.3
 
-On Saturday, 20 September 2025 at 07:15:45 CEST, Stephen Boyd wrote:
-> Quoting Beno=C3=AEt Monin (2025-09-03 05:47:15)
-> > Ensure that the divider is even when the flag CLK_DIVIDER_EVEN_INTEGERS
-> > is set, similar to the power of two check for CLK_DIVIDER_POWER_OF_TWO.
+On Saturday, 20 September 2025 at 07:24:36 CEST, Stephen Boyd wrote:
+> Quoting Beno=C3=AEt Monin (2025-09-03 05:47:16)
+> > If any of the flag CLK_DIVIDER_ONE_BASED, CLK_DIVIDER_POWER_OF_TWO,
+> > CLK_DIVIDER_MAX_AT_ZERO or CLK_DIVIDER_EVEN_INTEGERS is set, the divider
+> > table will be ignored in _get_div and _get_val. This can lead to subtle
+> > bug when a clock is registered with some flags and an optional table,
+> > with the clock rate and register value being computed with the wrong
+> > type of conversion.
 > >=20
+> > Prevent this by refusing to register a divider with both the flag and
+> > the table set.
+> >=20
+> > Signed-off-by: Beno=C3=AEt Monin <benoit.monin@bootlin.com>
+> > ---
+> >  drivers/clk/clk-divider.c | 7 +++++++
+> >  1 file changed, 7 insertions(+)
+> >=20
+> > diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
+> > index 8e8f87024e76625f348f1d66c15a7a938fa0c4db..b4861d519bac2121dd015d0=
+94c94a5fee2480148 100644
+> > --- a/drivers/clk/clk-divider.c
+> > +++ b/drivers/clk/clk-divider.c
+> > @@ -561,6 +561,13 @@ struct clk_hw *__clk_hw_register_divider(struct de=
+vice *dev,
+> >                         return ERR_PTR(-EINVAL);
+> >                 }
+> >         }
 >=20
-> Is this a fix?
+> Nitpick: Prefer a newline here.
 >=20
-This was found during code review, nothing prevents divider_get_val() to
-compute an odd divider, but we have not hit a bug caused by that.
+> > +       if (table && (clk_divider_flags & (CLK_DIVIDER_ONE_BASED |
+> > +                                          CLK_DIVIDER_POWER_OF_TWO |
+> > +                                          CLK_DIVIDER_MAX_AT_ZERO |
+> > +                                          CLK_DIVIDER_EVEN_INTEGERS)))=
+ {
+> > +               pr_warn("divider table and flags incompatible\n");
+>=20
+> This pr_warn() (and the one above this one) are not very helpful because
+> we don't know which clk is the problem. We also don't know if this is
+> going to cause boot failures for devices out there that have this flag
+> set and a table. Were all drivers audited?
+>=20
+> I wonder if we can check this condition at compile time with some sort
+> of test on the clk_divider_flags expression to see if it is a compile
+> time constant along with the table pointer being a compile time constant
+> as well that isn't NULL?
+>=20
+I did check all the in-kernel callers and none got this wrong, passing
+either the flag or the table, as I ended up doing in clk-eyeq. I'll see if
+I can come up with a compile time check otherwise maybe just a note in
+clk-provider.h where struct clk_divider is documented could be enough.
 
-Should I add a Fixes tag to=20
-6a136805e3c15 ("clk: divider: IntroduceCLK_DIVIDER_EVEN_INTEGERS flag")
-or drop this patch since it does not fix a bug per se?
+> > +               return ERR_PTR(-EINVAL);
+> > +       }
+>=20
+
 
 Best regards,
 =2D-=20
