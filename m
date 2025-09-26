@@ -1,177 +1,162 @@
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C158A2882B7
-	for <linux-clk@vger.kernel.org>; Fri, 26 Sep 2025 07:27:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF08435950
+	for <linux-clk@vger.kernel.org>; Fri, 26 Sep 2025 08:40:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758871676; cv=none; b=rIMGvaCttWgK7h35PsxGfjOckn2iwEAir70IVduzKSIbED6WAfre2QSvS9Wi6tkyExN4Swcfq/0L0e+KV9VbWtyoO2Lr5GRJjwy/TWdMNHAv6nVA3hAdME8VlkgengnAiThgqLojKw5rbC0R4g2OplL1dMOcD8yG5ZvW4qgaDQ0=
+	t=1758876044; cv=none; b=qWSbaUcG+PBQXS/1jWseAJCrzOZfrjqnHgxxpifIJoYUVSB21ZgVX7zHO1GSQR1lFazZH1dfSTQDDih1qUEeMKZcOpNajaQEqW8BAnzM3zB4mb0Pl9Llbg6ekz0TCJVo/xIzaZ+Li/7A1aIBA02nOqAD65wxkK4qjL2L70QWO/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758871676; c=relaxed/simple;
-	bh=ZeB616wfGXDpkcv6+GcDdwImzUVfxZi+D210Q3QTVMo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=uAWyst8y5d2B6pjQdf2WyLb7gVOGGEC9462GfeqYfV49i1kJKSImQlN24Wd9ZzQjlxdnml3cXusAag4NP/KKt3f4PiyC44ki0QtszTnQ6o8YC0EfL+XoruIJ18YDqP4vEQrx60kfC2jTfEpiEJ9xbpvmX4s/Xk85IIb1KyyMMsU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=SXqxsBnu; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1758876044; c=relaxed/simple;
+	bh=BF6fj45ETbF2JTxivH96fy19F1Zq2v8s40/BNLfEbsk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jrvvmrKBfacJvpuY5uZqAQQAdR44ByahZndGwIlD0cW2WJeFt39Ed6nbqO8dBpc6T7HYFM/mdBo0UJgM260HVKOlkGKvf0gJTmIlEjaZ/UsATMnby69AECNWD3Rvwv4lRq7Gg8HPy8aFj+iroBqRuRSHPJpLQ7pKYhtAwOpr5ck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=TW6ltXRz; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="SXqxsBnu"
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250926072746euoutp02cfe198e0bb741fabad5639397f7430ee~oxHYg8Sz92980329803euoutp02p
-	for <linux-clk@vger.kernel.org>; Fri, 26 Sep 2025 07:27:46 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250926072746euoutp02cfe198e0bb741fabad5639397f7430ee~oxHYg8Sz92980329803euoutp02p
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1758871666;
-	bh=vfTqJAeUpyWDWUY0mZYgZGj49ET2JHgaUA22xnXpmkY=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=SXqxsBnupU76fIpOgWpc3cxxUgtojx8A4U9ZVmc3fjzLt8Sai/y7EnEfFFn8i25Fc
-	 zpM07Ptxl+rmYuluBBD0NxZSbiKLTU0oFTxEj74zJPuHnq/8s/p0OZmMxAVi7MNVtT
-	 HUD0rXWmiHD+q5rhEnZr7Pcmr1EVqMIgBFaTMBsI=
-Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250926072745eucas1p139b192b8a0342c448f1917a867b91b23~oxHXwfdhJ1038710387eucas1p1w;
-	Fri, 26 Sep 2025 07:27:45 +0000 (GMT)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250926072743eusmtip144b115372f153f8c07ba60b620d2d799~oxHWbRlP82061920619eusmtip1S;
-	Fri, 26 Sep 2025 07:27:43 +0000 (GMT)
-Message-ID: <1e5d1625-1326-4565-8407-71a58a91d230@samsung.com>
-Date: Fri, 26 Sep 2025 09:27:42 +0200
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="TW6ltXRz"
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58Q6p6Ht014879
+	for <linux-clk@vger.kernel.org>; Fri, 26 Sep 2025 08:40:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	QJH3H/0kmdW6w7MgCtEBO34/S0w4O3IKZVUmNKMzmxs=; b=TW6ltXRzQyf5A7om
+	E18NnxeB03KQyW2HIqMhNtSSpsj8daU4M3DoSJiF+CN8Ob3AOMMvzlM4mN2ls++K
+	lrOthPpxhzyxOQbPvBVEBVA0rzWNe2lUaLCuItVXgdQ0/nGr/H9nWkPMR7rmrckJ
+	rU+AvuwfmzVhlD/iI39A6TtD2ZIepde1jdDt74ujELry+hgSe/qOnh00kayYDXTb
+	prbcPCRSvg8qYjZiAZdnt/stB8QpyxDTHB45bEICq106dailIXO/si7EGsO0SwQa
+	r2r70ePAFVD08PQVJW7G6ZCaDH5QvaSakNtEFVKtydxUDFyql70//cVqyXW0NM13
+	8PL0pw==
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49db0ta5hx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Fri, 26 Sep 2025 08:40:41 +0000 (GMT)
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-27356178876so15515275ad.1
+        for <linux-clk@vger.kernel.org>; Fri, 26 Sep 2025 01:40:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758876040; x=1759480840;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QJH3H/0kmdW6w7MgCtEBO34/S0w4O3IKZVUmNKMzmxs=;
+        b=QB7G24gYq9m4Eau6qiSbqBxO6DSU0hQRPAE/zOoIZk44+lIfJTNkzML2vwlMag4ASh
+         8LJMGJf23JBCEgi043AopDeTuQNr+B/5yyNFKBkm22f4Sb8iRYqRAp5/7Q0wBOshFRTH
+         QTnHqzMlnabgiM1Sr8nI1D3V4/k2CrNO0aeCgCbGstoxuM/H0S4dGIKZM3SmrX0ToX8I
+         33fgDJRjFQ4YrelFHbCOLJNkiA7p2/SEnH25/WGjVljlXp0ANuGUOUJluhIxT/G2d3Ap
+         VpT5eqkq1L5zwz7tioctJJ86mzRu9DGXIGYcASfapt0Xswh0JKroPErtu0p1UqQK1d5t
+         NdJA==
+X-Forwarded-Encrypted: i=1; AJvYcCXBJ1tK6BBiB9aJ1RPtcuoIGrTG3ehwRkNBtacPZ8+Co3g5r4xmLTSIgsWRv5L+2TFaQllD/zODoaM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4eV997aRKx/BWKpFLSJ3y8EQ+synA0BV/BBG/DVjTyNb6GtsD
+	e4uvQTWhvaFUSN8vNUJiR/zmV0X3SI5WccBeH3sMYtxokoxbTGsRqRp85YjYcNEw1SV+h1tpCR9
+	Ocn6dBT2N28GbP03+IxiC9x0m0nebjkacPNEZgzeJ6N1DHU4M7szr2RZlsDcTMCg=
+X-Gm-Gg: ASbGncuphRd+sugJaPMHxscSdtoCMiTZFuQrdws6hmnca+GUgb6ujt3scro9zgEiB85
+	qjlzzEbqiUi6awMyFwKItz2vTZoOmDIGH1Z445lYzseLQBsqSPFuKvxMMznX/sGoaiAuKCXkwcV
+	1bX1uLyZyHD6L/YoGsU7dW3MUMVGMCgisinBkOQn5RnXsWiHk1L/meOC4LEnFGxOCVSx6FfolKA
+	cxIVfcdLa9obdheoBMyz5RKREk8xD1E1RGw3TYb8vGwcMbLRXDCxhwoKAL0/jDJobU764JMHxOP
+	6UEs0uDL8UlpmH8c3jSGEKqlBiKKfJmstUO90kogA0dkjfmJ3w/nlY7ycoHXnrbGLYoi
+X-Received: by 2002:a17:902:e787:b0:266:e8c3:4731 with SMTP id d9443c01a7336-27ed4a4e69fmr57199395ad.23.1758876040419;
+        Fri, 26 Sep 2025 01:40:40 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGSYjbgxz3ZpRa0D00ZVNPgHg9O0ctAAj1epWv0U96tMdUGtuWmJ8IJY2bgSO3VYP/MfK11Rw==
+X-Received: by 2002:a17:902:e787:b0:266:e8c3:4731 with SMTP id d9443c01a7336-27ed4a4e69fmr57199205ad.23.1758876039860;
+        Fri, 26 Sep 2025 01:40:39 -0700 (PDT)
+Received: from [10.217.216.188] ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed6733a63sm47601845ad.64.2025.09.26.01.40.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 26 Sep 2025 01:40:39 -0700 (PDT)
+Message-ID: <d55b42b6-1b2b-4a52-8eaf-78c4ed78958c@oss.qualcomm.com>
+Date: Fri, 26 Sep 2025 14:10:31 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH v2 2/5] clk: bcm: rpi: Turn firmware clock on/off when
- preparing/unpreparing
-To: Stefan Wahren <wahrenst@gmx.net>, =?UTF-8?Q?Ma=C3=ADra_Canal?=
-	<mcanal@igalia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen
-	Boyd <sboyd@kernel.org>, Nicolas Saenz Julienne <nsaenz@kernel.org>, Florian
-	Fainelli <florian.fainelli@broadcom.com>, Maxime Ripard
-	<mripard@kernel.org>, Melissa Wen <mwen@igalia.com>, Iago Toral Quiroga
-	<itoral@igalia.com>, Dom Cobley <popcornmix@gmail.com>, Dave Stevenson
-	<dave.stevenson@raspberrypi.com>, Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org,
-	Broadcom internal kernel review list
-	<bcm-kernel-feedback-list@broadcom.com>, kernel-dev@igalia.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 7/9] clk: qcom: camcc: Add support for camera clock
+ controller for Kaanapali
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, aiqun.yu@oss.qualcomm.com,
+        tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com,
+        yijie.yang@oss.qualcomm.com
+References: <20250924-knp-mmclk-v1-0-d7ea96b4784a@oss.qualcomm.com>
+ <20250924-knp-mmclk-v1-7-d7ea96b4784a@oss.qualcomm.com>
+ <d18c5196-dd8e-47d6-87bd-de0ac94fbf3b@linaro.org>
 Content-Language: en-US
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <2b1537c1-93e4-4c6c-8554-a2d877759201@gmx.net>
+From: Taniya Das <taniya.das@oss.qualcomm.com>
+In-Reply-To: <d18c5196-dd8e-47d6-87bd-de0ac94fbf3b@linaro.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250926072745eucas1p139b192b8a0342c448f1917a867b91b23
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250925075711eucas1p26efbb194311a6e22ab593a39b43e12c3
-X-EPHeader: CA
-X-CMS-RootMailID: 20250925075711eucas1p26efbb194311a6e22ab593a39b43e12c3
-References: <20250731-v3d-power-management-v2-0-032d56b01964@igalia.com>
-	<20250731-v3d-power-management-v2-2-032d56b01964@igalia.com>
-	<CGME20250925075711eucas1p26efbb194311a6e22ab593a39b43e12c3@eucas1p2.samsung.com>
-	<727aa0c8-2981-4662-adf3-69cac2da956d@samsung.com>
-	<2b1537c1-93e4-4c6c-8554-a2d877759201@gmx.net>
-
-On 25.09.2025 18:48, Stefan Wahren wrote:
-> Am 25.09.25 um 09:57 schrieb Marek Szyprowski:
->> On 31.07.2025 23:06, Maíra Canal wrote:
->>> Currently, when we prepare or unprepare RPi's clocks, we don't actually
->>> enable/disable the firmware clock. This means that
->>> `clk_disable_unprepare()` doesn't actually change the clock state at
->>> all, nor does it lowers the clock rate.
->>>
->>> >From the Mailbox Property Interface documentation [1], we can see that
->>> we should use `RPI_FIRMWARE_SET_CLOCK_STATE` to set the clock state
->>> off/on. Therefore, use `RPI_FIRMWARE_SET_CLOCK_STATE` to create a
->>> prepare and an unprepare hook for RPi's firmware clock.
->>>
->>> As now the clocks are actually turned off, some of them are now marked
->>> CLK_IS_CRITICAL, as those are required to be on during the whole system
->>> operation.
->>>
->>> Link:https://github.com/raspberrypi/firmware/wiki/Mailbox-property-interface 
->>> [1]
->>> Signed-off-by: Maíra Canal<mcanal@igalia.com>
->>>
->>> ---
->>>
->>> About the pixel clock: currently, if we actually disable the pixel
->>> clock during a hotplug, the system will crash. This happens in the
->>> RPi 4.
->>>
->>> The crash happens after we disabled the CRTC (thus, the pixel clock),
->>> but before the end of atomic commit tail. As vc4's pixel valve doesn't
->>> directly hold a reference to its clock – we use the HDMI encoder to
->>> manage the pixel clock – I believe we might be disabling the clock
->>> before we should.
->>>
->>> After this investigation, I decided to keep things as they current are:
->>> the pixel clock is never disabled, as fixing it would go out of
->>> the scope of this series.
->>> ---
->>>    drivers/clk/bcm/clk-raspberrypi.c | 56 
->>> ++++++++++++++++++++++++++++++++++++++-
->>>    1 file changed, 55 insertions(+), 1 deletion(-)
->> This patch landed recently in linux-next as commit 919d6924ae9b ("clk:
->> bcm: rpi: Turn firmware clock on/off when preparing/unpreparing"). In my
->> tests I found that it breaks booting of RaspberryPi3B+ board in ARM
->> 32bit mode. Surprisingly the same board in ARM 64bit mode correctly
->> boots a kernel compiled from the same source. The RPi3B+ board freezes
->> after loading the DRM modules (kernel compiled from 
->> arm/multi_v7_defconfig):
-> thanks for spotting and bisecting this. Sorry, I only reviewed the 
-> changes and didn't had the time to test any affected board.
->
-> I was able to reproduce this issue and the following workaround avoid 
-> the hang in my case:
->
-> diff --git a/drivers/clk/bcm/clk-raspberrypi.c 
-> b/drivers/clk/bcm/clk-raspberrypi.c
-> index 1a9162f0ae31..94fd4f6e2837 100644
-> --- a/drivers/clk/bcm/clk-raspberrypi.c
-> +++ b/drivers/clk/bcm/clk-raspberrypi.c
-> @@ -137,6 +137,7 @@ raspberrypi_clk_variants[RPI_FIRMWARE_NUM_CLK_ID] = {
->         [RPI_FIRMWARE_V3D_CLK_ID] = {
->                 .export = true,
->                 .maximize = true,
-> +               .flags = CLK_IS_CRITICAL,
->         },
->         [RPI_FIRMWARE_PIXEL_CLK_ID] = {
->                 .export = true,
->
-Right, this fixes (frankly speaking 'hides') the issue. Feel free to add:
-
-Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+X-Proofpoint-ORIG-GUID: -5GpNnez1FRlwgfyl1OCbhPM_5nBCePS
+X-Proofpoint-GUID: -5GpNnez1FRlwgfyl1OCbhPM_5nBCePS
+X-Authority-Analysis: v=2.4 cv=Jvz8bc4C c=1 sm=1 tr=0 ts=68d65189 cx=c_pps
+ a=JL+w9abYAAE89/QcEU+0QA==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=txcd_wJ1IAhHlW4x_IwA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=zZCYzV9kfG8A:10
+ a=324X-CrmTo6CU4MGRt3R:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI1MDE3MSBTYWx0ZWRfX4sdV1Xg+/Dsf
+ SGQvfEOLUCIeKHAwNQDk3JDQqvHL12Rk3vvgbi+x+0CFeKNa7sszL9O+mNYGPFz/BYmEAD0LW7h
+ pDUlY0kGzJBA6c32GnWvHsQoTziI7pVbevBMoNhaEc1jNcMhQNE8dy4nT9xXbbFP6lGrVq2igtf
+ ynQBNTsLGkaFFn/VAh87afwwL1nGoV4f0lhwdigs+3ALPtaWAaN+cDfAPq4BenNJPG5/nWjcHO8
+ ggsVo6sZVGuO3l1924RasiHcngyNO3x9DtxUcl5aZEI7O706ivxyY/udDLUrmbX/YoFd4Wm6SLD
+ mexM2mDmj3AodnBtJ0yp9wELesReNBfDb6B2qQN6F8z1Om+8b98Ej2mPj1a0aNfDZWHsu5ypdkg
+ SEsaP8+6rQUhvORzloO/Fe4BNuf1+g==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-26_02,2025-09-26_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 malwarescore=0 bulkscore=0 impostorscore=0 lowpriorityscore=0
+ suspectscore=0 spamscore=0 priorityscore=1501 adultscore=0 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509250171
 
 
-> The proper fix should be in the clock consumer drivers. I found that 
-> vc4_v3d doesn't ensure that the clock is enabled before accessing the 
-> registers. Unfortunately the following change doesn't fix the issue 
-> for me :-(
->
-> diff --git a/drivers/gpu/drm/vc4/vc4_v3d.c 
-> b/drivers/gpu/drm/vc4/vc4_v3d.c
-> index bb09df5000bd..5e43523732b4 100644
-> --- a/drivers/gpu/drm/vc4/vc4_v3d.c
-> +++ b/drivers/gpu/drm/vc4/vc4_v3d.c
-> @@ -441,7 +441,7 @@ static int vc4_v3d_bind(struct device *dev, struct 
-> device *master, void *data)
->         vc4->v3d = v3d;
->         v3d->vc4 = vc4;
->
-> -       v3d->clk = devm_clk_get_optional(dev, NULL);
-> +       v3d->clk = devm_clk_get_optional_enabled(dev, NULL);
->         if (IS_ERR(v3d->clk))
->                 return dev_err_probe(dev, PTR_ERR(v3d->clk), "Failed 
-> to get V3D clock\n");
 
-Well, this can be sorted out in the drivers as a next step.
+On 9/25/2025 2:40 PM, Bryan O'Donoghue wrote:
+> On 25/09/2025 00:56, Jingyi Wang wrote:
+>> +static u32 cam_cc_kaanapali_critical_cbcrs[] = {
+>> +    0x21398, /* CAM_CC_DRV_AHB_CLK */
+>> +    0x21390, /* CAM_CC_DRV_XO_CLK */
+>> +    0x21364, /* CAM_CC_GDSC_CLK */
+>> +    0x21368, /* CAM_CC_SLEEP_CLK */
+>> +};
+> 
+> How is this critical list decided ?
+> 
 
+Bryan, these are list based on design recommendations.
 
-Best regards
+> For example why is the AHB clock critical but the CAMNOC and AXI clocks
+> not critical ?
+> 
+
+AHB clock is required for access and NOC & AXI needs to be managed by
+the client SW driver.
+
+> ---
+> bod
+
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+Thanks,
+Taniya Das
 
