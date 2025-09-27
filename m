@@ -1,159 +1,230 @@
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86E214A21
-	for <linux-clk@vger.kernel.org>; Sat, 27 Sep 2025 09:20:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93A4C1F541E;
+	Sat, 27 Sep 2025 10:40:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758964855; cv=none; b=qDD9paZQL+Fg4Dlurws3YH9eabTg8243xbSRBrmPbYZVnAbc6enP7LBy3nQcgCBi/4YJMKnupo32Qr/TkNm4pn025mEYSvSRtGTBBMCCsf6zdcuq+vaY3bPwKbhC7gmmqPlh/QIzlvrwkxIQszc0uyC75yFRgfhaJSZSUxMdzVM=
+	t=1758969643; cv=none; b=EtehLohZLnnjKjh+Lzm9RaucpgG7xgVsKmjDfjq3GfGb3Tt/u3FKj37ptKCRnCrodNZNaE0ASxecXzyzmwNzmzw8GEU0Ks5+mKNyTGYPK3lQ08wWbEswb5KczuOJyOrH4cxPJbd7h5eBvqZ87d6U/ZVH06/fWbqEghmtnFCeeoU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758964855; c=relaxed/simple;
-	bh=/t3TZT7OJrjKJml8DIU0qxdIMBB5wu0/exPcKbnLXnQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cS0yVDg1Js6YXeB2O/3nGuomZUrzbl4A2ltoVmBY7o9BS6/fZHhabgXJOlK1kS/AB2Y+j6ZS15kF/BqpCVPOKMXy6BmVnI0zFyscVezRbPsJ1dzbt2WeuHTimiUzFMSq/J5BLqnejLLCJ7H+lfbZAxc3mcdidHrJDffY7dhO8g4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WMuB4BRP; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1758969643; c=relaxed/simple;
+	bh=MqZQcoGXG4SDq6jxLl2RGQWZXvBxfGsoLv0xZxlD0tc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cucvMqOIyZPnXMQLsy9dwVp9zw4n0mosrKDCqxFFsOQnvgw80jXsJ4CuqpO4Gss5T5kdjd9yZrBgW5nbKHIib5aR3tyV8ALV+KGH8znyVbJpg73+FIGhlSWc7pCA1ApeO2i7cOC2hh/wm4RSB5S3q9cf/hx75eiFERNCsQx2HzY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LyetWSAX; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WMuB4BRP"
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3fc36b99e92so2452542f8f.0
-        for <linux-clk@vger.kernel.org>; Sat, 27 Sep 2025 02:20:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758964852; x=1759569652; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+K9Vn9bWAnI4BE155GCPvaTjF5XBKFWlh0xk9agIzlA=;
-        b=WMuB4BRPUhBt+bNq/DGyqc7vLAb9bi2ccfL3AxOEX6D6TbqIfzp93BoervgD3hu4UC
-         XpUR7IHdC1YlskIUJHQd1LtPpsMGLTB2DKwsdlpEhxX8CrVtiGIMX7hZ5KXyeZHOrf9l
-         UKyYCSWrhjjDhowJYtOPO9osFRoyjB7kgHJViS45HgTho/8YkbXXMMVouIgoY2mSMP0A
-         nU9QX/h7ylR6ll+ex8LUzslz3RFrzGHOAYDR/5hQA36EB+j/6FihbhAs21zWxORcSXXy
-         xvA++U3WEuR0U7A9RaCEC4CxgJw0xlLd0BeJdcBqO+Cl214WRd5282hTS/TS6QTQaU0m
-         6s2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758964852; x=1759569652;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+K9Vn9bWAnI4BE155GCPvaTjF5XBKFWlh0xk9agIzlA=;
-        b=FyVwf/tDQXKdYcld07nS9Fukho1aKIr8Hk8GuATtquBIafoINyoRwexymDfyjNP3RO
-         ny2y5mbCGwlvg0Qh6erzWXdNUlb467u7eU09Srd6FEI6c3nbidgpVEbC0FBbhRB3KgtL
-         gHlhBkJt8MsHmVl/gV7QSpyIXQKtszwhOK0XpW3rmRPTtLs9nV3lhdBrye/JjucKH+9t
-         h98ZFWK//wfngq9DyPwerGCMhB8vXOd0IAdG6+RtKKOTCXTaoIrnpPaC1A+cnkvkorz5
-         alym4EQ3lW8iXymJqyv+dxbppIH/JPnXDR+HQhShXHOHNMAnp/qhR7xviMmbjZrMeuKD
-         bIcw==
-X-Forwarded-Encrypted: i=1; AJvYcCVfP8movHv4D5uBBKRWffSvS31cptPX56Ce7rel2o8vmTq6XniHpmzzL63HWqCpHugK85er1VpYCqg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUx0hSMxNQtp9TIDmz1C5SCypq6hqQ1v7dfp76j+34yB+pAXEo
-	SJk9j3ZxchLGUzA2c7dI+pJYIQMw6CVuBAsfRyYXyGsfbcbdwjSrh+k8dqypWl1fJuOgRAuZVy1
-	HP4GbG4YIId8mM7SfMBIOX/bPxQepjFy4nyFaHf4=
-X-Gm-Gg: ASbGncsMObmtvIrNO17LFiLGaVRgCiJZGwxGe5/atlNStw01NiMWSRNSoth9PuftJOZ
-	zfzadFRcpxpwuw6TPcfRiQKMbbJwAgjgmDFA1YhgiQNkp4JrA8w9qGfE9ZLVbYOLmAucipkh5ut
-	44mcDGgn/AWzGJZ0NIt9O2319zjYcr0CP5YHE3rcX/kO68PL7oPCW4FHN6XegcC6gnW0M2YxHw1
-	dG+jN9Jrvy0JNs6H2c=
-X-Google-Smtp-Source: AGHT+IFrTxM9Q7PDjvaeqtIGpYhacKRy64PKIRSyugqmIbH/nwL4P9ZHMzWlj1q2unq+uw4xc3LL+ZZ5rcx2i+qxmE0=
-X-Received: by 2002:a05:6000:420e:b0:3e8:f67:894f with SMTP id
- ffacd0b85a97d-40f65cb098emr8732361f8f.26.1758964851657; Sat, 27 Sep 2025
- 02:20:51 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LyetWSAX"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2287C4CEE7;
+	Sat, 27 Sep 2025 10:40:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758969643;
+	bh=MqZQcoGXG4SDq6jxLl2RGQWZXvBxfGsoLv0xZxlD0tc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=LyetWSAXMMwwpITPBJYkxxuHYWO7f36w79vODcBRLaiX6knQuFmmEaRMtkAmlBScN
+	 7/pI32MhXZIo2T5zwXsMqLsUIJ2ejV7kR0EQjEGEyYalhqKdbfYF6g9qlc/zz8VD7r
+	 VD2BA/cdww3zzkdnFGHhyvzB1WtPQOX1odBIznfWRGUZfJAz9XBPGXQDQRkRHI2PYL
+	 2PNh0i9LsjUMTmj4x3H8zdEemtN/oR9NcAcVnOkGSHdFkeaAoIP1uRMquRPIo5hMR9
+	 2L8zygBUUDHvrHDIWTVTP39C0sRogFxLwGeQlxsCoXvTDCil9Ob0XIK0MtjD2YTN46
+	 3m8a3TU/GaGMQ==
+Message-ID: <dc48e781-ca65-4afe-9780-a814a7231648@kernel.org>
+Date: Sat, 27 Sep 2025 11:40:38 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <81260328acb5c78e915ab04afad3901a31c16128.1758793709.git.geert+renesas@glider.be>
-In-Reply-To: <81260328acb5c78e915ab04afad3901a31c16128.1758793709.git.geert+renesas@glider.be>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Sat, 27 Sep 2025 10:20:25 +0100
-X-Gm-Features: AS18NWBrfcgOBOZDAaeK8p6RbP_plvyufDtAafY_khBrZmmD6GFm9c13OLsUcRw
-Message-ID: <CA+V-a8u-FEfB7WyDRtz_q5ZKKmZMRrNbv6uoBg234ggkVD1BGg@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: Use IS_ERR() for pointers that cannot be NULL
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	kernel test robot <lkp@intel.com>, Dan Carpenter <dan.carpenter@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] dt-bindings: clock: qcom,x1e80100-gcc: Add missing
+ USB4 clocks/resets
+To: Konrad Dybcio <konradybcio@kernel.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Rajendra Nayak <quic_rjendra@quicinc.com>,
+ Wesley Cheng <wesley.cheng@oss.qualcomm.com>,
+ Sibi Sankar <quic_sibis@quicinc.com>, Abel Vesa <abel.vesa@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+References: <20250926-topic-hamoa_gcc_usb4-v1-0-25cad1700829@oss.qualcomm.com>
+ <20250926-topic-hamoa_gcc_usb4-v1-1-25cad1700829@oss.qualcomm.com>
+From: Bryan O'Donoghue <bod@kernel.org>
+Content-Language: en-US
+In-Reply-To: <20250926-topic-hamoa_gcc_usb4-v1-1-25cad1700829@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Sep 25, 2025 at 10:53=E2=80=AFAM Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
->
-> The use of IS_ERR_OR_NULL() suggests that "clk" can be a NULL pointer.
-> Hence smatch assumes so, and issues a "passing zero to 'PTR_ERR'"
-> warning.
->
-> At these checkpoints, "clk" always contains either a valid pointer, or
-> an error pointer (none of the functions called return NULL pointers).
-> Hence replace IS_ERR_OR_NULL() by IS_ERR().
->
-> Reported-by: kernel test robot <lkp@intel.com>
-> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> Closes: https://lore.kernel.org/r/202408032025.ve2JMaoV-lkp@intel.com/
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On 26/09/2025 13:03, Konrad Dybcio wrote:
+> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> 
+> Some of the USB4 muxes, RCGs and resets were not initially described.
+> 
+> Add indices for them to allow extending the driver.
+> 
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 > ---
-> To be queued in renesas-clk-for-v6.19.
->
->  drivers/clk/renesas/renesas-cpg-mssr.c | 2 +-
->  drivers/clk/renesas/rzg2l-cpg.c        | 2 +-
->  drivers/clk/renesas/rzv2h-cpg.c        | 2 +-
->  3 files changed, 3 insertions(+), 3 deletions(-)
->
-Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-
-Cheers,
-Prabhakar
-
-> diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas=
-/renesas-cpg-mssr.c
-> index 7d661beb09a0810b..0289a35e4e6a0e59 100644
-> --- a/drivers/clk/renesas/renesas-cpg-mssr.c
-> +++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-> @@ -451,7 +451,7 @@ static void __init cpg_mssr_register_core_clk(const s=
-truct cpg_core_clk *core,
->                 break;
->         }
->
-> -       if (IS_ERR_OR_NULL(clk))
-> +       if (IS_ERR(clk))
->                 goto fail;
->
->         dev_dbg(dev, "Core clock %pC at %lu Hz\n", clk, clk_get_rate(clk)=
-);
-> diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-=
-cpg.c
-> index 15b0b96373b03d16..2923961ec001079a 100644
-> --- a/drivers/clk/renesas/rzg2l-cpg.c
-> +++ b/drivers/clk/renesas/rzg2l-cpg.c
-> @@ -1177,7 +1177,7 @@ rzg2l_cpg_register_core_clk(const struct cpg_core_c=
-lk *core,
->                 goto fail;
->         }
->
-> -       if (IS_ERR_OR_NULL(clk))
-> +       if (IS_ERR(clk))
->                 goto fail;
->
->         dev_dbg(dev, "Core clock %pC at %lu Hz\n", clk, clk_get_rate(clk)=
-);
-> diff --git a/drivers/clk/renesas/rzv2h-cpg.c b/drivers/clk/renesas/rzv2h-=
-cpg.c
-> index 0965f3d11213ed22..0509d1e338058f4e 100644
-> --- a/drivers/clk/renesas/rzv2h-cpg.c
-> +++ b/drivers/clk/renesas/rzv2h-cpg.c
-> @@ -591,7 +591,7 @@ rzv2h_cpg_register_core_clk(const struct cpg_core_clk=
- *core,
->                 goto fail;
->         }
->
-> -       if (IS_ERR_OR_NULL(clk))
-> +       if (IS_ERR(clk))
->                 goto fail;
->
->         dev_dbg(dev, "Core clock %pC at %lu Hz\n", clk, clk_get_rate(clk)=
-);
-> --
-> 2.43.0
->
->
+>   .../bindings/clock/qcom,x1e80100-gcc.yaml          | 62 ++++++++++++++++++++--
+>   include/dt-bindings/clock/qcom,x1e80100-gcc.h      | 61 +++++++++++++++++++++
+>   2 files changed, 119 insertions(+), 4 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,x1e80100-gcc.yaml b/Documentation/devicetree/bindings/clock/qcom,x1e80100-gcc.yaml
+> index 68dde0720c711320aa0e7c74040cf3c4422dda72..1b15b507095455c93b1ba39404cafbb6f96be5a9 100644
+> --- a/Documentation/devicetree/bindings/clock/qcom,x1e80100-gcc.yaml
+> +++ b/Documentation/devicetree/bindings/clock/qcom,x1e80100-gcc.yaml
+> @@ -32,9 +32,36 @@ properties:
+>         - description: PCIe 5 pipe clock
+>         - description: PCIe 6a pipe clock
+>         - description: PCIe 6b pipe clock
+> -      - description: USB QMP Phy 0 clock source
+> -      - description: USB QMP Phy 1 clock source
+> -      - description: USB QMP Phy 2 clock source
+> +      - description: USB4_0 QMPPHY clock source
+> +      - description: USB4_1 QMPPHY clock source
+> +      - description: USB4_2 QMPPHY clock source
+> +      - description: USB4_0 PHY DP0 GMUX clock source
+> +      - description: USB4_0 PHY DP1 GMUX clock source
+> +      - description: USB4_0 PHY PCIE PIPEGMUX clock source
+> +      - description: USB4_0 PHY PIPEGMUX clock source
+> +      - description: USB4_0 PHY SYS PCIE PIPEGMUX clock source
+> +      - description: USB4_1 PHY DP0 GMUX 2 clock source
+> +      - description: USB4_1 PHY DP1 GMUX 2 clock source
+> +      - description: USB4_1 PHY PCIE PIPEGMUX clock source
+> +      - description: USB4_1 PHY PIPEGMUX clock source
+> +      - description: USB4_1 PHY SYS PCIE PIPEGMUX clock source
+> +      - description: USB4_2 PHY DP0 GMUX 2 clock source
+> +      - description: USB4_2 PHY DP1 GMUX 2 clock source
+> +      - description: USB4_2 PHY PCIE PIPEGMUX clock source
+> +      - description: USB4_2 PHY PIPEGMUX clock source
+> +      - description: USB4_2 PHY SYS PCIE PIPEGMUX clock source
+> +      - description: USB4_0 PHY RX 0 clock source
+> +      - description: USB4_0 PHY RX 1 clock source
+> +      - description: USB4_1 PHY RX 0 clock source
+> +      - description: USB4_1 PHY RX 1 clock source
+> +      - description: USB4_2 PHY RX 0 clock source
+> +      - description: USB4_2 PHY RX 1 clock source
+> +      - description: USB4_0 PHY PCIE PIPE clock source
+> +      - description: USB4_0 PHY max PIPE clock source
+> +      - description: USB4_1 PHY PCIE PIPE clock source
+> +      - description: USB4_1 PHY max PIPE clock source
+> +      - description: USB4_2 PHY PCIE PIPE clock source
+> +      - description: USB4_2 PHY max PIPE clock source
+>   
+>     power-domains:
+>       description:
+> @@ -67,7 +94,34 @@ examples:
+>                  <&pcie6b_phy>,
+>                  <&usb_1_ss0_qmpphy 0>,
+>                  <&usb_1_ss1_qmpphy 1>,
+> -               <&usb_1_ss2_qmpphy 2>;
+> +               <&usb_1_ss2_qmpphy 2>,
+> +               <&usb4_0_phy_dp0_gmux_clk>,
+> +               <&usb4_0_phy_dp1_gmux_clk>,
+> +               <&usb4_0_phy_pcie_pipegmux_clk>,
+> +               <&usb4_0_phy_pipegmux_clk>,
+> +               <&usb4_0_phy_sys_pcie_pipegmux_clk>,
+> +               <&usb4_1_phy_dp0_gmux_2_clk>,
+> +               <&usb4_1_phy_dp1_gmux_2_clk>,
+> +               <&usb4_1_phy_pcie_pipegmux_clk>,
+> +               <&usb4_1_phy_pipegmux_clk>,
+> +               <&usb4_1_phy_sys_pcie_pipegmux_clk>,
+> +               <&usb4_2_phy_dp0_gmux_2_clk>,
+> +               <&usb4_2_phy_dp1_gmux_2_clk>,
+> +               <&usb4_2_phy_pcie_pipegmux_clk>,
+> +               <&usb4_2_phy_pipegmux_clk>,
+> +               <&usb4_2_phy_sys_pcie_pipegmux_clk>,
+> +               <&usb4_0_phy_rx_0_clk>,
+> +               <&usb4_0_phy_rx_1_clk>,
+> +               <&usb4_1_phy_rx_0_clk>,
+> +               <&usb4_1_phy_rx_1_clk>,
+> +               <&usb4_2_phy_rx_0_clk>,
+> +               <&usb4_2_phy_rx_1_clk>,
+> +               <&usb4_0_phy_pcie_pipe_clk>,
+> +               <&usb4_0_phy_max_pipe_clk>,
+> +               <&usb4_1_phy_pcie_pipe_clk>,
+> +               <&usb4_1_phy_max_pipe_clk>,
+> +               <&usb4_2_phy_pcie_pipe_clk>,
+> +               <&usb4_2_phy_max_pipe_clk>;
+>         power-domains = <&rpmhpd RPMHPD_CX>;
+>         #clock-cells = <1>;
+>         #reset-cells = <1>;
+> diff --git a/include/dt-bindings/clock/qcom,x1e80100-gcc.h b/include/dt-bindings/clock/qcom,x1e80100-gcc.h
+> index 710c340f24a57d799ac04650fbe9d4ea0f294bde..62aa1242559270dd3bd31cd10322ee265468b8e4 100644
+> --- a/include/dt-bindings/clock/qcom,x1e80100-gcc.h
+> +++ b/include/dt-bindings/clock/qcom,x1e80100-gcc.h
+> @@ -363,6 +363,30 @@
+>   #define GCC_USB3_PRIM_PHY_PIPE_CLK_SRC				353
+>   #define GCC_USB3_SEC_PHY_PIPE_CLK_SRC				354
+>   #define GCC_USB3_TERT_PHY_PIPE_CLK_SRC				355
+> +#define GCC_USB34_PRIM_PHY_PIPE_CLK_SRC				356
+> +#define GCC_USB34_SEC_PHY_PIPE_CLK_SRC				357
+> +#define GCC_USB34_TERT_PHY_PIPE_CLK_SRC				358
+> +#define GCC_USB4_0_PHY_DP0_CLK_SRC				359
+> +#define GCC_USB4_0_PHY_DP1_CLK_SRC				360
+> +#define GCC_USB4_0_PHY_P2RR2P_PIPE_CLK_SRC			361
+> +#define GCC_USB4_0_PHY_PCIE_PIPE_MUX_CLK_SRC			362
+> +#define GCC_USB4_0_PHY_RX0_CLK_SRC				363
+> +#define GCC_USB4_0_PHY_RX1_CLK_SRC				364
+> +#define GCC_USB4_0_PHY_SYS_CLK_SRC				365
+> +#define GCC_USB4_1_PHY_DP0_CLK_SRC				366
+> +#define GCC_USB4_1_PHY_DP1_CLK_SRC				367
+> +#define GCC_USB4_1_PHY_P2RR2P_PIPE_CLK_SRC			368
+> +#define GCC_USB4_1_PHY_PCIE_PIPE_MUX_CLK_SRC			369
+> +#define GCC_USB4_1_PHY_RX0_CLK_SRC				370
+> +#define GCC_USB4_1_PHY_RX1_CLK_SRC				371
+> +#define GCC_USB4_1_PHY_SYS_CLK_SRC				372
+> +#define GCC_USB4_2_PHY_DP0_CLK_SRC				373
+> +#define GCC_USB4_2_PHY_DP1_CLK_SRC				374
+> +#define GCC_USB4_2_PHY_P2RR2P_PIPE_CLK_SRC			375
+> +#define GCC_USB4_2_PHY_PCIE_PIPE_MUX_CLK_SRC			376
+> +#define GCC_USB4_2_PHY_RX0_CLK_SRC				377
+> +#define GCC_USB4_2_PHY_RX1_CLK_SRC				378
+> +#define GCC_USB4_2_PHY_SYS_CLK_SRC				379
+>   
+>   /* GCC power domains */
+>   #define GCC_PCIE_0_TUNNEL_GDSC					0
+> @@ -484,4 +508,41 @@
+>   #define GCC_VIDEO_BCR						87
+>   #define GCC_VIDEO_AXI0_CLK_ARES					88
+>   #define GCC_VIDEO_AXI1_CLK_ARES					89
+> +#define GCC_USB4_0_MISC_USB4_SYS_BCR				90
+> +#define GCC_USB4_0_MISC_RX_CLK_0_BCR				91
+> +#define GCC_USB4_0_MISC_RX_CLK_1_BCR				92
+> +#define GCC_USB4_0_MISC_USB_PIPE_BCR				93
+> +#define GCC_USB4_0_MISC_PCIE_PIPE_BCR				94
+> +#define GCC_USB4_0_MISC_TMU_BCR					95
+> +#define GCC_USB4_0_MISC_SB_IF_BCR				96
+> +#define GCC_USB4_0_MISC_HIA_MSTR_BCR				97
+> +#define GCC_USB4_0_MISC_AHB_BCR					98
+> +#define GCC_USB4_0_MISC_DP0_MAX_PCLK_BCR			99
+> +#define GCC_USB4_0_MISC_DP1_MAX_PCLK_BCR			100
+> +#define GCC_USB4_1_MISC_USB4_SYS_BCR				101
+> +#define GCC_USB4_1_MISC_RX_CLK_0_BCR				102
+> +#define GCC_USB4_1_MISC_RX_CLK_1_BCR				103
+> +#define GCC_USB4_1_MISC_USB_PIPE_BCR				104
+> +#define GCC_USB4_1_MISC_PCIE_PIPE_BCR				105
+> +#define GCC_USB4_1_MISC_TMU_BCR					106
+> +#define GCC_USB4_1_MISC_SB_IF_BCR				107
+> +#define GCC_USB4_1_MISC_HIA_MSTR_BCR				108
+> +#define GCC_USB4_1_MISC_AHB_BCR					109
+> +#define GCC_USB4_1_MISC_DP0_MAX_PCLK_BCR			110
+> +#define GCC_USB4_1_MISC_DP1_MAX_PCLK_BCR			111
+> +#define GCC_USB4_2_MISC_USB4_SYS_BCR				112
+> +#define GCC_USB4_2_MISC_RX_CLK_0_BCR				113
+> +#define GCC_USB4_2_MISC_RX_CLK_1_BCR				114
+> +#define GCC_USB4_2_MISC_USB_PIPE_BCR				115
+> +#define GCC_USB4_2_MISC_PCIE_PIPE_BCR				116
+> +#define GCC_USB4_2_MISC_TMU_BCR					117
+> +#define GCC_USB4_2_MISC_SB_IF_BCR				118
+> +#define GCC_USB4_2_MISC_HIA_MSTR_BCR				119
+> +#define GCC_USB4_2_MISC_AHB_BCR					120
+> +#define GCC_USB4_2_MISC_DP0_MAX_PCLK_BCR			121
+> +#define GCC_USB4_2_MISC_DP1_MAX_PCLK_BCR			122
+> +#define GCC_USB4PHY_PHY_PRIM_BCR				123
+> +#define GCC_USB4PHY_PHY_SEC_BCR					124
+> +#define GCC_USB4PHY_PHY_TERT_BCR				125
+> +
+>   #endif
+> 
+Reviewed-by: Bryan O'Donoghue <bod@kernel.org>
