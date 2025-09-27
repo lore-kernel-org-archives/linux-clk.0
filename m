@@ -1,117 +1,105 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA32015B971;
-	Sat, 27 Sep 2025 10:52:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2774C278158
+	for <linux-clk@vger.kernel.org>; Sat, 27 Sep 2025 11:03:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758970373; cv=none; b=bHLq6X5l2q1MwXuwQblqIc3WXJ8PA8kSglGuJ7QbCBHuS5rZniPUNKRIirPwWaHUh9yPnSI2adcvy49d+JZOSs9mL+c9X1xaI3IaA4qrKWx+Mt+Zrh7IUetvQ+IGCH7M9uV23RYy+4VxMib34TRpPnqdygohAu22hQqvhcrv8ew=
+	t=1758970997; cv=none; b=qwL7hGVdRkKmRoN8p9MAhlVx8FWHFZ3DUjrX88zpy//hVrp6LHhECRHdN5YLQLzlUH26jTTeJDyL0ckRzzMXcdoKEIDca4jFHwnRO70eJ9ehpp60NDlH9AF+/JiLhg05+DKEP9mwWnncTuxUtvd/Nelo8kLSu9HdSX9cYN4n1d8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758970373; c=relaxed/simple;
-	bh=5vJ79PqLSk1W3ySPx3aEhtMSl07Usjxr4YYanamg+qI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JapdIcYjDdcHdkQ7mevauGmmpRltEeXg+ChufqX8xli7poJcoYiLzZcD2BfjG9BtjsjciMuA/9/z6M4qXZnG5r90xkViifvj9wwVh3bJBOwbu3MP6IEtInNhgXqsEHd1dupzYuKmsKI1cFPqFIrrdvqdD31tMmh9WqD5aZxB8pg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KJtfeXqf; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1758970997; c=relaxed/simple;
+	bh=MEPk8mF0XWJhaPBW8X4rO7lqawwu25cscAs0P6vTG3s=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=b2YWLxOLO9FrLf/UCLbRWqCPMFRhyJHlDcCnfg9ieVtr5GCE5i/rsuS6nmCb18qe1NJU+MRWQqUS55K5KMVJG9YFNbb0Ud8/AUkVApatPnX7KummnLh0jXvU58nN38LxXmfXpwgnYRcjPZERBSDMptIce/5Iqxq5n8o/LAuanrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B8DBl0JA; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KJtfeXqf"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB713C4CEE7;
-	Sat, 27 Sep 2025 10:52:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758970373;
-	bh=5vJ79PqLSk1W3ySPx3aEhtMSl07Usjxr4YYanamg+qI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=KJtfeXqfLaEcUKsaryDmNzD7+ylJeOzAp9i7oCbXn83M1o2ir4TqQmmmGZSeXRync
-	 edNho+p6GK7QNWXEDkkWn0ElVK+6FUMGhlBK8XQfUq2ol13Cx3NhlNNnyMKKVa3BrR
-	 9PwF7JmU9QFUbdWA06l2bhe79mipvlFUiXYvk4KzRtgVrq1ncQgIF2A5eRZH2m4eUm
-	 0UgM47PYtfwqHEryiyxkSa1DYMIBozCfM8P5Vmfk2liWHUar4Hn41APmgDTniVOsY1
-	 PPm13BZVMjOdt1z/UwAMsFzyQ0cdqvg82Z8nxx6hQ2wrZa9YYKvFPfl5V/WI3oEpJF
-	 uwI+BA6yJsH5w==
-Message-ID: <0f1b82e2-208d-44d1-8e3a-08b2821a297d@kernel.org>
-Date: Sat, 27 Sep 2025 11:52:48 +0100
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B8DBl0JA"
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-46b7bf21fceso23319705e9.3
+        for <linux-clk@vger.kernel.org>; Sat, 27 Sep 2025 04:03:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758970994; x=1759575794; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tkNWDYlAClljJacvPFHJT9/32vyeFE8E70qgHvwmkb8=;
+        b=B8DBl0JAKft7KS0mBXk4ZY/ok6mJDWMh2p+a5mIpvq0gcIDr/nrOcKqyZZpb4sEwsn
+         0JvCxISZgsr2Y6Com5U6VjlE8zGBC0ir58SwzAVi+kaOBqi0LcziH3q8uwCxP2kfY2jf
+         oZ7zw1MKqyWSqsxH3xCjcxxgYRAiEEsYTDw9E1YXLmvMm3u+NRE7s3Xw4mrNsX3oBMD9
+         YEVlT/0fJil/YiUuHHGONX2ymzrPDhHDbfn5rPwaPpLZxwx+TuBR2hFju6qEKe2uTsgY
+         aCeRYI6sqWOcBkoVzVMeQh3k/9rZGfxTxFOETegROEUGv6k6i0PKaJEC58q2hRISmilt
+         mzxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758970994; x=1759575794;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tkNWDYlAClljJacvPFHJT9/32vyeFE8E70qgHvwmkb8=;
+        b=KoT5ZyH9ypdaML+YnaC+L2uQb5+n9esOOo85NV9KJ1DDGOAE7ewEvSbkzV5P2Quyfg
+         +jpUehHdH/5ABiIw/XMnMThcUoXaB08QOEmujCKRSQ/7/wH8ApF/dxYkmVbyU/vZXGSb
+         5TRVj7cpH3Ld5uSFE/E1Kw/bIlgXMspdKphBIOv1GN2E13zJUTJn8ZoWX9t0IsNVebAO
+         vXsvh7SmWPNIZD5ZUBhBeBvqhl0U+K02tcqvdfG9FeDo2Ym26J+UadVRKfr/qpoEiX42
+         xQooSzBXLGkNeyc2DmQzg7dvujnoiVFpa2MaYSDHRnLv9cL7hpdnf0ErDccJnRIE9HF/
+         c5cw==
+X-Forwarded-Encrypted: i=1; AJvYcCVtdIgnMdRO8wQIK8YMp07103DGvxFYTAFkbIm8BB/MYOnjGgWoXCVElDmA90pM7yjOENxV9P+AhMA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8hQrYrgBcRQCH/i6TmtMtjYo/mvrmvTg/h296mskQqGId7E4q
+	dssA0zR02uLwJoBNdKXwrGwH98WFwwATvZVBRUI9PfQQZ1wSZju8DCND
+X-Gm-Gg: ASbGncuEKHs0usm1rggEC70AF5nx8VsaRQu2aVXdThnU+9sPlb2PawpU88xelJMsQvi
+	ggdikrR3Ib/DaxkQCi1gQ7hdWhEtIv6AlcTK2s7BwyGt5uZtJSkvamVJGujcJews6qXcdqouDJX
+	2HjGKgujS0PYzVO4mUkMDKOjlKZ5TaJhweGP8kRC9k7fwUlnbCf7gHTgLyXZf/V2jDBOy6STnkZ
+	NiWcXbbpP/c9cx6KYUTTw6ZgZDN7S48Ipskx0jtvV1INUxE+hySHVFysLEuue+Klsrd9DV81VZ1
+	ul6PW3/tD/AXdPH0UfXgrwptS8I3jntH2gNaBwUQ8k5CvUwg/ozNZlMo4JCsHy2DYFQn3IvNb3W
+	WgfbwTgB8WTu2OmEYwikRZGrYi46O2Iw+/xzGqwW5RgqH71c4vcQo/vbLXRzjzbMADVMrFbBdgd
+	tK3GM42rRavDqpow==
+X-Google-Smtp-Source: AGHT+IF79XdU3MiveCiJWHuSLef1NIT2fZqNrN2anDonGJumcYidxmAS11xssMvpXUUEBE8RsYnPGQ==
+X-Received: by 2002:a05:600c:3e86:b0:46e:4784:cdf5 with SMTP id 5b1f17b1804b1-46e4784d03cmr11911565e9.15.1758970994270;
+        Sat, 27 Sep 2025 04:03:14 -0700 (PDT)
+Received: from Radijator.localdomain (93-140-175-232.adsl.net.t-com.hr. [93.140.175.232])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e33bf70b5sm106190035e9.21.2025.09.27.04.03.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 27 Sep 2025 04:03:13 -0700 (PDT)
+From: "=?utf-8?q?Duje_Mihanovi=C4=87?=" <dujemihanovic32@gmail.com>
+X-Google-Original-From: =?utf-8?q?Duje_Mihanovi=C4=87?= <duje@dujemihanovic.xyz>
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, 
+ =?utf-8?q?Duje_Mihanovi=C4=87?= <dujemihanovic32@gmail.com>
+Cc: David Wronek <david@mainlining.org>, Karel Balej <balejk@matfyz.cz>, 
+ phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, 
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-pm@vger.kernel.org
+In-Reply-To: <20250913-pxa1908-genpd-v4-0-55e4cf32f619@dujemihanovic.xyz>
+References: <20250913-pxa1908-genpd-v4-0-55e4cf32f619@dujemihanovic.xyz>
+Subject: Re: (subset) [PATCH v4 0/4] Marvell PXA1908 power domains
+Message-Id: <175897099249.11004.17270115916151643401.b4-ty@dujemihanovic.xyz>
+Date: Sat, 27 Sep 2025 13:03:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] arm64: dts: qcom: x1e80100: Extend the gcc input
- clock list
-To: Konrad Dybcio <konradybcio@kernel.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Rajendra Nayak <quic_rjendra@quicinc.com>,
- Wesley Cheng <wesley.cheng@oss.qualcomm.com>,
- Sibi Sankar <quic_sibis@quicinc.com>, Abel Vesa <abel.vesa@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-References: <20250926-topic-hamoa_gcc_usb4-v1-0-25cad1700829@oss.qualcomm.com>
- <20250926-topic-hamoa_gcc_usb4-v1-3-25cad1700829@oss.qualcomm.com>
-From: Bryan O'Donoghue <bod@kernel.org>
-Content-Language: en-US
-In-Reply-To: <20250926-topic-hamoa_gcc_usb4-v1-3-25cad1700829@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.14.2
 
-On 26/09/2025 13:03, Konrad Dybcio wrote:
-> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> 
-> With the recent dt-bindings update, the missing USB4 clocks have been
-> added.
-> 
-> Extend the existing list to make sure the DT contains the expected
-> amount of 'clocks' entries.
 
-Small nit, "expected number" would be better.
-
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> ---
->   arch/arm64/boot/dts/qcom/x1e80100.dtsi | 29 ++++++++++++++++++++++++++++-
->   1 file changed, 28 insertions(+), 1 deletion(-)
+On Sat, 13 Sep 2025 23:12:47 +0200, Duje Mihanović wrote:
+> This series implements support for the power domains found in Marvell's
+> PXA1908 SoC. The domains control power for the graphics, video and image
+> processors along with the DSI PHY.
 > 
-> diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-> index 51576d9c935decbc61a8e4200de83e739f7da814..cc76b9933a9bbff396ec4739f4a1dd3d2cc81f0f 100644
-> --- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-> @@ -807,7 +807,34 @@ gcc: clock-controller@100000 {
->   				 <0>,
->   				 <&usb_1_ss0_qmpphy QMP_USB43DP_USB3_PIPE_CLK>,
->   				 <&usb_1_ss1_qmpphy QMP_USB43DP_USB3_PIPE_CLK>,
-> -				 <&usb_1_ss2_qmpphy QMP_USB43DP_USB3_PIPE_CLK>;
-> +				 <&usb_1_ss2_qmpphy QMP_USB43DP_USB3_PIPE_CLK>,
-> +				 <0>,
-> +				 <0>,
-> +				 <0>,
-> +				 <0>,
-> +				 <0>,
-> +				 <0>,
-> +				 <0>,
-> +				 <0>,
-> +				 <0>,
-> +				 <0>,
-> +				 <0>,
-> +				 <0>,
-> +				 <0>,
-> +				 <0>,
-> +				 <0>,
-> +				 <0>,
-> +				 <0>,
-> +				 <0>,
-> +				 <0>,
-> +				 <0>,
-> +				 <0>,
-> +				 <0>,
-> +				 <0>,
-> +				 <0>,
-> +				 <0>,
-> +				 <0>,
-> +				 <0>;
->   
->   			power-domains = <&rpmhpd RPMHPD_CX>;
->   			#clock-cells = <1>;
 > 
 
-Reviewed-by: Bryan O'Donoghue <bod@kernel.org>
+Applied, thanks!
+
+[4/4] arm64: dts: marvell: pxa1908: Add power domains
+      commit: 1ee5305033c227610c072f32c4ac8ba0adbd42bd
+
+Best regards,
+-- 
+Duje Mihanović <duje@dujemihanovic.xyz>
+
