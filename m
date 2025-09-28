@@ -1,320 +1,144 @@
-Received: from OS8PR02CU002.outbound.protection.outlook.com (mail-japanwestazon11022133.outbound.protection.outlook.com [40.107.75.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5B2C2367BF;
-	Sun, 28 Sep 2025 06:41:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.75.133
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759041687; cv=fail; b=NF6IortV7JawYbX3YZ1Azk0+UK+DePb3pBmvOOJtx/FgwQ5Ai/k9jCE5ZWIa++viLrjmWZcMSRmv1xWsNyKNtJbfmaUv7YToD4WD0C2DAo3Mb5RXHb9ETJe07GcsSozaRZOQC9f028oU1oyc3XkeqOGseQYw+e9/jKxzqSt90Gs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759041687; c=relaxed/simple;
-	bh=s2VWkNj3Qt/r6tsGUK6hQ+f3eFPxlLxtbn3B42V961g=;
-	h=Message-ID:Date:Subject:From:To:Cc:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=QXpCsmO2ErPwARrBwejUeGdHm6HkqqOXxiRkfnuL5HE0yC5Yu+i2qCM+WSL8c0W2a7pVwxYoNUl8/17s7rtBgC8w6qaav0nx5EkHbpF8dPHZ+kKSbWetq/TzPDBeXc2ACRNq8913zoz4VeXER2Ky6QJvR+chG4Fql5Dak7nOCN0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b=oJ+IvJLU; arc=fail smtp.client-ip=40.107.75.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amlogic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C59B01F5EA
+	for <linux-clk@vger.kernel.org>; Sun, 28 Sep 2025 13:14:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759065269; cv=none; b=F/Cjhai5WS9m6cJtIjoJ++90vWCNbWAhfwCKr3fKnmrcS9L2k05yWEZkTUjCcLQOE1tNrIf+jwIi1+epqOhOR3TG7dBz3fZrOVCURWbMvu9ZYs35AWitKr7dgQW39kMYOg5bPxpEuVXvjiSaEe2g7yhm2BvUVp50iFNzGD8f4uU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759065269; c=relaxed/simple;
+	bh=3riZSv89RF2gYphT6PVorEQD/jVFxTpvGpr0z6+XnH4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=INm0rxx46dteJLQDOZWOmOTQrLNnfw5ybKJ5Jxl7S4N/3W69nJeq05YSlvkQBz+07ulz3uv4B1DoWTss2vL6u6KRlpY3uQZPDq8QagMGePkNDWvycGZUEFyTVnfm3APy1UnKkrf3T3+6DQr0FVZMV74wf5sG774ol4/arV2eA3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qLut65Bg; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b="oJ+IvJLU"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=LXwtZh05s9afX27Z9S6J9C7AQRxKxNgQiWKdHZpPi5l0ENwZsL2weqBNIrxYPS3VE6JohSSr49qnynqFvormk3PvJn4ppLJLJCFGGgm5/M7Lyp9lUN3V4cuiVuuWsidf/oc2J8NWE7ed+kZK0Fa+5KjBW3aq/ryf8thOgWJNkl2UUn+QTZFebjP3u8azigApRF2XePvuvyEYLUKVxGvhjV4pXghwNGs+bx1WevhCNqEOxiwp0FDrP2FW3G1ZB0KZh3TaCVt6DSrsM3YXHK1/FpzsOsFQPsbXgr0DZGgt5aM3VSPmOOhpZCUtpjAs1drK1DhKn0OR8Y3/xpVZj5vtRA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=kBf4HMpCfkhlWPW13vqIyVW818GwvAjfWE2LtaewXTo=;
- b=KBv/Bh3OO6YSbZM2B/HnJJpQSJnhQQQBSAFcpHAvwSPsEZGcEz20zG6/WYPwHYtc5lVtIKaVTk7iQypx83EqYyvLVSpY9ChOxixocgAeyDLcvuPuR3U6Hn71koT+LA9O5BZjZ6jBZXqMuD4lKWyVhqlpJn0vG1Lnmf9qFxOfGxMoMwatbxcpdbuSHvNELHh/O1TdlDNaWppEtvSKy+yV2pNi/i+qqgriCmrkY2rMmil8daoM4Dc9vGSAjiTc70joTInz/Wq7Ef3nRgiqUuQ8i2zsfxf6SjjNc2WCOStL6mWGnbIowUqR+eI1OK902X4NShxruuotXGRV3Qz4zftTJA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
- dkim=pass header.d=amlogic.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amlogic.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=kBf4HMpCfkhlWPW13vqIyVW818GwvAjfWE2LtaewXTo=;
- b=oJ+IvJLUhMyMXgqXbV2xGGmnk/DZmeyxuxmV1HT6qouyNZ7Z8XbJs9RFaGrmQyTXsbWbwA7HwjTrlLRABvfFFI72EM1tBWVA8WNbSts0HNMGWbpgrK2qpbXi9QUJd4CCGCZZ7ZeL09nEuNfJK0+K8s0MbmGcWV6t0pm/bDnKz0FJPY8CUDEQzrs+GTfdgAnN7/0Y3k8dXwh9jvgpG4kWEXDl0utyVEQ96bY1ITxbqhtzZFArQ7YQMBCzzasP94vURdIaM8OJMSXc9yr7Zxh3pPMwxg15gNEicR7nsJJw7KH5yDOEouihZAemEMUOq3POg0TDlTvArPVv/TtnDLjyTQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amlogic.com;
-Received: from KL1PR03MB5778.apcprd03.prod.outlook.com (2603:1096:820:6d::13)
- by SEZPR03MB7775.apcprd03.prod.outlook.com (2603:1096:101:126::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.15; Sun, 28 Sep
- 2025 06:41:21 +0000
-Received: from KL1PR03MB5778.apcprd03.prod.outlook.com
- ([fe80::e1e:5c95:a889:828e]) by KL1PR03MB5778.apcprd03.prod.outlook.com
- ([fe80::e1e:5c95:a889:828e%5]) with mapi id 15.20.9160.013; Sun, 28 Sep 2025
- 06:41:21 +0000
-Message-ID: <9834c7c5-9334-4c78-a2fe-588ff03cf935@amlogic.com>
-Date: Sun, 28 Sep 2025 14:40:48 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] clk: meson: Fix glitch free mux related issues
-From: Chuan Liu <chuan.liu@amlogic.com>
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>,
- Kevin Hilman <khilman@baylibre.com>, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org
-References: <20240929-fix_glitch_free-v1-0-22f9c36b7edf@amlogic.com>
- <20240929-fix_glitch_free-v1-2-22f9c36b7edf@amlogic.com>
- <CAFBinCBd5-s6vaBoJNerXavQiHgsv4Fm3v0svUX7geL=kJvVYg@mail.gmail.com>
- <20178015-4075-40e9-bbf4-20ae558c2bef@amlogic.com>
- <1jldyzrv2t.fsf@starbuckisacylon.baylibre.com>
- <e70e9aaa-f448-4f67-9149-cb5970c9bbd6@amlogic.com>
-In-Reply-To: <e70e9aaa-f448-4f67-9149-cb5970c9bbd6@amlogic.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SI2PR01CA0016.apcprd01.prod.exchangelabs.com
- (2603:1096:4:191::20) To KL1PR03MB5778.apcprd03.prod.outlook.com
- (2603:1096:820:6d::13)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qLut65Bg"
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-46e317bc647so23356015e9.2
+        for <linux-clk@vger.kernel.org>; Sun, 28 Sep 2025 06:14:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1759065265; x=1759670065; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=gnNndhc0WQdDWGMDmZUWmVIb8CtGrXN6Pk1K2XcSkQQ=;
+        b=qLut65BgcxvXtMLERBOXoXoDW9XGGi82l2Fh6QzoOGAFNGce/8eosmEWvMeoH2SRxq
+         osQ695KbKkJ0fUluO3XzP6kT5vC6LC3O3a9rKv+VuyMVnLERZs1B0z24tH2yG1c0jWxQ
+         Ht8OrukJM1mKXvw9eoNkLKarUvhEiajQza/AQ7MNTw8eX2inGjA8oV/AWvYOcqnLB9VU
+         s/O1+Vkp+zNsjPjPctsWdUU/tW0IxMC6dpXabcAz7yjxBElvzmGUgLFhD95sC93I8ZmX
+         9qtqBC34FksCg7uvE1YX3jibertHVWNxN+4PHJ7eaOGw6O0rgWvtPP+MnwcEi+iVnp99
+         aBwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759065265; x=1759670065;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gnNndhc0WQdDWGMDmZUWmVIb8CtGrXN6Pk1K2XcSkQQ=;
+        b=SN0hjeTSmS8FUk53L35Fb1aVUf9eM+hDdtXgupS7mlWlfC+6CLV0vERRk1Fl8vAetH
+         w2flj+6E995ow+pakgihiuTnGxObB1LYsuBlKvptunO4oMaRUg5QmP0ohyBb8U9UJBCK
+         sepp9TwCevrch3ZD3ebfy3P0wWKtoQfmEjeneCdCGgKGfq47osMNarmobqC+FQKiVE1A
+         L8r5WHEE3Qq+xu72uD6ix2KxgIXbuZkQKM6Xlu7UqCRhBb82aW2/ffiVWAZAw1qEaQZh
+         S7rVKnL94lwqy700NvOTVVVnakwlQaMZJKHkEuOxM4sE7hNlZeAcfahHAfXBVttjXLK0
+         ha/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUDyItgE1ylDAvp112d0JrW/a6WCvEnbxvvVfNrmQEDBZULkaHBCu+UeY9MbfLkfX41sTJxreH8mB4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnTSWjmZspe0weLsxV2C39Il4JWkKfDqejVSCm5iFa/6mj1THs
+	T/xMMkOVtTr3IuFgPpzoeqA8vgd93vPHSRquF0o/EQxNelkUN4l6sN/PZanQ/4TLcvk=
+X-Gm-Gg: ASbGncthI51sIgr2GqZSXTFn4Enr7zpiqoRHzxeqvMiZ3oxqb9xbA6fCtzvf/vO+rey
+	aHQ8aI2J/wRzMiwQyI14qPJ/ARKW3U9xcwb95e3KHEfGzqloven1OfQRsV6pu0MQI8hRnv3CYCj
+	nShwwA7/wEuhEr/jqzzA/c7OThvy8gLz09a6l4zftmtHd02ZDDm2dT0LYy4ek4ld1hf+LCos5Fb
+	kygvruyIUY+RSaWhLx5/qjqn8GEzkZQubMXB2UBOn9qnKxTaZUC4Q9hXbIXg0BF8ZK3BixDcPcj
+	RyFIZVGQj+aLwyDMA+vYFt0bx2AYL58xjwxyhCXZF2BX/2nJ0lhXqLbWkjHNa6xf7Hq3WMtXPuj
+	+fGh8tlPfgHp4W+sgrP6+
+X-Google-Smtp-Source: AGHT+IFHb3oDQ0OVmvk0hVB8JKFPZtRGTwTlv1xt2zo6q6m03RR19MwfC+nHlf/J1s1P9XWzP2+A4g==
+X-Received: by 2002:a05:600c:8286:b0:46e:456e:ada5 with SMTP id 5b1f17b1804b1-46e456eaecbmr42961705e9.28.1759065264953;
+        Sun, 28 Sep 2025 06:14:24 -0700 (PDT)
+Received: from hackbox.lan ([86.121.7.169])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e2ab7d4e3sm188496385e9.23.2025.09.28.06.14.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 28 Sep 2025 06:14:24 -0700 (PDT)
+From: Abel Vesa <abel.vesa@linaro.org>
+Date: Sun, 28 Sep 2025 16:14:09 +0300
+Subject: [PATCH] clk: qcom: glymur: Fix the sec and tert phy pipe clock
+ halt check
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: KL1PR03MB5778:EE_|SEZPR03MB7775:EE_
-X-MS-Office365-Filtering-Correlation-Id: e0062479-6def-49a9-5f56-08ddfe5a096f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?cVpiT3lxMnBxTnhoRWFRam5oTVorWUlNZzhDWk5LZWV0aXBYMWplLyt2c2Y4?=
- =?utf-8?B?cGhSb0wvL2Joa3crWFJkQVpSWWdGRXNaOUNQL1NwL1NkVXB6cHVSaFhNODNX?=
- =?utf-8?B?b3AvajRTR2tqUTBrc211SDlpZEU1WXJxWEVTM0FDWjVHOE1EU0p3VWVmeGtH?=
- =?utf-8?B?NkhHQ0tJdWVJZm1lMlgxR1dOcmJBeFBNQTdjWnVIdk8wV2wxSkdkRHUrNTNB?=
- =?utf-8?B?YkwzOUdtV05ubjNHNlkybU5BZ0pQdlpSZGNrcG1UTjFnb2ZhdGQxbllrRG5m?=
- =?utf-8?B?Qk9ZY2RsMkNxQzA0S09semR1SGl0TUUvU0JINmlxS0VyaHRwYjdyQXRRZllj?=
- =?utf-8?B?UklSdy9GcFNWcXVFdHlTVzhnY0NUZzh0b01tVWVKNkZDQjA4L2drOFppWmY0?=
- =?utf-8?B?cGY5N1ZFUVFYNEVNUUpxTk5UK0REbVlySnAzY3oxejJ1dG5PTnluWVJkbzhj?=
- =?utf-8?B?alhwbTExaTNzVVk4T3h6MmVxbkprWEEyTjd1NnBKNzlRMzh4NEw5QjA4V0hW?=
- =?utf-8?B?NU91OHpIaVNRTHBXYmRGR0xjcHo5MkhITmZzUlBtalNpTTBVQzZuVGxGTERX?=
- =?utf-8?B?QmpnZ1pVQUlGRHRISEZ2NXFLc09sd2l0NmZreTlBNFFmeDlPcFFQWTE4TGRY?=
- =?utf-8?B?WU5uQ0FUK2F3MjhkMGMxZlZxdTh4dXRzM0E4U2JQWXhUSG41L3kxU01PUEo1?=
- =?utf-8?B?R0NldVJOcXNLVjFTcU9laVZhVksyd2dJK1dKcngrdjhOVVA4TG1wSGN3N0lx?=
- =?utf-8?B?Q0VMWHJBZ1FnelpUczlOeFE1TDZnKzY2MmcwekFNdHV4SHZhM2l2UnlwRnJu?=
- =?utf-8?B?WlU5K2N4TWZQdmtjWlVzWVRtcDcrem95bDdCTjF3QkxmWVVFSmc5SDVtOXUr?=
- =?utf-8?B?Rit6U1J2SWxLQXdham9tM3hpQk1ad1ZOb3BYTjI2TklHQkRMa0EzdWNicloz?=
- =?utf-8?B?OWNYUTMrNDVFbjRxV1NkUkdsWEpuWlJCWmtKMVJLdG5IYTk2czJVNmQwUFNJ?=
- =?utf-8?B?WWpLUVgwYUtMdS9DajBqVHN4YS8zS3VCTk0rcVdzTTlJVjUxNmdCYnJwNGJo?=
- =?utf-8?B?OTlKMUtmc1pJM2M0Wk9wU2ZnM3E4eHhJOVEzTXVvcXV6ZUtjMHB0QXZMNlU2?=
- =?utf-8?B?bUgzZHoxRXhCWkpIU3RJclRyVFpISGhiek11Z1FROXBHdTFSNlIyNzZIeGpG?=
- =?utf-8?B?L3ZOd3JndERsU01wMU5KdVl0elBraGp6Ni9xZDAyRmdPQVIwbFFndUptTjhu?=
- =?utf-8?B?VGVObWpoZVBpRXBvZWNaNWxMQnVseU90LzIwUi9BZlpYUHJSZ1czMm1ERWI5?=
- =?utf-8?B?UTBiR2JiQTNSV21udDJOZ2RVR3REbmFpQTRGTG1MTW80WXk1MVJ2aUgxSnhM?=
- =?utf-8?B?bDhGYTRHeWpCeG9rVE9QVnYrV2FSQ2ljZFlXQ3h0cHBqUlZ1RERkaG1qdFFR?=
- =?utf-8?B?bk00VjRhU0N2YVhJZ3Z3aHNlNXA1VzRpSjU4eDZ2RjZ0YXpXeHNtbFhUSzMv?=
- =?utf-8?B?aFlHbHJod1o1bjAyNzVsL2F6MHRiUEdncGNabUFKcEkzeWxGSmo3WE5YaVFX?=
- =?utf-8?B?YUhReHhqSWZkN0lQcElCZGREYkVNOFIreWlobHhJNVJpUHFNTlh3bXROdVdV?=
- =?utf-8?B?bHZYMGwyV2tBVEttYVhCWEdhYkhVakErUTl5UFFiMmlKTDJ2MXVUMmhaM3Ba?=
- =?utf-8?B?bWNxYVRtZ0NaakFZWTUydWY0c1ZNaUZCWkx4b0hmVldKcWZMUXVBWThjYTIv?=
- =?utf-8?B?b2xCRUQxT05FdGVQdWtlNDFsaGRKb1krK2NKQkhHdkpGbWZHSXlzWlRxZEZ2?=
- =?utf-8?B?LzZpbjZHNWNyQ3M4OEMzcy93MXlNejdtN3BvWlpiMCs0Vnh6d1ZpZFIzYnRI?=
- =?utf-8?B?cHNZS095MFgzTTJqVkE3YWdqb2l6aTZUN3JOWjNIVDZVRlpMOGIrMVdmVStm?=
- =?utf-8?Q?IyElpppnR++F7yjRZNj+QEshr33+k/6f?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR03MB5778.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?TlRoY01Mc3lLRDdXNzRPQ2NSMkdUaitmdFpIRzdvTXVvaWFhVzJsZlU3STQ2?=
- =?utf-8?B?M0p4c3lQeHpzNXZ2ZnNEb2E1b0ZKbWV5cWZmVjdLbTFNeFVLM2RDNFJGNWxF?=
- =?utf-8?B?MmQxNXllQlg1RDhCS3o0VHRlMVUrbGdKUkY3Q0U5MW5qVmpxYW5Zd2tQcmpz?=
- =?utf-8?B?Wkt5QlhxQUF5MzZBOFFWYlpIRlFuYXpoeVIrNDIzWWNvZXJMWTBYVmxvY2Zw?=
- =?utf-8?B?a0V2NmZMckw4aUVOclJaVmpEWGZ2SFBkWHU0ejVuUEJQNGVDYmZxV29xWHZM?=
- =?utf-8?B?QmI4N0k3dnRORlFvS29JRlIwdURYR1Jsdk14WUVwQk9jbmtOZHBrcW81N0Y2?=
- =?utf-8?B?K1pYKzRkMmk1OFJGZXFiOUcrZDgyajRhb0hFbzdvcy8zbEQ4REc2bzFuQzQ3?=
- =?utf-8?B?UDUyQkZ5bUw1MkkvNTlubXZVemF3VzdHQXB0YjVZQ25SSE0yNDJsNjYzd2pQ?=
- =?utf-8?B?cDlaUEFBNWxNeFJKait6QXhwT0hLY2FEOEpWNGYyTWRXRjM5eWV2ZnYvbGRO?=
- =?utf-8?B?U0RZM3ErNG51NGtSNWF5NjFvOFJESVNsVmQ2cjVtQWR3S1ovU21qZzkvTUc0?=
- =?utf-8?B?UVFvcUlZclVwYWpUekJWL2ZLU1VEZFcxL3BUUm1Jd3ZZb3dwM2x1a3B3aFJ6?=
- =?utf-8?B?TUp6UmtUa1AwN3EzOUUrRlRhMnN3NmU0VTRxTCtKcnk1ZmtiVXF6NnBLMkVR?=
- =?utf-8?B?djJ5NVVMeHROcTVHdGZYdjA0cERjKzBoQm45Ykp0NWhKNm1kVU9BOXVEbjRB?=
- =?utf-8?B?aEN2Z3hYL0hacWxhZmFDdjlKcHdiUUNHSndxaHFRZldrSmV2YlJ2eU1GdUFw?=
- =?utf-8?B?MnVXc1ZYUk05M1pXeFcvRXlsQStJNG12U09YMlkvNGRIa1Zpd3M2T0lzS080?=
- =?utf-8?B?STRMMmhONHhLRTNKbGQ4ajdiWjVmWlM1YThLc3grTmRUQk9aYU5oNDdGMFoz?=
- =?utf-8?B?TWdlVG4wMXV6OEttTlVxQStsV05ab0JoTmlvWlQwbE03M05WbFJ3QlRublFL?=
- =?utf-8?B?QVdLVFM0dUJVY2tGZ2F5M0FBNWdMMmtRVUFFdi9CVTZLSjdYalpXWUdiNyt1?=
- =?utf-8?B?L3FuMXdBbXJmNVdlRHhMTHN0cGNZSnZPZnJuM0YrdkxuWVRqUExvTG5oaWpq?=
- =?utf-8?B?d2lhWnhWYzVrQW5BdlZxRTBUdjdrYTJLeXFrWWhMMVptckpjWDVGcmw0ZjJv?=
- =?utf-8?B?MlZUcGE2Z1pnQnZJU3QzQktFeThUcmpFaDNBZFNMbUZKa25FSVNMeGhsRStK?=
- =?utf-8?B?K3V3NjB1M1JqN0RiYWdXaUxOc2dyVWJLdDVMaGxnMjRZakplUThhMVlwRytt?=
- =?utf-8?B?d1V3eXZkbUVrRUtXU2IzaUcyd1JOSEEwQ1FxMEg5blVrMVlFd3Q3NHZRTWNh?=
- =?utf-8?B?czdaRFdxQXdTZTMvcmtWVEpTVVV0V1ZGdk9zWDlNWktwV1M3alJxaUM3T3NE?=
- =?utf-8?B?TlBGek90VWZwM3NtV0dmVnI0aXRyN1JDZWRRZXBGYnIyZXpzdk5BRCtRd0dv?=
- =?utf-8?B?OVBFQWZqZ3RxN2ZSU1E3eXpjRUE5Z1FKM1pyNGNBT3NISGFXZGE0b0JPZmNw?=
- =?utf-8?B?aUQ5UFRCbmdVTWNHRzFYZm4rck5pR3pvekJQZjNWc1NnaWFjZjZiSGxDL3kz?=
- =?utf-8?B?dHR0SDFCMWEvVTU2Z3lrb05VWkI4WU4yVk5aREpYMkZaS1haaDZqeFI3b0hP?=
- =?utf-8?B?SUtxTWN1THZidjZ3OXBUZm5mTUFsSEIrTm5XZDhkM1QvQllzNys0bTdyV1pM?=
- =?utf-8?B?RzBpZWJvNzNYbEdJSmpMYk56Vm1IY29oaEtOSHJ4K1BFVVFtMjY5anFhZWpx?=
- =?utf-8?B?RGk5ZlAzK2FpbmY4ZDZuMnZkc0VPKzdUU2RjZTNCRjB1VDVJNGw2VWtad0RT?=
- =?utf-8?B?UldJNHRqbGZnSjNKZld1YStSd2FxWVVOV0pDSFptdDdTWXZpbU05NWdsQnFz?=
- =?utf-8?B?a0xlSUNHMXh0ZkVrcHR5VXdIUVRKWXBXSWZ5dlNzS2h3YkcyblhZN0w5SFBP?=
- =?utf-8?B?Z3lJT05Pd0o1K0g5MGUvVXVnUFRKWXFRUUxadGU1T1VWWTFvdXNROFZ1V3pl?=
- =?utf-8?B?Rkg1aUxMWXJmNWh2QzdxZjF4VC83SGRXakxyUTlhTXJvWnBweWJCQ2JYaFYx?=
- =?utf-8?Q?Qn591aPIL6sG34JEhQBHzW0zb?=
-X-OriginatorOrg: amlogic.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e0062479-6def-49a9-5f56-08ddfe5a096f
-X-MS-Exchange-CrossTenant-AuthSource: KL1PR03MB5778.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Sep 2025 06:41:21.6352
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: VOeYIf1xJhFVzQMuIJogaZhUmuymK2vmB1pmDZSCnCUsjAMS56WFc2+c/mLUpIm/xAo2Kbl1vLCwFB8XZR6tNA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR03MB7775
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250928-clk-qcom-glymur-gcc-fix-sec-tert-pipe-clk-v1-1-55e323cc98cf@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAKA02WgC/x2NywqDMBAAf0X27EIetdj+ivRQ1jVd6iPdpEUR/
+ 73B48Aws0NiFU5wr3ZQ/kmSZS5g6wro9ZwDo/SFwRnXmJtrkcY3fmiZMIzb9FUMRDjIiokJM2v
+ GKJFP6zpc2sZa731voPSichHPV/c4jj+AShyiewAAAA==
+X-Change-ID: 20250928-clk-qcom-glymur-gcc-fix-sec-tert-pipe-clk-6f48511333d0
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+ Taniya Das <taniya.das@oss.qualcomm.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>
+X-Mailer: b4 0.15-dev-dedf8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1618; i=abel.vesa@linaro.org;
+ h=from:subject:message-id; bh=3riZSv89RF2gYphT6PVorEQD/jVFxTpvGpr0z6+XnH4=;
+ b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBo2TSmmRI6R9RZyfovfldOzZKEpXFB1ZFYgHV8k
+ R5526ldYfOJAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCaNk0pgAKCRAbX0TJAJUV
+ VsrgD/9mRj60D87jBf2Up0vFZFZ+yc2SiYwJj2SOotV65izhQ6ON59lJ6wa/LwixviEDBH4M9f9
+ jTdsp2tWnwXIoUyH54YCKHL1L/ZZq/ekUJqloDkH7g5lQJxHA6WDo7bHd10B+S2o/UxT+xzogx9
+ 7n1fXb6ttVNNJehlB1Al8Pi1SzqCgDS2tYHyYOx3hXMV2Y6ASrnBQB7gu+kaYeJ692bVzK5FUu2
+ lqdL35zrnqtiztC4wtvUQiaBALn4875yee8VHHH8bJXZ2edV5PdkHhimFwRFveidJja0NQ74Gga
+ 3nwYTD6zDkowpVUVrXPvgw5qdqDVVr0jUdrrwrJYv2jsBFoD2WEtRFTFSfmILmFBOICK2u4ENcA
+ 8nICplVZGn6AfLP4unAwKmpatrs6v3sBJqOCncE/xqNnxbpZTfxisq2ZI63et4dRbN/0LXF9J93
+ 8z9L8M3Aot7WSFfyfWSP69c0JNaP+Y6LrqbQG0unypyuD4n7ZhriZ6D6zE5VTgmt1I9ZHeNyWCt
+ TSRm5xrT1EU0rWe5/U3KgZcnl3dECSpoV7fJj1NIHXr1+Hy4qCts5pbU7jAc8gwGib0iNQDE15Z
+ nO0r8dbHTjup5uIsG9RKItELgkoiPb/WYbCBZGRIzVNjagK5uMCKLXWbcDGEP9aLVNvq10dN9Ho
+ KgHDmlsfRHwWQOg==
+X-Developer-Key: i=abel.vesa@linaro.org; a=openpgp;
+ fpr=6AFF162D57F4223A8770EF5AF7BF214136F41FAE
 
+On Glymur platform, halt checking on gcc_usb3_sec_phy_pipe_clk and
+gcc_usb3_tert_phy_pipe_clk on enable reports them as being stuck as off,
+but since the gcc_usb3_prim_phy_pipe_clk clock halt check flag is marked
+as delay, means it probably it should be the same for sec and tert as
+well. So replace the voted flag with the delay one for these two clocks.
 
-On 9/28/2025 2:05 PM, Chuan Liu wrote:
-> Hi Jerome & Martin:
->
-> Sorry for the imprecise description of the glitch-free mux earlier.
->
-> Recently, while troubleshooting a CPU hang issue caused by glitches,
-> I realized there was a discrepancy from our previous understanding,
-> so I'd like to clarify it here.
->
-> On 10/8/2024 2:02 PM, Jerome Brunet wrote:
->
->> [ EXTERNAL EMAIL ]
->>
->> On Tue 08 Oct 2024 at 13:44, Chuan Liu <chuan.liu@amlogic.com> wrote:
->>
->>> Hi Martin,
->>>
->>>
->>> On 2024/10/1 4:08, Martin Blumenstingl wrote:
->>>> [ EXTERNAL EMAIL ]
->>>>
->>>> Hello,
->>>>
->>>> On Sun, Sep 29, 2024 at 8:10 AM Chuan Liu via B4 Relay
->>>> <devnull+chuan.liu.amlogic.com@kernel.org> wrote:
->>>>> From: Chuan Liu <chuan.liu@amlogic.com>
->>>>>
->>>>> glitch free mux has two clock channels (channel 0 and channel 1) with
->>>>> the same configuration. When the frequency needs to be changed, 
->>>>> the two
->>>>> channels ping-pong to ensure clock continuity and suppress glitch.
->>>> You describe the solution to this below:
->>>>> Add flag CLK_SET_RATE_GATE to channels 0 and 1 to implement Ping-Pong
->>>>> switchover to suppress glitch.
->>>> It would be great to have this change in a separate patch.
->>>> The clocks to which you're adding CLK_SET_RATE_GATE aren't switched at
->>>> runtime in mainline kernels (at least I think so).
->>>
->>> Okay, I will separate it into two patches and submit it in the next 
->>> version.
->>>
->>>
->>>>> Channel 0 of glitch free mux is not only the clock source for the 
->>>>> mux,
->>>>> but also the working clock for glitch free mux. Therefore, when 
->>>>> glitch
->>>>> free mux switches, it is necessary to ensure that channel 0 has a 
->>>>> clock
->>>>> input, otherwise glitch free mux will not work and cannot switch 
->>>>> to the
->>>>> target channel.
->>>> [...]
->>>>> glitch free mux Add flag CLK_OPS_PARENT_ENABLE to ensure that 
->>>>> channel 0
->>>>> has clock input when switching channels.
->>>> This describes a second problem. I think it's best to have this in a
->>>> separate commit/patch.
->>>> Also you're updating some mali clocks (e.g. on G12 and GX) but not all
->>>> of them (Meson8b for example is missing).
->>>
->>> Yes, M8 missed it, I will complete it in the next version.
->>>
->>>
->>>> I still have some questions to the CLK_OPS_PARENT_ENABLE approach -
->>>> please share your findings on this.
->>>>
->>>> There's multiple clocks involved in a glitch-free mux hierarchy:
->>>> - a number of clock inputs (e.g. fclk, xtal, ...)
->>>> - two muxes (one for every channel of the glitch-free mux)
->>>> - two dividers (one for every channel of the glitch-free mux)
->>>> - two gates (one for every channel of the glitch-free mux)
->>>> - the glitch-free mux
->>>>
->>>> When switching from channel 0 (which is active and enabled) CCF
->>>> (common clock framework) will:
->>>> a) on channel 1:
->>>> - find the best input clock
->>>> - choose the best input clock in the mux
->>>> - set the divider
->>>> - enable the gate
->>>> b) switch the glitch-free mux
->>>> c) on channel 2:
->>>> - disable the gate
->>>>
->>>> To me it's not clear at which level the problem occurs (glitch-free
->>>> mux, gate, divider, mux, input clock).
->>>> Also I don't understand why enabling the clocks with
->>>> CLK_OPS_PARENT_ENABLE solves any problem since CCF is doing things
->>>> automatically for us.
->>>> Can you please explain (preferably with an example) what problem is
->>>> solved with this approach?
->>>
->>> If CLK_OPS_PARENT_ENABLE is configured in mux, 'new_parent' and
->>> 'old_parent' will be enabled first when __clk_set_parent_before() is
->>> called. And disable them at __clk_set_parent_after(). Our glitch free
->>> only has two clock sources, so adding this flag ensures that both
->>> channels 0 and 1 are enabled when mux switches.
->>>
->>> In fact, we just need to make sure that channel 0 is enabled. The
->
-> It is indeed necessary to enable the glitch-free mux on *both* channel 
-> 0 and channel 1 to allow proper switching. multiple original channel 
-> clock cycles and new channel clock cycles will be filtered during mux 
-> switching. An example of the clock waveform is shown below: __ __ __ 
-> __ __ __ __ __ ori: ↑ |__↑ |__↑ |__↑ |__↑ |__↑ |__↑ |__↑ |__↑ ^ 1 * 
-> cycle original channel. _ _ _ _ _ _ _ _ _ _ _ _ new: ↑ |_↑ |_↑ |_↑ |_↑ 
-> |_↑ |_↑ |_↑ |_↑ |_↑ |_↑ |_↑ |_↑ ^ 5 * cycles new channel. __ __ _ _ _ 
-> _ out: ↑ |__↑ |______________________↑ |_↑ |_↑ |_↑ |_↑ ^ ^ start 
-> switching mux. switch to new channel.
->
+Fixes: efe504300a17 ("clk: qcom: gcc: Add support for Global Clock Controller")
+Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+---
+ drivers/clk/qcom/gcc-glymur.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Sorry, there seems to be something wrong with the following format parsing.
+diff --git a/drivers/clk/qcom/gcc-glymur.c b/drivers/clk/qcom/gcc-glymur.c
+index 62059120f9720bbac03852c0368f4de3038a559c..f00d72bb4ac4d60032e5332e6bcc439f890e5082 100644
+--- a/drivers/clk/qcom/gcc-glymur.c
++++ b/drivers/clk/qcom/gcc-glymur.c
+@@ -6816,7 +6816,7 @@ static struct clk_branch gcc_usb3_sec_phy_com_aux_clk = {
+ 
+ static struct clk_branch gcc_usb3_sec_phy_pipe_clk = {
+ 	.halt_reg = 0xe2078,
+-	.halt_check = BRANCH_HALT_VOTED,
++	.halt_check = BRANCH_HALT_DELAY,
+ 	.hwcg_reg = 0xe2078,
+ 	.hwcg_bit = 1,
+ 	.clkr = {
+@@ -6872,7 +6872,7 @@ static struct clk_branch gcc_usb3_tert_phy_com_aux_clk = {
+ 
+ static struct clk_branch gcc_usb3_tert_phy_pipe_clk = {
+ 	.halt_reg = 0xe1078,
+-	.halt_check = BRANCH_HALT_VOTED,
++	.halt_check = BRANCH_HALT_DELAY,
+ 	.hwcg_reg = 0xe1078,
+ 	.hwcg_bit = 1,
+ 	.clkr = {
 
+---
+base-commit: 262858079afde6d367ce3db183c74d8a43a0e83f
+change-id: 20250928-clk-qcom-glymur-gcc-fix-sec-tert-pipe-clk-6f48511333d0
 
-An example of the clock waveform is shown below:
+Best regards,
+-- 
+Abel Vesa <abel.vesa@linaro.org>
 
-
-        __    __    __    __    __    __    __    __
-ori:  ↑  |__↑  |__↑  |__↑  |__↑  |__↑  |__↑  |__↑  |__↑
-                   ^
-                   1 * cycle original channel.
-        _   _   _   _   _   _   _   _   _   _   _   _
-new:  ↑ |_↑ |_↑ |_↑ |_↑ |_↑ |_↑ |_↑ |_↑ |_↑ |_↑ |_↑ |_↑
-                                       ^
-                                       5 * cycles new channel.
-        __    __                        _   _   _   _
-out:  ↑  |__↑  |______________________↑ |_↑ |_↑ |_↑ |_↑
-              ^                        ^
-              start switching mux.     switch to new channel.
-
-
->>> purpose of CLK_OPS_PARENT_ENABLE may not be to solve our situation,
->>> but adding this flag does solve our current problem.
->> This is last point is important.
->>
->> It is OK to use a side effect of CLK_OPS_PARENT_ENABLE but it needs to
->> be documented somehow, so what really matters is still known 2y from 
->> now.
->>
->> Make sure the information appears in the code comments at least once.
->>
->>>
->>>> Last but not least: if we're running into bugs when
->>>> CLK_OPS_PARENT_ENABLE is missing then that patch should carry a Fixes
->>>> tag.
->>>
->>> Thanks for the heads-up. I'll keep an eye on it in the next version.
->>>
->>>
->>>> Best regards,
->>>> Martin
->> -- 
->> Jerome
