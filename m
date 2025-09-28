@@ -1,373 +1,173 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7581625;
-	Sat, 27 Sep 2025 14:02:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6F8D1FB3
+	for <linux-clk@vger.kernel.org>; Sun, 28 Sep 2025 00:24:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758981739; cv=none; b=XNcyO6ip6e5ypxFmPV+DdPcnXR392SpL9CsnWxXk1vj0XjrGv+dLSVpqmlUcAQbRROo8VvadxADss2o4P+BatHGyNJEOLFpr7zDTdUGG9UmeA/KzCYgUVu/CbOnfLb0Z5/V0a9k1pTEml+bSdFxRm/MlGawNTPvQEBZDRA27DYw=
+	t=1759019059; cv=none; b=WlaMwJi0tmZK473uLzCDj0iaO8iaFlzHW6894ZwmSPEMdLi6hw0CBRZzduG84D/qaoUbW15i59yK+wHnPFql866CC2rSijEP0IvXqpbjd8LRT4N5Vn3o+ORZErujT5GhRwLqXGzFCy+1OAG6K3aE0AJktx9jgcgsONQt7cwpmvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758981739; c=relaxed/simple;
-	bh=e5U1xGvNbO0HvWgSJ7VB6F+ifO4uCe/kW5E1C56z3gQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pKseVdQHJ6Pf/OKzO0iGjv4tOE6CgUHifH8ADwcaBBfd7VlpWjqHUSsx9yQZ2Z+sWUOhUdD1n1VqlfckxafilmoKl6wAoqPKMTcxCCkviJgGLrh+b37f6ygmxHjOOnbpasxF0hu9/UjKvtYEqn1+4Ol7eEwx3AP6nCimQ327QFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=H2IsAtIZ; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1759019059; c=relaxed/simple;
+	bh=ba6wzr+UFiyiYoFNVhxsMUJoo6ADljhE38nRvbuUDTg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=HGrOfXXjA1qVXaXgyrYRb1NS8vdsSou52th/Xsrmr/rCdjjnzLgK915O2ryuJa9/UhVCPdD7ObQfzKFVA37JZwvg41kavFaYpZwH17U2L3ayQImKU+O4TIL5nk/067odh8Z6NK4D8cLkpT8sVFrISaHWVmOlRkYVrI0fU40LBMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=J6jdo4ZC; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="H2IsAtIZ"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758981737; x=1790517737;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=e5U1xGvNbO0HvWgSJ7VB6F+ifO4uCe/kW5E1C56z3gQ=;
-  b=H2IsAtIZcMXBy8zFjONi1PrH8Q0ICvdkT6OBBawTpeE7Nd9bJwS7Eh5t
-   v+R0L+Ft3ZWQD0zr+q8s2jef5w7mh/N12vEY6yyrF4ewiyX9qeRdXf1SQ
-   vF7Q8fG+Ly/ebsYBM8zjeWas75Ln5rKVqVKPiojypYt0ZblsICYHljnSv
-   BiuSEvASodLe+g51LkSIoafrJQM2XbPyRX1Yf1vfA5V+PVBHb9RcAW2Y8
-   hLpZtPux0lUlIZ9Gl3GZNQUQDt8TMf9p0A1TXcCqFentWYNK2wzkm8+Go
-   jOGkOX7kZa3pOVz9+E3tGDVSJeXDyT5y11P8adBtsW08C0H8q0XWnSWxI
-   Q==;
-X-CSE-ConnectionGUID: /QaYB+s2R2q0CjJSXCdbBA==
-X-CSE-MsgGUID: EaZO7u3kTZu+IydnDWEuqQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="61248285"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="61248285"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Sep 2025 07:02:16 -0700
-X-CSE-ConnectionGUID: O0GBdTMRRS+5glIrGQfm1w==
-X-CSE-MsgGUID: bttIIo7YSsCxJMgxWtaEdg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,297,1751266800"; 
-   d="scan'208";a="177774235"
-Received: from lkp-server02.sh.intel.com (HELO 84c55410ccf6) ([10.239.97.151])
-  by fmviesa006.fm.intel.com with ESMTP; 27 Sep 2025 07:02:12 -0700
-Received: from kbuild by 84c55410ccf6 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v2VV3-00076B-2b;
-	Sat, 27 Sep 2025 14:02:09 +0000
-Date: Sat, 27 Sep 2025 22:01:45 +0800
-From: kernel test robot <lkp@intel.com>
-To: Konrad Dybcio <konradybcio@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Rajendra Nayak <quic_rjendra@quicinc.com>,
-	Wesley Cheng <wesley.cheng@oss.qualcomm.com>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Sibi Sankar <quic_sibis@quicinc.com>,
-	Abel Vesa <abel.vesa@linaro.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] clk: qcom: gcc-x1e80100: Add missing USB4
- clocks/resets
-Message-ID: <202509272140.wYFpHZfD-lkp@intel.com>
-References: <20250926-topic-hamoa_gcc_usb4-v1-2-25cad1700829@oss.qualcomm.com>
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="J6jdo4ZC"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759019056;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=psSCqpeBnzhLzJkdjUsfUs2VDXVmpZ0fDDgl3ZWHtDc=;
+	b=J6jdo4ZCCt3ythfZYrSJxloKem4q/5a1lgCV+IH7GlSt/ehq5aAJylo0vuBCQZkDmLm0SP
+	HiUP/SLi/1gxgvroqDvjsR+koPMXP1XWHnlZU5LMy5iXA5X5jyGLWuRKTW0VIFLzgAsuiF
+	lwWG5z7qyEAinWYHshhHrSS5h222sgc=
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
+ [209.85.160.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-241-atds4FI_NVS5AlUB_qn3nw-1; Sat, 27 Sep 2025 20:24:15 -0400
+X-MC-Unique: atds4FI_NVS5AlUB_qn3nw-1
+X-Mimecast-MFC-AGG-ID: atds4FI_NVS5AlUB_qn3nw_1759019054
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4df60ea7a1bso12536971cf.2
+        for <linux-clk@vger.kernel.org>; Sat, 27 Sep 2025 17:24:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759019053; x=1759623853;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=psSCqpeBnzhLzJkdjUsfUs2VDXVmpZ0fDDgl3ZWHtDc=;
+        b=GyW8z5EuCUk3yzl8zDtljFM1ia+dPKXCgSrJS+vLOfO6t0vxfc67ZKs6EtErB/rxnL
+         EzN2URFaP0upEqRlXC8K8lKVuI99RDv04/qY68rtfXVpJmHRLAO8R+66jPmAZ0MAu+5+
+         nynYjQ5yidfM11+38Hme695p7bnxa/BX2rtHKcQL22wPB+CDf2B5LpLYGvwcwDOijosI
+         WRCUNeLhlY6TbPmXmmAZ+ENRoU+/vEdHwEi5x2Abwg339c3pZ0JmS2Q+IxRZjDu4wICA
+         yhdg0MeE6nqqrrUtMD2mYTtvVLteb/e9HFmRkJvp39hPw3ciO+S1cpC6c3QJJOtoSRf+
+         rrgQ==
+X-Gm-Message-State: AOJu0YzwzGJvs1hP6tOa4ixKCUenyO4pqa7HtaENkwKwUqNVAK8q7HV5
+	ziY/Du72ks8eoN0F2MG/zBjEOYzes6hjh4QU3cu//Qj/8fdqs2s0pag06FkWPyhpxJddCX8zaod
+	WBl1v6eUh8FJCWpXdZDhe4bHjEVcAD4dMENwogCjk3NRzGIpYtySqvbX8kOJPaPWJR1eN4QQrnT
+	IjuQVHK7Kxi9zlOask6db/lQzWnsrQsU2cUd/7nIA//XEJ
+X-Gm-Gg: ASbGncsGWNzsaPKD0WvVPZdK+5O7QMUc762sBx1/eZ/JNe82RCX3oOIYIoGn4j3DuUu
+	mOidHLxkYp7k1sTDlWU0yPhHcxvpodpxcaUD9UPNPpuJbd5kcKPUEktaqyQPHdkKTzOGzhFDD31
+	whd6QKNtOtLyeXrUJx7fzwu8nMnI9EkLNPV5VTCt6N8X35sF54yPaBXjGdFRNeM10thu7OE5DGc
+	318nBfbey/qUlwULFePuyQLV4HvUq1rCPRVP/V/q7IgTLm60ivNhlMDlEmEE6aZIpgqqA4AMc0s
+	XemeVUqelRQrFpI7VKAK715WhFuc+yRx/iNAZYV//hmKz9whdK++pjrRHBEIfaeuBXZGQvah8EH
+	3N0S4Z7axMihxtT3k8gf1+VZ9PEAVIRFe/RlZ
+X-Received: by 2002:a05:622a:581a:b0:4b5:e49d:806d with SMTP id d75a77b69052e-4da4bfbda28mr165455001cf.55.1759019053535;
+        Sat, 27 Sep 2025 17:24:13 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFyQvKy9OezR3GY2xuXQhprsGnXj00ibUT8p4YTmVwsRyJDVxfzmm+JhnWEed6nQBwgNhgfBg==
+X-Received: by 2002:a05:622a:581a:b0:4b5:e49d:806d with SMTP id d75a77b69052e-4da4bfbda28mr165454781cf.55.1759019053103;
+        Sat, 27 Sep 2025 17:24:13 -0700 (PDT)
+Received: from [192.168.1.15] (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4db0b94353fsm48463401cf.21.2025.09.27.17.24.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 27 Sep 2025 17:24:12 -0700 (PDT)
+From: Brian Masney <bmasney@redhat.com>
+Date: Sat, 27 Sep 2025 20:24:00 -0400
+Subject: [PATCH next] clk: microchip: core: remove duplicate
+ roclk_determine_rate()
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250926-topic-hamoa_gcc_usb4-v1-2-25cad1700829@oss.qualcomm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250927-clk-microchip-core-compile-error-v1-1-c5c3bd633c5b@redhat.com>
+X-B4-Tracking: v=1; b=H4sIAB+A2GgC/x2NwQqDMBAFf0X23IU0IFZ/pXgo64su1SRsRATx3
+ xt6GZjLzEUFpig0NBcZDi2aYpXnoyFZPnEG61SdvPOt633Hsn55U7Eki2aWZKjYsq5gmCXjgPA
+ S7zC1AVQz2RD0/C/eFHHuNN73D/ZpznN4AAAA
+X-Change-ID: 20250927-clk-microchip-core-compile-error-fef8c20ed5fe
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2756; i=bmasney@redhat.com;
+ s=20250903; h=from:subject:message-id;
+ bh=ba6wzr+UFiyiYoFNVhxsMUJoo6ADljhE38nRvbuUDTg=;
+ b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGDJuNGjldiv//RN+t0fu8kS7hQF5G2MWrfjXJmcTFKxpX
+ lhk/Cipo5SFQYyLQVZMkWVJrlFBROoq23t3NFlg5rAygQxh4OIUgIkU2TIyPL1/o6765IaO00qp
+ JvsZ7y4/kOnzwnPf1ybHS6zbX5/cZMXwV3btnFcfo4O38vGWXKpfxJpsOH3GtcoJp65b9T+TlXV
+ 9zQsA
+X-Developer-Key: i=bmasney@redhat.com; a=openpgp;
+ fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
 
-Hi Konrad,
+Fix compiler error caused by the round_rate() to determine_rate()
+migration.
 
-kernel test robot noticed the following build warnings:
+Signed-off-by: Brian Masney <bmasney@redhat.com>
+---
+I didn't cross compile the original series on MIPS, and this driver
+isn't compiled with COMPILE_TEST. I couldn't enable COMPILE_TEST for
+this driver because of the asm/mach-pic32/pic32.h include.
 
-[auto build test WARNING on 8e2755d7779a95dd61d8997ebce33ff8b1efd3fb]
+I didn't include a Fixes tag since the original commit didn't make it's
+way into Linus's tree yet. I'm not sure if you want to squash this, or
+include it as a separate commit.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Konrad-Dybcio/dt-bindings-clock-qcom-x1e80100-gcc-Add-missing-USB4-clocks-resets/20250926-200520
-base:   8e2755d7779a95dd61d8997ebce33ff8b1efd3fb
-patch link:    https://lore.kernel.org/r/20250926-topic-hamoa_gcc_usb4-v1-2-25cad1700829%40oss.qualcomm.com
-patch subject: [PATCH 2/3] clk: qcom: gcc-x1e80100: Add missing USB4 clocks/resets
-config: riscv-randconfig-002-20250927 (https://download.01.org/0day-ci/archive/20250927/202509272140.wYFpHZfD-lkp@intel.com/config)
-compiler: riscv64-linux-gcc (GCC) 15.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250927/202509272140.wYFpHZfD-lkp@intel.com/reproduce)
+Fixes: e9f039c08cdc ("clk: microchip: core: convert from round_rate() to determine_rate()")
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509272140.wYFpHZfD-lkp@intel.com/
+The SHA is from next-20250926.
+---
+ drivers/clk/microchip/clk-core.c | 23 ++++++++---------------
+ 1 file changed, 8 insertions(+), 15 deletions(-)
 
-All warnings (new ones prefixed by >>):
+diff --git a/drivers/clk/microchip/clk-core.c b/drivers/clk/microchip/clk-core.c
+index 3e03e10539c72cc28e53401093e37409c2ea3d08..b34348d491f3e1b576b2b9a8a66bfddd8c2296ea 100644
+--- a/drivers/clk/microchip/clk-core.c
++++ b/drivers/clk/microchip/clk-core.c
+@@ -374,20 +374,6 @@ static unsigned long roclk_recalc_rate(struct clk_hw *hw,
+ 	return roclk_calc_rate(parent_rate, rodiv, rotrim);
+ }
+ 
+-static int roclk_determine_rate(struct clk_hw *hw,
+-				struct clk_rate_request *req)
+-{
+-	u32 rotrim, rodiv;
+-
+-	/* calculate dividers for new rate */
+-	roclk_calc_div_trim(req->rate, req->best_parent_rate, &rodiv, &rotrim);
+-
+-	/* caclulate new rate (rounding) based on new rodiv & rotrim */
+-	req->rate = roclk_calc_rate(req->best_parent_rate, rodiv, rotrim);
+-
+-	return 0;
+-}
+-
+ static int roclk_determine_rate(struct clk_hw *hw,
+ 				struct clk_rate_request *req)
+ {
+@@ -398,6 +384,8 @@ static int roclk_determine_rate(struct clk_hw *hw,
+ 
+ 	/* find a parent which can generate nearest clkrate >= rate */
+ 	for (i = 0; i < clk_hw_get_num_parents(hw); i++) {
++		u32 rotrim, rodiv;
++
+ 		/* get parent */
+ 		parent_clk = clk_hw_get_parent_by_index(hw, i);
+ 		if (!parent_clk)
+@@ -408,7 +396,12 @@ static int roclk_determine_rate(struct clk_hw *hw,
+ 		if (req->rate > parent_rate)
+ 			continue;
+ 
+-		nearest_rate = roclk_round_rate(hw, req->rate, &parent_rate);
++		/* calculate dividers for new rate */
++		roclk_calc_div_trim(req->rate, req->best_parent_rate, &rodiv, &rotrim);
++
++		/* caclulate new rate (rounding) based on new rodiv & rotrim */
++		nearest_rate = roclk_calc_rate(req->best_parent_rate, rodiv, rotrim);
++
+ 		delta = abs(nearest_rate - req->rate);
+ 		if ((nearest_rate >= req->rate) && (delta < best_delta)) {
+ 			best_parent_clk = parent_clk;
 
->> drivers/clk/qcom/gcc-x1e80100.c:580:32: warning: 'gcc_parent_map_33' defined but not used [-Wunused-const-variable=]
-     580 | static const struct parent_map gcc_parent_map_33[] = {
-         |                                ^~~~~~~~~~~~~~~~~
->> drivers/clk/qcom/gcc-x1e80100.c:570:32: warning: 'gcc_parent_map_32' defined but not used [-Wunused-const-variable=]
-     570 | static const struct parent_map gcc_parent_map_32[] = {
-         |                                ^~~~~~~~~~~~~~~~~
->> drivers/clk/qcom/gcc-x1e80100.c:560:32: warning: 'gcc_parent_map_31' defined but not used [-Wunused-const-variable=]
-     560 | static const struct parent_map gcc_parent_map_31[] = {
-         |                                ^~~~~~~~~~~~~~~~~
->> drivers/clk/qcom/gcc-x1e80100.c:550:32: warning: 'gcc_parent_map_30' defined but not used [-Wunused-const-variable=]
-     550 | static const struct parent_map gcc_parent_map_30[] = {
-         |                                ^~~~~~~~~~~~~~~~~
->> drivers/clk/qcom/gcc-x1e80100.c:540:32: warning: 'gcc_parent_map_29' defined but not used [-Wunused-const-variable=]
-     540 | static const struct parent_map gcc_parent_map_29[] = {
-         |                                ^~~~~~~~~~~~~~~~~
->> drivers/clk/qcom/gcc-x1e80100.c:530:32: warning: 'gcc_parent_map_28' defined but not used [-Wunused-const-variable=]
-     530 | static const struct parent_map gcc_parent_map_28[] = {
-         |                                ^~~~~~~~~~~~~~~~~
->> drivers/clk/qcom/gcc-x1e80100.c:520:32: warning: 'gcc_parent_map_27' defined but not used [-Wunused-const-variable=]
-     520 | static const struct parent_map gcc_parent_map_27[] = {
-         |                                ^~~~~~~~~~~~~~~~~
->> drivers/clk/qcom/gcc-x1e80100.c:510:32: warning: 'gcc_parent_map_26' defined but not used [-Wunused-const-variable=]
-     510 | static const struct parent_map gcc_parent_map_26[] = {
-         |                                ^~~~~~~~~~~~~~~~~
->> drivers/clk/qcom/gcc-x1e80100.c:500:32: warning: 'gcc_parent_map_25' defined but not used [-Wunused-const-variable=]
-     500 | static const struct parent_map gcc_parent_map_25[] = {
-         |                                ^~~~~~~~~~~~~~~~~
->> drivers/clk/qcom/gcc-x1e80100.c:490:32: warning: 'gcc_parent_map_24' defined but not used [-Wunused-const-variable=]
-     490 | static const struct parent_map gcc_parent_map_24[] = {
-         |                                ^~~~~~~~~~~~~~~~~
->> drivers/clk/qcom/gcc-x1e80100.c:480:32: warning: 'gcc_parent_map_23' defined but not used [-Wunused-const-variable=]
-     480 | static const struct parent_map gcc_parent_map_23[] = {
-         |                                ^~~~~~~~~~~~~~~~~
->> drivers/clk/qcom/gcc-x1e80100.c:470:32: warning: 'gcc_parent_map_22' defined but not used [-Wunused-const-variable=]
-     470 | static const struct parent_map gcc_parent_map_22[] = {
-         |                                ^~~~~~~~~~~~~~~~~
->> drivers/clk/qcom/gcc-x1e80100.c:460:32: warning: 'gcc_parent_map_21' defined but not used [-Wunused-const-variable=]
-     460 | static const struct parent_map gcc_parent_map_21[] = {
-         |                                ^~~~~~~~~~~~~~~~~
->> drivers/clk/qcom/gcc-x1e80100.c:450:32: warning: 'gcc_parent_map_20' defined but not used [-Wunused-const-variable=]
-     450 | static const struct parent_map gcc_parent_map_20[] = {
-         |                                ^~~~~~~~~~~~~~~~~
->> drivers/clk/qcom/gcc-x1e80100.c:440:32: warning: 'gcc_parent_map_19' defined but not used [-Wunused-const-variable=]
-     440 | static const struct parent_map gcc_parent_map_19[] = {
-         |                                ^~~~~~~~~~~~~~~~~
->> drivers/clk/qcom/gcc-x1e80100.c:430:32: warning: 'gcc_parent_map_18' defined but not used [-Wunused-const-variable=]
-     430 | static const struct parent_map gcc_parent_map_18[] = {
-         |                                ^~~~~~~~~~~~~~~~~
->> drivers/clk/qcom/gcc-x1e80100.c:420:32: warning: 'gcc_parent_map_17' defined but not used [-Wunused-const-variable=]
-     420 | static const struct parent_map gcc_parent_map_17[] = {
-         |                                ^~~~~~~~~~~~~~~~~
->> drivers/clk/qcom/gcc-x1e80100.c:410:32: warning: 'gcc_parent_map_16' defined but not used [-Wunused-const-variable=]
-     410 | static const struct parent_map gcc_parent_map_16[] = {
-         |                                ^~~~~~~~~~~~~~~~~
->> drivers/clk/qcom/gcc-x1e80100.c:400:32: warning: 'gcc_parent_map_15' defined but not used [-Wunused-const-variable=]
-     400 | static const struct parent_map gcc_parent_map_15[] = {
-         |                                ^~~~~~~~~~~~~~~~~
->> drivers/clk/qcom/gcc-x1e80100.c:390:32: warning: 'gcc_parent_map_14' defined but not used [-Wunused-const-variable=]
-     390 | static const struct parent_map gcc_parent_map_14[] = {
-         |                                ^~~~~~~~~~~~~~~~~
-   drivers/clk/qcom/gcc-x1e80100.c:380:32: warning: 'gcc_parent_map_13' defined but not used [-Wunused-const-variable=]
-     380 | static const struct parent_map gcc_parent_map_13[] = {
-         |                                ^~~~~~~~~~~~~~~~~
+---
+base-commit: 262858079afde6d367ce3db183c74d8a43a0e83f
+change-id: 20250927-clk-microchip-core-compile-error-fef8c20ed5fe
 
-Kconfig warnings: (for reference only)
-   WARNING: unmet direct dependencies detected for ARCH_HAS_ELF_CORE_EFLAGS
-   Depends on [n]: BINFMT_ELF [=n] && ELF_CORE [=y]
-   Selected by [y]:
-   - RISCV [=y]
-
-
-vim +/gcc_parent_map_33 +580 drivers/clk/qcom/gcc-x1e80100.c
-
-   389	
- > 390	static const struct parent_map gcc_parent_map_14[] = {
-   391		{ P_GCC_USB4_0_PHY_DP1_GMUX_CLK_SRC, 0 },
-   392		{ P_USB4_0_PHY_GCC_USB4RTR_MAX_PIPE_CLK, 2 },
-   393	};
-   394	
-   395	static const struct clk_parent_data gcc_parent_data_14[] = {
-   396		{ .index = DT_GCC_USB4_0_PHY_DP1_GMUX_CLK_SRC },
-   397		{ .index = DT_USB4_0_PHY_GCC_USB4RTR_MAX_PIPE_CLK },
-   398	};
-   399	
- > 400	static const struct parent_map gcc_parent_map_15[] = {
-   401		{ P_USB4_0_PHY_GCC_USB4_PCIE_PIPE_CLK, 0 },
-   402		{ P_BI_TCXO, 2 },
-   403	};
-   404	
-   405	static const struct clk_parent_data gcc_parent_data_15[] = {
-   406		{ .index = DT_USB4_0_PHY_GCC_USB4_PCIE_PIPE_CLK },
-   407		{ .index = DT_BI_TCXO },
-   408	};
-   409	
- > 410	static const struct parent_map gcc_parent_map_16[] = {
-   411		{ P_GCC_USB4_0_PHY_PCIE_PIPEGMUX_CLK_SRC, 0 },
-   412		{ P_USB4_0_PHY_GCC_USB4_PCIE_PIPE_CLK, 1 },
-   413	};
-   414	
-   415	static const struct clk_parent_data gcc_parent_data_16[] = {
-   416		{ .index = DT_GCC_USB4_0_PHY_PCIE_PIPEGMUX_CLK_SRC },
-   417		{ .index = DT_USB4_0_PHY_GCC_USB4_PCIE_PIPE_CLK },
-   418	};
-   419	
- > 420	static const struct parent_map gcc_parent_map_17[] = {
-   421		{ P_QUSB4PHY_0_GCC_USB4_RX0_CLK, 0 },
-   422		{ P_BI_TCXO, 2 },
-   423	};
-   424	
-   425	static const struct clk_parent_data gcc_parent_data_17[] = {
-   426		{ .index = DT_QUSB4PHY_0_GCC_USB4_RX0_CLK },
-   427		{ .index = DT_BI_TCXO },
-   428	};
-   429	
- > 430	static const struct parent_map gcc_parent_map_18[] = {
-   431		{ P_QUSB4PHY_0_GCC_USB4_RX1_CLK, 0 },
-   432		{ P_BI_TCXO, 2 },
-   433	};
-   434	
-   435	static const struct clk_parent_data gcc_parent_data_18[] = {
-   436		{ .index = DT_QUSB4PHY_0_GCC_USB4_RX1_CLK },
-   437		{ .index = DT_BI_TCXO },
-   438	};
-   439	
- > 440	static const struct parent_map gcc_parent_map_19[] = {
-   441		{ P_GCC_USB4_0_PHY_SYS_PIPEGMUX_CLK_SRC, 0 },
-   442		{ P_USB4_0_PHY_GCC_USB4_PCIE_PIPE_CLK, 2 },
-   443	};
-   444	
-   445	static const struct clk_parent_data gcc_parent_data_19[] = {
-   446		{ .index = DT_GCC_USB4_0_PHY_SYS_PIPEGMUX_CLK_SRC },
-   447		{ .index = DT_USB4_0_PHY_GCC_USB4_PCIE_PIPE_CLK },
-   448	};
-   449	
- > 450	static const struct parent_map gcc_parent_map_20[] = {
-   451		{ P_GCC_USB4_1_PHY_DP0_GMUX_CLK_SRC, 0 },
-   452		{ P_USB4_1_PHY_GCC_USB4RTR_MAX_PIPE_CLK, 2 },
-   453	};
-   454	
-   455	static const struct clk_parent_data gcc_parent_data_20[] = {
-   456		{ .index = DT_GCC_USB4_1_PHY_DP0_GMUX_CLK_SRC },
-   457		{ .index = DT_USB4_1_PHY_GCC_USB4RTR_MAX_PIPE_CLK },
-   458	};
-   459	
- > 460	static const struct parent_map gcc_parent_map_21[] = {
-   461		{ P_GCC_USB4_1_PHY_DP1_GMUX_CLK_SRC, 0 },
-   462		{ P_USB4_1_PHY_GCC_USB4RTR_MAX_PIPE_CLK, 2 },
-   463	};
-   464	
-   465	static const struct clk_parent_data gcc_parent_data_21[] = {
-   466		{ .index = DT_GCC_USB4_1_PHY_DP1_GMUX_CLK_SRC },
-   467		{ .index = DT_USB4_1_PHY_GCC_USB4RTR_MAX_PIPE_CLK },
-   468	};
-   469	
- > 470	static const struct parent_map gcc_parent_map_22[] = {
-   471		{ P_USB4_1_PHY_GCC_USB4_PCIE_PIPE_CLK, 0 },
-   472		{ P_BI_TCXO, 2 },
-   473	};
-   474	
-   475	static const struct clk_parent_data gcc_parent_data_22[] = {
-   476		{ .index = DT_USB4_1_PHY_GCC_USB4_PCIE_PIPE_CLK },
-   477		{ .index = DT_BI_TCXO },
-   478	};
-   479	
- > 480	static const struct parent_map gcc_parent_map_23[] = {
-   481		{ P_GCC_USB4_1_PHY_PCIE_PIPEGMUX_CLK_SRC, 0 },
-   482		{ P_USB4_1_PHY_GCC_USB4_PCIE_PIPE_CLK, 1 },
-   483	};
-   484	
-   485	static const struct clk_parent_data gcc_parent_data_23[] = {
-   486		{ .index = DT_GCC_USB4_1_PHY_PCIE_PIPEGMUX_CLK_SRC },
-   487		{ .index = DT_USB4_1_PHY_GCC_USB4_PCIE_PIPE_CLK },
-   488	};
-   489	
- > 490	static const struct parent_map gcc_parent_map_24[] = {
-   491		{ P_QUSB4PHY_1_GCC_USB4_RX0_CLK, 0 },
-   492		{ P_BI_TCXO, 2 },
-   493	};
-   494	
-   495	static const struct clk_parent_data gcc_parent_data_24[] = {
-   496		{ .index = DT_QUSB4PHY_1_GCC_USB4_RX0_CLK },
-   497		{ .index = DT_BI_TCXO },
-   498	};
-   499	
- > 500	static const struct parent_map gcc_parent_map_25[] = {
-   501		{ P_QUSB4PHY_1_GCC_USB4_RX1_CLK, 0 },
-   502		{ P_BI_TCXO, 2 },
-   503	};
-   504	
-   505	static const struct clk_parent_data gcc_parent_data_25[] = {
-   506		{ .index = DT_QUSB4PHY_1_GCC_USB4_RX1_CLK },
-   507		{ .index = DT_BI_TCXO },
-   508	};
-   509	
- > 510	static const struct parent_map gcc_parent_map_26[] = {
-   511		{ P_GCC_USB4_1_PHY_SYS_PIPEGMUX_CLK_SRC, 0 },
-   512		{ P_USB4_1_PHY_GCC_USB4_PCIE_PIPE_CLK, 2 },
-   513	};
-   514	
-   515	static const struct clk_parent_data gcc_parent_data_26[] = {
-   516		{ .index = DT_GCC_USB4_1_PHY_SYS_PIPEGMUX_CLK_SRC },
-   517		{ .index = DT_USB4_1_PHY_GCC_USB4_PCIE_PIPE_CLK },
-   518	};
-   519	
- > 520	static const struct parent_map gcc_parent_map_27[] = {
-   521		{ P_GCC_USB4_2_PHY_DP0_GMUX_CLK_SRC, 0 },
-   522		{ P_USB4_2_PHY_GCC_USB4RTR_MAX_PIPE_CLK, 2 },
-   523	};
-   524	
-   525	static const struct clk_parent_data gcc_parent_data_27[] = {
-   526		{ .index = DT_GCC_USB4_2_PHY_DP0_GMUX_CLK_SRC },
-   527		{ .index = DT_USB4_2_PHY_GCC_USB4RTR_MAX_PIPE_CLK },
-   528	};
-   529	
- > 530	static const struct parent_map gcc_parent_map_28[] = {
-   531		{ P_GCC_USB4_2_PHY_DP1_GMUX_CLK_SRC, 0 },
-   532		{ P_USB4_2_PHY_GCC_USB4RTR_MAX_PIPE_CLK, 2 },
-   533	};
-   534	
-   535	static const struct clk_parent_data gcc_parent_data_28[] = {
-   536		{ .index = DT_GCC_USB4_2_PHY_DP1_GMUX_CLK_SRC },
-   537		{ .index = DT_USB4_2_PHY_GCC_USB4RTR_MAX_PIPE_CLK },
-   538	};
-   539	
- > 540	static const struct parent_map gcc_parent_map_29[] = {
-   541		{ P_USB4_2_PHY_GCC_USB4_PCIE_PIPE_CLK, 0 },
-   542		{ P_BI_TCXO, 2 },
-   543	};
-   544	
-   545	static const struct clk_parent_data gcc_parent_data_29[] = {
-   546		{ .index = DT_USB4_2_PHY_GCC_USB4_PCIE_PIPE_CLK },
-   547		{ .index = DT_BI_TCXO },
-   548	};
-   549	
- > 550	static const struct parent_map gcc_parent_map_30[] = {
-   551		{ P_GCC_USB4_2_PHY_PCIE_PIPEGMUX_CLK_SRC, 0 },
-   552		{ P_USB4_2_PHY_GCC_USB4_PCIE_PIPE_CLK, 1 },
-   553	};
-   554	
-   555	static const struct clk_parent_data gcc_parent_data_30[] = {
-   556		{ .index = DT_GCC_USB4_2_PHY_PCIE_PIPEGMUX_CLK_SRC },
-   557		{ .index = DT_USB4_2_PHY_GCC_USB4_PCIE_PIPE_CLK },
-   558	};
-   559	
- > 560	static const struct parent_map gcc_parent_map_31[] = {
-   561		{ P_QUSB4PHY_2_GCC_USB4_RX0_CLK, 0 },
-   562		{ P_BI_TCXO, 2 },
-   563	};
-   564	
-   565	static const struct clk_parent_data gcc_parent_data_31[] = {
-   566		{ .index = DT_QUSB4PHY_2_GCC_USB4_RX0_CLK },
-   567		{ .index = DT_BI_TCXO },
-   568	};
-   569	
- > 570	static const struct parent_map gcc_parent_map_32[] = {
-   571		{ P_QUSB4PHY_2_GCC_USB4_RX1_CLK, 0 },
-   572		{ P_BI_TCXO, 2 },
-   573	};
-   574	
-   575	static const struct clk_parent_data gcc_parent_data_32[] = {
-   576		{ .index = DT_QUSB4PHY_2_GCC_USB4_RX1_CLK },
-   577		{ .index = DT_BI_TCXO },
-   578	};
-   579	
- > 580	static const struct parent_map gcc_parent_map_33[] = {
-   581		{ P_GCC_USB4_2_PHY_SYS_PIPEGMUX_CLK_SRC, 0 },
-   582		{ P_USB4_2_PHY_GCC_USB4_PCIE_PIPE_CLK, 2 },
-   583	};
-   584	
-
+Best regards,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Brian Masney <bmasney@redhat.com>
+
