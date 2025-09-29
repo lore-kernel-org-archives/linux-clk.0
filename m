@@ -1,248 +1,291 @@
-Received: from OS8PR02CU002.outbound.protection.outlook.com (mail-japanwestazon11022116.outbound.protection.outlook.com [40.107.75.116])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04089280339;
-	Mon, 29 Sep 2025 09:31:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.75.116
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759138305; cv=fail; b=cWVo9wpDUCKO5XEiWBQlfOBQ0wDIk9L2QHmk+bOToAK/cZ41KATYbhcbHq8vRluJGjVykp/tO0wGsNPQg9/YdONLtIEpEZsmQzcWnJLdHGRgixtFrMVl5PXIRZ0itdycFLlxdtOj324jtCzvqxwxoZNXkkwAJrRH/psUccxdqhc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759138305; c=relaxed/simple;
-	bh=Ybh5WQEUYIlSvSBAm1aAo8b7rr8QP2Er3fDUjbx7suY=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Sj6KQSjMjqBcEuKvbJ4PJvhS+w0vhzlzl2eecYqpSi/5E3J3KfZ3Y5ICu/x7VR5MG/c6Bvz7TFhHPx+ream3bVW2o7ngmxbNB7wJzAVeVQ64kN/DX5dLnJpf24YrohEk29Ytydhd1pFOYB5GSHYLHlhDitsE7+NY4fcKSQuqU1E=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b=wE0s3H77; arc=fail smtp.client-ip=40.107.75.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amlogic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 753712FF15F
+	for <linux-clk@vger.kernel.org>; Mon, 29 Sep 2025 11:23:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759145014; cv=none; b=l/MUyeNjEUk5qjAghdHTfpzxtY2dkix5AR+Og0Iu38LqonhTGFZAzlE4g8Kd4GgWZtmpLd1m97+DD47eDCjUCQBelGhjQFcLZZ/p+NRMKW0q0NgixUZp2ascVKwGHh5LTjAqvY7x1/7Ccb+SXE5j0NkAr1ZB6eSpmSOgQe0WOkg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759145014; c=relaxed/simple;
+	bh=o6GH9yM5X/l45RBwJ3B7UFsxj4Ov3IBjhVL8z/0/vWA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZD4XKH/O6jRZ3gCbWp5rGQL8psOWEL8wZ2c1AyJApp5axkPwVrlSDIC7V8/O8xZcp7HA+7JdvGZSD17RuePpT2y1q8vRe9F688qWeKlbdVyGY8z1kwzKz1JR4EhLVRaMMVUjlpTwYHe5BMIZaj4L5+QgHC0fIJyZRR+OKPoOHB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P2oEOtbS; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b="wE0s3H77"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=La0cnvT4cYOzJPWL/ihImE5wZLCbK/Bc/BeyhnxzD+/3Sk1EO7eInLgw1p8qZisxIMLxe6XAHQFx2XQQ6ahoWZNyaOLLRqkyBaFC7rWjRdMcepzNeqTXFyhcaNofdAlL0I5gu69kzpET86nEEghQ9Zt2TVFqKsVUc7yYniN+NSYFWiLQYVgZD78XcpBjreD0P6byeSd6Yoag7h30ZIwtJDOo6rToHeS8ZcEIYBS5yZsLwcYHL7VufCQio56gfY4s71RachSq3Ql5GkIwqxoOxptgaZXJ7MjgA6DwqrNpv9V3O0jdp5I1eF2ItzZLLekYFhFVCe5xPhcXu0ly6CoMBw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=c6js61FF3XzIpiviMctRcf9MyKu6wVA9+NNyDgU9sXY=;
- b=ngsPTAtpgpAgC/IxLwHAXaHC/E5kpL5PEOLC+PMcevQoYVG3sisFJVVZB2Wgoyed2OPdrA+qYbtlOm79K3c6pVOUQxWpe6upObZI9UxOsvQ8qNwt/GMvUpbhzRC6+oU/8RIqZB+c8LBm29rozbyRWIz/E7HcGGwsKXJHYHg2vPtzrIV1xNiK3EM7D/gWZHZ1TWxPIj9EnSfUvLEdX/vusAIZ/TKxb1muiQq7NbieYF8Sg5urKg1mFIKYFhkNNHOz85hmZzuJc7Qt3Q0cg8Xh1f7HN4GxeprYleXevlTfRUqXqdGNMC27/GJH91a6iC5HkPdI2NStXdkZQAmyzKh4iQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
- dkim=pass header.d=amlogic.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amlogic.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=c6js61FF3XzIpiviMctRcf9MyKu6wVA9+NNyDgU9sXY=;
- b=wE0s3H77GDgIg4c2zuh/UDzsC28EBZygKQ4ko4AcGXBfcHEnY69XP5j1BJx0LWQ1MndtoS8d3DM7c3WrzXHCOpFWxv33hwz/YtZLWqWAP/kxKS3iNE8nyb00cCjz4tKm8/85SrYickZL9Wm3H6d7hfBCpJZGC54RkgmFnzRb8x377/wIEv8/qWL653KSKsHHxYhj0/k+M4/cpwWqKOgX8wX1STzfUtIgp8AXu2WiEjSsrs/WkDIHt27BoRp+f1Xy36VB5ElZuevB6KNwxq4F/U5WmMmIJ+rRj7FpPZJYjcvrU7giteXnM9Wv0Rq+lUblg/RF36NBVzzc5B6zhL/S+A==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amlogic.com;
-Received: from KL1PR03MB5778.apcprd03.prod.outlook.com (2603:1096:820:6d::13)
- by TYZPR03MB7576.apcprd03.prod.outlook.com (2603:1096:400:427::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.20; Mon, 29 Sep
- 2025 09:31:40 +0000
-Received: from KL1PR03MB5778.apcprd03.prod.outlook.com
- ([fe80::e1e:5c95:a889:828e]) by KL1PR03MB5778.apcprd03.prod.outlook.com
- ([fe80::e1e:5c95:a889:828e%5]) with mapi id 15.20.9160.015; Mon, 29 Sep 2025
- 09:31:40 +0000
-Message-ID: <36cd6282-ae1d-43f3-8738-592f043d0ba6@amlogic.com>
-Date: Mon, 29 Sep 2025 17:31:07 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] clk: meson: Fix glitch free mux related issues
-To: Jerome Brunet <jbrunet@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>,
- Kevin Hilman <khilman@baylibre.com>, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org
-References: <20240929-fix_glitch_free-v1-0-22f9c36b7edf@amlogic.com>
- <20240929-fix_glitch_free-v1-2-22f9c36b7edf@amlogic.com>
- <CAFBinCBd5-s6vaBoJNerXavQiHgsv4Fm3v0svUX7geL=kJvVYg@mail.gmail.com>
- <20178015-4075-40e9-bbf4-20ae558c2bef@amlogic.com>
- <1jldyzrv2t.fsf@starbuckisacylon.baylibre.com>
- <e70e9aaa-f448-4f67-9149-cb5970c9bbd6@amlogic.com>
- <9834c7c5-9334-4c78-a2fe-588ff03cf935@amlogic.com>
- <CAFBinCCoX5+6+KQAtbhKx9KdSZhXVxS=cz8DfMVhjPX1c0iSPw@mail.gmail.com>
- <1jfrc563wa.fsf@starbuckisacylon.baylibre.com>
-From: Chuan Liu <chuan.liu@amlogic.com>
-In-Reply-To: <1jfrc563wa.fsf@starbuckisacylon.baylibre.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SI1PR02CA0001.apcprd02.prod.outlook.com
- (2603:1096:4:1f7::15) To KL1PR03MB5778.apcprd03.prod.outlook.com
- (2603:1096:820:6d::13)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P2oEOtbS"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-46e33b260b9so44342015e9.2
+        for <linux-clk@vger.kernel.org>; Mon, 29 Sep 2025 04:23:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759145011; x=1759749811; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=cHIeUtwUMwlpj/aPUYic3SGp0yyW1lvSsod+CzPmLm8=;
+        b=P2oEOtbSaavfn66LK7SWH5vfedPyrqeQC1Gz5X00DD/awXDlc/hGm2rsLhd2kGwMEi
+         /n+W8LEf/8TdtLDTJsv8oAGkbFps1crJ5yHHqatkg+UWzc2rkT6vd/rfLvrePSK5Vwoc
+         VaW7NAN6eNdXjVf6wW6BVBUBdarnslhgnJtLw8clRSm0gjUa7gClYwNv8+xu+Z9CJ8eK
+         lqu9PqIqbPMIEL+suur4S3ICA1qxmXo0ogrTbk9AXp6BJZtUgIWl41rjoW6hxKQaRRsT
+         Ff8v23bI6QGsmQ/NzkbgOooTY5xLz0eA5Ia3PrOsMo/YwxkKuVAllmvUWtrG4BJtywlR
+         Mk3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759145011; x=1759749811;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cHIeUtwUMwlpj/aPUYic3SGp0yyW1lvSsod+CzPmLm8=;
+        b=G7uYF6P9kpRRdgN6XXnolHUWpZvIfQiczw3I/sqkKNa5CziWgnP6JibfBtDwyfFeaf
+         SLUdDKn1RXZk/zkUmIF0MH56TS/b4EoBb/BfoR5TSX/dYHoVxSSTXRxCFtYW7k9V9/Hu
+         7voRXW0YE7dV1Xs6LE+Jb+ZP3+abxPY+C0Y20pjkAZXkkXqNHcDCtIp82DgiDyqlxTAl
+         528jpRsbCpOiihiuPL5y1CjtTpUJgb1jAxUf32+KZepZ55wy7yowUkj5msRcHDGXjwte
+         gT9TvW7TTFJ+zQ723he+RPmP3pJmO8eijOBPG62CR/YI/O0FB9BoGfCk2HJjz+haJ2eq
+         uOxg==
+X-Forwarded-Encrypted: i=1; AJvYcCVWUlS8WQQMjke+5hgjhvo6uf3/v1jddFjdcPpg1PHYGm5Ks/jHw6k72fcRdlmecqUUekGlKSew78Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbPimCsA8fk2pCcXz1niOMRs5OO6c08VG/E5WZ6ZMhWcEkHkGQ
+	WtSLo49Jf3oR58fx1dQQ9xa0elzungs/VU4Q+8MdnCBdH0Wt7sIR+ojK
+X-Gm-Gg: ASbGncsqIGzWS6JpZ8NwxokNS1tpKXJY6zQ1GuTOke9dx4kysrmi97kZmVGJ1sFxyFV
+	Zp/p+/wvGZ09esUQ9fyFO7tNMoIdnQIZMr1LSH9jO+gmP0v6kT1VhrkzropMg3nv5CXcmhL1cAF
+	DdiWRc/06HQ39UbzTgIL7UwXlmrz+QkE2er/DWs0YefLRP2zo79tjixU59AMf005QSo5LpAd7BI
+	jysMJ/ky/OCOsQ6WuKN2a25Z14Uu2cT873m+VnaXu9I1rTFuS/pcOQtLHhhj647/g2tggPPTEyt
+	K1t/XSM5av/p+BK24J6WKAFzjwEsNSpn9869X8TEH5UTa1ZkTMy3hdTMMBS3qwl2iZybtn6bovN
+	++7VwBfy8+O5Udzh+BYactt+xI98eArwpWz95gPe45ddQIn42553g87RbbdOwMurhMQ==
+X-Google-Smtp-Source: AGHT+IF7t6Y5sr/tULnaPZaeuk2hwGoBeQF4vR7bTyautiXiyjXn+xefZSwap9LxXcjToXlLJXaF7A==
+X-Received: by 2002:a5d:588d:0:b0:3e9:d9bd:5043 with SMTP id ffacd0b85a97d-40e3ab8747emr14437342f8f.0.1759145010463;
+        Mon, 29 Sep 2025 04:23:30 -0700 (PDT)
+Received: from iku.example.org ([2a06:5906:61b:2d00:6614:1d02:ab7a:3f9])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-41f00aebdb7sm5143046f8f.57.2025.09.29.04.23.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Sep 2025 04:23:29 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v4] clk: renesas: cpg-mssr: Add module reset support for RZ/T2H
+Date: Mon, 29 Sep 2025 12:23:24 +0100
+Message-ID: <20250929112324.3622148-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: KL1PR03MB5778:EE_|TYZPR03MB7576:EE_
-X-MS-Office365-Filtering-Correlation-Id: f639bc76-1b94-440e-e445-08ddff3afecc
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?N2M4TTA0dHdXcXNhaEVhRjBXZVlhNXFvL01qTXVTVXhQRlVudzhuL3ZjZzla?=
- =?utf-8?B?azRnK2xVVXp1ZHdLUXpqdU1lNEN0UEdxM1BhMTJydkJMcFJhb2x6OVRidm1w?=
- =?utf-8?B?YzFmV1A0N0pVVmY1KzRqa0VOZlpvVnNNVEV3SSthSDlhZ2lERUVmUWdKbFhy?=
- =?utf-8?B?UGtpT0MwVk44a1NYYkZHajQrUnZoZUQvUlo4dVJlK1V2NWZtVGZlcVFyWXhw?=
- =?utf-8?B?MWhQanA1NEdKdkl5cGg3MHoyYkdScnB5WWMzamtBWXlFL2pzZTFURWt5ME15?=
- =?utf-8?B?TDNnZXN2Si9ONzlVSDY1WExRem5BcjZ5bDV4V0dVSjBmeUhaTEcwdTRiZE00?=
- =?utf-8?B?dzMyRDFUUEZxbjF1aVM3L24xWWVzUDd6Yy9FaU8vdCs2K2FMczZMSmxiTG56?=
- =?utf-8?B?ZzRQWFFJZlZJemZ6ZXpJRFR2c3JMamRUZ0hCRFNsUkVNdVdMaXRIWlhVM3pv?=
- =?utf-8?B?NkcrMms4NnV4M2F4L2M3amlCYU9tak1DcVcyNC9yUloxdi9QeDAxVFk1dXRn?=
- =?utf-8?B?VUNUYkYzekVEOGlRZVdqa2ZaZGRsNkdGc3NtSWFGcmJnVC8vc0VKZGdvVDhV?=
- =?utf-8?B?V0EzbnlnRjJnQVJBSWtwWU9BbWVOUkpmM0FkOWIyRHFQNzZXWGFHTGFOUmNT?=
- =?utf-8?B?ekNIMzI3MWJxWnBoeThkOHFoRzdlZTVwUDczN0VBd2dIUGwvTXN3cVdLYUNJ?=
- =?utf-8?B?ZEN2SG51OGp5VXQwcE5NdVhYeUpJYi84WnJtRStQRTlXWWErenhWWHgzbTEy?=
- =?utf-8?B?b3BrbS9SSWp1MlZnUkxGbCs2WkJEQWM1WThyN3RjazNRYTVsMUMvQWxKZTRK?=
- =?utf-8?B?WnhrUHFTQU8yUDR1RmN4bXU1eWY0dlhWRnByN0VYNTdnaFBQRzBDMCs4a04r?=
- =?utf-8?B?Z0xtVjhLS3dCZ2E4UzVVci85L2RIVXgxdVNsZHlOa0c0Y2s3dEVONUdBT21W?=
- =?utf-8?B?U2Q5YW5SVzdtUmdOVFU3RjBiVDF2MWRoSkdZVHZZOFlpM0hkUG02ZFFzbWZa?=
- =?utf-8?B?MGY2VWllbjhOcFQ5bFVnR1FOczlHUFBDemVlL1dBRFhZK21nZk1rVGo2d0tq?=
- =?utf-8?B?TGFxQVN1L282SlRMbGY5QXBrNXN5a0tpRm12alRCY1FmaTM5Vk5temFSNDVQ?=
- =?utf-8?B?WlV3MHg0dHBsc3gzZ1hsUWtxUjJDM3M3aFpodHBRbGpQbE9zUzRsbHIrd3dt?=
- =?utf-8?B?R3pPQXZZM2d5WWdQdWFvQ1VVM2lBeTRDRS9ZSERkZEhzWFpxcWcrbHNqWG0y?=
- =?utf-8?B?K3RaUEZQaktMVldVeExOVEU4TGh2WEZ3a1pSYkxOMy9pQUxyQU5tTUlqaDlr?=
- =?utf-8?B?Ykpxb0RsMmQ1bXc2Yjk4Zm0vOE8zQ29PTE5jcUtWejIxWlFLS1Z1UzJ5Q1Ay?=
- =?utf-8?B?UWlXMyswcTU1NEIxbXhtRm81djhQaUk5L2Zqend4Y3NLcmh3WjN4aUlrbit2?=
- =?utf-8?B?RDAzTTV2K2RCVWRPdWRvdUNNa2oza2oxRGxka3AxQjVoVmJad0ZoRGI0eUNB?=
- =?utf-8?B?bk43T3pFY3pIN0ZCeUk2Z3FNeFBjdDlvTlJnU2VpRXdaNE5jKys3UFlsN21Z?=
- =?utf-8?B?RkFMdDIvWG1xYzlUZlV0elpzODA0VGxSRVQ2UGd5WFdDTFRuQ2wzWDdkWE5m?=
- =?utf-8?B?U3F1c1NMcWxRQmpvV2pvRGdGeE1RVlBVbEpsRFppQ3hPODJjbVp2NWdGR0ZR?=
- =?utf-8?B?S0pod1VxaXZ6K2Q0T3YyckFObk5WdjR0R3ZScGxvRlBWUEU0eEJLajNqMHNy?=
- =?utf-8?B?VkROaGxkZGQvbmFzTCtIMXd5QlF0WE56enR2UnVacm9Lb3pHS0xvTzdxNkc5?=
- =?utf-8?B?NktwZWxrVmpFaFF6UjFLWHRDM285UER4bi9ZTThaMEVQR0tHNmRHRFV0WVpS?=
- =?utf-8?B?eWltalk3TEhQOGFGNDBiU0VFeHUyd1ZIWFNjQnMzM3ZRZ0dQakxvRDlRL3Za?=
- =?utf-8?Q?7yacMEjALtviR4nr31VVzzP+FmW0eqec?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR03MB5778.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?dzd4MGUvOGxYOVprUWdVMUYvTUx6bkJtai9URlZ4bXlYMDhWSHFEWm94Y0Ra?=
- =?utf-8?B?Z0c4cFVJSDJSaC9VdVhTLzYvblJYQi9GY3g1MGlXUEJNT003WDV5bnErVmx6?=
- =?utf-8?B?RkFXMzYzc2p4cVZIMERZc0diU3pUN0JrckoxRUxtVk1RVmZGeXE3RStTRWVL?=
- =?utf-8?B?TzFnbHpFaHNVYlRRZW1kdWNzcHQ4VXA2d01aTmZHNjBBeVdNQnoxMDg5ZElG?=
- =?utf-8?B?K2cxTVNOY2c4ZmNFVDYzL1JBY0ZTaUhTc3Yyd1BhRE5Kc0FOWDBBVEY4c2hv?=
- =?utf-8?B?SzFwSmFtOEpBdUpidWQycVBtQkVLNXk2MlRlOTV3TFU4MW1tV1JBS3FHQ0tB?=
- =?utf-8?B?WFVWWGt0QjdkdkJFV2lPZmZNSUpTYVFJSlNUM1hvMUJKQytFbDhBU2JXeG16?=
- =?utf-8?B?Z3czcXFHQThmcDl6WW8zd20zSzE4VG9BSXpiMnBvZXRubGhES3dyT0E5dU0x?=
- =?utf-8?B?YWcyckxONWYwS2d0dEd1YW43WEF1S0hUazhrSmo0d2NURWhwZGV2U1pKNVZV?=
- =?utf-8?B?OGxkQVlSTXpYWW54TUVWSDVSWHRRcktNb2pzMUtDOWZ3ZUF2RFdYSERGSmlo?=
- =?utf-8?B?TmxQdjl6VHRIVnhqdG9FR0JuMVJZWVRESTNFY252UDUzbSs0Mnd1Y2xqYk9J?=
- =?utf-8?B?U3FRNnBpNTVqNVE2SXlNVGsvekxlYXlSc05qTXZqSFBjSGZiVCtqbVg0Y0JE?=
- =?utf-8?B?TGprbWxmSnpLcHB4dnU0RzRoMEh4c29McjMwZ0s4eE12N0hmcDVEVEFYQ25K?=
- =?utf-8?B?amVvMS9nL3U4cXlyU0F4RkI1TUIvVDJ4RUZvK1l4N21MZ0tFa2plc2FCTVpZ?=
- =?utf-8?B?Tm1rWWFFR3FPZnRhVUFxTFFpS0hRUitxa2RieGJUbXd1VTRBZWxXYVBhbUpt?=
- =?utf-8?B?TkhGVzZRdTlROGFFVVFqQVFKbStPa0xsd1hSeVJsRHgzY2JUeXFQVEl2ckto?=
- =?utf-8?B?NlFSdFpNS1U5UGt4M0dRcHh0QkNQc3pXU0FuSFRJaWJicFl1bzdLb1V4R0JW?=
- =?utf-8?B?c3MzbFNTT0s4bzllZHN1U05LNFdtTkcyK1l0TFhKa3FpVXY5ZGdQcUxXRFY3?=
- =?utf-8?B?M1ovYVh3eTlyZEwxZ1hZY0lnZ2tvOVd0ZmJPcGFyd3BBdVN5SHZRVFQxZkFD?=
- =?utf-8?B?eXJEK0FKclZHWWptbGd6SHV6TVJ6NWxjMGx5THlxcXd0b2dlaHdiekpNVHJU?=
- =?utf-8?B?NDVKUXBXdFRwcGRuYjRPWXVLZzNkakVvTnNDanR1VTVHZFY2OUVqY3NlRzVt?=
- =?utf-8?B?SVpWelh4Z0h3NTFEb2c1YmZrc1ZnUHVSemNkOTM3UTloVTJOMmpGNWliMTFD?=
- =?utf-8?B?SGZmdm0rRG0yVTBaU2VlMUtaU0ZRVlZiK2VxVU13d29sL2RwRVNMQ1VVa3Bq?=
- =?utf-8?B?VjdhTkg2ZHJHYWZ6eUNRRU9iN0VRemdiS2V5ZzI3UzVyTEVOYjhQeXZ4SzV1?=
- =?utf-8?B?L1NMT0xBcHFmdmxGUnFpTmZpWGFmemkzVnFGYWdXWlJZQ2E0a0dpV0dpb25i?=
- =?utf-8?B?ZUQ3UFNsTlZLclFwZGNWaXQrbURxK3pNeVJPNmMrZmd5dmlYd3pTdkZmaDVN?=
- =?utf-8?B?QlR4M0tjcGd6bzlEUkxoWk8wY3JiNk5zbnFlUCs1VnBCb3AwREoxS0JhaHl4?=
- =?utf-8?B?c0tRSWc5MzNDemJ3ekplb1B5Vk9aYXpNV2VFc29hLzVqOVovNEZCQXg0SkhZ?=
- =?utf-8?B?R3dRN1Y3M2ZDbG1uZTdweHFYOEVIcE5MU1BvN1g4cXZGVVNGc0FSS2h3aFds?=
- =?utf-8?B?T1NPY0JnSUFKZXpxVGI3a2ZoYUgwTGdydVJzeUtVaUNIdGE2VVByRDlBYkkv?=
- =?utf-8?B?YlgveG9uenZjNi9Ra2lnV1laYm00Y3dpWWUvaXgvdUtTTXczUVBseFA1ZmJx?=
- =?utf-8?B?NC9FM0llS1BheWNzT3M5RkJlaDBHM3ZlVXpINlhUOHhpc0tNZUlzN3ZIRnNL?=
- =?utf-8?B?NENFR2xtVXpNQUZoZndFUkFjRGh6anQrWFEyTVpOeHpBMnlQZmtCOFpXa1lS?=
- =?utf-8?B?YkVHd3pXMk42ZHFMTWRqTEtFSlhtZ1ZOZHk0RGpQNm5PcEM5Z3BVay9TOVB0?=
- =?utf-8?B?M1lvaFhhc3BReHFWcmY2aWtRaXBqRitBcEI1ZFNIeDJLUXhaejhRQktZYzlX?=
- =?utf-8?Q?SNObewiR462tb7qBCjhTjxdH7?=
-X-OriginatorOrg: amlogic.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f639bc76-1b94-440e-e445-08ddff3afecc
-X-MS-Exchange-CrossTenant-AuthSource: KL1PR03MB5778.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Sep 2025 09:31:40.6490
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: yncgKn2wxgcez5we+oQ+bgV4DojWhzitfE6kRbYgqZTFrBUZVPK9Svm2Jf13OYeVWcLhUfZ+Dg/pswOU041Y9A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR03MB7576
+Content-Transfer-Encoding: 8bit
 
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-On 9/29/2025 4:48 PM, Jerome Brunet wrote:
-> [ EXTERNAL EMAIL ]
->
-> On Sun 28 Sep 2025 at 22:55, Martin Blumenstingl <martin.blumenstingl@googlemail.com> wrote:
->
->> Hello,
->>
->> On Sun, Sep 28, 2025 at 8:41 AM Chuan Liu <chuan.liu@amlogic.com> wrote:
->>>
->>> On 9/28/2025 2:05 PM, Chuan Liu wrote:
->>>> Hi Jerome & Martin:
->>>>
->>>> Sorry for the imprecise description of the glitch-free mux earlier.
->>>>
->>>> Recently, while troubleshooting a CPU hang issue caused by glitches,
->>>> I realized there was a discrepancy from our previous understanding,
->>>> so I'd like to clarify it here.
->> [...]
->>> An example of the clock waveform is shown below:
->>>
->>>
->                       1                  2
->                       v                  v
->>>          __    __    __    __    __    __    __    __
->>> ori:  ↑  |__↑  |__↑  |__↑  |__↑  |__↑  |__↑  |__↑  |__↑
->>>                     ^
->>>                     1 * cycle original channel.
->>>          _   _   _   _   _   _   _   _   _   _   _   _
->>> new:  ↑ |_↑ |_↑ |_↑ |_↑ |_↑ |_↑ |_↑ |_↑ |_↑ |_↑ |_↑ |_↑
->>>                                         ^
->>>                                         5 * cycles new channel.
->>>          __    __                        _   _   _   _
->>> out:  ↑  |__↑  |______________________↑ |_↑ |_↑ |_↑ |_↑
->>>                ^                        ^
->>>                start switching mux.     switch to new channel.
-> Ok ... but when is it safe to disable the "ori" clock ?
-> Can you do it at '1' already ? or do you have to wait for '2' ?
+Add support for module reset handling on the RZ/T2H SoC. Unlike earlier
+CPG/MSSR variants, RZ/T2H uses a unified set of Module Reset Control
+Registers (MRCR) where both reset and deassert actions are done via
+read-modify-write (RMW) to the same register.
 
+Introduce a new MRCR offset table (mrcr_for_rzt2h) for RZ/T2H and assign
+it to reset_regs. For this SoC, the number of resets is based on the
+number of MRCR registers rather than the number of module clocks. Also
+add cpg_mrcr_reset_ops to implement reset, assert, and deassert using RMW
+while holding the spinlock. This follows the RZ/T2H requirements, where
+processing after releasing a module reset must be secured by performing
+seven dummy reads of the same register, and where a module that is reset
+and released again must ensure the target bit in the Module Reset Control
+Register is set to 1.
 
-It should wait for "2", because there is a state machine in the
-glitch-free mux, this state machine is driven by the working clock
-provided by its channel 0.
+Update the reset controller registration to select cpg_mrcr_reset_ops for
+RZ/T2H, while keeping the existing cpg_mssr_reset_ops for other SoCs.
 
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
+v3->v4:
+- Renamed cpg_mrcr_set_bit() to cpg_mrcr_set_reset_state() for clarity.
+- Updated the parameters in cpg_mrcr_set_reset_state().
 
->
->> Thank you for the detailed report!
->> This is indeed problematic behavior. I guess the result is somewhat
->> random: depending on load (power draw), silicon lottery (quality),
->> temperature, voltage supply, ... - one may or may not see crashes
->> caused by this.
->>
->> Based on the previous discussion on this topic, my suggestion is to
->> split the original patch:
->> - one to add CLK_SET_RATE_GATE where needed (I think the meson8b.c
->> driver already has this where needed) to actually enable the
->> glitch-free mux behavior
->> - another one with the CLK_OPS_PARENT_ENABLE change (meson8b.c would
->> also need to be updated) to prevent the glitch-free mux from
->> temporarily outputting an electrical low signal. Jerome also asked to
->> document the behavior so we don't forget why we set this flag
-> Yes please split the changes and visit all the controllers shipping this
-> type of muxes.
->
->> Both patches should get the proper "Fixes" tags.
-> ... and proper fixes tag maybe different depending on the controller so
-> there might more that just 2 changes.
->
->> I think it would also be great if you could include the waveform
->> example in at least the commit message as it helps understand the
->> problem.
->>
->> Let's also give Jerome some time to comment before you send patches.
->>
->>
->> Best regards,
->> Martin
-> --
-> Jerome
+v2->v3:
+- Simplifed the code by adding a common function cpg_mrcr_set_bit() to handle
+  set/clear of bits with options for verify and dummy reads.
+- Added a macro for the number of dummy reads required.
+
+v1->v2:
+- Added cpg_mrcr_reset_ops for RZ/T2H specific handling
+- Updated commit message
+---
+ drivers/clk/renesas/renesas-cpg-mssr.c | 111 ++++++++++++++++++++++++-
+ 1 file changed, 107 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
+index de1cf7ba45b7..fcb2c3c22f87 100644
+--- a/drivers/clk/renesas/renesas-cpg-mssr.c
++++ b/drivers/clk/renesas/renesas-cpg-mssr.c
+@@ -40,6 +40,8 @@
+ #define WARN_DEBUG(x)	do { } while (0)
+ #endif
+ 
++#define RZT2H_RESET_REG_READ_COUNT	7
++
+ /*
+  * Module Standby and Software Reset register offets.
+  *
+@@ -137,6 +139,22 @@ static const u16 srcr_for_gen4[] = {
+ 	0x2C60, 0x2C64, 0x2C68, 0x2C6C, 0x2C70, 0x2C74,
+ };
+ 
++static const u16 mrcr_for_rzt2h[] = {
++	0x240,	/* MRCTLA */
++	0x244,	/* Reserved */
++	0x248,	/* Reserved */
++	0x24C,	/* Reserved */
++	0x250,	/* MRCTLE */
++	0x254,	/* Reserved */
++	0x258,	/* Reserved */
++	0x25C,	/* Reserved */
++	0x260,	/* MRCTLI */
++	0x264,	/* Reserved */
++	0x268,	/* Reserved */
++	0x26C,	/* Reserved */
++	0x270,	/* MRCTLM */
++};
++
+ /*
+  * Software Reset Clearing Register offsets
+  */
+@@ -736,6 +754,72 @@ static int cpg_mssr_status(struct reset_controller_dev *rcdev,
+ 	return !!(readl(priv->pub.base0 + priv->reset_regs[reg]) & bitmask);
+ }
+ 
++static int cpg_mrcr_set_reset_state(struct reset_controller_dev *rcdev,
++				    unsigned long id, bool set)
++{
++	struct cpg_mssr_priv *priv = rcdev_to_priv(rcdev);
++	unsigned int reg = id / 32;
++	unsigned int bit = id % 32;
++	u32 bitmask = BIT(bit);
++	void __iomem *reg_addr;
++	unsigned long flags;
++	unsigned int i;
++	u32 val;
++
++	dev_dbg(priv->dev, "%s %u%02u\n", set ? "assert" : "deassert", reg, bit);
++
++	spin_lock_irqsave(&priv->pub.rmw_lock, flags);
++
++	reg_addr = priv->pub.base0 + priv->reset_regs[reg];
++	/* Read current value and modify */
++	val = readl(reg_addr);
++	if (set)
++		val |= bitmask;
++	else
++		val &= ~bitmask;
++	writel(val, reg_addr);
++
++	/*
++	 * For secure processing after release from a module reset, dummy read
++	 * the same register at least seven times.
++	 */
++	for (i = 0; !set && i < RZT2H_RESET_REG_READ_COUNT; i++)
++		readl(reg_addr);
++
++	/* Verify the operation */
++	val = readl(reg_addr);
++	if ((set && !(bitmask & val)) || (!set && (bitmask & val))) {
++		dev_err(priv->dev, "Reset register %u%02u operation failed\n", reg, bit);
++		spin_unlock_irqrestore(&priv->pub.rmw_lock, flags);
++		return -EIO;
++	}
++
++	spin_unlock_irqrestore(&priv->pub.rmw_lock, flags);
++
++	return 0;
++}
++
++static int cpg_mrcr_reset(struct reset_controller_dev *rcdev, unsigned long id)
++{
++	int ret;
++
++	ret = cpg_mrcr_set_reset_state(rcdev, id, true);
++	if (ret)
++		return ret;
++
++	return cpg_mrcr_set_reset_state(rcdev, id, false);
++}
++
++static int cpg_mrcr_assert(struct reset_controller_dev *rcdev, unsigned long id)
++{
++	return cpg_mrcr_set_reset_state(rcdev, id, true);
++}
++
++static int cpg_mrcr_deassert(struct reset_controller_dev *rcdev, unsigned long id)
++{
++	return cpg_mrcr_set_reset_state(rcdev, id, false);
++}
++
+ static const struct reset_control_ops cpg_mssr_reset_ops = {
+ 	.reset = cpg_mssr_reset,
+ 	.assert = cpg_mssr_assert,
+@@ -743,6 +827,13 @@ static const struct reset_control_ops cpg_mssr_reset_ops = {
+ 	.status = cpg_mssr_status,
+ };
+ 
++static const struct reset_control_ops cpg_mrcr_reset_ops = {
++	.reset = cpg_mrcr_reset,
++	.assert = cpg_mrcr_assert,
++	.deassert = cpg_mrcr_deassert,
++	.status = cpg_mssr_status,
++};
++
+ static int cpg_mssr_reset_xlate(struct reset_controller_dev *rcdev,
+ 				const struct of_phandle_args *reset_spec)
+ {
+@@ -760,11 +851,23 @@ static int cpg_mssr_reset_xlate(struct reset_controller_dev *rcdev,
+ 
+ static int cpg_mssr_reset_controller_register(struct cpg_mssr_priv *priv)
+ {
+-	priv->rcdev.ops = &cpg_mssr_reset_ops;
++	/*
++	 * RZ/T2H (and family) has the Module Reset Control Registers
++	 * which allows control resets of certain modules.
++	 * The number of resets is not equal to the number of module clocks.
++	 */
++	if (priv->reg_layout == CLK_REG_LAYOUT_RZ_T2H) {
++		priv->rcdev.ops = &cpg_mrcr_reset_ops;
++		priv->rcdev.nr_resets = ARRAY_SIZE(mrcr_for_rzt2h) * 32;
++	} else {
++		priv->rcdev.ops = &cpg_mssr_reset_ops;
++		priv->rcdev.nr_resets = priv->num_mod_clks;
++	}
++
+ 	priv->rcdev.of_node = priv->dev->of_node;
+ 	priv->rcdev.of_reset_n_cells = 1;
+ 	priv->rcdev.of_xlate = cpg_mssr_reset_xlate;
+-	priv->rcdev.nr_resets = priv->num_mod_clks;
++
+ 	return devm_reset_controller_register(priv->dev, &priv->rcdev);
+ }
+ 
+@@ -1169,6 +1272,7 @@ static int __init cpg_mssr_common_init(struct device *dev,
+ 		priv->control_regs = stbcr;
+ 	} else if (priv->reg_layout == CLK_REG_LAYOUT_RZ_T2H) {
+ 		priv->control_regs = mstpcr_for_rzt2h;
++		priv->reset_regs = mrcr_for_rzt2h;
+ 	} else if (priv->reg_layout == CLK_REG_LAYOUT_RCAR_GEN4) {
+ 		priv->status_regs = mstpsr_for_gen4;
+ 		priv->control_regs = mstpcr_for_gen4;
+@@ -1265,8 +1369,7 @@ static int __init cpg_mssr_probe(struct platform_device *pdev)
+ 		goto reserve_exit;
+ 
+ 	/* Reset Controller not supported for Standby Control SoCs */
+-	if (priv->reg_layout == CLK_REG_LAYOUT_RZ_A ||
+-	    priv->reg_layout == CLK_REG_LAYOUT_RZ_T2H)
++	if (priv->reg_layout == CLK_REG_LAYOUT_RZ_A)
+ 		goto reserve_exit;
+ 
+ 	error = cpg_mssr_reset_controller_register(priv);
+-- 
+2.51.0
+
