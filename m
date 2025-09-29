@@ -1,87 +1,57 @@
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF8DC301027
-	for <linux-clk@vger.kernel.org>; Mon, 29 Sep 2025 12:55:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E799F30B511;
+	Mon, 29 Sep 2025 15:43:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759150526; cv=none; b=r9ACIVHVGTdHpifKuhmSaNi2ZSrcjHscGoaVmRWb+zckrW70sLX0Wdv3oHnda09agQNf9lkWN7374asj8TQdHAryHKGeqF4VCEnZ4sw5ir7U7Pe822XUa6hYk7Y3q9UDDnIlNT5f8EBbkrbd0xa2tOtR2YHzeUzyGpgUni5MctM=
+	t=1759160593; cv=none; b=TzYgENy3hnQEIUeOdfhMLPPhmmjqA//qndDGjvxMrJlxXmXBYhqEbV/9d8lKSQj4nftyXjsXPql9UAGoPTbajl3izHBFm55vNWVd81FehV+XNBIQwiHtqvwvMh95xM/OwRZ4PVkWeU76ykLMQvWR2aS6aulPDisVCjfHqDi/mgo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759150526; c=relaxed/simple;
-	bh=jrwBbbXXDaBjS/wd/tHW0cdSBXmArxaZRUoB6beYLM0=;
+	s=arc-20240116; t=1759160593; c=relaxed/simple;
+	bh=5q8LLF4ag2MVwttfhWyI7ecDLzD9/dPboJQ0VHDhT3A=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=aeNApdNwb37oHoeVgiYVtBrpoDAWqb0BxTtuhKn/suf8cUOUA6JeQKIquCTmgLT5n21MMwSBEh3sOcqLEygleaETDPnuzdmjsMkUe2KaBOStRgB9TlMHBPFQ2JSoorpedYTGQUt5kbOOpqeowyssg0Lebxum9FWjtu4wKfZKTlI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Eu1ilJTh; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	 MIME-Version:Content-Type; b=obHtX7hg+ilaLgLCtZvD52phHFAaSx6nA6LY546BESu8htOkL6Onc5MsLQmoEa4yBksFqfKLdtzABWCY6wXP6MLtmaeV4bu7jKRV9M3VQLOMHQLoyXh2CeOgbtkH9XRQya3rPE6ZAvn/OuxeNum8z1AT86Vwv6OAhG5DNiILkPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=FCR94bK2; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Eu1ilJTh"
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-46e37d6c21eso30455385e9.0
-        for <linux-clk@vger.kernel.org>; Mon, 29 Sep 2025 05:55:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1759150522; x=1759755322; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:user-agent
-         :references:in-reply-to:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=p4AJhIRDhtQztFOcWyZbbOIS6wbTlWTjViXERoklQ24=;
-        b=Eu1ilJThNuzLjztuSWjmFDwpen6iRw7wG6Be4GmbZHmj/kq2XcTPMTvyqPiAZ2edGq
-         5RjvDB6aAps+v/MkIDHGseMgmlFO4wndRP0BxpVheCf5CuXoSSnGrxSzlbPnhtBBC4Q5
-         w1pctru5Q5xT7MWW71HI0sdber0zQe2xTpdsGnH867GEfxts+z6RZ7U4eiV/umMS3jxv
-         kVBQchw9ocdImE4k/SQ4pmOIWaRwL/8Gc6dXLkX8RslT7nA43vhiRoIl1Pel4uHET6en
-         rv1QLZtg40F3Nbu7cHY/my4uik4C5zUWNZy+lBSQgkR10jSygRtwySZiPOu2NlVzXuyn
-         O05Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759150522; x=1759755322;
-        h=content-transfer-encoding:mime-version:message-id:date:user-agent
-         :references:in-reply-to:subject:cc:to:from:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=p4AJhIRDhtQztFOcWyZbbOIS6wbTlWTjViXERoklQ24=;
-        b=ZydO92t21qWfppBv5u4gCpECKiIqhw35DCeedSsmFU9Sfb0bA+l/+whlnToYiJCu5f
-         uxtl1UvKe7QcTAq0Vf3HKbAHyM9lkDXZ1oQZ5kvviu1lnpcMFCHNyxOFMBsCwziG9gJ9
-         JGuxT74ztlbGdEGbDd/D5EaIG0k4KqME7ZN66zZWUS991kjXLRMaUtiDdNwUwwcVSAvD
-         pZhHvnKexrQKZFYk1kr2r0a3mo9x3WLMxpyWa4FNCuRwZP1PgBlvg4HPK+dQfgl2AlYY
-         OBRJxitE8SP+NFZVuy6ihYKEaJzsc0DFvVe3eFerFKYLkBmfGKVIkyP/NTAi/vzyACxN
-         NKUg==
-X-Forwarded-Encrypted: i=1; AJvYcCVp+gmDbHk4EM4EzNre3Uu/96weKu1HbVckrHA2wNM+ShkX4E2/ag3EOC6kKsoEVf5pBMt/vl9bi+s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzprwXlo7lMtBEAafSA2R3tYK7bU0HPDY0dp6oPrK7FhriofC31
-	Wg+kmhTPEi0whocvt8BqiNdzZtlx3/cmzDqYvmL8MF9xX6jlZsSiuFdXadXbV8ZD8QI=
-X-Gm-Gg: ASbGncsXq6aRlqA4Tg0Aagf0jvUdnkrojIo/9Wq4MnjsiJtZsouhAl/4uNkOnub/uG5
-	jHIg22qwQom/cs4h4nibD/03QmXD570gdnTu53XqTdiVvYKRpxiBSKBX4erq5mwS6VokU438gUu
-	RrmZ0BFxRQcFFqtsUiSrBx/kJPXBT7GlymCavllehNUxtIf1npikqGvsLfwdScuV436qEuIzKRA
-	c7iP9QVuuXEExADumYXH5fUzq45qA5LtN25FNGDFby8rvae/UW7j/fLLIeHn8w7tVC4JP8HSjNT
-	ByP6J0/Lv1rSb+2wLp67R6oSl5cosyA86e8hqWYUkID7Nho0jL9S6J8PqkqLyO73gWklm8BcoRC
-	Lotx8j3aRw2KbbQgGCWeazdkLOsrpZBA=
-X-Google-Smtp-Source: AGHT+IFVFN0XLFy2t2r8lsVdrqYeMn/8TCLqXkS7DTElSFf2//cTI3KRbqZwOsdLupaXoEn5NrWF2w==
-X-Received: by 2002:a05:600c:3b23:b0:46e:32dd:1b1a with SMTP id 5b1f17b1804b1-46e32dd1cbemr151873375e9.7.1759150522095;
-        Mon, 29 Sep 2025 05:55:22 -0700 (PDT)
-Received: from localhost ([2a01:e0a:3c5:5fb1:9ad:4617:2761:d4d0])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-46e56f64849sm12304965e9.11.2025.09.29.05.55.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Sep 2025 05:55:21 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Chuan Liu <chuan.liu@amlogic.com>
-Cc: Martin Blumenstingl <martin.blumenstingl@googlemail.com>,  Michael
- Turquette <mturquette@baylibre.com>,  Stephen Boyd <sboyd@kernel.org>,
-  Neil Armstrong <neil.armstrong@linaro.org>,  Kevin Hilman
- <khilman@baylibre.com>,  linux-clk@vger.kernel.org,
-  linux-kernel@vger.kernel.org,  linux-amlogic@lists.infradead.org,
-  linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 2/2] clk: meson: Fix glitch free mux related issues
-In-Reply-To: <36cd6282-ae1d-43f3-8738-592f043d0ba6@amlogic.com> (Chuan Liu's
-	message of "Mon, 29 Sep 2025 17:31:07 +0800")
-References: <20240929-fix_glitch_free-v1-0-22f9c36b7edf@amlogic.com>
-	<20240929-fix_glitch_free-v1-2-22f9c36b7edf@amlogic.com>
-	<CAFBinCBd5-s6vaBoJNerXavQiHgsv4Fm3v0svUX7geL=kJvVYg@mail.gmail.com>
-	<20178015-4075-40e9-bbf4-20ae558c2bef@amlogic.com>
-	<1jldyzrv2t.fsf@starbuckisacylon.baylibre.com>
-	<e70e9aaa-f448-4f67-9149-cb5970c9bbd6@amlogic.com>
-	<9834c7c5-9334-4c78-a2fe-588ff03cf935@amlogic.com>
-	<CAFBinCCoX5+6+KQAtbhKx9KdSZhXVxS=cz8DfMVhjPX1c0iSPw@mail.gmail.com>
-	<1jfrc563wa.fsf@starbuckisacylon.baylibre.com>
-	<36cd6282-ae1d-43f3-8738-592f043d0ba6@amlogic.com>
-User-Agent: mu4e 1.12.9; emacs 30.1
-Date: Mon, 29 Sep 2025 14:55:20 +0200
-Message-ID: <1j1pnp5sg7.fsf@starbuckisacylon.baylibre.com>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="FCR94bK2"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 6EDB84E40E53;
+	Mon, 29 Sep 2025 15:43:09 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 3B17B606AE;
+	Mon, 29 Sep 2025 15:43:09 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 9E9D3102F1A0C;
+	Mon, 29 Sep 2025 17:43:05 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1759160588; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=S1PdaIvO7vK9SB7Z0ERMuEoy98E+U47D3nVJtH+4Aqk=;
+	b=FCR94bK24e1NoOiyF+A/RbIyOW+tTMUG3y4g3og4gWZyyXJaS00FXRsl39dlwRgRIZ/k3J
+	AK+mywa0BxPUY+nCP8IMpGuJ95/GUwJs+cTfjUrCT054gC1lsqpsr4VR9ARrrcD8fX2MaS
+	rbc1p1yzzUEDmIx25+WiAWcBf9q7i3oorfLutoPa3rGXJdTqJRA+1DplYKRG2MRKmzc4/b
+	St12Emjl4h3HuzabkOq9MNbLCJ19bjikzYM0ykLd7aoWBe3I3bFacn4PYd5Cb2wI3ydGg/
+	9fUqOIui11YZn1Aa2IoZiu+Qm638BxPUI/njFLpoL2j73b04aDsJUWBfMkpEbg==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,  Stephen Boyd
+ <sboyd@kernel.org>,  Krzysztof Kozlowski <krzk+dt@kernel.org>,  Conor
+ Dooley <conor+dt@kernel.org>,  Linus Walleij <linus.walleij@linaro.org>,
+  Richard Cochran <richardcochran@gmail.com>,  Gregory CLEMENT
+ <gregory.clement@bootlin.com>,  Marek =?utf-8?Q?Beh=C3=BAn?=
+ <kabel@kernel.org>,
+  linux-clk@vger.kernel.org,  devicetree@vger.kernel.org,
+  linux-kernel@vger.kernel.org,  linux-gpio@vger.kernel.org,
+  netdev@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: pinctrl: Convert
+ marvell,armada-3710-(sb|nb)-pinctrl to DT schema
+In-Reply-To: <20250924223528.2956771-1-robh@kernel.org> (Rob Herring's message
+	of "Wed, 24 Sep 2025 17:35:24 -0500")
+References: <20250924223528.2956771-1-robh@kernel.org>
+User-Agent: mu4e 1.12.7; emacs 30.2
+Date: Mon, 29 Sep 2025 17:43:04 +0200
+Message-ID: <87ms6di7sn.fsf@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -90,107 +60,116 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Mon 29 Sep 2025 at 17:31, Chuan Liu <chuan.liu@amlogic.com> wrote:
+On 24/09/2025 at 17:35:24 -05, "Rob Herring (Arm)" <robh@kernel.org> wrote:
 
-> On 9/29/2025 4:48 PM, Jerome Brunet wrote:
->> [ EXTERNAL EMAIL ]
->>
->> On Sun 28 Sep 2025 at 22:55, Martin Blumenstingl
->> <martin.blumenstingl@googlemail.com> wrote:
->>
->>> Hello,
->>>
->>> On Sun, Sep 28, 2025 at 8:41=E2=80=AFAM Chuan Liu <chuan.liu@amlogic.co=
-m> wrote:
->>>>
->>>> On 9/28/2025 2:05 PM, Chuan Liu wrote:
->>>>> Hi Jerome & Martin:
->>>>>
->>>>> Sorry for the imprecise description of the glitch-free mux earlier.
->>>>>
->>>>> Recently, while troubleshooting a CPU hang issue caused by glitches,
->>>>> I realized there was a discrepancy from our previous understanding,
->>>>> so I'd like to clarify it here.
->>> [...]
->>>> An example of the clock waveform is shown below:
->>>>
->>>>
->>                       1                  2
->>                       v                  v
->>>>          __    __    __    __    __    __    __    __
->>>> ori:  =E2=86=91  |__=E2=86=91  |__=E2=86=91  |__=E2=86=91  |__=E2=86=
-=91  |__=E2=86=91  |__=E2=86=91  |__=E2=86=91  |__=E2=86=91
->>>>                     ^
->>>>                     1 * cycle original channel.
->>>>          _   _   _   _   _   _   _   _   _   _   _   _
->>>> new:  =E2=86=91 |_=E2=86=91 |_=E2=86=91 |_=E2=86=91 |_=E2=86=91 |_=E2=
-=86=91 |_=E2=86=91 |_=E2=86=91 |_=E2=86=91 |_=E2=86=91 |_=E2=86=91 |_=E2=86=
-=91 |_=E2=86=91
->>>>                                         ^
->>>>                                         5 * cycles new channel.
->>>>          __    __                        _   _   _   _
->>>> out:  =E2=86=91  |__=E2=86=91  |______________________=E2=86=91 |_=E2=
-=86=91 |_=E2=86=91 |_=E2=86=91 |_=E2=86=91
->>>>                ^                        ^
->>>>                start switching mux.     switch to new channel.
->> Ok ... but when is it safe to disable the "ori" clock ?
->> Can you do it at '1' already ? or do you have to wait for '2' ?
+> Convert the marvell,armada3710-(sb|nb)-pinctrl binding to DT schema
+> format. The binding includes the "marvell,armada-3700-xtal-clock"
+> subnode which is simple enough to include here.
 >
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
+>  .../bindings/clock/armada3700-xtal-clock.txt  |  29 ---
+>  .../marvell,armada-3710-xb-pinctrl.yaml       | 122 +++++++++++
+>  .../pinctrl/marvell,armada-37xx-pinctrl.txt   | 195 ------------------
+>  3 files changed, 122 insertions(+), 224 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/clock/armada3700-xt=
+al-clock.txt
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/marvell,arm=
+ada-3710-xb-pinctrl.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/pinctrl/marvell,arm=
+ada-37xx-pinctrl.txt
 >
-> It should wait for "2", because there is a state machine in the
-> glitch-free mux, this state machine is driven by the working clock
-> provided by its channel 0.
+> diff --git a/Documentation/devicetree/bindings/clock/armada3700-xtal-cloc=
+k.txt b/Documentation/devicetree/bindings/clock/armada3700-xtal-clock.txt
+> deleted file mode 100644
+> index 4c0807f28cfa..000000000000
+> --- a/Documentation/devicetree/bindings/clock/armada3700-xtal-clock.txt
+> +++ /dev/null
+> @@ -1,29 +0,0 @@
+> -* Xtal Clock bindings for Marvell Armada 37xx SoCs
+> -
+> -Marvell Armada 37xx SoCs allow to determine the xtal clock frequencies by
+> -reading the gpio latch register.
+> -
+> -This node must be a subnode of the node exposing the register address
+> -of the GPIO block where the gpio latch is located.
+> -See Documentation/devicetree/bindings/pinctrl/marvell,armada-37xx-pinctr=
+l.txt
+> -
+> -Required properties:
+> -- compatible : shall be one of the following:
+> -	"marvell,armada-3700-xtal-clock"
+> -- #clock-cells : from common clock binding; shall be set to 0
+> -
+> -Optional properties:
+> -- clock-output-names : from common clock binding; allows overwrite defau=
+lt clock
+> -	output names ("xtal")
+> -
+> -Example:
+> -pinctrl_nb: pinctrl-nb@13800 {
+> -	compatible =3D "armada3710-nb-pinctrl", "syscon", "simple-mfd";
+> -	reg =3D <0x13800 0x100>, <0x13C00 0x20>;
+> -
+> -	xtalclk: xtal-clk {
+> -		compatible =3D "marvell,armada-3700-xtal-clock";
+> -		clock-output-names =3D "xtal";
+> -		#clock-cells =3D <0>;
+> -	};
+> -};
+> diff --git a/Documentation/devicetree/bindings/pinctrl/marvell,armada-371=
+0-xb-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/marvell,armad=
+a-3710-xb-pinctrl.yaml
+> new file mode 100644
+> index 000000000000..c4d09d8720bd
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pinctrl/marvell,armada-3710-xb-pi=
+nctrl.yaml
+> @@ -0,0 +1,122 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/pinctrl/marvell,armada-3710-xb-pinctr=
+l.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Marvell Armada 37xx SoC pin and gpio controller
+> +
+> +maintainers:
+> +  - Gregory CLEMENT <gregory.clement@bootlin.com>
+> +  - Marek Beh=C3=BAn <kabel@kernel.org>
+> +  - Miquel Raynal <miquel.raynal@bootlin.com>
+> +
+> +description: >
+> +  Each Armada 37xx SoC come with two pin and gpio controller one for the=
+ south
+> +  bridge and the other for the north bridge.
 
-Then I don't think the 2 flags are enough to make it safe
+As I think you'll send a v2 because of the robot complaint, maybe you
+could rephrase a bit to ease the reading:
 
-Nothing guarantees that CCF will wait for those 5 cycles to turn off
-the clock noted 'ori' above.
+"...two pin/gpio controllers, one for..."
 
-I think you need new specific ops for this mux
+> +
+> +  Inside this set of register the gpio latch allows exposing some config=
+uration
+> +  of the SoC and especially the clock frequency of the xtal. Hence, this=
+ node is
+> +  a represent as syscon allowing sharing the register between multiple h=
+ardware
 
-Something that would
-* protect both parents before changing the mux
-* do the actual change
-* wait for it to settle
-* remove the protection
+represented as a?
 
->
->
->>
->>> Thank you for the detailed report!
->>> This is indeed problematic behavior. I guess the result is somewhat
->>> random: depending on load (power draw), silicon lottery (quality),
->>> temperature, voltage supply, ... - one may or may not see crashes
->>> caused by this.
->>>
->>> Based on the previous discussion on this topic, my suggestion is to
->>> split the original patch:
->>> - one to add CLK_SET_RATE_GATE where needed (I think the meson8b.c
->>> driver already has this where needed) to actually enable the
->>> glitch-free mux behavior
->>> - another one with the CLK_OPS_PARENT_ENABLE change (meson8b.c would
->>> also need to be updated) to prevent the glitch-free mux from
->>> temporarily outputting an electrical low signal. Jerome also asked to
->>> document the behavior so we don't forget why we set this flag
->> Yes please split the changes and visit all the controllers shipping this
->> type of muxes.
->>
->>> Both patches should get the proper "Fixes" tags.
->> ... and proper fixes tag maybe different depending on the controller so
->> there might more that just 2 changes.
->>
->>> I think it would also be great if you could include the waveform
->>> example in at least the commit message as it helps understand the
->>> problem.
->>>
->>> Let's also give Jerome some time to comment before you send patches.
->>>
->>>
->>> Best regards,
->>> Martin
->> --
->> Jerome
+> +  block.
 
---=20
-Jerome
+blocks?
+
+
+The rest looks fine, so:
+
+Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
+
+Thanks,
+Miqu=C3=A8l
