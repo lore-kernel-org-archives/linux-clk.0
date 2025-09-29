@@ -1,295 +1,218 @@
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E25AF3054F6;
-	Mon, 29 Sep 2025 12:14:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759148072; cv=pass; b=TcdBm/p1VXCCR2zlC/0qHPFmXaCfC/nBAGHnVl/Xanl+I0PE1C9l4Pdp4IV0KMo35u0T/Va3iKHpBMs+1DdJNCSCw9gquDgKLB4DgManvEXpNAJAPFCwnMtvMwuDcB8xVwbktEVcOn/M7m5vzSui9D+MqrZOYYvqzRHsNEx33V8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759148072; c=relaxed/simple;
-	bh=5I/escBKj3uilVCPN/e1SeAh9S8vgr81SFJ+zAkJog4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=lJUf9oPkm8CjSV9Dg2Uva8+u4XxFGDZe02JdYMvl2y4zmR22dhBwDXGPwJ+EnUPEv3yDAQwCi60l+dTjuVSNpfmRoDXdGvtf4eDg1l9BHiY0tu9zHDw9CqAmYgxCT0KZAz8iSnwqphW9PHP14WfvrDANIULWlNf9Szjspje/kiE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=H9BMuKhA; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B30C0263C9E
+	for <linux-clk@vger.kernel.org>; Mon, 29 Sep 2025 12:36:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759149390; cv=none; b=chs41K/jkVAQ2Vai7N3ceHsL8y2L1Rp9PtMLmAmlWD5/JwxqU4aAP1nU3LKZAkn46qPXdq/J7MSi7uXMgfEWWHybq3XTGe45KrsUcuwRM0yji3qBenMXlNfSMZ+nbHqZiO4v9HpbfKssNstoIfYAL6jW38Xmh9OXfAa92jn+GiY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759149390; c=relaxed/simple;
+	bh=lbe4TYsEeMKqVuQpR7VHFcFEHlUVlfr2EGTmCNN/Pxs=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=NzaqFEoXEwsIjzIrap88Lc9/Xb1e8eyplnJYdsS70JgiHG3cX2Mx3q+MTBBXh+T14kVdFaTxhXjajftLoRWvBBQxtDRJ5koJe+7DpRLOojN9bHF6oDX5GZPfFRPxviQzceh18mA7ZNxL+y0IQpCGzq49here/tom4s2yaeD65WQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=oDgohOEc; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="H9BMuKhA"
-ARC-Seal: i=1; a=rsa-sha256; t=1759148041; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=l3IeeCFfddAq9uI/UL9Z1bGtfVcNvp/qVEJ18KqA0m2pXjSHrdvxn1tzBASNztGNUDEpQ6DYz9xDe2gHerdLD7L28dOPj+W32rK35W16DZKlE7lfRE7UxQNrUSHae2lOEEeHlTXM3oWppCM2WnfFyh1Zf5kU824s0L2NGhqckZg=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1759148041; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=oO1g6MVsIwHZqI00UWOe7M4zzpRvLEWu88wj9uOkgOA=; 
-	b=DPwhpsFk+q7iIs/sctiye/mx9b9K+KmDeuSIAYFzHnJvVhgw8jOcw5CNewfD/9YfiEJ4g6RwQQZE6C4EoY/4IbWuvCbkfxfC6BXfxMlG3rJVQ5B/VDjPA9Lmd5mf0VrD1XbPyHf5nwK72zMSGXBRNMPW8QftS8E9gGql/n2UO60=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
-	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1759148041;
-	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
-	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:References:In-Reply-To:To:To:Cc:Cc:Reply-To;
-	bh=oO1g6MVsIwHZqI00UWOe7M4zzpRvLEWu88wj9uOkgOA=;
-	b=H9BMuKhA5abb5FBGv3R7hSPNM4EE9i9hpN7KoDimM7ku/gZtE7Ph3jGbb52UUjTN
-	h+sr8BdzJSdy2r3+pZnefnefPEyUqY7q0boos6c2VgY7Uv+pBhVF6HOP1/6MNmuqc9n
-	a5P4dLc1N49JC71q3YyA2dprmAuypm1xT0lscqQ4=
-Received: by mx.zohomail.com with SMTPS id 1759148039321413.33555808567644;
-	Mon, 29 Sep 2025 05:13:59 -0700 (PDT)
-From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Date: Mon, 29 Sep 2025 14:13:23 +0200
-Subject: [PATCH 4/4] clk: mediatek: Add rpm clocks to clk-mt8196-mfg
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="oDgohOEc"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-46e37d6c21eso30300505e9.0
+        for <linux-clk@vger.kernel.org>; Mon, 29 Sep 2025 05:36:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1759149386; x=1759754186; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:user-agent
+         :references:in-reply-to:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=t5TiAseZcVQOtO3WU44wqIk3ETdplagD04sSEDVxBRM=;
+        b=oDgohOEcdcOZWjy/do716ZqdIpvJglD6qhwOYXHaBDoYXtq9UeSd0NV7V7td/Z4PGX
+         B6NiqvAxXP6U+lyTdpy1Lx6cpOmJ21NVDjwnzjEtE0qAPc+vW+tmSLA2Zr7q6t501Jzm
+         nYz09Euc+MNQnA5wU+7rVPMTCqlZbyMr5wS7JjAuQ/m9BZFOxQwdpPGQHUojE931gB/J
+         7a61sBc2WtINrWKxlH8EtrhlK4EvQl6dsIb8kheQXYGs2/NhTklVvdOXvGkUBJdrvLue
+         HlcuaYJITKkXMuGYDVFD7MzJ5V++z2bJWUd44wGxS9U5eCayUSHo+sULVCNhf+Y7zRZP
+         xv4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759149386; x=1759754186;
+        h=content-transfer-encoding:mime-version:message-id:date:user-agent
+         :references:in-reply-to:subject:cc:to:from:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=t5TiAseZcVQOtO3WU44wqIk3ETdplagD04sSEDVxBRM=;
+        b=T0RX0mDH6/1228gjacuMEvhO01kEvJLRQfZPHPR6Dc3xm4ZAWOO5I9y5l82hPOja56
+         9nL3S7LHrfqW+95oFDtMrWXnJho9mUQa4a5uvLfKXseJdR6ezUTgM5KV+2mPX+V4QjPj
+         9Xrh0AAZ8VCTV/1ItEMdWyZQEeIyKN/Z3YFmRhm6EpO4YgyQ6exbjMCevA5SW/wz12MV
+         5JBnJsztsxaKjvFW+PW1ceAMOCC/gUTYixXtm+km3pKbZxGtpK1jodIglEgTkaO5Qu0Y
+         UMp7L/ksz2laF49v9NBQmRXGZqqSRP03vDEsvdkYQm8QnxGLeslFw65nvE0bO0CQeGMD
+         5hbw==
+X-Forwarded-Encrypted: i=1; AJvYcCXFBkGTAAeRo2Z86zZa0azhOkKOVL3VMVibtyBDnkwtsk+PYXlMhw8EmUM71c+3B5K9JnGSUij693g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWy3ypZba1EWOHqxwlqhg/uHixUSa6lUnd6SkL1uPyJ1J/ORd1
+	PH1bj9DaP4pW2EKxYaRoxCmdjAcKdq5zO38/FWOLuQ27V9oxeWDzZ676Mrw0g7Ovb54=
+X-Gm-Gg: ASbGncsf8Spn1aSZVb9gMgXrX7oV7Qy5xwHBtfMcKSAwDD30dQWMuIQ52ExFf6+2Ik9
+	GowM38tV+gWGN+Yaw2AlYooToTU+SxHTt57MFgYnomV0bFxS/MhCG9XWgqAj4I+nSlKsglrFF32
+	whOjUNPMAmPMvDIbRinY0gOEn/JPvAN4EBC5EWEKjTqaUdfzd/3WdpPhUWG4p+n9bo1rnx3YOIS
+	FYGjIu7tDcW2sOAQB3lP4pbYKfE2dt2RkId/671rKNvKGwMSVOrmHp2HmOyRAHid9IIlv7GwuFO
+	7/hzvDjVxwm4FgF1QSIA2PAo0muMenu3yn5vWO0SxlLF5tOS9xWLfkjFSkZ7M167SWCLA10YNCJ
+	frjnO/Q1YBQC4d3hF/MfpljDIANhlQBw=
+X-Google-Smtp-Source: AGHT+IHo0QKRizwsJhQ5D0tkdyBpVp2YHvhvxBq16FZ5DocejNzdXKBFoyHjJt0irT3wdJx8Oxn2bA==
+X-Received: by 2002:a05:600c:4453:b0:46d:cfc9:1d20 with SMTP id 5b1f17b1804b1-46e329fa931mr124081375e9.22.1759149385782;
+        Mon, 29 Sep 2025 05:36:25 -0700 (PDT)
+Received: from localhost ([2a01:e0a:3c5:5fb1:9ad:4617:2761:d4d0])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-46e2a9af27dsm229660415e9.8.2025.09.29.05.36.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Sep 2025 05:36:25 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Chuan Liu <chuan.liu@amlogic.com>
+Cc: Martin Blumenstingl <martin.blumenstingl@googlemail.com>,  Michael
+ Turquette <mturquette@baylibre.com>,  Stephen Boyd <sboyd@kernel.org>,
+  Neil Armstrong <neil.armstrong@linaro.org>,  Kevin Hilman
+ <khilman@baylibre.com>,  linux-clk@vger.kernel.org,
+  linux-kernel@vger.kernel.org,  linux-amlogic@lists.infradead.org,
+  linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 2/2] clk: meson: Fix glitch free mux related issues
+In-Reply-To: <eee93d9d-2977-449d-8792-b2416f0c09ad@amlogic.com> (Chuan Liu's
+	message of "Mon, 29 Sep 2025 11:15:46 +0800")
+References: <20240929-fix_glitch_free-v1-0-22f9c36b7edf@amlogic.com>
+	<20240929-fix_glitch_free-v1-2-22f9c36b7edf@amlogic.com>
+	<CAFBinCBd5-s6vaBoJNerXavQiHgsv4Fm3v0svUX7geL=kJvVYg@mail.gmail.com>
+	<20178015-4075-40e9-bbf4-20ae558c2bef@amlogic.com>
+	<1jldyzrv2t.fsf@starbuckisacylon.baylibre.com>
+	<e70e9aaa-f448-4f67-9149-cb5970c9bbd6@amlogic.com>
+	<9834c7c5-9334-4c78-a2fe-588ff03cf935@amlogic.com>
+	<CAFBinCCoX5+6+KQAtbhKx9KdSZhXVxS=cz8DfMVhjPX1c0iSPw@mail.gmail.com>
+	<eee93d9d-2977-449d-8792-b2416f0c09ad@amlogic.com>
+User-Agent: mu4e 1.12.9; emacs 30.1
+Date: Mon, 29 Sep 2025 14:36:24 +0200
+Message-ID: <1ja52d5tbr.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250929-mtk-pll-rpm-v1-4-49541777878d@collabora.com>
-References: <20250929-mtk-pll-rpm-v1-0-49541777878d@collabora.com>
-In-Reply-To: <20250929-mtk-pll-rpm-v1-0-49541777878d@collabora.com>
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Guangjie Song <guangjie.song@mediatek.com>, 
- Laura Nao <laura.nao@collabora.com>, 
- =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>, 
- Yassine Oudjana <y.oudjana@protonmail.com>
-Cc: kernel@collabora.com, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-mediatek@lists.infradead.org, 
- Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-The mfgpll clocks on mt8196 require that the MFG's EB clock is on if
-their control registers are touched in any way at all. Failing to ensure
-this results in a pleasant SError interrupt if the EB clock happens to
-be off.
+On Mon 29 Sep 2025 at 11:15, Chuan Liu <chuan.liu@amlogic.com> wrote:
 
-To achieve this, leverage the CCF core's runtime power management
-support. Define the necessary suspend/resume callbacks, add the
-necessary code to get RPM clocks from the DT, and make sure RPM is
-enabled before clock registration happens.
+> Hi Martin:
+>
+> Thanks for the detailed explanation.
+>
+>
+> On 9/29/2025 4:55 AM, Martin Blumenstingl wrote:
+>> [ EXTERNAL EMAIL ]
+>>
+>> Hello,
+>>
+>> On Sun, Sep 28, 2025 at 8:41=E2=80=AFAM Chuan Liu <chuan.liu@amlogic.com=
+> wrote:
+>>>
+>>> On 9/28/2025 2:05 PM, Chuan Liu wrote:
+>>>> Hi Jerome & Martin:
+>>>>
+>>>> Sorry for the imprecise description of the glitch-free mux earlier.
+>>>>
+>>>> Recently, while troubleshooting a CPU hang issue caused by glitches,
+>>>> I realized there was a discrepancy from our previous understanding,
+>>>> so I'd like to clarify it here.
+>> [...]
+>>> An example of the clock waveform is shown below:
+>>>
+>>>
+>>>          __    __    __    __    __    __    __    __
+>>> ori:  =E2=86=91  |__=E2=86=91  |__=E2=86=91  |__=E2=86=91  |__=E2=86=91=
+  |__=E2=86=91  |__=E2=86=91  |__=E2=86=91  |__=E2=86=91
+>>>                     ^
+>>>                     1 * cycle original channel.
+>>>          _   _   _   _   _   _   _   _   _   _   _   _
+>>> new:  =E2=86=91 |_=E2=86=91 |_=E2=86=91 |_=E2=86=91 |_=E2=86=91 |_=E2=
+=86=91 |_=E2=86=91 |_=E2=86=91 |_=E2=86=91 |_=E2=86=91 |_=E2=86=91 |_=E2=86=
+=91 |_=E2=86=91
+>>>                                         ^
+>>>                                         5 * cycles new channel.
+>>>          __    __                        _   _   _   _
+>>> out:  =E2=86=91  |__=E2=86=91  |______________________=E2=86=91 |_=E2=
+=86=91 |_=E2=86=91 |_=E2=86=91 |_=E2=86=91
+>>>                ^                        ^
+>>>                start switching mux.     switch to new channel.
+>> Thank you for the detailed report!
+>> This is indeed problematic behavior. I guess the result is somewhat
+>> random: depending on load (power draw), silicon lottery (quality),
+>> temperature, voltage supply, ... - one may or may not see crashes
+>> caused by this.
+>
+>
+> Yes, our glitch-free mux is designed to prevent glitches caused by
+> excessively short high or low levels in the clock output.
+>
+>
+>>
+>> Based on the previous discussion on this topic, my suggestion is to
+>> split the original patch:
+>> - one to add CLK_SET_RATE_GATE where needed (I think the meson8b.c
+>> driver already has this where needed) to actually enable the
+>> glitch-free mux behavior
+>> - another one with the CLK_OPS_PARENT_ENABLE change (meson8b.c would
+>> also need to be updated) to prevent the glitch-free mux from
+>> temporarily outputting an electrical low signal. Jerome also asked to
+>> document the behavior so we don't forget why we set this flag
+>>
+>> Both patches should get the proper "Fixes" tags.
+>> I think it would also be great if you could include the waveform
+>> example in at least the commit message as it helps understand the
+>> problem.
+>>
+>> Let's also give Jerome some time to comment before you send patches.
+>
+>
+> A V2 version was submitted later with changes based on your suggestions.
+> Regarding the "Fixes" tag, Jerome had proposed some modifications.
+>
+> [PATCH v2 0/3] clk: Fix issues related to CLK_IGNORE_UNUSED failures and
+> amlogic glitch free mux - Chuan Liu via B4 Relay
+> <https://lore.kernel.org/all/20241111-fix_glitch_free-v2-0-0099fd9ad3e5@a=
+mlogic.com/>
+>
 
-For the RPM callbacks to really make much sense at all, we change the
-drvdata from clk_data to a new private struct, as is common in drivers
-across the Linux kernel.
+The comments I've provided on this still stands.
 
-Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
----
- drivers/clk/mediatek/clk-mt8196-mfg.c | 104 +++++++++++++++++++++++++++-------
- drivers/clk/mediatek/clk-pll.h        |   2 +
- 2 files changed, 87 insertions(+), 19 deletions(-)
+>
+> Adding CLK_OPS_PARENT_ENABLE causes the CLK_IGNORE_UNUSED configuration
+> of it's parent clocks on the chain to become ineffective, so this patch
+> depends on fixing that issue before it can proceed.
 
-diff --git a/drivers/clk/mediatek/clk-mt8196-mfg.c b/drivers/clk/mediatek/clk-mt8196-mfg.c
-index 8e09c0f7b7548f8e286671cea2dac64530b8ce47..64cc0c037f62d7eab8d0e7fc00c05d122bf4130c 100644
---- a/drivers/clk/mediatek/clk-mt8196-mfg.c
-+++ b/drivers/clk/mediatek/clk-mt8196-mfg.c
-@@ -13,6 +13,7 @@
- #include <linux/of_address.h>
- #include <linux/of_device.h>
- #include <linux/platform_device.h>
-+#include <linux/pm_runtime.h>
- 
- #include "clk-mtk.h"
- #include "clk-pll.h"
-@@ -38,7 +39,7 @@
- 	    _flags, _rst_bar_mask,				\
- 	    _pd_reg, _pd_shift, _tuner_reg,			\
- 	    _tuner_en_reg, _tuner_en_bit,			\
--	    _pcw_reg, _pcw_shift, _pcwbits) {			\
-+	    _pcw_reg, _pcw_shift, _pcwbits, _rpm_clks) {	\
- 		.id = _id,					\
- 		.name = _name,					\
- 		.reg = _reg,					\
-@@ -58,26 +59,60 @@
- 		.pcw_shift = _pcw_shift,			\
- 		.pcwbits = _pcwbits,				\
- 		.pcwibits = MT8196_INTEGER_BITS,		\
-+		.rpm_clk_names = _rpm_clks,			\
-+		.num_rpm_clks = ARRAY_SIZE(_rpm_clks),		\
- 	}
- 
-+static const char * const mfgpll_rpm_clk_names[] = {
-+	NULL
-+};
-+
- static const struct mtk_pll_data mfg_ao_plls[] = {
- 	PLL(CLK_MFG_AO_MFGPLL, "mfgpll", MFGPLL_CON0, MFGPLL_CON0, 0, 0, 0,
--	    BIT(0), MFGPLL_CON1, 24, 0, 0, 0,
--	    MFGPLL_CON1, 0, 22),
-+	    BIT(0), MFGPLL_CON1, 24, 0, 0, 0, MFGPLL_CON1, 0, 22,
-+	    mfgpll_rpm_clk_names),
- };
- 
- static const struct mtk_pll_data mfgsc0_ao_plls[] = {
- 	PLL(CLK_MFGSC0_AO_MFGPLL_SC0, "mfgpll-sc0", MFGPLL_SC0_CON0,
- 	    MFGPLL_SC0_CON0, 0, 0, 0, BIT(0), MFGPLL_SC0_CON1, 24, 0, 0, 0,
--	    MFGPLL_SC0_CON1, 0, 22),
-+	    MFGPLL_SC0_CON1, 0, 22, mfgpll_rpm_clk_names),
- };
- 
- static const struct mtk_pll_data mfgsc1_ao_plls[] = {
- 	PLL(CLK_MFGSC1_AO_MFGPLL_SC1, "mfgpll-sc1", MFGPLL_SC1_CON0,
- 	    MFGPLL_SC1_CON0, 0, 0, 0, BIT(0), MFGPLL_SC1_CON1, 24, 0, 0, 0,
--	    MFGPLL_SC1_CON1, 0, 22),
-+	    MFGPLL_SC1_CON1, 0, 22, mfgpll_rpm_clk_names),
- };
- 
-+struct clk_mt8196_mfg {
-+	struct clk_hw_onecell_data *clk_data;
-+	struct clk_bulk_data *rpm_clks;
-+	unsigned int num_rpm_clks;
-+};
-+
-+static int __maybe_unused clk_mt8196_mfg_resume(struct device *dev)
-+{
-+	struct clk_mt8196_mfg *clk_mfg = dev_get_drvdata(dev);
-+
-+	if (!clk_mfg || !clk_mfg->rpm_clks)
-+		return 0;
-+
-+	return clk_bulk_prepare_enable(clk_mfg->num_rpm_clks, clk_mfg->rpm_clks);
-+}
-+
-+static int __maybe_unused clk_mt8196_mfg_suspend(struct device *dev)
-+{
-+	struct clk_mt8196_mfg *clk_mfg = dev_get_drvdata(dev);
-+
-+	if (!clk_mfg || !clk_mfg->rpm_clks)
-+		return 0;
-+
-+	clk_bulk_disable_unprepare(clk_mfg->num_rpm_clks, clk_mfg->rpm_clks);
-+
-+	return 0;
-+}
-+
- static const struct of_device_id of_match_clk_mt8196_mfg[] = {
- 	{ .compatible = "mediatek,mt8196-mfgpll-pll-ctrl",
- 	  .data = &mfg_ao_plls },
-@@ -92,35 +127,60 @@ MODULE_DEVICE_TABLE(of, of_match_clk_mt8196_mfg);
- static int clk_mt8196_mfg_probe(struct platform_device *pdev)
- {
- 	const struct mtk_pll_data *plls;
--	struct clk_hw_onecell_data *clk_data;
-+	struct clk_mt8196_mfg *clk_mfg;
- 	struct device_node *node = pdev->dev.of_node;
-+	struct device *dev = &pdev->dev;
- 	const int num_plls = 1;
--	int r;
-+	int r, i;
- 
--	plls = of_device_get_match_data(&pdev->dev);
-+	plls = of_device_get_match_data(dev);
- 	if (!plls)
- 		return -EINVAL;
- 
--	clk_data = mtk_alloc_clk_data(num_plls);
--	if (!clk_data)
-+	clk_mfg = devm_kzalloc(dev, sizeof(*clk_mfg), GFP_KERNEL);
-+	if (!clk_mfg)
- 		return -ENOMEM;
- 
--	r = mtk_clk_register_plls(&pdev->dev, plls, num_plls, clk_data);
-+	clk_mfg->num_rpm_clks = plls[0].num_rpm_clks;
-+
-+	if (clk_mfg->num_rpm_clks) {
-+		clk_mfg->rpm_clks = devm_kcalloc(dev, clk_mfg->num_rpm_clks,
-+						 sizeof(*clk_mfg->rpm_clks),
-+						 GFP_KERNEL);
-+		if (!clk_mfg->rpm_clks)
-+			return -ENOMEM;
-+
-+		for (i = 0; i < clk_mfg->num_rpm_clks; i++)
-+			clk_mfg->rpm_clks->id = plls[0].rpm_clk_names[i];
-+
-+		r = devm_clk_bulk_get(dev, clk_mfg->num_rpm_clks,
-+				      clk_mfg->rpm_clks);
-+		if (r)
-+			return r;
-+	}
-+
-+	clk_mfg->clk_data = mtk_alloc_clk_data(num_plls);
-+	if (!clk_mfg->clk_data)
-+		return -ENOMEM;
-+
-+	dev_set_drvdata(dev, clk_mfg);
-+	pm_runtime_enable(dev);
-+
-+	r = mtk_clk_register_plls(dev, plls, num_plls, clk_mfg->clk_data);
- 	if (r)
- 		goto free_clk_data;
- 
--	r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
-+	r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get,
-+				   clk_mfg->clk_data);
- 	if (r)
- 		goto unregister_plls;
- 
--	platform_set_drvdata(pdev, clk_data);
--
- 	return r;
- 
- unregister_plls:
--	mtk_clk_unregister_plls(plls, num_plls, clk_data);
-+	mtk_clk_unregister_plls(plls, num_plls, clk_mfg->clk_data);
- free_clk_data:
--	mtk_free_clk_data(clk_data);
-+	mtk_free_clk_data(clk_mfg->clk_data);
- 
- 	return r;
- }
-@@ -128,20 +188,26 @@ static int clk_mt8196_mfg_probe(struct platform_device *pdev)
- static void clk_mt8196_mfg_remove(struct platform_device *pdev)
- {
- 	const struct mtk_pll_data *plls = of_device_get_match_data(&pdev->dev);
--	struct clk_hw_onecell_data *clk_data = platform_get_drvdata(pdev);
-+	struct clk_mt8196_mfg *clk_mfg = dev_get_drvdata(&pdev->dev);
- 	struct device_node *node = pdev->dev.of_node;
- 
- 	of_clk_del_provider(node);
--	mtk_clk_unregister_plls(plls, 1, clk_data);
--	mtk_free_clk_data(clk_data);
-+	mtk_clk_unregister_plls(plls, 1, clk_mfg->clk_data);
-+	mtk_free_clk_data(clk_mfg->clk_data);
- }
- 
-+static DEFINE_RUNTIME_DEV_PM_OPS(clk_mt8196_mfg_pm_ops,
-+				 clk_mt8196_mfg_suspend,
-+				 clk_mt8196_mfg_resume,
-+				 NULL);
-+
- static struct platform_driver clk_mt8196_mfg_drv = {
- 	.probe = clk_mt8196_mfg_probe,
- 	.remove = clk_mt8196_mfg_remove,
- 	.driver = {
- 		.name = "clk-mt8196-mfg",
- 		.of_match_table = of_match_clk_mt8196_mfg,
-+		.pm = pm_ptr(&clk_mt8196_mfg_pm_ops),
- 	},
- };
- module_platform_driver(clk_mt8196_mfg_drv);
-diff --git a/drivers/clk/mediatek/clk-pll.h b/drivers/clk/mediatek/clk-pll.h
-index 0f2a1d19eea78b7390b221af47016eb9897f3596..82b86b849a67359d8f23d828f50422081c2747e3 100644
---- a/drivers/clk/mediatek/clk-pll.h
-+++ b/drivers/clk/mediatek/clk-pll.h
-@@ -53,6 +53,8 @@ struct mtk_pll_data {
- 	u8 pll_en_bit; /* Assume 0, indicates BIT(0) by default */
- 	u8 pcw_chg_bit;
- 	u8 fenc_sta_bit;
-+	const char * const *rpm_clk_names;
-+	unsigned int num_rpm_clks;
- };
- 
- /*
+Unused clocks are NOT a configuration.
 
--- 
-2.51.0
+They are by-product of the bootloader. You cannot rely on them. If
+anything depends on them, you have a(nother) problem to solve.=20
 
+>
+>
+> Jerome and I have submitted patches to address the issue of
+> CLK_IGNORE_UNUSED becoming ineffective. I originally planned to wait
+> for progress on this patch and then incorporate Jerome's feedback before
+> sending the V3 version.
+
+I've provided a suggestion but this something happening in clock core.
+I suggest that you split this out of your series so things that need to
+go through Stephen are not mixed with Amlogic stuff.
+
+But again, you cannot rely on the state of clock just because it has
+CLK_IGNORE_UNUSED:
+
+* Nothing says it is enabled to begin with
+* Nothing says it will stay on if a consumer comes and goes
+* ... and yes, it does not survive CCF usage checking down the road.
+
+It is unreliable and it is not meant to be more than that, AFAIK
+
+>
+> Hi Jerome, sorry if this caused any misunderstanding on your part; I
+> will provide timely feedback moving forward.
+>
+>
+>>
+>>
+>> Best regards,
+>> Martin
+
+--=20
+Jerome
