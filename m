@@ -1,172 +1,248 @@
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from OS8PR02CU002.outbound.protection.outlook.com (mail-japanwestazon11022116.outbound.protection.outlook.com [40.107.75.116])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F11C26B2B0
-	for <linux-clk@vger.kernel.org>; Mon, 29 Sep 2025 08:48:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759135690; cv=none; b=nBBajld5aOqiimC262lPx26E5ZTXTBurBBPy/thFKoMSLFmzwoBt59ZoGgQPyrAGBo4slHCS/9Xc/fdr/QiDXogKgohrafhAUGM5+XJ815eLJykKImLyHJyOzhGtX/i5XmLeFQ/OV949gzm6SQLVs5szr5bGA/kFWl1QcOC3Ob4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759135690; c=relaxed/simple;
-	bh=ipcd2RHyYDEBjL29RjOErCJnGZ4m2L37yFw6N1BWRao=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=TVxM0Q5ZHna/awmwosnobopRxD7xc/hrTSlLAd1yBePfYkwZ2evLhBPgyYSBPzWICn+LEzjJutEGZSxs8q7k4nZGrflukAkXgxDp6tBmHir9JOk1PhKp/jJUlDiY5zk3IxAuQTaEIOhlCvU6WBkspkZrUdmdCS+wu7eMDBpVnAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=CWBqfZO0; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04089280339;
+	Mon, 29 Sep 2025 09:31:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.75.116
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759138305; cv=fail; b=cWVo9wpDUCKO5XEiWBQlfOBQ0wDIk9L2QHmk+bOToAK/cZ41KATYbhcbHq8vRluJGjVykp/tO0wGsNPQg9/YdONLtIEpEZsmQzcWnJLdHGRgixtFrMVl5PXIRZ0itdycFLlxdtOj324jtCzvqxwxoZNXkkwAJrRH/psUccxdqhc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759138305; c=relaxed/simple;
+	bh=Ybh5WQEUYIlSvSBAm1aAo8b7rr8QP2Er3fDUjbx7suY=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Sj6KQSjMjqBcEuKvbJ4PJvhS+w0vhzlzl2eecYqpSi/5E3J3KfZ3Y5ICu/x7VR5MG/c6Bvz7TFhHPx+ream3bVW2o7ngmxbNB7wJzAVeVQ64kN/DX5dLnJpf24YrohEk29Ytydhd1pFOYB5GSHYLHlhDitsE7+NY4fcKSQuqU1E=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b=wE0s3H77; arc=fail smtp.client-ip=40.107.75.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amlogic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="CWBqfZO0"
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3f2cf786abeso3125470f8f.3
-        for <linux-clk@vger.kernel.org>; Mon, 29 Sep 2025 01:48:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1759135687; x=1759740487; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:user-agent
-         :references:in-reply-to:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=y9mWuuUO2oTiIhZB/31OQZAO1jKBhIUPfx0Zm8nC4/A=;
-        b=CWBqfZO09hD7C+A5RYxdq+wwvlLx/8umLO3F2S39jkZJztsjqhC9/xYOonURCjA/7p
-         a5JuQGUjLFcV/VHBPZkBNKmYE0M0zynfNiy/mu2c/9jQ1OxmzVW/RU1u8xEXQdqowHx5
-         T19RVvNyccwA86wpOhabO4xnk+3Gz1vDhfIbCifNzRXJHZ6qL/0S946WiXocLaCQ3HPX
-         iDSCr4llp1QcMHddQmd9VtijRVfUsH7fCpofIhwytgsb54vnvZEIKVrICdw+hnQvTULH
-         cGfdpMR2q/o3GjZJsXYRluRGVV76yj69O+B+GlhwrW10CxpLf58ESvwzqYicFGGzryHq
-         VDgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759135687; x=1759740487;
-        h=content-transfer-encoding:mime-version:message-id:date:user-agent
-         :references:in-reply-to:subject:cc:to:from:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=y9mWuuUO2oTiIhZB/31OQZAO1jKBhIUPfx0Zm8nC4/A=;
-        b=hNbQKcxYQUegDKKe8vybQ3bIPY97PZgLumWqFF6hGZtWtO83gIVvCecfMixsTbJjQ9
-         CidtCV6V1YBLkzBHNEdhm/i/n+zEVnV6N/fhCP25Q2v1lruygCEtYLuynVqN+V/58e/h
-         zOQisSeQuHe9/Ld+LKEgvPNbxEdoUd849xX7Tp0SNbzS4AnXHQPI49IhosSP8JRvkXTv
-         E/HLD4Wke5SkwKOougaRHJuEWjHy1HUZZnEImDT+73UF9LJi2krOq7225k0+1VA3FtjH
-         qikDbOSKfajeRgyuQF1pM4MNxaxNUSVwPxFbqof9wXNTt0FMpqynBZT9Rb8NyhRzVLBX
-         cxmg==
-X-Forwarded-Encrypted: i=1; AJvYcCUjgSOefUteU84pjjZ9uWJHoQSBjUxNAPa3brig/4gj22C7J1aQg6e0AlhZEDxpRomietdj/oRZl4A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YynXTCYAh5s3FT+Zu9DsGRNiMsNGyRdeP3EnV8om2Sfk8DhOx82
-	fHOeqfLkZi6fiepuhwed86A4QMH9QVjv+cSjjXYY5ukIivu/mxG5zLJY2Nw3ecFWZb0=
-X-Gm-Gg: ASbGncsvFSbI29A2yWpXfBP6lbidpb7U0Rx/3EHA7uenqqVaotlhpUeZtzyaU8wmP08
-	5o4oex8zm/C9MgLWQs+JagvjCUX/CwuLaUMhsmUx1geAVdCu6gra3fXURdKYgOw4lkZzvR65C42
-	w+oZrrMTcOrGJQSWgsfUMSbD02lgnz6O3663MWjJETWWI9DA9Zzs8T8nJSUaCa4YyEpsjx7YCuv
-	W4os17CWre0ur3L+9jDcAT2KSfyK4OBpIdmzX5NS0aovxaZS3KutRdPqlDYGBDL+vhBAL0A9b0e
-	Nhfd/YSIIe1JeSYPy95EFBDgO8D5H1TuHyZRTFZ9IhgtBHZRtVx/3T27YO0/0gj6PFRem5nZTuX
-	A1KB8QYshnSAfE7K5dqBxslV1cmv3Gt9B
-X-Google-Smtp-Source: AGHT+IEuJjQ2ywEf1FmcgUiPlzRMP7EQ4wv/Yzx58fshvg0ascmwTL+/3T4ksUZ0TgAGJ3QGBI0S5Q==
-X-Received: by 2002:a05:6000:2586:b0:3ec:ea73:a91e with SMTP id ffacd0b85a97d-40e498b77bfmr13575306f8f.12.1759135686798;
-        Mon, 29 Sep 2025 01:48:06 -0700 (PDT)
-Received: from localhost ([2a01:e0a:3c5:5fb1:9891:6c55:82b6:bfe9])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-40fb7203b8asm17522265f8f.9.2025.09.29.01.48.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Sep 2025 01:48:06 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: Chuan Liu <chuan.liu@amlogic.com>,  Michael Turquette
- <mturquette@baylibre.com>,  Stephen Boyd <sboyd@kernel.org>,  Neil
- Armstrong <neil.armstrong@linaro.org>,  Kevin Hilman
- <khilman@baylibre.com>,  linux-clk@vger.kernel.org,
-  linux-kernel@vger.kernel.org,  linux-amlogic@lists.infradead.org,
-  linux-arm-kernel@lists.infradead.org
+	dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b="wE0s3H77"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=La0cnvT4cYOzJPWL/ihImE5wZLCbK/Bc/BeyhnxzD+/3Sk1EO7eInLgw1p8qZisxIMLxe6XAHQFx2XQQ6ahoWZNyaOLLRqkyBaFC7rWjRdMcepzNeqTXFyhcaNofdAlL0I5gu69kzpET86nEEghQ9Zt2TVFqKsVUc7yYniN+NSYFWiLQYVgZD78XcpBjreD0P6byeSd6Yoag7h30ZIwtJDOo6rToHeS8ZcEIYBS5yZsLwcYHL7VufCQio56gfY4s71RachSq3Ql5GkIwqxoOxptgaZXJ7MjgA6DwqrNpv9V3O0jdp5I1eF2ItzZLLekYFhFVCe5xPhcXu0ly6CoMBw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=c6js61FF3XzIpiviMctRcf9MyKu6wVA9+NNyDgU9sXY=;
+ b=ngsPTAtpgpAgC/IxLwHAXaHC/E5kpL5PEOLC+PMcevQoYVG3sisFJVVZB2Wgoyed2OPdrA+qYbtlOm79K3c6pVOUQxWpe6upObZI9UxOsvQ8qNwt/GMvUpbhzRC6+oU/8RIqZB+c8LBm29rozbyRWIz/E7HcGGwsKXJHYHg2vPtzrIV1xNiK3EM7D/gWZHZ1TWxPIj9EnSfUvLEdX/vusAIZ/TKxb1muiQq7NbieYF8Sg5urKg1mFIKYFhkNNHOz85hmZzuJc7Qt3Q0cg8Xh1f7HN4GxeprYleXevlTfRUqXqdGNMC27/GJH91a6iC5HkPdI2NStXdkZQAmyzKh4iQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
+ dkim=pass header.d=amlogic.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amlogic.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=c6js61FF3XzIpiviMctRcf9MyKu6wVA9+NNyDgU9sXY=;
+ b=wE0s3H77GDgIg4c2zuh/UDzsC28EBZygKQ4ko4AcGXBfcHEnY69XP5j1BJx0LWQ1MndtoS8d3DM7c3WrzXHCOpFWxv33hwz/YtZLWqWAP/kxKS3iNE8nyb00cCjz4tKm8/85SrYickZL9Wm3H6d7hfBCpJZGC54RkgmFnzRb8x377/wIEv8/qWL653KSKsHHxYhj0/k+M4/cpwWqKOgX8wX1STzfUtIgp8AXu2WiEjSsrs/WkDIHt27BoRp+f1Xy36VB5ElZuevB6KNwxq4F/U5WmMmIJ+rRj7FpPZJYjcvrU7giteXnM9Wv0Rq+lUblg/RF36NBVzzc5B6zhL/S+A==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amlogic.com;
+Received: from KL1PR03MB5778.apcprd03.prod.outlook.com (2603:1096:820:6d::13)
+ by TYZPR03MB7576.apcprd03.prod.outlook.com (2603:1096:400:427::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.20; Mon, 29 Sep
+ 2025 09:31:40 +0000
+Received: from KL1PR03MB5778.apcprd03.prod.outlook.com
+ ([fe80::e1e:5c95:a889:828e]) by KL1PR03MB5778.apcprd03.prod.outlook.com
+ ([fe80::e1e:5c95:a889:828e%5]) with mapi id 15.20.9160.015; Mon, 29 Sep 2025
+ 09:31:40 +0000
+Message-ID: <36cd6282-ae1d-43f3-8738-592f043d0ba6@amlogic.com>
+Date: Mon, 29 Sep 2025 17:31:07 +0800
+User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH 2/2] clk: meson: Fix glitch free mux related issues
-In-Reply-To: <CAFBinCCoX5+6+KQAtbhKx9KdSZhXVxS=cz8DfMVhjPX1c0iSPw@mail.gmail.com>
-	(Martin Blumenstingl's message of "Sun, 28 Sep 2025 22:55:50 +0200")
+To: Jerome Brunet <jbrunet@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>,
+ Kevin Hilman <khilman@baylibre.com>, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org
 References: <20240929-fix_glitch_free-v1-0-22f9c36b7edf@amlogic.com>
-	<20240929-fix_glitch_free-v1-2-22f9c36b7edf@amlogic.com>
-	<CAFBinCBd5-s6vaBoJNerXavQiHgsv4Fm3v0svUX7geL=kJvVYg@mail.gmail.com>
-	<20178015-4075-40e9-bbf4-20ae558c2bef@amlogic.com>
-	<1jldyzrv2t.fsf@starbuckisacylon.baylibre.com>
-	<e70e9aaa-f448-4f67-9149-cb5970c9bbd6@amlogic.com>
-	<9834c7c5-9334-4c78-a2fe-588ff03cf935@amlogic.com>
-	<CAFBinCCoX5+6+KQAtbhKx9KdSZhXVxS=cz8DfMVhjPX1c0iSPw@mail.gmail.com>
-User-Agent: mu4e 1.12.9; emacs 30.1
-Date: Mon, 29 Sep 2025 10:48:05 +0200
-Message-ID: <1jfrc563wa.fsf@starbuckisacylon.baylibre.com>
+ <20240929-fix_glitch_free-v1-2-22f9c36b7edf@amlogic.com>
+ <CAFBinCBd5-s6vaBoJNerXavQiHgsv4Fm3v0svUX7geL=kJvVYg@mail.gmail.com>
+ <20178015-4075-40e9-bbf4-20ae558c2bef@amlogic.com>
+ <1jldyzrv2t.fsf@starbuckisacylon.baylibre.com>
+ <e70e9aaa-f448-4f67-9149-cb5970c9bbd6@amlogic.com>
+ <9834c7c5-9334-4c78-a2fe-588ff03cf935@amlogic.com>
+ <CAFBinCCoX5+6+KQAtbhKx9KdSZhXVxS=cz8DfMVhjPX1c0iSPw@mail.gmail.com>
+ <1jfrc563wa.fsf@starbuckisacylon.baylibre.com>
+From: Chuan Liu <chuan.liu@amlogic.com>
+In-Reply-To: <1jfrc563wa.fsf@starbuckisacylon.baylibre.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SI1PR02CA0001.apcprd02.prod.outlook.com
+ (2603:1096:4:1f7::15) To KL1PR03MB5778.apcprd03.prod.outlook.com
+ (2603:1096:820:6d::13)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: KL1PR03MB5778:EE_|TYZPR03MB7576:EE_
+X-MS-Office365-Filtering-Correlation-Id: f639bc76-1b94-440e-e445-08ddff3afecc
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?N2M4TTA0dHdXcXNhaEVhRjBXZVlhNXFvL01qTXVTVXhQRlVudzhuL3ZjZzla?=
+ =?utf-8?B?azRnK2xVVXp1ZHdLUXpqdU1lNEN0UEdxM1BhMTJydkJMcFJhb2x6OVRidm1w?=
+ =?utf-8?B?YzFmV1A0N0pVVmY1KzRqa0VOZlpvVnNNVEV3SSthSDlhZ2lERUVmUWdKbFhy?=
+ =?utf-8?B?UGtpT0MwVk44a1NYYkZHajQrUnZoZUQvUlo4dVJlK1V2NWZtVGZlcVFyWXhw?=
+ =?utf-8?B?MWhQanA1NEdKdkl5cGg3MHoyYkdScnB5WWMzamtBWXlFL2pzZTFURWt5ME15?=
+ =?utf-8?B?TDNnZXN2Si9ONzlVSDY1WExRem5BcjZ5bDV4V0dVSjBmeUhaTEcwdTRiZE00?=
+ =?utf-8?B?dzMyRDFUUEZxbjF1aVM3L24xWWVzUDd6Yy9FaU8vdCs2K2FMczZMSmxiTG56?=
+ =?utf-8?B?ZzRQWFFJZlZJemZ6ZXpJRFR2c3JMamRUZ0hCRFNsUkVNdVdMaXRIWlhVM3pv?=
+ =?utf-8?B?NkcrMms4NnV4M2F4L2M3amlCYU9tak1DcVcyNC9yUloxdi9QeDAxVFk1dXRn?=
+ =?utf-8?B?VUNUYkYzekVEOGlRZVdqa2ZaZGRsNkdGc3NtSWFGcmJnVC8vc0VKZGdvVDhV?=
+ =?utf-8?B?V0EzbnlnRjJnQVJBSWtwWU9BbWVOUkpmM0FkOWIyRHFQNzZXWGFHTGFOUmNT?=
+ =?utf-8?B?ekNIMzI3MWJxWnBoeThkOHFoRzdlZTVwUDczN0VBd2dIUGwvTXN3cVdLYUNJ?=
+ =?utf-8?B?ZEN2SG51OGp5VXQwcE5NdVhYeUpJYi84WnJtRStQRTlXWWErenhWWHgzbTEy?=
+ =?utf-8?B?b3BrbS9SSWp1MlZnUkxGbCs2WkJEQWM1WThyN3RjazNRYTVsMUMvQWxKZTRK?=
+ =?utf-8?B?WnhrUHFTQU8yUDR1RmN4bXU1eWY0dlhWRnByN0VYNTdnaFBQRzBDMCs4a04r?=
+ =?utf-8?B?Z0xtVjhLS3dCZ2E4UzVVci85L2RIVXgxdVNsZHlOa0c0Y2s3dEVONUdBT21W?=
+ =?utf-8?B?U2Q5YW5SVzdtUmdOVFU3RjBiVDF2MWRoSkdZVHZZOFlpM0hkUG02ZFFzbWZa?=
+ =?utf-8?B?MGY2VWllbjhOcFQ5bFVnR1FOczlHUFBDemVlL1dBRFhZK21nZk1rVGo2d0tq?=
+ =?utf-8?B?TGFxQVN1L282SlRMbGY5QXBrNXN5a0tpRm12alRCY1FmaTM5Vk5temFSNDVQ?=
+ =?utf-8?B?WlV3MHg0dHBsc3gzZ1hsUWtxUjJDM3M3aFpodHBRbGpQbE9zUzRsbHIrd3dt?=
+ =?utf-8?B?R3pPQXZZM2d5WWdQdWFvQ1VVM2lBeTRDRS9ZSERkZEhzWFpxcWcrbHNqWG0y?=
+ =?utf-8?B?K3RaUEZQaktMVldVeExOVEU4TGh2WEZ3a1pSYkxOMy9pQUxyQU5tTUlqaDlr?=
+ =?utf-8?B?Ykpxb0RsMmQ1bXc2Yjk4Zm0vOE8zQ29PTE5jcUtWejIxWlFLS1Z1UzJ5Q1Ay?=
+ =?utf-8?B?UWlXMyswcTU1NEIxbXhtRm81djhQaUk5L2Zqend4Y3NLcmh3WjN4aUlrbit2?=
+ =?utf-8?B?RDAzTTV2K2RCVWRPdWRvdUNNa2oza2oxRGxka3AxQjVoVmJad0ZoRGI0eUNB?=
+ =?utf-8?B?bk43T3pFY3pIN0ZCeUk2Z3FNeFBjdDlvTlJnU2VpRXdaNE5jKys3UFlsN21Z?=
+ =?utf-8?B?RkFMdDIvWG1xYzlUZlV0elpzODA0VGxSRVQ2UGd5WFdDTFRuQ2wzWDdkWE5m?=
+ =?utf-8?B?U3F1c1NMcWxRQmpvV2pvRGdGeE1RVlBVbEpsRFppQ3hPODJjbVp2NWdGR0ZR?=
+ =?utf-8?B?S0pod1VxaXZ6K2Q0T3YyckFObk5WdjR0R3ZScGxvRlBWUEU0eEJLajNqMHNy?=
+ =?utf-8?B?VkROaGxkZGQvbmFzTCtIMXd5QlF0WE56enR2UnVacm9Lb3pHS0xvTzdxNkc5?=
+ =?utf-8?B?NktwZWxrVmpFaFF6UjFLWHRDM285UER4bi9ZTThaMEVQR0tHNmRHRFV0WVpS?=
+ =?utf-8?B?eWltalk3TEhQOGFGNDBiU0VFeHUyd1ZIWFNjQnMzM3ZRZ0dQakxvRDlRL3Za?=
+ =?utf-8?Q?7yacMEjALtviR4nr31VVzzP+FmW0eqec?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR03MB5778.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?dzd4MGUvOGxYOVprUWdVMUYvTUx6bkJtai9URlZ4bXlYMDhWSHFEWm94Y0Ra?=
+ =?utf-8?B?Z0c4cFVJSDJSaC9VdVhTLzYvblJYQi9GY3g1MGlXUEJNT003WDV5bnErVmx6?=
+ =?utf-8?B?RkFXMzYzc2p4cVZIMERZc0diU3pUN0JrckoxRUxtVk1RVmZGeXE3RStTRWVL?=
+ =?utf-8?B?TzFnbHpFaHNVYlRRZW1kdWNzcHQ4VXA2d01aTmZHNjBBeVdNQnoxMDg5ZElG?=
+ =?utf-8?B?K2cxTVNOY2c4ZmNFVDYzL1JBY0ZTaUhTc3Yyd1BhRE5Kc0FOWDBBVEY4c2hv?=
+ =?utf-8?B?SzFwSmFtOEpBdUpidWQycVBtQkVLNXk2MlRlOTV3TFU4MW1tV1JBS3FHQ0tB?=
+ =?utf-8?B?WFVWWGt0QjdkdkJFV2lPZmZNSUpTYVFJSlNUM1hvMUJKQytFbDhBU2JXeG16?=
+ =?utf-8?B?Z3czcXFHQThmcDl6WW8zd20zSzE4VG9BSXpiMnBvZXRubGhES3dyT0E5dU0x?=
+ =?utf-8?B?YWcyckxONWYwS2d0dEd1YW43WEF1S0hUazhrSmo0d2NURWhwZGV2U1pKNVZV?=
+ =?utf-8?B?OGxkQVlSTXpYWW54TUVWSDVSWHRRcktNb2pzMUtDOWZ3ZUF2RFdYSERGSmlo?=
+ =?utf-8?B?TmxQdjl6VHRIVnhqdG9FR0JuMVJZWVRESTNFY252UDUzbSs0Mnd1Y2xqYk9J?=
+ =?utf-8?B?U3FRNnBpNTVqNVE2SXlNVGsvekxlYXlSc05qTXZqSFBjSGZiVCtqbVg0Y0JE?=
+ =?utf-8?B?TGprbWxmSnpLcHB4dnU0RzRoMEh4c29McjMwZ0s4eE12N0hmcDVEVEFYQ25K?=
+ =?utf-8?B?amVvMS9nL3U4cXlyU0F4RkI1TUIvVDJ4RUZvK1l4N21MZ0tFa2plc2FCTVpZ?=
+ =?utf-8?B?Tm1rWWFFR3FPZnRhVUFxTFFpS0hRUitxa2RieGJUbXd1VTRBZWxXYVBhbUpt?=
+ =?utf-8?B?TkhGVzZRdTlROGFFVVFqQVFKbStPa0xsd1hSeVJsRHgzY2JUeXFQVEl2ckto?=
+ =?utf-8?B?NlFSdFpNS1U5UGt4M0dRcHh0QkNQc3pXU0FuSFRJaWJicFl1bzdLb1V4R0JW?=
+ =?utf-8?B?c3MzbFNTT0s4bzllZHN1U05LNFdtTkcyK1l0TFhKa3FpVXY5ZGdQcUxXRFY3?=
+ =?utf-8?B?M1ovYVh3eTlyZEwxZ1hZY0lnZ2tvOVd0ZmJPcGFyd3BBdVN5SHZRVFQxZkFD?=
+ =?utf-8?B?eXJEK0FKclZHWWptbGd6SHV6TVJ6NWxjMGx5THlxcXd0b2dlaHdiekpNVHJU?=
+ =?utf-8?B?NDVKUXBXdFRwcGRuYjRPWXVLZzNkakVvTnNDanR1VTVHZFY2OUVqY3NlRzVt?=
+ =?utf-8?B?SVpWelh4Z0h3NTFEb2c1YmZrc1ZnUHVSemNkOTM3UTloVTJOMmpGNWliMTFD?=
+ =?utf-8?B?SGZmdm0rRG0yVTBaU2VlMUtaU0ZRVlZiK2VxVU13d29sL2RwRVNMQ1VVa3Bq?=
+ =?utf-8?B?VjdhTkg2ZHJHYWZ6eUNRRU9iN0VRemdiS2V5ZzI3UzVyTEVOYjhQeXZ4SzV1?=
+ =?utf-8?B?L1NMT0xBcHFmdmxGUnFpTmZpWGFmemkzVnFGYWdXWlJZQ2E0a0dpV0dpb25i?=
+ =?utf-8?B?ZUQ3UFNsTlZLclFwZGNWaXQrbURxK3pNeVJPNmMrZmd5dmlYd3pTdkZmaDVN?=
+ =?utf-8?B?QlR4M0tjcGd6bzlEUkxoWk8wY3JiNk5zbnFlUCs1VnBCb3AwREoxS0JhaHl4?=
+ =?utf-8?B?c0tRSWc5MzNDemJ3ekplb1B5Vk9aYXpNV2VFc29hLzVqOVovNEZCQXg0SkhZ?=
+ =?utf-8?B?R3dRN1Y3M2ZDbG1uZTdweHFYOEVIcE5MU1BvN1g4cXZGVVNGc0FSS2h3aFds?=
+ =?utf-8?B?T1NPY0JnSUFKZXpxVGI3a2ZoYUgwTGdydVJzeUtVaUNIdGE2VVByRDlBYkkv?=
+ =?utf-8?B?YlgveG9uenZjNi9Ra2lnV1laYm00Y3dpWWUvaXgvdUtTTXczUVBseFA1ZmJx?=
+ =?utf-8?B?NC9FM0llS1BheWNzT3M5RkJlaDBHM3ZlVXpINlhUOHhpc0tNZUlzN3ZIRnNL?=
+ =?utf-8?B?NENFR2xtVXpNQUZoZndFUkFjRGh6anQrWFEyTVpOeHpBMnlQZmtCOFpXa1lS?=
+ =?utf-8?B?YkVHd3pXMk42ZHFMTWRqTEtFSlhtZ1ZOZHk0RGpQNm5PcEM5Z3BVay9TOVB0?=
+ =?utf-8?B?M1lvaFhhc3BReHFWcmY2aWtRaXBqRitBcEI1ZFNIeDJLUXhaejhRQktZYzlX?=
+ =?utf-8?Q?SNObewiR462tb7qBCjhTjxdH7?=
+X-OriginatorOrg: amlogic.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f639bc76-1b94-440e-e445-08ddff3afecc
+X-MS-Exchange-CrossTenant-AuthSource: KL1PR03MB5778.apcprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Sep 2025 09:31:40.6490
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: yncgKn2wxgcez5we+oQ+bgV4DojWhzitfE6kRbYgqZTFrBUZVPK9Svm2Jf13OYeVWcLhUfZ+Dg/pswOU041Y9A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR03MB7576
 
-On Sun 28 Sep 2025 at 22:55, Martin Blumenstingl <martin.blumenstingl@googl=
-email.com> wrote:
 
-> Hello,
+On 9/29/2025 4:48 PM, Jerome Brunet wrote:
+> [ EXTERNAL EMAIL ]
 >
-> On Sun, Sep 28, 2025 at 8:41=E2=80=AFAM Chuan Liu <chuan.liu@amlogic.com>=
- wrote:
+> On Sun 28 Sep 2025 at 22:55, Martin Blumenstingl <martin.blumenstingl@googlemail.com> wrote:
+>
+>> Hello,
+>>
+>> On Sun, Sep 28, 2025 at 8:41 AM Chuan Liu <chuan.liu@amlogic.com> wrote:
+>>>
+>>> On 9/28/2025 2:05 PM, Chuan Liu wrote:
+>>>> Hi Jerome & Martin:
+>>>>
+>>>> Sorry for the imprecise description of the glitch-free mux earlier.
+>>>>
+>>>> Recently, while troubleshooting a CPU hang issue caused by glitches,
+>>>> I realized there was a discrepancy from our previous understanding,
+>>>> so I'd like to clarify it here.
+>> [...]
+>>> An example of the clock waveform is shown below:
+>>>
+>>>
+>                       1                  2
+>                       v                  v
+>>>          __    __    __    __    __    __    __    __
+>>> ori:  ↑  |__↑  |__↑  |__↑  |__↑  |__↑  |__↑  |__↑  |__↑
+>>>                     ^
+>>>                     1 * cycle original channel.
+>>>          _   _   _   _   _   _   _   _   _   _   _   _
+>>> new:  ↑ |_↑ |_↑ |_↑ |_↑ |_↑ |_↑ |_↑ |_↑ |_↑ |_↑ |_↑ |_↑
+>>>                                         ^
+>>>                                         5 * cycles new channel.
+>>>          __    __                        _   _   _   _
+>>> out:  ↑  |__↑  |______________________↑ |_↑ |_↑ |_↑ |_↑
+>>>                ^                        ^
+>>>                start switching mux.     switch to new channel.
+> Ok ... but when is it safe to disable the "ori" clock ?
+> Can you do it at '1' already ? or do you have to wait for '2' ?
+
+
+It should wait for "2", because there is a state machine in the
+glitch-free mux, this state machine is driven by the working clock
+provided by its channel 0.
+
+
+>
+>> Thank you for the detailed report!
+>> This is indeed problematic behavior. I guess the result is somewhat
+>> random: depending on load (power draw), silicon lottery (quality),
+>> temperature, voltage supply, ... - one may or may not see crashes
+>> caused by this.
+>>
+>> Based on the previous discussion on this topic, my suggestion is to
+>> split the original patch:
+>> - one to add CLK_SET_RATE_GATE where needed (I think the meson8b.c
+>> driver already has this where needed) to actually enable the
+>> glitch-free mux behavior
+>> - another one with the CLK_OPS_PARENT_ENABLE change (meson8b.c would
+>> also need to be updated) to prevent the glitch-free mux from
+>> temporarily outputting an electrical low signal. Jerome also asked to
+>> document the behavior so we don't forget why we set this flag
+> Yes please split the changes and visit all the controllers shipping this
+> type of muxes.
+>
+>> Both patches should get the proper "Fixes" tags.
+> ... and proper fixes tag maybe different depending on the controller so
+> there might more that just 2 changes.
+>
+>> I think it would also be great if you could include the waveform
+>> example in at least the commit message as it helps understand the
+>> problem.
+>>
+>> Let's also give Jerome some time to comment before you send patches.
 >>
 >>
->> On 9/28/2025 2:05 PM, Chuan Liu wrote:
->> > Hi Jerome & Martin:
->> >
->> > Sorry for the imprecise description of the glitch-free mux earlier.
->> >
->> > Recently, while troubleshooting a CPU hang issue caused by glitches,
->> > I realized there was a discrepancy from our previous understanding,
->> > so I'd like to clarify it here.
-> [...]
->> An example of the clock waveform is shown below:
->>
->>
-                     1                  2
-                     v                  v
->>         __    __    __    __    __    __    __    __
->> ori:  =E2=86=91  |__=E2=86=91  |__=E2=86=91  |__=E2=86=91  |__=E2=86=91 =
- |__=E2=86=91  |__=E2=86=91  |__=E2=86=91  |__=E2=86=91
->>                    ^
->>                    1 * cycle original channel.
->>         _   _   _   _   _   _   _   _   _   _   _   _
->> new:  =E2=86=91 |_=E2=86=91 |_=E2=86=91 |_=E2=86=91 |_=E2=86=91 |_=E2=86=
-=91 |_=E2=86=91 |_=E2=86=91 |_=E2=86=91 |_=E2=86=91 |_=E2=86=91 |_=E2=86=91=
- |_=E2=86=91
->>                                        ^
->>                                        5 * cycles new channel.
->>         __    __                        _   _   _   _
->> out:  =E2=86=91  |__=E2=86=91  |______________________=E2=86=91 |_=E2=86=
-=91 |_=E2=86=91 |_=E2=86=91 |_=E2=86=91
->>               ^                        ^
->>               start switching mux.     switch to new channel.
-
-Ok ... but when is it safe to disable the "ori" clock ?
-Can you do it at '1' already ? or do you have to wait for '2' ?
-
-
-> Thank you for the detailed report!
-> This is indeed problematic behavior. I guess the result is somewhat
-> random: depending on load (power draw), silicon lottery (quality),
-> temperature, voltage supply, ... - one may or may not see crashes
-> caused by this.
->
-> Based on the previous discussion on this topic, my suggestion is to
-> split the original patch:
-> - one to add CLK_SET_RATE_GATE where needed (I think the meson8b.c
-> driver already has this where needed) to actually enable the
-> glitch-free mux behavior
-> - another one with the CLK_OPS_PARENT_ENABLE change (meson8b.c would
-> also need to be updated) to prevent the glitch-free mux from
-> temporarily outputting an electrical low signal. Jerome also asked to
-> document the behavior so we don't forget why we set this flag
-
-Yes please split the changes and visit all the controllers shipping this
-type of muxes.
-
->
-> Both patches should get the proper "Fixes" tags.
-
-... and proper fixes tag maybe different depending on the controller so
-there might more that just 2 changes.
-
-> I think it would also be great if you could include the waveform
-> example in at least the commit message as it helps understand the
-> problem.
->
-> Let's also give Jerome some time to comment before you send patches.
->
->
-> Best regards,
-> Martin
-
---=20
-Jerome
+>> Best regards,
+>> Martin
+> --
+> Jerome
