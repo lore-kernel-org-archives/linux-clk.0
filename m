@@ -1,261 +1,232 @@
-Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazon11023085.outbound.protection.outlook.com [52.101.127.85])
+Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D0B7A92E;
-	Mon, 29 Sep 2025 03:16:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.127.85
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759115788; cv=fail; b=jGv5uHKQNos6uZOs65JO10UfgtKNkQsDtATV3a1ly1+WW3dc4qqBnKuiSAWfmS3rOeKZ67CWixzGTu9xu5WkSLQXLPd6VW65OrHIHQPlInQRHSKKVQnNa9NB0WkN+SaiCXHhK3HBNZFnr5rJRZL2wbPGCo0tb3tcdurrdkO1B9A=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759115788; c=relaxed/simple;
-	bh=54TN3D5Gbl6pZ5hVEqEzqJ2xx8OO23uKTjU9a3kD4jc=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=H39Jgv5pGz/Nn/VWqKcAm3wDzAUdAAAbkjXf2fbDeX3S1kQBkLdkSxAuFYjH1bXeMdh/UMIDKvt3COLGdxNnLLCcqxDCm6FXgc2VFcnL0J4800BGFmDtRb9JKcvULyv+xAf7SJ/pfr6jhjmcPQ9YHBw0+rnMLHfhoMZ9XRRSfS8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b=nCWlB4NU; arc=fail smtp.client-ip=52.101.127.85
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amlogic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB52D1BD9C9;
+	Mon, 29 Sep 2025 08:31:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759134701; cv=none; b=jhC/MV1bFGtcN2pK1b4xwCHc48MwoWg6R51ngys7yhmZZ/R5NAmxFnyv7MIwCttdM59QoJ8e4hx2Cy6mBVJhautBerfoa2P+wcR9Lx+hrqvGs40MykmB5IzfN44rWmNnkwHKRUtpBQLGAHrqYUCJrg5ms9ri1ltrv/l5DWLiy8I=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759134701; c=relaxed/simple;
+	bh=+j7FLUzlB5Kbpdp4tRwawZ8cWKv7CbENb5Nr7qQ1SLg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qVj9pvbvJ+Cgic6C+WeuoNAqXv5czXq6i54q+0GHhfvwZ8txdt7B2HRWQbbizm8osUMombD1q3xVWfyPpq9cBXkIIluu20hXIgLc4cy/VaI7MfTpTnYNbYVHXAybXwAznQCo6RJNH5jypNzjz0t9T8wuGZJQHJThP11bAC2exL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; dkim=pass (2048-bit key) header.d=windriver.com header.i=@windriver.com header.b=FFcLe0Il; arc=none smtp.client-ip=205.220.178.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b="nCWlB4NU"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=dAGVgYzPkZMJJ7Ybgnm+1yINWvSGP9qPkY8oLvqdsmzYI+WUiMjJpxN2qHzeebclCyhIOZ0BmOlIDc6ORqfV3y2zGBawftYEPinRjrNMRE+usycVF2W54oWVl1S8PAh8aWQp4EqiftttfU2Jb1iqVOR7uHGRGBA4BN3ZUpDiuOrV7j+42/5yB6iwhpnp1tiQ6GyLGUjpM687OhjFGLzKg8E1veTvi2ffDPA9rc5lCrI6pm5yorW8zBO3D5yD09SFyiqqxfrpgCmGnQqZ5FQo7dqZtLE6uHOgoxd8PfYGiB0zYEp8z22mJE3kp9KPvB1jKXXN2RHt77I/xQ0ztCfQ7A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zt1QSmgRejrd+NrfTWSKN0EhNtY26T0rV8lKeG4yNQg=;
- b=Ot+rdoWDerZIXBrTjCGzBRiK1Wepta7DPcBX/y7DwWacjadAxGg6MK+hdodZkE+gF8u/PHOzmIr9v4WUtu70NTx4WbYjcdBi6LvFRIwOxhaRbkyA6LZz5Ly3DveURbO7/RUK+GyZEOtcDHAbVnSFzvVFs2JCMYGFtZTDuHalAsw0aZexlYfMU3iWY4TsTZixaFPDaORV+vhw7mlemUMeUjAPhBcXgYehZOT4QuZsgxSwYTXCXS+wQvVOHRD/lrlw8Aw7Za87V48hhIJaJd5QXz+jMJveBT87PpeLEfuwShD/P2GVGqaqQYYnwonQY5KBnVn0Vezruj3ns8ivwifZGQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
- dkim=pass header.d=amlogic.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amlogic.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zt1QSmgRejrd+NrfTWSKN0EhNtY26T0rV8lKeG4yNQg=;
- b=nCWlB4NUjKZ9BY93+w6EWzc9Y7ZzxyqSRjuAcfOKklndfRQwRVwr3KOFcxIrY/s42SLz5acQvfltyNWyrflXwHqmfuJETb7L/9Qp9bLGHngmq2n26/55sRODnJ/0JloM3JSbWyDS3qvmbEewHjC9SI8if6/OE6YOUAUHtbFWBEN/VAvwX2JaAOrje1UNjqhr8q5vC+2s39cDOT6gIkfnGisJVuC9Ai6DJMjva8S8BaFRhV8gVpigJSoPOVP2xDJ8djccMjmKqzVBjXlWw82H3qguA0U0XPLrIVdYkYfotKI/IwSmKtDq36eXLa2TY9K7BJwNKLZgbIRSPuJmuN0/fA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amlogic.com;
-Received: from KL1PR03MB5778.apcprd03.prod.outlook.com (2603:1096:820:6d::13)
- by SEYPR03MB6816.apcprd03.prod.outlook.com (2603:1096:101:8d::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.13; Mon, 29 Sep
- 2025 03:16:21 +0000
-Received: from KL1PR03MB5778.apcprd03.prod.outlook.com
- ([fe80::e1e:5c95:a889:828e]) by KL1PR03MB5778.apcprd03.prod.outlook.com
- ([fe80::e1e:5c95:a889:828e%5]) with mapi id 15.20.9160.015; Mon, 29 Sep 2025
- 03:16:21 +0000
-Message-ID: <eee93d9d-2977-449d-8792-b2416f0c09ad@amlogic.com>
-Date: Mon, 29 Sep 2025 11:15:46 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] clk: meson: Fix glitch free mux related issues
-To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>,
- Kevin Hilman <khilman@baylibre.com>, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org
-References: <20240929-fix_glitch_free-v1-0-22f9c36b7edf@amlogic.com>
- <20240929-fix_glitch_free-v1-2-22f9c36b7edf@amlogic.com>
- <CAFBinCBd5-s6vaBoJNerXavQiHgsv4Fm3v0svUX7geL=kJvVYg@mail.gmail.com>
- <20178015-4075-40e9-bbf4-20ae558c2bef@amlogic.com>
- <1jldyzrv2t.fsf@starbuckisacylon.baylibre.com>
- <e70e9aaa-f448-4f67-9149-cb5970c9bbd6@amlogic.com>
- <9834c7c5-9334-4c78-a2fe-588ff03cf935@amlogic.com>
- <CAFBinCCoX5+6+KQAtbhKx9KdSZhXVxS=cz8DfMVhjPX1c0iSPw@mail.gmail.com>
-From: Chuan Liu <chuan.liu@amlogic.com>
-In-Reply-To: <CAFBinCCoX5+6+KQAtbhKx9KdSZhXVxS=cz8DfMVhjPX1c0iSPw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SI2P153CA0033.APCP153.PROD.OUTLOOK.COM
- (2603:1096:4:190::21) To KL1PR03MB5778.apcprd03.prod.outlook.com
- (2603:1096:820:6d::13)
+	dkim=pass (2048-bit key) header.d=windriver.com header.i=@windriver.com header.b="FFcLe0Il"
+Received: from pps.filterd (m0250812.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 58T5WD0Q3972843;
+	Mon, 29 Sep 2025 08:31:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=windriver.com;
+	 h=cc:content-transfer-encoding:content-type:date:from
+	:message-id:mime-version:subject:to; s=PPS06212021; bh=/dfgCLpXl
+	Jtx3/W2lv7hKqChDDgHXCgSJBQ4U6FEQPA=; b=FFcLe0IljADWX9PBr1Zct0Yyj
+	1JLjenU+UC2QCLmFloQC3UNT2H+gNd0ZvBWlZj05saCRkFzgvBiKfCn2Ytukk6w+
+	dqFA388T8Ql1uZk19bgSH336Im9HiIozJVa9BPpZFo7tFVNpDt07XlknSm34ZCz1
+	rHL7JtDmvTCpz/E2TtdKw7A8nqqaGp+WTnnI/HffqDsqyxg2TUH/hw952MSotvZy
+	NrbrWHJ/OsG4E9jn3U0J12bbH5bY3Aifn7F2FXREgF80vCAli9u7sZADPP8/uJZ2
+	WishceH/zoZUHOMjKBcEWavwQ/8IPG0DPMc06bow1C15WLSpfQ6R9C9ExmRnw==
+Received: from ala-exchng01.corp.ad.wrs.com ([128.224.246.36])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 49e6w7hpnk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Mon, 29 Sep 2025 08:31:22 +0000 (GMT)
+Received: from ALA-EXCHNG02.corp.ad.wrs.com (10.11.224.122) by
+ ala-exchng01.corp.ad.wrs.com (10.11.224.121) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.59; Mon, 29 Sep 2025 01:31:21 -0700
+Received: from pek-lpd-ccm5.wrs.com (10.11.232.110) by
+ ALA-EXCHNG02.corp.ad.wrs.com (10.11.224.122) with Microsoft SMTP Server id
+ 15.1.2507.59 via Frontend Transport; Mon, 29 Sep 2025 01:31:20 -0700
+From: Yun Zhou <yun.zhou@windriver.com>
+To: <mturquette@baylibre.com>, <sboyd@kernel.org>, <dianders@chromium.org>,
+        <yun.zhou@windriver.com>
+CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] clk: fix slab-use-after-free when clk_core_populate_parent_map failed
+Date: Mon, 29 Sep 2025 16:31:19 +0800
+Message-ID: <20250929083119.2066159-1-yun.zhou@windriver.com>
+X-Mailer: git-send-email 2.27.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: KL1PR03MB5778:EE_|SEYPR03MB6816:EE_
-X-MS-Office365-Filtering-Correlation-Id: 19fa7adf-5e81-464b-f392-08ddff069039
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?R281d2REOUxTKytnMWFtdkEyQ1A5bWxJeTJjT3hQNDA4d0ZzbVJ6RTVyREZa?=
- =?utf-8?B?NFBnMGJmQmxTaTFsQ29pSS9ibUZSMHBmV0NsbjZXUmdQblVLa1BVYWREYmN1?=
- =?utf-8?B?cUVtZWZobzhVYndmNjNrZ1FjclpTZFhySksxc1hRZ0VrTjhqa2owMFRWOHVK?=
- =?utf-8?B?M052OXB5elI4Nm5PRHRBdXd3Q05aMklMQS80ZkNzOS9xbytDdklGYzhFYk1R?=
- =?utf-8?B?MElXcG5JVzZPY0xnSURyS0ZRU0x6UkM4cWRzVm9jak9QSE04bWF0eEdvYlVB?=
- =?utf-8?B?NFQrSTBoRUdHaStEbmVZME1BVUlucTdXUWIrek0vUmVKZThNajV6cHpSMy9M?=
- =?utf-8?B?WnQvM0ZsZHgxandXL2tzRGl6VW9CL2tOQ2tOU29YUmIvMFNqcFVQclZOVEdk?=
- =?utf-8?B?U2ZiWEl2UEVpUnRlc2FaYmpPMHpDeFdhdmxqeVowSGZONnlMU2xTZXBDVXNL?=
- =?utf-8?B?MmxHaG9NY0xxVnNjRmZ6WElMRzVINEFTSW52SE9sZi9XdWNJTzZiOXdFTU94?=
- =?utf-8?B?TW11UVB5dXJFeURqUlE1c1pGckQ4U09IUXhkRldGSWoyUTVZQW84bVpNOWZ1?=
- =?utf-8?B?cjNPa24rbVBnbUdzbVR2TFhvbkFNWmFyVkhoT09CVWl4OGx1K3RreW1qeW9F?=
- =?utf-8?B?ejlzUVpyY0x1YmRHc3hGV1IrZlA2MWFhT0RBSklSZE5sRzd3K3QyQ0oyaUdy?=
- =?utf-8?B?UlFtc2tOV2lIMUNKWFh2MlpKb0lSM1dkcEphRTJVL0JBdld2RDNkV1BHK1BX?=
- =?utf-8?B?TDQ5QU1TUnI4L3dJSFJoUk5JNlpabjBydXFNSWZZS1ZPc2hXdXVzaUxRbmoz?=
- =?utf-8?B?d1JYT04xOHdSQVMzSzF2NTY2T1RIcStJbEVDRU9pM24rTlNpNHU3NjFCaExK?=
- =?utf-8?B?S0NHVExCdjhQT0lkTEpKK3pTQnBjUWJuYUdIMzVUVkhGNmRlRmZxcUlMZHdp?=
- =?utf-8?B?WXJXNERBVTNENUF6TFFKbXNtQ1VnR2hLSkRwUk1mNkRYcmE5VTVwUEVzaTRI?=
- =?utf-8?B?a0pycEJwcUljcm51MkdrSTlCekM3NzdUeTc4OUZaRXgyQlNYamJZNTEwZEV5?=
- =?utf-8?B?SlRobzdQWlRSYzNVY1FqbysvN2ZNODFWS1lqY2ZnK0ZkVmR5ZHpJUkd3RUNZ?=
- =?utf-8?B?dzFVZTU0UHl5ektoNFhPeVVzeGUzWjBPbjRnR1pUSVBRNEtiYmdKMHdQUjdJ?=
- =?utf-8?B?eU1iTG5TUDRLVGpHZTJKaFRUUUF6ZkIrMEw2dG52QlIycUFFOExVOVhwY2pD?=
- =?utf-8?B?SkxzbzFCWW41UjRZZU5mMHRWeGlhU0o4TjJJMEVzQytDOFBEcDlJb1NDVTlO?=
- =?utf-8?B?cXVYMUp6Ky9aSm16ZENzWlVVUTI4Z0pvZk9DZTNKWFMxekptb2QwNVdXcXRO?=
- =?utf-8?B?ODUrN2Y0Y3NQYnJJWk9IZ3BETDNkMlptYm1iK0tjL1JnblU2QU9ZcWh4eCs5?=
- =?utf-8?B?blh5U3NjRklTMEVseDF5dVFLbHpKdWFnSGFzM0VWRzBhbGRnUEFNby9ac1ZT?=
- =?utf-8?B?OGIvbnc5NlRNb3BTNWtVQzI3SS9XMENTK2tsVC9VZ2hmMUF1N2xYejlaeE1Z?=
- =?utf-8?B?aUd0eEdrQ3BzdnMxUS9tcEh5SGdhcWIrcUNpY25mbnZybkM4RkRXaktTM1lZ?=
- =?utf-8?B?cEdSRnZkcVpmV29OYWxnT1JpOHkyWUFVdnkzUWpNNDBsUTdIaWRnTmwvK1B5?=
- =?utf-8?B?MWdsZnhwelhpbTh6ZVZNQWltUWdvdU9UY2NOZllnZVBVQVpVNnRjOXg5NVFw?=
- =?utf-8?B?ZGVkNWtXeWxzZlVrZzN2RGRMbW1mV1FJMWNhSXhhRVZuMjFmQ0NpSkxYNzJq?=
- =?utf-8?B?NUhBdjlGV3VxOTJFdXNMcCtKQm5BaWJyeVRuTjcxd2JVc3h0SWFzeHIyZnVI?=
- =?utf-8?B?OEMxeThXOHhNZlpyQThqSGJmU3RCU3hkS1JOM1JXWnFaNEY3alppelNDRGt0?=
- =?utf-8?B?TzlVOVJxTVFyVlcvSE5BalpvYzR2SXRPWXo5d1VMc1p2NTRydEw3OGI5TnRX?=
- =?utf-8?B?NVRjbmZ3QTJ3PT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR03MB5778.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?eTNRYkxXNytjZmtqS2U5MkM4VUpEZHE2enBpMHBqWXVzd0pPaVpEMGtISVRu?=
- =?utf-8?B?SFI1VjEwalB1OUgzRmdscmNlV1I3S1FoUXA3eTlQcHpzZTlzdHhJdlg3UlUv?=
- =?utf-8?B?dG0vb2E1ODBYNmV0Qll5eDd3NHp0My9jTE1PWHd6YmNmLzBsU1B2T3ZGemRj?=
- =?utf-8?B?SGRnelFqckZycFluMnJPbTA4VHg2TEdBamtlVXROeGh4Vno1ZmlzcXpLMGRt?=
- =?utf-8?B?enIxYzlBU3g3QzdtbFlMY0p1SGxNYmNvRWpLNHZxdUlpU0ltQjNyNGhodDdo?=
- =?utf-8?B?Q3ZhSEk0akhQWXplZEUwQkVyZ3MrTVE4RGdXcnNtd3VSaE53Z1ZSNlRZdlNW?=
- =?utf-8?B?cmMzWnh2dXJSdjRnaG8vUnNUNFZjdU5wRVQ4c2ZlVXVtQzJaUmJyd1AvVFpo?=
- =?utf-8?B?MVVQZEtNeXR4Sk01NGFKWGtDM1BodjlDOEUxZmllQ2JRSHVEVFlHZWhsU0VI?=
- =?utf-8?B?TGtZWW9TV2t4bDV5eWh0c1dxQ0tQc2Y2ZkQ1NzFlZG10a2k5TXU5ZGhTc1FK?=
- =?utf-8?B?Z0pXMXp6L05ubEZGRnFpRW95MVFsMXVSSzFJTE5FVTRFZ0hKV3FUOVdLcElI?=
- =?utf-8?B?N1VlajZuZll4UTJPL1lYN2svdVRKR2NWSzl5bzZGZEx4NXg1WVBYL0VLcnha?=
- =?utf-8?B?R0JHeGxVRXRabTIyc2swVDgzditWNk84cEdtVmtWcWxyUmlFYzZ2SlhobUE1?=
- =?utf-8?B?WllLY1VCTzVISVNJOWR4S1lLLzVobXZ1ZzhHTTZwZmR5eUFuUHpnRERnSmVL?=
- =?utf-8?B?ZnBkRjRCV1RHRDVRZXVtMitmeUFTdDh4UDJvaWhpdzU4TkEwOEhqeXc1Q05I?=
- =?utf-8?B?VTI5QUR0S3dwMXBUOG93aEtvTDB0ekR2Rk8zeVJoL2g5RFVzbzhLTzdFM1dq?=
- =?utf-8?B?WmE3c0E2REtEaGxGLzIzcmQrYTVzdlNSV05hYlBDUGRXMjZ2aTAwZEZqTFVL?=
- =?utf-8?B?VEVZM3NqTzd1Q1hQUXg5Q085OWRRQXMzeWFmOUxTWTlvcjdjbEFnTE5sS05F?=
- =?utf-8?B?Q00xdEtnK29wdHFRVEkrbjZzb3VwakZ0VXNzS3NINkxGREQrN0xzYmZObG5q?=
- =?utf-8?B?Um5aWHp2S3Z2cmUybU5ZWVRnR1M4NmY4a2c1M3YxM0c5NzQwMzEvK0duU0FM?=
- =?utf-8?B?N0hoYm9SWTVUaWFyL1l3d0M5ZzloTW5TUHZ2eEZaVmNoMndQa0tyemJlUzFr?=
- =?utf-8?B?OGdNV1pSMmN2YjJXSVlVRWUzclp2bS9raTQvc1RWU1pLRTIwNmlhREo1NGM2?=
- =?utf-8?B?VFRvdnZKUlArVDdpVXVmK2Rhc3Ewc1IycmtockZaN09KN1JlWUY2WUtheHRL?=
- =?utf-8?B?T0lUMmQ3VXhYR1NQWXQ4WUxBYUVzc3FEVUs2Z0hqNXVlZW0yRWF3VTQ0RDNZ?=
- =?utf-8?B?dG9EeWRPbVZ1bWJINGcyaHlGSSsrM0FkSTVsRTcwMEZYNDUybTJZdjFUOGsr?=
- =?utf-8?B?ZE9XZkRVZCsxRzhTV0lxRWhqQTFZT3dFODIwWVJIbkk4d01XTGFMeVN0NldK?=
- =?utf-8?B?YkNvOVJVS2R4cTVsUjFpS3k0MG5WbUlGUndjcDQvcHJnSmxkNHNPYUtJWWVy?=
- =?utf-8?B?Vmw0VE9BMTVyWC9PbUxwWE93ZE9ZdUUycTZOVnVCTGNpRlZZVXR3dUZucHMy?=
- =?utf-8?B?Z3RheXluR2M0a1pxeEhmN3E2dnJOUUJKVTFCdVFhYVNBNUxiQmY2WmVtS0sz?=
- =?utf-8?B?UVFTcW93NFV1dDREMy8yYkwyeTdHUDlhM3FiYlpYWDR0UHlZSXM1VVYzZWpK?=
- =?utf-8?B?bDBhcjUyUlNtc3N5TEc4aTArdURTNWNlWG5KTlpPN1J4QlRYckRScm9oMTRa?=
- =?utf-8?B?Qk1MTGoyVnpmamZ3cGVrU0dhYTNqSGpZQmNxNjdLWllVUHZGQ1FNN21rQmpy?=
- =?utf-8?B?UWZzanFSNGR2QkpOd3MvajZFVEhCMlovTGNZVTRDZmJCT0RNY1VFTDhhVFVv?=
- =?utf-8?B?YTFSOEVpTE5sTVZOeE5jN2NadWgycThKbU5jVFYzUjJOVCt4VWZQME1jQzVF?=
- =?utf-8?B?cXZMbUVSQm12U0Rub3YzNjk5bGRvYkdQUjVkZTZiYWFDdnZoT3QyYXZ1VHRa?=
- =?utf-8?B?QjY3YUFIOC9JV1pFb3hGWGZhNkphakZrWExGUjBZVU9PZHBYaWRURjBCOXh3?=
- =?utf-8?Q?8u3QDtdNSVfdt8+eTvXI+uc4a?=
-X-OriginatorOrg: amlogic.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 19fa7adf-5e81-464b-f392-08ddff069039
-X-MS-Exchange-CrossTenant-AuthSource: KL1PR03MB5778.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Sep 2025 03:16:21.3535
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: bOc+GVth4lAjGqXsMRBTDc4nR0aMm1Qb0I/rgS9tpuL+PPbOU4C99q/cVlYPdYYtlHCWDE/04TM1hcHmXnRTYQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR03MB6816
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI5MDA4MSBTYWx0ZWRfXwoOrOMc8y5cF
+ PbJvTUGB+IMUJAsqpOGObKM2z8KvF4Z7QEGhTYBMAK0y3mCPsDFQXcG4AGjrgwIz0a3Lro31k+a
+ +qVc6ozEMOoMRRp7rJuovTyGGd6ljx+vlC7c6WuN2B2uf6QMulUlBsYksh4s3Fxo6vDUXVLSSpF
+ +cvGUEUW71yxLovrzTXmj5p/Qp6p6o5+c9OUeKxoz/o0v65N33TcELziQeZiTNiyw6p7HLqzncB
+ JZ/zfLxBLOYSTv5eXWMkoQO0VTV+DUnrUsVoOHTrQlG1N1dQCv5N4R9Yz0u3pGSmJiXovXCmK7T
+ tQ7i5Wq/PWn58tp5q0O6JDz7enEQsbpUIxwp22oq8iu+O2WkEjP/p3C5oirEF36qR9hoY5pGn2D
+ T4IxCesS2ZtrtOW92qIq/usk3F/OjQ==
+X-Authority-Analysis: v=2.4 cv=Lc0xKzfi c=1 sm=1 tr=0 ts=68da43da cx=c_pps
+ a=AbJuCvi4Y3V6hpbCNWx0WA==:117 a=AbJuCvi4Y3V6hpbCNWx0WA==:17
+ a=yJojWOMRYYMA:10 a=t7CeM3EgAAAA:8 a=eLMzZ2F9_icGV3DWmJ0A:9
+ a=FdTzh2GWekK77mhwV6Dw:22 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-ORIG-GUID: RRSJ-KXXUm36X-kljhq7Xit4VliMsZOg
+X-Proofpoint-GUID: RRSJ-KXXUm36X-kljhq7Xit4VliMsZOg
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-29_03,2025-09-29_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1011 phishscore=0 bulkscore=0 adultscore=0 priorityscore=1501
+ impostorscore=0 spamscore=0 suspectscore=0 malwarescore=0 lowpriorityscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2509150000 definitions=main-2509290081
 
-Hi Martin:
+If clk_core_populate_parent_map() fails, core->parents will be immediately
+released within clk_core_populate_parent_map(). Therefore it is can't be
+released in __clk_release() again.
 
-Thanks for the detailed explanation.
+This fixes the following KASAN reported issue:
 
+==================================================================
+BUG: KASAN: slab-use-after-free in __clk_release+0x80/0x160
+Read of size 8 at addr ffffff8043fd0980 by task kworker/u6:0/27
 
-On 9/29/2025 4:55 AM, Martin Blumenstingl wrote:
-> [ EXTERNAL EMAIL ]
->
-> Hello,
->
-> On Sun, Sep 28, 2025 at 8:41 AM Chuan Liu <chuan.liu@amlogic.com> wrote:
->>
->> On 9/28/2025 2:05 PM, Chuan Liu wrote:
->>> Hi Jerome & Martin:
->>>
->>> Sorry for the imprecise description of the glitch-free mux earlier.
->>>
->>> Recently, while troubleshooting a CPU hang issue caused by glitches,
->>> I realized there was a discrepancy from our previous understanding,
->>> so I'd like to clarify it here.
-> [...]
->> An example of the clock waveform is shown below:
->>
->>
->>          __    __    __    __    __    __    __    __
->> ori:  ↑  |__↑  |__↑  |__↑  |__↑  |__↑  |__↑  |__↑  |__↑
->>                     ^
->>                     1 * cycle original channel.
->>          _   _   _   _   _   _   _   _   _   _   _   _
->> new:  ↑ |_↑ |_↑ |_↑ |_↑ |_↑ |_↑ |_↑ |_↑ |_↑ |_↑ |_↑ |_↑
->>                                         ^
->>                                         5 * cycles new channel.
->>          __    __                        _   _   _   _
->> out:  ↑  |__↑  |______________________↑ |_↑ |_↑ |_↑ |_↑
->>                ^                        ^
->>                start switching mux.     switch to new channel.
-> Thank you for the detailed report!
-> This is indeed problematic behavior. I guess the result is somewhat
-> random: depending on load (power draw), silicon lottery (quality),
-> temperature, voltage supply, ... - one may or may not see crashes
-> caused by this.
+CPU: 1 PID: 27 Comm: kworker/u6:0 Tainted: G        W          6.6.69-yocto-standard+ #7
+Hardware name: Raspberry Pi 4 Model B (DT)
+Workqueue: events_unbound deferred_probe_work_func
+Call trace:
+ dump_backtrace+0x98/0xf8
+ show_stack+0x20/0x38
+ dump_stack_lvl+0x48/0x60
+ print_report+0xf8/0x5d8
+ kasan_report+0xb4/0x100
+ __asan_load8+0x9c/0xc0
+ __clk_release+0x80/0x160
+ __clk_register+0x6dc/0xfb8
+ devm_clk_hw_register+0x70/0x108
+ bcm2835_register_clock+0x284/0x358
+ bcm2835_clk_probe+0x2c4/0x438
+ platform_probe+0x98/0x110
+ really_probe+0x1e4/0x3e8
+ __driver_probe_device+0xc0/0x1a0
+ driver_probe_device+0x110/0x1e8
+ __device_attach_driver+0xf0/0x1a8
+ bus_for_each_drv+0xf8/0x178
+ __device_attach+0x120/0x240
+ device_initial_probe+0x1c/0x30
+ bus_probe_device+0xdc/0xe8
+ deferred_probe_work_func+0xe8/0x130
+ process_one_work+0x2a4/0x698
+ worker_thread+0x53c/0x708
+ kthread+0x1b4/0x1c8
+ ret_from_fork+0x10/0x20
 
+Allocated by task 27:
+ kasan_save_stack+0x3c/0x68
+ kasan_set_track+0x2c/0x40
+ kasan_save_alloc_info+0x24/0x38
+ __kasan_kmalloc+0xd4/0xd8
+ __kmalloc+0x74/0x238
+ __clk_register+0x718/0xfb8
+ devm_clk_hw_register+0x70/0x108
+ bcm2835_register_clock+0x284/0x358
+ bcm2835_clk_probe+0x2c4/0x438
+ platform_probe+0x98/0x110
+ really_probe+0x1e4/0x3e8
+ __driver_probe_device+0xc0/0x1a0
+ driver_probe_device+0x110/0x1e8
+ __device_attach_driver+0xf0/0x1a8
+ bus_for_each_drv+0xf8/0x178
+ __device_attach+0x120/0x240
+ device_initial_probe+0x1c/0x30
+ bus_probe_device+0xdc/0xe8
+ deferred_probe_work_func+0xe8/0x130
+ process_one_work+0x2a4/0x698
+ worker_thread+0x53c/0x708
+ kthread+0x1b4/0x1c8
+ ret_from_fork+0x10/0x20
 
-Yes, our glitch-free mux is designed to prevent glitches caused by
-excessively short high or low levels in the clock output.
+Freed by task 27:
+ kasan_save_stack+0x3c/0x68
+ kasan_set_track+0x2c/0x40
+ kasan_save_free_info+0x38/0x60
+ __kasan_slab_free+0x100/0x170
+ slab_free_freelist_hook+0xcc/0x218
+ __kmem_cache_free+0x158/0x210
+ kfree+0x88/0x140
+ __clk_register+0x9d0/0xfb8
+ devm_clk_hw_register+0x70/0x108
+ bcm2835_register_clock+0x284/0x358
+ bcm2835_clk_probe+0x2c4/0x438
+ platform_probe+0x98/0x110
+ really_probe+0x1e4/0x3e8
+ __driver_probe_device+0xc0/0x1a0
+ driver_probe_device+0x110/0x1e8
+ __device_attach_driver+0xf0/0x1a8
+ bus_for_each_drv+0xf8/0x178
+ __device_attach+0x120/0x240
+ device_initial_probe+0x1c/0x30
+ bus_probe_device+0xdc/0xe8
+ deferred_probe_work_func+0xe8/0x130
+ process_one_work+0x2a4/0x698
+ worker_thread+0x53c/0x708
+ kthread+0x1b4/0x1c8
+ ret_from_fork+0x10/0x20
 
+The buggy address belongs to the object at ffffff8043fd0800
+ which belongs to the cache kmalloc-512 of size 512
+The buggy address is located 384 bytes inside of
+ freed 512-byte region [ffffff8043fd0800, ffffff8043fd0a00)
 
->
-> Based on the previous discussion on this topic, my suggestion is to
-> split the original patch:
-> - one to add CLK_SET_RATE_GATE where needed (I think the meson8b.c
-> driver already has this where needed) to actually enable the
-> glitch-free mux behavior
-> - another one with the CLK_OPS_PARENT_ENABLE change (meson8b.c would
-> also need to be updated) to prevent the glitch-free mux from
-> temporarily outputting an electrical low signal. Jerome also asked to
-> document the behavior so we don't forget why we set this flag
->
-> Both patches should get the proper "Fixes" tags.
-> I think it would also be great if you could include the waveform
-> example in at least the commit message as it helps understand the
-> problem.
->
-> Let's also give Jerome some time to comment before you send patches.
+The buggy address belongs to the physical page:
+page:fffffffe010ff400 refcount:1 mapcount:0 mapping:0000000000000000 index:0xffffff8043fd0e00 pfn:0x43fd0
+head:fffffffe010ff400 order:3 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+flags: 0x4000000000000840(slab|head|zone=1)
+page_type: 0xffffffff()
+raw: 4000000000000840 ffffff8040002f40 ffffff8040000a50 ffffff8040000a50
+raw: ffffff8043fd0e00 0000000000150002 00000001ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
 
+Memory state around the buggy address:
+ ffffff8043fd0880: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffffff8043fd0900: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>ffffff8043fd0980: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                   ^
+ ffffff8043fd0a00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffffff8043fd0a80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+==================================================================
 
-A V2 version was submitted later with changes based on your suggestions.
-Regarding the "Fixes" tag, Jerome had proposed some modifications.
+Fixes: 9d05ae531c2c ("clk: Initialize struct clk_core kref earlier")
+Signed-off-by: Yun Zhou <yun.zhou@windriver.com>
+---
+ drivers/clk/clk.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-[PATCH v2 0/3] clk: Fix issues related to CLK_IGNORE_UNUSED failures and 
-amlogic glitch free mux - Chuan Liu via B4 Relay 
-<https://lore.kernel.org/all/20241111-fix_glitch_free-v2-0-0099fd9ad3e5@amlogic.com/>
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index b821b2cdb155..b93f38de4cac 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -4254,7 +4254,6 @@ static int clk_core_populate_parent_map(struct clk_core *core,
+ 	 * having a cache of names/clk_hw pointers to clk_core pointers.
+ 	 */
+ 	parents = kcalloc(num_parents, sizeof(*parents), GFP_KERNEL);
+-	core->parents = parents;
+ 	if (!parents)
+ 		return -ENOMEM;
+ 
+@@ -4295,6 +4294,8 @@ static int clk_core_populate_parent_map(struct clk_core *core,
+ 		}
+ 	}
+ 
++	core->parents = parents;
++
+ 	return 0;
+ }
+ 
+@@ -4302,7 +4303,7 @@ static void clk_core_free_parent_map(struct clk_core *core)
+ {
+ 	int i = core->num_parents;
+ 
+-	if (!core->num_parents)
++	if (!core->parents)
+ 		return;
+ 
+ 	while (--i >= 0) {
+-- 
+2.27.0
 
-
-Adding CLK_OPS_PARENT_ENABLE causes the CLK_IGNORE_UNUSED configuration
-of it's parent clocks on the chain to become ineffective, so this patch
-depends on fixing that issue before it can proceed.
-
-
-Jerome and I have submitted patches to address the issue of
-CLK_IGNORE_UNUSED becoming ineffective. I originally planned to wait
-for progress on this patch and then incorporate Jerome's feedback before
-sending the V3 version.
-
-Hi Jerome, sorry if this caused any misunderstanding on your part; I
-will provide timely feedback moving forward.
-
-
->
->
-> Best regards,
-> Martin
