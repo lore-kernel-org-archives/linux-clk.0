@@ -1,37 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B91F22F5333;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B92642F533A;
 	Tue, 30 Sep 2025 09:37:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759225051; cv=none; b=YiY7fppCtcPmEiRQ3nKVQXk+vjJdxv7Yt+S+BzUnCxrcP8pwOvK0FuovactPB64WDqi3qlHCSUuxzCFSm6Vhg4Pxvtnp7TnOiwG/dA9XM4mDSRzsfqeAS0U0e7mY+0Ip+/wRF0QHcdjz2X2G8ErO0KkUl/Acmmaqy0IbNOAIIDU=
+	t=1759225051; cv=none; b=p59AIGxwiiMtbiNuzw9z/OEgFoNec9owqB87dn6vJpCSCHLKq35EiudL9KuDuwZVKVyOhScKTHebg/xRiU8E8U/CEaqKKWP/yV0dgqeQxOzhIYxNY1wFxtggTyVScv1smnhnFjPgrcF8691rfihlAU/Gf+1PxHQ+ejyHQNqfkAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1759225051; c=relaxed/simple;
-	bh=Ln6ckunYF1rhHX/pMi0GZqFO1vw1cbwS0hhp7CdYdMQ=;
+	bh=tvbsNP2qVU1cS/ayMypPvum2ysqLXXw2xrupi3Us5z4=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=kLWotdpB4D/2hG7iPaDEAtGJDluqt9/NaOZOMhVkOlqFCm9nDqAyHFJvCU3ow7l2z7ZOW5HRn3rfCDo+OORfh7sa2unyHee/Ft1w8R96siv0qQYMQue01rXUR4qCsy8CpUYbUDg7jbur0SFtrsfFyt6qzIoltDXmZ76n7TYhv2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O2YMv6mb; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=FjlsNI7a5eqWRm8Jvk3poTCeDLGmCMXVpB7G89N5axR8qLyy/yddEQ787vAfgsrBP/AdcCtMS0EOzqXgUYkE9aQlBbrVQHDKxoeRcDS9afDUYXSJ5ghw/yTcYmhEnH2wgi225fPoFcbadc7v2uVCZu3MSrM3HVLWF2nt56Erb7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rr6/GDpa; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O2YMv6mb"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 645D0C4AF0C;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rr6/GDpa"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 4F585C113D0;
 	Tue, 30 Sep 2025 09:37:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1759225051;
-	bh=Ln6ckunYF1rhHX/pMi0GZqFO1vw1cbwS0hhp7CdYdMQ=;
+	bh=tvbsNP2qVU1cS/ayMypPvum2ysqLXXw2xrupi3Us5z4=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=O2YMv6mbgT79WBGL2LXGTHx37t3nbjWEkdBv8EjwFiEyXCMERsfnMFP+jM7O9BH4M
-	 hHOpXyWAVr+LAKZ9ayK7LtVizPGDADJ45BNEnEyhUChIBBn8BD7T9wP0vkv9MBDTFy
-	 SbpQ6RnqK4PHEMaQZWpJL5AOYWK1wTuylb4gzMg0/lm9luJJKkQK3Q/9NasUqqbBYP
-	 QAeWG37tQYSsq5hWJGrvip2kh5AJ6qSobxFsjWSarOW1weWrp9l8KLEM7zipwdxijk
-	 dYj2afvD1CHfI58mk4/7TSoYAic9U1BAPRa3zp/JfMQgROWlCuefoPWuDk3b8i96cB
-	 EEmH4GlmuDuew==
+	b=rr6/GDpauEY2HHAqRcDmiTNhPC7TN9DAYYCycVXlDHtgTxBjCkc0uJgP65l+B+keg
+	 IG5OhTR5p2myHJndvJuwe6EBdnrjZG+N3ZocVpjpthu4fDFCEKSIhqnL0tv99g9Z3f
+	 /V4WdCoMcyEn11g12Y7Dmojcrfqdi5QKtD7H/QqDqdPPB3elrqmiIhYMOcG76ao0z9
+	 /eT1wpxwfTl3tvjwkyJwiUWcYNPXbRbeqkNYAiifZ7b8iIdE14ORShYP/+C9deIr4Y
+	 Dpj5k0HogW95ceGK2HuPd2zss+gv7edzgvwTBJ8qWqbvCT8eVyCL68ADpgGTBa2DVf
+	 cOxoDpwD8M2vA==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F978CAC5B9;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41289CAC5B8;
 	Tue, 30 Sep 2025 09:37:31 +0000 (UTC)
 From: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
-Date: Tue, 30 Sep 2025 17:37:15 +0800
-Subject: [PATCH 02/19] dt-bindings: clock: Add Amlogic A4 PLL clock
+Date: Tue, 30 Sep 2025 17:37:14 +0800
+Subject: [PATCH 01/19] dt-bindings: clock: Add Amlogic A4 SCMI clock
  controller
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -41,7 +41,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250930-a4_a5_add_clock_driver-v1-2-a9acf7951589@amlogic.com>
+Message-Id: <20250930-a4_a5_add_clock_driver-v1-1-a9acf7951589@amlogic.com>
 References: <20250930-a4_a5_add_clock_driver-v1-0-a9acf7951589@amlogic.com>
 In-Reply-To: <20250930-a4_a5_add_clock_driver-v1-0-a9acf7951589@amlogic.com>
 To: Michael Turquette <mturquette@baylibre.com>, 
@@ -56,11 +56,11 @@ Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, 
  Xianwei Zhao <xianwei.zhao@amlogic.com>, Chuan Liu <chuan.liu@amlogic.com>
 X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1759225047; l=2798;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1759225047; l=1814;
  i=chuan.liu@amlogic.com; s=20240902; h=from:subject:message-id;
- bh=Ft6yNqo0TZ3QMKb3Jm5Wur9+935/1unmm660KRVPRPE=;
- b=2dpRYtAPCMjQbgEd7EMDfUTMrfRTEis8Y4GdAn4NjLc4KD01/8j89KXgL4Txe0Cy3rKTBvv3o
- eLsPuSQ6X+GBUiNTGLkXxVH9r6bIYzfxMxgIszPdqOkuCly5YWFwrHs
+ bh=lepg6iT8bmM81rEU5ToL/dWT4QLnpMs52RztUgBBpJI=;
+ b=9DlKusjYS9lvJ5c+yIorherlGXVHoEWA7WXl+kn4Crs79ES3JyMECgX8nYfKzxnBZ3aewWJbC
+ PNqO/UxUUyuC5w6Rvv8v4ryBepX5x7v5MVHuUbUJjfzWlvDFRb2nrux
 X-Developer-Key: i=chuan.liu@amlogic.com; a=ed25519;
  pk=fnKDB+81SoWGKW2GJNFkKy/ULvsDmJZRGBE7pR5Xcpo=
 X-Endpoint-Received: by B4 Relay for chuan.liu@amlogic.com/20240902 with
@@ -70,102 +70,61 @@ Reply-To: chuan.liu@amlogic.com
 
 From: Chuan Liu <chuan.liu@amlogic.com>
 
-Add the PLL clock controller dt-bindings for Amlogic A4 SoC family.
+Add the SCMI clock controller dt-bindings for Amlogic A4 SoC family.
 
 Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
 ---
- .../bindings/clock/amlogic,a4-pll-clkc.yaml        | 61 ++++++++++++++++++++++
- include/dt-bindings/clock/amlogic,a4-pll-clkc.h    | 15 ++++++
- 2 files changed, 76 insertions(+)
+ include/dt-bindings/clock/amlogic,a4-scmi-clkc.h | 42 ++++++++++++++++++++++++
+ 1 file changed, 42 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/amlogic,a4-pll-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,a4-pll-clkc.yaml
+diff --git a/include/dt-bindings/clock/amlogic,a4-scmi-clkc.h b/include/dt-bindings/clock/amlogic,a4-scmi-clkc.h
 new file mode 100644
-index 000000000000..dafad7bd4407
+index 000000000000..454e492f8f6f
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/amlogic,a4-pll-clkc.yaml
-@@ -0,0 +1,61 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+# Copyright (C) 2025 Amlogic, Inc. All rights reserved
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/amlogic,a4-pll-clkc.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Amlogic A4 series PLL Clock Controller
-+
-+maintainers:
-+  - Neil Armstrong <neil.armstrong@linaro.org>
-+  - Jerome Brunet <jbrunet@baylibre.com>
-+  - Chuan Liu <chuan.liu@amlogic.com>
-+  - Xianwei Zhao <xianwei.zhao@amlogic.com>
-+
-+properties:
-+  compatible:
-+    const: amlogic,a4-pll-clkc
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    items:
-+      - description: input oscillator
-+      - description: input fix pll
-+
-+  clock-names:
-+    items:
-+      - const: xtal
-+      - const: fix
-+
-+  "#clock-cells":
-+    const: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - clock-names
-+  - "#clock-cells"
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/amlogic,a4-scmi-clkc.h>
-+    apb {
-+        #address-cells = <2>;
-+        #size-cells = <2>;
-+
-+        clock-controller@8000 {
-+            compatible = "amlogic,a4-pll-clkc";
-+            reg = <0x0 0x8000 0x0 0x110>;
-+            clocks = <&xtal>,
-+                     <&scmi_clk CLKID_FIXED_PLL>;
-+            clock-names = "xtal",
-+                          "fix";
-+            #clock-cells = <1>;
-+        };
-+    };
-diff --git a/include/dt-bindings/clock/amlogic,a4-pll-clkc.h b/include/dt-bindings/clock/amlogic,a4-pll-clkc.h
-new file mode 100644
-index 000000000000..0950dcd68e0a
---- /dev/null
-+++ b/include/dt-bindings/clock/amlogic,a4-pll-clkc.h
-@@ -0,0 +1,15 @@
++++ b/include/dt-bindings/clock/amlogic,a4-scmi-clkc.h
+@@ -0,0 +1,42 @@
 +/* SPDX-License-Identifier: (GPL-2.0-only OR MIT) */
 +/*
 + * Copyright (c) 2025 Amlogic, Inc. All rights reserved.
 + * Author: Chuan Liu <chuan.liu@amlogic.com>
 + */
 +
-+#ifndef _DT_BINDINGS_CLOCK_AMLOGIC_A4_PLL_CLKC_H
-+#define _DT_BINDINGS_CLOCK_AMLOGIC_A4_PLL_CLKC_H
++#ifndef __AMLOGIC_A4_SCMI_CLKC_H
++#define __AMLOGIC_A4_SCMI_CLKC_H
 +
-+#define CLKID_GP0_PLL_DCO			0
-+#define CLKID_GP0_PLL				1
-+#define CLKID_HIFI_PLL_DCO			2
-+#define CLKID_HIFI_PLL				3
++#define CLKID_OSC				0
++#define CLKID_SYS_CLK				1
++#define CLKID_AXI_CLK				2
++#define CLKID_CPU_CLK				3
++#define CLKID_FIXED_PLL				4
++#define CLKID_GP1_PLL				5
++#define CLKID_ACLKM				6
++#define CLKID_SYS_PLL_DIV16			7
++#define CLKID_CPU_CLK_DIV16			8
++#define CLKID_FCLK_50M_PREDIV			9
++#define CLKID_FCLK_50M_DIV			10
++#define CLKID_FCLK_50M				11
++#define CLKID_FCLK_DIV2_DIV			12
++#define CLKID_FCLK_DIV2				13
++#define CLKID_FCLK_DIV2P5_DIV			14
++#define CLKID_FCLK_DIV2P5			15
++#define CLKID_FCLK_DIV3_DIV			16
++#define CLKID_FCLK_DIV3				17
++#define CLKID_FCLK_DIV4_DIV			18
++#define CLKID_FCLK_DIV4				19
++#define CLKID_FCLK_DIV5_DIV			20
++#define CLKID_FCLK_DIV5				21
++#define CLKID_FCLK_DIV7_DIV			22
++#define CLKID_FCLK_DIV7				23
++#define CLKID_SYS_MMC_PCLK			24
++#define CLKID_SYS_CPU_CTRL			25
++#define CLKID_SYS_IRQ_CTRL			26
++#define CLKID_SYS_GIC				27
++#define CLKID_SYS_BIG_NIC			28
++#define CLKID_AXI_SYS_NIC			29
++#define CLKID_AXI_CPU_DMC			30
 +
-+#endif  /* _DT_BINDINGS_CLOCK_AMLOGIC_A4_PLL_CLKC_H */
++#endif /* __AMLOGIC_A4_SCMI_CLKC_H */
 
 -- 
 2.42.0
