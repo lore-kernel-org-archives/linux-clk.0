@@ -1,118 +1,131 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0523B1C68F;
-	Tue, 30 Sep 2025 18:56:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 107FC2264C0
+	for <linux-clk@vger.kernel.org>; Tue, 30 Sep 2025 19:14:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759258584; cv=none; b=kxu05fcyo+Pqb79qcmW9K6OXCchvQeD0kVAbm/4S79m2xTueuGnOTBj9hHQmPDolpvj0l0nLY0afISJKaRFT2+oXO6gTmTADmuYIeuqWDBdhGE6HeCuf3QtFeu0vcMINogLkXKiDm90/OgERcLWzPHrQZOv68FlixnJNng/6f+o=
+	t=1759259652; cv=none; b=J/2anUtmWImeuvK/3RemsP+mFM87o1UaBzS6zrbVEnuZ4kzL5nUt62IfEdY5KNslfASxpMinMpXohJ9JGXphBvPsJjrQnqPTbUlCt6wlP3XrEKd9Ic9k0Q4wbBqDVrkCk/v/4jEBtavgm5SNvhNFaQCcjKyOxf9ulsjGD5I1Gkc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759258584; c=relaxed/simple;
-	bh=fgnAYxcMrRCgX+i+l7YC4q2cl3BBIPoevLQdigNTtlQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=W1q05UrKVJfPoqLQesvofD80fdbzFfKs88ObznMvyfaTX8kPKfnBn93nhViSmObPofECcxqU9qZHep7R1kneEKJCSuKY2QVCRhNkLu2KNt2e2jP6QJiAnDSecpvjkeFbzfUib7bfL4kS2exYP3XBDTL7+4POiLhi3aAmDt6bTD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gF/6+cHi; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1759259652; c=relaxed/simple;
+	bh=PawSnYt8WmMj8SZdGcAwqC+TWH/Zc85+nywQIoFiozQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RdrAHubzZfWikts1foEIjskpLRpueZ+8Na+Yronr4LwLPT6wFAGnOdeUBZuK17fx5G6gaXxLb2aq5Keo/HRNDo2PtylOf+3yrZxqQUMdZcPE6dzUcNSNNqrA7fl7lrTsx+ECaq0RfHF9YQsXCGhZoTbuCISwR2RtdiAsDrHGKyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=lN1CLLIy; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gF/6+cHi"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5428EC116B1;
-	Tue, 30 Sep 2025 18:56:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759258583;
-	bh=fgnAYxcMrRCgX+i+l7YC4q2cl3BBIPoevLQdigNTtlQ=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=gF/6+cHiUYT4FzbgmZnMIlXFrg/grJekMm7ZfEdAzfRWzpbYEcjPgZZLRlzmWskZj
-	 i70RYosXNUM4lnsS+9mGZEk4V7S1pJDDu61aAd1Q2b9aLX0h57b7xMCYjf6IFCRDud
-	 P3BTeZsyw6Fpq5BVjplXXMYSXuIAMeKVNvS8ms2938zXG9zWDtKV0gamsx82BBdXtl
-	 kARVwvEmv/JuaJk263sTGRLSuxjVP+EGDbl502Vyq1n7ByWe5ICPaNWp9Cyjb7ZTQT
-	 Bk0DF93K1iMvudpCjZjEofoqN0ad/07ccXCRs3SzZTJRmIbUHIgFvstCFgncVbYsYT
-	 vlKR377sc2SaA==
-From: Nathan Chancellor <nathan@kernel.org>
-Date: Tue, 30 Sep 2025 11:56:09 -0700
-Subject: [PATCH 2/2] clk: qcom: Fix dependencies of
- QCS_{DISP,GPU,VIDEO}CC_615
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="lN1CLLIy"
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58UCA4xt031650
+	for <linux-clk@vger.kernel.org>; Tue, 30 Sep 2025 19:14:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=goYALe8rxnHCGdz+Re2W+Iqv
+	KOXN11Rt4Lm5Gbd0TUY=; b=lN1CLLIyEBzJH2h//vLM/tnqcyL/ZTqyB8jJGtz+
+	nKuSzGK8gPGsen3+t8npQOsros3KwkhLFekmnHgCT94weutkC3wlwz8Rn5zucHFK
+	tvALcGzJ/YeuVG+8J5C6j7KttZb8iDMf06eW766+vFsSno5mL7z2cfOCCSrRK8gX
+	uba+ufvKMHQbvb6elYfGG5vnRijU+GLrdzhuzKh1qmZf7ueCGTwNpBjR12UI0h9U
+	Le9jNSfn2tInM6VTQ8o8w8vUenQwzfH8CW1dGOXIHSHiANiK6NDqBzmpgmTzl5IU
+	lOu2lfdFfVFfQPlhJAC0gS3AJt1lXxJ7Jn9b/iFM/RsNfA==
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49e8pdhxds-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Tue, 30 Sep 2025 19:14:10 +0000 (GMT)
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4dec9293c62so100144471cf.1
+        for <linux-clk@vger.kernel.org>; Tue, 30 Sep 2025 12:14:10 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759259649; x=1759864449;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=goYALe8rxnHCGdz+Re2W+IqvKOXN11Rt4Lm5Gbd0TUY=;
+        b=tYR9nCtyDhHYSiQe2TxxJYJNkDewJw1uOWJ7e9ndaoKwDNiDImuhXWDOeKv4uvvIcN
+         vXSKXX8BRBzTtA9s13aAPC3GKw2ituiaoNVdHOamVRmzvqm4EmDDQYtAwwy9w7V4YEGd
+         EtxK9ixt6AHRInVveX5YT7BIpjzd+OqL8du6mhOsoEfNMQR8ZYD3NmAqOsgaTXw5HVUl
+         QQGWlrLe+HSJtENW7xPwXWBQ5tioBdvurrioyrlP/ooQ9cQI+NIv9RCypGCcbMuk17eR
+         tKgvUe9tZXaRzRh3fHgpyHJQbmU6hXmVR60xxZsoVk4Qljc1COaukzrJYXsW6hH80r7f
+         rx/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXTfv7fv0X3wbvaW110rUcBTjxOFPdqANkhGivJHXeG3q7+SdKnZoIeEvD/Gea7ChLNRG1ZDjdsJzA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywrid9OmL3H8gAimEXWlbII5BH251LfiVx9QIlPVUxuAAunOL6O
+	NgqV63mk3eu7b/l/HCYZxlAohFv9UVdes7gCInds51JUnJ6OF7iJsT8OwcTwgb//ZElyh3JUkK0
+	Y+Omfd7tV6FM7R8TKdVTb/k8j+9LxsKn7drN/yPVZI7HyopdVuV4KoxGVe0PL4hc=
+X-Gm-Gg: ASbGncvazryci6tcCb3K8o7rtDz27Fq8OQ5gmso59cd4XtAvxMUMtTwMDdyvYZep/38
+	5ynX8smfAZbWW1QCdKGAg8xf/+aXp1v+OhbkAwKn+wvvY7uSO1LHWh/m832Wn7VvSNOtakGR+t8
+	WUqRkyO63fSFjWHbKny+ZMwdqPortMN0QB15avZCsfKF/cbShhY3AjhyGJbZc3C4l6uIi0WHObY
+	cbqgLxjfaAydp9hYbg64pfw3pPeD/k4lTBYcFyHdLiw2ftdC1tWL2U8ZdDE2sKrzkOeVCdVzKAG
+	vnaj6MMliJkEXAVoTxnQs1t8q4kGnI7d5vm6V0mQ6zYiyqp+Lzow0Mc78pGFdV/g0R2oZgmqre6
+	SbBsBFIP5j3kZ05Az2Nq7fLGS5lEoEDTuze+KzllTJ9btCEaHqAaycE3aYw==
+X-Received: by 2002:a05:622a:5a09:b0:4b7:9171:7b10 with SMTP id d75a77b69052e-4e41eef7075mr9962991cf.64.1759259648941;
+        Tue, 30 Sep 2025 12:14:08 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHWaNA0ZDNYeL9wcUtcyeSgm1Kjom+qbg+3Fbj0RuE8VjgW7lsTtOWKRJ0PJ7Wa9FP7+7IEvQ==
+X-Received: by 2002:a05:622a:5a09:b0:4b7:9171:7b10 with SMTP id d75a77b69052e-4e41eef7075mr9962581cf.64.1759259648498;
+        Tue, 30 Sep 2025 12:14:08 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5879e9b81d7sm2043093e87.128.2025.09.30.12.14.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Sep 2025 12:14:07 -0700 (PDT)
+Date: Tue, 30 Sep 2025 22:14:05 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Taniya Das <quic_tdas@quicinc.com>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        patches@lists.linux.dev, stable@vger.kernel.org
+Subject: Re: [PATCH 1/2] clk: qcom: Fix SM_VIDEOCC_6350 dependencies
+Message-ID: <manv5cazdhashfkduondlikqn4ut6q53dhjhyepu34tszrdsfx@bmnjqsrtcf6n>
+References: <20250930-clk-qcom-kconfig-fixes-arm-v1-0-15ae1ae9ec9f@kernel.org>
+ <20250930-clk-qcom-kconfig-fixes-arm-v1-1-15ae1ae9ec9f@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250930-clk-qcom-kconfig-fixes-arm-v1-2-15ae1ae9ec9f@kernel.org>
-References: <20250930-clk-qcom-kconfig-fixes-arm-v1-0-15ae1ae9ec9f@kernel.org>
-In-Reply-To: <20250930-clk-qcom-kconfig-fixes-arm-v1-0-15ae1ae9ec9f@kernel.org>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, 
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
- Taniya Das <quic_tdas@quicinc.com>, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
- patches@lists.linux.dev, stable@vger.kernel.org, 
- Nathan Chancellor <nathan@kernel.org>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2053; i=nathan@kernel.org;
- h=from:subject:message-id; bh=fgnAYxcMrRCgX+i+l7YC4q2cl3BBIPoevLQdigNTtlQ=;
- b=owGbwMvMwCUmm602sfCA1DTG02pJDBl31M//mR/08NwDz+Q3ze6HY1ZPX6URwlp1fbXZo4xl6
- 37IKmvHdJSyMIhxMciKKbJUP1Y9bmg45yzjjVOTYOawMoEMYeDiFICJSB9jZNivKrP+EVuthc3h
- kknZ2vaxmlk3biiEnEp4vf7kyQTnz6cZ/kct/q59aMvByu4vX/0u/tyVV8D8/VS11/lvy65tvOr
- OP4MBAA==
-X-Developer-Key: i=nathan@kernel.org; a=openpgp;
- fpr=2437CB76E544CB6AB3D9DFD399739260CB6CB716
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250930-clk-qcom-kconfig-fixes-arm-v1-1-15ae1ae9ec9f@kernel.org>
+X-Proofpoint-GUID: klTXokAHSCRcPOjP7aFibEarM8u9LtPf
+X-Authority-Analysis: v=2.4 cv=MYZhep/f c=1 sm=1 tr=0 ts=68dc2c02 cx=c_pps
+ a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=YvO9g5Z2dZ-zDM10cScA:9 a=CjuIK1q_8ugA:10
+ a=dawVfQjAaf238kedN5IG:22
+X-Proofpoint-ORIG-GUID: klTXokAHSCRcPOjP7aFibEarM8u9LtPf
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDAzNiBTYWx0ZWRfXyU3jPze7J/3z
+ qHfzb86Yz7xSS3fsmHSJo/XucjWrCp0owcyqeoWlfPGyy4jr4daicRoxvy+SYPwlMiBIp3CbCLv
+ Rd0UuR4TibUSiMrnlbi7h9EXy6UbDuOuDjl5Q5u8E7GR7cF86nhHMWtB5VoOOt+N292CLKavPsN
+ GUyUekVVRxhNqIMOdF5M4CVFx9pn35gRsdnBqewhycp0MBJmZLq6B53s4fW2EpVbo+m7nG/grRi
+ voZdPSL/epj2ITkkLGjxuN1I0tS2Q+lGxkr+5+490Cp28tIKrA/cGe2vNLHEJzItOv7uMPVBWUn
+ eiRcZ1Qt6dcn6vDyBZ2bf4qMHUEnldyX+33g9xMnqScOO3thKLbpiJNY2wzhJ9syLlWqGe1AfH/
+ FCrLHtZ8NO8vhR5Ap7GU1grTIPc9WQ==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-30_04,2025-09-29_04,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 clxscore=1015 bulkscore=0 lowpriorityscore=0
+ priorityscore=1501 phishscore=0 malwarescore=0 spamscore=0 impostorscore=0
+ adultscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2509150000
+ definitions=main-2509270036
 
-It is possible to select CONFIG_QCS_{DISP,GPU,VIDEO}CC_615 when
-targeting ARCH=arm, causing a Kconfig warning when selecting
-CONFIG_QCS_GCC_615 without its dependencies, CONFIG_ARM64 or
-CONFIG_COMPILE_TEST.
+On Tue, Sep 30, 2025 at 11:56:08AM -0700, Nathan Chancellor wrote:
+> It is possible to select CONFIG_SM_GCC_6350 when targeting ARCH=arm,
+> causing a Kconfig warning when selecting CONFIG_SM_GCC_6350 without
+> its dependencies, CONFIG_ARM64 or CONFIG_COMPILE_TEST.
+> 
+>   WARNING: unmet direct dependencies detected for SM_GCC_6350
+>     Depends on [n]: COMMON_CLK [=y] && COMMON_CLK_QCOM [=m] && (ARM64 || COMPILE_TEST [=n])
+>     Selected by [m]:
+>     - SM_VIDEOCC_6350 [=m] && COMMON_CLK [=y] && COMMON_CLK_QCOM [=m]
+> 
+> Add the same dependency to clear up the warning.
+> 
 
-  WARNING: unmet direct dependencies detected for QCS_GCC_615
-    Depends on [n]: COMMON_CLK [=y] && COMMON_CLK_QCOM [=m] && (ARM64 || COMPILE_TEST [=n])
-    Selected by [m]:
-    - QCS_DISPCC_615 [=m] && COMMON_CLK [=y] && COMMON_CLK_QCOM [=m]
-    - QCS_GPUCC_615 [=m] && COMMON_CLK [=y] && COMMON_CLK_QCOM [=m]
-    - QCS_VIDEOCC_615 [=m] && COMMON_CLK [=y] && COMMON_CLK_QCOM [=m]
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
-Add the same dependency to these configurations to clear up the
-warnings.
-
-Cc: stable@vger.kernel.org
-Fixes: 9b47105f5434 ("clk: qcom: dispcc-qcs615: Add QCS615 display clock controller driver")
-Fixes: f4b5b40805ab ("clk: qcom: gpucc-qcs615: Add QCS615 graphics clock controller driver")
-Fixes: f6a8abe0cc16 ("clk: qcom: videocc-qcs615: Add QCS615 video clock controller driver")
-Signed-off-by: Nathan Chancellor <nathan@kernel.org>
----
- drivers/clk/qcom/Kconfig | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index ec7d1a9b578e..6fef0bfc1773 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -531,6 +531,7 @@ config QCM_DISPCC_2290
- 
- config QCS_DISPCC_615
- 	tristate "QCS615 Display Clock Controller"
-+	depends on ARM64 || COMPILE_TEST
- 	select QCS_GCC_615
- 	help
- 	  Support for the display clock controller on Qualcomm Technologies, Inc
-@@ -586,6 +587,7 @@ config QCS_GCC_615
- 
- config QCS_GPUCC_615
- 	tristate "QCS615 Graphics clock controller"
-+	depends on ARM64 || COMPILE_TEST
- 	select QCS_GCC_615
- 	help
- 	  Support for the graphics clock controller on QCS615 devices.
-@@ -594,6 +596,7 @@ config QCS_GPUCC_615
- 
- config QCS_VIDEOCC_615
- 	tristate "QCS615 Video Clock Controller"
-+	depends on ARM64 || COMPILE_TEST
- 	select QCS_GCC_615
- 	help
- 	  Support for the video clock controller on QCS615 devices.
 
 -- 
-2.51.0
-
+With best wishes
+Dmitry
