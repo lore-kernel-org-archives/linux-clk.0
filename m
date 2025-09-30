@@ -1,37 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33B8F2F656F;
-	Tue, 30 Sep 2025 09:37:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FC2A2F656B;
+	Tue, 30 Sep 2025 09:37:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759225052; cv=none; b=So7K6LRtRfF/jQw2PVgGFlFq+T/mM0xROonfJmOewGYF0YOWCd6nd+4ikXN3GMc8lZfflQGE19MM1NLW8+CnIB+zCNaVow5DvyHgwpvn169vXWUlapZSYLpk2Ww3yqAy/p4S+xNGBccqpXPnhJRoep5a5TvfrXKQmz4yzuFKDOI=
+	t=1759225052; cv=none; b=HRYitQvVsX/QdW4jMSS5um+OO4RXBM/S2sXc0XkOebXi9l4PvFSx6ZRZfU/8zPEjG6zKNi5wHpjWzppXSpE/LmfnG+kCll/GOSm7/T8CvITBiS9Qx0JRpVZ+5ejk34w4c0mcr1Pyyozx7jo+h9vczzPzLfiXtWXAyjQQYZGuAxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1759225052; c=relaxed/simple;
-	bh=YxnyBmHxHXzYw9b8hnimJetb+1Ax5l5URVrr4n8BLuQ=;
+	bh=y+/nG1RB4CcOjHU49MzledrxQ0x1bK5PWySm2xxXylU=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=sULXMzBBXbJ5BZmgtCruKQ8OStMZYGWWI7koOKuI1P8Cs9yLjyP9F1RpAURzjZZHQa00PJic9NkiWgMdvf1RtJJCVicX2/OmYWOtoLSKNnpUevqSlU3AfDRigP6ts043wU475ZtE7ThttSd6NLmNyuApQlOzJIY0MZJa69AAInA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nbowOD04; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=Xb8CKvsuTGXPe3H32N9paHOALZRBhEfsDbyHYakirEu8yrq0y/1bj1m1baTKeuhufCT1AIFEAXAyGBVGCPh1H/drCrnntITUhKAq9hAtOqWyiDTTg3xU5Z95fCwZ4IIayzHm2vRiRviM7owfwmSYCzuetH098XStR/9ZJ/UzVv4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d/dGqS9B; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nbowOD04"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 98B3FC2BCAF;
-	Tue, 30 Sep 2025 09:37:31 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d/dGqS9B"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 0F68AC19421;
+	Tue, 30 Sep 2025 09:37:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759225051;
-	bh=YxnyBmHxHXzYw9b8hnimJetb+1Ax5l5URVrr4n8BLuQ=;
+	s=k20201202; t=1759225052;
+	bh=y+/nG1RB4CcOjHU49MzledrxQ0x1bK5PWySm2xxXylU=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=nbowOD043XUfT4f0Yxlyoo5OVZnB40eqlO5t0xPQxBSSD9JI7WyKAUgg3Q8OfWhw5
-	 RL6MIcbXGMn+URG1vzBPntmntV7sXXl6IbzkuhO8LnmJzt9vdTVv6dVgOQmZkcGWz3
-	 HkmGGkBwypfBdybroOOoeFnkeg0fUwYQUi8Or6c2d8xc+Djo3M4H52l+RxDKZKFbcN
-	 U9UZ6eKq1HDUc8r3kAD5Th0ozB2gGSCcLNxYFAcVW8U7D4LrTfDFLSJhGwKbChaxDk
-	 DdS21jjICCK6FLPJdR56svsHekatDhrJAzw/ycwQEEw7zjiCFCcQhn8r5Yeh3k7QpH
-	 wwyPZ8KAlP92g==
+	b=d/dGqS9BsH4ISHsdnjFt9pnaOCX24Sg+f1f9gVCnvtXfh1/Roma1f8N5D3hB16bHn
+	 TIqgRRcY3JIUAP0LOAjiGuu9ywpDHLn1aQ05R+5cFa3jvIIjVfFl5KAfjj7Ur4VD72
+	 nNwLapvzTa/yziT+v0rIpvNV2+ZxEY/tksYn7q7mpkqxsIRz3VAmslc8MWfk0460KC
+	 T1nmktjLKMUWvwUh5nj1UG0bz6M/zM4xM2Rr2yHIYBOHAn+Yk4yJvPomV/t2w0+6Wz
+	 2RWrbPvfLjzaoBZp5xAxgSavzKzVsfD18Nn1GMsdOnClWsmP/SCK/giw9bNABapRs1
+	 WoVbVHDQKotCg==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F50CCCA46F;
-	Tue, 30 Sep 2025 09:37:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07783CAC5B9;
+	Tue, 30 Sep 2025 09:37:32 +0000 (UTC)
 From: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
-Date: Tue, 30 Sep 2025 17:37:19 +0800
-Subject: [PATCH 06/19] clk: amlogic: Fix out-of-range PLL frequency setting
+Date: Tue, 30 Sep 2025 17:37:25 +0800
+Subject: [PATCH 12/19] dt-bindings: clock: Add Amlogic A5 SCMI clock
+ controller support
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -40,7 +41,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250930-a4_a5_add_clock_driver-v1-6-a9acf7951589@amlogic.com>
+Message-Id: <20250930-a4_a5_add_clock_driver-v1-12-a9acf7951589@amlogic.com>
 References: <20250930-a4_a5_add_clock_driver-v1-0-a9acf7951589@amlogic.com>
 In-Reply-To: <20250930-a4_a5_add_clock_driver-v1-0-a9acf7951589@amlogic.com>
 To: Michael Turquette <mturquette@baylibre.com>, 
@@ -55,11 +56,11 @@ Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, 
  Xianwei Zhao <xianwei.zhao@amlogic.com>, Chuan Liu <chuan.liu@amlogic.com>
 X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1759225047; l=799;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1759225047; l=2047;
  i=chuan.liu@amlogic.com; s=20240902; h=from:subject:message-id;
- bh=N/UanqAAstFKaIoQ6E9vlI4RDukLeWAnvo1MhrWVBkQ=;
- b=NIGYgjmhjY3pQ4TkcHp0Hu/MXYaxJFmjLqUACPK6UAcYyXgxSZv9INdR2f7JW4NPfchtH+Zg6
- xq0i+9MDrAkDlwweTsVFFpVntkLGXyDpWktoIks9BoSUXNbAlLfgsdA
+ bh=CUR2pdjRbzn6+DAqRfbcYQodptVVflwPa6cKLrjmKRk=;
+ b=mNi+DwQap04YFOWpZvxQdv0PnR84ND8ajhtbq1nTfik0/qcmbdTbCUyL+SC8+DqnnzrhaYSQc
+ h2xW+BQE8aKDDBn1nx3hFYwP4uEJsOgKWt6SPCM7DV9fmBnjR6+X/M7
 X-Developer-Key: i=chuan.liu@amlogic.com; a=ed25519;
  pk=fnKDB+81SoWGKW2GJNFkKy/ULvsDmJZRGBE7pR5Xcpo=
 X-Endpoint-Received: by B4 Relay for chuan.liu@amlogic.com/20240902 with
@@ -69,28 +70,66 @@ Reply-To: chuan.liu@amlogic.com
 
 From: Chuan Liu <chuan.liu@amlogic.com>
 
-meson_clk_get_pll_range_index incorrectly determines the maximum value
-of 'm'.
+Add the SCMI clock controller dt-bindings for the Amlogic A5 SoC family.
 
-Fixes: 8eed1db1adec6 ("clk: meson: pll: update driver for the g12a")
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Co-developed-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
+Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
 Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
 ---
- drivers/clk/meson/clk-pll.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/dt-bindings/clock/amlogic,a5-scmi-clkc.h | 44 ++++++++++++++++++++++++
+ 1 file changed, 44 insertions(+)
 
-diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
-index c1e4c5710015..602c93aba3cc 100644
---- a/drivers/clk/meson/clk-pll.c
-+++ b/drivers/clk/meson/clk-pll.c
-@@ -191,7 +191,7 @@ static int meson_clk_get_pll_range_index(unsigned long rate,
- 	*m = meson_clk_get_pll_range_m(rate, parent_rate, *n, pll);
- 
- 	/* the pre-divider gives a multiplier too big - stop */
--	if (*m >= (1 << pll->m.width))
-+	if (*m > pll->range->max)
- 		return -EINVAL;
- 
- 	return 0;
+diff --git a/include/dt-bindings/clock/amlogic,a5-scmi-clkc.h b/include/dt-bindings/clock/amlogic,a5-scmi-clkc.h
+new file mode 100644
+index 000000000000..1bf027d0110a
+--- /dev/null
++++ b/include/dt-bindings/clock/amlogic,a5-scmi-clkc.h
+@@ -0,0 +1,44 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR MIT) */
++/*
++ * Copyright (c) 2024 Amlogic, Inc. All rights reserved.
++ * Author: Chuan Liu <chuan.liu@amlogic.com>
++ */
++
++#ifndef __AMLOGIC_A5_SCMI_CLKC_H
++#define __AMLOGIC_A5_SCMI_CLKC_H
++
++#define CLKID_OSC				0
++#define CLKID_SYS_CLK				1
++#define CLKID_AXI_CLK				2
++#define CLKID_CPU_CLK				3
++#define CLKID_DSU_CLK				4
++#define CLKID_GP1_PLL				5
++#define CLKID_FIXED_PLL_DCO			6
++#define CLKID_FIXED_PLL				7
++#define CLKID_ACLKM				8
++#define CLKID_SYS_PLL_DIV16			9
++#define CLKID_CPU_CLK_DIV16			10
++#define CLKID_FCLK_50M_PREDIV			11
++#define CLKID_FCLK_50M_DIV			12
++#define CLKID_FCLK_50M				13
++#define CLKID_FCLK_DIV2_DIV			14
++#define CLKID_FCLK_DIV2				15
++#define CLKID_FCLK_DIV2P5_DIV			16
++#define CLKID_FCLK_DIV2P5			17
++#define CLKID_FCLK_DIV3_DIV			18
++#define CLKID_FCLK_DIV3				19
++#define CLKID_FCLK_DIV4_DIV			20
++#define CLKID_FCLK_DIV4				21
++#define CLKID_FCLK_DIV5_DIV			22
++#define CLKID_FCLK_DIV5				23
++#define CLKID_FCLK_DIV7_DIV			24
++#define CLKID_FCLK_DIV7				25
++#define CLKID_SYS_MMC_PCLK			26
++#define CLKID_SYS_CPU_CTRL			27
++#define CLKID_SYS_IRQ_CTRL			28
++#define CLKID_SYS_GIC				29
++#define CLKID_SYS_BIG_NIC			30
++#define CLKID_AXI_SYS_NIC			31
++#define CLKID_AXI_CPU_DMC			32
++
++#endif /* __AMLOGIC_A5_SCMI_CLKC_H */
 
 -- 
 2.42.0
