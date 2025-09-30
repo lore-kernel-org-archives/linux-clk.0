@@ -1,114 +1,183 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 972C4220687
-	for <linux-clk@vger.kernel.org>; Tue, 30 Sep 2025 10:23:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA2BB23A995;
+	Tue, 30 Sep 2025 11:28:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759227785; cv=none; b=GO2oLF+CkqhoFXd5L0FdXoKcpDrfQfjplSqR2iPaMuZ3Plz5j97N2w6OuRVtGIazuKMVj20aAoi/v9NRGKpCqgEgbMG0S62jGEwNcgmKGJnz89rkFSrdcso+6rde20fc1qkomK6UagHE7FGBtNB4V38Yd88zXt94NbzvTyaTyjg=
+	t=1759231735; cv=none; b=FwKydVa1PFAeQGwKFfuZ/XDcvb5c6UtwFseUEUAiLnapchw9soinfdZSkPKfJTVBVicOwNRKVaAvhjUEGFFRDDPrmDxja+eIsWTY4uFWANh3Z5SRXuLEMagm6wMYzf169UD9LFGiZOz51yfBSlakrzVztYuXdviBERuPvEuos7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759227785; c=relaxed/simple;
-	bh=iwETwjsWH8KkWnjdGAXqGGSLFku1lXN3pXfIWeiax2w=;
+	s=arc-20240116; t=1759231735; c=relaxed/simple;
+	bh=2uOCefQxy9aMorGL7YJd54BkvaKF2LUCUk691jwJwyg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GzkzFYcurrrIlsbbW9ipaYGQfEqWWNngN8SEDWjTncnILtCuD31HFGIVdAoBkABkQAdQgyM/2gkvl8/6jUSHz91HCcKSTyNU/7LTdqJAuvKXKiVpEN691RLOv9vEv4THmo+YLiMfOJyQGMFL2MPjAouWGgyoiC2klRfpGAR0F+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=a26GaCmv; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=jzp5KOVNRKh4h0btu9hh3DSaSBEditudiLW/JmqCc3cvhEw89yKM0Kqn11FxMTegVyCGQsviReXK8wvpEyI4TzaEVbVeSenb5E+SdJoqPNpdM/XOIWrLkeT/XUdLItaNNLoWszaqS99eGrd8UKFxvCMy8r+6zSfueExLX0SWZpc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pzdBuhSD; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="a26GaCmv"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759227782;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Mgf+5bSh0KvMOHC6oH/iO2k9wdq3bzQfdz8vvpviODQ=;
-	b=a26GaCmvjtOGXKkgtKZ7kDdb3lz6kjmiFM+yJ7WSn383o+Gbz8IQfGyaX3MsWXKdCN28vy
-	rpEYlcqDNP/C0vCZRSLnxuBV2HTPmzlRfl11jMa0EMiIkhJmqe4cYboljLvcor5vq0DINB
-	QsNgtW1cRGYMThlXrvZIXGKPfV1XVCc=
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
- [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-643-QjLDHbptNNeGFi9nMb6Gdg-1; Tue, 30 Sep 2025 06:23:01 -0400
-X-MC-Unique: QjLDHbptNNeGFi9nMb6Gdg-1
-X-Mimecast-MFC-AGG-ID: QjLDHbptNNeGFi9nMb6Gdg_1759227781
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-8606c1c2b4eso1154898285a.0
-        for <linux-clk@vger.kernel.org>; Tue, 30 Sep 2025 03:23:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759227781; x=1759832581;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Mgf+5bSh0KvMOHC6oH/iO2k9wdq3bzQfdz8vvpviODQ=;
-        b=WjQpgdCycXBPCQKagXgP4wXmbuQJYUowuHLsQDkGac6yCt5Yg6fwzl+J28x7/1BOfS
-         8wyBjcNXPQ17THenbViRZUHpcnWgQEyW7CNZj2Dzz2itinhWVfNUFXlf5xETmInEERBr
-         YkMTMqjqSsHY0QLYJOFjJM9h6AoNs8uyI8fab/JJ76LP+r09rc8LcI3iiWsy1sEXFNAl
-         vsywASxTeX3XBsumU+begyjEAJkq7yGKIGe+Lm5g0cgt/6wyWKsgDWUaxT2ikcUGsx5t
-         olLVUKpwzjFZWZ7RK+JXs3xTpAznMGd9PuzLjenfdRfVBvWiXjcRV9fwRix4F/oT7UqE
-         HSnw==
-X-Forwarded-Encrypted: i=1; AJvYcCWyDpVjp88SIoswgrZT/YsK6DFF+VocmLWMeTWQxtQryHjnX5kDUZPO4oeoQSznWISxfvQ7HBgdTII=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOKroRSTLWJUNukVG9w38+D6OrzdVbI+auLFsSt1gYLroKXZJb
-	WjkeSRVUFYtQ9BO9M21Pnpp/lAvhRFdYi6OWAzz4EKkIfvqFmcQfOCLExxYo611bpjYK+fnM+l8
-	6JHHLK2cCoYFaMYJ96mMV52UQrDGOpxIq5Nmiz4gpywkKdgDmVs6ZNVg/PJnW/w==
-X-Gm-Gg: ASbGncuU+b2LXRqAmevT8yhoF4nRoPwLhcLUyHIGgIKYFjI3vgA/hMDxDXHXyc+OHp9
-	xq183Fn9fp3l8I17nhRJlRSBx6EsTeTU+jTu46dTWh7c0MmvFzqM5+XNzNN3NdM7CPjiYGNXDb5
-	Sl521RCqxvJ3aHfI/e2Us4lnI/X1DuHN/VCLMrKx3PqLdFjkvSzNxtQLiPg9IndvhUxv0YrVWbA
-	XHN5UGz7U5afgp2h2ufWmFUIiQzVVBiDhj59ACxzKbrNbOXEPsOZ3NTxzJPNCE5zGcsKsP6d0DG
-	IZ7KWkUaOmEY/TP8g+ml32GUgdIxerKEssztkwyTOMXU8M+v28YlL+Da1m3FlPP2MaBgWmjKiWK
-	0Nfx64hATTqI5VUZbizu+GcDaOUqd2mdwBCMe
-X-Received: by 2002:a05:620a:a115:b0:871:dc2d:6026 with SMTP id af79cd13be357-871dc2d7504mr86159785a.16.1759227780677;
-        Tue, 30 Sep 2025 03:23:00 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEoByg3sSfWNNSEyfpGpiDYCBSbVHTJiJB2RdYaJ4CTo/cPLRB4Pivt12MeIkKx9oIwAdPV4A==
-X-Received: by 2002:a05:620a:a115:b0:871:dc2d:6026 with SMTP id af79cd13be357-871dc2d7504mr86157585a.16.1759227780145;
-        Tue, 30 Sep 2025 03:23:00 -0700 (PDT)
-Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-85c2737869esm1013615585a.11.2025.09.30.03.22.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Sep 2025 03:22:59 -0700 (PDT)
-Date: Tue, 30 Sep 2025 06:22:58 -0400
-From: Brian Masney <bmasney@redhat.com>
-To: "Zhou, Yun" <yun.zhou@windriver.com>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, dianders@chromium.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: fix slab-use-after-free when
- clk_core_populate_parent_map failed
-Message-ID: <aNuvghjOrY7nSviZ@redhat.com>
-References: <20250929083119.2066159-1-yun.zhou@windriver.com>
- <aNrj60UeYQfXmlJ2@redhat.com>
- <a77dc81a-e8fa-4f9e-8915-3b8f352c114c@windriver.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pzdBuhSD"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF4F4C4CEF0;
+	Tue, 30 Sep 2025 11:28:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759231735;
+	bh=2uOCefQxy9aMorGL7YJd54BkvaKF2LUCUk691jwJwyg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pzdBuhSDQRs6RHdxJsBxtNXioCysuVWr2khDLJyNG7Qa/bDjZHSoY00AOk90fe/YA
+	 fBWv/Akonk21ZIG7tQOMNPVGWmOF9RA/n/2GsX64+bzONWhhflGZqlz61TeJYq35Pb
+	 IOfrgxePA5xGVz9ootiQHrWvcfjkYnlmm/OM4yrINLbAhFClu6rYTFWrAWJJURhr66
+	 db6CzAl3Zyuvh6z9JrdNllWCyYFFx4+5GKrIdwD2o/ZSR5CB6lTAxBHYABGJpaJLZI
+	 TA3Z1XngTCRvkDnYkHBl4WT2ylxHe47ADsROyE4LbfYDuvhWE8pwMeFwciUpnx5UKF
+	 wBGJd8xk1tFzQ==
+Date: Tue, 30 Sep 2025 13:28:52 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Brian Masney <bmasney@redhat.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+	Russell King <linux@armlinux.org.uk>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org
+Subject: Re: [PATCH RFC v4 00/12] clk: add support for v1 / v2 clock rate
+ negotiation and kunit tests
+Message-ID: <20250930-brawny-pastel-wildcat-4ba8d8@houat>
+References: <20250923-clk-tests-docs-v4-0-9205cb3d3cba@redhat.com>
+ <20250925-eager-delectable-frog-fcbb5d@penduick>
+ <aNVPqHldkVzbyvix@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="oaferhurvh74yiin"
 Content-Disposition: inline
-In-Reply-To: <a77dc81a-e8fa-4f9e-8915-3b8f352c114c@windriver.com>
-User-Agent: Mutt/2.2.14 (2025-02-20)
+In-Reply-To: <aNVPqHldkVzbyvix@redhat.com>
 
-Hi Yun,
 
-On Tue, Sep 30, 2025 at 12:59:14PM +0800, Zhou, Yun wrote:
-> Hi Brian,
-> 
-> Thanks for your review.
-> 
-> This defect is caused by multiple reasons, but as you said, the fixes tag is
-> not accurate enough.
-> 
-> I think it should be:
-> 
-> Fixes: fc0c209c1 ("clk: Allow parents to be specified without string names")
-> 
-> Do you think so?
+--oaferhurvh74yiin
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH RFC v4 00/12] clk: add support for v1 / v2 clock rate
+ negotiation and kunit tests
+MIME-Version: 1.0
 
-Yes, that's what I would make it. With that fixed in a v2, you can add:
+On Thu, Sep 25, 2025 at 10:20:24AM -0400, Brian Masney wrote:
+> On Thu, Sep 25, 2025 at 02:14:14PM +0200, Maxime Ripard wrote:
+> > On Tue, Sep 23, 2025 at 10:39:19AM -0400, Brian Masney wrote:
+> > > The Common Clock Framework is expected to keep a clock=E2=80=99s rate=
+ stable
+> > > after setting a new rate with:
+> > >=20
+> > >     clk_set_rate(clk, NEW_RATE);
+> > >=20
+> > > Clock consumers do not know about the clock hierarchy, sibling clocks,
+> > > or the type of clocks involved. However, several longstanding issues
+> > > affect how rate changes propagate through the clock tree when
+> > > CLK_SET_RATE_PARENT is involved, and the parent's clock rate is chang=
+ed:
+> > >=20
+> > > - A clock in some cases can unknowingly change a sibling clock's rate.
+> > >   More details about this particular case are documented at:
+> > >   https://lore.kernel.org/linux-clk/20250528-clk-wip-v2-v2-2-0d2c2f22=
+0442@redhat.com/
+> > >=20
+> > > - No negotiation is done with the sibling clocks, so an inappropriate
+> > >   or less than ideal parent rate can be selected.
+> > >=20
+> > > A selection of some real world examples of where this shows up is at
+> > > [1]. DRM needs to run at precise clock rates, and this issue shows up
+> > > there, however will also show up in other subsystems that require
+> > > precise clock rates, such as sound.
+> > >=20
+> > > An unknown subset of existing boards are unknowingly dependent on the
+> > > existing behavior, so it's risky to change the way the rate negotiati=
+on
+> > > logic is done in the clk core.
+> > >=20
+> > > This series adds support for v1 and v2 rate negotiation logic to the =
+clk
+> > > core. When a child determines that a parent rate change needs to occur
+> > > when the v2 logic is used, the parent negotiates with all nodes in th=
+at
+> > > part of the clk subtree and picks the first rate that's acceptable to
+> > > all nodes.
+> > >=20
+> > > Kunit tests are introduced to illustrate the problem, and are updated
+> > > later in the series to illustrate that the v2 negotiation logic works
+> > > as expected, while keeping compatibility with v1.
+> > >=20
+> > > I marked this as a RFC since Stephen asked me in a video call to not
+> > > add a new member to struct clk_core, however I don't see how to do th=
+is
+> > > any other way.
+> > >=20
+> > > - The clk core doesn=E2=80=99t, and shouldn=E2=80=99t, know about the=
+ internal state the
+> > >   various clk providers.
+> > > - Child clks shouldn=E2=80=99t have to know the internal state of the=
+ parent clks.
+> > > - Currently this information is not exposed in any way to the clk cor=
+e.
+> >=20
+> > I recall from that video call that Stephen asked:
+> >=20
+> > - to indeed not introduce a new op
+> > - to evaluate the change from top to bottom, but to set it bottom to top
+> > - to evaluate the rate by letting child clocks expose an array of the
+> >   parent rates they would like, and to intersect all of them to figure
+> >   out the best parent rate.
+> >=20
+> > It looks like you followed none of these suggestions, so explaining why
+> > you couldn't implement them would be a great first step.
+> >=20
+> > Also, you sent an RFC, on what would you like a comment exactly?
+>=20
+> Stephen asked me to not introduce a new clk op, however I don't see a
+> clean way to do this any other way. Personally, I think that we need a
+> new clk op for this use case for the reasons I outlined on the cover
+> letter.
 
-Reviewed-by: Brian Masney <bmasney@redhat.com>
+So his suggestion was to base the whole logic on clk_ops.determine_rate.
+You're saying that it would violate parent/child abstraction. Can you
+explain why you think that is the case, because it's really not obvious
+to me.
 
-Also, just a heads up to not top post, and to reply inline next time.
+Additionally, and assuming that we indeed need something similar to your
+suggestion, determinate_rate takes a pointer to struct clk_rate_request.
+Why did you choose to create a new op instead of adding the check_rate
+pointer to clk_rate_request?
 
-https://subspace.kernel.org/etiquette.html#do-not-top-post-when-replying
+> I am open for suggestions about alternative ways, and will gladly make
+> modifications. This is why I marked this series as RFC. Patch 10 in
+> this series is the main change of note here.
+>=20
+> Additionally, the presence of the new op is a convenient way to also
+> signal to the clk core that these providers can use the v2 negotiation
+> logic. Otherwise, we'll need to introduce a flag somewhere else if we
+> want to support a v1/v2 negotiation logic across the clk tree.
+>=20
+> As for 2), I negotiate the rate change from the top down. The new_rate
+> is propagated in the same manner as what's done today in the clk core
+> when a parent rate change occurs. I let it reuse the existing rate
+> change code that's currently in the clk core to minimize the change
+> that was introduced.
+>=20
+> Regarding the clock table in 3), it could be done with what's there,
+> but there's the issue of the new clk_op. I posted this to get feedback
+> about that since I think we should settle on the core changes.
 
-Brian
+Again, why can't we add a pointer to that array in clk_rate_request?
 
+Maxime
+
+--oaferhurvh74yiin
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaNu+9AAKCRAnX84Zoj2+
+dsprAXoCxeRN9DGpm/p1kDonhFIiCK5LgsbpU3OkGp3ZgFrNCna1JVI8jRDE3hSr
+Wn6cX6kBfRUw+0sV1+kkLwnzULRBoY58WYHOQleKb3CBYWkQUu0OBJfMQzmcIB04
+vsZnADuerw==
+=8KBc
+-----END PGP SIGNATURE-----
+
+--oaferhurvh74yiin--
