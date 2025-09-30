@@ -1,38 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7800D2F7475;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F0802F747C;
 	Tue, 30 Sep 2025 09:37:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759225052; cv=none; b=DAuCpNYR5GhuoWacP9GApGQ+H75RcRWaK9hQtN49d2r/ZWqNucndR29nADd/yMyuTNAdz0zotN7GJH9dRDf3g9UZeqXUfBrPfehwxWVDuEqLSz1LMrAGK9BEraQZ9DR1rd3yeU8AEwwtNgAAFNs46IMalzISSA1+18PBRn9/gAs=
+	t=1759225052; cv=none; b=BY2E3SlIbjPyPv0BS+bFtW+XVc5mvdJKuBgR8dLe9mhB3rgo+AU4d8OU7h5SiL2m4pU/521XR1mo/hkhlcHXu8qqKluQsLD/+Rj76Z1/8XqE+uXl/MzJi2fw16OKqxv0IjMRyP9OfeeOJlKrwvNxOcY3S6w8KwsCt7UjgWB5nrc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1759225052; c=relaxed/simple;
-	bh=vqbss3GMqYKyjAUeXpUSBjKgviFCWxod5+9aHRq1ztY=;
+	bh=oh4PASq7xylO3BBtX+WnDud/YQdsjyjmr7Yp6EcSjUk=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=XFrRdCR8YSbWnJ4iIArOaZ/06SyQtuSdzMD88Qgrvy5IsCa+ublGCqWc4fioHbHlLaOBfBL0HLHww6sWEL4ES+PNnOYHUHY4WVPZXuN2vVZO/S6RoYJHYG++4HmmJ1M8x8FNYjCZ2XmjnB3Bz0CV7gj/UeFb/ybr6EapNvA884E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UrtiKNLm; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=nDyi3Cy/axBWtyGJM6WAiJ1X3aPCezQSvPa74CrF0iz5L5MVbrRUUUOF+ubwZCBORJNsQcf/2dQWJhb5eSPolJzujkL57meOAAazAlzDxHMgeUFQxGfncGPEUEQBUerqnB7DUPu1VTDcNoAcfR/xEY6XV/YM21Pqjc5A+59BAno=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OhIEuEq9; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UrtiKNLm"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 2E725C4CEF7;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OhIEuEq9"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 564B2C2BCB1;
 	Tue, 30 Sep 2025 09:37:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1759225052;
-	bh=vqbss3GMqYKyjAUeXpUSBjKgviFCWxod5+9aHRq1ztY=;
+	bh=oh4PASq7xylO3BBtX+WnDud/YQdsjyjmr7Yp6EcSjUk=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=UrtiKNLmevBL/yImcd8DWr64Y5ipOKvdUoikcSGIlcF251jd87+RUtk6bQMqycKXV
-	 bmuXdSv5N88P/buACUSlCbLZdOC0GONJxK3lGvjl304ow7CN1mFrqicA0YmnWuDLj4
-	 03CdS45TDPG1TXqk1UvAKAF9GpmSIAQ9JffQYWJTpfoErzyxv87q7v9f6tdPiaVyEe
-	 dujz4excsytn3atUN/dc1ygCpEV+mkaZzLWHqH5FamobksD4sh7eALRKboqh4THrVB
-	 ZMFQA9UsqkqMNzfjLVl2LpdZu+uGB89WjnBoS8Lcw+MeVmkH1ql6SkOpi+8WmgzfPq
-	 XHWo5TYew6YDg==
+	b=OhIEuEq9Uo8HaiLRTAhG1VFViZayJv/tQX1/2fcOPHmbqAQAYlZfzTaVsc8MueDNv
+	 P5UYWXYwZKJdCOQ+no8K3DtiLFLGq+UKe0dc0k392+qYSdOdI9z9UrDHfBnZ+1LieZ
+	 ItmfBTqbBfpBcgyMny+Nf5joVDYn3rgm/BHp3GZMfahlgcCWIhzDWEb5p89bQjPZXR
+	 tfZ0ibcXT6wz9CAVAHOt+kBENZyixG/vIGkXIEkuFO42l2WoHUaD99VtSCs3ATgxk8
+	 QOYXWDACnQ7UKMqOIJyRM6jAmQpFruVsHeeECKWi64o+OSRuLQWrlfNrFskjzZTPIu
+	 8lWvlmSol4G+w==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25FB2CCA472;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46E38CCA474;
 	Tue, 30 Sep 2025 09:37:32 +0000 (UTC)
 From: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
-Date: Tue, 30 Sep 2025 17:37:27 +0800
-Subject: [PATCH 14/19] dt-bindings: clock: Add Amlogic A5 peripherals clock
- controller
+Date: Tue, 30 Sep 2025 17:37:29 +0800
+Subject: [PATCH 16/19] clk: amlogic: Add A5 clock peripherals controller
+ driver
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -41,7 +41,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250930-a4_a5_add_clock_driver-v1-14-a9acf7951589@amlogic.com>
+Message-Id: <20250930-a4_a5_add_clock_driver-v1-16-a9acf7951589@amlogic.com>
 References: <20250930-a4_a5_add_clock_driver-v1-0-a9acf7951589@amlogic.com>
 In-Reply-To: <20250930-a4_a5_add_clock_driver-v1-0-a9acf7951589@amlogic.com>
 To: Michael Turquette <mturquette@baylibre.com>, 
@@ -56,11 +56,11 @@ Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, 
  Xianwei Zhao <xianwei.zhao@amlogic.com>, Chuan Liu <chuan.liu@amlogic.com>
 X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1759225047; l=9596;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1759225047; l=30160;
  i=chuan.liu@amlogic.com; s=20240902; h=from:subject:message-id;
- bh=LDsJSfffZZmihBCb3jZySU47D3GfC2AzT2yzTyvoxfo=;
- b=rmZ04qz/v20Bq80D/CQHFlQpXL5aIoNo9m68Uaakwiyltwicyc0kh3mPPQ8MSBbjelG+GTY+e
- N7TX5/vsD6jChSOPBOl4Apye9J+TAt3dmwSg0Vy2rL8tSYA0isJTumY
+ bh=KeBxst5q1bZnGWsto6J1+CBIkEmgVhOABad3e1K1508=;
+ b=CFfqtg+5M3qxmQ2Zcv522xtv3FT9zUURitpPtzBGNQ3LKfaIzcP3D9vVOvUgaDvFmdMWDKO2C
+ R+M7D0wORm2A7gzI6PkWvafVbKlnrohqfboG2TF65zqNiO/rJF7eKu9
 X-Developer-Key: i=chuan.liu@amlogic.com; a=ed25519;
  pk=fnKDB+81SoWGKW2GJNFkKy/ULvsDmJZRGBE7pR5Xcpo=
 X-Endpoint-Received: by B4 Relay for chuan.liu@amlogic.com/20240902 with
@@ -70,296 +70,942 @@ Reply-To: chuan.liu@amlogic.com
 
 From: Chuan Liu <chuan.liu@amlogic.com>
 
-Add the peripherals clock controller dt-bindings for the Amlogic A5
-SoC family.
+Add the peripherals clock controller driver for the Amlogic A5 SoC family.
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 Co-developed-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
 Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
 Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
 ---
- .../clock/amlogic,a5-peripherals-clkc.yaml         | 134 +++++++++++++++++++++
- .../clock/amlogic,a5-peripherals-clkc.h            | 132 ++++++++++++++++++++
- 2 files changed, 266 insertions(+)
+ drivers/clk/meson/Kconfig          |  13 +
+ drivers/clk/meson/Makefile         |   1 +
+ drivers/clk/meson/a5-peripherals.c | 883 +++++++++++++++++++++++++++++++++++++
+ 3 files changed, 897 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/amlogic,a5-peripherals-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,a5-peripherals-clkc.yaml
+diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
+index db4b98abf4f4..eae9386d8e51 100644
+--- a/drivers/clk/meson/Kconfig
++++ b/drivers/clk/meson/Kconfig
+@@ -172,6 +172,19 @@ config COMMON_CLK_A5_PLL
+ 	  Say Y if you want the board to work, because PLLs are the parent
+ 	  of most peripherals.
+ 
++config COMMON_CLK_A5_PERIPHERALS
++	tristate "Amlogic A5 peripherals clock controller"
++	depends on ARM64
++	default ARCH_MESON
++	select COMMON_CLK_MESON_REGMAP
++	select COMMON_CLK_MESON_DUALDIV
++	select COMMON_CLK_MESON_CLKC_UTILS
++	imply COMMON_CLK_SCMI
++	imply COMMON_CLK_A5_PLL
++	help
++	  Support for the Peripherals clock controller on Amlogic A113X2 device,
++	  AKA A5. Say Y if you want the peripherals clock to work.
++
+ config COMMON_CLK_C3_PLL
+ 	tristate "Amlogic C3 PLL clock controller"
+ 	depends on ARM64
+diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
+index ff73d2486f05..15001947ba1f 100644
+--- a/drivers/clk/meson/Makefile
++++ b/drivers/clk/meson/Makefile
+@@ -22,6 +22,7 @@ obj-$(CONFIG_COMMON_CLK_A1_PERIPHERALS) += a1-peripherals.o
+ obj-$(CONFIG_COMMON_CLK_A4_PLL) += a4-pll.o
+ obj-$(CONFIG_COMMON_CLK_A4_PERIPHERALS) += a4-peripherals.o
+ obj-$(CONFIG_COMMON_CLK_A5_PLL) += a5-pll.o
++obj-$(CONFIG_COMMON_CLK_A5_PERIPHERALS) += a5-peripherals.o
+ obj-$(CONFIG_COMMON_CLK_C3_PLL) += c3-pll.o
+ obj-$(CONFIG_COMMON_CLK_C3_PERIPHERALS) += c3-peripherals.o
+ obj-$(CONFIG_COMMON_CLK_GXBB) += gxbb.o gxbb-aoclk.o
+diff --git a/drivers/clk/meson/a5-peripherals.c b/drivers/clk/meson/a5-peripherals.c
 new file mode 100644
-index 000000000000..88d71d9a72ea
+index 000000000000..eca9f3dcc256
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/amlogic,a5-peripherals-clkc.yaml
-@@ -0,0 +1,134 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+# Copyright (C) 2024 Amlogic, Inc. All rights reserved
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/amlogic,a5-peripherals-clkc.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Amlogic A5 series Peripheral Clock Controller
-+
-+maintainers:
-+  - Xianwei Zhao <xianwei.zhao@amlogic.com>
-+  - Chuan Liu <chuan.liu@amlogic.com>
-+
-+properties:
-+  compatible:
-+    const: amlogic,a5-peripherals-clkc
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    minItems: 18
-+    items:
-+      - description: input oscillator
-+      - description: input oscillators multiplexer
-+      - description: input fix pll
-+      - description: input fclk div 2
-+      - description: input fclk div 2p5
-+      - description: input fclk div 3
-+      - description: input fclk div 4
-+      - description: input fclk div 5
-+      - description: input fclk div 7
-+      - description: input mpll2
-+      - description: input mpll3
-+      - description: input gp0 pll
-+      - description: input gp1 pll
-+      - description: input hifi pll
-+      - description: input sys clk
-+      - description: input axi clk
-+      - description: input sys pll div 16
-+      - description: input cpu clk div 16
-+      - description: input pad clock for rtc clk (optional)
-+      - description: input ddr pll (optional)
-+      - description: input source from clk-measure (optional)
-+      - description: input rtc pll (optional)
-+
-+  clock-names:
-+    minItems: 18
-+    items:
-+      - const: xtal
-+      - const: oscin
-+      - const: fix
-+      - const: fdiv2
-+      - const: fdiv2p5
-+      - const: fdiv3
-+      - const: fdiv4
-+      - const: fdiv5
-+      - const: fdiv7
-+      - const: mpll2
-+      - const: mpll3
-+      - const: gp0
-+      - const: gp1
-+      - const: hifi
-+      - const: sysclk
-+      - const: axiclk
-+      - const: sysplldiv16
-+      - const: cpudiv16
-+      - const: pad_osc
-+      - const: ddr
-+      - const: clkmsr
-+      - const: rtc
-+
-+  "#clock-cells":
-+    const: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - clock-names
-+  - "#clock-cells"
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/amlogic,a5-scmi-clkc.h>
-+    #include <dt-bindings/clock/amlogic,a5-pll-clkc.h>
-+    apb {
-+        #address-cells = <2>;
-+        #size-cells = <2>;
-+
-+        clock-controller@0 {
-+            compatible = "amlogic,a5-peripherals-clkc";
-+            reg = <0x0 0x0 0x0 0x224>;
-+            #clock-cells = <1>;
-+            clocks = <&xtal>,
-+                     <&scmi_clk CLKID_OSC>,
-+                     <&scmi_clk CLKID_FIXED_PLL>,
-+                     <&scmi_clk CLKID_FCLK_DIV2>,
-+                     <&scmi_clk CLKID_FCLK_DIV2P5>,
-+                     <&scmi_clk CLKID_FCLK_DIV3>,
-+                     <&scmi_clk CLKID_FCLK_DIV4>,
-+                     <&scmi_clk CLKID_FCLK_DIV5>,
-+                     <&scmi_clk CLKID_FCLK_DIV7>,
-+                     <&clkc_pll CLKID_MPLL2>,
-+                     <&clkc_pll CLKID_MPLL3>,
-+                     <&clkc_pll CLKID_GP0_PLL>,
-+                     <&scmi_clk CLKID_GP1_PLL>,
-+                     <&clkc_pll CLKID_HIFI_PLL>,
-+                     <&scmi_clk CLKID_SYS_CLK>,
-+                     <&scmi_clk CLKID_AXI_CLK>,
-+                     <&scmi_clk CLKID_SYS_PLL_DIV16>,
-+                     <&scmi_clk CLKID_CPU_CLK_DIV16>;
-+            clock-names = "xtal",
-+                          "oscin",
-+                          "fix",
-+                          "fdiv2",
-+                          "fdiv2p5",
-+                          "fdiv3",
-+                          "fdiv4",
-+                          "fdiv5",
-+                          "fdiv7",
-+                          "mpll2",
-+                          "mpll3",
-+                          "gp0",
-+                          "gp1",
-+                          "hifi",
-+                          "sysclk",
-+                          "axiclk",
-+                          "sysplldiv16",
-+                          "cpudiv16";
-+        };
-+    };
-diff --git a/include/dt-bindings/clock/amlogic,a5-peripherals-clkc.h b/include/dt-bindings/clock/amlogic,a5-peripherals-clkc.h
-new file mode 100644
-index 000000000000..b8a68b7f29dc
---- /dev/null
-+++ b/include/dt-bindings/clock/amlogic,a5-peripherals-clkc.h
-@@ -0,0 +1,132 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR MIT) */
++++ b/drivers/clk/meson/a5-peripherals.c
+@@ -0,0 +1,883 @@
++// SPDX-License-Identifier: GPL-2.0-only
 +/*
-+ * Copyright (c) 2024 Amlogic, Inc. All rights reserved.
++ * Amlogic A5 Peripherals Clock Controller Driver
++ *
++ * Copyright (c) 2024-2025 Amlogic, inc.
 + * Author: Chuan Liu <chuan.liu@amlogic.com>
 + */
 +
-+#ifndef _DT_BINDINGS_CLOCK_AMLOGIC_A5_PERIPHERALS_CLKC_H
-+#define _DT_BINDINGS_CLOCK_AMLOGIC_A5_PERIPHERALS_CLKC_H
++#include <linux/clk-provider.h>
++#include <linux/platform_device.h>
++#include "clk-regmap.h"
++#include "clk-dualdiv.h"
++#include "meson-clkc-utils.h"
++#include <dt-bindings/clock/amlogic,a5-peripherals-clkc.h>
 +
-+#define CLKID_RTC_DUALDIV_CLKIN			0
-+#define CLKID_RTC_DUALDIV			1
-+#define CLKID_RTC_DUALDIV_SEL			2
-+#define CLKID_RTC_DUALDIV_CLKOUT		3
-+#define CLKID_RTC_CLK				4
-+#define CLKID_SYS_RESET_CTRL			5
-+#define CLKID_SYS_PWR_CTRL			6
-+#define CLKID_SYS_PAD_CTRL			7
-+#define CLKID_SYS_CTRL				8
-+#define CLKID_SYS_TS_PLL			9
-+#define CLKID_SYS_DEV_ARB			10
-+#define CLKID_SYS_MAILBOX			11
-+#define CLKID_SYS_JTAG_CTRL			12
-+#define CLKID_SYS_IR_CTRL			13
-+#define CLKID_SYS_MSR_CLK			14
-+#define CLKID_SYS_ROM				15
-+#define CLKID_SYS_CPU_ARB			16
-+#define CLKID_SYS_RSA				17
-+#define CLKID_SYS_SARADC			18
-+#define CLKID_SYS_STARTUP			19
-+#define CLKID_SYS_SECURE			20
-+#define CLKID_SYS_SPIFC				21
-+#define CLKID_SYS_DSPA				22
-+#define CLKID_SYS_NNA				23
-+#define CLKID_SYS_ETH_MAC			24
-+#define CLKID_SYS_RAMA				25
-+#define CLKID_SYS_RAMB				26
-+#define CLKID_SYS_AUDIO_TOP			27
-+#define CLKID_SYS_AUDIO_VAD			28
-+#define CLKID_SYS_USB				29
-+#define CLKID_SYS_SD_EMMC_A			30
-+#define CLKID_SYS_SD_EMMC_C			31
-+#define CLKID_SYS_PWM_AB			32
-+#define CLKID_SYS_PWM_CD			33
-+#define CLKID_SYS_PWM_EF			34
-+#define CLKID_SYS_PWM_GH			35
-+#define CLKID_SYS_SPICC_1			36
-+#define CLKID_SYS_SPICC_0			37
-+#define CLKID_SYS_UART_A			38
-+#define CLKID_SYS_UART_B			39
-+#define CLKID_SYS_UART_C			40
-+#define CLKID_SYS_UART_D			41
-+#define CLKID_SYS_UART_E			42
-+#define CLKID_SYS_I2C_M_A			43
-+#define CLKID_SYS_I2C_M_B			44
-+#define CLKID_SYS_I2C_M_C			45
-+#define CLKID_SYS_I2C_M_D			46
-+#define CLKID_SYS_RTC				47
-+#define CLKID_AXI_AUDIO_VAD			48
-+#define CLKID_AXI_AUDIO_TOP			49
-+#define CLKID_AXI_RAMB				50
-+#define CLKID_AXI_RAMA				51
-+#define CLKID_AXI_NNA				52
-+#define CLKID_AXI_DEV1_DMC			53
-+#define CLKID_AXI_DEV0_DMC			54
-+#define CLKID_AXI_DSP_DMC			55
-+#define CLKID_12_24M_IN				56
-+#define CLKID_12M_24M				57
-+#define CLKID_FCLK_25M_DIV			58
-+#define CLKID_FCLK_25M				59
-+#define CLKID_GEN_SEL				60
-+#define CLKID_GEN_DIV				61
-+#define CLKID_GEN				62
-+#define CLKID_SARADC_SEL			63
-+#define CLKID_SARADC_DIV			64
-+#define CLKID_SARADC				65
-+#define CLKID_PWM_A_SEL				66
-+#define CLKID_PWM_A_DIV				67
-+#define CLKID_PWM_A				68
-+#define CLKID_PWM_B_SEL				69
-+#define CLKID_PWM_B_DIV				70
-+#define CLKID_PWM_B				71
-+#define CLKID_PWM_C_SEL				72
-+#define CLKID_PWM_C_DIV				73
-+#define CLKID_PWM_C				74
-+#define CLKID_PWM_D_SEL				75
-+#define CLKID_PWM_D_DIV				76
-+#define CLKID_PWM_D				77
-+#define CLKID_PWM_E_SEL				78
-+#define CLKID_PWM_E_DIV				79
-+#define CLKID_PWM_E				80
-+#define CLKID_PWM_F_SEL				81
-+#define CLKID_PWM_F_DIV				82
-+#define CLKID_PWM_F				83
-+#define CLKID_PWM_G_SEL				84
-+#define CLKID_PWM_G_DIV				85
-+#define CLKID_PWM_G				86
-+#define CLKID_PWM_H_SEL				87
-+#define CLKID_PWM_H_DIV				88
-+#define CLKID_PWM_H				89
-+#define CLKID_SPICC_0_SEL			90
-+#define CLKID_SPICC_0_DIV			91
-+#define CLKID_SPICC_0				92
-+#define CLKID_SPICC_1_SEL			93
-+#define CLKID_SPICC_1_DIV			94
-+#define CLKID_SPICC_1				95
-+#define CLKID_SD_EMMC_A_SEL			96
-+#define CLKID_SD_EMMC_A_DIV			97
-+#define CLKID_SD_EMMC_A				98
-+#define CLKID_SD_EMMC_C_SEL			99
-+#define CLKID_SD_EMMC_C_DIV			100
-+#define CLKID_SD_EMMC_C				101
-+#define CLKID_TS_DIV				102
-+#define CLKID_TS				103
-+#define CLKID_ETH_125M_DIV			104
-+#define CLKID_ETH_125M				105
-+#define CLKID_ETH_RMII_DIV			106
-+#define CLKID_ETH_RMII				107
-+#define CLKID_DSPA_0_SEL			108
-+#define CLKID_DSPA_0_DIV			109
-+#define CLKID_DSPA_0				110
-+#define CLKID_DSPA_1_SEL			111
-+#define CLKID_DSPA_1_DIV			112
-+#define CLKID_DSPA_1				113
-+#define CLKID_DSPA				114
-+#define CLKID_NNA_CORE_SEL			115
-+#define CLKID_NNA_CORE_DIV			116
-+#define CLKID_NNA_CORE				117
-+#define CLKID_NNA_AXI_SEL			118
-+#define CLKID_NNA_AXI_DIV			119
-+#define CLKID_NNA_AXI				120
++#define RTC_BY_OSCIN_CTRL0		0x8
++#define RTC_BY_OSCIN_CTRL1		0xc
++#define RTC_CTRL			0x10
++#define SYS_CLK_EN0_REG0		0x44
++#define SYS_CLK_EN0_REG1		0x48
++#define DSPA_CLK_CTRL0			0x9c
++#define CLK12_24_CTRL			0xa8
++#define AXI_CLK_EN0			0xac
++#define TS_CLK_CTRL			0x158
++#define ETH_CLK_CTRL			0x164
++#define NAND_CLK_CTRL			0x168
++#define SD_EMMC_CLK_CTRL		0x16c
++#define SPICC_CLK_CTRL			0x174
++#define GEN_CLK_CTRL			0x178
++#define SAR_CLK_CTRL0			0x17c
++#define PWM_CLK_AB_CTRL			0x180
++#define PWM_CLK_CD_CTRL			0x184
++#define PWM_CLK_EF_CTRL			0x188
++#define PWM_CLK_GH_CTRL			0x18c
++#define NNA_CLK_CNTL			0x220
 +
-+#endif  /* _DT_BINDINGS_CLOCK_AMLOGIC_A5_PERIPHERALS_CLKC_H */
++static struct clk_regmap a5_rtc_dualdiv_clkin = {
++	.data = &(struct clk_regmap_gate_data) {
++		.offset = RTC_BY_OSCIN_CTRL0,
++		.bit_idx = 31,
++	},
++	.hw.init = &(struct clk_init_data) {
++		.name = "rtc_dualdiv_clkin",
++		.ops = &clk_regmap_gate_ops,
++		.parent_data = &(const struct clk_parent_data) {
++			.fw_name = "oscin",
++		},
++		.num_parents = 1,
++	},
++};
++
++static const struct meson_clk_dualdiv_param a5_rtc_dualdiv_table[] = {
++	{ 733, 732, 8, 11, 1 },
++	{ /* sentinel */ }
++};
++
++static struct clk_regmap a5_rtc_dualdiv = {
++	.data = &(struct meson_clk_dualdiv_data) {
++		.n1 = {
++			.reg_off = RTC_BY_OSCIN_CTRL0,
++			.shift   = 0,
++			.width   = 12,
++		},
++		.n2 = {
++			.reg_off = RTC_BY_OSCIN_CTRL0,
++			.shift   = 12,
++			.width   = 12,
++		},
++		.m1 = {
++			.reg_off = RTC_BY_OSCIN_CTRL1,
++			.shift   = 0,
++			.width   = 12,
++		},
++		.m2 = {
++			.reg_off = RTC_BY_OSCIN_CTRL1,
++			.shift   = 12,
++			.width   = 12,
++		},
++		.dual = {
++			.reg_off = RTC_BY_OSCIN_CTRL0,
++			.shift   = 28,
++			.width   = 1,
++		},
++		.table = a5_rtc_dualdiv_table,
++	},
++	.hw.init = &(struct clk_init_data) {
++		.name = "rtc_dualdiv",
++		.ops = &meson_clk_dualdiv_ops,
++		.parent_hws = (const struct clk_hw *[]) {
++			&a5_rtc_dualdiv_clkin.hw
++		},
++		.num_parents = 1,
++	},
++};
++
++static const struct clk_parent_data a5_rtc_dualdiv_parent_data[] = {
++	{ .hw = &a5_rtc_dualdiv.hw },
++	{ .hw = &a5_rtc_dualdiv_clkin.hw }
++};
++
++static struct clk_regmap a5_rtc_dualdiv_sel = {
++	.data = &(struct clk_regmap_mux_data) {
++		.offset = RTC_BY_OSCIN_CTRL1,
++		.mask = 0x1,
++		.shift = 24,
++	},
++	.hw.init = &(struct clk_init_data) {
++		.name = "rtc_dualdiv_sel",
++		.ops = &clk_regmap_mux_ops,
++		.parent_data = a5_rtc_dualdiv_parent_data,
++		.num_parents = ARRAY_SIZE(a5_rtc_dualdiv_parent_data),
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static struct clk_regmap a5_rtc_dualdiv_clkout = {
++	.data = &(struct clk_regmap_gate_data) {
++		.offset = RTC_BY_OSCIN_CTRL0,
++		.bit_idx = 30,
++	},
++	.hw.init = &(struct clk_init_data) {
++		.name = "rtc_dualdiv_clkout",
++		.ops = &clk_regmap_gate_ops,
++		.parent_hws = (const struct clk_hw *[]) {
++			&a5_rtc_dualdiv_sel.hw
++		},
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static const struct clk_parent_data a5_rtc_clk_parent_data[] = {
++	{ .fw_name = "oscin" },
++	{ .hw = &a5_rtc_dualdiv_clkout.hw },
++	{ .fw_name = "pad_osc" }
++};
++
++static struct clk_regmap a5_rtc_clk = {
++	.data = &(struct clk_regmap_mux_data) {
++		.offset = RTC_CTRL,
++		.mask = 0x3,
++		.shift = 0,
++	},
++	.hw.init = &(struct clk_init_data) {
++		.name = "rtc_clk",
++		.ops = &clk_regmap_mux_ops,
++		.parent_data = a5_rtc_clk_parent_data,
++		.num_parents = ARRAY_SIZE(a5_rtc_clk_parent_data),
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++#define A5_PCLK(_name, _reg, _bit, _pdata, _flags)			\
++struct clk_regmap a5_##_name = {					\
++	.data = &(struct clk_regmap_gate_data) {			\
++		.offset = (_reg),					\
++		.bit_idx = (_bit),					\
++	},								\
++	.hw.init = &(struct clk_init_data) {				\
++		.name = #_name,						\
++		.ops = &clk_regmap_gate_ops,				\
++		.parent_data = (_pdata),				\
++		.num_parents = 1,					\
++		.flags = (_flags),					\
++	},								\
++}
++
++static const struct clk_parent_data a5_sys_pclk_parents = { .fw_name = "sysclk" };
++
++#define A5_SYS_PCLK(_name, _reg, _bit, _flags) \
++	A5_PCLK(_name, _reg, _bit, &a5_sys_pclk_parents, _flags)
++
++static A5_SYS_PCLK(sys_reset_ctrl,	SYS_CLK_EN0_REG0, 1, 0);
++static A5_SYS_PCLK(sys_pwr_ctrl,	SYS_CLK_EN0_REG0, 3, 0);
++static A5_SYS_PCLK(sys_pad_ctrl,	SYS_CLK_EN0_REG0, 4, 0);
++static A5_SYS_PCLK(sys_ctrl,		SYS_CLK_EN0_REG0, 5, 0);
++static A5_SYS_PCLK(sys_ts_pll,		SYS_CLK_EN0_REG0, 6, 0);
++
++/*
++ * NOTE: sys_dev_arb provides the clock to the ETH and SPICC arbiters that
++ * access the AXI bus.
++ */
++static A5_SYS_PCLK(sys_dev_arb,		SYS_CLK_EN0_REG0, 7, 0);
++static A5_SYS_PCLK(sys_mailbox,		SYS_CLK_EN0_REG0, 10, 0);
++static A5_SYS_PCLK(sys_jtag_ctrl,	SYS_CLK_EN0_REG0, 12, 0);
++static A5_SYS_PCLK(sys_ir_ctrl,		SYS_CLK_EN0_REG0, 13, 0);
++static A5_SYS_PCLK(sys_msr_clk,		SYS_CLK_EN0_REG0, 15, 0);
++static A5_SYS_PCLK(sys_rom,		SYS_CLK_EN0_REG0, 16, 0);
++static A5_SYS_PCLK(sys_cpu_apb,		SYS_CLK_EN0_REG0, 18, 0);
++static A5_SYS_PCLK(sys_rsa,		SYS_CLK_EN0_REG0, 19, 0);
++static A5_SYS_PCLK(sys_saradc,		SYS_CLK_EN0_REG0, 20, 0);
++static A5_SYS_PCLK(sys_startup,		SYS_CLK_EN0_REG0, 21, 0);
++static A5_SYS_PCLK(sys_secure,		SYS_CLK_EN0_REG0, 22, 0);
++static A5_SYS_PCLK(sys_spifc,		SYS_CLK_EN0_REG0, 23, 0);
++static A5_SYS_PCLK(sys_dspa,		SYS_CLK_EN0_REG0, 24, 0);
++static A5_SYS_PCLK(sys_nna,		SYS_CLK_EN0_REG0, 25, 0);
++static A5_SYS_PCLK(sys_eth_mac,		SYS_CLK_EN0_REG0, 26, 0);
++static A5_SYS_PCLK(sys_rama,		SYS_CLK_EN0_REG0, 28, 0);
++static A5_SYS_PCLK(sys_ramb,		SYS_CLK_EN0_REG0, 30, 0);
++static A5_SYS_PCLK(sys_audio_top,	SYS_CLK_EN0_REG1, 0, 0);
++static A5_SYS_PCLK(sys_audio_vad,	SYS_CLK_EN0_REG1, 1, 0);
++static A5_SYS_PCLK(sys_usb,		SYS_CLK_EN0_REG1, 2, 0);
++static A5_SYS_PCLK(sys_sd_emmc_a,	SYS_CLK_EN0_REG1, 3, 0);
++static A5_SYS_PCLK(sys_sd_emmc_c,	SYS_CLK_EN0_REG1, 4, 0);
++static A5_SYS_PCLK(sys_pwm_ab,		SYS_CLK_EN0_REG1, 5, 0);
++static A5_SYS_PCLK(sys_pwm_cd,		SYS_CLK_EN0_REG1, 6, 0);
++static A5_SYS_PCLK(sys_pwm_ef,		SYS_CLK_EN0_REG1, 7, 0);
++static A5_SYS_PCLK(sys_pwm_gh,		SYS_CLK_EN0_REG1, 8, 0);
++static A5_SYS_PCLK(sys_spicc_1,		SYS_CLK_EN0_REG1, 9, 0);
++static A5_SYS_PCLK(sys_spicc_0,		SYS_CLK_EN0_REG1, 10, 0);
++static A5_SYS_PCLK(sys_uart_a,		SYS_CLK_EN0_REG1, 11, 0);
++static A5_SYS_PCLK(sys_uart_b,		SYS_CLK_EN0_REG1, 12, 0);
++static A5_SYS_PCLK(sys_uart_c,		SYS_CLK_EN0_REG1, 13, 0);
++static A5_SYS_PCLK(sys_uart_d,		SYS_CLK_EN0_REG1, 14, 0);
++static A5_SYS_PCLK(sys_uart_e,		SYS_CLK_EN0_REG1, 15, 0);
++static A5_SYS_PCLK(sys_i2c_m_a,		SYS_CLK_EN0_REG1, 16, 0);
++static A5_SYS_PCLK(sys_i2c_m_b,		SYS_CLK_EN0_REG1, 17, 0);
++static A5_SYS_PCLK(sys_i2c_m_c,		SYS_CLK_EN0_REG1, 18, 0);
++static A5_SYS_PCLK(sys_i2c_m_d,		SYS_CLK_EN0_REG1, 19, 0);
++static A5_SYS_PCLK(sys_rtc,		SYS_CLK_EN0_REG1, 21, 0);
++
++static const struct clk_parent_data a5_axi_clk_parents = { .fw_name = "axiclk" };
++
++#define A5_AXI_CLK(_name, _reg, _bit, _flags) \
++	A5_PCLK(_name, _reg, _bit, &a5_axi_clk_parents, _flags)
++
++static A5_AXI_CLK(axi_audio_vad,	AXI_CLK_EN0, 0, 0);
++static A5_AXI_CLK(axi_audio_top,	AXI_CLK_EN0, 1, 0);
++static A5_AXI_CLK(axi_ramb,		AXI_CLK_EN0, 5, 0);
++static A5_AXI_CLK(axi_rama,		AXI_CLK_EN0, 6, 0);
++static A5_AXI_CLK(axi_nna,		AXI_CLK_EN0, 12, 0);
++
++/*
++ * NOTE: axi_dev1_dmc provides the clock for the peripherals(EMMC, SDIO,
++ * sec_top, USB, Audio) to access the AXI bus of the DDR.
++ */
++static A5_AXI_CLK(axi_dev1_dmc,	AXI_CLK_EN0, 13, 0);
++
++/*
++ * NOTE: axi_dev0_dmc provides the clock for the peripherals(ETH and SPICC)
++ * to access the AXI bus of the DDR.
++ */
++static A5_AXI_CLK(axi_dev0_dmc,	AXI_CLK_EN0, 14, 0);
++static A5_AXI_CLK(axi_dsp_dmc,		AXI_CLK_EN0, 15, 0);
++
++static struct clk_regmap a5_clk_12_24m_in = {
++	.data = &(struct clk_regmap_gate_data) {
++		.offset = CLK12_24_CTRL,
++		.bit_idx = 11,
++	},
++	.hw.init = &(struct clk_init_data) {
++		.name = "clk_12_24m_in",
++		.ops = &clk_regmap_gate_ops,
++		.parent_data = &(const struct clk_parent_data) {
++			.fw_name = "xtal",
++		},
++		.num_parents = 1,
++	},
++};
++
++static struct clk_regmap a5_clk_12_24m = {
++	.data = &(struct clk_regmap_div_data) {
++		.offset = CLK12_24_CTRL,
++		.shift = 10,
++		.width = 1,
++	},
++	.hw.init = &(struct clk_init_data) {
++		.name = "clk_12_24m",
++		.ops = &clk_regmap_divider_ops,
++		.parent_hws = (const struct clk_hw *[]) {
++			&a5_clk_12_24m_in.hw
++		},
++		.num_parents = 1,
++	},
++};
++
++static struct clk_regmap a5_fclk_25m_div = {
++	.data = &(struct clk_regmap_div_data) {
++		.offset = CLK12_24_CTRL,
++		.shift = 0,
++		.width = 8,
++	},
++	.hw.init = &(struct clk_init_data) {
++		.name = "fclk_25m_div",
++		.ops = &clk_regmap_divider_ops,
++		.parent_data = &(const struct clk_parent_data) {
++			.fw_name = "fix",
++		},
++		.num_parents = 1,
++	},
++};
++
++static struct clk_regmap a5_fclk_25m = {
++	.data = &(struct clk_regmap_gate_data) {
++		.offset = CLK12_24_CTRL,
++		.bit_idx = 12,
++	},
++	.hw.init = &(struct clk_init_data) {
++		.name = "fclk_25m",
++		.ops = &clk_regmap_gate_ops,
++		.parent_hws = (const struct clk_hw *[]) {
++			&a5_fclk_25m_div.hw
++		},
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++/*
++ * Channel 4 5 8 9 10 11 13 14 15 16 18 are not connected.
++ *
++ * gp1 is designed for DSU (DynamIQ Shared Unit) alone. It cannot be changed
++ * arbitrarily. gp1 is read-only in the kernel and is only open for debug
++ * purposes.
++ */
++static u32 a5_gen_parent_table[] = { 0, 1, 2, 3, 6, 7, 12, 17, 19, 20, 21, 22,
++				    23, 24, 25, 26, 27, 28};
++
++static const struct clk_parent_data a5_gen_parent_data[] = {
++	{ .fw_name = "oscin" },
++	{ .hw = &a5_rtc_clk.hw },
++	{ .fw_name = "sysplldiv16" },
++	{ .fw_name = "ddr" },
++	{ .fw_name = "gp1" },
++	{ .fw_name = "hifi" },
++	{ .fw_name = "clkmsr" },
++	{ .fw_name = "cpudiv16" },
++	{ .fw_name = "fdiv2" },
++	{ .fw_name = "fdiv2p5" },
++	{ .fw_name = "fdiv3" },
++	{ .fw_name = "fdiv4" },
++	{ .fw_name = "fdiv5" },
++	{ .fw_name = "fdiv7" },
++	{ .fw_name = "mpll0" },
++	{ .fw_name = "mpll1" },
++	{ .fw_name = "mpll2" },
++	{ .fw_name = "mpll3" }
++};
++
++static struct clk_regmap a5_gen_sel = {
++	.data = &(struct clk_regmap_mux_data) {
++		.offset = GEN_CLK_CTRL,
++		.mask = 0x1f,
++		.shift = 12,
++		.table = a5_gen_parent_table,
++	},
++	.hw.init = &(struct clk_init_data) {
++		.name = "gen_sel",
++		.ops = &clk_regmap_mux_ops,
++		.parent_data = a5_gen_parent_data,
++		.num_parents = ARRAY_SIZE(a5_gen_parent_data),
++	},
++};
++
++static struct clk_regmap a5_gen_div = {
++	.data = &(struct clk_regmap_div_data) {
++		.offset = GEN_CLK_CTRL,
++		.shift = 0,
++		.width = 11,
++	},
++	.hw.init = &(struct clk_init_data) {
++		.name = "gen_div",
++		.ops = &clk_regmap_divider_ops,
++		.parent_hws = (const struct clk_hw *[]) {
++			&a5_gen_sel.hw
++		},
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static struct clk_regmap a5_gen = {
++	.data = &(struct clk_regmap_gate_data) {
++		.offset = GEN_CLK_CTRL,
++		.bit_idx = 11,
++	},
++	.hw.init = &(struct clk_init_data) {
++		.name = "gen",
++		.ops = &clk_regmap_gate_ops,
++		.parent_hws = (const struct clk_hw *[]) {
++			&a5_gen_div.hw
++		},
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++#define A5_COMP_SEL(_name, _reg, _shift, _mask, _pdata) \
++	MESON_COMP_SEL(a5_, _name, _reg, _shift, _mask, _pdata, NULL, 0, 0)
++
++#define A5_COMP_DIV(_name, _reg, _shift, _width) \
++	MESON_COMP_DIV(a5_, _name, _reg, _shift, _width, 0, CLK_SET_RATE_PARENT)
++
++#define A5_COMP_GATE(_name, _reg, _bit) \
++	MESON_COMP_GATE(a5_, _name, _reg, _bit, CLK_SET_RATE_PARENT)
++
++static const struct clk_parent_data a5_saradc_parent_data[] = {
++	{ .fw_name = "oscin" },
++	{ .fw_name = "sysclk" }
++};
++
++static A5_COMP_SEL(saradc, SAR_CLK_CTRL0, 9, 0x3, a5_saradc_parent_data);
++static A5_COMP_DIV(saradc, SAR_CLK_CTRL0, 0, 8);
++static A5_COMP_GATE(saradc, SAR_CLK_CTRL0, 8);
++
++static const struct clk_parent_data a5_pwm_parent_data[] = {
++	{ .fw_name = "oscin" },
++	{ .hw = &a5_rtc_clk.hw },
++	{ .fw_name = "fdiv4" },
++	{ .fw_name = "fdiv3" }
++};
++
++static A5_COMP_SEL(pwm_a, PWM_CLK_AB_CTRL, 9, 0x3, a5_pwm_parent_data);
++static A5_COMP_DIV(pwm_a, PWM_CLK_AB_CTRL, 0, 8);
++static A5_COMP_GATE(pwm_a, PWM_CLK_AB_CTRL, 8);
++
++static A5_COMP_SEL(pwm_b, PWM_CLK_AB_CTRL, 25, 0x3, a5_pwm_parent_data);
++static A5_COMP_DIV(pwm_b, PWM_CLK_AB_CTRL, 16, 8);
++static A5_COMP_GATE(pwm_b, PWM_CLK_AB_CTRL, 24);
++
++static A5_COMP_SEL(pwm_c, PWM_CLK_CD_CTRL, 9, 0x3, a5_pwm_parent_data);
++static A5_COMP_DIV(pwm_c, PWM_CLK_CD_CTRL, 0, 8);
++static A5_COMP_GATE(pwm_c, PWM_CLK_CD_CTRL, 8);
++
++static A5_COMP_SEL(pwm_d, PWM_CLK_CD_CTRL, 25, 0x3, a5_pwm_parent_data);
++static A5_COMP_DIV(pwm_d, PWM_CLK_CD_CTRL, 16, 8);
++static A5_COMP_GATE(pwm_d, PWM_CLK_CD_CTRL, 24);
++
++static A5_COMP_SEL(pwm_e, PWM_CLK_EF_CTRL, 9, 0x3, a5_pwm_parent_data);
++static A5_COMP_DIV(pwm_e, PWM_CLK_EF_CTRL, 0, 8);
++static A5_COMP_GATE(pwm_e, PWM_CLK_EF_CTRL, 8);
++
++static A5_COMP_SEL(pwm_f, PWM_CLK_EF_CTRL, 25, 0x3, a5_pwm_parent_data);
++static A5_COMP_DIV(pwm_f, PWM_CLK_EF_CTRL, 16, 8);
++static A5_COMP_GATE(pwm_f, PWM_CLK_EF_CTRL, 24);
++
++static A5_COMP_SEL(pwm_g, PWM_CLK_GH_CTRL, 9, 0x3, a5_pwm_parent_data);
++static A5_COMP_DIV(pwm_g, PWM_CLK_GH_CTRL, 0, 8);
++static A5_COMP_GATE(pwm_g, PWM_CLK_GH_CTRL, 8);
++
++static A5_COMP_SEL(pwm_h, PWM_CLK_GH_CTRL, 25, 0x3, a5_pwm_parent_data);
++static A5_COMP_DIV(pwm_h, PWM_CLK_GH_CTRL, 16, 8);
++static A5_COMP_GATE(pwm_h, PWM_CLK_GH_CTRL, 24);
++
++/*
++ * NOTE: Channel 7 is gp1, because gp1 is designed for DSU, so spicc does not
++ * support this source in the driver.
++ */
++static const struct clk_parent_data a5_spicc_parent_data[] = {
++	{ .fw_name = "oscin" },
++	{ .fw_name = "sysclk" },
++	{ .fw_name = "fdiv4" },
++	{ .fw_name = "fdiv3" },
++	{ .fw_name = "fdiv2" },
++	{ .fw_name = "fdiv5" },
++	{ .fw_name = "fdiv7" }
++};
++
++static A5_COMP_SEL(spicc_0, SPICC_CLK_CTRL, 7, 0x7, a5_spicc_parent_data);
++static A5_COMP_DIV(spicc_0, SPICC_CLK_CTRL, 0, 6);
++static A5_COMP_GATE(spicc_0, SPICC_CLK_CTRL, 6);
++
++static A5_COMP_SEL(spicc_1, SPICC_CLK_CTRL, 23, 0x7, a5_spicc_parent_data);
++static A5_COMP_DIV(spicc_1, SPICC_CLK_CTRL, 16, 6);
++static A5_COMP_GATE(spicc_1, SPICC_CLK_CTRL, 22);
++
++static const struct clk_parent_data a5_sd_emmc_parent_data[] = {
++	{ .fw_name = "oscin" },
++	{ .fw_name = "fdiv2" },
++	{ .fw_name = "fdiv3" },
++	{ .fw_name = "hifi" },
++	{ .fw_name = "fdiv2p5" },
++	{ .fw_name = "mpll2" },
++	{ .fw_name = "mpll3" },
++	{ .fw_name = "gp0" }
++};
++
++static A5_COMP_SEL(sd_emmc_a, SD_EMMC_CLK_CTRL, 9, 0x7, a5_sd_emmc_parent_data);
++static A5_COMP_DIV(sd_emmc_a, SD_EMMC_CLK_CTRL, 0, 7);
++static A5_COMP_GATE(sd_emmc_a, SD_EMMC_CLK_CTRL, 7);
++
++static A5_COMP_SEL(sd_emmc_c, NAND_CLK_CTRL, 9, 0x7, a5_sd_emmc_parent_data);
++static A5_COMP_DIV(sd_emmc_c, NAND_CLK_CTRL, 0, 7);
++static A5_COMP_GATE(sd_emmc_c, NAND_CLK_CTRL, 7);
++
++static struct clk_regmap a5_ts_div = {
++	.data = &(struct clk_regmap_div_data) {
++		.offset = TS_CLK_CTRL,
++		.shift = 0,
++		.width = 8,
++	},
++	.hw.init = &(struct clk_init_data) {
++		.name = "ts_div",
++		.ops = &clk_regmap_divider_ops,
++		.parent_data = &(const struct clk_parent_data) {
++			.fw_name = "oscin",
++		},
++		.num_parents = 1,
++	},
++};
++
++static struct clk_regmap a5_ts = {
++	.data = &(struct clk_regmap_gate_data) {
++		.offset = TS_CLK_CTRL,
++		.bit_idx = 8,
++	},
++	.hw.init = &(struct clk_init_data) {
++		.name = "ts",
++		.ops = &clk_regmap_gate_ops,
++		.parent_hws = (const struct clk_hw *[]) {
++			&a5_ts_div.hw
++		},
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static struct clk_fixed_factor a5_eth_125m_div = {
++	.mult = 1,
++	.div = 8,
++	.hw.init = &(struct clk_init_data) {
++		.name = "eth_125m_div",
++		.ops = &clk_fixed_factor_ops,
++		.parent_data = &(const struct clk_parent_data) {
++			.fw_name = "fdiv2",
++		},
++		.num_parents = 1,
++	},
++};
++
++static struct clk_regmap a5_eth_125m = {
++	.data = &(struct clk_regmap_gate_data) {
++		.offset = ETH_CLK_CTRL,
++		.bit_idx = 7,
++	},
++	.hw.init = &(struct clk_init_data) {
++		.name = "eth_125m",
++		.ops = &clk_regmap_gate_ops,
++		.parent_hws = (const struct clk_hw *[]) {
++			&a5_eth_125m_div.hw
++		},
++		.num_parents = 1,
++	},
++};
++
++static struct clk_regmap a5_eth_rmii_div = {
++	.data = &(struct clk_regmap_div_data) {
++		.offset = ETH_CLK_CTRL,
++		.shift = 0,
++		.width = 7,
++	},
++	.hw.init = &(struct clk_init_data) {
++		.name = "eth_rmii_div",
++		.ops = &clk_regmap_divider_ops,
++		.parent_data = &(const struct clk_parent_data) {
++			.fw_name = "fdiv2",
++		},
++		.num_parents = 1,
++	},
++};
++
++static struct clk_regmap a5_eth_rmii = {
++	.data = &(struct clk_regmap_gate_data) {
++		.offset = ETH_CLK_CTRL,
++		.bit_idx = 8,
++	},
++	.hw.init = &(struct clk_init_data) {
++		.name = "eth_rmii",
++		.ops = &clk_regmap_gate_ops,
++		.parent_hws = (const struct clk_hw *[]) {
++			&a5_eth_rmii_div.hw
++		},
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++/* Channel 6 is gp1. */
++static u32 a5_dspa_parent_table[] = { 0, 1, 2, 3, 4, 5, 7};
++
++static const struct clk_parent_data a5_dspa_parent_data[] = {
++	{ .fw_name = "oscin" },
++	{ .fw_name = "fdiv2p5" },
++	{ .fw_name = "fdiv3" },
++	{ .fw_name = "rtc" },  /* rtc_pll */
++	{ .fw_name = "hifi" },
++	{ .fw_name = "fdiv4" },
++	{ .hw = &a5_rtc_clk.hw }
++};
++
++static struct clk_regmap a5_dspa_0_sel = {
++	.data = &(struct clk_regmap_mux_data) {
++		.offset = DSPA_CLK_CTRL0,
++		.mask = 0x7,
++		.shift = 10,
++		.table = a5_dspa_parent_table,
++	},
++	.hw.init = &(struct clk_init_data) {
++		.name = "dspa_0_sel",
++		.ops = &clk_regmap_mux_ops,
++		.parent_data = a5_dspa_parent_data,
++		.num_parents = ARRAY_SIZE(a5_dspa_parent_data),
++	},
++};
++
++static struct clk_regmap a5_dspa_0_div = {
++	.data = &(struct clk_regmap_div_data) {
++		.offset = DSPA_CLK_CTRL0,
++		.shift = 0,
++		.width = 10,
++	},
++	.hw.init = &(struct clk_init_data) {
++		.name = "dspa_0_div",
++		.ops = &clk_regmap_divider_ops,
++		.parent_hws = (const struct clk_hw *[]) {
++			&a5_dspa_0_sel.hw
++		},
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static struct clk_regmap a5_dspa_0 = {
++	.data = &(struct clk_regmap_gate_data) {
++		.offset = DSPA_CLK_CTRL0,
++		.bit_idx = 13,
++	},
++	.hw.init = &(struct clk_init_data) {
++		.name = "dspa_0",
++		.ops = &clk_regmap_gate_ops,
++		.parent_hws = (const struct clk_hw *[]) {
++			&a5_dspa_0_div.hw
++		},
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_GATE | CLK_SET_RATE_PARENT,
++	},
++};
++
++static struct clk_regmap a5_dspa_1_sel = {
++	.data = &(struct clk_regmap_mux_data) {
++		.offset = DSPA_CLK_CTRL0,
++		.mask = 0x7,
++		.shift = 26,
++		.table = a5_dspa_parent_table,
++	},
++	.hw.init = &(struct clk_init_data) {
++		.name = "dspa_1_sel",
++		.ops = &clk_regmap_mux_ops,
++		.parent_data = a5_dspa_parent_data,
++		.num_parents = ARRAY_SIZE(a5_dspa_parent_data),
++	},
++};
++
++static struct clk_regmap a5_dspa_1_div = {
++	.data = &(struct clk_regmap_div_data) {
++		.offset = DSPA_CLK_CTRL0,
++		.shift = 16,
++		.width = 10,
++	},
++	.hw.init = &(struct clk_init_data) {
++		.name = "dspa_1_div",
++		.ops = &clk_regmap_divider_ops,
++		.parent_hws = (const struct clk_hw *[]) {
++			&a5_dspa_1_sel.hw
++		},
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static struct clk_regmap a5_dspa_1 = {
++	.data = &(struct clk_regmap_gate_data) {
++		.offset = DSPA_CLK_CTRL0,
++		.bit_idx = 29,
++	},
++	.hw.init = &(struct clk_init_data) {
++		.name = "dspa_1",
++		.ops = &clk_regmap_gate_ops,
++		.parent_hws = (const struct clk_hw *[]) {
++			&a5_dspa_1_div.hw
++		},
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_GATE | CLK_SET_RATE_PARENT,
++	},
++};
++
++static struct clk_regmap a5_dspa = {
++	.data = &(struct clk_regmap_mux_data){
++		.offset = DSPA_CLK_CTRL0,
++		.mask = 0x1,
++		.shift = 15,
++	},
++	.hw.init = &(struct clk_init_data) {
++		.name = "dspa",
++		.ops = &clk_regmap_mux_ops,
++		.parent_hws = (const struct clk_hw *[]) {
++			&a5_dspa_0.hw,
++			&a5_dspa_1.hw
++		},
++		.num_parents = 2,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++#define A5_COMP_SEL_WITH_TAB(_name, _reg, _shift, _mask, _pdata, _table) \
++	MESON_COMP_SEL(a5_, _name, _reg, _shift, _mask, _pdata, _table, 0, 0)
++
++/* Channel 6 is gp1. */
++static u32 a5_nna_parent_table[] = { 0, 1, 2, 3, 4, 5, 7};
++
++static const struct clk_parent_data a5_nna_parent_data[] = {
++	{ .fw_name = "oscin" },
++	{ .fw_name = "fdiv2p5" },
++	{ .fw_name = "fdiv4" },
++	{ .fw_name = "fdiv3" },
++	{ .fw_name = "fdiv5" },
++	{ .fw_name = "fdiv2" },
++	{ .fw_name = "hifi" }
++};
++
++static A5_COMP_SEL_WITH_TAB(nna_core, NNA_CLK_CNTL, 9, 0x7,
++			    a5_nna_parent_data, a5_nna_parent_table);
++static A5_COMP_DIV(nna_core, NNA_CLK_CNTL, 0, 7);
++static A5_COMP_GATE(nna_core, NNA_CLK_CNTL, 8);
++
++static A5_COMP_SEL_WITH_TAB(nna_axi, NNA_CLK_CNTL, 25, 0x7,
++			    a5_nna_parent_data, a5_nna_parent_table);
++static A5_COMP_DIV(nna_axi, NNA_CLK_CNTL, 16, 7);
++static A5_COMP_GATE(nna_axi, NNA_CLK_CNTL, 24);
++
++static struct clk_hw *a5_peripherals_hw_clks[] = {
++	[CLKID_RTC_DUALDIV_CLKIN]	= &a5_rtc_dualdiv_clkin.hw,
++	[CLKID_RTC_DUALDIV]		= &a5_rtc_dualdiv.hw,
++	[CLKID_RTC_DUALDIV_SEL]		= &a5_rtc_dualdiv_sel.hw,
++	[CLKID_RTC_DUALDIV_CLKOUT]	= &a5_rtc_dualdiv_clkout.hw,
++	[CLKID_RTC_CLK]			= &a5_rtc_clk.hw,
++	[CLKID_SYS_RESET_CTRL]		= &a5_sys_reset_ctrl.hw,
++	[CLKID_SYS_PWR_CTRL]		= &a5_sys_pwr_ctrl.hw,
++	[CLKID_SYS_PAD_CTRL]		= &a5_sys_pad_ctrl.hw,
++	[CLKID_SYS_CTRL]		= &a5_sys_ctrl.hw,
++	[CLKID_SYS_TS_PLL]		= &a5_sys_ts_pll.hw,
++	[CLKID_SYS_DEV_ARB]		= &a5_sys_dev_arb.hw,
++	[CLKID_SYS_MAILBOX]		= &a5_sys_mailbox.hw,
++	[CLKID_SYS_JTAG_CTRL]		= &a5_sys_jtag_ctrl.hw,
++	[CLKID_SYS_IR_CTRL]		= &a5_sys_ir_ctrl.hw,
++	[CLKID_SYS_MSR_CLK]		= &a5_sys_msr_clk.hw,
++	[CLKID_SYS_ROM]			= &a5_sys_rom.hw,
++	[CLKID_SYS_CPU_ARB]		= &a5_sys_cpu_apb.hw,
++	[CLKID_SYS_RSA]			= &a5_sys_rsa.hw,
++	[CLKID_SYS_SARADC]		= &a5_sys_saradc.hw,
++	[CLKID_SYS_STARTUP]		= &a5_sys_startup.hw,
++	[CLKID_SYS_SECURE]		= &a5_sys_secure.hw,
++	[CLKID_SYS_SPIFC]		= &a5_sys_spifc.hw,
++	[CLKID_SYS_DSPA]		= &a5_sys_dspa.hw,
++	[CLKID_SYS_NNA]			= &a5_sys_nna.hw,
++	[CLKID_SYS_ETH_MAC]		= &a5_sys_eth_mac.hw,
++	[CLKID_SYS_RAMA]		= &a5_sys_rama.hw,
++	[CLKID_SYS_RAMB]		= &a5_sys_ramb.hw,
++	[CLKID_SYS_AUDIO_TOP]		= &a5_sys_audio_top.hw,
++	[CLKID_SYS_AUDIO_VAD]		= &a5_sys_audio_vad.hw,
++	[CLKID_SYS_USB]			= &a5_sys_usb.hw,
++	[CLKID_SYS_SD_EMMC_A]		= &a5_sys_sd_emmc_a.hw,
++	[CLKID_SYS_SD_EMMC_C]		= &a5_sys_sd_emmc_c.hw,
++	[CLKID_SYS_PWM_AB]		= &a5_sys_pwm_ab.hw,
++	[CLKID_SYS_PWM_CD]		= &a5_sys_pwm_cd.hw,
++	[CLKID_SYS_PWM_EF]		= &a5_sys_pwm_ef.hw,
++	[CLKID_SYS_PWM_GH]		= &a5_sys_pwm_gh.hw,
++	[CLKID_SYS_SPICC_1]		= &a5_sys_spicc_1.hw,
++	[CLKID_SYS_SPICC_0]		= &a5_sys_spicc_0.hw,
++	[CLKID_SYS_UART_A]		= &a5_sys_uart_a.hw,
++	[CLKID_SYS_UART_B]		= &a5_sys_uart_b.hw,
++	[CLKID_SYS_UART_C]		= &a5_sys_uart_c.hw,
++	[CLKID_SYS_UART_D]		= &a5_sys_uart_d.hw,
++	[CLKID_SYS_UART_E]		= &a5_sys_uart_e.hw,
++	[CLKID_SYS_I2C_M_A]		= &a5_sys_i2c_m_a.hw,
++	[CLKID_SYS_I2C_M_B]		= &a5_sys_i2c_m_b.hw,
++	[CLKID_SYS_I2C_M_C]		= &a5_sys_i2c_m_c.hw,
++	[CLKID_SYS_I2C_M_D]		= &a5_sys_i2c_m_d.hw,
++	[CLKID_SYS_RTC]			= &a5_sys_rtc.hw,
++	[CLKID_AXI_AUDIO_VAD]		= &a5_axi_audio_vad.hw,
++	[CLKID_AXI_AUDIO_TOP]		= &a5_axi_audio_top.hw,
++	[CLKID_AXI_RAMB]		= &a5_axi_ramb.hw,
++	[CLKID_AXI_RAMA]		= &a5_axi_rama.hw,
++	[CLKID_AXI_NNA]			= &a5_axi_nna.hw,
++	[CLKID_AXI_DEV1_DMC]		= &a5_axi_dev1_dmc.hw,
++	[CLKID_AXI_DEV0_DMC]		= &a5_axi_dev0_dmc.hw,
++	[CLKID_AXI_DSP_DMC]		= &a5_axi_dsp_dmc.hw,
++	[CLKID_12_24M_IN]		= &a5_clk_12_24m_in.hw,
++	[CLKID_12M_24M]			= &a5_clk_12_24m.hw,
++	[CLKID_FCLK_25M_DIV]		= &a5_fclk_25m_div.hw,
++	[CLKID_FCLK_25M]		= &a5_fclk_25m.hw,
++	[CLKID_GEN_SEL]			= &a5_gen_sel.hw,
++	[CLKID_GEN_DIV]			= &a5_gen_div.hw,
++	[CLKID_GEN]			= &a5_gen.hw,
++	[CLKID_SARADC_SEL]		= &a5_saradc_sel.hw,
++	[CLKID_SARADC_DIV]		= &a5_saradc_div.hw,
++	[CLKID_SARADC]			= &a5_saradc.hw,
++	[CLKID_PWM_A_SEL]		= &a5_pwm_a_sel.hw,
++	[CLKID_PWM_A_DIV]		= &a5_pwm_a_div.hw,
++	[CLKID_PWM_A]			= &a5_pwm_a.hw,
++	[CLKID_PWM_B_SEL]		= &a5_pwm_b_sel.hw,
++	[CLKID_PWM_B_DIV]		= &a5_pwm_b_div.hw,
++	[CLKID_PWM_B]			= &a5_pwm_b.hw,
++	[CLKID_PWM_C_SEL]		= &a5_pwm_c_sel.hw,
++	[CLKID_PWM_C_DIV]		= &a5_pwm_c_div.hw,
++	[CLKID_PWM_C]			= &a5_pwm_c.hw,
++	[CLKID_PWM_D_SEL]		= &a5_pwm_d_sel.hw,
++	[CLKID_PWM_D_DIV]		= &a5_pwm_d_div.hw,
++	[CLKID_PWM_D]			= &a5_pwm_d.hw,
++	[CLKID_PWM_E_SEL]		= &a5_pwm_e_sel.hw,
++	[CLKID_PWM_E_DIV]		= &a5_pwm_e_div.hw,
++	[CLKID_PWM_E]			= &a5_pwm_e.hw,
++	[CLKID_PWM_F_SEL]		= &a5_pwm_f_sel.hw,
++	[CLKID_PWM_F_DIV]		= &a5_pwm_f_div.hw,
++	[CLKID_PWM_F]			= &a5_pwm_f.hw,
++	[CLKID_PWM_G_SEL]		= &a5_pwm_g_sel.hw,
++	[CLKID_PWM_G_DIV]		= &a5_pwm_g_div.hw,
++	[CLKID_PWM_G]			= &a5_pwm_g.hw,
++	[CLKID_PWM_H_SEL]		= &a5_pwm_h_sel.hw,
++	[CLKID_PWM_H_DIV]		= &a5_pwm_h_div.hw,
++	[CLKID_PWM_H]			= &a5_pwm_h.hw,
++	[CLKID_SPICC_0_SEL]		= &a5_spicc_0_sel.hw,
++	[CLKID_SPICC_0_DIV]		= &a5_spicc_0_div.hw,
++	[CLKID_SPICC_0]			= &a5_spicc_0.hw,
++	[CLKID_SPICC_1_SEL]		= &a5_spicc_1_sel.hw,
++	[CLKID_SPICC_1_DIV]		= &a5_spicc_1_div.hw,
++	[CLKID_SPICC_1]			= &a5_spicc_1.hw,
++	[CLKID_SD_EMMC_A_SEL]		= &a5_sd_emmc_a_sel.hw,
++	[CLKID_SD_EMMC_A_DIV]		= &a5_sd_emmc_a_div.hw,
++	[CLKID_SD_EMMC_A]		= &a5_sd_emmc_a.hw,
++	[CLKID_SD_EMMC_C_SEL]		= &a5_sd_emmc_c_sel.hw,
++	[CLKID_SD_EMMC_C_DIV]		= &a5_sd_emmc_c_div.hw,
++	[CLKID_SD_EMMC_C]		= &a5_sd_emmc_c.hw,
++	[CLKID_TS_DIV]			= &a5_ts_div.hw,
++	[CLKID_TS]			= &a5_ts.hw,
++	[CLKID_ETH_125M_DIV]		= &a5_eth_125m_div.hw,
++	[CLKID_ETH_125M]		= &a5_eth_125m.hw,
++	[CLKID_ETH_RMII_DIV]		= &a5_eth_rmii_div.hw,
++	[CLKID_ETH_RMII]		= &a5_eth_rmii.hw,
++	[CLKID_DSPA_0_SEL]		= &a5_dspa_0_sel.hw,
++	[CLKID_DSPA_0_DIV]		= &a5_dspa_0_div.hw,
++	[CLKID_DSPA_0]			= &a5_dspa_0.hw,
++	[CLKID_DSPA_1_SEL]		= &a5_dspa_1_sel.hw,
++	[CLKID_DSPA_1_DIV]		= &a5_dspa_1_div.hw,
++	[CLKID_DSPA_1]			= &a5_dspa_1.hw,
++	[CLKID_DSPA]			= &a5_dspa.hw,
++	[CLKID_NNA_CORE_SEL]		= &a5_nna_core_sel.hw,
++	[CLKID_NNA_CORE_DIV]		= &a5_nna_core_div.hw,
++	[CLKID_NNA_CORE]		= &a5_nna_core.hw,
++	[CLKID_NNA_AXI_SEL]		= &a5_nna_axi_sel.hw,
++	[CLKID_NNA_AXI_DIV]		= &a5_nna_axi_div.hw,
++	[CLKID_NNA_AXI]			= &a5_nna_axi.hw,
++};
++
++static const struct meson_clkc_data a5_peripherals_clkc_data = {
++	.hw_clks = {
++		.hws = a5_peripherals_hw_clks,
++		.num = ARRAY_SIZE(a5_peripherals_hw_clks),
++	},
++};
++
++static const struct of_device_id a5_peripherals_clkc_match_table[] = {
++	{
++		.compatible = "amlogic,a5-peripherals-clkc",
++		.data = &a5_peripherals_clkc_data,
++	},
++	{}
++};
++MODULE_DEVICE_TABLE(of, a5_peripherals_clkc_match_table);
++
++static struct platform_driver a5_peripherals_clkc_driver = {
++	.probe = meson_clkc_mmio_probe,
++	.driver = {
++		.name = "a5-peripherals-clkc",
++		.of_match_table = a5_peripherals_clkc_match_table,
++	},
++};
++module_platform_driver(a5_peripherals_clkc_driver);
++
++MODULE_DESCRIPTION("Amlogic A5 Peripherals Clock Controller driver");
++MODULE_AUTHOR("Chuan Liu <chuan.liu@amlogic.com>");
++MODULE_LICENSE("GPL");
++MODULE_IMPORT_NS("CLK_MESON");
 
 -- 
 2.42.0
