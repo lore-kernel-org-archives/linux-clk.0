@@ -1,38 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B90A12F39B4;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B91842F5305;
 	Tue, 30 Sep 2025 09:37:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759225051; cv=none; b=U4rjZAe/Xlr4+jfkFUKwK8EOSyRqD8CS6J/Bd1bX3+l73FSr+qLVASIsIq1OiZpCff3HYX+YQg8uYswEzBQZi0P4k/LjAHDBtEPkTHlCUKZOm9jJlHXmgzAtA7fs6XUZqdYQ9CwuP25ycO3VWBUkJIKqqmCz+gnFj5cc3G5a6NA=
+	t=1759225051; cv=none; b=H82mNCIkHAvznb9d2rB+rVrk9kKhebNDFQ0uK8LuK8KxvnB+YL6L4JanwsRPqHk3jQ/RipMoTXR3wisAGXfyXtQbE5w3ZxMNx2x19H6SkjJOeRu+7F3J+X5ahosubqzUURFs8ZGGOpK55eTzEyIEye225HUKACAwQphlaHo88ls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1759225051; c=relaxed/simple;
-	bh=hhzYEfgfZJNiOina++Jm2EzVehDXlsbevAJCQFuj9kw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=D4YuUsITr1L7JnP4S+qRHhagw8w5VZJ+8ZHqfEWsdIDMFc/EdPAxs+4cMgqbASl/zqbOSKnJex9pH2Y6B+CGavgJh8mT/zPb07GJ/4jejwtWTUI7dt8YKqO9tPDRMu0mhMsWJuGJBXUXyA5iXFE46psZEn2GX6+0QDFGsJAqjJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QV+QzIhw; arc=none smtp.client-ip=10.30.226.201
+	bh=5o+htP+rM/HKQyGn1eH3S7+MzThwQ+uX1Hq8VqONr8g=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=qfAlzwfA4rot1qJjKmh0kXonbmBpLrgwUgUEbhgYW2mxxc66r2CTe75AHS/PT+7m+f+HlKlp+tGn4t6mLTt7n8qnoURQZZXq5Vnpt7fGiANIfh/X7gp5KDVr0kNGXFJWZGKz7NcUgBlL+4cvSF4WF/LbcDtMETxUIpWn0faYODc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n9xxRbBB; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QV+QzIhw"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 6DA97C16AAE;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n9xxRbBB"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 44A39C4CEF0;
 	Tue, 30 Sep 2025 09:37:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1759225051;
-	bh=hhzYEfgfZJNiOina++Jm2EzVehDXlsbevAJCQFuj9kw=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=QV+QzIhwZrE9VWAn6cwpBhVNLO/omJpozHuuNF4t3foc9yGrhmww5m/QgJWNv46S7
-	 rOwkTW6m6RalpsxD+50dKPZENVbPYbXjABCq6w7dOZkbDX9wEvkuh4dd2/9e4KfdOi
-	 xaJ6Rl+2nsyjzWEDToS9EhRdsQ9V54QNJco2BZaYVRuYbTeaaoqi/B5r1ifpe8jEVX
-	 RkmKU06WgR1gSWqDR0XUeFXDEPFADzkZdzxaf3DesJEW+O6Fo7Piy9+t9srYoNjKng
-	 0jiI14TA10kR4GUdT/b3FlnViUk4XsDJDRDzQIrhuvIJ/ll0EqCmLh351kCX8jfk8A
-	 NSlbUBozJZM2A==
+	bh=5o+htP+rM/HKQyGn1eH3S7+MzThwQ+uX1Hq8VqONr8g=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=n9xxRbBBX96T9ogcvhLUVw8I8DhLBCLfbpk2dfxWWXyJ/khtsq8oqFcT7gGdJqit/
+	 tWd6EgzlvC+0o6Bt7lHLfzDo/6yH7naAjRWQ7xfHiml1BS1hpIL3N9vAdcUGR7SpT3
+	 Z0LNwuF6TBLCCfkRPe13i8SnOwGpuzl7LzdYjnvutHXqCzQ7mwHuxzuXC2EYyof6jH
+	 edpVAsXoS8kubU08pHR5U9LT4zwEzvQQw1N81UnIzStZ03XlSFJL/og3k0UuUxff7b
+	 zF4jiPEE3lZ5q0AOmAQgCMDSl+xXF5V2LJneUtv9+igBFiWrDje3RdijMcN/HiabZW
+	 yZbBf/QEdRPfw==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60DDACCA46F;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FAB2CAC5BC;
 	Tue, 30 Sep 2025 09:37:31 +0000 (UTC)
 From: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
-Date: Tue, 30 Sep 2025 17:37:16 +0800
-Subject: [PATCH 03/19] dt-bindings: clock: Add Amlogic A4 peripherals clock
- controller
+Subject: [PATCH 00/19] clk: amlogic: Add PLLs and peripheral clocks for A4
+ and A5 SoCs
+Date: Tue, 30 Sep 2025 17:37:13 +0800
+Message-Id: <20250930-a4_a5_add_clock_driver-v1-0-a9acf7951589@amlogic.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -40,10 +40,10 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250930-a4_a5_add_clock_driver-v1-3-a9acf7951589@amlogic.com>
-References: <20250930-a4_a5_add_clock_driver-v1-0-a9acf7951589@amlogic.com>
-In-Reply-To: <20250930-a4_a5_add_clock_driver-v1-0-a9acf7951589@amlogic.com>
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAMmk22gC/x3M0QoCIRBA0V9Z5jnBNC37lSXEnKmGYl1GkED89
+ 6TH83Bvh0rCVOG6dBBqXLlsE8fDAvmVticpxmkw2jgdzEWlU0wuJsSYPyW/Iwo3EmXu5xzQB+e
+ thRnvQg/+/sfrbYwfl8Id9GgAAAA=
 To: Michael Turquette <mturquette@baylibre.com>, 
  Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -56,11 +56,11 @@ Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, 
  Xianwei Zhao <xianwei.zhao@amlogic.com>, Chuan Liu <chuan.liu@amlogic.com>
 X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1759225047; l=8947;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1759225047; l=4218;
  i=chuan.liu@amlogic.com; s=20240902; h=from:subject:message-id;
- bh=lhJQX8qWsm+to1dG1JwM0xsIMHODJaKrrUgF0nVZFEY=;
- b=a7biYnhSuewY3g4iaR1DNoe8YbJFpvLqMwcKYqq5x7ygHLg2BhDtZVK2b441lwLevreswCWx3
- Iz8zpdGdPw6BGIliV1Xl1LqVXp8sp8uHulLQ+vnniGCGaRvbBdLTOaO
+ bh=5o+htP+rM/HKQyGn1eH3S7+MzThwQ+uX1Hq8VqONr8g=;
+ b=9UB/pSh4Qx25JQAEirqjDzvZLuzERi70Cm6gW7FIEkZawGXnWeEHArseYuIOn4cVV4sEtZAa/
+ JbTQPGuAcNjD5619B0r6CFtJhOhE2icgF32q6i9IBU4mc7tmLmTgXXe
 X-Developer-Key: i=chuan.liu@amlogic.com; a=ed25519;
  pk=fnKDB+81SoWGKW2GJNFkKy/ULvsDmJZRGBE7pR5Xcpo=
 X-Endpoint-Received: by B4 Relay for chuan.liu@amlogic.com/20240902 with
@@ -68,282 +68,85 @@ X-Endpoint-Received: by B4 Relay for chuan.liu@amlogic.com/20240902 with
 X-Original-From: Chuan Liu <chuan.liu@amlogic.com>
 Reply-To: chuan.liu@amlogic.com
 
-From: Chuan Liu <chuan.liu@amlogic.com>
+This patch series includes changes related to the PLL and peripheral
+clocks for both the A4 and A5 SoCs.
 
-Add the peripherals clock controller dt-bindings for the Amlogic A4
-SoC family.
+The patches for A5 were previously submitted up to V3 by Xianwei.
+https://lore.kernel.org/all/20250103-a5-clk-v3-0-a207ce83b9e9@amlogic.com/
+After friendly coordination, I’ve taken over and continued the
+submission as part of this series. The dt-bindings patch retains Rob's
+original "Reviewed-by" tag, and I hope this hasn’t caused any
+additional confusion.
 
+Both A4 and A5 belong to the Audio series. Judging by their names, one
+might assume that A5 is an upgrade to A4, but in fact, A5 was released
+a year earlier than A4.
+
+Since there are differences in the PLLs and peripheral clocks between
+the A4 and A5 SoCs (especially the PLL), and taking into account factors
+such as memory footprint and maintainability, this series does not
+attempt to merge the two into a shared driver as was done for
+G12A/G12B/SM1.
+
+This patch series includes all related dt-bindings, driver, and dts
+changes for the PLLs and peripheral clocks. Following our past convention
+for clock-related submissions, the dts changes are placed at the end
+and submitted separately. If this ordering makes it harder for
+maintainers to review or pick patches, please feel free to point it out.
+
+Co-developed-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
+Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
 Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
 ---
- .../clock/amlogic,a4-peripherals-clkc.yaml         | 122 +++++++++++++++++++
- .../clock/amlogic,a4-peripherals-clkc.h            | 129 +++++++++++++++++++++
- 2 files changed, 251 insertions(+)
+Chuan Liu (19):
+      dt-bindings: clock: Add Amlogic A4 SCMI clock controller
+      dt-bindings: clock: Add Amlogic A4 PLL clock controller
+      dt-bindings: clock: Add Amlogic A4 peripherals clock controller
+      clk: amlogic: Optimize PLL enable timing
+      clk: amlogic: Correct l_detect bit control
+      clk: amlogic: Fix out-of-range PLL frequency setting
+      clk: amlogic: Add A4 PLL clock controller driver
+      clk: amlogic: Add A4 clock peripherals controller driver
+      arm64: dts: amlogic: A4: Add scmi-clk node
+      arm64: dts: amlogic: A4: Add PLL controller node
+      arm64: dts: amlogic: A4: Add peripherals clock controller node
+      dt-bindings: clock: Add Amlogic A5 SCMI clock controller support
+      dt-bindings: clock: Add Amlogic A5 PLL clock controller
+      dt-bindings: clock: Add Amlogic A5 peripherals clock controller
+      clk: amlogic: Add A5 PLL clock controller driver
+      clk: amlogic: Add A5 clock peripherals controller driver
+      arm64: dts: amlogic: A5: Add scmi-clk node
+      arm64: dts: amlogic: A5: Add PLL controller node
+      arm64: dts: amlogic: A5: Add peripheral clock controller node
 
-diff --git a/Documentation/devicetree/bindings/clock/amlogic,a4-peripherals-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,a4-peripherals-clkc.yaml
-new file mode 100644
-index 000000000000..13a0622f1f64
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/amlogic,a4-peripherals-clkc.yaml
-@@ -0,0 +1,122 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+# Copyright (C) 2025 Amlogic, Inc. All rights reserved
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/amlogic,a4-peripherals-clkc.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Amlogic A4 series Peripheral Clock Controller
-+
-+maintainers:
-+  - Neil Armstrong <neil.armstrong@linaro.org>
-+  - Jerome Brunet <jbrunet@baylibre.com>
-+  - Xianwei Zhao <xianwei.zhao@amlogic.com>
-+  - Chuan Liu <chuan.liu@amlogic.com>
-+
-+properties:
-+  compatible:
-+    const: amlogic,a4-peripherals-clkc
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    minItems: 16
-+    items:
-+      - description: input oscillator
-+      - description: input oscillators multiplexer
-+      - description: input fix pll
-+      - description: input fclk div 2
-+      - description: input fclk div 2p5
-+      - description: input fclk div 3
-+      - description: input fclk div 4
-+      - description: input fclk div 5
-+      - description: input fclk div 7
-+      - description: input gp0 pll
-+      - description: input gp1 pll
-+      - description: input hifi pll
-+      - description: input sys clk
-+      - description: input axi clk
-+      - description: input sys pll div 16
-+      - description: input cpu clk div 16
-+      - description: input pad clock for rtc clk (optional)
-+
-+  clock-names:
-+    minItems: 16
-+    items:
-+      - const: xtal
-+      - const: oscin
-+      - const: fix
-+      - const: fdiv2
-+      - const: fdiv2p5
-+      - const: fdiv3
-+      - const: fdiv4
-+      - const: fdiv5
-+      - const: fdiv7
-+      - const: gp0
-+      - const: gp1
-+      - const: hifi
-+      - const: sysclk
-+      - const: axiclk
-+      - const: sysplldiv16
-+      - const: cpudiv16
-+      - const: pad_osc
-+
-+  "#clock-cells":
-+    const: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - clock-names
-+  - "#clock-cells"
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/amlogic,a4-scmi-clkc.h>
-+    #include <dt-bindings/clock/amlogic,a4-pll-clkc.h>
-+    apb {
-+        #address-cells = <2>;
-+        #size-cells = <2>;
-+
-+        clock-controller@0 {
-+            compatible = "amlogic,a4-peripherals-clkc";
-+            reg = <0x0 0x0 0x0 0x20c>;
-+            #clock-cells = <1>;
-+            clocks = <&xtal>,
-+                     <&scmi_clk CLKID_OSC>,
-+                     <&scmi_clk CLKID_FIXED_PLL>,
-+                     <&scmi_clk CLKID_FCLK_DIV2>,
-+                     <&scmi_clk CLKID_FCLK_DIV2P5>,
-+                     <&scmi_clk CLKID_FCLK_DIV3>,
-+                     <&scmi_clk CLKID_FCLK_DIV4>,
-+                     <&scmi_clk CLKID_FCLK_DIV5>,
-+                     <&scmi_clk CLKID_FCLK_DIV7>,
-+                     <&clkc_pll CLKID_GP0_PLL>,
-+                     <&scmi_clk CLKID_GP1_PLL>,
-+                     <&clkc_pll CLKID_HIFI_PLL>,
-+                     <&scmi_clk CLKID_SYS_CLK>,
-+                     <&scmi_clk CLKID_AXI_CLK>,
-+                     <&scmi_clk CLKID_SYS_PLL_DIV16>,
-+                     <&scmi_clk CLKID_CPU_CLK_DIV16>;
-+            clock-names = "xtal",
-+                          "oscin",
-+                          "fix",
-+                          "fdiv2",
-+                          "fdiv2p5",
-+                          "fdiv3",
-+                          "fdiv4",
-+                          "fdiv5",
-+                          "fdiv7",
-+                          "gp0",
-+                          "gp1",
-+                          "hifi",
-+                          "sysclk",
-+                          "axiclk",
-+                          "sysplldiv16",
-+                          "cpudiv16";
-+        };
-+    };
-diff --git a/include/dt-bindings/clock/amlogic,a4-peripherals-clkc.h b/include/dt-bindings/clock/amlogic,a4-peripherals-clkc.h
-new file mode 100644
-index 000000000000..b09f4bb4d0d0
---- /dev/null
-+++ b/include/dt-bindings/clock/amlogic,a4-peripherals-clkc.h
-@@ -0,0 +1,129 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR MIT) */
-+/*
-+ * Copyright (c) 2025 Amlogic, Inc. All rights reserved.
-+ * Author: Chuan Liu <chuan.liu@amlogic.com>
-+ */
-+
-+#ifndef _DT_BINDINGS_CLOCK_AMLOGIC_A4_PERIPHERALS_CLKC_H
-+#define _DT_BINDINGS_CLOCK_AMLOGIC_A4_PERIPHERALS_CLKC_H
-+
-+#define CLKID_RTC_DUALDIV_CLKIN			0
-+#define CLKID_RTC_DUALDIV			1
-+#define CLKID_RTC_DUALDIV_SEL			2
-+#define CLKID_RTC_DUALDIV_CLKOUT		3
-+#define CLKID_RTC_CLK				4
-+#define CLKID_SYS_RESET_CTRL			5
-+#define CLKID_SYS_PWR_CTRL			6
-+#define CLKID_SYS_PAD_CTRL			7
-+#define CLKID_SYS_CTRL				8
-+#define CLKID_SYS_TS_PLL			9
-+#define CLKID_SYS_DEV_ARB			10
-+#define CLKID_SYS_MAILBOX			11
-+#define CLKID_SYS_JTAG_CTRL			12
-+#define CLKID_SYS_IR_CTRL			13
-+#define CLKID_SYS_MSR_CLK			14
-+#define CLKID_SYS_ROM				15
-+#define CLKID_SYS_CPU_ARB			16
-+#define CLKID_SYS_RSA				17
-+#define CLKID_SYS_SARADC			18
-+#define CLKID_SYS_STARTUP			19
-+#define CLKID_SYS_SECURE			20
-+#define CLKID_SYS_SPIFC				21
-+#define CLKID_SYS_LED_CTRL			22
-+#define CLKID_SYS_ETH_PHY			23
-+#define CLKID_SYS_ETH_MAC			24
-+#define CLKID_SYS_RAMA				25
-+#define CLKID_SYS_RAMB				26
-+#define CLKID_SYS_AUDIO_TOP			27
-+#define CLKID_SYS_AUDIO_VAD			28
-+#define CLKID_SYS_USB				29
-+#define CLKID_SYS_SD_EMMC_A			30
-+#define CLKID_SYS_SD_EMMC_C			31
-+#define CLKID_SYS_PWM_AB			32
-+#define CLKID_SYS_PWM_CD			33
-+#define CLKID_SYS_PWM_EF			34
-+#define CLKID_SYS_PWM_GH			35
-+#define CLKID_SYS_SPICC_1			36
-+#define CLKID_SYS_SPICC_0			37
-+#define CLKID_SYS_UART_A			38
-+#define CLKID_SYS_UART_B			39
-+#define CLKID_SYS_UART_C			40
-+#define CLKID_SYS_UART_D			41
-+#define CLKID_SYS_UART_E			42
-+#define CLKID_SYS_I2C_M_A			43
-+#define CLKID_SYS_I2C_M_B			44
-+#define CLKID_SYS_I2C_M_C			45
-+#define CLKID_SYS_I2C_M_D			46
-+#define CLKID_SYS_RTC				47
-+#define CLKID_SYS_VOUT				48
-+#define CLKID_SYS_ACODEC			49
-+#define CLKID_SYS_USB_CTRL			50
-+#define CLKID_AXI_AUDIO_VAD			51
-+#define CLKID_AXI_AUDIO_TOP			52
-+#define CLKID_AXI_RAMA				53
-+#define CLKID_AXI_DEV1_DMC			54
-+#define CLKID_AXI_DEV0_DMC			55
-+#define CLKID_AXI_DSP_DMC			56
-+#define CLKID_12_24M_IN				57
-+#define CLKID_12M_24M				58
-+#define CLKID_FCLK_25M_DIV			59
-+#define CLKID_FCLK_25M				60
-+#define CLKID_GEN_SEL				61
-+#define CLKID_GEN_DIV				62
-+#define CLKID_GEN				63
-+#define CLKID_SARADC_SEL			64
-+#define CLKID_SARADC_DIV			65
-+#define CLKID_SARADC				66
-+#define CLKID_PWM_A_SEL				67
-+#define CLKID_PWM_A_DIV				68
-+#define CLKID_PWM_A				69
-+#define CLKID_PWM_B_SEL				70
-+#define CLKID_PWM_B_DIV				71
-+#define CLKID_PWM_B				72
-+#define CLKID_PWM_C_SEL				73
-+#define CLKID_PWM_C_DIV				74
-+#define CLKID_PWM_C				75
-+#define CLKID_PWM_D_SEL				76
-+#define CLKID_PWM_D_DIV				77
-+#define CLKID_PWM_D				78
-+#define CLKID_PWM_E_SEL				79
-+#define CLKID_PWM_E_DIV				80
-+#define CLKID_PWM_E				81
-+#define CLKID_PWM_F_SEL				82
-+#define CLKID_PWM_F_DIV				83
-+#define CLKID_PWM_F				84
-+#define CLKID_PWM_G_SEL				85
-+#define CLKID_PWM_G_DIV				86
-+#define CLKID_PWM_G				87
-+#define CLKID_PWM_H_SEL				88
-+#define CLKID_PWM_H_DIV				89
-+#define CLKID_PWM_H				90
-+#define CLKID_SPICC_0_SEL			91
-+#define CLKID_SPICC_0_DIV			92
-+#define CLKID_SPICC_0				93
-+#define CLKID_SPICC_1_SEL			94
-+#define CLKID_SPICC_1_DIV			95
-+#define CLKID_SPICC_1				96
-+#define CLKID_SD_EMMC_A_SEL			97
-+#define CLKID_SD_EMMC_A_DIV			98
-+#define CLKID_SD_EMMC_A				99
-+#define CLKID_SD_EMMC_C_SEL			100
-+#define CLKID_SD_EMMC_C_DIV			101
-+#define CLKID_SD_EMMC_C				102
-+#define CLKID_TS_DIV				103
-+#define CLKID_TS				104
-+#define CLKID_ETH_125M_DIV			105
-+#define CLKID_ETH_125M				106
-+#define CLKID_ETH_RMII_DIV			107
-+#define CLKID_ETH_RMII				108
-+#define CLKID_VOUT_MCLK_SEL			109
-+#define CLKID_VOUT_MCLK_DIV			110
-+#define CLKID_VOUT_MCLK				111
-+#define CLKID_VOUT_ENC_SEL			112
-+#define CLKID_VOUT_ENC_DIV			113
-+#define CLKID_VOUT_ENC				114
-+#define CLKID_AUDIO_CORE_SEL			115
-+#define CLKID_AUDIO_CORE_DIV			116
-+#define CLKID_AUDIO_CORE			117
-+
-+#endif  /* _DT_BINDINGS_CLOCK_AMLOGIC_A4_PERIPHERALS_CLKC_H */
+ .../clock/amlogic,a4-peripherals-clkc.yaml         | 122 +++
+ .../bindings/clock/amlogic,a4-pll-clkc.yaml        |  61 ++
+ .../clock/amlogic,a5-peripherals-clkc.yaml         | 134 ++++
+ .../bindings/clock/amlogic,a5-pll-clkc.yaml        |  63 ++
+ arch/arm64/boot/dts/amlogic/amlogic-a4.dtsi        |  80 ++
+ arch/arm64/boot/dts/amlogic/amlogic-a5.dtsi        |  87 ++
+ drivers/clk/meson/Kconfig                          |  53 ++
+ drivers/clk/meson/Makefile                         |   4 +
+ drivers/clk/meson/a1-pll.c                         |   1 +
+ drivers/clk/meson/a4-peripherals.c                 | 764 ++++++++++++++++++
+ drivers/clk/meson/a4-pll.c                         | 242 ++++++
+ drivers/clk/meson/a5-peripherals.c                 | 883 +++++++++++++++++++++
+ drivers/clk/meson/a5-pll.c                         | 476 +++++++++++
+ drivers/clk/meson/clk-pll.c                        |  76 +-
+ drivers/clk/meson/clk-pll.h                        |   2 +
+ .../clock/amlogic,a4-peripherals-clkc.h            | 129 +++
+ include/dt-bindings/clock/amlogic,a4-pll-clkc.h    |  15 +
+ include/dt-bindings/clock/amlogic,a4-scmi-clkc.h   |  42 +
+ .../clock/amlogic,a5-peripherals-clkc.h            | 132 +++
+ include/dt-bindings/clock/amlogic,a5-pll-clkc.h    |  24 +
+ include/dt-bindings/clock/amlogic,a5-scmi-clkc.h   |  44 +
+ 21 files changed, 3406 insertions(+), 28 deletions(-)
+---
+base-commit: 01f3a6d1d59b8e25a6de243b0d73075cf0415eaf
+change-id: 20250928-a4_a5_add_clock_driver-2b7c9d695633
 
+Best regards,
 -- 
-2.42.0
+Chuan Liu <chuan.liu@amlogic.com>
 
 
