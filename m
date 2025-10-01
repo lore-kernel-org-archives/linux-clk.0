@@ -1,149 +1,182 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0A151A8F97
-	for <linux-clk@vger.kernel.org>; Wed,  1 Oct 2025 07:04:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCA3A139D
+	for <linux-clk@vger.kernel.org>; Wed,  1 Oct 2025 07:45:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759302275; cv=none; b=Nf1Fvx127MRfrr5Xe+2t6dMri4yXch/+S9rsx50Pny9u4n/6XSyai8nawI6/ymv5BaHB1xpjUOrsUarVTYWCe5S2WRO/DHYSdnEePl4FFNZOGFhZyqyaEIXSC7TDey27wI+aklovRgopbAo7n1du6elUt9Mnrksa+CvdmEvFNdc=
+	t=1759304712; cv=none; b=D/6h8uqlYWbDafppWVeIUDWYm510X2/lAcfhmCgz4AGSjkyHTu5Bxt/RmQglGFkpcqr9wX2Flc8ErZLmmUDEP7Tf7P7sVFbg6M13mQDOZL/KDBVPxsu8OeA1FdgCBOBjWX+fgvDQE3GQNdMq7AYFgh6+HX7jEKJbc+Zr84E2/O8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759302275; c=relaxed/simple;
-	bh=We2BKF/GHnXH5YX/6E9v5kprJ6brDvpihZaj/zsbNOk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DdzorA3fy1q1n2G9cmmwE36R4Ao8/yMR2tkD1uUY/EXGXSRLDFZuvTS5E+3LO98tAUFF9ulzTQdk7PeY/3/KnWsYBtb3b1Ke73ZwgFvCPZfJoV/a36AGY9aTS0WhPwpFLungr+GDu0W/aZ2gXQt5YeCW5Fn8QzGpKRxBMZOM13g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=NUL7WSz8; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1759304712; c=relaxed/simple;
+	bh=gm2ytgIS3UZc9HpOqeONLn/ri5+xjkdL1nRnbvvmjBU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=alDmojNiKTm7SkUqD2AED8eLwCitDoMnSsaqAD0Ln1O6KGYcO91quuer4J28wrvfY754AU4b5W3TAJETBZKhcAS6WKc00DfmKRMOEGjpKg916Sy+/pfMyHdvvpWv4zYBEY/IixoppFePw7vWRZz4i1WCQbVnnP4s67VxIgcE7S4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=x9fSJzuD; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="NUL7WSz8"
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58UMITmU016964
-	for <linux-clk@vger.kernel.org>; Wed, 1 Oct 2025 07:04:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	rajT27AwFunrMNV7n/DU+VYrepqPJvpfTRDT7Uk8rjA=; b=NUL7WSz8Lq0J2Yug
-	iwphD+paud8YRd/GQRn/PNIrIY8X54TBs0eq29v9iHTUJkzpL04BQqWpRhZu/3wd
-	py3S09QvkmwZQpuQE6vOI76HWMZrLKJdqEdrPKKvliTdlplwHppaTzNCsUCQtEMK
-	NGKkKau+Oyc7jxRqU6b+U4OY/TvR2zVrpyuIabqyb9Q7UgodAQ3G0mad+zl32/TO
-	IujM2q5oaGekfT1RUXPDf4ZL9wmNQKwsvRyx/wm3T6C3nv79fpMsR+Gqm3QnbALQ
-	tb9+YNE00NRWCkdPtWLYIwW1+Wpb5pJOtzFn+CFp837ax8kCK0NSnxjxSOKmGPPE
-	nNU2iQ==
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49e93hkc8y-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Wed, 01 Oct 2025 07:04:32 +0000 (GMT)
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-28bd8b3fa67so30445785ad.2
-        for <linux-clk@vger.kernel.org>; Wed, 01 Oct 2025 00:04:32 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="x9fSJzuD"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-46e5980471eso12638235e9.2
+        for <linux-clk@vger.kernel.org>; Wed, 01 Oct 2025 00:45:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1759304708; x=1759909508; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:user-agent
+         :references:in-reply-to:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Qg7VWjS0JkeDUM38Rnu5q8oeFtV0qmFaVpXseuYx1QE=;
+        b=x9fSJzuDKtcyHVCx2jVACQazlfc/jcYHr8kxe0KPDITnhQSzB4YwmKVKjOpuXhC9io
+         TK+MwDBSMrUXYu3kqfEjST5QAHjPoR3QNiAR7YcTjU0qG9JaslkdOekzWtAKNUb3fKy+
+         V+U1xbFuJi+Hg5txDENPnA78f4kxw7YISmtpUlGS3xQArhYQ5tqv27dL+SoglCt1YGRT
+         VGieQKefZHJGForAQKGnYBjFl/FCjb/jJXdwL0OW/wtp648z93cK3sTLa17N5Dhgkox6
+         QiSKAR9rYZEr47VgLkDNTMccIPrGp0fFUVSvzM5+dNVeMzff6UqlHrPs949xgMZfEsx9
+         Zn9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759302272; x=1759907072;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rajT27AwFunrMNV7n/DU+VYrepqPJvpfTRDT7Uk8rjA=;
-        b=XNbvZPu+i2ELg5fRefyyD3U1L+3Rs0GIyL1ZjoR6FfLEVURxUlTqwS3jh1uOoe38DC
-         p1ZUe/6JPPH8/MW/1yJWS4UArDtn3fsN2faxryfPWutmnhBfx2ECONQ2lu5YAUkKDCV9
-         prCu75LUbgtxq5U4FtQ663/Gpr8nfv8hUMpJkcnQfdygVLDQL+5UQ9dEb4YFbPUAyC13
-         MuG4m8v5Pu7JbrxA+KbblvPXU6d+hjGR6VWTX4CrziZO3tcAQCxuOi55k8Lq5lr2DVL/
-         zgALrvt0Hu2gQ0r/IoOxyMA3UjQqo0kl5Fg6DJZeXkXvVPTQcxAY8z9hJPxlnsssmJOe
-         Ae6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXQCjmetJePdl4RvAf8RtGM6A+Evglmd8NS0tUjJ8CufRZeLVBoO6kwVA7T/pAoOAHNbEyeAn+85Sw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJ10ZT4jlKVQS0d6fDvB7Xwf/vTs+ydXdEpaCcWITpSH/nL6U0
-	Pup5Vz2Wch7UQSVgYYLGcxxT5LnpCVtD6C/xNphNy7gVzdE67uQPxLg6jMEKJcI+PXQ16RNSiPn
-	yzYVP+kIzmK0kSIf5fXlmyTem+YxnyAQKrW3pRRaAOQNyxtPMRFAOA1h2oWJJ36A=
-X-Gm-Gg: ASbGncvY69TpOAF8nPbSrgFXjn8NJTkbvuD6IFNBr2+YJ4d5ABKRSupQjrwrnsymGVC
-	FxaxSCdbJDPZQ/wGAc2q7BowqkDyUS4ONV1xkDG0IngW5vHhjDM2ac5wPbFAe11RRNC026X+fgn
-	b4XwxRfQP5bwQEa2UuD0TmoMetkDsiDxfhx9WJALY2oMV9d5sZJ1kkb+s9G2sNWYYvQT3g/Uxpb
-	EAHxBJdEZcHPNjWXWJwjJCB7zuzWbK+gaIK2MC5De4lZSK8O6P2it5QOxmw8GSYYLWtQf5dZJiq
-	R9Zqa56TUmtNHtFZeRIbkq69WQd2g09zuCZ0p1tiuOEaBBXEcQK1fkB3Lh6Eq3bKuYdFfTkk
-X-Received: by 2002:a17:902:e74a:b0:27f:1c1a:ee43 with SMTP id d9443c01a7336-28e7f32ff11mr31042335ad.29.1759302272018;
-        Wed, 01 Oct 2025 00:04:32 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEv94nJISy/926rdHvVX5QYfH6D1YpTXMM4MBF8t63Ks9MFaXihh5qMTzyo0mDLv3bcRsz5VQ==
-X-Received: by 2002:a17:902:e74a:b0:27f:1c1a:ee43 with SMTP id d9443c01a7336-28e7f32ff11mr31041995ad.29.1759302271554;
-        Wed, 01 Oct 2025 00:04:31 -0700 (PDT)
-Received: from [10.218.33.29] ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed69bd869sm179517665ad.120.2025.10.01.00.04.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 01 Oct 2025 00:04:31 -0700 (PDT)
-Message-ID: <58d76b7f-843d-4439-a987-7895e0b52441@oss.qualcomm.com>
-Date: Wed, 1 Oct 2025 12:34:26 +0530
+        d=1e100.net; s=20230601; t=1759304708; x=1759909508;
+        h=content-transfer-encoding:mime-version:message-id:date:user-agent
+         :references:in-reply-to:subject:cc:to:from:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=Qg7VWjS0JkeDUM38Rnu5q8oeFtV0qmFaVpXseuYx1QE=;
+        b=ibuXgbbD+a2i6UheL6mqI0b7TWZ35zZ2kdq0GBkgZo5CKIyXPduVEGIea7pCyccnnA
+         wZN/6FQCqRVZ36K6IrIE9GiTfAuXYf3fF11r8pxpiaN4Ecow9f8ygsd+25+4+mwRR2Hl
+         uyL3tnsPrw/hA4KXGQB369WcmzyNriZL5gqznMZfuFscnaY+hTPNUUaGypshxlCCATP/
+         be5aY4oPXf0Eownp8QFOkv2aeDWV0X6MVWmvx6ZtcCF86kzVDEVO1ESmZgjaPQV5PdLC
+         7s5D9h3DSc9ZXCQ51wRFTvdfKUflO8jomM00BiUHQGeXMnlYjknIgNg7jma08PiNY3ll
+         TNaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUBDAdPF75xgghQ25fFPL+9D7x4GH5L3qVNXH6ni4up0DLZoaHzla+TCvAosfCTmcbz1uRydneEa2g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx59Cw7unhUgQOQFXUQTzjfp6zpazx5MTursI0NqjHSlnClNDK1
+	CPGI7XUZnQfO/KqhPfODPIwXJnkbF0RRr9xb3vwTWNcSNlt8cngMedapdoR3eKpUp7M=
+X-Gm-Gg: ASbGncv4x1FuKJigGHUNi/Wl0ueIjcdh6eWPLEQ7tvZXrZRtH4fEq8IDvpPbokuCKjD
+	pdPJKJXjXrk9aZLKKOpwer0MzLOuDUIfavXt0pbN0039vv9XyGJPphDZHOje6z52R3aIV2+l02G
+	hnHRDZW4vDYMZVK1XCCjZs3J1DOy9UwixHvEu7rKALRgvhyyFcDws2ugiUdDwbOwGKOeoWBqnOS
+	ZX5LJ7ZTv1OUyUm3L52eN0ka/T3s8ZsX3AKnn6cASGbfXEmUkNBt8VEczHCV8GI6pBQ1SGkitWk
+	xp3cXE8QuxaXN4beAJAb3r9D4Gqz9wEe4feBZm7r+MXCdRq+49XUqML3JhKgj0SrJZZnGpkRPYF
+	HHt+Vn80SQXomfc9U+p8Cdx0OY9x3mZwdGv2pNsNld4QUiQ==
+X-Google-Smtp-Source: AGHT+IFoRjI2Zw2x09D63Jf0YC7whoQC5cYnsETwVyuJVa3Ra7wHW3S2yFZ3fp1jDTOz8cPlStVCVA==
+X-Received: by 2002:a05:600c:6812:b0:45f:2cf9:c229 with SMTP id 5b1f17b1804b1-46e611a1fa9mr20772605e9.0.1759304707793;
+        Wed, 01 Oct 2025 00:45:07 -0700 (PDT)
+Received: from localhost ([2a01:e0a:3c5:5fb1:ec6d:2bf4:7406:4872])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-46e619a6fc8sm26382545e9.13.2025.10.01.00.45.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 01 Oct 2025 00:45:07 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,  Stephen Boyd
+ <sboyd@kernel.org>,  Rob Herring <robh@kernel.org>,  Krzysztof Kozlowski
+ <krzk+dt@kernel.org>,  Conor Dooley <conor+dt@kernel.org>,  Neil Armstrong
+ <neil.armstrong@linaro.org>,  Kevin Hilman <khilman@baylibre.com>,  Martin
+ Blumenstingl <martin.blumenstingl@googlemail.com>,  chuan.liu@amlogic.com,
+  linux-kernel@vger.kernel.org,  linux-clk@vger.kernel.org,
+  devicetree@vger.kernel.org,  linux-amlogic@lists.infradead.org,
+  linux-arm-kernel@lists.infradead.org,  Xianwei Zhao
+ <xianwei.zhao@amlogic.com>
+Subject: Re: [PATCH 00/19] clk: amlogic: Add PLLs and peripheral clocks for
+ A4 and A5 SoCs
+In-Reply-To: <20250930-a4_a5_add_clock_driver-v1-0-a9acf7951589@amlogic.com>
+	(Chuan Liu via's message of "Tue, 30 Sep 2025 17:37:13 +0800")
+References: <20250930-a4_a5_add_clock_driver-v1-0-a9acf7951589@amlogic.com>
+User-Agent: mu4e 1.12.9; emacs 30.1
+Date: Wed, 01 Oct 2025 09:45:06 +0200
+Message-ID: <1jv7kz3w1p.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] clk: qcom: Fix dependencies of
- QCS_{DISP,GPU,VIDEO}CC_615
-To: Nathan Chancellor <nathan@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        patches@lists.linux.dev, stable@vger.kernel.org
-References: <20250930-clk-qcom-kconfig-fixes-arm-v1-0-15ae1ae9ec9f@kernel.org>
- <20250930-clk-qcom-kconfig-fixes-arm-v1-2-15ae1ae9ec9f@kernel.org>
-Content-Language: en-US
-From: Imran Shaik <imran.shaik@oss.qualcomm.com>
-In-Reply-To: <20250930-clk-qcom-kconfig-fixes-arm-v1-2-15ae1ae9ec9f@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDA0MSBTYWx0ZWRfX/kGa0iWuDMu0
- HQwcyjWNXkM+NTwlllJVO2l1L7ucGwzAx8STPbM+IMeLf64TfE1yj4TXI3NUkXmidlXJJKSCekv
- nD9AHPwvFckVS2HE1lMkrlBD5Da329tv3nPoJdHbsePKrmKoTKIWxG1e0HlB5HqTGGpG33aSSI+
- BGaU+nOvOwyscskCcw8PajSmODhzcvkWBiDOBoeSVKtQSkpZr4D/i9zuHZp9357PZcnroTsKMAJ
- neKvOGbq/hKlaOZOsua4jhgTulnRXCqK6WqrNdRri7YSkq6xfqYDev4P42Mbz4TdMfqdvc93qAV
- iLlXsGtSwc3ICglVG3sDr4586OZdLWee1o4TCeZb+yEEIxv81Lw3/9XmURcnqs2MgCbMOivj5hv
- d1fN70wLNrpYdtesyCCmhS5Wf37Gxg==
-X-Proofpoint-GUID: 4zdB4ii7tBbRMETiNISBpGzp7EZ183eR
-X-Proofpoint-ORIG-GUID: 4zdB4ii7tBbRMETiNISBpGzp7EZ183eR
-X-Authority-Analysis: v=2.4 cv=Rfydyltv c=1 sm=1 tr=0 ts=68dcd281 cx=c_pps
- a=IZJwPbhc+fLeJZngyXXI0A==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
- a=zds2va5xP088SW_5QeoA:9 a=QEXdDO2ut3YA:10 a=uG9DUKGECoFWVXl0Dc02:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-01_01,2025-09-29_04,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 priorityscore=1501 bulkscore=0 adultscore=0 lowpriorityscore=0
- impostorscore=0 clxscore=1015 malwarescore=0 spamscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509270041
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
+On Tue 30 Sep 2025 at 17:37, Chuan Liu via B4 Relay <devnull+chuan.liu.amlo=
+gic.com@kernel.org> wrote:
 
-
-On 10/1/2025 12:26 AM, Nathan Chancellor wrote:
-> It is possible to select CONFIG_QCS_{DISP,GPU,VIDEO}CC_615 when
-> targeting ARCH=arm, causing a Kconfig warning when selecting
-> CONFIG_QCS_GCC_615 without its dependencies, CONFIG_ARM64 or
-> CONFIG_COMPILE_TEST.
-> 
->   WARNING: unmet direct dependencies detected for QCS_GCC_615
->     Depends on [n]: COMMON_CLK [=y] && COMMON_CLK_QCOM [=m] && (ARM64 || COMPILE_TEST [=n])
->     Selected by [m]:
->     - QCS_DISPCC_615 [=m] && COMMON_CLK [=y] && COMMON_CLK_QCOM [=m]
->     - QCS_GPUCC_615 [=m] && COMMON_CLK [=y] && COMMON_CLK_QCOM [=m]
->     - QCS_VIDEOCC_615 [=m] && COMMON_CLK [=y] && COMMON_CLK_QCOM [=m]
-> 
-> Add the same dependency to these configurations to clear up the
-> warnings.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 9b47105f5434 ("clk: qcom: dispcc-qcs615: Add QCS615 display clock controller driver")
-> Fixes: f4b5b40805ab ("clk: qcom: gpucc-qcs615: Add QCS615 graphics clock controller driver")
-> Fixes: f6a8abe0cc16 ("clk: qcom: videocc-qcs615: Add QCS615 video clock controller driver")
-> Signed-off-by: Nathan Chancellor <nathan@kernel.org>
-> ---
->  drivers/clk/qcom/Kconfig | 3 +++
->  1 file changed, 3 insertions(+)
+> This patch series includes changes related to the PLL and peripheral
+> clocks for both the A4 and A5 SoCs.
 >
+> The patches for A5 were previously submitted up to V3 by Xianwei.
+> https://lore.kernel.org/all/20250103-a5-clk-v3-0-a207ce83b9e9@amlogic.com/
+> After friendly coordination, I=E2=80=99ve taken over and continued the
+> submission as part of this series. The dt-bindings patch retains Rob's
+> original "Reviewed-by" tag, and I hope this hasn=E2=80=99t caused any
+> additional confusion.
 
-Reviewed-by: Imran Shaik <imran.shaik@oss.qualcomm.com>
+... and yet you restart the versioning of the series making it harder
+for people to follow that
 
-Thanks,
-Imran
+>
+> Both A4 and A5 belong to the Audio series. Judging by their names, one
+> might assume that A5 is an upgrade to A4, but in fact, A5 was released
+> a year earlier than A4.
+>
+> Since there are differences in the PLLs and peripheral clocks between
+> the A4 and A5 SoCs (especially the PLL), and taking into account factors
+> such as memory footprint and maintainability, this series does not
+> attempt to merge the two into a shared driver as was done for
+> G12A/G12B/SM1.
+
+... and we end up with 19 patches series while it could be splitted into
+manageable series, for each controller of each SoC
+
+>
+> This patch series includes all related dt-bindings, driver, and dts
+> changes for the PLLs and peripheral clocks. Following our past convention
+> for clock-related submissions, the dts changes are placed at the end
+> and submitted separately. If this ordering makes it harder for
+> maintainers to review or pick patches, please feel free to point it out.
+>
+> Co-developed-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
+> Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
+> Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
+> ---
+> Chuan Liu (19):
+>       dt-bindings: clock: Add Amlogic A4 SCMI clock controller
+>       dt-bindings: clock: Add Amlogic A4 PLL clock controller
+>       dt-bindings: clock: Add Amlogic A4 peripherals clock controller
+>       clk: amlogic: Optimize PLL enable timing
+>       clk: amlogic: Correct l_detect bit control
+>       clk: amlogic: Fix out-of-range PLL frequency setting
+>       clk: amlogic: Add A4 PLL clock controller driver
+>       clk: amlogic: Add A4 clock peripherals controller driver
+>       arm64: dts: amlogic: A4: Add scmi-clk node
+>       arm64: dts: amlogic: A4: Add PLL controller node
+>       arm64: dts: amlogic: A4: Add peripherals clock controller node
+>       dt-bindings: clock: Add Amlogic A5 SCMI clock controller support
+>       dt-bindings: clock: Add Amlogic A5 PLL clock controller
+>       dt-bindings: clock: Add Amlogic A5 peripherals clock controller
+>       clk: amlogic: Add A5 PLL clock controller driver
+>       clk: amlogic: Add A5 clock peripherals controller driver
+>       arm64: dts: amlogic: A5: Add scmi-clk node
+>       arm64: dts: amlogic: A5: Add PLL controller node
+>       arm64: dts: amlogic: A5: Add peripheral clock controller node
+>
+>  .../clock/amlogic,a4-peripherals-clkc.yaml         | 122 +++
+>  .../bindings/clock/amlogic,a4-pll-clkc.yaml        |  61 ++
+>  .../clock/amlogic,a5-peripherals-clkc.yaml         | 134 ++++
+>  .../bindings/clock/amlogic,a5-pll-clkc.yaml        |  63 ++
+>  arch/arm64/boot/dts/amlogic/amlogic-a4.dtsi        |  80 ++
+>  arch/arm64/boot/dts/amlogic/amlogic-a5.dtsi        |  87 ++
+>  drivers/clk/meson/Kconfig                          |  53 ++
+>  drivers/clk/meson/Makefile                         |   4 +
+>  drivers/clk/meson/a1-pll.c                         |   1 +
+>  drivers/clk/meson/a4-peripherals.c                 | 764 +++++++++++++++=
++++
+>  drivers/clk/meson/a4-pll.c                         | 242 ++++++
+>  drivers/clk/meson/a5-peripherals.c                 | 883 +++++++++++++++=
+++++++
+>  drivers/clk/meson/a5-pll.c                         | 476 +++++++++++
+>  drivers/clk/meson/clk-pll.c                        |  76 +-
+>  drivers/clk/meson/clk-pll.h                        |   2 +
+>  .../clock/amlogic,a4-peripherals-clkc.h            | 129 +++
+>  include/dt-bindings/clock/amlogic,a4-pll-clkc.h    |  15 +
+>  include/dt-bindings/clock/amlogic,a4-scmi-clkc.h   |  42 +
+>  .../clock/amlogic,a5-peripherals-clkc.h            | 132 +++
+>  include/dt-bindings/clock/amlogic,a5-pll-clkc.h    |  24 +
+>  include/dt-bindings/clock/amlogic,a5-scmi-clkc.h   |  44 +
+>  21 files changed, 3406 insertions(+), 28 deletions(-)
+> ---
+> base-commit: 01f3a6d1d59b8e25a6de243b0d73075cf0415eaf
+> change-id: 20250928-a4_a5_add_clock_driver-2b7c9d695633
+>
+> Best regards,
+
+--=20
+Jerome
