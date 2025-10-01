@@ -1,120 +1,173 @@
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACC672ED85F
-	for <linux-clk@vger.kernel.org>; Wed,  1 Oct 2025 13:24:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08E86262D14
+	for <linux-clk@vger.kernel.org>; Wed,  1 Oct 2025 15:13:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759325064; cv=none; b=V4PvTrczWH+wzqmnd+6wIq0FRfRmsd/dpNawoAe46/Umy8MeL6uTlZm+RE+pgZbqjMz1zljoKoQvzkvqVODw82Lkz7rLYskSrbPgrc4EMx0NLsUo1P3JoI05gvDQdrajRwbV0XfwpbnNIpSUs0ZGL3ZvcPAAsKHMUbVfzs8W+iE=
+	t=1759331612; cv=none; b=GRCgPvYMW9hMI7iORRYywU+4rfnG17aPOHWsm7lPR/QxE5aOPK/80YNYudMWDRxHNoEVJIAdOK6l2aGsXlX4VhMPnxocYL0qWWj0JadtGPZfiI+ZvMKI/VYcsM0iI9AZhlE1It/9GU8aj5/tgva6IMF3HzXhbUO50jdZJR7zPmw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759325064; c=relaxed/simple;
-	bh=I05mR9/50DLTEHHaHy45Q5YQgLDEg9VchuCah9dVd2k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=s6GTL4bWpktUIjFuJXObyxpkU6fZyh2adRTZnOR5Z/wNefev4B1czIYF17z5Nd96ySVYnAgAXZfcYqbZ9lipKyhwxnzGlWaM1cflTWEFHDukz+Ugf2y7Co8aakn8pMfpWH9lJDtJ57BXSOiUGTbofZS3Opwa2KYw5jvShoXQmUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-85630d17586so978233885a.1
-        for <linux-clk@vger.kernel.org>; Wed, 01 Oct 2025 06:24:22 -0700 (PDT)
+	s=arc-20240116; t=1759331612; c=relaxed/simple;
+	bh=zRnYw0c/jEYg6tUfOIO2XTCeocsoj1LuLA2X2KUMWjo=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=dJATTl31fcEKIB/KahhMZ9+4MYbaISdQ9Zq/Gxk+mvrHMuTPgL6TkrnXXyzffGNl0Q+nobyWm1kU6o7nY0Rk/KS175kQ6PeQmludZ9JAucULUNjDxkjTnaZ3FPnHZ7aMS27eg1EwAWK9HeuOWw33DknXf1hVqsju5ZE/wYHAaBo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ci6/nRZ/; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ci6/nRZ/"
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-b4539dddd99so412321566b.1
+        for <linux-clk@vger.kernel.org>; Wed, 01 Oct 2025 08:13:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1759331609; x=1759936409; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=SEEUny1Be1BFGwKqqn+oNj/RmCjib3ttC0W23b9Ns+s=;
+        b=ci6/nRZ/4MuEYA0OJYZnxVJ21xzIPaqeqzs2qApreXIib0h2sZYflSBjBTDUvZvJ1J
+         9ZKLaZTaQTRqKXmns1BvGnil/+2OgVe8LlsZVNkNzWx72AVeSSg7qpTcoFeQSofpKxYR
+         rUUb7ceVKyS7LwM38RUxelEOWRm+eKXMynAhMQF/f+TAB0PU5CPznmftXaTee1xflzSE
+         IP7aGHRzddI2diFu7+fs3WrjkdxX8JckmFnJ9sjNniKcKsPQEMXMcVRbWDGmtskepumI
+         vC763HRwKFF7E1KIMrWmrCQ1j1C18K07+LX2Uq43H5/aifgtNN8zWA92boOUBUt4Nqq/
+         zNFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759325061; x=1759929861;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fYdalTnEkJlTI6nAxkZ1pZoLmc57oQNk8+NRjQz1+SA=;
-        b=YI6YQIa4OBNKziCCxC+dcWV4sybrQpoUxB7/W9JJruQZWddbYSQx/Q0N0z4Gw3i9pX
-         rZEU2j3owsd//MXSRCs2acc9ugdzwKNGg8qE1wC+wGFeKr9+5GVxQktHE9iMUr2zBEg9
-         xRVm35EKnoB5UYc/e8cQtttBVptDtnFws2RDxbb/Za9vh5Tuh2BOXQyAB/QayFJkwMBJ
-         kJhhWlKDjkR8pl5dmaK6S6NOlzRaDQQPvvopJg0gYheAf7tTmEHgDo33NRAQyJFC27bD
-         47gxnee3mRdIq/1gbXWQ5ktzjGPc5G0oKkVh1wNZdn53jdpZSa6To+0Gx1uosR30n3sS
-         eq2w==
-X-Forwarded-Encrypted: i=1; AJvYcCWYFh0UFoGhjVxWSTbA7mjhsUXiCbLgLTkV5ebV5iCfJ7QhKvnUmWyZSzqsyG/A5q/+ay3K9jOUY2c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzw67SNhbYMZk/pLgM7Jme+KdNCWYmH1Kzoqa0/Gs3dY6QcYeK0
-	lpGOvmDiPK+4RSgnMEhyTLQPBFYQ/L9GO2IO6iZzItMzRvGnQvIMiY/GzYeiYJ+E
-X-Gm-Gg: ASbGncvWuEdwiEQA7YxkotYudjtt7t/UOhGWgmU0TZVxKujWVf1YPoGcSZLBRw70I46
-	XugyBlfj/8uSgEmnBZvl+maKruJBxsXsgSLbEIFERhHtdoLeIg7uFzYVkr/Jh95A5w+9M9krKyR
-	9HPuQqmc3vFv6rE21c7iBlMwJo6oIGLlADZk8gN1tSEaV1iKmHq/15XTpGKq95h+/rOkxs2Kj9x
-	gX2XtiAl29jPEFxRLMnB9xcy5BF2cpE2HkxpeeCM1Ff8gjzw+R3E5F6AXmWe0qXUuZhfVOaHOWi
-	ErnUVaK3cy3Zhqt0Go4B5zNBZX67IfCC03gs9BFALdcLFCz4AA2wU89Zd8zoNvKiWMkhmikTjGV
-	oB95YIV352qgzI7jpin/j+z9qJj0fnu/NL0nXgknbK6n+hgD/C0u1YaLd6clfQn8cDVjUtdrOeO
-	MP/BkVKfwOlooB
-X-Google-Smtp-Source: AGHT+IGLr7dGlG7KfcKm3B9fsRjCApX+9NEIwYEqAyNFTvzYKBkMI4DujecSDkmDrNbsmJCnoD0y5A==
-X-Received: by 2002:a05:620a:28d2:b0:835:20be:c61a with SMTP id af79cd13be357-8737116cc42mr476021585a.27.1759325061401;
-        Wed, 01 Oct 2025 06:24:21 -0700 (PDT)
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com. [209.85.222.176])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-85c28a8d4d8sm1228794985a.25.2025.10.01.06.24.21
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 01 Oct 2025 06:24:21 -0700 (PDT)
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-856cbf74c4aso155630085a.2
-        for <linux-clk@vger.kernel.org>; Wed, 01 Oct 2025 06:24:21 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXv/bK+7354Q8BUdMjoT5gaOgE9U93k8QDkO2Q+6IWfYpx+UabPnc3ns+XCXepPY661cX4uyXwDCCM=@vger.kernel.org
-X-Received: by 2002:a05:6102:161e:b0:58f:31da:dbd3 with SMTP id
- ada2fe7eead31-5d3fe509ac2mr1393313137.13.1759324645740; Wed, 01 Oct 2025
- 06:17:25 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1759331609; x=1759936409;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SEEUny1Be1BFGwKqqn+oNj/RmCjib3ttC0W23b9Ns+s=;
+        b=lU2xa2LLBjp0hHdUj+B5whVworOGJyoeh+ZfIYVP8SFPbeZjZZZ6fJoJdhB6mpsQ54
+         t+MbngAlDMovlS3w6kH80oBr+KOtisfHz/TEXlTcshzByG6L5c+c+2S0UdRG44C08t3E
+         ckec+AHcULOFKKlw4svi6c35y5kDazfwLShRH7cO1S4sH4ce4I+jDSK5PvRtB/TejAIY
+         Z8Evj+ZzNGtOsE+B7mSO4of3ZJOpJdlH63rO163cHxA+BJzShcsrQqi+ZF46HnrwVE6o
+         QFUfRiysFIg9OEyOXknw9KC5po4FO7ToAx3eACGqcexfUXbPCuJpzUDLLFRzeLqiDWre
+         q9Xg==
+X-Forwarded-Encrypted: i=1; AJvYcCV8XZGiXtsGZ2iMw5fpvgaqA58KIdfuZ4XUDBjv+CbVhOufjODS9aCXOfu/YshtLZUnWNysklBJT6k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyX3Bb8FNHmiCzXIVqkaykP8EnZWjojsxGGRfS3rObqPEXkHakK
+	2RMJFz4Kx92vSOdAtMIe3FkE38WYFpPSbGXZioHEdQ7XA4DATk/RSQ+doFzlQWMZo6o=
+X-Gm-Gg: ASbGncsXIKRkf8UADHmKmy4IDpA8KCjmv8UTe32Dg2teze4MbnGqfzaJL6l40J+rMFw
+	R6B5Ygnn6khww5rLDwUDkdySPhH3WvzgHTgn5HIGLpJqKRl5oGBVXtRy+to1bWTjnQ9oakyfzNO
+	iyBlQM9I9I11wIuOfrWVEdFdfu4zKfDT0Y+cTfEW2BvqqET/nchy8fEBDqICqfkUtIJIzNibns2
+	r/aMHt4xOCXHG6chkwdAq86uAeK9EohZQ+sWS85Be89Off9TLYudXqTUQ55Mk8WmUrdd4qc9KK4
+	h7Y1lcKBxnxtJfmRR0AcnzkKS9igtux1/Cue30421wT5bIqS2JuJf1cnX4LSytu9ZdD/1EAOGaR
+	aIAjXYe+cy221mdT6oYHtUxMFKYNY6zH5lJmQk9GCLjD+UL3vf/0w5J1UCHtv149Um4rVDqaff7
+	ww5BDyenDzXyrRR2s8v4qjABKjXvNfUC8/GOhN
+X-Google-Smtp-Source: AGHT+IHBCc4NxqsoRLhxkWHk/fgJ6Xl1FY/slzvWV2YPuSfVBu5/dMpl+l0CNjy2qT0HCYNogprb6A==
+X-Received: by 2002:a17:906:3746:b0:b47:70bf:645 with SMTP id a640c23a62f3a-b4770bf06f8mr246716466b.58.1759331609281;
+        Wed, 01 Oct 2025 08:13:29 -0700 (PDT)
+Received: from puffmais2.c.googlers.com (224.138.204.35.bc.googleusercontent.com. [35.204.138.224])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b3cedacd973sm797226866b.49.2025.10.01.08.13.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 01 Oct 2025 08:13:28 -0700 (PDT)
+From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Date: Wed, 01 Oct 2025 16:13:16 +0100
+Subject: [PATCH] clk: samsung: clk-pll: simplify samsung_pll_lock_wait()
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250903161718.180488-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250903161718.180488-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <db2fc907-218c-4688-aebf-4a929f21b074@ideasonboard.com> <CA+V-a8vghwkHKWoqU8NQ3O9ZdHxB+cEvMv7Z9LQOMsZcx9vjPA@mail.gmail.com>
- <f1e671a3-77af-4ae2-aa6e-bde93aaa54b7@ideasonboard.com> <CA+V-a8tosiUkhaWGoZ9yTBe1Kyy0DLUGreqReH2NOWmVeS5_pw@mail.gmail.com>
-In-Reply-To: <CA+V-a8tosiUkhaWGoZ9yTBe1Kyy0DLUGreqReH2NOWmVeS5_pw@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 1 Oct 2025 15:17:14 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVFSvSGBearGPU61atsHFu7NoDjpbxNNvyGO21j0-_OOQ@mail.gmail.com>
-X-Gm-Features: AS18NWDiZs7Ynz61qNNAVC6cUY3oeLbFhcjv_kGBKaaXq5pMP7Ji5m5RgOlqVh8
-Message-ID: <CAMuHMdVFSvSGBearGPU61atsHFu7NoDjpbxNNvyGO21j0-_OOQ@mail.gmail.com>
-Subject: Re: [PATCH v8 2/6] clk: renesas: rzv2h-cpg: Add support for DSI clocks
-To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Cc: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Biju Das <biju.das.jz@bp.renesas.com>, Magnus Damm <magnus.damm@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20251001-samsung-clk-pll-simplification-v1-1-d12def9e74b2@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAAxF3WgC/x2NQQrCMBAAv1L23IXsiqB+pfQQ4qYupjFk2yKE/
+ t3gcQ4z08Ckqhg8hgZVDjX95A40DhBePi+C+uwM7PhKzhGaX23PC4b0xpISmq4ladTgt67iRRz
+ H252YmKFHSpWo3/9gms/zB//yC0hwAAAA
+X-Change-ID: 20251001-samsung-clk-pll-simplification-3e02f8912122
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>
+Cc: Peter Griffin <peter.griffin@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+X-Mailer: b4 0.14.2
 
-Hi Prabhakar,
+readl_relaxed_poll_timeout_atomic() has been updated in 2023 in
+commit 7349a69cf312 ("iopoll: Do not use timekeeping in
+read_poll_timeout_atomic()") to avoid usage of timekeeping APIs. It
+also never used udelay() when no delay was given.
 
-On Wed, 1 Oct 2025 at 14:23, Lad, Prabhakar <prabhakar.csengg@gmail.com> wr=
-ote:
-> On Thu, Sep 11, 2025 at 3:26=E2=80=AFPM Tomi Valkeinen
-> <tomi.valkeinen+renesas@ideasonboard.com> wrote:
-> > I still don't see why all the code here has to be in a header file.
-> > Usually headers contain only a few lines of inline code. Is there a
-> > reason why it's not in a .c file?
-> >
-> Ok, I will move the functions to rzv2h-cpg.c and export the symbols
-> and have the declarations in include/linux/clk/renesas.h.
->
-> Geert are you OK with the above?
+With the implementation avoiding timekeeping APIs, and with a caller
+not passing a delay, the timeout argument simply becomes a loop
+counter.
 
-Sure. The DRM driver would already have a hard dependency on the
-clock header file anyway.
+Therefore the code here can be simplified to unconditionally use
+readl_relaxed_poll_timeout_atomic(). The difference being the last
+argument, the timeout (loop counter). Simply adjust it to pass the
+more generous counter in all cases.
 
-Gr{oetje,eeting}s,
+Signed-off-by: André Draszik <andre.draszik@linaro.org>
+---
+ drivers/clk/samsung/clk-pll.c | 31 ++++++++++---------------------
+ 1 file changed, 10 insertions(+), 21 deletions(-)
 
-                        Geert
+diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
+index 7bea7be1d7e45c32f0b303ffa55ce9cde4a4f71d..a7e693f6983ec073bedd633ed8da7efafc1a20bb 100644
+--- a/drivers/clk/samsung/clk-pll.c
++++ b/drivers/clk/samsung/clk-pll.c
+@@ -17,8 +17,7 @@
+ #include "clk.h"
+ #include "clk-pll.h"
+ 
+-#define PLL_TIMEOUT_US		20000U
+-#define PLL_TIMEOUT_LOOPS	1000000U
++#define PLL_TIMEOUT_LOOPS	20000U
+ 
+ struct samsung_clk_pll {
+ 	struct clk_hw		hw;
+@@ -84,7 +83,7 @@ arch_initcall(samsung_pll_disable_early_timeout);
+ static int samsung_pll_lock_wait(struct samsung_clk_pll *pll,
+ 				 unsigned int reg_mask)
+ {
+-	int i, ret;
++	int ret;
+ 	u32 val;
+ 
+ 	/*
+@@ -93,25 +92,15 @@ static int samsung_pll_lock_wait(struct samsung_clk_pll *pll,
+ 	 * initialized, another when the timekeeping is suspended. udelay() also
+ 	 * cannot be used when the clocksource is not running on arm64, since
+ 	 * the current timer is used as cycle counter. So a simple busy loop
+-	 * is used here in that special cases. The limit of iterations has been
+-	 * derived from experimental measurements of various PLLs on multiple
+-	 * Exynos SoC variants. Single register read time was usually in range
+-	 * 0.4...1.5 us, never less than 0.4 us.
++	 * is used here.
++	 * The limit of iterations has been derived from experimental
++	 * measurements of various PLLs on multiple Exynos SoC variants. Single
++	 * register read time was usually in range 0.4...1.5 us, never less than
++	 * 0.4 us.
+ 	 */
+-	if (pll_early_timeout || timekeeping_suspended) {
+-		i = PLL_TIMEOUT_LOOPS;
+-		while (i-- > 0) {
+-			if (readl_relaxed(pll->con_reg) & reg_mask)
+-				return 0;
+-
+-			cpu_relax();
+-		}
+-		ret = -ETIMEDOUT;
+-	} else {
+-		ret = readl_relaxed_poll_timeout_atomic(pll->con_reg, val,
+-					val & reg_mask, 0, PLL_TIMEOUT_US);
+-	}
+-
++	ret = readl_relaxed_poll_timeout_atomic(pll->con_reg, val,
++						val & reg_mask, 0,
++						PLL_TIMEOUT_LOOPS);
+ 	if (ret < 0)
+ 		pr_err("Could not lock PLL %s\n", clk_hw_get_name(&pll->hw));
+ 
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+---
+base-commit: 3b9b1f8df454caa453c7fb07689064edb2eda90a
+change-id: 20251001-samsung-clk-pll-simplification-3e02f8912122
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Best regards,
+-- 
+André Draszik <andre.draszik@linaro.org>
+
