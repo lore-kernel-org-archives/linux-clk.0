@@ -1,33 +1,40 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FE9C278150;
-	Wed,  1 Oct 2025 09:38:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5A052C3263;
+	Wed,  1 Oct 2025 11:40:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759311537; cv=none; b=sR0CYKFEEcqn/DKsuTHV3VijZ5FMwgCOjdHH96bcfKPQHNfrjEvRF60Gmu6HEb3TM6P/tC5XYtB1gxImAe1nIlaEOVC5sAhDHEQryQt/wyI67KXkggtAlnZJ1auoElaTHOj4kbGUTk4sKhfRjPgdVewQZqRC7MDGKFTvjL1pdhw=
+	t=1759318857; cv=none; b=pT/VEK2VhginoKWmJYyoguubqHKJZdpKYwbLxpc3IErDwk2IUL3FegYoE+qrneX+AYfsuTGtkEJ2VRfaHFL5er6y8iEDLUz9YWkJeB/GJLudquv5s5e5f+bayFBkImejROfCQN/9OJYEpf75QEuCHjaFn+ITxTzl5RcGbcLX2G0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759311537; c=relaxed/simple;
-	bh=H6syAT5lGzrU3swJYL8VgnwKi0EYbeSgtN9L4OFu5Z8=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Y+9gR5iaVmoU9Qtxgex5TQuygtuRkYfhL+ltQUqO9pIKniSGicpKn/8F76NelS3o0QpmCtyoCvTpxwSNZ/xo5Eg/iPT5TzWkeBQN8oiyrefQaJegfRIwOG/usHmwZIfSZPZ5cqAQdmWD7WTcKhtLNTbL/5yg5U2Xhr6k5lhPMJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fcqErpp7; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1759318857; c=relaxed/simple;
+	bh=pe7+znf6mpyZlP+jxhc4JLkMrXrdb9R9nlQiJWAL+Ro=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CC7EtD/yHGEeu9c7uLps1GsqgN6mu/4d3bMCVSfNeQ1rL/1p2zxltEziKyK+iAidRAuK4rjAz0gDanVcVkxNzWg8NvrnlLjlPmH9WM5Ig3aEfDDzhD7nOvLMVM7JfitFTYTi3bQkcLKj+CrqO6KBHUwHTLjA8bVJCHES+SnQuWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=S05kqDyN; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fcqErpp7"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B3EDC4CEF4;
-	Wed,  1 Oct 2025 09:38:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759311536;
-	bh=H6syAT5lGzrU3swJYL8VgnwKi0EYbeSgtN9L4OFu5Z8=;
-	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
-	b=fcqErpp7qrjU9McG/p/HpxRq8Hc/eEK9ROwv483siLY2lhXUhIJ4c10tRVmSipFCy
-	 H1cUoUwY6REYQYV8WZwfdmDRlOhGGnduKJbFWz93kohU/Guq8JtYyLLoPuRM9+k2Hv
-	 GQvQyN+JNnqYbtW7JVcEer1SJyOhrb3ztKSs1aeFSwZHA8vy7a8Obil+4o19c8sqTi
-	 LPaIAjUoYTPSJX1vmEMzX+6OQPM0sPKz6KzJsQMYGs4GR0oonRwRzzlehm64B6DYX3
-	 FSXty0SlySmG4Um4P4euAUBoFTJ3AHrhBhxWcvfu7azQZtRldOU8fu+H9v3hTxPnN4
-	 UPsnsd24Vl83w==
-Message-ID: <50676923-1daf-4c15-a289-a791242664f4@kernel.org>
-Date: Wed, 1 Oct 2025 11:38:45 +0200
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="S05kqDyN"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1759318854;
+	bh=pe7+znf6mpyZlP+jxhc4JLkMrXrdb9R9nlQiJWAL+Ro=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=S05kqDyNRj+pe9gVvonHeRgxc9guOFsO7g6gLLdPFYpQ/9tT5CQdQdvMTE1VksqrB
+	 rmrGEPCDvOKU2Dc/a68BHzcbqMBSseRUjeHmSnVf2ZORiPxtBzoVfecyuvQyDPAIrR
+	 KOKTA6Bbbb0Eu4S+tUrceHpnEzJACVC1xROtoMHBywqK7g5K8jxdC8cXjihSr7OdST
+	 Dfrb9c66uo1GUqRSUSzWyPhLD5+QHxyjbXB3y5dL6UBRm+hXEMujV4+OKBKodLC1KG
+	 1XQ6P8rkBoWLo0I+jl6Ed/Brji/egH4mmYS5DTotXN26ouvfonaX0EYe02QSgSRPsR
+	 84ai4DMes2oDQ==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 769AE17E12DA;
+	Wed,  1 Oct 2025 13:40:53 +0200 (CEST)
+Message-ID: <bddf658c-c9b1-48c7-b39c-0720e9d4c934@collabora.com>
+Date: Wed, 1 Oct 2025 13:40:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,95 +42,75 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: Hans Verkuil <hverkuil+cisco@kernel.org>
-Subject: Re: [PATCH v3 04/20] media: synopsys: hdmirx: replace macros with
- bitfield variants
+Subject: Re: [PATCH 3/4] clk: mediatek: Pass device to clk_hw_register for
+ PLLs
 To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
- Yury Norov <yury.norov@gmail.com>,
- Rasmus Villemoes <linux@rasmusvillemoes.dk>,
- Jaehoon Chung <jh80.chung@samsung.com>, Ulf Hansson
- <ulf.hansson@linaro.org>, Heiko Stuebner <heiko@sntech.de>,
- Shreeya Patel <shreeya.patel@collabora.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Sandy Huang
- <hjc@rock-chips.com>, Andy Yan <andy.yan@rock-chips.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
- Nicolas Frattaroli <frattaroli.nicolas@gmail.com>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Shawn Lin <shawn.lin@rock-chips.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
- Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
- Bjorn Helgaas <bhelgaas@google.com>, Chanwoo Choi <cw00.choi@samsung.com>,
- MyungJoo Ham <myungjoo.ham@samsung.com>,
- Kyungmin Park <kyungmin.park@samsung.com>, Qin Jian <qinjian@cqplus1.com>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
- Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>
-Cc: kernel@collabora.com, linux-kernel@vger.kernel.org,
- linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-media@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-phy@lists.infradead.org,
- linux-sound@vger.kernel.org, netdev@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com, linux-pci@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-clk@vger.kernel.org, llvm@lists.linux.dev
-References: <20250825-byeword-update-v3-0-947b841cdb29@collabora.com>
- <20250825-byeword-update-v3-4-947b841cdb29@collabora.com>
-Content-Language: en-US, nl
-In-Reply-To: <20250825-byeword-update-v3-4-947b841cdb29@collabora.com>
-Content-Type: text/plain; charset=UTF-8
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ Guangjie Song <guangjie.song@mediatek.com>,
+ Laura Nao <laura.nao@collabora.com>,
+ =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>,
+ Yassine Oudjana <y.oudjana@protonmail.com>
+Cc: kernel@collabora.com, Krzysztof Kozlowski
+ <krzysztof.kozlowski@linaro.org>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+References: <20250929-mtk-pll-rpm-v1-0-49541777878d@collabora.com>
+ <20250929-mtk-pll-rpm-v1-3-49541777878d@collabora.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20250929-mtk-pll-rpm-v1-3-49541777878d@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 25/08/2025 10:28, Nicolas Frattaroli wrote:
-> The era of hand-rolled HIWORD_UPDATE macros is over, at least for those
-> drivers that use constant masks.
+Il 29/09/25 14:13, Nicolas Frattaroli ha scritto:
+> Passing the struct device pointer to clk_hw_register allows for runtime
+> power management to work for the registered clocks. However, the
+> mediatek PLL clocks do not do this.
 > 
-> Replace the UPDATE macro with bitfield.h's FIELD_PREP, to give us
-> additional error checking.
+> Change this by adding a struct device pointer argument to
+> mtk_clk_register_pll, and fix up the only other user of it. Also add a
+> new member to the struct mtk_clk_pll for the struct device pointer,
+> which is set by mtk_clk_register_pll and is used by
+> mtk_clk_register_pll_ops.
 > 
-> Also, replace the HIWORD_UPDATE macro at the same time with the new
-> FIELD_PREP_WM16 macro in hw_bitfield.h, which also gives us additional
-> error checking.
-> 
-> The UPDATE/HIWORD_UPDATE macros are left as wrappers around the
-> replacement macros, in order to not rock the boat too much, and keep the
-> changes easy to review.
+> If mtk_clk_register_pll is called with a NULL struct device pointer,
+> then everything still works as expected; the clock core will simply
+> treat them as previously, i.e. without runtime power management.
 > 
 > Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-
-Acked-by: Hans Verkuil <hverkuil+cisco@kernel.org>
-
 > ---
->  drivers/media/platform/synopsys/hdmirx/snps_hdmirx.h | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
+>   drivers/clk/mediatek/clk-pll.c   | 9 ++++++---
+>   drivers/clk/mediatek/clk-pll.h   | 4 +++-
+>   drivers/clk/mediatek/clk-pllfh.c | 2 +-
+>   3 files changed, 10 insertions(+), 5 deletions(-)
 > 
-> diff --git a/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.h b/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.h
-> index 220ab99ca61152b36b0a08b398ddefdb985709a5..b26668a98aafd1682b8342cc11f84666a13f07a3 100644
-> --- a/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.h
-> +++ b/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.h
-> @@ -8,10 +8,12 @@
->  #ifndef DW_HDMIRX_H
->  #define DW_HDMIRX_H
->  
-> +#include <linux/bitfield.h>
->  #include <linux/bitops.h>
-> +#include <linux/hw_bitfield.h>
->  
-> -#define UPDATE(x, h, l)		(((x) << (l)) & GENMASK((h), (l)))
-> -#define HIWORD_UPDATE(v, h, l)	(((v) << (l)) | (GENMASK((h), (l)) << 16))
-> +#define UPDATE(x, h, l)		(FIELD_PREP(GENMASK((h), (l)), (x)))
-> +#define HIWORD_UPDATE(v, h, l)	(FIELD_PREP_WM16(GENMASK((h), (l)), (v)))
->  
->  /* SYS_GRF */
->  #define SYS_GRF_SOC_CON1			0x0304
+
+..snip..
+
+> diff --git a/drivers/clk/mediatek/clk-pllfh.c b/drivers/clk/mediatek/clk-pllfh.c
+> index 83630ee07ee976bf980c8cf2dd35ea24c1b40821..62bfe4a480f14a0a742fb094aff0e6d1a79fe0c3 100644
+> --- a/drivers/clk/mediatek/clk-pllfh.c
+> +++ b/drivers/clk/mediatek/clk-pllfh.c
+> @@ -220,7 +220,7 @@ int mtk_clk_register_pllfhs(struct device_node *node,
+>   		if (use_fhctl)
+>   			hw = mtk_clk_register_pllfh(pll, pllfh, base);
+>   		else
+> -			hw = mtk_clk_register_pll(pll, base);
+> +			hw = mtk_clk_register_pll(NULL, pll, base);
+>   
+
+Seriously, you've done all that work in patch [2/4], and now you're doing that
+just only with PLLFH?
+
+Nicolas, c'mon. It's just 5 minutes ahead. :-D
+
+Cheers,
+Angelo
+
+>   		if (IS_ERR(hw)) {
+>   			pr_err("Failed to register %s clk %s: %ld\n",
 > 
 
