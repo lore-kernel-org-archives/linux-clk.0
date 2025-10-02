@@ -1,51 +1,61 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC2C25227;
-	Thu,  2 Oct 2025 00:20:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A10D5224F6;
+	Thu,  2 Oct 2025 01:15:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759364442; cv=none; b=inJJV7JNlbQaoGEPUnlty5kf0EvtH5bdXF9EAZhzvoiPccaon703jTK3Su7akgcsqkXmhTc7VXTg9olDrWDK2HP7cVguizAEiuVM06T+KQBaPWCFkYvJcTI/m7bdSTqN5Vpn4AmQOZ6kDZcPVHVCUxJUTZ9l+cxVbz8s5xS/lTE=
+	t=1759367738; cv=none; b=A6XdMEdUl7YY5TOJ/z8ZK29t5LVleDjQsdOYnP7WirRjfwQyRWz8OK5zUoTYTcy/ZXwqBWlOzsjsmEQjK+wcEqwJ+YsICOeGxWnKPWPPetekX9ZE0mUMfK4DC2516CGk1luGxy/U8R7yQ4rj1FvoWTVg2jPb1DMPK6zkSrNBzBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759364442; c=relaxed/simple;
-	bh=Z5VycwaRGCTZh6B0+RfFBfHEf7Kh1kkGLViY785TdZ8=;
+	s=arc-20240116; t=1759367738; c=relaxed/simple;
+	bh=ybWFhd4Bl669wN6zdk9DEt87ykdf3WJUYTYkdhjzDkI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rRPnx+yKNXMmhTHJwRlSFRL7U4WfmMLsWkSz3fOmwmITJv1Pnl/+OREtXdapiVkD6oPh86feBuN5UnpL353OMSCvMkWVA2v+Vzp+6ObduOrwoVES9LEjW5Ejo4kWVNYe/ayo940L46pBj8TmVSRfZr7dJ3uBWbohVNHXMid/egk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IBxfyob7; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=jf8cjtpGr7dBQXRfXDF3XMyut4s8qLe+tgr7oEAnNaGK59eYfjIjGOqkokCmS0oXX6JYxdMGDqCDLsE0BQDBmKzf5n9OXmblqlRUXtwPeMAAYCba+aGKYk50ep+x5fghFB7tKHiH60G7CH6IXjuKTY9wgloLlXPPNoIhozW5WD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ojSiId7B; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IBxfyob7"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7395DC4CEF1;
-	Thu,  2 Oct 2025 00:20:41 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ojSiId7B"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2B43C4CEF1;
+	Thu,  2 Oct 2025 01:15:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759364441;
-	bh=Z5VycwaRGCTZh6B0+RfFBfHEf7Kh1kkGLViY785TdZ8=;
+	s=k20201202; t=1759367738;
+	bh=ybWFhd4Bl669wN6zdk9DEt87ykdf3WJUYTYkdhjzDkI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IBxfyob737auB/QcF4F3g6r4Kc+F+nDjefh76CK3QaXDH2wX/4RrVopLminyOy+Yt
-	 yBKeUbEZdPjS8nkPJ2y6ABhCR0iQWZFX3Vfnl07r2WSpNfY2PRyOtHOF4UIxKKYN72
-	 OhqpKdj3F4Q9mKHw0iWbb3gV3msoegcF7YB9llsOqwDPTpO2S8EF4DaW9hXKao3ayG
-	 D5ZUfPM1/bdBtx15W3EV3u3vZE32fBWg15xBsPX5z+iHXHPrzLKpM7XkIRL0gWtJ9g
-	 mduSCiMtwkcrZjaHDbM3d9afva2YpizvZMPz9VYO/xBjyKiqyr70IylztsVnf/9Was
-	 Tlg6E7Z+sKVHQ==
-Date: Wed, 1 Oct 2025 19:20:40 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
-Cc: linux-arm-kernel@lists.infradead.org, Stephen Boyd <sboyd@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
+	b=ojSiId7BoaS8UNz6oiQJrQVUImuzaY/mzCOniA7rvODFJU4GAwUFv3dAgCJ9KmWI9
+	 1rb7vwOLVXCWEKDPZVA/QFcQ8hNXvZwihE9EUDqzN0i0LGKz3mZuFkIl+BeojgiBCU
+	 6foF4q0z6vt1vPHkePosD2qlYpq2eRtrg4Yc8uAvb+RdqD/+Kaq6mAQj3hAwsvJkjt
+	 3azSV6vbvVsz+lvu0jLtVusygK4HGehccP5CclvEsKavXAfPgmSPpGgH6h/OOEfeBH
+	 Uz3jG6rmCjTj3suHzJb09+WYEWjJH3rEfjUL2aKnnt+rELnYhKCKu0hL7aghTc4jW8
+	 qhgxpAinpzLCQ==
+Date: Wed, 1 Oct 2025 20:15:36 -0500
+From: Rob Herring <robh@kernel.org>
+To: Luo Jie <quic_luoj@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org,
+	Stephen Boyd <sboyd@kernel.org>,
+	Varadarajan Narayanan <quic_varada@quicinc.com>,
+	Georgi Djakov <djakov@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Anusha Rao <quic_anusha@quicinc.com>,
+	Manikanta Mylavarapu <quic_mmanikan@quicinc.com>,
+	Devi Priya <quic_devipriy@quicinc.com>,
 	Philipp Zabel <p.zabel@pengutronix.de>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Felix Fietkau <nbd@nbd.name>, Andreas Gnau <andreas.gnau@iopsys.eu>,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>
-Subject: Re: [PATCH v3 1/3] dt-bindings: clock: airoha: Add reset support to
- EN7523 clock binding
-Message-ID: <175936443940.2629153.2958124902767152491.robh@kernel.org>
-References: <20250924094112.1918444-1-mikhail.kshevetskiy@iopsys.eu>
- <20250924104850.1930254-1-mikhail.kshevetskiy@iopsys.eu>
- <20250924104850.1930254-2-mikhail.kshevetskiy@iopsys.eu>
+	Richard Cochran <richardcochran@gmail.com>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	quic_kkumarcs@quicinc.com, quic_linchen@quicinc.com,
+	quic_leiwei@quicinc.com, quic_pavir@quicinc.com,
+	quic_suruchia@quicinc.com
+Subject: Re: [PATCH v6 02/10] dt-bindings: clock: Add "interconnect-cells"
+ property in IPQ9574 example
+Message-ID: <20251002011536.GA2828951-robh@kernel.org>
+References: <20250925-qcom_ipq5424_nsscc-v6-0-7fad69b14358@quicinc.com>
+ <20250925-qcom_ipq5424_nsscc-v6-2-7fad69b14358@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -54,20 +64,25 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250924104850.1930254-2-mikhail.kshevetskiy@iopsys.eu>
+In-Reply-To: <20250925-qcom_ipq5424_nsscc-v6-2-7fad69b14358@quicinc.com>
 
-
-On Wed, 24 Sep 2025 13:48:48 +0300, Mikhail Kshevetskiy wrote:
-> Introduce reset capability to EN7523 device-tree clock binding
-> documentation.
+On Thu, Sep 25, 2025 at 10:05:36PM +0800, Luo Jie wrote:
+> The Networking Subsystem (NSS) clock controller acts as both a clock
+> provider and an interconnect provider. The #interconnect-cells property
+> is needed in the Device Tree Source (DTS) to ensure that client drivers
+> such as the PPE driver can correctly acquire ICC clocks from the NSS ICC
+> provider.
 > 
-> Signed-off-by: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
+> Add the #interconnect-cells property to the IPQ9574 Device Tree binding
+> example to complete it.
+
+The subject is wrong as it #interconnect-cells, not interconnect-cells.
+
+> 
+> Fixes: 28300ecedce4 ("dt-bindings: clock: Add ipq9574 NSSCC clock and reset definitions")
+> Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
 > ---
->  .../bindings/clock/airoha,en7523-scu.yaml     |  3 +-
->  .../dt-bindings/reset/airoha,en7523-reset.h   | 61 +++++++++++++++++++
->  2 files changed, 62 insertions(+), 2 deletions(-)
->  create mode 100644 include/dt-bindings/reset/airoha,en7523-reset.h
-> 
+>  Documentation/devicetree/bindings/clock/qcom,ipq9574-nsscc.yaml | 1 +
+>  1 file changed, 1 insertion(+)
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
