@@ -1,90 +1,65 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03ACE4C6E;
-	Thu,  2 Oct 2025 01:19:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E157B442C;
+	Thu,  2 Oct 2025 01:31:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759367994; cv=none; b=VaDLBKlK0utpWZFQseIjKV/Qp4+gNBkYMw7O8UP3aoBtbhlVsnFQqkMvb2riYAhni/UOw+aFreFiKXWqxtsE3eRMQq4mIZaugS36FDMNdJqBf8k5Lcx9LppvZzMruB7SjIN5MPAuzVbAN1BoRcdzwdOtkJ9p21d7TCUyY/ZwjvE=
+	t=1759368669; cv=none; b=NFSw/jYgsiqIOIteNyNR91kuirUER9r7W0lB7bGqxGOe+Vmfw20FPZS3mGin66us7GhCQ7Ssns5G2SJHjdVaICLswmZGDCBD9Y8zMaXzEZa0mZpv6uGm0OwiAePUHaLq44cOIAGl99bTFgVnU+YOVX9gmPK5N5vwlduHzQu0EdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759367994; c=relaxed/simple;
-	bh=S5v77+loamJYz2mc9F0sUnNrIjYA6jb36MoituK44Hs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gBoE/W2qJPNOTH+vHCFnPB0yWUpE2CBMkgcW7LWFxAsOB0U9QgmfJF+IZy9Y10xg3LotnhS0l9L4EcIHo5sIL8xH7NZ5P8JTXOJK003fNrYiPVa9TcHY5ix1pcUy9rLBzVVC9T3vbPoo3qo7LvP111bgcvuDX7mvalL0CcAv/NM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WOEqlg92; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1759368669; c=relaxed/simple;
+	bh=HedJW/nDt3ySfYEknVt9nC6mYxiOLbtjAAGaTegzmC0=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=dltU4ye5yRD8Zkm+I6lkGdFrLrCw5UKXfLB5aOT4yONYlD9/4lgtZap69kgxliROrrfhQ4myMvfXN9XtEEZXYuP2g+F64FC6CFx7GQCBZH7g5Q+TfrbByspFpfUHZyXI0sCL+2mVSmlR9EO5btY2RfUekx4H07/neUd0ReMAipw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TK3FBJ2P; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WOEqlg92"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAC23C4CEF1;
-	Thu,  2 Oct 2025 01:19:52 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TK3FBJ2P"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC3AFC4CEF1;
+	Thu,  2 Oct 2025 01:31:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759367993;
-	bh=S5v77+loamJYz2mc9F0sUnNrIjYA6jb36MoituK44Hs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WOEqlg92ll97si18eSiQXlGl6HGZySnMaBwFwN1KOe+BKepCzCTp4XHmWDWNL0+Vs
-	 fX4/VCdyCr9byQQ3Z0r+ux9QG0+uwC9kSinEfbXJ6SgzH2ky58ZlvYD29Ng4kVXttW
-	 4aCVdg68OqZMZqKviZkvIKWMKvMEN26FpP5W7kfI/ifaq3rvPSCKzuuw0Ook3g9nlj
-	 kWmsxSO9q9yP/YRsfawTF7cMXQ7FdBYQ4R5FgYT6/yoeVtpGNscbFilr07drwwnmUC
-	 JLf8fXlNhhVRc4wXKM8AGxBVHRU8tTfSdSZtE5BBI1mFl1zaJ+DVgXDTMfW1JF8y3d
-	 Eocl/yGYXHhZw==
-Date: Wed, 1 Oct 2025 20:19:46 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-media@vger.kernel.org,
-	Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	linux-staging@lists.linux.dev, devicetree@vger.kernel.org,
-	Arnd Bergmann <arnd@arndb.de>, dri-devel@lists.freedesktop.org,
-	linux-tegra@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
-	linux-gpio@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Stephen Boyd <sboyd@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Sowjanya Komatineni <skomatineni@nvidia.com>,
-	Jonas =?iso-8859-1?Q?Schw=F6bel?= <jonasschwoebel@yahoo.de>,
-	Simona Vetter <simona@ffwll.ch>,
-	Aaron Kling <webgeek1234@gmail.com>,
-	David Airlie <airlied@gmail.com>, linux-clk@vger.kernel.org,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	linux-kernel@vger.kernel.org,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Charan Pedumuru <charan.pedumuru@gmail.com>
-Subject: Re: [PATCH v3 04/22] dt-bindings: display: tegra: document Tegra30
- VI and VIP
-Message-ID: <175936798598.2836295.8899587600859365567.robh@kernel.org>
-References: <20250925151648.79510-1-clamor95@gmail.com>
- <20250925151648.79510-5-clamor95@gmail.com>
+	s=k20201202; t=1759368665;
+	bh=HedJW/nDt3ySfYEknVt9nC6mYxiOLbtjAAGaTegzmC0=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=TK3FBJ2Pi2XNFQq9wfiZrF7ao79pFnuUna+jNN0498YP7RF7HEsRgtaLhnbLS6q0r
+	 hpboNQUzFTc1MGKR12rpI9y0J3SKPMEvGY4NQP2HAaEN52crnjtGv1sLYtJ11tn06D
+	 YjPslPyB9QVE8rIkGcNSfhuH1JeIsqAvuPHJQJCtKrvmZN26/3HKrC8YiJacARUjj8
+	 V6YCCiLuRSwwsoaYDX6V7CF84x9nYW3hLryJkVq927C1YnZAvosV1PP8ZVooNIavsO
+	 KbKcZ0y91kn+zfApjzIAoO98WSPQus3zTdGW1z9FQYmNsSawQMOGbVSAh1XK8zb903
+	 ro8EdAaYMFEzw==
+Date: Wed, 1 Oct 2025 19:31:00 -0600 (MDT)
+From: Paul Walmsley <pjw@kernel.org>
+To: Paul Walmsley <pjw@kernel.org>
+cc: Geert Uytterhoeven <geert+renesas@glider.be>, 
+    Michael Turquette <mturquette@baylibre.com>, 
+    Stephen Boyd <sboyd@kernel.org>, Rahul Pathak <rpathak@ventanamicro.com>, 
+    Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+    Anup Patel <apatel@ventanamicro.com>, linux-clk@vger.kernel.org, 
+    linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: COMMON_CLK_RPMI should depend on RISCV
+In-Reply-To: <6555b47f-919b-b56c-4a76-352c904343c2@kernel.org>
+Message-ID: <82323d78-0111-aa0d-cafb-d0c04071c6ea@kernel.org>
+References: <ed37635b59b0765ed3dbed6ea33c562a40b9e287.1759243789.git.geert+renesas@glider.be> <6555b47f-919b-b56c-4a76-352c904343c2@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250925151648.79510-5-clamor95@gmail.com>
+Content-Type: text/plain; charset=US-ASCII
 
+On Wed, 1 Oct 2025, Paul Walmsley wrote:
 
-On Thu, 25 Sep 2025 18:16:30 +0300, Svyatoslav Ryhel wrote:
-> Existing Parallel VI interface schema for Tegra20 is fully compatible with
-> Tegra30; hence, lets reuse it by setting fallback for Tegra30.
+> On Tue, 30 Sep 2025, Geert Uytterhoeven wrote:
 > 
-> Adjust existing VI schema to reflect that Tegra20 VI is compatible with
-> Tegra30 by setting a fallback for Tegra30. Additionally, switch to using
-> an enum instead of list of const.
+> > And perhaps the "default RISCV" should be dropped, too?
 > 
-> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> ---
->  .../display/tegra/nvidia,tegra20-vi.yaml      | 19 ++++++++++++-------
->  .../display/tegra/nvidia,tegra20-vip.yaml     |  9 +++++++--
->  2 files changed, 19 insertions(+), 9 deletions(-)
-> 
+> Probably.  I guess we should just add this to the arch/riscv defconfig 
+> instead.  Let's wait on this one for a few days to see if anyone has any 
+> comments, and consider that change for v6.18-rc fixes.
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Sorry, this one got garbled on the way out.  I meant to say that we should 
+think about whether it makes sense to use a more fine-grained way to 
+enable this by default.
 
+
+- Paul
