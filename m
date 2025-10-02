@@ -1,234 +1,378 @@
-Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8D9034BA47;
-	Thu,  2 Oct 2025 06:12:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCA1A259CA4
+	for <linux-clk@vger.kernel.org>; Thu,  2 Oct 2025 06:20:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759385585; cv=none; b=WLk8M0nQneVPo/uBsohY+wATxdQC7I1XHhx7QO2Lj8bAk3zx2xjU4VtfGfe21h8rRLTek1O0JRAhYP6STM12nATDzPlC1wwMtSp3G+z12Ms0ArBZ0e/JuOIMzhzjFd2XHLIFTVZFa5HJyK2Gq5dbrRgsgkkMPiynx6lvXCi09CQ=
+	t=1759386052; cv=none; b=FRPx1OWKTE1d3OSb7KFTw6tcpn9T9+gxgXwLrN4k/rh3e7w/4Ptmne7VpW8OHka8RaxA7XfBkJQh3LzhKWlqZUvlGMbGLDIO8wvjEXEq9IyzIcCr+fB5ihbztaFyZi9difEBvPCcDJvsO7l3MtmIKkWse8hYdq0uiTU3hIx7D3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759385585; c=relaxed/simple;
-	bh=GjLK0p+izySXHz7kEOe4+iLKCXhXiT5g3d28CfE/DE4=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jfoExMDNdBan558CHAJxrKcLkugCm2Bwt/twqx0Py2azL1RoBmR5qEMva/t6hQO01hn0117MjNw67/QMs5t3bf0i+9JIHqm7xNlOYItM9BcjtQjf3djhl26n2oK7msADnpX/jkoKn/309t6RMdCzV7uybnAG33LWulc2WUtQGRE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; dkim=pass (2048-bit key) header.d=windriver.com header.i=@windriver.com header.b=hdqpTeA8; arc=none smtp.client-ip=205.220.178.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+	s=arc-20240116; t=1759386052; c=relaxed/simple;
+	bh=UNOlGRUb2F62rGzVEa0QkuGjIMpHnAX408mUBw31bhY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Y0UZylek1IHQEnu16JBtf207avyoeVdkf1DUUY9IK9criHZ+4pYopOCwWW/H+qkGNM7HVgrCGVFeM9PNlwN2wgdHr6J9JhKamLPmpDjkIvQ6acyDcSwbkuGfW7PLlGxP2eNgbaZ9m6cIGih30XQaARZzbYush2UXl0QhJTyTQqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E0oN3lnc; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=windriver.com header.i=@windriver.com header.b="hdqpTeA8"
-Received: from pps.filterd (m0250811.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59268fMg3849820;
-	Thu, 2 Oct 2025 06:12:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=windriver.com;
-	 h=cc:content-transfer-encoding:content-type:date:from
-	:message-id:mime-version:subject:to; s=PPS06212021; bh=kAMh6joK6
-	HOtEonNKtVBdVyO8wKGvRGr0L0AuFQk6Is=; b=hdqpTeA85gz2vvFfN9YzS5JvX
-	W1GhGsIYihw5+8E1ajl9esp1iXneMSgvXdaKPSi8umO011PaWJ7mO+dYi3VCUaT+
-	k7MM9QtY25D1OE4BVHVTOsS25e7gDM6NGifLcC+KUK3K7p6dhsKgchFUraLQoM1h
-	WGMAMJdHUZgSPnuNLWc66WZZbNFioq9JLyZG1uipZMH1gLPhgdwGWtn7IZJqctex
-	yhbQOAzKjIA4Af7klIsRYrzVXIeG6Wzd2c0GmIxBdfZCN6gRadrWGdVFIW0pS15X
-	R0mWpdtM640PQlFDCbXYCc+kAdRFFTpaOuJnRHjM7dA7jedRtOZjDfszozo/Q==
-Received: from ala-exchng01.corp.ad.wrs.com ([128.224.246.36])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 49e54wwye8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Thu, 02 Oct 2025 06:12:20 +0000 (GMT)
-Received: from ala-exchng01.corp.ad.wrs.com (10.11.224.121) by
- ala-exchng01.corp.ad.wrs.com (10.11.224.121) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.59; Wed, 1 Oct 2025 23:12:18 -0700
-Received: from pek-lpd-ccm5.wrs.com (10.11.232.110) by
- ala-exchng01.corp.ad.wrs.com (10.11.224.121) with Microsoft SMTP Server id
- 15.1.2507.59 via Frontend Transport; Wed, 1 Oct 2025 23:12:16 -0700
-From: Yun Zhou <yun.zhou@windriver.com>
-To: <bmasney@redhat.com>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <dianders@chromium.org>, <yun.zhou@windriver.com>
-CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH] [v2] clk: fix slab-use-after-free when clk_core_populate_parent_map failed
-Date: Thu, 2 Oct 2025 14:12:15 +0800
-Message-ID: <20251002061215.1055185-1-yun.zhou@windriver.com>
-X-Mailer: git-send-email 2.27.0
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E0oN3lnc"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-46e29d65728so3694015e9.3
+        for <linux-clk@vger.kernel.org>; Wed, 01 Oct 2025 23:20:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759386048; x=1759990848; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oRTBM8LnR/gK/57/NUtGMW396PKa7QUFyM6GxtmZzcw=;
+        b=E0oN3lnc59W2KB5Gaie3GBYyi5o5MPYYuwoz+HTuzMOSYgxacgW5iV7XsRGaj/4z08
+         tXOTG8RIJ+0w69jGO/FevHPBowiVcyr4b3Hl2KT16GRoZWvSH3JtfNWfHS4Ji3h06Xfe
+         8EdZCfglKrNcDWGOIwy9TpnsNIg9XsJbOFqZ0CDmNCbZ18tDaMEKPJ5eQksanhDG2rQ/
+         lqmEpKA7ofkvB1tDWWk/NGjJWTc0Mcj/dDnTTHM5YLipi3g2NppqZxBq83K6AV72atRv
+         6NJ2CRc6ly/bfkp+WLpX7BZZjmPoAumWgPFdmXDBj+5kosyqjcHy8OV3Tzllue5vXvbH
+         6sGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759386048; x=1759990848;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oRTBM8LnR/gK/57/NUtGMW396PKa7QUFyM6GxtmZzcw=;
+        b=uCTPR2GnQs1tnxvYQXYkW9gWZ757u+izAFAUszgtB6IYBSvRam0NMWH7XLrIOEyOuQ
+         3rJrbnUp2ucM/CcxeikwfAhh3OEvbe4a5ASYjOWm1e3RKZdhBxAVJzUzOnMsQszcBKwS
+         YeIxJEcj+7IghDCcYwHo/s3ouZ/z2YPtwUKBEkTV6mrNu/WbJuDRxJHscrvdgeo28GHH
+         tIX59DZ98ctIGQcj4re0prWzPtRoTga1M0nUEmP90kNC+70ar+4/RWpepm0TWNmtMyTR
+         iRQUia+qhKbhxcvVBRqVMX5sy6Ni2jvq+reuulcWfWiWhEuAJmq1Rej5cNC79pMwnW2+
+         NA8w==
+X-Forwarded-Encrypted: i=1; AJvYcCXcKvehQ8jMgA/SLg30si4wVyOFvflweKIEnZJWzBfK9t4f50L5IsP48dUuQzjiyf+KGtKt8G2OAnw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWgQsy9y+Th0gC64RVa+szll6QiP8N6KjfQOLGccjY0G1ZnjU1
+	X9Vqn0/xQwmreOZDYHStvsJDPd4HZhwfSSXq8dE4ReJN5hd3S+USAyDmFpdjsqLyrulBYvip470
+	PePDBsfPQJMvAcg9FtsMQWqag9AfKNhA=
+X-Gm-Gg: ASbGncszUXynXg07CvHJyb5HLJk/osAWYJ/azycdiG2yo1dB78eXE6RfBhfE7Vy9eYi
+	NFycJ0ruFDikOXADVbHsQgVP2AwrGzMHEXh/yHS074TtznL0+S3uCaXaEIw+7M5p/Y/XwX3gMHB
+	7i5kVJgfTWlZbpt3HaCu1+LPIfTSPhHeC0ipg9xww7c2Tgw9oMHa9sK6yv+7wcXcTynaHvryOSM
+	8kl/cchPGf9b5JnV+AoszTklCRe63/p
+X-Google-Smtp-Source: AGHT+IG9I4dMog6DxhWZOtxZxWspqecPS6EJtfodnZXn/7hJIjt8sWMqMJeo+ECpmT/FYt/a4eXCECTuucjee6Wbagg=
+X-Received: by 2002:a5d:64e6:0:b0:3ec:e152:e2ce with SMTP id
+ ffacd0b85a97d-4255780b3bfmr4279258f8f.32.1759386047845; Wed, 01 Oct 2025
+ 23:20:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDAyMDA1MSBTYWx0ZWRfX2UDiLL7D+B7T
- dmv+ksyoMZiyrPAVQvvEUkpl/Tjzj5C94CRWUsm/ZeSdF1r6hOwkf/68uJVn7seSf2SuGztdUE3
- fNfaW9R22+xczViaB4BQU9Qqirtb6TySDiWIwRiRpkgMOrZBXPV8YTq30/6Z+3JdaSoNxRIxp+d
- R37eb3H35bXLCwLaiCgAaARfJ/yg4uzRoxWIpbhQDA9CquipYvkGOOqDag2JFMSgiqOdFDCeWF6
- JpABaFescSky/dO6JKkEouX35gnpgaKyPwpkQtibZT7mlNAbYOqfHmOK7wDOIsI1xhzDFX3EVhG
- uJVR8FdBnjM9PsfzOUBkq4BEBm6h9roj8fvKicvDM1y9i0IOoSApQNbzMBq+jaxNazNvotH4nk/
- bbr/1Hx6AAszSDBoUixosVZ0JeAKmg==
-X-Authority-Analysis: v=2.4 cv=ZNPaWH7b c=1 sm=1 tr=0 ts=68de17c4 cx=c_pps
- a=AbJuCvi4Y3V6hpbCNWx0WA==:117 a=AbJuCvi4Y3V6hpbCNWx0WA==:17
- a=x6icFKpwvdMA:10 a=t7CeM3EgAAAA:8 a=20KFwNOVAAAA:8 a=DMPQ43qBQR3bOjbsdysA:9
- a=FdTzh2GWekK77mhwV6Dw:22 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-ORIG-GUID: UYpdVda9EF2249JbDxzTjG9sMesolJu_
-X-Proofpoint-GUID: UYpdVda9EF2249JbDxzTjG9sMesolJu_
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-02_02,2025-09-29_04,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 priorityscore=1501 clxscore=1015 impostorscore=0
- bulkscore=0 suspectscore=0 spamscore=0 adultscore=0 phishscore=0
- malwarescore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2509150000
- definitions=main-2510020051
+References: <20250925151648.79510-1-clamor95@gmail.com> <3665995.U7HbjWM52l@senjougahara>
+ <CAPVz0n3CrVufs8vbw8XnYuwoZoQ2Xsi3V4HimgT0=4RQySzvaw@mail.gmail.com> <3862885.G96rZvMJ2N@senjougahara>
+In-Reply-To: <3862885.G96rZvMJ2N@senjougahara>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Thu, 2 Oct 2025 09:20:36 +0300
+X-Gm-Features: AS18NWD2rw-jNTiwDDXFJSZS6WdVYt-M8PE-7b82qk0Xm-jz28tlJ9BCRahpUc8
+Message-ID: <CAPVz0n2shn41h4z4PoMdtCXzj+96ak69TCqt7Ag5qpqdWi6UWA@mail.gmail.com>
+Subject: Re: [PATCH v3 15/22] staging: media: tegra-video: tegra20: simplify
+ format align calculations
+To: Mikko Perttunen <mperttunen@nvidia.com>
+Cc: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Sowjanya Komatineni <skomatineni@nvidia.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
+	Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	=?UTF-8?Q?Jonas_Schw=C3=B6bel?= <jonasschwoebel@yahoo.de>, 
+	Dmitry Osipenko <digetx@gmail.com>, Charan Pedumuru <charan.pedumuru@gmail.com>, 
+	Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>, Aaron Kling <webgeek1234@gmail.com>, 
+	Arnd Bergmann <arnd@arndb.de>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-media@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-staging@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-If clk_core_populate_parent_map() fails, core->parents will be immediately
-released within clk_core_populate_parent_map(). Therefore it is can't be
-released in __clk_release() again.
+=D1=87=D1=82, 2 =D0=B6=D0=BE=D0=B2=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 09:12=
+ Mikko Perttunen <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
+>
+> On Thursday, October 2, 2025 2:41=E2=80=AFPM Svyatoslav Ryhel wrote:
+> > =D1=87=D1=82, 2 =D0=B6=D0=BE=D0=B2=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 0=
+7:00 Mikko Perttunen <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
+> > >
+> > > On Wednesday, October 1, 2025 4:59=E2=80=AFPM Svyatoslav Ryhel wrote:
+> > > > =D1=81=D1=80, 1 =D0=B6=D0=BE=D0=B2=D1=82. 2025=E2=80=AF=D1=80. =D0=
+=BE 10:51 Mikko Perttunen <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
+> > > > >
+> > > > > On Wednesday, October 1, 2025 2:35=E2=80=AFPM Svyatoslav Ryhel wr=
+ote:
+> > > > > > =D1=81=D1=80, 1 =D0=B6=D0=BE=D0=B2=D1=82. 2025=E2=80=AF=D1=80. =
+=D0=BE 08:07 Svyatoslav Ryhel <clamor95@gmail.com> =D0=BF=D0=B8=D1=88=D0=B5=
+:
+> > > > > > >
+> > > > > > > =D1=81=D1=80, 1 =D0=B6=D0=BE=D0=B2=D1=82. 2025=E2=80=AF=D1=80=
+. =D0=BE 07:38 Mikko Perttunen <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=
+=D0=B5:
+> > > > > > > >
+> > > > > > > > On Friday, September 26, 2025 12:16=E2=80=AFAM Svyatoslav R=
+yhel wrote:
+> > > > > > > > > Simplify format align calculations by slightly modifying =
+supported formats
+> > > > > > > > > structure. Adjusted U and V offset calculations for plana=
+r formats since
+> > > > > > > > > YUV420P bits per pixel is 12 (1 full plane for Y + 2 * 1/=
+4 planes for U
+> > > > > > > > > and V) so stride is width * 3/2, but offset must be calcu=
+lated with plain
+> > > > > > > > > width since each plain has stride width * 1. This aligns =
+with downstream
+> > > > > > > >
+> > > > > > > > plane
+> > > > > > > >
+> > > > > > > > > behavior which uses same approach for offset calculations=
+.
+> > > > > > > > >
+> > > > > > > > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> > > > > > > > > ---
+> > > > > > > > >  drivers/staging/media/tegra-video/tegra20.c | 58 +++++++=
+++------------
+> > > > > > > > >  drivers/staging/media/tegra-video/vi.h      |  3 +-
+> > > > > > > > >  2 files changed, 27 insertions(+), 34 deletions(-)
+> > > > > > > > >
+> > > > > > > > > diff --git a/drivers/staging/media/tegra-video/tegra20.c =
+b/drivers/staging/media/tegra-video/tegra20.c
+> > > > > > > > > index 7c3ff843235d..b7a39723dfc2 100644
+> > > > > > > > > --- a/drivers/staging/media/tegra-video/tegra20.c
+> > > > > > > > > +++ b/drivers/staging/media/tegra-video/tegra20.c
+> > > > > > > > > @@ -280,20 +280,8 @@ static void tegra20_fmt_align(struct=
+ v4l2_pix_format *pix, unsigned int bpp)
+> > > > > > > > >       pix->width  =3D clamp(pix->width,  TEGRA20_MIN_WIDT=
+H,  TEGRA20_MAX_WIDTH);
+> > > > > > > > >       pix->height =3D clamp(pix->height, TEGRA20_MIN_HEIG=
+HT, TEGRA20_MAX_HEIGHT);
+> > > > > > > > >
+> > > > > > > > > -     switch (pix->pixelformat) {
+> > > > > > > > > -     case V4L2_PIX_FMT_UYVY:
+> > > > > > > > > -     case V4L2_PIX_FMT_VYUY:
+> > > > > > > > > -     case V4L2_PIX_FMT_YUYV:
+> > > > > > > > > -     case V4L2_PIX_FMT_YVYU:
+> > > > > > > > > -             pix->bytesperline =3D roundup(pix->width, 2=
+) * 2;
+> > > > > > > > > -             pix->sizeimage =3D roundup(pix->width, 2) *=
+ 2 * pix->height;
+> > > > > > > > > -             break;
+> > > > > > > > > -     case V4L2_PIX_FMT_YUV420:
+> > > > > > > > > -     case V4L2_PIX_FMT_YVU420:
+> > > > > > > > > -             pix->bytesperline =3D roundup(pix->width, 8=
+);
+> > > > > > > > > -             pix->sizeimage =3D roundup(pix->width, 8) *=
+ pix->height * 3 / 2;
+> > > > > > > > > -             break;
+> > > > > > > > > -     }
+> > > > > > > > > +     pix->bytesperline =3D DIV_ROUND_UP(pix->width * bpp=
+, 8);
+> > > > > > > > > +     pix->sizeimage =3D pix->bytesperline * pix->height;
+> > > > > > > > >  }
+> > > > > > > > >
+> > > > > > > > >  /*
+> > > > > > > > > @@ -305,6 +293,7 @@ static void tegra20_channel_queue_set=
+up(struct tegra_vi_channel *chan)
+> > > > > > > > >  {
+> > > > > > > > >       unsigned int stride =3D chan->format.bytesperline;
+> > > > > > > > >       unsigned int height =3D chan->format.height;
+> > > > > > > > > +     unsigned int width =3D chan->format.width;
+> > > > > > > > >
+> > > > > > > > >       chan->start_offset =3D 0;
+> > > > > > > > >
+> > > > > > > > > @@ -321,8 +310,8 @@ static void tegra20_channel_queue_set=
+up(struct tegra_vi_channel *chan)
+> > > > > > > > >
+> > > > > > > > >       case V4L2_PIX_FMT_YUV420:
+> > > > > > > > >       case V4L2_PIX_FMT_YVU420:
+> > > > > > > > > -             chan->addr_offset_u =3D stride * height;
+> > > > > > > > > -             chan->addr_offset_v =3D chan->addr_offset_u=
+ + stride * height / 4;
+> > > > > > > > > +             chan->addr_offset_u =3D width * height;
+> > > > > > > > > +             chan->addr_offset_v =3D chan->addr_offset_u=
+ + width * height / 4;
+> > > > > > > > >
+> > > > > > > > >               /* For YVU420, we swap the locations of the=
+ U and V planes. */
+> > > > > > > > >               if (chan->format.pixelformat =3D=3D V4L2_PI=
+X_FMT_YVU420)
+> > > > > > > > > @@ -332,14 +321,14 @@ static void tegra20_channel_queue_s=
+etup(struct tegra_vi_channel *chan)
+> > > > > > > > >               chan->start_offset_v =3D chan->addr_offset_=
+v;
+> > > > > > > > >
+> > > > > > > > >               if (chan->vflip) {
+> > > > > > > > > -                     chan->start_offset   +=3D stride * =
+(height - 1);
+> > > > > > > > > -                     chan->start_offset_u +=3D (stride /=
+ 2) * ((height / 2) - 1);
+> > > > > > > > > -                     chan->start_offset_v +=3D (stride /=
+ 2) * ((height / 2) - 1);
+> > > > > > > > > +                     chan->start_offset   +=3D width * (=
+height - 1);
+> > > > > > > > > +                     chan->start_offset_u +=3D (width / =
+2) * ((height / 2) - 1);
+> > > > > > > > > +                     chan->start_offset_v +=3D (width / =
+2) * ((height / 2) - 1);
+> > > > > > > > >               }
+> > > > > > > > >               if (chan->hflip) {
+> > > > > > > > > -                     chan->start_offset   +=3D stride - =
+1;
+> > > > > > > > > -                     chan->start_offset_u +=3D (stride /=
+ 2) - 1;
+> > > > > > > > > -                     chan->start_offset_v +=3D (stride /=
+ 2) - 1;
+> > > > > > > > > +                     chan->start_offset   +=3D width - 1=
+;
+> > > > > > > > > +                     chan->start_offset_u +=3D (width / =
+2) - 1;
+> > > > > > > > > +                     chan->start_offset_v +=3D (width / =
+2) - 1;
+> > > > > > > > >               }
+> > > > > > > > >               break;
+> > > > > > > > >       }
+> > > > > > > > > @@ -576,20 +565,23 @@ static const struct tegra_vi_ops te=
+gra20_vi_ops =3D {
+> > > > > > > > >       .vi_stop_streaming =3D tegra20_vi_stop_streaming,
+> > > > > > > > >  };
+> > > > > > > > >
+> > > > > > > > > -#define TEGRA20_VIDEO_FMT(MBUS_CODE, BPP, FOURCC)    \
+> > > > > > > > > -{                                                    \
+> > > > > > > > > -     .code    =3D MEDIA_BUS_FMT_##MBUS_CODE,           \
+> > > > > > > > > -     .bpp     =3D BPP,                                 \
+> > > > > > > > > -     .fourcc  =3D V4L2_PIX_FMT_##FOURCC,               \
+> > > > > > > > > +#define TEGRA20_VIDEO_FMT(DATA_TYPE, BIT_WIDTH, MBUS_COD=
+E, BPP, FOURCC)      \
+> > > > > > > > > +{                                                       =
+             \
+> > > > > > > > > +     .img_dt         =3D TEGRA_IMAGE_DT_##DATA_TYPE,    =
+               \
+> > > > > > > > > +     .bit_width      =3D BIT_WIDTH,                     =
+               \
+> > > > > > > > > +     .code           =3D MEDIA_BUS_FMT_##MBUS_CODE,     =
+               \
+> > > > > > > > > +     .bpp            =3D BPP,                           =
+               \
+> > > > > > > > > +     .fourcc         =3D V4L2_PIX_FMT_##FOURCC,         =
+               \
+> > > > > > > > >  }
+> > > > > > > > >
+> > > > > > > > >  static const struct tegra_video_format tegra20_video_for=
+mats[] =3D {
+> > > > > > > > > -     TEGRA20_VIDEO_FMT(UYVY8_2X8, 2, UYVY),
+> > > > > > > > > -     TEGRA20_VIDEO_FMT(VYUY8_2X8, 2, VYUY),
+> > > > > > > > > -     TEGRA20_VIDEO_FMT(YUYV8_2X8, 2, YUYV),
+> > > > > > > > > -     TEGRA20_VIDEO_FMT(YVYU8_2X8, 2, YVYU),
+> > > > > > > > > -     TEGRA20_VIDEO_FMT(UYVY8_2X8, 1, YUV420),
+> > > > > > > > > -     TEGRA20_VIDEO_FMT(UYVY8_2X8, 1, YVU420),
+> > > > > > > > > +     /* YUV422 */
+> > > > > > > > > +     TEGRA20_VIDEO_FMT(YUV422_8, 16, UYVY8_2X8, 16, UYVY=
+),
+> > > > > > > > > +     TEGRA20_VIDEO_FMT(YUV422_8, 16, VYUY8_2X8, 16, VYUY=
+),
+> > > > > > > > > +     TEGRA20_VIDEO_FMT(YUV422_8, 16, YUYV8_2X8, 16, YUYV=
+),
+> > > > > > > > > +     TEGRA20_VIDEO_FMT(YUV422_8, 16, YVYU8_2X8, 16, YVYU=
+),
+> > > > > > > > > +     TEGRA20_VIDEO_FMT(YUV422_8, 16, UYVY8_2X8, 12, YUV4=
+20),
+> > > > > > > > > +     TEGRA20_VIDEO_FMT(YUV422_8, 16, UYVY8_2X8, 12, YVU4=
+20),
+> > > > > > > > >  };
+> > > > > > > >
+> > > > > > > > Looking at the code, BPP seems to only be used for the line=
+ stride (i.e. bytes per line) calculation. I think we should just make it 8=
+ for the planar formats (possibly with an explaining comment). With the cur=
+rent code, we end up with 'bytesperline' variables in places not being the =
+actual bytes per line, which is confusing.
+> > > > > > > >
+> > > > > > > > Actually, we can then just make the 'bpp' field be bytes pe=
+r pixel as it was before to avoid the discrepancy with Tegra210.
+> > > > > > > >
+> > > > > > >
+> > > > > > > No, this code is actually cleaner and in sync with what downs=
+tream
+> > > > > > > does, Tegra210 bytes per pixel is confusing since it totally =
+neglects
+> > > > > > > formats with fractional bytes per pixel, it is impossible to =
+set there
+> > > > > > > 3/2 for example, which is used by YUV420.
+> > > > > > >
+> > > > > > > According to downstream code bytes_per_line =3D
+> > > > > > > soc_mbus_bytes_per_line..., downstream directly name is bytes=
+_per_line
+> > > > > > > and soc_mbus_bytes_per_line returns width * 3 / 2 which is co=
+rrect
+> > > > > > > calculation (12 bits). Meanwhile for planar formats Tegra has=
+ 3
+> > > > > > > different buffers so with offset calculation plain width must=
+ be used
+> > > > > > > (which matches downstream).
+> > > > > > >
+> > > > > >
+> > > > > > If you mean use of BPP by VI, I can propose removing bytesperli=
+ne and
+> > > > > > sizeimage configuration from VI entirely and leave this to per-=
+SoC
+> > > > > > fmt_align function which does this already anyway and guards ev=
+ery
+> > > > > > time those values are referred. This way there will be no insta=
+nces
+> > > > > > where "places not being the actual bytes per line" comes true.
+> > > > >
+> > > > > Without trying myself, I'm not sure what approach is the cleanest=
+. In any case, the downstream code is just wrong (or incorrectly named), so=
+ we shouldn't defer to it in this matter. I don't see a reason to keep the =
+value '12' either if it doesn't serve any purpose (admittedly if we changed=
+ it to 8 or 1, 'bpp' would be a confusing name for it, but explainable with=
+ a comment and improve-able later) I don't mind having an if/switch stateme=
+nt for the planar formats to use a '8' as multiplier instead of '12' if we =
+need to keep the '12'. But the main thing I want to avoid is a bytesperline=
+/stride variable that isn't the line stride in bytes.
+> > > > >
+> > > >
+> > > > I am proposing you a solution, handle bytesperline and sizeimage in
+> > > > per-SoC fmt_align function.
+> > >
+> > > Ok, I think that sounds good. It's good to consolidate the calculatio=
+n in one place.
+> > >
+> > > >
+> > > > 12 represents amount of bits used per pixel, 8 for Y plane, 2 for U
+> > > > plane and 2 for V plane, total is 12. "but explainable with a comme=
+nt
+> > > > and improve-able later" why then we cannot use 12 with a comment? t=
+his
+> > > > is all arbitrary. Downstream is not wrong from this perspective, yo=
+u
+> > > > don't take into account that YUV420 is planar and it uses 3 planes =
+a
+> > > > whole Y plane and 1/4 of U and V which in total results in wigth + =
+2 *
+> > > > 1/4 width which is width * 3/2
+> > >
+> > > Yes -- but AIUI, the only thing the bpp value is used for the bytespe=
+rline calculation. When we add the special case for planar formats, which d=
+oesn't use the bpp value, then the value 12 is never used anywhere. We shou=
+ld at least have a comment saying it is unused. (At that point, we could ju=
+st hardcode the bpp values in the fmt_align function -- but I don't mind ei=
+ther way.)
+> > >
+> > https://ffmpeg.org/pipermail/ffmpeg-user/2023-June/056488.html
+>
+> I understand very well that for YUV420, each pixel has 12 bits of color i=
+nformation. But how many bits of color information each pixel has is not us=
+eful in the context of this driver. The number of bytes per line is not rel=
+ated to how many bits of color information each pixel has for planar format=
+s.
 
-This fixes the following KASAN reported issue:
+No, it has direct impact. This is how buffer size / image size is
+calculated since we place each plane consecutive. And bytes per line
+is used specifically in image size calculation. This is common part
+with non-planar formats. Then since Tegra provides a dedicated
+channels/buffers for each plane, configuration of planar format
+includes an additional step with calculation for each plane.
 
-==================================================================
-BUG: KASAN: slab-use-after-free in __clk_release+0x80/0x160
-Read of size 8 at addr ffffff8043fd0980 by task kworker/u6:0/27
-
-CPU: 1 PID: 27 Comm: kworker/u6:0 Tainted: G        W          6.6.69-yocto-standard+ #7
-Hardware name: Raspberry Pi 4 Model B (DT)
-Workqueue: events_unbound deferred_probe_work_func
-Call trace:
- dump_backtrace+0x98/0xf8
- show_stack+0x20/0x38
- dump_stack_lvl+0x48/0x60
- print_report+0xf8/0x5d8
- kasan_report+0xb4/0x100
- __asan_load8+0x9c/0xc0
- __clk_release+0x80/0x160
- __clk_register+0x6dc/0xfb8
- devm_clk_hw_register+0x70/0x108
- bcm2835_register_clock+0x284/0x358
- bcm2835_clk_probe+0x2c4/0x438
- platform_probe+0x98/0x110
- really_probe+0x1e4/0x3e8
- __driver_probe_device+0xc0/0x1a0
- driver_probe_device+0x110/0x1e8
- __device_attach_driver+0xf0/0x1a8
- bus_for_each_drv+0xf8/0x178
- __device_attach+0x120/0x240
- device_initial_probe+0x1c/0x30
- bus_probe_device+0xdc/0xe8
- deferred_probe_work_func+0xe8/0x130
- process_one_work+0x2a4/0x698
- worker_thread+0x53c/0x708
- kthread+0x1b4/0x1c8
- ret_from_fork+0x10/0x20
-
-Allocated by task 27:
- kasan_save_stack+0x3c/0x68
- kasan_set_track+0x2c/0x40
- kasan_save_alloc_info+0x24/0x38
- __kasan_kmalloc+0xd4/0xd8
- __kmalloc+0x74/0x238
- __clk_register+0x718/0xfb8
- devm_clk_hw_register+0x70/0x108
- bcm2835_register_clock+0x284/0x358
- bcm2835_clk_probe+0x2c4/0x438
- platform_probe+0x98/0x110
- really_probe+0x1e4/0x3e8
- __driver_probe_device+0xc0/0x1a0
- driver_probe_device+0x110/0x1e8
- __device_attach_driver+0xf0/0x1a8
- bus_for_each_drv+0xf8/0x178
- __device_attach+0x120/0x240
- device_initial_probe+0x1c/0x30
- bus_probe_device+0xdc/0xe8
- deferred_probe_work_func+0xe8/0x130
- process_one_work+0x2a4/0x698
- worker_thread+0x53c/0x708
- kthread+0x1b4/0x1c8
- ret_from_fork+0x10/0x20
-
-Freed by task 27:
- kasan_save_stack+0x3c/0x68
- kasan_set_track+0x2c/0x40
- kasan_save_free_info+0x38/0x60
- __kasan_slab_free+0x100/0x170
- slab_free_freelist_hook+0xcc/0x218
- __kmem_cache_free+0x158/0x210
- kfree+0x88/0x140
- __clk_register+0x9d0/0xfb8
- devm_clk_hw_register+0x70/0x108
- bcm2835_register_clock+0x284/0x358
- bcm2835_clk_probe+0x2c4/0x438
- platform_probe+0x98/0x110
- really_probe+0x1e4/0x3e8
- __driver_probe_device+0xc0/0x1a0
- driver_probe_device+0x110/0x1e8
- __device_attach_driver+0xf0/0x1a8
- bus_for_each_drv+0xf8/0x178
- __device_attach+0x120/0x240
- device_initial_probe+0x1c/0x30
- bus_probe_device+0xdc/0xe8
- deferred_probe_work_func+0xe8/0x130
- process_one_work+0x2a4/0x698
- worker_thread+0x53c/0x708
- kthread+0x1b4/0x1c8
- ret_from_fork+0x10/0x20
-
-The buggy address belongs to the object at ffffff8043fd0800
- which belongs to the cache kmalloc-512 of size 512
-The buggy address is located 384 bytes inside of
- freed 512-byte region [ffffff8043fd0800, ffffff8043fd0a00)
-
-The buggy address belongs to the physical page:
-page:fffffffe010ff400 refcount:1 mapcount:0 mapping:0000000000000000 index:0xffffff8043fd0e00 pfn:0x43fd0
-head:fffffffe010ff400 order:3 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-flags: 0x4000000000000840(slab|head|zone=1)
-page_type: 0xffffffff()
-raw: 4000000000000840 ffffff8040002f40 ffffff8040000a50 ffffff8040000a50
-raw: ffffff8043fd0e00 0000000000150002 00000001ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
- ffffff8043fd0880: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffffff8043fd0900: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->ffffff8043fd0980: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                   ^
- ffffff8043fd0a00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
- ffffff8043fd0a80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-==================================================================
-
-Fixes: fc0c209c147f ("clk: Allow parents to be specified without string names")
-Signed-off-by: Yun Zhou <yun.zhou@windriver.com>
-Reviewed-by: Brian Masney <bmasney@redhat.com>
----
- drivers/clk/clk.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index b821b2cdb155..b93f38de4cac 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -4254,7 +4254,6 @@ static int clk_core_populate_parent_map(struct clk_core *core,
- 	 * having a cache of names/clk_hw pointers to clk_core pointers.
- 	 */
- 	parents = kcalloc(num_parents, sizeof(*parents), GFP_KERNEL);
--	core->parents = parents;
- 	if (!parents)
- 		return -ENOMEM;
- 
-@@ -4295,6 +4294,8 @@ static int clk_core_populate_parent_map(struct clk_core *core,
- 		}
- 	}
- 
-+	core->parents = parents;
-+
- 	return 0;
- }
- 
-@@ -4302,7 +4303,7 @@ static void clk_core_free_parent_map(struct clk_core *core)
- {
- 	int i = core->num_parents;
- 
--	if (!core->num_parents)
-+	if (!core->parents)
- 		return;
- 
- 	while (--i >= 0) {
--- 
-2.27.0
-
+>
+>
+>
