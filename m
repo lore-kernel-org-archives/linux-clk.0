@@ -1,65 +1,160 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E157B442C;
-	Thu,  2 Oct 2025 01:31:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D22EA18024;
+	Thu,  2 Oct 2025 01:52:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759368669; cv=none; b=NFSw/jYgsiqIOIteNyNR91kuirUER9r7W0lB7bGqxGOe+Vmfw20FPZS3mGin66us7GhCQ7Ssns5G2SJHjdVaICLswmZGDCBD9Y8zMaXzEZa0mZpv6uGm0OwiAePUHaLq44cOIAGl99bTFgVnU+YOVX9gmPK5N5vwlduHzQu0EdU=
+	t=1759369966; cv=none; b=JeTN/+9e7Zym3Gy7RnJh9L+y4eotcxmBIfzl8DULUGj+ms4XIwv1u3ZDm9C/P7MvM4lt+1UTh0MQO3MbyyRM8A0rlOZ91CFgPkMHEUOSSIpRUZOD6fBHwWyajYKnuNYJ5ZOZEJPgDErluJH8bqnn4lK1HCjG17lveTAgK8DTFWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759368669; c=relaxed/simple;
-	bh=HedJW/nDt3ySfYEknVt9nC6mYxiOLbtjAAGaTegzmC0=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=dltU4ye5yRD8Zkm+I6lkGdFrLrCw5UKXfLB5aOT4yONYlD9/4lgtZap69kgxliROrrfhQ4myMvfXN9XtEEZXYuP2g+F64FC6CFx7GQCBZH7g5Q+TfrbByspFpfUHZyXI0sCL+2mVSmlR9EO5btY2RfUekx4H07/neUd0ReMAipw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TK3FBJ2P; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1759369966; c=relaxed/simple;
+	bh=tspc5d34DMU8IoQ9+1NwNhd7W1LOMvs3/Io1z+Hqf/U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j2kMN7o1BUe/xsoZ52LL48E391FPs7Bdu4BCly+XXqp89aJG4yo5t+Aby5x/lhDQd+ucZSiI1Ugn2hZqVd84r/jU53Il1QT6JOOQnLKhnsY8QZEDu23XEcDVNXzhPk78rImbg10lGyfQ1F2FWGviyGUcw4pQbqU7wbLFhoqpg1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MnjpTqpb; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TK3FBJ2P"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC3AFC4CEF1;
-	Thu,  2 Oct 2025 01:31:04 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MnjpTqpb"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 294D2C4CEF1;
+	Thu,  2 Oct 2025 01:52:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759368665;
-	bh=HedJW/nDt3ySfYEknVt9nC6mYxiOLbtjAAGaTegzmC0=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=TK3FBJ2Pi2XNFQq9wfiZrF7ao79pFnuUna+jNN0498YP7RF7HEsRgtaLhnbLS6q0r
-	 hpboNQUzFTc1MGKR12rpI9y0J3SKPMEvGY4NQP2HAaEN52crnjtGv1sLYtJ11tn06D
-	 YjPslPyB9QVE8rIkGcNSfhuH1JeIsqAvuPHJQJCtKrvmZN26/3HKrC8YiJacARUjj8
-	 V6YCCiLuRSwwsoaYDX6V7CF84x9nYW3hLryJkVq927C1YnZAvosV1PP8ZVooNIavsO
-	 KbKcZ0y91kn+zfApjzIAoO98WSPQus3zTdGW1z9FQYmNsSawQMOGbVSAh1XK8zb903
-	 ro8EdAaYMFEzw==
-Date: Wed, 1 Oct 2025 19:31:00 -0600 (MDT)
-From: Paul Walmsley <pjw@kernel.org>
-To: Paul Walmsley <pjw@kernel.org>
-cc: Geert Uytterhoeven <geert+renesas@glider.be>, 
-    Michael Turquette <mturquette@baylibre.com>, 
-    Stephen Boyd <sboyd@kernel.org>, Rahul Pathak <rpathak@ventanamicro.com>, 
-    Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-    Anup Patel <apatel@ventanamicro.com>, linux-clk@vger.kernel.org, 
-    linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: COMMON_CLK_RPMI should depend on RISCV
-In-Reply-To: <6555b47f-919b-b56c-4a76-352c904343c2@kernel.org>
-Message-ID: <82323d78-0111-aa0d-cafb-d0c04071c6ea@kernel.org>
-References: <ed37635b59b0765ed3dbed6ea33c562a40b9e287.1759243789.git.geert+renesas@glider.be> <6555b47f-919b-b56c-4a76-352c904343c2@kernel.org>
+	s=k20201202; t=1759369965;
+	bh=tspc5d34DMU8IoQ9+1NwNhd7W1LOMvs3/Io1z+Hqf/U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MnjpTqpbFG9MFq6gvjiBtfQVNK4EwzZChhlbPJLMjbxdmuRiewsYbSUm9ebQExjtB
+	 nkSyZUyL2K0c4psuhC7Wp878c1IvuromCF7g91w9nNDi0cC1rj12zCgcDuXswV5U/d
+	 BZA82QlODS8ZzZm0bPYrGZgBvbz3aHe4mUFSo0JSLNXseU2uktQlcVrTAyHovwUCo2
+	 0BE6u4QQbXO9B4MU9ZSjI+RGQtQ0nUhI7tEqGz72GElbWO9RArlWZbDuRRjbt2X0Cc
+	 vQOn6kxILSquGwQWbgUxaawS5DmEuyDhuqsL65/ntNYq54bPiaLYnkxz4UZ0sjvWaj
+	 Pac/IUS0OLt8w==
+Date: Wed, 1 Oct 2025 20:52:44 -0500
+From: Rob Herring <robh@kernel.org>
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Sowjanya Komatineni <skomatineni@nvidia.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jonas =?iso-8859-1?Q?Schw=F6bel?= <jonasschwoebel@yahoo.de>,
+	Dmitry Osipenko <digetx@gmail.com>,
+	Charan Pedumuru <charan.pedumuru@gmail.com>,
+	Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>,
+	Aaron Kling <webgeek1234@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-staging@lists.linux.dev
+Subject: Re: [PATCH v3 20/22] dt-bindings: display: tegra: document Tegra20
+ and Tegra30 CSI
+Message-ID: <20251002015244.GA2836647-robh@kernel.org>
+References: <20250925151648.79510-1-clamor95@gmail.com>
+ <20250925151648.79510-21-clamor95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250925151648.79510-21-clamor95@gmail.com>
 
-On Wed, 1 Oct 2025, Paul Walmsley wrote:
-
-> On Tue, 30 Sep 2025, Geert Uytterhoeven wrote:
+On Thu, Sep 25, 2025 at 06:16:46PM +0300, Svyatoslav Ryhel wrote:
+> Document CSI HW block found in Tegra20 and Tegra30 SoC.
 > 
-> > And perhaps the "default RISCV" should be dropped, too?
+> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> ---
+>  .../display/tegra/nvidia,tegra20-csi.yaml     | 135 ++++++++++++++++++
+>  1 file changed, 135 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-csi.yaml
 > 
-> Probably.  I guess we should just add this to the arch/riscv defconfig 
-> instead.  Let's wait on this one for a few days to see if anyone has any 
-> comments, and consider that change for v6.18-rc fixes.
+> diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-csi.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-csi.yaml
+> new file mode 100644
+> index 000000000000..817b3097846b
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-csi.yaml
+> @@ -0,0 +1,135 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/display/tegra/nvidia,tegra20-csi.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: NVIDIA Tegra20 CSI controller
+> +
+> +maintainers:
+> +  - Svyatoslav Ryhel <clamor95@gmail.com>
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - nvidia,tegra20-csi
+> +      - nvidia,tegra30-csi
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks: true
+> +  clock-names: true
+> +
+> +  avdd-dsi-csi-supply:
+> +    description: DSI/CSI power supply. Must supply 1.2 V.
+> +
+> +  power-domains:
+> +    maxItems: 1
+> +
+> +  "#nvidia,mipi-calibrate-cells":
+> +    description:
+> +      The number of cells in a MIPI calibration specifier. Should be 1.
+> +      The single cell specifies an id of the pad that need to be
+> +      calibrated for a given device. Valid pad ids for receiver would be
+> +      0 for CSI-A; 1 for CSI-B; 2 for DSI-A and 3 for DSI-B.
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    const: 1
 
-Sorry, this one got garbled on the way out.  I meant to say that we should 
-think about whether it makes sense to use a more fine-grained way to 
-enable this by default.
+Sorry I didn't bring this up before, but is this ever not 1? If it is 
+fixed, then you don't really need the property. I prefer it just be 
+fixed rather than getting a bunch of vendor specific #foo-cells.
 
 
-- Paul
+> +
+> +  "#address-cells":
+> +    const: 1
+> +
+> +  "#size-cells":
+> +    const: 0
+> +
+> +patternProperties:
+> +  "^channel@[0-1]$":
+> +    type: object
+> +    description: channel 0 represents CSI-A and 1 represents CSI-B
+> +    additionalProperties: false
+> +
+> +    properties:
+> +      reg:
+> +        maximum: 1
+> +
+> +      nvidia,mipi-calibrate:
+> +        description: Should contain a phandle and a specifier specifying
+> +          which pad is used by this CSI channel and needs to be calibrated.
+> +        $ref: /schemas/types.yaml#/definitions/phandle-array
+
+Sounds like only one entry? Then 'maxItems: 1' is needed. If you drop 
+#nvidia,mipi-calibrate-cells, then you need to define the arg size too:
+
+items:
+  - items:
+      - description: phandle to ...
+      - description: what the arg contains.
+
