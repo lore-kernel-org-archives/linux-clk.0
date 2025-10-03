@@ -1,957 +1,471 @@
-Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazon11012041.outbound.protection.outlook.com [52.101.43.41])
+Received: from fout-b8-smtp.messagingengine.com (fout-b8-smtp.messagingengine.com [202.12.124.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10AE828FFE7;
-	Fri,  3 Oct 2025 09:19:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.43.41
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759483166; cv=fail; b=qfm/Wooar1t9eGhvVGGzx5Hu+phHAyhk3zeWGFsN6sx5EFsJTC3TQ86nQh0Hu2AZ/lydFA2CGbj4IrjZ1PCVaRC8eXiodMzE+yslqG6CrP1KvuNdghUBNap57k6xZ//dW9W8qi2xnFD1FcetlGO0ZrEknJb+qOt9pzdPhVPzl/s=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759483166; c=relaxed/simple;
-	bh=IVqFPIhgRdeHrP7RfrjxnKfzqaQECKshMUC3hRnlzBQ=;
-	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ccmTK9rrPvYF88F6neUbJ7/P4s91Kh19M9E9KA2pt7M5BXzNBjupXDSmhDI/lARjTg+7GAqBuuDzi9ENrGC8GkJXCbIUgmpctAFPKo4LmNGWULhO3Zq9krTdUQzKsSETQl4bMHJUfJ8PaPKgs3viqzd7vF+35+WAgYCRn9GcUqA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com; spf=pass smtp.mailfrom=altera.com; dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b=oK/Z7qRK; arc=fail smtp.client-ip=52.101.43.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altera.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C60742A80;
+	Fri,  3 Oct 2025 15:08:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.151
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759504106; cv=none; b=PdMjk78YXm3mdAnd20yws5gecsEHbKOmcEB+DsGcu95Ujp0TZFkLiOmDMXzjNWYWbufl9ym+oClcGJwsu9XEPXrkb2PaBX3ARjoeKkyAuMGWBJktwThvB1HMUSqdw9kRwTeYkRXVBbCF8TRyhe66eviz2tPfBvfx70sdP/UFjUc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759504106; c=relaxed/simple;
+	bh=xchu3zkjff/yqh0XlrDCR8C58ZhukqzWo/y3lvTI5cE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fv6G07LSuaGmUk8+d1rpk2Tw5asG5mwko2H3rS50OwK25Q+fenNckzF55h5Dl8k1DbkQkLUGIootAdK3gd6OdpUCTn050q9F+DTakV8mgeWYxY3NavzEBxDDBjqXEkGMTeEy0nmBOrbvODEsfn55FMAJQgedWoYHq5ev57t5dew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=VhlK3yba; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=t69O1oGL; arc=none smtp.client-ip=202.12.124.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b="oK/Z7qRK"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=CA1L3Vj/PTCuoyFD9PhgMZm+4wtRBuEaVZqXIuRcMnk5nH7DAcfGEjuVJIWnh+K468YgXJLb2SVT9uK43NkmBpa/xsskrj0VQq9mM18Xbu9f/0OaZ7f4qcB2C99DbtWxXHjlNNAEKOQMM4UkrgElvRANZCuMcspFoQftVY32/ikb52Q3rKX6KbVs/6ciVvuRcNnpL2M9kl7EE7PeEbHp1NAaxESyNElUGNirRzxUHDiV6m095zEnBJVsVlH3S7OH/mwKsVuBOdnJtWJAYhxX6iH1J/uxiootkcp7UVLx0UF+m9mmX2Tz9VB0QDAttePVNhTYqty5aJLNebpNMUvkZw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=oTUsbGPD9EKZ2J3OSZQuQez+MjMlpa8oEz3NPAWwoaw=;
- b=oLd6OFKDEbKLmM2F9mqzxFF9IOj/JXSYMdJZAhbCj6GWo0TH7Kunbui021kgOZwJwBtXLScEuzhAF9J2LGCXev7OgrTIiHUcW81tI0Gve3A4GpKXLORKBNvw7e6/j+NPZyYo8TtKdV4pm7a9JxVxMKjeaKP4sTxzmZzTYzQRQXf/nbTiiiDzOyT6oF3k6teJ7yYjl9ds2u00zf259cULosevmNImxB4RnlkzJiml7elYm5lFM66fFGW+rQQQS784blk4IxaiTs0iOWx/+YE/SWO3E2flSYQBTSeFaZTvrqHwpmUullKzmFcHD3nCZJrSCMbVzMFf9cYHoZqpCc8C0Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=altera.com; dmarc=pass action=none header.from=altera.com;
- dkim=pass header.d=altera.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=altera.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=oTUsbGPD9EKZ2J3OSZQuQez+MjMlpa8oEz3NPAWwoaw=;
- b=oK/Z7qRKbnQWGfFumjs+ElSPPMMFZkvGkO82fBKsOm/mKkAvj/vGKQBImObNyA4LmZVSUvKhCZhQjZb9/g2sSj+jcns2+bwwVIW+q2w0eLJSwZ1auo97whAUTJxllweWd1ZrQpnatnzHZUceFh9uwGsVY4+IqLD59pE3KC/aZjjY5KbEd+G0FiGt+XqXChUlZtrijDuhHsAt9e58ZBbtfrY6Zv8SFrO43nxGfEZWRc+V6adI06/wbaOet0YD4xlijTwXFzOeebpNjSvjP6Xuk9u1NvIMPtCQpoPkkLVyZZ9YxxEzQy25nL2ePazkYsnWzT5ktfm2jkZz2yDTgW/1LQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=altera.com;
-Received: from MN2PR03MB4927.namprd03.prod.outlook.com (2603:10b6:208:1a8::8)
- by PH8PR03MB7245.namprd03.prod.outlook.com (2603:10b6:510:238::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.17; Fri, 3 Oct
- 2025 09:19:21 +0000
-Received: from MN2PR03MB4927.namprd03.prod.outlook.com
- ([fe80::bfcb:80f5:254c:c419]) by MN2PR03MB4927.namprd03.prod.outlook.com
- ([fe80::bfcb:80f5:254c:c419%5]) with mapi id 15.20.9182.015; Fri, 3 Oct 2025
- 09:19:21 +0000
-From: Khairul Anuar Romli <khairul.anuar.romli@altera.com>
-To: Dinh Nguyen <dinguyen@kernel.org>,
+	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="VhlK3yba";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="t69O1oGL"
+Received: from phl-compute-09.internal (phl-compute-09.internal [10.202.2.49])
+	by mailfout.stl.internal (Postfix) with ESMTP id 3CE1C1D0003B;
+	Fri,  3 Oct 2025 11:08:22 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-09.internal (MEProxy); Fri, 03 Oct 2025 11:08:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1759504102;
+	 x=1759590502; bh=i270RD4VcI7ckhtO3vqu0AJfQn3RYqxv+Cfx//Wv2CU=; b=
+	VhlK3ybaDdC/0tJW57ikF0I5RT/eaTbMaXc0+EDVU7d105JbXC5MW3xW5EN54AHq
+	ScdjCzVSP3zxyePLdR4cFkp5jTs/RJWQFoEA7YAX2sTqUie3Tu3SeAlbV9HrSB9o
+	BBAnAzClj6UyUiU3WcPDMQ/rHNjjtB5SAyTkZPdwjBF/+TU778amWIDrdAECZ5JD
+	syS/B0j0LBSlwN++TdkworskzUUnd7qTFhUnn5KKMxCfYDjowSVM0NopLjBEb4Hi
+	1N8jbAx2tTNRBjyDsM0q1nyKcWIiCdz0fOm34woD0wTIct/x3CPXJCISISvE34cY
+	9q27cqdqC1A/6/l0yOPskA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1759504102; x=
+	1759590502; bh=i270RD4VcI7ckhtO3vqu0AJfQn3RYqxv+Cfx//Wv2CU=; b=t
+	69O1oGLGZ7KbBQoDdjdViJuPPLqSxh4gPMHtQ7BWfIdgB2NU9+vtX7FowrlSEYsJ
+	+AQ6pbE5lnLIxCRG8wkxBB2W/USLo2+WKEXrF8yE+ZjOCsc+TNIk9asuu3zTM4L0
+	imE9MoLEgzBwwLKFc8wVsWTYobzLpLcqc5EaoH3CZmJRiaJHS6z3teePFxiQRcpA
+	TGHjkz926cXlSIIQTTvjR6rgE79bVFjoTMe5UYOArXGg7/SwOwfpfz9E+EIqt1Ip
+	DoREsyBC7Y5UGiGKU346rDuSF+VdcEUeoeHKtWQIxHKYCLIeOMV9aQMu85WSJlRc
+	LyKMwb3vlcMTlDuf2g8jA==
+X-ME-Sender: <xms:5ebfaAdA4nQwTJLZUyRYm9oL3a9HxuVDJ_0aSB5RAqvULjpphq19tA>
+    <xme:5ebfaLj8PAaTs9Sn76dr80mQLBtz5KTr0U8Ib_npDjjZO8Ll3OMyEEV1Cc6DbEyTm
+    4RSXZRssy0qpCBGLFMQF1u6hAd-sGxNVUaa_JA3NHo56s1da9kPJyY>
+X-ME-Received: <xmr:5ebfaIy5GmOuxi5Jye7xZPlU9yD4IYlAnVIkWtpfEXuhtHHH7bXdhVG75vDfwYvXVulCBoui5hWMSdBEup_hkPfhwQqlSuc>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdekledvvdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpeffhffvvefukfhfgggtugfgjgesthekredttddtjeenucfhrhhomheppfhikhhlrghs
+    ucfunpguvghrlhhunhguuceonhhikhhlrghsrdhsohguvghrlhhunhgusehrrghgnhgrth
+    gvtghhrdhsvgeqnecuggftrfgrthhtvghrnhepveetgedtvddvhfdtkeeghfeffeehteeh
+    keekgeefjeduieduueelgedtheekkeetnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
+    hrrghmpehmrghilhhfrhhomhepnhhikhhlrghsrdhsohguvghrlhhunhgusehrrghgnhgr
+    thgvtghhrdhsvgdpnhgspghrtghpthhtohepiedpmhhouggvpehsmhhtphhouhhtpdhrtg
+    hpthhtohepmhgrrhgvkhdrvhgrshhuthdorhgvnhgvshgrshesmhgrihhlsghogidrohhr
+    ghdprhgtphhtthhopehlihhnuhigqdgtlhhksehvghgvrhdrkhgvrhhnvghlrdhorhhgpd
+    hrtghpthhtohepghgvvghrthdorhgvnhgvshgrshesghhlihguvghrrdgsvgdprhgtphht
+    thhopehmthhurhhquhgvthhtvgessggrhihlihgsrhgvrdgtohhmpdhrtghpthhtohepsh
+    gsohihugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqrhgvnhgvshgr
+    shdqshhotgesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:5ebfaHPnVDmv-MGUMvtyu7UK7qmkowJqqHHbNnC74F7SRojVOXEbLw>
+    <xmx:5ebfaJVUJNcw_1doWvxYYZWfy03xznaw5uptbtV9IFXGocuFoNs8gg>
+    <xmx:5ebfaL3ln2womImDc2B89GeanSCDGBumtLQewhQNKddvrrhb4Q92tQ>
+    <xmx:5ebfaHp7_IP5IZbP0WYxomJJmCvqZGpHNYaaLAGR_wp9xDBrRPDg8Q>
+    <xmx:5ubfaCi1VApX0OpRqpB-V5InT1RDeiHuODA97aUW8q5mjdgYDfp46CAb>
+Feedback-ID: i80c9496c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 3 Oct 2025 11:08:20 -0400 (EDT)
+Date: Fri, 3 Oct 2025 17:08:19 +0200
+From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+To: Marek Vasut <marek.vasut+renesas@mailbox.org>
+Cc: linux-clk@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK),
-	linux-kernel@vger.kernel.org (open list),
-	Ang Tien Sung <tiensung.ang@altera.com>,
-	Khairul Anuar Romli <khairul.anuar.romli@altera.com>
-Subject: [PATCH 1/1] clk: socfpga: agilex5: add clock driver for Agilex5
-Date: Fri,  3 Oct 2025 17:19:14 +0800
-Message-Id: <e7e7e105327aafd54e58d1786a7a55ff0ea4aa9b.1759482803.git.khairul.anuar.romli@altera.com>
-X-Mailer: git-send-email 2.35.3
-In-Reply-To: <cover.1759482803.git.khairul.anuar.romli@altera.com>
-References: <cover.1759482803.git.khairul.anuar.romli@altera.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SJ0PR13CA0063.namprd13.prod.outlook.com
- (2603:10b6:a03:2c4::8) To MN2PR03MB4927.namprd03.prod.outlook.com
- (2603:10b6:208:1a8::8)
+	Stephen Boyd <sboyd@kernel.org>, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] clk: renesas: cpg-mssr: Add missing 1ms delay into reset
+ toggle callback
+Message-ID: <20251003150819.GC344149@ragnatech.se>
+References: <20250918030552.331389-1-marek.vasut+renesas@mailbox.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN2PR03MB4927:EE_|PH8PR03MB7245:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5df99ab6-a709-43bf-528e-08de025def5c
-X-MS-Exchange-AtpMessageProperties: SA
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?3E+LYVD5nndURh5Euz6qiNpNZtz3SA3xH1a23uAKqLx/PdcSOh6DG0ClPmkH?=
- =?us-ascii?Q?uu9IDA/cyFw5692bWSvfrpM5+0ObRsPlKKmRz3gU12BBZK3JBIUE4SXMDr2z?=
- =?us-ascii?Q?XmE1vXWSTz47aWbalFmU9gkg4xh08U9J/eLHd47nULjcwf5NUPSKXjgGw8de?=
- =?us-ascii?Q?xH6wSgtg/9ZwQc1XitAW7fGnq3Fh+yItoHRfbB3iO2k7uk2Ff2Wbzj9S73i1?=
- =?us-ascii?Q?ybEh4qvIXQDxCswrwjM5YVFM57BvXvUhhUZspUyDcJ0QTf7bnbrkFKaSDkwL?=
- =?us-ascii?Q?Ot+Mmen1pNV5suSxsOdRgTBpXw2bRC1SHAADfDSTapUkLwS/FWE3Rv0CuHz3?=
- =?us-ascii?Q?yUbgN/EU7BxVj0OJFE0rXN+mpQKB4jVxr5Pq8DsFGN9ZLrEo7iXmjB+2DOMZ?=
- =?us-ascii?Q?Y9yUifjCkBxw0Y/NyWthKvfQ7Uy9K2SfD7OtAe8JoK7uoO0/IPlupgjalgYh?=
- =?us-ascii?Q?eHf216HA6/dVgplh2W4GQIoiPEzPzgFtjKTfn+ygsk3gUMv6hdOaxZfBLtEO?=
- =?us-ascii?Q?GBYFi2eNNJHmAz5NnfjkrJ49TOhQt3BAhRSOs8cNVqfz2grZNVq58fKNxqtj?=
- =?us-ascii?Q?u1q/CIu/nzQ7Ly03mmbM2jJh/+HJVk9QYt7l5m3KesDMg3Mjk/fySABCSZWg?=
- =?us-ascii?Q?mc7fzkP6f/YrINoik3HADHQCGR38CneMc4Lt4pthyZh6stgSdTauHW28T2c2?=
- =?us-ascii?Q?G3jEFyCzS9vd4rhh73LOpm6i57GoIKtuALiZcvfWupSaRPTSMW7TcPDe+UOE?=
- =?us-ascii?Q?E5aQ3AzYRQ/jSbvYwEj9/eGhMN+CeEDvP8laPE5aJ+28Qx8qJKW1+38rGyOX?=
- =?us-ascii?Q?F2ARd1mmFKzfYKjjM3eGD+a1gzktfSqWxGacRTBYEf9B30kQU6kQXmhV6Z++?=
- =?us-ascii?Q?OKcwiAV3Fkf80/6u9hkphc2Faxq7c/oGly4/KI2kznCZ2ZcJ5aHpwnsMohLh?=
- =?us-ascii?Q?C8eb2ubhdi8lMN7pixDK4uGsD2HUaQvJ3pomJf7gpnGL2XTaDrTG6QRFZuZq?=
- =?us-ascii?Q?1s9ftn+Yf02AqfllXZNFIdJ/H4FJ5pmnkTaALATyoud0pufOWMiCrvd3xf7e?=
- =?us-ascii?Q?lc1NT7ZQEF1eZyFhzJ/tuhaPFrZlCD3eB1wXhycUL2GfX1RhSCFy/7yB4C9r?=
- =?us-ascii?Q?hxMyBuBWePTvrUa2BcI4q5m/7wOGbfXq+qlDJW9YXc4kIuNWf18qvdyOpSCk?=
- =?us-ascii?Q?hxo1essfdixAOPvoNHS2oz91AYy4F1RvVr5EzQVgGbH3NEOsILrd+ZIlKfkF?=
- =?us-ascii?Q?mN9QRw5Fkl3CscYhT/DXSdiEEoXrua/FFb01IvkKmO50lZD/eapit9vhHtrU?=
- =?us-ascii?Q?9x7/IgGbfZUQFbS4TEvCfOPGX03JJXlqVvSX5wKXRpb4STjVbkrbIgmjvUvL?=
- =?us-ascii?Q?HrLGsDtk5ds72+40WF5vnBjOSRF9swrpL5O2AaOoonuTm6Mt1LwSvTw3qZ3N?=
- =?us-ascii?Q?BzQmm8JdSfwiJ7POsTftgchO+GSmMyBt?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR03MB4927.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?OLmzLS1x376YHtsPRg/QOBXJZnics4c4ybMhYud/cbHeIy4zMjSIX+OgC5GK?=
- =?us-ascii?Q?lIiM4FJh8H+WcK3zhf3A9OIKe76wJkxCYiGoh10UF4Op13J6jlZoWsAdY++N?=
- =?us-ascii?Q?EbyE3WmOpWIRWGHxRHp8DHUrNVNqG1iMR4I65C78lXV1cyHbdFmVIthgfC+v?=
- =?us-ascii?Q?Hux1Au9obVE1EGc+ax3SV0RU74cSSJi1ELIpHvNImEcXR1pJwv0EplxZ6yXH?=
- =?us-ascii?Q?sOh48CDgkreHk5Mpf8qxIAgxQ8YovWy1r3Kw24XULVMcaabmbgluBboESTNi?=
- =?us-ascii?Q?yGkwZdazZviOljqXfUQLOioz3h6eFVVHGZyyZOiqg/ael+Mi4nBoHbHU8KcZ?=
- =?us-ascii?Q?IFcGWPyCYYp4YElRGmoDODvS51JTjbpYEBOntiBMHkLuPkmkadpFgr3HHBk/?=
- =?us-ascii?Q?nbmTlaFAehE5XW1tuWd0IdI/M/EA92WqsGiszMWzWXbgYmlhX4VlIiBcdu3Z?=
- =?us-ascii?Q?2xamzdV+rv0M58Dfu8kLjS3/k/o38VIWJCAOUMMeKciGiS2aieUFuN42tblc?=
- =?us-ascii?Q?i1q/oKxclQ0N9yujRFC418ntWv7gRE2MPusvE7+tsYkLemL7c/XZ5COXlXWB?=
- =?us-ascii?Q?WDHxfI96VD/smGv/oGklZUBrISAITexdRtFwf8ZeJ7WhWUH4ygrpI7JkNxKn?=
- =?us-ascii?Q?CMRMmKomefL3M1farjQmk9Srto89wStgTM7Y1O+rDCtaw7zOqfbQI0GfQzOx?=
- =?us-ascii?Q?2ozklUjCT1nCmn5wuFyWpiiTpSXhesAWZ7R33XZorXqF28uOztyAb00dL5JQ?=
- =?us-ascii?Q?5Z8CdhO+b7Vmxuc6GZMvsREOaaxw+E9w2PkzyRXb4/rK0Y28Rwx+tkdz73Lv?=
- =?us-ascii?Q?by9KmJItsM6T6vxxZk1tB6O3rtfZvm9L+5/803RCia00LbjM1zqZdcoxmrt/?=
- =?us-ascii?Q?mYIST0HxVFwUyL4P8pP28I1FxFZlrja9ObVQ+3n2v34X6dAdfZO0yfd9iz3B?=
- =?us-ascii?Q?TURAKbJLI6hLXGC0YFEJkHFhAxV9ouefHYtAbGNCVAlnLIdVkj+YSv1xeYB7?=
- =?us-ascii?Q?gS4nC05SRwmnEY94k4rwv+zB2Bv2NTXRm4b14R7p+VU0Yg85nyLndWd3CDuk?=
- =?us-ascii?Q?duk53hG3WzKqrBOOn8FsiU0p+codbBmKe/hBL6Lvca2YT4D7jaJHNA4oAhPX?=
- =?us-ascii?Q?m4ZvpQTqjK1yv0r1SNLnrCMmhKMSP6hPpZpyACj98mBj/ELJXWpGbnc7ywzO?=
- =?us-ascii?Q?nZWlgKW6H72mXzP7McTfi8wzIoC1BzLQxkdUDOo5Mve9896zqe+5as1i+AbB?=
- =?us-ascii?Q?M2mBHPV76LyfxH5uROAUXqcKdfznOZq/E9diHkSWJp5NZ2omx6B5VwSaQqAP?=
- =?us-ascii?Q?9QhijGdaIBikanj5lHZ/a8l5KseuApi3z+pHwgCQZxxp8yoYNzmVC6IpWwse?=
- =?us-ascii?Q?onE6hIkmhu8reGfbkn71T72MlK5omvcf2GY2vywo/SokP8Fhs+RSypkvfTeG?=
- =?us-ascii?Q?DJ8JEsSBEG2MSOsV12gUtLW7kqYFyzhZk3Zjs9Rx1qvSr/nmMm+iHE9JE35v?=
- =?us-ascii?Q?FGAdbs2J8HBOwtSvWvRsoSXhN4brIKvX4qw8dnv3ha/mL6ddc+2kwrDGfGKJ?=
- =?us-ascii?Q?zy4WJMeSBs7Nkw3j3t7zDb67SE8rNaGjGPJC4bmUvkg/a1VbGiiyQWo9pZbH?=
- =?us-ascii?Q?8A=3D=3D?=
-X-OriginatorOrg: altera.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5df99ab6-a709-43bf-528e-08de025def5c
-X-MS-Exchange-CrossTenant-AuthSource: MN2PR03MB4927.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Oct 2025 09:19:21.2769
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: fbd72e03-d4a5-4110-adce-614d51f2077a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Dz1rRb9u/vkXsvM7W4frNn9ISikaEvtRsBg63c/IuN4eHq2R1IrWRD/YwAjaE7/y7inOQ9LNrpF8zbKWkGNMuBug1qv4qBTSb3g722dqNV0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR03MB7245
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250918030552.331389-1-marek.vasut+renesas@mailbox.org>
 
-Add the new Clock manager driver to support new Agilex5 platform. The new
-driver got rid of the clk_parent_data structures as there are no 'clock-names'
-property in the DT bindings and use parent_names internally. This is based on
-the previous feedback from the maintainer.
+Hi Marek,
 
-Signed-off-by: Ang Tien Sung <tiensung.ang@altera.com>
-Signed-off-by: Khairul Anuar Romli <khairul.anuar.romli@altera.com>
----
- drivers/clk/socfpga/clk-agilex5.c    | 563 +++++++++++++++++++++++++++
- drivers/clk/socfpga/clk-gate-s10.c   |  53 +++
- drivers/clk/socfpga/clk-periph-s10.c |  41 ++
- drivers/clk/socfpga/clk-pll-s10.c    |  38 +-
- drivers/clk/socfpga/stratix10-clk.h  |  43 ++
- 5 files changed, 737 insertions(+), 1 deletion(-)
- create mode 100644 drivers/clk/socfpga/clk-agilex5.c
+Thanks for your work.
 
-diff --git a/drivers/clk/socfpga/clk-agilex5.c b/drivers/clk/socfpga/clk-agilex5.c
-new file mode 100644
-index 000000000000..0013fab81357
---- /dev/null
-+++ b/drivers/clk/socfpga/clk-agilex5.c
-@@ -0,0 +1,563 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2022-2024, Intel Corporation
-+ * Copyright (C) 2025, Altera Corporation
-+ */
-+#include <linux/slab.h>
-+#include <linux/clk-provider.h>
-+#include <linux/of_device.h>
-+#include <linux/of_address.h>
-+#include <linux/platform_device.h>
-+#include  <dt-bindings/clock/intel,agilex5-clkmgr.h>
-+#include "stratix10-clk.h"
-+#include "clk.h"
-+
-+/* External parent clocks come from DT via fw_name */
-+static const char * const boot_pll_parents[] = {
-+	"osc1",
-+	"cb-intosc-hs-div2-clk",
-+};
-+
-+static const char * const main_pll_parents[] = {
-+	"osc1",
-+	"cb-intosc-hs-div2-clk",
-+	"f2s-free-clk",
-+};
-+
-+static const char * const periph_pll_parents[] = {
-+	"osc1",
-+	"cb-intosc-hs-div2-clk",
-+};
-+
-+/* Core free muxes */
-+static const char * const core0_free_mux[] = {
-+	"main_pll_c1",
-+	"peri_pll_c0",
-+	"osc1",
-+	"cb-intosc-hs-div2-clk",
-+	"f2s-free-clk",
-+};
-+
-+static const char * const core1_free_mux[] = {
-+	"main_pll_c1",
-+	"peri_pll_c0",
-+	"osc1",
-+	"cb-intosc-hs-div2-clk",
-+	"f2s-free-clk",
-+};
-+
-+static const char * const core2_free_mux[] = {
-+	"main_pll_c0",
-+	"osc1",
-+	"cb-intosc-hs-div2-clk",
-+	"f2s-free-clk",
-+};
-+
-+static const char * const core3_free_mux[] = {
-+	"main_pll_c0",
-+	"osc1",
-+	"cb-intosc-hs-div2-clk",
-+	"f2s-free-clk",
-+};
-+
-+static const char * const dsu_free_mux[] = {
-+	"main_pll_c2",
-+	"peri_pll_c0",
-+	"osc1",
-+	"cb-intosc-hs-div2-clk",
-+	"f2s-free-clk",
-+};
-+
-+static const char * const noc_free_mux[] = {
-+	"main_pll_c3",
-+	"peri_pll_c1",
-+	"osc1",
-+	"cb-intosc-hs-div2-clk",
-+	"f2s-free-clk",
-+};
-+
-+static const char * const emac_ptp_free_mux[] = {
-+	"main_pll_c3",
-+	"peri_pll_c3",
-+	"osc1",
-+	"cb-intosc-hs-div2-clk",
-+	"f2s-free-clk",
-+};
-+
-+static const char * const emaca_free_mux[] = {
-+	"main_pll_c2",
-+	"peri_pll_c3",
-+	"osc1",
-+	"cb-intosc-hs-div2-clk",
-+	"f2s-free-clk",
-+};
-+
-+static const char * const emacb_free_mux[] = {
-+	"main_pll_c3",
-+	"peri_pll_c3",
-+	"osc1",
-+	"cb-intosc-hs-div2-clk",
-+	"f2s-free-clk",
-+};
-+
-+static const char * const gpio_db_free_mux[] = {
-+	"main_pll_c3",
-+	"peri_pll_c1",
-+	"osc1",
-+	"cb-intosc-hs-div2-clk",
-+	"f2s-free-clk",
-+};
-+
-+static const char * const psi_ref_free_mux[] = {
-+	"main_pll_c1",
-+	"peri_pll_c3",
-+	"osc1",
-+	"cb-intosc-hs-div2-clk",
-+	"f2s-free-clk",
-+};
-+
-+static const char * const usb31_free_mux[] = {
-+	"main_pll_c3",
-+	"peri_pll_c2",
-+	"osc1",
-+	"cb-intosc-hs-div2-clk",
-+	"f2s-free-clk",
-+};
-+
-+static const char * const s2f_user0_free_mux[] = {
-+	"main_pll_c1",
-+	"peri_pll_c3",
-+	"osc1",
-+	"cb-intosc-hs-div2-clk",
-+	"f2s-free-clk",
-+};
-+
-+static const char * const s2f_user1_free_mux[] = {
-+	"main_pll_c1",
-+	"peri_pll_c3",
-+	"osc1",
-+	"cb-intosc-hs-div2-clk",
-+	"f2s-free-clk",
-+};
-+
-+/* Secondary muxes between free_clk and boot_clk */
-+static const char * const core0_mux[] = {
-+	"core0_free_clk",
-+	"boot_clk",
-+};
-+
-+static const char * const core1_mux[] = {
-+	"core1_free_clk",
-+	"boot_clk",
-+};
-+
-+static const char * const core2_mux[] = {
-+	"core2_free_clk",
-+	"boot_clk",
-+};
-+
-+static const char * const core3_mux[] = {
-+	"core3_free_clk",
-+	"boot_clk",
-+};
-+
-+static const char * const dsu_mux[] = {
-+	"dsu_free_clk",
-+	"boot_clk",
-+};
-+
-+static const char * const noc_mux[] = {
-+	"noc_free_clk",
-+	"boot_clk",
-+};
-+
-+static const char * const emac_mux[] = {
-+	"emaca_free_clk",
-+	"emacb_free_clk",
-+	"boot_clk",
-+};
-+
-+static const char * const s2f_user0_mux[] = {
-+	"s2f_user0_free_clk",
-+	"boot_clk",
-+};
-+
-+static const char * const s2f_user1_mux[] = {
-+	"s2f_user1_free_clk",
-+	"boot_clk",
-+};
-+
-+static const char * const psi_mux[] = {
-+	"psi_ref_free_clk",
-+	"boot_clk",
-+};
-+
-+static const char * const gpio_db_mux[] = {
-+	"gpio_db_free_clk",
-+	"boot_clk",
-+};
-+
-+static const char * const emac_ptp_mux[] = {
-+	"emac_ptp_free_clk",
-+	"boot_clk",
-+};
-+
-+static const char * const usb31_mux[] = {
-+	"usb31_free_clk",
-+	"boot_clk",
-+};
-+
-+static const struct agilex5_pll_clock agilex5_pll_clks[] = {
-+	{
-+		.id = AGILEX5_BOOT_CLK,
-+		.name = "boot_clk",
-+		.parent_names = boot_pll_parents,
-+		.num_parents = ARRAY_SIZE(boot_pll_parents),
-+		.flags = 0,
-+		.offset = 0x0,
-+	},
-+	{
-+		.id = AGILEX5_MAIN_PLL_CLK,
-+		.name = "main_pll",
-+		.parent_names = main_pll_parents,
-+		.num_parents = ARRAY_SIZE(main_pll_parents),
-+		.flags = 0,
-+		.offset = 0x48,
-+	},
-+	{
-+		.id = AGILEX5_PERIPH_PLL_CLK,
-+		.name = "periph_pll",
-+		.parent_names = periph_pll_parents,
-+		.num_parents = ARRAY_SIZE(periph_pll_parents),
-+		.flags = 0,
-+		.offset = 0x9C,
-+	},
-+};
-+
-+/* Main PLL C0, C1, C2, C3 and Peri PLL C0, C1, C2, C3. With ping-pong counter. */
-+static const struct stratix10_perip_c_clock agilex5_main_perip_c_clks[] = {
-+	{ AGILEX5_MAIN_PLL_C0_CLK, "main_pll_c0", "main_pll", NULL, 1, 0,
-+	  0x5C },
-+	{ AGILEX5_MAIN_PLL_C1_CLK, "main_pll_c1", "main_pll", NULL, 1, 0,
-+	  0x60 },
-+	{ AGILEX5_MAIN_PLL_C2_CLK, "main_pll_c2", "main_pll", NULL, 1, 0,
-+	  0x64 },
-+	{ AGILEX5_MAIN_PLL_C3_CLK, "main_pll_c3", "main_pll", NULL, 1, 0,
-+	  0x68 },
-+	{ AGILEX5_PERIPH_PLL_C0_CLK, "peri_pll_c0", "periph_pll", NULL, 1, 0,
-+	  0xB0 },
-+	{ AGILEX5_PERIPH_PLL_C1_CLK, "peri_pll_c1", "periph_pll", NULL, 1, 0,
-+	  0xB4 },
-+	{ AGILEX5_PERIPH_PLL_C2_CLK, "peri_pll_c2", "periph_pll", NULL, 1, 0,
-+	  0xB8 },
-+	{ AGILEX5_PERIPH_PLL_C3_CLK, "peri_pll_c3", "periph_pll", NULL, 1, 0,
-+	  0xBC },
-+};
-+
-+/* Non-SW clock-gated enabled clocks */
-+static const struct agilex5_perip_cnt_clock agilex5_main_perip_cnt_clks[] = {
-+	{ AGILEX5_CORE0_FREE_CLK, "core0_free_clk", core0_free_mux,
-+	ARRAY_SIZE(core0_free_mux), 0, 0x0100, 0, 0, 0},
-+	{ AGILEX5_CORE1_FREE_CLK, "core1_free_clk", core1_free_mux,
-+	ARRAY_SIZE(core1_free_mux), 0, 0x0104, 0, 0, 0},
-+	{ AGILEX5_CORE2_FREE_CLK, "core2_free_clk", core2_free_mux,
-+	ARRAY_SIZE(core2_free_mux), 0, 0x010C, 0, 0, 0},
-+	{ AGILEX5_CORE3_FREE_CLK, "core3_free_clk", core3_free_mux,
-+	ARRAY_SIZE(core3_free_mux), 0, 0x0110, 0, 0, 0},
-+	{ AGILEX5_DSU_FREE_CLK, "dsu_free_clk", dsu_free_mux,
-+	ARRAY_SIZE(dsu_free_mux), 0, 0xfc, 0, 0, 0},
-+	{ AGILEX5_NOC_FREE_CLK, "noc_free_clk", noc_free_mux,
-+	ARRAY_SIZE(noc_free_mux), 0, 0x40, 0, 0, 0 },
-+	{ AGILEX5_EMAC_A_FREE_CLK, "emaca_free_clk", emaca_free_mux,
-+	ARRAY_SIZE(emaca_free_mux), 0, 0xD4, 0, 0x88, 0 },
-+	{ AGILEX5_EMAC_B_FREE_CLK, "emacb_free_clk", emacb_free_mux,
-+	ARRAY_SIZE(emacb_free_mux), 0, 0xD8, 0, 0x88, 1 },
-+	{ AGILEX5_EMAC_PTP_FREE_CLK, "emac_ptp_free_clk", emac_ptp_free_mux,
-+	ARRAY_SIZE(emac_ptp_free_mux), 0, 0xDC, 0, 0x88, 2 },
-+	{ AGILEX5_GPIO_DB_FREE_CLK, "gpio_db_free_clk", gpio_db_free_mux,
-+	ARRAY_SIZE(gpio_db_free_mux), 0, 0xE0, 0, 0x88, 3 },
-+	{ AGILEX5_S2F_USER0_FREE_CLK, "s2f_user0_free_clk", s2f_user0_free_mux,
-+	ARRAY_SIZE(s2f_user0_free_mux), 0, 0xE8, 0, 0x30, 2 },
-+	{ AGILEX5_S2F_USER1_FREE_CLK, "s2f_user1_free_clk", s2f_user1_free_mux,
-+	ARRAY_SIZE(s2f_user1_free_mux), 0, 0xEC, 0, 0x88, 5 },
-+	{ AGILEX5_PSI_REF_FREE_CLK, "psi_ref_free_clk", psi_ref_free_mux,
-+	ARRAY_SIZE(psi_ref_free_mux), 0, 0xF0, 0, 0x88, 6 },
-+	{ AGILEX5_USB31_FREE_CLK, "usb31_free_clk", usb31_free_mux,
-+	ARRAY_SIZE(usb31_free_mux), 0, 0xF8, 0, 0x88, 7},
-+};
-+
-+static const char * const cs_pdbg_parents[] = { "cs_at_clk" };
-+static const char * const usb31_bus_clk_early_parents[] = { "l4_main_clk" };
-+static const char * const l4_mp_clk_parent[] = { "l4_mp_clk" };
-+static const char * const l4_sp_clk_parent[] = { "l4_sp_clk" };
-+static const char * const dfi_clk_parent[] = { "dfi_clk" };
-+
-+/* SW Clock gate enabled clocks */
-+static const struct agilex5_gate_clock agilex5_gate_clks[] = {
-+	{ AGILEX5_CORE0_CLK, "core0_clk", core0_mux,
-+	  ARRAY_SIZE(core0_mux), 0, 0x24, 8, 0, 0, 0, 0x30, 5, 0 },
-+	{ AGILEX5_CORE1_CLK, "core1_clk", core1_mux,
-+	  ARRAY_SIZE(core1_mux), 0, 0x24, 9, 0, 0, 0, 0x30, 5, 0 },
-+	{ AGILEX5_CORE2_CLK, "core2_clk", core2_mux,
-+	  ARRAY_SIZE(core2_mux), 0, 0x24, 10, 0, 0, 0, 0x30, 6, 0 },
-+	{ AGILEX5_CORE3_CLK, "core3_clk", core3_mux,
-+	  ARRAY_SIZE(core3_mux), 0, 0x24, 11, 0, 0, 0, 0x30, 7, 0 },
-+	{ AGILEX5_MPU_CLK, "dsu_clk", dsu_mux, ARRAY_SIZE(dsu_mux), 0, 0, 0,
-+	  0, 0, 0, 0x34, 4, 0 },
-+	{ AGILEX5_MPU_PERIPH_CLK, "mpu_periph_clk", dsu_mux,
-+	  ARRAY_SIZE(dsu_mux), 0, 0, 0, 0x44, 20, 2, 0x34, 4, 0 },
-+	{ AGILEX5_MPU_CCU_CLK, "mpu_ccu_clk", dsu_mux,
-+	  ARRAY_SIZE(dsu_mux), 0, 0, 0, 0x44, 18, 2, 0x34, 4, 0 },
-+	{ AGILEX5_L4_MAIN_CLK, "l4_main_clk", noc_mux, ARRAY_SIZE(noc_mux),
-+	  CLK_IS_CRITICAL, 0x24, 1, 0, 0, 0, 0, 0, 0 },
-+	{ AGILEX5_L4_MP_CLK, "l4_mp_clk", noc_mux, ARRAY_SIZE(noc_mux), 0,
-+	  0x24, 2, 0x44, 4, 2, 0x30, 1, 0 },
-+	{ AGILEX5_L4_SYS_FREE_CLK, "l4_sys_free_clk", noc_mux,
-+	  ARRAY_SIZE(noc_mux), 0, 0, 0, 0x44, 2, 2, 0x30, 1, 0 },
-+	{ AGILEX5_L4_SP_CLK, "l4_sp_clk", noc_mux, ARRAY_SIZE(noc_mux),
-+	  CLK_IS_CRITICAL, 0x24, 3, 0x44, 6, 2, 0x30, 1, 0 },
-+
-+	/* Core sight clocks*/
-+	{ AGILEX5_CS_AT_CLK, "cs_at_clk", noc_mux, ARRAY_SIZE(noc_mux), 0,
-+	  0x24, 4, 0x44, 24, 2, 0x30, 1, 0 },
-+	{ AGILEX5_CS_TRACE_CLK, "cs_trace_clk", noc_mux,
-+	  ARRAY_SIZE(noc_mux), 0, 0x24, 4, 0x44, 26, 2, 0x30, 1, 0 },
-+	{ AGILEX5_CS_PDBG_CLK, "cs_pdbg_clk", cs_pdbg_parents, 1, 0, 0x24, 4,
-+	  0x44, 28, 1, 0, 0, 0 },
-+
-+	/* Main Peripheral PLL1 Begin */
-+	{ AGILEX5_EMAC0_CLK, "emac0_clk", emac_mux, ARRAY_SIZE(emac_mux),
-+	  0, 0x7C, 0, 0, 0, 0, 0x94, 26, 0 },
-+	{ AGILEX5_EMAC1_CLK, "emac1_clk", emac_mux, ARRAY_SIZE(emac_mux),
-+	  0, 0x7C, 1, 0, 0, 0, 0x94, 27, 0 },
-+	{ AGILEX5_EMAC2_CLK, "emac2_clk", emac_mux, ARRAY_SIZE(emac_mux),
-+	  0, 0x7C, 2, 0, 0, 0, 0x94, 28, 0 },
-+	{ AGILEX5_EMAC_PTP_CLK, "emac_ptp_clk", emac_ptp_mux,
-+	  ARRAY_SIZE(emac_ptp_mux), 0, 0x7C, 3, 0, 0, 0, 0x88, 2, 0 },
-+	{ AGILEX5_GPIO_DB_CLK, "gpio_db_clk", gpio_db_mux,
-+	  ARRAY_SIZE(gpio_db_mux), 0, 0x7C, 4, 0x98, 0, 16, 0x88, 3, 1 },
-+	  /* Main Peripheral PLL1 End */
-+
-+	  /* Peripheral clocks  */
-+	{ AGILEX5_S2F_USER0_CLK, "s2f_user0_clk", s2f_user0_mux,
-+	  ARRAY_SIZE(s2f_user0_mux), 0, 0x24, 6, 0, 0, 0, 0x30, 2, 0 },
-+	{ AGILEX5_S2F_USER1_CLK, "s2f_user1_clk", s2f_user1_mux,
-+	  ARRAY_SIZE(s2f_user1_mux), 0, 0x7C, 6, 0, 0, 0, 0x88, 5, 0 },
-+	{ AGILEX5_PSI_REF_CLK, "psi_ref_clk", psi_mux,
-+	  ARRAY_SIZE(psi_mux), 0, 0x7C, 7, 0, 0, 0, 0x88, 6, 0 },
-+	{ AGILEX5_USB31_SUSPEND_CLK, "usb31_suspend_clk", usb31_mux,
-+	  ARRAY_SIZE(usb31_mux), 0, 0x7C, 25, 0, 0, 0, 0x88, 7, 0 },
-+	{ AGILEX5_USB31_BUS_CLK_EARLY, "usb31_bus_clk_early", usb31_bus_clk_early_parents,
-+	  1, 0, 0x7C, 25, 0, 0, 0, 0, 0, 0 },
-+	{ AGILEX5_USB2OTG_HCLK, "usb2otg_hclk", l4_mp_clk_parent, 1, 0, 0x7C,
-+	  8, 0, 0, 0, 0, 0, 0 },
-+	{ AGILEX5_SPIM_0_CLK, "spim_0_clk", l4_mp_clk_parent, 1, 0, 0x7C, 9,
-+	  0, 0, 0, 0, 0, 0 },
-+	{ AGILEX5_SPIM_1_CLK, "spim_1_clk", l4_mp_clk_parent, 1, 0, 0x7C, 11,
-+	  0, 0, 0, 0, 0, 0 },
-+	{ AGILEX5_SPIS_0_CLK, "spis_0_clk", l4_sp_clk_parent, 1, 0, 0x7C, 12,
-+	  0, 0, 0, 0, 0, 0 },
-+	{ AGILEX5_SPIS_1_CLK, "spis_1_clk", l4_sp_clk_parent, 1, 0, 0x7C, 13,
-+	  0, 0, 0, 0, 0, 0 },
-+	{ AGILEX5_DMA_CORE_CLK, "dma_core_clk", l4_mp_clk_parent, 1, 0, 0x7C,
-+	  14, 0, 0, 0, 0, 0, 0 },
-+	{ AGILEX5_DMA_HS_CLK, "dma_hs_clk", l4_mp_clk_parent, 1, 0, 0x7C, 14,
-+	  0, 0, 0, 0, 0, 0 },
-+	{ AGILEX5_I3C_0_CORE_CLK, "i3c_0_core_clk", l4_mp_clk_parent, 1, 0,
-+	  0x7C, 18, 0, 0, 0, 0, 0, 0 },
-+	{ AGILEX5_I3C_1_CORE_CLK, "i3c_1_core_clk", l4_mp_clk_parent, 1, 0,
-+	  0x7C, 19, 0, 0, 0, 0, 0, 0 },
-+	{ AGILEX5_I2C_0_PCLK, "i2c_0_pclk", l4_sp_clk_parent, 1, 0, 0x7C, 15,
-+	  0, 0, 0, 0, 0, 0 },
-+	{ AGILEX5_I2C_1_PCLK, "i2c_1_pclk", l4_sp_clk_parent, 1, 0, 0x7C, 16,
-+	  0, 0, 0, 0, 0, 0 },
-+	{ AGILEX5_I2C_EMAC0_PCLK, "i2c_emac0_pclk", l4_sp_clk_parent, 1, 0,
-+	  0x7C, 17, 0, 0, 0, 0, 0, 0 },
-+	{ AGILEX5_I2C_EMAC1_PCLK, "i2c_emac1_pclk", l4_sp_clk_parent, 1, 0,
-+	  0x7C, 22, 0, 0, 0, 0, 0, 0 },
-+	{ AGILEX5_I2C_EMAC2_PCLK, "i2c_emac2_pclk", l4_sp_clk_parent, 1, 0,
-+	  0x7C, 27, 0, 0, 0, 0, 0, 0 },
-+	{ AGILEX5_UART_0_PCLK, "uart_0_pclk", l4_sp_clk_parent, 1, 0, 0x7C, 20,
-+	  0, 0, 0, 0, 0, 0 },
-+	{ AGILEX5_UART_1_PCLK, "uart_1_pclk", l4_sp_clk_parent, 1, 0, 0x7C, 21,
-+	  0, 0, 0, 0, 0, 0 },
-+	{ AGILEX5_SPTIMER_0_PCLK, "sptimer_0_pclk", l4_sp_clk_parent, 1, 0,
-+	  0x7C, 23, 0, 0, 0, 0, 0, 0 },
-+	{ AGILEX5_SPTIMER_1_PCLK, "sptimer_1_pclk", l4_sp_clk_parent, 1, 0,
-+	  0x7C, 24, 0, 0, 0, 0, 0, 0 },
-+
-+	/*NAND, SD/MMC and SoftPHY overall clocking*/
-+	{ AGILEX5_DFI_CLK, "dfi_clk", l4_mp_clk_parent, 1, 0, 0, 0, 0x44, 16,
-+	  2, 0, 0, 0 },
-+	{ AGILEX5_NAND_NF_CLK, "nand_nf_clk", dfi_clk_parent, 1, 0, 0x7C, 10,
-+	  0, 0, 0, 0, 0, 0 },
-+	{ AGILEX5_NAND_BCH_CLK, "nand_bch_clk", l4_mp_clk_parent, 1, 0, 0x7C,
-+	  10, 0, 0, 0, 0, 0, 0 },
-+	{ AGILEX5_SDMMC_SDPHY_REG_CLK, "sdmmc_sdphy_reg_clk", l4_mp_clk_parent,
-+	  1, 0, 0x7C, 5, 0, 0, 0, 0, 0, 0 },
-+	{ AGILEX5_SDMCLK, "sdmclk", dfi_clk_parent, 1, 0, 0x7C, 5, 0, 0, 0,
-+	  0, 0, 0 },
-+	{ AGILEX5_SOFTPHY_REG_PCLK, "softphy_reg_pclk", l4_mp_clk_parent, 1, 0,
-+	  0x7C, 26, 0, 0, 0, 0, 0, 0 },
-+	{ AGILEX5_SOFTPHY_PHY_CLK, "softphy_phy_clk", l4_mp_clk_parent, 1, 0,
-+	  0x7C, 26, 0x44, 16, 2, 0, 0, 0 },
-+	{ AGILEX5_SOFTPHY_CTRL_CLK, "softphy_ctrl_clk", dfi_clk_parent, 1, 0,
-+	  0x7C, 26, 0, 0, 0, 0, 0, 0 },
-+};
-+
-+static int
-+agilex5_clk_register_c_perip(const struct stratix10_perip_c_clock *clks,
-+			     int nums, struct stratix10_clock_data *data)
-+{
-+	struct clk_hw *hw_clk;
-+	void __iomem *base = data->base;
-+	int i;
-+
-+	for (i = 0; i < nums; i++) {
-+		hw_clk = s10_register_periph(&clks[i], base);
-+		if (IS_ERR(hw_clk)) {
-+			pr_err("%s: failed to register clock %s\n", __func__,
-+			       clks[i].name);
-+			continue;
-+		}
-+		data->clk_data.hws[clks[i].id] = hw_clk;
-+	}
-+	return 0;
-+}
-+
-+static int
-+agilex5_clk_register_cnt_perip(const struct agilex5_perip_cnt_clock *clks,
-+			       int nums, struct stratix10_clock_data *data)
-+{
-+	struct clk_hw *hw_clk;
-+	void __iomem *base = data->base;
-+	int i;
-+
-+	for (i = 0; i < nums; i++) {
-+		hw_clk = agilex5_register_cnt_periph(&clks[i], base);
-+		if (IS_ERR(hw_clk)) {
-+			pr_err("%s: failed to register clock %s\n", __func__,
-+			       clks[i].name);
-+			continue;
-+		}
-+		data->clk_data.hws[clks[i].id] = hw_clk;
-+	}
-+
-+	return 0;
-+}
-+
-+static int agilex5_clk_register_gate(const struct agilex5_gate_clock *clks,
-+				     int nums,
-+				     struct stratix10_clock_data *data)
-+{
-+	struct clk_hw *hw_clk;
-+	void __iomem *base = data->base;
-+	int i;
-+
-+	for (i = 0; i < nums; i++) {
-+		hw_clk = agilex5_register_gate(&clks[i], base);
-+		if (IS_ERR(hw_clk)) {
-+			pr_err("%s: failed to register clock %s\n", __func__,
-+			       clks[i].name);
-+			continue;
-+		}
-+		data->clk_data.hws[clks[i].id] = hw_clk;
-+	}
-+
-+	return 0;
-+}
-+
-+static int agilex5_clk_register_pll(const struct agilex5_pll_clock *clks,
-+				    int nums, struct stratix10_clock_data *data)
-+{
-+	struct clk_hw *hw_clk;
-+	void __iomem *base = data->base;
-+	int i;
-+
-+	for (i = 0; i < nums; i++) {
-+		hw_clk = agilex5_register_pll(&clks[i], base);
-+		if (IS_ERR(hw_clk)) {
-+			pr_err("%s: failed to register clock %s\n", __func__,
-+			       clks[i].name);
-+			continue;
-+		}
-+		data->clk_data.hws[clks[i].id] = hw_clk;
-+	}
-+
-+	return 0;
-+}
-+
-+static int agilex5_clkmgr_init(struct platform_device *pdev)
-+{
-+	struct device_node *np = pdev->dev.of_node;
-+	struct device *dev = &pdev->dev;
-+	struct stratix10_clock_data *clk_data;
-+	struct resource *res;
-+	void __iomem *base;
-+	int i, num_clks;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	base = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(base))
-+		return PTR_ERR(base);
-+
-+	num_clks = AGILEX5_NUM_CLKS;
-+
-+	clk_data = devm_kzalloc(dev, struct_size(clk_data, clk_data.hws, num_clks), GFP_KERNEL);
-+	if (!clk_data)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < num_clks; i++)
-+		clk_data->clk_data.hws[i] = ERR_PTR(-ENOENT);
-+
-+	clk_data->base = base;
-+	clk_data->clk_data.num = num_clks;
-+
-+	agilex5_clk_register_pll(agilex5_pll_clks, ARRAY_SIZE(agilex5_pll_clks),
-+				 clk_data);
-+
-+	/* mainPLL C0, C1, C2, C3 and periph PLL C0, C1, C2, C3*/
-+	agilex5_clk_register_c_perip(agilex5_main_perip_c_clks,
-+				     ARRAY_SIZE(agilex5_main_perip_c_clks),
-+				     clk_data);
-+
-+	agilex5_clk_register_cnt_perip(agilex5_main_perip_cnt_clks,
-+				       ARRAY_SIZE(agilex5_main_perip_cnt_clks),
-+				       clk_data);
-+
-+	agilex5_clk_register_gate(agilex5_gate_clks,
-+				  ARRAY_SIZE(agilex5_gate_clks), clk_data);
-+
-+	of_clk_add_hw_provider(np, of_clk_hw_onecell_get, &clk_data->clk_data);
-+	return 0;
-+}
-+
-+static int agilex5_clkmgr_probe(struct platform_device *pdev)
-+{
-+	int (*probe_func)(struct platform_device *init_func);
-+
-+	probe_func = of_device_get_match_data(&pdev->dev);
-+	if (!probe_func)
-+		return -ENODEV;
-+	return probe_func(pdev);
-+}
-+
-+static const struct of_device_id agilex5_clkmgr_match_table[] = {
-+	{ .compatible = "intel,agilex5-clkmgr", .data = agilex5_clkmgr_init },
-+	{}
-+};
-+
-+static struct platform_driver agilex5_clkmgr_driver = {
-+	.probe		= agilex5_clkmgr_probe,
-+	.driver		= {
-+		.name	= "agilex5-clkmgr",
-+		.suppress_bind_attrs = true,
-+		.of_match_table = agilex5_clkmgr_match_table,
-+	},
-+};
-+
-+static int __init agilex5_clk_init(void)
-+{
-+	return platform_driver_register(&agilex5_clkmgr_driver);
-+}
-+core_initcall(agilex5_clk_init);
-diff --git a/drivers/clk/socfpga/clk-gate-s10.c b/drivers/clk/socfpga/clk-gate-s10.c
-index 3930d922efb4..dce3ef137bf3 100644
---- a/drivers/clk/socfpga/clk-gate-s10.c
-+++ b/drivers/clk/socfpga/clk-gate-s10.c
-@@ -239,3 +239,56 @@ struct clk_hw *agilex_register_gate(const struct stratix10_gate_clock *clks, voi
- 	}
- 	return hw_clk;
- }
-+
-+struct clk_hw *agilex5_register_gate(const struct agilex5_gate_clock *clks, void __iomem *regbase)
-+{
-+	struct clk_hw *hw_clk;
-+	struct socfpga_gate_clk *socfpga_clk;
-+	struct clk_init_data init;
-+	int ret;
-+
-+	socfpga_clk = kzalloc(sizeof(*socfpga_clk), GFP_KERNEL);
-+	if (!socfpga_clk)
-+		return NULL;
-+
-+	socfpga_clk->hw.reg = regbase + clks->gate_reg;
-+	socfpga_clk->hw.bit_idx = clks->gate_idx;
-+
-+	gateclk_ops.enable = clk_gate_ops.enable;
-+	gateclk_ops.disable = clk_gate_ops.disable;
-+
-+	socfpga_clk->fixed_div = clks->fixed_div;
-+
-+	if (clks->div_reg)
-+		socfpga_clk->div_reg = regbase + clks->div_reg;
-+	else
-+		socfpga_clk->div_reg = NULL;
-+
-+	socfpga_clk->width = clks->div_width;
-+	socfpga_clk->shift = clks->div_offset;
-+
-+	if (clks->bypass_reg)
-+		socfpga_clk->bypass_reg = regbase + clks->bypass_reg;
-+	else
-+		socfpga_clk->bypass_reg = NULL;
-+	socfpga_clk->bypass_shift = clks->bypass_shift;
-+
-+	if (streq(clks->name, "cs_pdbg_clk"))
-+		init.ops = &dbgclk_ops;
-+	else
-+		init.ops = &agilex_gateclk_ops;
-+
-+	init.name = clks->name;
-+	init.flags = clks->flags;
-+	init.num_parents = clks->num_parents;
-+	init.parent_names = clks->parent_names;
-+	socfpga_clk->hw.hw.init = &init;
-+	hw_clk = &socfpga_clk->hw.hw;
-+
-+	ret = clk_hw_register(NULL, &socfpga_clk->hw.hw);
-+	if (ret) {
-+		kfree(socfpga_clk);
-+		return ERR_PTR(ret);
-+	}
-+	return hw_clk;
-+}
-diff --git a/drivers/clk/socfpga/clk-periph-s10.c b/drivers/clk/socfpga/clk-periph-s10.c
-index f5c1ca42b668..f12ca43ffe7c 100644
---- a/drivers/clk/socfpga/clk-periph-s10.c
-+++ b/drivers/clk/socfpga/clk-periph-s10.c
-@@ -214,3 +214,44 @@ struct clk_hw *s10_register_cnt_periph(const struct stratix10_perip_cnt_clock *c
- 	}
- 	return hw_clk;
- }
-+
-+struct clk_hw *agilex5_register_cnt_periph(const struct agilex5_perip_cnt_clock *clks,
-+					   void __iomem *regbase)
-+{
-+	struct clk_hw *hw_clk;
-+	struct socfpga_periph_clk *periph_clk;
-+	struct clk_init_data init;
-+	const char *name = clks->name;
-+	int ret;
-+
-+	periph_clk = kzalloc(sizeof(*periph_clk), GFP_KERNEL);
-+	if (WARN_ON(!periph_clk))
-+		return NULL;
-+
-+	if (clks->offset)
-+		periph_clk->hw.reg = regbase + clks->offset;
-+	else
-+		periph_clk->hw.reg = NULL;
-+
-+	if (clks->bypass_reg)
-+		periph_clk->bypass_reg = regbase + clks->bypass_reg;
-+	else
-+		periph_clk->bypass_reg = NULL;
-+	periph_clk->bypass_shift = clks->bypass_shift;
-+	periph_clk->fixed_div = clks->fixed_divider;
-+
-+	init.name = name;
-+	init.ops = &peri_cnt_clk_ops;
-+	init.flags = clks->flags;
-+	init.num_parents = clks->num_parents;
-+	init.parent_names = clks->parent_names;
-+	periph_clk->hw.hw.init = &init;
-+	hw_clk = &periph_clk->hw.hw;
-+
-+	ret = clk_hw_register(NULL, hw_clk);
-+	if (ret) {
-+		kfree(periph_clk);
-+		return ERR_PTR(ret);
-+	}
-+	return hw_clk;
-+}
-diff --git a/drivers/clk/socfpga/clk-pll-s10.c b/drivers/clk/socfpga/clk-pll-s10.c
-index a88c212bda12..ae80814cfa92 100644
---- a/drivers/clk/socfpga/clk-pll-s10.c
-+++ b/drivers/clk/socfpga/clk-pll-s10.c
-@@ -182,7 +182,7 @@ static const struct clk_ops clk_pll_ops = {
- };
- 
- static const struct clk_ops clk_boot_ops = {
--	.recalc_rate = clk_boot_clk_recalc_rate,
-+	.recalc_rate = clk_boot_clk_recalc_rate, /* TODO this is wrong*/
- 	.get_parent = clk_boot_get_parent,
- 	.prepare = clk_pll_prepare,
- };
-@@ -304,3 +304,39 @@ struct clk_hw *n5x_register_pll(const struct stratix10_pll_clock *clks,
- 	}
- 	return hw_clk;
- }
-+
-+struct clk_hw *agilex5_register_pll(const struct agilex5_pll_clock *clks,
-+				    void __iomem *reg)
-+{
-+	struct clk_hw *hw_clk;
-+	struct socfpga_pll *pll_clk;
-+	struct clk_init_data init;
-+	const char *name = clks->name;
-+	int ret;
-+
-+	pll_clk = kzalloc(sizeof(*pll_clk), GFP_KERNEL);
-+	if (WARN_ON(!pll_clk))
-+		return NULL;
-+
-+	pll_clk->hw.reg = reg + clks->offset;
-+
-+	if (streq(name, SOCFPGA_BOOT_CLK))
-+		init.ops = &clk_boot_ops;
-+	else
-+		init.ops = &agilex_clk_pll_ops;
-+
-+	init.name = name;
-+	init.flags = clks->flags;
-+	init.num_parents = clks->num_parents;
-+	init.parent_names = clks->parent_names;
-+	pll_clk->hw.hw.init = &init;
-+	pll_clk->hw.bit_idx = SOCFPGA_PLL_POWER;
-+	hw_clk = &pll_clk->hw.hw;
-+
-+	ret = clk_hw_register(NULL, hw_clk);
-+	if (ret) {
-+		kfree(pll_clk);
-+		return ERR_PTR(ret);
-+	}
-+	return hw_clk;
-+}
-diff --git a/drivers/clk/socfpga/stratix10-clk.h b/drivers/clk/socfpga/stratix10-clk.h
-index 83fe4eb3133c..d1fe4578b3e0 100644
---- a/drivers/clk/socfpga/stratix10-clk.h
-+++ b/drivers/clk/socfpga/stratix10-clk.h
-@@ -73,12 +73,55 @@ struct stratix10_gate_clock {
- 	u8			fixed_div;
- };
- 
-+struct agilex5_pll_clock {
-+	unsigned int	id;
-+	const char	*name;
-+	const char	* const *parent_names;
-+	u8	num_parents;
-+	unsigned long   flags;
-+	unsigned long   offset;
-+};
-+
-+struct agilex5_perip_cnt_clock {
-+	unsigned int		id;
-+	const char		*name;
-+	const char	* const *parent_names;
-+	u8			num_parents;
-+	unsigned long		flags;
-+	unsigned long		offset;
-+	u8			fixed_divider;
-+	unsigned long		bypass_reg;
-+	unsigned long		bypass_shift;
-+};
-+
-+struct agilex5_gate_clock {
-+	unsigned int		id;
-+	const char		*name;
-+	const char	* const *parent_names;
-+	u8			num_parents;
-+	unsigned long		flags;
-+	unsigned long		gate_reg;
-+	u8			gate_idx;
-+	unsigned long		div_reg;
-+	u8			div_offset;
-+	u8			div_width;
-+	unsigned long		bypass_reg;
-+	u8			bypass_shift;
-+	u8			fixed_div;
-+};
-+
- struct clk_hw *s10_register_pll(const struct stratix10_pll_clock *clks,
- 			     void __iomem *reg);
- struct clk_hw *agilex_register_pll(const struct stratix10_pll_clock *clks,
- 				void __iomem *reg);
- struct clk_hw *n5x_register_pll(const struct stratix10_pll_clock *clks,
- 			     void __iomem *reg);
-+struct clk_hw *agilex5_register_pll(const struct agilex5_pll_clock *clks,
-+				    void __iomem *reg);
-+struct clk_hw *agilex5_register_cnt_periph(const struct agilex5_perip_cnt_clock *clks,
-+					   void __iomem *regbase);
-+struct clk_hw *agilex5_register_gate(const struct agilex5_gate_clock *clks,
-+				     void __iomem *regbase);
- struct clk_hw *s10_register_periph(const struct stratix10_perip_c_clock *clks,
- 				void __iomem *reg);
- struct clk_hw *n5x_register_periph(const struct n5x_perip_c_clock *clks,
+On 2025-09-18 05:04:43 +0200, Marek Vasut wrote:
+> R-Car V4H Reference Manual R19UH0186EJ0130 Rev.1.30 Apr. 21, 2025 page 583
+> Figure 9.3.1(a) Software Reset flow (A) as well as flow (B) / (C) indicate
+> after reset has been asserted by writing a matching reset bit into register
+> SRCR, it is mandatory to wait 1ms.
+> 
+> This 1ms delay is documented on R-Car V4H and V4M, it is currently unclear
+> whether S4 is affected as well. This patch does apply the extra delay on
+> R-Car S4 as well.
+> 
+> Fix the reset driver to respect the additional delay when toggling resets.
+> Drivers which use separate reset_control_(de)assert() must assure matching
+> delay in their driver code.
+> 
+> Fixes: 0ab55cf18341 ("clk: renesas: cpg-mssr: Add support for R-Car V4H")
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+> ---
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: linux-clk@vger.kernel.org
+> Cc: linux-renesas-soc@vger.kernel.org
+> ---
+>  drivers/clk/renesas/renesas-cpg-mssr.c | 11 +++++++++--
+>  1 file changed, 9 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
+> index be9f59e6975d..65dfaceea71f 100644
+> --- a/drivers/clk/renesas/renesas-cpg-mssr.c
+> +++ b/drivers/clk/renesas/renesas-cpg-mssr.c
+> @@ -689,8 +689,15 @@ static int cpg_mssr_reset(struct reset_controller_dev *rcdev,
+>  	/* Reset module */
+>  	writel(bitmask, priv->pub.base0 + priv->reset_regs[reg]);
+>  
+> -	/* Wait for at least one cycle of the RCLK clock (@ ca. 32 kHz) */
+> -	udelay(35);
+> +	/*
+> +	 * On R-Car Gen4, delay after SRCR has been written is 1ms.
+> +	 * On older SoCs, delay after SRCR has been written is 35us
+> +	 * (one cycle of the RCLK clock @ cca. 32 kHz).
+> +	 */
+> +	if (priv->reg_layout == CLK_REG_LAYOUT_RCAR_GEN4)
+> +		usleep_range(1000, 2000);
+> +	else
+> +		usleep_range(35, 1000);
+
+I rebased the R-Car ISP work to renesas-drivers today and it included 
+this change, and I seem to have hit an issue with the switch form 
+udelay() to usleep_range() I'm afraid. I can't find any other good 
+reproducer of the issue however.
+
+THe core of the issue seems to be that if a reset is issued from an 
+atomic context bad things happen if you try to sleep. I get this splat 
+and the board is completer dead after it, needing a power cycle to 
+recover.
+
+If I revert this patch things work as expected.
+
+[   29.256947] BUG: scheduling while atomic: yavta/597/0x00000002
+[   29.257783] 2 locks held by yavta/597:
+[   29.258268]  #0: ffff000442a66418 (&io->lock){+.+.}-{4:4}, at: __video_do_ioctl+0xdc/0x3f0
+[   29.259356]  #1: ffff000442a66e18 (&core->lock){....}-{3:3}, at: risp_core_start_streaming+0xec/0x440
+[   29.260555] irq event stamp: 3916
+[   29.260983] hardirqs last  enabled at (3915): [<ffff800080fb4e04>] _raw_spin_unlock_irqrestore+0x64/0x68
+[   29.262205] hardirqs last disabled at (3916): [<ffff800080fb43d8>] _raw_spin_lock_irqsave+0x78/0x80
+[   29.263366] softirqs last  enabled at (3848): [<ffff8000800c2478>] handle_softirqs+0x44c/0x4a0
+[   29.264476] softirqs last disabled at (3805): [<ffff800080010270>] __do_softirq+0x10/0x18
+[   29.265529] CPU: 0 UID: 0 PID: 597 Comm: yavta Not tainted 6.17.0-arm64-renesas-09711-g5173b0d6549f #52 PREEMPT
+[   29.265536] Hardware name: Retronix Sparrow Hawk board based on r8a779g3 (DT)
+[   29.265540] Call trace:
+[   29.265542]  show_stack+0x14/0x1c (C)
+[   29.265551]  dump_stack_lvl+0x6c/0x90
+[   29.265558]  dump_stack+0x14/0x1c
+[   29.265563]  __schedule_bug+0x64/0x78
+[   29.265570]  __schedule+0xcfc/0xf90
+[   29.265574]  schedule+0x48/0x154
+[   29.265577]  schedule_hrtimeout_range_clock+0xd8/0x120
+[   29.265582]  usleep_range_state+0x84/0xe0
+[   29.265587]  cpg_mssr_reset+0xd8/0xdc
+[   29.265595]  reset_control_reset+0x4c/0x160
+[   29.265604]  risp_core_start_streaming+0x100/0x440
+[   29.265609]  risp_io_start_streaming+0x74/0x108
+[   29.265614]  vb2_start_streaming+0x64/0x168
+[   29.265618]  vb2_core_streamon+0xd0/0x1b8
+[   29.265621]  vb2_ioctl_streamon+0x50/0x8c
+[   29.265625]  v4l_streamon+0x20/0x28
+[   29.265631]  __video_do_ioctl+0x344/0x3f0
+[   29.265635]  video_usercopy+0x2e4/0x870
+[   29.265639]  video_ioctl2+0x14/0x20
+[   29.265643]  v4l2_ioctl+0x3c/0x60
+[   29.265646]  __arm64_sys_ioctl+0x88/0xe0
+[   29.265653]  invoke_syscall.constprop.0+0x3c/0xe4
+[   29.265659]  el0_svc_common.constprop.0+0x34/0xcc
+[   29.265663]  do_el0_svc+0x18/0x20
+[   29.265667]  el0_svc+0x3c/0x2a0
+[   29.265673]  el0t_64_sync_handler+0x98/0xe0
+[   29.265678]  el0t_64_sync+0x154/0x158
+[   29.268217] BUG: spinlock wrong CPU on CPU#1, yavta/597
+[   29.282715]  lock: 0xffff000442a66e00, .magic: dead4ead, .owner: yavta/597, .owner_cpu: 0
+[   29.283783] CPU: 1 UID: 0 PID: 597 Comm: yavta Tainted: G        W           6.17.0-arm64-renesas-09711-g5173b0d6549f #52 PREEMPT
+[   29.283790] Tainted: [W]=WARN
+[   29.283793] Hardware name: Retronix Sparrow Hawk board based on r8a779g3 (DT)
+[   29.283795] Call trace:
+[   29.283797]  show_stack+0x14/0x1c (C)
+[   29.283812]  dump_stack_lvl+0x6c/0x90
+[   29.283821]  dump_stack+0x14/0x1c
+[   29.283825]  spin_dump+0x74/0x80
+[   29.283831]  do_raw_spin_unlock+0xfc/0x104
+[   29.283839]  _raw_spin_unlock_irqrestore+0x2c/0x68
+[   29.283848]  risp_core_start_streaming+0x30c/0x440
+[   29.283858]  risp_io_start_streaming+0x74/0x108
+[   29.283863]  vb2_start_streaming+0x64/0x168
+[   29.283867]  vb2_core_streamon+0xd0/0x1b8
+[   29.283869]  vb2_ioctl_streamon+0x50/0x8c
+[   29.283873]  v4l_streamon+0x20/0x28
+[   29.283879]  __video_do_ioctl+0x344/0x3f0
+[   29.283885]  video_usercopy+0x2e4/0x870
+[   29.283889]  video_ioctl2+0x14/0x20
+[   29.283892]  v4l2_ioctl+0x3c/0x60
+[   29.283895]  __arm64_sys_ioctl+0x88/0xe0
+[   29.283903]  invoke_syscall.constprop.0+0x3c/0xe4
+[   29.283908]  el0_svc_common.constprop.0+0x34/0xcc
+[   29.283912]  do_el0_svc+0x18/0x20
+[   29.283915]  el0_svc+0x3c/0x2a0
+[   29.283922]  el0t_64_sync_handler+0x98/0xe0
+[   29.283926]  el0t_64_sync+0x154/0x158
+[   29.283952] ------------[ cut here ]------------
+[   29.298904] WARNING: CPU: 1 PID: 597 at kernel/rcu/srcutree.c:732 __srcu_check_read_flavor+0x50/0xe0
+[   29.300062] CPU: 1 UID: 0 PID: 597 Comm: yavta Tainted: G        W           6.17.0-arm64-renesas-09711-g5173b0d6549f #52 PREEMPT
+[   29.301538] Tainted: [W]=WARN
+[   29.301913] Hardware name: Retronix Sparrow Hawk board based on r8a779g3 (DT)
+[   29.302810] pstate: 00400009 (nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+[   29.303689] pc : __srcu_check_read_flavor+0x50/0xe0
+[   29.304307] lr : device_links_read_lock+0x20/0x60
+[   29.304904] sp : ffff800083c438a0
+[   29.305322] x29: ffff800083c438a0 x28: 0000000000000001 x27: 0000000000000001
+[   29.306225] x26: 0000000000000000 x25: ffff800081751db8 x24: ffff800080123160
+[   29.307125] x23: 0000000000000002 x22: ffff800080726a90 x21: ffff000440c56968
+[   29.308026] x20: ffff800080726a90 x19: ffff8000818bc240 x18: 0000000000000010
+[   29.308926] x17: 202c3739352f6174 x16: 766179203a72656e x15: 0000000000000020
+[   29.309826] x14: 0000000000000000 x13: 00000000ffff1060 x12: 00000000fffffffd
+[   29.310726] x11: 0000000000000058 x10: 0000000000000018 x9 : ffff800081777de0
+[   29.311626] x8 : ffff800083c437b0 x7 : ffff800083c438c0 x6 : ffff800083c43870
+[   29.312526] x5 : ffff800083c437f0 x4 : ffff800083c44000 x3 : 0000000000000000
+[   29.313426] x2 : 00000000ffffffff x1 : 0000000000000001 x0 : ffff8000818bc470
+[   29.314326] Call trace:
+[   29.314636]  __srcu_check_read_flavor+0x50/0xe0 (P)
+[   29.315254]  device_links_read_lock+0x20/0x60
+[   29.315805]  __rpm_callback+0x14c/0x210
+[   29.316294]  rpm_callback+0x6c/0x78
+[   29.316737]  rpm_resume+0x50c/0x718
+[   29.317179]  __pm_runtime_resume+0x48/0x88
+[   29.317698]  vsp1_device_get+0x1c/0x84
+[   29.318175]  vsp1_isp_start_streaming+0x7c/0x198
+[   29.318761]  risp_core_start_streaming+0x318/0x440
+[   29.319368]  risp_io_start_streaming+0x74/0x108
+[   29.319942]  vb2_start_streaming+0x64/0x168
+[   29.320470]  vb2_core_streamon+0xd0/0x1b8
+[   29.320976]  vb2_ioctl_streamon+0x50/0x8c
+[   29.321484]  v4l_streamon+0x20/0x28
+[   29.321925]  __video_do_ioctl+0x344/0x3f0
+[   29.322433]  video_usercopy+0x2e4/0x870
+[   29.322920]  video_ioctl2+0x14/0x20
+[   29.323362]  v4l2_ioctl+0x3c/0x60
+[   29.323781]  __arm64_sys_ioctl+0x88/0xe0
+[   29.324279]  invoke_syscall.constprop.0+0x3c/0xe4
+[   29.324875]  el0_svc_common.constprop.0+0x34/0xcc
+[   29.325469]  do_el0_svc+0x18/0x20
+[   29.325890]  el0_svc+0x3c/0x2a0
+[   29.326289]  el0t_64_sync_handler+0x98/0xe0
+[   29.326819]  el0t_64_sync+0x154/0x158
+[   29.327283] irq event stamp: 3935
+[   29.327702] hardirqs last  enabled at (3935): [<ffff800080fa655c>] irqentry_exit+0x3c/0x180
+[   29.328755] hardirqs last disabled at (3934): [<ffff800080fab110>] preempt_schedule_irq+0x70/0xa0
+[   29.329872] softirqs last  enabled at (3930): [<ffff8000800c2478>] handle_softirqs+0x44c/0x4a0
+[   29.330958] softirqs last disabled at (3919): [<ffff800080010270>] __do_softirq+0x10/0x18
+[   29.331988] ---[ end trace 0000000000000000 ]---
+[   29.332579] ------------[ cut here ]------------
+[   29.333163] WARNING: CPU: 1 PID: 597 at kernel/irq/irqdesc.c:666 handle_irq_desc+0x3c/0x58
+[   29.334207] CPU: 1 UID: 0 PID: 597 Comm: yavta Tainted: G        W           6.17.0-arm64-renesas-09711-g5173b0d6549f #52 PREEMPT
+[   29.335683] Tainted: [W]=WARN
+[   29.336058] Hardware name: Retronix Sparrow Hawk board based on r8a779g3 (DT)
+[   29.336954] pstate: 404000c9 (nZcv daIF +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+[   29.337831] pc : handle_irq_desc+0x3c/0x58
+[   29.338348] lr : generic_handle_domain_irq+0x18/0x20
+[   29.338975] sp : ffff8000824d3fd0
+[   29.339393] x29: ffff8000824d3fd0 x28: ffff000443a9cf80 x27: 0000000000000001
+[   29.340293] x26: 0000000000000000 x25: ffff800081751db8 x24: ffff800080123160
+[   29.341193] x23: 0000000000400009 x22: ffff80008016c294 x21: ffff800083c438a0
+[   29.342093] x20: 0000000000000000 x19: ffff800081684cd8 x18: 0000000000000010
+[   29.342993] x17: ffff80063d8b5000 x16: ffff8000824d0000 x15: 0000000000000020
+[   29.343893] x14: 0000000000000000 x13: 00000000ffff1060 x12: 00000000fffffffd
+[   29.344793] x11: 0000000000000058 x10: 0000000000000018 x9 : 0000000000000040
+[   29.345692] x8 : ffff000440013918 x7 : 0000000000000000 x6 : ffff0004404004b8
+[   29.346592] x5 : ffff000440400490 x4 : ffff000440400588 x3 : ffff800081751db8
+[   29.347492] x2 : 0000000000000000 x1 : 000000000a032a08 x0 : ffff000440100c00
+[   29.348392] Call trace:
+[   29.348702]  handle_irq_desc+0x3c/0x58 (P)
+[   29.349220]  gic_handle_irq+0x48/0xc0
+[   29.349683]  call_on_irq_stack+0x30/0x60
+[   29.350180]  do_interrupt_handler+0x78/0x7c
+[   29.350710]  el1_interrupt+0x34/0x50
+[   29.351167]  el1h_64_irq_handler+0x14/0x1c
+[   29.351686]  el1h_64_irq+0x6c/0x70
+[   29.352116]  __srcu_check_read_flavor+0x54/0xe0 (P)
+[   29.352734]  device_links_read_lock+0x20/0x60
+[   29.353285]  __rpm_callback+0x14c/0x210
+[   29.353771]  rpm_callback+0x6c/0x78
+[   29.354213]  rpm_resume+0x50c/0x718
+[   29.354655]  __pm_runtime_resume+0x48/0x88
+[   29.355174]  vsp1_device_get+0x1c/0x84
+[   29.355649]  vsp1_isp_start_streaming+0x7c/0x198
+[   29.356233]  risp_core_start_streaming+0x318/0x440
+[   29.356839]  risp_io_start_streaming+0x74/0x108
+[   29.357413]  vb2_start_streaming+0x64/0x168
+[   29.357941]  vb2_core_streamon+0xd0/0x1b8
+[   29.358447]  vb2_ioctl_streamon+0x50/0x8c
+[   29.358954]  v4l_streamon+0x20/0x28
+[   29.359397]  __video_do_ioctl+0x344/0x3f0
+[   29.359904]  video_usercopy+0x2e4/0x870
+[   29.360390]  video_ioctl2+0x14/0x20
+[   29.360832]  v4l2_ioctl+0x3c/0x60
+[   29.361252]  __arm64_sys_ioctl+0x88/0xe0
+[   29.361749]  invoke_syscall.constprop.0+0x3c/0xe4
+[   29.362344]  el0_svc_common.constprop.0+0x34/0xcc
+[   29.362938]  do_el0_svc+0x18/0x20
+[   29.363359]  el0_svc+0x3c/0x2a0
+[   29.363758]  el0t_64_sync_handler+0x98/0xe0
+[   29.364288]  el0t_64_sync+0x154/0x158
+[   29.364751] irq event stamp: 3935
+[   29.365169] hardirqs last  enabled at (3935): [<ffff800080fa655c>] irqentry_exit+0x3c/0x180
+[   29.366220] hardirqs last disabled at (3934): [<ffff800080fab110>] preempt_schedule_irq+0x70/0xa0
+[   29.367338] softirqs last  enabled at (3930): [<ffff8000800c2478>] handle_softirqs+0x44c/0x4a0
+[   29.368422] softirqs last disabled at (3919): [<ffff800080010270>] __do_softirq+0x10/0x18
+[   29.369451] ---[ end trace 0000000000000000 ]---
+[   29.370033] ------------[ cut here ]------------
+[   29.370614] Unexpected interrupt (irqnr 26)
+[   29.371159] WARNING: CPU: 1 PID: 597 at drivers/irqchip/irq-gic-v3.c:875 gic_handle_irq+0xb4/0xc0
+[   29.372278] CPU: 1 UID: 0 PID: 597 Comm: yavta Tainted: G        W           6.17.0-arm64-renesas-09711-g5173b0d6549f #52 PREEMPT
+[   29.373755] Tainted: [W]=WARN
+[   29.374129] Hardware name: Retronix Sparrow Hawk board based on r8a779g3 (DT)
+[   29.375026] pstate: 604000c9 (nZCv daIF +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+[   29.375902] pc : gic_handle_irq+0xb4/0xc0
+[   29.376409] lr : gic_handle_irq+0xb4/0xc0
+[   29.376915] sp : ffff8000824d3fe0
+[   29.377333] x29: ffff8000824d3fe0 x28: ffff000443a9cf80 x27: 0000000000000001
+[   29.378233] x26: 0000000000000000 x25: ffff800081751db8 x24: ffff800080123160
+[   29.379133] x23: 0000000000400009 x22: ffff80008016c294 x21: ffff800083c438a0
+[   29.380033] x20: 0000000000000000 x19: ffff800081684cd8 x18: 000000000000000a
+[   29.380933] x17: ffff80063d8b5000 x16: ffff8000824d0000 x15: 0720072007200720
+[   29.381833] x14: 0720072007200720 x13: 0720072007200720 x12: 0720072007200720
+[   29.382733] x11: 0000000000000058 x10: 0000000000000018 x9 : ffff800081777de0
+[   29.383634] x8 : 0000000000057fa8 x7 : 000000000000031b x6 : ffff8000817cfde0
+[   29.384534] x5 : ffff0006bef28448 x4 : ffff80063d8b5000 x3 : ffff000443a9cf80
+[   29.385434] x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffff000443a9cf80
+[   29.386333] Call trace:
+[   29.386643]  gic_handle_irq+0xb4/0xc0 (P)
+[   29.387150]  call_on_irq_stack+0x30/0x60
+[   29.387647]  do_interrupt_handler+0x78/0x7c
+[   29.388176]  el1_interrupt+0x34/0x50
+[   29.388630]  el1h_64_irq_handler+0x14/0x1c
+[   29.389149]  el1h_64_irq+0x6c/0x70
+[   29.389579]  __srcu_check_read_flavor+0x54/0xe0 (P)
+[   29.390197]  device_links_read_lock+0x20/0x60
+[   29.390748]  __rpm_callback+0x14c/0x210
+[   29.391235]  rpm_callback+0x6c/0x78
+[   29.391677]  rpm_resume+0x50c/0x718
+[   29.392120]  __pm_runtime_resume+0x48/0x88
+[   29.392638]  vsp1_device_get+0x1c/0x84
+[   29.393114]  vsp1_isp_start_streaming+0x7c/0x198
+[   29.393697]  risp_core_start_streaming+0x318/0x440
+[   29.394305]  risp_io_start_streaming+0x74/0x108
+[   29.394879]  vb2_start_streaming+0x64/0x168
+[   29.395407]  vb2_core_streamon+0xd0/0x1b8
+[   29.395914]  vb2_ioctl_streamon+0x50/0x8c
+[   29.396421]  v4l_streamon+0x20/0x28
+[   29.396863]  __video_do_ioctl+0x344/0x3f0
+[   29.397372]  video_usercopy+0x2e4/0x870
+[   29.397858]  video_ioctl2+0x14/0x20
+[   29.398300]  v4l2_ioctl+0x3c/0x60
+[   29.398720]  __arm64_sys_ioctl+0x88/0xe0
+[   29.399218]  invoke_syscall.constprop.0+0x3c/0xe4
+[   29.399814]  el0_svc_common.constprop.0+0x34/0xcc
+[   29.400408]  do_el0_svc+0x18/0x20
+[   29.400828]  el0_svc+0x3c/0x2a0
+[   29.401228]  el0t_64_sync_handler+0x98/0xe0
+[   29.401758]  el0t_64_sync+0x154/0x158
+[   29.402221] irq event stamp: 3935
+[   29.402639] hardirqs last  enabled at (3935): [<ffff800080fa655c>] irqentry_exit+0x3c/0x180
+[   29.403690] hardirqs last disabled at (3934): [<ffff800080fab110>] preempt_schedule_irq+0x70/0xa0
+[   29.404807] softirqs last  enabled at (3930): [<ffff8000800c2478>] handle_softirqs+0x44c/0x4a0
+[   29.405893] softirqs last disabled at (3919): [<ffff800080010270>] __do_softirq+0x10/0x18
+[   29.406922] ---[ end trace 0000000000000000 ]---
+[   29.363758]  el0t_64_sync_handler+0x98/0xe0
+[   29.364288]  el0t_64_sync+0x154/0x158
+[   29.364751] irq event stamp: 3935
+[   29.365169] hardirqs last  enabled at (3935): [<ffff800080fa655c>] irqentry_exit+0x3c/0x180
+[   29.366220] hardirqs last disabled at (3934): [<ffff800080fab110>] preempt_schedule_irq+0x70/0xa0
+[   29.367338] softirqs last  enabled at (3930): [<ffff8000800c2478>] handle_softirqs+0x44c/0x4a0
+[   29.368422] softirqs last disabled at (3919): [<ffff800080010270>] __do_softirq+0x10/0x18
+[   29.369451] ---[ end trace 0000000000000000 ]---
+[   29.370033] ------------[ cut here ]------------
+[   29.370614] Unexpected interrupt (irqnr 26)
+[   29.371159] WARNING: CPU: 1 PID: 597 at drivers/irqchip/irq-gic-v3.c:875 gic_handle_irq+0xb4/0xc0
+[   29.372278] CPU: 1 UID: 0 PID: 597 Comm: yavta Tainted: G        W           6.17.0-arm64-renesas-09711-g5173b0d6549f #52 PREEMPT
+[   29.373755] Tainted: [W]=WARN
+[   29.374129] Hardware name: Retronix Sparrow Hawk board based on r8a779g3 (DT)
+[   29.375026] pstate: 604000c9 (nZCv daIF +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+[   29.375902] pc : gic_handle_irq+0xb4/0xc0
+[   29.376409] lr : gic_handle_irq+0xb4/0xc0
+[   29.376915] sp : ffff8000824d3fe0
+[   29.377333] x29: ffff8000824d3fe0 x28: ffff000443a9cf80 x27: 0000000000000001
+[   29.378233] x26: 0000000000000000 x25: ffff800081751db8 x24: ffff800080123160
+[   29.379133] x23: 0000000000400009 x22: ffff80008016c294 x21: ffff800083c438a0
+[   29.380033] x20: 0000000000000000 x19: ffff800081684cd8 x18: 000000000000000a
+[   29.380933] x17: ffff80063d8b5000 x16: ffff8000824d0000 x15: 0720072007200720
+[   29.381833] x14: 0720072007200720 x13: 0720072007200720 x12: 0720072007200720
+[   29.382733] x11: 0000000000000058 x10: 0000000000000018 x9 : ffff800081777de0
+[   29.383634] x8 : 0000000000057fa8 x7 : 000000000000031b x6 : ffff8000817cfde0
+[   29.384534] x5 : ffff0006bef28448 x4 : ffff80063d8b5000 x3 : ffff000443a9cf80
+[   29.385434] x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffff000443a9cf80
+[   29.386333] Call trace:
+[   29.386643]  gic_handle_irq+0xb4/0xc0 (P)
+[   29.387150]  call_on_irq_stack+0x30/0x60
+[   29.387647]  do_interrupt_handler+0x78/0x7c
+[   29.388176]  el1_interrupt+0x34/0x50
+[   29.388630]  el1h_64_irq_handler+0x14/0x1c
+[   29.389149]  el1h_64_irq+0x6c/0x70
+[   29.389579]  __srcu_check_read_flavor+0x54/0xe0 (P)
+[   29.390197]  device_links_read_lock+0x20/0x60
+[   29.390748]  __rpm_callback+0x14c/0x210
+[   29.391235]  rpm_callback+0x6c/0x78
+[   29.391677]  rpm_resume+0x50c/0x718
+[   29.392120]  __pm_runtime_resume+0x48/0x88
+[   29.392638]  vsp1_device_get+0x1c/0x84
+[   29.393114]  vsp1_isp_start_streaming+0x7c/0x198
+[   29.393697]  risp_core_start_streaming+0x318/0x440
+[   29.394305]  risp_io_start_streaming+0x74/0x108
+[   29.394879]  vb2_start_streaming+0x64/0x168
+[   29.395407]  vb2_core_streamon+0xd0/0x1b8
+[   29.395914]  vb2_ioctl_streamon+0x50/0x8c
+[   29.396421]  v4l_streamon+0x20/0x28
+[   29.396863]  __video_do_ioctl+0x344/0x3f0
+[   29.397372]  video_usercopy+0x2e4/0x870
+[   29.397858]  video_ioctl2+0x14/0x20
+[   29.398300]  v4l2_ioctl+0x3c/0x60
+[   29.398720]  __arm64_sys_ioctl+0x88/0xe0
+[   29.399218]  invoke_syscall.constprop.0+0x3c/0xe4
+[   29.399814]  el0_svc_common.constprop.0+0x34/0xcc
+[   29.400408]  do_el0_svc+0x18/0x20
+[   29.400828]  el0_svc+0x3c/0x2a0
+[   29.401228]  el0t_64_sync_handler+0x98/0xe0
+[   29.401758]  el0t_64_sync+0x154/0x158
+[   29.402221] irq event stamp: 3935
+[   29.402639] hardirqs last  enabled at (3935): [<ffff800080fa655c>] irqentry_exit+0x3c/0x180
+[   29.403690] hardirqs last disabled at (3934): [<ffff800080fab110>] preempt_schedule_irq+0x70/0xa0
+[   29.404807] softirqs last  enabled at (3930): [<ffff8000800c2478>] handle_softirqs+0x44c/0x4a0
+[   29.405893] softirqs last disabled at (3919): [<ffff800080010270>] __do_softirq+0x10/0x18
+[   29.406922] ---[ end trace 0000000000000000 ]---
+
+>  
+>  	/* Release module from reset state */
+>  	writel(bitmask, priv->pub.base0 + priv->reset_clear_regs[reg]);
+> -- 
+> 2.51.0
+> 
+> 
+
 -- 
-2.35.3
-
+Kind Regards,
+Niklas Söderlund
