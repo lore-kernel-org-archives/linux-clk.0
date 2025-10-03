@@ -1,141 +1,111 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 577D0221F03
-	for <linux-clk@vger.kernel.org>; Fri,  3 Oct 2025 19:38:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E16A83987D;
+	Fri,  3 Oct 2025 20:47:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759520312; cv=none; b=i15zog8njtzLv43gADVlXUCInHxlTrFxIJWqCg/bNnfQDESTK2fXSqOM8eLblM4CBqNP0taXkn4bWBv3kk7VE5X5esyP9GabbwoOjwcqpBKRsReqVmG7Q/tNVAnzY+TAFoV0CjO0Kpu2rZbOFHR0h+6VMIyD28VsYitFTMAW3VA=
+	t=1759524465; cv=none; b=MNnQYAVEXZqOVXLyYipwdV4cvYe2wBqYxJdK80+S0sQZkPdeWo3EnCTKMxsysBwfMJSyZkgsOXwmH/wzR4eJuZLixhpIhf50pr+OoL0ZdcHmgC25DgE7xOf1gG5JEEsv5sbDnjlQmeTj6erbpGqrBmofIEXjSJ4XdrgPPd/Rw1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759520312; c=relaxed/simple;
-	bh=6PA7/gZ6w/NaM0vZU25LxZi7CVbMutYUKbETi4CKwyE=;
+	s=arc-20240116; t=1759524465; c=relaxed/simple;
+	bh=s9KdYwHxtmjq+rq4sojwwWTmmqYjg09bj3FGC5XSE/I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aJGWzULmdGkTR24GNTIDA7n32xGvOn0ilEAuNzpnzrl4+/BDFCKgbxW/CHeqpC03ua6MgFXxcqskLixSWnj+fJGeOx+xuz6YpqIsZzT9YOAhGNQfp1bxfzlJewPGozXKotQGKeG+pnOGyrxGaurRn1QXY9L7PNSkNZeFx8WgmGU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=T54qu9PL; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=p4LdM15ePpBHRKYN/dxw2hK4OoozEa0c/fTNX25AZu/TkNm9vlPREs6SllqOLcxy6+hz6ng9c2iI/IlsMmmz03xklMCHgaM6BqwhqJx1SGnDjq3+nUeRufIP5U+FRIBkdexQ0Y21RcSlHzdCnEHCdtdBhvTr7/UYyxgPt7Ktewo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d6y11QK1; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="T54qu9PL"
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 593B6QpU024045
-	for <linux-clk@vger.kernel.org>; Fri, 3 Oct 2025 19:38:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=c/QeD1msDHzyxrlgBhbUPpRV
-	r2cqluEXpYx+ZEgqG8E=; b=T54qu9PLdBEo+X3HJs2aoWSGZ7TqW0eB7ilFmhJ5
-	XapBW6n0KZJ8cZ6i3VCZk2jJ6NTU91p2S+iW1L5N5Kb8RjNKJrXuLAeOFNLZ2XNl
-	0t8KZ7BTlzbqKP0BYOMQwDF7vrAlP/TzHv3/KpoZLkG4/dwHdbuqUOLkMZThXfIc
-	d9cA8sXENJV+34ea7aFpkkaPopjjcDIYa9jHrGtXvy53K4LzejRt6PH56iscWHwh
-	Z8WlBkJkqSgRMvSjBTeSJSKejxijJNu/6TwR8rUER7LME58YG4nyX8aRuW8MFtRX
-	0UxwKgltXZdjImcSxJR24TnY5MLkevMdyXJWJdVC5NB13A==
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49e59nc5we-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Fri, 03 Oct 2025 19:38:30 +0000 (GMT)
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4e1015c48c8so70075141cf.1
-        for <linux-clk@vger.kernel.org>; Fri, 03 Oct 2025 12:38:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759520309; x=1760125109;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=c/QeD1msDHzyxrlgBhbUPpRVr2cqluEXpYx+ZEgqG8E=;
-        b=Lmm6fxcLWQb/17hTJnPsukmlBhL8+rmAEpdiwQSp2c4gd8zLtLnullBfUeNhiLafom
-         HphuJi2P1TiZOhHAYuiq516MvphS3tAEif0DUnm8XqgNg+oppSOdEI3K5A+RY4jfcUpb
-         BVnyPpFe7XTuxvWj/E+o5LPESg9y4bR2/lh4hHsnJDetAKakV+vpP06cVqagfKHDquKP
-         9GTpVpZBXGMMCtKjdljb5OI549hQjxC8FOL/1eB8gDIq9taPBFIDDSnEF6r7lfZLoLBs
-         0XeLrsmZDFeNCTwaS8svma9ao8fFILyraQpQMkTnOu41h14wD7D+CG5yLW0ntT5Du7Md
-         7ubA==
-X-Forwarded-Encrypted: i=1; AJvYcCXnMSj4hnxNCTGI/teCyw+neeunwuTqDymvc+l/pU0a+pwSlo2FnfDLfRCxWm6wPzsOqZRWKrdR2/8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0K2gfivoiPujzRXT4kR3IFIYdt6/4hbXHs1K6N0R6AHsBiled
-	o8wwtWJuofSgYl8AM15rdm94Kgyu3zARnYBPuLjtfpZGLaemiW5h+6euzJEzdCSuRYGGvO2Pdtp
-	yOcrpUh4+fvI4yMlY8JTYcGc+GCLKvDTNwlHrwLvA3bHcVDUTvMR4QjJ1hOPtDRw=
-X-Gm-Gg: ASbGncvPRrKSkVjE6SHQF1uKQVV78JpldzfcW2TeKf7DG3yTDFRwjJF+bXTnAb1bSNH
-	5WdWdyJzZXBGoNB4btS0jATMOLKzDPxm8ioZRCNHZMQukoNpRp2/WdEninbXUElMY29JLSlYG3d
-	fQzAr0Wm4ZkLwA/m97cSZMKshHNTZ8g3F4F7KmulBsv1j7vcG7WRhEieEQOOKpGnmVXe7bMYDoe
-	y5V0/JdIpBNjvCQlsYqjsTq1dwvjOaormJlZqTej2hIuyHpZwjsoNvMd9cbbJqSQJAQ7vTxrKvE
-	zRdi+qEo9bWTvDkhgm9upciiQpbilreilb+KY8MHoFPWIJYcA84V4dxM3xR/xtgrlC/AvnI2qNL
-	L3Rcl81h5gtrMI35Lb7XXMSK13zfs8SAug6V8FUvWT7vtfY2unN8hoIWkwQ==
-X-Received: by 2002:ac8:574c:0:b0:4d6:c73f:de88 with SMTP id d75a77b69052e-4e5766fa419mr66222231cf.3.1759520290992;
-        Fri, 03 Oct 2025 12:38:10 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHa6kGS9lVlPG9s/2DewNwN4ny2UeX5qnAiNzIzbVl4p+vL4Y447NPSIDi2TcL94+kOw3WYpg==
-X-Received: by 2002:ac8:574c:0:b0:4d6:c73f:de88 with SMTP id d75a77b69052e-4e5766fa419mr66220391cf.3.1759520288686;
-        Fri, 03 Oct 2025 12:38:08 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-58b011a7e65sm2090376e87.112.2025.10.03.12.38.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Oct 2025 12:38:06 -0700 (PDT)
-Date: Fri, 3 Oct 2025 22:38:03 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Konrad Dybcio <konradybcio@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Rajendra Nayak <quic_rjendra@quicinc.com>,
-        Wesley Cheng <wesley.cheng@oss.qualcomm.com>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Sibi Sankar <quic_sibis@quicinc.com>, Abel Vesa <abel.vesa@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Bryan O'Donoghue <bod@kernel.org>
-Subject: Re: [PATCH v2 3/3] arm64: dts: qcom: x1e80100: Extend the gcc input
- clock list
-Message-ID: <xad3x7qn6qxrnfqrhcyqkileh7efwizklmwlj4firdqpkz67em@2bcx44acnpre>
-References: <20251003-topic-hamoa_gcc_usb4-v2-0-61d27a14ee65@oss.qualcomm.com>
- <20251003-topic-hamoa_gcc_usb4-v2-3-61d27a14ee65@oss.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d6y11QK1"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7302C4CEF5;
+	Fri,  3 Oct 2025 20:47:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759524464;
+	bh=s9KdYwHxtmjq+rq4sojwwWTmmqYjg09bj3FGC5XSE/I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=d6y11QK15ZptdWlP41qvreKP+B3iFmWUFkf3nCrbM4xwYUYyG9tVcIfnLscTKs9PW
+	 RwKJdiQ+tHjDH6b4QYRIPTDqNM1yRC1FmVnI7xpckDbCDby6fRJDNSGLwyLmrCsMuJ
+	 +EnsN/amGGUjz9mlYR90GLkIe8Xf6BfRBM29dgfEz7TqOURUVnmmusBn7haFd57Ot2
+	 pRVOlOH8XaUsiBM7yX3x0MEUQ2jBX1e1ybH0Ls+ivJbWVIQPu2cA3CTiSCe+rGIG1t
+	 6J2cK6X8+UjoK3QC7jNlBcjsU77FGfp8OKFRtwyDzKZpBWDFcBKhusG2TosjL+rhPj
+	 A7mRq8QKyoYMw==
+Date: Fri, 3 Oct 2025 21:47:39 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Jammy Huang <jammy_huang@aspeedtech.com>
+Cc: "mturquette@baylibre.com" <mturquette@baylibre.com>,
+	"sboyd@kernel.org" <sboyd@kernel.org>,
+	"robh@kernel.org" <robh@kernel.org>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"joel@jms.id.au" <joel@jms.id.au>,
+	"andrew@codeconstruct.com.au" <andrew@codeconstruct.com.au>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1] dt-bindings: clock: Add AST2500/AST2600 VIDEO reset
+ definition
+Message-ID: <20251003-gestate-roast-37ef1b1c2e07@spud>
+References: <20251002095651.2211900-1-jammy_huang@aspeedtech.com>
+ <20251002-accuracy-gloomily-a3e46d5a3f02@spud>
+ <TYZPR06MB65687E6795F9C899B3F067CEF1E4A@TYZPR06MB6568.apcprd06.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="1VWs/xU7QyzcZvNl"
+Content-Disposition: inline
+In-Reply-To: <TYZPR06MB65687E6795F9C899B3F067CEF1E4A@TYZPR06MB6568.apcprd06.prod.outlook.com>
+
+
+--1VWs/xU7QyzcZvNl
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251003-topic-hamoa_gcc_usb4-v2-3-61d27a14ee65@oss.qualcomm.com>
-X-Proofpoint-GUID: 1pk5Ge_AF5fo6IVZ6egZL0jtPtHMBEio
-X-Authority-Analysis: v=2.4 cv=O4g0fR9W c=1 sm=1 tr=0 ts=68e02636 cx=c_pps
- a=JbAStetqSzwMeJznSMzCyw==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=x6icFKpwvdMA:10 a=EUspDBNiAAAA:8 a=VwQbUJbxAAAA:8 a=AeM-GoSWWiRe9qQbtTAA:9
- a=CjuIK1q_8ugA:10 a=uxP6HrT_eTzRwkO_Te1X:22
-X-Proofpoint-ORIG-GUID: 1pk5Ge_AF5fo6IVZ6egZL0jtPtHMBEio
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDAwMSBTYWx0ZWRfX33YpKRH4ak+V
- 3pwSYkm0Y1nU/TpLfmbru7zkJV4qAhv+SfKxtSnNCQ+dtK61WzqCWtiMOh8+sGCrf407XRmy7EB
- WRpz5GsulUkbt8n28Dq48pLfpy2sDhCzz0Ay/fn67QFQizpEWfB1ILLD3hdcOzNFBFyfnTauglP
- lL17RcNyeyY66M6dYKxeBV4gzJ2pjNQ+3Nr1VzOIh/ksvaLL0QCRRaWYE8qJgqfoUCs0RCAy3n4
- 4WLmHgylyGImatqt6d92bXiKEZ5DvJH8K8tzih9kYLXr165s7R0UkgZNhR8PGlaxbHz8iunzcUZ
- /2DM8OL/Y2ADVU0Mi1+OErzrawxnWqFtZxvx7im28VlDQChrCIxtSEK/IgzYOKX0rpn1OPdPpvi
- vPkIVxBB8ZlVeE27dvvpcI5vYFdn9Q==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-03_06,2025-10-02_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 phishscore=0 clxscore=1015 priorityscore=1501 lowpriorityscore=0
- spamscore=0 impostorscore=0 bulkscore=0 suspectscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509270001
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 03, 2025 at 08:14:40PM +0200, Konrad Dybcio wrote:
-> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> 
-> With the recent dt-bindings update, the missing USB4 clocks have been
-> added.
-> 
-> Extend the existing list to make sure the DT contains the expected
-> amount of 'clocks' entries.
-> 
-> Reviewed-by: Bryan O'Donoghue <bod@kernel.org>
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> ---
->  arch/arm64/boot/dts/qcom/x1e80100.dtsi | 29 ++++++++++++++++++++++++++++-
->  1 file changed, 28 insertions(+), 1 deletion(-)
-> 
+On Fri, Oct 03, 2025 at 01:50:46AM +0000, Jammy Huang wrote:
+>=20
+> > On Thu, Oct 02, 2025 at 05:56:51PM +0800, Jammy Huang wrote:
+> > > Add VIDEO reset bit definition for AST2500/AST2600.
+> > >
+> > > Signed-off-by: Jammy Huang <jammy_huang@aspeedtech.com>
+> > > ---
+> > >  include/dt-bindings/clock/aspeed-clock.h | 1 +
+> > >  1 file changed, 1 insertion(+)
+> > >
+> > > diff --git a/include/dt-bindings/clock/aspeed-clock.h
+> > b/include/dt-bindings/clock/aspeed-clock.h
+> > > index 06d568382c77..421ca577c1b2 100644
+> > > --- a/include/dt-bindings/clock/aspeed-clock.h
+> > > +++ b/include/dt-bindings/clock/aspeed-clock.h
+> > > @@ -53,5 +53,6 @@
+> > >  #define ASPEED_RESET_AHB		8
+> > >  #define ASPEED_RESET_CRT1		9
+> > >  #define ASPEED_RESET_HACE		10
+> > > +#define ASPEED_RESET_VIDEO		21
+> >=20
+> > What's up with the gap here? Are there another 10 resets missing?
+> Thanks for your review. I find this is just an index of reset map. I will=
+ update
+> new patch later.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+I don't know what this has to do with the question I asked. What's going
+to be in the update?
 
 
--- 
-With best wishes
-Dmitry
+Cheers,
+Conor.
+
+--1VWs/xU7QyzcZvNl
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaOA2awAKCRB4tDGHoIJi
+0jDmAQC9H6FC4Z5rZxCYUvmj2W55k+/oKnx/O91NA9fjEXpn4wEA1EUm7O+71S3h
+KO0JSohz5byNmEAy5MoQILoMqD6k2Aw=
+=MtpR
+-----END PGP SIGNATURE-----
+
+--1VWs/xU7QyzcZvNl--
