@@ -1,166 +1,380 @@
-Received: from fhigh-a7-smtp.messagingengine.com (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7DC5A935;
-	Sun,  5 Oct 2025 14:19:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB0162A1CF;
+	Sun,  5 Oct 2025 21:56:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759673973; cv=none; b=ns+WaQhI/vfFGmuA3qCV3m9B9E7AEqU6IbrjGOzJnjgABGjpFl1NJJbIBrVKXrb6LiRmTew+QACXhjULOL59VRRGowwLH/jDGkn5C8qtEmGcg3dEU2Zm73VxrKhPCrPk3chXIyAJgK80PEDhqliirkpBkoCh4oN9MTBYP0u3VaY=
+	t=1759701418; cv=none; b=CJuD1oRKmp5maRE+eUkxsPV+lC3RW4YzFWMjYRJkWdyN++fkpwW9Ge9vq7kUbyVDEVzW/flZ4EuL0fZ9aFOL3x+GInmV/QuRcQm+DzRZt0gbm5m7J9rou5/8a+EgMMBkTKttbz9qs/lPQM9lxuNCOEKfCqZ1NFdCaE0HpR/6K20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759673973; c=relaxed/simple;
-	bh=mFSXTfQU3yOeCglPcP/To78XvVk1YPQn343Bx/mNRyI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uetMOBIDEWgvU/N9kG0Q6t9Mlbtgy40pqz5hFW3IUNVZd7PCGel0RRe2K7Gkg+TkdrMsHF6J71RwpEE3NpeGPyxmL2Fl7hG0l6R8bTopM6XwCgy348emX9WkX2KwaY4yovdPO+HYaN6giJc3QR0LxRDswxUYK84jlWo9A2YwVII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=dFzZmemy; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Gbtx3Pnm; arc=none smtp.client-ip=103.168.172.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="dFzZmemy";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Gbtx3Pnm"
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id DD39014000B5;
-	Sun,  5 Oct 2025 10:19:30 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-03.internal (MEProxy); Sun, 05 Oct 2025 10:19:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1759673970;
-	 x=1759760370; bh=jA59cn6swCrXo1Qb1s4scUzP1SMSDzyk7A4NjSUgh6c=; b=
-	dFzZmemyfkB2Uy90KYcYYQ27oClKDyBNMC4QFmxNJZF1cdBi0MiUcMjGw/+RVyXo
-	LJxSRfL9r13az4DBkwtVhm/gbug532EQo6wzagcDmn6v1zCZGh4X8Jqpo79vfXKR
-	F/efqHq6EbYnhfm6u0AmTGRYILJZUf67myODkrKqjQspBXivNN2Zu/Gw7zbVByR+
-	h4FSOaR/dbYN3B5GMo2NTBAADOHUJ9xZXOArg/wBd1CPC9XAPOLXeYzWmJMWy4SO
-	H9r/ED/p7xUr7rEzHQfEa8jYHddTvs+Y1JAy21kiSXbJek0DLUi44Djwcf6YuB3n
-	smKGWJ0Z9OfVdKrgQrex9Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1759673970; x=
-	1759760370; bh=jA59cn6swCrXo1Qb1s4scUzP1SMSDzyk7A4NjSUgh6c=; b=G
-	btx3Pnmw4fcGZqcUHZJK4RORy9TinZcU2W0xTjNhuGta+z2mASrQ9bh0HbHucxGE
-	Oey6as5N4WxAhf8WbeQtuXlQNlvZRelIthlRn0mElYIqh3tf2IgMLusBcpwgXP+Y
-	4PPGgMIM7m/zkQx+dueLMeX+90LUhHUPCTZp1e0zPxEJxQn4OM9sUEXZFSIC+rQT
-	5R8m0w30XH2dbB0rda6MlNeZR/ugFVr3ucQtQEyJXGLr5NZ98J/vsSsdMrvQQpvj
-	7qo3Ll33U9IWQMb9pwsdAEnec3jRhEbpfiHVNNPiwQ5M/h4769iKO6a+xDhnruzw
-	D4kACTJb7reEjOhn+vtaA==
-X-ME-Sender: <xms:cn7iaMFiYbmDJJkB524SHrK5tawKursKNrb9LAJKlvVc9N97O-Sf9A>
-    <xme:cn7iaGFBkjum5v-TdAfEdaElIJgtG7_cBY-lExOq1Ghe9Mwk-tyapDZv6KHuYzeOh
-    7b2witWXcoziIU_grk9LWQbSd6On6qV8ulpUjqXeyA0Zlu8etlMLbU>
-X-ME-Received: <xmr:cn7iaCQbn7Zt9M7PB5MiblyHdtP2PqTOhgmKR3If-XH4sDQVZ2laRN0Pa4r_sN0UB2fjxftJRRmN2s1pdR3hFVmX9VAH0dk>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdelgeekkecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpeffhffvvefukfhfgggtugfgjgesthekredttddtjeenucfhrhhomheppfhikhhlrghs
-    ucfunpguvghrlhhunhguuceonhhikhhlrghsrdhsohguvghrlhhunhgusehrrghgnhgrth
-    gvtghhrdhsvgeqnecuggftrfgrthhtvghrnhepveetgedtvddvhfdtkeeghfeffeehteeh
-    keekgeefjeduieduueelgedtheekkeetnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
-    hrrghmpehmrghilhhfrhhomhepnhhikhhlrghsrdhsohguvghrlhhunhgusehrrghgnhgr
-    thgvtghhrdhsvgdpnhgspghrtghpthhtohepiedpmhhouggvpehsmhhtphhouhhtpdhrtg
-    hpthhtohepmhgrrhgvkhdrvhgrshhuthdorhgvnhgvshgrshesmhgrihhlsghogidrohhr
-    ghdprhgtphhtthhopehlihhnuhigqdgtlhhksehvghgvrhdrkhgvrhhnvghlrdhorhhgpd
-    hrtghpthhtohepghgvvghrthdorhgvnhgvshgrshesghhlihguvghrrdgsvgdprhgtphht
-    thhopehmthhurhhquhgvthhtvgessggrhihlihgsrhgvrdgtohhmpdhrtghpthhtohepsh
-    gsohihugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqrhgvnhgvshgr
-    shdqshhotgesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:cn7iaPJcWf8oojZ2zYeOQBDw_zaOxH_QVY-_LSlJpUPJ9X2uUgjtSw>
-    <xmx:cn7iaFYDdIwUsaeQikDzLMOBnXH6aPRm4cXoIDobtm1hKucBAB8lBA>
-    <xmx:cn7iaJ-L8Jodg0KTK7TID7UBIKvreGe5k9vGoVtf36MIpnFrueI6OQ>
-    <xmx:cn7iaOa6Hz30SE7v6q69eU8D2qwRZbrBNbX6wYi5rwDUHJa-AyN0dQ>
-    <xmx:cn7iaFLMbPX3_YZOF2Pur9hZrTHKasz3Ky7HRBmuyW7q0hVvG9_I9vpV>
-Feedback-ID: i80c9496c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 5 Oct 2025 10:19:30 -0400 (EDT)
-Date: Sun, 5 Oct 2025 16:19:28 +0200
-From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-To: Marek Vasut <marek.vasut+renesas@mailbox.org>
-Cc: linux-clk@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2] clk: renesas: cpg-mssr: Add missing 1ms delay into
- reset toggle callback
-Message-ID: <20251005141928.GB1015803@ragnatech.se>
-References: <20251005131524.16745-1-marek.vasut+renesas@mailbox.org>
+	s=arc-20240116; t=1759701418; c=relaxed/simple;
+	bh=ZPuLZMTDLLctIl395YutGFv90SdSy3FAHvE1GyuzzKo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=Dbhxqmjutxc0KUMDFEtOOJs19xzXIv6NXlbzPxJYhZLNRuRd+CndVZijRTcInlvU96xkhj/nqpptpi9QoFBCiLGyUgotzKEvOwikdylJbV5TKsoa3OxCHLtRQfhGUwGtTxqi5ZJpR6KkfJcCPs1ZZWuFJbs8/WupXERJqnB8oRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCDC7C4CEF4;
+	Sun,  5 Oct 2025 21:56:57 +0000 (UTC)
+Message-ID: <cd8e3d8c-314a-4a77-a3c1-665957f4ea9a@kernel.og>
+Date: Sun, 5 Oct 2025 16:56:56 -0500
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251005131524.16745-1-marek.vasut+renesas@mailbox.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] clk: socfpga: agilex5: add clock driver for Agilex5
+To: Khairul Anuar Romli <khairul.anuar.romli@altera.com>,
+ Dinh Nguyen <dinguyen@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>,
+ "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+ open list <linux-kernel@vger.kernel.org>,
+ Ang Tien Sung <tiensung.ang@altera.com>
+References: <cover.1759482803.git.khairul.anuar.romli@altera.com>
+ <e7e7e105327aafd54e58d1786a7a55ff0ea4aa9b.1759482803.git.khairul.anuar.romli@altera.com>
+Content-Language: en-US
+From: Dinh Nguyen <dinguyen@kernel.og>
+In-Reply-To: <e7e7e105327aafd54e58d1786a7a55ff0ea4aa9b.1759482803.git.khairul.anuar.romli@altera.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Marek,
 
-Thanks for your work.
 
-On 2025-10-05 15:14:58 +0200, Marek Vasut wrote:
-> R-Car V4H Reference Manual R19UH0186EJ0130 Rev.1.30 Apr. 21, 2025 page 583
-> Figure 9.3.1(a) Software Reset flow (A) as well as flow (B) / (C) indicate
-> after reset has been asserted by writing a matching reset bit into register
-> SRCR, it is mandatory to wait 1ms.
+On 10/3/25 04:19, Khairul Anuar Romli wrote:
+> Add the new Clock manager driver to support new Agilex5 platform. The new
+> driver got rid of the clk_parent_data structures as there are no 'clock-names'
+> property in the DT bindings and use parent_names internally. This is based on
+> the previous feedback from the maintainer.
 > 
-> This 1ms delay is documented on R-Car V4H and V4M, it is currently unclear
-> whether S4 is affected as well. This patch does apply the extra delay on
-> R-Car S4 as well.
-> 
-> Fix the reset driver to respect the additional delay when toggling resets.
-> Drivers which use separate reset_control_(de)assert() must assure matching
-> delay in their driver code.
-> 
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Fixes: 0ab55cf18341 ("clk: renesas: cpg-mssr: Add support for R-Car V4H")
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
-
-With R-Car ISP that had issues with v1,
-
-Tested-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-
+> Signed-off-by: Ang Tien Sung <tiensung.ang@altera.com>
+> Signed-off-by: Khairul Anuar Romli <khairul.anuar.romli@altera.com>
 > ---
-> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: linux-clk@vger.kernel.org
-> Cc: linux-renesas-soc@vger.kernel.org
-> ---
-> V2: - Add RB from Geert
->     - Use ca. as abbreviation for circa (cca.)
->     - Switch back to udelay(), risp triggers this code from atomic context
-> ---
->  drivers/clk/renesas/renesas-cpg-mssr.c | 11 +++++++++--
->  1 file changed, 9 insertions(+), 2 deletions(-)
+>   drivers/clk/socfpga/clk-agilex5.c    | 563 +++++++++++++++++++++++++++
+>   drivers/clk/socfpga/clk-gate-s10.c   |  53 +++
+>   drivers/clk/socfpga/clk-periph-s10.c |  41 ++
+>   drivers/clk/socfpga/clk-pll-s10.c    |  38 +-
+>   drivers/clk/socfpga/stratix10-clk.h  |  43 ++
+>   5 files changed, 737 insertions(+), 1 deletion(-)
+
+Do you want to add it a Makefile to build it?
+
+>   create mode 100644 drivers/clk/socfpga/clk-agilex5.c
 > 
-> diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
-> index be9f59e6975d7..ddc234942a85a 100644
-> --- a/drivers/clk/renesas/renesas-cpg-mssr.c
-> +++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-> @@ -689,8 +689,15 @@ static int cpg_mssr_reset(struct reset_controller_dev *rcdev,
->  	/* Reset module */
->  	writel(bitmask, priv->pub.base0 + priv->reset_regs[reg]);
->  
-> -	/* Wait for at least one cycle of the RCLK clock (@ ca. 32 kHz) */
-> -	udelay(35);
-> +	/*
-> +	 * On R-Car Gen4, delay after SRCR has been written is 1ms.
-> +	 * On older SoCs, delay after SRCR has been written is 35us
-> +	 * (one cycle of the RCLK clock @ ca. 32 kHz).
-> +	 */
-> +	if (priv->reg_layout == CLK_REG_LAYOUT_RCAR_GEN4)
-> +		udelay(1000);
+> diff --git a/drivers/clk/socfpga/clk-agilex5.c b/drivers/clk/socfpga/clk-agilex5.c
+> new file mode 100644
+> index 000000000000..0013fab81357
+> --- /dev/null
+> +++ b/drivers/clk/socfpga/clk-agilex5.c
+> @@ -0,0 +1,563 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) 2022-2024, Intel Corporation
+> + * Copyright (C) 2025, Altera Corporation
+> + */
+> +#include <linux/slab.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/of_device.h>
+> +#include <linux/of_address.h>
+
+Remove of_device.h and of_address and just use of.h.
+
+> +#include <linux/platform_device.h>
+> +#include  <dt-bindings/clock/intel,agilex5-clkmgr.h>
+> +#include "stratix10-clk.h"
+> +#include "clk.h"
+> +
+
+<snip>
+
+
+> +
+> +static int
+> +agilex5_clk_register_c_perip(const struct stratix10_perip_c_clock *clks,
+> +			     int nums, struct stratix10_clock_data *data)
+> +{
+> +	struct clk_hw *hw_clk;
+> +	void __iomem *base = data->base;
+> +	int i;
+> +
+> +	for (i = 0; i < nums; i++) {
+> +		hw_clk = s10_register_periph(&clks[i], base);
+> +		if (IS_ERR(hw_clk)) {
+> +			pr_err("%s: failed to register clock %s\n", __func__,
+> +			       clks[i].name);
+> +			continue;
+> +		}
+> +		data->clk_data.hws[clks[i].id] = hw_clk;
+> +	}
+> +	return 0;
+> +}
+> +
+> +static int
+> +agilex5_clk_register_cnt_perip(const struct agilex5_perip_cnt_clock *clks,
+> +			       int nums, struct stratix10_clock_data *data)
+> +{
+> +	struct clk_hw *hw_clk;
+> +	void __iomem *base = data->base;
+> +	int i;
+> +
+> +	for (i = 0; i < nums; i++) {
+> +		hw_clk = agilex5_register_cnt_periph(&clks[i], base);
+> +		if (IS_ERR(hw_clk)) {
+> +			pr_err("%s: failed to register clock %s\n", __func__,
+> +			       clks[i].name);
+> +			continue;
+> +		}
+> +		data->clk_data.hws[clks[i].id] = hw_clk;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int agilex5_clk_register_gate(const struct agilex5_gate_clock *clks,
+> +				     int nums,
+> +				     struct stratix10_clock_data *data)
+> +{
+> +	struct clk_hw *hw_clk;
+> +	void __iomem *base = data->base;
+> +	int i;
+> +
+> +	for (i = 0; i < nums; i++) {
+> +		hw_clk = agilex5_register_gate(&clks[i], base);
+> +		if (IS_ERR(hw_clk)) {
+> +			pr_err("%s: failed to register clock %s\n", __func__,
+> +			       clks[i].name);
+> +			continue;
+> +		}
+> +		data->clk_data.hws[clks[i].id] = hw_clk;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int agilex5_clk_register_pll(const struct agilex5_pll_clock *clks,
+> +				    int nums, struct stratix10_clock_data *data)
+> +{
+> +	struct clk_hw *hw_clk;
+> +	void __iomem *base = data->base;
+> +	int i;
+> +
+> +	for (i = 0; i < nums; i++) {
+> +		hw_clk = agilex5_register_pll(&clks[i], base);
+> +		if (IS_ERR(hw_clk)) {
+> +			pr_err("%s: failed to register clock %s\n", __func__,
+> +			       clks[i].name);
+> +			continue;
+> +		}
+> +		data->clk_data.hws[clks[i].id] = hw_clk;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int agilex5_clkmgr_init(struct platform_device *pdev)
+> +{
+> +	struct device_node *np = pdev->dev.of_node;
+> +	struct device *dev = &pdev->dev;
+> +	struct stratix10_clock_data *clk_data;
+> +	struct resource *res;
+> +	void __iomem *base;
+> +	int i, num_clks;
+> +
+> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	base = devm_ioremap_resource(dev, res);
+
+Use devm_platform_ioremap_resource() for simpler code.
+
+> +	if (IS_ERR(base))
+> +		return PTR_ERR(base);
+> +
+> +	num_clks = AGILEX5_NUM_CLKS;
+> +
+> +	clk_data = devm_kzalloc(dev, struct_size(clk_data, clk_data.hws, num_clks), GFP_KERNEL);
+> +	if (!clk_data)
+> +		return -ENOMEM;
+
+Please take a look at commit "65f9e1becb55 clk: socfpga: agilex: Add 
+bounds-checking coverage for struct stratix10_clock_data"
+
+
+> +
+> +	for (i = 0; i < num_clks; i++)
+> +		clk_data->clk_data.hws[i] = ERR_PTR(-ENOENT);
+> +
+> +	clk_data->base = base;
+> +	clk_data->clk_data.num = num_clks;
+> +
+> +	agilex5_clk_register_pll(agilex5_pll_clks, ARRAY_SIZE(agilex5_pll_clks),
+> +				 clk_data);
+> +
+> +	/* mainPLL C0, C1, C2, C3 and periph PLL C0, C1, C2, C3*/
+> +	agilex5_clk_register_c_perip(agilex5_main_perip_c_clks,
+> +				     ARRAY_SIZE(agilex5_main_perip_c_clks),
+> +				     clk_data);
+> +
+> +	agilex5_clk_register_cnt_perip(agilex5_main_perip_cnt_clks,
+> +				       ARRAY_SIZE(agilex5_main_perip_cnt_clks),
+> +				       clk_data);
+> +
+> +	agilex5_clk_register_gate(agilex5_gate_clks,
+> +				  ARRAY_SIZE(agilex5_gate_clks), clk_data);
+> +
+> +	of_clk_add_hw_provider(np, of_clk_hw_onecell_get, &clk_data->clk_data);
+> +	return 0;
+> +}
+> +
+> +static int agilex5_clkmgr_probe(struct platform_device *pdev)
+> +{
+> +	int (*probe_func)(struct platform_device *init_func);
+> +
+> +	probe_func = of_device_get_match_data(&pdev->dev);
+> +	if (!probe_func)
+> +		return -ENODEV;
+> +	return probe_func(pdev);
+> +}
+> +
+> +static const struct of_device_id agilex5_clkmgr_match_table[] = {
+> +	{ .compatible = "intel,agilex5-clkmgr", .data = agilex5_clkmgr_init },
+> +	{}
+> +};
+> +
+> +static struct platform_driver agilex5_clkmgr_driver = {
+> +	.probe		= agilex5_clkmgr_probe,
+> +	.driver		= {
+> +		.name	= "agilex5-clkmgr",
+> +		.suppress_bind_attrs = true,
+> +		.of_match_table = agilex5_clkmgr_match_table,
+> +	},
+> +};
+> +
+> +static int __init agilex5_clk_init(void)
+> +{
+> +	return platform_driver_register(&agilex5_clkmgr_driver);
+> +}
+> +core_initcall(agilex5_clk_init);
+> diff --git a/drivers/clk/socfpga/clk-gate-s10.c b/drivers/clk/socfpga/clk-gate-s10.c
+> index 3930d922efb4..dce3ef137bf3 100644
+> --- a/drivers/clk/socfpga/clk-gate-s10.c
+> +++ b/drivers/clk/socfpga/clk-gate-s10.c
+> @@ -239,3 +239,56 @@ struct clk_hw *agilex_register_gate(const struct stratix10_gate_clock *clks, voi
+>   	}
+>   	return hw_clk;
+>   }
+> +
+> +struct clk_hw *agilex5_register_gate(const struct agilex5_gate_clock *clks, void __iomem *regbase)
+> +{
+> +	struct clk_hw *hw_clk;
+> +	struct socfpga_gate_clk *socfpga_clk;
+> +	struct clk_init_data init;
+> +	int ret;
+> +
+> +	socfpga_clk = kzalloc(sizeof(*socfpga_clk), GFP_KERNEL);
+> +	if (!socfpga_clk)
+> +		return NULL;
+> +
+> +	socfpga_clk->hw.reg = regbase + clks->gate_reg;
+> +	socfpga_clk->hw.bit_idx = clks->gate_idx;
+> +
+> +	gateclk_ops.enable = clk_gate_ops.enable;
+> +	gateclk_ops.disable = clk_gate_ops.disable;
+> +
+> +	socfpga_clk->fixed_div = clks->fixed_div;
+> +
+> +	if (clks->div_reg)
+> +		socfpga_clk->div_reg = regbase + clks->div_reg;
 > +	else
-> +		udelay(35);
->  
->  	/* Release module from reset state */
->  	writel(bitmask, priv->pub.base0 + priv->reset_clear_regs[reg]);
-> -- 
-> 2.51.0
-> 
-> 
+> +		socfpga_clk->div_reg = NULL;
+> +
+> +	socfpga_clk->width = clks->div_width;
+> +	socfpga_clk->shift = clks->div_offset;
+> +
+> +	if (clks->bypass_reg)
+> +		socfpga_clk->bypass_reg = regbase + clks->bypass_reg;
+> +	else
+> +		socfpga_clk->bypass_reg = NULL;
+> +	socfpga_clk->bypass_shift = clks->bypass_shift;
+> +
+> +	if (streq(clks->name, "cs_pdbg_clk"))
+> +		init.ops = &dbgclk_ops;
+> +	else
+> +		init.ops = &agilex_gateclk_ops;
+> +
+> +	init.name = clks->name;
+> +	init.flags = clks->flags;
+> +	init.num_parents = clks->num_parents;
+> +	init.parent_names = clks->parent_names;
+> +	socfpga_clk->hw.hw.init = &init;
+> +	hw_clk = &socfpga_clk->hw.hw;
+> +
+> +	ret = clk_hw_register(NULL, &socfpga_clk->hw.hw);
+> +	if (ret) {
+> +		kfree(socfpga_clk);
+> +		return ERR_PTR(ret);
+> +	}
+> +	return hw_clk;
+> +}
+> diff --git a/drivers/clk/socfpga/clk-periph-s10.c b/drivers/clk/socfpga/clk-periph-s10.c
+> index f5c1ca42b668..f12ca43ffe7c 100644
+> --- a/drivers/clk/socfpga/clk-periph-s10.c
+> +++ b/drivers/clk/socfpga/clk-periph-s10.c
+> @@ -214,3 +214,44 @@ struct clk_hw *s10_register_cnt_periph(const struct stratix10_perip_cnt_clock *c
+>   	}
+>   	return hw_clk;
+>   }
+> +
+> +struct clk_hw *agilex5_register_cnt_periph(const struct agilex5_perip_cnt_clock *clks,
+> +					   void __iomem *regbase)
+> +{
+> +	struct clk_hw *hw_clk;
+> +	struct socfpga_periph_clk *periph_clk;
+> +	struct clk_init_data init;
+> +	const char *name = clks->name;
+> +	int ret;
+> +
+> +	periph_clk = kzalloc(sizeof(*periph_clk), GFP_KERNEL);
+> +	if (WARN_ON(!periph_clk))
+> +		return NULL;
+> +
+> +	if (clks->offset)
+> +		periph_clk->hw.reg = regbase + clks->offset;
+> +	else
+> +		periph_clk->hw.reg = NULL;
+> +
+> +	if (clks->bypass_reg)
+> +		periph_clk->bypass_reg = regbase + clks->bypass_reg;
+> +	else
+> +		periph_clk->bypass_reg = NULL;
+> +	periph_clk->bypass_shift = clks->bypass_shift;
+> +	periph_clk->fixed_div = clks->fixed_divider;
+> +
+> +	init.name = name;
+> +	init.ops = &peri_cnt_clk_ops;
+> +	init.flags = clks->flags;
+> +	init.num_parents = clks->num_parents;
+> +	init.parent_names = clks->parent_names;
+> +	periph_clk->hw.hw.init = &init;
+> +	hw_clk = &periph_clk->hw.hw;
+> +
+> +	ret = clk_hw_register(NULL, hw_clk);
+> +	if (ret) {
+> +		kfree(periph_clk);
+> +		return ERR_PTR(ret);
+> +	}
+> +	return hw_clk;
+> +}
+> diff --git a/drivers/clk/socfpga/clk-pll-s10.c b/drivers/clk/socfpga/clk-pll-s10.c
+> index a88c212bda12..ae80814cfa92 100644
+> --- a/drivers/clk/socfpga/clk-pll-s10.c
+> +++ b/drivers/clk/socfpga/clk-pll-s10.c
+> @@ -182,7 +182,7 @@ static const struct clk_ops clk_pll_ops = {
+>   };
+>   
+>   static const struct clk_ops clk_boot_ops = {
+> -	.recalc_rate = clk_boot_clk_recalc_rate,
+> +	.recalc_rate = clk_boot_clk_recalc_rate, /* TODO this is wrong*/
 
--- 
-Kind Regards,
-Niklas Söderlund
+Do you know what's wrong with it? Maybe fix it first?
+
+
+Dinh
