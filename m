@@ -1,120 +1,144 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C9BE1B5EC8
-	for <linux-clk@vger.kernel.org>; Mon,  6 Oct 2025 14:11:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A272D2459F8;
+	Mon,  6 Oct 2025 18:55:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759759874; cv=none; b=TmoPZTgeDlhX6K9twgynwqM++PyFtkOXwOCGPAHjvrL57g0Wfdf/AbigDNlnu46WWDepSUhJ7oFhpvrhfvBdzElGexIsb6GtPw5Eu0U5FcFtjLHWJlKJ6O81eZ3ZXquCNSY7dMazo1yYLua0FYNttxSti9wsZ5ZxIoqFc+EQIic=
+	t=1759776909; cv=none; b=YtjssVHSgYK8rasiYDjkNQkZa3inWXe6OVUL4b4Newt3VussPjWcz+V4DdCJLi28GPTLPTHXoWSvqSN3nO/fL9XJ2YQzfYDYzr1IK9OOZTH0a5aamujl1yCB8Ni0sRg3/0WGAjGSBuLINOGcpViIybTg+0FrF0zee9pvZ1Q2/h8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759759874; c=relaxed/simple;
-	bh=Mg/jC+FLhJpwM/iO1rt/TYkO4L6jfihw3EuIYOjBrrA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=AsL6Dod4tmMFLwj+4Yth0TsO5llwhVW5RhzgzJIzRcpNZT7LXZp7N5Y94+kBxhwM9GhWGDk3xqaVDWzomOpoTPoZfEgLA+moR1OJgJLJH6jLZrZwQVi4xRZ+PaMQOf0or8vS5+7q4oy2Fwtvse0LBsUdavECzsAd3IRe6gRjDBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1v5lvT-0007Bu-BH; Mon, 06 Oct 2025 16:10:55 +0200
-Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1v5lvS-002FFX-2u;
-	Mon, 06 Oct 2025 16:10:54 +0200
-Received: from pza by lupine with local (Exim 4.98.2)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1v5lvS-00000000B4r-3UUA;
-	Mon, 06 Oct 2025 16:10:54 +0200
-Message-ID: <8220c385d69bd46adf65f58d8e95b247dff6ae1e.camel@pengutronix.de>
-Subject: Re: [PATCH v2] clk: renesas: cpg-mssr: Add missing 1ms delay into
- reset toggle callback
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Geert Uytterhoeven <geert@linux-m68k.org>, Marek Vasut
-	 <marek.vasut@mailbox.org>
-Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, linux-renesas-soc@vger.kernel.org
-Date: Mon, 06 Oct 2025 16:10:54 +0200
-In-Reply-To: <CAMuHMdVEK5MaJNWwpT_7yo0=tk+Pm+99QRD3SStkWsHHDDVJ7A@mail.gmail.com>
-References: <20251005131524.16745-1-marek.vasut+renesas@mailbox.org>
-	 <CAMuHMdV-6A+vV4bZLoT2NtXiqMQLTRRbNJXC1z2ttXX=aXFEGw@mail.gmail.com>
-	 <9864e81d-3b62-4513-9deb-1ce154cdc571@mailbox.org>
-	 <CAMuHMdVEK5MaJNWwpT_7yo0=tk+Pm+99QRD3SStkWsHHDDVJ7A@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1-1 
+	s=arc-20240116; t=1759776909; c=relaxed/simple;
+	bh=zATYGJ5s94ipPbFwAl7MAY7cDQkGbW0aMQw7dvwOS7Y=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=YvEvpKcCjaUzRsay34QZ/2J72vorXeZMWNQQwhjhhgA1vziCj01UNa8I4M8EXJaVdqQwB27/8o5MDx1yvrwRs8n8DHj2eRB468qWgCpxvoCS5is7igF3M52tBBA0vO6Pl8wDaSKdqCTNDfIfah3VRMwBf9cko0ZElD/Wx+X1x0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=SLuhxf/3; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="SLuhxf/3"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 52BFFC085D2;
+	Mon,  6 Oct 2025 18:54:41 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 60899606B7;
+	Mon,  6 Oct 2025 18:54:59 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 1C559102F2116;
+	Mon,  6 Oct 2025 20:54:39 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1759776897; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=KEzW3jit24CmXPxdwBbp7La6xIwBqgbqQZqEtvxRu/Q=;
+	b=SLuhxf/3XYFe9lSvtSeMg9+E9K5RRLzpeO6V1c2rDu+XPhBiz9+8CC4HkyDTDVE/k20H6P
+	mUw0uLt/vC1lUh/ptOhnnN8s02feywmxLly41Gn7Beb+CryrbBeU3h6VkynVX2v4t9fRTi
+	3e48jHMLpg2HeiMGvVWTkIi2YToLzMywVXpG6Nf0uFRKXHRhrrdGVLCUdyhBhRH9oBlmX/
+	HUg29WHlMfpvRBX/GpCd0eFB4Avn/1q/OnnDDz2h46/KHmYKXa2ljekJVxfmHKCqTPGgsj
+	sU9xl8XMOy8Q5/T9K6xwDjAlgwkSW3O8LqIiudrODya8XLUfODnncHp1fGWUZw==
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 06 Oct 2025 20:54:38 +0200
+Message-Id: <DDBGU9ELXIAW.1RLHSNOPVR9B3@bootlin.com>
+Cc: "David Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>,
+ "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard"
+ <mripard@kernel.org>, "Thomas Zimmermann" <tzimmermann@suse.de>, "Rob
+ Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+ "Conor Dooley" <conor+dt@kernel.org>, "Thierry Reding"
+ <thierry.reding@gmail.com>, "Jonathan Hunter" <jonathanh@nvidia.com>,
+ "Sowjanya Komatineni" <skomatineni@nvidia.com>, "Prashant Gaikwad"
+ <pgaikwad@nvidia.com>, "Michael Turquette" <mturquette@baylibre.com>,
+ "Stephen Boyd" <sboyd@kernel.org>, "Linus Walleij"
+ <linus.walleij@linaro.org>, "Mauro Carvalho Chehab" <mchehab@kernel.org>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ =?utf-8?q?Jonas_Schw=C3=B6bel?= <jonasschwoebel@yahoo.de>, "Dmitry
+ Osipenko" <digetx@gmail.com>, "Charan Pedumuru"
+ <charan.pedumuru@gmail.com>, "Diogo Ivo" <diogo.ivo@tecnico.ulisboa.pt>,
+ "Aaron Kling" <webgeek1234@gmail.com>, "Arnd Bergmann" <arnd@arndb.de>,
+ <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+ <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <linux-media@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+ <linux-gpio@vger.kernel.org>, <linux-staging@lists.linux.dev>
+Subject: Re: [PATCH v3 15/22] staging: media: tegra-video: tegra20: simplify
+ format align calculations
+From: "Luca Ceresoli" <luca.ceresoli@bootlin.com>
+To: "Svyatoslav Ryhel" <clamor95@gmail.com>, "Mikko Perttunen"
+ <mperttunen@nvidia.com>
+X-Mailer: aerc 0.20.1
+References: <20250925151648.79510-1-clamor95@gmail.com>
+ <3665995.U7HbjWM52l@senjougahara>
+ <CAPVz0n3CrVufs8vbw8XnYuwoZoQ2Xsi3V4HimgT0=4RQySzvaw@mail.gmail.com>
+ <3862885.G96rZvMJ2N@senjougahara>
+ <CAPVz0n2shn41h4z4PoMdtCXzj+96ak69TCqt7Ag5qpqdWi6UWA@mail.gmail.com>
+In-Reply-To: <CAPVz0n2shn41h4z4PoMdtCXzj+96ak69TCqt7Ag5qpqdWi6UWA@mail.gmail.com>
+X-Last-TLS-Session-Version: TLSv1.3
 
-Hi Geert, Marek,
+Hello Svyatoslav,
 
-On Mo, 2025-10-06 at 16:03 +0200, Geert Uytterhoeven wrote:
-> Hi Marek,
->=20
-> On Mon, 6 Oct 2025 at 15:56, Marek Vasut <marek.vasut@mailbox.org> wrote:
-> > On 10/6/25 3:43 PM, Geert Uytterhoeven wrote:
-> > > > R-Car V4H Reference Manual R19UH0186EJ0130 Rev.1.30 Apr. 21, 2025 p=
-age 583
-> > > > Figure 9.3.1(a) Software Reset flow (A) as well as flow (B) / (C) i=
-ndicate
-> > > > after reset has been asserted by writing a matching reset bit into =
-register
-> > > > SRCR, it is mandatory to wait 1ms.
-> >=20
-> > [...]
-> >=20
-> > > > +        * On R-Car Gen4, delay after SRCR has been written is 1ms.
-> > > > +        * On older SoCs, delay after SRCR has been written is 35us
-> > > > +        * (one cycle of the RCLK clock @ ca. 32 kHz).
-> > > > +        */
-> > > > +       if (priv->reg_layout =3D=3D CLK_REG_LAYOUT_RCAR_GEN4)
-> > > > +               udelay(1000);
-> > >=20
-> > > 1ms is a bit long for busy waiting, so I'd really like to avoid this.
-> > >=20
-> > > While the documentation does state this 1ms, I understand the
-> > > issue we saw in the field was fixed by
-> > > https://patch.msgid.link/20250922162113.113223-1-marek.vasut+renesas@=
-mailbox.org
-> >=20
-> > This synchronizes the asynchronized resets, this is a separate topic
-> > from the 1ms delay.
-> >=20
-> > > so perhaps we can do without this longer delay?
-> >=20
-> > This aligns the driver with hardware operation charts in the V4H RM,
-> > which mandate the 1ms. If we want to follow the RM accurately, then we
-> > do need the 1ms delay, otherwise who knows what kind of fringe failures
-> > we could run into.
->=20
-> All true...
->=20
-> > > FTR, it looks like the reset controller documentation doesn't say
-> > > anything about the context from which it is safe to make reset calls?
-> >=20
-> > What does this mean ? Please clarify .
->=20
-> Are you allowed to call reset_control_reset() from atomic context,
-> like the ISP driver does?
-> For the clock subsystem, this is clearly documented: e.g. clk_enable()
-> can be called from atomic context, clk_prepare() cannot.
+On Thu Oct 2, 2025 at 8:20 AM CEST, Svyatoslav Ryhel wrote:
+>> > > > 12 represents amount of bits used per pixel, 8 for Y plane, 2 for =
+U
+>> > > > plane and 2 for V plane, total is 12. "but explainable with a comm=
+ent
+>> > > > and improve-able later" why then we cannot use 12 with a comment? =
+this
+>> > > > is all arbitrary. Downstream is not wrong from this perspective, y=
+ou
+>> > > > don't take into account that YUV420 is planar and it uses 3 planes=
+ a
+>> > > > whole Y plane and 1/4 of U and V which in total results in wigth +=
+ 2 *
+>> > > > 1/4 width which is width * 3/2
+>> > >
+>> > > Yes -- but AIUI, the only thing the bpp value is used for the bytesp=
+erline calculation. When we add the special case for planar formats, which =
+doesn't use the bpp value, then the value 12 is never used anywhere. We sho=
+uld at least have a comment saying it is unused. (At that point, we could j=
+ust hardcode the bpp values in the fmt_align function -- but I don't mind e=
+ither way.)
+>> > >
+>> > https://ffmpeg.org/pipermail/ffmpeg-user/2023-June/056488.html
+>>
+>> I understand very well that for YUV420, each pixel has 12 bits of color =
+information. But how many bits of color information each pixel has is not u=
+seful in the context of this driver. The number of bytes per line is not re=
+lated to how many bits of color information each pixel has for planar forma=
+ts.
+>
+> No, it has direct impact. This is how buffer size / image size is
+> calculated since we place each plane consecutive. And bytes per line
+> is used specifically in image size calculation. This is common part
+> with non-planar formats. Then since Tegra provides a dedicated
+> channels/buffers for each plane, configuration of planar format
+> includes an additional step with calculation for each plane.
 
-The reset_control_assert()/deassert() APIs are de-facto only safe to
-call from contexts that can sleep, because some reset drivers sleep or
-call gpio_set_value_cansleep().
-This is not properly documented and the reset functions don't enforce
-it with might_sleep() either, which is an oversight.
+Sorry, I haven't followed the discussion in detail, but I tested you series
+on Tegra20 VIP and capture does not work, with a SIGSEGV in
+gstreamer. Bisecting pointed to this as the first commit where the issue
+happens.
 
-regards
-Philipp
+I compared the input and output values of tegra20_fmt_align() at this
+commit and at the previous one, and this is the result:
+
+                       before this patch     with this patch
+  At function entry:
+  bpp                        1                     12
+  pix->width                 640                   640
+  pix->height                480                   480
+  		          =20
+  On return:       =20
+  pix->bytesperline          640                   960
+  pix->sizeimage             460800                460800
+
+I hope these info will help.
+
+Best regards,
+Luca
+
+--
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
