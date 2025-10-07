@@ -1,117 +1,116 @@
-Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0217C23C38C
-	for <linux-clk@vger.kernel.org>; Tue,  7 Oct 2025 21:06:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F263F2798E5
+	for <linux-clk@vger.kernel.org>; Tue,  7 Oct 2025 23:58:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759871174; cv=none; b=i6SJLWAEr2vtkdhssp3ayui/hP3SgHcdJ59Ydjs2JM8JRA3rBVrudrsZnsgI+v4n38BdgQyMp/BEZig0P4+hQkB8XRerf0SLulhI9Lm1dun/lTtLvuU5+B7JnWBPwKsNEc8i1N9gHKHZ342LfxO8MRpX4MdEit3DVLEK2XLSeOU=
+	t=1759881508; cv=none; b=DQvQZMQv7ko82q6BT75sfKlYKDFSaFgWmYT/1wxkqGLJyc8eTzwLgtzJArSb3T2CkYTD7+ezYOqcA6qAX9WwuxFMRM5nZVq/kiU1zJLNkvrkjffUmbzhABhFBtPB5omFd4G7Z9d+VTvYkm3hIHktgyweyDmysSSnpUz7xa7hpDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759871174; c=relaxed/simple;
-	bh=TS9Ms/0nVBXQq/XqEcRsNa3oajKBYOCo7nWDKz2HJI8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Utb8iOR9Dl2LjOHqT5727yRE7xrj1nWhqG+pwQ66sqQNp/1q1zKaK31nedkWzSUyfUpQi5saptZTm9G7ZgHe6Mk7avav4CmHBtQ6TloWYFOdA1KJ4kbYBIzoQ8duN0y/7thIVmY6ENKg2Z/VZ2I6at0hltsWuK25e15T1SaSQj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Qhq4wB7+; arc=none smtp.client-ip=209.85.166.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+	s=arc-20240116; t=1759881508; c=relaxed/simple;
+	bh=M0bXAxUVajGUdbwCo52C81i/ru3MEd9U+J9iHxF4EIA=;
+	h=MIME-Version:Content-Type:Date:Message-ID:CC:Subject:From:To:
+	 References:In-Reply-To; b=N7w4irr2/jrsEP1x9CiEAjnIjqCmlViAIsY4K82zAfwCcJ94LrSENhIxnI7ZLQ6m7O9iGRSU6TMLDcqi598jOzeMJmxA4lT9d7cUfTlV9h65WAPyJZdU0Wl7fi894uksrNWH8G+RErVLC8SHU3CVLbNGDUW3pVbOwpMOqphsaU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=cqyg9jB4; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Qhq4wB7+"
-Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-42d7ef9a402so1557865ab.0
-        for <linux-clk@vger.kernel.org>; Tue, 07 Oct 2025 14:06:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1759871170; x=1760475970; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hDJssHW/G49N1bctBMwaYMSUbzS9ng1oTayUPFPGvKw=;
-        b=Qhq4wB7+rgCQZFRu83X4RoxsEzYv0iSftIIGtAb8b+OtUfRMEkJxsT/kdvnwC7JqLq
-         fOb019meCBe8RgcqQktkhqyIUGZh+8rfFnSLz5Pz3kDbD7C/fwcc5o57Tp2CRRCK6t1S
-         Kfd+S4E9YIZlKqtr3pvTKrUWv0ccMznVqeA98=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759871170; x=1760475970;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hDJssHW/G49N1bctBMwaYMSUbzS9ng1oTayUPFPGvKw=;
-        b=eC6cFSuSPNuaPV68gwCC2tXNoWb/jWItziY6ndYvcQ1uxy/3guItWyFTbH1C49MZoK
-         f9c1bZF2raOGRo1L+JTuOuZ6MN43wLQS3kIYjlSC4+i/XrZxYjJ1RhyTzWb4nle+gPwX
-         5X3kfl/CFK5+yOzQ13BaEZZ0U6VGM5MOuuQyDUSqxqnRXh/3al0nAeFYHy+uX2yMNbnE
-         8idQjzuuKS4Hm+782JeWp6WnM4iK5oKXWEfBuEdD3qsMKeRi6tRwmuzSP5XU9DpiXg+a
-         3m0pOOmXADFSdZ1vnWs7KxGyxyh7CqhAZn0aTh0O+7ZIPTqj1T9zmmMEA3zluPR44nrL
-         L06g==
-X-Gm-Message-State: AOJu0Yy4EhVyqJE57k5qFfxWOiio6nf/6oBpeGIgP+mxyYbIPO0SgD6K
-	37B2IQ87U/J5MNQpBKz28qP14G+2gG20PZLUtpYt4xIWHeA4J9xfStd9hn1Ilbogvdw=
-X-Gm-Gg: ASbGncszGroc5W86IzFCcIh25AeBKaHtA1fCS6GYG0cnIbmlFcUfOsOpnyt4rkpOrhC
-	mQ8l9kqcT+opJo+xJkXhkt5nUEEIkbwoIe+mbqcOUhgZlAbOY7jovr2VH2TZ6aMUay62QljnpWc
-	72guD8QwE3162WnQSOAnSulSVWVZQwaVhxMFq+WYyEIB0FgB1++tJgjoALsfoiD7VwM5gIbqLpW
-	uJOVGD+5fVxbdfaMqQGxKNUSvmutLZeNY9zna9V5vKFOuVJAEXv6+1wdJzqq98LTaj3ncgvPxp7
-	lszSislDUqrx94d2ETsWjHiCEkC3STVnIduNLTkznmyk1HmYQYaDRZJijVB0FXYp+5zjyrXhuiP
-	moMFEVomdWf45hK0hGjQsvoLQa2gqkqngd/mbdgtCVZeSlVmRzWUpbPl/jTcKk8JyVoCJ2Q==
-X-Google-Smtp-Source: AGHT+IHJS9tRfCPlCMJwh844fS5buPRYb19l+/WQy1lMrZF9u3+w3MuGpV9DibTiaEiM0xpOHSxg7g==
-X-Received: by 2002:a05:6e02:17cb:b0:425:8134:bcaa with SMTP id e9e14a558f8ab-42f7c2d49a8mr65232375ab.0.1759871169924;
-        Tue, 07 Oct 2025 14:06:09 -0700 (PDT)
-Received: from [192.168.1.14] ([38.175.187.108])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-42e8a0bb405sm55081635ab.12.2025.10.07.14.06.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 Oct 2025 14:06:09 -0700 (PDT)
-Message-ID: <c87d45dc-d545-4359-9e2f-11e43a45859f@linuxfoundation.org>
-Date: Tue, 7 Oct 2025 15:06:08 -0600
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="cqyg9jB4"
+Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 597NwEQv3925036;
+	Tue, 7 Oct 2025 18:58:14 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1759881494;
+	bh=urU6PQHdQqsMtPa1c24jHJ6XH4WzEMGYSPWPHyUzoLA=;
+	h=Date:CC:Subject:From:To:References:In-Reply-To;
+	b=cqyg9jB4NavaZmogqDvl+zUI1OiXi24drjkj39POkRwgwVWTLci8+XFtOd1VQ+5sL
+	 B2ktongdfYiIid5TZ9COdDshgW9uh+J/TiTlc92hs6aTiZ7Wejv0gO+khSIVQ/z9TH
+	 qsx8nEH8ToRfylskoiYZnWMP75o4izflV97cM9Bs=
+Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
+	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 597NwE4U1045284
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Tue, 7 Oct 2025 18:58:14 -0500
+Received: from DFLE211.ent.ti.com (10.64.6.69) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 7
+ Oct 2025 18:58:14 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE211.ent.ti.com
+ (10.64.6.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Tue, 7 Oct 2025 18:58:14 -0500
+Received: from localhost (rs-desk.dhcp.ti.com [128.247.81.144])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 597NwD0V1901943;
+	Tue, 7 Oct 2025 18:58:14 -0500
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND] clk: at91: sam9x7: Use kmalloc_array() instead of
- kmalloc()
-To: Sidharth Seela <sidharthseela@gmail.com>, mturquette@baylibre.com,
- sboyd@kernel.org, nicolas.ferre@microchip.com,
- alexandre.belloni@bootlin.com, claudiu.beznea@tuxon.dev,
- varshini.rajendran@microchip.com
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, david.hunter.linux@gmail.com,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20250924145552.55058-1-sidharthseela@gmail.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20250924145552.55058-1-sidharthseela@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="UTF-8"
+Date: Tue, 7 Oct 2025 18:58:13 -0500
+Message-ID: <DDCHX9627F8N.KWJDFIS4TO5O@ti.com>
+CC: <linux-clk@vger.kernel.org>, <mwalle@kernel.org>
+Subject: Re: [PATCH] clk: do not trust cached rates for disabled clocks
+From: Randolph Sapp <rs@ti.com>
+To: <rs@ti.com>, <mturquette@baylibre.com>, <sboyd@kernel.org>
+X-Mailer: aerc 0.21.0-0-g5549850facc2
+References: <20251003222917.706646-2-rs@ti.com>
+In-Reply-To: <20251003222917.706646-2-rs@ti.com>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On 9/24/25 08:55, Sidharth Seela wrote:
-> Replace kmalloc with kmalloc array in clk/at91/sam9x7.c. Refactor to new
-> API, for cases with dynamic size calculations inside kmalloc().
-> 
-
-This following line doesn't belong in commit log.
-
-Can you add details on how you tested this patch and also how
-you found the problem to begin with.
-
-> Resend is to correct previously sent patches mailing address.
-
-
-> 
-> Signed-off-by: Sidharth Seela <sidharthseela@gmail.com>
+On Fri Oct 3, 2025 at 5:29 PM CDT, rs wrote:
+> From: Randolph Sapp <rs@ti.com>
+>
+> Recalculate the clock rate for unprepared clocks. This cached value can
+> vary depending on the clocking architecture. On platforms with clocks
+> that have shared management it's possible that:
+>
+>  - Previously disabled clocks have been enabled by other entities
+>  - Rates calculated during clock tree initialization could have changed
+>
+> Signed-off-by: Randolph Sapp <rs@ti.com>
 > ---
-> diff --git a/drivers/clk/at91/sam9x7.c b/drivers/clk/at91/sam9x7.c
-> index ffab32b047a0..0c0a746a183d 100644
-> --- a/drivers/clk/at91/sam9x7.c
-> +++ b/drivers/clk/at91/sam9x7.c
-> @@ -748,9 +748,9 @@ static void __init sam9x7_pmc_setup(struct device_node *np)
->   	if (!sam9x7_pmc)
->   		return;
->   
-> -	clk_mux_buffer = kmalloc(sizeof(void *) *
-> -				 (ARRAY_SIZE(sam9x7_gck)),
-> -				 GFP_KERNEL);
-> +	clk_mux_buffer = kmalloc_array(ARRAY_SIZE(sam9x7_gck),
-> +					sizeof(void *),
-> +					GFP_KERNEL);
->   	if (!clk_mux_buffer)
->   		goto err_free;
->   
+>
+> I'm hoping this will start a bit of a discussion. I'm still curious why p=
+eople
+> would want to read the rate of an unprepared clock, but there were so man=
+y
+> logged operations on my test platforms that I assumed it must have some p=
+urpose.
+>
+> Either way, I don't believe cached values should ever be trusted in this
+> scenario.
 
-thanks,
--- Shuah
+Ignoring the typo in the subject (s/disabled/unprepared/), was there any
+feedback regarding this patch?
+
+>  drivers/clk/clk.c | 12 ++++++++++--
+>  1 file changed, 10 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index 85d2f2481acf..9c8b9036b6f6 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -1971,8 +1971,16 @@ static void __clk_recalc_rates(struct clk_core *co=
+re, bool update_req,
+> =20
+>  static unsigned long clk_core_get_rate_recalc(struct clk_core *core)
+>  {
+> -	if (core && (core->flags & CLK_GET_RATE_NOCACHE))
+> -		__clk_recalc_rates(core, false, 0);
+> +	if (core) {
+> +		bool prepared =3D clk_core_is_prepared(core);
+> +
+> +		if (core->flags & CLK_GET_RATE_NOCACHE || !prepared) {
+> +			if (!prepared)
+> +				pr_debug("%s: rate requested for unprepared clock %s\n",
+> +					 __func__, core->name);
+> +			__clk_recalc_rates(core, false, 0);
+> +		}
+> +	}
+> =20
+>  	return clk_core_get_rate_nolock(core);
+>  }
+
