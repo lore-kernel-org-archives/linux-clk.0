@@ -1,108 +1,170 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1853229B1F;
-	Tue,  7 Oct 2025 19:33:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E4AE19067C;
+	Tue,  7 Oct 2025 19:37:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759865624; cv=none; b=F66/40vTR6k2tXqRxD15qOm81jXp7rZ79frlRJf406Kw4ncsHeqNOJYMJq18DCO0ZXkDQBXtW6dxwpGW6uh0uGcPcpd8LTDYJrvTM7g6epAVQnHK1tlxtsoAx8NFbv2YFGkJGKXEKuxY75Hc59/YAiUxSd7pduPOP6NtUoJbkOg=
+	t=1759865882; cv=none; b=Da6DrBqBZ4FOddZG166H/gxotEadje67jFeZhH8dmDRqnWPvr5K3xa/Me4FVAjgyYnugj2B/RuTCXQ3XJBPvUHAYqspLOSSEr97b8cUTmrrW40DARbMOVWGM2KMROT9ZSUQ+LJc7RZmP6auBDXIsaPDQEu/B9AP79teUQqQ/2qE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759865624; c=relaxed/simple;
-	bh=1ABVdOdS45tzlNhfhjOVPvsY/QQgFK6EkT8seexuK4M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hWTI6a2TwiiBmuSNXek7xbMKa/QIXEiSTLtFpCy10oTpRN5WZgINNU7NLhjwx/VpQh8kXxeUY+1/m+IeLOHHeg0+yLIfKFUktuZC+zRp9PE2c1tmEpzvnxBXPGaVQFZ9XSHT89me+vFukFwj6cdeyWIbJyahyzTKZPdzAPidSK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Btmyp3T6; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1759865882; c=relaxed/simple;
+	bh=6AKFpL6na3bt8D8QEpmSTN5t9tbazOeWjvoxMIAmQhI=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=p3cHWst/1E+HCHU1OIO8fEyzX4OaWMSUYAJhvbr4U6jJjHOnpXzzpPn8aXlS9sEJgl3YUdDc3qpgi1wZWQLJfH0VP5rHeAXYX8a1E7oiINwbkmbP1UdMrYGnRF3lIHPpT9PFTT3eyxM0/YfJiapkkqjtkT6eQeO6ZFvnm+xXeRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Yb0ixHZ9; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Btmyp3T6"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1759865622; x=1791401622;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=1ABVdOdS45tzlNhfhjOVPvsY/QQgFK6EkT8seexuK4M=;
-  b=Btmyp3T61abJWwaYN5SE1uabS+AmJM9pBSpvjqm727L60K/DjbNxBIJj
-   iammekrxpBSu1uhUxZe4Hl2fUUY3yAfcDmbh+oS7df7qS01AlE3gRv3Gg
-   i5HRAGsesb9aAC0IL/n6z8eoMpWVsa2PERPLWY7jxu67teyGg1M2v63Bb
-   zdV9bqpNgyFVSfEFZr062QOlcyTAhPR9PvA7Nd4Gha8DeFxyP06pze7Ke
-   EKBfUeywskksr0ZjGCExWKu7SnrSKPUWa2qIqhCH/xjkrS2tkSRZh5iBZ
-   fP1DIx4Tj2wsiDqg49rQ0Iie1//8YzaYp5GbqLda6a8TMwZjG4X02zydP
-   g==;
-X-CSE-ConnectionGUID: eiFXfXPcR2yAkPhS2VEK+Q==
-X-CSE-MsgGUID: RMbyS2LQQ9q+50GIdQ9kyQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="61974145"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="61974145"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Oct 2025 12:33:41 -0700
-X-CSE-ConnectionGUID: xPssVK6ERI6TqiI6LcTAGg==
-X-CSE-MsgGUID: ia3cnOsoTy6733I3bchwyA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,321,1751266800"; 
-   d="scan'208";a="203958184"
-Received: from igk-lkp-server01.igk.intel.com (HELO 0e586ad5e7f7) ([10.91.175.65])
-  by fmviesa002.fm.intel.com with ESMTP; 07 Oct 2025 12:33:38 -0700
-Received: from kbuild by 0e586ad5e7f7 with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1v6DRH-000000007wv-2ZFu;
-	Tue, 07 Oct 2025 19:33:35 +0000
-Date: Tue, 7 Oct 2025 21:33:05 +0200
-From: kernel test robot <lkp@intel.com>
-To: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-amlogic@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	Xianwei Zhao <xianwei.zhao@amlogic.com>,
-	Chuan Liu <chuan.liu@amlogic.com>
-Subject: Re: [PATCH 11/19] arm64: dts: amlogic: A4: Add peripherals clock
- controller node
-Message-ID: <202510072131.VRSrXJh7-lkp@intel.com>
-References: <20250930-a4_a5_add_clock_driver-v1-11-a9acf7951589@amlogic.com>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Yb0ixHZ9"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id A3BD91A11D1;
+	Tue,  7 Oct 2025 19:37:57 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 64481606C8;
+	Tue,  7 Oct 2025 19:37:57 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 5D315102F2176;
+	Tue,  7 Oct 2025 21:37:40 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1759865875; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=4GcWK5Hme5WCrSE/n/v4fGwUF3MXcCwR4mya1TPBBHw=;
+	b=Yb0ixHZ9OCx4HZ8HP9niaBIyueqHaMT7Ipq0pdbnE0i4WY2Ng5Mg+xgzwQs68bH/pNFSnk
+	K3AKjz+LtGvdzXCI1pVRMaVajrNkDgV6T5la1kzbEkvO28RA5r/VjCtVzJZfaDnJ1ny4Wl
+	6KEJdUNvPwq6X/+cD1wiTbpZWX/ZgZMZelEhB5JIPCUEMSjMEv/EUiNDyS9WxcTRj1jGH9
+	Pmf9mTOaneqZOH7bbSjI/4lSZy3ddI5yqsTN+B2cw4t3rFZIQwvjQl/WkCajGxbS2rmo7e
+	uNZfenJmiQWnR1Dy0NIEQfAkP63mKj4DkpwzjClaKNW0XzyyD36AcUVIXw4vIg==
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250930-a4_a5_add_clock_driver-v1-11-a9acf7951589@amlogic.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 07 Oct 2025 21:37:39 +0200
+Message-Id: <DDCCDQMTQG55.1K25Y3U0JE15Q@bootlin.com>
+Cc: "Mikko Perttunen" <mperttunen@nvidia.com>, "David Airlie"
+ <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Maarten Lankhorst"
+ <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
+ "Thomas Zimmermann" <tzimmermann@suse.de>, "Rob Herring" <robh@kernel.org>,
+ "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley"
+ <conor+dt@kernel.org>, "Thierry Reding" <thierry.reding@gmail.com>,
+ "Jonathan Hunter" <jonathanh@nvidia.com>, "Sowjanya Komatineni"
+ <skomatineni@nvidia.com>, "Prashant Gaikwad" <pgaikwad@nvidia.com>,
+ "Michael Turquette" <mturquette@baylibre.com>, "Stephen Boyd"
+ <sboyd@kernel.org>, "Linus Walleij" <linus.walleij@linaro.org>, "Mauro
+ Carvalho Chehab" <mchehab@kernel.org>, "Greg Kroah-Hartman"
+ <gregkh@linuxfoundation.org>, =?utf-8?q?Jonas_Schw=C3=B6bel?=
+ <jonasschwoebel@yahoo.de>, "Dmitry Osipenko" <digetx@gmail.com>, "Charan
+ Pedumuru" <charan.pedumuru@gmail.com>, "Diogo Ivo"
+ <diogo.ivo@tecnico.ulisboa.pt>, "Aaron Kling" <webgeek1234@gmail.com>,
+ "Arnd Bergmann" <arnd@arndb.de>, <dri-devel@lists.freedesktop.org>,
+ <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linux-media@vger.kernel.org>,
+ <linux-clk@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+ <linux-staging@lists.linux.dev>
+Subject: Re: [PATCH v3 15/22] staging: media: tegra-video: tegra20: simplify
+ format align calculations
+From: "Luca Ceresoli" <luca.ceresoli@bootlin.com>
+To: "Svyatoslav Ryhel" <clamor95@gmail.com>
+X-Mailer: aerc 0.20.1
+References: <20250925151648.79510-1-clamor95@gmail.com>
+ <3665995.U7HbjWM52l@senjougahara>
+ <CAPVz0n3CrVufs8vbw8XnYuwoZoQ2Xsi3V4HimgT0=4RQySzvaw@mail.gmail.com>
+ <3862885.G96rZvMJ2N@senjougahara>
+ <CAPVz0n2shn41h4z4PoMdtCXzj+96ak69TCqt7Ag5qpqdWi6UWA@mail.gmail.com>
+ <DDBGU9ELXIAW.1RLHSNOPVR9B3@bootlin.com>
+ <CAPVz0n3EB-tw0af+O4acmbvXNHkH62t5v3r3O0nedLs_XJ39PA@mail.gmail.com>
+In-Reply-To: <CAPVz0n3EB-tw0af+O4acmbvXNHkH62t5v3r3O0nedLs_XJ39PA@mail.gmail.com>
+X-Last-TLS-Session-Version: TLSv1.3
 
-Hi Chuan,
+Hello Svyatoslav,
 
-kernel test robot noticed the following build errors:
+On Tue Oct 7, 2025 at 6:02 PM CEST, Svyatoslav Ryhel wrote:
+> =D0=BF=D0=BD, 6 =D0=B6=D0=BE=D0=B2=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 21:=
+55 Luca Ceresoli <luca.ceresoli@bootlin.com> =D0=BF=D0=B8=D1=88=D0=B5:
+>>
+>> Hello Svyatoslav,
+>>
+>> On Thu Oct 2, 2025 at 8:20 AM CEST, Svyatoslav Ryhel wrote:
+>> >> > > > 12 represents amount of bits used per pixel, 8 for Y plane, 2 f=
+or U
+>> >> > > > plane and 2 for V plane, total is 12. "but explainable with a c=
+omment
+>> >> > > > and improve-able later" why then we cannot use 12 with a commen=
+t? this
+>> >> > > > is all arbitrary. Downstream is not wrong from this perspective=
+, you
+>> >> > > > don't take into account that YUV420 is planar and it uses 3 pla=
+nes a
+>> >> > > > whole Y plane and 1/4 of U and V which in total results in wigt=
+h + 2 *
+>> >> > > > 1/4 width which is width * 3/2
+>> >> > >
+>> >> > > Yes -- but AIUI, the only thing the bpp value is used for the byt=
+esperline calculation. When we add the special case for planar formats, whi=
+ch doesn't use the bpp value, then the value 12 is never used anywhere. We =
+should at least have a comment saying it is unused. (At that point, we coul=
+d just hardcode the bpp values in the fmt_align function -- but I don't min=
+d either way.)
+>> >> > >
+>> >> > https://ffmpeg.org/pipermail/ffmpeg-user/2023-June/056488.html
+>> >>
+>> >> I understand very well that for YUV420, each pixel has 12 bits of col=
+or information. But how many bits of color information each pixel has is no=
+t useful in the context of this driver. The number of bytes per line is not=
+ related to how many bits of color information each pixel has for planar fo=
+rmats.
+>> >
+>> > No, it has direct impact. This is how buffer size / image size is
+>> > calculated since we place each plane consecutive. And bytes per line
+>> > is used specifically in image size calculation. This is common part
+>> > with non-planar formats. Then since Tegra provides a dedicated
+>> > channels/buffers for each plane, configuration of planar format
+>> > includes an additional step with calculation for each plane.
+>>
+>> Sorry, I haven't followed the discussion in detail, but I tested you ser=
+ies
+>> on Tegra20 VIP and capture does not work, with a SIGSEGV in
+>> gstreamer. Bisecting pointed to this as the first commit where the issue
+>> happens.
+>>
+>> I compared the input and output values of tegra20_fmt_align() at this
+>> commit and at the previous one, and this is the result:
+>>
+>>                        before this patch     with this patch
+>>   At function entry:
+>>   bpp                        1                     12
+>>   pix->width                 640                   640
+>>   pix->height                480                   480
+>>
+>>   On return:
+>>   pix->bytesperline          640                   960
+>>   pix->sizeimage             460800                460800
+>>
+>> I hope these info will help.
+>
+> Which command did you use? I have tested with ffmpeg and
+> yuv422/yuv420p and it worked perfectly fine.
 
-[auto build test ERROR on 01f3a6d1d59b8e25a6de243b0d73075cf0415eaf]
+I have a simple testing script that runs these commands, with
+VNODE=3D"/dev/video0":
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Chuan-Liu-via-B4-Relay/dt-bindings-clock-Add-Amlogic-A4-SCMI-clock-controller/20250930-174011
-base:   01f3a6d1d59b8e25a6de243b0d73075cf0415eaf
-patch link:    https://lore.kernel.org/r/20250930-a4_a5_add_clock_driver-v1-11-a9acf7951589%40amlogic.com
-patch subject: [PATCH 11/19] arm64: dts: amlogic: A4: Add peripherals clock controller node
-config: arm64-randconfig-2051-20251007 (https://download.01.org/0day-ci/archive/20251007/202510072131.VRSrXJh7-lkp@intel.com/config)
-compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project c410e88f0f8c0654d7744d6d029009f9cb736143)
-dtschema version: 2025.8
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251007/202510072131.VRSrXJh7-lkp@intel.com/reproduce)
+v4l2-ctl -d ${VNODE} --set-ctrl horizontal_flip=3D1 --set-ctrl vertical_fli=
+p=3D1
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510072131.VRSrXJh7-lkp@intel.com/
+gst-launch-1.0 -ve v4l2src device=3D${VNODE} num-buffers=3D500 \
+  ! video/x-raw,width=3D640,height=3D480,framerate=3D50/1,format=3DI420 \
+  ! videorate drop-only=3Dtrue skip-to-first=3Dtrue \
+  ! video/x-raw,framerate=3D50/4 \
+  ! queue \
+  ! avenc_mpeg4 \
+  ! mp4mux \
+  ! filesink location=3D/tmp/grab.mp4
 
-All errors (new ones prefixed by >>):
+Luca
 
-   Error: arch/arm64/boot/dts/amlogic/amlogic-a4.dtsi:119.19-20 syntax error
->> FATAL ERROR: Unable to parse input tree
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+--
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
