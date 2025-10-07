@@ -1,170 +1,90 @@
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oo1-f51.google.com (mail-oo1-f51.google.com [209.85.161.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E4AE19067C;
-	Tue,  7 Oct 2025 19:37:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 748561B87F0
+	for <linux-clk@vger.kernel.org>; Tue,  7 Oct 2025 20:21:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759865882; cv=none; b=Da6DrBqBZ4FOddZG166H/gxotEadje67jFeZhH8dmDRqnWPvr5K3xa/Me4FVAjgyYnugj2B/RuTCXQ3XJBPvUHAYqspLOSSEr97b8cUTmrrW40DARbMOVWGM2KMROT9ZSUQ+LJc7RZmP6auBDXIsaPDQEu/B9AP79teUQqQ/2qE=
+	t=1759868496; cv=none; b=jixhRdl1UiL5QJW885y5Q2CjMZ1hCxvCicyvMyiF5T10ckxaW0oG88biKy1lJyRmO73nwU/fpmE3KGc/bgWS2gD8V0JwigKuTqG5h0gFxh5fQUA0g2uUSpEuzYLNyZMezeiVo6eEp4U8k3C6qyKf76IfIObnnfgy1hxnwCW6Rmo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759865882; c=relaxed/simple;
-	bh=6AKFpL6na3bt8D8QEpmSTN5t9tbazOeWjvoxMIAmQhI=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=p3cHWst/1E+HCHU1OIO8fEyzX4OaWMSUYAJhvbr4U6jJjHOnpXzzpPn8aXlS9sEJgl3YUdDc3qpgi1wZWQLJfH0VP5rHeAXYX8a1E7oiINwbkmbP1UdMrYGnRF3lIHPpT9PFTT3eyxM0/YfJiapkkqjtkT6eQeO6ZFvnm+xXeRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Yb0ixHZ9; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1759868496; c=relaxed/simple;
+	bh=t4kdCtbMpSolLUWzyca+TrSgBjxKOUaqCLIHEI3NSpw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DUZ/OsNTY2WopVoXBdzrtVmHHjzqO+0erGsOBl432xr6nbAYMeWjJm0BEntiI9/OfTsgCLDhXm52FmKgyZHqxok8Hy/tqOtCvKq/zCSKcn/k/SNVnMu+HDKsRIGitWDiTU6+UD3Sz63+lYDntZVPqMFss3bWv6LVq7lx7zTHZnM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hHQtwXtJ; arc=none smtp.client-ip=209.85.161.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Yb0ixHZ9"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id A3BD91A11D1;
-	Tue,  7 Oct 2025 19:37:57 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 64481606C8;
-	Tue,  7 Oct 2025 19:37:57 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 5D315102F2176;
-	Tue,  7 Oct 2025 21:37:40 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1759865875; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=4GcWK5Hme5WCrSE/n/v4fGwUF3MXcCwR4mya1TPBBHw=;
-	b=Yb0ixHZ9OCx4HZ8HP9niaBIyueqHaMT7Ipq0pdbnE0i4WY2Ng5Mg+xgzwQs68bH/pNFSnk
-	K3AKjz+LtGvdzXCI1pVRMaVajrNkDgV6T5la1kzbEkvO28RA5r/VjCtVzJZfaDnJ1ny4Wl
-	6KEJdUNvPwq6X/+cD1wiTbpZWX/ZgZMZelEhB5JIPCUEMSjMEv/EUiNDyS9WxcTRj1jGH9
-	Pmf9mTOaneqZOH7bbSjI/4lSZy3ddI5yqsTN+B2cw4t3rFZIQwvjQl/WkCajGxbS2rmo7e
-	uNZfenJmiQWnR1Dy0NIEQfAkP63mKj4DkpwzjClaKNW0XzyyD36AcUVIXw4vIg==
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hHQtwXtJ"
+Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-64c7c78369aso3323819eaf.0
+        for <linux-clk@vger.kernel.org>; Tue, 07 Oct 2025 13:21:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1759868493; x=1760473293; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=t4kdCtbMpSolLUWzyca+TrSgBjxKOUaqCLIHEI3NSpw=;
+        b=hHQtwXtJEEpxiy2cS8AfLKG6xMyZxsA6Brt/B7Pz4bW3nn1/UByh/OWZUexJZUnXl5
+         sVOrV0aU0jFZyzdZ/QmpdsU3X235GeiZhQ1PXVUBOiwACIDN2S3dzM/gT20qJMyWx+BM
+         FNPrOuNYx1x2hUHqJ9Hqz4+ne7g5v/RD8uJJfEftNUbmP/S3jy081s7580w8iYI5KPtI
+         FK/lzh2dp4FKJFkf2/eP9CrlWD8k6TzKcNG9Evz5/i9qEsR8ws461flW4ZuGPmnAdtSY
+         DxPI2dK/hH4mzJM8pp592lfSbrvolnUZW0PITfFjLfdOVxnaEI5tAC5Qqjjvc0F8jze1
+         mVtg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759868493; x=1760473293;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=t4kdCtbMpSolLUWzyca+TrSgBjxKOUaqCLIHEI3NSpw=;
+        b=aIFIyimp6mxAguE93TCIRTDh46zQxIf9yJaUBhggCFZCUZTx4J+EIq9ZiF6OvyqcDH
+         u3tFzQ5xptRcvCMBA0MPMSH4vmNDx7lN8kNDYzehlXZtfD9zC1RI63Pzcf8p9H88PDYi
+         1PEWE3zxyKkOCvx4XpKG4KQbENjMjX+HSonktwyZn0qO6m7CQWvZDDZKFaQC+ICc/DL1
+         RhHkpnYhQw53sPbrXLy6/8Cpg5Ly7I5E7w4McdydlG+uBAClA0wvrEsebuXD3Ge+wsQO
+         L4dwWZBjmT2BZTT+mrUj3i6+QeG/ny3LjQrYcfsW3yOogFSIHolO9edQ05CVOq1qu0U0
+         urVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV3nics+feTMANPpo42zfzGAsXknOF7qeWCMk/Kja4YA3ZYa/vjCEnAvgCfOb1UWFez4C7Bnz87ZbE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/4fN3KFcNm1CXpF1kVrU1jbV5nsPKPoonGV/ZQ6Xef9D59psJ
+	pFp+LX+UwozUi2FiRiKEcp/L4GWivSZ6/bh0ZDLsaAh7DpxGOGn7ZeH2OsMy8Hlk7FDjkJSCla9
+	BsN5+h2lGmtgph2aEv2AsV+N55S15Zu6hSfBrOLR0Qw==
+X-Gm-Gg: ASbGncts9+YcQg4NsjqgCMIKpEm1dWU5GO0JL/eE+CecwKCxvfceJr4Fw5CuOZWY80Z
+	5M/PIhEfrB1JErA/pEmm7kpnKBFw3J4Yn2DPM9PDsfzmov3gGzWncNv3TVMlwXvu1ZcRvcXRQFr
+	5XtgI3s1043enGT3BC0LjJR6eBBEWDRYUdY6YS7sy7oT4ahXej/EAv79c24LFu8Ui5HzRFIQm0a
+	ovz2R4hetIwYfm1N2XGk9mNop6YNJSxUbVXLQ==
+X-Google-Smtp-Source: AGHT+IFpXtTl/XW7xSv6EAre9JtZi5PYEJL3Nxxq8Z5J/VjHzSG4hRXvlO0e3SJ/ojRDNDKk3AnJrSSYwAUNIg/KUXU=
+X-Received: by 2002:a05:6808:e8d:b0:437:f364:8361 with SMTP id
+ 5614622812f47-4417b36da9emr428435b6e.11.1759868493573; Tue, 07 Oct 2025
+ 13:21:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+References: <20251007-power-domains-clock-google-gs101-clock-v1-1-1ee73c453ba8@linaro.org>
+In-Reply-To: <20251007-power-domains-clock-google-gs101-clock-v1-1-1ee73c453ba8@linaro.org>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Tue, 7 Oct 2025 21:21:21 +0100
+X-Gm-Features: AS18NWCC9b83T6F2zFo4-esWHDAnbT_8yqAmmeWUhP__nUnwGaXjsaGNRCUZonU
+Message-ID: <CADrjBPqAXYBsjPaG0w2tdA7EAW93x=DU_OxrEeyuGKByhyG5vw@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: clock: google,gs101-clock: add power-domains
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 07 Oct 2025 21:37:39 +0200
-Message-Id: <DDCCDQMTQG55.1K25Y3U0JE15Q@bootlin.com>
-Cc: "Mikko Perttunen" <mperttunen@nvidia.com>, "David Airlie"
- <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Maarten Lankhorst"
- <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
- "Thomas Zimmermann" <tzimmermann@suse.de>, "Rob Herring" <robh@kernel.org>,
- "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley"
- <conor+dt@kernel.org>, "Thierry Reding" <thierry.reding@gmail.com>,
- "Jonathan Hunter" <jonathanh@nvidia.com>, "Sowjanya Komatineni"
- <skomatineni@nvidia.com>, "Prashant Gaikwad" <pgaikwad@nvidia.com>,
- "Michael Turquette" <mturquette@baylibre.com>, "Stephen Boyd"
- <sboyd@kernel.org>, "Linus Walleij" <linus.walleij@linaro.org>, "Mauro
- Carvalho Chehab" <mchehab@kernel.org>, "Greg Kroah-Hartman"
- <gregkh@linuxfoundation.org>, =?utf-8?q?Jonas_Schw=C3=B6bel?=
- <jonasschwoebel@yahoo.de>, "Dmitry Osipenko" <digetx@gmail.com>, "Charan
- Pedumuru" <charan.pedumuru@gmail.com>, "Diogo Ivo"
- <diogo.ivo@tecnico.ulisboa.pt>, "Aaron Kling" <webgeek1234@gmail.com>,
- "Arnd Bergmann" <arnd@arndb.de>, <dri-devel@lists.freedesktop.org>,
- <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux-media@vger.kernel.org>,
- <linux-clk@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
- <linux-staging@lists.linux.dev>
-Subject: Re: [PATCH v3 15/22] staging: media: tegra-video: tegra20: simplify
- format align calculations
-From: "Luca Ceresoli" <luca.ceresoli@bootlin.com>
-To: "Svyatoslav Ryhel" <clamor95@gmail.com>
-X-Mailer: aerc 0.20.1
-References: <20250925151648.79510-1-clamor95@gmail.com>
- <3665995.U7HbjWM52l@senjougahara>
- <CAPVz0n3CrVufs8vbw8XnYuwoZoQ2Xsi3V4HimgT0=4RQySzvaw@mail.gmail.com>
- <3862885.G96rZvMJ2N@senjougahara>
- <CAPVz0n2shn41h4z4PoMdtCXzj+96ak69TCqt7Ag5qpqdWi6UWA@mail.gmail.com>
- <DDBGU9ELXIAW.1RLHSNOPVR9B3@bootlin.com>
- <CAPVz0n3EB-tw0af+O4acmbvXNHkH62t5v3r3O0nedLs_XJ39PA@mail.gmail.com>
-In-Reply-To: <CAPVz0n3EB-tw0af+O4acmbvXNHkH62t5v3r3O0nedLs_XJ39PA@mail.gmail.com>
-X-Last-TLS-Session-Version: TLSv1.3
 
-Hello Svyatoslav,
-
-On Tue Oct 7, 2025 at 6:02 PM CEST, Svyatoslav Ryhel wrote:
-> =D0=BF=D0=BD, 6 =D0=B6=D0=BE=D0=B2=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 21:=
-55 Luca Ceresoli <luca.ceresoli@bootlin.com> =D0=BF=D0=B8=D1=88=D0=B5:
->>
->> Hello Svyatoslav,
->>
->> On Thu Oct 2, 2025 at 8:20 AM CEST, Svyatoslav Ryhel wrote:
->> >> > > > 12 represents amount of bits used per pixel, 8 for Y plane, 2 f=
-or U
->> >> > > > plane and 2 for V plane, total is 12. "but explainable with a c=
-omment
->> >> > > > and improve-able later" why then we cannot use 12 with a commen=
-t? this
->> >> > > > is all arbitrary. Downstream is not wrong from this perspective=
-, you
->> >> > > > don't take into account that YUV420 is planar and it uses 3 pla=
-nes a
->> >> > > > whole Y plane and 1/4 of U and V which in total results in wigt=
-h + 2 *
->> >> > > > 1/4 width which is width * 3/2
->> >> > >
->> >> > > Yes -- but AIUI, the only thing the bpp value is used for the byt=
-esperline calculation. When we add the special case for planar formats, whi=
-ch doesn't use the bpp value, then the value 12 is never used anywhere. We =
-should at least have a comment saying it is unused. (At that point, we coul=
-d just hardcode the bpp values in the fmt_align function -- but I don't min=
-d either way.)
->> >> > >
->> >> > https://ffmpeg.org/pipermail/ffmpeg-user/2023-June/056488.html
->> >>
->> >> I understand very well that for YUV420, each pixel has 12 bits of col=
-or information. But how many bits of color information each pixel has is no=
-t useful in the context of this driver. The number of bytes per line is not=
- related to how many bits of color information each pixel has for planar fo=
-rmats.
->> >
->> > No, it has direct impact. This is how buffer size / image size is
->> > calculated since we place each plane consecutive. And bytes per line
->> > is used specifically in image size calculation. This is common part
->> > with non-planar formats. Then since Tegra provides a dedicated
->> > channels/buffers for each plane, configuration of planar format
->> > includes an additional step with calculation for each plane.
->>
->> Sorry, I haven't followed the discussion in detail, but I tested you ser=
-ies
->> on Tegra20 VIP and capture does not work, with a SIGSEGV in
->> gstreamer. Bisecting pointed to this as the first commit where the issue
->> happens.
->>
->> I compared the input and output values of tegra20_fmt_align() at this
->> commit and at the previous one, and this is the result:
->>
->>                        before this patch     with this patch
->>   At function entry:
->>   bpp                        1                     12
->>   pix->width                 640                   640
->>   pix->height                480                   480
->>
->>   On return:
->>   pix->bytesperline          640                   960
->>   pix->sizeimage             460800                460800
->>
->> I hope these info will help.
+On Tue, 7 Oct 2025 at 17:03, Andr=C3=A9 Draszik <andre.draszik@linaro.org> =
+wrote:
 >
-> Which command did you use? I have tested with ffmpeg and
-> yuv422/yuv420p and it worked perfectly fine.
+> The CMU can be part of a power domain, so we need to allow the relevant
+> property 'power-domains'.
+>
+> Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+> ---
 
-I have a simple testing script that runs these commands, with
-VNODE=3D"/dev/video0":
-
-v4l2-ctl -d ${VNODE} --set-ctrl horizontal_flip=3D1 --set-ctrl vertical_fli=
-p=3D1
-
-gst-launch-1.0 -ve v4l2src device=3D${VNODE} num-buffers=3D500 \
-  ! video/x-raw,width=3D640,height=3D480,framerate=3D50/1,format=3DI420 \
-  ! videorate drop-only=3Dtrue skip-to-first=3Dtrue \
-  ! video/x-raw,framerate=3D50/4 \
-  ! queue \
-  ! avenc_mpeg4 \
-  ! mp4mux \
-  ! filesink location=3D/tmp/grab.mp4
-
-Luca
-
---
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
