@@ -1,63 +1,63 @@
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C08BA2FAC1D
-	for <linux-clk@vger.kernel.org>; Wed,  8 Oct 2025 07:31:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 725D32FAC03
+	for <linux-clk@vger.kernel.org>; Wed,  8 Oct 2025 07:31:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759908710; cv=none; b=A9WbiP47Wmp06U49kKilpDgBQ+4SZ96EYwj3uk8EC2tZBxhvd58nYr8UDz5liiX9vfb/fQFbyNmSiPibbUU3nFEdq95a6+lrl+T2BQd/RmuR1R2/AjpZ65DgXiaMHuGbPTeuKy3fFjLqlK/W6z1vgmR4T0luIzFPiT9MqMdqkOo=
+	t=1759908714; cv=none; b=lDthJbEzxyNxtBqu5EfsJ2huo8q0jfyUfsTnSzRqJ3SiMieGxuPLoJKbPzaLJzspqK1iHpdX3HtQT4/Vt5VmtzqUTX2ylSa/kYUHI3e/1qBweZLmRTLZhdlj/35RoLWsEuN0i1fDDjkgyEzg3W/YC9lVCzwyEmPrIbR8oeV6s84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759908710; c=relaxed/simple;
-	bh=LMNj3RJtvSAolKc/cNyymmQWeXKMjtcs4eYn8DUf4jQ=;
+	s=arc-20240116; t=1759908714; c=relaxed/simple;
+	bh=DQG+inBx8ZXDHcXJybTvBi9O4BMU38YbAkGRkU7JaQ0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=J4SZAQnyLhqy62qiD52GhFufaIO622CdugLKjE5bUI8MBUtMgGwqi/bs4Fzk3E1NaLw9qQKGw6lejSsS5tqpSbNJmntvuiXXhIupZIKUXVKn/+kuNFgiDZ24JOY/Cezv+oZ4tOcGRnamACXe8az7RB5pFiApark9HrpUUpWRRo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fU7By8IJ; arc=none smtp.client-ip=209.85.167.50
+	 MIME-Version; b=ZsbxfAmZQv2FCQibz7E6WqzfwD0jmq2yVeRHVLVNooUv/ugLdxUnNC5OYHL0RfHRShC7dbSKAS4UsaC9M3V9V4NGHx1wdwHrpRwGavnHcpKUR5AOJSumWtvR30sCiXBgo3qQNsnD1jF6cDqLZZX3ZrG7d0RUuTL4cL3JLsIZtb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G7+lWQWy; arc=none smtp.client-ip=209.85.167.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fU7By8IJ"
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-57b35e176dbso9053486e87.1
-        for <linux-clk@vger.kernel.org>; Wed, 08 Oct 2025 00:31:47 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G7+lWQWy"
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-57a59124323so2275101e87.2
+        for <linux-clk@vger.kernel.org>; Wed, 08 Oct 2025 00:31:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759908706; x=1760513506; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1759908709; x=1760513509; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=kNqGqTCCsfPGbDV/XUSDGT/efKZfdWLbKEq+jQy+Hag=;
-        b=fU7By8IJ7Z38ZZ160nZFh8txVIOZi5d2XijmE9R4LTxngADYF/8P5QtHwI/TiChlFs
-         d+acG437BoZc+5LUb1EMbOu3b/iRBi9yZjxweHRoLybIKxX9GqvHiVJBZHFly4v98oOK
-         HYp1sLXz/N/w0Mgg3JmLkRaiiYjrt5Lyo27EDslG5sc1cdaXzNdGNdPayvlXeHwdTYJL
-         ndVuHl04W/2xoESt1g+/JzAPDAohH2zc+f1vFMDExExSmeRcGlDLwLFly/SrUvCMoueH
-         BZhwGwH0G0ltE9l/slZRPCzh/5Krv6f1IUT8KCspFIot8ZOWle2iF3ctV1RTdaGLCnc6
-         Xiog==
+        bh=UNRJG9b/INfi23des3nzlgfKaLYdiUShg0Bsn9STYF0=;
+        b=G7+lWQWyryV9LtEA2h9Fju7xkySa19kVPCq0EdVTAxoBLBWbkS1pirZzs/4eu3elyk
+         mN23d2df8bowdox3TOvuMVQMHK2Nia1knM5j+OG2by1uPRgQYhtR5TjTXxtBKeIL7br0
+         S1FHVLlp6CJoC3ZUfBORF95/aRdolUBmEl08BoQdBzK4khmQ1fdOV7G/iDE4JdMeION0
+         fIoAzmKGqAh+Z7fbQGakX9yIKzicjmVD8LssRxXjKCNyoLPU57f7CxK3NdIxSppciZug
+         FTnW/tTHWxVhHFEyfVNdvC2kVgWWmZ18QBMEXYxZwuI39nQSlc1Q60F+IuZPzZKg5kyi
+         73HQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759908706; x=1760513506;
+        d=1e100.net; s=20230601; t=1759908709; x=1760513509;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=kNqGqTCCsfPGbDV/XUSDGT/efKZfdWLbKEq+jQy+Hag=;
-        b=dUb5dxVomAa5YeoB6SwU676iWZDif4vnnOFEx1mwxrm817QOBxhvA9g5/5BXk8cUwp
-         IDHLc8FoLd4mPfM95rtKOL4RS/d2S8DBTjIVR6w/TSP7qbv4tylC12zdL8cwLVa+uLee
-         enwJgLfqGjrHBrBoWjoumVdzISx0cweHHAS1FjelawElJ/sSt2pONa0d8S4RuvX6D5Mq
-         G2BiAi3+LN3OaGVyZ9LKeynazM0MUy1RFEUXzrvfP5WJwkiVA1ZiMD2o+oXc/pID1rU2
-         s9OigY7ZB31RLpiZXx/smlOjoW44zSNJ+uKBsAq85OUtMo38rIw0VXg9qCt8rTRaI9Bm
-         h96A==
-X-Forwarded-Encrypted: i=1; AJvYcCV7pgpvuobmZSgLoG2fxzoSE/o/HMSrhaXutQXtd3R8N6CWzn7otwOKGhJUyK45Bzq+Qk12yDQT0sQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxwCTC+Vthb0scDARBB9rf/DoFmNHJqbsnpXbmvEGYe0vlICkid
-	V53btgb//y6/2KnbVPZYmDRkU0P2aLzBaT86KLsCmQFfe1dHd5u5l/dt
-X-Gm-Gg: ASbGnctZTpbvhT2CzB+xJP2OwWouA/oGjaHdBgh/JjGq15pAJnWBhd5jx1PM93xJiyw
-	Xc6H9nrRmJW4EKRTaRoCkITWhzXsvWKl3G1yuuFddzKfm67YtcRcjmMQoq5/SifU3W6Ir0E4tqR
-	xqNfCkmY/P+k0mEi9DeCZahMHMUJBKWEbmJi9uuvhVt6fb2a0iKqUCY3/aW0hXDAYfT1X9MZvbZ
-	7Qh+dVusitPQPJ6Hr9qoutJu4yqlQPx+HC5pyhwxARxuq5KQa0TNWVMhPo5/+7eIszgGgXlfF3k
-	7IlWOaYFezQvX8cs+QU2ePS8GB2z7PtUzRhBmQUnPX5YYxBk8rA9VvFOIwrJGEN1EeFpJfwvepp
-	LRNcuHgfjP9l6+HHEzmJpVNQlcqA6g8h3bfOjUQ==
-X-Google-Smtp-Source: AGHT+IGRZlClUUWF0NFnw8JC06wEKdlQrkDCO3jAGBg1Eoa3BWw4+yky34BfCurBVLPslna6NuvYHw==
-X-Received: by 2002:a05:6512:3b8e:b0:576:f133:9288 with SMTP id 2adb3069b0e04-5906daea903mr620850e87.54.1759908705540;
-        Wed, 08 Oct 2025 00:31:45 -0700 (PDT)
+        bh=UNRJG9b/INfi23des3nzlgfKaLYdiUShg0Bsn9STYF0=;
+        b=pK0uiwkVw2DHzX14jmYE9lCgjwgn14eBgfug0UdXvbogs9bLdW0HOBI2WzG7Zb4Bjc
+         8ERW8If1G7ZgHWfJowpf1IF9DElPsSUxYALtt0FYvJhXHVCxvFBnCkz3njVqtNgZQJR4
+         Zh+hx9gJ2eorlWG9Pt5BWCNkjYknG0nGqq5yVWkQhuvYe3G3O4U4kusJksoDNFC59LYy
+         jMcNGBfS/l7XaU3MkGqubg2oIZ9g6hkZGJAtE2pQ6yL90R8FUaxFm3s5awPNp0GyUWj5
+         xJJxTQYmFdx3XsEHj+eKkD5pq7eIUaq3uAH4vpP9oxFh0M3cpsEUE0m7zJq+PoLM/6aZ
+         cUEw==
+X-Forwarded-Encrypted: i=1; AJvYcCUKHh9ZQFuJL0TP23TqMWtFe83ezs1I2N5qGaO/9n9Bdzaq0crJSx9cip/T/XMAM6mz0+fnGn2GlL8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJ4W8lhb82GFvgeFtCbp6DTu42z3yf3LA4arHhhVQjdVM8idum
+	vpi50Ih2nr/AfvbVoYQYdUY331pczsul80zW8ogG3TqHfoQYvGODBHOb
+X-Gm-Gg: ASbGncuLbwhHajomYv7WdZRunkWfjkH2nLfYtEkzEXpkZiyfq4eb4jp+hRS7RAUMv/T
+	kyQQMLbMZ5pPC5kgIaqzMdqpSt4B2FdI1k8rafhufUfOkOoHoERTbY8K0Z5y2KghnwwqmHfTSkl
+	E43s5wiFmP7V7DCx4R/xA9bNBJaE1rSfE2RjOgoWqtSuBFjA3z+DfuQHofk/ZKlbLlQ5NoPcQAq
+	exFaZH123PznzdmLqtsos6wa+8H/5XW0K55j4zXdxcARGEn2+o7E/xt8jPLLYMMZqE8VOewM14L
+	maKf/q2g4vg8I85BcA3P9lcfW2E+gquNrY0NNwuQoU5dfjBiQi6aXGLbSkZmop2Z3vY7mZ16A1C
+	Y1zbHpjEZ5xz0WtYW4UnwLRogpyzphWHK5OOlpA==
+X-Google-Smtp-Source: AGHT+IF61Uf+7jyVQLbDjguFkflG7qNGvFKGa9VJbcmzM10P4AOV0pJo6kc07mp87QYBfIqV8TPf7A==
+X-Received: by 2002:a05:6512:2247:b0:55f:4107:ac46 with SMTP id 2adb3069b0e04-5906d8a084amr687325e87.25.1759908708862;
+        Wed, 08 Oct 2025 00:31:48 -0700 (PDT)
 Received: from xeon.. ([188.163.112.70])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-58b0118d22bsm6911016e87.85.2025.10.08.00.31.44
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-58b0118d22bsm6911016e87.85.2025.10.08.00.31.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Oct 2025 00:31:45 -0700 (PDT)
+        Wed, 08 Oct 2025 00:31:48 -0700 (PDT)
 From: Svyatoslav Ryhel <clamor95@gmail.com>
 To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
 	Maxime Ripard <mripard@kernel.org>,
@@ -93,9 +93,9 @@ Cc: dri-devel@lists.freedesktop.org,
 	linux-clk@vger.kernel.org,
 	linux-gpio@vger.kernel.org,
 	linux-staging@lists.linux.dev
-Subject: [PATCH v4 19/24] staging: media: tegra-video: tegra20: increase maximum VI clock frequency
-Date: Wed,  8 Oct 2025 10:30:41 +0300
-Message-ID: <20251008073046.23231-20-clamor95@gmail.com>
+Subject: [PATCH v4 21/24] staging: media: tegra-video: tegra20: adjust luma buffer stride
+Date: Wed,  8 Oct 2025 10:30:43 +0300
+Message-ID: <20251008073046.23231-22-clamor95@gmail.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20251008073046.23231-1-clamor95@gmail.com>
 References: <20251008073046.23231-1-clamor95@gmail.com>
@@ -107,8 +107,8 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Increase maximum VI clock frequency to 450MHz to allow correct work with
-high resolution camera sensors.
+Luma buffer stride is calculated by multiplying height in pixels of image
+by bytes per line. Adjust that value accordingly.
 
 Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
@@ -117,18 +117,18 @@ Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/staging/media/tegra-video/tegra20.c b/drivers/staging/media/tegra-video/tegra20.c
-index 93105ed57ca7..149386a15176 100644
+index 0457209b789a..626f34543853 100644
 --- a/drivers/staging/media/tegra-video/tegra20.c
 +++ b/drivers/staging/media/tegra-video/tegra20.c
-@@ -598,7 +598,7 @@ const struct tegra_vi_soc tegra20_vi_soc = {
- 	.ops = &tegra20_vi_ops,
- 	.hw_revision = 1,
- 	.vi_max_channels = 2, /* TEGRA_VI_OUT_1 and TEGRA_VI_OUT_2 */
--	.vi_max_clk_hz = 150000000,
-+	.vi_max_clk_hz = 450000000,
- 	.has_h_v_flip = true,
- };
- 
+@@ -504,7 +504,7 @@ static void tegra20_camera_capture_setup(struct tegra_vi_channel *chan)
+ 	u32 data_type = chan->fmtinfo->img_dt;
+ 	int width  = chan->format.width;
+ 	int height = chan->format.height;
+-	int stride_l = chan->format.bytesperline;
++	int stride_l = chan->format.bytesperline * height;
+ 	int stride_c = (output_fourcc == V4L2_PIX_FMT_YUV420 ||
+ 			output_fourcc == V4L2_PIX_FMT_YVU420) ? 1 : 0;
+ 	enum tegra_vi_out output_channel = (data_type == TEGRA_IMAGE_DT_RAW8 ||
 -- 
 2.48.1
 
