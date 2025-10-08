@@ -1,116 +1,96 @@
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F263F2798E5
-	for <linux-clk@vger.kernel.org>; Tue,  7 Oct 2025 23:58:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A2B828A731
+	for <linux-clk@vger.kernel.org>; Wed,  8 Oct 2025 03:37:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759881508; cv=none; b=DQvQZMQv7ko82q6BT75sfKlYKDFSaFgWmYT/1wxkqGLJyc8eTzwLgtzJArSb3T2CkYTD7+ezYOqcA6qAX9WwuxFMRM5nZVq/kiU1zJLNkvrkjffUmbzhABhFBtPB5omFd4G7Z9d+VTvYkm3hIHktgyweyDmysSSnpUz7xa7hpDU=
+	t=1759894636; cv=none; b=u1V0uAqgq/QZt3peh+zlStNwHbVB9rlrwB+7srdNTAIGUnFjKq5nNtyUrgl/cZaBfscyGTMzcPau50zrFaFHrLwXaX6u2/U67Ka9SlphgI0lQjaFyHMSfINK7Zf58gq8h9QbJofilrI5tWnPIgWLbJUezLjmcCDhZWdl3UAwLAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759881508; c=relaxed/simple;
-	bh=M0bXAxUVajGUdbwCo52C81i/ru3MEd9U+J9iHxF4EIA=;
-	h=MIME-Version:Content-Type:Date:Message-ID:CC:Subject:From:To:
-	 References:In-Reply-To; b=N7w4irr2/jrsEP1x9CiEAjnIjqCmlViAIsY4K82zAfwCcJ94LrSENhIxnI7ZLQ6m7O9iGRSU6TMLDcqi598jOzeMJmxA4lT9d7cUfTlV9h65WAPyJZdU0Wl7fi894uksrNWH8G+RErVLC8SHU3CVLbNGDUW3pVbOwpMOqphsaU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=cqyg9jB4; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+	s=arc-20240116; t=1759894636; c=relaxed/simple;
+	bh=Zx04ah/IYXegpf5FVcljzAJSZIUmnHslBnom7Csei1k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TW9cp2LEZlXSkteE0xs/GIiO3E/CfRaWVGvE+CLWP0Q0r3eFtYyME6zkoTflNAt9KWpnJJCO8IC0dLCS/JZLfR7IhK0N9YargM8wMgPemvzirFQQ0I8084frK7bqW8YutXuTsstETuhoI+WPUFR16lYeHcjp3t8K2pIsYNW8fyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YIxnlv6m; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="cqyg9jB4"
-Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 597NwEQv3925036;
-	Tue, 7 Oct 2025 18:58:14 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1759881494;
-	bh=urU6PQHdQqsMtPa1c24jHJ6XH4WzEMGYSPWPHyUzoLA=;
-	h=Date:CC:Subject:From:To:References:In-Reply-To;
-	b=cqyg9jB4NavaZmogqDvl+zUI1OiXi24drjkj39POkRwgwVWTLci8+XFtOd1VQ+5sL
-	 B2ktongdfYiIid5TZ9COdDshgW9uh+J/TiTlc92hs6aTiZ7Wejv0gO+khSIVQ/z9TH
-	 qsx8nEH8ToRfylskoiYZnWMP75o4izflV97cM9Bs=
-Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
-	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 597NwE4U1045284
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Tue, 7 Oct 2025 18:58:14 -0500
-Received: from DFLE211.ent.ti.com (10.64.6.69) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 7
- Oct 2025 18:58:14 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE211.ent.ti.com
- (10.64.6.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Tue, 7 Oct 2025 18:58:14 -0500
-Received: from localhost (rs-desk.dhcp.ti.com [128.247.81.144])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 597NwD0V1901943;
-	Tue, 7 Oct 2025 18:58:14 -0500
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YIxnlv6m"
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-62fca216e4aso1206191a12.0
+        for <linux-clk@vger.kernel.org>; Tue, 07 Oct 2025 20:37:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759894632; x=1760499432; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Zx04ah/IYXegpf5FVcljzAJSZIUmnHslBnom7Csei1k=;
+        b=YIxnlv6mCJ6ehncdiXVji8DOVRDffpIvwwovJ6YMRDPAxO5DOyRfJkP8eF0sFFNiJa
+         wmztyNwzya6ckbQNK1VLqfkH+AedpxEVKbPD3gUrLJGOmVAVAJE6bn7f7i+HnUPCvTVf
+         gyMdKLsY28D38z6JsrJoye/ZDpWNthN2hsmpkwHPopyZkY75+eYaxj8nJVE3nzvdz/Zd
+         2iCZqir2Jet0OI278ZvKdqZSmPKVNtI5gJKtAl3/w63gIrjZFC98FIrfhncVLWoMI1gg
+         H3DV21yHajGyurWsR8S0Wvdovgnb/b8UM88uckQYGjkMpxrWjula9Pz8DDHPPYyhhOcA
+         PB7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759894632; x=1760499432;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Zx04ah/IYXegpf5FVcljzAJSZIUmnHslBnom7Csei1k=;
+        b=nHcyFTJEC07MWN2+U3ekuAJsVi2L+0ay/t/SZU5/nGK1kxGWtPPRAhXofxgKJ7H3XD
+         cRuWw8OeiKahvo5HKbDBVGzOMBSsTvcTEUkJhEXmlSF3ITcNVQhhc6WmiWZCWzjdsk4G
+         EoIkEXr2GMAmmt1juJSAC2zVmgYQp+JexAbDsZDdkIK7nJcudp7uuWyig5xyjsA2SR36
+         9GC4Lugoc69/9RSzpQlylllM++1wP9Kwj7cyPEZ15/lzNApcxX4INTIZTBCvjdcos0HF
+         ToUbovQCMLsdk9igYl99SubMrNm/iNnVBSRqo+KWVmJFsJnITQD5L10u3O/9pAJYr0VK
+         OWGg==
+X-Forwarded-Encrypted: i=1; AJvYcCWLSt7Prmlg/Dt3Qk0FYtUHUG+NdeuXr7KfJCeJE8g8lM8CzWnf/hzzjIsBR+5IUJ9PqCU5d7x511E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxDcWZYgwN/wCTithZ70GKeunGsDtc8B9c2qhgCLykTslM7nqm5
+	V+3/KmXlh3urBeMnBuRDRm3+WzM2pg9YC/TwQrdLz7cq15RltDk5zpm1iA3wZeyRaRZT0y4+6p4
+	VL68ep4KCRSeUbBESx5V96Qbnf8ORn0I=
+X-Gm-Gg: ASbGncung0XIbAkWUQtCsEO96xKNSf4IWDVVOTcnoJeU1nuwT+I8rXJ/a4xcp+m4/A2
+	70Dcp5jauBe9OUMALPBXQAhJxY2mq5a/jMKeSV2SbiceRjB7rSJippIHB6T1Q3RGKopntlB+r+v
+	jHPvuhUGWHsapmkAE9+sm5t5WzWpicTfXO8BDvaODqQHE9VJ5hruXimV4dXpGsc0N+7ZXQYMONB
+	UxzF9kWRhMGVt9z25jng95t99dzJKtXfcwC+xeMtkcIJyx2IxKATIBize5QOI4U3g==
+X-Google-Smtp-Source: AGHT+IFdakwpHCbhBv8L8ewQ8YL1xFOcXFkqwuOUaP1m0nKJBrxbVsaF6mhz+pLN4b219pRES/JDwQc0A3VoDQDnZvo=
+X-Received: by 2002:a05:6402:4019:b0:639:e04d:b0cd with SMTP id
+ 4fb4d7f45d1cf-639e04db5bdmr313287a12.10.1759894631994; Tue, 07 Oct 2025
+ 20:37:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+References: <20250924145552.55058-1-sidharthseela@gmail.com> <c87d45dc-d545-4359-9e2f-11e43a45859f@linuxfoundation.org>
+In-Reply-To: <c87d45dc-d545-4359-9e2f-11e43a45859f@linuxfoundation.org>
+From: Sidharth Seela <sidharthseela@gmail.com>
+Date: Wed, 8 Oct 2025 09:07:00 +0530
+X-Gm-Features: AS18NWAJtkfAkiglYcQF83q4sQMGaqHzh0wb2Unau5kJ3UCJfzcYdxQwGuDuKzM
+Message-ID: <CAJE-K+A_xFPPDbPFQiOwH5nUJdrrGHxvV9xVppXWTNJ5g2bUHw@mail.gmail.com>
+Subject: Re: [PATCH RESEND] clk: at91: sam9x7: Use kmalloc_array() instead of kmalloc()
+To: Shuah Khan <skhan@linuxfoundation.org>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, nicolas.ferre@microchip.com, 
+	alexandre.belloni@bootlin.com, claudiu.beznea@tuxon.dev, 
+	varshini.rajendran@microchip.com, linux-clk@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	david.hunter.linux@gmail.com
 Content-Type: text/plain; charset="UTF-8"
-Date: Tue, 7 Oct 2025 18:58:13 -0500
-Message-ID: <DDCHX9627F8N.KWJDFIS4TO5O@ti.com>
-CC: <linux-clk@vger.kernel.org>, <mwalle@kernel.org>
-Subject: Re: [PATCH] clk: do not trust cached rates for disabled clocks
-From: Randolph Sapp <rs@ti.com>
-To: <rs@ti.com>, <mturquette@baylibre.com>, <sboyd@kernel.org>
-X-Mailer: aerc 0.21.0-0-g5549850facc2
-References: <20251003222917.706646-2-rs@ti.com>
-In-Reply-To: <20251003222917.706646-2-rs@ti.com>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Transfer-Encoding: quoted-printable
 
-On Fri Oct 3, 2025 at 5:29 PM CDT, rs wrote:
-> From: Randolph Sapp <rs@ti.com>
->
-> Recalculate the clock rate for unprepared clocks. This cached value can
-> vary depending on the clocking architecture. On platforms with clocks
-> that have shared management it's possible that:
->
->  - Previously disabled clocks have been enabled by other entities
->  - Rates calculated during clock tree initialization could have changed
->
-> Signed-off-by: Randolph Sapp <rs@ti.com>
-> ---
->
-> I'm hoping this will start a bit of a discussion. I'm still curious why p=
-eople
-> would want to read the rate of an unprepared clock, but there were so man=
-y
-> logged operations on my test platforms that I assumed it must have some p=
-urpose.
->
-> Either way, I don't believe cached values should ever be trusted in this
-> scenario.
+On Wed, Oct 8, 2025 at 2:36=E2=80=AFAM Shuah Khan <skhan@linuxfoundation.or=
+g> wrote:
+> This following line doesn't belong in commit log.
 
-Ignoring the typo in the subject (s/disabled/unprepared/), was there any
-feedback regarding this patch?
+This was one of my early patches. It won't happen again.
 
->  drivers/clk/clk.c | 12 ++++++++++--
->  1 file changed, 10 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index 85d2f2481acf..9c8b9036b6f6 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -1971,8 +1971,16 @@ static void __clk_recalc_rates(struct clk_core *co=
-re, bool update_req,
-> =20
->  static unsigned long clk_core_get_rate_recalc(struct clk_core *core)
->  {
-> -	if (core && (core->flags & CLK_GET_RATE_NOCACHE))
-> -		__clk_recalc_rates(core, false, 0);
-> +	if (core) {
-> +		bool prepared =3D clk_core_is_prepared(core);
-> +
-> +		if (core->flags & CLK_GET_RATE_NOCACHE || !prepared) {
-> +			if (!prepared)
-> +				pr_debug("%s: rate requested for unprepared clock %s\n",
-> +					 __func__, core->name);
-> +			__clk_recalc_rates(core, false, 0);
-> +		}
-> +	}
-> =20
->  	return clk_core_get_rate_nolock(core);
->  }
+> Can you add details on how you tested this patch and also how
+> you found the problem to begin with.
 
+I used grep to find instances of kmalloc and went through the ones
+with size calculations inside them.
+I did compile testing, My mistake, I forgot to add request for test.
+I would like to retract this patch for the same.
+
+--=20
+Thanks,
+Sidharth Seela
+www.realtimedesign.org
