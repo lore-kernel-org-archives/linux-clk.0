@@ -1,96 +1,189 @@
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A2B828A731
-	for <linux-clk@vger.kernel.org>; Wed,  8 Oct 2025 03:37:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F1232E2EEE
+	for <linux-clk@vger.kernel.org>; Wed,  8 Oct 2025 05:45:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759894636; cv=none; b=u1V0uAqgq/QZt3peh+zlStNwHbVB9rlrwB+7srdNTAIGUnFjKq5nNtyUrgl/cZaBfscyGTMzcPau50zrFaFHrLwXaX6u2/U67Ka9SlphgI0lQjaFyHMSfINK7Zf58gq8h9QbJofilrI5tWnPIgWLbJUezLjmcCDhZWdl3UAwLAA=
+	t=1759902311; cv=none; b=DxFwuykrFQeGIGETGkFIaT50UbVJxlEl01hWXhazcQGtTE70yCfIJDWizQQGKUluOymhRf2IrxYpxsP+YnrqjtxBChV3FZO/eFOstFuBX8wCN8WFKL9+6jQ5gIdoWRj53q0vfj3iBhFfGUtBZxiQlofPqKFA9zHBtltjgqm31D0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759894636; c=relaxed/simple;
-	bh=Zx04ah/IYXegpf5FVcljzAJSZIUmnHslBnom7Csei1k=;
+	s=arc-20240116; t=1759902311; c=relaxed/simple;
+	bh=y3ENnxsjvGdO+/N1hWTYhRava8fqxMcu3LUBH2wKiGc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TW9cp2LEZlXSkteE0xs/GIiO3E/CfRaWVGvE+CLWP0Q0r3eFtYyME6zkoTflNAt9KWpnJJCO8IC0dLCS/JZLfR7IhK0N9YargM8wMgPemvzirFQQ0I8084frK7bqW8YutXuTsstETuhoI+WPUFR16lYeHcjp3t8K2pIsYNW8fyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YIxnlv6m; arc=none smtp.client-ip=209.85.208.51
+	 To:Cc:Content-Type; b=XNEYAmoFePKvMPBLpWdINtoUJ76mWDFZ/2/g2rQpZ4uw0VCq0Q3GjKklrNQJABCAU4SsWQKzg8YXPozZgXPoIBtUrPYuG01enjTWp2YsohFS1iCPXtLxLQlGcyidvaF/Sa64M/FDGMdSbeM09StLr1++YWL8Rv8urq7bK1Lwnac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dJI89l/0; arc=none smtp.client-ip=209.85.128.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YIxnlv6m"
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-62fca216e4aso1206191a12.0
-        for <linux-clk@vger.kernel.org>; Tue, 07 Oct 2025 20:37:13 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dJI89l/0"
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-46e47cca387so73106845e9.3
+        for <linux-clk@vger.kernel.org>; Tue, 07 Oct 2025 22:45:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759894632; x=1760499432; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1759902307; x=1760507107; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Zx04ah/IYXegpf5FVcljzAJSZIUmnHslBnom7Csei1k=;
-        b=YIxnlv6mCJ6ehncdiXVji8DOVRDffpIvwwovJ6YMRDPAxO5DOyRfJkP8eF0sFFNiJa
-         wmztyNwzya6ckbQNK1VLqfkH+AedpxEVKbPD3gUrLJGOmVAVAJE6bn7f7i+HnUPCvTVf
-         gyMdKLsY28D38z6JsrJoye/ZDpWNthN2hsmpkwHPopyZkY75+eYaxj8nJVE3nzvdz/Zd
-         2iCZqir2Jet0OI278ZvKdqZSmPKVNtI5gJKtAl3/w63gIrjZFC98FIrfhncVLWoMI1gg
-         H3DV21yHajGyurWsR8S0Wvdovgnb/b8UM88uckQYGjkMpxrWjula9Pz8DDHPPYyhhOcA
-         PB7Q==
+        bh=nMrA9ECVAZwUgiOwDSSBvdQk3vkFdAvd5oJUQqsaClA=;
+        b=dJI89l/0XyujkW5L/n7t2uL8uv2MH2+jiQpPnSCKIjaxqsIjR+pR2Y/hkLAGKwAOlF
+         lDxPtFiezq83rmcdZjS1YXIhJwgYWrEbeEcL2U6PcgI9WJgFNBLdAVtFb4xGmMzSs/kq
+         +DgNuIaCrmSv+q3MoiE7kstdaDWo7w7W72c3Gku/3xbQD7xo3szNKxRk+FkkgAa+qYIc
+         3tkQ2y+LbQLJrtTl5vaIjKko5Q+cFYdtfjCpHL9VFqgMUVosMSfbWkStMne2Ppr7IirM
+         ovRLVNZu6cYHssyaR+ZZdrlgZfScNBI1QAvA+J09WH4z/KMw3Rnxs4Ot2eGpds5j291l
+         ka9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759894632; x=1760499432;
+        d=1e100.net; s=20230601; t=1759902307; x=1760507107;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Zx04ah/IYXegpf5FVcljzAJSZIUmnHslBnom7Csei1k=;
-        b=nHcyFTJEC07MWN2+U3ekuAJsVi2L+0ay/t/SZU5/nGK1kxGWtPPRAhXofxgKJ7H3XD
-         cRuWw8OeiKahvo5HKbDBVGzOMBSsTvcTEUkJhEXmlSF3ITcNVQhhc6WmiWZCWzjdsk4G
-         EoIkEXr2GMAmmt1juJSAC2zVmgYQp+JexAbDsZDdkIK7nJcudp7uuWyig5xyjsA2SR36
-         9GC4Lugoc69/9RSzpQlylllM++1wP9Kwj7cyPEZ15/lzNApcxX4INTIZTBCvjdcos0HF
-         ToUbovQCMLsdk9igYl99SubMrNm/iNnVBSRqo+KWVmJFsJnITQD5L10u3O/9pAJYr0VK
-         OWGg==
-X-Forwarded-Encrypted: i=1; AJvYcCWLSt7Prmlg/Dt3Qk0FYtUHUG+NdeuXr7KfJCeJE8g8lM8CzWnf/hzzjIsBR+5IUJ9PqCU5d7x511E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDcWZYgwN/wCTithZ70GKeunGsDtc8B9c2qhgCLykTslM7nqm5
-	V+3/KmXlh3urBeMnBuRDRm3+WzM2pg9YC/TwQrdLz7cq15RltDk5zpm1iA3wZeyRaRZT0y4+6p4
-	VL68ep4KCRSeUbBESx5V96Qbnf8ORn0I=
-X-Gm-Gg: ASbGncung0XIbAkWUQtCsEO96xKNSf4IWDVVOTcnoJeU1nuwT+I8rXJ/a4xcp+m4/A2
-	70Dcp5jauBe9OUMALPBXQAhJxY2mq5a/jMKeSV2SbiceRjB7rSJippIHB6T1Q3RGKopntlB+r+v
-	jHPvuhUGWHsapmkAE9+sm5t5WzWpicTfXO8BDvaODqQHE9VJ5hruXimV4dXpGsc0N+7ZXQYMONB
-	UxzF9kWRhMGVt9z25jng95t99dzJKtXfcwC+xeMtkcIJyx2IxKATIBize5QOI4U3g==
-X-Google-Smtp-Source: AGHT+IFdakwpHCbhBv8L8ewQ8YL1xFOcXFkqwuOUaP1m0nKJBrxbVsaF6mhz+pLN4b219pRES/JDwQc0A3VoDQDnZvo=
-X-Received: by 2002:a05:6402:4019:b0:639:e04d:b0cd with SMTP id
- 4fb4d7f45d1cf-639e04db5bdmr313287a12.10.1759894631994; Tue, 07 Oct 2025
- 20:37:11 -0700 (PDT)
+        bh=nMrA9ECVAZwUgiOwDSSBvdQk3vkFdAvd5oJUQqsaClA=;
+        b=AozIqO1UQXi02FSzk9BSt0dp6ot5EHYQBgcE9g50qYU1BDuagH7dDN3yABXkAa0NPg
+         z/9pI8E2JV1/dh3GVU07b/B6jODqLDxmb7V8qO0igI1MDKZEnwi3AqESjBMkU+ALuMta
+         dZv9ZCij8jxCogATiKWA4K9xeXhZra3d5+LQXm28wV2PoRFq7tDXp0Xl97A2tSQvT1j6
+         8b67a4uzHtB6IA5CyAFaUmTMRYJfKJmziuBiFUIsma63xy0fkiV71tsi4KBW110HwA5g
+         v6FQIZCaxeVqv0w9oHj6wgSuftlp9m2OyiowIupEETpKSAITHtDY8yxd3NcdAmMKKhtW
+         2qeQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVq3E/zPVyS7S7fh1eWjGG+FCBszLTjeqmTsh424lCOFt2oQSqutJvDJpwN3n77IE34svp/idRre+s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWSAB5datQpcQHSW+TT722/oPBWJ7jrjrlGWTHuEirgKpF/l3U
+	PI7/B5z/8PUgB2084SHn44V9GSM3iR3pi12gBnj7I+ySMnUAsF/rDob3j6vUdXE122nkERyY8GE
+	sxXc+/qbe6SizW5CKmBqSOK1EHF3z0f4=
+X-Gm-Gg: ASbGnctyK5h4F3P0xdhePM1rbwRy16ctPVraIPX8Ht67anfOHZsZ74mSGw+hM8dVShg
+	DXpJZuAXySpy2R88iHN5CZzpS8CR+DLptCuJ39mDHolDYhw9q+og5P/mNdh5y2BBYxsFc8s1Ycx
+	eiOdXkj88taGYE2aLYJQXa07qnD710MaSDVMKyOAJtW6H3imbKqVKQxZ1LkbrQvd1PJtRzl/NU8
+	Zc40d4Tavl9fmkJ6NMqfdji5UxKAKAMvYQ5I2Z5nvk=
+X-Google-Smtp-Source: AGHT+IGztvS3EO/cNIRYVGvR4DZ8zwLuITrFfy/EcAWJFbzbd68GMfyHQ8W0cNkfgVipNkMiDx6l2VYQHC3kXlqK76Q=
+X-Received: by 2002:a05:600c:34cc:b0:46e:3550:9390 with SMTP id
+ 5b1f17b1804b1-46fa9af18ffmr13448945e9.20.1759902306398; Tue, 07 Oct 2025
+ 22:45:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250924145552.55058-1-sidharthseela@gmail.com> <c87d45dc-d545-4359-9e2f-11e43a45859f@linuxfoundation.org>
-In-Reply-To: <c87d45dc-d545-4359-9e2f-11e43a45859f@linuxfoundation.org>
-From: Sidharth Seela <sidharthseela@gmail.com>
-Date: Wed, 8 Oct 2025 09:07:00 +0530
-X-Gm-Features: AS18NWAJtkfAkiglYcQF83q4sQMGaqHzh0wb2Unau5kJ3UCJfzcYdxQwGuDuKzM
-Message-ID: <CAJE-K+A_xFPPDbPFQiOwH5nUJdrrGHxvV9xVppXWTNJ5g2bUHw@mail.gmail.com>
-Subject: Re: [PATCH RESEND] clk: at91: sam9x7: Use kmalloc_array() instead of kmalloc()
-To: Shuah Khan <skhan@linuxfoundation.org>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, nicolas.ferre@microchip.com, 
-	alexandre.belloni@bootlin.com, claudiu.beznea@tuxon.dev, 
-	varshini.rajendran@microchip.com, linux-clk@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	david.hunter.linux@gmail.com
+References: <20250925151648.79510-1-clamor95@gmail.com> <3665995.U7HbjWM52l@senjougahara>
+ <CAPVz0n3CrVufs8vbw8XnYuwoZoQ2Xsi3V4HimgT0=4RQySzvaw@mail.gmail.com>
+ <3862885.G96rZvMJ2N@senjougahara> <CAPVz0n2shn41h4z4PoMdtCXzj+96ak69TCqt7Ag5qpqdWi6UWA@mail.gmail.com>
+ <DDBGU9ELXIAW.1RLHSNOPVR9B3@bootlin.com> <CAPVz0n3EB-tw0af+O4acmbvXNHkH62t5v3r3O0nedLs_XJ39PA@mail.gmail.com>
+ <DDCCDQMTQG55.1K25Y3U0JE15Q@bootlin.com>
+In-Reply-To: <DDCCDQMTQG55.1K25Y3U0JE15Q@bootlin.com>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Wed, 8 Oct 2025 08:44:54 +0300
+X-Gm-Features: AS18NWDLUfrT6G2ttxsWBntZhVB5Szu88XFWQNFiBezo9FYR32OuHM_dRjRAWzM
+Message-ID: <CAPVz0n2y230JejNiTk3yT_6voauX1REu=fx21pFbsBByo=X2aA@mail.gmail.com>
+Subject: Re: [PATCH v3 15/22] staging: media: tegra-video: tegra20: simplify
+ format align calculations
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc: Mikko Perttunen <mperttunen@nvidia.com>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Sowjanya Komatineni <skomatineni@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Linus Walleij <linus.walleij@linaro.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?UTF-8?Q?Jonas_Schw=C3=B6bel?= <jonasschwoebel@yahoo.de>, 
+	Dmitry Osipenko <digetx@gmail.com>, Charan Pedumuru <charan.pedumuru@gmail.com>, 
+	Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>, Aaron Kling <webgeek1234@gmail.com>, 
+	Arnd Bergmann <arnd@arndb.de>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-media@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-staging@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 8, 2025 at 2:36=E2=80=AFAM Shuah Khan <skhan@linuxfoundation.or=
-g> wrote:
-> This following line doesn't belong in commit log.
+=D0=B2=D1=82, 7 =D0=B6=D0=BE=D0=B2=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 22:37=
+ Luca Ceresoli <luca.ceresoli@bootlin.com> =D0=BF=D0=B8=D1=88=D0=B5:
+>
+> Hello Svyatoslav,
+>
+> On Tue Oct 7, 2025 at 6:02 PM CEST, Svyatoslav Ryhel wrote:
+> > =D0=BF=D0=BD, 6 =D0=B6=D0=BE=D0=B2=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 2=
+1:55 Luca Ceresoli <luca.ceresoli@bootlin.com> =D0=BF=D0=B8=D1=88=D0=B5:
+> >>
+> >> Hello Svyatoslav,
+> >>
+> >> On Thu Oct 2, 2025 at 8:20 AM CEST, Svyatoslav Ryhel wrote:
+> >> >> > > > 12 represents amount of bits used per pixel, 8 for Y plane, 2=
+ for U
+> >> >> > > > plane and 2 for V plane, total is 12. "but explainable with a=
+ comment
+> >> >> > > > and improve-able later" why then we cannot use 12 with a comm=
+ent? this
+> >> >> > > > is all arbitrary. Downstream is not wrong from this perspecti=
+ve, you
+> >> >> > > > don't take into account that YUV420 is planar and it uses 3 p=
+lanes a
+> >> >> > > > whole Y plane and 1/4 of U and V which in total results in wi=
+gth + 2 *
+> >> >> > > > 1/4 width which is width * 3/2
+> >> >> > >
+> >> >> > > Yes -- but AIUI, the only thing the bpp value is used for the b=
+ytesperline calculation. When we add the special case for planar formats, w=
+hich doesn't use the bpp value, then the value 12 is never used anywhere. W=
+e should at least have a comment saying it is unused. (At that point, we co=
+uld just hardcode the bpp values in the fmt_align function -- but I don't m=
+ind either way.)
+> >> >> > >
+> >> >> > https://ffmpeg.org/pipermail/ffmpeg-user/2023-June/056488.html
+> >> >>
+> >> >> I understand very well that for YUV420, each pixel has 12 bits of c=
+olor information. But how many bits of color information each pixel has is =
+not useful in the context of this driver. The number of bytes per line is n=
+ot related to how many bits of color information each pixel has for planar =
+formats.
+> >> >
+> >> > No, it has direct impact. This is how buffer size / image size is
+> >> > calculated since we place each plane consecutive. And bytes per line
+> >> > is used specifically in image size calculation. This is common part
+> >> > with non-planar formats. Then since Tegra provides a dedicated
+> >> > channels/buffers for each plane, configuration of planar format
+> >> > includes an additional step with calculation for each plane.
+> >>
+> >> Sorry, I haven't followed the discussion in detail, but I tested you s=
+eries
+> >> on Tegra20 VIP and capture does not work, with a SIGSEGV in
+> >> gstreamer. Bisecting pointed to this as the first commit where the iss=
+ue
+> >> happens.
+> >>
+> >> I compared the input and output values of tegra20_fmt_align() at this
+> >> commit and at the previous one, and this is the result:
+> >>
+> >>                        before this patch     with this patch
+> >>   At function entry:
+> >>   bpp                        1                     12
+> >>   pix->width                 640                   640
+> >>   pix->height                480                   480
+> >>
+> >>   On return:
+> >>   pix->bytesperline          640                   960
+> >>   pix->sizeimage             460800                460800
+> >>
+> >> I hope these info will help.
+> >
+> > Which command did you use? I have tested with ffmpeg and
+> > yuv422/yuv420p and it worked perfectly fine.
+>
+> I have a simple testing script that runs these commands, with
+> VNODE=3D"/dev/video0":
+>
+> v4l2-ctl -d ${VNODE} --set-ctrl horizontal_flip=3D1 --set-ctrl vertical_f=
+lip=3D1
+>
+> gst-launch-1.0 -ve v4l2src device=3D${VNODE} num-buffers=3D500 \
+>   ! video/x-raw,width=3D640,height=3D480,framerate=3D50/1,format=3DI420 \
+>   ! videorate drop-only=3Dtrue skip-to-first=3Dtrue \
+>   ! video/x-raw,framerate=3D50/4 \
+>   ! queue \
+>   ! avenc_mpeg4 \
+>   ! mp4mux \
+>   ! filesink location=3D/tmp/grab.mp4
+>
+> Luca
 
-This was one of my early patches. It won't happen again.
+I can reproduce what you are observing. ok, I will drop this commit.
 
-> Can you add details on how you tested this patch and also how
-> you found the problem to begin with.
-
-I used grep to find instances of kmalloc and went through the ones
-with size calculations inside them.
-I did compile testing, My mistake, I forgot to add request for test.
-I would like to retract this patch for the same.
-
---=20
-Thanks,
-Sidharth Seela
-www.realtimedesign.org
+> --
+> Luca Ceresoli, Bootlin
+> Embedded Linux and Kernel engineering
+> https://bootlin.com
