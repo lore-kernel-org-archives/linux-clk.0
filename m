@@ -1,125 +1,169 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09E3F25782F;
-	Thu,  9 Oct 2025 10:49:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8976B2D77FF
+	for <linux-clk@vger.kernel.org>; Thu,  9 Oct 2025 13:03:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760006987; cv=none; b=N8OybhXT5FHaOg3KWOC93yKmbkxZ8zSqKl+evjkhNxYScDjfIcZ1oijwrN5H1lNc4iQvpPVndJONoP2wuc+kTXv/YkTnW7Ce8s6DUTvAhQ6JMN/3jgdeBHtO6Jz/JqaT2999+c1+mf3Kuzh7+eZdeW6u265hgtosnCrcm2OkPRM=
+	t=1760015019; cv=none; b=QXWdqYzJdAR+O8WX1kT0um3Ie6JAiQUiaSaJMIYMg/d53Y4USr1AcbcydZy88C5ZzuW6lyD+BAKFKEUPCzL5YbO/AsKFgCG3+a32fYXA9rVmMMHRa60sw/4Zizr4GoblISGKwgMDbCe072QerEHlbB6Ao2Xb27TG+G+9M3B9KIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760006987; c=relaxed/simple;
-	bh=3VZrqPhhrNXEy/mRlhhDhNRBMVFExI8o2W9EJEEHd6E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kxu+YqNGVvg42NN3T7QCE75NHB/cpMhaX/uOXRXC1R/LfAqsVbW+dY03tJKqP7GFJL/BmE90yGlrM76SnNdOpc+7UyusZ/I7XndvO5UH3RyCgiBGbe/CrFC4kJiKoWnb+gyFOwb2U0DI7Rgtn/e8sDDRp10dsD+JliP7xCfr+do=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M197fa8R; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1760015019; c=relaxed/simple;
+	bh=4bGkbKr/BNDRtyM3ktButr5lP4Fuyu+QNRcAebYeltA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SAPyPmhO5fWY2jnBQL+dw9QLB+mNmu9rCjM3Z9kCKe+gYz03WmGlSKQpH4IcSORG910uo6RL/oPxPnHbR5whplt83/5PyDgTDaFZcPLTnH9asAUb/T/0cvbmIwhK06AKWIWZbfTO9/HxYkM7A4YnMvtjFK10+HECsU1HIj9XG58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SXQYosKY; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M197fa8R"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7FE0C4CEE7;
-	Thu,  9 Oct 2025 10:49:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760006986;
-	bh=3VZrqPhhrNXEy/mRlhhDhNRBMVFExI8o2W9EJEEHd6E=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=M197fa8RRsw263fxtDR0T4Dhoal4cN9+7A2grnCGtAF+MV0GdTvANntezKTJlXldM
-	 ov5fui9nz4IJ1CNdK2DVR5l0rM9+htwGDSbS8zxNdNq062oQZyKtT+OhXGMxkfjEf1
-	 N9PVCJH8+FEHj7tVfGcRJyAbwgEJQWtFWwkhLESe28IHHD9EMgw/uWz4bZEuYJ6eAV
-	 CV1TMT96WDGhGdewd/+OGGycye6dWiCi6MimXErAdDkKicQLKsQrJnxx5NSOr0m8BL
-	 42GhOxv5Xmzwencch/oCOHvLgv1BUK8CE5gOfbGkKltKpNRhOiMHfGQQFrTfsQZi3s
-	 TcI5czSlC7JEQ==
-Message-ID: <23cf6dad-1162-429d-8cdc-5fc6aa7757a8@kernel.org>
-Date: Thu, 9 Oct 2025 19:49:36 +0900
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SXQYosKY"
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3ee1221ceaaso757434f8f.3
+        for <linux-clk@vger.kernel.org>; Thu, 09 Oct 2025 06:03:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760015015; x=1760619815; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Zla+EsFG4nzRnArXGImEQSCTyHGK3J4mv7lfg4FYjWQ=;
+        b=SXQYosKYU7Rih933lGVfSxkmWUdJhkFRZUGjdT9lLxhgsR7f96KI6JMXx0/vOaYWEi
+         xU7lS+DINxfSgmKirH7hrymeofS1pBKWvGaTCLlfzc41SJ3JZjJKT2E1bZ6iTGgZBfTi
+         4S/cDY8QN/dzJvCKbcz7Gy0a1Kp3+Cz7K+QVE33lqBIqfYYp6zd3459vcKQzovfKdu4w
+         mugYaXZdcCRIW+hncb5NOvIGRQKc3H4FNb1ApTTrnRyh0hLLgQML6y1Id7+jknWKgAPy
+         77O1hX99LUU6xi6cygYZH/GNeXYigF7lug/T1KgvWGx9XUVbRiZGheBRwN/h4o2ViEij
+         ZxBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760015015; x=1760619815;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Zla+EsFG4nzRnArXGImEQSCTyHGK3J4mv7lfg4FYjWQ=;
+        b=wigP9BaDnPANKOFvoDIV5g4dpas4VOxaYxSr3Q+OsJuZw6ZWKW14ThGgEdH1rEHMco
+         HCnrR1ea7fmihi6j5iC1j64NlyxA/gHR1M+H29BkBvvL+vV6NeQMvEfz7JQP5kPz+Fnd
+         54427ykpe8pwOsjx98ZJK82AyOlEXDSzFi+lmGCWpaJgZ1OwGdTuaHivLkaBjXCXOBP8
+         RffsANNo7ugoxl1BODpiHDYXiKNbnXylPv5TyATn8s7NQ/s1E/S9otJ1RN4C5KD9bIcR
+         Unru9oJxnJoEy6RP11giI7pmXCQpIxvTx9sq2FEACRaIdRdGbts5nJWW71iJ96296Cza
+         RjIg==
+X-Forwarded-Encrypted: i=1; AJvYcCUpSy5JVzQw8X2n8OPPxXSy2N0/pl73QVRlkOE6Nuszuyf79oG4/J5CMOZjJO339Wwd+CYaQ+E4enk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyspr3ozUbkx3GHmiv512JivugDDOHRlg0e85Ai8z7SxsFpi1tS
+	ZOyp/EyBX8MNT+xYe53dk5WPKPdgKwAg8prSQyBGhJ0hf2VAOafmv/m97O7uEYQ0L6iALKMfsmf
+	TzUz5KdKN32IFLdI6/ErdBVLJQPULNQA=
+X-Gm-Gg: ASbGncse/2PPPU72J/9OmbeiEzJZxJyXVty2gt3I88VuYzEMuMvivUJ+LENQJha/RHz
+	48Dc94H96Bha1ZG6Men1N8TBYwP7Z4h++2JlAJ1AyLEmDn3ZU+8XXdIYbUhBMaEmx+n9hbsTsZx
+	R5IE+MU8ABzUYPGVUA1o0WIzxD+eh4Oo5UwmDEoYsSmHvaCWkrLDcG1pztl0ETnJ2ZQhFSAb31t
+	aTHmHW52Ro7ITHtkb2HZcUecxy57HgHiagxpuQ1lZZOv8+N0oS4BZjKRUvLDPv6iy1Z+8YHO+Y=
+X-Google-Smtp-Source: AGHT+IG/ELPHmCCIZvciJbhA0k36idMhkGgCEPRr06+VPS042eX0V2JX9JR4zJTZ7TPW7Buub8nsqgeW9JGjesjwXe0=
+X-Received: by 2002:a05:6000:2681:b0:413:473f:5515 with SMTP id
+ ffacd0b85a97d-4266e8dd718mr4549664f8f.48.1760015014251; Thu, 09 Oct 2025
+ 06:03:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/9] dt-bindings: clock: qcom: Add Kaanapali video clock
- controller
-To: Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>,
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
- Jagadeesh Kona <quic_jkona@quicinc.com>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Taniya Das <taniya.das@oss.qualcomm.com>,
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, aiqun.yu@oss.qualcomm.com,
- tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com,
- yijie.yang@oss.qualcomm.com
-References: <20250924-knp-mmclk-v1-0-d7ea96b4784a@oss.qualcomm.com>
- <20250924-knp-mmclk-v1-4-d7ea96b4784a@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250924-knp-mmclk-v1-4-d7ea96b4784a@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20251002161728.186024-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20251002161728.186024-7-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdUugFOOvHqjRyoPErh6rqpVuAS_Yr6mGqerKT0VQ-Y6KQ@mail.gmail.com>
+In-Reply-To: <CAMuHMdUugFOOvHqjRyoPErh6rqpVuAS_Yr6mGqerKT0VQ-Y6KQ@mail.gmail.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Thu, 9 Oct 2025 14:03:06 +0100
+X-Gm-Features: AS18NWB5J7UqnUnaUM9kOBg5egFn9pDXfiyyxgzQNRfPJ7AfsT8nEGf8oxH6wq0
+Message-ID: <CA+V-a8t7AQH5LpJaMgq9FUnA6qiUH=d5ngp0qr523BUWu88d+A@mail.gmail.com>
+Subject: Re: [PATCH v9 6/6] drm: renesas: rz-du: mipi_dsi: Add support for
+ RZ/V2H(P) SoC
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Biju Das <biju.das.jz@bp.renesas.com>, Magnus Damm <magnus.damm@gmail.com>, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 25/09/2025 08:56, Jingyi Wang wrote:
-> From: Taniya Das <taniya.das@oss.qualcomm.com>
-> 
-> Add device tree bindings for the video clock controller on Qualcomm
-> Kaanapali SoC.
-> 
-> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
-> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-> ---
+Hi Geert,
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Thank you for the review.
 
-Best regards,
-Krzysztof
+On Mon, Oct 6, 2025 at 1:49=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68k=
+.org> wrote:
+>
+> Hi Prabhakar,
+>
+> On Thu, 2 Oct 2025 at 18:17, Prabhakar <prabhakar.csengg@gmail.com> wrote=
+:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Add MIPI DSI support for the Renesas RZ/V2H(P) SoC. Compared to the
+> > RZ/G2L family, the RZ/V2H(P) requires dedicated D-PHY PLL programming,
+> > different clock configuration, and additional timing parameter handling=
+.
+> > The driver introduces lookup tables and helpers for D-PHY timings
+> > (TCLK*, THS*, TLPX, and ULPS exit) as specified in the RZ/V2H(P) hardwa=
+re
+> > manual. ULPS exit timing depends on the LPCLK rate and is now handled
+> > explicitly.
+> >
+> > The implementation also adds support for 16 bpp RGB format, updates the
+> > clock setup path to use the RZ/V2H PLL divider limits, and provides new
+> > .dphy_init, .dphy_conf_clks, and .dphy_startup_late_init callbacks to
+> > match the RZ/V2H sequence.
+> >
+> > With these changes, the RZ/V2H(P) can operate the MIPI DSI interface in
+> > compliance with its hardware specification while retaining support for
+> > existing RZ/G2L platforms.
+> >
+> > Co-developed-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+> > Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > Reviewed-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+> > ---
+> > v8->v9:
+> > - Updated Kconfig to select CLK_RZV2H
+> > - Updated to use renesas.h
+> > - Added reviewed-by tag from Tomi
+>
+> Thanks for the update!
+>
+> > --- a/drivers/gpu/drm/renesas/rz-du/Kconfig
+> > +++ b/drivers/gpu/drm/renesas/rz-du/Kconfig
+> > @@ -19,6 +19,7 @@ config DRM_RZG2L_USE_MIPI_DSI
+> >         depends on DRM_BRIDGE && OF
+> >         depends on DRM_RZG2L_DU || COMPILE_TEST
+> >         default DRM_RZG2L_DU
+> > +       select CLK_RZV2H
+>
+> As the kernel test robot has already told you, this is not a good idea.
+> RZ/V2H support is optional, just rely on (dummy) rzv2h_get_pll_*()
+> helpers returning false if CLK_RZV2H is not enabled.
+>
+Agreed, I will add static inline helpers in renesas.h if !CLK_RZV2H.
+
+Cheers,
+Prabhakar
+
+> >         help
+> >           Enable support for the RZ/G2L Display Unit embedded MIPI DSI =
+encoders.
+> >
+>
+> Gr{oetje,eeting}s,
+>
+>                         Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m6=
+8k.org
+>
+> In personal conversations with technical people, I call myself a hacker. =
+But
+> when I'm talking to journalists I just say "programmer" or something like=
+ that.
+>                                 -- Linus Torvalds
+>
