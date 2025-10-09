@@ -1,251 +1,226 @@
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AA16EAF9
-	for <linux-clk@vger.kernel.org>; Thu,  9 Oct 2025 07:33:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0382D2C027C
+	for <linux-clk@vger.kernel.org>; Thu,  9 Oct 2025 07:59:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759995218; cv=none; b=QkyZoWqN3VNdnBPAb3xETx6A8rLRVNKQ9RRwWvO1TlFuwNyQLji6AE75UFwHABg/gf3+zPwkr0Ehmx7f1nQaZ1cldyNk231VU4lrfdEkLhfouDm5lN1RKSNXAyLnSlow01go4FCtfSHD9EDnJF+WXNlwiJbtDfjxPqwjyJEbR+o=
+	t=1759996767; cv=none; b=ENuejx8TeFVsKRhwjJu7fxsdJy3jCBKI2PvS658yMbN3yc7WA91yFtKltQyyTmQvXFcn7iJCbRY2xdezbnpeuLRwR0n1kWtjMcDVTI3vp70/iYfKF2vQ4vyzbUSDSS4BSCk8r+YU7/7wCFEQ8ZRStpNNbpLDl39eUbh8UgQnjBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759995218; c=relaxed/simple;
-	bh=G8OoxQLaFK2PaPDhEJDRVm1b1vFwiUVvBv4LPzwja2g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HmLZSCNZs1cWBlOmMhjIyp+io8cbUDlrssG0CqaokbIafdcz8BkMcJriH4wQ9VOSzETiOsXijY+jlpIZq3ZNnmv/d2gOVcKIZE5ftAbkzF6SdFhTw+yS6iZqEYGOE4jcJsIeHOLnuXLkZxOInyW6hKcITzw8DPI8ZZ132/29tQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=jFGnBWyj; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	s=arc-20240116; t=1759996767; c=relaxed/simple;
+	bh=r+EYS8LJHH5JzPOJqQR2JJIXOzlbTKM/eKWn1ocsvTc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=dLSu+BR85LYH/AyAJT/aNLeXCW9Jw67BA7pQVbcKH/SZfdcAKP/dV73twJ3ZAtQfPsTOfuusW9HHRCOE6wkI1YwBEFz0Mh0LcIAlBe+bbz+pTWI6DF/YhzzLl+cVBcPYAbswjEQXaokxoIf/APqAobIr5aBf3LGeGw9Y7UQnGCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=sVVYuFPc; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jFGnBWyj"
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-3635bd94f3eso5152371fa.0
-        for <linux-clk@vger.kernel.org>; Thu, 09 Oct 2025 00:33:35 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="sVVYuFPc"
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3fa528f127fso518400f8f.1
+        for <linux-clk@vger.kernel.org>; Thu, 09 Oct 2025 00:59:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1759995213; x=1760600013; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1759996763; x=1760601563; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:user-agent
+         :references:in-reply-to:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=NATA04lG9cqYNuKN4V/mGz7RayXhel8O3qk+QILIDN0=;
-        b=jFGnBWyjp8PPlIsG3UmFz50ei1x5BzvUhm1lYGWJkUwbSh+M/jmRzjeqXlEZ0iglKw
-         PPbKitcRVD8+tucaDaoWNlLeTkG+7KOk3FmGZVujJ60+Ao2vCwouNXiYwc69PO5M/hho
-         oMgeZv1oihZa/K5+XiuWeldp4WSVIGlLigJFQ=
+        bh=utVwjhO8Z9nfTT7T332+x9pXtf82IVN0SHJivYwFQFM=;
+        b=sVVYuFPculI/UNQcEflmywDrpyCbr8lR1xv5hBdmnW5WdOWjiY26tYe5wDDO4lN0qO
+         95TQDUEpgOH/wDss3vfVlT7ZhXWxzmXU1rJ4WU457wtdc0PIux0+MljPtDCXlzvq/KBy
+         hVpS8orG4uPjQ86ZDFn1wPmGgk+GgLJEyQNcHw3L9u/2ThmmVHMnqIqVfTFWjKTCYeNO
+         ucrfeuFrluMR0rXg1uJnq4ssXXzwK52f2hYzZRYUlXMqUyr8O0b70xYKvZiAteCD/dMu
+         X5NMdr+HSF0dE+HbP37L2rh++2QMraOwr23n/F23tnKBOwYCNQkgj/FoG32LuXybCHe6
+         c56w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759995213; x=1760600013;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NATA04lG9cqYNuKN4V/mGz7RayXhel8O3qk+QILIDN0=;
-        b=Qk7FrzK3Zd5elzApNSai6R//bSd5NeWSl085DtS39yw3t69KBtDesFICndwOgJxKjn
-         ghGMvfdELunKOm/aWj0lvlcvl92lXGKTlIuhKRmJIe7Ejfr/3yf2r+4RR0d8rd6FbVNT
-         bVqw9mxWmMmV1sw2PBTH6nyCdGpfHAVAvFUcHMnbn1mltmS6iJbKHJM1WUq6O/vn/taJ
-         sjMimu95zeeHAYCrFmXn9QFNsQkug24caeZimqwpDDSFS30QvdN0hJUZFCAGAyC40SoM
-         99ofR6iAWFi/an3D4Oo4YgRi/BPdsMV7OzeZ86NBtb9ZkqGZ8Y3x9YdfhWKsRxxotN8Y
-         P+DA==
-X-Forwarded-Encrypted: i=1; AJvYcCWhMMItvmdi7HwplqNoUJofVI9oyYFNQh3E5iEGJuCaciRTit3zvP38QhPPpZ7nA11GrsOoAPzIR/Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2taKpO3FDzf7TWXzz2/l7kd4a53jeEPdt9seSfCjnJrBiuJm+
-	FBMyz+rbOb/XkKQanFmUwFAF5AjGMpfq7hXnZ8j2admyumW8BucHlGbDOYxfQjdZ4+avmEzpjeW
-	vja0QnJcxTyWiqJnszd7E80UHVKxSe2lQi1++yW4cI6BOozC78Os=
-X-Gm-Gg: ASbGncu5ODvp8kkaUGAJXcpeJKVGeG0DsiBxYxzW1VE0wIOY499bJJ73Z/ycwGPdU6R
-	+fU6rWAPIKOK7X4H3j7MlWzf1Zuaxu8hhbkn2uFDDCNDRJzU5dg1GRezn/qzzdXDCwrBUHGZcdN
-	ein5RMvLvppZvlkDm739d0vTrlDdfZJgOVlwmW8v6mpRLjZnlzZ/3ORTdB6TDHX5T3Y/dVj3CJa
-	xRa8StApbvKeyTgfgW26OIBeyX8BZm3E2dNe4XSnC0+KeNDARXuw7NnFZKOQA==
-X-Google-Smtp-Source: AGHT+IF6m8ACDaU9hzMk8xdqL2Q2Hbks2uUt6Iy3PDX+KKlJyzdC/zfk13eIYMHbsDIcLqn07l/Zwc+Zn356g2up4Tk=
-X-Received: by 2002:a2e:be9a:0:b0:337:f1d7:d500 with SMTP id
- 38308e7fff4ca-37609d953b8mr16127351fa.18.1759995213025; Thu, 09 Oct 2025
- 00:33:33 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1759996763; x=1760601563;
+        h=content-transfer-encoding:mime-version:message-id:date:user-agent
+         :references:in-reply-to:subject:cc:to:from:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=utVwjhO8Z9nfTT7T332+x9pXtf82IVN0SHJivYwFQFM=;
+        b=epVye1C/ukyBFDTfFYfBep9KnpdQuD5h1tTKx2Qv98welHXwOod5iByWwca8IyuY9F
+         HHY/9JUgIKBh0TkeBk+VhDICs8JXOQgpi9/L30Vx/yX6lzFtVE4H8FejR2GPtiqGy5Ry
+         SVPdv4+CocVw+miSWPU02YW61CBPo3NTLllbRI2Q1RQQRnRxcE9jNTHwhftfIrsACn57
+         jFC1Jfp/Sys1kzr5QjJWECpJ+y1GKi3v3vAmdQ8OCuSzHbSves/64vjCq0BL+VEcGcnS
+         Zwyrj1i8CZJtiNMD9ehBpylTJE+f+uEh2v++xlKNT+m/WpI83L/OBk+ucaze6f/P9khS
+         NObQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWGMp2U2m54BB3HBzEHNHWwKM14j8oHPD322SOYQ6rW6tq4dZYb9LPV9qrJwLU32xcnnoiarrr1Q58=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxno75IohbuS2a4ptil2EqkfTsmv/1YMRQa8icHYb5/88061Jj3
+	zLn2oS+n1nD2QPjj1wzNFfO/KhUeerBncnujBankxYYlp/iV/uwgbkibW1iyG1AqptE=
+X-Gm-Gg: ASbGncvZPp6Ce7ZJ1ThmOb0wcquv7iuB7GqL4xmxgtWSVhpfT1mmnrB2/ZScODNedKY
+	RzQwEC/Dfqmz2Y9IhcZYAt1sqgDIZTAhAilrj+7ZGLY4tpj+UpmRuZU+aWKpa3WnmB3r6OFkfbi
+	RV0CqgHUrp8bSqk0UDzLdX9trX/oCc7ajAoMi+jDJMTS65K9DJFawkcBN81a5S/aJVGffvw6AJz
+	FK9rgHZv+KxPj4fZLH/zBf7ZtmL3JJc/KdvRmZOT4iV17J7BlIucDwgcn9sLKCI1mK4UCNUsB1a
+	uLK0TgZ6GBdRQ2N/YqqUO7tX6Ani35y51DND6rB42BhIJ35u4n9ErJUcyMMNV7xVi9Dq2R5ekCY
+	DVLAMpZffMxYy8qySmvIuoVUfHCMX1n+Qz0/vrbZQNTUhPOJpuHasAG2R
+X-Google-Smtp-Source: AGHT+IG5pvNgDMJPTKAtRd4veVO0FFUkU2pJXXO+YNn1lCJbx4D7Y9oh8jCMqxVVxc+i8Y4GbC2AVA==
+X-Received: by 2002:a05:6000:2c02:b0:401:ae97:a1ab with SMTP id ffacd0b85a97d-42666aa67f9mr4871037f8f.10.1759996763143;
+        Thu, 09 Oct 2025 00:59:23 -0700 (PDT)
+Received: from localhost ([2a01:e0a:3c5:5fb1:1753:6135:be55:f8ab])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-4255d8ab8fdsm32990864f8f.15.2025.10.09.00.59.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 Oct 2025 00:59:22 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Chuan Liu <chuan.liu@amlogic.com>
+Cc: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>,
+  Michael Turquette <mturquette@baylibre.com>,  Stephen Boyd
+ <sboyd@kernel.org>,  Rob Herring <robh@kernel.org>,  Krzysztof Kozlowski
+ <krzk+dt@kernel.org>,  Conor Dooley <conor+dt@kernel.org>,  Neil Armstrong
+ <neil.armstrong@linaro.org>,  Kevin Hilman <khilman@baylibre.com>,  Martin
+ Blumenstingl <martin.blumenstingl@googlemail.com>,
+  linux-kernel@vger.kernel.org,  linux-clk@vger.kernel.org,
+  devicetree@vger.kernel.org,  linux-amlogic@lists.infradead.org,
+  linux-arm-kernel@lists.infradead.org,  Xianwei Zhao
+ <xianwei.zhao@amlogic.com>
+Subject: Re: [PATCH 00/19] clk: amlogic: Add PLLs and peripheral clocks for
+ A4 and A5 SoCs
+In-Reply-To: <b8105d25-112c-4406-9f3a-8fbbd0754b26@amlogic.com> (Chuan Liu's
+	message of "Thu, 9 Oct 2025 11:09:25 +0800")
+References: <20250930-a4_a5_add_clock_driver-v1-0-a9acf7951589@amlogic.com>
+	<1jv7kz3w1p.fsf@starbuckisacylon.baylibre.com>
+	<b8105d25-112c-4406-9f3a-8fbbd0754b26@amlogic.com>
+User-Agent: mu4e 1.12.9; emacs 30.1
+Date: Thu, 09 Oct 2025 09:59:22 +0200
+Message-ID: <1jh5w84iat.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251008-mtk-pll-rpm-v2-0-170ed0698560@collabora.com> <20251008-mtk-pll-rpm-v2-4-170ed0698560@collabora.com>
-In-Reply-To: <20251008-mtk-pll-rpm-v2-4-170ed0698560@collabora.com>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Thu, 9 Oct 2025 15:33:22 +0800
-X-Gm-Features: AS18NWDCKGPR4MxJLy6Y5o4fyCGycMwSUzGQZN0AhucPrjjtAqoX3WiLmZowTiU
-Message-ID: <CAGXv+5Hpndq09cbudofSvkNE6w+tHb85VCqDb3P920S8vwonHQ@mail.gmail.com>
-Subject: Re: [PATCH v2 4/5] clk: mediatek: Refactor pllfh registration to pass device
-To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Dong Aisheng <aisheng.dong@nxp.com>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	Yassine Oudjana <y.oudjana@protonmail.com>, Laura Nao <laura.nao@collabora.com>, 
-	=?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>, 
-	Chia-I Wu <olvaffe@gmail.com>, kernel@collabora.com, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org, Stephen Boyd <sboyd@codeaurora.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 9, 2025 at 12:06=E2=80=AFAM Nicolas Frattaroli
-<nicolas.frattaroli@collabora.com> wrote:
->
-> After refactoring all of PLL to pass the device, it's now fairly easy to
-> refactor pllfh and its users, as pllfh registration wraps PLL
-> registration.
->
-> Do this refactor and move all of the pllfh users to pass the device as
-> well.
->
-> Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-> ---
->  drivers/clk/mediatek/clk-mt6795-apmixedsys.c |  2 +-
->  drivers/clk/mediatek/clk-mt8173-apmixedsys.c | 14 +++++++-------
->  drivers/clk/mediatek/clk-mt8186-apmixedsys.c |  2 +-
->  drivers/clk/mediatek/clk-mt8192-apmixedsys.c |  2 +-
->  drivers/clk/mediatek/clk-mt8195-apmixedsys.c |  2 +-
->  drivers/clk/mediatek/clk-pllfh.c             | 13 ++++++++-----
->  drivers/clk/mediatek/clk-pllfh.h             |  2 +-
->  7 files changed, 20 insertions(+), 17 deletions(-)
->
-> diff --git a/drivers/clk/mediatek/clk-mt6795-apmixedsys.c b/drivers/clk/m=
-ediatek/clk-mt6795-apmixedsys.c
-> index 91665d7f125efde4941cc4de881c5b503a935529..123d5d7fea8554676364dc56f=
-5c023e43325d516 100644
-> --- a/drivers/clk/mediatek/clk-mt6795-apmixedsys.c
-> +++ b/drivers/clk/mediatek/clk-mt6795-apmixedsys.c
-> @@ -152,7 +152,7 @@ static int clk_mt6795_apmixed_probe(struct platform_d=
-evice *pdev)
->                 return -ENOMEM;
->
->         fhctl_parse_dt(fhctl_node, pllfhs, ARRAY_SIZE(pllfhs));
-> -       ret =3D mtk_clk_register_pllfhs(node, plls, ARRAY_SIZE(plls),
-> +       ret =3D mtk_clk_register_pllfhs(dev, plls, ARRAY_SIZE(plls),
->                                       pllfhs, ARRAY_SIZE(pllfhs), clk_dat=
-a);
->         if (ret)
->                 goto free_clk_data;
-> diff --git a/drivers/clk/mediatek/clk-mt8173-apmixedsys.c b/drivers/clk/m=
-ediatek/clk-mt8173-apmixedsys.c
-> index 95385bb67d5511eda3a851f81986e67eaf81e5fb..d7d416172ab35bc027ae67c16=
-3c1dc20dee857b6 100644
-> --- a/drivers/clk/mediatek/clk-mt8173-apmixedsys.c
-> +++ b/drivers/clk/mediatek/clk-mt8173-apmixedsys.c
-> @@ -140,13 +140,13 @@ MODULE_DEVICE_TABLE(of, of_match_clk_mt8173_apmixed=
-);
->  static int clk_mt8173_apmixed_probe(struct platform_device *pdev)
->  {
->         const u8 *fhctl_node =3D "mediatek,mt8173-fhctl";
-> -       struct device_node *node =3D pdev->dev.of_node;
->         struct clk_hw_onecell_data *clk_data;
-> +       struct device *dev =3D &pdev->dev;
->         void __iomem *base;
->         struct clk_hw *hw;
->         int r;
->
-> -       base =3D of_iomap(node, 0);
-> +       base =3D of_iomap(dev->of_node, 0);
->         if (!base)
->                 return -ENOMEM;
->
-> @@ -157,25 +157,25 @@ static int clk_mt8173_apmixed_probe(struct platform=
-_device *pdev)
->         }
->
->         fhctl_parse_dt(fhctl_node, pllfhs, ARRAY_SIZE(pllfhs));
-> -       r =3D mtk_clk_register_pllfhs(node, plls, ARRAY_SIZE(plls),
-> -                                   pllfhs, ARRAY_SIZE(pllfhs), clk_data)=
-;
-> +       r =3D mtk_clk_register_pllfhs(dev, plls, ARRAY_SIZE(plls), pllfhs=
-,
-> +                                   ARRAY_SIZE(pllfhs), clk_data);
->         if (r)
->                 goto free_clk_data;
->
->         hw =3D mtk_clk_register_ref2usb_tx("ref2usb_tx", "clk26m", base +=
- REGOFF_REF2USB);
->         if (IS_ERR(hw)) {
->                 r =3D PTR_ERR(hw);
-> -               dev_err(&pdev->dev, "Failed to register ref2usb_tx: %d\n"=
-, r);
-> +               dev_err(dev, "Failed to register ref2usb_tx: %d\n", r);
->                 goto unregister_plls;
->         }
->         clk_data->hws[CLK_APMIXED_REF2USB_TX] =3D hw;
->
-> -       hw =3D devm_clk_hw_register_divider(&pdev->dev, "hdmi_ref", "tvdp=
-ll_594m", 0,
-> +       hw =3D devm_clk_hw_register_divider(dev, "hdmi_ref", "tvdpll_594m=
-", 0,
->                                           base + REGOFF_HDMI_REF, 16, 3,
->                                           CLK_DIVIDER_POWER_OF_TWO, NULL)=
-;
->         clk_data->hws[CLK_APMIXED_HDMI_REF] =3D hw;
->
-> -       r =3D of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_dat=
-a);
-> +       r =3D of_clk_add_hw_provider(dev->of_node, of_clk_hw_onecell_get,=
- clk_data);
->         if (r)
->                 goto unregister_ref2usb;
->
-> diff --git a/drivers/clk/mediatek/clk-mt8186-apmixedsys.c b/drivers/clk/m=
-ediatek/clk-mt8186-apmixedsys.c
-> index 4b2b16578232d986f78deed4778c5fab7f460184..d35dd2632e43ab535b32b8b99=
-f8d75de02d56fe2 100644
-> --- a/drivers/clk/mediatek/clk-mt8186-apmixedsys.c
-> +++ b/drivers/clk/mediatek/clk-mt8186-apmixedsys.c
-> @@ -151,7 +151,7 @@ static int clk_mt8186_apmixed_probe(struct platform_d=
-evice *pdev)
->
->         fhctl_parse_dt(fhctl_node, pllfhs, ARRAY_SIZE(pllfhs));
->
-> -       r =3D mtk_clk_register_pllfhs(node, plls, ARRAY_SIZE(plls),
-> +       r =3D mtk_clk_register_pllfhs(&pdev->dev, plls, ARRAY_SIZE(plls),
->                                     pllfhs, ARRAY_SIZE(pllfhs), clk_data)=
-;
->         if (r)
->                 goto free_apmixed_data;
-> diff --git a/drivers/clk/mediatek/clk-mt8192-apmixedsys.c b/drivers/clk/m=
-ediatek/clk-mt8192-apmixedsys.c
-> index 0b66a27e4d5ac68f09dc6a4197fd84ef82342df9..b0563a285bd666d492a7fa940=
-733aad1ab1a0bae 100644
-> --- a/drivers/clk/mediatek/clk-mt8192-apmixedsys.c
-> +++ b/drivers/clk/mediatek/clk-mt8192-apmixedsys.c
-> @@ -162,7 +162,7 @@ static int clk_mt8192_apmixed_probe(struct platform_d=
-evice *pdev)
->
->         fhctl_parse_dt(fhctl_node, pllfhs, ARRAY_SIZE(pllfhs));
->
-> -       r =3D mtk_clk_register_pllfhs(node, plls, ARRAY_SIZE(plls),
-> +       r =3D mtk_clk_register_pllfhs(&pdev->dev, plls, ARRAY_SIZE(plls),
->                                     pllfhs, ARRAY_SIZE(pllfhs), clk_data)=
-;
->         if (r)
->                 goto free_clk_data;
-> diff --git a/drivers/clk/mediatek/clk-mt8195-apmixedsys.c b/drivers/clk/m=
-ediatek/clk-mt8195-apmixedsys.c
-> index 282a3137dc89419a6d0b574fd549cee941687900..44917ab034c56f01ef02d1957=
-f17eb0655438d75 100644
-> --- a/drivers/clk/mediatek/clk-mt8195-apmixedsys.c
-> +++ b/drivers/clk/mediatek/clk-mt8195-apmixedsys.c
-> @@ -181,7 +181,7 @@ static int clk_mt8195_apmixed_probe(struct platform_d=
-evice *pdev)
->
->         fhctl_parse_dt(fhctl_node, pllfhs, ARRAY_SIZE(pllfhs));
->
-> -       r =3D mtk_clk_register_pllfhs(node, plls, ARRAY_SIZE(plls),
-> +       r =3D mtk_clk_register_pllfhs(&pdev->dev, plls, ARRAY_SIZE(plls),
->                                     pllfhs, ARRAY_SIZE(pllfhs), clk_data)=
-;
->         if (r)
->                 goto free_apmixed_data;
-> diff --git a/drivers/clk/mediatek/clk-pllfh.c b/drivers/clk/mediatek/clk-=
-pllfh.c
-> index 62bfe4a480f14a0a742fb094aff0e6d1a79fe0c3..8ad11023d91127e88900bc6bc=
-abbaeafb1e00664 100644
-> --- a/drivers/clk/mediatek/clk-pllfh.c
-> +++ b/drivers/clk/mediatek/clk-pllfh.c
-> @@ -10,6 +10,7 @@
->  #include <linux/slab.h>
->  #include <linux/clkdev.h>
->  #include <linux/delay.h>
-> +#include <linux/device.h>
+On Thu 09 Oct 2025 at 11:09, Chuan Liu <chuan.liu@amlogic.com> wrote:
 
-This shouldn't be needed, as you aren't using any of the APIs.
+> Hi Jerome,
+>
+> =C2=A0 =C2=A0 Thanks for your review, because the national day holidays d=
+id not
+> timely feedback.
+>
+>
+> On 10/1/2025 3:45 PM, Jerome Brunet wrote:
+>> [ EXTERNAL EMAIL ]
+>>
+>> On Tue 30 Sep 2025 at 17:37, Chuan Liu via B4 Relay
+>> <devnull+chuan.liu.amlogic.com@kernel.org> wrote:
+>>
+>>> This patch series includes changes related to the PLL and peripheral
+>>> clocks for both the A4 and A5 SoCs.
+>>>
+>>> The patches for A5 were previously submitted up to V3 by Xianwei.
+>>> https://lore.kernel.org/all/20250103-a5-clk-v3-0-a207ce83b9e9@amlogic.c=
+om/
+>>> After friendly coordination, I=E2=80=99ve taken over and continued the
+>>> submission as part of this series. The dt-bindings patch retains Rob's
+>>> original "Reviewed-by" tag, and I hope this hasn=E2=80=99t caused any
+>>> additional confusion.
+>> ... and yet you restart the versioning of the series making it harder
+>> for people to follow that
+>
+>
+> Sorry for the inconvenience caused. The main changes compared to the
+> previous version by Xianwei are in the driver part.
+>
+> The dt-bindings part only has minor modifications in [PATCH 14/19].
+>
+> The driver part has relatively larger changes because it needs to be
+> based on the code base you previously submitted.
 
-A forward declaration of |struct device| in the header should suffice.
-It should be added anyway, since the header defines data structures that
-have a |struct device *| field.
+I'm not seeing a justification for the mess introduced and I'm not
+looking for one to be honest
 
+>
+>>> Both A4 and A5 belong to the Audio series. Judging by their names, one
+>>> might assume that A5 is an upgrade to A4, but in fact, A5 was released
+>>> a year earlier than A4.
+>>>
+>>> Since there are differences in the PLLs and peripheral clocks between
+>>> the A4 and A5 SoCs (especially the PLL), and taking into account factors
+>>> such as memory footprint and maintainability, this series does not
+>>> attempt to merge the two into a shared driver as was done for
+>>> G12A/G12B/SM1.
+>> ... and we end up with 19 patches series while it could be splitted into
+>> manageable series, for each controller of each SoC
+>
+>
+> I'm not sure if I understood you correctly.
+>
+> Do you mean that I should split this series of 19 patches into multiple
+> patch series and send them separately? For example:
+> serie 1: A4 SCMI clock controller (dt-bindings)
+> serie 2: A4 PLL clock controller (dt-bindings, driver, dts)
+> serie 3: A4 peripherals clock controller (dt-bindings, driver, dts)
+> ... A5 similarly?
 
-ChenYu
+Things that do not actually depends on each other or which are not
+merged through the same tree should not be sent together. There is
+nothing new here. Same basic reminders on each submission.
+
+>
+>
+>>> This patch series includes all related dt-bindings, driver, and dts
+>>> changes for the PLLs and peripheral clocks. Following our past conventi=
+on
+>>> for clock-related submissions, the dts changes are placed at the end
+>>> and submitted separately. If this ordering makes it harder for
+>>> maintainers to review or pick patches, please feel free to point it out.
+>>>
+>>> Co-developed-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
+>>> Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
+>>> Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
+>>> ---
+>>> Chuan Liu (19):
+>>>        dt-bindings: clock: Add Amlogic A4 SCMI clock controller
+>>>        dt-bindings: clock: Add Amlogic A4 PLL clock controller
+>>>        dt-bindings: clock: Add Amlogic A4 peripherals clock controller
+>>>        clk: amlogic: Optimize PLL enable timing
+>>>        clk: amlogic: Correct l_detect bit control
+>>>        clk: amlogic: Fix out-of-range PLL frequency setting
+>>>        clk: amlogic: Add A4 PLL clock controller driver
+>>>        clk: amlogic: Add A4 clock peripherals controller driver
+>>>        arm64: dts: amlogic: A4: Add scmi-clk node
+>>>        arm64: dts: amlogic: A4: Add PLL controller node
+>>>        arm64: dts: amlogic: A4: Add peripherals clock controller node
+>>>        dt-bindings: clock: Add Amlogic A5 SCMI clock controller support
+>>>        dt-bindings: clock: Add Amlogic A5 PLL clock controller
+>>>        dt-bindings: clock: Add Amlogic A5 peripherals clock controller
+>>>        clk: amlogic: Add A5 PLL clock controller driver
+>>>        clk: amlogic: Add A5 clock peripherals controller driver
+>>>        arm64: dts: amlogic: A5: Add scmi-clk node
+>>>        arm64: dts: amlogic: A5: Add PLL controller node
+>>>        arm64: dts: amlogic: A5: Add peripheral clock controller node
+>>>
+>>>   .../clock/amlogic,a4-peripherals-clkc.yaml         | 122 +++
+>>>   .../bindings/clock/amlogic,a4-pll-clkc.yaml        |  61 ++
+>>>   .../clock/amlogic,a5-peripherals-clkc.yaml         | 134 ++++
+>>>   .../bindings/clock/amlogic,a5-pll-clkc.yaml        |  63 ++
+>>>   arch/arm64/boot/dts/amlogic/amlogic-a4.dtsi        |  80 ++
+>>>   arch/arm64/boot/dts/amlogic/amlogic-a5.dtsi        |  87 ++
+>>>   drivers/clk/meson/Kconfig                          |  53 ++
+>>>   drivers/clk/meson/Makefile                         |   4 +
+>>>   drivers/clk/meson/a1-pll.c                         |   1 +
+>>>   drivers/clk/meson/a4-peripherals.c                 | 764 ++++++++++++=
+++++++
+>>>   drivers/clk/meson/a4-pll.c                         | 242 ++++++
+>>>   drivers/clk/meson/a5-peripherals.c                 | 883 ++++++++++++=
++++++++++
+>>>   drivers/clk/meson/a5-pll.c                         | 476 +++++++++++
+>>>   drivers/clk/meson/clk-pll.c                        |  76 +-
+>>>   drivers/clk/meson/clk-pll.h                        |   2 +
+>>>   .../clock/amlogic,a4-peripherals-clkc.h            | 129 +++
+>>>   include/dt-bindings/clock/amlogic,a4-pll-clkc.h    |  15 +
+>>>   include/dt-bindings/clock/amlogic,a4-scmi-clkc.h   |  42 +
+>>>   .../clock/amlogic,a5-peripherals-clkc.h            | 132 +++
+>>>   include/dt-bindings/clock/amlogic,a5-pll-clkc.h    |  24 +
+>>>   include/dt-bindings/clock/amlogic,a5-scmi-clkc.h   |  44 +
+>>>   21 files changed, 3406 insertions(+), 28 deletions(-)
+>>> ---
+>>> base-commit: 01f3a6d1d59b8e25a6de243b0d73075cf0415eaf
+>>> change-id: 20250928-a4_a5_add_clock_driver-2b7c9d695633
+>>>
+>>> Best regards,
+>> --
+>> Jerome
+
+--=20
+Jerome
