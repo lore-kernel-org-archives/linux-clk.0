@@ -1,56 +1,56 @@
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 193DD1E492A
-	for <linux-clk@vger.kernel.org>; Thu,  9 Oct 2025 07:09:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B866222586
+	for <linux-clk@vger.kernel.org>; Thu,  9 Oct 2025 07:19:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759993801; cv=none; b=u8wNRepzPOjHo8w5wBwXqzr97UJRfxpHG3u87vlIIr/Y2HgtKuxFua0nJGQiwh1D6cFP///Z9RJvM3uoBYoDT43mCJ89mR4rOhUQTyCsbLStqia4JiUhshcZFY/ty+naU6TYGxX/Z8e2AY/hfP1R2TsZQG6Q2GSnNML1JWe/jxg=
+	t=1759994382; cv=none; b=MFTSqMSfA1BlTRq+91U/EwD/HyIubCL2sunkAE4aU+Nq1ufnFUOOU7VIGhcRKqUBGBTC0RR6+xePyPq/ZBWnomiUiLZPvqXJXBC1Vcj43IGAHLaXRACEdbfeka7T7wJE5fd9OpacuQjb2kV61lS06Kc4Cndmy1+0k8OLKPzrvvc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759993801; c=relaxed/simple;
-	bh=cCLugtlKER5JKVdxfXmIi5m5k7cSqN7AKwCJ9L732vk=;
+	s=arc-20240116; t=1759994382; c=relaxed/simple;
+	bh=oSwSu7UxNbNkaNtKrVySKYicTsoE7H2TkVuZcXvnVcg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=b7rKk1Z4Qiv+mAGMN0SAWwVIgz+6LCLgqNEg77B+wA8oX3fZmKNhRreuxnZIv/jmUvuvyJxkcFTSYiai2AznlkHIA/FMTdp3C9LagWXevo/+qnKBUD6RqqZL2M9wnZIM33xhlAm8jM4G56MHb8tH1h5sIKH3684qfXnF/sqz9fk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=eQ4QEsnH; arc=none smtp.client-ip=209.85.208.178
+	 To:Cc:Content-Type; b=O5vh40wB+JNRNOnGIqbT1UJHPJ3bLIoJVUUIWtbnUB7TKjmJKjwCZiKxiU8uWLEBvpo5LwehzL5yD8fT56bPryu+J2IyEMc7VjLfUFdu60SCSIyqqUr6xmsWWIsw3V+AduZ6A+tCjlQ/5Ng2TVaT/OA2gADmfUP8nwItMeskziM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=jkomd7Qa; arc=none smtp.client-ip=209.85.167.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="eQ4QEsnH"
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-371e4858f74so7942341fa.1
-        for <linux-clk@vger.kernel.org>; Thu, 09 Oct 2025 00:09:59 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jkomd7Qa"
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-57a59124323so829275e87.2
+        for <linux-clk@vger.kernel.org>; Thu, 09 Oct 2025 00:19:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1759993798; x=1760598598; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1759994378; x=1760599178; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=cCLugtlKER5JKVdxfXmIi5m5k7cSqN7AKwCJ9L732vk=;
-        b=eQ4QEsnHg0aO8w/ehvMcNELyQkHPCwkdywiG8Kcbf0OBKX/cF5VoknNgYeDJF9SCFY
-         3ZEqmodTVzTAWQO2bMqoYMAA4QBsWF7E+Uz0ue+46dE9HQsylYS7s9ZmLZ2i/L9z9nVi
-         Q1qIHlttt3YVRuEDp/myrOTeKT0TMV8joEkgk=
+        bh=5c5+mJ/UHP/9LbfelQ205BO5Ehj3e8KPSEEqoMsr+r0=;
+        b=jkomd7QanJfQL+taGy8affio/Zf0CCSAeUZfKoNGNVLi9zNehO29/+8U9CHcC0x/2J
+         NOzgoEf72XHoZVZ+PIFKq8IlW6Cz744RqexnvLtkWdxZXDjPCW3HRhEwBtiUxU6dZJYL
+         Sol9Qedoun0z+zp3eegSOGa2Ybx1BnM47rRVw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759993798; x=1760598598;
+        d=1e100.net; s=20230601; t=1759994378; x=1760599178;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=cCLugtlKER5JKVdxfXmIi5m5k7cSqN7AKwCJ9L732vk=;
-        b=HNIX8WUWISB8ImME5lbH9JWI7BagTvtt4hN+prz1sUVCefyArkf4TiFGd8urGawCSi
-         3WHo0L6p/uZCwuVM7UKONeuJzyHKMR+UMIg6icLpRQewcNrs/ATlHPa/MD39uAbo9cp3
-         H+rw9Nrw+SkYdVAD28W5noiJESfvWLdt+bBPHPsOelTzobihX5fM0nijzJolyZAgCVIR
-         Wu99mo1vTbt1vqFgI23/a8KPEynH/cnTb3X+FHDeRkXPuYofj+0nRX+BE8KaQWoEcXsR
-         9JrkwGKTmrfmyNIzpv/JUL+zIwhws2tgH/Yf5ay2m67tZ/PJHIRyNQyjAGmzltTqjP3U
-         9ztA==
-X-Forwarded-Encrypted: i=1; AJvYcCXUM+huvOW5la7y2YHIW6FEqfmEkbI3H4zO+uk3SjxxlAtEqyJGv2AtXnZ6e77Z8z4+YW13sHbafgc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdsyKdkU94LosbNRJcAWRG9Y8GisZzTHsMyfPhY77nQKN/QNLr
-	2rKHGiL9WmtJxalnVrNS/7eD6EtdupbIFNNsPWkpcKn+o5GrUhgqOsRuma292EWe9YASiaoYnrd
-	CYfPVIYBagM+yJPAdqr+TLxy2GPGSdcx8XbOLju4D
-X-Gm-Gg: ASbGncuFBqdBia2wS7SPqCbibGz/iPeMxjlyjKzc1BW5x3UFpW/0Wh7H1a9l4qzxTUY
-	FYxW6ZIE0T7c35u8dltqJHw2/jn88kBeLeRTotvRgYh0jhjZXRibQO24FcHOYRLS5OAG3OM2uiC
-	TIQjecR8FjY3ZWGrsn4DVPeBZRtH5PohDCK2iwjzmo/bDh0NoheU0qGRu1b4jXJHTs6ZIc4OH41
-	5iI+eo0B9JkXfhqy3vdq36/5bbBF35rrLchAGK5aUDiUKhpBelZwV19NfSTiA==
-X-Google-Smtp-Source: AGHT+IEJhbj8B5bmWohXhF9RO2rE1lp3Eq4MRp9b8SXg6OKS6nhaW5FvJnYrKALXjGj9kyLiKxmA5YOScYogDginsYs=
-X-Received: by 2002:a2e:be10:0:b0:366:ef7d:bab3 with SMTP id
- 38308e7fff4ca-3760a2aec91mr17588391fa.1.1759993798125; Thu, 09 Oct 2025
- 00:09:58 -0700 (PDT)
+        bh=5c5+mJ/UHP/9LbfelQ205BO5Ehj3e8KPSEEqoMsr+r0=;
+        b=pTLp88/M+szrKW5ct/VdHqtVFcKH1OkATFBlXqnynvieU2FxTvdm1HI0doxUw2TJFg
+         l0YHUhdCSRRkA+jr9UzIPoUWqZzCxOKG56mVDHTKazyOwQcG4Hsoe6BMbYP0qUfpgsNN
+         TbRPBPxu20TBGUeljaKxPlRbRateAqbJknS4Eclm4ogICwRvr9kJOMuXSQ3l2t+nkP58
+         nsUQLRG5CegRWgQysxp+gy98+ESJ6eOljqRJElVYHTUm6wRrEqkpCNpYhTd5zjUACwcu
+         JVe6YOZVfVQPvdgkQSQTE3oWHi33AkoMuDvZhnDCF46LJk/ab40muWuo9YQ2Cuclr90+
+         fhog==
+X-Forwarded-Encrypted: i=1; AJvYcCUTyUbCZx1goXp95YD0iyt7JJF2EKoUWclMpuXx8DHPF0Q9YCVD3+7c3zEh0vPtoIRZymt11rv3xXM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdjN1z4foA+r6U8kVEUVw491X5W74Jlg8dqJ0QdsXVlz+l5eed
+	NQhz8dFvdkWxH/NfAp4nn5JTeNDZvyg4QHJbAHR26u3TAvOp+3dNDseXQZtFcdNredz6y5iRYIY
+	ZrQ6srxEgAJZAPyLL5jMajHtlJCE8xNjzI+LqfCSf
+X-Gm-Gg: ASbGncsPei2NyGff1rQd9YXREz1qI5bimHtqKALeIfx5JmMbCQAFVFxBas2AcADzjsD
+	4fOKmgRb3ea49ezJ+wAAYEZb/A1TCDqEhCkFLmU3j4INPURSDGglEs0rgiOnN2ptBw3LcSNxwjF
+	y8XSaoH3v1UYU3M/ldm9PwkDkVANxXKji7wSKnZ7bmp0EmtsUwUoBSJrqfUa7YiRCxPw9oLAb/f
+	pwNRxrLVUHFd/SyNyUVdeow1tgQU4Q6QuYI2wdXFskTfsYYACJDOYA+ngDk0Q==
+X-Google-Smtp-Source: AGHT+IHSaW0g4YpO769xUwsa4iNj202mqOPzRJ46LGO1j2gm27+8xePTXEdB7gctFN8wB6vE1Rr8nunFbpgl3JoXAJg=
+X-Received: by 2002:a05:6512:a90:b0:55f:6759:a792 with SMTP id
+ 2adb3069b0e04-5906d8ed836mr1731541e87.34.1759994378341; Thu, 09 Oct 2025
+ 00:19:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -60,9 +60,9 @@ MIME-Version: 1.0
 References: <20251008-mtk-pll-rpm-v2-0-170ed0698560@collabora.com> <20251008-mtk-pll-rpm-v2-2-170ed0698560@collabora.com>
 In-Reply-To: <20251008-mtk-pll-rpm-v2-2-170ed0698560@collabora.com>
 From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Thu, 9 Oct 2025 15:09:47 +0800
-X-Gm-Features: AS18NWBfT_0WimyLL897lV8iBPOUkT6dheJLRJo28H-RJf0AZ4JmglLtj3pPXGo
-Message-ID: <CAGXv+5HAvx2uqJM7hWyBpF=wPZLWmCkKDaBnSOsPnU2+YFM0CA@mail.gmail.com>
+Date: Thu, 9 Oct 2025 15:19:27 +0800
+X-Gm-Features: AS18NWDNV8mYg3wiP9Z1G6zwejV94_0pr6WyN1XzhbiCP9cR62AhpDcipKqCy2M
+Message-ID: <CAGXv+5GGSKVwvQihGVJNch6qxv88t03BcBhN9tgB=K-5VvN+Cg@mail.gmail.com>
 Subject: Re: [PATCH v2 2/5] clk: mediatek: Refactor pll registration to pass device
 To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
 Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
@@ -88,7 +88,36 @@ On Thu, Oct 9, 2025 at 12:06=E2=80=AFAM Nicolas Frattaroli
 > of a struct device_node pointer, and fix up all users of this function.
 >
 > Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+> ---
 
-Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
+Actually,
 
-Thank you for taking up this task!
+> diff --git a/drivers/clk/mediatek/clk-pll.h b/drivers/clk/mediatek/clk-pl=
+l.h
+> index d71c150ce83e4bb2fe78290c2d5570a90084246d..0e2b94b9cd4b56adceee3b04e=
+9ab24c2526471da 100644
+> --- a/drivers/clk/mediatek/clk-pll.h
+> +++ b/drivers/clk/mediatek/clk-pll.h
+> @@ -78,9 +78,9 @@ struct mtk_clk_pll {
+>         const struct mtk_pll_data *data;
+>  };
+
+Please replace the |struct device_node| forward declaration at the top
+of this file with one for |struct device|.
+
+> -int mtk_clk_register_plls(struct device_node *node,
+> -                         const struct mtk_pll_data *plls, int num_plls,
+> -                         struct clk_hw_onecell_data *clk_data);
+> +int mtk_clk_register_plls(struct device *dev, const struct mtk_pll_data =
+*plls,
+> +                         int num_plls, struct clk_hw_onecell_data *clk_d=
+ata);
+> +
+>  void mtk_clk_unregister_plls(const struct mtk_pll_data *plls, int num_pl=
+ls,
+>                              struct clk_hw_onecell_data *clk_data);
+>
+>
+> --
+> 2.51.0
+>
