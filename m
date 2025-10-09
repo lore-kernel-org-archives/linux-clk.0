@@ -1,69 +1,69 @@
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4C2A2BE65B
-	for <linux-clk@vger.kernel.org>; Thu,  9 Oct 2025 07:08:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 193DD1E492A
+	for <linux-clk@vger.kernel.org>; Thu,  9 Oct 2025 07:09:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759993691; cv=none; b=rHix4XCKGyaS/Oh0IMMDBBkFNC3vAQKZFoHinuTRifKPEBVQ+TMk+XodAafzE+ok7n/O3JTVkaC6G2YHnHrcihx5w01HYrtmP9w3Kglb8FnhRDkaY2rNIKYcY+YQNESyBXXYliAWu136W/v8yBLi9ll+jn4CqkFv7/UHcaSm5Ic=
+	t=1759993801; cv=none; b=u8wNRepzPOjHo8w5wBwXqzr97UJRfxpHG3u87vlIIr/Y2HgtKuxFua0nJGQiwh1D6cFP///Z9RJvM3uoBYoDT43mCJ89mR4rOhUQTyCsbLStqia4JiUhshcZFY/ty+naU6TYGxX/Z8e2AY/hfP1R2TsZQG6Q2GSnNML1JWe/jxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759993691; c=relaxed/simple;
-	bh=LhYyzk6WfYJhkKhEyLTwv9qmYjmpZeKxoucLrJ2XuEY=;
+	s=arc-20240116; t=1759993801; c=relaxed/simple;
+	bh=cCLugtlKER5JKVdxfXmIi5m5k7cSqN7AKwCJ9L732vk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KpIX5e1eAEkhx97JIz/1HA2u8t3u01TUOpAACirNoprvNA3B/14AhpaIzu0VPYmwcT1lTE61SlSAehw/LuInad6Nep/isY5gZwDblBcDBmcqySsa3AQEIx/z1u2M/2xTaW5LmUfU90lL6e67HImNdxTi7feYpwIbd17geTOks8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Y3hBbt8z; arc=none smtp.client-ip=209.85.208.172
+	 To:Cc:Content-Type; b=b7rKk1Z4Qiv+mAGMN0SAWwVIgz+6LCLgqNEg77B+wA8oX3fZmKNhRreuxnZIv/jmUvuvyJxkcFTSYiai2AznlkHIA/FMTdp3C9LagWXevo/+qnKBUD6RqqZL2M9wnZIM33xhlAm8jM4G56MHb8tH1h5sIKH3684qfXnF/sqz9fk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=eQ4QEsnH; arc=none smtp.client-ip=209.85.208.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Y3hBbt8z"
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-373a1ab2081so4869371fa.3
-        for <linux-clk@vger.kernel.org>; Thu, 09 Oct 2025 00:08:08 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="eQ4QEsnH"
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-371e4858f74so7942341fa.1
+        for <linux-clk@vger.kernel.org>; Thu, 09 Oct 2025 00:09:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1759993687; x=1760598487; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1759993798; x=1760598598; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=VrEMSIgPZk1KeuuGhcj52P085Zkq+6alNWoGna9Zc/w=;
-        b=Y3hBbt8z8AwSILzcdkl6Bwx1zj7jBg53Puw9j1ElP818AHH9BIixjKVyOf7YpVu913
-         icKUHN92dLdHT45wRQcU0tg4N5eRUHAM1PRZZHE5zqt4BFCks5+dWLcvZjI6HguWdYvo
-         M6KnJcRCdR/J1RTW9Dg7ulpu6Se3NpttfzPR8=
+        bh=cCLugtlKER5JKVdxfXmIi5m5k7cSqN7AKwCJ9L732vk=;
+        b=eQ4QEsnHg0aO8w/ehvMcNELyQkHPCwkdywiG8Kcbf0OBKX/cF5VoknNgYeDJF9SCFY
+         3ZEqmodTVzTAWQO2bMqoYMAA4QBsWF7E+Uz0ue+46dE9HQsylYS7s9ZmLZ2i/L9z9nVi
+         Q1qIHlttt3YVRuEDp/myrOTeKT0TMV8joEkgk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759993687; x=1760598487;
+        d=1e100.net; s=20230601; t=1759993798; x=1760598598;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=VrEMSIgPZk1KeuuGhcj52P085Zkq+6alNWoGna9Zc/w=;
-        b=fDq+KQqhF7r3XWBbKk4d93L7NRzRHfByaybOpTAb6ZuX1xngJPZoJBDZwukYT+lNvf
-         J/zuMEEOACqT2+WL4pcVP9D1YipziCT0pOrUvYvZNmfmoFC34igpVNAA6mTqtyuq+0iI
-         0DHS1j+4OAwfNPlt8v+vSg1iMJk5x8ZjpY0qr0q/iC56rFzKYO+rDMyaZaX776hcRK56
-         sw/vpnYqWi17e0Ks6VW1eV/mI88vcTpG0OqzTaKXuZ6HT/cyRXMF6GzH2RsbBFVA6MLa
-         NBm6iTuZzlwDvDeEvWdbXxomL4L3gCcgJ3O3IsnpSiqrqFXOBOo2PtAEv+qZ71+x/9JR
-         CNOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXYSU9Uh7iI4QVjABlHBjYaC1g18ADWBKKaTacUCBqct1QXOWHKvqu51mv9i+r+u9pCh4MjGxfaIxY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyvvoxfivpuTY7/QVaaKh4R0wTdfVo2XyqaVi+v+HOKT185gqdI
-	Hfhul+YZzak+8Sgl8RMS59GBIznXco3YboMnGJHx/FCPmxO7KFuXhc1WFSfw+VWFB6KMvBVO4DB
-	dCj4vDTarucw0jAGwk2IwtByCYxoQCdRtbIpH8Q/K
-X-Gm-Gg: ASbGncs6rt5NHWogLWn3XXy/PBZ1zVi8UExL/ipG1V8qE+i2wHZKNvS6xVabPxYoCZ3
-	tLSgQmdCeuSOltAIPx6GEJfotrc5il6IEdSYuyfUxgeeAQQyKil9TMwxY6PBHFLXYubvj4aOVeo
-	L2IltN6TSCaoK2LJWKw3xZhTLWmZXyYF9PKuGdxjyxaIDJkN7Efvq7TuFhwZimnNFA1eeQ2kc3n
-	LcUlTLix7Kypri/JBSOKwFNzFtbv9XlZ4tgM1yAgkF0k6Xpj4EpgRj+CnJReg==
-X-Google-Smtp-Source: AGHT+IHRoD8fUFYarUIhK/FMKZGr2CwU3Gj3Lvi6h5d/Em4hrbue6QlrL7H+4NXmnHM+zo7hkW3w3oPsj8Dawmy7Yjk=
-X-Received: by 2002:a2e:be26:0:b0:365:6b40:8687 with SMTP id
- 38308e7fff4ca-37609e0ea58mr13923031fa.22.1759993686781; Thu, 09 Oct 2025
- 00:08:06 -0700 (PDT)
+        bh=cCLugtlKER5JKVdxfXmIi5m5k7cSqN7AKwCJ9L732vk=;
+        b=HNIX8WUWISB8ImME5lbH9JWI7BagTvtt4hN+prz1sUVCefyArkf4TiFGd8urGawCSi
+         3WHo0L6p/uZCwuVM7UKONeuJzyHKMR+UMIg6icLpRQewcNrs/ATlHPa/MD39uAbo9cp3
+         H+rw9Nrw+SkYdVAD28W5noiJESfvWLdt+bBPHPsOelTzobihX5fM0nijzJolyZAgCVIR
+         Wu99mo1vTbt1vqFgI23/a8KPEynH/cnTb3X+FHDeRkXPuYofj+0nRX+BE8KaQWoEcXsR
+         9JrkwGKTmrfmyNIzpv/JUL+zIwhws2tgH/Yf5ay2m67tZ/PJHIRyNQyjAGmzltTqjP3U
+         9ztA==
+X-Forwarded-Encrypted: i=1; AJvYcCXUM+huvOW5la7y2YHIW6FEqfmEkbI3H4zO+uk3SjxxlAtEqyJGv2AtXnZ6e77Z8z4+YW13sHbafgc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdsyKdkU94LosbNRJcAWRG9Y8GisZzTHsMyfPhY77nQKN/QNLr
+	2rKHGiL9WmtJxalnVrNS/7eD6EtdupbIFNNsPWkpcKn+o5GrUhgqOsRuma292EWe9YASiaoYnrd
+	CYfPVIYBagM+yJPAdqr+TLxy2GPGSdcx8XbOLju4D
+X-Gm-Gg: ASbGncuFBqdBia2wS7SPqCbibGz/iPeMxjlyjKzc1BW5x3UFpW/0Wh7H1a9l4qzxTUY
+	FYxW6ZIE0T7c35u8dltqJHw2/jn88kBeLeRTotvRgYh0jhjZXRibQO24FcHOYRLS5OAG3OM2uiC
+	TIQjecR8FjY3ZWGrsn4DVPeBZRtH5PohDCK2iwjzmo/bDh0NoheU0qGRu1b4jXJHTs6ZIc4OH41
+	5iI+eo0B9JkXfhqy3vdq36/5bbBF35rrLchAGK5aUDiUKhpBelZwV19NfSTiA==
+X-Google-Smtp-Source: AGHT+IEJhbj8B5bmWohXhF9RO2rE1lp3Eq4MRp9b8SXg6OKS6nhaW5FvJnYrKALXjGj9kyLiKxmA5YOScYogDginsYs=
+X-Received: by 2002:a2e:be10:0:b0:366:ef7d:bab3 with SMTP id
+ 38308e7fff4ca-3760a2aec91mr17588391fa.1.1759993798125; Thu, 09 Oct 2025
+ 00:09:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251008-mtk-pll-rpm-v2-0-170ed0698560@collabora.com> <20251008-mtk-pll-rpm-v2-1-170ed0698560@collabora.com>
-In-Reply-To: <20251008-mtk-pll-rpm-v2-1-170ed0698560@collabora.com>
+References: <20251008-mtk-pll-rpm-v2-0-170ed0698560@collabora.com> <20251008-mtk-pll-rpm-v2-2-170ed0698560@collabora.com>
+In-Reply-To: <20251008-mtk-pll-rpm-v2-2-170ed0698560@collabora.com>
 From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Thu, 9 Oct 2025 15:07:55 +0800
-X-Gm-Features: AS18NWBxQ-yW1drBobxZE5-xVOr4CwQCIc293oxeKqSrQOU5dPVPYMgKJ9ACvWg
-Message-ID: <CAGXv+5F_xeC_sGNB9Aev4CQbC_8Vo4YA1u7K60oKu8PseL=Qhw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/5] clk: Respect CLK_OPS_PARENT_ENABLE during recalc
+Date: Thu, 9 Oct 2025 15:09:47 +0800
+X-Gm-Features: AS18NWBfT_0WimyLL897lV8iBPOUkT6dheJLRJo28H-RJf0AZ4JmglLtj3pPXGo
+Message-ID: <CAGXv+5HAvx2uqJM7hWyBpF=wPZLWmCkKDaBnSOsPnU2+YFM0CA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/5] clk: mediatek: Refactor pll registration to pass device
 To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
 Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
 	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
@@ -76,74 +76,19 @@ Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 9, 2025 at 12:07=E2=80=AFAM Nicolas Frattaroli
+On Thu, Oct 9, 2025 at 12:06=E2=80=AFAM Nicolas Frattaroli
 <nicolas.frattaroli@collabora.com> wrote:
 >
-> When CLK_OPS_PARENT_ENABLE was introduced, it guarded various clock
-> operations, such as setting the rate or switching parents. However,
-> another operation that can and often does touch actual hardware state is
-> recalc_rate, which may also be affected by such a dependency.
+> As it stands, mtk_clk_register_plls takes a struct device_node pointer
+> as its first argument. This is a tragic happenstance, as it's trivial to
+> get the device_node from a struct device, but the opposite not so much.
+> The struct device is a much more useful thing to have passed down.
 >
-> Add parent enables/disables where the recalc_rate op is called directly.
+> Refactor mtk_clk_register_plls to take a struct device pointer instead
+> of a struct device_node pointer, and fix up all users of this function.
 >
-> Fixes: fc8726a2c021 ("clk: core: support clocks which requires parents en=
-able (part 2)")
-> Fixes: a4b3518d146f ("clk: core: support clocks which requires parents en=
-able (part 1)")
 > Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
 
 Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
 
-> ---
->  drivers/clk/clk.c | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
->
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index 85d2f2481acf360f0618a4a382fb51250e9c2fc4..1b0f9d567f48e003497afc98d=
-f0c0d2ad244eb90 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -1921,7 +1921,14 @@ static unsigned long clk_recalc(struct clk_core *c=
-ore,
->         unsigned long rate =3D parent_rate;
->
->         if (core->ops->recalc_rate && !clk_pm_runtime_get(core)) {
-> +               if (core->flags & CLK_OPS_PARENT_ENABLE)
-> +                       clk_core_prepare_enable(core->parent);
-> +
->                 rate =3D core->ops->recalc_rate(core->hw, parent_rate);
-> +
-> +               if (core->flags & CLK_OPS_PARENT_ENABLE)
-> +                       clk_core_disable_unprepare(core->parent);
-> +
->                 clk_pm_runtime_put(core);
->         }
->         return rate;
-> @@ -4031,6 +4038,9 @@ static int __clk_core_init(struct clk_core *core)
->          */
->         clk_core_update_duty_cycle_nolock(core);
->
-> +       if (core->flags & CLK_OPS_PARENT_ENABLE)
-> +               clk_core_prepare_enable(core->parent);
-> +
->         /*
->          * Set clk's rate.  The preferred method is to use .recalc_rate. =
- For
->          * simple clocks and lazy developers the default fallback is to u=
-se the
-> @@ -4046,6 +4056,9 @@ static int __clk_core_init(struct clk_core *core)
->                 rate =3D 0;
->         core->rate =3D core->req_rate =3D rate;
->
-> +       if (core->flags & CLK_OPS_PARENT_ENABLE)
-> +               clk_core_disable_unprepare(core->parent);
-> +
->         /*
->          * Enable CLK_IS_CRITICAL clocks so newly added critical clocks
->          * don't get accidentally disabled when walking the orphan tree a=
-nd
->
-> --
-> 2.51.0
->
->
+Thank you for taking up this task!
