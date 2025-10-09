@@ -1,92 +1,81 @@
-Received: from fout-b2-smtp.messagingengine.com (fout-b2-smtp.messagingengine.com [202.12.124.145])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D32924BD03;
-	Thu,  9 Oct 2025 18:12:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 014C421FF38
+	for <linux-clk@vger.kernel.org>; Thu,  9 Oct 2025 18:56:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760033577; cv=none; b=g5rJUM/BRroep2eYzj7qTLMX6ShEk7rUOTAwZtA4v3z+axpZig+iGTkM3+fvcMwoDjKIZJFhT0Wv5QhjqcxcBkDffmrroYHYEezdfg3aLPUqWII3vNp4u8SMuXklNocx7WBdmQ3F4iN4HfvaUe8Ip/gGGWXGMOtrjJ+G0Jib6LE=
+	t=1760036178; cv=none; b=BNVsXftxPLkFfT4nxIXk+D1TB2IXus2b5g8ExfPgr+m3N/asSmeL8GYd6betbaIq+gVGpfWFk8ZPJ99Sydb8rJoxXq2MMsgKsxrl1k5Vv7eh+tHDo2nSz2obXwHT7vif5wBK5p9UkIzDbzYOW58sPHsn7tqUwKGQiMF8zX1tGK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760033577; c=relaxed/simple;
-	bh=iXj2HYV1s3ATEkhcscqNZs7/IKnrkOl0Nwe/bos6hBo=;
+	s=arc-20240116; t=1760036178; c=relaxed/simple;
+	bh=4iB88tQw2WXsZzzM6xK3yQGqAvESZ/GXQ3GjoVzeMlU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ENWpDYtkpFuObhshLENvBy9Ryw0vSwu3Q4J3yaszByT69ZNMS49EBJx931wlzE7SfxqSOngIs9jSrLL7BXSOJ6fyxGh61Gzm+4gwWNmdKNfgNnnTnOQBJ2bGm0uAmOb/erWiI/My62QFzHSRxU2WLE9G9J0f4EN0g8mrubvrs4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=od93zvom; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=pLthQ6Mu; arc=none smtp.client-ip=202.12.124.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
+	 Content-Type:Content-Disposition:In-Reply-To; b=YlJtHMyKwZmGF4WNINPPfrhizdhCdVRYBa+xc0hcPAol3EsBTXT7wOiJg3rIEASdvuNQHK4vxqRYrzvYWpJK6NTrRMGzjUWsz55fsTku/QUnn2p3npRD/6oKvM3ln/amTB8YEIWftCXB+KfG9wVUx93xYnCgeyLZoo7M49aX358=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IinhdPH8; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="od93zvom";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="pLthQ6Mu"
-Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
-	by mailfout.stl.internal (Postfix) with ESMTP id 759BB1D0003C;
-	Thu,  9 Oct 2025 14:12:53 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-02.internal (MEProxy); Thu, 09 Oct 2025 14:12:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1760033573;
-	 x=1760119973; bh=2ARSzrDkgF/WLyQlIcPcdMxriBnwEIQrbWwts1neh+8=; b=
-	od93zvomj56Xm3dV0itATqt/d6MSb0ZNCucalnxN0/SvAwF/mBjxP2+CGh01Z1wl
-	dDJRVzG2cILIVzTdNxuIishUFkEdH8CkkWUcXL9AGKFX+/gvCRGo7jbWmKFg4ezY
-	7Hu2MWQf9+GBisQELZcZjswNvMHMgY6fkvIU+95X/m4qJRgMOQwt0286xzWt9wU7
-	jW8RrLLXYj0nGp7kXAsdt257PYybshhvwkUmpWeYUQiOXs4RQhD8BfiupDLdYvUY
-	Y/tLZ+kPCbGxVLRy+LKn5fCGHpnmHX5Y2PFj83KSngYkZ2fidiF4DDbmdC6FbJZe
-	X5pSH3GUZIRQtE2mkgCUdA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1760033573; x=
-	1760119973; bh=2ARSzrDkgF/WLyQlIcPcdMxriBnwEIQrbWwts1neh+8=; b=p
-	LthQ6Murzp57zj6mK+lfJrNEHcmz25Q8vEvLAwmJSQ7Cjw/QARRQAQnUVvTxv/+r
-	lhjfIjB+bikp2h/WKT/HtES5FlRBaoBFqmYLowJJQ/i/1JQbrmCnxdD6t1W7kzdQ
-	uFMTxNxdFfNwIPrQqvIbli6PnQZV2XVd5SOqL+eB5odxhtB77VwI1Q59k+eVkiMX
-	OkYjk09iq9Zq0zjizZj71F/YM61sMb4qAevwzJDx6zydw7idKK7HhK/6G6l8Bz6l
-	4ZRaJfDc78OEO2dO4SvQTTHo6bhodKUPbpD7ITtdFW37Id9BEoPqe7tqmHrWY7/A
-	qUZMn1hfIfOlGCCuf++/g==
-X-ME-Sender: <xms:JPvnaIaJfmIleBe2TL4CmVDNBBY7UDPsDSUprixJKwCiXN-ysMQ_Xg>
-    <xme:JPvnaMth5H4afVo1xMo-G3vKGPUD0X6g-m8UFv_co2cgPp7Dr07-PfZ9d0ogtwtoX
-    6NksiY81itxvN6P79TTQUB4nftu1TNADlBU3gEKu-VHuszXuL66mFw>
-X-ME-Received: <xmr:JPvnaKPUs8511TbgPielHdsu6sTVQehMhU8ibXbRW8FWJenTSGHnibM0X6eA1u5e_vFBkalNP7u8UcKmminwZt68GtFjaec>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddutdeikeejucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevuffkfhggtggugfgjsehtkeertddttdejnecuhfhrohhmpefpihhklhgr
-    shcuufpnuggvrhhluhhnugcuoehnihhklhgrshdrshhouggvrhhluhhnugesrhgrghhnrg
-    htvggthhdrshgvqeenucggtffrrghtthgvrhhnpeevteegtddvvdfhtdekgefhfeefheet
-    heekkeegfeejudeiudeuleegtdehkeekteenucevlhhushhtvghrufhiiigvpedtnecurf
-    grrhgrmhepmhgrihhlfhhrohhmpehnihhklhgrshdrshhouggvrhhluhhnugesrhgrghhn
-    rghtvggthhdrshgvpdhnsggprhgtphhtthhopeeipdhmohguvgepshhmthhpohhuthdprh
-    gtphhtthhopehgvggvrhhtsehlihhnuhigqdhmieekkhdrohhrghdprhgtphhtthhopehm
-    rghrvghkrdhvrghsuhhtodhrvghnvghsrghssehmrghilhgsohigrdhorhhgpdhrtghpth
-    htoheplhhinhhugidqtghlkhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthho
-    pehmthhurhhquhgvthhtvgessggrhihlihgsrhgvrdgtohhmpdhrtghpthhtohepshgsoh
-    ihugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqrhgvnhgvshgrshdq
-    shhotgesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:JPvnaD4aEIP8dAC91VGsYedzba1DREgXPdqgV4uSjUa_LPWTx5rWmw>
-    <xmx:JPvnaARXn0hRYz4yBebk4kJtjfTI60rMReTOxsmfhEE20PeJrYf5EQ>
-    <xmx:JPvnaACpg8LrRBwptd9MqOkjd0Xi4dobqFm40qBjQSt-VfNGgjD2UA>
-    <xmx:JPvnaAHRKNP1IuKq6BBFmy1gI1lFp1rBRv3PeXwW_fGiqdYHQW2rCg>
-    <xmx:JfvnaF9e0FIU2o0rQQoy8wwPGHhDQd3GJ34LsxNwBvo_bNWdLOjGvD67>
-Feedback-ID: i80c9496c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 9 Oct 2025 14:12:52 -0400 (EDT)
-Date: Thu, 9 Oct 2025 20:12:50 +0200
-From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
-	linux-clk@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] clk: renesas: cpg-mssr: Add missing 1ms delay into reset
- toggle callback
-Message-ID: <20251009181250.GB2550463@ragnatech.se>
-References: <20250918030552.331389-1-marek.vasut+renesas@mailbox.org>
- <20251003150819.GC344149@ragnatech.se>
- <CAMuHMdWXkwOyAhAZB=j_zZg8PcGcdkMDGOa-nBhcgjYRgb7MSg@mail.gmail.com>
- <20251006122338.GB1353934@ragnatech.se>
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IinhdPH8"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760036175;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=73VHJPHIbh12PnyxfeCzN+eZOdvnFxFQRvkYUUFjG6M=;
+	b=IinhdPH8Tazv+mxUKMAWYZmuw/aFfoO4o6MVU/4HB3XAiOfQnenv46Iy3qdcV48jKnW3tP
+	lVYjp2CkqSXS2iG8zJzseuyHFZFG/p96BihQHTNhgL6RORU63Tkhf2c7K+CNilbwUooutq
+	n2TuEGeKYZAUFT1UG3iOdvrttfNYm+Q=
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
+ [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-330-ErWInrO4Pausuf_ONOsG3Q-1; Thu, 09 Oct 2025 14:56:14 -0400
+X-MC-Unique: ErWInrO4Pausuf_ONOsG3Q-1
+X-Mimecast-MFC-AGG-ID: ErWInrO4Pausuf_ONOsG3Q_1760036173
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4dfc05dec2fso70406361cf.3
+        for <linux-clk@vger.kernel.org>; Thu, 09 Oct 2025 11:56:14 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760036173; x=1760640973;
+        h=user-agent:in-reply-to:content-transfer-encoding
+         :content-disposition:mime-version:references:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=73VHJPHIbh12PnyxfeCzN+eZOdvnFxFQRvkYUUFjG6M=;
+        b=THWz3/o5yT8qGVrTx35etMV8hj3aqUDuPUJc+UtwkKQeLNeLS2V0g2DgWh6I1cBdyO
+         nHvq9zlsilW/oqdAIUnL1qzIaNiFef6bDCOzus0qXgLO3TgkJrjOO8y+onfoMFa5+ZWt
+         7ZiTu3rlSdAEC3dZVQBgY7ZrXQ3gQ/1GpDm9QrqZ43F6il9BmRLK2G4cH8epc1+X+1tC
+         MFjeNM356rLCgcVMhpGMxhCQYMvnFDeEfw60fmzKxvaiMtCP3ePXMilx2orPuJ0nDggJ
+         Ldy4AGI2bIvzd/CL+kuPntNRJ/+UZKlAXPJsJOJYlwSvpvNCSFx4/OVgMQoAB7xKACxa
+         qgFA==
+X-Forwarded-Encrypted: i=1; AJvYcCV9WF5fS4d1BD70QV96SDCR54cniz9nmqQp1CnIMkmJD62u+O42RR+vBTpj2FTWmYPSX93WmqUgehI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7tGo0FBjuIz7HECNCXe7mfZQlchDpPhbDpItqYlngKWToRIjZ
+	TBBepaFkfxJTCzdK7TvzzKt1Fkl2DsecLCXVsC48QCy5UFtuYAbRZ5GB9Gn209oSx8vldNNukWR
+	Juzwg2A8sRFcI78o0Hf12RXr2Akvl69sHi3JcZSgvGkPAX+/He13UOfcREjvb2w==
+X-Gm-Gg: ASbGncvznvB6sYf2hAoVVL+nOCkI+Ko7VcJlfuws7sdAELZBfthVaRVH0Ezl7zJ0jne
+	8oxtVa2ZWGVybHUsTWXvjzzUoF4vbVUIdhafksNJ7BONmUfeUaJGE87z7/XVZoWauExnYFbPajF
+	Exqw8w1D9E2myTb4MCKIGUxO3U9eVSQMfqVDkAQ0MNGkdmh71zkBJbcLCcuMY9pB3AJFE0T/xpD
+	iwJ4XxnkO0FTTKKwvEK+dpK1x+sPYgGof13UXb0AC1PwT55neYZPL/Q96OQZ3FZh2hC4iZegJB7
+	bSMfSUDW7iW+T2ruHW6amkty2g4LtylZe2H/2WLbJS3m2wH8RsbUjQJ0Ob9aORkxZnYNmMN+yAc
+	fcveu9t0S8v0Ma5EUoAbQaQS1XuRpY2bKZKGZ
+X-Received: by 2002:ac8:584c:0:b0:4e5:7bd4:1beb with SMTP id d75a77b69052e-4e6ead65549mr104456831cf.68.1760036173505;
+        Thu, 09 Oct 2025 11:56:13 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE2AD5ZZcXckeSU9b450Mt8BqD9SOhoclS7nRF67Cec3FIHzgTkgVAjC1MmE6pVFS6HrvZ8kA==
+X-Received: by 2002:ac8:584c:0:b0:4e5:7bd4:1beb with SMTP id d75a77b69052e-4e6ead65549mr104456441cf.68.1760036172855;
+        Thu, 09 Oct 2025 11:56:12 -0700 (PDT)
+Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4e706dd1ceesm3026011cf.41.2025.10.09.11.56.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 Oct 2025 11:56:12 -0700 (PDT)
+Date: Thu, 9 Oct 2025 14:56:10 -0400
+From: Brian Masney <bmasney@redhat.com>
+To: Chen-Yu Tsai <wenst@chromium.org>
+Cc: Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: tests: Add tests for clk lookup by name
+Message-ID: <aOgFSi_h95tfD8x2@redhat.com>
+References: <20251002092036.2504858-1-wenst@chromium.org>
+ <aOb6iNR9T4R9Hp3R@redhat.com>
+ <CAGXv+5HPjEnYh+zUi67+Y=nmFfdRFw0xd=rT7L_-GNxouga4Ow@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -96,115 +85,67 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251006122338.GB1353934@ragnatech.se>
+In-Reply-To: <CAGXv+5HPjEnYh+zUi67+Y=nmFfdRFw0xd=rT7L_-GNxouga4Ow@mail.gmail.com>
+User-Agent: Mutt/2.2.14 (2025-02-20)
 
-Hello,
-
-On 2025-10-06 14:23:42 +0200, Niklas Söderlund wrote:
-> On 2025-10-06 13:53:34 +0200, Geert Uytterhoeven wrote:
-> > Hi Niklas,
-> > 
-> > On Fri, 3 Oct 2025 at 17:08, Niklas Söderlund
-> > <niklas.soderlund@ragnatech.se> wrote:
-> > > On 2025-09-18 05:04:43 +0200, Marek Vasut wrote:
-> > > > R-Car V4H Reference Manual R19UH0186EJ0130 Rev.1.30 Apr. 21, 2025 page 583
-> > > > Figure 9.3.1(a) Software Reset flow (A) as well as flow (B) / (C) indicate
-> > > > after reset has been asserted by writing a matching reset bit into register
-> > > > SRCR, it is mandatory to wait 1ms.
-> > > >
-> > > > This 1ms delay is documented on R-Car V4H and V4M, it is currently unclear
-> > > > whether S4 is affected as well. This patch does apply the extra delay on
-> > > > R-Car S4 as well.
-> > > >
-> > > > Fix the reset driver to respect the additional delay when toggling resets.
-> > > > Drivers which use separate reset_control_(de)assert() must assure matching
-> > > > delay in their driver code.
-> > > >
-> > > > Fixes: 0ab55cf18341 ("clk: renesas: cpg-mssr: Add support for R-Car V4H")
-> > > > Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
-> > 
-> > > > --- a/drivers/clk/renesas/renesas-cpg-mssr.c
-> > > > +++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-> > > > @@ -689,8 +689,15 @@ static int cpg_mssr_reset(struct reset_controller_dev *rcdev,
-> > > >       /* Reset module */
-> > > >       writel(bitmask, priv->pub.base0 + priv->reset_regs[reg]);
-> > > >
-> > > > -     /* Wait for at least one cycle of the RCLK clock (@ ca. 32 kHz) */
-> > > > -     udelay(35);
-> > > > +     /*
-> > > > +      * On R-Car Gen4, delay after SRCR has been written is 1ms.
-> > > > +      * On older SoCs, delay after SRCR has been written is 35us
-> > > > +      * (one cycle of the RCLK clock @ cca. 32 kHz).
-> > > > +      */
-> > > > +     if (priv->reg_layout == CLK_REG_LAYOUT_RCAR_GEN4)
-> > > > +             usleep_range(1000, 2000);
-> > > > +     else
-> > > > +             usleep_range(35, 1000);
+On Thu, Oct 09, 2025 at 11:24:22AM +0800, Chen-Yu Tsai wrote:
+> On Thu, Oct 9, 2025 at 7:58 AM Brian Masney <bmasney@redhat.com> wrote:
+> >
+> > On Thu, Oct 02, 2025 at 05:20:35PM +0800, Chen-Yu Tsai wrote:
+> > > Clk lookup (by name) recently gained some performance improvements at
+> > > the expense of more complexity within the lookup code.
 > > >
-> > > I rebased the R-Car ISP work to renesas-drivers today and it included
-> > > this change, and I seem to have hit an issue with the switch form
-> > > udelay() to usleep_range() I'm afraid. I can't find any other good
-> > > reproducer of the issue however.
-> > 
-> > Yeah, AFAIK we didn't have any callers of reset_control_assert() from
-> > atomic context, but I was already afraid one was going to pop up...
-> > 
-> > > THe core of the issue seems to be that if a reset is issued from an
-> > > atomic context bad things happen if you try to sleep. I get this splat
-> > > and the board is completer dead after it, needing a power cycle to
-> > > recover.
+> > > To make sure that this works as intended and doesn't break, add some
+> > > basic tests for this part of the CCF.
 > > >
-> > > If I revert this patch things work as expected.
+> > > A new "clk_hw_lookup()" function is added purely for running kunit
+> > > tests.
 > > >
-> > > [   29.256947] BUG: scheduling while atomic: yavta/597/0x00000002
-> > 
-> > > [   29.265595]  reset_control_reset+0x4c/0x160
-> > > [   29.265604]  risp_core_start_streaming+0x100/0x440
-> > > [   29.265609]  risp_io_start_streaming+0x74/0x108
-> > 
-> > The existing udelay(2000) after the call to reset_control_reset() is
-> > also a bit gross.
+> > > Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+> > > ---
+> > >  drivers/clk/clk.c      | 11 +++++++
+> > >  drivers/clk/clk.h      |  4 +++
+> > >  drivers/clk/clk_test.c | 66 +++++++++++++++++++++++++++++++++++++++++-
+> > >  3 files changed, 80 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> > > index 85d2f2481acf..a17d0070d11f 100644
+> > > --- a/drivers/clk/clk.c
+> > > +++ b/drivers/clk/clk.c
+> > > @@ -778,6 +778,17 @@ struct clk *__clk_lookup(const char *name)
+> > >       return !core ? NULL : core->hw->clk;
+> > >  }
+> > >
+> > > +#if IS_ENABLED(CONFIG_CLK_KUNIT_TEST)
+> > > +/* This is only provided for kunit tests to test the core lookup functions. */
+> > > +struct clk_hw *clk_hw_lookup(const char *name)
+> > > +{
+> > > +     struct clk_core *core = clk_core_lookup(name);
+> > > +
+> > > +     return !core ? NULL : core->hw;
+> > > +}
+> > > +EXPORT_SYMBOL_GPL(clk_hw_lookup);
+> > > +#endif
+> >
+> > Use EXPORT_SYMBOL_IF_KUNIT instead for consistency with the rest of the
+> > kernel. In clk_test.c, you'll also need to add:
+> >
+> > MODULE_IMPORT_NS("EXPORTED_FOR_KUNIT_TESTING");
 > 
-> Haha, I agree :-)
+> Didn't know about this one. Thanks!
 > 
-> > I understand you are using a spinlock because you
-> > need to synchronize with an interrupt handler.  Would converting to a
-> > threaded interrupt handler and using a mutex (which the code already
-> > uses) instead be an option?
+> > Since clk_hw_lookup() is only used by kunit, why not just put this new
+> > function in clk-test.c, and use EXPORT_SYMBOL_IF_KUNIT on
+> > clk_core_lookup?
 > 
-> Yes and no. For the current use-case where the ISP is used in off-line 
-> mode, that is userspace dequeue images from VIN and then queues them to 
-> the ISP, it could work. But if we ever want to support the ISP in 
-> in-line mode, that is the CSI-2 Rx queues the frames directly to the ISP 
-> I think a threaded interrupt handler would be to slow to change ISP 
-> parameters between each frame.
+> Then we end up sort of exposing clk_core_lookup as well?
 > 
-> But that can also be a future problem, I will see what I can do.
+> I believe Stephen wants to keep things contained as much as possible.
 
-With a bit of work I have reworked the ISP driver to reset the core from 
-a context that can sleep. Without the need for a threaded interrupt 
-handler. Thanks for all the tips shared on IRC Geert and Marek.
+I agree about keeping things contained as much as possible as well.
+clk_core_lookup() would only be exposed to the kunit tests if you used
+EXPORT_SYMBOL_IF_KUNIT. Definitely go with whatever approach you think
+Stephen will prefer.
 
-I now have no known case where usleep_range() in cpg_mssr_reset() causes 
-issues. If I trip any more I will let you guys know.
+Brian
 
-> 
-> > 
-> > Gr{oetje,eeting}s,
-> > 
-> >                         Geert
-> > 
-> > -- 
-> > Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-> > 
-> > In personal conversations with technical people, I call myself a hacker. But
-> > when I'm talking to journalists I just say "programmer" or something like that.
-> >                                 -- Linus Torvalds
-> 
-> -- 
-> Kind Regards,
-> Niklas Söderlund
-
--- 
-Kind Regards,
-Niklas Söderlund
