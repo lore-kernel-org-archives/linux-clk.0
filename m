@@ -1,40 +1,40 @@
 Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E564A2D192B;
-	Thu,  9 Oct 2025 08:01:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CAD91FBCA1;
+	Thu,  9 Oct 2025 08:09:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759996872; cv=none; b=mR7wXMannuDuyiHmQzT5R6f/9kQ+8HPWpJFD+Xqmr3nya9Zs6vMNBxHNvuBC7BSC6b1N35xEqXDJyVWnCqqfe8QpIPnW73S5eflyg6FmgvnqYwokCYuhRr3AsukIj76aEp7zU9c2Qef3QrYATlzmdHPfdJOonOqacoYLyLm64U4=
+	t=1759997380; cv=none; b=PW8ySWnT8z3+mh680zIzZg1kMA1cbRXFN03UjpQKvbiGwWQfCdkQh1vSwYI/ia5PidizVsey18eUEHgXo5LYt3jMUT2VsmGEooHEAOAQmmzRvh9a6Lf/xSH6oWVK19DVxqKYTvVXTLMtzkGkslTcPnucgzfWHLxmyFcTjPN4+LI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759996872; c=relaxed/simple;
-	bh=DqlFY+zfg6KeRhIUsiMUfsKdx6WZau+HnPPKOGqJT/c=;
+	s=arc-20240116; t=1759997380; c=relaxed/simple;
+	bh=KyklGAMNtWChaurBpHK/F2+DI+34oXWWStcbMlx5O1E=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DojvTMwoCyOZ03Ll6Y8iZ9qX54MDNJD4W/RI67GB1SE4iWwQsLMZfoS5NQ2+aGk6nN3JYfi21JYhqhGDptAgN0sLpgdF1Zwax16S6bUnyvBrm5O4wV7iYVXR7nUs8rXTxzrHvsttnq25rRgKLWrjhUP9jQfCJA9SkSvGseZ4hMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=HraFy0Jq; arc=none smtp.client-ip=148.251.105.195
+	 In-Reply-To:Content-Type; b=egBmkHDzGF6QAVRDrVfyhumIUxlCShxHZpeUIK5CviJ8Cy2e+17xYcNmzgaKMsNS9lI2PBp+VzJm+DEX2f1M/h175D3nXAVAXVGh6ChAiQHkfFP0RvnjVdYIJp+ISXm+8o6VUU9c5jqNGUBCxuB8lg4d7qUzZAaK1XPdkdMl+eo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=LRD+5gZ3; arc=none smtp.client-ip=148.251.105.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="HraFy0Jq"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="LRD+5gZ3"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1759996867;
-	bh=DqlFY+zfg6KeRhIUsiMUfsKdx6WZau+HnPPKOGqJT/c=;
+	s=mail; t=1759997376;
+	bh=KyklGAMNtWChaurBpHK/F2+DI+34oXWWStcbMlx5O1E=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=HraFy0Jq12QWJzCAJx0MZgvEv+7d0nrcabfSHjL/SqWVQ7Epcrobd0lWV6FM2IQmR
-	 Huivx/Eu6nvWBbFkTSVrdBEdCznxgZc5ySyA8bwxQnZpm0ZvuAEljijPVma2jEHg/B
-	 7v+myiidksIx+pA1rXWr2KX/EvyiObJQxQLtzAKYcw9k5sDuL9Odu8q19GBjavKefC
-	 kHXbKVM9rlSgBD2/8oO9VKPBjni7r9phgpNVc/JVaY2ew+dIVL4cvpjFYHwlboWY1K
-	 337eRRqWiJlrzRbI0KqhipLMlDzgAUfzt6yZhBE8PB453ST4A55RiSbhPfZAKIwujC
-	 yXxWwIvI1tJ5Q==
+	b=LRD+5gZ34GwE1TSoRgv6iHn3KzXA7akJeAMubD6bh35xsyTqRczdE/Pp2ZX8AIGc/
+	 kkgExMbedADvQpbyt1HZ3tFIr24wVHWL0tpq6zx1WoryuydCi1Tabn7a6fF8anTL62
+	 Q/fs4RLUsgjFP5fkbOnkzHn9sx86LqUYnPfDVQhzRuu/dh8H2aEvFH55HIGv4tb51l
+	 0RkT7dPm9F2upYo1nPxrX7gnCxdeaZv7UvPRnuWIMVXA+2eB6WW56uSU5+TIFmTemx
+	 8Uk0KeQnXK8FS/6aUWzAingmikgnOp+XBVP55SxRNxi7bfhBEdrjNnv+ibm12vcmug
+	 HFmpw8vgavdTA==
 Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 49AD217E0CF8;
-	Thu,  9 Oct 2025 10:01:07 +0200 (CEST)
-Message-ID: <602158eb-472c-4443-9dda-aadf2a6c9f6d@collabora.com>
-Date: Thu, 9 Oct 2025 10:01:06 +0200
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id D69D717E04DA;
+	Thu,  9 Oct 2025 10:09:35 +0200 (CEST)
+Message-ID: <2477df4e-c89e-408f-bb2a-d5af51f78ef8@collabora.com>
+Date: Thu, 9 Oct 2025 10:09:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -42,7 +42,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/5] clk: Respect CLK_OPS_PARENT_ENABLE during recalc
+Subject: Re: [PATCH v2 2/5] clk: mediatek: Refactor pll registration to pass
+ device
 To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
  <sboyd@kernel.org>, Dong Aisheng <aisheng.dong@nxp.com>,
@@ -55,25 +56,87 @@ Cc: kernel@collabora.com, linux-clk@vger.kernel.org,
  linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-mediatek@lists.infradead.org, Stephen Boyd <sboyd@codeaurora.org>
 References: <20251008-mtk-pll-rpm-v2-0-170ed0698560@collabora.com>
- <20251008-mtk-pll-rpm-v2-1-170ed0698560@collabora.com>
+ <20251008-mtk-pll-rpm-v2-2-170ed0698560@collabora.com>
 From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Content-Language: en-US
-In-Reply-To: <20251008-mtk-pll-rpm-v2-1-170ed0698560@collabora.com>
+In-Reply-To: <20251008-mtk-pll-rpm-v2-2-170ed0698560@collabora.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 Il 08/10/25 18:05, Nicolas Frattaroli ha scritto:
-> When CLK_OPS_PARENT_ENABLE was introduced, it guarded various clock
-> operations, such as setting the rate or switching parents. However,
-> another operation that can and often does touch actual hardware state is
-> recalc_rate, which may also be affected by such a dependency.
+> As it stands, mtk_clk_register_plls takes a struct device_node pointer
+> as its first argument. This is a tragic happenstance, as it's trivial to
+> get the device_node from a struct device, but the opposite not so much.
+> The struct device is a much more useful thing to have passed down.
 > 
-> Add parent enables/disables where the recalc_rate op is called directly.
+> Refactor mtk_clk_register_plls to take a struct device pointer instead
+> of a struct device_node pointer, and fix up all users of this function.
 > 
-> Fixes: fc8726a2c021 ("clk: core: support clocks which requires parents enable (part 2)")
-> Fixes: a4b3518d146f ("clk: core: support clocks which requires parents enable (part 1)")
 > Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+> ---
+>   drivers/clk/mediatek/clk-mt2701.c            | 2 +-
+>   drivers/clk/mediatek/clk-mt2712-apmixedsys.c | 2 +-
+>   drivers/clk/mediatek/clk-mt6735-apmixedsys.c | 4 ++--
+>   drivers/clk/mediatek/clk-mt6765.c            | 2 +-
+>   drivers/clk/mediatek/clk-mt6779.c            | 2 +-
+>   drivers/clk/mediatek/clk-mt6797.c            | 2 +-
+>   drivers/clk/mediatek/clk-mt7622-apmixedsys.c | 2 +-
+>   drivers/clk/mediatek/clk-mt7629.c            | 2 +-
+>   drivers/clk/mediatek/clk-mt7981-apmixed.c    | 2 +-
+>   drivers/clk/mediatek/clk-mt7986-apmixed.c    | 2 +-
+>   drivers/clk/mediatek/clk-mt7988-apmixed.c    | 2 +-
+>   drivers/clk/mediatek/clk-mt8135-apmixedsys.c | 3 ++-
+>   drivers/clk/mediatek/clk-mt8167-apmixedsys.c | 2 +-
+>   drivers/clk/mediatek/clk-mt8183-apmixedsys.c | 2 +-
+>   drivers/clk/mediatek/clk-mt8188-apmixedsys.c | 2 +-
+>   drivers/clk/mediatek/clk-mt8195-apusys_pll.c | 3 ++-
+>   drivers/clk/mediatek/clk-mt8196-apmixedsys.c | 3 ++-
+>   drivers/clk/mediatek/clk-mt8196-mcu.c        | 2 +-
+>   drivers/clk/mediatek/clk-mt8196-mfg.c        | 2 +-
+>   drivers/clk/mediatek/clk-mt8196-vlpckgen.c   | 2 +-
+>   drivers/clk/mediatek/clk-mt8365-apmixedsys.c | 2 +-
+>   drivers/clk/mediatek/clk-mt8516-apmixedsys.c | 2 +-
+>   drivers/clk/mediatek/clk-pll.c               | 7 ++++---
+>   drivers/clk/mediatek/clk-pll.h               | 6 +++---
+>   24 files changed, 33 insertions(+), 29 deletions(-)
+> 
+
+..snip..
+
+> diff --git a/drivers/clk/mediatek/clk-pll.h b/drivers/clk/mediatek/clk-pll.h
+> index d71c150ce83e4bb2fe78290c2d5570a90084246d..0e2b94b9cd4b56adceee3b04e9ab24c2526471da 100644
+> --- a/drivers/clk/mediatek/clk-pll.h
+> +++ b/drivers/clk/mediatek/clk-pll.h
+> @@ -78,9 +78,9 @@ struct mtk_clk_pll {
+>   	const struct mtk_pll_data *data;
+>   };
+>   
+
+There's a forward declaration of struct device_node in this header: with this
+change, that becomes unused.
+
+Please change that to a forward declaration of struct device instead.
+
+While at it, I'd appreciate if you could either:
+  A. Remove the forward declaration for `struct clk_hw_onecell_data` and for
+     `struct clk_ops` (as both come from clk-provider.h - which this already
+      includes);
+    ...or...
+  B. Remove the inclusion of clk-provider.h and keep the forward declarations.
+
+After which:
 
 Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+
+> -int mtk_clk_register_plls(struct device_node *node,
+> -			  const struct mtk_pll_data *plls, int num_plls,
+> -			  struct clk_hw_onecell_data *clk_data);
+> +int mtk_clk_register_plls(struct device *dev, const struct mtk_pll_data *plls,
+> +			  int num_plls, struct clk_hw_onecell_data *clk_data);
+> +
+>   void mtk_clk_unregister_plls(const struct mtk_pll_data *plls, int num_plls,
+>   			     struct clk_hw_onecell_data *clk_data);
+>   
+> 
 
 
