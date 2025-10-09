@@ -1,69 +1,44 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECD4315E90;
-	Thu,  9 Oct 2025 17:02:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F409D23B605;
+	Thu,  9 Oct 2025 17:37:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760029379; cv=none; b=m0bvMzMJSbY47XGCtjR6bfW9jtIwcfCZAU3vgVoFidGDH7X1wRHO0hJlx+KB07F9w7i1YeB35LGRuNnCGEezFD0T9U7S/Al66TJd/RXWuwmVFY0c+McIptvKWqvRjtZrDxdmKjqVM03a5gxyMNUJx5ISexKMFE5OaCnFU15MgZ4=
+	t=1760031469; cv=none; b=UpEMvLZeU9G6hN/t7uvz17Ll1P9QHnHI9rCZAplH0ia6r3aXidcM83lKEDvFVJKHNFRfx//gTJ1xJUrLL4qNHlFEfRqLOW0TPSxvBrrDb1m1+t6Tza9tAyTqiR/L0PGJxR1e7/T/ep5erH6r3V77kB0To7X5BllpqUcCvJ5QNqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760029379; c=relaxed/simple;
-	bh=CuPJwPQaNVIp3hY6I0ilMYciVhwSPCyur8NOlazcDsE=;
+	s=arc-20240116; t=1760031469; c=relaxed/simple;
+	bh=q0/Tm1rBeGWihtR/SqMZaiZCGZAzw++6LlAYgjIfWTI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jJZo5O3Ni+oslnD4tWOfdYaTMnuecX9YKhNSmiuVA0ax9sxDiFo5dxQLjP3R7Xn9IqEmnylahYlVXPGgD704nD2UHaNWP6487CfQsrWvUNLyzIfC4ccmLGHbIkCRiG/1cauh7R1q1KNDFJze1mSG9pcM3HV91J4u5SImmgSGdI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gmhMLwPW; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=ax+6C/MKJW20OPvuKatQakX88+DvYSb6ktXiLYoBpzo325CS0awHcIf0wMng7lJ625c20/deGHqpaXPT5tQDyq1ObgcCKM443k327BQieet6IvO7VgnQm6E0QxES20dos3PIdx9yHpHd0STfixXXEvTlIu5oyb4pPg1hrYNrAqI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IAWbNK0r; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gmhMLwPW"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98A7DC4CEE7;
-	Thu,  9 Oct 2025 17:02:52 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IAWbNK0r"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C006C4CEE7;
+	Thu,  9 Oct 2025 17:37:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760029378;
-	bh=CuPJwPQaNVIp3hY6I0ilMYciVhwSPCyur8NOlazcDsE=;
+	s=k20201202; t=1760031465;
+	bh=q0/Tm1rBeGWihtR/SqMZaiZCGZAzw++6LlAYgjIfWTI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gmhMLwPWUgZNhmXKJHZbPHhNG7RPCnqifoKOQeiolKjtiJSUuZiBCpDUWHHH/YZ4g
-	 f9U+fGjqSrDWxVLOBatg3qI67patjZf+MXsbirkV3VMTJVRXgylrUDxqQwLlSTZQiJ
-	 nqxetvkQYaMcc2tbuGiuqUzLWM90TNbG0z00yz2XbvSmXhL1xfPSx7MTzNDz5y8eC0
-	 yw4As8939N37U7HtitFC2C1Mf7a+Dbpj/xuj8veR5/Ez8SaSokPhboNwrW4SJh5uYD
-	 lPkcV4OnOBmp1X4sS5zxKW88sEasIN4KJpAGBf+S5ifI0QRKQEGqh/ZZ0hIyfcfoMv
-	 9KtH2Iplk5qFg==
-Date: Thu, 9 Oct 2025 18:02:50 +0100
+	b=IAWbNK0rzqoCjWzWD2ebGC1xj0JvwZ3ZrtlxoO1G4yVW2ADuwisSM2EjjewAdkXmz
+	 94nED2B/fdxZsDIK7FziBYGSHvu2ByUd/PgfXBd02bowi/OokPQs8+JT2tuogzj0Ke
+	 q6rhQi8j4eDHLx3UbI3t58Kg0TCRNaetRWPiLT0qoz39wxMVcTYmM5hzdvVaGVPgCS
+	 93qC+0oJWqJO2vrTgmUxSQZ0xhE+FeEpfWIrYS07C57awpgkXzV54tTEfu81HfWN1Q
+	 8Qu9Pm4UHlsy0qWQQEscNTtMaqTWWQMUwfH6iUj/QNBNdf9p1XMdGpqG40Hstyc+vG
+	 JX8WscY2YdLNw==
+Date: Thu, 9 Oct 2025 18:37:41 +0100
 From: Conor Dooley <conor@kernel.org>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Sowjanya Komatineni <skomatineni@nvidia.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jonas =?iso-8859-1?Q?Schw=F6bel?= <jonasschwoebel@yahoo.de>,
-	Dmitry Osipenko <digetx@gmail.com>,
-	Charan Pedumuru <charan.pedumuru@gmail.com>,
-	Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>,
-	Aaron Kling <webgeek1234@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-staging@lists.linux.dev
-Subject: Re: [PATCH v4 22/24] dt-bindings: display: tegra: document Tegra20
- and Tegra30 CSI
-Message-ID: <20251009-steerable-babied-7b5f7a2c58da@spud>
-References: <20251008073046.23231-1-clamor95@gmail.com>
- <20251008073046.23231-23-clamor95@gmail.com>
- <20251008-canopener-marsupial-a92355b656ef@spud>
- <20251008-broaden-antennae-02de66094ad3@spud>
- <CAPVz0n1NYL+t-KC1FwHYXuQ0C483ay3g8zP4SmBKVC2rh=x4Bg@mail.gmail.com>
+To: dongxuyang@eswincomputing.com
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	ningyu@eswincomputing.com, linmin@eswincomputing.com,
+	huangyifeng@eswincomputing.com, pinkesh.vaghela@einfochips.com
+Subject: Re: [PATCH v6 1/2] dt-bindings: clock: eswin: Documentation for
+ eic7700 SoC
+Message-ID: <20251009-reggae-discharge-e39faaa312f6@spud>
+References: <20251009092029.140-1-dongxuyang@eswincomputing.com>
+ <20251009092119.198-1-dongxuyang@eswincomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -71,56 +46,26 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="HSF292molu88Asuo"
+	protocol="application/pgp-signature"; boundary="2WfRS743DVbdgsZW"
 Content-Disposition: inline
-In-Reply-To: <CAPVz0n1NYL+t-KC1FwHYXuQ0C483ay3g8zP4SmBKVC2rh=x4Bg@mail.gmail.com>
+In-Reply-To: <20251009092119.198-1-dongxuyang@eswincomputing.com>
 
 
---HSF292molu88Asuo
-Content-Type: text/plain; charset=utf-8
+--2WfRS743DVbdgsZW
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 09, 2025 at 08:35:22AM +0300, Svyatoslav Ryhel wrote:
-> =D1=87=D1=82, 9 =D0=B6=D0=BE=D0=B2=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 00:=
-22 Conor Dooley <conor@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
-> >
-> > On Wed, Oct 08, 2025 at 10:21:06PM +0100, Conor Dooley wrote:
-> > > On Wed, Oct 08, 2025 at 10:30:44AM +0300, Svyatoslav Ryhel wrote:
-> > > Of course you'd then have to add minItems: 1 and maxItems: 3 to the
-> > > extracted definitions.
->=20
-> What do you mean by your last statement? Add minItems: 1 and maxItems:
-> 3 like this?
->=20
-> This does to common properties
->   clocks:
->     minItems: 1
->     maxItems: 3
->     items:
->       - description: module clock
->       - description: PAD A clock
->       - description: PAD B clock
->=20
->   clock-names:
->     minItems: 1
->     maxItems: 3
->     items:
->       - const: csi
->       - const: csia-pad
->       - const: csib-pad
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-Yes, that is what I meant.
-
---HSF292molu88Asuo
+--2WfRS743DVbdgsZW
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaOfqugAKCRB4tDGHoIJi
-0hG0AP9Mkkygk9Q2BjWzrDg0CFZgtvVwKgrrBLgJV/EnbFfz5AEA1V+4UBvnLGFD
-xZ7p4fN/kJGOCld/pw6BT+OMgI/sUAk=
-=94WG
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaOfy5AAKCRB4tDGHoIJi
+0mo4AP9EOSxes27wxZlUymg+dZRqgQo/RcyxnN75/fR1UqIiEgEA0kf2jwsTsygy
+aL8MIP439fiplruu//63r5BSYho1nQk=
+=AAw7
 -----END PGP SIGNATURE-----
 
---HSF292molu88Asuo--
+--2WfRS743DVbdgsZW--
