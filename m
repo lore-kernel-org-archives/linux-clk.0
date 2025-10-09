@@ -1,71 +1,71 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F409D23B605;
-	Thu,  9 Oct 2025 17:37:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3F59242D83;
+	Thu,  9 Oct 2025 18:04:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760031469; cv=none; b=UpEMvLZeU9G6hN/t7uvz17Ll1P9QHnHI9rCZAplH0ia6r3aXidcM83lKEDvFVJKHNFRfx//gTJ1xJUrLL4qNHlFEfRqLOW0TPSxvBrrDb1m1+t6Tza9tAyTqiR/L0PGJxR1e7/T/ep5erH6r3V77kB0To7X5BllpqUcCvJ5QNqI=
+	t=1760033059; cv=none; b=S4voV/4n6+xqQJ/wA6IQAyHjkYS/V1LkkMOeq4dfbb7Qj78L5CfJhqr3E3arL7fU+eo+vNNIDeMD6urKVHbLsl4cs06KZjwmEGJOdvEbIZ2FdzwSjtyJuRFiGFujKwlGKNn236HMssMi2t1HyR9ozBNzHe5/T2TY7NWKGTMlTcQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760031469; c=relaxed/simple;
-	bh=q0/Tm1rBeGWihtR/SqMZaiZCGZAzw++6LlAYgjIfWTI=;
+	s=arc-20240116; t=1760033059; c=relaxed/simple;
+	bh=K+hPseUknflSy4hygWFCRuB5yq+mdBnazdt9i44bmg8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ax+6C/MKJW20OPvuKatQakX88+DvYSb6ktXiLYoBpzo325CS0awHcIf0wMng7lJ625c20/deGHqpaXPT5tQDyq1ObgcCKM443k327BQieet6IvO7VgnQm6E0QxES20dos3PIdx9yHpHd0STfixXXEvTlIu5oyb4pPg1hrYNrAqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IAWbNK0r; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=dLCj7Hhvgz5FBQI3ijsa9xWVZqOaICMc38PLLlG4MFhCnHLfCDUc1r1waQC6up38jtTic4EzVlSgJIVknkCXb45L17zeN3ejT9mDi5ogu6QQAqm7jy9N0u/mEMYVOi0uSBtcup01+WbMTD5DOJ9mOyPygnO8QlLUVHazetVd+Do=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=owltrz/G; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IAWbNK0r"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C006C4CEE7;
-	Thu,  9 Oct 2025 17:37:42 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="owltrz/G"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2540C4CEE7;
+	Thu,  9 Oct 2025 18:04:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760031465;
-	bh=q0/Tm1rBeGWihtR/SqMZaiZCGZAzw++6LlAYgjIfWTI=;
+	s=k20201202; t=1760033059;
+	bh=K+hPseUknflSy4hygWFCRuB5yq+mdBnazdt9i44bmg8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IAWbNK0rzqoCjWzWD2ebGC1xj0JvwZ3ZrtlxoO1G4yVW2ADuwisSM2EjjewAdkXmz
-	 94nED2B/fdxZsDIK7FziBYGSHvu2ByUd/PgfXBd02bowi/OokPQs8+JT2tuogzj0Ke
-	 q6rhQi8j4eDHLx3UbI3t58Kg0TCRNaetRWPiLT0qoz39wxMVcTYmM5hzdvVaGVPgCS
-	 93qC+0oJWqJO2vrTgmUxSQZ0xhE+FeEpfWIrYS07C57awpgkXzV54tTEfu81HfWN1Q
-	 8Qu9Pm4UHlsy0qWQQEscNTtMaqTWWQMUwfH6iUj/QNBNdf9p1XMdGpqG40Hstyc+vG
-	 JX8WscY2YdLNw==
-Date: Thu, 9 Oct 2025 18:37:41 +0100
-From: Conor Dooley <conor@kernel.org>
-To: dongxuyang@eswincomputing.com
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	ningyu@eswincomputing.com, linmin@eswincomputing.com,
-	huangyifeng@eswincomputing.com, pinkesh.vaghela@einfochips.com
-Subject: Re: [PATCH v6 1/2] dt-bindings: clock: eswin: Documentation for
- eic7700 SoC
-Message-ID: <20251009-reggae-discharge-e39faaa312f6@spud>
-References: <20251009092029.140-1-dongxuyang@eswincomputing.com>
- <20251009092119.198-1-dongxuyang@eswincomputing.com>
+	b=owltrz/GJxZu1UAvwCW/COWHnZAzwxKes5ADduozJqQwtIWbQfzeUUSGQNBY9PTvv
+	 D3t23hfmu6nKLeOFLzmiJ1ep4DmWqsT0wAKZk7BwCGttUtZ9RVy8cUvORNrDzbUQAQ
+	 kbu0IEyrSU2iaf8cvC41vbL1sJt2zYesbuG+qN4Ye7few39gDSPE98XjjliI7Lt6Gp
+	 CSlAZpLhBa1P89chi91jqDURIv8fOpIyOgELRoKRlVNjB0jCC2P/FPSsJVaiX5DK/t
+	 0gPtRS4FxCMopn472srDZBzg4vQaf1nMMAQpZe1wP80U8vHhchM5WxKMXaeCsQL4an
+	 wbfCcpPQD4yTw==
+Date: Thu, 9 Oct 2025 13:04:17 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Chuan Liu <chuan.liu@amlogic.com>
+Cc: Kevin Hilman <khilman@baylibre.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Stephen Boyd <sboyd@kernel.org>, linux-amlogic@lists.infradead.org,
+	Jerome Brunet <jbrunet@baylibre.com>, linux-clk@vger.kernel.org,
+	Conor Dooley <conor+dt@kernel.org>,
+	Xianwei Zhao <xianwei.zhao@amlogic.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH 03/19] dt-bindings: clock: Add Amlogic A4 peripherals
+ clock controller
+Message-ID: <176003305705.2941216.8177451888000768294.robh@kernel.org>
+References: <20250930-a4_a5_add_clock_driver-v1-0-a9acf7951589@amlogic.com>
+ <20250930-a4_a5_add_clock_driver-v1-3-a9acf7951589@amlogic.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="2WfRS743DVbdgsZW"
-Content-Disposition: inline
-In-Reply-To: <20251009092119.198-1-dongxuyang@eswincomputing.com>
-
-
---2WfRS743DVbdgsZW
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20250930-a4_a5_add_clock_driver-v1-3-a9acf7951589@amlogic.com>
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
---2WfRS743DVbdgsZW
-Content-Type: application/pgp-signature; name="signature.asc"
+On Tue, 30 Sep 2025 17:37:16 +0800, Chuan Liu wrote:
+> Add the peripherals clock controller dt-bindings for the Amlogic A4
+> SoC family.
+> 
+> Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
+> ---
+>  .../clock/amlogic,a4-peripherals-clkc.yaml         | 122 +++++++++++++++++++
+>  .../clock/amlogic,a4-peripherals-clkc.h            | 129 +++++++++++++++++++++
+>  2 files changed, 251 insertions(+)
+> 
 
------BEGIN PGP SIGNATURE-----
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaOfy5AAKCRB4tDGHoIJi
-0mo4AP9EOSxes27wxZlUymg+dZRqgQo/RcyxnN75/fR1UqIiEgEA0kf2jwsTsygy
-aL8MIP439fiplruu//63r5BSYho1nQk=
-=AAw7
------END PGP SIGNATURE-----
-
---2WfRS743DVbdgsZW--
