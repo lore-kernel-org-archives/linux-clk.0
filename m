@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3FC625782F;
-	Thu,  9 Oct 2025 10:46:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A90713E41A;
+	Thu,  9 Oct 2025 10:48:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760006798; cv=none; b=GTdxfvgXPMYz1Z168WeFyn9ViSpsWAhmPoeUOwbg0wFT8bQm4SA9o0CfGB+K01BS0ZTK3o3jQWQofCGOW+9J0a0OkIoj3U1hyVOtm7AkQtDPmxc5zhJKKZIliOEbHVf8DGZSP8zsF09+0NQripFDy1apt6+Ik302gQikY9bsoPo=
+	t=1760006937; cv=none; b=N5larab421IDTf4WNb0lXdrJRBcl0NBprvk5GScewRcnMTCTTMPnCXb+asg3oQ9xXbRAgXZHPzGagzAELSXW3y0oLFZAb5GHhZU4gtyMxWzPFU/EcYOkXGq0L8Djk/k9guNxDU+OfzS3PUmIg5hyIR6njvWNXmGXsMKoqWI5/vM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760006798; c=relaxed/simple;
-	bh=gq1GlD/JNmscj9pSxVM6SlS8u8l/THT51VLdoDTnla0=;
+	s=arc-20240116; t=1760006937; c=relaxed/simple;
+	bh=GTjixdu7ePBauENBb+e/bL/cURiVsnusHjIi9xV2Sbw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gFLdkjMb0xSJe9POww4RQo7XN4xeMFeeZILKF/DTVPIUphhnzs9US1isDRYCtXpeLCwY6GDAvSdj2l8h/Z5zqZQoRmBdNmDTQIdusUow/vmxzqRDnknxZ5rP8NYYkIUKVP4Hms66OefH9fHmUnLGm6aU4DCFWNhwcNpDp40CLsw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TSr4Iqqs; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=k80Uvb4e/WNmxxAroQrp0EbvYx3VI8WP88gaPxR9GAzP1jLpbc6qF8pJGnImHhrs1OnLdLDMJTFtiQUQCzzG0O75OtiCulL5IEMch3eUTkUXcGpZejrqDFdQkpsFO5v0Nye5sYGerAf+/A14KoON+JtauLIEJigFDokrVeL1FcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o6XVKd3F; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TSr4Iqqs"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B164C4CEE7;
-	Thu,  9 Oct 2025 10:46:30 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o6XVKd3F"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E5E1C4CEE7;
+	Thu,  9 Oct 2025 10:48:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760006797;
-	bh=gq1GlD/JNmscj9pSxVM6SlS8u8l/THT51VLdoDTnla0=;
+	s=k20201202; t=1760006937;
+	bh=GTjixdu7ePBauENBb+e/bL/cURiVsnusHjIi9xV2Sbw=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=TSr4IqqsxsyT8F1nq/aIe4VLSeSg8I/etJRvanmcnCOtlvmnkf4LL8OMxieTOJ1P9
-	 hjcKizTU/YYhgHku2CZXML1r//ChcXvlrx2melRdH4MPw+ws8ov+4Y79Tqcs872R4Z
-	 N1oE4kJ2gt6ReJgMpk2HHHOMAu5tZTbe6FI9tuR+Zc2W8fVNBUIfz3ZTWilRzRCsgt
-	 MA3FrxT3jLqAXsMhimTraeDLNsCH2Ox9gne7Xe/cMHYepBUpQHHDM3AcJpX3iurg9u
-	 4OA8NULWeZr7YGqUF2i90B0VFdWqohyJI0iqtc3reAtgWYbqHqHIW4fkzaZ1Z+DmF0
-	 +LWuGuFBFzrEg==
-Message-ID: <5a44b53f-4913-4c62-836f-85d67b513b62@kernel.org>
-Date: Thu, 9 Oct 2025 19:46:28 +0900
+	b=o6XVKd3FInHGGs+BTgwBkMh5zLoyY9Yo639JuTkPZb3r6pSxmV36AHxyfc4N/q9//
+	 wG89uWjuVE0rga057D8cUg4PM4qhFcbWbqgH1VDcunjFkkOtQOkpLd8tChSc1SABGe
+	 ceR8oTv88v3HaenVPBnzteZ34f67VHMFZHmDwLSqSJUiVt+7iygM0UDV4ZwcGsnLOn
+	 xRw/6FY5sy/ZRw1m5+dXTYRjlsWHzE7PY/lkDN3W3LTSAXGWBMAoWj0WA8S6XOBRhD
+	 ObOmZdKYK1Z0ezF6wXXNdY8SLFeuYvXF1BX5oHCdZNli+zMNHZf8qIkVMwAqUdBiRu
+	 FnY5ZVzPch9oA==
+Message-ID: <5a7ffa2d-6eee-4a97-acd5-1c54acfd82ba@kernel.org>
+Date: Thu, 9 Oct 2025 19:48:41 +0900
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,23 +35,31 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] dt-bindings: clock: qcom: Add SM8750 video clock
- controller
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Taniya Das <taniya.das@oss.qualcomm.com>,
+Subject: Re: [PATCH 1/9] dt-bindings: clock: qcom: document Kaanapali DISPCC
+ clock controller
+To: Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
  Bjorn Andersson <andersson@kernel.org>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
  <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: Ajit Pandey <quic_ajipan@quicinc.com>,
- Imran Shaik <quic_imrashai@quicinc.com>,
- Jagadeesh Kona <quic_jkona@quicinc.com>, linux-arm-msm@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20250829-sm8750-videocc-v2-v2-0-4517a5300e41@oss.qualcomm.com>
- <EAIobHjo8rM1e0LwqDqaUllC0qjV5ElMMhk6KgT1oNnFt_-k7ctM2_6kym9OjEtse5o4pOFM7yCkXgrSGRZhuw==@protonmail.internalid>
- <20250829-sm8750-videocc-v2-v2-2-4517a5300e41@oss.qualcomm.com>
- <d965949c-a7a0-43df-9bf1-c1232fc7e38e@linaro.org>
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>,
+ Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+ Jagadeesh Kona <quic_jkona@quicinc.com>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Taniya Das <taniya.das@oss.qualcomm.com>,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, aiqun.yu@oss.qualcomm.com,
+ tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com,
+ yijie.yang@oss.qualcomm.com
+References: <20250924-knp-mmclk-v1-0-d7ea96b4784a@oss.qualcomm.com>
+ <20250924-knp-mmclk-v1-1-d7ea96b4784a@oss.qualcomm.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -97,22 +105,22 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <d965949c-a7a0-43df-9bf1-c1232fc7e38e@linaro.org>
+In-Reply-To: <20250924-knp-mmclk-v1-1-d7ea96b4784a@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 15/09/2025 19:58, Bryan O'Donoghue wrote:
->>   properties:
->>     compatible:
->> @@ -25,6 +26,7 @@ properties:
->>         - qcom,sm8475-videocc
->>         - qcom,sm8550-videocc
->>         - qcom,sm8650-videocc
->> +      - qcom,sm8750-videocc
+On 25/09/2025 08:56, Jingyi Wang wrote:
+> From: Taniya Das <taniya.das@oss.qualcomm.com>
 > 
-> Shouldn't this be qcom,pakala-videocc now ?
+> Document device tree bindings for display clock controller for
+> Qualcomm Kaanapali SoC.
+> 
+> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
+> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
 
-No, why? There is no such soc as "pakala". See qcom bindings.
+
+
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
