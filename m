@@ -1,59 +1,59 @@
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8976B2D77FF
-	for <linux-clk@vger.kernel.org>; Thu,  9 Oct 2025 13:03:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE1CF2E6CD4
+	for <linux-clk@vger.kernel.org>; Thu,  9 Oct 2025 13:08:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760015019; cv=none; b=QXWdqYzJdAR+O8WX1kT0um3Ie6JAiQUiaSaJMIYMg/d53Y4USr1AcbcydZy88C5ZzuW6lyD+BAKFKEUPCzL5YbO/AsKFgCG3+a32fYXA9rVmMMHRa60sw/4Zizr4GoblISGKwgMDbCe072QerEHlbB6Ao2Xb27TG+G+9M3B9KIU=
+	t=1760015331; cv=none; b=rI4ODCkPLvfqEi82eU1zQXRLfVqjJU36tAigTThOpKYoGqzb1fQ63P7ia3pOvAyrfX5PeG9zIDG2yLNvlmqq/KJ084piE6tratNCDd5eBPMEUSl7JLfG02c+S8l8Kv0/o0aIlyuGE2Khd+s6q/ZQgZdkO0ShyXOyG1Th5l3GnGo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760015019; c=relaxed/simple;
-	bh=4bGkbKr/BNDRtyM3ktButr5lP4Fuyu+QNRcAebYeltA=;
+	s=arc-20240116; t=1760015331; c=relaxed/simple;
+	bh=brMLkJnhR4MJcvZ7cy6uJzkSB3AkGPRzWnGN9KMZzd8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SAPyPmhO5fWY2jnBQL+dw9QLB+mNmu9rCjM3Z9kCKe+gYz03WmGlSKQpH4IcSORG910uo6RL/oPxPnHbR5whplt83/5PyDgTDaFZcPLTnH9asAUb/T/0cvbmIwhK06AKWIWZbfTO9/HxYkM7A4YnMvtjFK10+HECsU1HIj9XG58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SXQYosKY; arc=none smtp.client-ip=209.85.221.53
+	 To:Cc:Content-Type; b=syhSpdgsnAoRgzSukqGiFt3bXaK2p5HP75eLK7pZnUME2ZJyXXU6ThiHtfzJUNlH3KY3lzA/pvP89G236J+nnH2krrdFSBevmV+gJrugXGvAF6sRpk4sxKRExXhlymWRnW2tjZlVdPMQ+yuVlRj7RSxQ2Hc4Vj0agOj1Z2xvAt0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DJQLaO4F; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SXQYosKY"
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3ee1221ceaaso757434f8f.3
-        for <linux-clk@vger.kernel.org>; Thu, 09 Oct 2025 06:03:36 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DJQLaO4F"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-46e491a5b96so5374215e9.2
+        for <linux-clk@vger.kernel.org>; Thu, 09 Oct 2025 06:08:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760015015; x=1760619815; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1760015326; x=1760620126; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Zla+EsFG4nzRnArXGImEQSCTyHGK3J4mv7lfg4FYjWQ=;
-        b=SXQYosKYU7Rih933lGVfSxkmWUdJhkFRZUGjdT9lLxhgsR7f96KI6JMXx0/vOaYWEi
-         xU7lS+DINxfSgmKirH7hrymeofS1pBKWvGaTCLlfzc41SJ3JZjJKT2E1bZ6iTGgZBfTi
-         4S/cDY8QN/dzJvCKbcz7Gy0a1Kp3+Cz7K+QVE33lqBIqfYYp6zd3459vcKQzovfKdu4w
-         mugYaXZdcCRIW+hncb5NOvIGRQKc3H4FNb1ApTTrnRyh0hLLgQML6y1Id7+jknWKgAPy
-         77O1hX99LUU6xi6cygYZH/GNeXYigF7lug/T1KgvWGx9XUVbRiZGheBRwN/h4o2ViEij
-         ZxBw==
+        bh=Qhovi4HUngN4Wor+KHpxSd3sVb2276HUKfA4yNG8cvE=;
+        b=DJQLaO4FB2lD4k7FmMA9nhdVy6AEYVf3+5fAKbAuLPSeNxk56ltU+k7ISyUve9kfcn
+         hw+Pvxwut0qNVcuW9gOMGhQhRlJhGkUQilgs6kxad7aMT7IbLTGcq/wDe8J+sVHn7Kl7
+         WxD6DBcTiO/oyfmTwKBZEHzlmIDvADst7fbYd3Dkjvune1rUsmpLGpC8ZpBE/eBshOkM
+         xz3D/G4nn+7zGoLQbyXcGMzHwxpiPWwceANt+lkw+XKV7O1+v7tajMZerw/T++gi/dC2
+         QaXpCE7w3QqpxWS36NVdgcJIWz9/4WXGzWZx4hVqxnolm97yilYWZEMBqxMKobDrQmbo
+         nPug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760015015; x=1760619815;
+        d=1e100.net; s=20230601; t=1760015326; x=1760620126;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Zla+EsFG4nzRnArXGImEQSCTyHGK3J4mv7lfg4FYjWQ=;
-        b=wigP9BaDnPANKOFvoDIV5g4dpas4VOxaYxSr3Q+OsJuZw6ZWKW14ThGgEdH1rEHMco
-         HCnrR1ea7fmihi6j5iC1j64NlyxA/gHR1M+H29BkBvvL+vV6NeQMvEfz7JQP5kPz+Fnd
-         54427ykpe8pwOsjx98ZJK82AyOlEXDSzFi+lmGCWpaJgZ1OwGdTuaHivLkaBjXCXOBP8
-         RffsANNo7ugoxl1BODpiHDYXiKNbnXylPv5TyATn8s7NQ/s1E/S9otJ1RN4C5KD9bIcR
-         Unru9oJxnJoEy6RP11giI7pmXCQpIxvTx9sq2FEACRaIdRdGbts5nJWW71iJ96296Cza
-         RjIg==
-X-Forwarded-Encrypted: i=1; AJvYcCUpSy5JVzQw8X2n8OPPxXSy2N0/pl73QVRlkOE6Nuszuyf79oG4/J5CMOZjJO339Wwd+CYaQ+E4enk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyspr3ozUbkx3GHmiv512JivugDDOHRlg0e85Ai8z7SxsFpi1tS
-	ZOyp/EyBX8MNT+xYe53dk5WPKPdgKwAg8prSQyBGhJ0hf2VAOafmv/m97O7uEYQ0L6iALKMfsmf
-	TzUz5KdKN32IFLdI6/ErdBVLJQPULNQA=
-X-Gm-Gg: ASbGncse/2PPPU72J/9OmbeiEzJZxJyXVty2gt3I88VuYzEMuMvivUJ+LENQJha/RHz
-	48Dc94H96Bha1ZG6Men1N8TBYwP7Z4h++2JlAJ1AyLEmDn3ZU+8XXdIYbUhBMaEmx+n9hbsTsZx
-	R5IE+MU8ABzUYPGVUA1o0WIzxD+eh4Oo5UwmDEoYsSmHvaCWkrLDcG1pztl0ETnJ2ZQhFSAb31t
-	aTHmHW52Ro7ITHtkb2HZcUecxy57HgHiagxpuQ1lZZOv8+N0oS4BZjKRUvLDPv6iy1Z+8YHO+Y=
-X-Google-Smtp-Source: AGHT+IG/ELPHmCCIZvciJbhA0k36idMhkGgCEPRr06+VPS042eX0V2JX9JR4zJTZ7TPW7Buub8nsqgeW9JGjesjwXe0=
-X-Received: by 2002:a05:6000:2681:b0:413:473f:5515 with SMTP id
- ffacd0b85a97d-4266e8dd718mr4549664f8f.48.1760015014251; Thu, 09 Oct 2025
- 06:03:34 -0700 (PDT)
+        bh=Qhovi4HUngN4Wor+KHpxSd3sVb2276HUKfA4yNG8cvE=;
+        b=VEydtuwdTkgPjyF9SRoYDQHrsdshlZGgOgYamqvTzHIxw0aCRAhO4drd4rpXay7Csw
+         ECyaIN7oeO0TdTiD+7CPjP1yVx7rWV8Uq6qllLvlQbu2OLisseNZFf1YQ535yjce/gya
+         RxhATmAig0OkQ4HOQih5U9KVljvnwoENUZDP497cRn4pxUxIHviLwSGiXkx/b+hHpAJQ
+         mwTgF+SbiPM05gTt9vAROUXMMFGvCTzy9HsNPiinheu27NgMoobJQbCiNLbhdBPdhUJE
+         1/APayONgwq9ZBb6+u8l9Ad6rPhYPBq3BQo4Y96KVjv5oKXgPBPZ3K9MBMrWTUC1OAX9
+         6TUg==
+X-Forwarded-Encrypted: i=1; AJvYcCUeyW78kxwQjkB1HHk0hGqXCtSsfB5wMpBe5HE43WBlwncleBLC4RADCbuJ6DliOMSRgiqnisIjkxo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJuI976WAyOeQ01mEV6o70fm64qvYdKil05s80AJTbjD+5Brsw
+	ShR0+1/jLZN3b0ITLL7AtJ2efVtD/xUpLbubrj4+uZGtzC7oEl0Ib2uIvNjeerKYZcMwRixokl8
+	43EinkxFvK7S0ihunfd20a/TStRxjLCY=
+X-Gm-Gg: ASbGncuEz9RrcXb73N+APxH3LZqCg1w+3JpQq0mHzewOCTQJZvnze0Vc5Wejnzc/cwn
+	oFz93D8QtiPHGN4LwKFZexpsYgHWlTAl+8q59QXCyKuTYHGiUayGkkq6CoqiImao6Nm1HNsxuMn
+	SOFYr/x53N8hkpBHML4q5L7ZyyevQanjrMj2t5Ktk7WhS8x2Ax5kxButmcRA8sjYJs7Zgnseec6
+	it4UZWaFvfOITMFyijXXlvFfqe6vJrEZKyMJY1dAIQufEU1W4MQW9+8wNwSquwlMlCmW/n13c0=
+X-Google-Smtp-Source: AGHT+IFBEmfcqddrXrL/Z1EH2lks0Dwq8+yKxv5/UdWltkE4DG7UysEBFkKmbef4z8X6f+H3A2Gk6BgSHDVYwx1ZvP4=
+X-Received: by 2002:a05:600c:6383:b0:46e:32dd:1b1a with SMTP id
+ 5b1f17b1804b1-46fa9a8f146mr49327895e9.7.1760015326038; Thu, 09 Oct 2025
+ 06:08:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -61,14 +61,13 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20251002161728.186024-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20251002161728.186024-7-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdUugFOOvHqjRyoPErh6rqpVuAS_Yr6mGqerKT0VQ-Y6KQ@mail.gmail.com>
-In-Reply-To: <CAMuHMdUugFOOvHqjRyoPErh6rqpVuAS_Yr6mGqerKT0VQ-Y6KQ@mail.gmail.com>
+ <20251002161728.186024-3-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdVP4xgsc6rD_Z6OMAXR-mOe9WdfZb2jXZSzDmXdgZzFSw@mail.gmail.com>
+In-Reply-To: <CAMuHMdVP4xgsc6rD_Z6OMAXR-mOe9WdfZb2jXZSzDmXdgZzFSw@mail.gmail.com>
 From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Thu, 9 Oct 2025 14:03:06 +0100
-X-Gm-Features: AS18NWB5J7UqnUnaUM9kOBg5egFn9pDXfiyyxgzQNRfPJ7AfsT8nEGf8oxH6wq0
-Message-ID: <CA+V-a8t7AQH5LpJaMgq9FUnA6qiUH=d5ngp0qr523BUWu88d+A@mail.gmail.com>
-Subject: Re: [PATCH v9 6/6] drm: renesas: rz-du: mipi_dsi: Add support for
- RZ/V2H(P) SoC
+Date: Thu, 9 Oct 2025 14:08:19 +0100
+X-Gm-Features: AS18NWC5rsslB-cfQdgL7VawbRMgX6qh2J8jZ5sIkVStSJ8rbfHF59Zw3xWMXPw
+Message-ID: <CA+V-a8uWYsQcfHx-4BRaLoH30uy3vaT-e9zqrW_kwoX_bsb8Xw@mail.gmail.com>
+Subject: Re: [PATCH v9 2/6] clk: renesas: rzv2h-cpg: Add support for DSI clocks
 To: Geert Uytterhoeven <geert@linux-m68k.org>
 Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
 	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
@@ -91,7 +90,7 @@ Hi Geert,
 
 Thank you for the review.
 
-On Mon, Oct 6, 2025 at 1:49=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68k=
+On Mon, Oct 6, 2025 at 1:45=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68k=
 .org> wrote:
 >
 > Hi Prabhakar,
@@ -100,70 +99,458 @@ On Mon, Oct 6, 2025 at 1:49=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68k=
 :
 > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 > >
-> > Add MIPI DSI support for the Renesas RZ/V2H(P) SoC. Compared to the
-> > RZ/G2L family, the RZ/V2H(P) requires dedicated D-PHY PLL programming,
-> > different clock configuration, and additional timing parameter handling=
-.
-> > The driver introduces lookup tables and helpers for D-PHY timings
-> > (TCLK*, THS*, TLPX, and ULPS exit) as specified in the RZ/V2H(P) hardwa=
-re
-> > manual. ULPS exit timing depends on the LPCLK rate and is now handled
-> > explicitly.
+> > Add support for PLLDSI and its post-dividers in the RZ/V2H CPG driver a=
+nd
+> > export helper APIs for use by the DSI driver.
 > >
-> > The implementation also adds support for 16 bpp RGB format, updates the
-> > clock setup path to use the RZ/V2H PLL divider limits, and provides new
-> > .dphy_init, .dphy_conf_clks, and .dphy_startup_late_init callbacks to
-> > match the RZ/V2H sequence.
+> > Introduce per-PLL-DSI state in the CPG private structure and provide a
+> > set of helper functions that find valid PLL parameter combinations for
+> > a requested frequency. The new helpers are rzv2h_get_pll_pars(),
+> > rzv2h_get_pll_div_pars(), rzv2h_get_pll_divs_pars() and
+> > rzv2h_get_pll_dtable_pars() and they are exported in the "RZV2H_CPG"
+> > namespace for use by other consumers (notably the DSI driver). These
+> > helpers perform iterative searches over PLL parameters (M, K, P, S)
+> > and optional post-dividers and return the best match (or an exact
+> > match when possible).
 > >
-> > With these changes, the RZ/V2H(P) can operate the MIPI DSI interface in
-> > compliance with its hardware specification while retaining support for
-> > existing RZ/G2L platforms.
+> > Move PLL/CLK related limits and parameter types into the shared
+> > include (include/linux/clk/renesas.h) by adding struct rzv2h_pll_limits=
+,
+> > struct rzv2h_pll_pars and struct rzv2h_pll_div_pars plus the
+> > RZV2H_CPG_PLL_DSI_LIMITS() helper macro to define DSI PLL limits.
+> >
+> > This change centralises the PLLDSI algorithms so the CPG and DSI
+> > drivers compute PLL parameters consistently and allows the DSI driver
+> > to accurately request rates and program its PLL.
 > >
 > > Co-developed-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
 > > Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
 > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > Reviewed-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
 > > ---
 > > v8->v9:
-> > - Updated Kconfig to select CLK_RZV2H
-> > - Updated to use renesas.h
-> > - Added reviewed-by tag from Tomi
+> > - Dropped `renesas-rzv2h-cpg-pll.h` header and merged into `renesas.h`
+> > - Exported the symbols for PLL calculation apis
+> > - Updated commit message
+> > - Dropped reviewed-by tags due to above changes
 >
 > Thanks for the update!
 >
-> > --- a/drivers/gpu/drm/renesas/rz-du/Kconfig
-> > +++ b/drivers/gpu/drm/renesas/rz-du/Kconfig
-> > @@ -19,6 +19,7 @@ config DRM_RZG2L_USE_MIPI_DSI
-> >         depends on DRM_BRIDGE && OF
-> >         depends on DRM_RZG2L_DU || COMPILE_TEST
-> >         default DRM_RZG2L_DU
-> > +       select CLK_RZV2H
+> > --- a/drivers/clk/renesas/rzv2h-cpg.c
+> > +++ b/drivers/clk/renesas/rzv2h-cpg.c
 >
-> As the kernel test robot has already told you, this is not a good idea.
-> RZ/V2H support is optional, just rely on (dummy) rzv2h_get_pll_*()
-> helpers returning false if CLK_RZV2H is not enabled.
+> > +/*
+> > + * rzv2h_get_pll_div_pars - Finds the best combination of PLL paramete=
+rs
+> > + * and divider value for a given frequency.
+> > + *
+> > + * @limits: Pointer to the structure containing the limits for the PLL=
+ parameters
+> > + * @pars: Pointer to the structure where the best calculated PLL param=
+eters and
+> > + * divider values will be stored
+> > + * @divider: Divider value to be applied to the PLL output
+> > + * @freq_millihz: Target output frequency in millihertz
+> > + *
+> > + * This function calculates the best set of PLL parameters (M, K, P, S=
+) where
+> > + * the divider value is already known. See rzv2h_get_pll_pars() for mo=
+re details
+> > + * on how the PLL parameters are calculated.
+> > + */
+> > +bool rzv2h_get_pll_div_pars(const struct rzv2h_pll_limits *limits,
+> > +                           struct rzv2h_pll_div_pars *pars, u8 divider=
+,
+> > +                           u64 freq_millihz)
+> > +{
+> > +       if (!rzv2h_get_pll_pars(limits, &pars->pll, freq_millihz * divi=
+der))
+> > +               return false;
+> > +
+> > +       pars->div.divider_value =3D divider;
+> > +       pars->div.freq_millihz =3D DIV_U64_ROUND_CLOSEST(pars->pll.freq=
+_millihz, divider);
+> > +       pars->div.error_millihz =3D freq_millihz - pars->div.freq_milli=
+hz;
+> > +
+> > +       return true;
+> > +}
+> > +EXPORT_SYMBOL_NS_GPL(rzv2h_get_pll_div_pars, "RZV2H_CPG");
 >
-Agreed, I will add static inline helpers in renesas.h if !CLK_RZV2H.
+> This function does not seem to be used outside this module yet,
+> so why is it exported?
+>
+Agreed, I will drop it.
+
+> If you do ever need it, you could define a simple wrapper in the
+> header file:
+>
+>     static inline bool rzv2h_get_pll_div_pars(const struct
+> rzv2h_pll_limits *limits,
+>                                               struct rzv2h_pll_div_pars *=
+pars,
+>                                               u8 divider, u64 freq_millih=
+z)
+>     {
+>             return rzv2h_get_pll_divs_pars(limits, pars, &divider, 1,
+> freq_millihz);
+>     }
+>
+Agreed.
+
+> > +
+> > +/*
+> > + * rzv2h_get_pll_divs_pars - Finds the best combination of PLL paramet=
+ers
+> > + * and divider value for a given frequency.
+> > + *
+> > + * @limits: Pointer to the structure containing the limits for the PLL=
+ parameters
+> > + * @pars: Pointer to the structure where the best calculated PLL param=
+eters and
+> > + * divider values will be stored
+> > + * @table: Pointer to the array of valid divider values
+> > + * @table_size: Size of the divider values array
+> > + * @freq_millihz: Target output frequency in millihertz
+> > + *
+> > + * This function calculates the best set of PLL parameters (M, K, P, S=
+) and divider
+> > + * value to achieve the desired frequency. See rzv2h_get_pll_pars() fo=
+r more details
+> > + * on how the PLL parameters are calculated.
+> > + *
+> > + * freq_millihz is the desired frequency generated by the PLL followed=
+ by a
+> > + * a gear.
+> > + */
+> > +bool rzv2h_get_pll_divs_pars(const struct rzv2h_pll_limits *limits,
+> > +                            struct rzv2h_pll_div_pars *pars,
+> > +                            const u8 *table, u8 table_size, u64 freq_m=
+illihz)
+> > +{
+> > +       struct rzv2h_pll_div_pars p, best;
+> > +
+> > +       best.div.error_millihz =3D S64_MAX;
+> > +       p.div.error_millihz =3D S64_MAX;
+> > +       for (unsigned int i =3D 0; i < table_size; i++) {
+> > +               if (!rzv2h_get_pll_div_pars(limits, &p, table[i], freq_=
+millihz))
+>
+> If you don't need rzv2h_get_pll_div_pars() elsewhere, you could just
+> expand it here.
+>
+Agreed, I will expand it here and drop rzv2h_get_pll_div_pars().
+
+> > +                       continue;
+> > +
+> > +               if (p.div.error_millihz =3D=3D 0) {
+> > +                       *pars =3D p;
+> > +                       return true;
+> > +               }
+> > +
+> > +               if (abs(best.div.error_millihz) > abs(p.div.error_milli=
+hz))
+> > +                       best =3D p;
+> > +       }
+> > +
+> > +       if (best.div.error_millihz =3D=3D S64_MAX)
+> > +               return false;
+> > +
+> > +       *pars =3D best;
+> > +       return true;
+> > +}
+> > +EXPORT_SYMBOL_NS_GPL(rzv2h_get_pll_divs_pars, "RZV2H_CPG");
+> > +
+> > +/*
+> > + * rzv2h_get_pll_dtable_pars - Finds the best combination of PLL param=
+eters
+> > + * and divider value for a given frequency using a divider table.
+> > + *
+> > + * @limits: Pointer to the structure containing the limits for the PLL=
+ parameters
+> > + * @pars: Pointer to the structure where the best calculated PLL param=
+eters and
+> > + * divider values will be stored
+> > + * @dtable: Pointer to the array of valid divider values
+> > + * @freq_millihz: Target output frequency in millihertz
+> > + *
+> > + * See rzv2h_get_pll_divs_pars() for more details on how the PLL
+> > + * parameters and divider values are calculated.
+> > + */
+> > +bool rzv2h_get_pll_dtable_pars(const struct rzv2h_pll_limits *limits,
+> > +                              struct rzv2h_pll_div_pars *pars,
+> > +                              const struct clk_div_table *dtable, u64 =
+freq_millihz)
+> > +{
+> > +       const struct clk_div_table *div =3D dtable;
+> > +       u8 table[RZV2H_MAX_DIV_TABLES] =3D { 0 };
+> > +       unsigned int i =3D 0;
+> > +
+> > +       for (; div->div; div++) {
+> > +               if (i >=3D RZV2H_MAX_DIV_TABLES)
+> > +                       return false;
+> > +               table[i++] =3D div->div;
+> > +       }
+> > +
+> > +       return rzv2h_get_pll_divs_pars(limits, pars, table, i, freq_mil=
+lihz);
+> > +}
+> > +EXPORT_SYMBOL_NS_GPL(rzv2h_get_pll_dtable_pars, "RZV2H_CPG");
+>
+> This function does not seem to be used outside this module yet,
+> so why is it exported?
+>
+Agreed, I will drop it.
+
+> > +
+> > +static unsigned long rzv2h_cpg_plldsi_div_recalc_rate(struct clk_hw *h=
+w,
+> > +                                                     unsigned long par=
+ent_rate)
+> > +{
+> > +       struct rzv2h_plldsi_div_clk *dsi_div =3D to_plldsi_div_clk(hw);
+> > +       struct rzv2h_cpg_priv *priv =3D dsi_div->priv;
+> > +       struct ddiv ddiv =3D dsi_div->ddiv;
+> > +       u32 div;
+> > +
+> > +       div =3D readl(priv->base + ddiv.offset);
+> > +       div >>=3D ddiv.shift;
+> > +       div &=3D clk_div_mask(ddiv.width);
+> > +       div =3D dsi_div->dtable[div].div;
+> > +
+> > +       return DIV_ROUND_CLOSEST_ULL(parent_rate, div);
+> > +}
+> > +
+> > +static int rzv2h_cpg_plldsi_div_determine_rate(struct clk_hw *hw,
+> > +                                              struct clk_rate_request =
+*req)
+> > +{
+> > +       struct rzv2h_plldsi_div_clk *dsi_div =3D to_plldsi_div_clk(hw);
+> > +       struct pll_clk *pll_clk =3D to_pll(clk_hw_get_parent(hw));
+> > +       struct rzv2h_cpg_priv *priv =3D dsi_div->priv;
+> > +       struct rzv2h_pll_div_pars *dsi_params;
+> > +       struct rzv2h_pll_dsi_info *dsi_info;
+> > +       u64 rate_millihz;
+> > +
+> > +       dsi_info =3D &priv->pll_dsi_info[pll_clk->pll.instance];
+> > +       dsi_params =3D &dsi_info->pll_dsi_parameters;
+> > +
+> > +       rate_millihz =3D mul_u32_u32(req->rate, MILLI);
+> > +       if (rate_millihz =3D=3D dsi_params->div.error_millihz + dsi_par=
+ams->div.freq_millihz)
+> > +               goto exit_determine_rate;
+> > +
+> > +       if (!rzv2h_get_pll_dtable_pars(dsi_info->pll_dsi_limits, dsi_pa=
+rams, dsi_div->dtable,
+> > +                                      rate_millihz)) {
+>
+> If you don't need rzv2h_get_pll_dtable_pars() elsewhere, you could just
+> expand it here.
+>
+Ok, I will expand it here.
+
+> > +               dev_err(priv->dev,
+> > +                       "failed to determine rate for req->rate: %lu\n"=
+,
+> > +                       req->rate);
+> > +               return -EINVAL;
+> > +       }
+> > +
+> > +exit_determine_rate:
+> > +       req->rate =3D DIV_ROUND_CLOSEST_ULL(dsi_params->div.freq_millih=
+z, MILLI);
+> > +       req->best_parent_rate =3D req->rate * dsi_params->div.divider_v=
+alue;
+> > +       dsi_info->req_pll_dsi_rate =3D req->best_parent_rate;
+> > +
+> > +       return 0;
+> > +}
+>
+> > --- a/include/linux/clk/renesas.h
+> > +++ b/include/linux/clk/renesas.h
+> > @@ -10,7 +10,9 @@
+> >  #ifndef __LINUX_CLK_RENESAS_H_
+> >  #define __LINUX_CLK_RENESAS_H_
+> >
+> > +#include <linux/clk-provider.h>
+> >  #include <linux/types.h>
+> > +#include <linux/units.h>
+> >
+> >  struct device;
+> >  struct device_node;
+> > @@ -32,4 +34,138 @@ void cpg_mssr_detach_dev(struct generic_pm_domain *=
+unused, struct device *dev);
+> >  #define cpg_mssr_attach_dev    NULL
+> >  #define cpg_mssr_detach_dev    NULL
+> >  #endif
+> > +
+> > +/**
+> > + * struct rzv2h_pll_limits - PLL parameter constraints
+> > + *
+> > + * This structure defines the minimum and maximum allowed values for
+> > + * various parameters used to configure a PLL. These limits ensure
+> > + * the PLL operates within valid and stable ranges.
+> > + *
+> > + * @fout: Output frequency range (in MHz)
+> > + * @fout.min: Minimum allowed output frequency
+> > + * @fout.max: Maximum allowed output frequency
+> > + *
+> > + * @fvco: PLL oscillation frequency range (in MHz)
+> > + * @fvco.min: Minimum allowed VCO frequency
+> > + * @fvco.max: Maximum allowed VCO frequency
+> > + *
+> > + * @m: Main-divider range
+> > + * @m.min: Minimum main-divider value
+> > + * @m.max: Maximum main-divider value
+> > + *
+> > + * @p: Pre-divider range
+> > + * @p.min: Minimum pre-divider value
+> > + * @p.max: Maximum pre-divider value
+> > + *
+> > + * @s: Divider range
+> > + * @s.min: Minimum divider value
+> > + * @s.max: Maximum divider value
+> > + *
+> > + * @k: Delta-sigma modulator range (signed)
+> > + * @k.min: Minimum delta-sigma value
+> > + * @k.max: Maximum delta-sigma value
+> > + */
+> > +struct rzv2h_pll_limits {
+> > +       struct {
+> > +               u32 min;
+> > +               u32 max;
+> > +       } fout;
+> > +
+> > +       struct {
+> > +               u32 min;
+> > +               u32 max;
+> > +       } fvco;
+> > +
+> > +       struct {
+> > +               u16 min;
+> > +               u16 max;
+> > +       } m;
+> > +
+> > +       struct {
+> > +               u8 min;
+> > +               u8 max;
+> > +       } p;
+> > +
+> > +       struct {
+> > +               u8 min;
+> > +               u8 max;
+> > +       } s;
+> > +
+> > +       struct {
+> > +               s16 min;
+> > +               s16 max;
+> > +       } k;
+> > +};
+> > +
+> > +/**
+> > + * struct rzv2h_pll_pars - PLL configuration parameters
+> > + *
+> > + * This structure contains the configuration parameters for the
+> > + * Phase-Locked Loop (PLL), used to achieve a specific output frequenc=
+y.
+> > + *
+> > + * @m: Main divider value
+> > + * @p: Pre-divider value
+> > + * @s: Output divider value
+> > + * @k: Delta-sigma modulation value
+> > + * @freq_millihz: Calculated PLL output frequency in millihertz
+> > + * @error_millihz: Frequency error from target in millihertz (signed)
+> > + */
+> > +struct rzv2h_pll_pars {
+> > +       u16 m;
+> > +       u8 p;
+> > +       u8 s;
+> > +       s16 k;
+> > +       u64 freq_millihz;
+> > +       s64 error_millihz;
+> > +};
+> > +
+> > +/**
+> > + * struct rzv2h_pll_div_pars - PLL parameters with post-divider
+> > + *
+> > + * This structure is used for PLLs that include an additional post-div=
+ider
+> > + * stage after the main PLL block. It contains both the PLL configurat=
+ion
+> > + * parameters and the resulting frequency/error values after the divid=
+er.
+> > + *
+> > + * @pll: Main PLL configuration parameters (see struct rzv2h_pll_pars)
+> > + *
+> > + * @div: Post-divider configuration and result
+> > + * @div.divider_value: Divider applied to the PLL output
+> > + * @div.freq_millihz: Output frequency after divider in millihertz
+> > + * @div.error_millihz: Frequency error from target in millihertz (sign=
+ed)
+> > + */
+> > +struct rzv2h_pll_div_pars {
+> > +       struct rzv2h_pll_pars pll;
+> > +       struct {
+> > +               u8 divider_value;
+> > +               u64 freq_millihz;
+> > +               s64 error_millihz;
+> > +       } div;
+> > +};
+> > +
+> > +#define RZV2H_CPG_PLL_DSI_LIMITS(name)                                =
+ \
+> > +       static const struct rzv2h_pll_limits (name) =3D {              =
+   \
+> > +               .fout =3D { .min =3D 25 * MEGA, .max =3D 375 * MEGA }, =
+       \
+> > +               .fvco =3D { .min =3D 1600 * MEGA, .max =3D 3200 * MEGA =
+},     \
+> > +               .m =3D { .min =3D 64, .max =3D 533 },                  =
+       \
+> > +               .p =3D { .min =3D 1, .max =3D 4 },                     =
+       \
+> > +               .s =3D { .min =3D 0, .max =3D 6 },                     =
+       \
+> > +               .k =3D { .min =3D -32768, .max =3D 32767 },            =
+       \
+> > +       }                                                              =
+ \
+> > +
+> > +bool rzv2h_get_pll_pars(const struct rzv2h_pll_limits *limits,
+> > +                       struct rzv2h_pll_pars *pars, u64 freq_millihz);
+>
+> Please add a dummy returning false for the !CONFIG_CLK_RZV2H case.
+>
+Agreed, I will add a static inline helper returning false.
+
+> > +
+> > +bool rzv2h_get_pll_div_pars(const struct rzv2h_pll_limits *limits,
+> > +                           struct rzv2h_pll_div_pars *pars, u8 divider=
+,
+> > +                           u64 freq_millihz);
+>
+> Unused, please drop.
+>
+OK.
+
+> > +
+> > +bool rzv2h_get_pll_divs_pars(const struct rzv2h_pll_limits *limits,
+> > +                            struct rzv2h_pll_div_pars *pars,
+> > +                            const u8 *table, u8 table_size, u64 freq_m=
+illihz);
+>
+> Please add a dummy returning false for the !CONFIG_CLK_RZV2H case.
+>
+Agreed, I will add a static inline helper returning false.
+
+> > +
+> > +bool rzv2h_get_pll_dtable_pars(const struct rzv2h_pll_limits *limits,
+> > +                              struct rzv2h_pll_div_pars *pars,
+> > +                              const struct clk_div_table *dtable, u64 =
+freq_millihz);
+>
+> Unused, please drop.
+>
+Ok.
 
 Cheers,
 Prabhakar
-
-> >         help
-> >           Enable support for the RZ/G2L Display Unit embedded MIPI DSI =
-encoders.
-> >
->
-> Gr{oetje,eeting}s,
->
->                         Geert
->
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m6=
-8k.org
->
-> In personal conversations with technical people, I call myself a hacker. =
-But
-> when I'm talking to journalists I just say "programmer" or something like=
- that.
->                                 -- Linus Torvalds
->
