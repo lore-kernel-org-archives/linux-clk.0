@@ -1,151 +1,117 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 014C421FF38
-	for <linux-clk@vger.kernel.org>; Thu,  9 Oct 2025 18:56:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 654661EF0B0;
+	Fri, 10 Oct 2025 02:02:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760036178; cv=none; b=BNVsXftxPLkFfT4nxIXk+D1TB2IXus2b5g8ExfPgr+m3N/asSmeL8GYd6betbaIq+gVGpfWFk8ZPJ99Sydb8rJoxXq2MMsgKsxrl1k5Vv7eh+tHDo2nSz2obXwHT7vif5wBK5p9UkIzDbzYOW58sPHsn7tqUwKGQiMF8zX1tGK0=
+	t=1760061755; cv=none; b=I4d1VKqKVslc9xUhxsW5VDOjuSifqRwYNzNlrOJ+8+GYKpX0SKfrd0c7+XhB1rWJFI6bOoGNY6hFi9OsOZ6BJ7V0AbTv0hBGaUG+812iEkfEjtDENw3LvNnd9Ps0193wxOIqSZ7MU7BC4ncjVJofW2fegRhL8h/Wv0xL1IGFYB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760036178; c=relaxed/simple;
-	bh=4iB88tQw2WXsZzzM6xK3yQGqAvESZ/GXQ3GjoVzeMlU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YlJtHMyKwZmGF4WNINPPfrhizdhCdVRYBa+xc0hcPAol3EsBTXT7wOiJg3rIEASdvuNQHK4vxqRYrzvYWpJK6NTrRMGzjUWsz55fsTku/QUnn2p3npRD/6oKvM3ln/amTB8YEIWftCXB+KfG9wVUx93xYnCgeyLZoo7M49aX358=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IinhdPH8; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1760061755; c=relaxed/simple;
+	bh=/FJH5Vpkh52wcPrzkMVwtmP0OwkiIrTThiVP10A1rog=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=RIBdgk1lKbGeTQrkYCxgqlS/6cwlq9ExDUa7JhtYHEqjQIiPlJP5Zpeu8DwfX2FrZN9yHpMoZP40xwXm6hOf5Koc42cCbE322Qfrgo4bdA/3AQYCOmcenCX8K0mTQdL+Hi2w2s1OZQmrgNJ88rva+qZQAuWRahWvuqAtuo6Bk3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jHC7gvou; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IinhdPH8"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760036175;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=73VHJPHIbh12PnyxfeCzN+eZOdvnFxFQRvkYUUFjG6M=;
-	b=IinhdPH8Tazv+mxUKMAWYZmuw/aFfoO4o6MVU/4HB3XAiOfQnenv46Iy3qdcV48jKnW3tP
-	lVYjp2CkqSXS2iG8zJzseuyHFZFG/p96BihQHTNhgL6RORU63Tkhf2c7K+CNilbwUooutq
-	n2TuEGeKYZAUFT1UG3iOdvrttfNYm+Q=
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
- [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-330-ErWInrO4Pausuf_ONOsG3Q-1; Thu, 09 Oct 2025 14:56:14 -0400
-X-MC-Unique: ErWInrO4Pausuf_ONOsG3Q-1
-X-Mimecast-MFC-AGG-ID: ErWInrO4Pausuf_ONOsG3Q_1760036173
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4dfc05dec2fso70406361cf.3
-        for <linux-clk@vger.kernel.org>; Thu, 09 Oct 2025 11:56:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760036173; x=1760640973;
-        h=user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:mime-version:references:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=73VHJPHIbh12PnyxfeCzN+eZOdvnFxFQRvkYUUFjG6M=;
-        b=THWz3/o5yT8qGVrTx35etMV8hj3aqUDuPUJc+UtwkKQeLNeLS2V0g2DgWh6I1cBdyO
-         nHvq9zlsilW/oqdAIUnL1qzIaNiFef6bDCOzus0qXgLO3TgkJrjOO8y+onfoMFa5+ZWt
-         7ZiTu3rlSdAEC3dZVQBgY7ZrXQ3gQ/1GpDm9QrqZ43F6il9BmRLK2G4cH8epc1+X+1tC
-         MFjeNM356rLCgcVMhpGMxhCQYMvnFDeEfw60fmzKxvaiMtCP3ePXMilx2orPuJ0nDggJ
-         Ldy4AGI2bIvzd/CL+kuPntNRJ/+UZKlAXPJsJOJYlwSvpvNCSFx4/OVgMQoAB7xKACxa
-         qgFA==
-X-Forwarded-Encrypted: i=1; AJvYcCV9WF5fS4d1BD70QV96SDCR54cniz9nmqQp1CnIMkmJD62u+O42RR+vBTpj2FTWmYPSX93WmqUgehI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7tGo0FBjuIz7HECNCXe7mfZQlchDpPhbDpItqYlngKWToRIjZ
-	TBBepaFkfxJTCzdK7TvzzKt1Fkl2DsecLCXVsC48QCy5UFtuYAbRZ5GB9Gn209oSx8vldNNukWR
-	Juzwg2A8sRFcI78o0Hf12RXr2Akvl69sHi3JcZSgvGkPAX+/He13UOfcREjvb2w==
-X-Gm-Gg: ASbGncvznvB6sYf2hAoVVL+nOCkI+Ko7VcJlfuws7sdAELZBfthVaRVH0Ezl7zJ0jne
-	8oxtVa2ZWGVybHUsTWXvjzzUoF4vbVUIdhafksNJ7BONmUfeUaJGE87z7/XVZoWauExnYFbPajF
-	Exqw8w1D9E2myTb4MCKIGUxO3U9eVSQMfqVDkAQ0MNGkdmh71zkBJbcLCcuMY9pB3AJFE0T/xpD
-	iwJ4XxnkO0FTTKKwvEK+dpK1x+sPYgGof13UXb0AC1PwT55neYZPL/Q96OQZ3FZh2hC4iZegJB7
-	bSMfSUDW7iW+T2ruHW6amkty2g4LtylZe2H/2WLbJS3m2wH8RsbUjQJ0Ob9aORkxZnYNmMN+yAc
-	fcveu9t0S8v0Ma5EUoAbQaQS1XuRpY2bKZKGZ
-X-Received: by 2002:ac8:584c:0:b0:4e5:7bd4:1beb with SMTP id d75a77b69052e-4e6ead65549mr104456831cf.68.1760036173505;
-        Thu, 09 Oct 2025 11:56:13 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE2AD5ZZcXckeSU9b450Mt8BqD9SOhoclS7nRF67Cec3FIHzgTkgVAjC1MmE6pVFS6HrvZ8kA==
-X-Received: by 2002:ac8:584c:0:b0:4e5:7bd4:1beb with SMTP id d75a77b69052e-4e6ead65549mr104456441cf.68.1760036172855;
-        Thu, 09 Oct 2025 11:56:12 -0700 (PDT)
-Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4e706dd1ceesm3026011cf.41.2025.10.09.11.56.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Oct 2025 11:56:12 -0700 (PDT)
-Date: Thu, 9 Oct 2025 14:56:10 -0400
-From: Brian Masney <bmasney@redhat.com>
-To: Chen-Yu Tsai <wenst@chromium.org>
-Cc: Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: tests: Add tests for clk lookup by name
-Message-ID: <aOgFSi_h95tfD8x2@redhat.com>
-References: <20251002092036.2504858-1-wenst@chromium.org>
- <aOb6iNR9T4R9Hp3R@redhat.com>
- <CAGXv+5HPjEnYh+zUi67+Y=nmFfdRFw0xd=rT7L_-GNxouga4Ow@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jHC7gvou"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 699A1C4CEE7;
+	Fri, 10 Oct 2025 02:02:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760061755;
+	bh=/FJH5Vpkh52wcPrzkMVwtmP0OwkiIrTThiVP10A1rog=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=jHC7gvou25hLkuFkaYMvrSDcsTsOOuX2swQ0g+a61BPmUTAcrgSfElEtfNqjdmfMY
+	 y4gpfwakVAU7B/sVavKKAOMdUrp7UK82S2xwfp2wcs3LO5MqL4Cz+KthkT2/iNQNVz
+	 Am0ltYCrwDrAbFQy+YnZoNwwwtlHPRqI+yeSlx1Xobhcmp4MqSskfe4Y5xBxWfonyo
+	 f5aDkIX3//GuEg4MUDmQ2gdE2E2fYOr5FXiwtpU9STt5Sca4n1wEItvYNlq+N/lSFV
+	 zitKHfCrASOOprtFjenQwd9QTTlaJKtCqm2IZ+Rr5trfiOZMDKv6ZFD5TUIBnbUjuO
+	 RcaeHY/9urQbQ==
+Message-ID: <3a960143-ad3e-4c3a-88a7-48e69576caed@kernel.org>
+Date: Fri, 10 Oct 2025 04:02:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGXv+5HPjEnYh+zUi67+Y=nmFfdRFw0xd=rT7L_-GNxouga4Ow@mail.gmail.com>
-User-Agent: Mutt/2.2.14 (2025-02-20)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] clk: samsung: exynos5420: Add support for power
+ control registers
+To: Anand Moon <linux.amoon@gmail.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>,
+ "open list:SAMSUNG SOC CLOCK DRIVERS" <linux-samsung-soc@vger.kernel.org>,
+ "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+ "moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES"
+ <linux-arm-kernel@lists.infradead.org>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20250909180652.7130-1-linux.amoon@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250909180652.7130-1-linux.amoon@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 09, 2025 at 11:24:22AM +0800, Chen-Yu Tsai wrote:
-> On Thu, Oct 9, 2025 at 7:58 AM Brian Masney <bmasney@redhat.com> wrote:
-> >
-> > On Thu, Oct 02, 2025 at 05:20:35PM +0800, Chen-Yu Tsai wrote:
-> > > Clk lookup (by name) recently gained some performance improvements at
-> > > the expense of more complexity within the lookup code.
-> > >
-> > > To make sure that this works as intended and doesn't break, add some
-> > > basic tests for this part of the CCF.
-> > >
-> > > A new "clk_hw_lookup()" function is added purely for running kunit
-> > > tests.
-> > >
-> > > Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
-> > > ---
-> > >  drivers/clk/clk.c      | 11 +++++++
-> > >  drivers/clk/clk.h      |  4 +++
-> > >  drivers/clk/clk_test.c | 66 +++++++++++++++++++++++++++++++++++++++++-
-> > >  3 files changed, 80 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> > > index 85d2f2481acf..a17d0070d11f 100644
-> > > --- a/drivers/clk/clk.c
-> > > +++ b/drivers/clk/clk.c
-> > > @@ -778,6 +778,17 @@ struct clk *__clk_lookup(const char *name)
-> > >       return !core ? NULL : core->hw->clk;
-> > >  }
-> > >
-> > > +#if IS_ENABLED(CONFIG_CLK_KUNIT_TEST)
-> > > +/* This is only provided for kunit tests to test the core lookup functions. */
-> > > +struct clk_hw *clk_hw_lookup(const char *name)
-> > > +{
-> > > +     struct clk_core *core = clk_core_lookup(name);
-> > > +
-> > > +     return !core ? NULL : core->hw;
-> > > +}
-> > > +EXPORT_SYMBOL_GPL(clk_hw_lookup);
-> > > +#endif
-> >
-> > Use EXPORT_SYMBOL_IF_KUNIT instead for consistency with the rest of the
-> > kernel. In clk_test.c, you'll also need to add:
-> >
-> > MODULE_IMPORT_NS("EXPORTED_FOR_KUNIT_TESTING");
+On 09/09/2025 20:06, Anand Moon wrote:
+> As per the Exynos5422 user manual, settings for the PWR_CTRL, PWR_CTRL2,
+> PWR_CTRL_KFC, and PWR_CNTL_KFC registers manage ARM clock down and up
+> configurations for idle and standby states.
 > 
-> Didn't know about this one. Thanks!
+> The Exynos5422's dynamic clock frequency down feature enables automatic
+> clock down when all CPU cores are in Wait For Event (WFE) or
+> Wait For Interrupt (WFI) states, utilizing this feature in standby
+> configurations.
 > 
-> > Since clk_hw_lookup() is only used by kunit, why not just put this new
-> > function in clk-test.c, and use EXPORT_SYMBOL_IF_KUNIT on
-> > clk_core_lookup?
-> 
-> Then we end up sort of exposing clk_core_lookup as well?
-> 
-> I believe Stephen wants to keep things contained as much as possible.
+> These modifications enhance the power management capabilities of the
+> Exynos542x by providing finer control over the ARM clock behavior in
+> various states.
 
-I agree about keeping things contained as much as possible as well.
-clk_core_lookup() would only be exposed to the kunit tests if you used
-EXPORT_SYMBOL_IF_KUNIT. Definitely go with whatever approach you think
-Stephen will prefer.
+This seems reasonable, but I need more detailed tests and Tested-by.
 
-Brian
-
+Best regards,
+Krzysztof
