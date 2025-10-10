@@ -1,82 +1,69 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 763082836F;
-	Fri, 10 Oct 2025 14:32:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B0422367B0;
+	Fri, 10 Oct 2025 14:33:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760106720; cv=none; b=FqrtE9EOul1z6YH+QYPtUCVdQ/95j5m9AG3mhzDrV58SR8ZhxfUyvHQ4SBJHic2n2Wejv5DEU93I4ziumIfftW+EpKKWTTyAch4cBmNc/cGNsvbVzH21hk2h77vnHB+IIRGcrziJ5tFQQvJ/4vveqOp7xnwelsJ6hkWdt+d3gl8=
+	t=1760106797; cv=none; b=i+0QaUTgB917asxhHFpiWWuHxUqWRzCuMPz7YYSVzortl2xUfbwoJLS7v8KmzsxZNjL9wBeXoZutrsOBdaknZYXb/umRHoJ5Iv2058GCKeNzItx+FQsE8BI4/KeD93+tMFR2vak7Mbf7uoNZNkTnMGNsNy+pjNG5ofcGBW3wo3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760106720; c=relaxed/simple;
-	bh=wEhFTZooq1SoHLK/XSZtmAYLO1RTIgJF4XL0BWpSf6Y=;
+	s=arc-20240116; t=1760106797; c=relaxed/simple;
+	bh=m2PXNXrLebhFa6++1XBL2y98d/eheP7r5cvfGNR8yVA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KCYmb8yhvaECAA+YMPwHBmD9LRjwUlKl1er48XMT+eTNcjZ0nevIMzGVy01wcNKOWsC31V8R0akvqy+TNkeCmpLIMGkTXf+HGNwPaw/lqJnlTi4tNK7u5mtvAGrXbuzzh4EcMhtHr7Qzag5vz2tVn9ilOHbUDXVeOprWzjTnLIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FXpCUjjH; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=KxdUVMHBb5Ixq/KXoh5jHs4cojRIfMlT0MF4/HE94/XCgS5Abe8WFsi7VCDxZwqUUT6O2Tb7lxCGYf8CsVo8/Ip+Aaf19vPlHrlfb8HuExQT7ukAaKZbmEu1Uin1gG/DuUAyixJwg25AGfU0MozQL8kLgIvM6/93IW3ersSK+ls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rudQa4Cw; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FXpCUjjH"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D1A4C4CEF1;
-	Fri, 10 Oct 2025 14:31:55 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rudQa4Cw"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0E5AC4CEF1;
+	Fri, 10 Oct 2025 14:33:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760106719;
-	bh=wEhFTZooq1SoHLK/XSZtmAYLO1RTIgJF4XL0BWpSf6Y=;
+	s=k20201202; t=1760106796;
+	bh=m2PXNXrLebhFa6++1XBL2y98d/eheP7r5cvfGNR8yVA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FXpCUjjH9b/60w57JjvE1ZeBOKiZcpafsYdqPVv+0bN4+mCBf8fyZNgsOzG1MSJoT
-	 P81HDDez/i6P/08T6m9e2/P5JQH3TEcTmzHeq5WLMQZj+o6mQhjpEt2rz3wzyj8X3Y
-	 aIR5xPdCs3Zs//fY3zOCHI5xdoI2W7PBp99rvspB1EA9oWBODKnvMveUlLGnkZ+7EZ
-	 iY1Ztt4jHYz/yxJ+Zh/7antlDGDH7v7sm8xIWGkwaB8l4NdZfiZ3qr4SmKa22Yjt1c
-	 mYGuEwetaX1bykkHnzvHQ8/CdGZxgHtqL7kyyDGJWsMRTs2zbz0z7NhQDkAXdiwHTF
-	 2+l8nLEhYJcvg==
-Date: Fri, 10 Oct 2025 15:31:53 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Xu Yang <xu.yang_2@nxp.com>
-Cc: Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Li Jun <jun.li@nxp.com>,
-	Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+	b=rudQa4CwjZPlcEyIjZSD/meAC8K/kcQSLFWXk+zb4u95bUz0GkUzdYbVvZxn0i3bP
+	 JsHQPldNp8xjCqCXHwe4gn+Yig8oSdETZUtZjXjnS1BykzpxNxjZdrPiI7pbSxeJdD
+	 b9kUcTCTcofCNkeoNMS+rFsRqfP83/CvcX+IIbqqFjk6awPJ2d8u0Y8OaqlG/BVfFx
+	 wy8TTmZsckSy+RkniV4NZzLz8MP+vXJL5tX5a/u2dihQaIT5VBCMyBlw5h4UgA3Esh
+	 wdnWpHqe7EMBbdR9kfTWOE+5HrAB/JjxULpRjeyjwks44VNfm1Hv+MarEzwhPx7NN2
+	 exDyON92tAnCw==
+Date: Fri, 10 Oct 2025 09:33:14 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-samsung-soc@vger.kernel.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, kernel-team@android.com,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	linux-arm-kernel@lists.infradead.org,
+	Will McVicker <willmcvicker@google.com>,
+	Stephen Boyd <sboyd@kernel.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-phy@lists.infradead.org,
-	devicetree@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] dt-bindings: phy: imx8mq-usb: add alternate
- reference clock
-Message-ID: <20251010-eldest-padded-98f9852a1248@spud>
-References: <20251010-usb-phy-alt-clk-support-v2-0-af4b78bb4ae8@nxp.com>
- <20251010-usb-phy-alt-clk-support-v2-1-af4b78bb4ae8@nxp.com>
+Subject: Re: [PATCH] dt-bindings: clock: google,gs101-clock: add power-domains
+Message-ID: <176010679359.249518.14445454979945020127.robh@kernel.org>
+References: <20251007-power-domains-clock-google-gs101-clock-v1-1-1ee73c453ba8@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ReRyNSNdhTFV+Mx9"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20251010-usb-phy-alt-clk-support-v2-1-af4b78bb4ae8@nxp.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251007-power-domains-clock-google-gs101-clock-v1-1-1ee73c453ba8@linaro.org>
 
 
---ReRyNSNdhTFV+Mx9
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Tue, 07 Oct 2025 17:03:10 +0100, André Draszik wrote:
+> The CMU can be part of a power domain, so we need to allow the relevant
+> property 'power-domains'.
+> 
+> Signed-off-by: André Draszik <andre.draszik@linaro.org>
+> ---
+>  Documentation/devicetree/bindings/clock/google,gs101-clock.yaml | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
---
-pw-bot: not-applicable
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
---ReRyNSNdhTFV+Mx9
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaOkY2QAKCRB4tDGHoIJi
-0q3mAP9j5GE2F7HQWGUYyOU9k9MhsEyyX3rvlNH5Tnd6R2lBIAD+LQIwhk0KoqWh
-PzUa4lYpWpc9tc/dr16rfSTrs9YE8wk=
-=mQj2
------END PGP SIGNATURE-----
-
---ReRyNSNdhTFV+Mx9--
