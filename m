@@ -1,136 +1,262 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97E7D2FD1C2;
-	Fri, 10 Oct 2025 18:42:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760121740; cv=none; b=DAc8gNgaPFgxRR5/ZPW2YEbcUhNHuF6Hz0e+FgLkgXz73zH4ycs7OnfE7/+jJK+PRdItlxwZJsM/ddofYlxHgON+oOTHaSZgYA2WLtTCNS7CIN7DmGtQ0OCrnkV3MHp6S7y0UlCOTgmhEtICTfuK5hFBB2S5N6hRnyELLUrfqII=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760121740; c=relaxed/simple;
-	bh=yr5O1vBEL2Wcyj75rjICSFJodCn8Ot3ie+4ynX8Yldk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D5fO9WxGzR6dvVeoSHs+GhLGmyGjfuVfZi5vsNtxFCF75PVrBObKHfjrj4/Z7ZeMp079muCxSAudSb9YXRja8WfyS5UPYtAiivFfyxTHB7zhTy88JiRIYvDDOTD+WKFJMoL3oOW2aJqE/fZ7AZkTmWkGHLiqjU6pUTvi+I0MgKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hY6xOg/m; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F2822EFD90;
+	Fri, 10 Oct 2025 20:08:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760126884; cv=pass; b=I2wrgk1l+3RfWKpR3sjMN7l5+RM/ej7BDgOskzmLejttJpEeW6n8Xai4IGj0dS1RqyCWgoxpkxaqE3GeNmGy4quobS7+3NzdZ1NGsdDdW7JPVrZMWPNtSyOzmom2RqwNl73LOTD70m/QGxwiQlOJ4gV6aidehyEBpaWi3pcbORI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760126884; c=relaxed/simple;
+	bh=df+NHXoVzp6wAu4DdS1ujOHkGrPCGok+YiBTBJ3rAlw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=F3OI+4kfBSMt13yRRu9SmEVc6cQ2WyGcK5T1FNke2A73waxh0QqyTbMxB7PYl1ITEshiEEuMctgsFqqaOBfpsY51N1DsrpHvnnsWtEbySbO+b+g3cZ5hvf0mUXTNrezi+esMBzI7s+kaA22BbzqsPGNlhSKxeODQxnVLRedKb4Y=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=Sf6HS2NB; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hY6xOg/m"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760121739; x=1791657739;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=yr5O1vBEL2Wcyj75rjICSFJodCn8Ot3ie+4ynX8Yldk=;
-  b=hY6xOg/mxPP8kJtu+ReunRCg/q2cUbaWPg//Q4V1f3BFr8elyz/IKDTK
-   Q/0ffPTdLtCOkNwIorajcEclvwCvyFfeV0CvkaOQqQS/TfSKrS4IzZTq8
-   IVN3yL7pJE9OOoFb6ovO1a4z4/CwlWFVBZRQw81NrWj3Q2+jubwlasJM1
-   u03Sfsdo1DED+zKL1BsyZglwxj15ddSrrZtr/dhzcziuiJgK0B9zqdaBv
-   TDOt6Re35HxfpqTAxaAneMJvCG6TEpkvY9EnrKtch5spk76Z4XHSbGJLs
-   IFblwBqeuFetbjhHWzVicuk3D7VBWQnZU1uqj4Gqcv0ktfuzto9cfwvBn
-   w==;
-X-CSE-ConnectionGUID: 5TCRL1xeTIufAvs+8wrsgg==
-X-CSE-MsgGUID: pl7xvq+ZTvSLFUIb/+GTJA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="62288507"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="62288507"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2025 11:42:18 -0700
-X-CSE-ConnectionGUID: udKB6OpJROCUFgb3Kiq00g==
-X-CSE-MsgGUID: 9kUA5bX/QIC8UPbCsBCYfg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,219,1754982000"; 
-   d="scan'208";a="180158850"
-Received: from lkp-server01.sh.intel.com (HELO 6a630e8620ab) ([10.239.97.150])
-  by orviesa006.jf.intel.com with ESMTP; 10 Oct 2025 11:42:12 -0700
-Received: from kbuild by 6a630e8620ab with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v7I49-000345-2q;
-	Fri, 10 Oct 2025 18:42:09 +0000
-Date: Sat, 11 Oct 2025 02:41:35 +0800
-From: kernel test robot <lkp@intel.com>
-To: Peng Fan <peng.fan@nxp.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	Sebin Francis <sebin.francis@ti.com>,
-	Brian Masney <bmasney@redhat.com>
-Cc: oe-kbuild-all@lists.linux.dev, Dan Carpenter <error27@gmail.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, arm-scmi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH v5 4/6] clk: Add KUnit tests for assigned-clock-sscs
-Message-ID: <202510110212.VLPx3MCC-lkp@intel.com>
-References: <20251009-clk-ssc-v5-1-v5-4-d6447d76171e@nxp.com>
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="Sf6HS2NB"
+ARC-Seal: i=1; a=rsa-sha256; t=1760126800; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=SpABhvblEL9SdXRaLVtJzpg/g+mDC82aoNkraQ7Z+Y8LQsyZrQAYPV6LVqzhRAQxzSuQU9XkLjTrSWn5usoMp92v+6tPwUK4i+4lFNsHuz5FTw5ZbBkZLOZAQpKNZ86FuI9IT6x9ymu01IDrfTTNTWSQJU7Zs6nvdCCjJmqZhnw=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1760126800; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=bDSQ9VvVld/VLomgjuC14NZl74tMino0lN1j5l3p66M=; 
+	b=KrhKsxCzb19qNPbEgxGzv1cUlRuxv4jPP6fUkcy96k3U/H1ty/c77w9O4D7jB/P4zairottDMEXlAtWZtjlPZq9ptDPSB5s6ESJhuEgxpBUCw5sowTWF7AQcKdobyqcc9toow11qHViZIf9iiVbO61YsiUmHFBe0Ume0MxfsB08=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
+	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1760126800;
+	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
+	bh=bDSQ9VvVld/VLomgjuC14NZl74tMino0lN1j5l3p66M=;
+	b=Sf6HS2NBxwKoKc+RN5h7N7IJ5YqNKtmEoDvDMRNmynmx/q0MB5bPx1Yp68OhFTQo
+	UBlkzKzanMpTy+uGvHucs47paIfrqKbwEgrV56wi7ok4IeHZDWT15Y06bF/DD4xy9uO
+	Mr5KpHB2pGGqJ4SC12w3EcUAdmir6ClP3UecLRWg=
+Received: by mx.zohomail.com with SMTPS id 1760126798226932.2245475821575;
+	Fri, 10 Oct 2025 13:06:38 -0700 (PDT)
+From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+To: Chen-Yu Tsai <wenst@chromium.org>
+Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+ Dong Aisheng <aisheng.dong@nxp.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ Yassine Oudjana <y.oudjana@protonmail.com>,
+ Laura Nao <laura.nao@collabora.com>,
+ =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <nfraprado@collabora.com>,
+ Chia-I Wu <olvaffe@gmail.com>, kernel@collabora.com,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+Subject:
+ Re: [PATCH v2 4/5] clk: mediatek: Refactor pllfh registration to pass device
+Date: Fri, 10 Oct 2025 22:06:31 +0200
+Message-ID: <13720474.O9o76ZdvQC@workhorse>
+In-Reply-To:
+ <CAGXv+5Hpndq09cbudofSvkNE6w+tHb85VCqDb3P920S8vwonHQ@mail.gmail.com>
+References:
+ <20251008-mtk-pll-rpm-v2-0-170ed0698560@collabora.com>
+ <20251008-mtk-pll-rpm-v2-4-170ed0698560@collabora.com>
+ <CAGXv+5Hpndq09cbudofSvkNE6w+tHb85VCqDb3P920S8vwonHQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251009-clk-ssc-v5-1-v5-4-d6447d76171e@nxp.com>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-Hi Peng,
+On Thursday, 9 October 2025 09:33:22 Central European Summer Time Chen-Yu T=
+sai wrote:
+> On Thu, Oct 9, 2025 at 12:06=E2=80=AFAM Nicolas Frattaroli
+> <nicolas.frattaroli@collabora.com> wrote:
+> >
+> > After refactoring all of PLL to pass the device, it's now fairly easy to
+> > refactor pllfh and its users, as pllfh registration wraps PLL
+> > registration.
+> >
+> > Do this refactor and move all of the pllfh users to pass the device as
+> > well.
+> >
+> > Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+> > ---
+> >  drivers/clk/mediatek/clk-mt6795-apmixedsys.c |  2 +-
+> >  drivers/clk/mediatek/clk-mt8173-apmixedsys.c | 14 +++++++-------
+> >  drivers/clk/mediatek/clk-mt8186-apmixedsys.c |  2 +-
+> >  drivers/clk/mediatek/clk-mt8192-apmixedsys.c |  2 +-
+> >  drivers/clk/mediatek/clk-mt8195-apmixedsys.c |  2 +-
+> >  drivers/clk/mediatek/clk-pllfh.c             | 13 ++++++++-----
+> >  drivers/clk/mediatek/clk-pllfh.h             |  2 +-
+> >  7 files changed, 20 insertions(+), 17 deletions(-)
+> >
+> > diff --git a/drivers/clk/mediatek/clk-mt6795-apmixedsys.c b/drivers/clk=
+/mediatek/clk-mt6795-apmixedsys.c
+> > index 91665d7f125efde4941cc4de881c5b503a935529..123d5d7fea8554676364dc5=
+6f5c023e43325d516 100644
+> > --- a/drivers/clk/mediatek/clk-mt6795-apmixedsys.c
+> > +++ b/drivers/clk/mediatek/clk-mt6795-apmixedsys.c
+> > @@ -152,7 +152,7 @@ static int clk_mt6795_apmixed_probe(struct platform=
+_device *pdev)
+> >                 return -ENOMEM;
+> >
+> >         fhctl_parse_dt(fhctl_node, pllfhs, ARRAY_SIZE(pllfhs));
+> > -       ret =3D mtk_clk_register_pllfhs(node, plls, ARRAY_SIZE(plls),
+> > +       ret =3D mtk_clk_register_pllfhs(dev, plls, ARRAY_SIZE(plls),
+> >                                       pllfhs, ARRAY_SIZE(pllfhs), clk_d=
+ata);
+> >         if (ret)
+> >                 goto free_clk_data;
+> > diff --git a/drivers/clk/mediatek/clk-mt8173-apmixedsys.c b/drivers/clk=
+/mediatek/clk-mt8173-apmixedsys.c
+> > index 95385bb67d5511eda3a851f81986e67eaf81e5fb..d7d416172ab35bc027ae67c=
+163c1dc20dee857b6 100644
+> > --- a/drivers/clk/mediatek/clk-mt8173-apmixedsys.c
+> > +++ b/drivers/clk/mediatek/clk-mt8173-apmixedsys.c
+> > @@ -140,13 +140,13 @@ MODULE_DEVICE_TABLE(of, of_match_clk_mt8173_apmix=
+ed);
+> >  static int clk_mt8173_apmixed_probe(struct platform_device *pdev)
+> >  {
+> >         const u8 *fhctl_node =3D "mediatek,mt8173-fhctl";
+> > -       struct device_node *node =3D pdev->dev.of_node;
+> >         struct clk_hw_onecell_data *clk_data;
+> > +       struct device *dev =3D &pdev->dev;
+> >         void __iomem *base;
+> >         struct clk_hw *hw;
+> >         int r;
+> >
+> > -       base =3D of_iomap(node, 0);
+> > +       base =3D of_iomap(dev->of_node, 0);
+> >         if (!base)
+> >                 return -ENOMEM;
+> >
+> > @@ -157,25 +157,25 @@ static int clk_mt8173_apmixed_probe(struct platfo=
+rm_device *pdev)
+> >         }
+> >
+> >         fhctl_parse_dt(fhctl_node, pllfhs, ARRAY_SIZE(pllfhs));
+> > -       r =3D mtk_clk_register_pllfhs(node, plls, ARRAY_SIZE(plls),
+> > -                                   pllfhs, ARRAY_SIZE(pllfhs), clk_dat=
+a);
+> > +       r =3D mtk_clk_register_pllfhs(dev, plls, ARRAY_SIZE(plls), pllf=
+hs,
+> > +                                   ARRAY_SIZE(pllfhs), clk_data);
+> >         if (r)
+> >                 goto free_clk_data;
+> >
+> >         hw =3D mtk_clk_register_ref2usb_tx("ref2usb_tx", "clk26m", base=
+ + REGOFF_REF2USB);
+> >         if (IS_ERR(hw)) {
+> >                 r =3D PTR_ERR(hw);
+> > -               dev_err(&pdev->dev, "Failed to register ref2usb_tx: %d\=
+n", r);
+> > +               dev_err(dev, "Failed to register ref2usb_tx: %d\n", r);
+> >                 goto unregister_plls;
+> >         }
+> >         clk_data->hws[CLK_APMIXED_REF2USB_TX] =3D hw;
+> >
+> > -       hw =3D devm_clk_hw_register_divider(&pdev->dev, "hdmi_ref", "tv=
+dpll_594m", 0,
+> > +       hw =3D devm_clk_hw_register_divider(dev, "hdmi_ref", "tvdpll_59=
+4m", 0,
+> >                                           base + REGOFF_HDMI_REF, 16, 3,
+> >                                           CLK_DIVIDER_POWER_OF_TWO, NUL=
+L);
+> >         clk_data->hws[CLK_APMIXED_HDMI_REF] =3D hw;
+> >
+> > -       r =3D of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_d=
+ata);
+> > +       r =3D of_clk_add_hw_provider(dev->of_node, of_clk_hw_onecell_ge=
+t, clk_data);
+> >         if (r)
+> >                 goto unregister_ref2usb;
+> >
+> > diff --git a/drivers/clk/mediatek/clk-mt8186-apmixedsys.c b/drivers/clk=
+/mediatek/clk-mt8186-apmixedsys.c
+> > index 4b2b16578232d986f78deed4778c5fab7f460184..d35dd2632e43ab535b32b8b=
+99f8d75de02d56fe2 100644
+> > --- a/drivers/clk/mediatek/clk-mt8186-apmixedsys.c
+> > +++ b/drivers/clk/mediatek/clk-mt8186-apmixedsys.c
+> > @@ -151,7 +151,7 @@ static int clk_mt8186_apmixed_probe(struct platform=
+_device *pdev)
+> >
+> >         fhctl_parse_dt(fhctl_node, pllfhs, ARRAY_SIZE(pllfhs));
+> >
+> > -       r =3D mtk_clk_register_pllfhs(node, plls, ARRAY_SIZE(plls),
+> > +       r =3D mtk_clk_register_pllfhs(&pdev->dev, plls, ARRAY_SIZE(plls=
+),
+> >                                     pllfhs, ARRAY_SIZE(pllfhs), clk_dat=
+a);
+> >         if (r)
+> >                 goto free_apmixed_data;
+> > diff --git a/drivers/clk/mediatek/clk-mt8192-apmixedsys.c b/drivers/clk=
+/mediatek/clk-mt8192-apmixedsys.c
+> > index 0b66a27e4d5ac68f09dc6a4197fd84ef82342df9..b0563a285bd666d492a7fa9=
+40733aad1ab1a0bae 100644
+> > --- a/drivers/clk/mediatek/clk-mt8192-apmixedsys.c
+> > +++ b/drivers/clk/mediatek/clk-mt8192-apmixedsys.c
+> > @@ -162,7 +162,7 @@ static int clk_mt8192_apmixed_probe(struct platform=
+_device *pdev)
+> >
+> >         fhctl_parse_dt(fhctl_node, pllfhs, ARRAY_SIZE(pllfhs));
+> >
+> > -       r =3D mtk_clk_register_pllfhs(node, plls, ARRAY_SIZE(plls),
+> > +       r =3D mtk_clk_register_pllfhs(&pdev->dev, plls, ARRAY_SIZE(plls=
+),
+> >                                     pllfhs, ARRAY_SIZE(pllfhs), clk_dat=
+a);
+> >         if (r)
+> >                 goto free_clk_data;
+> > diff --git a/drivers/clk/mediatek/clk-mt8195-apmixedsys.c b/drivers/clk=
+/mediatek/clk-mt8195-apmixedsys.c
+> > index 282a3137dc89419a6d0b574fd549cee941687900..44917ab034c56f01ef02d19=
+57f17eb0655438d75 100644
+> > --- a/drivers/clk/mediatek/clk-mt8195-apmixedsys.c
+> > +++ b/drivers/clk/mediatek/clk-mt8195-apmixedsys.c
+> > @@ -181,7 +181,7 @@ static int clk_mt8195_apmixed_probe(struct platform=
+_device *pdev)
+> >
+> >         fhctl_parse_dt(fhctl_node, pllfhs, ARRAY_SIZE(pllfhs));
+> >
+> > -       r =3D mtk_clk_register_pllfhs(node, plls, ARRAY_SIZE(plls),
+> > +       r =3D mtk_clk_register_pllfhs(&pdev->dev, plls, ARRAY_SIZE(plls=
+),
+> >                                     pllfhs, ARRAY_SIZE(pllfhs), clk_dat=
+a);
+> >         if (r)
+> >                 goto free_apmixed_data;
+> > diff --git a/drivers/clk/mediatek/clk-pllfh.c b/drivers/clk/mediatek/cl=
+k-pllfh.c
+> > index 62bfe4a480f14a0a742fb094aff0e6d1a79fe0c3..8ad11023d91127e88900bc6=
+bcabbaeafb1e00664 100644
+> > --- a/drivers/clk/mediatek/clk-pllfh.c
+> > +++ b/drivers/clk/mediatek/clk-pllfh.c
+> > @@ -10,6 +10,7 @@
+> >  #include <linux/slab.h>
+> >  #include <linux/clkdev.h>
+> >  #include <linux/delay.h>
+> > +#include <linux/device.h>
+>=20
+> This shouldn't be needed, as you aren't using any of the APIs.
+>=20
+> A forward declaration of |struct device| in the header should suffice.
+> It should be added anyway, since the header defines data structures that
+> have a |struct device *| field.
+>=20
+>=20
+> ChenYu
+>=20
 
-kernel test robot noticed the following build errors:
 
-[auto build test ERROR on 7c3ba4249a3604477ea9c077e10089ba7ddcaa03]
+  drivers/clk/mediatek/clk-pllfh.c:208:21: error: incomplete definition of =
+type 'struct device'
+    208 |         base =3D of_iomap(dev->of_node, 0);
+        |                         ~~~^
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Peng-Fan/dt-bindings-clock-Add-spread-spectrum-definition/20251010-085803
-base:   7c3ba4249a3604477ea9c077e10089ba7ddcaa03
-patch link:    https://lore.kernel.org/r/20251009-clk-ssc-v5-1-v5-4-d6447d76171e%40nxp.com
-patch subject: [PATCH v5 4/6] clk: Add KUnit tests for assigned-clock-sscs
-config: s390-randconfig-002-20251011 (https://download.01.org/0day-ci/archive/20251011/202510110212.VLPx3MCC-lkp@intel.com/config)
-compiler: s390-linux-gcc (GCC) 15.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251011/202510110212.VLPx3MCC-lkp@intel.com/reproduce)
+Alas, it is needed, otherwise we can't get the of_node. dev_of_node
+is also defined in device.h, so it works out to the same difference.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510110212.VLPx3MCC-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> drivers/clk/clk_test.c:115:32: error: initialization of 'int (*)(struct clk_hw *, const struct clk_spread_spectrum *)' from incompatible pointer type 'int (*)(struct clk_hw *, struct clk_spread_spectrum *)' [-Wincompatible-pointer-types]
-     115 |         .set_spread_spectrum = clk_dummy_set_spread_spectrum,
-         |                                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/clk/clk_test.c:115:32: note: (near initialization for 'clk_dummy_rate_ops.set_spread_spectrum')
-   drivers/clk/clk_test.c:87:12: note: 'clk_dummy_set_spread_spectrum' declared here
-      87 | static int clk_dummy_set_spread_spectrum(struct clk_hw *hw,
-         |            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/clk/clk_test.c:122:32: error: initialization of 'int (*)(struct clk_hw *, const struct clk_spread_spectrum *)' from incompatible pointer type 'int (*)(struct clk_hw *, struct clk_spread_spectrum *)' [-Wincompatible-pointer-types]
-     122 |         .set_spread_spectrum = clk_dummy_set_spread_spectrum,
-         |                                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/clk/clk_test.c:122:32: note: (near initialization for 'clk_dummy_maximize_rate_ops.set_spread_spectrum')
-   drivers/clk/clk_test.c:87:12: note: 'clk_dummy_set_spread_spectrum' declared here
-      87 | static int clk_dummy_set_spread_spectrum(struct clk_hw *hw,
-         |            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/clk/clk_test.c:129:32: error: initialization of 'int (*)(struct clk_hw *, const struct clk_spread_spectrum *)' from incompatible pointer type 'int (*)(struct clk_hw *, struct clk_spread_spectrum *)' [-Wincompatible-pointer-types]
-     129 |         .set_spread_spectrum = clk_dummy_set_spread_spectrum,
-         |                                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/clk/clk_test.c:129:32: note: (near initialization for 'clk_dummy_minimize_rate_ops.set_spread_spectrum')
-   drivers/clk/clk_test.c:87:12: note: 'clk_dummy_set_spread_spectrum' declared here
-      87 | static int clk_dummy_set_spread_spectrum(struct clk_hw *hw,
-         |            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Kind regards,
+Nicolas Frattaroli
 
 
-vim +115 drivers/clk/clk_test.c
-
-   110	
-   111	static const struct clk_ops clk_dummy_rate_ops = {
-   112		.recalc_rate = clk_dummy_recalc_rate,
-   113		.determine_rate = clk_dummy_determine_rate,
-   114		.set_rate = clk_dummy_set_rate,
- > 115		.set_spread_spectrum = clk_dummy_set_spread_spectrum,
-   116	};
-   117	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
