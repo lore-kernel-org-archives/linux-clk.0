@@ -1,132 +1,119 @@
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9A542F261B
-	for <linux-clk@vger.kernel.org>; Fri, 10 Oct 2025 12:46:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B0C91C5F27;
+	Fri, 10 Oct 2025 13:05:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760100414; cv=none; b=c1n9ZTeKPqj5VgNOiUcnlLiD65zzPWHmS2hYiazXrE05XBqgria4rtx0IW+/R3q1ozVpv95V0tUQt0WHjlPTJlKvl0b7L55FUIgsBOHwMifgc9mBbO+lygAvi+nY+KrmA3frHYEh4ZLkoh4gVSGKIxEWAIZ4ruZ/VYjzGV6cMeM=
+	t=1760101531; cv=none; b=QteLo74i0pLD/VzFWRSGylKXknxdL9HD/SHZsSvUkXPpUcaxpqJHvlChQ1UUmCv6zVepRg/mJehHh4oDhmvCHSF+GhwOfKizyxQKwAQDFNJVYYd1GS3IoL+hdcITPzOQnObNVIV4I108UrvFM2xqLD4RHBce3N0SmWt1O3BWPDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760100414; c=relaxed/simple;
-	bh=hUk7p7wXwxuWON/P6SaBYN67C9x3HyQcVroLLSWoXfk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=qYw66GFoEq8btV7KzP1YeI2NHGK289gH5mlFSe+PlqB7j4URcBdBwa2SLqr9uPe+qQ6oWct4Oy5wifd4CBpX2iq08rWZ/eew7uMb8J/P4e2boHKTt7xoZwzecX7yvhgQcxYUhb4p7ozSFW+rf1FG/uykoGr/kPMLcRDxs8mTKN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=i+Q6AJqY; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1760101531; c=relaxed/simple;
+	bh=eI0lVn2zqvhKeyBzYrvyQURzCJ7dE2FL0otjWNA8eJE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=p5nZGE2lfCwds1eonaKarlPCy4a69SgTcKrv/7Uq5BUisQ5SrGIXqxB6/gh+07Qa4UHGstW/cxXTIOpEVYDi0X/hdtnpHHwrMz+w1fBlo7PTLObFrvtCGpPReVFXh79zxwzgRRde7s7F/WrJOl3hTaQmDqWRGikayDq/Jx6l5Pk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fRCiNVm/; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="i+Q6AJqY"
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-46e3cdc1a6aso15687745e9.1
-        for <linux-clk@vger.kernel.org>; Fri, 10 Oct 2025 05:46:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760100409; x=1760705209; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=euDBh1JPBik0jtg2IFON/RfdHFmTQnkqEMlQtD5Hj7I=;
-        b=i+Q6AJqYmm8LBYnWZA8kmyEyGoHVTegHASQDDbaz4rGaIbsc/whJJvcu6vrzHNgRVB
-         c9/g5dJlEG2S25+17M1PUWImRVua9g2HNFhsKv94T2aMxZJL1YL2PV6xJZmL86tgQEoc
-         updU1xJHMb+MXNq5INGRue1lYsqWQ+ycmXUxkuN1Ma84PyrujDF8DP5UwjiX+y5yeu8V
-         3D0QKAShx9+Nsgpo5fFl26AFnmCeuQ0QtAVXOLYN/qZ0WdEASFS8ca4onoPWMl1fu0eU
-         xT7/omWnVlv5KT8YSoDi6AnpTSGwkzODlGfx5GTiwtrl+IaoXO+f3Fxv9wPmVtRrxzGN
-         BPzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760100409; x=1760705209;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=euDBh1JPBik0jtg2IFON/RfdHFmTQnkqEMlQtD5Hj7I=;
-        b=DiivM6TY1gk7AKt66KLFE2p95HQfnOOqJ0DsUWD7fLE7WYOJMGBFncA2EGV9qLeUV8
-         tdr91Tyf7lUgn9puhvKGzOG7SejzjE4NhH72mhBIwi8WD/TpceY/Jmqz1d0e5b5/wR2o
-         3AQ7LAnFpkVmNFx/hh5G+F72EghiBwtsrI7Eye+pYryNfmEyuaUigA18MSAczhFDq1eh
-         X233JI2GzuJgTDmDGPssnIUYKqdw/yDLj++UguJS5Ig+7sUhQsObmF0HVMZl0ERsXzlG
-         2IB5GSp+hE4/zfme5JvYnoJ5EsB/bQ+9TKXQ6WApad6kWK+nH3chEC8XDaABCQVz2S3W
-         Ak0g==
-X-Forwarded-Encrypted: i=1; AJvYcCXgLWShVL0Qh3uFWG5U7/XiytPZ7q8al/K+HdHOM/zCXW+FuIZtJjpeKleseOHOiaJD9+Szzyd/Fo0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyib5I28BTM98MdGyRVHD9pi7jshgdbjMdr1YCo6vSNwX5sFVbo
-	44/UjblLR75b3xyB27u8stRbwZ+ABnI535vndb5Fd2x350NLdJ5s16qniF2EeY0ZVtA=
-X-Gm-Gg: ASbGnct31g2ttG1A1d2vss/KGWKdcMnWYoWW72A498w0aE0nXBkkOsTrQ4F39mvQiC+
-	nIv1Ttqm8XzJnTdyXCL8Ev5RRKQta4A3Bc9xF0D8/Pm4EocWebKMdxHyZspkiHXLR5O2ApwhPtC
-	EpkOjmiuCZ0PtnJU+S1DLPxDaPLr0JrRBsR5Wr5uXHLf/lU7nDn315KKH1rhP3oUXSDRvJcbI7y
-	b7Wcd2pYQL2ihP1p+3h6UL0OTeoxZ61+uBri0AMAVIVxgfKAtkpz/TF26KE3suIeONsdDOCeqh5
-	ID8lNcAx+GAgY/GyQ9AXVmzMNPfZPP5jUxbPxNysvdxP5wEFGXlCw/8zG869fBqFc9sc+avBs8n
-	nzYaJHpgGW6o5p0L7+EPYGFlpfBSNual21ms2esah6SUEExoU7heTxbcS45bfskLnySOHMCNwKu
-	9NANA4ZiGo+arYwU31FXkXhQ==
-X-Google-Smtp-Source: AGHT+IH8x0QfTr6wJYCjDE3d42CDoKbarW30rvQ/Cc2ORyEX4B7UUOdkskMSSnIc4XAyGE82hs4N5Q==
-X-Received: by 2002:a05:600c:6592:b0:46f:a2ba:581f with SMTP id 5b1f17b1804b1-46fa9ec796bmr84534875e9.16.1760100408792;
-        Fri, 10 Oct 2025 05:46:48 -0700 (PDT)
-Received: from ta2.c.googlers.com (213.53.77.34.bc.googleusercontent.com. [34.77.53.213])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fb484d056sm46376895e9.9.2025.10.10.05.46.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Oct 2025 05:46:48 -0700 (PDT)
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-Date: Fri, 10 Oct 2025 12:46:36 +0000
-Subject: [PATCH v6 6/6] MAINTAINERS: add ACPM clock bindings and driver
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fRCiNVm/"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E597C4CEF1;
+	Fri, 10 Oct 2025 13:05:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760101530;
+	bh=eI0lVn2zqvhKeyBzYrvyQURzCJ7dE2FL0otjWNA8eJE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=fRCiNVm/3dF34ZzrUE+fvON/MgRL8ikYDRgTtPU9/UvueEfUu/zNhUZj35un78yc/
+	 F3og+IbYjn/0N2J/RQuvrTz85nnspTqKTzDoAcmY+pjHa61/1dGdL5IMheP+OO0YHx
+	 hvIl+2RS7kNnEY9Cv1rJ5/q7i97SsCaUvQROybd1pOc0+ImrZnVH1msl53wKXMNmnX
+	 JvjxQilFygro7QZcFTl9Ot+gsLtfQgLdISBfcTYTtru9F4We+yyoKQqfiCoDCvH6Th
+	 /k/L7Unq3lUY2YF6orKHwv9y9jkpbXrn8RLyT5GNIF8WglJ7AqRytp2w8IxMNWPF7n
+	 M4gDnXsmPHy8w==
+Message-ID: <d01ad1f7-dc46-4b9d-9823-9d69b1d2be54@kernel.org>
+Date: Fri, 10 Oct 2025 15:05:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 5/7] clk: s2mps11: add the support for S2MPS16 PMIC
+ clock
+To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250914124227.2619925-1-ivo.ivanov.ivanov1@gmail.com>
+ <20250914124227.2619925-6-ivo.ivanov.ivanov1@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250914124227.2619925-6-ivo.ivanov.ivanov1@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251010-acpm-clk-v6-6-321ee8826fd4@linaro.org>
-References: <20251010-acpm-clk-v6-0-321ee8826fd4@linaro.org>
-In-Reply-To: <20251010-acpm-clk-v6-0-321ee8826fd4@linaro.org>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Peter Griffin <peter.griffin@linaro.org>, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, 
- Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Chanwoo Choi <cw00.choi@samsung.com>, 
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-clk@vger.kernel.org, willmcvicker@google.com, kernel-team@android.com, 
- Tudor Ambarus <tudor.ambarus@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1760100402; l=1202;
- i=tudor.ambarus@linaro.org; s=20241212; h=from:subject:message-id;
- bh=hUk7p7wXwxuWON/P6SaBYN67C9x3HyQcVroLLSWoXfk=;
- b=Enoypv5lWz1jLL8VOiF8wE4cWDFIyo47tyJbQitxtWSbq+eKO6jjL0y+BmtW8IkT/uywAVSZb
- namtqWy2kaMATnFmk94Ffxc0XmxkNambqyqvWPYoai4R6uOhoewf3BJ
-X-Developer-Key: i=tudor.ambarus@linaro.org; a=ed25519;
- pk=uQzE0NXo3dIjeowMTOPCpIiPHEz12IA/MbyzrZVh9WI=
 
-Extend the Google Tensor SoC support list of files to include the
-GS101 ACPM clock bindings. Add the ACPM clock driver under the
-Samsung Exynos ACPM Protocol entry.
+On 14/09/2025 14:42, Ivaylo Ivanov wrote:
+> Add the support for S2MPS16 PMIC clock, which is functionally the same
+> as the currently supported ones, with the exception of a different
+> register.
+> 
+> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+> ---
+>  drivers/clk/clk-s2mps11.c | 8 ++++++++
 
-Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
----
- MAINTAINERS | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+This depends on mfd patch. Many maintainers would appreciate if you
+mention it also in the patch changelog (---), not only cover letter.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 3a27901781c2b2589a0f95678cf3df06401cac3c..6a6727ceeef67622e96441165aec542a2cb696c4 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -10599,7 +10599,7 @@ F:	Documentation/devicetree/bindings/soc/google/google,gs101-pmu-intr-gen.yaml
- F:	arch/arm64/boot/dts/exynos/google/
- F:	drivers/clk/samsung/clk-gs101.c
- F:	drivers/phy/samsung/phy-gs101-ufs.c
--F:	include/dt-bindings/clock/google,gs101.h
-+F:	include/dt-bindings/clock/google,gs101*
- K:	[gG]oogle.?[tT]ensor
- 
- GPD FAN DRIVER
-@@ -22756,6 +22756,7 @@ L:	linux-kernel@vger.kernel.org
- L:	linux-samsung-soc@vger.kernel.org
- S:	Supported
- F:	Documentation/devicetree/bindings/firmware/google,gs101-acpm-ipc.yaml
-+F:	drivers/clk/samsung/clk-acpm.c
- F:	drivers/firmware/samsung/exynos-acpm*
- F:	include/linux/firmware/samsung/exynos-acpm-protocol.h
- 
 
--- 
-2.51.0.740.g6adb054d12-goog
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
+Best regards,
+Krzysztof
