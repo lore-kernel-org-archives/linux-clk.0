@@ -1,145 +1,160 @@
-Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com [209.85.217.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BE31273D66
-	for <linux-clk@vger.kernel.org>; Fri, 10 Oct 2025 07:39:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AB9A2C325B;
+	Fri, 10 Oct 2025 09:43:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760081996; cv=none; b=n1dxN3hpXqFz9Y5vHA5OHxdYg+7tDtJcMCT7hKhWNfQPk8tfxq7T2MJQCpEwPnpcSbYYdLE5RdJHUF4PVXNG9ZRuFYhy2ZRJbuYKmr+YbGBcBKvVZpHtSG7VJY3t8ElL13tu0OW0vpg2x5sWLPlFTYHPCJJJzSVpNZnPBAqnbA8=
+	t=1760089411; cv=none; b=o7BOQMwnji261KPh4Dh7L1PvYaIKe/xRRYBUx2v1J/EbrkQDMusXbu4oNeXcSnXNCU2dfyDK2Kc2RRsmUzNG7rMIWP1fbWhIHqmKKQ/mExnBE98VAUBHzgxB57PPkqokP01VNlSl2R9nhffVrpnc/yspMlqjbSKWYZs0Hlw7+mw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760081996; c=relaxed/simple;
-	bh=UPchuvReFLKZUodDfs2E9bb42rO6Ub7zgDbedskMYJQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HinrjPTuj8MIDnCO/O5K/opYAJWHjQF1LM7dANsQnDQSleO0qT7md5YE3fsYDs6qldw+fmpPBjv3LmbFTY7f6SE0M2/EYawfmAYWioboTGtYHJuOvzP5d24WGs0nA/Q3RwOQ7NgkmJUTY8QDDp/8mEGtAqxKljf6Z8R3Zmh35Ns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f45.google.com with SMTP id ada2fe7eead31-5d3fb34ba53so1419857137.1
-        for <linux-clk@vger.kernel.org>; Fri, 10 Oct 2025 00:39:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760081994; x=1760686794;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=g+ttZbolmltC88YmqqxciPmwAZI8Qy5cQcJ0WlW2Ejk=;
-        b=SiCCKNCD1nXCJFn+MLqUDLfwgNJXOyP8wokqIEhWnh5HVH0+r16LP6vgybVx/sJp91
-         /6SjN2D5BQnoIa+yg4ZL2og/GLx79dLqwlor5Z2BrIWpvCBFKx87vpVnmHhyXTNBBC9u
-         9J7tUfX5fYJad8IP85LRgmBh/R/OOiy2jwKerIizLDWVRowaFoZbE5Da5W8FwtzrsIlW
-         TsG9VnPdXW5Xa+YnmapoUn0SmfFC6Ne4/CLfqDExhR1X+9npkVDG7jzsIEqYeMexgtqG
-         0xeivNiIfiPIVWcm+3rfTz5rgamfS5/swPTNDRehYqhzis55q70CDcTWk3uAw+Fa/IU5
-         69gQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXH7cixfPkvSzhhI3l/XlPxO4B996vLRomxqvFGaVQdZ8nBJEATHZgZSyZWLcDTRuTxvC38odjxRHo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZtABRF28dfRHzSMjfYIu7xb4kPC4peyvmBfhVMzYa1QkAEuV8
-	g6j1ZfceU6PZxUKgxU3EkT5+6Rr+zJjy4hS4QwgeFqzir5ql4ERQEDCB8XOh0zx4
-X-Gm-Gg: ASbGncvA/f3YaNP+ono9bmvZ7a7xYS7hXSOfpp6gIsrvmt+OfPGHN463ReIkjCMJaUT
-	WK1aRXzBcYE/03sESMvfHcUEoVabaRPCbrfrwLyEMVQOO6RsWrKu/sLL/9mzW0jrN3Y0kiw58bG
-	LH4Nr1YQpSOXjABqIGoS8W9Kr6KCvt+p68v6PAaaD5jSiDaP1acxTtaPfxeSFrao8XFxPmh+oKS
-	JsCNsh7mW+sn3aZFXHVj+1YlfP37JxhSD25bHueN1bpuTE67By4cyNqPyYWKMjdeIlTste/O823
-	YbTsvN2whpihZu8CL5yyuatJXUQQjD5ELOtpyPeCBSv+gYDUFw3S7rvB8VwRqEeFuC7WghKAXXy
-	hBOIsH8uZnjxCV3fwbY6I5fmVBe3FT6W6R5wYQCKKmid6M86B/Q3Uj/BuqxpNPrt8JNh90pmDQT
-	64oGU=
-X-Google-Smtp-Source: AGHT+IHT3d/z4WMXf3tVHAMUQUu63MoKC7wnzWnkdh6U4Jg+6EacEcsU1dccKqAty3ETcjFccEtASw==
-X-Received: by 2002:a05:6102:1483:b0:552:aa04:c61 with SMTP id ada2fe7eead31-5d5e23571dcmr5106373137.23.1760081993822;
-        Fri, 10 Oct 2025 00:39:53 -0700 (PDT)
-Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com. [209.85.217.48])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-930bf7ae894sm524322241.18.2025.10.10.00.39.53
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 10 Oct 2025 00:39:53 -0700 (PDT)
-Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-556f7e21432so1630247137.2
-        for <linux-clk@vger.kernel.org>; Fri, 10 Oct 2025 00:39:53 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUiEW5HMCdFovlVdjhMXMolLuUuYAjPKkpVcEasy2eLjuzhu0kr+tYaLVxPiSVKuBTKyW95wa8Rl64=@vger.kernel.org
-X-Received: by 2002:a05:6102:1483:b0:552:aa04:c61 with SMTP id
- ada2fe7eead31-5d5e23571dcmr5106366137.23.1760081993484; Fri, 10 Oct 2025
- 00:39:53 -0700 (PDT)
+	s=arc-20240116; t=1760089411; c=relaxed/simple;
+	bh=YQnvT7VgvloWaeCtVW7QZ5fYbRDxAI2v4C9nz/kg3ew=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=aKDSP6DhapSr2zExLVZy67ge06zmdyo3SeG1Uay8llY2lbU2D58Bf76Og85m7FXhHrbFHGIgEj2N+MQChqw/KoECALJP2mQQdnL87BXe1bGLOrlMX8jMuaLi7hBx0BV7K5H2yrsNlcl/FHSaeBXsy7PMUrhU5sIrADQTb7PZjSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Hyu87awd; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Hyu87awd"
+Received: from [127.0.1.1] (cpc141996-chfd3-2-0-cust928.12-3.cable.virginm.net [86.13.91.161])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 261FF593;
+	Fri, 10 Oct 2025 11:41:47 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1760089307;
+	bh=YQnvT7VgvloWaeCtVW7QZ5fYbRDxAI2v4C9nz/kg3ew=;
+	h=From:Date:Subject:To:Cc:From;
+	b=Hyu87awd5kKD9juDCkkpF7YIx0v6qf5k3YZWcVYU3DaYa8S+eNEt/ijFlMwFMwCrS
+	 OS2qsH6xYhVPEGNumbLyYOELLr2PsLykop/DsJme0CI6hLkkynM3cR1DxXXb8mwcjg
+	 xuzmcd5omUpfLmIp2op45L0vRZrXem7uKL3GhHxU=
+From: Daniel Scally <dan.scally@ideasonboard.com>
+Date: Fri, 10 Oct 2025 10:43:10 +0100
+Subject: [PATCH v2] clk: renesas: r9a09g057-cpg: Add clock and reset
+ entries for ISP
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251005131524.16745-1-marek.vasut+renesas@mailbox.org>
- <CAMuHMdV-6A+vV4bZLoT2NtXiqMQLTRRbNJXC1z2ttXX=aXFEGw@mail.gmail.com>
- <9864e81d-3b62-4513-9deb-1ce154cdc571@mailbox.org> <CAMuHMdVEK5MaJNWwpT_7yo0=tk+Pm+99QRD3SStkWsHHDDVJ7A@mail.gmail.com>
- <8220c385d69bd46adf65f58d8e95b247dff6ae1e.camel@pengutronix.de>
-In-Reply-To: <8220c385d69bd46adf65f58d8e95b247dff6ae1e.camel@pengutronix.de>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 10 Oct 2025 09:39:42 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXf5-tajON6bu8E8riuKTYev+wr=F08oSsmR0rJgCF3YA@mail.gmail.com>
-X-Gm-Features: AS18NWD8vsVGbk4pjXdOCbjlrmtFfZ_mqBe9nTk9CWR-xxNlIBE48LR0lCcl3Sc
-Message-ID: <CAMuHMdXf5-tajON6bu8E8riuKTYev+wr=F08oSsmR0rJgCF3YA@mail.gmail.com>
-Subject: Re: [PATCH v2] clk: renesas: cpg-mssr: Add missing 1ms delay into
- reset toggle callback
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Marek Vasut <marek.vasut@mailbox.org>, linux-clk@vger.kernel.org, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251010-rzv2h_isp_clk-v2-1-2c8853a9af7c@ideasonboard.com>
+X-B4-Tracking: v=1; b=H4sIAC3V6GgC/x3MQQ6CMBCF4auQri3pTKygK+9hCBnbIhOxJa1pR
+ MLdrSz/l7xvFclFdklcqlVElzlx8CXwUAkzkn84yba0QIUaFCgZvxnHntPcm+kpYWgd4ZnaI5A
+ onzm6gT+7d+tKj5zeIS47n+G/7pLS6gQIqLHWuoFGSZCWfJ0MTdNyZesoBX8PFG1twkt027b9A
+ NlV+5mrAAAA
+X-Change-ID: 20251010-rzv2h_isp_clk-1f8ea29a841a
+To: Geert Uytterhoeven <geert+renesas@glider.be>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>
+Cc: fabrizio.castro.jz@renesas.com, linux-renesas-soc@vger.kernel.org, 
+ linux-clk@vger.kernel.org, prabhakar.mahadev-lad.rj@bp.renesas.com, 
+ Daniel Scally <dan.scally@ideasonboard.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3820;
+ i=dan.scally@ideasonboard.com; h=from:subject:message-id;
+ bh=YQnvT7VgvloWaeCtVW7QZ5fYbRDxAI2v4C9nz/kg3ew=;
+ b=owEBbQKS/ZANAwAKAchJV3psRXUyAcsmYgBo6NU5UxA3zBKaswSeyoACAY3YYQQhYWUtfgAkk
+ JwedLXf+ImJAjMEAAEKAB0WIQQqyuwyDnZdb+mxmm/ISVd6bEV1MgUCaOjVOQAKCRDISVd6bEV1
+ MlaKD/sHdxeZyp29G6yYn/Ct+vEvZWCGxCI5q6Ep+L2z9E+CdiznJkjszrvjDoi+apIINo1U1Q0
+ RMo4ZbDfkyE5096PYrkIbhS/sRASO2pNRYlgNhX/WR6NL/4RKaoBMhqkl/Co8cGPwviUL5cAuld
+ D0g2NI6thl7uGxNbOVxMeCTCfoj4MpK5iyR+5wsmaQXw7hQTDHSVnTkrSJ7uQX1t4eeTxzXKtcq
+ 6B+kMwCizwnEqUKmPfWui7/R5HXs4JIN2K3XkmGPJb33L3V77jyC7yeR7q6FGVlvAXF+k2RnUiX
+ GHl6X38X2Q555zCsR3LprhtALvn/6z9kVorG41svuD99dqwZlcTfktALTLzAjZ6E9uP8xGE8uD8
+ Yvi2F12+UA17Io1HOhyVWLWajf2GdDcRz4AbAibYcRWslS5vlLXvwEH49C6yeVjPerfgDuMr/89
+ IpUKkDqyNrbzb0Yj6dCml6E8r9Be/jHnyTDRI9wGnQDtlRtETYggXoprjxgdR4hXtHI3yj8EgBv
+ t/fs8eHEEkZqapDAyHnxwQejATCYaBL+YkLN7rfRexTgZvJEO2Upc/0hFwEMBq5nBjib1sT/V/d
+ gWnRmTeSW1mjfWlFXeEuL+WiWPgp5gJR9n/tf7lz4uTeM1NHjw6X6MF0l5ZQLn57+Mji4p6CcgM
+ yHcPTwACc7LFmrw==
+X-Developer-Key: i=dan.scally@ideasonboard.com; a=openpgp;
+ fpr=EEC699ACA1B7CB5D31330C0BBD501C2A3546CCF6
 
-Hi Philipp,
+Add entries detailing the clocks and resets for the ISP in the
+RZ/V2H(P) SoC.
 
-On Mon, 6 Oct 2025 at 16:10, Philipp Zabel <p.zabel@pengutronix.de> wrote:
-> On Mo, 2025-10-06 at 16:03 +0200, Geert Uytterhoeven wrote:
-> > On Mon, 6 Oct 2025 at 15:56, Marek Vasut <marek.vasut@mailbox.org> wrote:
-> > > On 10/6/25 3:43 PM, Geert Uytterhoeven wrote:
-> > > > > R-Car V4H Reference Manual R19UH0186EJ0130 Rev.1.30 Apr. 21, 2025 page 583
-> > > > > Figure 9.3.1(a) Software Reset flow (A) as well as flow (B) / (C) indicate
-> > > > > after reset has been asserted by writing a matching reset bit into register
-> > > > > SRCR, it is mandatory to wait 1ms.
-> > >
-> > > [...]
-> > >
-> > > > > +        * On R-Car Gen4, delay after SRCR has been written is 1ms.
-> > > > > +        * On older SoCs, delay after SRCR has been written is 35us
-> > > > > +        * (one cycle of the RCLK clock @ ca. 32 kHz).
-> > > > > +        */
-> > > > > +       if (priv->reg_layout == CLK_REG_LAYOUT_RCAR_GEN4)
-> > > > > +               udelay(1000);
-> > > >
-> > > > 1ms is a bit long for busy waiting, so I'd really like to avoid this.
-> > > >
-> > > > While the documentation does state this 1ms, I understand the
-> > > > issue we saw in the field was fixed by
-> > > > https://patch.msgid.link/20250922162113.113223-1-marek.vasut+renesas@mailbox.org
-> > >
-> > > This synchronizes the asynchronized resets, this is a separate topic
-> > > from the 1ms delay.
-> > >
-> > > > so perhaps we can do without this longer delay?
-> > >
-> > > This aligns the driver with hardware operation charts in the V4H RM,
-> > > which mandate the 1ms. If we want to follow the RM accurately, then we
-> > > do need the 1ms delay, otherwise who knows what kind of fringe failures
-> > > we could run into.
-> >
-> > All true...
-> >
-> > > > FTR, it looks like the reset controller documentation doesn't say
-> > > > anything about the context from which it is safe to make reset calls?
-> > >
-> > > What does this mean ? Please clarify .
-> >
-> > Are you allowed to call reset_control_reset() from atomic context,
-> > like the ISP driver does?
-> > For the clock subsystem, this is clearly documented: e.g. clk_enable()
-> > can be called from atomic context, clk_prepare() cannot.
->
-> The reset_control_assert()/deassert() APIs are de-facto only safe to
-> call from contexts that can sleep, because some reset drivers sleep or
-> call gpio_set_value_cansleep().
-> This is not properly documented and the reset functions don't enforce
-> it with might_sleep() either, which is an oversight.
+Signed-off-by: Daniel Scally <dan.scally@ideasonboard.com>
+---
+Changes in v2:
+- Dropped the dt-bindings patches since the macros weren't needed
+- Squashed the separate patches adding clock and reset definitions
+  into a single patch
+- Link to v1: https://lore.kernel.org/r/20250506121252.557170-1-dan.scally@ideasonboard.com
+---
+ drivers/clk/renesas/r9a09g057-cpg.c | 14 ++++++++++++++
+ drivers/clk/renesas/rzv2h-cpg.h     |  2 ++
+ 2 files changed, 16 insertions(+)
 
-Thanks for confirming!
-So I keep v1 in renesas-clk-for-v6.19, using usleep_range().
+diff --git a/drivers/clk/renesas/r9a09g057-cpg.c b/drivers/clk/renesas/r9a09g057-cpg.c
+index 6389c4b6a5231e444d5d54eba963eec7bbfd47e3..081b64fcbc6b4d7fafc3c88726cd3677672fffd7 100644
+--- a/drivers/clk/renesas/r9a09g057-cpg.c
++++ b/drivers/clk/renesas/r9a09g057-cpg.c
+@@ -64,6 +64,7 @@ enum clk_ids {
+ 	CLK_SMUX2_GBE1_TXCLK,
+ 	CLK_SMUX2_GBE1_RXCLK,
+ 	CLK_PLLGPU_GEAR,
++	CLK_PLLVDO_ISP,
+ 
+ 	/* Module Clocks */
+ 	MOD_CLK_BASE,
+@@ -170,6 +171,7 @@ static const struct cpg_core_clk r9a09g057_core_clks[] __initconst = {
+ 	DEF_SMUX(".smux2_gbe1_rxclk", CLK_SMUX2_GBE1_RXCLK, SSEL1_SELCTL1, smux2_gbe1_rxclk),
+ 
+ 	DEF_DDIV(".pllgpu_gear", CLK_PLLGPU_GEAR, CLK_PLLGPU, CDDIV3_DIVCTL1, dtable_2_64),
++	DEF_DDIV(".pllvdo_isp", CLK_PLLVDO_ISP, CLK_PLLVDO, CDDIV2_DIVCTL3, dtable_2_64),
+ 
+ 	/* Core Clocks */
+ 	DEF_FIXED("sys_0_pclk", R9A09G057_SYS_0_PCLK, CLK_QEXTAL, 1, 1),
+@@ -377,6 +379,14 @@ static const struct rzv2h_mod_clk r9a09g057_mod_clks[] __initconst = {
+ 						BUS_MSTOP(3, BIT(4))),
+ 	DEF_MOD("gpu_0_ace_clk",		CLK_PLLDTY_ACPU_DIV2, 15, 2, 7, 18,
+ 						BUS_MSTOP(3, BIT(4))),
++	DEF_MOD("isp_0_reg_aclk",		CLK_PLLDTY_ACPU_DIV2, 14, 2, 7, 2,
++						BUS_MSTOP(9, BIT(8))),
++	DEF_MOD("isp_0_pclk",			CLK_PLLDTY_DIV16, 14, 3, 7, 3,
++						BUS_MSTOP(9, BIT(8))),
++	DEF_MOD("isp_0_vin_aclk",		CLK_PLLDTY_ACPU_DIV2, 14, 4, 7, 4,
++						BUS_MSTOP(9, BIT(9))),
++	DEF_MOD("isp_0_isp_sclk",		CLK_PLLVDO_ISP, 14, 5, 7, 5,
++						BUS_MSTOP(9, BIT(9))),
+ };
+ 
+ static const struct rzv2h_reset r9a09g057_resets[] __initconst = {
+@@ -442,6 +452,10 @@ static const struct rzv2h_reset r9a09g057_resets[] __initconst = {
+ 	DEF_RST(12, 14, 5, 31),		/* CRU_3_PRESETN */
+ 	DEF_RST(12, 15, 6, 0),		/* CRU_3_ARESETN */
+ 	DEF_RST(13, 0, 6, 1),		/* CRU_3_S_RESETN */
++	DEF_RST(13, 1, 6, 2),		/* ISP_0_VIN_ARESETN */
++	DEF_RST(13, 2, 6, 3),		/* ISP_0_REG_ARESETN */
++	DEF_RST(13, 3, 6, 4),		/* ISP_0_ISP_SRESETN */
++	DEF_RST(13, 4, 6, 5),		/* ISP_0_PRESETN */
+ 	DEF_RST(13, 13, 6, 14),		/* GPU_0_RESETN */
+ 	DEF_RST(13, 14, 6, 15),		/* GPU_0_AXI_RESETN */
+ 	DEF_RST(13, 15, 6, 16),		/* GPU_0_ACE_RESETN */
+diff --git a/drivers/clk/renesas/rzv2h-cpg.h b/drivers/clk/renesas/rzv2h-cpg.h
+index 840eed25aeda72f83644c6ba60d3f4368979b60e..e020d9624dfd75fbbf3dccf5ea045f81d26e0ae3 100644
+--- a/drivers/clk/renesas/rzv2h-cpg.h
++++ b/drivers/clk/renesas/rzv2h-cpg.h
+@@ -115,6 +115,7 @@ struct fixed_mod_conf {
+ #define CPG_SSEL1		(0x304)
+ #define CPG_CDDIV0		(0x400)
+ #define CPG_CDDIV1		(0x404)
++#define CPG_CDDIV2		(0x408)
+ #define CPG_CDDIV3		(0x40C)
+ #define CPG_CDDIV4		(0x410)
+ #define CPG_CSDIV0		(0x500)
+@@ -125,6 +126,7 @@ struct fixed_mod_conf {
+ #define CDDIV1_DIVCTL1	DDIV_PACK(CPG_CDDIV1, 4, 2, 5)
+ #define CDDIV1_DIVCTL2	DDIV_PACK(CPG_CDDIV1, 8, 2, 6)
+ #define CDDIV1_DIVCTL3	DDIV_PACK(CPG_CDDIV1, 12, 2, 7)
++#define CDDIV2_DIVCTL3	DDIV_PACK(CPG_CDDIV2, 12, 3, 11)
+ #define CDDIV3_DIVCTL1	DDIV_PACK(CPG_CDDIV3, 4, 3, 13)
+ #define CDDIV3_DIVCTL2	DDIV_PACK(CPG_CDDIV3, 8, 3, 14)
+ #define CDDIV3_DIVCTL3	DDIV_PACK(CPG_CDDIV3, 12, 1, 15)
 
-Gr{oetje,eeting}s,
+---
+base-commit: b5788b96cba97da01e1f0e1316133427c1102ff6
+change-id: 20251010-rzv2h_isp_clk-1f8ea29a841a
 
-                        Geert
-
+Best regards,
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Daniel Scally <dan.scally@ideasonboard.com>
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
