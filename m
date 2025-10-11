@@ -1,53 +1,53 @@
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A503280CF6;
-	Sat, 11 Oct 2025 17:04:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B02C5280CF6;
+	Sat, 11 Oct 2025 17:04:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760202282; cv=none; b=gmn++HSO/v4sDgvvcBX4T0BdnwSV3VyPkfp00dKrKVhuhnjBnR6BckeshK3lEzRBNqy27jS9P9CdAsIgJqzzDm12N7gD80N5r7AdTZbQaWNs5zcM5yBWIzwhdNGsGXkOB/rmoBijZrCoxQU4UCbXNBVGAVDbpKvqwm0H+9fgpqg=
+	t=1760202285; cv=none; b=HPEqVg4NzjO/j1x/fIN1pXV0QUwwd3XJn4zpzWAU1Sc2Lp31hVXTUBSbQvRuD8ZX1MAOeW+W2vcUonqPyi120JZPtmS/yOKe5Id25lZzynZHhuedv+bvw6iAwDny4WU+xBIHiBUlF8F+M95NWWCB0YS2gqTba8Nt7R7s+hKz6QU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760202282; c=relaxed/simple;
-	bh=Y5j1FVTBnurUDixG4QZnfsscj2A5HBYrI2v87ym4DEo=;
+	s=arc-20240116; t=1760202285; c=relaxed/simple;
+	bh=shjGUgD42aA3UBeH8UXPox3YY2NG8E0aO/Pif9jEx2A=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HG8Jpc8vZSE2yBuU7JpVoZYLLeTcW5H7IpHRJFKGo0OlAPg00Ojio+wpRgfDSb4S3inb9/Hv+1hRswYon70Wwj0VvMqDzpO5MnwRTNDp3jjm5hcknanMnfmd/1udQC/gUMKc7ECL4K1kL0QsxGbtxN+JVSPRqWViDPbJF5qvVmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=qntewtUT; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=ILg7KWpq; arc=none smtp.client-ip=80.241.56.151
+	 MIME-Version; b=NpdXMkeE0qF8qvjYdDHS6ZAuU5ovNKL1bf3SWYBCBO4tT9KKSzdmLdkGlYj3JZDOBETLt7V807KV41w6nfjSJeC3dDoFkJpI3xIr9bUasEPPXMflDLZCc3RLld8KnvDBw1qVP1VqUkuoqOzWmiEI0AimOD9qBixH5aunCMSretE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=tqjlmaHY; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=f++N/k58; arc=none smtp.client-ip=80.241.56.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="qntewtUT";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="ILg7KWpq"
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="tqjlmaHY";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="f++N/k58"
 Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4ckVMq1rhTz9sqh;
-	Sat, 11 Oct 2025 19:04:39 +0200 (CEST)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4ckVMt0wx4z9smD;
+	Sat, 11 Oct 2025 19:04:42 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1760202279;
+	t=1760202282;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=367A/rZ7UTnDfmjlT6T1zz71iP4ogyv+HPSWUI3+1HQ=;
-	b=qntewtUTmMA/YfdUzZIWaVWE/0T5B8HgFWP50oONfA/vYxCUQ6LKhefnjW5P+NSWI1Vwr+
-	AXpD+vgwOV7Dl6y3QKUtFfU2NSF2MYqiCYUpQX7Qm+eij6d2eBDzPAEIEw7S4ogVtZHiAL
-	YNiyd2W5/K7FZ+Qe+9fA6CqDrZzZ+Is5rFrd31oZqdHXxVcXfACDb1xepllF7LjAI0gDD1
-	vadpeuDmEZc86+E7kXZmKODXmtknynvEpLN+D51k1+SL4DoryHxiaIBlZejsT+zMDlqqzH
-	Ir3B3PVFBh4UgUW8ucZATm8MGkz1dgqUh3SCJDUNLC34Dnniamx8RYFQ7/THfA==
+	bh=5LjHuRvAlrfCTpQDqtJrxybp4IoylwmrNNBs7s/aRME=;
+	b=tqjlmaHY1CGDfdfoJiakvgTc2fopzFqf6q/gsCflhFR4rHqU7L2EEsms4bzwKYHXYz4b3o
+	V4g3hvuaXo0bCu32JJofDqANm16PwIHAoIdMxp8k3XYBbb1aUiV89Cfwkiuh5FNeDj4yG7
+	hZREnFB1IqgP33ytoWRKCIeNMlY0UFL39PEVLLkgWGc7Dr6eQE0y2fIkIrrJdPxXnUGR75
+	GFi5jlbVW+STjYsMTgEa8bW66No4Si3qYAQIfKYhSY3/r+VQTe/2uA14Duw8s/Z0QgQh09
+	HcwGhM9Itesjg3icn3UyLkYdVflVpDhJsiR1bSWFPgjr58F2pvp2xZkLc3bziQ==
 From: Marek Vasut <marek.vasut@mailbox.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1760202277;
+	t=1760202280;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=367A/rZ7UTnDfmjlT6T1zz71iP4ogyv+HPSWUI3+1HQ=;
-	b=ILg7KWpqUEZnRUys6Q17qWzUBE4HkdF+yRnxCXiTmE9Cc/JAbnOedtt+mozTP05FiRr+L/
-	CjaXHGX1Fe+Pz/lVBQWmGt/whsOD3W1zbKaknaNJwnajiJJGgARzY8ZYk3nIQqTGBYDf0n
-	hkSYjYXxm5Eag6nutiB+i+wcSO7INddln6GL01wI0P2VQPV9lrOfwGxrB6RBot97LWA76E
-	84sd1HEhORl1MWnn7HH+T1hLF2gCWNgXa3xUqX2imxgGON+uAAj+BRTFOpR8GFeJycUR5r
-	A15MgwVoojIq10liekHgT7Z0+5wIgnU4wR+mm8ul3rBrVbZzrQhqVtQtOFUjFg==
+	bh=5LjHuRvAlrfCTpQDqtJrxybp4IoylwmrNNBs7s/aRME=;
+	b=f++N/k58Ot2ykVd+EAPD/3jivNMZ2j25H2ZOquPo6g9OT0UyYX8s1RAcZUpBhHcLHz3SO7
+	4aDJ3l5xEysB1uf9Is7mT1ZPiZYweub6nq7FdwUyYhmy8bGpRx3MykW/4PIZt146zL/3UW
+	x5c6nPQJN6Vo0pjn9sFuBKu+e9TXEr/7eFrscX4GZd5NlMDG3qO6hSw3N+Ip1nobyiYDRi
+	Jk0WiuNIDJvOu0NbI7PkIliODsQZ0Qbix4FP1S+SVRnBDYMxtRXRLowvYkm5FsmTZ8PAMp
+	vXv6EG10as4nBcYQJfP3Xx7oliOur4qUXxNQA9HWIpRTsCM7TRwX5Y2G7Fmufw==
 To: dri-devel@lists.freedesktop.org
 Cc: Marek Vasut <marek.vasut@mailbox.org>,
 	Abel Vesa <abelvesa@kernel.org>,
@@ -66,9 +66,9 @@ Cc: Marek Vasut <marek.vasut@mailbox.org>,
 	imx@lists.linux.dev,
 	linux-arm-kernel@lists.infradead.org,
 	linux-clk@vger.kernel.org
-Subject: [PATCH 37/39] dt-bindings: interrupt-controller: fsl,irqsteer: Add i.MX95 support
-Date: Sat, 11 Oct 2025 18:51:52 +0200
-Message-ID: <20251011170213.128907-38-marek.vasut@mailbox.org>
+Subject: [PATCH 38/39] dt-bindings: clock: support i.MX95 Display Stream CSR module
+Date: Sat, 11 Oct 2025 18:51:53 +0200
+Message-ID: <20251011170213.128907-39-marek.vasut@mailbox.org>
 In-Reply-To: <20251011170213.128907-1-marek.vasut@mailbox.org>
 References: <20251011170213.128907-1-marek.vasut@mailbox.org>
 Precedence: bulk
@@ -78,11 +78,11 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-MBO-RS-META: 4teipx56a5ji5ytbza95e8jhhftthrwf
-X-MBO-RS-ID: 4d16a57372f0a97bb62
+X-MBO-RS-META: xry4amm6fd4yjhbdnui4z36buro1w5ge
+X-MBO-RS-ID: 7d7d6d1d1f9255c8d3d
 
-Add compatible string "fsl,imx95-irqsteer" for the i.MX95 chip, which is
-backward compatible with "fsl,imx-irqsteer".
+i.MX95 DISPLAY STREAM_CSR includes registers to control DSI PHY settings.
+Add dt-schema for it.
 
 Signed-off-by: Marek Vasut <marek.vasut@mailbox.org>
 ---
@@ -104,29 +104,57 @@ Cc: imx@lists.linux.dev
 Cc: linux-arm-kernel@lists.infradead.org
 Cc: linux-clk@vger.kernel.org
 ---
- .../devicetree/bindings/interrupt-controller/fsl,irqsteer.yaml  | 2 ++
- 1 file changed, 2 insertions(+)
+ .../imx/nxp,imx95-display-stream-csr.yaml     | 41 +++++++++++++++++++
+ 1 file changed, 41 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/imx/nxp,imx95-display-stream-csr.yaml
 
-diff --git a/Documentation/devicetree/bindings/interrupt-controller/fsl,irqsteer.yaml b/Documentation/devicetree/bindings/interrupt-controller/fsl,irqsteer.yaml
-index c49688be10581..5c768c1e159c1 100644
---- a/Documentation/devicetree/bindings/interrupt-controller/fsl,irqsteer.yaml
-+++ b/Documentation/devicetree/bindings/interrupt-controller/fsl,irqsteer.yaml
-@@ -20,6 +20,7 @@ properties:
-               - fsl,imx8qm-irqsteer
-               - fsl,imx8qxp-irqsteer
-               - fsl,imx94-irqsteer
-+              - fsl,imx95-irqsteer
-           - const: fsl,imx-irqsteer
- 
-   reg:
-@@ -87,6 +88,7 @@ allOf:
-               - fsl,imx8mp-irqsteer
-               - fsl,imx8qm-irqsteer
-               - fsl,imx8qxp-irqsteer
-+              - fsl,imx95-irqsteer
-     then:
-       required:
-         - power-domains
+diff --git a/Documentation/devicetree/bindings/display/imx/nxp,imx95-display-stream-csr.yaml b/Documentation/devicetree/bindings/display/imx/nxp,imx95-display-stream-csr.yaml
+new file mode 100644
+index 0000000000000..61153120c9378
+--- /dev/null
++++ b/Documentation/devicetree/bindings/display/imx/nxp,imx95-display-stream-csr.yaml
+@@ -0,0 +1,41 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/display/imx/nxp,imx95-display-stream-csr.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: NXP i.MX95 Display Stream Block Control
++
++maintainers:
++  - Marek Vasut <marek.vasut@mailbox.org>
++
++properties:
++  compatible:
++    items:
++      - enum:
++          - nxp,imx95-display-stream-csr
++          - nxp,imx95-master-stream-csr
++          - nxp,imx95-mipi-tx-phy-csr
++      - const: syscon
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++  - clocks
++
++additionalProperties: false
++
++examples:
++  - |
++    syscon@4ad00000 {
++      compatible = "nxp,imx95-display-stream-csr", "syscon";
++      reg = <0x4ad00000 0x10000>;
++      clocks = <&scmi_clk 62>;
++    };
++...
 -- 
 2.51.0
 
