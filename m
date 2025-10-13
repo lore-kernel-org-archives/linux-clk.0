@@ -1,99 +1,118 @@
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DBEC2E8B79
-	for <linux-clk@vger.kernel.org>; Mon, 13 Oct 2025 10:24:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C331B25FA10;
+	Mon, 13 Oct 2025 11:34:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760351092; cv=none; b=mL1B3EYWBy0BpCpzAF2BYqAovxn918G5ChsYOnv3M4W88dhlqp3DX++r4Ztvb4UBIrAR89AFD8jtObKBVDG8SLhgsgxjlhCqZD669dQFidb/U6oUexmDz78F3gptZdaDNkhOc8UyXUuowGfs2X7ms+wGNnyOxmet7BcV2OkvVE8=
+	t=1760355292; cv=none; b=HyGeIM4H+Q4uEtco9nX6aXSQGqIQhpYNh0sEc8x7kYbH+A+3kwVkJjUeLBMXrNlJzYizWEnzoEBbI1QKAacT2bLSlPmyXpDrTFcxow94R+G/7IJj9mZPnj8Ye/buhDQuY6fPF2Y0qW2ptTA1XBb2CIz+VDYpP+wVXzY9M6fEhPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760351092; c=relaxed/simple;
-	bh=+unRYycP97fv008huF8n6bo0ikkvJYI2Zc7wQSeA3nU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=L1yMD2zolfJKgwZO4x6oDnb96dgxJ4+w7Blc2QbsN3jrMxGq9DsWthexvDbLKnStoNMkuHZgZf8R0WCbdn7879UBxWt3eePsUs+MGjduC8oM0ayuABP4wtgY6tvWTpaAtTtKvaLMKhCAG+QLG8wxG9ENH+hTAx6xMVl0TJtr00I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PnycrD9Q; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1760355292; c=relaxed/simple;
+	bh=qHo5Ociuz3ISYbBTktS8mV4hBaTdUD1TNltNhHxPHe8=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=ilYS0gTjt5/t5LhbNTgtSuBvBRYyoi8siy7FAyLMPTQHLGgSieHemwLRp3qVAT37CSdq7a9mtu6jzCN5j+JHYqD0vkN2FQxaeOSRLSomeP6VHPmcKsrSl160VyU48t/koj/2qv/kKyccfmn9tdUFPnQZopPruv7fDMupYyvqTuE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EMUYgqQJ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PnycrD9Q"
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-579d7104c37so4952527e87.3
-        for <linux-clk@vger.kernel.org>; Mon, 13 Oct 2025 03:24:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760351088; x=1760955888; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+unRYycP97fv008huF8n6bo0ikkvJYI2Zc7wQSeA3nU=;
-        b=PnycrD9Qad1YKFd8X1Fdi+B+dQb2/88AAJMxqSdOEyAn89o5Vkb6zBKx4rZK8+SYA7
-         l2s5oHfjefOqLMnW41TWJdDaS8KtoTVXqwZUFsi0Ih+x6jXCizfsM3njjDTzrf8Hn4xm
-         +zFcy+h2NDXA/DNnvMNVpkZqB3gp0511kfa3K/+iDC6UTCF35SoIscW5voCfrJXOsaW5
-         UHhH3ttD2YsQPKHIkOJIRRvJ5V+QnZbK3GEE0VJhm9HtdGTqJ0uX5CMQ3rKMT/QCDT/f
-         DhtdIIRbTgImcyvRWPvPL+StstNq3dbIOaFbxqe5/Bh7LsjGEklpQSG5n+ZuTJNTDMND
-         vZKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760351088; x=1760955888;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+unRYycP97fv008huF8n6bo0ikkvJYI2Zc7wQSeA3nU=;
-        b=Dre6ABjiwrArLLyW+RTYWGKnlFYUyxlQu4iFF1VNNuRRk7gdYu2dP966Q44nPU/My5
-         xyfPB8AxMl/vx4gZepkQnAXdFJSGBvUeU0dIP89XgXpiNW5gxpA4MEuJP+56sRfFHaWI
-         LHbYnSTeD95p5iDbXOkN382U1iw1hg2VEgnY5QTe7/pr7zCUsD+JqhJ5xOcSoIUqSSjV
-         ngZsKiaa0ZTIZK07lQJhUq2EvxU/c77F+jM3Zhg3FrOnLeBbLgLXEy9+5ADO128qlOlo
-         mRoBhXaZeiAfx/YfuDYQTC9SAo7ZKyL3vze2keGTMhcksKVVeH1mBRo8UMZhJK8T56Gd
-         /cNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVX/yec6KpYrCG0AcEIwzYo8pfaE+wPp/RiV8xw4Bv4z6Q4Ml8Td2EscaJaiYCUpkyQsWz5e3QqX/g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxjCy3MUHsY+8Ctk8YKIS0St7EfqgGRFRE0nubZCq9/ECb8m4fF
-	1K+WmHTJRK1dB8ZYuFN5PMgkemvDYt2zw6MmYgsYTj54GRUxhTxyVMYDb/PEPbNdLIxXUCuNlmp
-	9fu5pt46LMUkJMdhVhe14SO9Dj3SP+WHVzI5B8BmbBA==
-X-Gm-Gg: ASbGncvtJPPeFJHM0n18O5dOB5wW7BczP0B59XX+EEeHn4vRCJMQ9DyYFKLqxvYJ8vd
-	cYuH0qSA2vVpQOhXAzfsmWY7AO+0WLZz1DRXpixqsDrIa+/+yvy1bn45yH6bb9wqiO8XNS11RNy
-	iB0et0Mu8EP1orhpZSfl2h3cz2I6LUgQc1Pbsm/97uUW0a7oUPmDBzQmtMz4YvYqmWuXRzfwN6G
-	0F1L/69hQ2AMYPi57ol0cUvnElSMQ==
-X-Google-Smtp-Source: AGHT+IGvGHloV1limtQ0fx79bfGJXQow2XXzmDst8EglcpB9EbNJ8pFYHIXf92/sCJscA5Ld0pw8fuj+myOX2Y7yQHE=
-X-Received: by 2002:a05:651c:1ca:b0:36b:8361:15c7 with SMTP id
- 38308e7fff4ca-37609ee797dmr50886881fa.42.1760351087667; Mon, 13 Oct 2025
- 03:24:47 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EMUYgqQJ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37F80C4CEFE;
+	Mon, 13 Oct 2025 11:34:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760355292;
+	bh=qHo5Ociuz3ISYbBTktS8mV4hBaTdUD1TNltNhHxPHe8=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=EMUYgqQJBaG9oIHosv/b1lUaybryPArFGOXVa3RxUD2oBMMMGC6h7mCPW3TGu+e+5
+	 9e9RCfdDUkgMqStiDigqgKp/n2/H0REgZWT0kblWrhVnMqv5gv5eKS4XQ+HsECSiNC
+	 XjdMiRrsIDBevkWHEKHjrjEOQwjkaPjrmo2RfZiyeU4VQUuZOEnO8AYYOUaxSYNPcu
+	 3bdrPemORMWeT9WzPKMCCC2RQcNeSKALOB1asoC2qDdwn9xM5jMegR5Woipdx+NeA9
+	 /SGv+4b7iDIHPixpgn9q3i9wDiTi2Wz2wvF8m7176XLaS3itqELAthUS1p7z9T+lwQ
+	 iTSo2LCa0mUgw==
+Date: Mon, 13 Oct 2025 06:34:50 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250925221927.2610760-1-robh@kernel.org>
-In-Reply-To: <20250925221927.2610760-1-robh@kernel.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 13 Oct 2025 12:24:36 +0200
-X-Gm-Features: AS18NWDB8GoBtqV-UtGzBfY0pqqIxdxK6aWLKDGgXTJxVPFOQb277q1e2UR2gHY
-Message-ID: <CACRpkdZH_Q18CHnT9rjhOGUx53L3pKrP6BrPkB0hSV7JB1N44g@mail.gmail.com>
-Subject: Re: [PATCH v2] dt-bindings: pinctrl: Convert marvell,armada-3710-(sb|nb)-pinctrl
- to DT schema
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>, 
-	Gregory CLEMENT <gregory.clement@bootlin.com>, =?UTF-8?B?TWFyZWsgQmVow7pu?= <kabel@kernel.org>, 
-	Miquel Raynal <miquel.raynal@bootlin.com>, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-gpio@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ imx@lists.linux.dev, Fabio Estevam <festevam@gmail.com>, 
+ Abel Vesa <abelvesa@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Liu Ying <victor.liu@nxp.com>, linux-arm-kernel@lists.infradead.org, 
+ dri-devel@lists.freedesktop.org, Lucas Stach <l.stach@pengutronix.de>, 
+ Peng Fan <peng.fan@nxp.com>, Shawn Guo <shawnguo@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
+ Thomas Zimmermann <tzimmermann@suse.de>, linux-clk@vger.kernel.org
+To: Marek Vasut <marek.vasut@mailbox.org>
+In-Reply-To: <20251011170213.128907-35-marek.vasut@mailbox.org>
+References: <20251011170213.128907-1-marek.vasut@mailbox.org>
+ <20251011170213.128907-35-marek.vasut@mailbox.org>
+Message-Id: <176035524848.2736280.3284568560507441062.robh@kernel.org>
+Subject: Re: [PATCH 34/39] dt-bindings: display: bridge: ldb: Add an i.MX95
+ entry
 
-On Fri, Sep 26, 2025 at 12:19=E2=80=AFAM Rob Herring (Arm) <robh@kernel.org=
-> wrote:
 
-> Convert the marvell,armada3710-(sb|nb)-pinctrl binding to DT schema
-> format. The binding includes the "marvell,armada-3700-xtal-clock"
-> subnode which is simple enough to include here.
->
-> Mark interrupt-controller/#interrupt-cells as required as the users have
-> them and the h/w is either capable of interrupts or not.
->
-> As this syscon has 2 register ranges, syscon-common.yaml needs to be
-> updated to drop the restriction of 1 register entry.
->
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+On Sat, 11 Oct 2025 18:51:49 +0200, Marek Vasut wrote:
+> i.MX95 has twice a single LVDS port and share a similar LDB_CTRL register
+> layout with i.MX8MP and i.MX93. Unlike the other SoCs, i.MX95 does have a
+> mapping bridge in front of this LDB PHY.
+> 
+> Signed-off-by: Marek Vasut <marek.vasut@mailbox.org>
+> ---
+> Cc: Abel Vesa <abelvesa@kernel.org>
+> Cc: Conor Dooley <conor+dt@kernel.org>
+> Cc: Fabio Estevam <festevam@gmail.com>
+> Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
+> Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
+> Cc: Liu Ying <victor.liu@nxp.com>
+> Cc: Lucas Stach <l.stach@pengutronix.de>
+> Cc: Peng Fan <peng.fan@nxp.com>
+> Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: Shawn Guo <shawnguo@kernel.org>
+> Cc: Thomas Zimmermann <tzimmermann@suse.de>
+> Cc: devicetree@vger.kernel.org
+> Cc: dri-devel@lists.freedesktop.org
+> Cc: imx@lists.linux.dev
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-clk@vger.kernel.org
+> ---
+>  Documentation/devicetree/bindings/display/bridge/fsl,ldb.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
 
-Patch applied!
+My bot found errors running 'make dt_binding_check' on your patch:
 
-Yours,
-Linus Walleij
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/display/bridge/fsl,imx95-lvds.example.dtb: ldb (fsl,imx95-ldb): '#address-cells', '#size-cells', 'channel@0', 'channel@1', 'power-domains' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/display/bridge/fsl,ldb.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/display/bridge/fsl,imx95-lvds.example.dtb: ldb (fsl,imx95-ldb): clock-names:0: 'ldb' was expected
+	from schema $id: http://devicetree.org/schemas/display/bridge/fsl,ldb.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/display/bridge/fsl,imx95-lvds.example.dtb: ldb (fsl,imx95-ldb): clock-names: ['pixel', 'bypass'] is too long
+	from schema $id: http://devicetree.org/schemas/display/bridge/fsl,ldb.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/display/bridge/fsl,imx95-lvds.example.dtb: ldb (fsl,imx95-ldb): clocks: [[4294967295, 266, 2], [4294967295, 266, 4]] is too long
+	from schema $id: http://devicetree.org/schemas/display/bridge/fsl,ldb.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/display/bridge/fsl,imx95-lvds.example.dtb: ldb (fsl,imx95-ldb): 'ports' is a required property
+	from schema $id: http://devicetree.org/schemas/display/bridge/fsl,ldb.yaml#
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20251011170213.128907-35-marek.vasut@mailbox.org
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
