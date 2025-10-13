@@ -1,86 +1,70 @@
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010040.outbound.protection.outlook.com [52.101.84.40])
+Received: from GVXPR05CU001.outbound.protection.outlook.com (mail-swedencentralazon11013042.outbound.protection.outlook.com [52.101.83.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 101A325B663;
-	Mon, 13 Oct 2025 15:53:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.40
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21D982882D6;
+	Mon, 13 Oct 2025 16:38:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.83.42
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760370831; cv=fail; b=DJGljqxApza8JimVHYrxGmbf0zhNRr+tNju+NJzPjxQiICwbJMG8DhzQ5tJjujxRlZicuF2xkQamrO9yqIK9rfFlRih2V6iCTIVwNBBXmxLiM83NTzbCtp5nAEqTlzo/G0Anr9GIUIns4SE3mAlDevZc2dX5LlXomCo/jRevi5g=
+	t=1760373521; cv=fail; b=YjgxmUCkX71yqIr5BrInIlUUrZOhjSPE5dvBGV6eaA8nSnQMb/fQadD8mLaU3UG8tYPg/GMZt2KUyA5QqYsYqdUUKrMYCYHrggTXMEyqtmS78S8+gYsyEwLXrYT9se+50KdVNnxMARRQ8w65TTUK9izYkjO93oFmeDoUER2GEKE=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760370831; c=relaxed/simple;
-	bh=C9mkc0n5SrYTVe7Bqdzec+ulRE1gVFtdnw6Rb+YHz88=;
+	s=arc-20240116; t=1760373521; c=relaxed/simple;
+	bh=r/YWUyO/HwiSFU+8ISqtHfZUWqbcOngtBfsMLFV1Cxo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=trjYvDvnh1FR4TGIygzTgXmLMuZTvgmGp/cUrK4hvFL3T8qgRet7BCMu1ovr1VZDHOvARH0gOLQHOQXGe5b/VRiclUlmqWGbSCNgNvt1+T1x4EXtGron84WnRPYcQ4Wlgn6HDTbstIqHBwwXhHGOgM8NMXIMv6z0Aqie11Abf6o=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=e2jGZahp; arc=fail smtp.client-ip=52.101.84.40
+	 Content-Disposition:In-Reply-To:MIME-Version; b=PtZCxu6jFbOA23udPESpweyrOnsrFoDjG2sdv4sbx/sZVdKDrTnHsqRenlWQTe7sAKqWVW5WA1QeITRJEw+nsE96p5EtytvMW7KNLKyN7I3pSlOopQSKKIs0IbWtGQUdIymRU5fjcquOOYveBRKCoeit1mVgycGQ8o78cs8pZgQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=LbzQKNNh; arc=fail smtp.client-ip=52.101.83.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="e2jGZahp"
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="LbzQKNNh"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Swle5RTNYcnx8lVU+26rf0kk5aQJZdGGzvAcfTxM6EMm+5/34IouT0Tdyb2/0LG0uESb4UAWbXUJibvbuH6ox5hXoh7bndei4SL2pPVRzw/6RXuOgGP+OWgDZ/mgQnJCIqmO9NTuV1MFk1+yLWz29lz7RARYYRYcYdrznQ1uY64LCxP/RRbDQaMOf2JaCJFndj8JCatQMfcvZAgz2TqCdZ4y8x/eBFszHMW02hTAZYmzInY0SFBTZyM6bHlsU30Dd25DVGkgZnpdJK4Z3YvmL0wRcw1ZbLS25yeloK5Lp6RnRZYf7bRIH5qO+BU239E8eA6XH6pz1yE+fKOuBWuvTQ==
+ b=fxBT+efA8P9q7x6UqLFJUR9N/WhK3qNlD9WtHrEAxCAnD/LHg5Y4UyIQ1hNvLXUDlPlcuntyuCgXeGVBCQ6Xvs/0AXB5DQgsIATEd/wpJz46z7snFif8Q5uigvJ897iLoAm1Y5m/YA4yIgMyRU2gKsYk4c8s7xcJs7Wa3jAl88XVhuuZnJLOlT165xZoG9otNX9FZ7kfxjBfLT/5Hx6QwVpljdhkCvKakEL14TmWRkwY1ywJkSZZs89GaRxJBBqUABjcKXIHyOJnOU4W5OlFyjkFBq13YKidk3XtoEul34wtKFS30OuTrA2J86fGx++Trg4pMpekMnbPSgyYGw1cKw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=BbPbfc0aVm5bNp2C/i2ms303pAKpS70GwpEy5Rz9+xY=;
- b=NyfeNzJCyQDcu2KOAelYIUhauzNmVzPq783WbOwKDnGByI66FOFGHufOVeebKrDedYMRZcj2L5vjRh83S94Pj7tGNald4vM7k5o9HjuzlIrNZB4K8ayCtv9tgPfycxYmgRjZa4hrGEMhYi/qbXtMm1Bn4eQ6ugCDy6lse5rpuDGeQGMH4s3LfP88Nad3wwkVTaNaJjQFnMER+vEASaaGPTaIetYAfO27GUv5eeTTknBonBycypatlOBmwyg4CD9clY7N/6tG2SH9tK7Jhp6sXgtD3aRPRDLE4GKJMIkF1DT+WMlSEyg48dzViFfucx3l2M2ld52suWtQc2tr9J68Ew==
+ bh=G3y6XMHzJDYSiOn9Bi4+wtiY5q16nu0gZyVSaGsy0TA=;
+ b=JLNkRcL4kjB8q3b6m/a1nJ6WqlOzj6pSq9M5gyaX8V9dWnIRaYiHDskJUdfnQB6LwEjiMR/JZozxUMsU1mtOEf/UIR2lQbMbMnBUBBaBsqq5dGxxtwXQXeJdz/7/sp/8TpsxkMip118zair2pmz1XcJxgt4K3jB6jErWsVNgNUJwbyX3hsnKcasTCJgDqAU3S3REYnQcoK+E9B6Uc55py/PesdA9JdTggLjEs+H2NdiJbMTcIBW1lnEc1jAw3rx1wmyQaLX9UUi41v4xsapOyklOdPEJhzYSezDYtyGHjKCtzdZUF6k7veGh26qggOqXUKBPh4btbt4tnyn6B0KboQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
  header.d=nxp.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BbPbfc0aVm5bNp2C/i2ms303pAKpS70GwpEy5Rz9+xY=;
- b=e2jGZahp1J26ryF5c7YKiBAXm2S3uuNNwB7MdIR9gjhCTc/cwTYMcWLBO8HRoZDfWddwhQspiNtEnj9b3pHg1RVp2Wt5ghxDGHL+rhXuhDtWz4rNjQVUyTd9yqXt9eGuh8/83gvyT+P4S3WUCjX5BgUCFNX99hAUQqEhBRkslyPUpWU2STxthb2qLlbIeqGYw5nCB39xOHdxgWhA0WJljn6K/uFbQLhw/RAL0yBMqhqlgNXP3BZA63MI9vFJ8YKLj/ke3puoFEe9VoehxqW9u8536b65phKclqZCG3oieQxW3psugvOgMldWIGVDSWzsndAoH3Hhuv/MjEDVAHnESQ==
+ bh=G3y6XMHzJDYSiOn9Bi4+wtiY5q16nu0gZyVSaGsy0TA=;
+ b=LbzQKNNh6WRaf85YahAGnjtzg8FJJlKTYX06MHR6tL+cSiLqGYXk4bHj74Kli1h6YKaU/jWR8/OcUBN7Tzgf1wfMeaK0sEJeuct/YcOr2PPh/ohMmuG+sPKKGk30vKy6QldcDH0Wdqwf5s3JvRPTp7wMndgZqUvfSgXmDR/WXryVEuHakeR+j4pTFcjiiDKY0sEzHaInKMn2qo7aKSSVjmwnlT9lyv5V3JTfoRd0LOnPWMgmErFfvgFD7AohG4Khb8qZcEgg7vMCJzMkfRdK8aCVC4Llf4nKGdkYwkXjuxEGeasWxNKiexwg1VQ6gXM8l63Kb+7UupLwblqMdh18Bg==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nxp.com;
 Received: from AS4PR04MB9621.eurprd04.prod.outlook.com (2603:10a6:20b:4ff::22)
- by DU2PR04MB8583.eurprd04.prod.outlook.com (2603:10a6:10:2da::8) with
+ by AM9PR04MB7521.eurprd04.prod.outlook.com (2603:10a6:20b:2df::16) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.12; Mon, 13 Oct
- 2025 15:53:45 +0000
+ 2025 16:38:35 +0000
 Received: from AS4PR04MB9621.eurprd04.prod.outlook.com
  ([fe80::a84d:82bf:a9ff:171e]) by AS4PR04MB9621.eurprd04.prod.outlook.com
  ([fe80::a84d:82bf:a9ff:171e%4]) with mapi id 15.20.9203.009; Mon, 13 Oct 2025
- 15:53:45 +0000
-Date: Mon, 13 Oct 2025 11:53:32 -0400
+ 16:38:35 +0000
+Date: Mon, 13 Oct 2025 12:38:28 -0400
 From: Frank Li <Frank.li@nxp.com>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+To: Marek Vasut <marek.vasut@mailbox.org>
+Cc: dri-devel@lists.freedesktop.org, Abel Vesa <abelvesa@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Sowjanya Komatineni <skomatineni@nvidia.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jonas =?iso-8859-1?Q?Schw=F6bel?= <jonasschwoebel@yahoo.de>,
-	Dmitry Osipenko <digetx@gmail.com>,
-	Charan Pedumuru <charan.pedumuru@gmail.com>,
-	Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>,
-	Aaron Kling <webgeek1234@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-staging@lists.linux.dev
-Subject: Re: [PATCH v4 22/24] dt-bindings: display: tegra: document Tegra20
- and Tegra30 CSI
-Message-ID: <aO0gfGn+F6iQBaP/@lizhi-Precision-Tower-5810>
-References: <20251008073046.23231-1-clamor95@gmail.com>
- <20251008073046.23231-23-clamor95@gmail.com>
+	Fabio Estevam <festevam@gmail.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Liu Ying <victor.liu@nxp.com>, Lucas Stach <l.stach@pengutronix.de>,
+	Peng Fan <peng.fan@nxp.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Rob Herring <robh@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH 02/39] drm/imx: Add i.MX95 Display Controller DomainBlend
+Message-ID: <aO0rBBzI3cGWzO34@lizhi-Precision-Tower-5810>
+References: <20251011170213.128907-1-marek.vasut@mailbox.org>
+ <20251011170213.128907-3-marek.vasut@mailbox.org>
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251008073046.23231-23-clamor95@gmail.com>
-X-ClientProxiedBy: PH7PR03CA0004.namprd03.prod.outlook.com
- (2603:10b6:510:339::30) To AS4PR04MB9621.eurprd04.prod.outlook.com
+In-Reply-To: <20251011170213.128907-3-marek.vasut@mailbox.org>
+X-ClientProxiedBy: CH5P223CA0023.NAMP223.PROD.OUTLOOK.COM
+ (2603:10b6:610:1f3::28) To AS4PR04MB9621.eurprd04.prod.outlook.com
  (2603:10a6:20b:4ff::22)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -89,282 +73,339 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR04MB9621:EE_|DU2PR04MB8583:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4401d476-0d78-40a7-a706-08de0a70b08e
+X-MS-TrafficTypeDiagnostic: AS4PR04MB9621:EE_|AM9PR04MB7521:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3ea40dcf-de5d-4b1b-f844-08de0a76f441
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|19092799006|52116014|7416014|376014|7053199007|38350700014;
+ BCL:0;ARA:13230040|1800799024|366016|19092799006|52116014|7416014|376014|7053199007|38350700014;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?kiCEUJAbPH+Dts8qcAuLgBl8IVLJcrUYEuL0FZ6v1mLGBwLdWN9PV94xEeRf?=
- =?us-ascii?Q?aYUNSEo6oUxKifOXZOTWvKGJ+QVQYbBnUcOyQbkjRy7yFj4KR3/k7rUdqu+U?=
- =?us-ascii?Q?HjY//ksmpzQVhx278uDinsUYolbdFSAeCU0GxzKxrUS9O1swfvUpHqTVNb+Z?=
- =?us-ascii?Q?4X0YZLXYX7e42/oG2SUGxI3k22d2NPlvrk+j+/YfZFY8RVBAFFgeDA9AahsW?=
- =?us-ascii?Q?qDm9MMHi3CZ8JbAuZscw1AKz9oxuvKlkUAtCEIrcTyce/5Q6kxaoEjhkmJh8?=
- =?us-ascii?Q?aJt00+k6c/Loyjq8GnsQAZu5MhDUlz937KjcG3sx44knJgqUQlkkzm/2Colr?=
- =?us-ascii?Q?UG7Ng7A3AUjIVuRkM+w9zI977nzEeKS9XfG59fR+552FfGtQxWzYkpwP1fJd?=
- =?us-ascii?Q?1+t0yDZvleE3Mm5i0GYO0LPDstlxURbpGF1RxTx4cwchAVltGv1fRhvwUgfy?=
- =?us-ascii?Q?25WA9oMK5+4azNkBvHu2pyaeCF9dBrskHr+tCVDbVQovTpZ6q5XgvCBjjArE?=
- =?us-ascii?Q?JtOSv+8o0TK3vsCxHj2npDAhfJ5XVcyoGonCBxrsGMartjNa3noBuKpIhdDY?=
- =?us-ascii?Q?fZKQ1JJRQC2aF3u6A5MkR3OJx6VtxjOMzDogDuzdGHFvud/DnVeDIcxJLxSo?=
- =?us-ascii?Q?AxwT05lB9agv3IbgE7adAt9JmRX/r1k9T6bayq7jQUunbjqmhXFUE5Pjcv26?=
- =?us-ascii?Q?+ScQfkEJM4Dld2aJVmdChCBhh5R6yHe6bf/vTbGQouIElpwhubGTsUemuAyt?=
- =?us-ascii?Q?S2l1aKjsoyGa5NCVbO7LuZr25npKlFwKlZiJqYhhAdKnDeeHSfi8h4VzgCPk?=
- =?us-ascii?Q?4rWhmZzNmKixIZOdk6E+Yzg6tcRuWzfwcYylu+2V6IRQD+9fhhh+OlbbwgSk?=
- =?us-ascii?Q?PmpSrDcoFO+qrBnn4Ese6ShdowJhddw0rN7TnfqXVEJxae3wIOujO6j0h4AH?=
- =?us-ascii?Q?6eSrbXpldFxwA/HbS68KrnAawZJbq/dsu+n/n5ycHycbDTidzRKbAXket7LG?=
- =?us-ascii?Q?L2e+WdLdABpFQURg5uqvyaS+AsS4PiRGT3DI58udtoSEdRHvOEOvIpA/4w0g?=
- =?us-ascii?Q?DN7VtuWoON32hSvNScexYnKWXmeNmwov8iByoEfuuMgsm9rffyJZ1GnTOtej?=
- =?us-ascii?Q?wjb5IKjD+wb3RgN4VoPCFzqjATHmSD3ckPuS83DCjYPsqM4Ziv9Qb/6IXKSr?=
- =?us-ascii?Q?AaPjC62VKPskYgxChEbESkSwIt1aLXOb/PtWeWhIl/SoiI7c6mf9l1Zbd9FP?=
- =?us-ascii?Q?SR/Y4aDTB8cJtKOCzR2sW7EyxpqOQDFAvdF1XFi6SdK5ogtSXdz0tiFLIwtL?=
- =?us-ascii?Q?pb5Ar8UuXHr1uysFYe2jAh3UNgeR+ZT5c3gMz6+pCWIce2KHEce4ua5IdQsg?=
- =?us-ascii?Q?+fZhJU4tEnKGdNLz2QN8FDtVV/SManKZaGNTrt4DEHatCl+argEkQxwRdQbL?=
- =?us-ascii?Q?tOLgqYLel97Z5QHhIH4b9g08l1POjsW/cWKvSGzfOUPiirkcpDzDZw=3D=3D?=
+ =?us-ascii?Q?yvcms/qvd7BimrATUL4IJcDQQwIeFzXdHuatFpk0dI5znrNntEIqAa64Nf14?=
+ =?us-ascii?Q?Kb3EWmH5I3yUcqIiBAxnpeSHAk5FqTbosJYPq6yHecF4FZ4jQy7BDTfpT6Yl?=
+ =?us-ascii?Q?Bqdl1WyYe2Wy8cgY7QzfVx6MWOB+deg3FzXOKjDy1R04K4cPZ58O41MaCch8?=
+ =?us-ascii?Q?rRxTuEYjz14YsVxjjTPeIDwX6+rzFBybUstYnyk32lEBZa93BTO9UtXUHnSM?=
+ =?us-ascii?Q?GK7pERq1alxhwKFny2n8lUncNVuMVO0/UgvlT20kzyKK0axXE7V8PyzbJOvc?=
+ =?us-ascii?Q?mLYirlSirUPaP/x+F4l3BrRTP5vrTCbx2zGEPllpgj/NPBBvSXbc7rWp/g5H?=
+ =?us-ascii?Q?QIjBomPiWx8ykt3gxKATsET3Y5R6kMZWIT4mIox3+t0rkwklLc0zpSSVLd71?=
+ =?us-ascii?Q?YhjkzKPOQ3WYAYxJGMUWVwq2ZnlfMHdRF2jc7s+FGcUFun8Jh9c860nz0mIp?=
+ =?us-ascii?Q?zE1fNRnVJgnSRxr0AEeH9PBZuERPRUvdYYBMNRWLgKxGe3pJx9/W4vpSxlhI?=
+ =?us-ascii?Q?AsP73ZOk3CC0Irh+VVmcnTltDbxM731tA2gcNgpmU6AhbmD1SrsjMUP+GxyG?=
+ =?us-ascii?Q?N/lQLwZJladUnstLc3SkdjOMTBR0M7+TYd4hopTm6hTRhEj3QgXI5WE6djY0?=
+ =?us-ascii?Q?wsHTbUr9nVxr5BkfdkcUeSIg9baSZuH0n7yn+ouyeybdZ8s7/wKx13CUhK/t?=
+ =?us-ascii?Q?jHBprDc1WjT0JxzzFi/jkjr/aURm5ggziV4W+Hnqy2WljCBJ0D2EtUV4zeBb?=
+ =?us-ascii?Q?ek3FyENG/bor0j8Exkn1irlNwQj1R9kGoGLSxAPaeP4f/zF2o9ejAL2ComVX?=
+ =?us-ascii?Q?c1Pxni4uaklvZ8m/PKedbcv8i40vPmylLcSDjmbi9ekVf96YFkGRTwP2vCJn?=
+ =?us-ascii?Q?vcGvkXs3r2j/6pBn8SUcdhquVYkIu6U/jpuECcaN6/7/Mo3wOmIXzScEfPbY?=
+ =?us-ascii?Q?RuMBo2HUBNXdBa0HEF6SPLcchmbdSqKgfHkaUzhg+xsAGJ8Lua5CO+s+780B?=
+ =?us-ascii?Q?jxtmRFMCLcEzi/aIAPbXVppmVlmpO1yf8IalC7LWITLn+Mi4TWoRKC3/Bg57?=
+ =?us-ascii?Q?z9u8LovSHiPmXCc+gIQ/VsqnsakCnoinkoGpYuT5jsYwQb84QpNPr786MM1L?=
+ =?us-ascii?Q?dltSIFpRmsARoF1gJBci24D9F/LjfSvN26h8mtS1AQ6i4fGN6Nacrn8d6aM0?=
+ =?us-ascii?Q?/z3/wtlHKx4a0bWJpQJFHWfndsYCHF0E2nT4fB4r+vmIhCcmvd7efH0z3IXI?=
+ =?us-ascii?Q?tD5qPKw8vXDqQUcRpNwL3+UK3TXxhbXdZGa3Da7QXYbNtoRSjxOWvZvXolO1?=
+ =?us-ascii?Q?d7Qf+/XMRwwmMjzcllMjHoKjlbQYnbH9/tTg9GKT4NGMB3oDM5lhsgf5LEMj?=
+ =?us-ascii?Q?2YHou7j20/yBqfcAOktgJsIEoQHCJTW5duCpyssCqBwDj3C2OO7b8Ttxe4Mv?=
+ =?us-ascii?Q?6QgJay2Pj3DhDYZHCYw/qvCH3MUZUeciZYpgmWiqRr5kH7xAQDnvxZRt5blj?=
+ =?us-ascii?Q?qSqdr2qXEhgk7Mzsk8OgxN51wbkUSp/HwPRh?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR04MB9621.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(19092799006)(52116014)(7416014)(376014)(7053199007)(38350700014);DIR:OUT;SFP:1101;
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR04MB9621.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(19092799006)(52116014)(7416014)(376014)(7053199007)(38350700014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?P+jiQ+UtGH3Au+oSlTgBkXxXW8q+jaRrfhJN0UNWRaqydhu7xpYRL5NYnigF?=
- =?us-ascii?Q?5ZHp24N/DeBXqTh8dtPyROEIIlosIc3F4UQIF4oVDEQeN6JxcdkVeMXFg49d?=
- =?us-ascii?Q?PpsG2hx+UpEOhF6EuNON/76jK9owMHSqmR4+auhMtpPMiHzVnN5yur52DieR?=
- =?us-ascii?Q?+rrJtJ9YI9kYmevu1xyDUltUnWzNDlsrSyjaGWaozKQws8xOD7a7G6NnqasC?=
- =?us-ascii?Q?WBbJmwCfow+sL2wBVjcGp+IDmqyFA5NSkdq2hb7K8IdjrEKKMIL+DVVVnp4l?=
- =?us-ascii?Q?J3wpc3PzCX31+wdYpbndhx4SVwum8datzGXLqrnvWO1ZK2TbtoWpiDHxHs0Z?=
- =?us-ascii?Q?geTrmY1W2V3bBRmxBkstvL6xqfk8XtjWclhRx9ZCRaUSBqiayj/XcWp8IQMg?=
- =?us-ascii?Q?gCKC+ayZ3yVxKA3Qq7fABZQsIay0Ww+WxzEFQnMQtG2Qc73f0rKMokqgaFmy?=
- =?us-ascii?Q?QAhRaHWOhDAmCCyNv/MZ2Glzw3vQzy3kNOIv6ULBsWULIr1YPe+CCuXb92wz?=
- =?us-ascii?Q?R6objkLzqihlDu4fGh39qX4jCjUp040QkPfNNDsfBuIkqwjJ95cIgO7RHAg5?=
- =?us-ascii?Q?whq0GsTuNHy1FbiybiX3/yZlmzQOp8Zu0dNfh0+bsPs/VUyryUcsrg/Z0xs3?=
- =?us-ascii?Q?ktPNI1DZuRbaWsx3cyOut6EvWavBuOHPzLrwKhbZDvEENb2uLedP9qsdamVA?=
- =?us-ascii?Q?04UzMey/07v9y18R59mJRMII8KV+wznXicLLCGAozLieA/EKGqAbywkZpur2?=
- =?us-ascii?Q?C6NRP4nS0iobGJ5v9SiHkWnyH2BPMOp4cd8Z5RZvQlPFb1eaDCjMLzneTbKw?=
- =?us-ascii?Q?uUJhsnaEdg3aXLeMNDHM/Sa1xrrhpSGVXyvUXIsdyHEJDUPdqJGLyCu/9+/T?=
- =?us-ascii?Q?pHZ2eKbfw9nMqc5pywH2dDJz1A2C8OEGa2Pzbq5WxUA2O6ojHWNtQtzIznUb?=
- =?us-ascii?Q?4w1LOq3L4sL5HZtcId+QVg0pDkQ3TdC51omf28bm22JjW2Tfn1gYWcu+ElTq?=
- =?us-ascii?Q?BSkHnMRgB32BjgL+LMShtPbY8kavXqIYMmU7dP/CZx8fbSxz+dLZ7kjBJd6j?=
- =?us-ascii?Q?QN3LXN/lUWPSwkCx4XSuspTUiG+Ot9d97LSW2rg3IWBC9ggqp2Cyid7SdKyX?=
- =?us-ascii?Q?z6SugOP2zxKb3hY+LU/D1gAkTYb4xZlgkyLTehQy4EI2/sYQKns1PQkHw+mM?=
- =?us-ascii?Q?CM8bvr1A3B7Ux2THuVNI6hu7SIJMPhjGBP6DtzxNUizl5fFr3wewN6bq85Vi?=
- =?us-ascii?Q?JjR/1EvtFFUn0zh9sfGfrKEp0dEQazU5EwSWtAAyi7Djhg6oFWeVJ/Z78z9e?=
- =?us-ascii?Q?DOKn/VvxzCvbYiCooCxXc/UWqQ9Z0pV1Ma9fT4N7UvVzIX0w7Gq65d4RFsHG?=
- =?us-ascii?Q?NJCOqtuydhA4I5kkZLi7nyXGFZQcsnINBlcVenRt3Hu7bgjLu9BsG6ADi1uV?=
- =?us-ascii?Q?PIhKUgyAWr2FTpDdi2OB3a8wlMyXnD2hK6+bON21WqjwntDs62HmvjNbIcae?=
- =?us-ascii?Q?RMSWuibum0FxHppLjYhL+TzO/GIJ7uTo76Ww5Qp2T7iyyeYD0Wiz8nNDGMAU?=
- =?us-ascii?Q?GyU98H1QGGy0P6qjA2TYWJVsEZoyXBg9ksZ67zxW?=
+ =?us-ascii?Q?p/OUFL/WOySkw8dKH1lnNrI35zTLTe1wz5V1wAY8hUoQmE/YJqphC3ZY1f/o?=
+ =?us-ascii?Q?2VSu5L9a2bowpz6+X7pQK6ErS8HqccGElsiR482/mYi8pp2zEb8IMAiDL48k?=
+ =?us-ascii?Q?pb/JfIrZgjXB22yqLVXaSfKWHX+AXWLUU6SaKaiYAaQjTBX9dQe+gVMHYBx4?=
+ =?us-ascii?Q?+WwI5sfQSJ4gbH0BJWjuthkiJ5D62KKbICiIp0lyGrgNicYKufD1Ay3x0wZY?=
+ =?us-ascii?Q?tt+DMWTHNbiVJUk06vs1wZzCSfvRfMKLXFEvNN/51Ovr6kDiqKBIi96wgq4M?=
+ =?us-ascii?Q?bwpfM/uQ/ny7hKcEeP6vWzYRZT8d2oKelWIYUT0pR3sTzD+kBfpHzIv5VRJu?=
+ =?us-ascii?Q?ziF50X1v/O4bxv1fnrvE9Yzw6bx1hE+xv2qSNXppkFBrFhS0XORTS7+rE8GE?=
+ =?us-ascii?Q?BF6JF0yBkAjzreyWGUtLhFImmb0I+XSI6WR3fK7mkH66RAg65g3305I7Ju9r?=
+ =?us-ascii?Q?OPgMLslOZNW3jQhOOODDX45K1rYdiuRe1ximMr/0am3MowcT93WzFF4lmtZD?=
+ =?us-ascii?Q?jHGA9/SihrYT7w2ykdjG/2XfVTrz7JMQxl0QnmrTZ8/jBC8Di93uRvzWLE4G?=
+ =?us-ascii?Q?klprEJ5IhrfrYAqjrO0WgosA9PRIhm9dSQia72lL+youaALW6DX19wUwi/OO?=
+ =?us-ascii?Q?wrWxZhv2o4WmteIzIQCItMTnrUjThY45tn24c8Pvd1v5nycrVetO1/FWQ0Vb?=
+ =?us-ascii?Q?Wpdvpj7qAh2gpTqeFBG8EuHt9KrEBZNRbtsTPArgSokNX3PWMYHaT/QqHG2G?=
+ =?us-ascii?Q?n/PXEC/ZZwviC8ZI5sCJnBA1b4wdzlJMyc55AODt589t8EBnKaRMahuFjm9z?=
+ =?us-ascii?Q?Ku41mLy2sU/PlZ3wR3ofi9aZP+T/7RguXz1GEVd0FZJ/E+KQ6lRUYYDJtsUJ?=
+ =?us-ascii?Q?+lOKTIkrvulvrP+tiNxf0y24+eSPSIWHIEhb7YLsIHDG3Nh4tgh+y3wLoe6W?=
+ =?us-ascii?Q?SVjG7UoNq7nrhab30P+JhayEFimdfzBomlW5tqsGQAeEq40SRT2oBoEEJKL0?=
+ =?us-ascii?Q?ocf8dl/NKR3+FCHVT0DSBTXIs+PZGXA4lkGWfWLlPbVeG1qwg7fFW6aLukaU?=
+ =?us-ascii?Q?9Ht76xRGfx8IA5428j02+eeDJRVQ7k3FVP2iWIp1DAbjV2QibfXIqUnbBJ3d?=
+ =?us-ascii?Q?mWAP3Smk1Qd9ldC5cIlQPGcL9Gvp/UlHtR8glWNxtCWhO8ua7BDE70LD+gf+?=
+ =?us-ascii?Q?jtbRAQksEvPgr6d0f7n1EqI/ZM6QdLnJrk6akfEjqJFIeXJpsfBtRGXw0elN?=
+ =?us-ascii?Q?i+E6KlHDvEXAknxidalQJ+1B65OE76An9e/r8jG5BQxGOdgOZ2XHDCfLLAaj?=
+ =?us-ascii?Q?waxrKzyCmXs92fUjRZdqfH2i7sFdbv1/Tr++GL48P6IK0C/d1TJm8rinOq+R?=
+ =?us-ascii?Q?FpDYAt2Vh085/6CTdjLm32YURzRCRN9385NUfGUiACI+wWBMAEvVeC8D30Wb?=
+ =?us-ascii?Q?C1cVspgACI6qVBjZlLX0gq+mrK99kYx4ruKUYeteLObbqk/6nwA8ZRY4B2vH?=
+ =?us-ascii?Q?2cQDwhLkva3mjog8i5mWoLWSU92NcirF4G+YZilN5ITHA7cN7QCCWdzNJqBJ?=
+ =?us-ascii?Q?s7jqgVbo/T6RAjhOI/tb6NnT8Ob76e/LtUh8L1Xv?=
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4401d476-0d78-40a7-a706-08de0a70b08e
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3ea40dcf-de5d-4b1b-f844-08de0a76f441
 X-MS-Exchange-CrossTenant-AuthSource: AS4PR04MB9621.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Oct 2025 15:53:44.9843
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Oct 2025 16:38:35.6424
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: JlBjdPSydaaxZDWVN0UGYiTC0xfL+XC6dyPwtZ4+FFxo58EHRbk8CuAQN9F8naQJrSovkk8WCPVn/Xg9Q7QYfg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU2PR04MB8583
+X-MS-Exchange-CrossTenant-UserPrincipalName: sY/qPOW32r2jiokJmlGge/hTZw1gdG43WJH4dd9RtnDBRr5epWFCuFh5maf1GHRFjbymDryA0hESb0p8a2MSsg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB7521
 
-On Wed, Oct 08, 2025 at 10:30:44AM +0300, Svyatoslav Ryhel wrote:
-> Document CSI HW block found in Tegra20 and Tegra30 SoC.
+On Sat, Oct 11, 2025 at 06:51:17PM +0200, Marek Vasut wrote:
+> i.MX95 Display Controller display engine consists of all processing
+> units that operate in a display clock domain. Add DomainBlend driver
+> which is specific to i.MX95 and required to get any display output on
+> that SoC.
 >
-> The #nvidia,mipi-calibrate-cells is not an introduction of property, such
-> property already exists in nvidia,tegra114-mipi.yaml and is used in
-> multiple device trees. In case of Tegra30 and Tegra20 CSI block combines
-> mipi calibration function and CSI function, in Tegra114+ mipi calibration
-> got a dedicated hardware block which is already supported. This property
-> here is used to align with mipi-calibration logic used by Tegra114+.
->
-> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> Signed-off-by: Marek Vasut <marek.vasut@mailbox.org>
 > ---
->  .../display/tegra/nvidia,tegra20-csi.yaml     | 135 ++++++++++++++++++
->  1 file changed, 135 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-csi.yaml
+> Cc: Abel Vesa <abelvesa@kernel.org>
+> Cc: Conor Dooley <conor+dt@kernel.org>
+> Cc: Fabio Estevam <festevam@gmail.com>
+> Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
+> Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
+> Cc: Liu Ying <victor.liu@nxp.com>
+> Cc: Lucas Stach <l.stach@pengutronix.de>
+> Cc: Peng Fan <peng.fan@nxp.com>
+> Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: Shawn Guo <shawnguo@kernel.org>
+> Cc: Thomas Zimmermann <tzimmermann@suse.de>
+> Cc: devicetree@vger.kernel.org
+> Cc: dri-devel@lists.freedesktop.org
+> Cc: imx@lists.linux.dev
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-clk@vger.kernel.org
+> ---
+>  drivers/gpu/drm/imx/dc/Makefile  |   2 +-
+>  drivers/gpu/drm/imx/dc/dc-crtc.c |   2 +
+>  drivers/gpu/drm/imx/dc/dc-db.c   | 226 +++++++++++++++++++++++++++++++
+>  drivers/gpu/drm/imx/dc/dc-de.c   |   2 +
+>  drivers/gpu/drm/imx/dc/dc-de.h   |  11 ++
+>  drivers/gpu/drm/imx/dc/dc-drv.c  |   1 +
+>  drivers/gpu/drm/imx/dc/dc-drv.h  |   3 +
+>  drivers/gpu/drm/imx/dc/dc-kms.h  |   4 +
+>  8 files changed, 250 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/gpu/drm/imx/dc/dc-db.c
 >
-> diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-csi.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-csi.yaml
-> new file mode 100644
-> index 000000000000..817b3097846b
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-csi.yaml
-> @@ -0,0 +1,135 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/display/tegra/nvidia,tegra20-csi.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> diff --git a/drivers/gpu/drm/imx/dc/Makefile b/drivers/gpu/drm/imx/dc/Makefile
+> index b9d33c074984a..20386e4082e56 100644
+> --- a/drivers/gpu/drm/imx/dc/Makefile
+> +++ b/drivers/gpu/drm/imx/dc/Makefile
+> @@ -1,6 +1,6 @@
+>  # SPDX-License-Identifier: GPL-2.0
+>
+> -imx8-dc-drm-objs := dc-cf.o dc-crtc.o dc-de.o dc-drv.o dc-ed.o dc-fg.o dc-fl.o \
+> +imx8-dc-drm-objs := dc-cf.o dc-crtc.o dc-db.o dc-de.o dc-drv.o dc-ed.o dc-fg.o dc-fl.o \
+>  		    dc-fu.o dc-fw.o dc-ic.o dc-kms.o dc-lb.o dc-pe.o \
+>  		    dc-plane.o dc-tc.o
+>
+...
 > +
-> +title: NVIDIA Tegra20 CSI controller
+> +#include "dc-drv.h"
+> +#include "dc-pe.h"
 > +
-> +maintainers:
-> +  - Svyatoslav Ryhel <clamor95@gmail.com>
+> +#define PIXENGCFG_DYNAMIC			0x8
+> +#define  PIXENGCFG_DYNAMIC_PRIM_SEL_MASK	GENMASK(5, 0)
+> +#define  PIXENGCFG_DYNAMIC_PRIM_SEL(x)		\
+> +		FIELD_PREP(PIXENGCFG_DYNAMIC_PRIM_SEL_MASK, (x))
+> +#define  PIXENGCFG_DYNAMIC_SEC_SEL_MASK		GENMASK(13, 8)
+> +#define  PIXENGCFG_DYNAMIC_SEC_SEL(x)		\
+> +		FIELD_PREP(PIXENGCFG_DYNAMIC_SEC_SEL_MASK, (x))
 > +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - nvidia,tegra20-csi
-> +      - nvidia,tegra30-csi
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks: true
+> +#define STATICCONTROL				0x8
+> +#define  SHDTOKSEL_MASK				GENMASK(6, 4)
+> +#define  SHDTOKSEL(x)				FIELD_PREP(SHDTOKSEL_MASK, (x))
+> +#define  SHDLDSEL_MASK				GENMASK(3, 1)
+> +#define  SHDLDSEL(x)				FIELD_PREP(SHDLDSEL_MASK, (x))
 
-Need limit how many clocks needs
-
-clocks:
-  maxItems: <?>
-
-> +  clock-names: true
-
-Need provide exact list, I saw you provide list at if branch, but here
-need provide numbers limitations.
-
-clock-names:
-  maxItems: 3
-  minItems: 1
+Can you keep bit fields as consistent order,  from 31..0 or 0..31.
 
 > +
-> +  avdd-dsi-csi-supply:
-> +    description: DSI/CSI power supply. Must supply 1.2 V.
+> +#define CONTROL					0xc
+> +#define  SHDTOKGEN				BIT(0)
 > +
-> +  power-domains:
-> +    maxItems: 1
+...
 > +
-> +  "#nvidia,mipi-calibrate-cells":
-> +    description:
-> +      The number of cells in a MIPI calibration specifier. Should be 1.
-> +      The single cell specifies an id of the pad that need to be
-> +      calibrated for a given device. Valid pad ids for receiver would be
-> +      0 for CSI-A; 1 for CSI-B; 2 for DSI-A and 3 for DSI-B.
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    const: 1
+> +enum dc_db_blend_func {
+> +	DC_DOMAINBLEND_BLEND_ZERO,
+> +	DC_DOMAINBLEND_BLEND_ONE,
+> +	DC_DOMAINBLEND_BLEND_PRIM_ALPHA,
+> +	DC_DOMAINBLEND_BLEND_ONE_MINUS_PRIM_ALPHA,
+> +	DC_DOMAINBLEND_BLEND_SEC_ALPHA,
+> +	DC_DOMAINBLEND_BLEND_ONE_MINUS_SEC_ALPHA,
+> +	DC_DOMAINBLEND_BLEND_CONST_ALPHA,
+> +	DC_DOMAINBLEND_BLEND_ONE_MINUS_CONST_ALPHA,
+> +};
 > +
-> +  "#address-cells":
-> +    const: 1
+> +enum dc_db_shadow_sel {
+> +	SW = 0x4,
+> +	SW_PRIM = 0x5,
+> +	SW_SEC = 0x6,
+> +};
 > +
-> +  "#size-cells":
-> +    const: 0
-> +
-> +patternProperties:
-> +  "^channel@[0-1]$":
-> +    type: object
-> +    description: channel 0 represents CSI-A and 1 represents CSI-B
-> +    additionalProperties: false
-> +
-> +    properties:
-> +      reg:
-> +        maximum: 1
-> +
-> +      nvidia,mipi-calibrate:
-> +        description: Should contain a phandle and a specifier specifying
-> +          which pad is used by this CSI channel and needs to be calibrated.
-> +        $ref: /schemas/types.yaml#/definitions/phandle-array
-> +
-> +      "#address-cells":
-> +        const: 1
-> +
-> +      "#size-cells":
-> +        const: 0
-> +
-> +      port@0:
-> +        $ref: /schemas/graph.yaml#/$defs/port-base
-> +        unevaluatedProperties: false
-> +        description: port receiving the video stream from the sensor
-> +
-> +        properties:
-> +          endpoint:
-> +            $ref: /schemas/media/video-interfaces.yaml#
-> +            unevaluatedProperties: false
-> +
-> +            required:
-> +              - data-lanes
-> +
-> +      port@1:
-> +        $ref: /schemas/graph.yaml#/properties/port
-> +        description: port sending the video stream to the VI
+> +static const struct dc_subdev_info dc_db_info[] = {
+> +	{ .reg_start = 0x4b6a0000, .id = 0, },
+> +	{ .reg_start = 0x4b720000, .id = 1, },
+> +};
 
-The other systems looks, put port@<n> under ports.
+Not sure why need map register address to id? Does graphic link or use
+dt cells pass it as argument.
 
-ports {
-  port@0
-  ...
-  port@1
-  ...
-}
-
+I have find use .id at this driver.
 
 > +
-> +    required:
-> +      - reg
-> +      - "#address-cells"
-> +      - "#size-cells"
-> +      - port@0
-> +      - port@1
+> +static const struct regmap_range dc_db_regmap_ranges[] = {
+> +	regmap_reg_range(STATICCONTROL, BLENDCONTROL),
+> +};
 > +
-> +allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - nvidia,tegra20-csi
-> +    then:
-> +      properties:
-> +        clocks:
-> +          items:
-> +            - description: module clock
+...
 > +
-> +        clock-names: false
+> +static inline void dc_db_enable_shden(struct dc_db *db)
+> +{
+> +	regmap_write_bits(db->reg_cfg, STATICCONTROL, SHDEN, SHDEN);
+> +}
 > +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - nvidia,tegra30-csi
-> +    then:
-> +      properties:
-> +        clocks:
-> +          items:
-> +            - description: module clock
-> +            - description: PAD A clock
-> +            - description: PAD B clock
+> +static inline void dc_db_shdtoksel(struct dc_db *db, enum dc_db_shadow_sel sel)
+> +{
+> +	regmap_write_bits(db->reg_cfg, STATICCONTROL, SHDTOKSEL_MASK,
+> +			  SHDTOKSEL(sel));
+> +}
 > +
-> +        clock-names:
-> +          items:
-> +            - const: csi
-> +            - const: csia-pad
-> +            - const: csib-pad
+> +static inline void dc_db_shdldsel(struct dc_db *db, enum dc_db_shadow_sel sel)
+> +{
+> +	regmap_write_bits(db->reg_cfg, STATICCONTROL, SHDLDSEL_MASK,
+> +			  SHDLDSEL(sel));
+> +}
+> +
+> +void dc_db_shdtokgen(struct dc_db *db)
+> +{
+> +	regmap_write(db->reg_cfg, CONTROL, SHDTOKGEN);
+> +}
+> +
+> +static void dc_db_mode(struct dc_db *db, enum dc_db_mode mode)
+> +{
+> +	regmap_write(db->reg_cfg, MODECONTROL, mode);
+> +}
+> +
+> +static inline void dc_db_alphamaskmode_disable(struct dc_db *db)
+> +{
+> +	regmap_write_bits(db->reg_cfg, ALPHACONTROL, ALPHAMASKENABLE, 0);
+> +}
 
-This is new binding
+This helper function just write value to one register, not helper much
+at all.
 
-at top
+> +
+> +static inline void dc_db_blendcontrol(struct dc_db *db)
+> +{
+> +	u32 val = PRIM_A_BLD_FUNC(DC_DOMAINBLEND_BLEND_ZERO) |
+> +		  SEC_A_BLD_FUNC(DC_DOMAINBLEND_BLEND_ZERO) |
+> +		  PRIM_C_BLD_FUNC(DC_DOMAINBLEND_BLEND_ZERO) |
+> +		  SEC_C_BLD_FUNC(DC_DOMAINBLEND_BLEND_ONE);
+> +
+> +	regmap_write(db->reg_cfg, BLENDCONTROL, val);
+> +}
+> +
+> +void dc_db_init(struct dc_db *db)
+> +{
+> +	dc_db_enable_shden(db);
+> +	dc_db_shdtoksel(db, SW);
+> +	dc_db_shdldsel(db, SW);
+> +	dc_db_mode(db, DB_PRIMARY);
+> +	dc_db_alphamaskmode_disable(db);
+> +	dc_db_blendcontrol(db);
+> +}
+> +
+...
+>
+> +struct dc_db {
+> +	struct device *dev;
+> +	struct regmap *reg_cfg;
+> +	int id;
 
-clock-names
-  items:
-    - const: csi
-    - const: csia-pad
-    - const: csib-pad
-  minItems: 1
-
-
-here, just limit number
-
-  clock-names:
-    minItems: 3
+where actually use this id?
 
 Frank
+
+> +};
 > +
-> +additionalProperties: false
+>  struct dc_fg {
+>  	struct device *dev;
+>  	struct regmap *reg;
+> @@ -30,6 +36,7 @@ struct dc_tc {
+>  struct dc_de {
+>  	struct device *dev;
+>  	struct regmap *reg_top;
+> +	struct dc_db *db;
+>  	struct dc_fg *fg;
+>  	struct dc_tc *tc;
+>  	int irq_shdload;
+> @@ -37,6 +44,10 @@ struct dc_de {
+>  	int irq_seqcomplete;
+>  };
+>
+> +/* Domain Blend Unit */
+> +void dc_db_init(struct dc_db *db);
+> +void dc_db_shdtokgen(struct dc_db *db);
 > +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - power-domains
-> +  - "#address-cells"
-> +  - "#size-cells"
-> +
-> +# see nvidia,tegra20-vi.yaml for an example
+>  /* Frame Generator Unit */
+>  void dc_fg_cfg_videomode(struct dc_fg *fg, struct drm_display_mode *m);
+>  void dc_fg_enable(struct dc_fg *fg);
+> diff --git a/drivers/gpu/drm/imx/dc/dc-drv.c b/drivers/gpu/drm/imx/dc/dc-drv.c
+> index 04f021d2d6cfc..f108964bf89f4 100644
+> --- a/drivers/gpu/drm/imx/dc/dc-drv.c
+> +++ b/drivers/gpu/drm/imx/dc/dc-drv.c
+> @@ -263,6 +263,7 @@ static struct platform_driver dc_driver = {
+>
+>  static struct platform_driver * const dc_drivers[] = {
+>  	&dc_cf_driver,
+> +	&dc_db_driver,
+>  	&dc_de_driver,
+>  	&dc_ed_driver,
+>  	&dc_fg_driver,
+> diff --git a/drivers/gpu/drm/imx/dc/dc-drv.h b/drivers/gpu/drm/imx/dc/dc-drv.h
+> index eb61b8c762693..17ce2d748262b 100644
+> --- a/drivers/gpu/drm/imx/dc/dc-drv.h
+> +++ b/drivers/gpu/drm/imx/dc/dc-drv.h
+> @@ -40,6 +40,8 @@ struct dc_drm_device {
+>  	struct dc_ed *ed_safe[DC_DISPLAYS];
+>  	/** @ed_cont: extdst list(content stream) */
+>  	struct dc_ed *ed_cont[DC_DISPLAYS];
+> +	/** @lb: domainblend list */
+> +	struct dc_db *db[DC_DISPLAYS];
+>  	/** @fg: framegen list */
+>  	struct dc_fg *fg[DC_DISPLAYS];
+>  	/** @fu_disp: fetchunit list(used by display engine) */
+> @@ -71,6 +73,7 @@ void dc_kms_uninit(struct dc_drm_device *dc_drm);
+>  int dc_plane_init(struct dc_drm_device *dc_drm, struct dc_plane *dc_plane);
+>
+>  extern struct platform_driver dc_cf_driver;
+> +extern struct platform_driver dc_db_driver;
+>  extern struct platform_driver dc_de_driver;
+>  extern struct platform_driver dc_ed_driver;
+>  extern struct platform_driver dc_fg_driver;
+> diff --git a/drivers/gpu/drm/imx/dc/dc-kms.h b/drivers/gpu/drm/imx/dc/dc-kms.h
+> index cd7860eff986a..3e61dbb87afe7 100644
+> --- a/drivers/gpu/drm/imx/dc/dc-kms.h
+> +++ b/drivers/gpu/drm/imx/dc/dc-kms.h
+> @@ -48,6 +48,8 @@ struct dc_crtc {
+>  	struct dc_ed *ed_cont;
+>  	/** @ed_safe: safety stream extdst */
+>  	struct dc_ed *ed_safe;
+> +	/** @db: domain blend */
+> +	struct dc_db *db;
+>  	/** @fg: framegen */
+>  	struct dc_fg *fg;
+>  	/**
+> @@ -122,6 +124,8 @@ struct dc_plane {
+>  	struct dc_fu *fu;
+>  	/** @cf: content stream constframe */
+>  	struct dc_cf *cf;
+> +	/** @db: domainblend */
+> +	struct dc_db *db;
+>  	/** @lb: layerblend */
+>  	struct dc_lb *lb;
+>  	/** @ed: content stream extdst */
 > --
-> 2.48.1
+> 2.51.0
 >
