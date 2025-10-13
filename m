@@ -1,210 +1,483 @@
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazon11013071.outbound.protection.outlook.com [52.101.72.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADE3C25A64C
-	for <linux-clk@vger.kernel.org>; Mon, 13 Oct 2025 16:45:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760373925; cv=none; b=Hg5ayGTW8rVpgOe8IWJNJ336vgpD18FiwW20VZ9D2RV0ipops2xmjhMHw6670ggsQPDlk9Jc2o9GeWJ92K1pOfmInECPCsh5iCaM9Eo0FjFcbaeKregwylUOMvTPmQamxKGijSpItyOAe/8YgNgKNQLjQbmKxU86ycCyZr8gSXg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760373925; c=relaxed/simple;
-	bh=0wTihLOD99fRq7kWBMtjXLXmc8J0Akxg7M80xoV5nnA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GfYK1edBTE4YDj53E9TqI2Gb1Fqs/y2o9Q9BZFTFpNKHp3Zj9XjPuX1bKIJQPd6is7Zkwv1DC4Gda3SY5+Ib7yvFa+XSR6rMErGVstJtw9E002mKKUyGp9ODFddgQSu9egZAm7+1WWkSP37kJreKgK+D9SoB5SVLPSHTntw70lc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OUqE/1Ks; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E999B2749C1;
+	Mon, 13 Oct 2025 16:49:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.72.71
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760374185; cv=fail; b=l8X/MZn7osSo4iP/1ptcr6lxkTJnlEVGYvQzf9Dk64EGH+gLxQVZQAIsa8f3iEL1QsRKAO0quteLjMmNaB3jF7cltxvoS0FrNMMZv/7aaKf53O+tc6iAAyorJ4Ercyo/uZ2XnIC7Xy84zJgLJAcRFW4i3vrVN8ilnOJBRnobFRs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760374185; c=relaxed/simple;
+	bh=BldurmcMyrLVMIOeZ9cY834jauQ+FCCs3KoAiP7ATvs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=oGdmnTTexMoRlGSXd/Up1W1fcbXJ0YE86Lw7u6x6mh+NAXbSVz8YWeJKbZXRmhUpjXfxjo23sdqQdKCeh0bYzzPSe2TJpBhpfpJvFF2ox0XbkTfLX+MV1JDh1PsydsAB5UhHCB5FVhyo6BHZwRxPcqxohFj8VSVuakTm5cc24eE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=neFJ31bP; arc=fail smtp.client-ip=52.101.72.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OUqE/1Ks"
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3ee13baf2e1so3249936f8f.3
-        for <linux-clk@vger.kernel.org>; Mon, 13 Oct 2025 09:45:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760373919; x=1760978719; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bm/7+n2mKW42M8RxL5Oj+vsywNFzwHrxsNk7zzkAZi0=;
-        b=OUqE/1Ks5LUsaO1cITsVFTzTfZ5bikpUOuGvvxer7crCYxJJoC8EPq21TH95WNn3e9
-         oc2kq21tildUCXFmqTjhUg6Wi2QWGt7dfGT4uNUFKZ1BGVdkjZmKvKKVzYeJr2g+PPlT
-         bU0U+qz3tizok054Eahr+7BBXFXjg1xAyASCaN6S0QZFnD/m8qVArPVjApTa2QSH6sAT
-         Ha506+HLugASfms8rhLX2RheSiWWkufBE3zFzWIrr69upQZjLXgjNw9GQ477wJbNq/kB
-         Vuq5JMxIxlIDiQVp8SDvJieVkjG6C0jTOqq2r18qHpdZ1tfqIiZ49Q2vG9x97wRRupKu
-         3ckA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760373919; x=1760978719;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bm/7+n2mKW42M8RxL5Oj+vsywNFzwHrxsNk7zzkAZi0=;
-        b=XOAhxwhrSQfEkWmByOOfxVdehyetaGSYV+qTADeTqtWCFnIw3i6UfSU3bk8jltSWI9
-         Dxy7ixg6ZHXqmhysW9UCdvWgLiDAIp0dilT9axzpepWA14oWUNyJjdi940CGpwg+QV0x
-         5i9hUnoWArSgf2M2P1Llc4H5i9DdPotA/Qjx+FWUewSwcXnWmNcEshPBqzpfA2SmG3jd
-         7hWpPgZ98sqilPoE7Xj/iBb2i8gYY+4AGkJHR8E0n8YSDfpg+AIEVEJzSUkOJv/OtS2s
-         LVeW2Cr6qPCgEyGHFzrJWmXiHUaS8ByublZzi6FxuQbmjHA4pJkbMrAATlkkQwVzKtAY
-         LByw==
-X-Forwarded-Encrypted: i=1; AJvYcCW/JDbJHDadLCUdkFZuCVRLOEyDZ/r/3EEec5yZ76R7377yW7caA7l+ZngzcVPwnDtnmjeKYkcgzJw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwH+SLvAGwDVD2EpJF26ndOifVTiHVz1F8PX11+5mlM3lefseiO
-	McyuSrJFQ1qnB89sKg31aKhS4t2agX6/hvUZh+ZjIXdZxctWaz1X6TWwtJOSuhRTSlXoElx62Cx
-	JBsn6swiQGb9HqZtMcpPExmvjZajh6ls=
-X-Gm-Gg: ASbGncs+4Qt+cfQtjtBurqHA62T1jENDUp//X+dnjmNEHiATXPS8KHVHVzIhE5ENb+F
-	PD4X7aNoZTTkzXhNqpJu3tzSs2wgG/NOh6Au0gQeafpLJrCXDAISwJSPPqigvzHm8dM2EDwgROg
-	QHE0TDV6/it5RZGhTArSl6t/n1npcPqeMlAsqYVgibHhpruB1KoN0eJHQPEGvhVbbwzKisrx80S
-	Xfn9NZQ1pfrJ+ZLXmWefKM9nxYESEfyNUde4iVSRgATuJ/wtiES4p45RCe9
-X-Google-Smtp-Source: AGHT+IFAeGAh4Wpnp3B5IRkMFfhupqiBX/iiJ3P/+Yj20ZzS6IuDiZo7IhU/1z0XLJ7PY/lxRHpoJi84zX1pyuIRQLg=
-X-Received: by 2002:a05:6000:460b:b0:426:d51c:495b with SMTP id
- ffacd0b85a97d-426d51c4abemr6608215f8f.27.1760373918503; Mon, 13 Oct 2025
- 09:45:18 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="neFJ31bP"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=c+ygpIG5Z1Us6PlCrFy6DQeMkpPXq3UkOySKKJTlEHlCvzVR/EI9Lkssohi5rb2tC6mu2s94lOlHemu3rrqJdZt55f8UoQplb3WICLYA8VA6v8gT+CI+dJbkDK6vGPPo363a+jOFNdWtUlZpFRS8pbuc6eVc8U1+Xxe0zBZrVEFy48K4VRt0nqiVh9Onmza3fdhY4f5S3JUB0wa+V230VPSMZyX+kzGp8rZsFy8IJx5niKKxEs1onpbZPT9u+LjRZDiN/3d6CBSdj0vjjTx9JXvxLZaFHE/AKqgIUkpvsFvVb/9AwhXsw3JCLrixeaGMN0jTt318+jh3kiNDKqeb6Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=yiq5O/wv/Vh9vl9iFRuI6H8xyEesFiCQ9wPcLjy/jGE=;
+ b=rDBsHoiH8xeuPKyo76P4Uy9e7rC9/58MR56omDa5qKEGGvRekpePDpnZsRt+TaXgggPJhJqtmLq1riWA34Yc4TEjj7ptLnGoLqpV4r8qmB+LXBKqzimJpQOZ+hfb09cwuP5mJQ7/HTXZtSdLGFpry40VX5ECrKU3YcGX60L2zRw7tt7cWMLCdrB/VJak73ZwzHvaBXPyV3PsLGHXfPOw3tMDPDC4cD9X2KUE/9yct+nXWqDRryDsGoKwXONGG3nMpqSou4mM5ea0B0pTUkebrR1xaMz5YDRuDUy0XA21XRSUQ6ZvASaAOKI+GtLPocTWg4X5Z0xcv0IorLfN9rjtUQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=yiq5O/wv/Vh9vl9iFRuI6H8xyEesFiCQ9wPcLjy/jGE=;
+ b=neFJ31bPNkP8sjAVMAq/3jOUOAEnHbVJ3ceDuYQneTrpISNTaDBuOcdJEZjwwayxlXUwnHvfdCgjH9FDUbcGderFwuYu2tcQXm4jTWu0Vd03FxV91i+1YoTshr0fHX/GB+QYq3U8T4uyi8M5fnZIToIcKNfogwPWnPKoy3ssUaAqOACgktCONy4ZO9vuRs02RMdSZgQXqaYoWNNotQfLfia7BhpaOOhuufsx22yDdAQtP/YOYUmABuviUDgT6D087TqVBGqUpYcNPCSBcvQwOoQ07f4S8N12NJ2nKgSCOkYn8dMs+4yR14ifEer4PdLLC4W721JPkaD8rpEwg/RnGQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AS4PR04MB9621.eurprd04.prod.outlook.com (2603:10a6:20b:4ff::22)
+ by PAXPR04MB9304.eurprd04.prod.outlook.com (2603:10a6:102:2b6::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.12; Mon, 13 Oct
+ 2025 16:49:38 +0000
+Received: from AS4PR04MB9621.eurprd04.prod.outlook.com
+ ([fe80::a84d:82bf:a9ff:171e]) by AS4PR04MB9621.eurprd04.prod.outlook.com
+ ([fe80::a84d:82bf:a9ff:171e%4]) with mapi id 15.20.9203.009; Mon, 13 Oct 2025
+ 16:49:38 +0000
+Date: Mon, 13 Oct 2025 12:49:29 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Marek Vasut <marek.vasut@mailbox.org>
+Cc: dri-devel@lists.freedesktop.org, Abel Vesa <abelvesa@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Fabio Estevam <festevam@gmail.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Liu Ying <victor.liu@nxp.com>, Lucas Stach <l.stach@pengutronix.de>,
+	Peng Fan <peng.fan@nxp.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Rob Herring <robh@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH 03/39] dt-bindings: display: imx: Document i.MX95 Display
+ Controller processing units
+Message-ID: <aO0tmUWA5H0J80Ov@lizhi-Precision-Tower-5810>
+References: <20251011170213.128907-1-marek.vasut@mailbox.org>
+ <20251011170213.128907-4-marek.vasut@mailbox.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251011170213.128907-4-marek.vasut@mailbox.org>
+X-ClientProxiedBy: PH2PEPF0000385B.namprd17.prod.outlook.com
+ (2603:10b6:518:1::69) To AS4PR04MB9621.eurprd04.prod.outlook.com
+ (2603:10a6:20b:4ff::22)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250929112324.3622148-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdXz0ThdhjeeurjE6TLXjVLXUy-ie-PqXHrTYExQ6TpeLA@mail.gmail.com>
-In-Reply-To: <CAMuHMdXz0ThdhjeeurjE6TLXjVLXUy-ie-PqXHrTYExQ6TpeLA@mail.gmail.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Mon, 13 Oct 2025 17:44:52 +0100
-X-Gm-Features: AS18NWCKBDqvR-oZRgUD7Bn15GS9DM_WwNfwWczE6IvmlyY-mHebH_EDvOspORg
-Message-ID: <CA+V-a8urG_e4yZXg9VH-cOPeK62qPGR1L2Zbbc3O97WB22hcRw@mail.gmail.com>
-Subject: Re: [PATCH v4] clk: renesas: cpg-mssr: Add module reset support for RZ/T2H
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS4PR04MB9621:EE_|PAXPR04MB9304:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3cca731d-e6d0-4eaf-e80b-08de0a787f3f
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+ BCL:0;ARA:13230040|1800799024|366016|19092799006|376014|7416014|52116014|38350700014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+ =?us-ascii?Q?GqeO4zRp13pGsHeDa7r9nxj3RLnxrJEktl8hejtvE9kbG9MRGrclzpxUIVQj?=
+ =?us-ascii?Q?sG0k2UVy/9mfbxIJBpjaKWTv6qV/K0rUSRZeFQayODumwgH2WO69uTCTCmtc?=
+ =?us-ascii?Q?f8nMUVDGr8ydpiGCuT88YeIXAJlPU5AqpdmvPZWkJ7Ipp/HjG+kMYvvjV4WX?=
+ =?us-ascii?Q?YWbjWi6xTS0L/Pc1UP5btXEu5l6qrT01AJWqZLEz70OJ/fwc3Mp7AKXzzjSL?=
+ =?us-ascii?Q?Tl4xOGSOntLaqgphvdQ/YIzo73JMtkejAyInLDeVLmyuEFHzp3j2mgB1gBrJ?=
+ =?us-ascii?Q?KEPpj/AV6GoyIqYC0u4DeXG2055B/0I1obZeG+sHnfpv5wN9sXHYJHQ/gwfT?=
+ =?us-ascii?Q?eOCCJPaAqOSQ61cP/IYuJI16r8CvHKOV+ZoyugphDdVAVWGCT6kDUbRpGoXN?=
+ =?us-ascii?Q?N5mYWTBYSdpQvqqz5aGwChKJpo0KlWXjd4jn1wopHEYgOqxAjjSnprTabTqo?=
+ =?us-ascii?Q?6VSK4ZyYEBRjKwX/HIs+GagaEaJBlAhy/fZDm62u+yiuimnNTlNW+/DjcNfo?=
+ =?us-ascii?Q?HnyTPtmYUUFxiXhNqZXL08CXhZMPYWJABBpCKuIDr97wPfW7BTC+pkY+0l7A?=
+ =?us-ascii?Q?2G8Eh05GmHBd6j6a3FIa79YFUSkCn9JraF1L99Uv1mvNy8JJqmmYQpBoiPSD?=
+ =?us-ascii?Q?KnuBKKKMhvj3QurLwIHI23wV+hA0hWxR3cC+WMxrpakj81Gj4mEA48pwt71H?=
+ =?us-ascii?Q?1PssFzo8o1DJulCGdMe2WIgXTTQ+aJCBJrJaoemcMdR0OSQfZvxFleveBu7H?=
+ =?us-ascii?Q?pBXrRKkdg5DghffJKtw6gxnutoUasRNqqcnSPi3tL3JKKN0UiRrOvJ9eeKNT?=
+ =?us-ascii?Q?FLN5vVWPEzSyR+233kwWlsU34u7AYw4PjFZSpCBbPAd7BLbVa0LxXVR91m18?=
+ =?us-ascii?Q?l+rVrh4dpqVlYSR86S4UN74SVBSXTOzNHusfyBBVmo29/jAKnMUDziPfr0df?=
+ =?us-ascii?Q?1y1B9OtgiPqKpTRQEwmATpKXxHiQZvha+xOCPxpvMu6Dlw+PRQD2S9EmN1v9?=
+ =?us-ascii?Q?vb5y2WD9BXcQhflIKHRFXiZsukMBccLO4ZqlEx59JUKy5MUIHkGkk04Mp8L2?=
+ =?us-ascii?Q?6P3rsUjB4zcAHxBn4ra4SwGngdfwOrV2AzkrL1PQ6MrJ7cEVLiT4dIMyasn1?=
+ =?us-ascii?Q?V1Tz92dIdvbiOLrJNc4RZDr7qHDgXa2j8dQWq74w1C5ku2eFsXCxezwD61Xp?=
+ =?us-ascii?Q?CZDwDZ1YYCph8d7lfiwtTz1QsNQsenogvYF+lRSpi8euhxuCbZyv8dHytDdK?=
+ =?us-ascii?Q?ej680bWhjvFPQaJjXHr4ixygEkyc5JkBXMRbzgLcyYaC7bO0DBuEV4YmRfxB?=
+ =?us-ascii?Q?XFdgG73U8ohSIpwNxcjRf983+iCJrBt6msvlbkmWZ1MtW9eBZbocbMLueCje?=
+ =?us-ascii?Q?S2w4YKKG+O+VJWSQmlmewJjH1JsRpxz+cV8q90POb6qnlTFjBt64OgMYupHa?=
+ =?us-ascii?Q?0uWJd/Bwv+yj0NTxmAKnuFb+JhplMsdhWZJX8rSbO90s3rshfrx/HCYSd8Of?=
+ =?us-ascii?Q?1lPjJI5FGVDqydifAmj6suai7ogaDRJxtLHi?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR04MB9621.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(19092799006)(376014)(7416014)(52116014)(38350700014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?us-ascii?Q?ZdKD1GxlxG4Ml8W82tbYqK8mvOt+bQFY+1UZZ1srxcf8T/kzpdS4rsuF+YgE?=
+ =?us-ascii?Q?yOv5ooWWTuhtxYg/2uy076Im+HdAMTpG0hh4YXCUOgppmarTkZoxXDF4luHL?=
+ =?us-ascii?Q?PbZk2iF9ePLfFkVSutqn5vKTXkTgimcuycd4JXVghitni4mORTFyBhP7Q+GS?=
+ =?us-ascii?Q?HyhqnvH+Whhor02GbD5mpT7NhUv8L7O5MyZRnRue+UAke5gMxQL9QImDa6b3?=
+ =?us-ascii?Q?hCZAPFfH3SdIdrnnK7vMGaexLyVXPB84AEr3viXDEeY1Tx0pCPlnAm44hDd1?=
+ =?us-ascii?Q?791ct5OXY4sK7bsn8D9IIa1ncH4J+hddqqTUJp06DZnU1q4IsPB6CVWfgSEL?=
+ =?us-ascii?Q?uRw0+nKlg1tnCIbAOiImgfPflIJk267oIwI70MZpRLcaBTdXKwQva8d17sMV?=
+ =?us-ascii?Q?6jh8/clu1XWUL6C093RBcoyDlaXC1dvGbYMRvtjzql7APzKlJ/VF7bUTT5n3?=
+ =?us-ascii?Q?mlxvMSxXq3mIngwzS1N43VepZg9wuVGgXC6zTpf4L/saaMEshEpZR8reRj/p?=
+ =?us-ascii?Q?10TgntWU++uAk1N/+CuQUR19o4aYPYyC5Ip9Ou3nVsNfaxt3nwoSDk3MB/Za?=
+ =?us-ascii?Q?XoMkEzZgQpVex4zH+JSkapw4pEX8eQ3KcVSl9ie76RS9hsaOJ983RwrSXXwz?=
+ =?us-ascii?Q?/T6EvaVQe2ufAP6NNbp9Za1eHLw+rLCLWqzHfmspN/eS9Yf/Nf91gKu4fPAh?=
+ =?us-ascii?Q?+53xFpo7asOYktZIj/KjSG6rZLYMCo0F4FITgUa+452UdDKIkxZG1UvQyqfh?=
+ =?us-ascii?Q?GgWVuF9gSj7ScpiNfOue5Fnn2nJ9IzKCMH6C3869xnVUHZ4lNBOySBcntkn+?=
+ =?us-ascii?Q?+EJgdxN91KKD/ByaRUAoor79WOztIkqU4cpIfjdpkB4ZnBli7ZU4Hxf5hvJO?=
+ =?us-ascii?Q?+AwdmIjFBRwmQxkm0WiULUnxBpJFcSyR3hOB9WkMs4FGG/94eMnuBtkDtF+c?=
+ =?us-ascii?Q?FF5O7QtVowOOMdp3ZowNfwf+Rk/0yLF1SOloIthuzKKLdYKX2hbybfhaszvY?=
+ =?us-ascii?Q?6CaTRxEW/nVbKUT9qX6mFlSQl1THSBhuWHaxPQyIs5J/yoyVxEGXQTV4uitM?=
+ =?us-ascii?Q?gJQpKjx8c5+TEcJO4QEIf6ZuKqnA5II+qhmAoIKLCIpZWDmeYB8Ib6udVtUn?=
+ =?us-ascii?Q?pwBYTjFU19JKH9OuBHjBxcnRMv4gk+52+0ZFvlJm93LrUr5gHVKPiuPXMtvq?=
+ =?us-ascii?Q?n1uEOUny6zIqXYCw2fh420GQO3WSEm+sbJgnwcW0QBiI7x3BydjqYrHIM0LM?=
+ =?us-ascii?Q?ZZ1+jNKudgefMMO2sFzpGSOrniDZdJqLLsYryjG7FmmbZ/epceIG9cK5b5iJ?=
+ =?us-ascii?Q?A1uXC2+6Fh5dK4DPElvhw6sskxykPd8ctYBG/0XGv+eCa7feQt86x/o2viS3?=
+ =?us-ascii?Q?V2Hx4hvz4+3P0U64MdEGKRstEQm5LCRoewVaIIgl4p9lE0xe9nOOpFgQNzQD?=
+ =?us-ascii?Q?gwbcE9OSOz7aEvF0M65aPaGXEmw/l4NxTSwqzR3PrNCT4m59Y4CalRwBFSZf?=
+ =?us-ascii?Q?QYG1OetqmlCMG4LXPCKIHQPW5k7jt0sY2f3UDOmPX6UpOuDUJzm9+H2EtMgr?=
+ =?us-ascii?Q?XfKWIb4YlcDKcpju3BEiq7jr3OO5uzUwSrPsgNBr?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3cca731d-e6d0-4eaf-e80b-08de0a787f3f
+X-MS-Exchange-CrossTenant-AuthSource: AS4PR04MB9621.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Oct 2025 16:49:38.7699
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: nbJAZYchIlAF2MJQyaGigiFVm/u//1FNoFFjV19RgtGCbmU1tumH8kf2zEKnay4iMY1HL/OPNcCv2Pd1UH85LA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB9304
 
-Hi Geert,
+On Sat, Oct 11, 2025 at 06:51:18PM +0200, Marek Vasut wrote:
+> Freescale i.MX95 Display Controller is implemented as construction set of
+> building blocks with unified concept and standardized interfaces. Document
+> all new processing units present in i.MX95.
+>
+> Signed-off-by: Marek Vasut <marek.vasut@mailbox.org>
+> ---
+> Cc: Abel Vesa <abelvesa@kernel.org>
+> Cc: Conor Dooley <conor+dt@kernel.org>
+> Cc: Fabio Estevam <festevam@gmail.com>
+> Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
+> Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
+> Cc: Liu Ying <victor.liu@nxp.com>
+> Cc: Lucas Stach <l.stach@pengutronix.de>
+> Cc: Peng Fan <peng.fan@nxp.com>
+> Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: Shawn Guo <shawnguo@kernel.org>
+> Cc: Thomas Zimmermann <tzimmermann@suse.de>
+> Cc: devicetree@vger.kernel.org
+> Cc: dri-devel@lists.freedesktop.org
+> Cc: imx@lists.linux.dev
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-clk@vger.kernel.org
+> ---
+>  .../imx/fsl,imx8qxp-dc-constframe.yaml        |  4 +-
+>  .../imx/fsl,imx8qxp-dc-display-engine.yaml    | 45 +++++++++++++---
+>  .../display/imx/fsl,imx8qxp-dc-extdst.yaml    |  4 +-
+>  .../display/imx/fsl,imx8qxp-dc-fetchunit.yaml |  1 +
+>  .../display/imx/fsl,imx8qxp-dc-framegen.yaml  | 13 ++++-
+>  .../imx/fsl,imx8qxp-dc-layerblend.yaml        |  4 +-
+>  .../imx/fsl,imx8qxp-dc-pixel-engine.yaml      | 52 +++++++++++++++---
+>  .../display/imx/fsl,imx8qxp-dc-tcon.yaml      |  5 +-
+>  .../bindings/display/imx/fsl,imx8qxp-dc.yaml  | 53 ++++++++++++++++---
+>  9 files changed, 153 insertions(+), 28 deletions(-)
+>
+> diff --git a/Documentation/devicetree/bindings/display/imx/fsl,imx8qxp-dc-constframe.yaml b/Documentation/devicetree/bindings/display/imx/fsl,imx8qxp-dc-constframe.yaml
+> index 94f6785636085..3a585b3b9a789 100644
+> --- a/Documentation/devicetree/bindings/display/imx/fsl,imx8qxp-dc-constframe.yaml
+> +++ b/Documentation/devicetree/bindings/display/imx/fsl,imx8qxp-dc-constframe.yaml
+> @@ -18,7 +18,9 @@ maintainers:
+>
+...
+>
+>      properties:
+>        compatible:
+> -        const: fsl,imx8qxp-dc-framegen
+> +        enum:
+> +          - fsl,imx8qxp-dc-framegen
+> +          - fsl,imx95-dc-framegen
+>
+>    "^gammacor@[0-9a-f]+$":
+>      type: object
+> @@ -90,13 +102,15 @@ patternProperties:
+>        compatible:
+>          const: fsl,imx8qxp-dc-signature
+>
+> -  "^tcon@[0-9a-f]+$":
+> +  "^tcon(@[0-9a-f]+)?$":
 
-Thank you for the review.
+why here allow no address unit tcon?
 
-On Mon, Oct 13, 2025 at 4:46=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
-k.org> wrote:
->
-> Hi Prabhakar,
->
-> On Mon, 29 Sept 2025 at 13:23, Prabhakar <prabhakar.csengg@gmail.com> wro=
-te:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > Add support for module reset handling on the RZ/T2H SoC. Unlike earlier
-> > CPG/MSSR variants, RZ/T2H uses a unified set of Module Reset Control
-> > Registers (MRCR) where both reset and deassert actions are done via
-> > read-modify-write (RMW) to the same register.
-> >
-> > Introduce a new MRCR offset table (mrcr_for_rzt2h) for RZ/T2H and assig=
-n
-> > it to reset_regs. For this SoC, the number of resets is based on the
-> > number of MRCR registers rather than the number of module clocks. Also
-> > add cpg_mrcr_reset_ops to implement reset, assert, and deassert using R=
-MW
-> > while holding the spinlock. This follows the RZ/T2H requirements, where
-> > processing after releasing a module reset must be secured by performing
-> > seven dummy reads of the same register, and where a module that is rese=
-t
-> > and released again must ensure the target bit in the Module Reset Contr=
-ol
-> > Register is set to 1.
-> >
-> > Update the reset controller registration to select cpg_mrcr_reset_ops f=
-or
-> > RZ/T2H, while keeping the existing cpg_mssr_reset_ops for other SoCs.
-> >
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > ---
-> > v3->v4:
-> > - Renamed cpg_mrcr_set_bit() to cpg_mrcr_set_reset_state() for clarity.
-> > - Updated the parameters in cpg_mrcr_set_reset_state().
->
-> Thanks for the update!
->
-> > --- a/drivers/clk/renesas/renesas-cpg-mssr.c
-> > +++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-> > @@ -736,6 +754,72 @@ static int cpg_mssr_status(struct reset_controller=
-_dev *rcdev,
-> >         return !!(readl(priv->pub.base0 + priv->reset_regs[reg]) & bitm=
-ask);
-> >  }
-> >
-> > +static int cpg_mrcr_set_reset_state(struct reset_controller_dev *rcdev=
-,
-> > +                                   unsigned long id, bool set)
-> > +{
-> > +       struct cpg_mssr_priv *priv =3D rcdev_to_priv(rcdev);
-> > +       unsigned int reg =3D id / 32;
-> > +       unsigned int bit =3D id % 32;
-> > +       u32 bitmask =3D BIT(bit);
-> > +       void __iomem *reg_addr;
-> > +       unsigned long flags;
-> > +       unsigned int i;
-> > +       u32 val;
-> > +
-> > +       dev_dbg(priv->dev, "%s %u%02u\n", set ? "assert" : "deassert", =
-reg, bit);
-> > +
-> > +       spin_lock_irqsave(&priv->pub.rmw_lock, flags);
-> > +
-> > +       reg_addr =3D priv->pub.base0 + priv->reset_regs[reg];
-> > +       /* Read current value and modify */
-> > +       val =3D readl(reg_addr);
-> > +       if (set)
-> > +               val |=3D bitmask;
-> > +       else
-> > +               val &=3D ~bitmask;
-> > +       writel(val, reg_addr);
-> > +
-> > +       /*
-> > +        * For secure processing after release from a module reset, dum=
-my read
-> > +        * the same register at least seven times.
->
-> This comment is waiting to become out-of-sync with the actual value...
->
-For the reset operation no, for this I would like to keep this as is.
-But for the MSTP registers I will be adding a delay. Or did I
-misunderstand something?
+Frank
 
-> > +        */
-> > +       for (i =3D 0; !set && i < RZT2H_RESET_REG_READ_COUNT; i++)
-> > +               readl(reg_addr);
-> > +
-> > +       /* Verify the operation */
-> > +       val =3D readl(reg_addr);
-> > +       if ((set && !(bitmask & val)) || (!set && (bitmask & val))) {
+>      type: object
+>      additionalProperties: true
 >
-> Perhaps just "set =3D=3D !(bitmask & val)"? Or is that too obscure?
+>      properties:
+>        compatible:
+> -        const: fsl,imx8qxp-dc-tcon
+> +        enum:
+> +          - fsl,imx8qxp-dc-tcon
+> +          - fsl,imx95-dc-tcon
 >
-Ok, I will update it to the above in v5.
+...
+> diff --git a/Documentation/devicetree/bindings/display/imx/fsl,imx8qxp-dc-framegen.yaml b/Documentation/devicetree/bindings/display/imx/fsl,imx8qxp-dc-framegen.yaml
+> index 9d1dc3a9de90e..dd83ac669478b 100644
+> --- a/Documentation/devicetree/bindings/display/imx/fsl,imx8qxp-dc-framegen.yaml
+> +++ b/Documentation/devicetree/bindings/display/imx/fsl,imx8qxp-dc-framegen.yaml
+> @@ -16,18 +16,27 @@ maintainers:
+>
+>  properties:
+>    compatible:
+> -    const: fsl,imx8qxp-dc-framegen
+> +    enum:
+> +      - fsl,imx8qxp-dc-framegen
+> +      - fsl,imx95-dc-framegen
+>
+>    reg:
+>      maxItems: 1
+>
+>    clocks:
+> -    maxItems: 1
+> +    minItems: 1
+> +    maxItems: 6
+> +
+> +  clock-names:
+> +    minItems: 1
+> +    maxItems: 6
+>
+>    interrupts:
+> +    minItems: 6
+>      maxItems: 8
+>
+>    interrupt-names:
+> +    minItems: 6
 
-Cheers,
-Prabhakar
-> > +               dev_err(priv->dev, "Reset register %u%02u operation fai=
-led\n", reg, bit);
-> > +               spin_unlock_irqrestore(&priv->pub.rmw_lock, flags);
-> > +               return -EIO;
-> > +       }
-> > +
-> > +       spin_unlock_irqrestore(&priv->pub.rmw_lock, flags);
-> > +
-> > +       return 0;
-> > +}
+Need if branch to keep the same restriction for exited compatible string
+
+>      items:
+>        - const: int0
+>        - const: int1
+> diff --git a/Documentation/devicetree/bindings/display/imx/fsl,imx8qxp-dc-layerblend.yaml b/Documentation/devicetree/bindings/display/imx/fsl,imx8qxp-dc-layerblend.yaml
+> index 2a6ab8a0ed7fc..6565b7acf47e4 100644
+> --- a/Documentation/devicetree/bindings/display/imx/fsl,imx8qxp-dc-layerblend.yaml
+> +++ b/Documentation/devicetree/bindings/display/imx/fsl,imx8qxp-dc-layerblend.yaml
+> @@ -13,7 +13,9 @@ maintainers:
 >
-> Regardless:
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>  properties:
+>    compatible:
+> -    const: fsl,imx8qxp-dc-layerblend
+> +    enum:
+> +      - fsl,imx8qxp-dc-layerblend
+> +      - fsl,imx95-dc-layerblend
 >
-> Gr{oetje,eeting}s,
+>    reg:
+>      maxItems: 2
+...
+> diff --git a/Documentation/devicetree/bindings/display/imx/fsl,imx8qxp-dc-pixel-engine.yaml b/Documentation/devicetree/bindings/display/imx/fsl,imx8qxp-dc-pixel-engine.yaml
+> index 633443a6cc380..2d0ee83e30b25 100644
+> --- a/Documentation/devicetree/bindings/display/imx/fsl,imx8qxp-dc-pixel-engine.yaml
+> +++ b/Documentation/devicetree/bindings/display/imx/fsl,imx8qxp-dc-pixel-engine.yaml
+> @@ -17,19 +17,28 @@ maintainers:
 >
->                         Geert
+>  properties:
+>    compatible:
+> -    const: fsl,imx8qxp-dc-pixel-engine
+> +    oneOf:
+> +      - const: fsl,imx8qxp-dc-pixel-engine
+> +      - items:
+> +          - const: fsl,imx95-dc-pixel-engine
+> +          - const: fsl,imx8qxp-dc-pixel-engine
 >
+>    reg:
+>      maxItems: 1
+>
+>    clocks:
+> -    maxItems: 1
+> +    minItems: 1
+> +    maxItems: 2
+> +
+> +  clock-names:
+> +    minItems: 1
+> +    maxItems: 2
+>
+>    "#address-cells":
+> -    const: 1
+> +    enum: [1, 2]
+>
+>    "#size-cells":
+> -    const: 1
+> +    enum: [1, 2]
+>
+>    ranges: true
+>
+...
+>
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: fsl,imx95-dc-pixel-engine
+> +    then:
+> +      properties:
+> +        "#address-cells":
+> +          const: 2
+> +        "#size-cells":
+> +          const: 2
+> +    else:
+> +      properties:
+> +        "#address-cells":
+> +          const: 1
+> +        "#size-cells":
+> +          const: 1
+
+
+Need keep the same restriction for clocks and clock-names.
+
+> +
+>  additionalProperties: false
+>
+>  examples:
+> diff --git a/Documentation/devicetree/bindings/display/imx/fsl,imx8qxp-dc-tcon.yaml b/Documentation/devicetree/bindings/display/imx/fsl,imx8qxp-dc-tcon.yaml
+> index 7a3b77ea92c73..1f935b342f461 100644
+> --- a/Documentation/devicetree/bindings/display/imx/fsl,imx8qxp-dc-tcon.yaml
+> +++ b/Documentation/devicetree/bindings/display/imx/fsl,imx8qxp-dc-tcon.yaml
+> @@ -15,7 +15,9 @@ maintainers:
+>
+>  properties:
+>    compatible:
+> -    const: fsl,imx8qxp-dc-tcon
+> +    enum:
+> +      - fsl,imx8qxp-dc-tcon
+> +      - fsl,imx95-dc-tcon
+>
+>    reg:
+>      maxItems: 1
+> @@ -26,7 +28,6 @@ properties:
+>
+>  required:
+>    - compatible
+> -  - reg
+>    - port
+>
+>  additionalProperties: false
+> diff --git a/Documentation/devicetree/bindings/display/imx/fsl,imx8qxp-dc.yaml b/Documentation/devicetree/bindings/display/imx/fsl,imx8qxp-dc.yaml
+> index 0a72f9f0b5fda..1e8f559acb4de 100644
+> --- a/Documentation/devicetree/bindings/display/imx/fsl,imx8qxp-dc.yaml
+> +++ b/Documentation/devicetree/bindings/display/imx/fsl,imx8qxp-dc.yaml
+> @@ -48,13 +48,20 @@ maintainers:
+>
+>  properties:
+>    compatible:
+> -    const: fsl,imx8qxp-dc
+> +    enum:
+> +      - fsl,imx8qxp-dc
+> +      - fsl,imx95-dc
+>
+>    reg:
+>      maxItems: 1
+>
+>    clocks:
+> -    maxItems: 1
+> +    minItems: 1
+> +    maxItems: 6
+> +
+> +  clock-names:
+> +    minItems: 1
+> +    maxItems: 6
+>
+>    resets:
+>      maxItems: 2
+> @@ -68,10 +75,15 @@ properties:
+>      maxItems: 1
+>
+>    "#address-cells":
+> -    const: 1
+> +    enum: [1, 2]
+>
+>    "#size-cells":
+> -    const: 1
+> +    enum: [1, 2]
+> +
+> +  fsl,syscon:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description: |
+> +      A phandle which points to Control and Status Registers (CSR) module.
+
+Why need this one? is it possible to abstract it to standard interface,
+like phy, clock, reset ...
+
+Frank
+>
+>    ranges: true
+>
+> @@ -90,7 +102,9 @@ patternProperties:
+>
+>      properties:
+>        compatible:
+> -        const: fsl,imx8qxp-dc-display-engine
+> +        enum:
+> +          - fsl,imx8qxp-dc-display-engine
+> +          - fsl,imx95-dc-display-engine
+>
+>    "^interrupt-controller@[0-9a-f]+$":
+>      type: object
+> @@ -98,7 +112,9 @@ patternProperties:
+>
+>      properties:
+>        compatible:
+> -        const: fsl,imx8qxp-dc-intc
+> +        enum:
+> +          - fsl,imx8qxp-dc-intc
+> +          - fsl,imx95-dc-intc
+>
+>    "^pixel-engine@[0-9a-f]+$":
+>      type: object
+> @@ -106,7 +122,11 @@ patternProperties:
+>
+>      properties:
+>        compatible:
+> -        const: fsl,imx8qxp-dc-pixel-engine
+> +        oneOf:
+> +          - const: fsl,imx8qxp-dc-pixel-engine
+> +          - items:
+> +              - const: fsl,imx95-dc-pixel-engine
+> +              - const: fsl,imx8qxp-dc-pixel-engine
+>
+>    "^pmu@[0-9a-f]+$":
+>      type: object
+> @@ -125,6 +145,25 @@ required:
+>    - "#size-cells"
+>    - ranges
+>
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: fsl,imx95-dc
+> +    then:
+> +      properties:
+> +        "#address-cells":
+> +          const: 2
+> +        "#size-cells":
+> +          const: 2
+> +    else:
+> +      properties:
+> +        "#address-cells":
+> +          const: 1
+> +        "#size-cells":
+> +          const: 1
+> +
+>  additionalProperties: false
+>
+>  examples:
 > --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m6=
-8k.org
+> 2.51.0
 >
-> In personal conversations with technical people, I call myself a hacker. =
-But
-> when I'm talking to journalists I just say "programmer" or something like=
- that.
->                                 -- Linus Torvalds
