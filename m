@@ -1,203 +1,195 @@
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx-relay58-hz1.antispameurope.com (mx-relay58-hz1.antispameurope.com [94.100.133.229])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFD762C11E5
-	for <linux-clk@vger.kernel.org>; Mon, 13 Oct 2025 05:27:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760333241; cv=none; b=HgU0zKwXXJ33XxUphE6zFJ0dnVrbZ8HVRfI6YcsqWIDHVPzLxXCWy+E0KlKAIArcbMXZKHUdnpD1Y3dqHr37Gooa6KzRsTfTx/CDz5NkYDp5ZY5M7l5SS7rZSJke8NOZJBGmvm2lBrw493U1xAvKaXO9wGRhQUbTWdRtIfPjFrc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760333241; c=relaxed/simple;
-	bh=vR9nKyPffL2VDU8rb6utkrmttWxZIF+kzlDY5Kd7Wjs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=hqNE8NfB1CLF1de7KReZmj1GSUALvRVMeOzrCCNCtSay74S9h61fNtsJOw35mvpf9Y+rD/5fMu+dPP0ppgtPCLO7RYZlWR+KQawoQCm09v0SmQ9SrtN8lwWNzo3UDXTkEGOYRTb4Hgqyq8jqjeJkHcxD3gCuRjh9vNvwP6q6UF4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=X8eXP6hm; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B21D22DEA72
+	for <linux-clk@vger.kernel.org>; Mon, 13 Oct 2025 05:59:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=94.100.133.229
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760335147; cv=pass; b=Y6M9su532KC8mELLFiYoSJcjuX7QK54NFt+JBKzRkkSDi4mEurAT7SV6AzrDP0LkaPV/gNWeCPgysrWl7PBYF7yGA4gWsHmi3YqFhymKxmdKkKKXS5qyxyhvdcVmzPB2Lva+/lEGkUiKljn53qBw8GVHVtnudr8XykN20+jl6Og=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760335147; c=relaxed/simple;
+	bh=X8AGmIyFH62+8FCE1sx2DQx4ow/3aWax6JFtbnR28t8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QxVof+50i5UCZ+qPZYf5Em+KXLMx1OqMMwfmabVgr6QzW1fTM3vth0RkpKdpFHElb/Nfhi+kunMQ3Rga/hzwcc5sIIE/g4fsLl8paYk93UpCi3ihrOEB3PZnSNbK7BKfWjMLbDSvj1VcffbAak+ikcLKsd3oqKFDFfrTV/6Q3mo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=n2+u07gI; arc=pass smtp.client-ip=94.100.133.229
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="X8eXP6hm"
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-63b9da57cecso1208026a12.0
-        for <linux-clk@vger.kernel.org>; Sun, 12 Oct 2025 22:27:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760333238; x=1760938038; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=7VJrEJBNZ6VriBGsN1UMBP9n7t2CYVLrBXMdoP5t8UM=;
-        b=X8eXP6hmWxrqB/scWbXcJ6QM2ZtimGgPo5kqrumB7Uj1PJBa3N+VMthto/DZDdfOn/
-         R8PW0fpLaurdC9VgAIzc0vlB5nqFoTB3vkfcoWMMRmnVgTPssyPNWEHP3TFdUUsl1RV7
-         sOVKcEhRGJfwQ3uS0DKBCgz4F7U84d/srXUxlWK69TLJTod8bjxS3wUyAI97qavekS2g
-         i69qm8jhM1yLJk6vJBU8bsmCLLgiJAYekQMGslGsMp7DMO3uAKv1u519NUS+rnKrReSj
-         tj/Dn+0B3dZYBqmx4fTs/YYwxZ+w3zAICGipItF9lUPyX9PTsfBhEuE0PcF5I7b7pBLC
-         3nlg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760333238; x=1760938038;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7VJrEJBNZ6VriBGsN1UMBP9n7t2CYVLrBXMdoP5t8UM=;
-        b=b4aD2ERkVW0r+Zgv0FAezvIgbKJJaudqVnhxLJo6bv4sXU0K4cB6fyzTEuoQdUYvmL
-         lU58rk0zjX5ionEe9L9hv01sUAhYBlOmpTphQTmhU6fqU595UN2peg9b6UYlNUel5xOh
-         X1LC4k9Hb/baTmHtbCaOFhrt1uhQHgZGYzYPjUrVFG5metdg4kAhm390IGPfP5VmIJ2A
-         ThYsw1f9D9kjX54+TE/gztpCGR2GUYO5DCVnYPhelgypdSeMKs1vW2VuJwQLv/SykGA5
-         pNCaczb9DO/YJCDCEy9ehbVR0cwc08cHLMKfvCe4vzNUfM5yQq0OQPexpH0lzSl0Hhem
-         jIsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVK1618jrm9cqhbOFr9Vq90D1T0/zEJTKk2ABWnBh4onPYn6OUL4l0iRfyhI3uRy+SLmFyXcVl1Suo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCOpR0yNaFUP1zmQXgDwFg8uw+XPWVxDH6vuyzdBnecev/BJMI
-	SW66vj3BFpOz88Gm9p5GpK/exzOUV2HqKcUdrw0sB3f4fjBAYupTbrs4UkwTNSWruSA=
-X-Gm-Gg: ASbGncu8NvKZ7JSNpcldfZd443zncVuc5tOgOuefhOtfir6zop/BS1e/Z1/q9nJtmQ6
-	CyKVRdKFPDt0VbIvDbrZA0YvqZPA5u5W8UhsYCuI+SR865WADa294nn4+12wZo+p7bldxwCCgSD
-	9Fh4rZL3rVMERhOJfTyHJgySXwCI4BQNTd6b5N5D4WkdLHMsJzK1kpRrA2vUMo9O9zuAahzxq1/
-	03AJ5F6igQ0vUr5Mai2ErwHgX0i8WuRgDJvYqHzxzFEhIORwSTrP7BSEnS1IE2LNVnwhjQqYPB/
-	yalITMvywQq+yoHQ78UB8KLuLJTtovdwkUy1D5nrlc250cd6XOglY5+jWEm05u1UVMYJK7KMxM0
-	lxSzD3rmh3/eEIVwC9yclZEzftnDoXswDwKPKfns8CiLtJksMvmzm7oMX4RSiQ/2SrUtsRSEo9v
-	AWNKYZxNhru3uiaDOx30X7L7FAJsV9jqX+1/4=
-X-Google-Smtp-Source: AGHT+IHUNo2sp45AF3K1U65pU1zYD6XjGU7jIcshwZlsBDQ3QedzAm3HkYPvI5oJO4ZrZSWC+P9Mgg==
-X-Received: by 2002:a05:6402:350a:b0:63a:690:8080 with SMTP id 4fb4d7f45d1cf-63a069082a3mr13232653a12.6.1760333238273;
-        Sun, 12 Oct 2025 22:27:18 -0700 (PDT)
-Received: from puffmais2.c.googlers.com (224.138.204.35.bc.googleusercontent.com. [35.204.138.224])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-63b7334cb4bsm5392310a12.44.2025.10.12.22.27.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 12 Oct 2025 22:27:17 -0700 (PDT)
-From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Mon, 13 Oct 2025 06:27:16 +0100
-Subject: [PATCH v2] clk: samsung: clk-pll: simplify samsung_pll_lock_wait()
+	dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="n2+u07gI"
+ARC-Authentication-Results: i=1; mx-gate58-hz1.hornetsecurity.com 1; spf=pass
+ reason=mailfrom (ip=94.100.132.6, headerfrom=ew.tq-group.com)
+ smtp.mailfrom=ew.tq-group.com
+ smtp.helo=hmail-p-smtp01-out04-hz1.hornetsecurity.com; dmarc=pass
+ header.from=ew.tq-group.com orig.disposition=pass
+ARC-Message-Signature: a=rsa-sha256;
+ bh=qVaz1zwGuDSR6vm0lLRYYp/IrSSmnl0g1UxK/5AowGY=; c=relaxed/relaxed;
+ d=hornetsecurity.com; h=from:to:date:subject:mime-version:; i=1; s=hse1;
+ t=1760335116;
+ b=NGE6U5VMNeMd86F5OaUk9Z+5/wJKFlhKtQg21m+KC2xoSO7FTD3ITHC+NoEIKmu9ZR9uKNAL
+ XzurtDdvyP6i3ZaX0UMbtfj6MJpjWdTZFQZ/UT1PubRmawgjzX1WQdpFNAEyS4AtKb5OkKn00RW
+ HsOPgAWuH7GB9ZfRu7/oDP5MbFFyRG2NtgNsQidO0o0MxPUhu9dNGEvR/JUXXBBuNFXl5KWq9l5
+ vaxeW7Rfq4RNVRysJKHXa3I0WekTYpDwQ19OSvM2NacCTI0GSg+2tf6s1RlZhFqO/B/xWcAPh6F
+ VpXCI/+Y7tV83PnGGUDW5K9kqPdBuOf19wdNSkpqutRUw==
+ARC-Seal: a=rsa-sha256; cv=none; d=hornetsecurity.com; i=1; s=hse1;
+ t=1760335116;
+ b=cdObsrZrSYajtmEiNliW2ZuV0aVmTBnrkgDreum20aGssjgRlPAX2toS4XkEyYVyXEuoIFDI
+ hdLSeb7MJvaZB/AsnpJzvCw0pL/EITNUEDeLSHB+rzMst5t+4eU1OyzOx6JXKePi4t39W4Sqlpv
+ Q1fEI1bTIigoB9Is5q87MGN009O3yRJ/bq+TAg4GwuglSnimq8E2e3WpyPT8X+VCpAemqHWfuvk
+ JrFuDX8VG6DUEdMNWypEhUZ8gbMhyVuh14gBTlW1uM8PiH2GI1llv5atLv382cjulWiLvx4g+KF
+ mIKQtqx7lhrG39gF2Dl0sTXr4yiLSozuejUkAbnVv/aqQ==
+Received: from he-nlb01-hz1.hornetsecurity.com ([94.100.132.6]) by mx-relay58-hz1.antispameurope.com;
+ Mon, 13 Oct 2025 07:58:36 +0200
+Received: from steina-w.localnet (host-82-135-125-110.customer.m-online.net [82.135.125.110])
+	(Authenticated sender: alexander.stein@ew.tq-group.com)
+	by hmail-p-smtp01-out04-hz1.hornetsecurity.com (Postfix) with ESMTPSA id DC35522054B;
+	Mon, 13 Oct 2025 07:58:12 +0200 (CEST)
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Li Jun <jun.li@nxp.com>,
+ Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+ linux-arm-kernel@lists.infradead.org
+Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ Xu Yang <xu.yang_2@nxp.com>, Frank Li <Frank.Li@nxp.com>,
+ Xu Yang <xu.yang_2@nxp.com>
+Subject:
+ Re: [PATCH v2 3/4] phy: fsl-imx8mq-usb: support alternate reference clock
+Date: Mon, 13 Oct 2025 07:58:12 +0200
+Message-ID: <2805917.mvXUDI8C0e@steina-w>
+Organization: TQ-Systems GmbH
+In-Reply-To: <20251010-usb-phy-alt-clk-support-v2-3-af4b78bb4ae8@nxp.com>
+References:
+ <20251010-usb-phy-alt-clk-support-v2-0-af4b78bb4ae8@nxp.com>
+ <20251010-usb-phy-alt-clk-support-v2-3-af4b78bb4ae8@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20251013-samsung-clk-pll-simplification-v2-1-b9aab610878c@linaro.org>
-X-B4-Tracking: v=1; b=H4sIALON7GgC/42NQQ6CMBBFr0K6dkxn1CiuvIdhUWEKE0tLWmw0h
- LtbOYHL95P/3qISR+GkrtWiImdJEnwB2lWqHYzvGaQrrEjTCbVGSGZML99D654wOQdJxsmJldb
- M5QoH1mQvNRISqSKZIlt5b4F7U3iQNIf42XoZf+vf6oyA0CF1bGs+Hx90c+JNDPsQe9Ws6/oFz
- htrRc0AAAA=
-X-Change-ID: 20251001-samsung-clk-pll-simplification-3e02f8912122
-To: Krzysztof Kozlowski <krzk@kernel.org>, 
- Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>
-Cc: Peter Griffin <peter.griffin@linaro.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Sam Protsenko <semen.protsenko@linaro.org>, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-X-Mailer: b4 0.14.2
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+X-cloud-security-sender:alexander.stein@ew.tq-group.com
+X-cloud-security-recipient:linux-clk@vger.kernel.org
+X-cloud-security-crypt: load encryption module
+X-cloud-security-Mailarchiv: E-Mail archived for: alexander.stein@ew.tq-group.com
+X-cloud-security-Mailarchivtype:outbound
+X-cloud-security-Virusscan:CLEAN
+X-cloud-security-disclaimer: This E-Mail was scanned by E-Mailservice on mx-relay58-hz1.antispameurope.com with 4clRTy0D7HzQkxm
+X-cloud-security-connect: he-nlb01-hz1.hornetsecurity.com[94.100.132.6], TLS=1, IP=94.100.132.6
+X-cloud-security-Digest:7d5dfab00112230566df6a60cb391a85
+X-cloud-security:scantime:2.228
+DKIM-Signature: a=rsa-sha256;
+ bh=qVaz1zwGuDSR6vm0lLRYYp/IrSSmnl0g1UxK/5AowGY=; c=relaxed/relaxed;
+ d=ew.tq-group.com;
+ h=content-type:mime-version:subject:from:to:message-id:date; s=hse1;
+ t=1760335115; v=1;
+ b=n2+u07gI/iSKPu0J9uw/ifKOvaOu+BxYbup6E1KPCuYSrvyCo//OhDZzUcb0xKEozt2NXv2p
+ rQ+Rg62SwbXhDXxSUqjDp07bpEGgPmwAXoQe9/nfxlLaEbMLUa4r9E11B+InX7ENtiR+TsL24mR
+ ztxCuYGxaq4GD71g+BiDtkP00BsXIb5sCzmDJPg+Oj2jqbsGY/K1roSa6IYl/BeX5LYYFpZ14ad
+ mfIP6dgqR4gI1X2LKCXOhE9EQWduXpBrT2rDMUUDCB17hWfMpJy1UxDmT4L7FrOKJVPxODLFmUf
+ hbVfXYCK9LqOEgGULBl46sraltgZhJmDMhEnS36gbTjmQ==
 
-readl_relaxed_poll_timeout_atomic() has been updated in 2023 in
-commit 7349a69cf312 ("iopoll: Do not use timekeeping in
-read_poll_timeout_atomic()") to avoid usage of timekeeping APIs. It
-also never used udelay() when no delay was given.
+Am Freitag, 10. Oktober 2025, 13:01:12 CEST schrieb Xu Yang:
+> This phy supports both 24MHz and 100MHz clock inputs. By default it's
+> using XTAL 24MHz and the 100MHz clock is a alternate reference clock.
+> Add supports to use alternate reference clock in case 24MHz clock
+> can't work well.
 
-With the implementation avoiding timekeeping APIs, and with a caller
-not passing a delay, the timeout argument simply becomes a loop
-counter.
+This driver supports imx8mx and imx8mp as well. Do these SoC also support
+the alternative clock?
 
-Therefore the code here can be simplified to unconditionally use
-readl_relaxed_poll_timeout_atomic(). The difference being the last
-argument, the timeout (loop counter). Simply adjust it to pass the
-more generous counter in all cases.
+Best regards
+Alexander
 
-This change also allows us to drop all code around the
-pll_early_timeout variable as it is unused now.
+> 
+> Reviewed-by: Frank Li <Frank.Li@nxp.com>
+> Signed-off-by: Xu Yang <xu.yang_2@nxp.com>
+> 
+> ---
+> Changes in v2:
+>  - add Rb tag
+> ---
+>  drivers/phy/freescale/phy-fsl-imx8mq-usb.c | 23 +++++++++++++++++++++--
+>  1 file changed, 21 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/phy/freescale/phy-fsl-imx8mq-usb.c b/drivers/phy/freescale/phy-fsl-imx8mq-usb.c
+> index b94f242420fc733cd75abef8ba1cd4f59ac18eb5..ad8a55012e42f2c15496955d00c6d5fd85c5beb2 100644
+> --- a/drivers/phy/freescale/phy-fsl-imx8mq-usb.c
+> +++ b/drivers/phy/freescale/phy-fsl-imx8mq-usb.c
+> @@ -16,6 +16,7 @@
+>  #define PHY_CTRL0_REF_SSP_EN		BIT(2)
+>  #define PHY_CTRL0_FSEL_MASK		GENMASK(10, 5)
+>  #define PHY_CTRL0_FSEL_24M		0x2a
+> +#define PHY_CTRL0_FSEL_100M		0x27
+>  
+>  #define PHY_CTRL1			0x4
+>  #define PHY_CTRL1_RESET			BIT(0)
+> @@ -108,6 +109,7 @@ struct tca_blk {
+>  struct imx8mq_usb_phy {
+>  	struct phy *phy;
+>  	struct clk *clk;
+> +	struct clk *alt_clk;
+>  	void __iomem *base;
+>  	struct regulator *vbus;
+>  	struct tca_blk *tca;
+> @@ -582,7 +584,8 @@ static int imx8mp_usb_phy_init(struct phy *phy)
+>  	/* USB3.0 PHY signal fsel for 24M ref */
+>  	value = readl(imx_phy->base + PHY_CTRL0);
+>  	value &= ~PHY_CTRL0_FSEL_MASK;
+> -	value |= FIELD_PREP(PHY_CTRL0_FSEL_MASK, PHY_CTRL0_FSEL_24M);
+> +	value |= FIELD_PREP(PHY_CTRL0_FSEL_MASK, imx_phy->alt_clk ?
+> +			    PHY_CTRL0_FSEL_100M : PHY_CTRL0_FSEL_24M);
+>  	writel(value, imx_phy->base + PHY_CTRL0);
+>  
+>  	/* Disable alt_clk_en and use internal MPLL clocks */
+> @@ -626,13 +629,24 @@ static int imx8mq_phy_power_on(struct phy *phy)
+>  	if (ret)
+>  		return ret;
+>  
+> -	return clk_prepare_enable(imx_phy->clk);
+> +	ret = clk_prepare_enable(imx_phy->clk);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = clk_prepare_enable(imx_phy->alt_clk);
+> +	if (ret) {
+> +		clk_disable_unprepare(imx_phy->clk);
+> +		return ret;
+> +	}
+> +
+> +	return ret;
+>  }
+>  
+>  static int imx8mq_phy_power_off(struct phy *phy)
+>  {
+>  	struct imx8mq_usb_phy *imx_phy = phy_get_drvdata(phy);
+>  
+> +	clk_disable_unprepare(imx_phy->alt_clk);
+>  	clk_disable_unprepare(imx_phy->clk);
+>  	regulator_disable(imx_phy->vbus);
+>  
+> @@ -681,6 +695,11 @@ static int imx8mq_usb_phy_probe(struct platform_device *pdev)
+>  		return PTR_ERR(imx_phy->clk);
+>  	}
+>  
+> +	imx_phy->alt_clk = devm_clk_get_optional(dev, "alt");
+> +	if (IS_ERR(imx_phy->alt_clk))
+> +		return dev_err_probe(dev, PTR_ERR(imx_phy->alt_clk),
+> +				    "Failed to get alt clk\n");
+> +
+>  	imx_phy->base = devm_platform_ioremap_resource(pdev, 0);
+>  	if (IS_ERR(imx_phy->base))
+>  		return PTR_ERR(imx_phy->base);
+> 
+> 
 
-Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
-Signed-off-by: André Draszik <andre.draszik@linaro.org>
----
-Changes in v2:
-- drop pll_early_timeout (Krzysztof)
-- drop timekeeping.h
-- collect tags
-- Link to v1: https://lore.kernel.org/r/20251001-samsung-clk-pll-simplification-v1-1-d12def9e74b2@linaro.org
----
- drivers/clk/samsung/clk-pll.c | 41 ++++++++++-------------------------------
- 1 file changed, 10 insertions(+), 31 deletions(-)
 
-diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
-index 7bea7be1d7e45c32f0b303ffa55ce9cde4a4f71d..0a8fc9649ae2975b1b19669fd5192bae984aa57b 100644
---- a/drivers/clk/samsung/clk-pll.c
-+++ b/drivers/clk/samsung/clk-pll.c
-@@ -11,14 +11,12 @@
- #include <linux/iopoll.h>
- #include <linux/delay.h>
- #include <linux/slab.h>
--#include <linux/timekeeping.h>
- #include <linux/clk-provider.h>
- #include <linux/io.h>
- #include "clk.h"
- #include "clk-pll.h"
- 
--#define PLL_TIMEOUT_US		20000U
--#define PLL_TIMEOUT_LOOPS	1000000U
-+#define PLL_TIMEOUT_LOOPS	20000U
- 
- struct samsung_clk_pll {
- 	struct clk_hw		hw;
-@@ -71,20 +69,11 @@ static int samsung_pll_determine_rate(struct clk_hw *hw,
- 	return 0;
- }
- 
--static bool pll_early_timeout = true;
--
--static int __init samsung_pll_disable_early_timeout(void)
--{
--	pll_early_timeout = false;
--	return 0;
--}
--arch_initcall(samsung_pll_disable_early_timeout);
--
- /* Wait until the PLL is locked */
- static int samsung_pll_lock_wait(struct samsung_clk_pll *pll,
- 				 unsigned int reg_mask)
- {
--	int i, ret;
-+	int ret;
- 	u32 val;
- 
- 	/*
-@@ -93,25 +82,15 @@ static int samsung_pll_lock_wait(struct samsung_clk_pll *pll,
- 	 * initialized, another when the timekeeping is suspended. udelay() also
- 	 * cannot be used when the clocksource is not running on arm64, since
- 	 * the current timer is used as cycle counter. So a simple busy loop
--	 * is used here in that special cases. The limit of iterations has been
--	 * derived from experimental measurements of various PLLs on multiple
--	 * Exynos SoC variants. Single register read time was usually in range
--	 * 0.4...1.5 us, never less than 0.4 us.
-+	 * is used here.
-+	 * The limit of iterations has been derived from experimental
-+	 * measurements of various PLLs on multiple Exynos SoC variants. Single
-+	 * register read time was usually in range 0.4...1.5 us, never less than
-+	 * 0.4 us.
- 	 */
--	if (pll_early_timeout || timekeeping_suspended) {
--		i = PLL_TIMEOUT_LOOPS;
--		while (i-- > 0) {
--			if (readl_relaxed(pll->con_reg) & reg_mask)
--				return 0;
--
--			cpu_relax();
--		}
--		ret = -ETIMEDOUT;
--	} else {
--		ret = readl_relaxed_poll_timeout_atomic(pll->con_reg, val,
--					val & reg_mask, 0, PLL_TIMEOUT_US);
--	}
--
-+	ret = readl_relaxed_poll_timeout_atomic(pll->con_reg, val,
-+						val & reg_mask, 0,
-+						PLL_TIMEOUT_LOOPS);
- 	if (ret < 0)
- 		pr_err("Could not lock PLL %s\n", clk_hw_get_name(&pll->hw));
- 
 
----
-base-commit: 2b763d4652393c90eaa771a5164502ec9dd965ae
-change-id: 20251001-samsung-clk-pll-simplification-3e02f8912122
-
-Best regards,
--- 
-André Draszik <andre.draszik@linaro.org>
 
