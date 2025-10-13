@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DE752566;
-	Mon, 13 Oct 2025 23:45:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED635271459;
+	Mon, 13 Oct 2025 23:46:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760399137; cv=none; b=P1wms5rz0Zpnp6u+/vMeYgjutpucLy51bKYFq7j1V049QlltGCie+wsCrFEFjTQoFoyZ9B0VJaX1hBjV5/pS7UXfAuHA7BiIrVRtbVIU2hBu/gDvWFNG2LphWC9gCu0PD7Z/zU8RrOou1uoAlJhgO+DoC/8mB/n/HhUnJvcndr0=
+	t=1760399212; cv=none; b=ETa6Ur92kXAehEpzDrtQZrJioGxk7wGkvvax8FU/blGZlKeH4D4dYkIL0h+E3A2AEAGgbkQtrAt/2pElSDGnZhyBz7GvvS4toipSOXwnsXlI9bCeZ/s+bV5A8cSNHZXNgaNvQOozSupQsIDptmQcHbCa0i+Zc/EA6E1bNRJpFzU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760399137; c=relaxed/simple;
-	bh=2f1utiAKopa7ZuUmslutQNS8BtFzuw3EgW0uafIqTys=;
+	s=arc-20240116; t=1760399212; c=relaxed/simple;
+	bh=ln7BOLkb6G8W4wmeA7gbrLOv0Exevns6isZBbKKN2j0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=g/ukdHoDQpzJUt0P/AHVJ9+7WNBy7YrwDUUmeJWHWe1tKDPEeg+UiCQWc7GCDdhGKI2Ho3Sy0PSWtTYNWzvt6kNlqXvyZlwey4uYEde6yDekeRZ80bZY1pTrd0Ls+E7MKe+JvpatmmE0Tg7TEf7Qp1R09cFqdUw1AIYiEhuoBTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ADXELeR/; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=GCcxT8LNSd2bDBzAjz3gkyAHmHiSA0Ho8agMzMHN96TnW18iTPjTuJGpKC9SGTh23Xo/ZpsNW0pwCKOckOX+DCqFBoH608QKxd5gSoyGjZ7w7v7YXyOsfu20KWycus4926rgG4NFeG6iqVL9TQrU6bDZUd2ZIFbe30ZJP9XT/QQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mWHRghjG; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ADXELeR/"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B0F5C4CEE7;
-	Mon, 13 Oct 2025 23:45:32 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mWHRghjG"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1D56C4CEFE;
+	Mon, 13 Oct 2025 23:46:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760399136;
-	bh=2f1utiAKopa7ZuUmslutQNS8BtFzuw3EgW0uafIqTys=;
+	s=k20201202; t=1760399211;
+	bh=ln7BOLkb6G8W4wmeA7gbrLOv0Exevns6isZBbKKN2j0=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ADXELeR/1Fx+QRR8gH83ZZNhuxl5wv3NPYkNhUbSP49tTsOmFCwxj6J5COMG+z/o1
-	 O62vop6fn8JerXXa5/CtVgbf8M7LLsbRyV1POkKmaY2DVsNsNVHU19mdMrK3giuiwu
-	 Cm+zN7hJJCS89vOif7gs0Ql+hXCsrZ2lOXWWSEpTi4KAvVVW8ogysuDFfcWIxeKLj6
-	 /P3z8gGgFtou9f6wmK7BvFT9sLX7l86EkfdsA+2eak/dLzR9YNbjffKREdLneVBix9
-	 NLwvBQScXduaax65LzhWPTsNAYTSEVIbjSfM6gZmdXmoLkwYpqdqY9+3zSdiqHs7pu
-	 bCAzUTJHE1NOQ==
-Message-ID: <5c934650-c01a-4d16-a5fe-aa12acc5a75a@kernel.org>
-Date: Tue, 14 Oct 2025 01:45:28 +0200
+	b=mWHRghjGb/kak6uxuwjIH0NYYUo36BhOWJwpEiKKFtAXc7ZtEzG2vtmZqE3uBV9Nx
+	 Kun3CfjUXTNB/knXSmZZIbnBZORHfmCoNMZ6cYVws5sJ4TNmrZjiWR2mWC8kE8pUMo
+	 OrR3AthJdZWRp321CNNSDhf/yRB0yz3l5Esk6xRt2sydnbbMlXzomANzmEj5wDcJCc
+	 GEY9LQZxEX86iaQsOXPVbYghClbpSYmuCM6P7hg59b6xvWt4WpM8o4ZCLoKjbp9JfD
+	 pay9kbo+tY4kVfb7sNvd4bZ+omi3qbTX5I+hryVjY8YUooAB8xGOABaNrgSoYSsxzR
+	 GMEQYLPKDCxPw==
+Message-ID: <0f75ad16-e1b0-430e-bf0c-4c386d401d13@kernel.org>
+Date: Tue, 14 Oct 2025 01:46:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,8 +35,7 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/7] dt-bindings: clock: imx8ulp: add SIM LPAV clock gate
- ID definitions
+Subject: Re: [PATCH 3/7] dt-bindings: clock: document 8ULP's SIM LPAV
 To: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
 Cc: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
@@ -48,9 +47,9 @@ Cc: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
  linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
  Pengutronix Kernel Team <kernel@pengutronix.de>
 References: <20250804155407.285353-1-laurentiumihalcea111@gmail.com>
- <20250804155407.285353-3-laurentiumihalcea111@gmail.com>
- <20250805-natural-vulture-of-glamour-5fac8d@kuoka>
- <27b2e692-ecff-483f-bb88-392f6ce87574@gmail.com>
+ <20250804155407.285353-4-laurentiumihalcea111@gmail.com>
+ <20250805-stereotyped-precise-vicugna-1c78ff@kuoka>
+ <1ad36baf-83af-4ab7-9f47-dd7f74d4749f@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -96,21 +95,36 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <27b2e692-ecff-483f-bb88-392f6ce87574@gmail.com>
+In-Reply-To: <1ad36baf-83af-4ab7-9f47-dd7f74d4749f@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 13/10/2025 14:52, Laurentiu Mihalcea wrote:
+On 13/10/2025 14:48, Laurentiu Mihalcea wrote:
 >>> +
->>> +#define IMX8ULP_CLK_SIM_LPAV_END		3
->> Drop. Not a binding (see other discussions for many SoCs why).
+>>> +  mux-controller:
+>>> +    $ref: /schemas/mux/reg-mux.yaml#
+>>> +
+>>> +required:
+>>> +  - compatible
+>>> +  - reg
+>>> +  - clocks
+>>> +  - clock-names
+>>> +  - '#clock-cells'
+>> reset cells and mux controller.
 > 
 > 
-> these definitions are being used by the clock driver we're introducing here
+> I'd say the mux-controller child can stay optional since the driver allows it?
+> 
+> 
+> As for "#reset-cells": unless CONFIG_RESET_CONTROLLER is enabled, the driver allows
+> 
+> this property to not be specified. The whole idea was to try and make the driver more
 
 
-So you did not read these other discussions and just replied to me with
-the same argument as others.
+I don't talk here about driver, but hardware. How is it possible to
+create a board with imx8ulp which sometimes have this mux and sometimes
+does not have?
+
 
 Best regards,
 Krzysztof
