@@ -1,302 +1,193 @@
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com [209.85.221.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF5023090C5
-	for <linux-clk@vger.kernel.org>; Mon, 13 Oct 2025 13:42:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77B452A1BA
+	for <linux-clk@vger.kernel.org>; Mon, 13 Oct 2025 14:21:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760362931; cv=none; b=dAaUHw9iya14u/CLTu1srDGet1wW1WUB6QSZhVbTVJTskWt6nGWcrm3W2wNG2d8Z69QeHAlosbzNJfRtz2mZNxgO+n/hqK2HgTTXT9k4vBSttPISTj8Hu09MaxddOsrEV05FtzfaCYCHfQccVT3mhcGGN4VPCpvYdEZXr+qTlzE=
+	t=1760365284; cv=none; b=Hxsh9lDcZ96KrokKNtMHN2Yj9rFm1+los0UgDWI7n8irSdtO3KmKUxm2IE8n7v3g3s5IOAwfuj2CTEbrMHteORXD2cjTLjq1G4k5wH4HRUA/brSNxbXP/0xe/ysB7zBLDbrtnhnfgxv1qlghL4v7hlaIXDqabEs/8myhO3KIllA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760362931; c=relaxed/simple;
-	bh=BKr8nVscrBQotunl8u3eUCru7U4bR7e46blB/UH7zYk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Sji+Rrj387YMFO7N/uuGb771dCuzVLnNLYGCACvye0e8ZiXC/416nAE0KdJrlG4eAQtVKGdBea25Ej3W24Ew+cXdbt3/aKrbogguMRQT9zMUDyptygXHZVMi4tx428GDeNd5JRkY13Y6HM1SxPfsBG/gqDMpKO9qKZfHcACRuro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RFHvPTOF; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1760365284; c=relaxed/simple;
+	bh=zlA57FXRk3iS29Kzv4WEft+U6fVs9xyP1OQ8Cp0Brq4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KdVWL89Nh5R7TwAs57lP+noq000KGJHy/juLpRI+XkF5PvVV34Br61b/cORBmzY32MAE67t+5Woc2nQ9CTHGCz7lV93RHsm5c6ShKIwF+Fwh9f1tuRZ71nymNkYJKZiByW0AboWvFrdt5IKej/xbCr7Pf8/iNmrgULnTlJl+svE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RFHvPTOF"
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-639fb035066so6614183a12.0
-        for <linux-clk@vger.kernel.org>; Mon, 13 Oct 2025 06:42:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760362927; x=1760967727; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rrxn5V2ZLraaXqN1UhOIzjX1yimKmGYY2iP8b/c23xI=;
-        b=RFHvPTOFEazrnVZ+d+wAmKPdyUftHbrsiQOggoftM7nAcEICLrkkcMd4yxSQ5Fcy+K
-         ZxNIr5QtYgr7Ve9mNYaEVqKqGuOFm2KSJmdUzrekrU6Tb4sLBSzMClH1mIhey3/3cgWR
-         DKDrAzhb4qziZXj5XeokfIpxrwiIau/B4etYK321aFyPC0gUef2yh/zfxEh9X0UlNmhH
-         woGDOa39vTUACPGFDyLFosYEM/pRnukFYWaTlisr3AdVGrDkgT8VlzRypgEJw8ru41a+
-         LhzWXt+QPWG9lMgtXfNorqWlTbXF9GjkP/ZvgzM2UO7JPffi+6/4KkMDQp5pqzteOzg+
-         zkYw==
+Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-54aa0792200so3092399e0c.3
+        for <linux-clk@vger.kernel.org>; Mon, 13 Oct 2025 07:21:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760362927; x=1760967727;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rrxn5V2ZLraaXqN1UhOIzjX1yimKmGYY2iP8b/c23xI=;
-        b=G+PHc9sYJPfDM4O7yRNWv6IRjvE5oYUsX4tOqslm0hFtjhujp9HtTRL7zG809TuDpf
-         Aq1pCmI1kQZbwgcMymQwT/AQrKWRJnU7tnUhT+94Ajs8r8lyfjciHNKF2HDgqupwtnyX
-         yf36I+8zk8Ht6zxOIFD6MFyXG+SZWugt00pA8hqu5Tjn6gzIVWVPIRByJ+yQBo8THXn1
-         DDm3KBNxqEn/vDFr38dRl182A5g5e1M4CjEqHyA5riso334/UjuZ9+dXmREGqeJoEds9
-         WcNTdbAxW1axgGFtwOQ5lLVkNNUPnJ6ktG/lyhQYRoqUk0yfXq//yJnv/6VQzNLpiIAb
-         zo7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUKWfoXRQzowbiFMfAveXUdq2Vg+tYTaNr/Pq6k8qbRly2DeffMfG3Ut+vLtG9WqQcuwBbGNHPRg68=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxENOnnUZyyU2vc8e6GfbQg+xiad2DtBY2G1vtwvP5XrL5ZNQxJ
-	WHJmRmtQPvlJLhmBJxD5xWBHpd3m51HoV4UJGLXukOI6s+V99COwNN72
-X-Gm-Gg: ASbGncsYitXYhUzssF2urtgVbyDLlYn8VUVLvWBnh94+UVeA+qBnV+WTsa/ozNsoK1j
-	Ppxb9cKnouvIcoQEOD8A8XFay3+Aig2/esxv6kDlwKaAjtGY4M9AgbbmZ6NBudtBsoQMvmdl+7N
-	V6g/5Ggob0U4dLYcEmJlJseftiz1LR1hkFkMqP+SLO3fxhxi8zCgPZWOhN694zwmGGUKmV/tuDA
-	Vx3pP7jlPHGMhrb2hWGiaSav1kyiH34g15vLbjpn/K3skgIqv1skVlr+fPAj4VnDm+OgRuLuZI4
-	uqL/3mI44lhWRJgtT/aHHEl5zM0yrAj/j5zSFdKAYOqVMVqaWzn1kS/NP5a8F/67X45fzLKcJB8
-	4NS5QMzD37gcZjpTaKT94TzWShWIx6K6BooOohOZW3yFR+87vA0GAOSIcgXoRznuE8VdojzTghY
-	ZITp8OzqMeka7x
-X-Google-Smtp-Source: AGHT+IHW8B7vpbCVSo6VA1fn0F5FpN2EF++GQ7/3RSyeUuDyDe6Te8GkuSpOBf62mr76lPkgAINLng==
-X-Received: by 2002:a05:6402:40d1:b0:639:ef26:a01d with SMTP id 4fb4d7f45d1cf-639ef26a47emr15112262a12.11.1760362927050;
-        Mon, 13 Oct 2025 06:42:07 -0700 (PDT)
-Received: from tablet.my.domain (83.21.75.22.ipv4.supernova.orange.pl. [83.21.75.22])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-63a5c32249esm8729019a12.41.2025.10.13.06.42.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Oct 2025 06:42:06 -0700 (PDT)
-From: Artur Weber <aweber.kernel@gmail.com>
-Date: Mon, 13 Oct 2025 15:41:54 +0200
-Subject: [PATCH v7 7/7] clk: bcm281xx: Add corresponding bus clocks for
- peripheral clocks
+        d=1e100.net; s=20230601; t=1760365281; x=1760970081;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wM5BKo03UXTKAaO0inlA90fZOzSgvU3v+GhQ9ytzuNM=;
+        b=vdnCm6Q/AJeImOfk7SzrJuxYunhq/b7GcCOEF13kkcf+1yN/slLzlcRyGm5dszNPHt
+         rNUtv4gujgfhlwUWAjvXs/iypuK7oIW8uXdOaiqqi4KeOUDvoqIMyBnz0yCGTlDUwpPA
+         8jolkndQz2O8sYP9Lh3/V9S8WCpLY1YeAomNjtZ5UIc12ck5PoWLIWhH7yI4/pcm3qOa
+         T2BdGzeFfgD7Cez1NmWf8v4ZI5n9GrRenvVV3Ptq+CJDgU8UT7WghQrzo7SEEiDCATip
+         SJkkYWnd4VkQGQJSfs03KzU0XkaS8DJ8zxo7jPNvoP3heevi1nYMz8upAVBNYYrvG0a6
+         yD5w==
+X-Forwarded-Encrypted: i=1; AJvYcCVoAHlg1/k967s4CRdVt8zFbMh04i/LNLvL86ejQ6WzCPvrDxbioM9m/HBi2e5ys+g7QBFUvE14LqA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWws8xaeJHM1iFMelg1bWHlPeY1OpmwWQkSvXuXasLSXMbWBZp
+	x2uumePohXC3U5EJ1NjSbAM43n4svTOUpib32TNU7XEyjiAwrutqV1y9929/3/Oj
+X-Gm-Gg: ASbGnctMZSv38955M7usC3CJ9LExYYkjDPFyTOaTIXVw48m+sAB2xhBKK9kA1pXxh0z
+	/RVS5p45vW9p+DWcuxhhNMf6euqyfU/HsVdMVb1bd71awm9kXpljgxqFTBWx+w81l37uAHeurF2
+	V5Tn2VMe7rOiyKthzDvAdiN5Lb3Oiv4f6gcab7sXKpErUqveG7RzqfGDez9ZKXKtf2oILDo0N2N
+	xZA8WVd2X2nvzIhoTIJOiR+BpVTLRHiLOusALu+FrJWzn+0W/NVIOyQzmYIp48FWQi6iIx3qhjI
+	1072cTykl9zKWqNsuuSd8iD8tt5f2F5uuscP55g8U1ABLoRWyje4umsftn/+Xblasajl9CUvHXa
+	nuj88z33JzqIICxKjBJfXAlN0emUG12lGj3UOOX5bL1EJ4jcxWTMPhBkKBunTdPnbE3QNWzhfZa
+	j6MWw=
+X-Google-Smtp-Source: AGHT+IGFgzd2+/Ls5wzYoedWbLApigwdcd+qTkCKE3sjbFe7MD9J0CebdxEZKfjRXjlHUNxabXT55Q==
+X-Received: by 2002:a05:6122:d8b:b0:554:afe3:1fbd with SMTP id 71dfb90a1353d-554b8b93760mr7852843e0c.11.1760365280857;
+        Mon, 13 Oct 2025 07:21:20 -0700 (PDT)
+Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com. [209.85.217.48])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-554d80a38ddsm3110899e0c.16.2025.10.13.07.21.19
+        for <linux-clk@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 13 Oct 2025 07:21:19 -0700 (PDT)
+Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-5a0d17db499so3931681137.3
+        for <linux-clk@vger.kernel.org>; Mon, 13 Oct 2025 07:21:19 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW/ff2sJPOeCKu703sI2Zx2MaQHtPbJX3ILYjm8zR3Pwc4bmw2HjxT/+pQke8iMrtEKCJ0O4Mo/x8U=@vger.kernel.org
+X-Received: by 2002:a05:6102:512b:b0:5d3:ff01:363d with SMTP id
+ ada2fe7eead31-5d5e2323bc3mr8711756137.21.1760365279124; Mon, 13 Oct 2025
+ 07:21:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251013-kona-bus-clock-v7-7-8f473d99ae19@gmail.com>
-References: <20251013-kona-bus-clock-v7-0-8f473d99ae19@gmail.com>
-In-Reply-To: <20251013-kona-bus-clock-v7-0-8f473d99ae19@gmail.com>
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, 
- Florian Fainelli <florian.fainelli@broadcom.com>, 
- Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: Alex Elder <elder@kernel.org>, 
- Stanislav Jakubek <stano.jakubek@gmail.com>, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- ~postmarketos/upstreaming@lists.sr.ht, linux-arm-kernel@lists.infradead.org, 
- phone-devel@vger.kernel.org, Artur Weber <aweber.kernel@gmail.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6005;
- i=aweber.kernel@gmail.com; h=from:subject:message-id;
- bh=BKr8nVscrBQotunl8u3eUCru7U4bR7e46blB/UH7zYk=;
- b=owEBbQKS/ZANAwAKAbO7+KEToFFoAcsmYgBo7QGg6q+Yc21Ig+afa32iNWFNzvHv7ZkWVlH2N
- 0Em92Ym7byJAjMEAAEKAB0WIQTmYwAOrB3szWrSiQ2zu/ihE6BRaAUCaO0BoAAKCRCzu/ihE6BR
- aMTLEACdZNtR5aTmug+rai2D1xBgUuBhee96uc7gCs6JjvgMPMffeAChVUIytsllR71lj74m9mf
- g5X6AS9hbUWdkzNGZl8jslulemey9NH8A9W19Ld9XejQDTWGQtv9RTZ4mAHagi0m/pCoBf8b9H4
- vfM+34HRFfV05296MrCfT1kFibzDvgCKHZzEgvvM/B0J+X6hDtwezVfRi9tlarMvORZEUhaY9xu
- dM+WKd1ZUpvyc+oaFMSpxtEfkmhCR3fk8P7EANYZ/D/HOf17SiSA3Cw386UdyFoiESu43w35qlo
- zGFooOq+OowrQDWkutSUHsQrMGes5RP5twZL+9EpOIBcsesKO7mtOMxwAcbE9f35Ey91Q/kwL2R
- WzwoecopMZZB2Hcim6Qw6zZNFUyB1Z+5likC1QeAON1Gd2uGbKo+n31B9sXk0Af3vuYErD6ZqZj
- fxUBic+06J2pgC4tWVDQ+hp9H/dOeGxAUnD/G6DlFiYHJjrCIKbynMWNsecBhKPg0oA5+XUh+aZ
- yY66HmUc7Tcma0giwX2YK6SpQ/sDjOaAZWjkTiVJqr2nChHDthpLFt9/b1FvoDVgCJ6LWOCzlCp
- pFrMW7Q6KqHQUq4M/QLCWwICtIy+qvpOE2q7WDv4NRyMsdQtt6ClLslQy7E1MLymsEztaHR3oNH
- Ks8sp5Chwqk+k3Q==
-X-Developer-Key: i=aweber.kernel@gmail.com; a=openpgp;
- fpr=E663000EAC1DECCD6AD2890DB3BBF8A113A05168
+References: <20251009160732.1623262-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20251009160732.1623262-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20251009160732.1623262-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 13 Oct 2025 16:21:07 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdV2-YrktT+=D2LVFw5oR+6EOLcPB_Yuh5wnos099W9YHQ@mail.gmail.com>
+X-Gm-Features: AS18NWACXzl9qHe2hLpg2jHp4NfY_rtfyBAoBdwcOf1UGmjWi7aFUHns305Ee_M
+Message-ID: <CAMuHMdV2-YrktT+=D2LVFw5oR+6EOLcPB_Yuh5wnos099W9YHQ@mail.gmail.com>
+Subject: Re: [PATCH v10 2/6] clk: renesas: rzv2h-cpg: Add support for DSI clocks
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, 
+	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Biju Das <biju.das.jz@bp.renesas.com>, Magnus Damm <magnus.damm@gmail.com>, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Add bus clocks corresponding to peripheral clocks currently supported
-by the BCM281xx clock driver.
+On Thu, 9 Oct 2025 at 18:07, Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Add support for PLLDSI and its post-dividers to the RZ/V2H CPG driver and
+> export a set of helper APIs to allow other consumers (notably the DSI
+> driver) to compute and select PLL parameter combinations.
+>
+> Introduce per-PLL-DSI state in the CPG private structure and implement
+> clk ops and registration for PLLDSI and PLLDSI divider clocks. Implement
+> rzv2h_cpg_plldsi_determine_rate and rzv2h_cpg_plldsi_set_rate to drive
+> PLL programming via the new per-PLL state and add a plldsi divider clk
+> with determine/set/recalc operations that cooperate with the PLL
+> algorithm.
+>
+> Centralize PLL parameter types and limits by moving definitions into a
+> shared header (include/linux/clk/renesas.h). Add struct rzv2h_pll_limits,
+> struct rzv2h_pll_pars and struct rzv2h_pll_div_pars, plus the
+> RZV2H_CPG_PLL_DSI_LIMITS() macro to declare DSI PLL limits.
+>
+> Provide two exported helper functions, rzv2h_get_pll_pars() and
+> rzv2h_get_pll_divs_pars(), that perform iterative searches over PLL
+> parameters (M, K, P, S) and optional post-dividers to find the best (or
+> exact) match for a requested frequency. Export these helpers in the
+> "RZV2H_CPG" namespace for use by external drivers.
+>
+> This change centralizes DSI PLL rate selection logic, prevents duplicate
+> implementations in multiple drivers, and enables the DSI driver to
+> request accurate PLL rates and program the hardware consistently.
+>
+> Co-developed-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+> v9->v10:
+> - Dropped rzv2h_get_pll_div_pars() helper and opencoded instead.
+> - Dropped rzv2h_get_pll_dtable_pars() helper and opencoded instead.
+> - Added dummy helpers rzv2h_get_pll_pars() and rzv2h_get_pll_divs_pars()
+>   in renesas.h for !CONFIG_CLK_RZV2H case.
+> - Updated commit message.
 
-Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
-Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
----
-Changes in v4:
-- Adapt to CLOCK_COUNT -> CLK_COUNT rename
+Thanks for the update!
 
-Changes in v3:
-- Adapt to CLOCK_COUNT defines being moved
+> --- a/drivers/clk/renesas/rzv2h-cpg.c
+> +++ b/drivers/clk/renesas/rzv2h-cpg.c
 
-Changes in v2:
-- Add this patch (BCM281xx bus clocks)
----
- drivers/clk/bcm/clk-bcm281xx.c | 127 ++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 124 insertions(+), 3 deletions(-)
+> +static int rzv2h_cpg_plldsi_div_determine_rate(struct clk_hw *hw,
+> +                                              struct clk_rate_request *req)
+> +{
+> +       struct rzv2h_plldsi_div_clk *dsi_div = to_plldsi_div_clk(hw);
+> +       struct pll_clk *pll_clk = to_pll(clk_hw_get_parent(hw));
+> +       struct rzv2h_cpg_priv *priv = dsi_div->priv;
+> +       u8 table[RZV2H_MAX_DIV_TABLES] = { 0 };
+> +       struct rzv2h_pll_div_pars *dsi_params;
+> +       struct rzv2h_pll_dsi_info *dsi_info;
+> +       const struct clk_div_table *div;
+> +       u64 rate_millihz;
+> +       unsigned int i;
+> +
+> +       dsi_info = &priv->pll_dsi_info[pll_clk->pll.instance];
+> +       dsi_params = &dsi_info->pll_dsi_parameters;
+> +
+> +       rate_millihz = mul_u32_u32(req->rate, MILLI);
+> +       if (rate_millihz == dsi_params->div.error_millihz + dsi_params->div.freq_millihz)
+> +               goto exit_determine_rate;
+> +
+> +       div = dsi_div->dtable;
 
-diff --git a/drivers/clk/bcm/clk-bcm281xx.c b/drivers/clk/bcm/clk-bcm281xx.c
-index 62c3bf465625..13fd8a5ea8fa 100644
---- a/drivers/clk/bcm/clk-bcm281xx.c
-+++ b/drivers/clk/bcm/clk-bcm281xx.c
-@@ -59,7 +59,17 @@ static struct peri_clk_data pmu_bsc_var_data = {
- 	.trig		= TRIGGER(0x0a40, 2),
- };
- 
--#define BCM281XX_AON_CCU_CLK_COUNT	(BCM281XX_AON_CCU_PMU_BSC_VAR + 1)
-+static struct bus_clk_data hub_timer_apb_data = {
-+	.gate		= HW_SW_GATE(0x0414, 18, 3, 2),
-+	.hyst		= HYST(0x0414, 10, 11),
-+};
-+
-+static struct bus_clk_data pmu_bsc_apb_data = {
-+	.gate		= HW_SW_GATE(0x0418, 18, 3, 2),
-+	.hyst		= HYST(0x0418, 10, 11),
-+};
-+
-+#define BCM281XX_AON_CCU_CLK_COUNT	(BCM281XX_AON_CCU_PMU_BSC_APB + 1)
- 
- static struct ccu_data aon_ccu_data = {
- 	BCM281XX_CCU_COMMON(aon, AON),
-@@ -70,6 +80,10 @@ static struct ccu_data aon_ccu_data = {
- 			KONA_CLK(aon, pmu_bsc, peri),
- 		[BCM281XX_AON_CCU_PMU_BSC_VAR] =
- 			KONA_CLK(aon, pmu_bsc_var, peri),
-+		[BCM281XX_AON_CCU_HUB_TIMER_APB] =
-+			KONA_CLK(aon, hub_timer_apb, bus),
-+		[BCM281XX_AON_CCU_PMU_BSC_APB] =
-+			KONA_CLK(aon, pmu_bsc_apb, bus),
- 		[BCM281XX_AON_CCU_CLK_COUNT] = LAST_KONA_CLK,
- 	},
- };
-@@ -178,7 +192,36 @@ static struct peri_clk_data hsic2_12m_data = {
- 	.trig		= TRIGGER(0x0afc, 5),
- };
- 
--#define BCM281XX_MASTER_CCU_CLK_COUNT	(BCM281XX_MASTER_CCU_HSIC2_12M + 1)
-+static struct bus_clk_data sdio1_ahb_data = {
-+	.gate		= HW_SW_GATE(0x0358, 16, 1, 0),
-+};
-+
-+static struct bus_clk_data sdio2_ahb_data = {
-+	.gate		= HW_SW_GATE(0x035c, 16, 1, 0),
-+};
-+
-+static struct bus_clk_data sdio3_ahb_data = {
-+	.gate		= HW_SW_GATE(0x0364, 16, 1, 0),
-+};
-+
-+static struct bus_clk_data sdio4_ahb_data = {
-+	.gate		= HW_SW_GATE(0x0360, 16, 1, 0),
-+};
-+
-+static struct bus_clk_data usb_ic_ahb_data = {
-+	.gate		= HW_SW_GATE(0x0354, 16, 1, 0),
-+};
-+
-+/* also called usbh_ahb */
-+static struct bus_clk_data hsic2_ahb_data = {
-+	.gate		= HW_SW_GATE(0x0370, 16, 1, 0),
-+};
-+
-+static struct bus_clk_data usb_otg_ahb_data = {
-+	.gate		= HW_SW_GATE(0x0348, 16, 1, 0),
-+};
-+
-+#define BCM281XX_MASTER_CCU_CLK_COUNT	(BCM281XX_MASTER_CCU_USB_OTG_AHB + 1)
- 
- static struct ccu_data master_ccu_data = {
- 	BCM281XX_CCU_COMMON(master, MASTER),
-@@ -197,6 +240,20 @@ static struct ccu_data master_ccu_data = {
- 			KONA_CLK(master, hsic2_48m, peri),
- 		[BCM281XX_MASTER_CCU_HSIC2_12M] =
- 			KONA_CLK(master, hsic2_12m, peri),
-+		[BCM281XX_MASTER_CCU_SDIO1_AHB] =
-+			KONA_CLK(master, sdio1_ahb, bus),
-+		[BCM281XX_MASTER_CCU_SDIO2_AHB] =
-+			KONA_CLK(master, sdio2_ahb, bus),
-+		[BCM281XX_MASTER_CCU_SDIO3_AHB] =
-+			KONA_CLK(master, sdio3_ahb, bus),
-+		[BCM281XX_MASTER_CCU_SDIO4_AHB] =
-+			KONA_CLK(master, sdio4_ahb, bus),
-+		[BCM281XX_MASTER_CCU_USB_IC_AHB] =
-+			KONA_CLK(master, usb_ic_ahb, bus),
-+		[BCM281XX_MASTER_CCU_HSIC2_AHB] =
-+			KONA_CLK(master, hsic2_ahb, bus),
-+		[BCM281XX_MASTER_CCU_USB_OTG_AHB] =
-+			KONA_CLK(master, usb_otg_ahb, bus),
- 		[BCM281XX_MASTER_CCU_CLK_COUNT] = LAST_KONA_CLK,
- 	},
- };
-@@ -309,7 +366,51 @@ static struct peri_clk_data pwm_data = {
- 	.trig		= TRIGGER(0x0afc, 15),
- };
- 
--#define BCM281XX_SLAVE_CCU_CLK_COUNT	(BCM281XX_SLAVE_CCU_PWM + 1)
-+static struct bus_clk_data uartb_apb_data = {
-+	.gate		= HW_SW_GATE(0x0400, 16, 1, 0),
-+};
-+
-+static struct bus_clk_data uartb2_apb_data = {
-+	.gate		= HW_SW_GATE(0x0404, 16, 1, 0),
-+};
-+
-+static struct bus_clk_data uartb3_apb_data = {
-+	.gate		= HW_SW_GATE(0x0408, 16, 1, 0),
-+};
-+
-+static struct bus_clk_data uartb4_apb_data = {
-+	.gate		= HW_SW_GATE(0x040c, 16, 1, 0),
-+};
-+
-+static struct bus_clk_data ssp0_apb_data = {
-+	.gate		= HW_SW_GATE(0x0410, 16, 1, 0),
-+};
-+
-+static struct bus_clk_data ssp2_apb_data = {
-+	.gate		= HW_SW_GATE(0x0418, 16, 1, 0),
-+};
-+
-+static struct bus_clk_data bsc1_apb_data = {
-+	.gate		= HW_SW_GATE(0x0458, 16, 1, 0),
-+	.hyst		= HYST(0x0458, 8, 9),
-+};
-+
-+static struct bus_clk_data bsc2_apb_data = {
-+	.gate		= HW_SW_GATE(0x045c, 16, 1, 0),
-+	.hyst		= HYST(0x045c, 8, 9),
-+};
-+
-+static struct bus_clk_data bsc3_apb_data = {
-+	.gate		= HW_SW_GATE(0x0484, 16, 1, 0),
-+	.hyst		= HYST(0x0484, 8, 9),
-+};
-+
-+static struct bus_clk_data pwm_apb_data = {
-+	.gate		= HW_SW_GATE(0x0468, 16, 1, 0),
-+	.hyst		= HYST(0x0468, 8, 9),
-+};
-+
-+#define BCM281XX_SLAVE_CCU_CLK_COUNT	(BCM281XX_SLAVE_CCU_PWM_APB + 1)
- 
- static struct ccu_data slave_ccu_data = {
- 	BCM281XX_CCU_COMMON(slave, SLAVE),
-@@ -334,6 +435,26 @@ static struct ccu_data slave_ccu_data = {
- 			KONA_CLK(slave, bsc3, peri),
- 		[BCM281XX_SLAVE_CCU_PWM] =
- 			KONA_CLK(slave, pwm, peri),
-+		[BCM281XX_SLAVE_CCU_UARTB_APB] =
-+			KONA_CLK(slave, uartb_apb, bus),
-+		[BCM281XX_SLAVE_CCU_UARTB2_APB] =
-+			KONA_CLK(slave, uartb2_apb, bus),
-+		[BCM281XX_SLAVE_CCU_UARTB3_APB] =
-+			KONA_CLK(slave, uartb3_apb, bus),
-+		[BCM281XX_SLAVE_CCU_UARTB4_APB] =
-+			KONA_CLK(slave, uartb4_apb, bus),
-+		[BCM281XX_SLAVE_CCU_SSP0_APB] =
-+			KONA_CLK(slave, ssp0_apb, bus),
-+		[BCM281XX_SLAVE_CCU_SSP2_APB] =
-+			KONA_CLK(slave, ssp2_apb, bus),
-+		[BCM281XX_SLAVE_CCU_BSC1_APB] =
-+			KONA_CLK(slave, bsc1_apb, bus),
-+		[BCM281XX_SLAVE_CCU_BSC2_APB] =
-+			KONA_CLK(slave, bsc2_apb, bus),
-+		[BCM281XX_SLAVE_CCU_BSC3_APB] =
-+			KONA_CLK(slave, bsc3_apb, bus),
-+		[BCM281XX_SLAVE_CCU_PWM_APB] =
-+			KONA_CLK(slave, pwm_apb, bus),
- 		[BCM281XX_SLAVE_CCU_CLK_COUNT] = LAST_KONA_CLK,
- 	},
- };
+This belongs inside the for-initializer below.
+
+> +       i = 0;
+
+Ditto; or better: in the variable declaration at the top of the function.
+
+> +       for (; div->div; div++) {
+> +               if (i >= RZV2H_MAX_DIV_TABLES)
+> +                       return -EINVAL;
+> +               table[i++] = div->div;
+> +       }
+> +
+> +       if (!rzv2h_get_pll_divs_pars(dsi_info->pll_dsi_limits, dsi_params, table, i,
+> +                                    rate_millihz)) {
+> +               dev_err(priv->dev, "failed to determine rate for req->rate: %lu\n",
+> +                       req->rate);
+> +               return -EINVAL;
+> +       }
+> +
+> +exit_determine_rate:
+> +       req->rate = DIV_ROUND_CLOSEST_ULL(dsi_params->div.freq_millihz, MILLI);
+> +       req->best_parent_rate = req->rate * dsi_params->div.divider_value;
+> +       dsi_info->req_pll_dsi_rate = req->best_parent_rate;
+> +
+> +       return 0;
+> +}
+
+The rest LGTM, so with the above fixed, and the field changes factored
+out into a separate patch:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
-2.51.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
