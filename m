@@ -1,47 +1,47 @@
-Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011047.outbound.protection.outlook.com [52.101.70.47])
+Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11011017.outbound.protection.outlook.com [52.101.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 393042D3A9B;
-	Mon, 13 Oct 2025 18:30:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BEF12D3EDB;
+	Mon, 13 Oct 2025 18:31:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.17
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760380204; cv=fail; b=Bw2ucPNlpVz81j4Wuk9zxyUUBYLBYt+zKc2C/J+MQhcSUHXGentR8UkZOaLb2+xCRP8TcgTA28mANuVN1hRIYv5ZfhWifjhqetEYWTe6AlELV1CcjioiBxb0uaLJ7aaQ3Y/ptUxD/PLEYI/GhkiivgPi9yqMMckxONjb3kR+Uyo=
+	t=1760380310; cv=fail; b=RedIAMuoPEK0iyO/ipe/3DNLE5PcOlnlpyJvL8glYhEhpfFtyYivRTusVhV2HPje5KPRLYtUB/akQh6FiUpaKAprZa02RgGm8HS4jy8jIDwwly2U4T14tduOryWdA36kx2GvvbqfaaG+f3yntZ/wfLa+yxa1ZWoOgQvZDD+pX2Q=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760380204; c=relaxed/simple;
-	bh=d3Gjd74FJmYX8gKeHEQrBTVXvSP9IJlH2uJhdT8l+YA=;
+	s=arc-20240116; t=1760380310; c=relaxed/simple;
+	bh=XHKQlH3YHaUAYtQqqKCHOti1/cuMcyPz0Ftfbj//ihA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=HNP0QIolfLp30ysU2U4U8lihscQVRws58Dx1JR45FFMmRrLR1iRLIxPn9rFbBFWvWdzlNdxDNtD/W/jk2SG/xMoL+E58s8wmV/aoa07RQceho//LOG/O/+wGvszuJ+mUCTkIS3ZKilod049hpWvEAtBeAKrXy2CWTGgd78urlPM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=G8fiUB8R; arc=fail smtp.client-ip=52.101.70.47
+	 Content-Disposition:In-Reply-To:MIME-Version; b=DwpmKHoTBHOL4LZOmB9/REA3e5C0aO3rUF9/GpN5iffud/jAlMXeCUAAYCR1IIDT8QDJqCt1hJ+8/0cGCEp1xJTJurEjV8lUJhoGp6kJxhbwzFFeWZ22JOmApILyC7TdI7fSaLQg8b62qbXVbzvqHIgDJw5BCZhqK3u5HgT+HiM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=SNtHeaJ3; arc=fail smtp.client-ip=52.101.65.17
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="G8fiUB8R"
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="SNtHeaJ3"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=VvekRY/rkuhuggs68cbkwYmMZZKOnVGnzz/azUIFdWi+cPJVojrSki+/4TKbHPdosXSIbuP7pbTuk6zXNKESPt/zlGkZrSr+/UorAEDgws3M32RRPAs1Zks+HAd/pQImp9tHQ19gvu+FKJa9ptySZILxImM+jwUE6dOeq1oKsXQEc2/SmMZQBUDhcnMX+Q4x84GvVLd/gc1rLaSnNEZe+lBQ1grr8GndXtveG6AoGBpSMuf28ael3YPw6mfxfpx8AfZA8HcDrBytkHpqTTQDJTvYVBYwmgFbnIF4bkT/EjVMXe+vmhb6EX1phZB/gyEYaYGgQQMkRADJYTh9dC5jJQ==
+ b=pM7cpajlq7kfXbx9HuI9z2g/MYXmFJfN1cUTZAeLVwI4I2cZcJceYfCqQTPyXjcRyGnHZSFCZQciDjqyVgbGHigb7oHVnm6tdQxbdER8fuzMFUCmogxWcnjqazmneRPt68RC8ei8r7UfYzdUZU40+HlybD1S0StiXg2AMsL6DFOME/z0Zp+Q7z6+u6/xUPFCTqN3DXVb9k0kjwuz7HuM8Sut13qWzHxkY9IYoV/Egzshaa0fPnIDSJvzuYGGKGOmQdKvamx/RwXktOVxD7VYmlXUAWDIiX2sl3u8FCwy47lZifFurUyhm/wOm6c6MYmKMF/I/sFK61nJGp3Mped31A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+WsbFbicuODf4xLGKZTkjhRdDpwff74SRBXJKuVXE6k=;
- b=y0tIjvGrKnez3zeNlRw+GaF+CKTFRPXY+41ITcqSyKH6r+KYODO6vECNuQym8+GVZrdsmS4senYgRkhbk19pcJ5eoFdr1YbvZqI/0fqaaSi4W0215EtgMdritf48yyK+KNuwwIcSsy00oBPAEASveQvrprZrSesK1Xce4OLsOd0Er903Rg43uUtMYjvmfTDCb/2XwuALPP1+qAGGLMROJ/2FV2ZrqpUoZsNala1KxiaVX5px/gVoqKs1z6iCEGE1Ar6FYTagD4teFf4pWHweWQvvVSywNGTchjdnA5y+mWFcVJ53typGA6G1fIBpca+q+2R2bshDb9Jjkb3ieOwysw==
+ bh=M+QYGLxmECyUwP0mAJR/AYb2pBzF42AvLYb24pnR75U=;
+ b=eDDP5xjA7wkP98ShGfYcLuvUwmKNPSNHnftw6/z+M5rbS24gBLJcaCUh+QciRB3rM3C5iQ0IF4nFy+YMBfnZjq9gQvtRmiqIXpGoC+OOJ+hgEbjIpGwguWzSALO3aOZ0M22RF+ADQetL9uwg4RqVlQi+n7x0qW7WypAwcXP9UOAwitTWoU6aEk+6TEB6YdXniNasOtnzeiovllu03T/2B/h42/aqKNsWMvSYZjNiKEzQv6D4CIV9wneNg30AbqzaBw/z/8lRxLyAsYxSjeSZwVcpGfxplNxxQ/BhrfY+Q0FJmWr0RlDjqYz/JQCX+88LDEU0BwcCgi8dd24lhuyNrQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
  header.d=nxp.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+WsbFbicuODf4xLGKZTkjhRdDpwff74SRBXJKuVXE6k=;
- b=G8fiUB8RZYDgv4OwVq8Wk4HrV8+qN2luXjBSuIuA+CWsfRzIXo9SQCHjXFdkp0L6meXxLG8P1/r/bUAPvTEwH/0WQQRW4atZoJUuhxadkKAx3W5HZpLOXC7SdqfP7/gLciH0q8ydEonGUMPiGCiQ0SgiixlXDqDqXfCqNW1kve3M67y9RQfD+uD0ouQF1jQUWIhOQCQftrywRwKqcht1q14H/Jpn6rvc5SUVjbDT3NiiuM6NhFdyTIpqy28FSgKlsAybq8KReLcapNONNDMzL0KUvDilrbQ2mdEcHVu9//RUqi841y+XZzqKNcGJNfzOPbKdDzPgcVkHQRW+7XQhkA==
+ bh=M+QYGLxmECyUwP0mAJR/AYb2pBzF42AvLYb24pnR75U=;
+ b=SNtHeaJ3v5Z9RvwTMfxmblZCJRWmBiWEpx+teETKfbEGy35k1AaEVSqnQI1UNyYAVNmf2iKTzRhRvkqZkp4biFdRbICTkj3qMO5/zHbVIvdgL9P7CcxbA3acBoR9wRjT86BgWDqHVfG/H1ZpgaBt1onTC+mv11+InEl7VE/AOIBw3Xxur3djzOhiHWpLuidVfB7FKQz3JZe+V2aKFVNojNAANUK1tEfTIxC6oPjA5M8Jn6giJh9eT5HwWO1q2TXLRLAzpI2KK18nTpHEUOiQOM296hwuNMySLbI9S/CyhJV2WNfPyMYpGzCh+wj0tJysMTwfNktgJeiYGF/CWbfhig==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nxp.com;
 Received: from AS4PR04MB9621.eurprd04.prod.outlook.com (2603:10a6:20b:4ff::22)
  by AS1PR04MB9383.eurprd04.prod.outlook.com (2603:10a6:20b:4d9::13) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.13; Mon, 13 Oct
- 2025 18:29:58 +0000
+ 2025 18:31:45 +0000
 Received: from AS4PR04MB9621.eurprd04.prod.outlook.com
  ([fe80::a84d:82bf:a9ff:171e]) by AS4PR04MB9621.eurprd04.prod.outlook.com
  ([fe80::a84d:82bf:a9ff:171e%4]) with mapi id 15.20.9203.009; Mon, 13 Oct 2025
- 18:29:58 +0000
-Date: Mon, 13 Oct 2025 14:29:49 -0400
+ 18:31:45 +0000
+Date: Mon, 13 Oct 2025 14:31:36 -0400
 From: Frank Li <Frank.li@nxp.com>
 To: Marek Vasut <marek.vasut@mailbox.org>
 Cc: dri-devel@lists.freedesktop.org, Abel Vesa <abelvesa@kernel.org>,
@@ -56,15 +56,16 @@ Cc: dri-devel@lists.freedesktop.org, Abel Vesa <abelvesa@kernel.org>,
 	Thomas Zimmermann <tzimmermann@suse.de>, devicetree@vger.kernel.org,
 	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
 	linux-clk@vger.kernel.org
-Subject: Re: [PATCH 11/39] drm/imx: dc: fg: Parametrize register access
-Message-ID: <aO1FHck+8/F2psKs@lizhi-Precision-Tower-5810>
+Subject: Re: [PATCH 12/39] drm/imx: dc: ed: Pass struct
+ dc_fg_subdev_match_data via OF match data
+Message-ID: <aO1FiCu9cHKtwT94@lizhi-Precision-Tower-5810>
 References: <20251011170213.128907-1-marek.vasut@mailbox.org>
- <20251011170213.128907-12-marek.vasut@mailbox.org>
+ <20251011170213.128907-13-marek.vasut@mailbox.org>
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251011170213.128907-12-marek.vasut@mailbox.org>
-X-ClientProxiedBy: PH8PR22CA0001.namprd22.prod.outlook.com
- (2603:10b6:510:2d1::16) To AS4PR04MB9621.eurprd04.prod.outlook.com
+In-Reply-To: <20251011170213.128907-13-marek.vasut@mailbox.org>
+X-ClientProxiedBy: PH8PR21CA0013.namprd21.prod.outlook.com
+ (2603:10b6:510:2ce::22) To AS4PR04MB9621.eurprd04.prod.outlook.com
  (2603:10a6:20b:4ff::22)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -74,89 +75,89 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: AS4PR04MB9621:EE_|AS1PR04MB9383:EE_
-X-MS-Office365-Filtering-Correlation-Id: 101672dc-bef6-4f02-1ff8-08de0a86835a
+X-MS-Office365-Filtering-Correlation-Id: 8fcc09a4-b5bf-48b7-0358-08de0a86c2f1
 X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
  BCL:0;ARA:13230040|1800799024|376014|7416014|52116014|19092799006|366016|7053199007|38350700014;
 X-Microsoft-Antispam-Message-Info:
- =?us-ascii?Q?3U3yTYdmIp2SFfLS77XGHLArXw/SqRtoYQetCG5R/QzoLg7ch2cMfQI78EXh?=
- =?us-ascii?Q?j1/WLTLRqLH1RRvAddnoXOGyFgratp8uVqernedx+PxLBWu5PM2h3j1fmGV/?=
- =?us-ascii?Q?Or5TjuL/pF27NEfUqF7PhN0Qa9lYXBPVqrUqEH1xa6OiU6KQAT+BaeBOIrOi?=
- =?us-ascii?Q?FB/BnwRgFZ3NR1opgTTXNfNN5nHlkZGwmNomOBrT6bKqJ20Kt5NJcY64iNWZ?=
- =?us-ascii?Q?YOZZ7cULZxG+kwEhi9jCjYEHk3HoD82vT4HEU4QEAUAnMVGr1AY5TvhBDfCn?=
- =?us-ascii?Q?supCjDxid8HTvK7HpmQ0LmjcWgLh6VMjFyaNOhmW1JFLOBu1hHMvYCFXccF5?=
- =?us-ascii?Q?/vyKpUrugtSOlIlI0npPqZbIYg/XHVZ9QVnox/6jTR5JhdumpYOIH6QdT4Dc?=
- =?us-ascii?Q?w8oCnLDeeg+3hgthhtQ8xJxfEzqN6eMB6JlJ0ZTbCa5WwwHA/cxivyWbAm0/?=
- =?us-ascii?Q?QWrL83u6ZLMQbFPuPXuvVMJZR25qZnaVmYdDhbMufek7Sackmg2loIwk42IJ?=
- =?us-ascii?Q?b608+CyeVLj+oS35NUNKbozRQLReUEJk/2hVj3r1YwYWgXSSJ4OAKdFcKMTW?=
- =?us-ascii?Q?wV9lXAUey2sNg/6u8NZj3pWLadbhG3ESQ+G7zGLILc5OOG2Tk0yZaBI77y+0?=
- =?us-ascii?Q?6fEe6nKmzs4KfCl8AN1Iq2M3Hek4yUWDd5zvJNOGrJY3WngoDb+YVgzvbXhu?=
- =?us-ascii?Q?QBAOliVJUMYtl9Oet0eI6WtGqY2t3rw0VohJtSPXauvzcmxcZDbc5wm1oVOk?=
- =?us-ascii?Q?uePMXS23xCxG6ebtNaVtUjK38TCLa4P1do7DNPp3zSlM1aivQklBewaC/3f8?=
- =?us-ascii?Q?M2XRUd5cL3mKY5dU/BdtQpi3WUWtLdcYZJuRwOpsaDf/BZ03Adb+qZeu+7yD?=
- =?us-ascii?Q?bSE5iPIl9NKOk6Ll5oG3H12dA9a6W6D8V0REqq59OReQN5ZDWL1h8W6L6eXc?=
- =?us-ascii?Q?8SkGFyCMWVsUIea8Zef8MXVf3hrypiFPqbE3tBKNuHcfXk+Oz/HDnYatDSt2?=
- =?us-ascii?Q?+9IE+2NzeL8vfCoKc1iaYMvkq68AL5Mjs0DRURndINHSmvUKNBadbVG8Q+vZ?=
- =?us-ascii?Q?dyNQlUqxl7dkX+NAibY2pj1URO0MbS+lhjujk7CDgk1+wHySZvW07mwfUBy8?=
- =?us-ascii?Q?aNhLM3sghjvWiiEsCcCuKYkgBphRuopD9E1KB6ncoY2Pyn0fdJU6RLhgPH8y?=
- =?us-ascii?Q?VHrS1nw+vZcgEpnsCmUUFSTC9GwG0yFfnESBFMK/iJ/pUfHEVLkad2VVcF1U?=
- =?us-ascii?Q?Sn4oJ1Z10NRciiWsoBt7mCswIpVOcZyMzEM2T+9DCSBmH/1geOldB11i9t2l?=
- =?us-ascii?Q?T6ZwlkrJGshJtE34kgdsFlzsDVwKFw00vkMH54QzOkJjFQPwvJSMjDZhrcqO?=
- =?us-ascii?Q?/N1v2GXUhZ5U2FQngkiReEN/QuTYUFSvrScnLE3WIj4Q+1+z1S55pIEIxBjR?=
- =?us-ascii?Q?qE6jUnS4alruXZ/GZhgeDSsRhWQb8ao7vm7WCmC909aJhJ+utuA9UHve0Xyc?=
- =?us-ascii?Q?YtZYNAtU+8NHf7pCNChVD7bqrTjyBYZKxjDH?=
+ =?us-ascii?Q?qGLmZBMne/PXAdl/TdJLgOFYyAikI2Hr4an9or58jRf+da423tBPNgCatuAp?=
+ =?us-ascii?Q?ljmgiqOwfSvVyRAIkq1cqlD3mNmJGGmWExReqt1IIT+cxojlU+vye1wKCv+g?=
+ =?us-ascii?Q?tjqzY1x3aSCgS1VJ4kURquXjTw7vHECA4OK5xOWCX5TfM8Qxv6ZRgPj9zX4W?=
+ =?us-ascii?Q?dGAOsMeXTzDhYynUU0M1szL2tuyS114j5qMKZFombaqSxVd9S2L2Mw2wGk4M?=
+ =?us-ascii?Q?MRvfFHdbfoMJNQ4KE/vLlj5d0nRU9NQXF+AAR9/AaeRju8SJeJVszxE8o3c7?=
+ =?us-ascii?Q?hsTmN1jlfdkRuIVUTZgiYqH6tjQtimzPN8WcPwFwYyxvtRFV1gpxgoURE2Sp?=
+ =?us-ascii?Q?JfECMc2+zXEC4RnM5DsmUDAdHWFx47JyRyaZgmEkPaWuWi30FY1l3FybDLBa?=
+ =?us-ascii?Q?puS5JJuqlbBgvIxTWH/lLYsu1VNuxnFz5+/t7+kkWJ3h+BWeHkbV0f06EEA8?=
+ =?us-ascii?Q?rwag1E+zAGvxZrl9i4m8Y5rdj+EejtDAaAP+nOnhnuhzt1rcfXeq4cenEJgI?=
+ =?us-ascii?Q?Y7wKTPQNX7xdtES/s6fJNVU7Rd+U4tz0ApsENQMPOgtwbeocGZzp4reQkDFE?=
+ =?us-ascii?Q?r6TZWU4raSnMYCD95Ke3TY84HYRyMsBamT9nWt/0xi9a8vS3AwJ2SEZQ0Ig2?=
+ =?us-ascii?Q?7N3b9p+OXkcBWfbtSb9mt3pBPU5SPUqukrw5LGPDQOb40Cv0sfMOdtWUV1L0?=
+ =?us-ascii?Q?NnR0r0sD3W2i6ZEuABAfhbUmOcQ/QVzKl4XnKCUqIfdmTkYFZPloyWrHA0KV?=
+ =?us-ascii?Q?2NPEumMpi3Qh4juF0taDLa1+bzRnguvmsgBP2ShN/RtP5Jd83IRoXwo/dV3n?=
+ =?us-ascii?Q?/Vzogt+Na1NxGtgYvNpYe/kckulV/B29JWTju16XTgV3OFAq5z/a6+CPm0ZK?=
+ =?us-ascii?Q?q6CaqCc1d+jUzxb/qfWSROaGFu2/viJ1hztmxDAfrSlnIFvNk3mmZbJnH8im?=
+ =?us-ascii?Q?+j/xn7b8bU1TmylR4N97TdVx9O2FOouYtWQRdnQnokyCRtMaoYxnf6wP6Kkt?=
+ =?us-ascii?Q?RVfCmuyOdYfBzlZQvOlm1td1av+n2xGuK0RNZ4wid9wEUbVUnIaQPkbmwcpe?=
+ =?us-ascii?Q?NKBkftsNNBJb4/FXuORlnjGwKs8Y8i8CSlwWz6zYBo9QHtVJn6FD42NLlHp0?=
+ =?us-ascii?Q?FTlotzEOS2da8+fVY+9fsbPX9hU4c7GTFZfVlpjO6ib1fA0BFK8gNhvfU8DA?=
+ =?us-ascii?Q?tfsc9hXicwi0geRXlif1SsofbjGVdyLJWUrIveqE+IpHJ+C6hee8cTXOPN6C?=
+ =?us-ascii?Q?Am7Ifs91gMy+uC+zl3vLt/w6GiqMT6zaKBmXPkYKGSquZoJwNsUpqwXoWRXL?=
+ =?us-ascii?Q?6N0JitWiQYvZ7uo7vcs0+VqLth1CN8RdqY1FjO9Mzbnf6+c91SEL6r+sRSoh?=
+ =?us-ascii?Q?3SOqfwdnL01EjEKC7Riw3b/xIxfCKWTm87jhwJce2f/mv3Xvb6FAfyb2fr+4?=
+ =?us-ascii?Q?48CpdN1mxhbIRyIPaR7lK0dnhi9cSR3OcLR4k8exzImc8IAzt5+HVCQcg6dX?=
+ =?us-ascii?Q?cgTZ8a555C10y//SqB/e8bpMR/UHEECDRn15?=
 X-Forefront-Antispam-Report:
  CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR04MB9621.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(52116014)(19092799006)(366016)(7053199007)(38350700014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
- =?us-ascii?Q?8qS0msKiygjVbzmg1ePJswejnGifneMMfts9/SghpWBKv2ykSWfRYAPdqfCM?=
- =?us-ascii?Q?MWDGGRTss7KBABL7GEe9Z7xV9PebLX5F6xev7rb11ose2xobs/NKvDABrvFT?=
- =?us-ascii?Q?bGMZa2xHj+sxOKj2lmFVeCTVALO9P6Yk0L3UC5viBmsfT65vrl6uBpisik+P?=
- =?us-ascii?Q?xbUI4esfqRYjX+ViPIOLe66cvN9kfMvVhzTvLh1l1dR5T4cSDqsbzRc7NhR+?=
- =?us-ascii?Q?xAMG8VmDJPwxZeyX95kh+1Kv8fcM1lAZKed33sDRpN8lqSlhQXDTPU2UBlcf?=
- =?us-ascii?Q?x9ElJXQ59x1t+gP+4ukh6n8/VIA6Bvgl84khjFdNAQsPWSGQqCv5Ff+thvg/?=
- =?us-ascii?Q?Fs1sa+YoSm65mduo3n7x/BOdSaQa6lq8D15mmEOY7GzbsqKiYdjrDQ1zXf62?=
- =?us-ascii?Q?ToESwQNQgr4n8vsaWb8/fR7RRsGrsXvB0l3F3QiwUJ0zq8mVPO4337E/WPM2?=
- =?us-ascii?Q?R3xUvAv+py5Khx2twsc9pKva8FACQ2LvmrSHVcih8ny8ccKk0n7iDd1qScS3?=
- =?us-ascii?Q?NLmjrsfUnsuJAWcD3pnSeP2w/fC6JJCz+wx6do0RCUYWQU1wokPqFH0h4+0F?=
- =?us-ascii?Q?fiprWRFNIWA/B4DRGIFwXEeTi2pKtuEVqN91dFZRFCHwn8zmq+1CihQq8DC8?=
- =?us-ascii?Q?er14xfiyWjzJl2jEZZXAz+C/h4fXy7q5JGybMAjyV5rtqiAnJN694OStChdm?=
- =?us-ascii?Q?hiBsO/JA8zhtfke9iqfE67ODBznyRm3Uh08ws8oiVqBrGgosnCFd+Eh9DGTa?=
- =?us-ascii?Q?Z33/YevUWaNWzeTbuEW6cZTuJvM8j7HVRbzBnxWWN5Fqi1XRk8g2kXyGYqs7?=
- =?us-ascii?Q?qdR1hlV56HFS/OPHQ1uuUfdKAnwxZ78CjRNEI+i3+c3Z+S/G+u2+gKZyEw1V?=
- =?us-ascii?Q?wB6/uBFf7ALSEcbfeQbvddWEN8/g4SH2uPrwNXQmyO1KI9/3nhA8f4rL/mZh?=
- =?us-ascii?Q?hnoGuzt7vLaIcpLRsPd+4DSt4A8LF8EaXmYNRsQ2zB6T+aFOkz7caXAHyrga?=
- =?us-ascii?Q?gw/vrVRyE7bzsQrWYu8UQ2P09KDu0Y1rE7SqKldweQmGIkmG2BvSNGWv2huA?=
- =?us-ascii?Q?VwcdakyacSKfnBsEFWPN1FNygfTlocb0BIWgPWPkWnBGgzKuWJiRCSOIFw6v?=
- =?us-ascii?Q?4+BsmFS0MLgGOg0mGEClz0FoJD3Ce0+VOTyapa09/bYinoxsaA3WvmHQpMh7?=
- =?us-ascii?Q?t0yymEt6tb4GJ3VICHSH8XyIns0GEPER6Tza24ErOVUwBH7RDJUPOQiq1H0K?=
- =?us-ascii?Q?4Xd7fyW+sJCHIEglTMBeqLhTSgfND18TJvlNfWID7aZMyTuFA9UuVUFcodac?=
- =?us-ascii?Q?GOkbjA2Buco4eQfK8Ja1LHn350dEt+G3Ix3nzpkDzffb+wGlKOUJLsif2fJg?=
- =?us-ascii?Q?7hB9L8jMPlPOi3TpT4nemhDW13uvwfAivj80ijV0IhnKP3I4cLm13iJJyYjY?=
- =?us-ascii?Q?V5rlHN2UM51pXHmWm48cpPo3+/R3FAwFgVj3JLdg+flg5cXVTrG+AKbSAypg?=
- =?us-ascii?Q?Cmju09HkahQYGqL75J6MsU1jSSpYMywYD9LTg3HuWZRYLI6bRbnpMiNCwQ35?=
- =?us-ascii?Q?F215h9mopy+owdzJjYahQEPynX9bR4hF4YyYoeN5?=
+ =?us-ascii?Q?R5uFmoZTlb+lqkwaV/yrFlBEYIfympb89iQbiE03BpgttLvg2M8IdYbdMeC1?=
+ =?us-ascii?Q?32m+FZxgfu5Q3zo0PZXjkOBcLG3suRIbFOWfz/qpXpwJ4mzSptO+XhrEQxBV?=
+ =?us-ascii?Q?6SoXzufGf2fbEs0k9lp030YSiBUJHQbldwM1unJqKgmslnEd0+VbG/NPvuIV?=
+ =?us-ascii?Q?5rCgFqeYghqgPIMQsLdetDj75q49UMBFipzwMgkolFDwOAMXdpCiGNe3YIeU?=
+ =?us-ascii?Q?3SSTLv9Ffpe1Dq6C1H5K7amTySRljBhcoJaWf2m8EzI0chLHYj8w76rrU8BS?=
+ =?us-ascii?Q?1IfHFmV82Xl/kxAdWD8YXSvJxfM6rdzp1fhlIwq7dFVnHkLqIKsXUGjIPNzL?=
+ =?us-ascii?Q?/qX5MkRdDV4LaaNm3V6a5dUJboMCc3e5tysup1BRLk2BrQXlA+I0hWQB5229?=
+ =?us-ascii?Q?pCMa6x4r5vWXsyr99qLx4aGXa3DmMVjYam5vzDvWE1C0+cpzA8IMAQsWJTSI?=
+ =?us-ascii?Q?6w+gniCPYSO2qSKp9iOe/5EljzMVNmpXfcm1tIdtQqPT2eNaW0knB5orRz1E?=
+ =?us-ascii?Q?rVTstYUwm+9rohUQIyzp5n7Q2rp1rxdxhIRTeEpDU3qdYVweb65W6rMFUTDT?=
+ =?us-ascii?Q?ii8//tSk5gUoR9QaGmWHosUxDsK0Z4YGZI1+MS5twoUlU756Rn7iXvvEW4kp?=
+ =?us-ascii?Q?85lXH1YIpvniXySaSd3phLO2z8pySe84mG7bime9dltd+SCVfpGeFSMt7QSs?=
+ =?us-ascii?Q?Qq48XAQtgXz8NwlpzC74J4CQ+nnre/UtOkWIukdPHCTGGbc7YG62r6EbI/rV?=
+ =?us-ascii?Q?5l47ZfeFYqf/7KrtrwS1Nj3ZyrlyWPpImc5Phjl1uB256XyHxFnzzNkIV/DL?=
+ =?us-ascii?Q?GK0uoafR4gcePxSTrRDndZO0gtrglzo/3j229EHEGRAiAUG/gRQBAQVOsl1L?=
+ =?us-ascii?Q?2jV+r5uTHitE0pLguJyz352e4Fwjn7WNlMziSjwGXQeqvgszICeCLBYw5DOF?=
+ =?us-ascii?Q?6kp4T8ml/ePycgg9RObvUEyZrhOrTMNJIWTJiWNFTSGfT3SZ6J12S19Jd/fy?=
+ =?us-ascii?Q?WEApWhE/Digg1Y0nSj2eAmJXKD1nUxrF+MIHBc9tl1VsISee92y/aUEFpVa8?=
+ =?us-ascii?Q?WzhzAhDdv2us9utWkh//siNbhZTRML8aTcDhBfR7FcLcJGfAGqw/xoNa23HW?=
+ =?us-ascii?Q?awR0juN5i+RM09AgWlR2/5JHw4f5kZ1eArTHzCd8zKy4iuV0Y3odAULE/6xu?=
+ =?us-ascii?Q?NZdMVGxc/q9DyzBSNdnLjLyztGQXgC/ACr51PEo7d/C6Z8xGioMfcKiAPvRa?=
+ =?us-ascii?Q?dHDEnV/0/+rK2O3vYAyBkgfd97NvBeNXzjiu8AIf4U6fPCLbVy2VpAs4dgSo?=
+ =?us-ascii?Q?MwAOB4X0Uu+UXF40EE8Gl9V8ONe8zTNnc50kGu+vQXacjeC8JqtVf1IJZeFl?=
+ =?us-ascii?Q?2ZuTu+FA6V3s30538MSuiIwWx1V9jT0X+NKllDPvS1hPY+4NQH8WtAdwmq2z?=
+ =?us-ascii?Q?P9NHy+Jc6imOXQDSR2RTwTeH5d/nxDz6MRMmud/v1XgiqEbO4r3RX/jRdtOv?=
+ =?us-ascii?Q?YQkl+u7NKWcv5cCzdGZM5dyBSY92/qBfuXy+Nri/TBNBq1nFiZAbBE44bB9g?=
+ =?us-ascii?Q?sQK1sAKuHHtNz2DADfaSSBiHUkgZHS8BIMgaAakq?=
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 101672dc-bef6-4f02-1ff8-08de0a86835a
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8fcc09a4-b5bf-48b7-0358-08de0a86c2f1
 X-MS-Exchange-CrossTenant-AuthSource: AS4PR04MB9621.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Oct 2025 18:29:58.2226
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Oct 2025 18:31:44.9359
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: BywooSVIUQVYK4aGWgwvZ/Dx+N/QnGYQHZuvI0swKiUD8qSue/0/FGuVd7Gc6MHJrcz5ygfTTNe/nKQsT4l/KA==
+X-MS-Exchange-CrossTenant-UserPrincipalName: MsGPUG0dU6AHAHDk9Zk3pWaECdlnsO2Pne/Lg2qPovO9kHXGjxCPXFMvuyHbmg9JKINeuDc3t8FLq5ER66iWvg==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS1PR04MB9383
 
-On Sat, Oct 11, 2025 at 06:51:26PM +0200, Marek Vasut wrote:
-> Pass register offset for the second half of the register area around.
-> This is done in preparation for i.MX95 support addition, which has the
-
-This is preparation for i.MX95 support addition...
-
-> registers at offset 0x24 instead of 0x00. No functional change so far.
+On Sat, Oct 11, 2025 at 06:51:27PM +0200, Marek Vasut wrote:
+> Introduce struct dc_fg_subdev_match_data which describes the differences
+> between i.MX8QXP and i.MX95, which in this case is registers offset and
+> address space offsets, and pass it as OF match data into the driver, so
+> the driver can use the match data to apply correct offset to access the
+> IP registers on each SoC. This is a preparatory patch for i.MX95 addition.
+> No functional change.
 >
 > Signed-off-by: Marek Vasut <marek.vasut@mailbox.org>
 > ---
@@ -178,191 +179,247 @@ This is preparation for i.MX95 support addition...
 > Cc: linux-arm-kernel@lists.infradead.org
 > Cc: linux-clk@vger.kernel.org
 > ---
->  drivers/gpu/drm/imx/dc/dc-fg.c | 62 ++++++++++++++++++----------------
->  1 file changed, 32 insertions(+), 30 deletions(-)
+>  drivers/gpu/drm/imx/dc/dc-de.h |  1 +
+>  drivers/gpu/drm/imx/dc/dc-fg.c | 74 +++++++++++++++++++++-------------
+>  2 files changed, 46 insertions(+), 29 deletions(-)
 >
-> diff --git a/drivers/gpu/drm/imx/dc/dc-fg.c b/drivers/gpu/drm/imx/dc/dc-fg.c
-> index 5fadd67aa911b..05e635fdb4f9c 100644
-> --- a/drivers/gpu/drm/imx/dc/dc-fg.c
-> +++ b/drivers/gpu/drm/imx/dc/dc-fg.c
-> @@ -49,35 +49,37 @@
->  #define  ROW(x)			FIELD_PREP(GENMASK(29, 16), (x))
->  #define  COL(x)			FIELD_PREP(GENMASK(13, 0), (x))
->
-> -#define PACFG			0x54
-> -#define SACFG			0x58
-> +#define OFFSET_MX8QXP		0x00
-> +
-> +#define PACFG(o)		(0x54 + (o))
-> +#define SACFG(o)		(0x58 + (o))
->  #define  STARTY(x)		FIELD_PREP(GENMASK(29, 16), ((x) + 1))
->  #define  STARTX(x)		FIELD_PREP(GENMASK(13, 0), ((x) + 1))
->
-> -#define FGINCTRL		0x5c
-> -#define FGINCTRLPANIC		0x60
-> +#define FGINCTRL(o)		(0x5c + (o))
-> +#define FGINCTRLPANIC(o)	(0x60 + (o))
+> diff --git a/drivers/gpu/drm/imx/dc/dc-de.h b/drivers/gpu/drm/imx/dc/dc-de.h
+> index e054ad88190e1..797056a09ddb4 100644
+> --- a/drivers/gpu/drm/imx/dc/dc-de.h
+> +++ b/drivers/gpu/drm/imx/dc/dc-de.h
+> @@ -26,6 +26,7 @@ struct dc_fg {
+>  	struct device *dev;
+>  	struct regmap *reg;
+>  	struct clk *clk_disp;
+> +	unsigned int reg_offset;
 
-I think off is better to read compared o
+the same as other comments, pointer to dc_fg_subdev_match_data.
 
 Frank
-
->  #define  FGDM_MASK		GENMASK(2, 0)
->  #define  ENPRIMALPHA		BIT(3)
->  #define  ENSECALPHA		BIT(4)
+>  };
 >
-> -#define FGCCR			0x64
-> +#define FGCCR(o)		(0x64 + (o))
->  #define  CCGREEN(x)		FIELD_PREP(GENMASK(19, 10), (x))
+>  struct dc_tc {
+> diff --git a/drivers/gpu/drm/imx/dc/dc-fg.c b/drivers/gpu/drm/imx/dc/dc-fg.c
+> index 05e635fdb4f9c..e13b057a92ffb 100644
+> --- a/drivers/gpu/drm/imx/dc/dc-fg.c
+> +++ b/drivers/gpu/drm/imx/dc/dc-fg.c
+> @@ -12,6 +12,7 @@
+>  #include <linux/mod_devicetable.h>
+>  #include <linux/module.h>
+>  #include <linux/platform_device.h>
+> +#include <linux/property.h>
+>  #include <linux/regmap.h>
+>  #include <linux/units.h>
 >
-> -#define FGENABLE		0x68
-> +#define FGENABLE(o)		(0x68 + (o))
->  #define  FGEN			BIT(0)
->
-> -#define FGSLR			0x6c
-> +#define FGSLR(o)		(0x6c + (o))
->  #define  SHDTOKGEN		BIT(0)
->
-> -#define FGTIMESTAMP		0x74
-> +#define FGTIMESTAMP(o)		(0x74 + (o))
->  #define  FRAMEINDEX(x)		FIELD_GET(GENMASK(31, 14), (x))
->  #define  LINEINDEX(x)		FIELD_GET(GENMASK(13, 0), (x))
->
-> -#define FGCHSTAT		0x78
-> +#define FGCHSTAT(o)		(0x78 + (o))
->  #define  SECSYNCSTAT		BIT(24)
->  #define  SFIFOEMPTY		BIT(16)
->
-> -#define FGCHSTATCLR		0x7c
-> +#define FGCHSTATCLR(o)		(0x7c + (o))
+> @@ -82,6 +83,12 @@
+>  #define FGCHSTATCLR(o)		(0x7c + (o))
 >  #define  CLRSECSTAT		BIT(16)
 >
+> +struct dc_fg_subdev_match_data {
+> +	const struct regmap_config	*regmap_config;
+> +	unsigned int			reg_offset;
+> +	const struct dc_subdev_info	*info;
+> +};
+> +
 >  enum dc_fg_syncmode {
-> @@ -98,15 +100,15 @@ static const struct dc_subdev_info dc_fg_info[] = {
->  static const struct regmap_range dc_fg_regmap_write_ranges[] = {
->  	regmap_reg_range(FGSTCTRL, VTCFG2),
->  	regmap_reg_range(PKICKCONFIG, SKICKCONFIG),
-> -	regmap_reg_range(PACFG, FGSLR),
-> -	regmap_reg_range(FGCHSTATCLR, FGCHSTATCLR),
-> +	regmap_reg_range(PACFG(OFFSET_MX8QXP), FGSLR(OFFSET_MX8QXP)),
-> +	regmap_reg_range(FGCHSTATCLR(OFFSET_MX8QXP), FGCHSTATCLR(OFFSET_MX8QXP)),
+>  	FG_SYNCMODE_OFF,	/* No side-by-side synchronization. */
+>  };
+> @@ -91,46 +98,52 @@ enum dc_fg_dm {
+>  	FG_DM_SEC_ON_TOP = 0x5,	/* Both inputs overlaid with secondary on top. */
 >  };
 >
->  static const struct regmap_range dc_fg_regmap_read_ranges[] = {
->  	regmap_reg_range(FGSTCTRL, VTCFG2),
->  	regmap_reg_range(PKICKCONFIG, SKICKCONFIG),
-> -	regmap_reg_range(PACFG, FGENABLE),
-> -	regmap_reg_range(FGTIMESTAMP, FGCHSTAT),
-> +	regmap_reg_range(PACFG(OFFSET_MX8QXP), FGENABLE(OFFSET_MX8QXP)),
-> +	regmap_reg_range(FGTIMESTAMP(OFFSET_MX8QXP), FGCHSTAT(OFFSET_MX8QXP)),
+> -static const struct dc_subdev_info dc_fg_info[] = {
+> +static const struct dc_subdev_info dc_fg_info_imx8qxp[] = {
+>  	{ .reg_start = 0x5618b800, .id = 0, },
+>  	{ .reg_start = 0x5618d400, .id = 1, },
+>  	{ /* sentinel */ },
 >  };
 >
->  static const struct regmap_access_table dc_fg_regmap_write_table = {
-> @@ -126,7 +128,7 @@ static const struct regmap_config dc_fg_regmap_config = {
+> -static const struct regmap_range dc_fg_regmap_write_ranges[] = {
+> +static const struct regmap_range dc_fg_regmap_write_ranges_imx8qxp[] = {
+>  	regmap_reg_range(FGSTCTRL, VTCFG2),
+>  	regmap_reg_range(PKICKCONFIG, SKICKCONFIG),
+>  	regmap_reg_range(PACFG(OFFSET_MX8QXP), FGSLR(OFFSET_MX8QXP)),
+>  	regmap_reg_range(FGCHSTATCLR(OFFSET_MX8QXP), FGCHSTATCLR(OFFSET_MX8QXP)),
+>  };
+>
+> -static const struct regmap_range dc_fg_regmap_read_ranges[] = {
+> +static const struct regmap_range dc_fg_regmap_read_ranges_imx8qxp[] = {
+>  	regmap_reg_range(FGSTCTRL, VTCFG2),
+>  	regmap_reg_range(PKICKCONFIG, SKICKCONFIG),
+>  	regmap_reg_range(PACFG(OFFSET_MX8QXP), FGENABLE(OFFSET_MX8QXP)),
+>  	regmap_reg_range(FGTIMESTAMP(OFFSET_MX8QXP), FGCHSTAT(OFFSET_MX8QXP)),
+>  };
+>
+> -static const struct regmap_access_table dc_fg_regmap_write_table = {
+> -	.yes_ranges = dc_fg_regmap_write_ranges,
+> -	.n_yes_ranges = ARRAY_SIZE(dc_fg_regmap_write_ranges),
+> +static const struct regmap_access_table dc_fg_regmap_write_table_imx8qxp = {
+> +	.yes_ranges = dc_fg_regmap_write_ranges_imx8qxp,
+> +	.n_yes_ranges = ARRAY_SIZE(dc_fg_regmap_write_ranges_imx8qxp),
+>  };
+>
+> -static const struct regmap_access_table dc_fg_regmap_read_table = {
+> -	.yes_ranges = dc_fg_regmap_read_ranges,
+> -	.n_yes_ranges = ARRAY_SIZE(dc_fg_regmap_read_ranges),
+> +static const struct regmap_access_table dc_fg_regmap_read_table_imx8qxp = {
+> +	.yes_ranges = dc_fg_regmap_read_ranges_imx8qxp,
+> +	.n_yes_ranges = ARRAY_SIZE(dc_fg_regmap_read_ranges_imx8qxp),
+>  };
+>
+> -static const struct regmap_config dc_fg_regmap_config = {
+> +static const struct regmap_config dc_fg_regmap_config_imx8qxp = {
+>  	.reg_bits = 32,
+>  	.reg_stride = 4,
+>  	.val_bits = 32,
 >  	.fast_io = true,
->  	.wr_table = &dc_fg_regmap_write_table,
->  	.rd_table = &dc_fg_regmap_read_table,
-> -	.max_register = FGCHSTATCLR,
-> +	.max_register = FGCHSTATCLR(OFFSET_MX8QXP),
+> -	.wr_table = &dc_fg_regmap_write_table,
+> -	.rd_table = &dc_fg_regmap_read_table,
+> +	.wr_table = &dc_fg_regmap_write_table_imx8qxp,
+> +	.rd_table = &dc_fg_regmap_read_table_imx8qxp,
+>  	.max_register = FGCHSTATCLR(OFFSET_MX8QXP),
 >  };
 >
+> +static const struct dc_fg_subdev_match_data dc_fg_match_data_imx8qxp = {
+> +	.regmap_config = &dc_fg_regmap_config_imx8qxp,
+> +	.reg_offset = OFFSET_MX8QXP,
+> +	.info = dc_fg_info_imx8qxp,
+> +};
+> +
 >  static inline void dc_fg_enable_shden(struct dc_fg *fg)
-> @@ -172,15 +174,15 @@ void dc_fg_cfg_videomode(struct dc_fg *fg, struct drm_display_mode *m)
+>  {
+>  	regmap_write_bits(fg->reg, FGSTCTRL, SHDEN, SHDEN);
+> @@ -174,15 +187,15 @@ void dc_fg_cfg_videomode(struct dc_fg *fg, struct drm_display_mode *m)
 >  	regmap_write(fg->reg, SKICKCONFIG, COL(kick_col) | ROW(kick_row) | EN);
 >
 >  	/* primary and secondary area position configuration */
-> -	regmap_write(fg->reg, PACFG, STARTX(0) | STARTY(0));
-> -	regmap_write(fg->reg, SACFG, STARTX(0) | STARTY(0));
-> +	regmap_write(fg->reg, PACFG(OFFSET_MX8QXP), STARTX(0) | STARTY(0));
-> +	regmap_write(fg->reg, SACFG(OFFSET_MX8QXP), STARTX(0) | STARTY(0));
+> -	regmap_write(fg->reg, PACFG(OFFSET_MX8QXP), STARTX(0) | STARTY(0));
+> -	regmap_write(fg->reg, SACFG(OFFSET_MX8QXP), STARTX(0) | STARTY(0));
+> +	regmap_write(fg->reg, PACFG(fg->reg_offset), STARTX(0) | STARTY(0));
+> +	regmap_write(fg->reg, SACFG(fg->reg_offset), STARTX(0) | STARTY(0));
 >
 >  	/* alpha */
-> -	regmap_write_bits(fg->reg, FGINCTRL,      ENPRIMALPHA | ENSECALPHA, 0);
-> -	regmap_write_bits(fg->reg, FGINCTRLPANIC, ENPRIMALPHA | ENSECALPHA, 0);
-> +	regmap_write_bits(fg->reg, FGINCTRL(OFFSET_MX8QXP), ENPRIMALPHA | ENSECALPHA, 0);
-> +	regmap_write_bits(fg->reg, FGINCTRLPANIC(OFFSET_MX8QXP), ENPRIMALPHA | ENSECALPHA, 0);
+> -	regmap_write_bits(fg->reg, FGINCTRL(OFFSET_MX8QXP), ENPRIMALPHA | ENSECALPHA, 0);
+> -	regmap_write_bits(fg->reg, FGINCTRLPANIC(OFFSET_MX8QXP), ENPRIMALPHA | ENSECALPHA, 0);
+> +	regmap_write_bits(fg->reg, FGINCTRL(fg->reg_offset), ENPRIMALPHA | ENSECALPHA, 0);
+> +	regmap_write_bits(fg->reg, FGINCTRLPANIC(fg->reg_offset), ENPRIMALPHA | ENSECALPHA, 0);
 >
 >  	/* constant color is green(used in panic mode)  */
-> -	regmap_write(fg->reg, FGCCR, CCGREEN(0x3ff));
-> +	regmap_write(fg->reg, FGCCR(OFFSET_MX8QXP), CCGREEN(0x3ff));
+> -	regmap_write(fg->reg, FGCCR(OFFSET_MX8QXP), CCGREEN(0x3ff));
+> +	regmap_write(fg->reg, FGCCR(fg->reg_offset), CCGREEN(0x3ff));
 >
 >  	ret = clk_set_rate(fg->clk_disp, m->clock * HZ_PER_KHZ);
 >  	if (ret < 0)
-> @@ -189,34 +191,34 @@ void dc_fg_cfg_videomode(struct dc_fg *fg, struct drm_display_mode *m)
+> @@ -191,34 +204,34 @@ void dc_fg_cfg_videomode(struct dc_fg *fg, struct drm_display_mode *m)
 >
 >  static inline void dc_fg_displaymode(struct dc_fg *fg, enum dc_fg_dm mode)
 >  {
-> -	regmap_write_bits(fg->reg, FGINCTRL, FGDM_MASK, mode);
-> +	regmap_write_bits(fg->reg, FGINCTRL(OFFSET_MX8QXP), FGDM_MASK, mode);
+> -	regmap_write_bits(fg->reg, FGINCTRL(OFFSET_MX8QXP), FGDM_MASK, mode);
+> +	regmap_write_bits(fg->reg, FGINCTRL(fg->reg_offset), FGDM_MASK, mode);
 >  }
 >
 >  static inline void dc_fg_panic_displaymode(struct dc_fg *fg, enum dc_fg_dm mode)
 >  {
-> -	regmap_write_bits(fg->reg, FGINCTRLPANIC, FGDM_MASK, mode);
-> +	regmap_write_bits(fg->reg, FGINCTRLPANIC(OFFSET_MX8QXP), FGDM_MASK, mode);
+> -	regmap_write_bits(fg->reg, FGINCTRLPANIC(OFFSET_MX8QXP), FGDM_MASK, mode);
+> +	regmap_write_bits(fg->reg, FGINCTRLPANIC(fg->reg_offset), FGDM_MASK, mode);
 >  }
 >
 >  void dc_fg_enable(struct dc_fg *fg)
 >  {
-> -	regmap_write(fg->reg, FGENABLE, FGEN);
-> +	regmap_write(fg->reg, FGENABLE(OFFSET_MX8QXP), FGEN);
+> -	regmap_write(fg->reg, FGENABLE(OFFSET_MX8QXP), FGEN);
+> +	regmap_write(fg->reg, FGENABLE(fg->reg_offset), FGEN);
 >  }
 >
 >  void dc_fg_disable(struct dc_fg *fg)
 >  {
-> -	regmap_write(fg->reg, FGENABLE, 0);
-> +	regmap_write(fg->reg, FGENABLE(OFFSET_MX8QXP), 0);
+> -	regmap_write(fg->reg, FGENABLE(OFFSET_MX8QXP), 0);
+> +	regmap_write(fg->reg, FGENABLE(fg->reg_offset), 0);
 >  }
 >
 >  void dc_fg_shdtokgen(struct dc_fg *fg)
 >  {
-> -	regmap_write(fg->reg, FGSLR, SHDTOKGEN);
-> +	regmap_write(fg->reg, FGSLR(OFFSET_MX8QXP), SHDTOKGEN);
+> -	regmap_write(fg->reg, FGSLR(OFFSET_MX8QXP), SHDTOKGEN);
+> +	regmap_write(fg->reg, FGSLR(fg->reg_offset), SHDTOKGEN);
 >  }
 >
 >  u32 dc_fg_get_frame_index(struct dc_fg *fg)
 >  {
 >  	u32 val;
 >
-> -	regmap_read(fg->reg, FGTIMESTAMP, &val);
-> +	regmap_read(fg->reg, FGTIMESTAMP(OFFSET_MX8QXP), &val);
+> -	regmap_read(fg->reg, FGTIMESTAMP(OFFSET_MX8QXP), &val);
+> +	regmap_read(fg->reg, FGTIMESTAMP(fg->reg_offset), &val);
 >
 >  	return FRAMEINDEX(val);
 >  }
-> @@ -225,7 +227,7 @@ u32 dc_fg_get_line_index(struct dc_fg *fg)
+> @@ -227,7 +240,7 @@ u32 dc_fg_get_line_index(struct dc_fg *fg)
 >  {
 >  	u32 val;
 >
-> -	regmap_read(fg->reg, FGTIMESTAMP, &val);
-> +	regmap_read(fg->reg, FGTIMESTAMP(OFFSET_MX8QXP), &val);
+> -	regmap_read(fg->reg, FGTIMESTAMP(OFFSET_MX8QXP), &val);
+> +	regmap_read(fg->reg, FGTIMESTAMP(fg->reg_offset), &val);
 >
 >  	return LINEINDEX(val);
 >  }
-> @@ -249,21 +251,21 @@ bool dc_fg_secondary_requests_to_read_empty_fifo(struct dc_fg *fg)
+> @@ -251,21 +264,21 @@ bool dc_fg_secondary_requests_to_read_empty_fifo(struct dc_fg *fg)
 >  {
 >  	u32 val;
 >
-> -	regmap_read(fg->reg, FGCHSTAT, &val);
-> +	regmap_read(fg->reg, FGCHSTAT(OFFSET_MX8QXP), &val);
+> -	regmap_read(fg->reg, FGCHSTAT(OFFSET_MX8QXP), &val);
+> +	regmap_read(fg->reg, FGCHSTAT(fg->reg_offset), &val);
 >
 >  	return !!(val & SFIFOEMPTY);
 >  }
 >
 >  void dc_fg_secondary_clear_channel_status(struct dc_fg *fg)
 >  {
-> -	regmap_write(fg->reg, FGCHSTATCLR, CLRSECSTAT);
-> +	regmap_write(fg->reg, FGCHSTATCLR(OFFSET_MX8QXP), CLRSECSTAT);
+> -	regmap_write(fg->reg, FGCHSTATCLR(OFFSET_MX8QXP), CLRSECSTAT);
+> +	regmap_write(fg->reg, FGCHSTATCLR(fg->reg_offset), CLRSECSTAT);
 >  }
 >
 >  int dc_fg_wait_for_secondary_syncup(struct dc_fg *fg)
 >  {
 >  	unsigned int val;
 >
-> -	return regmap_read_poll_timeout(fg->reg, FGCHSTAT, val,
-> +	return regmap_read_poll_timeout(fg->reg, FGCHSTAT(OFFSET_MX8QXP), val,
+> -	return regmap_read_poll_timeout(fg->reg, FGCHSTAT(OFFSET_MX8QXP), val,
+> +	return regmap_read_poll_timeout(fg->reg, FGCHSTAT(fg->reg_offset), val,
 >  					val & SECSYNCSTAT, 5, 100000);
 >  }
 >
+> @@ -305,6 +318,8 @@ void dc_fg_init(struct dc_fg *fg)
+>
+>  static int dc_fg_bind(struct device *dev, struct device *master, void *data)
+>  {
+> +	const struct dc_fg_subdev_match_data *dc_fg_match_data = device_get_match_data(dev);
+> +	const struct dc_subdev_info *dc_fg_info = dc_fg_match_data->info;
+>  	struct platform_device *pdev = to_platform_device(dev);
+>  	struct dc_drm_device *dc_drm = data;
+>  	struct resource *res;
+> @@ -320,7 +335,7 @@ static int dc_fg_bind(struct device *dev, struct device *master, void *data)
+>  	if (IS_ERR(base))
+>  		return PTR_ERR(base);
+>
+> -	fg->reg = devm_regmap_init_mmio(dev, base, &dc_fg_regmap_config);
+> +	fg->reg = devm_regmap_init_mmio(dev, base, dc_fg_match_data->regmap_config);
+>  	if (IS_ERR(fg->reg))
+>  		return PTR_ERR(fg->reg);
+>
+> @@ -336,6 +351,7 @@ static int dc_fg_bind(struct device *dev, struct device *master, void *data)
+>  	}
+>
+>  	fg->dev = dev;
+> +	fg->reg_offset = dc_fg_match_data->reg_offset;
+>  	dc_drm->fg[id] = fg;
+>
+>  	return 0;
+> @@ -363,7 +379,7 @@ static void dc_fg_remove(struct platform_device *pdev)
+>  }
+>
+>  static const struct of_device_id dc_fg_dt_ids[] = {
+> -	{ .compatible = "fsl,imx8qxp-dc-framegen" },
+> +	{ .compatible = "fsl,imx8qxp-dc-framegen", .data = &dc_fg_match_data_imx8qxp },
+>  	{ /* sentinel */ }
+>  };
+>  MODULE_DEVICE_TABLE(of, dc_fg_dt_ids);
 > --
 > 2.51.0
 >
