@@ -1,64 +1,63 @@
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD2E63594F
-	for <linux-clk@vger.kernel.org>; Mon, 13 Oct 2025 01:01:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6DE01E9B0D
+	for <linux-clk@vger.kernel.org>; Mon, 13 Oct 2025 01:01:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760317294; cv=none; b=tXLVKr/lMY6f1x6pHNIumFFiT8ObyLp5pjQe/hJGbv0kH246qOaOdN9scvnKL3yWl8JGHyVGsO9htAJ8R+uZHCHT980MNZD7L9XYiDXUJRhwXQ7pbhGeam4dRT2g6WcrNunq16mBah6jx/vOc4Ge/ZZ41t4d0TfIEpc/cXHHTes=
+	t=1760317300; cv=none; b=ZLTaKVbDY/x+W6V97/zCiikQX8/5lAmHxPICj2KgSrnpg3S7VToSORBrkl8O/48uLuLUqSFfqzxmt2XkdC5jXDguhoGnfyqOnJRhlUski1tqAnWBYvLSphmo+LU2opQBKi8tYxFzPEtTQFFsRUymr++Sab7LR37PjEsq25/M+44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760317294; c=relaxed/simple;
-	bh=dhrLxPGTCnTlpUoyVGvUo2ddd4H0lO2MQd8iMkm24hk=;
+	s=arc-20240116; t=1760317300; c=relaxed/simple;
+	bh=vblrrA1PTLfQIEhi9r3mgnNvhMqCX1+5f453+YraP/s=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=CPM5HBPGlMVTMyXtreQvp0s6IOr/yrJ5xIdlEiZRm6/3CmSLS4o/5jXLvuW1zz+16CCU0SsyUOsjxLfsvieKNGjliu/gQGRCgS+7ON15yjSTwxtORWf0Bf82OW6feIYpijV95XW4JkR4wTY0E6jltgQfggFdj3tyAejg2M4cBiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=r3HK5yee; arc=none smtp.client-ip=209.85.214.176
+	 MIME-Version:Content-Type; b=kuCCCOQbNMkuxf+WMyGRwsSBF9Bsq+fg8FcVQCpdUJsy6/b+u/56VnMDOb9fgvP/QxE0b4WD5j3zfH1v3gxDE2J5I2fmU3yF9mxk2rSNfcy0UZzSWEl5GL+ccOL/JGGu08MZoTv2hvC9c/4oU3AwBMK0yYtstTcFUz6cleMqHMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yj5gAkhf; arc=none smtp.client-ip=209.85.215.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="r3HK5yee"
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-26e81c17d60so8428695ad.0
-        for <linux-clk@vger.kernel.org>; Sun, 12 Oct 2025 18:01:32 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yj5gAkhf"
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-b67cd5d88ddso3181a12.0
+        for <linux-clk@vger.kernel.org>; Sun, 12 Oct 2025 18:01:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760317292; x=1760922092; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1760317298; x=1760922098; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=CeD0ycGia2aeOxgxjZnlT8Vbvac6TmHq5j7KmcNWbBg=;
-        b=r3HK5yeedWMBhfa0sYr+F+SLA2HAqukwK1kkftd9moxEbAJo4Oj3nDf4Q40DsHMmJl
-         7/hJoemEvN5jh5h/hXpyscpunQ4Nm2hLgM/yRdWfYMJ9rArtRgBF5KVujjzun7903gfx
-         h5+8wJEMeFnK1lw+XYEeqm8tgXXvDp/ZaOiH2C+keKa2TsuOm9soFf2klWvLJF9yb4SW
-         d+0ABNI+gwAvO0bse3699P17g1wc9Hyl1lCaxBTyv1IaLIoilgNk540WLyaDi49EYc0J
-         02tJw9h13nrC/6wHqLO8XEr7NkO5kLQLtTmKOm8cIcmd4W5VYGSwlDKl1XNpv1YQ6gCD
-         98Kw==
+        bh=LUCP4LKA1bDFYppqppgto8MgAIuMCRJ1Lo8b0QTm/8I=;
+        b=yj5gAkhf6BBL0MNXA02+hw36MWK4tBitSyoh4BfsDTi+al+MuFeBXCdJEeAkTzMm1s
+         MignmTDKUFtgYQA4KjKucC8ryLXj5MsNwh6q94RyF87l0xrWtCogYC1G0Ax4wMczW2YD
+         4se0k6ekipB2gJoK+COiIUwM/JnMGwoD6aRd0XVzhUYWe4Fs2bPzEILQyQ8CW3KUIAf8
+         zNAkScD0BZOn1HUV+Wu57bKOD+NMx+wIy8lAWtokhey9J+O4PuUjFngMv4tmbA2trDJv
+         9fP5ZEqjeq3neRZBvXnHwXBRWiRXqVd7IhsOfsqdlAK53e8JRllgck/vXAcGR5/yOKtK
+         t6Kw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760317292; x=1760922092;
+        d=1e100.net; s=20230601; t=1760317298; x=1760922098;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=CeD0ycGia2aeOxgxjZnlT8Vbvac6TmHq5j7KmcNWbBg=;
-        b=I3q+Sb9jDGiqKo9wfZlaDAtrJ7YGuoDP3QPBEhfOv9eUoAB2k0oh5I4NNhF7R/gs5J
-         Tf2fPBtxf1IQ2xJQ2dq8khKiISSh853b5Jf4fRGiBwR+Zn0apl+27Xwd//EEHtmY2FGx
-         h96++AVleTBXxbPxD97It15hFIPIXHak9S0h+cj0ih+TuprAAflawvBhhcBleHmiYhXj
-         a60ZsyMJyqhzV/11D7qur0jc2V/gOp58alMzh/KoVuPSiAZNOEHejxd/UxJ3UZfeym3w
-         q6MnE249jXbqE+5YdEJUVIjwZU89sVlqO3Ixf5cOEokHlIMqm7y04YXzLSlfHSLqk6VS
-         13UA==
-X-Forwarded-Encrypted: i=1; AJvYcCUV6Si837k47r/EatRkjbWDWyqvBLeJ8ngLBVAae/AxNMEuHh26jmPKJEUnKnX3s6/ePMSAQ7EtoiI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTQqyInIBpI2mP2XuSlvQeSssI+M1N+crLfChgmMYba+waishw
-	3E+k46NHD/OYW+37PRkhlt163vd4ieLtEXNhLyM79jQS4JqeuC566GeyZMDAWBpZ/uo=
-X-Gm-Gg: ASbGncvri+TeITcwGp/sFU2XWt8+yL35d9nDMyVdNI9QQkosKcNgMcmcpA4bJwRnimq
-	HL9usuZjtvLQpI7KJwFQc8ggIObWfzlBJmIJPy4TnhFUnYT7JMlCFCZtz9iQtiBY8JyLoQmJIRq
-	EQ5QmXuBylTjhWaRbsh0nGbCHvqJaQBbkXEOQVhJsYOLEIh4mHIvN27GrP7ioExE4u/A3zipkgL
-	fKQqLNUE6mNTxEA1+2d/jsNbyfP3JT/yhfXwh59NWz/k7hCuG7HPt8zHavVhITIAtzEfngwTp1t
-	qH+CBODxc1mz2A6Q7cCdaW9w4J5UfWzTPXEyYgJI1MQuejzJin1XEfK+Aw0jrZoRzxPcxMCuRrJ
-	r4spiYNr8i116L9lUuJ2KxSt7ihLYKwnAXCNlxD3U/IictzXaLVXg9itrAUjkWCPTgeHoC0lI9z
-	VH4c4wFw==
-X-Google-Smtp-Source: AGHT+IHOaxNaAYL/G3bBHEMSSdgsFReOlc8/uFblf96ArsJ9WQV3cPQ/wzrsOXueFnV0tG611gnucQ==
-X-Received: by 2002:a05:6a20:9383:b0:2df:b68d:f7e with SMTP id adf61e73a8af0-32da8461710mr14755652637.5.1760317291935;
-        Sun, 12 Oct 2025 18:01:31 -0700 (PDT)
+        bh=LUCP4LKA1bDFYppqppgto8MgAIuMCRJ1Lo8b0QTm/8I=;
+        b=lZtOMCBjxgsM/PQvLv9Ev5J7WaQ+BhWNJmmPCQbYRnqhOdHJfV+dPgSsQcaWN6ss0M
+         aTOZmnyr4hznCmRMhgIZQHnYtCdOK3fXqTcWScu3Mhlp2hJFPu+78RyhIBnXOC24oYxc
+         BEGJCS36QnAi4bJqVaBs0eGE6J50UiBfrQZyYV8pQ5vI719gwUCR3l93sY5wLE768rvH
+         wzjWjsXKx5cIu78a8KTcv52o/ofFtfB757qjd/veWpRxcvleCmr+Emmo6XDShhX6yhBv
+         QPRLUmbAGnMPO49iXfDgvcsxinzIeEGFC5Zsv0IfuVAtsv5Z5oe3RsYw7/Dac4pqIaMj
+         bHOw==
+X-Forwarded-Encrypted: i=1; AJvYcCVoGXFNVRBcnBji0y6cPnRFRLMKvR4nfbjgY3opjzd2R3VJe83jwUOPAUwl9mUv7FQ+gJToBwr9d5g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzhFhi1Qqk2+glu9YGI4O2f8vxMFsPY9BGxy3kh4cCUJgugoTq
+	xb8TUCFXvnu+gPC2M9CZGmfoYG3koM2o7ctE9AFh8TC4YqMIuFQS1CNw2/OB+vFka3s=
+X-Gm-Gg: ASbGnctMstsAXcNxHdw6oskCwjlNUBpT2ZjZcJv0wXfgikJ1z5e8RvT49duo+nTCYj6
+	HB5ysOwxq46XWPsYpt+iBAnZn6/xc7rY+KQODOl5ZaJy4qYPARPOtKXmaLvnzF54srvMzKiH9Es
+	Z2dcpG/kqAfJxbzRSu45JCa/yyR79m5sLFPtqKjbuERn3jzYz9yqvdxbPA/uTivPN3ijCujUeyZ
+	CFLezPZ99l85IBmvHVHFfI2hA94G60ZgmOY72+ydilmcZXTFK2RxKUdlfkYhjKTnwqV7yu6OEJh
+	wPG7VnJBH0VlqUgypHPJhqXPIF9ClSvA4f/xSrOoHWzT9qGyVmdQMJgtSjVcRZ3hhdhD6+lLJo9
+	oFFr5f4TQJqxecRmZgs+rXcwWMcUxuiY+Jz8/yCm5V7l7nG2pXzKFvIKhnbgGTX8WB5p4css=
+X-Google-Smtp-Source: AGHT+IE1B9hR89kcu5D4i0PCjI7kQyz2poCnY9xOFDtLABQiwPAkgeCMqEBV5hkmUp72wJBiyTt0Ng==
+X-Received: by 2002:a05:6a00:b50:b0:793:1b79:ee5c with SMTP id d2e1a72fcca58-79387c173d0mr11494869b3a.6.1760317297843;
+        Sun, 12 Oct 2025 18:01:37 -0700 (PDT)
 Received: from [127.0.1.1] ([121.134.152.93])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7992d0e2ab3sm9512805b3a.64.2025.10.12.18.01.27
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7992d0e2ab3sm9512805b3a.64.2025.10.12.18.01.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 12 Oct 2025 18:01:31 -0700 (PDT)
+        Sun, 12 Oct 2025 18:01:37 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To: krzk@kernel.org, s.nawrocki@samsung.com, cw00.choi@samsung.com, 
  alim.akhtar@samsung.com, mturquette@baylibre.com, sboyd@kernel.org, 
@@ -68,14 +67,14 @@ Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
  devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
  linux-kernel@vger.kernel.org, chandan.vn@samsung.com, 
  dev.tailor@samsung.com, karthik.sun@samsung.com
-In-Reply-To: <20250915095401.3699849-2-raghav.s@samsung.com>
-References: <20250915095401.3699849-1-raghav.s@samsung.com>
- <CGME20250915094512epcas5p223e2eb264967508527f478eb2200be83@epcas5p2.samsung.com>
- <20250915095401.3699849-2-raghav.s@samsung.com>
-Subject: Re: (subset) [PATCH v2 1/3] dt-bindings: clock: exynosautov920:
- add m2m clock definitions
-Message-Id: <176031728689.32330.1215080941311408154.b4-ty@linaro.org>
-Date: Mon, 13 Oct 2025 03:01:26 +0200
+In-Reply-To: <20250925130457.3476803-2-raghav.s@samsung.com>
+References: <20250925130457.3476803-1-raghav.s@samsung.com>
+ <CGME20250925125616epcas5p37346312c6a788a5398212f671d8a369d@epcas5p3.samsung.com>
+ <20250925130457.3476803-2-raghav.s@samsung.com>
+Subject: Re: (subset) [PATCH 1/3] dt-bindings: clock: exynosautov920: add
+ mfc clock definitions
+Message-Id: <176031729214.32330.12498017940011083883.b4-ty@linaro.org>
+Date: Mon, 13 Oct 2025 03:01:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -87,15 +86,15 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14.3
 
 
-On Mon, 15 Sep 2025 15:23:59 +0530, Raghav Sharma wrote:
-> Add device tree clock binding definitions for CMU_M2M
+On Thu, 25 Sep 2025 18:34:55 +0530, Raghav Sharma wrote:
+> Add device tree clock binding definitions for CMU_MFC
 > 
 > 
 
 Applied, thanks!
 
-[1/3] dt-bindings: clock: exynosautov920: add m2m clock definitions
-      https://git.kernel.org/krzk/linux/c/4914c17a76047ccbde24397cf9d406558183d756
+[1/3] dt-bindings: clock: exynosautov920: add mfc clock definitions
+      https://git.kernel.org/krzk/linux/c/0b94201e327471d034d81cf5fd2131a5529eea19
 
 Best regards,
 -- 
