@@ -1,121 +1,170 @@
-Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175])
+Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com [209.85.217.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB99B3112B4
-	for <linux-clk@vger.kernel.org>; Mon, 13 Oct 2025 15:24:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 681742727E3
+	for <linux-clk@vger.kernel.org>; Mon, 13 Oct 2025 15:46:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760369050; cv=none; b=m220ta5NbxBPNW/Ih7uLGw6ZMjEg2W0IRUQfsY7HHfnRHgDNFZKprS9DBmsMFcsw808zGXqpmCRRIpzebRf5Hl38X1YVq73llH4xLUgyQzR2YTjTqAjcBRt3Erl9XXvyA3soYk/1OjKOrQObQaCED1VTerCVgrlDxZJa90Fn7vY=
+	t=1760370415; cv=none; b=BT3Y8dOdVIVGlAvxo85LwEtb1EWKUJKaUyZfyWXGw6Qi7jj2gj/vZlPptZ0ckr88x9Ki3dDJ619HQ2xFwk/+/1AHJBdAIikLloE0aCI/0KqeASu5A3tqHlnjFz8vsp/3OVmMRHLf8YWPRpDjXHirbuYiaWFT363CxBuWDC52xkU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760369050; c=relaxed/simple;
-	bh=DENqB/OcotsKyuHcXI2b7+iyagtKWeW19rqjF9NIRV8=;
+	s=arc-20240116; t=1760370415; c=relaxed/simple;
+	bh=UlmRHBnP3MpiQ+OwZRY1Jv/J/gbcIYNu5Xl0caw6270=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qiI8Rkour1U4NHQx0W5lpAD6VPTWbzoCzfLk0t8zvRZspmlSiiromHKqBMSxX+nCuXMx+zzl3S5umisfCa/PRYihSxa6cjie9/5CV5qZ35BzWo418/ZVFfm3a1dPeTLsrktad0jMZ1UDs7rIkmIMDZ69kt1b09O+FhlSHUJ7Ibs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.175
+	 To:Cc:Content-Type; b=OOjikUjZyGpucykY5pVuKOu1SDP3RtUKOKg5WjsoJrFDyFA1Yf+N9GINTsVKJ3TXKq2VWGDgZPeVhk4pPU71MGJcw8l06yqvrC67Aa1aWltrSg9q+oUFshPtV0CptGQj/JFaC/gSss4Xf5St8LEivwe296hokng7OvT5bc6qANg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-54bc2d1feb2so1095375e0c.1
-        for <linux-clk@vger.kernel.org>; Mon, 13 Oct 2025 08:24:07 -0700 (PDT)
+Received: by mail-vs1-f45.google.com with SMTP id ada2fe7eead31-59a8c1eb90cso2084550137.0
+        for <linux-clk@vger.kernel.org>; Mon, 13 Oct 2025 08:46:53 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760369046; x=1760973846;
+        d=1e100.net; s=20230601; t=1760370412; x=1760975212;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=tsy0eDfhPBdpuoZPurTAe13rVL2skD/L1Ou2tlGLMy8=;
-        b=vi5kFiJ86HvwPEmG66QK/J+LoErL1IgHO1L71efIywYcEx2dmbdSvC5al4c+64Z4+J
-         3b7z2/nJzF/Sv5JMp7GyH138zhyLFsHRKGAhVDvyMpW+jOkZE4qW4sRTqah7ZpxosuM8
-         thyUdYHyWAhbizSnC9nX5kXj1n4F61UKAm+LaXYJib6TSTI31kjQpuHMU2+34LIPHUj0
-         AkQSi0JjMgisjNc02GiO2hASZwQHdjKIUMPxEGbRhC6yu7v/RftIsusNMHBqKJeOtvIq
-         YkNg6oX69+bz+onI5LgK195sA0ikZrwCVofsm+N3CnzDLVGLVzfQmSkojFU7l+xNwmgq
-         VA8g==
-X-Forwarded-Encrypted: i=1; AJvYcCXtbFCPxvBICCekYaas0OdsJo0TFscb2AvJGGbsqDiQlgp1cMFwIYeWpzWoWYjaQZNo4euoVH+1rn4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YycHYr1zgyoQGxSIO0TUOxYlQO2Zl4ZXhenk8C/RGSvca+wgEzK
-	iiS8Rix0aQdK/woKXErtPY4bQnfMP4gODEH+OkiIOrx1YSq3feBVSKRrf43o18fn
-X-Gm-Gg: ASbGncv+1eqPKD2IJt4nAp9+XeGtMtJxkaYjBWY8EARmKd3j0P1Lv6w0yaINMUuoHZs
-	wXbHq36/F3txaK5hXfq741tUPfjPYyNk3sAlsexbvt5T3ZvHPFJwXACrU03U/ruJwZhlOMTF0Ad
-	gBcQZzVnKyR5rIqPN0/rlZw1/aVUqHS7LfdiWq4s3wWrbE8BBxI26xFmHc/9sxgsj+RCSh1OboY
-	KDVRNnrtQ2NIAizIVTWrWuexx9o/aVjjZVgA5TdfW3ZP+MYX2Nk0Oq0CdJOG65fVbcbVAICXvDk
-	9vxg7rEiEJ+Ggkkn3pgDUZg7F+g2AolEo5zwEvigyPr+yeEn9p0uzngfrF/b9LnW/MQxXhlHazI
-	PGCok+ze5HS0TMigcWU+9dQVgIrcpdKFZZ/3xHN2xXw1D/UVtCFH6MCBl3uJwdOqDQKXN3ndBQ1
-	VerSw=
-X-Google-Smtp-Source: AGHT+IH6A/z6rYdXZGM7Y9SS3aIm3RcBWjszgfXRK4TQfUaxwpt4Ay67OB4sJxj407FaSjc8//QrYA==
-X-Received: by 2002:a05:6122:31a7:b0:54b:c83b:9299 with SMTP id 71dfb90a1353d-554b8b93859mr7186489e0c.10.1760369046514;
-        Mon, 13 Oct 2025 08:24:06 -0700 (PDT)
-Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com. [209.85.217.54])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-554d80ddf8asm3181313e0c.21.2025.10.13.08.24.05
+        bh=PtJsWdibGOFQ5FzXb1Mac56uXQ5iFDLzA2u7VIR4IYY=;
+        b=nQfBLTxeIBOlDA0VN0+UjtopKm2jFOmCr8sRahH2iGqHz4juSCZfDIW3MhNeRAqj62
+         0HVJ7fgz86XBI1Q3e2DFGlSaYvmSRrHZBuftv85+7W/XK8yc0o1kv5eMK0Ns53Pu7VXU
+         RyVZx9kIvmSVT4dpU4laU2n0ZN+hkX+v2ceYKbJ/j/jtzhTQ+WM4jHJAm5GlkaDqeRUo
+         /75THL4lQ3q4ga/eLyvu1SpuxP4Gzs2R5R1czGRLiELZLWE5bvdlYJMaXIPr3+yeLitS
+         RFVLO4BMTV3wiW91mNN+KBp6QQM8RmOTCVWYrHom5c9xYFZp2fNue9WndnDQX8re6Do5
+         2awQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWik47l4098Cz3Yn6acxn+a7yefam13IQ4R7NAqf9z4IxCrhMPq0+QfvCdxIGZllIMNfnogRemBnpY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxw9ejeyf+6JpfQ+H1JX7dK/UP4CBVLLevmkjqmokH5DOBiF/qO
+	pQwz7a+TaRR08EUd23zcKxMW/OjfZD3CRpIS5x8qA8mQWmWQq2V1rI0MFUCQHa6W
+X-Gm-Gg: ASbGncuXInJQQA2vCpgeOkI2cuVVG331s+uRUdGxaqzjXWjb8TiKLU5xSpbgzD8siI/
+	j6TR2xO5MSOzc1gzW3haCYN69haxWNOSlhnP57JZyE/RDV4qtmlF4HruRcxcSqlDPHG4h3QJu9M
+	COJuKshGe4S8CEjeZv5rGpU6JKYq2/AYksoz0okIigcNie/bhQ+Ee6HLo4BmJlhuQ/XVT5gzErw
+	OCKBTbrtK2IDfxsaTAZPNxOBrP0pFcy06BJ32mBC2P/hZd/spjK0Sr4WX6v/UzpYMAek/d1d1SJ
+	05yLtKs0bymaFSawgP/X2JEzMMGGnF1+30IdaRuuTbL0s1LDs8VKPlL3p7RRd7zRynKecBG0HyC
+	n/zpMoL4eVLcF8qSE6tA0ADBCfc13r63SBna6o8HfqNcgj/4w0oytPud+xotf86JY144ovN72j6
+	4kyzU=
+X-Google-Smtp-Source: AGHT+IEvvFXlCOPXCl/81+coLyBw/otJ9UQImU4oGWl7er599KEYfEhbtCX4VlqVYHmKZiMKKDjSFQ==
+X-Received: by 2002:a05:6102:2c09:b0:5d6:155c:33aa with SMTP id ada2fe7eead31-5d6155c3c51mr1980416137.16.1760370411935;
+        Mon, 13 Oct 2025 08:46:51 -0700 (PDT)
+Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com. [209.85.217.42])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-5d5fc8f17fdsm3498789137.14.2025.10.13.08.46.51
         for <linux-clk@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 13 Oct 2025 08:24:06 -0700 (PDT)
-Received: by mail-vs1-f54.google.com with SMTP id ada2fe7eead31-5ccccc1f7caso2213881137.1
-        for <linux-clk@vger.kernel.org>; Mon, 13 Oct 2025 08:24:05 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUbsQD5BkIGB8S+EzE2oCSopThHCUwwMsJJAlQ0lo/X97UhA9kIoYotuxjtxenFn0sswQmTE8Ujqv0=@vger.kernel.org
-X-Received: by 2002:a05:6102:5987:b0:52a:1ff2:da15 with SMTP id
- ada2fe7eead31-5d5e22a274cmr6461301137.15.1760369045394; Mon, 13 Oct 2025
- 08:24:05 -0700 (PDT)
+        Mon, 13 Oct 2025 08:46:51 -0700 (PDT)
+Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-583a520bd81so1680059137.2
+        for <linux-clk@vger.kernel.org>; Mon, 13 Oct 2025 08:46:51 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVocGJebrWzzux+uk2uOSTsEuASHbTzfkJ24d2sL1NzlaXl06Gb1R1k3VarTa4fgfCq5BzVvuvZojk=@vger.kernel.org
+X-Received: by 2002:a05:6102:3e25:b0:521:b9f2:a5ca with SMTP id
+ ada2fe7eead31-5d5e224f3c1mr7951324137.13.1760370410972; Mon, 13 Oct 2025
+ 08:46:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251010-rzv2h_isp_clk-v2-1-2c8853a9af7c@ideasonboard.com>
-In-Reply-To: <20251010-rzv2h_isp_clk-v2-1-2c8853a9af7c@ideasonboard.com>
+References: <20250929112324.3622148-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20250929112324.3622148-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 13 Oct 2025 17:23:54 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXYsHFi3LSLLPtTZ8xrZsLsXUMG693C3KE=wShhObnkCQ@mail.gmail.com>
-X-Gm-Features: AS18NWA9Hs19mkJEa6IfJo5fXRfqr6oSpD-LjSgVL2758b3dOA-smMQy-fpnLbQ
-Message-ID: <CAMuHMdXYsHFi3LSLLPtTZ8xrZsLsXUMG693C3KE=wShhObnkCQ@mail.gmail.com>
-Subject: Re: [PATCH v2] clk: renesas: r9a09g057-cpg: Add clock and reset
- entries for ISP
-To: Daniel Scally <dan.scally@ideasonboard.com>
+Date: Mon, 13 Oct 2025 17:46:39 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXz0ThdhjeeurjE6TLXjVLXUy-ie-PqXHrTYExQ6TpeLA@mail.gmail.com>
+X-Gm-Features: AS18NWCTwKq3E1BVZam3Q34YfaC1jIp6YPas2zUMEY6rkQoDMFp4o8_Br3H8oBc
+Message-ID: <CAMuHMdXz0ThdhjeeurjE6TLXjVLXUy-ie-PqXHrTYExQ6TpeLA@mail.gmail.com>
+Subject: Re: [PATCH v4] clk: renesas: cpg-mssr: Add module reset support for RZ/T2H
+To: Prabhakar <prabhakar.csengg@gmail.com>
 Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	fabrizio.castro.jz@renesas.com, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, prabhakar.mahadev-lad.rj@bp.renesas.com
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Hi Daniel,
+Hi Prabhakar,
 
-On Fri, 10 Oct 2025 at 11:43, Daniel Scally <dan.scally@ideasonboard.com> wrote:
-> Add entries detailing the clocks and resets for the ISP in the
-> RZ/V2H(P) SoC.
+On Mon, 29 Sept 2025 at 13:23, Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 >
-> Signed-off-by: Daniel Scally <dan.scally@ideasonboard.com>
+> Add support for module reset handling on the RZ/T2H SoC. Unlike earlier
+> CPG/MSSR variants, RZ/T2H uses a unified set of Module Reset Control
+> Registers (MRCR) where both reset and deassert actions are done via
+> read-modify-write (RMW) to the same register.
+>
+> Introduce a new MRCR offset table (mrcr_for_rzt2h) for RZ/T2H and assign
+> it to reset_regs. For this SoC, the number of resets is based on the
+> number of MRCR registers rather than the number of module clocks. Also
+> add cpg_mrcr_reset_ops to implement reset, assert, and deassert using RMW
+> while holding the spinlock. This follows the RZ/T2H requirements, where
+> processing after releasing a module reset must be secured by performing
+> seven dummy reads of the same register, and where a module that is reset
+> and released again must ensure the target bit in the Module Reset Control
+> Register is set to 1.
+>
+> Update the reset controller registration to select cpg_mrcr_reset_ops for
+> RZ/T2H, while keeping the existing cpg_mssr_reset_ops for other SoCs.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 > ---
-> Changes in v2:
-> - Dropped the dt-bindings patches since the macros weren't needed
-> - Squashed the separate patches adding clock and reset definitions
->   into a single patch
-> - Link to v1: https://lore.kernel.org/r/20250506121252.557170-1-dan.scally@ideasonboard.com
+> v3->v4:
+> - Renamed cpg_mrcr_set_bit() to cpg_mrcr_set_reset_state() for clarity.
+> - Updated the parameters in cpg_mrcr_set_reset_state().
 
 Thanks for the update!
 
+> --- a/drivers/clk/renesas/renesas-cpg-mssr.c
+> +++ b/drivers/clk/renesas/renesas-cpg-mssr.c
+> @@ -736,6 +754,72 @@ static int cpg_mssr_status(struct reset_controller_dev *rcdev,
+>         return !!(readl(priv->pub.base0 + priv->reset_regs[reg]) & bitmask);
+>  }
+>
+> +static int cpg_mrcr_set_reset_state(struct reset_controller_dev *rcdev,
+> +                                   unsigned long id, bool set)
+> +{
+> +       struct cpg_mssr_priv *priv = rcdev_to_priv(rcdev);
+> +       unsigned int reg = id / 32;
+> +       unsigned int bit = id % 32;
+> +       u32 bitmask = BIT(bit);
+> +       void __iomem *reg_addr;
+> +       unsigned long flags;
+> +       unsigned int i;
+> +       u32 val;
+> +
+> +       dev_dbg(priv->dev, "%s %u%02u\n", set ? "assert" : "deassert", reg, bit);
+> +
+> +       spin_lock_irqsave(&priv->pub.rmw_lock, flags);
+> +
+> +       reg_addr = priv->pub.base0 + priv->reset_regs[reg];
+> +       /* Read current value and modify */
+> +       val = readl(reg_addr);
+> +       if (set)
+> +               val |= bitmask;
+> +       else
+> +               val &= ~bitmask;
+> +       writel(val, reg_addr);
+> +
+> +       /*
+> +        * For secure processing after release from a module reset, dummy read
+> +        * the same register at least seven times.
+
+This comment is waiting to become out-of-sync with the actual value...
+
+> +        */
+> +       for (i = 0; !set && i < RZT2H_RESET_REG_READ_COUNT; i++)
+> +               readl(reg_addr);
+> +
+> +       /* Verify the operation */
+> +       val = readl(reg_addr);
+> +       if ((set && !(bitmask & val)) || (!set && (bitmask & val))) {
+
+Perhaps just "set == !(bitmask & val)"? Or is that too obscure?
+
+> +               dev_err(priv->dev, "Reset register %u%02u operation failed\n", reg, bit);
+> +               spin_unlock_irqrestore(&priv->pub.rmw_lock, flags);
+> +               return -EIO;
+> +       }
+> +
+> +       spin_unlock_irqrestore(&priv->pub.rmw_lock, flags);
+> +
+> +       return 0;
+> +}
+
+Regardless:
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-clk for v6.19, with the below fixed...
-
-> --- a/drivers/clk/renesas/r9a09g057-cpg.c
-> +++ b/drivers/clk/renesas/r9a09g057-cpg.c
-> @@ -64,6 +64,7 @@ enum clk_ids {
->         CLK_SMUX2_GBE1_TXCLK,
->         CLK_SMUX2_GBE1_RXCLK,
->         CLK_PLLGPU_GEAR,
-> +       CLK_PLLVDO_ISP,
-
-... moving up, with the other CLK_PLLVDO_* entries...
-
->
->         /* Module Clocks */
->         MOD_CLK_BASE,
-> @@ -170,6 +171,7 @@ static const struct cpg_core_clk r9a09g057_core_clks[] __initconst = {
->         DEF_SMUX(".smux2_gbe1_rxclk", CLK_SMUX2_GBE1_RXCLK, SSEL1_SELCTL1, smux2_gbe1_rxclk),
->
->         DEF_DDIV(".pllgpu_gear", CLK_PLLGPU_GEAR, CLK_PLLGPU, CDDIV3_DIVCTL1, dtable_2_64),
-> +       DEF_DDIV(".pllvdo_isp", CLK_PLLVDO_ISP, CLK_PLLVDO, CDDIV2_DIVCTL3, dtable_2_64),
-
-... moving up, with the other CLK_PLLVDO_* entries.
-
->
->         /* Core Clocks */
->         DEF_FIXED("sys_0_pclk", R9A09G057_SYS_0_PCLK, CLK_QEXTAL, 1, 1),
 
 Gr{oetje,eeting}s,
 
