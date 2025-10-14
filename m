@@ -1,78 +1,91 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0013D35948;
-	Tue, 14 Oct 2025 17:48:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 314062741B3;
+	Tue, 14 Oct 2025 18:06:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760464126; cv=none; b=UBYoPIGKA92A5ZlKjC1IqSSpxG3jMl6sYqPXdPsI+aimsbriLbk1zaFwdRf9L6rcXjjm2Vd7OJ4p/9SU9Y+ZQue4tU+pBBxEdrWRusEkw/ELQH7q0nu5bzLhBTmn5toJvP954aYhYE8CGK8JqjXc8Tw6i6FNscsiv9dPFqJl69k=
+	t=1760465217; cv=none; b=rOsqQpAngK1z+jmELBXUJ7DnYJjr9rQPTy/VmmNJ1G024Po5uYhXKupHlKf0RbhfRKx1ROuY6mGK9ruFHP1nVIhut2PDKTUf94xMbKUSOMXlJswK9o0i/5mQzFOVr1ZrTbdsW2yLBlgNCgWi/Wpm1zpnILw7knQ1yWSje+6NCv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760464126; c=relaxed/simple;
-	bh=wbftGYNhKoYWLRqME8ZofabBhLkIsOcpSWlpA7M6FPU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WWDbRbhV0p1earivrECR6vL4KfHk9sZwJkO5wj+GxbFbpIAWX8QGCCCUAF53m760mqeauuazOemGvZVOPjUs/aZCLdrucdv+Jsr2JLe6etvfeFxxnN+MK6AcAuBR/xg0+JXbkEWCladuOyAYnK/NhHg2GNYuRvAr97rflukdnF4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kzNI8Gsr; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1760465217; c=relaxed/simple;
+	bh=2Bc4jeTDUOZBAoT875/RgB8dXWQZZhWa6hi9IWA9N1o=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ld6ggLlNAKcjQ8Gj/7QL08LdIoiHUiGfBwHrjfhFwXVswITkixxuqvjF+JvYxnR8eQT2vNh9SZ6g5YRnaVSqXyhFvxPm0CWs6Pdr8HEH+5wGEmkDYcP0cSqeZ96+BHy0YrC8qOiCIEyy1JHcIwzhJCRJfgTSc404WhjmoTUSIkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=Z9OoWeec; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kzNI8Gsr"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FC23C4CEE7;
-	Tue, 14 Oct 2025 17:48:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760464125;
-	bh=wbftGYNhKoYWLRqME8ZofabBhLkIsOcpSWlpA7M6FPU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kzNI8GsrFNrEub0BvD9o7i66EW4HCx/C/R0rKbpYm368klPrIEfTdkp/wRkFynOL+
-	 s2zeM7Kb/+KHPOGP9uaosk2GcU71gbGuJTPy9c1Ghvq8F9iFhDubsWFMEQlwlOE5Bt
-	 zcoh6tMURiYWW2P7tfQJzqPNOLp6AKepN470/4DSsGMm/cxkaeV4E1ORrYJZB3/FUK
-	 4KmIYv9hnm/UzWYYOKJpn6gP9i6cAPrkD9cJlfxdbrs54GEd1VAQDLs9/dGVIEGFxU
-	 3ZMCVJ+tqL/nEySVqj4u3feyOvXrGHiCoP8fuSRGmZ22qLfQwcLXTHNkPzMNEFWwIC
-	 21znlWXNeJ+yw==
-Date: Tue, 14 Oct 2025 18:48:40 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH 1/2] dt-bindings: clock: renesas,r9a09g077/87: Add
- XSPI0/1 IDs
-Message-ID: <20251014-emphasize-savings-5456a59f62ab@spud>
-References: <20251014151325.160062-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20251014151325.160062-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="Z9OoWeec"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
+	bh=TOZSAhMRoAi3ivFm/RUgbGXpjIfGUXs3ICM+R1IZIJE=; b=Z9OoWeecwoNEZkO2ZI1cvN3ctl
+	AHOBscQGHPybThXJQ1AGvFyJSuYIRJtkxV9QWlhGNG82J2GsJSf2uidys1gK/9oYsIDpDGu4cQv/p
+	N2spY0NZZcZSXEsx9IbkVbuCjZqvxb1mgq6PO91TT5J7KsKCUVNyKWd/cZw5ODK22KaQs8VxOaS75
+	Jb8Oez7VGFEadXfI1xn4sTxqYARkJa29vtwhHE1R8a7UZZPsuoFVyvq80nZhyiD8x1YcynwueslpC
+	jYjHB15kOW3sDEGkPrf6cfpoH+LQL1s+NoqjvLxHMs9R5Et9yCUSCHYeZbp8Qk+1TKR6eQUoS63rr
+	wV2xiR9A==;
+Received: from i53875b75.versanet.de ([83.135.91.117] helo=localhost.localdomain)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1v8jQ9-0001Gj-RG; Tue, 14 Oct 2025 20:06:49 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: robh@kernel.org,
+	WeiHao Li <cn.liweihao@gmail.com>
+Cc: Heiko Stuebner <heiko@sntech.de>,
+	hjc@rock-chips.com,
+	andy.yan@rock-chips.com,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: (subset) [PATCH v2 0/8] drm/rockchip: Add MIPI DSI support for RK3368
+Date: Tue, 14 Oct 2025 20:06:33 +0200
+Message-ID: <176046473165.1662867.3389597341632636891.b4-ty@sntech.de>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250905025632.222422-1-cn.liweihao@gmail.com>
+References: <20250905025632.222422-1-cn.liweihao@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="/sKAZk5BI9NvYP7l"
-Content-Disposition: inline
-In-Reply-To: <20251014151325.160062-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
 
---/sKAZk5BI9NvYP7l
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Fri, 05 Sep 2025 10:56:24 +0800, WeiHao Li wrote:
+> This series adds MIPI DSI support for the Rockchip RK3368 SoC, enabling
+> native display connectivity through the MIPI DSI host controller and
+> PHY. The changes span multiple subsystems, including clock control,
+> DRM/VOP integration, DSI controller binding.
+> 
+> Key changes:
+>  - Update dw-mipi-dsi-rockchip driver to preperly handle RK3368 dsi
+>    initialization.
+>  - Add missing lut_size of vop_data for RK3368.
+>  - Add missing clock ID SCLK_MIPIDSI_24M to the RK3368 CRU driver,
+>    which is required for enabling the 24MHz reference clock.
+>  - Add MIPI DSI node to rk3368.dtsi with correct clocks, resets,
+>    and register mappings.
+>  - Add dt-bindings document.
+> 
+> [...]
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-pw-bot: not-applicable
+Applied, thanks!
 
---/sKAZk5BI9NvYP7l
-Content-Type: application/pgp-signature; name="signature.asc"
+[5/8] arm64: dts: rockchip: Add display subsystem for RK3368
+      commit: ef06b5ddee1e1288e51e8d961947d1b16156db0c
+[6/8] arm64: dts: rockchip: Add D-PHY for RK3368
+      commit: d62e2ad29b815509291b6a07787ed51b52e2b4d5
+[7/8] arm64: dts: rockchip: Add DSI for RK3368
+      commit: 5023d0cd61831acd6e88496f5f7867a18a217a74
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaO6M+AAKCRB4tDGHoIJi
-0gPNAP4vHeJ0rCWCEb594UGNl/AkjvvmlsNc+rIOvXgbqK/myQD+L61aa5QcZcpM
-vzIuXDySLGITMVLT4bLE+xlnBFBKxw8=
-=w0RP
------END PGP SIGNATURE-----
-
---/sKAZk5BI9NvYP7l--
+Best regards,
+-- 
+Heiko Stuebner <heiko@sntech.de>
