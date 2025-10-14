@@ -1,102 +1,95 @@
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18F8B30E849
-	for <linux-clk@vger.kernel.org>; Tue, 14 Oct 2025 12:03:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50DDC31353D;
+	Tue, 14 Oct 2025 12:23:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760443430; cv=none; b=e2Z/UhjCrJyFN13oThHwfgx2ZH1watH8WBjMD1xL3G4o7jLaNlpH95yF/xbUZp2jMR7jHG2I3KPZdlZHdR1PVXerH2jjar6vJar2Rn52YQA3f6qeWVuutOFDnrxLci/LkZGhff8kVWrqvJOoL8C/jfodWhqVbYmxa5aZ5NtObbI=
+	t=1760444624; cv=none; b=Ml9A0oiLkZnUevKHmvnc38olKn6xUsemW/MCvzNNb8ryzRNCSCc2Cp3YR48K0hrvbVjLhOr8F0xfxqDYOI0cWFnUv2A9gCRjEy1aOOLQ98Dhj9pw5oHxj+7MtBvN2RJJ5QETg59FYGNkNwOvFRgre8Y2B02dODCcavRboz/hi/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760443430; c=relaxed/simple;
-	bh=0NzeDm4YRr+qmfFJMboOlJS287Q0PmtLlAQtT9HyscU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=V/ClT6UojbaAF4+wxxVYlcbXDI7wYz4KKgeT0LHfd0xJJVOYIzyPxHotcDsFSytC2vcDOGEk7Cw/MvFl8Y3WpYHfV1ytBiVecqfcEubfwvN3xDseQV4tHUiVoOc7wr35CMlEhSeg+9O+2ZFGW0Clri9J5iQqgEDW370hR01oRqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KeRbIqUR; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1760444624; c=relaxed/simple;
+	bh=CafyeVLIYPhJPVMUhLBEGd8+CQQAGixD0ZmUS6mVJSw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=vENAQoRtGBbYrh4+1K0aH2MTj9cJtDAzyQfyJ9rIJIRb8CHCUIXpMYV7/A09iZKTf+unULd56uW/cgLDHcQ2afVeslgwVECf4TAZxDC8pulBEpg1xoJ1QkSrxG2X0VwvxaolLFZ1Tpn3NfS7BtnaXQIJ2lupKhxU67aTKp/QXG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=DaOYctO2; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KeRbIqUR"
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-57a604fecb4so6899585e87.1
-        for <linux-clk@vger.kernel.org>; Tue, 14 Oct 2025 05:03:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760443425; x=1761048225; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0NzeDm4YRr+qmfFJMboOlJS287Q0PmtLlAQtT9HyscU=;
-        b=KeRbIqURvSmDKHLD9BjfyIl86pAK4C1iZUq/tjbs9bCMuphFQdxqW/bAwAcKUAv6Lm
-         t2wwL6yXnVXaxgrF0sLYb737SQ8RdSXjPkeXO5507NRFOtJA4msOXarJBHf2TSkPrEfZ
-         pxFqUgNRQ7AKGBqXyiDY7KwpgVVKEutHHW2tS7ahbfy4iBGKMRlFQyzT/5jYpbWmfRXe
-         lf/ysQHLr3QRASu7pWgUnhdiN1VaT6ddwnnzRTyJY8hWJDGJTH7ftYZHxcgmQyuu+m1+
-         +N+7s27oeoUcsRHx5dygwN8+RN/TogsDtRbxTubRDheKks491Bi1l0+2JQtjj6ZQrTq6
-         7KhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760443425; x=1761048225;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0NzeDm4YRr+qmfFJMboOlJS287Q0PmtLlAQtT9HyscU=;
-        b=LGmWUkksrFwYG6W5tJBqnBZx6xR96Zlm7Xi+apsACuNMtyt3vetreBCfNHhJeU9qMD
-         ogiroek6I8INaX73r1VPL5I108cHlaeDmQFVAUFOj+qpWfjOEmDhin4FC+nwnIR9Rt1j
-         dq8+g34w8LqKvn6ek1FaBSN4VSomnlfiiYl1EiPvuobbP9gCeOtkZNo8CL/0psdnHO9b
-         0Dcd1WsIj2CSYl4QdX8pMEmcKMKAAxJbFJ2pX0DXCnacVhR9b9MSk5cv44WW0MK6dgBW
-         5J8QjSJ5sZa4RVge0sthMHFYsFd+NUbPAJPydM/SRMUEBHeQWi/dVryJduPIDmNrUk1t
-         JDvw==
-X-Forwarded-Encrypted: i=1; AJvYcCXh32oqYJH3i9Y6g47y6Ar8qo64wtI5FBFS9aF/tvbb7LU6w0znEuVuoaaY8RKjEyvsCV3nXQSBvyA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJ4vJ6eAqH3F8jmHxIfXFKfKhnK3xEL23H4VD0NIBhq86Mvf5Q
-	tcOBHQHM7LVtP6p3cyUxRxS5SriffDOBHp3aeACJdnVcft5ZI47vbLiPvzcmYyzRKqnC+EBH8Ak
-	liSGYRd7ycSs7n5pO2g4DsxLkgh/6g08n+DFDDHYXlg==
-X-Gm-Gg: ASbGncv37IEaP8K0ZXwNxtOZspKL/y5QzvrshSct8p7XougkBVivxvrOZEb9ThtDhUk
-	D0OKWC1XQwH5W9qhD7PHhNilaEyOjVHbPVpcsOCbN0mpoOMBEDNGyrSzQkybo+O+w9Yo039wHvG
-	koIO2m5VXNqshsox8pky9y5gYm7vASC/uMdXUXrzF1VekM6XttSx+Nx/yQF1UQ4DIrZZ/Vc+5AU
-	lk3LBImgc+mjshTKILYB7mOj7enq4QgmWk1Fpnf
-X-Google-Smtp-Source: AGHT+IFD0BB7RH2Ep9aDetjvf52TraFr1nZFUAFZVtaRLq2brbGFG6VPJ0RQdb2vqcIUZBE6o0FGikD6X+TXoiS5UhI=
-X-Received: by 2002:a05:6512:3d10:b0:58b:26:11da with SMTP id
- 2adb3069b0e04-5906d8ef684mr6189769e87.29.1760443425099; Tue, 14 Oct 2025
- 05:03:45 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="DaOYctO2"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
+	bh=A2wa4K0qWIFLcAnfmzypd+kDyosnJxyDAY3/uLjy03g=; b=DaOYctO2Ib9IIYYgqETAyF2zIt
+	0+gdutChlJDPIJbn0lIc0SwMbpflnjgYWoOc7FgRiawhAQkz3x9py/RpPBWx2KjwC06eTD7fneq09
+	bJp8jk4J3cRK3O0DZ32q6J+QQnBtn7Yuch+Q5V6lLihMBGmKAPfrwfQwJwNJSINqraC9zCmT40rC0
+	AdvyMhuGPULRwEJ7U7cWltvUNxOa67xECIx+3RpFdtsy+6jYWsUbO04FuEhB+0FBHrauAfDjxX6Az
+	8eX0hhGCHsZm3ry0U70sKnfyLUXe2QZoTMr6f0tpaMuvj2+vMOCYW47xmewnSGd8YFn+YzsGaDYuT
+	cy3bAg7A==;
+Received: from i53875b75.versanet.de ([83.135.91.117] helo=localhost.localdomain)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1v8e3s-0007Hl-IL; Tue, 14 Oct 2025 14:23:28 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: robh@kernel.org,
+	WeiHao Li <cn.liweihao@gmail.com>
+Cc: Heiko Stuebner <heiko@sntech.de>,
+	hjc@rock-chips.com,
+	andy.yan@rock-chips.com,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: (subset) [PATCH v2 0/8] drm/rockchip: Add MIPI DSI support for RK3368
+Date: Tue, 14 Oct 2025 14:23:18 +0200
+Message-ID: <176044455977.1550590.10827811203766869968.b4-ty@sntech.de>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250905025632.222422-1-cn.liweihao@gmail.com>
+References: <20250905025632.222422-1-cn.liweihao@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251008073046.23231-1-clamor95@gmail.com> <20251008073046.23231-2-clamor95@gmail.com>
-In-Reply-To: <20251008073046.23231-2-clamor95@gmail.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 14 Oct 2025 14:03:32 +0200
-X-Gm-Features: AS18NWCj_bKF0VIZCo40xgE2nZcym7DwrLVXQ08YjlTg5hV9lzx6rx-fa2x4Vss
-Message-ID: <CACRpkdb74fh_eFCd0MM4RK1_KtNRugLPp2yMA20FrpHq+-o6YA@mail.gmail.com>
-Subject: Re: [PATCH v4 01/24] pinctrl: tegra20: register csus_mux clock
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Sowjanya Komatineni <skomatineni@nvidia.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
-	Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Mikko Perttunen <mperttunen@nvidia.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	=?UTF-8?Q?Jonas_Schw=C3=B6bel?= <jonasschwoebel@yahoo.de>, 
-	Dmitry Osipenko <digetx@gmail.com>, Charan Pedumuru <charan.pedumuru@gmail.com>, 
-	Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>, Aaron Kling <webgeek1234@gmail.com>, 
-	Arnd Bergmann <arnd@arndb.de>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-media@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-staging@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 8, 2025 at 9:31=E2=80=AFAM Svyatoslav Ryhel <clamor95@gmail.com=
-> wrote:
 
-> Add csus_mux for further use as the csus clock parent, similar to how the
-> cdev1 and cdev2 muxes are utilized. Additionally, constify the cdev paren=
-t
-> name lists to resolve checkpatch warnings.
->
-> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+On Fri, 05 Sep 2025 10:56:24 +0800, WeiHao Li wrote:
+> This series adds MIPI DSI support for the Rockchip RK3368 SoC, enabling
+> native display connectivity through the MIPI DSI host controller and
+> PHY. The changes span multiple subsystems, including clock control,
+> DRM/VOP integration, DSI controller binding.
+> 
+> Key changes:
+>  - Update dw-mipi-dsi-rockchip driver to preperly handle RK3368 dsi
+>    initialization.
+>  - Add missing lut_size of vop_data for RK3368.
+>  - Add missing clock ID SCLK_MIPIDSI_24M to the RK3368 CRU driver,
+>    which is required for enabling the 24MHz reference clock.
+>  - Add MIPI DSI node to rk3368.dtsi with correct clocks, resets,
+>    and register mappings.
+>  - Add dt-bindings document.
+> 
+> [...]
 
-This patch 1/24 applied to the pinctrl tree!
+Applied, thanks!
 
-Yours,
-Linus Walleij
+[1/8] drm/rockchip: dsi: Add support for RK3368
+      commit: 6dd6949c76afbec037a66e6b9bcb6e2c5dee933e
+[2/8] drm/rockchip: vop: add lut_size for RK3368 vop_data
+      commit: 8e944ab8196e421f20386f51c5ffc43baa145932
+[8/8] dt-bindings: display: rockchip,dw-mipi-dsi: Document RK3368 DSI
+      commit: 2b756d321bf9f4e93437198d212c6ccec137b295
+
+
+Moved patch8 (dt-binding) in front of patch1 (driver addition)
+
+
+Best regards,
+-- 
+Heiko Stuebner <heiko@sntech.de>
