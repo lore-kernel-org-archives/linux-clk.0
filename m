@@ -1,36 +1,49 @@
-Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35FBB3148B5;
-	Tue, 14 Oct 2025 14:09:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3420A28751D;
+	Tue, 14 Oct 2025 14:35:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760450979; cv=none; b=aUoemf22Iyq+oOVhsNUoICCzWrIbNSEXa3+pZF/XtOEO5+MxnVQzCPy/0h05zGheizdoBLSWWj7ZBMRXJWch4f2B6tKyg/6TfEQMCcKDxLw/l9LWMIFfx36AAXw7euuRWdq6Tg/Kq6r7Nq856EYq8KkG5xk/yaI9cx4qcnsqS+4=
+	t=1760452556; cv=none; b=NrsM313nHuEz3FSAKk/mkcz6Rt2vD3djhRdC6B1X/0TeirJ1sAD63LrjISPxUgKmRGcbRFUAboNZbUI1hfH7pslKKl6vbzc9TrxWhveqbH437/glzs0QCTyKnbAUSu/QQa3f3Xok3VPy7ha1lFgUSgH2FoJLutdzLoBXwRnp344=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760450979; c=relaxed/simple;
-	bh=C+I7jRzy1uHJ8YIDmnk3OZCclxRG44SM/5BgAM5ngnA=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=PqrupxSHp2pMTcrfRsSC/v/7b0UvEySnb+pff8Q6lQQ/SZ6IM7xq3l49Jp4BOcJXccFNWM89VtK5OWnv6AFHCovO6fnZavmzDTKHepKoaKXNi7SWURp0y2EXeBvraGpWbEt4gS3rPMNNxXdGgXaPpuxnkOQDem0AL8+TrKA5ejQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=ZyQO1s+I; dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=9VLwke00; arc=none smtp.client-ip=5.75.144.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
+	s=arc-20240116; t=1760452556; c=relaxed/simple;
+	bh=7KNa7wMTbQbmZ467rE28JO0t2zhoYtNlOvlIQNscl48=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=OdrplKkSt9w3xTWhxvQQhUE7xZjEu4LJIIhjUbC51O5Qje/pANXplajpXXwobn7jd0VhLQlmxz/vuFeNWUk17uvsr5ubrXU7kOAhtnMpLarxqIyN3m8pr05Zn7a+NB2CJgNbM6MSXtNwDdS5lLV41R0qD90niZuodYzWxtdHTvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=bjkKe4IG; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="ZyQO1s+I";
-	dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="9VLwke00"
-DKIM-Signature: v=1; a=rsa-sha256; s=202507r; d=mainlining.org; c=relaxed/relaxed;
-	h=To:Message-Id:Date:Subject:From; t=1760450668; bh=POZJoYeAh9Ape4Vz22iS9RG
-	4lQbKzFY6rrb0lkpBS60=; b=ZyQO1s+ItIpEJCKAc50L5zX7OpM1v8EQ43mrU5aI8ZrbMO/Bpq
-	+gOeL0xMnouZdOYa1cYPNLgdP3kjUA4Vi5xzCFp7eShX1ExplQORdjrtSNVtibxH/I7vPwywv3s
-	nLiROVRRvnmm9vE+fl/jqWefObFu6UuMnBNDg87dmFJdwSwrTbJ1+4wvtfBbHEHU5qFTItOt6/x
-	NCuZ+7/5+sWA19WER6T2CmeIUGgJNGAxRCjVWGoeBJE2Zg0qxeJOkDBH0m6f9HaG+ywB7dYO8jT
-	gE25LIoCrJxPiH1atiav6VtROmvhsPEdLA7sUeszt7stFulNs6034UCER9UutKUIAGA==;
-DKIM-Signature: v=1; a=ed25519-sha256; s=202507e; d=mainlining.org; c=relaxed/relaxed;
-	h=To:Message-Id:Date:Subject:From; t=1760450668; bh=POZJoYeAh9Ape4Vz22iS9RG
-	4lQbKzFY6rrb0lkpBS60=; b=9VLwke00XwuZlNV4JY4llWmJIgCSGsivffnez+tmhUurwd3RC9
-	TlHnA67EOLZ45l8kZVzvAahT2dnyfUAaFzCA==;
-From: =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
-Subject: [PATCH v10 0/3] Initial support of MSM8937 and Xiaomi Redmi 3S
-Date: Tue, 14 Oct 2025 16:04:23 +0200
-Message-Id: <20251014-msm8937-v10-0-b3e8da82e968@mainlining.org>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="bjkKe4IG"
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59E87G6b019855;
+	Tue, 14 Oct 2025 14:35:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=moyjh2Z/8bfDBFji1OPTFR
+	7wVBaNaU9yBpbA9EtFOc4=; b=bjkKe4IGIVd6nTwf0SWq/2ajHCCxlMcskWXl+E
+	JBLIR3HWOQ6lqAVNUFyosziC23uyhzI/Vna4r/MW5rvwLZ4+zShJLSLYj+V3Js1e
+	QtJT6ekRRVHCEd3ibADeA3MXhQn+cxtYeFlYlOXhpX438es2tT9+8KBZKGvrIOnx
+	ZUJemVDdpb+Hj4BfQdW/eAK9RvAOrNVR+SHfx9mXlvgQKnZdcrYEgMdFbH7H/r0k
+	oqC8k8lo1Dp9DrPKz5JDiHjr1vmV0WJ/cqxbqwdSDh2yGy8FCHSm9Zlzdcr7r+eQ
+	CPCVh24XTbNN0UUQliZiE/MEaPGqfF8HN+iwSWYHU9/1GsVw==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49qg0c0sy6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 14 Oct 2025 14:35:43 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 59EEZgKh004513
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 14 Oct 2025 14:35:42 GMT
+Received: from nsssdc-sh01-lnx.ap.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.24; Tue, 14 Oct 2025 07:35:37 -0700
+From: Luo Jie <quic_luoj@quicinc.com>
+Subject: [PATCH v7 00/10] Add Network Subsystem (NSS) clock controller
+ support for IPQ5424 SoC
+Date: Tue, 14 Oct 2025 22:35:25 +0800
+Message-ID: <20251014-qcom_ipq5424_nsscc-v7-0-081f4956be02@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -39,164 +52,179 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-B4-Tracking: v=1; b=H4sIAGdY7mgC/3XRwU7EIBAG4FfZcLaGGdoO48n3MB7oAF0S2zWta
- TSbfXfpJkoT8TgTvn8YuKo1LCms6ul0VUvY0poucy5AP5yUnN08hib53FCosdMIupnWybKhBtG
- GqL2YIKzy6fclxPR5j3p5zfU5rR+X5euevMHe/cmA34wNGt2QRwq+p0jaPk8uzW9pTvP4eFlGt
- QdteMBoCsaMB2bKzd4Eb6rYHHFbsMnYO08CFkVkqOK2YANdwW3GEMFgsKRdy1XcFdziYeduv3Z
- kSxwitL6O+4Itlkff+h1r1gM6GXoKVUwHbA6TKWM06DgOwG6gKrb/YLtPJi++N+Kckyrmglkfv
- oozdppJGKSzGv7g2+32Ddw76ZGMAgAA
-X-Change-ID: 20250210-msm8937-228ef0dc3ec9
-To: Bjorn Andersson <andersson@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Stephan Gerhold <stephan@gerhold.net>, 
- =?utf-8?q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>, 
- Linus Walleij <linus.walleij@linaro.org>, Lee Jones <lee@kernel.org>, 
- Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
- Robin Murphy <robin.murphy@arm.com>, Konrad Dybcio <konradybcio@kernel.org>, 
- Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- Dmitry Baryshkov <lumag@kernel.org>, 
- Rob Clark <robin.clark@oss.qualcomm.com>, 
- Abhinav Kumar <abhinav.kumar@linux.dev>, 
- Jessica Zhang <jessica.zhang@oss.qualcomm.com>, 
- Robert Marko <robimarko@gmail.com>, 
- Adam Skladowski <a_skl39@protonmail.com>, 
- Sireesh Kodali <sireeshkodali@protonmail.com>, 
- Das Srinagesh <quic_gurus@quicinc.com>, 
- Srinivas Kandagatla <srini@kernel.org>, 
- Rob Clark <robin.clark@oss.qualcomm.com>, 
- Dmitry Baryshkov <lumag@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-gpio@vger.kernel.org, iommu@lists.linux.dev, 
- dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
- phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, 
- linux@mainlining.org, 
- =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>, 
- Dang Huynh <danct12@riseup.net>, 
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1760450666; l=3812;
- i=barnabas.czeman@mainlining.org; s=20240730; h=from:subject:message-id;
- bh=C+I7jRzy1uHJ8YIDmnk3OZCclxRG44SM/5BgAM5ngnA=;
- b=XwivLAYsPR4LZnKO9q5c7+bFeTDlvdy8G2gZvkodlsKGnvlLS7vSOvbr0krVq648cRwNcCqWl
- YIJu7HLB0FDAcRgq5zJpbMKQu5gcBUs5V57aEl/Xm8J2+GwBInUz0Uc
-X-Developer-Key: i=barnabas.czeman@mainlining.org; a=ed25519;
- pk=TWUSIGgwW/Sn4xnX25nw+lszj1AT/A3bzkahn7EhOFc=
+X-B4-Tracking: v=1; b=H4sIAK5f7mgC/22NQQ6CMBREr0L+2pq2tEVYeQ9DCJSP/IUFWiUa0
+ rtbu3b5JjNvDgjoCQM0xQEedwq0uATVqQA79+6OjMbEILnUggvFNrs8Olo3raTqXAjWMsRhNLI
+ vBVYK0nD1ONE7S29t4pnCc/Gf/LGbX5p1vJb6n243jLNq6kdTD0KV+nLdXmTJ2XPqQhtj/AJSs
+ 3FKtgAAAA==
+To: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "Varadarajan
+ Narayanan" <quic_varada@quicinc.com>,
+        Rob Herring <robh@kernel.org>,
+        "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        "Anusha Rao" <quic_anusha@quicinc.com>,
+        Devi Priya
+	<quic_devipriy@quicinc.com>,
+        Manikanta Mylavarapu
+	<quic_mmanikan@quicinc.com>,
+        Georgi Djakov <djakov@kernel.org>,
+        Philipp Zabel
+	<p.zabel@pengutronix.de>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Konrad
+ Dybcio <konradybcio@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski@linaro.org>,
+        <devicetree@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+        <netdev@vger.kernel.org>, <quic_kkumarcs@quicinc.com>,
+        <quic_linchen@quicinc.com>, <quic_leiwei@quicinc.com>,
+        <quic_pavir@quicinc.com>, <quic_suruchia@quicinc.com>,
+        Luo Jie <quic_luoj@quicinc.com>,
+        Konrad Dybcio
+	<konrad.dybcio@oss.qualcomm.com>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1760452536; l=5119;
+ i=quic_luoj@quicinc.com; s=20250209; h=from:subject:message-id;
+ bh=7KNa7wMTbQbmZ467rE28JO0t2zhoYtNlOvlIQNscl48=;
+ b=SulFvGhg7QlW1UrWht7gQbOVva0v6rrAT+WRheLpyOe5cAJytMygDjadhGti9edzT4p2K5hJV
+ rraTPg+2zWXBNPy9juNxL9Xu/Xpa2Sdr49USyeNUYBlNvQGW38suZ9d
+X-Developer-Key: i=quic_luoj@quicinc.com; a=ed25519;
+ pk=pzwy8bU5tJZ5UKGTv28n+QOuktaWuriznGmriA9Qkfc=
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: _6Jkyj4yyEGTHcVvLS2jWlAe-Ml-dNBT
+X-Proofpoint-ORIG-GUID: _6Jkyj4yyEGTHcVvLS2jWlAe-Ml-dNBT
+X-Authority-Analysis: v=2.4 cv=eaIwvrEH c=1 sm=1 tr=0 ts=68ee5fbf cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8
+ a=ZVt5iEiquArM4_yOc0kA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDExMDAyMiBTYWx0ZWRfXxelgXNtMd6YY
+ w5t8iM4+RzsFyhDO7Z5qsSXtfax/+zlsRapncbfWEMPwDWAK7hdh8KXCK1CwHER0SHNwKzA7pum
+ Biy+cU7EKvw6kNw+E2SXzK+RjYgV5DkQCArMsEULwSJeZ/kAlc87XSebed2zwKKPQahqDKiDusv
+ pczO/r7bqZO09fU1QSMF8t7U81in6mlS1jRMSdFpfTvvxcMG5UeC69aMNSC6isPVVyjxVv30sv3
+ aHfhtV4V0v4fzANXaj6Pemqm31jyROteSvorOQ/KEP+lCita2fKZT4WwrFXhE4BF8Xq4OxKphz2
+ 9yq4ZUjNHR3Z3NJjVyn4ZVBE722wcECMQ5jhhyCd+V9ma4bNxqqeAusvFC38gXc+i4A4HkKRSNT
+ L8Qti4qRFgxCLz1AFJjHtk08j6czkw==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-14_03,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 priorityscore=1501 spamscore=0 impostorscore=0 phishscore=0
+ adultscore=0 lowpriorityscore=0 clxscore=1015 suspectscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510110022
 
-This patch series add initial support for MSM8937 SoC
-and Xiaomi Redmi 3S (land).
+The NSS clock controller on the IPQ5424 SoC provides clocks and resets
+to the networking related hardware blocks such as the Packet Processing
+Engine (PPE) and UNIPHY (PCS). Its parent clocks are sourced from the
+GCC, CMN PLL, and UNIPHY blocks.
 
-The series is extending the MSM8917 gcc and pinctrl drivers
-because they are sibling SoCs.
-MSM8937 have 4 more A53 cores and have one more dsi port then
-MSM8917.
-It implements little-big architecture and uses Adreno 505.
+Additionally, register the gpll0_out_aux GCC clock, which serves as one
+of the parent clocks for some of the NSS clocks.
 
-Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
+The NSS NoC clocks are also enabled to use the icc-clk framework, enabling
+the creation of interconnect paths for the network subsystem’s connections
+with these NoCs.
+
+The NSS clock controller receives its input clocks from the CMN PLL outputs.
+The related patch series which adds support for IPQ5424 SoC in the CMN PLL
+driver is listed below.
+https://lore.kernel.org/all/20250610-qcom_ipq5424_cmnpll-v3-0-ceada8165645@quicinc.com/
+
+Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
 ---
-Changes in v10:
-- Rebase on latest next.
-- Remove applied patches.
-- Link to v9: https://lore.kernel.org/r/20250903-msm8937-v9-0-a097c91c5801@mainlining.org
-
-Changes in v9:
-- msm8937:
-  - Update vbif size to 0x3000.
-  - Update qfprom size to 0x3000.
-  - Remove extra line below wcnss-wlan2-pins.
-  - Update gpu_speedbin address to 0x201b.
-- qcom.yaml: Rebase on latest next.
-- Link to v8: https://lore.kernel.org/r/20250831-msm8937-v8-0-b7dcd63caaac@mainlining.org
-
-Changes in v8:
-- msm8937:
-  - Fix scm compatible.
-  - Fix position of sram@60000 node.
-- Document qcom,scm-msm8937 compatible
-- Link to v7: https://lore.kernel.org/r/20250831-msm8937-v7-0-232a9fb19ab7@mainlining.org
-
 Changes in v7:
-- gpu.yaml: update adreno 505 pattern
-- Link to v6: https://lore.kernel.org/r/20250820-msm8937-v6-0-b090b2acb67e@mainlining.org
+- Update the commit title to use #interconnect-cells as recommended.
+- Collect the reviewed-by tags.
+- Link to v6: https://lore.kernel.org/r/20250925-qcom_ipq5424_nsscc-v6-0-7fad69b14358@quicinc.com
 
 Changes in v6:
-- msm8937:
-  - Fix nodes ordering.
-  - Format clocks, reg, dmas and -names properties.
-  - Add gpu_speedbin.
-- Describe A505 clocks.
-- Link to v5: https://lore.kernel.org/r/20250421-msm8937-v5-0-bf9879ef14d9@mainlining.org
+- Remove '#interconnect-cells' from the list of required properties in the
+  DT binding.
+- Add the Reviewed-by tag to the IPQ5424 DT binding patch.
+- Link to v5: https://lore.kernel.org/r/20250909-qcom_ipq5424_nsscc-v5-0-332c49a8512b@quicinc.com
 
 Changes in v5:
-- msm8937:
-  - Remove wrongly defined idle-states.
-  - Fix thermal zones.
-  - Use the header with DSI phy clock IDs.
-  - Fix the nodes order.
-  - Fix the pinctrls style.
-  - Follow gcc header changes.
-- msm8937-xiaomi-land:
-  - Remove headphone switch and speaker amplifier bindings.
-  - Unify status property style.
-- gcc bindings:
-  - Expand MSM8953 gcc schema with MSM8937.
-  - Add MSM8937 prefix for MSM8937 specific clocks.
-- gcc:
-  - Follow the bindings changes.
-- Drop alwayson clock documentation it will be handled in another
-  patchset.
-- Link to v4: https://lore.kernel.org/r/20250315-msm8937-v4-0-1f132e870a49@mainlining.org
+- Reorder the fixes patch "Add required "interconnect-cells" property"
+  to the beginning of the series.
+- Enhance the commit message to clearly explain the necessity of the
+  #interconnect-cells property for interconnect providers, and why
+  there is no ABI breakage for currently supported SoC IPQ9574.
+- Collect the reviewed-by tags.
+- Link to v4: https://lore.kernel.org/r/20250828-qcom_ipq5424_nsscc-v4-0-cb913b205bcb@quicinc.com
 
 Changes in v4:
-- Add missing rpmcc include for qcom,gcc-msm8937 dtbinding exmaple.
-- msm8937: add missing space after s9-p1@230
-- msm8937-xiaomi-land: replace LED_FUNCTION_INDICATOR to LED_FUNCTION_STATUS
-- Remove applied patches
-- Link to v3: https://lore.kernel.org/r/20250224-msm8937-v3-0-dad7c182cccb@mainlining.org
+- Add new, generic clock names "nss" and "ppe" in DT bindings to support
+  the newer SoC such as IPQ5424 SoC, while retaining existing clock names
+  for IPQ9574.
+- Register all necessary NoC clocks as interconnect paths.
+- Separate the fix for correcting icc_first_node_id into its own patch.
+- Separate the fix requiring the "#interconnect-cells" property for NSS
+  clock controller node.
+- Update commit titles from "clock:" to "clk:" for consistency.
+- Update copyright to remove year as per guidelines in all driver files.
+- Remove the Acked-by tag from the "Add Qualcomm IPQ5424 NSSNOC IDs" patch"
+  as the new NOC IDs are added.
+- Link to v3: https://lore.kernel.org/r/20250710-qcom_ipq5424_nsscc-v3-0-f149dc461212@quicinc.com
 
 Changes in v3:
-- Fix qcom,gcc-msm8937 dtbinding example 
-- Link to v2: https://lore.kernel.org/r/20250223-msm8937-v2-0-b99722363ed3@mainlining.org
+- Remove frequency suffix from clock names for PPE and NSS clocks in
+  IPQ9574 DT binding and DTS.
+- Update IPQ5424 DT bindings and DTS to as per new PPE and NSS clock names.
+- Expand the register region of IPQ5424 NSSCC to utilize the entire 0x100_000
+  address range, ensuring inclusion of the wrapper region.
+- Collect the reviewed-by tags.
+- Link to v2: https://lore.kernel.org/r/20250627-qcom_ipq5424_nsscc-v2-0-8d392f65102a@quicinc.com
 
 Changes in v2:
-- drop applied patches
-- drop gcc schema commits infavor of a new schema for gcc-msm8937
-- document always on clock for adreno 505/506/510
-- msm8937:
-  - set cache size
-  - rename cpu labels
-  - fix style issues addressed by review
-- msm8937-xiaom-land:
-  - remove unused serial0 alias
-  - remove regulator-always-on from pm8937_l6
-  - add blue indicator led for aw2013
-- Link to v1: https://lore.kernel.org/r/20250211-msm8937-v1-0-7d27ed67f708@mainlining.org
+- Add new, separate clock names "nss" and "ppe" in dtbindings to support
+  the IPQ5424 SoC.
+- Wrap the commit message body at 75 columns.
+- Fix the indentation issue in the `IPQ_NSSCC_5424` Kconfig entry.
+- Enhance the commit message for the defconfig patch to clarify the requirement
+  for enabling `IPQ_NSSCC_5424`.
+- Link to v1: https://lore.kernel.org/r/20250617-qcom_ipq5424_nsscc-v1-0-4dc2d6b3cdfc@quicinc.com
 
 ---
-Barnabás Czémán (2):
-      dt-bindings: arm: qcom: Add Xiaomi Redmi 3S
-      arm64: dts: qcom: Add Xiaomi Redmi 3S
+Luo Jie (10):
+      clk: qcom: gcc-ipq5424: Correct the icc_first_node_id
+      dt-bindings: clock: Add "#interconnect-cells" property in IPQ9574 example
+      dt-bindings: interconnect: Add Qualcomm IPQ5424 NSSNOC IDs
+      clk: qcom: gcc-ipq5424: Enable NSS NoC clocks to use icc-clk
+      dt-bindings: clock: gcc-ipq5424: Add definition for GPLL0_OUT_AUX
+      clk: qcom: gcc-ipq5424: Add gpll0_out_aux clock
+      dt-bindings: clock: qcom: Add NSS clock controller for IPQ5424 SoC
+      clk: qcom: Add NSS clock controller driver for IPQ5424
+      arm64: dts: qcom: ipq5424: Add NSS clock controller node
+      arm64: defconfig: Build NSS clock controller driver for IPQ5424
 
-Dang Huynh (1):
-      arm64: dts: qcom: Add initial support for MSM8937
-
- Documentation/devicetree/bindings/arm/qcom.yaml  |    6 +
- arch/arm64/boot/dts/qcom/Makefile                |    1 +
- arch/arm64/boot/dts/qcom/msm8937-xiaomi-land.dts |  381 ++++
- arch/arm64/boot/dts/qcom/msm8937.dtsi            | 2133 ++++++++++++++++++++++
- 4 files changed, 2521 insertions(+)
+ .../bindings/clock/qcom,ipq9574-nsscc.yaml         |   63 +-
+ arch/arm64/boot/dts/qcom/ipq5424.dtsi              |   32 +-
+ arch/arm64/configs/defconfig                       |    1 +
+ drivers/clk/qcom/Kconfig                           |   11 +
+ drivers/clk/qcom/Makefile                          |    1 +
+ drivers/clk/qcom/gcc-ipq5424.c                     |   28 +-
+ drivers/clk/qcom/nsscc-ipq5424.c                   | 1340 ++++++++++++++++++++
+ include/dt-bindings/clock/qcom,ipq5424-gcc.h       |    3 +-
+ include/dt-bindings/clock/qcom,ipq5424-nsscc.h     |   65 +
+ include/dt-bindings/interconnect/qcom,ipq5424.h    |   33 +
+ include/dt-bindings/reset/qcom,ipq5424-nsscc.h     |   46 +
+ 11 files changed, 1612 insertions(+), 11 deletions(-)
 ---
-base-commit: 52ba76324a9d7c39830c850999210a36ef023cde
-change-id: 20250210-msm8937-228ef0dc3ec9
+base-commit: 13863a59e410cab46d26751941980dc8f088b9b3
+change-id: 20251014-qcom_ipq5424_nsscc-eebd62a31e74
 
 Best regards,
 -- 
-Barnabás Czémán <barnabas.czeman@mainlining.org>
+Luo Jie <quic_luoj@quicinc.com>
 
