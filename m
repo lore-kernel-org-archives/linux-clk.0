@@ -1,91 +1,97 @@
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 314062741B3;
-	Tue, 14 Oct 2025 18:06:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DE2A306B32;
+	Tue, 14 Oct 2025 21:12:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760465217; cv=none; b=rOsqQpAngK1z+jmELBXUJ7DnYJjr9rQPTy/VmmNJ1G024Po5uYhXKupHlKf0RbhfRKx1ROuY6mGK9ruFHP1nVIhut2PDKTUf94xMbKUSOMXlJswK9o0i/5mQzFOVr1ZrTbdsW2yLBlgNCgWi/Wpm1zpnILw7knQ1yWSje+6NCv8=
+	t=1760476330; cv=none; b=ZAWZ7Nqf5IgQkkE7jC5jDtJODYFvuIQpAM1ua1vnl66iIInVXKAmE+txgI3jzDA9G7XTnEn5h8o8o02jYnWJ9mipjHr48A4yWbzT8GfzsTtH0cc3KBP65Ud/pWXXNT4VO8la4j1skFl1iGvtCEo6RQ9h2Dw6kY52X/7klEbF3+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760465217; c=relaxed/simple;
-	bh=2Bc4jeTDUOZBAoT875/RgB8dXWQZZhWa6hi9IWA9N1o=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ld6ggLlNAKcjQ8Gj/7QL08LdIoiHUiGfBwHrjfhFwXVswITkixxuqvjF+JvYxnR8eQT2vNh9SZ6g5YRnaVSqXyhFvxPm0CWs6Pdr8HEH+5wGEmkDYcP0cSqeZ96+BHy0YrC8qOiCIEyy1JHcIwzhJCRJfgTSc404WhjmoTUSIkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=Z9OoWeec; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+	s=arc-20240116; t=1760476330; c=relaxed/simple;
+	bh=C54wNaaIu+uHDYiULR2PYNdHVI7AwK6UwSpIIYAUtlc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pRnFG9AU+EY5NxGShrma1eG4lel/gE1BwTzLsGWrLnwCqRS+cCmrm+2adwCwzqV31B+8BX/E5ZMsT/4G1Q8sBrGIPYiPwbMS6IpsFSZ8S8WWmm72WJ8qF0LLnn2ogOpkh0wTZaVrJREMVn9zywdul7xNnXWF+MIhF24PNRorp5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=MLYI2/PH; arc=none smtp.client-ip=80.241.56.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="Z9OoWeec"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
-	bh=TOZSAhMRoAi3ivFm/RUgbGXpjIfGUXs3ICM+R1IZIJE=; b=Z9OoWeecwoNEZkO2ZI1cvN3ctl
-	AHOBscQGHPybThXJQ1AGvFyJSuYIRJtkxV9QWlhGNG82J2GsJSf2uidys1gK/9oYsIDpDGu4cQv/p
-	N2spY0NZZcZSXEsx9IbkVbuCjZqvxb1mgq6PO91TT5J7KsKCUVNyKWd/cZw5ODK22KaQs8VxOaS75
-	Jb8Oez7VGFEadXfI1xn4sTxqYARkJa29vtwhHE1R8a7UZZPsuoFVyvq80nZhyiD8x1YcynwueslpC
-	jYjHB15kOW3sDEGkPrf6cfpoH+LQL1s+NoqjvLxHMs9R5Et9yCUSCHYeZbp8Qk+1TKR6eQUoS63rr
-	wV2xiR9A==;
-Received: from i53875b75.versanet.de ([83.135.91.117] helo=localhost.localdomain)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1v8jQ9-0001Gj-RG; Tue, 14 Oct 2025 20:06:49 +0200
-From: Heiko Stuebner <heiko@sntech.de>
-To: robh@kernel.org,
-	WeiHao Li <cn.liweihao@gmail.com>
-Cc: Heiko Stuebner <heiko@sntech.de>,
-	hjc@rock-chips.com,
-	andy.yan@rock-chips.com,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: (subset) [PATCH v2 0/8] drm/rockchip: Add MIPI DSI support for RK3368
-Date: Tue, 14 Oct 2025 20:06:33 +0200
-Message-ID: <176046473165.1662867.3389597341632636891.b4-ty@sntech.de>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250905025632.222422-1-cn.liweihao@gmail.com>
-References: <20250905025632.222422-1-cn.liweihao@gmail.com>
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="MLYI2/PH"
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4cmRjp4WXwz9v66;
+	Tue, 14 Oct 2025 23:11:58 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1760476318;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GWenJQKHGvTj+n/qgZQIpg+9Ejswl9uucWP6T0h0hpI=;
+	b=MLYI2/PHUQ4pCbm9fiLSTZAnUEOdKGjp6Au1B9J53t8M+wbCqm1xlFnvXkFREipJSNM4zV
+	Xbbqek71cshVEyb/L9n1iv9eFIQMvPe4oYr4xtI1JeMHWefwaejwgfBp+fT9lAscZxwBn1
+	F8Lv3JB9KqBqKSnzBiyx1RkceBK1RjarniMYy72tUZhbRDT0cspNP3imfmUcH5TklObIU0
+	KhffzrGnLAbEnb3bhBbN0GzWCpxNljk3ZyMX2T/1EUzgz3xKqfGYe1IQiu5mRPJdfBKFK+
+	DDFK9UGzdyTo+omE3G2FEdAAgmdbgwoG64vUo/5q/mZOZkiVX7vYRx3mHek/Cg==
+Message-ID: <43e3e005-5d30-4450-8dbc-8c6b5a0fa951@mailbox.org>
+Date: Tue, 14 Oct 2025 23:11:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH 05/39] drm/imx: dc: Rework dc_subdev_get_id() to drop
+ ARRAY_SIZE() use
+To: Frank Li <Frank.li@nxp.com>, Liu Ying <victor.liu@nxp.com>
+Cc: dri-devel@lists.freedesktop.org, Abel Vesa <abelvesa@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Fabio Estevam <festevam@gmail.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Lucas Stach <l.stach@pengutronix.de>, Peng Fan <peng.fan@nxp.com>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Rob Herring <robh@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, devicetree@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org
+References: <20251011170213.128907-1-marek.vasut@mailbox.org>
+ <20251011170213.128907-6-marek.vasut@mailbox.org>
+ <aO0vLbkpXejre2Ta@lizhi-Precision-Tower-5810>
+ <c7fee270-f3ff-402f-8266-0ffbb5077a61@mailbox.org>
+ <aO5oKe14GLp3diGH@lizhi-Precision-Tower-5810>
+Content-Language: en-US
+From: Marek Vasut <marek.vasut@mailbox.org>
+In-Reply-To: <aO5oKe14GLp3diGH@lizhi-Precision-Tower-5810>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-MBO-RS-META: 8ejmrw47in7jc7eotepxsc5w834h4ob9
+X-MBO-RS-ID: 68e0347f68ce8adfa13
 
-
-On Fri, 05 Sep 2025 10:56:24 +0800, WeiHao Li wrote:
-> This series adds MIPI DSI support for the Rockchip RK3368 SoC, enabling
-> native display connectivity through the MIPI DSI host controller and
-> PHY. The changes span multiple subsystems, including clock control,
-> DRM/VOP integration, DSI controller binding.
+On 10/14/25 5:11 PM, Frank Li wrote:
+> On Tue, Oct 14, 2025 at 04:03:37PM +0200, Marek Vasut wrote:
+>> On 10/13/25 6:56 PM, Frank Li wrote:
+>>> On Sat, Oct 11, 2025 at 06:51:20PM +0200, Marek Vasut wrote:
+>>>> Rework dc_subdev_get_id() to drop ARRAY_SIZE() use and use empty trailing
+>>>> entry in each ID look up array instead. This allows passing of those arrays
+>>>> around as OF match data, which will be useful when using this pipeline on
+>>>> i.MX95, which has different address-to-ID mapping.
+>>>>
+>>>> Signed-off-by: Marek Vasut <marek.vasut@mailbox.org>
+>>>
+>>> This change is okay. but my questions is why need map register to id.
+>>
+>> This seems to be a recurring pattern in the driver, where some components
+>> need to find other components to link with them. The mapping is fixed, and
+>> since the DT does not encode link IDs, the resolution of the mapping has to
+>> happen by mapping the component base addresses to the IDs first.
 > 
-> Key changes:
->  - Update dw-mipi-dsi-rockchip driver to preperly handle RK3368 dsi
->    initialization.
->  - Add missing lut_size of vop_data for RK3368.
->  - Add missing clock ID SCLK_MIPIDSI_24M to the RK3368 CRU driver,
->    which is required for enabling the 24MHz reference clock.
->  - Add MIPI DSI node to rk3368.dtsi with correct clocks, resets,
->    and register mappings.
->  - Add dt-bindings document.
-> 
-> [...]
+> In graphic link, port@<n>, n should be id? why not use it?
+I suspect you could model the relationships between the DC blocks using 
+OF graph, yes. I also suspect that description would be very complex in 
+DT, considering the amount of blocks and links this device contains. I 
+suspect this is why there is no such DT description using OF graph.
 
-Applied, thanks!
-
-[5/8] arm64: dts: rockchip: Add display subsystem for RK3368
-      commit: ef06b5ddee1e1288e51e8d961947d1b16156db0c
-[6/8] arm64: dts: rockchip: Add D-PHY for RK3368
-      commit: d62e2ad29b815509291b6a07787ed51b52e2b4d5
-[7/8] arm64: dts: rockchip: Add DSI for RK3368
-      commit: 5023d0cd61831acd6e88496f5f7867a18a217a74
-
-Best regards,
--- 
-Heiko Stuebner <heiko@sntech.de>
+I think it might also be good to talk to Liu directly about the original 
+design decision and why this id mapping was done the way it was done, 
+they should know better than me.
