@@ -1,87 +1,130 @@
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67696303C88;
-	Tue, 14 Oct 2025 22:09:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCD6D30CD88;
+	Tue, 14 Oct 2025 22:15:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760479771; cv=none; b=ZNeZnNpGdNHcv7bwtuPFPq1yxoHSTTx/do4nroNkSwvru1ruf5jKwfQ68i8azrwTpfcOeaJX8Tih7SgSE+o35E1SeNZLmDMLRjeGa/S7wGmn+X/BMBWOnytfduA+nP3Gc/yajTcw76U5mXQfVDWwkEEz1ydiOpJ+sWJ8JTeAz5k=
+	t=1760480114; cv=none; b=IgRl/AI9VvVpp7vX8gJOh400BHbIls0827Jw0V71S0YSHJ0pTwSaVzbgJBJIsruba/ZgKmyVa4S0OUZTupMFcflgLL8w+cXqNNW7MRpUf0DqF2SbzV3cQOknRpzfZ3EeIod59ul9ronm1eC0blpmd8+RLHKoGW740qR74o1mN5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760479771; c=relaxed/simple;
-	bh=oI1abJIFHqXDPS9wXYVnXUtBPXbCwR8ksekULWNMqYg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CFcg9lzBbmk6/KJZxVTr7l4xDs7Thn+CIpUMADT6Z0xu0epHksFjHbg5hOJzSuCUd3Kz2sdZ3dqj+RRKwwmJ1xZnI7XUqPxGONMzzIyB+jy18JedPbR0MEGpI7xNitz3A9LTgDhbG81HaB9rlnlFZZoeiyPXBFmLRg0lUS0WVWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=wRFL0mRr; arc=none smtp.client-ip=80.241.56.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+	s=arc-20240116; t=1760480114; c=relaxed/simple;
+	bh=KgyniKiyFQd23HrebtH3vCuphtXuSOMM+Bh/BfGRffE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tCocz4kqG8028MWtp1IoNDrZpqF1h7Gs0X/18SL27S7KWNEKqqgsfdnQv1ux2j+m1p7pK9FIkH6/NiztiG5eNWo6Af0o6G0L86bf+JjsVN2uIAhbt/ZUPJK7qzhWppsbFPEX/vCQ0I8NBw/oScaLAwDo0NBMJ8RMlRHC/A+QZxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sl0ltCIa; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="wRFL0mRr"
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4cmT063mGpz9stY;
-	Wed, 15 Oct 2025 00:09:26 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1760479766;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AIxf1/4W8b4if0tFBzh4U5BnvAEvdOXSo62yxEFwEXw=;
-	b=wRFL0mRrJT2CfJS4ItX0KWMGyP3Gd6aS+1DYz2MHvDq7l3O06LdxC5IfzJXNCA2M51hrbq
-	1d6Z9j8iX/LlZhdjawnfU6FkCRo01vWKAqQZ3fzGVq+nWSWF08jMUGuT/3E/G68WDlUHaJ
-	trmYmANaird7rtZRuyXC8KEne49qggfwm8AZp4x4MvwYmLM1lkyBOLfsgIIWzIdUG2dZeR
-	v8/cIHOXbp/zMIH433gJFELVOTnIsWxeADBs0I6YYAQcr7KnOVmxlWonIjl4pn0i2RdR7L
-	LTPsWK8zHA21GJf1mjTDKo3hjdejYGsVkXpSURd1uA4Q54Kc8hIqF2/NmIC15g==
-Message-ID: <bf451620-c917-4d4a-999d-32148fbcf11b@mailbox.org>
-Date: Wed, 15 Oct 2025 00:09:22 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sl0ltCIa"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 941D7C4CEE7;
+	Tue, 14 Oct 2025 22:15:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760480114;
+	bh=KgyniKiyFQd23HrebtH3vCuphtXuSOMM+Bh/BfGRffE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Sl0ltCIaQzg15GVBhSlGUF3hZpn9xqKCszU+Bdt2RM5W8c8LV3lIhxpJpPZk0bfls
+	 dXg3GRaXErfEMP032i8bQDDjecno7KBm1MbQnuIoaU0ZHKEHJ1qsQB0OTrr2ZC2CFF
+	 qVMh/T8PBHgWVkt49KwymYodOVz3iyMA2qT4FGAKjgG7F7IozYVUsBO0hK2fRFrYnr
+	 zRkbzG2sYwy5puMrOVS2TQlORXvDdfFT6H23NDvHbPuGB946AtTMcLMgjqv4NmAObm
+	 wF7LMcYDTummp9q1MNAmLymjyBVDvKYRjtdKqkqT1W3NEbO73JLpbJeSnjZxiCnfja
+	 V2neNP2AElBOA==
+Date: Tue, 14 Oct 2025 23:15:10 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Marek Vasut <marek.vasut@mailbox.org>
+Cc: linux-clk@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+	devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: clk: rs9: Fix DIF pattern match
+Message-ID: <20251014-limit-mom-fa96e8498dd4@spud>
+References: <20251014104626.10682-1-marek.vasut@mailbox.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 00/39] Add i.MX95 DPU/DSI/LVDS support
-To: Liu Ying <victor.liu@nxp.com>, dri-devel@lists.freedesktop.org
-Cc: Abel Vesa <abelvesa@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Fabio Estevam <festevam@gmail.com>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Lucas Stach <l.stach@pengutronix.de>, Peng Fan <peng.fan@nxp.com>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Rob Herring <robh@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, devicetree@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org
-References: <20251011170213.128907-1-marek.vasut@mailbox.org>
- <2a22c45e-5de4-49ee-af3e-002941a7e2d0@nxp.com>
-Content-Language: en-US
-From: Marek Vasut <marek.vasut@mailbox.org>
-In-Reply-To: <2a22c45e-5de4-49ee-af3e-002941a7e2d0@nxp.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-MBO-RS-META: dfgywskta81h96wyddskwwoj8dxm9e8x
-X-MBO-RS-ID: 547d559a5ba5a68b3f8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="khdArLaV7tas5Ih6"
+Content-Disposition: inline
+In-Reply-To: <20251014104626.10682-1-marek.vasut@mailbox.org>
 
-On 10/14/25 11:13 AM, Liu Ying wrote:
-> On 10/11/2025, Marek Vasut wrote:
->> DPU is added into DC driver
-> 
-> This has conflicts with my in-flight patch series for adding i.MX8QXP DC
-> prefetch engine support(though i.MX95 SoC doesn't embed any display controller
-> prefetch engine).  You probably want to take a look at it, just a heads up.
-> 
-> https://lore.kernel.org/all/20250929-imx8-dc-prefetch-v3-0-c01d0608add2@nxp.com/
 
-Thank you for sharing that.
+--khdArLaV7tas5Ih6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Would it make sense to send 4 and 5 separately , so the fixes can land 
-faster?
+On Tue, Oct 14, 2025 at 12:46:03PM +0200, Marek Vasut wrote:
+> The pattern match [0-19] is incorrect and does not cover range of 0..19,
+> use pattern 1?[0-9] to cover range 0..19 instead. Update the example to
+> validate all parts of the pattern match and prevent such failures in the
+> future.
+>=20
+> Fixes: 26c1bc67aa2f ("dt-bindings: clk: rs9: Add Renesas 9-series I2C PCI=
+e clock generator")
+> Signed-off-by: Marek Vasut <marek.vasut@mailbox.org>
 
-Also, could you please try and avoid the SCU dependency on patch 7 , and 
-more in that direction , can the PRG be made a bit more optional, so the 
-iMX95 can still be supported by the DC driver ?
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+pw-bot: not-applicable
 
--- 
-Best regards,
-Marek Vasut
+> ---
+> Cc: Conor Dooley <conor+dt@kernel.org>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: devicetree@vger.kernel.org
+> Cc: linux-clk@vger.kernel.org
+> Cc: linux-renesas-soc@vger.kernel.org
+> ---
+>  .../devicetree/bindings/clock/renesas,9series.yaml    | 11 ++++++++++-
+>  1 file changed, 10 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/clock/renesas,9series.yaml=
+ b/Documentation/devicetree/bindings/clock/renesas,9series.yaml
+> index af6319697b1c0..a85f78ce29702 100644
+> --- a/Documentation/devicetree/bindings/clock/renesas,9series.yaml
+> +++ b/Documentation/devicetree/bindings/clock/renesas,9series.yaml
+> @@ -62,7 +62,7 @@ properties:
+>      description: Output clock down spread in pcm (1/1000 of percent)
+> =20
+>  patternProperties:
+> -  "^DIF[0-19]$":
+> +  "^DIF1?[0-9]$":
+>      type: object
+>      description:
+>        Description of one of the outputs (DIF0..DIF19).
+> @@ -107,6 +107,15 @@ examples:
+>              DIF0 {
+>                  renesas,slew-rate =3D <3000000>;
+>              };
+> +
+> +            /* Not present on 9FGV0241, used for DT validation only */
+> +            DIF2 {
+> +                renesas,slew-rate =3D <2000000>;
+> +            };
+> +
+> +            DIF19 {
+> +                renesas,slew-rate =3D <3000000>;
+> +            };
+>          };
+>      };
+> =20
+> --=20
+> 2.51.0
+>=20
+
+--khdArLaV7tas5Ih6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaO7LbgAKCRB4tDGHoIJi
+0iRtAP98fuLWwi2rj6BMCq3LRsL0F87fvaNaTczkkSsFtG63WAD9E0Ze2gsjxvy/
+xuZ752LZnbtlTZLPDImbROP8GhwIxAw=
+=z2F3
+-----END PGP SIGNATURE-----
+
+--khdArLaV7tas5Ih6--
