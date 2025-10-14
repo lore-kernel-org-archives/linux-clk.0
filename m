@@ -1,63 +1,78 @@
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98ADA2D8DAF;
-	Tue, 14 Oct 2025 10:46:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67EA52FB629
+	for <linux-clk@vger.kernel.org>; Tue, 14 Oct 2025 10:54:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760438811; cv=none; b=FVxmkOuq3HSJLnOADiHvtr1F2q/HJDUhpv7uzSup0PPTyyMd40qHP+RyZvJaPzyUV2OYt1ohR0erCjUqyPrWnykdCl4hismgwe5VSTlrMIl5z2OVviiyDx/1cozwmc8ktFLlXJU66/MRxsZeyabNAKa+7lAbxG47q3f5YM5cenk=
+	t=1760439246; cv=none; b=pEoXhP3xrJrFxM3CVYHy9BThnV3FukhI3wPK6swiTFz9HxIqhoxqI7xhJRlbFx5vE6wImvC7kldoQ/I6YDdeWdD8LbTShASjK8+pzYWq7VfnDiImrBa8O63HDXIyd/v39ys2Bky9ahoNNzabq6b8F8Jnmmzs4NGOCrH7Z5vxgYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760438811; c=relaxed/simple;
-	bh=J5cGKQ7ib6j+foxfpPAYFC5BN5rwa+rlmWWDA+c+YNo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=plCG/LQ05fVwt/T7LIOA4qezAvri3WH8OfWl2DWmgbPMrkffGEplQqy/wZNmPmtwfGy37LbHClke83LRBtaBW3KYV3wd6L3zn0Fqt79Nig+m0EEg1VKrv9B4XLO2g/FkajC59bQAYWl9D+5gjueN/cphd9cpRHF4GPKwWGLnalo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=kF0vJiJD; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=OYLagKI8; arc=none smtp.client-ip=80.241.56.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+	s=arc-20240116; t=1760439246; c=relaxed/simple;
+	bh=Mr8tfZLBlB8aFgod6sfW7x6gPlPlXWbUdZCIVbKO4Es=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QnCdrDVWDNzKx8A3jFc6BWy7bOD8GrtcWxR9sXZMoS2rj8gg+ooRrCz/W4gcnuyWgSC4BmmTPQvAnVn4YWh4Aif9S8HIDg1N/KlxwdlZNtHnRjCNdWbXRu9ksWNP/uKS0f0EaVHhpvg4By/DvquBtLWXEKEO/jmpZptLw3kk5Hc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y8IiQ3HP; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="kF0vJiJD";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="OYLagKI8"
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4cm9rR3KXhz9tSq;
-	Tue, 14 Oct 2025 12:46:47 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1760438807;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=SWWrsBpR7aC/HdPqmhuSETjy0DLiu2RVjUmznP1EZ3g=;
-	b=kF0vJiJDcogCNv0cFOdvVpENtqcMPoNYg7j0M6RLIhIoslGj8vRCssoyBtR5d/0gQ0/RDF
-	pcx/qqSQcQR8mbPICIt3akYSahBxsk79iqhs6TssIgti3SkDllbDViikMUbKwD7Tt2Q02K
-	FiYQrvOwAq8hPvo9dBdqwt0lRpSPFcCy3NTitTvRZdLpVd/cuBvr/IZ5bLjHfm3mGk5d70
-	EIb8fSsjXHOsIYy8ggnXflGDsJlSkRNjPcheIyImLUZxQ32nqFkEjIc04jRPJX1ajaaWUB
-	6EpzKJ32ElcgJ1rM3/TlQg02OJcjo/Kb+afhXXasc/7TKHzDwedncjC42uJJyA==
-From: Marek Vasut <marek.vasut@mailbox.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1760438805;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=SWWrsBpR7aC/HdPqmhuSETjy0DLiu2RVjUmznP1EZ3g=;
-	b=OYLagKI835qdAPt0LeDDDPypVvLtva5oIsZ2dN7fq6EYxTnXx//ww9kfnotHojaQPpG3DZ
-	nnyJbOlp7w86QT8+r4pDht3mRFNNgf+8EM9rHy1xZlijHRYf5YDcaBNRrZYyExEFdxtNsj
-	LX47wmSskHe/aPmU+kZKGsnroDNppEJBZCitZUExfCK52uyliAOJojk7KrP94nZ+Hyr9xX
-	GQhU4wjwVnAik6jiaBZEquo3UZT9o1u7+Qhzlo9Hf2VWPx8a1s2K4vkOc4stkssmXQ3hQ1
-	gcYFA2xACN38Q7j5+KDsCpzOeYPPRgxhexDLG5+Ay16kVJctlXA/DzhwsI8AGg==
-To: linux-clk@vger.kernel.org
-Cc: Marek Vasut <marek.vasut@mailbox.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y8IiQ3HP"
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-781997d195aso3688752b3a.3
+        for <linux-clk@vger.kernel.org>; Tue, 14 Oct 2025 03:54:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760439244; x=1761044044; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=JCcGuEZSgrij4aPzZeBxOmzwZd89EZQp1SLrIiFb3XQ=;
+        b=Y8IiQ3HPqfjjAltwdpksk+eCEN5E5X+Pw5iGK5HtG5Vp/kFbruXuX13ckEwFr8ppPt
+         5JI3EoclvQOis2eaRwMsrsXGcnyfVdQRtyY1hvEmzI6eLTNp3TzwHPOCehDj5Lac2z6N
+         T0bZa0nT4g68RLttEKDdBbgXo6KFCUiSKTIpEqONiaI398l088N728hhCUvnThd/jiqf
+         DE0ZmtrUW+TjNGmgYVOzXKXljuKxINEgxaBC4LHHnA+r/Olm42vesorlz9hqBLqwWfqC
+         DlOsZWB+trXc6FCwNoYEc3nV81mi9nWIfdhbmIKDWdCT8mNv3lwFQsFfvoZhBoFMTKDr
+         cRLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760439244; x=1761044044;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JCcGuEZSgrij4aPzZeBxOmzwZd89EZQp1SLrIiFb3XQ=;
+        b=r3+hlTtXqYq+oyHHTx4iaSUhoc6Dmo8dARrE4aZ9x2FJTe0r3FU9It/0chyjIiHLdg
+         65IzIpLrTzYFm5wLYl2gsN5BoyC4jXEoNKSj0If+2BkZVlg7U2S/I/5vf2q+1/wNP1Wb
+         vT+tU+WR1Aa7KsTbUAgqfYTZEq2vd/TNIeMd3Et0l2kuKWV+sY0cpuTrYNElLB0W6Ctj
+         qO1XM6fEZajaUARmMAn5/ww7G/Kq5YhaLdbsRFsAQNTRdtkLX8rKIEfsLi3LEg79epLA
+         JY6VMfnVUA+cOPNxMrbgkHsPp/JDr6xsQ36xW7lQb+GL1dhFp+BnZTQ8myJ4p7YLgrNu
+         83HQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXyKw0qxF7w3MgZvmGrrkaeqWMQhyxmf5Un3K9zox2jPZnYfocUysQTUGYVXNNxMfiilM60V+x6RkE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxnESGDHs2lD5M4HKRHstxNryX9atdFalnzIA+qFKMtq2wL/4Ub
+	jP4sNqskTU5svnDWcHCv5+hOUCyrQG3iZbb9vwGiTKjF/UiCP9U3Tn9j
+X-Gm-Gg: ASbGncsTNKTJ2oJAxo+DlSNEW7zmClpxAhGvFmYR+HcHaWBzGoiPJdrIZG6/1/RsQHz
+	B1yw5hfPSlAJ1wfRXkrO/Vc9SR316pFdyDIu+Z1hT7ydhuHS+iay1rZFXrlRvFvgrIs/l61qaHK
+	Zw3Qvw371WOHtos8DlD0Jj5rW+W2k19IIu0ONd4MF4X1FW9b2UBmPDwj9kSAAU/2jxZhF98/3WL
+	4m54yoKIwFxHpZnKmtXbUNn899IZJ8vWUUiIHwPwKawP/KO4uVgloOEsu/07YiorGW/lqfanqGB
+	dG/xbfm7GEOMJE30xFdP9sorWdSr0g8wbnvvILQ8U4rBGVYXxj3ZAhXw76xbgubI3EHVRfjTv1y
+	ohqbPc6wH5PYV0Er83KjUsjKdaShM/TEmUF+U3vfFgMZDuGI6mKEpqlC+I0+ZcrM+pBrqQYiDkQ
+	==
+X-Google-Smtp-Source: AGHT+IHul9FYXPgeY0MtOe+ORzdsrXCIGeWmnOQdSxYt0ZHodvYGCUDDVSFP9FvoFR1UMaj3nEkjBg==
+X-Received: by 2002:a05:6a20:7351:b0:2ff:1132:8c48 with SMTP id adf61e73a8af0-32da8164167mr34514969637.24.1760439244522;
+        Tue, 14 Oct 2025 03:54:04 -0700 (PDT)
+Received: from iku.. ([2401:4900:1c07:6d70:9e09:769b:2b4f:71ef])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7992b060962sm14901724b3a.1.2025.10.14.03.54.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Oct 2025 03:54:03 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh@kernel.org>,
-	Stephen Boyd <sboyd@kernel.org>,
-	devicetree@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] dt-bindings: clk: rs9: Fix DIF pattern match
-Date: Tue, 14 Oct 2025 12:46:03 +0200
-Message-ID: <20251014104626.10682-1-marek.vasut@mailbox.org>
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH] clk: renesas: cpg-mssr: Add read-back and delay handling for RZ/T2H MSTP
+Date: Tue, 14 Oct 2025 11:53:48 +0100
+Message-ID: <20251014105348.93705-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -65,59 +80,88 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-MBO-RS-ID: 7e34b1579a2a1b96ac5
-X-MBO-RS-META: s6uxqg19jh1au34je3g8qwdwc9oxoxzm
 
-The pattern match [0-19] is incorrect and does not cover range of 0..19,
-use pattern 1?[0-9] to cover range 0..19 instead. Update the example to
-validate all parts of the pattern match and prevent such failures in the
-future.
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Fixes: 26c1bc67aa2f ("dt-bindings: clk: rs9: Add Renesas 9-series I2C PCIe clock generator")
-Signed-off-by: Marek Vasut <marek.vasut@mailbox.org>
+On the RZ/T2H SoC, a specific sequence is required when releasing a
+module from the module stop state (i.e. when clearing the corresponding
+bit in the MSTPCRm register to '0'). After writing to the MSTPCRm
+register, a read-back of the same register must be performed, followed
+by at least seven dummy reads of any register within the IP block that
+is being released.
+
+To avoid mapping device registers for this purpose, a short delay is
+introduced after the read-back to ensure proper hardware stabilization
+before the module becomes accessible.
+
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
-Cc: Conor Dooley <conor+dt@kernel.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Rob Herring <robh@kernel.org>
-Cc: Stephen Boyd <sboyd@kernel.org>
-Cc: devicetree@vger.kernel.org
-Cc: linux-clk@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
----
- .../devicetree/bindings/clock/renesas,9series.yaml    | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+Hi Geert,
 
-diff --git a/Documentation/devicetree/bindings/clock/renesas,9series.yaml b/Documentation/devicetree/bindings/clock/renesas,9series.yaml
-index af6319697b1c0..a85f78ce29702 100644
---- a/Documentation/devicetree/bindings/clock/renesas,9series.yaml
-+++ b/Documentation/devicetree/bindings/clock/renesas,9series.yaml
-@@ -62,7 +62,7 @@ properties:
-     description: Output clock down spread in pcm (1/1000 of percent)
+I made use of the timed_read_poll_timeout_atomic() macro to print the
+delay after the read operation. With first case I printed the value read
+from the register and in the second case I just printed the number of
+loops and time taken. So to be on the safe side I have added a udelay(10)
+after the read operation. Please find below the output from both the cases.
+
+#1 With value printed
+[    1.468936] read_7times_init: poll OK after 0 loops 223 ticks, 10000 ns left of 10 us
+[    1.477719] read_7times: read 0: ff002104
+[    1.482358] read_7times_init: poll OK after 0 loops 126 ticks, 10000 ns left of 10 us
+[    1.491331] read_7times: read 1: ff002104
+[    1.495901] read_7times_init: poll OK after 0 loops 100 ticks, 10000 ns left of 10 us
+[    1.504692] read_7times: read 2: ff002104
+[    1.509261] read_7times_init: poll OK after 0 loops 103 ticks, 10000 ns left of 10 us
+[    1.518052] read_7times: read 3: ff002104
+[    1.522692] read_7times_init: poll OK after 0 loops 100 ticks, 10000 ns left of 10 us
+[    1.531665] read_7times: read 4: ff002104
+[    1.536209] read_7times_init: poll OK after 0 loops 102 ticks, 10000 ns left of 10 us
+[    1.545183] read_7times: read 5: ff002104
+[    1.549726] read_7times_init: poll OK after 0 loops 84 ticks, 10000 ns left of 10 us
+[    1.558456] read_7times: read 6: ff002104
+
+#2 Without values being printed
+[    1.469581] read_7times_init: poll OK after 0 loops 255 ticks, 10000 ns left of 10 us
+[    1.478668] read_7times_init: poll OK after 0 loops 130 ticks, 10000 ns left of 10 us
+[    1.487650] read_7times_init: poll OK after 0 loops 101 ticks, 10000 ns left of 10 us
+[    1.496527] read_7times_init: poll OK after 0 loops 99 ticks, 10000 ns left of 10 us
+[    1.505231] read_7times_init: poll OK after 0 loops 96 ticks, 10000 ns left of 10 us
+[    1.514109] read_7times_init: poll OK after 0 loops 97 ticks, 10000 ns left of 10 us
+[    1.522883] read_7times_init: poll OK after 0 loops 99 ticks, 10000 ns left of 10 us
+
+Cheers, Prabhakar
+---
+ drivers/clk/renesas/renesas-cpg-mssr.c | 15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
+index c9598fd1f8cd..4e9c1bcaf968 100644
+--- a/drivers/clk/renesas/renesas-cpg-mssr.c
++++ b/drivers/clk/renesas/renesas-cpg-mssr.c
+@@ -308,10 +308,21 @@ static int cpg_mstp_clock_endisable(struct clk_hw *hw, bool enable)
  
- patternProperties:
--  "^DIF[0-19]$":
-+  "^DIF1?[0-9]$":
-     type: object
-     description:
-       Description of one of the outputs (DIF0..DIF19).
-@@ -107,6 +107,15 @@ examples:
-             DIF0 {
-                 renesas,slew-rate = <3000000>;
-             };
-+
-+            /* Not present on 9FGV0241, used for DT validation only */
-+            DIF2 {
-+                renesas,slew-rate = <2000000>;
-+            };
-+
-+            DIF19 {
-+                renesas,slew-rate = <3000000>;
-+            };
-         };
-     };
+ 	spin_unlock_irqrestore(&priv->pub.rmw_lock, flags);
  
+-	if (!enable || priv->reg_layout == CLK_REG_LAYOUT_RZ_A ||
+-	    priv->reg_layout == CLK_REG_LAYOUT_RZ_T2H)
++	if (!enable || priv->reg_layout == CLK_REG_LAYOUT_RZ_A)
+ 		return 0;
+ 
++	if (priv->reg_layout == CLK_REG_LAYOUT_RZ_T2H) {
++		/*
++		 * For the RZ/T2H case, it is necessary to perform a read-back after
++		 * accessing the MSTPCRm register and to dummy-read any register of
++		 * the IP at least seven times. Instead of memory-mapping the IP
++		 * register, we simply add a delay after the read operation.
++		 */
++		cpg_rzt2h_mstp_read(hw, priv->control_regs[reg]);
++		udelay(10);
++		return 0;
++	}
++
+ 	error = readl_poll_timeout_atomic(priv->pub.base0 + priv->status_regs[reg],
+ 					  value, !(value & bitmask), 0, 10);
+ 	if (error)
 -- 
-2.51.0
+2.43.0
 
