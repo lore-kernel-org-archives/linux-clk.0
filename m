@@ -1,353 +1,197 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B76E03002B9;
-	Tue, 14 Oct 2025 15:30:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0F80288C2C
+	for <linux-clk@vger.kernel.org>; Tue, 14 Oct 2025 16:37:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760455849; cv=none; b=Ub9OfkZkwvFCZwMLyNVnsWMR4GqhaYYTR8LWILKHDlGedG7M5O4BHH4q48WxpOVsFPCKvalbNQXGIA+bfx6ogRNLwtBdA+XRZOYdJ/hpAcWk8aFuFOIrggUES7t3OaEB/3LNJHAnhi5CqkJ9kPIXJ8pXqaD5XtPjuw536VeRvhk=
+	t=1760459873; cv=none; b=McQo8bHIpHwH9/OAbyADpu/YLoZlylXNvODMSbXKVfv60g2QXRztW6ZVSDXzmPFfpV4zKSkYlDsxKf2huiCh/7tYCYgQNmYjONI+FhzNGouU4LGvmGHI4cZK5AB1AKf2mppsaYVkLQYVUwbcspVzthIaIvMIFooLSe7DL3ZcydQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760455849; c=relaxed/simple;
-	bh=A5QbPcQmASszBH7eCjb9mxMsfoDfogo+3AvqiMDfHWM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=o76qMDtqy3tyqVcRMkwnA1BjgxkrXSuan4HHcwmgJH6mVnugS7k3jMB2RYpEp71tH5NqqctyihQKhScrPpbR1YA7QY9kTtCo9U4JKbgeUkRHceaWGzcJ5KdDZY73iD3aOdzENr9dxKL8ObrWjgaFZeaMn6I54qbT9LGk63DlGXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=stjGgtV3; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="stjGgtV3"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E13D7C4CEE7;
-	Tue, 14 Oct 2025 15:30:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760455849;
-	bh=A5QbPcQmASszBH7eCjb9mxMsfoDfogo+3AvqiMDfHWM=;
-	h=From:To:Cc:Subject:Date:From;
-	b=stjGgtV3EjIkrR1FlccLeyqPCBFg4cyc3VKA/I+ut0W9JBSSCBl+wVazwABDI4NRI
-	 CWsaqjtYXgFdrUJysdicR5Zf5UU17ZYtbQXi8f6ZrFH2+/1mvJybGsCv0Fg52HxbuO
-	 nq+TVqVNGqG970NY9UCDReT7arMQfXo8Qu30GbpQ0GYMNxmnEVdtIZfUvcwWz7zO2t
-	 DnhwQGZTi1IPWd6Mi1RsFyIC7hKS7rRDcyc3zEorM2qVN0oN1L1mZ9kiW3baHxe02N
-	 dfWAlyyL0oS1je3ODd/gYQ3TeIAFOXWc0ZTqLgGkD4MnigIaoI8cPPC3hdYEk1I+x0
-	 /fVz1Kw0op2YQ==
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Andrew Lunn <andrew@lunn.ch>,
-	Gregory Clement <gregory.clement@bootlin.com>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org
-Subject: [PATCH] dt-bindings: arm: Convert Marvell AP80x System Controller to DT schema
-Date: Tue, 14 Oct 2025 10:30:38 -0500
-Message-ID: <20251014153040.3783896-1-robh@kernel.org>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1760459873; c=relaxed/simple;
+	bh=bZnvcHJpPl6wYyHylv3znMtM3/3FCxpGoasHkgSZkxo=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=CKzgF39v6zB5vJHUnSMYDWTgZkxIa0Fkd5Su6Ks06wGpvJDBhErdLJRGMTS+yD7kWDyBd0sHo1Zk+n8ySYMTp9Noz/QOFeB234vqnpE1wyAGKQGCp1pv/2URMMsuySmjVo+F7S5Jhj6jR3giXyU2w4SBMdQ+mNpl5YGNI/E+lJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1v8i1s-0003ht-P6; Tue, 14 Oct 2025 18:37:40 +0200
+Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1v8i1r-003aTt-2C;
+	Tue, 14 Oct 2025 18:37:39 +0200
+Received: from pza by lupine with local (Exim 4.98.2)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1v8i1r-00000000Bnk-2XDo;
+	Tue, 14 Oct 2025 18:37:39 +0200
+Message-ID: <86cdb51d3eb7414cb1665836175e3ea32ed687dd.camel@pengutronix.de>
+Subject: Re: [PATCH v4] clk: renesas: cpg-mssr: Add module reset support for
+ RZ/T2H
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Geert Uytterhoeven <geert@linux-m68k.org>, "Lad, Prabhakar"
+	 <prabhakar.csengg@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, 	linux-renesas-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, 	linux-kernel@vger.kernel.org, Biju Das
+ <biju.das.jz@bp.renesas.com>, Fabrizio Castro
+ <fabrizio.castro.jz@renesas.com>, Lad Prabhakar
+ <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Date: Tue, 14 Oct 2025 18:37:39 +0200
+In-Reply-To: <CAMuHMdWNnmmXPxPiuO4r66Mc78gPQ7ticuKt3y5pJ_DqRu_aLQ@mail.gmail.com>
+References: 
+	<20250929112324.3622148-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	 <CAMuHMdXz0ThdhjeeurjE6TLXjVLXUy-ie-PqXHrTYExQ6TpeLA@mail.gmail.com>
+	 <CA+V-a8urG_e4yZXg9VH-cOPeK62qPGR1L2Zbbc3O97WB22hcRw@mail.gmail.com>
+	 <CAMuHMdWNnmmXPxPiuO4r66Mc78gPQ7ticuKt3y5pJ_DqRu_aLQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.1-1 
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 
-Convert the Marvell AP80x System Controller binding to DT schema format.
+Hi Geert, Prabhakar,
 
-There's not any specific compatible for the whole block which is a
-separate problem, so just the child nodes are documented. Only the
-pinctrl and clock child nodes need to be converted as the GPIO node
-already has a schema.
+On Di, 2025-10-14 at 08:46 +0200, Geert Uytterhoeven wrote:
+> Hi Prabhakar,
+>=20
+> On Mon, 13 Oct 2025 at 18:45, Lad, Prabhakar <prabhakar.csengg@gmail.com>=
+ wrote:
+> > On Mon, Oct 13, 2025 at 4:46=E2=80=AFPM Geert Uytterhoeven <geert@linux=
+-m68k.org> wrote:
+> > > On Mon, 29 Sept 2025 at 13:23, Prabhakar <prabhakar.csengg@gmail.com>=
+ wrote:
+> > > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > > >=20
+> > > > Add support for module reset handling on the RZ/T2H SoC. Unlike ear=
+lier
+> > > > CPG/MSSR variants, RZ/T2H uses a unified set of Module Reset Contro=
+l
+> > > > Registers (MRCR) where both reset and deassert actions are done via
+> > > > read-modify-write (RMW) to the same register.
+> > > >=20
+> > > > Introduce a new MRCR offset table (mrcr_for_rzt2h) for RZ/T2H and a=
+ssign
+> > > > it to reset_regs. For this SoC, the number of resets is based on th=
+e
+> > > > number of MRCR registers rather than the number of module clocks. A=
+lso
+> > > > add cpg_mrcr_reset_ops to implement reset, assert, and deassert usi=
+ng RMW
+> > > > while holding the spinlock. This follows the RZ/T2H requirements, w=
+here
+> > > > processing after releasing a module reset must be secured by perfor=
+ming
+> > > > seven dummy reads of the same register, and where a module that is =
+reset
+> > > > and released again must ensure the target bit in the Module Reset C=
+ontrol
+> > > > Register is set to 1.
+> > > >=20
+> > > > Update the reset controller registration to select cpg_mrcr_reset_o=
+ps for
+> > > > RZ/T2H, while keeping the existing cpg_mssr_reset_ops for other SoC=
+s.
+> > > >=20
+> > > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.c=
+om>
+> > > > ---
+> > > > v3->v4:
+> > > > - Renamed cpg_mrcr_set_bit() to cpg_mrcr_set_reset_state() for clar=
+ity.
+> > > > - Updated the parameters in cpg_mrcr_set_reset_state().
+> > >=20
+> > > Thanks for the update!
+> > >=20
+> > > > --- a/drivers/clk/renesas/renesas-cpg-mssr.c
+> > > > +++ b/drivers/clk/renesas/renesas-cpg-mssr.c
+> > > > @@ -736,6 +754,72 @@ static int cpg_mssr_status(struct reset_contro=
+ller_dev *rcdev,
+> > > >         return !!(readl(priv->pub.base0 + priv->reset_regs[reg]) & =
+bitmask);
+> > > >  }
+> > > >=20
+> > > > +static int cpg_mrcr_set_reset_state(struct reset_controller_dev *r=
+cdev,
+> > > > +                                   unsigned long id, bool set)
+> > > > +{
+> > > > +       struct cpg_mssr_priv *priv =3D rcdev_to_priv(rcdev);
+> > > > +       unsigned int reg =3D id / 32;
+> > > > +       unsigned int bit =3D id % 32;
+> > > > +       u32 bitmask =3D BIT(bit);
+> > > > +       void __iomem *reg_addr;
+> > > > +       unsigned long flags;
+> > > > +       unsigned int i;
+> > > > +       u32 val;
+> > > > +
+> > > > +       dev_dbg(priv->dev, "%s %u%02u\n", set ? "assert" : "deasser=
+t", reg, bit);
+> > > > +
+> > > > +       spin_lock_irqsave(&priv->pub.rmw_lock, flags);
+> > > > +
+> > > > +       reg_addr =3D priv->pub.base0 + priv->reset_regs[reg];
+> > > > +       /* Read current value and modify */
+> > > > +       val =3D readl(reg_addr);
+> > > > +       if (set)
+> > > > +               val |=3D bitmask;
+> > > > +       else
+> > > > +               val &=3D ~bitmask;
+> > > > +       writel(val, reg_addr);
+> > > > +
+> > > > +       /*
+> > > > +        * For secure processing after release from a module reset,=
+ dummy read
+> > > > +        * the same register at least seven times.
+> > >=20
+> > > This comment is waiting to become out-of-sync with the actual value..=
+.
+> > >=20
+> > For the reset operation no, for this I would like to keep this as is.
+> > But for the MSTP registers I will be adding a delay. Or did I
+> > misunderstand something?
+>=20
+> How to make sure both "#define RZT2H_RESET_REG_READ_COUNT 7" and
+> "seven" are updated together?
+>=20
+>     /*
+>      * For secure processing after release from a module reset, one must
+>      * perform multiple dummy reads of the same register.
+>      */
+>=20
+> >=20
+> > > > +        */
+> > > > +       for (i =3D 0; !set && i < RZT2H_RESET_REG_READ_COUNT; i++)
+> > > > +               readl(reg_addr);
+> > > > +
+> > > > +       /* Verify the operation */
+> > > > +       val =3D readl(reg_addr);
+> > > > +       if ((set && !(bitmask & val)) || (!set && (bitmask & val)))=
+ {
+> > >=20
+> > > Perhaps just "set =3D=3D !(bitmask & val)"? Or is that too obscure?
+> > >=20
+> > Ok, I will update it to the above in v5.
+>=20
+> No need to resend yet, I could make these changes while applying
+> (when Philipp is happy).
 
-Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
----
- .../arm/marvell/ap80x-system-controller.txt   | 146 ------------------
- .../bindings/clock/marvell,ap80x-clock.yaml   |  54 +++++++
- .../pinctrl/marvell,ap806-pinctrl.yaml        |  61 ++++++++
- 3 files changed, 115 insertions(+), 146 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/arm/marvell/ap80x-system-controller.txt
- create mode 100644 Documentation/devicetree/bindings/clock/marvell,ap80x-clock.yaml
- create mode 100644 Documentation/devicetree/bindings/pinctrl/marvell,ap806-pinctrl.yaml
+Consider me happy and feel free to add
 
-diff --git a/Documentation/devicetree/bindings/arm/marvell/ap80x-system-controller.txt b/Documentation/devicetree/bindings/arm/marvell/ap80x-system-controller.txt
-deleted file mode 100644
-index 72de11bd2ef0..000000000000
---- a/Documentation/devicetree/bindings/arm/marvell/ap80x-system-controller.txt
-+++ /dev/null
-@@ -1,146 +0,0 @@
--Marvell Armada AP80x System Controller
--======================================
--
--The AP806/AP807 is one of the two core HW blocks of the Marvell Armada
--7K/8K/931x SoCs. It contains system controllers, which provide several
--registers giving access to numerous features: clocks, pin-muxing and
--many other SoC configuration items. This DT binding allows to describe
--these system controllers.
--
--For the top level node:
-- - compatible: must be: "syscon", "simple-mfd";
-- - reg: register area of the AP80x system controller
--
--SYSTEM CONTROLLER 0
--===================
--
--Clocks:
---------
--
--
--The Device Tree node representing the AP806/AP807 system controller
--provides a number of clocks:
--
-- - 0: reference clock of CPU cluster 0
-- - 1: reference clock of CPU cluster 1
-- - 2: fixed PLL at 1200 Mhz
-- - 3: MSS clock, derived from the fixed PLL
--
--Required properties:
--
-- - compatible: must be one of:
--   * "marvell,ap806-clock"
--   * "marvell,ap807-clock"
-- - #clock-cells: must be set to 1
--
--Pinctrl:
----------
--
--For common binding part and usage, refer to
--Documentation/devicetree/bindings/pinctrl/marvell,mvebu-pinctrl.txt.
--
--Required properties:
--- compatible must be "marvell,ap806-pinctrl",
--
--Available mpp pins/groups and functions:
--Note: brackets (x) are not part of the mpp name for marvell,function and given
--only for more detailed description in this document.
--
--name	pins	functions
--================================================================================
--mpp0	0	gpio, sdio(clk), spi0(clk)
--mpp1	1	gpio, sdio(cmd), spi0(miso)
--mpp2	2	gpio, sdio(d0), spi0(mosi)
--mpp3	3	gpio, sdio(d1), spi0(cs0n)
--mpp4	4	gpio, sdio(d2), i2c0(sda)
--mpp5	5	gpio, sdio(d3), i2c0(sdk)
--mpp6	6	gpio, sdio(ds)
--mpp7	7	gpio, sdio(d4), uart1(rxd)
--mpp8	8	gpio, sdio(d5), uart1(txd)
--mpp9	9	gpio, sdio(d6), spi0(cs1n)
--mpp10	10	gpio, sdio(d7)
--mpp11	11	gpio, uart0(txd)
--mpp12	12	gpio, sdio(pw_off), sdio(hw_rst)
--mpp13	13	gpio
--mpp14	14	gpio
--mpp15	15	gpio
--mpp16	16	gpio
--mpp17	17	gpio
--mpp18	18	gpio
--mpp19	19	gpio, uart0(rxd), sdio(pw_off)
--
--GPIO:
-------
--For common binding part and usage, refer to
--Documentation/devicetree/bindings/gpio/gpio-mvebu.yaml.
--
--Required properties:
--
--- compatible: "marvell,armada-8k-gpio"
--
--- offset: offset address inside the syscon block
--
--Optional properties:
--
--- marvell,pwm-offset: offset address of PWM duration control registers inside
--  the syscon block
--
--Example:
--ap_syscon: system-controller@6f4000 {
--	compatible = "syscon", "simple-mfd";
--	reg = <0x6f4000 0x1000>;
--
--	ap_clk: clock {
--		compatible = "marvell,ap806-clock";
--		#clock-cells = <1>;
--	};
--
--	ap_pinctrl: pinctrl {
--		compatible = "marvell,ap806-pinctrl";
--	};
--
--	ap_gpio: gpio {
--		compatible = "marvell,armada-8k-gpio";
--		offset = <0x1040>;
--		ngpios = <19>;
--		gpio-controller;
--		#gpio-cells = <2>;
--		gpio-ranges = <&ap_pinctrl 0 0 19>;
--		marvell,pwm-offset = <0x10c0>;
--		#pwm-cells = <2>;
--		clocks = <&ap_clk 3>;
--	};
--};
--
--SYSTEM CONTROLLER 1
--===================
--
--Cluster clocks:
-----------------
--
--Device Tree Clock bindings for cluster clock of Marvell
--AP806/AP807. Each cluster contain up to 2 CPUs running at the same
--frequency.
--
--Required properties:
-- - compatible: must be one of:
--   * "marvell,ap806-cpu-clock"
--   * "marvell,ap807-cpu-clock"
--- #clock-cells : should be set to 1.
--
--- clocks : shall be the input parent clock(s) phandle for the clock
--           (one per cluster)
--
--- reg: register range associated with the cluster clocks
--
--ap_syscon1: system-controller@6f8000 {
--	compatible = "marvell,armada-ap806-syscon1", "syscon", "simple-mfd";
--	reg = <0x6f8000 0x1000>;
--
--	cpu_clk: clock-cpu@278 {
--		compatible = "marvell,ap806-cpu-clock";
--		clocks = <&ap_clk 0>, <&ap_clk 1>;
--		#clock-cells = <1>;
--		reg = <0x278 0xa30>;
--	};
--};
-diff --git a/Documentation/devicetree/bindings/clock/marvell,ap80x-clock.yaml b/Documentation/devicetree/bindings/clock/marvell,ap80x-clock.yaml
-new file mode 100644
-index 000000000000..43b0631ba167
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/marvell,ap80x-clock.yaml
-@@ -0,0 +1,54 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/marvell,ap80x-clock.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Marvell Armada AP80x System Controller Clocks
-+
-+maintainers:
-+  - Gregory Clement <gregory.clement@bootlin.com>
-+  - Miquel Raynal <miquel.raynal@bootlin.com>
-+
-+description: >
-+  The AP806/AP807 is one of the two core HW blocks of the Marvell Armada
-+  7K/8K/931x SoCs. It contains system controllers, which provide several
-+  registers giving access to numerous features: clocks, pin-muxing and many
-+  other SoC configuration items.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - marvell,ap806-clock
-+      - marvell,ap806-cpu-clock
-+      - marvell,ap807-clock
-+      - marvell,ap807-cpu-clock
-+
-+  reg:
-+    maxItems: 1
-+
-+  "#clock-cells":
-+    const: 1
-+
-+  clocks:
-+    items:
-+      - description: cluster 0 parent clock phandle
-+      - description: cluster 1 parent clock phandle
-+
-+required:
-+  - compatible
-+  - "#clock-cells"
-+
-+additionalProperties: false
-+
-+allOf:
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - marvell,ap806-cpu-clock
-+              - marvell,ap807-cpu-clock
-+    then:
-+      required:
-+        - clocks
-diff --git a/Documentation/devicetree/bindings/pinctrl/marvell,ap806-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/marvell,ap806-pinctrl.yaml
-new file mode 100644
-index 000000000000..00a7e358a8c9
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pinctrl/marvell,ap806-pinctrl.yaml
-@@ -0,0 +1,61 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/pinctrl/marvell,ap806-pinctrl.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Marvell AP806 pin controller
-+
-+maintainers:
-+  - Gregory Clement <gregory.clement@bootlin.com>
-+  - Miquel Raynal <miquel.raynal@bootlin.com>
-+
-+properties:
-+  compatible:
-+    const: marvell,ap806-pinctrl
-+
-+  reg:
-+    maxItems: 1
-+
-+patternProperties:
-+  '-pins$':
-+    type: object
-+    additionalProperties: false
-+
-+    properties:
-+      marvell,function:
-+        $ref: /schemas/types.yaml#/definitions/string
-+        description:
-+          Indicates the function to select.
-+        enum: [ gpio, i2c0, sdio, spi0, uart0, uart1 ]
-+
-+      marvell,pins:
-+        $ref: /schemas/types.yaml#/definitions/string-array
-+        description:
-+          Array of MPP pins to be used for the given function.
-+        minItems: 1
-+        maxItems: 20
-+        items:
-+          enum: [
-+            mpp0, mpp1, mpp2, mpp3, mpp4, mpp5, mpp6, mpp7, mpp8, mpp9, mpp10,
-+            mpp11, mpp12, mpp13, mpp14, mpp15, mpp16, mpp17, mpp18, mpp19
-+          ]
-+
-+allOf:
-+  - $ref: pinctrl.yaml#
-+
-+required:
-+  - compatible
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    pinctrl {
-+        compatible = "marvell,ap806-pinctrl";
-+
-+        uart0_pins: uart0-pins {
-+            marvell,pins = "mpp11", "mpp19";
-+            marvell,function = "uart0";
-+        };
-+    };
--- 
-2.51.0
+Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
 
+, set =3D=3D !(bitmask & val) and all.
+
+regards
+Philipp
