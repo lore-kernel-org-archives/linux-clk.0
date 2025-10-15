@@ -1,98 +1,89 @@
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64C9B1F4CBE;
-	Wed, 15 Oct 2025 13:27:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C43721A26B;
+	Wed, 15 Oct 2025 13:31:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760534850; cv=none; b=fbSNlotagCKpNUud9uevvMVS24QtoF7jyxJA59diS1BMvn8Ni/dqTgwi2UgKLTHwI7g1hpLbWkgofwzwNToO9HpwToqWJqZ3QDIHeGyglpdiFTTJGPjh7MPfAWcV6rwPvaYV5AvcD3OaWSj5Xys+mtbv44RjGZwMK3JiRlfzGLo=
+	t=1760535109; cv=none; b=rMYMh4tm1pI3tvOk2XNzv3fKwtZNFEh9vAxBZZoTp9UjwfOUV5g/BMP+sLkzglDCtRaJiU+B6D8XdsCrEeV/uE/sGrhgGuh03bxwU/t8izhkKauc3byBwF8hlrv/rAQOpTBgabTfEPn5h7SzCJc2BfV04/8IdEBtdlOoFjluOuc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760534850; c=relaxed/simple;
-	bh=kTXZnSO2pGG9Yfrfg2dDvXGwy2AWU+E8hqGmsSKEt1I=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=T8MXpwZBCth0j42NC0s+Af+eoRtCCHy1ISgGV9YY9YUn0J482yO39tdb0c2Z+/TioDkata//cECiqvDq4ir8F/SLtUQKG5FrCkhPfUiLYms2cKUpN4rVS7TAPL8E/au8KsGaDsfroOxIL1efypbtVT3aiBs708g8Ep/E1SUVC+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=tWVdwD3B; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+	s=arc-20240116; t=1760535109; c=relaxed/simple;
+	bh=U6U9Isg9UG30rWgAIkGOrIJ8TJ7Vt+fz8n5cRLTTnNE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GGYTJnNV5SPjsczNvpt+lvI+5G7lY495M/VeRxAIiVCSfVn/EEvyM13QSQmcVM8Wzth4OVZYZL3KLmgbQz+5DhA3uF6hQ0p7oRJFrvryHV3yfcmcgeIPP/FIYvYPRv7YknC8uyhHf+UI8e1ey/Np1Uz20q3f6SzNg1rQtLTjgzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NjkVEOa0; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="tWVdwD3B"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
-	bh=EFu78uXLNhhYEH7SVSyRI1WHuG5g54Ao3mQfyxG+tcA=; b=tWVdwD3BvmoVph276K/6AP4+qH
-	FOgl0YNA7jJdbhOWcHJU/rnlh1YeNzgB9WF4tJPvuZKylLCkTWCzzR5K/D0I8cpazCXWYylTCdo7Z
-	CJYaFUS7GccbUgcRUhX4T9cy/WFZ6RiFo6LexaXZpK6XVNPlissl69o1kRlu7mI8qYHBuKZ/5Rdya
-	4BAA8eEnVsoY8kve7J9ddgxVXZbwAWfyUZIiEIvXV/ib2DyzjHnNWKJIvC34fzk0KH4N2bjYtWdvX
-	GCb9B0oBFseQS66XDAw8YFoR+YhZJXBi1kUgasdPvWT17hTspcUsJFwPHgfcXGc/d1NGMro/KJFIu
-	MairWdyQ==;
-Received: from i53875a40.versanet.de ([83.135.90.64] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1v91X6-0007hd-Ux; Wed, 15 Oct 2025 15:27:12 +0200
-From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
-To: Quentin Schulz <quentin.schulz@cherry.de>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, zhangqing@rock-chips.com,
- sebastian.reichel@collabora.com, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject:
- Re: [PATCH] clk: rockchip: rk3588: Don't change PLL rates when setting
- dclk_vop2_src
-Date: Wed, 15 Oct 2025 15:27:12 +0200
-Message-ID: <2749454.BddDVKsqQX@diego>
-In-Reply-To: <6677ebf9-50bd-4df0-806c-9698f2256a8d@cherry.de>
-References:
- <20251008133135.3745785-1-heiko@sntech.de>
- <6677ebf9-50bd-4df0-806c-9698f2256a8d@cherry.de>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NjkVEOa0"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B13CC4CEF8;
+	Wed, 15 Oct 2025 13:31:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760535108;
+	bh=U6U9Isg9UG30rWgAIkGOrIJ8TJ7Vt+fz8n5cRLTTnNE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NjkVEOa0kDfH9tViKXPU8re9ULjS63UkwqtmS40Er35wFdQP/39XagX39obdH0pNS
+	 kacHVArwTN8ZpgIFFwnorVX7x71UBMbm1LVlKkWodBC+sxGBwPhuI8fgokg4mG0SRl
+	 9QgQzrOlPBRf7hcdcdowOGDhAs8Ig8rqpXrG5duNFvzuXWt3NP1N1OwpslbIKFbMbY
+	 0kqTF2XVa0QxJ7tffLU6jZX/jbyQTyLdPeVOpntsnk5dTRufeHH8JWCbbECC1GIlXt
+	 wDIdOI7lTQSIv0/VcCtNNOGylySalRmp8Ja0tkKf2guvhWUB0JMAUaJaN9dCpBsR1w
+	 tfVDFvPSjOUiA==
+Date: Wed, 15 Oct 2025 08:31:46 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Marek Vasut <marek.vasut@mailbox.org>
+Cc: Abel Vesa <abelvesa@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Peng Fan <peng.fan@nxp.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	devicetree@vger.kernel.org, imx@lists.linux.dev,
+	Liu Ying <victor.liu@nxp.com>, Fabio Estevam <festevam@gmail.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH 37/39] dt-bindings: interrupt-controller: fsl,irqsteer:
+ Add i.MX95 support
+Message-ID: <176053510455.3263483.4220696056487086323.robh@kernel.org>
+References: <20251011170213.128907-1-marek.vasut@mailbox.org>
+ <20251011170213.128907-38-marek.vasut@mailbox.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251011170213.128907-38-marek.vasut@mailbox.org>
 
-Am Mittwoch, 15. Oktober 2025, 14:58:46 Mitteleurop=C3=A4ische Sommerzeit s=
-chrieb Quentin Schulz:
-> Hi Heiko,
->=20
-> On 10/8/25 3:31 PM, Heiko Stuebner wrote:
-> > dclk_vop2_src currently has CLK_SET_RATE_PARENT | CLK_SET_RATE_NO_REPAR=
-ENT
-> > flags set, which is vastly different than dclk_vop0_src or dclk_vop1_sr=
-c,
-> > which have none of those.
-> >=20
-> > With these flags in dclk_vop2_src, actually setting the clock then resu=
-lts
-> > in a lot of other peripherals breaking, because setting the rate results
-> > in the PLL source getting changed:
-> >=20
-> > [   14.898718] clk_core_set_rate_nolock: setting rate for dclk_vop2 to =
-152840000
-> > [   15.155017] clk_change_rate: setting rate for pll_gpll to 1680000000
-> > [ clk adjusting every gpll user ]
-> >=20
-> > This includes possibly the other vops, i2s, spdif and even the uarts.
-> > Among other possible things, this breaks the uart console on a board
-> > I use. Sometimes it recovers later on, but there will be a big block
->=20
-> I can reproduce on the same board as yours and this fixes the issue=20
-> indeed (note I can only reproduce for now when display the modetest=20
-> pattern, otherwise after boot the console seems fine to me).
 
-I boot into a Debian rootfs with fbcon on my system, and the serial
-console produces garbled output when the vop adjusts the clock
+On Sat, 11 Oct 2025 18:51:52 +0200, Marek Vasut wrote:
+> Add compatible string "fsl,imx95-irqsteer" for the i.MX95 chip, which is
+> backward compatible with "fsl,imx-irqsteer".
+> 
+> Signed-off-by: Marek Vasut <marek.vasut@mailbox.org>
+> ---
+> Cc: Abel Vesa <abelvesa@kernel.org>
+> Cc: Conor Dooley <conor+dt@kernel.org>
+> Cc: Fabio Estevam <festevam@gmail.com>
+> Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
+> Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
+> Cc: Liu Ying <victor.liu@nxp.com>
+> Cc: Lucas Stach <l.stach@pengutronix.de>
+> Cc: Peng Fan <peng.fan@nxp.com>
+> Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: Shawn Guo <shawnguo@kernel.org>
+> Cc: Thomas Zimmermann <tzimmermann@suse.de>
+> Cc: devicetree@vger.kernel.org
+> Cc: dri-devel@lists.freedesktop.org
+> Cc: imx@lists.linux.dev
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-clk@vger.kernel.org
+> ---
+>  .../devicetree/bindings/interrupt-controller/fsl,irqsteer.yaml  | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
 
-Sometimes it recovers after a bit, but other times it doesn't
-
-> Reviewed-by: Quentin Schulz <quentin.schulz@cherry.de>
-> Tested-by: Quentin Schulz <quentin.schulz@cherry.de> # RK3588 Tiger w/=20
-> DP carrierboard
-
-Thanks for testing
-Heiko
-
+Applied, thanks!
 
