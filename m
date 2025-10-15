@@ -1,51 +1,51 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C43721A26B;
-	Wed, 15 Oct 2025 13:31:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16116223DEF;
+	Wed, 15 Oct 2025 13:33:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760535109; cv=none; b=rMYMh4tm1pI3tvOk2XNzv3fKwtZNFEh9vAxBZZoTp9UjwfOUV5g/BMP+sLkzglDCtRaJiU+B6D8XdsCrEeV/uE/sGrhgGuh03bxwU/t8izhkKauc3byBwF8hlrv/rAQOpTBgabTfEPn5h7SzCJc2BfV04/8IdEBtdlOoFjluOuc=
+	t=1760535199; cv=none; b=lnjIGLimXlmhJWB1RE4RdrpdNkYB1S9MKvDdwbICNCEmH+gZRSr6ovVyrCf7VN49Khc8H7a8Wb/KbwFFtKxgdPIFbPZeWTzETI8Fqe/3bOBbwHkwP+0gSPHCk3NMIC2g0Z9tCBWibZ03QBmrZcb/Q7TA/rzjS7ahr1igXYsvCT8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760535109; c=relaxed/simple;
-	bh=U6U9Isg9UG30rWgAIkGOrIJ8TJ7Vt+fz8n5cRLTTnNE=;
+	s=arc-20240116; t=1760535199; c=relaxed/simple;
+	bh=3fz9KGNaQakjQB6EQzIxoVQtqjKXznasDpV8NOPgPuQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GGYTJnNV5SPjsczNvpt+lvI+5G7lY495M/VeRxAIiVCSfVn/EEvyM13QSQmcVM8Wzth4OVZYZL3KLmgbQz+5DhA3uF6hQ0p7oRJFrvryHV3yfcmcgeIPP/FIYvYPRv7YknC8uyhHf+UI8e1ey/Np1Uz20q3f6SzNg1rQtLTjgzs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NjkVEOa0; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=AHKtg9wj13BPTC/+2FWO7rU32Oh4xcOHb2/ad8VqJ1TRGxYZKOzYxFmE0mBgCFCNIQuUw1cJE/j6cb/h+sutze/YLjyrCZTLbsfDD+nVByyG/b5I6hiWDJU7K1uqiw8wDb5Pvefb34FEPw3oVZKWlIdTYl5xYr8ATw6KVFJRhvY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rz/cv0jG; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NjkVEOa0"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B13CC4CEF8;
-	Wed, 15 Oct 2025 13:31:48 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rz/cv0jG"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 559D5C4CEF8;
+	Wed, 15 Oct 2025 13:33:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760535108;
-	bh=U6U9Isg9UG30rWgAIkGOrIJ8TJ7Vt+fz8n5cRLTTnNE=;
+	s=k20201202; t=1760535197;
+	bh=3fz9KGNaQakjQB6EQzIxoVQtqjKXznasDpV8NOPgPuQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NjkVEOa0kDfH9tViKXPU8re9ULjS63UkwqtmS40Er35wFdQP/39XagX39obdH0pNS
-	 kacHVArwTN8ZpgIFFwnorVX7x71UBMbm1LVlKkWodBC+sxGBwPhuI8fgokg4mG0SRl
-	 9QgQzrOlPBRf7hcdcdowOGDhAs8Ig8rqpXrG5duNFvzuXWt3NP1N1OwpslbIKFbMbY
-	 0kqTF2XVa0QxJ7tffLU6jZX/jbyQTyLdPeVOpntsnk5dTRufeHH8JWCbbECC1GIlXt
-	 wDIdOI7lTQSIv0/VcCtNNOGylySalRmp8Ja0tkKf2guvhWUB0JMAUaJaN9dCpBsR1w
-	 tfVDFvPSjOUiA==
-Date: Wed, 15 Oct 2025 08:31:46 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
+	b=rz/cv0jGa6pcHdPzjjI1OM8wpBajf6uLdiwhQUjIwwa/08P9M/cr0zt05mHYbGzUK
+	 pap+MlEKcpQWolJ4vJYl77nEIi6aTDGVnrh2/dHbbz3AB2m0+CbqmYAeY+/43BXpAZ
+	 nU1X0VzsbhDXvWvb/CKzy8DN1iM2qdMPqTvgWUXtZpeACYkz/ARmZBjUtMmi47peiv
+	 HIbrkj584SyBB/tJYeQz/7Z2SJNMV281XhoF3xnBSGApzpfCfHsZEX+wQ2luvZxRhO
+	 0qSJOTwfU95lhsoyRTxgYH8XXrdMTpt8r/jKCwtEGVd66+lDNjniYl0p3IppvQ0rca
+	 pdMbGAjZ42upQ==
+Date: Wed, 15 Oct 2025 08:33:15 -0500
+From: Rob Herring <robh@kernel.org>
 To: Marek Vasut <marek.vasut@mailbox.org>
-Cc: Abel Vesa <abelvesa@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+Cc: dri-devel@lists.freedesktop.org, Abel Vesa <abelvesa@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Fabio Estevam <festevam@gmail.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Liu Ying <victor.liu@nxp.com>, Lucas Stach <l.stach@pengutronix.de>,
 	Peng Fan <peng.fan@nxp.com>,
 	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	devicetree@vger.kernel.org, imx@lists.linux.dev,
-	Liu Ying <victor.liu@nxp.com>, Fabio Estevam <festevam@gmail.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH 37/39] dt-bindings: interrupt-controller: fsl,irqsteer:
- Add i.MX95 support
-Message-ID: <176053510455.3263483.4220696056487086323.robh@kernel.org>
+	Shawn Guo <shawnguo@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH 38/39] dt-bindings: clock: support i.MX95 Display Stream
+ CSR module
+Message-ID: <20251015133315.GA3263713-robh@kernel.org>
 References: <20251011170213.128907-1-marek.vasut@mailbox.org>
- <20251011170213.128907-38-marek.vasut@mailbox.org>
+ <20251011170213.128907-39-marek.vasut@mailbox.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -54,12 +54,11 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251011170213.128907-38-marek.vasut@mailbox.org>
+In-Reply-To: <20251011170213.128907-39-marek.vasut@mailbox.org>
 
-
-On Sat, 11 Oct 2025 18:51:52 +0200, Marek Vasut wrote:
-> Add compatible string "fsl,imx95-irqsteer" for the i.MX95 chip, which is
-> backward compatible with "fsl,imx-irqsteer".
+On Sat, Oct 11, 2025 at 06:51:53PM +0200, Marek Vasut wrote:
+> i.MX95 DISPLAY STREAM_CSR includes registers to control DSI PHY settings.
+> Add dt-schema for it.
 > 
 > Signed-off-by: Marek Vasut <marek.vasut@mailbox.org>
 > ---
@@ -81,9 +80,35 @@ On Sat, 11 Oct 2025 18:51:52 +0200, Marek Vasut wrote:
 > Cc: linux-arm-kernel@lists.infradead.org
 > Cc: linux-clk@vger.kernel.org
 > ---
->  .../devicetree/bindings/interrupt-controller/fsl,irqsteer.yaml  | 2 ++
->  1 file changed, 2 insertions(+)
+>  .../imx/nxp,imx95-display-stream-csr.yaml     | 41 +++++++++++++++++++
+>  1 file changed, 41 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/display/imx/nxp,imx95-display-stream-csr.yaml
 > 
+> diff --git a/Documentation/devicetree/bindings/display/imx/nxp,imx95-display-stream-csr.yaml b/Documentation/devicetree/bindings/display/imx/nxp,imx95-display-stream-csr.yaml
+> new file mode 100644
+> index 0000000000000..61153120c9378
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/display/imx/nxp,imx95-display-stream-csr.yaml
+> @@ -0,0 +1,41 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/display/imx/nxp,imx95-display-stream-csr.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: NXP i.MX95 Display Stream Block Control
+> +
+> +maintainers:
+> +  - Marek Vasut <marek.vasut@mailbox.org>
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - enum:
+> +          - nxp,imx95-display-stream-csr
+> +          - nxp,imx95-master-stream-csr
+> +          - nxp,imx95-mipi-tx-phy-csr
 
-Applied, thanks!
+'-csr' seems redundant.
 
+> +      - const: syscon
