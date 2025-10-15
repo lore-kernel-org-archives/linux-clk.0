@@ -1,24 +1,24 @@
-Received: from mail-m49235.qiye.163.com (mail-m49235.qiye.163.com [45.254.49.235])
+Received: from mail-m49244.qiye.163.com (mail-m49244.qiye.163.com [45.254.49.244])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9BF731B823;
-	Wed, 15 Oct 2025 09:13:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC53F319870;
+	Wed, 15 Oct 2025 09:18:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.244
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760519628; cv=none; b=s5RbsJkgmsuNK4MpwkokQKfnUm50B/1hZUE5qRkRee8xNotPFl5pvQfAgaQxTV3PXho1/DVr0F7nc4ml0Msibcg/jEK96dWF8pyHLNsQj1gzDYla4/noaS5H5i4OKJnGiLsE88/9tsaybnfs6gu9H+pflmWRTb3/BMhLAoFaoOY=
+	t=1760519931; cv=none; b=VYIF+QC89jI4TcQftCsCszAzSl0SNnJyuo1Go46WUVYY9sbfnxP+ez0Q3Jc9fciZkhbhrtHnjBB3V6s2kAKVcn9qJWyl0sZW6EXgQsl0Pj42yEt014lCV3JXhy1nJMWkxuY00wTikM9BDWTLmdZZZfv0y+ab+inlXQ7rq0o/y9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760519628; c=relaxed/simple;
-	bh=x0lIpzffAmO6r81tis0cOVPRwUzF0pWjPojvvh/X6Ns=;
+	s=arc-20240116; t=1760519931; c=relaxed/simple;
+	bh=btcK1B0MMJafW/Jquj5sZzV1ywQecUcid+Asf0skoos=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=asIaDGKh0FkUdpTfBhgUY/3P7Ew24xFKqB7WzWU7x8jclPxgBNlNz7Inu+IAivTyUcn//lBaM1LpvGrzVMFH/3BAof9ymPbtWMbqE5jBnj6+E3XVE334LtfcSwQbfL5b/ivf3xIkEAs8mKRNCI4J8B4S2DVaLQXMehMaBDjdAwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=WnvTLEpH; arc=none smtp.client-ip=45.254.49.235
+	 MIME-Version; b=HecytKSFi/agQe0baxA6Gfehxf0PlSkxyiFCf7XZwPE5J1PpIQVRJq1zi/+KYAsaOHXuYU2r+iCO1MxmYi+aUKYLbyVkcf3bban5y0zpxUntyaa48oiCz/2r5sUwOa/R1sjFwalN0JHmjtTQIoaDZWbXWbar9VZFHmVYqfYOKPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=Gi2doyVx; arc=none smtp.client-ip=45.254.49.244
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="WnvTLEpH"
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="Gi2doyVx"
 Received: from rockchip.. (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 25fe01692;
-	Wed, 15 Oct 2025 17:13:35 +0800 (GMT+08:00)
+	by smtp.qiye.163.com (Hmail) with ESMTP id 25fe0167e;
+	Wed, 15 Oct 2025 17:13:30 +0800 (GMT+08:00)
 From: Elaine Zhang <zhangqing@rock-chips.com>
 To: mturquette@baylibre.com,
 	sboyd@kernel.org,
@@ -34,9 +34,9 @@ Cc: devicetree@vger.kernel.org,
 	linux-rockchip@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	huangtao@rock-chips.com
-Subject: [PATCH v1 5/5] clk: rockchip: add support for pvtpll clk
-Date: Wed, 15 Oct 2025 17:13:25 +0800
-Message-Id: <20251015091325.71333-6-zhangqing@rock-chips.com>
+Subject: [PATCH v1 2/5] dt-bindings: clock, reset: Add support for rv1126b
+Date: Wed, 15 Oct 2025 17:13:22 +0800
+Message-Id: <20251015091325.71333-3-zhangqing@rock-chips.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20251015091325.71333-1-zhangqing@rock-chips.com>
 References: <20251015091325.71333-1-zhangqing@rock-chips.com>
@@ -47,957 +47,897 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a99e72573fe03a3kunmdd11480e6b2156
+X-HM-Tid: 0a99e7255f3c03a3kunmdd11480e6b20dc
 X-HM-MType: 1
 X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQxgYTlZCHkxOSUNKS0lPGUlWFRQJFh
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGU5IQlYdTxpPGUoaH01OTk1WFRQJFh
 	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
 	hVSktLVUpCS0tZBg++
 DKIM-Signature: a=rsa-sha256;
-	b=WnvTLEpHhffnWICbSsmpGpNXpM2TsGVxthjbkaKruEouvvmMZO9pWZ+uWaJstN32dGjk1wD7YQcDlRQ2s5gwPZCTvh6MWp/AR+wvbzg3yJOCD+OwgiHZSmylYYzJf76pV7RZELrNyjEoGgUJCh7Nu9gaxM8zCefeS1/PQvjBSZE=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=i+sZgcR30oFRHyqeSFTW6KDz+jFVoBTho0YSGddht4Q=;
+	b=Gi2doyVx64vM18xZkF9WiNFCkjs4L8wAN6V7aDtTxotmSU/xs6+YgscuJ5fzreN8yOSc13AVbkU+vLk+x7tJNgtdRIIylYj9YGs3h5PaCis960M29ZDFOYDlAtoz1EgF8B/DxINEHq0W9e/JxAF9wCAbXq025+NbSGQ4AF7WAuE=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=IiROeU6p2jW+AN4Xzw5kddM/wnj+ubw6P2Maxv5fUXg=;
 	h=date:mime-version:subject:message-id:from;
 
-Support to adjust pvtpll by volt-sel and otp.
-Support calibrate pvtpll init frequency.
+Add clock and reset ID defines for rv1126b.
+Also add documentation for the rv1126b CRU core.
 
 Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
 ---
- drivers/clk/rockchip/clk-pvtpll.c | 925 ++++++++++++++++++++++++++++++
- 1 file changed, 925 insertions(+)
- create mode 100644 drivers/clk/rockchip/clk-pvtpll.c
+ .../bindings/clock/rockchip,rv1126b-cru.yaml  |  52 +++
+ .../dt-bindings/clock/rockchip,rv1126b-cru.h  | 392 +++++++++++++++++
+ .../dt-bindings/reset/rockchip,rv1126b-cru.h  | 405 ++++++++++++++++++
+ 3 files changed, 849 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rv1126b-cru.yaml
+ create mode 100644 include/dt-bindings/clock/rockchip,rv1126b-cru.h
+ create mode 100644 include/dt-bindings/reset/rockchip,rv1126b-cru.h
 
-diff --git a/drivers/clk/rockchip/clk-pvtpll.c b/drivers/clk/rockchip/clk-pvtpll.c
+diff --git a/Documentation/devicetree/bindings/clock/rockchip,rv1126b-cru.yaml b/Documentation/devicetree/bindings/clock/rockchip,rv1126b-cru.yaml
 new file mode 100644
-index 000000000000..8a5c9a84646e
+index 000000000000..61bfcde9b16a
 --- /dev/null
-+++ b/drivers/clk/rockchip/clk-pvtpll.c
-@@ -0,0 +1,925 @@
-+// SPDX-License-Identifier: GPL-2.0
++++ b/Documentation/devicetree/bindings/clock/rockchip,rv1126b-cru.yaml
+@@ -0,0 +1,52 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/rockchip,rv1126b-cru.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Rockchip RV1126B Clock and Reset Unit
++
++maintainers:
++  - Elaine Zhang <zhangqing@rock-chips.com>
++  - Heiko Stuebner <heiko@sntech.de>
++
++description:
++  The rv1126b clock controller generates the clock and also implements a
++  reset controller for SoC peripherals.
++
++properties:
++  compatible:
++    enum:
++      - rockchip,rv1126b-cru
++
++  reg:
++    maxItems: 1
++
++  "#clock-cells":
++    const: 1
++
++  "#reset-cells":
++    const: 1
++
++  clocks:
++    maxItems: 1
++
++  clock-names:
++    const: xin24m
++
++required:
++  - compatible
++  - reg
++  - "#clock-cells"
++  - "#reset-cells"
++
++additionalProperties: false
++
++examples:
++  - |
++    cru: clock-controller@20000000 {
++      compatible = "rockchip,rv1126b-cru";
++      reg = <0x20000000 0xc0000>;
++      #clock-cells = <1>;
++      #reset-cells = <1>;
++    };
+diff --git a/include/dt-bindings/clock/rockchip,rv1126b-cru.h b/include/dt-bindings/clock/rockchip,rv1126b-cru.h
+new file mode 100644
+index 000000000000..317012421c22
+--- /dev/null
++++ b/include/dt-bindings/clock/rockchip,rv1126b-cru.h
+@@ -0,0 +1,392 @@
++/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
 +/*
 + * Copyright (c) 2025 Rockchip Electronics Co., Ltd.
 + * Author: Elaine Zhang <zhangqing@rock-chips.com>
 + */
 +
-+#include <linux/clk.h>
-+#include <linux/delay.h>
-+#include <linux/err.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/module.h>
-+#include <linux/nvmem-consumer.h>
-+#include <linux/of.h>
-+#include <linux/of_platform.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+#include <linux/slab.h>
-+#include <linux/string.h>
-+#include <linux/clk-provider.h>
-+#include <linux/regulator/consumer.h>
-+#include "clk.h"
-+
-+#define MHz	1000000
-+
-+#define RV1103B_PVTPLL_GCK_CFG			0x20
-+#define RV1103B_PVTPLL_GCK_LEN			0x24
-+#define RV1103B_GCK_START			BIT(0)
-+#define RV1103B_GCK_EN				BIT(1)
-+#define RV1103B_GCK_MODE			BIT(5)
-+#define RV1103B_GCK_RING_LEN_SEL_OFFSET		0
-+#define RV1103B_GCK_RING_LEN_SEL_MASK		0x1ff
-+#define RV1103B_GCK_RING_SEL_OFFSET		10
-+#define RV1103B_GCK_RING_SEL_MASK		0x07
-+#define RV1103B_PVTPLL_MAX_LENGTH		0x1ff
-+#define RV1103B_PVTPLL_GCK_CNT_AVG		0x54
-+
-+#define RV1126B_PVTPLL_NORMAL_MODE		0x1
-+#define RV1126B_PVTPLL_SLOW_MODE		0
-+#define RV1126B_PVTPLL_MODE_SHIFT		0
-+#define RV1126B_PVTPLL_MODE_MASK		0x1
-+
-+#define RK3506_GRF_CORE_PVTPLL_CON0_L		0x00
-+#define RK3506_GRF_CORE_PVTPLL_CON0_H		0x04
-+#define RK3506_OSC_RING_SEL_OFFSET		8
-+#define RK3506_OSC_RING_SEL_MASK		0x03
-+#define RK3506_OSC_EN				BIT(1)
-+#define RK3506_START				BIT(0)
-+#define RK3506_RING_LENGTH_SEL_OFFSET		0
-+#define RK3506_RING_LENGTH_SEL_MASK		0x7f
-+#define RK3506_PVTPLL_MAX_LENGTH		0x7f
-+
-+struct rockchip_clock_pvtpll;
-+
-+struct pvtpll_table {
-+	unsigned int rate;
-+	u32 length;
-+	u32 length_frac;
-+	u32 ring_sel;
-+	u32 volt_sel_thr;
-+};
-+
-+struct rockchip_clock_pvtpll_info {
-+	const struct clk_ops *clk_ops;
-+	unsigned int table_size;
-+	struct pvtpll_table *table;
-+	unsigned int jm_table_size;
-+	struct pvtpll_table *jm_table;
-+	unsigned int pvtpll_adjust_factor;
-+	unsigned int calibrate_length_step;
-+	unsigned int calibrate_freq_per_step;
-+	unsigned int mode_offset;
-+	bool is_always_on;
-+	int (*config)(struct rockchip_clock_pvtpll *pvtpll,
-+		      struct pvtpll_table *table);
-+	int (*pvtpll_calibrate)(struct rockchip_clock_pvtpll *pvtpll);
-+	int (*pvtpll_volt_sel_adjust)(struct rockchip_clock_pvtpll *pvtpll,
-+				      u32 clock_id,
-+				      u32 volt_sel);
-+};
-+
-+struct rockchip_clock_pvtpll {
-+	struct device *dev;
-+	struct list_head list_head;
-+	struct rockchip_clock_pvtpll_info *info;
-+	struct regmap *regmap;
-+	struct regmap *regmap_cru;
-+	struct clk_hw hw;
-+	struct clk *main_clk;
-+	struct clk *sclk;
-+	struct clk *pvtpll_clk;
-+	struct clk *pvtpll_out;
-+	struct notifier_block pvtpll_nb;
-+	struct delayed_work pvtpll_calibrate_work;
-+	unsigned long cur_rate;
-+	u32 pvtpll_clk_id;
-+};
-+
-+static LIST_HEAD(rockchip_clock_pvtpll_list);
-+static DEFINE_MUTEX(pvtpll_list_mutex);
-+
-+struct otp_opp_info {
-+	u16 min_freq;
-+	u16 max_freq;
-+	u8 volt;
-+	u8 length;
-+} __packed;
-+
-+#define ROCKCHIP_PVTPLL(_rate, _sel, _len)			\
-+{								\
-+	.rate = _rate##U,					\
-+	.ring_sel = _sel,					\
-+	.length = _len,						\
-+}
-+
-+#define ROCKCHIP_PVTPLL_VOLT_SEL(_rate, _sel, _len, _volt_sel_thr)	\
-+{								\
-+	.rate = _rate##U,					\
-+	.ring_sel = _sel,					\
-+	.length = _len,						\
-+	.volt_sel_thr = _volt_sel_thr,				\
-+}
-+
-+static struct pvtpll_table rv1103b_core_pvtpll_table[] = {
-+	/* rate_hz, ring_sel, length */
-+	ROCKCHIP_PVTPLL_VOLT_SEL(1608000000, 1, 6, 7),
-+	ROCKCHIP_PVTPLL_VOLT_SEL(1512000000, 1, 6, 6),
-+	ROCKCHIP_PVTPLL_VOLT_SEL(1416000000, 1, 6, 6),
-+	ROCKCHIP_PVTPLL_VOLT_SEL(1296000000, 1, 6, 5),
-+	ROCKCHIP_PVTPLL_VOLT_SEL(1200000000, 1, 6, 3),
-+	ROCKCHIP_PVTPLL_VOLT_SEL(1008000000, 1, 26, 3),
-+	ROCKCHIP_PVTPLL_VOLT_SEL(816000000, 1, 50, 3),
-+};
-+
-+static struct pvtpll_table rv1103b_enc_pvtpll_table[] = {
-+	/* rate_hz, ring_se, length */
-+	ROCKCHIP_PVTPLL(500000000, 1, 80),
-+};
-+
-+static struct pvtpll_table rv1103b_isp_pvtpll_table[] = {
-+	/* rate_hz, ring_se, length */
-+	ROCKCHIP_PVTPLL(400000000, 1, 160),
-+};
-+
-+static struct pvtpll_table rv1103b_npu_pvtpll_table[] = {
-+	/* rate_hz, ring_se, length */
-+	ROCKCHIP_PVTPLL_VOLT_SEL(1000000000, 1, 12, 7),
-+	ROCKCHIP_PVTPLL_VOLT_SEL(900000000, 1, 12, 6),
-+	ROCKCHIP_PVTPLL_VOLT_SEL(800000000, 1, 12, 4),
-+	ROCKCHIP_PVTPLL_VOLT_SEL(700000000, 1, 32, 4),
-+};
-+
-+static struct pvtpll_table rv1126b_aisp_pvtpll_table[] = {
-+	/* rate_hz, ring_se, length */
-+	ROCKCHIP_PVTPLL(835000000, 0, 8),
-+	ROCKCHIP_PVTPLL(805000000, 0, 8),
-+	ROCKCHIP_PVTPLL(775000000, 0, 8),
-+};
-+
-+static struct pvtpll_table rv1126b_core_pvtpll_table[] = {
-+	/* rate_hz, ring_sel, length */
-+	ROCKCHIP_PVTPLL_VOLT_SEL(1900000000, 0, 30, 0),
-+	ROCKCHIP_PVTPLL_VOLT_SEL(1800000000, 0, 30, 0),
-+	ROCKCHIP_PVTPLL_VOLT_SEL(1700000000, 0, 30, 0),
-+	ROCKCHIP_PVTPLL_VOLT_SEL(1608000000, 0, 30, 5),
-+	ROCKCHIP_PVTPLL_VOLT_SEL(1512000000, 0, 30, 3),
-+	ROCKCHIP_PVTPLL_VOLT_SEL(1416000000, 0, 34, 3),
-+	ROCKCHIP_PVTPLL_VOLT_SEL(1296000000, 0, 38, 3),
-+	ROCKCHIP_PVTPLL_VOLT_SEL(1200000000, 0, 38, 3),
-+	ROCKCHIP_PVTPLL_VOLT_SEL(1008000000, 0, 52, 3),
-+	ROCKCHIP_PVTPLL_VOLT_SEL(816000000, 0, 84, 3),
-+};
-+
-+static struct pvtpll_table rv1126b_enc_pvtpll_table[] = {
-+	/* rate_hz, ring_se, length */
-+	ROCKCHIP_PVTPLL(550000000, 0, 80),
-+	ROCKCHIP_PVTPLL(520000000, 0, 88),
-+	ROCKCHIP_PVTPLL(500000000, 0, 88),
-+	ROCKCHIP_PVTPLL(480000000, 0, 88),
-+};
-+
-+static struct pvtpll_table rv1126b_isp_pvtpll_table[] = {
-+	/* rate_hz, ring_se, length */
-+	ROCKCHIP_PVTPLL(530000000, 0, 100),
-+	ROCKCHIP_PVTPLL(510000000, 0, 100),
-+	ROCKCHIP_PVTPLL(490000000, 0, 100),
-+};
-+
-+static struct pvtpll_table rv1126b_npu_pvtpll_table[] = {
-+	/* rate_hz, ring_se, length, volt_sel_thr */
-+	ROCKCHIP_PVTPLL_VOLT_SEL(1100000000, 0, 12, 0),
-+	ROCKCHIP_PVTPLL_VOLT_SEL(1050000000, 0, 12, 0),
-+	ROCKCHIP_PVTPLL_VOLT_SEL(1000000000, 0, 12, 0),
-+	ROCKCHIP_PVTPLL_VOLT_SEL(950000000, 0, 12, 2),
-+	ROCKCHIP_PVTPLL_VOLT_SEL(900000000, 0, 14, 1),
-+	ROCKCHIP_PVTPLL_VOLT_SEL(800000000, 0, 18, 1),
-+	ROCKCHIP_PVTPLL_VOLT_SEL(700000000, 0, 36, 3),
-+	ROCKCHIP_PVTPLL_VOLT_SEL(600000000, 0, 60, 3),
-+	ROCKCHIP_PVTPLL_VOLT_SEL(510000000, 0, 108, 3),
-+};
-+
-+static struct pvtpll_table rk3506_core_pvtpll_table[] = {
-+	/* rate_hz, ring_sel, length, volt_sel_thr */
-+	ROCKCHIP_PVTPLL_VOLT_SEL(1608000000, 0, 6, 7),
-+	ROCKCHIP_PVTPLL_VOLT_SEL(1512000000, 0, 6, 7),
-+	ROCKCHIP_PVTPLL_VOLT_SEL(1416000000, 0, 6, 5),
-+	ROCKCHIP_PVTPLL_VOLT_SEL(1296000000, 0, 6, 3),
-+	ROCKCHIP_PVTPLL_VOLT_SEL(1200000000, 0, 6, 2),
-+	ROCKCHIP_PVTPLL_VOLT_SEL(1008000000, 0, 10, 4),
-+	ROCKCHIP_PVTPLL_VOLT_SEL(800000000, 0, 18, 4),
-+};
-+
-+static struct pvtpll_table rk3506j_core_pvtpll_table[] = {
-+	/* rate_hz, ring_sel, length, volt_sel_thr */
-+	ROCKCHIP_PVTPLL_VOLT_SEL(1608000000, 0, 6, 7),
-+	ROCKCHIP_PVTPLL_VOLT_SEL(1512000000, 0, 7, 7),
-+	ROCKCHIP_PVTPLL_VOLT_SEL(1416000000, 0, 7, 5),
-+	ROCKCHIP_PVTPLL_VOLT_SEL(1296000000, 0, 7, 3),
-+	ROCKCHIP_PVTPLL_VOLT_SEL(1200000000, 0, 7, 2),
-+	ROCKCHIP_PVTPLL_VOLT_SEL(1008000000, 0, 11, 2),
-+	ROCKCHIP_PVTPLL_VOLT_SEL(800000000, 0, 19, 2),
-+};
-+
-+static struct pvtpll_table
-+*rockchip_get_pvtpll_settings(struct rockchip_clock_pvtpll *pvtpll,
-+			      unsigned long rate)
-+{
-+	const struct rockchip_clock_pvtpll_info *info = pvtpll->info;
-+	int i;
-+
-+	for (i = 0; i < info->table_size; i++) {
-+		if (rate == info->table[i].rate)
-+			return &info->table[i];
-+	}
-+	return NULL;
-+}
-+
-+static int rv1103b_pvtpll_configs(struct rockchip_clock_pvtpll *pvtpll,
-+				  struct pvtpll_table *table)
-+{
-+	u32 val;
-+	int ret = 0;
-+
-+	val = HIWORD_UPDATE(table->ring_sel, RV1103B_GCK_RING_SEL_MASK,
-+			    RV1103B_GCK_RING_SEL_OFFSET);
-+	ret = regmap_write(pvtpll->regmap, RV1103B_PVTPLL_GCK_LEN, val);
-+	if (ret)
-+		return ret;
-+
-+	val = HIWORD_UPDATE(table->length, RV1103B_GCK_RING_LEN_SEL_MASK,
-+			    RV1103B_GCK_RING_LEN_SEL_OFFSET);
-+	ret = regmap_write(pvtpll->regmap, RV1103B_PVTPLL_GCK_LEN, val);
-+	if (ret)
-+		return ret;
-+
-+	ret = regmap_write(pvtpll->regmap, RV1103B_PVTPLL_GCK_CFG,
-+			   RV1103B_GCK_EN | (RV1103B_GCK_EN << 16) |
-+			   RV1103B_GCK_MODE | (RV1103B_GCK_MODE << 16));
-+	if (ret)
-+		return ret;
-+
-+	ret = regmap_write(pvtpll->regmap, RV1103B_PVTPLL_GCK_CFG,
-+			   RV1103B_GCK_START | (RV1103B_GCK_START << 16));
-+	if (ret)
-+		return ret;
-+
-+	return ret;
-+}
-+
-+static int rv1126b_pvtpll_configs(struct rockchip_clock_pvtpll *pvtpll,
-+				  struct pvtpll_table *table)
-+{
-+	u32 val;
-+	int ret = 0;
-+
-+	ret = rv1103b_pvtpll_configs(pvtpll, table);
-+	if (ret)
-+		return ret;
-+
-+	if (!pvtpll->regmap_cru)
-+		return 0;
-+
-+	val = HIWORD_UPDATE(RV1126B_PVTPLL_NORMAL_MODE, RV1126B_PVTPLL_MODE_MASK,
-+			    RV1126B_PVTPLL_MODE_SHIFT);
-+	return regmap_write(pvtpll->regmap_cru, pvtpll->info->mode_offset, val);
-+}
-+
-+static int rk3506_pvtpll_configs(struct rockchip_clock_pvtpll *pvtpll,
-+				 struct pvtpll_table *table)
-+{
-+	u32 val;
-+	int ret = 0;
-+
-+	val = HIWORD_UPDATE(table->ring_sel, RK3506_OSC_RING_SEL_MASK,
-+			    RK3506_OSC_RING_SEL_OFFSET);
-+	ret = regmap_write(pvtpll->regmap, RK3506_GRF_CORE_PVTPLL_CON0_L, val);
-+	if (ret)
-+		return ret;
-+
-+	val = HIWORD_UPDATE(table->length, RK3506_RING_LENGTH_SEL_MASK,
-+			    RK3506_RING_LENGTH_SEL_OFFSET);
-+	ret = regmap_write(pvtpll->regmap, RK3506_GRF_CORE_PVTPLL_CON0_H, val);
-+	if (ret)
-+		return ret;
-+
-+	ret = regmap_write(pvtpll->regmap, RK3506_GRF_CORE_PVTPLL_CON0_L,
-+			   RK3506_START | (RK3506_START << 16) |
-+			   RK3506_OSC_EN | (RK3506_OSC_EN << 16));
-+	if (ret)
-+		return ret;
-+
-+	return ret;
-+}
-+
-+static int rockchip_clock_pvtpll_set_rate(struct clk_hw *hw,
-+					  unsigned long rate,
-+					  unsigned long parent_rate)
-+{
-+	struct rockchip_clock_pvtpll *pvtpll;
-+	struct pvtpll_table *table;
-+	int ret = 0;
-+
-+	pvtpll = container_of(hw, struct rockchip_clock_pvtpll, hw);
-+
-+	if (!pvtpll)
-+		return 0;
-+
-+	/*
-+	 * The calibration is only for the init frequency of pvtpll on the platform
-+	 * which regulator is fixed, if the frequency will be change, we assume that
-+	 * dvfs is working, so just cancel the calibration work and use the pvtpll
-+	 * configuration from pvtpll_table, it will match the opp-table.
-+	 */
-+	if (pvtpll->info->pvtpll_calibrate)
-+		cancel_delayed_work_sync(&pvtpll->pvtpll_calibrate_work);
-+
-+	table = rockchip_get_pvtpll_settings(pvtpll, rate);
-+	if (!table)
-+		return 0;
-+
-+	ret = pvtpll->info->config(pvtpll, table);
-+
-+	pvtpll->cur_rate = rate;
-+	return ret;
-+}
-+
-+static unsigned long
-+rockchip_clock_pvtpll_recalc_rate(struct clk_hw *hw,
-+				  unsigned long parent_rate)
-+{
-+	struct rockchip_clock_pvtpll *pvtpll;
-+
-+	pvtpll = container_of(hw, struct rockchip_clock_pvtpll, hw);
-+
-+	if (!pvtpll)
-+		return 0;
-+
-+	return pvtpll->cur_rate;
-+}
-+
-+static long rockchip_clock_pvtpll_round_rate(struct clk_hw *hw, unsigned long rate,
-+					     unsigned long *prate)
-+{
-+	struct rockchip_clock_pvtpll *pvtpll;
-+	struct pvtpll_table *table;
-+
-+	pvtpll = container_of(hw, struct rockchip_clock_pvtpll, hw);
-+
-+	if (!pvtpll)
-+		return 0;
-+
-+	table = rockchip_get_pvtpll_settings(pvtpll, rate);
-+	if (!table)
-+		return 0;
-+
-+	return rate;
-+}
-+
-+static int rv1126b_pvtpll_enable(struct clk_hw *hw)
-+{
-+	struct rockchip_clock_pvtpll *pvtpll;
-+	struct pvtpll_table *table;
-+	u32 val = 0;
-+
-+	pvtpll = container_of(hw, struct rockchip_clock_pvtpll, hw);
-+	table = rockchip_get_pvtpll_settings(pvtpll, pvtpll->cur_rate);
-+	if (!table)
-+		return 0;
-+
-+	regmap_read(pvtpll->regmap, RV1103B_PVTPLL_GCK_CFG, &val);
-+	if (!(val & RV1103B_GCK_EN))
-+		return pvtpll->info->config(pvtpll, table);
-+
-+	return 0;
-+}
-+
-+static void rv1126b_pvtpll_disable(struct clk_hw *hw)
-+{
-+	struct rockchip_clock_pvtpll *pvtpll;
-+	u32 val;
-+	int ret;
-+
-+	pvtpll = container_of(hw, struct rockchip_clock_pvtpll, hw);
-+	if (!pvtpll->regmap_cru)
-+		return;
-+
-+	val = HIWORD_UPDATE(RV1126B_PVTPLL_SLOW_MODE, RV1126B_PVTPLL_MODE_MASK,
-+			    RV1126B_PVTPLL_MODE_SHIFT);
-+	ret = regmap_write(pvtpll->regmap_cru,  pvtpll->info->mode_offset, val);
-+	if (ret)
-+		return;
-+	regmap_write(pvtpll->regmap, RV1103B_PVTPLL_GCK_CFG, RV1103B_GCK_EN << 16);
-+}
-+
-+static int rv1126b_pvtpll_is_enabled(struct clk_hw *hw)
-+{
-+	struct rockchip_clock_pvtpll *pvtpll;
-+	u32 val = 0;
-+
-+	pvtpll = container_of(hw, struct rockchip_clock_pvtpll, hw);
-+	regmap_read(pvtpll->regmap, RV1103B_PVTPLL_GCK_CFG, &val);
-+
-+	return (val & RV1103B_GCK_EN);
-+}
-+
-+static const struct clk_ops clock_pvtpll_ops = {
-+	.recalc_rate = rockchip_clock_pvtpll_recalc_rate,
-+	.round_rate = rockchip_clock_pvtpll_round_rate,
-+	.set_rate = rockchip_clock_pvtpll_set_rate,
-+};
-+
-+static const struct clk_ops rv1126b_pvtpll_ops = {
-+	.recalc_rate = rockchip_clock_pvtpll_recalc_rate,
-+	.round_rate = rockchip_clock_pvtpll_round_rate,
-+	.set_rate = rockchip_clock_pvtpll_set_rate,
-+	.enable = rv1126b_pvtpll_enable,
-+	.disable = rv1126b_pvtpll_disable,
-+	.is_enabled = rv1126b_pvtpll_is_enabled,
-+};
-+
-+/* Remove is_enabled for fixing clk_summary issue */
-+static const struct clk_ops rv1126b_npu_pvtpll_ops = {
-+	.recalc_rate = rockchip_clock_pvtpll_recalc_rate,
-+	.round_rate = rockchip_clock_pvtpll_round_rate,
-+	.set_rate = rockchip_clock_pvtpll_set_rate,
-+	.enable = rv1126b_pvtpll_enable,
-+	.disable = rv1126b_pvtpll_disable,
-+};
-+
-+static int clock_pvtpll_regitstor(struct device *dev,
-+				  struct rockchip_clock_pvtpll *pvtpll)
-+{
-+	struct clk_init_data init = {};
-+
-+	init.parent_names = NULL;
-+	init.num_parents = 0;
-+	init.flags = CLK_GET_RATE_NOCACHE;
-+	init.name = "pvtpll";
-+	if (pvtpll->info->clk_ops)
-+		init.ops = pvtpll->info->clk_ops;
-+	else
-+		init.ops = &clock_pvtpll_ops;
-+
-+	pvtpll->hw.init = &init;
-+
-+	/* optional override of the clockname */
-+	of_property_read_string_index(dev->of_node, "clock-output-names",
-+				      0, &init.name);
-+	pvtpll->pvtpll_out = devm_clk_register(dev, &pvtpll->hw);
-+	if (IS_ERR(pvtpll->pvtpll_out))
-+		return PTR_ERR(pvtpll->pvtpll_out);
-+
-+	return of_clk_add_provider(dev->of_node, of_clk_src_simple_get,
-+				   pvtpll->pvtpll_out);
-+}
-+
-+static int pvtpll_volt_sel_adjust_linear(struct rockchip_clock_pvtpll *pvtpll,
-+					 u32 clock_id,
-+					 u32 volt_sel)
-+{
-+	struct pvtpll_table *table = pvtpll->info->table;
-+	unsigned int size = pvtpll->info->table_size;
-+	unsigned int factor = pvtpll->info->pvtpll_adjust_factor;
-+	u32 delta_len = 0;
-+	int i;
-+
-+	for (i = 0; i < size; i++) {
-+		if (!table[i].volt_sel_thr)
-+			continue;
-+		if (volt_sel >= table[i].volt_sel_thr) {
-+			delta_len = (volt_sel - table[i].volt_sel_thr + 1) * factor;
-+			table[i].length += delta_len;
-+			if (table[i].length > RK3506_PVTPLL_MAX_LENGTH)
-+				table[i].length = RK3506_PVTPLL_MAX_LENGTH;
-+
-+			/* update new pvtpll config for current rate */
-+			if (table[i].rate == pvtpll->cur_rate)
-+				pvtpll->info->config(pvtpll, table + i);
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+int rockchip_pvtpll_volt_sel_adjust(u32 clock_id, u32 volt_sel)
-+{
-+	struct rockchip_clock_pvtpll *pvtpll;
-+	int ret = -ENODEV;
-+
-+	mutex_lock(&pvtpll_list_mutex);
-+	list_for_each_entry(pvtpll, &rockchip_clock_pvtpll_list, list_head) {
-+		if ((pvtpll->pvtpll_clk_id == clock_id) && pvtpll->info->pvtpll_volt_sel_adjust) {
-+			ret = pvtpll->info->pvtpll_volt_sel_adjust(pvtpll, clock_id, volt_sel);
-+			break;
-+		}
-+	}
-+	mutex_unlock(&pvtpll_list_mutex);
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(rockchip_pvtpll_volt_sel_adjust);
-+
-+static int rockchip_pvtpll_get_otp_info(struct device *dev,
-+					struct otp_opp_info *opp_info)
-+{
-+	struct nvmem_cell *cell;
-+	void *buf;
-+	size_t len = 0;
-+
-+	cell = nvmem_cell_get(dev, "opp-info");
-+	if (IS_ERR(cell))
-+		return PTR_ERR(cell);
-+
-+	buf = nvmem_cell_read(cell, &len);
-+	if (IS_ERR(buf)) {
-+		nvmem_cell_put(cell);
-+		return PTR_ERR(buf);
-+	}
-+	if (len != sizeof(*opp_info)) {
-+		kfree(buf);
-+		nvmem_cell_put(cell);
-+		return -EINVAL;
-+	}
-+
-+	memcpy(opp_info, buf, sizeof(*opp_info));
-+	kfree(buf);
-+	nvmem_cell_put(cell);
-+
-+	return 0;
-+}
-+
-+static void rockchip_switch_pvtpll_table(struct device *dev,
-+					 struct rockchip_clock_pvtpll *pvtpll)
-+{
-+	u8 spec = 0;
-+
-+	if (!pvtpll->info->jm_table)
-+		return;
-+
-+	if (!nvmem_cell_read_u8(dev, "specification_serial_number", &spec)) {
-+		/* M = 0xd, J = 0xa */
-+		if ((spec == 0xd) || (spec == 0xa)) {
-+			pvtpll->info->table = pvtpll->info->jm_table;
-+			pvtpll->info->table_size = pvtpll->info->jm_table_size;
-+		}
-+	}
-+}
-+
-+static void rockchip_adjust_pvtpll_by_otp(struct device *dev,
-+					  struct rockchip_clock_pvtpll *pvtpll)
-+{
-+	struct otp_opp_info opp_info = { 0 };
-+	struct pvtpll_table *table = pvtpll->info->table;
-+	unsigned int size = pvtpll->info->table_size;
-+	u32 min_freq, max_freq;
-+	int i;
-+
-+	if (rockchip_pvtpll_get_otp_info(dev, &opp_info))
-+		return;
-+
-+	if (!opp_info.length)
-+		return;
-+
-+	dev_info(dev, "adjust opp-table by otp: min=%uM, max=%uM, length=%u\n",
-+		 opp_info.min_freq, opp_info.max_freq, opp_info.length);
-+
-+	min_freq = opp_info.min_freq * MHz;
-+	max_freq = opp_info.max_freq * MHz;
-+
-+	for (i = 0; i < size; i++) {
-+		if (table[i].rate < min_freq)
-+			continue;
-+		if (table[i].rate > max_freq)
-+			continue;
-+
-+		table[i].length += opp_info.length;
-+		if (table[i].length > RK3506_PVTPLL_MAX_LENGTH)
-+			table[i].length = RK3506_PVTPLL_MAX_LENGTH;
-+	}
-+}
-+
-+static int rv1103b_pvtpll_calibrate(struct rockchip_clock_pvtpll *pvtpll)
-+{
-+	unsigned int rate, delta, length, length_ori, val, i = 0;
-+	unsigned int length_step = pvtpll->info->calibrate_length_step;
-+	unsigned int freq_per_step = pvtpll->info->calibrate_freq_per_step;
-+	unsigned long target_rate = pvtpll->cur_rate / MHz;
-+	int ret;
-+
-+	ret = regmap_read(pvtpll->regmap, RV1103B_PVTPLL_GCK_CNT_AVG, &rate);
-+	if (ret)
-+		return ret;
-+
-+	if (rate < target_rate)
-+		return 0;
-+
-+	/* delta < (6.25% * target_rate) */
-+	if ((rate - target_rate) < (target_rate >> 4))
-+		return 0;
-+
-+	ret = regmap_read(pvtpll->regmap, RV1103B_PVTPLL_GCK_LEN, &val);
-+	if (ret)
-+		return ret;
-+	length_ori = (val >> RV1103B_GCK_RING_LEN_SEL_OFFSET) & RV1103B_GCK_RING_LEN_SEL_MASK;
-+	length = length_ori;
-+	delta = rate - target_rate;
-+	length += (delta / freq_per_step) * length_step;
-+	val = HIWORD_UPDATE(length, RV1103B_GCK_RING_LEN_SEL_MASK,
-+			    RV1103B_GCK_RING_LEN_SEL_OFFSET);
-+	ret = regmap_write(pvtpll->regmap, RV1103B_PVTPLL_GCK_LEN, val);
-+	if (ret)
-+		return ret;
-+	usleep_range(2000, 2100);
-+	ret = regmap_read(pvtpll->regmap, RV1103B_PVTPLL_GCK_CNT_AVG, &rate);
-+	if (ret)
-+		return ret;
-+
-+	while ((rate < target_rate) || ((rate - target_rate) > (target_rate >> 4))) {
-+		if (i++ > 20)
-+			break;
-+
-+		if (rate > target_rate)
-+			length += length_step;
-+		else
-+			length -= length_step;
-+		if (length < length_ori)
-+			break;
-+
-+		val = HIWORD_UPDATE(length, RV1103B_GCK_RING_LEN_SEL_MASK,
-+				    RV1103B_GCK_RING_LEN_SEL_OFFSET);
-+		ret = regmap_write(pvtpll->regmap, RV1103B_PVTPLL_GCK_LEN, val);
-+		if (ret)
-+			return ret;
-+		usleep_range(2000, 2100);
-+		ret = regmap_read(pvtpll->regmap, RV1103B_PVTPLL_GCK_CNT_AVG, &rate);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	/* update pvtpll table */
-+	if (length > length_ori) {
-+		delta = length - length_ori;
-+		for (i = 0; i < pvtpll->info->table_size; i++)
-+			pvtpll->info->table[i].length += delta;
-+	}
-+
-+	return 0;
-+}
-+
-+static void rockchip_pvtpll_calibrate(struct work_struct *work)
-+{
-+	struct rockchip_clock_pvtpll *pvtpll;
-+	int ret;
-+
-+	pvtpll = container_of(work, struct rockchip_clock_pvtpll, pvtpll_calibrate_work.work);
-+
-+	if (pvtpll->info->pvtpll_calibrate) {
-+		ret = pvtpll->info->pvtpll_calibrate(pvtpll);
-+		if (ret)
-+			dev_warn(pvtpll->dev, "%s: calibrate error, ret %d\n", __func__, ret);
-+	}
-+}
-+
-+static const struct rockchip_clock_pvtpll_info rv1103b_core_pvtpll_data = {
-+	.config = rv1103b_pvtpll_configs,
-+	.table_size = ARRAY_SIZE(rv1103b_core_pvtpll_table),
-+	.table = rv1103b_core_pvtpll_table,
-+	.pvtpll_adjust_factor = 4,
-+	.pvtpll_volt_sel_adjust = pvtpll_volt_sel_adjust_linear,
-+	.calibrate_length_step = 2,
-+	.calibrate_freq_per_step = 30,
-+	.pvtpll_calibrate = rv1103b_pvtpll_calibrate,
-+};
-+
-+static const struct rockchip_clock_pvtpll_info rv1103b_enc_pvtpll_data = {
-+	.config = rv1103b_pvtpll_configs,
-+	.table_size = ARRAY_SIZE(rv1103b_enc_pvtpll_table),
-+	.table = rv1103b_enc_pvtpll_table,
-+	.calibrate_length_step = 8,
-+	.calibrate_freq_per_step = 25,
-+	.pvtpll_calibrate = rv1103b_pvtpll_calibrate,
-+};
-+
-+static const struct rockchip_clock_pvtpll_info rv1103b_isp_pvtpll_data = {
-+	.config = rv1103b_pvtpll_configs,
-+	.table_size = ARRAY_SIZE(rv1103b_isp_pvtpll_table),
-+	.table = rv1103b_isp_pvtpll_table,
-+};
-+
-+static const struct rockchip_clock_pvtpll_info rv1103b_npu_pvtpll_data = {
-+	.config = rv1103b_pvtpll_configs,
-+	.table_size = ARRAY_SIZE(rv1103b_npu_pvtpll_table),
-+	.table = rv1103b_npu_pvtpll_table,
-+	.pvtpll_adjust_factor = 6,
-+	.pvtpll_volt_sel_adjust = pvtpll_volt_sel_adjust_linear,
-+	.calibrate_length_step = 4,
-+	.calibrate_freq_per_step = 25,
-+	.pvtpll_calibrate = rv1103b_pvtpll_calibrate,
-+};
-+
-+static const struct rockchip_clock_pvtpll_info rv1126b_aisp_pvtpll_data = {
-+	.clk_ops = &rv1126b_pvtpll_ops,
-+	.config = rv1126b_pvtpll_configs,
-+	.table_size = ARRAY_SIZE(rv1126b_aisp_pvtpll_table),
-+	.table = rv1126b_aisp_pvtpll_table,
-+	.calibrate_length_step = 4,
-+	.calibrate_freq_per_step = 20,
-+	.pvtpll_calibrate = rv1103b_pvtpll_calibrate,
-+	.mode_offset = 0xb0300,
-+};
-+
-+static const struct rockchip_clock_pvtpll_info rv1126b_core_pvtpll_data = {
-+	.config = rv1126b_pvtpll_configs,
-+	.table_size = ARRAY_SIZE(rv1126b_core_pvtpll_table),
-+	.table = rv1126b_core_pvtpll_table,
-+	.pvtpll_adjust_factor = 4,
-+	.pvtpll_volt_sel_adjust = pvtpll_volt_sel_adjust_linear,
-+	.mode_offset = 0x30300,
-+	.is_always_on = true,
-+};
-+
-+static const struct rockchip_clock_pvtpll_info rv1126b_enc_pvtpll_data = {
-+	.config = rv1126b_pvtpll_configs,
-+	.table_size = ARRAY_SIZE(rv1126b_enc_pvtpll_table),
-+	.table = rv1126b_enc_pvtpll_table,
-+	.calibrate_length_step = 8,
-+	.calibrate_freq_per_step = 20,
-+	.pvtpll_calibrate = rv1103b_pvtpll_calibrate,
-+	.mode_offset = 0x80300,
-+	.is_always_on = true,
-+};
-+
-+static const struct rockchip_clock_pvtpll_info rv1126b_isp_pvtpll_data = {
-+	.clk_ops = &rv1126b_pvtpll_ops,
-+	.config = rv1126b_pvtpll_configs,
-+	.table_size = ARRAY_SIZE(rv1126b_isp_pvtpll_table),
-+	.table = rv1126b_isp_pvtpll_table,
-+	.calibrate_length_step = 8,
-+	.calibrate_freq_per_step = 20,
-+	.pvtpll_calibrate = rv1103b_pvtpll_calibrate,
-+	.mode_offset = 0x70300,
-+};
-+
-+static const struct rockchip_clock_pvtpll_info rv1126b_npu_pvtpll_data = {
-+	.clk_ops = &rv1126b_npu_pvtpll_ops,
-+	.config = rv1126b_pvtpll_configs,
-+	.table_size = ARRAY_SIZE(rv1126b_npu_pvtpll_table),
-+	.table = rv1126b_npu_pvtpll_table,
-+	.pvtpll_adjust_factor = 6,
-+	.pvtpll_volt_sel_adjust = pvtpll_volt_sel_adjust_linear,
-+	.mode_offset = 0x90300,
-+};
-+
-+static const struct rockchip_clock_pvtpll_info rk3506_core_pvtpll_data = {
-+	.config = rk3506_pvtpll_configs,
-+	.table_size = ARRAY_SIZE(rk3506_core_pvtpll_table),
-+	.table = rk3506_core_pvtpll_table,
-+	.jm_table_size = ARRAY_SIZE(rk3506j_core_pvtpll_table),
-+	.jm_table = rk3506j_core_pvtpll_table,
-+	.pvtpll_adjust_factor = 1,
-+	.pvtpll_volt_sel_adjust = pvtpll_volt_sel_adjust_linear,
-+};
-+
-+static const struct of_device_id rockchip_clock_pvtpll_match[] = {
-+	{
-+		.compatible = "rockchip,rv1103b-core-pvtpll",
-+		.data = (void *)&rv1103b_core_pvtpll_data,
-+	},
-+	{
-+		.compatible = "rockchip,rv1103b-enc-pvtpll",
-+		.data = (void *)&rv1103b_enc_pvtpll_data,
-+	},
-+	{
-+		.compatible = "rockchip,rv1103b-isp-pvtpll",
-+		.data = (void *)&rv1103b_isp_pvtpll_data,
-+	},
-+	{
-+		.compatible = "rockchip,rv1103b-npu-pvtpll",
-+		.data = (void *)&rv1103b_npu_pvtpll_data,
-+	},
-+	{
-+		.compatible = "rockchip,rv1126b-aisp-pvtpll",
-+		.data = (void *)&rv1126b_aisp_pvtpll_data,
-+	},
-+	{
-+		.compatible = "rockchip,rv1126b-core-pvtpll",
-+		.data = (void *)&rv1126b_core_pvtpll_data,
-+	},
-+	{
-+		.compatible = "rockchip,rv1126b-enc-pvtpll",
-+		.data = (void *)&rv1126b_enc_pvtpll_data,
-+	},
-+	{
-+		.compatible = "rockchip,rv1126b-isp-pvtpll",
-+		.data = (void *)&rv1126b_isp_pvtpll_data,
-+	},
-+	{
-+		.compatible = "rockchip,rv1126b-npu-pvtpll",
-+		.data = (void *)&rv1126b_npu_pvtpll_data,
-+	},
-+	{
-+		.compatible = "rockchip,rk3506-core-pvtpll",
-+		.data = (void *)&rk3506_core_pvtpll_data,
-+	},
-+	{}
-+};
-+MODULE_DEVICE_TABLE(of, rockchip_clock_pvtpll_match);
-+
-+static int rockchip_clock_pvtpll_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct device_node *np = pdev->dev.of_node;
-+	struct rockchip_clock_pvtpll *pvtpll;
-+	struct of_phandle_args clkspec = { 0 };
-+	int error = 0;
-+
-+	pvtpll = devm_kzalloc(dev, sizeof(*pvtpll), GFP_KERNEL);
-+	if (!pvtpll)
-+		return -ENOMEM;
-+
-+	pvtpll->info = (struct rockchip_clock_pvtpll_info *)device_get_match_data(&pdev->dev);
-+	if (!pvtpll->info)
-+		return -EINVAL;
-+
-+	pvtpll->regmap = device_node_to_regmap(np);
-+	if (IS_ERR(pvtpll->regmap))
-+		return PTR_ERR(pvtpll->regmap);
-+
-+	pvtpll->regmap_cru = syscon_regmap_lookup_by_phandle_optional(np, "rockchip,cru");
-+
-+	pvtpll->dev = dev;
-+	pvtpll->pvtpll_clk_id = UINT_MAX;
-+	INIT_DELAYED_WORK(&pvtpll->pvtpll_calibrate_work, rockchip_pvtpll_calibrate);
-+
-+	error = of_parse_phandle_with_args(np, "clocks", "#clock-cells",
-+					   0, &clkspec);
-+	if (!error) {
-+		pvtpll->pvtpll_clk_id = clkspec.args[0];
-+		of_node_put(clkspec.np);
-+	}
-+
-+	rockchip_switch_pvtpll_table(dev, pvtpll);
-+
-+	rockchip_adjust_pvtpll_by_otp(dev, pvtpll);
-+
-+	platform_set_drvdata(pdev, pvtpll);
-+
-+	error = clock_pvtpll_regitstor(&pdev->dev, pvtpll);
-+	if (error) {
-+		dev_err(&pdev->dev, "failed to register clock: %d\n", error);
-+		return error;
-+	}
-+
-+	if (pvtpll->info->pvtpll_calibrate)
-+		queue_delayed_work(system_freezable_wq,
-+				   &pvtpll->pvtpll_calibrate_work,
-+				   0);
-+
-+	mutex_lock(&pvtpll_list_mutex);
-+	list_add(&pvtpll->list_head, &rockchip_clock_pvtpll_list);
-+	mutex_unlock(&pvtpll_list_mutex);
-+
-+	return 0;
-+}
-+
-+static int rockchip_clock_pvtpll_remove(struct platform_device *pdev)
-+{
-+	struct device_node *np = pdev->dev.of_node;
-+
-+	of_clk_del_provider(np);
-+
-+	return 0;
-+}
-+
-+static int rockchip_clock_pvtpll_resume(struct device *dev)
-+{
-+	struct rockchip_clock_pvtpll *pvtpll = dev_get_drvdata(dev);
-+	struct pvtpll_table *table;
-+
-+	if (!pvtpll->info->is_always_on)
-+		return 0;
-+
-+	table = rockchip_get_pvtpll_settings(pvtpll, pvtpll->cur_rate);
-+	if (!table)
-+		return 0;
-+
-+	return pvtpll->info->config(pvtpll, table);
-+}
-+
-+static DEFINE_SIMPLE_DEV_PM_OPS(rockchip_clock_pvtpll_pm_ops, NULL,
-+				rockchip_clock_pvtpll_resume);
-+
-+static struct platform_driver rockchip_clock_pvtpll_driver = {
-+	.driver = {
-+		.name = "rockchip-clcok-pvtpll",
-+		.pm = pm_sleep_ptr(&rockchip_clock_pvtpll_pm_ops),
-+		.of_match_table = rockchip_clock_pvtpll_match,
-+	},
-+	.probe = rockchip_clock_pvtpll_probe,
-+	.remove = rockchip_clock_pvtpll_remove,
-+};
-+
-+module_platform_driver(rockchip_clock_pvtpll_driver);
-+
-+MODULE_DESCRIPTION("Rockchip Clock Pvtpll Driver");
-+MODULE_LICENSE("GPL");
++#ifndef _DT_BINDINGS_CLK_ROCKCHIP_RV1126B_H
++#define _DT_BINDINGS_CLK_ROCKCHIP_RV1126B_H
++
++/* pll clocks */
++#define PLL_GPLL				1
++#define PLL_CPLL				2
++#define PLL_AUPLL				3
++#define ARMCLK					4
++#define SCLK_DDR				5
++
++/* clk (clocks) */
++#define CLK_CPLL_DIV20				8
++#define CLK_CPLL_DIV10				9
++#define CLK_CPLL_DIV8				10
++#define CLK_GPLL_DIV8				11
++#define CLK_GPLL_DIV6				12
++#define CLK_GPLL_DIV4				13
++#define CLK_CPLL_DIV3				14
++#define CLK_GPLL_DIV3				15
++#define CLK_CPLL_DIV2				16
++#define CLK_GPLL_DIV2				17
++#define CLK_CM_FRAC0				18
++#define CLK_CM_FRAC1				19
++#define CLK_CM_FRAC2				20
++#define CLK_UART_FRAC0				21
++#define CLK_UART_FRAC1				22
++#define CLK_AUDIO_FRAC0				23
++#define CLK_AUDIO_FRAC1				24
++#define CLK_AUDIO_INT0				25
++#define CLK_AUDIO_INT1				26
++#define SCLK_UART0_SRC				27
++#define SCLK_UART1				28
++#define SCLK_UART2				29
++#define SCLK_UART3				30
++#define SCLK_UART4				31
++#define SCLK_UART5				32
++#define SCLK_UART6				33
++#define SCLK_UART7				34
++#define MCLK_SAI0				35
++#define MCLK_SAI1				36
++#define MCLK_SAI2				37
++#define MCLK_PDM				38
++#define CLKOUT_PDM				39
++#define MCLK_ASRC0				40
++#define MCLK_ASRC1				41
++#define MCLK_ASRC2				42
++#define MCLK_ASRC3				43
++#define CLK_ASRC0				44
++#define CLK_ASRC1				45
++#define CLK_CORE_PLL				46
++#define CLK_NPU_PLL				47
++#define CLK_VEPU_PLL				48
++#define CLK_ISP_PLL				49
++#define CLK_AISP_PLL				50
++#define CLK_SARADC0_SRC				51
++#define CLK_SARADC1_SRC				52
++#define CLK_SARADC2_SRC				53
++#define HCLK_NPU_ROOT				54
++#define PCLK_NPU_ROOT				55
++#define ACLK_VEPU_ROOT				56
++#define HCLK_VEPU_ROOT				57
++#define PCLK_VEPU_ROOT				58
++#define CLK_CORE_RGA_SRC			59
++#define ACLK_GMAC_ROOT				60
++#define ACLK_VI_ROOT				61
++#define HCLK_VI_ROOT				62
++#define PCLK_VI_ROOT				63
++#define DCLK_VICAP_ROOT				64
++#define CLK_SYS_DSMC_ROOT			65
++#define ACLK_VDO_ROOT				66
++#define ACLK_RKVDEC_ROOT			67
++#define HCLK_VDO_ROOT				68
++#define PCLK_VDO_ROOT				69
++#define DCLK_OOC_SRC				70
++#define DCLK_VOP				71
++#define DCLK_DECOM_SRC				72
++#define PCLK_DDR_ROOT				73
++#define ACLK_SYSMEM_SRC				74
++#define ACLK_TOP_ROOT				75
++#define ACLK_BUS_ROOT				76
++#define HCLK_BUS_ROOT				77
++#define PCLK_BUS_ROOT				78
++#define CCLK_SDMMC0				79
++#define CCLK_SDMMC1				80
++#define CCLK_EMMC				81
++#define SCLK_2X_FSPI0				82
++#define CLK_GMAC_PTP_REF_SRC			83
++#define CLK_GMAC_125M				84
++#define CLK_TIMER_ROOT				85
++#define TCLK_WDT_NS_SRC				86
++#define TCLK_WDT_S_SRC				87
++#define TCLK_WDT_HPMCU				88
++#define CLK_CAN0				89
++#define CLK_CAN1				90
++#define PCLK_PERI_ROOT				91
++#define ACLK_PERI_ROOT				92
++#define CLK_I2C_BUS_SRC				93
++#define CLK_SPI0				94
++#define CLK_SPI1				95
++#define BUSCLK_PMU_SRC				96
++#define CLK_PWM0				97
++#define CLK_PWM2				98
++#define CLK_PWM3				99
++#define CLK_PKA_RKCE_SRC			100
++#define ACLK_RKCE_SRC				101
++#define ACLK_VCP_ROOT				102
++#define HCLK_VCP_ROOT				103
++#define PCLK_VCP_ROOT				104
++#define CLK_CORE_FEC_SRC			105
++#define CLK_CORE_AVSP_SRC			106
++#define CLK_50M_GMAC_IOBUF_VI			107
++#define PCLK_TOP_ROOT				108
++#define CLK_MIPI0_OUT2IO			109
++#define CLK_MIPI1_OUT2IO			110
++#define CLK_MIPI2_OUT2IO			111
++#define CLK_MIPI3_OUT2IO			112
++#define CLK_CIF_OUT2IO				113
++#define CLK_MAC_OUT2IO				114
++#define MCLK_SAI0_OUT2IO			115
++#define MCLK_SAI1_OUT2IO			116
++#define MCLK_SAI2_OUT2IO			117
++#define CLK_CM_FRAC0_SRC			118
++#define CLK_CM_FRAC1_SRC			119
++#define CLK_CM_FRAC2_SRC			120
++#define CLK_UART_FRAC0_SRC			121
++#define CLK_UART_FRAC1_SRC			122
++#define CLK_AUDIO_FRAC0_SRC			123
++#define CLK_AUDIO_FRAC1_SRC			124
++#define ACLK_NPU_ROOT				125
++#define HCLK_RKNN				126
++#define ACLK_RKNN				127
++#define PCLK_GPIO3				128
++#define DBCLK_GPIO3				129
++#define PCLK_IOC_VCCIO3				130
++#define PCLK_SARADC0				131
++#define CLK_SARADC0				132
++#define HCLK_SDMMC1				133
++#define HCLK_VEPU				134
++#define ACLK_VEPU				135
++#define CLK_CORE_VEPU				136
++#define HCLK_FEC				137
++#define ACLK_FEC				138
++#define CLK_CORE_FEC				139
++#define HCLK_AVSP				140
++#define ACLK_AVSP				141
++#define BUSCLK_PMU1_ROOT			142
++#define HCLK_AISP				143
++#define ACLK_AISP				144
++#define CLK_CORE_AISP				145
++#define CLK_CORE_ISP_ROOT			146
++#define PCLK_DSMC				147
++#define ACLK_DSMC				148
++#define HCLK_CAN0				149
++#define HCLK_CAN1				150
++#define PCLK_GPIO2				151
++#define DBCLK_GPIO2				152
++#define PCLK_GPIO4				153
++#define DBCLK_GPIO4				154
++#define PCLK_GPIO5				155
++#define DBCLK_GPIO5				156
++#define PCLK_GPIO6				157
++#define DBCLK_GPIO6				158
++#define PCLK_GPIO7				159
++#define DBCLK_GPIO7				160
++#define PCLK_IOC_VCCIO2				161
++#define PCLK_IOC_VCCIO4				162
++#define PCLK_IOC_VCCIO5				163
++#define PCLK_IOC_VCCIO6				164
++#define PCLK_IOC_VCCIO7				165
++#define HCLK_ISP				166
++#define ACLK_ISP				167
++#define CLK_CORE_ISP				168
++#define HCLK_VICAP				169
++#define ACLK_VICAP				170
++#define DCLK_VICAP				171
++#define ISP0CLK_VICAP				172
++#define HCLK_VPSS				173
++#define ACLK_VPSS				174
++#define CLK_CORE_VPSS				175
++#define PCLK_CSI2HOST0				176
++#define DCLK_CSI2HOST0				177
++#define PCLK_CSI2HOST1				178
++#define DCLK_CSI2HOST1				179
++#define PCLK_CSI2HOST2				180
++#define DCLK_CSI2HOST2				181
++#define PCLK_CSI2HOST3				182
++#define DCLK_CSI2HOST3				183
++#define HCLK_SDMMC0				184
++#define ACLK_GMAC				185
++#define PCLK_GMAC				186
++#define CLK_GMAC_PTP_REF			187
++#define PCLK_CSIPHY0				188
++#define PCLK_CSIPHY1				189
++#define PCLK_MACPHY				190
++#define PCLK_SARADC1				191
++#define CLK_SARADC1				192
++#define PCLK_SARADC2				193
++#define CLK_SARADC2				194
++#define ACLK_RKVDEC				195
++#define HCLK_RKVDEC				196
++#define CLK_HEVC_CA_RKVDEC			197
++#define ACLK_VOP				198
++#define HCLK_VOP				199
++#define HCLK_RKJPEG				200
++#define ACLK_RKJPEG				201
++#define ACLK_RKMMU_DECOM			202
++#define HCLK_RKMMU_DECOM			203
++#define DCLK_DECOM				204
++#define ACLK_DECOM				205
++#define PCLK_DECOM				206
++#define PCLK_MIPI_DSI				207
++#define PCLK_DSIPHY				208
++#define ACLK_OOC				209
++#define ACLK_SYSMEM				210
++#define PCLK_DDRC				211
++#define PCLK_DDRMON				212
++#define CLK_TIMER_DDRMON			213
++#define PCLK_DFICTRL				214
++#define PCLK_DDRPHY				215
++#define PCLK_DMA2DDR				216
++#define CLK_RCOSC_SRC				217
++#define BUSCLK_PMU_MUX				218
++#define BUSCLK_PMU_ROOT				219
++#define PCLK_PMU				220
++#define CLK_XIN_RC_DIV				221
++#define CLK_32K					222
++#define PCLK_PMU_GPIO0				223
++#define DBCLK_PMU_GPIO0				224
++#define PCLK_PMU_HP_TIMER			225
++#define CLK_PMU_HP_TIMER			226
++#define CLK_PMU_32K_HP_TIMER			227
++#define PCLK_PWM1				228
++#define CLK_PWM1				229
++#define CLK_OSC_PWM1				230
++#define CLK_RC_PWM1				231
++#define CLK_FREQ_PWM1				232
++#define CLK_COUNTER_PWM1			233
++#define PCLK_I2C2				234
++#define CLK_I2C2				235
++#define PCLK_UART0				236
++#define SCLK_UART0				237
++#define PCLK_RCOSC_CTRL				238
++#define CLK_OSC_RCOSC_CTRL			239
++#define CLK_REF_RCOSC_CTRL			240
++#define PCLK_IOC_PMUIO0				241
++#define CLK_REFOUT				242
++#define CLK_PREROLL				243
++#define CLK_PREROLL_32K				244
++#define HCLK_PMU_SRAM				245
++#define PCLK_WDT_LPMCU				246
++#define TCLK_WDT_LPMCU				247
++#define CLK_LPMCU				248
++#define CLK_LPMCU_RTC				249
++#define PCLK_LPMCU_MAILBOX			250
++#define HCLK_OOC				251
++#define PCLK_SPI2AHB				252
++#define HCLK_SPI2AHB				253
++#define HCLK_FSPI1				254
++#define HCLK_XIP_FSPI1				255
++#define SCLK_1X_FSPI1				256
++#define PCLK_IOC_PMUIO1				257
++#define PCLK_AUDIO_ADC_PMU			258
++#define MCLK_AUDIO_ADC_PMU			259
++#define MCLK_AUDIO_ADC_DIV4_PMU			260
++#define MCLK_LPSAI				261
++#define ACLK_GIC400				262
++#define PCLK_WDT_NS				263
++#define TCLK_WDT_NS				264
++#define PCLK_WDT_HPMCU				265
++#define HCLK_CACHE				266
++#define PCLK_HPMCU_MAILBOX			267
++#define PCLK_HPMCU_INTMUX			268
++#define CLK_HPMCU				269
++#define CLK_HPMCU_RTC				270
++#define PCLK_RKDMA				271
++#define ACLK_RKDMA				272
++#define PCLK_DCF				273
++#define ACLK_DCF				274
++#define HCLK_RGA				275
++#define ACLK_RGA				276
++#define CLK_CORE_RGA				277
++#define PCLK_TIMER				278
++#define CLK_TIMER0				279
++#define CLK_TIMER1				280
++#define CLK_TIMER2				281
++#define CLK_TIMER3				282
++#define CLK_TIMER4				283
++#define CLK_TIMER5				284
++#define PCLK_I2C0				285
++#define CLK_I2C0				286
++#define PCLK_I2C1				287
++#define CLK_I2C1				288
++#define PCLK_I2C3				289
++#define CLK_I2C3				290
++#define PCLK_I2C4				291
++#define CLK_I2C4				292
++#define PCLK_I2C5				293
++#define CLK_I2C5				294
++#define PCLK_SPI0				295
++#define PCLK_SPI1				296
++#define PCLK_PWM0				297
++#define CLK_OSC_PWM0				298
++#define CLK_RC_PWM0				299
++#define PCLK_PWM2				300
++#define CLK_OSC_PWM2				301
++#define CLK_RC_PWM2				302
++#define PCLK_PWM3				303
++#define CLK_OSC_PWM3				304
++#define CLK_RC_PWM3				305
++#define PCLK_UART1				306
++#define PCLK_UART2				307
++#define PCLK_UART3				308
++#define PCLK_UART4				309
++#define PCLK_UART5				310
++#define PCLK_UART6				311
++#define PCLK_UART7				312
++#define PCLK_TSADC				313
++#define CLK_TSADC				314
++#define HCLK_SAI0				315
++#define HCLK_SAI1				316
++#define HCLK_SAI2				317
++#define HCLK_RKDSM				318
++#define MCLK_RKDSM				319
++#define HCLK_PDM				320
++#define HCLK_ASRC0				321
++#define HCLK_ASRC1				322
++#define PCLK_AUDIO_ADC_BUS			323
++#define MCLK_AUDIO_ADC_BUS			324
++#define MCLK_AUDIO_ADC_DIV4_BUS			325
++#define PCLK_RKCE				326
++#define HCLK_NS_RKCE				327
++#define PCLK_OTPC_NS				328
++#define CLK_SBPI_OTPC_NS			329
++#define CLK_USER_OTPC_NS			330
++#define CLK_OTPC_ARB				331
++#define PCLK_OTP_MASK				332
++#define CLK_TSADC_PHYCTRL			333
++#define LRCK_SRC_ASRC0				334
++#define LRCK_DST_ASRC0				335
++#define LRCK_SRC_ASRC1				336
++#define LRCK_DST_ASRC1				337
++#define PCLK_KEY_READER				338
++#define ACLK_NSRKCE				339
++#define CLK_PKA_NSRKCE				340
++#define PCLK_RTC_ROOT				341
++#define PCLK_GPIO1				342
++#define DBCLK_GPIO1				343
++#define PCLK_IOC_VCCIO1				344
++#define ACLK_USB3OTG				345
++#define CLK_REF_USB3OTG				346
++#define CLK_SUSPEND_USB3OTG			347
++#define HCLK_USB2HOST				348
++#define HCLK_ARB_USB2HOST			349
++#define PCLK_RTC_TEST				350
++#define HCLK_EMMC				351
++#define HCLK_FSPI0				352
++#define HCLK_XIP_FSPI0				353
++#define PCLK_PIPEPHY				354
++#define PCLK_USB2PHY				355
++#define CLK_REF_PIPEPHY_CPLL_SRC		356
++#define CLK_REF_PIPEPHY				357
++#define HCLK_VPSL				358
++#define ACLK_VPSL				359
++#define CLK_CORE_VPSL				360
++#define CLK_MACPHY				361
++#define HCLK_RKRNG_NS				362
++#define HCLK_RKRNG_S_NS				363
++#define CLK_AISP_PLL_SRC			364
++
++/* secure clks */
++#define CLK_USER_OTPC_S				400
++#define CLK_SBPI_OTPC_S				401
++#define PCLK_OTPC_S				402
++#define PCLK_KEY_READER_S			403
++#define HCLK_KL_RKCE_S				404
++#define HCLK_RKCE_S				405
++#define PCLK_WDT_S				406
++#define TCLK_WDT_S				407
++#define CLK_STIMER0				408
++#define CLK_STIMER1				409
++#define PLK_STIMER				410
++#define HCLK_RKRNG_S				411
++#define CLK_PKA_RKCE_S				412
++#define ACLK_RKCE_S				413
++
++#endif
+diff --git a/include/dt-bindings/reset/rockchip,rv1126b-cru.h b/include/dt-bindings/reset/rockchip,rv1126b-cru.h
+new file mode 100644
+index 000000000000..a78121833125
+--- /dev/null
++++ b/include/dt-bindings/reset/rockchip,rv1126b-cru.h
+@@ -0,0 +1,405 @@
++/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
++/*
++ * Copyright (c) 2025 Rockchip Electronics Co., Ltd.
++ * Author: Elaine Zhang <zhangqing@rock-chips.com>
++ */
++
++#ifndef _DT_BINDINGS_RESET_ROCKCHIP_RV1126B_H
++#define _DT_BINDINGS_RESET_ROCKCHIP_RV1126B_H
++
++/* ==========================list all of reset fields id=========================== */
++/* TOPCRU-->SOFTRST_CON00 */
++
++/* TOPCRU-->SOFTRST_CON15 */
++#define SRST_PRESETN_CRU				0
++#define SRST_PRESETN_CRU_BIU				1
++
++/* BUSCRU-->SOFTRST_CON00 */
++#define SRST_ARESETN_TOP_BIU				2
++#define SRST_ARESETN_RKCE_BIU				3
++#define SRST_ARESETN_BUS_BIU				4
++#define SRST_HRESETN_BUS_BIU				5
++#define SRST_PRESETN_BUS_BIU				6
++#define SRST_PRESETN_CRU_BUS				7
++#define SRST_PRESETN_SYS_GRF				8
++#define SRST_HRESETN_BOOTROM				9
++#define SRST_ARESETN_GIC400				10
++#define SRST_ARESETN_SPINLOCK				11
++#define SRST_PRESETN_WDT_NS				12
++#define SRST_TRESETN_WDT_NS				13
++
++/* BUSCRU-->SOFTRST_CON01 */
++#define SRST_PRESETN_WDT_HPMCU				14
++#define SRST_TRESETN_WDT_HPMCU				15
++#define SRST_HRESETN_CACHE				16
++#define SRST_PRESETN_HPMCU_MAILBOX			17
++#define SRST_PRESETN_HPMCU_INTMUX			18
++#define SRST_RESETN_HPMCU_FULL_CLUSTER			19
++#define SRST_RESETN_HPMCU_PWUP				20
++#define SRST_RESETN_HPMCU_ONLY_CORE			21
++#define SRST_TRESETN_HPMCU_JTAG				22
++#define SRST_PRESETN_RKDMA				23
++#define SRST_ARESETN_RKDMA				24
++
++/* BUSCRU-->SOFTRST_CON02 */
++#define SRST_PRESETN_DCF				25
++#define SRST_ARESETN_DCF				26
++#define SRST_HRESETN_RGA				27
++#define SRST_ARESETN_RGA				28
++#define SRST_RESETN_CORE_RGA				29
++#define SRST_PRESETN_TIMER				30
++#define SRST_RESETN_TIMER0				31
++#define SRST_RESETN_TIMER1				32
++#define SRST_RESETN_TIMER2				33
++#define SRST_RESETN_TIMER3				34
++#define SRST_RESETN_TIMER4				35
++#define SRST_RESETN_TIMER5				36
++#define SRST_ARESETN_RKCE				37
++#define SRST_RESETN_PKA_RKCE				38
++#define SRST_HRESETN_RKRNG_S				39
++#define SRST_HRESETN_RKRNG_NS				40
++
++/* BUSCRU-->SOFTRST_CON03 */
++#define SRST_PRESETN_I2C0				41
++#define SRST_RESETN_I2C0				42
++#define SRST_PRESETN_I2C1				43
++#define SRST_RESETN_I2C1				44
++#define SRST_PRESETN_I2C3				45
++#define SRST_RESETN_I2C3				46
++#define SRST_PRESETN_I2C4				47
++#define SRST_RESETN_I2C4				48
++#define SRST_PRESETN_I2C5				49
++#define SRST_RESETN_I2C5				50
++#define SRST_PRESETN_SPI0				51
++#define SRST_RESETN_SPI0				52
++#define SRST_PRESETN_SPI1				53
++#define SRST_RESETN_SPI1				54
++
++/* BUSCRU-->SOFTRST_CON04 */
++#define SRST_PRESETN_PWM0				55
++#define SRST_RESETN_PWM0				56
++#define SRST_PESETN_PWM2				57
++#define SRST_RESETN_PWM2				58
++#define SRST_PRESETN_PWM3				59
++#define SRST_RESETN_PWM3				60
++
++/* BUSCRU-->SOFTRST_CON05 */
++#define SRST_PRESETN_UART1				61
++#define SRST_SRESETN_UART1				62
++#define SRST_PRESETN_UART2				63
++#define SRST_SRESETN_UART2				64
++#define SRST_PRESETN_UART3				65
++#define SRST_SRESETN_UART3				66
++#define SRST_PRESETN_UART4				67
++#define SRST_SRESETN_UART4				68
++#define SRST_PRESETN_UART5				69
++#define SRST_SRESETN_UART5				70
++#define SRST_PRESETN_UART6				71
++#define SRST_SRESETN_UART6				72
++#define SRST_PRESETN_UART7				73
++#define SRST_SRESETN_UART7				74
++
++/* BUSCRU-->SOFTRST_CON06 */
++#define SRST_PRESETN_TSADC				75
++#define SRST_RESETN_TSADC				76
++#define SRST_HRESETN_SAI0				77
++#define SRST_MRESETN_SAI0				78
++#define SRST_HRESETN_SAI1				79
++#define SRST_MRESETN_SAI1				80
++#define SRST_HRESETN_SAI2				81
++#define SRST_MRESETN_SAI2				82
++#define SRST_HRESETN_RKDSM				83
++#define SRST_MRESETN_RKDSM				84
++#define SRST_HRESETN_PDM				85
++#define SRST_MRESETN_PDM				86
++#define SRST_RESETN_PDM					87
++
++/* BUSCRU-->SOFTRST_CON07 */
++#define SRST_HRESETN_ASRC0				88
++#define SRST_RESETN_ASRC0				89
++#define SRST_HRESETN_ASRC1				90
++#define SRST_RESETN_ASRC1				91
++#define SRST_PRESETN_AUDIO_ADC_BUS			92
++#define SRST_MRESETN_AUDIO_ADC_BUS			93
++#define SRST_PRESETN_RKCE				94
++#define SRST_HRESETN_NS_RKCE				95
++#define SRST_PRESETN_OTPC_NS				96
++#define SRST_RESETN_SBPI_OTPC_NS			97
++#define SRST_RESETN_USER_OTPC_NS			98
++#define SRST_RESETN_OTPC_ARB				99
++#define SRST_PRESETN_OTP_MASK				100
++
++/* PERICRU-->SOFTRST_CON00 */
++#define SRST_ARESETN_PERI_BIU				101
++#define SRST_PRESETN_PERI_BIU				102
++#define SRST_PRESETN_RTC_BIU				103
++#define SRST_PRESETN_CRU_PERI				104
++#define SRST_PRESETN_PERI_GRF				105
++#define SRST_PRESETN_GPIO1				106
++#define SRST_DBRESETN_GPIO1				107
++#define SRST_PRESETN_IOC_VCCIO1				108
++#define SRST_ARESETN_USB3OTG				109
++#define SRST_HRESETN_USB2HOST				110
++#define SRST_HRESETN_ARB_USB2HOST			111
++#define SRST_PRESETN_RTC_TEST				112
++
++/* PERICRU-->SOFTRST_CON01 */
++#define SRST_HRESETN_EMMC				113
++#define SRST_HRESETN_FSPI0				114
++#define SRST_HRESETN_XIP_FSPI0				115
++#define SRST_SRESETN_2X_FSPI0				116
++#define SRST_RESETN_UTMI_USB2HOST			117
++#define SRST_RESETN_REF_PIPEPHY				118
++#define SRST_PRESETN_PIPEPHY				119
++#define SRST_PRESETN_PIPEPHY_GRF			120
++#define SRST_PRESETN_USB2PHY				121
++#define SRST_RESETN_POR_USB2PHY				122
++#define SRST_RESETN_OTG_USB2PHY				123
++#define SRST_RESETN_HOST_USB2PHY			124
++
++/* CORECRU-->SOFTRST_CON00 */
++#define SRST_RESETN_REF_PVTPLL_CORE			125
++#define SRST_NCOREPORESET0				126
++#define SRST_NCORESET0					127
++#define SRST_NCOREPORESET1				128
++#define SRST_NCORESET1					129
++#define SRST_NCOREPORESET2				130
++#define SRST_NCORESET2					131
++#define SRST_NCOREPORESET3				132
++#define SRST_NCORESET3					133
++#define SRST_NDBGRESET					134
++#define SRST_NL2RESET					135
++
++/* CORECRU-->SOFTRST_CON01 */
++#define SRST_ARESETN_CORE_BIU				136
++#define SRST_PRESETN_CORE_BIU				137
++#define SRST_HRESETN_CORE_BIU				138
++#define SRST_PRESETN_DBG				139
++#define SRST_POTRESETN_DBG				140
++#define SRST_NTRESETN_DBG				141
++#define SRST_PRESETN_CORE_PVTPLL			142
++#define SRST_PRESETN_CRU_CORE				143
++#define SRST_PRESETN_CORE_GRF				144
++#define SRST_PRESETN_DFT2APB				145
++
++/* PMUCRU-->SOFTRST_CON00 */
++#define SRST_HRESETN_PMU_BIU				146
++#define SRST_PRESETN_PMU_GPIO0				147
++#define SRST_DBRESETN_PMU_GPIO0				148
++#define SRST_PRESETN_PMU_HP_TIMER			149
++#define SRST_RESETN_PMU_HP_TIMER			150
++#define SRST_RESETN_PMU_32K_HP_TIMER			151
++
++/* PMUCRU-->SOFTRST_CON01 */
++#define SRST_PRESETN_PWM1				152
++#define SRST_RESETN_PWM1				153
++#define SRST_PRESETN_I2C2				154
++#define SRST_RESETN_I2C2				155
++#define SRST_PESETN_UART0				156
++#define SRST_SRESETN_UART0				157
++
++/* PMUCRU-->SOFTRST_CON02 */
++#define SRST_PRESETN_RCOSC_CTRL				158
++#define SRST_RESETN_REF_RCOSC_CTRL			159
++#define SRST_PRESETN_IOC_PMUIO0				160
++#define SRST_PRESETN_CRU_PMU				161
++#define SRST_PRESETN_PMU_GRF				162
++#define SRST_RESETN_PREROLL				163
++#define SRST_RESETN_PREROLL_32K				164
++#define SRST_HRESETN_PMU_SRAM				165
++
++/* PMUCRU-->SOFTRST_CON03 */
++#define SRST_PRESETN_WDT_LPMCU				166
++#define SRST_TRESETN_WDT_LPMCU				167
++#define SRST_RESETN_LPMCU_FULL_CLUSTER			168
++#define SRST_RESETN_LPMCU_PWUP				169
++#define SRST_RESETN_LPMCU_ONLY_CORE			170
++#define SRST_TRESETN_LPMCU_JTAG				171
++#define SRST_PRESETN_LPMCU_MAILBOX			172
++
++/* PMU1CRU-->SOFTRST_CON00 */
++#define SRST_PRESETN_SPI2AHB				173
++#define SRST_HRESETN_SPI2AHB				174
++#define SRST_HRESETN_FSPI1				175
++#define SRST_HRESETN_XIP_FSPI1				176
++#define SRST_SRESETN_1X_FSPI1				177
++#define SRST_PRESETN_IOC_PMUIO1				178
++#define SRST_PRESETN_CRU_PMU1				179
++#define SRST_PRESETN_AUDIO_ADC_PMU			180
++#define SRST_MRESETN_AUDIO_ADC_PMU			181
++#define SRST_HRESETN_PMU1_BIU				182
++
++/* PMU1CRU-->SOFTRST_CON01 */
++#define SRST_PRESETN_LPDMA				183
++#define SRST_ARESETN_LPDMA				184
++#define SRST_HRESETN_LPSAI				185
++#define SRST_MRESETN_LPSAI				186
++#define SRST_PRESETN_AOA_TDD				187
++#define SRST_PRESETN_AOA_FE				188
++#define SRST_PRESETN_AOA_AAD				189
++#define SRST_PRESETN_AOA_APB				190
++#define SRST_PRESETN_AOA_SRAM				191
++
++/* DDRCRU-->SOFTRST_CON00 */
++#define SRST_PRESETN_DDR_BIU				192
++#define SRST_PRESETN_DDRC				193
++#define SRST_PRESETN_DDRMON				194
++#define SRST_RESETN_TIMER_DDRMON			195
++#define SRST_PRESETN_DFICTRL				196
++#define SRST_PESETN_DDR_GRF				197
++#define SRST_PRESETN_CRU_DDR				198
++#define SRST_PRESETN_DDRPHY				199
++#define SRST_PRESETN_DMA2DDR				200
++
++/* SUBDDRCRU-->SOFTRST_CON00 */
++#define SRST_ARESETN_SYSMEM_BIU				201
++#define SRST_ARESETN_SYSMEM				202
++#define SRST_ARESETN_DDR_BIU				203
++#define SRST_ARESETN_DDRSCH0_CPU			204
++#define SRST_ARESETN_DDRSCH1_NPU			205
++#define SRST_ARESETN_DDRSCH2_POE			206
++#define SRST_ARESETN_DDRSCH3_VI				207
++#define SRST_RESETN_CORE_DDRC				208
++#define SRST_RESETN_DDRMON				209
++#define SRST_RESETN_DFICTRL				210
++#define SRST_RESETN_RS					211
++#define SRST_ARESETN_DMA2DDR				212
++#define SRST_RESETN_DDRPHY				213
++
++/* VICRU-->SOFTRST_CON00 */
++#define SRST_RESETN_REF_PVTPLL_ISP			214
++#define SRST_ARESETN_GMAC_BIU				215
++#define SRST_ARESETN_VI_BIU				216
++#define SRST_HRESETN_VI_BIU				217
++#define SRST_PRESETN_VI_BIU				218
++#define SRST_PRESETN_CRU_VI				219
++#define SRST_PRESETN_VI_GRF				220
++#define SRST_PRESETN_VI_PVTPLL				221
++#define SRST_PRESETN_DSMC				222
++#define SRST_ARESETN_DSMC				223
++#define SRST_HRESETN_CAN0				224
++#define SRST_RESETN_CAN0				225
++#define SRST_HRESETN_CAN1				226
++#define SRST_RESETN_CAN1				227
++
++/* VICRU-->SOFTRST_CON01 */
++#define SRST_PRESETN_GPIO2				228
++#define SRST_DBRESETN_GPIO2				229
++#define SRST_PRESETN_GPIO4				230
++#define SRST_DBRESETN_GPIO4				231
++#define SRST_PRESETN_GPIO5				232
++#define SRST_DBRESETN_GPIO5				233
++#define SRST_PRESETN_GPIO6				234
++#define SRST_DBRESETN_GPIO6				235
++#define SRST_PRESETN_GPIO7				236
++#define SRST_DBRESETN_GPIO7				237
++#define SRST_PRESETN_IOC_VCCIO2				238
++#define SRST_PRESETN_IOC_VCCIO4				239
++#define SRST_PRESETN_IOC_VCCIO5				240
++#define SRST_PRESETN_IOC_VCCIO6				241
++#define SRST_PRESETN_IOC_VCCIO7				242
++
++/* VICRU-->SOFTRST_CON02 */
++#define SRST_RESETN_CORE_ISP				243
++#define SRST_HRESETN_VICAP				244
++#define SRST_ARESETN_VICAP				245
++#define SRST_DRESETN_VICAP				246
++#define SRST_ISP0RESETN_VICAP				247
++#define SRST_RESETN_CORE_VPSS				248
++#define SRST_RESETN_CORE_VPSL				249
++#define SRST_PRESETN_CSI2HOST0				250
++#define SRST_PRESETN_CSI2HOST1				251
++#define SRST_PRESETN_CSI2HOST2				252
++#define SRST_PRESETN_CSI2HOST3				253
++#define SRST_HRESETN_SDMMC0				254
++#define SRST_ARESETN_GMAC				255
++#define SRST_PRESETN_CSIPHY0				256
++#define SRST_PRESETN_CSIPHY1				257
++
++/* VICRU-->SOFTRST_CON03 */
++#define SRST_PRESETN_MACPHY				258
++#define SRST_RESETN_MACPHY				259
++#define SRST_PRESETN_SARADC1				260
++#define SRST_RESETN_SARADC1				261
++#define SRST_PRESETN_SARADC2				262
++#define SRST_RESETN_SARADC2				263
++
++/* VEPUCRU-->SOFTRST_CON00 */
++#define SRST_RESETN_REF_PVTPLL_VEPU			264
++#define SRST_ARESETN_VEPU_BIU				265
++#define SRST_HRESETN_VEPU_BIU				266
++#define SRST_PRESETN_VEPU_BIU				267
++#define SRST_PRESETN_CRU_VEPU				268
++#define SRST_PRESETN_VEPU_GRF				269
++#define SRST_PRESETN_GPIO3				270
++#define SRST_DBRESETN_GPIO3				271
++#define SRST_PRESETN_IOC_VCCIO3				272
++#define SRST_PRESETN_SARADC0				273
++#define SRST_RESETN_SARADC0				274
++#define SRST_HRESETN_SDMMC1				275
++
++/* VEPUCRU-->SOFTRST_CON01 */
++#define SRST_PRESETN_VEPU_PVTPLL			276
++#define SRST_HRESETN_VEPU				277
++#define SRST_ARESETN_VEPU				278
++#define SRST_RESETN_CORE_VEPU				279
++
++/* NPUCRU-->SOFTRST_CON00 */
++#define SRST_RESETN_REF_PVTPLL_NPU			280
++#define SRST_ARESETN_NPU_BIU				281
++#define SRST_HRESETN_NPU_BIU				282
++#define SRST_PRESETN_NPU_BIU				283
++#define SRST_PRESETN_CRU_NPU				284
++#define SRST_PRESETN_NPU_GRF				285
++#define SRST_PRESETN_NPU_PVTPLL				286
++#define SRST_HRESETN_RKNN				287
++#define SRST_ARESETN_RKNN				288
++
++/* VDOCRU-->SOFTRST_CON00 */
++#define SRST_ARESETN_RKVDEC_BIU				289
++#define SRST_ARESETN_VDO_BIU				290
++#define SRST_HRESETN_VDO_BIU				291
++#define SRST_PRESETN_VDO_BIU				292
++#define SRST_PRESETN_CRU_VDO				293
++#define SRST_PRESETN_VDO_GRF				294
++#define SRST_ARESETN_RKVDEC				295
++#define SRST_HRESETN_RKVDEC				296
++#define SRST_RESETN_HEVC_CA_RKVDEC			297
++#define SRST_ARESETN_VOP				298
++#define SRST_HRESETN_VOP				299
++#define SRST_DRESETN_VOP				300
++#define SRST_ARESETN_OOC				301
++#define SRST_HRESETN_OOC				302
++#define SRST_DRESETN_OOC				303
++
++/* VDOCRU-->SOFTRST_CON01 */
++#define SRST_HRESETN_RKJPEG				304
++#define SRST_ARESETN_RKJPEG				305
++#define SRST_ARESETN_RKMMU_DECOM			306
++#define SRST_HRESETN_RKMMU_DECOM			307
++#define SRST_DRESETN_DECOM				308
++#define SRST_ARESETN_DECOM				309
++#define SRST_PRESETN_DECOM				310
++#define SRST_PRESETN_MIPI_DSI				311
++#define SRST_PRESETN_DSIPHY				312
++
++/* VCPCRU-->SOFTRST_CON00 */
++#define SRST_RESETN_REF_PVTPLL_VCP			313
++#define SRST_ARESETN_VCP_BIU				314
++#define SRST_HRESETN_VCP_BIU				315
++#define SRST_PRESETN_VCP_BIU				316
++#define SRST_PRESETN_CRU_VCP				317
++#define SRST_PRESETN_VCP_GRF				318
++#define SRST_PRESETN_VCP_PVTPLL				319
++#define SRST_ARESETN_AISP_BIU				320
++#define SRST_HRESETN_AISP_BIU				321
++#define SRST_RESETN_CORE_AISP				322
++
++/* VCPCRU-->SOFTRST_CON01 */
++#define SRST_HRESETN_FEC				323
++#define SRST_ARESETN_FEC				324
++#define SRST_RESETN_CORE_FEC				325
++#define SRST_HRESETN_AVSP				326
++#define SRST_ARESETN_AVSP				327
++
++#endif
 -- 
 2.34.1
 
