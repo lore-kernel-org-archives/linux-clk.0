@@ -1,200 +1,115 @@
-Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11011045.outbound.protection.outlook.com [52.101.65.45])
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CB8931B124;
-	Wed, 15 Oct 2025 10:09:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.45
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760522962; cv=fail; b=I8fkOVn6RYQghYBPaZjTu9ThU+sxFcQgxn1SjPmwBuMjTaYJqNZJiNU00giwyH95NpyAMje0OJazZ7jb3lkL1m31lvVgLX7DDnDrzon/7Qn+B6Eag0QKclZg55WpphABIkvj0ch2EpKLl0GhTOfBhHjY47rF7wImmZmWoacXlk0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760522962; c=relaxed/simple;
-	bh=9bX9tW2IzDsdGL89vmVQ7UiWbHa/Ig+SrRC2l8/s6sc=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=AgIMRn0BaG5vAon49bjX1AdZHu84V68BNIg96g1D7Zgj1KZuqmtRhlyfZ12oRKJduPfyUeSq9VLMYSFUvKHgqZ7oWCQT5uEK7gi0DbzIewJ+EFu9vdbSsicxV0ogq4D6mmYGzebFzSPcarHK2PLxMFRnszSfHTVUZfZ58l1RBJo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=NCAsV6co; arc=fail smtp.client-ip=52.101.65.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91619319619;
+	Wed, 15 Oct 2025 10:10:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760523046; cv=none; b=bSN6qFI3idJIMGNF7/PeMDOS1ndTnUScZ4PIv0fHpIiS2bvwuND0O46DRwEJMAJAiaPFK/WM6bhADAt+ZZkaty1nIuh+IgOmfNBKoLdcl25l+CF2OOFO3INYXVgQMapMcU4VEMx5E076Lp/CSifMQHlMNRBndK1zdQd0mdCWVtY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760523046; c=relaxed/simple;
+	bh=nMwJtK338awejpYC3YveTpo3oENIWXP/gPoCITzCGGc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dlPJF8w7qs9mmikh/1vSbuAmobomsKG9YHnIBBQrri88vJ3zGK1qhKtU1nArfz5YHpihNMzUbamW7GJ2/U5s7NXxDDElnGckZXgQdlHT4AbPBWx6aa+GKtgx6kHUrAK26o0oA7iPsngrZwmiSZaJ/vY2ha4on7WAhMLV76TwooQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=m0ZZqw7Q; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="NCAsV6co"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=MzF9aDo/9kevHLSRyntDw20rqVV0Rf6LidLeBpenYqm4yh/wfzCELuxMuk82x1dU7L8GEG4drP+oQaEcjNKBi7DqLzqp3i3Tgsz7MLsuj2VdOn78t1wK0qzD3MmJ8nR/rKL+GA5CqG9LsM1HcjSBMXMBDjJ8lMaMyG3ZblaFc867QovSwblmXTiCEjpd2PCSvCo1ze6Ue27PIpEsaCxwcTW+VCCFBlUwUjeKuly4muVlKTIjlYXbXFopQDeJ51tIlbgDRVTgOy2CKSn4hC9ACrgQ81iv3fNuwCfZiYihpDFbrEP2UtEueAYfYKIx3jvasIGlGAjvnyLzTF1gDPcaFw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wHKrmdfVMjq5oJLNteR+WtVT1upjcmeFSxBH/bqwJWM=;
- b=tuR2nn3XrgiCSsMguDeMMwAcSDf27JY9wMLqVQ19L+i0P0Ooyu7lRSGXD69deiWxA2BRSF8L8rDFVr4KaVA8DSGndH+ZyUcqvu1epZXoOQ8ev+ifVwaykXBmCBGWMAO0y4mVr/EhsAkazmpybxPVFf+ycynN5o2h6MDB2eek3CMOOmRRJ0KoFtGTSLaAkiRTq7DZj8hv6r9PWTVgm+Iy16RSePmdop57qFfxr2LkbOpQ1N8iOC2a3zSOwELpvQ79NZMv1Av/3caD+NWwFa8c0W0kldVYUkwK6QohiY7bXB7TvEDHSOhF+DA0z0hIv7AxsYWwbWMvMzFvK4bHuiz9iw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wHKrmdfVMjq5oJLNteR+WtVT1upjcmeFSxBH/bqwJWM=;
- b=NCAsV6coPrxLvpWLgL38YV26RhAl1FLp9t8N7IeyuExr535amU5ycE/wHCsDHKZGUQHPsqTVCtVYnZj7Yd926klynCeThgJpsrpC6fNvNSNPV91CQ75yYhfuJM7KzF2aR5zLlGmrW+x9L02wzvm3nDoQVxqdCOuT0jFkdNyBSMQH39Ecpkstl6Pi4qfgySgmip5r2apV8rL7pHMvJDz9mOzO8ciU2loW+cr+KY4ZLPkWw32SuBGD8fhkLIEj6yJFm7g95A4VCMyiwIooj9ww3yTXQXpq/jffLywLPt27TyWkuwvJ7/BnjETROqqUhxEeSxyHkpo9CNAgRc79GLKX7A==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
- by AM9PR04MB8809.eurprd04.prod.outlook.com (2603:10a6:20b:408::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.11; Wed, 15 Oct
- 2025 10:09:16 +0000
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::4609:64af:8a4b:fd64]) by AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::4609:64af:8a4b:fd64%6]) with mapi id 15.20.9228.009; Wed, 15 Oct 2025
- 10:09:16 +0000
-Message-ID: <182271f2-4986-4401-a4c5-ca379a02e69b@nxp.com>
-Date: Wed, 15 Oct 2025 18:09:39 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/39] Add i.MX95 DPU/DSI/LVDS support
-To: Marek Vasut <marek.vasut@mailbox.org>, dri-devel@lists.freedesktop.org
-Cc: Abel Vesa <abelvesa@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Fabio Estevam <festevam@gmail.com>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Lucas Stach <l.stach@pengutronix.de>, Peng Fan <peng.fan@nxp.com>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Rob Herring <robh@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, devicetree@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org
-References: <20251011170213.128907-1-marek.vasut@mailbox.org>
- <2a22c45e-5de4-49ee-af3e-002941a7e2d0@nxp.com>
- <bf451620-c917-4d4a-999d-32148fbcf11b@mailbox.org>
-From: Liu Ying <victor.liu@nxp.com>
-Content-Language: en-US
-In-Reply-To: <bf451620-c917-4d4a-999d-32148fbcf11b@mailbox.org>
-Content-Type: text/plain; charset=UTF-8
-X-ClientProxiedBy: SI2PR01CA0047.apcprd01.prod.exchangelabs.com
- (2603:1096:4:193::10) To AM7PR04MB7046.eurprd04.prod.outlook.com
- (2603:10a6:20b:113::22)
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="m0ZZqw7Q"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
+	bh=WziRWtAQDPOgqfcKKpsG/YJDdpUVFZowmRQABd+4UVY=; b=m0ZZqw7QOv1LxvPy6+OiudHA/o
+	72d/SeDprr4jod1xW6uBoB5b7acxzePtVNTn+GrZkVkT0ZvJcsXUN9fci5HfTDGoEF8d5NbOpf1YR
+	YQrh215wAqbtV1oHp8i5sH0nGbNrDEpqT3qPNXoZZJDWkF/uvHwG/yY85c1SGeiUkndx9lxkKey3T
+	cKfZB+6OKPr79BJ4/gdZ1u0+1JLmBmYMgFHHPREiwjoE9k2icQKx2UaZHJ/RLW3k2N+qNTB32iPvc
+	hZhCODQElGacGtgBAg0oxvJVTS41Aj+EEajYn40wLJOsOhlbjafPFl+8nZJv4kLnNz25mO2EUXs1U
+	1Hmo3Qew==;
+Received: from i53875a40.versanet.de ([83.135.90.64] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1v8ySo-0006Qp-Ej; Wed, 15 Oct 2025 12:10:34 +0200
+From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
+To: mturquette@baylibre.com, sboyd@kernel.org, sugar.zhang@rock-chips.com,
+ zhangqing@rock-chips.com, robh@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+ conor+dt@kernel.org, Elaine Zhang <zhangqing@rock-chips.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org, huangtao@rock-chips.com
+Subject:
+ Re: [PATCH v1 1/5] clk: rockchip: Implement rockchip_clk_register_armclk_v2()
+Date: Wed, 15 Oct 2025 12:10:33 +0200
+Message-ID: <2271625.NgBsaNRSFp@diego>
+In-Reply-To: <20251015091325.71333-2-zhangqing@rock-chips.com>
+References:
+ <20251015091325.71333-1-zhangqing@rock-chips.com>
+ <20251015091325.71333-2-zhangqing@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM7PR04MB7046:EE_|AM9PR04MB8809:EE_
-X-MS-Office365-Filtering-Correlation-Id: 741273ae-2c59-4fab-d581-08de0bd2e5b2
-X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
- BCL:0;ARA:13230040|1800799024|366016|19092799006|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
- =?utf-8?B?SWsvd3BJYno5T2RwcnpHaWxqL1pwRmhocXFud212VWpjZEpVT3NyQ0N3dktw?=
- =?utf-8?B?TGR0KzdVU0dZYW9qV1pPOTh5aEVSMFF6ZERtc2tBUVI1SUgyYnV4ODViZWN6?=
- =?utf-8?B?eDZVZm9KdGVXZGgydElVdE9UcVIxcGNpc0tVVUZQb1VpQnJZWW8yc3g1cVNU?=
- =?utf-8?B?Sm8xemE1Z2U1dGJieGFwTzcyN0swcHRnUjFBU0duRXQwb0VEMTRwOU5XaVJV?=
- =?utf-8?B?dG9ORjl5Y1NGa3IxL1A3RVd5NTVoY0MzOUNtNjdFOFY4UkdseWhEK2VwVFAz?=
- =?utf-8?B?NGhsZE9QVEFCdHlCTXMyMGowOUZQMTc4TmZyOERlQ0NaWTlucWlFSWpsT25p?=
- =?utf-8?B?TWUwZzBycms5VE4vVGhHbldTM3YxalF0YjZKemJZQllYNWZJbE1ncU9QMUww?=
- =?utf-8?B?R2xPSEpyb0FieFFxMUpsTThuaDVOOHByR3VNTkZYQTFaQ0JVS0NRdnZBU2Zs?=
- =?utf-8?B?TkZpd2YyNHFxbEs1VVRnOVBtTEpwbGxPd3o5QUQ2eFZPUXFsRTBPSFlRUjE4?=
- =?utf-8?B?dll0WWdqR0ZqaWNEcER1UWo5MTlsMWtFa21jM1B5VUl6dC9XVDhIUWY3TTNo?=
- =?utf-8?B?UGwxblRpaW8zaUorZjErT2Fpc0pTVzYvdEpKWmkrMEJ4SWFiZUdkNW5vMW11?=
- =?utf-8?B?V0RhcVJ5MUY0L3ExK016T2tCcmJRcE1xbjk1d0Y2Mk9oUll1Q2dZeFhFNDlK?=
- =?utf-8?B?MEJWc1gxSTkwL3dGNEpyQVFWMFpyZmdXbmFDdEpUYU9zOTY3UjZCQzRiWFRX?=
- =?utf-8?B?cGxjVFphOC8rSTRCK2tSS1p5QTE5ZUZ2NkovUm80UjJxa0lmY0ZZN2xNVWNy?=
- =?utf-8?B?TVhjcU43YVV2SE1wMm1HdWs3K1FOKytHUHdXTlQ0clVkWGtkWDk0b09Gbmtu?=
- =?utf-8?B?N3RQZVZ4ZmM0Ukg2UWRpaEUybFN1VGhnSlJNVW9zSmdKOGNsbXdhNzBncW5I?=
- =?utf-8?B?bDZ3QnoyNlgvNkhRRUxvT1NwNFJjV0daVkhZL2w2ekFUTHZGZEROUnJlUnQr?=
- =?utf-8?B?RnpPR1lmQmNGY2p5ZVRnZXhwZkdnNU41VDNmaW9iN0llbnUzQWNqb2IxVWtx?=
- =?utf-8?B?YytsVmJWYzd1N2ZSelBFdGNicjk3TkRDWFpCVWdyN3AybjNmQlNDS05neCtT?=
- =?utf-8?B?N1owT080S3lrd0NLR1dhZmMwUUV6c3lNUWFCbFZJTFNuSjZQTk1TbDR2R1Fa?=
- =?utf-8?B?MGpRYjB6bUd6QmJ2WGU3QkNzV1pJcUtpVHZ1WFUybWszbDlTZ3Nqa1huNjNP?=
- =?utf-8?B?dU9yUWJJd0t3OUVyM09zazFIR3NocjlzeFpRQkxmYzBEK3BTTHhsRnVBeFUw?=
- =?utf-8?B?SmdsdFJhb3QxOFUxVWIvcnJIakVWRm9YY3JxUU5ZZHV6WGpHQ3RLZ09Zbmlx?=
- =?utf-8?B?a05BUDYyTjJtZ2pkSHM1RDV6ZG9nYkpEaDdsUDJlbzg2aXZKdXNLN3JKWUhK?=
- =?utf-8?B?VzhFQ3JreWQ0NnNaMzJhTXZHVVVHcnllYlAxVHhJMEdZTzhTL3orVU90TWVM?=
- =?utf-8?B?OGVWT1hUTjBWUUNISHlNc1VDWGZ0M3ZnUFBhOW8reGZvRTc4TFBPcmFjN1dI?=
- =?utf-8?B?RC9KSmhSMXFnLytJZEpXZEROOEtvR3RlS0tOMDl4TkZMdzBkMzVESDdZUytO?=
- =?utf-8?B?KzVYQnovWm1NQ0hqQlowZXpHZUFVWnh3ZGlEN3ZLSDBjbUZEeFlPSGJKRkt6?=
- =?utf-8?B?NExQWnZXVUpoTlplenFPa2tOS0U3SlpVWTEwbE9rY015NVJwK0FyOGpSUDQz?=
- =?utf-8?B?R0dYWDkzZkNyaERtbFFxbWFCYzNPOVRjRnkvTm9yYW5KM0VVa2dFZUdYWU1i?=
- =?utf-8?B?eGc3amdjSkZLa2p2QmNWREtPbW5Hc0ZIVVhyQWFpVzJDNkRQd2duK2xCRmFy?=
- =?utf-8?B?eXNhM21FYk5YWldRaE9YSXZnL1d5Q0ZzSmJObVp0Yk5mTlJVTDB5ZzRadG82?=
- =?utf-8?Q?J6PaU4zsvHQ7TW3dM01Ripwn9CfvS/mp?=
-X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(19092799006)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
- =?utf-8?B?Tkc1M0szVElST0t4cGFaZDZOWUovTGYyR3Z2aXRSdUlUT0kwVXlybHlOb3ZY?=
- =?utf-8?B?WGl2NmZvZ29XbDJLSld6TWhHMjQ4VytYTkVBWk1uVmw3ZXRCWGEzRlNSalpR?=
- =?utf-8?B?Zm1aZmIwNEFmaUxUbmx1UXFocUhnT3NZSjUyZWplcStycExVdHFEZUVNNmpY?=
- =?utf-8?B?dXQweWVvdlZleTFxUnI4TmdIemM4Q25TbEFqRXFJRlhtZUlaTDhHVEk3SnAx?=
- =?utf-8?B?aEdhT3RHZUpwT3pxSjB0eTc0UTVSbGFGWGQ0ejdtSHJ1YlFLa0pzYnBmMzN3?=
- =?utf-8?B?VDJla2VPU0o4ckloQUFzRzBKa2RJQkVncGJMc2RKaXI0QVB3SDU0U2xFSDkx?=
- =?utf-8?B?UkdVN1lsbG9BcnJmMklYaUlzbGcyZEQrOVJCREErY3crdVNlcUQrYWdpMXhk?=
- =?utf-8?B?SDhhYXhXMEJUSytyVWFqbXh4TTJWOVVLY0hsTWo2ajFMRzFIOGtQZ09KT2ZX?=
- =?utf-8?B?a28vMEVZOGs3RURXNllZREpIUkl0Tm00OVdJUzRvYVJQYlJ6NDFXQUpzazR3?=
- =?utf-8?B?RU5RSzFlMGVmQ0xUWHJONjQxcTYvUk1hNkZMMTZwdllDcnZSeGZubTdqdjVr?=
- =?utf-8?B?N01tb1VOaklvd2ZiR09pMTgyQkVSYkh2ZHhtWE9UQU05Y25rSUEwQXRtdWNM?=
- =?utf-8?B?YVJsYzRJSFVjYmhBRjhqdlcxaWVpc1lvWnBuanZzVXB6cmV5VGI5TXp1M280?=
- =?utf-8?B?czByaUJJQ05VTUpPWVY3czBRdm5NK3ZsSzZBVG5ld24yZFFoTW82NmlZdGVB?=
- =?utf-8?B?OXNxTjlMeWRpQ3d1ZTA2Tll6UnNQdVAzOUlYT0txTjlkVmtNOW8wR0p2S0xh?=
- =?utf-8?B?US9ETkU4THRZWTFSTUdXa3h4bXVIYmRIc3U1dGlwckFJdkt1QVFaZ3dJU2Zu?=
- =?utf-8?B?aExvem0xQjVSeTlKdHlPaEFwM1JxWXhpU2FOaEozZzN4dXM4R0FZQXJ4eUdo?=
- =?utf-8?B?UndqVThRZGNIdnlrMUU0WWV2dU4wcHBETEhiL250MHpIT05ZbSthMXA2QkRu?=
- =?utf-8?B?a1B5SW1DQ0NMZkl1dUFYeEEweVBURnB6Y1NWQXRkZGx0ZjVYK3EyS00wWDgr?=
- =?utf-8?B?cHBZVEVXQVQ5eUlEaXNUcmFhUGQvQ05uaXpFdUV2MEdVOVhURmJWeXN1QWMw?=
- =?utf-8?B?T2l2K0FXNExjTEZsNllscVl1MWp0ZU5jbWp4TEFORWVWdkI3TDZXQW5WRjRL?=
- =?utf-8?B?OVVvWDQ0cFQ1aVRjZmpHdnVnREFRRDN5dGRaczNFSjVIL3dBdFpGYWFWbHBU?=
- =?utf-8?B?eDBBZG9qRG5NdVc5UlF1bzJnVlJmWnVnUENPblFKc2ErTDFWV05IbGU1cXdw?=
- =?utf-8?B?VHEvZWF6UjlpMG5TV2NrZHN2T1pSd2lZUWR1alV3c0xiUXpQR2pRdmpMTktB?=
- =?utf-8?B?RzNmdzl4ZmY5ZVVRc0FCSytWS2hjdE1jdXlvbXVKaHUxYVRTKzNZNmhjNGd1?=
- =?utf-8?B?TVUraEZURERSdDdtd0FiZkxEMFM2eXhmbFFZNGppOXg2VDhwOXFYczI3UnZv?=
- =?utf-8?B?V2tEdFZBaGFyeEZJbHQzT0d0M2ZreGdLR0haVEIvSkpaKzc4RGphUUdja1RF?=
- =?utf-8?B?UmZSRXRjcUhoZWZmeExHLzhqRG8vb3h2RTQ3d2FKbnhxdUJtNmZoL1duNUoy?=
- =?utf-8?B?ZXlER3UyaytoNHdVYjI2a083dlpNcW9TdjQ4UGQ4a2cya1F2VHptaGtJUDNE?=
- =?utf-8?B?QURWMjNMTFR3VERKMnVURjEzZmVaQlV0NXlIeEltRFcvTElQTG1Mbm5pUFRU?=
- =?utf-8?B?MkdWS3BhcGhQd3Y4T2Y3SS9LdVNzbmN4eE1pMFBOV0VlKy9wTmJpUkZNaE5m?=
- =?utf-8?B?NG9Kb3Nia1dBa1BxT01GR0sxUDVjaHpDeTFPeENoK0xXRU1ZbS85VkN0V0Yy?=
- =?utf-8?B?N3RzRnVsUGdqNU1oU01JdEJzU0ZEVkE1UWxqYW85bkpQOEJBd2ErVGJFUmlT?=
- =?utf-8?B?WE1idTFlazIvdXpzQnFjaW5vdjBOdjJUMDhGV2ttbjd5b1JER0ErT0J4R3Rj?=
- =?utf-8?B?VTJBNzNnUzZ4NDR1eFFGa2RETVVkMFF2eTJKSElON0FHaUFBZHNBbERHRmRo?=
- =?utf-8?B?ZTVPRmlWTWFYdFVSZHdDbGxOS2lNb3ZPM2dDbE10R2hWTkNkZEd5cHR4WjIw?=
- =?utf-8?Q?0tTJoG9hI8/tisB9ulPgSSW5b?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 741273ae-2c59-4fab-d581-08de0bd2e5b2
-X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Oct 2025 10:09:16.0264
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: oULF5RGu0lwvtq8qFybKUym9KdctiadwWxRcIgNXfrJcizlFHi2OgyLK5cCu0/9T66k6xsDE03ZQctYJXnb74w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB8809
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-On 10/15/2025, Marek Vasut wrote:
-> On 10/14/25 11:13 AM, Liu Ying wrote:
->> On 10/11/2025, Marek Vasut wrote:
->>> DPU is added into DC driver
->>
->> This has conflicts with my in-flight patch series for adding i.MX8QXP DC
->> prefetch engine support(though i.MX95 SoC doesn't embed any display controller
->> prefetch engine).  You probably want to take a look at it, just a heads up.
->>
->> https://lore.kernel.org/all/20250929-imx8-dc-prefetch-v3-0-c01d0608add2@nxp.com/
-> 
-> Thank you for sharing that.
-> 
-> Would it make sense to send 4 and 5 separately , so the fixes can land faster?
+Hi Elaine,
 
-Maybe not, since there is no user(DT node is not enabled) so far.
-But I'd like to have more review/ack for that patch series(it's kind of
-hard to get sufficient review...).
+Am Mittwoch, 15. Oktober 2025, 11:13:21 Mitteleurop=C3=A4ische Sommerzeit s=
+chrieb Elaine Zhang:
+> The clock path of CPU may be simplified as follows:
+>=20
+>     --gpll--|--\
+>             |   \
+>             |    \
+>             |     \
+>    --v0pll--| mux |--[gate]--[div]--clk_core--
+>             |     /
+>             |    /
+>    --v1pll--|   /
+>             |--/
+>=20
 
-> 
-> Also, could you please try and avoid the SCU dependency on patch 7 ,
-> and more in that direction , can the PRG be made a bit more optional, so the
+when introducing new core concepts, please really try to explain the
+concept and also in detail why the old code cannot fullfill the new
+requirements.
 
-Don't think there is any way to address them.
+=46rom what I gathered, the main difference is that on the bigger socs we
+have one sort of dedicated PLL for each armclk (i.e. B0PLL, B1PLL, LPLL
+on rk3588) with the other parents being used as an interim source while
+we adjust the main one.
 
-> iMX95 can still be supported by the DC driver ?
+Here the rv1126b (and rk3506) don't have that, but instead can select
+from a number of "equal-but-shared" PLL sources.
 
-SCU dependency and PRG(even more other reasons) make me opt to separate
-modules for i.MX95/8qxp DCs.
+Is my reading correct here?
 
--- 
-Regards,
-Liu Ying
+
+> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+> ---
+>  drivers/clk/rockchip/clk-cpu.c | 165 +++++++++++++++++++++++++++++++++
+>  drivers/clk/rockchip/clk.c     |  24 +++++
+>  drivers/clk/rockchip/clk.h     |  15 +++
+>  3 files changed, 204 insertions(+)
+>=20
+> diff --git a/drivers/clk/rockchip/clk-cpu.c b/drivers/clk/rockchip/clk-cp=
+u.c
+> index dcc9dcb597ae..a48628e5c095 100644
+> --- a/drivers/clk/rockchip/clk-cpu.c
+> +++ b/drivers/clk/rockchip/clk-cpu.c
+
+[...]
+
+> +struct clk *rockchip_clk_register_cpuclk_v2(const char *name,
+
+can we please find a descriptive name instead of "_v2"
+
+I guess if my reading above is correct something like "_multi_pll" or so
+might be nice.
+
+
+Thanks
+Heiko
+
+
