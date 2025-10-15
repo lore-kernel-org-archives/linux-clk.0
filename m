@@ -1,90 +1,209 @@
-Received: from mail-m32103.qiye.163.com (mail-m32103.qiye.163.com [220.197.32.103])
+Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010039.outbound.protection.outlook.com [52.101.69.39])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B47931AF3D;
-	Wed, 15 Oct 2025 09:13:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.103
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760519619; cv=none; b=swcZUi5dhMBPbneSfBPxpPEUWglsVowoHdk+4aim788h21JP15l3Fm6por/LgsSc5dDHNy+CjVYb76ZaBSx5U1Ua+cmVQd8+RtQohgMPwO46J63ugOPHHgCmjqs98qXK3G3HTRftMU+KNlJLIugq3lh77d7ulvQIn8KwY7Xl9oQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760519619; c=relaxed/simple;
-	bh=R2i7/iWxTvrX1RQdQvd79TnBe02cKPCRBuFIzGxu0mY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XHO7pWB/YOkhWbSspNiXvAQ69efMBKn+D6TmWtGrCPV8xQBIz0BrOZLxGH+S0bXja20iO1DtQkVnjIJjRKv66909WamyctR2z6Hggn2aKOxbEaiDmPB7xMK8MeqVnpy60fxnnzpnSaxePYPHo6csWEnT+wKrHQ9VEL0i6tRXO5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=Hyfm5rZd; arc=none smtp.client-ip=220.197.32.103
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA59931B80E;
+	Wed, 15 Oct 2025 09:13:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.39
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760519625; cv=fail; b=e4S30gWl+ArPxlAPzxZrmLPH/Crd0rrxJSd9UjBy6fZ3fkIajs373+aFLAxhabexq/hUN4nCrre2tnl3Ety7HwRUB9js1D+bshvbcr1R+Mi4qTvw+QXrhf31RQu4mmDZCFn7zuoJ2Llad9qI9QNhRRp8sxdTMtML5jYhBMrC8Ng=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760519625; c=relaxed/simple;
+	bh=8nD9gzNqbX8k8WWo+OWTuSbShpis9vUvFx3pKrSxIUE=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=igkFQfPnw61vlUCZjjXJzuDWdIB28rygOtLP7WwTPh1J4NslH0RCZLp1hmhGlswAX0pTJQ+x6cGnXxirNjQskW+SdWkG3mmv7TwF1w+zo2SroGznuybUmHeCbdZdzbkP3BNZi1Ke5tVCSvnC11EOKd/E5M4bwC+TXSr+q+OjiYs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=STlq5bT2; arc=fail smtp.client-ip=52.101.69.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="Hyfm5rZd"
-Received: from rockchip.. (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 25fe0166a;
-	Wed, 15 Oct 2025 17:13:26 +0800 (GMT+08:00)
-From: Elaine Zhang <zhangqing@rock-chips.com>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	sugar.zhang@rock-chips.com,
-	zhangqing@rock-chips.com,
-	heiko@sntech.de,
-	robh@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org,
-	conor+dt@kernel.org
-Cc: devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	huangtao@rock-chips.com
-Subject: [PATCH v1 0/5] clk: rockchip: Add clock controller for the RV1126B
-Date: Wed, 15 Oct 2025 17:13:20 +0800
-Message-Id: <20251015091325.71333-1-zhangqing@rock-chips.com>
-X-Mailer: git-send-email 2.34.1
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="STlq5bT2"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=SvgdiA+iMvnwH2div74MqW9jqBlTAoOgx5cS07JDIRlFhIfoXC1IfwRLOfxS7xSoubSuly/FfU47t+XIGk6Kx3pNAxVkYi6NiLjD2qbm1XlGUFwbKkhOsZOaUsAu+bLGCM1DhiXtT3eYTBx1/u2Us3NNFnnWhMIHEPKLzs2KdTT5kOZOhc9YAxahZLscJN67Xd6l2jWWk32r56qj4BLAf8mOqKdWIp2GkB268m6FGLQ8aIbs76X0cSbHUOxVJvGebtQDzRoqPBV2IJP9s5GJy3Dfq9lH3PUpnLDnp6yhXjgz0SswRTf+T6RIqLuCJvBivYwYxCBU0GO0wpdGAlebzg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=UZrxxGI3KmLwlppHUmEApuSuioKy3TyjBhwDUlICoF4=;
+ b=GD7EsTQMSMO/LCypNr0c9w6p/LSfRyRXVlPGIXn2d4zfIqbbo+aWZq8n44gk7AgavUcQWHoHlBdjWCLSVqwoDYgeeOs8bO2TyNFWn+b4eRQ7PJdlPQEYU4qCgOFmANZhlL3MUi3ASuPWH9JKfAktK+EH3ruG9bG3yQrqOaRd4m7Zzyoo8czdETVHQg8HjMtDimSWZMJ6IjZPfH11WMMNAzjJ+TomDwX06f8rA5IK3sanaCwWOjHkkpAYOpYjKAHyXKrlV19pPufhEdk1/104UQyQGU9BEmssq9OHzA0lpNwjNufgr5p16cDdqTP7lv5xyQNH60JxMAr9tb6bj2VjYg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=UZrxxGI3KmLwlppHUmEApuSuioKy3TyjBhwDUlICoF4=;
+ b=STlq5bT201Hzaf4zw4TsQ8mKYJlt4S8bV8X94FvWCaFqNEyipeA9qVn0zao6JHSshgaahNmnvVCikGGkClpuCiHJFE832s19QUVSJZoqbgZO2s5KBSCgBoOsD2pWmtiuldTiCMxbU/0UCAfyJdZ/EJNNpqMx4R+xRKJucdRh0cGl1hcali3bskz45/dWC363qEYpOhskfI0Z9yM+xAQmdWbVIRewENh5ZSvhV7TGmy9W7uvGRIV0mXqqgjPB4lJzLsmCmTlKoE0lcW/TR3e121ehkuPckLZ2fpNFg7Rj0/2cBh8mQiw7CWJ9oIfKlHbNzShY0xTpXZfx6h5XOzCoGQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
+ by AM9PR04MB9004.eurprd04.prod.outlook.com (2603:10a6:20b:40b::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.10; Wed, 15 Oct
+ 2025 09:13:39 +0000
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::4609:64af:8a4b:fd64]) by AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::4609:64af:8a4b:fd64%6]) with mapi id 15.20.9228.009; Wed, 15 Oct 2025
+ 09:13:39 +0000
+Message-ID: <be6bc134-1dfc-4cd5-8f1b-cd5431828eb3@nxp.com>
+Date: Wed, 15 Oct 2025 17:14:02 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 05/39] drm/imx: dc: Rework dc_subdev_get_id() to drop
+ ARRAY_SIZE() use
+To: Marek Vasut <marek.vasut@mailbox.org>, Frank Li <Frank.li@nxp.com>
+Cc: dri-devel@lists.freedesktop.org, Abel Vesa <abelvesa@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Fabio Estevam <festevam@gmail.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Lucas Stach <l.stach@pengutronix.de>, Peng Fan <peng.fan@nxp.com>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Rob Herring <robh@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, devicetree@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org
+References: <20251011170213.128907-1-marek.vasut@mailbox.org>
+ <20251011170213.128907-6-marek.vasut@mailbox.org>
+ <aO0vLbkpXejre2Ta@lizhi-Precision-Tower-5810>
+ <c7fee270-f3ff-402f-8266-0ffbb5077a61@mailbox.org>
+ <aO5oKe14GLp3diGH@lizhi-Precision-Tower-5810>
+ <43e3e005-5d30-4450-8dbc-8c6b5a0fa951@mailbox.org>
+From: Liu Ying <victor.liu@nxp.com>
+Content-Language: en-US
+In-Reply-To: <43e3e005-5d30-4450-8dbc-8c6b5a0fa951@mailbox.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SG2PR06CA0190.apcprd06.prod.outlook.com (2603:1096:4:1::22)
+ To AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a99e72551d203a3kunmdd11480e6b2054
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGkkfT1ZLHhpOSUhDSE1DHRpWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
-	hVSktLVUpCS0tZBg++
-DKIM-Signature: a=rsa-sha256;
-	b=Hyfm5rZdqfbV+Zm54hF1JZGTGqy7lX8fLtR2Q4j0G9AlbEArwrUQzy/RqZUe7sYkWo4XziVe7FnwpYw5vqWea+wcebrMsKZA3xk3/gU429u42lQEQmGn3U+efHykZ3Arg1aRGhnpi7LN6TTUe2QaPImx29orBP9i+qOh0uslTCg=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=7b6Z8fzetWYE+7cZhOYZwFJZsXm06iGFmfkTEFPEbLg=;
-	h=date:mime-version:subject:message-id:from;
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM7PR04MB7046:EE_|AM9PR04MB9004:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8de24c49-648c-4ca4-7ba5-08de0bcb20f4
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+ BCL:0;ARA:13230040|19092799006|376014|7416014|1800799024|366016|7053199007;
+X-Microsoft-Antispam-Message-Info:
+ =?utf-8?B?aGVzRkc5ZGNKNkFFbVRUUnlRWUtMM1hGSklRNDl0NXJjTmtmTXNwcENpUTMz?=
+ =?utf-8?B?SWZ3clZRUWRKQVNkODNDRXBJZFJwUFdlSno0bE9XcngxWXlPV2VoU0lTQWl0?=
+ =?utf-8?B?SzVsNG4wNW5YRVYrNEkvcGIxeUd1UUhUYTNQR2trbG1RNFY2WGZKNCtKY2lx?=
+ =?utf-8?B?TjZDdWI1MWpkS21uN1V1QTBBTkxjcUZjNmhwUlZFcFdWeERDRXZneXdVOGhN?=
+ =?utf-8?B?bjM1eTdrdmtZa0N6UWlhbUtCcDdWTHdZekhCTk5SR2lmTXU5UDIvZ1gvT1ZC?=
+ =?utf-8?B?VjVQLy82K0RSRGNxaXVFK1krL1RQc2U2VDRNRkJFUFRGOXV3YkpzVENRVndD?=
+ =?utf-8?B?cG1tQStXaWE3ZW4xVGJGL0xaZW5VNU9OVTFCM0N0RjllS0NBSzdLbytvVmFQ?=
+ =?utf-8?B?ZGNOaUZ5ZVVxcEloeUN3eDFmOXM2eWtnMVFWWEpjamtOc2doa1p4dStkOUZI?=
+ =?utf-8?B?dnBDY1IrNHFIcUtQOXJpR3hmTy9lTW42aWlFR1Jac0RRZUZudzIzRmpVQnZR?=
+ =?utf-8?B?S053Z1R2T01QY1FlM0YxRkxBQzZJQWZTUGZuamQvbVY5ZHRIcVMyMGlpQTZ0?=
+ =?utf-8?B?Q1REYWJPbEU0REROYkYrM0FHaGhzb3ZaSEc0VGJYTlZDODhoTFRDeEt6NnBn?=
+ =?utf-8?B?SjRsRDZEZVd5bkkxUmNESm9rWjUzN2k1dXJMSUxqK296OFpPQmlPK29BUlFz?=
+ =?utf-8?B?Uk1oQ3NFZDl1Q051SlJERW14VnFEQWdFZC9ULzZIcExQR0dTRFU3N0VlY1lB?=
+ =?utf-8?B?SXpaM3NoN1JQcmNNNkJDSi95RnhWUzhEYStyWlRFZER6V3dMZVBCdHdjMHRK?=
+ =?utf-8?B?dG9xSTljSjc2Z1BvYm1DMExpZm42R2Zoc3lYS3dsQ2lTbWxmVG5oS2dwTzlH?=
+ =?utf-8?B?Z25ZczM2VlNYNyswTTl4Nm0rdGVXZnB1aDYzU05BQUU1alN0aDZsTDhtd0NP?=
+ =?utf-8?B?WjFjODhrZGtoSmZOY09TNWpjN2xqck1UM21aVFZYUVF5MFd3bmpQemVPVFU3?=
+ =?utf-8?B?bHVTdXBITWc4eEgwdDlBcW9WTXZ6clVTNVd5a3VSNmpvRFljVkwrT1BGaXFN?=
+ =?utf-8?B?aHVBNTk0ZUJYbmJ3QkNmVWRKMG9JZW9WNElUUWhCWktjUzFubXZ6dFc4cUlt?=
+ =?utf-8?B?SHdCb0tyenFhNWQxL0hoaFd4OW55OHdYUW92WmNpVWc1cXpFZnNieitTbE5U?=
+ =?utf-8?B?KzBGbjJONFBXZmhMbnQvZ3AvcEd5WUxVZU0yc0RJUnl6VkdyeFlmc0ZQdGE1?=
+ =?utf-8?B?cDJwdVFhVmVFampINjM0L05ERXk5MWRjTUxPYXpXSG1YZEx0dUo2RUNJOTdU?=
+ =?utf-8?B?anhueUQ0Z2RKejlyeFNMSWs2czRCTVU2RHNoY1NiRU5ZbW9SSHZ1QURYVEEv?=
+ =?utf-8?B?MDEvU2xJRmdiYlI4SmZINkhaSGl5U3JKWnJqQ0lhdVZ3UXRKTXpydUE2OEMx?=
+ =?utf-8?B?SklzeTExY1hoYkJUb3lncjdzTVZ5dmdSRUMrdWN0NnhRa1NOckorNFQ5c2NH?=
+ =?utf-8?B?ZVZFQWpLTUpKWWNnbFd0Y05LNzlMcTgvOXdOaEUzL3llYXpLaHZNTDR1eVBL?=
+ =?utf-8?B?RnhTWDNJazBaTkdidVNxdFhnM2YybDZ3Q0FKRTA0b3VudlhFaHhPK3RFanFY?=
+ =?utf-8?B?RVBGWnI4akI5VVIwQk83aHp2eUsweG1OZlZreVNGaGlIWjB3cGhsQ1Nlajd2?=
+ =?utf-8?B?ZjNQNnMwWlIzZW1FNmdjTVEvd1l2SDJidm9XTStDYkFnVTFJakM5ZlhpZXlX?=
+ =?utf-8?B?NWUwbmp5NXZ3RGVCd2NZYXZMNlR3bElFV2todkEvalNQdGVYem5QRTl3UVBD?=
+ =?utf-8?B?TjFiZTAwaStlSUtMZTAzWVRjdEtoUG9sRkl1R3RyWi84ZCt2NUY0ck1MNmY1?=
+ =?utf-8?B?bzRuWnNvNWRxT0Q3U2RQRElrVzNxTWFyY3ExdHlSQmoyM2M4NStSOHY0cDV3?=
+ =?utf-8?Q?hgehn3GtOmKTF51EQ57Qc2p8o+U8mFAR?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(376014)(7416014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?utf-8?B?cW01VWxKcHVUa1lKMlJoczRUS2lrand6NStxR0VHQ0k3MGZncUdGaG1KT0Nv?=
+ =?utf-8?B?SWpnMkY1eGs2ZjlKNURxUkVocnJac0NNMDlwRFFqK2R3MVFzWEJrbEFBbXgv?=
+ =?utf-8?B?bS95WERrQ0VqYVRaRTZuTFQ3YVhLMUNlSC9MTEZRWGxSTmJpM3N1OGo4Ukcr?=
+ =?utf-8?B?UWNPUXRvcS9QVWhOWFRIOWkwQWE5RXp0QWZhVlArZjY2UG5ROVF0elVjajBz?=
+ =?utf-8?B?dDdTZEtZNDc3S2J1dFlUNXRjUjVid010OVMzUkZJc1N1YUo5Nkt4dndmZGcy?=
+ =?utf-8?B?K1dINys2dlhLYnpZRlJjeXZyajByRHNWcTJwanhMcS9MdW0xNHowR2xmWEJD?=
+ =?utf-8?B?M2lscU5VbGtTaU42RCtxK1o5aVRGUUdWeWNha0dnUnRhOUoxYVRoOHNJVjFL?=
+ =?utf-8?B?TUh6bEMvbzlNTEIweDdpVXBWaHdONndUMTgzUTdUdHVCZHJ2WWJ6cmxOWmFH?=
+ =?utf-8?B?MW1iWDlRVkh5blBjaFErMHNlVFk0Z3MreGduUEphYTREYXhROFdpVEtUbHJs?=
+ =?utf-8?B?dEVCejJCbEdsNjM0emdwcVhHMWI2QzVmZVllb1pWSEJxTmkvemJaOHNPazdo?=
+ =?utf-8?B?TTg3SVdWQ3NMVWdZWWJ3VC9QOENlcW5vTGtSQWFVcFF1OHkvaFJlZFhabGRV?=
+ =?utf-8?B?QlpFdXAxRmwvMGNVYXBTVVpyamRHTTFtWWxCRkN5dFhNclJ6TXNWSmJCbkRS?=
+ =?utf-8?B?YzkxY3VkeVRwNG9ZbE9ILy9wL0gzWE1paGxMTGFTZXgvOGJYMmUveUNtZU96?=
+ =?utf-8?B?VTdZNXg4NklYR1NBekg2Qm1uYVcySGdLTkswUHRlTkxNcEZ6RDFRcERQdmdC?=
+ =?utf-8?B?dE5wMzF6ODJBcDFnK295NVJhSUw5T3JxaGlUWkM2V1BzZVd0QzZvZ0VkUEcz?=
+ =?utf-8?B?cnhvYnhkcG52Nk96SUtoNHdZcFJac1c1MzVKdXUwL0IxOHNmNG9udXdIZkI3?=
+ =?utf-8?B?Y0J2UmJwM29sbVEzS3dCQWY5YUFsSUhPZkJKbXBtZlFqOHNHdVI3WFI3VXo4?=
+ =?utf-8?B?OEZPTzNzaUJtRVp3Nzd3MXZ0NWlrZjN4V2VhbnUxdUNtb1Z6aVRjVjY3aHBl?=
+ =?utf-8?B?UFlkeS81cmZNMjE4SkJwNkMxWHl2S0ljSGxhajZQSFh2TklzcXhKMDZSS2RG?=
+ =?utf-8?B?dGVCUVpGQ2Y3cVBKbjlhdHRxeEcvRUVCS1BPclFuak5nQ0lLZnJZZXhZb09o?=
+ =?utf-8?B?T0dMcElsbGtPa25CNUEvOG96ZTlpcVFITDhqMzdhSnZsMG56QzliUmJ4a2d3?=
+ =?utf-8?B?eVRzemFaK1VUTVFsa1hCNWJmWEY5RWRUNlFTNHUzcWZOa1grOFFlQ1pDd05F?=
+ =?utf-8?B?WG5HL2xxNU10YkZ1MkhUbnFqVUdFTG05TzlhVGNNSHlIbXkrb3A0bThTQlNT?=
+ =?utf-8?B?aDRPTW0rN1duTm43bDhhM0ZKZFo5dUNEdjJrRmJpRjJocTFZTlBLMlgrbmJ6?=
+ =?utf-8?B?a0dVemRRdERyVncxa2NNZ1RnR3VrVjlUUjY0bEpZNmFha0x1ZVhYRTNKS3pV?=
+ =?utf-8?B?WGI4M0s3RXhVaVdPOTFqUVd2cm5VdWxDREpVSDFpMSs5bTBEUk9aYWVkWmdI?=
+ =?utf-8?B?YjZSOWkvVU8reE8rbi9ucUFyemwwTERhQzkxNWJwbElnL29zbmZIT3p0OEJk?=
+ =?utf-8?B?eS9oNHB6VXZCZjk4YUVsU1lTc2liVWRteThBVTBORFY4eEdweTJ1YlBDR0JL?=
+ =?utf-8?B?bWhJZ2gxNldYWmhOSFJwUk5SbENPQTF6YzhQZ2duSHd3bGk5WWQzbXpHRVU3?=
+ =?utf-8?B?MU9xUWlqWkpnZVdueWRUeE5FeXpHVEhvYmhML3Znd2M0bm55aXhNS3BLYUdo?=
+ =?utf-8?B?SStjWWJtdXFJMkdpUDlMaHllbjBpSzFPdzVZQmFRa3JhWE1uVEcxVkZ1RGd4?=
+ =?utf-8?B?aVlQbzkxVjQrT0Z2WlM4MlpPMStjTGNKaldCZE96cGI1cXE3eG1QbTVKS0pQ?=
+ =?utf-8?B?dmFkOUJGK1Yycmx0UjZVdDFvT1J6VW01eU8vMTZqNDV2K2UyVngzWCtQWjZY?=
+ =?utf-8?B?aHZzNTRhSlFsLzlMQy9VL05TMFdVZm5FQ0dYMFk0bWw3RVhTVDlmaWVqWHlm?=
+ =?utf-8?B?d3BFcGV3UWVuNFhjc3FESysvV3hOK2YwS2dLdUVlNlBvM2pRY3BSc1hWRkwz?=
+ =?utf-8?Q?0xW+5Ra/K5C8dqRPcreqpb7EA?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8de24c49-648c-4ca4-7ba5-08de0bcb20f4
+X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Oct 2025 09:13:39.4581
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: gEfC/hgutro91o/h8hW2dklfhFgESDIFkLsBsgR/A+JqGEc/V1gsbuWDVaE9gtlGCmV6AfuM99pd0+h/PAqm+w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB9004
 
-Add yaml and dt-bindings for the RV1126B.
+On 10/14/2025, Marek Vasut wrote:
+> On 10/14/25 5:11 PM, Frank Li wrote:
+>> On Tue, Oct 14, 2025 at 04:03:37PM +0200, Marek Vasut wrote:
+>>> On 10/13/25 6:56 PM, Frank Li wrote:
+>>>> On Sat, Oct 11, 2025 at 06:51:20PM +0200, Marek Vasut wrote:
+>>>>> Rework dc_subdev_get_id() to drop ARRAY_SIZE() use and use empty trailing
+>>>>> entry in each ID look up array instead. This allows passing of those arrays
+>>>>> around as OF match data, which will be useful when using this pipeline on
+>>>>> i.MX95, which has different address-to-ID mapping.
+>>>>>
+>>>>> Signed-off-by: Marek Vasut <marek.vasut@mailbox.org>
+>>>>
+>>>> This change is okay. but my questions is why need map register to id.
+>>>
+>>> This seems to be a recurring pattern in the driver, where some components
+>>> need to find other components to link with them. The mapping is fixed, and
+>>> since the DT does not encode link IDs, the resolution of the mapping has to
+>>> happen by mapping the component base addresses to the IDs first.
+>>
+>> In graphic link, port@<n>, n should be id? why not use it?
+> I suspect you could model the relationships between the DC blocks using OF
+> graph, yes. I also suspect that description would be very complex in
+> DT, considering the amount of blocks and links this device contains. I
+> suspect this is why there is no such DT description using OF graph.
 
-Elaine Zhang (5):
-  clk: rockchip: Implement rockchip_clk_register_armclk_v2()
-  dt-bindings: clock, reset: Add support for rv1126b
-  clk: rockchip: Add clock controller for the RV1126B
-  dt-bindings: clock: Add support for rockchip pvtpll
-  clk: rockchip: add support for pvtpll clk
+Yes.  The design decision was made to avoid using OF graph to describe
+links between DC blocks due to the complexity.
 
- .../bindings/clock/rockchip,clk-pvtpll.yaml   |  100 ++
- .../bindings/clock/rockchip,rv1126b-cru.yaml  |   52 +
- drivers/clk/rockchip/Kconfig                  |    7 +
- drivers/clk/rockchip/Makefile                 |    1 +
- drivers/clk/rockchip/clk-cpu.c                |  165 +++
- drivers/clk/rockchip/clk-pvtpll.c             |  925 ++++++++++++++
- drivers/clk/rockchip/clk-rv1126b.c            | 1112 +++++++++++++++++
- drivers/clk/rockchip/clk.c                    |   24 +
- drivers/clk/rockchip/clk.h                    |   83 ++
- drivers/clk/rockchip/rst-rv1126b.c            |  444 +++++++
- .../dt-bindings/clock/rockchip,rv1126b-cru.h  |  392 ++++++
- .../dt-bindings/reset/rockchip,rv1126b-cru.h  |  405 ++++++
- 12 files changed, 3710 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/rockchip,clk-pvtpll.yaml
- create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rv1126b-cru.yaml
- create mode 100644 drivers/clk/rockchip/clk-pvtpll.c
- create mode 100644 drivers/clk/rockchip/clk-rv1126b.c
- create mode 100644 drivers/clk/rockchip/rst-rv1126b.c
- create mode 100644 include/dt-bindings/clock/rockchip,rv1126b-cru.h
- create mode 100644 include/dt-bindings/reset/rockchip,rv1126b-cru.h
+> 
+> I think it might also be good to talk to Liu directly about the original design
+> decision and why this id mapping was done the way it was done,
+> they should know better than me.
+
 
 -- 
-2.34.1
-
+Regards,
+Liu Ying
