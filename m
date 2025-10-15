@@ -1,193 +1,259 @@
-Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazon11013023.outbound.protection.outlook.com [52.101.72.23])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5F6A3064AA;
-	Wed, 15 Oct 2025 08:58:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.72.23
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760518739; cv=fail; b=rxLLmUImZ6BKQznMEkaoKjvxKIeFuFNmkr0d4sa98LTcPmz7nHbUv2W9UiNKnm2ht8hUeyCPQoeg5DyiK35IGnyZMj3YF4/Ox4MS6HokJ3VrQ91enET2iPY1MV6FpavX7cxc8vsx8DVsIlc+J2HJSDVozz4gi0gqSbx+JuISxnY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760518739; c=relaxed/simple;
-	bh=JMvQG6LQLFgBDGaAA74K/lKBQJ7rHwiUYf5/a+0dugs=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=bGnS3Jq0PL+eHSGatpH4yj1TwE9L50YxePfkQicd41jx92YV/hv7Of4Of2VWaG56I4vkag/wM5X97M3f2Y/UhOqBvPXgbluia7S8OHZsDPiZbfMeXm7hHQu0wj6U6MIrF+U5U54dSlKE5u5xC/7qaaVIgWXe11TbUN9uPb35FBY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=YZip9dCs; arc=fail smtp.client-ip=52.101.72.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7D792BE7DB
+	for <linux-clk@vger.kernel.org>; Wed, 15 Oct 2025 09:07:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760519231; cv=none; b=BGfjHpBu4Sym0P4AFs9FBW7vOhqC8duHBks+Gi1g9sK2MOefNbtpGDvIWBnQKB/S2HJmErdKJP7n6KDl4xkuzaBTu1hSdgL/5XsXBYMFYKmllRtxWIP1TiTGHI/KkSyCOBGN06edSD62GqcBJhs6TdF1GUkIyWgGGgCQw35BnLE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760519231; c=relaxed/simple;
+	bh=sqfqcCk73C339CEFGKekRqgEOx3juK3PyvjyD2ABo7w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gVE9S1gWTSqOE6aVQQ9S4pVrfc6a87sr0P5QclZECl2rZmqATt10viczc+jiWBG6Y2EDpLAPHqwCiGYIjz5JZEcDq5BLRBtByIJ+3Sf5t9h83+3V7Un48mGMcGY3d+DnXLhYyag9llO7Di8kyZ6tp/u99xDFK1Q3126pIRSKrUY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Nw+8/3+T; arc=none smtp.client-ip=209.85.215.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="YZip9dCs"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=X93pz9WOmq4noSiSpMt4CTsAEkvXU/lo1WpvQ0X/0EqPd0Yz/aHJeT6K57HSItyILYEr+i8S2ZfpR/PUSed8m4hbLu71lrlcflPBMLlq9ZJ326ofPUIbiaXkuLlPL5nXc9v1wa7Nkdn0SevyWcwffe2CQRNUwXMXcYiNzzQ90lZN79/5FTOHffDifeIa/1p3tTlAqakCrfKD/ILuKctSydjfUJyKmo/mIYcmAp+ELnIxNAP1qSJOhEyTXivjBf3EWPUq+jwqBahLBXqGd2H1CfK5RbgEACHWe0te0l4IcDblyRQDr3/3oldVn1RJr7ysvwBzuVLoGLWaPlj+byJ0bQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ixCTfF3cX2pK5yUcxhjZ2J5+zjJT83hov47KZUT1s4Y=;
- b=kmRb5GvXAhKiqU2ajpYGrizWe9kYnz4pxrMQ8h9IRN7m0Nf9tRaRwEDPq9i1Ezr7mpZ885v55rM+KQkLuwgRSEAXky05WngTHzUM0Bc+mwT/V4Z0RYmeOrRmqqkVU/9IAXNzgNUWWid5rymG/5IGYYQKKJUvt1HbS0RSqD7CIIxX32hZq4h/3rGjI4xlu5JCGcPoXVicTBvpfa/d0YzmBHciSGtMvo65uBprLUd3SgsmTz52akpnFjhNYieUuxKJxY1CPF0kdVyJjNbX7r0Cjwisk3ehOU2oVkTw+yqNm+WObPNU+Q2Ap/JDrBP7FBa7UUg1Qd0q2tjnZwO0SOlv3Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ixCTfF3cX2pK5yUcxhjZ2J5+zjJT83hov47KZUT1s4Y=;
- b=YZip9dCs0tJUJOM6XnQo0kqZzCKdvhJVJKXJmX/DZyH7QxaN/jBGqMGyujWXDHZhhwuGPCUEYl5x7hggoD9DkZM6pL7CSUAU8lsRRIoKa6Fj0Ch3/Joy3R6KP2hhuWtryqY3Gp7WzlUEwS+RVH5CezvABvVqlfbfRjeYxjx3RS7/sgnD4sKOyGzCGnAEADQYA/lMeDbts/Iqr7gH1rhGKWO9G07ydnDYhVc/P/abpwRhmdkRQVQMOjkC4L3ts8ELKGrlqdEu42TcMpopPVc62RjL5Sg3W7T8YeKDMeVZAxy7d2HQx57CO9NM9fJxvmQUV4jTHih/BiWRORbAYw7VkA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
- by AS8PR04MB8056.eurprd04.prod.outlook.com (2603:10a6:20b:288::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.9; Wed, 15 Oct
- 2025 08:58:51 +0000
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::4609:64af:8a4b:fd64]) by AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::4609:64af:8a4b:fd64%6]) with mapi id 15.20.9228.009; Wed, 15 Oct 2025
- 08:58:51 +0000
-Message-ID: <e3ab9421-61a5-4ab6-8c72-6b0ab340f3a8@nxp.com>
-Date: Wed, 15 Oct 2025 16:59:13 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 03/39] dt-bindings: display: imx: Document i.MX95 Display
- Controller processing units
-To: Marek Vasut <marek.vasut@mailbox.org>, Frank Li <Frank.li@nxp.com>
-Cc: dri-devel@lists.freedesktop.org, Abel Vesa <abelvesa@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Fabio Estevam <festevam@gmail.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Lucas Stach <l.stach@pengutronix.de>, Peng Fan <peng.fan@nxp.com>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Rob Herring <robh@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, devicetree@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org
-References: <20251011170213.128907-1-marek.vasut@mailbox.org>
- <20251011170213.128907-4-marek.vasut@mailbox.org>
- <aO0tmUWA5H0J80Ov@lizhi-Precision-Tower-5810>
- <260b4db1-c02a-48a0-baf8-5e217c729824@mailbox.org>
-From: Liu Ying <victor.liu@nxp.com>
-Content-Language: en-US
-In-Reply-To: <260b4db1-c02a-48a0-baf8-5e217c729824@mailbox.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SI1PR02CA0044.apcprd02.prod.outlook.com
- (2603:1096:4:1f6::6) To AM7PR04MB7046.eurprd04.prod.outlook.com
- (2603:10a6:20b:113::22)
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Nw+8/3+T"
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-b5526b7c54eso3837452a12.0
+        for <linux-clk@vger.kernel.org>; Wed, 15 Oct 2025 02:07:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1760519229; x=1761124029; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=v54lCkZaDqlFCcH302UrfaefVMpcSxNOJrGx418qcEA=;
+        b=Nw+8/3+Tl/lopvM/VYoSfKVkzRah1xOgmqxwVpv/HvNUAFIS3m0OGA/CEXgM2B6hMm
+         lugAfr+ruJzgvCca9hGaZItiGcDuiY5BA3Wke+jyEx5YynslEqdvao+mN3EYxrsEd+XR
+         aMHiaeiG8kqNfa5zoAB7VQEvImmre0JYcSUjA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760519229; x=1761124029;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=v54lCkZaDqlFCcH302UrfaefVMpcSxNOJrGx418qcEA=;
+        b=WkWovvtt5NFMAm2QgiFpKTkPIj4Bj0JqHaChiK2WEQqpAaDKwqcCxp8Buu/0Tjse05
+         +IEYDG3trfSkA5ocYSKSNfX8Ck+VlcKiqWkgzzjUt78uPhOGsxCK2qbbcPDFADt+ddvW
+         v2zpPUIl/gLttkjnfVlmaN7bdchnAFCzEBhB0EMt21B8WplzSqu9MYOU6xo8bi1qn+eo
+         eRGGiT+UOnwjwMganzSDgn0/KW+UwTVvu27L+94BsML+YcYEwbG87wpZNxqAPGlym3QY
+         vCebSWzwxIxr5TCqPT1hjjEjtsNbDlIOwlX+8M8/9evMrOIVkbmw8LoE5zT5eCHHRyVe
+         imYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXYzO5c7hNF3ikOuz+7r+s+sEbDZ4asXrBPMb0xvcqDnlX04/ABRh1f2yyMCrSIWsxZR9m5H9Nkn3w=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxuu/A1C4GBR9gwLKRIFWmaoUNME4zVRpt/2UhVd2ZI64Cu142S
+	8SwDS3wMailiBujSOpfVPXXW5wz1xjvoGsFAGhmgsalBtILwKMLMlYrXfufGnqq/6w==
+X-Gm-Gg: ASbGncsw+L6rolrisuWXCbR6tD7gat/b9IUu5SX1mogLFul2relgjnpKGb6uG62WBew
+	guNl15r126Ee1rx4HQjUwDP7y9uu9igNFj3Z86vDY4YaFRw+Zo131mM8a0WC4QrsONbpZv98Gwl
+	561G8bSo2XvuIsUOf2HMmfdJV02HVbHDMDAsaDTwDPvID6LfveiBIqb+Y3ASYUv3kfEVVyzy/0u
+	yHBg92EKt8Xu2eTbEfdpXJ/jrL+Gz7qOMDgsL4lhDmJPsPsa8SDv0llVYdD+huIrJgBGpH/RC3U
+	ERi5Zi3Y+NaqBjfkosUG0XIfhGeYA1rwMcxTP1pLyatUZU7YhThZiicPJNaflXLKqkqaNYnWnsq
+	B8zUfwWB18kSWt/u2q1cp05k5LdkdOdqLDe8hkoXYj3Ya2NUJTvh4i8UHXSSbbI25D/UIhSSX6q
+	vLGkSsXWVlSQ4zAISx40COc8ESNfTJCm8t
+X-Google-Smtp-Source: AGHT+IHlL0oIuISBopxFJ5LX7OHcqdJOEAXBYDDnEYLkTxGptox99BOIpt/UkQRjt+HPN1uykPtDLA==
+X-Received: by 2002:a17:903:3807:b0:269:8d16:42d1 with SMTP id d9443c01a7336-290272e1e24mr316691295ad.50.1760519228878;
+        Wed, 15 Oct 2025 02:07:08 -0700 (PDT)
+Received: from wenstp920.tpe.corp.google.com ([2a00:79e0:201d:8:1a1f:d7c1:704a:3e83])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b678df233cfsm14389395a12.28.2025.10.15.02.07.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Oct 2025 02:07:08 -0700 (PDT)
+From: Chen-Yu Tsai <wenst@chromium.org>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Chen-Yu Tsai <wenst@chromium.org>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Brian Masney <bmasney@redhat.com>
+Subject: [PATCH v2] clk: tests: Add tests for clk lookup by name
+Date: Wed, 15 Oct 2025 17:06:59 +0800
+Message-ID: <20251015090701.2049164-1-wenst@chromium.org>
+X-Mailer: git-send-email 2.51.0.788.g6d19910ace-goog
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM7PR04MB7046:EE_|AS8PR04MB8056:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8f6b381d-c4e1-4804-d868-08de0bc90fb6
-X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
- BCL:0;ARA:13230040|19092799006|376014|366016|1800799024|7416014;
-X-Microsoft-Antispam-Message-Info:
- =?utf-8?B?ZWRMWnRXWkREdU5FdDkwMmt4RU1yVjBhbTRROHM3L3dpamh1N3BNNW1Cdjd5?=
- =?utf-8?B?QjZURGdKY3c5c2NubHJGS0hqTlR1YW9IcGdydHk3WDJwRjNvdTdGRkthTjJv?=
- =?utf-8?B?SGw4Q0pnZzVrenl1UTVBbHFZcHFFV2w5TzBManRrTHBhN3hOblVSNXVRUDhl?=
- =?utf-8?B?K2V2RzlqYW5PRkVBV2hML0NmYm1hZ1NwM3ZtOGtud3g2SGh1Z0hodkplUFB3?=
- =?utf-8?B?NGllcjA1akgwN3ZqU3VhVjRja1Bxa25NbnQ4K1Y5UnFHVUhtSElINzhPTjQy?=
- =?utf-8?B?Z1dRcUcwbGhVblQ4RzhnT1BTV2J0c3BqS2k3NnBFUFlZcFoxaGd3Y3hDalIv?=
- =?utf-8?B?Rk9UWkJQb1VRUG42L3ZmNEI2d3NGbjI0UHpDZEhZU0lRdVVzVjA5OGo3TW4z?=
- =?utf-8?B?NWdkb1FzRkdxaDdqcU1KdW8wYXdFbDFBTGg0R1BmL3FWWEgvQ0pRTE00WlVG?=
- =?utf-8?B?b1h5eEpPTERYVzZKVWE3SXl1SXBZZitjaHY2Mkl5T0tBN3lyZW5mWnRtMXlJ?=
- =?utf-8?B?SU5hM0pZSHJ6ZkhQcFlyWmdScWJySjdaRnE3QThodGJRNStiQUFrMWgyZ0pz?=
- =?utf-8?B?QnRxVmh1bFdmRUZSR1V3TDF2Ky9ORW80VkFsdEdBaStHYkdEYktvZDF6Rm9W?=
- =?utf-8?B?ZGpJcEh1T21WbnJIZ0g4eElvZFNKdWpkWFdnNWJmRWFsdHkrM3VlZ0dTNkIv?=
- =?utf-8?B?YTA1WHp0S0NrVkxEbXZaVHRoNDlkVHE0MWlRWnNlQmQvcnp5MGZQWjRCc09V?=
- =?utf-8?B?aVhUekdqMUsvUVltRS9VRWhLTTRMc2lmYnkxeFo4bDc1WkVDdFFhQ2JVUk16?=
- =?utf-8?B?UEE0dkNIbGVpOU9BbFNUZGcvYTdlSGhpWnZSNEM3Mm4yVlNWM25SSFhCMEtE?=
- =?utf-8?B?a1o1QVlad1U3YTZuWGRBWVBBZEpyVHdiN0c3RklPRHMxNzljRmJxb0xXbVd1?=
- =?utf-8?B?NXE2VWdoT25FOEpBQWtRZzZsdnZwc1RyVUpXckFyTnFSc0NJSVNtYW9YYW4x?=
- =?utf-8?B?T25KRTQrczJxSWltU0hJL1NzY1o3VlBIbkVPMnYxbjRudUZhNTVoWUVzY0dB?=
- =?utf-8?B?TWhnSFVpS1RSSjIwNGZIbGtYSjBZK2VZaTd2RC9KbmdWeEtoVjh2R2xVcWVj?=
- =?utf-8?B?T2FXdjRxbFhpNlI5THdRcGJlckQrdHlTV1lTZC93Y1FsQk9mc1dkWU9GZWJk?=
- =?utf-8?B?cnh3ajFSMlowQm9ZangrU2FHcG0xNmVXbkhDVTRUSnViMzZEVkFsMm9CK2Y5?=
- =?utf-8?B?dENtTXY3RDhZKzBLSERCRzVPUEo4MXdSVUxrbkdqZzNHUjRUUFcwT3VJclNM?=
- =?utf-8?B?Z0IzWnlodTBkZmZ4ZUFaWFpQWmJzVm5Bay8zazhkRExUcWJUT3JDMDBKam1M?=
- =?utf-8?B?MGs5b2ZtN0hoS0tHa043Z1VhUjQ1RnZOdzFJWlpFNm81NUdpK2p2MDJpaWRa?=
- =?utf-8?B?Tm8xTVRUZ2gxejh3TDRCQTEvU2h5NTF3YTd2M1BmWDdvdWFRTjF2Yk1ud2Vm?=
- =?utf-8?B?c21DcHIrbnhqT3MwN2VHeFpWN0VLUmtGTmU0bnkzRXFkYUlvakkxT25yU1Ex?=
- =?utf-8?B?ZXNadWpQdlZEVEVXd250dlNMbjNXQ2IrUy8yMllSSGtoZ08vYTZEa3hTMjdl?=
- =?utf-8?B?bnpGVG0zaXFWd08waUcvakRIMXdjWHVSS3ovOHUydmYraHY0SnU1U1o1cGlT?=
- =?utf-8?B?bDd3NjZYSEJOcE9TVVpKcENTQll2R0E0VG15NFJaWThDeklaVjd0L1BYQmNE?=
- =?utf-8?B?RWZOSGNHdUpnVWhBeWlGNkxpREYrMmUwc3JkNjlqY0dxNkNla0p4NWhFZXNy?=
- =?utf-8?B?TXN0Q2VvQ0hXQUJGOUFuZ2xLbmM2aXk1TkR6NzkzNjZtdlpSQWNscGppOHpk?=
- =?utf-8?B?QkhWamIxcXZ3U0pxWDRvVmVhUzRLOXE5UnFkbzlKcTJ1UllYVUNRWWs5b1N2?=
- =?utf-8?Q?xoJYr4v0j4PsEYUZxhh5tmThre3S+Fpo?=
-X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(376014)(366016)(1800799024)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
- =?utf-8?B?VVQ2Ui8yQzhRYzVNaEt3QWltaHFGVmZ6dGJaK1QyYzhRNkZNUnhVNjhJSDdz?=
- =?utf-8?B?RHB1SWIxMUg3dmdtMjRMNGRXWHdxQXViZFR6L0lnQVlvbWd2VnpacWkya3h2?=
- =?utf-8?B?Q3dvb3haMlVCZGtRNXc5TlAvZ05DT3B2RFJjaCtPS1d4ZlRCZ3NGRDZXSzlr?=
- =?utf-8?B?eTV3OVFUMmRlaEJBbkVsN29kbVdhSTJTdlY5UVFpOFZmYjFQMmRtaXBkYTdP?=
- =?utf-8?B?bjVJNk00UVFyMVBrRldSTDB2R3VINzFzZzV6bGlrSGVUOVB4MHg2NUpPY0JD?=
- =?utf-8?B?WWc4NjVZYUVHNXgrMldYNnc0eHRkcFVSa3VsNHVCN1cxckhsZlVsMEJyUmVu?=
- =?utf-8?B?WldHNUVxeXp4MFVUV0Y3Y3VFUHA4T29LOHdyTnZmTjRjVm1rbDMwdExOR0VB?=
- =?utf-8?B?SmVXTU9HNWxQMEoydEswYTdWZEgwVkltSWpjYzBrb0tsMVFTZk5kYVJHTG5Z?=
- =?utf-8?B?cjdxNWlTdTBzVm11eXQvSzE3QzhKT1BiS2hSTUFnZnBvUUFoemlkNW5LZDB3?=
- =?utf-8?B?ZEZNaFpCenFGd0dyTS9ZcEl6NmlOS21NY3ZNSExaM1plRm16TnlQN0FJbTR1?=
- =?utf-8?B?dEdZZ1hOK21ha21HaXFIWUx2VXdYRGc4WE9JaWRpYmRQRUVHM1V0MTFoTHox?=
- =?utf-8?B?ZENoWFNRc0E3WUl5SlRyWlFMTE5LajF2U3lwMlZSUmFXZ2JZMnRzZXVBWVc3?=
- =?utf-8?B?S2xsNnd6VGpXWUROT3c4SjVwcWVGMTFRMHI4RGV1Z0I0MzZ2WUxvNXJ1eGZs?=
- =?utf-8?B?YWYzNVByUDZUTFdNT20xTFFhOGNqUFhyTEhUQmdzTXp5MEZjNkc4alhNNHMx?=
- =?utf-8?B?UWJyUVd2YlZVOEdIMGhyVkVudXRLeXE5U2RVQnkrOUZRUHM2Z3NTd1V3Wit0?=
- =?utf-8?B?ZHRsWFlZd0RGUEhlb2lRcVZnWlhRdnJtYWtvMm9UanhwK3FyQTdNbkdwL3Nh?=
- =?utf-8?B?L0RuV2JWOG44dGNzc3JuNGMzL2NLdzM0S2FsdWNSUk12aWdnUGdNRDN3OTVW?=
- =?utf-8?B?aTVpdy9wTklTNUVYL3dlUFVHSVFZOWNrYnp0RFk3RlRvejhoUUNBcHhFby9Q?=
- =?utf-8?B?Y25sT2doTTJXYnIyNWY0cko2K3JlNE0xMWxBYzZmd2I1S3kwcFA4OHh0MFF1?=
- =?utf-8?B?OTFBV0lvR1NaSjdsUlNRbkZsMExUWkw1TjdqU29Sanh6d2JIRmlVMjlFVC9m?=
- =?utf-8?B?Y2t1c21ZUlMxN1owemU3Ri9idlJzZUJuekpFOVR0citkVFl2YkN0UFk0TVVO?=
- =?utf-8?B?Z0oyaXBreStFNDB5RnRzQ0VDV3RWZlgzWE5tWVE1VFdrVlZZZ3A0ejNGeWFP?=
- =?utf-8?B?cU9TelZ5L1VyWVI3akVXaWJUMFNUNUtTVGhKV3V4M2NLQTN4dEhqdldKRGV5?=
- =?utf-8?B?d0Q4ZWxlZWxGVTdOVTc4NzlJdWhvbEgrVDVvdnEvYzVCb1BTV1hsMFhxVm14?=
- =?utf-8?B?b1Z4NktMOE5IMUdrRldsaTJJcE5yUHkzbk4vRklURDFnd2FFNHFFTndOQktx?=
- =?utf-8?B?UlcveHVFUGtFVzI4Z0Q5T2VOenQ0SjVJWXI2V25YWG0xQUtHV1lsR0FJSkhP?=
- =?utf-8?B?ejdUOFpkTERvNmJaWG1BWFFsdWFhc01KbmtTZTZzd1ZkeUlJVUtPRXltS0sz?=
- =?utf-8?B?UWY1WGV2aFJ6WGJIRHphRUtrUnZVWVV2czhHSFVMaGE0OWhKZ0tSV0tkdVBq?=
- =?utf-8?B?ZHUwcXhJWHNMSDlobHJ0Y3RUL3RXU1BNZkJUVXpWVHlLSVZuQXVkQ3p0WmxP?=
- =?utf-8?B?RHRFOGtaTXZxUCtweGhtTVVHL2ZLYUhETStOOUxDR08wOVJvQmJMMVVMSlJh?=
- =?utf-8?B?azJyUDdvVGtmVlVneEo5c2VHbGFKZGtLWHkxUzcvM25TNVl4NlJuN3NTWXJK?=
- =?utf-8?B?WXNtWXB5b2hWTXVmQzQralJJbTJHM09saDlsTk9aUm55MUNSR0RYVHljMVJH?=
- =?utf-8?B?azhhT2haT25PcElPMktHem5uWTVxZVoxV0ZDbnNCL21SbGpJYVlpZ1Raalky?=
- =?utf-8?B?aWg1bUkvWEZLL3h4OVZsTFFSNlNrV3dkbEQzaEVKMUIyZ0JkQkErdmxWWDB1?=
- =?utf-8?B?SGV1TCtnN0xwTER0c0ZrYWlwZDVpc2tPVXVabVFyVU41TTlGSDIzR01ObkJF?=
- =?utf-8?Q?9/ReASKyuvHoX5EX1az20oQTS?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8f6b381d-c4e1-4804-d868-08de0bc90fb6
-X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Oct 2025 08:58:51.6462
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ibSD1BFTuJ6qXcw8cERm4gupf1LfAfonttGyXoCheNiZMDFKucYhE/dNfszOzV5OmUv8pcSmhzCqVf8iniV9XA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8056
+Content-Transfer-Encoding: 8bit
 
-On 10/14/2025, Marek Vasut wrote:
-> On 10/13/25 6:49 PM, Frank Li wrote:
-> 
-> Hello Frank,
-> 
->>> @@ -90,13 +102,15 @@ patternProperties:
->>>         compatible:
->>>           const: fsl,imx8qxp-dc-signature
->>>
->>> -  "^tcon@[0-9a-f]+$":
->>> +  "^tcon(@[0-9a-f]+)?$":
->>
->> why here allow no address unit tcon?
-> This might be something Liu can clarify too.
-> 
-> TCON on iMX95 DPU does not seem to exist at all, or at least has no control registers. Hence no address.
+Clk lookup (by name) recently gained some performance improvements at
+the expense of more complexity within the lookup code.
 
-i.MX95 DC hasn't got TCON so it should not be documented for i.MX95 DC.
+To make sure that this works as intended and doesn't break, add some
+basic tests for this part of the CCF.
 
+A new "clk_hw_lookup()" function is added purely for running kunit
+tests.
+
+Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+
+---
+Changes since v1:
+- Added missing prepare lock/unlock
+- Switched to EXPORT_SYMBOL_IF_KUNIT and VISIBLE_IF_KUNIT kunit
+  visibility macros for consistency (Brian)
+  This probably doesn't make much difference except that the symbol is
+  now in the EXPORT_SYMBOL_IF_KUNIT namespace
+---
+ drivers/clk/clk.c      | 18 ++++++++++++
+ drivers/clk/clk.h      |  4 +++
+ drivers/clk/clk_test.c | 67 +++++++++++++++++++++++++++++++++++++++++-
+ 3 files changed, 88 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 85d2f2481acf..b39ad8944a06 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -10,6 +10,7 @@
+ #include <linux/clkdev.h>
+ #include <linux/clk.h>
+ #include <linux/clk-provider.h>
++#include <linux/compiler_attributes.h>
+ #include <linux/device.h>
+ #include <linux/err.h>
+ #include <linux/hashtable.h>
+@@ -25,6 +26,8 @@
+ #include <linux/string.h>
+ #include <linux/stringhash.h>
+ 
++#include <kunit/visibility.h>
++
+ #include "clk.h"
+ 
+ static DEFINE_SPINLOCK(enable_lock);
+@@ -778,6 +781,21 @@ struct clk *__clk_lookup(const char *name)
+ 	return !core ? NULL : core->hw->clk;
+ }
+ 
++/* This is only provided for kunit tests to test the core lookup functions. */
++#if IS_ENABLED(CONFIG_CLK_KUNIT_TEST)
++VISIBLE_IF_KUNIT struct clk_hw * __maybe_unused __must_check clk_hw_lookup(const char *name)
++{
++	struct clk_core *core;
++
++	clk_prepare_lock();
++	core = clk_core_lookup(name);
++	clk_prepare_unlock();
++
++	return !core ? NULL : core->hw;
++}
++EXPORT_SYMBOL_IF_KUNIT(clk_hw_lookup);
++#endif
++
+ static void clk_core_get_boundaries(struct clk_core *core,
+ 				    unsigned long *min_rate,
+ 				    unsigned long *max_rate)
+diff --git a/drivers/clk/clk.h b/drivers/clk/clk.h
+index 2d801900cad5..a8ed54f5b572 100644
+--- a/drivers/clk/clk.h
++++ b/drivers/clk/clk.h
+@@ -8,6 +8,10 @@ struct clk_hw;
+ struct device;
+ struct of_phandle_args;
+ 
++#if IS_ENABLED(CONFIG_CLK_KUNIT_TEST)
++struct clk_hw *clk_hw_lookup(const char *name);
++#endif
++
+ #if defined(CONFIG_OF) && defined(CONFIG_COMMON_CLK)
+ struct clk_hw *of_clk_get_hw(struct device_node *np,
+ 				    int index, const char *con_id);
+diff --git a/drivers/clk/clk_test.c b/drivers/clk/clk_test.c
+index a268d7b5d4cb..a8989566946b 100644
+--- a/drivers/clk/clk_test.c
++++ b/drivers/clk/clk_test.c
+@@ -175,6 +175,8 @@ static const struct clk_ops clk_multiple_parents_no_reparent_mux_ops = {
+ 	.set_parent = clk_multiple_parents_mux_set_parent,
+ };
+ 
++#define DUMMY_CLK_NAME	"test_dummy_rate"
++
+ static int clk_test_init_with_ops(struct kunit *test, const struct clk_ops *ops)
+ {
+ 	struct clk_dummy_context *ctx;
+@@ -187,7 +189,7 @@ static int clk_test_init_with_ops(struct kunit *test, const struct clk_ops *ops)
+ 	ctx->rate = DUMMY_CLOCK_INIT_RATE;
+ 	test->priv = ctx;
+ 
+-	init.name = "test_dummy_rate";
++	init.name = DUMMY_CLK_NAME;
+ 	init.ops = ops;
+ 	ctx->hw.init = &init;
+ 
+@@ -3541,6 +3543,67 @@ static struct kunit_suite clk_hw_get_dev_of_node_test_suite = {
+ 	.test_cases = clk_hw_get_dev_of_node_test_cases,
+ };
+ 
++/*
++ * Test that clk lookup with a name that is not registered returns NULL.
++ */
++static void clk_lookup_not_registered_clk_returns_NULL(struct kunit *test)
++{
++	KUNIT_EXPECT_PTR_EQ(test, NULL, clk_hw_lookup(DUMMY_CLK_NAME));
++}
++
++/*
++ * Test that clk lookup with a name that is registered returns the clk.
++ */
++static void clk_lookup_registered_clk_returns_clk(struct kunit *test)
++{
++	struct clk_hw *hw;
++	struct clk_init_data init = {
++		.name = DUMMY_CLK_NAME,
++		.ops = &empty_clk_ops,
++	};
++
++	hw = kunit_kzalloc(test, sizeof(*hw), GFP_KERNEL);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, hw);
++
++	hw->init = &init;
++	KUNIT_ASSERT_EQ(test, 0, clk_hw_register_kunit(test, NULL, hw));
++
++	KUNIT_EXPECT_PTR_EQ(test, hw, clk_hw_lookup(DUMMY_CLK_NAME));
++}
++
++/*
++ * Test that clk lookup with a name that was unregistered returns NULL.
++ */
++static void clk_lookup_unregistered_clk_returns_NULL(struct kunit *test)
++{
++	struct clk_hw *hw;
++	struct clk_init_data init = {
++		.name = DUMMY_CLK_NAME,
++		.ops = &empty_clk_ops,
++	};
++
++	hw = kunit_kzalloc(test, sizeof(*hw), GFP_KERNEL);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, hw);
++
++	hw->init = &init;
++	KUNIT_ASSERT_FALSE(test, clk_hw_register(NULL, hw));
++
++	clk_hw_unregister(hw);
++
++	KUNIT_EXPECT_PTR_EQ(test, NULL, clk_hw_lookup(DUMMY_CLK_NAME));
++}
++
++static struct kunit_case clk_lookup_test_cases[] = {
++	KUNIT_CASE(clk_lookup_not_registered_clk_returns_NULL),
++	KUNIT_CASE(clk_lookup_registered_clk_returns_clk),
++	KUNIT_CASE(clk_lookup_unregistered_clk_returns_NULL),
++	{}
++};
++
++static struct kunit_suite clk_lookup_test_suite = {
++	.name = "clk-lookup",
++	.test_cases = clk_lookup_test_cases,
++};
+ 
+ kunit_test_suites(
+ 	&clk_assigned_rates_suite,
+@@ -3560,6 +3623,8 @@ kunit_test_suites(
+ 	&clk_register_clk_parent_data_device_suite,
+ 	&clk_single_parent_mux_test_suite,
+ 	&clk_uncached_test_suite,
++	&clk_lookup_test_suite,
+ );
+ MODULE_DESCRIPTION("Kunit tests for clk framework");
++MODULE_IMPORT_NS("EXPORTED_FOR_KUNIT_TESTING");
+ MODULE_LICENSE("GPL v2");
 -- 
-Regards,
-Liu Ying
+2.51.0.788.g6d19910ace-goog
+
