@@ -1,212 +1,119 @@
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 117392D6E4A
-	for <linux-clk@vger.kernel.org>; Wed, 15 Oct 2025 14:56:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31F9F3375BF;
+	Wed, 15 Oct 2025 16:18:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760540190; cv=none; b=bKa/f2mVLu/0TxfbqSGGaNGebt9ifk4pzBeqFERd+mYfWF0y3ckCRQ3uO4AEd5YxvAXxCCgF/WUg8xvtYy50LkZTG7mhJSNGimKuyqbT9Kpr8CNphX4w7xkC1VV87XowbcGTV6vYgRWASRIeLhjeV3rMZhlH9hQtqZzqKi2rDe0=
+	t=1760545115; cv=none; b=optOlJ8IEYAWUUQtbwpsUcULlJ9D8D/Py6yHyPmwChZXUSrR7tK27SsOROwYasG3iMcu7SqzHIFik8yyu+g3Hdgfcn/JW9rMA8BEmPxH6SVpQGN6ub4sY0QGE9F21NxNBLOfI0bRcXicSIuuUjjc/8PqCDYiYQ9X98nQ8y7p69w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760540190; c=relaxed/simple;
-	bh=cAVu1Ez4yYUTuEc8XdVelIPzH5j9qezO1CIAHTlUR1I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YaJtcSXi6INL74z1psAR3ldJrQ0vteAC8fQjxEkOYvlrmTOqo1VYluqFneGb1N0oUyejyVdURKRvgysk+hVVtRyB0pSe/lXYzjgGvfh9oYUniTpvDee6to5GfkhtqgNkFm6M/zf0eaeO89HIlEbgboBIyMMsqDMN7p6kYsLoBHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DfiKFUsF; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1760545115; c=relaxed/simple;
+	bh=HFtFHnjdoCw2QpmLuESwUrt9XygQu+XZS3kuRKv4N8E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dMsxmmortNyFC9gXlUKw3RCZeM7MDnRwyWwcrnmDmeYTbqK4XHX0SB20AYGD/bUzWwF9xqV8SZuuW9qA1Pc9X6yWJ3ZN2Q3ve5hBFUD34UKrsnts4DUdsL2ULt3QTpPUnQkEpqjSwwyR+rN8nj9jQWMTfdKHuk9z7vWyz0tC4KQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=V1Gj3UXl; arc=none smtp.client-ip=80.241.56.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DfiKFUsF"
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3ee1381b835so4459058f8f.1
-        for <linux-clk@vger.kernel.org>; Wed, 15 Oct 2025 07:56:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760540185; x=1761144985; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GI9CaA/4ITOkaOZyH+29H11i4BVtBD/Oo8oTodLjamo=;
-        b=DfiKFUsFIHEIez+fvibFeKf7Yqv2B/m5F9vC5tRPDAc5mQSJpdrniDg8Z018NIc/S3
-         ybkZ4hBUnrJi1euEjkQfiXh6olXVMR7rBRGvuQnS9VUdArqEEZVVxCUkmcjE229PZnPE
-         RiDLmVdHKFs5UK0P+HJ+RGRE7NMyD+PFnmZus52WMzZy7bebO6NuwPLQSPPm8exZihfw
-         Aa4cNhqUcQhDJpR/6KI5t7r5WpfkVzhvbW4e+h4FPzUWuu9xDmXdXTBnVZBF6UG5DyuP
-         9O9gYlVHwb70omAZoKcXzQTHJAv0CkD0Y4Lvgy7nfLZvrra7ebvJwcXJkaowJq6XWiQp
-         +jiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760540185; x=1761144985;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GI9CaA/4ITOkaOZyH+29H11i4BVtBD/Oo8oTodLjamo=;
-        b=Y804QJU+5un6aDx9nigrEm3YVaqxnu2EvUTBrl+yIqBVfii91oqcyutGVwxW90aEPY
-         FnUgk6qOiyyvLj4sYOSNZZLj9+UxW0yvh/19NSJnolWj5rdhd24nPwDlB7riijha0gWd
-         1V3ccRLw/CJSPg/BzjOtMh1JalCB7Q1W3FE9B+DwRXLBN8iLCcx96eW4+zDYuH1DiT66
-         ShpSwcnCize83hMBBkr71Gesh6AYYYGkszWpVEh28kH4XlAYYSJhLzC67HQ/2qEex8Vj
-         oDJHgJwnxY3ViB/mwbxPGSFv43hUcb/IYosbOOAlgaCN/8iQjrgcDEKUVuy6B5dQwpjp
-         on8w==
-X-Forwarded-Encrypted: i=1; AJvYcCUkMOJdP7HeOT2eGIcLxzevziscPKxEdQqwQRD65hj0abRZngujDNan2hXfM8nPNrGhAThMuLQ8mAw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywb7rCaE/JwaWLp5fkyHi7W6TXrQK3cbrmCZdwspSg1L5qQNiNg
-	5U7pB1fxVoO3Mj3e84rp4JAhCKxTWCjlUPjVslsomDILwq3biUvEn4NtEyGJ7g4Nl5vonJrBNeQ
-	X0ddDS8ybqf+XoUnXYknXcchjDRwA5og=
-X-Gm-Gg: ASbGncvOE65SiYa5Ey0G5YXI94bOOkgbFsfBerr6GCEvbnIp2LArvtkuCbzwdwsEG04
-	yEsXySZsIb+NMTK/v9WtB+X881gahs/6rpKvyvWlfpiGtNQYq09cd8tBvzViTD37g5swktEN0aQ
-	m8WiAUzb7xOHUeujLUSzk4p9ZYRO5iqcpVizQYMeSmFJeiIsdifS8A9Suf8xkPmcBuvQ1/IoZkT
-	q2B9RcDuY0mbrifbosXIFgxeXklmpIM1dwq/lYs0NEZxX5KH1K4gDw0KElo
-X-Google-Smtp-Source: AGHT+IH5L1Mo7xLa57k+5KugvuK+N+9eSJpkUwgo4LQeKXBhJMy9CjFuhGIGVQ+i6zqQoqwOUPriVfL9xrycTyM9beg=
-X-Received: by 2002:a05:6000:43d6:20b0:426:f391:1968 with SMTP id
- ffacd0b85a97d-426f3911a30mr3441482f8f.35.1760540185079; Wed, 15 Oct 2025
- 07:56:25 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="V1Gj3UXl"
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4cmx8k3hfSz9spd;
+	Wed, 15 Oct 2025 18:18:30 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1760545110;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+RAcB1KnTu10/U/5AH7wLJv4yw422htNmPqwtIjsMk4=;
+	b=V1Gj3UXlTfbAXXf5H8fENfL7wuosE2RSQoMBoCz53MsTllEkLuoeDDji6805ZHRW/Gw2o0
+	Xu+HELzQrpUOJ4rxjwCf0hYN+hyML3uTegapcoIlXOoLI25GNkOeBr85BaF976a60WtRex
+	aOjTyjwPhdras7ObxUNPbMgCA/y5MfJPz+G5148y3bXilFNgAZFtArFRjUA3aq0/Sw8eGq
+	xoNLrI70eJJzv70Rxl8IVKoG2unPNxQZZWlxubfp++LOdQPT/f/Wz+9U6Zq7qJwowPxn9k
+	DG2C8guxzonxJujbwt0iuMaFLr19G69W9/ZMo/0Q+roji0ksHOC2+vvHviKJww==
+Message-ID: <e0507800-7e86-4fbb-95cb-e64d8cca1e49@mailbox.org>
+Date: Wed, 15 Oct 2025 18:18:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251009160732.1623262-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20251009160732.1623262-3-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdV2-YrktT+=D2LVFw5oR+6EOLcPB_Yuh5wnos099W9YHQ@mail.gmail.com>
-In-Reply-To: <CAMuHMdV2-YrktT+=D2LVFw5oR+6EOLcPB_Yuh5wnos099W9YHQ@mail.gmail.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Wed, 15 Oct 2025 15:55:57 +0100
-X-Gm-Features: AS18NWDborL4rX4hqJjZmtwrGarJ9O0NBNJ1OthS7bueNWRfQx925JxPvOSaoZs
-Message-ID: <CA+V-a8s9v5QmU=vrHM6wkFbEwdzp_+eE6kxEN53JfhnpA2KOUg@mail.gmail.com>
-Subject: Re: [PATCH v10 2/6] clk: renesas: rzv2h-cpg: Add support for DSI clocks
-To: Geert Uytterhoeven <geert@linux-m68k.org>, 
-	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Biju Das <biju.das.jz@bp.renesas.com>, Magnus Damm <magnus.damm@gmail.com>, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 00/39] Add i.MX95 DPU/DSI/LVDS support
+To: Liu Ying <victor.liu@nxp.com>, dri-devel@lists.freedesktop.org
+Cc: Abel Vesa <abelvesa@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Fabio Estevam <festevam@gmail.com>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Lucas Stach <l.stach@pengutronix.de>, Peng Fan <peng.fan@nxp.com>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Rob Herring <robh@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, devicetree@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org
+References: <20251011170213.128907-1-marek.vasut@mailbox.org>
+ <174ec43e-4cac-4452-a77b-e2e3b8413d05@nxp.com>
+ <2c4a42eb-8c49-4ba3-baa3-921ec52f730d@mailbox.org>
+ <92d928cc-d9df-4c9c-8571-da39001b91a7@nxp.com>
+Content-Language: en-US
+From: Marek Vasut <marek.vasut@mailbox.org>
+In-Reply-To: <92d928cc-d9df-4c9c-8571-da39001b91a7@nxp.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-MBO-RS-ID: 03ff7b3109451a21313
+X-MBO-RS-META: kx1epfwft5um1jo7qw14sxkpbgi5h5ht
 
-Hi Geert,
+On 10/15/25 12:00 PM, Liu Ying wrote:
 
-Thank you for the review.
+Hi,
 
-On Mon, Oct 13, 2025 at 3:26=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
-k.org> wrote:
->
-> On Thu, 9 Oct 2025 at 18:07, Prabhakar <prabhakar.csengg@gmail.com> wrote=
-:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > Add support for PLLDSI and its post-dividers to the RZ/V2H CPG driver a=
-nd
-> > export a set of helper APIs to allow other consumers (notably the DSI
-> > driver) to compute and select PLL parameter combinations.
-> >
-> > Introduce per-PLL-DSI state in the CPG private structure and implement
-> > clk ops and registration for PLLDSI and PLLDSI divider clocks. Implemen=
-t
-> > rzv2h_cpg_plldsi_determine_rate and rzv2h_cpg_plldsi_set_rate to drive
-> > PLL programming via the new per-PLL state and add a plldsi divider clk
-> > with determine/set/recalc operations that cooperate with the PLL
-> > algorithm.
-> >
-> > Centralize PLL parameter types and limits by moving definitions into a
-> > shared header (include/linux/clk/renesas.h). Add struct rzv2h_pll_limit=
-s,
-> > struct rzv2h_pll_pars and struct rzv2h_pll_div_pars, plus the
-> > RZV2H_CPG_PLL_DSI_LIMITS() macro to declare DSI PLL limits.
-> >
-> > Provide two exported helper functions, rzv2h_get_pll_pars() and
-> > rzv2h_get_pll_divs_pars(), that perform iterative searches over PLL
-> > parameters (M, K, P, S) and optional post-dividers to find the best (or
-> > exact) match for a requested frequency. Export these helpers in the
-> > "RZV2H_CPG" namespace for use by external drivers.
-> >
-> > This change centralizes DSI PLL rate selection logic, prevents duplicat=
-e
-> > implementations in multiple drivers, and enables the DSI driver to
-> > request accurate PLL rates and program the hardware consistently.
-> >
-> > Co-developed-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-> > Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > ---
-> > v9->v10:
-> > - Dropped rzv2h_get_pll_div_pars() helper and opencoded instead.
-> > - Dropped rzv2h_get_pll_dtable_pars() helper and opencoded instead.
-> > - Added dummy helpers rzv2h_get_pll_pars() and rzv2h_get_pll_divs_pars(=
-)
-> >   in renesas.h for !CONFIG_CLK_RZV2H case.
-> > - Updated commit message.
->
-> Thanks for the update!
->
-> > --- a/drivers/clk/renesas/rzv2h-cpg.c
-> > +++ b/drivers/clk/renesas/rzv2h-cpg.c
->
-> > +static int rzv2h_cpg_plldsi_div_determine_rate(struct clk_hw *hw,
-> > +                                              struct clk_rate_request =
-*req)
-> > +{
-> > +       struct rzv2h_plldsi_div_clk *dsi_div =3D to_plldsi_div_clk(hw);
-> > +       struct pll_clk *pll_clk =3D to_pll(clk_hw_get_parent(hw));
-> > +       struct rzv2h_cpg_priv *priv =3D dsi_div->priv;
-> > +       u8 table[RZV2H_MAX_DIV_TABLES] =3D { 0 };
-> > +       struct rzv2h_pll_div_pars *dsi_params;
-> > +       struct rzv2h_pll_dsi_info *dsi_info;
-> > +       const struct clk_div_table *div;
-> > +       u64 rate_millihz;
-> > +       unsigned int i;
-> > +
-> > +       dsi_info =3D &priv->pll_dsi_info[pll_clk->pll.instance];
-> > +       dsi_params =3D &dsi_info->pll_dsi_parameters;
-> > +
-> > +       rate_millihz =3D mul_u32_u32(req->rate, MILLI);
-> > +       if (rate_millihz =3D=3D dsi_params->div.error_millihz + dsi_par=
-ams->div.freq_millihz)
-> > +               goto exit_determine_rate;
-> > +
-> > +       div =3D dsi_div->dtable;
->
-> This belongs inside the for-initializer below.
->
-Agreed.
+>> I wanted to put this whole thing on the list first, before I start splitting it up.
+>>
+>> For starters, I think I can send these separately:
+> 
+> Before discussing how to split, a bigger question is that is it fine to
+> support both i.MX8qxp DC and i.MX95 DC in the same imx8_dc_drm module?
+> Separate modules look more reasonable to me, considering the fact that
+> there are quite a lot difference between the two DCs.
 
-> > +       i =3D 0;
->
-> Ditto; or better: in the variable declaration at the top of the function.
->
-Ok, I will move to the top.
+(maybe I do not quite understand your suggestion with "separate module", 
+I assume this means entirely duplicate driver, is that correct? I 
+operate with that assumption in the text below.)
 
-> > +       for (; div->div; div++) {
-> > +               if (i >=3D RZV2H_MAX_DIV_TABLES)
-> > +                       return -EINVAL;
-> > +               table[i++] =3D div->div;
-> > +       }
-> > +
-> > +       if (!rzv2h_get_pll_divs_pars(dsi_info->pll_dsi_limits, dsi_para=
-ms, table, i,
-> > +                                    rate_millihz)) {
-> > +               dev_err(priv->dev, "failed to determine rate for req->r=
-ate: %lu\n",
-> > +                       req->rate);
-> > +               return -EINVAL;
-> > +       }
-> > +
-> > +exit_determine_rate:
-> > +       req->rate =3D DIV_ROUND_CLOSEST_ULL(dsi_params->div.freq_millih=
-z, MILLI);
-> > +       req->best_parent_rate =3D req->rate * dsi_params->div.divider_v=
-alue;
-> > +       dsi_info->req_pll_dsi_rate =3D req->best_parent_rate;
-> > +
-> > +       return 0;
-> > +}
->
-> The rest LGTM, so with the above fixed, and the field changes factored
-> out into a separate patch:
-Ok, I will move the field changes into a separate patch.
+This series indicates that the functional units in the DC are basically 
+identical, with the majority of changes being register base addresses of 
+the whole DC and an odd bit or register offset here and there. Most of 
+the code can be reused, as can be seen in the first half of the series.
 
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+The addition of iMX95 into the iMX8QXP DC also does not seem to be 
+making the driver in any way more complicated.
 
-Cheers,
-Prabhakar
+What would be the benefit of having duplicate driver for IP that is 
+basically identical, for i.MX95 ?
+
+[...]
+
+>> - drm/imx: dc: Rename i.MX8QXP specific Link IDs
+> 
+> TBH, I'm not a big fan of adding LINK_ID_x_MXy to enum dc_link_id, since
+> the members may have the same value and it's kind of a mess considering
+> future SoCs.
+
+I am open to a better suggestion which does not involve duplicate driver.
+
+>> - drm/imx: Add more RGB swizzling options
+> 
+> This one seems ok.
+
+I can send that one separately. Can you test that on MX8QXP ? I don't 
+have a board with that SoC, sorry.
+
+[...]
+
+> I kind of opt to separate modules.  Maybe, to save some code, an additional
+> module can be introduced to wrap common part as helpers, plus some callback
+> magics, like fg->dc_fg_cfg_videomode().
+Let me ask for clarification here -- by separate modules, do you mean 
+two totally separate drivers ?
