@@ -1,150 +1,193 @@
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazon11013023.outbound.protection.outlook.com [52.101.72.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E28E9314D37;
-	Wed, 15 Oct 2025 07:21:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760512909; cv=none; b=L9fbH98WGijTNC15KHZj0PID7DT8apgYsyZ91tlcDrfU2ThUYolz8kV4grvE4FBj5tkJk4RFuxKYIHzumYtEwz2OwCdxpBZP4/ZYDFZtnBITTzzHKHVUGfrkBsNuUiK4JX7ZqYJ7u9pyzRMCLbtBSiKC13UAzF42p/sxtFWBb5E=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760512909; c=relaxed/simple;
-	bh=ZzdIgXkVyruSkkb124Jgkm0GwzeDNU9Cpoe/h8aUEvg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=eLhF9oI/4pVm5rCPryg/OPFA8+JzWJYmI70vz7R6qE+DA4rlPbxP9Za9ZlaDtGNFoXgSRBONeFsL4pAZEIrS7gVM2sFj/UhAzaF3QDJulrRC9qT34xayfY8DDVWHSUGb6oqkKqjVhCZBs7Mz1rU1e5m8IV3u9BH0wTmGjr4cGmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=13/95jD2; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5F6A3064AA;
+	Wed, 15 Oct 2025 08:58:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.72.23
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760518739; cv=fail; b=rxLLmUImZ6BKQznMEkaoKjvxKIeFuFNmkr0d4sa98LTcPmz7nHbUv2W9UiNKnm2ht8hUeyCPQoeg5DyiK35IGnyZMj3YF4/Ox4MS6HokJ3VrQ91enET2iPY1MV6FpavX7cxc8vsx8DVsIlc+J2HJSDVozz4gi0gqSbx+JuISxnY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760518739; c=relaxed/simple;
+	bh=JMvQG6LQLFgBDGaAA74K/lKBQJ7rHwiUYf5/a+0dugs=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=bGnS3Jq0PL+eHSGatpH4yj1TwE9L50YxePfkQicd41jx92YV/hv7Of4Of2VWaG56I4vkag/wM5X97M3f2Y/UhOqBvPXgbluia7S8OHZsDPiZbfMeXm7hHQu0wj6U6MIrF+U5U54dSlKE5u5xC/7qaaVIgWXe11TbUN9uPb35FBY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=YZip9dCs; arc=fail smtp.client-ip=52.101.72.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="13/95jD2"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 7B07B1A13B1;
-	Wed, 15 Oct 2025 07:21:45 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 4C607606FA;
-	Wed, 15 Oct 2025 07:21:45 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id E343D102F22BC;
-	Wed, 15 Oct 2025 09:21:32 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1760512903; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=x4ZLGkOvm/oVigw1/rloRb4F3nzZJ1Eq9qAeVsAs4fw=;
-	b=13/95jD25xlXmwc7R6cH5utrqLk/HydWkfUY5UAwRu+FW2yl+l+tf7aKeHHHXqhGa3Hh1g
-	C7U5piDWXij4eAwMG3FcMRMZwHFx9KfJf2soJXvwVrFcC1HIt+jFMl8u58jqa+xvMyvycw
-	/OMkrxOgHqBrrRbJYnf9FJhsvLy9LtU/n334Y0Jqzr2yMlD8i+mVYckXutUZApDiv3CGP8
-	CgqY65Ogld37rs6/a29unDJxzrOX8xfqiD0iIFbEkLnPYzFWPtZChkTFRRhoDiDc83dCGN
-	/ecyucff/4m9QfuIOxGqKSwkD68Nenwp720UITVnFX9MCEsPGgluSQvCOiWaFg==
-From: Herve Codina <herve.codina@bootlin.com>
-To: Andrew Lunn <andrew@lunn.ch>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Peter Rosin <peda@axentia.se>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Charles Keepax <ckeepax@opensource.cirrus.com>,
-	Richard Fitzgerald <rf@opensource.cirrus.com>,
-	David Rhodes <david.rhodes@cirrus.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Mark Brown <broonie@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Daniel Scally <djrscally@gmail.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Len Brown <lenb@kernel.org>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Wolfram Sang <wsa@kernel.org>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-i2c@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	linux-sound@vger.kernel.org,
-	patches@opensource.cirrus.com,
-	linux-gpio@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-spi@vger.kernel.org,
-	linux-acpi@vger.kernel.org,
-	linux-cxl@vger.kernel.org,
-	Allan Nielsen <allan.nielsen@microchip.com>,
-	Horatiu Vultur <horatiu.vultur@microchip.com>,
-	Steen Hegelund <steen.hegelund@microchip.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: [PATCH v4 29/29] misc: lan966x_pci: Add drivers needed to support SFPs in Kconfig help
-Date: Wed, 15 Oct 2025 09:14:16 +0200
-Message-ID: <20251015071420.1173068-30-herve.codina@bootlin.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251015071420.1173068-1-herve.codina@bootlin.com>
-References: <20251015071420.1173068-1-herve.codina@bootlin.com>
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="YZip9dCs"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=X93pz9WOmq4noSiSpMt4CTsAEkvXU/lo1WpvQ0X/0EqPd0Yz/aHJeT6K57HSItyILYEr+i8S2ZfpR/PUSed8m4hbLu71lrlcflPBMLlq9ZJ326ofPUIbiaXkuLlPL5nXc9v1wa7Nkdn0SevyWcwffe2CQRNUwXMXcYiNzzQ90lZN79/5FTOHffDifeIa/1p3tTlAqakCrfKD/ILuKctSydjfUJyKmo/mIYcmAp+ELnIxNAP1qSJOhEyTXivjBf3EWPUq+jwqBahLBXqGd2H1CfK5RbgEACHWe0te0l4IcDblyRQDr3/3oldVn1RJr7ysvwBzuVLoGLWaPlj+byJ0bQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ixCTfF3cX2pK5yUcxhjZ2J5+zjJT83hov47KZUT1s4Y=;
+ b=kmRb5GvXAhKiqU2ajpYGrizWe9kYnz4pxrMQ8h9IRN7m0Nf9tRaRwEDPq9i1Ezr7mpZ885v55rM+KQkLuwgRSEAXky05WngTHzUM0Bc+mwT/V4Z0RYmeOrRmqqkVU/9IAXNzgNUWWid5rymG/5IGYYQKKJUvt1HbS0RSqD7CIIxX32hZq4h/3rGjI4xlu5JCGcPoXVicTBvpfa/d0YzmBHciSGtMvo65uBprLUd3SgsmTz52akpnFjhNYieUuxKJxY1CPF0kdVyJjNbX7r0Cjwisk3ehOU2oVkTw+yqNm+WObPNU+Q2Ap/JDrBP7FBa7UUg1Qd0q2tjnZwO0SOlv3Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ixCTfF3cX2pK5yUcxhjZ2J5+zjJT83hov47KZUT1s4Y=;
+ b=YZip9dCs0tJUJOM6XnQo0kqZzCKdvhJVJKXJmX/DZyH7QxaN/jBGqMGyujWXDHZhhwuGPCUEYl5x7hggoD9DkZM6pL7CSUAU8lsRRIoKa6Fj0Ch3/Joy3R6KP2hhuWtryqY3Gp7WzlUEwS+RVH5CezvABvVqlfbfRjeYxjx3RS7/sgnD4sKOyGzCGnAEADQYA/lMeDbts/Iqr7gH1rhGKWO9G07ydnDYhVc/P/abpwRhmdkRQVQMOjkC4L3ts8ELKGrlqdEu42TcMpopPVc62RjL5Sg3W7T8YeKDMeVZAxy7d2HQx57CO9NM9fJxvmQUV4jTHih/BiWRORbAYw7VkA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
+ by AS8PR04MB8056.eurprd04.prod.outlook.com (2603:10a6:20b:288::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.9; Wed, 15 Oct
+ 2025 08:58:51 +0000
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::4609:64af:8a4b:fd64]) by AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::4609:64af:8a4b:fd64%6]) with mapi id 15.20.9228.009; Wed, 15 Oct 2025
+ 08:58:51 +0000
+Message-ID: <e3ab9421-61a5-4ab6-8c72-6b0ab340f3a8@nxp.com>
+Date: Wed, 15 Oct 2025 16:59:13 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 03/39] dt-bindings: display: imx: Document i.MX95 Display
+ Controller processing units
+To: Marek Vasut <marek.vasut@mailbox.org>, Frank Li <Frank.li@nxp.com>
+Cc: dri-devel@lists.freedesktop.org, Abel Vesa <abelvesa@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Fabio Estevam <festevam@gmail.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Lucas Stach <l.stach@pengutronix.de>, Peng Fan <peng.fan@nxp.com>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Rob Herring <robh@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, devicetree@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org
+References: <20251011170213.128907-1-marek.vasut@mailbox.org>
+ <20251011170213.128907-4-marek.vasut@mailbox.org>
+ <aO0tmUWA5H0J80Ov@lizhi-Precision-Tower-5810>
+ <260b4db1-c02a-48a0-baf8-5e217c729824@mailbox.org>
+From: Liu Ying <victor.liu@nxp.com>
+Content-Language: en-US
+In-Reply-To: <260b4db1-c02a-48a0-baf8-5e217c729824@mailbox.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SI1PR02CA0044.apcprd02.prod.outlook.com
+ (2603:1096:4:1f6::6) To AM7PR04MB7046.eurprd04.prod.outlook.com
+ (2603:10a6:20b:113::22)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM7PR04MB7046:EE_|AS8PR04MB8056:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8f6b381d-c4e1-4804-d868-08de0bc90fb6
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+ BCL:0;ARA:13230040|19092799006|376014|366016|1800799024|7416014;
+X-Microsoft-Antispam-Message-Info:
+ =?utf-8?B?ZWRMWnRXWkREdU5FdDkwMmt4RU1yVjBhbTRROHM3L3dpamh1N3BNNW1Cdjd5?=
+ =?utf-8?B?QjZURGdKY3c5c2NubHJGS0hqTlR1YW9IcGdydHk3WDJwRjNvdTdGRkthTjJv?=
+ =?utf-8?B?SGw4Q0pnZzVrenl1UTVBbHFZcHFFV2w5TzBManRrTHBhN3hOblVSNXVRUDhl?=
+ =?utf-8?B?K2V2RzlqYW5PRkVBV2hML0NmYm1hZ1NwM3ZtOGtud3g2SGh1Z0hodkplUFB3?=
+ =?utf-8?B?NGllcjA1akgwN3ZqU3VhVjRja1Bxa25NbnQ4K1Y5UnFHVUhtSElINzhPTjQy?=
+ =?utf-8?B?Z1dRcUcwbGhVblQ4RzhnT1BTV2J0c3BqS2k3NnBFUFlZcFoxaGd3Y3hDalIv?=
+ =?utf-8?B?Rk9UWkJQb1VRUG42L3ZmNEI2d3NGbjI0UHpDZEhZU0lRdVVzVjA5OGo3TW4z?=
+ =?utf-8?B?NWdkb1FzRkdxaDdqcU1KdW8wYXdFbDFBTGg0R1BmL3FWWEgvQ0pRTE00WlVG?=
+ =?utf-8?B?b1h5eEpPTERYVzZKVWE3SXl1SXBZZitjaHY2Mkl5T0tBN3lyZW5mWnRtMXlJ?=
+ =?utf-8?B?SU5hM0pZSHJ6ZkhQcFlyWmdScWJySjdaRnE3QThodGJRNStiQUFrMWgyZ0pz?=
+ =?utf-8?B?QnRxVmh1bFdmRUZSR1V3TDF2Ky9ORW80VkFsdEdBaStHYkdEYktvZDF6Rm9W?=
+ =?utf-8?B?ZGpJcEh1T21WbnJIZ0g4eElvZFNKdWpkWFdnNWJmRWFsdHkrM3VlZ0dTNkIv?=
+ =?utf-8?B?YTA1WHp0S0NrVkxEbXZaVHRoNDlkVHE0MWlRWnNlQmQvcnp5MGZQWjRCc09V?=
+ =?utf-8?B?aVhUekdqMUsvUVltRS9VRWhLTTRMc2lmYnkxeFo4bDc1WkVDdFFhQ2JVUk16?=
+ =?utf-8?B?UEE0dkNIbGVpOU9BbFNUZGcvYTdlSGhpWnZSNEM3Mm4yVlNWM25SSFhCMEtE?=
+ =?utf-8?B?a1o1QVlad1U3YTZuWGRBWVBBZEpyVHdiN0c3RklPRHMxNzljRmJxb0xXbVd1?=
+ =?utf-8?B?NXE2VWdoT25FOEpBQWtRZzZsdnZwc1RyVUpXckFyTnFSc0NJSVNtYW9YYW4x?=
+ =?utf-8?B?T25KRTQrczJxSWltU0hJL1NzY1o3VlBIbkVPMnYxbjRudUZhNTVoWUVzY0dB?=
+ =?utf-8?B?TWhnSFVpS1RSSjIwNGZIbGtYSjBZK2VZaTd2RC9KbmdWeEtoVjh2R2xVcWVj?=
+ =?utf-8?B?T2FXdjRxbFhpNlI5THdRcGJlckQrdHlTV1lTZC93Y1FsQk9mc1dkWU9GZWJk?=
+ =?utf-8?B?cnh3ajFSMlowQm9ZangrU2FHcG0xNmVXbkhDVTRUSnViMzZEVkFsMm9CK2Y5?=
+ =?utf-8?B?dENtTXY3RDhZKzBLSERCRzVPUEo4MXdSVUxrbkdqZzNHUjRUUFcwT3VJclNM?=
+ =?utf-8?B?Z0IzWnlodTBkZmZ4ZUFaWFpQWmJzVm5Bay8zazhkRExUcWJUT3JDMDBKam1M?=
+ =?utf-8?B?MGs5b2ZtN0hoS0tHa043Z1VhUjQ1RnZOdzFJWlpFNm81NUdpK2p2MDJpaWRa?=
+ =?utf-8?B?Tm8xTVRUZ2gxejh3TDRCQTEvU2h5NTF3YTd2M1BmWDdvdWFRTjF2Yk1ud2Vm?=
+ =?utf-8?B?c21DcHIrbnhqT3MwN2VHeFpWN0VLUmtGTmU0bnkzRXFkYUlvakkxT25yU1Ex?=
+ =?utf-8?B?ZXNadWpQdlZEVEVXd250dlNMbjNXQ2IrUy8yMllSSGtoZ08vYTZEa3hTMjdl?=
+ =?utf-8?B?bnpGVG0zaXFWd08waUcvakRIMXdjWHVSS3ovOHUydmYraHY0SnU1U1o1cGlT?=
+ =?utf-8?B?bDd3NjZYSEJOcE9TVVpKcENTQll2R0E0VG15NFJaWThDeklaVjd0L1BYQmNE?=
+ =?utf-8?B?RWZOSGNHdUpnVWhBeWlGNkxpREYrMmUwc3JkNjlqY0dxNkNla0p4NWhFZXNy?=
+ =?utf-8?B?TXN0Q2VvQ0hXQUJGOUFuZ2xLbmM2aXk1TkR6NzkzNjZtdlpSQWNscGppOHpk?=
+ =?utf-8?B?QkhWamIxcXZ3U0pxWDRvVmVhUzRLOXE5UnFkbzlKcTJ1UllYVUNRWWs5b1N2?=
+ =?utf-8?Q?xoJYr4v0j4PsEYUZxhh5tmThre3S+Fpo?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(376014)(366016)(1800799024)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?utf-8?B?VVQ2Ui8yQzhRYzVNaEt3QWltaHFGVmZ6dGJaK1QyYzhRNkZNUnhVNjhJSDdz?=
+ =?utf-8?B?RHB1SWIxMUg3dmdtMjRMNGRXWHdxQXViZFR6L0lnQVlvbWd2VnpacWkya3h2?=
+ =?utf-8?B?Q3dvb3haMlVCZGtRNXc5TlAvZ05DT3B2RFJjaCtPS1d4ZlRCZ3NGRDZXSzlr?=
+ =?utf-8?B?eTV3OVFUMmRlaEJBbkVsN29kbVdhSTJTdlY5UVFpOFZmYjFQMmRtaXBkYTdP?=
+ =?utf-8?B?bjVJNk00UVFyMVBrRldSTDB2R3VINzFzZzV6bGlrSGVUOVB4MHg2NUpPY0JD?=
+ =?utf-8?B?WWc4NjVZYUVHNXgrMldYNnc0eHRkcFVSa3VsNHVCN1cxckhsZlVsMEJyUmVu?=
+ =?utf-8?B?WldHNUVxeXp4MFVUV0Y3Y3VFUHA4T29LOHdyTnZmTjRjVm1rbDMwdExOR0VB?=
+ =?utf-8?B?SmVXTU9HNWxQMEoydEswYTdWZEgwVkltSWpjYzBrb0tsMVFTZk5kYVJHTG5Z?=
+ =?utf-8?B?cjdxNWlTdTBzVm11eXQvSzE3QzhKT1BiS2hSTUFnZnBvUUFoemlkNW5LZDB3?=
+ =?utf-8?B?ZEZNaFpCenFGd0dyTS9ZcEl6NmlOS21NY3ZNSExaM1plRm16TnlQN0FJbTR1?=
+ =?utf-8?B?dEdZZ1hOK21ha21HaXFIWUx2VXdYRGc4WE9JaWRpYmRQRUVHM1V0MTFoTHox?=
+ =?utf-8?B?ZENoWFNRc0E3WUl5SlRyWlFMTE5LajF2U3lwMlZSUmFXZ2JZMnRzZXVBWVc3?=
+ =?utf-8?B?S2xsNnd6VGpXWUROT3c4SjVwcWVGMTFRMHI4RGV1Z0I0MzZ2WUxvNXJ1eGZs?=
+ =?utf-8?B?YWYzNVByUDZUTFdNT20xTFFhOGNqUFhyTEhUQmdzTXp5MEZjNkc4alhNNHMx?=
+ =?utf-8?B?UWJyUVd2YlZVOEdIMGhyVkVudXRLeXE5U2RVQnkrOUZRUHM2Z3NTd1V3Wit0?=
+ =?utf-8?B?ZHRsWFlZd0RGUEhlb2lRcVZnWlhRdnJtYWtvMm9UanhwK3FyQTdNbkdwL3Nh?=
+ =?utf-8?B?L0RuV2JWOG44dGNzc3JuNGMzL2NLdzM0S2FsdWNSUk12aWdnUGdNRDN3OTVW?=
+ =?utf-8?B?aTVpdy9wTklTNUVYL3dlUFVHSVFZOWNrYnp0RFk3RlRvejhoUUNBcHhFby9Q?=
+ =?utf-8?B?Y25sT2doTTJXYnIyNWY0cko2K3JlNE0xMWxBYzZmd2I1S3kwcFA4OHh0MFF1?=
+ =?utf-8?B?OTFBV0lvR1NaSjdsUlNRbkZsMExUWkw1TjdqU29Sanh6d2JIRmlVMjlFVC9m?=
+ =?utf-8?B?Y2t1c21ZUlMxN1owemU3Ri9idlJzZUJuekpFOVR0citkVFl2YkN0UFk0TVVO?=
+ =?utf-8?B?Z0oyaXBreStFNDB5RnRzQ0VDV3RWZlgzWE5tWVE1VFdrVlZZZ3A0ejNGeWFP?=
+ =?utf-8?B?cU9TelZ5L1VyWVI3akVXaWJUMFNUNUtTVGhKV3V4M2NLQTN4dEhqdldKRGV5?=
+ =?utf-8?B?d0Q4ZWxlZWxGVTdOVTc4NzlJdWhvbEgrVDVvdnEvYzVCb1BTV1hsMFhxVm14?=
+ =?utf-8?B?b1Z4NktMOE5IMUdrRldsaTJJcE5yUHkzbk4vRklURDFnd2FFNHFFTndOQktx?=
+ =?utf-8?B?UlcveHVFUGtFVzI4Z0Q5T2VOenQ0SjVJWXI2V25YWG0xQUtHV1lsR0FJSkhP?=
+ =?utf-8?B?ejdUOFpkTERvNmJaWG1BWFFsdWFhc01KbmtTZTZzd1ZkeUlJVUtPRXltS0sz?=
+ =?utf-8?B?UWY1WGV2aFJ6WGJIRHphRUtrUnZVWVV2czhHSFVMaGE0OWhKZ0tSV0tkdVBq?=
+ =?utf-8?B?ZHUwcXhJWHNMSDlobHJ0Y3RUL3RXU1BNZkJUVXpWVHlLSVZuQXVkQ3p0WmxP?=
+ =?utf-8?B?RHRFOGtaTXZxUCtweGhtTVVHL2ZLYUhETStOOUxDR08wOVJvQmJMMVVMSlJh?=
+ =?utf-8?B?azJyUDdvVGtmVlVneEo5c2VHbGFKZGtLWHkxUzcvM25TNVl4NlJuN3NTWXJK?=
+ =?utf-8?B?WXNtWXB5b2hWTXVmQzQralJJbTJHM09saDlsTk9aUm55MUNSR0RYVHljMVJH?=
+ =?utf-8?B?azhhT2haT25PcElPMktHem5uWTVxZVoxV0ZDbnNCL21SbGpJYVlpZ1Raalky?=
+ =?utf-8?B?aWg1bUkvWEZLL3h4OVZsTFFSNlNrV3dkbEQzaEVKMUIyZ0JkQkErdmxWWDB1?=
+ =?utf-8?B?SGV1TCtnN0xwTER0c0ZrYWlwZDVpc2tPVXVabVFyVU41TTlGSDIzR01ObkJF?=
+ =?utf-8?Q?9/ReASKyuvHoX5EX1az20oQTS?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8f6b381d-c4e1-4804-d868-08de0bc90fb6
+X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Oct 2025 08:58:51.6462
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ibSD1BFTuJ6qXcw8cERm4gupf1LfAfonttGyXoCheNiZMDFKucYhE/dNfszOzV5OmUv8pcSmhzCqVf8iniV9XA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8056
 
-Recently, new device-tree nodes were added in the overlay to add support
-for SFPs on LAN966x PCI device.
+On 10/14/2025, Marek Vasut wrote:
+> On 10/13/25 6:49 PM, Frank Li wrote:
+> 
+> Hello Frank,
+> 
+>>> @@ -90,13 +102,15 @@ patternProperties:
+>>>         compatible:
+>>>           const: fsl,imx8qxp-dc-signature
+>>>
+>>> -  "^tcon@[0-9a-f]+$":
+>>> +  "^tcon(@[0-9a-f]+)?$":
+>>
+>> why here allow no address unit tcon?
+> This might be something Liu can clarify too.
+> 
+> TCON on iMX95 DPU does not seem to exist at all, or at least has no control registers. Hence no address.
 
-The LAN966X Kconfig help section mentions drivers related to devices
-added based on the overlay description.
+i.MX95 DC hasn't got TCON so it should not be documented for i.MX95 DC.
 
-Add drivers related to devices described by those new nodes in the
-already existing driver list.
-
-Signed-off-by: Herve Codina <herve.codina@bootlin.com>
----
- drivers/misc/Kconfig | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
-index 3ca09d993a19..c4e6af87c977 100644
---- a/drivers/misc/Kconfig
-+++ b/drivers/misc/Kconfig
-@@ -636,13 +636,18 @@ config MCHP_LAN966X_PCI
- 	  Even if this driver does not depend on those other drivers, in order
- 	  to have a fully functional board, the following drivers are needed:
- 	    - fixed-clock (COMMON_CLK)
-+	    - i2c-mux-pinctrl (I2C_MUX_PINCTRL)
- 	    - lan966x-cpu-syscon (MFD_SYSCON)
-+	    - lan966x-gck (COMMON_CLK_LAN966X)
- 	    - lan966x-miim (MDIO_MSCC_MIIM)
- 	    - lan966x-oic (LAN966X_OIC)
- 	    - lan966x-pinctrl (PINCTRL_OCELOT)
- 	    - lan966x-serdes (PHY_LAN966X_SERDES)
- 	    - lan966x-switch (LAN966X_SWITCH)
- 	    - lan966x-switch-reset (RESET_MCHP_SPARX5)
-+	    - sam9x60-i2c (I2C_AT91)
-+	    - sama5d2-flexcom (MFD_ATMEL_FLEXCOM)
-+	    - sfp (SFP)
- 
- source "drivers/misc/c2port/Kconfig"
- source "drivers/misc/eeprom/Kconfig"
 -- 
-2.51.0
-
+Regards,
+Liu Ying
