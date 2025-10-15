@@ -1,119 +1,76 @@
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31F9F3375BF;
-	Wed, 15 Oct 2025 16:18:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76F72325480;
+	Wed, 15 Oct 2025 18:31:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760545115; cv=none; b=optOlJ8IEYAWUUQtbwpsUcULlJ9D8D/Py6yHyPmwChZXUSrR7tK27SsOROwYasG3iMcu7SqzHIFik8yyu+g3Hdgfcn/JW9rMA8BEmPxH6SVpQGN6ub4sY0QGE9F21NxNBLOfI0bRcXicSIuuUjjc/8PqCDYiYQ9X98nQ8y7p69w=
+	t=1760553116; cv=none; b=ZKhUSNIet3zVykZ6HXFACq3o4BSonho6KQPdM/PAAEAnav68hqCTwEg5T00a3wThA1Vj3g1FdEhMA1fZ+LW59R8ZpJvwVrhv01IFhRZCFoVt4biI5qYIG050x9UaACX+BD6DH8SZTNWv/Af/OeD4JR36t7o7fek0dJF5toUo9Gk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760545115; c=relaxed/simple;
-	bh=HFtFHnjdoCw2QpmLuESwUrt9XygQu+XZS3kuRKv4N8E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dMsxmmortNyFC9gXlUKw3RCZeM7MDnRwyWwcrnmDmeYTbqK4XHX0SB20AYGD/bUzWwF9xqV8SZuuW9qA1Pc9X6yWJ3ZN2Q3ve5hBFUD34UKrsnts4DUdsL2ULt3QTpPUnQkEpqjSwwyR+rN8nj9jQWMTfdKHuk9z7vWyz0tC4KQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=V1Gj3UXl; arc=none smtp.client-ip=80.241.56.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+	s=arc-20240116; t=1760553116; c=relaxed/simple;
+	bh=745IEqjMLPClb39Tf9d1zUU3SvdsnRvc6cJCVLlU9Bo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fWh+BwbVO48y44glexu2to/8k6EcZ52FtwomkWyimJfUUVvRzqm77567JKHdEge3md7GvRx+dT6EXZPwGzUHsuKuWfDA8e1JTH1XWPIjapAIiIzwPM6fXbBuaoaVH/F4iMgfKxKfIqdybyy5fES9scK6x4ZatDJgIaCyrrt13lU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=by9wpcsv; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="V1Gj3UXl"
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4cmx8k3hfSz9spd;
-	Wed, 15 Oct 2025 18:18:30 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1760545110;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+RAcB1KnTu10/U/5AH7wLJv4yw422htNmPqwtIjsMk4=;
-	b=V1Gj3UXlTfbAXXf5H8fENfL7wuosE2RSQoMBoCz53MsTllEkLuoeDDji6805ZHRW/Gw2o0
-	Xu+HELzQrpUOJ4rxjwCf0hYN+hyML3uTegapcoIlXOoLI25GNkOeBr85BaF976a60WtRex
-	aOjTyjwPhdras7ObxUNPbMgCA/y5MfJPz+G5148y3bXilFNgAZFtArFRjUA3aq0/Sw8eGq
-	xoNLrI70eJJzv70Rxl8IVKoG2unPNxQZZWlxubfp++LOdQPT/f/Wz+9U6Zq7qJwowPxn9k
-	DG2C8guxzonxJujbwt0iuMaFLr19G69W9/ZMo/0Q+roji0ksHOC2+vvHviKJww==
-Message-ID: <e0507800-7e86-4fbb-95cb-e64d8cca1e49@mailbox.org>
-Date: Wed, 15 Oct 2025 18:18:25 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="by9wpcsv"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCEA9C4CEF8;
+	Wed, 15 Oct 2025 18:31:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760553116;
+	bh=745IEqjMLPClb39Tf9d1zUU3SvdsnRvc6cJCVLlU9Bo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=by9wpcsvmDWWfdyRKF3SXdvPNP6Bhdym/3/NdTCz+DyPQGXuqijjPP9dxLllX8bW4
+	 L6CPRD8ggleEOHq4Bm1DIN+EJfxqTo3CY1TXfPDTjBYM+D7a14ucyyXIRfF+Ri4L7z
+	 KDGwJtLMaMl5lI60NlVw95oztEumktHRXN1ZS+AJxJWcCVW26sLGqhc5eFE09kOd/V
+	 k7SlQIvAJpwv2ivP13t54yOsh15++RJB04QN+uaiBf8dIpWcRf5fv9ooVVBjqzG5HM
+	 lYVNpswqVeXzoCN007ZfAC5OCPwusPDBFPLGpSIe66whJRI3/qb79NLzcHVjEcnUmR
+	 CYh6y/3MrFWOg==
+Date: Wed, 15 Oct 2025 13:31:53 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Peter Griffin <peter.griffin@linaro.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	Sam Protsenko <semen.protsenko@linaro.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Will McVicker <willmcvicker@google.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	linux-samsung-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	kernel-team@android.com, linux-kernel@vger.kernel.org,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Subject: Re: [PATCH 1/9] dt-bindings: soc: samsung: exynos-sysreg: add gs101
+ hsi0 and misc compatibles
+Message-ID: <176055311249.179333.13160204351428508138.robh@kernel.org>
+References: <20251013-automatic-clocks-v1-0-72851ee00300@linaro.org>
+ <20251013-automatic-clocks-v1-1-72851ee00300@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 00/39] Add i.MX95 DPU/DSI/LVDS support
-To: Liu Ying <victor.liu@nxp.com>, dri-devel@lists.freedesktop.org
-Cc: Abel Vesa <abelvesa@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Fabio Estevam <festevam@gmail.com>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Lucas Stach <l.stach@pengutronix.de>, Peng Fan <peng.fan@nxp.com>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Rob Herring <robh@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, devicetree@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org
-References: <20251011170213.128907-1-marek.vasut@mailbox.org>
- <174ec43e-4cac-4452-a77b-e2e3b8413d05@nxp.com>
- <2c4a42eb-8c49-4ba3-baa3-921ec52f730d@mailbox.org>
- <92d928cc-d9df-4c9c-8571-da39001b91a7@nxp.com>
-Content-Language: en-US
-From: Marek Vasut <marek.vasut@mailbox.org>
-In-Reply-To: <92d928cc-d9df-4c9c-8571-da39001b91a7@nxp.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-MBO-RS-ID: 03ff7b3109451a21313
-X-MBO-RS-META: kx1epfwft5um1jo7qw14sxkpbgi5h5ht
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251013-automatic-clocks-v1-1-72851ee00300@linaro.org>
 
-On 10/15/25 12:00 PM, Liu Ying wrote:
 
-Hi,
-
->> I wanted to put this whole thing on the list first, before I start splitting it up.
->>
->> For starters, I think I can send these separately:
+On Mon, 13 Oct 2025 21:51:30 +0100, Peter Griffin wrote:
+> Add dedicated compatibles for gs101 hsi0 and misc sysreg controllers to the
+> documentation.
 > 
-> Before discussing how to split, a bigger question is that is it fine to
-> support both i.MX8qxp DC and i.MX95 DC in the same imx8_dc_drm module?
-> Separate modules look more reasonable to me, considering the fact that
-> there are quite a lot difference between the two DCs.
-
-(maybe I do not quite understand your suggestion with "separate module", 
-I assume this means entirely duplicate driver, is that correct? I 
-operate with that assumption in the text below.)
-
-This series indicates that the functional units in the DC are basically 
-identical, with the majority of changes being register base addresses of 
-the whole DC and an odd bit or register offset here and there. Most of 
-the code can be reused, as can be seen in the first half of the series.
-
-The addition of iMX95 into the iMX8QXP DC also does not seem to be 
-making the driver in any way more complicated.
-
-What would be the benefit of having duplicate driver for IP that is 
-basically identical, for i.MX95 ?
-
-[...]
-
->> - drm/imx: dc: Rename i.MX8QXP specific Link IDs
+> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> ---
+>  .../devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml        | 4 ++++
+>  1 file changed, 4 insertions(+)
 > 
-> TBH, I'm not a big fan of adding LINK_ID_x_MXy to enum dc_link_id, since
-> the members may have the same value and it's kind of a mess considering
-> future SoCs.
 
-I am open to a better suggestion which does not involve duplicate driver.
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
->> - drm/imx: Add more RGB swizzling options
-> 
-> This one seems ok.
-
-I can send that one separately. Can you test that on MX8QXP ? I don't 
-have a board with that SoC, sorry.
-
-[...]
-
-> I kind of opt to separate modules.  Maybe, to save some code, an additional
-> module can be introduced to wrap common part as helpers, plus some callback
-> magics, like fg->dc_fg_cfg_videomode().
-Let me ask for clarification here -- by separate modules, do you mean 
-two totally separate drivers ?
