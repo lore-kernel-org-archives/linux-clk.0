@@ -1,70 +1,42 @@
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail-m32103.qiye.163.com (mail-m32103.qiye.163.com [220.197.32.103])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7D792BE7DB
-	for <linux-clk@vger.kernel.org>; Wed, 15 Oct 2025 09:07:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B47931AF3D;
+	Wed, 15 Oct 2025 09:13:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.103
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760519231; cv=none; b=BGfjHpBu4Sym0P4AFs9FBW7vOhqC8duHBks+Gi1g9sK2MOefNbtpGDvIWBnQKB/S2HJmErdKJP7n6KDl4xkuzaBTu1hSdgL/5XsXBYMFYKmllRtxWIP1TiTGHI/KkSyCOBGN06edSD62GqcBJhs6TdF1GUkIyWgGGgCQw35BnLE=
+	t=1760519619; cv=none; b=swcZUi5dhMBPbneSfBPxpPEUWglsVowoHdk+4aim788h21JP15l3Fm6por/LgsSc5dDHNy+CjVYb76ZaBSx5U1Ua+cmVQd8+RtQohgMPwO46J63ugOPHHgCmjqs98qXK3G3HTRftMU+KNlJLIugq3lh77d7ulvQIn8KwY7Xl9oQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760519231; c=relaxed/simple;
-	bh=sqfqcCk73C339CEFGKekRqgEOx3juK3PyvjyD2ABo7w=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gVE9S1gWTSqOE6aVQQ9S4pVrfc6a87sr0P5QclZECl2rZmqATt10viczc+jiWBG6Y2EDpLAPHqwCiGYIjz5JZEcDq5BLRBtByIJ+3Sf5t9h83+3V7Un48mGMcGY3d+DnXLhYyag9llO7Di8kyZ6tp/u99xDFK1Q3126pIRSKrUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Nw+8/3+T; arc=none smtp.client-ip=209.85.215.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	s=arc-20240116; t=1760519619; c=relaxed/simple;
+	bh=R2i7/iWxTvrX1RQdQvd79TnBe02cKPCRBuFIzGxu0mY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XHO7pWB/YOkhWbSspNiXvAQ69efMBKn+D6TmWtGrCPV8xQBIz0BrOZLxGH+S0bXja20iO1DtQkVnjIJjRKv66909WamyctR2z6Hggn2aKOxbEaiDmPB7xMK8MeqVnpy60fxnnzpnSaxePYPHo6csWEnT+wKrHQ9VEL0i6tRXO5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=Hyfm5rZd; arc=none smtp.client-ip=220.197.32.103
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Nw+8/3+T"
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-b5526b7c54eso3837452a12.0
-        for <linux-clk@vger.kernel.org>; Wed, 15 Oct 2025 02:07:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1760519229; x=1761124029; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=v54lCkZaDqlFCcH302UrfaefVMpcSxNOJrGx418qcEA=;
-        b=Nw+8/3+Tl/lopvM/VYoSfKVkzRah1xOgmqxwVpv/HvNUAFIS3m0OGA/CEXgM2B6hMm
-         lugAfr+ruJzgvCca9hGaZItiGcDuiY5BA3Wke+jyEx5YynslEqdvao+mN3EYxrsEd+XR
-         aMHiaeiG8kqNfa5zoAB7VQEvImmre0JYcSUjA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760519229; x=1761124029;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=v54lCkZaDqlFCcH302UrfaefVMpcSxNOJrGx418qcEA=;
-        b=WkWovvtt5NFMAm2QgiFpKTkPIj4Bj0JqHaChiK2WEQqpAaDKwqcCxp8Buu/0Tjse05
-         +IEYDG3trfSkA5ocYSKSNfX8Ck+VlcKiqWkgzzjUt78uPhOGsxCK2qbbcPDFADt+ddvW
-         v2zpPUIl/gLttkjnfVlmaN7bdchnAFCzEBhB0EMt21B8WplzSqu9MYOU6xo8bi1qn+eo
-         eRGGiT+UOnwjwMganzSDgn0/KW+UwTVvu27L+94BsML+YcYEwbG87wpZNxqAPGlym3QY
-         vCebSWzwxIxr5TCqPT1hjjEjtsNbDlIOwlX+8M8/9evMrOIVkbmw8LoE5zT5eCHHRyVe
-         imYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXYzO5c7hNF3ikOuz+7r+s+sEbDZ4asXrBPMb0xvcqDnlX04/ABRh1f2yyMCrSIWsxZR9m5H9Nkn3w=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxuu/A1C4GBR9gwLKRIFWmaoUNME4zVRpt/2UhVd2ZI64Cu142S
-	8SwDS3wMailiBujSOpfVPXXW5wz1xjvoGsFAGhmgsalBtILwKMLMlYrXfufGnqq/6w==
-X-Gm-Gg: ASbGncsw+L6rolrisuWXCbR6tD7gat/b9IUu5SX1mogLFul2relgjnpKGb6uG62WBew
-	guNl15r126Ee1rx4HQjUwDP7y9uu9igNFj3Z86vDY4YaFRw+Zo131mM8a0WC4QrsONbpZv98Gwl
-	561G8bSo2XvuIsUOf2HMmfdJV02HVbHDMDAsaDTwDPvID6LfveiBIqb+Y3ASYUv3kfEVVyzy/0u
-	yHBg92EKt8Xu2eTbEfdpXJ/jrL+Gz7qOMDgsL4lhDmJPsPsa8SDv0llVYdD+huIrJgBGpH/RC3U
-	ERi5Zi3Y+NaqBjfkosUG0XIfhGeYA1rwMcxTP1pLyatUZU7YhThZiicPJNaflXLKqkqaNYnWnsq
-	B8zUfwWB18kSWt/u2q1cp05k5LdkdOdqLDe8hkoXYj3Ya2NUJTvh4i8UHXSSbbI25D/UIhSSX6q
-	vLGkSsXWVlSQ4zAISx40COc8ESNfTJCm8t
-X-Google-Smtp-Source: AGHT+IHlL0oIuISBopxFJ5LX7OHcqdJOEAXBYDDnEYLkTxGptox99BOIpt/UkQRjt+HPN1uykPtDLA==
-X-Received: by 2002:a17:903:3807:b0:269:8d16:42d1 with SMTP id d9443c01a7336-290272e1e24mr316691295ad.50.1760519228878;
-        Wed, 15 Oct 2025 02:07:08 -0700 (PDT)
-Received: from wenstp920.tpe.corp.google.com ([2a00:79e0:201d:8:1a1f:d7c1:704a:3e83])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b678df233cfsm14389395a12.28.2025.10.15.02.07.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Oct 2025 02:07:08 -0700 (PDT)
-From: Chen-Yu Tsai <wenst@chromium.org>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Chen-Yu Tsai <wenst@chromium.org>,
-	linux-clk@vger.kernel.org,
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="Hyfm5rZd"
+Received: from rockchip.. (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 25fe0166a;
+	Wed, 15 Oct 2025 17:13:26 +0800 (GMT+08:00)
+From: Elaine Zhang <zhangqing@rock-chips.com>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	sugar.zhang@rock-chips.com,
+	zhangqing@rock-chips.com,
+	heiko@sntech.de,
+	robh@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org,
+	conor+dt@kernel.org
+Cc: devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	Brian Masney <bmasney@redhat.com>
-Subject: [PATCH v2] clk: tests: Add tests for clk lookup by name
-Date: Wed, 15 Oct 2025 17:06:59 +0800
-Message-ID: <20251015090701.2049164-1-wenst@chromium.org>
-X-Mailer: git-send-email 2.51.0.788.g6d19910ace-goog
+	huangtao@rock-chips.com
+Subject: [PATCH v1 0/5] clk: rockchip: Add clock controller for the RV1126B
+Date: Wed, 15 Oct 2025 17:13:20 +0800
+Message-Id: <20251015091325.71333-1-zhangqing@rock-chips.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -72,188 +44,47 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a99e72551d203a3kunmdd11480e6b2054
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGkkfT1ZLHhpOSUhDSE1DHRpWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+DKIM-Signature: a=rsa-sha256;
+	b=Hyfm5rZdqfbV+Zm54hF1JZGTGqy7lX8fLtR2Q4j0G9AlbEArwrUQzy/RqZUe7sYkWo4XziVe7FnwpYw5vqWea+wcebrMsKZA3xk3/gU429u42lQEQmGn3U+efHykZ3Arg1aRGhnpi7LN6TTUe2QaPImx29orBP9i+qOh0uslTCg=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=7b6Z8fzetWYE+7cZhOYZwFJZsXm06iGFmfkTEFPEbLg=;
+	h=date:mime-version:subject:message-id:from;
 
-Clk lookup (by name) recently gained some performance improvements at
-the expense of more complexity within the lookup code.
+Add yaml and dt-bindings for the RV1126B.
 
-To make sure that this works as intended and doesn't break, add some
-basic tests for this part of the CCF.
+Elaine Zhang (5):
+  clk: rockchip: Implement rockchip_clk_register_armclk_v2()
+  dt-bindings: clock, reset: Add support for rv1126b
+  clk: rockchip: Add clock controller for the RV1126B
+  dt-bindings: clock: Add support for rockchip pvtpll
+  clk: rockchip: add support for pvtpll clk
 
-A new "clk_hw_lookup()" function is added purely for running kunit
-tests.
+ .../bindings/clock/rockchip,clk-pvtpll.yaml   |  100 ++
+ .../bindings/clock/rockchip,rv1126b-cru.yaml  |   52 +
+ drivers/clk/rockchip/Kconfig                  |    7 +
+ drivers/clk/rockchip/Makefile                 |    1 +
+ drivers/clk/rockchip/clk-cpu.c                |  165 +++
+ drivers/clk/rockchip/clk-pvtpll.c             |  925 ++++++++++++++
+ drivers/clk/rockchip/clk-rv1126b.c            | 1112 +++++++++++++++++
+ drivers/clk/rockchip/clk.c                    |   24 +
+ drivers/clk/rockchip/clk.h                    |   83 ++
+ drivers/clk/rockchip/rst-rv1126b.c            |  444 +++++++
+ .../dt-bindings/clock/rockchip,rv1126b-cru.h  |  392 ++++++
+ .../dt-bindings/reset/rockchip,rv1126b-cru.h  |  405 ++++++
+ 12 files changed, 3710 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/rockchip,clk-pvtpll.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rv1126b-cru.yaml
+ create mode 100644 drivers/clk/rockchip/clk-pvtpll.c
+ create mode 100644 drivers/clk/rockchip/clk-rv1126b.c
+ create mode 100644 drivers/clk/rockchip/rst-rv1126b.c
+ create mode 100644 include/dt-bindings/clock/rockchip,rv1126b-cru.h
+ create mode 100644 include/dt-bindings/reset/rockchip,rv1126b-cru.h
 
-Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
-
----
-Changes since v1:
-- Added missing prepare lock/unlock
-- Switched to EXPORT_SYMBOL_IF_KUNIT and VISIBLE_IF_KUNIT kunit
-  visibility macros for consistency (Brian)
-  This probably doesn't make much difference except that the symbol is
-  now in the EXPORT_SYMBOL_IF_KUNIT namespace
----
- drivers/clk/clk.c      | 18 ++++++++++++
- drivers/clk/clk.h      |  4 +++
- drivers/clk/clk_test.c | 67 +++++++++++++++++++++++++++++++++++++++++-
- 3 files changed, 88 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 85d2f2481acf..b39ad8944a06 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -10,6 +10,7 @@
- #include <linux/clkdev.h>
- #include <linux/clk.h>
- #include <linux/clk-provider.h>
-+#include <linux/compiler_attributes.h>
- #include <linux/device.h>
- #include <linux/err.h>
- #include <linux/hashtable.h>
-@@ -25,6 +26,8 @@
- #include <linux/string.h>
- #include <linux/stringhash.h>
- 
-+#include <kunit/visibility.h>
-+
- #include "clk.h"
- 
- static DEFINE_SPINLOCK(enable_lock);
-@@ -778,6 +781,21 @@ struct clk *__clk_lookup(const char *name)
- 	return !core ? NULL : core->hw->clk;
- }
- 
-+/* This is only provided for kunit tests to test the core lookup functions. */
-+#if IS_ENABLED(CONFIG_CLK_KUNIT_TEST)
-+VISIBLE_IF_KUNIT struct clk_hw * __maybe_unused __must_check clk_hw_lookup(const char *name)
-+{
-+	struct clk_core *core;
-+
-+	clk_prepare_lock();
-+	core = clk_core_lookup(name);
-+	clk_prepare_unlock();
-+
-+	return !core ? NULL : core->hw;
-+}
-+EXPORT_SYMBOL_IF_KUNIT(clk_hw_lookup);
-+#endif
-+
- static void clk_core_get_boundaries(struct clk_core *core,
- 				    unsigned long *min_rate,
- 				    unsigned long *max_rate)
-diff --git a/drivers/clk/clk.h b/drivers/clk/clk.h
-index 2d801900cad5..a8ed54f5b572 100644
---- a/drivers/clk/clk.h
-+++ b/drivers/clk/clk.h
-@@ -8,6 +8,10 @@ struct clk_hw;
- struct device;
- struct of_phandle_args;
- 
-+#if IS_ENABLED(CONFIG_CLK_KUNIT_TEST)
-+struct clk_hw *clk_hw_lookup(const char *name);
-+#endif
-+
- #if defined(CONFIG_OF) && defined(CONFIG_COMMON_CLK)
- struct clk_hw *of_clk_get_hw(struct device_node *np,
- 				    int index, const char *con_id);
-diff --git a/drivers/clk/clk_test.c b/drivers/clk/clk_test.c
-index a268d7b5d4cb..a8989566946b 100644
---- a/drivers/clk/clk_test.c
-+++ b/drivers/clk/clk_test.c
-@@ -175,6 +175,8 @@ static const struct clk_ops clk_multiple_parents_no_reparent_mux_ops = {
- 	.set_parent = clk_multiple_parents_mux_set_parent,
- };
- 
-+#define DUMMY_CLK_NAME	"test_dummy_rate"
-+
- static int clk_test_init_with_ops(struct kunit *test, const struct clk_ops *ops)
- {
- 	struct clk_dummy_context *ctx;
-@@ -187,7 +189,7 @@ static int clk_test_init_with_ops(struct kunit *test, const struct clk_ops *ops)
- 	ctx->rate = DUMMY_CLOCK_INIT_RATE;
- 	test->priv = ctx;
- 
--	init.name = "test_dummy_rate";
-+	init.name = DUMMY_CLK_NAME;
- 	init.ops = ops;
- 	ctx->hw.init = &init;
- 
-@@ -3541,6 +3543,67 @@ static struct kunit_suite clk_hw_get_dev_of_node_test_suite = {
- 	.test_cases = clk_hw_get_dev_of_node_test_cases,
- };
- 
-+/*
-+ * Test that clk lookup with a name that is not registered returns NULL.
-+ */
-+static void clk_lookup_not_registered_clk_returns_NULL(struct kunit *test)
-+{
-+	KUNIT_EXPECT_PTR_EQ(test, NULL, clk_hw_lookup(DUMMY_CLK_NAME));
-+}
-+
-+/*
-+ * Test that clk lookup with a name that is registered returns the clk.
-+ */
-+static void clk_lookup_registered_clk_returns_clk(struct kunit *test)
-+{
-+	struct clk_hw *hw;
-+	struct clk_init_data init = {
-+		.name = DUMMY_CLK_NAME,
-+		.ops = &empty_clk_ops,
-+	};
-+
-+	hw = kunit_kzalloc(test, sizeof(*hw), GFP_KERNEL);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, hw);
-+
-+	hw->init = &init;
-+	KUNIT_ASSERT_EQ(test, 0, clk_hw_register_kunit(test, NULL, hw));
-+
-+	KUNIT_EXPECT_PTR_EQ(test, hw, clk_hw_lookup(DUMMY_CLK_NAME));
-+}
-+
-+/*
-+ * Test that clk lookup with a name that was unregistered returns NULL.
-+ */
-+static void clk_lookup_unregistered_clk_returns_NULL(struct kunit *test)
-+{
-+	struct clk_hw *hw;
-+	struct clk_init_data init = {
-+		.name = DUMMY_CLK_NAME,
-+		.ops = &empty_clk_ops,
-+	};
-+
-+	hw = kunit_kzalloc(test, sizeof(*hw), GFP_KERNEL);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, hw);
-+
-+	hw->init = &init;
-+	KUNIT_ASSERT_FALSE(test, clk_hw_register(NULL, hw));
-+
-+	clk_hw_unregister(hw);
-+
-+	KUNIT_EXPECT_PTR_EQ(test, NULL, clk_hw_lookup(DUMMY_CLK_NAME));
-+}
-+
-+static struct kunit_case clk_lookup_test_cases[] = {
-+	KUNIT_CASE(clk_lookup_not_registered_clk_returns_NULL),
-+	KUNIT_CASE(clk_lookup_registered_clk_returns_clk),
-+	KUNIT_CASE(clk_lookup_unregistered_clk_returns_NULL),
-+	{}
-+};
-+
-+static struct kunit_suite clk_lookup_test_suite = {
-+	.name = "clk-lookup",
-+	.test_cases = clk_lookup_test_cases,
-+};
- 
- kunit_test_suites(
- 	&clk_assigned_rates_suite,
-@@ -3560,6 +3623,8 @@ kunit_test_suites(
- 	&clk_register_clk_parent_data_device_suite,
- 	&clk_single_parent_mux_test_suite,
- 	&clk_uncached_test_suite,
-+	&clk_lookup_test_suite,
- );
- MODULE_DESCRIPTION("Kunit tests for clk framework");
-+MODULE_IMPORT_NS("EXPORTED_FOR_KUNIT_TESTING");
- MODULE_LICENSE("GPL v2");
 -- 
-2.51.0.788.g6d19910ace-goog
+2.34.1
 
