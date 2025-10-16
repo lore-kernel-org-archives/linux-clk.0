@@ -1,97 +1,91 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B1702E0934;
-	Thu, 16 Oct 2025 10:42:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68F72328613;
+	Thu, 16 Oct 2025 10:53:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760611378; cv=none; b=p0eRKHMUg1GCQMEh1+pUgSPMwv8/sUEoOXbvU1+91ZpddaiL3CX1Jv+UWJIz8jbuU5kRnj1OpgGe8YmLzvcbhOz9+E5EGkEnkXVd7Ieq4HgKCQ02t4kVhXXfW+ro0lV32d5dDhQ1fWX1Z+68tUNKIBpH6ZQrSS5pypij50O6NR0=
+	t=1760612033; cv=none; b=heUKVMsXD0bFI8+aTzm+Hh89JjDbL0Nd0AIXFSkNE/euIpW11hNUm4773iPAZayKMeq9LY9ZZe+7Kq9L5MMq6ElyHj4DUSm3Oa0gAasvRY/Shyrd8vWALwvum7dnI5cpQxgOue8Np8uUXR+JW1k9HOGgM76zX8CMIh0XbpR76Z4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760611378; c=relaxed/simple;
-	bh=fErXExt8RSysN8h2wJXFWIVOcFCJHfLTOJEmQT9C/wc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=peiT/Acn98ADf0DiXyH1Uxid2fI/4lnOckmqUYn0E5UsATi/s1BQs16Z6McUzXm2fUhIInamWJeNSJ59t7kFfF4xyOGxKf65vJ4iMc7jYcqpX83kPB3luf1ehi77m3Wwbdyay9xRF0MXa15DtoqqEPZRgZu1PDeGsWdXJfRsGkA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JmiVN99a; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JmiVN99a"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB8BDC4CEF9;
-	Thu, 16 Oct 2025 10:42:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760611378;
-	bh=fErXExt8RSysN8h2wJXFWIVOcFCJHfLTOJEmQT9C/wc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=JmiVN99azeY59tVwDTzaK+WC4HQWXUncOqi3pAncLsEm7ZoloUtQxcL0wO03R+6/y
-	 PQQBiEKO8U3A1mlrvP3RQKUG6j9ISIEA8lFMKq6OCCskt7dHIy0j/pZS2yN2P4eLMz
-	 s06rZAmY58W9yL0Y0zrEm4QJTaxF1y6DQYh2/YScdddCgZwVmREfLd2kNXizNAbYu3
-	 irTpEnrr8B/lItxlpxgJkCPDQrtZMwjRZuqn2MKytv65xyyjRGmMQZEzKLoRBhVQ7J
-	 CJm5MFX/ATbnHUJ3MR8dMAmQ4RWRJ5o34bBiuNvdsY14Eg+qoDg7pTytqL4EyvS+HT
-	 hgj3oGQp5xSsQ==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: Tamir Duberstein <tamird@gmail.com>, "Rafael J. Wysocki"
- <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, Miguel Ojeda
- <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng
- <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn?=
- Roy Baron
- <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, Alice Ryhl
- <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo Krummrich
- <dakr@kernel.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann
- <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter
- <simona@ffwll.ch>, FUJITA Tomonori <fujita.tomonori@gmail.com>, Andrew
- Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, Russell
- King <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Breno Leitao
- <leitao@debian.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Luis
- Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, Dave
- Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>, Leon
- Romanovsky <leon@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
- Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Arnd
- Bergmann
- <arnd@arndb.de>, Brendan Higgins <brendan.higgins@linux.dev>, David Gow
- <davidgow@google.com>, Rae Moar <rmoar@google.com>, Jens Axboe
- <axboe@kernel.dk>, Alexandre Courbot <acourbot@nvidia.com>, Alexander Viro
- <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan
- Kara <jack@suse.cz>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown
- <broonie@kernel.org>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org, nouveau@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, netdev@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-pci@vger.kernel.org,
- linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
- linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org, Tamir
- Duberstein <tamird@gmail.com>
-Subject: Re: [PATCH v2 17/19] rust: sync: replace `kernel::c_str!` with
- C-Strings
-In-Reply-To: <20250925-core-cstr-cstrings-v2-17-78e0aaace1cd@gmail.com>
-References: <20250925-core-cstr-cstrings-v2-0-78e0aaace1cd@gmail.com>
- <20250925-core-cstr-cstrings-v2-17-78e0aaace1cd@gmail.com>
-Date: Thu, 16 Oct 2025 12:42:35 +0200
-Message-ID: <874irz5dr8.fsf@t14s.mail-host-address-is-not-set>
+	s=arc-20240116; t=1760612033; c=relaxed/simple;
+	bh=tvLe7oqK/Vj/59PdAQQug6bKhT8NZJUWW0AetLUgCqs=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lGtwgs2QSkFEWse1Gb6LcLVk//8sauyFROQjbrPfUAh7MgAW7zSDkuJvhdfDaElW+CGv8spsTFZvlw/KoOsrFjHnWAJmTsZtjir1RlvUlhI+cdIcUir/wpzos81CNn1Nf/vSL7LV6rGIoAKHDQF8CKGlqambyDweU7pkECVMzkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cnPtG3GQNz6L4xg;
+	Thu, 16 Oct 2025 18:52:38 +0800 (CST)
+Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
+	by mail.maildlp.com (Postfix) with ESMTPS id 0C2D81402A5;
+	Thu, 16 Oct 2025 18:53:43 +0800 (CST)
+Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
+ (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 16 Oct
+ 2025 11:53:40 +0100
+Date: Thu, 16 Oct 2025 11:53:39 +0100
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+CC: Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>, Thierry Reding
+	<thierry.reding@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Bartosz
+ Golaszewski <brgl@bgdev.pl>, Shawn Guo <shawnguo@kernel.org>, "Fabio Estevam"
+	<festevam@gmail.com>, Nuno =?UTF-8?Q?S=C3=A1?= <nuno.sa@analog.com>,
+	Lars-Peter Clausen <lars@metafoo.de>, "Michael Hennerich"
+	<Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, Andy
+ Shevchenko <andy@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>, Mauro
+ Carvalho Chehab <mchehab@kernel.org>, "Lee Jones" <lee@kernel.org>, Joel
+ Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@codeconstruct.com.au>,
+	Andrew Lunn <andrew@lunn.ch>, "Vladimir Oltean" <olteanv@gmail.com>, "David
+ S. Miller" <davem@davemloft.net>, "Eric Dumazet" <edumazet@google.com>, Jakub
+ Kicinski <kuba@kernel.org>, "Paolo Abeni" <pabeni@redhat.com>, Daire McNamara
+	<daire.mcnamara@microchip.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?UTF-8?Q?Wilczy?= =?UTF-8?Q?=C5=84ski?= <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+	"Bjorn Andersson" <andersson@kernel.org>, Geert Uytterhoeven
+	<geert+renesas@glider.be>, Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea
+	<claudiu.beznea@tuxon.dev>, Florian Fainelli <f.fainelli@gmail.com>, "Tony
+ Lindgren" <tony@atomide.com>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<linux-gpio@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-iio@vger.kernel.org>, <linux-media@vger.kernel.org>,
+	<netdev@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+	<linux-phy@lists.infradead.org>
+Subject: Re: [PATCH] dt-bindings: Fix inconsistent quoting
+Message-ID: <20251016115339.000047f7@huawei.com>
+In-Reply-To: <20251015232015.846282-1-robh@kernel.org>
+References: <20251015232015.846282-1-robh@kernel.org>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100009.china.huawei.com (7.191.174.83) To
+ dubpeml100005.china.huawei.com (7.214.146.113)
 
-Tamir Duberstein <tamird@gmail.com> writes:
+On Wed, 15 Oct 2025 18:16:24 -0500
+"Rob Herring (Arm)" <robh@kernel.org> wrote:
 
-> C-String literals were added in Rust 1.77. Replace instances of
-> `kernel::c_str!` with C-String literals where possible.
->
-> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-> Reviewed-by: Benno Lossin <lossin@kernel.org>
-> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
-
-Acked-by: Andreas Hindborg <a.hindborg@kernel.org>
-
-
-Best regards,
-Andreas Hindborg
-
-
+> yamllint has gained a new check which checks for inconsistent quoting
+> (mixed " and ' quotes within a file). Fix all the cases yamllint found
+> so we can enable the check (once the check is in a release). Use
+> whichever quoting is dominate in the file.
+> 
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
+>  .../arm/altera/socfpga-clk-manager.yaml       |  4 ++--
+>  .../bindings/clock/nvidia,tegra124-car.yaml   |  8 ++++----
+>  .../bindings/clock/nvidia,tegra20-car.yaml    |  6 +++---
+>  .../devicetree/bindings/gpio/gpio-mxs.yaml    |  9 +++++----
+>  .../bindings/gpio/snps,dw-apb-gpio.yaml       |  4 ++--
+>  .../bindings/iio/temperature/adi,ltc2983.yaml | 20 +++++++++----------
+For this one
+Acked-by: Jonathan Cameron <jonathan.cameron@huawei.com>
 
