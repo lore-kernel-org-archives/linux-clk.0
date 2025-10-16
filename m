@@ -1,91 +1,133 @@
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68F72328613;
-	Thu, 16 Oct 2025 10:53:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A74FD7263B
+	for <linux-clk@vger.kernel.org>; Thu, 16 Oct 2025 11:23:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760612033; cv=none; b=heUKVMsXD0bFI8+aTzm+Hh89JjDbL0Nd0AIXFSkNE/euIpW11hNUm4773iPAZayKMeq9LY9ZZe+7Kq9L5MMq6ElyHj4DUSm3Oa0gAasvRY/Shyrd8vWALwvum7dnI5cpQxgOue8Np8uUXR+JW1k9HOGgM76zX8CMIh0XbpR76Z4=
+	t=1760613834; cv=none; b=fV1dBeWMfZYxgSXF7R1Yx5a/tedGEfJcafKniKFVfOBOPI8PO0OPDD/718dP3tIghZawcsv9yWFUjqCocmJ7kvFT3R560fC6AHHB8hEoXjPZSeyJAjesU2IlthloYAtPb5dKHnqsFWDI5kmSypKr9PjKj4AHrQ23Qze9tqSRqAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760612033; c=relaxed/simple;
-	bh=tvLe7oqK/Vj/59PdAQQug6bKhT8NZJUWW0AetLUgCqs=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lGtwgs2QSkFEWse1Gb6LcLVk//8sauyFROQjbrPfUAh7MgAW7zSDkuJvhdfDaElW+CGv8spsTFZvlw/KoOsrFjHnWAJmTsZtjir1RlvUlhI+cdIcUir/wpzos81CNn1Nf/vSL7LV6rGIoAKHDQF8CKGlqambyDweU7pkECVMzkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cnPtG3GQNz6L4xg;
-	Thu, 16 Oct 2025 18:52:38 +0800 (CST)
-Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
-	by mail.maildlp.com (Postfix) with ESMTPS id 0C2D81402A5;
-	Thu, 16 Oct 2025 18:53:43 +0800 (CST)
-Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
- (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 16 Oct
- 2025 11:53:40 +0100
-Date: Thu, 16 Oct 2025 11:53:39 +0100
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-CC: Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>, Thierry Reding
-	<thierry.reding@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Bartosz
- Golaszewski <brgl@bgdev.pl>, Shawn Guo <shawnguo@kernel.org>, "Fabio Estevam"
-	<festevam@gmail.com>, Nuno =?UTF-8?Q?S=C3=A1?= <nuno.sa@analog.com>,
-	Lars-Peter Clausen <lars@metafoo.de>, "Michael Hennerich"
-	<Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, Andy
- Shevchenko <andy@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>, Mauro
- Carvalho Chehab <mchehab@kernel.org>, "Lee Jones" <lee@kernel.org>, Joel
- Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@codeconstruct.com.au>,
-	Andrew Lunn <andrew@lunn.ch>, "Vladimir Oltean" <olteanv@gmail.com>, "David
- S. Miller" <davem@davemloft.net>, "Eric Dumazet" <edumazet@google.com>, Jakub
- Kicinski <kuba@kernel.org>, "Paolo Abeni" <pabeni@redhat.com>, Daire McNamara
-	<daire.mcnamara@microchip.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?UTF-8?Q?Wilczy?= =?UTF-8?Q?=C5=84ski?= <kwilczynski@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
-	"Bjorn Andersson" <andersson@kernel.org>, Geert Uytterhoeven
-	<geert+renesas@glider.be>, Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea
-	<claudiu.beznea@tuxon.dev>, Florian Fainelli <f.fainelli@gmail.com>, "Tony
- Lindgren" <tony@atomide.com>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<linux-gpio@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-iio@vger.kernel.org>, <linux-media@vger.kernel.org>,
-	<netdev@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-	<linux-phy@lists.infradead.org>
-Subject: Re: [PATCH] dt-bindings: Fix inconsistent quoting
-Message-ID: <20251016115339.000047f7@huawei.com>
-In-Reply-To: <20251015232015.846282-1-robh@kernel.org>
-References: <20251015232015.846282-1-robh@kernel.org>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1760613834; c=relaxed/simple;
+	bh=I31Uk3YWJwyrgQXxbhKQwPqLbs2QoJCuIf4PyZoBnbY=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:From:To:
+	 References:In-Reply-To; b=QMhSIdrk0eGtb4PFnKEl0EBvr80WsIgxmOs43EhV1MvM4kxaVwAy+vITxs7GqkGQ5HaNluKZUEFTnPshebDaf0ZCuVfcjGo72u4gs4RIzsGtQSkCbQNSlOM1uGXMCE03YcGZZNK9cxjSmHq+YrJtI5LvcdQ7MZtwxxnGfrZk7q8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sQCnSNh6; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sQCnSNh6"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8E89C4CEF1;
+	Thu, 16 Oct 2025 11:23:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760613834;
+	bh=I31Uk3YWJwyrgQXxbhKQwPqLbs2QoJCuIf4PyZoBnbY=;
+	h=Date:Subject:Cc:From:To:References:In-Reply-To:From;
+	b=sQCnSNh6rhYku5EQvxFFEnicBup3dou2cVJJtlg6BTvyfwGs3U0ytXDFcmBEemVOd
+	 3zTsRt91nraUBEUzsF2Rh0DKsdHJCViFS3qhlqoEOFU1NeTUTZ40aV1Qp14JMFfsgT
+	 1C+3InGl0DwtE4fqenC6VR5cfsehtkd688I/N1JBPFdgHvCyxsPRSf2SX5UoN3gptc
+	 u27OepqpwEM5ifQ0//KrXncqxw5KeSHe088zaIswIQ8vs59ew1YxSaWkWfkdWtKsuV
+	 UacZ4l+k8dCCb9KRhp6zKlNKGmUSYUucCCMuUHjeeWuZrcUukqGXvSxYEnMBWXeifU
+	 pbCDTyNmvQcmA==
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100009.china.huawei.com (7.191.174.83) To
- dubpeml100005.china.huawei.com (7.214.146.113)
+Mime-Version: 1.0
+Content-Type: multipart/signed;
+ boundary=5d365f8004443b969733adad42e553ed3a27fb4f50366628902a0127d1d9;
+ micalg=pgp-sha384; protocol="application/pgp-signature"
+Date: Thu, 16 Oct 2025 13:23:49 +0200
+Message-Id: <DDJPIJGC8W1L.1BCHJEG3FO574@kernel.org>
+Subject: Re: [PATCH] clk: do not trust cached rates for disabled clocks
+Cc: <linux-clk@vger.kernel.org>
+From: "Michael Walle" <mwalle@kernel.org>
+To: <rs@ti.com>, <mturquette@baylibre.com>, <sboyd@kernel.org>
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: aerc 0.20.0
+References: <20251003222917.706646-2-rs@ti.com>
+In-Reply-To: <20251003222917.706646-2-rs@ti.com>
 
-On Wed, 15 Oct 2025 18:16:24 -0500
-"Rob Herring (Arm)" <robh@kernel.org> wrote:
+--5d365f8004443b969733adad42e553ed3a27fb4f50366628902a0127d1d9
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 
-> yamllint has gained a new check which checks for inconsistent quoting
-> (mixed " and ' quotes within a file). Fix all the cases yamllint found
-> so we can enable the check (once the check is in a release). Use
-> whichever quoting is dominate in the file.
-> 
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+Hi,
+
+On Sat Oct 4, 2025 at 12:29 AM CEST, rs wrote:
+> From: Randolph Sapp <rs@ti.com>
+>
+> Recalculate the clock rate for unprepared clocks. This cached value can
+> vary depending on the clocking architecture. On platforms with clocks
+> that have shared management it's possible that:
+>
+>  - Previously disabled clocks have been enabled by other entities
+>  - Rates calculated during clock tree initialization could have changed
+>
+> Signed-off-by: Randolph Sapp <rs@ti.com>
 > ---
->  .../arm/altera/socfpga-clk-manager.yaml       |  4 ++--
->  .../bindings/clock/nvidia,tegra124-car.yaml   |  8 ++++----
->  .../bindings/clock/nvidia,tegra20-car.yaml    |  6 +++---
->  .../devicetree/bindings/gpio/gpio-mxs.yaml    |  9 +++++----
->  .../bindings/gpio/snps,dw-apb-gpio.yaml       |  4 ++--
->  .../bindings/iio/temperature/adi,ltc2983.yaml | 20 +++++++++----------
-For this one
-Acked-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+>
+> I'm hoping this will start a bit of a discussion. I'm still curious why p=
+eople
+> would want to read the rate of an unprepared clock, but there were so man=
+y
+> logged operations on my test platforms that I assumed it must have some p=
+urpose.
 
+> Either way, I don't believe cached values should ever be trusted in this
+> scenario.
+>
+>  drivers/clk/clk.c | 12 ++++++++++--
+>  1 file changed, 10 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index 85d2f2481acf..9c8b9036b6f6 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -1971,8 +1971,16 @@ static void __clk_recalc_rates(struct clk_core *co=
+re, bool update_req,
+> =20
+>  static unsigned long clk_core_get_rate_recalc(struct clk_core *core)
+>  {
+> -	if (core && (core->flags & CLK_GET_RATE_NOCACHE))
+> -		__clk_recalc_rates(core, false, 0);
+> +	if (core) {
+> +		bool prepared =3D clk_core_is_prepared(core);
+> +
+> +		if (core->flags & CLK_GET_RATE_NOCACHE || !prepared) {
+> +			if (!prepared)
+> +				pr_debug("%s: rate requested for unprepared clock %s\n",
+> +					 __func__, core->name);
+> +			__clk_recalc_rates(core, false, 0);
+> +		}
+> +	}
+
+I'm not sure this patch is correct. In case the clock is not
+prepared, the rate is still cached in __clk_recalc_rates(). Thus,
+I'd expect the following sequence to return a wrong rate:
+
+  # assuming clock is unprepared and will return 0
+  clk_get_rate()       // this will fetch the (wrong) rate and cache it
+  clk_prepare_enable()
+  clk_get_rate()       // this will then return the cached rate
+
+Or do I miss something here?
+
+-michael
+
+> =20
+>  	return clk_core_get_rate_nolock(core);
+>  }
+
+
+--5d365f8004443b969733adad42e553ed3a27fb4f50366628902a0127d1d9
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iKgEABMJADAWIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCaPDVxhIcbXdhbGxlQGtl
+cm5lbC5vcmcACgkQEic87j4CH/gVMgGAmPxKXbmMB8iQ7fv7RVC6aU1um/P88QT/
+z73j48nLVomzZlUtBHJt5liYpVs8GLMfAX9fCcPCeUxJhTXcz9RqZXNnZRfEQ+gh
+KHfjRE0xGYGdhWW9NkmwE8pMeLapWwWHg8M=
+=4ML6
+-----END PGP SIGNATURE-----
+
+--5d365f8004443b969733adad42e553ed3a27fb4f50366628902a0127d1d9--
