@@ -1,41 +1,57 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA29531D371
-	for <linux-clk@vger.kernel.org>; Thu, 16 Oct 2025 11:46:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E73D324B3E
+	for <linux-clk@vger.kernel.org>; Thu, 16 Oct 2025 12:14:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760615177; cv=none; b=UAaK+k9Gzkjoc7IoHmW6z/4VsNeyN41oW8Dh8g5kS3z3o//bVignvmIpP0oe/wJmcQHaL5120xdwpXHeObHfVkUxjbbdtZ0PsHYZDcIDgYPV2AZevVvMAZOWSLPTd0CLOYz8e5e5k3D7nwuzxECWKMq6btLkPCEDsoNtJLpPIVk=
+	t=1760616854; cv=none; b=J96B2G440MCeMLK5tsU5IN6fmZZV90xBClQ3DRUPWhTPeOR1zY20gJ6iGhgtyVrWylMlR+w9Rb/4st8DU1GPGQpO3/yjbQedJhAzZxjf9wiR1j0u7ioLjmofectqZQco/tbU9p0spEixfhNmd3EET1jRgBLw/pQEWcSIYmkyMks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760615177; c=relaxed/simple;
-	bh=PZizulifq2HVUabPYk3xuoVBwllBTb+3Td/PKhrD1JE=;
+	s=arc-20240116; t=1760616854; c=relaxed/simple;
+	bh=Qljm2z2l5uF20OnzQWwo+pu0aWLXVl3TFALx6BWruW4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ioj2mpk/CYgjomRiMXbRtUToRv5LMaIOI0XG2TrRpuNI2plOqWXl+jKTT9H5nG216kZmODGNsM1Vbgqo8T4PDtBLUwYy7Ym4MvZexua7lu5u/j/tikBGLBVrq0wudxeR2qHU/2V1qakueKKQh4+uMEJqalZG5Hg7b6CQpxLAGAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PcNzu12O; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PcNzu12O"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6780EC116C6
-	for <linux-clk@vger.kernel.org>; Thu, 16 Oct 2025 11:46:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760615177;
-	bh=PZizulifq2HVUabPYk3xuoVBwllBTb+3Td/PKhrD1JE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=PcNzu12ObRZcpna9g12fDshV2MGmXlk/nlZt9J4Gmm043u2IUfqaTpUe0NLoqIKXo
-	 ZlOKwamdwLQcC5ORXKB8Kbz9mW/Hct4sNahJjIhD2GdahXO9nYqNgAIJfR14rdXCMH
-	 lsXZR9vtIdbNSvtgHlbwubvbcL0NHyYAsJ7PFHhCITmFYDrI6WrIr6e0ocfKJBJGJN
-	 3oaa0V192M4SNay3eMc1xqzXIh/HbyOrp4+L20JAFAjy4iuV70bP1B6iETxSb5AgiO
-	 RMncC0YTj5H9ZvUET8qpbQn5gk2t5usy9+o82XELbU/+otfNr6E7Zz3riSI5j9wfUA
-	 ivumbrsVbUZGQ==
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-63bad3cd668so1158825a12.3
-        for <linux-clk@vger.kernel.org>; Thu, 16 Oct 2025 04:46:17 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXEOhu2xrCqBvaHfmndM/7Ldg9/IXUJ0WM/7HOlRkttJvtXvY2N/Y57HGXAetUrNR2u82qv35PPHpE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGr4AF1wO7up2qlgIKdBqglGpbZp9nbEXhCR9OG79UXzRrit1f
-	sda7G0e+C87194+sYAxS7QwNDu/trFM1Sjrqb3vDuV3tDzJZvpz6ElzfWMJrbPGuNVpvai0yzA3
-	vaLzq78nwi8uxCnieL9vmq79IdVT1Cw==
-X-Google-Smtp-Source: AGHT+IG/cukXQVGNzPUMXsg5+RoCAkU44f3RdQmcvQZOd/ZrFBQ7UEz32fqOhzDQMAOYnE1PB3ZCi0DPIcgQtV+P3zk=
-X-Received: by 2002:a17:907:7e96:b0:b3d:d6be:4cbe with SMTP id
- a640c23a62f3a-b50aa8a9063mr3962097166b.18.1760615174961; Thu, 16 Oct 2025
- 04:46:14 -0700 (PDT)
+	 To:Cc:Content-Type; b=hXqPlNIVBhxuv5jCI1cnBvw8Qsdn6uaAAclZEY0A0APG8O7F5Qg886Xl23QXB6lyL+Gty7Dm/ENgj4VKrR8D0CIuYS2Gh/F3dRb5KQFRG5j5uM5OKXnMYyJwhdq81pd4N/xjLewbJZ1ju1pbXVoOKW1V39XPwzyz99430TxtXz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-863fa984ef5so141546085a.3
+        for <linux-clk@vger.kernel.org>; Thu, 16 Oct 2025 05:14:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760616852; x=1761221652;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=e3GThzLUFjGbl3VuQITKYi7/BLSw+ups+ZHEY60Y/84=;
+        b=Q3rBElF4CkaDHZxQxAnNakZWtKg8Xa54PYayVVtNdP9Jfo33Wm227hrERNvJ6XaWLw
+         ApT+9ZgHR3j0/HJu/E2NVpyribQzf8yrqz0xbXCVnc4OMug4dRrvpmJHn+/bUVy/CU5f
+         mD9YM87h+mQ45prVCx06Sjx6Rl9BTG4ar2h34Ih991gUHC/+D+5V0v/g61bq43SV6S55
+         6r08FZkFRn2jPJR2ufLnPbB682KULjrzW0YR2c5Ier+WmybUysRdwCMjcomNSyMFGwbN
+         5c6xAwxfqytxtbHm4PaIDQYAxus2gMYeeDlr2+8PUcY2Lu6D0oyi3bQADU1IX3y4sYly
+         6UMw==
+X-Forwarded-Encrypted: i=1; AJvYcCWYOIS7yIWRf+5BVVt3g4my1wEvONgTT2ttaE6VdyHma2RZ0TDfxwiwzKIj5r9DOG/ENJNlXUcK4O4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YznXhzIK0DtbWIcTotP39xzeGgPb+JSqQn+yOMorF9B1Taknb7J
+	3C6ujg8x9MmhujDsrTkQR+y75/ab7WvEf0TI9xu4jbc3y+qIyLqB/O14TBsz27rI
+X-Gm-Gg: ASbGncuCszlNRaW0+ejjeoAlILB3gPzbgXflzRis14fDM6ip4NzaqB4zy4vzadwjAuB
+	eF+cA+cl9df1e13//IkRHZh00EiEguyWfXd6GeMjMIkdfM/MZ+Uj2qwLvCdyMh2r0+/Qh2CWKw1
+	Q/kshkb8Yy+Xp3K912caTGR+CScO/Ci8e9DM9aqx/ZPFJqMXfXyyklky3RW/4Q5ffE/nvLIwQ9q
+	Od09vXrvn3SkkntEtfOQUkcHj33zCPoe/VHwHzuTER3l+yAh//V+wU3+ePyhOvKpl3HK54g+NTa
+	/LvaXMAvNuZbAwDD3CW6D3ldpFkHyLtXCvpjvkgcKCXE35HF/IsiX160RQN4tlVpSyNKKEoUGdz
+	2i0n16wfNdBN5uenIIeUTk5zjzTMFa3ekzMXG139e2pXV1eIl3D+w61MToa68eVvpwZybt5G5CU
+	SgaIotWSc/NLr0FXdscpj5Ihw36MCoC2ZS808FTp8L9doJ4f8UvCk4
+X-Google-Smtp-Source: AGHT+IF8NHMBKzmOG/ciCo7TR2Icu1Ec14812J/x2FpEQYmGWj8E7Meg7snUoqZHhb8l1BRXbX3XrQ==
+X-Received: by 2002:a05:620a:6914:b0:811:76d4:6d4c with SMTP id af79cd13be357-88351de7e2dmr3822297685a.10.1760616851460;
+        Thu, 16 Oct 2025 05:14:11 -0700 (PDT)
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com. [209.85.222.173])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-88f3803b27dsm184078385a.37.2025.10.16.05.14.11
+        for <linux-clk@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 16 Oct 2025 05:14:11 -0700 (PDT)
+Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-88fca7a60cfso89311785a.2
+        for <linux-clk@vger.kernel.org>; Thu, 16 Oct 2025 05:14:11 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV1LqXDh6Fc3NecWt4HIOFmiOC/ihkgjp7GKIDHUBhyYSumZ7TOoOFUD6qAJbczalz+z4Yxjkx1BS8=@vger.kernel.org
+X-Received: by 2002:a05:6102:6c2:b0:4fb:ebe1:7db1 with SMTP id
+ ada2fe7eead31-5d5e220448dmr12281536137.12.1760616407229; Thu, 16 Oct 2025
+ 05:06:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -43,14 +59,15 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20251015232015.846282-1-robh@kernel.org> <CAMuHMdVBDN8-gWVs1f=1E2NgD6Dp4=ZFUnyzqHaQj9JWPpZepw@mail.gmail.com>
-In-Reply-To: <CAMuHMdVBDN8-gWVs1f=1E2NgD6Dp4=ZFUnyzqHaQj9JWPpZepw@mail.gmail.com>
-From: Rob Herring <robh@kernel.org>
-Date: Thu, 16 Oct 2025 06:46:02 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqL1KL4CvnxF5eQG2kN2VOxJ2Fh1yBx9=tqJEWOeg0DdzQ@mail.gmail.com>
-X-Gm-Features: AS18NWBW0tx10CGZVgmCxHc_hmn_UbUIH_yG162ZfRbVO05hKCLDAYOsOpbWm_A
-Message-ID: <CAL_JsqL1KL4CvnxF5eQG2kN2VOxJ2Fh1yBx9=tqJEWOeg0DdzQ@mail.gmail.com>
+ <CAL_JsqL1KL4CvnxF5eQG2kN2VOxJ2Fh1yBx9=tqJEWOeg0DdzQ@mail.gmail.com>
+In-Reply-To: <CAL_JsqL1KL4CvnxF5eQG2kN2VOxJ2Fh1yBx9=tqJEWOeg0DdzQ@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 16 Oct 2025 14:06:36 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUUZaL6qyuTZPoRc11WSuqcoRUFNksXZNJoijTeL+vfKQ@mail.gmail.com>
+X-Gm-Features: AS18NWBH0cbPp0cJrT4sY267e4E8JBEuMEr4tkAtjK9DVXEqfelKr3ZBbd1AYGI
+Message-ID: <CAMuHMdUUZaL6qyuTZPoRc11WSuqcoRUFNksXZNJoijTeL+vfKQ@mail.gmail.com>
 Subject: Re: [PATCH] dt-bindings: Fix inconsistent quoting
-To: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Rob Herring <robh@kernel.org>
 Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
 	Stephen Boyd <sboyd@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
 	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
@@ -78,50 +95,48 @@ Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 16, 2025 at 2:57=E2=80=AFAM Geert Uytterhoeven <geert@linux-m68=
-k.org> wrote:
->
-> Hi Rob,
->
-> On Thu, 16 Oct 2025 at 01:20, Rob Herring (Arm) <robh@kernel.org> wrote:
-> > yamllint has gained a new check which checks for inconsistent quoting
-> > (mixed " and ' quotes within a file). Fix all the cases yamllint found
-> > so we can enable the check (once the check is in a release). Use
-> > whichever quoting is dominate in the file.
+Hi Rob,
+
+On Thu, 16 Oct 2025 at 13:46, Rob Herring <robh@kernel.org> wrote:
+> On Thu, Oct 16, 2025 at 2:57=E2=80=AFAM Geert Uytterhoeven <geert@linux-m=
+68k.org> wrote:
+> > On Thu, 16 Oct 2025 at 01:20, Rob Herring (Arm) <robh@kernel.org> wrote=
+:
+> > > yamllint has gained a new check which checks for inconsistent quoting
+> > > (mixed " and ' quotes within a file). Fix all the cases yamllint foun=
+d
+> > > so we can enable the check (once the check is in a release). Use
+> > > whichever quoting is dominate in the file.
+> > >
+> > > Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 > >
-> > Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
->
-> Thanks for your patch!
->
-> Since you are mentioning mixed quotes, is one or the other preferred?
-
-I have a slight preference for single quotes.
-
-> Shouldn't we try to be consistent across all files?
-
-I don't particularly care to change 915 files. And if the tools don't
-enforce it, I'm not going to do so in reviews.
-
-> > --- a/Documentation/devicetree/bindings/pinctrl/renesas,pfc.yaml
-> > +++ b/Documentation/devicetree/bindings/pinctrl/renesas,pfc.yaml
-> > @@ -129,7 +129,7 @@ additionalProperties:
+> > Thanks for your patch!
 > >
-> >      - type: object
-> >        additionalProperties:
-> > -        $ref: "#/additionalProperties/anyOf/0"
-> > +        $ref: '#/additionalProperties/anyOf/0'
-> >
-> >  examples:
-> >    - |
-> > @@ -190,7 +190,7 @@ examples:
-> >
-> >              sdhi0_pins: sd0 {
-> >                      groups =3D "sdhi0_data4", "sdhi0_ctrl";
-> > -                    function =3D "sdhi0";
-> > +                    function =3D "sdhi0';
+> > Since you are mentioning mixed quotes, is one or the other preferred?
 >
-> Huh?
+> I have a slight preference for single quotes.
 
-One too many search and replace. Fixed.
+OK, so outside human-readable descriptions, there should only be double
+quotes in property values, i.e. on lines ending with a comma or a
+semicolon.  Sounds like that can be scripted, or validated by scripting.
 
-Rob
+> > Shouldn't we try to be consistent across all files?
+>
+> I don't particularly care to change 915 files. And if the tools don't
+> enforce it, I'm not going to do so in reviews.
+
+Fair enough.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
