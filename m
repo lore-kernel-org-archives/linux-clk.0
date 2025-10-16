@@ -1,57 +1,97 @@
-Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33A0231690D
-	for <linux-clk@vger.kernel.org>; Thu, 16 Oct 2025 10:09:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B1702E0934;
+	Thu, 16 Oct 2025 10:42:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760609372; cv=none; b=tifThccPSLKO8dUBMgUi0x8op91Clm8VCJPtEAUyicoxsL5W3Ln2qLLhipeBkIkN79ns5z+A5rpUmJi7tVlgfjgq9E3303d3km9Rju8ttBHoa2+doWzoJ54ow8Zo6g1ComveO5DOBM0LCEcnku2AohTb4ATmN0FaAm/4PLdIIko=
+	t=1760611378; cv=none; b=p0eRKHMUg1GCQMEh1+pUgSPMwv8/sUEoOXbvU1+91ZpddaiL3CX1Jv+UWJIz8jbuU5kRnj1OpgGe8YmLzvcbhOz9+E5EGkEnkXVd7Ieq4HgKCQ02t4kVhXXfW+ro0lV32d5dDhQ1fWX1Z+68tUNKIBpH6ZQrSS5pypij50O6NR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760609372; c=relaxed/simple;
-	bh=xqwpNMooTaIdz0y9JUPSbiJ3oxZWuqvmNdg4pIHMQ5k=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=gbo+7X0FNVx85rYgJ+vVOm19uerrtVxoYTIngW2n8t+o4yZ9ntvx/niK/QdIXmf64cVOSjSkkYWwiEJyAUTLo+N7U0Ea1e/RvRKBNNto745p2hTrf0R32Ii72k6DloB4voOotTd3e64QKETGTYNWAzwGRjaEQjMTdwIRDqdiT2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jookia.org; spf=pass smtp.mailfrom=jookia.org; dkim=pass (2048-bit key) header.d=jookia.org header.i=@jookia.org header.b=Dj9YJTP/; arc=none smtp.client-ip=91.218.175.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jookia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jookia.org
+	s=arc-20240116; t=1760611378; c=relaxed/simple;
+	bh=fErXExt8RSysN8h2wJXFWIVOcFCJHfLTOJEmQT9C/wc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=peiT/Acn98ADf0DiXyH1Uxid2fI/4lnOckmqUYn0E5UsATi/s1BQs16Z6McUzXm2fUhIInamWJeNSJ59t7kFfF4xyOGxKf65vJ4iMc7jYcqpX83kPB3luf1ehi77m3Wwbdyay9xRF0MXa15DtoqqEPZRgZu1PDeGsWdXJfRsGkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JmiVN99a; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jookia.org header.i=@jookia.org header.b="Dj9YJTP/"
-Date: Thu, 16 Oct 2025 21:09:07 +1100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jookia.org; s=key1;
-	t=1760609365;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type;
-	bh=WFDiFA6zLRTJNmDhHzgOdS/hX+IMuTwozMzz+W1ATuM=;
-	b=Dj9YJTP/8kUovw1bdC/cz45wh5i4b6kjqVOIKDZkaR+oKPbwS3G3L9oaYTSNi4ZdDSteKT
-	UcIR0osfydVPWkpiCSBznuT3UAkOQPQrr0zRMd+9m+PaHF8iqF9xRgUs6nUuZ0xPmPxseJ
-	jx1ozPj8JvAqspHq+Zd5SP3WjhUhlZO7kMmkbTArkeu3940AuAkgn0f70g8NY4moVKyglH
-	vuuSSAPWXNxSrqctqM8Iab/+0vZQzhbkjQ5czmAA1FxZQBfJxVfv+TPjk3UJ1jsJSkUnYT
-	k2BRqftb27uS3Wj4RxDeqsHfcQ8viaYKn2uFgO6mHp5VRsRnStU24p7AmIpt3g==
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: John Watts <contact@jookia.org>
-To: linux-clk@vger.kernel.org
-Subject: 32-bit clocks can't round above 2**31
-Message-ID: <aPDEQy7M71ZKqn-W@titan>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JmiVN99a"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB8BDC4CEF9;
+	Thu, 16 Oct 2025 10:42:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760611378;
+	bh=fErXExt8RSysN8h2wJXFWIVOcFCJHfLTOJEmQT9C/wc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=JmiVN99azeY59tVwDTzaK+WC4HQWXUncOqi3pAncLsEm7ZoloUtQxcL0wO03R+6/y
+	 PQQBiEKO8U3A1mlrvP3RQKUG6j9ISIEA8lFMKq6OCCskt7dHIy0j/pZS2yN2P4eLMz
+	 s06rZAmY58W9yL0Y0zrEm4QJTaxF1y6DQYh2/YScdddCgZwVmREfLd2kNXizNAbYu3
+	 irTpEnrr8B/lItxlpxgJkCPDQrtZMwjRZuqn2MKytv65xyyjRGmMQZEzKLoRBhVQ7J
+	 CJm5MFX/ATbnHUJ3MR8dMAmQ4RWRJ5o34bBiuNvdsY14Eg+qoDg7pTytqL4EyvS+HT
+	 hgj3oGQp5xSsQ==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: Tamir Duberstein <tamird@gmail.com>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, Miguel Ojeda
+ <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng
+ <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn?=
+ Roy Baron
+ <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, Alice Ryhl
+ <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo Krummrich
+ <dakr@kernel.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann
+ <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter
+ <simona@ffwll.ch>, FUJITA Tomonori <fujita.tomonori@gmail.com>, Andrew
+ Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, Russell
+ King <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Breno Leitao
+ <leitao@debian.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Luis
+ Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, Dave
+ Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>, Leon
+ Romanovsky <leon@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+ Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Arnd
+ Bergmann
+ <arnd@arndb.de>, Brendan Higgins <brendan.higgins@linux.dev>, David Gow
+ <davidgow@google.com>, Rae Moar <rmoar@google.com>, Jens Axboe
+ <axboe@kernel.dk>, Alexandre Courbot <acourbot@nvidia.com>, Alexander Viro
+ <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan
+ Kara <jack@suse.cz>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown
+ <broonie@kernel.org>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org, nouveau@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, netdev@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-pci@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
+ linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org, Tamir
+ Duberstein <tamird@gmail.com>
+Subject: Re: [PATCH v2 17/19] rust: sync: replace `kernel::c_str!` with
+ C-Strings
+In-Reply-To: <20250925-core-cstr-cstrings-v2-17-78e0aaace1cd@gmail.com>
+References: <20250925-core-cstr-cstrings-v2-0-78e0aaace1cd@gmail.com>
+ <20250925-core-cstr-cstrings-v2-17-78e0aaace1cd@gmail.com>
+Date: Thu, 16 Oct 2025 12:42:35 +0200
+Message-ID: <874irz5dr8.fsf@t14s.mail-host-address-is-not-set>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain
 
-Hi, just a small bug I spotted when debugging some code. Hope this helps.
+Tamir Duberstein <tamird@gmail.com> writes:
 
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -1572,7 +1572,7 @@ late_initcall_sync(clk_disable_unused);
- static int clk_core_determine_round_nolock(struct clk_core *core,
-                                           struct clk_rate_request *req)
- {
--       long rate;
-+       unsigned long rate;
- 
-        lockdep_assert_held(&prepare_lock);
+> C-String literals were added in Rust 1.77. Replace instances of
+> `kernel::c_str!` with C-String literals where possible.
+>
+> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+> Reviewed-by: Benno Lossin <lossin@kernel.org>
+> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+
+Acked-by: Andreas Hindborg <a.hindborg@kernel.org>
+
+
+Best regards,
+Andreas Hindborg
+
+
 
