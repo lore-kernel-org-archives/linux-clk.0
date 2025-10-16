@@ -1,87 +1,62 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 530C232D0E1;
-	Thu, 16 Oct 2025 16:31:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7887A2E229C
+	for <linux-clk@vger.kernel.org>; Thu, 16 Oct 2025 17:28:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760632304; cv=none; b=ppOExmXrhWc8K7kfT308TbB4X8ABZ/ZG4oZHhsavzpT/dDx/clgtqvweh1JXoMEtUk1t3uqsIOnRmf8MuDGJoImH4tiIiVeEWdkGbvVXbG3gMzfoB9DbwdQ7NonYbU5SHP8XDN2bnVpaLwaXMTicEoFoS0E32NIpYjTJLDWptHM=
+	t=1760635700; cv=none; b=s+KSzpjuuZgTTYXB5V35HWq8kvdnL+lfTRYlo5qKQ+HBx/EJRKhVZwmfoTD1DUnZyrQweAJIXcAp7QuQv6HUu8bX2XvRn9Evhy+m60BbPSVKOIIaSXduF+XVSbqN27ITPIqH76eWqp20qQWG2EYFINhXYoXMl0j1gvmJs49sDjg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760632304; c=relaxed/simple;
-	bh=29W5nbATLg28IhUhpNbWJzH8SNHYX5AYEkj889sc9+k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JfQFixmiVmNKaMqfpg2U4mB3mJ9YZEROWv2lICShK/z70MkCTJSlO6+4vFLoyR0Y68Lx6aq1v/mNZUCcxuaEgu6spQDlmwN5jIA+knu8CPyvxlMufbzse4BoUSTUDFEP3/oXfI3h2m/D50fAJhTvMluqVZj93uBxFFrGj6qwjUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pFtCA44i; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1760635700; c=relaxed/simple;
+	bh=tZbgRbpFSIWSXqOxYGNL8H9YbvCuakZJM7LBaeTyqzs=;
+	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:To:
+	 Date:Message-ID; b=FC4COJ/fdd6IPh7PgpbeUa1krz7jGAThPJSvziAq2YPSv735331T1qKzsKrHSRsjuIU+d1f31uBClTth1jk7bitgiIWECo9QubdDphvfjdDQ/2ptPuv57O/uU6hZs0RydK52lf/v+EkBaRwttu5bNV7an2vtyj5g8bVCSf43Hr8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nxBIbzil; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pFtCA44i"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FB2FC4CEF1;
-	Thu, 16 Oct 2025 16:31:40 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nxBIbzil"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA800C4CEF1;
+	Thu, 16 Oct 2025 17:28:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760632303;
-	bh=29W5nbATLg28IhUhpNbWJzH8SNHYX5AYEkj889sc9+k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pFtCA44i6uxF+9s4JNBqT9WeY/G9YYlQMIH20RphumNcs3qYiz9OzadSzPhPCqgdW
-	 rvjp16iCsQgrS3D33mowTrTFqqgs5UbnhZDZiqbn3KxMheWP4Cpv2J26+iiPlzko6F
-	 lcaAeaZ/+m2cniCZ3zj+2wu0RhyYouFsbwOVTykcxFWsr3HY0AH/Ayxv1wd+TrR4WM
-	 lB1a0Evjy4vWqH7iAs9bYte2IH7iXz5EzcQT74rQK9qDVdz6tcRX4LPEAYokTowTc+
-	 +J2afBV6FMYZL2CgcBwLmnw6pCD3p4rjk8MdyS5KIJK88afhucf56TPuJ6/lbJL7nF
-	 ff2X8UaZJCJUw==
-Date: Thu, 16 Oct 2025 17:31:38 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Marek Vasut <marek.vasut@mailbox.org>
-Cc: dri-devel@lists.freedesktop.org, Frank Li <Frank.Li@nxp.com>,
-	Abel Vesa <abelvesa@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Fabio Estevam <festevam@gmail.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Liu Ying <victor.liu@nxp.com>, Lucas Stach <l.stach@pengutronix.de>,
-	Peng Fan <peng.fan@nxp.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Rob Herring <robh@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Thomas Zimmermann <tzimmermann@suse.de>, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2] dt-bindings: interrupt-controller: fsl,irqsteer: Add
- i.MX95 support
-Message-ID: <20251016-anger-pretzel-87c1f84b8673@spud>
-References: <20251014215801.51331-1-marek.vasut@mailbox.org>
+	s=k20201202; t=1760635700;
+	bh=tZbgRbpFSIWSXqOxYGNL8H9YbvCuakZJM7LBaeTyqzs=;
+	h=In-Reply-To:References:Subject:From:To:Date:From;
+	b=nxBIbzil8baDNcoXHk1NNy0z1eE6hL5H4OkBvT1gSJSwxevfGSWVTkLvCcBoimPpL
+	 euti2Wp4nHihpDLV3eyouqapU30sV2K/0d3JMCZZt7XV3LHmz7KZqhOPHxAnXNxu0H
+	 31dX1bx9+UfXi4ruFnDfTCnvWzMMZvRC3sFn6PhSVGqrjQBP0cY7szM3P+s1/UZxcn
+	 9qFayXQ/8LFpvK4LCtnf+3AistRpwIO7QqRAj8DYGRBn+3mipwp7WYNNlDul0CGk2a
+	 vFmK6TkSODnYKf3WqJPkLo/2MjL6sD1YhrLjFvy+cjKYKqXultjx0GJW5XN9Loqgd0
+	 9zb3/vOc5iNUw==
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="T89yuDH1YCgqWT9Y"
-Content-Disposition: inline
-In-Reply-To: <20251014215801.51331-1-marek.vasut@mailbox.org>
-
-
---T89yuDH1YCgqWT9Y
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <aPDEQy7M71ZKqn-W@titan>
+References: <aPDEQy7M71ZKqn-W@titan>
+Subject: Re: 32-bit clocks can't round above 2**31
+From: Stephen Boyd <sboyd@kernel.org>
+To: John Watts <contact@jookia.org>, linux-clk@vger.kernel.org
+Date: Thu, 16 Oct 2025 10:28:18 -0700
+Message-ID: <176063569888.11701.5380644365407350173@lazor>
+User-Agent: alot/0.11
 
-On Tue, Oct 14, 2025 at 11:57:15PM +0200, Marek Vasut wrote:
-> Add compatible string "fsl,imx95-irqsteer" for the i.MX95 chip, which is
-> backward compatible with "fsl,imx-irqsteer".
+Quoting John Watts (2025-10-16 03:09:07)
+> Hi, just a small bug I spotted when debugging some code. Hope this helps.
+
+Please submit a proper patch. Thanks!
+
 >=20
-> Reviewed-by: Frank Li <Frank.Li@nxp.com>
-> Signed-off-by: Marek Vasut <marek.vasut@mailbox.org>
-
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-pw-bot: not-applicable
-
---T89yuDH1YCgqWT9Y
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaPEd6gAKCRB4tDGHoIJi
-0vgtAQCsWApIMcAo4VKXn6RTQPNgNRFXtSQGMXFxXZFAmCE4WQEAnpcjtLoHMOEm
-RAckTJ0NvNnAdqmW9zbbJNm50vefMAU=
-=16D2
------END PGP SIGNATURE-----
-
---T89yuDH1YCgqWT9Y--
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -1572,7 +1572,7 @@ late_initcall_sync(clk_disable_unused);
+>  static int clk_core_determine_round_nolock(struct clk_core *core,
+>                                            struct clk_rate_request *req)
+>  {
+> -       long rate;
+> +       unsigned long rate;
+> =20
+>         lockdep_assert_held(&prepare_lock);
+>
