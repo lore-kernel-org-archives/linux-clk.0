@@ -1,133 +1,127 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A74FD7263B
-	for <linux-clk@vger.kernel.org>; Thu, 16 Oct 2025 11:23:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA29531D371
+	for <linux-clk@vger.kernel.org>; Thu, 16 Oct 2025 11:46:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760613834; cv=none; b=fV1dBeWMfZYxgSXF7R1Yx5a/tedGEfJcafKniKFVfOBOPI8PO0OPDD/718dP3tIghZawcsv9yWFUjqCocmJ7kvFT3R560fC6AHHB8hEoXjPZSeyJAjesU2IlthloYAtPb5dKHnqsFWDI5kmSypKr9PjKj4AHrQ23Qze9tqSRqAQ=
+	t=1760615177; cv=none; b=UAaK+k9Gzkjoc7IoHmW6z/4VsNeyN41oW8Dh8g5kS3z3o//bVignvmIpP0oe/wJmcQHaL5120xdwpXHeObHfVkUxjbbdtZ0PsHYZDcIDgYPV2AZevVvMAZOWSLPTd0CLOYz8e5e5k3D7nwuzxECWKMq6btLkPCEDsoNtJLpPIVk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760613834; c=relaxed/simple;
-	bh=I31Uk3YWJwyrgQXxbhKQwPqLbs2QoJCuIf4PyZoBnbY=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:From:To:
-	 References:In-Reply-To; b=QMhSIdrk0eGtb4PFnKEl0EBvr80WsIgxmOs43EhV1MvM4kxaVwAy+vITxs7GqkGQ5HaNluKZUEFTnPshebDaf0ZCuVfcjGo72u4gs4RIzsGtQSkCbQNSlOM1uGXMCE03YcGZZNK9cxjSmHq+YrJtI5LvcdQ7MZtwxxnGfrZk7q8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sQCnSNh6; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1760615177; c=relaxed/simple;
+	bh=PZizulifq2HVUabPYk3xuoVBwllBTb+3Td/PKhrD1JE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ioj2mpk/CYgjomRiMXbRtUToRv5LMaIOI0XG2TrRpuNI2plOqWXl+jKTT9H5nG216kZmODGNsM1Vbgqo8T4PDtBLUwYy7Ym4MvZexua7lu5u/j/tikBGLBVrq0wudxeR2qHU/2V1qakueKKQh4+uMEJqalZG5Hg7b6CQpxLAGAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PcNzu12O; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sQCnSNh6"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8E89C4CEF1;
-	Thu, 16 Oct 2025 11:23:53 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PcNzu12O"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6780EC116C6
+	for <linux-clk@vger.kernel.org>; Thu, 16 Oct 2025 11:46:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760613834;
-	bh=I31Uk3YWJwyrgQXxbhKQwPqLbs2QoJCuIf4PyZoBnbY=;
-	h=Date:Subject:Cc:From:To:References:In-Reply-To:From;
-	b=sQCnSNh6rhYku5EQvxFFEnicBup3dou2cVJJtlg6BTvyfwGs3U0ytXDFcmBEemVOd
-	 3zTsRt91nraUBEUzsF2Rh0DKsdHJCViFS3qhlqoEOFU1NeTUTZ40aV1Qp14JMFfsgT
-	 1C+3InGl0DwtE4fqenC6VR5cfsehtkd688I/N1JBPFdgHvCyxsPRSf2SX5UoN3gptc
-	 u27OepqpwEM5ifQ0//KrXncqxw5KeSHe088zaIswIQ8vs59ew1YxSaWkWfkdWtKsuV
-	 UacZ4l+k8dCCb9KRhp6zKlNKGmUSYUucCCMuUHjeeWuZrcUukqGXvSxYEnMBWXeifU
-	 pbCDTyNmvQcmA==
+	s=k20201202; t=1760615177;
+	bh=PZizulifq2HVUabPYk3xuoVBwllBTb+3Td/PKhrD1JE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=PcNzu12ObRZcpna9g12fDshV2MGmXlk/nlZt9J4Gmm043u2IUfqaTpUe0NLoqIKXo
+	 ZlOKwamdwLQcC5ORXKB8Kbz9mW/Hct4sNahJjIhD2GdahXO9nYqNgAIJfR14rdXCMH
+	 lsXZR9vtIdbNSvtgHlbwubvbcL0NHyYAsJ7PFHhCITmFYDrI6WrIr6e0ocfKJBJGJN
+	 3oaa0V192M4SNay3eMc1xqzXIh/HbyOrp4+L20JAFAjy4iuV70bP1B6iETxSb5AgiO
+	 RMncC0YTj5H9ZvUET8qpbQn5gk2t5usy9+o82XELbU/+otfNr6E7Zz3riSI5j9wfUA
+	 ivumbrsVbUZGQ==
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-63bad3cd668so1158825a12.3
+        for <linux-clk@vger.kernel.org>; Thu, 16 Oct 2025 04:46:17 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXEOhu2xrCqBvaHfmndM/7Ldg9/IXUJ0WM/7HOlRkttJvtXvY2N/Y57HGXAetUrNR2u82qv35PPHpE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGr4AF1wO7up2qlgIKdBqglGpbZp9nbEXhCR9OG79UXzRrit1f
+	sda7G0e+C87194+sYAxS7QwNDu/trFM1Sjrqb3vDuV3tDzJZvpz6ElzfWMJrbPGuNVpvai0yzA3
+	vaLzq78nwi8uxCnieL9vmq79IdVT1Cw==
+X-Google-Smtp-Source: AGHT+IG/cukXQVGNzPUMXsg5+RoCAkU44f3RdQmcvQZOd/ZrFBQ7UEz32fqOhzDQMAOYnE1PB3ZCi0DPIcgQtV+P3zk=
+X-Received: by 2002:a17:907:7e96:b0:b3d:d6be:4cbe with SMTP id
+ a640c23a62f3a-b50aa8a9063mr3962097166b.18.1760615174961; Thu, 16 Oct 2025
+ 04:46:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: multipart/signed;
- boundary=5d365f8004443b969733adad42e553ed3a27fb4f50366628902a0127d1d9;
- micalg=pgp-sha384; protocol="application/pgp-signature"
-Date: Thu, 16 Oct 2025 13:23:49 +0200
-Message-Id: <DDJPIJGC8W1L.1BCHJEG3FO574@kernel.org>
-Subject: Re: [PATCH] clk: do not trust cached rates for disabled clocks
-Cc: <linux-clk@vger.kernel.org>
-From: "Michael Walle" <mwalle@kernel.org>
-To: <rs@ti.com>, <mturquette@baylibre.com>, <sboyd@kernel.org>
+MIME-Version: 1.0
+References: <20251015232015.846282-1-robh@kernel.org> <CAMuHMdVBDN8-gWVs1f=1E2NgD6Dp4=ZFUnyzqHaQj9JWPpZepw@mail.gmail.com>
+In-Reply-To: <CAMuHMdVBDN8-gWVs1f=1E2NgD6Dp4=ZFUnyzqHaQj9JWPpZepw@mail.gmail.com>
+From: Rob Herring <robh@kernel.org>
+Date: Thu, 16 Oct 2025 06:46:02 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqL1KL4CvnxF5eQG2kN2VOxJ2Fh1yBx9=tqJEWOeg0DdzQ@mail.gmail.com>
+X-Gm-Features: AS18NWBW0tx10CGZVgmCxHc_hmn_UbUIH_yG162ZfRbVO05hKCLDAYOsOpbWm_A
+Message-ID: <CAL_JsqL1KL4CvnxF5eQG2kN2VOxJ2Fh1yBx9=tqJEWOeg0DdzQ@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: Fix inconsistent quoting
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Stephen Boyd <sboyd@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
+	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	Shawn Guo <shawnguo@kernel.org>, Fabio Estevam <festevam@gmail.com>, 
+	=?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, 
+	Jonathan Cameron <jic23@kernel.org>, Andy Shevchenko <andy@kernel.org>, 
+	Jassi Brar <jassisinghbrar@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Lee Jones <lee@kernel.org>, Joel Stanley <joel@jms.id.au>, 
+	Andrew Jeffery <andrew@codeconstruct.com.au>, Andrew Lunn <andrew@lunn.ch>, 
+	Vladimir Oltean <olteanv@gmail.com>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Daire McNamara <daire.mcnamara@microchip.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Manivannan Sadhasivam <mani@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, Vinod Koul <vkoul@kernel.org>, 
+	Kishon Vijay Abraham I <kishon@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Nicolas Ferre <nicolas.ferre@microchip.com>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+	Florian Fainelli <f.fainelli@gmail.com>, Tony Lindgren <tony@atomide.com>, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-iio@vger.kernel.org, linux-media@vger.kernel.org, 
+	netdev@vger.kernel.org, linux-pci@vger.kernel.org, 
+	linux-phy@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Mailer: aerc 0.20.0
-References: <20251003222917.706646-2-rs@ti.com>
-In-Reply-To: <20251003222917.706646-2-rs@ti.com>
 
---5d365f8004443b969733adad42e553ed3a27fb4f50366628902a0127d1d9
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-
-Hi,
-
-On Sat Oct 4, 2025 at 12:29 AM CEST, rs wrote:
-> From: Randolph Sapp <rs@ti.com>
+On Thu, Oct 16, 2025 at 2:57=E2=80=AFAM Geert Uytterhoeven <geert@linux-m68=
+k.org> wrote:
 >
-> Recalculate the clock rate for unprepared clocks. This cached value can
-> vary depending on the clocking architecture. On platforms with clocks
-> that have shared management it's possible that:
+> Hi Rob,
 >
->  - Previously disabled clocks have been enabled by other entities
->  - Rates calculated during clock tree initialization could have changed
+> On Thu, 16 Oct 2025 at 01:20, Rob Herring (Arm) <robh@kernel.org> wrote:
+> > yamllint has gained a new check which checks for inconsistent quoting
+> > (mixed " and ' quotes within a file). Fix all the cases yamllint found
+> > so we can enable the check (once the check is in a release). Use
+> > whichever quoting is dominate in the file.
+> >
+> > Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 >
-> Signed-off-by: Randolph Sapp <rs@ti.com>
-> ---
+> Thanks for your patch!
 >
-> I'm hoping this will start a bit of a discussion. I'm still curious why p=
-eople
-> would want to read the rate of an unprepared clock, but there were so man=
-y
-> logged operations on my test platforms that I assumed it must have some p=
-urpose.
+> Since you are mentioning mixed quotes, is one or the other preferred?
 
-> Either way, I don't believe cached values should ever be trusted in this
-> scenario.
+I have a slight preference for single quotes.
+
+> Shouldn't we try to be consistent across all files?
+
+I don't particularly care to change 915 files. And if the tools don't
+enforce it, I'm not going to do so in reviews.
+
+> > --- a/Documentation/devicetree/bindings/pinctrl/renesas,pfc.yaml
+> > +++ b/Documentation/devicetree/bindings/pinctrl/renesas,pfc.yaml
+> > @@ -129,7 +129,7 @@ additionalProperties:
+> >
+> >      - type: object
+> >        additionalProperties:
+> > -        $ref: "#/additionalProperties/anyOf/0"
+> > +        $ref: '#/additionalProperties/anyOf/0'
+> >
+> >  examples:
+> >    - |
+> > @@ -190,7 +190,7 @@ examples:
+> >
+> >              sdhi0_pins: sd0 {
+> >                      groups =3D "sdhi0_data4", "sdhi0_ctrl";
+> > -                    function =3D "sdhi0";
+> > +                    function =3D "sdhi0';
 >
->  drivers/clk/clk.c | 12 ++++++++++--
->  1 file changed, 10 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index 85d2f2481acf..9c8b9036b6f6 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -1971,8 +1971,16 @@ static void __clk_recalc_rates(struct clk_core *co=
-re, bool update_req,
-> =20
->  static unsigned long clk_core_get_rate_recalc(struct clk_core *core)
->  {
-> -	if (core && (core->flags & CLK_GET_RATE_NOCACHE))
-> -		__clk_recalc_rates(core, false, 0);
-> +	if (core) {
-> +		bool prepared =3D clk_core_is_prepared(core);
-> +
-> +		if (core->flags & CLK_GET_RATE_NOCACHE || !prepared) {
-> +			if (!prepared)
-> +				pr_debug("%s: rate requested for unprepared clock %s\n",
-> +					 __func__, core->name);
-> +			__clk_recalc_rates(core, false, 0);
-> +		}
-> +	}
+> Huh?
 
-I'm not sure this patch is correct. In case the clock is not
-prepared, the rate is still cached in __clk_recalc_rates(). Thus,
-I'd expect the following sequence to return a wrong rate:
+One too many search and replace. Fixed.
 
-  # assuming clock is unprepared and will return 0
-  clk_get_rate()       // this will fetch the (wrong) rate and cache it
-  clk_prepare_enable()
-  clk_get_rate()       // this will then return the cached rate
-
-Or do I miss something here?
-
--michael
-
-> =20
->  	return clk_core_get_rate_nolock(core);
->  }
-
-
---5d365f8004443b969733adad42e553ed3a27fb4f50366628902a0127d1d9
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iKgEABMJADAWIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCaPDVxhIcbXdhbGxlQGtl
-cm5lbC5vcmcACgkQEic87j4CH/gVMgGAmPxKXbmMB8iQ7fv7RVC6aU1um/P88QT/
-z73j48nLVomzZlUtBHJt5liYpVs8GLMfAX9fCcPCeUxJhTXcz9RqZXNnZRfEQ+gh
-KHfjRE0xGYGdhWW9NkmwE8pMeLapWwWHg8M=
-=4ML6
------END PGP SIGNATURE-----
-
---5d365f8004443b969733adad42e553ed3a27fb4f50366628902a0127d1d9--
+Rob
