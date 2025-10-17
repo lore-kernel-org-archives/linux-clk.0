@@ -1,328 +1,89 @@
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 951BC269AE9
-	for <linux-clk@vger.kernel.org>; Fri, 17 Oct 2025 08:02:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8559D29A31D;
+	Fri, 17 Oct 2025 08:31:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760688175; cv=none; b=UHnlyxZF1ONQf91z2xVjwXeah4R/YgCQaFUfwmSfL2cDc7cmtwkkfWNao3KPvSaVW6tc5VEF6CC6hXQwd0eoRyWhH15WafI0dxOixJwM7QWARw2CwKMxUecedqY7fKuIMHt5db8c4o3jfigosWZCCMa2aDPczwHy+KJ1UIQgQCc=
+	t=1760689909; cv=none; b=Cw7VdikmW2nfjv3s3x69iXQKqX6x76h2EhdpQX6DWqvHyeJ+vqx8f9yXbAM0iSajFIwpHlzS2Cw3/ptwk63mRGtfekLvtkFGa77/eskzLhtfEA8PSa/Vx4rJW3Y1t0sJ14sF00oyW6D3qRzW7dAb1oClmLHz2cVMj3cMUSSPpYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760688175; c=relaxed/simple;
-	bh=BHss4FoO2Qi0SvA29bXFSquG2p3R4Bnd8ZfEOJ8J/48=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=XHaG2qjR2Xuc54Rl7Id3A2CkvLc9a59C0voM3mS/4W9qSBhgwzqEkyp3yoQf5uLLPaNxFhCaNVuKYis0w3iRA+qJUHvWRKdypaiogTHFyZFpmQAQX46tlGlxZ/sA92D+5ykMiSqd5C/KY98y9/1upu1Ugdrt21RPOTIbkC7rDl0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=QI3LYkqf; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+	s=arc-20240116; t=1760689909; c=relaxed/simple;
+	bh=8JUiOrjDfOdA/96I1n2RoxKgJNH0r2C48Z5YYltnGhg=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=dBOiLDtZVGt29Ubh66K3Ek3jjd7T+G+S6+ELRlvNdKSOrjiuOOBEMLAbBwk3BcUsZKssvYPK/v/yg87Zrox/O8762emWQEgfjFnZ4/iqmAyEvOrzWd12RbxQgRWALgtgJKzdcEBoMdke4h3H+WhRyAupWqFGPcXJwCabe99peoo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bSxYK2kD; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="QI3LYkqf"
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-46b303f755aso16298185e9.1
-        for <linux-clk@vger.kernel.org>; Fri, 17 Oct 2025 01:02:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1760688172; x=1761292972; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XAxSMRXVZPlPv/36eReBoBLx3IDrZODJTLPnejHOYjs=;
-        b=QI3LYkqf1evy1hZLcNUlOmXftN9gD02zLR4s59g4xPS5FgoapWx2sSht7w+fkVGdXq
-         VgaO9hoO1sJr9y55QmaqjrKSfU+rqsM/WazBW9aDcqScjl0vI+m5CQ8zDWS/hms4TWyn
-         z+sCa8iNVtFaBCjioktlMc8opC4Ps4G+MIHaywlRQwp8B6yJUo6e4bgp12P8Abic+cD8
-         N7K5i2L8cD/Gthgnbrsa7MGALSEuwEToIA5O9VX7p+ac3r5xmfZB/FXkUyISwmoXhLW0
-         i3vU+GFm4CB/xBN8fUnYvckoj6B4NvKjfdyJNFB7DbGuDBz4b3Er8XfUnNA/PlxwLTx3
-         CZbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760688172; x=1761292972;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XAxSMRXVZPlPv/36eReBoBLx3IDrZODJTLPnejHOYjs=;
-        b=OhnNBK4mu+AVSOYQlxAbytBWAcT0bJFrfxveF/5VnUlM0whHlSsgtV5TsFmDWvvJvT
-         rCNNNE3vdJtDTebcRzS5wTTCfnMR+ciSfIDf2lynLzCV5gbxk8IOLZjnsv/jzLNBpi9N
-         8iPlEKxT3ka3VdBKtjNVs13K5lUdUWP5V7AUCEfQInA6yHcSnEISkpTkeQ86mq64rLDn
-         NFNKk8Thgb4AOGyLdyYjgIBM5lEKy74uuVug6o63MLmv+ew2WFkh6aw9LS0hqpUvhLO5
-         NXyaL0ynANAFS9L5RhmnGXzKw1e6oG1wa3iCdU6T6SScEClnGEyUsHTJTFr4vzi6dpY0
-         updQ==
-X-Gm-Message-State: AOJu0YzOWlnaRHnT8OIZX38XzgXbtHphH8HiwlwNnfk3EUeI2zGBllG5
-	D/L4Rww8DSjS2HcwDtkQB+q+wsKBhxF5pCfl0o+GCAY3WrfGnXRH5PyhHETYwh0SABg=
-X-Gm-Gg: ASbGncsn7ibAY75kiGHEPc/SOJymtVBe7UO/jd6fRZf4zhy2xa0i4ybJ+aaXBlH0sjG
-	0WWFyjq/5HpjyIAUr+rzVKCY+YSjGlLxKj9XKZ6P8GpO/smBy2A1C5lAn6FSQePIqq4Q0J3AvTX
-	ZqZhF3MeuDcwJPHd3moiTVVVZ4ACvO/wrSFo4dp+ImnU00fnt0qEfA90giJi7j19azFAKYN/aDZ
-	2+72WbR3FdvygkqOnC3D3lkOMgenN9j8LOPSEhgho5v10O3mdSve7ajte4k73eE452vWphb2ExM
-	iu/LjA3W8WF21mOtTwJL/CEOrO+WNOWOe0VK2hcGAQoqtrWVAdB1xDmhH+RBTTslPCW9nktI66j
-	LjPIum9XRZOdyMGn8dLfVUjGe7j0RrNcVNGDOjuMfvkIyNLGpKq5DHTGP6oz3samqactQLc0=
-X-Google-Smtp-Source: AGHT+IHvCHZjcj7wi3K1kJaTaFOa1B+LFzitGId9ApKssL7/DI8nCK+H7MZM4mkNZmUXbA7wEjH1aQ==
-X-Received: by 2002:a5d:5f82:0:b0:425:86c8:c4ff with SMTP id ffacd0b85a97d-42704d90011mr2229269f8f.22.1760688171765;
-        Fri, 17 Oct 2025 01:02:51 -0700 (PDT)
-Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:6c59:a281:27c9:93a1])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42708bcea1bsm1082308f8f.14.2025.10.17.01.02.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Oct 2025 01:02:49 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Fri, 17 Oct 2025 10:02:42 +0200
-Subject: [PATCH 2/2] reset: remove legacy reset lookup code
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bSxYK2kD"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED015C4CEE7;
+	Fri, 17 Oct 2025 08:31:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760689908;
+	bh=8JUiOrjDfOdA/96I1n2RoxKgJNH0r2C48Z5YYltnGhg=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=bSxYK2kDJV4zgONmPeuPitDLrbENAOcdwhHNI9fk2w0/zI5It/AVh5B3m2jkhK9S7
+	 geXRz55eImzmjpiK8aUGHgF8yVZhmi8zxkgihRCKnMIWmnCqMFPZMUomGx2keiu7H5
+	 TDWkfMaZgaKdT5MHSOx2Hxdy4ZoLUQGuBSytAwCdaVRGR9t5WY96tAUTsNsARIPvc4
+	 OW4xweUoJtc4gGXNhSkQg3OxGtfijv6DD9W0NDlgC8MimW8fVppaqm3rUS8FdJehf2
+	 nb8B/nVLpIqWKO4ZekSXkLFbOnMNF3onDdBkYeo+s/ZbYRqUkKh5JIYy6wGz8qdH3n
+	 6benPmRb8/eoA==
+Date: Fri, 17 Oct 2025 03:31:46 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251017-da850-reset-lookup-v1-2-362a309a9f09@linaro.org>
-References: <20251017-da850-reset-lookup-v1-0-362a309a9f09@linaro.org>
-In-Reply-To: <20251017-da850-reset-lookup-v1-0-362a309a9f09@linaro.org>
-To: David Lechner <david@lechnology.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6888;
- i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
- bh=A2X6FNVmrkD9MIoR5QwN+WAFrugrM3iUCi2XfKX/Rgs=;
- b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBo8fgmUaaxm5mLolw+xBKawAlQ/qYaq0ttSCT3q
- YFt0rYPJ76JAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCaPH4JgAKCRARpy6gFHHX
- clGDEADCA8fWq+VssPhKVjgjOC8Xqdy9nrNm9DnAhZKSvv/wSZ7TCkSqc2eLxMwLgXAMjchQd1H
- hb4W22aIVDhVyrZRU/aG+Q+B046614BepLfGNvosR1gzgMFHe+0KXDeAQaQ4gUaB4sqkMkY2Q6n
- YSWoSy1hKKnJkuZ4//e3Jp2eyBTDz51CcWa6EZTZGeFmWpANL6HH6m65X8AjtOGj2WFmXkACQds
- vOXbECFD+bqPKaJYeWYNxMPBpLZXFe4Gzy8GWKQZe11yGE0j7atG439AENCmvTaKQ+XkGCMDih6
- 8oTMmPQwxg/UcRNCe+e3ehVmDGTBMTycPfg+Qpkrro/m/fJFLcbmUEfKBzsfxlW3g59B9QHGTnI
- n+5Fgau1WaAuU95nKKclwL49j6l3/B4th/pBpzDWVLRAPKUBhHr6eBLxwwi8N69gTGNxC4XpOX5
- 7DZGlwDVHFiERoyW/wdd1/1lDaAe/rCWuMMsAZpbw+fzqREMeU+oVJelD8evr/V243Rinq0sOfB
- g8t2ZCiKRewjxoZEvXP+8pt29MbpMh0VZVHNVNR0BMX56g387f4MawcLWlNuut8XEaU2BMacsPt
- cc4BmjWVTgYGI9MJckswxLyOjRy6uD0XnPEJROMh4qq8nFLVnt8dhilyQkNC0ao3SEyzpiek1rt
- bcIvB4OSbHScotw==
-X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
- fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: sugar.zhang@rock-chips.com, krzysztof.kozlowski+dt@linaro.org, 
+ linux-arm-kernel@lists.infradead.org, heiko@sntech.de, 
+ mturquette@baylibre.com, conor+dt@kernel.org, huangtao@rock-chips.com, 
+ linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+ linux-clk@vger.kernel.org, sboyd@kernel.org, devicetree@vger.kernel.org
+To: Elaine Zhang <zhangqing@rock-chips.com>
+In-Reply-To: <20251017063107.1606965-5-zhangqing@rock-chips.com>
+References: <20251017063107.1606965-1-zhangqing@rock-chips.com>
+ <20251017063107.1606965-5-zhangqing@rock-chips.com>
+Message-Id: <176068990653.1336490.3635831064787473495.robh@kernel.org>
+Subject: Re: [PATCH v2 4/5] dt-bindings: clock: Add support for rockchip
+ pvtpll
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-There are no more users of this code. Let's remove the exported symbols
-and the implementation from reset core.
+On Fri, 17 Oct 2025 14:31:06 +0800, Elaine Zhang wrote:
+> Add pvtpll documentation for rockchip.
+> 
+> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+> ---
+>  .../bindings/clock/rockchip,clk-pvtpll.yaml   | 98 +++++++++++++++++++
+>  1 file changed, 98 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/rockchip,clk-pvtpll.yaml
+> 
 
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
- drivers/reset/core.c             | 120 +--------------------------------------
- include/linux/reset-controller.h |  33 -----------
- 2 files changed, 2 insertions(+), 151 deletions(-)
+My bot found errors running 'make dt_binding_check' on your patch:
 
-diff --git a/drivers/reset/core.c b/drivers/reset/core.c
-index 22f67fc77ae531c6efba3ce92cc73a2d57397762..9ca4ac27daf955d7fe74f7684819072a6f32492b 100644
---- a/drivers/reset/core.c
-+++ b/drivers/reset/core.c
-@@ -190,33 +190,6 @@ int devm_reset_controller_register(struct device *dev,
- }
- EXPORT_SYMBOL_GPL(devm_reset_controller_register);
- 
--/**
-- * reset_controller_add_lookup - register a set of lookup entries
-- * @lookup: array of reset lookup entries
-- * @num_entries: number of entries in the lookup array
-- */
--void reset_controller_add_lookup(struct reset_control_lookup *lookup,
--				 unsigned int num_entries)
--{
--	struct reset_control_lookup *entry;
--	unsigned int i;
--
--	mutex_lock(&reset_lookup_mutex);
--	for (i = 0; i < num_entries; i++) {
--		entry = &lookup[i];
--
--		if (!entry->dev_id || !entry->provider) {
--			pr_warn("%s(): reset lookup entry badly specified, skipping\n",
--				__func__);
--			continue;
--		}
--
--		list_add_tail(&entry->list, &reset_lookup_list);
--	}
--	mutex_unlock(&reset_lookup_mutex);
--}
--EXPORT_SYMBOL_GPL(reset_controller_add_lookup);
--
- static inline struct reset_control_array *
- rstc_to_array(struct reset_control *rstc) {
- 	return container_of(rstc, struct reset_control_array, base);
-@@ -1081,70 +1054,6 @@ __of_reset_control_get(struct device_node *node, const char *id, int index,
- }
- EXPORT_SYMBOL_GPL(__of_reset_control_get);
- 
--static struct reset_controller_dev *
--__reset_controller_by_name(const char *name)
--{
--	struct reset_controller_dev *rcdev;
--
--	lockdep_assert_held(&reset_list_mutex);
--
--	list_for_each_entry(rcdev, &reset_controller_list, list) {
--		if (!rcdev->dev)
--			continue;
--
--		if (!strcmp(name, dev_name(rcdev->dev)))
--			return rcdev;
--	}
--
--	return NULL;
--}
--
--static struct reset_control *
--__reset_control_get_from_lookup(struct device *dev, const char *con_id,
--				enum reset_control_flags flags)
--{
--	bool optional = flags & RESET_CONTROL_FLAGS_BIT_OPTIONAL;
--	const struct reset_control_lookup *lookup;
--	struct reset_controller_dev *rcdev;
--	const char *dev_id = dev_name(dev);
--	struct reset_control *rstc = NULL;
--
--	mutex_lock(&reset_lookup_mutex);
--
--	list_for_each_entry(lookup, &reset_lookup_list, list) {
--		if (strcmp(lookup->dev_id, dev_id))
--			continue;
--
--		if ((!con_id && !lookup->con_id) ||
--		    ((con_id && lookup->con_id) &&
--		     !strcmp(con_id, lookup->con_id))) {
--			mutex_lock(&reset_list_mutex);
--			rcdev = __reset_controller_by_name(lookup->provider);
--			if (!rcdev) {
--				mutex_unlock(&reset_list_mutex);
--				mutex_unlock(&reset_lookup_mutex);
--				/* Reset provider may not be ready yet. */
--				return ERR_PTR(-EPROBE_DEFER);
--			}
--
--			flags &= ~RESET_CONTROL_FLAGS_BIT_OPTIONAL;
--
--			rstc = __reset_control_get_internal(rcdev,
--							    lookup->index,
--							    flags);
--			mutex_unlock(&reset_list_mutex);
--			break;
--		}
--	}
--
--	mutex_unlock(&reset_lookup_mutex);
--
--	if (!rstc)
--		return optional ? NULL : ERR_PTR(-ENOENT);
--
--	return rstc;
--}
--
- struct reset_control *__reset_control_get(struct device *dev, const char *id,
- 					  int index, enum reset_control_flags flags)
- {
-@@ -1157,7 +1066,7 @@ struct reset_control *__reset_control_get(struct device *dev, const char *id,
- 	if (dev->of_node)
- 		return __of_reset_control_get(dev->of_node, id, index, flags);
- 
--	return __reset_control_get_from_lookup(dev, id, flags);
-+	return ERR_PTR(-ENOENT);
- }
- EXPORT_SYMBOL_GPL(__reset_control_get);
- 
-@@ -1492,31 +1401,6 @@ devm_reset_control_array_get(struct device *dev, enum reset_control_flags flags)
- }
- EXPORT_SYMBOL_GPL(devm_reset_control_array_get);
- 
--static int reset_control_get_count_from_lookup(struct device *dev)
--{
--	const struct reset_control_lookup *lookup;
--	const char *dev_id;
--	int count = 0;
--
--	if (!dev)
--		return -EINVAL;
--
--	dev_id = dev_name(dev);
--	mutex_lock(&reset_lookup_mutex);
--
--	list_for_each_entry(lookup, &reset_lookup_list, list) {
--		if (!strcmp(lookup->dev_id, dev_id))
--			count++;
--	}
--
--	mutex_unlock(&reset_lookup_mutex);
--
--	if (count == 0)
--		count = -ENOENT;
--
--	return count;
--}
--
- /**
-  * reset_control_get_count - Count number of resets available with a device
-  *
-@@ -1530,6 +1414,6 @@ int reset_control_get_count(struct device *dev)
- 	if (dev->of_node)
- 		return of_reset_control_get_count(dev->of_node);
- 
--	return reset_control_get_count_from_lookup(dev);
-+	return -ENOENT;
- }
- EXPORT_SYMBOL_GPL(reset_control_get_count);
-diff --git a/include/linux/reset-controller.h b/include/linux/reset-controller.h
-index 357df16ede328657478eceb1ba6065f42a210ea2..46514cb1b9e0626872fe71357b24d54ff0e81a8b 100644
---- a/include/linux/reset-controller.h
-+++ b/include/linux/reset-controller.h
-@@ -26,31 +26,6 @@ struct module;
- struct device_node;
- struct of_phandle_args;
- 
--/**
-- * struct reset_control_lookup - represents a single lookup entry
-- *
-- * @list: internal list of all reset lookup entries
-- * @provider: name of the reset controller device controlling this reset line
-- * @index: ID of the reset controller in the reset controller device
-- * @dev_id: name of the device associated with this reset line
-- * @con_id: name of the reset line (can be NULL)
-- */
--struct reset_control_lookup {
--	struct list_head list;
--	const char *provider;
--	unsigned int index;
--	const char *dev_id;
--	const char *con_id;
--};
--
--#define RESET_LOOKUP(_provider, _index, _dev_id, _con_id)		\
--	{								\
--		.provider = _provider,					\
--		.index = _index,					\
--		.dev_id = _dev_id,					\
--		.con_id = _con_id,					\
--	}
--
- /**
-  * struct reset_controller_dev - reset controller entity that might
-  *                               provide multiple reset controls
-@@ -90,9 +65,6 @@ void reset_controller_unregister(struct reset_controller_dev *rcdev);
- struct device;
- int devm_reset_controller_register(struct device *dev,
- 				   struct reset_controller_dev *rcdev);
--
--void reset_controller_add_lookup(struct reset_control_lookup *lookup,
--				 unsigned int num_entries);
- #else
- static inline int reset_controller_register(struct reset_controller_dev *rcdev)
- {
-@@ -108,11 +80,6 @@ static inline int devm_reset_controller_register(struct device *dev,
- {
- 	return 0;
- }
--
--static inline void reset_controller_add_lookup(struct reset_control_lookup *lookup,
--					       unsigned int num_entries)
--{
--}
- #endif
- 
- #endif
+yamllint warnings/errors:
 
--- 
-2.48.1
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/rockchip,clk-pvtpll.example.dtb: pvtpll-core@20480000 (rockchip,rv1126b-core-pvtpll): compatible: ['rockchip,rv1126b-core-pvtpll', 'syscon'] is too long
+	from schema $id: http://devicetree.org/schemas/clock/rockchip,clk-pvtpll.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/rockchip,clk-pvtpll.example.dtb: pvtpll-npu@22080000 (rockchip,rv1126b-npu-pvtpll): compatible: ['rockchip,rv1126b-npu-pvtpll', 'syscon'] is too long
+	from schema $id: http://devicetree.org/schemas/clock/rockchip,clk-pvtpll.yaml#
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20251017063107.1606965-5-zhangqing@rock-chips.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
