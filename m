@@ -1,89 +1,176 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8559D29A31D;
-	Fri, 17 Oct 2025 08:31:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 471862D9EED
+	for <linux-clk@vger.kernel.org>; Fri, 17 Oct 2025 09:35:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760689909; cv=none; b=Cw7VdikmW2nfjv3s3x69iXQKqX6x76h2EhdpQX6DWqvHyeJ+vqx8f9yXbAM0iSajFIwpHlzS2Cw3/ptwk63mRGtfekLvtkFGa77/eskzLhtfEA8PSa/Vx4rJW3Y1t0sJ14sF00oyW6D3qRzW7dAb1oClmLHz2cVMj3cMUSSPpYg=
+	t=1760693707; cv=none; b=VNlvHcMphSJcenZYYXMeFhPki6pERsMq/L/wT4LW3WFiZUWirNok05K2NmKQp71ACf4lVzBkPtz44Q885tnK1TlpqUYT0E/Pdx2s19S6XE2oufraEEmqjvLrlYtvLnaifrTUdm2DKpuX5Va/nxG0gf1Syy4cAOjtPoM0JBaB7Zk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760689909; c=relaxed/simple;
-	bh=8JUiOrjDfOdA/96I1n2RoxKgJNH0r2C48Z5YYltnGhg=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=dBOiLDtZVGt29Ubh66K3Ek3jjd7T+G+S6+ELRlvNdKSOrjiuOOBEMLAbBwk3BcUsZKssvYPK/v/yg87Zrox/O8762emWQEgfjFnZ4/iqmAyEvOrzWd12RbxQgRWALgtgJKzdcEBoMdke4h3H+WhRyAupWqFGPcXJwCabe99peoo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bSxYK2kD; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bSxYK2kD"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED015C4CEE7;
-	Fri, 17 Oct 2025 08:31:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760689908;
-	bh=8JUiOrjDfOdA/96I1n2RoxKgJNH0r2C48Z5YYltnGhg=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=bSxYK2kDJV4zgONmPeuPitDLrbENAOcdwhHNI9fk2w0/zI5It/AVh5B3m2jkhK9S7
-	 geXRz55eImzmjpiK8aUGHgF8yVZhmi8zxkgihRCKnMIWmnCqMFPZMUomGx2keiu7H5
-	 TDWkfMaZgaKdT5MHSOx2Hxdy4ZoLUQGuBSytAwCdaVRGR9t5WY96tAUTsNsARIPvc4
-	 OW4xweUoJtc4gGXNhSkQg3OxGtfijv6DD9W0NDlgC8MimW8fVppaqm3rUS8FdJehf2
-	 nb8B/nVLpIqWKO4ZekSXkLFbOnMNF3onDdBkYeo+s/ZbYRqUkKh5JIYy6wGz8qdH3n
-	 6benPmRb8/eoA==
-Date: Fri, 17 Oct 2025 03:31:46 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1760693707; c=relaxed/simple;
+	bh=6vzNI1DK18m3ce5DSYBfwoD5ny5GBGqbd/mU6bAfUFA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=KNeUUbzRy1KoyHvb0RSw4wchTcF3a2EQCnJMsmGPzSgZAEDpoqQIeaTrk95AveFk+gtlPIZIM2TzOhJGIdbrWWLTAyxQN0elH6mg0gYsTxWOg/5FYleTEEOK5j3aFWUIRs9k8WD6MLDyt+ypC5akncX+KMaRLVNyB2G0vkV8/Q4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1v9grO-000516-Q7; Fri, 17 Oct 2025 11:34:54 +0200
+Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1v9grN-0042MN-32;
+	Fri, 17 Oct 2025 11:34:53 +0200
+Received: from pza by lupine with local (Exim 4.98.2)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1v9grN-000000003Jz-3fNi;
+	Fri, 17 Oct 2025 11:34:53 +0200
+Message-ID: <7cef6733507f86dfcc30131f1d941a47771a394a.camel@pengutronix.de>
+Subject: Re: [PATCH 2/2] reset: remove legacy reset lookup code
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Bartosz Golaszewski <brgl@bgdev.pl>, David Lechner
+ <david@lechnology.com>,  Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz
+ Golaszewski <bartosz.golaszewski@linaro.org>
+Date: Fri, 17 Oct 2025 11:34:53 +0200
+In-Reply-To: <20251017-da850-reset-lookup-v1-2-362a309a9f09@linaro.org>
+References: <20251017-da850-reset-lookup-v1-0-362a309a9f09@linaro.org>
+	 <20251017-da850-reset-lookup-v1-2-362a309a9f09@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.1-1 
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: sugar.zhang@rock-chips.com, krzysztof.kozlowski+dt@linaro.org, 
- linux-arm-kernel@lists.infradead.org, heiko@sntech.de, 
- mturquette@baylibre.com, conor+dt@kernel.org, huangtao@rock-chips.com, 
- linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, 
- linux-clk@vger.kernel.org, sboyd@kernel.org, devicetree@vger.kernel.org
-To: Elaine Zhang <zhangqing@rock-chips.com>
-In-Reply-To: <20251017063107.1606965-5-zhangqing@rock-chips.com>
-References: <20251017063107.1606965-1-zhangqing@rock-chips.com>
- <20251017063107.1606965-5-zhangqing@rock-chips.com>
-Message-Id: <176068990653.1336490.3635831064787473495.robh@kernel.org>
-Subject: Re: [PATCH v2 4/5] dt-bindings: clock: Add support for rockchip
- pvtpll
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 
+Hi Bartosz,
 
-On Fri, 17 Oct 2025 14:31:06 +0800, Elaine Zhang wrote:
-> Add pvtpll documentation for rockchip.
-> 
-> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+On Fr, 2025-10-17 at 10:02 +0200, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>=20
+> There are no more users of this code. Let's remove the exported symbols
+> and the implementation from reset core.
+>=20
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 > ---
->  .../bindings/clock/rockchip,clk-pvtpll.yaml   | 98 +++++++++++++++++++
->  1 file changed, 98 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/rockchip,clk-pvtpll.yaml
-> 
+>  drivers/reset/core.c             | 120 +--------------------------------=
+------
+>  include/linux/reset-controller.h |  33 -----------
 
-My bot found errors running 'make dt_binding_check' on your patch:
+Ah, the best kind of patch.
 
-yamllint warnings/errors:
+>  2 files changed, 2 insertions(+), 151 deletions(-)
+>=20
+> diff --git a/drivers/reset/core.c b/drivers/reset/core.c
+> index 22f67fc77ae531c6efba3ce92cc73a2d57397762..9ca4ac27daf955d7fe74f7684=
+819072a6f32492b 100644
+> --- a/drivers/reset/core.c
+> +++ b/drivers/reset/core.c
+[...]
+> @@ -1081,70 +1054,6 @@ __of_reset_control_get(struct device_node *node, c=
+onst char *id, int index,
+>  }
+>  EXPORT_SYMBOL_GPL(__of_reset_control_get);
+> =20
+> -static struct reset_controller_dev *
+> -__reset_controller_by_name(const char *name)
+> -{
+> -	struct reset_controller_dev *rcdev;
+> -
+> -	lockdep_assert_held(&reset_list_mutex);
+> -
+> -	list_for_each_entry(rcdev, &reset_controller_list, list) {
+> -		if (!rcdev->dev)
+> -			continue;
+> -
+> -		if (!strcmp(name, dev_name(rcdev->dev)))
+> -			return rcdev;
+> -	}
+> -
+> -	return NULL;
+> -}
+> -
+> -static struct reset_control *
+> -__reset_control_get_from_lookup(struct device *dev, const char *con_id,
+> -				enum reset_control_flags flags)
+> -{
+> -	bool optional =3D flags & RESET_CONTROL_FLAGS_BIT_OPTIONAL;
+> -	const struct reset_control_lookup *lookup;
+> -	struct reset_controller_dev *rcdev;
+> -	const char *dev_id =3D dev_name(dev);
+> -	struct reset_control *rstc =3D NULL;
+> -
+> -	mutex_lock(&reset_lookup_mutex);
+> -
+> -	list_for_each_entry(lookup, &reset_lookup_list, list) {
+> -		if (strcmp(lookup->dev_id, dev_id))
+> -			continue;
+> -
+> -		if ((!con_id && !lookup->con_id) ||
+> -		    ((con_id && lookup->con_id) &&
+> -		     !strcmp(con_id, lookup->con_id))) {
+> -			mutex_lock(&reset_list_mutex);
+> -			rcdev =3D __reset_controller_by_name(lookup->provider);
+> -			if (!rcdev) {
+> -				mutex_unlock(&reset_list_mutex);
+> -				mutex_unlock(&reset_lookup_mutex);
+> -				/* Reset provider may not be ready yet. */
+> -				return ERR_PTR(-EPROBE_DEFER);
+> -			}
+> -
+> -			flags &=3D ~RESET_CONTROL_FLAGS_BIT_OPTIONAL;
+> -
+> -			rstc =3D __reset_control_get_internal(rcdev,
+> -							    lookup->index,
+> -							    flags);
+> -			mutex_unlock(&reset_list_mutex);
+> -			break;
+> -		}
+> -	}
+> -
+> -	mutex_unlock(&reset_lookup_mutex);
+> -
+> -	if (!rstc)
+> -		return optional ? NULL : ERR_PTR(-ENOENT);
+> -
+> -	return rstc;
+> -}
+> -
+>  struct reset_control *__reset_control_get(struct device *dev, const char=
+ *id,
+>  					  int index, enum reset_control_flags flags)
+>  {
+> @@ -1157,7 +1066,7 @@ struct reset_control *__reset_control_get(struct de=
+vice *dev, const char *id,
+>  	if (dev->of_node)
+>  		return __of_reset_control_get(dev->of_node, id, index, flags);
+> =20
+> -	return __reset_control_get_from_lookup(dev, id, flags);
+> +	return ERR_PTR(-ENOENT);
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/rockchip,clk-pvtpll.example.dtb: pvtpll-core@20480000 (rockchip,rv1126b-core-pvtpll): compatible: ['rockchip,rv1126b-core-pvtpll', 'syscon'] is too long
-	from schema $id: http://devicetree.org/schemas/clock/rockchip,clk-pvtpll.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/rockchip,clk-pvtpll.example.dtb: pvtpll-npu@22080000 (rockchip,rv1126b-npu-pvtpll): compatible: ['rockchip,rv1126b-npu-pvtpll', 'syscon'] is too long
-	from schema $id: http://devicetree.org/schemas/clock/rockchip,clk-pvtpll.yaml#
+I think this should be:
 
-doc reference errors (make refcheckdocs):
+	bool optional =3D flags & RESET_CONTROL_FLAGS_BIT_OPTIONAL;
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20251017063107.1606965-5-zhangqing@rock-chips.com
+	/* ... */
 
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
+	return optional ? NULL : ERR_PTR(-ENOENT);
 
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
+With that,
 
-pip3 install dtschema --upgrade
+Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
 
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+regards
+Philipp
