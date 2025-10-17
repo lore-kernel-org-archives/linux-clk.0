@@ -1,175 +1,129 @@
-Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C0E324DCE2
-	for <linux-clk@vger.kernel.org>; Fri, 17 Oct 2025 16:06:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0EF427B4EB
+	for <linux-clk@vger.kernel.org>; Fri, 17 Oct 2025 16:14:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760717216; cv=none; b=nYiYJaCrrKahPTCfHdq67BiLqcsA8c+nImOVZN+6FT8EZaHiJU0mLpv84pk9A+M20Doj3JM5GQd6eLk8iMGFIE+eA9KWc7BjWLYBGNdjtZmQw/0vbldEKQwWVpKZ2Imk6ZHUhLsSQ04nGZ40/nIhKp+R/QPwrShTaaSLMN7TNYk=
+	t=1760717658; cv=none; b=eWe6dZN4gckWH+UwUEbxVD6+J08+xzMhoPdiODYdzVeZEHpM5erhtqBivSfBZFIvmjpengbatZs920+4dkUFXpZ5kfMvb5vPiKP3w1P0QYp3qqE4l+FyJ/UVwfAQVTIlM/CTxbQoTOSWCCvxNHQiQp1avG8cAnjxg4jJGvjJMGg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760717216; c=relaxed/simple;
-	bh=5UuF/HjwkQMRQp3toEpBUcYrHBj825aq+Tc6Itk11zY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZGqnNjtxn25blg276NbBrTdO9gYAsPqov83o8g21ub25On4+xXkwLPHp5/FItkgr1XDdEfyJnQGxW/GdwmRp0t8uuduVDkq3mlmx2/Ac1kJfsVPJUICt/x/97rI9SuDUqOEWQc7E61GW1NkGZwpoxZv0BSKl8CxcZsK3fa/iOjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	s=arc-20240116; t=1760717658; c=relaxed/simple;
+	bh=CZmROVfTD8u1AlAo33CGWQ3lRipjkitrHczW2VKKWkA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IEQmw8TgB0YzNSBEO0EStvklpCOgkKZkl5Cr8w3/kNsFgRq70cMBxvyMk8MnRD9397TaM89vqJqNl5qP5PbUsyv5hr/KrZ1cY6bW0H6clKHedSg+q1I1rM/jXWp6EmpehpU7RBe/b9Ij4ZVcLodYsGODxqp2/1LCwGxHK6gQnz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SZeBBw3s; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-74572fb94b3so1420227a34.2
-        for <linux-clk@vger.kernel.org>; Fri, 17 Oct 2025 09:06:54 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SZeBBw3s"
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-b3d196b7eeeso386038466b.0
+        for <linux-clk@vger.kernel.org>; Fri, 17 Oct 2025 09:14:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760717655; x=1761322455; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=uDBtrf04QYUQbsiCFswby2jYYDrs9vGFSiZ+aqY91Ds=;
+        b=SZeBBw3sMoXBlUBjq3xUWrLzHSBBv/FVyG1mT4NQ1ZS2SvoeoqFlJoXJmOc1esevyg
+         Ymlcr02CdW7mOxEdd8FGAon1BBRu0wFJth1QZXKnzUUhEP2xHB4AyhA0oF+EoD5GDvh/
+         roknxByFG9ye6pZQGV4td0lOFD6ZeKK1jAE/r1yVY+LF1U09K4oLs6PorpFBu1NeLJam
+         dLL0aM8f+BpJvhqvMAV9qB8YOj2rl3Ip1HVi3NUv4qrplJll0SciTeWCMuhT1tqYHu14
+         gRCEEwNPaGZo0Lr1hIGO2Yhrhue5aNjgBQXRTM433NTHSqwnwmni8v6n57P2kJc4VDa+
+         onmw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760717214; x=1761322014;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1760717655; x=1761322455;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=D4mf9FdrvOGmLornKgNki0gXD9BcM6SCmzEl3gfV4Zs=;
-        b=OBnoKj8eW7BVbp6yUpexsy9+U8+0sUcxy7vg9qneNoTeicrciulkxTNMEu25+UjcqB
-         7t5vHTjqDt6uzm0yL1FViQLDTtscbKrZS1HNeYjVjpj0ZA6RJsn/y4uP34iGTMxIppya
-         gz8sE2eipgkseJ3hXGXzuUSv/Edza5xGjvY+4pU7EY3BBn0xUVBB204hPEL36bTXhCHE
-         fc/+JPpeOTG9RjgZJ9kiXPXUT65Go1QgS9NXBmlxpNbQwQsNKrw8RWfVftP4PCFXowZf
-         AFL4HQsLbVvEVgqBMftI2W1bHUup+Lrc5az0/6rI57jWhVHaO5ra/6qoDj9ueNtIi/1e
-         7Ytw==
-X-Forwarded-Encrypted: i=1; AJvYcCW0DLn2CzpIWSIm6vF/tF/zc3yO63GWYkdgXKBKyT5CDH6LhGZDX1GwOD/y1D1YyL9acMAxbEBI+AI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxedIJRxG0JIg1Bu/a5QyGpprhTUvl+d2BhC28e80uI6fEvC4aH
-	eOT+qKysAPojvg6x/Fs1MFbuIalJl0v1J0gLFGPrLS9Q6sJbF4O6FnuhU8W0HkYw
-X-Gm-Gg: ASbGncvvy1hP3FSfMtEtuDbTyAhdb1caRTWMyBYVPV6qyWKCozoSOC5gzi7DTtt/MJC
-	thKqlFjitlHrOG/4v2fLdrwpGFJ97SvVvBrXtmK+mqe1ix1Q6cbwQdkQT6EP82axHLCwX9yJhHZ
-	o4DGsJUU8yI7oqz4xESdU6RVCT7DPxn1gDZQ89s4JM+fE63bgQ+jUuXgObfVtiwfkLKgA0+FL0h
-	WXSqBgkM5TLTN2bmw0xNUUVsaKIWgG1llOR+sst+nZx6i0REh2UW197/FCtNixIhkJfoZSC82X0
-	SFkvTrvl3O4EkOj+5gVvpZie4vp+zL0w/wnyX5u8MFs1A9JIa9ljfkGMXs2WdibBPXRsJenvNKg
-	cjsvAgYk8u7L9ee5rAU2VQOY3acgIxzIA2lbIElH7EcCKgWiF/NLDxXmLmf5k/IKvFyuYWrjmm1
-	voTSefKAj5W7u8BmFHf5Ljh4T5w5n/lOOjZJVJjDWROw==
-X-Google-Smtp-Source: AGHT+IFiQ5THHk7rR8FKHvEyF5vFgLcSS0NQ/oTF/RycLX1Hu8RIbDBgLzFhxx/Ep04BSyzDhre7FQ==
-X-Received: by 2002:a05:6808:178a:b0:438:bdb0:89ba with SMTP id 5614622812f47-443a2ec72cbmr1622304b6e.3.1760717213549;
-        Fri, 17 Oct 2025 09:06:53 -0700 (PDT)
-Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com. [209.85.167.181])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-651d3a9adb3sm8442eaf.1.2025.10.17.09.06.53
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 17 Oct 2025 09:06:53 -0700 (PDT)
-Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-443a7490a54so481452b6e.1
-        for <linux-clk@vger.kernel.org>; Fri, 17 Oct 2025 09:06:53 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXLggQb9SzNB1ervHU2CB89VOL/3viyzFOANavLnmFxynLR30kd7pZZWEWjh8XgjfXe6UDNzUwTMuc=@vger.kernel.org
-X-Received: by 2002:a05:6102:40c6:10b0:5d7:dec6:389a with SMTP id
- ada2fe7eead31-5d7dec64177mr1309355137.9.1760716852567; Fri, 17 Oct 2025
- 09:00:52 -0700 (PDT)
+        bh=uDBtrf04QYUQbsiCFswby2jYYDrs9vGFSiZ+aqY91Ds=;
+        b=kRyNYbiYhZEoQlfa19ZBk6C9JD3R0cC18F3UriO4ch05T/Lb+q8af6yuECwMO2Uzo9
+         6ctislRGcgCfHLQ0bQ8l5N1HNQq4naX+C7bUPgNKKd7KbEMwugLpYRuWpEmLoWL0+gDg
+         Y9uC3IdZ7dfj86a3JHGLO2DnmzIgr+dTR8gfN55lKh70xfSsmGGYe3fShaHdpwiOqQ0A
+         75SyrZrhhnUPFo1pXvDI6aZ8IbflUVHJSwnQO3Tzm2sAoVm6pxLW84ZhsR2wVTVYR3VY
+         gIvsqltqwjoEAZLxUIWBTqvVTlxwgVY5FM1s5fEtvOhaJ1MVFrBezXDq3UTbVhRi7abT
+         wKUg==
+X-Forwarded-Encrypted: i=1; AJvYcCV9kKVZ6GrTNdaDthtfGbde/yhe/DaC3mkIwOHzI6UZbQzKINXKQZ4erU0aNZPUH9/Ug5p/zLE7F18=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZB3LWCu4UDzSNgVi49L0rHTE/levGfnsjKguRhBfgY31uae3Q
+	JkQNv+ql+ZKRpxCPYNmkcZHKXzE4o8PYTsJvlMxtGfd/EL7/EL+w2W1K
+X-Gm-Gg: ASbGnctwRKoK8md6PFzWx3snCxiEAzbe3ptBkCxwbZVnNj9AOCI33VquOnue4XNW35s
+	3AKRgV69ZuSZtNUHHUKMcLOcKfS8wcBmUZafiIJZboEH+1pT5/3bZBHAyTg5r1mKV575YA+bxuC
+	igPbplTIZ+L/lvnggUEjl+fKWFvp5cJXkD+tt9W56QRJBhotwnByRfHXzWHcZrNbKQd2HyhzBEe
+	fzDhiL8k+lKL5ilfZSh7dOfEqWtDTsrUWvEVMFx28EzjeCsDxeMRzulYldAS2OVrAjsSNmkthN7
+	x6I5R9WAdG1HqkODrn/lXorBiA11DMmwkko3qQV/c4aJ2X9QjV1IujLgM78UyJz7SidO+2PnycZ
+	pBHmK4SpRdJfL7MN8tTUS6Hz//9kI6UXonC+3c487BazeDUkt+Ia8PGr+liTyTzlrZCQHPqgp9s
+	CaFfSImuhKBu6U2R8058i899+8+jWV2oXA7sL+nkw3
+X-Google-Smtp-Source: AGHT+IHK9WQ4a0UK8NwMypKKKManCE9AjC6PIzjyVE2Ox3e8SVeVLpu0Cb9a9BFD18dkt9RME7LIHQ==
+X-Received: by 2002:a17:907:3e1d:b0:b3c:8940:623c with SMTP id a640c23a62f3a-b6472a6a114mr519013666b.14.1760717655010;
+        Fri, 17 Oct 2025 09:14:15 -0700 (PDT)
+Received: from ivaylo-T580.. (79-100-18-255.ip.btc-net.bg. [79.100.18.255])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b65eb036706sm9606466b.41.2025.10.17.09.14.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Oct 2025 09:14:14 -0700 (PDT)
+From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-samsung-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/5] clk: samsung: introduce exynos8890 clock driver
+Date: Fri, 17 Oct 2025 19:13:28 +0300
+Message-ID: <20251017161334.1295955-1-ivo.ivanov.ivanov1@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1739540679.git.geert+renesas@glider.be> <2d30e5ffe70ce35f952b7d497d2959391fbf0580.1739540679.git.geert+renesas@glider.be>
- <20251017081912.2ad26705@kernel.org>
-In-Reply-To: <20251017081912.2ad26705@kernel.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 17 Oct 2025 18:00:41 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVS5KmVkv_pmc+R-EXik-Z1_7nuiHM=vm1Cu8v91wmLBQ@mail.gmail.com>
-X-Gm-Features: AS18NWD4CQztq7yi6j63q-9XtnW0otWo2wOw8z0_Fp7R-6z_qrlZWB5IqFYEbBg
-Message-ID: <CAMuHMdVS5KmVkv_pmc+R-EXik-Z1_7nuiHM=vm1Cu8v91wmLBQ@mail.gmail.com>
-Subject: Re: [PATCH treewide v3 2/4] bitfield: Add non-constant
- field_{prep,get}() helpers
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Nicolas Ferre <nicolas.ferre@microchip.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
-	Giovanni Cabiddu <giovanni.cabiddu@intel.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
-	David Miller <davem@davemloft.net>, Linus Walleij <linus.walleij@linaro.org>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, Joel Stanley <joel@jms.id.au>, 
-	Andrew Jeffery <andrew@codeconstruct.com.au>, Crt Mori <cmo@melexis.com>, 
-	Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Jacky Huang <ychuang3@nuvoton.com>, 
-	Shan-Chun Hung <schung@nuvoton.com>, Yury Norov <yury.norov@gmail.com>, 
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
-	Johannes Berg <johannes@sipsolutions.net>, Alex Elder <elder@ieee.org>, 
-	David Laight <david.laight.linux@gmail.com>, Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-renesas-soc@vger.kernel.org, linux-crypto@vger.kernel.org, 
-	qat-linux@intel.com, linux-gpio@vger.kernel.org, 
-	linux-aspeed@lists.ozlabs.org, linux-iio@vger.kernel.org, 
-	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Jakub,
+Hey folks,
 
-On Fri, 17 Oct 2025 at 17:19, Jakub Kicinski <kuba@kernel.org> wrote:
-> On Fri, 14 Feb 2025 14:55:51 +0100 Geert Uytterhoeven wrote:
-> > The existing FIELD_{GET,PREP}() macros are limited to compile-time
-> > constants.  However, it is very common to prepare or extract bitfield
-> > elements where the bitfield mask is not a compile-time constant.
-> >
-> > To avoid this limitation, the AT91 clock driver and several other
-> > drivers already have their own non-const field_{prep,get}() macros.
-> > Make them available for general use by consolidating them in
-> > <linux/bitfield.h>, and improve them slightly:
-> >   1. Avoid evaluating macro parameters more than once,
-> >   2. Replace "ffs() - 1" by "__ffs()",
-> >   3. Support 64-bit use on 32-bit architectures.
-> >
-> > This is deliberately not merged into the existing FIELD_{GET,PREP}()
-> > macros, as people expressed the desire to keep stricter variants for
-> > increased safety, or for performance critical paths.
->
-> We already have helpers for this, please just don't know they exist :/
->
-> The "const" version of the helpers are specifically defined to work
-> on masks generated with BIT() and GENMASK(). If the mask is not
-> constant we should expect it to have a well defined width.
->
-> I strongly prefer that we do this instead and convert the users to
-> the fixed-width version:
->
-> ---->8----------------
->
-> Subject: bitfield: open code the fixed-width non-const helpers so that people see them
->
-> There is a number of useful helpers defined in bitfield.h but
-> they are mostly invisible to the reader because they are all
-> generated by macros. Open code the 32b versions (which are
-> most commonly used) to give developers a chance to discover them.
->
-> Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+This patchset adds a pretty much full (except for ISP and camera blocks)
+cmu driver for exynos8890. It's configured to run with gates in manual
+mode, which is done differenetly from other exynos SoCs.
 
-Thanks, but this is more or less the same code which you suggested
-before [1], and to which I just replied[2] after looking at the
-generated assembler output on various architectures.
+Best regards,
+Ivaylo
 
-> @@ -188,6 +193,81 @@ static __always_inline u64 field_mask(u64 field)
->         return field / field_multiplier(field);
->  }
->  #define field_max(field)       ((typeof(field))field_mask(field))
-> +
-> +/**
-> + * u32_encode_bits() - prepare a u32 bitfield element (non-const)
-> + * @v: value to put in the field
-> + * @field: shifted mask defining the field's length and position
-> + *
-> + * Equivalent of FIELD_PREP() for u32, field does not have to be constant.
-> + *
-> + * Note that the helper is available for other field widths (generated below).
-> + */
-> +static __always_inline __u32 u32_encode_bits(u32 v, u32 field)
-> +{
-> +       if (__builtin_constant_p(v) && (v & ~field_mask(field)))
-> +               __field_overflow();
-> +       return ((v & field_mask(field)) * field_multiplier(field));
+Changes from V2:
+patch 2/5:
+- rebase on next and drop the unnecessary new line
+patch 3/5:
+- rebase on next
+- add r-b tag from Peng Fan
+patch 4/5:
+- rebase
+- add r-b tag from Peng Fan
+patch 5/5:
+- include bitfield.h to ease the kernel test robot's pain
+- add a comment that specifies we're disabling hwacg and change
+the commit description as per Peng Fan's suggestion
 
-Unfortunately gcc emits actual divisions or __*div*() calls, and
-multiplications in the non-constant case.
+Ivaylo Ivanov (5):
+  dt-bindings: clock: add exynos8890 SoC
+  clk: samsung: clk-pll: Add support for pll_141xx
+  clk: samsung: clk-pll: Add support for pll_1419x
+  clk: samsung: clk-pll: Add support for pll_1431x
+  clk: samsung: introduce exynos8890 clock driver
 
-So I don't think this is suitable as-is.
-
-> +}
-
-[1] https://lore.kernel.org/all/20250214073402.0129e259@kernel.org
-[2] https://lore.kernel.org/all/CAMuHMdU+0HGG22FbO3wNmXtbUm9RhTopYrGghF6UrkFu-iww2A@mail.gmail.com
-
-Gr{oetje,eeting}s,
-
-                        Geert
+ .../clock/samsung,exynos8890-cmu.yaml         |  477 +
+ drivers/clk/samsung/Makefile                  |    1 +
+ drivers/clk/samsung/clk-exynos8890.c          | 8697 +++++++++++++++++
+ drivers/clk/samsung/clk-pll.c                 |   12 +-
+ drivers/clk/samsung/clk-pll.h                 |   12 +
+ .../clock/samsung,exynos8890-cmu.h            | 1279 +++
+ 6 files changed, 10476 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/samsung,exynos8890-cmu.yaml
+ create mode 100644 drivers/clk/samsung/clk-exynos8890.c
+ create mode 100644 include/dt-bindings/clock/samsung,exynos8890-cmu.h
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.43.0
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
