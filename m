@@ -1,101 +1,100 @@
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FB6528727D;
-	Fri, 17 Oct 2025 16:51:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5134F221726;
+	Fri, 17 Oct 2025 17:39:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760719881; cv=none; b=M1QbI2gOvW5WIoZmAZhG77a7oOcGVwtBJMnkyT58h18RfGbFY3F/nbfFOpPkbNPMmLe1oxp6TqocWh3X8fd/yV8ARP6AYIRSOW5vEkvlYem97E+Mzms83Hag3k7eyTlAhpCYDfvlAY3HZ+7sVLfXRrOROrQyZB+8lGe4umXt65Q=
+	t=1760722779; cv=none; b=PQGu7n8ZdD4ihx0s5glaaCJFel3VMqjLGzW53ri17yteryRvIFu95dNnO0ieQEkXlaDjMGY5tkGsRJ+g5gDaZNksy+YZLuwAXD4nGRjMs+07UlFzLneaIrrFWxNfWSxUX/4SZEBkduM3nvylKIbD+RAgydXTjJ4lpKjRh6CjKAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760719881; c=relaxed/simple;
-	bh=hBS7zXpwgc06YApPZakDHwkP5KDcqLK2xOOP5lYVbh4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uzKLVSgQkQwwfVluGjXjDTLkzzV1EUp2LzAJbS3/APN7JlLIS9aSfBagUvIp1DejfnluCd1kUsqe8avSt2s/1PhR1t9v/AdEF197Gj5qFPjkHD3K0C8hIGsU2CaQuc41MCfwVa4sxaTQZWW93Iqj4b8nflfCWHY9zI7nd7fnKKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=F9oG5Aad; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+	s=arc-20240116; t=1760722779; c=relaxed/simple;
+	bh=RLpFlKj0oX6F2FHmvB6odL7qjqFC0HmExWxoVhIdU1A=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UvyS4bxtzcEfUO//Ezexi0Lj5QwG1MlYxsOIhUXmMBcMTbUGQMRLLucauGlguhJmARoqgaaw9cvBQuaGzY6+1CJ7LGjpuSGtvzaKhpsDJxtbctyDTNik1DvncTA4wlJzPPMQ55YholeG9ClBGfmsU5+bk4hjvR8zmgtANWNmdog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NT0kk5AT; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="F9oG5Aad"
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4cp9nc4Zdtz9sSq;
-	Fri, 17 Oct 2025 18:51:16 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1760719876;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qnyRJyBxqqT6Z/vke/OGUHeBh7T7CM9FTOlPeQxkIbU=;
-	b=F9oG5AadMHujS4rxilXnq9aHT15NPwRYd0bRa+jQjBORkZi2yiwZRFiq7dMLwqrbEgtGnF
-	uVhQIpmLzP6MgJi2cdKVxACJC+lgTawa2grTfcPCTE74t1YJ3aC07XY1cLofvD7JL8HGlR
-	nEP4xvjIqp+KSA1RKCDRBwm2tvHLT7AkpWoudVKprnU5DQOt4dNGoR/02HOKlT5vGX7whu
-	5bYZetKhuYhZgGKCsGgQZzZLg6GR9J05mwTWHj7BK8Mw9Fi2xnkQ8B7UBiEy31GB+g55OL
-	XxzpVRn74A3h2UUBT39eg38rQ1yrGrICQKFpBHU/PesyL2D7HzyJZo6KXDDN+A==
-Message-ID: <85a35703-fc75-4fde-b9ca-a2ceb1214327@mailbox.org>
-Date: Fri, 17 Oct 2025 17:54:41 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NT0kk5AT"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BD47C4CEE7;
+	Fri, 17 Oct 2025 17:39:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760722779;
+	bh=RLpFlKj0oX6F2FHmvB6odL7qjqFC0HmExWxoVhIdU1A=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=NT0kk5AT8tFG1ex9SS8EUtqaH3MN+k/hRFCGSaqU55hscTm9YrecMaHll0u79zNw6
+	 sIBNy7OA9YnQH8zcWJvaMly7J6UxVErlApIMtWqqtxuCay5hHv3uxPVR74IQZH7Eo7
+	 POgxmUZCozpR5oUMwioI8150ALcQrPO9kadHLQDIRlSHNVEt+zPMCklNd1E0+Dvk0M
+	 FLUc8epgBZ5fXzgVrxCcc2oNTqFhlAuQ56P5auW6pS+BXbjn0jHuPDkH8FdSsJSL4W
+	 uFicrrFA5Ph3zrKxR/crhBXdSf97NMqd7lwWACFyVrsYLycFeAVJesTkco7Sb8QbzJ
+	 h9rvU97EVVwQg==
+Date: Fri, 17 Oct 2025 10:39:36 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Nicolas Ferre <nicolas.ferre@microchip.com>, Alexandre
+ Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea
+ <claudiu.beznea@tuxon.dev>, Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
+ Herbert Xu <herbert@gondor.apana.org.au>, David Miller
+ <davem@davemloft.net>, Linus Walleij <linus.walleij@linaro.org>, Bartosz
+ Golaszewski <brgl@bgdev.pl>, Joel Stanley <joel@jms.id.au>, Andrew Jeffery
+ <andrew@codeconstruct.com.au>, Crt Mori <cmo@melexis.com>, Jonathan Cameron
+ <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Jacky Huang
+ <ychuang3@nuvoton.com>, Shan-Chun Hung <schung@nuvoton.com>, Yury Norov
+ <yury.norov@gmail.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Johannes
+ Berg <johannes@sipsolutions.net>, Alex Elder <elder@ieee.org>, David Laight
+ <david.laight.linux@gmail.com>, Vincent Mailhol
+ <mailhol.vincent@wanadoo.fr>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org,
+ linux-crypto@vger.kernel.org, qat-linux@intel.com,
+ linux-gpio@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
+ linux-iio@vger.kernel.org, linux-sound@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Jonathan Cameron
+ <Jonathan.Cameron@huawei.com>
+Subject: Re: [PATCH treewide v3 2/4] bitfield: Add non-constant
+ field_{prep,get}() helpers
+Message-ID: <20251017103936.49fbafdd@kernel.org>
+In-Reply-To: <CAMuHMdVS5KmVkv_pmc+R-EXik-Z1_7nuiHM=vm1Cu8v91wmLBQ@mail.gmail.com>
+References: <cover.1739540679.git.geert+renesas@glider.be>
+	<2d30e5ffe70ce35f952b7d497d2959391fbf0580.1739540679.git.geert+renesas@glider.be>
+	<20251017081912.2ad26705@kernel.org>
+	<CAMuHMdVS5KmVkv_pmc+R-EXik-Z1_7nuiHM=vm1Cu8v91wmLBQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 00/39] Add i.MX95 DPU/DSI/LVDS support
-To: Liu Ying <victor.liu@nxp.com>, dri-devel@lists.freedesktop.org
-Cc: Abel Vesa <abelvesa@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Fabio Estevam <festevam@gmail.com>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Lucas Stach <l.stach@pengutronix.de>, Peng Fan <peng.fan@nxp.com>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Rob Herring <robh@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, devicetree@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org
-References: <20251011170213.128907-1-marek.vasut@mailbox.org>
- <2a22c45e-5de4-49ee-af3e-002941a7e2d0@nxp.com>
- <bf451620-c917-4d4a-999d-32148fbcf11b@mailbox.org>
- <182271f2-4986-4401-a4c5-ca379a02e69b@nxp.com>
-Content-Language: en-US
-From: Marek Vasut <marek.vasut@mailbox.org>
-In-Reply-To: <182271f2-4986-4401-a4c5-ca379a02e69b@nxp.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-MBO-RS-ID: 21f322bb393c42677d5
-X-MBO-RS-META: xow3qztriop681daecnza1kueomurrys
 
-On 10/15/25 12:09 PM, Liu Ying wrote:
-
-Hello Liu,
-
->>> This has conflicts with my in-flight patch series for adding i.MX8QXP DC
->>> prefetch engine support(though i.MX95 SoC doesn't embed any display controller
->>> prefetch engine).  You probably want to take a look at it, just a heads up.
->>>
->>> https://lore.kernel.org/all/20250929-imx8-dc-prefetch-v3-0-c01d0608add2@nxp.com/
->>
->> Thank you for sharing that.
->>
->> Would it make sense to send 4 and 5 separately , so the fixes can land faster?
+On Fri, 17 Oct 2025 18:00:41 +0200 Geert Uytterhoeven wrote:
+> > +/**
+> > + * u32_encode_bits() - prepare a u32 bitfield element (non-const)
+> > + * @v: value to put in the field
+> > + * @field: shifted mask defining the field's length and position
+> > + *
+> > + * Equivalent of FIELD_PREP() for u32, field does not have to be constant.
+> > + *
+> > + * Note that the helper is available for other field widths (generated below).
+> > + */
+> > +static __always_inline __u32 u32_encode_bits(u32 v, u32 field)
+> > +{
+> > +       if (__builtin_constant_p(v) && (v & ~field_mask(field)))
+> > +               __field_overflow();
+> > +       return ((v & field_mask(field)) * field_multiplier(field));  
 > 
-> Maybe not, since there is no user(DT node is not enabled) so far.
-> But I'd like to have more review/ack for that patch series(it's kind of
-> hard to get sufficient review...).
+> Unfortunately gcc emits actual divisions or __*div*() calls, and
+> multiplications in the non-constant case.
+> 
+> So I don't think this is suitable as-is.
 
-I could test on the MX95 if we can somehow ... figure this out. Then I 
-can provide RB/TB easily. I don't have MX8qxp device.
+Sorry I missed or forgot that you replied :(
 
->> Also, could you please try and avoid the SCU dependency on patch 7 ,
->> and more in that direction , can the PRG be made a bit more optional, so the
-> 
-> Don't think there is any way to address them.
-> 
->> iMX95 can still be supported by the DC driver ?
-> 
-> SCU dependency and PRG(even more other reasons) make me opt to separate
-> modules for i.MX95/8qxp DCs.
-SCU is only a register accessor, PRG is another block in the DC, I think 
-those can be isolated. It seems the whole DC is a composition of 
-multiple reusable blocks, so we can compose them for both MX8qxp and 
-MX95 the right way and reuse most of the code, right ?
+The inline helpers exist already have have a lot of uses. If __ffs is
+more optimal then why not make existing helpers use it as well? 
+It'd be far more beneficial:
+
+$ git grep u32_encode_bits | wc -l
+391
+
+Sorry if I'm being slow..
