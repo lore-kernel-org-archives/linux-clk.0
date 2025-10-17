@@ -1,133 +1,172 @@
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA8D134DCD0
-	for <linux-clk@vger.kernel.org>; Fri, 17 Oct 2025 11:22:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760700124; cv=none; b=GI8LVZMPIdsiOPcIsLhlZt+iKBox7kpzCXLqbuCrLJKwkWLRjL5W17RBYoX/58mzAdIlgGzSBybYfgfY+cnf0Cdx9AQxsBBqGMl7qfA+yaQD/3I2qyXAZcKIk7sh3lsTUQNn2zgBHXmvAMj2FdUA+nCKMYRBNQ1r4wYyWf5QpYI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760700124; c=relaxed/simple;
-	bh=y613Fibuye7rvTibD+68qb4oNwl+ydXU9k6h+6Dna6A=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D6F1332EB4;
+	Fri, 17 Oct 2025 12:22:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760703753; cv=pass; b=g4AOBLSEMgoaRnoFE0dWyGoRF9H16/OIkwtxkIOVz5Ons5LhBGfo4THP3CCwtR7AEGRMkUiStif0yDaWoUGj/axfAv+l1bkJH6AbpFeAHyFOry7dlOxI3ezKzdEHKdBCRENVd5aieXfEETxSmrSkO0FrSdE8BY0etWDSVU/zuEQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760703753; c=relaxed/simple;
+	bh=DD3xeD3NOA9LRX1XaV2kCPPZjXulQHRLiDrKsQfSY+I=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Xz3DAS+fd3ER5yOohTE8wRb9u2YM906iXh0CPjsY5ziWAOePTUkxusP4xVGpJusZz4KP+3OJ4EYgs7QmlxTEzBMKjyMMqJF84qW8L4MaWQ3FHDT5IExqvKaXnu8PICPRmS3ZXckqTPZAzaZ+MMs4enjQPFlXTbC/5j2e50Z4wyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=niyy5DtK; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 MIME-Version:Content-Type; b=XQopvzW67iIbuLmeyx5+5PRUVxgKIOAdBFwkslJSz9En/hYiKTnZKNBZdQq3mLTKYlG45jSqS1J51xLWWGa7ln7T16dibnBRXP+bbYjK9C6dfRltTpfd2C4J2tDVWu5M97RTmLvsGzmGH7PDGPU66BJMis/i5DbAkPmrN8X73zI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=k8GMJlor; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="niyy5DtK"
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-b3c2db014easo398813166b.0
-        for <linux-clk@vger.kernel.org>; Fri, 17 Oct 2025 04:22:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760700121; x=1761304921; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=07Toi2vUIU+MWGlot8kMIQ1ee07JBmL9YfZNkL4sfI0=;
-        b=niyy5DtK/jIqiA/dpFcGD8XGY2TG1/EBgwRWvMgT44+eZ5c40GsYOxjZWgK9xMx3oJ
-         Ub8ppWIKnhpL6mFxaHI7eVX8M+d7R9ThA3MaeUDMqPecxRXxCYqLewPINElPIZgufd4J
-         CxgiDjEBtHdlyczcz2/x+y10CmJmL+jiQFjudfTN64G1bJvHofnY5h4eZEPzRJhHQEPs
-         qwy4GzPp+9srKAdaOVD9o9ZAREt/yd7xn7kkDN5vjWKYb+yl8olWCqsDQRShre42SEEo
-         T+Pr/HabeP5C3YDNcyXxK8O8zBm8NGZNRB6EIJpdgDmERmtVOJ36eQCIFUSB1cBdtTOM
-         1umg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760700121; x=1761304921;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=07Toi2vUIU+MWGlot8kMIQ1ee07JBmL9YfZNkL4sfI0=;
-        b=TBGtSz22N3diEIIja1hr39aGyL68OjjCurwyv6MNIVFfNJjfX+lpFKkCGLYJdAxBYH
-         APEoHLLyCxagzc2smWfkZ3fnV5yj3iRaNZvdT2aMlC8clYuluvBL2MHDXfGSbRNt3USP
-         37H9QFyPbNa+5PHp0W7ogbgYQdqSMe4XAIkx2EtqpJMSuwGHoFRrxq3Izf3yYCB1jqcC
-         3eRS7uf1oeNWq/K1qVYZ0i1mx/8diN2Xsigwa1wtC5U7aS+rViOce5vAHZfck2e7vMqW
-         2lQIHbKXu2OWgP/ctpdJyV6UxVMihziQVTy/d8NVz+kvbw3kqL6ZxwuFhTdZeZjr9eRT
-         mwpQ==
-X-Gm-Message-State: AOJu0Yzmj1xvrSzIPEYJdV52+ybLcUTUAjbJn/7PmLS8lk6EZjzJacup
-	JHW5mLudJrymkP4W31iNhu5UmqbWzHrWdtzLJIeti9FU0+8g1GKorM+8
-X-Gm-Gg: ASbGncvzWPom2EUCzgLBOCuEAjVLB+0K4u41W4aKc9vUtpvVjTojcIaqz6Z3AKcgCgh
-	tVHL6pgZ+cCswU4CsJGN6wS/1MQdQLXQk04bIbHxtde0HzE+7DKkAwGsuE6PJ2VQfRd2yMCvEBu
-	oc6sBSd1iwJ/dA2P5WmJw6lveY5NBr9JPASIK8cd6uADFygHpzEdKfz4yxdzgOebHJv+/V6PHcf
-	7qDWDvB2wY5wwXn0vxxWGxCoPfwRzfRxuEylJ6zWPKsd+Brlp0IbYsutslolItHJbIN7V+tYI+3
-	cFYBo17VSYHbVNyoTP7Gs3WcTJVNr4lYUd3/NoChI01Qsc3VWFL8gSqhx8UZTJTM2dcmJEd5/QJ
-	AalVf91CHtwpF9GGYygiUxgzidApOXxPZwvI/NV+YvblytRlRpeKcRWzWRauFq8dYQ6JblNUYb2
-	MXIp9kdrjqjFSpA6qpq0x+uIMyRoGZdyXEJVHdyA==
-X-Google-Smtp-Source: AGHT+IFm4WIQFISVomrAFV51FZBLIpyrii3K7EFFJhRI3QtwYUrQCPmRYno3c3emRFDyrsQdPdKFXw==
-X-Received: by 2002:a17:907:7ea3:b0:b41:873d:e220 with SMTP id a640c23a62f3a-b6474f18597mr313933066b.50.1760700121004;
-        Fri, 17 Oct 2025 04:22:01 -0700 (PDT)
-Received: from SMW024614.wbi.nxp.com ([128.77.115.157])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b5ccd1af35fsm788256166b.60.2025.10.17.04.21.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Oct 2025 04:22:00 -0700 (PDT)
-From: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
-To: Abel Vesa <abelvesa@kernel.org>,
-	Peng Fan <peng.fan@nxp.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Fabio Estevam <festevam@gmail.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Shengjiu Wang <shengjiu.wang@nxp.com>
-Cc: linux-clk@vger.kernel.org,
-	imx@lists.linux.dev,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Pengutronix Kernel Team <kernel@pengutronix.de>
-Subject: [PATCH v2 8/8] arm64: dts: imx8ulp: add sim lpav node
-Date: Fri, 17 Oct 2025 04:20:25 -0700
-Message-ID: <20251017112025.11997-9-laurentiumihalcea111@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251017112025.11997-1-laurentiumihalcea111@gmail.com>
-References: <20251017112025.11997-1-laurentiumihalcea111@gmail.com>
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="k8GMJlor"
+ARC-Seal: i=1; a=rsa-sha256; t=1760703723; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=UMAmICaP0DmVjcDJq0w9peZBvM7IWGqT6pnW/tElYIgtQjckhuM0F0kgxg+7Uy3HIThBhmQ49GYS+aZL+VbQR7/kph9ctT1stl+SlqT5yCJz+W2j8D2pMeNXXehKek03JjLJtP4gDvVaLL4DaAjEbJnqMFagef4FsyVDaLl0Yg0=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1760703723; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=tVS1yjlCPcljk4srWv5SXmg1dIE2H/RRXTrB6Ic2heM=; 
+	b=j4OoqGZ5DTFOsmf6cr1Emx6wGIfS4Sgu/rFqEX15FgSMns07IsUr6/PYK5okE9PtdtnZSe4jhQC/Vh2acBYC8HZdkTKNUJaHxCzOoU7Lhne2dbHZV5CaZK5oHGa1jP/79gH6XX22jgM/hNlQ8UMyHaD35+aYMIff/5DtiHBAWrQ=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
+	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1760703723;
+	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
+	bh=tVS1yjlCPcljk4srWv5SXmg1dIE2H/RRXTrB6Ic2heM=;
+	b=k8GMJlorX+Qdqv2XyU6q9law0BrDuTrEXukxDoN9+17ciGI0tmTwpxw53XC4zKDy
+	f4bpf3dvF4HiEO26sKZilcsYfau85A9okjutkAfx9MLsVbyBf7kRQygXWmaAF+Ts190
+	QltcMvkdhpDf0r9NAsDMwIDXnB7V96zLzZNFUhAo=
+Received: by mx.zohomail.com with SMTPS id 1760703720868631.1429498538683;
+	Fri, 17 Oct 2025 05:22:00 -0700 (PDT)
+From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+To: Brian Masney <bmasney@redhat.com>
+Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+ Dong Aisheng <aisheng.dong@nxp.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ Yassine Oudjana <y.oudjana@protonmail.com>,
+ Laura Nao <laura.nao@collabora.com>,
+ =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <nfraprado@collabora.com>,
+ Chia-I Wu <olvaffe@gmail.com>, Chen-Yu Tsai <wenst@chromium.org>,
+ kernel@collabora.com, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH v3 1/5] clk: Respect CLK_OPS_PARENT_ENABLE during recalc
+Date: Fri, 17 Oct 2025 14:21:55 +0200
+Message-ID: <3342669.irdbgypaU6@workhorse>
+In-Reply-To: <aPFbDl_JKyDay1S5@redhat.com>
+References:
+ <20251010-mtk-pll-rpm-v3-0-fb1bd15d734a@collabora.com>
+ <20251010-mtk-pll-rpm-v3-1-fb1bd15d734a@collabora.com>
+ <aPFbDl_JKyDay1S5@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 
-From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+On Thursday, 16 October 2025 22:52:30 Central European Summer Time Brian Masney wrote:
+> Hi Nicolas,
+> 
+> On Fri, Oct 10, 2025 at 10:47:09PM +0200, Nicolas Frattaroli wrote:
+> > When CLK_OPS_PARENT_ENABLE was introduced, it guarded various clock
+> > operations, such as setting the rate or switching parents. However,
+> > another operation that can and often does touch actual hardware state is
+> > recalc_rate, which may also be affected by such a dependency.
+> > 
+> > Add parent enables/disables where the recalc_rate op is called directly.
+> > 
+> > Fixes: fc8726a2c021 ("clk: core: support clocks which requires parents enable (part 2)")
+> > Fixes: a4b3518d146f ("clk: core: support clocks which requires parents enable (part 1)")
+> > Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> > Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
+> > Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+> > ---
+> >  drivers/clk/clk.c | 13 +++++++++++++
+> >  1 file changed, 13 insertions(+)
+> > 
+> > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> > index 85d2f2481acf360f0618a4a382fb51250e9c2fc4..1b0f9d567f48e003497afc98df0c0d2ad244eb90 100644
+> > --- a/drivers/clk/clk.c
+> > +++ b/drivers/clk/clk.c
+> > @@ -1921,7 +1921,14 @@ static unsigned long clk_recalc(struct clk_core *core,
+> >  	unsigned long rate = parent_rate;
+> >  
+> >  	if (core->ops->recalc_rate && !clk_pm_runtime_get(core)) {
+> > +		if (core->flags & CLK_OPS_PARENT_ENABLE)
+> > +			clk_core_prepare_enable(core->parent);
+> > +
+> >  		rate = core->ops->recalc_rate(core->hw, parent_rate);
+> > +
+> > +		if (core->flags & CLK_OPS_PARENT_ENABLE)
+> > +			clk_core_disable_unprepare(core->parent);
+> > +
+> >  		clk_pm_runtime_put(core);
+> >  	}
+> >  	return rate;
+> 
+> clk_change_rate() has the following code:
+> 
+> 
+>         if (core->flags & CLK_OPS_PARENT_ENABLE)
+>                 clk_core_prepare_enable(parent);
+> 
+> 	...
+> 
+>         core->rate = clk_recalc(core, best_parent_rate);
+> 
+> 	...
+> 
+>         if (core->flags & CLK_OPS_PARENT_ENABLE)
+>                 clk_core_disable_unprepare(parent);
+> 
+> clk_change_rate() ultimately is called by various clk_set_rate
+> functions. Will that be a problem for the double calls to
+> clk_core_prepare_enable()?
 
-Add DT node for the SIM LPAV module.
+I don't see how multiple prepares are a problem as long as they're
+balanced.
 
-Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
----
- arch/arm64/boot/dts/freescale/imx8ulp.dtsi | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+> 
+> Fanning this out to the edge further is going to make the code even
+> more complicated. What do you think about moving this to
+> clk_core_enable_lock()? I know the set_parent operation has a special
+> case that would need to be worked around.
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8ulp.dtsi b/arch/arm64/boot/dts/freescale/imx8ulp.dtsi
-index 13b01f3aa2a4..676535c3fc84 100644
---- a/arch/arm64/boot/dts/freescale/imx8ulp.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8ulp.dtsi
-@@ -776,6 +776,23 @@ edma2: dma-controller@2d800000 {
- 						"ch28", "ch29", "ch30", "ch31";
- 			};
- 
-+			sim_lpav: clock-controller@2da50000 {
-+				compatible = "fsl,imx8ulp-sim-lpav";
-+				reg = <0x2da50000 0x10000>;
-+				clocks = <&cgc2 IMX8ULP_CLK_LPAV_BUS_DIV>,
-+					 <&cgc2 IMX8ULP_CLK_HIFI_DIVCORE>,
-+					 <&cgc2 IMX8ULP_CLK_HIFI_DIVPLAT>;
-+				clock-names = "lpav_bus", "hifi_core", "hifi_plat";
-+				#clock-cells = <1>;
-+				#reset-cells = <1>;
-+
-+				sim_lpav_mux: mux-controller {
-+					compatible = "reg-mux";
-+					#mux-control-cells = <1>;
-+					mux-reg-masks = <0x8 0x00000200>;
-+				};
-+			};
-+
- 			cgc2: clock-controller@2da60000 {
- 				compatible = "fsl,imx8ulp-cgc2";
- 				reg = <0x2da60000 0x10000>;
--- 
-2.43.0
+__clk_core_init also needs special code in that case, as it calls the
+bare recalc_rate op with no clk_core_enable_lock beforehand. It's also
+wrong, in that recalc_rate does not necessitate the clock being on as
+far as I'm aware. (if it did, this wouldn't be a problem in the first
+place, as enabling it would enable the parent as well). Changing the
+semantics of clk_recalc, and therefore clk_get_rate, to also enable
+the clock, would be a major change in how the common clock framework
+functions.
+
+In my case, the __clk_core_init callback was the one that crashed,
+so it really needs to happen there, and I really don't want to
+refactor every location where `CLK_OPS_PARENT_ENABLE` is used for
+a bugfix just to avoid potentially checking the same flag twice.
+
+Having `CLK_OPS_PARENT_ENABLE` cleaned up such that every clk op
+that has potential register access is never directly called by the
+clk core except for one place, an accessor function that does both
+pmdomain and `CLK_OPS_PARENT_ENABLE` checks, would be nice, e.g.
+by keeping the clk_recalc change and then having __clk_core_init
+call clk_recalc instead of the recalc op directly. But then the
+__clk_core_init logic needs further refactoring as well.
+
+I'm not sure I want to do that in this series, because it's quite
+a bit different from just adding the missing check and parent
+toggling, and has the chance of me introducing subtle logic bugs
+in what is supposed to be a bugfix.
+
+> 
+> Brian
+> 
+> 
+
+Kind regards,
+Nicolas Frattaroli
+
 
