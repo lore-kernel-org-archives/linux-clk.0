@@ -1,212 +1,193 @@
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from MRWPR03CU001.outbound.protection.outlook.com (mail-francesouthazon11011069.outbound.protection.outlook.com [40.107.130.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC5DD369980
-	for <linux-clk@vger.kernel.org>; Fri, 17 Oct 2025 14:05:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760709954; cv=none; b=A+kliBi7AIEqsY496I5IoIrGTwYTs456tGDy92ar5qpf+D2qqzxMm3A6+w3lB+RawzrRRjpXUe+Y8CBihjPazqaZ1P6eGYFWw0fCqijXfKQMWtPFdNu2JAMMqsfTbY7SIDxZNb/uh/rddQVWMoW4sCLi661PMt3eO/Zbp4kO+p8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760709954; c=relaxed/simple;
-	bh=y2j14fKCfSUEyLu3qKfrbsyP8qXM57xWfcpUmJOscjA=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=VKvXt5+aAK1d2iG1S2ggeFezmd7LYhPlSjYAHIm5Tetbzu3CFqB91WBWu88e+a+xDXOP5fxaQNLWEqSN7D7Thq240SjtfnGaY33VE/F68FAQZo9FkU0j3UzcFvK+XCIZyZYvflcTkfan1l5e2eiLnFAx4hrldBNJa2A9cLmx4zU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=HnzF4Fov; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fairphone.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61A5933971D;
+	Fri, 17 Oct 2025 14:28:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.130.69
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760711331; cv=fail; b=hiPj+aX3oxKQ4pExkPYg7jPjxT5PeMDxBbUQZKp+B3oIE0k3N1VhChSRz7bPPHd053reUNouWMg25aE/RdP20iKiqysZKBjJ0Qf4tiqtAZY5nWSOId7dvWTyke/aMxmH70jxW/yeSM8Ifc7XP7Yav/Cm2v9J2Te/4c/UB6BhtME=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760711331; c=relaxed/simple;
+	bh=1/gsUlkw7snuZg1HPVyPWVRZ5err+QmvFT84/tjsOb0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=Dc/DjW5SvvRqW62xP4Q/UYwEF7mXSdPzTd6I7Dyzx8Yz++x5hXILe+2nltF5jDHmbh0yEgaoK6CKgAVRyyi3+NwOMTcZrbFeb1sjhLjVra1XCWf74jdZnEXCvU8tzXlawgFC62FwInxfMb3F9TcTD19qW36nBY897lsD9U39qlc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=fe4fnJkH; arc=fail smtp.client-ip=40.107.130.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="HnzF4Fov"
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-63c0eb94ac3so3190082a12.2
-        for <linux-clk@vger.kernel.org>; Fri, 17 Oct 2025 07:05:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1760709951; x=1761314751; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NDtFkvW71ZpCBo0DPDG4zvNO/0+/N+iEEt28V0Z9TN4=;
-        b=HnzF4FovcXOObmvLMUbPJTiOwxK3ehxfgyH7u84LetBoLjc5H7FG1kqIFLSH5jTjaf
-         OGh4df+M7VWi13/QZgAdVYq/3yJWXT/MtRt1ezmVRJC/27CTPtD14AdNMaxMQx4jQUwr
-         +2eWFU5CH5l8RWXG+G799vZhBvt6UAQNTpYwFjl/5e/2QuS9JPIu7vj+tuglbusVRJ6u
-         fHPziA8qXIg5RkJreJB+d46gKllAOzl2/ZNC2Scj/By3O2QmhqzRmJwRGgevaBWDagBC
-         W7StOWDa+9qrCUhfxY1/XACFSr50Nvz1kc7byZzZwu6OhAaSkAcQQZ33wR9Np/ynfEG2
-         USjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760709951; x=1761314751;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=NDtFkvW71ZpCBo0DPDG4zvNO/0+/N+iEEt28V0Z9TN4=;
-        b=xHyH3yic7EP0CTuKP03Jx/ibjFZ95DiLjJGM11YLbl+njU9miIzABz0ILp3LQ0QHKZ
-         cdJlTfVPGO33pK2gbzyORrQuZAIIP+m9d8WgP9MPz1xGTPzBz6fIqw3zHQpjnJ2Uv76r
-         oQIvO2ABb2NZ1j/ZAB/T0spfcOM9VjhsLlKuu7c4bjU6paxCS+XFFEq9vDWamvULhqfd
-         s0Kf6CnL6BMXuTqH2beIomKTP2GzhZtbIP1iUboaPAN4LCMeIfVvyCaEDR2Eu23o7nYi
-         ofIf/TVeazSQCcSri1BWhodbyUW3QvCGaEGJ/yh67rOFmH6/uTPgg3ZnPPsrnPEDJ59J
-         aTxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWuFk1eiH1Qf/gGMZEgIn7KNjbi3Pg21ksnKzllGCoUQKB1+JufK9Z6tsPsBF+4xbSJW5xbyBsZ9dg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0OmG7jxoEucPn/z7V77Zk6g5RUZ6oL2i4IdBD9qDxZlf5+KFg
-	HHalBYc3OHZOnQPiEMWFEVwKy62J4UrtVL6mwP723wKseAd+naDQ2sCdr3eZC4OXI+A=
-X-Gm-Gg: ASbGncszkA2TSeeA+XmJqWcdM1hL+4+xdYbfk/k3sMy6bP1kxlKmW0JFlMFzn1EvtnI
-	NRoDo27lr1XseklQOCfYXK7fRFavi31+k+ShzgwLgoF/ChSxULKuTiJDr3kmbOcCoTnjR5a7ahG
-	IcJ06wxkT3H33cF07UG3UOIAFxU3vsbv6IMMG/+dVVJ/eH2t+07H1js//Vu1RTPwd/BoTfIBZvg
-	JUme024Cut9G5pM27H0X1YK48OMwL5ofS3y61+SgcFeqaAWGgcs/7S43sqc/9psjlloMhTShBho
-	e3TW+W0e46YWszBn57gTw372mBVWN9RCqZAbSy/Fa0d7WSs+IV5RFaNoM08UQn9S3XEcODvWSVU
-	pfG4VBoaKSLQpiq5qbYX9z/ZkCF7nPz1JpWt/f16gFnc0poafZO2STG22FNtB+MX1y87Pjwrzc4
-	gQrhkeOF1itIKDWIzIhkx0JYZoRz8lIFJE+9PYJTiDlrBc5DtUrAOfx6xK
-X-Google-Smtp-Source: AGHT+IHD0zQCxNlY8i8goUteHIFFoUwCmKep+B7VhLiGVGAGPiHMCDPi+AsNJHLKrrEXZzT+k7ZWpg==
-X-Received: by 2002:a05:6402:3552:b0:639:e30c:2477 with SMTP id 4fb4d7f45d1cf-63c1f636789mr3573697a12.7.1760709951080;
-        Fri, 17 Oct 2025 07:05:51 -0700 (PDT)
-Received: from localhost (144-178-202-139.static.ef-service.nl. [144.178.202.139])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-63a5c134062sm18799571a12.36.2025.10.17.07.05.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 17 Oct 2025 07:05:49 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="fe4fnJkH"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=YaTXrmvTT5XlepOycMGU32LFeVXQsfz6vREjOgH1xA0YPL4woeP2EAEnGosrzVfeHMhx1NHwApFAVcB5F73qNJDWbQGWM+xaTryHQ4Ox2ruoEPY6T/WD8odm6lEeoDomaHWLg8RSdivWhdZV1ep1plvHgEtxD9nVzsenO4L1cq6wdt9igYRFwUgwzFomtqanZEjvD9P37WBPLorZWSSAA+w8G38wbRgf1sLc+n4k8/PsKHUlcZ+KtDT2C0KkIViZOLe+moAtqHSjSFCpOghieosRfAnHlYBpZXcX6XUibzdFB/cAWuiYlnEwln2dh9lR4cG8GhRUDcukhWEnzzKngA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=rQJR9QYGpqVtWB2KEKXyf2/wjVDfocH46dPTmz0Aau4=;
+ b=h1a4iAc2dZMF1tKx1spqvWSrwe0kt272gEJhTi8ax81OqLdMzEXVFeG4OcLeKPZoY19mBaqXkPlkCPN5Y3CFYRuhJsr4MvbTbh03R6HcjwwF1I37v/1DUXTfDMeOfGenE3VlAqc6zDowNlxXvKkzSWyAVPDRrqM5kF+ztIjslC5NJgdTCqi+m4im6ZBA1cmTZAkTxWkKjPGHyqHzwO5B3g7YUbn+iniCe3PaW4KkcNE6jauSi8YQ+NFwSkWHWEoA0jkJ0PFmzIll+JOnGehMG0qFTpXtnn4/QDH2oiJkS0UDnz2zUIigH2VoEx6ATz+b7W2lFn8Wz5WzyHIqVsb/TQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=rQJR9QYGpqVtWB2KEKXyf2/wjVDfocH46dPTmz0Aau4=;
+ b=fe4fnJkHunvNh2cPGMz1/S08pOikBjzDSuIqVEKlhRU63/qGEtUIq2u+ndUaZkmlVgtjokhhg//of038SgVtTmAglOZng490Jf+QMC5sUi41RhnMCy2ekxn51aneNgnm1iKlf2Nm4Pc1d0pxgcJLuJy4k5AjBoq5Byt06HU8EFjNruj6AtgYu+Qmxv/DjHq6LOC0h4fHKFZGCa0oCbUySN1yufrlo9j8PZkdnXsHdqwZiTJxwcbWYjkkB8SezvFbGHZdne+z3sHU0k/RC0Ag/P8WS0Dn7lSQJC+WcCsEZuq7Y0U3YyiE4hvJMqa3t3NvCR0YJhczZEUofaiL/xRxuQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXSPRMB0053.eurprd04.prod.outlook.com (2603:10a6:102:23f::21)
+ by AS5PR04MB9854.eurprd04.prod.outlook.com (2603:10a6:20b:673::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.12; Fri, 17 Oct
+ 2025 14:28:44 +0000
+Received: from PAXSPRMB0053.eurprd04.prod.outlook.com
+ ([fe80::504f:2a06:4579:5f15]) by PAXSPRMB0053.eurprd04.prod.outlook.com
+ ([fe80::504f:2a06:4579:5f15%6]) with mapi id 15.20.9228.010; Fri, 17 Oct 2025
+ 14:28:44 +0000
+Date: Fri, 17 Oct 2025 10:28:35 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
+Cc: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Fabio Estevam <festevam@gmail.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	Shengjiu Wang <shengjiu.wang@nxp.com>, linux-clk@vger.kernel.org,
+	imx@lists.linux.dev, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Pengutronix Kernel Team <kernel@pengutronix.de>
+Subject: Re: [PATCH v2 1/8] reset: imx8mp-audiomix: Fix bad mask values
+Message-ID: <aPJSk2spnihEEkas@lizhi-Precision-Tower-5810>
+References: <20251017112025.11997-1-laurentiumihalcea111@gmail.com>
+ <20251017112025.11997-2-laurentiumihalcea111@gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251017112025.11997-2-laurentiumihalcea111@gmail.com>
+X-ClientProxiedBy: PH0PR07CA0004.namprd07.prod.outlook.com
+ (2603:10b6:510:5::9) To PAXSPRMB0053.eurprd04.prod.outlook.com
+ (2603:10a6:102:23f::21)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 17 Oct 2025 16:05:48 +0200
-Message-Id: <DDKNL43NWFMA.1S03T0SUYFVMY@fairphone.com>
-Cc: "Bjorn Andersson" <andersson@kernel.org>, "Rob Herring"
- <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Jagadeesh
- Kona" <quic_jkona@quicinc.com>, "Bryan O'Donoghue"
- <bryan.odonoghue@linaro.org>, "Michael Turquette"
- <mturquette@baylibre.com>, "Stephen Boyd" <sboyd@kernel.org>, "Conor
- Dooley" <conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
- <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH 2/2] arm64: dts: qcom: sm8550: Additionally manage MXC
- power domain in camcc
-From: "Luca Weiss" <luca.weiss@fairphone.com>
-To: "Taniya Das" <taniya.das@oss.qualcomm.com>, "Luca Weiss"
- <luca.weiss@fairphone.com>, "Dmitry Baryshkov"
- <dmitry.baryshkov@oss.qualcomm.com>, "Vladimir Zapolskiy"
- <vladimir.zapolskiy@linaro.org>
-X-Mailer: aerc 0.21.0-0-g5549850facc2
-References: <20250303225521.1780611-1-vladimir.zapolskiy@linaro.org>
- <20250303225521.1780611-3-vladimir.zapolskiy@linaro.org>
- <dbxvzgqs5slrl5edqunal3wplg5jiszqv46dr4nzgowwlhkhxa@qwtfq7nfjwfo>
- <3210a484-b9c3-4399-bee1-9f5bbc90034c@linaro.org>
- <CAA8EJprP9Z181VDCT=xfyrBipzgiB0tfb8M_XZ4H=yOrvEnB0w@mail.gmail.com>
- <f41061a2-cf45-4588-8df7-22270c936ee2@quicinc.com>
- <D8EZ47Z557OX.37FDVYA5AHET0@fairphone.com>
- <d64c0776-0b12-42d3-aed3-4e6a13487f51@quicinc.com>
-In-Reply-To: <d64c0776-0b12-42d3-aed3-4e6a13487f51@quicinc.com>
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXSPRMB0053:EE_|AS5PR04MB9854:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7f291342-7626-4453-9c36-08de0d897a3c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|376014|7416014|366016|1800799024|19092799006|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?SfpT6/lm39Dj5ieG9bYkmEzKaZrz+QTyFo8VoKUEcWNEIgIHtPzQq65f/YoS?=
+ =?us-ascii?Q?fFKodPi2i5zvGqDI9RE34N+7ebsI9ue6eiMItScpczoTCxrEi21EJCqrG1bz?=
+ =?us-ascii?Q?sR8C+trW+bW3FhUA0EYMQCAOyg8uJ3A1DwvNzvps22aJfpLzMdDo/elxxHWk?=
+ =?us-ascii?Q?425CvDlLkC3qhLrwFqs5fI8A4DmwK8uO7dFgf2PbLgFLriMnMc8aSn6t5o/7?=
+ =?us-ascii?Q?M59gdU95yrfWyltwMR4mO1G0t0AJtoAtDv7Tmzvsh+waqbgDtPr95CkysFg1?=
+ =?us-ascii?Q?2oYLVuxNJ3Pe6z6sqKhIhyVxa/Pq6KcKrdmNEAP+qrdE7wYrifY2WEgwbMsT?=
+ =?us-ascii?Q?XptB7ac/Z27qFCeQJSSBcejoH0x+dmIz7cS3N7zKKdPWA7MRLUeHmcKVyqBn?=
+ =?us-ascii?Q?9cVGeMgAG9MvEJ5lpR3CfTECU+myEjQ8SlYnKLpR78i+blv01iByCmqbe2Qe?=
+ =?us-ascii?Q?OZ5r6TRNuqViOtcRwbHJk3/KVdsu1YiAuVY/PbZ2US5to6EBP7aHJ4owyP/d?=
+ =?us-ascii?Q?/Z0pWhA1qWuqILnM8YiyaTTejpmoL2yq93YOFoW177JWtwHGyyx+K2oLVJZP?=
+ =?us-ascii?Q?FIW+BcjNN1NpJfcsDpJUZBrC2G7/8Lb+myzdcuHJMCL9gzXGNUF4JQsdkaQ7?=
+ =?us-ascii?Q?CAqTchQEOXPVJ0Xq25brxUXmaQC1eh/h+R85KSLLREWbD7Xeuj6bcnrN9rPM?=
+ =?us-ascii?Q?9QGXl6m2yWcXax0GCQnvYi3iiKVgVV4wKJPFTnO1O5iCxGXhVqaLuRG1uiNJ?=
+ =?us-ascii?Q?Q4qHEEsvuOQYdZty0S/xXZ7AulxoNCQKtC4RtvL45GAVDwXGE8JqcDp6z7YF?=
+ =?us-ascii?Q?jIIiX4llJeWuci66Bc12dfZhTT5GKUC48ZfTQseUCaFJ+W9V+2tqBxJ/ykGr?=
+ =?us-ascii?Q?n0TCiCC4cqL1MxMuHz0BQ2wJvwXWeWnOQTjzltMCEaZLrzvzab+iwTVaFXyJ?=
+ =?us-ascii?Q?8vrjpb6dZEdVAiTMa2T+nWAON7cflq9xcEFmXDnw4ekjJrh4dpj5fb4ygaQ1?=
+ =?us-ascii?Q?j4OVZGT+TqbBC0nJncipbOjNkQLf60SYxS2W0VkZPTiBbTeeuDdNlDzBKsKo?=
+ =?us-ascii?Q?oYxH+d6/XxQbOJWFJVRGmU27ERMG0Y6+0DoGonM/ykAqmX4RA0ebNgkGEMo0?=
+ =?us-ascii?Q?OW3NMvTomq7eMOLk0ah8zT1kkuz8jFaCUj4P6eu6ayyu02r2YhGwUkuv/+li?=
+ =?us-ascii?Q?wAtxWkwdxlUxbntcydNJJ6H8KBC9MonjBfw3IJ4hpWafr03nlDffTgshr3uy?=
+ =?us-ascii?Q?o33CUgF/niiFJTDyKyzBC2idFrUGr+tw9WLt+nZ9UweKum3Ulae8X6tuO++s?=
+ =?us-ascii?Q?499wbA858FtYiEVlEJSXjctUNictl/cPP8WI6cDVrQX0f0Ij8QP8SUQJnOrY?=
+ =?us-ascii?Q?j2pZ8o3ks0NFuzXHyNDkcdGP7kY8IYs30iv70ssmKvh3sGLnfg05HegIOZZ+?=
+ =?us-ascii?Q?rQEsXmx5KN18MySGgmax/fjvegPJ8X6llpb9nAiw2+NT4zOWGD+2/w0KQMZk?=
+ =?us-ascii?Q?VjxuJj5jS09T15Z/pCOMlcBiGkGGP+yTGKKo?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXSPRMB0053.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(7416014)(366016)(1800799024)(19092799006)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?f9NvKBYtFSzvdJNN9gzOAhWY1BSeYAzTHeYDlKEmWj38mE5oh8SIfIE2Nvev?=
+ =?us-ascii?Q?dcURifPasZncPGrjwi4+HTajzX1UaKDoGKy0SkWi5nOGh9ENjs18nedow8zs?=
+ =?us-ascii?Q?Oq9wbjsh56RYZ8erieFQz1uHavjsDGkksiBA1dRbeDNRh/j6OCuqONuIfR9e?=
+ =?us-ascii?Q?Xgv9J1JcprJRnSKbQpiKNzWk2RsncW3zfZTJztp50ifZwmI0u2xjDFAZWRTX?=
+ =?us-ascii?Q?EXSfj9aC8RY2ergQFQsupGwI3CwxcKFDYjjdqyT/jWAvja/WqMgejD6E/upX?=
+ =?us-ascii?Q?YxXoPYfh/SydV4N9QqVs3l0piV8NKr3I/iX34IRnaiTcn2x301+tMoCUEp5U?=
+ =?us-ascii?Q?srGwpVsRWLev1b0bBCYcE+R7Zq16kctb07mu99aD5dR9Si+ZMAm5iyszLRdF?=
+ =?us-ascii?Q?vNqg5YDlcYpV0M+13YpJM8GP6ZGO30WVnrAnSIa8MLkkVnsj2h3OG3jMtdwM?=
+ =?us-ascii?Q?Y9tZ1AoRkq/R5xrPgHEMllCxg+qgwUoF97eBT6X3DHjb+lWOeHmdXKaF41bY?=
+ =?us-ascii?Q?62BCCIC/hZ9Kgi3ivfwK77evLIdjPCnvWoyTF6nXlFDv7/r0BGAhj8+lUNGt?=
+ =?us-ascii?Q?2913R9gzvWZdZuLQyfaZrtle04jFVpcEiOrjoshL05BGVkQO6nWY1RIDa7Go?=
+ =?us-ascii?Q?4ydv5x1vIo/k/d9BYByA0wuN7J2P8YuX7VGq39cZSAhy+916fSqzw27E4RM5?=
+ =?us-ascii?Q?1TAuihZSpsBZNlYs6i4hbWEbmrfpOawwq9X6RLDsTzSBYlvLyRbkEpzDMN5T?=
+ =?us-ascii?Q?30iMAOkx1sh/CE0pVVC3EkGwOVGq7GFS4kSLG9d38kJf+mh1+tketT/tXQsc?=
+ =?us-ascii?Q?gpjcx+lZ8tMR2mcLE1ueurdF7KQjrcujYraPa2EXwM+iyNmMQXP29i87yyGC?=
+ =?us-ascii?Q?zF8993Fqu5+tkOt2KqeMCL8r3Fsja2IZIuzJT9NqAfI3Vc2wE50fkoKYdP5r?=
+ =?us-ascii?Q?fBLeCF5JZALI7lsW75U84D+TsfC6l21NVBCRGdIGiXl3dflFOV6sighgVS5A?=
+ =?us-ascii?Q?7j87Uwr1yphUvQoETN926iKQBlB9v94jNgZ/sm5fUWJFMPm1FpPmGl56dX/k?=
+ =?us-ascii?Q?u0jxxPAuI77N+8FkCPZEPd9SsRPEArzM3/+fhf6Jnr0FYUJ+ed2N/AD+nRVl?=
+ =?us-ascii?Q?3wmZ3uCvsl3U6ie1cFdE0E60zxehy4O9zZok4kjy4hhjjUop55yzr/pPbLUq?=
+ =?us-ascii?Q?MmiOcMTG92LU9qycCHytXHB5SG0USoIN4n5gUVUM+PGeDDpYDapiSQ1al0sC?=
+ =?us-ascii?Q?pnsZMNwSmahVBXI+gv7vrOw0OB51eaR+jvoGdzQwbuoKMAyF3EBgm+DSnf8+?=
+ =?us-ascii?Q?jbf9Ms2tl5rFdqu61OKOxwAiKlA8Jp/Nf77nGQU3RrQI20/NC5n+6coO6EiY?=
+ =?us-ascii?Q?I+B7pJ6hbRVc/VtsL0gxSy2L8PMOTtazhmkFNFmxVoyJBGKcqjxUnkbIBJgc?=
+ =?us-ascii?Q?DfyGDK/c0vRs8bTlWxnOSqjLlCCEkcPtcRU4MFOU5C08FLljcmW4f1h8geXX?=
+ =?us-ascii?Q?u9p/sK+fOo338ehGq+nb6cH3OXFly2gO0biudZS1jYjXEvbaEkV7y5exrH7U?=
+ =?us-ascii?Q?FpggDyVk4NRS2fpqe9M=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7f291342-7626-4453-9c36-08de0d897a3c
+X-MS-Exchange-CrossTenant-AuthSource: PAXSPRMB0053.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Oct 2025 14:28:44.7454
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: DzPDONQL71hUY7FhxijWEiVQV1qCL4OXuTCHpexjPk/MdmA+s0tYQj1VM/hKhEyJdhMdgFSTw+ot8oIyXRRMhQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS5PR04MB9854
 
-Hi Taniya,
-
-On Thu Mar 13, 2025 at 12:57 PM CET, Taniya Das wrote:
+On Fri, Oct 17, 2025 at 04:20:18AM -0700, Laurentiu Mihalcea wrote:
+> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
 >
+> As per the i.MX8MP TRM, section 14.2 "AUDIO_BLK_CTRL", table 14.2.3.1.1
+> "memory map", the definition of the EARC control register shows that the
+> EARC controller software reset is controlled via bit 0, while the EARC PHY
+> software reset is controlled via bit 1.
 >
-> On 3/13/2025 1:22 PM, Luca Weiss wrote:
->> Hi Taniya,
->>=20
->> On Thu Mar 13, 2025 at 5:39 AM CET, Taniya Das wrote:
->>>
->>>
->>> On 3/4/2025 2:10 PM, Dmitry Baryshkov wrote:
->>>> On Tue, 4 Mar 2025 at 09:37, Vladimir Zapolskiy
->>>> <vladimir.zapolskiy@linaro.org> wrote:
->>>>>
->>>>> On 3/4/25 01:53, Dmitry Baryshkov wrote:
->>>>>> On Tue, Mar 04, 2025 at 12:55:21AM +0200, Vladimir Zapolskiy wrote:
->>>>>>> SM8550 Camera Clock Controller shall enable both MXC and MMCX power
->>>>>>> domains.
->>>>>>
->>>>>> Are those really required to access the registers of the cammcc? Or =
-is
->>>>>> one of those (MXC?) required to setup PLLs? Also, is this applicable
->>>>>> only to sm8550 or to other similar clock controllers?
->>>>>
->>>>> Due to the described problem I experience a fatal CPU stall on SM8550=
--QRD,
->>>>> not on any SM8450 or SM8650 powered board for instance, however it do=
-es
->>>>> not exclude an option that the problem has to be fixed for other cloc=
-k
->>>>> controllers, but it's Qualcomm to confirm any other touched platforms=
-,
->>>>
->>>> Please work with Taniya to identify used power domains.
->>>>
->>>
->>> CAMCC requires both MMCX and MXC to be functional.
->>=20
->> Could you check whether any clock controllers on SM6350/SM7225 (Bitra)
->> need multiple power domains, or in general which clock controller uses
->> which power domain.
->>=20
->> That SoC has camcc, dispcc, gcc, gpucc, npucc and videocc.
->>=20
->> That'd be highly appreciated since I've been hitting weird issues there
->> that could be explained by some missing power domains.
->>=20
+> This means that the current definitions of IMX8MP_AUDIOMIX_EARC_RESET_MASK
+> and IMX8MP_AUDIOMIX_EARC_PHY_RESET_MASK are wrong since their values would
+> imply that the EARC controller software reset is controlled via bit 1 and
+> the EARC PHY software reset is controlled via bit 2. Fix them.
 >
-> Hi Luca,
+> Fixes: a83bc87cd30a ("reset: imx8mp-audiomix: Prepare the code for more reset bits")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+
+Just curious, why previous version can work?
+
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
+> ---
+>  drivers/reset/reset-imx8mp-audiomix.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 >
-> The targets you mentioned does not have any have multiple rail
-> dependency, but could you share the weird issues with respect to clock
-> controller I can take a look.
-
-Coming back to this, I've taken a shot at camera on SM6350 (Fairphone 4)
-again, but again hitting some clock issues.
-
-For reference, I am testing with following change:
-https://lore.kernel.org/linux-arm-msm/20250911011218.861322-3-vladimir.zapo=
-lskiy@linaro.org/
-
-Trying to enable CAMCC_MCLK1_CLK - wired up to the IMX576 camera sensor
-on this phone - results in following error.
-
-[    3.140232] ------------[ cut here ]------------
-[    3.141264] camcc_mclk1_clk status stuck at 'off'
-[    3.141276] WARNING: CPU: 6 PID: 12 at drivers/clk/qcom/clk-branch.c:87 =
-clk_branch_toggle+0x170/0x190
-
-Checking the driver against downstream driver, it looks like the RCGs
-should be using clk_rcg2_shared_ops because of enable_safe_config in
-downstream, but changing that doesn't really improve the situation, but
-it does change the error message to this:
-
-[    2.933254] ------------[ cut here ]------------
-[    2.933961] camcc_mclk1_clk_src: rcg didn't update its configuration.
-[    2.933970] WARNING: CPU: 7 PID: 12 at drivers/clk/qcom/clk-rcg2.c:136 u=
-pdate_config+0xd4/0xe4
-
-I've also noticed that some camcc drivers take in GCC_CAMERA_AHB_CLK as
-iface clk, could something like this be missing on sm6350?
-
-I'd appreciate any help or tips for resolving this.
-
-Regards
-Luca
-
+> diff --git a/drivers/reset/reset-imx8mp-audiomix.c b/drivers/reset/reset-imx8mp-audiomix.c
+> index 6b357adfe646..eceb37ff5dc5 100644
+> --- a/drivers/reset/reset-imx8mp-audiomix.c
+> +++ b/drivers/reset/reset-imx8mp-audiomix.c
+> @@ -14,8 +14,8 @@
+>  #include <linux/reset-controller.h>
 >
->> Regards
->> Luca
->>=20
->>>
->>>>> for instance x1e80100-camcc has it resolved right at the beginning.
->>>>>
->>>>> To my understanding here 'required-opps' shall also be generalized, s=
-o
->>>>> the done copy from x1e80100-camcc was improper, and the latter dt-bin=
-ding
->>>>> should be fixed.
->>>>
->>>> Yes
->>>>
->>>
->>> required-opps is not mandatory for MXC as we ensure that MxC would neve=
-r
->>> hit retention.
->>>
->>> https://lore.kernel.org/r/20240625-avoid_mxc_retention-v2-1-af9c2f549a5=
-f@quicinc.com
->>>
->>>
->>>>
->>>>
->>=20
-
+>  #define IMX8MP_AUDIOMIX_EARC_RESET_OFFSET	0x200
+> -#define IMX8MP_AUDIOMIX_EARC_RESET_MASK		BIT(1)
+> -#define IMX8MP_AUDIOMIX_EARC_PHY_RESET_MASK	BIT(2)
+> +#define IMX8MP_AUDIOMIX_EARC_RESET_MASK		BIT(0)
+> +#define IMX8MP_AUDIOMIX_EARC_PHY_RESET_MASK	BIT(1)
+>
+>  #define IMX8MP_AUDIOMIX_DSP_RUNSTALL_OFFSET	0x108
+>  #define IMX8MP_AUDIOMIX_DSP_RUNSTALL_MASK	BIT(5)
+> --
+> 2.43.0
+>
