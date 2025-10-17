@@ -1,47 +1,47 @@
-Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010036.outbound.protection.outlook.com [52.101.69.36])
+Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013062.outbound.protection.outlook.com [40.107.162.62])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C4452DC78A;
-	Fri, 17 Oct 2025 14:58:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.36
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5395B2F12D7;
+	Fri, 17 Oct 2025 15:00:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.62
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760713090; cv=fail; b=d31hwYB7Vly9Rw56KrIyR/6TQRbtJW9rMJhQNsOAtjnere+mDu7cN4VVYw2Bd0nBt/bhZVQuNLL5XPTOGJMtLEjuWwoVYyoYhUxsX38yQQH36SC+26vwacRKkGScynaKQuWzsK45ChFMoW/D0NN+jVn0JyjVFqTn3fHNkUwM9HM=
+	t=1760713209; cv=fail; b=BhKC2rv6vGICx+vXYCIRRmusdse2EdaNWydYF1mjMLiS06d/P29JPARrq0W/U1eZiiHdlgKJO9BzWzP+W5l+aliYqSVXQEBA9VuMk8vk2Y1yMnhywLbqUbcPGHU0cYqNXf+NAwT9s2LTUVxapNmHiUPnBpZLWihIoo1ARJE6+6w=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760713090; c=relaxed/simple;
-	bh=jyyGdAnd63hEbOvYPYUZ7p+Gq4MX0zwpvMJDQaDvjLI=;
+	s=arc-20240116; t=1760713209; c=relaxed/simple;
+	bh=M0zsPGF82hykh120SzaYs2kejNe1n2UrjM5EuN+alrY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=WUbFVittxW5gV9aRQ6RCtkEGtsx2PItUFVe1RXivejO9xrz4qKtY3IIsWwtSX6szocFqZniEOhzpZPBNJHaxKHya9sQ0N6r7zLZFC7dgUkKpGvBalT4Ou7ZfOvng5BDi9DH+tTcVxUDDTB4o1KxEbJUw9wI2EBKW33cXRyE4hLI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=YbPL5Wqo; arc=fail smtp.client-ip=52.101.69.36
+	 Content-Disposition:In-Reply-To:MIME-Version; b=nTUOQtfW3HdqabVC78fPba8ivMkSu1y8VHEUsIL+dXKX34oZJARs1sliIxxlC2+gywFvCFUg+oEoKbHiv2qJDrnwpCmPgmGoHb6xQ6ejG+wgma2xDsNqSIRVosewxapEooLBpKy2P7pcY966QpLYAZgpyHzjA1FR6r+UpUDCBHQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=U/uAIHQd; arc=fail smtp.client-ip=40.107.162.62
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="YbPL5Wqo"
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="U/uAIHQd"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=SkkFt8O5yUzRale0K0jVE7XjmiYkcDKcBYlLvpN9VfB8lttyBjfkotWwRSITDpf2M6OmQz8ZN2cTr3uOVr53OJmfVLoty1RvJ0lkM0tYIunTnq8SCnw5CyKYh46FYHWzqwOBN2fsHqV63k3z5CNodcII9hjdeloIU774wg5+egOwZi01y+ql4hoO2kqn4D0JPWCFQRTerReaxcwGaxR+p+LxEo1CJeHzKvyUlEPrW0cPMWRYfd3pCJCiwvt9kHxTLVEi8lSH2G8smeRSUQb5MMja5RNQzf+TrOdOE/A/Za3FlQPUCvo84kpHVgqClp+J0tbJM3a53DWmUP7bOE30OQ==
+ b=bb3cx4+DY97fcagb9/h+mvFwPTBrBk/cqXQwOctk9N30Bk37H7XBA7jfbG+WNoxNJQ3F557abX5mkRk2BCdsEzq2GjfBee9b/p+oS5cb9o7Lumih/5qOgyfhs9MYY8Ob/LL+Y6I/x5XAI6cMaL5asrTcXuS1wALUMya+K7RT2MAktmF8HgPVAr/28NzNjYy9Z3NOCr7CwNxvKLs18k57VeSRB6q5Z9x5sMtKer/29fgRb/lwJYBUsVygXXodIcWPLdZfMoikurVs6Wi8RKBskEUFa53HqVnajkM5iphxmsuyP+r0ZeGoNWpWOwVKyuF5M/nCbHjjKAPgTopybHg42Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=DhbHfxBapUS48AaHnkpUu6W23KMKJqRQjEJlk29JuB0=;
- b=RjMkMk6Ikqxhn07ulUKeeZQhoZad3VStHt6xl1r6Uc7X3YGxEYdzrUCGHEeD8VxfuYZG4NsDhl4Xvyp7XRRTdmwTOrWEHcipSaFp62mkqx5W197A5Io9MCn3YE2ZgyfDe7EPylO8NRg88iNUcKbbutBNXQQX9/+2DG2OEbSLkZyF8vCRZUj9DA5VGU3xuEGwvXltRl9BKAI96qCi/Qk89S38QO56HVITSdfy+bRjpiFFr+ePUs9/udXxrgnuPOjceHRYaT9xJ2qbMrmlLOUNbAd1Qpg1vtWMZOwYkvcmuM68Ij3Zs0z1EZ8PwBldY6hqNChH/RPw8c9zS4Mi0UKDsQ==
+ bh=p1dcKcpVVLGTBkOUmuh0NmoX92wivO5TSnNxU/70zrA=;
+ b=L5hWcciM9qN/S3LDmGzt92e/faXp6jUmVv5W9gkuj/2B83TaeJldBbvlw5Sjhvpzd8gzqeIWf0te7PftG99j7VLl4/TbMcy23nZHBSzRr5XmA44d3RSYQxvWCeFK7CshJ9W5jjr3xof/tYeiOK455DMgb3tqAFVmZjkhHTS5SH7h/OS+lNzD14L/7+Z/EdNC4x3pNfZRmYE3gWzu1LYtcMDTzk1EWN7pWj+w3Y1kC1wp8vCihPr4YnAuPR3Avp8CgQ9dJcMD8F+7b5nr7EgwfNY23aHkxsEN4teDFRELsMCUowtauAvRRwQH/J3fn0REnMOKJFR7EZVfBSZKgrBAZA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
  header.d=nxp.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DhbHfxBapUS48AaHnkpUu6W23KMKJqRQjEJlk29JuB0=;
- b=YbPL5WqoTgG2Ti7RS2BxUSjeZXGG/XGAZtsWxkvTeLUyNFHNo2MwOk+qoh4fA2Jt8vQhJDKebJbxvHOSGNHOHnBt82sZKfNTyl3HfjbHT1pIwvy706Q6H2mdovNFFKtAIRo8TMQOwtVK/y03KGzgZvbGw+xBbfnN8NLRplzKYVGVc9SQVdI/ghwLVDC7+uXPePLaMH3mQtt1CF5WElMQjkfH19kM1WGS4f3ZLpcm4YU/yf7Gye+5eiBdvSdVyAxoWsShXHWX8/Lu2Qy4Fi5C3SwjGxmVbtAKPjoxhWiV+BxdXaxxJQYfgpTrMhKN3ttrLy4q9VJY1clMd3y4gVwmLQ==
+ bh=p1dcKcpVVLGTBkOUmuh0NmoX92wivO5TSnNxU/70zrA=;
+ b=U/uAIHQdYEIOGLr3Ypu+BesfWnq9l4PZUJL+LkQ+/c0u4B25y1Kv4dwpXJRNdYQA1w6Vrjs2/Z7iKVgecL8xiEtgiNlNF3V3V7ukeIKciHMs6j3QT8nDTAG57529Kta4EAGKU4tzsGz5jfZTt0cpZArVEsZII4NDL19OmwRAH4eEPHBX33FeaFX3bjumD/o2YLOHBbz7vCK3AsjEM/IvqJpmCrOfQrbpMhkNsMofKU8uMy4A+3OMy6+adpzLGBvIS13lxW1lPesFdFAT3OtUZbz4COgW2ZQ9wiGgFFbkuMWeUeBGk8opc9iHr6T6AyOneOaHpbIU62LQ5KvAPQ5CoQ==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nxp.com;
 Received: from PAXSPRMB0053.eurprd04.prod.outlook.com (2603:10a6:102:23f::21)
  by DB9PR04MB8395.eurprd04.prod.outlook.com (2603:10a6:10:247::15) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.13; Fri, 17 Oct
- 2025 14:58:04 +0000
+ 2025 15:00:02 +0000
 Received: from PAXSPRMB0053.eurprd04.prod.outlook.com
  ([fe80::504f:2a06:4579:5f15]) by PAXSPRMB0053.eurprd04.prod.outlook.com
  ([fe80::504f:2a06:4579:5f15%6]) with mapi id 15.20.9228.010; Fri, 17 Oct 2025
- 14:58:04 +0000
-Date: Fri, 17 Oct 2025 10:57:56 -0400
+ 15:00:02 +0000
+Date: Fri, 17 Oct 2025 10:59:53 -0400
 From: Frank Li <Frank.li@nxp.com>
 To: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
 Cc: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
@@ -56,15 +56,15 @@ Cc: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
 	imx@lists.linux.dev, devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
 	Pengutronix Kernel Team <kernel@pengutronix.de>
-Subject: Re: [PATCH v2 7/8] reset: imx8mp-audiomix: Support i.MX8ULP SIM LPAV
-Message-ID: <aPJZdAQwdoOP3cqN@lizhi-Precision-Tower-5810>
+Subject: Re: [PATCH v2 2/8] dt-bindings: clock: document 8ULP's SIM LPAV
+Message-ID: <aPJZ6dDRyyl3Qg4o@lizhi-Precision-Tower-5810>
 References: <20251017112025.11997-1-laurentiumihalcea111@gmail.com>
- <20251017112025.11997-8-laurentiumihalcea111@gmail.com>
+ <20251017112025.11997-3-laurentiumihalcea111@gmail.com>
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251017112025.11997-8-laurentiumihalcea111@gmail.com>
-X-ClientProxiedBy: PH7P223CA0006.NAMP223.PROD.OUTLOOK.COM
- (2603:10b6:510:338::27) To PAXSPRMB0053.eurprd04.prod.outlook.com
+In-Reply-To: <20251017112025.11997-3-laurentiumihalcea111@gmail.com>
+X-ClientProxiedBy: SJ0PR05CA0076.namprd05.prod.outlook.com
+ (2603:10b6:a03:332::21) To PAXSPRMB0053.eurprd04.prod.outlook.com
  (2603:10a6:102:23f::21)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -74,179 +74,212 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: PAXSPRMB0053:EE_|DB9PR04MB8395:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0b63ce91-2f6c-4517-aaae-08de0d8d9315
+X-MS-Office365-Filtering-Correlation-Id: 70409378-ba3b-49c4-f51f-08de0d8dd96d
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
 	BCL:0;ARA:13230040|366016|1800799024|19092799006|376014|7416014|52116014|38350700014;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?iQ4nB0u0bBkiFVitfZBDSJz/iE5QjEhrl5YFFld/34zgqF3qwHjQmfOT8vIR?=
- =?us-ascii?Q?h6YjxASb7s4AqESk+tmpj5M2E2YC7/VeI8Kre973BIkBljjGUIAZwIhbCsn9?=
- =?us-ascii?Q?4q+ONzGFx3w/178NNPRKnAgZ7AoZcAPNqNRbVC5Ew2A9TRxLhf2SVhFVsG8x?=
- =?us-ascii?Q?lKNSQ+XRlF49FaO2dMOqG/YfSN7rFhLBgj4houBhAElFshxG1pDTq2fh9/7S?=
- =?us-ascii?Q?COy7FPyrJ9tMw/hmzVKwCkL25iNXiWQjZn3hZLHzatZ43t9Mn0u/sN6HqIzN?=
- =?us-ascii?Q?HtoCzlg0PfxyR3jtsPqQFvzGItDATiild9IUcqEh6HFOkf5Rt7QmqUKQLUeh?=
- =?us-ascii?Q?xw+MK824p1jRKcrXOd8ZX/cvJfuAyQwRolZ+gVIX7MuBNW3U0SMtI3VcpRz6?=
- =?us-ascii?Q?NDVaa5qJc95UJedQ3FV/+Oz6t4svUMsKq4ozOfUYZ0ZbV16UausfoQa9NVYC?=
- =?us-ascii?Q?TYC8se1zpTUU/AeNWJUdd9G8c0FvT6uf1KM0bZCzIxqDkaN+4mVyQp21kozC?=
- =?us-ascii?Q?JJG5xgrGeDDdy6Wo9wwBvj9NUSOddQtxY0Au1em6OU8bVKiB9/h57BNBNImp?=
- =?us-ascii?Q?Bx01pS5oVjnlgUgz5r/bjQ6KZjUL6cd02UBe5ndnqjEqco47yArv/GyMFEPA?=
- =?us-ascii?Q?QPE9Le2ADbZeXUyByUwausyv8u5UJMtWjsYuENbCBcDipW9GjnHy7tRgLyqz?=
- =?us-ascii?Q?IgeFVpvjGyHL7zXA97xLi/ta/F3xT4c+moj/P7hu80bG5OIy2QSD0mIqvb4W?=
- =?us-ascii?Q?QEol7R76E0o99YPvfwJYm5AOfGGDbFKBI/o9PjY05p8VnEfakokmfoa4934y?=
- =?us-ascii?Q?S7EwDqEpiBKoxKxYGV1uxvt+JV/rP/7zk0ByN4EH2aBCGBCI/ppCNzhI8GfD?=
- =?us-ascii?Q?+0wKIrPc3BCdmbyfGyMCv7Pb3fWBaznMT4AID3nFgIByrH6QTgiZxsI61xsE?=
- =?us-ascii?Q?kurij3zqt6RvxY2A6qlm+1vpyyFLydbaqhLYTYWfsvZI0rVwTIo6vgK888a5?=
- =?us-ascii?Q?mNJ2TJdYNrWP+9Lj9NaF54Nl2r7zKT1g4s12SXCh2HM8lQB+8aV5QkdN7Z27?=
- =?us-ascii?Q?I57gD2Bl5x8acNu7OdjO6Trq0oTLmW2DsXjVKL/DF5/iwCgK62GFVmeBFDU5?=
- =?us-ascii?Q?8H3XgZqH3J86tUnhr+3hG95O8fIajJ89gsHu8wPosrsxiWa0Dq5a1BWgB1F+?=
- =?us-ascii?Q?Hn7XrftBCccXctzKeSB07g7HhOaHNAsqzRkhhCqiA5wc3yacte6MqguOePmO?=
- =?us-ascii?Q?Tr0tzE/9onnuMn7xtIbJdqYTykdGqBJekBzBV1ROiZdtCfLR4wd9DXeXIUGi?=
- =?us-ascii?Q?/yST+aLHm87AtPRxXqhdh2CCH+oMqIhvQDzgU2hNYAud01bxCKUoiA3daK31?=
- =?us-ascii?Q?8Tm75jv/+zq/i6iKI5KaAObRu1AsF9LnWQ2xryxkVUYkk5ceSG6r7yxx1oyV?=
- =?us-ascii?Q?fJaT7sq5ZG+FJSRJXkgBv/NySySRi8t7SutQ6umB2UoWiYIsSuv3zgpJH5aM?=
- =?us-ascii?Q?Y9b80erD2d/fyTEi0lEdWIx+W8XQBF6TvTEf?=
+	=?us-ascii?Q?qhSeeiGbXZ6tVuPoUv7qEyEXzBkwUXP6On75/iJrljljGezHVu8diL4uVCYq?=
+ =?us-ascii?Q?zJ70ww/i1rSGE74i+fxfmq+BfpfQbaSOFplinpbKdubGvBOduFStAoUmyeW1?=
+ =?us-ascii?Q?lGwtbM5A/++oGlRryizhmMTufQINyRHED1G/tN/gMKai0R8DWmZnH+v6KpuF?=
+ =?us-ascii?Q?0vLmuGy980mNnBknqhcStiY7PTXfVN9FVPnekUnbRn4b8oABJfx8Ev3U3FIi?=
+ =?us-ascii?Q?1o7qieC2yvqaJHPCujcvAx/2+H4WyKWVlEOrPaAV58ozut+aXcYWqEDG49ll?=
+ =?us-ascii?Q?qZmMdf+cji7lAjqWtB7ZHmBktIAKuq4nSwmbdfDTlYmP85Pn7r3i/OTWki0N?=
+ =?us-ascii?Q?6450qJp1JPfVJDfrpHUhSHpEguytgmBBusJqIuSXkwvkMQLnli0mpr4zAWF6?=
+ =?us-ascii?Q?cOFzWHjjggBkZfOeYbpY0lrh5rmxnIVJ2Z29DKjQ9g4mDGm8e8w4Rve2Z8O+?=
+ =?us-ascii?Q?UPsmbktYNaxOctJp/nQli4+e3Kzrc3+Y7Xh3ZOKLA2rariWkWcKwgxsBIGjx?=
+ =?us-ascii?Q?0TkW5MlPIJiW8oD8Z3SqE/RiIJ7DV62yeE8vTH/XQVRnR14M7pRwdjETplpz?=
+ =?us-ascii?Q?NvGGa98a11CC81EyOh5jKoA9K5pOp6WJAkyc2pAZJoBt9HkryFmXl1zK56fZ?=
+ =?us-ascii?Q?D4gyJEDrVWkq5Dde37pprF+QsAj4MRQDypFbqKzQxgupAEeXw+MC/jwrTM6o?=
+ =?us-ascii?Q?FJbnEzTwjKyO0TYOd89rK2HiEf+vefYuDB73auggi3N+Ub64fQ80XZ0Aes6i?=
+ =?us-ascii?Q?eXjQtfgKmqBp1pn/OczDyJSNqkJZtJsf753YssB/RoK/6/e59IwFY4ZW4bSv?=
+ =?us-ascii?Q?fV1EoVRPWKbvc/WzKCBfGfek4mHcsukMuEU0jEGS0f8Gfx8Cs9oSF+94nlc8?=
+ =?us-ascii?Q?ajAE6/1DbsqSTP0p5gtYDw8xlGzdjm5TAl8+4YJczXpW0+vsq/STeLLj2Yoz?=
+ =?us-ascii?Q?MD+ziXur9sIy22zzR9d1Oga7wRx9sG/kGP7Y2pDVaseAvkEnXMVcV1Znxd+Z?=
+ =?us-ascii?Q?mUxII7MnxBe/EdGqbo14vmkJSBkW3Mr6UycAd1aVaf7Tq+y6pKtS7uepnW8q?=
+ =?us-ascii?Q?n60ZjNV6TrmHsSJA4CZuAZdI3QaBD8gQX8CHUnLUSZYotryWD0TjMeNqTGry?=
+ =?us-ascii?Q?hwhZb73qX9nVgVVUTZfpb5aVnIP52MJOvrtnRo4jjhfIaBKLi7MQn49K191x?=
+ =?us-ascii?Q?Sc7xCQ13sOV1Z79snC+YqxTqwHjSgDt8xnwK9eonUlmOo9kjUMYHEep9qRfg?=
+ =?us-ascii?Q?W/9I3pTURKovGqXORZ1SzkqJMK4JmNPgHtbP7LwJSEbvzkuwTA3AS0S9HyUe?=
+ =?us-ascii?Q?dh/hizyTtvkr1uvZAih5jt4paS4QgDm227DktMeIb9xFzZSZb2WbCocT6SdK?=
+ =?us-ascii?Q?2a2MvWp8eZONTISHjyM4Q36DxC3dnXk356UCZI+PDIZuamo5HuSJiiPSCwR1?=
+ =?us-ascii?Q?PjqVEMsPtzjj00mUVcpVh6F7lJUH17ad8fgi+nB2dE9km2gd+i/RcQ=3D=3D?=
 X-Forefront-Antispam-Report:
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXSPRMB0053.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(19092799006)(376014)(7416014)(52116014)(38350700014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?0L/RJlQAJblZGuzUiJawV0Q44kyhrF8oT6pJql34rHC6yTazSM3fmwIF+/zJ?=
- =?us-ascii?Q?Sr5ybc35X6FQ6Ae01GUPjWzzfLkk19PII5a1D9KXzsQN8JcGvJwW69be5qtK?=
- =?us-ascii?Q?18BOzf+ZK2rSD4N/fnSM8h4a4Z4a2X5YLWCqie+opxHkObijQCe5SCUB1gHh?=
- =?us-ascii?Q?93kiiN9XfpDGuQFew9huI0h4OuIsFfzyLxapz1JNnUfrtorYyBRSpZA2DDpH?=
- =?us-ascii?Q?jy3TA8E08GlVnQvmohufgGFbpkUsFkRjsEnTaYq1FxwTa0IUHf/FzVoEdmMx?=
- =?us-ascii?Q?dvrO8xOVbdiLqTcZOtVMGMlRx50xNHN/vKuirjsQ0jXS1rskZU4HRQXgtIBQ?=
- =?us-ascii?Q?zz7auvPO+UOugnV4x8DuRr4po+zpkajka9RCGvK10HRuSqrh7RoDNG2wQDWO?=
- =?us-ascii?Q?wmcCd7/3RtzvtRyM4wTxPsijrmXbfDDcHbW0rK9iIx1g61v+suW3pgzqhD4s?=
- =?us-ascii?Q?C3EiOZHTY1Q/9sEQDvmLRN+z/CTN/KNWSAZvu0wAUWeaSddE5TS/2quDXEGu?=
- =?us-ascii?Q?JO4BjYlQr5gMjG2/nh1rxUhsE0yeVq0SwIhA/3OhhXfOgY2YjYmfyI5UFNB8?=
- =?us-ascii?Q?pyaBJu6nthYSsK3ixxrShlAG3wpx9DWqYt5cJ+eVT02EwAkw1U+LSWlJZyV9?=
- =?us-ascii?Q?rp9DePnFb7QuXIufvBZUyPqDC11ODpXHLNvxsYxzS/hvCrd87qDO+r/J0ebt?=
- =?us-ascii?Q?8v2cYA13Knh8UNvHWdLuVokxwJ+D3g5MwyE2I8EZ9ZQOiutZUll6ylPsJEE9?=
- =?us-ascii?Q?h69KaXp+HGx8f+QBra2YAGCbT1JDB+grQ026CN9Em+dfrYn1TiD6VLjZ2+Dx?=
- =?us-ascii?Q?tpkYWnGMZHsJOlHfRhwZSl7nyc795ZxZaEYUmtmPaCNvV/jx9fLJ+CgqwU6x?=
- =?us-ascii?Q?ig7ri5JHurEuNFS2gNMc+cAjQFP/0rac+s0lwxMfJF/4s8jrx2uh3OViNrvr?=
- =?us-ascii?Q?fFJtKYlTjEZGhHenhFQ5sHXqMyePihEgoKVQy+D/6gwOscegenIglP9rBj8z?=
- =?us-ascii?Q?i1rAooczKD5TsEYteSpekfAdifHgOyGQhbhPL6AlP34KKGW5wQgVmP5PwQqr?=
- =?us-ascii?Q?Ryoxx//FFygI9cdoBl1lQlqwUhSOoFenLh0llK0B0jHEjMZPdvFhw/Oyz7+V?=
- =?us-ascii?Q?yEhgsnyZRFxxQ76+u3VvoS2vu7dmBhN4h51SIStKp/hdV7818My221ob4yCC?=
- =?us-ascii?Q?is2XrPG1ZWO2sLs5HagM5eikB0mKqsZ6ypjQyvDG02tTXT3gx7vxCYedgQmw?=
- =?us-ascii?Q?RTyYp8EDPVrAtFw2kGmnDUdjI3spyBFyznJPzYrs5irnCVsucZuRkboQ07O3?=
- =?us-ascii?Q?+RHaIWDfclrrlfG5C+HpXpARDdl475eReb7OMyRngwfUhYcDUTB4oN4ZQXLN?=
- =?us-ascii?Q?p0w186AVOX1KfTsp98xXfAmFbxb4l1+n7q+oGcsQw8KJBlahJRqe77pql0Hi?=
- =?us-ascii?Q?wnXl2LT/20vWupZXN2epEizGT1RBMkcSlP8rxtpC+d/BMgi7yz1rQPa8OwOo?=
- =?us-ascii?Q?AwEJvw7hJ02k0n5wfMIFW7YyoXxtxJJ5XjJcZpje2vvKBWQnzsv8qyxuGnjZ?=
- =?us-ascii?Q?r6/6ijg7cpYBrCUOu6o=3D?=
+	=?us-ascii?Q?XS57Wb2GTBTGavpn+vC+H1l9rf0uInctymws5T2cfy67RUQsE78DkTEQGJ0s?=
+ =?us-ascii?Q?ElAwaUDdtAkSyWjehr+ng/tV8/CnGMPQVUlO3fT1ZdL4J1pi8OKhicV4/ugh?=
+ =?us-ascii?Q?84vTydv8tEHG5heWSfYUZR4RMgzaWD/gUf4WTDiGt5Sob2xYIRwOnPyhFLtt?=
+ =?us-ascii?Q?mfR6U/umQr/VcBhdQ9qGho5+x1jiYBbYa0pgW09T9A/ZMrSXxxQKLbSMYWQn?=
+ =?us-ascii?Q?I9JctowVa+rdylBbdEi3K3QX8aHwmipYaiZiqknzho0tKqtBGf+GrX00C8RE?=
+ =?us-ascii?Q?MLyCO8f6OQMBrbGlrwQx1W2ztJcKRLPOkd3cbAsm0wOc1Sj6LI6sV1aNKhI7?=
+ =?us-ascii?Q?j1/Slfklc+I+pi4N4Jhw6JEnCxoyjjk8SyAZfiV/b5CEs+L/CzIyR+1PO0xt?=
+ =?us-ascii?Q?/sn3pHcIO2yJ9zQM2WiE9tRrSonrc2y6rZn5F9yAcaSjKV+mMLIBfCMeU95B?=
+ =?us-ascii?Q?knjy3uMOOiod6b1W/LINifpKb+52lt9/DI0cc+XwPWxAEKWOO8oYZWpfxzbt?=
+ =?us-ascii?Q?joaGZv0h/GeBl1AaDgscDzZkgr6qw3vE1ejk/8TFV6Mq5wOKQXXKL9JBgW46?=
+ =?us-ascii?Q?49rtjY6sV4CTbEjfIELFk9eAyXpqe6sJWS3ef3D8ylrhnvxqPN2CuwQd4iMF?=
+ =?us-ascii?Q?q6BOrLob8B/Acy4jQzZ58yuIm/p6qq/QdyLo8ebXdXfCk0usvWUNX3mcfhdX?=
+ =?us-ascii?Q?bGwloaDZVz6PCiBhY3i4qBJbaBzpjoqHfLRSnBRz0lNfv8Te7coJ5UvjSCgW?=
+ =?us-ascii?Q?bLsOuhUzcjXdHwapIQY0iRwBbfpHU8YDALG/zq1ExEsYqpFAuEPpb9b15nHH?=
+ =?us-ascii?Q?3i4NdUUfailPnskMK37imOlj8Fd3wjpwbQ8lnsiJJaQXgEwY4Y1iUUUITYhm?=
+ =?us-ascii?Q?Rjs+KXftWI03DiorJFMyMrfxpwxUAuK7CUof88oRUWYIvQY9xm/kqvlFd5nL?=
+ =?us-ascii?Q?QReMmpS7NzTuc/Oy3L6MDkEOHU1OezLYAPU2MQNnYbwGegnnnOYRU1hSkF6n?=
+ =?us-ascii?Q?s9BHUjIutQvpAktTjLQ3bdbrZjNWG5/8T7VZ241WqprxTixSNiP6oeVNacMz?=
+ =?us-ascii?Q?EtztLAd+B6Ex4Hf7+IlC+WkXptS9uW93J6MvJtK6iC9VxGnso/cF4Q0IGcH2?=
+ =?us-ascii?Q?7/g6rUI0ifCpDO3eZV8ep7qKlsvc6Hv+iPQCDVFIjs5gdnYQrJT1i/UM6+m/?=
+ =?us-ascii?Q?T0ZZ/Km+fCiMRjYWHA8X3nX+G/0v1TYAsY341PmalEmk4Ukgjs4d1GVxap7T?=
+ =?us-ascii?Q?dEntaPWqITwnBWd9q461p5n0wh7VO9ftp7GoA6ItEtz8bSK5+dC1J6UtaJiz?=
+ =?us-ascii?Q?t78uYnyMlmlF0obaXB7MYuD2ZLKl9VnaXmyqBdFjvtmi+YKAYj6uM03k5Mfd?=
+ =?us-ascii?Q?BtsQsGQKIQMZ/5pCHzv2ghgWyHNzvkj9nTv7OdNSLNOPTg0dpYuH1fKKCCV/?=
+ =?us-ascii?Q?7cFSuqT4mBjOgY0QuIFJjVQiKRRB/xeZ85fPAe1GvpQ9sfHBNEa8NIGuHfge?=
+ =?us-ascii?Q?PwEujPoMfHf1UvSNYlq7vYICPU4EPbs75Gy0WzccDWTIoAiTjvHU9xa8jimT?=
+ =?us-ascii?Q?eCfpVEgiDoRHRNlw48I=3D?=
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0b63ce91-2f6c-4517-aaae-08de0d8d9315
+X-MS-Exchange-CrossTenant-Network-Message-Id: 70409378-ba3b-49c4-f51f-08de0d8dd96d
 X-MS-Exchange-CrossTenant-AuthSource: PAXSPRMB0053.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Oct 2025 14:58:04.4890
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Oct 2025 15:00:02.3882
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ylPAcopEsEOTo1+Ux9A6NruClFOXzADEZATYhIk5IpoowEwNtHB3/aRZdcrQm2CmqWarUTh5AVJcgdh1JlpmLg==
+X-MS-Exchange-CrossTenant-UserPrincipalName: l1/j2wx/Cu0wluxJLJWgzz+2C/VfrLQNUG9c+CuAzSDa568W5RVojKT11OlLmMjMOU5/qeo+NyjxTWmlYBZiZQ==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB8395
 
-On Fri, Oct 17, 2025 at 04:20:24AM -0700, Laurentiu Mihalcea wrote:
+On Fri, Oct 17, 2025 at 04:20:19AM -0700, Laurentiu Mihalcea wrote:
 > From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
 >
-> Support i.MX8ULP's SIM LPAV by adding its reset map definition.
+> Add documentation for i.MX8ULP's SIM LPAV module.
 >
-> Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
 > Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
 > ---
->  drivers/reset/reset-imx8mp-audiomix.c | 51 +++++++++++++++++++++++++++
->  1 file changed, 51 insertions(+)
+>  .../bindings/clock/fsl,imx8ulp-sim-lpav.yaml  | 72 +++++++++++++++++++
+>  include/dt-bindings/clock/imx8ulp-clock.h     |  5 ++
+>  .../dt-bindings/reset/fsl,imx8ulp-sim-lpav.h  | 16 +++++
+>  3 files changed, 93 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/fsl,imx8ulp-sim-lpav.yaml
+>  create mode 100644 include/dt-bindings/reset/fsl,imx8ulp-sim-lpav.h
 >
-> diff --git a/drivers/reset/reset-imx8mp-audiomix.c b/drivers/reset/reset-imx8mp-audiomix.c
-> index c370913107f5..b333d7c1442a 100644
-> --- a/drivers/reset/reset-imx8mp-audiomix.c
-> +++ b/drivers/reset/reset-imx8mp-audiomix.c
-> @@ -3,6 +3,7 @@
->   * Copyright 2024 NXP
->   */
->
-> +#include <dt-bindings/reset/fsl,imx8ulp-sim-lpav.h>
->  #include <dt-bindings/reset/imx8mp-reset-audiomix.h>
->
->  #include <linux/auxiliary_bus.h>
-> @@ -17,6 +18,8 @@
->  #define IMX8MP_AUDIOMIX_EARC_RESET_OFFSET	0x200
->  #define IMX8MP_AUDIOMIX_DSP_RUNSTALL_OFFSET	0x108
->
-> +#define IMX8ULP_SIM_LPAV_SYSCTRL0_OFFSET	0x8
+> diff --git a/Documentation/devicetree/bindings/clock/fsl,imx8ulp-sim-lpav.yaml b/Documentation/devicetree/bindings/clock/fsl,imx8ulp-sim-lpav.yaml
+> new file mode 100644
+> index 000000000000..fb3b9028a4c3
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/fsl,imx8ulp-sim-lpav.yaml
+> @@ -0,0 +1,72 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/fsl,imx8ulp-sim-lpav.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
->  struct imx8mp_reset_map {
->  	unsigned int offset;
->  	unsigned int mask;
-> @@ -55,6 +58,50 @@ static const struct imx8mp_reset_info imx8mp_reset_info = {
->  	.num_lines = ARRAY_SIZE(imx8mp_reset_map),
->  };
->
-> +static const struct imx8mp_reset_map imx8ulp_reset_map[] = {
-> +	[IMX8ULP_SIM_LPAV_HIFI4_DSP_DBG_RST] = {
-> +		.offset = IMX8ULP_SIM_LPAV_SYSCTRL0_OFFSET,
-> +		.mask = BIT(25),
+> +title: NXP i.MX8ULP LPAV System Integration Module (SIM)
+> +
+> +maintainers:
+> +  - Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+> +
+> +description:
+> +  The i.MX8ULP LPAV subsystem contains a block control module known as
+> +  SIM LPAV, which offers functionalities such as clock gating or reset
+> +  line assertion/de-assertion.
+> +
+> +properties:
+> +  compatible:
+> +    const: fsl,imx8ulp-sim-lpav
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    maxItems: 3
+> +
+> +  clock-names:
+> +    items:
+> +      - const: lpav_bus
+> +      - const: hifi_core
+> +      - const: hifi_plat
 
-Register defination still perfer use macro. If not, let me know.
+dt prefer use -
+lpav-bus, ...
 
-Frank
-> +		.shift = 25,
-> +		.active_low = false,
-> +	},
-> +	[IMX8ULP_SIM_LPAV_HIFI4_DSP_RST] = {
-> +		.offset = IMX8ULP_SIM_LPAV_SYSCTRL0_OFFSET,
-> +		.mask = BIT(16),
-> +		.shift = 16,
-> +		.active_low = false,
-> +	},
-> +	[IMX8ULP_SIM_LPAV_HIFI4_DSP_STALL] = {
-> +		.offset = IMX8ULP_SIM_LPAV_SYSCTRL0_OFFSET,
-> +		.mask = BIT(13),
-> +		.shift = 13,
-> +		.active_low = false,
-> +	},
-> +	[IMX8ULP_SIM_LPAV_DSI_RST_BYTE_N] = {
-> +		.offset = IMX8ULP_SIM_LPAV_SYSCTRL0_OFFSET,
-> +		.mask = BIT(5),
-> +		.shift = 5,
-> +		.active_low = true,
-> +	},
-> +	[IMX8ULP_SIM_LPAV_DSI_RST_ESC_N] = {
-> +		.offset = IMX8ULP_SIM_LPAV_SYSCTRL0_OFFSET,
-> +		.mask = BIT(4),
-> +		.shift = 4,
-> +		.active_low = true,
-> +	},
-> +	[IMX8ULP_SIM_LPAV_DSI_RST_DPI_N] = {
-> +		.offset = IMX8ULP_SIM_LPAV_SYSCTRL0_OFFSET,
-> +		.mask = BIT(3),
-> +		.shift = 3,
-> +		.active_low = true,
-> +	},
-> +};
 > +
-> +static const struct imx8mp_reset_info imx8ulp_reset_info = {
-> +	.map = imx8ulp_reset_map,
-> +	.num_lines = ARRAY_SIZE(imx8ulp_reset_map),
-> +};
+> +  '#clock-cells':
+> +    const: 1
 > +
->  struct imx8mp_audiomix_reset {
->  	struct reset_controller_dev rcdev;
->  	void __iomem *base;
-> @@ -183,6 +230,10 @@ static const struct auxiliary_device_id imx8mp_audiomix_reset_ids[] = {
->  		.name = "clk_imx8mp_audiomix.reset",
->  		.driver_data = (kernel_ulong_t)&imx8mp_reset_info,
->  	},
-> +	{
-> +		.name = "clk_imx8ulp_sim_lpav.reset",
-> +		.driver_data = (kernel_ulong_t)&imx8ulp_reset_info,
-> +	},
->  	{ }
->  };
->  MODULE_DEVICE_TABLE(auxiliary, imx8mp_audiomix_reset_ids);
+> +  '#reset-cells':
+> +    const: 1
+> +
+> +  mux-controller:
+> +    $ref: /schemas/mux/reg-mux.yaml#
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - clock-names
+> +  - '#clock-cells'
+> +  - '#reset-cells'
+> +  - mux-controller
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/imx8ulp-clock.h>
+> +
+> +    clock-controller@2da50000 {
+> +        compatible = "fsl,imx8ulp-sim-lpav";
+> +        reg = <0x2da50000 0x10000>;
+> +        clocks = <&cgc2 IMX8ULP_CLK_LPAV_BUS_DIV>,
+> +                 <&cgc2 IMX8ULP_CLK_HIFI_DIVCORE>,
+> +                 <&cgc2 IMX8ULP_CLK_HIFI_DIVPLAT>;
+> +        clock-names = "lpav_bus", "hifi_core", "hifi_plat";
+> +        #clock-cells = <1>;
+> +        #reset-cells = <1>;
+> +
+> +        mux-controller {
+> +            compatible = "reg-mux";
+> +            #mux-control-cells = <1>;
+> +            mux-reg-masks = <0x8 0x00000200>;
+> +        };
+> +    };
+> diff --git a/include/dt-bindings/clock/imx8ulp-clock.h b/include/dt-bindings/clock/imx8ulp-clock.h
+> index 827404fadf5c..c62d84d093a9 100644
+> --- a/include/dt-bindings/clock/imx8ulp-clock.h
+> +++ b/include/dt-bindings/clock/imx8ulp-clock.h
+> @@ -255,4 +255,9 @@
+>
+>  #define IMX8ULP_CLK_PCC5_END		56
+>
+> +/* LPAV SIM */
+> +#define IMX8ULP_CLK_SIM_LPAV_HIFI_CORE		0
+> +#define IMX8ULP_CLK_SIM_LPAV_HIFI_PBCLK		1
+> +#define IMX8ULP_CLK_SIM_LPAV_HIFI_PLAT		2
+> +
+>  #endif
+> diff --git a/include/dt-bindings/reset/fsl,imx8ulp-sim-lpav.h b/include/dt-bindings/reset/fsl,imx8ulp-sim-lpav.h
+> new file mode 100644
+> index 000000000000..adf95bb26d21
+> --- /dev/null
+> +++ b/include/dt-bindings/reset/fsl,imx8ulp-sim-lpav.h
+> @@ -0,0 +1,16 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+> +/*
+> + * Copyright 2025 NXP
+> + */
+> +
+> +#ifndef DT_BINDING_RESET_IMX8ULP_SIM_LPAV_H
+> +#define DT_BINDING_RESET_IMX8ULP_SIM_LPAV_H
+> +
+> +#define IMX8ULP_SIM_LPAV_HIFI4_DSP_DBG_RST	0
+> +#define IMX8ULP_SIM_LPAV_HIFI4_DSP_RST		1
+> +#define IMX8ULP_SIM_LPAV_HIFI4_DSP_STALL	2
+> +#define IMX8ULP_SIM_LPAV_DSI_RST_BYTE_N		3
+> +#define IMX8ULP_SIM_LPAV_DSI_RST_ESC_N		4
+> +#define IMX8ULP_SIM_LPAV_DSI_RST_DPI_N		5
+> +
+> +#endif /* DT_BINDING_RESET_IMX8ULP_SIM_LPAV_H */
 > --
 > 2.43.0
 >
