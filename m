@@ -1,122 +1,126 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D05ED23D7E7;
-	Fri, 17 Oct 2025 07:43:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 452D022A4EA
+	for <linux-clk@vger.kernel.org>; Fri, 17 Oct 2025 08:02:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760687012; cv=none; b=DhVcHoLFJzmdD86pkR/ODAGzve4eBX/BOHyBXZQxlsubdfOWJz9IKwTaJkgORl6sAkSFeSH670HBMUyh6KFWFCYnj+/u+q7izlo9gKDHYGJPRDbiKUr1pLp3nPBhYG9sUQLaIUysBRDotTgTAx2zG882fxT/kvmnekh6YLcrfFU=
+	t=1760688170; cv=none; b=kmw99GS4hnQmB9Ql487sg5pNimr3WOgTi6g5Ogn0yRzjV5ObKCzOYEtrH5LeI06zRuKzIkZyBW04/BH8QJd6XXr5TkhE5R9RfpSSXX4+f8Gvvq+dc5VQRFvR3LKK30ijqzc3wpRvYLvB6kPT7cRL1er1xFU8zruNv1pNSITwb9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760687012; c=relaxed/simple;
-	bh=Ghawdb9l72IEZCfQwNVJ0wErDbWEow5FhFKT+ciucco=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aKQV21R9X9YZe7Rhgcu8MrDPCIs+LUfswhMkApl+CiNDuhkaCJCHFJeXLG6vzPrPj6by9uVe8xPnKRS+NrbfjdO9oqabQ9vugnxNf4i2iICVja1LAZbjXTYk3zDlwiA6jc/ce+s/8FD5UUa3+ivPXRdxmDWd168TmItxw2ZVZNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=rbgnTyiR; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1760688170; c=relaxed/simple;
+	bh=+Zz86raGXQ4tEA6M4IJ4q4AZu+RYhIAQ0gpsL4WG+Og=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=GhoVcA4rTN8u+iNU3HEmdZn7NO8HUV7eVVrh2VYm4KXtkHxC9Md6goO6gD3lwxPGmzjElNQDWtPHJAf+2IvJS+m9yhS43+AVOfLlKEHZglF5lgMCKqEa8nBS+APX3cESloJdSi5V51x7m9UX0Ydk69cxX1wWVMZIife1+NfxCd0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=IOIcl56y; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="rbgnTyiR"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3942C4CEE7;
-	Fri, 17 Oct 2025 07:43:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1760687011;
-	bh=Ghawdb9l72IEZCfQwNVJ0wErDbWEow5FhFKT+ciucco=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rbgnTyiRwNqzWTCsT9SFJ0M0y6ewfizs6HV6j9R9MCeXDn5I+PfLLTbX7sIZzLKdb
-	 2CLT0UiaisCdgatT2tsNx53BuVw1axilp0cVSfN3oo61y9gcRgaA5AbPgN6rFvEW+K
-	 y3LwXgi9MYsbutny94X7lRDSlaUPH76FX4X3wTQI=
-Date: Fri, 17 Oct 2025 09:43:28 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Andrew Jeffery <andrew@codeconstruct.com.au>
-Cc: Brian Masney <bmasney@redhat.com>,
-	Iwona Winiarska <iwona.winiarska@intel.com>,
-	Joel Stanley <joel@jms.id.au>, Maxime Ripard <mripard@kernel.org>,
-	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-	linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] peci: controller: peci-aspeed: convert from round_rate()
- to determine_rate()
-Message-ID: <2025101721-twiddling-huskiness-4852@gregkh>
-References: <20250810-peci-round-rate-v1-1-ec96d216a455@redhat.com>
- <aMatZAX6eFI1RmDH@redhat.com>
- <28dc3bd8aeca7e3164747960747f75060c596704.camel@codeconstruct.com.au>
- <aPEZSY6RC-UVclxN@redhat.com>
- <ba2e6b78e59afb7c89e5022770a142ec8c31659a.camel@codeconstruct.com.au>
- <2025101759-runner-landing-374b@gregkh>
- <2975918e3f3a7de245e93fbee52335acb78bb23a.camel@codeconstruct.com.au>
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="IOIcl56y"
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-4060b4b1200so1446858f8f.3
+        for <linux-clk@vger.kernel.org>; Fri, 17 Oct 2025 01:02:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1760688167; x=1761292967; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=g6jUScl2NITZ+PoGEq7AwOuZFPu/G6TgC/xMdzTqEyA=;
+        b=IOIcl56ypedoZC49+uSoe3y1328eMGiPMbrWp5qmwmZqUG6bxn+xEXJ3KeA3B2H7eE
+         elb3UWhXa0C4aaeD/hudbPo7sxeRtKcS4xb8vthzqTQB1hlqXYlxUS8++MKSAvNweHjQ
+         wPa/jXLvaVZQQ/O4K5D7o6Wujk/f/ZCEo8eOEDqlWsu2ygqJNdV72uwjsMoETpX/shsD
+         bW/7ar9zyM12sywZ94gT5SDQDyntvEK96oMib7PU+g+3O/L1XkVl8LzFxwxOWMdLkbHo
+         HQ64ygdN7nl3OjeJrgvigRGXSOZlMVgxV2x8nL1E36k+bx8aNVv39sOCPLpXIqlPbxv3
+         kK4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760688167; x=1761292967;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=g6jUScl2NITZ+PoGEq7AwOuZFPu/G6TgC/xMdzTqEyA=;
+        b=Ci4YHr+4tB1n9aGqQfcJeoEjvd3cEBsWaqSowREFx1Ri6PXNOkezaxWazyNXjX3Et8
+         fJk3rCC4besc36mtTo79npmf7nOEfp5WoqxIvn9L0W8WUIb0hXqiQN0rOSEk/fWE3hRA
+         MT2Mth7cPPhHzkiWf4GU6SLg7qsAC7HZ9PrETy8yM1iNFa9JPktNU4N59/MTOganaIFP
+         FqfJbEW3lCTKH6qx84FsRpx0XsW2OTdGeLNvV/U5wPk9vQWMqe6XDK/SllStOW52tYAQ
+         5rRrEP8U/Rk1sKSgYv0hkEJ35roDOrNQDgZufvbN/k9h690aUGMwaVG7LplNquVQ04Ww
+         g64g==
+X-Gm-Message-State: AOJu0Ywd89CPfdFa9wl9x4t772f2uDiYiXWuCKDzNuLeI7KN/AQ+Cgx6
+	sQXNErYkz3o5mSkfEvVrJafjqoxicbVgADgN4u+XZp7bsJPCiBIkFaEKtB3oiRuuBIW5GOOYPZ2
+	ycS8c8j53lA==
+X-Gm-Gg: ASbGncvyBqRggHrscHXutFIKnQhHli8yz3CMj7ZzIpcO6rtM543XxhamYvNtQjPgRgk
+	5s1KPY9rqyPsjLKZDAoCEAuugGonUL4C/SLRXuz7SmlaabkRV8gmLwyHYy1Lb1PTaRw8lTj+Gli
+	7nOLe9bXoO/W+xUmwQUg4FmYGAdD19s7CpK1vNq+GQYaGvE5gUl0QOSA6W7MNJLKU1RpfwpE4UD
+	nYQXzTL/R67xUle7KhC2r+EPs645z7nUJGBssa2LpGXnF+x5DlbeeM4//yVT0AngWmX5g00Zp5k
+	oRckskGslX367Fa4QqEOLtAa0khKxD+MLNt3NrIbEh52KNB6nY2HwpR2scUiPfeSEBNR3MLdeiz
+	v4sE4cQVkHLhlVmA1K1KALoclyIztxq0P2LmmGxlJRdsAdfc/oUmvVPbWhAR8LKuJgRErs4o=
+X-Google-Smtp-Source: AGHT+IH+3cqatsdxr7KnVnzTd2G0piwrqv+5MDST6gZ033Fz0Y9dVGarFXa+3uevs+8omXzS46lViQ==
+X-Received: by 2002:a05:6000:470a:b0:425:8577:9cd4 with SMTP id ffacd0b85a97d-42704da392fmr1867346f8f.54.1760688167461;
+        Fri, 17 Oct 2025 01:02:47 -0700 (PDT)
+Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:6c59:a281:27c9:93a1])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42708bcea1bsm1082308f8f.14.2025.10.17.01.02.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Oct 2025 01:02:46 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH 0/2] reset: remove last remaining user of the legacy lookup
+ and drop unused code
+Date: Fri, 17 Oct 2025 10:02:40 +0200
+Message-Id: <20251017-da850-reset-lookup-v1-0-362a309a9f09@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2975918e3f3a7de245e93fbee52335acb78bb23a.camel@codeconstruct.com.au>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIACD48WgC/x3MQQ5AMBBA0avIrE3SVqS4iliUGUyISotIxN01l
+ m/x/wORg3CEJnsg8CVR/Jag8wyG2W0To1AyGGVKrbRFclWpMHDkA1fvl3NHHlxhyZCluocU7oF
+ Huf9p273vB/I6i0xkAAAA
+X-Change-ID: 20251017-da850-reset-lookup-eca37d2d7d9b
+To: David Lechner <david@lechnology.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1046;
+ i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
+ bh=+Zz86raGXQ4tEA6M4IJ4q4AZu+RYhIAQ0gpsL4WG+Og=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBo8fgieyvnPPpUx87hUI3kShF3FIW7747ARrkfT
+ z88AlKReOGJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCaPH4IgAKCRARpy6gFHHX
+ cuK8D/sHa0OZJF7j3ijUfnr6NiZoBEgUXeJHwvw37LgQUgRWVv0/8SZFl+jBB+6bjTQEnMB9eup
+ UJh15hLQ/555Xc7KSC9MZSB1MAkmn8sPcagTXxoXZyedkGYaV1Kt/FScT41ZevjQUcfOTcOwy7y
+ FjzDf/FtNSrkDlenP3Qotm1mBsNkdmli/nvVwzobKmzLNz5g3w9A/ZzB7h8glS6U0aFQXK3VUbi
+ LfhTX1T1uy2rqNdJ/zH3+qWp74gMfzd1QsSagblV0n0X55mDNV8YIeInblU3y8LGkXWgY5EKzJA
+ EPlJuNX40GaS4mKc2g8qGrXs81rhMsMPz65l4b7yW9dsdZy5T58QYbfohTF1O+0Z/MZZqBnD/Tw
+ tMkctzQrLlsWlKMPlVQWyC3K0QDajWAxILY3U3XN8JtV1Fi+Op8mOD9AItrG48p9BKiD1YJsWID
+ 5Zf6X0yDGOb3bVAI9RHchmqpiZSzBgKVypIHTDkpkadWTjYcptyUENp95Q79hKBlHX8kujtfSNu
+ tqskZtlwF0cMY+gNfx6pLllr0SXmVEnmVWW7RsneVUQR8Vb3nUnanz8OSjcUgGtt/wfJaeHoDDk
+ qhtFwkKKviq40FsS9ALv0YGspPt2v8fWmHRvSC4BuAT81PTGYo014wHFI1p87ue21ofX5pdLQrr
+ VhqLB7qM+s0YXZA==
+X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
+ fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
-On Fri, Oct 17, 2025 at 05:57:44PM +1030, Andrew Jeffery wrote:
-> On Fri, 2025-10-17 at 08:41 +0200, Greg Kroah-Hartman wrote:
-> > On Fri, Oct 17, 2025 at 04:52:37PM +1030, Andrew Jeffery wrote:
-> > > Hi Greg,
-> > > 
-> > > On Thu, 2025-10-16 at 12:11 -0400, Brian Masney wrote:
-> > > > Hi Andrew and Iwona,
-> > > > 
-> > > > On Mon, Sep 15, 2025 at 02:36:48PM +0930, Andrew Jeffery wrote:
-> > > > > Hi Brian,
-> > > > > 
-> > > > > On Sun, 2025-09-14 at 07:56 -0400, Brian Masney wrote:
-> > > > > > Hi Iwona, Joel, and Andrew,
-> > > > > > 
-> > > > > > On Sun, Aug 10, 2025 at 06:21:51PM -0400, Brian Masney wrote:
-> > > > > > > The round_rate() clk ops is deprecated, so migrate this
-> > > > > > > driver from
-> > > > > > > round_rate() to determine_rate() using the Coccinelle
-> > > > > > > semantic patch
-> > > > > > > appended to the "under-the-cut" portion of the patch.
-> > > > > > > 
-> > > > > > > Signed-off-by: Brian Masney <bmasney@redhat.com>
-> > > > > > 
-> > > > > > Would it be possible to get this picked up for v6.18? I'd
-> > > > > > like to remove
-> > > > > > this API from drivers/clk in v6.19.
-> > > > > 
-> > > > > My (strong) preference is that Iwona applies it, but I'll keep
-> > > > > an eye
-> > > > > out for any unusual delays.
-> > > > 
-> > > > This patch wasn't picked up for v6.18. Any chance this can get
-> > > > picked up
-> > > > now for v6.19?
-> > > > 
-> > > > I'm hoping to get this merged so that we can remove the
-> > > > round_rate() clk
-> > > > op from the clk core. The clk maintainer (Stephen) mentioned this
-> > > > work
-> > > > in his last pull to Linus.
-> > > > 
-> > > > https://lore.kernel.org/linux-clk/20251007051720.11386-1-sboyd@kernel.org/
-> > > 
-> > > Are you happy to pick this up directly in Iwona's absence?
-> > 
-> > Why me?
-> 
-> I figured that would be sensible since Iwona historically sent you PRs
-> for the PECI subsystem.
+The TI DaVinci platform is the only remaining user of reset platform
+lookup. Except that we no longer have any legacy, non-DT boards in
+mainline so we can now safely remove it from the PSC driver and drop the
+legacy lookup support from reset core.
 
-I did not remember that, sorry.  The MAINTAINERS file does not mention
-this at all, and it lists many other maintainers that should be able to
-take this patch:
-	$ ./scripts/get_maintainer.pl  drivers/peci/controller/peci-aspeed.c
-	Iwona Winiarska <iwona.winiarska@intel.com> (maintainer:ASPEED PECI CONTROLLER)
-	Joel Stanley <joel@jms.id.au> (maintainer:ARM/ASPEED MACHINE SUPPORT)
-	Andrew Jeffery <andrew@codeconstruct.com.au> (maintainer:ARM/ASPEED MACHINE SUPPORT)
-	linux-aspeed@lists.ozlabs.org (moderated list:ASPEED PECI CONTROLLER)
-	openbmc@lists.ozlabs.org (moderated list:ASPEED PECI CONTROLLER)
-	linux-arm-kernel@lists.infradead.org (moderated list:ARM/ASPEED MACHINE SUPPORT)
-	linux-kernel@vger.kernel.org (open list)
-	ASPEED PECI CONTROLLER status: Supported
-	PECI SUBSYSTEM status: Supported
-	ARM/ASPEED MACHINE SUPPORT status: Supported
+The DaVinci clock driver doesn't see a lot of traffic these days so I
+suggest a simple Ack from the clock maintainers and routing it through
+the reset core for v6.19.
 
-thanks,
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+Bartosz Golaszewski (2):
+      clk: davinci: psc: drop unused reset lookup
+      reset: remove legacy reset lookup code
 
-greg k-h
+ drivers/clk/davinci/psc-da850.c  |   7 ---
+ drivers/reset/core.c             | 120 +--------------------------------------
+ include/linux/reset-controller.h |  33 -----------
+ 3 files changed, 2 insertions(+), 158 deletions(-)
+---
+base-commit: 2433b84761658ef123ae683508bc461b07c5b0f0
+change-id: 20251017-da850-reset-lookup-eca37d2d7d9b
+
+Best regards,
+-- 
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+
