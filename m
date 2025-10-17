@@ -1,135 +1,97 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 196AC3FCC;
-	Fri, 17 Oct 2025 05:12:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CDCB81720;
+	Fri, 17 Oct 2025 06:22:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760677931; cv=none; b=IGmVY3XJZea4GuQbLaSSSdPd+SCguWiUSWmeZN0MZAZ486HjaVfm3LmeDZLaqwg/ZWaA+UX96IAKRLtp2XuQbrxG6Mtd1vdaLgBFQT4+/NlL6D5TXznoX2Ugd4TJhl3qMVCvP/oNpx3t6IM03v8gO42Berc77I6qPwnuScXN6QY=
+	t=1760682163; cv=none; b=X0ZDXzMbMeoGFRQ9r/iyzjg+jJAPg4maqu12mHky0Z4OS4MwwypUew9Muat/aYEq6lfNBmo9jmdc/38H96MsLvX/Hx4taU+tMAJVdipoEYX5k47JXN4WX7M8GFQkwx2pR6Dlp079Xk8NODDTTuLZq3ebQsyuy9yen3QfNyBr5L0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760677931; c=relaxed/simple;
-	bh=yTz2OAWYK23rMc0c1KwBF4lmZ8+usEUxK6yl7xp/muE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LlOcEm4WEG4c0+Nt3o4zEakj5FpoupxbuH6H1xhBFgRgP2xCbz2PnqpiyzIY4SIqrYCy2cO79SlUdU0nLF1oEW8aY+zbLB8HJHVv32gMKrYkHJ5b1ailOhtJbmEd3i66GyUwTWaNG5L4/hNZrEaURX3Qa/kO9aXJPJA+TIE24lc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eTqi9inl; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1760682163; c=relaxed/simple;
+	bh=ECOUsH1noeAgZRtyf60EKc9L4f4Ba1khmYrgNO6yCKI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=lmAkiGvbraBOLuG3Xfp5CMEN0fgAYMeRoPfkEPmRgSYUVJ8vBKWrQBYqxpzJrVArxYyIVUs80xjVykZ7izX37sDBGhcHo9LxMPgYK5yTflhDh+sRI59RaEOkoY5r/TL8DVGyxio+TnXdwQ5/t/W3uxM5nq+hcg17FSkdytVMlmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=hvLneN0/; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eTqi9inl"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71BE0C4CEE7;
-	Fri, 17 Oct 2025 05:12:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760677928;
-	bh=yTz2OAWYK23rMc0c1KwBF4lmZ8+usEUxK6yl7xp/muE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=eTqi9inlVuMf/4wKDJUrTR8A+z0E/PpeuE+WtXHYsmXBssSjwi8OofIjL1Tk0avVF
-	 wWMBpJ8kt+M5vTFhoSxUU4T+jMYhXZLpdzeQ5Sdh/JYx68hlvJYGtcJBpdJ6XVw4xh
-	 j/LnAb6EqNtFxtcFucD/82+BudLaLcQcwYre57RSFa0BOLtUN1XMDsWqn0s0kNES/P
-	 lyV61eeH84FZOsxksggHTMO4DoHGI6Dd9lEu73MVBlFpDVNerPeQ4g6IdMMnmM4v0L
-	 dRk0lxnWE3DGcuGe9GnQSjO/kuV98ltoSlcL6Q9vIf8P4URJeeaLamO4CWveu+9Rmg
-	 8MRZDN1AwMZ7Q==
-Message-ID: <841fca71-6842-4874-a829-6296949ad925@kernel.org>
-Date: Fri, 17 Oct 2025 07:12:02 +0200
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="hvLneN0/"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=codeconstruct.com.au; s=2022a; t=1760682159;
+	bh=ECOUsH1noeAgZRtyf60EKc9L4f4Ba1khmYrgNO6yCKI=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=hvLneN0/Px7YzZp8b/zEB/xqh4Q/3+FDAw7zlSsc4TeURYycGuPdfKTZ3AnO7n/e0
+	 dhUJwk5jSVHBT5GDP00eYJSTeCx1s03MhFSu8gi1YqapD10A3v9X4qqLrAAjfvRAuy
+	 BA/l/adLjPGmTQp/adoDUvyk1LN2XrKbc9KwnxIpsExPKG+Iq5DN16jA3jB6Rp1NiO
+	 18K5D1Ukc3IIEOUsC8W8YSr78oGfK8XoDXz7eJKZiyv3iS8KveEisQFKdE+bXfCKZE
+	 2WNy9vSuS+0oONiu+wxcoFIxwrwQyxJfVavPLlBbEFpoS5zT5TEKTvrIFQfIWZUPXo
+	 /VJuozz3Mh/ug==
+Received: from [192.168.68.113] (unknown [180.150.112.213])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 73D1B6477A;
+	Fri, 17 Oct 2025 14:22:38 +0800 (AWST)
+Message-ID: <ba2e6b78e59afb7c89e5022770a142ec8c31659a.camel@codeconstruct.com.au>
+Subject: Re: [PATCH] peci: controller: peci-aspeed: convert from
+ round_rate() to determine_rate()
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Brian Masney <bmasney@redhat.com>, Iwona Winiarska
+	 <iwona.winiarska@intel.com>, Joel Stanley <joel@jms.id.au>, Maxime Ripard
+	 <mripard@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
+	linux-clk@vger.kernel.org, linux-aspeed@lists.ozlabs.org, 
+	openbmc@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Date: Fri, 17 Oct 2025 16:52:37 +1030
+In-Reply-To: <aPEZSY6RC-UVclxN@redhat.com>
+References: <20250810-peci-round-rate-v1-1-ec96d216a455@redhat.com>
+	 <aMatZAX6eFI1RmDH@redhat.com>
+	 <28dc3bd8aeca7e3164747960747f75060c596704.camel@codeconstruct.com.au>
+	 <aPEZSY6RC-UVclxN@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.1-1 
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] dt-bindings: thermal: r9a09g047-tsu: Document RZ/V2H
- TSU
-To: Ovidiu Panait <ovidiu.panait.rb@renesas.com>,
- john.madieu.xa@bp.renesas.com, rafael@kernel.org, daniel.lezcano@linaro.org,
- rui.zhang@intel.com, lukasz.luba@arm.com, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, geert+renesas@glider.be,
- magnus.damm@gmail.com, mturquette@baylibre.com, sboyd@kernel.org
-Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- linux-clk@vger.kernel.org
-References: <20251016131327.19141-1-ovidiu.panait.rb@renesas.com>
- <20251016131327.19141-3-ovidiu.panait.rb@renesas.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
- QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
- +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
- ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
- 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
- hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
- tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
- 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
- naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
- hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
- whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
- qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
- RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
- Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
- H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
- dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
- AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
- jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
- zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
- XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20251016131327.19141-3-ovidiu.panait.rb@renesas.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-On 16/10/2025 15:13, Ovidiu Panait wrote:
-> The Renesas RZ/V2H SoC includes a Thermal Sensor Unit (TSU) block designed
-> to measure the junction temperature. The device provides real-time
-> temperature measurements for thermal management, utilizing two dedicated
-> channels for temperature sensing.
-> 
-> The Renesas RZ/V2H SoC is using the same TSU IP found on the RZ/G3E SoC,
-> the only difference being that it has two channels instead of one.
-> 
-> Add new compatible string "renesas,r9a09g057-tsu" for RZ/V2H and use
-> "renesas,r9a09g047-tsu" as a fallback compatible to indicate hardware
-> compatibility with the RZ/G3E implementation.
-> 
-> Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
-> ---
->  .../devicetree/bindings/thermal/renesas,r9a09g047-tsu.yaml | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/thermal/renesas,r9a09g047-tsu.yaml b/Documentation/devicetree/bindings/thermal/renesas,r9a09g047-tsu.yaml
-> index 8d3f3c24f0f2..274e96e37a12 100644
-> --- a/Documentation/devicetree/bindings/thermal/renesas,r9a09g047-tsu.yaml
-> +++ b/Documentation/devicetree/bindings/thermal/renesas,r9a09g047-tsu.yaml
-> @@ -16,7 +16,12 @@ description:
->  
->  properties:
->    compatible:
-> -    const: renesas,r9a09g047-tsu
-> +    oneOf:
-> +      - items:
+Hi Greg,
 
+On Thu, 2025-10-16 at 12:11 -0400, Brian Masney wrote:
+> Hi Andrew and Iwona,
+>=20
+> On Mon, Sep 15, 2025 at 02:36:48PM +0930, Andrew Jeffery wrote:
+> > Hi Brian,
+> >=20
+> > On Sun, 2025-09-14 at 07:56 -0400, Brian Masney wrote:
+> > > Hi Iwona, Joel, and Andrew,
+> > >=20
+> > > On Sun, Aug 10, 2025 at 06:21:51PM -0400, Brian Masney wrote:
+> > > > The round_rate() clk ops is deprecated, so migrate this driver from
+> > > > round_rate() to determine_rate() using the Coccinelle semantic patc=
+h
+> > > > appended to the "under-the-cut" portion of the patch.
+> > > >=20
+> > > > Signed-off-by: Brian Masney <bmasney@redhat.com>
+> > >=20
+> > > Would it be possible to get this picked up for v6.18? I'd like to rem=
+ove
+> > > this API from drivers/clk in v6.19.
+> >=20
+> > My (strong) preference is that Iwona applies it, but I'll keep an eye
+> > out for any unusual delays.
+>=20
+> This patch wasn't picked up for v6.18. Any chance this can get picked up
+> now for v6.19?
+>=20
+> I'm hoping to get this merged so that we can remove the round_rate() clk
+> op from the clk core. The clk maintainer (Stephen) mentioned this work
+> in his last pull to Linus.
+>=20
+> https://lore.kernel.org/linux-clk/20251007051720.11386-1-sboyd@kernel.org=
+/
 
-No need to add items here.
+Are you happy to pick this up directly in Iwona's absence?
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-Best regards,
-Krzysztof
+Andrew
