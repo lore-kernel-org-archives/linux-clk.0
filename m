@@ -1,93 +1,175 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail-m1973180.qiye.163.com (mail-m1973180.qiye.163.com [220.197.31.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CC3D30F94E;
-	Fri, 17 Oct 2025 06:41:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE8E124166D;
+	Fri, 17 Oct 2025 07:06:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760683273; cv=none; b=GbqnHMOFR7Ime4vyYQGRmLmx17aRyaiekSmtm17T6sHmJg2ZareCZjib1Esun1/flL8UgVx4vC0P8JFwkHpVSHQWR1lNeaaXTtdVwv6ADL/+SXUP2cTwc4oT3z14kcAHDRHotpxqqHjMBBR/oSa8gxWcN17gEr8NASPLQ8m5Vmw=
+	t=1760684806; cv=none; b=jTwuYhf5WNEI3mTZ9NM6cCshnmHx64HFBRM+PjnB9kdcdWRKMjHL84SG/heab373KA1xHEgoRY4CziEhpgvaSpPpOXRMWMQ+MkdOdsacp0BcjPalGebWjBSqFvO7Tu5mLcch4AHBB5FtiYqynx+WhCnx3d4cK8iIGwkYYlhmWtg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760683273; c=relaxed/simple;
-	bh=boNVW1ZqVyp6QPqYXslzFhQnM4rFlkUnf9eUPHMVPYc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FqSLie4kE6ETY4BmXwlRf1t4PLHKF2gd4qX5toP6uZvuAQH5zdqL7Qn8NvgSukBY3LR8WL2LT/IxztKC93RlQNYKCjzuCYX0nghHZ4xvhb6UDg5gdyUOz+W53EEajCUywbEuJ0jqlG5NGeCX7WXZf+CU0AnlT+VwaQHPSW7LyJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=hjBxTQvr; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1760684806; c=relaxed/simple;
+	bh=T0lj+Xv8/va+X9aoHNFB79EkrCdwN+yRsCOwz+0K3RM=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=IvQICPQ16NtRkrdB/CI8gJ8g28JZfi0L6+9vCqYALAhwHjFWVplSstWnF7HYlWVuMURL4sN0o1gZm/NGmC5GHOuUXCkIepxwL69XwjKjnTeyCQo2d+0ss9CebSRsxG3rIK53pJAFlX5qTfPv85ubGKhFxjjsI8dM5Ta8/8qsMGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=YOo1Uv6u; arc=none smtp.client-ip=220.197.31.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="hjBxTQvr"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B59AC4CEE7;
-	Fri, 17 Oct 2025 06:41:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1760683272;
-	bh=boNVW1ZqVyp6QPqYXslzFhQnM4rFlkUnf9eUPHMVPYc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hjBxTQvrAfuLPNC2keww1Wt8vFoF+J+E8ZZ0BZQWAaPazcqvI4z2lHr1qsXFDTv/E
-	 HZDrhFWcgHNRAyJYhFFQ+UUaT8nUdAvkG0GMPYwg4QEnDODqyjrWgO3lvvqAvTRwdR
-	 /JfiPXvXBFFDP7HmxhTJoqTqyxScFrArfwBCKeH0=
-Date: Fri, 17 Oct 2025 08:41:10 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Andrew Jeffery <andrew@codeconstruct.com.au>
-Cc: Brian Masney <bmasney@redhat.com>,
-	Iwona Winiarska <iwona.winiarska@intel.com>,
-	Joel Stanley <joel@jms.id.au>, Maxime Ripard <mripard@kernel.org>,
-	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-	linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] peci: controller: peci-aspeed: convert from round_rate()
- to determine_rate()
-Message-ID: <2025101759-runner-landing-374b@gregkh>
-References: <20250810-peci-round-rate-v1-1-ec96d216a455@redhat.com>
- <aMatZAX6eFI1RmDH@redhat.com>
- <28dc3bd8aeca7e3164747960747f75060c596704.camel@codeconstruct.com.au>
- <aPEZSY6RC-UVclxN@redhat.com>
- <ba2e6b78e59afb7c89e5022770a142ec8c31659a.camel@codeconstruct.com.au>
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="YOo1Uv6u"
+Received: from rockchip.. (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 263d85193;
+	Fri, 17 Oct 2025 14:31:15 +0800 (GMT+08:00)
+From: Elaine Zhang <zhangqing@rock-chips.com>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	sugar.zhang@rock-chips.com,
+	zhangqing@rock-chips.com,
+	heiko@sntech.de,
+	robh@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org,
+	conor+dt@kernel.org
+Cc: devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	huangtao@rock-chips.com
+Subject: [PATCH v2 4/5] dt-bindings: clock: Add support for rockchip pvtpll
+Date: Fri, 17 Oct 2025 14:31:06 +0800
+Message-Id: <20251017063107.1606965-5-zhangqing@rock-chips.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20251017063107.1606965-1-zhangqing@rock-chips.com>
+References: <20251017063107.1606965-1-zhangqing@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ba2e6b78e59afb7c89e5022770a142ec8c31659a.camel@codeconstruct.com.au>
+Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a99f0dd8e7703a3kunm5af2b40521c29d
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQhlNTVZPQk1CShhKSEtITU1WFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+DKIM-Signature: a=rsa-sha256;
+	b=YOo1Uv6uELPDrrc0XVFHwL+uDEFvx9R5+cTGQpHHYa7ML7JX5+zD/7o9k1WH3NaowZYtRia+6+Qp5QXTpoayoHdMkUesL9pi8iKcHIuqBkHM7yuB38W0/UxWGyS1oVD8MvaM3luPsu7FlSA0goFaYrieE8olcQYOpT+7uM4WjTQ=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=SJ3STLI4HR5Zee9OI1k5XabSxX35FolMIOKO+PCdfuE=;
+	h=date:mime-version:subject:message-id:from;
 
-On Fri, Oct 17, 2025 at 04:52:37PM +1030, Andrew Jeffery wrote:
-> Hi Greg,
-> 
-> On Thu, 2025-10-16 at 12:11 -0400, Brian Masney wrote:
-> > Hi Andrew and Iwona,
-> > 
-> > On Mon, Sep 15, 2025 at 02:36:48PM +0930, Andrew Jeffery wrote:
-> > > Hi Brian,
-> > > 
-> > > On Sun, 2025-09-14 at 07:56 -0400, Brian Masney wrote:
-> > > > Hi Iwona, Joel, and Andrew,
-> > > > 
-> > > > On Sun, Aug 10, 2025 at 06:21:51PM -0400, Brian Masney wrote:
-> > > > > The round_rate() clk ops is deprecated, so migrate this driver from
-> > > > > round_rate() to determine_rate() using the Coccinelle semantic patch
-> > > > > appended to the "under-the-cut" portion of the patch.
-> > > > > 
-> > > > > Signed-off-by: Brian Masney <bmasney@redhat.com>
-> > > > 
-> > > > Would it be possible to get this picked up for v6.18? I'd like to remove
-> > > > this API from drivers/clk in v6.19.
-> > > 
-> > > My (strong) preference is that Iwona applies it, but I'll keep an eye
-> > > out for any unusual delays.
-> > 
-> > This patch wasn't picked up for v6.18. Any chance this can get picked up
-> > now for v6.19?
-> > 
-> > I'm hoping to get this merged so that we can remove the round_rate() clk
-> > op from the clk core. The clk maintainer (Stephen) mentioned this work
-> > in his last pull to Linus.
-> > 
-> > https://lore.kernel.org/linux-clk/20251007051720.11386-1-sboyd@kernel.org/
-> 
-> Are you happy to pick this up directly in Iwona's absence?
+Add pvtpll documentation for rockchip.
 
-Why me?
+Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+---
+ .../bindings/clock/rockchip,clk-pvtpll.yaml   | 98 +++++++++++++++++++
+ 1 file changed, 98 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/rockchip,clk-pvtpll.yaml
 
-confused,
+diff --git a/Documentation/devicetree/bindings/clock/rockchip,clk-pvtpll.yaml b/Documentation/devicetree/bindings/clock/rockchip,clk-pvtpll.yaml
+new file mode 100644
+index 000000000000..5a293c8c254a
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/rockchip,clk-pvtpll.yaml
+@@ -0,0 +1,98 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/rockchip,clk-pvtpll.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Rockchip Pvtpll
++
++maintainers:
++  - Elaine Zhang <zhangqing@rock-chips.com>
++  - Heiko Stuebner <heiko@sntech.de>
++
++properties:
++  compatible:
++    enum:
++      - rockchip,rv1103b-core-pvtpll
++      - rockchip,rv1103b-enc-pvtpll
++      - rockchip,rv1103b-isp-pvtpll
++      - rockchip,rv1103b-npu-pvtpll
++      - rockchip,rv1126b-core-pvtpll
++      - rockchip,rv1126b-isp-pvtpll
++      - rockchip,rv1126b-enc-pvtpll
++      - rockchip,rv1126b-aisp-pvtpll
++      - rockchip,rv1126b-npu-pvtpll
++      - rockchip,rk3506-core-pvtpll
++
++  reg:
++    maxItems: 1
++
++  "#clock-cells":
++    const: 0
++
++  clocks:
++    maxItems: 1
++
++  clock-output-names:
++    maxItems: 1
++
++  rockchip,cru:
++    $ref: /schemas/types.yaml#/definitions/phandle
++    description: |
++      Phandle to the main Clock and Reset Unit (CRU) controller.
++      Required for PVTPLLs that need to interact with the main CRU
++      for clock management operations.
++
++required:
++  - "#clock-cells"
++  - compatible
++  - reg
++  - clock-output-names
++
++additionalProperties: false
++
++examples:
++  - |
++    pvtpll_core: pvtpll-core@20480000 {
++      compatible = "rockchip,rv1126b-core-pvtpll", "syscon";
++      reg = <0x20480000 0x100>;
++      #clock-cells = <0>;
++      clock-output-names = "clk_core_pvtpll";
++    };
++
++  - |
++    pvtpll_isp: pvtpll-isp@21c60000 {
++      compatible = "rockchip,rv1126b-isp-pvtpll";
++      reg = <0x21c60000 0x100>;
++      rockchip,cru = <&cru>;
++      #clock-cells = <0>;
++      clock-output-names = "clk_isp_pvtpll";
++    };
++
++  - |
++    pvtpll_enc: pvtpll-enc@21f00000 {
++      compatible = "rockchip,rv1126b-enc-pvtpll";
++      reg = <0x21f00000 0x100>;
++      #clock-cells = <0>;
++      clock-output-names = "clk_vepu_pvtpll";
++    };
++
++  - |
++    pvtpll_aisp: pvtpll-aisp@21fc0000 {
++      compatible = "rockchip,rv1126b-aisp-pvtpll";
++      reg = <0x21fc0000 0x100>;
++      rockchip,cru = <&cru>;
++      #clock-cells = <0>;
++      clock-output-names = "clk_vcp_pvtpll";
++    };
++
++  - |
++    pvtpll_npu: pvtpll-npu@22080000 {
++      compatible = "rockchip,rv1126b-npu-pvtpll", "syscon";
++      reg = <0x22080000 0x100>;
++      rockchip,cru = <&cru>;
++      #clock-cells = <0>;
++      clock-output-names = "clk_npu_pvtpll";
++    };
++
++...
+-- 
+2.34.1
 
-greg k-h
