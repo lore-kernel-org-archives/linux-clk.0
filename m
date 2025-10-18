@@ -1,55 +1,55 @@
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CBD6258CD7
-	for <linux-clk@vger.kernel.org>; Sat, 18 Oct 2025 18:03:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 927F8258ECA
+	for <linux-clk@vger.kernel.org>; Sat, 18 Oct 2025 18:03:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760810592; cv=none; b=XPLjPTFswPxn8EMU+nmFns+MgL8t/G1I6mqFZRqVJX0N/GVXb0yVfvEo0Avuj3RIqKpzqc4kbTZi2Ypoh7nIlJbB5dcKtIrGAuhR4AQVzhTq7KT+cb7v/13cnscPaxzu3HKPcfxMV8Z+XQxpwB5v5/Gu41SVNLokey4VgSWfSQU=
+	t=1760810598; cv=none; b=XECfuLjkFLikoz5wkvrACo5XWdX0GHvopBjJYKSXrOK8qgxZb0DQMsTzc7+ZDHoMq9JuwM07eD4WibPVmjW9GKMEejljxeQPOQfyMB8K7dQRpysMfasr+/uEUglCS2m6A0D/LvdSCDV7YcVczOxu40BC6Djr0HXfjL0fUt5pdyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760810592; c=relaxed/simple;
-	bh=0GzwcDEeRifVYWOU1Ju17zqBLy5F9ZnkEqm/6SUKvKQ=;
+	s=arc-20240116; t=1760810598; c=relaxed/simple;
+	bh=hMEnshIBBCwKDA9va+C+vgTZ7D8UBppyjlBh7zEwkCg=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=j8PXK7ZFFGMKNHI+k3lv5QFo7IJbQtf4TyC7MBUPri/8XI/8Nsf3g+S24+o6Ngqsz/rt/kr12plmXHqFyskiKO0QBw0be1QkKWXL3zzKPL9xK+6DPgf78ibJFKrYrO0aHzZfWzbp23qOZX6eWXasZeb5newz4LXaI8uDsAhLc1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hxDIUqo6; arc=none smtp.client-ip=209.85.128.74
+	 To:Cc:Content-Type; b=HCl+lSi1YA6K5D8+B5GbGWsmls3soCQARklpRBo1hw76+yFO2cXlW276RMyCald+8yrV+5W0OgDtR5b0MQ//qMkngCPOdOil+DKTNVISodfuzuD3tdP9lsaEkDV+/zWYegZbrLpZohBf81jiVo+YWBIdswGCORwM3NvIv/DxehI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rAH46SFk; arc=none smtp.client-ip=209.85.128.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hxDIUqo6"
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-47114d373d5so25353625e9.1
-        for <linux-clk@vger.kernel.org>; Sat, 18 Oct 2025 11:03:09 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rAH46SFk"
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-46e47d14dceso18091045e9.2
+        for <linux-clk@vger.kernel.org>; Sat, 18 Oct 2025 11:03:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760810588; x=1761415388; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1760810595; x=1761415395; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3Jw3+rOqAmz9lI4+2vszjAxIVE8PlKgnkOGLhqwHbOo=;
-        b=hxDIUqo6eoQQzTk/UK2gwlX//nfbdzaTwNxS/XcLvWTFXKz5p8Pib51uSza/iK0TR8
-         E7X08qcyzgzhVWcnKqAcu8Ntg4MaM66VYBAUC/zpzCTch5BnhEDIjTZ4q2M+Ath2bwkf
-         keKUxSQwJixk4tDpFD1p33qi9gIt4SniDidLU+08qSE3TxoKzOCIrt6m/dnTz8zCvc7N
-         oZbivVvtCBzIdIvnPZzer6FR5aEICGsb08wSrGdARgtbrsoJKZgu0UA8TPzWXsaCXZgK
-         NRqMU7lsymz2BK2cZ/baMWhs4noidaJxecq56qoMu+p1Tn9QwS2IRTTZ4V12VmLAsjgq
-         aYrA==
+        bh=P+Xp99Syf6solx7Qtcc9CHjBfbP4dER1f+PiKli4U2c=;
+        b=rAH46SFknU6g/O+c9FsM0Mynh5Na/VXbCoy0kaqhgmol+EcG+2U5WNgvTbpujC1pdn
+         c135DTKP7q9wPejRxg9bkmkFs3aRlL54p4hOFLGmjUg07Hq4TU4wRgfPFJYRvekZPgrT
+         T4my87GpFOArojEb1Pa9Dnbvj0Hrz+JnTEjDvYo7ojwSuhcTvPEt+fp3ypiUcdokhQMV
+         gn+1evR8OlBXVQG2oA8xg7lr8JnjpzWDiIga1rLJQW6FDO658c3lQafRxG6M/wsb916J
+         RK/SQWcLcaOa6+qHfY0ncZ36onzFoSDspShOjIcHyvqBwsGMhB+bIFdS03TXtou+2jZ9
+         S+Gw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760810588; x=1761415388;
+        d=1e100.net; s=20230601; t=1760810595; x=1761415395;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3Jw3+rOqAmz9lI4+2vszjAxIVE8PlKgnkOGLhqwHbOo=;
-        b=EIXwEaK9CMCRncL+0d19yVv5e1Vr39t0qVXWapr1i6kcawWZV+ThgOAAsPr8RWpsne
-         NPa0gT9lhLLg26VMuXB38eSb7z2iO1KNaWEfVBIHpneuGIAn2zsUrgHtjMzbaW0nQrPo
-         +Wv/ZKW1LEkJCXvQZ1Mrb2DoHsVAylQjEZyAhn8xSyMuCa/hlL4fMHeC4/JFcNyfwg8I
-         9ArxD01h5TWJ18ImKdJalfxaFlbYhcSTzhD/4qjIDLY40+5c2qGHAopgAgXX6dNH7gD3
-         h+sPn6EgPoFZ+sfgdWe2J8n/FbndCqtwf7oWjg5xqQ6hOSTP85axTWqwht0WTteNu/sy
-         oBzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVcqjzNPckhec0aOJbTe3XaihH8Jv8lS/vSv6OIkA+4hrscZ5VhnabY+DmkSGLrf9jovimk6yH3H3s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhILDuWGu0RT9kBc9Pc6YjVb/olaWXmvQoJvltpcLpiyMPTQry
-	9bCD4reETDB04aqUhRkLsIAm4x2p/BAAl6sAe04QebgE0NuKu2pZXyGtn3n3JFMaIEKY/Z6K9gu
-	NK8FKplpJNFdrHxqelA==
-X-Google-Smtp-Source: AGHT+IEDBiBL9j3PrKHEoPMUCzoRBlvkx4ZL7AxoxVM1NpYJWMzoUQv31Vq5zUARBonVeR76HGoFc6I/2XbrkI8=
-X-Received: from wmbh26.prod.google.com ([2002:a05:600c:a11a:b0:46e:6a75:2910])
+        bh=P+Xp99Syf6solx7Qtcc9CHjBfbP4dER1f+PiKli4U2c=;
+        b=uuxqC5aqNiK5ZHWOZ59dewtncC7UsUN5/VPVJ6Vvku4OVmhKeTdZPqVoXtMJauSDtt
+         bpCZZCbahPOPZzKodn6AF3YYAMrl0iTP/z3OP3rYED84yxCpIZeYJersWyBqwBJzPPsV
+         gGMnTaqMWGwI0wOgRQLQE4aChopeG2LxnkpKpaiidt/R4OJC83osMRhpJTdgO5UgmXrp
+         GgycN34U5uWRhdGtk76a14D3agKKcgWsF7cHl+ZP68T5UQ81cKcIDqgn6Y86zYTVm8Kg
+         EwRnx829zWRxCh9i6qOj5ijg/JUXRboaW55O9PxLVQibquyAWBuGv52xJRNoWHXd9rrZ
+         3Smg==
+X-Forwarded-Encrypted: i=1; AJvYcCVWBpxYFgK5ECyuS1vNFyQxY0HPXeWRlQheZQn2hCT31UgEInHQlkWtrQCsfZCgw13hsMU7JqsJmeA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzxRoDK9YELYqc0D0WVH/znY3yvbjS8eJxNgo6CbiSRtEjBOFvL
+	hz/lqK6nZYD/b0e1q9bpqvbftr/oodltJunjjjJA8y5Oznv0P67YQH2a6zivXb8sZxJP4zPlHon
+	iWcuy8Wrs0/iNRruCKg==
+X-Google-Smtp-Source: AGHT+IFD1cfJ8UvE+arlsN4Q/pztwM830HHKQSYiiR0oQA7gs4M/kyYn5nx3HAt5EUs2SUtbpxbRKJSK1nrxs4c=
+X-Received: from wmbz7.prod.google.com ([2002:a05:600c:c087:b0:46f:aa50:d700])
  (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:4715:b0:45b:9a46:69e9 with SMTP id 5b1f17b1804b1-4711791c8c3mr58877225e9.31.1760810587581;
- Sat, 18 Oct 2025 11:03:07 -0700 (PDT)
-Date: Sat, 18 Oct 2025 18:03:03 +0000
+ 2002:a05:600c:474a:b0:46f:b42e:e39c with SMTP id 5b1f17b1804b1-4711794902dmr54802325e9.41.1760810594858;
+ Sat, 18 Oct 2025 11:03:14 -0700 (PDT)
+Date: Sat, 18 Oct 2025 18:03:12 +0000
 In-Reply-To: <20251018-cstr-core-v18-0-ef3d02760804@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -59,8 +59,8 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20251018-cstr-core-v18-0-ef3d02760804@gmail.com>
 X-Mailer: git-send-email 2.51.0.915.g61a8936c21-goog
-Message-ID: <20251018180303.3615403-1-aliceryhl@google.com>
-Subject: [PATCH v18 12/16] rust: configfs: use `CStr::as_char_ptr`
+Message-ID: <20251018180313.3615630-1-aliceryhl@google.com>
+Subject: [PATCH v18 13/16] rust: regulator: use `CStr::as_char_ptr`
 From: Alice Ryhl <aliceryhl@google.com>
 To: tamird@gmail.com
 Cc: Liam.Howlett@oracle.com, a.hindborg@kernel.org, airlied@gmail.com, 
@@ -94,22 +94,43 @@ implement `Deref<Target=&[u8]>`.
 Signed-off-by: Tamir Duberstein <tamird@gmail.com>
 Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 ---
- rust/kernel/configfs.rs | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ rust/kernel/regulator.rs | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/rust/kernel/configfs.rs b/rust/kernel/configfs.rs
-index 10f1547ca9f1..466fb7f40762 100644
---- a/rust/kernel/configfs.rs
-+++ b/rust/kernel/configfs.rs
-@@ -157,7 +157,7 @@ pub fn new(
-                     unsafe {
-                         bindings::config_group_init_type_name(
-                             &mut (*place.get()).su_group,
--                            name.as_ptr(),
-+                            name.as_char_ptr(),
-                             item_type.as_ptr(),
-                         )
-                     };
+diff --git a/rust/kernel/regulator.rs b/rust/kernel/regulator.rs
+index b55a201e5029..65a4eb096cae 100644
+--- a/rust/kernel/regulator.rs
++++ b/rust/kernel/regulator.rs
+@@ -84,7 +84,7 @@ pub struct Error<State: RegulatorState> {
+ pub fn devm_enable(dev: &Device<Bound>, name: &CStr) -> Result {
+     // SAFETY: `dev` is a valid and bound device, while `name` is a valid C
+     // string.
+-    to_result(unsafe { bindings::devm_regulator_get_enable(dev.as_raw(), name.as_ptr()) })
++    to_result(unsafe { bindings::devm_regulator_get_enable(dev.as_raw(), name.as_char_ptr()) })
+ }
+ 
+ /// Same as [`devm_enable`], but calls `devm_regulator_get_enable_optional`
+@@ -102,7 +102,9 @@ pub fn devm_enable(dev: &Device<Bound>, name: &CStr) -> Result {
+ pub fn devm_enable_optional(dev: &Device<Bound>, name: &CStr) -> Result {
+     // SAFETY: `dev` is a valid and bound device, while `name` is a valid C
+     // string.
+-    to_result(unsafe { bindings::devm_regulator_get_enable_optional(dev.as_raw(), name.as_ptr()) })
++    to_result(unsafe {
++        bindings::devm_regulator_get_enable_optional(dev.as_raw(), name.as_char_ptr())
++    })
+ }
+ 
+ /// A `struct regulator` abstraction.
+@@ -268,7 +270,8 @@ pub fn get_voltage(&self) -> Result<Voltage> {
+     fn get_internal(dev: &Device, name: &CStr) -> Result<Regulator<T>> {
+         // SAFETY: It is safe to call `regulator_get()`, on a device pointer
+         // received from the C code.
+-        let inner = from_err_ptr(unsafe { bindings::regulator_get(dev.as_raw(), name.as_ptr()) })?;
++        let inner =
++            from_err_ptr(unsafe { bindings::regulator_get(dev.as_raw(), name.as_char_ptr()) })?;
+ 
+         // SAFETY: We can safely trust `inner` to be a pointer to a valid
+         // regulator if `ERR_PTR` was not returned.
 -- 
 2.51.0.915.g61a8936c21-goog
 
