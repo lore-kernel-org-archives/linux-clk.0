@@ -1,53 +1,53 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9589D354ADF;
-	Sat, 18 Oct 2025 11:34:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 283BB23CEF9;
+	Sat, 18 Oct 2025 15:56:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760787267; cv=none; b=TGbiYz1lTeNqLbCCpEIq6LPvCATIwcvHfp0IOGyJvMPNZi2skeBx7y0vNHdxVY0NF7yEI1nWlaf+VTlvufWtEaNpVaz6sAeuucO1LJCQLRYx1pjIWOqnu8xKVOsTiiG8ySy0r0huwYOtqJaBN85XWFL574TttoYWG5wiNeFvrSM=
+	t=1760802966; cv=none; b=rwB7BA9+HBMUx3gRUMRlEtJASNVCVLTAOes0OHg+tZcWdTHG/E3ch979qEMCFGm8zcd2XK+oA2oyTgXzsT5prvH8yszfPzlDqdgZ5M5ktioRi8TflZHuOOp3OmC12J/HQpdAjobiduKfIxoTzUjKyaS52UeJQhloywAF85+6cIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760787267; c=relaxed/simple;
-	bh=lxmXxI9NVNvUFbJkHjVwI4PAcvRKTU8tPXimX86qghE=;
+	s=arc-20240116; t=1760802966; c=relaxed/simple;
+	bh=1gVJ8CjsGwA0FTk/Tm3gXx44AUXg3U1s1eJGlpVlkHM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B1dhfoYc2J2VjnfnMWZZaL1YJZfP18k8AFPyTCv8b2SK96vz2jztWKBA3gDS2zXStBnfxBmveMnR6/2ADAKE6KYAkvBt49kzinpZfOwjQmYK8izWbbKLabtE17hbnlJ491faCfAGL6nM8JIVNYiI8y8lsMPUaM7AbLgXNaToJbM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cXD+BNUK; arc=none smtp.client-ip=192.198.163.10
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y/hpauvaNIJ0yJofL6DSPLcZoCKsCR+gZyee2f+8W7k/haKJgb+6WPFWPLYSnO4nHae3bz/GgIVM92X1iWoMXvX0S8rrEIqcz+jJmgsxaX+XgJusxihIZZ7EDvGjtsD8NUkIbON2bFyR3cb/z5uow6jjXLkWmw/NQdnLmSTuj3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lSmz/FPs; arc=none smtp.client-ip=192.198.163.13
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cXD+BNUK"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lSmz/FPs"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760787266; x=1792323266;
+  t=1760802961; x=1792338961;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=lxmXxI9NVNvUFbJkHjVwI4PAcvRKTU8tPXimX86qghE=;
-  b=cXD+BNUK15x2DaVHETizGjZvPMTkYntmBc6Kx7r5yOBVZtqvudKCRrD+
-   ZeGcG/SS/EssfXQjB8hYjBmEDDxQHubNhPhz3BP+nrel6YJIRa9q0AwLA
-   YuPwg+JheXBkzbkqB9PQZicI/slRoY5iYBOGnE13XOlWj2kIvz1cJDFDl
-   cZl/KyAEY70qyTLak3SOVPJqmmDf4QUbNeN0voBku1UKOPEuYUabafMeF
-   7yZwWS4XTTr5MxnUjIKNiCkoYGjkqVCNKeo67aWVUkMGJd2LOEtWB8Dlc
-   oRwSpPIbQ5pcQtOGZsR7sCSLrX7jHpB5M+l6KYabGdLAmAyCQtxj0BVJd
+  bh=1gVJ8CjsGwA0FTk/Tm3gXx44AUXg3U1s1eJGlpVlkHM=;
+  b=lSmz/FPs3OkFsVXcTcvRi3K4Nc5Szi2yGYe8RxvAHCdfIb36+hGUdr5c
+   +enJsDQ/7lFqjl0ac9QVfeRUkOrCY/EfmSEUXgJhFszwVjJlDOamF9HCv
+   tH9LTN1dzES/IXOF7mRwrKiNtK1WArg4kHTH6OQZv0SpWStDxlZKO+gNx
+   QbtxGZnpXbGw8ermIG6fAal6WWcxadpD5rqVvF56lXzAxtF8D1EoRjZCP
+   KH+IFmp9Q/3WPjNJBDXStQ1FOaI+O60O+f0rPxkZXLpTMFgBYxf3YaUJ8
+   y1+LriXVr0HUAbFp1GuL9y2pdclTTAkZZi7gF/s4FmUlyLY3JIktByjVi
    Q==;
-X-CSE-ConnectionGUID: imIc4URUTK2Nw4UKeVd23A==
-X-CSE-MsgGUID: 8HJQArxoT5+YpoH0jt46rA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11585"; a="74331305"
-X-IronPort-AV: E=Sophos;i="6.19,238,1754982000"; 
-   d="scan'208";a="74331305"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2025 04:34:25 -0700
-X-CSE-ConnectionGUID: hItXz9+CR9+morbJD6EyVA==
-X-CSE-MsgGUID: MR5JyuycRausU/z8Jyg5Pw==
+X-CSE-ConnectionGUID: BdqSWhomRXqAUjLWvfbc5Q==
+X-CSE-MsgGUID: HwWy5QTgTqWP3R664kslEQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="65611004"
+X-IronPort-AV: E=Sophos;i="6.19,239,1754982000"; 
+   d="scan'208";a="65611004"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2025 08:56:01 -0700
+X-CSE-ConnectionGUID: I4TNBVbjTM+FEQOJ8MGs+Q==
+X-CSE-MsgGUID: IsFoQzfXSWehBMmDnrDCzw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,238,1754982000"; 
-   d="scan'208";a="182491676"
+X-IronPort-AV: E=Sophos;i="6.19,239,1754982000"; 
+   d="scan'208";a="182985402"
 Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by orviesa009.jf.intel.com with ESMTP; 18 Oct 2025 04:34:20 -0700
+  by orviesa008.jf.intel.com with ESMTP; 18 Oct 2025 08:55:56 -0700
 Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1vA5CU-0008G9-0M;
-	Sat, 18 Oct 2025 11:34:18 +0000
-Date: Sat, 18 Oct 2025 19:33:56 +0800
+	id 1vA9Hd-0008Nl-1H;
+	Sat, 18 Oct 2025 15:55:53 +0000
+Date: Sat, 18 Oct 2025 23:55:42 +0800
 From: kernel test robot <lkp@intel.com>
 To: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>,
 	Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
@@ -64,7 +64,7 @@ Cc: oe-kbuild-all@lists.linux.dev, linux-clk@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
 	Pengutronix Kernel Team <kernel@pengutronix.de>
 Subject: Re: [PATCH v2 3/8] clk: imx: add driver for imx8ulp's sim lpav
-Message-ID: <202510181949.IazLEB6V-lkp@intel.com>
+Message-ID: <202510182350.57sb54Rm-lkp@intel.com>
 References: <20251017112025.11997-4-laurentiumihalcea111@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -78,10 +78,10 @@ In-Reply-To: <20251017112025.11997-4-laurentiumihalcea111@gmail.com>
 
 Hi Laurentiu,
 
-kernel test robot noticed the following build warnings:
+kernel test robot noticed the following build errors:
 
-[auto build test WARNING on pza/reset/next]
-[also build test WARNING on abelvesa/clk/imx abelvesa/for-next linus/master v6.18-rc1 next-20251017]
+[auto build test ERROR on pza/reset/next]
+[also build test ERROR on abelvesa/clk/imx abelvesa/for-next linus/master v6.18-rc1 next-20251017]
 [cannot apply to pza/imx-drm/next]
 [If your patch is applied to the wrong git tree, kindly drop us a note.
 And when submitting patch, we suggest to use '--base' as documented in
@@ -91,40 +91,55 @@ url:    https://github.com/intel-lab-lkp/linux/commits/Laurentiu-Mihalcea/reset-
 base:   https://git.pengutronix.de/git/pza/linux reset/next
 patch link:    https://lore.kernel.org/r/20251017112025.11997-4-laurentiumihalcea111%40gmail.com
 patch subject: [PATCH v2 3/8] clk: imx: add driver for imx8ulp's sim lpav
-config: xtensa-randconfig-r132-20251018 (https://download.01.org/0day-ci/archive/20251018/202510181949.IazLEB6V-lkp@intel.com/config)
-compiler: xtensa-linux-gcc (GCC) 11.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251018/202510181949.IazLEB6V-lkp@intel.com/reproduce)
+config: m68k-allyesconfig (https://download.01.org/0day-ci/archive/20251018/202510182350.57sb54Rm-lkp@intel.com/config)
+compiler: m68k-linux-gcc (GCC) 15.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251018/202510182350.57sb54Rm-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510181949.IazLEB6V-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510182350.57sb54Rm-lkp@intel.com/
 
-All warnings (new ones prefixed by >>):
+All errors (new ones prefixed by >>):
 
    drivers/clk/imx/clk-imx8ulp-sim-lpav.c: In function 'clk_imx8ulp_sim_lpav_aux_reset_release':
-   drivers/clk/imx/clk-imx8ulp-sim-lpav.c:52:9: error: implicit declaration of function 'kfree' [-Werror=implicit-function-declaration]
+>> drivers/clk/imx/clk-imx8ulp-sim-lpav.c:52:9: error: implicit declaration of function 'kfree' [-Wimplicit-function-declaration]
       52 |         kfree(adev);
          |         ^~~~~
    drivers/clk/imx/clk-imx8ulp-sim-lpav.c: In function 'clk_imx8ulp_sim_lpav_register_aux_reset':
-   drivers/clk/imx/clk-imx8ulp-sim-lpav.c:65:16: error: cleanup argument not a function
+>> drivers/clk/imx/clk-imx8ulp-sim-lpav.c:65:16: error: cleanup argument not a function
       65 |         struct auxiliary_device *adev __free(kfree) = NULL;
          |                ^~~~~~~~~~~~~~~~
-   drivers/clk/imx/clk-imx8ulp-sim-lpav.c:68:16: error: implicit declaration of function 'kzalloc' [-Werror=implicit-function-declaration]
+>> drivers/clk/imx/clk-imx8ulp-sim-lpav.c:68:16: error: implicit declaration of function 'kzalloc' [-Wimplicit-function-declaration]
       68 |         adev = kzalloc(sizeof(*adev), GFP_KERNEL);
          |                ^~~~~~~
->> drivers/clk/imx/clk-imx8ulp-sim-lpav.c:68:14: warning: assignment to 'struct auxiliary_device *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+>> drivers/clk/imx/clk-imx8ulp-sim-lpav.c:68:14: error: assignment to 'struct auxiliary_device *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
       68 |         adev = kzalloc(sizeof(*adev), GFP_KERNEL);
          |              ^
-   cc1: some warnings being treated as errors
 
 
-vim +68 drivers/clk/imx/clk-imx8ulp-sim-lpav.c
+vim +/kfree +52 drivers/clk/imx/clk-imx8ulp-sim-lpav.c
 
+    46	
+    47	#ifdef CONFIG_RESET_CONTROLLER
+    48	static void clk_imx8ulp_sim_lpav_aux_reset_release(struct device *dev)
+    49	{
+    50		struct auxiliary_device *adev = to_auxiliary_dev(dev);
+    51	
+  > 52		kfree(adev);
+    53	}
+    54	
+    55	static void clk_imx8ulp_sim_lpav_unregister_aux_reset(void *data)
+    56	{
+    57		struct auxiliary_device *adev = data;
+    58	
+    59		auxiliary_device_delete(adev);
+    60		auxiliary_device_uninit(adev);
+    61	}
     62	
     63	static int clk_imx8ulp_sim_lpav_register_aux_reset(struct platform_device *pdev)
     64	{
-    65		struct auxiliary_device *adev __free(kfree) = NULL;
+  > 65		struct auxiliary_device *adev __free(kfree) = NULL;
     66		int ret;
     67	
   > 68		adev = kzalloc(sizeof(*adev), GFP_KERNEL);
