@@ -1,198 +1,208 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012025.outbound.protection.outlook.com [52.101.66.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E80E98F6F;
-	Sat, 18 Oct 2025 04:15:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760760938; cv=none; b=InBRFnV0qiNqyil0cXWrfZ+R/0N+IcdSw645P178cqhHRXFjFm8yBuleTpPt+I1aGVm0UoOvQ2rajvu5ZL/kdAwmzyK+b93odlolRr4vpd0OkvUMZK7C3BsecPJ5BMgC74gyn2MgvH1FDfpWHoiDIhAr2CnMDGO//2eebIQROcw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760760938; c=relaxed/simple;
-	bh=xJ+JsUz4XbcP1v+4FsWXjV6AIbsUH9+FEb2iGeNwyHU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I9MCgctbDbNUrGKoyWu+EnyZtj5uxR7UF1fA40ybEku0RLjZR0uxaWsFztHlRbaXogqAZ4X0rWqVdpNb/8JlYWhnjZlScmXueNjQvK4lK6Ts67/IDWDdO/V7RpADvaALaWW1pLjSSmqrdySlshUUTSVcXaYVn+htqJnvhIj7IwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=g3FIrFGk; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 046091E5714;
+	Sat, 18 Oct 2025 05:44:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.25
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760766282; cv=fail; b=gpK5huUnq3puWltQo10XIYixjI1nD4zDiRIKKoG7Uy0sqaAHmxRfEakDWYoSsHO1U4u3nzTo7ZHaJi7s12iOm5O+5svvfLSJw0INY6NPa0pO8prRoLC04b39auGo6BiGiugtv6zi6K9VDyzejzCMpxeDzKZBNa2k2LjbblmRRQw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760766282; c=relaxed/simple;
+	bh=UdVqWMAUUbWSecNNBZdzlXCi820HsrMJi5iB6WJDH1s=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=U6Mfi2SKL0Kz/5R4Q1qNe54xLvf1MKedO3hCeczO5ulh7a9qxYlmdh7+QTIaiA8suv4NYk0jyQggSP1n8SteblLUDbpSOZeWo5CWT3W6S2/1ZnMrCPWM01WtBew1WQO8ojEJfwsuh77f6tQhNFZ19smKcNbvB3YzsArDsLgs/Gk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=NpIk962p; arc=fail smtp.client-ip=52.101.66.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="g3FIrFGk"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760760937; x=1792296937;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=xJ+JsUz4XbcP1v+4FsWXjV6AIbsUH9+FEb2iGeNwyHU=;
-  b=g3FIrFGk98QcATYpI8cwSUmIe9plA6sLC3wn4pNX5crEXdi/kqMK9Fxb
-   bgq0i9HAMz667uFgvblObzYlruBIpgAEkuruRHbY+YEj64rSWTgAHBTte
-   k7bAZu39LzVkdpMbK8r8UMNyZQL92xytaZ8dT5sAL/sB7dEUN+4NJjdi9
-   aVEElEDoiBIBowQUvA7s7nqWY6moJD5IO2bnhOP4704OZeI7cHf0wIvTt
-   OkpgzRYr59iornyusa9Etjf2l03x5rkTr33DYEAwEjhaLWZHdmuy3clKg
-   nAQ/oxGv0LO9ekqvYlgjcKvGVWVSq1hqzVMX5tsIDX1bE39f2HmdkSTTi
-   A==;
-X-CSE-ConnectionGUID: flR1fEKLShqPXUH8+ak5Mw==
-X-CSE-MsgGUID: 8z9AqGCZQiOrRBecBy3/QQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11585"; a="63122079"
-X-IronPort-AV: E=Sophos;i="6.19,238,1754982000"; 
-   d="scan'208";a="63122079"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2025 21:15:36 -0700
-X-CSE-ConnectionGUID: vdSs8jYZR0+Zx8hwJkk8DQ==
-X-CSE-MsgGUID: AOaCem9pThybXB/LUZKBSg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,238,1754982000"; 
-   d="scan'208";a="188197059"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by fmviesa004.fm.intel.com with ESMTP; 17 Oct 2025 21:15:31 -0700
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v9yLg-00083H-2m;
-	Sat, 18 Oct 2025 04:15:25 +0000
-Date: Sat, 18 Oct 2025 12:15:08 +0800
-From: kernel test robot <lkp@intel.com>
-To: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>,
-	Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Fabio Estevam <festevam@gmail.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Shengjiu Wang <shengjiu.wang@nxp.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-clk@vger.kernel.org, imx@lists.linux.dev,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Pengutronix Kernel Team <kernel@pengutronix.de>
-Subject: Re: [PATCH v2 3/8] clk: imx: add driver for imx8ulp's sim lpav
-Message-ID: <202510181121.D3XVfMFh-lkp@intel.com>
-References: <20251017112025.11997-4-laurentiumihalcea111@gmail.com>
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="NpIk962p"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=p98hwQeFKnxUq19PWUnMp6xn22hZJfl4PnB7Jj7DHGmkS3lZiySReKy2SZwGGbMPIxTc9ENBD8xNsyAy3UXNFrmNDJiXkE8Fc4UNEjW8fexxaGOIZNXlEs2j3juAWvkQE1qhtv2qHT8FhdDanjRqNP+wezpZde91ugDVEN9gORqfNmr9XwcBc2An7H++wece27DhCfvNnwBYsPXtnCX2AtsevUG7/k8vF8y4lqbtPrXkb9XUP0Di6oSKTM5+CtyoUUWWNaXkG5Isi0yY7cjfBF+YhgSGndB9o9Fe5T8KEdajIMsXRXyW8jefuHRxiNK+5qt8SMOVFza5FLOwazdRfw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=UdVqWMAUUbWSecNNBZdzlXCi820HsrMJi5iB6WJDH1s=;
+ b=j6bVLNT5ZBlBhcpa+jS5NgCrn7xd3WTvfrYX0FkIDHV2thmlWR9tjfo8EUvZbV/K0FoTbKGy4T7+fMmmblC6iY5UTuRgEDbm90auRylsNQt9rzCZ1a14XVhDEd/NUiFu5ceAaHhsWgLIAqJc0t38KrWAw7H/dWl+0OgoW33j/5uFLmSInVKIQfStuSGz8evSUmrdejz3Vv26UFDc3YalxZ+xKiDVSQ7z2wXFkrdx35Kc34IL0RLV8a8RM904+XFL8pZldAuWTP9hWe8abzc2EcScb7xYB97hJCgjJJFBWW0i8mAm3AUFtfXLdVdBNAm4tmz97qwBTs3EK7t1ECB5LQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=UdVqWMAUUbWSecNNBZdzlXCi820HsrMJi5iB6WJDH1s=;
+ b=NpIk962p0scyM/Wp/5o2dNfkPDWgG+EgK5Xjp9yLSM0ZxO76f2aBzFqawcE+SCjmf5DFgf0+Tnau1PgBrTn4Zhyz7RIj6ZoupqRQOjMu6dRAxfBYm0BJ8Bp9WruzGCmP4GcXdm6vNXbvWkb79vZJ/pjsCJAm6MILtQPkXA/6vkCHDFmuFfC2OTddS6ptAv4K/tv+n0aWRgSvYXNfd0VLR7jE0sf25yDWllLzpy8obHDyvVbSHgt54dwGOiiS92gqjVfTLILq9bhXB9zZ01Yj7QqGk0cMKl+BssYIhzLK7ost9Ky+SoQfRfgKCFtdT4N255lhXFgu0P7mfZRAmGAc3w==
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
+ by PA4PR04MB9463.eurprd04.prod.outlook.com (2603:10a6:102:2ab::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.14; Sat, 18 Oct
+ 2025 05:44:35 +0000
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::4609:64af:8a4b:fd64]) by AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::4609:64af:8a4b:fd64%6]) with mapi id 15.20.9228.011; Sat, 18 Oct 2025
+ 05:44:35 +0000
+From: Ying Liu <victor.liu@nxp.com>
+To: Marek Vasut <marek.vasut@mailbox.org>, Frank Li <frank.li@nxp.com>
+CC: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Abel
+ Vesa <abelvesa@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Fabio Estevam
+	<festevam@gmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Laurent
+ Pinchart <laurent.pinchart@ideasonboard.com>, Lucas Stach
+	<l.stach@pengutronix.de>, Peng Fan <peng.fan@nxp.com>, Pengutronix Kernel
+ Team <kernel@pengutronix.de>, Rob Herring <robh@kernel.org>, Shawn Guo
+	<shawnguo@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>
+Subject: RE: [PATCH 03/39] dt-bindings: display: imx: Document i.MX95 Display
+ Controller processing units
+Thread-Topic: [PATCH 03/39] dt-bindings: display: imx: Document i.MX95 Display
+ Controller processing units
+Thread-Index:
+ AQHcOtDpq/HIeI920U2ay67GHTY3jLTATQyAgAE/OgCAAWIMgIAAFnKAgAEOngCAAmmBAIAA7AnQ
+Date: Sat, 18 Oct 2025 05:44:34 +0000
+Message-ID:
+ <AM7PR04MB70469596D08C61B712208B9A98F7A@AM7PR04MB7046.eurprd04.prod.outlook.com>
+References: <20251011170213.128907-1-marek.vasut@mailbox.org>
+ <20251011170213.128907-4-marek.vasut@mailbox.org>
+ <aO0tmUWA5H0J80Ov@lizhi-Precision-Tower-5810>
+ <260b4db1-c02a-48a0-baf8-5e217c729824@mailbox.org>
+ <e3ab9421-61a5-4ab6-8c72-6b0ab340f3a8@nxp.com>
+ <ae9d1289-c0f9-47b9-b6be-e39d170425a2@mailbox.org>
+ <a9a9867c-2653-45f0-89a2-39132335aac9@nxp.com>
+ <49a97a81-f5db-40c7-83ae-2e12b790a6ae@mailbox.org>
+In-Reply-To: <49a97a81-f5db-40c7-83ae-2e12b790a6ae@mailbox.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: AM7PR04MB7046:EE_|PA4PR04MB9463:EE_
+x-ms-office365-filtering-correlation-id: e07f2054-3b0f-4a01-d315-08de0e096b3d
+x-ld-processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|19092799006|7416014|376014|1800799024|366016|38070700021;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?enhseWFPaGZ5QkN0dzFHck9TZDZiOURQajBDb3ZBQWJzWWhUQ0dkWkRuREo1?=
+ =?utf-8?B?VTRhbFc0R2QyNGt6ckwvbGhMQWhVbUp5RGxGM1p1S3JvSHhQMEhKdGM2RUJ3?=
+ =?utf-8?B?OG9KUzFvRGhsZnJMN0N4M3Vva2REOURFTFNwTzlLV2RxcjdQSm85dG1RVnUr?=
+ =?utf-8?B?N01CZTZ4bHRqYURtTVplNUY0YTFMektldWZRelc2MzVzbEtUWEZvYkFhQS9N?=
+ =?utf-8?B?SjVESHB6ZE05SGVrOHRyN3VacnVlZVRYZm1ESUdyTTh4Q01ITmtYYXZKanJJ?=
+ =?utf-8?B?b1lLY3JKd3o2bDNuVTBRa05CRlR1NFdsaGwyR0RtTnc0Q1ZwMTZEL2R6d0g1?=
+ =?utf-8?B?SGpSMlBvdlNDVlJ6RVdZL1ZHRytpOE9uU0dTM0ZtanBsMStjOGZ6cmRFNmJS?=
+ =?utf-8?B?ZkVWNUgxcSt0QTBUNkJCUzM2bjlVS1BUdmRDRDNIeCtwZ2pGclVWOStrVllo?=
+ =?utf-8?B?WllNUjgrTVJ2MHd3QUNjMVBPZlpBOVpMWnRiUys3akdTUElrcVdROTBLemxH?=
+ =?utf-8?B?RFpqTzlWR2kxL3dYeEIvNjBrUlloQW9jamsxZ2JIc1FnQWdDSHFPb2h2QlFK?=
+ =?utf-8?B?SEZhUDN0MHV1a0lkOXVUdGhsSjVBRTU5NWQ3SGUyd055b0Fob0dVY0s3cFlr?=
+ =?utf-8?B?Ymk5K05WY1h1KzQwaG1Gdi9KWE10MmJaN0lIOGI4d3NRYjZOUldRcnBSYzkx?=
+ =?utf-8?B?UVNzTjJueDh0a2MwWWh1TGo3VHFvR3hYZmlHeDdobzc0MmE3YkoxZGFoTXB4?=
+ =?utf-8?B?NGNhYUVNRllJZEw2MkNYUnRzYzA1TnpDekxQcTJkcUxJK25WSTVIVmlTaVVS?=
+ =?utf-8?B?Tlh1N294bDZCN3BWZGkzYUl1WWtZSlMvQkFQcHpGNHoyK0c5d3Z0SDZDV0dt?=
+ =?utf-8?B?eFU1OWROZ1lzbzQ0dVB5THUwLzdaR252NW02a253MWJSeGhXaE9HZG9YZVVy?=
+ =?utf-8?B?US9CT01BaDd1U3lkNURJTWNBR01mOU1GSnBrMW9iUndJNEhuV2dQdy9yRHlW?=
+ =?utf-8?B?bmlibFZXQ0RVY3E1VFlEZ3hvRW9jbnZ4TTZ6RnphZ1laSWY1RVlmWkEvSGdt?=
+ =?utf-8?B?anBhd1FGanhqNmZJaW9DUkVRL2N1b2pKUTh5QU5KUnJQVjNyWWVjcXVyV0RR?=
+ =?utf-8?B?Sjg1aEVGMzcwN0s3UGUrTEZNeVd2QUNDVXVaRGZmKy9CZnR3azJGVU11MG5Y?=
+ =?utf-8?B?TDlKRGZkczRvZVg2S0M2TFlXZ3AranQ3UEdUMkVBelJGeXVEY0dmM3dQa2xX?=
+ =?utf-8?B?NWRpNXlvMWh2R0NVM3RDQWdzU0hQNi9Qck45TERTTkxJNGVINERwQnZrY0VN?=
+ =?utf-8?B?bFVLSTFZbU5wbERaeVllY3NFd3lrYUVaUUV2MHl0Rkl3WjNPNWJjcDNiYXVy?=
+ =?utf-8?B?cVI1WlhmSWV1SHF6SDhuWWdLQ1pucWs0UFN5MmhWRTlvbDluK3JIeUlNYkpo?=
+ =?utf-8?B?d2tJU3VseVhSMm5IMXVnMUtSYVdaODJ6L3RWdC93ZHhNRStpT1ZBeUFWOFlS?=
+ =?utf-8?B?SllxdVBtSHR6VXEyWXdvZXA0U3VVZFlMZUZXdkoyY3lud1lWUUMwcFZkclc4?=
+ =?utf-8?B?OXRhMU9NM3g5UkxWVlNDUGRXeDlMRnZDWDk2UnFXYi9ETkhsTlJqaElUbTAx?=
+ =?utf-8?B?am5jZU43anNSekw2RExJM093K05wZWFzOVF5aHJ5TjZrOTRpbDZhai96MHVT?=
+ =?utf-8?B?Y2N2TGhqdC9FeU16NUw2Vk1pSUhVeXNMZmN4ajBsaW9PNktmYmsyVEszWXh5?=
+ =?utf-8?B?WDk0ckhSd29LTFNRbGFEMmxuWGhBb3RuUjB0a2xYVEpjMlhZM0FLOTdEZit1?=
+ =?utf-8?B?eWdWaFBuZE5HVlFtczIvSmlLdGh6Q2l5VW0xalhuNnNReGJUY3RKWlJpMmwy?=
+ =?utf-8?B?N2RzdUVQNkV0RUw5djF1Y1FNR1dJTEhiM2ZjYXI4b2N2dmZ6TVFzUVh2RnVC?=
+ =?utf-8?B?K2duVXRDdGVJVkNuUUNpVVc5eC9ocnFHVklQR0I0ME5IaTdVRXFTUWZodDU1?=
+ =?utf-8?B?VmZtdnpmcTFKTEIxektCQjhJWnlCVXU5bk1iZjVIK3k3SkV0eVJhQzFoeGFz?=
+ =?utf-8?Q?zf+hcF?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(7416014)(376014)(1800799024)(366016)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?YTVLSCs5elcrb1JBMmsrNDFqNWpub2huOXpzNnd5RXBGQVkyN2lsb2g2RitN?=
+ =?utf-8?B?WGNZY0NFUi9aUGF6anFvSitKVnJWNVU2TGx4TG5tQ0pURjZaWmpBeHNJMy9J?=
+ =?utf-8?B?VjcyMmdhSTVjMk5IUTA0SlhIRlRQdVFiTE56Ti9kT0M5VFByelRZUHFoT0RP?=
+ =?utf-8?B?cnhycjV0ZHVEa21nT0lySXdkb25jNGV4SENiZlNubEZaQ2hGN201dGpJZzlT?=
+ =?utf-8?B?ejFWK0FoeVZWL2p2SllXZVlqQVpVOFhMajJaSTJWUDQwb1puK0hkUHlzTW1K?=
+ =?utf-8?B?VnhldEYzV1k5RVdZQS9pL2cxREdXZzdvY3drTEt2azJJdThGZnVteWtJdk5K?=
+ =?utf-8?B?TStnckM4ZVNDbzhoYTJoZmYwbG5xc015YWRjZWRab0FxLzdlNkhBdWs3MnhL?=
+ =?utf-8?B?dGJDQTgwaWtMbHFWZFJ4bzA0cUgyZjJ0UFlMOW0wQzBQM2VMbVdXL25OWVdN?=
+ =?utf-8?B?WVNuaXB1cW0xTHBBdTByTlU3NWxRclc3TEU5RjNtdzlHWmIxNEJIblVvNGtk?=
+ =?utf-8?B?RTlEenZoSi9QZ0wva0wvZDhKWWJKeWtnOWkreWpoTzZnbU4rcEtwSHBpRy93?=
+ =?utf-8?B?NWJhUm9pR3lRU05rYkU0VHdkQ1BkdXduRzFYbnhMSUtNNTI1RUl0R3ExRW5O?=
+ =?utf-8?B?Rmc1RkQvS3NJVkNEWWFSY3U2UitkWHF4TldxbW9hM2VQUzZEUktzNjJ2aWw0?=
+ =?utf-8?B?dGZGeWdJcm85R3VoVkIvWXpGZkd3VFNyQW5UNXNuWHBVR0h1ZDJWTnBDcXVm?=
+ =?utf-8?B?REI0YUh6N3E5Z2J0U3FZd3NWNzNGQ3N1RzdDbWd2SE50dmVkVHFldnljTlRp?=
+ =?utf-8?B?M0psaGpxZHVNMUFnd2Fwb1VCVzRBNXNKdElhMjk3RnVBQ0tkajhhckZlWXg4?=
+ =?utf-8?B?RENCWUh5UWtaZXZLVlNlaHZINWtSQlpiNDNqamNmV3F6YmhFd21Hb0VpKzYz?=
+ =?utf-8?B?WkJoQittcFFVZjVJNmswWVJFcXFJTlpVYkpHbXY5Rm9ObzBzOGR2RnN4QTd6?=
+ =?utf-8?B?S0FXZGtvMEpBTEJ1cWpvT0VtWkU3MWZiWThlVURPcHlOOFk3TXl5ekVMNTJs?=
+ =?utf-8?B?WWpJTHZ1TzRlWlZMNUhrN0RNeWJzbHBTMzZVakJ5NXJMaXhRNmdJcDZmVXgz?=
+ =?utf-8?B?V29RWHNUNUR0b1dTMXpkdGN3akRhdlpOd1ZwT09HbXNEZmlEUm9IZkJsRm44?=
+ =?utf-8?B?eDBmMTAzWVFxWG1zcmJTeEJMckUyZ2YwWHBlUUphQlN1MXhxd1c3K0svck5w?=
+ =?utf-8?B?RE0wck1lald4QnlyUzNQVXNjVHNpbmRpNE5uOXFaa3djQTBYTXhoUEtGNEhv?=
+ =?utf-8?B?S2NFZ3dqbG56aGl5VzByQ2VrTkRTTGN3UUxjR0JOS0RHYVdoeUk2Slp5NFNj?=
+ =?utf-8?B?NzdLalp2amcwaEFxQkhwalpuZGprUzU4RTB2Vm1FejhjS2VzZGNNd3dqb00z?=
+ =?utf-8?B?ZVpXRXNDZmNVbFEwYlpGYTBDVHJIaFMzRzBEaDRXLy83TERONFRVK0paZnF3?=
+ =?utf-8?B?SWZyRG5wcnpOOEg3UDNrN2dGc0NSc0QzMml5YjZlY0xqUTVjTTNmZ05hOVV2?=
+ =?utf-8?B?YVFXVHgrTy9ITDRYbExmWDZvU3hkUko3NXNML0Z0Tmk2ZDgrMWJGbmZRVFpj?=
+ =?utf-8?B?ekpudi9EKzROaUo5bUY1Vk9JdE5QQUtXd2FuQk40UXBVSjlwQXczckNYelhy?=
+ =?utf-8?B?Zlpudi9uR2FYUzNoLzYySlhXaDJ6VjduRWx0TWxmdHZ6OUUvVUdBeEpVT25G?=
+ =?utf-8?B?S0swUmVJb2VwSUtGSyt0b2pvRGRTM2lsdkt1T3lyOTZ4Y2V6UHRhd0FWampu?=
+ =?utf-8?B?NXljM2s0R1A0V0k4WGVRVTB2RnQralBlT0E0eDFYZXU4WldKeUhINGloaVBq?=
+ =?utf-8?B?blNyVXUvUWpWZmFkdHBOV0UvSFpaU0JzMEhEcDAxYW9VRmtBUkZNNExVd0NU?=
+ =?utf-8?B?bUtPMlBBRC85V3k3Z2pwaGhNZkdWdXJQeDVJblM0cXBuQTZLTnB5ejZ3amE3?=
+ =?utf-8?B?LzBwRHR2dXpmTytNdEdKcXEvZEVHc2pwTjB1d2dnbDY2MHFjWm1GTnh1VVdr?=
+ =?utf-8?B?cUhyL1VldnE5QU9xOWtGWG9EcEE1TTcxeXBCS3h4RGpIazZYTzdsNEN1N25S?=
+ =?utf-8?Q?7/Dg=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251017112025.11997-4-laurentiumihalcea111@gmail.com>
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e07f2054-3b0f-4a01-d315-08de0e096b3d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Oct 2025 05:44:34.9759
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: /b4m1K9LEGJR9H23M2hk/tUh9PSk4SkGG7k+xKJygyJfUIxSXD/YmRk0r5G8vtO0/+yWkD4NrhH940Zmro+1jw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4PR04MB9463
 
-Hi Laurentiu,
-
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on pza/reset/next]
-[also build test ERROR on abelvesa/clk/imx abelvesa/for-next linus/master v6.18-rc1 next-20251017]
-[cannot apply to pza/imx-drm/next]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Laurentiu-Mihalcea/reset-imx8mp-audiomix-Fix-bad-mask-values/20251017-192620
-base:   https://git.pengutronix.de/git/pza/linux reset/next
-patch link:    https://lore.kernel.org/r/20251017112025.11997-4-laurentiumihalcea111%40gmail.com
-patch subject: [PATCH v2 3/8] clk: imx: add driver for imx8ulp's sim lpav
-config: hexagon-allmodconfig (https://download.01.org/0day-ci/archive/20251018/202510181121.D3XVfMFh-lkp@intel.com/config)
-compiler: clang version 17.0.6 (https://github.com/llvm/llvm-project 6009708b4367171ccdbf4b5905cb6a803753fe18)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251018/202510181121.D3XVfMFh-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510181121.D3XVfMFh-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> drivers/clk/imx/clk-imx8ulp-sim-lpav.c:52:2: error: call to undeclared function 'kfree'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-      52 |         kfree(adev);
-         |         ^
->> drivers/clk/imx/clk-imx8ulp-sim-lpav.c:65:32: error: use of undeclared identifier '__free_kfree'; did you mean '__free_pages'?
-      65 |         struct auxiliary_device *adev __free(kfree) = NULL;
-         |                                       ^
-   include/linux/cleanup.h:213:33: note: expanded from macro '__free'
-     213 | #define __free(_name)   __cleanup(__free_##_name)
-         |                                   ^
-   <scratch space>:30:1: note: expanded from here
-      30 | __free_kfree
-         | ^
-   include/linux/gfp.h:381:13: note: '__free_pages' declared here
-     381 | extern void __free_pages(struct page *page, unsigned int order);
-         |             ^
->> drivers/clk/imx/clk-imx8ulp-sim-lpav.c:65:32: error: 'cleanup' function '__free_pages' must take 1 parameter
-      65 |         struct auxiliary_device *adev __free(kfree) = NULL;
-         |                                       ^
-   include/linux/cleanup.h:213:33: note: expanded from macro '__free'
-     213 | #define __free(_name)   __cleanup(__free_##_name)
-         |                                   ^
-   <scratch space>:30:1: note: expanded from here
-      30 | __free_kfree
-         | ^
->> drivers/clk/imx/clk-imx8ulp-sim-lpav.c:68:9: error: call to undeclared function 'kzalloc'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-      68 |         adev = kzalloc(sizeof(*adev), GFP_KERNEL);
-         |                ^
->> drivers/clk/imx/clk-imx8ulp-sim-lpav.c:68:7: error: incompatible integer to pointer conversion assigning to 'struct auxiliary_device *' from 'int' [-Wint-conversion]
-      68 |         adev = kzalloc(sizeof(*adev), GFP_KERNEL);
-         |              ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   5 errors generated.
-
-
-vim +/kfree +52 drivers/clk/imx/clk-imx8ulp-sim-lpav.c
-
-    46	
-    47	#ifdef CONFIG_RESET_CONTROLLER
-    48	static void clk_imx8ulp_sim_lpav_aux_reset_release(struct device *dev)
-    49	{
-    50		struct auxiliary_device *adev = to_auxiliary_dev(dev);
-    51	
-  > 52		kfree(adev);
-    53	}
-    54	
-    55	static void clk_imx8ulp_sim_lpav_unregister_aux_reset(void *data)
-    56	{
-    57		struct auxiliary_device *adev = data;
-    58	
-    59		auxiliary_device_delete(adev);
-    60		auxiliary_device_uninit(adev);
-    61	}
-    62	
-    63	static int clk_imx8ulp_sim_lpav_register_aux_reset(struct platform_device *pdev)
-    64	{
-  > 65		struct auxiliary_device *adev __free(kfree) = NULL;
-    66		int ret;
-    67	
-  > 68		adev = kzalloc(sizeof(*adev), GFP_KERNEL);
-    69		if (!adev)
-    70			return -ENOMEM;
-    71	
-    72		adev->name = "reset";
-    73		adev->dev.parent = &pdev->dev;
-    74		adev->dev.release = clk_imx8ulp_sim_lpav_aux_reset_release;
-    75	
-    76		ret = auxiliary_device_init(adev);
-    77		if (ret) {
-    78			dev_err(&pdev->dev, "failed to initialize aux dev\n");
-    79			return ret;
-    80		}
-    81	
-    82		ret = auxiliary_device_add(adev);
-    83		if (ret) {
-    84			auxiliary_device_uninit(adev);
-    85			dev_err(&pdev->dev, "failed to add aux dev\n");
-    86			return ret;
-    87		}
-    88	
-    89		return devm_add_action_or_reset(&pdev->dev,
-    90						clk_imx8ulp_sim_lpav_unregister_aux_reset,
-    91						no_free_ptr(adev));
-    92	}
-    93	#else
-    94	static int clk_imx8ulp_sim_lpav_register_aux_reset(struct platform_device *pdev)
-    95	{
-    96		return 0;
-    97	}
-    98	#endif /* CONFIG_RESET_CONTROLLER */
-    99	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+T24gMTAvMTcvMjUsIE1hcmVrIFZhc3V0IDxtYXJlay52YXN1dEBtYWlsYm94Lm9yZz4gd3JvdGU6
+DQo+IE9uIDEwLzE2LzI1IDQ6MjggQU0sIExpdSBZaW5nIHdyb3RlOg0KPiANCj4gSGVsbG8gTGl1
+LA0KDQpIZWxsbyBNYXJlaywNCg0KPiANCj4gPiBIYXZlIHlvdSBnb3QgaS5NWDk1IERDIElQIHNw
+ZWM/ICBJZiBubywgdGhlbiBpdCB3b3VsZCBiZSBkaWZmaWN1bHQgZm9yIHlvdSB0bw0KPiA+IHdy
+aXRlIERUIGJpbmRpbmdzIGZvciBhbGwgaS5NWDk1IERDIHVuaXRzLiAgTm90ZSB0aGF0IHRoaXMg
+aXMgc29tZXRoaW5nDQo+ID4gbmVjZXNzYXJ5IHRvIGRvLg0KPiANCj4gTm9wZSwgc3RpbGwgd2Fp
+dGluZyBmb3IgdGhvc2UuDQo+IA0KPiA+IEFuZCwgYSBiaXQgbW9yZSBpbmZvcm1hdGlvbiBhYm91
+dCBkaXNwbGF5IHBpcGVsaW5lcyBpbiBpLk1YOTUgZGlzcGxheQ0KPiBkb21haW46DQo+ID4NCj4g
+PiBEaXRoZXIgLT4gcGl4ZWwgaW50ZXJsZWF2ZXIgLT4gcGl4ZWwgbGluayBsb29wYmFjayAtPiBj
+YW1lcmEgZG9tYWluDQo+ID4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAtPiBwaXhlbCBs
+aW5rIC0+IE1JUEkgRFNJIGNvbnRyb2xsZXINCj4gPiAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgIC0+IHBpeGVsIG1hcHBlcihMREIpDQo+ID4NCj4gPiBOb3RlIHRoYXQgTlhQIGRvd25zdHJl
+YW0ga2VybmVsIHdyb25nbHkgYWRkcyBwaXhlbCBsaW5rIGJldHdlZW4gcGl4ZWwNCj4gPiBpbnRl
+cmxlYXZlciBhbmQgcGl4ZWwgbWFwcGVyIGR1ZSB0byBhbWJpZ3VvdXMgaS5NWDk1IFRSTS4NCj4g
+SXMgbXkgdW5kZXJzdGFuZGluZyBjb3JyZWN0LCB0aGF0IHRoZSBEaXRoZXIgVW5pdCB+PSBEaXNw
+bGF5IEVuZ2luZSA/DQoNCk5vcGUsIERpdGhlciBVbml0IGlzIGEgY29tcG9uZW50IG9mIERpc3Bs
+YXkgRW5naW5lLiAgWW91IG1heSB0YWtlIGEgbG9vayBhdA0KZnNsLGlteDhxeHAtZGMtZGlzcGxh
+eS1lbmdpbmUueWFtbCB3aG9zZSBwYXR0ZXJuUHJvcGVydGllcyBsaXN0cyBhbGwgY29tcG9uZW50
+cw0Kb2YgaS5NWDhxeHAgREMgRGlzcGxheSBFbmdpbmUgYW5kIERpdGhlciBVbml0IGlzIG9uZSBv
+ZiB0aGVtLg0KDQppLk1YOTUgREMgRGlzcGxheSBFbmdpbmUgaGFzIGJlbG93IGNvbXBvbmVudHM6
+DQpEb21haW4gQmxlbmQgVW5pdCwgRnJhbWUgR2VuZXJhdG9yLCBDb2xvciBNYXRyaXgsIExVVCAz
+RCwgRGl0aGVyIFVuaXQsIGZyb20NCnRoZSBmaXJzdCBpbnB1dCBjb21wb25lbnQgdG8gdGhlIGxh
+c3Qgb3V0cHV0IGNvbXBvbmVudCwgYW5kIGFkZGl0aW9uYWxseSwNClNpZ25hdHVyZSBVbml0IGFu
+ZCBJREhhc2ggVW5pdCB3aGljaCBiZSBjb25maWd1cmVkIHRvIHRhcCBmcm9tIHNvbWUgb2YgdGhl
+DQphYm92ZSBjb21wb25lbnRzLg0KDQpMaXUgWWluZw0K
