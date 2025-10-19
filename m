@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED8932066DE;
-	Sun, 19 Oct 2025 09:29:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 207121EE019;
+	Sun, 19 Oct 2025 10:03:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760866194; cv=none; b=rfdIbdseh3DQdOyTcwpP/riiijpW0Xr9AIPmqyLn1Vg+tbIK6ZCogRYpgioP23QxnfEKkLEa8fGhJKggmOSeK9QZvRT0LUvTmD/TvTIcBziVFhYHXboi8FKppkNLYUBLI2VOxv+H7fop4b77XomeCe9U8IQs+7S/1utoihZVVX8=
+	t=1760868239; cv=none; b=oV7gRY1Oex1w/Vw9s2YXtP+EHW7Vodwgt45hFYL1y1DCxHD0W9ZMiwHiqx6l+Jbg5bMK41/eYDGvCWoYZLO7MzO24OFrx1R0EwgtAjJTpyTEq/Qqkkk4jeVGqyAu392/VvAzlnLChc2M/NbvjcdQJ0CzGCXslhZFg/a66RdALX4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760866194; c=relaxed/simple;
-	bh=cEmiAejCUSeYDb1o32TLK/cNCU4eQV59ADHywcriXb0=;
+	s=arc-20240116; t=1760868239; c=relaxed/simple;
+	bh=y6N4OVCBgMamWcwFizLrQmToD6eC9fiNXocvZf5m3CY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=h3qlyCoAVGph0nNMdrU9ih4+ntzokGin3RjpJ4dvMPYGAQEixkx88fhZm+wMYg+GdGM5FlB1+w1o6mD2P5ej5OGIQgyaypQnBIkjmuwPUe9INJYl9rK3eylm+USofvNo8+/YE+giZxwcSLlK1OYQaga57/L8rvjwZUur0TNm+tY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iiTneN9M; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=arriiTMowwPbJQoJ+jQ4kJJQxz4AFj/jS2Gt/iJyfICTBKCjpWvB3zA1h+xZ+fiB6TmMAXC8Zu8pMca2JuPlgpcy2+DfwD/9YVY8elG4AFe5Pe59qT/PH4iB2kzAFvl5r8LEs9jFeoMPenettT87jb8APdg61uEA8kYrYOgRr4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=In29qi3z; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iiTneN9M"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1C19C4CEE7;
-	Sun, 19 Oct 2025 09:29:49 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="In29qi3z"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80702C4CEE7;
+	Sun, 19 Oct 2025 10:03:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760866193;
-	bh=cEmiAejCUSeYDb1o32TLK/cNCU4eQV59ADHywcriXb0=;
+	s=k20201202; t=1760868238;
+	bh=y6N4OVCBgMamWcwFizLrQmToD6eC9fiNXocvZf5m3CY=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=iiTneN9MUhgUQCpYId0iMaFP3eHHAykQ2vKUT5mFuscc10O0Y5ZHUgwxoMAJOvver
-	 cuvr8mzYmZoGoAnDDiuhrnjZ39mUoK9t5WUQzoTWL7mEfR+mvbFOSje44nvrTrgwDH
-	 ZHCxLbRvqEvXu8tpebrkQOzcjo3r1pILJOrpzmKWzFGGecbhTLHFFlWRcLpQzu54qk
-	 etLyu2Mzvfcthj/kqatFcpfsr5ux7tLpdKZZIZ/jR9MfBfkNwUAIS6fWuXTLCLJ/Tv
-	 78WTcims63I1MzYyxglZ/vfSf5w30o9ptTJo23FVffc6UrBGjv0inHX/flcgJp5K6O
-	 fUmzhYUKaWslg==
-Message-ID: <67bff695-48ef-4b06-a434-aa5844f8d9c4@kernel.org>
-Date: Sun, 19 Oct 2025 11:29:48 +0200
+	b=In29qi3z0rBMtHAkJwncS/drzsoqgYMQVyLcNJ1aYeFpGOv/QtnUujmASFqxvXMjW
+	 WIsZ2QR1q9EyuMq1z/K28VeHyI4xx+USHYrbY2Gki6minkGXQKieECU9r1oJ0OajZD
+	 4o9CxnyNLjMw4sEY8tWZ3ej9wrcnC/7RIXIan1IDCFsBwl48jYbMa2yW3k9ff7MjsT
+	 oaazzO9pDGbpGQEHmp/Q4HrDk9uUvQGvHaqtFvwRac2lgZ2NXE0RQB7iBBwoyAR7TP
+	 TUVwfDsYAxYqfX1PaeLuGYjJeDzNaF0sYn7ksLfoCOsNXkC/XUs+1zHLLtCHugq5ur
+	 r2ccp4TpkX1eQ==
+Message-ID: <f45b3490-0cb3-4a3f-88e1-1f5b462e8088@kernel.org>
+Date: Sun, 19 Oct 2025 12:03:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,18 +35,20 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/6] dt-bindings: rtc: renesas,rz-rtca3: Add RZ/V2H
- support
-To: Ovidiu Panait <ovidiu.panait.rb@renesas.com>,
- claudiu.beznea.uj@bp.renesas.com, alexandre.belloni@bootlin.com,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- geert+renesas@glider.be, magnus.damm@gmail.com, mturquette@baylibre.com,
- sboyd@kernel.org, p.zabel@pengutronix.de
-Cc: linux-rtc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org
-References: <20251019092106.5737-1-ovidiu.panait.rb@renesas.com>
- <20251019092106.5737-3-ovidiu.panait.rb@renesas.com>
+Subject: Re: [PATCH v2 2/8] dt-bindings: clock: document 8ULP's SIM LPAV
+To: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>,
+ Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Fabio Estevam <festevam@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>,
+ Daniel Baluta <daniel.baluta@nxp.com>, Shengjiu Wang <shengjiu.wang@nxp.com>
+Cc: linux-clk@vger.kernel.org, imx@lists.linux.dev,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Pengutronix Kernel Team <kernel@pengutronix.de>
+References: <20251017112025.11997-1-laurentiumihalcea111@gmail.com>
+ <20251017112025.11997-3-laurentiumihalcea111@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -92,27 +94,19 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20251019092106.5737-3-ovidiu.panait.rb@renesas.com>
+In-Reply-To: <20251017112025.11997-3-laurentiumihalcea111@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 19/10/2025 11:21, Ovidiu Panait wrote:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: renesas,r9a09g057-rtca3
-> +    then:
-> +      properties:
-> +        resets:
-> +          items:
-> +            - description: RTC reset
+On 17/10/2025 13:20, Laurentiu Mihalcea wrote:
+> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+> 
+> Add documentation for i.MX8ULP's SIM LPAV module.
+> 
+> Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+> ---
 
-So this is a completely different type of reset than VBATTB from earlier
-device?
-
-> +            - description: Reset for the RTEST registers
-> +
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
