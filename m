@@ -1,188 +1,178 @@
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DF4B242D9E;
-	Mon, 20 Oct 2025 15:42:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760974966; cv=pass; b=O1kqHPaPYKwdygiFDCPLluwGOuiQ+qnBZG4al1xPzozaI9zEt0+4cMixpTmiQpHknvkJx+xGi/58YkX2TPFrJvdKGF0hjAKl/++7e2jA/ZpMS3LRZ+T6wP4jrjAfxxHlMOx4TCt8yhdyivseI3QyJhNGNNRjzqiKtaDE20qbclA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760974966; c=relaxed/simple;
-	bh=+zCfMEaimnIQeBDYATDZG9tN7TJnlorbW9UQo+gSdbo=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=NvJnK6RdXg+HNhygS102ayPBmEX+Rtse85p0lVCarz86UxAn0Fm0OqftSLbIuzw34nH/xcpSwVU1xHV430aP1qFwsd2EeAbAeIt8YKvc1ni4a7a9DEjYn2sPDFu8fneqU8vNYCA5MNNi2ApE/wcmyEM1uj6OKqJmc/ipYQ5B8mc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=KBL/eZfM; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57161275105;
+	Mon, 20 Oct 2025 15:50:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760975443; cv=none; b=tpgeW/vqsQggsQfca0a6M7Q+e/+tYWMXew4s3XfFJrJVskb7WboP95DCWb87H3VN/LCxbaqexm4FHa3Kb2fo0GGhGJ+y3YVMLUIJxjFN9duaIyLuBOSm3wAkAkaHzAMx51UFhqyp67UXpH4HVrIf9/gWeTbvy1I1E1UEEzBiqGs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760975443; c=relaxed/simple;
+	bh=l8m4M2GIde3SF7ii/dLB0xHO/biVzlVY+q5epUJqyd4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PiIH/IYiNQ8TdZSUsIUdDSsZtujbbUREX2RTv+cr1elAQ1jJtLTkp0jsRldrRCt8BbIkScGGRAFHXOgnhYSBwrJ7tP49s6eReVI2lMzp3Z07hKTqkChyity3AjhlGVCpN+IPag7z5UqWBVRgnFTS3uJ3DcWyovuaV66b6hvEva8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UlUrGhDG; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="KBL/eZfM"
-ARC-Seal: i=1; a=rsa-sha256; t=1760974820; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=Ai6yEfvevnlicRnC6hUZILro9Xj58jvdixOTEejaTJAezMeYe2ReXvP5lgDe/WINSHWappBOFgEKq2//QLzV3b+ybSJd1N53dm9QBOeZUyqBWjfDkjkemswx40u7RhWcRhpjoxq72o2qvG8MdqeHNz7E7o1wMCgC4ipN2l4sh+s=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1760974820; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=md/pBzoYcFzUHz80KevulIkZ5BiZWUg/YH97ioL+0fI=; 
-	b=HdM+49AnxQEKmoKUYQiZRIpVoAcA/DC0xlvRuxm8uf3W/fbDEia6nOs7GWoOtzoYE/UGda73iO9UBeIe/TCmPXDp0tkYKHbb1X3UKJZ0s7dPQMKxEWoXpALSm1wZ6mM2D4paCoug77yh/yogs5AUlLFDy+Dezq7mT6gkz4+RGiQ=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1760974820;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=md/pBzoYcFzUHz80KevulIkZ5BiZWUg/YH97ioL+0fI=;
-	b=KBL/eZfMEc9QO++XN/8UsD5kyy7gAS7vSEROcPEP17Q3eWx1vZVA4+k0asFa5R0J
-	sTiiTblJtBEBMOtWvm98i8Kz/P/1W/M+5ncofRvrtjwyn46hZcH0B0AclLDJgq63STK
-	5Y/3Su2IZ1it6kk4ifqtXzfZAmYnm6mnjyTd48zQ=
-Received: by mx.zohomail.com with SMTPS id 1760974819040413.8982192024972;
-	Mon, 20 Oct 2025 08:40:19 -0700 (PDT)
-Content-Type: text/plain;
-	charset=us-ascii
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UlUrGhDG"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85AF6C4CEF9;
+	Mon, 20 Oct 2025 15:50:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760975442;
+	bh=l8m4M2GIde3SF7ii/dLB0xHO/biVzlVY+q5epUJqyd4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=UlUrGhDGmwt2YWU7VhKf3xkl4TOrFUlSsfIGATYsbWhQgIGFbf6BbFyXGseBKLSm3
+	 5wAfPtCnASu7++fbV0fHdcnl66AGMWatycdzQ6AaQkEXN7KcZ/z/GZISfch8q1hN98
+	 bzgWzJ+8IRY9fNj4AhLOe9/4H903R5rd+nOMDYR/qac3hK3FFZr9v2fA6uzqxLLh34
+	 Y78za+vt2MfYhs+oTvXGw+qIBPkHIgnkhNPQTXvupIcmmaA4CGptWYB9utfuEv/2FY
+	 A97oc4hWFFjqyFmJxYF4iWDERBj41P/HLgrDTxRh3AtmWSgz0UDK2pHL4tkoNHDNS1
+	 6mETWH0pxUZoQ==
+Message-ID: <20e796b1-0895-4cc8-b97f-fe2696b055f8@kernel.org>
+Date: Mon, 20 Oct 2025 17:50:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
-Subject: Re: [RESEND PATCH v18 13/16] rust: regulator: use `CStr::as_char_ptr`
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <20251018-cstr-core-v18-13-9378a54385f8@gmail.com>
-Date: Mon, 20 Oct 2025 12:39:52 -0300
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Danilo Krummrich <dakr@kernel.org>,
- Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <lossin@kernel.org>,
- Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- =?utf-8?Q?Arve_Hj=C3=B8nnev=C3=A5g?= <arve@android.com>,
- Todd Kjos <tkjos@android.com>,
- Martijn Coenen <maco@android.com>,
- Joel Fernandes <joelagnelf@nvidia.com>,
- Christian Brauner <brauner@kernel.org>,
- Carlos Llamas <cmllamas@google.com>,
- Suren Baghdasaryan <surenb@google.com>,
- Jens Axboe <axboe@kernel.dk>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Uladzislau Rezki <urezki@gmail.com>,
- Bjorn Helgaas <bhelgaas@google.com>,
- =?utf-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
- Viresh Kumar <vireshk@kernel.org>,
- Nishanth Menon <nm@ti.com>,
- Stephen Boyd <sboyd@kernel.org>,
- Breno Leitao <leitao@debian.org>,
- Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>,
- David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>,
- Luis Chamberlain <mcgrof@kernel.org>,
- Russ Weight <russ.weight@linux.dev>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Jan Kara <jack@suse.cz>,
- Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@redhat.com>,
- Will Deacon <will@kernel.org>,
- Waiman Long <longman@redhat.com>,
- Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
- Bill Wendling <morbo@google.com>,
- Justin Stitt <justinstitt@google.com>,
- rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- linux-block@vger.kernel.org,
- linux-pci@vger.kernel.org,
- linux-pm@vger.kernel.org,
- linux-clk@vger.kernel.org,
- dri-devel@lists.freedesktop.org,
- linux-fsdevel@vger.kernel.org,
- llvm@lists.linux.dev,
- Tamir Duberstein <tamird@gmail.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <C487CA8E-E8B6-4294-8081-D629DDD80253@collabora.com>
-References: <20251018-cstr-core-v18-0-9378a54385f8@gmail.com>
- <20251018-cstr-core-v18-13-9378a54385f8@gmail.com>
-To: Tamir Duberstein <tamird@kernel.org>
-X-Mailer: Apple Mail (2.3826.700.81)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/8] dt-bindings: clock: document 8ULP's SIM LPAV
+To: Frank Li <Frank.li@nxp.com>
+Cc: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>,
+ Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Fabio Estevam <festevam@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>,
+ Daniel Baluta <daniel.baluta@nxp.com>, Shengjiu Wang
+ <shengjiu.wang@nxp.com>, linux-clk@vger.kernel.org, imx@lists.linux.dev,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Pengutronix Kernel Team <kernel@pengutronix.de>
+References: <20251017112025.11997-1-laurentiumihalcea111@gmail.com>
+ <20251017112025.11997-3-laurentiumihalcea111@gmail.com>
+ <aPJZ6dDRyyl3Qg4o@lizhi-Precision-Tower-5810>
+ <cdecae8a-7fb9-4ac2-a412-1a18c4783ffa@kernel.org>
+ <aPZTwf8O8tkqnDhx@lizhi-Precision-Tower-5810>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <aPZTwf8O8tkqnDhx@lizhi-Precision-Tower-5810>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+On 20/10/2025 17:22, Frank Li wrote:
+> On Sun, Oct 19, 2025 at 12:05:27PM +0200, Krzysztof Kozlowski wrote:
+>> On 17/10/2025 16:59, Frank Li wrote:
+>>> On Fri, Oct 17, 2025 at 04:20:19AM -0700, Laurentiu Mihalcea wrote:
+>>>> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+>>>>
+>>>> Add documentation for i.MX8ULP's SIM LPAV module.
+>>>>
+>>>> Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+>>>> ---
+>>>>  .../bindings/clock/fsl,imx8ulp-sim-lpav.yaml  | 72 +++++++++++++++++++
+>>>>  include/dt-bindings/clock/imx8ulp-clock.h     |  5 ++
+>>>>  .../dt-bindings/reset/fsl,imx8ulp-sim-lpav.h  | 16 +++++
+>>>>  3 files changed, 93 insertions(+)
+>>>>  create mode 100644 Documentation/devicetree/bindings/clock/fsl,imx8ulp-sim-lpav.yaml
+>>>>  create mode 100644 include/dt-bindings/reset/fsl,imx8ulp-sim-lpav.h
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/clock/fsl,imx8ulp-sim-lpav.yaml b/Documentation/devicetree/bindings/clock/fsl,imx8ulp-sim-lpav.yaml
+>>>> new file mode 100644
+>>>> index 000000000000..fb3b9028a4c3
+>>>> --- /dev/null
+>>>> +++ b/Documentation/devicetree/bindings/clock/fsl,imx8ulp-sim-lpav.yaml
+>>>> @@ -0,0 +1,72 @@
+>>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>>>> +%YAML 1.2
+>>>> +---
+>>>> +$id: http://devicetree.org/schemas/clock/fsl,imx8ulp-sim-lpav.yaml#
+>>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>>> +
+>>>> +title: NXP i.MX8ULP LPAV System Integration Module (SIM)
+>>>> +
+>>>> +maintainers:
+>>>> +  - Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+>>>> +
+>>>> +description:
+>>>> +  The i.MX8ULP LPAV subsystem contains a block control module known as
+>>>> +  SIM LPAV, which offers functionalities such as clock gating or reset
+>>>> +  line assertion/de-assertion.
+>>>> +
+>>>> +properties:
+>>>> +  compatible:
+>>>> +    const: fsl,imx8ulp-sim-lpav
+>>>> +
+>>>> +  reg:
+>>>> +    maxItems: 1
+>>>> +
+>>>> +  clocks:
+>>>> +    maxItems: 3
+>>>> +
+>>>> +  clock-names:
+>>>> +    items:
+>>>> +      - const: lpav_bus
+>>>> +      - const: hifi_core
+>>>> +      - const: hifi_plat
+>>>
+>>> dt prefer use -
+>>
+>>
+>> I don't think we ever expressed such preference. Where did you find it?
+> 
+> It should come from review message when submit binding-doc patch.  but I
+> can't find it now. But at least, compatible string and node-name use "-".
+> 
+> It'd better to add to writing-bindings.rst. It is hard to search whole
+> linux-devicetree mail list or brain may cheat me. It is good to keep
+> everything consistent.
 
 
+Yeah, but please don't make up rules and suggest them if you cannot
+justify them. I don't recall such rule and I don't have it in my notes,
+so that's why I asked.
 
-> On 18 Oct 2025, at 16:16, Tamir Duberstein <tamird@kernel.org> wrote:
->=20
-> From: Tamir Duberstein <tamird@gmail.com>
->=20
-> Replace the use of `as_ptr` which works through `<CStr as
-> Deref<Target=3D&[u8]>::deref()` in preparation for replacing
-> `kernel::str::CStr` with `core::ffi::CStr` as the latter does not
-> implement `Deref<Target=3D&[u8]>`.
->=20
-> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
-> ---
-> rust/kernel/regulator.rs | 9 ++++++---
-> 1 file changed, 6 insertions(+), 3 deletions(-)
->=20
-> diff --git a/rust/kernel/regulator.rs b/rust/kernel/regulator.rs
-> index b55a201e5029..65a4eb096cae 100644
-> --- a/rust/kernel/regulator.rs
-> +++ b/rust/kernel/regulator.rs
-> @@ -84,7 +84,7 @@ pub struct Error<State: RegulatorState> {
-> pub fn devm_enable(dev: &Device<Bound>, name: &CStr) -> Result {
->     // SAFETY: `dev` is a valid and bound device, while `name` is a =
-valid C
->     // string.
-> -    to_result(unsafe { =
-bindings::devm_regulator_get_enable(dev.as_raw(), name.as_ptr()) })
-> +    to_result(unsafe { =
-bindings::devm_regulator_get_enable(dev.as_raw(), name.as_char_ptr()) })
-> }
->=20
-> /// Same as [`devm_enable`], but calls =
-`devm_regulator_get_enable_optional`
-> @@ -102,7 +102,9 @@ pub fn devm_enable(dev: &Device<Bound>, name: =
-&CStr) -> Result {
-> pub fn devm_enable_optional(dev: &Device<Bound>, name: &CStr) -> =
-Result {
->     // SAFETY: `dev` is a valid and bound device, while `name` is a =
-valid C
->     // string.
-> -    to_result(unsafe { =
-bindings::devm_regulator_get_enable_optional(dev.as_raw(), =
-name.as_ptr()) })
-> +    to_result(unsafe {
-> +        bindings::devm_regulator_get_enable_optional(dev.as_raw(), =
-name.as_char_ptr())
-> +    })
-> }
->=20
-> /// A `struct regulator` abstraction.
-> @@ -268,7 +270,8 @@ pub fn get_voltage(&self) -> Result<Voltage> {
->     fn get_internal(dev: &Device, name: &CStr) -> Result<Regulator<T>> =
-{
->         // SAFETY: It is safe to call `regulator_get()`, on a device =
-pointer
->         // received from the C code.
-> -        let inner =3D from_err_ptr(unsafe { =
-bindings::regulator_get(dev.as_raw(), name.as_ptr()) })?;
-> +        let inner =3D
-> +            from_err_ptr(unsafe { =
-bindings::regulator_get(dev.as_raw(), name.as_char_ptr()) })?;
->=20
->         // SAFETY: We can safely trust `inner` to be a pointer to a =
-valid
->         // regulator if `ERR_PTR` was not returned.
->=20
-> --=20
-> 2.51.1
->=20
->=20
-
-Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
-
+Best regards,
+Krzysztof
