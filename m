@@ -1,332 +1,142 @@
-Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013063.outbound.protection.outlook.com [40.107.159.63])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B95A2D6E67;
-	Mon, 20 Oct 2025 06:21:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.63
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760941317; cv=fail; b=Dtb3ZxroPE5wnYAhzcT/JyhYIkyAJpRhhvbseTX5f9wKGryKa6UN2qbQ+bLrHdAKfT3zQamyZbgs4phMkyuPgOIBKT3cjak9G3lQeC///QFcfKBYIRnnrkCwxZ+ozSgzdKLELCz3/8N0JU6ixtuIsst2J168FdI4QwejWSfkBBc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760941317; c=relaxed/simple;
-	bh=TYk03FUa1GE5gwcc8cLIVfBPQf1FUThIfkjIrGMR+uo=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=FlSofVFdeO33P4rBjUrjLjfj2Oa9Nroj7KHiHrLvSbMz9pim0jo59Mr4ihoDbpJHJzjBdC4K7W7g3eHVVv7cC6xOwCsOkqc62KOW2uff81exxabbU6UBpNpehbZ17ZGGPIMHUKO9yrh0+Ni9BFtZsKP5BgcB+M+sFZC6BY4QfkE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=FSXAjCe9; arc=fail smtp.client-ip=40.107.159.63
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1369214F9FB;
+	Mon, 20 Oct 2025 06:55:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760943302; cv=none; b=lQIMNHUjPFbtfgoL8YtUYEzWwZCqTcPLGUd1eDhE8f6bvtBQjMueI7SA97IrpNJp917x4NeZGSqvfBmcuwofCE5vxejxR2R3UQ2KnlxV/1/UMN5Qx+CHfAomYfOxpa5FmA3cp0obIt5906BonvYiTUYlSLu+J5gtnV3QzCLj26s=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760943302; c=relaxed/simple;
+	bh=DAuRUF0lLu8WfXtUTMdE9X0H9e1gzgxTyuJAuFXveM8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=u4/lEV0JOWSRNuJw4KoyyzrVwKbdBm/Xaka+kMmkMjJHHR9GKk9fAImi0YqiFS0bMOXX8z1gZSQfuOqwMuthFu8Hi+Zp7qXGC9WXcYgoKX6RgzGbA8m5/ReM3IpSxyKFvIm0D8hb1GhpZIbfOn+k0r+6qt+ZJhpY8GHEPBop5v4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dEy1A4I6; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="FSXAjCe9"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=v4UuT6XbJaasfTkT6u7VAu6po+1SRjuIxL1fz62GEBuPQU/6dL5euE6hk1gtrk6ZD7rDr02UGQF34QeEuoTgYIJl/mEFKYfWVJhz+3ozETyfcRHQlCyai88bz/R1CChzUv74wl1UEvwS57j9cZxdbElo4/TIllagUphYlBwGs30fuYiTB3lvMCiQshyMvffj2oY0pkNRJJAVaFRLNTwQHSSj7Go7DRfH74UtQloxiHQev0Bd/QOgIuRmLNKWAYDaZ8WWExg8TqZ2Rpy/K0yLqgvBSJqEidtx3nSlDZ0F9xOvSl68zPtXhd2ectNrE7mqmc+mP6sJ0l1fmxj3SooPcA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=KaGP7uTcJdcvn3BSYOzHeiY447AXofcJyFkDo62N4co=;
- b=ZdpfFjOa07A6YVSlDW1ePpvEq+8InQPCU9VVLyky2Ibt3mu++PBsBCIP9BvJ2W6FjU/Qp5BjtVMNoDiKj87wyDz2KwEatoNUENVP9iwnGTGvjYhCiwhoHw3+Qbm4x2aI8uJsYlNvp0MVoL97d3l+PvDzKp3x1wPBDR4jEGjTgtEdv6WMeKlL4luWSU2AADentj9o4X8SJkKgkq4dpdSEbuo1fkF7VqWRrgbWuR0VfPjm0HDuIk09B5dB7OPd40vj2zvF7XCNi/3GNXsH8wDEArQt+ggD49ylFBT/Ra9r6HHVn92LeK8NOs9feqoGlbP9ucmPyuT0QCAoRm6hkJ4zOg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KaGP7uTcJdcvn3BSYOzHeiY447AXofcJyFkDo62N4co=;
- b=FSXAjCe9+DF2Wc6amKINdejetnHtQGowBLi7WUVXtgXJzpGUl8uF3TJdvLHt0c4XS8mnKu7XJiKPTsRIfCyQAyrtN7ZMWYJIhHLgQxqZ1wXiqsUeOG6o7HgPJhOLu9iKOUWZ0MHG1JWO8qGDi7EBJetqrsATF3rXZ06tu+hgAzXQ+25VkIkvLWd3bwpXeioWrRcB2HQcTSgITsW32mOMJgHi+VVGmkSnahSqGcKK3gPVY9ZyrPFVtE2n+k0Sxe72Og4nnqUYRc87N5SuVDiNsX+foIzC2ylXJvxmI/NN/pNp4+rAonxntW1VoUUuBZLqkQ9Hne+/RJevA2GhOJTrjg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
- by GV1PR04MB10749.eurprd04.prod.outlook.com (2603:10a6:150:204::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.16; Mon, 20 Oct
- 2025 06:21:30 +0000
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::4609:64af:8a4b:fd64]) by AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::4609:64af:8a4b:fd64%6]) with mapi id 15.20.9228.015; Mon, 20 Oct 2025
- 06:21:30 +0000
-Message-ID: <dc4b1b65-542f-4bd2-bd91-af3fe4223b63@nxp.com>
-Date: Mon, 20 Oct 2025 14:21:53 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/bridge: fsl-ldb: Parse register offsets from DT
-To: Marek Vasut <marek.vasut@mailbox.org>, dri-devel@lists.freedesktop.org
-Cc: Abel Vesa <abelvesa@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Fabio Estevam <festevam@gmail.com>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Lucas Stach <l.stach@pengutronix.de>, Peng Fan <peng.fan@nxp.com>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Rob Herring <robh@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, devicetree@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org
-References: <20251017154029.105099-1-marek.vasut@mailbox.org>
-From: Liu Ying <victor.liu@nxp.com>
-Content-Language: en-US
-In-Reply-To: <20251017154029.105099-1-marek.vasut@mailbox.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SG2PR03CA0112.apcprd03.prod.outlook.com
- (2603:1096:4:91::16) To AM7PR04MB7046.eurprd04.prod.outlook.com
- (2603:10a6:20b:113::22)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dEy1A4I6"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BF03C4CEFB;
+	Mon, 20 Oct 2025 06:54:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760943301;
+	bh=DAuRUF0lLu8WfXtUTMdE9X0H9e1gzgxTyuJAuFXveM8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=dEy1A4I6YWD00vNF2H0Ik163tGCkiofeFlomrMISl6Qcgs753dVLzNcz8XX39HJ78
+	 KJv1AZhz3i3rcw8nQ4rZPeNcjY8BQG+5atgxa5AIPswB7RB0+qVsVykcy12bf8hlAy
+	 GT7+/NyMjFvBl7scU7ouuqXDfL3OByAHIjsPcdD90Yl799xAbHKY5h0yTVrxQnfeQA
+	 uZuPi4rEMxIXQO+MwlK4BkLAn8QQqtDiCfbSswzaroh0jHc1hbAZaiOH8DX1sze+8f
+	 MKLIqSpxv5JVgyPKm1/R6cJ+SRMSu0Ai601jw5zQTGGx9pgrUmkyLGF0iWnIMqPuo+
+	 zC6a8lTtDlcNg==
+Message-ID: <92f1c027-bacc-4537-a158-2e0890e2e8ee@kernel.org>
+Date: Mon, 20 Oct 2025 08:54:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM7PR04MB7046:EE_|GV1PR04MB10749:EE_
-X-MS-Office365-Filtering-Correlation-Id: e2698e8e-c80b-41c8-17f6-08de0fa0e820
-X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
- BCL:0;ARA:13230040|1800799024|7416014|366016|19092799006|376014|7053199007;
-X-Microsoft-Antispam-Message-Info:
- =?utf-8?B?RmxBL09JdVNTd2NTT3RvUmhIeSsyZTFLSUI3a2NCMmJHTGhNVlVZTlpSeHFB?=
- =?utf-8?B?ZjFKaGhuR3hDRlRaSWtyVlVua3lJOHRpNDF2Rk9aOHFpdUlSbXB1MEVCVjNM?=
- =?utf-8?B?M3ZsVXhqV2tTUUFsZ0JnazRQMmRwaWJ3ZFpvQ0xmTkNUWnlCTFpyWlN6UXh5?=
- =?utf-8?B?cy84aVlnNUxIVFUyZlNqbUJ6YkIrWmtSRmtkOUk5SkROUkNUamtVVnV0bHo5?=
- =?utf-8?B?akFITUMyVm9PaVBSd2MrcWx0SDZhdVI0REtxRlVUNFNyemFCRVNXWG1YcUFi?=
- =?utf-8?B?bkxDU3p6UksxRFMwdFBQWExyUHF0RXNYbUZUQjFHSWYvNFJtalJyWHJOY2Zl?=
- =?utf-8?B?eWxQR2ZaMnRjaEFtTjRsbllrN1R4ajROK3NKTm9RNHVuKzEweE43R3E5OUJv?=
- =?utf-8?B?WEtPL01nSDJSbDhGWS9BQTZ6bEZQaysxTHhlbnQ2Uzc2WGc5Tlp0MzhTL3Jn?=
- =?utf-8?B?Q3F1WnBobHF0YVU5WkNjUmpDWUtXN0tYQ1B5bHZpTG42TWROV2xxVGowQzNX?=
- =?utf-8?B?YU1yNWY5alZDK3RqazFFNmZKYWszcDZ4WDYwRmVZT0lVVzEzVmNDa2RUbFg2?=
- =?utf-8?B?TFJTakM3L0lPQkFvT1Z1UjVQeFcvbnJ1RHdueU53bHJaNUY2czRiem4xYjJR?=
- =?utf-8?B?K0p2aUNVK05IK1lwZktTKzVNR1k3QXhEU08vdVU1WXNJSzVrWlp1RENzT0cr?=
- =?utf-8?B?cmdnbTFzQk5YWGNXbVlTdkdnZCtMVytxQ1NtbFZ5cmRycy9Lb2FQblJtUDFU?=
- =?utf-8?B?WS9MYkcwbGdMZCs3R1JISGl3NVVtWVh5Q29sZ1VITUFCMCtvU0RGYWllOTIw?=
- =?utf-8?B?NW9zVmtaNktBUFJBdjh2YVhQc2NrQVNBTmtUaWd2SExwSE41aXByK0NLT0JW?=
- =?utf-8?B?TkxJQ0c4QVZyRnFEQ3pvNFhEcUlGQnNXS3l1anhCWU40c09JUm16QWZ5L2dZ?=
- =?utf-8?B?NFFVL1cyS0twK0w0VVVLQkp3Z28ralIyL1c2Mi9tMTNSdjFibEo2VnNxMWkw?=
- =?utf-8?B?Z2RzZG90T0QwcmJKMkUxQ0F2dUczOEx3VVdVdTkrQkN1akhXRHVvc0dBbE53?=
- =?utf-8?B?R0VzMERKVXhVbER1ZWJsRmZDUThCaWRLb0xLa0dCYnZhazVZNDFTUkNub3ZO?=
- =?utf-8?B?YkVQZnFhSE03Uk1xbWRCMUtxTjdrdWk3TVlKNXk1aklkLzRVdjdobzdKYWdP?=
- =?utf-8?B?RnNRbGZUNWliUWtaY0tFOC9BQloyeWZQVWtYM0xLWEpycVEvT3BVU2QrQzFT?=
- =?utf-8?B?Q1ltV2ZiUmdRODZteFNRMERZTVVORkZzY0RFbnBQNjRJTzh6WE9WTUZWdkNU?=
- =?utf-8?B?RjhibW5icmFtMktqS1lkTFFHTCtWRWxONStvMDFna0p3UGk1V2dQa1Z3VkU0?=
- =?utf-8?B?clArVFowQXVVRFVwYnVYNU5nS3ZnbW5XLzZkMzZoSE1tNEdJZmZseldjRExl?=
- =?utf-8?B?aDlFbGZuYzBkbzJMeTFOVjV4Vmoza0czMU9oRGxDSmtZaXl5cFlaQldiY2pH?=
- =?utf-8?B?S2psWTNEZDJOQ2U0V3o0U3l0eUNsRldLOFdBdUtvVGlSK052UkI4U2RaQytJ?=
- =?utf-8?B?ajJMM2tLYkFPM1pHNDUzNHNwMmxQMEJhVlpRTDRabDZ4RFp3WDFEcFVzTTUv?=
- =?utf-8?B?c1lkR0ovcG1ZU3owdWl5RUEwaEtaSHl6eWl4clZaa3J2alF5bVlZbFZBNHJm?=
- =?utf-8?B?UFBLRDQzbU0wYkdlbHBZOE1JNnQ4RXR2Q0tycE1nWEpLN1NVWTR1VEFLV1VS?=
- =?utf-8?B?amc4N2liVTZkbEd0dDNlTE0wSnFDOVVkUTlqcnVJQmxBZ3RSdHRZbEVFYmJ5?=
- =?utf-8?B?NEZzNThCZ0FWVHZYYUpyT0paMnUvUHl6UDZmVTA3YXNxeXN6YWx4VnloaGtm?=
- =?utf-8?B?bldkY1B2NXhCUXF1MlQ4U0VGUmNXNEtlNERKam1PNTlsdUZ4N3pLR2FHSUJw?=
- =?utf-8?Q?MwInhx/chJKzg7DUzuFUm9+ZU9iPucgg?=
-X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(366016)(19092799006)(376014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
- =?utf-8?B?Umh1YWFVL0hDTEJDU0prWDE4aCtDZUFNckVHQ2ZGTEFvMFB2SmFLYW9aajRq?=
- =?utf-8?B?NnozMGxWVFhYWE1DblNCcnlmdmFnOElzb00zT2xyd2puU0hlVFp2cWxLdGpW?=
- =?utf-8?B?bnlXbW5LeU5JTEtuTWNBTFdoSksvSXhNb1NrWlVkM3ljYXMzMDFxOHVSMEZm?=
- =?utf-8?B?QWtTYU1XbDZjN0RtR29UUjExbzNaM3JLSWRGVzBnYkNwQmN2N2xtUjhrd2J1?=
- =?utf-8?B?cC9UWUMwelRHQjFjU0dyY3ZHUTllazFQYUMvRWk5UXhiTElXTTVMVVhKQzJw?=
- =?utf-8?B?Yk50Z1ArcHhtVUdxR1BkUTArU3R3WlRaNXNZbncvL2xIb214RjE3eVQ1WnZS?=
- =?utf-8?B?bHdvUFgrM1RaUWFPaTN3RUlQK0FObWx0RGZjNGQya2ZlRVo5RFppWEFXRnpX?=
- =?utf-8?B?MnJod0x3NVp2N1ExRSt3bmJxbmRaSjUyRGZ0Sm03ZDZlYU5xQnRlbjFyc3lP?=
- =?utf-8?B?YTdVbHo2MWpWbVE3blJyazlCZkNuZjJlMXdyTjdGN0RtQkI1QXlFQVRISGdG?=
- =?utf-8?B?dmwzdFBaVnp2WkZUUjJwUXRJOGViZFBYUjd2UGY0QUNibGVvZUFZZDRuU01N?=
- =?utf-8?B?L2VSVnRBdk5SV05YYjhZWm4yM0RDM2VWY0ZYdENMTTlDNTdTbENpWTh3OExU?=
- =?utf-8?B?OENmOHRXMFd0dEVqcEpGU0sxUlAxbnorVTlLZm9POHpEVGlINE00RzlCcTdC?=
- =?utf-8?B?UXdXcytGWWkvWisyMDBIYkt0bUdzVis5bTYvOU9FN0k0MFliYWhOM2dCZ1Ru?=
- =?utf-8?B?cjBMT3p2QzBCdk1nWVRiUGZCWmgwNWt5RnI2a0dPdlJaK1A1Z1pzNmpPUCs2?=
- =?utf-8?B?YUFQSXhlMDZKWFUvaVNHSDY1QjA4VEJGWnJqT0V3a0hob3pPdnFMSjlnemtB?=
- =?utf-8?B?U3lveVhpNkdveUZNREpQb2xhV0h0a0JLcjhnVnJNYStkemNSTjVBdFNvb3d2?=
- =?utf-8?B?dUw4OTRjSDFVUG81Umxnbm5VM3RKK2pZL1NjRUJ5RmVZTHovK0NDOW5SeUR0?=
- =?utf-8?B?Z0J6dDVSK1FpU1lKQ3FPdjVWcFRUaWdCUTE0MzQ3OG1RQnFNb2Rmc013MG5w?=
- =?utf-8?B?aXBvRUpVREc5NlljRGFhL2UzQlh6Y0VyRHVFRWhQKzJ5bW1xTDdxQ3h4a3lv?=
- =?utf-8?B?Vk1NRUxuWW1WUXVOWGtIdElzUTRLNVFSc3IyNE9ocTg2MVI3bmQvcHZOQjBN?=
- =?utf-8?B?aTBHcEthYVJoYUd4clpRNG0xVnlIaG5lb1VJb0hSNDBnYnhINmt3SVhYdGwz?=
- =?utf-8?B?VGZ1Ujhxc3VLeFc1QmlpU2Y3Z2NrZit1c3ozUktXSk0rdGFwN1dTZEFXa3Fa?=
- =?utf-8?B?US9Dak13Q1dSNk0wRUEzWDRKZTl1NWYwUU1JRTZRK0hUNlh6d0Q2NThMaGhE?=
- =?utf-8?B?cTlPbTVDRlZ1R0puZHhmSkFVeEJJdHM3TnBjSlVEM2VobjNmZzhvMjJuU3oz?=
- =?utf-8?B?eDNrMVFVcE8zRE1NU0gvdlc3N1N5eTVDR0lUdXpQNC93Qm82S3BNNXJMcmxU?=
- =?utf-8?B?WmVmR05TZGFEZFB1MXRIcVVzSEVWSGlFYjBvWjZtYWtHZ1BYd0N1N3c3STll?=
- =?utf-8?B?RExiV2ZjNERQaTIzVVZnOXlnVkswU3J0cXJ1T3ZxQTJHY0ZYRVpvd0VIZ0Jt?=
- =?utf-8?B?RG5objBwaFdiWS9qUGtzSkUxOEpOckRMZmdBajJ4ZDNGTHNYLzBkWmxNSk1H?=
- =?utf-8?B?SGFGSnVnZk5sbTNzRjdra3VnMmVJQ0lmUE1SYU43dEw0NjhSd1BWbW54RC9W?=
- =?utf-8?B?MHR1VXFBS3hKYmxTS0tOdzdickV0QjRybHhWK1FCMzVEMERpN3JNQ0wvbnJw?=
- =?utf-8?B?dm9hcUZPeExWdG1ORDluYWZPK1VsMU1ldUU3Wkg4dkFhYW5mVGRtblpKOVlM?=
- =?utf-8?B?bis2NzcvSU12ZmNPWjQwMzZtcHhuNGFCMXRUZkx2V0V5a0FnU0N0TDZpLzZM?=
- =?utf-8?B?MGJWa1dpbUFiTndQT05ENUJPTVFUSFhjbkREMlFUR2FMQnNZVnV6WERkQWk4?=
- =?utf-8?B?eWphR3VUV3ZYVmQ0TFVxSnJKUWFXUTZDd210eWNJY3BoR29XWUFsQWJOR0h4?=
- =?utf-8?B?YjR0NHVPR3VmWURRL1UyMkFRQmIyM1liMGw1ZWN5a2kveXRvTlJGVzFmSzRF?=
- =?utf-8?Q?em+7z1YfY1/wFLTCpeo5TbHzk?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e2698e8e-c80b-41c8-17f6-08de0fa0e820
-X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Oct 2025 06:21:29.9710
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: S1bArZCI9rXaxKo9WqPIl+gqKV1cHkuokL5Dp/wbdfuWOaz1riQKPK/GXGDwfETs/fOpGFuLAn0bAdREy1+U2g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR04MB10749
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 4/6] clk: samsung: add Exynos ACPM clock driver
+To: Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Peter Griffin <peter.griffin@linaro.org>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, willmcvicker@google.com, kernel-team@android.com
+References: <20251010-acpm-clk-v6-0-321ee8826fd4@linaro.org>
+ <20251010-acpm-clk-v6-4-321ee8826fd4@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20251010-acpm-clk-v6-4-321ee8826fd4@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 10/17/2025, Marek Vasut wrote:
-> The DT binding for this bridge describe register offsets for the LDB,
-
-s/describe/describes/
-
-> parse the register offsets from DT instead of hard-coding them in the
-> driver. No functional change.
+On 10/10/2025 14:46, Tudor Ambarus wrote:
+> Add the Exynos ACPM clock driver. It provides support for clocks that
+> are controlled by firmware that implements the ACPM interface.
 > 
-> Signed-off-by: Marek Vasut <marek.vasut@mailbox.org>
+> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+> Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
+> Tested-by: Peter Griffin <peter.griffin@linaro.org> # on gs101-oriole
 > ---
-> Cc: Abel Vesa <abelvesa@kernel.org>
-> Cc: Conor Dooley <conor+dt@kernel.org>
-> Cc: Fabio Estevam <festevam@gmail.com>
-> Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
-> Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
-> Cc: Liu Ying <victor.liu@nxp.com>
-> Cc: Lucas Stach <l.stach@pengutronix.de>
-> Cc: Peng Fan <peng.fan@nxp.com>
-> Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
-> Cc: Rob Herring <robh@kernel.org>
-> Cc: Shawn Guo <shawnguo@kernel.org>
-> Cc: Thomas Zimmermann <tzimmermann@suse.de>
-> Cc: devicetree@vger.kernel.org
-> Cc: dri-devel@lists.freedesktop.org
-> Cc: imx@lists.linux.dev
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-clk@vger.kernel.org
-> ---
->  drivers/gpu/drm/bridge/fsl-ldb.c | 42 ++++++++++++++++++++------------
->  1 file changed, 26 insertions(+), 16 deletions(-)
+>  drivers/clk/samsung/Kconfig    |  10 +++
+>  drivers/clk/samsung/Makefile   |   1 +
+>  drivers/clk/samsung/clk-acpm.c | 185 +++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 196 insertions(+)
 > 
-> diff --git a/drivers/gpu/drm/bridge/fsl-ldb.c b/drivers/gpu/drm/bridge/fsl-ldb.c
-> index 5c3cf37200bce..c54caea0b63fc 100644
-> --- a/drivers/gpu/drm/bridge/fsl-ldb.c
-> +++ b/drivers/gpu/drm/bridge/fsl-ldb.c
-> @@ -61,24 +61,16 @@ enum fsl_ldb_devtype {
->  };
+> diff --git a/drivers/clk/samsung/Kconfig b/drivers/clk/samsung/Kconfig
+> index 76a494e95027af26272e30876a87ac293bd56dfa..70a8b82a0136b4d0213d8ff95e029c52436e5c7f 100644
+> --- a/drivers/clk/samsung/Kconfig
+> +++ b/drivers/clk/samsung/Kconfig
+> @@ -95,6 +95,16 @@ config EXYNOS_CLKOUT
+>  	  status of the certains clocks from SoC, but it could also be tied to
+>  	  other devices as an input clock.
 >  
->  struct fsl_ldb_devdata {
-> -	u32 ldb_ctrl;
-> -	u32 lvds_ctrl;
->  	bool lvds_en_bit;
->  	bool single_ctrl_reg;
+> +config EXYNOS_ACPM_CLK
+> +	tristate "Clock driver controlled via ACPM interface"
+> +	depends on EXYNOS_ACPM_PROTOCOL || (COMPILE_TEST && !EXYNOS_ACPM_PROTOCOL)
 
-single_ctrl_reg can be dropped then, as it can be expressed by failing to
-get the second register.
 
-Furthermore, with this done, lvds_en_bit is the only member left and hence
-struct fsl_ldb_devdata can also be dropped, as IIRC there is no need to
-use a structure for device data with only a flag.
+I merged the patches but I don't get why we are not enabling it by
+default, just like every other clock driver. What is so special here?
 
->  };
->  
->  static const struct fsl_ldb_devdata fsl_ldb_devdata[] = {
->  	[IMX6SX_LDB] = {
-> -		.ldb_ctrl = 0x18,
->  		.single_ctrl_reg = true,
->  	},
-> -	[IMX8MP_LDB] = {
-> -		.ldb_ctrl = 0x5c,
-> -		.lvds_ctrl = 0x128,
-> -	},
-> +	[IMX8MP_LDB] = { },
->  	[IMX93_LDB] = {
-> -		.ldb_ctrl = 0x20,
-> -		.lvds_ctrl = 0x24,
->  		.lvds_en_bit = true,
->  	},
->  };
-> @@ -90,6 +82,8 @@ struct fsl_ldb {
->  	struct clk *clk;
->  	struct regmap *regmap;
->  	const struct fsl_ldb_devdata *devdata;
-> +	u32 ldb_ctrl;
-> +	u32 lvds_ctrl;
->  	bool ch0_enabled;
->  	bool ch1_enabled;
->  };
-> @@ -204,7 +198,7 @@ static void fsl_ldb_atomic_enable(struct drm_bridge *bridge,
->  		reg |=	(fsl_ldb->ch0_enabled ? LDB_CTRL_DI0_VSYNC_POLARITY : 0) |
->  			(fsl_ldb->ch1_enabled ? LDB_CTRL_DI1_VSYNC_POLARITY : 0);
->  
-> -	regmap_write(fsl_ldb->regmap, fsl_ldb->devdata->ldb_ctrl, reg);
-> +	regmap_write(fsl_ldb->regmap, fsl_ldb->ldb_ctrl, reg);
->  
->  	if (fsl_ldb->devdata->single_ctrl_reg)
->  		return;
-> @@ -212,7 +206,7 @@ static void fsl_ldb_atomic_enable(struct drm_bridge *bridge,
->  	/* Program LVDS_CTRL */
->  	reg = LVDS_CTRL_CC_ADJ(2) | LVDS_CTRL_PRE_EMPH_EN |
->  	      LVDS_CTRL_PRE_EMPH_ADJ(3) | LVDS_CTRL_VBG_EN;
-> -	regmap_write(fsl_ldb->regmap, fsl_ldb->devdata->lvds_ctrl, reg);
-> +	regmap_write(fsl_ldb->regmap, fsl_ldb->lvds_ctrl, reg);
->  
->  	/* Wait for VBG to stabilize. */
->  	usleep_range(15, 20);
-> @@ -220,7 +214,7 @@ static void fsl_ldb_atomic_enable(struct drm_bridge *bridge,
->  	reg |=	(fsl_ldb->ch0_enabled ? LVDS_CTRL_CH0_EN : 0) |
->  		(fsl_ldb->ch1_enabled ? LVDS_CTRL_CH1_EN : 0);
->  
-> -	regmap_write(fsl_ldb->regmap, fsl_ldb->devdata->lvds_ctrl, reg);
-> +	regmap_write(fsl_ldb->regmap, fsl_ldb->lvds_ctrl, reg);
->  }
->  
->  static void fsl_ldb_atomic_disable(struct drm_bridge *bridge,
-> @@ -231,12 +225,12 @@ static void fsl_ldb_atomic_disable(struct drm_bridge *bridge,
->  	/* Stop channel(s). */
->  	if (fsl_ldb->devdata->lvds_en_bit)
->  		/* Set LVDS_CTRL_LVDS_EN bit to disable. */
-> -		regmap_write(fsl_ldb->regmap, fsl_ldb->devdata->lvds_ctrl,
-> +		regmap_write(fsl_ldb->regmap, fsl_ldb->lvds_ctrl,
->  			     LVDS_CTRL_LVDS_EN);
->  	else
->  		if (!fsl_ldb->devdata->single_ctrl_reg)
-> -			regmap_write(fsl_ldb->regmap, fsl_ldb->devdata->lvds_ctrl, 0);
-> -	regmap_write(fsl_ldb->regmap, fsl_ldb->devdata->ldb_ctrl, 0);
-> +			regmap_write(fsl_ldb->regmap, fsl_ldb->lvds_ctrl, 0);
-> +	regmap_write(fsl_ldb->regmap, fsl_ldb->ldb_ctrl, 0);
->  
->  	clk_disable_unprepare(fsl_ldb->clk);
->  }
-> @@ -296,7 +290,7 @@ static int fsl_ldb_probe(struct platform_device *pdev)
->  	struct device_node *remote1, *remote2;
->  	struct drm_panel *panel;
->  	struct fsl_ldb *fsl_ldb;
-> -	int dual_link;
-> +	int dual_link, idx, ret;
->  
->  	fsl_ldb = devm_drm_bridge_alloc(dev, struct fsl_ldb, bridge, &funcs);
->  	if (IS_ERR(fsl_ldb))
-> @@ -309,6 +303,22 @@ static int fsl_ldb_probe(struct platform_device *pdev)
->  	fsl_ldb->dev = &pdev->dev;
->  	fsl_ldb->bridge.of_node = dev->of_node;
->  
-> +	idx = of_property_match_string(dev->of_node, "reg-names", "ldb");
-> +	if (idx < 0)
-> +		return idx;
+> +	help
+> +	  This driver provides support for clocks that are controlled by
+> +	  firmware that implements the ACPM interface.
 > +
-> +	ret = of_property_read_u32_index(dev->of_node, "reg", 2 * idx, &fsl_ldb->ldb_ctrl);
-> +	if (ret)
-> +		return ret;
+> +	  This driver uses the ACPM interface to interact with the firmware
+> +	  providing all the clock controlls.
 > +
-> +	idx = of_property_match_string(dev->of_node, "reg-names", "lvds");
-> +	if (idx < 0)
-> +		return idx;
-
-Hey, i.MX6SX LDB's single_ctrl_reg is true.  This would break i.MX6SX since
-this returns with error code?
-
-> +
-> +	ret = of_property_read_u32_index(dev->of_node, "reg", 2 * idx, &fsl_ldb->lvds_ctrl);
-> +	if (ret)
-> +		return ret;
-
-I'm not sure if these of_property_xxx function calls are correct or not,
-but they look pretty heavy.  Can they be replaced with of_property_read_reg()?
-
-> +
->  	fsl_ldb->clk = devm_clk_get(dev, "ldb");
->  	if (IS_ERR(fsl_ldb->clk))
->  		return PTR_ERR(fsl_ldb->clk);
-
-
--- 
-Regards,
-Liu Ying
+>  config TESLA_FSD_COMMON_CLK
+>  	bool "Tesla FSD clock controller support" if COMPILE_TEST
+>  	depends on COMMON_CLK_SAMSUNG
+Best regards,
+Krzysztof
