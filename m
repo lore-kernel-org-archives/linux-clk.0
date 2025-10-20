@@ -1,127 +1,204 @@
-Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6499E2F617F
-	for <linux-clk@vger.kernel.org>; Mon, 20 Oct 2025 09:35:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE4972F0673
+	for <linux-clk@vger.kernel.org>; Mon, 20 Oct 2025 09:38:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760952956; cv=none; b=iyrm9gvBhMuIi0eovqNEFwAXcF0XUVxkpQGWcigEqG7f8SkYPzmY3GmTvtW+TJip1vOIDDcnQHAHTNo7pDsG/qChBhJhFyhweCHvyENBP/QKXflXYBnpwGtojuzPWgAR61ICDGFfcNP9BHxxwkFEc8pIpvh0pHBAhUt+fws/DeU=
+	t=1760953101; cv=none; b=E5VKwn2YJfoCp1c3FxaUSNdqupafGz+QiMWL02U/xm1kLT9j6ozfb99cZwvi8bhxyvqIvMXKPo9hMxTXBy1HPVcEzanVgtM+2fUav7E0jVCj6YLrv66udXO5qMH5ZSPOuQOTGqbOoIxizEoBs9QbXUFnLorrc49T2iAUuGCdM3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760952956; c=relaxed/simple;
-	bh=Re+DOU6/e6dkcK3rl4TDT3ox52jxcfPQEvS5zL7tp/g=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Gay7I+j/640UK8c4NBCAO3dDc/0S4Zn8KKWE80AWTDu9h71TsKjfsIJk1whvgyRLPE4pAsNCguVoahPMYcoQ03yzpRXZvXdEozlN1GNf09EKzccRLZuULIa/AfHj+HtjAySuunH0JWfvf6z4jNGxKPXuugJa28NmwrImxKR9pro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1RUFl2LW; arc=none smtp.client-ip=209.85.221.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+	s=arc-20240116; t=1760953101; c=relaxed/simple;
+	bh=ZM99vAaDenOAHQs62WH/1ACKRvDOf/c1+nx6vwi0iiU=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=fqs9Th1bx4Sr3eNBG6gzDWKTpxlEyx4mRf8XSaN1yyQ0KNkx4Qtdc9aYW9f+HJzl3nxKo8wBiAftmq0YEZqmVwmELMbFeNpWDcjnxbycNlXD/Ez9LbAw1PtHDeNmn1uWSOrGfqn0BqJ41TM66B/ve3/manwhFJ6rEC2N3G268C0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow-tech.com; spf=pass smtp.mailfrom=cknow-tech.com; dkim=pass (2048-bit key) header.d=cknow-tech.com header.i=@cknow-tech.com header.b=onWXANZn; arc=none smtp.client-ip=95.215.58.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow-tech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow-tech.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1RUFl2LW"
-Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-4283bf5b764so1016797f8f.3
-        for <linux-clk@vger.kernel.org>; Mon, 20 Oct 2025 02:35:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760952953; x=1761557753; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=M4tqO9Ss7dvk0HhlC8ItWFcBE+vqGHgkt9qscACZJ4U=;
-        b=1RUFl2LWMYmE0wZ7SZRuwEEQkImEJTM/VTw9bsGEhkblqTUgPHPnf4W46mqSkmfNMw
-         GvrwVA2X6PLl0Cm6eP+J1TuoRC1x7J/tjlQDvu9n4sqYe9E+6tj3ONopelDCWlbUY2d/
-         Lg3XsxX69Eiay3qcA3Id4aOS+YQr3PN4hnPXsfFM6ZzSLpuPUkG/YHTIYB4cXkongzuQ
-         GBVIXU6mEuVRoEGqQdVETYB1BF3YEzE9znm9WGwtkT+RHfeoylG+Ev5M40cot5HW1AVI
-         dnYVHOsSMICSdvLcemgumkWMglHL9naXxH1HGFzPL8Qh3ssB1XuR8tbqH8JDqjfkHoc/
-         eKGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760952953; x=1761557753;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=M4tqO9Ss7dvk0HhlC8ItWFcBE+vqGHgkt9qscACZJ4U=;
-        b=k5HoETG9LBjPZA3V5V2l2LqXJzx2to6am9CKkpo6jT5nfzMYtuDJZIZb4u3FCFs5Ks
-         r8RqyeNt4eBw6zcZAOB8UR1Tmy2Dwd6yHuTX0TSdeUA5VUS78N1x6RwKE3foZ7j51c0U
-         omQN348KworP9sHJxPKYo6yfXHJOSYWTKycIJO9M63BclKyujNs+EmIwtsvnHEqrX6S8
-         UoZHGuR+g3HMNEi7dlFJLMZY1C7TUQg5WRT4zFtdBYK72EC9G+Ptcmnu4iUxXnLzwgEC
-         UYxnfag/wCu/Xf/eFBIlN9EM0zI3KUQvkBCTdC2r9w5ltGji+/aFDgoa05TYd/YqF7ta
-         /lSA==
-X-Forwarded-Encrypted: i=1; AJvYcCWd94za+l+yHR2pgqGOtAh6+EuY1z38GeJQo7Ys1FTgjPTylnnQSfwrUYC39eIKgf2WrZQUCZKLimM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqIp5aK4Fk2Da1chBQ1OKc2YxB3ExVkDv/By4EvTvBIxzNOJuB
-	/vVwNIQUr32Eu01URN5f9A6JaPVcmFFSdt5eovKPubtnLGYPgaXcn4tuoOL63ehjKG//GQY/fzZ
-	vXbeXXnWQwEdLCroO+Q==
-X-Google-Smtp-Source: AGHT+IEPdMgaAsWVjr61PyUGcldq0t0ZV5oF0MkmxsMnMiNypMU138b1txPZ8fl/PFCxXF3KGb7789Q8USnSNmM=
-X-Received: from wrbea3.prod.google.com ([2002:a05:6000:ec3:b0:426:da8f:f403])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6000:26c4:b0:427:202:d4d2 with SMTP id ffacd0b85a97d-42704db5b02mr8051029f8f.58.1760952952791;
- Mon, 20 Oct 2025 02:35:52 -0700 (PDT)
-Date: Mon, 20 Oct 2025 09:35:35 +0000
-In-Reply-To: <20251020-clk-send-sync-v2-0-44ab533ae084@google.com>
+	dkim=pass (2048-bit key) header.d=cknow-tech.com header.i=@cknow-tech.com header.b="onWXANZn"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20251020-clk-send-sync-v2-0-44ab533ae084@google.com>
-X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1503; i=aliceryhl@google.com;
- h=from:subject:message-id; bh=Re+DOU6/e6dkcK3rl4TDT3ox52jxcfPQEvS5zL7tp/g=;
- b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBo9gJ07vy/mXgVpdOzBOWq5qGFjx03OJ2lFgfAi
- n22Xp8hhmyJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCaPYCdAAKCRAEWL7uWMY5
- Rij2EACyfhsJPjQ4ytTfDpEjKd1ocl5UxJUPZpGWrQOsDzjPSSTHDC9vOEsFkkzpAyXeU17d0Qs
- m/3yYJmuQSOsCPb8cV3ltxv4qU8Z75tF/b6lst22W3fK5G8lqSiGblXNW1gx4TgZ757iFAXCvWF
- ciPm3m6C8M8SIqAa99IIaE8oEUPZBCAnisRRPVJ77Me8S7cNE3xSHr79A1sN6s2yxNWmOjKZ7Yb
- GJu5Wh2dWMZBp3N+Uz9XC69a3s4rBRyJ2yRvh8PVAQ4tAkjq4yq5yOIQUl3LJ+O7bnJbeclMfQ0
- lRB3CR8c7lEba8t4rg6naXb/oFC6W46wlVoT9T04sPOqEMUXQZQbe+eTMUlwCWDoPrJjp/v07IF
- zjql0Hsf3HgAq6UAKoiFs1PdrvxC638uoLpVT7guRvlca/JbxR/Syjttxb8NfJzMAwGpNpb7mgG
- 1A3UL9bH0iyXJNzd1JhXR9kv2MQK8XnOczxR9/Lnu+ZsDk2DQeWHAQSAtChVD4gObn3L5KX3R62
- ZMeTuFI0nUJRPevoZ5q5D1lNZveSmGuiGAkuk7tDZaaHkeUiEzroKk2k8FugE5A2g2YnpgzH0gA
- jpgdtAV6a85Ru+ZL2g5oGmNYPDwBIrUMS+5LLf82YGg3oRm3qK2YeKhYjVgX60UorqxiABR+V9T CQ9akw67fcYzwXw==
-X-Mailer: b4 0.14.2
-Message-ID: <20251020-clk-send-sync-v2-2-44ab533ae084@google.com>
-Subject: [PATCH v2 2/2] tyr: remove impl Send/Sync for TyrData
-From: Alice Ryhl <aliceryhl@google.com>
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, Daniel Almeida <daniel.almeida@collabora.com>, 
-	linux-clk@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>
-Content-Type: text/plain; charset="utf-8"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow-tech.com;
+	s=key1; t=1760953090;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Q5GKFSb8/CEfXGsPeMSq9twJk4tF7yOdz4CDd5l/dKU=;
+	b=onWXANZnK+qqfixEuAceXS1lWRx+JeiaxMXIWo0ENGg8AfYu6LSCzWRujpeE3aJgRl1MKD
+	5UYyN5Yu3LXWx0Pfe51SQNTWPgNGGwPlQub+f+qcMrlq1Ku3R9tK2sRXTOVmF5Y7wrAam9
+	paPdawkWZi6FjgBdOrwdkMzsQGQdYngyKTiWWVdnTCPE3hdsVUg/YvhuwmP+ZP3RQ+kq6r
+	a1dg7XBXJsQ+fAYnAyg3JrzuJLlaY24b5vin667/995YhHWgvY9Agftc09sFMPjGhnxV6M
+	lEJLdbXKhmGgw7RyRLeRm+zJ5nHdrkUyOLVr8zM7RnWrXoWozQe3ocHOXkRZDg==
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 20 Oct 2025 11:38:02 +0200
+Message-Id: <DDN1RQB4LG0X.30F0A3IMJ4YI4@cknow-tech.com>
+Cc: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+ <linux-clk@vger.kernel.org>, <linux-rockchip@lists.infradead.org>,
+ <linux-kernel@vger.kernel.org>, <huangtao@rock-chips.com>
+Subject: Re: [PATCH v3 4/5] dt-bindings: clock: Add support for rockchip
+ pvtpll
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "Diederik de Haas" <diederik@cknow-tech.com>
+To: "Elaine Zhang" <zhangqing@rock-chips.com>, <mturquette@baylibre.com>,
+ <sboyd@kernel.org>, <sugar.zhang@rock-chips.com>, <heiko@sntech.de>,
+ <robh@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+ <conor+dt@kernel.org>
+References: <20251020023724.2723372-1-zhangqing@rock-chips.com>
+ <20251020023724.2723372-5-zhangqing@rock-chips.com>
+In-Reply-To: <20251020023724.2723372-5-zhangqing@rock-chips.com>
+X-Migadu-Flow: FLOW_OUT
 
-Now that clk implements Send and Sync, we no longer need to manually
-implement these traits for TyrData. Thus remove the implementations.
+On Mon Oct 20, 2025 at 4:37 AM CEST, Elaine Zhang wrote:
+> Add pvtpll documentation for rockchip.
+>
+> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+> ---
+>  .../bindings/clock/rockchip,clk-pvtpll.yaml   | 100 ++++++++++++++++++
+>  1 file changed, 100 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/rockchip,clk-=
+pvtpll.yaml
+>
+> diff --git a/Documentation/devicetree/bindings/clock/rockchip,clk-pvtpll.=
+yaml b/Documentation/devicetree/bindings/clock/rockchip,clk-pvtpll.yaml
+> new file mode 100644
 
-The comment also mentions the regulator. However, the regulator had the
-traits added in commit 9a200cbdb543 ("rust: regulator: implement Send
-and Sync for Regulator<T>"), which is already in mainline.
+Should this file have the 'clk-' part in its name?
+In a way this is different from the other DT binding files, but none of
+the others have the 'clk-' part in their file name:
 
-Signed-off-by: Alice Ryhl <aliceryhl@google.com>
----
- drivers/gpu/drm/tyr/driver.rs | 12 ------------
- 1 file changed, 12 deletions(-)
+me@pc:~/linux/Documentation/devicetree/bindings/clock$ ls -lh rockchip,*
+-rw-rw-r-- 1 me me 2,9K okt 20 11:32 rockchip,px30-cru.yaml
+-rw-rw-r-- 1 me me 1,9K okt 20 11:32 rockchip,rk3036-cru.yaml
+-rw-rw-r-- 1 me me 1,8K okt 20 11:32 rockchip,rk3128-cru.yaml
+-rw-rw-r-- 1 me me 2,3K okt 20 11:32 rockchip,rk3188-cru.yaml
+-rw-rw-r-- 1 me me 2,1K okt 20 11:32 rockchip,rk3228-cru.yaml
+-rw-rw-r-- 1 me me 2,6K okt 20 11:32 rockchip,rk3288-cru.yaml
+-rw-rw-r-- 1 me me 2,2K okt 20 11:32 rockchip,rk3308-cru.yaml
+-rw-rw-r-- 1 me me 2,1K okt 20 11:32 rockchip,rk3328-cru.yaml
+-rw-rw-r-- 1 me me 2,4K okt 20 11:32 rockchip,rk3368-cru.yaml
+-rw-rw-r-- 1 me me 2,5K okt 20 11:32 rockchip,rk3399-cru.yaml
+-rw-rw-r-- 1 me me 1,5K okt 20 11:32 rockchip,rk3528-cru.yaml
+-rw-rw-r-- 1 me me 1,1K okt 20 11:32 rockchip,rk3562-cru.yaml
+-rw-rw-r-- 1 me me 1,8K okt 20 11:32 rockchip,rk3568-cru.yaml
+-rw-rw-r-- 1 me me 1,2K okt 20 11:32 rockchip,rk3576-cru.yaml
+-rw-rw-r-- 1 me me 1,6K okt 20 11:32 rockchip,rk3588-cru.yaml
+-rw-rw-r-- 1 me me 2,2K okt 20 11:32 rockchip,rv1108-cru.yaml
+-rw-rw-r-- 1 me me 1,3K okt 20 11:32 rockchip,rv1126-cru.yaml
 
-diff --git a/drivers/gpu/drm/tyr/driver.rs b/drivers/gpu/drm/tyr/driver.rs
-index d5625dd1e41c8406494b267d4ac560c442a8012c..574b85bbc497f8d1053d16a11f77ecbe2c87bfb2 100644
---- a/drivers/gpu/drm/tyr/driver.rs
-+++ b/drivers/gpu/drm/tyr/driver.rs
-@@ -53,18 +53,6 @@ pub(crate) struct TyrData {
-     pub(crate) gpu_info: GpuInfo,
- }
- 
--// Both `Clk` and `Regulator` do not implement `Send` or `Sync`, but they
--// should. There are patches on the mailing list to address this, but they have
--// not landed yet.
--//
--// For now, add this workaround so that this patch compiles with the promise
--// that it will be removed in a future patch.
--//
--// SAFETY: This will be removed in a future patch.
--unsafe impl Send for TyrData {}
--// SAFETY: This will be removed in a future patch.
--unsafe impl Sync for TyrData {}
--
- fn issue_soft_reset(dev: &Device<Bound>, iomem: &Devres<IoMem>) -> Result {
-     regs::GPU_CMD.write(dev, iomem, regs::GPU_CMD_SOFT_RESET)?;
- 
+> index 000000000000..8be34bcde7b0
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/rockchip,clk-pvtpll.yaml
+> @@ -0,0 +1,100 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/rockchip,clk-pvtpll.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Rockchip Pvtpll
+> +
+> +maintainers:
+> +  - Elaine Zhang <zhangqing@rock-chips.com>
+> +  - Heiko Stuebner <heiko@sntech.de>
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - enum:
+> +          - rockchip,rv1103b-core-pvtpll
+> +          - rockchip,rv1103b-enc-pvtpll
+> +          - rockchip,rv1103b-isp-pvtpll
+> +          - rockchip,rv1103b-npu-pvtpll
+> +          - rockchip,rv1126b-core-pvtpll
+> +          - rockchip,rv1126b-isp-pvtpll
+> +          - rockchip,rv1126b-enc-pvtpll
+> +          - rockchip,rv1126b-aisp-pvtpll
+> +          - rockchip,rv1126b-npu-pvtpll
+> +          - rockchip,rk3506-core-pvtpll
+> +      - const: syscon
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  "#clock-cells":
+> +    const: 0
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  clock-output-names:
+> +    maxItems: 1
+> +
+> +  rockchip,cru:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description: |
+> +      Phandle to the main Clock and Reset Unit (CRU) controller.
+> +      Required for PVTPLLs that need to interact with the main CRU
+> +      for clock management operations.
+> +
+> +required:
+> +  - "#clock-cells"
+> +  - compatible
+> +  - reg
+> +  - clock-output-names
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    pvtpll_core: pvtpll-core@20480000 {
+> +      compatible =3D "rockchip,rv1126b-core-pvtpll", "syscon";
+> +      reg =3D <0x20480000 0x100>;
+> +      #clock-cells =3D <0>;
+> +      clock-output-names =3D "clk_core_pvtpll";
+> +    };
+> +
+> +  - |
+> +    pvtpll_isp: pvtpll-isp@21c60000 {
+> +      compatible =3D "rockchip,rv1126b-isp-pvtpll", "syscon";
+> +      reg =3D <0x21c60000 0x100>;
+> +      rockchip,cru =3D <&cru>;
+> +      #clock-cells =3D <0>;
+> +      clock-output-names =3D "clk_isp_pvtpll";
+> +    };
+> +
+> +  - |
+> +    pvtpll_enc: pvtpll-enc@21f00000 {
+> +      compatible =3D "rockchip,rv1126b-enc-pvtpll", "syscon";
+> +      reg =3D <0x21f00000 0x100>;
+> +      #clock-cells =3D <0>;
+> +      clock-output-names =3D "clk_vepu_pvtpll";
+> +    };
+> +
+> +  - |
+> +    pvtpll_aisp: pvtpll-aisp@21fc0000 {
+> +      compatible =3D "rockchip,rv1126b-aisp-pvtpll", "syscon";
+> +      reg =3D <0x21fc0000 0x100>;
+> +      rockchip,cru =3D <&cru>;
+> +      #clock-cells =3D <0>;
+> +      clock-output-names =3D "clk_vcp_pvtpll";
+> +    };
+> +
+> +  - |
+> +    pvtpll_npu: pvtpll-npu@22080000 {
+> +      compatible =3D "rockchip,rv1126b-npu-pvtpll", "syscon";
+> +      reg =3D <0x22080000 0x100>;
+> +      rockchip,cru =3D <&cru>;
+> +      #clock-cells =3D <0>;
+> +      clock-output-names =3D "clk_npu_pvtpll";
 
--- 
-2.51.0.915.g61a8936c21-goog
+rockchip,cru line as the last line?
+
+Cheers,
+  Diederik
+
+> +    };
+> +
+> +...
 
