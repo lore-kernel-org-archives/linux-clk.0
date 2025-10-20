@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1814033342D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1821A33342E;
 	Mon, 20 Oct 2025 17:11:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760980283; cv=none; b=DIdPmD10y+L32kMT1lFSlzmH9FYYmpFmcZbxr73QpqO6xUb9l5e03qxMzXPbEa/3/jiih4pWB2T0Ka0dqKdFcPdu5WJAD0/Ak4ECwZQKf46vwmPCSX48i5obGr627e/TZWjyEt4RbbmauDNgN9YLKgqRYD4hrmdwGAJVnBCTG9Q=
+	t=1760980283; cv=none; b=upCGKA/uBNe+Hkv/mSOJakNv6+k6mqqNsDg6xZNKWe1C8qAU3W5AQsSRTb19pCWaPOgGIoaMpZAf4HwzWVTNL3+KyCSp7L6fvpc4mNxe1uUfxGD8mOomo2M++hWdKzCVlgyII+XZgdRnH8wODyepzBarQXQeToO/4/CnB+PcuCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1760980283; c=relaxed/simple;
-	bh=JAXFSTXHoi2lWkQbmUxgDURhf5LRyBjzq6/sRld0KGE=;
+	bh=0ChEAhtAFbnQFbVJGkrrhKo/Uoy5YpaI4s6lIy/TvXM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Wtb84kPl9jCOhDokoYyxoHAU6LxrCi2BNKOWY4bkochz3RHtH70hq105xsla7ru0h3I9edEPxFHY1WEZfrQh7hxfOvKOcaPsmHlPV241x6F36VryL1XL51XiSsINaLnMknT9FkR+Mq2pte41HyibxRv9ilXCy98sxC90xWhNBcc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qhSYF2x1; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version; b=nn3cHSfr+HtPN6pjM2R5W0Gp1h4gPkmL/ooKhpgNr6lbnd2JRSEC6VXy3iaZkxIi7IJh2/OPVryhaR2zIaj2YA7gVQy+Aj1eBcndmj/aQYYR2XjX70IJB/g4UfEpDhPwQRmSrAm6BB+eUU2j+n6R1wuXY9RYpEpvV0m30SmarB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QFgPhNMI; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qhSYF2x1"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EF48C2BCB1;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QFgPhNMI"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93322C4AF0F;
 	Mon, 20 Oct 2025 17:11:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1760980282;
-	bh=JAXFSTXHoi2lWkQbmUxgDURhf5LRyBjzq6/sRld0KGE=;
+	bh=0ChEAhtAFbnQFbVJGkrrhKo/Uoy5YpaI4s6lIy/TvXM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=qhSYF2x18gezxn8W9SgUF6hy6rUHBaXOg6ph2VjiEAx29wvX5U5Oa05T2lw7reI/n
-	 kn1ZTDIbFT7UvV0xitDjxSv1SiFcBxxt2I6sNK6SG1hil/wKHdXC5b8ZYPeeV6Wost
-	 cNvEU/VSA9UkcIsVT9MXgnSHiEhV6/+q3iExPXSj/YcNmzsO8CyXwxC+LJiJj+CnYh
-	 24H2ACtsEv10HLPnZDIBB17J91hBsKeZwhaMdg5FwDgPXkvKZiIrSiu2RxVlLoMo2T
-	 dTamHu9JEDL6WzK7OshtVzyzAdA4KY/Gwa7pD7e8XbD3TC3vy/PqcSSFsGu6JBL9h5
-	 6V+cb5GCVcHOQ==
+	b=QFgPhNMI2Jj90qwqd7mDU/ZGMu+ZjcHs5w0mLa+IsNtEgj0sgkZnwc4paZhm33RCU
+	 1LptkaLyQRXZkSYB9tWLderYNPCpMIqHX/Ca4CEdsm33tL5utK7qMOZA+7gX5vHM9j
+	 02O9+o9Olcw2OfJJsLClQ1mmOXwIdW//v02t0gaiaWWOu36vhXhPZfoAImpEDw2iKC
+	 k84LiAP8JBU9+ocen1vnga+nSR8ELeXrvBFsPLT30hR5/g+w/HhSSJyniNHy1rlEO9
+	 F44qxeo4PQAcV9RGRUpNv9fG+TDjXiAZCaKNWMDQp6+Z5pcyUOa59afKNKQTTLsKY9
+	 sRSdJjineEy7A==
 Received: by wens.tw (Postfix, from userid 1000)
-	id 770105FEC6; Tue, 21 Oct 2025 01:11:18 +0800 (CST)
+	id 667A65FEEE; Tue, 21 Oct 2025 01:11:18 +0800 (CST)
 From: Chen-Yu Tsai <wens@kernel.org>
 To: Chen-Yu Tsai <wens@kernel.org>,
 	Jernej Skrabec <jernej@kernel.org>,
@@ -45,9 +45,9 @@ Cc: linux-sunxi@lists.linux.dev,
 	devicetree@vger.kernel.org,
 	dmaengine@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 10/11] arm64: dts: allwinner: a523: Add I2S2 pins on PI pin group
-Date: Tue, 21 Oct 2025 01:10:56 +0800
-Message-ID: <20251020171059.2786070-11-wens@kernel.org>
+Subject: [PATCH 08/11] arm64: dts: allwinner: a523: Add device node for SPDIF block
+Date: Tue, 21 Oct 2025 01:10:54 +0800
+Message-ID: <20251020171059.2786070-9-wens@kernel.org>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20251020171059.2786070-1-wens@kernel.org>
 References: <20251020171059.2786070-1-wens@kernel.org>
@@ -59,36 +59,42 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The Radxa Cubie A5E exposes I2S2 through the PI pin group on the 40-pin
-GPIO header.
+The A523 has a SPDIF interface that is capable of both playback and
+capture.
 
-Add a pinmux setting for it so potential users can directly reference
-it.
+Add a node for it.
 
 Signed-off-by: Chen-Yu Tsai <wens@kernel.org>
 ---
- arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi b/arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi
-index eea9ce83783c..cebd8e16e845 100644
+index 8edbd3873199..33f991dbd00b 100644
 --- a/arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi
 +++ b/arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi
-@@ -145,6 +145,14 @@ pio: pinctrl@2000000 {
- 			interrupt-controller;
- 			#interrupt-cells = <3>;
+@@ -818,6 +818,21 @@ mcu_ccu: clock-controller@7102000 {
+ 			#reset-cells = <1>;
+ 		};
  
-+			/omit-if-no-ref/
-+			i2s2_pi_pins: i2s2-pi-pins {
-+				pins = "PI2", "PI3", "PI4", "PI5";
-+				allwinner,pinmux = <5>;
-+				function = "i2s2";
-+				bias-disable;
-+			};
++		spdif: spdif@7116000 {
++			compatible = "allwinner,sun55i-a523-spdif";
++			reg = <0x07116000 0x400>;
++			interrupts = <GIC_SPI 196 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mcu_ccu CLK_BUS_MCU_SPDIF>,
++				 <&mcu_ccu CLK_MCU_SPDIF_TX>,
++				 <&mcu_ccu CLK_MCU_SPDIF_RX>;
++			clock-names = "apb", "tx", "rx";
++			resets = <&mcu_ccu RST_BUS_MCU_SPDIF>;
++			dmas = <&mcu_dma 2>, <&mcu_dma 2>;
++			dma-names = "rx", "tx";
++			#sound-dai-cells = <0>;
++			status = "disabled";
++		};
 +
- 			mmc0_pins: mmc0-pins {
- 				pins = "PF0" ,"PF1", "PF2", "PF3", "PF4", "PF5";
- 				allwinner,pinmux = <2>;
+ 		mcu_dma: dma-controller@7121000 {
+ 			compatible = "allwinner,sun55i-a523-mcu-dma",
+ 				     "allwinner,sun50i-a100-dma";
 -- 
 2.47.3
 
