@@ -1,33 +1,66 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48D5D24886F;
-	Mon, 20 Oct 2025 11:22:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 361353002BD
+	for <linux-clk@vger.kernel.org>; Mon, 20 Oct 2025 11:40:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760959321; cv=none; b=HEo3BHm/m+OHEvZ67H09rH87LoC2xLIqKBoHK4nC/3qm6EsL+2SZe/LjEsN3T9RNmo2SaBhPt0yaMF2P0Sh/MRhCbyZnBk8LxN0l/K2Q+ubMUMLEn2wB/xJhNcK852URPNsaR3QTm3P9u+8N9TsBTbhrv1MaQzaNUP028hku2XY=
+	t=1760960428; cv=none; b=cd99yMuP36NDEYWAMfjjxPVJKwJJKxENtWOGargqP+vkhwVWrLJ8ZjkLAuvNC6oV60LZwk5NlX/8FskgzxGdNIb6/vVJF8y7D10g36Aak7g4jbkMRlFuag/9VrvbJAe6JB7G1KzUiv/SDgr3f7A3pJq4gsm+odZ5Wwa5Cw9dXWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760959321; c=relaxed/simple;
-	bh=LSHVI2VLtnjMI4kRWYUVFoVw5grvJWjCEzPh2CrLB9U=;
+	s=arc-20240116; t=1760960428; c=relaxed/simple;
+	bh=4qujkQr4EkckgFAhQ5XlwTIFQvfBFbXCicgVyIawCXE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cYzj/6owDoghY2Kn0WBqLoJFjoZqDgHw0W/7kT0K1baxDQ6IvKjCxYINWVBC1t5FENQyLxjnmB6aVdQhE8VZpt0GLDX+5g0ahiYIde72l1yaM1Y2zet1sqDPLi0uVqv7DgXzsmyAeaEpD8glN9vNzArb4P4O86u6Y184HCbOhGM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YfCWxJYu; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=O3J/Ggq9QEhg5FSltLIyIn5kwr1WWzdarySpR7Ex8FHia64hksrRzOmn+EzWMmUw/XLJDxxJNoFP6NLg/cKkGzzUcF87Xv2rwuSSa6G9iTFz+lVZQCZOraVviqp9sqQHZ5Fm3llhLJSWDC4+iy8EZArwDoEU7EU1cdLRu/9cD1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e98zoSil; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YfCWxJYu"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACF8FC4CEF9;
-	Mon, 20 Oct 2025 11:21:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760959320;
-	bh=LSHVI2VLtnjMI4kRWYUVFoVw5grvJWjCEzPh2CrLB9U=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=YfCWxJYus6FG0VhGEPHSD8Fv+hUPHuzdgxzvI/yj/ZVQO+yhR1lnZxExLt1uJ+Q9j
-	 b1WuQP0XLv0ksoPGuIYH+IHHDfp5VdwtfBYHgQMxij7Scc2qyqcTcYaZ5FaO/Z8Q7A
-	 pfOX5ug/YaKv9hRFViLXK2g0Rbsln0oERYmRj/VowBzXFeMoYQot23+nguqhIdzUtU
-	 KBtNjWTBnmkeBywrJFHehgpRO2viLQXKH7W0x4MfoEYfeZk8+5+p2rgNUDwXWJSgC6
-	 nh5ebyYJ5fuhhAhhWtP0Hvny47X5+bWq1bO08Kr6GW09Df2IpqcSVXecL9a60UMnTU
-	 uNBZwtVal3QkA==
-Message-ID: <c5712c26-439f-4c20-8d36-4179f345cca1@kernel.org>
-Date: Mon, 20 Oct 2025 13:21:54 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e98zoSil"
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-63bf76fc9faso7786241a12.2
+        for <linux-clk@vger.kernel.org>; Mon, 20 Oct 2025 04:40:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760960424; x=1761565224; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=KPl2Um7I2lBVEhg+iDB6W2BYLR9yy3oT8b4PVEgHMKA=;
+        b=e98zoSilovxWLl2kMmZEK6dF+U4Ae9hpk1M9dfW+SquR1ax+sd/sNc5OxVkuK3d/2r
+         Z6kuUIftzuCvGdeGkJPXSC1uiLd7K6qof1BGtq9s8VHlMF1AGC65mxJOLN2kIbARvMeV
+         lUKPeKBCQtVLTrQuCfkJUp149Xt4tl0FNnbBbNLgJOwM99LRR6GR7MliqyLLHoRBC+Se
+         H7d9Uueq2UAJa1R7VD7TmPkuwis4nDQdFoJ6jRI+M5TSPqse5lVghgAIytqAOOJcq+h9
+         CpnUuWxfMbqnVBZWPor7Snq1PdOz0Is83OTI0R767LPgw0Ztz0S64MxdvDwUeEBIkMDu
+         TJGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760960424; x=1761565224;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KPl2Um7I2lBVEhg+iDB6W2BYLR9yy3oT8b4PVEgHMKA=;
+        b=ttpYQc84m8lkSX+WJQlSbCX6njioEfK/Oce22nElnvoJii6DoLCTXwM6MkMyJgByve
+         KNcM800y6v6vQcBLQjrkFyX+BYDS30EriNxFI/AGD16rnDpqve62o1EJqa6r3SiRcPXk
+         bHMsp0UD7lDDe7x+3SFxBq9RZMeLIFS5f/feZViCFvOhiT/r0N0TX40iEGyURAUOEr+Z
+         q8OikM3M5KCH4wJZQsMdZ1SPT7HblAXgnSOeVPSRpYFiqw+iEyVG+W+plAptNLWKdOhd
+         i2kkOGnmMxTFHXphskdDT91HvTqGU9g1Nlbm3SiD23ASZ2kHqeprMj1tSGOsk8kgkK2U
+         YNOg==
+X-Forwarded-Encrypted: i=1; AJvYcCXACDubKo2qJ4d1kCDr1Bptt1RIkCVIc4D9NTJ+legjUEYszlSbaQVKv8LhFmpFGZmL923XEJbWqAo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YynYFlyd8YtW92jbX7q/4qH23C2xwvOIIAGT+weQab4PP1VywLp
+	skVGSgLT0X1/5hIuyE0Z/QcVcJGrMDIO1sKXn29LVtvcwpOSeve1+7bP
+X-Gm-Gg: ASbGncsegqNWKZ2shwph5HRbBfJFxYyGyQis1Z50gSGrZBxV+wxiT7xq0KR6+f2ugmE
+	PX69OgfgwBbc+CwVXcaIMsB8wUwuYh6/LBGMlgiXckeKe32bauZZogehMbRAYnY+Dr24r14Ziqk
+	EiFrdzOTDwP6i4zAW5PwGpTEC52VLi7i8U4xjShZe4/iZcdv2dg0PZT0jYqRxu+OBxEVu+6hEG2
+	scBCN6+q9joYa3O4B2gEVIrhK1/gfabwygNhq6PedvTcpVUQj0ucOVIcvhHHjaDqlqAc/p1k7JF
+	NFcPBDOnX9DbgySvnzHCmFtZto27AGC7+cXY2wGsCAQcy0eXSr6OSVwfwsOG0H5Q6uAdMbFMwMA
+	qeT3/YfK/uw5VEoOAy+6/D6B+tZzaZ6/jkgpSwQur9nq9EZrOdrOay5HYzb4lXeolnJXTCisWu3
+	a+lvHxAzy8IT1lNxXDxH0aoJ0nSoqG+yCYsWrCJZUjxD0=
+X-Google-Smtp-Source: AGHT+IHv0Y0doSGXPi8HpPtRdOnJc4jNXqRl53GERgwAGtBO/cFV9LV248sfpWgTh1PM9QwVQ56tPg==
+X-Received: by 2002:a05:6402:510b:b0:63b:f157:bc2d with SMTP id 4fb4d7f45d1cf-63c1f62af3emr12187142a12.1.1760960424268;
+        Mon, 20 Oct 2025 04:40:24 -0700 (PDT)
+Received: from [10.25.213.231] ([128.77.115.157])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-63c4949998csm6438734a12.38.2025.10.20.04.40.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Oct 2025 04:40:23 -0700 (PDT)
+Message-ID: <07a3b881-9ddf-477d-a027-32b3f9ee3d36@gmail.com>
+Date: Mon, 20 Oct 2025 04:40:20 -0700
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,134 +68,315 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 4/6] clk: samsung: add Exynos ACPM clock driver
-To: Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Peter Griffin <peter.griffin@linaro.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+Subject: Re: [PATCH v2 3/8] clk: imx: add driver for imx8ulp's sim lpav
+To: Frank Li <Frank.li@nxp.com>
+Cc: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Fabio Estevam <festevam@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>,
+ Daniel Baluta <daniel.baluta@nxp.com>, Shengjiu Wang
+ <shengjiu.wang@nxp.com>, linux-clk@vger.kernel.org, imx@lists.linux.dev,
  devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, willmcvicker@google.com, kernel-team@android.com
-References: <20251010-acpm-clk-v6-0-321ee8826fd4@linaro.org>
- <20251010-acpm-clk-v6-4-321ee8826fd4@linaro.org>
- <92f1c027-bacc-4537-a158-2e0890e2e8ee@kernel.org>
- <17695fcf-f33c-4246-8d5c-b2120e9e03b1@linaro.org>
- <2f8da425-63d9-4321-9cd3-976bbd29a52f@kernel.org>
- <a03cd07f-8e9f-4b02-b301-f1bbb69eb7db@linaro.org>
- <f6812244-8e8e-45b9-87b9-fe96d740a843@kernel.org>
- <de77e673-c2f2-4293-88bf-be9c6779a5dc@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+ linux-kernel@vger.kernel.org, Pengutronix Kernel Team <kernel@pengutronix.de>
+References: <20251017112025.11997-1-laurentiumihalcea111@gmail.com>
+ <20251017112025.11997-4-laurentiumihalcea111@gmail.com>
+ <aPJVtzVyTYAhIFGp@lizhi-Precision-Tower-5810>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <de77e673-c2f2-4293-88bf-be9c6779a5dc@linaro.org>
+From: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
+In-Reply-To: <aPJVtzVyTYAhIFGp@lizhi-Precision-Tower-5810>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 20/10/2025 13:02, Tudor Ambarus wrote:
-> 
-> 
-> On 10/20/25 10:58 AM, Krzysztof Kozlowski wrote:
->> On 20/10/2025 11:19, Tudor Ambarus wrote:
->>>
->>>
->>> On 10/20/25 9:22 AM, Krzysztof Kozlowski wrote:
->>>> On 20/10/2025 09:45, Tudor Ambarus wrote:
->>>>>
->>>>>
->>>>> On 10/20/25 7:54 AM, Krzysztof Kozlowski wrote:
->>>>>>> diff --git a/drivers/clk/samsung/Kconfig b/drivers/clk/samsung/Kconfig
->>>>>>> index 76a494e95027af26272e30876a87ac293bd56dfa..70a8b82a0136b4d0213d8ff95e029c52436e5c7f 100644
->>>>>>> --- a/drivers/clk/samsung/Kconfig
->>>>>>> +++ b/drivers/clk/samsung/Kconfig
->>>>>>> @@ -95,6 +95,16 @@ config EXYNOS_CLKOUT
->>>>>>>  	  status of the certains clocks from SoC, but it could also be tied to
->>>>>>>  	  other devices as an input clock.
->>>>>>>  
->>>>>>> +config EXYNOS_ACPM_CLK
->>>>>>> +	tristate "Clock driver controlled via ACPM interface"
->>>>>>> +	depends on EXYNOS_ACPM_PROTOCOL || (COMPILE_TEST && !EXYNOS_ACPM_PROTOCOL)
->>>>>>
->>>>>> I merged the patches but I don't get why we are not enabling it by
->>>>>> default, just like every other clock driver. What is so special here?
->>>>>
->>>>> Thanks! Are you referring to the depends on line? I needed it otherwise
->>>>> on randconfigs where COMPILE_TEST=y and EXYNOS_ACPM_PROTOCOL=n I get:
->>>>
->>>>
->>>> No. I am referring to missing default and defconfig patch.
->>>>
->>>
->>> default m or y would force compilation of EXYNOS_ACPM_CLK and
->>> EXYNOS_ACPM_PROTOCOL for all ARCH_EXYNOS, even on Exynos platforms that
->>> don't use ACPM. Since ACPM is not universally required by the Exynos
->>> architecture, I thought to make it opt-in (default n).
+
+On 10/17/2025 7:41 AM, Frank Li wrote:
+> On Fri, Oct 17, 2025 at 04:20:20AM -0700, Laurentiu Mihalcea wrote:
+>> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
 >>
+>> The i.MX8ULP System Integration Module (SIM) LPAV module is a block
+>> control module found inside the LPAV subsystem, which offers some clock
+>> gating options and reset line assertion/de-assertion capabilities.
 >>
->> Just like every clock driver. So again - how is it different?
-> 
-> The key difference lies in the universality of the hardware interface
-> across the ARCH_EXYNOS family. If EXYNOS_AUDSS_CLK_CON, EXYNOS_CLKOUT
-> are considered core, integral, or nearly universal features across
-> Exynos SoCs, then it's alright to have them by default. I can't tell how
-> common is ACPM across the Samsung Exynos SoCs. I know it's present on
-> gs{1,2)01 and e850. Heard it mentioned around some other phone but I
-> can't remember which. Maybe we shall set to a default m when more users
-> reveal themselves? I'm of course open to drop the defconfig patch and
-> follow up with a patch setting EXYNOS_ACPM_CLK to
-> "default m if ARCH_EXYNOS" if you think it's common enough.
+>> Therefore, the clock gate management is supported by registering the
+>> module's driver as a clock provider, while the reset capabilities are
+>> managed via the auxiliary device API to allow the DT node to act as a
+>> reset and clock provider.
+>>
+>> Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+>> ---
+>>  drivers/clk/imx/Makefile               |   1 +
+>>  drivers/clk/imx/clk-imx8ulp-sim-lpav.c | 211 +++++++++++++++++++++++++
+>>  2 files changed, 212 insertions(+)
+>>  create mode 100644 drivers/clk/imx/clk-imx8ulp-sim-lpav.c
+>>
+>> diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
+>> index 03f2b2a1ab63..208b46873a18 100644
+>> --- a/drivers/clk/imx/Makefile
+>> +++ b/drivers/clk/imx/Makefile
+>> @@ -41,6 +41,7 @@ clk-imx-lpcg-scu-$(CONFIG_CLK_IMX8QXP) += clk-lpcg-scu.o clk-imx8qxp-lpcg.o
+>>  clk-imx-acm-$(CONFIG_CLK_IMX8QXP) = clk-imx8-acm.o
+>>
+>>  obj-$(CONFIG_CLK_IMX8ULP) += clk-imx8ulp.o
+>> +obj-$(CONFIG_CLK_IMX8ULP) += clk-imx8ulp-sim-lpav.o
+>>
+>>  obj-$(CONFIG_CLK_IMX1)   += clk-imx1.o
+>>  obj-$(CONFIG_CLK_IMX25)  += clk-imx25.o
+>> diff --git a/drivers/clk/imx/clk-imx8ulp-sim-lpav.c b/drivers/clk/imx/clk-imx8ulp-sim-lpav.c
+>> new file mode 100644
+>> index 000000000000..a67a0e50e1ce
+>> --- /dev/null
+>> +++ b/drivers/clk/imx/clk-imx8ulp-sim-lpav.c
+>> @@ -0,0 +1,211 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * Copyright 2025 NXP
+>> + */
+>> +
+>> +#include <dt-bindings/clock/imx8ulp-clock.h>
+>> +
+>> +#include <linux/auxiliary_bus.h>
+>> +#include <linux/clk-provider.h>
+>> +#include <linux/module.h>
+>> +#include <linux/of.h>
+>> +#include <linux/of_platform.h>
+>> +#include <linux/platform_device.h>
+>> +#include <linux/regmap.h>
+>> +
+>> +#define SYSCTRL0 0x8
+>> +
+>> +#define IMX8ULP_HIFI_CLK_GATE(gname, cname, pname, bidx)	\
+>> +	{							\
+>> +		.name = gname "_cg",				\
+>> +		.id = IMX8ULP_CLK_SIM_LPAV_HIFI_##cname,	\
+>> +		.parent = { .fw_name = pname, .name = pname },	\
+>> +		.bit = bidx,					\
+>> +	}
+>> +
+>> +struct clk_imx8ulp_sim_lpav_data {
+>> +	void __iomem *base;
+>> +	struct regmap *regmap;
+>> +	spinlock_t lock; /* shared by MUX, clock gate and reset */
+>> +	unsigned long flags; /* for spinlock usage */
+>> +	struct clk_hw_onecell_data clk_data; /*  keep last */
+>> +};
+>> +
+>> +struct clk_imx8ulp_sim_lpav_gate {
+>> +	const char *name;
+>> +	int id;
+>> +	const struct clk_parent_data parent;
+>> +	u8 bit;
+>> +};
+>> +
+>> +static struct clk_imx8ulp_sim_lpav_gate gates[] = {
+>> +	IMX8ULP_HIFI_CLK_GATE("hifi_core", CORE, "hifi_core", 17),
+>> +	IMX8ULP_HIFI_CLK_GATE("hifi_pbclk", PBCLK, "lpav_bus", 18),
+>> +	IMX8ULP_HIFI_CLK_GATE("hifi_plat", PLAT, "hifi_plat", 19)
+>> +};
+>> +
+>> +#ifdef CONFIG_RESET_CONTROLLER
+> Needn't this ifdef because if CONFIG_RESET_CONTROLLER, reset driver will
+> not probe, just register aux device is not harmful.
 
 
-OK, we can wait till one more user appears. Although the choice is less
-about universality, but rather if this is a core SoC element. If this is
-a core SoC element, then SoC ARCH should select it (not allow to disable
-it), even if this is only for one ARCH_EXYNOS SoC.
+ah, yes, was meant to drop this. Will give it a try and do the change for V3 if everything
 
-Best regards,
-Krzysztof
+works well.
+
+
+>
+>> +static void clk_imx8ulp_sim_lpav_aux_reset_release(struct device *dev)
+>> +{
+>> +	struct auxiliary_device *adev = to_auxiliary_dev(dev);
+>> +
+>> +	kfree(adev);
+>> +}
+>> +
+>> +static void clk_imx8ulp_sim_lpav_unregister_aux_reset(void *data)
+>> +{
+>> +	struct auxiliary_device *adev = data;
+>> +
+>> +	auxiliary_device_delete(adev);
+>> +	auxiliary_device_uninit(adev);
+>> +}
+>> +
+>> +static int clk_imx8ulp_sim_lpav_register_aux_reset(struct platform_device *pdev)
+>> +{
+>> +	struct auxiliary_device *adev __free(kfree) = NULL;
+>> +	int ret;
+>> +
+>> +	adev = kzalloc(sizeof(*adev), GFP_KERNEL);
+>> +	if (!adev)
+>> +		return -ENOMEM;
+>> +
+>> +	adev->name = "reset";
+>> +	adev->dev.parent = &pdev->dev;
+>> +	adev->dev.release = clk_imx8ulp_sim_lpav_aux_reset_release;
+>> +
+>> +	ret = auxiliary_device_init(adev);
+>> +	if (ret) {
+>> +		dev_err(&pdev->dev, "failed to initialize aux dev\n");
+>> +		return ret;
+>> +	}
+>> +
+>> +	ret = auxiliary_device_add(adev);
+>> +	if (ret) {
+>> +		auxiliary_device_uninit(adev);
+>> +		dev_err(&pdev->dev, "failed to add aux dev\n");
+>> +		return ret;
+>> +	}
+>> +
+>> +	return devm_add_action_or_reset(&pdev->dev,
+>> +					clk_imx8ulp_sim_lpav_unregister_aux_reset,
+>> +					no_free_ptr(adev));
+> use devm_auxiliary_device_create() to simple whole code.
+
+
+good catch. Will give this a try and switch to it in next version if there's no issues.
+
+
+>
+>> +}
+>> +#else
+>> +static int clk_imx8ulp_sim_lpav_register_aux_reset(struct platform_device *pdev)
+>> +{
+>> +	return 0;
+>> +}
+>> +#endif /* CONFIG_RESET_CONTROLLER */
+>> +
+>> +static void clk_imx8ulp_sim_lpav_lock(void *arg) __acquires(&data->lock)
+>> +{
+>> +	struct clk_imx8ulp_sim_lpav_data *data = dev_get_drvdata(arg);
+>> +
+>> +	spin_lock_irqsave(&data->lock, data->flags);
+>> +}
+>> +
+>> +static void clk_imx8ulp_sim_lpav_unlock(void *arg) __releases(&data->lock)
+>> +{
+>> +	struct clk_imx8ulp_sim_lpav_data *data = dev_get_drvdata(arg);
+>> +
+>> +	spin_unlock_irqrestore(&data->lock, data->flags);
+>> +}
+>> +
+>> +static const struct regmap_config clk_imx8ulp_sim_lpav_regmap_cfg = {
+>> +	.reg_bits = 32,
+>> +	.val_bits = 32,
+>> +	.reg_stride = 4,
+>> +	.lock = clk_imx8ulp_sim_lpav_lock,
+>> +	.unlock = clk_imx8ulp_sim_lpav_unlock,
+> why need lock/unlock here, regmap already have lock to access one register.
+
+
+yeah but we want to share the lock with the clock gate. I know we can theoretically do
+
+something like "&regmap->spinlock" but the lock initialization (i.e. which lock we initialize)
+
+depends on how we configure "struct regmap_config", which is why I think my proposal is
+
+more robust since we don't depend on how we fill in the fields of "struct regmap_config"
+
+(other than lock/unlock/lock_arg).
+
+
+But then again I'm not fixated on current approach so if more people think it would
+
+be better to just use "&regmap->spinlock" then I'll give that a try.
+
+
+>
+> Frank
+>> +};
+>> +
+>> +static int clk_imx8ulp_sim_lpav_probe(struct platform_device *pdev)
+>> +{
+>> +	struct clk_imx8ulp_sim_lpav_data *data;
+>> +	struct regmap_config regmap_config;
+>> +	struct clk_hw *hw;
+>> +	int i, ret;
+>> +
+>> +	data = devm_kzalloc(&pdev->dev,
+>> +			    struct_size(data, clk_data.hws, ARRAY_SIZE(gates)),
+>> +			    GFP_KERNEL);
+>> +	if (!data)
+>> +		return -ENOMEM;
+>> +
+>> +	dev_set_drvdata(&pdev->dev, data);
+>> +
+>> +	memcpy(&regmap_config, &clk_imx8ulp_sim_lpav_regmap_cfg, sizeof(regmap_config));
+>> +	regmap_config.lock_arg = &pdev->dev;
+>> +
+>> +	/*
+>> +	 * this lock is used directly by the clock gate and indirectly
+>> +	 * by the reset and mux controller via the regmap API
+>> +	 */
+>> +	spin_lock_init(&data->lock);
+>> +
+>> +	data->base = devm_platform_ioremap_resource(pdev, 0);
+>> +	if (IS_ERR(data->base))
+>> +		return dev_err_probe(&pdev->dev, PTR_ERR(data->base),
+>> +				     "failed to ioremap base\n");
+>> +	/*
+>> +	 * although the clock gate doesn't use the regmap API to modify the
+>> +	 * registers, we still need the regmap because of the reset auxiliary
+>> +	 * driver and the MUX drivers, which use the parent device's regmap
+>> +	 */
+>> +	data->regmap = devm_regmap_init_mmio(&pdev->dev, data->base, &regmap_config);
+>> +	if (IS_ERR(data->regmap))
+>> +		return dev_err_probe(&pdev->dev, PTR_ERR(data->regmap),
+>> +				     "failed to initialize regmap\n");
+>> +
+>> +	data->clk_data.num = ARRAY_SIZE(gates);
+>> +
+>> +	for (i = 0; i < ARRAY_SIZE(gates); i++) {
+>> +		hw = devm_clk_hw_register_gate_parent_data(&pdev->dev,
+>> +							   gates[i].name,
+>> +							   &gates[i].parent,
+>> +							   CLK_SET_RATE_PARENT,
+>> +							   data->base + SYSCTRL0,
+>> +							   gates[i].bit,
+>> +							   0x0, &data->lock);
+>> +		if (IS_ERR(hw))
+>> +			return dev_err_probe(&pdev->dev, PTR_ERR(hw),
+>> +					     "failed to register %s gate\n",
+>> +					     gates[i].name);
+>> +
+>> +		data->clk_data.hws[i] = hw;
+>> +	}
+>> +
+>> +	ret = clk_imx8ulp_sim_lpav_register_aux_reset(pdev);
+>> +	if (ret)
+>> +		return dev_err_probe(&pdev->dev, ret,
+>> +				     "failed to register aux reset\n");
+>> +
+>> +	ret = devm_of_clk_add_hw_provider(&pdev->dev,
+>> +					  of_clk_hw_onecell_get,
+>> +					  &data->clk_data);
+>> +	if (ret)
+>> +		return dev_err_probe(&pdev->dev, ret,
+>> +				     "failed to register clk hw provider\n");
+>> +
+>> +	/* used to probe MUX child device */
+>> +	return devm_of_platform_populate(&pdev->dev);
+>> +}
+>> +
+>> +static const struct of_device_id clk_imx8ulp_sim_lpav_of_match[] = {
+>> +	{ .compatible = "fsl,imx8ulp-sim-lpav" },
+>> +	{ }
+>> +};
+>> +MODULE_DEVICE_TABLE(of, clk_imx8ulp_sim_lpav_of_match);
+>> +
+>> +static struct platform_driver clk_imx8ulp_sim_lpav_driver = {
+>> +	.probe = clk_imx8ulp_sim_lpav_probe,
+>> +	.driver = {
+>> +		.name = "clk-imx8ulp-sim-lpav",
+>> +		.of_match_table = clk_imx8ulp_sim_lpav_of_match,
+>> +	},
+>> +};
+>> +module_platform_driver(clk_imx8ulp_sim_lpav_driver);
+>> +
+>> +MODULE_LICENSE("GPL");
+>> +MODULE_DESCRIPTION("i.MX8ULP LPAV System Integration Module (SIM) clock driver");
+>> +MODULE_AUTHOR("Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>");
+>> --
+>> 2.43.0
+>>
