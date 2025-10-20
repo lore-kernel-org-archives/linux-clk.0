@@ -1,33 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0D952D1F44;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0F2532F754;
 	Mon, 20 Oct 2025 17:11:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760980280; cv=none; b=aElnK2fiSE50XDhFWTfYs4La9TKdqfGoCEthFmQKywdhab6E05CzcMJy0RpXIea1Fx2j53X5EDuJLohwGwIf5Z34peimWHjpcsaRy8mGV5tS9cgS+6ZYUSNTZ17pG79uE3p0bVcii/9qW8zZCL7J6LPYSwy55T3GF5CJdYkgPyk=
+	t=1760980280; cv=none; b=KL4JMiuQ1GKOFFkAUnSVz03AM0ogk/zwwzGBNPxHc3GZlIbshzcv4hm1C3u982P5Ay7bHMJLsf+VT9VR+/DgnpWneG85Za9lWLSeRAcZ74F4agyvN3Gdmsx99PwfnCtErJRKDNhEDpKcwIfuTAyGso/O+WIn3C+SJIqV46qR1ug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1760980280; c=relaxed/simple;
-	bh=scg+/vO8bFxkmmzsBeRqdeZzJ1dGRrmJ/AeHk9Ng2s0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=LqgvjlYkJ0vf+Vvbh3pTI7sf4pptuFH/IvdUAMBbVobDnq3MZVff1kCjluifU4jienBiVI7nPf3gf4aKN7FcMXp2aoWqigWEzizj5TPCWzjrzFMQqCksbKM5c0KCF9AdNt59bwepoVf/EgC4XiP2HEaEyQSzruN7xwEwL7cfVms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gy4iVDXJ; arc=none smtp.client-ip=10.30.226.201
+	bh=TJPYa24Z5KTj/XUQBDA+4muq/sKdsaWSFY+S+sPkdkw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nIfTC1fQRqpNr66bAWuk4T6M9eiIOTdheb/qPSCuISI2/s3pua+2mntMwNlnMTrrKPlNq9n91m3GM/iGciLfC4tqz9pTTOdUQHTmTRisQnS2BPTznNdzbBcdNl9741XH6rqsayyyKW/3PEAVCcBZEDKNuW3exIwRucp/ab84wiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RTQz/DbS; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gy4iVDXJ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 482EEC113D0;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RTQz/DbS"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B395C4CEF9;
 	Mon, 20 Oct 2025 17:11:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1760980280;
-	bh=scg+/vO8bFxkmmzsBeRqdeZzJ1dGRrmJ/AeHk9Ng2s0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Gy4iVDXJWPC5L6y6UGyZNPo1lTkIFG+bSMJ3dmQuCn4YSDVdoZO6n7pLVV7CmH4RA
-	 K2IdzWv4HUJdz6a7QyNz6Fkz3s5IEm22PF1bQQo+GXfG6rW2u6ADBT9Kd5tEPIyA9I
-	 SAqqzGT62WZfYIC8H87SqEnyyJT7Qep5vR9wvouCiHE6gJqodbcrY/OpOlMCInb5G6
-	 PNW9S6EsKppFRgFGqBHMMN4dT/HmB8AjB9bWiufu+0VZJj2QatzvL2TlHqtN2DvAo+
-	 zcxZK5zdadGd2C6f75ZqiasnwzAwdr7mNjrqcUJJqHkXOB/QTFmFy821qOGMn/v3TW
-	 lriRxPotYO48g==
+	bh=TJPYa24Z5KTj/XUQBDA+4muq/sKdsaWSFY+S+sPkdkw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=RTQz/DbS3nDJtiW0gDdrU4/D+mk33QWYGezbsuDwSgW+xyVGsCuE7m2lbKyKoZDYg
+	 Qxd2TUg5S8DD4fruNkVcz6j9K2v0gJFpE6uo4SZaiwN6gkdyVwLfkaneT53r5mDLH7
+	 WoUBvzrF4qdszKMcVpagSm4DAFS+/vF12j6AL74W6f3HsqSeqZ3cfBsFgCvUocr291
+	 Q84eyOe8eHgi1cUIQiImKIl+am2qIMJjFA3bkyY05VTwx/oHMC06eQm5Aq1xnKVWUt
+	 odkOIZ8CHk2n+GNqzHgdEF7a5pMxYN0hWChZwXnFGS4LMAX5WhEe+eSD+gJ7lXcQdw
+	 MLoZ4bYpOegMA==
 Received: by wens.tw (Postfix, from userid 1000)
-	id 344895FE2C; Tue, 21 Oct 2025 01:11:18 +0800 (CST)
+	id 1D6D45FDC3; Tue, 21 Oct 2025 01:11:18 +0800 (CST)
 From: Chen-Yu Tsai <wens@kernel.org>
 To: Chen-Yu Tsai <wens@kernel.org>,
 	Jernej Skrabec <jernej@kernel.org>,
@@ -45,12 +44,10 @@ Cc: linux-sunxi@lists.linux.dev,
 	devicetree@vger.kernel.org,
 	dmaengine@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 02/11] ASoC: dt-bindings: allwinner,sun4i-a10-i2s: Add compatible for A523
-Date: Tue, 21 Oct 2025 01:10:48 +0800
-Message-ID: <20251020171059.2786070-3-wens@kernel.org>
+Subject: [PATCH 00/11] allwinner: a523: Enable I2S and SPDIF TX
+Date: Tue, 21 Oct 2025 01:10:46 +0800
+Message-ID: <20251020171059.2786070-1-wens@kernel.org>
 X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251020171059.2786070-1-wens@kernel.org>
-References: <20251020171059.2786070-1-wens@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -59,33 +56,84 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-As far as the author can tell, based on their respective manuals,
-the I2S interface controllers found in the Allwinner A523 SoC is the
-same as ones in the R329 SoC.
+Hi folks,
 
-Add a SoC-specific compatible for it, with a fallback to the R329's
-compatible.
+This series enables the SPDIF and I2S hardware found on the Allwinner
+A523/A527/T527 family SoCs. These SoCs have one SPDIF interface and
+four I2S interfaces. All of them are capable of both playback and
+capture, however the SPDIF driver only supports playback.
 
-Signed-off-by: Chen-Yu Tsai <wens@kernel.org>
----
- .../devicetree/bindings/sound/allwinner,sun4i-a10-i2s.yaml    | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+The series is organized by subsystem, so each maintainer can find the
+patches they need to take.
 
-diff --git a/Documentation/devicetree/bindings/sound/allwinner,sun4i-a10-i2s.yaml b/Documentation/devicetree/bindings/sound/allwinner,sun4i-a10-i2s.yaml
-index 739114fb6549..ae86cb5f0a74 100644
---- a/Documentation/devicetree/bindings/sound/allwinner,sun4i-a10-i2s.yaml
-+++ b/Documentation/devicetree/bindings/sound/allwinner,sun4i-a10-i2s.yaml
-@@ -33,7 +33,9 @@ properties:
-       - const: allwinner,sun50i-h6-i2s
-       - const: allwinner,sun50i-r329-i2s
-       - items:
--          - const: allwinner,sun20i-d1-i2s
-+          - enum:
-+              - allwinner,sun20i-d1-i2s
-+              - allwinner,sun55i-a523-i2s
-           - const: allwinner,sun50i-r329-i2s
- 
-   reg:
+Patch 1 adds SoC/hardware specific compatibles for the two DMA
+controllers in the A523 SoC.
+
+Patch 2 adds an SoC specific compatible for the I2S interface
+controllers in the A523 SoC.
+
+Patch 3 adds an SoC specific compatible for the SPDIF interface
+controller in the A523 SoC.
+
+Patch 4 adds driver support for the SPDIF interface.
+
+Patch 5 marks a clock related to the DMA controller as critical. The
+docs are quite vague on how this particular clock gate ties in with
+the other memory bus gate that the DMA controller needs.
+
+Patch 6 tweaks the software lower limit of the audio PLL.
+
+Patch 7 adds devices nodes for the DMA controllers.
+
+Patch 8 adds a devices node for the SPDIF interface controller.
+
+Patch 9 adds device nodes for the I2S interface controllers.
+
+Patch 10 adds one set of pinmux settings for I2S2.
+
+Patch 11 is what I used to test the changes, and serves as an example
+for how to use these new interfaces.
+
+
+Patch 1 can go through the dmaengine tree, or I can take it through the
+sunxi tree.
+
+Patches 2 through 4 should go through the ASoC tree.
+
+The rest, except the example, will go through the sunxi tree.
+
+
+Please take a look.
+
+
+Thanks
+ChenYu
+
+
+Chen-Yu Tsai (11):
+  dt-bindings: dma: allwinner,sun50i-a64-dma: Add compatibles for A523
+  ASoC: dt-bindings: allwinner,sun4i-a10-i2s: Add compatible for A523
+  ASoC: dt-bindings: allwinner,sun4i-a10-spdif: Add compatible for A523
+  ASoC: sun4i-spdif: Support SPDIF output on A523 family
+  clk: sunxi-ng: sun55i-a523-r-ccu: Mark bus-r-dma as critical
+  clk: sunxi-ng: sun55i-a523-ccu: Lower audio0 pll minimum rate
+  arm64: dts: allwinner: a523: Add DMA controller device nodes
+  arm64: dts: allwinner: a523: Add device node for SPDIF block
+  arm64: dts: allwinner: a523: Add device nodes for I2S controllers
+  arm64: dts: allwinner: a523: Add I2S2 pins on PI pin group
+  [EXAMPLE] arm64: dts: allwinner: a527-cubie-a5e: Enable I2S and SPDIF
+    output
+
+ .../dma/allwinner,sun50i-a64-dma.yaml         |   5 +-
+ .../sound/allwinner,sun4i-a10-i2s.yaml        |   4 +-
+ .../sound/allwinner,sun4i-a10-spdif.yaml      |  44 +++++-
+ .../arm64/boot/dts/allwinner/sun55i-a523.dtsi | 135 ++++++++++++++++++
+ .../dts/allwinner/sun55i-a527-cubie-a5e.dts   |  52 +++++++
+ drivers/clk/sunxi-ng/ccu-sun55i-a523-r.c      |   2 +-
+ drivers/clk/sunxi-ng/ccu-sun55i-a523.c        |   2 +-
+ sound/soc/sunxi/sun4i-spdif.c                 |  28 +++-
+ 8 files changed, 259 insertions(+), 13 deletions(-)
+
 -- 
 2.47.3
 
