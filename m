@@ -1,178 +1,195 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57161275105;
-	Mon, 20 Oct 2025 15:50:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760975443; cv=none; b=tpgeW/vqsQggsQfca0a6M7Q+e/+tYWMXew4s3XfFJrJVskb7WboP95DCWb87H3VN/LCxbaqexm4FHa3Kb2fo0GGhGJ+y3YVMLUIJxjFN9duaIyLuBOSm3wAkAkaHzAMx51UFhqyp67UXpH4HVrIf9/gWeTbvy1I1E1UEEzBiqGs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760975443; c=relaxed/simple;
-	bh=l8m4M2GIde3SF7ii/dLB0xHO/biVzlVY+q5epUJqyd4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PiIH/IYiNQ8TdZSUsIUdDSsZtujbbUREX2RTv+cr1elAQ1jJtLTkp0jsRldrRCt8BbIkScGGRAFHXOgnhYSBwrJ7tP49s6eReVI2lMzp3Z07hKTqkChyity3AjhlGVCpN+IPag7z5UqWBVRgnFTS3uJ3DcWyovuaV66b6hvEva8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UlUrGhDG; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7190024BD1A;
+	Mon, 20 Oct 2025 15:59:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760975998; cv=pass; b=HwWBQHP6llaRZp5pqU/yAGHnS/QThBLxXaAYg5MFu87/NYtysOm6XdThLozt0ybxA/862/DGSUL9lRrqto5q40orjWk0St5UlZNgo81wuYlai6qndUqYqiaswI19/P9VlQvekw5B/Q4fkiigLxI5QXuxcNShmnamK8MkjX67KhE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760975998; c=relaxed/simple;
+	bh=ZG1Avcj97+DuLAUg3cK2NE+DlJ8sgcNUDHLqJdRW+Fk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sPIVmz0Sb3BvX1mVPlx7iyGxQskzFYx6sUn4vrS/V+4zqTjOUWjWQLwhFg/H7ulmNwpxvve4bkIfiTRJk7z9UbJ2D6WgXLg8a/gU32szziuu6NoXFpe1+6XMe6q+hGFQwzXi65pjrl4qgvUYxYfCHNZjkfULTSC+y1aL0k1SoNs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=CIqNZUYN; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UlUrGhDG"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85AF6C4CEF9;
-	Mon, 20 Oct 2025 15:50:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760975442;
-	bh=l8m4M2GIde3SF7ii/dLB0xHO/biVzlVY+q5epUJqyd4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=UlUrGhDGmwt2YWU7VhKf3xkl4TOrFUlSsfIGATYsbWhQgIGFbf6BbFyXGseBKLSm3
-	 5wAfPtCnASu7++fbV0fHdcnl66AGMWatycdzQ6AaQkEXN7KcZ/z/GZISfch8q1hN98
-	 bzgWzJ+8IRY9fNj4AhLOe9/4H903R5rd+nOMDYR/qac3hK3FFZr9v2fA6uzqxLLh34
-	 Y78za+vt2MfYhs+oTvXGw+qIBPkHIgnkhNPQTXvupIcmmaA4CGptWYB9utfuEv/2FY
-	 A97oc4hWFFjqyFmJxYF4iWDERBj41P/HLgrDTxRh3AtmWSgz0UDK2pHL4tkoNHDNS1
-	 6mETWH0pxUZoQ==
-Message-ID: <20e796b1-0895-4cc8-b97f-fe2696b055f8@kernel.org>
-Date: Mon, 20 Oct 2025 17:50:36 +0200
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="CIqNZUYN"
+ARC-Seal: i=1; a=rsa-sha256; t=1760975979; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=Wy0NOCnKfBjwkN1+ttbmqreAXMxrEFfBhHLur1okXEVB8hGchpzFBxF24zQq262j2EPG6VZfHZSmP4USowJRFr+Z6lioLlMEvaHijQE+Nn5HTVQZbHRs1wdx4xFPJS644ufSUkEswDomYYIXFqVSKbv4dRaPFk4ZA5dMMUpw7n8=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1760975979; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=zrRTMDRoKEij/qgsmjlkkItncpY8TQi3dW/HAP1V1O4=; 
+	b=DUWu+26nuvDQigb7XaIUdxyQGTczedqCMJO/SY5kloFvFuWPLZkInxx29MAZTg7WDeNaQMXfUZacUqlFBBEd3LbPIxS/mGT5uLhT5WLsLgT0/xQ0n7U7abTOQ18VZ+tdcIR2eABIbiDeekEdJq7QDRftFcvyNgzS1G6l9Fes9p8=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
+	dmarc=pass header.from=<sebastian.reichel@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1760975978;
+	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
+	bh=zrRTMDRoKEij/qgsmjlkkItncpY8TQi3dW/HAP1V1O4=;
+	b=CIqNZUYNWpVGH2I7WLmeDPFtveMCn0pQ2wDLLwd58MBwsleeFPHnqkWJ4YKq/OoL
+	I7cbgvwlgvfSblNpOu4m4Xs6KGbAV7WI4vx/8TC4ADXbrDa6iWeHSjUppx4QcNRSGsw
+	VQyNbCMfk+C1PqkHa+15qNQ4KC6mvNv6pkY8c464=
+Received: by mx.zohomail.com with SMTPS id 1760975975377620.3381568170347;
+	Mon, 20 Oct 2025 08:59:35 -0700 (PDT)
+Received: by venus (Postfix, from userid 1000)
+	id 4BE16180B11; Mon, 20 Oct 2025 17:59:29 +0200 (CEST)
+Date: Mon, 20 Oct 2025 17:59:29 +0200
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: Quentin Schulz <quentin.schulz@cherry.de>, mturquette@baylibre.com, 
+	sboyd@kernel.org, zhangqing@rock-chips.com, linux-clk@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org, Andy Yan <andy.yan@rock-chips.com>
+Subject: Re: [PATCH] clk: rockchip: rk3588: Don't change PLL rates when
+ setting dclk_vop2_src
+Message-ID: <j6ondk5xnwbm36isdoni5vtdq5mf5ak4kp63ratqlnpwsgrqj2@paw5lzwqa2ze>
+References: <20251008133135.3745785-1-heiko@sntech.de>
+ <2749454.BddDVKsqQX@diego>
+ <eumxn7lvp34si2gik33hcavcrsstqqoxixiznjbertxars7zcx@xsycorjhj3id>
+ <4856104.usQuhbGJ8B@phil>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/8] dt-bindings: clock: document 8ULP's SIM LPAV
-To: Frank Li <Frank.li@nxp.com>
-Cc: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>,
- Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Fabio Estevam <festevam@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>,
- Daniel Baluta <daniel.baluta@nxp.com>, Shengjiu Wang
- <shengjiu.wang@nxp.com>, linux-clk@vger.kernel.org, imx@lists.linux.dev,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Pengutronix Kernel Team <kernel@pengutronix.de>
-References: <20251017112025.11997-1-laurentiumihalcea111@gmail.com>
- <20251017112025.11997-3-laurentiumihalcea111@gmail.com>
- <aPJZ6dDRyyl3Qg4o@lizhi-Precision-Tower-5810>
- <cdecae8a-7fb9-4ac2-a412-1a18c4783ffa@kernel.org>
- <aPZTwf8O8tkqnDhx@lizhi-Precision-Tower-5810>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <aPZTwf8O8tkqnDhx@lizhi-Precision-Tower-5810>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-
-On 20/10/2025 17:22, Frank Li wrote:
-> On Sun, Oct 19, 2025 at 12:05:27PM +0200, Krzysztof Kozlowski wrote:
->> On 17/10/2025 16:59, Frank Li wrote:
->>> On Fri, Oct 17, 2025 at 04:20:19AM -0700, Laurentiu Mihalcea wrote:
->>>> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
->>>>
->>>> Add documentation for i.MX8ULP's SIM LPAV module.
->>>>
->>>> Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
->>>> ---
->>>>  .../bindings/clock/fsl,imx8ulp-sim-lpav.yaml  | 72 +++++++++++++++++++
->>>>  include/dt-bindings/clock/imx8ulp-clock.h     |  5 ++
->>>>  .../dt-bindings/reset/fsl,imx8ulp-sim-lpav.h  | 16 +++++
->>>>  3 files changed, 93 insertions(+)
->>>>  create mode 100644 Documentation/devicetree/bindings/clock/fsl,imx8ulp-sim-lpav.yaml
->>>>  create mode 100644 include/dt-bindings/reset/fsl,imx8ulp-sim-lpav.h
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/clock/fsl,imx8ulp-sim-lpav.yaml b/Documentation/devicetree/bindings/clock/fsl,imx8ulp-sim-lpav.yaml
->>>> new file mode 100644
->>>> index 000000000000..fb3b9028a4c3
->>>> --- /dev/null
->>>> +++ b/Documentation/devicetree/bindings/clock/fsl,imx8ulp-sim-lpav.yaml
->>>> @@ -0,0 +1,72 @@
->>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->>>> +%YAML 1.2
->>>> +---
->>>> +$id: http://devicetree.org/schemas/clock/fsl,imx8ulp-sim-lpav.yaml#
->>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>>> +
->>>> +title: NXP i.MX8ULP LPAV System Integration Module (SIM)
->>>> +
->>>> +maintainers:
->>>> +  - Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
->>>> +
->>>> +description:
->>>> +  The i.MX8ULP LPAV subsystem contains a block control module known as
->>>> +  SIM LPAV, which offers functionalities such as clock gating or reset
->>>> +  line assertion/de-assertion.
->>>> +
->>>> +properties:
->>>> +  compatible:
->>>> +    const: fsl,imx8ulp-sim-lpav
->>>> +
->>>> +  reg:
->>>> +    maxItems: 1
->>>> +
->>>> +  clocks:
->>>> +    maxItems: 3
->>>> +
->>>> +  clock-names:
->>>> +    items:
->>>> +      - const: lpav_bus
->>>> +      - const: hifi_core
->>>> +      - const: hifi_plat
->>>
->>> dt prefer use -
->>
->>
->> I don't think we ever expressed such preference. Where did you find it?
-> 
-> It should come from review message when submit binding-doc patch.  but I
-> can't find it now. But at least, compatible string and node-name use "-".
-> 
-> It'd better to add to writing-bindings.rst. It is hard to search whole
-> linux-devicetree mail list or brain may cheat me. It is good to keep
-> everything consistent.
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="d64jzfl74qyxt42h"
+Content-Disposition: inline
+In-Reply-To: <4856104.usQuhbGJ8B@phil>
+X-Zoho-Virus-Status: 1
+X-Zoho-Virus-Status: 1
+X-Zoho-AV-Stamp: zmail-av-1.4.3/260.922.11
+X-ZohoMailClient: External
 
 
-Yeah, but please don't make up rules and suggest them if you cannot
-justify them. I don't recall such rule and I don't have it in my notes,
-so that's why I asked.
+--d64jzfl74qyxt42h
+Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] clk: rockchip: rk3588: Don't change PLL rates when
+ setting dclk_vop2_src
+MIME-Version: 1.0
 
-Best regards,
-Krzysztof
+Hi,
+
+On Mon, Oct 20, 2025 at 02:49:10PM +0200, Heiko Stuebner wrote:
+> Am Donnerstag, 16. Oktober 2025, 00:57:15 Mitteleurop=E4ische Sommerzeit =
+schrieb Sebastian Reichel:
+> > On Wed, Oct 15, 2025 at 03:27:12PM +0200, Heiko St=FCbner wrote:
+> > > Am Mittwoch, 15. Oktober 2025, 14:58:46 Mitteleurop=E4ische Sommerzei=
+t schrieb Quentin Schulz:
+> > > > On 10/8/25 3:31 PM, Heiko Stuebner wrote:
+> > > > > dclk_vop2_src currently has CLK_SET_RATE_PARENT | CLK_SET_RATE_NO=
+_REPARENT
+> > > > > flags set, which is vastly different than dclk_vop0_src or dclk_v=
+op1_src,
+> > > > > which have none of those.
+> > > > >=20
+> > > > > With these flags in dclk_vop2_src, actually setting the clock the=
+n results
+> > > > > in a lot of other peripherals breaking, because setting the rate =
+results
+> > > > > in the PLL source getting changed:
+> > > > >=20
+> > > > > [   14.898718] clk_core_set_rate_nolock: setting rate for dclk_vo=
+p2 to 152840000
+> > > > > [   15.155017] clk_change_rate: setting rate for pll_gpll to 1680=
+000000
+> > > > > [ clk adjusting every gpll user ]
+> > > > >=20
+> > > > > This includes possibly the other vops, i2s, spdif and even the ua=
+rts.
+> > > > > Among other possible things, this breaks the uart console on a bo=
+ard
+> > > > > I use. Sometimes it recovers later on, but there will be a big bl=
+ock
+> > > >=20
+> > > > I can reproduce on the same board as yours and this fixes the issue=
+=20
+> > > > indeed (note I can only reproduce for now when display the modetest=
+=20
+> > > > pattern, otherwise after boot the console seems fine to me).
+> > >=20
+> > > I boot into a Debian rootfs with fbcon on my system, and the serial
+> > > console produces garbled output when the vop adjusts the clock
+> > >=20
+> > > Sometimes it recovers after a bit, but other times it doesn't
+> > >=20
+> > > > Reviewed-by: Quentin Schulz <quentin.schulz@cherry.de>
+> > > > Tested-by: Quentin Schulz <quentin.schulz@cherry.de> # RK3588 Tiger=
+ w/DP carrierboard
+> >=20
+> > I'm pretty sure I've seen this while playing with USB-C DP AltMode
+> > on Rock 5B. So far I had no time to investigate further.
+> >=20
+> > What I'm missing in the commit message is the impact on VOP. Also
+> > it might be a good idea to have Andy in Cc, so I've added him.
+>=20
+> Hmm, it brings VP2 in line with the other two VPs, only VP2 had this
+> special setting - even right from the start, so it could very well
+> have been left there accidentially during submission.
+
+I did the initial upstream submission based on downstream (the TRM
+is quite bad regading describing the clock trees, so not much
+validation has been done by me). The old vendor kernel tree had it
+like this, but that also changed a bit over time afterwards and no
+longer has any special handling for VP2. OTOH it does set
+CLK_SET_RATE_NO_REPARENT for all dclk_vop<number>_src, which you
+are now removing for VP2.
+
+FWIW these are the two flags:
+
+#define CLK_SET_RATE_PARENT     BIT(2) /* propagate rate change up one leve=
+l */
+#define CLK_SET_RATE_NO_REPARENT BIT(7) /* don't re-parent on rate change */
+
+So by removing CLK_SET_RATE_NO_REPARENT you are allowing dclk_vop2_src
+to be switched to a different PLL when a different rate is being
+requested. That change is completley unrelated to the bug you are
+seeing right now?
+
+> So in the end VP2 will have to deal with this, because when the VP
+> causes a rate change in the GPLL, this changes so many clocks of
+> other possibly running devices. Not only the uart, but also emmc
+> and many more. And all those devices do not like if their clock gets
+> changed under them I think.
+
+It's certainly weird, that VP2 was (and still is in upstream) handled
+special. Note that GPLL being changed is not really necessary.
+dclk_vop2_src parent can be GPLL, CPLL, V0PLL or AUPLL. Effects on
+other hardware IP very much depends on the parent setup. What I try
+to understand is if there is also a bug in the rockchipdrm driver
+and/or if removing CLK_SET_RATE_NO_REPARENT is a good idea. That's
+why I hoped Andy could chime in and provide some background :)
+
+Greetings,
+
+-- Sebastian
+
+--d64jzfl74qyxt42h
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmj2XF0ACgkQ2O7X88g7
++poMyxAAkrvmSp4lAynpMvLbEurz1nIp5X6KpJxALZHkLQhTbIMdkzYvjh504H9x
+f9m8anU4Vz0uzwNWNNWMeYKieOC8hcdj6SWEPkgfk0lWNwZfbu1lu1z4wesNh5Ey
+6y796JBjOKUUfFxuH9Z7ejA0w0ZEFrsjjr8cjzCB1/ZC3XDyA+t309e4w/28k9mx
+n+CobUeYsehMLyV2bT3ykWRaLkFwx9Wt1/+k4fPCL0hiEmZYcDRXZpjq6i1L1T3x
+DmT5wY8Yxfa2IMypKI7y08EXJHqGqgoW1gNJUuCpom2sQXCnEyVAdoGlW1J9wHNy
++lY0ucMa/fMPMReP4FtVxDCavxziANOutp4ZSM1ubU71ZsnyN0BRbPt+l3Mw6wUf
+J2PF91DmuWlYVyDSP2PCL8ziIp6ManlPZtdJ9ZbqwN8huG8nhCIYx0SRoeAxnKRT
+Zd8f0nXzFH8oLxVT48R1pmhalavydtAHBq3+PAAMf0RhQ0eGOQ9S+0zwU9lvPnvR
+nvduTJMnGvVYQBzvzyV4BgCJ8Gpt1bHGauhzraHOmOdFLQn9vFtTXw2hCcPU5/1I
+PG3wapsmCaramEwbIC2TPnw2FGEf3QuTfvOBAb/QLL8r+mFTMdUdLJzRzgnNX/r2
+lcvCOEN8REWVCxqvdaHUNlX0eX0yG/LBd6Dj9YslosfRI3/Mp8o=
+=J09E
+-----END PGP SIGNATURE-----
+
+--d64jzfl74qyxt42h--
