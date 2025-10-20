@@ -1,157 +1,232 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 344C93321A3;
-	Mon, 20 Oct 2025 17:11:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04F58221FC8;
+	Mon, 20 Oct 2025 17:25:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760980283; cv=none; b=DJZS4jICjWXofzbQMHadpaPSpsgcm7bNvwvzdOlLiVwN/IB6MPyQ46NaOpSqNPX/lPPVzTBhryJ70cYpjy/t6SI1VE9o4q321454LKJRr9wLtOdMU+F7+kXeK/qUk4pOSqhBP8TuGe4p6T9UPZUADVohX0tbYo8S+AErOnYBpV8=
+	t=1760981133; cv=none; b=QtDEPV0RvmVwOwbulZyKnBh8ycVGXcY7ULVIrI6tI2SUzzQZZPke2Xhfb7Ei2VW9iD7Qqt85J5AF+1fk4nqYVFgHBtf5VceKVIISYJ0DXA888Z/5+uHjLdr08Az6+clgX2XMmxZDURbuneR11V9+xlowtXqWWvLtJrPWBAk6OO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760980283; c=relaxed/simple;
-	bh=7WylpHCfl5v2xSL09jxwrG9Ik/L6u+sN2kDjKM+sdbI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=O4N186eKhWzJDqTvjLwZlVGQoGTEMaEe1uI+tX+Y3caD4djuDHty+gq3SrbaCRjP6W0TqvNOUYtMdjS1QMoVsv9K+yCNXvKMVyfpNQiD/a2MCNu7KbwopegSy7bPB4Ct32OCHLJdlNuhG9MpJtv9ZI8/6/9D7xtMGXQhGBiT0b0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PJrLsn+g; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1760981133; c=relaxed/simple;
+	bh=DuBiH9luvdFsYtFQDPaPHiGDRbY0ctxFlHUj5m7vjTM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CIOkkX1FWFFp90i70n9oihcZIu5BJqRPNWadpESzVatn0OScUFI0TnZUjFTxqEnEvrEn3nyu5/Wt8A49dwdEpVYlj8iY52u/A6/oYySqvrVNix3HHTkVQRrBdUpONnbUZBg8gW3aJHCUfXcb4iueZzPeSIuUuzgGHWm/SoDcZos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hvFaRQws; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PJrLsn+g"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2964C16AAE;
-	Mon, 20 Oct 2025 17:11:22 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hvFaRQws"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFB16C4CEF9;
+	Mon, 20 Oct 2025 17:25:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760980282;
-	bh=7WylpHCfl5v2xSL09jxwrG9Ik/L6u+sN2kDjKM+sdbI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=PJrLsn+galda3bYPgMdWQJEffSywb41/LmjAd3z8v3a1YlYtdfLc559jdDWnv+Wig
-	 V9XGVO7dvkaKETtdhrtDbwL1y9p4bGq0oaIm1VZnnsL3gxWWMGyB4BYIpznNMbhv9/
-	 iE3GnEpXGzgF5rKyQepzeFz28YxLcHMSmpunD2BzmOPrZr9ODGzvMSautCJ+vgyBvn
-	 5dFRNlAsNBy9vXs69lt1bt7xpy3CRUCo5IOxKaFLISOyUIW2HQwXFGsqjT3Zr4l5l7
-	 hPMWkX+bX1Vqa+cvLZ/wNKrCZeWN06GAe3D4bkHjNCajAywnufCgqFk8G/JKeMnkvB
-	 Bf6MvlnlxwuVw==
-Received: by wens.tw (Postfix, from userid 1000)
-	id 811E45FF56; Tue, 21 Oct 2025 01:11:18 +0800 (CST)
-From: Chen-Yu Tsai <wens@kernel.org>
-To: Chen-Yu Tsai <wens@kernel.org>,
-	Jernej Skrabec <jernej@kernel.org>,
-	Samuel Holland <samuel@sholland.org>,
-	Mark Brown <broonie@kernel.org>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Vinod Koul <vkoul@kernel.org>
-Cc: linux-sunxi@lists.linux.dev,
-	linux-sound@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	dmaengine@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 11/11] [EXAMPLE] arm64: dts: allwinner: a527-cubie-a5e: Enable I2S and SPDIF output
-Date: Tue, 21 Oct 2025 01:10:57 +0800
-Message-ID: <20251020171059.2786070-12-wens@kernel.org>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251020171059.2786070-1-wens@kernel.org>
-References: <20251020171059.2786070-1-wens@kernel.org>
+	s=k20201202; t=1760981132;
+	bh=DuBiH9luvdFsYtFQDPaPHiGDRbY0ctxFlHUj5m7vjTM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hvFaRQws7bdXPnuSz/e9AOAPBP5vBrh4radRk3rQm+sefnQSGzRu3/alDZVhArAuJ
+	 yqau7dOASZUNWselQ2tzgdz4BRYTmRsG8tR34AwICJaEHX/Ykdo+soiQJHDc9WUUwM
+	 xKHW8fopijbL08IfGG3DQhUlvUTxbYi6nZgJi6g2Ws4TRclTKbt4NnZ0lVHp3C+uwV
+	 rrZawovEREr+Y7GLeuGXQ8DGukbkIklwlmxAm81VJojIA/ghY/D5EDKX1U8ayM6JbW
+	 s5k3AJECYx/FbjGxyKs8GhBxmxq0VEKeLzCE27bSgT5pFwyTF7O5Urv8HCQwB6SnKM
+	 78qcZBhgNad0g==
+Date: Mon, 20 Oct 2025 18:25:27 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Diederik de Haas <diederik@cknow-tech.com>
+Cc: Elaine Zhang <zhangqing@rock-chips.com>, mturquette@baylibre.com,
+	sboyd@kernel.org, sugar.zhang@rock-chips.com, heiko@sntech.de,
+	robh@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+	conor+dt@kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+	huangtao@rock-chips.com
+Subject: Re: [PATCH v3 4/5] dt-bindings: clock: Add support for rockchip
+ pvtpll
+Message-ID: <20251020-pureness-portion-61cef49b6042@spud>
+References: <20251020023724.2723372-1-zhangqing@rock-chips.com>
+ <20251020023724.2723372-5-zhangqing@rock-chips.com>
+ <DDN1RQB4LG0X.30F0A3IMJ4YI4@cknow-tech.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="zDbktCb2H3iO4Q0A"
+Content-Disposition: inline
+In-Reply-To: <DDN1RQB4LG0X.30F0A3IMJ4YI4@cknow-tech.com>
 
-This is an example change.
 
-The Radxa Cubie A5E exposes I2S2 and SPDIF on the 40-pin header. Enable
-both.
+--zDbktCb2H3iO4Q0A
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-In this example, I2S2 is connected to adafruit speaker bonnet, which
-sports a pair of MAX98357A for speaker amplication. SPDIF is connected
-to a SPDIF interface card for PCs, which has both coaxial and optical
-outputs. The output was connected via optical cable to a dumb SPDIF to
-analog audio converter.
+On Mon, Oct 20, 2025 at 11:38:02AM +0200, Diederik de Haas wrote:
+> On Mon Oct 20, 2025 at 4:37 AM CEST, Elaine Zhang wrote:
+> > Add pvtpll documentation for rockchip.
+> >
+> > Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+> > ---
+> >  .../bindings/clock/rockchip,clk-pvtpll.yaml   | 100 ++++++++++++++++++
+> >  1 file changed, 100 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/clock/rockchip,cl=
+k-pvtpll.yaml
+> >
+> > diff --git a/Documentation/devicetree/bindings/clock/rockchip,clk-pvtpl=
+l.yaml b/Documentation/devicetree/bindings/clock/rockchip,clk-pvtpll.yaml
+> > new file mode 100644
+>=20
+> Should this file have the 'clk-' part in its name?
+> In a way this is different from the other DT binding files, but none of
+> the others have the 'clk-' part in their file name:
 
-Signed-off-by: Chen-Yu Tsai <wens@kernel.org>
----
- .../dts/allwinner/sun55i-a527-cubie-a5e.dts   | 52 +++++++++++++++++++
- 1 file changed, 52 insertions(+)
+Normally we would ask for a filename matching the compatible, which IIRC
+is what these -cru ones are doing.
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun55i-a527-cubie-a5e.dts b/arch/arm64/boot/dts/allwinner/sun55i-a527-cubie-a5e.dts
-index bfdf1728cd14..828d101d28e8 100644
---- a/arch/arm64/boot/dts/allwinner/sun55i-a527-cubie-a5e.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun55i-a527-cubie-a5e.dts
-@@ -64,6 +64,46 @@ reg_usb_vbus: vbus {
- 		gpio = <&r_pio 0 8 GPIO_ACTIVE_HIGH>;	/* PL8 */
- 		enable-active-high;
- 	};
-+
-+	codec: audio-codec {
-+		compatible = "maxim,max98360a";
-+		#sound-dai-cells = <0>;
-+	};
-+
-+	sound-i2s {
-+		compatible = "simple-audio-card";
-+		simple-audio-card,name = "I2S";
-+		simple-audio-card,format = "left_j";
-+		simple-audio-card,bitclock-master = <&dailink_cpu>;
-+		simple-audio-card,frame-master = <&dailink_cpu>;
-+		simple-audio-card,mclk-fs = <128>;
-+
-+		dailink_cpu: simple-audio-card,cpu {
-+			sound-dai = <&i2s2>;
-+		};
-+
-+		dailink0_master: simple-audio-card,codec {
-+			sound-dai = <&codec>;
-+		};
-+	};
-+
-+	sound-spdif {
-+		compatible = "simple-audio-card";
-+		simple-audio-card,name = "spdif-out";
-+
-+		simple-audio-card,cpu {
-+			sound-dai = <&spdif>;
-+		};
-+
-+		simple-audio-card,codec {
-+			sound-dai = <&spdif_out>;
-+		};
-+	};
-+
-+	spdif_out: spdif-out {
-+		#sound-dai-cells = <0>;
-+		compatible = "linux,spdif-dit";
-+	};
- };
- 
- &ehci0 {
-@@ -101,6 +141,12 @@ &gpu {
- 	status = "okay";
- };
- 
-+&i2s2 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2s2_pi_pins>;
-+	status = "okay";
-+};
-+
- &mdio0 {
- 	ext_rgmii0_phy: ethernet-phy@1 {
- 		compatible = "ethernet-phy-ieee802.3-c22";
-@@ -344,6 +390,12 @@ &r_pio {
- 	vcc-pm-supply = <&reg_aldo3>;
- };
- 
-+&spdif {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&spdif_out_pi_pin>;
-+	status = "okay";
-+};
-+
- &uart0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&uart0_pb_pins>;
--- 
-2.47.3
+>=20
+> me@pc:~/linux/Documentation/devicetree/bindings/clock$ ls -lh rockchip,*
+> -rw-rw-r-- 1 me me 2,9K okt 20 11:32 rockchip,px30-cru.yaml
+> -rw-rw-r-- 1 me me 1,9K okt 20 11:32 rockchip,rk3036-cru.yaml
+> -rw-rw-r-- 1 me me 1,8K okt 20 11:32 rockchip,rk3128-cru.yaml
+> -rw-rw-r-- 1 me me 2,3K okt 20 11:32 rockchip,rk3188-cru.yaml
+> -rw-rw-r-- 1 me me 2,1K okt 20 11:32 rockchip,rk3228-cru.yaml
+> -rw-rw-r-- 1 me me 2,6K okt 20 11:32 rockchip,rk3288-cru.yaml
+> -rw-rw-r-- 1 me me 2,2K okt 20 11:32 rockchip,rk3308-cru.yaml
+> -rw-rw-r-- 1 me me 2,1K okt 20 11:32 rockchip,rk3328-cru.yaml
+> -rw-rw-r-- 1 me me 2,4K okt 20 11:32 rockchip,rk3368-cru.yaml
+> -rw-rw-r-- 1 me me 2,5K okt 20 11:32 rockchip,rk3399-cru.yaml
+> -rw-rw-r-- 1 me me 1,5K okt 20 11:32 rockchip,rk3528-cru.yaml
+> -rw-rw-r-- 1 me me 1,1K okt 20 11:32 rockchip,rk3562-cru.yaml
+> -rw-rw-r-- 1 me me 1,8K okt 20 11:32 rockchip,rk3568-cru.yaml
+> -rw-rw-r-- 1 me me 1,2K okt 20 11:32 rockchip,rk3576-cru.yaml
+> -rw-rw-r-- 1 me me 1,6K okt 20 11:32 rockchip,rk3588-cru.yaml
+> -rw-rw-r-- 1 me me 2,2K okt 20 11:32 rockchip,rv1108-cru.yaml
+> -rw-rw-r-- 1 me me 1,3K okt 20 11:32 rockchip,rv1126-cru.yaml
+>=20
+> > index 000000000000..8be34bcde7b0
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/clock/rockchip,clk-pvtpll.yaml
+> > @@ -0,0 +1,100 @@
+> > +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/clock/rockchip,clk-pvtpll.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Rockchip Pvtpll
+> > +
+> > +maintainers:
+> > +  - Elaine Zhang <zhangqing@rock-chips.com>
+> > +  - Heiko Stuebner <heiko@sntech.de>
+> > +
+> > +properties:
+> > +  compatible:
+> > +    items:
+> > +      - enum:
+> > +          - rockchip,rv1103b-core-pvtpll
+> > +          - rockchip,rv1103b-enc-pvtpll
+> > +          - rockchip,rv1103b-isp-pvtpll
+> > +          - rockchip,rv1103b-npu-pvtpll
+> > +          - rockchip,rv1126b-core-pvtpll
+> > +          - rockchip,rv1126b-isp-pvtpll
+> > +          - rockchip,rv1126b-enc-pvtpll
+> > +          - rockchip,rv1126b-aisp-pvtpll
+> > +          - rockchip,rv1126b-npu-pvtpll
+> > +          - rockchip,rk3506-core-pvtpll
+> > +      - const: syscon
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  "#clock-cells":
+> > +    const: 0
+> > +
+> > +  clocks:
+> > +    maxItems: 1
+> > +
+> > +  clock-output-names:
+> > +    maxItems: 1
+> > +
+> > +  rockchip,cru:
+> > +    $ref: /schemas/types.yaml#/definitions/phandle
+> > +    description: |
+> > +      Phandle to the main Clock and Reset Unit (CRU) controller.
+> > +      Required for PVTPLLs that need to interact with the main CRU
+> > +      for clock management operations.
+> > +
+> > +required:
+> > +  - "#clock-cells"
+> > +  - compatible
+> > +  - reg
+> > +  - clock-output-names
+> > +
+> > +additionalProperties: false
+> > +
+> > +examples:
+> > +  - |
+> > +    pvtpll_core: pvtpll-core@20480000 {
 
+Additionally, none of the labels are being used and should be removed.
+"pvtpll-anything" is also not a generic node name, so those should get
+changed too.
+
+> > +      compatible =3D "rockchip,rv1126b-core-pvtpll", "syscon";
+> > +      reg =3D <0x20480000 0x100>;
+> > +      #clock-cells =3D <0>;
+> > +      clock-output-names =3D "clk_core_pvtpll";
+> > +    };
+> > +
+> > +  - |
+> > +    pvtpll_isp: pvtpll-isp@21c60000 {
+> > +      compatible =3D "rockchip,rv1126b-isp-pvtpll", "syscon";
+> > +      reg =3D <0x21c60000 0x100>;
+> > +      rockchip,cru =3D <&cru>;
+> > +      #clock-cells =3D <0>;
+> > +      clock-output-names =3D "clk_isp_pvtpll";
+> > +    };
+> > +
+> > +  - |
+> > +    pvtpll_enc: pvtpll-enc@21f00000 {
+> > +      compatible =3D "rockchip,rv1126b-enc-pvtpll", "syscon";
+> > +      reg =3D <0x21f00000 0x100>;
+> > +      #clock-cells =3D <0>;
+> > +      clock-output-names =3D "clk_vepu_pvtpll";
+> > +    };
+> > +
+> > +  - |
+> > +    pvtpll_aisp: pvtpll-aisp@21fc0000 {
+> > +      compatible =3D "rockchip,rv1126b-aisp-pvtpll", "syscon";
+> > +      reg =3D <0x21fc0000 0x100>;
+> > +      rockchip,cru =3D <&cru>;
+> > +      #clock-cells =3D <0>;
+> > +      clock-output-names =3D "clk_vcp_pvtpll";
+> > +    };
+> > +
+> > +  - |
+> > +    pvtpll_npu: pvtpll-npu@22080000 {
+> > +      compatible =3D "rockchip,rv1126b-npu-pvtpll", "syscon";
+> > +      reg =3D <0x22080000 0x100>;
+> > +      rockchip,cru =3D <&cru>;
+> > +      #clock-cells =3D <0>;
+> > +      clock-output-names =3D "clk_npu_pvtpll";
+>=20
+> rockchip,cru line as the last line?
+>=20
+> Cheers,
+>   Diederik
+>=20
+> > +    };
+> > +
+> > +...
+>=20
+
+--zDbktCb2H3iO4Q0A
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaPZwhwAKCRB4tDGHoIJi
+0iLPAP94ZMFR0xuWCqtCuslKikrX4Ilvj42EKuYV0Wo1K3G3xgEA6RkNCbvO3yRX
+ZW3mmydndwZgdwfiMuW03QLeH0FEnwI=
+=Kr3S
+-----END PGP SIGNATURE-----
+
+--zDbktCb2H3iO4Q0A--
