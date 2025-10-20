@@ -1,104 +1,116 @@
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51B5C332ECE
-	for <linux-clk@vger.kernel.org>; Mon, 20 Oct 2025 18:00:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 623D12C2346
+	for <linux-clk@vger.kernel.org>; Mon, 20 Oct 2025 18:09:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760983214; cv=none; b=httSepluzfHtYL6tSsOtbA77F3Ki7/6FyTtQF6431YyFslGpNAPcv48jlDxGqgqqCCCJxJjKFZ1zG6SBEFF8+kWIvnH3y0BlFdURx4RKTVGzKHTZAngHhoEOxvQIss5Hw96Rk2ZMJvHnF8/XO83+xQ/OQcqHGTASVNeUo6IsMhE=
+	t=1760983773; cv=none; b=RrxC1uy33ccVi5sFTcQ+1eCBXBpv8SPecPznPjxDK8QUMS28dPnL8r4wKgMTW2NpnCePCsiFxEaDPTJMt8dRcKSdBAAAuK1bmEqaYK1mVLJ218cH2ppKTqY4OxisZxXrVFwBMTEnLMs+p2Dh/62NBVs27RHyYxPh0IQDUbqWhWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760983214; c=relaxed/simple;
-	bh=l0zP/IswWls5tUEjRW4gHHMAJEe54gk5KhQpTRSbZKo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=i3zT6KujqLC+xGCJnB8lhYIeReHgLkN/+VtSd3p2xB1GWeae4y5t0nkwerit1jSQkVUB21fUxJ41G2PwoW584GkIbNtUdPKjYAyEXMDgJcmPB9HsESOj1f0aW2yEkg5xFr2/yNKeW0ywUEqJVivtOe1vZUVbsGRQWUC7jF52AFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YRlIXWdp; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1760983773; c=relaxed/simple;
+	bh=oKPrwAwmPcFNZGmDx1ZWXy1ZmIL+sig1bBBsB/7aJUU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ks8zwkZ904kZXSlzdXSbHbp58yWQiBJ913BrsXAvKwnlxzyObPyszObliRate/uX2UlQWZD31JB0U0RdSIC1UfnM+PUyl1JXSPnORcy7D+Y7CRHNsr05dy82EF354AY+x+9xvhxLCclqt092jnY0+iwWAl7KqdgOR1S6RFrnVoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cElUcY9j; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YRlIXWdp"
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-47106fc51faso54788045e9.0
-        for <linux-clk@vger.kernel.org>; Mon, 20 Oct 2025 11:00:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760983211; x=1761588011; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=l0zP/IswWls5tUEjRW4gHHMAJEe54gk5KhQpTRSbZKo=;
-        b=YRlIXWdpXZZky1S+VQYFWxgAgiquk2WWTh/sda9oeCfMLuXyqlS+0yqkVULqXq1cPV
-         HXdf5ySp//CweUuNbjJpvU/jD5Tick/tuagMhLeLRIEh7Gy+x3EKRK6fnHmc2VcHxlbk
-         /axAyceLgkAZRBrVLX0FSSH73ctUd6tNZvBEP6UiA9ULz6ipykI5qNINmnLS2slp243G
-         BwvmlA8qv1C8Ow5JumRFcs8RuMr9exUZZnVrWZdd6IEBtiOXvAqUJ/iO+DAXFQ0g05Od
-         NCwHy9Y1aR8STwfPfi/u9PNn91Wujmm2u2mWfCsdXRhf/fJuZIZamXkYtsE1TDTS2Kw/
-         8v6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760983211; x=1761588011;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=l0zP/IswWls5tUEjRW4gHHMAJEe54gk5KhQpTRSbZKo=;
-        b=LTu+9khkPU6YiiXH3w8Uhvee5OYWefTIoxOyRxM4ufy6iTtcXgy7dOKov7pNTR904O
-         qXj7K7zlVAc9KqEV3j+RfvwfVxqB4A2E1D3O58er+5qnw1JlHWARB/uhQ99PN3/1O98c
-         rTy5gnaQY9O3lrHfGVjpFeQE9cEfbUjv4KKhUR1wPvbePoBqzKb3vLZpwVU0k2QU1MSK
-         S20jYXs35B0qYOW2NlTmLFQBHfTmYK50fGZJVnD794unuD/4tzJLL7wdS6Ii4QDUeEH6
-         jjrCIqOzibmr2eI2Tu7QWE4C3iW8KjYTGYY58YS36pHzSPc8W0iFefPqqzjcdbA+KU1z
-         qlLg==
-X-Forwarded-Encrypted: i=1; AJvYcCXM/IOAacJxfPJBa/fEWge2XX5qzYqikjpokdE6PfY6tGb9YkAy86jscFSM91+mQffK6gSj8QfkD6w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJqbeOxxzG2H9CNgSWWKkEcpC4zpT5xkarFYyBuOK+7doeYL2q
-	Dcd7eHQ6L1DNUDEhay/i5f47XQy9uHGqR4sxe6lc1j0Nqv2/B9UMb2KL
-X-Gm-Gg: ASbGncsvTXNFRFXz0+u13KhpmhYwA8Yg3x7ZE79pKdGupKkk3R5Tk6oA8Q9PSNCQ5Ve
-	56lWENXUBLVexmXTTcOkkUrrsn2wTyOGdjl+OqzHXcZRYRh7ZomNz0PYrjQybt7reXXjsIT2Q6L
-	oj43ZqaIPgkTupZR7MuvQphVZumlzfWqSVTXItyTKWvH2l5U7rkZXhEJHq5fPov953M7Qi5tqXO
-	Qc+yT9e5IA13irAE/tF42oHaGE3cctGOLHC/EZk0HGPhoEM0GTrCDJybB/x7yCn0SePEqkTOD2p
-	L4bR8NbSKFn6kxlFIRSsTcooKpxQTNUofDndV38WfIusQ427mXsCUx8FPgBTlUZKA47xIA8+VQL
-	XNiX8Uw9x5tU49M/FJv5EeGzA8fhXdfs+mnxnufOgeAFT54NwHHMOtcYY1hbQnmQ3F2eqLbsjym
-	1Rjlq8Pgx1ODq5IaB13oXE6Yv3fMIB7yjqwFODv7zK5VWu8NsCEz+FORKiNDj5j31ZWgs=
-X-Google-Smtp-Source: AGHT+IGVeYcgA+CwUr1r7hUy/8iCaT15cDHaEmoGMtDm9YvbEjOd+dz5rkW55YdwDONL4X5PTcG3yg==
-X-Received: by 2002:a05:600c:3b8d:b0:46d:27b7:e7e5 with SMTP id 5b1f17b1804b1-47117917572mr126637915e9.32.1760983210516;
-        Mon, 20 Oct 2025 11:00:10 -0700 (PDT)
-Received: from jernej-laptop.localnet (178-79-73-218.dynamic.telemach.net. [178.79.73.218])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-471144238easm248496085e9.4.2025.10.20.11.00.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Oct 2025 11:00:10 -0700 (PDT)
-From: Jernej =?UTF-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
-To: Chen-Yu Tsai <wens@kernel.org>, Jernej Skrabec <jernej@kernel.org>,
- Samuel Holland <samuel@sholland.org>, Mark Brown <broonie@kernel.org>,
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Vinod Koul <vkoul@kernel.org>, Chen-Yu Tsai <wens@kernel.org>
-Cc: linux-sunxi@lists.linux.dev, linux-sound@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- devicetree@vger.kernel.org, dmaengine@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject:
- Re: [PATCH 10/11] arm64: dts: allwinner: a523: Add I2S2 pins on PI pin group
-Date: Mon, 20 Oct 2025 20:00:08 +0200
-Message-ID: <9520278.CDJkKcVGEf@jernej-laptop>
-In-Reply-To: <20251020171059.2786070-11-wens@kernel.org>
-References:
- <20251020171059.2786070-1-wens@kernel.org>
- <20251020171059.2786070-11-wens@kernel.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cElUcY9j"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 031CEC2BCB3
+	for <linux-clk@vger.kernel.org>; Mon, 20 Oct 2025 18:09:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760983773;
+	bh=oKPrwAwmPcFNZGmDx1ZWXy1ZmIL+sig1bBBsB/7aJUU=;
+	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc:From;
+	b=cElUcY9juSeNiBjy+AkG0mXLvgXLuSinG148FBwevxnzyyxzs38DdleUuvtzmuEzB
+	 SH8INpi4KUw3KgsjR8GrstW4Y5gnuCHyF9IqUgXy2fy6SNyd/3rSmUFPZIfYZcOfqm
+	 9ZtS2daVF952W50BeOX8oG+blrQfeL1PfB90fJJCHhcRX9KGb44VWLjGsQD2t9R1P5
+	 cfmM/K5pGmIA8A9ihqTJP9ttrDFbwTSk13gkw49vtm3IBnMEgF2/YnE3tOEOxxxvhg
+	 twMzL/eWbUVtqDHnTpBhxpsJnEW5584f2wrnVvVBbhoCuDoDNgIUrHKFVXCI8/52wX
+	 TcbjfAXTQzR3Q==
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-586883eb9fbso5762216e87.1
+        for <linux-clk@vger.kernel.org>; Mon, 20 Oct 2025 11:09:32 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV5xqWMvrA1eHUtFVlbHtiB993PEgeFzr9z5L0ortx83Aq6bM1c2zqyRYKwYLOWeRG5Lzb/UOcBRFo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywbrw8TQRXEXxvXIUubg7z9e/viR0eZKvHRyN8hb08YQ7050Msr
+	o5X9uInjxIhkCKfg9BcQmMVHPDOlgW1MBIYZk/UYKqHBraJXB/1J8PEQHMXPxFfuMO7VXHjwu3q
+	Ew3RNIECURn8WRINcuQvCmYgcyAbtDcM=
+X-Google-Smtp-Source: AGHT+IFuWmZV6QNucFFpgj1UEioCDpFc0/s3jbB+5BwfcLRxENd3iLjRFZ6WKCDjV8YIsE8qTPZM2NSG8F6Mb8oD9G4=
+X-Received: by 2002:a2e:bcc4:0:b0:36d:6ae3:8158 with SMTP id
+ 38308e7fff4ca-37797a0daa8mr37580611fa.25.1760983771244; Mon, 20 Oct 2025
+ 11:09:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20251020171059.2786070-1-wens@kernel.org> <20251020171059.2786070-7-wens@kernel.org>
+ <8591609.T7Z3S40VBb@jernej-laptop>
+In-Reply-To: <8591609.T7Z3S40VBb@jernej-laptop>
+Reply-To: wens@kernel.org
+From: Chen-Yu Tsai <wens@kernel.org>
+Date: Tue, 21 Oct 2025 02:09:18 +0800
+X-Gmail-Original-Message-ID: <CAGb2v66osdLJa=_nTxz9wppUkxvu2fuS=NgYN8fKOUOLHw6-Ag@mail.gmail.com>
+X-Gm-Features: AS18NWCT7E5mgPMwg3ZEBu9fYAxffaDigDTAPFUYOPP5rokDOnq4gkBQ9OJvhcg
+Message-ID: <CAGb2v66osdLJa=_nTxz9wppUkxvu2fuS=NgYN8fKOUOLHw6-Ag@mail.gmail.com>
+Subject: Re: [PATCH 06/11] clk: sunxi-ng: sun55i-a523-ccu: Lower audio0 pll
+ minimum rate
+To: =?UTF-8?Q?Jernej_=C5=A0krabec?= <jernej.skrabec@gmail.com>
+Cc: Jernej Skrabec <jernej@kernel.org>, Samuel Holland <samuel@sholland.org>, 
+	Mark Brown <broonie@kernel.org>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>, 
+	linux-sunxi@lists.linux.dev, linux-sound@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	devicetree@vger.kernel.org, dmaengine@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
 
-Dne ponedeljek, 20. oktober 2025 ob 19:10:56 Srednjeevropski poletni =C4=8D=
-as je Chen-Yu Tsai napisal(a):
-> The Radxa Cubie A5E exposes I2S2 through the PI pin group on the 40-pin
-> GPIO header.
->=20
-> Add a pinmux setting for it so potential users can directly reference
-> it.
->=20
-> Signed-off-by: Chen-Yu Tsai <wens@kernel.org>
+On Tue, Oct 21, 2025 at 1:52=E2=80=AFAM Jernej =C5=A0krabec <jernej.skrabec=
+@gmail.com> wrote:
+>
+> Dne ponedeljek, 20. oktober 2025 ob 19:10:52 Srednjeevropski poletni =C4=
+=8Das je Chen-Yu Tsai napisal(a):
+> > While the user manual states that the PLL's rate should be between 180
+> > MHz and 3 GHz in the register defninition section, it also says the
+> > actual operating frequency is 22.5792*4 MHz in the PLL features table.
+> >
+> > 22.5792*4 MHz is one of the actual clock rates that we want and is
+> > is available in the SDM table. Lower the minimum clock rate to 90 MHz
+> > so that both rates in the SDM table can be used.
+>
+> So factor of 2 could be missed somewhere?
 
-Acked-by: Jernej Skrabec <jernej.skrabec@gmail.com>
+Not sure what you mean? This PLL only gives *4 and *1 outputs.
 
-Best regards,
-Jernej
-
-
+> >
+> > Fixes: 7cae1e2b5544 ("clk: sunxi-ng: Add support for the A523/T527 CCU =
+PLLs")
+> > Signed-off-by: Chen-Yu Tsai <wens@kernel.org>
+>
+> Reviewed-by: Jernej Skrabec <jernej.skrabec@gmail.com>
+>
+> Best regards,
+> Jernej
+>
+> > ---
+> >  drivers/clk/sunxi-ng/ccu-sun55i-a523.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/clk/sunxi-ng/ccu-sun55i-a523.c b/drivers/clk/sunxi=
+-ng/ccu-sun55i-a523.c
+> > index acb532f8361b..20dad06b37ca 100644
+> > --- a/drivers/clk/sunxi-ng/ccu-sun55i-a523.c
+> > +++ b/drivers/clk/sunxi-ng/ccu-sun55i-a523.c
+> > @@ -300,7 +300,7 @@ static struct ccu_nm pll_audio0_4x_clk =3D {
+> >       .m              =3D _SUNXI_CCU_DIV(16, 6),
+> >       .sdm            =3D _SUNXI_CCU_SDM(pll_audio0_sdm_table, BIT(24),
+> >                                        0x178, BIT(31)),
+> > -     .min_rate       =3D 180000000U,
+> > +     .min_rate       =3D 90000000U,
+> >       .max_rate       =3D 3000000000U,
+> >       .common         =3D {
+> >               .reg            =3D 0x078,
+> >
+>
+>
+>
+>
