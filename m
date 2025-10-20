@@ -1,338 +1,310 @@
-Received: from mail-m49236.qiye.163.com (mail-m49236.qiye.163.com [45.254.49.236])
+Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011068.outbound.protection.outlook.com [52.101.70.68])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6057A26B75F;
-	Mon, 20 Oct 2025 03:13:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.236
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760929989; cv=none; b=QrFjCr7Gh182eSa1Wi7g2IQ7JexoG14MqNfxRbkIh+YYjadtAOI9Xby9PTiqeMsp0asOpUP+hIKrAOHVNnkM0y/C0JcYg5gLSqJmOWEab/d4d2BY+2bU96WTHCrtcGuECRIOlVPtrpVLr9vmqfCnLye/l9v9vt6Zxx8CAgZCw5s=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760929989; c=relaxed/simple;
-	bh=EhdkYAZpvq92qEuzwBPeEULq8Eb6F4v8ckyLbH1yC70=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=SvUkPM+DzqEE3a45a4ZJenjerhN1FGcEmSJFwsDWj1v9d72dp7nvMhFKCXckbtIyEh3adH3NFBo9vuULdyGmR0wE+BUDQxBqcTHRRRsjhhvBu1svV4Qw1QFm67FT5iMTYmGw1CqZ3FsrOddL5exyz3hqo2+MPSSz8+PPxpY3as8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=H2MKM8Wl; arc=none smtp.client-ip=45.254.49.236
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5508145355;
+	Mon, 20 Oct 2025 05:36:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.68
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760938619; cv=fail; b=sTz8CRBI8JcmR7EMQxJZKj9/9K83+axWxpkhGBTcdBQp0hMk8XDTxsaEdhAfvT3Bv9L7vAZJg9UC5GYu0DnAZBWB6J8zG9xUixGmC8ns5ZqtKQE6F38jHI9PaMsAap/9Cv/Ud4D4vjIwG24GRn0RzoSUGlavIxmvevQDvRoV064=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760938619; c=relaxed/simple;
+	bh=SZ3/by1zoQbuDlLh2vz3/2ul73eKjoWjftE37X9Vqu4=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Q/Y4eKbjbuDVeIPhoxWDacvB+8PHbLpkupMn6/wvQjyUBgGuBDh3s8f3vJ7PgPYbGfh28QLH/qQswGymTAODk9yvKKw3hPjaAxGmj6ilP2l1kFU3ih3aXUYUHsKz+Ka6vq2naVIbFgOEkIgYMugy/MUuxJChlOKOrWxAYJTg35s=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=FRq0JhFA; arc=fail smtp.client-ip=52.101.70.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="H2MKM8Wl"
-Received: from rockchip.. (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 2671210c6;
-	Mon, 20 Oct 2025 10:37:27 +0800 (GMT+08:00)
-From: Elaine Zhang <zhangqing@rock-chips.com>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	sugar.zhang@rock-chips.com,
-	zhangqing@rock-chips.com,
-	heiko@sntech.de,
-	robh@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org,
-	conor+dt@kernel.org
-Cc: devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	huangtao@rock-chips.com
-Subject: [PATCH v3 1/5] clk: rockchip: Implement rockchip_clk_register_armclk_multi_pll()
-Date: Mon, 20 Oct 2025 10:37:20 +0800
-Message-Id: <20251020023724.2723372-2-zhangqing@rock-chips.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251020023724.2723372-1-zhangqing@rock-chips.com>
-References: <20251020023724.2723372-1-zhangqing@rock-chips.com>
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="FRq0JhFA"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=GG68on0cT9nhZ6NHf43U9ZIcnUXwIsh7c2PmK0LJKnFQAzwuOB7hni3d+F3IcIo8bGvaC1WxlMynIPnE1xYao64BH+E2RWzsCux9kFZXoSpuInoGv5g0eR6MMhUTksVrqDYNg/RfY0vVuehyeoc/rFnyQ9CYg6ci/3Dfzh4WQ+dW/M6ueIqysGdmY3gcMAUf1bw7np3ajC9/dY+hUMWj8YFY89hUqpVXa+4zzExM+9yEK+S8eI8zFdze0QPt0KcS8BWsDjqbXQT8DGRvzCQKjXRMB2CFdNV98NHG/3TwwMLj5SjF1uuXDQWeaF7e/Kcqgj0wB0H/aFv61vZLUKAfQw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=NdUaAlI5OkxI7HJVnWxsXPZ1CIqiw0vwrwxKUZuTh5Y=;
+ b=L4/dXT8Tk7Gb26+fm/sntrmIbFuTnwD2Cwu+QJ8KERmTRGbb4aBNO78tDcpeNnf4X3AB2NQnfmev+qMumqQ6nh2kzzgefC6lJG/3pg077mSFpdcq6oV7TVAQOODevyw43G1vrTy9YMxdPVwyid+qiv8GFc1wb+D6Q0mfmB/EoM0xHyoFjGZ+42zboN6Rr0yPTa57wO8KxGKdEG5NOLzkv0H9CDe3fMZndy7LNj/j1r9sgtwwmZ80vyRDFdADZpydSUY6StutBoE2EOsdi7B9QQwKM1itqGN7a/BBFkEKvu+Dm/qU10VIKBN5ZnD+BKSCQeC8e+9NRAI5KM4q7HRSEg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=NdUaAlI5OkxI7HJVnWxsXPZ1CIqiw0vwrwxKUZuTh5Y=;
+ b=FRq0JhFA1mc7FB+4kFvdqy3ArVSUiB+I0qmPkiOFZeEd+JFIawhF3YCn+351A28alnDxxcmUMNxsYy/RMGLwVIO/TvKPIvqVmXSMvih1lwvd9Df5Fvn8c//P0yQx4HyVLvUCKrFBWLEuHoQ5BuI0FZx+oQzH1w2zkmTQijKOKRHDgCibIojy1CkmLoo3wlJ2c/XZnEulcQ63eDxpUARsKuwoG5dEVpqQ5Zv4CYVr7otc7AJXTenWJxC69M9xgSFPDysr3FUHOVlu1qTjWajDTUMedieH+3APblrfr2bPtKKE4pmd6dTGBKx8Nl8lpD13Um/VJEOcemM1VECTygisLg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
+ by AM0PR04MB6883.eurprd04.prod.outlook.com (2603:10a6:208:17f::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.11; Mon, 20 Oct
+ 2025 05:36:53 +0000
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::4609:64af:8a4b:fd64]) by AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::4609:64af:8a4b:fd64%6]) with mapi id 15.20.9228.015; Mon, 20 Oct 2025
+ 05:36:52 +0000
+Message-ID: <c0ebafa0-403b-4576-965d-50f3db259fa1@nxp.com>
+Date: Mon, 20 Oct 2025 13:37:16 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/imx: Add more RGB swizzling options
+To: Marek Vasut <marek.vasut@mailbox.org>, dri-devel@lists.freedesktop.org
+Cc: Abel Vesa <abelvesa@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Fabio Estevam <festevam@gmail.com>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Lucas Stach <l.stach@pengutronix.de>, Peng Fan <peng.fan@nxp.com>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Rob Herring <robh@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, devicetree@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org
+References: <20251017144626.66918-1-marek.vasut@mailbox.org>
+From: Liu Ying <victor.liu@nxp.com>
+Content-Language: en-US
+In-Reply-To: <20251017144626.66918-1-marek.vasut@mailbox.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SI2PR06CA0008.apcprd06.prod.outlook.com
+ (2603:1096:4:186::23) To AM7PR04MB7046.eurprd04.prod.outlook.com
+ (2603:10a6:20b:113::22)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a99ff7a92b303a3kunmd1f16c94462dff
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQ05LGlYaTBgZSEhMQhgfGB1WFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
-	hVSktLVUpCS0tZBg++
-DKIM-Signature: a=rsa-sha256;
-	b=H2MKM8Wl93Mp1qm0+b4ood61ANFvyIn/QmxL6Yiyzv+43XIhuOZwHLk+occonm91ryETuuCTbK+7ZcN9hLnHcIfecCU/ze3JEcM+EETlaRtrix7gyhY1hXACf6xLF51WlvDBswku7oC9RSzv8VvT+mEFSLQbVDXRhZdnKaJRBoM=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=Vt1xPRkUMcE8svXTy4dUISsmpUifWdbpaIRSmoEuGbY=;
-	h=date:mime-version:subject:message-id:from;
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM7PR04MB7046:EE_|AM0PR04MB6883:EE_
+X-MS-Office365-Filtering-Correlation-Id: ff48230f-8fc3-4796-9918-08de0f9aac63
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+ BCL:0;ARA:13230040|1800799024|7416014|366016|376014|19092799006|7053199007;
+X-Microsoft-Antispam-Message-Info:
+ =?utf-8?B?dEJKajJvYTd1WCtkYjRyY0JnUWVrNDJnbHowT3FJTkU4dWgxZzV1VE5IZitv?=
+ =?utf-8?B?aFZHM0lJdVBRMHBRQnpaa29Fc3pEd3hSL056MjdsVlZaaWNDbWlzZ1BWcDE1?=
+ =?utf-8?B?QkQvWE5JNDE0ekVvaHU2eWx0b2lieFJDMVR3b3ZabktuekhGSzBCQ044eVVR?=
+ =?utf-8?B?STVCZ0Q0b2xQNGZSOS9EMkxQOUQvOW9scTFyZVVWL1djQ2VkaDVveHBZaEpD?=
+ =?utf-8?B?enBNQjZ6Q0xXV2xLYktYOTV4VkZDZHhDNzJleUJPYW9pQ3lGSUk4QmhmZFNt?=
+ =?utf-8?B?WjcxL0F1cTB1TW9QbWNIN1h2S3hFWG5NcTBvdlpma0hlUWJTVUtUNU11NVN6?=
+ =?utf-8?B?VytLSUNXdWlmcVI0UXpMeDJhdStJZGRBS2JVcVBQNzBvWVRkWjU1WjhGcXQ1?=
+ =?utf-8?B?aUdSWUpXZHlCWW9xYmt5VVNwVHJ0MlRlMTNXQnU1QjRQUlJZNFZ2S21Xcm9i?=
+ =?utf-8?B?djl2eDJSbDkxeWh4bEJNcmk5ZDFTYnczdHByTXJTbFdXL240NitBMTBoME5t?=
+ =?utf-8?B?NS8yWUJyM1ZBUUdYOHNHaC9GM0IxWXdHdnFxT1d0ZW5ITHZzam5WekdCTkFU?=
+ =?utf-8?B?ZURyeGgvN3RPYUZVL3Q1MDZiRVI4WkU1Rjc3Y2Iwd3hkWVFsUWdFc0tEbXc5?=
+ =?utf-8?B?U1JZRWYzR2pFUDJJUTN0NFluTWZCb3ViMlNVZURaVkZ0WnpQcGhUQVJCT3ov?=
+ =?utf-8?B?ei9XN2NpeGVjMFlTbFJzdFR1TGFFRE9ueG04M0lIbS9DVm8zRDIyNU9NTlRO?=
+ =?utf-8?B?VG9Hbi9acEgrWXVIWjNuK0l1UVRyWTJHWTlZdkdBQXYvY2pUZXF1eTRTaWZN?=
+ =?utf-8?B?SkNXRm5ucDNpMTdtYVJBQm9CelUyQVhsOXpxR25EK0FKZk5yWDRRbTJOaGpo?=
+ =?utf-8?B?WklUc3ZUdHFhcmprNUk2Uk1uRTltcHFyWnNTUllBbFBlY3NtYnBPSUlTbUNr?=
+ =?utf-8?B?M2d3aTJOandoRktGSFR3VnV2alFIT2NNYnNhNE5KOFFwVTNSajRXdmczRlor?=
+ =?utf-8?B?YUQ2MCtLZnEzR253T1BtOFpaMDVudnMwYURQa2xZKzNHWGRaY1EwZ1MxM0c1?=
+ =?utf-8?B?MnJNSDNZeDdEMHpEZng0TXJib3o3OUlqVEFqR3AwNG9tbnRXTFd0UXBvRktU?=
+ =?utf-8?B?RUd1d0ttWHJ1eGRGU29MeEFtTForVjNUcUhlTytwa3VXcDBuSjJQQ2djeWdX?=
+ =?utf-8?B?YVROQ01lbGZKYlU2ajBWZDdwZndzbDJ6YStBYVIzVkhMcEw2NXVXMXJSamVh?=
+ =?utf-8?B?WUtTM01WM3VhSytRbnp2RmV3NkdNRnJYVWFsQ3NuOGFnUzN4MWVHOUlPR05t?=
+ =?utf-8?B?VWVWaHVXYnZMVHJla0FoRHJTckVMbHZFUkRFMkhJcUVNK3hUakl3U1pwQUxu?=
+ =?utf-8?B?SDRDWjNsMkZBb2I3TjlIc1dJTjRqN1NPV211bFhkTnhZNVFjLzc1UkFUQi81?=
+ =?utf-8?B?V3FOVy9VYnZCSnZnNHNOTWVRQmQzYkQ2RFAwM2VyVFNRS3VvalFzWXM0MWtO?=
+ =?utf-8?B?aE5yQWNlNmpzbVpKQ0dTYXd5L1RDT2VuYWxBemx3WThzWWJZblU0STF0WGhS?=
+ =?utf-8?B?Yjk2eG1USUE2eng4TG9pRjlGU0ZqVDFsSU5hMzhqTU5relFyQnc0SG82MmRn?=
+ =?utf-8?B?NUxNWmtFTkZ5V2VlTXRhS2NBZW0yR3J3VjVoQy9wSG1RN05IRU9LUk85N0Nt?=
+ =?utf-8?B?Nys3MjZkSU0vclNtN2Jra0YrNTlDWWNzaXZVOTBncVVZMXhseTZrbitNT2hH?=
+ =?utf-8?B?UXpldEV1UEoyVjh0bEVwc3FrSmlNUTNCcS9BVHM1SXNHV0NWWktZeDRKZXlR?=
+ =?utf-8?B?ckZYQzZJWG84V09kcStORk5MTzNjcGVDRnoyMWFVQlVqd3BwYzNZNlZLZzBF?=
+ =?utf-8?B?a2g4VUtxRG1kUFJNdXZKRmpBQStYZVJKR01UeG92cVgveDdVWG5vMWlsYWJD?=
+ =?utf-8?Q?XitmhvyulLEm/nEDqv2mrgfQTfSc6Ysx?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(366016)(376014)(19092799006)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?utf-8?B?T0hIYVZFK0NZcUpmWEJLbXBTRzJFMXRHWnZjVTIvRUhBcGN1WXBRaUlISFpN?=
+ =?utf-8?B?UlF3NnR1c3ZDSEFTVFZSN2dIQ0I2SVkxY1JnVTFXem8zSmNpQTk5eXRnTDk4?=
+ =?utf-8?B?L29Bc0RQcUE5MXB3VWphQ3pXRmRsS1hxMlZUNURzenR6emRqalp5eEhvYjg5?=
+ =?utf-8?B?dnRCbEhiMCtXNW9EOFBVSkNwMVk2bUN0N2l5SFNza2ZVSS9GVU9aWWoxUkNa?=
+ =?utf-8?B?aHNRdlVpdUVBYjVtUHp6elJTcWdJV3RoVlQ2ZDZSTjgwTktsTUhFb0dQMlFJ?=
+ =?utf-8?B?OTRPUVo3Qll3dEJsRzdiRmtCYWx3MFRyWVkyWCtFNTF4d0s3WWd0NlVwakNl?=
+ =?utf-8?B?ek92elRNU0s0STBrZU5xdUJPUWtFcGkvRFpKWTVTUkZNbU0yZW80K0g0ZC9x?=
+ =?utf-8?B?Q2RkQ3diM2hmSlhPRTBrMkR3MXZ6YkVzc2JaVU1ORjNHVXRjak5VcnQzaDFj?=
+ =?utf-8?B?TjJjeDQ3Qnl3VUtWZFpoQmI5WHFJYnlpNWgydERmWURsUE8zRVJNZmYvSkNK?=
+ =?utf-8?B?MXpKUjNaNmlranM4ditJSUM1cm14bjZsaTJGWUpYaVFYRVFmWXFuSWJGT0R3?=
+ =?utf-8?B?d0NCVWZCbEUvWG1jUTNFc05yeXp6OG9Md1QzYlpVTnRMeFJheHVIRmVjRllp?=
+ =?utf-8?B?VHdZaUIwZ1RSb0VLRVBMbnlOYUhMWndvaEhZTGZvSk9rMW5hMzFmNkFkeEN5?=
+ =?utf-8?B?SFQveHA3N1REc0VPblZuVXNIOUp4K0NqZ2hpS2Z6R0dBNlQ5aWYzMWNYRWFW?=
+ =?utf-8?B?dXUzblAxaWttNm9SbmFIYW5ZczMxWEt4L0NpTWhMdEp4V05oL0ljeWhWM1k4?=
+ =?utf-8?B?NkN2a0xOK3h4c2NJNFRLTEhIMXVrQm1ZWmpPcHlhNHYwc1c3Rm9wdnYyNEFL?=
+ =?utf-8?B?MmYwUlIxVnRmUVlQaHROWHpZVjNtaWh6d3h3cVhSSThCZzkxSnJ6ZnBieG9H?=
+ =?utf-8?B?RWVFNDE3NEhubFBBQlJjS3Q5WTNuSG5GaUJCU1lGUjRRd3lwVzFWVjMzNWYy?=
+ =?utf-8?B?V1pzMWFtbXRFOFRlbytrZzlLaHhpbVV1blYvL1E2ZVFucUZhRThXUlNVNFh1?=
+ =?utf-8?B?MndXSDJ1Ym1Wd015ME5kWVRRY3FKYUhjNFpNaldRdlVpcFF4d3BxWFh6cFlI?=
+ =?utf-8?B?ckNxMDNQT2ZkemsvSUsrVG55NC8zNVVnd2J1Y0V5NTlGRTNoQW0xdmtIUFll?=
+ =?utf-8?B?UDZhZTRnL3dhTS81NDFBbnVPbWR5WEJXNkl6WUpNR3k3Ly8zZmVqWjZYbS91?=
+ =?utf-8?B?WW9tMVg2SzNqVXlrOUhjMzIxenJtNEVYTDlzdkQ5b3o4TC8vUEtqbEdKam9t?=
+ =?utf-8?B?NHBUVXRINEE1SU40eThpUDB0bE9qcVhOanV3eXQ1VmdXdjNleGZpay9ibWFV?=
+ =?utf-8?B?eVlkVDRSckRZT3VJTDF1eXNsTHBaaDlzUlJORndFekthTjVycURuYjljcHBp?=
+ =?utf-8?B?elRLNFJYTkJpdDZmMWtkenI5bUZRNXo3VEE4MzRZUUdmTEJvenRXTlpDdUtE?=
+ =?utf-8?B?cE5Yam5UbmlOVnlHdHBPR29rUytCM3ZVS2xrbE5KaWhFVmt2bHVmUUhybGVv?=
+ =?utf-8?B?U0x2a2lZV1M5c05IUDYyUHJvMUxrRzhXRGtEWk5ORjc1Y0c0a1E2cW5Md0Jx?=
+ =?utf-8?B?aXBwOFlSaDcxODRySXBQaGRqdnk4Q1J3WUF5aytsL0w3LzN4UC8rQ2JvSVY1?=
+ =?utf-8?B?VTRmTndPZ1lRMjViOXhMUlJ1ZmtRRDhrMldlRTlxOEI0cHF6ZGtNUXNMRDFB?=
+ =?utf-8?B?MGJTeHIxR3J6UXM4eFFIWEJzRDMrUEtWNDAxWU1DeE5vak5xRXFWKzFmNGMv?=
+ =?utf-8?B?VFVhMGlxZUoydE1sUC9GTlR6TGkveTFDTFU1QVpWd3VkQW0xV25Cc1VpbnJo?=
+ =?utf-8?B?UUNFYVVKd3BYdWxVdlc5dkkySk1TckhLOElyWHE0SkdXb3hweDcybXptTVpm?=
+ =?utf-8?B?ZjhINW9YcjRDSk9hUlNzY3ZPUGlhbnpPUVpHNE5NMDRPR25Cb0dGQTcxcFdJ?=
+ =?utf-8?B?QkN0d1pzV0VXdDAxakhLc0EvTVdFdTE0OFg0MVVjaVRyTW0reVBJamFWeUdM?=
+ =?utf-8?B?TGNWbUEwSjQ3cjQ3R0o3OFRUVEc4bFhMM01idCtheWcyRGw3bVdDTDFvek14?=
+ =?utf-8?Q?imSUt0mqTuUkb4xmOF5a52WZw?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ff48230f-8fc3-4796-9918-08de0f9aac63
+X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Oct 2025 05:36:52.7482
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: cT1WMmVsSHvdwbKBXyQMU16SFmtPdBw3vTTUa6tg3CJztHVffNWASvB7RP2x7byf/YNcMhAEt2MP4SiVJLtgbg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB6883
 
-The current path will have an independent PLL(LPLL\BPLL)
-exclusively for the CPU to use.
-As follows:
+On 10/17/2025, Marek Vasut wrote:
+> Add additional buffer format swizzling options beyond XR24, the
+> hardware is capable of sampling other formats, fill them in.
 
-            |-\
-    --lpll--|  \
-            |mux|--[gate]--[div]--clk_core--
-    --gpll--|  /
-            |-/
+This would make me change my patch series of adding i.MX8qxp DC
+prefetch engine support, because that patch series supports only XR24.
+But, I don't mind doing that as long as this doesn't support RG24 and
+BG24.
 
-The new chip does not have a dedicated PLL for the cpu;
-it is distributed nearby from the common PLL.
-If there are special frequency requirements that require the
-use of pvtpll, explanations will be submitted later.
+> 
+> Signed-off-by: Marek Vasut <marek.vasut@mailbox.org>
 
-The clock path of new soc CPU simplified as follows:
+The subject prefix should be specific to "drm/imx: dc-plane:".
 
-    --gpll--|--\
-            |   \
-            |    \
-            |     \
-   --v0pll--| mux |--[gate]--[div]--clk_core--
-            |     /
-            |    /
-   --v1pll--|   /
-            |--/
+> ---
+> Cc: Abel Vesa <abelvesa@kernel.org>
+> Cc: Conor Dooley <conor+dt@kernel.org>
+> Cc: Fabio Estevam <festevam@gmail.com>
+> Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
+> Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
+> Cc: Liu Ying <victor.liu@nxp.com>
+> Cc: Lucas Stach <l.stach@pengutronix.de>
+> Cc: Peng Fan <peng.fan@nxp.com>
+> Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: Shawn Guo <shawnguo@kernel.org>
+> Cc: Thomas Zimmermann <tzimmermann@suse.de>
+> Cc: devicetree@vger.kernel.org
+> Cc: dri-devel@lists.freedesktop.org
+> Cc: imx@lists.linux.dev
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-clk@vger.kernel.org
+> ---
+> Liu, please test on MX8qxp , I do not have that hardware.
 
-Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
----
- drivers/clk/rockchip/clk-cpu.c | 165 +++++++++++++++++++++++++++++++++
- drivers/clk/rockchip/clk.c     |  24 +++++
- drivers/clk/rockchip/clk.h     |  15 +++
- 3 files changed, 204 insertions(+)
+I've tested XB24, RX24, BX24 and RG16 on i.MX8qxp MEK board.
 
-diff --git a/drivers/clk/rockchip/clk-cpu.c b/drivers/clk/rockchip/clk-cpu.c
-index dcc9dcb597ae..6e91a3041a03 100644
---- a/drivers/clk/rockchip/clk-cpu.c
-+++ b/drivers/clk/rockchip/clk-cpu.c
-@@ -396,3 +396,168 @@ struct clk *rockchip_clk_register_cpuclk(const char *name,
- 	kfree(cpuclk);
- 	return ERR_PTR(ret);
- }
-+
-+static int rockchip_cpuclk_multi_pll_pre_rate_change(struct rockchip_cpuclk *cpuclk,
-+						     struct clk_notifier_data *ndata)
-+{
-+	unsigned long new_rate = roundup(ndata->new_rate, 1000);
-+	const struct rockchip_cpuclk_rate_table *rate;
-+	unsigned long flags;
-+
-+	rate = rockchip_get_cpuclk_settings(cpuclk, new_rate);
-+	if (!rate) {
-+		pr_err("%s: Invalid rate : %lu for cpuclk\n",
-+		       __func__, new_rate);
-+		return -EINVAL;
-+	}
-+
-+	if (new_rate > ndata->old_rate) {
-+		spin_lock_irqsave(cpuclk->lock, flags);
-+		rockchip_cpuclk_set_dividers(cpuclk, rate);
-+		spin_unlock_irqrestore(cpuclk->lock, flags);
-+	}
-+
-+	return 0;
-+}
-+
-+static int rockchip_cpuclk_multi_pll_post_rate_change(struct rockchip_cpuclk *cpuclk,
-+						      struct clk_notifier_data *ndata)
-+{
-+	unsigned long new_rate = roundup(ndata->new_rate, 1000);
-+	const struct rockchip_cpuclk_rate_table *rate;
-+	unsigned long flags;
-+
-+	rate = rockchip_get_cpuclk_settings(cpuclk, new_rate);
-+	if (!rate) {
-+		pr_err("%s: Invalid rate : %lu for cpuclk\n",
-+		       __func__, new_rate);
-+		return -EINVAL;
-+	}
-+
-+	if (new_rate < ndata->old_rate) {
-+		spin_lock_irqsave(cpuclk->lock, flags);
-+		rockchip_cpuclk_set_dividers(cpuclk, rate);
-+		spin_unlock_irqrestore(cpuclk->lock, flags);
-+	}
-+
-+	return 0;
-+}
-+
-+static int rockchip_cpuclk_multi_pll_notifier_cb(struct notifier_block *nb,
-+						 unsigned long event, void *data)
-+{
-+	struct clk_notifier_data *ndata = data;
-+	struct rockchip_cpuclk *cpuclk = to_rockchip_cpuclk_nb(nb);
-+	int ret = 0;
-+
-+	pr_debug("%s: event %lu, old_rate %lu, new_rate: %lu\n",
-+		 __func__, event, ndata->old_rate, ndata->new_rate);
-+	if (event == PRE_RATE_CHANGE)
-+		ret = rockchip_cpuclk_multi_pll_pre_rate_change(cpuclk, ndata);
-+	else if (event == POST_RATE_CHANGE)
-+		ret = rockchip_cpuclk_multi_pll_post_rate_change(cpuclk, ndata);
-+
-+	return notifier_from_errno(ret);
-+}
-+
-+struct clk *rockchip_clk_register_cpuclk_multi_pll(const char *name,
-+						   const char *const *parent_names,
-+						   u8 num_parents, void __iomem *base,
-+						   int muxdiv_offset, u8 mux_shift,
-+						   u8 mux_width, u8 mux_flags,
-+						   int div_offset, u8 div_shift,
-+						   u8 div_width, u8 div_flags,
-+						   unsigned long flags, spinlock_t *lock,
-+						   const struct rockchip_cpuclk_rate_table *rates,
-+						   int nrates)
-+{
-+	struct rockchip_cpuclk *cpuclk;
-+	struct clk_hw *hw;
-+	struct clk_mux *mux = NULL;
-+	struct clk_divider *div = NULL;
-+	const struct clk_ops *mux_ops = NULL, *div_ops = NULL;
-+	int ret;
-+
-+	if (num_parents > 1) {
-+		mux = kzalloc(sizeof(*mux), GFP_KERNEL);
-+		if (!mux)
-+			return ERR_PTR(-ENOMEM);
-+
-+		mux->reg = base + muxdiv_offset;
-+		mux->shift = mux_shift;
-+		mux->mask = BIT(mux_width) - 1;
-+		mux->flags = mux_flags;
-+		mux->lock = lock;
-+		mux_ops = (mux_flags & CLK_MUX_READ_ONLY) ? &clk_mux_ro_ops
-+							: &clk_mux_ops;
-+	}
-+
-+	if (div_width > 0) {
-+		div = kzalloc(sizeof(*div), GFP_KERNEL);
-+		if (!div) {
-+			ret = -ENOMEM;
-+			goto free_mux;
-+		}
-+
-+		div->flags = div_flags;
-+		if (div_offset)
-+			div->reg = base + div_offset;
-+		else
-+			div->reg = base + muxdiv_offset;
-+		div->shift = div_shift;
-+		div->width = div_width;
-+		div->lock = lock;
-+		div_ops = (div_flags & CLK_DIVIDER_READ_ONLY)
-+						? &clk_divider_ro_ops
-+						: &clk_divider_ops;
-+	}
-+
-+	hw = clk_hw_register_composite(NULL, name, parent_names, num_parents,
-+				       mux ? &mux->hw : NULL, mux_ops,
-+				       div ? &div->hw : NULL, div_ops,
-+				       NULL, NULL, flags);
-+	if (IS_ERR(hw)) {
-+		ret = PTR_ERR(hw);
-+		goto free_div;
-+	}
-+
-+	cpuclk = kzalloc(sizeof(*cpuclk), GFP_KERNEL);
-+	if (!cpuclk) {
-+		ret = -ENOMEM;
-+		goto unregister_clk;
-+	}
-+
-+	cpuclk->reg_base = base;
-+	cpuclk->lock = lock;
-+	cpuclk->clk_nb.notifier_call = rockchip_cpuclk_multi_pll_notifier_cb;
-+	ret = clk_notifier_register(hw->clk, &cpuclk->clk_nb);
-+	if (ret) {
-+		pr_err("%s: failed to register clock notifier for %s\n",
-+		       __func__, name);
-+		goto free_cpuclk;
-+	}
-+
-+	if (nrates > 0) {
-+		cpuclk->rate_count = nrates;
-+		cpuclk->rate_table = kmemdup(rates,
-+					     sizeof(*rates) * nrates,
-+					     GFP_KERNEL);
-+		if (!cpuclk->rate_table) {
-+			ret = -ENOMEM;
-+			goto free_cpuclk;
-+		}
-+	}
-+
-+	return hw->clk;
-+
-+free_cpuclk:
-+	kfree(cpuclk);
-+unregister_clk:
-+	clk_hw_unregister_composite(hw);
-+free_div:
-+	kfree(div);
-+free_mux:
-+	kfree(mux);
-+
-+	return ERR_PTR(ret);
-+}
-diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
-index 19caf26c991b..2601df3b1066 100644
---- a/drivers/clk/rockchip/clk.c
-+++ b/drivers/clk/rockchip/clk.c
-@@ -722,6 +722,30 @@ void rockchip_clk_register_armclk(struct rockchip_clk_provider *ctx,
- }
- EXPORT_SYMBOL_GPL(rockchip_clk_register_armclk);
- 
-+void rockchip_clk_register_armclk_multi_pll(struct rockchip_clk_provider *ctx,
-+					    struct rockchip_clk_branch *list,
-+					    const struct rockchip_cpuclk_rate_table *rates,
-+					    int nrates)
-+{
-+	struct clk *clk;
-+
-+	clk = rockchip_clk_register_cpuclk_multi_pll(list->name, list->parent_names,
-+						     list->num_parents, ctx->reg_base,
-+						     list->muxdiv_offset, list->mux_shift,
-+						     list->mux_width, list->mux_flags,
-+						     list->div_offset, list->div_shift,
-+						     list->div_width, list->div_flags,
-+						     list->flags, &ctx->lock, rates, nrates);
-+	if (IS_ERR(clk)) {
-+		pr_err("%s: failed to register clock %s: %ld\n",
-+		       __func__, list->name, PTR_ERR(clk));
-+		return;
-+	}
-+
-+	rockchip_clk_set_lookup(ctx, clk, list->id);
-+}
-+EXPORT_SYMBOL_GPL(rockchip_clk_register_armclk_multi_pll);
-+
- void rockchip_clk_protect_critical(const char *const clocks[],
- 				   int nclocks)
- {
-diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
-index 7c5e74c7a2e2..23653a942403 100644
---- a/drivers/clk/rockchip/clk.h
-+++ b/drivers/clk/rockchip/clk.h
-@@ -622,6 +622,17 @@ struct clk *rockchip_clk_register_cpuclk(const char *name,
- 			const struct rockchip_cpuclk_rate_table *rates,
- 			int nrates, void __iomem *reg_base, spinlock_t *lock);
- 
-+struct clk *rockchip_clk_register_cpuclk_multi_pll(const char *name,
-+						   const char *const *parent_names,
-+						   u8 num_parents, void __iomem *base,
-+						   int muxdiv_offset, u8 mux_shift,
-+						   u8 mux_width, u8 mux_flags,
-+						   int div_offset, u8 div_shift,
-+						   u8 div_width, u8 div_flags,
-+						   unsigned long flags, spinlock_t *lock,
-+						   const struct rockchip_cpuclk_rate_table *rates,
-+						   int nrates);
-+
- struct clk *rockchip_clk_register_mmc(const char *name,
- 				const char *const *parent_names, u8 num_parents,
- 				void __iomem *reg,
-@@ -1208,6 +1219,10 @@ void rockchip_clk_register_armclk(struct rockchip_clk_provider *ctx,
- 			const struct rockchip_cpuclk_reg_data *reg_data,
- 			const struct rockchip_cpuclk_rate_table *rates,
- 			int nrates);
-+void rockchip_clk_register_armclk_multi_pll(struct rockchip_clk_provider *ctx,
-+					    struct rockchip_clk_branch *list,
-+					    const struct rockchip_cpuclk_rate_table *rates,
-+					    int nrates);
- void rockchip_clk_protect_critical(const char *const clocks[], int nclocks);
- void rockchip_register_restart_notifier(struct rockchip_clk_provider *ctx,
- 					unsigned int reg, void (*cb)(void));
+> ---
+>  drivers/gpu/drm/imx/dc/dc-fu.c    | 40 +++++++++++++++++++++++++++++++
+>  drivers/gpu/drm/imx/dc/dc-plane.c |  8 +++++++
+>  2 files changed, 48 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/imx/dc/dc-fu.c b/drivers/gpu/drm/imx/dc/dc-fu.c
+> index 1d8f74babef8a..397af0e9b0236 100644
+> --- a/drivers/gpu/drm/imx/dc/dc-fu.c
+> +++ b/drivers/gpu/drm/imx/dc/dc-fu.c
+> @@ -65,6 +65,46 @@ static const struct dc_fu_pixel_format pixel_formats[] = {
+>  		DRM_FORMAT_XRGB8888,
+>  		R_BITS(8)   | G_BITS(8)   | B_BITS(8)   | A_BITS(0),
+>  		R_SHIFT(16) | G_SHIFT(8)  | B_SHIFT(0)  | A_SHIFT(0),
+> +	}, {
+> +		DRM_FORMAT_ARGB8888,
+
+Since we only support primary plane and this one contains alpha component,
+I'd prefer to seeing it being supported when overlay plane is enabled in the
+future, not now.
+
+Same to the other formats with alpha component.
+
+> +		R_BITS(8)   | G_BITS(8)   | B_BITS(8)   | A_BITS(8),
+> +		R_SHIFT(16) | G_SHIFT(8)  | B_SHIFT(0)  | A_SHIFT(24),
+> +	}, {
+> +		DRM_FORMAT_ABGR8888,
+> +		R_BITS(8)   | G_BITS(8)   | B_BITS(8)   | A_BITS(8),
+> +		R_SHIFT(0)  | G_SHIFT(8)  | B_SHIFT(16) | A_SHIFT(24),
+> +	}, {
+> +		DRM_FORMAT_XBGR8888,
+> +		R_BITS(8)   | G_BITS(8)   | B_BITS(8)   | A_BITS(0),
+> +		R_SHIFT(0)  | G_SHIFT(8)  | B_SHIFT(16) | A_SHIFT(0),
+> +	}, {
+> +		DRM_FORMAT_RGBA8888,
+> +		R_BITS(8)   | G_BITS(8)   | B_BITS(8)   | A_BITS(8),
+> +		R_SHIFT(24) | G_SHIFT(16) | B_SHIFT(8)  | A_SHIFT(0),
+> +	}, {
+> +		DRM_FORMAT_RGBX8888,
+> +		R_BITS(8)   | G_BITS(8)   | B_BITS(8)   | A_BITS(0),
+> +		R_SHIFT(24) | G_SHIFT(16) | B_SHIFT(8)  | A_SHIFT(0),
+> +	}, {
+> +		DRM_FORMAT_BGRA8888,
+> +		R_BITS(8)   | G_BITS(8)   | B_BITS(8)   | A_BITS(8),
+> +		R_SHIFT(8)  | G_SHIFT(16) | B_SHIFT(24) | A_SHIFT(0),
+> +	}, {
+> +		DRM_FORMAT_BGRX8888,
+> +		R_BITS(8)   | G_BITS(8)   | B_BITS(8)   | A_BITS(0),
+> +		R_SHIFT(8)  | G_SHIFT(16) | B_SHIFT(24) | A_SHIFT(0),
+> +	}, {
+> +		DRM_FORMAT_RGB888,
+
+This is not in dc_plane_formats[] below.
+
+Also, I don't think the prefetch engines(DPRC + PRG) of i.MX8qxp/qm DC
+support this pixel format, though the DC itself seems to support it(but
+NXP downstream kernel doesn't support it).  So, in order not to support
+bypassing the prefetch engines in runtime(which makes the driver a lot
+more complicated), I hope that we don't bother to support it(even forever).
+
+> +		R_BITS(8)   | G_BITS(8)   | B_BITS(8)   | A_BITS(0),
+> +		R_SHIFT(16) | G_SHIFT(8)  | B_SHIFT(0)  | A_SHIFT(0),
+> +	}, {
+> +		DRM_FORMAT_BGR888,
+
+Ditto.
+
+> +		R_BITS(8)   | G_BITS(8)   | B_BITS(8)   | A_BITS(0),
+> +		R_SHIFT(0)  | G_SHIFT(8)  | B_SHIFT(16) | A_SHIFT(0),
+> +	}, {
+> +		DRM_FORMAT_RGB565,
+> +		R_BITS(5)   | G_BITS(6)   | B_BITS(5)   | A_BITS(0),
+> +		R_SHIFT(11) | G_SHIFT(5)  | B_SHIFT(0)  | A_SHIFT(0),
+>  	},
+>  };
+>  
+> diff --git a/drivers/gpu/drm/imx/dc/dc-plane.c b/drivers/gpu/drm/imx/dc/dc-plane.c
+> index e40d5d66c5c1f..68d32b76fab95 100644
+> --- a/drivers/gpu/drm/imx/dc/dc-plane.c
+> +++ b/drivers/gpu/drm/imx/dc/dc-plane.c
+> @@ -33,6 +33,14 @@ do {									\
+>  
+>  static const uint32_t dc_plane_formats[] = {
+>  	DRM_FORMAT_XRGB8888,
+> +	DRM_FORMAT_ARGB8888,
+> +	DRM_FORMAT_ABGR8888,
+> +	DRM_FORMAT_XBGR8888,
+> +	DRM_FORMAT_RGBA8888,
+> +	DRM_FORMAT_RGBX8888,
+> +	DRM_FORMAT_BGRA8888,
+> +	DRM_FORMAT_BGRX8888,
+> +	DRM_FORMAT_RGB565,
+
+I suppose that this patch may support only the below formats for now.
+
++	DRM_FORMAT_XBGR8888,
++	DRM_FORMAT_RGBX8888,
++	DRM_FORMAT_BGRX8888,
++	DRM_FORMAT_RGB565,
+
+>  };
+>  
+>  static const struct drm_plane_funcs dc_plane_funcs = {
+
+
 -- 
-2.34.1
-
+Regards,
+Liu Ying
