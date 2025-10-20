@@ -1,234 +1,199 @@
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F07352C029D
-	for <linux-clk@vger.kernel.org>; Mon, 20 Oct 2025 19:35:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A83A02F12D6
+	for <linux-clk@vger.kernel.org>; Mon, 20 Oct 2025 19:36:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760988941; cv=none; b=CsmXKUjYbbTB+84ZBNH8j0iQ8uIWV5HEtfDlFmBr8oMAD546KJjHAGVe48Fdw7gXwY1xLnPgAIeoSNw7aJtKCIxEMyv17xGnbSRuLuNx819cBoRmfDzRT5rT02jGaTFH35OQcKpDWDM0oA3JGUpq+Qs60lYoDe1NbKUINVZ5Aq0=
+	t=1760989010; cv=none; b=ppzRsqD0d2JvSJS/uRAs5Eg5F9Qie7uvF2fGF5Ug+mYeNYd+ubghmwbVdjiTvkA04E5uBjagSgUjV3SjrEeX+oK+DbEGNw92285kiygH0p2UwPd0PtxFE+cGI1geFtZ47+/84yObB9FSfua6gNA+JiDTeaBaJ/e2mZ7ZvUOUC3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760988941; c=relaxed/simple;
-	bh=oNEYCAZoe2K5VSK04zcW9dzheEfMP2pAPSvel73xE/8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HaKwZcfV99Fhwd5OI3GJRTDLB6n4j7Reel2clcNs1M2Q0NG1QXi5fMUuHIdbbPdtijMjaisi+TZmQHgnDL/FcXwGGGLHLa5cUJ8SOwpzJx3dLGHwriH4Wdbd49Q5fjGmaWrurDQlfYV28ZLYavckbQtlslh96Pkc9j8cn35Ef/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=RgK1I4Pq; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+	s=arc-20240116; t=1760989010; c=relaxed/simple;
+	bh=HXS7xGymDI6/8nnlFWj0A2HLQl6SA7kHsV+2dlr/xeg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HpKNsA4gsfCeh0mZfvQkzdnoqoqaQvkoRlt3PH/Qpip8Peo1OQjVO18f/QiNi2iXyxhWtvK8jnvReBC8PJg80hghkfJecMv6jE3Ki4+YXS3goPBbGQ0vEyTNaP4b4P1Yfs/KH/8AGgYD8wDrXJJkRGisK14uYFdHXSWNGfmAzKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=d1TNzonU; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="RgK1I4Pq"
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-b6bbfc57b75so168968066b.0
-        for <linux-clk@vger.kernel.org>; Mon, 20 Oct 2025 12:35:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1760988937; x=1761593737; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=iJzjjaEDD0imOWDSSABZOwuIGHAJF+eM/svL2iJ1tjE=;
-        b=RgK1I4PqTAoQsXu1V+7UWtrl/PB7Kh/MDcZfzBleq5J1r4nn7PO/Qwqvw1CqsQbuHd
-         vGn3mW4v97PIsVYyO/nSsvtJHYCO9vvIdYSSVy4ht6DlmmAclf5xYYLMNo0Q9nqRQnP1
-         5yHPpoD5+X41faepiYO044YiSS8uQ/p8W3/NkbLurqYRf1Kzv9n9b+DfkY3aYQYxfgCv
-         CeoxTaiNuyjDoOQXCNr8NGEQqSqyThHS8iXB6Us+T1iaowJDKKF3M2Z/xbJ+pqLaMgeE
-         QqwktUzAvI4vgKA7faXCbnP0W1oLnlY+Q3H/VnVQsqqc7bnrVaYht5Rg+bDZnX7rZgGE
-         QvHw==
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="d1TNzonU"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760989006;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5ZiaSM2PnoC+EdbhzADV84+t+uutkx1Amp/dmBBeJxQ=;
+	b=d1TNzonUBAde62H0OVgA4jWkMEQ81nb85H3I7Xxpf6sX2scMbRlfgpCJPWz7iD9iC5Qc+9
+	mG8IdKEdpEbfq6t+Lt4a9v3s9cgyVsuOigkMFGIYfaPgD/gP72rudioKUw1uPUiJsTu+pT
+	S/a/GJqElD6TOByQyd2R0x1snQ1OzM4=
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
+ [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-54-exEVI9o6M_yrPAkwNjdPTQ-1; Mon, 20 Oct 2025 15:36:45 -0400
+X-MC-Unique: exEVI9o6M_yrPAkwNjdPTQ-1
+X-Mimecast-MFC-AGG-ID: exEVI9o6M_yrPAkwNjdPTQ_1760989005
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-827061b4ca9so1487501185a.3
+        for <linux-clk@vger.kernel.org>; Mon, 20 Oct 2025 12:36:45 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760988937; x=1761593737;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iJzjjaEDD0imOWDSSABZOwuIGHAJF+eM/svL2iJ1tjE=;
-        b=VFj5BiCElVVYMnZD66be+cvu2oti/ZUUTHusHVii8ypvBLruat+fIky+iJj5GcspqS
-         6h/Nkqq2RO1Mz5JBHHIY9WFGXzjHXhBz2NzauvcTZK6j58dIvmtepsD/+5WGtN15WIwN
-         A647TG75cQC76VEaun5X7QjSSQoT80RC3KTyN6tHeAAlMAyfLIGzzeF9nLdaD9dq23TS
-         7zr/iS77dbvqTpD73D8xG+QcjT4VwIt1lKeJi3zUbkfCpfX/PD5KM6/PSHMh4x/AIwmh
-         lnNEc9AZAqufazRV43WOJ9U6BAYmdYpQJeKIXpVbeHzB+jhuKA+lR/r5Fm1DE+uJ/tZG
-         a22g==
-X-Gm-Message-State: AOJu0YyoQA/IkG9TlMOB0JAXUQ+3+u9AaxXLCoJQlU0vaKgnyffdpe+M
-	6rEXQ8Ggi1/hHya6aT3NTANPcxOf/ND3Do12WKas/SQBXgF8pPkIJLTx+4/ye9rycBM=
-X-Gm-Gg: ASbGnctfAUEUJBLCv9Q7WO3bxPjHx92loDIYDVFMnFCIaLM2BXI4fGXm0W2IG0ewHtC
-	CX2/jNUv36KXm+tbty/TjMbcKz96ecSR69dQGHle3mTgdjlwFDjoqYztmGaJC9LLn+AaMEnKCrg
-	+dnro2XyKNk0Dzh7D7Nih0mLAynfs6xFakkIyMNFLy07VCTBkuKFKFVDlYcRAbIG/Jy88lOzz3z
-	mbsVa9Blv7WAc7Rf/vb+zSFr+hBBj8ljlCou5E7HSQlhwsLokpjHPjyDu2Eel5fNL6kfhBy+Gfc
-	MITz+Rx6JdfUN3Imdg7uR+SCmhMnysCvSj6Gq1cwfZlCd8uBL68LiEicnSp/5IOuem330FWfsmA
-	R4ikJQnSgDYrGxUsY63Hj6nSAo+3InI9X/2+Iqb2e5sxC6ht+Q5+8QXjvY8XVE5wuWwdCGNFNNT
-	kZd8AMq4EVGgXb8aQN6yqUe1ESsoM92g==
-X-Google-Smtp-Source: AGHT+IEiYwpBReda0RVlKDOQV0LSpWf2aD9VoyYoOpi2xDJAeQwN4pP2e2fQdG41lg3CAj5uR9jk8Q==
-X-Received: by 2002:a17:907:7a86:b0:b57:2c75:cc8d with SMTP id a640c23a62f3a-b605249e429mr2106696966b.14.1760988936588;
-        Mon, 20 Oct 2025 12:35:36 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.151])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b65eb0362fbsm879008666b.39.2025.10.20.12.35.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 20 Oct 2025 12:35:36 -0700 (PDT)
-Message-ID: <e20e05e7-6deb-4180-bb70-59045fdcdbfb@tuxon.dev>
-Date: Mon, 20 Oct 2025 22:35:34 +0300
+        d=1e100.net; s=20230601; t=1760989005; x=1761593805;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5ZiaSM2PnoC+EdbhzADV84+t+uutkx1Amp/dmBBeJxQ=;
+        b=uHlXDQSOwMCdskCqvfzESJZcsBBmhJbGyOR+iJxLik/vkqG3SH284yZ0f+8Y0Q5LjQ
+         Yhvr3iDQs+g7qedZiNwklyj4E7TwMp5MnqVyLIHYd2NwhrLmKJZr6FXh1fdYWwPq9JHE
+         kWhL5i6bNM4aH1XSOCqj6IIsFJVRWWKDQJWmLIxO+Vq+Cm6OuDaAuHmofVEZVJkpdOjW
+         PaKL/i4AOmzAxoi7V9p3Ul0W9HJuySB2eifu0TgEgi4KEaM25L3AECX2OpR8GsVoeLvF
+         UjBNXuo99l6Q6MQTF/kjE/O4vUPMulyEUAR7Haae9ch+e/IzYEGqhY1JtwRBS/f4Ayai
+         JMDg==
+X-Forwarded-Encrypted: i=1; AJvYcCXDHDyYGJGYh1EBClPwwZeh+nhm9XJDKKg+ORNZD4+Me/4/IhHNy0BtYhW6Dq2z4gLHNkXE8y+CXi0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwyitPtE2mAjBKnRB+DNRqW/YFysoxoDq+j1gd33WsTP+mJ2E1t
+	ZilEZXL1Ys+gXBuxmqFVCqT4o62SbToJHNpEWlyqAq5GPfb4qGOCTHh8b7p1ljYtA6HaDIS1LxH
+	59zFeHv002ehygN+TpeGFDhk40jN8qmP7XHYcLyyYdsxWUklmqVbVzW2t809aMA==
+X-Gm-Gg: ASbGncv9SNq5N/3Mw9/flmZMX0IdUdZ/XOIY6FpW4XIB7beQn6jSoBTGuiWeoyrBJOU
+	GRLMQK3AdAvvmgWJpMlu6Eza1sQZ31ORwaa2WM5VbCXZDQ1ZKXcJsH6f42SSyHpz33LkI8yxqh3
+	eFmRV+g0wzr4tx8gbfoZN/ex+xyJUion8ejdUU/fiY4k/FqWtXNMuA9UFzHw8Ij1kXurc1R94G1
+	eqjF5peFFpYXuGL1vHTRWVnI+sPsB7Qm807x/wydgLJh9H4fyVjXqxfYaRrH3keFuSLvV9rwC6y
+	UzduaCPMNDmhph/xFarGdA17RBLuaCPXgHRWit1joBDiljIwrkG0Jc8e4raPjfpYhwcdYa595hX
+	dJUtOEtnPWhcKaOm4jSIU5j22l/Di6A==
+X-Received: by 2002:a05:620a:372a:b0:859:be3b:b5ac with SMTP id af79cd13be357-8906e7b97famr1467032985a.4.1760989004784;
+        Mon, 20 Oct 2025 12:36:44 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFsNNiKmKY9peurhzlqev2tF6KISu0JNaKtgEbeRgj3Y5mOQwBz7wnSHOaZ0F5uLAZ7ugJitg==
+X-Received: by 2002:a05:620a:372a:b0:859:be3b:b5ac with SMTP id af79cd13be357-8906e7b97famr1467030685a.4.1760989004383;
+        Mon, 20 Oct 2025 12:36:44 -0700 (PDT)
+Received: from redhat.com ([2600:382:7726:4296:a56e:fe07:ce3f:d5f0])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8924e082780sm537713185a.51.2025.10.20.12.36.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Oct 2025 12:36:43 -0700 (PDT)
+Date: Mon, 20 Oct 2025 15:36:41 -0400
+From: Brian Masney <bmasney@redhat.com>
+To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Dong Aisheng <aisheng.dong@nxp.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Yassine Oudjana <y.oudjana@protonmail.com>,
+	Laura Nao <laura.nao@collabora.com>,
+	=?iso-8859-1?Q?N=EDcolas_F=2E_R=2E_A=2E?= Prado <nfraprado@collabora.com>,
+	Chia-I Wu <olvaffe@gmail.com>, Chen-Yu Tsai <wenst@chromium.org>,
+	kernel@collabora.com, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH v3 1/5] clk: Respect CLK_OPS_PARENT_ENABLE during recalc
+Message-ID: <aPaPSeClhiq2WYJN@redhat.com>
+References: <20251010-mtk-pll-rpm-v3-0-fb1bd15d734a@collabora.com>
+ <20251010-mtk-pll-rpm-v3-1-fb1bd15d734a@collabora.com>
+ <aPFbDl_JKyDay1S5@redhat.com>
+ <3342669.irdbgypaU6@workhorse>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 28/31] clk: at91: at91sam9260: switch to parent_hw and
- parent_data
-To: Ryan.Wanner@microchip.com, mturquette@baylibre.com, sboyd@kernel.org,
- alexandre.belloni@bootlin.com, nicolas.ferre@microchip.com
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, varshini.rajendran@microchip.com
-References: <cover.1758226719.git.Ryan.Wanner@microchip.com>
- <a85eafe6b462d385c399f8e56773dbedaa1f3260.1758226719.git.Ryan.Wanner@microchip.com>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Content-Language: en-US
-In-Reply-To: <a85eafe6b462d385c399f8e56773dbedaa1f3260.1758226719.git.Ryan.Wanner@microchip.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3342669.irdbgypaU6@workhorse>
+User-Agent: Mutt/2.2.14 (2025-02-20)
 
-Hi, Ryan,
+Hi Nicolas,
 
-On 9/19/25 00:16, Ryan.Wanner@microchip.com wrote:
-> From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+On Fri, Oct 17, 2025 at 02:21:55PM +0200, Nicolas Frattaroli wrote:
+> On Thursday, 16 October 2025 22:52:30 Central European Summer Time Brian Masney wrote:
+> > On Fri, Oct 10, 2025 at 10:47:09PM +0200, Nicolas Frattaroli wrote:
+> > > When CLK_OPS_PARENT_ENABLE was introduced, it guarded various clock
+> > > operations, such as setting the rate or switching parents. However,
+> > > another operation that can and often does touch actual hardware state is
+> > > recalc_rate, which may also be affected by such a dependency.
+> > > 
+> > > Add parent enables/disables where the recalc_rate op is called directly.
+> > > 
+> > > Fixes: fc8726a2c021 ("clk: core: support clocks which requires parents enable (part 2)")
+> > > Fixes: a4b3518d146f ("clk: core: support clocks which requires parents enable (part 1)")
+> > > Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> > > Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
+> > > Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+> > > ---
+> > >  drivers/clk/clk.c | 13 +++++++++++++
+> > >  1 file changed, 13 insertions(+)
+> > > 
+> > > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> > > index 85d2f2481acf360f0618a4a382fb51250e9c2fc4..1b0f9d567f48e003497afc98df0c0d2ad244eb90 100644
+> > > --- a/drivers/clk/clk.c
+> > > +++ b/drivers/clk/clk.c
+> > > @@ -1921,7 +1921,14 @@ static unsigned long clk_recalc(struct clk_core *core,
+> > >  	unsigned long rate = parent_rate;
+> > >  
+> > >  	if (core->ops->recalc_rate && !clk_pm_runtime_get(core)) {
+> > > +		if (core->flags & CLK_OPS_PARENT_ENABLE)
+> > > +			clk_core_prepare_enable(core->parent);
+> > > +
+> > >  		rate = core->ops->recalc_rate(core->hw, parent_rate);
+> > > +
+> > > +		if (core->flags & CLK_OPS_PARENT_ENABLE)
+> > > +			clk_core_disable_unprepare(core->parent);
+> > > +
+> > >  		clk_pm_runtime_put(core);
+> > >  	}
+> > >  	return rate;
+> > 
+> > clk_change_rate() has the following code:
+> > 
+> > 
+> >         if (core->flags & CLK_OPS_PARENT_ENABLE)
+> >                 clk_core_prepare_enable(parent);
+> > 
+> > 	...
+> > 
+> >         core->rate = clk_recalc(core, best_parent_rate);
+> > 
+> > 	...
+> > 
+> >         if (core->flags & CLK_OPS_PARENT_ENABLE)
+> >                 clk_core_disable_unprepare(parent);
+> > 
+> > clk_change_rate() ultimately is called by various clk_set_rate
+> > functions. Will that be a problem for the double calls to
+> > clk_core_prepare_enable()?
 > 
-> Switch AT91SAM92600 clocks to use parent_hw and parent_data. Having
-> parent_hw instead of parent names improves to clock registration
-> speed and re-parenting.
+> I don't see how multiple prepares are a problem as long as they're
+> balanced.
 > 
-> Signed-off-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-> Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
-> ---
->  drivers/clk/at91/at91sam9260.c | 120 ++++++++++++++++++---------------
->  1 file changed, 67 insertions(+), 53 deletions(-)
+> > 
+> > Fanning this out to the edge further is going to make the code even
+> > more complicated. What do you think about moving this to
+> > clk_core_enable_lock()? I know the set_parent operation has a special
+> > case that would need to be worked around.
 > 
-> diff --git a/drivers/clk/at91/at91sam9260.c b/drivers/clk/at91/at91sam9260.c
-> index 55350331b07e..2ac2a340da2f 100644
-> --- a/drivers/clk/at91/at91sam9260.c
-> +++ b/drivers/clk/at91/at91sam9260.c
-> @@ -9,7 +9,7 @@
->  
->  struct sck {
->  	char *n;
-> -	char *p;
-> +	struct clk_hw *parent_hw;
->  	u8 id;
->  };
->  
-> @@ -24,7 +24,7 @@ struct at91sam926x_data {
->  	const struct clk_pll_layout *pllb_layout;
->  	const struct clk_pll_characteristics *pllb_characteristics;
->  	const struct clk_master_characteristics *mck_characteristics;
-> -	const struct sck *sck;
-> +	struct sck *sck;
->  	const struct pck *pck;
->  	u8 num_sck;
->  	u8 num_pck;
-> @@ -72,11 +72,11 @@ static const struct clk_pll_characteristics sam9260_pllb_characteristics = {
->  	.out = sam9260_pllb_out,
->  };
->  
-> -static const struct sck at91sam9260_systemck[] = {
-> -	{ .n = "uhpck", .p = "usbck",    .id = 6 },
-> -	{ .n = "udpck", .p = "usbck",    .id = 7 },
-> -	{ .n = "pck0",  .p = "prog0",    .id = 8 },
-> -	{ .n = "pck1",  .p = "prog1",    .id = 9 },
-> +static struct sck at91sam9260_systemck[] = {
-> +	{ .n = "uhpck", .id = 6 },
-> +	{ .n = "udpck", .id = 7 },
-> +	{ .n = "pck0",  .id = 8 },
-> +	{ .n = "pck1",  .id = 9 },
->  };
->  
->  static const struct pck at91sam9260_periphck[] = {
-> @@ -213,15 +213,15 @@ static const struct clk_pll_characteristics sam9261_pllb_characteristics = {
->  	.out = sam9261_pllb_out,
->  };
->  
-> -static const struct sck at91sam9261_systemck[] = {
-> -	{ .n = "uhpck", .p = "usbck",    .id = 6 },
-> -	{ .n = "udpck", .p = "usbck",    .id = 7 },
-> -	{ .n = "pck0",  .p = "prog0",    .id = 8 },
-> -	{ .n = "pck1",  .p = "prog1",    .id = 9 },
-> -	{ .n = "pck2",  .p = "prog2",    .id = 10 },
-> -	{ .n = "pck3",  .p = "prog3",    .id = 11 },
-> -	{ .n = "hclk0", .p = "masterck_div", .id = 16 },
-> -	{ .n = "hclk1", .p = "masterck_div", .id = 17 },
-> +static struct sck at91sam9261_systemck[] = {
-> +	{ .n = "uhpck", .id = 6 },
-> +	{ .n = "udpck", .id = 7 },
-> +	{ .n = "pck0",  .id = 8 },
-> +	{ .n = "pck1",  .id = 9 },
-> +	{ .n = "pck2",  .id = 10 },
-> +	{ .n = "pck3",  .id = 11 },
-> +	{ .n = "hclk0", .id = 16 },
-> +	{ .n = "hclk1", .id = 17 },
->  };
->  
->  static const struct pck at91sam9261_periphck[] = {
-> @@ -277,13 +277,13 @@ static const struct clk_pll_characteristics sam9263_pll_characteristics = {
->  	.out = sam9260_plla_out,
->  };
->  
-> -static const struct sck at91sam9263_systemck[] = {
-> -	{ .n = "uhpck", .p = "usbck",    .id = 6 },
-> -	{ .n = "udpck", .p = "usbck",    .id = 7 },
-> -	{ .n = "pck0",  .p = "prog0",    .id = 8 },
-> -	{ .n = "pck1",  .p = "prog1",    .id = 9 },
-> -	{ .n = "pck2",  .p = "prog2",    .id = 10 },
-> -	{ .n = "pck3",  .p = "prog3",    .id = 11 },
-> +static struct sck at91sam9263_systemck[] = {
-> +	{ .n = "uhpck", .id = 6 },
-> +	{ .n = "udpck", .id = 7 },
-> +	{ .n = "pck0",  .id = 8 },
-> +	{ .n = "pck1",  .id = 9 },
-> +	{ .n = "pck2",  .id = 10 },
-> +	{ .n = "pck3",  .id = 11 },
->  };
->  
->  static const struct pck at91sam9263_periphck[] = {
-> @@ -330,12 +330,11 @@ static void __init at91sam926x_pmc_setup(struct device_node *np,
->  					 struct at91sam926x_data *data)
->  {
->  	const char *slowxtal_name, *mainxtal_name;
-> +	struct clk_parent_data parent_data[4];
->  	struct pmc_data *at91sam9260_pmc;
->  	u32 usb_div[] = { 1, 2, 4, 0 };
-> -	const char *parent_names[6];
-> -	const char *slck_name;
-> +	struct clk_hw *usbck_hw, *hw;
->  	struct regmap *regmap;
-> -	struct clk_hw *hw;
->  	int i;
->  	bool bypass;
->  
-> @@ -363,12 +362,13 @@ static void __init at91sam926x_pmc_setup(struct device_node *np,
->  
->  	bypass = of_property_read_bool(np, "atmel,osc-bypass");
->  
-> -	hw = at91_clk_register_main_osc(regmap, "main_osc", mainxtal_name, NULL,
-> +	hw = at91_clk_register_main_osc(regmap, "main_osc", NULL,
-> +					&AT91_CLK_PD_NAME(mainxtal_name),
->  					bypass);
->  	if (IS_ERR(hw))
->  		goto err_free;
->  
-> -	hw = at91_clk_register_rm9200_main(regmap, "mainck", "main_osc", NULL);
-> +	hw = at91_clk_register_rm9200_main(regmap, "mainck", NULL, &AT91_CLK_PD_HW(hw));
->  	if (IS_ERR(hw))
->  		goto err_free;
->  
-> @@ -382,20 +382,17 @@ static void __init at91sam926x_pmc_setup(struct device_node *np,
->  		if (IS_ERR(hw))
->  			goto err_free;
->  
-> -		parent_names[0] = "slow_rc_osc";
-> -		parent_names[1] = "slow_xtal";
-> -		hw = at91_clk_register_sam9260_slow(regmap, "slck",
-> -						    parent_names, NULL, 2);
-> +		parent_data[0] = AT91_CLK_PD_HW(hw);
-> +		parent_data[1] = AT91_CLK_PD_NAME(slowxtal_name);
-> +		hw = at91_clk_register_sam9260_slow(regmap, "slck", NULL, parent_data, 2);
->  		if (IS_ERR(hw))
->  			goto err_free;
->  
->  		at91sam9260_pmc->chws[PMC_SLOW] = hw;
-> -		slck_name = "slck";
-> -	} else {
-> -		slck_name = slowxtal_name;
+> __clk_core_init also needs special code in that case, as it calls the
+> bare recalc_rate op with no clk_core_enable_lock beforehand. It's also
+> wrong, in that recalc_rate does not necessitate the clock being on as
+> far as I'm aware. (if it did, this wouldn't be a problem in the first
+> place, as enabling it would enable the parent as well). Changing the
+> semantics of clk_recalc, and therefore clk_get_rate, to also enable
+> the clock, would be a major change in how the common clock framework
+> functions.
+> 
+> In my case, the __clk_core_init callback was the one that crashed,
+> so it really needs to happen there, and I really don't want to
+> refactor every location where `CLK_OPS_PARENT_ENABLE` is used for
+> a bugfix just to avoid potentially checking the same flag twice.
+> 
+> Having `CLK_OPS_PARENT_ENABLE` cleaned up such that every clk op
+> that has potential register access is never directly called by the
+> clk core except for one place, an accessor function that does both
+> pmdomain and `CLK_OPS_PARENT_ENABLE` checks, would be nice, e.g.
+> by keeping the clk_recalc change and then having __clk_core_init
+> call clk_recalc instead of the recalc op directly. But then the
+> __clk_core_init logic needs further refactoring as well.
+> 
+> I'm not sure I want to do that in this series, because it's quite
+> a bit different from just adding the missing check and parent
+> toggling, and has the chance of me introducing subtle logic bugs
+> in what is supposed to be a bugfix.
 
-This section here should be kept.
+I agree and that makes sense. Thanks for the explanation. What you have
+is a good compromise.
+
+Reviewed-by: Brian Masney <bmasney@redhat.com>
+
