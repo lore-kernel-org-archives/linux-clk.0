@@ -1,137 +1,123 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C787629DB6A
-	for <linux-clk@vger.kernel.org>; Mon, 20 Oct 2025 09:20:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DED92F49E9
+	for <linux-clk@vger.kernel.org>; Mon, 20 Oct 2025 09:35:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760952005; cv=none; b=SqSk97RmoZWp82SewX5YihHVl3iu22fFij5GLMHWfPBkXW2mQuSNzTGm/hFhBkor2jkxrWBjWKuPno3c8LUCGdwiJNOOyN+e29TpNbLVpN7hUy0CCBFRjx0DkjPNBHrRm6ZI9caX4n+nd4GYwrFtFUASbHPKoubATylAbiXB+c4=
+	t=1760952954; cv=none; b=BTjVdk4G8w0zFTOn29eCLoeoRo0mBZh4nV2FtGxodfK5nIAB4L7KI5TMJC2V0RVUwVtMJZ0gZ0yILz2iFWsEwjD4cdTBXWW3G9rnbKQCCYcoeHeK6caFh8sM28gQkftpWqkC854uo/dOhTwNe8fuVew4jqMFQK2jkfbmzKcad4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760952005; c=relaxed/simple;
-	bh=iVDOlt8XyF/0gL57nFvuUrvv3rVY9GhGb/oEjhukzyw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pNCQnqf8dLikrMegJHE0B5mdj2hDk4Yyo/Y7ecnfvVBeY6jH80UeYW2TI0xiOT6MZGWNcvin3jCvL292IDah7KhoATCcEEXqRr5NnlYywUiYTF4LjXjeCC0rt9OuY79UCSD27WZe+/NmzeD5l8x/oYPdoukbM54r1ljsQcxFJaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mF3rRDMQ; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1760952954; c=relaxed/simple;
+	bh=XhBk+fLp2W5DECzp9hS0MG7aAfAwiZePIRPabG3zfvQ=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=FUdVdZy2dPHsVrMMEDvCrvA0/Q/htCbhsn0z7aDzNk4FDv1JZ1jjFG45S47ZHI/T2bR08hm7VYM3RPOn3cTMyr8ROXO/7Aa6mxDxWuQB3I7lVlzw9J8X3dp3JvMKmbntEBtlkiZip/SuLeIfyhp6ben/KQomdxOKoPDiV1CHpcc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1AWuBwr9; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mF3rRDMQ"
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-46b303f7469so31755815e9.1
-        for <linux-clk@vger.kernel.org>; Mon, 20 Oct 2025 02:20:03 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1AWuBwr9"
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-4721b4f3afbso7334935e9.0
+        for <linux-clk@vger.kernel.org>; Mon, 20 Oct 2025 02:35:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760952002; x=1761556802; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=0XCJmz4HW13zmCaIQ84NTp39kjqei0obsLTQVEkJ9Dg=;
-        b=mF3rRDMQXSm7smo7UWNVZCkAehPKg9jizKJO6E9LLRlH+/aLfAkrAICg5bBp9XbI+r
-         5+AOUafKYfIOesscShW1dVhPeR0q+IvhHlxFv6hhIGKrv7gycWH0qeaWCMEzAWts+6++
-         s2L06QgbJGZwA08HnnY6Ua5Z6FJXRciE2T766SI128rokZBlOcAYUGpQQ+y84LeVtZmj
-         RMuO6YLqksZ4VujsPIO/7EOpy6mPh1Q/v0Oq3VzMSyZ5Ul/S/kn+Mvl0Js4Y1fR+D7vm
-         K4NXlFwFg7A5Od9N+eGfpLcfnxmlKTFQi51LFqbmDO5TFKNGL3MSdjZfkaGQwsk+1o1i
-         S5YA==
+        d=google.com; s=20230601; t=1760952950; x=1761557750; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ecbXXUemuSWRJnCILxztx4T9Y94vvKKPFZCmK42EZU4=;
+        b=1AWuBwr9bWBWN2KdYxxf9bPip8eO54XPe02DKZPLNm6Uu2fC4dJDkOmLHLmx1sOrxU
+         gFGSWMMq30EaQVdoT0skNEtw5dW0OL3B67AX/ZNqzFDTY6ZA1q1/N5poKzNbxzrQriCB
+         8E7deXS4CYG8hCowRnu0Xh4mvF3Y6eXwoM0cLVqrCnIskgkFqFDwOJYOCDlQPwBVc2/s
+         6SYQI1NnXr2BfWycFgZZXpS74Rvonq7KmhbEMR1Zj0IxSt92y5xZUZVkIILP6upMhgAL
+         gFeHliRH5I5fbklisFYYe9RIHUKBRgBKP0FhkmtPnbELmpO3M6sfbx1+29rfveWRVTVN
+         4GGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760952002; x=1761556802;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0XCJmz4HW13zmCaIQ84NTp39kjqei0obsLTQVEkJ9Dg=;
-        b=F0i1vovYWZDgiUquntcrr6IKM3z5YtdD0g550p3sAT5REINrzRC9ZUHQdo3THYxkS2
-         j5dy0ON0kobIpwZPA0Wu5UpG9yL0qrYi3EcmLM35ZmUNfAQwn/qLpajrRS+ING7zD1HY
-         hRiihOJduPJvqjLNZnsC/gG6wHSrjL1tT6bB5dZkFXtiy0rfdtfBZE/vg3w5qSvoGfey
-         vCwWxjZNLgjREk+IgDu82/nmzye2+52ALI8JDODPbvIw8LLfvoqEtvS0s+rWA1Hfbzbx
-         WH/3g8sqC+fdZA1JXKNSnA8kMnGIFQeXQTQfJk7MPwleCBI3PfG5RqgliVV/NpScCQ4G
-         QOaw==
-X-Forwarded-Encrypted: i=1; AJvYcCUqvRVebWCyExttnBl/yRDeGLQhqUJmHDmvPjxtXKv8ieja2HSjIWS4B2ebQQAKiLsB6z5FbHrTm/c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXJbEhU8CnKl7l6AE/sWE8pg09ZcuUZkAAdV1bPbRR5uf4F2mh
-	4uaHGktxuTb/2vRFM74xQiWa8cJSZTLbfSnBk7dxCZghQorB6eN36U06ShuqWWnph8c=
-X-Gm-Gg: ASbGncsflx1TEjhKRuqoE+r9h+C/NvIWwsgkpbmZlf9vv3ApYfNRj9blFEdSF29qQlj
-	ma1vjRnFeoYM3CA6phU3NvGQboX1w1fUbypM/1HQ4btbCf26AuJi3IhSm404H7lqG1piCTwnPgb
-	T3gbdLGS0uMjO89oTB7XkrwhYBdvRv0DNU0F0SbnvfHlLwvm3boUfEw4A4Y3lXC/zknMioyNi6z
-	qvyDTNkEOGnWtUizBE36mhuEHEZ7XplijpH8AnE5KZ7kvRHiMoIsB4T2WxArsFuJZO3He9+mncQ
-	C/k7x7Vb3wJnonMqIAUD4iybg+brDK+TRRKTbgIh/LuOcqfFrcHCwjGKf7sTwu4Mv7qqazviSOQ
-	SbVVZL4HTnAMIwNaZe+s5ls8tTE7n0GE29Wh8HOHFviK7Ao6AZsLVbSObVjjaR7iI8C/twx+HUB
-	6OFbyEPxi0LTE7ThILSU8=
-X-Google-Smtp-Source: AGHT+IHDfUmNi5eqw691/M33t81cdCOV6g/HJdfYKSgYwXlWSNi3vurpVr1BkRRnhjmGHUqYcBuwxw==
-X-Received: by 2002:a05:6000:4008:b0:428:3bf5:b3b8 with SMTP id ffacd0b85a97d-4283bf5b655mr5592745f8f.44.1760952002139;
-        Mon, 20 Oct 2025 02:20:02 -0700 (PDT)
-Received: from [10.11.12.107] ([79.115.63.145])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427f00ce3e2sm14354917f8f.47.2025.10.20.02.20.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 20 Oct 2025 02:20:01 -0700 (PDT)
-Message-ID: <a03cd07f-8e9f-4b02-b301-f1bbb69eb7db@linaro.org>
-Date: Mon, 20 Oct 2025 10:19:59 +0100
+        d=1e100.net; s=20230601; t=1760952950; x=1761557750;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ecbXXUemuSWRJnCILxztx4T9Y94vvKKPFZCmK42EZU4=;
+        b=XQzlBZXYUR11vYRrlRnB99zVrwQDO2B/QXOmukjC9LM6x7ZT484WPSIY3/cfVJiv+p
+         xncNygB6txSKGcsCcwS2UNvwKP/cjhbHfBrH+Sz1K1+/y0UGqYnLiGD0o6Y8DIK6urim
+         GXVDoVnEG2M38gXDWpIr7dshQQCxwRAVC+/6VfTu1Inc0W1PCAlX1JLXTelaw0Bf81Gq
+         wJ0m2vyXHWkjLReFC9XvJ43FVThbS1w6Yo2V0xdl/ZDQK+dGPVH0T5m7xRzyFLocbjze
+         kBmTTmr67PTsrPkym4mGFQBH1FOICw+d/86hfFwAg0pS0uqWYeerKrL9w8G6KnT/tGdK
+         t9MQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXHGmRRnjB8LxXbcAEN6njGHl64ENCzIpAlRF5/UChvPqqHqo+Jje5jz4F0NC3q0ZSyOzFTVWcFoZA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyui3Ut1y0URNaDMLB/Hj1BvdO2fMQ+4DzjZT9NbzQb1iLt24IH
+	aKKzgV34RFZa76902x7hxHEdmHkYN0pHQgvaUlWdbKRK/ldjJKcwVf26q2fLWVwNPkJimLZwPFr
+	5UFLfHEhkP5cO+29qTA==
+X-Google-Smtp-Source: AGHT+IEtfKcr2bAXbhY6IBXnQhniMXdtpnsNRZuWCK/iqep4lByGpTbbKfjLmiObkoIKm2uxWetnzZkGUuTSDxI=
+X-Received: from wmwl14.prod.google.com ([2002:a05:600d:82ee:b0:46e:2e2a:b707])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:3b8d:b0:471:60c:1501 with SMTP id 5b1f17b1804b1-47117918c0cmr104204395e9.28.1760952950391;
+ Mon, 20 Oct 2025 02:35:50 -0700 (PDT)
+Date: Mon, 20 Oct 2025 09:35:33 +0000
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 4/6] clk: samsung: add Exynos ACPM clock driver
-To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Peter Griffin <peter.griffin@linaro.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, willmcvicker@google.com, kernel-team@android.com
-References: <20251010-acpm-clk-v6-0-321ee8826fd4@linaro.org>
- <20251010-acpm-clk-v6-4-321ee8826fd4@linaro.org>
- <92f1c027-bacc-4537-a158-2e0890e2e8ee@kernel.org>
- <17695fcf-f33c-4246-8d5c-b2120e9e03b1@linaro.org>
- <2f8da425-63d9-4321-9cd3-976bbd29a52f@kernel.org>
-Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <2f8da425-63d9-4321-9cd3-976bbd29a52f@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIAGUC9mgC/3XMSw7CIBSF4a00d+w1vIzVkfswHVS4UGKFBgyxa
+ di72LnD/yTn2yBT8pTh2m2QqPjsY2ghDh3oaQyO0JvWIJg4sQtTqOcnZgoG8xo0Sm3Hs1XENQl onyWR9Z/duw+tJ5/fMa07X/hv/ScVjhxVb5iQUjB69DcXo5vpqOMLhlrrF6sjiBOrAAAA
+X-Change-Id: 20250904-clk-send-sync-3cfa7f4e1ce2
+X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1249; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=XhBk+fLp2W5DECzp9hS0MG7aAfAwiZePIRPabG3zfvQ=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBo9gJs7Q7itgelMJ1LzKLFYAoousvr6TcvFH7hQ
+ XjvX4P/A7eJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCaPYCbAAKCRAEWL7uWMY5
+ RkAoEACoMbT7N91tq6z9gw5Ha5yrZpV6rkSfFWZ/exIkoXzGDiz5RKf+RRI/iiwC2FvD5ZAy4mq
+ SOaXWmfTBTXHUkdWBUOlYkytI9maWPYNDfdFM+g3jQ8Y5/CFeKJRonwwCWRrpy/TTNjO+sDCjja
+ xOvhuxcIGWqX01KA1+TpsGrKPLtu/awy0ttYdUSfHBKbBz/jGGnHWVv9MEzUjQxB+Cs6qFZwfDM
+ DNhJxlffjrIiI3dOCarwQkSjILbEK4mE8nA87uH6ExHRtUAazId7Lfva+v7+uGHpJo10AzQ7HmC
+ ZTmRY1yoVbmsPaEcJj7CzG4IGsOrF7kSS7MOYGYkI0sCM2MxJaVMsY+JOqAnhcfNpRkGX2ic9Uf
+ p7KHTC+Ps0hlwNRbkyjL2uxnd/n4F+7ZR1LKnPxyVpphdzVV+2C/7tOyqBn7isNEUB/hkBYtfzd
+ Pyzzzn3xbIJaClZfI6YvG2iQflzXw9VZGLFYdn4a9Gx1GDrDRZ271Q9/sFOw2RBZEZ8CRwQKjNT
+ fiEXQsl71RZmGRQePGzg6aGKgcC90ZXfspJzyc5cpitifksiKN81asWWr0hROILxRdUJzoLx+js
+ 2yD1Vx3GGHOvk7ATDcf7TbuqCfG4NIXEn9DJ7g0x4DFwSOc6KaZamGTkVjUgRCR9EOPY6jOPKWO myLnflY/rcRpMPA==
+X-Mailer: b4 0.14.2
+Message-ID: <20251020-clk-send-sync-v2-0-44ab533ae084@google.com>
+Subject: [PATCH v2 0/2] Implement Send and Sync for clk
+From: Alice Ryhl <aliceryhl@google.com>
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, Daniel Almeida <daniel.almeida@collabora.com>, 
+	linux-clk@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>
+Content-Type: text/plain; charset="utf-8"
 
+I added a patch to remove the Send/Sync impl for the Tyr driver as well.
+I think it's fine for the Tyr patch to land through whichever tree takes
+the clk patch, as there should be no non-trivial merge conflicts. Or we
+can also take the clk patch through drm-rust where tyr patches normally
+go if preferred by clk maintainers.
 
+Regarding Daniel's patch [1], I suggest that Daniel sends his type-state
+change rebased on top of this series (without including the patches in
+this series in his).
 
-On 10/20/25 9:22 AM, Krzysztof Kozlowski wrote:
-> On 20/10/2025 09:45, Tudor Ambarus wrote:
->>
->>
->> On 10/20/25 7:54 AM, Krzysztof Kozlowski wrote:
->>>> diff --git a/drivers/clk/samsung/Kconfig b/drivers/clk/samsung/Kconfig
->>>> index 76a494e95027af26272e30876a87ac293bd56dfa..70a8b82a0136b4d0213d8ff95e029c52436e5c7f 100644
->>>> --- a/drivers/clk/samsung/Kconfig
->>>> +++ b/drivers/clk/samsung/Kconfig
->>>> @@ -95,6 +95,16 @@ config EXYNOS_CLKOUT
->>>>  	  status of the certains clocks from SoC, but it could also be tied to
->>>>  	  other devices as an input clock.
->>>>  
->>>> +config EXYNOS_ACPM_CLK
->>>> +	tristate "Clock driver controlled via ACPM interface"
->>>> +	depends on EXYNOS_ACPM_PROTOCOL || (COMPILE_TEST && !EXYNOS_ACPM_PROTOCOL)
->>>
->>> I merged the patches but I don't get why we are not enabling it by
->>> default, just like every other clock driver. What is so special here?
->>
->> Thanks! Are you referring to the depends on line? I needed it otherwise
->> on randconfigs where COMPILE_TEST=y and EXYNOS_ACPM_PROTOCOL=n I get:
-> 
-> 
-> No. I am referring to missing default and defconfig patch.
-> 
+[1]: https://lore.kernel.org/rust-for-linux/20250910-clk-type-state-v2-2-1b97c11bb631@collabora.com/
 
-default m or y would force compilation of EXYNOS_ACPM_CLK and
-EXYNOS_ACPM_PROTOCOL for all ARCH_EXYNOS, even on Exynos platforms that
-don't use ACPM. Since ACPM is not universally required by the Exynos
-architecture, I thought to make it opt-in (default n).
+Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+---
+Changes in v2:
+- Rebase on v6.18-rc1.
+- Add patch to tyr driver.
+- Link to v1: https://lore.kernel.org/r/20250904-clk-send-sync-v1-1-48d023320eb8@google.com
 
-Setting it as a module in arm64 defconfig makes it available on
-compatible platforms.
+---
+Alice Ryhl (2):
+      rust: clk: implement Send and Sync
+      tyr: remove impl Send/Sync for TyrData
 
-Similar clock drivers do the same: CLK_RASPBERRYPI.
-COMMON_CLK_SCPI, COMMON_CLK_SCMI - no defaults and set them as builtin
-in the arm64 defconfig.
+ drivers/gpu/drm/tyr/driver.rs | 12 ------------
+ rust/kernel/clk.rs            |  7 +++++++
+ 2 files changed, 7 insertions(+), 12 deletions(-)
+---
+base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
+change-id: 20250904-clk-send-sync-3cfa7f4e1ce2
 
-Cheers,
-ta
+Best regards,
+-- 
+Alice Ryhl <aliceryhl@google.com>
+
