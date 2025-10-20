@@ -1,65 +1,65 @@
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D99F330304
-	for <linux-clk@vger.kernel.org>; Mon, 20 Oct 2025 19:41:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A95543148BB
+	for <linux-clk@vger.kernel.org>; Mon, 20 Oct 2025 19:42:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760989310; cv=none; b=EwnjI8GDW/8xSIeUnV0G1WtBF5J+1YLlx2Tv6n8ci0SuLGdn1WnObptyusExnTylUsh97uZcrQ56OS7POxNPKWG83ozdXj3k9dTVEBuoas5OZ2WPfWZsaXu74AdwlOJhvlYo0AAx1EIB8GKVJLjzCn99+RV5FmN8RUmRdGYsE+k=
+	t=1760989369; cv=none; b=Ax+TuBCaKiuge/0EIdgF2j6iKEtlwp2vG/8WwwGHLAEGx6G/5naXTfX62ytjc0JSjGuKf6teLNyC7HzVB4SAy0B5Ef7gqgcg4wm7Da8npx+YIG2gbSBRNT3psOQ087BhJafWoJ5eVtfpK17jUdPhHDKn1/HKharC4weVV2CKhrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760989310; c=relaxed/simple;
-	bh=uQSzjldxRTZ35ORML6b3Cd4RgGLVmAPkW+5ZxaJHB28=;
+	s=arc-20240116; t=1760989369; c=relaxed/simple;
+	bh=Bcib7GgDvbxG8dNMZol8O5N62eoUHF7edKC5bkNsAo0=;
 	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Fp4SmONSkB14q6mWheQ3lvxAgGZi/KcLTWO+mbrKkfmZyrZxIWEWQa0ZZSNGNT8qP8SD30wD5dezEBJCxzBx06Dg7hSYcC4uOLrytBPAseuXmoMpycmm2tGNy1PTcBWWTMH9Nh448LybGjk+hNuPJNlRcRC1DiU49GFOYD4Q7Q0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=f38f3xHA; arc=none smtp.client-ip=209.85.208.44
+	 In-Reply-To:Content-Type; b=C6wHlLMM0zSX9WgllKXjZlXmJu/R4ez4kbIAHcJQBhj9ug5mTnxhVkoU0IbO+IXQldf9I2oLVq9cFsZtePYokLe8kSVy9gZY4zxktUbcRMKwiQA/dXkoNUOyyzmipC87VG2te6eZW2Hr90FqFnnuyJaFe+C/34l+2g7Y1mMUHuA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=Zd5uConY; arc=none smtp.client-ip=209.85.218.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="f38f3xHA"
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-63c4b5a1b70so5260703a12.1
-        for <linux-clk@vger.kernel.org>; Mon, 20 Oct 2025 12:41:47 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="Zd5uConY"
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-b3e9d633b78so194619666b.1
+        for <linux-clk@vger.kernel.org>; Mon, 20 Oct 2025 12:42:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1760989306; x=1761594106; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1760989365; x=1761594165; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:content-language:references
          :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=S+3slhELo00fMq3w//kko/evMNTGZF1TLZtlTKBnvEc=;
-        b=f38f3xHAdE+ycTYIPZX40GnfoIm4Kvx3pCaNBHweC0BH1cqw7K5HswGsRf9vqYrqnZ
-         wRdyVjB8ptllWQqgH3ZNwGVHM9GiUKYuF7icRp5JW/T6Nej9tp8uuRSfM/MKf8cn9H75
-         qhKS6XAlSQuf28XqSp4cWNI/XzEbj5fL9D/rrgtZ/IDhYlaj79XO6qUUUhl/2boLScMS
-         d0QZfGqR2ZaX5mMr5Ol4gRVN0Tmp1X7XBiJwmyeW41sHT6OSwqGZKAbe7k7EBP4PVswg
-         eLypgtM+ECJ91S+6j8u75cmVNz4gnE8YrendcQOis7ABOqXQxKEYWZ4AKFDDfqK3P+Cu
-         AS9w==
+        bh=7Uq5LFMJuGM/xM9Jid2EcKy6jYFa1OSnWMslrM9L2Xw=;
+        b=Zd5uConYHo7E15j/bDQDH9oVidNkRsA9nm1D9JrzQkL73VvOtIjMxF13BLpSU9Ct0n
+         qofP5imqbk59fxdrCw8bLP1UPapsc8a29RhbNcmoL/LuRReoOZ9bK2vw2UHFtXV390LY
+         MiuXNGkEsgV7556VldpE2LBMEnhA8M2IuRyPwwofJ7UjSPwS3bUFy1Vl0bmOkzSs8imj
+         kAKphKlnPkygHXr5PlTFBXCy3pGAW7VVhyNMgKht9AUK2YWULVjqaOI/VGxwITwgpuZk
+         NI04Jb9jPmrQJVBs+8KthXTOxUViUV8pENXbjovh8SqhgX3qz5Iah2o4kRpisdXdiAmo
+         3z1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760989306; x=1761594106;
+        d=1e100.net; s=20230601; t=1760989365; x=1761594165;
         h=content-transfer-encoding:in-reply-to:content-language:references
          :cc:to:subject:from:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=S+3slhELo00fMq3w//kko/evMNTGZF1TLZtlTKBnvEc=;
-        b=JW9Q0G68K9OJQHlXfRt6kRwOjRkrQ1uHdxKUcGCHZsrYlT56WR7HiocCNSntgUVuwE
-         N3dNefmu34vuvn/Ww87omOYGj5QH2CzXATqU/NWSpn3yQ/hQF2lTWlqJNHQHuGH4LYNu
-         JquAsEVt/GNfCCkjgQm//WCpPlme6A4efBgrNUIr0E6DSoJrPB0JvBGKTT3R+K4Wtbv/
-         GGQkafxt9mhjRFx6IYZ52f2QQdphXT5x3i6ivgG06Eo7L4e0Te/5hZbUFrPKpoh5KYSr
-         kJoIgsmDAsp9HOH4HJ7ptkTCW823wOjsojAJIfWPYD42mhK/Az68WxmCQMCCBMqzRP0t
-         5M8A==
-X-Gm-Message-State: AOJu0Yx1cZLAp/+J5QGOZxiA6Seref2bDd+hAYrAP1LUKXqyubK/XYou
-	NVkimFiWm5cbFlkvuYCC1oWabBrgkyxUjnSRMa0n5m4no9XhuRVUC6i041Xo40RjMmU=
-X-Gm-Gg: ASbGncsAs1mj0wzqJVLX6yvRQJcnlAeF5hDAYtxd99S4CAZ0NRbctwVURicD5kvnDV3
-	M/ecMYA63ye63SPle7hOM6SZ2GZ3iJpakWdhYb/fnLXl+g2Yxn+KtQileM2YiZvcTuflyot0VwY
-	TZd0iSJsp+msvLx8C67E+81nZGmxEsfiEjC7aosevM1PxRLjv1ItY9OPrBBQKRP3TDvUxLPFGOU
-	79srUYKlD299Y03ZdS1EhMFmkEL0ymj4JilCWWxalAekvjI7HxpIlN40UAPOoMKyonvOoYxh5Rj
-	TNm3VMQUPQ1PS0mFLkQ2W00FTn87pMdQRQ3Cjc8lAxTR9LFPBQsaq51RcTWzRjh72iaFMdAmZaN
-	CVYChVRvY/C1Gjm0DSjBMS04vC8iISSx3Tqhv7Uic2YYzV2EPMX+Ieqnbxlmbsadnq0qN4ZZ9/6
-	Hx7fAgNuYl
-X-Google-Smtp-Source: AGHT+IHDIxoLORK8TXA5ZD6/WsOqHWJqq7Eq+n+YHr0BJm7nwggP3jvxI5a/xsatvpj+kR59rawzjQ==
-X-Received: by 2002:a05:6402:4306:b0:628:b619:49bd with SMTP id 4fb4d7f45d1cf-63c1f6cea4amr12864517a12.25.1760989305960;
-        Mon, 20 Oct 2025 12:41:45 -0700 (PDT)
+        bh=7Uq5LFMJuGM/xM9Jid2EcKy6jYFa1OSnWMslrM9L2Xw=;
+        b=RCWY1msjRreMROeiGqyjGizTeMWHpxZoVY7ZCcaU+XeZOJS/PdKbWlfS13q46qw0L4
+         3Sghi38nmv3VbLRaN+xXVFlwtDS0kmef663oZKEIMOYfLWKV6UcGGox70AFSB3MojDJF
+         be2UjTnNoE2eDfC/BEjNMpO30avNUY7geuHxS0hHNDXBTKThG9UEyK8dPA9K5Q/s2jmM
+         plMMLavo88hmNCcn8eMM9um58TvFQok1h/qNy3Y+9MViH9gIM1FF5j361KDn5qhn/duQ
+         WNwiL4hPXLBAzuakuBhtY/xUOr+cS4gXJcS+NlQZibk3/lN6WPUhatWIrC/NWv9AZPN7
+         Yvug==
+X-Gm-Message-State: AOJu0YwbR8iF6d3wR4P+H7bESDWoLihS1CqCW6y8KW/1C6MtN7jfNEa5
+	fPelWHYyLNmQYGvFMcC5Mh44GaBMDQkwL8gSWx+UayEtiFgv2KuVNks1Wq6VRxsY5KU=
+X-Gm-Gg: ASbGncsOowY/D/duEydsUaYYQKYfNpQKfju0NmbzYImEzN9AwxDuBgvbkf3JQb6cnKa
+	pcGxzKCBaaL5CyqyImKDKbAVuh/r3J/mKpSp1ZUNdhNqmWvEbaUsuNSX5Gwnsyl83TIW5aDfQ2G
+	J9usINQw3ghBzZCaBAxtKorNNmdBl2ypdR9D/azhOfz4+8IdglGkl74tkEcqZOOk80m4BLFh+h3
+	YDZwz7eZmYWrD8MKfAHsariVTBpAlEU16xF4/XH1/NjC4g6KtEm03FDq3pQiY3okRf0iY/Rwi/f
+	htywTCB9ncN0dKTWeqIMKbmcFeho12ilJ3T+c/T0la8UXEeL6j8rBkfMPtBGRqEMxGbPyee3Ud4
+	f2LRyO/j5sonw1Vz/298YMciAUGNVkBizbz1OkMUiUPoQ27dvtsrBhd8Bxrnrt6gqpxLqoLXJbM
+	GYqSe6+IakC6rVm+aPc4c=
+X-Google-Smtp-Source: AGHT+IGHu2znjunMS42qnTeHNhloC2OADaigESnIDF75k5aPWsi00OCyrhzBuu/+FUhbaAk7uDtcAQ==
+X-Received: by 2002:a17:907:890b:b0:b07:e348:8278 with SMTP id a640c23a62f3a-b6054cdd6d3mr1791255066b.25.1760989364997;
+        Mon, 20 Oct 2025 12:42:44 -0700 (PDT)
 Received: from [192.168.50.4] ([82.78.167.151])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-63c49430145sm7409668a12.19.2025.10.20.12.41.44
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-63c4945f003sm7581371a12.27.2025.10.20.12.42.43
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 20 Oct 2025 12:41:44 -0700 (PDT)
-Message-ID: <5650e47d-97ab-49a3-8342-7aad9daa5a1c@tuxon.dev>
-Date: Mon, 20 Oct 2025 22:41:43 +0300
+        Mon, 20 Oct 2025 12:42:44 -0700 (PDT)
+Message-ID: <e5f4a505-86ff-4d89-86d6-5433cf7c5665@tuxon.dev>
+Date: Mon, 20 Oct 2025 22:42:43 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -68,16 +68,15 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Subject: Re: [PATCH v4 05/31] clk: at91: clk-peripheral: switch to
- clk_parent_data
+Subject: Re: [PATCH v4 06/31] clk: at91: clk-main: switch to clk parent data
 To: Ryan.Wanner@microchip.com, mturquette@baylibre.com, sboyd@kernel.org,
  alexandre.belloni@bootlin.com, nicolas.ferre@microchip.com
 Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-kernel@vger.kernel.org, varshini.rajendran@microchip.com
 References: <cover.1758226719.git.Ryan.Wanner@microchip.com>
- <b0635913503630a8e1880b0b9ba8656465020181.1758226719.git.Ryan.Wanner@microchip.com>
+ <0f8054488ac3cd658d7a6fc0d5cd4f684ce8355a.1758226719.git.Ryan.Wanner@microchip.com>
 Content-Language: en-US
-In-Reply-To: <b0635913503630a8e1880b0b9ba8656465020181.1758226719.git.Ryan.Wanner@microchip.com>
+In-Reply-To: <0f8054488ac3cd658d7a6fc0d5cd4f684ce8355a.1758226719.git.Ryan.Wanner@microchip.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
@@ -86,11 +85,48 @@ Hi, Ryan,
 On 9/19/25 00:15, Ryan.Wanner@microchip.com wrote:
 > From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 > 
-> Use struct clk_parent_data instead of parent_hw for peripheral clocks.
+> Use struct clk_parent_data instead of parent_hw for the main clock
+> to less usage of __clk_get_hw() in SoC specific clock drivers and simpler
 
-Could you please explain also why as done in other patches?
+Probably missing "This" in front of "to less" or something similar?
 
-The rest looks good to me.
+> conversion of existing SoC specific clock drivers from parent_names to
+> modern clk_parent_data structures. This will lead in the end at removing
+> __clk_get_hw() in SoC specific drivers
+> (that will be solved by subsequent commits).
+> 
+> Signed-off-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+> [ryan.wanner@microchip: Add SAMA7D65 and SAM9X75 SoCs to use parent_data.]
+> Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
+> ---
 
-Thank you,
-Claudiu
+
+[...]
+
+> @@ -1020,9 +1020,9 @@ static void __init sama7g5_pmc_setup(struct device_node *np)
+>  	if (IS_ERR(main_osc_hw))
+>  		goto err_free;
+>  
+> -	parent_hws[0] = main_rc_hw;
+> -	parent_hws[1] = main_osc_hw;
+> -	hw = at91_clk_register_sam9x5_main(regmap, "mainck", NULL, parent_hws, 2);
+> +	parent_data[0] = AT91_CLK_PD_HW(main_rc_hw);
+> +	parent_data[1] = AT91_CLK_PD_HW(main_osc_hw);
+
+You missed to convert parent data to an array and adjust use it accordingly
+in this file.
+
+> +	hw = at91_clk_register_sam9x5_main(regmap, "mainck", NULL, parent_data, 2);
+>  	if (IS_ERR(hw))
+>  		goto err_free;
+>  
+> @@ -1057,7 +1057,7 @@ static void __init sama7g5_pmc_setup(struct device_node *np)
+>  
+>  				hw = sam9x60_clk_register_frac_pll(regmap,
+>  					&pmc_pll_lock, sama7g5_plls[i][j].n,
+> -					&parent_data, parent_rate, i,
+> +					parent_data, parent_rate, i,
+>  					sama7g5_plls[i][j].c,
+>  					sama7g5_plls[i][j].l,
+>  					sama7g5_plls[i][j].f);
+
