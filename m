@@ -1,199 +1,164 @@
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com [209.85.217.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8650F25A2C6
-	for <linux-clk@vger.kernel.org>; Mon, 20 Oct 2025 11:59:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C01D4311979
+	for <linux-clk@vger.kernel.org>; Mon, 20 Oct 2025 12:13:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760961600; cv=none; b=l9uh24Kys43ND8+q2QMlEoCzPE82Ifm+2SftrmKeYyiF6HnZzi0w6WR15u8I27krt95SzAO0N5t96j74itQKLIXpCMM3kfxN2R6ndm8R1UGF8TCXyv76BSZb4AAlODhGpPmindxdI36Qy81BHWkOufURS7LZjRKTx6P4ydtuu7Q=
+	t=1760962422; cv=none; b=dr28yzdJhlHafPkw/eVIdUKSPXZPxD56KbBe55aKkZ/GOUMdiU7tJTU0WN4zoOruqRh5zWhGLC90BEknPNRX69Js3+CZPUDGGmGYWuJhhwrOywDtTPTZGL3d5/APsP4LWqQ6JKsNYU0mMZ481hTNMB7un0E/gU8mOpA7y5kVDZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760961600; c=relaxed/simple;
-	bh=+tJtGhzL8/nlJ0ZRUo4lnx1z48ZNBBmtc/H2ux9Ns1s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WAglobGXgIkX+sHLE7fppmEP+O2XRKUlCxBuBFP/HJgDOtLDnp0BISyECxDfXqHCrosbi0DUIVaOElYgOV6wkYHeXvw/vzwLfMKIjdq8WGe3W9ewpewPzEKmUjNWma/DylKbHQrM6wAt28kgosl5mzv1OqBU9JnD02LRRCRIMDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CgsAlOnI; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1760962422; c=relaxed/simple;
+	bh=zQJyABbFIFRgraIjRfB4Kv0edNHngRx2HTU3PnrqMSo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=n46b8KdRSTpmcWCBYEZxefnroMXw7y5Nn93263ukUrQlJiY1jKVnaodVzSCYIAYf3i9Z+f1AXgnN4AnYfKPHZrqbDDL4dhjV6T7V/yR8l+QauBQRkV5NYbeeoEnf1XgtQNgbhwyCnzcPN9Z/zdzbqeukyjEufBBG4x7uyd8khvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CgsAlOnI"
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-b403bb7843eso786190066b.3
-        for <linux-clk@vger.kernel.org>; Mon, 20 Oct 2025 04:59:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760961597; x=1761566397; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=r9qU6FzgzJIkijGhPwFvDcu1xBSrqOMq/g46aIW1/Vk=;
-        b=CgsAlOnIZJ101Jg6p1eZ+8FJr6o3ZoA0XYLCCfzcLslU3E5voxzHRyqDOy3bd5H+rh
-         2tPQLgYz06mZPDy02VQ2v8aeWyb37RgMUlHYRJRzP4AYmWI1iVX4+hp6TyIIYBx40QFH
-         RDiBzu8Yo1qhZeIV8v0hWOZRltRSsfX92XXAxLVFKMTpJwMEF7UttLUwuGOSl7jV7Uzj
-         8nYt1mBiGtuZ8rkdGRDa7bs4OWzsJKbiKHcjQAslbXxuPKRqHw+Qu01UlfkOlp4KAo+d
-         K+2313Uv3bhKxSDoJC/tIrjoIgcEzmRodANjuChTlVLwnrqzGZ6tOb7lPnEf3l6DIkRx
-         XzlQ==
+Received: by mail-vs1-f43.google.com with SMTP id ada2fe7eead31-59a8c1eb90cso1959670137.0
+        for <linux-clk@vger.kernel.org>; Mon, 20 Oct 2025 05:13:40 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760961597; x=1761566397;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=r9qU6FzgzJIkijGhPwFvDcu1xBSrqOMq/g46aIW1/Vk=;
-        b=E5xNRDYHSbgF4seouYZCtpmXhjVswKRN/LX89C0lSCvmzKr+82e5myCvxFASqvTEHw
-         uH2U47Tyhl93uKy0Q42NIAaG85k/cLwNxYMS4zZUlbJ/oYlbo/JTGc/LF1OKGkoTuBU1
-         SGWA+p+Yb/vemqZ/8OyELYDBsNA4uOM837lcUc5+s9KWttOuL+glWSUXrrHhApzjbdxq
-         AW2PeAoxHoXpZBoC3aXnpQRajZ5Pyn7tdVoOs0S9CqQtW/J/sq9FwxF2dTRVgGsBjezh
-         GHLTHXCspgcPF7VTaTiPMWgoZ6aRuhf/s0L3Do57niqkjANpBpOoCXe+PX9D87NO8Qjd
-         59/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVxBxZFqSHnntXFZMpqhxvSlOZOV+5gZd1J1q6ttBNxT3UQDvuSmeYCKBCxA1vw0BTKyvpEpjOE088=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHPvuioppS5P3+tqKcn38GQfqwVpwKUcVg+rc4B+PIrI64DRVh
-	KfZEcEA8hbAJCKeD33PR+x+eMsAJgB51qf4ruWnIwfQ73x+r56Gc6mVA
-X-Gm-Gg: ASbGnctf8NhcvlWAWod/jBzFfa+Xey+qvQ4Ih2+dWdCHPreLFBHjNwLrLXoZ7pG6I/4
-	m31DliR2G01+O1YKGfRDs/OaguYVI9HQa8FUs3DzwlJIIWD+Bqv4Yi3k9tbZMUCQHQLF8O6jMA3
-	ngfJK0iN1nSZZBTdKPc+5RtXD95N4nz9mfhj19iTcY6FOiX+uB5ICCk/e7ZeHaJ7Oe1xBFz31KU
-	MAzuDoEL2avht1Rr7ONlXNyu0+1kkVpZ7GP9O32SjI3i2C/0L5z0xTqt9hOR1sN+qDiNW3HRQpo
-	UJpsi0j6xJAZArTH9d3Er6/NidgSCgqTmuxXe64sgxgOYFJjdfEbBIodNm1p8Atw5j+PrbKg/z+
-	rv/UE2l3JdETALhIvng0Lz/6alM3rFjOojuwt7sFs/2k766JuZR6ABmEm5+VKAgx5J9n4vItaIm
-	Lzlhi2tgvA14ABphmWCLbCVlWu7Zd3hXjZ
-X-Google-Smtp-Source: AGHT+IEBXKsErf4ichcBkQA9FZmSnI5DZeli6KgMkaabKrVEZ2rxSHwXbSqWavZ4Sb3eNG/IyTW7tA==
-X-Received: by 2002:a17:907:70d:b0:b42:9840:eac5 with SMTP id a640c23a62f3a-b647482e03cmr1529682266b.61.1760961596496;
-        Mon, 20 Oct 2025 04:59:56 -0700 (PDT)
-Received: from [10.25.213.231] ([128.77.115.157])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b65eb725d80sm777107466b.67.2025.10.20.04.59.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Oct 2025 04:59:56 -0700 (PDT)
-Message-ID: <7b4936f5-77ea-4077-94bc-38bb5c63f4c3@gmail.com>
-Date: Mon, 20 Oct 2025 04:59:52 -0700
+        d=1e100.net; s=20230601; t=1760962419; x=1761567219;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Pomt2ITXhIHlFit8dq3w5svz3PMdwi8h98cx9ZzxHC0=;
+        b=M1BJIj5ZvjOM7C3yEgEkuO46HmvqDGdXXkPCfvdcGxMP3W6YwK3w4FC4DhlskWaz1Y
+         934JD5oj1DE2K7vQwCA4WiKXa8ZeilvjiGg6ZeEatrO4/IP1NoYGYRMAmX7lwqoNdmLx
+         3ZayImUxLhUqI1Ac7RsYVssLL3vF3XfoAa0mxyse6vUaUuE/6itg7DdAkriZ3GvtXlGL
+         uRDIqwxmCHHqKmOUAD3Eb20h49Yibl6lpe7X95xv64jBq0oWB76gqkuFMX8Vptj4nwqq
+         3XEjKngBNskWPd5+t319QmDpWfv2+sV1b/JXAAZ/QGwxUUM8jvhdFUK68cjNfkEYx+xg
+         sCJw==
+X-Forwarded-Encrypted: i=1; AJvYcCXbn9r0zH83jWsY2GGei2trSJOv3+rtCjcJuzl0Bdkz+Oc/3AWLH50hKkh+sZJoluahHohA6l3wJIY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVH5I8OWmY6MxI/Xkhn2EFRQavndlFIky8YyXekdKqNcFkphhL
+	iQqo7irRy+CRjUx0X+YWkqkssosipQ6ic9O+Rw9v5b42G6BZfYtrHzPuuo9xuu4K
+X-Gm-Gg: ASbGnctKUxOrkWtqPldCeWJB/K7wvbV1tBf2bhGm9gxAiJo7T1KhssU/vF1TRN9iehb
+	HXlnxN8Kq4r5QT1BorfA0t/IrWn9Y9qcrxM2dbRUp+IARvKq4BbakgstM9J2ZRRAmVX8jyjPDa5
+	ZLhmlkInuAXDQGx4Ijz9MlByY5hlhrqpRJQuyCX5LBD1Hf4ZkDtaK06PwL37ejj5tj1h4RifzcJ
+	xqtcBym85kFqsYvhC+M+jPGGFtQguImdmt92WCu8GEMqgPQsDs9dClH+i9mzGm5RWNlm/K+sjpj
+	nRKgq/wWuofypQmpqTyVWLvOak1ULJaq4pcx+7A/R9ntYGOKGaVXoC+JBHhY0CUGZP8UBDjmJJ7
+	c/ah3jgxF3ASSbpV0C/+N619aeMhTOG/EFpVJtkjj1PBOiiM0nsbP6x5V7oJjNVlQv7jarQEyGD
+	MuzPSAPX+gQ7XQqvx5gL1iKW4wiwIa56bxu7lz2e4LFVe0Mm5C
+X-Google-Smtp-Source: AGHT+IGCO2oV+wNAN143AQ/O2q9PD7RdFKVHk6aupS9zQkAGjoSoMtcc/Oa/bM6wLiWkhY0k44LRUQ==
+X-Received: by 2002:a05:6102:3a0c:b0:5d5:f6ae:38c8 with SMTP id ada2fe7eead31-5d7dd6f48c9mr3559111137.39.1760962419438;
+        Mon, 20 Oct 2025 05:13:39 -0700 (PDT)
+Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com. [209.85.222.41])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-5d96c0e4eb6sm2436778137.4.2025.10.20.05.13.37
+        for <linux-clk@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 20 Oct 2025 05:13:38 -0700 (PDT)
+Received: by mail-ua1-f41.google.com with SMTP id a1e0cc1a2514c-932cf836259so368961241.3
+        for <linux-clk@vger.kernel.org>; Mon, 20 Oct 2025 05:13:37 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXqMG3GFBGiOaxaTYGrcmukVbU4iectGvu0H3Cq1bthPaITXOJKb6XKFAI1te8NlEWXBS1hHR+OhJM=@vger.kernel.org
+X-Received: by 2002:a05:6102:50a2:b0:5d5:f6ae:38ca with SMTP id
+ ada2fe7eead31-5d7dd6f4c27mr3609494137.41.1760962417639; Mon, 20 Oct 2025
+ 05:13:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 6/8] reset: imx8mp-audiomix: Extend the driver usage
-To: Frank Li <Frank.li@nxp.com>
-Cc: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Fabio Estevam <festevam@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>,
- Daniel Baluta <daniel.baluta@nxp.com>, Shengjiu Wang
- <shengjiu.wang@nxp.com>, linux-clk@vger.kernel.org, imx@lists.linux.dev,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Pengutronix Kernel Team <kernel@pengutronix.de>
-References: <20251017112025.11997-1-laurentiumihalcea111@gmail.com>
- <20251017112025.11997-7-laurentiumihalcea111@gmail.com>
- <aPJZCv+iG6cuxsj4@lizhi-Precision-Tower-5810>
-Content-Language: en-US
-From: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
-In-Reply-To: <aPJZCv+iG6cuxsj4@lizhi-Precision-Tower-5810>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <cover.1760696560.git.geert+renesas@glider.be> <792d176149bc4ffde2a7b78062388dc2466c23ca.1760696560.git.geert+renesas@glider.be>
+ <aPJwtZSMgZLDzxH8@yury>
+In-Reply-To: <aPJwtZSMgZLDzxH8@yury>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 20 Oct 2025 14:13:26 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXCoqZmSqRAfujib=2fk0Ob1FiPYWBj8vMXfuXNoKhfVg@mail.gmail.com>
+X-Gm-Features: AS18NWDS1vbUG4-z_--VlQ3gjSspwjijy0fs8EPqX7O88cWCZQUNQKHTmAYei1k
+Message-ID: <CAMuHMdXCoqZmSqRAfujib=2fk0Ob1FiPYWBj8vMXfuXNoKhfVg@mail.gmail.com>
+Subject: Re: [PATCH v4 1/4] bitfield: Drop underscores from macro parameters
+To: Yury Norov <yury.norov@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Nicolas Ferre <nicolas.ferre@microchip.com>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+	Giovanni Cabiddu <giovanni.cabiddu@intel.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
+	David Miller <davem@davemloft.net>, Linus Walleij <linus.walleij@linaro.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Joel Stanley <joel@jms.id.au>, 
+	Andrew Jeffery <andrew@codeconstruct.com.au>, Crt Mori <cmo@melexis.com>, 
+	Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Jacky Huang <ychuang3@nuvoton.com>, 
+	Shan-Chun Hung <schung@nuvoton.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+	Johannes Berg <johannes@sipsolutions.net>, Jakub Kicinski <kuba@kernel.org>, Alex Elder <elder@ieee.org>, 
+	David Laight <david.laight.linux@gmail.com>, Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
+	Jason Baron <jbaron@akamai.com>, Borislav Petkov <bp@alien8.de>, Tony Luck <tony.luck@intel.com>, 
+	Michael Hennerich <Michael.Hennerich@analog.com>, Kim Seer Paller <kimseer.paller@analog.com>, 
+	David Lechner <dlechner@baylibre.com>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	Andy Shevchenko <andy@kernel.org>, Richard Genoud <richard.genoud@bootlin.com>, 
+	Cosmin Tanislav <demonsingur@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Jianping Shen <Jianping.Shen@de.bosch.com>, linux-clk@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org, 
+	linux-crypto@vger.kernel.org, linux-edac@vger.kernel.org, qat-linux@intel.com, 
+	linux-gpio@vger.kernel.org, linux-aspeed@lists.ozlabs.org, 
+	linux-iio@vger.kernel.org, linux-sound@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+Hi Yury,
 
-On 10/17/2025 7:56 AM, Frank Li wrote:
-> On Fri, Oct 17, 2025 at 04:20:23AM -0700, Laurentiu Mihalcea wrote:
->> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
->>
->> Some NXP SoCs integrate one or more, per-subsystem, block control IPs,
->> which allow users to control the assertion and de-assertion of the
->> reset lines tied to some peripherals present in said subsystems. Some
->> examples of such SoCs include i.MX8MP with AUDIOMIX block control and
->> i.MX8ULP with SIM LPAV.
->>
->> Some of the aformentioned block control IPs exhibit a common pattern with
->> respect to the assertion and de-assertion of the reset lines. Namely, the
->> user is able to control the state of the reset line by toggling a bit from
->> one of the IP's registers.
->>
->> Linux can take advantage of this pattern and, instead of having one driver
->> for each block control IP, a single, more generic driver could be used.
->>
->> To allow this to happen, the previous approach, in which a single reset
->> map is used, is replaced by a per-driver approach, in which each auxiliary
->> device driver holds a reference to a certain reset map.
-> Can you shorter your commit message?, basically, you just add
-> imx8mp_reset_info for difference auxiliary_device_id.
+On Fri, 17 Oct 2025 at 18:37, Yury Norov <yury.norov@gmail.com> wrote:
+> On Fri, Oct 17, 2025 at 12:54:09PM +0200, Geert Uytterhoeven wrote:
+> > There is no need to prefix macro parameters with underscores.
+> > Remove the underscores.
+> >
+> > Suggested-by: David Laight <david.laight.linux@gmail.com>
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > ---
+> > v4:
+> >   - Update recently introduced FIELD_MODIFY() macro,
 
-
-yeah, but the commit message is not trying to explain the code, but, rather,
-
-offer a bit more context to understand WHY we're doing this. However, I'm not
-
-fixated on this so if people don't think it's useful then I'll just shorten it.
-
-
+> > --- a/include/linux/bitfield.h
+> > +++ b/include/linux/bitfield.h
+> > @@ -60,68 +60,68 @@
+> >
+> >  #define __bf_cast_unsigned(type, x)  ((__unsigned_scalar_typeof(type))(x))
+> >
+> > -#define __BF_FIELD_CHECK(_mask, _reg, _val, _pfx)                    \
+> > +#define __BF_FIELD_CHECK(mask, reg, val, pfx)                                \
+> >       ({                                                              \
+> > -             BUILD_BUG_ON_MSG(!__builtin_constant_p(_mask),          \
+> > -                              _pfx "mask is not constant");          \
+> > -             BUILD_BUG_ON_MSG((_mask) == 0, _pfx "mask is zero");    \
+> > -             BUILD_BUG_ON_MSG(__builtin_constant_p(_val) ?           \
+> > -                              ~((_mask) >> __bf_shf(_mask)) &        \
+> > -                                     (0 + (_val)) : 0,               \
+> > -                              _pfx "value too large for the field"); \
+> > -             BUILD_BUG_ON_MSG(__bf_cast_unsigned(_mask, _mask) >     \
+> > -                              __bf_cast_unsigned(_reg, ~0ull),       \
+> > -                              _pfx "type of reg too small for mask"); \
+> > -             __BUILD_BUG_ON_NOT_POWER_OF_2((_mask) +                 \
+> > -                                           (1ULL << __bf_shf(_mask))); \
+> > +             BUILD_BUG_ON_MSG(!__builtin_constant_p(mask),           \
+> > +                              pfx "mask is not constant");           \
+> > +             BUILD_BUG_ON_MSG((mask) == 0, pfx "mask is zero");      \
+> > +             BUILD_BUG_ON_MSG(__builtin_constant_p(val) ?            \
+> > +                              ~((mask) >> __bf_shf(mask)) &  \
+> > +                                     (0 + (val)) : 0,                \
+> > +                              pfx "value too large for the field"); \
+> > +             BUILD_BUG_ON_MSG(__bf_cast_unsigned(mask, mask) >       \
+> > +                              __bf_cast_unsigned(reg, ~0ull),        \
+> > +                              pfx "type of reg too small for mask"); \
+> > +             __BUILD_BUG_ON_NOT_POWER_OF_2((mask) +                  \
+> > +                                           (1ULL << __bf_shf(mask))); \
+> >       })
 >
->> Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
->> Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
->> ---
->>  drivers/reset/reset-imx8mp-audiomix.c | 18 ++++++++++++++++--
->>  1 file changed, 16 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/reset/reset-imx8mp-audiomix.c b/drivers/reset/reset-imx8mp-audiomix.c
->> index c74ce6e04177..c370913107f5 100644
->> --- a/drivers/reset/reset-imx8mp-audiomix.c
->> +++ b/drivers/reset/reset-imx8mp-audiomix.c
->> @@ -24,7 +24,12 @@ struct imx8mp_reset_map {
->>  	bool active_low;
->>  };
->>
->> -static const struct imx8mp_reset_map reset_map[] = {
->> +struct imx8mp_reset_info {
->> +	const struct imx8mp_reset_map *map;
->> +	int num_lines;
->> +};
->> +
->> +static const struct imx8mp_reset_map imx8mp_reset_map[] = {
->>  	[IMX8MP_AUDIOMIX_EARC_RESET] = {
->>  		.offset	= IMX8MP_AUDIOMIX_EARC_RESET_OFFSET,
->>  		.mask = BIT(0),
->> @@ -45,10 +50,16 @@ static const struct imx8mp_reset_map reset_map[] = {
->>  	},
->>  };
->>
->> +static const struct imx8mp_reset_info imx8mp_reset_info = {
->> +	.map = imx8mp_reset_map,
->> +	.num_lines = ARRAY_SIZE(imx8mp_reset_map),
->> +};
->> +
->>  struct imx8mp_audiomix_reset {
->>  	struct reset_controller_dev rcdev;
->>  	void __iomem *base;
->>  	struct regmap *regmap;
->> +	const struct imx8mp_reset_info *rinfo;
->>  };
->>
->>  static struct imx8mp_audiomix_reset *to_imx8mp_audiomix_reset(struct reset_controller_dev *rcdev)
->> @@ -60,6 +71,7 @@ static int imx8mp_audiomix_update(struct reset_controller_dev *rcdev,
->>  				  unsigned long id, bool assert)
->>  {
->>  	struct imx8mp_audiomix_reset *priv = to_imx8mp_audiomix_reset(rcdev);
->> +	const struct imx8mp_reset_map *reset_map = priv->rinfo->map;
->>  	unsigned int mask, offset, active_low, shift, val;
->>
->>  	mask = reset_map[id].mask;
->> @@ -144,7 +156,8 @@ static int imx8mp_audiomix_reset_probe(struct auxiliary_device *adev,
->>  		return -ENOMEM;
->>
->>  	priv->rcdev.owner     = THIS_MODULE;
->> -	priv->rcdev.nr_resets = ARRAY_SIZE(reset_map);
->> +	priv->rinfo           = (const struct imx8mp_reset_info *)id->driver_data;
-> needn't force convert from void*
+> I agree that underscored parameters are excessive. But fixing them has
+> a side effect of wiping the history, which is a bad thing.
 >
-> Frank
->
->> +	priv->rcdev.nr_resets = priv->rinfo->num_lines;
->>  	priv->rcdev.ops       = &imx8mp_audiomix_reset_ops;
->>  	priv->rcdev.of_node   = dev->parent->of_node;
->>  	priv->rcdev.dev	      = dev;
->> @@ -168,6 +181,7 @@ static int imx8mp_audiomix_reset_probe(struct auxiliary_device *adev,
->>  static const struct auxiliary_device_id imx8mp_audiomix_reset_ids[] = {
->>  	{
->>  		.name = "clk_imx8mp_audiomix.reset",
->> +		.driver_data = (kernel_ulong_t)&imx8mp_reset_info,
->>  	},
->>  	{ }
->>  };
->> --
->> 2.43.0
->>
+> I would prefer to save a history over following a rule that seemingly
+> is not written down. Let's keep this untouched for now, and if there
+> will be a need to move the code, we can drop underscores as well.
+
+Fair enough.
+So I assume you are fine with not having underscored parameters in
+new code, like in [PATCH v4 2/4]?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
