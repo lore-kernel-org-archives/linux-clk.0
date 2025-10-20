@@ -1,84 +1,83 @@
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39C4117A2F0
-	for <linux-clk@vger.kernel.org>; Mon, 20 Oct 2025 17:52:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDBBE3321C1
+	for <linux-clk@vger.kernel.org>; Mon, 20 Oct 2025 17:58:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760982746; cv=none; b=mUacFqthN+li5OcHZ4/JKUEbfvqZo21TZ/AMnCaBAv/5dutFWmkafs/FfWFauw5wnXX+n+vUgAFXhv1BBnGwJGx/LwGuXVUhWQO172E00o2fkeV6FYOY71xUwqbsoXBfIupk7hMKnwfI3XgglYYmizi4SQyA6tflr7w41FTGcgg=
+	t=1760983084; cv=none; b=pmTaqGNn4jga3XEoUwc9davFJ179jDDVa9foKSXvv2R16UZicbZrKMRSbpeQCsHpGMJvUTeP+jAbUbkoDrXT974b93AkhoEzY4M85smmSuMrwYwmhDuopOGrwdUfC2BkU05hFRvUEOH9JhjM6cjzFIycEfsTIUwkToOb4ozWYgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760982746; c=relaxed/simple;
-	bh=pdYHJcuACjLxyUbGtQJb6l+Qo8ulOoDOXrsmHol9Lt0=;
+	s=arc-20240116; t=1760983084; c=relaxed/simple;
+	bh=iJYNXDViBNg9H23IU+cEG/iUlaVVosMhC4bKdCUk1To=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PSK6VxLivjgSBTczmQj+TnEP3+UDg5CUjb7WV+ozBl8etnImsIeHrQbxLwciC7+2vNfTuzfh/p0JDnES/L7QJj857vtG3rJzDmXcEim/q8MSV06D9YmBZasafrsvMnYKDebdjqETJ+E38UEQD4su2ky3TSE+an0HWBls95NvZPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j87a7Qnr; arc=none smtp.client-ip=209.85.221.54
+	 MIME-Version:Content-Type; b=cppUy67ztXTPaFsneHK89ipdnIUdVfjPvkeLetpBS5Vngl/tg8YTMIpjraKkgrIT7S3D+o9i73bYJ/JPT2fZS7PqhG/rMxzKP8jhedwAai0vS4U8bGivm76AsngWgJamBbBry+v9wbdUQRxZM4ZEg+MKnHZ0iHhVg5hxiWBSD9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TB6sa/bx; arc=none smtp.client-ip=209.85.221.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j87a7Qnr"
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-427007b1fe5so3043923f8f.1
-        for <linux-clk@vger.kernel.org>; Mon, 20 Oct 2025 10:52:24 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TB6sa/bx"
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-426ed6f4db5so3019346f8f.0
+        for <linux-clk@vger.kernel.org>; Mon, 20 Oct 2025 10:58:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760982743; x=1761587543; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1760983080; x=1761587880; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=0hPztYo4gHaE9LtG99gGwWjUyFltd44jOHvoR42cvBk=;
-        b=j87a7QnrHSHjFhEFTU4teGZPeNQZlfIdzR1xQC8IjN9UPQSSXbpPCoTiiORv/5M26V
-         XNeT9wtRjLDR26FEUpBkuYN8XedK6vEidP1psmaUBKW/DyQeDl/b1RiGH5zam0iNotsB
-         OfHnoVm3xQx1F0ZKp84uPJyBTt/8rtkJDDiAZeVowPp+iQes2QMZBZizY5s2KYWqKKGy
-         prGE+BCJv10yntaNtHknE5Z2ZudkCnDGH8Pu6aVvi3Zz+iacwJG8Opi1/3BVO4DF4cpi
-         vvQAzIDEcUZm1DFY8pIuw4yLsSr4Eo7Pcpszdpe7ABCnq1T5zMIFqjpRtLgDsWaItaNt
-         VX4Q==
+        bh=iJYNXDViBNg9H23IU+cEG/iUlaVVosMhC4bKdCUk1To=;
+        b=TB6sa/bx5bkTjJ5MaRhcpoj6Tf+mFleUpkzyR1LtkRSW/kXnqrrcGWLQ7C9+UprhCu
+         K1XY1qd1HVhm3OvgiCsqJNj0FM4j2JMbZEDSRepw3+TdidZRy4/ZurPhN5XLQYdrbMmO
+         Lsn/gkkqUQ/7qMWdk3UfjUTRMGxLLUJTKxihy2FsmjW/5+zCubXFEEs+/IaRPFEzQzEJ
+         wJ7pyfU1HWpXxsuNJTR7E9RGoDFMVintFSrrcBougdWmQv/+YiDsKLoHahosFgX35b6R
+         9i4JyJGfT0SlDNxpF2MpizZ67ZIo8q3L3+faAIJW6gXLbFpDbZUvzsbnJ8bJjvb24p4r
+         LE7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760982743; x=1761587543;
+        d=1e100.net; s=20230601; t=1760983080; x=1761587880;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=0hPztYo4gHaE9LtG99gGwWjUyFltd44jOHvoR42cvBk=;
-        b=LBwAGi9cHUbaOyIfdstf56skFLrlxm5osH0RPQLIUqlCw4q9a8jQZaAaGCdGUK/x38
-         rNVeitXB2B98SPtT7G08Qr7Ro6FXQ1M6y7FZSPqN1YpQccc3jN4qZSEMqHlr86gdl5ig
-         hPZ5S80x+vluulHYUxILW5v6Vd8aPsHg6IDUQFuBKEND/sCzAJr63PwPJU6lJR4vzx+Q
-         GRU1EMJjsZxPIoPhbwYQQvlLTFaSYFKJJ5rx7vg8LRBr9utlB2D3tpOtvs7rv5/yNfzm
-         5oX6AH3+N51o8dMzFhY2diQGrNUTBl/z/9LLaxMyqF2K1JR9Jt806wKnl62P9PCvkW66
-         /gTw==
-X-Forwarded-Encrypted: i=1; AJvYcCUMmjWxjXMfKGVqHma7HloK41y+WUezF1rThy+vEIsbPY//ZoL76GLCoiZ/jnaK+sWE1WHM5YAU93U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMbcs6j7paOJLSBkGPtz8vkChu58KDCAFPQVHxJHJsyqYseRj1
-	aD8ue1t7s54xxMqjHqjbPMqeWsinYGlb3Ep8hOvzH2L+nEXIdfIdoh5tRlY57w==
-X-Gm-Gg: ASbGncvqpiy3iq1DesO4TOBrIboY2Tqa4WEfkpmTk7cQ/ZuFgAWV/2bqWrkMdC2c7lI
-	4nVARF+eEQSXZrJURvVag0+xtQsg/oEvNUECg6gRx8FBHQZcDyBTpMQ42NZSSANyyziLUbZD+LT
-	Xb0VLiod9BMCN0nEau/Ye0OB0tDoKQEn5V805BMFf0MdGleQ1Zfe+Y54s236i6DC66rR10jIGnA
-	7zZ2WX+jccaxiRWqzprlcjc3Kb9Y7CB5SO/CdNoZECCBVm3a+/TsK7yWj0KzVpSGGlWoswjX0bg
-	+nX5jVSVXT6pBpseCTXKHfbUEDaSVm8ZcyoidRxvMQEw7O8Chlf5SfLp6qWweOdsbue51w6z/XE
-	7H7mKphJSoiULWmJ6bJDcR6ta0CmeLa8OOphnrOkbVBoczuSL/d2+58Y/O9ooFk61QDKcPlXUGD
-	S+48SAnF3CXHfjX+u9ZUvSlKysl+HCfAZ3zmA8U6ZsaW+b729biAxbAXgkuM9lxEKPyAJGdtkWN
-	HIMwg==
-X-Google-Smtp-Source: AGHT+IGEpXcGziVc/IPeVNYdyzKmZC+YRn2Z3nf2tImqr8LtU1jXE0yH1+EHM8IBNjLdRoUankugUA==
-X-Received: by 2002:a05:6000:26d2:b0:3e6:f91e:fa72 with SMTP id ffacd0b85a97d-42704d83dfdmr8290390f8f.7.1760982742464;
-        Mon, 20 Oct 2025 10:52:22 -0700 (PDT)
+        bh=iJYNXDViBNg9H23IU+cEG/iUlaVVosMhC4bKdCUk1To=;
+        b=CKBcaQ5nuBhc8ur31PbtI5QKL44ByrBeQygI7lynbFFVb4vfxcbFDNqZdGwFcKSrtS
+         McZiBe8b7WVizCjYsH6DRoLN1K9CUx8M3mUE6tANsd1r6RPPeyZ5FRbvrpsrY/DVtjU+
+         tgqYo7HVTlnMt5wvuj4RZW5FQHk18bNyIdwDerL/+SBrKYSkZvw6cw3f38PrbkYjfAm+
+         6gDOA+2lGLk2rZgZoSO2TGZgxUF+fjElARznIMtylY3yLVtbE4P9IL7gpcT/TktSmNnC
+         wNTjLx8G6zQO1PV0msXHhhRQHIT2WJ9zdaT3PEduYMmIavvhInVFl5jJFUPloOnC4vVF
+         DVSw==
+X-Forwarded-Encrypted: i=1; AJvYcCWurkzod9iXBeWtcFItOG9Uwy7UQteW4kowRZW7P9ggq6kgGhBpU4T6L6dUVlb1e8QLfaxKOsocX6s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyk/zm8N0Q1kaFs+Zf86QeLsQo/dUXZyaY07nMPOuB+rMg0aumo
+	jR0xsjrc0byo93dcpPTdl0Gp3FLgw/GJkXOt3cDwBarDRx/QFXmioIBk
+X-Gm-Gg: ASbGncu5zeW+4xHmJrS7ZwtX9gPYhcrn2mhgJ+spRwxjKeoTzHZo4d94rVGXkEXYXcI
+	M8XCgrRq2027jgY/igq6vRBGv7H4FR2svJQprM5pkKMn1Fsb+Lxe8QgTh+JxweMU4Znbro92T54
+	g5Of/F6vqeJIpt8SSVh+jAscbmWyQjJr0lhiNgn6NggHzxtegRKz4afoXdFE9YMF3UOR9nENxOe
+	iF+UTnu7fipBJJ8J89tsp3DG8W0OyLf/smsn1wDsE8ugTN3oPa9OVgZQLEyins7RTfvmeUUbS7m
+	o35IBvonBMW4SsxWWmshzj2PkxNZeJyUIsxnpaGoOruC/0o5sL6TXtnhoKGsyMnFjvxXEOkBzA9
+	gGPjSDMKqNCelpSzgjynLtP4KNPH/9nnoA+kVI09oXRbzcQD5HWiUgFAwHl8/XHfpzqL+5iTZiB
+	LOSWnKvJz1v+LhKXoQQPmAx+BBJTLzVW6BAMyUXi2v15XUu2CZHE1B2mBTpThEjnSkXEsV
+X-Google-Smtp-Source: AGHT+IEQQl9YZkR1BgzZ6Z2Nufpu9HBikDewEvyF4EuaS29j/RILS2DM6SBqWX87g+1TkKzsAinQ/A==
+X-Received: by 2002:a05:6000:705:b0:426:f9d3:2feb with SMTP id ffacd0b85a97d-42704beea1emr10367539f8f.23.1760983080172;
+        Mon, 20 Oct 2025 10:58:00 -0700 (PDT)
 Received: from jernej-laptop.localnet (178-79-73-218.dynamic.telemach.net. [178.79.73.218])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427ea5b3c34sm16222568f8f.17.2025.10.20.10.52.21
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427f00ce08asm16294878f8f.44.2025.10.20.10.57.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Oct 2025 10:52:22 -0700 (PDT)
+        Mon, 20 Oct 2025 10:57:59 -0700 (PDT)
 From: Jernej =?UTF-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
 To: Chen-Yu Tsai <wens@kernel.org>, Jernej Skrabec <jernej@kernel.org>,
  Samuel Holland <samuel@sholland.org>, Mark Brown <broonie@kernel.org>,
  Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
  Vinod Koul <vkoul@kernel.org>, Chen-Yu Tsai <wens@kernel.org>
-Cc: linux-sunxi@lists.linux.dev, linux-sound@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- devicetree@vger.kernel.org, dmaengine@vger.kernel.org,
- linux-kernel@vger.kernel.org
+Cc: Chen-Yu Tsai <wens@csie.org>, linux-sunxi@lists.linux.dev,
+ linux-sound@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
 Subject:
- Re: [PATCH 06/11] clk: sunxi-ng: sun55i-a523-ccu: Lower audio0 pll minimum
- rate
-Date: Mon, 20 Oct 2025 19:52:20 +0200
-Message-ID: <8591609.T7Z3S40VBb@jernej-laptop>
-In-Reply-To: <20251020171059.2786070-7-wens@kernel.org>
+ Re: [PATCH 07/11] arm64: dts: allwinner: a523: Add DMA controller device
+ nodes
+Date: Mon, 20 Oct 2025 19:57:58 +0200
+Message-ID: <2324646.iZASKD2KPV@jernej-laptop>
+In-Reply-To: <20251020171059.2786070-8-wens@kernel.org>
 References:
  <20251020171059.2786070-1-wens@kernel.org>
- <20251020171059.2786070-7-wens@kernel.org>
+ <20251020171059.2786070-8-wens@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -88,48 +87,18 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="utf-8"
 
-Dne ponedeljek, 20. oktober 2025 ob 19:10:52 Srednjeevropski poletni =C4=8D=
+Dne ponedeljek, 20. oktober 2025 ob 19:10:53 Srednjeevropski poletni =C4=8D=
 as je Chen-Yu Tsai napisal(a):
-> While the user manual states that the PLL's rate should be between 180
-> MHz and 3 GHz in the register defninition section, it also says the
-> actual operating frequency is 22.5792*4 MHz in the PLL features table.
+> From: Chen-Yu Tsai <wens@csie.org>
 >=20
-> 22.5792*4 MHz is one of the actual clock rates that we want and is
-> is available in the SDM table. Lower the minimum clock rate to 90 MHz
-> so that both rates in the SDM table can be used.
-
-So factor of 2 could be missed somewhere?
-
+> The A523 has two DMA controllers. Add device nodes for both. Also hook
+> up DMA for existing devices.
 >=20
-> Fixes: 7cae1e2b5544 ("clk: sunxi-ng: Add support for the A523/T527 CCU PL=
-Ls")
-> Signed-off-by: Chen-Yu Tsai <wens@kernel.org>
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 
-Reviewed-by: Jernej Skrabec <jernej.skrabec@gmail.com>
+Acked-by: Jernej Skrabec <jernej.skrabec@gmail.com>
 
 Best regards,
 Jernej
-
-> ---
->  drivers/clk/sunxi-ng/ccu-sun55i-a523.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/clk/sunxi-ng/ccu-sun55i-a523.c b/drivers/clk/sunxi-n=
-g/ccu-sun55i-a523.c
-> index acb532f8361b..20dad06b37ca 100644
-> --- a/drivers/clk/sunxi-ng/ccu-sun55i-a523.c
-> +++ b/drivers/clk/sunxi-ng/ccu-sun55i-a523.c
-> @@ -300,7 +300,7 @@ static struct ccu_nm pll_audio0_4x_clk =3D {
->  	.m		=3D _SUNXI_CCU_DIV(16, 6),
->  	.sdm		=3D _SUNXI_CCU_SDM(pll_audio0_sdm_table, BIT(24),
->  					 0x178, BIT(31)),
-> -	.min_rate	=3D 180000000U,
-> +	.min_rate	=3D 90000000U,
->  	.max_rate	=3D 3000000000U,
->  	.common		=3D {
->  		.reg		=3D 0x078,
->=20
-
-
 
 
