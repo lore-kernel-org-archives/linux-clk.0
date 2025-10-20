@@ -1,133 +1,110 @@
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1D9A6BFCE
-	for <linux-clk@vger.kernel.org>; Mon, 20 Oct 2025 19:45:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D7E629B228
+	for <linux-clk@vger.kernel.org>; Mon, 20 Oct 2025 21:35:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760989530; cv=none; b=bXAIFsVQ5fUETJmyMDkz9fzbgwwvQldG+KZmnULrasmZlMbMEwkoPkfYU7IfO9t3dF/cTOrRPP8Rcm/ItAPy65XwpxeKwDztBtlCAAAA3jdmDNHrIxOsOWmNJQEK5uDW8y1g22NkdbHXju0n2CS9obBiAI6f6H3BCvxs0I1ms3I=
+	t=1760996126; cv=none; b=OL0nhAoacMng5zKRgeiq2bqaakWyUkcHvzd0OSfrr+LSNVL6VYZroVss/GGGHvLKbb3eTaU9I/HIdDDiynfzAOAzgMnkN54aHix/LEk1FonR4BDZR9xvr8ziiwWi2rHxxEdqhz4bgqCNcIdzJvzN30TCkrbq6ONHkHfDFjNtgIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760989530; c=relaxed/simple;
-	bh=p2sWbK/i6wPHhukAdzgNJbGHi8CFyvayEux3Moga6Ko=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=iITe4UhcWBnAsqezx6iebnLkrqEOS3k1oF2MWuE1JMeeNLSRAUOHRoB1sMdTLL0Nk7BbgdfLWmNwP/3af1djr1UzOqRR+xCBs77PKFaAdM428H9jDfPtyHNlCzPP3baFsJ9I4GrH7x6zvstrbh7BrOnVQxIvgti63LBIJSA/9bo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=FdNHWhoF; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+	s=arc-20240116; t=1760996126; c=relaxed/simple;
+	bh=p+3sYnwm/zVmUqqbZ6Lan1Fe/EeeP/Xr5dbG7CHwG7Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XFrchrl/qfe2wBNl9ZiqtIa+FKN0QrDOv1Z0c9vP0rqxdgnl4qVVhVMwdYeVZ/Lo8NzOvWI/F/Mbe0/CqzFC3aIOzw/RYuWpI+gcAfWrDJQtMSBdBG93akyVC1KBSew5qfElG4qQ7WbcN5WiyYfzp1YhZgbrAPtoPL4CK/sxUDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PE7buZHj; arc=none smtp.client-ip=209.85.128.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="FdNHWhoF"
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b463f986f80so928118266b.2
-        for <linux-clk@vger.kernel.org>; Mon, 20 Oct 2025 12:45:28 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PE7buZHj"
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-71d60157747so49732327b3.0
+        for <linux-clk@vger.kernel.org>; Mon, 20 Oct 2025 14:35:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1760989527; x=1761594327; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=qz5TY9x2mwFP+v6DHBmNs5rDoED1VITmKzDSzUIYHws=;
-        b=FdNHWhoFU/7zcce7misiCY9YQE9FDJ56k7r5OAXc9qNZSmAMu4iwNKF7OTEThW8NVj
-         jC8pbkiYy3eZMs6ADoZnKME5Q76io19a/JpeqGvC7xRNp+6pJvjIrHM68+mgDbY4sqiv
-         dXj6pnXsnI47Ve3VcXWW3a//6LiPOpU05crPmkujSxJyv+ry45s3TEdwdTzNjJFVnPHZ
-         87JMxe0Ts53XC6KpiGHHJcStiulkh4AjZJ0SzTYrshzKQV8ZhHozFSkN++/64u2hlS1r
-         v38QGvKbP1ZNcrCLBA2vX+209F0pJdflgUiDOn2Te1VjrtGUU9RBkoY0yDLRyTfiWSyK
-         omjg==
+        d=linaro.org; s=google; t=1760996123; x=1761600923; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=p+3sYnwm/zVmUqqbZ6Lan1Fe/EeeP/Xr5dbG7CHwG7Y=;
+        b=PE7buZHjoYUMImtbfQNuaX+nnmlXX0XVVE4OhOMIKupSEDMANMsRMetsBK08uqy9At
+         1ukTlNhpTEXQrM8BahxXobWCEbiHW7aWVf1NWaIFS3gablTeWO93iMG4LU1l9+cCvhYH
+         7tPLZf8TCIvYEugcAzJA5ee8dZgQLC2ZY6qu12KFYAw022n6+w2D/bEPPh8qiOB6GmHy
+         nGo9fDaU0220t0tuLMv4f2WWl0fLIrDUMy5DWw2lnePBzMljbpA7pzYa5Ni8uDXxb7Yb
+         +Yn+cMf8PyBX6KFf1okxtiAiwDvRW9AVz1yHmzxK4J9XtSee1T7ifpwWG2hxFnDKzp2Y
+         EPPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760989527; x=1761594327;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qz5TY9x2mwFP+v6DHBmNs5rDoED1VITmKzDSzUIYHws=;
-        b=U6pt2nAJ/42SBH6Jl7dneVQSzR6CWJQ2QfKAOzmmvZglMuHR1xccaFtvp0k91GbUVx
-         OD+aT4EQ0Mnbkx7lLb83XOtEL7bPA8ifSuhIYo80R+pYwRZy7cEb6oitWesDOFjCjv7+
-         xzbT7xM6LU+eLmxCAXapDKQyFXfWTH/USGqi9B4RO3qtrsxEev3nAnoUHleFwDDLR+fz
-         1uuN/jAlVYvdlP+2k6/w/GRb1Nix8689pCKN6uNVlaglvI5eOJn4wy/WLvrK08vgRSyn
-         kQpVViqU3ijQn4hQ0PHpsc7tGG3thB36xhAyxbBqci1XvK3QCKbgSS7A4DHuGuK5JF6M
-         JdDQ==
-X-Gm-Message-State: AOJu0YxbqV6bZ6K9HxGJd6vu6b2gdM5ZIR3Jqbi83AVlF6lpErvEAcu7
-	se8xtQcunh4K7bQODW+0aQKtrx6aD5IzzIloHQXtrd4Fdjgd6qCHCIR6QQ0Xe7nbgCw=
-X-Gm-Gg: ASbGncsaCX15SfCFB2wvcUHJ9AWSeJi77hhQcjVsX0cGaKnrzVEq/NHKTmlQLML5MMp
-	gXDn8O7xGIdML14BxFX96joKO21oZna0sYMX5SBiP0IQ7tTG6Y1L3Uko0nU5rQQ3iXJpnZvoQVJ
-	GXO/LF2eDvMkgUkgEUi3G1AVDYNfKc8Z2DiIko0nrpgeauBqyLbG2tWfM18upk7dSiJCR9D3OwK
-	TGnRKrhD7QFrRs1wsG3DW+oJd0+aq24PtltlnsaBM0+De0JNHsMLHkKeXkIQ8rfv6jFdPhcvgv/
-	7amxJHLj25VscXx+z5tOXzpNMVoUcaJS8WW5ppgkkH9c4bQZ/25/DkP7AE92Cy5WHActKqjAlAd
-	k29uu9i2J6ZRablNgvNG3n+owJNtZnLKb+Zd2UKmOXR3vw1i8z17nasPCL+jS6u/OlBmmA13J8S
-	sdgwevqnF2SZG55j0sZIQ=
-X-Google-Smtp-Source: AGHT+IGCob6piujm3PcDzGeduTMgTD25Owlac554+NOU9vrtDAhPuhqkFthuXzRSWnHKOtAXcaqOWQ==
-X-Received: by 2002:a17:907:9482:b0:b2e:9926:3919 with SMTP id a640c23a62f3a-b647314166dmr1286907066b.22.1760989526706;
-        Mon, 20 Oct 2025 12:45:26 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.151])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b65eb725d80sm874107566b.67.2025.10.20.12.45.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 20 Oct 2025 12:45:26 -0700 (PDT)
-Message-ID: <b9f50783-6313-4c40-bbf2-c8474ddc2f59@tuxon.dev>
-Date: Mon, 20 Oct 2025 22:45:23 +0300
+        d=1e100.net; s=20230601; t=1760996123; x=1761600923;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=p+3sYnwm/zVmUqqbZ6Lan1Fe/EeeP/Xr5dbG7CHwG7Y=;
+        b=RxV1C4JliMdJqdAJX7UHHbIxUPba7qjHXj0Q10vaWU4ZmfR9wQ+Aosqrrh+63fInIp
+         ffHoe0H1tEVWxj0cTulRzELO645iUTAPkeHOi3oc0dq3/jhyHk6R1qshaG/bRxi68F8S
+         GptiWI0YR5BZOAEk7Y9qrfvvK2I1YNRa6mj33U7i/DhOAT6ZuvqcQEwI3+L5SgnXlTW2
+         awjnkVQnUdyNmHPp/E0+GUdpO+bimK8Q4HsevqXACUGblmrlp73ZHfsDrLqBf/M8Es55
+         B4Kw+RzWW8zaR6QY6k8u5k0HapPf7svesPrBs25sjANw+zHr+++mQEa8aAPwdb64xaNr
+         vU3w==
+X-Forwarded-Encrypted: i=1; AJvYcCXe6x0A08OY2UOWEJ8tu2f0KGPDi1dyH8ZYcKRhRUB6IP9ONggFGc+8q/sla4djyEQRmQD40D1z3Qo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5XCWWfXrhWJ72CJGh54U8ZjLnFMhAWstWVunZgM74PJsC6Fpu
+	YAS+ssjYeiyrmLnY6Kw+qCpmOBNVkxMODsj9qPLvpWZpS0a7/gTMExD1iBs2J/PzaiE3XTvZydW
+	3IZEcb//W/DUlyEpBwS3TBMXd9y+PYYgiwOhQFAfZ8A==
+X-Gm-Gg: ASbGnctsec3i7Evy5SLI9UKI0pfvWnKvCIMndFFk811fX2F75CBVoowSD5o41mWu+r6
+	pjPXCULL3RomD6jTU1vGCQSdYiNwrdFAnCAb7RC0L9Y4aaMQWG61k8tmHfuAAGB9QUVJjh/12HD
+	OQPekdIAss3CKC9k+xVzxY21JF7XCt9066ZO0C0HNsB1J4i0dfutu5Wxkal6DKDuXc2RhrWR1HN
+	XKrSe7NKmdeYFWwPLIRNxLhjJaHDpNuY+xBrGAzz+DFbguabQlOCj4Ls/e3WBFVIyBov7A=
+X-Google-Smtp-Source: AGHT+IHcbLV8sjcTUSW/kYKLFIDfgxSVgbG/hCotLfs+E1Yurw11PQwO89zUraRAtmdIvysGYrHzIqa+Gk+I+qbLfMk=
+X-Received: by 2002:a05:690e:408b:b0:63e:221e:bd38 with SMTP id
+ 956f58d0204a3-63e221ebe30mr9755360d50.64.1760996123201; Mon, 20 Oct 2025
+ 14:35:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Subject: Re: [PATCH v4 10/31] clk: at91: clk-generated: use clk_parent_data
-To: Ryan.Wanner@microchip.com, mturquette@baylibre.com, sboyd@kernel.org,
- alexandre.belloni@bootlin.com, nicolas.ferre@microchip.com
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, varshini.rajendran@microchip.com
-References: <cover.1758226719.git.Ryan.Wanner@microchip.com>
- <645beaecf4b81c7e08f8adf3b9c74fa4b0176993.1758226719.git.Ryan.Wanner@microchip.com>
-Content-Language: en-US
-In-Reply-To: <645beaecf4b81c7e08f8adf3b9c74fa4b0176993.1758226719.git.Ryan.Wanner@microchip.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20251015232015.846282-1-robh@kernel.org>
+In-Reply-To: <20251015232015.846282-1-robh@kernel.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 20 Oct 2025 23:35:10 +0200
+X-Gm-Features: AS18NWBAzh5HU2QEiT3WGw7lWd7_MVL73oGUD23tlLIja0Rs_422Nhq3kpTmHsU
+Message-ID: <CACRpkdZFXxBY2AopX2bgFGE_nhXmV3YirfRwuo4L6qWzzAC4rg@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: Fix inconsistent quoting
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Stephen Boyd <sboyd@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Shawn Guo <shawnguo@kernel.org>, Fabio Estevam <festevam@gmail.com>, 
+	=?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, 
+	Jonathan Cameron <jic23@kernel.org>, Andy Shevchenko <andy@kernel.org>, 
+	Jassi Brar <jassisinghbrar@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Lee Jones <lee@kernel.org>, Joel Stanley <joel@jms.id.au>, 
+	Andrew Jeffery <andrew@codeconstruct.com.au>, Andrew Lunn <andrew@lunn.ch>, 
+	Vladimir Oltean <olteanv@gmail.com>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Daire McNamara <daire.mcnamara@microchip.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Manivannan Sadhasivam <mani@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, Vinod Koul <vkoul@kernel.org>, 
+	Kishon Vijay Abraham I <kishon@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Nicolas Ferre <nicolas.ferre@microchip.com>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+	Florian Fainelli <f.fainelli@gmail.com>, Tony Lindgren <tony@atomide.com>, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-iio@vger.kernel.org, linux-media@vger.kernel.org, 
+	netdev@vger.kernel.org, linux-pci@vger.kernel.org, 
+	linux-phy@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi, Ryan,
+On Thu, Oct 16, 2025 at 1:20=E2=80=AFAM Rob Herring (Arm) <robh@kernel.org>=
+ wrote:
 
-On 9/19/25 00:15, Ryan.Wanner@microchip.com wrote:
-> From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-> 
-> Use struct clk_parent_data instead of struct parent_hw as this leads
-> to less usage of __clk_get_hw() in SoC specific clock drivers and simpler
-> conversion of existing SoC specific clock drivers from parent_names to
-> modern clk_parent_data structures.
-> 
-> Remove the last of the usage of __clk_get_hw().
-> 
-> Signed-off-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-> [ryan.wanner@microchip.com: Added SAMA7D65 and SAM9X75 SoCs to the
-> clk-generated changes. Adjust clk name variable order.]
-> Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
-> ---
+> yamllint has gained a new check which checks for inconsistent quoting
+> (mixed " and ' quotes within a file). Fix all the cases yamllint found
+> so we can enable the check (once the check is in a release). Use
+> whichever quoting is dominate in the file.
+>
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 
-[...]
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
->  static void __init sama7g5_pmc_setup(struct device_node *np)
->  {
-> -	const char *main_xtal_name;
-> +	const char *main_xtal_name, *md_slck_name, *td_slck_name;
->  	struct pmc_data *sama7g5_pmc;
->  	void **alloc_mem = NULL;
->  	int alloc_mem_size = 0;
->  	struct regmap *regmap;
->  	struct clk_hw *hw, *main_rc_hw, *main_osc_hw;
-> -	struct clk_hw *td_slck_hw, *md_slck_hw;
->  	struct clk_parent_data parent_data[10];
-> -	struct clk_hw *parent_hws[10];
->  	struct clk *main_xtal;
->  	bool bypass;
->  	int i, j;
->  
-> -	td_slck_hw = __clk_get_hw(of_clk_get_by_name(np, "td_slck"));
-> -	md_slck_hw = __clk_get_hw(of_clk_get_by_name(np, "md_slck"));
-> +	i = of_property_match_string(np, "clock-names", "td_slck");
-> +	if (i < 0)
-> +		return;
-> +	td_slck_name = of_clk_get_parent_name(np, i);
-> +
-> +	i = of_property_match_string(np, "clock-names", "md_slck");
-> +	if (i < 0)
-> +		return;
-> +	md_slck_name = of_clk_get_parent_name(np, i);
-> +
->  	i = of_property_match_string(np, "clock-names", "main_xtal");
->  
-Please drop the resulting empty line here.
+Yours,
+Linus Walleij
