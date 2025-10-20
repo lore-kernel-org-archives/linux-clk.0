@@ -1,199 +1,705 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A83A02F12D6
-	for <linux-clk@vger.kernel.org>; Mon, 20 Oct 2025 19:36:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE2FA219A86
+	for <linux-clk@vger.kernel.org>; Mon, 20 Oct 2025 19:38:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760989010; cv=none; b=ppzRsqD0d2JvSJS/uRAs5Eg5F9Qie7uvF2fGF5Ug+mYeNYd+ubghmwbVdjiTvkA04E5uBjagSgUjV3SjrEeX+oK+DbEGNw92285kiygH0p2UwPd0PtxFE+cGI1geFtZ47+/84yObB9FSfua6gNA+JiDTeaBaJ/e2mZ7ZvUOUC3g=
+	t=1760989112; cv=none; b=fNogNQ/9vW5AXqrELlv5aiVtKp4OU9pgC+HFz6I3W5xq+Jwt0HOVQ86sAOnOgSuOpwjMlcYFwjqyiqeET3qTcH8+GLumSI9OTRVaNJr7GT4mgdm84sdmi6WRkJBqZQzbcfkpvLZhDmoIoP06Ytt/vh0e4YlGS8cCRTjcrp7X1uU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760989010; c=relaxed/simple;
-	bh=HXS7xGymDI6/8nnlFWj0A2HLQl6SA7kHsV+2dlr/xeg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HpKNsA4gsfCeh0mZfvQkzdnoqoqaQvkoRlt3PH/Qpip8Peo1OQjVO18f/QiNi2iXyxhWtvK8jnvReBC8PJg80hghkfJecMv6jE3Ki4+YXS3goPBbGQ0vEyTNaP4b4P1Yfs/KH/8AGgYD8wDrXJJkRGisK14uYFdHXSWNGfmAzKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=d1TNzonU; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1760989112; c=relaxed/simple;
+	bh=eebYZ6zXLx76cYE+gcR91bkMT5gnmpTffdOPN3ar8/o=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=H2AR0uy3U3oMn9hXGrzEFyCD9qWElDTUKMkf1p7l1AS3NyzzkhJs9Xqo6eE+l+o+xsf38ZbpNcG73S4T+gU2majBLvjaP4hDBTdJo62Znq8USksCRSY0juPvBGDzsrjNH/XaXb+EeIDLYHiIm1fSUaPsHHO/EZocQ4NXzT07rhk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=DS3Vf5h8; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="d1TNzonU"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760989006;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5ZiaSM2PnoC+EdbhzADV84+t+uutkx1Amp/dmBBeJxQ=;
-	b=d1TNzonUBAde62H0OVgA4jWkMEQ81nb85H3I7Xxpf6sX2scMbRlfgpCJPWz7iD9iC5Qc+9
-	mG8IdKEdpEbfq6t+Lt4a9v3s9cgyVsuOigkMFGIYfaPgD/gP72rudioKUw1uPUiJsTu+pT
-	S/a/GJqElD6TOByQyd2R0x1snQ1OzM4=
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
- [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-54-exEVI9o6M_yrPAkwNjdPTQ-1; Mon, 20 Oct 2025 15:36:45 -0400
-X-MC-Unique: exEVI9o6M_yrPAkwNjdPTQ-1
-X-Mimecast-MFC-AGG-ID: exEVI9o6M_yrPAkwNjdPTQ_1760989005
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-827061b4ca9so1487501185a.3
-        for <linux-clk@vger.kernel.org>; Mon, 20 Oct 2025 12:36:45 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="DS3Vf5h8"
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-b4539dddd99so853981066b.1
+        for <linux-clk@vger.kernel.org>; Mon, 20 Oct 2025 12:38:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1760989108; x=1761593908; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=i+POII8yE39Tn3Tv94O818PXGkTF4y8feAyeQOz6HMQ=;
+        b=DS3Vf5h8QtUt07EsUMb+KUYIbN9LYUv7IC2POAvzSLkBNKcg1s6CC+loItEWAhUEaJ
+         DLdrAwHHvYB3FyRnYEu0rEcRw4dft6mXlJ6pdIh4IyWg4rlfMTyJntB0fupw0FuOsygG
+         dV4Xg4lipWVS5/9W8zh/jEt9WBLqnUq2tV7c96p47NS44T1ukUiZBw8KN5UKW/Ot58AS
+         XaBOrX0mCqUKddB5rrumi+gWH8M+m1hnRpfzNxFeCMqhkJ+mByUqihAIX0m7IJUHq53N
+         qtMBGOnqaH8bW1yrYqYh48v01XBqYfMJ21Jbe3x+aJa6EbjKDwGvH1qTMKq98iqpZdbe
+         SrYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760989005; x=1761593805;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5ZiaSM2PnoC+EdbhzADV84+t+uutkx1Amp/dmBBeJxQ=;
-        b=uHlXDQSOwMCdskCqvfzESJZcsBBmhJbGyOR+iJxLik/vkqG3SH284yZ0f+8Y0Q5LjQ
-         Yhvr3iDQs+g7qedZiNwklyj4E7TwMp5MnqVyLIHYd2NwhrLmKJZr6FXh1fdYWwPq9JHE
-         kWhL5i6bNM4aH1XSOCqj6IIsFJVRWWKDQJWmLIxO+Vq+Cm6OuDaAuHmofVEZVJkpdOjW
-         PaKL/i4AOmzAxoi7V9p3Ul0W9HJuySB2eifu0TgEgi4KEaM25L3AECX2OpR8GsVoeLvF
-         UjBNXuo99l6Q6MQTF/kjE/O4vUPMulyEUAR7Haae9ch+e/IzYEGqhY1JtwRBS/f4Ayai
-         JMDg==
-X-Forwarded-Encrypted: i=1; AJvYcCXDHDyYGJGYh1EBClPwwZeh+nhm9XJDKKg+ORNZD4+Me/4/IhHNy0BtYhW6Dq2z4gLHNkXE8y+CXi0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwyitPtE2mAjBKnRB+DNRqW/YFysoxoDq+j1gd33WsTP+mJ2E1t
-	ZilEZXL1Ys+gXBuxmqFVCqT4o62SbToJHNpEWlyqAq5GPfb4qGOCTHh8b7p1ljYtA6HaDIS1LxH
-	59zFeHv002ehygN+TpeGFDhk40jN8qmP7XHYcLyyYdsxWUklmqVbVzW2t809aMA==
-X-Gm-Gg: ASbGncv9SNq5N/3Mw9/flmZMX0IdUdZ/XOIY6FpW4XIB7beQn6jSoBTGuiWeoyrBJOU
-	GRLMQK3AdAvvmgWJpMlu6Eza1sQZ31ORwaa2WM5VbCXZDQ1ZKXcJsH6f42SSyHpz33LkI8yxqh3
-	eFmRV+g0wzr4tx8gbfoZN/ex+xyJUion8ejdUU/fiY4k/FqWtXNMuA9UFzHw8Ij1kXurc1R94G1
-	eqjF5peFFpYXuGL1vHTRWVnI+sPsB7Qm807x/wydgLJh9H4fyVjXqxfYaRrH3keFuSLvV9rwC6y
-	UzduaCPMNDmhph/xFarGdA17RBLuaCPXgHRWit1joBDiljIwrkG0Jc8e4raPjfpYhwcdYa595hX
-	dJUtOEtnPWhcKaOm4jSIU5j22l/Di6A==
-X-Received: by 2002:a05:620a:372a:b0:859:be3b:b5ac with SMTP id af79cd13be357-8906e7b97famr1467032985a.4.1760989004784;
-        Mon, 20 Oct 2025 12:36:44 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFsNNiKmKY9peurhzlqev2tF6KISu0JNaKtgEbeRgj3Y5mOQwBz7wnSHOaZ0F5uLAZ7ugJitg==
-X-Received: by 2002:a05:620a:372a:b0:859:be3b:b5ac with SMTP id af79cd13be357-8906e7b97famr1467030685a.4.1760989004383;
-        Mon, 20 Oct 2025 12:36:44 -0700 (PDT)
-Received: from redhat.com ([2600:382:7726:4296:a56e:fe07:ce3f:d5f0])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8924e082780sm537713185a.51.2025.10.20.12.36.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Oct 2025 12:36:43 -0700 (PDT)
-Date: Mon, 20 Oct 2025 15:36:41 -0400
-From: Brian Masney <bmasney@redhat.com>
-To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Dong Aisheng <aisheng.dong@nxp.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Yassine Oudjana <y.oudjana@protonmail.com>,
-	Laura Nao <laura.nao@collabora.com>,
-	=?iso-8859-1?Q?N=EDcolas_F=2E_R=2E_A=2E?= Prado <nfraprado@collabora.com>,
-	Chia-I Wu <olvaffe@gmail.com>, Chen-Yu Tsai <wenst@chromium.org>,
-	kernel@collabora.com, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH v3 1/5] clk: Respect CLK_OPS_PARENT_ENABLE during recalc
-Message-ID: <aPaPSeClhiq2WYJN@redhat.com>
-References: <20251010-mtk-pll-rpm-v3-0-fb1bd15d734a@collabora.com>
- <20251010-mtk-pll-rpm-v3-1-fb1bd15d734a@collabora.com>
- <aPFbDl_JKyDay1S5@redhat.com>
- <3342669.irdbgypaU6@workhorse>
+        d=1e100.net; s=20230601; t=1760989108; x=1761593908;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=i+POII8yE39Tn3Tv94O818PXGkTF4y8feAyeQOz6HMQ=;
+        b=Q82YrET2Sur4Yhj8QegbmbpkM0RykfuL8yhpuebk4UvwkF+S/1c4IdHajeDM1wCrA3
+         x8lQivdGtmj4+ANlz54s4Of2A6LOzY3oJIaMlHk+awOlcwv9pjf31MdVYtxYbNQTDt+/
+         WgQjiVEMoho9bmNC22JK7ApnaC3Hn8xyAcE5nXWIn+/n02Vn9kRTFiUXpILaNkEssZVZ
+         6/upVeMsfi5Bxt8nbXc3to6b8K+hSXuT8MulRF9UW9f4V5VIBtAi4pzrHU14nibyKv1X
+         H3p+U/FYfzgUQ4GuqzkmG13AC6TvG1lt3ychoZyZaBHVvGQCtH+btjO4ePCxo+SwBlrY
+         4ozw==
+X-Gm-Message-State: AOJu0YwtAxBJhd89BPghI6zm+t/iYTj3H6tRE93e8/344jq8GwUy4pS4
+	O+BU8GYN//CJAZJA5WBh58BFHYNTDjAv/GPAPRFEO9NYcVLGtZ8bTWWNqt5rG2fkGlY=
+X-Gm-Gg: ASbGncv/tNpUvC0G+mznOmv4v8KKb7jgQcdg9yic3g1Yc8eur3XSGKl7dw41fe2sEAo
+	w/NyuDTeO4AGSaGC9Sy6l3dHkCjTZGu+Q+DjFwzZ+WOpkgLAIlAfKgAOMY+uw1UkkAA22CZ3f0e
+	ZCNBNKnSeyyfWF4X5TXTYxmXQFjJ/+37van7TPi+0Wln5sp8fzukL/bx2WN0SCXOpF0Kp9hm3Y+
+	4CAeDyuqGBXHAHfACaqgRC1R8h/ipINCJLdWr4ozsEDP9CErmPhv1gLginVFOM1k9ulXz9oqXms
+	uQPj32Z54gedLQ/I6EdIsbGvsRLu7HKzxCDwb/IDM40QUJCy4NgCDRKAW+Zu1xpwlRM6m/2/UQc
+	webksTRh6c5c9YKrT9sRlnBdPmjfcsARC9ncUwSN706sOc+muyUJHiWodg/lt5iPTq85nesrQK1
+	FMYses75PEU2NFE6e0e0SJVShykg/WMw==
+X-Google-Smtp-Source: AGHT+IFdcQDIo2mOF/i8zi/X2ww0d2oBPJM2lD8zVmbbp1jaSiX2zU6I5RocEU06qb06iAN1mVpxnA==
+X-Received: by 2002:a17:907:2d23:b0:b55:c837:f6f5 with SMTP id a640c23a62f3a-b6472b5f7c3mr1647314766b.1.1760989107987;
+        Mon, 20 Oct 2025 12:38:27 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.151])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b65e83914d0sm861289966b.21.2025.10.20.12.38.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 20 Oct 2025 12:38:27 -0700 (PDT)
+Message-ID: <63bcb444-7baf-4332-bca5-9582818691b3@tuxon.dev>
+Date: Mon, 20 Oct 2025 22:38:26 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3342669.irdbgypaU6@workhorse>
-User-Agent: Mutt/2.2.14 (2025-02-20)
+User-Agent: Mozilla Thunderbird
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Subject: Re: [PATCH v4 03/31] clk: at91: sam9x75: switch to parent_hw and
+ parent_data
+To: Ryan.Wanner@microchip.com, mturquette@baylibre.com, sboyd@kernel.org,
+ alexandre.belloni@bootlin.com, nicolas.ferre@microchip.com
+Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, varshini.rajendran@microchip.com
+References: <cover.1758226719.git.Ryan.Wanner@microchip.com>
+ <42d01c533eecf4018174ab5c3e0a6130e3dc34f0.1758226719.git.Ryan.Wanner@microchip.com>
+Content-Language: en-US
+In-Reply-To: <42d01c533eecf4018174ab5c3e0a6130e3dc34f0.1758226719.git.Ryan.Wanner@microchip.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Nicolas,
+Hi, Ryan,
 
-On Fri, Oct 17, 2025 at 02:21:55PM +0200, Nicolas Frattaroli wrote:
-> On Thursday, 16 October 2025 22:52:30 Central European Summer Time Brian Masney wrote:
-> > On Fri, Oct 10, 2025 at 10:47:09PM +0200, Nicolas Frattaroli wrote:
-> > > When CLK_OPS_PARENT_ENABLE was introduced, it guarded various clock
-> > > operations, such as setting the rate or switching parents. However,
-> > > another operation that can and often does touch actual hardware state is
-> > > recalc_rate, which may also be affected by such a dependency.
-> > > 
-> > > Add parent enables/disables where the recalc_rate op is called directly.
-> > > 
-> > > Fixes: fc8726a2c021 ("clk: core: support clocks which requires parents enable (part 2)")
-> > > Fixes: a4b3518d146f ("clk: core: support clocks which requires parents enable (part 1)")
-> > > Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> > > Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
-> > > Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-> > > ---
-> > >  drivers/clk/clk.c | 13 +++++++++++++
-> > >  1 file changed, 13 insertions(+)
-> > > 
-> > > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> > > index 85d2f2481acf360f0618a4a382fb51250e9c2fc4..1b0f9d567f48e003497afc98df0c0d2ad244eb90 100644
-> > > --- a/drivers/clk/clk.c
-> > > +++ b/drivers/clk/clk.c
-> > > @@ -1921,7 +1921,14 @@ static unsigned long clk_recalc(struct clk_core *core,
-> > >  	unsigned long rate = parent_rate;
-> > >  
-> > >  	if (core->ops->recalc_rate && !clk_pm_runtime_get(core)) {
-> > > +		if (core->flags & CLK_OPS_PARENT_ENABLE)
-> > > +			clk_core_prepare_enable(core->parent);
-> > > +
-> > >  		rate = core->ops->recalc_rate(core->hw, parent_rate);
-> > > +
-> > > +		if (core->flags & CLK_OPS_PARENT_ENABLE)
-> > > +			clk_core_disable_unprepare(core->parent);
-> > > +
-> > >  		clk_pm_runtime_put(core);
-> > >  	}
-> > >  	return rate;
-> > 
-> > clk_change_rate() has the following code:
-> > 
-> > 
-> >         if (core->flags & CLK_OPS_PARENT_ENABLE)
-> >                 clk_core_prepare_enable(parent);
-> > 
-> > 	...
-> > 
-> >         core->rate = clk_recalc(core, best_parent_rate);
-> > 
-> > 	...
-> > 
-> >         if (core->flags & CLK_OPS_PARENT_ENABLE)
-> >                 clk_core_disable_unprepare(parent);
-> > 
-> > clk_change_rate() ultimately is called by various clk_set_rate
-> > functions. Will that be a problem for the double calls to
-> > clk_core_prepare_enable()?
+On 9/19/25 00:15, Ryan.Wanner@microchip.com wrote:
+> From: Ryan Wanner <Ryan.Wanner@microchip.com>
 > 
-> I don't see how multiple prepares are a problem as long as they're
-> balanced.
+> Switch SAM9X75 clocks to use parent_hw and parent_data. Having
+> parent_hw instead of parent names improves to clock registration
+> speed and re-parenting.
 > 
-> > 
-> > Fanning this out to the edge further is going to make the code even
-> > more complicated. What do you think about moving this to
-> > clk_core_enable_lock()? I know the set_parent operation has a special
-> > case that would need to be worked around.
+> The USBCLK will be updated in subsequent patches that update the clock
+> registration functions to use parent_hw and parent_data.
 > 
-> __clk_core_init also needs special code in that case, as it calls the
-> bare recalc_rate op with no clk_core_enable_lock beforehand. It's also
-> wrong, in that recalc_rate does not necessitate the clock being on as
-> far as I'm aware. (if it did, this wouldn't be a problem in the first
-> place, as enabling it would enable the parent as well). Changing the
-> semantics of clk_recalc, and therefore clk_get_rate, to also enable
-> the clock, would be a major change in how the common clock framework
-> functions.
+> __clk_get_hw() will be removed in subsequent patches in this series.
 > 
-> In my case, the __clk_core_init callback was the one that crashed,
-> so it really needs to happen there, and I really don't want to
-> refactor every location where `CLK_OPS_PARENT_ENABLE` is used for
-> a bugfix just to avoid potentially checking the same flag twice.
+> Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
+> ---
+>  drivers/clk/at91/sam9x7.c | 308 +++++++++++++++++++++-----------------
+>  1 file changed, 173 insertions(+), 135 deletions(-)
 > 
-> Having `CLK_OPS_PARENT_ENABLE` cleaned up such that every clk op
-> that has potential register access is never directly called by the
-> clk core except for one place, an accessor function that does both
-> pmdomain and `CLK_OPS_PARENT_ENABLE` checks, would be nice, e.g.
-> by keeping the clk_recalc change and then having __clk_core_init
-> call clk_recalc instead of the recalc op directly. But then the
-> __clk_core_init logic needs further refactoring as well.
-> 
-> I'm not sure I want to do that in this series, because it's quite
-> a bit different from just adding the missing check and parent
-> toggling, and has the chance of me introducing subtle logic bugs
-> in what is supposed to be a bugfix.
+> diff --git a/drivers/clk/at91/sam9x7.c b/drivers/clk/at91/sam9x7.c
+> index 89868a0aeaba..cb5849da494f 100644
+> --- a/drivers/clk/at91/sam9x7.c
+> +++ b/drivers/clk/at91/sam9x7.c
+> @@ -33,10 +33,22 @@ enum pll_ids {
+>  	PLL_ID_UPLL,
+>  	PLL_ID_AUDIO,
+>  	PLL_ID_LVDS,
+> -	PLL_ID_PLLA_DIV2,
+>  	PLL_ID_MAX,
+>  };
+>  
+> +/*
+> + * PLL component identifier
+> + * @PLL_COMPID_FRAC: Fractional PLL component identifier
+> + * @PLL_COMPID_DIV0: 1st PLL divider component identifier
+> + * @PLL_COMPID_DIV1: 2nd PLL divider component identifier
+> + */
+> +enum pll_component_id {
+> +	PLL_COMPID_FRAC,
+> +	PLL_COMPID_DIV0,
+> +	PLL_COMPID_DIV1,
+> +	PLL_COMPID_MAX,
+> +};
+> +
+>  /**
+>   * enum pll_type - PLL type identifiers
+>   * @PLL_TYPE_FRAC:	fractional PLL identifier
+> @@ -185,6 +197,18 @@ static const struct clk_pll_layout pll_divio_layout = {
+>  	.endiv_shift	= 30,
+>  };
+>  
+> +/*
+> + * SAM9X7 PLL possible parents
+> + * @SAM9X7_PLL_PARENT_MAINCK: MAINCK is PLL a parent
+> + * @SAM9X7_PLL_PARENT_MAIN_XTAL: MAIN XTAL is a PLL parent
+> + * @SAM9X7_PLL_PARENT_FRACCK: Frac PLL is a PLL parent (for PLL dividers)
+> + */
+> +enum sam9x7_pll_parent {
+> +	SAM9X7_PLL_PARENT_MAINCK,
+> +	SAM9X7_PLL_PARENT_MAIN_XTAL,
+> +	SAM9X7_PLL_PARENT_FRACCK
+> +};
+> +
+>  /*
+>   * PLL clocks description
+>   * @n:		clock name
+> @@ -192,22 +216,24 @@ static const struct clk_pll_layout pll_divio_layout = {
+>   * @l:		clock layout
+>   * @t:		clock type
+>   * @c:		pll characteristics
+> + * @hw:		pointer to clk_hw
+>   * @f:		clock flags
+>   * @eid:	export index in sam9x7->chws[] array
+>   */
+> -static const struct {
+> +static struct {
+>  	const char *n;
+> -	const char *p;
+>  	const struct clk_pll_layout *l;
+>  	u8 t;
+>  	const struct clk_pll_characteristics *c;
+> +	struct clk_hw *hw;
+>  	unsigned long f;
+> +	enum sam9x7_pll_parent p;
+>  	u8 eid;
+> -} sam9x7_plls[][3] = {
+> +} sam9x7_plls[][PLL_COMPID_MAX] = {
+>  	[PLL_ID_PLLA] = {
+> -		{
+> +		[PLL_COMPID_FRAC] = {
+>  			.n = "plla_fracck",
+> -			.p = "mainck",
+> +			.p = SAM9X7_PLL_PARENT_MAINCK,
+>  			.l = &plla_frac_layout,
+>  			.t = PLL_TYPE_FRAC,
+>  			/*
+> @@ -218,9 +244,9 @@ static const struct {
+>  			.c = &plla_characteristics,
+>  		},
+>  
+> -		{
+> +		[PLL_COMPID_DIV0] = {
+>  			.n = "plla_divpmcck",
+> -			.p = "plla_fracck",
+> +			.p = SAM9X7_PLL_PARENT_FRACCK,
+>  			.l = &pll_divpmc_layout,
+>  			.t = PLL_TYPE_DIV,
+>  			/* This feeds CPU. It should not be disabled */
+> @@ -228,21 +254,35 @@ static const struct {
+>  			.eid = PMC_PLLACK,
+>  			.c = &plla_characteristics,
+>  		},
+> +
+> +		[PLL_COMPID_DIV1] = {
+> +			.n = "plla_div2pmcck",
+> +			.p = SAM9X7_PLL_PARENT_FRACCK,
+> +			.l = &plladiv2_divpmc_layout,
+> +			/*
+> +			 * This may feed critical parts of the system like timers.
+> +			 * It should not be disabled.
+> +			 */
+> +			.f = CLK_IS_CRITICAL | CLK_SET_RATE_GATE,
+> +			.c = &plladiv2_characteristics,
+> +			.eid = PMC_PLLADIV2,
+> +			.t = PLL_TYPE_DIV,
+> +		},
+>  	},
+>  
+>  	[PLL_ID_UPLL] = {
+> -		{
+> +		[PLL_COMPID_FRAC] = {
+>  			.n = "upll_fracck",
+> -			.p = "main_osc",
+> +			.p = SAM9X7_PLL_PARENT_MAIN_XTAL,
+>  			.l = &pll_frac_layout,
+>  			.t = PLL_TYPE_FRAC,
+>  			.f = CLK_SET_RATE_GATE,
+>  			.c = &upll_characteristics,
+>  		},
+>  
+> -		{
+> +		[PLL_COMPID_DIV0] = {
+>  			.n = "upll_divpmcck",
+> -			.p = "upll_fracck",
+> +			.p = SAM9X7_PLL_PARENT_FRACCK,
+>  			.l = &pll_divpmc_layout,
+>  			.t = PLL_TYPE_DIV,
+>  			.f = CLK_SET_RATE_GATE | CLK_SET_PARENT_GATE |
+> @@ -253,18 +293,18 @@ static const struct {
+>  	},
+>  
+>  	[PLL_ID_AUDIO] = {
+> -		{
+> +		[PLL_COMPID_FRAC] = {
+>  			.n = "audiopll_fracck",
+> -			.p = "main_osc",
+> +			.p = SAM9X7_PLL_PARENT_MAIN_XTAL,
+>  			.l = &pll_frac_layout,
+>  			.f = CLK_SET_RATE_GATE,
+>  			.c = &audiopll_characteristics,
+>  			.t = PLL_TYPE_FRAC,
+>  		},
+>  
+> -		{
+> +		[PLL_COMPID_DIV0] = {
+>  			.n = "audiopll_divpmcck",
+> -			.p = "audiopll_fracck",
+> +			.p = SAM9X7_PLL_PARENT_FRACCK,
+>  			.l = &pll_divpmc_layout,
+>  			.f = CLK_SET_RATE_GATE | CLK_SET_PARENT_GATE |
+>  			     CLK_SET_RATE_PARENT,
+> @@ -273,9 +313,9 @@ static const struct {
+>  			.t = PLL_TYPE_DIV,
+>  		},
+>  
+> -		{
+> +		[PLL_COMPID_DIV1] = {
+>  			.n = "audiopll_diviock",
+> -			.p = "audiopll_fracck",
+> +			.p = SAM9X7_PLL_PARENT_FRACCK,
+>  			.l = &pll_divio_layout,
+>  			.f = CLK_SET_RATE_GATE | CLK_SET_PARENT_GATE |
+>  			     CLK_SET_RATE_PARENT,
+> @@ -286,18 +326,18 @@ static const struct {
+>  	},
+>  
+>  	[PLL_ID_LVDS] = {
+> -		{
+> +		[PLL_COMPID_FRAC] = {
+>  			.n = "lvdspll_fracck",
+> -			.p = "main_osc",
+> +			.p = SAM9X7_PLL_PARENT_MAIN_XTAL,
+>  			.l = &pll_frac_layout,
+>  			.f = CLK_SET_RATE_GATE,
+>  			.c = &lvdspll_characteristics,
+>  			.t = PLL_TYPE_FRAC,
+>  		},
+>  
+> -		{
+> +		[PLL_COMPID_DIV0] = {
+>  			.n = "lvdspll_divpmcck",
+> -			.p = "lvdspll_fracck",
+> +			.p = SAM9X7_PLL_PARENT_FRACCK,
+>  			.l = &pll_divpmc_layout,
+>  			.f = CLK_SET_RATE_GATE | CLK_SET_PARENT_GATE |
+>  			     CLK_SET_RATE_PARENT,
+> @@ -306,22 +346,6 @@ static const struct {
+>  			.t = PLL_TYPE_DIV,
+>  		},
+>  	},
+> -
+> -	[PLL_ID_PLLA_DIV2] = {
+> -		{
+> -			.n = "plla_div2pmcck",
+> -			.p = "plla_fracck",
+> -			.l = &plladiv2_divpmc_layout,
+> -			/*
+> -			 * This may feed critical parts of the system like timers.
+> -			 * It should not be disabled.
+> -			 */
+> -			.f = CLK_IS_CRITICAL | CLK_SET_RATE_GATE,
+> -			.c = &plladiv2_characteristics,
+> -			.eid = PMC_PLLADIV2,
+> -			.t = PLL_TYPE_DIV,
+> -		},
+> -	},
+>  };
+>  
+>  static const struct clk_programmable_layout sam9x7_programmable_layout = {
+> @@ -339,9 +363,9 @@ static const struct clk_pcr_layout sam9x7_pcr_layout = {
+>  	.pid_mask = GENMASK(6, 0),
+>  };
+>  
+> -static const struct {
+> +static struct {
+>  	char *n;
+> -	char *p;
+> +	struct clk_hw *parent_hw;
+>  	u8 id;
+>  	unsigned long flags;
+>  } sam9x7_systemck[] = {
+> @@ -349,10 +373,10 @@ static const struct {
+>  	 * ddrck feeds DDR controller and is enabled by bootloader thus we need
+>  	 * to keep it enabled in case there is no Linux consumer for it.
+>  	 */
+> -	{ .n = "ddrck",		.p = "masterck_div",	.id = 2,	.flags = CLK_IS_CRITICAL },
+> -	{ .n = "uhpck",		.p = "usbck",		.id = 6 },
+> -	{ .n = "pck0",		.p = "prog0",		.id = 8 },
+> -	{ .n = "pck1",		.p = "prog1",		.id = 9 },
+> +	{ .n = "ddrck",		.id = 2,	.flags = CLK_IS_CRITICAL },
+> +	{ .n = "uhpck",		.id = 6 },
+> +	{ .n = "pck0",		.id = 8 },
+> +	{ .n = "pck1",		.id = 9 },
+>  };
+>  
+>  /*
+> @@ -426,7 +450,8 @@ static const struct {
+>  /*
+>   * Generic clock description
+>   * @n:			clock name
+> - * @pp:			PLL parents
+> + * @pp:			PLL parents (entry formed by PLL components identifiers
+> + *			(see enum pll_component_id))
+>   * @pp_mux_table:	PLL parents mux table
+>   * @r:			clock output range
+>   * @pp_chg_id:		id in parent array of changeable PLL parent
+> @@ -435,7 +460,10 @@ static const struct {
+>   */
+>  static const struct {
+>  	const char *n;
+> -	const char *pp[8];
+> +	struct {
+> +			int pll_id;
+> +			int pll_compid;
 
-I agree and that makes sense. Thanks for the explanation. What you have
-is a good compromise.
+2 tabs here should be enough.
 
-Reviewed-by: Brian Masney <bmasney@redhat.com>
+> +	} pp[8];
+>  	const char pp_mux_table[8];
+>  	struct clk_range r;
+>  	int pp_chg_id;
+> @@ -445,7 +473,7 @@ static const struct {
+>  	{
+>  		.n = "flex0_gclk",
+>  		.id = 5,
+> -		.pp = { "plla_div2pmcck", },
+> +		.pp = { PLL_IDS_TO_ARR_ENTRY(PLLA, DIV1), },
+>  		.pp_mux_table = { 8, },
+>  		.pp_count = 1,
+>  		.pp_chg_id = INT_MIN,
+> @@ -454,7 +482,7 @@ static const struct {
+>  	{
+>  		.n = "flex1_gclk",
+>  		.id = 6,
+> -		.pp = { "plla_div2pmcck", },
+> +		.pp = { PLL_IDS_TO_ARR_ENTRY(PLLA, DIV1), },
+>  		.pp_mux_table = { 8, },
+>  		.pp_count = 1,
+>  		.pp_chg_id = INT_MIN,
+> @@ -463,7 +491,7 @@ static const struct {
+>  	{
+>  		.n = "flex2_gclk",
+>  		.id = 7,
+> -		.pp = { "plla_div2pmcck", },
+> +		.pp = { PLL_IDS_TO_ARR_ENTRY(PLLA, DIV1), },
+>  		.pp_mux_table = { 8, },
+>  		.pp_count = 1,
+>  		.pp_chg_id = INT_MIN,
+> @@ -472,7 +500,7 @@ static const struct {
+>  	{
+>  		.n = "flex3_gclk",
+>  		.id = 8,
+> -		.pp = { "plla_div2pmcck", },
+> +		.pp = { PLL_IDS_TO_ARR_ENTRY(PLLA, DIV1), },
+>  		.pp_mux_table = { 8, },
+>  		.pp_count = 1,
+>  		.pp_chg_id = INT_MIN,
+> @@ -481,7 +509,7 @@ static const struct {
+>  	{
+>  		.n = "flex6_gclk",
+>  		.id = 9,
+> -		.pp = { "plla_div2pmcck", },
+> +		.pp = { PLL_IDS_TO_ARR_ENTRY(PLLA, DIV1), },
+>  		.pp_mux_table = { 8, },
+>  		.pp_count = 1,
+>  		.pp_chg_id = INT_MIN,
+> @@ -490,7 +518,7 @@ static const struct {
+>  	{
+>  		.n = "flex7_gclk",
+>  		.id = 10,
+> -		.pp = { "plla_div2pmcck", },
+> +		.pp = { PLL_IDS_TO_ARR_ENTRY(PLLA, DIV1), },
+>  		.pp_mux_table = { 8, },
+>  		.pp_count = 1,
+>  		.pp_chg_id = INT_MIN,
+> @@ -499,7 +527,7 @@ static const struct {
+>  	{
+>  		.n = "flex8_gclk",
+>  		.id = 11,
+> -		.pp = { "plla_div2pmcck", },
+> +		.pp = { PLL_IDS_TO_ARR_ENTRY(PLLA, DIV1), },
+>  		.pp_mux_table = { 8, },
+>  		.pp_count = 1,
+>  		.pp_chg_id = INT_MIN,
+> @@ -509,7 +537,7 @@ static const struct {
+>  		.n = "sdmmc0_gclk",
+>  		.id = 12,
+>  		.r = { .max = 105000000 },
+> -		.pp = { "audiopll_divpmcck", "plla_div2pmcck", },
+> +		.pp = { PLL_IDS_TO_ARR_ENTRY(AUDIO, DIV0), PLL_IDS_TO_ARR_ENTRY(PLLA, DIV1), },
+>  		.pp_mux_table = { 6, 8, },
+>  		.pp_count = 2,
+>  		.pp_chg_id = INT_MIN,
+> @@ -518,7 +546,7 @@ static const struct {
+>  	{
+>  		.n = "flex4_gclk",
+>  		.id = 13,
+> -		.pp = { "plla_div2pmcck", },
+> +		.pp = { PLL_IDS_TO_ARR_ENTRY(PLLA, DIV1), },
+>  		.pp_mux_table = { 8, },
+>  		.pp_count = 1,
+>  		.pp_chg_id = INT_MIN,
+> @@ -527,7 +555,7 @@ static const struct {
+>  	{
+>  		.n = "flex5_gclk",
+>  		.id = 14,
+> -		.pp = { "plla_div2pmcck", },
+> +		.pp = { PLL_IDS_TO_ARR_ENTRY(PLLA, DIV1), },
+>  		.pp_mux_table = { 8, },
+>  		.pp_count = 1,
+>  		.pp_chg_id = INT_MIN,
+> @@ -536,7 +564,7 @@ static const struct {
+>  	{
+>  		.n = "flex9_gclk",
+>  		.id = 15,
+> -		.pp = { "plla_div2pmcck", },
+> +		.pp = { PLL_IDS_TO_ARR_ENTRY(PLLA, DIV1), },
+>  		.pp_mux_table = { 8, },
+>  		.pp_count = 1,
+>  		.pp_chg_id = INT_MIN,
+> @@ -545,7 +573,7 @@ static const struct {
+>  	{
+>  		.n = "flex10_gclk",
+>  		.id = 16,
+> -		.pp = { "plla_div2pmcck", },
+> +		.pp = { PLL_IDS_TO_ARR_ENTRY(PLLA, DIV1), },
+>  		.pp_mux_table = { 8, },
+>  		.pp_count = 1,
+>  		.pp_chg_id = INT_MIN,
+> @@ -554,7 +582,7 @@ static const struct {
+>  	{
+>  		.n = "tcb0_gclk",
+>  		.id = 17,
+> -		.pp = { "audiopll_divpmcck", "plla_div2pmcck", },
+> +		.pp = { PLL_IDS_TO_ARR_ENTRY(AUDIO, DIV0), PLL_IDS_TO_ARR_ENTRY(PLLA, DIV1), },
+>  		.pp_mux_table = { 6, 8, },
+>  		.pp_count = 2,
+>  		.pp_chg_id = INT_MIN,
+> @@ -563,7 +591,7 @@ static const struct {
+>  	{
+>  		.n = "adc_gclk",
+>  		.id = 19,
+> -		.pp = { "upll_divpmcck", "plla_div2pmcck", },
+> +		.pp = { PLL_IDS_TO_ARR_ENTRY(UPLL, DIV0), PLL_IDS_TO_ARR_ENTRY(PLLA, DIV1), },
+>  		.pp_mux_table = { 5, 8, },
+>  		.pp_count = 2,
+>  		.pp_chg_id = INT_MIN,
+> @@ -573,7 +601,7 @@ static const struct {
+>  		.n = "lcd_gclk",
+>  		.id = 25,
+>  		.r = { .max = 75000000 },
+> -		.pp = { "audiopll_divpmcck", "plla_div2pmcck", },
+> +		.pp = { PLL_IDS_TO_ARR_ENTRY(AUDIO, DIV0), PLL_IDS_TO_ARR_ENTRY(PLLA, DIV1), },
+>  		.pp_mux_table = { 6, 8, },
+>  		.pp_count = 2,
+>  		.pp_chg_id = INT_MIN,
+> @@ -583,7 +611,7 @@ static const struct {
+>  		.n = "sdmmc1_gclk",
+>  		.id = 26,
+>  		.r = { .max = 105000000 },
+> -		.pp = { "audiopll_divpmcck", "plla_div2pmcck", },
+> +		.pp = { PLL_IDS_TO_ARR_ENTRY(AUDIO, DIV0), PLL_IDS_TO_ARR_ENTRY(PLLA, DIV1), },
+>  		.pp_mux_table = { 6, 8, },
+>  		.pp_count = 2,
+>  		.pp_chg_id = INT_MIN,
+> @@ -593,7 +621,7 @@ static const struct {
+>  		.n = "mcan0_gclk",
+>  		.id = 29,
+>  		.r = { .max = 80000000 },
+> -		.pp = { "upll_divpmcck", "plla_div2pmcck", },
+> +		.pp = { PLL_IDS_TO_ARR_ENTRY(UPLL, DIV0), PLL_IDS_TO_ARR_ENTRY(PLLA, DIV1), },
+>  		.pp_mux_table = { 5, 8, },
+>  		.pp_count = 2,
+>  		.pp_chg_id = INT_MIN,
+> @@ -603,7 +631,7 @@ static const struct {
+>  		.n = "mcan1_gclk",
+>  		.id = 30,
+>  		.r = { .max = 80000000 },
+> -		.pp = { "upll_divpmcck", "plla_div2pmcck", },
+> +		.pp = { PLL_IDS_TO_ARR_ENTRY(UPLL, DIV0), PLL_IDS_TO_ARR_ENTRY(PLLA, DIV1), },
+>  		.pp_mux_table = { 5, 8, },
+>  		.pp_count = 2,
+>  		.pp_chg_id = INT_MIN,
+> @@ -612,7 +640,7 @@ static const struct {
+>  	{
+>  		.n = "flex11_gclk",
+>  		.id = 32,
+> -		.pp = { "plla_div2pmcck", },
+> +		.pp = { PLL_IDS_TO_ARR_ENTRY(PLLA, DIV1), },
+>  		.pp_mux_table = { 8, },
+>  		.pp_count = 1,
+>  		.pp_chg_id = INT_MIN,
+> @@ -621,7 +649,7 @@ static const struct {
+>  	{
+>  		.n = "flex12_gclk",
+>  		.id = 33,
+> -		.pp = { "plla_div2pmcck", },
+> +		.pp = { PLL_IDS_TO_ARR_ENTRY(PLLA, DIV1), },
+>  		.pp_mux_table = { 8, },
+>  		.pp_count = 1,
+>  		.pp_chg_id = INT_MIN,
+> @@ -631,7 +659,7 @@ static const struct {
+>  		.n = "i2s_gclk",
+>  		.id = 34,
+>  		.r = { .max = 100000000 },
+> -		.pp = { "audiopll_divpmcck", "plla_div2pmcck", },
+> +		.pp = { PLL_IDS_TO_ARR_ENTRY(AUDIO, DIV0), PLL_IDS_TO_ARR_ENTRY(PLLA, DIV1), },
+>  		.pp_mux_table = { 6, 8, },
+>  		.pp_count = 2,
+>  		.pp_chg_id = INT_MIN,
+> @@ -641,7 +669,7 @@ static const struct {
+>  		.n = "qspi_gclk",
+>  		.id = 35,
+>  		.r = { .max = 200000000 },
+> -		.pp = { "audiopll_divpmcck", "plla_div2pmcck", },
+> +		.pp = { PLL_IDS_TO_ARR_ENTRY(AUDIO, DIV0), PLL_IDS_TO_ARR_ENTRY(PLLA, DIV1), },
+>  		.pp_mux_table = { 6, 8, },
+>  		.pp_count = 2,
+>  		.pp_chg_id = INT_MIN,
+> @@ -650,7 +678,7 @@ static const struct {
+>  	{
+>  		.n = "pit64b0_gclk",
+>  		.id = 37,
+> -		.pp = { "plla_div2pmcck", },
+> +		.pp = { PLL_IDS_TO_ARR_ENTRY(PLLA, DIV1), },
+>  		.pp_mux_table = { 8, },
+>  		.pp_count = 1,
+>  		.pp_chg_id = INT_MIN,
+> @@ -660,7 +688,7 @@ static const struct {
+>  		.n = "classd_gclk",
+>  		.id = 42,
+>  		.r = { .max = 100000000 },
+> -		.pp = { "audiopll_divpmcck", "plla_div2pmcck", },
+> +		.pp = { PLL_IDS_TO_ARR_ENTRY(AUDIO, DIV0), PLL_IDS_TO_ARR_ENTRY(PLLA, DIV1), },
+>  		.pp_mux_table = { 6, 8, },
+>  		.pp_count = 2,
+>  		.pp_chg_id = INT_MIN,
+> @@ -669,7 +697,7 @@ static const struct {
+>  	{
+>  		.n = "tcb1_gclk",
+>  		.id = 45,
+> -		.pp = { "audiopll_divpmcck", "plla_div2pmcck", },
+> +		.pp = { PLL_IDS_TO_ARR_ENTRY(AUDIO, DIV0), PLL_IDS_TO_ARR_ENTRY(PLLA, DIV1), },
+>  		.pp_mux_table = { 6, 8, },
+>  		.pp_count = 2,
+>  		.pp_chg_id = INT_MIN,
+> @@ -678,7 +706,7 @@ static const struct {
+>  	{
+>  		.n = "dbgu_gclk",
+>  		.id = 47,
+> -		.pp = { "plla_div2pmcck", },
+> +		.pp = { PLL_IDS_TO_ARR_ENTRY(PLLA, DIV1), },
+>  		.pp_mux_table = { 8, },
+>  		.pp_count = 1,
+>  		.pp_chg_id = INT_MIN,
+> @@ -688,7 +716,7 @@ static const struct {
+>  		.n = "mipiphy_gclk",
+>  		.id = 55,
+>  		.r = { .max = 27000000 },
+> -		.pp = { "plla_div2pmcck", },
+> +		.pp = { PLL_IDS_TO_ARR_ENTRY(PLLA, DIV1), },
+>  		.pp_mux_table = { 8, },
+>  		.pp_count = 1,
+>  		.pp_chg_id = INT_MIN,
+> @@ -697,7 +725,7 @@ static const struct {
+>  	{
+>  		.n = "pit64b1_gclk",
+>  		.id = 58,
+> -		.pp = { "plla_div2pmcck", },
+> +		.pp = { PLL_IDS_TO_ARR_ENTRY(PLLA, DIV1), },
+>  		.pp_mux_table = { 8, },
+>  		.pp_count = 1,
+>  		.pp_chg_id = INT_MIN,
+> @@ -706,7 +734,7 @@ static const struct {
+>  	{
+>  		.n = "gmac_gclk",
+>  		.id = 67,
+> -		.pp = { "audiopll_divpmcck", "plla_div2pmcck", },
+> +		.pp = { PLL_IDS_TO_ARR_ENTRY(AUDIO, DIV0), PLL_IDS_TO_ARR_ENTRY(PLLA, DIV1), },
+>  		.pp_mux_table = { 6, 8, },
+>  		.pp_count = 2,
+>  		.pp_chg_id = INT_MIN,
+> @@ -716,33 +744,25 @@ static const struct {
+>  static void __init sam9x7_pmc_setup(struct device_node *np)
+>  {
+>  	struct clk_range range = CLK_RANGE(0, 0);
+> -	const char *td_slck_name, *md_slck_name, *mainxtal_name;
+> +	const char *main_xtal_name;
+>  	struct pmc_data *sam9x7_pmc;
+>  	const char *parent_names[9];
+>  	void **clk_mux_buffer = NULL;
+>  	int clk_mux_buffer_size = 0;
+> -	struct clk_hw *main_osc_hw;
+>  	struct regmap *regmap;
+> -	struct clk_hw *hw;
+> +	struct clk_hw *hw, *main_rc_hw, *main_osc_hw, *main_xtal_hw;
+> +	struct clk_hw *td_slck_hw, *md_slck_hw, *usbck_hw;
+> +	struct clk_hw *parent_hws[9];
+>  	int i, j;
+>  
+> -	i = of_property_match_string(np, "clock-names", "td_slck");
+> -	if (i < 0)
+> -		return;
+> -
+> -	td_slck_name = of_clk_get_parent_name(np, i);
+> -
+> -	i = of_property_match_string(np, "clock-names", "md_slck");
+> -	if (i < 0)
+> -		return;
+> -
+> -	md_slck_name = of_clk_get_parent_name(np, i);
+> -
+> +	td_slck_hw = __clk_get_hw(of_clk_get_by_name(np, "td_slck"));
+> +	md_slck_hw = __clk_get_hw(of_clk_get_by_name(np, "md_slck"));
+>  	i = of_property_match_string(np, "clock-names", "main_xtal");
+
+Could you please move this above:
+
+        main_xtal_name = of_clk_get_parent_name(np, i);
+
+and have it like:
+
+	i = of_property_match_string(np, "clock-names", "main_xtal");
+	if (i < 0)
+		return;
+	mainxtal_name = of_clk_get_parent_name(np, i);
+
+
+> -	if (i < 0)
+> +
+> +	if (!td_slck_hw || !md_slck_hw || !i)
+
+I would keep the checking of i close to of_property_match_string(). Also,
+you changed check only zero as invalid value. Is that right?
+of_property_match_string() can return negative error numbers as well.
+
+>  		return;
+> -	mainxtal_name = of_clk_get_parent_name(np, i);
+>  
+> +	main_xtal_name = of_clk_get_parent_name(np, i);
+>  	regmap = device_node_to_regmap(np);
+>  	if (IS_ERR(regmap))
+>  		return;
+> @@ -760,26 +780,25 @@ static void __init sam9x7_pmc_setup(struct device_node *np)
+>  	if (!clk_mux_buffer)
+>  		goto err_free;
+>  
+> -	hw = at91_clk_register_main_rc_osc(regmap, "main_rc_osc", 12000000,
+> -					   50000000);
+> -	if (IS_ERR(hw))
+> +	main_rc_hw = at91_clk_register_main_rc_osc(regmap, "main_rc_osc", 12000000,
+> +						   50000000);
+> +	if (IS_ERR(main_rc_hw))
+>  		goto err_free;
+>  
+> -	hw = at91_clk_register_main_osc(regmap, "main_osc", mainxtal_name, NULL, 0);
+> -	if (IS_ERR(hw))
+> +	main_osc_hw = at91_clk_register_main_osc(regmap, "main_osc", NULL, &AT91_CLK_PD_NAME(main_xtal_name), 0);
+
+Could you please add a line break before &AT91_CLK_PD_NAME() ?
+
 
