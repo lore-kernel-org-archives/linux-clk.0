@@ -1,65 +1,65 @@
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79E232D0636
-	for <linux-clk@vger.kernel.org>; Mon, 20 Oct 2025 19:44:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1D9A6BFCE
+	for <linux-clk@vger.kernel.org>; Mon, 20 Oct 2025 19:45:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760989466; cv=none; b=IbI+YTgmNWDTyK9lmYL+IwmVlG4znaZ1R77IxqQAJdGoETqfTB4em/f3knhO0KjU2nMBRw60+RKVY1G5ZtE8++aD1bI4O22/gL67qwyEUyLyh8Vj3kj2L1/Ijpjff6CmpINNk6jgVERhD9u+YynALuY/mUqmBIYbLOPZuK/6H8g=
+	t=1760989530; cv=none; b=bXAIFsVQ5fUETJmyMDkz9fzbgwwvQldG+KZmnULrasmZlMbMEwkoPkfYU7IfO9t3dF/cTOrRPP8Rcm/ItAPy65XwpxeKwDztBtlCAAAA3jdmDNHrIxOsOWmNJQEK5uDW8y1g22NkdbHXju0n2CS9obBiAI6f6H3BCvxs0I1ms3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760989466; c=relaxed/simple;
-	bh=th+Pf7BlNE9Ml++HbEuu+5vMDSJNkIeM3J0nT4hFNWo=;
+	s=arc-20240116; t=1760989530; c=relaxed/simple;
+	bh=p2sWbK/i6wPHhukAdzgNJbGHi8CFyvayEux3Moga6Ko=;
 	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Vruy3yGKYGAcwx11hCdXr9WhMn2SbPklX+nVOVL0emqWE78jUN0PQ/3khy9CvuadITTv46dqSRjHadopJiE5ck6tVY8Rlqm3KnFqVXvi7cdBwoec+thG2Z1yMTkRfn+7Pct674JML8+Nvuw3/jCTpTalhASFGlKho36TdtsGC+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=GsiqSamx; arc=none smtp.client-ip=209.85.208.49
+	 In-Reply-To:Content-Type; b=iITe4UhcWBnAsqezx6iebnLkrqEOS3k1oF2MWuE1JMeeNLSRAUOHRoB1sMdTLL0Nk7BbgdfLWmNwP/3af1djr1UzOqRR+xCBs77PKFaAdM428H9jDfPtyHNlCzPP3baFsJ9I4GrH7x6zvstrbh7BrOnVQxIvgti63LBIJSA/9bo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=FdNHWhoF; arc=none smtp.client-ip=209.85.218.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="GsiqSamx"
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-63c2d72581fso5658094a12.0
-        for <linux-clk@vger.kernel.org>; Mon, 20 Oct 2025 12:44:24 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="FdNHWhoF"
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b463f986f80so928118266b.2
+        for <linux-clk@vger.kernel.org>; Mon, 20 Oct 2025 12:45:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1760989463; x=1761594263; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1760989527; x=1761594327; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:content-language:references
          :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=E/rHfvCGQ7vSJJOElRUDluOOr/mXgiutMeNr5c1rvEw=;
-        b=GsiqSamxNymKjJ8fECISyLpNq4JnJZHJVk5uONDftuy2wMjBDSYGb/5SC34S7+Ae+6
-         vnPUp8YdoUm2qEh3/d3vF01hhglg2lURNbDXa522T3yMvApaDr+1sJpGiorwFRrIqtrE
-         XZ6Jiz/yC1nrw37ObPAtOYyYS9lM10n2y9IlcnqMlsYL+2yI9zUzWxCvZ8ux3657ZW1I
-         g8AjRkolvDT0/gWWjMF7b0cIeeV1tf7/8K9PtDK7KmlEv6M43neGKJ6solyd5xNHOOQs
-         GJcXbfzCYs4UV3Nx9I933wl5dFGhH7KLkAHzTszawFTpCpxYt2cs7sQRmxzEFxV3sVy2
-         aSnQ==
+        bh=qz5TY9x2mwFP+v6DHBmNs5rDoED1VITmKzDSzUIYHws=;
+        b=FdNHWhoFU/7zcce7misiCY9YQE9FDJ56k7r5OAXc9qNZSmAMu4iwNKF7OTEThW8NVj
+         jC8pbkiYy3eZMs6ADoZnKME5Q76io19a/JpeqGvC7xRNp+6pJvjIrHM68+mgDbY4sqiv
+         dXj6pnXsnI47Ve3VcXWW3a//6LiPOpU05crPmkujSxJyv+ry45s3TEdwdTzNjJFVnPHZ
+         87JMxe0Ts53XC6KpiGHHJcStiulkh4AjZJ0SzTYrshzKQV8ZhHozFSkN++/64u2hlS1r
+         v38QGvKbP1ZNcrCLBA2vX+209F0pJdflgUiDOn2Te1VjrtGUU9RBkoY0yDLRyTfiWSyK
+         omjg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760989463; x=1761594263;
+        d=1e100.net; s=20230601; t=1760989527; x=1761594327;
         h=content-transfer-encoding:in-reply-to:content-language:references
          :cc:to:subject:from:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=E/rHfvCGQ7vSJJOElRUDluOOr/mXgiutMeNr5c1rvEw=;
-        b=D/z1UxYcW2aW09kraUpved2X4InamvIT6o642aiZLNnVU/D3hAvla4BBWDT9nOBpMm
-         +riN9NG9oYpcldSjhPtWVJoV3guLk0HBnUKozu7QZkmdeHSsBANNx4AaG+hi5Z5a3Rri
-         AOkB6aoSCbiJrd81CiwTPeoByv5n+v0xn6DqwBRBJyHP9XSKNqZYH0gI/yWXVAdgrt2r
-         H7pIY3hg3k3P0mAWU7HreTqCpHO1Y4Q9LI/TzkPyKcqjhWPy0e6CYR75i+aGF5L/yRRJ
-         oq67ETF2T6RehVsTPXkKb+Ac5GVgyzYuysNBdGybTvVAqhEQNgrQOlSNrxb2cTV+6Sgc
-         O4sA==
-X-Gm-Message-State: AOJu0YzFkV+FRt6iBEMGbr4rneFRVfdD1i3P+1lmYlaPNjg6CPFS+Idn
-	HvmcpJwoRGmCoWbDherC/PBQc99ODRko5DEP24iqTzYkJyttYUbSqgRiguSkj22qJjs=
-X-Gm-Gg: ASbGnctLCmajWR/ETGjb+2/Lzppsm0YpQXMC+qxAgvRv7q5mFsSPSfozKEQUamtNJ6P
-	5UXXpQEJlOy5x1cWKE2MBxmSMSHoccS0M7B5sRNOq1WTbP09ecT3QyQnUQPnaiJtGqvep8HaCYA
-	Un7qYuEUyQsKcB0bmZpa2n0CeEdDZlzmApBgC7cHg/iHmaHXO5RJEv6IRXs7kB5BlwTmc6hWUzn
-	JPd78AIbUowUV6zaGWbi+/TJBekOCgoXhbko2lLKg/BOVZF3Aa/X4HQ07rrEA54AoqAgmcKFs0x
-	Gqc+9UByK0bruIeh6OSCZBjQ1ZWPpafKU6zgVZL9P4zHTE09qjHMrQ9peR3wwqyYefRLL87ZQoT
-	fQ6cc5aJot9xuwLC7K0QS7pnkerCqVgjYdg4sOIQfxwZ3zvpB6RPWOb6U6PbDzZI1ILU7Vrsgyp
-	R7r1m6qfSI
-X-Google-Smtp-Source: AGHT+IHJmKY5JzYa17Wwq5eRnrHMWSM06j/Es4HUtYcSQtsu62W1SioDH4KU66ZTBqpLPBdqBNGQ5A==
-X-Received: by 2002:a05:6402:2551:b0:62f:2afa:60e6 with SMTP id 4fb4d7f45d1cf-63c1f64ececmr12589171a12.7.1760989462748;
-        Mon, 20 Oct 2025 12:44:22 -0700 (PDT)
+        bh=qz5TY9x2mwFP+v6DHBmNs5rDoED1VITmKzDSzUIYHws=;
+        b=U6pt2nAJ/42SBH6Jl7dneVQSzR6CWJQ2QfKAOzmmvZglMuHR1xccaFtvp0k91GbUVx
+         OD+aT4EQ0Mnbkx7lLb83XOtEL7bPA8ifSuhIYo80R+pYwRZy7cEb6oitWesDOFjCjv7+
+         xzbT7xM6LU+eLmxCAXapDKQyFXfWTH/USGqi9B4RO3qtrsxEev3nAnoUHleFwDDLR+fz
+         1uuN/jAlVYvdlP+2k6/w/GRb1Nix8689pCKN6uNVlaglvI5eOJn4wy/WLvrK08vgRSyn
+         kQpVViqU3ijQn4hQ0PHpsc7tGG3thB36xhAyxbBqci1XvK3QCKbgSS7A4DHuGuK5JF6M
+         JdDQ==
+X-Gm-Message-State: AOJu0YxbqV6bZ6K9HxGJd6vu6b2gdM5ZIR3Jqbi83AVlF6lpErvEAcu7
+	se8xtQcunh4K7bQODW+0aQKtrx6aD5IzzIloHQXtrd4Fdjgd6qCHCIR6QQ0Xe7nbgCw=
+X-Gm-Gg: ASbGncsaCX15SfCFB2wvcUHJ9AWSeJi77hhQcjVsX0cGaKnrzVEq/NHKTmlQLML5MMp
+	gXDn8O7xGIdML14BxFX96joKO21oZna0sYMX5SBiP0IQ7tTG6Y1L3Uko0nU5rQQ3iXJpnZvoQVJ
+	GXO/LF2eDvMkgUkgEUi3G1AVDYNfKc8Z2DiIko0nrpgeauBqyLbG2tWfM18upk7dSiJCR9D3OwK
+	TGnRKrhD7QFrRs1wsG3DW+oJd0+aq24PtltlnsaBM0+De0JNHsMLHkKeXkIQ8rfv6jFdPhcvgv/
+	7amxJHLj25VscXx+z5tOXzpNMVoUcaJS8WW5ppgkkH9c4bQZ/25/DkP7AE92Cy5WHActKqjAlAd
+	k29uu9i2J6ZRablNgvNG3n+owJNtZnLKb+Zd2UKmOXR3vw1i8z17nasPCL+jS6u/OlBmmA13J8S
+	sdgwevqnF2SZG55j0sZIQ=
+X-Google-Smtp-Source: AGHT+IGCob6piujm3PcDzGeduTMgTD25Owlac554+NOU9vrtDAhPuhqkFthuXzRSWnHKOtAXcaqOWQ==
+X-Received: by 2002:a17:907:9482:b0:b2e:9926:3919 with SMTP id a640c23a62f3a-b647314166dmr1286907066b.22.1760989526706;
+        Mon, 20 Oct 2025 12:45:26 -0700 (PDT)
 Received: from [192.168.50.4] ([82.78.167.151])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-63c48ab54fbsm7278599a12.15.2025.10.20.12.44.20
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b65eb725d80sm874107566b.67.2025.10.20.12.45.25
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 20 Oct 2025 12:44:22 -0700 (PDT)
-Message-ID: <9656db91-b930-47f3-bdca-ed42f066aa8e@tuxon.dev>
-Date: Mon, 20 Oct 2025 22:44:20 +0300
+        Mon, 20 Oct 2025 12:45:26 -0700 (PDT)
+Message-ID: <b9f50783-6313-4c40-bbf2-c8474ddc2f59@tuxon.dev>
+Date: Mon, 20 Oct 2025 22:45:23 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -68,15 +68,15 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Subject: Re: [PATCH v4 08/31] clk: at91: clk-master: use clk_parent_data
+Subject: Re: [PATCH v4 10/31] clk: at91: clk-generated: use clk_parent_data
 To: Ryan.Wanner@microchip.com, mturquette@baylibre.com, sboyd@kernel.org,
  alexandre.belloni@bootlin.com, nicolas.ferre@microchip.com
 Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-kernel@vger.kernel.org, varshini.rajendran@microchip.com
 References: <cover.1758226719.git.Ryan.Wanner@microchip.com>
- <160f139d5a5647104826c5878ca077faa26916bc.1758226719.git.Ryan.Wanner@microchip.com>
+ <645beaecf4b81c7e08f8adf3b9c74fa4b0176993.1758226719.git.Ryan.Wanner@microchip.com>
 Content-Language: en-US
-In-Reply-To: <160f139d5a5647104826c5878ca077faa26916bc.1758226719.git.Ryan.Wanner@microchip.com>
+In-Reply-To: <645beaecf4b81c7e08f8adf3b9c74fa4b0176993.1758226719.git.Ryan.Wanner@microchip.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
@@ -90,35 +90,44 @@ On 9/19/25 00:15, Ryan.Wanner@microchip.com wrote:
 > conversion of existing SoC specific clock drivers from parent_names to
 > modern clk_parent_data structures.
 > 
-> __clk_get_hw will be removed in subsequent patches.
+> Remove the last of the usage of __clk_get_hw().
 > 
 > Signed-off-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-> [ryan.wanner@microchip.com: Add clk-master changes to SAM9X75 and
-> SAMA7D65 SoCs. As well as add md_slck commit message.]
+> [ryan.wanner@microchip.com: Added SAMA7D65 and SAM9X75 SoCs to the
+> clk-generated changes. Adjust clk name variable order.]
 > Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
 > ---
 
 [...]
 
-> @@ -752,15 +752,17 @@ static void __init sam9x7_pmc_setup(struct device_node *np)
+>  static void __init sama7g5_pmc_setup(struct device_node *np)
+>  {
+> -	const char *main_xtal_name;
+> +	const char *main_xtal_name, *md_slck_name, *td_slck_name;
+>  	struct pmc_data *sama7g5_pmc;
+>  	void **alloc_mem = NULL;
+>  	int alloc_mem_size = 0;
 >  	struct regmap *regmap;
->  	struct clk_hw *hw, *main_rc_hw, *main_osc_hw, *main_xtal_hw;
->  	struct clk_hw *td_slck_hw, *md_slck_hw, *usbck_hw;
-> -	struct clk_parent_data parent_data[2];
-> +	struct clk_parent_data parent_data[9];
->  	struct clk_hw *parent_hws[9];
+>  	struct clk_hw *hw, *main_rc_hw, *main_osc_hw;
+> -	struct clk_hw *td_slck_hw, *md_slck_hw;
+>  	struct clk_parent_data parent_data[10];
+> -	struct clk_hw *parent_hws[10];
+>  	struct clk *main_xtal;
+>  	bool bypass;
 >  	int i, j;
 >  
->  	td_slck_hw = __clk_get_hw(of_clk_get_by_name(np, "td_slck"));
->  	md_slck_hw = __clk_get_hw(of_clk_get_by_name(np, "md_slck"));
-> -	i = of_property_match_string(np, "clock-names", "main_xtal");
-> +	if (!td_slck_hw || !md_slck_hw)
-> +		return;
->  
-> -	if (!td_slck_hw || !md_slck_hw || !i)
-> +	i = of_property_match_string(np, "clock-names", "main_xtal");
+> -	td_slck_hw = __clk_get_hw(of_clk_get_by_name(np, "td_slck"));
+> -	md_slck_hw = __clk_get_hw(of_clk_get_by_name(np, "md_slck"));
+> +	i = of_property_match_string(np, "clock-names", "td_slck");
 > +	if (i < 0)
->  		return;
-
-The diff here should be gone from this patch if handled in previous
-conversion patches.
+> +		return;
+> +	td_slck_name = of_clk_get_parent_name(np, i);
+> +
+> +	i = of_property_match_string(np, "clock-names", "md_slck");
+> +	if (i < 0)
+> +		return;
+> +	md_slck_name = of_clk_get_parent_name(np, i);
+> +
+>  	i = of_property_match_string(np, "clock-names", "main_xtal");
+>  
+Please drop the resulting empty line here.
