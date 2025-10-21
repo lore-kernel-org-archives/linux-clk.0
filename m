@@ -1,35 +1,35 @@
 Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 569F927F759;
-	Tue, 21 Oct 2025 08:37:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97F52311953;
+	Tue, 21 Oct 2025 08:38:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761035824; cv=none; b=BkJaHUaDhyFZzlZ45vByoxloTEenvQBIkQsrbtHZNNVSP2SNWjOzqv1YmQnGnw3fX76iaUaPA9n83Wh08WiOaYSj8idiN3Z5nNronzk/bT8ZmS7kNB98n217e3fNQ4jcC2504R2oN5ZKuBtTlDIzHo3q5bYADBhBo+rfb7Zl/m4=
+	t=1761035937; cv=none; b=nCgi+94vADBMbTM8THAOOGHlr35gM73+3a6i0D1VsAGqJz3GJaJ+21Dn0h/hpEoldZpNMGbds4iO3vPn9eXgLWS+a9/A5sZaDo8jL4inopeRvKN/Kvbd5qAOQt8PrYz0D8iRNGq5U9aJvdowN4DosIzM5dtjy+v7mpS0SbcF8/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761035824; c=relaxed/simple;
-	bh=kxUPe6KqLh2DKKLMP1TMTBCbRdceZpYNV75wfyCVXps=;
+	s=arc-20240116; t=1761035937; c=relaxed/simple;
+	bh=OkTTOs8u5Z/zCBGUclr/sqSWwZZH1BXU6gWLVeYZeYY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YfuYszT7pLZQhrd7h9RWkcyrSi7I8cx7xpYT44CW7lceBKV98Fw0znIyTBqspetrybcAIq2KAl8jg+6M6auAuNf9Yn54RAwoZyU1/KA3+0KzJDhUJGW/oP33kfpzu2sL86pBxpiXq7o76Xcx/zkFkrBGekUMNvB6cv2OvbtVxYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=qB5LIpGN; arc=none smtp.client-ip=185.11.138.130
+	 MIME-Version:Content-Type; b=GX7Qd3F/+urxoP+B+JAI5kj93EvsEMG+XyOEUPmGAdWA6Ik+J/vjbn6T7jnGuUpiO+d+9wdMn37poVswCIzRFEz+KOUFTCYgqd/2SGF/+c/5FV/arC+ImUEfB+uDJn0Al10C30J6QAjl7VnpVLXbYxiFs4iAB3bCFBdzJx+Yypo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=iEdMi9lI; arc=none smtp.client-ip=185.11.138.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="qB5LIpGN"
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="iEdMi9lI"
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
 	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
 	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
-	bh=uzjSzcMiMfvyxgchJvQg0UkKHrfCLh0KZ54XotRuE78=; b=qB5LIpGNS6VFKFLCsQ7oi+wSOg
-	/gArHf6epn6m21W3unoEXDPGUQAXZ9m7K7Rn+oeJ7JoBTN+ERYRDShJuirU885aLX5XyGLpHTXBSC
-	E1YaPDNxlmOwHcY/a/j2vCuQvvkr2tNAxR5Y2lJh7dynyISUinvs6ndeDB5YVgvegEbddLJbE+3r3
-	sita/nZb3YjX638SsaONPcDcq/p9RieF4Nv9+pKLjxP4esookDF/TG2wvF1AkNtYYF3h8sVihnN5a
-	hCy0rvV3e/Eq3GOpFSmgjhDapqEmqGYm44wguRibcHutYarOgTIftclczed7RRtZhSD9Y+Z+PoJaK
-	zMCyixjQ==;
+	bh=GXbqGEqtn7uQLSJTDpkbfTb/HIT9zRnLyNNGASNhKDc=; b=iEdMi9lIca+YqotIqGbMIEpwR8
+	z073jtgmRswef6NyTJsXqw8tvedCaf67afY5Up+KyW2MoL+XrmFr6G0+2reuEJ1HdXbvIuA/ePs9r
+	4HuGjGADqCQMBO5DJUxD9RGGTzwtzzVZQbtXvdCyc+Og6PCT8aRmiSeSIibQK9GdBz9a7q4OfO/Qv
+	LYiRKWrveDlm8s1T2cmeKVum+KxCcyQ2QAagVs+BL5OKQGhMuMNl+hWVX6tHFAydUkonqZo6hQctF
+	OWPz21P82+fVZd+CujyborfqXwX5kOqBvc+Rt7XmC5ST7WdLe3S3mT1nEbi8LQhEXwSxW4HrXf3gx
+	uaNGptCA==;
 Received: from [212.111.240.218] (helo=phil.localnet)
 	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.94.2)
 	(envelope-from <heiko@sntech.de>)
-	id 1vB7rS-0001TP-CV; Tue, 21 Oct 2025 10:36:54 +0200
+	id 1vB7tH-0001Ua-Sv; Tue, 21 Oct 2025 10:38:47 +0200
 From: Heiko Stuebner <heiko@sntech.de>
 To: mturquette@baylibre.com, sboyd@kernel.org, sugar.zhang@rock-chips.com,
  zhangqing@rock-chips.com, robh@kernel.org, krzysztof.kozlowski+dt@linaro.org,
@@ -37,16 +37,14 @@ To: mturquette@baylibre.com, sboyd@kernel.org, sugar.zhang@rock-chips.com,
 Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org,
  linux-kernel@vger.kernel.org, huangtao@rock-chips.com,
- finley.xiao@rock-chips.com
-Subject:
- Re: [PATCH v4 6/7] dt-bindings: clock: rockchip: Add RK3506 clock and reset
- unit
-Date: Tue, 21 Oct 2025 10:36:53 +0200
-Message-ID: <24128799.6Emhk5qWAg@phil>
-In-Reply-To: <20251021065232.2201500-7-zhangqing@rock-chips.com>
+ finley.xiao@rock-chips.com, Conor Dooley <conor.dooley@microchip.com>
+Subject: Re: [PATCH v4 2/7] dt-bindings: clock, reset: Add support for rv1126b
+Date: Tue, 21 Oct 2025 10:38:46 +0200
+Message-ID: <4463339.ejJDZkT8p0@phil>
+In-Reply-To: <20251021065232.2201500-3-zhangqing@rock-chips.com>
 References:
  <20251021065232.2201500-1-zhangqing@rock-chips.com>
- <20251021065232.2201500-7-zhangqing@rock-chips.com>
+ <20251021065232.2201500-3-zhangqing@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -58,50 +56,50 @@ Content-Type: text/plain; charset="utf-8"
 
 Hi Elaine,
 
-Am Dienstag, 21. Oktober 2025, 08:52:31 Mitteleurop=C3=A4ische Sommerzeit s=
+Am Dienstag, 21. Oktober 2025, 08:52:27 Mitteleurop=C3=A4ische Sommerzeit s=
 chrieb Elaine Zhang:
-> From: Finley Xiao <finley.xiao@rock-chips.com>
+> Add clock and reset ID defines for rv1126b.
+> Also add documentation for the rv1126b CRU core.
 >=20
-> Add device tree bindings for clock and reset unit on RK3506 SoC.
-> Add clock and reset IDs for RK3506 SoC.
->=20
-> Signed-off-by: Finley Xiao <finley.xiao@rock-chips.com>
+> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+> Acked-by: Conor Dooley <conor.dooley@microchip.com>
 > ---
->  .../bindings/clock/rockchip,rk3506-cru.yaml   |  45 +++
->  .../dt-bindings/clock/rockchip,rk3506-cru.h   | 285 ++++++++++++++++++
->  .../dt-bindings/reset/rockchip,rk3506-cru.h   | 211 +++++++++++++
->  3 files changed, 541 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk35=
-06-cru.yaml
->  create mode 100644 include/dt-bindings/clock/rockchip,rk3506-cru.h
->  create mode 100644 include/dt-bindings/reset/rockchip,rk3506-cru.h
+>  .../bindings/clock/rockchip,rv1126b-cru.yaml  |  52 +++
+>  .../dt-bindings/clock/rockchip,rv1126b-cru.h  | 392 +++++++++++++++++
+>  .../dt-bindings/reset/rockchip,rv1126b-cru.h  | 405 ++++++++++++++++++
+>  3 files changed, 849 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rv11=
+26b-cru.yaml
+>  create mode 100644 include/dt-bindings/clock/rockchip,rv1126b-cru.h
+>  create mode 100644 include/dt-bindings/reset/rockchip,rv1126b-cru.h
 >=20
-> diff --git a/Documentation/devicetree/bindings/clock/rockchip,rk3506-cru.=
-yaml b/Documentation/devicetree/bindings/clock/rockchip,rk3506-cru.yaml
+> diff --git a/Documentation/devicetree/bindings/clock/rockchip,rv1126b-cru=
+=2Eyaml b/Documentation/devicetree/bindings/clock/rockchip,rv1126b-cru.yaml
 > new file mode 100644
-> index 000000000000..43e192d9b2af
+> index 000000000000..04b0a5c51e4e
 > --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/rockchip,rk3506-cru.yaml
-> @@ -0,0 +1,45 @@
+> +++ b/Documentation/devicetree/bindings/clock/rockchip,rv1126b-cru.yaml
+> @@ -0,0 +1,52 @@
 > +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
 > +%YAML 1.2
 > +---
-> +$id: http://devicetree.org/schemas/clock/rockchip,rk3506-cru.yaml#
+> +$id: http://devicetree.org/schemas/clock/rockchip,rv1126b-cru.yaml#
 > +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-> +title: Rockchip RK3506 Clock and Reset Unit (CRU)
+> +title: Rockchip RV1126B Clock and Reset Unit
 > +
 > +maintainers:
-> +  - Finley Xiao <finley.xiao@rock-chips.com>
+> +  - Elaine Zhang <zhangqing@rock-chips.com>
 > +  - Heiko Stuebner <heiko@sntech.de>
 > +
-> +description: |
-> +  The RK3506 CRU generates the clock and also implements reset for SoC
-> +  peripherals.
+> +description:
+> +  The rv1126b clock controller generates the clock and also implements a
+> +  reset controller for SoC peripherals.
 > +
 > +properties:
 > +  compatible:
-> +    const: rockchip,rk3506-cru
+> +    enum:
+> +      - rockchip,rv1126b-cru
 > +
 > +  reg:
 > +    maxItems: 1
@@ -112,11 +110,13 @@ yaml b/Documentation/devicetree/bindings/clock/rockchip,rk3506-cru.yaml
 > +  "#reset-cells":
 > +    const: 1
 > +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  clock-names:
+> +    const: xin24m
 
-I think we want clocks and clock-names properties here for xin24m
-similar to the rv1126b binding (and other modern soc bindings)
-
-Also, I think we'll need
+I think we're missing the optional
 
    rockchip,grf:
      $ref: /schemas/types.yaml#/definitions/phandle
@@ -125,10 +125,11 @@ Also, I think we'll need
        if missing pll rates are not changeable, due to the missing pll
        lock status.
 
-because, you're using RK3506_GRF_SOC_STATUS
-for the PLL locking status.
+
+because RV1126B_GRF_SOC_STATUS0 contains the PLL lock status.
 
 
 Heiko
+
 
 
