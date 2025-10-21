@@ -1,329 +1,186 @@
-Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com [209.85.217.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDF172F5492
-	for <linux-clk@vger.kernel.org>; Tue, 21 Oct 2025 14:02:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1C30339B4B;
+	Tue, 21 Oct 2025 14:07:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761055353; cv=none; b=VDRClcgE2ETCcERJK3PCJqSL6etdlziLx6JfDX+cCMBx4s44nbsZeey8s7OwjHT1F2RSMHeRZxvyyU7s+4KcDELCPpVRravaADpHtZ5PfN4Eyk6AMrgFR8PrfnvlPsheMHTy+RThSHwn4yz4ZeoVAGk1e5E3/S4Stq6Yvy+Bgwc=
+	t=1761055673; cv=none; b=ODBoVaHzjR4jugungenKZwQX6F1Tt2b/zV2AfV+x+6jO9oKKlFSpYMPt/oRyLv/ZWWxHlxpkt11ZccxHWZSro5XdWMtUCitF0VzGKKj+p91O0vsJbivfGU1PJ5QkgUlmnwJjvT+qs7Q5P1gDhhsSIcdf7J9tAIoNbT23hjw2EHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761055353; c=relaxed/simple;
-	bh=myPKEpFCfK6VNdq1OrXL5rHyz8ZZmJYmfPQNIlpMmNo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sb6fFHsl3zSf5PBa4uTi3Yw8DqAGPNNjO8K0ZPCSYHO7jYpAuLfXbpequFD8bctgeVgk99lIFyY4MhGcIrEBpQssdDC0asg8s6KVNRTEpnlq1VfJ9BUuudbWxGGxbyi++1Hp9Roe3FNci6/SyDvXsIuTdOHICfctwdBmpKdnsbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f51.google.com with SMTP id ada2fe7eead31-5d5fbfca7e2so4719165137.0
-        for <linux-clk@vger.kernel.org>; Tue, 21 Oct 2025 07:02:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761055350; x=1761660150;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YXugAlNcvucEYnbbLM3xKX3aXFg6Ylpfx0k5Z7y5qH4=;
-        b=Pdsp9x9fDPqrZph/8sk9SEIyGGxe7d6BxLoVs5eLaXt7V+KnaLV9YhDx7JMAO47Qi9
-         uDtGGN5PJ+t+Pyb+vWi2C+mu6koSCu5+SvRI/Z03dCjfHnNcw4fnYHrwzZFOBSIv8oJ0
-         P+sYvY6VFJmD4yH1/0gJHcozfy8hu94OPT47TV5Wk9KTWsRp6SEfm0LJjML4VFSSpZNK
-         OoTQnL5sv5sXGv3QE1MYxmn36641ePqauhQwXsHbJ/alI0JVFI4tr3itRBB1fDDATI8R
-         zbtmRU7GXRoM5sTTeh1tBDtyZtruNvmbgr+Xf71bcQFUh/COtVSMro/hrnrAm/px7C9m
-         JpGw==
-X-Forwarded-Encrypted: i=1; AJvYcCU4hvSHg2mCxtR50j0CWMBvWr600d3r8kzlGGZOBpCOvEHZUnyYD8SLOvCYpBEKlDEbW2mkj2asLuA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxvNI7QXq+kdth54kyIYQQylwLCT0OOY4HB7y8QmBaoTwGUdTRx
-	pWLZ5aCSiJqUSo3mgRVoo+ENLhlRx2Lplhm4oeJzzKqN4ZDopp5M+9uz5uVY72wM
-X-Gm-Gg: ASbGncu+ILbK3Z4il5vye4l44BDUU6GCK95RUfNYLomZb3Dsz5CaDtYRLo5YCzcgX0s
-	fPHhbsCa14aqau5Yu7UJR8eZrS3AaLc7iTIYMmRGJj2Te+mEA8A5cro/M/BNzlegZBSSMSp0U8e
-	SEi9SWkO+aDLnWBzoPwlT7isNqzoOKSKhxiMFnynodJ6NLoVLvz0jiJuN0ogjeKYwtHTsm9aRRo
-	QmBXS6iUxS3WZP+FEf0/quFeIwoF/3DmyLhdADQrT6deQUl8rLwbV9aj1NB2FOG+o60XDHD0tsd
-	dSTpbbNur5+2enCdLwCfy7MvH0Khz4gZuUe4xAQZN5ABGtTqTxzvXDsNcKZkdZEhfOEtbTWRymd
-	WHVlZiH085x6PDGHqabnAQnj8EHhmxp76kA8Y5337sKptYzrw+x+lo31fDUZlhIGx96mm95Xq8Z
-	wuldIcmYgT81Kk6pL79uMZavg+QGR0HzfOggEPlw==
-X-Google-Smtp-Source: AGHT+IEwtrUCmba+5Oz52xkeYDZ9YkMxWgxfw2yPDPYUnAk58zkOD5le2luSm1QClnNQDIToN7YLAA==
-X-Received: by 2002:a05:6102:3f4d:b0:5d6:85a:229f with SMTP id ada2fe7eead31-5d7ce7b9c91mr7182676137.15.1761055345626;
-        Tue, 21 Oct 2025 07:02:25 -0700 (PDT)
-Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com. [209.85.222.47])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-932f13f3217sm326092241.3.2025.10.21.07.02.24
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Oct 2025 07:02:24 -0700 (PDT)
-Received: by mail-ua1-f47.google.com with SMTP id a1e0cc1a2514c-8eafd5a7a23so3113562241.1
-        for <linux-clk@vger.kernel.org>; Tue, 21 Oct 2025 07:02:24 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW6mNvGS9pLkKfDf6ydOscsEHYkHCNniPXfF2IFcaJCUd+MZQSwhS6JVdlcFlW7GwZ0B8kIb5H95Vw=@vger.kernel.org
-X-Received: by 2002:a05:6102:2ad3:b0:5d5:f6ae:3914 with SMTP id
- ada2fe7eead31-5d7dd6dae8amr6635478137.22.1761055331143; Tue, 21 Oct 2025
- 07:02:11 -0700 (PDT)
+	s=arc-20240116; t=1761055673; c=relaxed/simple;
+	bh=MLoAqGWmWG0tS39BHCw04giIQ56RcWiSSu/4KePK/yY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sgmGlrKUdb4tksrHQsZ1HcjDvoKlG0Kh70mbQ0CCMcREOXY6c5yPSlsnUz3WslxCc7HQagKPneHaMhv7rcPcg8yhev8MuwPWxF6PfhwPEelNH4lkPTFC93dOGqIJpO72OgBcXakJxEuqunPYxXWscmxcAd8brb9ez0CQl8X+6BM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=COd4ZwD/; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="COd4ZwD/"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761055671; x=1792591671;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=MLoAqGWmWG0tS39BHCw04giIQ56RcWiSSu/4KePK/yY=;
+  b=COd4ZwD/UvEs7tmxenfEITc1kFvq/9VVf2748orKc9eEky4SF+Skqk8O
+   t4WVJ8jyg/v1Qur6lvugsLGVFcSEX6y9fbdPogNgOFSS4oUxeGiPV6B68
+   aWhWngrml6SKQdM/HtmaVCyuQXic+iRKOEctS/HJE7WswZEO0dgRHaEh8
+   /fcTHQzdAdC4J7Flf4Gk5E9TIZRuBTjFlhVdHvyih+DssVZUmGPX0PH5x
+   fR+Of66GBQoX/TZ5sAlmvKIg7H+dyvJLJVrpqpFMxjPPVxsKbj4Qaca5+
+   R6M/c9+CbshllIuABBawbgQYi42jNfOeCv2tbTGyFpTxLQ4FxLptEjYCi
+   Q==;
+X-CSE-ConnectionGUID: oJTT6URlQIi3BtwyR79hig==
+X-CSE-MsgGUID: YUZFebCiQHSJzRYuFTV9Hw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="73788480"
+X-IronPort-AV: E=Sophos;i="6.19,245,1754982000"; 
+   d="scan'208";a="73788480"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2025 07:07:50 -0700
+X-CSE-ConnectionGUID: OIuqUSuiRNiNI7aTyE6D3g==
+X-CSE-MsgGUID: pogwMQpnS7K/l603s2LfBg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,245,1754982000"; 
+   d="scan'208";a="184081155"
+Received: from fpallare-mobl4.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.245.148])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2025 07:07:39 -0700
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1vBD1S-00000001VzY-2SRO;
+	Tue, 21 Oct 2025 17:07:34 +0300
+Date: Tue, 21 Oct 2025 17:07:34 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Herve Codina <herve.codina@bootlin.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Peter Rosin <peda@axentia.se>, Arnd Bergmann <arnd@arndb.de>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Charles Keepax <ckeepax@opensource.cirrus.com>,
+	Richard Fitzgerald <rf@opensource.cirrus.com>,
+	David Rhodes <david.rhodes@cirrus.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Mark Brown <broonie@kernel.org>,
+	Daniel Scally <djrscally@gmail.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Len Brown <lenb@kernel.org>, Davidlohr Bueso <dave@stgolabs.net>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Wolfram Sang <wsa@kernel.org>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-i2c@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-sound@vger.kernel.org, patches@opensource.cirrus.com,
+	linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-spi@vger.kernel.org, linux-acpi@vger.kernel.org,
+	linux-cxl@vger.kernel.org,
+	Allan Nielsen <allan.nielsen@microchip.com>,
+	Horatiu Vultur <horatiu.vultur@microchip.com>,
+	Steen Hegelund <steen.hegelund@microchip.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v4 06/29] bus: Introduce simple-platorm-bus
+Message-ID: <aPeTppUgRC1wWQU9@smile.fi.intel.com>
+References: <20251015071420.1173068-1-herve.codina@bootlin.com>
+ <20251015071420.1173068-7-herve.codina@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250912142056.2123725-1-chris.brandt@renesas.com> <20250912142056.2123725-2-chris.brandt@renesas.com>
-In-Reply-To: <20250912142056.2123725-2-chris.brandt@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 21 Oct 2025 16:02:00 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVf7dSeqAhtyxDCFuCheQRzwS-8996Rr2Ntui21uiBgdA@mail.gmail.com>
-X-Gm-Features: AS18NWAilKOsk0msuDZD61x0CWnEgj86O5ttkvj001Q_uv_hFWGEg6rSKnFmYMU
-Message-ID: <CAMuHMdVf7dSeqAhtyxDCFuCheQRzwS-8996Rr2Ntui21uiBgdA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] clk: renesas: rzg2l: Remove DSI clock rate restrictions
-To: Chris Brandt <chris.brandt@renesas.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Hien Huynh <hien.huynh.px@renesas.com>, Nghia Vo <nghia.vo.zn@renesas.com>, 
-	Hugo Villeneuve <hugo@hugovil.com>, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251015071420.1173068-7-herve.codina@bootlin.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Hi Chris,
+On Wed, Oct 15, 2025 at 09:13:53AM +0200, Herve Codina wrote:
+> The simple-pm-bus driver handles several simple busses. When it is used
+> with busses other than a compatible "simple-pm-bus", it doesn't populate
+> its child devices during its probe.
+> 
+> This confuses fw_devlink and results in wrong or missing devlinks.
+> 
+> Once a driver is bound to a device and the probe() has been called,
+> device_links_driver_bound() is called.
+> 
+> This function performs operation based on the following assumption:
+>     If a child firmware node of the bound device is not added as a
+>     device, it will never be added.
+> 
+> Among operations done on fw_devlinks of those "never be added" devices,
+> device_links_driver_bound() changes their supplier.
+> 
+> With devices attached to a simple-bus compatible device, this change
+> leads to wrong devlinks where supplier of devices points to the device
+> parent (i.e. simple-bus compatible device) instead of the device itself
+> (i.e. simple-bus child).
+> 
+> When the device attached to the simple-bus is removed, because devlinks
+> are not correct, its consumers are not removed first.
+> 
+> In order to have correct devlinks created, make the simple-bus driver
+> compliant with the devlink assumption and create its child devices
+> during its probe.
+> 
+> Doing that leads to other issues due to the fact that simple-bus is
+> closely related to of_platform_populate().
+> 
+> Indeed, of_platform_populate() can probe child devices if a simple-bus
+> compatible node is detected. This behavior is expected by some drivers
+> such as some MFD drivers. Those drivers perform some operations in their
+> probe() but rely on the core (simple-mfd, simple-bus compatible) to
+> populate child devices [1].
+> 
+> Avoiding recursive probing in of_platform_populate() and let the
+> simple-bus driver probe its child devices will break some system.
+> 
+> For this reason, keep the current behavior of the simple-bus driver and
+> of_platform_populate() as they are and introduce simple-platform-bus
+> driver.
+> 
+> This driver doesn't interfere with of_platform_populate() and populates
+> child devices during its probe() as expected by fw_devlink.
+> 
+> [1] https://lore.kernel.org/all/20250715095201.1bcb4ab7@bootlin.com/
 
-On Fri, 12 Sept 2025 at 16:22, Chris Brandt <chris.brandt@renesas.com> wrote:
-> Convert the limited MIPI clock calculations to a full range of settings
-> based on math including H/W limitation validation.
-> Since the required DSI division setting must be specified from external
-> sources before calculations, expose a new API to set it.
->
-> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-> Signed-off-by: hienhuynh <hien.huynh.px@renesas.com>
-> Signed-off-by: Nghia Vo <nghia.vo.zn@renesas.com>
+Link tag?
 
-Thanks for your patch!
+...
 
-> --- a/drivers/clk/renesas/rzg2l-cpg.c
-> +++ b/drivers/clk/renesas/rzg2l-cpg.c
-> @@ -74,6 +74,22 @@
->  #define MSTOP_OFF(conf)                FIELD_GET(GENMASK(31, 16), (conf))
->  #define MSTOP_MASK(conf)       FIELD_GET(GENMASK(15, 0), (conf))
->
-> +#define PLL5_FOUTVCO_MIN       800000000
-> +#define PLL5_FOUTVCO_MAX       3000000000
-> +#define PLL5_POSTDIV_MIN       1
-> +#define PLL5_POSTDIV_MAX       7
-> +#define PLL5_POSTDIV_DEF       1
-> +#define PLL5_REFDIV_MIN                1
-> +#define PLL5_REFDIV_MAX                2
+The below is simply wrong. The luck that you got no errors is due to CONFIG_OF
+being bool and not tristate in Kconfig. I dunno if this driver ever gets the
+'m' capability, but currently it uses tons of dead code (such as MODULE_*()
+macros). Disregard of that, the proposed change should go to the separate
+compilation unit at bare minimum.
 
-Documentation says 1..63?
+...
 
-> +#define PLL5_REFDIV_DEF                1
-> +#define PLL5_INTIN_MIN         20
-> +#define PLL5_INTIN_MAX         320
-> +#define PLL5_INTIN_DEF         125
-> +#define PLL5_FRACIN_DEF                0
-> +
-> +#define PLL5_TARGET_DPI                0
-> +#define PLL5_TARGET_DSI                1
+>  module_platform_driver(simple_pm_bus_driver);
 
-These two should become an enum in include/linux/clk/renesas.h,
-as their values are passed (as magic numbers) from outside.
+> +module_platform_driver(simple_platform_bus_driver);
 
-> +
->  /**
->   * struct clk_hw_data - clock hardware data
->   * @hw: clock hw
-> @@ -129,6 +145,12 @@ struct rzg2l_pll5_param {
->         u8 pl5_spread;
->  };
->
-> +/* PLL5 output will be used for DPI or MIPI-DSI */
-> +static int dsi_div_target = PLL5_TARGET_DPI;
-> +
-> +/* Required division ratio for MIPI D-PHY clock changes depending on resolution and lanes. */
-> +static int dsi_div_ab;
-
-unsigned int
-
-> +
->  struct rzg2l_pll5_mux_dsi_div_param {
->         u8 clksrc;
->         u8 dsi_div_a;
-> @@ -557,24 +579,102 @@ rzg2l_cpg_sd_mux_clk_register(const struct cpg_core_clk *core,
->  }
->
->  static unsigned long
-> -rzg2l_cpg_get_foutpostdiv_rate(struct rzg2l_pll5_param *params,
-> +rzg2l_cpg_get_foutpostdiv_rate(struct rzg2l_cpg_priv *priv,
-> +                              struct rzg2l_pll5_param *params,
->                                unsigned long rate)
->  {
->         unsigned long foutpostdiv_rate, foutvco_rate;
-> +       u8 div = 1;
-> +       bool found = 0;
-> +       int a, b;
-
-unsigned int
-
-> +
-> +       if (priv->mux_dsi_div_params.clksrc)
-> +               div = 2;
-> +
-> +       /* Calculate the DIV_DSI_A and DIV_DSI_B based on the final DIV DSI */
-> +       for (a = 0; a < 4; a++) {
-> +
-> +               if (dsi_div_target == PLL5_TARGET_DPI && a == 0)
-> +                       continue;       /* 1/1 div not supported for DIV_DSI_A for DPI */
-> +
-> +               for (b = 0; b < 16; b++) {
-> +
-> +                       if (dsi_div_target == PLL5_TARGET_DPI && b != 0)
-> +                               continue;       /* Only 1/1 div supported for DIV_DSI_B in DPI */
-> +
-> +                       if (((1 << a) * (b + 1)) == dsi_div_ab) {
-
-"(b + 1) << a"?
-
-> +                               priv->mux_dsi_div_params.dsi_div_a = a;
-> +                               priv->mux_dsi_div_params.dsi_div_b = b;
-> +
-> +                               goto found_dsi_div;
-> +                       }
-> +               }
-> +       }
-> +
-> +found_dsi_div:
-> +       /*
-> +        * Below conditions must be set for PLL5 parameters:
-> +        * - REFDIV must be between 1 and 2.
-> +        * - POSTDIV1/2 must be between 1 and 7.
-> +        * - INTIN must be between 20 and 320.
-> +        * - FOUTVCO must be between 800MHz and 3000MHz.
-> +        */
-> +       for (params->pl5_postdiv1 = PLL5_POSTDIV_MIN;
-> +            params->pl5_postdiv1 < PLL5_POSTDIV_MAX + 1;
-> +            params->pl5_postdiv1++) {
-> +               for (params->pl5_postdiv2 = PLL5_POSTDIV_MIN;
-> +                    params->pl5_postdiv2 < PLL5_POSTDIV_MAX + 1;
-> +                    params->pl5_postdiv2++) {
-> +                       foutvco_rate = rate * ((1 << priv->mux_dsi_div_params.dsi_div_a) *
-
-rate * ... << priv->mux_dsi_div_params.dsi_div_a;
-
-> +                                              (priv->mux_dsi_div_params.dsi_div_b + 1)) *
-> +                                             div * params->pl5_postdiv1 * params->pl5_postdiv2;
-> +                       if (foutvco_rate < PLL5_FOUTVCO_MIN + 1 ||
-> +                           foutvco_rate > PLL5_FOUTVCO_MAX - 1)
-> +                               continue;
-> +
-> +                       for (params->pl5_refdiv = PLL5_REFDIV_MIN;
-> +                            params->pl5_refdiv < PLL5_REFDIV_MAX + 1;
-> +                            params->pl5_refdiv++) {
-> +                               params->pl5_intin = (foutvco_rate * params->pl5_refdiv) /
-> +                                                   (EXTAL_FREQ_IN_MEGA_HZ * MEGA);
-> +                               if (params->pl5_intin < PLL5_INTIN_MIN + 1 ||
-> +                                   params->pl5_intin > PLL5_INTIN_MAX - 1)
-> +                                       continue;
-> +                               params->pl5_fracin = div_u64(((u64)
-> +                                                    (foutvco_rate * params->pl5_refdiv) %
-> +                                                    (EXTAL_FREQ_IN_MEGA_HZ * MEGA)) << 24,
-
-Please move the cast to u64 outside the modulo operation, else
-the latter becomes a 64-by-32 modulo, which requires using a helper
-from <linux/math64.h> when compile-testing for a 32-bit platform.
-
-> +                                                    EXTAL_FREQ_IN_MEGA_HZ * MEGA);
-> +                               found = 1;
-> +                               goto found_clk;
-> +                       }
-> +               }
-> +       }
-> +
-> +found_clk:
-> +       if (!found) {
-> +               params->pl5_intin = PLL5_INTIN_DEF;
-> +               params->pl5_fracin = PLL5_FRACIN_DEF;
-> +               params->pl5_refdiv = PLL5_REFDIV_DEF;
-> +               params->pl5_postdiv1 = PLL5_POSTDIV_DEF;
-> +               params->pl5_postdiv2 = PLL5_POSTDIV_DEF;
-> +       }
->
-> -       params->pl5_intin = rate / MEGA;
-> -       params->pl5_fracin = div_u64(((u64)rate % MEGA) << 24, MEGA);
-
-(u64)(rate % MEGA)
-
-> -       params->pl5_refdiv = 2;
-> -       params->pl5_postdiv1 = 1;
-> -       params->pl5_postdiv2 = 1;
->         params->pl5_spread = 0x16;
->
->         foutvco_rate = div_u64(mul_u32_u32(EXTAL_FREQ_IN_MEGA_HZ * MEGA,
-> -                                          (params->pl5_intin << 24) + params->pl5_fracin),
-> -                              params->pl5_refdiv) >> 24;
-> +                      (params->pl5_intin << 24) + params->pl5_fracin),
-> +                      params->pl5_refdiv) >> 24;
->         foutpostdiv_rate = DIV_ROUND_CLOSEST_ULL(foutvco_rate,
-
-foutvco_rate is unsigned long, but the division uses the _ULL() macro variant?
-
->                                                  params->pl5_postdiv1 * params->pl5_postdiv2);
->
-> +       /* If foutvco is above 1.5GHz, change parent and recalculate */
-> +       if (priv->mux_dsi_div_params.clksrc && foutvco_rate > 1500000000) {
-> +               priv->mux_dsi_div_params.clksrc = 0;
-> +               dsi_div_ab *= 2;
-> +               dsi_div_target = PLL5_TARGET_DSI;       /* Assume MIPI-DSI */
-> +               return rzg2l_cpg_get_foutpostdiv_rate(priv, params, rate);
-> +       }
-> +
->         return foutpostdiv_rate;
->  }
->
-> @@ -607,7 +707,7 @@ static unsigned long rzg2l_cpg_get_vclk_parent_rate(struct clk_hw *hw,
->         struct rzg2l_pll5_param params;
->         unsigned long parent_rate;
->
-> -       parent_rate = rzg2l_cpg_get_foutpostdiv_rate(&params, rate);
-> +       parent_rate = rzg2l_cpg_get_foutpostdiv_rate(priv, &params, rate);
->
->         if (priv->mux_dsi_div_params.clksrc)
->                 parent_rate /= 2;
-> @@ -626,6 +726,13 @@ static int rzg2l_cpg_dsi_div_determine_rate(struct clk_hw *hw,
->         return 0;
->  }
->
-> +void rzg2l_cpg_dsi_div_set_divider(int divider, int target)
-
-unsigned int divider
-
-> +{
-> +       dsi_div_ab = divider;
-> +       dsi_div_target = target;
-> +}
-> +EXPORT_SYMBOL_GPL(rzg2l_cpg_dsi_div_set_divider);
-> +
->  static int rzg2l_cpg_dsi_div_set_rate(struct clk_hw *hw,
->                                       unsigned long rate,
->                                       unsigned long parent_rate)
-> @@ -859,7 +966,7 @@ static int rzg2l_cpg_sipll5_set_rate(struct clk_hw *hw,
->
->         vclk_rate = rzg2l_cpg_get_vclk_rate(hw, rate);
->         sipll5->foutpostdiv_rate =
-> -               rzg2l_cpg_get_foutpostdiv_rate(&params, vclk_rate);
-> +               rzg2l_cpg_get_foutpostdiv_rate(priv, &params, vclk_rate);
->
->         /* Put PLL5 into standby mode */
->         writel(CPG_SIPLL5_STBY_RESETB_WEN, priv->base + CPG_SIPLL5_STBY);
-> @@ -949,6 +1056,8 @@ rzg2l_cpg_sipll5_register(const struct cpg_core_clk *core,
->         priv->mux_dsi_div_params.clksrc = 1; /* Use clk src 1 for DSI */
->         priv->mux_dsi_div_params.dsi_div_a = 1; /* Divided by 2 */
->         priv->mux_dsi_div_params.dsi_div_b = 2; /* Divided by 3 */
-> +       dsi_div_ab = (1 << priv->mux_dsi_div_params.dsi_div_a) *
-> +                    (priv->mux_dsi_div_params.dsi_div_b + 1);
-
-(priv->mux_dsi_div_params.dsi_div_b + 1) << priv->mux_dsi_div_params.dsi_div_a
-
->
->         return clk_hw->clk;
->  }
-
-Gr{oetje,eeting}s,
-
-                        Geert
+^^^ WRONG!
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+With Best Regards,
+Andy Shevchenko
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+
