@@ -1,106 +1,88 @@
-Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com [209.85.217.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15EB72EC54B
-	for <linux-clk@vger.kernel.org>; Tue, 21 Oct 2025 13:28:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05436169AD2;
+	Tue, 21 Oct 2025 13:32:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761053331; cv=none; b=kkNF8jR6I1660yYq/fmvRK/ZRR+E7zp+ubWgq/tNF5JcbttXn6yQ6DccCaMQ1/04uWSw2agcAx1ueDblSeeqzagQjbeZ7tKw7KGFuzXP+qZQBhGUwerCztrrnxt0/ymENTJ//XZQ4Gcha5UR1JjBhYVvR5P18WL/t1Mktm3esLU=
+	t=1761053525; cv=none; b=KsU97Dl606SArTe0GQtvZMUvZdkCU+NPDOdNT+LUolFKFgfulVhT9WOB/y6VlSZ+PnoDf4gFMFymTynmvGYtWha8cL0HNsbdSB3QudEajKaNO/TecM0d/q/R12HTelCwU7LNkBAH5hzdt992v2MHPyUoD/Pw7yZLJjQBIuzxHnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761053331; c=relaxed/simple;
-	bh=RQwS0fuOoAkZ4Bs1IOOQqMEfIMm1iFcY5Luv08QraSw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=B8+cdSRctreLLoUHL+3/BvScUL3hYP3DM3bGQrWQU6ilkFVxntuVFGlW5KqBE+y8jS3g0U+S9PfkYkc/RSA8SxlZ0ORFOxHqLESw+Nx7JG22uUCEQ1zwSLpp2vJcW490u8US/JMPdr5MMGoEM5gDLFZOEnBkTxG9dXNUtGkYCR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f47.google.com with SMTP id ada2fe7eead31-5d3fb34ba53so4744014137.1
-        for <linux-clk@vger.kernel.org>; Tue, 21 Oct 2025 06:28:49 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761053329; x=1761658129;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=foZkbBKrkpzKqOb0SdfF8T3/ui75q1xL0TwtV3s3sfo=;
-        b=wGi7p+vqH/3KU85mjgnaIvYlu4Ypn2A7MhZlnKO4sVtRG7flD5A6YCInhdRelml7hi
-         gM9R5bzdbCQmqMs1V4sNV/UINokWgc8E94G93vBqz4QopZhTDV76VGr5flNsjwHf5aDV
-         tXkIKDFw709Wt2glNI2EnQw9jBfykR6pWAddgKAlCztURl/pkzd1vNMcE4XqE/afhM3i
-         EvO7FliFXGf1yIZN9a5JucNM84Cc/8ZRTOb2CI7gfifnlmKtIj8hZuZDpwUFH2iHZ4CE
-         v19xozNntskeZMN0THbhILaGz8qZK78nlHDaayGcvATcABLuonOg+7HlOwl7J0EcUFtU
-         epgg==
-X-Forwarded-Encrypted: i=1; AJvYcCWo554kiARMMttOFy3nWjIs9j9PrB8pfhxISF3uHeWV3Iy7YMLcUyWCbh6O1/EVx9e8zfeotvgUEy4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzX2QHcx87bSGLfgTYRFWlLuQyR5e3at/Qz2rcivJ2LiHjjk2Jl
-	9MbpLAa6bcKwm5Ymt3Je+VmrWHiqc11rgOeeJoe3wP3AaWB0L4Sr1NDFyiC10NOX
-X-Gm-Gg: ASbGncuaRzf6SRG6T3dJiXFX6T6OpN2eJRfeYlZbbBiFsEAWIHVwdsVYphy/IqSSjoY
-	iJRWOtDEF1ZePOEOrKb9pWZvfAGVOmrxd4MkTARJOhgijtkwDuTi+XKec+qPZdLmbSvm/pjVJBJ
-	gNKV0ohDre6VWiDdqjlXaT3q8yzos9mJzdc1iikdtT+Zo4tVY3spmFkO9tfTrf7cLhHNPe4Utdv
-	TJQVqbHG7ztaiaNaKwrzW70hAUjb6Srliy3IZxgT2Jjg7e6eruUHY1ew8sDETFySgyqriTemyyb
-	xmwgX0vznkF08sOYAC+LKDAu3Hh4b2LH6138s7jNRJtt1KLloCjDVqdDECcKxnzsJe6K+LnMt4x
-	YMMejc7gT8QmBEWw+zl4RoqZgDRkoRoUGd3dq8XcuYg/8rQZwJy+03VeTBMd9WYsd+vJoA9ExiU
-	VFz/tEVkHx1SNA/GfS0TG5GWinmk5ZdrZkQqLYgL6sTHshnnE+
-X-Google-Smtp-Source: AGHT+IHgrSt8S0wDgTYhz7lXorm99rWMA2c/qFSYFNALzArV4sDSA44+8ySnUEuXtMjwaWHATr03LA==
-X-Received: by 2002:a05:6102:30dc:10b0:5d7:e095:9398 with SMTP id ada2fe7eead31-5d7e095983dmr3781179137.30.1761053328722;
-        Tue, 21 Oct 2025 06:28:48 -0700 (PDT)
-Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com. [209.85.217.42])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-5d96be9a783sm3649219137.0.2025.10.21.06.28.48
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Oct 2025 06:28:48 -0700 (PDT)
-Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-5d967b67003so3607596137.2
-        for <linux-clk@vger.kernel.org>; Tue, 21 Oct 2025 06:28:48 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUOBQNFziHd+tbW9O+3FjlieUbgevPiKinioV/xb9AXzlB2Kl9TTAxiPcPi+tF3LXsKv/M7wqSP0CA=@vger.kernel.org
-X-Received: by 2002:a05:6102:3a0a:b0:5be:57a1:3eda with SMTP id
- ada2fe7eead31-5d7dd555917mr6009011137.2.1761053328121; Tue, 21 Oct 2025
- 06:28:48 -0700 (PDT)
+	s=arc-20240116; t=1761053525; c=relaxed/simple;
+	bh=nyuiyacr165FLqxyWKt1B4gvgh4RzY/Ij1hXstDErIo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rput1g+eTDkR/uDkO3E2wjNF4p5BVsx5LJBW/Y02J2jiYMetBIG3MMi3SNgq0VQOXqnqGHPgeb6FHr69wXLrnkAGlGw0iygQQmJrZP2GwxQojz3WooJi5Af90QAq4Gi3olI3mopdyJsAA7YeMQZk5h2Ni6JsCK4LxxUvNpWvZZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cil8iBtA; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cil8iBtA"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC8D1C4CEF1;
+	Tue, 21 Oct 2025 13:32:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761053524;
+	bh=nyuiyacr165FLqxyWKt1B4gvgh4RzY/Ij1hXstDErIo=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Cil8iBtA/atoolDBeOsa4U9BKo1ptHWOAXfTcEX6czp1OYcyYe3FnYKwM4/oxkR2R
+	 dSLthkOzJaOdujRm2PUgDWgMFkOUiQqQ8fK9apV8sf/ae00SHABN2XIlK8MDNk+1bD
+	 5lKJ7sIi6pMd0+oMBVfvuhkmGT4oGxIP59P2jD1Q93wbZHx8HjnIDatzhsoJ9EW56z
+	 HzXW5VLv0n5Nbat7KvmLT74fqrR33YWgmiCqAePyIc9IiwGxzC6uSilvrN6wmRqNdw
+	 ORe2T5RsCIZLmK31YgJiu/AjUlpPY8R5WMQm0bt4JcYjydmzKELDLmHT5OIFkFk+qH
+	 8QtMEigusE5Hw==
+From: Conor Dooley <conor@kernel.org>
+To: claudiu.beznea@tuxon.dev,
+	Conor Dooley <conor@kernel.org>
+Cc: Conor Dooley <conor.dooley@microchip.com>,
+	Daire McNamara <daire.mcnamara@microchip.com>,
+	pierre-henry.moussay@microchip.com,
+	valentina.fernandezalanis@microchip.com,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	linux-riscv@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: (subset) [PATCH v5 0/9] Redo PolarFire SoC's mailbox/clock devicestrees and related code
+Date: Tue, 21 Oct 2025 14:31:29 +0100
+Message-ID: <20251021-ranked-attendee-8caed80461b2@spud>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20251013-album-bovine-faf9f5ebc5d4@spud>
+References: <20251013-album-bovine-faf9f5ebc5d4@spud>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251014105348.93705-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20251014105348.93705-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 21 Oct 2025 15:28:37 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVzuRhD-r=gSzm2FDDsAOr+Xu1fWyN7ky-U0NoJWXY=qw@mail.gmail.com>
-X-Gm-Features: AS18NWDraC2r8a9GHqVGQXFDsek2PQJQgzVHv7PR4XYgaOZDcSUVJXOIem5AU9A
-Message-ID: <CAMuHMdVzuRhD-r=gSzm2FDDsAOr+Xu1fWyN7ky-U0NoJWXY=qw@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: cpg-mssr: Add read-back and delay handling
- for RZ/T2H MSTP
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1060; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=zvlQ9UDW5VIJo68sV6XLu9TdJq0uO5RaIpr0pIhrGlg=; b=owGbwMvMwCVWscWwfUFT0iXG02pJDBnfuw06L5at+38rrWfu8afsV76WCMUoX4lrm9jUtfqY2 6uLW7qmd5SyMIhxMciKKbIk3u5rkVr/x2WHc89bmDmsTCBDGLg4BWAimfoM/z37vjSa3JwhXCId rvtJ63+VqiCLSra9U2mIo0f7hc7wUwz/y9qblsk3b7iqXppjsnVu/Kvo7cukfl9XcrQ9udS7PGw uFwA=
+X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
+Content-Transfer-Encoding: 8bit
 
-On Tue, 14 Oct 2025 at 12:54, Prabhakar <prabhakar.csengg@gmail.com> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> On the RZ/T2H SoC, a specific sequence is required when releasing a
-> module from the module stop state (i.e. when clearing the corresponding
-> bit in the MSTPCRm register to '0'). After writing to the MSTPCRm
-> register, a read-back of the same register must be performed, followed
-> by at least seven dummy reads of any register within the IP block that
-> is being released.
->
-> To avoid mapping device registers for this purpose, a short delay is
-> introduced after the read-back to ensure proper hardware stabilization
-> before the module becomes accessible.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Conor Dooley <conor.dooley@microchip.com>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-clk for v6.19.
+On Mon, 13 Oct 2025 18:45:32 +0100, Conor Dooley wrote:
+> From: Conor Dooley <conor.dooley@microchip.com>
+> 
+> In v5 the only real change is that I removed the attempt at a common
+> implementation of regmap-based divider/gate clocks. The series hasn't
+> managed to receive feedback on my approach in 2025, despite sending
+> several revisions and bumps, and it is blocking support for both new
+> drivers (gpio interrupt support, pinctrl and hwmon off the top of my
+> head) and a new platform so I have decided to strip out the attempt at
+> making something common in exchange for something that can be merged
+> through the clk-microchip tree without relying on feedback from the
+> clock maintainers.
+> 
+> [...]
 
-Gr{oetje,eeting}s,
+Applied to riscv-soc-drivers-for-next, because the pinctrl series that
+I am working on needs them.
 
-                        Geert
+[1/9] dt-bindings: soc: microchip: document the simple-mfd syscon on PolarFire SoC
+      https://git.kernel.org/conor/c/feaa716adc51
+[2/9] soc: microchip: add mfd drivers for two syscon regions on PolarFire SoC
+      https://git.kernel.org/conor/c/5b59e62532fc
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Thanks,
+Conor.
