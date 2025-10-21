@@ -1,129 +1,135 @@
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67A6B350290
-	for <linux-clk@vger.kernel.org>; Tue, 21 Oct 2025 18:09:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A45434A3CE
+	for <linux-clk@vger.kernel.org>; Tue, 21 Oct 2025 18:27:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761070194; cv=none; b=mwToP8zMJ238o8erdjyivJ/H2/ihXWrmDnMB/rM8UYDQ/Re4E5qssAob+TXAj6+Pd8KtSiyQoM4x4OaBGvOR1FB88aO+rbANVrb58eMTDCIboWRdWedpgcUoAFCODTaFK9gpWZz2bMAWzMr4YiFqGf8dgh69J4EY0Pe34AdTTXA=
+	t=1761071240; cv=none; b=Tv/dfzOKN4bO0VByRqrJzQBdSd64s4FCmhw5/QewnfbxQTX7bO1pc+R2141pJ7DrodK9nt+lQCYpIIyezL0NgTOkVhq+I4SDcDIKEcqwpt/APpFrmiGD9AZhCFEoJg+mxd22C6aYi9f+1xIrxiYGFCnwbXzIvIZ5LgLFc/fXCkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761070194; c=relaxed/simple;
-	bh=2Eq9A/AKwnR3gDsuZiWxdapYlfrJ603IEtmRzywXGso=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=B/+Co129J4FXmwoVws0DJFCCFuCWnQ/gjVp9Wa2fS1llKqukCH1B4DjSqxF0HcddlLDV1tS4sJreTaAUkSgIsq8sh5C8Iy67ONyp1NZzlVXR1hD2jqjmW8f+CguqT+3mJ309XdjbfvPaO9BL0a5rCC7OBSjrSHfU+JT1R9rPhBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=sh1xbfEs; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fairphone.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
+	s=arc-20240116; t=1761071240; c=relaxed/simple;
+	bh=3r3xUiz+nLNpkD5qTeW+3ABt35tVXdPHQ5mVpksysXM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EGh/Wpfi6EXltp2abQ/KZ/EgbWEzwiyfVkywqRnH7ZFRo2f9GbFwgMAdsogcjTmLEqGOqZnEnasTo+3XEU/mjcvS+MI0NdAoeem98+WQhZ8teIQCi66ggzdBogC30+YdNxpdnrHQsh7fnlJbOuV4KQ/IQEHfuyxcOS/fUzVHRpk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cLtGLmQt; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="sh1xbfEs"
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-6399328ff1fso10025263a12.0
-        for <linux-clk@vger.kernel.org>; Tue, 21 Oct 2025 11:09:52 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cLtGLmQt"
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3ed20bdfdffso5457399f8f.2
+        for <linux-clk@vger.kernel.org>; Tue, 21 Oct 2025 11:27:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1761070191; x=1761674991; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fZfW33wDtMvPrY5GE5lKPaP3JYy6uTE6Yvy/BumW9Tk=;
-        b=sh1xbfEsyxanZhnJmfRlO51HBynpowWXhNcWWzxCls8DOoxtH+tF+SMuDv4h0N+zIw
-         Q9VFMeD5DXWVUxy7814uTRkzm03NGgEXi+uiAaiU8oi8awVUu4tBhavwhUpEF/Tw1TXl
-         HQvEuZN3qsGAq/3ST+y50EfczyPtH4Xp9g+zhDYCRTMRUBTjBmbM7puP+8R0nBoFDZqZ
-         XNqUQVrb2WvXEgk0rQN+jUU8+q3EHHa5JQO7oyUP1CNIA5UFkGwAFbE6u0daksFN5TSr
-         IHk+SaXCU7z1lWtlGyUuHpQBKYUeqv5M0DHDYFvCl3PprphxtMvr5idP92uN9yrRmj/O
-         oVcw==
+        d=gmail.com; s=20230601; t=1761071237; x=1761676037; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cE8uSQwXWgST8uXT/C8GC45uDsa31ftgODHC5Ezx8BU=;
+        b=cLtGLmQtqPBe3lxB/xpZKMcQiZXLtK7+w/gfvxiI9DT2hV2r56IPfcry+utKUKCnZf
+         yIz9ShPYovz1CqeJ/NcS+ksnMIOUaM1REZhjea3gHjoLHBDa76aykskX895lDdwSG1DQ
+         Ak5UnimiJciAYbTle04ve9lgRlc8QMrTSrBq3FGtfBcioI96Aiw5AZvFmzdDtMtVQWla
+         aAd2AaManAUzA+OE9tH6qR7hZ6ghNn/OScB6pmppVY1GqmaUcgLSIzIuc8YLOy4aBrlt
+         YiquZehxLURcgM6BxW9Z19vRCxH0Z6cFY3jITZvVBGmOu5jLHtYTKXiBD9G+z9emd3ut
+         qhkg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761070191; x=1761674991;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1761071237; x=1761676037;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=fZfW33wDtMvPrY5GE5lKPaP3JYy6uTE6Yvy/BumW9Tk=;
-        b=glLo7S0Vjn8jl/6M6U6B7hLNfnIMxdLHcw5zZwx8LDdoJFWckuhPepVn8XodvBG+uT
-         gZAjUvLX7xntioVIFN1F+iHKjrJLG9OsZLztggkqbqITdjXpJyd/PNlKRWcPD/FLM9vJ
-         VEoANGHsicp1rgHkrsky+Bx4MZfNoDPs1MJsSUiw22SuKMtQmj3UeT7bk7nXWEoaAf9m
-         9bd3t7LN6n7a+Fz9CPGHqwjXkVUapJGvCvALvjugziAhuZFXvlUHpDLAanKU1E7IG7N/
-         PJ7z5ItnLP2HxYHXJ5Sz2WT8XA4bV/zWia4L7qRJ7ATAv0SOAWjD0fKSpEuaCOU9raO5
-         vMKA==
-X-Forwarded-Encrypted: i=1; AJvYcCV4+bbwESz521n7L0Ow+xMa9w0J8nFuAX6JAB9/Sm63CZh2CdoVEjMe7sUMtDBqe7cxXjkCuvV1ojk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9wdasF6Ot9un/l/W8sPr7j7mE2StFC5vfBRuMtXBMeXNtG19g
-	bXK8WHe3sFWw7nbcf1v4uoUa12Sp/efp+2EE3Bx9Cw433MQPXpFrMlfFlKBLZocYAv0=
-X-Gm-Gg: ASbGnctzjLeWHb5gAOsAfICmWK1+yEtgZk1oApBZHhMpiVZl1Hvc34niU0WqeG3X6ce
-	1kfNmHdGAL1WBFw+KLf08pbnVS/Pb3xWlt2/Whr29UpRp9hPTEOrBKfeBdnPR4flAJbkMkGRv16
-	+vuEhD8TiuxKDqW4YL0Dsx+NzD/3vXzzKFYeOgZlHdc4Ir0hlqSr2MDKauYI+ufnopr0mi0LeJo
-	Igx1fNJwEyi5LNVAew4N97sYXnOqXHJotjS3AYhP7AsPhKMLJJpGiG5exybmYZy82Sdvah/kRs6
-	EfdKGdGqgPERD28uxc1d8MMzn8rMUusoAeSH3k8uVuBtYmhfp8MZHBsp7eAlbsuJfNo7OwiKmey
-	tGS66q5QqIH02ZWQyCxHSx3ipKC5tfKk80KcQdPcdoOZHyP3OflFVwSmMDo7a3QPCtLwdvtbirg
-	Z3/izmqdY=
-X-Google-Smtp-Source: AGHT+IEtlpg7hHwYviAs9wYaJ8CDpbBGpkeU1rbRL5K3RYBz0JwLkuE1x94/3J0jWIixwOjEj4tdUA==
-X-Received: by 2002:a17:907:9288:b0:b3c:a161:6843 with SMTP id a640c23a62f3a-b647403a56amr2215928266b.4.1761070190578;
-        Tue, 21 Oct 2025 11:09:50 -0700 (PDT)
-Received: from otso.local ([213.208.157.251])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b65e8393778sm1116758166b.24.2025.10.21.11.09.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Oct 2025 11:09:50 -0700 (PDT)
-From: Luca Weiss <luca.weiss@fairphone.com>
-Date: Tue, 21 Oct 2025 20:08:55 +0200
-Subject: [PATCH 2/2] clk: qcom: camcc-sm7150: Fix PLL config of PLL2
+        bh=cE8uSQwXWgST8uXT/C8GC45uDsa31ftgODHC5Ezx8BU=;
+        b=Mkd8VzXm57qwjW3RYbCGMzYXjAo7iQMkdCNAlT/Q2qcaRuSDmKgmbmgPUyVSY3k0Um
+         dGPYm43AKLGBxuE4u3n7g0wJcjBrSW4cJ6lnBTb0CwnQH19unP2MOdlS/JZK45W0/wLS
+         qQoV/v6Xe4fupNTZQBLqC1XQzAfgrmdxWD94wTbcU6hFNbn59ffgiL4VH9zXlSN1vh4a
+         S6h+s0DN1NbA/wJxIBXn1vDtTknpwjgATdgKlYn6nI4hhcyE0AMQwrz0X55Dv5Y65mBA
+         DShtMYlP+1BqMioJEov3HnGvKvdZFmkzknlHtIL3i5+oo3oAv9vK5YjENL8L8JTvewGG
+         MX1w==
+X-Forwarded-Encrypted: i=1; AJvYcCUSr/u2F192nJ1CV25bxLkScDz6xPP4gO0XE5wAvizLSXXirgSX71NaAQnf/ozVjHzeVy0+mbO4oEc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQ9NhR+/KgVuzRd4hooKfpBcwZR+O+fgPf54k9pe3Eby9rEfRM
+	5J0sMRHOddGtDo0o/oZt3uRl8mAKNUWEpTGGLWNaIGq0FOsWhFRkODuR4UPjVBePjIBFj1QRNIe
+	I8OjuwnHdjTDzbHonrTSZHt7k80adYsE=
+X-Gm-Gg: ASbGncsbtggtBteQLnMcdhnAEbXvtFiDAVx3EbjDdyjReL08k0veHTOkUiiw0DZSqvD
+	cR0wKeYkCzupG8EJ9XpzOpLTx9N0RKQ2iDUQNVU1BOPpJCRe/KtY28dqWuw5pXAj+St290I7Bnm
+	rp26TphyVvzEpofqrKwAM3dCAXVhP5cebEcIBiisPiUllsLjO4ZqfPQlVZJ31nk0xt90QEIpSVZ
+	jjjGqgtNuOPsOHBt5UVtsAqmYECVBy2Z15jp/VZXxAJJdCu3A/SlB72I0zwybD9SBhXHQ+2
+X-Google-Smtp-Source: AGHT+IFk6i+z+s45x3Y/ZNnj0WEKOgAukvQOG+Cb2z0ro+7s902CDutfSXGh6tJcQ/iD0+vijYGT9n6qo6qo7pst6HM=
+X-Received: by 2002:a5d:64e4:0:b0:427:45f:ee21 with SMTP id
+ ffacd0b85a97d-42704d90029mr13980937f8f.27.1761071236448; Tue, 21 Oct 2025
+ 11:27:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251021-agera-pll-fixups-v1-2-8c1d8aff4afc@fairphone.com>
-References: <20251021-agera-pll-fixups-v1-0-8c1d8aff4afc@fairphone.com>
-In-Reply-To: <20251021-agera-pll-fixups-v1-0-8c1d8aff4afc@fairphone.com>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
- Danila Tikhonov <danila@jiaxyga.com>, 
- Taniya Das <taniya.das@oss.qualcomm.com>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Luca Weiss <luca.weiss@fairphone.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1761070183; l=1299;
- i=luca.weiss@fairphone.com; s=20250611; h=from:subject:message-id;
- bh=2Eq9A/AKwnR3gDsuZiWxdapYlfrJ603IEtmRzywXGso=;
- b=f6OVJw7dVaXmR3bN8+qrmYA4vRl/NtjHLvMpHGDllO4eZ6Umrt9okj7FpWsAidTFfMYCwvrIZ
- iLD5F0UgX4PAioKrJoBKaV0jcuvrWD9MRfX9FRK+H0QYJ90gLRud5yX
-X-Developer-Key: i=luca.weiss@fairphone.com; a=ed25519;
- pk=O1aw+AAust5lEmgrNJ1Bs7PTY0fEsJm+mdkjExA69q8=
+References: <20251015192611.241920-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdW1B7Yk1hUU9MSJsiL8wSmjAUGN7Qd_wgBHv8Ct=-wi4Q@mail.gmail.com>
+In-Reply-To: <CAMuHMdW1B7Yk1hUU9MSJsiL8wSmjAUGN7Qd_wgBHv8Ct=-wi4Q@mail.gmail.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Tue, 21 Oct 2025 19:26:49 +0100
+X-Gm-Features: AS18NWC2o60rc9cSL9khBvVcjIsmZkA_NFsLdA-38mFv9XLbwQriIqJBrdcPrNg
+Message-ID: <CA+V-a8uY11uWoQ_en5QC=W4HPHRwT6rKQQJ-knT8Gi-+czm05w@mail.gmail.com>
+Subject: Re: [PATCH v11 0/7] Add support for DU/DSI clocks and DSI driver
+ support for the Renesas RZ/V2H(P) SoC
+To: Geert Uytterhoeven <geert@linux-m68k.org>, Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
+	Biju Das <biju.das.jz@bp.renesas.com>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, dri-devel@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The 'Agera' PLLs (with clk_agera_pll_configure) do not take some of the
-parameters that are provided in the vendor driver. Instead the upstream
-configuration should provide the final user_ctl value that is written to
-the USER_CTL register.
+Hi Geert,
 
-Fix the config so that the PLL is configured correctly.
 
-Fixes: 9f0532da4226 ("clk: qcom: Add Camera Clock Controller driver for SM7150")
-Suggested-by: Taniya Das <taniya.das@oss.qualcomm.com>
-Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
----
- drivers/clk/qcom/camcc-sm7150.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+On Tue, Oct 21, 2025 at 11:26=E2=80=AFAM Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+>
+> Hi Prabhakar et al,
+>
+> On Wed, 15 Oct 2025 at 21:26, Prabhakar <prabhakar.csengg@gmail.com> wrot=
+e:
+> > This patch series adds DU/DSI clocks and provides support for the
+> > MIPI DSI interface on the RZ/V2H(P) SoC.
+> >
+> > v10->v11:
+> > - Split CPG_PLL_CLK1_K/M/PDIV macro change into separate patch
+> > - Updated rzv2h_cpg_plldsi_div_determine_rate()
+> >   while iterating over the divider table
+> > - Added Acked-by tag from Tomi for patch 2/7 and 3/7
+> > - Added Reviewed-by tag from Geert for patch 2/7 and 3/7
+>
+> I think this series is ready for merging.
+>
+\o/
 
-diff --git a/drivers/clk/qcom/camcc-sm7150.c b/drivers/clk/qcom/camcc-sm7150.c
-index 4a3baf5d8e85..590548cac45b 100644
---- a/drivers/clk/qcom/camcc-sm7150.c
-+++ b/drivers/clk/qcom/camcc-sm7150.c
-@@ -139,13 +139,9 @@ static struct clk_fixed_factor camcc_pll1_out_even = {
- /* 1920MHz configuration */
- static const struct alpha_pll_config camcc_pll2_config = {
- 	.l = 0x64,
--	.post_div_val = 0x3 << 8,
--	.post_div_mask = 0x3 << 8,
--	.early_output_mask = BIT(3),
--	.aux_output_mask = BIT(1),
--	.main_output_mask = BIT(0),
- 	.config_ctl_hi_val = 0x400003d6,
- 	.config_ctl_val = 0x20000954,
-+	.user_ctl_val = 0x0000030b,
- };
- 
- static struct clk_alpha_pll camcc_pll2 = {
+> > Lad Prabhakar (7):
+> >   clk: renesas: rzv2h-cpg: Add instance field to struct pll
+> >   clk: renesas: rzv2h-cpg: Use GENMASK for PLL fields
+> >   clk: renesas: rzv2h-cpg: Add support for DSI clocks
+> >   clk: renesas: r9a09g057: Add clock and reset entries for DSI and LCDC
+> >   dt-bindings: display: bridge: renesas,dsi: Document RZ/V2H(P) and
+> >     RZ/V2N
+> >   drm: renesas: rz-du: mipi_dsi: Add LPCLK clock support
+> >   drm: renesas: rz-du: mipi_dsi: Add support for RZ/V2H(P) SoC
+>
+> As this touches both clk and drm, let's discuss the merge strategy.
+> My proposal:
+>   1. I queue patches 1-3 in an immutable branch with a signed tag,
+>      to be used as a base for the remaining patches,
+>   2. I queue patch 4 on top of 1 in renesas-clk for v6.19,
+>   3. The DRM people queue patches 5-7 on top of 1.
+>
+> Does that sound fine for you?
+Sounds good to me.
 
--- 
-2.51.1
+Biju/Tomi, are you OK with the above?
 
+Cheers,
+Prabhakar
