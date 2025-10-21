@@ -1,638 +1,199 @@
-Received: from mail-m155115.qiye.163.com (mail-m155115.qiye.163.com [101.71.155.115])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01329252917;
-	Tue, 21 Oct 2025 03:44:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.115
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C14361EBA14
+	for <linux-clk@vger.kernel.org>; Tue, 21 Oct 2025 03:51:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761018246; cv=none; b=UfDRq1+PJxvei3dNBJbHgdtyUr0PiyoJYi/1exr6Na9fD0egxYJFFXSgR9b5pXXKl330bx+TVV7paLt2NNz9GT4+eqgFBETL0Cjq1UnUQtiPn8Uz4Uyi9F+09wUMViO3qhV+YSg2CC7G9TvDJbqoWcADKMwk/XvMrvzFnIMSOyk=
+	t=1761018663; cv=none; b=TOTfH6Pn8uqHsOXu/jP2fI9ZMA9i8DjaVA9a/3S/C+HrqepB8PP8miDdoCJTGzOCI/obSgcFyj30ycLKoZRaNTUDlY/tkf433umm6yspmwf4ysUUhLpiKt1n1BGaC0QHrYAhk2NQ5UovoevsDfADySrg9J4Iawb24QkU7mLELTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761018246; c=relaxed/simple;
-	bh=Jd1Y6ifRO9rlsnGxJIsXGdrZ24fSOQuOaWpYU8vuVv4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Bv6Hh/Lct/B4BxIlXEKsb/A+iUB3Y8Uu30iyyG/IwmGpg3d1ynWGL2OyCcl4CNByNkEH7RV1KfxiSh7R5KJ7MTf1Wvi0IHOxlCEFdM/qWfnwHulKAMkQswCiAdJHhZPbUFQyJwOo+p4jq1bZF4uBmqjpbJKiiz9uY56GK6P+U8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=X2pmb1Qp; arc=none smtp.client-ip=101.71.155.115
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+	s=arc-20240116; t=1761018663; c=relaxed/simple;
+	bh=aJyeINSKb1G3tVPbGfkA5Oqt5hmeaylrgY+aIoalhhg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MhaodKrDNe5OAiCPIfLUAO+I6W7hYf2z6ELkG+CVr/tT5UgXvhGModyX1PrjX8kGklI6MrU/CcX0X49RR6InaRpMEw2eat1upu5qHiZ+/162Vnx9K2goYc4VaV8p2ISvqlYRm47VSHNB/mUYr33NnWo5/A6TgrlN3I5c4qfA6VA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HVgViDMk; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="X2pmb1Qp"
-Received: from rockchip.. (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 26993a9e6;
-	Tue, 21 Oct 2025 11:38:45 +0800 (GMT+08:00)
-From: Elaine Zhang <zhangqing@rock-chips.com>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	sugar.zhang@rock-chips.com,
-	zhangqing@rock-chips.com,
-	heiko@sntech.de,
-	robh@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org,
-	conor+dt@kernel.org
-Cc: devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	huangtao@rock-chips.com,
-	finley.xiao@rock-chips.com
-Subject: [PATCH v4 6/7] dt-bindings: clock: rockchip: Add RK3506 clock and reset unit
-Date: Tue, 21 Oct 2025 11:38:33 +0800
-Message-Id: <20251021033834.1390006-7-zhangqing@rock-chips.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251021033834.1390006-1-zhangqing@rock-chips.com>
-References: <20251021033834.1390006-1-zhangqing@rock-chips.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HVgViDMk"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 731FFC116D0
+	for <linux-clk@vger.kernel.org>; Tue, 21 Oct 2025 03:51:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761018663;
+	bh=aJyeINSKb1G3tVPbGfkA5Oqt5hmeaylrgY+aIoalhhg=;
+	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc:From;
+	b=HVgViDMkKZyvApVhmfWv3KaZ8/4va6fCYtgkcHLXNQ7NMfudTTrSY5nHZ4EadmT/9
+	 XwBmth48HLf8nsMOU5qd0efJHOyRa89Y9z72n1dfnMt4DLM/8gqMn9Pix024YQu4RX
+	 5KPKEsfohJLWL9nLdcYixumNDgSRT722sxa8fLY0i83WAIgo7ePG7FZ9F/ir2iRYmy
+	 cG4swh7viqYBG+yUcLIN5Yx6x+seEABCcMcQHdbG3l8Cjx+xJkOlrKMaz/SkjIOfk/
+	 tqjmJKrP7t3jKNYeBUtXjkngniGzDxyiS7POP002wvICcSY2sRx9XWGtYEvfl3Lp+u
+	 yWPkTkLyxh/8A==
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-367874aeeacso62431891fa.1
+        for <linux-clk@vger.kernel.org>; Mon, 20 Oct 2025 20:51:03 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUn0NNK+0lmIYEqfntMu+t0H90LyA7dEqRW4ous6yr1xjEcc6RGPT/7wO0NgaP3rHmGUIsbtkpu8dI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwI+ZuAXO4ez5TA/Ex3sRifN/4hfc+etRWNcjTd0JKryjgfJePZ
+	J2vW0wxWcH1cMHVuQTeAY4K3WCPx6C4yznFjYmXDoTiOoDso2xrjK3SjuatcYXPgr/DCKqtr7EM
+	V1AL/55rWKk02nNp1SxOdATQnM+9H3ns=
+X-Google-Smtp-Source: AGHT+IG8vasmm5hWdGe7KBlLp5chhcRp+eBr/myvEiV96lMVwrmDdir100cF1onLwBZjh0GCzdDPuKXAZ1yS7H+1U/g=
+X-Received: by 2002:a2e:bc81:0:b0:372:9e15:8970 with SMTP id
+ 38308e7fff4ca-37797a0ca11mr52596901fa.23.1761018661756; Mon, 20 Oct 2025
+ 20:51:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a9a04d90e8203a3kunma5e74fcc5b4dec
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGRgYHlYdTE1IHksdQx9JThpWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
-	hVSktLVUpCS0tZBg++
-DKIM-Signature: a=rsa-sha256;
-	b=X2pmb1QpNxlvWKWjdjTvdUvbKUTWx6+xGX81pMEiXheY7M2EP86k2C0h0izj7h065XlBxPAhvz+p3bjIEi2buGUz0K+SXX2JlEr+ChfWcZBzQfKtaB6c+oMN46+p90UZC7FtFsV/KSUVQnmDhHLS2y5eGwW9iGzpHtdwawDhqrc=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=r1YOSC5lMmLh33iBzf/L49mNil1UpGuYXwcko9LYDmI=;
-	h=date:mime-version:subject:message-id:from;
+References: <20251020171059.2786070-1-wens@kernel.org> <20251020171059.2786070-5-wens@kernel.org>
+ <13867454.uLZWGnKmhe@jernej-laptop>
+In-Reply-To: <13867454.uLZWGnKmhe@jernej-laptop>
+Reply-To: wens@kernel.org
+From: Chen-Yu Tsai <wens@kernel.org>
+Date: Tue, 21 Oct 2025 11:50:48 +0800
+X-Gmail-Original-Message-ID: <CAGb2v65+U2L8=HM6DimzVw=saK6rbR4Bzg7Nwz0Jyq6UXJkf=g@mail.gmail.com>
+X-Gm-Features: AS18NWBDmVKtQm8S428O1qs2kjY6UgewUb3LycjUD4uEQoxwe6OCMS4j1ARdxWY
+Message-ID: <CAGb2v65+U2L8=HM6DimzVw=saK6rbR4Bzg7Nwz0Jyq6UXJkf=g@mail.gmail.com>
+Subject: Re: [PATCH 04/11] ASoC: sun4i-spdif: Support SPDIF output on A523 family
+To: =?UTF-8?Q?Jernej_=C5=A0krabec?= <jernej.skrabec@gmail.com>
+Cc: Jernej Skrabec <jernej@kernel.org>, Samuel Holland <samuel@sholland.org>, 
+	Mark Brown <broonie@kernel.org>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>, 
+	linux-sunxi@lists.linux.dev, linux-sound@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	devicetree@vger.kernel.org, dmaengine@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Finley Xiao <finley.xiao@rock-chips.com>
+On Tue, Oct 21, 2025 at 1:49=E2=80=AFAM Jernej =C5=A0krabec <jernej.skrabec=
+@gmail.com> wrote:
+>
+> Hi,
+>
+> Dne ponedeljek, 20. oktober 2025 ob 19:10:50 Srednjeevropski poletni =C4=
+=8Das je Chen-Yu Tsai napisal(a):
+> > The TX side of the SPDIF block on the A523 is almost the same the
+> > previous generations, the only difference being that it has separate
+> > module clock inputs for the TX and RX side.
+> >
+> > Since this driver currently only supports TX, add support for a
+> > different clock name so that TX and RX clocks can be separated
+> > if RX support is ever added. Then add support for the A523.
+> >
+> > Signed-off-by: Chen-Yu Tsai <wens@kernel.org>
+> > ---
+> >  sound/soc/sunxi/sun4i-spdif.c | 28 +++++++++++++++++++++++++---
+> >  1 file changed, 25 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/sound/soc/sunxi/sun4i-spdif.c b/sound/soc/sunxi/sun4i-spdi=
+f.c
+> > index 34e5bd94e9af..6a58dc4311de 100644
+> > --- a/sound/soc/sunxi/sun4i-spdif.c
+> > +++ b/sound/soc/sunxi/sun4i-spdif.c
+> > @@ -177,6 +177,7 @@ struct sun4i_spdif_quirks {
+> >       bool has_reset;
+> >       unsigned int val_fctl_ftx;
+> >       unsigned int mclk_multiplier;
+> > +     const char *tx_clk_name;
+> >  };
+> >
+> >  struct sun4i_spdif_dev {
+> > @@ -323,6 +324,7 @@ static int sun4i_spdif_hw_params(struct snd_pcm_sub=
+stream *substream,
+> >       }
+> >       mclk *=3D host->quirks->mclk_multiplier;
+> >
+> > +     dev_info(&pdev->dev, "Setting SPDIF clock rate to %u\n", mclk);
+> >       ret =3D clk_set_rate(host->spdif_clk, mclk);
+> >       if (ret < 0) {
+> >               dev_err(&pdev->dev,
+> > @@ -542,7 +544,6 @@ static struct snd_soc_dai_driver sun4i_spdif_dai =
+=3D {
+> >               .formats =3D SUN4I_FORMATS,
+> >       },
+> >       .ops =3D &sun4i_spdif_dai_ops,
+> > -     .name =3D "spdif",
+>
+> Why this change?
 
-Add device tree bindings for clock and reset unit on RK3506 SoC.
-Add clock and reset IDs for RK3506 SoC.
+Now that you mention it, this looks bogus to me as well. I'll drop it.
 
-Signed-off-by: Finley Xiao <finley.xiao@rock-chips.com>
----
- .../bindings/clock/rockchip,rk3506-cru.yaml   |  45 +++
- .../dt-bindings/clock/rockchip,rk3506-cru.h   | 285 ++++++++++++++++++
- .../dt-bindings/reset/rockchip,rk3506-cru.h   | 211 +++++++++++++
- 3 files changed, 541 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3506-cru.yaml
- create mode 100644 include/dt-bindings/clock/rockchip,rk3506-cru.h
- create mode 100644 include/dt-bindings/reset/rockchip,rk3506-cru.h
+> >  };
+> >
+> >  static const struct sun4i_spdif_quirks sun4i_a10_spdif_quirks =3D {
+> > @@ -572,6 +573,14 @@ static const struct sun4i_spdif_quirks sun50i_h6_s=
+pdif_quirks =3D {
+> >       .mclk_multiplier =3D 1,
+> >  };
+> >
+> > +static const struct sun4i_spdif_quirks sun55i_a523_spdif_quirks =3D {
+> > +     .reg_dac_txdata =3D SUN8I_SPDIF_TXFIFO,
+> > +     .val_fctl_ftx   =3D SUN50I_H6_SPDIF_FCTL_FTX,
+> > +     .has_reset      =3D true,
+> > +     .mclk_multiplier =3D 1,
+> > +     .tx_clk_name    =3D "tx",
+> > +};
+> > +
+> >  static const struct of_device_id sun4i_spdif_of_match[] =3D {
+> >       {
+> >               .compatible =3D "allwinner,sun4i-a10-spdif",
+> > @@ -594,6 +603,15 @@ static const struct of_device_id sun4i_spdif_of_ma=
+tch[] =3D {
+> >               /* Essentially the same as the H6, but without RX */
+> >               .data =3D &sun50i_h6_spdif_quirks,
+> >       },
+> > +     {
+> > +             .compatible =3D "allwinner,sun55i-a523-spdif",
+> > +             /*
+> > +              * Almost the same as H6, but has split the TX and RX clo=
+cks,
+> > +              * has a separate reset bit for the RX side, and has some
+> > +              * expanded features for the RX side.
+> > +              */
+> > +             .data =3D &sun55i_a523_spdif_quirks,
+> > +     },
+> >       { /* sentinel */ }
+> >  };
+> >  MODULE_DEVICE_TABLE(of, sun4i_spdif_of_match);
+> > @@ -635,6 +653,7 @@ static int sun4i_spdif_probe(struct platform_device=
+ *pdev)
+> >       const struct sun4i_spdif_quirks *quirks;
+> >       int ret;
+> >       void __iomem *base;
+> > +     const char *tx_clk_name =3D "spdif";
+>
+> Reverse tree?
 
-diff --git a/Documentation/devicetree/bindings/clock/rockchip,rk3506-cru.yaml b/Documentation/devicetree/bindings/clock/rockchip,rk3506-cru.yaml
-new file mode 100644
-index 000000000000..43e192d9b2af
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/rockchip,rk3506-cru.yaml
-@@ -0,0 +1,45 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/rockchip,rk3506-cru.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Rockchip RK3506 Clock and Reset Unit (CRU)
-+
-+maintainers:
-+  - Finley Xiao <finley.xiao@rock-chips.com>
-+  - Heiko Stuebner <heiko@sntech.de>
-+
-+description: |
-+  The RK3506 CRU generates the clock and also implements reset for SoC
-+  peripherals.
-+
-+properties:
-+  compatible:
-+    const: rockchip,rk3506-cru
-+
-+  reg:
-+    maxItems: 1
-+
-+  "#clock-cells":
-+    const: 1
-+
-+  "#reset-cells":
-+    const: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - "#clock-cells"
-+  - "#reset-cells"
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    clock-controller@ff9a0000 {
-+      compatible = "rockchip,rk3506-cru";
-+      reg = <0xff9a0000 0x20000>;
-+      #clock-cells = <1>;
-+      #reset-cells = <1>;
-+    };
-diff --git a/include/dt-bindings/clock/rockchip,rk3506-cru.h b/include/dt-bindings/clock/rockchip,rk3506-cru.h
-new file mode 100644
-index 000000000000..f629b6fa75c3
---- /dev/null
-+++ b/include/dt-bindings/clock/rockchip,rk3506-cru.h
-@@ -0,0 +1,285 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-+/*
-+ * Copyright (c) 2023-2025 Rockchip Electronics Co., Ltd.
-+ * Author: Finley Xiao <finley.xiao@rock-chips.com>
-+ */
-+
-+#ifndef _DT_BINDINGS_CLK_ROCKCHIP_RK3506_H
-+#define _DT_BINDINGS_CLK_ROCKCHIP_RK3506_H
-+
-+/* cru plls */
-+#define PLL_GPLL			1
-+#define PLL_V0PLL			2
-+#define PLL_V1PLL			3
-+
-+/* cru-clocks indices */
-+#define ARMCLK				15
-+#define CLK_DDR				16
-+#define XIN24M_GATE			17
-+#define CLK_GPLL_GATE			18
-+#define CLK_V0PLL_GATE			19
-+#define CLK_V1PLL_GATE			20
-+#define CLK_GPLL_DIV			21
-+#define CLK_GPLL_DIV_100M		22
-+#define CLK_V0PLL_DIV			23
-+#define CLK_V1PLL_DIV			24
-+#define CLK_INT_VOICE_MATRIX0		25
-+#define CLK_INT_VOICE_MATRIX1		26
-+#define CLK_INT_VOICE_MATRIX2		27
-+#define CLK_FRAC_UART_MATRIX0_MUX	28
-+#define CLK_FRAC_UART_MATRIX1_MUX	29
-+#define CLK_FRAC_VOICE_MATRIX0_MUX	30
-+#define CLK_FRAC_VOICE_MATRIX1_MUX	31
-+#define CLK_FRAC_COMMON_MATRIX0_MUX	32
-+#define CLK_FRAC_COMMON_MATRIX1_MUX	33
-+#define CLK_FRAC_COMMON_MATRIX2_MUX	34
-+#define CLK_FRAC_UART_MATRIX0		35
-+#define CLK_FRAC_UART_MATRIX1		36
-+#define CLK_FRAC_VOICE_MATRIX0		37
-+#define CLK_FRAC_VOICE_MATRIX1		38
-+#define CLK_FRAC_COMMON_MATRIX0		39
-+#define CLK_FRAC_COMMON_MATRIX1		40
-+#define CLK_FRAC_COMMON_MATRIX2		41
-+#define CLK_REF_USBPHY_TOP		42
-+#define CLK_REF_DPHY_TOP		43
-+#define ACLK_CORE_ROOT			44
-+#define PCLK_CORE_ROOT			45
-+#define PCLK_DBG			48
-+#define PCLK_CORE_GRF			49
-+#define PCLK_CORE_CRU			50
-+#define CLK_CORE_EMA_DETECT		51
-+#define CLK_REF_PVTPLL_CORE		52
-+#define PCLK_GPIO1			53
-+#define DBCLK_GPIO1			54
-+#define ACLK_CORE_PERI_ROOT		55
-+#define HCLK_CORE_PERI_ROOT		56
-+#define PCLK_CORE_PERI_ROOT		57
-+#define CLK_DSMC			58
-+#define ACLK_DSMC			59
-+#define PCLK_DSMC			60
-+#define CLK_FLEXBUS_TX			61
-+#define CLK_FLEXBUS_RX			62
-+#define ACLK_FLEXBUS			63
-+#define HCLK_FLEXBUS			64
-+#define ACLK_DSMC_SLV			65
-+#define HCLK_DSMC_SLV			66
-+#define ACLK_BUS_ROOT			67
-+#define HCLK_BUS_ROOT			68
-+#define PCLK_BUS_ROOT			69
-+#define ACLK_SYSRAM			70
-+#define HCLK_SYSRAM			71
-+#define ACLK_DMAC0			72
-+#define ACLK_DMAC1			73
-+#define HCLK_M0				74
-+#define PCLK_BUS_GRF			75
-+#define PCLK_TIMER			76
-+#define CLK_TIMER0_CH0			77
-+#define CLK_TIMER0_CH1			78
-+#define CLK_TIMER0_CH2			79
-+#define CLK_TIMER0_CH3			80
-+#define CLK_TIMER0_CH4			81
-+#define CLK_TIMER0_CH5			82
-+#define PCLK_WDT0			83
-+#define TCLK_WDT0			84
-+#define PCLK_WDT1			85
-+#define TCLK_WDT1			86
-+#define PCLK_MAILBOX			87
-+#define PCLK_INTMUX			88
-+#define PCLK_SPINLOCK			89
-+#define PCLK_DDRC			90
-+#define HCLK_DDRPHY			91
-+#define PCLK_DDRMON			92
-+#define CLK_DDRMON_OSC			93
-+#define PCLK_STDBY			94
-+#define HCLK_USBOTG0			95
-+#define HCLK_USBOTG0_PMU		96
-+#define CLK_USBOTG0_ADP			97
-+#define HCLK_USBOTG1			98
-+#define HCLK_USBOTG1_PMU		99
-+#define CLK_USBOTG1_ADP			100
-+#define PCLK_USBPHY			101
-+#define ACLK_DMA2DDR			102
-+#define PCLK_DMA2DDR			103
-+#define STCLK_M0			104
-+#define CLK_DDRPHY			105
-+#define CLK_DDRC_SRC			106
-+#define ACLK_DDRC_0			107
-+#define ACLK_DDRC_1			108
-+#define CLK_DDRC			109
-+#define CLK_DDRMON			110
-+#define HCLK_LSPERI_ROOT		111
-+#define PCLK_LSPERI_ROOT		112
-+#define PCLK_UART0			113
-+#define PCLK_UART1			114
-+#define PCLK_UART2			115
-+#define PCLK_UART3			116
-+#define PCLK_UART4			117
-+#define SCLK_UART0			118
-+#define SCLK_UART1			119
-+#define SCLK_UART2			120
-+#define SCLK_UART3			121
-+#define SCLK_UART4			122
-+#define PCLK_I2C0			123
-+#define CLK_I2C0			124
-+#define PCLK_I2C1			125
-+#define CLK_I2C1			126
-+#define PCLK_I2C2			127
-+#define CLK_I2C2			128
-+#define PCLK_PWM1			129
-+#define CLK_PWM1			130
-+#define CLK_OSC_PWM1			131
-+#define CLK_RC_PWM1			132
-+#define CLK_FREQ_PWM1			133
-+#define CLK_COUNTER_PWM1		134
-+#define PCLK_SPI0			135
-+#define CLK_SPI0			136
-+#define PCLK_SPI1			137
-+#define CLK_SPI1			138
-+#define PCLK_GPIO2			139
-+#define DBCLK_GPIO2			140
-+#define PCLK_GPIO3			141
-+#define DBCLK_GPIO3			142
-+#define PCLK_GPIO4			143
-+#define DBCLK_GPIO4			144
-+#define HCLK_CAN0			145
-+#define CLK_CAN0			146
-+#define HCLK_CAN1			147
-+#define CLK_CAN1			148
-+#define HCLK_PDM			149
-+#define MCLK_PDM			150
-+#define CLKOUT_PDM			151
-+#define MCLK_SPDIFTX			152
-+#define HCLK_SPDIFTX			153
-+#define HCLK_SPDIFRX			154
-+#define MCLK_SPDIFRX			155
-+#define MCLK_SAI0			156
-+#define HCLK_SAI0			157
-+#define MCLK_OUT_SAI0			158
-+#define MCLK_SAI1			159
-+#define HCLK_SAI1			160
-+#define MCLK_OUT_SAI1			161
-+#define HCLK_ASRC0			162
-+#define CLK_ASRC0			163
-+#define HCLK_ASRC1			164
-+#define CLK_ASRC1			165
-+#define PCLK_CRU			166
-+#define PCLK_PMU_ROOT			167
-+#define MCLK_ASRC0			168
-+#define MCLK_ASRC1			169
-+#define MCLK_ASRC2			170
-+#define MCLK_ASRC3			171
-+#define LRCK_ASRC0_SRC			172
-+#define LRCK_ASRC0_DST			173
-+#define LRCK_ASRC1_SRC			174
-+#define LRCK_ASRC1_DST			175
-+#define ACLK_HSPERI_ROOT		176
-+#define HCLK_HSPERI_ROOT		177
-+#define PCLK_HSPERI_ROOT		178
-+#define CCLK_SRC_SDMMC			179
-+#define HCLK_SDMMC			180
-+#define HCLK_FSPI			181
-+#define SCLK_FSPI			182
-+#define PCLK_SPI2			183
-+#define ACLK_MAC0			184
-+#define ACLK_MAC1			185
-+#define PCLK_MAC0			186
-+#define PCLK_MAC1			187
-+#define CLK_MAC_ROOT			188
-+#define CLK_MAC0			189
-+#define CLK_MAC1			190
-+#define MCLK_SAI2			191
-+#define HCLK_SAI2			192
-+#define MCLK_OUT_SAI2			193
-+#define MCLK_SAI3_SRC			194
-+#define HCLK_SAI3			195
-+#define MCLK_SAI3			196
-+#define MCLK_OUT_SAI3			197
-+#define MCLK_SAI4_SRC			198
-+#define HCLK_SAI4			199
-+#define MCLK_SAI4			200
-+#define HCLK_DSM			201
-+#define MCLK_DSM			202
-+#define PCLK_AUDIO_ADC			203
-+#define MCLK_AUDIO_ADC			204
-+#define MCLK_AUDIO_ADC_DIV4		205
-+#define PCLK_SARADC			206
-+#define CLK_SARADC			207
-+#define PCLK_OTPC_NS			208
-+#define CLK_SBPI_OTPC_NS		209
-+#define CLK_USER_OTPC_NS		210
-+#define PCLK_UART5			211
-+#define SCLK_UART5			212
-+#define PCLK_GPIO234_IOC		213
-+#define CLK_MAC_PTP_ROOT		214
-+#define CLK_MAC0_PTP			215
-+#define CLK_MAC1_PTP			216
-+#define CLK_SPI2			217
-+#define ACLK_VIO_ROOT			218
-+#define HCLK_VIO_ROOT			219
-+#define PCLK_VIO_ROOT			220
-+#define HCLK_RGA			221
-+#define ACLK_RGA			222
-+#define CLK_CORE_RGA			223
-+#define ACLK_VOP			224
-+#define HCLK_VOP			225
-+#define DCLK_VOP			226
-+#define PCLK_DPHY			227
-+#define PCLK_DSI_HOST			228
-+#define PCLK_TSADC			229
-+#define CLK_TSADC			230
-+#define CLK_TSADC_TSEN			231
-+#define PCLK_GPIO1_IOC			232
-+#define PCLK_OTPC_S			233
-+#define CLK_SBPI_OTPC_S			234
-+#define CLK_USER_OTPC_S			235
-+#define PCLK_OTP_MASK			236
-+#define PCLK_KEYREADER			237
-+#define HCLK_BOOTROM			238
-+#define PCLK_DDR_SERVICE		239
-+#define HCLK_CRYPTO_S			240
-+#define HCLK_KEYLAD			241
-+#define CLK_CORE_CRYPTO			242
-+#define CLK_PKA_CRYPTO			243
-+#define CLK_CORE_CRYPTO_S		244
-+#define CLK_PKA_CRYPTO_S		245
-+#define ACLK_CRYPTO_S			246
-+#define HCLK_RNG_S			247
-+#define CLK_CORE_CRYPTO_NS		248
-+#define CLK_PKA_CRYPTO_NS		249
-+#define ACLK_CRYPTO_NS			250
-+#define HCLK_CRYPTO_NS			251
-+#define HCLK_RNG			252
-+#define CLK_PMU				253
-+#define PCLK_PMU			254
-+#define CLK_PMU_32K			255
-+#define PCLK_PMU_CRU			256
-+#define PCLK_PMU_GRF			257
-+#define PCLK_GPIO0_IOC			258
-+#define PCLK_GPIO0			259
-+#define DBCLK_GPIO0			260
-+#define PCLK_GPIO1_SHADOW		261
-+#define DBCLK_GPIO1_SHADOW		262
-+#define PCLK_PMU_HP_TIMER		263
-+#define CLK_PMU_HP_TIMER		264
-+#define CLK_PMU_HP_TIMER_32K		265
-+#define PCLK_PWM0			266
-+#define CLK_PWM0			267
-+#define CLK_OSC_PWM0			268
-+#define CLK_RC_PWM0			269
-+#define CLK_MAC_OUT			270
-+#define CLK_REF_OUT0			271
-+#define CLK_REF_OUT1			272
-+#define CLK_32K_FRAC			273
-+#define CLK_32K_RC			274
-+#define CLK_32K				275
-+#define CLK_32K_PMU			276
-+#define PCLK_TOUCH_KEY			277
-+#define CLK_TOUCH_KEY			278
-+#define CLK_REF_PHY_PLL			279
-+#define CLK_REF_PHY_PMU_MUX		280
-+#define CLK_WIFI_OUT			281
-+#define CLK_V0PLL_REF			282
-+#define CLK_V1PLL_REF			283
-+#define CLK_32K_FRAC_MUX		284
-+
-+#endif
-diff --git a/include/dt-bindings/reset/rockchip,rk3506-cru.h b/include/dt-bindings/reset/rockchip,rk3506-cru.h
-new file mode 100644
-index 000000000000..f38cc066009b
---- /dev/null
-+++ b/include/dt-bindings/reset/rockchip,rk3506-cru.h
-@@ -0,0 +1,211 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-+/*
-+ * Copyright (c) 2023-2025 Rockchip Electronics Co., Ltd.
-+ * Author: Finley Xiao <finley.xiao@rock-chips.com>
-+ */
-+
-+#ifndef _DT_BINDINGS_REST_ROCKCHIP_RK3506_H
-+#define _DT_BINDINGS_REST_ROCKCHIP_RK3506_H
-+
-+/* CRU-->SOFTRST_CON00 */
-+#define SRST_NCOREPORESET0_AC		0
-+#define SRST_NCOREPORESET1_AC		1
-+#define SRST_NCOREPORESET2_AC		2
-+#define SRST_NCORESET0_AC		3
-+#define SRST_NCORESET1_AC		4
-+#define SRST_NCORESET2_AC		5
-+#define SRST_NL2RESET_AC		6
-+#define SRST_ARESETN_CORE_BIU_AC	7
-+#define SRST_HRESETN_M0_AC		8
-+
-+/* CRU-->SOFTRST_CON02 */
-+#define SRST_NDBGRESET			9
-+#define SRST_PRESETN_CORE_BIU		10
-+#define SRST_RESETN_PMU			11
-+
-+/* CRU-->SOFTRST_CON03 */
-+#define SRST_PRESETN_DBG		12
-+#define SRST_POTRESETN_DBG		13
-+#define SRST_PRESETN_CORE_GRF		14
-+#define SRST_RESETN_CORE_EMA_DETECT	15
-+#define SRST_RESETN_REF_PVTPLL_CORE	16
-+#define SRST_PRESETN_GPIO1		17
-+#define SRST_DBRESETN_GPIO1		18
-+
-+/* CRU-->SOFTRST_CON04 */
-+#define SRST_ARESETN_CORE_PERI_BIU	19
-+#define SRST_ARESETN_DSMC		20
-+#define SRST_PRESETN_DSMC		21
-+#define SRST_RESETN_FLEXBUS		22
-+#define SRST_ARESETN_FLEXBUS		23
-+#define SRST_HRESETN_FLEXBUS		24
-+#define SRST_ARESETN_DSMC_SLV		25
-+#define SRST_HRESETN_DSMC_SLV		26
-+#define SRST_RESETN_DSMC_SLV		27
-+
-+/* CRU-->SOFTRST_CON05 */
-+#define SRST_ARESETN_BUS_BIU		28
-+#define SRST_HRESETN_BUS_BIU		29
-+#define SRST_PRESETN_BUS_BIU		30
-+#define SRST_ARESETN_SYSRAM		31
-+#define SRST_HRESETN_SYSRAM		32
-+#define SRST_ARESETN_DMAC0		33
-+#define SRST_ARESETN_DMAC1		34
-+#define SRST_HRESETN_M0			35
-+#define SRST_RESETN_M0_JTAG		36
-+#define SRST_HRESETN_CRYPTO		37
-+
-+/* CRU-->SOFTRST_CON06 */
-+#define SRST_HRESETN_RNG		38
-+#define SRST_PRESETN_BUS_GRF		39
-+#define SRST_PRESETN_TIMER0		40
-+#define SRST_RESETN_TIMER0_CH0		41
-+#define SRST_RESETN_TIMER0_CH1		42
-+#define SRST_RESETN_TIMER0_CH2		43
-+#define SRST_RESETN_TIMER0_CH3		44
-+#define SRST_RESETN_TIMER0_CH4		45
-+#define SRST_RESETN_TIMER0_CH5		46
-+#define SRST_PRESETN_WDT0		47
-+#define SRST_TRESETN_WDT0		48
-+#define SRST_PRESETN_WDT1		49
-+#define SRST_TRESETN_WDT1		50
-+#define SRST_PRESETN_MAILBOX		51
-+#define SRST_PRESETN_INTMUX		52
-+#define SRST_PRESETN_SPINLOCK		53
-+
-+/* CRU-->SOFTRST_CON07 */
-+#define SRST_PRESETN_DDRC		54
-+#define SRST_HRESETN_DDRPHY		55
-+#define SRST_PRESETN_DDRMON		56
-+#define SRST_RESETN_DDRMON_OSC		57
-+#define SRST_PRESETN_DDR_LPC		58
-+#define SRST_HRESETN_USBOTG0		59
-+#define SRST_RESETN_USBOTG0_ADP		60
-+#define SRST_HRESETN_USBOTG1		61
-+#define SRST_RESETN_USBOTG1_ADP		62
-+#define SRST_PRESETN_USBPHY		63
-+#define SRST_RESETN_USBPHY_POR		64
-+#define SRST_RESETN_USBPHY_OTG0		65
-+#define SRST_RESETN_USBPHY_OTG1		66
-+
-+/* CRU-->SOFTRST_CON08 */
-+#define SRST_ARESETN_DMA2DDR		67
-+#define SRST_PRESETN_DMA2DDR		68
-+
-+/* CRU-->SOFTRST_CON09 */
-+#define SRST_RESETN_USBOTG0_UTMI	69
-+#define SRST_RESETN_USBOTG1_UTMI	70
-+
-+/* CRU-->SOFTRST_CON10 */
-+#define SRST_ARESETN_DDRC_0		71
-+#define SRST_ARESETN_DDRC_1		72
-+#define SRST_ARESETN_DDR_BIU		73
-+#define SRST_RESETN_DDRC		74
-+#define SRST_RESETN_DDRMON		75
-+
-+/* CRU-->SOFTRST_CON11 */
-+#define SRST_HRESETN_LSPERI_BIU		76
-+#define SRST_PRESETN_UART0		77
-+#define SRST_PRESETN_UART1		78
-+#define SRST_PRESETN_UART2		79
-+#define SRST_PRESETN_UART3		80
-+#define SRST_PRESETN_UART4		81
-+#define SRST_RESETN_UART0		82
-+#define SRST_RESETN_UART1		83
-+#define SRST_RESETN_UART2		84
-+#define SRST_RESETN_UART3		85
-+#define SRST_RESETN_UART4		86
-+#define SRST_PRESETN_I2C0		87
-+#define SRST_RESETN_I2C0		88
-+
-+/* CRU-->SOFTRST_CON12 */
-+#define SRST_PRESETN_I2C1		89
-+#define SRST_RESETN_I2C1		90
-+#define SRST_PRESETN_I2C2		91
-+#define SRST_RESETN_I2C2		92
-+#define SRST_PRESETN_PWM1		93
-+#define SRST_RESETN_PWM1		94
-+#define SRST_PRESETN_SPI0		95
-+#define SRST_RESETN_SPI0		96
-+#define SRST_PRESETN_SPI1		97
-+#define SRST_RESETN_SPI1		98
-+#define SRST_PRESETN_GPIO2		99
-+#define SRST_DBRESETN_GPIO2		100
-+
-+/* CRU-->SOFTRST_CON13 */
-+#define SRST_PRESETN_GPIO3		101
-+#define SRST_DBRESETN_GPIO3		102
-+#define SRST_PRESETN_GPIO4		103
-+#define SRST_DBRESETN_GPIO4		104
-+#define SRST_HRESETN_CAN0		105
-+#define SRST_RESETN_CAN0		106
-+#define SRST_HRESETN_CAN1		107
-+#define SRST_RESETN_CAN1		108
-+#define SRST_HRESETN_PDM		109
-+#define SRST_MRESETN_PDM		110
-+#define SRST_RESETN_PDM			111
-+#define SRST_RESETN_SPDIFTX		112
-+#define SRST_HRESETN_SPDIFTX		113
-+#define SRST_HRESETN_SPDIFRX		114
-+#define SRST_RESETN_SPDIFRX		115
-+#define SRST_MRESETN_SAI0		116
-+
-+/* CRU-->SOFTRST_CON14 */
-+#define SRST_HRESETN_SAI0		117
-+#define SRST_MRESETN_SAI1		118
-+#define SRST_HRESETN_SAI1		119
-+#define SRST_HRESETN_ASRC0		120
-+#define SRST_RESETN_ASRC0		121
-+#define SRST_HRESETN_ASRC1		122
-+#define SRST_RESETN_ASRC1		123
-+
-+/* CRU-->SOFTRST_CON17 */
-+#define SRST_HRESETN_HSPERI_BIU		124
-+#define SRST_HRESETN_SDMMC		125
-+#define SRST_HRESETN_FSPI		126
-+#define SRST_SRESETN_FSPI		127
-+#define SRST_PRESETN_SPI2		128
-+#define SRST_ARESETN_MAC0		129
-+#define SRST_ARESETN_MAC1		130
-+
-+/* CRU-->SOFTRST_CON18 */
-+#define SRST_MRESETN_SAI2		131
-+#define SRST_HRESETN_SAI2		132
-+#define SRST_HRESETN_SAI3		133
-+#define SRST_MRESETN_SAI3		134
-+#define SRST_HRESETN_SAI4		135
-+#define SRST_MRESETN_SAI4		136
-+#define SRST_HRESETN_DSM		137
-+#define SRST_MRESETN_DSM		138
-+#define SRST_PRESETN_AUDIO_ADC		139
-+#define SRST_MRESETN_AUDIO_ADC		140
-+
-+/* CRU-->SOFTRST_CON19 */
-+#define SRST_PRESETN_SARADC		141
-+#define SRST_RESETN_SARADC		142
-+#define SRST_RESETN_SARADC_PHY		143
-+#define SRST_PRESETN_OTPC_NS		144
-+#define SRST_RESETN_SBPI_OTPC_NS	145
-+#define SRST_RESETN_USER_OTPC_NS	146
-+#define SRST_PRESETN_UART5		147
-+#define SRST_RESETN_UART5		148
-+#define SRST_PRESETN_GPIO234_IOC	149
-+
-+/* CRU-->SOFTRST_CON21 */
-+#define SRST_ARESETN_VIO_BIU		150
-+#define SRST_HRESETN_VIO_BIU		151
-+#define SRST_HRESETN_RGA		152
-+#define SRST_ARESETN_RGA		153
-+#define SRST_RESETN_CORE_RGA		154
-+#define SRST_ARESETN_VOP		155
-+#define SRST_HRESETN_VOP		156
-+#define SRST_RESETN_VOP			157
-+#define SRST_PRESETN_DPHY		158
-+#define SRST_PRESETN_DSI_HOST		159
-+#define SRST_PRESETN_TSADC		160
-+#define SRST_RESETN_TSADC		161
-+
-+/* CRU-->SOFTRST_CON22 */
-+#define SRST_PRESETN_GPIO1_IOC		162
-+
-+#endif
--- 
-2.34.1
+I think that only applies to the network tree.
 
+> Otherwise it looks good.
+
+Thanks!
+
+ChenYu
+
+> Best regards,
+> Jernej
+>
+> >
+> >       dev_dbg(&pdev->dev, "Entered %s\n", __func__);
+> >
+> > @@ -671,9 +690,12 @@ static int sun4i_spdif_probe(struct platform_devic=
+e *pdev)
+> >               return PTR_ERR(host->apb_clk);
+> >       }
+> >
+> > -     host->spdif_clk =3D devm_clk_get(&pdev->dev, "spdif");
+> > +     if (quirks->tx_clk_name)
+> > +             tx_clk_name =3D quirks->tx_clk_name;
+> > +     host->spdif_clk =3D devm_clk_get(&pdev->dev, tx_clk_name);
+> >       if (IS_ERR(host->spdif_clk)) {
+> > -             dev_err(&pdev->dev, "failed to get a spdif clock.\n");
+> > +             dev_err(&pdev->dev, "failed to get the \"%s\" clock.\n",
+> > +                     tx_clk_name);
+> >               return PTR_ERR(host->spdif_clk);
+> >       }
+> >
+> >
+>
+>
+>
+>
