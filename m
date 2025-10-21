@@ -1,85 +1,86 @@
-Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com [209.85.221.177])
+Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com [209.85.222.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78C9D338915
-	for <linux-clk@vger.kernel.org>; Tue, 21 Oct 2025 13:35:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D147F22B8CB
+	for <linux-clk@vger.kernel.org>; Tue, 21 Oct 2025 13:36:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761053728; cv=none; b=BkAW2NO4gP/lCdo5Mo99DNiaY9N9Vfks5tBY/eC1MmcjflhbnrJ2/JF5Ti78gxeCswRAVLQd6XD7ILd/UwgrKWaoZ8vhaE6K7S9jxiBJqyHTMvvWrzFax4vVKscI/IaLj4RkubKAfobq9IuCNqKeQmJwGueD1fxs3Vw3qKZvXBo=
+	t=1761053819; cv=none; b=P7DRewVxfvzrND5jiv58Almhl9h++ApvuCIICLT/HxVqPL1gFHdM7Og1HeS1x910uJeRKacREwxEk1r3GrUCa4yygsxqdPLUg3OVJekEnfLGxsaYKkuOjPTQFz35Hjs6x5aebXb0NfNoCL8n4IofZiQhdk5MVz9bKLt4sEK1aDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761053728; c=relaxed/simple;
-	bh=gnF9AkJgPkgv+c5e70+0S/TuXUz2qGPWDAKnDZ2oFUs=;
+	s=arc-20240116; t=1761053819; c=relaxed/simple;
+	bh=rFDpMMd/J7LmBoOgvX90w3JvXvtchMw0C13OGNdvG04=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ATYDpU2I11Wbpv0AqmRKnYh9FPjFdKW5Y1Tw78+4w/PuFvcMrn68GPYBrScMY+4h0eBNLDz04URB5iStMKp1gJQRHoqKQAHJcEYrz4n/1p6gPwx6pBQd2Br6ulUJVQhE3RQ/qdwAG8FJaBIs++KyNq20AON4kwZPeULBThRUL6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.177
+	 To:Cc:Content-Type; b=s0PmTCmMvP3HpBcv6hEVmi5o1KHjg/CkERx7YrguUOc0Az07MFXHcixWsNN2ZSCmzNp0E/5QYz8p4R3Qqj08w7NNA3CJOb0Moy67HgTU2YTsO28p4tLSuw5FV7qm6slz2U2xAdbRjZr3neWoYko88uoQ9UpE2AgKpV88zJbSSCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f177.google.com with SMTP id 71dfb90a1353d-54bc04b9d07so2194164e0c.1
-        for <linux-clk@vger.kernel.org>; Tue, 21 Oct 2025 06:35:26 -0700 (PDT)
+Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-932bf9d3deeso2975646241.2
+        for <linux-clk@vger.kernel.org>; Tue, 21 Oct 2025 06:36:57 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761053725; x=1761658525;
+        d=1e100.net; s=20230601; t=1761053816; x=1761658616;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=2TkKqx+vxrv5wCaSsuSiP+PuBVA5+FMh9B80POq+sr0=;
-        b=FwLTiVlRjt3yAU++0qLIii6VRd3GdVzbZPAy12bvyEdytrJpv3mFTbzvIoSDq0Dwo7
-         ri+TQ90r6U/yTGoNYVvhcq0gbgLHxTITUzbQ+izs5KJaDTZJwi7asWqAEraODNdoO3si
-         YtGRdOcwy+/Mq6hjHE7RIx9LOM2TqsOotmowJwMrcVNyOs4mRV6MxdTYzkzb/huDH15b
-         uOC7ncaCOGKKzo5UyyPkpGbV2DInlIdzVY9shYxHqRB84UlcChXJ2CQGtC2vCR3d3tPL
-         eTQ8mKmM3iongLvtlZ+m6ncVDgw+1zo6h8CrFhgwJ1IY6kk+JG5eUGd9YTeVsGbbgZAc
-         AsEg==
-X-Forwarded-Encrypted: i=1; AJvYcCWuG0hlS8t+IsXjE61GuV9XBIusDcqbAwtLS6nnkXxrGJaEs4dHFI3Xv7MbcBYbLZrLt6TeQnNmomY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YylobCKN2Pxs40+KZ7eFWtNAoFzhDoAeDcfqbfxg872DncjNbWc
-	SzzF1RpzSAmsMpcnL9Tvgc6GCqD4PfJuDp7oGhXKL4Z4ef8nEtNZy0/K1is78fM6
-X-Gm-Gg: ASbGncuterf54ZF8HoWq2FEKDR95a1iHyX1zxy8g2GDIKqdWwB1ffeD/SoWlAkOro/B
-	tCf4QaOFt3uTeAdRIcvulWhXmy9AxBDNtPWk/ooP+Q5UQco46N8UBIQoKTVE8yJ24TOTqcUMHE6
-	SJDvslxougtolvZju7ZxsXMSQ3EWMG1gWaaAvmJ5vqdHCeEvF/+D6q0ZM+KvlEKNFBbfD2lErgZ
-	hk+4UFYcDf34sqgRPMz7iFrjchp+KrFwwJnUlXVlyvmKSnN8ZRPE6ynFchzdfyjX3WZdMhAlaKp
-	3yIFwW2zEsgKcxoWTNzMvqw3BBJijz0IFVWI9hqFZGD3sWSg3J/K4+9Cy9st2vOs4I+yQDByqqQ
-	25Vga/j5ea8ZuVuLZNM+JXhvA4xK/4StbVli1ybHQG/APeXBREiP+MXyNMf6CRNguMlhMlDzJVw
-	Xh59xLURAQkEmdt92B6GbjwtBu5o+2LuVfzBhzuA==
-X-Google-Smtp-Source: AGHT+IE2DLawvnITyoxEOLGKoz84EF/2TroEUyd1o3fKOlZpFdmCu5W/VB9szvbMP7zTOCTtPi8tmA==
-X-Received: by 2002:a05:6122:1e04:b0:544:87b0:d1d1 with SMTP id 71dfb90a1353d-5564ee60603mr4305248e0c.6.1761053724970;
-        Tue, 21 Oct 2025 06:35:24 -0700 (PDT)
-Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com. [209.85.222.48])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-55661fc8608sm3374161e0c.11.2025.10.21.06.35.23
+        bh=b78/bqYwVh1ldrSw5qZkZyL5FOTBO1IYeO3ztxHSC8M=;
+        b=Tnp1dc/Nzzzlpj8YK6xaTGMqzfF2XqOc37rxw3hljz64uU8kUXDN4uUmle1Qfg7sUK
+         /Jd0YqIq4Mk45Dju1oMFdaFthV3uXjN4lAz9r2kZnCKPnQsNzRBzDk2IC554+vpsC4P+
+         JU0pKfvIFJtv2xHhRSJh13aKOR1JPo/puab5TjAisAP+/I7cCmHudddUS8n7/UhPTBK/
+         VGnCOgVBqJdg+IaacvM531I/oBWKFB/Qei/7oqhLMI5x2CSE8HOnQfi79hsHJRRnks5V
+         +wfGph6N+mDnliBybdeL7BPMwnlVPwWX/0ijAefzxqzD5YHDASm1ow617b33imdSOPTU
+         At1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVNDtOiP1qM4QgUKyoCiBMWrL+5m7vnNuandUNlEafhOqGTEAh9KQj+QO1NSFeGvB3TdwLCOgif/M8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxcp92Ax/kENWQWRvmgRfuGiZ0Vg8Bn2VS8THXJ/Pm+g6NPYM26
+	1rjB6YJjq0AKkL5EBbv/ZA8ut4tnx4JXoi/+8v/OQH7pn5PDXf5NzcMVZLxl5PCP
+X-Gm-Gg: ASbGncu0mf8iglU+TjapRz+GPA4cGjAWHOqunGKXmBlTbbVz3dxOgAqrqoXI0t7eV+A
+	4Ade4tOQiL2O6pv0auqBdFYMFDZt87UvpbjV/eLTjfVOnSUCCdecwXwxcwj+Ob1l2BVSqxXS+pG
+	F7DgRBJarE7fMnQyZrTMEbDjn+qfSeh0M9RHg0UVTT/nOXKGUJ9HJ9rfBppsnb7ixNAEnS1WyYv
+	EgdoMEHTo4RKnjuRQdpeRLjpotlO+Yb/MBdOzA4bYRHEPuGNbMJfZ8bssAxW9va0QxFfGk8MjGM
+	zfdZJcbIKCLivjUJwlaZWSB5l5eBsz/68XEm0W70tDboIPpb+wgeM4L7C21dDCOw7PcIw5x0D3j
+	s5HN7/soYeCPPfL6Ic29EX+gQPWFVpoyYS8v2f5L/W4BbYd34l/jzferhdzqzEtDvFFpLBxjBJ2
+	vp2WYoonp73aXs4Viyeu+EnnIDFGJPSE4pbgJDyQ==
+X-Google-Smtp-Source: AGHT+IEV6gMMBJm5adZYkFcwTB+8gUTyCh/EPkC9AAkPkwfZ2sRIeh6su94Hm9BLNCcun9Mrvx4wIg==
+X-Received: by 2002:a05:6102:dcc:b0:5d6:12fc:76e1 with SMTP id ada2fe7eead31-5d7dd46cfcdmr5894631137.17.1761053816456;
+        Tue, 21 Oct 2025 06:36:56 -0700 (PDT)
+Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com. [209.85.222.44])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-5d96c0bd369sm3536442137.1.2025.10.21.06.36.55
         for <linux-clk@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Oct 2025 06:35:24 -0700 (PDT)
-Received: by mail-ua1-f48.google.com with SMTP id a1e0cc1a2514c-932cf276843so647141241.1
-        for <linux-clk@vger.kernel.org>; Tue, 21 Oct 2025 06:35:23 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUoNMzU4qz4QfuZVAO4Hof4Zo3JgeJgwI5l+EK2IM4Sad0rO1+J9EQgAfb9f+v+WVcP3/mt3TcLgoQ=@vger.kernel.org
-X-Received: by 2002:a05:6102:390a:b0:5d5:f6ae:38de with SMTP id
- ada2fe7eead31-5d7dd6ba33emr4614068137.41.1761053723732; Tue, 21 Oct 2025
- 06:35:23 -0700 (PDT)
+        Tue, 21 Oct 2025 06:36:55 -0700 (PDT)
+Received: by mail-ua1-f44.google.com with SMTP id a1e0cc1a2514c-932f654eaaeso98273241.0
+        for <linux-clk@vger.kernel.org>; Tue, 21 Oct 2025 06:36:55 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVy+AMTmsTLIvxN0i1dMipro/vJJ7e96ygxI3d6KnmpoWSTGOPnHlwVOBBRhBdjJudTc8SDpz5IM9s=@vger.kernel.org
+X-Received: by 2002:a05:6102:441d:b0:519:534a:6c4f with SMTP id
+ ada2fe7eead31-5d7dd5ee60fmr6017748137.33.1761053815204; Tue, 21 Oct 2025
+ 06:36:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251021080705.18116-1-ovidiu.panait.rb@renesas.com> <20251021080705.18116-2-ovidiu.panait.rb@renesas.com>
-In-Reply-To: <20251021080705.18116-2-ovidiu.panait.rb@renesas.com>
+References: <20251020143107.13974-1-ovidiu.panait.rb@renesas.com> <20251020143107.13974-2-ovidiu.panait.rb@renesas.com>
+In-Reply-To: <20251020143107.13974-2-ovidiu.panait.rb@renesas.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 21 Oct 2025 15:35:10 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdU+=c-HseXicppm+185qq3fcc7=qq3Nu4LjoKZuYF0d-A@mail.gmail.com>
-X-Gm-Features: AS18NWDE7aRGEcmYizQFJmtQta7msQIG0JXTbcDHGFqFLxinOoGCd4ViST3rwwc
-Message-ID: <CAMuHMdU+=c-HseXicppm+185qq3fcc7=qq3Nu4LjoKZuYF0d-A@mail.gmail.com>
-Subject: Re: [PATCH v2 1/6] clk: renesas: r9a09g057: Add clock and reset
- entries for RTC
+Date: Tue, 21 Oct 2025 15:36:44 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWNq-DFG4_i9CN+Rb2RSgO1Sxph7HO7SNhnr0d1=LoW0g@mail.gmail.com>
+X-Gm-Features: AS18NWBYsMSpOo4y4kMiKki8g1BkhV5Ulk8TYURDjYYjSArsxY_VVDXQMAlwt_w
+Message-ID: <CAMuHMdWNq-DFG4_i9CN+Rb2RSgO1Sxph7HO7SNhnr0d1=LoW0g@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] clk: renesas: r9a09g057: Add clock and reset
+ entries for TSU
 To: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
-Cc: claudiu.beznea.uj@bp.renesas.com, alexandre.belloni@bootlin.com, 
+Cc: john.madieu.xa@bp.renesas.com, rafael@kernel.org, 
+	daniel.lezcano@linaro.org, rui.zhang@intel.com, lukasz.luba@arm.com, 
 	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
 	magnus.damm@gmail.com, mturquette@baylibre.com, sboyd@kernel.org, 
-	p.zabel@pengutronix.de, linux-rtc@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+	linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 21 Oct 2025 at 10:07, Ovidiu Panait
+On Mon, 20 Oct 2025 at 16:31, Ovidiu Panait
 <ovidiu.panait.rb@renesas.com> wrote:
-> Add module clock and reset entries for the RTC module on the Renesas RZ/V2H
-> (R9A09G057) SoC.
+> Add module clock and reset entries for the TSU0 and TSU1 blocks on the
+> Renesas RZ/V2H (R9A09G057) SoC.
 >
 > Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 
