@@ -1,70 +1,68 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60FBC348869;
-	Tue, 21 Oct 2025 16:54:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 510553557ED;
+	Tue, 21 Oct 2025 17:53:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761065692; cv=none; b=jWs3+IKB5lZifijL2LqezswPHVX+k2FRCFlrzSWW42atdnRmO/gthUHARRAQr83PzksB8gpjNsaTGVTX7dRHeXG3bwuoCxKGLuUq+AHbun5kL6ncgrwu9zBQoMkiBr5No2npO8KBveST06sLrltvite/2RbxMWwsCQmFKXY6M9E=
+	t=1761069207; cv=none; b=P4t4vMU43t5qxBgJCzgP1TGfay4E2NP7a+DH/RV/KijWKKxD9Sq5LZBGj5M/LR5PxuHvP0hXnT4ZWoFxmAxW+o33FdWpYGCYvRqDr0P8DbWgp37XiApmtpBfH/FzdnFF+AH8InP9e7qT+Ib8e3PmHkhf2G6HBKoeKuGzqT9MKn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761065692; c=relaxed/simple;
-	bh=kcJe89EUvp59KaUJ7RAP9IH7lYX00mLmtsiVqwhSc4c=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=E+UxFoadWNNgMnL6Vo0vXmdwanE8TPe85QebRVsSiL2tRmK5QeYdZlpPpleSHTNRZzZeCsACV6jFiqYtq9R5kC379jNh4MO4gBjbIk+cQ+T9wEGZKBvILrRkf6gQ3bodkT8fjZHsopVfqvJ1RYiBWxK8lNGWsQG+gER1X2JiDmY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oYBpIhKL; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oYBpIhKL"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5B5BC4CEF5;
-	Tue, 21 Oct 2025 16:54:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761065691;
-	bh=kcJe89EUvp59KaUJ7RAP9IH7lYX00mLmtsiVqwhSc4c=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=oYBpIhKLxjvi6aQi1PUCD8cDzSPRZZ3c1fX2T8pHwltHk42aIqAM0qvDpKkD+HAfO
-	 GHkAgLKzPV5OkBlO9bdFHELLZrIbQlesC2RkfVeBNZniAdfbHY8LIKorsZNwcIlhI6
-	 tovf2fK83OEhMhFU9Gu/7tX4FInFo6K6wk2EormtE0eDX5Gq65jBAQdo1jp2VdJOTn
-	 y0D0CgvSjhYN4dpdjBuxiPcotHG/wzKeHIj6MKc96PHQwxEHp9g+qxfWpSnG9inQ2/
-	 tUwvxljR9/TM3gfjwAZNXVkD3Wb9rW3TcHTZBIIHToJ3YCgAOSnpxitnQjeaTTlUAU
-	 v1NGmzaRRZDlg==
-Received: from wens.tw (localhost [127.0.0.1])
-	by wens.tw (Postfix) with ESMTP id E4A4C5FBE4;
-	Wed, 22 Oct 2025 00:54:48 +0800 (CST)
-From: Chen-Yu Tsai <wens@kernel.org>
-To: wens@csie.org, samuel@sholland.org, 
- Jernej Skrabec <jernej.skrabec@gmail.com>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, linux-clk@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
- linux-kernel@vger.kernel.org, Andre Przywara <andre.przywara@arm.com>
-In-Reply-To: <20251020152704.4804-1-jernej.skrabec@gmail.com>
-References: <20251020152704.4804-1-jernej.skrabec@gmail.com>
-Subject: Re: [PATCH v2] clk: sunxi-ng: Mark A523 bus-r-cpucfg clock as
- critical
-Message-Id: <176106568889.3123154.11081141825428499092.b4-ty@kernel.org>
-Date: Wed, 22 Oct 2025 00:54:48 +0800
+	s=arc-20240116; t=1761069207; c=relaxed/simple;
+	bh=TWXOv5Mdy2U7Y72TfpTFWHWBB0MlAP/zZFp/GDplpuQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EJu1e+gGQqf47cwjfugR7UbdTwSk7cr0AeYf6oP3s/dvTzQzE1NQQO2grBo/+c4VWNEh1ky6jnPOUmr76g3C6TvafuHDV4R/01/KFBOyXsesES4GcubYFVrqYojFJtCN23jTBGJrXV6oW/EFB463AE7uoJjJyagyjGrRnEDDsgs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; arc=none smtp.client-ip=210.160.252.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
+X-CSE-ConnectionGUID: mYCLAkorRimnIgxsyhB2gA==
+X-CSE-MsgGUID: 81K4wOQxQyyQlIVGZETLaw==
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 22 Oct 2025 02:53:17 +0900
+Received: from vm01.adwin.renesas.com (unknown [10.226.92.145])
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 1FA064031FFC;
+	Wed, 22 Oct 2025 02:53:12 +0900 (JST)
+From: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
+To: biju.das.jz@bp.renesas.com,
+	geert+renesas@glider.be,
+	magnus.damm@gmail.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	mturquette@baylibre.com,
+	sboyd@kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH 0/4] Add versaclock3 support for RZ/V2H EVK
+Date: Tue, 21 Oct 2025 17:53:07 +0000
+Message-ID: <20251021175311.19611-1-ovidiu.panait.rb@renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3
+Content-Transfer-Encoding: 8bit
 
-On Mon, 20 Oct 2025 17:27:04 +0200, Jernej Skrabec wrote:
-> bus-r-cpucfg clock is important for peripheral which takes care of
-> powering CPU cores on and off. Since this operation is done by firmware
-> (TF-A), mark it as critical. That way Linux won't interfere with that
-> clock.
-> 
-> 
+Hi,
 
-Applied to sunxi/clk-fixes-for-6.18 in local tree, thanks!
-
-[1/1] clk: sunxi-ng: Mark A523 bus-r-cpucfg clock as critical
-      commit: 1dba74abf3e2fa4484b924d8ba6e54e64ebb8c82
+This series extends the versaclock3 driver to support the internal
+freerunning 32.768 kHz clock, which is used on the RZ/V2H SoC as RTC
+counter clock. It also adds the dts node for the RZ/V2H EVK.
 
 Best regards,
+Ovidiu
+
+Ovidiu Panait (4):
+  clk: versaclock3: Remove unused SE2 clock select macro
+  clk: versaclock3: Use clk_parent_data arrays for clk_mux
+  clk: versaclock3: Add freerunning 32.768kHz clock support
+  arm64: dts: renesas: r9a09g057h44-rzv2h-evk: Add versa3 clock
+    generator node
+
+ .../dts/renesas/r9a09g057h44-rzv2h-evk.dts    |  25 ++++
+ drivers/clk/clk-versaclock3.c                 | 126 +++++++++++++-----
+ 2 files changed, 120 insertions(+), 31 deletions(-)
+
 -- 
-Chen-Yu Tsai <wens@kernel.org>
+2.51.0
 
