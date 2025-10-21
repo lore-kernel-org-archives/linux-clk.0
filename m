@@ -1,135 +1,106 @@
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46A2632E6A6
-	for <linux-clk@vger.kernel.org>; Tue, 21 Oct 2025 12:41:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B34E62F2619;
+	Tue, 21 Oct 2025 12:56:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761050463; cv=none; b=o0Wc82EG1YlI61T76bXx6+RnKvJfuCEhnUyA5iTxL2bLWLllWym6EEhQswxmy3auwtVsRo90XxObYjdX82u03wMn7vuTJ+PwlGWuRpHrSkupK8cuFFIaKAJccbeDrlQwgzMpEBGhcvdPVlVYIWtGpq0UXjLyOF06SqsMSbwKjac=
+	t=1761051374; cv=none; b=birP8lmglh9IvqXx6Dg13D8kZEphRrh0rQNu7oyZOI9puKymD+MT9zP7Vide2L+gcANjZCp9Ore6NfU03DS31LKutG9xYE/TFJLN4AIhNHZ6FkZFdwbtLc1+VFOGXq1filFqmrceskqMmfRsDwSAJ6ljB8eOviMvu1gg8Fy5loY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761050463; c=relaxed/simple;
-	bh=yuVQZTDGjvvcPalMUgTg4epkdUaGdD4g6/GxObBxEI0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YAIgK9+17jF2pN1RqtMrTsixrCbw7DczcT4YANzpoDt+SqghEopnkfkmd2gYA6v39rvODuVVDGwBmQcsgJ+29prBbCCW+3QXNuG5q5RsF3zHDrFB/v8Cdd4N7FCxAMBCj9/JajaepGM5dSHRFL3PbPIqS5ZPUN7EJT/bAfQjaQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=IXuFI9KG; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+	s=arc-20240116; t=1761051374; c=relaxed/simple;
+	bh=+CO+/an1hiocjSGMGzZYAKHx4UcThwwf4NGM2r5oRxc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cFg8EJM7MBdJqQn6CpzvHMZioBo2JthXAwS53JBpb0C8M+U/OhEhgYTu7DCZkoYruv4ffG6mTk2OT1K6JQkhPbQz0NI/iwOzHSCf9Wi9QW+FNjQrsL6Wt4I/bYLgsP0mc/9FB6HMbpRMFRgxnqAdDs8snPvvcSvvz/bPs6c7/N8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RxsK1kQM; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="IXuFI9KG"
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-59093864727so6506680e87.3
-        for <linux-clk@vger.kernel.org>; Tue, 21 Oct 2025 05:41:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1761050459; x=1761655259; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NWb3L2HC5GL7gJV88qPeFIZPSp/OKkdc2F2PK/9kqwo=;
-        b=IXuFI9KG4A3E4U5Fibyo6SAZNeh861N5dZ2edgvOUXsjhDgufvCVHz/9zsQZEjK3BW
-         MjdzfFJgfVaycKMJmwOmMDVjWwXkD7nlGV67Jf8zvmtPIwiJnQ2Hi16/68lWT3XbNX0q
-         7UCzdCkaXSC/d6+2uyK1aPWErerdzs6Igm9Tb1vs/sYCNuAVd6bEm8yBMPW3HV7o+6lR
-         oKyQWdMb9O1alofphP99ZmDTFd+Qzv6AnI2dCfLRhj8HNObmEMBPQTn+FgswF+1mdw56
-         trf8UoHLlB9JpJl1xWI4L0iPsJJXVTFXUuRVtCxZ3EA8ysrGASRUvQ/StiZWJHbSyx4X
-         GBuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761050459; x=1761655259;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NWb3L2HC5GL7gJV88qPeFIZPSp/OKkdc2F2PK/9kqwo=;
-        b=XV5XdktX//2dMMmAWdh0wLS7V37TVOFS0gM1VNNHZl1P/yXnVflWZZ5gygADZCc2BX
-         GGjwoMNdyqkD5cq4hNX2OFBY9HSBY00XT+u473GVtnBWS+vk0Ckv0cVnw9RLmasHCBLC
-         4nNouEapMFpHcRyaABu+oTyTraD7FA4afl39G0/oS0Z0RT8hj6m34JPdXYfNAiMuu//b
-         2MOFpGJDxVQaRu4FsnA7nIF8KCpDqAFOdZ/BaSGA9+kkXDwihmqMKI//NtKtn4bGSr4g
-         d5tc5Xihhr1NpCawaaMJPUsFU5tG4wFU7jobwcyJOJ9sUQ4zYDHYj8XluvWFnIQQ9dNR
-         Gn3A==
-X-Forwarded-Encrypted: i=1; AJvYcCXEv8pRIrQ49VZTsp1jG91HtFBbNew0VJfpo2mWXJj8fDPjNdjic7inRzhowW5VVL0dOxoN2sspuz8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+pk+d2DW5m3G/9AkNNo/gygr0V/KrancDRSQN02NDFYP8jTXt
-	BXfKzHb9ZqW3Iy1Pv27di323D7mw/zGElZqF0udbBgW7orS/tRg9S4LM76kE6z5UCj9bO7OPXxM
-	Awi+lH2ULjyItKnKuECLKWv4u28J3rrlOmfUkdzOq5Q==
-X-Gm-Gg: ASbGncvLyUFCOiyO2/+agtFa6ZaDWXfbZAj+rucAcXTyuvoGvLtrCGzTfe8RKKw94L+
-	nr9qIiTGJmaLlm4giY7Je1mErvY+AYYg7asZMqCFm7Sqy8VGXZyerjvBEMSQHID8URqXp1aC8hc
-	bxRIJp+j7XSCJs7tY8mFSNc1heYJXg8Y1XArcWxVk3/+5TrFI9cB/pabKz1DETuPa4SXZqC2BVl
-	OnbP04n2nsOJN24WhwAHpV5fgP7g6rSUJMpVW1hKHhsV5GB/7A4YX1qd27nPH2yA37/Cq72A0cy
-	KDmkOxb99vznyRmNSHe2Ut6zlM4=
-X-Google-Smtp-Source: AGHT+IHJJi40QO2j+AEEIXG+FSVZbH+WW1DwyjfojmvqVA8OuBIji8cOMNjvhsKfbFVOj/fVZy/UensL3Bqq96jG85U=
-X-Received: by 2002:a05:6512:3b0c:b0:57a:310:66a8 with SMTP id
- 2adb3069b0e04-591d85773ffmr5098755e87.55.1761050459418; Tue, 21 Oct 2025
- 05:40:59 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RxsK1kQM"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761051373; x=1792587373;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=+CO+/an1hiocjSGMGzZYAKHx4UcThwwf4NGM2r5oRxc=;
+  b=RxsK1kQMpNNwkTSt8tnwbuqfdOt8sseF4XYKpkt6nUa4sh9MDbJDIDmP
+   8aK60dAnuU5jnKd1SvkcrkJLGCAZGF9fAdYu2ug1iI4CMhu/1hg8SN2Kx
+   zm1dHgZnH7HmwpXpXY/z7U1DIZt53XsiSJvh+U6tZ9UMWSe81Rs74hXsd
+   cMcII6FLEuNsdDBMARJrlfBljkWsjF2866SQkfX59AV4mxC16DCdouGQ5
+   wkpauo6zy/z8D5tsqUvLEw/i9NmFpQKgUm+gSDIY0D2i829goM1rWaclp
+   GuDCwMTZyM9EXZ79jgkhBHRcc6CxN75hBmqL4B2XkckyV5Fm/Nw12M9sG
+   g==;
+X-CSE-ConnectionGUID: ZiJEx3DmTMK+kAbMXBxPCg==
+X-CSE-MsgGUID: pUlZgJ3qQMuBqUojy/Ap5g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="62205843"
+X-IronPort-AV: E=Sophos;i="6.19,245,1754982000"; 
+   d="scan'208";a="62205843"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2025 05:56:12 -0700
+X-CSE-ConnectionGUID: BxovcXqjQZemzDJ3BcibFQ==
+X-CSE-MsgGUID: qYr8i8VcSOqS+siN1Hg8+g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,245,1754982000"; 
+   d="scan'208";a="183443263"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by orviesa007.jf.intel.com with ESMTP; 21 Oct 2025 05:56:08 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vBBuI-000App-0T;
+	Tue, 21 Oct 2025 12:56:06 +0000
+Date: Tue, 21 Oct 2025 20:55:47 +0800
+From: kernel test robot <lkp@intel.com>
+To: Chen-Yu Tsai <wens@kernel.org>, Jernej Skrabec <jernej@kernel.org>,
+	Samuel Holland <samuel@sholland.org>,
+	Mark Brown <broonie@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-sunxi@lists.linux.dev,
+	linux-sound@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 04/11] ASoC: sun4i-spdif: Support SPDIF output on A523
+ family
+Message-ID: <202510212039.XiolKgXp-lkp@intel.com>
+References: <20251020171059.2786070-5-wens@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251015232015.846282-1-robh@kernel.org>
-In-Reply-To: <20251015232015.846282-1-robh@kernel.org>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Tue, 21 Oct 2025 14:40:47 +0200
-X-Gm-Features: AS18NWCQWmhq7gNfZEHIkGW0O-gEdDRZh4gksyliLmXKxwOZhptAVz-Dcd8I0sA
-Message-ID: <CAMRc=Mf++cYPVrFH5_1KggTQi2Tew_MaeHMHSiczkVfM+=Y4rg@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: Fix inconsistent quoting
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Stephen Boyd <sboyd@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
-	Linus Walleij <linus.walleij@linaro.org>, Shawn Guo <shawnguo@kernel.org>, 
-	Fabio Estevam <festevam@gmail.com>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, 
-	Jonathan Cameron <jic23@kernel.org>, Andy Shevchenko <andy@kernel.org>, 
-	Jassi Brar <jassisinghbrar@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Lee Jones <lee@kernel.org>, Joel Stanley <joel@jms.id.au>, 
-	Andrew Jeffery <andrew@codeconstruct.com.au>, Andrew Lunn <andrew@lunn.ch>, 
-	Vladimir Oltean <olteanv@gmail.com>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Daire McNamara <daire.mcnamara@microchip.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Manivannan Sadhasivam <mani@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, Vinod Koul <vkoul@kernel.org>, 
-	Kishon Vijay Abraham I <kishon@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Nicolas Ferre <nicolas.ferre@microchip.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
-	Florian Fainelli <f.fainelli@gmail.com>, Tony Lindgren <tony@atomide.com>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-iio@vger.kernel.org, linux-media@vger.kernel.org, 
-	netdev@vger.kernel.org, linux-pci@vger.kernel.org, 
-	linux-phy@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251020171059.2786070-5-wens@kernel.org>
 
-On Thu, Oct 16, 2025 at 1:20=E2=80=AFAM Rob Herring (Arm) <robh@kernel.org>=
- wrote:
->
-> yamllint has gained a new check which checks for inconsistent quoting
-> (mixed " and ' quotes within a file). Fix all the cases yamllint found
-> so we can enable the check (once the check is in a release). Use
-> whichever quoting is dominate in the file.
->
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
->  .../arm/altera/socfpga-clk-manager.yaml       |  4 ++--
->  .../bindings/clock/nvidia,tegra124-car.yaml   |  8 ++++----
->  .../bindings/clock/nvidia,tegra20-car.yaml    |  6 +++---
->  .../devicetree/bindings/gpio/gpio-mxs.yaml    |  9 +++++----
->  .../bindings/gpio/snps,dw-apb-gpio.yaml       |  4 ++--
->  .../bindings/iio/temperature/adi,ltc2983.yaml | 20 +++++++++----------
->  .../mailbox/qcom,apcs-kpss-global.yaml        | 16 +++++++--------
->  .../mailbox/xlnx,zynqmp-ipi-mailbox.yaml      |  2 +-
->  .../bindings/media/fsl,imx6q-vdoa.yaml        |  2 +-
->  .../devicetree/bindings/mfd/aspeed-lpc.yaml   |  4 ++--
->  .../devicetree/bindings/mfd/ti,twl.yaml       |  4 ++--
->  .../bindings/net/ethernet-switch.yaml         |  2 +-
->  .../pci/plda,xpressrich3-axi-common.yaml      |  2 +-
->  .../bindings/phy/motorola,cpcap-usb-phy.yaml  |  4 ++--
->  .../pinctrl/microchip,sparx5-sgpio.yaml       | 12 +++++------
->  .../bindings/pinctrl/qcom,pmic-gpio.yaml      | 10 +++++-----
->  .../bindings/pinctrl/qcom,pmic-mpp.yaml       |  6 +++---
->  .../bindings/pinctrl/renesas,pfc.yaml         |  4 ++--
->  .../bindings/pinctrl/renesas,rza1-ports.yaml  |  2 +-
->  .../pinctrl/renesas,rzg2l-pinctrl.yaml        |  2 +-
->  .../pinctrl/renesas,rzv2m-pinctrl.yaml        |  2 +-
->  .../bindings/power/renesas,sysc-rmobile.yaml  |  4 ++--
->  .../soc/microchip/atmel,at91rm9200-tcb.yaml   |  8 ++++----
->  .../soc/tegra/nvidia,tegra20-pmc.yaml         | 12 +++++------
+Hi Chen-Yu,
 
-For GPIO:
+kernel test robot noticed the following build warnings:
 
-Acked-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+[auto build test WARNING on sunxi/sunxi/for-next]
+[also build test WARNING on broonie-sound/for-next vkoul-dmaengine/next linus/master v6.18-rc2 next-20251021]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Chen-Yu-Tsai/dt-bindings-dma-allwinner-sun50i-a64-dma-Add-compatibles-for-A523/20251021-011340
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git sunxi/for-next
+patch link:    https://lore.kernel.org/r/20251020171059.2786070-5-wens%40kernel.org
+patch subject: [PATCH 04/11] ASoC: sun4i-spdif: Support SPDIF output on A523 family
+config: loongarch-allyesconfig (https://download.01.org/0day-ci/archive/20251021/202510212039.XiolKgXp-lkp@intel.com/config)
+compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 754ebc6ebb9fb9fbee7aef33478c74ea74949853)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251021/202510212039.XiolKgXp-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510212039.XiolKgXp-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   Warning: sound/soc/sunxi/sun4i-spdif.c:180 struct member 'mclk_multiplier' not described in 'sun4i_spdif_quirks'
+>> Warning: sound/soc/sunxi/sun4i-spdif.c:180 struct member 'tx_clk_name' not described in 'sun4i_spdif_quirks'
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
