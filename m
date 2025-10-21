@@ -1,135 +1,148 @@
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97F52311953;
-	Tue, 21 Oct 2025 08:38:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03662329C4B
+	for <linux-clk@vger.kernel.org>; Tue, 21 Oct 2025 09:29:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761035937; cv=none; b=nCgi+94vADBMbTM8THAOOGHlr35gM73+3a6i0D1VsAGqJz3GJaJ+21Dn0h/hpEoldZpNMGbds4iO3vPn9eXgLWS+a9/A5sZaDo8jL4inopeRvKN/Kvbd5qAOQt8PrYz0D8iRNGq5U9aJvdowN4DosIzM5dtjy+v7mpS0SbcF8/I=
+	t=1761038970; cv=none; b=VTD5n/BCgZTSWlx8ffxd2YlyGnYlt6KEMY39pB140Oj109l7AamfZ9fMusqcs9fpqaHrhl84lP/SnISoAF0bFrZ085bfy2oKEusaP1w552U5esPbwDOwR/glTw75fJ6sxVt+z3I5ZgyHBTXuYLM+2CIui0o8T6LPB+txwTj2zj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761035937; c=relaxed/simple;
-	bh=OkTTOs8u5Z/zCBGUclr/sqSWwZZH1BXU6gWLVeYZeYY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GX7Qd3F/+urxoP+B+JAI5kj93EvsEMG+XyOEUPmGAdWA6Ik+J/vjbn6T7jnGuUpiO+d+9wdMn37poVswCIzRFEz+KOUFTCYgqd/2SGF/+c/5FV/arC+ImUEfB+uDJn0Al10C30J6QAjl7VnpVLXbYxiFs4iAB3bCFBdzJx+Yypo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=iEdMi9lI; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+	s=arc-20240116; t=1761038970; c=relaxed/simple;
+	bh=Lgkx5HPDkqjxZ87HJBcNSye0fzmxDpuWBWFLKUcBuJs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=esZu6P31z4iOu/vUg2nJydyyl4Cy0xMrUWldQA88IHQNCaaltKmNVAy2ULdw4TeEdOazw/HDvoEwAOsWM6Um/OaMs6Toqi3s2zuoFl2AwA2anB0rvGj70lbNH3fJtiPlMuUonPy6745YfwAqzu/oi7bcQTWc2amkhSgT8dIQHqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=eEsB44ae; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="iEdMi9lI"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
-	bh=GXbqGEqtn7uQLSJTDpkbfTb/HIT9zRnLyNNGASNhKDc=; b=iEdMi9lIca+YqotIqGbMIEpwR8
-	z073jtgmRswef6NyTJsXqw8tvedCaf67afY5Up+KyW2MoL+XrmFr6G0+2reuEJ1HdXbvIuA/ePs9r
-	4HuGjGADqCQMBO5DJUxD9RGGTzwtzzVZQbtXvdCyc+Og6PCT8aRmiSeSIibQK9GdBz9a7q4OfO/Qv
-	LYiRKWrveDlm8s1T2cmeKVum+KxCcyQ2QAagVs+BL5OKQGhMuMNl+hWVX6tHFAydUkonqZo6hQctF
-	OWPz21P82+fVZd+CujyborfqXwX5kOqBvc+Rt7XmC5ST7WdLe3S3mT1nEbi8LQhEXwSxW4HrXf3gx
-	uaNGptCA==;
-Received: from [212.111.240.218] (helo=phil.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1vB7tH-0001Ua-Sv; Tue, 21 Oct 2025 10:38:47 +0200
-From: Heiko Stuebner <heiko@sntech.de>
-To: mturquette@baylibre.com, sboyd@kernel.org, sugar.zhang@rock-chips.com,
- zhangqing@rock-chips.com, robh@kernel.org, krzysztof.kozlowski+dt@linaro.org,
- conor+dt@kernel.org, Elaine Zhang <zhangqing@rock-chips.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, huangtao@rock-chips.com,
- finley.xiao@rock-chips.com, Conor Dooley <conor.dooley@microchip.com>
-Subject: Re: [PATCH v4 2/7] dt-bindings: clock, reset: Add support for rv1126b
-Date: Tue, 21 Oct 2025 10:38:46 +0200
-Message-ID: <4463339.ejJDZkT8p0@phil>
-In-Reply-To: <20251021065232.2201500-3-zhangqing@rock-chips.com>
-References:
- <20251021065232.2201500-1-zhangqing@rock-chips.com>
- <20251021065232.2201500-3-zhangqing@rock-chips.com>
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="eEsB44ae"
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59L8VjtT026555
+	for <linux-clk@vger.kernel.org>; Tue, 21 Oct 2025 09:29:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	vchtIDKRTnCYbic8XdnIHZKcKNAB2qHtd73EA57D55U=; b=eEsB44aefSWI41BE
+	W7FmzAAbWsxaqRsbY7BhATESzbG+ZjNUet20iA02h/pSCGzDK8Cl7N4LFSjHrzcY
+	TFpRLlQwPy8xCqxuF427bUZbU8FpV/rgC+OObwb6mIF3z4tmDfRa2DSaGuyVF05p
+	OIaeAKGOt5KfegvFUMq4RJsDVsJaGCsX7CZWervhYAPmVYc+G0WrF272NJZ/bjwi
+	tYXms/jvasWANdWp/n1Y3QC/8h/xkR/27oQxcFsjtByow+wQBUFmyjOegxMZbfKd
+	woLJa06Zf/ocJtCOWGIXIxj2wgmEKNpJ6H8qtP1SZ4t610GcIeU+i0tp9oibIiUS
+	SY+NJQ==
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49v27j06mg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Tue, 21 Oct 2025 09:29:26 +0000 (GMT)
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-290b13c5877so111497395ad.0
+        for <linux-clk@vger.kernel.org>; Tue, 21 Oct 2025 02:29:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761038966; x=1761643766;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vchtIDKRTnCYbic8XdnIHZKcKNAB2qHtd73EA57D55U=;
+        b=ghec598Qs5T7Gp2SwrcLYXxCKWjVMdGm8dwnqN+4SevMthabQui7TaIBYLi20I5ama
+         u76lKwMfM/95YRi/7ucva353xZy8PRTSG5rmHj3gC3FbOZIMEx4PvXsGorFIQIdK4ok9
+         uY++LB9bm3zvq8oxbFlw2lvA4WpO0ZO5WHcmCm64XtPtBq2JeYMB0eJI7y3erHQ2LPoW
+         qr9BxWG2/EnzBmUbNbMqTcTxZulwq9ScLoAvEOr9U1kyXWw7ynjmXLY3cxRLU12aaxc/
+         I8vO/mjJoCkHb4Ly/t/Ut7JgoIRHtjMRCXU/Gsvbf0uhc27kqxKZJtKBkpwhCveyADv4
+         mQcA==
+X-Forwarded-Encrypted: i=1; AJvYcCWvzU1rEMoVx8cyLX3qyv15JLFyEGOtfcYhU8pk6hbWHHHPnA7H+65CMZJpNGOUkxo43F4rGr2MvwE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfX9uwkz+S7kuq/si+vIJsvov7v615/ZjRXFAEb3f1ZghmaXL2
+	LodT29xZbyvY0eYopEMtItpTjXHKk9bGv3dG4zfvnnX29C+jU7Sid1kZVhYEcFM/wYLU1ocLsSf
+	RSwt6iTrfEo3jz3hyk8fyGa7NvKlHKtPi5wzlAYaU8efSgkzmwKKq5Or8eGwYVdQ=
+X-Gm-Gg: ASbGncvxR7Rnu3dbFWFJS2GoYykAPK0HpxtDJRJT+JVq1Q9a240jo+qwhgkf0daTwQ+
+	aQwM61MEuEy/EXiHQCb2nJay26lUzmjsATD+2tlU0sR6P4QtIitTciJ9VFMiWdL9bzeX0DZLd5o
+	4sThe1UaTXpm0AuuMbdH7HKK/josL4Zs5cypy83PlUKupjrrgHEKYHA1Pzs3fJFfXNLnU2EmKUM
+	4+eMNHjoQAWic0Y2NfKuV4MYj5VslxL2T2NTSUgE8nylwpJI6HukJExCVNQ+Oim+E4sA8O9wgeP
+	H4bAkLz1FaSCGEYiCTClqcqSiA4Te/n0Qss7K9w0dkm8gbdYhOI0qt/DaIkDk+lQY33c8bxvjCg
+	kc+md1gvI18EOfaj7B/815aYH1qo=
+X-Received: by 2002:a17:902:ce0e:b0:292:324e:24bc with SMTP id d9443c01a7336-292324e26damr175702115ad.16.1761038965718;
+        Tue, 21 Oct 2025 02:29:25 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFOGC7PHugaE2XtwN/5ogJH3Nu6q4RR8mM10kZpgisPKy4YenMfCVuiNGzBa4/+043w5e9f1w==
+X-Received: by 2002:a17:902:ce0e:b0:292:324e:24bc with SMTP id d9443c01a7336-292324e26damr175701785ad.16.1761038964961;
+        Tue, 21 Oct 2025 02:29:24 -0700 (PDT)
+Received: from [10.217.217.147] ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29246ebcde4sm104829805ad.5.2025.10.21.02.29.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 21 Oct 2025 02:29:24 -0700 (PDT)
+Message-ID: <fda2da11-719b-4552-ab5c-d197c9f29092@oss.qualcomm.com>
+Date: Tue, 21 Oct 2025 14:59:21 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: qcom: gcc-x1e80100: Enable runtime PM
+To: Val Packett <val@packett.cool>, Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20251012230822.16825-1-val@packett.cool>
+Content-Language: en-US
+From: Taniya Das <taniya.das@oss.qualcomm.com>
+In-Reply-To: <20251012230822.16825-1-val@packett.cool>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAxOCBTYWx0ZWRfX2SusWMEMDXph
+ +3ZuH1isvW7TSvfoC+hzWOs7xoFczH7oirjHCqzZQr8JOEQj8WrpfcZ1LeV0QvghNkeudSvxcPs
+ f8D5Mqb+s+eYpCl2bE60UwhkBVc8DylnKCZbFSlp16kTXyECPUHTmxFdsKqakQHjgban7HglWpW
+ aDQ6aWqDgLWXpG4NgQYFpoNuaCnvXQm+d022TM0DCvg2LiPD/nGdufZYQiu0o5d9WAsPgimNJ2s
+ vMPOO3gAriOCxcWzL5Ul3kf8wcjjjjE/GyPnV4P8NddAUEMBZfxcaWqzxQFG9shXEjVByjZnMYO
+ 1z6Nvz/QWmX8Zlx5J53Kt3x+ovHMEcFDAolob/KB6IeJJd3dLBLYrRkrA1WYCEaTihkXww2Imp6
+ F2xOIAqA+x0pjivlPO4rTAxdPNuMkg==
+X-Authority-Analysis: v=2.4 cv=G4UR0tk5 c=1 sm=1 tr=0 ts=68f75276 cx=c_pps
+ a=JL+w9abYAAE89/QcEU+0QA==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=Ol272ZaqoCEH_NYozqoA:9 a=QEXdDO2ut3YA:10 a=324X-CrmTo6CU4MGRt3R:22
+X-Proofpoint-GUID: HW9-yQZyXyKUl1N70AEuZ5rX6pNB163k
+X-Proofpoint-ORIG-GUID: HW9-yQZyXyKUl1N70AEuZ5rX6pNB163k
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-20_07,2025-10-13_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 lowpriorityscore=0 malwarescore=0 bulkscore=0
+ priorityscore=1501 spamscore=0 suspectscore=0 adultscore=0 clxscore=1015
+ phishscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510020000
+ definitions=main-2510180018
 
-Hi Elaine,
 
-Am Dienstag, 21. Oktober 2025, 08:52:27 Mitteleurop=C3=A4ische Sommerzeit s=
-chrieb Elaine Zhang:
-> Add clock and reset ID defines for rv1126b.
-> Also add documentation for the rv1126b CRU core.
->=20
-> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
-> Acked-by: Conor Dooley <conor.dooley@microchip.com>
+
+On 10/13/2025 4:36 AM, Val Packett wrote:
+> Enable the main clock controller driver to participate in runtime
+> power management.
+> 
+> Signed-off-by: Val Packett <val@packett.cool>
 > ---
->  .../bindings/clock/rockchip,rv1126b-cru.yaml  |  52 +++
->  .../dt-bindings/clock/rockchip,rv1126b-cru.h  | 392 +++++++++++++++++
->  .../dt-bindings/reset/rockchip,rv1126b-cru.h  | 405 ++++++++++++++++++
->  3 files changed, 849 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rv11=
-26b-cru.yaml
->  create mode 100644 include/dt-bindings/clock/rockchip,rv1126b-cru.h
->  create mode 100644 include/dt-bindings/reset/rockchip,rv1126b-cru.h
->=20
-> diff --git a/Documentation/devicetree/bindings/clock/rockchip,rv1126b-cru=
-=2Eyaml b/Documentation/devicetree/bindings/clock/rockchip,rv1126b-cru.yaml
-> new file mode 100644
-> index 000000000000..04b0a5c51e4e
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/rockchip,rv1126b-cru.yaml
-> @@ -0,0 +1,52 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/rockchip,rv1126b-cru.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Rockchip RV1126B Clock and Reset Unit
-> +
-> +maintainers:
-> +  - Elaine Zhang <zhangqing@rock-chips.com>
-> +  - Heiko Stuebner <heiko@sntech.de>
-> +
-> +description:
-> +  The rv1126b clock controller generates the clock and also implements a
-> +  reset controller for SoC peripherals.
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - rockchip,rv1126b-cru
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  "#clock-cells":
-> +    const: 1
-> +
-> +  "#reset-cells":
-> +    const: 1
-> +
-> +  clocks:
-> +    maxItems: 1
-> +
-> +  clock-names:
-> +    const: xin24m
+> Seems like this would be one of the prerequisites for actually reaching
+> deeper power states.. I've been running with this patch on a Dell
+> Latitude 7455 for quite a while, did not see any harm for sure.
+> ---
+>  drivers/clk/qcom/gcc-x1e80100.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/clk/qcom/gcc-x1e80100.c b/drivers/clk/qcom/gcc-x1e80100.c
+> index 301fc9fc32d8..96bb604c6378 100644
+> --- a/drivers/clk/qcom/gcc-x1e80100.c
+> +++ b/drivers/clk/qcom/gcc-x1e80100.c
+> @@ -6721,6 +6721,7 @@ static const struct qcom_cc_desc gcc_x1e80100_desc = {
+>  	.num_resets = ARRAY_SIZE(gcc_x1e80100_resets),
+>  	.gdscs = gcc_x1e80100_gdscs,
+>  	.num_gdscs = ARRAY_SIZE(gcc_x1e80100_gdscs),
+> +	.use_rpm = true,
 
-I think we're missing the optional
+This is not required to be set for the global clock controller as 'CX'
+is the rail powering this clock controller.
 
-   rockchip,grf:
-     $ref: /schemas/types.yaml#/definitions/phandle
-     description:
-       Phandle to the syscon managing the "general register files" (GRF),
-       if missing pll rates are not changeable, due to the missing pll
-       lock status.
+>  };
+>  
+>  static const struct of_device_id gcc_x1e80100_match_table[] = {
 
-
-because RV1126B_GRF_SOC_STATUS0 contains the PLL lock status.
-
-
-Heiko
-
-
+-- 
+Thanks,
+Taniya Das
 
