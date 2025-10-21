@@ -1,164 +1,118 @@
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27272199EAD;
-	Tue, 21 Oct 2025 22:35:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B26D4350A38
+	for <linux-clk@vger.kernel.org>; Tue, 21 Oct 2025 23:45:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761086127; cv=none; b=B6lVDuqwdBohuynM4ObfuhedegSKW5aSOBR7HCrsIzgLhdEaiQo22N3C8TEIS4Zv1VsPlyvWpI4vh3IuoekDNJcs7K3ZXAw7RevRSX5crukCmYbY0mzc/tpbc3C6Wa18dP+nu53NkHYuN5YvhObUAjo4ldsNjYIpmSr3KW4WSys=
+	t=1761090318; cv=none; b=hMydFxijfClEnQ5LZ60TlLiJHSsgxtTNIXPLEsIP5+ckzyi1kiwaQ+MydIH1yKJNKrMNoM17GR2+2JclwqwcwJSoepaJwERqeOrD9QNhjZmhTiYlBq6KdHpyRs8gsFONh5JaoZHp0Sq1PpWD0dZmJ0+0vHQM7zGieGfZP2/Xz/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761086127; c=relaxed/simple;
-	bh=EbH8QsdMoy2u3j62vooEOCAT3w9TJPTiDCf+eFU2NIw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=rXXwkqny1xZxXvEOG3DxkMjl4L7O8mMDnwicR8y5RJi9g2ASy5HiUvyGtMcidRTNQ6KRgj+e2bctSRnr3aIaIZ+7zvwrTyvI0f3KJy6Ouok/ryroQmXCWuavb5UISRSPV72LXcEVTwkRqQWHRtTZuetz7RYsegwxnmDLR0DsWgc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=NwVzHpcr; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+	s=arc-20240116; t=1761090318; c=relaxed/simple;
+	bh=CG2fj2agGiYEv+VKfbErKVJafcLsg0MfoHn5vJsFu0g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XlxjTWWGaL2H00d5z01MNjzX8PrHcoTT6R7khEIIHP+IXOhXB3UUNMjaWSxnNHda7Oe5KR8xDO/oRFGNJHQBwilmOMPSN8+kI3ebywAwXPjHJcXMQa5Ld4bac/W8jorntnbKfONNbEc8sYVQAZ1gENp/DirWNO508nT4CQpXG+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uArbDuZd; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="NwVzHpcr"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uArbDuZd"
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-57b35d221e2so1581869e87.3
+        for <linux-clk@vger.kernel.org>; Tue, 21 Oct 2025 16:45:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1761086116;
-	bh=j6Z5RyFXrHpvFc4eRiFbkrrxzN6WfAoXMcnq2pqicfw=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References;
-	b=NwVzHpcr0vkIJvUKi4uJ0cl729CK2k58bT2Z9Ridpa0BoeNFzr4MFJoyHmGl5fbzL
-	 gYMCighc5YVlazpkf8da3p75/KNSwBfP0ZG2KsCPTB4YLtUh+alrSexKuCyr7nNRkG
-	 LBhYY6ftXBx6U6YFmeKdl+dzpeEh+kIivnR6uYPC9VMKf6dBXAzF4L4vdCQqKHRTaV
-	 8lolNXRaQ+P5jNzfc7yWl5ErfUyvSn6RrmZIMqxg3QnMC9O13/h/SYXQQVE1VE1Hbw
-	 L0da78AKJ5pE5O8L81Bkf01EzxTShIlzcfSiZFAkH2K4nmMtgdASu2tgLNzHs+f6IQ
-	 QTIbNS/9CZZpg==
-Received: from [192.168.68.113] (unknown [180.150.112.213])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id C76C57406C;
-	Wed, 22 Oct 2025 06:35:13 +0800 (AWST)
-Message-ID: <4aa22124cefc6bd23d75bdb0d5a85a2f38c22a77.camel@codeconstruct.com.au>
-Subject: Re: [PATCH] peci: controller: peci-aspeed: convert from
- round_rate() to determine_rate()
-From: Andrew Jeffery <andrew@codeconstruct.com.au>
-To: "Winiarska, Iwona" <iwona.winiarska@intel.com>, 
- "gregkh@linuxfoundation.org"
-	 <gregkh@linuxfoundation.org>, "bmasney@redhat.com" <bmasney@redhat.com>
-Cc: "joel@jms.id.au" <joel@jms.id.au>, "linux-aspeed@lists.ozlabs.org"
-	 <linux-aspeed@lists.ozlabs.org>, "sboyd@kernel.org" <sboyd@kernel.org>, 
- "linux-kernel@vger.kernel.org"
-	 <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	 <linux-arm-kernel@lists.infradead.org>, "linux-clk@vger.kernel.org"
-	 <linux-clk@vger.kernel.org>, "openbmc@lists.ozlabs.org"
-	 <openbmc@lists.ozlabs.org>, "mripard@kernel.org" <mripard@kernel.org>
-Date: Wed, 22 Oct 2025 09:05:13 +1030
-In-Reply-To: <d53256b35ee7089607463c66bb4a8c3420faf058.camel@intel.com>
-References: <20250810-peci-round-rate-v1-1-ec96d216a455@redhat.com>
-			 <aMatZAX6eFI1RmDH@redhat.com>
-			 <28dc3bd8aeca7e3164747960747f75060c596704.camel@codeconstruct.com.au>
-			 <aPEZSY6RC-UVclxN@redhat.com>
-			 <ba2e6b78e59afb7c89e5022770a142ec8c31659a.camel@codeconstruct.com.au>
-			 <2025101759-runner-landing-374b@gregkh>
-			 <2975918e3f3a7de245e93fbee52335acb78bb23a.camel@codeconstruct.com.au>
-			 <2025101721-twiddling-huskiness-4852@gregkh>
-		 <13566a08eeaed313ad789abcae1920d9b00483b0.camel@codeconstruct.com.au>
-	 <d53256b35ee7089607463c66bb4a8c3420faf058.camel@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1-1 
+        d=linaro.org; s=google; t=1761090314; x=1761695114; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=XXNzqEwyvYqnZn04rAmeK03nKv9T3yBVcqRQH6EexXc=;
+        b=uArbDuZdQaOAn9hQA2Iw6mo9Ds6W/whgOIVBqZa1phnQydfk3MwDFNYtRsfJeAyNNh
+         +PJfYdWHY+mJrVQzXxxXZfujOiQMSlQO7s74RVXc4b6MgpL1PvDIXwM7HXeFwNgTSyO3
+         2TuE/jTb5EN2YGwNakYB0yzcGWn0OxsHttIQZ8B2b36LpJZkP3rkNWjHuGFEutrs2bjH
+         zHiajdW2nU9z0kxvjK8NXwUdkM7WoMKw1QMfxUwgrtiJmgrz9WUWsat+uSoyB+pfqwij
+         BinDBKnwm/c1PIx5q+cnIS/ER+YAVsPquNGpzB1T+mTrrKSDdCHx75OBizjESpC1+N1b
+         Y76w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761090314; x=1761695114;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XXNzqEwyvYqnZn04rAmeK03nKv9T3yBVcqRQH6EexXc=;
+        b=r+AgFhOeiyEp48H4753zbhW2Lc4gAHH5TH+JqfMMw3ieMcJO2DA2LKVi5/144FHk4C
+         pwWGDFH2XfD163X13whH9fkInkhyjyE5DPlhiJFF9tc8DLlEQhbhIAao06s2zewoxWee
+         8tZYdEaTXq66w/RlVErXkcSFrdrIFENptOptMr0IWRW1Kn2vECtmhZeKJev6/VI9+0Q6
+         G4lVFYHRDSoT4vsDWnHqweST6gHz7uyQlvb/nU1KjfyGGi+gxOk0DW8TjB7C4RN2ZaI2
+         0CXc8zr5TWOm+wBgsA+oAEOoOHD0SXOPbvh2KePW8T4ek4GLVc8+L2j4Du8A/hd9QMhC
+         Kt9g==
+X-Forwarded-Encrypted: i=1; AJvYcCVi4bhR4XZJTSA1zI62E26mTtmVSEve05HblNYtrnOw9X2+mOyS2kWdhyseIaU4RuVZJTumLsAhoTc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSQeCygIsJKV52O8KTcvim1OfNnS+VpxOHlgEAft3xm2PDUFIn
+	FKgWk/qGGJwEd6bVv/i9tPtDg+ktxYHfyukmvbSy4g4/ObX/HC/Qi5Yk8BVasSB9Fzs=
+X-Gm-Gg: ASbGnctOJbxjhlMnAHfIwiew/FTSO5euqLAzjgvU6sB6m6EI0llISuSbs+TarcBiNlm
+	LZdrcbgAjBgmr5DIpEB6ZncNzzKWCRxXzFSRsvMvGKtAJmy0KdJB/tVd8anlQdVjvg/RbzHyHbO
+	13xC7cPkoe+kpIjj01+kZ+SkhKsDcaJsyGhsDTXbylReKqUd0p2YzJTdiiduPJDvUUaYqkyAwv9
+	5/qC6GSuE1mJ1i+yf1kwWtDky21eLn2ywpndIe/kJH+cGmQS8WSGhL1riAkY4TnAXGjZA3O3+rr
+	Ypr7eVp3Ec6JiNC+xp1ak3rZueqtFXq6Y50Ws6c3JZKqjk++IPAR5r3T0CabDz3G/1eq2e5ufpO
+	PSyieK6dY14ClOv7BDcYkidUD0bTvahKn0Fqmd6xtctTMukdd1RvxGa6lnvbb3l+Vj08MPVJ1xm
+	+ZVFm67ARw5XHWmfSQ6IivsvBjuRYYqVMTpL2yqinLvC4=
+X-Google-Smtp-Source: AGHT+IGnZwmTxu8wfMbgMZ/9IeVP05UhNFnptgFg9AIRjzkpILf4FE8wwl4LMnFdSkeVEZgUJgYRcA==
+X-Received: by 2002:a05:6512:308d:b0:55f:6637:78f with SMTP id 2adb3069b0e04-591ea31cd1cmr815372e87.9.1761090313555;
+        Tue, 21 Oct 2025 16:45:13 -0700 (PDT)
+Received: from thyme.. (91-159-24-186.elisa-laajakaista.fi. [91.159.24.186])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-591def160cfsm4076397e87.76.2025.10.21.16.45.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Oct 2025 16:45:12 -0700 (PDT)
+From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Dmitry Baryshkov <lumag@kernel.org>,
+	Jagadeesh Kona <quic_jkona@quicinc.com>,
+	Taniya Das <quic_tdas@quicinc.com>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Imran Shaik <imran.shaik@oss.qualcomm.com>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v2 0/6] clk: qcom: camcc: Specify Titan GDSC power domain as a parent to other ones
+Date: Wed, 22 Oct 2025 02:44:44 +0300
+Message-ID: <20251021234450.2271279-1-vladimir.zapolskiy@linaro.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Tue, 2025-10-21 at 21:01 +0000, Winiarska, Iwona wrote:
-> On Mon, 2025-10-20 at 09:30 +1030, Andrew Jeffery wrote:
-> > On Fri, 2025-10-17 at 09:43 +0200, Greg Kroah-Hartman wrote:
-> > > On Fri, Oct 17, 2025 at 05:57:44PM +1030, Andrew Jeffery wrote:
-> > > > On Fri, 2025-10-17 at 08:41 +0200, Greg Kroah-Hartman wrote:
-> > > > > On Fri, Oct 17, 2025 at 04:52:37PM +1030, Andrew Jeffery wrote:
-> > > > > > Hi Greg,
-> > > > > >=20
-> > > > > > On Thu, 2025-10-16 at 12:11 -0400, Brian Masney wrote:
-> > > > > > > Hi Andrew and Iwona,
-> > > > > > >=20
-> > > > > > > On Mon, Sep 15, 2025 at 02:36:48PM +0930, Andrew Jeffery wrot=
-e:
-> > > > > > > > Hi Brian,
-> > > > > > > >=20
-> > > > > > > > On Sun, 2025-09-14 at 07:56 -0400, Brian Masney wrote:
-> > > > > > > > > Hi Iwona, Joel, and Andrew,
-> > > > > > > > >=20
-> > > > > > > > > On Sun, Aug 10, 2025 at 06:21:51PM -0400, Brian Masney wr=
-ote:
-> > > > > > > > > > The round_rate() clk ops is deprecated, so migrate this
-> > > > > > > > > > driver from
-> > > > > > > > > > round_rate() to determine_rate() using the Coccinelle
-> > > > > > > > > > semantic patch
-> > > > > > > > > > appended to the "under-the-cut" portion of the patch.
-> > > > > > > > > >=20
-> > > > > > > > > > Signed-off-by: Brian Masney <bmasney@redhat.com>
-> > > > > > > > >=20
-> > > > > > > > > Would it be possible to get this picked up for v6.18? I'd
-> > > > > > > > > like to remove
-> > > > > > > > > this API from drivers/clk in v6.19.
-> > > > > > > >=20
-> > > > > > > > My (strong) preference is that Iwona applies it, but I'll k=
-eep
-> > > > > > > > an eye
-> > > > > > > > out for any unusual delays.
-> > > > > > >=20
-> > > > > > > This patch wasn't picked up for v6.18. Any chance this can ge=
-t
-> > > > > > > picked up
-> > > > > > > now for v6.19?
-> > > > > > >=20
-> > > > > > > I'm hoping to get this merged so that we can remove the
-> > > > > > > round_rate() clk
-> > > > > > > op from the clk core. The clk maintainer (Stephen) mentioned =
-this
-> > > > > > > work
-> > > > > > > in his last pull to Linus.
-> > > > > > >=20
-> > > > > > > https://lore.kernel.org/linux-clk/20251007051720.11386-1-sboy=
-d@kernel.org/
-> > > > > >=20
-> > > > > > Are you happy to pick this up directly in Iwona's absence?
-> > > > >=20
-> > > > > Why me?
-> > > >=20
-> > > > I figured that would be sensible since Iwona historically sent you =
-PRs
-> > > > for the PECI subsystem.
-> > >=20
-> > > I did not remember that, sorry.
-> > >=20
-> >=20
-> > No worries.
-> >=20
-> > > =C2=A0 The MAINTAINERS file does not mention
-> > > this at all, and it lists many other maintainers that should be able =
-to
-> > > take this patch:
-> > > 	$ ./scripts/get_maintainer.pl=C2=A0 drivers/peci/controller/peci-
-> > > aspeed.c
-> > > 	Iwona Winiarska <iwona.winiarska@intel.com> (maintainer:ASPEED PECI
-> > > CONTROLLER)
-> > > 	Joel Stanley <joel@jms.id.au> (maintainer:ARM/ASPEED MACHINE
-> > > SUPPORT)
-> > > 	Andrew Jeffery <andrew@codeconstruct.com.au> (maintainer:ARM/ASPEED
-> > > MACHINE SUPPORT)
-> >=20
-> > Iwona currently appears unresponsive, as mentioned. Joel's stepped back
-> > from maintaining the ASPEED bits as of earlier this year; I worked with
-> > him to add myself as a maintainer there, hence the last entry, and now
-> > getting in touch with you.
-> >=20
-> > I can apply the patch and send you a PR if that helps, if Iwona doesn't
-> > respond in the mean time.
->=20
-> Hi!
->=20
-> Sorry for the delay - for some reason this entire thread didn't land in m=
-y inbox
-> and I just found it now, randomly browsing mailing list :/
->=20
-> I will sent it as a PR for v6.19.
+When a consumer turns on/off a power domain dependent on another power
+domain in hardware, the parent power domain shall be turned on/off by
+the power domain provider as well, and to get it the power domain hardware
+hierarchy shall be described in the CAMCC driver.
 
-Ah, super! Thanks Iwona.
+Establish the power domain hierarchy with a Titan GDSC set as a parent of
+other GDSC power domains provided by the SDM845 camera clock controller.
 
-Andrew
+Changes from v1 to v2:
+* updated commit messages per ask from Bjorn,
+* added all collected Reviewed-by tags (Konrad, Imran, Bryan),
+* Fixes tag is set only to the changes, which are functional fixes in upstream.
+
+Link to v1:
+* https://lore.kernel.org/linux-clk/20250911011218.861322-1-vladimir.zapolskiy@linaro.org/
+
+Vladimir Zapolskiy (6):
+  clk: qcom: camcc-sm8550: Specify Titan GDSC power domain as a parent to other
+  clk: qcom: camcc-sm6350: Specify Titan GDSC power domain as a parent to other
+  clk: qcom: camcc-sdm845: Specify Titan GDSC power domain as a parent to other
+  clk: qcom: camcc-sm7150: Specify Titan GDSC power domain as a parent to IPEx and BPS
+  clk: qcom: camcc-sm8250: Specify Titan GDSC power domain as a parent to IPE/BPS/SBI
+  clk: qcom: camcc-sm8450: Specify Titan GDSC power domain as a parent to IPE/BPS/SBI
+
+ drivers/clk/qcom/camcc-sdm845.c |  3 +++
+ drivers/clk/qcom/camcc-sm6350.c |  7 +++++++
+ drivers/clk/qcom/camcc-sm7150.c |  3 +++
+ drivers/clk/qcom/camcc-sm8250.c |  3 +++
+ drivers/clk/qcom/camcc-sm8450.c |  3 +++
+ drivers/clk/qcom/camcc-sm8550.c | 10 ++++++++++
+ 6 files changed, 29 insertions(+)
+
+-- 
+2.49.0
+
