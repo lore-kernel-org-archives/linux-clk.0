@@ -1,78 +1,134 @@
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 271D12ECD2A;
-	Tue, 21 Oct 2025 08:07:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 569F927F759;
+	Tue, 21 Oct 2025 08:37:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761034066; cv=none; b=jUNlXNn8Fjk8Za4Ms6cyHxzJHkkyzfhI+lCpuS/M3G+slCpSCqRC+q1OD7V/23F+ubw+DmLx40eusi2GLxKfJc3xfL36HEThTrYkcogNkJsCb7MsXtMP1gBIR3DOkuP9JwnYFWfjo+zdnItHWcLrBInqIxHeJCqbnJBe77DcqGk=
+	t=1761035824; cv=none; b=BkJaHUaDhyFZzlZ45vByoxloTEenvQBIkQsrbtHZNNVSP2SNWjOzqv1YmQnGnw3fX76iaUaPA9n83Wh08WiOaYSj8idiN3Z5nNronzk/bT8ZmS7kNB98n217e3fNQ4jcC2504R2oN5ZKuBtTlDIzHo3q5bYADBhBo+rfb7Zl/m4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761034066; c=relaxed/simple;
-	bh=yNWLBorzXizqp98q/3u7dlT+3a2RcUk5qNcTHXL2eHk=;
+	s=arc-20240116; t=1761035824; c=relaxed/simple;
+	bh=kxUPe6KqLh2DKKLMP1TMTBCbRdceZpYNV75wfyCVXps=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=agVSid6vaZmMIg0ihnGh4JqR6ODM3KSlY98sJ98reZUidp6Y4M206zZKKSi8xKxRPc05OSWJNYrK5/rj+PCtFSVXXJlAvqAiRp32G7WOA/bS+rY83k1+BxZSdQyA2dwRQXYizEUQCmaCxfX4Fz2bvfS1XyUb7ABzQw1iqy+UqD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; arc=none smtp.client-ip=210.160.252.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
-X-CSE-ConnectionGUID: vT29u768Q7CdXZKKBXeuyw==
-X-CSE-MsgGUID: qnteZs6ZTDuPXjtnSxm9/g==
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 21 Oct 2025 17:07:43 +0900
-Received: from vm01.adwin.renesas.com (unknown [10.226.92.145])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 286FD4141C98;
-	Tue, 21 Oct 2025 17:07:38 +0900 (JST)
-From: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
-To: claudiu.beznea.uj@bp.renesas.com,
-	alexandre.belloni@bootlin.com,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	geert+renesas@glider.be,
-	magnus.damm@gmail.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	p.zabel@pengutronix.de
-Cc: linux-rtc@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH v2 6/6] arm64: dts: renesas: r9a09g057h44-rzv2h-evk: Enable RTC
-Date: Tue, 21 Oct 2025 08:07:05 +0000
-Message-ID: <20251021080705.18116-7-ovidiu.panait.rb@renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251021080705.18116-1-ovidiu.panait.rb@renesas.com>
-References: <20251021080705.18116-1-ovidiu.panait.rb@renesas.com>
+	 MIME-Version:Content-Type; b=YfuYszT7pLZQhrd7h9RWkcyrSi7I8cx7xpYT44CW7lceBKV98Fw0znIyTBqspetrybcAIq2KAl8jg+6M6auAuNf9Yn54RAwoZyU1/KA3+0KzJDhUJGW/oP33kfpzu2sL86pBxpiXq7o76Xcx/zkFkrBGekUMNvB6cv2OvbtVxYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=qB5LIpGN; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="qB5LIpGN"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
+	bh=uzjSzcMiMfvyxgchJvQg0UkKHrfCLh0KZ54XotRuE78=; b=qB5LIpGNS6VFKFLCsQ7oi+wSOg
+	/gArHf6epn6m21W3unoEXDPGUQAXZ9m7K7Rn+oeJ7JoBTN+ERYRDShJuirU885aLX5XyGLpHTXBSC
+	E1YaPDNxlmOwHcY/a/j2vCuQvvkr2tNAxR5Y2lJh7dynyISUinvs6ndeDB5YVgvegEbddLJbE+3r3
+	sita/nZb3YjX638SsaONPcDcq/p9RieF4Nv9+pKLjxP4esookDF/TG2wvF1AkNtYYF3h8sVihnN5a
+	hCy0rvV3e/Eq3GOpFSmgjhDapqEmqGYm44wguRibcHutYarOgTIftclczed7RRtZhSD9Y+Z+PoJaK
+	zMCyixjQ==;
+Received: from [212.111.240.218] (helo=phil.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1vB7rS-0001TP-CV; Tue, 21 Oct 2025 10:36:54 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: mturquette@baylibre.com, sboyd@kernel.org, sugar.zhang@rock-chips.com,
+ zhangqing@rock-chips.com, robh@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+ conor+dt@kernel.org, Elaine Zhang <zhangqing@rock-chips.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org, huangtao@rock-chips.com,
+ finley.xiao@rock-chips.com
+Subject:
+ Re: [PATCH v4 6/7] dt-bindings: clock: rockchip: Add RK3506 clock and reset
+ unit
+Date: Tue, 21 Oct 2025 10:36:53 +0200
+Message-ID: <24128799.6Emhk5qWAg@phil>
+In-Reply-To: <20251021065232.2201500-7-zhangqing@rock-chips.com>
+References:
+ <20251021065232.2201500-1-zhangqing@rock-chips.com>
+ <20251021065232.2201500-7-zhangqing@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-Enable RTC.
+Hi Elaine,
 
-Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
----
-v2 changes: none
+Am Dienstag, 21. Oktober 2025, 08:52:31 Mitteleurop=C3=A4ische Sommerzeit s=
+chrieb Elaine Zhang:
+> From: Finley Xiao <finley.xiao@rock-chips.com>
+>=20
+> Add device tree bindings for clock and reset unit on RK3506 SoC.
+> Add clock and reset IDs for RK3506 SoC.
+>=20
+> Signed-off-by: Finley Xiao <finley.xiao@rock-chips.com>
+> ---
+>  .../bindings/clock/rockchip,rk3506-cru.yaml   |  45 +++
+>  .../dt-bindings/clock/rockchip,rk3506-cru.h   | 285 ++++++++++++++++++
+>  .../dt-bindings/reset/rockchip,rk3506-cru.h   | 211 +++++++++++++
+>  3 files changed, 541 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk35=
+06-cru.yaml
+>  create mode 100644 include/dt-bindings/clock/rockchip,rk3506-cru.h
+>  create mode 100644 include/dt-bindings/reset/rockchip,rk3506-cru.h
+>=20
+> diff --git a/Documentation/devicetree/bindings/clock/rockchip,rk3506-cru.=
+yaml b/Documentation/devicetree/bindings/clock/rockchip,rk3506-cru.yaml
+> new file mode 100644
+> index 000000000000..43e192d9b2af
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/rockchip,rk3506-cru.yaml
+> @@ -0,0 +1,45 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/rockchip,rk3506-cru.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Rockchip RK3506 Clock and Reset Unit (CRU)
+> +
+> +maintainers:
+> +  - Finley Xiao <finley.xiao@rock-chips.com>
+> +  - Heiko Stuebner <heiko@sntech.de>
+> +
+> +description: |
+> +  The RK3506 CRU generates the clock and also implements reset for SoC
+> +  peripherals.
+> +
+> +properties:
+> +  compatible:
+> +    const: rockchip,rk3506-cru
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  "#clock-cells":
+> +    const: 1
+> +
+> +  "#reset-cells":
+> +    const: 1
+> +
 
- arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts | 4 ++++
- 1 file changed, 4 insertions(+)
+I think we want clocks and clock-names properties here for xin24m
+similar to the rv1126b binding (and other modern soc bindings)
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts b/arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts
-index 3215ce53fe33..f20b63acca00 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts
-+++ b/arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts
-@@ -408,6 +408,10 @@ &qextal_clk {
- 	clock-frequency = <24000000>;
- };
- 
-+&rtc {
-+	status = "okay";
-+};
-+
- &rtxin_clk {
- 	clock-frequency = <32768>;
- };
--- 
-2.51.0
+Also, I think we'll need
+
+   rockchip,grf:
+     $ref: /schemas/types.yaml#/definitions/phandle
+     description:
+       Phandle to the syscon managing the "general register files" (GRF),
+       if missing pll rates are not changeable, due to the missing pll
+       lock status.
+
+because, you're using RK3506_GRF_SOC_STATUS
+for the PLL locking status.
+
+
+Heiko
+
 
