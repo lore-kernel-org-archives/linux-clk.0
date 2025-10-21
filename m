@@ -1,102 +1,118 @@
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0773234E746;
-	Tue, 21 Oct 2025 17:53:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18A6C336EE1
+	for <linux-clk@vger.kernel.org>; Tue, 21 Oct 2025 18:09:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761069222; cv=none; b=jQoH8fEpluXtqRp3CNQRqPYWI2D+N0BJVfEcvAMzEqpJ68H5ovr6WWrWsL9TBVKUJ7vNe5n1ssovnG6Lxx4T63X/0r9zLeO3WdtyiTOB6owNJtg9f7LACWrKu6eiYCou2IXDEvaVxvvEECjE1kzhKMerikWvd6x4jWXFDqOKyQg=
+	t=1761070190; cv=none; b=XbyCGoqvvWedlMv1SnhfDEvUtaQ6TVdx2gVoc/wE4Hu8V+hzGJk9CmWRDsTRZILd9sYuyhKPdMdCLoGWawFirkhxvG4rD4XxZUXhEL+VRPJ1Kq8oy7Jz7GMh00bSVr6HZgJcv1ILj/pawbx/zDQI94m8WRmfmIVEXQIf6H61kKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761069222; c=relaxed/simple;
-	bh=kAMtk77+gh6Ls/eAb+5g7M4zSVS6rIbBx7LYhJZtD8U=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TGnkLdy66dzPPu/YQpt0Qa+hexUOXJPvRNNWlK7Umls9t6Xrf3x5Qr/q45WGlIAC920mzOKgOQuhFHy6KpkS6zUK1fdZCOuh019cQlsbff8kBqsV+0pak4i65gc3Gu/wFQo9U3nMT66QYu+nckyvi23aDFbomncolLQtevE+6AM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; arc=none smtp.client-ip=210.160.252.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
-X-CSE-ConnectionGUID: v1dHwJGoRJu8fFKdx9Fmyg==
-X-CSE-MsgGUID: 3jxux0IGRAqRnuwitZdbSw==
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 22 Oct 2025 02:53:34 +0900
-Received: from vm01.adwin.renesas.com (unknown [10.226.92.145])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id EA59E4031C11;
-	Wed, 22 Oct 2025 02:53:30 +0900 (JST)
-From: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
-To: biju.das.jz@bp.renesas.com,
-	geert+renesas@glider.be,
-	magnus.damm@gmail.com,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	mturquette@baylibre.com,
-	sboyd@kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH 4/4] arm64: dts: renesas: r9a09g057h44-rzv2h-evk: Add versa3 clock generator node
-Date: Tue, 21 Oct 2025 17:53:11 +0000
-Message-ID: <20251021175311.19611-5-ovidiu.panait.rb@renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251021175311.19611-1-ovidiu.panait.rb@renesas.com>
-References: <20251021175311.19611-1-ovidiu.panait.rb@renesas.com>
+	s=arc-20240116; t=1761070190; c=relaxed/simple;
+	bh=aRp9PLA2Ky1tVA6uHK/HKcddWUGAl0+QPgh6k0eSPvg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=TE/3Ku5iTRwh4c0Ra/X2VHeCvG9hvm7bVixGhAEYuqxbxRAWnulb1j9lohLN1lryUYgxubgtyJEes02QDilSTc02GCVKjcWRPZEGgYOWajbsQd+9kFiTAR/0Ex12KwmADQnzqF6mFdGBUit6sqFQ1qEAHlUxlVSee9a21KVPgz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=qw5BLrfu; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fairphone.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="qw5BLrfu"
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b3e7cc84b82so1142726266b.0
+        for <linux-clk@vger.kernel.org>; Tue, 21 Oct 2025 11:09:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fairphone.com; s=fair; t=1761070186; x=1761674986; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ruRUvdvkZoLr2jJW0Z1cLwXXKdDFMs/zL2a1Mukfk9s=;
+        b=qw5BLrfuRyqVv/RI69PT48U1aQMImgHG4w+IxtLVGQ507YWzAkf/bbWVpcmuHRJBzj
+         K/Vxu8mvoIWV66ccb3pHFssuCO1P6Ominbff4HBiJfYnv++HhDU+M98uuD6UOr8D+RLX
+         oX0nsuf8KhXvVQJlGjvb7gPKjKNGk1WtKBMrt+Jjo+N/yrJgB3CpMUoLnO2emKkHm8PB
+         C7k/qkEGSTeoxabXWNsYdx6oUiVHVqluN2+SVLWiQG6GcU0pZsswroz6rJC1L3o7APtd
+         wos/GbE5AL8udIAcGT9a0k7vueCaQMSkDi9f01o2hU5vdB62iztixttAr52d4dPcpT6u
+         oNpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761070186; x=1761674986;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ruRUvdvkZoLr2jJW0Z1cLwXXKdDFMs/zL2a1Mukfk9s=;
+        b=W7FSMa0m722dVkSNXeYa0kT6qzbmLlaPkXNx/TGzomLqPXxMuAy3LmRqQ3iuNGQilZ
+         W8N6ZCi+FzCnn6j35g8JqrP0jspiG/P5WhRH+waOUsenZGow/HVxLFGH0spv+SqKDgKy
+         JB4MhPuw4AWom0/EM0/242DP5J8KBy6yhDTYILRIJ52QgXdAnyvPX5CNOyiag5Af7jLA
+         D5VhlLoWt6bR+31dponKdaLx5ssNm9Uku/LThXn7iRXBrDNtTQCT3Oz3QD4vmotiQpYy
+         LFEenwO3dXs8QCggYAa7QeuH90eD/CQn1k6df2/qkXMWKoslP1M8olwgIiIM2cyYV2ad
+         BCsg==
+X-Forwarded-Encrypted: i=1; AJvYcCVeSVRLOARtsDLppw3uhbm+wPeGr2+joKWaR/aI4RSgCqVtjq5TpiOrdKTJWUUpYw+xDLcpp3o4Vfo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzypU/F0xGn7IIvyrpHoquv22RMnFRWAXcKIXBZrwN0ogDgd8cd
+	R3wcur5jm7XlUfM+37T3lHXXIvP7r1GWRFul5o2306hnjWM3c6Odv1xI6zGJ1U1wWdA=
+X-Gm-Gg: ASbGncuG3+hbRyGSLPQ1zBW8Yg7OaK85Q/WWheyskDIbPpq6XbBsvR2ZqxAFHYwYMo7
+	Q+5dnJmZTWGmm1Aiip/+AeXgQbDbFW/o6Dsr/G7dLPpsDKddvvYU39JxaOK9eWGsGOAo2UIQD8/
+	A0dvV7pHWu7wGXy2vDwTuNRX10yoO5amm7ihOvuVQswkx/tQtRyzTOoYlmR7nzv86V9agSiJ95V
+	rEFPhn/UUHh+0SgTO+CDuWHYGSlCJKGGFydoidJTScY+gdslLRBlZmK6hrFCfkDRudxaQgpja+y
+	53Uoy/bdj5DVMTuXdxGXLz7rNZkz3/F6TDSavdxi95q5/GuDoCY9zyy9nw1/Jjoc2gBeb5XLpHA
+	IzkxkTQumiIT8qV0jKIlW0xzh6jNrcY4H1Qzp5RFhveRu7Y8esbGrvIC9m9W5Gvx2/27FTo0vNU
+	iNnkQS4bSLlGJ56mBKRQ==
+X-Google-Smtp-Source: AGHT+IE5avVzpvShmbvSnzjVvBNOm23bDLEnbiX6D+4Il8N66SDi+tTOysqbM0IZc2AcphKPy6ifOQ==
+X-Received: by 2002:a17:907:25c5:b0:b4b:dd7e:65ea with SMTP id a640c23a62f3a-b6474b365c0mr1913226566b.35.1761070186373;
+        Tue, 21 Oct 2025 11:09:46 -0700 (PDT)
+Received: from otso.local ([213.208.157.251])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b65e8393778sm1116758166b.24.2025.10.21.11.09.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Oct 2025 11:09:46 -0700 (PDT)
+From: Luca Weiss <luca.weiss@fairphone.com>
+Subject: [PATCH 0/2] Fix Agera PLL config of CAMCC for SM6350 & SM7150
+Date: Tue, 21 Oct 2025 20:08:53 +0200
+Message-Id: <20251021-agera-pll-fixups-v1-0-8c1d8aff4afc@fairphone.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADXM92gC/x2MQQqAMAzAvjJ6tmAHKvgV8VBdnYUxx4YiiH93e
+ AwheaBIVikwmgeyXFr0iBWoMbDuHL2guspgW9tRawnZS2ZMIeCm95kKOnb9QnYdqGOoWcpSzb+
+ c5vf9AGVVLs9iAAAA
+X-Change-ID: 20251021-agera-pll-fixups-dad6b12c715a
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+ Danila Tikhonov <danila@jiaxyga.com>, 
+ Taniya Das <taniya.das@oss.qualcomm.com>
+Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Luca Weiss <luca.weiss@fairphone.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1761070183; l=921;
+ i=luca.weiss@fairphone.com; s=20250611; h=from:subject:message-id;
+ bh=aRp9PLA2Ky1tVA6uHK/HKcddWUGAl0+QPgh6k0eSPvg=;
+ b=ZZm6/NmPI1u7xNg8IcgQWaMv/5laGL+vT63Yqr0y0G9t5kzsMV4D43xY90DReDodb7sG5F7Ga
+ lYwR2fsKLeEAlTe4FrguUevMwr8AIOwddbg+Pd5SurfbMzZ1i0MXvEQ
+X-Developer-Key: i=luca.weiss@fairphone.com; a=ed25519;
+ pk=O1aw+AAust5lEmgrNJ1Bs7PTY0fEsJm+mdkjExA69q8=
 
-Add versa3 clock generator node. It provides clocks for the RTC, PCIe
-and audio devices.
+On SM6350 I noticed that CAMCC_MCLK* refuses to turn on (being stuck on
+off). The cause seems that PLL2 (of type Agera) is not configured
+correctly due to the implementation in clk-alpha-pll.c differing between
+downstream (e.g. msm-4.19) and upstream, and therefore the USER_CTL
+value is not configured.
 
-Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
+While looking around, it looks like camcc-sm7150.c has exactly the same
+issue, so fix that one as well.
+
+Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
 ---
- .../dts/renesas/r9a09g057h44-rzv2h-evk.dts    | 25 +++++++++++++++++++
- 1 file changed, 25 insertions(+)
+Luca Weiss (2):
+      clk: qcom: camcc-sm6350: Fix PLL config of PLL2
+      clk: qcom: camcc-sm7150: Fix PLL config of PLL2
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts b/arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts
-index f20b63acca00..3d2f926a3358 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts
-+++ b/arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts
-@@ -100,6 +100,12 @@ vqmmc_sdhi1: regulator-vccq-sdhi1 {
- 		states = <3300000 0>, <1800000 1>;
- 	};
- 
-+	x1: x1-clock {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <24000000>;
-+	};
-+
- 	/* 32.768kHz crystal */
- 	x6: x6-clock {
- 		compatible = "fixed-clock";
-@@ -209,6 +215,25 @@ raa215300: pmic@12 {
- 		clocks = <&x6>;
- 		clock-names = "xin";
- 	};
-+
-+	versa3: clock-generator@69 {
-+		compatible = "renesas,5l35023";
-+		reg = <0x69>;
-+		clocks = <&x1>;
-+		#clock-cells = <1>;
-+		assigned-clocks = <&versa3 0>,
-+				  <&versa3 1>,
-+				  <&versa3 2>,
-+				  <&versa3 3>,
-+				  <&versa3 4>,
-+				  <&versa3 5>;
-+		assigned-clock-rates = <24000000>,
-+				       <24576000>,
-+				       <32768>,
-+				       <22579200>,
-+				       <100000000>,
-+				       <100000000>;
-+	};
- };
- 
- &mdio0 {
+ drivers/clk/qcom/camcc-sm6350.c | 6 +-----
+ drivers/clk/qcom/camcc-sm7150.c | 6 +-----
+ 2 files changed, 2 insertions(+), 10 deletions(-)
+---
+base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
+change-id: 20251021-agera-pll-fixups-dad6b12c715a
+
+Best regards,
 -- 
-2.51.0
+Luca Weiss <luca.weiss@fairphone.com>
 
