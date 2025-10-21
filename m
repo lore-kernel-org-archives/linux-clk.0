@@ -1,131 +1,201 @@
-Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175])
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C303298CB7
-	for <linux-clk@vger.kernel.org>; Tue, 21 Oct 2025 10:26:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38B5332D442
+	for <linux-clk@vger.kernel.org>; Tue, 21 Oct 2025 10:36:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761042384; cv=none; b=cI0Qfn5Zr/Xs+F1Iwob6gQKunP1qXn8dgMVLhYB+ZnPt4KU3fRhx8lj7VS0iZqd0fij4U/DJZ3H77IUarVFjQ3q20ZrjhO9rjbMGbrpY3gEI5QC5MZlIBZHFCJztp7+7oTexRUS5J3b9QQCuPddsqQW9gk9/bXT/7Hm9IxH16K8=
+	t=1761043002; cv=none; b=Q9Urn3vg1QEq3xm1YdrlyvJLBuk2IgoHF3aqAz7/EOlk6LIX+DzXOvAiydlzVrRay4xs+E1ExyMFnQ3yBC2vVhvIfiwaLierz8D8rpF5H+wZDcwF38tiyvChxXhiyXGGQLfbNPxRgvDr+hakHz0DGkUZ28dpvlXVcn2vET9MJqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761042384; c=relaxed/simple;
-	bh=va4WxH64kPG8XCl6w3KCXlFAiPzGBJtiTtCajxRETjY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MxDSk0sAaBeyrq1cmyBTNTHka/44agcZXhOtSmwyLUpa0TJ3QuUC1HEufVxzfwnjqopWlERIFUVCQveKlb3mleKw3jo2YQC0NrhI5gvlP9EM8YAskC3+ok1R3vYVXYzsID/2ID/HpBET13K81kV4JLqYKBcb4amF7byiBvNezpo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-54bc6356624so5450142e0c.1
-        for <linux-clk@vger.kernel.org>; Tue, 21 Oct 2025 03:26:22 -0700 (PDT)
+	s=arc-20240116; t=1761043002; c=relaxed/simple;
+	bh=THknO6ravWsd3NQgFAsW90DN5nGw4cI/sjpLiGacHhk=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=j0bIS7PItxke/5yaDcmXRp9W1U9L44cLtAtdfFBCiryIB7BQubigyEf1xWRDOHlqPMMamDa2qmzzkCVkon5qEZmKd6e7NjrE6HdzJy62MpWUe5h55LDZ04cAX6e1HvFCoHHMWdzD4Qu8+Z7fSgqAf3hei9wrABpt9SL/9im1MBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=ZMnt0hsI; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fairphone.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="ZMnt0hsI"
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b5b823b4f3dso1034363066b.3
+        for <linux-clk@vger.kernel.org>; Tue, 21 Oct 2025 03:36:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fairphone.com; s=fair; t=1761042998; x=1761647798; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=T2j/5fMN5NhbH7iUBrDo0CGu9Ykp0qn/1cFaDJh/hxw=;
+        b=ZMnt0hsIfo2LFHaMQD8bz4zYsF/KwWz/yZ+2swDaaoVpTUpCUStKQy0MwmX8LpIdg8
+         OyowzTrdzUQIaXAXQGCMNwMCCIre7TB1cBerKKri4Ft5Bm0k81SeH5lcqdMykXAfBb+1
+         R7pFykSgo20PFINkc4/7kjOOKDlfSeCkfS+y94zi9otTUR7v9MbrrE+G1uo2s4XQFoCQ
+         1vvyfEZ17pp0v4p415krLuOeC9ZDuNU25lXGZLF5c/Amw5MfuExGwQ4fGjMF5I02cLId
+         1kRshaSqBrQUaAHK4lpjlMxJKXf4EfTq2iLtyomn+cTjTgVy/Scq5yKTNfdZsBVeIFi3
+         qtiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761042381; x=1761647181;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tDNH9pDF9LBAisWYpnrCUtwA+9hrIVu2UeAytlJC/r0=;
-        b=bvlWMGS+QCoifrPg3oNEX7emjV9wHuc3fs2Rdnl4g+cEwSbUohmcfKlSH63ptd+I7n
-         dQ5JC9gsS0rukW63t2MSUmZeUxi2yHraMYeadhcaJxCrL6TVzkAYEtQZRZtesdp30A7M
-         0NPxy8PsGhVjah0XUQxquboF7QM6CDZCkJA2yWamDJwaZaNntcHqAXbgU7c5VgeZ6VPE
-         yU1UlpBE+8QRxafCq/aVj6KifJU15kbdxIEc0VtirlwWjl5vaIur9Lfqb2/Cl/oo9mTW
-         BTduotJxLsX+hMZE/v29y5cTZIj/ed7cgc5EizHCAc1+zze2n3dxzukQVqIhqXS5vJ/w
-         3kBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU2G+NSDvq+kJ18D6o4JRrLZyuJvWzq83O24Eh8rPaBYZZ5TuRds4uotjJijEy650QcxyANlJexQxw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1XRGcwvTHcTTkiU8oDWrlSbzt+cAfWCdrImUsAPMwztl2KdA8
-	KSovyazo93XKTNDIBi2lJk0XGtzl5Z/65tGASk4zT+KB0ueV494+wmxDrk2zXxg/
-X-Gm-Gg: ASbGncuDRm6czAEFatu47mQLdkz7guIDwxIJuv83KqcK+/1cdEq880PMxa+l5YDg+gL
-	iuQvTTgp2KaNszKOdNMgmlLXT9wCL2XVZEPaVoI/okIXDTgNXOem1257HH4SuqO1GAC21x5jeq3
-	cb7Ek3BTJE4kM3PM0f/VGU33OJ0xHbd3u6nRBIuroj0SwV9K+f1PkgINahtVJZq/L93NTOSOkeZ
-	TYQKy/KMJtchi6M3k8feoOGybVzYG0EJ0MAgvz3rlwT9bdDi+ebYLUsKRFiyMSijVm+uL7kgQ1G
-	e+mm/P69gWefaZT9m+xfkY9L+NKJ7ocRvEg/cCQ0HTxy89gcvUrB1n5GWpv9sFBaJn1041dwxtq
-	rkg1SOoSyoXFXbIXP7H3RvJIxuUUkCuSAbQRZ7dBFKaNct6EAKvloyCtknarmOJKtfKSjhKMaAK
-	9StstF9iDvINcL5q4ai/WuoKQnnfBEYtyV4XYWSQ==
-X-Google-Smtp-Source: AGHT+IHDOn0w3dyLq/cfblXIf/ecL61l1CkFZQeDfK3iACSABx8pe62vZUA1sJ3S9qFGzC6H0SFlOw==
-X-Received: by 2002:a05:6123:db:b0:54a:a2a3:b16b with SMTP id 71dfb90a1353d-556401f5b3cmr4675189e0c.3.1761042380889;
-        Tue, 21 Oct 2025 03:26:20 -0700 (PDT)
-Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com. [209.85.217.53])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-55661f9e8bdsm3215356e0c.10.2025.10.21.03.26.20
-        for <linux-clk@vger.kernel.org>
+        d=1e100.net; s=20230601; t=1761042998; x=1761647798;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=T2j/5fMN5NhbH7iUBrDo0CGu9Ykp0qn/1cFaDJh/hxw=;
+        b=pqZzDRaD+Jv94Ox6XibHpppgtMzraWBcJkIwZI7Bfj3wvB6MUV5so6VpVhmoarXNyh
+         XDFiunBQHzRg+goxhXCHqshMcOSE0c8JEHh2IJTD03DYJleSStbKhhXQEhmXhHOvpSls
+         uedwcO/dF9F9ftppELea6dx6zwO+yiGt/v2dSP177pYBbRq9rCBaMoA5H+ypq3n361na
+         VIOHAXntiImxIdHZrFn4I3OmSxNTR7gH41k8p/UWY9rvYsu6WzZbiQxBBi2ezfxaeFZh
+         GYQm6RAG3kL/YXJ24uLv/T1K3GWBKL6namwwoe+x4Csn4fIir7HHgo2vHHGsmDEkhKyL
+         Nrag==
+X-Forwarded-Encrypted: i=1; AJvYcCU3zRC1jgaCH8b2mEzR5sNhhzHTZMgp3BYnwqh4JY3zH0BMLQzsQpoT8/KhDPfRF7nnB59oP0yOKp8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3hELOSYpB9NldDgk85T4ZGBvzfnWQa+RYLs6l1DqxHqscLvWA
+	i8pi7PLgSJj9iogn3ruwteurGv/ddZFDzUZRHV721iIAWBjon3ZD9znttHh70fkkOZU=
+X-Gm-Gg: ASbGnct/JKx+Zb9ZU+RphM//4CbW+OualjtXSWPHoP3vw93IsOZdqAjjFfsS+OXlo9H
+	swZfH5cP/jB3YYMpUpWEFcsN/Id1nXnTT3MFNhczSyR8Bt0aGD8J2CGxk2HaPlnmMdzfArJbM3M
+	LVP/BmL8MDq7saQh4+PwjLb4gBwtu/LftlGvkbRZHvGesASAIJxNJocO6H5Vg+lSPsBCd6jUIEo
+	2oqVfXH9Kwm33HFOQmtXDkiQMtyt0MbsTel/4iLncQ7+Co3h/S2rl+6Qm5tUwQGI6FyJB7kvInQ
+	Mcfd0Zn93ffrO0fXsTOOJ/h6hAtxMlcr1EAx+hEEmDQXvY3Q16MwTZ2WwRl0EMmoYlAPQ4dAQII
+	0MhuKRIdSIhBdwDWONppf9jACCLk3I84V59xgFbwH1UJvfMbK7iCZAMAXVO9vJZ7U/Ih3zDkTPL
+	lsx4EnSMsjUf18M7gJrNu56+YMEX9MnuqNvmXXTHXTK4es8EoOdnVqBTQ99wcPeQdTy7vapJAR2
+	AGCBUU23zW2ROYpkqJpu3AfqA==
+X-Google-Smtp-Source: AGHT+IGxaq6kMVimTVensoisT9WTDXA2uUyJiFpRAc9IVXDle+iQVHo1jPa1gFTcrYaSLvBaofq6qg==
+X-Received: by 2002:a17:907:3daa:b0:b5c:6a00:f8da with SMTP id a640c23a62f3a-b6472d5bbf5mr2001551766b.1.1761042998367;
+        Tue, 21 Oct 2025 03:36:38 -0700 (PDT)
+Received: from localhost (2001-1c00-3b8a-ea00-4b34-6694-d9bd-5210.cable.dynamic.v6.ziggo.nl. [2001:1c00:3b8a:ea00:4b34:6694:d9bd:5210])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b65e7da3412sm1041899466b.3.2025.10.21.03.36.37
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Oct 2025 03:26:20 -0700 (PDT)
-Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-5d5fbfca7e2so4549603137.0
-        for <linux-clk@vger.kernel.org>; Tue, 21 Oct 2025 03:26:20 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWnBTivGQ/ZWisR1wpdSbRtQNBz7YVWzk+PBySc39W4837catM044Y/6D1x2bX/3sdixhUZYTKwxbo=@vger.kernel.org
-X-Received: by 2002:a05:6102:e08:b0:529:7c2f:ceb5 with SMTP id
- ada2fe7eead31-5d7dd5035afmr5261434137.1.1761042379969; Tue, 21 Oct 2025
- 03:26:19 -0700 (PDT)
+        Tue, 21 Oct 2025 03:36:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20251015192611.241920-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20251015192611.241920-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 21 Oct 2025 12:26:08 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdW1B7Yk1hUU9MSJsiL8wSmjAUGN7Qd_wgBHv8Ct=-wi4Q@mail.gmail.com>
-X-Gm-Features: AS18NWA5TDVRnTdlKeYEusciZZnf69CtVCQ6CEB6928Ztx_Tex5oqUI1hZkbQkE
-Message-ID: <CAMuHMdW1B7Yk1hUU9MSJsiL8wSmjAUGN7Qd_wgBHv8Ct=-wi4Q@mail.gmail.com>
-Subject: Re: [PATCH v11 0/7] Add support for DU/DSI clocks and DSI driver
- support for the Renesas RZ/V2H(P) SoC
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Biju Das <biju.das.jz@bp.renesas.com>, Magnus Damm <magnus.damm@gmail.com>, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 21 Oct 2025 12:36:37 +0200
+Message-Id: <DDNXN4IVYLIL.3083X63IIT9B2@fairphone.com>
+Cc: "Bjorn Andersson" <andersson@kernel.org>, "Rob Herring"
+ <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Jagadeesh
+ Kona" <quic_jkona@quicinc.com>, "Bryan O'Donoghue"
+ <bryan.odonoghue@linaro.org>, "Michael Turquette"
+ <mturquette@baylibre.com>, "Stephen Boyd" <sboyd@kernel.org>, "Conor
+ Dooley" <conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+ <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH 2/2] arm64: dts: qcom: sm8550: Additionally manage MXC
+ power domain in camcc
+From: "Luca Weiss" <luca.weiss@fairphone.com>
+To: "Konrad Dybcio" <konrad.dybcio@oss.qualcomm.com>, "Luca Weiss"
+ <luca.weiss@fairphone.com>, "Taniya Das" <taniya.das@oss.qualcomm.com>,
+ "Dmitry Baryshkov" <dmitry.baryshkov@oss.qualcomm.com>, "Vladimir
+ Zapolskiy" <vladimir.zapolskiy@linaro.org>
+X-Mailer: aerc 0.21.0-0-g5549850facc2
+References: <20250303225521.1780611-1-vladimir.zapolskiy@linaro.org>
+ <20250303225521.1780611-3-vladimir.zapolskiy@linaro.org>
+ <dbxvzgqs5slrl5edqunal3wplg5jiszqv46dr4nzgowwlhkhxa@qwtfq7nfjwfo>
+ <3210a484-b9c3-4399-bee1-9f5bbc90034c@linaro.org>
+ <CAA8EJprP9Z181VDCT=xfyrBipzgiB0tfb8M_XZ4H=yOrvEnB0w@mail.gmail.com>
+ <f41061a2-cf45-4588-8df7-22270c936ee2@quicinc.com>
+ <D8EZ47Z557OX.37FDVYA5AHET0@fairphone.com>
+ <d64c0776-0b12-42d3-aed3-4e6a13487f51@quicinc.com>
+ <DDKNL43NWFMA.1S03T0SUYFVMY@fairphone.com>
+ <85bf3468-24bf-4f14-afcd-28878ad84dc9@oss.qualcomm.com>
+In-Reply-To: <85bf3468-24bf-4f14-afcd-28878ad84dc9@oss.qualcomm.com>
 
-Hi Prabhakar et al,
-
-On Wed, 15 Oct 2025 at 21:26, Prabhakar <prabhakar.csengg@gmail.com> wrote:
-> This patch series adds DU/DSI clocks and provides support for the
-> MIPI DSI interface on the RZ/V2H(P) SoC.
+On Mon Oct 20, 2025 at 2:21 PM CEST, Konrad Dybcio wrote:
+> On 10/17/25 4:05 PM, Luca Weiss wrote:
+>> Hi Taniya,
+>>=20
+>> On Thu Mar 13, 2025 at 12:57 PM CET, Taniya Das wrote:
+>>>
+>>>
+>>> On 3/13/2025 1:22 PM, Luca Weiss wrote:
+>>>> Hi Taniya,
+>>>>
+>>>> On Thu Mar 13, 2025 at 5:39 AM CET, Taniya Das wrote:
+>>>>>
+>>>>>
+>>>>> On 3/4/2025 2:10 PM, Dmitry Baryshkov wrote:
+>>>>>> On Tue, 4 Mar 2025 at 09:37, Vladimir Zapolskiy
+>>>>>> <vladimir.zapolskiy@linaro.org> wrote:
+>>>>>>>
+>>>>>>> On 3/4/25 01:53, Dmitry Baryshkov wrote:
+>>>>>>>> On Tue, Mar 04, 2025 at 12:55:21AM +0200, Vladimir Zapolskiy wrote=
+:
+>>>>>>>>> SM8550 Camera Clock Controller shall enable both MXC and MMCX pow=
+er
+>>>>>>>>> domains.
+>>>>>>>>
+>>>>>>>> Are those really required to access the registers of the cammcc? O=
+r is
+>>>>>>>> one of those (MXC?) required to setup PLLs? Also, is this applicab=
+le
+>>>>>>>> only to sm8550 or to other similar clock controllers?
+>>>>>>>
+>>>>>>> Due to the described problem I experience a fatal CPU stall on SM85=
+50-QRD,
+>>>>>>> not on any SM8450 or SM8650 powered board for instance, however it =
+does
+>>>>>>> not exclude an option that the problem has to be fixed for other cl=
+ock
+>>>>>>> controllers, but it's Qualcomm to confirm any other touched platfor=
+ms,
+>>>>>>
+>>>>>> Please work with Taniya to identify used power domains.
+>>>>>>
+>>>>>
+>>>>> CAMCC requires both MMCX and MXC to be functional.
+>>>>
+>>>> Could you check whether any clock controllers on SM6350/SM7225 (Bitra)
+>>>> need multiple power domains, or in general which clock controller uses
+>>>> which power domain.
+>>>>
+>>>> That SoC has camcc, dispcc, gcc, gpucc, npucc and videocc.
+>>>>
+>>>> That'd be highly appreciated since I've been hitting weird issues ther=
+e
+>>>> that could be explained by some missing power domains.
+>>>>
+>>>
+>>> Hi Luca,
+>>>
+>>> The targets you mentioned does not have any have multiple rail
+>>> dependency, but could you share the weird issues with respect to clock
+>>> controller I can take a look.
+>>=20
+>> Coming back to this, I've taken a shot at camera on SM6350 (Fairphone 4)
+>> again, but again hitting some clock issues.
+>>=20
+>> For reference, I am testing with following change:
+>> https://lore.kernel.org/linux-arm-msm/20250911011218.861322-3-vladimir.z=
+apolskiy@linaro.org/
+>>=20
+>> Trying to enable CAMCC_MCLK1_CLK - wired up to the IMX576 camera sensor
+>> on this phone - results in following error.
+>>=20
+>> [    3.140232] ------------[ cut here ]------------
+>> [    3.141264] camcc_mclk1_clk status stuck at 'off'
+>> [    3.141276] WARNING: CPU: 6 PID: 12 at drivers/clk/qcom/clk-branch.c:=
+87 clk_branch_toggle+0x170/0x190
+>>=20
+>> Checking the driver against downstream driver, it looks like the RCGs
+>> should be using clk_rcg2_shared_ops because of enable_safe_config in
+>> downstream, but changing that doesn't really improve the situation, but
+>> it does change the error message to this:
+>>=20
+>> [    2.933254] ------------[ cut here ]------------
+>> [    2.933961] camcc_mclk1_clk_src: rcg didn't update its configuration.
+>> [    2.933970] WARNING: CPU: 7 PID: 12 at drivers/clk/qcom/clk-rcg2.c:13=
+6 update_config+0xd4/0xe4
+>>=20
+>> I've also noticed that some camcc drivers take in GCC_CAMERA_AHB_CLK as
+>> iface clk, could something like this be missing on sm6350?
+>>=20
+>> I'd appreciate any help or tips for resolving this.
 >
-> v10->v11:
-> - Split CPG_PLL_CLK1_K/M/PDIV macro change into separate patch
-> - Updated rzv2h_cpg_plldsi_div_determine_rate()
->   while iterating over the divider table
-> - Added Acked-by tag from Tomi for patch 2/7 and 3/7
-> - Added Reviewed-by tag from Geert for patch 2/7 and 3/7
+> Is CAMCC_PLL2 online?
 
-I think this series is ready for merging.
+I'd assume so given nothing in dmesg is complaining about that?
 
-> Lad Prabhakar (7):
->   clk: renesas: rzv2h-cpg: Add instance field to struct pll
->   clk: renesas: rzv2h-cpg: Use GENMASK for PLL fields
->   clk: renesas: rzv2h-cpg: Add support for DSI clocks
->   clk: renesas: r9a09g057: Add clock and reset entries for DSI and LCDC
->   dt-bindings: display: bridge: renesas,dsi: Document RZ/V2H(P) and
->     RZ/V2N
->   drm: renesas: rz-du: mipi_dsi: Add LPCLK clock support
->   drm: renesas: rz-du: mipi_dsi: Add support for RZ/V2H(P) SoC
+But not sure how to check. Debugcc can't do PLLs, right?
 
-As this touches both clk and drm, let's discuss the merge strategy.
-My proposal:
-  1. I queue patches 1-3 in an immutable branch with a signed tag,
-     to be used as a base for the remaining patches,
-  2. I queue patch 4 on top of 1 in renesas-clk for v6.19,
-  3. The DRM people queue patches 5-7 on top of 1.
+In any case adding CLK_IS_CRITICAL to the camcc_pll2 doesn't change
+anything.
 
-Does that sound fine for you?
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Regards
+Luca
