@@ -1,99 +1,144 @@
-Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com [209.85.222.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D147F22B8CB
-	for <linux-clk@vger.kernel.org>; Tue, 21 Oct 2025 13:36:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5233126E6F4;
+	Tue, 21 Oct 2025 13:47:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761053819; cv=none; b=P7DRewVxfvzrND5jiv58Almhl9h++ApvuCIICLT/HxVqPL1gFHdM7Og1HeS1x910uJeRKacREwxEk1r3GrUCa4yygsxqdPLUg3OVJekEnfLGxsaYKkuOjPTQFz35Hjs6x5aebXb0NfNoCL8n4IofZiQhdk5MVz9bKLt4sEK1aDA=
+	t=1761054442; cv=none; b=t+idbib8/yLYzWmjQpdQbUvJFYpOKHYPNub0nsJ6+P1Ko01eblb8c0+APikhCWuSzVtOe4PSbbPFvoamxuvYgEhBeCLLvA2Z7uCt61aqPhxGGRChmp0yNh/AEGeqiWUREWwAOZ/l/1hrSqFc+0X3lqyhxAZ19mlrs62187Qi3Ss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761053819; c=relaxed/simple;
-	bh=rFDpMMd/J7LmBoOgvX90w3JvXvtchMw0C13OGNdvG04=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=s0PmTCmMvP3HpBcv6hEVmi5o1KHjg/CkERx7YrguUOc0Az07MFXHcixWsNN2ZSCmzNp0E/5QYz8p4R3Qqj08w7NNA3CJOb0Moy67HgTU2YTsO28p4tLSuw5FV7qm6slz2U2xAdbRjZr3neWoYko88uoQ9UpE2AgKpV88zJbSSCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-932bf9d3deeso2975646241.2
-        for <linux-clk@vger.kernel.org>; Tue, 21 Oct 2025 06:36:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761053816; x=1761658616;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=b78/bqYwVh1ldrSw5qZkZyL5FOTBO1IYeO3ztxHSC8M=;
-        b=Tnp1dc/Nzzzlpj8YK6xaTGMqzfF2XqOc37rxw3hljz64uU8kUXDN4uUmle1Qfg7sUK
-         /Jd0YqIq4Mk45Dju1oMFdaFthV3uXjN4lAz9r2kZnCKPnQsNzRBzDk2IC554+vpsC4P+
-         JU0pKfvIFJtv2xHhRSJh13aKOR1JPo/puab5TjAisAP+/I7cCmHudddUS8n7/UhPTBK/
-         VGnCOgVBqJdg+IaacvM531I/oBWKFB/Qei/7oqhLMI5x2CSE8HOnQfi79hsHJRRnks5V
-         +wfGph6N+mDnliBybdeL7BPMwnlVPwWX/0ijAefzxqzD5YHDASm1ow617b33imdSOPTU
-         At1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVNDtOiP1qM4QgUKyoCiBMWrL+5m7vnNuandUNlEafhOqGTEAh9KQj+QO1NSFeGvB3TdwLCOgif/M8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxcp92Ax/kENWQWRvmgRfuGiZ0Vg8Bn2VS8THXJ/Pm+g6NPYM26
-	1rjB6YJjq0AKkL5EBbv/ZA8ut4tnx4JXoi/+8v/OQH7pn5PDXf5NzcMVZLxl5PCP
-X-Gm-Gg: ASbGncu0mf8iglU+TjapRz+GPA4cGjAWHOqunGKXmBlTbbVz3dxOgAqrqoXI0t7eV+A
-	4Ade4tOQiL2O6pv0auqBdFYMFDZt87UvpbjV/eLTjfVOnSUCCdecwXwxcwj+Ob1l2BVSqxXS+pG
-	F7DgRBJarE7fMnQyZrTMEbDjn+qfSeh0M9RHg0UVTT/nOXKGUJ9HJ9rfBppsnb7ixNAEnS1WyYv
-	EgdoMEHTo4RKnjuRQdpeRLjpotlO+Yb/MBdOzA4bYRHEPuGNbMJfZ8bssAxW9va0QxFfGk8MjGM
-	zfdZJcbIKCLivjUJwlaZWSB5l5eBsz/68XEm0W70tDboIPpb+wgeM4L7C21dDCOw7PcIw5x0D3j
-	s5HN7/soYeCPPfL6Ic29EX+gQPWFVpoyYS8v2f5L/W4BbYd34l/jzferhdzqzEtDvFFpLBxjBJ2
-	vp2WYoonp73aXs4Viyeu+EnnIDFGJPSE4pbgJDyQ==
-X-Google-Smtp-Source: AGHT+IEV6gMMBJm5adZYkFcwTB+8gUTyCh/EPkC9AAkPkwfZ2sRIeh6su94Hm9BLNCcun9Mrvx4wIg==
-X-Received: by 2002:a05:6102:dcc:b0:5d6:12fc:76e1 with SMTP id ada2fe7eead31-5d7dd46cfcdmr5894631137.17.1761053816456;
-        Tue, 21 Oct 2025 06:36:56 -0700 (PDT)
-Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com. [209.85.222.44])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-5d96c0bd369sm3536442137.1.2025.10.21.06.36.55
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Oct 2025 06:36:55 -0700 (PDT)
-Received: by mail-ua1-f44.google.com with SMTP id a1e0cc1a2514c-932f654eaaeso98273241.0
-        for <linux-clk@vger.kernel.org>; Tue, 21 Oct 2025 06:36:55 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVy+AMTmsTLIvxN0i1dMipro/vJJ7e96ygxI3d6KnmpoWSTGOPnHlwVOBBRhBdjJudTc8SDpz5IM9s=@vger.kernel.org
-X-Received: by 2002:a05:6102:441d:b0:519:534a:6c4f with SMTP id
- ada2fe7eead31-5d7dd5ee60fmr6017748137.33.1761053815204; Tue, 21 Oct 2025
- 06:36:55 -0700 (PDT)
+	s=arc-20240116; t=1761054442; c=relaxed/simple;
+	bh=neT4o96+sfJPtM07jwlTFJkt0YWT2tPvX9k+nMmP5RU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=p1KP6tNwOZTvs/2dbcZF0RxHhCuPQtjzHSMFscVxJiOM+qzQi11k/WcnQ/OoIZqhRY4oINf5wiA3MfpcqcQSSEnGWDSkE4wAXsZlPf9GBAEXBkJbiJwiLei1kayBD/J3DmYXbTDp7CLr+BelvAzemmPcQNBOBLdf+WdP4foireA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=Mlh89lu7; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="Mlh89lu7"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
+	bh=aok4Q7VCeJwiry1qOMn1QTGAWgJx8h8keP6SSm7tHlQ=; b=Mlh89lu7wtQLx4mdH9MuwJQYFv
+	XjIltf3atCUoXi+p5e7lCcYpM4UyPbUFJm+8eFFY+UGuhKQeQyluZp0Rp4Gf4KwNQsQVqVsmdQKY+
+	QfyOik/etf8+aeNaxMM/M03AgFlf+oK63yjolN12SLXGnWrPaev6B6BdbNe2fOhTph+snLAMKMkhY
+	tcRNX0V96K6d+lekXsAm4R1AqXuq0oeJ40GsiSjyl8xqwkVAVmp1V1ul5J5fikDlL9QxhJDmoJg67
+	DL6D3FDSRj9khpecMAgByuCCTkYyfhzqrDg4gHSGMBAQLBa3rTWPA0cNDLF1L2DZ2nEzDHOmZ2UG1
+	ltdW8tjw==;
+Received: from i53875b19.versanet.de ([83.135.91.25] helo=phil.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1vBChk-0003Zt-HY; Tue, 21 Oct 2025 15:47:12 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: mturquette@baylibre.com, sboyd@kernel.org, sugar.zhang@rock-chips.com,
+ zhangqing@rock-chips.com, robh@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+ conor+dt@kernel.org, Elaine Zhang <zhangqing@rock-chips.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org, huangtao@rock-chips.com,
+ finley.xiao@rock-chips.com
+Subject: Re: [PATCH v4 5/7] clk: rockchip: add support for pvtpll clk
+Date: Tue, 21 Oct 2025 15:47:11 +0200
+Message-ID: <13871591.dW097sEU6C@phil>
+In-Reply-To: <20251021065232.2201500-6-zhangqing@rock-chips.com>
+References:
+ <20251021065232.2201500-1-zhangqing@rock-chips.com>
+ <20251021065232.2201500-6-zhangqing@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251020143107.13974-1-ovidiu.panait.rb@renesas.com> <20251020143107.13974-2-ovidiu.panait.rb@renesas.com>
-In-Reply-To: <20251020143107.13974-2-ovidiu.panait.rb@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 21 Oct 2025 15:36:44 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWNq-DFG4_i9CN+Rb2RSgO1Sxph7HO7SNhnr0d1=LoW0g@mail.gmail.com>
-X-Gm-Features: AS18NWBYsMSpOo4y4kMiKki8g1BkhV5Ulk8TYURDjYYjSArsxY_VVDXQMAlwt_w
-Message-ID: <CAMuHMdWNq-DFG4_i9CN+Rb2RSgO1Sxph7HO7SNhnr0d1=LoW0g@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] clk: renesas: r9a09g057: Add clock and reset
- entries for TSU
-To: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
-Cc: john.madieu.xa@bp.renesas.com, rafael@kernel.org, 
-	daniel.lezcano@linaro.org, rui.zhang@intel.com, lukasz.luba@arm.com, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	magnus.damm@gmail.com, mturquette@baylibre.com, sboyd@kernel.org, 
-	linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-On Mon, 20 Oct 2025 at 16:31, Ovidiu Panait
-<ovidiu.panait.rb@renesas.com> wrote:
-> Add module clock and reset entries for the TSU0 and TSU1 blocks on the
-> Renesas RZ/V2H (R9A09G057) SoC.
->
-> Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
+Am Dienstag, 21. Oktober 2025, 08:52:30 Mitteleurop=C3=A4ische Sommerzeit s=
+chrieb Elaine Zhang:
+> Support to adjust pvtpll by volt-sel and otp.
+> Support calibrate pvtpll init frequency.
+>=20
+> PVTPLL is used to monitor the chip performance variance caused by chip
+> process, voltage and temperature, and generate a set of reference signals
+> for adjusting the voltage of the chip.
+>=20
+> PVTPLL supports the following features:
+>=20
+> 1. A clock oscillation ring is integrated and used to generate a clock
+> like signal (osc_clk),the frequency of this clock is determined
+> by the cell delay value of clock oscillation ring circuit
+>=20
+> 2. A frequency counter(osc_cnt) is used to measure the frequency of osc_c=
+lk.
+>=20
+> 3. A externally input clock (ref_clk) is used as a reference clock for
+> detecting the frequency of osc_clk.
+>=20
+> 4. A calculation counter uses ref_clk to generate a configurable
+> periodic timing window.
+>=20
+> 5. Two clock counters are used to measure the frequency of the clock
+> generated by OSC_WRAPPER?
+>=20
+> 6. Support for dividing the ref_clk and osc_clk
+>=20
+> 7. Support for configuring the effective polarity of the voltage
+> regulator signal 'OUT'
+>=20
+> The clock path of cpu used pvtpll:
+>=20
+>     --gpll--|--\
+>             |   \                                 | \
+>             |    \                                |  \
+>             |     \                               |   \
+>    --v0pll--| mux |--[gate]--[div]--clk_core_src--|mux |--clk_core
+>             |     /                               |   /
+>             |    /   --ref_clk--[div]-cpu_pvtpll--|  /
+>    --v1pll--|   /                                 | /
+>             |--/
+>=20
+> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-clk for v6.19.
+[...]
 
-Gr{oetje,eeting}s,
+> +	pvtpll->regmap_cru =3D syscon_regmap_lookup_by_phandle_optional(np, "ro=
+ckchip,cru");
 
-                        Geert
+Not convinced about that :-) .
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+(1) the cru itself already ioremaps the CRU memory, so having a syscon
+    there would ioremap that memory a second time.
+(2) we should definitly not expose the whole CRU io-memory to other
+    drivers to write "random" stuff to. This will just invited further
+    hacks, where people want to take shortcuts with clock settings.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Also this seems highly specific to the rv1126b.
+
+Looking at the registers, this is a clk-mux between that deepslow clock
+and the actual pvtpll output and the config function really only
+reparents to the pvtpll in all cases.
+
+So I believe this should in the worst case just be mux clock, but also
+I see that the "correct" setting will already be set by the
+
+        /* pvtpll src init */
+        writel_relaxed(PVTPLL_SRC_SEL_PVTPLL, reg_base + RV1126B_CORECLKSEL=
+_CON(0));
+        writel_relaxed(PVTPLL_SRC_SEL_PVTPLL, reg_base + RV1126B_NPUCLKSEL_=
+CON(0));
+        writel_relaxed(PVTPLL_SRC_SEL_PVTPLL, reg_base + RV1126B_VICLKSEL_C=
+ON(0));
+        writel_relaxed(PVTPLL_SRC_SEL_PVTPLL, reg_base + RV1126B_VEPUCLKSEL=
+_CON(0));
+        writel_relaxed(PVTPLL_SRC_SEL_PVTPLL, reg_base + RV1126B_VCPCLKSEL_=
+CON(0));
+
+in the rv1126b clock driver?
+
+So that whole mode setting should not be necessary at all maybe?
+
+Thanks
+Heiko
+
+
