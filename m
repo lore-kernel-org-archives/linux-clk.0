@@ -1,85 +1,161 @@
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62FC7347BDE
-	for <linux-clk@vger.kernel.org>; Wed, 22 Oct 2025 14:08:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54B861494A8;
+	Wed, 22 Oct 2025 14:11:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761142121; cv=none; b=FBz+j49Y8w+WIspM+zdaEf5/5VPKA+J87g1mT3Y0P+XvAntFr4vewNRxHlFuzww7zFOfdcrCBlMnvHkA+36SkVFhYPDJMP6r5abzJMpbYoGYFWUoCI3GCudQZCkOsHlOru7gVRuhH2Sm7/W6Ogblaw4o9Zgn1DBJD+P+BrBhwXg=
+	t=1761142318; cv=none; b=hSBuuupMpoyZOFEtrWuxMMiwt4ADsJVUZosiGHcbjmHRzbnn0Bcb3/NuPgFAGKNAxnphPn6KNCHkGqYQleaxnrmoMZhgmsD0H8NLz4kiBxojZLAtF215ytVjyrdxBTT6Yu41ldb08e5aZ33xxzZq/XnT0aqOmwYQQgXACcZ6FXI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761142121; c=relaxed/simple;
-	bh=nf6lYvULmbWaC/xW9v0Y1FlJ/x3FuK/AGx8my0sNvcg=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=HiGg+W4cy7fy/uyrADSYhaek7dy+YzhrD/UKY2IYTKAaYxSmv0wmtXZH4lyZorOpZ9v9oAbqw2AEgb6inyN+dgFWo1d4gzG5lQ4tpyq3bqSJ72iS/9eht+R4EeZY0Q+4quxMg2fy7xTGpj1PFxl20N5pF9edBSGn2vu5Znuk9qg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qF7XKvKB; arc=none smtp.client-ip=209.85.128.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+	s=arc-20240116; t=1761142318; c=relaxed/simple;
+	bh=RwoJkus1WViVNJS0q2DbQhutmAlsR2CiQVXjHxAD0bY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=pETX3k0hN5QdEZ1WZ8saNnqPFAlovrCzV7KWPzk2uobtjQIWYl+N1FcOtQV7+lZ+6YANJgo2NSDlrbT8Y/wq+dBTKtLKDW2QVT82CiLOMw9OYW8QggreGBnlB98vlgErSVEOPvdSSwVeAfzcBF2C3X+RYNKtCtmA6j0bV4ZiTl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=PlCr3ESS; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qF7XKvKB"
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-47106a388cfso31909815e9.0
-        for <linux-clk@vger.kernel.org>; Wed, 22 Oct 2025 07:08:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761142118; x=1761746918; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ATlrZjqtWRkDgSGBMom3PghpDA1GYToK819nxmIH54Y=;
-        b=qF7XKvKBWv8/UBbXzTPd6EBis/6kZfznFn9ZfAGFjfclhnSHQTpHdHLryicTUurJOP
-         iUO0AdHakdp/wlIs6kgTnw1vLotjNL2W8Cd0SfjnUDAwSSTxY1uYdPhfFaQ9q6xqohjX
-         PXzN64LL6cpA2JMzSzI+JXLbbyY3T2COvqq0T9mAXDRrIz0xCePFgm1XHupaJpGECtrg
-         4D2vQ/zmUM3w1398ErmUc8UlE+6f3g4zXD6OzBIL6lvevvSE2whnugkkYcPidAcWyZfa
-         ay+5RAr6X0d9sOZ6cyoUk9zYKEjBJHTg5vp/tu25E2fSDy6E/azskM0ttPLsSFFg9hB0
-         dTAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761142118; x=1761746918;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ATlrZjqtWRkDgSGBMom3PghpDA1GYToK819nxmIH54Y=;
-        b=LPYUk584RWNwX60Pxeh5Zwl5PRIVXjSE0o80nU0LoY41qcTF1IJp9qwGIIGGCJyj4u
-         dssjU8Y9mPpZ/MH2qypnFfh7r3E1hoJoSMjUC1/dJSJa+UYfbSVlaFORZNpQdhHbIymT
-         ivvwHOOqYn8/jCjMmgNJVQdoJnTbqKrv4QZjl+QNUKIh2s9Yf/rrug8y1rKsm4tjJ/iu
-         qYBJlCrtqu+/AbjR4cis7QJ/icOvkKV1br+aVlS1A6Nsd/oSdFrN+6rjj/QSrUkVg0WG
-         JmoRRQlospNfM6TI/YewQij3jXZYoVOtiNjFwpB8U73QFpoRxiP/QnvJs7MSmBGqd83C
-         IlpA==
-X-Forwarded-Encrypted: i=1; AJvYcCWZCcnTrZ94C+7ofztUXv0XU5ta1MfENSLeAvPryNAyWKjDFJoY71QlIR1B55pygsi4y1vxssK4zlk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxF+8Oieb7jlHYz6ETidnjnnEVGFxc2VrB9RgXk01U+x9LqTQ1A
-	2otB6OhXRTvJmbYaMQChxXESy22yS/8dBBE2oRP+ICQqmcJqKbiJn44HRctsNEwYpnoEQruEnkh
-	MujjlrGKgRY4dDu0p0Q==
-X-Google-Smtp-Source: AGHT+IGGiD7bely6ltA8zojQnpBYzqlN9EfV8SH7PMi9UDRTq16fyrTVPdiLdtgeh1l7/mph0NHAx7PqvBdfS3Y=
-X-Received: from wmom23.prod.google.com ([2002:a05:600c:4617:b0:46e:15a3:1c9b])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:3f08:b0:470:ffd1:782d with SMTP id 5b1f17b1804b1-47117876a19mr174974085e9.6.1761142117704;
- Wed, 22 Oct 2025 07:08:37 -0700 (PDT)
-Date: Wed, 22 Oct 2025 14:08:36 +0000
-In-Reply-To: <jnpqitx2yup2cvt7ey4b3fgzsi62i2pkasjxgx6xfi2r45hhhn@qqle4nvlcbu2>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="PlCr3ESS"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id E6332C0AFFB;
+	Wed, 22 Oct 2025 14:11:33 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id A568C606DC;
+	Wed, 22 Oct 2025 14:11:53 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 8F9E6102F243C;
+	Wed, 22 Oct 2025 16:11:49 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1761142312; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=O1wkwa2sbgbrgVXmpX6aURjXnmTYmvjQpNTyuKJo+Jg=;
+	b=PlCr3ESSO1Lz6NgyqsmCsc1gCdHzwwzaG3F97GJRmw4UNWoV2zZ7Ztz+vBarrcv14hkeb8
+	ZLPyeJOQdJJxqxldUujAfOpz33WY+OHATCTElWRKckQ/Ao6vOezLXmeOxFjsgz8Ib59lKc
+	KOBnSv4diphrnuyCutb1P4DEV6thLTLIDScVZTqXqHAXxApOGGUkZyKzkHQfaJ5DMdHlIR
+	UcoROB9m1xZ6RUPIQK45ACSpJdTwH8G7+HERmtTQdCAu98NXgRY+WY8lMt9LedzckEgQhl
+	R52xwpALs7xqwSF7Kihb4yMXFpVU2h4Q5re8uyNBZYkMBuKNSFr+syWzkkktWg==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Andrew Lunn <andrew@lunn.ch>,  Gregory Clement
+ <gregory.clement@bootlin.com>,  Sebastian Hesselbarth
+ <sebastian.hesselbarth@gmail.com>,  Krzysztof Kozlowski
+ <krzk+dt@kernel.org>,  Conor Dooley <conor+dt@kernel.org>,  Michael
+ Turquette <mturquette@baylibre.com>,  Stephen Boyd <sboyd@kernel.org>,
+  Linus Walleij <linus.walleij@linaro.org>,  Richard Cochran
+ <richardcochran@gmail.com>,  linux-arm-kernel@lists.infradead.org,
+  devicetree@vger.kernel.org,  linux-kernel@vger.kernel.org,
+  linux-clk@vger.kernel.org,  linux-gpio@vger.kernel.org,
+  netdev@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: arm: Convert Marvell CP110 System
+ Controller to DT schema
+In-Reply-To: <20251014153021.3783485-1-robh@kernel.org> (Rob Herring's message
+	of "Tue, 14 Oct 2025 10:30:19 -0500")
+References: <20251014153021.3783485-1-robh@kernel.org>
+User-Agent: mu4e 1.12.7; emacs 30.2
+Date: Wed, 22 Oct 2025 16:11:48 +0200
+Message-ID: <87ldl3rpp7.fsf@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251020-clk-send-sync-v2-0-44ab533ae084@google.com>
- <20251020-clk-send-sync-v2-1-44ab533ae084@google.com> <ghaqgzgnk6mkv6tm4inm2e24jyidsk7qhbff6zwc46kefojw5p@3jvwnn3q4bxw>
- <aPiTm7Pb9WguOd9j@google.com> <jnpqitx2yup2cvt7ey4b3fgzsi62i2pkasjxgx6xfi2r45hhhn@qqle4nvlcbu2>
-Message-ID: <aPjlZMg7UXc099cU@google.com>
-Subject: Re: [PATCH v2 1/2] rust: clk: implement Send and Sync
-From: Alice Ryhl <aliceryhl@google.com>
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, Daniel Almeida <daniel.almeida@collabora.com>, 
-	linux-clk@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Wed, Oct 22, 2025 at 03:03:26PM +0530, Viresh Kumar wrote:
-> On 22-10-25, 08:19, Alice Ryhl wrote:
-> > I'm guessing this means you want me to take it through drm-rust? See
-> > what I put in the cover letter about choice of tree.
-> 
-> I was expecting Stephen to pick it up directly.
+Hi Rob,
 
-Ah, that's fine, thanks.
+Thanks for the conversion!
 
-Alice
+On 14/10/2025 at 10:30:19 -05, "Rob Herring (Arm)" <robh@kernel.org> wrote:
+
+> Convert the Marvell CP110 System Controller binding to DT schema
+> format.
+>
+> There's not any specific compatible for the whole block which is a
+> separate problem, so just the child nodes are documented. Only the
+> pinctrl and clock child nodes need to be converted as the GPIO node
+> already has a schema.
+>
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
+
+...
+
+> -Those clocks can be referenced by other Device Tree nodes using two
+> -cells:
+> - - The first cell must be 0 or 1. 0 for the core clocks and 1 for the
+> -   gateable clocks.
+> - - The second cell identifies the particular core clock or gateable
+> -   clocks.
+> -
+> -The following clocks are available:
+> - - Core clocks
+> -   - 0 0	APLL
+> -   - 0 1	PPv2 core
+> -   - 0 2	EIP
+> -   - 0 3	Core
+> -   - 0 4	NAND core
+> -   - 0 5	SDIO core
+> - - Gateable clocks
+> -   - 1 0	Audio
+> -   - 1 1	Comm Unit
+> -   - 1 2	NAND
+> -   - 1 3	PPv2
+> -   - 1 4	SDIO
+...
+
+Why do you want to drop this information? Telling
+
+    #clock-cells =3D <2>
+
+is not enough IMO, we must tell people what is expected in these
+cells. At the very least the cell values can be constrained to [0-1] for th=
+e first
+one and [0-5] or [0-26] respectively for the second one.
+
+But giving their meaning I think makes sense. I agree, these should have be=
+en
+defined inside a shared header, that would have been a better way to
+keep track of their meaning, but if we don't have that, I would propose
+to keep the information here?
+
+[...]
+
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pinctrl/marvell,armada-7k-pinctrl=
+.yaml
+> @@ -0,0 +1,73 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/pinctrl/marvell,armada-7k-pinctrl.yam=
+l#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Marvell Armada 7K/8K pin controller
+
+...
+
+> +        enum: [
+> +          au, dev, ge, ge0, ge1, gpio, i2c0, i2c1, io, led, link,
+> mii,
+
+I don't think "io" has ever been a valid value, it probably comes from a
+typo while sorting out all the possibilities ;-) (probably a left over
+of a gpio, mdio or sdio string).
+
+> +          mss_gpio0, mss_gpio1, mss_gpio2, mss_gpio3, mss_gpio4, mss_gpi=
+o5,
+> +          mss_gpio6, mss_gpio7, mss_i2c, mss_spi, mss_uart, nf, pcie, pc=
+ie0,
+> +          pcie1, pcie2, ptp, rei, sata0, sata1, sdio, sdio_cd, sdio_wp, =
+sei,
+> +          spi0, spi1, synce1, synce2, tdm, uart0, uart1, uart2, uart3, w=
+akeup,
+> +          xg
+
+Rest LGTM otherwise.
+
+Thanks,
+Miqu=C3=A8l
