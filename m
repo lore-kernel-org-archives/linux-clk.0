@@ -1,64 +1,64 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 207F634C9B5
-	for <linux-clk@vger.kernel.org>; Wed, 22 Oct 2025 14:21:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BE6034C98E
+	for <linux-clk@vger.kernel.org>; Wed, 22 Oct 2025 14:21:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761142899; cv=none; b=ckJ2P2+Q/p53l+a+WglQy8imi0bK624Wo1PL3+BN0b0MuFftwD8Y3oU73ZC+nb58qAG51eugfma8+1R/5qFf9ji8CtKttWuC00rESoTu+BZfpVDnv6NhACYUEsVGLRe7wg9X57fqiD6+UrSfKz57itgZQFh7Mjm7z5duOl+9pD4=
+	t=1761142901; cv=none; b=ZZySRJn35HE6icT5KCD9rGw8WqDbPPvMVSetxvhD1xxCM1AzgzRyBQS0JUEgGIjP5+OKAvgbwlw2tn6B24P6m8B95+ezuf2LpCKNNlWLYRJ62yXQ9oJYQ8KOm/0kTXofnLL9u8AWYdwU2UwJsEdpaZ3dCF/khSv8alOy05dUrjE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761142899; c=relaxed/simple;
-	bh=u+qJVWyapenrodgmMyyh5sdeoJQIHo+UHZurPNrBBEU=;
+	s=arc-20240116; t=1761142901; c=relaxed/simple;
+	bh=unhDWU3j7HXm8tKnMiJwHfKNJbf2ZhuKuePm6ASfLQM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mZAoexYKR7PTOkiWKQDQrUjpK0ejsDlln0mX5rs9VWUaDDN+dahMVcKE88wp8Ketk0gH6O3vNvLzxaZlD4PJAfbT9N/12eGTtmxTFPxb3b0vYzmT42Y/rP3Heqgw/AMEGwIogVxqQU615bUPgdnM1sU6wntYesPBlPggLkrIndk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dRW3mYGu; arc=none smtp.client-ip=209.85.128.49
+	 MIME-Version; b=kFjXB4/wMRrtZPTBAFhLR97UVahFsRLd8+EKYCrNA566pnKvkLwqjynZxZxKRkGc4VjZNXk4+AS8JV658hd9BtPWZYDy4Hjvo16vCQr+lKLjsPNiDa2j4iY64RFVnmH6TYsp8xWo4c1GMMuPm2AeUsjMxEPbRTf6ri1WIcjoYAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UucIpg2n; arc=none smtp.client-ip=209.85.128.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dRW3mYGu"
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-47112a73785so53148425e9.3
-        for <linux-clk@vger.kernel.org>; Wed, 22 Oct 2025 07:21:35 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UucIpg2n"
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-474975af41dso15805475e9.2
+        for <linux-clk@vger.kernel.org>; Wed, 22 Oct 2025 07:21:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761142893; x=1761747693; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1761142895; x=1761747695; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=oNnZ9HXiG4U5oHkge6rfZLR0dPMVP9tD5A0n1Dg/8XI=;
-        b=dRW3mYGusnM/Qmj4Y0elfbsCR225co2bFqnzUeMQY71kxiDG6gIjouamI/pS8dbXZd
-         PIEdkZzuejc/uJtv2auEXrEzBp2mVsXK9G9CUW1OLiXLnO++rxWZBrlcfJaduayjiLlg
-         liqQDgRSbp9KKzUUbT8Ue/lYFtvanYlxk4nlzHl8VJy0XY1ABF1RsSkA6ENVigxnxD9o
-         cmAUvpQQZAs1XvwHhnir1OXKqiDmtzh2MUcUEYtgwwg18EuuGR2I5RmUSbCMRXZA01U/
-         xqlASVgBaV4qcyybRNHDTXbNpj6fwTAB24HY410dsaFcLiPPv4KwgNSC9suYdITcpus0
-         L8Mw==
+        bh=rAO9OwRfZdFmlMl3mS0tub2HzSBi7qv3ODFvIZHKgFU=;
+        b=UucIpg2njXrElxJXn0QVRH13QlN1mvRoiWg0ERm3uZvdhE50xg5vLmw3mwWc3qdkcp
+         WjqWpoE0C3UDFjRfOuMJ3Kcek05+mnxMAuVWw3EwVEOMx0vRm+lRuk+zfxlTMsLsrxTB
+         P77z2S1TPqGH/CAH60uPaRBO6QrbIi3e2CV1XXiRE8ug2ZABlinb1BMlLFE+KP8mpPMY
+         nuSqvCckxpnXWdzgOHrkI6q42+NtqQReoIWMrWdcp/2vGf4+PKGVH4f2/HG2TXpDmA6z
+         aq49WcEjPYH/9QzJdcshTXkIVN5GJZg4VB6lHuYFQKf4a/aJjIfZb69Gy77RDP3gybA8
+         o/aw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761142893; x=1761747693;
+        d=1e100.net; s=20230601; t=1761142895; x=1761747695;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=oNnZ9HXiG4U5oHkge6rfZLR0dPMVP9tD5A0n1Dg/8XI=;
-        b=ag/BFntc+o7xYwwBQx0aNYJ9m3ySqLYkPe+cOZ7SKysswZuHJRGxYuYYSoCYhii6Rd
-         EpL0biczkZdmuig5BMT9cnHfiILtwcxsenlxIhA4SwzDwBAXTQPtb4gyluQtMwtYlPYB
-         iJbU7dk1FAcFGcIPB3sqG+3pvCaXk98+ACSQm6OeH5tyfZL68Kps/hKDTg1G7jemP8am
-         jBZv+7fKSWfzoBTDdgYoLOqnMLEdfo+czl5Rf9bHjnQ0k/mt0RSy0GA5v6vBkBtjgd3L
-         mGZ03NNAyBKPrWXPGDn/xk33LNIepbElUCAYxYfOjRSl2BMezdRI5HhQgOVOhPaPeQrN
-         KIqw==
-X-Forwarded-Encrypted: i=1; AJvYcCU43SgggWEAt6ITqAiYa3jVN4Hk+eELYHQJDUjzBLZ5WV4SkbXlBeswH2OnP/rwV9ioGtuZPtPVhhc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFcqAYsVi/19H0Fhth10LoQk1d9PWN4IFUued6YAU8NaA3X1FR
-	ESDnxVkGD4NT92WnqzhgphjEGL5ykiZpwm/GnLSju1I0Xz41ZjZp5tMy
-X-Gm-Gg: ASbGncuMtvdT42M5oKhdTjfRGbySVv3ORtFaHShdVAfAHgftF9gO4r+nkqrEasKmRah
-	8ISeUSL7vMr4dGLWZe5HwRX4pCvL+B1y7w9ubdsl8sXc9BMqHa99SZgwfJr/dIBhDG+SqdKLErd
-	vOHbEkwhyOMNfZLkhT7G0RHGNaHXaWYYTzXVUBF79kFIYwLQ0/urxI8KCHCUUQazekp2ScZuktA
-	TdU2Nn+ChrXYG3LY4Fg/hPsPo00Omz+zRPCFJSeHc8jhS5SDEOaelNAlFLKiS8AMdVULmSgv/yD
-	hNNLyCkHzAC+kZKjCV7+zHer7i76A6qNEjSifJN9byJnohzX54IsQjiHe+4r59UFENR2K+cGmuw
-	FErhzVP94BxS/8mfIBGs+93YdxyQ3VAyfY/TAnLTAoYsA0g4TPHBcWv2A5e1wuQuvMXK3YYQTLJ
-	YPBXCXH2TO9rX0
-X-Google-Smtp-Source: AGHT+IEnXWlJDCOikv9Trvtrnq+YEjaVZ6eiwnQHVodVjHM0wnLfQoIbLbeHL/Nmsexg12AMq8heQQ==
-X-Received: by 2002:a05:600c:518f:b0:46e:4a60:ea2c with SMTP id 5b1f17b1804b1-47117925e1dmr162394545e9.37.1761142893340;
-        Wed, 22 Oct 2025 07:21:33 -0700 (PDT)
+        bh=rAO9OwRfZdFmlMl3mS0tub2HzSBi7qv3ODFvIZHKgFU=;
+        b=poAh85wX5t71ncIaGujUtSQ0T4UhaiUahi0/TD8dsHGpWplEoXeTraVkISedhCMJ7t
+         BqIVjGA67QRBCB4fa1zScVIfieP/ZBY2q7MYw17qUH5jxYBPfPODULNrD5g2CeXD2s6D
+         Uo1wTk2RkyxpbLq6BGLEraKo+wRUoe6E6gRNJLwzhpRKV+d9GG2h89Tjrn2JETSglqM/
+         oyoJ0o7idfH91uYeedVdXzfpGN8jlBHMtoObT+tjiM9R0n+W9Db7dtd9TCqSwkQr5RVr
+         kVvrl+rkv5rl3VoUIs05XtlBZMRx0eU0RfFSruqpiTEUao72vSTwnDn8DJ4tKmRShZxD
+         cZog==
+X-Forwarded-Encrypted: i=1; AJvYcCULvT03mBVjjGxidjjg3/Cq5x6iu18scIJCSFn1UzFBihjo0RMNTkRJzYH0W0QQsi4OV5IUOYdy5OU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzW5MNWUTpk4a872glFV7EyIQuk4/d+PQNpLQ1woaJEhKdk1WjJ
+	xisRdJA+dls0XmtanZG5ymwjtCyhx25gw6ib8cWC3ZWDdfzww1ma2K4z
+X-Gm-Gg: ASbGncsIciSXTl5Xdm8km15lwC6dgmDpSS0vDmRvxqUEvAtvnmkgwkIP2DujWg80mF2
+	s0cmp804bX2W6jen7ijp0l664PyNq94uetR978rq0PvyQEcsOWLigPy+jKSsOie8u928EgAA2vN
+	SPrzldmoDCsJQX7ctsoNjmnzu0tj3x4fTtAkjkzV1KCIcvCugh5GYJF8RPlVwDAIh4YQTeN+hDy
+	GQiZUtTjx8FTDrSJaAY72X1DujQVzlu0eauAt2kDTDfZwHXjzDe0uZOpF2xcLss7yHqPZL0PKDW
+	qMCxSLpjZjn0P6auo16vOB0GVkWKpnsPaNjjx2XnOAnNkwKoTB3i8FG29aB1DChQJUg9m0wr/gp
+	I0AuXLe4pEDNdGUL7MFtBa6n6qFavDSwXo0b5ZmFmGF+9Gp6VUnhiYzyYcOEyf2LANDBDWG9O76
+	HSzA==
+X-Google-Smtp-Source: AGHT+IGaJGEihzS9F6fnNyhHVGRwXCsOXdE9dlWNhp4wiYwBqGQCgmFf5u4C0KR9SkCEnEJDDokDBg==
+X-Received: by 2002:a05:600c:8284:b0:46f:b43a:aedf with SMTP id 5b1f17b1804b1-47117925da1mr126433075e9.38.1761142895124;
+        Wed, 22 Oct 2025 07:21:35 -0700 (PDT)
 Received: from xeon.. ([188.163.112.61])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427ea5b3d4csm24803518f8f.19.2025.10.22.07.21.31
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-427ea5b3d4csm24803518f8f.19.2025.10.22.07.21.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Oct 2025 07:21:32 -0700 (PDT)
+        Wed, 22 Oct 2025 07:21:34 -0700 (PDT)
 From: Svyatoslav Ryhel <clamor95@gmail.com>
 To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
 	Maxime Ripard <mripard@kernel.org>,
@@ -92,9 +92,9 @@ Cc: dri-devel@lists.freedesktop.org,
 	linux-media@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	linux-staging@lists.linux.dev
-Subject: [PATCH v5 06/23] staging: media: tegra-video: vi: adjust get_selection op check
-Date: Wed, 22 Oct 2025 17:20:34 +0300
-Message-ID: <20251022142051.70400-7-clamor95@gmail.com>
+Subject: [PATCH v5 07/23] staging: media: tegra-video: vi: add flip controls only if no source controls are provided
+Date: Wed, 22 Oct 2025 17:20:35 +0300
+Message-ID: <20251022142051.70400-8-clamor95@gmail.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20251022142051.70400-1-clamor95@gmail.com>
 References: <20251022142051.70400-1-clamor95@gmail.com>
@@ -106,36 +106,46 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Get_selection operation may be implemented only for sink pad and may
-return error code. Set try_crop to 0 instead of returning error.
+Because the current Tegra video driver is video-centric, it exposes all
+controls via /dev/video. If both the camera sensor and the VI provide
+hflip and vflip, the driver will fail because only one control is allowed.
+To address this, hflip and vflip should be added from the SoC only if the
+camera sensor doesn't provide those controls.
 
 Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 ---
- drivers/staging/media/tegra-video/vi.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+ drivers/staging/media/tegra-video/vi.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/staging/media/tegra-video/vi.c b/drivers/staging/media/tegra-video/vi.c
-index 7c44a3448588..856b7c18b551 100644
+index 856b7c18b551..90473729b546 100644
 --- a/drivers/staging/media/tegra-video/vi.c
 +++ b/drivers/staging/media/tegra-video/vi.c
-@@ -476,15 +476,11 @@ static int __tegra_channel_try_format(struct tegra_vi_channel *chan,
- 	fse.code = fmtinfo->code;
- 	ret = v4l2_subdev_call(subdev, pad, enum_frame_size, sd_state, &fse);
- 	if (ret) {
--		if (!v4l2_subdev_has_op(subdev, pad, get_selection)) {
-+		if (!v4l2_subdev_has_op(subdev, pad, get_selection) ||
-+		    v4l2_subdev_call(subdev, pad, get_selection, NULL, &sdsel)) {
- 			try_crop->width = 0;
- 			try_crop->height = 0;
- 		} else {
--			ret = v4l2_subdev_call(subdev, pad, get_selection,
--					       NULL, &sdsel);
--			if (ret)
--				return -EINVAL;
--
- 			try_crop->width = sdsel.r.width;
- 			try_crop->height = sdsel.r.height;
- 		}
+@@ -961,6 +961,7 @@ static int tegra_channel_setup_ctrl_handler(struct tegra_vi_channel *chan)
+ 	}
+ #else
+ 	struct v4l2_subdev *subdev;
++	struct v4l2_ctrl *hflip, *vflip;
+ 
+ 	/* custom control */
+ 	v4l2_ctrl_new_custom(&chan->ctrl_handler, &syncpt_timeout_ctrl, NULL);
+@@ -986,11 +987,13 @@ static int tegra_channel_setup_ctrl_handler(struct tegra_vi_channel *chan)
+ 		return ret;
+ 	}
+ 
+-	if (chan->vi->soc->has_h_v_flip) {
++	hflip = v4l2_ctrl_find(subdev->ctrl_handler, V4L2_CID_HFLIP);
++	if (chan->vi->soc->has_h_v_flip && !hflip)
+ 		v4l2_ctrl_new_std(&chan->ctrl_handler, &vi_ctrl_ops, V4L2_CID_HFLIP, 0, 1, 1, 0);
+-		v4l2_ctrl_new_std(&chan->ctrl_handler, &vi_ctrl_ops, V4L2_CID_VFLIP, 0, 1, 1, 0);
+-	}
+ 
++	vflip = v4l2_ctrl_find(subdev->ctrl_handler, V4L2_CID_VFLIP);
++	if (chan->vi->soc->has_h_v_flip && !vflip)
++		v4l2_ctrl_new_std(&chan->ctrl_handler, &vi_ctrl_ops, V4L2_CID_VFLIP, 0, 1, 1, 0);
+ #endif
+ 
+ 	/* setup the controls */
 -- 
 2.48.1
 
