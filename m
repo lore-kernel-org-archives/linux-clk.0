@@ -1,116 +1,307 @@
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACC5A34C9A1
-	for <linux-clk@vger.kernel.org>; Wed, 22 Oct 2025 15:39:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B18E024634F
+	for <linux-clk@vger.kernel.org>; Wed, 22 Oct 2025 15:50:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761147585; cv=none; b=X5++P0LZaUwXMHD3jnCz88wIxK6m8pBQ+Pabswiaedes9Cf3phGzCdm/ItAocUJVxjhiQWrvGhatcZU4nHiGb9BWe/DMfQaeU42fqP0FYw9+MtojP4dto1ClY9ticaN+EDxkib+oumBLsMXQjdBMP4ziUGdR/IA/JTS6btXhup4=
+	t=1761148252; cv=none; b=ghQ/uW+NS02SjNWDNNLadzc8Hl6/W+LGZolW6pnlp3tKLuCr6ZmAG8byvjo+7/8zl1+K4iT1C00sxGwrE4301482nwGIXsh3LM9wfMxsAdyVwoD/wL89nSjc88lHGY9uEETExQ/lb+wBnZhR6jZwT6KWfkPid54GtYuGu1U68aI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761147585; c=relaxed/simple;
-	bh=nBWa0ag7woJY2vPCiQSnDe7vW7z+266sYVbZE0b/SD4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=B2ibQJ3rUq04ubpRZkH0srFPy4yV2zj/5sEUrYyNkT0EwHrZyUOEcoc0nAEQ2fGqcWw+h+Z0Q4FyP3LvJDivUpIeO2WwjsVjzuy+0dmOlTh0Xt7QqoibIGnwsXdvgvQanG/RCELdsX6ty84LYTE6Aq818JTFXqU4mVqUHvCxPUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=T1poV5fx; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1761148252; c=relaxed/simple;
+	bh=QB4SfuURmF0iWUdw/nwKqx87mibMXzZNnU/tV+VTflc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R7xYq4Wnem/PHlySqtVnPe4zr9V2lsi08nVEcqIwDCosNQ+o0GhZ7gUfobOrgmUx+99VJNwy9MbEuFRJAmql2fs5wmOnaTcp0z9t8OBg4jqPHlTVO2VzoHG818vi7lsGDTwgXZDsSY9lFwirqf80PI17uOLOEiphKTno/DJz/SI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PDDu7gNP; arc=none smtp.client-ip=209.85.222.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="T1poV5fx"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 8B63AC09FAE;
-	Wed, 22 Oct 2025 15:39:16 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 5644B606DC;
-	Wed, 22 Oct 2025 15:39:36 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 5C727102F2449;
-	Wed, 22 Oct 2025 17:39:33 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1761147575; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=iTiW6J9ezHzkr5T/PBNfpX9M9qHogdCahO4t6SNr+IY=;
-	b=T1poV5fxjVnA2EiU28J6U4jw1Xehi1H/nDJsf8K6fla3Tiv0niG1LP1ZFU887hBJstHVXF
-	hwDWF1pykcpZx5OtKpfHsVeRdoYVpbCXEOtgIFk3Z8OBry3JNY8XQz1HUMR6l9th/3vGCa
-	nfmkxmJemVhKirWcrbZ9rVAgzqBdxocDd2SL/OfEdYaUhsg1QT7StZ0TNZ8l9FHc2Oxt++
-	9jcvi24Yq+ygi0iZ34xni1H/0KOJRqPATvxl34e247UEijj1AB7HyhRn8jhG8Fl4I4tk/u
-	Pudb0rHOlwYwwHkhaDqsiHuIGEpAc9WGYH/rEr1Iwm3oFHYRC6fhDWpJ/B5d3Q==
-From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-Date: Wed, 22 Oct 2025 17:39:09 +0200
-Subject: [PATCH 7/7] MIPS: mobileye: eyeq5-epm: add two Cadence GEM
- Ethernet PHYs
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PDDu7gNP"
+Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-8915bd01244so1067335185a.1
+        for <linux-clk@vger.kernel.org>; Wed, 22 Oct 2025 08:50:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761148249; x=1761753049; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=M3oPL/TT2sCXS1NwLSM7rbWcVKVCBogVovmIALCF75E=;
+        b=PDDu7gNP+RCUzIQmZOQJK1qv35WyTpVYbtLZLmFSfywQDTG5R3T5gN41I7crHWRj2K
+         b5VQS09X5/96bxNUOMrO6FjixFoSqkFBkS3Ouv8k9MR6zr3GxbH/6moBzM3yEYPgD3jM
+         L4Q0xRTW6vh4ZfEIMEGVsqsk014lbD46/iUfRaUYt0vvuJHUXILq7NRkrnlsZLYCYre9
+         a2hXNyjBpCzoIJ+Nxhfai7xYyEZMrGzcM3kQZ/inOcx0EcPYqg+4Bi3mTFtogn8/Qqch
+         d8TFrDD11/JDwYgCmLgalmJB+MNlNKUbqqs0EzUk83DeDRFZUW61uSqjNo3UsEcspc+o
+         t+uw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761148249; x=1761753049;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=M3oPL/TT2sCXS1NwLSM7rbWcVKVCBogVovmIALCF75E=;
+        b=b+Zv8CQdjl5Y6y4H4YBikw5Wm2537R06HeZtsN7T4lrdMlWJcftJmPEtYXQSm7GdxZ
+         nlVU6JV4C88ggNz/9lMTmaKtbAEQirQURl4mK0c88AcIMogI4sEuZbfgjZXm0a10mvSf
+         vMs0yEdYvm2WKkO7Ck1Jn5vzHClAGVKSVsg/eckdP6A8bAAvZ99QzEheMn69jxaOdaEG
+         /zH8Q/fg4QfSfLB+fDjCyF6pxucYN8p54zngZlV9ISUWCsyJDI/tMdQhuVRa3q9y7gPR
+         IyxdRSNRk9QXsyh9njCe999kMDnRD4EM+xGo7sBq+OvM5AQ7rhe7hLE2Y9cnWck5qdzC
+         iWpg==
+X-Forwarded-Encrypted: i=1; AJvYcCXxJeS1aHL0cEGalxfkhAUmtkf+C3ubWTWxqUvT6DnBhfA2EOk4F/R7lPWz2xjG0YH5Ei1ZwdT6k8Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBNrIJcaN36fvKEYjySIE9mf0tAMNorfWfiYubLZpO6v90kR0j
+	xl5k+Y9EmvqIC4yd+9bdLXFAxl8qkgFWFUn4mG8thL9wLuVmyrma+UDT
+X-Gm-Gg: ASbGncuKXgCrGrM/OiqXGWGG11b0YIQsCdj8ejtEz2To438lyfh5cmTJtj1yghWSYOf
+	TW2vsqPaIILbfvC2qjgQ7i1SXfShK0UnAHd4XDEbQXZmcclV6hTwp3SCd53bmJBX9OY/vzDzdpb
+	NRhjbTs+1LqLuNd/+AxOTLG2heSo53W4hp06lwuqqWkzLNVL9XNfx8Rr7YYvhB4voGXN4tvRxsk
+	BGRGJUJ2zEHOsipWlI5SCRSG1qOlYt1Snckw1T6xIzZdrqJt4RKHHhYRsVNn2d4bMZZUDc8YFTr
+	RrbW6Ird0phcM61cTTFiLNP8DFa9RCSHAAo0sp71vY4wYY09PMpIwaCtOipraP/xHKbduW+6DiH
+	24V5krxdn2h0iUv3Fg3wEVnUAKH5v49UgWB7YHt7EXnw4c5vvmx+cF3UjZ5TrxAueEIaJTqKddV
+	HYln+nbWM=
+X-Google-Smtp-Source: AGHT+IFhU1/qxPcwG4iditd/DSbX/hwAr8IdRWU46wkqo60rCt6GN/oHrv/6ROXraOwUylmwPpHHaA==
+X-Received: by 2002:a05:620a:1984:b0:84f:f3bb:e464 with SMTP id af79cd13be357-8906fd1953cmr2828961185a.50.1761148248418;
+        Wed, 22 Oct 2025 08:50:48 -0700 (PDT)
+Received: from localhost ([12.22.141.131])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-891cd098328sm1000034585a.17.2025.10.22.08.50.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 Oct 2025 08:50:47 -0700 (PDT)
+Date: Wed, 22 Oct 2025 11:50:46 -0400
+From: Yury Norov <yury.norov@gmail.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	David Miller <davem@davemloft.net>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, Joel Stanley <joel@jms.id.au>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	Crt Mori <cmo@melexis.com>, Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Jacky Huang <ychuang3@nuvoton.com>,
+	Shan-Chun Hung <schung@nuvoton.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	Jakub Kicinski <kuba@kernel.org>, Alex Elder <elder@ieee.org>,
+	David Laight <david.laight.linux@gmail.com>,
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
+	Jason Baron <jbaron@akamai.com>, Borislav Petkov <bp@alien8.de>,
+	Tony Luck <tony.luck@intel.com>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Kim Seer Paller <kimseer.paller@analog.com>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Richard Genoud <richard.genoud@bootlin.com>,
+	Cosmin Tanislav <demonsingur@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Jianping Shen <Jianping.Shen@de.bosch.com>,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-renesas-soc@vger.kernel.org, linux-crypto@vger.kernel.org,
+	linux-edac@vger.kernel.org, qat-linux@intel.com,
+	linux-gpio@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
+	linux-iio@vger.kernel.org, linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: Re: [PATCH v4 2/4] bitfield: Add non-constant field_{prep,get}()
+ helpers
+Message-ID: <aPj9Tu75OFenm7U0@yury>
+References: <cover.1760696560.git.geert+renesas@glider.be>
+ <67c1998f144b3a21399672c8e4d58d3884ae2b3c.1760696560.git.geert+renesas@glider.be>
+ <aPKQMdyMO-vrb30X@yury>
+ <CAMuHMdXq7xubX4a6SZWcC1HX+_TsKeQigDVQrWvA=js5bhaUiQ@mail.gmail.com>
+ <aPhbhQEWAel4aD9t@yury>
+ <CAMuHMdUOX=ToDU_44fHrqKWUtee1LKpgisfTKOe4R33er9g+DA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20251022-macb-phy-v1-7-f29f28fae721@bootlin.com>
-References: <20251022-macb-phy-v1-0-f29f28fae721@bootlin.com>
-In-Reply-To: <20251022-macb-phy-v1-0-f29f28fae721@bootlin.com>
-To: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
- =?utf-8?q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>, 
- Kishon Vijay Abraham I <kishon@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Cc: linux-mips@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, 
- linux-clk@vger.kernel.org, 
- =?utf-8?q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>, 
- Maxime Chevallier <maxime.chevallier@bootlin.com>, 
- Tawfik Bayouk <tawfik.bayouk@mobileye.com>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>, 
- Andrew Lunn <andrew@lunn.ch>
-X-Mailer: b4 0.14.3
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdUOX=ToDU_44fHrqKWUtee1LKpgisfTKOe4R33er9g+DA@mail.gmail.com>
 
-The Mobileye EyeQ5 eval board (EPM) embeds two MDIO PHYs.
+On Wed, Oct 22, 2025 at 12:01:37PM +0200, Geert Uytterhoeven wrote:
+> Hi Yury,
+> 
+> On Wed, 22 Oct 2025 at 06:20, Yury Norov <yury.norov@gmail.com> wrote:
+> > On Mon, Oct 20, 2025 at 03:00:24PM +0200, Geert Uytterhoeven wrote:
+> > > On Fri, 17 Oct 2025 at 20:51, Yury Norov <yury.norov@gmail.com> wrote:
+> > > > On Fri, Oct 17, 2025 at 12:54:10PM +0200, Geert Uytterhoeven wrote:
+> > > > > The existing FIELD_{GET,PREP}() macros are limited to compile-time
+> > > > > constants.  However, it is very common to prepare or extract bitfield
+> > > > > elements where the bitfield mask is not a compile-time constant.
+> > > > >
+> > > > > To avoid this limitation, the AT91 clock driver and several other
+> > > > > drivers already have their own non-const field_{prep,get}() macros.
+> > > > > Make them available for general use by consolidating them in
+> > > > > <linux/bitfield.h>, and improve them slightly:
+> > > > >   1. Avoid evaluating macro parameters more than once,
+> > > > >   2. Replace "ffs() - 1" by "__ffs()",
+> > > > >   3. Support 64-bit use on 32-bit architectures.
+> > > > >
+> > > > > This is deliberately not merged into the existing FIELD_{GET,PREP}()
+> > > > > macros, as people expressed the desire to keep stricter variants for
+> > > > > increased safety, or for performance critical paths.
+> > > > >
+> > > > > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > > > > Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> > > > > Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> > > > > Acked-by: Crt Mori <cmo@melexis.com>
+> > > > > ---
+> > > > > v4:
+> > > > >   - Add Acked-by,
+> > > > >   - Rebase on top of commit 7c68005a46108ffa ("crypto: qat - relocate
+> > > > >     power management debugfs helper APIs") in v6.17-rc1,
+> > > > >   - Convert more recently introduced upstream copies:
+> > > > >       - drivers/edac/ie31200_edac.c
+> > > > >       - drivers/iio/dac/ad3530r.c
+> > > >
+> > > > Can you split out the part that actually introduces the new API?
+> > >
+> > > Unfortunately not, as that would cause build warnings/failures due
+> > > to conflicting redefinitions.
+> > > That is a reason why I want to apply this patch ASAP: new copies show
+> > > up all the time.
+> >
+> > In a preparation patch, for each driver:
+> >
+> >  +#ifndef field_prep
+> >  #define field_prep() ...
+> >  +#endif
+> >
+> > Or simply
+> >
+> >  +#undef field_prep
+> >  #define field_prep() ...
+> >
+> > Then add the generic field_prep() in a separate patch. Then you can drop
+> > ifdefery in the drivers.
+> >
+> > Yeah, more patches, but the result is cleaner.
+> 
+> And we need 3 kernel releases, as the addition of the macros to
+> the header file now has a hard dependency on adding the #undefs?
+> Unless I still apply all of them to an immutable branch, but then what
+> is the point?
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
----
- arch/mips/boot/dts/mobileye/eyeq5-epm5.dts | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+Not sure what do you mean. You can do it in a single series, and you
+don't need and should not split the series across releases. Consider
+my recent cpumask_next_wrap() rework as an example:
 
-diff --git a/arch/mips/boot/dts/mobileye/eyeq5-epm5.dts b/arch/mips/boot/dts/mobileye/eyeq5-epm5.dts
-index 9fc1a1b0a81b..babf52731ea6 100644
---- a/arch/mips/boot/dts/mobileye/eyeq5-epm5.dts
-+++ b/arch/mips/boot/dts/mobileye/eyeq5-epm5.dts
-@@ -29,3 +29,29 @@ temperature-sensor@48 {
- 		label = "U60";
- 	};
- };
-+
-+&macb0 {
-+	phy-mode = "sgmii";
-+	phy-handle = <&macb0_phy>;
-+
-+	mdio {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		macb0_phy: ethernet-phy@e {
-+			reg = <0xe>;
-+		};
-+	};
-+};
-+
-+&macb1 {
-+	phy-mode = "rgmii-id";
-+	phy-handle = <&macb1_phy>;
-+
-+	mdio {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		macb1_phy: ethernet-phy@e {
-+			reg = <0xe>;
-+		};
-+	};
-+};
+https://lore.kernel.org/all/20250128164646.4009-1-yury.norov@gmail.com/
 
--- 
-2.51.1
+1. #1-4 switch kernel users to alternative functions;
+2. #5 deprecates cpumask_next_wrap(), making sure it's a pure renaming,
+   i.e. no-op.
+3. #6 introduces the new nice implementation. It's the core-only patch,
+   no drivers are touched.
+4. #7-12 switch the rest of codebase from old version to new.
+5. #13 drops deprecated old function.
 
+This is the most common scheme. In you case you can cut the corners.
+
+The goals here are:
+
+ - keep core patches free of non-core code;
+ - switch drivers to the new functionality one-by-one in sake of
+   bisectability.
+ 
+> > > > > --- a/include/linux/bitfield.h
+> > > > > +++ b/include/linux/bitfield.h
+> > > > > @@ -220,4 +220,40 @@ __MAKE_OP(64)
+> > > > >  #undef __MAKE_OP
+> > > > >  #undef ____MAKE_OP
+> > > > >
+> > > > > +/**
+> > > > > + * field_prep() - prepare a bitfield element
+> > > > > + * @mask: shifted mask defining the field's length and position
+> > > > > + * @val:  value to put in the field
+> > > > > + *
+> > > > > + * field_prep() masks and shifts up the value.  The result should be
+> > > > > + * combined with other fields of the bitfield using logical OR.
+> > > > > + * Unlike FIELD_PREP(), @mask is not limited to a compile-time constant.
+> > > > > + */
+> > > > > +#define field_prep(mask, val)                                                \
+> > > > > +     ({                                                              \
+> > > > > +             __auto_type __mask = (mask);                            \
+> > > > > +             typeof(mask) __val = (val);                             \
+> > > > > +             unsigned int __shift = sizeof(mask) <= 4 ?              \
+> > > > > +                                    __ffs(__mask) : __ffs64(__mask); \
+> > > > > +             (__val << __shift) & __mask;    \
+> > > >
+> > > > __ffs(0) is undef. The corresponding comment in
+> > > > include/asm-generic/bitops/__ffs.h explicitly says: "code should check
+> > > > against 0 first".
+> > >
+> > > An all zeroes mask is a bug in the code that calls field_{get,prep}().
+> >
+> > It's a bug in FIELD_GET() - for sure. Because it's enforced in
+> > __BF_FIELD_CHECK(). field_get() doesn't enforce it, doesn't even
+> > mention that in the comment.
+> >
+> > I'm not fully convinced that empty runtime mask should be a bug.
+> 
+> Getting (and using) data from nowhere is a bug.
+> Storing data where there is no space to store is also a bug.
+> 
+> I will add a comment.
+> 
+> > Consider memcpy(dst, src, 0). This is a no-op, but not a bug as
+> > soon as the pointers are valid. If you _think_ it's a bug - please
+> > enforce it.
+> 
+> memcpy() with a fixed size of zero is probably a bug.
+> memcpy() with a variable size is usually used to copy "as much as is
+> needed", so zero is usually not a bug.
+
+5 lines above you say: "Getting (and using) data from nowhere is a bug".
+Now you're saying: "so zero is usually not a bug". So, is it a bug or
+not?
+
+Consider this example:
+        
+        unsigned a = field_get(mask, get_user(ptr));
+
+Conceptually it's the same as per-bit copy_from_user().
+
+The copy_from_user 
+1. allows size == 0;
+2. does not dereference pointers in that case, i.e. doesn't call
+   get_user().
+
+Can we make sure that field_get() provides the same guarantees?
+ 
+> > > > I think mask = 0 is a sign of error here. Can you add a code catching
+> > > > it at compile time, and maybe at runtime too? Something like:
+> > > >
+> > > >  #define __field_prep(mask, val)
+> > > >  ({
+> > > >         unsigned __shift = sizeof(mask) <= 4 ? __ffs(mask) : __ffs64(mask);
+> > > >         (val << __shift) & mask;
+> > > >  })
+> > > >
+> > > >  #define field_prep(mask, val)
+> > > >  ({
+> > > >         unsigned int __shift;
+> > > >         __auto_type __mask = (mask), __ret = 0;
+> > > >         typeof(mask) __val = (val);
+> > > >
+> > > >         BUILD_BUG_ON_ZERO(const_true(mask == 0));
+> > >
+> > > Futile, as code with a constant mask should use FIELD_PREP() instead.
+> >
+> > It's a weak argument. Sometimes compiler is smart enough to realize
+> > that something is a constant, while people won't. Sometimes code gets
+> > refactored. Sometimes people build complex expressions that should
+> > work both in run-time and compile time cases. Sometimes variables are
+> > compile- or run-time depending on config (nr_cpu_ids is an example).
+> >
+> > The field_prep() must handle const case just as good as capitalized
+> > version does.
+> 
+> OK, I will add the (build-time) check.
+
+If mask is compile-time, you can wire field_prep() to FIELD_PREP(), so
+it will do the work for you.
+ 
+Thanks,
+Yury
