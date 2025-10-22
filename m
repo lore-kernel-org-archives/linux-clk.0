@@ -1,307 +1,185 @@
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazon11013016.outbound.protection.outlook.com [52.101.72.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B18E024634F
-	for <linux-clk@vger.kernel.org>; Wed, 22 Oct 2025 15:50:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761148252; cv=none; b=ghQ/uW+NS02SjNWDNNLadzc8Hl6/W+LGZolW6pnlp3tKLuCr6ZmAG8byvjo+7/8zl1+K4iT1C00sxGwrE4301482nwGIXsh3LM9wfMxsAdyVwoD/wL89nSjc88lHGY9uEETExQ/lb+wBnZhR6jZwT6KWfkPid54GtYuGu1U68aI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761148252; c=relaxed/simple;
-	bh=QB4SfuURmF0iWUdw/nwKqx87mibMXzZNnU/tV+VTflc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R7xYq4Wnem/PHlySqtVnPe4zr9V2lsi08nVEcqIwDCosNQ+o0GhZ7gUfobOrgmUx+99VJNwy9MbEuFRJAmql2fs5wmOnaTcp0z9t8OBg4jqPHlTVO2VzoHG818vi7lsGDTwgXZDsSY9lFwirqf80PI17uOLOEiphKTno/DJz/SI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PDDu7gNP; arc=none smtp.client-ip=209.85.222.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD71D1F5851;
+	Wed, 22 Oct 2025 16:16:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.72.16
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761149805; cv=fail; b=bfzh/Ym9yWwsTzj9wuhW1HyHi1cKHmnDgnU1f9FoB8yI+HtwIE5QTO+p/e/gIUInIhCVMwfOyjbOeVhXD30OW5v/CCfbgNiWMkksCqp5oGdnMrtVxruRr2a8PBPawLnAap9wKwsSX3FyonKt0hFYCJH86Y51dOGU1j7K7ShfDnc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761149805; c=relaxed/simple;
+	bh=7xpSQz3FOZbTQZtBeV+BkxO6s+VD1IfdXjhxkCNbeQ8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=mgtbOdFQa6+/6eoEXf/srExQ+ZJHmf0huJ6u07HfoP8mX3cQ/QUJZYlIjkTM2Sx7G/CC/irieAp2xUdR9J3RpntGaJQX1Udw8B9UmAeH2ld4ezQVf0jrzy7X/vMFy+837kLanuAe2qqSfkpmtsBekVB7gyJuUEo9StPn0XEepS8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=VD9OAhqt; arc=fail smtp.client-ip=52.101.72.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PDDu7gNP"
-Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-8915bd01244so1067335185a.1
-        for <linux-clk@vger.kernel.org>; Wed, 22 Oct 2025 08:50:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761148249; x=1761753049; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=M3oPL/TT2sCXS1NwLSM7rbWcVKVCBogVovmIALCF75E=;
-        b=PDDu7gNP+RCUzIQmZOQJK1qv35WyTpVYbtLZLmFSfywQDTG5R3T5gN41I7crHWRj2K
-         b5VQS09X5/96bxNUOMrO6FjixFoSqkFBkS3Ouv8k9MR6zr3GxbH/6moBzM3yEYPgD3jM
-         L4Q0xRTW6vh4ZfEIMEGVsqsk014lbD46/iUfRaUYt0vvuJHUXILq7NRkrnlsZLYCYre9
-         a2hXNyjBpCzoIJ+Nxhfai7xYyEZMrGzcM3kQZ/inOcx0EcPYqg+4Bi3mTFtogn8/Qqch
-         d8TFrDD11/JDwYgCmLgalmJB+MNlNKUbqqs0EzUk83DeDRFZUW61uSqjNo3UsEcspc+o
-         t+uw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761148249; x=1761753049;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=M3oPL/TT2sCXS1NwLSM7rbWcVKVCBogVovmIALCF75E=;
-        b=b+Zv8CQdjl5Y6y4H4YBikw5Wm2537R06HeZtsN7T4lrdMlWJcftJmPEtYXQSm7GdxZ
-         nlVU6JV4C88ggNz/9lMTmaKtbAEQirQURl4mK0c88AcIMogI4sEuZbfgjZXm0a10mvSf
-         vMs0yEdYvm2WKkO7Ck1Jn5vzHClAGVKSVsg/eckdP6A8bAAvZ99QzEheMn69jxaOdaEG
-         /zH8Q/fg4QfSfLB+fDjCyF6pxucYN8p54zngZlV9ISUWCsyJDI/tMdQhuVRa3q9y7gPR
-         IyxdRSNRk9QXsyh9njCe999kMDnRD4EM+xGo7sBq+OvM5AQ7rhe7hLE2Y9cnWck5qdzC
-         iWpg==
-X-Forwarded-Encrypted: i=1; AJvYcCXxJeS1aHL0cEGalxfkhAUmtkf+C3ubWTWxqUvT6DnBhfA2EOk4F/R7lPWz2xjG0YH5Ei1ZwdT6k8Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBNrIJcaN36fvKEYjySIE9mf0tAMNorfWfiYubLZpO6v90kR0j
-	xl5k+Y9EmvqIC4yd+9bdLXFAxl8qkgFWFUn4mG8thL9wLuVmyrma+UDT
-X-Gm-Gg: ASbGncuKXgCrGrM/OiqXGWGG11b0YIQsCdj8ejtEz2To438lyfh5cmTJtj1yghWSYOf
-	TW2vsqPaIILbfvC2qjgQ7i1SXfShK0UnAHd4XDEbQXZmcclV6hTwp3SCd53bmJBX9OY/vzDzdpb
-	NRhjbTs+1LqLuNd/+AxOTLG2heSo53W4hp06lwuqqWkzLNVL9XNfx8Rr7YYvhB4voGXN4tvRxsk
-	BGRGJUJ2zEHOsipWlI5SCRSG1qOlYt1Snckw1T6xIzZdrqJt4RKHHhYRsVNn2d4bMZZUDc8YFTr
-	RrbW6Ird0phcM61cTTFiLNP8DFa9RCSHAAo0sp71vY4wYY09PMpIwaCtOipraP/xHKbduW+6DiH
-	24V5krxdn2h0iUv3Fg3wEVnUAKH5v49UgWB7YHt7EXnw4c5vvmx+cF3UjZ5TrxAueEIaJTqKddV
-	HYln+nbWM=
-X-Google-Smtp-Source: AGHT+IFhU1/qxPcwG4iditd/DSbX/hwAr8IdRWU46wkqo60rCt6GN/oHrv/6ROXraOwUylmwPpHHaA==
-X-Received: by 2002:a05:620a:1984:b0:84f:f3bb:e464 with SMTP id af79cd13be357-8906fd1953cmr2828961185a.50.1761148248418;
-        Wed, 22 Oct 2025 08:50:48 -0700 (PDT)
-Received: from localhost ([12.22.141.131])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-891cd098328sm1000034585a.17.2025.10.22.08.50.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Oct 2025 08:50:47 -0700 (PDT)
-Date: Wed, 22 Oct 2025 11:50:46 -0400
-From: Yury Norov <yury.norov@gmail.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	David Miller <davem@davemloft.net>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	Crt Mori <cmo@melexis.com>, Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Jacky Huang <ychuang3@nuvoton.com>,
-	Shan-Chun Hung <schung@nuvoton.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	Jakub Kicinski <kuba@kernel.org>, Alex Elder <elder@ieee.org>,
-	David Laight <david.laight.linux@gmail.com>,
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
-	Jason Baron <jbaron@akamai.com>, Borislav Petkov <bp@alien8.de>,
-	Tony Luck <tony.luck@intel.com>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Kim Seer Paller <kimseer.paller@analog.com>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Richard Genoud <richard.genoud@bootlin.com>,
-	Cosmin Tanislav <demonsingur@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Jianping Shen <Jianping.Shen@de.bosch.com>,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-renesas-soc@vger.kernel.org, linux-crypto@vger.kernel.org,
-	linux-edac@vger.kernel.org, qat-linux@intel.com,
-	linux-gpio@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
-	linux-iio@vger.kernel.org, linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: Re: [PATCH v4 2/4] bitfield: Add non-constant field_{prep,get}()
- helpers
-Message-ID: <aPj9Tu75OFenm7U0@yury>
-References: <cover.1760696560.git.geert+renesas@glider.be>
- <67c1998f144b3a21399672c8e4d58d3884ae2b3c.1760696560.git.geert+renesas@glider.be>
- <aPKQMdyMO-vrb30X@yury>
- <CAMuHMdXq7xubX4a6SZWcC1HX+_TsKeQigDVQrWvA=js5bhaUiQ@mail.gmail.com>
- <aPhbhQEWAel4aD9t@yury>
- <CAMuHMdUOX=ToDU_44fHrqKWUtee1LKpgisfTKOe4R33er9g+DA@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="VD9OAhqt"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=uT+mSMEC5apJkipylODFuP5Szff9JkpBLwCZXZHRdHY0TtEa7Op3318dc4kJiCklnI0+Q9w/kifWN8ZlpwFmxOCSeBDbRYahsVjCqpLLZZ6myO5XUcXvSnQ+pQcZKHDqOTM7+33+kac8plCh6pU7Mf29p2D0q7yPhEr91T2cyZOlcwxLM3tFpmNzVT2ZxtuqfP18B3L599doGiMSzgaga8oQR90azk8tM889Yvgp69TATpHjxTGPn+ZPeDsLMzOuofyh7Y9ptkEWb7SZgYhuFiMHWoHyp63bqwHbdCtAzpf1DfT/3uj9BIW3QA9f0BoZeYDGq88V7nMCy7/687AQ6A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=mfQqVCG12lBJlXYf9B66eJPuYwDEyTjrGd2+YlGQqO0=;
+ b=NhL+0QiTy4OEm2UbLuZOvcGNFKN73bR5XWjbkf1cUgxEeSxGFNrWMhS2qej6ccLZ8IMM4JoYmj848BgxhggU2lMbvAzASlacTFnDOaNS1Zl7iRwVSX7SUyAh/WGAZhOX73TOgqwmKOt74gaGUUXDm95XBWJM7ambIiGhRTSIXC321o5iXerGSi2Nf0rP6WOGAp/Y1Z3yDn2T8pkPl36nb1A6yJu4WvQ9j3YRg83oQ4ST4kZiyd5o+aDT+6uNsMIl0FqFYqE/A5eClZ9w9UwBOopCqsmupMFWd9jnLORK2Z31HajojapIbWG7OAPTDTCs4o47AGfAPK1HFsWNRsZMeg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=mfQqVCG12lBJlXYf9B66eJPuYwDEyTjrGd2+YlGQqO0=;
+ b=VD9OAhqth0RyWF6aJ+BoYeFPOSQIxsO4RMKf2hn4KrY4BpAqgbKndn+1V8VxWSGyC9HBSHKkS1UQuH5WHflW2kE4GIy3mK/pqlbIpRsp6kBff47Zg1NuFV6b1wLZ/H18oipFfr5ZsNQMWn9AKoQrLRInohejvvSo5DRIf24a4v4z9G66q1yOIN5w1UdDyOEqGmet2S0tYnSrmlO2VJazZU1Res5ZjwZi+X8b1hbmyblB9gOmENyVTE2TsYmh5LW1YX9APUa6mKOxG9vi7HRd7X5D855cHuWMOnTfNqksThPDGMqe/Tdz664y3a3k/JhA4Kx7WPQDs7crMwA8YzfvwA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXSPRMB0053.eurprd04.prod.outlook.com (2603:10a6:102:23f::21)
+ by DU2PR04MB9130.eurprd04.prod.outlook.com (2603:10a6:10:2f5::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.12; Wed, 22 Oct
+ 2025 16:16:33 +0000
+Received: from PAXSPRMB0053.eurprd04.prod.outlook.com
+ ([fe80::504f:2a06:4579:5f15]) by PAXSPRMB0053.eurprd04.prod.outlook.com
+ ([fe80::504f:2a06:4579:5f15%6]) with mapi id 15.20.9253.011; Wed, 22 Oct 2025
+ 16:16:33 +0000
+Date: Wed, 22 Oct 2025 12:16:22 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Peng Fan <peng.fan@oss.nxp.com>
+Cc: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>,
+	Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Fabio Estevam <festevam@gmail.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	Shengjiu Wang <shengjiu.wang@nxp.com>, linux-clk@vger.kernel.org,
+	imx@lists.linux.dev, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Pengutronix Kernel Team <kernel@pengutronix.de>
+Subject: Re: [PATCH v2 2/8] dt-bindings: clock: document 8ULP's SIM LPAV
+Message-ID: <aPkDVqRGBG9ILnQ9@lizhi-Precision-Tower-5810>
+References: <20251017112025.11997-1-laurentiumihalcea111@gmail.com>
+ <20251017112025.11997-3-laurentiumihalcea111@gmail.com>
+ <20251022140841.GB11174@nxa18884-linux.ap.freescale.net>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251022140841.GB11174@nxa18884-linux.ap.freescale.net>
+X-ClientProxiedBy: BYAPR21CA0007.namprd21.prod.outlook.com
+ (2603:10b6:a03:114::17) To PAXSPRMB0053.eurprd04.prod.outlook.com
+ (2603:10a6:102:23f::21)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdUOX=ToDU_44fHrqKWUtee1LKpgisfTKOe4R33er9g+DA@mail.gmail.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXSPRMB0053:EE_|DU2PR04MB9130:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4e7bc176-213e-45f4-dbb6-08de11865de4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|19092799006|376014|366016|52116014|7416014|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?JWOjBVHZTvl2iZ3oKmI48R/hXLHxNjHaxjWnSRzE0VSRbvtImJENdd29MaXi?=
+ =?us-ascii?Q?oKjRfLTcGTYBzSwz9gnV34934Hn+vlj6RosI7oFN0FLKt6ePS0zeU0lJxKu0?=
+ =?us-ascii?Q?A8thc+MmLBUXg1jE7XewSQHRVVaNBV31bif/7MB94uRaIiWR596CUejWi3LR?=
+ =?us-ascii?Q?Edho/JFqSVKWqRtIpyjEw4tB1eWp3PkvIwiBiniVPpDtxqNceb5bm+8az+Cg?=
+ =?us-ascii?Q?72mc0Gt3uRbe8SEvHa3iCjh83y91inhOZhJARu2jn27yaF/JZUWaPJajV0Lh?=
+ =?us-ascii?Q?tK0r/B7ItOXZSEboNMdDTiRt9JA1AQNroUU98+vXxQrQa+9Lm6xqY4PNTf6F?=
+ =?us-ascii?Q?NxmXMbuSNRokZdSfBfSlqvttFjBzLfbQ3sEhulKaKUPh+3ErN7pFYrQRkiWv?=
+ =?us-ascii?Q?pjWIMv3n/IzzLG7TE8y5ZXS0jI5a1gjCZyPwZxCYMJHRYJa5jaK8CxbdOp0k?=
+ =?us-ascii?Q?bD1+bXgFd6O/tQOUYcv/N5fAIus+pDwAuHP5wpv+MFlqWyDV7M1W3X0ZS04G?=
+ =?us-ascii?Q?gfYhIp5+97/edDa3AdhfhxPmnKrwEezw9j/VrAHoLekfEEQ0gXgBNDpuxR6h?=
+ =?us-ascii?Q?/C+w5KhTeA34UZQvGE1ljFiyn3sLZPJRq7Jf5HH+TchtJBQ4VWwCp8DLUzpb?=
+ =?us-ascii?Q?B3KeFnYdPlnwwTLx9Mgpohi27VovL2U1i0lXwCIApJ4NV/IF7isI8Q5KStpa?=
+ =?us-ascii?Q?B6jKPgz7RSZxhcMTRZOG4Z1pNGgsRlXGQOUstevIWw18TNRsAAUSWPqRc48u?=
+ =?us-ascii?Q?uKhGhqiX+NBhnye5yuer8xHVd8cCAagmSG1iy9vQ+9tYCA+3WZiNZJuDgAgA?=
+ =?us-ascii?Q?USUbkARxEXYqKK+fSTNSXvfGfsw4BOq6YMgHfcwao7U7tFQoCgsfs33iXAVU?=
+ =?us-ascii?Q?IugVnqscxTpSuRjn4x0WAiwloTE5+4lIxenKx2G7z9j/Xi4nIn4MwZFhfIwM?=
+ =?us-ascii?Q?ZlV9n7Q13WgXsyZj2HlbLDs8Go+wGSrz2SXj5/5JObXxJqdBekq8qrasE5RG?=
+ =?us-ascii?Q?J1I10spc7x1GxQ5o68l7UAhp+OK3Q+zEsG7d9h7O15vWA0Htu7aM8WDevIW3?=
+ =?us-ascii?Q?5oII+3XL1O4BXQu55hdOuT8ISiXydHRmEWWrkUlQnH6EzIH24LjklHlCRfyT?=
+ =?us-ascii?Q?SSjA5b+WXZvg4cv91Vc9tSw8EN6ObsADTD7uZr2pqgqJTcQXl5S7OKjXkSDT?=
+ =?us-ascii?Q?kjCkLiuDZ4YVvpz2sxHjq1tn/9oOjdPgwy5m6JseZMKP3Lsx2Lh4KyXfNI7N?=
+ =?us-ascii?Q?tm2UbPBbbUbgT0ZBV04OD4RDRJk8gVQ67ePsCAOXI86pbcRIFndGBtX3VxSN?=
+ =?us-ascii?Q?SUM/1EwzhZVfSulUNaBT0nxbM4i/EPxODmuDI3q1ddKN20JVPDzvNSJqMlPO?=
+ =?us-ascii?Q?HqiaAaNbH+Ay5S8OtOKdSBPvgbYj?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXSPRMB0053.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(376014)(366016)(52116014)(7416014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?vVIxT1kjgjpWCW9AoD5niUM+KNefbqBpulFnuOLHuQKoJgRHD7UZDUPDFJcn?=
+ =?us-ascii?Q?XRcfLY7EvtS4eenmTzY5eotQjatdX9zmhkbXeZwd+n7CKj/cEjbLcT6jI81A?=
+ =?us-ascii?Q?hv25tfOvV23qyxPA5uQSYYL7VCn1BiXfSujDv4qrfpoyHg8ZzC0d4MbnJOHr?=
+ =?us-ascii?Q?bmlMauiJlkt6DiPwWPTJFqDocbqeyd+at4dhNWrJ/pKaPEgRjd2+tHUebKnk?=
+ =?us-ascii?Q?N5/nelV7o29WqpcraK9y8iqWeevQxcvSyZcNXRGATT5jEaJaDmdiAN8+Ia0V?=
+ =?us-ascii?Q?RNLl13TeN6Q9QpjjibJ7ZyGAtiI7+kAeeoz+IOURmJD9HqM7KbixU8WRxgoY?=
+ =?us-ascii?Q?ntUeW7XZT1UXYPjMkQhLUrX75hwjMV0SWVT7RZSb6oDn/vG+gOh//avr5gxT?=
+ =?us-ascii?Q?tcolA3QLISd7DDDNH68u8ZgUIeq4AAfNINaf+cWhzDoV5m6I/9GwrjbmIpNX?=
+ =?us-ascii?Q?hV36aF7jEjETy5ij80c2moihb5azL7ZpAf265O8UFukPndCTKN6ijn2nXrRn?=
+ =?us-ascii?Q?85978HvA4IsuSsHjNyOrV4/18VKy85wyhlo/LJBPYtfypn2Jha9uGzHYppRZ?=
+ =?us-ascii?Q?lnBPVBv5r1Q/Gix4sD5YdVfV1lNwJVjO2C92eirUgUxet3htOusEa3UeuszB?=
+ =?us-ascii?Q?M0QRZoReMyH1vVvhbe2IM+8tkqKjhpNGPBbGAKY+ZVLish8wRj1uqtu8rN/Y?=
+ =?us-ascii?Q?KNQv9w4VfjWGGT6PM/kZZavnSSWuHhFAOlFiwdW1eKU8qGIrI1AYLm/ocbmE?=
+ =?us-ascii?Q?cqbIXuNIlZ3O5f4P9QmmmElDohqoD71900i4S+T0BuYDN/AydeWqSkgUyRnd?=
+ =?us-ascii?Q?akdIE6bMN8L1IXUTa8oyZid5XC2vWq6T5gcw4R/XSto+W3upGYIJvKQ8eNxe?=
+ =?us-ascii?Q?cJG9zqjKgvFcywaJMj7vCvdJ789ZjAot98xRsZQljDDUZu6EhUxNVtIrphIK?=
+ =?us-ascii?Q?skfA2lwiaMh7Lv+sddbo85BIA2s1VVI+RgwTATl10N7+2X+DfiUlPi8hpoLL?=
+ =?us-ascii?Q?c/AhjQlNoSE0zqNytErGqKYZcHlDSre1zPFX525VvsC8K35/ukBqbQukp/x+?=
+ =?us-ascii?Q?6/UXUh4J3R9qrhVjawsLzyLFSzLl3ca/IZ1hQ2w1M7nH4HXBcfqxFuKIkq1q?=
+ =?us-ascii?Q?Gy3T8wU/OAFZA/SaNhOd/klzVXARG2HxISHv92Z+bjWpLqV22Q+GvaguvXJ2?=
+ =?us-ascii?Q?4YeH7LmDtR4AxqJH+YPKd0C9Oo3hIH1D3KM4Nm9rvRnYX+LA4tHLFe10dUGX?=
+ =?us-ascii?Q?SFdooOGL7HJ2JEeynsLdUZfl++LxCiWB9HZvnhHx5qA2wO/NpNH61lv/mdMF?=
+ =?us-ascii?Q?WMnos67WrE4rYzoEhETSpgxE1v4lOoew9eR2EkD9J68xxf33DeFsbAg0juT9?=
+ =?us-ascii?Q?1P8RHvkQzKB7fj2AEFOkjGdCuksFNdXzTsk6wFn8ANEc7mfEWf4USmvbaaON?=
+ =?us-ascii?Q?fTyaZSmY2cn0EDU3AoLOPms8Ocn87/DOgYQMYCcc+rAsVHoJLS5Q9J76KyLE?=
+ =?us-ascii?Q?pS/Mbf5Q6JhmZvpJnOJmgHyfit5w/Cv8nktl2ZXkJHt0tL2ZNiAdSsS6mPTn?=
+ =?us-ascii?Q?E2yH0khchQ8wRRS/vQPuKEz4VIwUlXRs+yIq9oEJ?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4e7bc176-213e-45f4-dbb6-08de11865de4
+X-MS-Exchange-CrossTenant-AuthSource: PAXSPRMB0053.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Oct 2025 16:16:33.6045
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: VbRgrkdUiVMAnPt0HmmKRG03smQqKyqk+Vplo4cx81IguMFLHuTmuCMRMW/nrn52EO6ds5rlWWbredMIyJZGIg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU2PR04MB9130
 
-On Wed, Oct 22, 2025 at 12:01:37PM +0200, Geert Uytterhoeven wrote:
-> Hi Yury,
-> 
-> On Wed, 22 Oct 2025 at 06:20, Yury Norov <yury.norov@gmail.com> wrote:
-> > On Mon, Oct 20, 2025 at 03:00:24PM +0200, Geert Uytterhoeven wrote:
-> > > On Fri, 17 Oct 2025 at 20:51, Yury Norov <yury.norov@gmail.com> wrote:
-> > > > On Fri, Oct 17, 2025 at 12:54:10PM +0200, Geert Uytterhoeven wrote:
-> > > > > The existing FIELD_{GET,PREP}() macros are limited to compile-time
-> > > > > constants.  However, it is very common to prepare or extract bitfield
-> > > > > elements where the bitfield mask is not a compile-time constant.
-> > > > >
-> > > > > To avoid this limitation, the AT91 clock driver and several other
-> > > > > drivers already have their own non-const field_{prep,get}() macros.
-> > > > > Make them available for general use by consolidating them in
-> > > > > <linux/bitfield.h>, and improve them slightly:
-> > > > >   1. Avoid evaluating macro parameters more than once,
-> > > > >   2. Replace "ffs() - 1" by "__ffs()",
-> > > > >   3. Support 64-bit use on 32-bit architectures.
-> > > > >
-> > > > > This is deliberately not merged into the existing FIELD_{GET,PREP}()
-> > > > > macros, as people expressed the desire to keep stricter variants for
-> > > > > increased safety, or for performance critical paths.
-> > > > >
-> > > > > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > > > > Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-> > > > > Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> > > > > Acked-by: Crt Mori <cmo@melexis.com>
-> > > > > ---
-> > > > > v4:
-> > > > >   - Add Acked-by,
-> > > > >   - Rebase on top of commit 7c68005a46108ffa ("crypto: qat - relocate
-> > > > >     power management debugfs helper APIs") in v6.17-rc1,
-> > > > >   - Convert more recently introduced upstream copies:
-> > > > >       - drivers/edac/ie31200_edac.c
-> > > > >       - drivers/iio/dac/ad3530r.c
-> > > >
-> > > > Can you split out the part that actually introduces the new API?
-> > >
-> > > Unfortunately not, as that would cause build warnings/failures due
-> > > to conflicting redefinitions.
-> > > That is a reason why I want to apply this patch ASAP: new copies show
-> > > up all the time.
+On Wed, Oct 22, 2025 at 10:08:41PM +0800, Peng Fan wrote:
+> Hi Laurentiu,
+>
+> On Fri, Oct 17, 2025 at 04:20:19AM -0700, Laurentiu Mihalcea wrote:
+> >From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
 > >
-> > In a preparation patch, for each driver:
+> >Add documentation for i.MX8ULP's SIM LPAV module.
 > >
-> >  +#ifndef field_prep
-> >  #define field_prep() ...
-> >  +#endif
-> >
-> > Or simply
-> >
-> >  +#undef field_prep
-> >  #define field_prep() ...
-> >
-> > Then add the generic field_prep() in a separate patch. Then you can drop
-> > ifdefery in the drivers.
-> >
-> > Yeah, more patches, but the result is cleaner.
-> 
-> And we need 3 kernel releases, as the addition of the macros to
-> the header file now has a hard dependency on adding the #undefs?
-> Unless I still apply all of them to an immutable branch, but then what
-> is the point?
+> >Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+> >---
+> >+description:
+> >+  The i.MX8ULP LPAV subsystem contains a block control module known as
+> >+  SIM LPAV, which offers functionalities such as clock gating or reset
+> >+  line assertion/de-assertion.
+> >+
+> >+properties:
+> >+  compatible:
+> >+    const: fsl,imx8ulp-sim-lpav
+>
+> This block also contains QoS registers, General purpose registers, HIFI
 
-Not sure what do you mean. You can do it in a single series, and you
-don't need and should not split the series across releases. Consider
-my recent cpumask_next_wrap() rework as an example:
+Qos should go though interconnect interface.
 
-https://lore.kernel.org/all/20250128164646.4009-1-yury.norov@gmail.com/
+'#interconnect-cells' = <n>;
 
-1. #1-4 switch kernel users to alternative functions;
-2. #5 deprecates cpumask_next_wrap(), making sure it's a pure renaming,
-   i.e. no-op.
-3. #6 introduces the new nice implementation. It's the core-only patch,
-   no drivers are touched.
-4. #7-12 switch the rest of codebase from old version to new.
-5. #13 drops deprecated old function.
+Frank
 
-This is the most common scheme. In you case you can cut the corners.
-
-The goals here are:
-
- - keep core patches free of non-core code;
- - switch drivers to the new functionality one-by-one in sake of
-   bisectability.
- 
-> > > > > --- a/include/linux/bitfield.h
-> > > > > +++ b/include/linux/bitfield.h
-> > > > > @@ -220,4 +220,40 @@ __MAKE_OP(64)
-> > > > >  #undef __MAKE_OP
-> > > > >  #undef ____MAKE_OP
-> > > > >
-> > > > > +/**
-> > > > > + * field_prep() - prepare a bitfield element
-> > > > > + * @mask: shifted mask defining the field's length and position
-> > > > > + * @val:  value to put in the field
-> > > > > + *
-> > > > > + * field_prep() masks and shifts up the value.  The result should be
-> > > > > + * combined with other fields of the bitfield using logical OR.
-> > > > > + * Unlike FIELD_PREP(), @mask is not limited to a compile-time constant.
-> > > > > + */
-> > > > > +#define field_prep(mask, val)                                                \
-> > > > > +     ({                                                              \
-> > > > > +             __auto_type __mask = (mask);                            \
-> > > > > +             typeof(mask) __val = (val);                             \
-> > > > > +             unsigned int __shift = sizeof(mask) <= 4 ?              \
-> > > > > +                                    __ffs(__mask) : __ffs64(__mask); \
-> > > > > +             (__val << __shift) & __mask;    \
-> > > >
-> > > > __ffs(0) is undef. The corresponding comment in
-> > > > include/asm-generic/bitops/__ffs.h explicitly says: "code should check
-> > > > against 0 first".
-> > >
-> > > An all zeroes mask is a bug in the code that calls field_{get,prep}().
-> >
-> > It's a bug in FIELD_GET() - for sure. Because it's enforced in
-> > __BF_FIELD_CHECK(). field_get() doesn't enforce it, doesn't even
-> > mention that in the comment.
-> >
-> > I'm not fully convinced that empty runtime mask should be a bug.
-> 
-> Getting (and using) data from nowhere is a bug.
-> Storing data where there is no space to store is also a bug.
-> 
-> I will add a comment.
-> 
-> > Consider memcpy(dst, src, 0). This is a no-op, but not a bug as
-> > soon as the pointers are valid. If you _think_ it's a bug - please
-> > enforce it.
-> 
-> memcpy() with a fixed size of zero is probably a bug.
-> memcpy() with a variable size is usually used to copy "as much as is
-> needed", so zero is usually not a bug.
-
-5 lines above you say: "Getting (and using) data from nowhere is a bug".
-Now you're saying: "so zero is usually not a bug". So, is it a bug or
-not?
-
-Consider this example:
-        
-        unsigned a = field_get(mask, get_user(ptr));
-
-Conceptually it's the same as per-bit copy_from_user().
-
-The copy_from_user 
-1. allows size == 0;
-2. does not dereference pointers in that case, i.e. doesn't call
-   get_user().
-
-Can we make sure that field_get() provides the same guarantees?
- 
-> > > > I think mask = 0 is a sign of error here. Can you add a code catching
-> > > > it at compile time, and maybe at runtime too? Something like:
-> > > >
-> > > >  #define __field_prep(mask, val)
-> > > >  ({
-> > > >         unsigned __shift = sizeof(mask) <= 4 ? __ffs(mask) : __ffs64(mask);
-> > > >         (val << __shift) & mask;
-> > > >  })
-> > > >
-> > > >  #define field_prep(mask, val)
-> > > >  ({
-> > > >         unsigned int __shift;
-> > > >         __auto_type __mask = (mask), __ret = 0;
-> > > >         typeof(mask) __val = (val);
-> > > >
-> > > >         BUILD_BUG_ON_ZERO(const_true(mask == 0));
-> > >
-> > > Futile, as code with a constant mask should use FIELD_PREP() instead.
-> >
-> > It's a weak argument. Sometimes compiler is smart enough to realize
-> > that something is a constant, while people won't. Sometimes code gets
-> > refactored. Sometimes people build complex expressions that should
-> > work both in run-time and compile time cases. Sometimes variables are
-> > compile- or run-time depending on config (nr_cpu_ids is an example).
-> >
-> > The field_prep() must handle const case just as good as capitalized
-> > version does.
-> 
-> OK, I will add the (build-time) check.
-
-If mask is compile-time, you can wire field_prep() to FIELD_PREP(), so
-it will do the work for you.
- 
-Thanks,
-Yury
+> general purpose registers, and others.
+>
+> I am not sure whether need to add a syscon fallback here. dt maintainer may
+> help comment.
+>
+> Regards,
+> Peng
