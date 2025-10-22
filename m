@@ -1,37 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C04372D8DA8;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E24072F25E0;
 	Wed, 22 Oct 2025 06:59:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761116342; cv=none; b=enhggSZPJ+E3/zDvi4LQA14YC9tJFrinBuGNeSTShP5Z/wRffFWjcN2YThIVKNXsQ8HKLtWDMXatAEucZR8V0+sHslNoqkUj1E3MqRzcGMDoPOhvM4xqVW/dsGoo7HHnJnxtSRVxngu1+xBsBY4N542cga5w+1WuXDyzrAUG3cM=
+	t=1761116343; cv=none; b=bLR3ZZv5zlWc4WFdjIzVfdyupFHqCA7NPLb8v6GCuYpi82SFsWgTa5p047mpReeDt757ku7VRXpG1vozXAFASJbAVcmfe9fBFNMSLTw6ydGGT449UZPYIxK8p9GbIYgd93HPMomZSYgLx67bseyy89TyaXKC87Vclwy1X7sQU4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761116342; c=relaxed/simple;
-	bh=AD9HSHNdMY0OM9nnzoBOYxn8pv3LYh4EXRbZNlxGZDY=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=H/j60JWFbhIXLbhVmaTnwOAyLQQj15NKrqgkdp+ZudYARlL/U9kzp0ltqygffsrLD1kfe7u9+eTmxFH7goPHqYrsVSUZXghiTtjT6B6Ycsshgh7Y6XSWIb8EUugf/M8LaQgMyg79Y6wo2dcfwFtAjqT0Dn9tP74U8mnhHWEYyxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ry5qwBNt; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1761116343; c=relaxed/simple;
+	bh=tz1GN08S5uBHLdjHa0/ozlnw2WRGrO+4LkQLFLPDiG8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=XCG20QnbT8JOcWC4A6JSKECSYRi4L4ChK5zkvXYWudBwWFikFqn42hjwV9XyOnuUofAvBi+9I2W4Qox0AHJoiG7/kKDAPi2MRZw53bBE34oz4YY8J9cO98+i1YMe0JVnNYCoK8Q2JihKbc900Wnu/19xx3rLQpOWP7mBxws70Uc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r9hurdRu; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ry5qwBNt"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 56191C4CEE7;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r9hurdRu"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 8AEC0C116B1;
 	Wed, 22 Oct 2025 06:59:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1761116342;
-	bh=AD9HSHNdMY0OM9nnzoBOYxn8pv3LYh4EXRbZNlxGZDY=;
-	h=From:Subject:Date:To:Cc:Reply-To:From;
-	b=Ry5qwBNtHUsVAtOGSQ6ItB9v1IFtHufldIsqgs6ywIA7XrEkDBKcd+r5ebFA4WMaw
-	 aMKFf9ZfSU0gghPSPV+qTFLKVnTk3x4l2zxDjo3YM2NvD8SNl8w4yAHNJWCgmjWU8Y
-	 4NjVy24kZLbVoZqw04Og476zfvkN7Ywb2e23c/YVutD/ZdeQRMuHhakNcUSofc8nc2
-	 uAX40iJH6E8sgYsrHX+m1bcECsQCnXIO7ljbP5baBVA0tDUa3LCx2560cP5Wdc+NYd
-	 0uCzxR99ufvjH4SrDDY5EN3Ubt5GLSyse4dgR9MGiPW3K59KV+qc4/os3Bsl7cOezt
-	 Sh70XZGSBaACA==
+	bh=tz1GN08S5uBHLdjHa0/ozlnw2WRGrO+4LkQLFLPDiG8=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=r9hurdRub6sjGdNeStvNxLamcg5Bb540sE3Ej4LbE+9a9CKMk7vEQmem67Aoy80vZ
+	 t0DNgRy3fMrNbD53L7H7QEgtAxv4d7dz4CsmqJYjZitDRXIfbJ3ZyrdeosV5lNqsVD
+	 QG0k8rEUoUsDoqJAnsYTIsf21RGjIJBC14+4h6UOsYzMEV2MRedVKHsRDtnpnxjXQg
+	 7SfRpc1mwq6zs+cL/WX1a8Y5jA1wT1kcToeTteC2njzVlIkm0vK8kRQjFaQWX9uhJt
+	 rG8yLaRsefFrhvB2WmucpJv3YVAiVhUafBRqZTdAFasf6rjaAVKx3W6nlMnkxe3OT7
+	 wGK3NrujhwxJg==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 426C5CCD195;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81C64CCF9E0;
 	Wed, 22 Oct 2025 06:59:02 +0000 (UTC)
 From: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
-Subject: [PATCH 0/3] clk: amlogic: optimize the PLL driver
-Date: Wed, 22 Oct 2025 14:58:50 +0800
-Message-Id: <20251022-optimize_pll_driver-v1-0-a275722fb6f4@amlogic.com>
+Date: Wed, 22 Oct 2025 14:58:53 +0800
+Subject: [PATCH 3/3] clk: amlogic: Correct l_detect bit control
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -40,9 +40,9 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAKqA+GgC/x3MywqAIBBA0V+JWSeo9P6VCCmdaqCHjBFR9O9Jy
- 7O494GATBigSR5gPCnQvkWoNAE799uEglw0aKlzJbUUuz9opRuNXxbjmE5kUQ441qoqC5spiKV
- nHOn6r233vh/2hlFmZQAAAA==
+Message-Id: <20251022-optimize_pll_driver-v1-3-a275722fb6f4@amlogic.com>
+References: <20251022-optimize_pll_driver-v1-0-a275722fb6f4@amlogic.com>
+In-Reply-To: <20251022-optimize_pll_driver-v1-0-a275722fb6f4@amlogic.com>
 To: Neil Armstrong <neil.armstrong@linaro.org>, 
  Jerome Brunet <jbrunet@baylibre.com>, 
  Michael Turquette <mturquette@baylibre.com>, 
@@ -52,11 +52,11 @@ Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
  Chuan Liu <chuan.liu@amlogic.com>
 X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1761116340; l=880;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1761116340; l=2616;
  i=chuan.liu@amlogic.com; s=20240902; h=from:subject:message-id;
- bh=AD9HSHNdMY0OM9nnzoBOYxn8pv3LYh4EXRbZNlxGZDY=;
- b=kxSqjlsNE/85yLqBjRjfLRykrNWn7ajZhDatN3y6+Uqup7ZGGj2wCQC38UPxyBoTzrGMwIpCI
- lqHa5F1aU8TANQvaBZLFNKRSHEx3VozY1u8BZQvzMATv8LCUjF0UH82
+ bh=Dv3cPzZdf9Puk7bgGlGkCfNCiEdGxmv1X3Nj/+D8POg=;
+ b=BHhN2TDgNFvv/uGPJJpyLvmLNfv+ZEmzL2S9sXilJFfhJvBFD6R+79Z2raY7XQiQGmLbIXNag
+ V96WVa094xKBAJKEsbT4Kw52S5AzhIJN0wziJopr6yAfXB1pIQvlO+K
 X-Developer-Key: i=chuan.liu@amlogic.com; a=ed25519;
  pk=fnKDB+81SoWGKW2GJNFkKy/ULvsDmJZRGBE7pR5Xcpo=
 X-Endpoint-Received: by B4 Relay for chuan.liu@amlogic.com/20240902 with
@@ -64,32 +64,82 @@ X-Endpoint-Received: by B4 Relay for chuan.liu@amlogic.com/20240902 with
 X-Original-From: Chuan Liu <chuan.liu@amlogic.com>
 Reply-To: chuan.liu@amlogic.com
 
-This patch series consists of three topics involving the amlogic PLL
-driver:
-- Fix out-of-range PLL frequency setting
-- Optimize PLL enable timing
-- Correct l_detect bit control
+From: Chuan Liu <chuan.liu@amlogic.com>
 
-For easier review and management, these are submitted as a single
-patch series.
+l_detect controls the enable/disable of the PLL lock-detect module.
+
+For A1, the l_detect signal is active-low:
+0 -> Enable lock-detect module;
+1 -> Disable lock-detect module.
 
 Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
 ---
-Chuan Liu (3):
-      clk: amlogic: Fix out-of-range PLL frequency setting
-      clk: amlogic: Optimize PLL enable timing
-      clk: amlogic: Correct l_detect bit control
-
  drivers/clk/meson/a1-pll.c  |  1 +
- drivers/clk/meson/clk-pll.c | 76 ++++++++++++++++++++++++++++-----------------
+ drivers/clk/meson/clk-pll.c | 16 ++++++++++++----
  drivers/clk/meson/clk-pll.h |  2 ++
- 3 files changed, 51 insertions(+), 28 deletions(-)
----
-base-commit: 01f3a6d1d59b8e25a6de243b0d73075cf0415eaf
-change-id: 20251020-optimize_pll_driver-7bef91876c41
+ 3 files changed, 15 insertions(+), 4 deletions(-)
 
-Best regards,
+diff --git a/drivers/clk/meson/a1-pll.c b/drivers/clk/meson/a1-pll.c
+index 1f82e9c7c14e..bfe559c71402 100644
+--- a/drivers/clk/meson/a1-pll.c
++++ b/drivers/clk/meson/a1-pll.c
+@@ -137,6 +137,7 @@ static struct clk_regmap a1_hifi_pll = {
+ 		.range = &a1_hifi_pll_range,
+ 		.init_regs = a1_hifi_pll_init_regs,
+ 		.init_count = ARRAY_SIZE(a1_hifi_pll_init_regs),
++		.flags = CLK_MESON_PLL_L_DETECT_N
+ 	},
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "hifi_pll",
+diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
+index 26c83db487e8..602c93aba3cc 100644
+--- a/drivers/clk/meson/clk-pll.c
++++ b/drivers/clk/meson/clk-pll.c
+@@ -384,8 +384,12 @@ static int meson_clk_pll_enable(struct clk_hw *hw)
+ 		meson_parm_write(clk->map, &pll->rst, 1);
+ 
+ 	/* Disable the PLL lock-detect module */
+-	if (MESON_PARM_APPLICABLE(&pll->l_detect))
+-		meson_parm_write(clk->map, &pll->l_detect, 1);
++	if (MESON_PARM_APPLICABLE(&pll->l_detect)) {
++		if (pll->flags & CLK_MESON_PLL_L_DETECT_N)
++			meson_parm_write(clk->map, &pll->l_detect, 1);
++		else
++			meson_parm_write(clk->map, &pll->l_detect, 0);
++	}
+ 
+ 	/* Enable the pll */
+ 	meson_parm_write(clk->map, &pll->en, 1);
+@@ -413,8 +417,12 @@ static int meson_clk_pll_enable(struct clk_hw *hw)
+ 	udelay(20);
+ 
+ 	/* Enable the lock-detect module */
+-	if (MESON_PARM_APPLICABLE(&pll->l_detect))
+-		meson_parm_write(clk->map, &pll->l_detect, 0);
++	if (MESON_PARM_APPLICABLE(&pll->l_detect)) {
++		if (pll->flags & CLK_MESON_PLL_L_DETECT_N)
++			meson_parm_write(clk->map, &pll->l_detect, 0);
++		else
++			meson_parm_write(clk->map, &pll->l_detect, 1);
++	}
+ 
+ 	if (meson_clk_pll_wait_lock(hw)) {
+ 		/* disable PLL when PLL lock failed. */
+diff --git a/drivers/clk/meson/clk-pll.h b/drivers/clk/meson/clk-pll.h
+index 949157fb7bf5..83295a24721f 100644
+--- a/drivers/clk/meson/clk-pll.h
++++ b/drivers/clk/meson/clk-pll.h
+@@ -29,6 +29,8 @@ struct pll_mult_range {
+ 
+ #define CLK_MESON_PLL_ROUND_CLOSEST	BIT(0)
+ #define CLK_MESON_PLL_NOINIT_ENABLED	BIT(1)
++/* l_detect signal is active-low */
++#define CLK_MESON_PLL_L_DETECT_N	BIT(2)
+ 
+ struct meson_clk_pll_data {
+ 	struct parm en;
+
 -- 
-Chuan Liu <chuan.liu@amlogic.com>
+2.42.0
 
 
