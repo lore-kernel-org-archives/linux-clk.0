@@ -1,111 +1,96 @@
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC538308F1A
-	for <linux-clk@vger.kernel.org>; Wed, 22 Oct 2025 08:19:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77AC0309F06
+	for <linux-clk@vger.kernel.org>; Wed, 22 Oct 2025 09:07:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761121183; cv=none; b=KFwAdwpqIzhCrEn1fs2beP59+jqDE2G69Pe8yTdavyvEr795qhDsfVq7Y/Nd5Vf82wfkMYfQNUtw8qPc3B65mAkodr23A8K5+w59uWDQ4+qr6nVNPv2AjHbPvYwkBkH68PLgjmHqf91YuMary8oPK+C+wX1DbDU2KYHIF+UCQ/E=
+	t=1761124074; cv=none; b=t93EB32ctjPhZQeJOONoRGUaJ0JTIu1VFBl4FapzfJizpqB7FuxzIKZRtTk6QaGyHAleond0cVOVKsTmEwQJ8W9aUvkDMxwqnOQnIJFh4AfHUywB+jRH/A0mKoKQ/veRkxYpGNA/AIbqC0+YulBo2yFGKoAyBG257IO3K5gOTMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761121183; c=relaxed/simple;
-	bh=RHEi92BrqYPevwcCSHph3ISxaBSTH5yv2OoBTfvdyOA=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=QRmjFtPUnL0TvaCgWGVCEhfgC+YUngHSguI6D+Hr+dFlbZCew6YF58SRnN3hrHXihLGLwYh+SNQ7f6UEAasgpGWVPReWM7Xw/pI1AGA75rTi+/nqpsqeYIGpq6Q/qQbH+emIHkyHSgfJ+Euy7iTEYDVWNA/uD0/8/b+df5FXiJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=V/YiIvEV; arc=none smtp.client-ip=209.85.128.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+	s=arc-20240116; t=1761124074; c=relaxed/simple;
+	bh=CK4ye5gW8ZQIbFQzPoD9lWgtQo2XoUG4XijMpi4CeCs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i3wrF0rOGifDZnQb/45y4jIi4DdoHOjRtmu7Nc6Ovb9RGG/YOQmpqzy22ppY2PSD+yKtEzC+yJw7bTD35Nf7zk5VUH0aaPJUiFXqgx34ZZw9/5Kko6y+sX3fU7Sud6XIVKut4/IMhzr2uYV2aHEchSa7hkdrCi43aqiR951pL5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vWkTnnCx; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="V/YiIvEV"
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-4721b4f3afbso17707055e9.0
-        for <linux-clk@vger.kernel.org>; Wed, 22 Oct 2025 01:19:41 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vWkTnnCx"
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-471bde1e8f8so16566255e9.0
+        for <linux-clk@vger.kernel.org>; Wed, 22 Oct 2025 02:07:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761121180; x=1761725980; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=wEK/i+XAkLQEgOG+ywHekwqAFjmlaiDFBYJQ7FDBQr0=;
-        b=V/YiIvEVvbIymPXqtJLPYRTu4QnlxPwJaj7UzB5jcs2VXVsyvnrPtwGNn2IBXwVoKc
-         q8lPuDNLUgUfYBNKFpMjtFJZC9Tx3bnnNylsXcyA1d/O+AXh/ADvunks/o/Gz/nsAUU0
-         QIhHnad9Vjz6T3BzhAPjVvuew70SHMNu/0BbKJhXqLny4Bwiedcphq6vkJBweYDcmQKg
-         YZEBYDP0N7pzX+xAAFeBN+l5AYSmFUgp45C/bUi7IG5V2YqFLISitjmDuRtD/seEeiOV
-         0MXlG7A+VGZPYYJ/6fowVvSW4JWe1N1YpDsqRsnTJY+DYvOCS0fhqeuMiujA+tQymzRV
-         BSzw==
+        d=linaro.org; s=google; t=1761124070; x=1761728870; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=P1flJABJq76WrUF5m9yiOezJjduWZm513fvxhMdJAqE=;
+        b=vWkTnnCxDGCfAS/HR102S0nuMNvpFa6Dy96qaXniOMLn31UI/w2ZA0Ur8BsqJHghXh
+         Hbo/lR3O49NQbfQQR9Dcp0txzX6jrXpmSMrmoHZIsjDbbsYC4A/MQtvYJMW8Pv07G8kx
+         eMBsSMfGaoyOIXnrqEY1wIzaPFfQIP3aIO4LoLVw2Uqdh4G9x8tRoEXODXP5j0tEh8AK
+         tGmEiqM2YFf5fEDW58NX2O+3DnWqr/dNrFI4OoKWGfaM/IYtx/01DcJESJGnfrQTjsuj
+         y95avoxVvYDiSolnHWBud9u+fJav3g97IrACeAFWBOB7u7Q/tMy89LauCaRdbijgOA1e
+         fVcQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761121180; x=1761725980;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wEK/i+XAkLQEgOG+ywHekwqAFjmlaiDFBYJQ7FDBQr0=;
-        b=tGtNG2XYeTlDzWc/NzF9eW7pxt4FxEsWCm5XPPrwKJoQeu5l1qM22tXllvoNFyHaKb
-         yyO3Su+RBjNc4nr3yNif8ho6o2WGzPvGYFbQ/lnqd9PT/vlkwmofmGr6cvjEf2x0aTin
-         vUDRRXfRrpCY6oKo0L2qqEsQ6UNjLwK7ORi+R/AzeqdF11V11dZ0Bi79A1PrUmWXS5XC
-         zl/B8HZwiIicj/jZhkOPFkX/UYI5xA40z6w/2aVUB37omtQapWZTqV4pqgrt2JIJ8TQW
-         Iwn8ZzeVPzojNCER68Po18G5ErGGly4HEp60MAMqUBoFyRnsWTJXsSbhc3ZooEU4wi53
-         cicw==
-X-Forwarded-Encrypted: i=1; AJvYcCXXfOnBZ29jGz3D6p/ga+ju51FmzTIglTNNSTAIaR/odms0bvzmR4sZ3MVQqYv8BjahVDbPLE5260s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyS4o0DbuQwhjxA6UqvQzU3l3AHJFylMOXQXzqsbTtVVaR3q6I3
-	i+fZqp+O4iMYfAXCiBRMVqao9mkQI2ZeM1YAGzuuRHNu/b13OusBj9RGcaJPyCDx204wIZWM9tO
-	wmnoDRT0ZlpnBLdcTfg==
-X-Google-Smtp-Source: AGHT+IETajWDiqpRqa12EaVRu6fAxwYa+sMKITK3BOKL9H9yAMyU5Oa/ffCwAo+MISi9sybobSyD7GdOvUHfNzo=
-X-Received: from wmpv36.prod.google.com ([2002:a05:600c:4da4:b0:46e:2eb4:38d])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:8509:b0:471:16e5:6d7a with SMTP id 5b1f17b1804b1-4711787dca0mr106715285e9.13.1761121180045;
- Wed, 22 Oct 2025 01:19:40 -0700 (PDT)
-Date: Wed, 22 Oct 2025 08:19:39 +0000
-In-Reply-To: <ghaqgzgnk6mkv6tm4inm2e24jyidsk7qhbff6zwc46kefojw5p@3jvwnn3q4bxw>
+        d=1e100.net; s=20230601; t=1761124070; x=1761728870;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=P1flJABJq76WrUF5m9yiOezJjduWZm513fvxhMdJAqE=;
+        b=LDUNkjdY7Sn9TpmMwQVf2dREDsBtSd0GO96knCpgrRBv0SQsrwq3Uh9zPEfLjCvBQk
+         Xyox2GDXC5ItowczlP6tEu9IPgUlnntXsPAKBpRLqNQjwYIjPMDuyWnv6MEZJT7K8UVj
+         GEXgoXcEkPmK9m3PtyNXIGgjmnis3r6R+xCoDcjrFzzIue3CXyAh2nk0QfTAMQClnr2g
+         IsyDNxWBnYuWYcvfxDoUHFM/qgrS+ZcY/TjUTXBLF7bgManXeaDmpG4JMUftjYREMTwj
+         cWwtO03JOWNE1LKsJ0De3k1o7zDTIQcJuJqi8yQr5ZRpFM+xmGrFV8r/79/XheNnN5qw
+         Rf8g==
+X-Forwarded-Encrypted: i=1; AJvYcCXIzi2x2v2+bvyLAnfUS0nJw8FNeSbwiKJP1uWWT1enpzpdwVZbrlv2IerCR+R9kywjnpbhrOjbavg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8d44xueQwzjs6y8MvfPEx+E8VU2i4FV5gT0INN1xueEy9x9Yi
+	2+mUrUqUWBKnx+z/9gEheb32qWJC2jfbMebaQfUFnNkO7VCwGRJfNQ8YdOGkSU+rFw0=
+X-Gm-Gg: ASbGncvs9MwnCJ4wiPLtP4ksCBCuv53zmLGVNeTQBUIiDHMXAaGDsuuLWkg1R9HWpQ/
+	I1rmAbeZcigoURD+P1u2Y4uRJC2VhCjBUWUqCGyOBBl8ys0LoU7N/0g6C1LSWq/DPRqjuCpOZRl
+	EbS66Cf8NtqgHKbOPYF9XzOlb64b3/otoDFzT5EOWKZDOZYM6sh0HAZcR7uBrkeGnn7//+ckirX
+	4Bdjud2C216FVcfE89Z3OMjvY8zYis0LrTUGl1iranTSG9n2hQ+TRti6c8aIP2hKnAKzvQ4Fa7t
+	+Wf10Ep8RrG5Ydir5DCqIhweTPdCzzergTlHodDFqCRi9cjs+h7RXuPG7wFKq9c68OrEWre9spL
+	0yFZgeCXDDCy8WweUZzzypx4TaES+y8X6dSV6h6M01s2vMP0j3teq0/8PTbUQIaBPASHTZwi9
+X-Google-Smtp-Source: AGHT+IGFFlqpwATAAZ2BKrCrVb9D7HfZ5rwLRuh4BV5B0Yi0YMlAwBYfX4e0exoRZ0JufSPaMzAqQw==
+X-Received: by 2002:a05:600c:3513:b0:471:1415:b545 with SMTP id 5b1f17b1804b1-4711786d625mr156848555e9.7.1761124069502;
+        Wed, 22 Oct 2025 02:07:49 -0700 (PDT)
+Received: from linaro.org ([86.121.7.169])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475c428a16bsm38447755e9.5.2025.10.22.02.07.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 Oct 2025 02:07:48 -0700 (PDT)
+Date: Wed, 22 Oct 2025 12:07:47 +0300
+From: Abel Vesa <abel.vesa@linaro.org>
+To: Luca Weiss <luca.weiss@fairphone.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Danila Tikhonov <danila@jiaxyga.com>, 
+	Taniya Das <taniya.das@oss.qualcomm.com>, ~postmarketos/upstreaming@lists.sr.ht, 
+	phone-devel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] clk: qcom: camcc-sm6350: Fix PLL config of PLL2
+Message-ID: <5j7dxbp6biaweup6k2gizbx2g5cf5kzf34jx7mhukrcto7mkz6@3azkzkr7bioc>
+References: <20251021-agera-pll-fixups-v1-0-8c1d8aff4afc@fairphone.com>
+ <20251021-agera-pll-fixups-v1-1-8c1d8aff4afc@fairphone.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251020-clk-send-sync-v2-0-44ab533ae084@google.com>
- <20251020-clk-send-sync-v2-1-44ab533ae084@google.com> <ghaqgzgnk6mkv6tm4inm2e24jyidsk7qhbff6zwc46kefojw5p@3jvwnn3q4bxw>
-Message-ID: <aPiTm7Pb9WguOd9j@google.com>
-Subject: Re: [PATCH v2 1/2] rust: clk: implement Send and Sync
-From: Alice Ryhl <aliceryhl@google.com>
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, Daniel Almeida <daniel.almeida@collabora.com>, 
-	linux-clk@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251021-agera-pll-fixups-v1-1-8c1d8aff4afc@fairphone.com>
 
-On Wed, Oct 22, 2025 at 09:21:38AM +0530, Viresh Kumar wrote:
-> On 20-10-25, 09:35, Alice Ryhl wrote:
-> > These traits are required for drivers to embed the Clk type in their own
-> > data structures because driver data structures are usually required to
-> > be Send. Since the Clk type is thread-safe, implement the relevant
-> > traits.
-> > 
-> > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-> > ---
-> >  rust/kernel/clk.rs | 7 +++++++
-> >  1 file changed, 7 insertions(+)
-> > 
-> > diff --git a/rust/kernel/clk.rs b/rust/kernel/clk.rs
-> > index 1e6c8c42fb3a321951e275101848b35e1ae5c2a8..0a290202da69669d670ddad2b6762a1d5f1d912e 100644
-> > --- a/rust/kernel/clk.rs
-> > +++ b/rust/kernel/clk.rs
-> > @@ -129,6 +129,13 @@ mod common_clk {
-> >      #[repr(transparent)]
-> >      pub struct Clk(*mut bindings::clk);
-> >  
-> > +    // SAFETY: It is safe to call `clk_put` on another thread than where `clk_get` was called.
-> > +    unsafe impl Send for Clk {}
-> > +
-> > +    // SAFETY: It is safe to call any combination of the `&self` methods in parallel, as the
-> > +    // methods are synchronized internally.
-> > +    unsafe impl Sync for Clk {}
-> > +
-> >      impl Clk {
-> >          /// Gets [`Clk`] corresponding to a [`Device`] and a connection id.
-> >          ///
+On 25-10-21 20:08:54, Luca Weiss wrote:
+> The 'Agera' PLLs (with clk_agera_pll_configure) do not take some of the
+> parameters that are provided in the vendor driver. Instead the upstream
+> configuration should provide the final user_ctl value that is written to
+> the USER_CTL register.
 > 
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+> Fix the config so that the PLL is configured correctly, and fixes
+> CAMCC_MCLK* being stuck off.
+> 
+> Fixes: 80f5451d9a7c ("clk: qcom: Add camera clock controller driver for SM6350")
+> Suggested-by: Taniya Das <taniya.das@oss.qualcomm.com>
+> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
 
-I'm guessing this means you want me to take it through drm-rust? See
-what I put in the cover letter about choice of tree.
-
-Alice
+Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
