@@ -1,46 +1,56 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04EA835965;
-	Wed, 22 Oct 2025 17:42:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39F1D2DAFDE;
+	Wed, 22 Oct 2025 17:55:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761154945; cv=none; b=FqR1t2xtVXeoAzkgZWJqc4hateLzwVsU6OK2047uS8ZpsX+w2MKFKxcQkCCtWr4khixCFeJfy/umExd5wm4Yn28D+bqgt1wCHDEzxGSeKHTK8CmS1TsJDfNGW8X/eARBNmdm//A0E43Ybzdkt8znUdPS1clYXHKbFKztIIPo4DQ=
+	t=1761155724; cv=none; b=hNDGEfJbCLWJVt5xsrLjTBUplSZGrAJN1WmqMeB8PeN9WmExvrlfREFO0ZYBsUanAa6ci3e6hePgYM5Tpc/0EuIeegfX2HOgaWZOnDUqU0xqMgJ6iK54FmIlJGnMyRrYgJ5zreXD4z0bGpeCgVAl1Q/VIPM7t98OtY0+rx1WP20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761154945; c=relaxed/simple;
-	bh=0AMO4lrL/O5t2XKs7B1Iizfw927Zz0Apzg0ldNXZdUs=;
+	s=arc-20240116; t=1761155724; c=relaxed/simple;
+	bh=cUY8ixQPrzQuIjFkkA9Tc0PQzAYbO569D26Xok769Es=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QTN59MulPzPQ9YobwHtIQybZ+cbCCPQ37Ix2SQ2p+J8FIFRxAXWbpd7AdGs5BHfNjpfwLvaV89d6LowJqVVV1+2o9CUsav9Uz6fSitOdTvKg6DK0ASh5NkTayBiQ7WtNbP7cfGz4qImfJCC2d/uQbC2ZY8vms9sysimUhUE2404=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FOHm1xhm; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=lMZ/O0/YOHalmj5RqCnzL89T5iF1nWFpIWQkKbGHHf8a43dCxysjm+o2J7W6ZrjRl2Z9xrVwyqhb82DU4Yv5FxA0NZGsBb62LdSK/phxgR9b6zi4b6ofFCna9wmJZvxmHRkkLlTp3lXOx/DHmlwkvmpID6X4GTlm2cjAtummF14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AKpquUQO; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FOHm1xhm"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6ED36C4CEE7;
-	Wed, 22 Oct 2025 17:42:21 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AKpquUQO"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC358C4CEE7;
+	Wed, 22 Oct 2025 17:55:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761154944;
-	bh=0AMO4lrL/O5t2XKs7B1Iizfw927Zz0Apzg0ldNXZdUs=;
+	s=k20201202; t=1761155723;
+	bh=cUY8ixQPrzQuIjFkkA9Tc0PQzAYbO569D26Xok769Es=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FOHm1xhmo1kgXWFc4uIkN86mJYA95j2eikpskH5pimO30ekPriCRukukUtxvKmozD
-	 vMLDn85Rfu9wWdzW002K1G+yrywnCNTF76fJhsG9esjE1PVKyvAQg1nQiAzy5Fv9Sh
-	 OTGvXWn1XYPVVoK2szpWHSehCFbFcKsBA54VY+KavawYDlQFO84Y/xOZYBcFAXVqrH
-	 MiDzZ2P9VLvdxik8Fk+B9t9YQnlP2IfTstZ85mKcGCkveLcO6e346sirnXMYwxmf/O
-	 yjbuCjOsjCjB/NOafCnw0lSZlbidZVVCRn018rKTbCIopBZTUKdfOOQZYPOcJesw+0
-	 ijHsJGxOir1eA==
-Date: Wed, 22 Oct 2025 18:42:19 +0100
+	b=AKpquUQO8FVraQ/ev144KQ2j9NcIMzPxRY4ZPDrJQnIwdq/JoHa68apGYatwdYOeg
+	 16nQDf9aPiQeEYhYuXnLqNLRw2vsjl4bUPWbx7vjUo3Xwqqxrt8LDmhiU2zvNanqZh
+	 ulfrek87XtRNnxcIevyLVl0PCKS3WcDpCmYMu2uxgKfIvg8vpHya0zPyPgsInUFEfI
+	 7AZWHIxgDzl3wqHTMHIntUFrOFnJqTVytJDnkhrXIeLmT5JKo6Ws7a/ULAnx5UZLGp
+	 IHwuI/Vr74+5WqmXmrfeVbooAvLzohwSUB6q0vvuCNWr0y9OR5J/CnBBLab7g9FnSD
+	 0tHNcVBqtFncw==
+Date: Wed, 22 Oct 2025 18:55:17 +0100
 From: Conor Dooley <conor@kernel.org>
-To: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
-Cc: claudiu.beznea.uj@bp.renesas.com, alexandre.belloni@bootlin.com,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	geert+renesas@glider.be, magnus.damm@gmail.com,
-	mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de,
-	linux-rtc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 2/6] dt-bindings: rtc: renesas,rz-rtca3: Add RZ/V2H
- support
-Message-ID: <20251022-default-circus-944c6495cf63@spud>
-References: <20251021080705.18116-1-ovidiu.panait.rb@renesas.com>
- <20251021080705.18116-3-ovidiu.panait.rb@renesas.com>
+To: =?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>
+Cc: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
+	=?iso-8859-1?Q?Gr=E9gory?= Clement <gregory.clement@bootlin.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	linux-mips@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	=?iso-8859-1?Q?Beno=EEt?= Monin <benoit.monin@bootlin.com>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	Tawfik Bayouk <tawfik.bayouk@mobileye.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH 1/7] dt-bindings: soc: mobileye: OLB is an Ethernet PHY
+ provider on EyeQ5
+Message-ID: <20251022-patchwork-plunging-67232b409322@spud>
+References: <20251022-macb-phy-v1-0-f29f28fae721@bootlin.com>
+ <20251022-macb-phy-v1-1-f29f28fae721@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -48,43 +58,36 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="R3KKSfrPuScx9hz5"
+	protocol="application/pgp-signature"; boundary="Jjc5Mh3+CKARWUf/"
 Content-Disposition: inline
-In-Reply-To: <20251021080705.18116-3-ovidiu.panait.rb@renesas.com>
+In-Reply-To: <20251022-macb-phy-v1-1-f29f28fae721@bootlin.com>
 
 
---R3KKSfrPuScx9hz5
-Content-Type: text/plain; charset=us-ascii
+--Jjc5Mh3+CKARWUf/
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 21, 2025 at 08:07:01AM +0000, Ovidiu Panait wrote:
-> The Renesas RZ/V2H RTC IP is based on the same RTCA3 IP as RZ/G3S
-> (r9a08g045), with the following differences:
-> - It lacks the time capture functionality
-> - The maximum supported periodic interrupt frequency is 128Hz instead
->   of 256Hz
-> - It requires two reset lines instead of one
+On Wed, Oct 22, 2025 at 05:39:03PM +0200, Th=E9o Lebrun wrote:
+> OLB on EyeQ5 ("mobileye,eyeq5-olb" compatible) is now declared as a
+> generic PHY provider. Under the hood, it provides Ethernet RGMII/SGMII
+> PHY support for both MAC instances.
 >=20
-> Add new compatible string "renesas,r9a09g057-rtca3" for RZ/V2H and update
-> the binding accordingly:
-> - Allow "resets" to contain one or two entries depending on the SoC.
-> - Add "reset-names" property, but make it required only for RZ/V2H.
->=20
-> Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
+> Signed-off-by: Th=E9o Lebrun <theo.lebrun@bootlin.com>
 
 Acked-by: Conor Dooley <conor.dooley@microchip.com>
+
 pw-bot: not-applicable
 
---R3KKSfrPuScx9hz5
+--Jjc5Mh3+CKARWUf/
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaPkXewAKCRB4tDGHoIJi
-0q7TAQChZVDH6ozWYZk41KzGc/dUW9h4Owva4y7k8VjvxZSr7AEAlwoRe5h+RXJq
-Hv7cLdSxJehdR//pUV1yUr9sWbKSNws=
-=+6bp
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaPkahQAKCRB4tDGHoIJi
+0jnPAP92K/a04IoaqEzduGVMzofF3MGpr5b00WTiq05i+6Hp4QEAooMhYLXairhe
+IkapkJAWV3a5p89HjXfu2eN6G5+0mQc=
+=9d0M
 -----END PGP SIGNATURE-----
 
---R3KKSfrPuScx9hz5--
+--Jjc5Mh3+CKARWUf/--
