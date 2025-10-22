@@ -1,136 +1,74 @@
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ADAC191F91
-	for <linux-clk@vger.kernel.org>; Tue, 21 Oct 2025 23:45:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFA932A1BA;
+	Wed, 22 Oct 2025 00:14:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761090332; cv=none; b=KY0bHpNEmxXVA9+KPoPNqB5BITqChQmtyW1CwHXgKqbadDLmg9qRA3crt+YbUk2uwWSGeolKUdlxkz5D2al7gWoZV9ErumwznNz08QZHBAlLe0t4xx53ZHYnt7s9tN9/cVJOwN7FIay2Onir0Uhju05ya1f8tr4WSStryLv7/Ic=
+	t=1761092073; cv=none; b=QxlIvQf4Uhqe0gW0WUkeI80ANKrVXPdjl7uAWFpleVsVmJk/fb9kJ/rrQEG9XfV2IOAOA4u60KU18k/00tuYxPOyoWhKQxpPh+EQm2xgfc0jLOLVUw/DHdLcdCy97+iGLqVqw4lqny1XFsLN3NHCYindG6Q9QOQsWWcP3BUTl1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761090332; c=relaxed/simple;
-	bh=+D54v2JDMNpOzup8Q59t4AiDpewDb4vKYcAKUx5e69A=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=G/kgn40xJoNtcXAp1uW4Fa+2tNVreV+yiyFCfx7FU1O4F1Kv94eIVTEum+2qRiDred4x0hi48mwueWYiVRFTmXZ7Gm93W4b9cZkxwQH0lVnMK7hJmBvwAHb6T2cY860TcNjmtGL4V0TOXtb46pAbsV64stAson3qExQZY/fwysk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gjFvV3XB; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1761092073; c=relaxed/simple;
+	bh=qdTemEah2ZwUDwzRjVNCeMAn63LZUADIEQLUkKwzNvI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=EZOj6q5pSOQrlcFNdFeAiGvrEVtayUwkCBk+joZ3aR0PfeKUjAVLw9AeASJCmKqb6QGrDECIoxU36loUbTiu9+xfSdE5lqF5s00+MaUTl/UeA1JukZadPtBnN3cQilFg6NpKsWeNgOsfuLXExcd3nd5INl47kGsezEPyHbnRxMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZjDDTk4e; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gjFvV3XB"
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-57e3cad25e8so1070565e87.1
-        for <linux-clk@vger.kernel.org>; Tue, 21 Oct 2025 16:45:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761090328; x=1761695128; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vM96pygorBRucimoNBQaRrFTvcrfZKw95DHRz/7W2Ho=;
-        b=gjFvV3XB6QuqKujdYvhFJ+Afkt8VUh8Wt+cznjCGPDAAusBMzAcaFPRhQ3BM7AJv9p
-         DuCf5V7ZsdtgsGSodb97bXknTNwZmj2NMiHc8E/Ur7Qgia3f+KoeGpw4wRKdCS5Bi+H4
-         FaLfNvFc7vN9h1WeNlaUaZfSzImPt1MgU6JofV2FK7ydBXgWmaIjMRAOJg6n2j3JA38y
-         vKcV2y9yYYZ5AENopnbHTETG+0MQsZyReCI14SmMmb+FJLEknIfjzZES1iI9ZCEz+nWx
-         dqAnCTgLXTM0zOE3hCzxJpwBrsxlu2g9Gwuo8FjK2MT5u3U78Sa1ch09OuCi068DsQ+1
-         9HXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761090328; x=1761695128;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vM96pygorBRucimoNBQaRrFTvcrfZKw95DHRz/7W2Ho=;
-        b=XuDOAwULl70UwDmaHyyiBjC1myONHW5Jdg0hMvaKEhY4fHcNAQiw4Qg7zGrfHFoe/4
-         65lwliOmvYUX4K6p+KIwQZidtIfnl8QZ38ZNvtctsRm7bt0smjOH0zE8098OLXKxLMk8
-         sKkaGaXdJulEBNItGcYDt6OQVkyMjkmo+YtP6yO0TwsLrFuhxF4vvK9qtk0UmLbVR2Qv
-         OgWakEeLE8ffEutSbPe+c8GwQ4ZssiX7to/kADcWQyQJ4QQ2yPDxd8YIFru74ryqam9n
-         n7lWT2SU/R+ZiJEv84/n3GtjqQ8CZcNCkmHsNmnbIHwM5ypJvMgq3JpTofPapvYXk/mO
-         qmjw==
-X-Forwarded-Encrypted: i=1; AJvYcCXIMYQfGv7hhF+nYFcv097clEmMPuX9+NJdHgzcvr1CWSrG8SrDXbS6j5t+bYa0fYGfhw0B2f2YlWw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKSc6wCzcu7j8TNnxFlmYoJ5Q8Pt0AfU778zxB1xUyW52wdOa+
-	OwQKBELGUMeZBAywiIMMpUhzpqXHiHM2dZTguxxbQI3QQ6ry374cNlHpvL1io8yGH3g=
-X-Gm-Gg: ASbGncsydgBeyYiEeioHUPF1VZ4W6xoEoLIAojIQsaNgOZ0rF6nHLNxAjmoxt9XJEFY
-	qm67YkRB5kX8nyVnJ+myIJhO3ebpNKpA+OzEOCQ/1/r4JCi3p9Yur1c9hMz19biOo8GbyyvCbIQ
-	GYArzHgVuBxgi5g4wFWWOa7t2IrnGk8/zrUq1Z4FGSrJf8KJ+yPKi3xacx4OTjNs6qo0QzBpVd5
-	X+SSSJ27rrv3Rc3QKX9knFUWIJrcY/tDB1KiubELPsO5nHN7YMTKAkDyBxfgnUjbmNj9mTIqeJU
-	/J7gf7OEG2gYegQs1M/lsWpBuo0EE7qcnbmIXVpejj9l1kDKwtfWXEkF9CDLCai1gG4CPH+mXBm
-	IRbGDYivFaJLEmz4yv9ZSVvjVafZbYbK0tGX1Xuqk9ttBlGu3syxfvP1e9OXO1wYWParIGbdY8P
-	TtKsRdPlq02J9jSGJ0vYiRxS7OjEwXBdzk6O1SEX7s0mI=
-X-Google-Smtp-Source: AGHT+IELwd37Expap2tOy87KD2EnLyB9NP8Iub9YJAkkybMWoTVtsrS+mlavS5+uTLrM9jM06efhFA==
-X-Received: by 2002:a05:6512:3d0d:b0:55f:433b:e766 with SMTP id 2adb3069b0e04-591ea41924cmr1054619e87.7.1761090328388;
-        Tue, 21 Oct 2025 16:45:28 -0700 (PDT)
-Received: from thyme.. (91-159-24-186.elisa-laajakaista.fi. [91.159.24.186])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-591def160cfsm4076397e87.76.2025.10.21.16.45.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Oct 2025 16:45:26 -0700 (PDT)
-From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Dmitry Baryshkov <lumag@kernel.org>,
-	Jagadeesh Kona <quic_jkona@quicinc.com>,
-	Taniya Das <quic_tdas@quicinc.com>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Imran Shaik <imran.shaik@oss.qualcomm.com>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: [PATCH v2 6/6] clk: qcom: camcc-sm8450: Specify Titan GDSC power domain as a parent to IPE/BPS/SBI
-Date: Wed, 22 Oct 2025 02:44:50 +0300
-Message-ID: <20251021234450.2271279-7-vladimir.zapolskiy@linaro.org>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20251021234450.2271279-1-vladimir.zapolskiy@linaro.org>
-References: <20251021234450.2271279-1-vladimir.zapolskiy@linaro.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZjDDTk4e"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C51B0C4CEF1;
+	Wed, 22 Oct 2025 00:14:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761092073;
+	bh=qdTemEah2ZwUDwzRjVNCeMAn63LZUADIEQLUkKwzNvI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ZjDDTk4eNS2NWwQItnYm4fEAytnHF94dLxeWHleQAHpVRxYO4gR618BunjzSts/2O
+	 dQKqqrIV5MJGXQ/6mnrDgLrC2lO/VX54XFyZFwL22MXxAE4jk9KBetXZzfrETjpiJk
+	 Pak39RSQ+mhEPeaRRFm4AAthCEgbZQBchmbu8Tfn13r7F/PH7AtCMCuAPnZ7VlWj4E
+	 uTLCKhBi+lf2M5oetDe5qycSvbmjc9HqXTAaF9P8DHxpr6iSUwSEbvGbbr3XAy0ghc
+	 komcG6/Aozv8TU8zbF40bGCR81K3WWokPJN7sqoZSVk/F05NaiL1aYQ4fBxgFQrxIa
+	 +H7lZe6V8z7Fg==
+Date: Tue, 21 Oct 2025 17:14:30 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: =?UTF-8?B?VGjDqW8=?= Lebrun <theo.lebrun@bootlin.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Nicolas Ferre
+ <nicolas.ferre@microchip.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+ Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, =?UTF-8?B?R3I=?=
+ =?UTF-8?B?w6lnb3J5?= Clement <gregory.clement@bootlin.com>, Russell King
+ <linux@armlinux.org.uk>, Vinod Koul <vkoul@kernel.org>, Kishon Vijay
+ Abraham I <kishon@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Thomas Bogendoerfer
+ <tsbogend@alpha.franken.de>, Philipp Zabel <p.zabel@pengutronix.de>,
+ netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
+ linux-phy@lists.infradead.org, linux-clk@vger.kernel.org, Tawfik Bayouk
+ <tawfik.bayouk@mobileye.com>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>, =?UTF-8?B?QmVub8OudA==?= Monin
+ <benoit.monin@bootlin.com>, Maxime Chevallier
+ <maxime.chevallier@bootlin.com>, Andrew Lunn <andrew@lunn.ch>, Jerome
+ Brunet <jbrunet@baylibre.com>
+Subject: Re: [PATCH net-next 00/12] net: macb: EyeQ5 support (alongside
+ generic PHY driver in syscon)
+Message-ID: <20251021171430.579211b2@kernel.org>
+In-Reply-To: <20251021-macb-eyeq5-v1-0-3b0b5a9d2f85@bootlin.com>
+References: <20251021-macb-eyeq5-v1-0-3b0b5a9d2f85@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-When a consumer turns on/off a power domain dependent on another power
-domain in hardware, the parent power domain shall be turned on/off by
-the power domain provider as well, and to get it the power domain hardware
-hierarchy shall be described in the CAMCC driver.
+On Tue, 21 Oct 2025 18:32:41 +0200 Th=C3=A9o Lebrun wrote:
+> Merging all this won't be easy, sorry. Is this split across trees OK?
+> The net-next part is pretty evident, it is the rest that appears
+> complex to merge to me. I can resend the series exploded if useful
+> (or at least split net-next versus the rest).
 
-Establish the power domain hierarchy with a Titan GDSC set as a parent of
-other GDSC power domains provided by the SM8450 camera clock controller,
-including IPE, BPS and SBI ones.
-
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Reviewed-by: Imran Shaik <imran.shaik@oss.qualcomm.com>
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Signed-off-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
----
- drivers/clk/qcom/camcc-sm8450.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/clk/qcom/camcc-sm8450.c b/drivers/clk/qcom/camcc-sm8450.c
-index 4dd8be8cc988..ef8cf54d0eed 100644
---- a/drivers/clk/qcom/camcc-sm8450.c
-+++ b/drivers/clk/qcom/camcc-sm8450.c
-@@ -2935,6 +2935,7 @@ static struct gdsc bps_gdsc = {
- 		.name = "bps_gdsc",
- 	},
- 	.flags = HW_CTRL | POLL_CFG_GDSCR,
-+	.parent = &titan_top_gdsc.pd,
- 	.pwrsts = PWRSTS_OFF_ON,
- };
- 
-@@ -2944,6 +2945,7 @@ static struct gdsc ipe_0_gdsc = {
- 		.name = "ipe_0_gdsc",
- 	},
- 	.flags = HW_CTRL | POLL_CFG_GDSCR,
-+	.parent = &titan_top_gdsc.pd,
- 	.pwrsts = PWRSTS_OFF_ON,
- };
- 
-@@ -2953,6 +2955,7 @@ static struct gdsc sbi_gdsc = {
- 		.name = "sbi_gdsc",
- 	},
- 	.flags = POLL_CFG_GDSCR,
-+	.parent = &titan_top_gdsc.pd,
- 	.pwrsts = PWRSTS_OFF_ON,
- };
- 
--- 
-2.49.0
-
+Yes, please respin just the patches that need to go via net-next
+for us (1,3-6?). The rest I don't car^W know :)
+--=20
+pw-bot: cr
