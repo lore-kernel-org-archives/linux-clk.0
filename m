@@ -1,148 +1,295 @@
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53E8B1A317D;
-	Wed, 22 Oct 2025 09:52:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E66463126BD
+	for <linux-clk@vger.kernel.org>; Wed, 22 Oct 2025 10:07:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761126756; cv=none; b=FEQf+suWMK7EWM5tfO1TIW5TyvKsY92VqI1cYT3tSNjNeEOWDKhhjnQJg7lWB5nMTIgVNrO3/q+9I6+Ttf3m0LJ367KOpsurtE8svdsV+0WLWNMc95yNWqNOD2G+fG7UzSVh0y+qHNRmuS45pvTxpSyDrNY+l4xISnqodeT6KFI=
+	t=1761127640; cv=none; b=X7cnD8YKJYqiUEgWaoAMFXLsT6O0mIZYw4uN0h64I8tAOpO+4e9yFAuuNEBa9+9BX2SYad/p8oSuJ+jcgqCj3g0LBHTurM925ahErnusMJy3JUAhwQsZR6NyOoiUfspzPLv7W4FRsuCABlXeNlViBm+FvhnCEnXMCiLq/HgSV6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761126756; c=relaxed/simple;
-	bh=cVjcunS8h1jqTIUejZ/Xq/wEq3N5kc+C9hdZmV/2aZc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DYGEQ7jj/+viEqLRNyNFT8OnsE++FciQNIG709eOFVeSZSX/roWOncS767ILu4bpk4rlyPJfQDsdt7Q7VfZzNIpt3/0CCmX/SwA89xXkfzYmT25Zy53df4g/9SzQ7TzIqJQr49W+QZad2Wm9vxMrT+EGYnob/Xl41sQBPCYXBbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=fA20Bhol; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="fA20Bhol"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
-	bh=IRzW4TIfXqA8U8VyFhl4a5nR+JpRyPOHWAWMvoNSBog=; b=fA20BholhvJ7oFwc8aYVXE2OrK
-	QjmyiUqQbpuRqoxZ+ov/1s2x79Oq5rPYjUrhl9DPId2GhGLbZqtiykPQFIvR/6h5tHc58MyrJeV3T
-	8O3t0i8QBYjRFBJmTVw0E91OigGD6TNXcOoihDOeLxh7R3AYtgHPwRvj/J+bzH2ruAkf2WLUC+5/Z
-	1wcyMleDF0U1wMB7ysgv16Z0TPkayX3+cE4KSntcTzTnnGiuWNbTucD8PWCP8peCuyioOY9sf3DTp
-	UjAuzab7XyvRpTVIlzGqrQ9oojXWZ7iWnmWupjwZZ8I9f6XY9JgG8Y079cHBJJX8aTHKSiC+JVPG6
-	PKkkGKRg==;
-Received: from [141.76.253.241] (helo=phil.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1vBVVt-00027D-MX; Wed, 22 Oct 2025 11:52:13 +0200
-From: Heiko Stuebner <heiko@sntech.de>
-To: mturquette@baylibre.com, sboyd@kernel.org, sugar.zhang@rock-chips.com,
- robh@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
- zhangqing <zhangqing@rock-chips.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, huangtao@rock-chips.com,
- finley.xiao@rock-chips.com, Conor Dooley <conor.dooley@microchip.com>
-Subject: Re: [PATCH v4 2/7] dt-bindings: clock, reset: Add support for rv1126b
-Date: Wed, 22 Oct 2025 11:52:12 +0200
-Message-ID: <3346817.AJdgDx1Vlc@phil>
-In-Reply-To: <5a551943-141a-4842-a4d0-b66b32cf3e70@rock-chips.com>
-References:
- <20251021065232.2201500-1-zhangqing@rock-chips.com> <4463339.ejJDZkT8p0@phil>
- <5a551943-141a-4842-a4d0-b66b32cf3e70@rock-chips.com>
+	s=arc-20240116; t=1761127640; c=relaxed/simple;
+	bh=n8auG5eKlZyr31ot6Kp1D+Gj8aLD/n7p+Qqeh5TWnJo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=okauKRfgJWljnAFhE36WXsXC93A2fHYtDfqQ3YawJOdMuO4ycBlrC9mmXXpg7CIwWfZspmGWL/8PUWYKVuagRrNmyG33Q+ccEv3PV7ldj3zyKGfH3LM9XMicI3pgfMLTIVDiiTlYmvemykjjTMPVmBa2oTE3rFfyeQBSVsUWFIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-87c237eca60so74315046d6.1
+        for <linux-clk@vger.kernel.org>; Wed, 22 Oct 2025 03:07:17 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761127637; x=1761732437;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rEJ/AcXuMMrQoXRwb6HmCfF3LFX3cn+TJWCKJF/dV3w=;
+        b=QPdMQ0pQrMieoVrCEg1+ghgpddRJhylY2oOGzCD8ZOJWkXoipkp33JAhNuDl2sJbSS
+         pOegsPiEqnPjScheCtYYvoBC6eWimYprjiWgivILjyd878X+ZNhMaVwSaDpUvFEMbwW+
+         +xCDSekp3Z1EugvEULG8y3VJItW/ZfbXoEbV682HDpQ5dkB8nwxU2bdKd4HM10UWAmn9
+         WvDotYWmlLfsfNbBxOTE35UH3CAsmj1km1DTzMM4yhR3L4TPMmfUo3w5fvIkFx6aQgqc
+         /blKG9m7QqlC1ptz2bymxKSBNFSKCFGYZHJPsMq/8NpQTz6fZvXk+K1LH5IvLZW5Ar5f
+         rXbw==
+X-Forwarded-Encrypted: i=1; AJvYcCUecp2gw6YtRaQ7Ho5ok4UT8cxA75aGAiqZcMr7U1jaaaybcofj0ybkSziReGsTEk02EbN6394tlhc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+1RxIzzEFlaO/DyZCAVBxwA9MWGqirWIbhQb9nov9gm5/6+pb
+	EFTc9sUK71IFsoXj35m6lfVLODHuat/v5H4UkwWvTLMeZ2HD3x8SZcY3Bv/TG7S2
+X-Gm-Gg: ASbGnctJfkMaSaXgqnLD1C+O2FyxLE8IUGZNOXVvqaXcKbNI5oVcQvWJ132iePfmSHZ
+	wfXgVFAUQiPV6r47NH6AGuRnZRGGmZjolEAVQItaaRWg3JjNR4JGiCtg9bgLptc+XpUIeXJ4BKc
+	MEh2BobJh3QOm3SJ4vfj7nUiK+62Qo5qyRVoL7JmGP6+Nv54y2p8yDYQq+icyIfqztFZ+c03Sht
+	lJoxMNsv4FflsOpFZDSVC9quc5flzrMAWhxQPxvGpQ0tbeYy+JWw+2Zx3KT+zTbM/Fe69WRdmxi
+	ofHpCE5TzJlEuOiik0uCzN2ptxa5Ps2nL+w+5+EWuHeKfyXfQIKP1QgATNAauFPo/a2Bfz+2Pii
+	enKcVJoDPp66qVhUY1n8fC1dViftDUR3L7SVHBdrLELwsuqjzok11oLoBXFHL4KI7gwodT7qmVk
+	4jGeWR+HQJInk4XalKwQLlruxe4p7tAkyVK5ZvErqqYOn+kYwihNly
+X-Google-Smtp-Source: AGHT+IEcRya1ZLLSwk0faPcgD0lGcc+12jByFRUJnUAvhHYzO4JufCQvST78Cuaa1NBKFSeaPb+Cjg==
+X-Received: by 2002:ad4:5943:0:b0:7e9:2697:dc63 with SMTP id 6a1803df08f44-87c207f2a7dmr264653156d6.48.1761127636350;
+        Wed, 22 Oct 2025 03:07:16 -0700 (PDT)
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com. [209.85.160.179])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-87cf51fc2a5sm85543606d6.7.2025.10.22.03.07.16
+        for <linux-clk@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 22 Oct 2025 03:07:16 -0700 (PDT)
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4e89183fe47so9471011cf.2
+        for <linux-clk@vger.kernel.org>; Wed, 22 Oct 2025 03:07:16 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUR9el1zzZX5yzRQgz5F+VLhcKPnUuOeyZpXEqhq2TdmxAQWQv5kjjaHGTb9MJ9TZMo3JIGzPqyewo=@vger.kernel.org
+X-Received: by 2002:a05:6102:3f49:b0:5d6:615:a687 with SMTP id
+ ada2fe7eead31-5d7dd5544d6mr5930459137.7.1761127308820; Wed, 22 Oct 2025
+ 03:01:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+References: <cover.1760696560.git.geert+renesas@glider.be> <67c1998f144b3a21399672c8e4d58d3884ae2b3c.1760696560.git.geert+renesas@glider.be>
+ <aPKQMdyMO-vrb30X@yury> <CAMuHMdXq7xubX4a6SZWcC1HX+_TsKeQigDVQrWvA=js5bhaUiQ@mail.gmail.com>
+ <aPhbhQEWAel4aD9t@yury>
+In-Reply-To: <aPhbhQEWAel4aD9t@yury>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 22 Oct 2025 12:01:37 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUOX=ToDU_44fHrqKWUtee1LKpgisfTKOe4R33er9g+DA@mail.gmail.com>
+X-Gm-Features: AS18NWAJp5tYw_pRqlFhPyJqRT3wi5ZG4jspqrcr0Xp9hgyi6lbaoTACOgNkevQ
+Message-ID: <CAMuHMdUOX=ToDU_44fHrqKWUtee1LKpgisfTKOe4R33er9g+DA@mail.gmail.com>
+Subject: Re: [PATCH v4 2/4] bitfield: Add non-constant field_{prep,get}() helpers
+To: Yury Norov <yury.norov@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Nicolas Ferre <nicolas.ferre@microchip.com>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+	Giovanni Cabiddu <giovanni.cabiddu@intel.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
+	David Miller <davem@davemloft.net>, Linus Walleij <linus.walleij@linaro.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Joel Stanley <joel@jms.id.au>, 
+	Andrew Jeffery <andrew@codeconstruct.com.au>, Crt Mori <cmo@melexis.com>, 
+	Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Jacky Huang <ychuang3@nuvoton.com>, 
+	Shan-Chun Hung <schung@nuvoton.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+	Johannes Berg <johannes@sipsolutions.net>, Jakub Kicinski <kuba@kernel.org>, Alex Elder <elder@ieee.org>, 
+	David Laight <david.laight.linux@gmail.com>, Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
+	Jason Baron <jbaron@akamai.com>, Borislav Petkov <bp@alien8.de>, Tony Luck <tony.luck@intel.com>, 
+	Michael Hennerich <Michael.Hennerich@analog.com>, Kim Seer Paller <kimseer.paller@analog.com>, 
+	David Lechner <dlechner@baylibre.com>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	Andy Shevchenko <andy@kernel.org>, Richard Genoud <richard.genoud@bootlin.com>, 
+	Cosmin Tanislav <demonsingur@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Jianping Shen <Jianping.Shen@de.bosch.com>, linux-clk@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org, 
+	linux-crypto@vger.kernel.org, linux-edac@vger.kernel.org, qat-linux@intel.com, 
+	linux-gpio@vger.kernel.org, linux-aspeed@lists.ozlabs.org, 
+	linux-iio@vger.kernel.org, linux-sound@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Elaine,
+Hi Yury,
 
-Am Mittwoch, 22. Oktober 2025, 05:21:43 Mitteleurop=C3=A4ische Sommerzeit s=
-chrieb zhangqing:
-> =E5=9C=A8 2025/10/21 16:38, Heiko Stuebner =E5=86=99=E9=81=93:
-> > Am Dienstag, 21. Oktober 2025, 08:52:27 Mitteleurop=C3=A4ische Sommerze=
-it schrieb Elaine Zhang:
-> >> Add clock and reset ID defines for rv1126b.
-> >> Also add documentation for the rv1126b CRU core.
-> >>
-> >> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
-> >> Acked-by: Conor Dooley <conor.dooley@microchip.com>
-> >> ---
-> >>   .../bindings/clock/rockchip,rv1126b-cru.yaml  |  52 +++
-> >>   .../dt-bindings/clock/rockchip,rv1126b-cru.h  | 392 +++++++++++++++++
-> >>   .../dt-bindings/reset/rockchip,rv1126b-cru.h  | 405 ++++++++++++++++=
-++
-> >>   3 files changed, 849 insertions(+)
-> >>   create mode 100644 Documentation/devicetree/bindings/clock/rockchip,=
-rv1126b-cru.yaml
-> >>   create mode 100644 include/dt-bindings/clock/rockchip,rv1126b-cru.h
-> >>   create mode 100644 include/dt-bindings/reset/rockchip,rv1126b-cru.h
-> >>
-> >> diff --git a/Documentation/devicetree/bindings/clock/rockchip,rv1126b-=
-cru.yaml b/Documentation/devicetree/bindings/clock/rockchip,rv1126b-cru.yaml
-> >> new file mode 100644
-> >> index 000000000000..04b0a5c51e4e
-> >> --- /dev/null
-> >> +++ b/Documentation/devicetree/bindings/clock/rockchip,rv1126b-cru.yaml
-> >> @@ -0,0 +1,52 @@
-> >> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> >> +%YAML 1.2
-> >> +---
-> >> +$id: http://devicetree.org/schemas/clock/rockchip,rv1126b-cru.yaml#
-> >> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> >> +
-> >> +title: Rockchip RV1126B Clock and Reset Unit
-> >> +
-> >> +maintainers:
-> >> +  - Elaine Zhang <zhangqing@rock-chips.com>
-> >> +  - Heiko Stuebner <heiko@sntech.de>
-> >> +
-> >> +description:
-> >> +  The rv1126b clock controller generates the clock and also implement=
-s a
-> >> +  reset controller for SoC peripherals.
-> >> +
-> >> +properties:
-> >> +  compatible:
-> >> +    enum:
-> >> +      - rockchip,rv1126b-cru
-> >> +
-> >> +  reg:
-> >> +    maxItems: 1
-> >> +
-> >> +  "#clock-cells":
-> >> +    const: 1
-> >> +
-> >> +  "#reset-cells":
-> >> +    const: 1
-> >> +
-> >> +  clocks:
-> >> +    maxItems: 1
-> >> +
-> >> +  clock-names:
-> >> +    const: xin24m
-> > I think we're missing the optional
+On Wed, 22 Oct 2025 at 06:20, Yury Norov <yury.norov@gmail.com> wrote:
+> On Mon, Oct 20, 2025 at 03:00:24PM +0200, Geert Uytterhoeven wrote:
+> > On Fri, 17 Oct 2025 at 20:51, Yury Norov <yury.norov@gmail.com> wrote:
+> > > On Fri, Oct 17, 2025 at 12:54:10PM +0200, Geert Uytterhoeven wrote:
+> > > > The existing FIELD_{GET,PREP}() macros are limited to compile-time
+> > > > constants.  However, it is very common to prepare or extract bitfield
+> > > > elements where the bitfield mask is not a compile-time constant.
+> > > >
+> > > > To avoid this limitation, the AT91 clock driver and several other
+> > > > drivers already have their own non-const field_{prep,get}() macros.
+> > > > Make them available for general use by consolidating them in
+> > > > <linux/bitfield.h>, and improve them slightly:
+> > > >   1. Avoid evaluating macro parameters more than once,
+> > > >   2. Replace "ffs() - 1" by "__ffs()",
+> > > >   3. Support 64-bit use on 32-bit architectures.
+> > > >
+> > > > This is deliberately not merged into the existing FIELD_{GET,PREP}()
+> > > > macros, as people expressed the desire to keep stricter variants for
+> > > > increased safety, or for performance critical paths.
+> > > >
+> > > > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > > > Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> > > > Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> > > > Acked-by: Crt Mori <cmo@melexis.com>
+> > > > ---
+> > > > v4:
+> > > >   - Add Acked-by,
+> > > >   - Rebase on top of commit 7c68005a46108ffa ("crypto: qat - relocate
+> > > >     power management debugfs helper APIs") in v6.17-rc1,
+> > > >   - Convert more recently introduced upstream copies:
+> > > >       - drivers/edac/ie31200_edac.c
+> > > >       - drivers/iio/dac/ad3530r.c
+> > >
+> > > Can you split out the part that actually introduces the new API?
 > >
-> >     rockchip,grf:
-> >       $ref: /schemas/types.yaml#/definitions/phandle
-> >       description:
-> >         Phandle to the syscon managing the "general register files" (GR=
-=46),
-> >         if missing pll rates are not changeable, due to the missing pll
-> >         lock status.
+> > Unfortunately not, as that would cause build warnings/failures due
+> > to conflicting redefinitions.
+> > That is a reason why I want to apply this patch ASAP: new copies show
+> > up all the time.
+>
+> In a preparation patch, for each driver:
+>
+>  +#ifndef field_prep
+>  #define field_prep() ...
+>  +#endif
+>
+> Or simply
+>
+>  +#undef field_prep
+>  #define field_prep() ...
+>
+> Then add the generic field_prep() in a separate patch. Then you can drop
+> ifdefery in the drivers.
+>
+> Yeah, more patches, but the result is cleaner.
+
+And we need 3 kernel releases, as the addition of the macros to
+the header file now has a hard dependency on adding the #undefs?
+Unless I still apply all of them to an immutable branch, but then what
+is the point?
+
+> > > > --- a/include/linux/bitfield.h
+> > > > +++ b/include/linux/bitfield.h
+> > > > @@ -220,4 +220,40 @@ __MAKE_OP(64)
+> > > >  #undef __MAKE_OP
+> > > >  #undef ____MAKE_OP
+> > > >
+> > > > +/**
+> > > > + * field_prep() - prepare a bitfield element
+> > > > + * @mask: shifted mask defining the field's length and position
+> > > > + * @val:  value to put in the field
+> > > > + *
+> > > > + * field_prep() masks and shifts up the value.  The result should be
+> > > > + * combined with other fields of the bitfield using logical OR.
+> > > > + * Unlike FIELD_PREP(), @mask is not limited to a compile-time constant.
+> > > > + */
+> > > > +#define field_prep(mask, val)                                                \
+> > > > +     ({                                                              \
+> > > > +             __auto_type __mask = (mask);                            \
+> > > > +             typeof(mask) __val = (val);                             \
+> > > > +             unsigned int __shift = sizeof(mask) <= 4 ?              \
+> > > > +                                    __ffs(__mask) : __ffs64(__mask); \
+> > > > +             (__val << __shift) & __mask;    \
+> > >
+> > > __ffs(0) is undef. The corresponding comment in
+> > > include/asm-generic/bitops/__ffs.h explicitly says: "code should check
+> > > against 0 first".
 > >
+> > An all zeroes mask is a bug in the code that calls field_{get,prep}().
+>
+> It's a bug in FIELD_GET() - for sure. Because it's enforced in
+> __BF_FIELD_CHECK(). field_get() doesn't enforce it, doesn't even
+> mention that in the comment.
+>
+> I'm not fully convinced that empty runtime mask should be a bug.
+
+Getting (and using) data from nowhere is a bug.
+Storing data where there is no space to store is also a bug.
+
+I will add a comment.
+
+> Consider memcpy(dst, src, 0). This is a no-op, but not a bug as
+> soon as the pointers are valid. If you _think_ it's a bug - please
+> enforce it.
+
+memcpy() with a fixed size of zero is probably a bug.
+memcpy() with a variable size is usually used to copy "as much as is
+needed", so zero is usually not a bug.
+
+> > > I think mask = 0 is a sign of error here. Can you add a code catching
+> > > it at compile time, and maybe at runtime too? Something like:
+> > >
+> > >  #define __field_prep(mask, val)
+> > >  ({
+> > >         unsigned __shift = sizeof(mask) <= 4 ? __ffs(mask) : __ffs64(mask);
+> > >         (val << __shift) & mask;
+> > >  })
+> > >
+> > >  #define field_prep(mask, val)
+> > >  ({
+> > >         unsigned int __shift;
+> > >         __auto_type __mask = (mask), __ret = 0;
+> > >         typeof(mask) __val = (val);
+> > >
+> > >         BUILD_BUG_ON_ZERO(const_true(mask == 0));
 > >
-> > because RV1126B_GRF_SOC_STATUS0 contains the PLL lock status.
-> The pll lock truly uses bit10 of the PLL_CON1 register of CRU and does=20
-> not use grf. Does that mean there is no need to increase rockchip,grf=EF=
-=BC=9F
+> > Futile, as code with a constant mask should use FIELD_PREP() instead.
+>
+> It's a weak argument. Sometimes compiler is smart enough to realize
+> that something is a constant, while people won't. Sometimes code gets
+> refactored. Sometimes people build complex expressions that should
+> work both in run-time and compile time cases. Sometimes variables are
+> compile- or run-time depending on config (nr_cpu_ids is an example).
+>
+> The field_prep() must handle const case just as good as capitalized
+> version does.
 
-correct ... in that case we don't need the GRF reference.
-As we're not accessing the GRF.
+OK, I will add the (build-time) check.
 
-Please also drop the RV1126B_GRF_SOC_STATUS0 constant from the driver
-in that case.
+> > >         if (WARN_ON_ONCE(mask == 0))
+> > >                 goto out;
+> > >
+> > >         __ret = __field_prep(__mask, __val);
+> > >  out:
+> > >         ret;
+> > >  })
+> >
+> > Should we penalize all users (this is a macro, thus inlined everywhere)
+> > to protect against something that is clearly a bug in the caller?
+>
+> No. But we can wrap it with a config:
+>
+>  #ifdef CONFIG_BITFIELD_HARDENING
+>          if (WARN_ON_ONCE(mask == 0))
+>                  goto out;
+>  #endif
 
-Thanks
-Heiko
+That can be done later, when hardening other bitfield functions
+and macros.
 
+> > These new macros are intended for the case where mask is not a constant.
+> > So typically it is a variable of type u32 or u64.
+>
+> You never mentioned that. Anyways, it's again a weak argument.
 
+I'll add more comments ;-)
+
+> > > > +             unsigned int __shift = sizeof(mask) <= 4 ?              \
+> > > > +                                    __ffs(__mask) : __ffs64(__mask); \
+> > >
+> > > Can you use BITS_PER_TYPE() here?
+> >
+> > Yes, I could use BITS_PER_TYPE(unsigned long) here, to match the
+> > parameter type of __ffs() (on 64-bit platforms, __ffs() can be used
+> > unconditionally anyway), at the expense of making the line much longer
+> > so it has to be split.  Is that worthwhile?
+>
+> Not sure I understand... The
+>
+>         "unsigned int __shift = BITS_PER_TYPE(mask) < 64 ?"
+>
+> is 49 chars long vs 42 in your version. Even if you add two tabs, it's
+> still way below limits. And yes,
+
+Oh, you meant instead of the size check.
+I thought you objected to the hardcoded number 4.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
