@@ -1,124 +1,138 @@
-Received: from galaxy.gendns.com (galaxy.gendns.com [66.235.175.158])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB1933148C1;
-	Thu, 23 Oct 2025 15:32:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.235.175.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6FED33CEA5
+	for <linux-clk@vger.kernel.org>; Thu, 23 Oct 2025 15:42:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761233547; cv=none; b=sDd2yD950ZZM1m4J2ekveZxtQU4I6i0Oc27b7ScUQqhwUeOKpdppqky7K0vvPYhmkZKxMIs+D1xTk+M3YMmIGJODPQTQd2MYKKvw+hbgeIUmbsv4lzqAapC8AjStrk4PuGk/Ve+0JZcui/Znvky38GDFovJpRQ93815D7jZyGMo=
+	t=1761234149; cv=none; b=DCoUv0YUTvVjc/EG1IeDpBBxOh+IDVdq1bJ15xFQBovZyOFPBAZ/znaTMAtVXA0xKl7kIk16uJm7pPEg6F7hVgIiFs5bk3shU3BYQKPnbo8hwY2Bu5IasIeQzG/EgDuJcUN0nvb9e49zoz98hDcmhSBRpO39X/tRsZdMUAkuJg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761233547; c=relaxed/simple;
-	bh=P8k59anoT/AadEjPIfPO7uHi5k/E+oQXcU6A7DjU3bU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cYq89nNPF13DAQphfPa6aa5mPd5vpg+nywKn6F9w1fbUIoBHuyEpBMG42nTVuerAN7LSp9lg7SIEFSne2i96YKMGvoeZwfC6LbAHKsiwXiIq/8PMvAam+LA2heiOqQBP87DF11/1MCCSVYX4B08pQJ+9tAVIoQwjt3/qOt/u2JE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com; spf=pass smtp.mailfrom=lechnology.com; dkim=pass (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b=YOMMhPs2; arc=none smtp.client-ip=66.235.175.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lechnology.com
+	s=arc-20240116; t=1761234149; c=relaxed/simple;
+	bh=CdcIJyHX4clb96PckgG+JIrIZVu7Cky4+dgR8wQZ0AQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iFZcekrwCLl/tvv2uMoEUdymkpJuD9R0J/flLtQcu7pNsPuQSZVneg+DxHw0QxzbkEVD91z3kS6XNowdggZLjnKK1yjcg3rmKK0yBFXu7hcxmUxTjCpj9Bxste6bUz97FF0aeZ04Z3Q4HXzlEUUJamW1BZk2jGWc4pl7iTUmm2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XLsEC/hK; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="YOMMhPs2"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=OS6KQlX19NXXEspc1wth5SV/h+srPCP9b2POwqnDx+8=; b=YOMMhPs2WZ2d2L6uzBgPziCxzS
-	PwCKutdlFhO6gaGBGrDyXHvfteKJAFf4aS7uZjQHQ65JmpSqkCMGaI5Kcb7ftWJbrW6h81h7qsMfk
-	t1FByRKVvskheC2bq4csUvlL4jm42k/nyEBXzzVbThc39I4nG8NmGN3QnNBez0BptcMvwh/4ALRiT
-	MvVUCyZZQZKSrMFHAi1ZeYD4bPsypAWq6bkBq6M0eKwxzWS+2fBfr/hH2zauc743esVZWQHRuenbP
-	v3axwmX5AbpDc5XZ58KxM+pCrwQhFuRpP/NRl+4nPbTGDxCyGa+49mrjDGIHf8B2CcPcyuFj0GWc7
-	zQceWZsw==;
-Received: from ip98-183-112-25.ok.ok.cox.net ([98.183.112.25]:57698 helo=[192.168.1.142])
-	by galaxy.gendns.com with esmtpsa  (TLS1.3) tls TLS_AES_128_GCM_SHA256
-	(Exim 4.98.2)
-	(envelope-from <david@lechnology.com>)
-	id 1vBwwP-0000000CVH9-1KU4;
-	Thu, 23 Oct 2025 11:09:24 -0400
-Message-ID: <d8d89886-adb6-45ec-b2e6-aeaea1359bc3@lechnology.com>
-Date: Thu, 23 Oct 2025 10:09:24 -0500
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XLsEC/hK"
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-78af743c232so987068b3a.1
+        for <linux-clk@vger.kernel.org>; Thu, 23 Oct 2025 08:42:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761234146; x=1761838946; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FiXLImZ7fPO15Ek72Gzubnx0U1bgG0nde4mxLe+ZreM=;
+        b=XLsEC/hKI9rcYtvZep1kAQCqqw3YI29awmGXe1rBHmx869IAnxsBuaeEQYB0t6jLQs
+         imXwO/2IUFcQ/T4FXrbzCa4iK4fw1KiOFu5ITCVwnTwBKQFw/Ld6UhdCElxyHmrOnC6L
+         ZlL0a4p9RqTAN+T048bJ/RrIYJM+v6w4/AwZafr2sonvbFsXG58KyM/1bY5LSWq7BmH0
+         3sFqTzk+Cpf+GXDmZpQEcqhfDS4YOKcZ/CeX/sZSZCikzQoMak/Sjbj0n1nb+YU+m0Qa
+         D8WzDb1sjN9Dk5u+tUXh9878VLKtcU+YcYZlNPE3+zGCQNIaoO7A4ZRnOKxhG75gCRmX
+         9aWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761234146; x=1761838946;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FiXLImZ7fPO15Ek72Gzubnx0U1bgG0nde4mxLe+ZreM=;
+        b=Yyt7yE7P2keEjCkmTSOqIeGqdgd+KwRQu8BtVs5ZlBI/loMrptgDW2SSb5KCP9ODXm
+         V9Golhj8RzUAtb628Pus0Xo8HeuX1yQeMAugFJGSJ5MKXs5j/LeC6aKYGl1f0jEy4kGU
+         dNTT+pZtxfw4H5vKTuma3gQ/AOsazAvoKuB0Cxc35ISUIGKP1NLQ/uCmDdx5uC3PaBki
+         H1N8quaj/vfVz+fuxeJ0VWxWwZEIgrw3BpCobaTHNu5EoKP/cMo/CVjtwCdqmx+btW1/
+         RupyD9q1FMAEEZJsRhKV6vOT7WptME5loVdb31EXhQ3h39jmIGhTmkyxs35HFpOohX05
+         kuWg==
+X-Forwarded-Encrypted: i=1; AJvYcCWkO/l0V11s/IxmuATj86SRa+YoFWQWB2tVorOlgXpLRemjiLH1od+iIMNPMn/AcuxTFTVCBg4+lM4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGiTrCDog9UhjWpX6EAX4Pd7+K83eHe6EviZblt1A/d9Svc/EH
+	1CF7nNtBzCgewg3MPsPPF31vemIoLmOkbbJOBAW9xNQmY/AvWMSzZIbx
+X-Gm-Gg: ASbGncvd4x4DLs/EKaheIcy6GXcIs3Z9QKpiRCa0pT0Uu0GBcqwdgbFml4qJUynGrBq
+	dHndj/a/6DD4fL2+NGGvMQWYECuMUCzpc3E2Yh4e5W9AiYZ452+9eOXRkijAWCrX4CI4QcJIrU+
+	C1/7IXh7SLuTF4c9BOCLaIGqBPYOQsZkN2qk8xjYLq4QhOYv2ONdC1MdKIO9oILrO5gxDB5MNt3
+	/I8FjJCXOsV75BXHC3N2lc7J/W2Hzkdhe3Jpw33XhiAOblv4xah/qF9dm3+5EcBYTVfVpvh0YHo
+	1Dx46s9boYBICfNNBE9hiso/2yHhom/iXemBFy3mOI4MIcUlozsAj8IMbjIDfF3wb98SB86Wcxv
+	GMXhUImb+Zjq3BMdUKYB2tnQ3lFGHFZA+6XGm6IbOyH6z3pXmU258Qna21hkGA2kN33CkT745pT
+	Sx33CETHwRlmqB
+X-Google-Smtp-Source: AGHT+IFivLiKbkP0y2KMH2ZNEJ7GlEhOb9t2a5oI0W2mRRwwxItjHXvAd1GZTuvYOgULd0RdTXOLyw==
+X-Received: by 2002:a17:903:1746:b0:290:9ebf:211b with SMTP id d9443c01a7336-290cb07d223mr295078455ad.40.1761234145718;
+        Thu, 23 Oct 2025 08:42:25 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2946dda72ddsm27825615ad.6.2025.10.23.08.42.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Oct 2025 08:42:24 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Thu, 23 Oct 2025 08:42:23 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Robert Foss <rfoss@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+	Moritz Fischer <mdf@kernel.org>, Xu Yilun <yilun.xu@intel.com>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Georgi Djakov <djakov@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Joerg Roedel <joro@8bytes.org>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Lee Jones <lee@kernel.org>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Sebastian Reichel <sre@kernel.org>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Mark Brown <broonie@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Olivia Mackall <olivia@selenic.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linux-fbdev@vger.kernel.org, dmaengine@vger.kernel.org,
+	linux-fpga@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-hwmon@vger.kernel.org, linux-i2c@vger.kernel.org,
+	linux-iio@vger.kernel.org, linux-input@vger.kernel.org,
+	linux-pm@vger.kernel.org, iommu@lists.linux.dev,
+	linux-media@vger.kernel.org, linux-mtd@lists.infradead.org,
+	netdev@vger.kernel.org, linux-wireless@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-phy@lists.infradead.org,
+	linux-pwm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+	linux-crypto@vger.kernel.org, linux-sound@vger.kernel.org,
+	linux-usb@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: Remove extra blank lines
+Message-ID: <0d01d218-15df-4553-8e84-fef84fde211e@roeck-us.net>
+References: <20251023143957.2899600-1-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] clk: davinci: psc: drop unused reset lookup
-To: Bartosz Golaszewski <brgl@bgdev.pl>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-References: <20251022-da850-reset-lookup-v2-0-c80f03831f63@linaro.org>
- <20251022-da850-reset-lookup-v2-1-c80f03831f63@linaro.org>
-Content-Language: en-US
-From: David Lechner <david@lechnology.com>
-Autocrypt: addr=david@lechnology.com; keydata=
- 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
-In-Reply-To: <20251022-da850-reset-lookup-v2-1-c80f03831f63@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - galaxy.gendns.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lechnology.com
-X-Get-Message-Sender-Via: galaxy.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: galaxy.gendns.com: davidmain@lechnology.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251023143957.2899600-1-robh@kernel.org>
 
-On 10/22/25 8:51 AM, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Thu, Oct 23, 2025 at 09:37:56AM -0500, Rob Herring (Arm) wrote:
+> Generally at most 1 blank line is the standard style for DT schema
+> files. Remove the few cases with more than 1 so that the yamllint check
+> for this can be enabled.
 > 
-> We no longer support any non-DT DaVinci boards so there are no more
-> users of legacy reset lookup.
-> 
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> ---
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 
-Acked-by: David Lechner <david@lechnology.com>
-
+Acked-by: Guenter Roeck <linux@roeck-us.net>
