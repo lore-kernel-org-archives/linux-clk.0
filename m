@@ -1,144 +1,93 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A52952FE04F;
-	Thu, 23 Oct 2025 09:06:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEEE52F6587;
+	Thu, 23 Oct 2025 09:12:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761210409; cv=none; b=hztcON4S2MxQ08Nd1gwgpUPM3mZLnb/C5tfxJM7gCbKzOI8T77Zi4Ck2rsSiQDRI7Na7hSlYO/wUh14nDoiJZ5t6aTw+hQZvaan/ItekZ4LDEc3mlVOlmlGdUqIkOGMmHOusOkVYMlesYadxQfiNc0oIn2I2E2nSt75aZUpXt+Y=
+	t=1761210728; cv=none; b=GJXx0cj5dXYPzaVU+nlsfWoplr657Z+otH5yEy8uLbKRqNo0PtYXmDRPpWJLj3SfjYOtUSWpZZuyqE8Cd83FcNrqAemWb8XQoMwNAuYOXtEdSHKviQZDs9DEfIKO0pCU+UXF4Tlo57NnzDmj5N69DFShCT25p76YQpBAyUN3PR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761210409; c=relaxed/simple;
-	bh=xKFWE3FP8zQxD/fKvD/Su/ZNtr3Ujowi8h/zfAe1GQg=;
+	s=arc-20240116; t=1761210728; c=relaxed/simple;
+	bh=4fQns59QMA3pai7ttXXV7GO218fuxTEHJzSTkeLaOGQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WvqskD099BMPWhDWN/NeON00SVs5sLdHZc78cqS4azyUBylYzOvCtJfALHOkaiYEOhcY83DMxUV6EF6ajVOQhp4msIqFrfJi0JrB+KP4RaBjlWiOdlZbT69Ik12fKr45vUaKxBhFZMX0UAWtLVP0WzzFysh4oWvn7eBLayFttuI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=HJuEu9io; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=lCZlEU2mDAGqkfiiHjB0JAXosfHXXxSP3SElq70ncXWR0MYR/veMVaXegJvqUwmTLrtoCVj8+fbsdpJG8Uuwg8ZdIamsE5Uu7i4TLzyDIrVYfaiXJnhCWBP9h9DvGsx8DuZDE9wkq6ayGM/nCk+tAUxyaZPL2CImVdhIT6SvuKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RhXEyOTw; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="HJuEu9io"
-Received: from pendragon.ideasonboard.com (82-203-161-16.bb.dnainternet.fi [82.203.161.16])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 494FC4C7;
-	Thu, 23 Oct 2025 11:04:57 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1761210297;
-	bh=xKFWE3FP8zQxD/fKvD/Su/ZNtr3Ujowi8h/zfAe1GQg=;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RhXEyOTw"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E09BC4CEE7;
+	Thu, 23 Oct 2025 09:12:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761210725;
+	bh=4fQns59QMA3pai7ttXXV7GO218fuxTEHJzSTkeLaOGQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HJuEu9ioEFGCzueDKZ6jv6koSl/y7Hot56lpH2Up1vH0lU3Oq7SDd5ek3180SdnU6
-	 tmFiLdIK58Z8yRjqO3zeMpRDXfxPETJEuy3Y0ZOiIS86jDQwSLC6ZwVv+YhuYn49QN
-	 WXZ/t/dPj7RGbaBPLNYNoEfquKXZF6cdc6bl+1WI=
-Date: Thu, 23 Oct 2025 12:06:28 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
+	b=RhXEyOTw+Nv0PVa1o3YFTeWUCdbHCgKh6zEBhmXkZKML+wiA+jidi6IpfvNu5N68g
+	 TxHEYYUSNZnLmD2cj/nBirivk2DaLWkO6RSBh1vjJaRJdjvmqkQiCKPSqxuE4qt67j
+	 Dapwxx1Xw3bePtz51R441Du2xHZMmOQ04QpMi9vrKJBA5m8BIbpwVFMGuCFM9AuI+4
+	 rNedVDfDAWPLSXJS+V9rNuWuOHts8wsFtRVV43Ql08Quhg2X5YbkP/P4IIr0fOnyHo
+	 ZGKbK6BQCiUulrW7bu+t8qttLuzzaX6ILOOTHJCy9oprUUo1ITCdrW71x9knp8XIn4
+	 tW2MxbddPK5hA==
+Date: Thu, 23 Oct 2025 10:12:00 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Cc: Conor Dooley <conor.dooley@microchip.com>,
+	Daire McNamara <daire.mcnamara@microchip.com>,
+	pierre-henry.moussay@microchip.com,
+	valentina.fernandezalanis@microchip.com,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH v11 0/7] Add support for DU/DSI clocks and DSI driver
- support for the Renesas RZ/V2H(P) SoC
-Message-ID: <20251023090628.GF727@pendragon.ideasonboard.com>
-References: <20251015192611.241920-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <CAMuHMdW1B7Yk1hUU9MSJsiL8wSmjAUGN7Qd_wgBHv8Ct=-wi4Q@mail.gmail.com>
- <CA+V-a8uY11uWoQ_en5QC=W4HPHRwT6rKQQJ-knT8Gi-+czm05w@mail.gmail.com>
- <20251021184502.GD19043@pendragon.ideasonboard.com>
- <CAMuHMdUU-2ugmA-VcRuYOsriUKtAEQXmWEwJSwuCsSTa3ySTZg@mail.gmail.com>
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 2/9] soc: microchip: add mfd drivers for two syscon
+ regions on PolarFire SoC
+Message-ID: <20251023-lard-browbeat-daade890b4df@spud>
+References: <20251013-album-bovine-faf9f5ebc5d4@spud>
+ <20251013-patient-matrimony-6162c8f92e2e@spud>
+ <41dbea85-8aa1-4034-8106-e28c37e398b8@tuxon.dev>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="KI7GN8NHbpEH6S+z"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMuHMdUU-2ugmA-VcRuYOsriUKtAEQXmWEwJSwuCsSTa3ySTZg@mail.gmail.com>
+In-Reply-To: <41dbea85-8aa1-4034-8106-e28c37e398b8@tuxon.dev>
 
-On Thu, Oct 23, 2025 at 10:20:41AM +0200, Geert Uytterhoeven wrote:
-> Hi Laurent,
-> 
-> On Tue, 21 Oct 2025 at 20:45, Laurent Pinchart
-> <laurent.pinchart@ideasonboard.com> wrote:
-> > On Tue, Oct 21, 2025 at 07:26:49PM +0100, Lad, Prabhakar wrote:
-> > > On Tue, Oct 21, 2025 at 11:26 AM Geert Uytterhoeven wrote:
-> > > > On Wed, 15 Oct 2025 at 21:26, Prabhakar <prabhakar.csengg@gmail.com> wrote:
-> > > > > This patch series adds DU/DSI clocks and provides support for the
-> > > > > MIPI DSI interface on the RZ/V2H(P) SoC.
-> > > > >
-> > > > > v10->v11:
-> > > > > - Split CPG_PLL_CLK1_K/M/PDIV macro change into separate patch
-> > > > > - Updated rzv2h_cpg_plldsi_div_determine_rate()
-> > > > >   while iterating over the divider table
-> > > > > - Added Acked-by tag from Tomi for patch 2/7 and 3/7
-> > > > > - Added Reviewed-by tag from Geert for patch 2/7 and 3/7
-> > > >
-> > > > I think this series is ready for merging.
-> > >
-> > > \o/
-> > >
-> > > > > Lad Prabhakar (7):
-> > > > >   clk: renesas: rzv2h-cpg: Add instance field to struct pll
-> > > > >   clk: renesas: rzv2h-cpg: Use GENMASK for PLL fields
-> > > > >   clk: renesas: rzv2h-cpg: Add support for DSI clocks
-> > > > >   clk: renesas: r9a09g057: Add clock and reset entries for DSI and LCDC
-> > > > >   dt-bindings: display: bridge: renesas,dsi: Document RZ/V2H(P) and
-> > > > >     RZ/V2N
-> > > > >   drm: renesas: rz-du: mipi_dsi: Add LPCLK clock support
-> > > > >   drm: renesas: rz-du: mipi_dsi: Add support for RZ/V2H(P) SoC
-> > > >
-> > > > As this touches both clk and drm, let's discuss the merge strategy.
-> > > > My proposal:
-> > > >   1. I queue patches 1-3 in an immutable branch with a signed tag,
-> > > >      to be used as a base for the remaining patches,
-> > > >   2. I queue patch 4 on top of 1 in renesas-clk for v6.19,
-> > > >   3. The DRM people queue patches 5-7 on top of 1.
-> > > >
-> > > > Does that sound fine for you?
-> > > Sounds good to me.
-> > >
-> > > Biju/Tomi, are you OK with the above?
-> >
-> > The plan seems good to me. Note that you won't be able to push this
-> > yourself to drm-misc as committers are limited to pushing linear
-> > branches. We need an ack from the drm-misc maintainers, and one of them
-> 
-> Do you mean new commits must be in a single branch, or drm-misc
-> itself must be linear? In case of the former, 5-7 can be applied on top of
-> my immutable branch, without involving a merge?
 
-drm-misc must be linear, committers must rebase patches on the
-drm-misc-next branch before pushing.
+--KI7GN8NHbpEH6S+z
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> > will need to merge the branch (either branch 1. as prepared by Geert, on
-> > top of which you can them push patches 5-7 yourself, or a branch you'll
-> > prepare on top of 1. with patches 5-7).
-> 
-> Note that another change to include/linux/clk/renesas.h,
-> and thus a dependency of drm on clk, is coming in
-> "[PATCH v3 0/2] Remove hard coded values for MIPI-DSI"
-> https://lore.kernel.org/20251022235903.1091453-1-chris.brandt@renesas.com
-> 
-> Would it be worthwhile to wait on/speed up review of the latter?
+On Thu, Oct 23, 2025 at 07:04:33AM +0300, Claudiu Beznea wrote:
+> On 10/13/25 20:45, Conor Dooley wrote:
 
-Nobody will complain about reviews being sped up :-)
+> > +}
+> > +
+> > +static const struct of_device_id mpfs_control_scb_of_match[] =3D {
+> > +	{.compatible =3D "microchip,mpfs-control-scb", },
+>=20
+> This looks un-documented.
 
--- 
-Regards,
+It is actually documented, this stuff all took so long to get done that
+parts got applied piecemeal along the way, including any of the MFD
+bits.
 
-Laurent Pinchart
+I'll fix these things up separately, cos I already applied the first two
+patches here and just squash it in.
+
+--KI7GN8NHbpEH6S+z
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaPnxYAAKCRB4tDGHoIJi
+0rJYAQCgpkpqZSL7x7t82+VYX7l3XaRLUIGDEYkTvHJp0wOEVAD/RFe9FOMiRRhm
+r3FYvXwt1EoKcNCFEZiNkhB9BkaO5Ag=
+=Eqsv
+-----END PGP SIGNATURE-----
+
+--KI7GN8NHbpEH6S+z--
