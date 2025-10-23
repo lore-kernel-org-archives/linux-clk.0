@@ -1,97 +1,73 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB6F130C359
-	for <linux-clk@vger.kernel.org>; Thu, 23 Oct 2025 11:13:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 792AE29BDB4
+	for <linux-clk@vger.kernel.org>; Thu, 23 Oct 2025 11:45:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761217982; cv=none; b=gqyp7NKVm9UU0iX/l1Ze7xbu9O/ZodpYEs/id4Rkb/DCgnCasycur4zU94LPIm2e/CjdVImTplLDlsDVHMTcUQYO7TrGViy+VZwRHsE7u1LAAcMcI4nhIkTYXFaHMkufkaglSMw4vXPQWckP6gafvWbc3on4MdGxMlzamKv2gf4=
+	t=1761219937; cv=none; b=b0053+7CbHnNTDd+WrFaVJycsjAgkpjJxdAXeTfrZZRX14wMoZU7YXKja0hmKBC/H9LeBMcjyfMzPugBf+SCOaVNvK5VK/+D+0n6ZLh5ncU0DIfwTno16R8yr5RBgSKAU2ydXhZWN7b36wvKVCGMkMCRCcH3LYAHtaGa1Mi4Gsg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761217982; c=relaxed/simple;
-	bh=VSofXPKltqSzfUAWfolhUYjZILc/jZGqF+OMoYUXiPg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kSJT6AnLcpZHp+8/Q9XV43vmDp1GN0ke9A6/CaQygQql8ys4Kx70hBAWDAjgmnubq7AqFk4z2PGp8AJxCQ9eZaacNz5e0SXaNWS8pD84lBTjuHP31ErVwavaKvEvBYirXBGoDIogQKCo1rSPzKKrAdxyOCtLpi/ankSzzD6pek8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f/9otqDC; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1761219937; c=relaxed/simple;
+	bh=5uygY22KUTdZdiN65pp4UQum1fHvnpjkG+p1M2cJD0Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tOZOHwHQcMA719qHghK9lqwNs7JOCb12cCKeSUrv9E0bJvnU8Uwcgz0d/sgxp+vuqC44GROlsVjHzXddYFWTguLdWKlFfb6bOlCZC5XW9I/NDzUwdnzB4NLWVGK3jyUs+ZjUbO13MI22q+iP8+VJMrbSIVQbCqYKNSlAAMONSWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qbfJGleN; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f/9otqDC"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98F33C4AF0B
-	for <linux-clk@vger.kernel.org>; Thu, 23 Oct 2025 11:13:02 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qbfJGleN"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF818C4CEE7;
+	Thu, 23 Oct 2025 11:45:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761217982;
-	bh=VSofXPKltqSzfUAWfolhUYjZILc/jZGqF+OMoYUXiPg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=f/9otqDCFyr/bE8MPe6ch3MwaJ1kyi5Kq9EIZzV9+hO+1AqinNOOZIBZfpxkZRBqx
-	 bptX2Z7iZb5DDWZPoMUACkW/5EdPelk3FYviPAFMHF+r1xSgv+FD44cW5wPzUX7Vyc
-	 UPCAoHqzRafCo4j3+dqcrjFjn6PVF/Z7dw9lvFYJ6AmGmD8inamXBApCsgijcdvu3k
-	 yXw1KqlJ3tglPWS5WMKmaV+7TnJPTBD6NZi4BjsttO4YmL8W2P0xo+qTjb1yXtETSh
-	 XAnPXhkXsJd8nEoZ9xMO9tYn/xk0twYm9keODkjt+L08SGR9DeHjrO2bSqxLW2ppEq
-	 Fk5NvYeEA7B8Q==
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-b6d2f5c0e8eso153796366b.3
-        for <linux-clk@vger.kernel.org>; Thu, 23 Oct 2025 04:13:02 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUPGLIrr5ro5bUkhuiQZ2LsU63oYIzW8ImIwTf+3DEDwk+/cGAp/2AYS7xL6wV6bxaL63DZv+IGTc8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBnuLSHnOWahLAvWUIC5mpORuYCCv6LoYPgfIuVmytAaSrQzx3
-	+/LFLxh3PEwuz1oFh+PuU5fh3+kZFS6MJWXpHu3mXdMqMBDWQEdFtOEMNmLUfysEcsN+jQQH36A
-	vUDwrTWeKIY4LXg+aYIaFzoPPPb08Ww==
-X-Google-Smtp-Source: AGHT+IHXTXK9Inhzp31f6w2tfR0eGiG69ffpyx6TLgXjLoQig5J/jMOVgrMAnyrlyG50AeAs4SS7Rb45JstbYWrnInk=
-X-Received: by 2002:a17:907:9690:b0:b46:8bad:6970 with SMTP id
- a640c23a62f3a-b6d51c05e68mr217698766b.36.1761217981126; Thu, 23 Oct 2025
- 04:13:01 -0700 (PDT)
+	s=k20201202; t=1761219937;
+	bh=5uygY22KUTdZdiN65pp4UQum1fHvnpjkG+p1M2cJD0Y=;
+	h=From:To:Cc:Subject:Date:From;
+	b=qbfJGleNaVh01eKvyM/WefugpuArewFaYqNN9ryhzNDMDu0kzW5DDs5x/U4NikY0q
+	 7gPOiicyDk2x2SaIIJAjJ3N2SITMaVK6SXWfpz0JFSslYvRx14BDmyMiEn8kPSRlhV
+	 N6LSNmBXDwB5r46F1b+1UF9YDqmDOnyNyehrkkUpLEx5gcF2/usJ2VL6aXns5MCX2X
+	 v1Xs08QrylD91c59X4K4eavgCJLxMqeapCzdnqV04g3dU8YkLKhjSekqUcy4GcfGGF
+	 pPgtMhPowtKCW750OHM1QJ7EDJobtcB8qnbNu4jRWc3XrPEXX71DQ6JVmXNUdsj4w/
+	 Ws0B7AeKr2U4Q==
+From: Dinh Nguyen <dinguyen@kernel.org>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org
+Cc: dinguyen@kernel.org,
+	linux-clk@vger.kernel.org
+Subject: [GIT PULL] clk: socfpga: update for v6.19
+Date: Thu, 23 Oct 2025 06:45:35 -0500
+Message-ID: <20251023114535.262305-1-dinguyen@kernel.org>
+X-Mailer: git-send-email 2.42.0.411.g813d9a9188
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251022165509.3917655-2-robh@kernel.org> <87ms5iqf5b.fsf@bootlin.com>
-In-Reply-To: <87ms5iqf5b.fsf@bootlin.com>
-From: Rob Herring <robh@kernel.org>
-Date: Thu, 23 Oct 2025 06:12:48 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqL+DY4j62m3_BVjC7_o9Hbx4a54UORDNBC+Pg0YAQCO+w@mail.gmail.com>
-X-Gm-Features: AWmQ_bmtPaFimucwq25igSrk9S_iboFzoF-uoqSjxWerG3P5s9m5XHzlE7aUD-4
-Message-ID: <CAL_JsqL+DY4j62m3_BVjC7_o9Hbx4a54UORDNBC+Pg0YAQCO+w@mail.gmail.com>
-Subject: Re: [PATCH v2] dt-bindings: arm: Convert Marvell CP110 System
- Controller to DT schema
-To: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@bootlin.com>, 
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
-	Richard Cochran <richardcochran@gmail.com>, linux-arm-kernel@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, netdev@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 23, 2025 at 1:57=E2=80=AFAM Miquel Raynal <miquel.raynal@bootli=
-n.com> wrote:
->
-> Hi Rob,
->
-> > Convert the Marvell CP110 System Controller binding to DT schema
-> > format.
-> >
-> > There's not any specific compatible for the whole block which is a
-> > separate problem, so just the child nodes are documented. Only the
-> > pinctrl and clock child nodes need to be converted as the GPIO node
-> > already has a schema.
-> >
-> > Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
->
-> [...]
->
-> > +  "#clock-cells":
-> > +    const: 2
-> > +    description: >
->
-> I am surprised you prefer a description to a constraint expressed with
-> yaml. Yet, I am totally fine with it.
+The following changes since commit 3a8660878839faadb4f1a6dd72c3179c1df56787:
 
-I don't, but no one has come up with a way to put constraints here and
-then apply them to 'clocks' properties as appropriate.
+  Linux 6.18-rc1 (2025-10-12 13:42:36 -0700)
 
->
-> Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
+are available in the Git repository at:
 
-Thanks.
+  git://git.kernel.org/pub/scm/linux/kernel/git/dinguyen/linux.git tags/socfpga_clk_for_v6.19
 
-Rob
+for you to fetch changes up to 2050b57ecda040010ec797fb07713889372c5041:
+
+  clk: socfpga: agilex5: add clock driver for Agilex5 (2025-10-22 22:52:58 -0500)
+
+----------------------------------------------------------------
+SoCFPGA Clock updates for v6.19
+- Add the Agilex5 clock driver
+
+----------------------------------------------------------------
+Khairul Anuar Romli (1):
+      clk: socfpga: agilex5: add clock driver for Agilex5
+
+ drivers/clk/socfpga/Kconfig          |   2 +-
+ drivers/clk/socfpga/Makefile         |   2 +-
+ drivers/clk/socfpga/clk-agilex5.c    | 561 +++++++++++++++++++++++++++++++++++
+ drivers/clk/socfpga/clk-gate-s10.c   |  53 ++++
+ drivers/clk/socfpga/clk-periph-s10.c |  41 +++
+ drivers/clk/socfpga/clk-pll-s10.c    |  36 +++
+ drivers/clk/socfpga/stratix10-clk.h  |  43 +++
+ 7 files changed, 736 insertions(+), 2 deletions(-)
+ create mode 100644 drivers/clk/socfpga/clk-agilex5.c
