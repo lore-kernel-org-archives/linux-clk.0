@@ -1,88 +1,100 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com [209.85.217.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D65A72C08C5;
-	Fri, 24 Oct 2025 10:30:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F00EC146585
+	for <linux-clk@vger.kernel.org>; Fri, 24 Oct 2025 10:38:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761301843; cv=none; b=WqszXQ8Y1GDhUpTUg/4Blg8h60kIOww2lHd7bdc1E5ECjLi8LEM9hShjyATOBDbKwo7ObuBo6lNVlH1Pn3aHzwn3zx3999FjBRwTzxlOKoFCew6LNvvc7Y5CQrPHfPO6S83gYCcNTy9zDD3g3bN1XJDkiBR0yyOz3t4GtdNYIOY=
+	t=1761302304; cv=none; b=EyT58il1GP2jEluvWF5y98Jyg/PPurbbklont2nBnJVOHINOBDtsKxmOeb6pBliv2m0GbfIltW48eZjYluUxiZC4MN/zi8tIFwAnRiTzIF2Fvc2BBMzSV3LYYl4R6Ut+/jimvjU6F6fTTLgDmtSc/GCw8gml2+yVAX9sjK0q0/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761301843; c=relaxed/simple;
-	bh=xjBMkmI+qsDoGp9ZiRzBUp/jILZSgk47twlvE8podR4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V3tLwzIjbKeEYPSi2uB1jC8xElcJElsFUQBW+bL3lag82L5dWdGogO0j2ND7PJNmpxax1BRahWTKnVW+FwatlmBO0j0TZaCR8rUzoFUPWoMS+UDuM5Akun5De4LI/orJEy7f4PX/+EC41MlB1w3ZYxwADrK6fwIjDdmBSK+BABM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l/d2Y+U8; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l/d2Y+U8"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E75CC4CEF1;
-	Fri, 24 Oct 2025 10:30:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761301842;
-	bh=xjBMkmI+qsDoGp9ZiRzBUp/jILZSgk47twlvE8podR4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=l/d2Y+U8bQs8VF+XsPwC/lo+bxBE0j4eWS6VDHNCD/dOyGEFM7pOVi7s1xB8wyT1F
-	 jv0kcNfIyneAU7DFc2XMuu8oHJ2C93dqlydWRrXYT3RCBqDbolkiQ18EsFfqCwzdIT
-	 F0FJ+u2jbBRNARJVywQ0ZMr1PM6LZQ50TTD9W4llmkHp0cxkQM8R7YTAZNZuhKj472
-	 K02nhKLn9f/Q1d19EUPlbhQT59235yFCKn8XDWmWaJOjbnUv34C0E0GbdT7yY2B8c1
-	 q4jVSAnw+7Qfl9JCs14YGXOOwUUitTY/lsolUgoznKOAtNMsr23PjYx6i1nIOnN4f/
-	 YsZZGbsmS20jw==
-Date: Fri, 24 Oct 2025 12:30:37 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>, Vinod Koul <vkoul@kernel.org>, 
-	Moritz Fischer <mdf@kernel.org>, Xu Yilun <yilun.xu@intel.com>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, Guenter Roeck <linux@roeck-us.net>, 
-	Jonathan Cameron <jic23@kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
-	Georgi Djakov <djakov@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	Joerg Roedel <joro@8bytes.org>, Jassi Brar <jassisinghbrar@gmail.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Lee Jones <lee@kernel.org>, 
-	Miquel Raynal <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>, 
-	Vignesh Raghavendra <vigneshr@ti.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Johannes Berg <johannes@sipsolutions.net>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Manivannan Sadhasivam <mani@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Kishon Vijay Abraham I <kishon@kernel.org>, Sebastian Reichel <sre@kernel.org>, 
-	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, Mark Brown <broonie@kernel.org>, 
-	Mathieu Poirier <mathieu.poirier@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Olivia Mackall <olivia@selenic.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org, dmaengine@vger.kernel.org, 
-	linux-fpga@vger.kernel.org, linux-gpio@vger.kernel.org, linux-hwmon@vger.kernel.org, 
-	linux-i2c@vger.kernel.org, linux-iio@vger.kernel.org, linux-input@vger.kernel.org, 
-	linux-pm@vger.kernel.org, iommu@lists.linux.dev, linux-media@vger.kernel.org, 
-	linux-mtd@lists.infradead.org, netdev@vger.kernel.org, linux-wireless@vger.kernel.org, 
-	linux-pci@vger.kernel.org, linux-phy@lists.infradead.org, linux-pwm@vger.kernel.org, 
-	linux-remoteproc@vger.kernel.org, linux-crypto@vger.kernel.org, linux-sound@vger.kernel.org, 
-	linux-usb@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: Remove extra blank lines
-Message-ID: <fncqrwr6pi3ttxkf44hncy35ogxqdvql52hdcycq4yakbkeose@gv6lxr6a4uri>
-References: <20251023143957.2899600-1-robh@kernel.org>
+	s=arc-20240116; t=1761302304; c=relaxed/simple;
+	bh=WB5fApO8+rYBQab5f2Nym5kT+Se3DnyCljE8OKwhP3Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=f4eLhQXJIXJhwajOER3Z+2YPHKr7G0w2eu09cRKOz+Jh55O71N5P1VW6aw7ZfH5Vyb75W1xRnqxwX+3v3N2wbEbjgwbjqo15zquzhwAiWwF8bi8vwNZ9uVV0w91QYCBf0s/EEZvjEMH+bHgbFLbLCATBT8m4fFcPnugcDuhXZCM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-5db39d2ce9fso675023137.3
+        for <linux-clk@vger.kernel.org>; Fri, 24 Oct 2025 03:38:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761302302; x=1761907102;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kpq8mZd6yHaCnXYSdFvmX21GokIxR+DEgALaIuhYRgQ=;
+        b=q295xqAlW+yNUmckxSXSmGIWpjwPi81abZOkP/xr5di1xgwYP5WXuu9fmOzqa0J6ar
+         11WqJ5y+LjKkTrEzNA7s0TRt4RYNGCRAVRbsDAFB5UoE1B9EwY+NC/Tw3rHUAj/El9n8
+         yztDr1bJwIxxiJq3ZHbkbe2Z7nv/0tfvnOpTT3gN2cwhx3JfcndVwcYvew9OT2mmjB3M
+         uIclad2SQoIr1wdfn5MMS02zNIZ0JK8/qAqq0B3S/riNLk4Um6WcqHX1YYNncKpDKPGa
+         KTj3npkcrtwbiLhZdR0IzDA3y1lVMvLHzq5w2KXD6jHkNxq/z30ZvBZedjUgDJ4FBd6V
+         vUyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUrvz94FsmHQ8WFx1JfU0rpVjnDHXr4UIL5uMdz4KFaNULYcPuo8shBhnEYghNnnoXvI+HWZrNzLx8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxou9h7xCFCnFhlct9G5Hl3tQ8BFagKFoZg5w27ySitrMVeozEc
+	4SDL1SIL0l6JEMDQLCO68gSUXCP13O4MuZUcbdixx1H1CJTiBF536dGdANxaTH/W
+X-Gm-Gg: ASbGnctxG2co0uwxOw08xVQPUKYuAxEwgHd2SikYgCxUsptg/80eW6fFxXk6UyJZGfK
+	8RsLyq9CsymM0pOXBaVFpm4uSYupJp0NGS3076Wj9kgrE1IWrt00pwz8kz1BF3YS2hQ9IU506kE
+	NhCp7fAxQnefdTxjvb3STbG6w48+6U92390VyBZYhTkj9+mr/cfIP58oaHsqPolCgSSCNV/Wt1y
+	+/pT8yy/W8d+YTGhsxNMtyHQ+3KCcnnlwk0pP3doo8mQugjlMY/DfAqoTabgknEXKq2+1pd/i25
+	QurxDSb5UW2Oq74FtjarmvD49N575XP12dizlyElmd0zdxODPeQAFHS+eGo9Wt7WlDtJ3ymoVss
+	YboAyLMcrPOaClfkhONFB9Whzwwwvkr87rXgWAmJpmMNOgRFjlPNAkWMeONHi+jHUKTPJxi1OCj
+	/Hoqh5R8KCGnBJ20NNajXBYPhaWgCcFwOTE3cy4yLeVN50voII
+X-Google-Smtp-Source: AGHT+IHPwYtjRo6neUEmqyM7gWL/xcoQrIvzOKVy04jB3KzAaVJT4Du6ondCb/dJbQwZ6evFDEuegw==
+X-Received: by 2002:a05:6102:548d:b0:5db:2607:3c1f with SMTP id ada2fe7eead31-5db2e5b2c22mr1587213137.38.1761302301643;
+        Fri, 24 Oct 2025 03:38:21 -0700 (PDT)
+Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com. [209.85.222.46])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-5db2ca7d0ebsm2019477137.10.2025.10.24.03.38.20
+        for <linux-clk@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 24 Oct 2025 03:38:21 -0700 (PDT)
+Received: by mail-ua1-f46.google.com with SMTP id a1e0cc1a2514c-9231a251c01so946565241.1
+        for <linux-clk@vger.kernel.org>; Fri, 24 Oct 2025 03:38:20 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCULj65kmEoEgQXUnt0tWRvb9bAp3ZzNbptDPV32RDIh+tFhL68QXW3F61HdHMYoC3w+L4UsQ5kGlZA=@vger.kernel.org
+X-Received: by 2002:a05:6102:1497:b0:521:b9f2:a5ca with SMTP id
+ ada2fe7eead31-5db2e4786abmr1811923137.13.1761302300586; Fri, 24 Oct 2025
+ 03:38:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251023143957.2899600-1-robh@kernel.org>
+References: <20251023210724.666476-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20251023210724.666476-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20251023210724.666476-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 24 Oct 2025 12:38:09 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXesP=oUwtH+mc8G+5b11hBz7VUdEKrFvAC59F6fRHLWQ@mail.gmail.com>
+X-Gm-Features: AS18NWCQuTkOQsnhJUgy2vY_-eHhdBBMmfSA920Vmg-OjJTPAXTEY344anEjiXY
+Message-ID: <CAMuHMdXesP=oUwtH+mc8G+5b11hBz7VUdEKrFvAC59F6fRHLWQ@mail.gmail.com>
+Subject: Re: [PATCH 1/3] clk: renesas: r9a09g056: Add clocks and resets for
+ DSI and LCDC modules
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Rob,
+On Thu, 23 Oct 2025 at 23:07, Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Add clock and reset definitions required to support the DSI and LCDC
+> hardware blocks on the RZ/V2N SoC. This includes new core clocks, clock
+> dividers, module clocks, and reset entries, as well as PLL and divider
+> configurations specific to these peripherals.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-On Thu, Oct 23, 2025 at 09:37:56AM -0500, Rob Herring (Arm) wrote:
-> Generally at most 1 blank line is the standard style for DT schema
-> files. Remove the few cases with more than 1 so that the yamllint check
-> for this can be enabled.
-> 
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk for v6.19.
 
-Acked-by: Andi Shyti <andi.shyti@kernel.org>
+Gr{oetje,eeting}s,
 
-Thanks,
-Andi
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
