@@ -1,97 +1,143 @@
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+Received: from mail-oa1-f42.google.com (mail-oa1-f42.google.com [209.85.160.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91C1031A561
-	for <linux-clk@vger.kernel.org>; Fri, 24 Oct 2025 13:12:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 369153203A7
+	for <linux-clk@vger.kernel.org>; Fri, 24 Oct 2025 13:51:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761311555; cv=none; b=grrDpK1xBOdDISSjwAud/+X/iPsqX4Cm8jjXUS6CKwAx6URmDQwAS+O0cyfIdiDq9rm2zpR15qgw8/ZBLmtioLZMTTd4+bcWqyy++2fPYvSlMsnXURVE1GZvBMDwcRbl11xV28nYh1Bax+TvhujY26uF1Gx4MSzbdPEEHZrbMmA=
+	t=1761313880; cv=none; b=chJeWvrR1nsfSUBoYek76/Ebj4BxjSLiwrptW94NNdovsw8pmXM2wWno2/vGycO/iZulsspkj0Duj7JFSjxTkJ4BdolFwGa/OtMDHBWz24FHTf0nc3s0iWeJuxqCKpI80vZ2V/OmA3M6sWyCwemVaiFgEaklolbAicTovzbOzvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761311555; c=relaxed/simple;
-	bh=OKClficrmYxMDAQrUO1h0eLa0MMRKmFd9IjAbIgxwhw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BVC9QnLUFEbX44NO14LliwC1YN2SqXh4KgHfECFvl1iRm595SyHz6vrMkjJfWBg0wkxpYScCXkuMgVIh1mQEyYcGlOwHPpZ8VTgJ1juLiL7TjTMx4w2JarX/x++sFVCQs2dx4w7E/tCFjU0EiN1Dt8VcwE6VJmxK4JYFnVXYaw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WkRXA/Qd; arc=none smtp.client-ip=209.85.128.41
+	s=arc-20240116; t=1761313880; c=relaxed/simple;
+	bh=2Q+hjtxKQeLXbLBHNqlPoIllo2+ofr0q84sy/acEdSw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QQCJlukfty6350d4k5xrIeBNxHqJXSNbcUgcGcekBXsMyKjLvmclJ+fzfu6EuVygEudPR8OHRX2MHNtea7TEM504xUGO8Eh5ACkzXwGjbNnNsrBvnrDvmL3mUFJm/cFG4MvESwfVJhQpy06ocdGaKxJpSkMRU5w5frUg2bcfoFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kWYXWVxi; arc=none smtp.client-ip=209.85.160.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WkRXA/Qd"
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-47495477241so17270205e9.3
-        for <linux-clk@vger.kernel.org>; Fri, 24 Oct 2025 06:12:33 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kWYXWVxi"
+Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-3c987818958so728436fac.0
+        for <linux-clk@vger.kernel.org>; Fri, 24 Oct 2025 06:51:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761311552; x=1761916352; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=qvr6GH29Nfx+EsRdL+4o2+h1AfNCPToJ8oczIokC+Sw=;
-        b=WkRXA/QdNtxtJrCFjqQzLYldSPXwZQjNebyQX91crgckJ5q+eHO1le1WD2RdflCN8W
-         S1zdC/jJj0gfU9mmCVhYnBQpJy2rnotU3Pqj9wKcVBW8NoBHEHMk9nl0gB6pzjommuNn
-         ADerOYKxjM7xSG/9pkLgnIqLsKclnp2yofV8ikP7DBOFIFCuQT1Nui5OYnHojxiEmWgD
-         BCGihQUWpJE5A4OqEDr3f4nsly7lF5AdQ48BGFAR4FMMdQ598Wq7MNIMi3raZ6/TK7S6
-         KiIlCLs4ip8eg/ri5BkVSX6gOAcY7TJD5SllQ07gk661yBY3AHujmNR4YplCaE8VCF/Z
-         cdxQ==
+        d=linaro.org; s=google; t=1761313877; x=1761918677; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=2Q+hjtxKQeLXbLBHNqlPoIllo2+ofr0q84sy/acEdSw=;
+        b=kWYXWVxivPJor3zO1cbb2JfDM3Q+uUhUTuRs0dgQeyId3ffk4gJBtcxNSqzhVOaGi4
+         mAnR6XE7iOff1lX8im1+I5QnUMdBbg7I0ddBLjOnvJ64t/4CF3K9BILAW7Oh4ymerJeq
+         QCci8bQb8mS/fIOlROkcfwLiz7mBpoNPyLh9mGyAhiBkfTTvXmnna0CYQIoK5qidJX3q
+         d2ZGdAnFymZOsIXPtcQ0JNDb8oouvlNF/LTsMHrUyvBZ/CbPUYjvgCk9WXE9pyhHKctS
+         qQEG0jHQWN0mpU5m09RFzDsPg5f6Yz12NE3MD7sL/dFgVvYeDnDfvjoOXqWvtrQUu2Q+
+         bZHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761311552; x=1761916352;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qvr6GH29Nfx+EsRdL+4o2+h1AfNCPToJ8oczIokC+Sw=;
-        b=KsAx75HvBXf3WUTT5fXoAfjosQX3KKMN/WZSlra9gsoPw4Z3Gjkw53gUaBhUSmfj6n
-         ZoN0V4PZFcFB+JgCAjpfGEIHQ3fEO08bUGQxYwuvUvPOUDzG89xJcZZJz4JqxGMrrIkh
-         sh7F7fxYeDEuQm6lUb8TQtm3qOFCISO3vlgKEeUgxjlpSFfRK1bXNujGcsnUiBNC9+X6
-         6Gz7KtSoDbx3wPV+arsuNEJA+Pqrl6M2Zz+vwRWqXCXhG9ioD531cUoWhB1f3Fx73B4o
-         lirfNNTCYJaA3/w7NHtPn1IZkPzKLBc/LBZzRhlrDscOd/6I9G8GRUXBDmICNVCoNube
-         IHbA==
-X-Forwarded-Encrypted: i=1; AJvYcCXrddnkXQ+/cgVKpnf+FFKXDx6fw1RQT7clLbVbc5IGd+f5HrPmcTxiL6cNGqEYMK5QSXGC4viMDb4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYlB6yaW6/A/+tJL5N17evW+fs12YN+g5aUokSLbb+5VFhM3Ye
-	eU1ggFinNi5J/H7SncpYY7Ch5QSk0qSyiTFTVpDQ8rmvtz7lXCVvsr897sTuTOpf2Tg=
-X-Gm-Gg: ASbGnctcJIWKbER1zVzs2dl3MeWTnlIXTeF3Rh1Kvj6sZMqk2OGoWDOQ3Xtv/B6lqHW
-	uLFfI+ChPG1/x1fE8PHx9tq8Dp9vasH5riWG4B2N3A1RN+fwoMMKgZbo0/gQ/ohCLwBY567qe/4
-	IkG7I7u/GHjAiTWQV8LWEmUCClXGhoDQ+Hvvb+AuEf+w2l+WxXL4ib+USB8jps5P9xAwYSCI6uA
-	UQgJ5zD0JDWYXtXDKfirre7liqO/AanicngBbcaItG8pp6Q6KK2W/+uIqR5tLgSH5U74AtcYlOb
-	+jpCl7QB1C6PhH2MqASsmFzixq/Wm2JU9ibCNU4SnRGFroz4KbbSqtBPGf8WrcfYKidIU4uOWam
-	vsnoinGu1U4EWKp0L5IfZStNhMH8igMUv6o8JE2ivhnu4/O551jhd0HCr4lXzAqvHyAtjQlXX87
-	cgXZDSrGM=
-X-Google-Smtp-Source: AGHT+IF+1xCry/9A1ZHNOGG2pxcFEoxq6SJgtHoESPq3SvPRxcc9P29yK7lzj+svNHJcxN5sWMsJew==
-X-Received: by 2002:a05:600c:4f08:b0:46c:e3df:529e with SMTP id 5b1f17b1804b1-475cb03021dmr50372855e9.19.1761311551830;
-        Fri, 24 Oct 2025 06:12:31 -0700 (PDT)
-Received: from linaro.org ([86.121.7.169])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475c4342368sm156180605e9.9.2025.10.24.06.12.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Oct 2025 06:12:30 -0700 (PDT)
-Date: Fri, 24 Oct 2025 16:12:29 +0300
-From: Abel Vesa <abel.vesa@linaro.org>
-To: Taniya Das <taniya.das@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Dmitry Baryshkov <lumag@kernel.org>, Taniya Das <quic_tdas@quicinc.com>, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Ajit Pandey <ajit.pandey@oss.qualcomm.com>, Imran Shaik <imran.shaik@oss.qualcomm.com>, 
-	Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>
-Subject: Re: [PATCH v2] clk: qcom: gcc: Update the SDCC clock to use
- shared_floor_ops
-Message-ID: <mz37jryjovtqz2cqeitosbeznjf6px7444jqxmd3ccmwpbdruc@y5ms43b5wm5m>
-References: <20251024-sdcc_rcg2_shared_ops-v2-1-8fd5daca9cd2@oss.qualcomm.com>
+        d=1e100.net; s=20230601; t=1761313877; x=1761918677;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2Q+hjtxKQeLXbLBHNqlPoIllo2+ofr0q84sy/acEdSw=;
+        b=Tjlhx1+kadRPdg2BqsK+Vu+pvol/AE4Nr7Cd9xoXQM+yIM+q/44gUk8M/iy7sJLqbO
+         OE2yvY1qu0X7Du6I69Fa/lX7u3N4TbiHUxuaMyn5sAueyBzscDGQDA6x1XbT17hkJXU1
+         HDc6uKJBHBnhHlqpzTrtfhG3aoA6S4Oeo0GLTNCpC7+6Qsg8NAY/lsC/ky0qzkU+fXPl
+         6wjKyUqaPuRbtOTj2vqFEvI1ZBl92REVbCXWNEFLtpcPGMQi2qbPcBCi4zb4qTUswLde
+         HnaaOigVTyaXAfobi/8BOR1RWMKHktan47Pn7Pj0Aj1sLYLiWXHjZXwXuO6WRKqCoYgI
+         MhNw==
+X-Forwarded-Encrypted: i=1; AJvYcCUIFm4WxvRoAmZPU9EDWS0eWAb17al9GaZ7GRx86BsKymIDSGGUsSZq3r1KXtTUmzXEsIrvBJ3qIJM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzuZd4waX84YhjUquu0PLYZNBvfelv9NMmyPrDs7d5TEXPcbnAt
+	/hdgsg9Rnq0PtEKdlGUD6AMv7U/7zyo6+tXAs1kXf1yVYG2h/z0g228XRfxJXcY/Uh1MhjMmy4o
+	6u4HJFhI6Gv7UBbiBjDa8whe1xh4ckXIHOgzPvku3tg==
+X-Gm-Gg: ASbGncu1sWOkkX6uyE605hst61qIIdzYgDDRmJ93eGL5rkBkYFZRn5mjlghQuPwjGBV
+	3BLpdqfViT5RrS765VM0kq8TNkHWU/mlNYgLiJzBI/lasRpc4u+j+KkveQ1cINrrJvTV31oPUOn
+	/1H8PwoAOfNRSQ+sMMG4mTWKBhghV/faaQCLSZb1iqRRFe5aUDp+9Tj7RYlJZXf8F6/KT43UZj3
+	2lRjaY2TFIqPEOx7nYimfwJlmBY8A9mqlVQ3nOqr2530LneDMsyuszemQL0OQ==
+X-Google-Smtp-Source: AGHT+IHlphEUHdTlTQJtVbz4Rb5yJO5rZyVkkvYKLNT5GKPiTAAZeQLOg9k+GYR4etbv9qcFfzt4GYI8LyWVmzZyT20=
+X-Received: by 2002:a05:6808:1907:b0:441:8f74:f44 with SMTP id
+ 5614622812f47-443a319d493mr11540703b6e.62.1761313876914; Fri, 24 Oct 2025
+ 06:51:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251024-sdcc_rcg2_shared_ops-v2-1-8fd5daca9cd2@oss.qualcomm.com>
+References: <20251017161334.1295955-1-ivo.ivanov.ivanov1@gmail.com>
+ <20251017161334.1295955-6-ivo.ivanov.ivanov1@gmail.com> <20251022-savvy-sly-auk-a60073@kuoka>
+ <CADrjBPpXStuuvbaPZ+knb8fiGQja_hdX42PKfj=bTNCdXPCN9w@mail.gmail.com> <9594fa0e-22f6-4412-a967-6d5c1374da48@gmail.com>
+In-Reply-To: <9594fa0e-22f6-4412-a967-6d5c1374da48@gmail.com>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Fri, 24 Oct 2025 14:51:06 +0100
+X-Gm-Features: AS18NWC4v_lHSaYSR7559EcFNWgZxeNNJqRfIGOSzsUX6VCSF3TlMbDJY2BWrMY
+Message-ID: <CADrjBPpmUzu=g7RfJShC_2VNnvAt9Ur5NrGbyctssyMQ0nPkmg@mail.gmail.com>
+Subject: Re: [PATCH v2 5/5] clk: samsung: introduce exynos8890 clock driver
+To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+	Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-samsung-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 25-10-24 10:48:45, Taniya Das wrote:
-> Fix "gcc_sdcc2_apps_clk_src: rcg didn't update its configuration" during
-> boot. This happens due to the floor_ops tries to update the rcg
-> configuration even if the clock is not enabled.
-> The shared_floor_ops ensures that the RCG is safely parked and the new
-> parent configuration is cached in the parked_cfg when the clock is off.
-> 
-> Ensure to use the ops for the other SDCC clock instances as well.
-> 
-> Fixes: 39d6dcf67fe9 ("clk: qcom: gcc: Add support for QCS615 GCC clocks")
-> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
+Hi Ivaylo,
 
-Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
+On Fri, 24 Oct 2025 at 13:34, Ivaylo Ivanov
+<ivo.ivanov.ivanov1@gmail.com> wrote:
+>
+> On 10/24/25 15:07, Peter Griffin wrote:
+> > Hi Ivaylo & Krzysztof,
+> >
+> > On Wed, 22 Oct 2025 at 08:56, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> >> On Fri, Oct 17, 2025 at 07:13:33PM +0300, Ivaylo Ivanov wrote:
+> >>> Introduce a clocks management driver for exynos8890, providing clocks
+> >>> for the peripherals of that SoC.
+> >>>
+> >>> As exynos8890 is the first exynos SoC to feature Hardware Auto Clock
+> >>> Gating (HWACG), it differs from newer SoCs. Q-channel and Q-state bits
+> >>> are separate registers, unlike the CLK_CON_GAT_* ones that feature HWACG
+> >>> bits in the same register that controls manual gating. Hence, don't use
+> >>> the clk-exynos-arm64 helper, but implement logic that enforces manual
+> >>> gating.
+> > For sure it isn't the only upstream SoC with HWACG, gs101 and e850 and
+> > probably lots of Exynos SoCs have it. Whether it is the "first" in
+> > terms of release date of the SoC I don't know
+>
+> Huh? Samsung hasn't released a lot of exynos chips and you're free to check
+> kernel sources if curious. Exynos 7420 didn't have HWACG, 8890 and 8895
+> have it. Exynos 7870 (roughly same gen as 8890, but budget lineup) doesn't
+> have it.
 
+I'll take your word for it!
+>
+> > , unless there is some comment in
+> > downstream code to that effect). Your CMU registers do look like a
+> > different layout though.
+>
+> Exactly. First implementation/gen of HWACG == lots of room to improve.
+> Which they did, and this is what I implied here. I can word it differently
+> though, to be more clear.
+
+Ok, that makes sense. If it can be slightly reworded to make that
+clearer, as I found it slightly ambiguous on "first read".
+
+>
+> > Just fyi gs101 also has Q-Channel registers that contain HWACG Enable
+> > bits. The reset state of all these bits on gs101 (both for QCH_CON_XXX
+> > registers, QCH_EN bit and HWACG bit in CLK_CON_GAT_* regs is off). In
+> > my case I suspect the bootloader doesn't initialize any of them
+> > because of the CMUs "global enable override" bits in the CMU_OPTION
+> > register (which is initialized by the bootloader).
+>
+> Well, to be fair, without any documentations or bootloader sources there's
+> so much so I can do. The vendor kernel also force disables the qchannel
+> registers, hence the assumption.
+
+Sure, I appreciate having no specs and only downstream kernel sources
+is tough going. I think it's great what you folks are doing under the
+circumstances! I just wanted to point out that having some HWACG bits
+in the QCH regs isn't unique to this SoC (although it would seem that
+having to initialize all of the registers possibly is). Maybe the
+HWACG "global override" bits is one of the things they added in future
+revisions of HWACG.
+
+regards,
+
+Peter
