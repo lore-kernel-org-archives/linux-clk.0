@@ -1,143 +1,107 @@
-Received: from mail-oa1-f42.google.com (mail-oa1-f42.google.com [209.85.160.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 369153203A7
-	for <linux-clk@vger.kernel.org>; Fri, 24 Oct 2025 13:51:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 624DD186E40;
+	Fri, 24 Oct 2025 14:11:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761313880; cv=none; b=chJeWvrR1nsfSUBoYek76/Ebj4BxjSLiwrptW94NNdovsw8pmXM2wWno2/vGycO/iZulsspkj0Duj7JFSjxTkJ4BdolFwGa/OtMDHBWz24FHTf0nc3s0iWeJuxqCKpI80vZ2V/OmA3M6sWyCwemVaiFgEaklolbAicTovzbOzvg=
+	t=1761315105; cv=none; b=muj2LB5VBnEBemqBU3s3uKwSqYX4a1uoEvGbVZQw8d4bg7eB2/edmz7EYjq5pW5WsQt/8WLkmfaiwaNXnzzclaai7PhouexvLcvu68d1huqpZNwRcKsKnyCs5ByHAUxSa+Xx6an3RfcTArPCdaHtfKd9vm4qZTu4O1Sw0VD1rpY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761313880; c=relaxed/simple;
-	bh=2Q+hjtxKQeLXbLBHNqlPoIllo2+ofr0q84sy/acEdSw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QQCJlukfty6350d4k5xrIeBNxHqJXSNbcUgcGcekBXsMyKjLvmclJ+fzfu6EuVygEudPR8OHRX2MHNtea7TEM504xUGO8Eh5ACkzXwGjbNnNsrBvnrDvmL3mUFJm/cFG4MvESwfVJhQpy06ocdGaKxJpSkMRU5w5frUg2bcfoFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kWYXWVxi; arc=none smtp.client-ip=209.85.160.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1761315105; c=relaxed/simple;
+	bh=A2ibR8D3vX5O91d0A6dlXuJ33auKQkMfaPv3Zg/W9+8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZB/p3dOAgnUddBU+Fi0lXwpw7voXFbL6PSTG97f6IbO5/zHZX1RArPl0GqP27YxrjkGxGFj1EI/Vep6MjCLehZZvFUVeSES9AOhj3F8HSMtjhcu93L6wIA7IT4Gn0iud4LBRHrMPt7g+0PZbbGyyZxhd5HO9v0jVq7/zh89xMKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BBL/0gMF; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kWYXWVxi"
-Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-3c987818958so728436fac.0
-        for <linux-clk@vger.kernel.org>; Fri, 24 Oct 2025 06:51:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761313877; x=1761918677; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=2Q+hjtxKQeLXbLBHNqlPoIllo2+ofr0q84sy/acEdSw=;
-        b=kWYXWVxivPJor3zO1cbb2JfDM3Q+uUhUTuRs0dgQeyId3ffk4gJBtcxNSqzhVOaGi4
-         mAnR6XE7iOff1lX8im1+I5QnUMdBbg7I0ddBLjOnvJ64t/4CF3K9BILAW7Oh4ymerJeq
-         QCci8bQb8mS/fIOlROkcfwLiz7mBpoNPyLh9mGyAhiBkfTTvXmnna0CYQIoK5qidJX3q
-         d2ZGdAnFymZOsIXPtcQ0JNDb8oouvlNF/LTsMHrUyvBZ/CbPUYjvgCk9WXE9pyhHKctS
-         qQEG0jHQWN0mpU5m09RFzDsPg5f6Yz12NE3MD7sL/dFgVvYeDnDfvjoOXqWvtrQUu2Q+
-         bZHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761313877; x=1761918677;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2Q+hjtxKQeLXbLBHNqlPoIllo2+ofr0q84sy/acEdSw=;
-        b=Tjlhx1+kadRPdg2BqsK+Vu+pvol/AE4Nr7Cd9xoXQM+yIM+q/44gUk8M/iy7sJLqbO
-         OE2yvY1qu0X7Du6I69Fa/lX7u3N4TbiHUxuaMyn5sAueyBzscDGQDA6x1XbT17hkJXU1
-         HDc6uKJBHBnhHlqpzTrtfhG3aoA6S4Oeo0GLTNCpC7+6Qsg8NAY/lsC/ky0qzkU+fXPl
-         6wjKyUqaPuRbtOTj2vqFEvI1ZBl92REVbCXWNEFLtpcPGMQi2qbPcBCi4zb4qTUswLde
-         HnaaOigVTyaXAfobi/8BOR1RWMKHktan47Pn7Pj0Aj1sLYLiWXHjZXwXuO6WRKqCoYgI
-         MhNw==
-X-Forwarded-Encrypted: i=1; AJvYcCUIFm4WxvRoAmZPU9EDWS0eWAb17al9GaZ7GRx86BsKymIDSGGUsSZq3r1KXtTUmzXEsIrvBJ3qIJM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzuZd4waX84YhjUquu0PLYZNBvfelv9NMmyPrDs7d5TEXPcbnAt
-	/hdgsg9Rnq0PtEKdlGUD6AMv7U/7zyo6+tXAs1kXf1yVYG2h/z0g228XRfxJXcY/Uh1MhjMmy4o
-	6u4HJFhI6Gv7UBbiBjDa8whe1xh4ckXIHOgzPvku3tg==
-X-Gm-Gg: ASbGncu1sWOkkX6uyE605hst61qIIdzYgDDRmJ93eGL5rkBkYFZRn5mjlghQuPwjGBV
-	3BLpdqfViT5RrS765VM0kq8TNkHWU/mlNYgLiJzBI/lasRpc4u+j+KkveQ1cINrrJvTV31oPUOn
-	/1H8PwoAOfNRSQ+sMMG4mTWKBhghV/faaQCLSZb1iqRRFe5aUDp+9Tj7RYlJZXf8F6/KT43UZj3
-	2lRjaY2TFIqPEOx7nYimfwJlmBY8A9mqlVQ3nOqr2530LneDMsyuszemQL0OQ==
-X-Google-Smtp-Source: AGHT+IHlphEUHdTlTQJtVbz4Rb5yJO5rZyVkkvYKLNT5GKPiTAAZeQLOg9k+GYR4etbv9qcFfzt4GYI8LyWVmzZyT20=
-X-Received: by 2002:a05:6808:1907:b0:441:8f74:f44 with SMTP id
- 5614622812f47-443a319d493mr11540703b6e.62.1761313876914; Fri, 24 Oct 2025
- 06:51:16 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BBL/0gMF"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1996AC4CEF1;
+	Fri, 24 Oct 2025 14:11:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761315104;
+	bh=A2ibR8D3vX5O91d0A6dlXuJ33auKQkMfaPv3Zg/W9+8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BBL/0gMFAB6iXWn/03INztg9bjGFUFVZB5eEkShmlnZW6695iBe3ceBH7QqlkxLDu
+	 nF6DS3kY/hsSXGtbh3Nxk7Co4cRPzlPx//JB5m+xT2RmdIBEeH4YhCnuBClgHEkxOF
+	 TzjCuo9FD2PPHxhnIOKKdCZU0iw6F2v5AkruSO1vsmyNPpZgNlb1gVWIotAWmdcL7J
+	 nL2MB7mV5ifb7Y7EkH9R/jEE5kV0lq28zC2GmIJIniekDVOQ5pHjfExxhIYDXkYi3C
+	 5YSx+ApTyOqtJhIHDgos29oXb9L0QedvgUuT2eYn42m4MNZNdNZMbKC3GqbYlOaYK4
+	 dqC39Qu5dgZDA==
+Date: Fri, 24 Oct 2025 19:41:40 +0530
+From: Vinod Koul <vkoul@kernel.org>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Robert Foss <rfoss@kernel.org>, Moritz Fischer <mdf@kernel.org>,
+	Xu Yilun <yilun.xu@intel.com>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Georgi Djakov <djakov@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Joerg Roedel <joro@8bytes.org>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Lee Jones <lee@kernel.org>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Sebastian Reichel <sre@kernel.org>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Mark Brown <broonie@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Olivia Mackall <olivia@selenic.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linux-fbdev@vger.kernel.org, dmaengine@vger.kernel.org,
+	linux-fpga@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-hwmon@vger.kernel.org, linux-i2c@vger.kernel.org,
+	linux-iio@vger.kernel.org, linux-input@vger.kernel.org,
+	linux-pm@vger.kernel.org, iommu@lists.linux.dev,
+	linux-media@vger.kernel.org, linux-mtd@lists.infradead.org,
+	netdev@vger.kernel.org, linux-wireless@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-phy@lists.infradead.org,
+	linux-pwm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+	linux-crypto@vger.kernel.org, linux-sound@vger.kernel.org,
+	linux-usb@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: Remove extra blank lines
+Message-ID: <aPuJHM6SRbMpAZ8t@vaman>
+References: <20251023143957.2899600-1-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251017161334.1295955-1-ivo.ivanov.ivanov1@gmail.com>
- <20251017161334.1295955-6-ivo.ivanov.ivanov1@gmail.com> <20251022-savvy-sly-auk-a60073@kuoka>
- <CADrjBPpXStuuvbaPZ+knb8fiGQja_hdX42PKfj=bTNCdXPCN9w@mail.gmail.com> <9594fa0e-22f6-4412-a967-6d5c1374da48@gmail.com>
-In-Reply-To: <9594fa0e-22f6-4412-a967-6d5c1374da48@gmail.com>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Fri, 24 Oct 2025 14:51:06 +0100
-X-Gm-Features: AS18NWC4v_lHSaYSR7559EcFNWgZxeNNJqRfIGOSzsUX6VCSF3TlMbDJY2BWrMY
-Message-ID: <CADrjBPpmUzu=g7RfJShC_2VNnvAt9Ur5NrGbyctssyMQ0nPkmg@mail.gmail.com>
-Subject: Re: [PATCH v2 5/5] clk: samsung: introduce exynos8890 clock driver
-To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
-	Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-samsung-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251023143957.2899600-1-robh@kernel.org>
 
-Hi Ivaylo,
+On 23-10-25, 09:37, Rob Herring (Arm) wrote:
+> Generally at most 1 blank line is the standard style for DT schema
+> files. Remove the few cases with more than 1 so that the yamllint check
+> for this can be enabled.
+> 
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 
-On Fri, 24 Oct 2025 at 13:34, Ivaylo Ivanov
-<ivo.ivanov.ivanov1@gmail.com> wrote:
->
-> On 10/24/25 15:07, Peter Griffin wrote:
-> > Hi Ivaylo & Krzysztof,
-> >
-> > On Wed, 22 Oct 2025 at 08:56, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> >> On Fri, Oct 17, 2025 at 07:13:33PM +0300, Ivaylo Ivanov wrote:
-> >>> Introduce a clocks management driver for exynos8890, providing clocks
-> >>> for the peripherals of that SoC.
-> >>>
-> >>> As exynos8890 is the first exynos SoC to feature Hardware Auto Clock
-> >>> Gating (HWACG), it differs from newer SoCs. Q-channel and Q-state bits
-> >>> are separate registers, unlike the CLK_CON_GAT_* ones that feature HWACG
-> >>> bits in the same register that controls manual gating. Hence, don't use
-> >>> the clk-exynos-arm64 helper, but implement logic that enforces manual
-> >>> gating.
-> > For sure it isn't the only upstream SoC with HWACG, gs101 and e850 and
-> > probably lots of Exynos SoCs have it. Whether it is the "first" in
-> > terms of release date of the SoC I don't know
->
-> Huh? Samsung hasn't released a lot of exynos chips and you're free to check
-> kernel sources if curious. Exynos 7420 didn't have HWACG, 8890 and 8895
-> have it. Exynos 7870 (roughly same gen as 8890, but budget lineup) doesn't
-> have it.
+Acked-by: Vinod Koul <vkoul@kernel.org>
 
-I'll take your word for it!
->
-> > , unless there is some comment in
-> > downstream code to that effect). Your CMU registers do look like a
-> > different layout though.
->
-> Exactly. First implementation/gen of HWACG == lots of room to improve.
-> Which they did, and this is what I implied here. I can word it differently
-> though, to be more clear.
-
-Ok, that makes sense. If it can be slightly reworded to make that
-clearer, as I found it slightly ambiguous on "first read".
-
->
-> > Just fyi gs101 also has Q-Channel registers that contain HWACG Enable
-> > bits. The reset state of all these bits on gs101 (both for QCH_CON_XXX
-> > registers, QCH_EN bit and HWACG bit in CLK_CON_GAT_* regs is off). In
-> > my case I suspect the bootloader doesn't initialize any of them
-> > because of the CMUs "global enable override" bits in the CMU_OPTION
-> > register (which is initialized by the bootloader).
->
-> Well, to be fair, without any documentations or bootloader sources there's
-> so much so I can do. The vendor kernel also force disables the qchannel
-> registers, hence the assumption.
-
-Sure, I appreciate having no specs and only downstream kernel sources
-is tough going. I think it's great what you folks are doing under the
-circumstances! I just wanted to point out that having some HWACG bits
-in the QCH regs isn't unique to this SoC (although it would seem that
-having to initialize all of the registers possibly is). Maybe the
-HWACG "global override" bits is one of the things they added in future
-revisions of HWACG.
-
-regards,
-
-Peter
+-- 
+~Vinod
