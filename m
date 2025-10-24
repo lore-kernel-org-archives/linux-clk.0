@@ -1,104 +1,128 @@
-Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com [209.85.217.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB5B63064A6
-	for <linux-clk@vger.kernel.org>; Fri, 24 Oct 2025 10:16:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED2CF2F7AD3;
+	Fri, 24 Oct 2025 10:20:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761301015; cv=none; b=BT2xUXXJBiuuqrMXhzG3ySqmfBOVb14FWx/Awk+s5d6fjrGLeYQB41RQWI0y25liz7j5bv9IVPwjZUe1g2xo/YQsZZcp3QY7LtJA8vpZ8Oja8x0fTpsNZwX6WosQoK105V3zdDIJDQ9kBVpdb5U6oAjTkjDNSx/JFkPhCkKNHso=
+	t=1761301229; cv=none; b=RJp4PbPUem4Xg8boj68Kxf8qkp405iwjfyD+tu1FAADy3cvlhw9WErSH8oXWxWs8DhqyU7MlMmBZcWoe7kCdxRD5yi4Pk5W42vGFNuVp0GN+i2E0CYzuIjHuP1Sjxb9Z1GN2FtGm/qwIGeEKx+SNC/OgXMSXqDaVbWeAEJh+vRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761301015; c=relaxed/simple;
-	bh=AqiWd9FcEXBjGqvYmjKezWFbcC8LX/8ccSI0CzYf7rc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=C6D/nyaHxmDNIx4TzEzurONdaMwTF7CrPKcwrPZBNvvCsHHrYdqdtaL81xYy2Zmib0o/I7jUipok45S0EvaKvcnIXtJHnbRimK/zNJVx9YlW5chu6wcJwDQ6pp4Xg2ZbizM6AyYx5B8aBtMSA9F+J/hdaCuW22M5fLKYhnm9tuI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f47.google.com with SMTP id ada2fe7eead31-5d5f8e95d5eso1184570137.1
-        for <linux-clk@vger.kernel.org>; Fri, 24 Oct 2025 03:16:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761301012; x=1761905812;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=bSTLk7b49rZYTSOotXXLR+fnDfbehF6NQgF/VSyM9XA=;
-        b=Qj4wzrTxm4jI3pAN8VY1RqY2hoyNN6xR1DfCEOPJdkrrPzGoU6L/ls1ZaY0324RwyE
-         jRUAjOjeW+J4lMK9JFl3IarJ9Bef3MiluuqJrJZsMwOde/+RsKbk7g523v+5EE24IWdC
-         WGaswRz9ubA6lbbfI3Jl4OEbsIz1NoNa4gSAUUiHGxRiZtuklNWMZtQloMhLZpub99IA
-         mRwApIVj9+NEhorBqHPIQnK4uIsB/gpWI919LVSqz5mgeFYYUJMZg35iSwXCty7wUomS
-         fxORHTeKIZvz0R8Lm/M0wp5i9a+DC4IaeCqfFl/LaSzyTkBkRDqXyXs3S0HaWva6iXmH
-         Q9nw==
-X-Forwarded-Encrypted: i=1; AJvYcCWb8vwknscrOwSmgNarrOQeRK37nXSUGI46/hk9LqsGoIPDhroaysHJLPhcNd/R8yXFwMsxER0qD3A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHTW/2cs9MtXsIsNs8O3CS/u7LIL7BaZqqkmNJYiVbX5ZJhVbs
-	0OleWUS3TwYaSiZ8jHu8KUyFmzwKfu5Rp1eSqLnCiHWBasEsAP+jvgttpuPkzpHI
-X-Gm-Gg: ASbGncuFNChovQ+rIAp0u1FeUwwat4POQhVGmsBUL/4cGXo5cq59G6LJnQE4nNT6Fzg
-	bbYMr2kTcpJLYCe1mkG4EPwr2X+nFKIaTkQ8kmRwoz/23xl59WNaBTutednwIUhROfGfsyMmX0p
-	TlKA5A4k1ChIKgsBXG6zEOD5ogxHZ03pyeUJrIdKB8tKXOo+fgV8gv0QTalDQn+n3B19i6nFALJ
-	SEHGQQt+A95iuAA11rGuaU/MQYWxvK7OlPQhwi0PQ+pzjEU6aBg4hKNxd8YYXCPaa+ZTkV2pPga
-	7XYZ0SsLDOHPYKusM3wglhzxJkY8Yh2b0iyO+XqM+JtuFd7R7XdyWGIBwLxpVdujstDFG0o011q
-	UYNIoOKmtb/ScDMNYx0oxmNbGODt6lkh+rVMvkOqNRWviTCnyWsR61Nxifsu8SBAHodQe4XoSyi
-	ljMjKuPciv7GrBPDcHeGIqKkQ3vstnv+PDZXOzAw==
-X-Google-Smtp-Source: AGHT+IHRUMQJg+JqC23G6ORQGfX65+I6W5Rxz6szSwVibJu1z74z/XC14RiBoDF9tvB8W+uUEb5IMg==
-X-Received: by 2002:a05:6102:b12:b0:5db:2123:bfd3 with SMTP id ada2fe7eead31-5db2123c12bmr2996487137.2.1761301012344;
-        Fri, 24 Oct 2025 03:16:52 -0700 (PDT)
-Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com. [209.85.222.45])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-5db2c77c69bsm1907058137.2.2025.10.24.03.16.51
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 24 Oct 2025 03:16:51 -0700 (PDT)
-Received: by mail-ua1-f45.google.com with SMTP id a1e0cc1a2514c-89019079fbeso716465241.2
-        for <linux-clk@vger.kernel.org>; Fri, 24 Oct 2025 03:16:51 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWYTJp6QcOYjqNUcj2bfqIwapAzamLYsU4+JUys0Jhl7ulkMVdtSnure79GWCIpsYqh/quCnHG7yr8=@vger.kernel.org
-X-Received: by 2002:a05:6102:5111:b0:4f7:d553:3cfa with SMTP id
- ada2fe7eead31-5d7dd53dda7mr7539658137.12.1761301010775; Fri, 24 Oct 2025
- 03:16:50 -0700 (PDT)
+	s=arc-20240116; t=1761301229; c=relaxed/simple;
+	bh=FnW71TqPVzXRwI0dpG/xTBjzIyGRYlri2cV1BYifyeg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=k6VIVsgRNEneo+Xps8ZKYKyKbBfEj75gPXhpuBFDAjyfmNrrcH6nR8xGYaosUw7ltxNsEl9BoDPAbvDLnmPwZpv1ixlOZeGIVuz/2TPNS4D9+8rL4RgwsqWUptcJaz6++t3D+1fnsBhCO0PLvgoRkEz0p3Q/BYwOlUSF3XQAFxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P+m0hwPs; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P+m0hwPs"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA4A3C4CEF5;
+	Fri, 24 Oct 2025 10:20:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761301228;
+	bh=FnW71TqPVzXRwI0dpG/xTBjzIyGRYlri2cV1BYifyeg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=P+m0hwPsa1c9TUACFZRnUOkfnRR//EoynKUc2HkHZer4k0ASAdUGyETGx+4DOd4/D
+	 T3BqTR1lnp9a2tyc+UYGQKADQtoqLD6TKmNynKgNei1ThL7+S7Qk+DaJLUdwveuo5b
+	 HtBPY6ZVlCVnkqYfuwh95NS8VnGSBjY2NgGwvXRiFc/WCjF454xtDd5274z7ReMfI8
+	 tcCSlkNAa1y5lEccmQSqjwiZl+s58PvTDSo0TQ0rqZPmOpqAFZds6QPnGoU6K7Lw2e
+	 Xpfa/CwIuZtVVUObftnAU0Rf0fmDrS/VxKJiCOehPFsRC4AKWT8n8Gpl4/wPjXPcMt
+	 SXf+1m6g715zw==
+Date: Fri, 24 Oct 2025 11:20:23 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Cc: Conor Dooley <conor.dooley@microchip.com>,
+	Daire McNamara <daire.mcnamara@microchip.com>,
+	pierre-henry.moussay@microchip.com,
+	valentina.fernandezalanis@microchip.com,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Brian Masney <bmasney@redhat.com>
+Subject: Re: [PATCH v5 5/9] clk: microchip: mpfs: use regmap for clocks
+Message-ID: <20251024-dimness-everyday-1c074ce1f203@spud>
+References: <20251013-album-bovine-faf9f5ebc5d4@spud>
+ <20251013-undercook-flatfoot-70dca974cd19@spud>
+ <ab443375-524d-4e6c-a640-7e580c2d0c64@tuxon.dev>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251023081925.2412325-1-cosmin-gabriel.tanislav.xa@renesas.com> <20251023081925.2412325-2-cosmin-gabriel.tanislav.xa@renesas.com>
-In-Reply-To: <20251023081925.2412325-2-cosmin-gabriel.tanislav.xa@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 24 Oct 2025 12:16:39 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdU9jkZ16rw90qY-y1JwReVuh9GcoU9590Qj+fnAOBKcEA@mail.gmail.com>
-X-Gm-Features: AS18NWAl-mnooV2yE2ZHT2YePMkrfHPFCcWPI_7IIu3f_WOQ-qTqZQdZwGQjyhs
-Message-ID: <CAMuHMdU9jkZ16rw90qY-y1JwReVuh9GcoU9590Qj+fnAOBKcEA@mail.gmail.com>
-Subject: Re: [PATCH 01/10] clk: renesas: r9a09g077: add TSU module clock
-To: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
-Cc: John Madieu <john.madieu.xa@bp.renesas.com>, "Rafael J . Wysocki" <rafael@kernel.org>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
-	Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, linux-pm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="CLHXK2iYVH1gz/Qf"
+Content-Disposition: inline
+In-Reply-To: <ab443375-524d-4e6c-a640-7e580c2d0c64@tuxon.dev>
 
-On Thu, 23 Oct 2025 at 10:20, Cosmin Tanislav
-<cosmin-gabriel.tanislav.xa@renesas.com> wrote:
-> The Renesas RZ/T2H (R9A09G077) and RZ/N2H (R9A09G087) SoCs have a TSU
-> peripheral with controlled by a module clock.
->
-> The TSU module clock is enabled in register MSTPCRG (0x30c), at bit 7,
-> resulting in a (0x30c - 0x300) / 4 * 100 + 7 = 307 index.
->
-> Add it to the list of module clocks.
->
-> Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-clk for v6.19.
+--CLHXK2iYVH1gz/Qf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Gr{oetje,eeting}s,
+On Thu, Oct 23, 2025 at 07:06:01AM +0300, Claudiu Beznea wrote:
+> On 10/13/25 20:45, Conor Dooley wrote:
+> > From: Conor Dooley <conor.dooley@microchip.com>
+> > +static int mpfs_cfg_clk_set_rate(struct clk_hw *hw, unsigned long rate=
+, unsigned long prate)
+> > +{
+> > +	struct mpfs_cfg_hw_clock *cfg_hw =3D to_mpfs_cfg_clk(hw);
+> > +	struct mpfs_cfg_clock *cfg =3D &cfg_hw->cfg;
+> > +	unsigned long flags;
+> > +	u32 val;
+> > +	int divider_setting;
+>=20
+> This could be moved near flags to keep the reverse christmas tree order as
+> in the rest of this patch.
 
-                        Geert
+The driver doesn't (intentionally) use reverse christmas tree. If it
+does, that's just a byproduct of putting bigger types before smaller
+ones.
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> > +	divider_setting =3D divider_get_val(rate, prate, cfg->table, cfg->wid=
+th, 0);
+> > +
+> > +	if (divider_setting < 0)
+> > +		return divider_setting;
+> > +
+> > +	spin_lock_irqsave(&mpfs_clk_lock, flags);
+>=20
+> As spin locking is introduced in this file by this patch, you can go
+> directly w/ cleanup helpers for locking.
+>=20
+> > +
+> > +	regmap_read(cfg->map, cfg->map_offset, &val);
+> > +	val &=3D ~(clk_div_mask(cfg->width) << cfg_hw->cfg.shift);
+>=20
+> Why cfg_hw->cfg.shift here --------------------^ but cfg->shift on the ne=
+xt
+> line?
+>=20
+> > +	val |=3D divider_setting << cfg->shift;
+> > +	regmap_write(cfg->map, cfg->map_offset, val);
+>=20
+> Can't the regmap_read() + updated + regmap_write() be replaced by
+> regmap_update_bits() ?
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Yeah, I suppose it could. Ultimately what's here is a revert of with
+readl()/writel() replaced by regmap operations directly, so the answer
+to the above three items is that that's how they were done before the
+patch I am reverting. That's probably the answer to 90% of the things
+you've said here, this is how they were done prior to the commit I am
+reverting.
+
+
+--CLHXK2iYVH1gz/Qf
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaPtS5wAKCRB4tDGHoIJi
+0sNMAQDlxAVOoPeGx0hK7BMub2zdWhzl5Z42VCSLO0sdhyD3IAEAiM0jeYZctPm/
+LnrQTlUDFXDzYmq5VgkJDAkrhjUULgk=
+=KbJi
+-----END PGP SIGNATURE-----
+
+--CLHXK2iYVH1gz/Qf--
