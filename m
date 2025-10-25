@@ -1,137 +1,232 @@
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD3E92F5A22;
-	Fri, 24 Oct 2025 23:24:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761348269; cv=pass; b=tESIZXI3rYe74n1MlkmYxetEG3LosKmeN3UR1hdQDjz99Tbz9srsmGVoDx8Wt4YvF1W87bGfcvNavQPxn7Nj7P9kXzzJ6n6TRvefIAhbizE8PqujlDCJzBPDyifyWVTwv1CLlkT+FvgpXTXTWHecJR+SB7Zsfo10l0t51+fECNY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761348269; c=relaxed/simple;
-	bh=NQ0CrT99S0HB3iA81tiE1fKOXNruYRsIn5L3vGBZdtI=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57C60156F45;
+	Sat, 25 Oct 2025 00:32:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761352361; cv=none; b=aOZwPbLcdXF/b6flOjf+KoVv4YG6OPSzXNttbMxjd8wMAOSL5r4WKlJ/vuxKhweUx4VM1fjJDp/6fDe8cvQzPNP2segl6FaXlBglGNwamWgB6I4nWuKrr/+a/Jrd6XdDjFbncLJPcek89l03Ojh2p2TbO4qsX+O1OOPRCA8ifTU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761352361; c=relaxed/simple;
+	bh=ykn0rynaYicv/KHr2XtoEm7SZC+on0uB1brVoPFjQcA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R8JSdoh30zTpkv6DtPR9UqjoEILC8+z0s+1Ndj9y9flFG9S6SiV2d8jrt6hAqlx98mamkkU772V9SXHMqb6FLq9Q8oF2I6f1yTOpM0T8cJsnr2EL37uclg12YjC5zQnpg1dIRbZ+1QTDUVK5x58ziodwvrPG+7DKkUIVgQ0ROQc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=jUTlBQ2h; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=fFb3Nl1ivnGHfBD3CLWGyXAYmRmXGP17j+vn+8vigpBGaENNgcxrQiWzf+qbVqtTaHAzDPhO/RPLIr8a4DqqZ8nzE6+HHA4Eiu5Ly7R1XLYSJK7V9rfhXvtY3wV7wVQ9Zfrn3HwQZXIMOthdQtc7NLCqGYKaFJbYgugIehzWrVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VnBK9R5h; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="jUTlBQ2h"
-ARC-Seal: i=1; a=rsa-sha256; t=1761348264; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=E7jo3eFGtMbYc4umajgAJrDaAAeoH78FvXSvtwIPzMd+KALm6TW6J/PZo3Gl8IAj7J4S4JOqDkVaqCJ4DpyxUkL/D7r/nDZxCDXQIylw9m80ZHFV7ZnmYl6fN+yD1hWHfO07oqL+vl1wjfMlpqfazjWlj918MvnuxIHK7Hk60jc=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1761348264; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=TolhaGIsyaj1gVoV8dHb9QimZIX1Tzw1zXYiEcETqjM=; 
-	b=ERHFHpBMKqE6LtNxoI7EvA9o2mCsVLRI6J1+/qPThd+k1qt+nO9OwZhbx5E81USsXE7RyOCW1GyB5isp3iLRSkJC/p6ufY9tyScGPtH6liK71Qdq4msBQsSye0JsA4aNBjxrfKHSyGI+LcIwBsP7dWSDg8vI9r+LX3h+vlO9w2c=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
-	dmarc=pass header.from=<sebastian.reichel@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1761348264;
-	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
-	bh=TolhaGIsyaj1gVoV8dHb9QimZIX1Tzw1zXYiEcETqjM=;
-	b=jUTlBQ2h6Tuak+aNMb2CNTnEQ4BDpyDVgaRRROiBpKRCvZOPLn1o5LGy8JyX0l9X
-	sOXFCDgYktIsDNXusx7tmsAjPkY6Gy0P2EcQplSNWKOk61O5CR3GNBKVdk6o+/41U8c
-	rO3cD7tc7lCrL45EbJ0fyWmdAPtKKmAhIvpw6Ir4=
-Received: by mx.zohomail.com with SMTPS id 1761348261746725.1283250784594;
-	Fri, 24 Oct 2025 16:24:21 -0700 (PDT)
-Received: by venus (Postfix, from userid 1000)
-	id 476FE181935; Sat, 25 Oct 2025 01:24:06 +0200 (CEST)
-Date: Sat, 25 Oct 2025 01:24:06 +0200
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>, Vinod Koul <vkoul@kernel.org>, 
-	Moritz Fischer <mdf@kernel.org>, Xu Yilun <yilun.xu@intel.com>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, Guenter Roeck <linux@roeck-us.net>, 
-	Andi Shyti <andi.shyti@kernel.org>, Jonathan Cameron <jic23@kernel.org>, 
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Georgi Djakov <djakov@kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Joerg Roedel <joro@8bytes.org>, 
-	Jassi Brar <jassisinghbrar@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Lee Jones <lee@kernel.org>, Miquel Raynal <miquel.raynal@bootlin.com>, 
-	Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, 
-	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Johannes Berg <johannes@sipsolutions.net>, 
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Kishon Vijay Abraham I <kishon@kernel.org>, 
-	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, Mark Brown <broonie@kernel.org>, 
-	Mathieu Poirier <mathieu.poirier@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Olivia Mackall <olivia@selenic.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org, dmaengine@vger.kernel.org, 
-	linux-fpga@vger.kernel.org, linux-gpio@vger.kernel.org, linux-hwmon@vger.kernel.org, 
-	linux-i2c@vger.kernel.org, linux-iio@vger.kernel.org, linux-input@vger.kernel.org, 
-	linux-pm@vger.kernel.org, iommu@lists.linux.dev, linux-media@vger.kernel.org, 
-	linux-mtd@lists.infradead.org, netdev@vger.kernel.org, linux-wireless@vger.kernel.org, 
-	linux-pci@vger.kernel.org, linux-phy@lists.infradead.org, linux-pwm@vger.kernel.org, 
-	linux-remoteproc@vger.kernel.org, linux-crypto@vger.kernel.org, linux-sound@vger.kernel.org, 
-	linux-usb@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: Remove extra blank lines
-Message-ID: <god73pukywwznfyym7tym6m5k6fn3u7hwzj5gwhrxytt7oinfv@pokb4aos7pp6>
-References: <20251023143957.2899600-1-robh@kernel.org>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VnBK9R5h"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761352360; x=1792888360;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ykn0rynaYicv/KHr2XtoEm7SZC+on0uB1brVoPFjQcA=;
+  b=VnBK9R5htk5IjNNyctz3Zy5I7UfVShFVrNHs7H0icQJgXL/+jnRDQahq
+   tgH/+g3XcqnpZ6dS8CsqIrZV5MJIc6Z6/9r1TzZdYm1Rs+OrfXiqP6N01
+   ijCixFVAcxKiR9J80BUwfmBu2h5cfz2AWqkrFt5apq0cfWqeGbLbo8G8L
+   dXVqWkDsyxnW6wFSnWzzSoTP2gCkOcY9FT8pNOj0DxVPvPo4PVhgYmN9k
+   fSCD02Yi3UK8FEHbZCEaPasqL7asD0wj9wyZpnGPKaOVznB34LbKsFtsS
+   7h5/KbX3b5mF41iZjswkGdbmdd4ZVT69Mygc8Wgf9QzfJR+GQSAKA6uBQ
+   A==;
+X-CSE-ConnectionGUID: D5sLyMPfTw+dVZqweEbZEA==
+X-CSE-MsgGUID: XqDXYfOnRdS+Zo71rD/rMg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="86165138"
+X-IronPort-AV: E=Sophos;i="6.19,253,1754982000"; 
+   d="scan'208";a="86165138"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2025 17:32:39 -0700
+X-CSE-ConnectionGUID: xd+zz43FQhKMWA9xqz1Y1Q==
+X-CSE-MsgGUID: UvuvYmzAStKAuLWehOL2AA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,253,1754982000"; 
+   d="scan'208";a="185316801"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by fmviesa010.fm.intel.com with ESMTP; 24 Oct 2025 17:32:35 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vCSCv-000F05-0H;
+	Sat, 25 Oct 2025 00:32:33 +0000
+Date: Sat, 25 Oct 2025 08:31:53 +0800
+From: kernel test robot <lkp@intel.com>
+To: Prabhakar <prabhakar.csengg@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH 1/3] clk: renesas: r9a09g056: Add clocks and resets for
+ DSI and LCDC modules
+Message-ID: <202510250804.WuSolOK0-lkp@intel.com>
+References: <20251023210724.666476-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="4uianbie6i5kbvu2"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251023143957.2899600-1-robh@kernel.org>
-X-Zoho-Virus-Status: 1
-X-Zoho-Virus-Status: 1
-X-Zoho-AV-Stamp: zmail-av-1.4.3/261.330.82
-X-ZohoMailClient: External
+In-Reply-To: <20251023210724.666476-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+
+Hi Prabhakar,
+
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on geert-renesas-drivers/renesas-clk]
+[also build test ERROR on clk/clk-next linus/master v6.18-rc2 next-20251024]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Prabhakar/clk-renesas-r9a09g056-Add-clocks-and-resets-for-DSI-and-LCDC-modules/20251024-050927
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git renesas-clk
+patch link:    https://lore.kernel.org/r/20251023210724.666476-2-prabhakar.mahadev-lad.rj%40bp.renesas.com
+patch subject: [PATCH 1/3] clk: renesas: r9a09g056: Add clocks and resets for DSI and LCDC modules
+config: x86_64-buildonly-randconfig-004-20251025 (https://download.01.org/0day-ci/archive/20251025/202510250804.WuSolOK0-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251025/202510250804.WuSolOK0-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510250804.WuSolOK0-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> drivers/clk/renesas/r9a09g056-cpg.c:130:1: error: type specifier missing, defaults to 'int'; ISO C99 and later do not support implicit int [-Wimplicit-int]
+     130 | RZV2H_CPG_PLL_DSI_LIMITS(rzv2n_cpg_pll_dsi_limits);
+         | ^
+         | int
+>> drivers/clk/renesas/r9a09g056-cpg.c:130:26: error: a parameter list without types is only allowed in a function definition
+     130 | RZV2H_CPG_PLL_DSI_LIMITS(rzv2n_cpg_pll_dsi_limits);
+         |                          ^
+>> drivers/clk/renesas/r9a09g056-cpg.c:153:2: error: call to undeclared function 'DEF_PLLDSI'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     153 |         DEF_PLLDSI(".plldsi", CLK_PLLDSI, CLK_QEXTAL, PLLDSI),
+         |         ^
+>> drivers/clk/renesas/r9a09g056-cpg.c:153:48: error: call to undeclared function 'PLL_PACK_LIMITS'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     153 |         DEF_PLLDSI(".plldsi", CLK_PLLDSI, CLK_QEXTAL, PLLDSI),
+         |                                                       ^
+   drivers/clk/renesas/r9a09g056-cpg.c:131:17: note: expanded from macro 'PLLDSI'
+     131 | #define PLLDSI          PLL_PACK_LIMITS(0xc0, 1, 0, &rzv2n_cpg_pll_dsi_limits)
+         |                         ^
+>> drivers/clk/renesas/r9a09g056-cpg.c:153:48: error: use of undeclared identifier 'rzv2n_cpg_pll_dsi_limits'
+   drivers/clk/renesas/r9a09g056-cpg.c:131:46: note: expanded from macro 'PLLDSI'
+     131 | #define PLLDSI          PLL_PACK_LIMITS(0xc0, 1, 0, &rzv2n_cpg_pll_dsi_limits)
+         |                                                      ^
+>> drivers/clk/renesas/r9a09g056-cpg.c:189:5: error: use of undeclared identifier 'CSDIV0_DIVCTL2'
+     189 |                   CSDIV0_DIVCTL2, dtable_16_128),
+         |                   ^
+>> drivers/clk/renesas/r9a09g056-cpg.c:191:2: error: call to undeclared function 'DEF_PLLDSI_DIV'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     191 |         DEF_PLLDSI_DIV(".plldsi_gear", CLK_PLLDSI_GEAR, CLK_PLLDSI,
+         |         ^
+>> drivers/clk/renesas/r9a09g056-cpg.c:192:10: error: use of undeclared identifier 'CSDIV1_DIVCTL2'
+     192 |                        CSDIV1_DIVCTL2, dtable_2_32),
+         |                        ^
+>> drivers/clk/renesas/r9a09g056-cpg.c:410:19: error: invalid application of 'sizeof' to an incomplete type 'const struct cpg_core_clk[]'
+     410 |         .num_core_clks = ARRAY_SIZE(r9a09g056_core_clks),
+         |                          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/array_size.h:11:32: note: expanded from macro 'ARRAY_SIZE'
+      11 | #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]) + __must_be_array(arr))
+         |                                ^~~~~
+   9 errors generated.
 
 
---4uianbie6i5kbvu2
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] dt-bindings: Remove extra blank lines
-MIME-Version: 1.0
+vim +/int +130 drivers/clk/renesas/r9a09g056-cpg.c
 
-Hi,
+   129	
+ > 130	RZV2H_CPG_PLL_DSI_LIMITS(rzv2n_cpg_pll_dsi_limits);
+   131	#define PLLDSI		PLL_PACK_LIMITS(0xc0, 1, 0, &rzv2n_cpg_pll_dsi_limits)
+   132	
+   133	/* Mux clock tables */
+   134	static const char * const smux2_gbe0_rxclk[] = { ".plleth_gbe0", "et0_rxclk" };
+   135	static const char * const smux2_gbe0_txclk[] = { ".plleth_gbe0", "et0_txclk" };
+   136	static const char * const smux2_gbe1_rxclk[] = { ".plleth_gbe1", "et1_rxclk" };
+   137	static const char * const smux2_gbe1_txclk[] = { ".plleth_gbe1", "et1_txclk" };
+   138	static const char * const smux2_xspi_clk0[] = { ".pllcm33_div3", ".pllcm33_div4" };
+   139	static const char * const smux2_xspi_clk1[] = { ".smux2_xspi_clk0", ".pllcm33_div5" };
+   140	
+   141	static const struct cpg_core_clk r9a09g056_core_clks[] __initconst = {
+   142		/* External Clock Inputs */
+   143		DEF_INPUT("audio_extal", CLK_AUDIO_EXTAL),
+   144		DEF_INPUT("rtxin", CLK_RTXIN),
+   145		DEF_INPUT("qextal", CLK_QEXTAL),
+   146	
+   147		/* PLL Clocks */
+   148		DEF_FIXED(".pllcm33", CLK_PLLCM33, CLK_QEXTAL, 200, 3),
+   149		DEF_FIXED(".pllcln", CLK_PLLCLN, CLK_QEXTAL, 200, 3),
+   150		DEF_FIXED(".plldty", CLK_PLLDTY, CLK_QEXTAL, 200, 3),
+   151		DEF_PLL(".pllca55", CLK_PLLCA55, CLK_QEXTAL, PLLCA55),
+   152		DEF_FIXED(".plleth", CLK_PLLETH, CLK_QEXTAL, 125, 3),
+ > 153		DEF_PLLDSI(".plldsi", CLK_PLLDSI, CLK_QEXTAL, PLLDSI),
+   154		DEF_PLL(".pllgpu", CLK_PLLGPU, CLK_QEXTAL, PLLGPU),
+   155	
+   156		/* Internal Core Clocks */
+   157		DEF_FIXED(".pllcm33_div3", CLK_PLLCM33_DIV3, CLK_PLLCM33, 1, 3),
+   158		DEF_FIXED(".pllcm33_div4", CLK_PLLCM33_DIV4, CLK_PLLCM33, 1, 4),
+   159		DEF_FIXED(".pllcm33_div5", CLK_PLLCM33_DIV5, CLK_PLLCM33, 1, 5),
+   160		DEF_FIXED(".pllcm33_div16", CLK_PLLCM33_DIV16, CLK_PLLCM33, 1, 16),
+   161		DEF_DDIV(".pllcm33_gear", CLK_PLLCM33_GEAR, CLK_PLLCM33_DIV4, CDDIV0_DIVCTL1, dtable_2_64),
+   162		DEF_SMUX(".smux2_xspi_clk0", CLK_SMUX2_XSPI_CLK0, SSEL1_SELCTL2, smux2_xspi_clk0),
+   163		DEF_SMUX(".smux2_xspi_clk1", CLK_SMUX2_XSPI_CLK1, SSEL1_SELCTL3, smux2_xspi_clk1),
+   164		DEF_CSDIV(".pllcm33_xspi", CLK_PLLCM33_XSPI, CLK_SMUX2_XSPI_CLK1, CSDIV0_DIVCTL3,
+   165			  dtable_2_16),
+   166	
+   167		DEF_FIXED(".pllcln_div2", CLK_PLLCLN_DIV2, CLK_PLLCLN, 1, 2),
+   168		DEF_FIXED(".pllcln_div8", CLK_PLLCLN_DIV8, CLK_PLLCLN, 1, 8),
+   169		DEF_FIXED(".pllcln_div16", CLK_PLLCLN_DIV16, CLK_PLLCLN, 1, 16),
+   170	
+   171		DEF_DDIV(".plldty_acpu", CLK_PLLDTY_ACPU, CLK_PLLDTY, CDDIV0_DIVCTL2, dtable_2_64),
+   172		DEF_FIXED(".plldty_acpu_div2", CLK_PLLDTY_ACPU_DIV2, CLK_PLLDTY_ACPU, 1, 2),
+   173		DEF_FIXED(".plldty_acpu_div4", CLK_PLLDTY_ACPU_DIV4, CLK_PLLDTY_ACPU, 1, 4),
+   174		DEF_FIXED(".plldty_div8", CLK_PLLDTY_DIV8, CLK_PLLDTY, 1, 8),
+   175		DEF_FIXED(".plldty_div16", CLK_PLLDTY_DIV16, CLK_PLLDTY, 1, 16),
+   176	
+   177		DEF_FIXED(".plleth_250_fix", CLK_PLLETH_DIV_250_FIX, CLK_PLLETH, 1, 4),
+   178		DEF_FIXED(".plleth_125_fix", CLK_PLLETH_DIV_125_FIX, CLK_PLLETH_DIV_250_FIX, 1, 2),
+   179		DEF_CSDIV(".plleth_gbe0", CLK_CSDIV_PLLETH_GBE0,
+   180			  CLK_PLLETH_DIV_250_FIX, CSDIV0_DIVCTL0, dtable_2_100),
+   181		DEF_CSDIV(".plleth_gbe1", CLK_CSDIV_PLLETH_GBE1,
+   182			  CLK_PLLETH_DIV_250_FIX, CSDIV0_DIVCTL1, dtable_2_100),
+   183		DEF_SMUX(".smux2_gbe0_txclk", CLK_SMUX2_GBE0_TXCLK, SSEL0_SELCTL2, smux2_gbe0_txclk),
+   184		DEF_SMUX(".smux2_gbe0_rxclk", CLK_SMUX2_GBE0_RXCLK, SSEL0_SELCTL3, smux2_gbe0_rxclk),
+   185		DEF_SMUX(".smux2_gbe1_txclk", CLK_SMUX2_GBE1_TXCLK, SSEL1_SELCTL0, smux2_gbe1_txclk),
+   186		DEF_SMUX(".smux2_gbe1_rxclk", CLK_SMUX2_GBE1_RXCLK, SSEL1_SELCTL1, smux2_gbe1_rxclk),
+   187		DEF_FIXED(".cdiv4_plleth_lpclk", CLK_CDIV4_PLLETH_LPCLK, CLK_PLLETH, 1, 4),
+   188		DEF_CSDIV(".plleth_lpclk_gear", CLK_PLLETH_LPCLK_GEAR, CLK_CDIV4_PLLETH_LPCLK,
+ > 189			  CSDIV0_DIVCTL2, dtable_16_128),
+   190	
+ > 191		DEF_PLLDSI_DIV(".plldsi_gear", CLK_PLLDSI_GEAR, CLK_PLLDSI,
+ > 192			       CSDIV1_DIVCTL2, dtable_2_32),
+   193	
+   194		DEF_DDIV(".pllgpu_gear", CLK_PLLGPU_GEAR, CLK_PLLGPU, CDDIV3_DIVCTL1, dtable_2_64),
+   195	
+   196		/* Core Clocks */
+   197		DEF_FIXED("sys_0_pclk", R9A09G056_SYS_0_PCLK, CLK_QEXTAL, 1, 1),
+   198		DEF_DDIV("ca55_0_coreclk0", R9A09G056_CA55_0_CORE_CLK0, CLK_PLLCA55,
+   199			 CDDIV1_DIVCTL0, dtable_1_8),
+   200		DEF_DDIV("ca55_0_coreclk1", R9A09G056_CA55_0_CORE_CLK1, CLK_PLLCA55,
+   201			 CDDIV1_DIVCTL1, dtable_1_8),
+   202		DEF_DDIV("ca55_0_coreclk2", R9A09G056_CA55_0_CORE_CLK2, CLK_PLLCA55,
+   203			 CDDIV1_DIVCTL2, dtable_1_8),
+   204		DEF_DDIV("ca55_0_coreclk3", R9A09G056_CA55_0_CORE_CLK3, CLK_PLLCA55,
+   205			 CDDIV1_DIVCTL3, dtable_1_8),
+   206		DEF_FIXED("iotop_0_shclk", R9A09G056_IOTOP_0_SHCLK, CLK_PLLCM33_DIV16, 1, 1),
+   207		DEF_FIXED("usb2_0_clk_core0", R9A09G056_USB2_0_CLK_CORE0, CLK_QEXTAL, 1, 1),
+   208		DEF_FIXED("gbeth_0_clk_ptp_ref_i", R9A09G056_GBETH_0_CLK_PTP_REF_I,
+   209			  CLK_PLLETH_DIV_125_FIX, 1, 1),
+   210		DEF_FIXED("gbeth_1_clk_ptp_ref_i", R9A09G056_GBETH_1_CLK_PTP_REF_I,
+   211			  CLK_PLLETH_DIV_125_FIX, 1, 1),
+   212		DEF_FIXED_MOD_STATUS("spi_clk_spi", R9A09G056_SPI_CLK_SPI, CLK_PLLCM33_XSPI, 1, 2,
+   213				     FIXED_MOD_CONF_XSPI),
+   214	};
+   215	
 
-On Thu, Oct 23, 2025 at 09:37:56AM -0500, Rob Herring (Arm) wrote:
-> Generally at most 1 blank line is the standard style for DT schema
-> files. Remove the few cases with more than 1 so that the yamllint check
-> for this can be enabled.
->=20
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
->  .../devicetree/bindings/power/supply/mt6360_charger.yaml     | 1 -
->  .../bindings/power/supply/stericsson,ab8500-charger.yaml     | 1 -
-
-Acked-by: Sebastian Reichel <sebastian.reichel@collabora.com>
-
--- Sebastian
-
---4uianbie6i5kbvu2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmj8CpEACgkQ2O7X88g7
-+pqEIQ//WxlORWTU9xe37JxSV9323KQXYJPU3wtmtK4U8OlNGoVKu9XeR3w5pitG
-uy2cIzo80EdVMKsq5GKcONqwht31w9+RJaWZmytnll9Wbe3eiW3Lu6Ymx2zopgcW
-OoRuaiPPQUqGdgt7+VKgNt+4kH1sX/ur8z/Zd1rUrK9Xkks09pdqcZ/wpjm6KlQw
-e7x03OaDQ5h17Cg56SgH7NwoYjoUXDuSEKoZDx4wv5DQWh171Ez0/tWvYwYxM7+a
-Pxqt+zTDC1hdh6j1CaiOuwNb7pbdfcOWS7WZC8BPHNYW3eqFk5OQg+tZwEgoK9zV
-GLO0FrPPimJLgL2mfnq5FP0SzYU7FNgJD6gD/qKPzjsQlFLnwn69QCH/nTA9J/ZT
-ajcxgv6FLs3R3CGRptDBEUPOXez3dJeMeaN7hNeoswZNAe9uw1irXmedEzxLDO7S
-8WDVz6MvUAXOdXEcI+pUvuYfGWPwuJHspOgPuOwzO2sqg212V3sScOGcATq2BTDD
-mpc8LtRdKoZ3vUS9cVLRxtqLo8YB5roCBg0HEOexrwJayA074TSteqXhF2LH7LOW
-IcSZ37y+8QgWjTO2aXsiLJjoK2PsOLnvKzBRD5aeLhMd4H1Lw1xCxi75ut/fJPUY
-MLaS7WMtq7TVMRxBrjz8kaiR4opj84mVIXbVgoiISYooEKbbdic=
-=pPcb
------END PGP SIGNATURE-----
-
---4uianbie6i5kbvu2--
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
