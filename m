@@ -1,122 +1,107 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B9B527A477
-	for <linux-clk@vger.kernel.org>; Sun, 26 Oct 2025 23:16:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE68B3002B5
+	for <linux-clk@vger.kernel.org>; Sun, 26 Oct 2025 23:19:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761520584; cv=none; b=foQPnMkeyhhcIeB2W8ZRL4/yVN6VuT29zpW+MqUADNrznzcyxIXlln3lPtrsOhmdjXgI+KZH89RaZgOogPYYOxRr4k6nbHZADX5B345EYtABTeIKjvVg4xdex0oMX3LBi/TO1VUTwFT8hiotfKQA9zlBejUtZjIQT+REQUFZxRU=
+	t=1761520751; cv=none; b=ofv2WWM9XYG2x6ukk8Ao9QqhFvlD0JBSnSIKoUNVHqBE5ZFT3mqjwEYcDDlmXia2lfVeGE/gvRoKpQ6boJBDswHAvAkRoS7qCEzTKn4VZUhbn/4sF9nMKjpmfKqILA2Z2pQMeXyI5Af6ud4qSSHce/05CcSPNOpe+vVRVtmQe2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761520584; c=relaxed/simple;
-	bh=KQ6oL4hiz75C/A8/vFj2v/R+XXo7kpXKDEDVyBnk9ug=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fGiaeRc2D3XTqEuBUkQPgOBcp7AB45qe09MR1Fby5+QpuzXFOtYhQ4fibU1S4YgFH3DYhnsBJJ8p32kQgalWWbByzKEbwYcpqt8XFPfWcFStbXcSbpwMiEI53QrhIuOxWu6hs0j4S58/g6SZxw1QRGnyIUKSDU4xl0kNG7GlChY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ai6btCKZ; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1761520751; c=relaxed/simple;
+	bh=/WJ8idmdTVW0xynvaxgMdxuq6tLbTzgU7ly7Ov4QECY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=n2sgzPCPiujvf6H5X5LECm7GfUu12buhbPCEyzsYExHd6o9Dy9YRkA5MM2tYxMSfD0eiWFscAlCTMBBJlZQaJU1cbvscooyfBigqd22af77pYG+UTS62k7yR8cV1qNCSMGs/sMXa53nLYEDQXfzExgrW7tWJtoDsltsJrhuTLBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k4zCOhnf; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ai6btCKZ"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761520581;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TM9g2J61qUgy8rn11tUgr2Kr+gynrxk9ajK18D17/SY=;
-	b=Ai6btCKZda0DZTigGuCkmv8MbkVN4JNjRIDvw1UNNnYOmr0Ri/nAWJ5mMIdywIbxF5yPXh
-	G43G08c6nqL4qOFmUPfsy5wy3b6RfPU6E19OS2RDxMn833ic++wEuLJCFRYZS+WZd/AcI7
-	8krKRfHf9tDM/ez7h/VkYA30eCzyG2w=
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
- [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-616-6f1GbjqXPt6dE4PjaC_-fQ-1; Sun, 26 Oct 2025 19:16:19 -0400
-X-MC-Unique: 6f1GbjqXPt6dE4PjaC_-fQ-1
-X-Mimecast-MFC-AGG-ID: 6f1GbjqXPt6dE4PjaC_-fQ_1761520579
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-8a2594fa114so256972585a.0
-        for <linux-clk@vger.kernel.org>; Sun, 26 Oct 2025 16:16:19 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k4zCOhnf"
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-7a23208a0c2so3002459b3a.0
+        for <linux-clk@vger.kernel.org>; Sun, 26 Oct 2025 16:19:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761520749; x=1762125549; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Z+4rHLxk6jb9+WTlkBO1/v2Aj724T4zzmauAn+prGgM=;
+        b=k4zCOhnfMWdvMNdATvR+lZrelGH029R91TbJIaNm/js/eKlikY0X3I+psUK5F7TnHF
+         n0Fsk2zSa+XbPAyzwx/8b4EeNzLyZ2gzUM2xI6kjszRGhkg8mq1vQl+Ys1miM4waLxpR
+         jHQEZmVo3+v9gHWEo2QSLBCNMiDz7sVbMpbB47LKU82dfX7xNEV9aQv9XymSBA4RPPNT
+         7lodteKLrVpZxvKmF+6KtR4hw6yXuSfVchGrnJPeGmhv4KnXHgBpJOwz+Zm5mDFls9Pw
+         o8SVAVibJ2cwGuuKRv82oev8WzK8GYXrKJz7c1AFwcejzVxrGwtvFPcITTVtqHSVDITr
+         453A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761520579; x=1762125379;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TM9g2J61qUgy8rn11tUgr2Kr+gynrxk9ajK18D17/SY=;
-        b=Tv0JXBYcQRbunLW+l4PenmEKXOYzblLQCJwqlrkIxcD2w5siiRIwvtArEG3Xtfek6V
-         iEDJojWZunJen1lNxcLowTs0QEPPc37lhQD/6obEvZMC2hLjX5NeWrfvns3/xhxwK6ok
-         TeAP4Qo0X1+i1Wa1893tpBxEiza5oBbeB/E0pbyS7EC98RluwoyZutv4l9FxwB6io6Ya
-         qUlg8e12Can9MZJyWUoWDYhLh4BexH3R5ZSiovCo06xn8mbGB7ajbOMMtlBoCEhcp5d4
-         LP8yn+O1VGTLV+80bGtX7ucCBMkuiDmnksntdWdwJTcTu0YKIAknVmxZeiL1qWwxd9Q9
-         thyw==
-X-Forwarded-Encrypted: i=1; AJvYcCUAgQru6/H0/Orsi0zC6mJhPzx3V1/nqseISdrOkt6wJCBN18vCo6Np1YWkvRHHjFIoj0iUrNlGWog=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOK43KzPF1VIiX4UxRZtclrptuVv6LhYDy4NbMBUTx+/Lko+zo
-	x4igQmCkXSTT0RTuA++RapKLa5csurODZvpiz4KG+ysWICLdIm7fGNwUe9c194+iCXptOSmT8ez
-	Gdid7bN7qSJ9mIskwLGz1fGdkQpPtP98TJQhRajaiv+JjwaO2NLbCSi/dfPFkgsIG+dPggw==
-X-Gm-Gg: ASbGncvjZHqN461hQaQRtJjdARh2kp9VBRJUY05bAuECrgZk40qVZmDQeatJmd9GgAl
-	ArM6tap9jCrAhB8F7zK5y+kmQSfyB+Y8+N0JRaMjZYZcFzleFOnDXJCN4eamDkyewkCJsNMKM+h
-	cfrpXpxWnAk3IBm5Vmu/t7bxZ4sRsXvi2QQNioAUqQH2JJawSswKlYkkPHgn3/YHaqm01kPuEwu
-	e0xzKzTGkImUcrxM81MSkeVzGIuuc+sZGh9IDElTVQxZjFoPjr+jSN6X2rn3IjCPxwa6aC/ENWv
-	gOHjuJlLrUYeYhgrzbFqu/ptNxo929jrf585F3vQXuTavxuUfHXtwnS5ngMuvWwyObMVK8ucVlC
-	suqj3C40AjqsVYjv2rSwMMCiPwO5P
-X-Received: by 2002:a05:620a:4454:b0:809:b21:5421 with SMTP id af79cd13be357-89da1bae914mr1370444185a.39.1761520578744;
-        Sun, 26 Oct 2025 16:16:18 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE0exW7QsnW96XJU3LfmVTRq5OXRYKfDNXF9pTY84ykGNprSECOl2LKm846J2PimjM64qIFow==
-X-Received: by 2002:a05:620a:4454:b0:809:b21:5421 with SMTP id af79cd13be357-89da1bae914mr1370441885a.39.1761520578329;
-        Sun, 26 Oct 2025 16:16:18 -0700 (PDT)
-Received: from redhat.com ([2600:382:7702:71bf:259:17c7:d468:3f55])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-89f2421fc6fsm435746185a.9.2025.10.26.16.16.14
+        d=1e100.net; s=20230601; t=1761520749; x=1762125549;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Z+4rHLxk6jb9+WTlkBO1/v2Aj724T4zzmauAn+prGgM=;
+        b=TftTsGBiG79PnpW2+Z4f/s4IO+Esqef/szdhcLhSZcc08lfBoe7gLyObVjhQHaWbkK
+         n4kr7JmG7UnJqyQ1Jt2gKbqMQ4horfOF5inRLB7x/KuPlQnFh/TeqjsIXnyhhmLxE3kz
+         eEouje3mPthLPcso1JICk0xyXHfzMkX70Gc2s79qq6mv8AfKTs14FqEF9Epx4NbLGH+s
+         MgrGtE6S41fo2fpKoDFQ1qcJ24pizo3V29jVraY/J+nW2p35cAuL0H/4G82AgpiL01Ux
+         t1C13YTg+QyKQJxO4Jye7sff2JqV64kmWGRstJ2g/sLC+du9MX+fR76eHRnnKW5nKffg
+         n6ig==
+X-Gm-Message-State: AOJu0YzFHmgLzbLcj1VmWYCSivfHR585FXztHZmrY0Lbev2FkoxMQimw
+	RorgJZIAC3N0vA+ZKBvI7bdcuIo9sSK11lyrtWSmGAHIbG2ix0gkMAZ2
+X-Gm-Gg: ASbGncuEva9aDmvs6pdcPXLHBrJjcgfkhlrFVx5+p3oevlCXYAjawaXTtPnLFGIUa6j
+	igJKypq78rL36IQ8f/ve58LveAUhsB+57dxinvb5D/d6zjn8Q+ONre7kZFOKZw88yjYtH6EPdYR
+	tqJmIG3mQa4hufUeQEH3j3IE2IYdu+eI09yULtcUKqqEYJj3syvGPsBn5YxgK9aiKdEhN+58odb
+	p+nDGTvLiHBT48oumBN/L7SB+kFKQaG890ABHpBwtiA+z2rzkLbLllH61GgQnqEnfYdCJtqVMor
+	D+CRHE+VJj7LinIdUKcd3HtQpSWku5DXU3YK4P7A3QnWTfTePgHePrQYSAGV/ZFS8hMxlqVpKfG
+	lnDXT1ebM1CdEdr5U8/9MRm7QRSLqZ0EjnbkK35V6a2iPQkWmcH4tqc6PIdNDXCdvvDHihq5ieh
+	r9cDjuY+DRhu/7gIa1LsXZww==
+X-Google-Smtp-Source: AGHT+IEN4o7iKPho66M4NW9RdMeb44MBPT3fDS+h+9MUllLBI3rDk+XvZ4kv8Y7LCuF6ZJtVcrt2Nw==
+X-Received: by 2002:a05:6a21:33a7:b0:2dc:40f5:3c6c with SMTP id adf61e73a8af0-334a864aa37mr45862799637.54.1761520749111;
+        Sun, 26 Oct 2025 16:19:09 -0700 (PDT)
+Received: from fedora ([172.59.161.218])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33fed7e9571sm6242596a91.9.2025.10.26.16.19.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 26 Oct 2025 16:16:17 -0700 (PDT)
-Date: Sun, 26 Oct 2025 19:16:13 -0400
-From: Brian Masney <bmasney@redhat.com>
-To: Sasha Levin <sashal@kernel.org>
-Cc: patches@lists.linux.dev, stable@vger.kernel.org,
-	Sudeep Holla <sudeep.holla@arm.com>, Peng Fan <peng.fan@nxp.com>,
-	mturquette@baylibre.com, sboyd@kernel.org, arm-scmi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH AUTOSEL 6.17-6.12] clk: scmi: migrate round_rate() to
- determine_rate()
-Message-ID: <aP6rvQD-bwSkhfU5@redhat.com>
-References: <20251026144958.26750-1-sashal@kernel.org>
- <20251026144958.26750-39-sashal@kernel.org>
+        Sun, 26 Oct 2025 16:19:08 -0700 (PDT)
+From: Alex Tran <alex.t.tran@gmail.com>
+To: pdeschrijver@nvidia.com,
+	pgaikwad@nvidia.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	thierry.reding@gmail.com,
+	jonathanh@nvidia.com
+Cc: linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Alex Tran <alex.t.tran@gmail.com>
+Subject: [PATCH v1] clk: tegra: clk-dfll: scale force_val with coefficient according to whether cg_scale is set
+Date: Sun, 26 Oct 2025 16:18:59 -0700
+Message-ID: <20251026231859.823231-1-alex.t.tran@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251026144958.26750-39-sashal@kernel.org>
-User-Agent: Mutt/2.2.14 (2025-02-20)
+Content-Transfer-Encoding: 8bit
 
-Hi Sasha,
+force_val was hard coded to use a coefficient of 128,
+regardless of the cg_scale configuration. This should instead match the
+DFLL_PARAMS_CG_SCALE bit, use a coefficient of 128 when
+cg_scale is set, or 1 when not set.
 
-On Sun, Oct 26, 2025 at 10:49:17AM -0400, Sasha Levin wrote:
-> From: Brian Masney <bmasney@redhat.com>
-> 
-> [ Upstream commit 80cb2b6edd8368f7e1e8bf2f66aabf57aa7de4b7 ]
-> 
-> This driver implements both the determine_rate() and round_rate() clk
-> ops, and the round_rate() clk ops is deprecated. When both are defined,
-> clk_core_determine_round_nolock() from the clk core will only use the
-> determine_rate() clk ops.
-> 
-> The existing scmi_clk_determine_rate() is a noop implementation that
-> lets the firmware round the rate as appropriate. Drop the existing
-> determine_rate implementation and convert the existing round_rate()
-> implementation over to determine_rate().
-> 
-> scmi_clk_determine_rate() was added recently when the clock parent
-> support was added, so it's not expected that this change will regress
-> anything.
-> 
-> Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
-> Reviewed-by: Peng Fan <peng.fan@nxp.com>
-> Tested-by: Peng Fan <peng.fan@nxp.com> #i.MX95-19x19-EVK
-> Signed-off-by: Brian Masney <bmasney@redhat.com>
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Alex Tran <alex.t.tran@gmail.com>
+---
+ drivers/clk/tegra/clk-dfll.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Please drop this commit from all stable backports.
-
-Thanks,
-
-Brian
+diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll.c
+index 22dc29432eff..3362983eedcf 100644
+--- a/drivers/clk/tegra/clk-dfll.c
++++ b/drivers/clk/tegra/clk-dfll.c
+@@ -882,7 +882,7 @@ static void dfll_set_frequency_request(struct tegra_dfll *td,
+ {
+ 	u32 val = 0;
+ 	int force_val;
+-	int coef = 128; /* FIXME: td->cg_scale? */
++	int coef = td->cg_scale ? 128 : 1;
+ 
+ 	force_val = (req->lut_index - td->lut_safe) * coef / td->cg;
+ 	force_val = clamp(force_val, FORCE_MIN, FORCE_MAX);
+-- 
+2.51.0
 
