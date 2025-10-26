@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D83E71F8723;
-	Sun, 26 Oct 2025 01:25:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C888F257AD1;
+	Sun, 26 Oct 2025 01:38:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761441945; cv=none; b=cFK8rB2+TgvbTo+qSSVkc6fgRS9D4SVFOofSyUa2cag0++FGZoNnV4hv3vgXq0ppgsQB/1mUTwVZ0jfZt4okQ7l663u/hWv5epeXxx6+RUfIC5NizcAvX4syDcOHx0gLW4iILW+AOP7rq5H5s2KGMxsYYRDXu1bNi4PbeycXYu4=
+	t=1761442683; cv=none; b=ExMWPNg2lPhGuqScYNTCKx1FqqiQI6Q8F4+kameEfKxicVS1qcNz559ryiAjPaJhfxGLx9sVcAqdfY1UAecDDKo5hyXjhi797s/zRIK2qbJmVmiMiEs/VGkT7YQ1X9CmQjK4pkzqv+iMkFU8h0LgLm2uqJXFXscAA7uH1EC8phs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761441945; c=relaxed/simple;
-	bh=70P8xlYI642awQAB/EnR8mAGXnx+RlbtYNmpsU6er98=;
+	s=arc-20240116; t=1761442683; c=relaxed/simple;
+	bh=2HcKcgB6jHIZesXRvZwKQsoY54Ip9aqZx1tQ9AISVEM=;
 	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=MYk48R0jIK9x/w2qCrEWgXkjn+mM0z9qM9ESiSOpASiXTaeL1g02uIGpqdQ5Jv/M0NJS7lUfTSSy99rDCrH0uh5OtxEJaqVtlGW8u1BOjiY9TQZaC4EW+hjpQTNeJNPZew2MWolceCEEBeziHEUIZOjlhLeI5wiJre5aStssCao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i41rtwFW; arc=none smtp.client-ip=10.30.226.201
+	 To:Date:Message-ID; b=mv7m0PjNLCYO3TctQVmNrtv9jxS2u3Z825AjnZT7CpPLsgf+fiuSjPuanO8F2Ic1auninC7RfKfAY+S8L7xgyoqZZCcaZ+MBJLRFO94HgxphJfFziyB6NPvk5nxq+Jg5IJjyYtXdhKvyXzS1mloo1nFufNe/jigwWwZPJR4VBHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rDtQblCC; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i41rtwFW"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6190FC4CEF5;
-	Sun, 26 Oct 2025 01:25:45 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rDtQblCC"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49584C4CEF5;
+	Sun, 26 Oct 2025 01:38:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761441945;
-	bh=70P8xlYI642awQAB/EnR8mAGXnx+RlbtYNmpsU6er98=;
+	s=k20201202; t=1761442683;
+	bh=2HcKcgB6jHIZesXRvZwKQsoY54Ip9aqZx1tQ9AISVEM=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=i41rtwFWYrS9j3p7cGKkbv3/UooN0UNjRUbgnJlkAl7Bd/Mhb3mBjn6w9IXIyJDXj
-	 tDU+gytiFp5hsjUcvrITOKlGafH9XZLa9zuHB5xeUp8KeWvTQHukuWx/AKHBoBO4hR
-	 j5K6S1FLCWJDC2RGlHtjK5zfd03SEAqYJOa7GFvQFddPea3Ld8vQQ7djh438IrUQD7
-	 ND3i6NJ84oR9AiDXoBtkN7sxx9XNXVq/ny7FOua/ZwYHvSNQlJO4wpOywmM92x1a7D
-	 pKRqAFfQSDs6BsLc+WQXVB3DVUUVOtxm8wkOeTeDuAoG4RgYCgyKprT+ZfgUSdoCjF
-	 Znnuyf44Q/HYg==
+	b=rDtQblCCtUCUKiRRrygK6a2CwpX8xhd4Qy53wJX6mc+rbr/NyIrFBOFeQYE4d4tSN
+	 OnmJxoiUv1+ljxx1vqnrMQaRplVEB+gd4SX4zbzUc9D7KvgJ0ilpgSiblHuTq+DStQ
+	 tBLXacxzM3rdEpgQV/8Tek30kaJ9HhVQQqNL2pPxc4mLtWBizUDtHyGPVTS0VKcSW6
+	 Js2lA29S4SoDvMYTHw/31B+pVRAYhQtmTCWmv+QxFBN4Dxd2KVqFmixrF8FY/oUNNJ
+	 Gsbzfz8XalHnTCYqLi1hZ1y7S6unGA2HZ67YYmwGYekO/yzdr1cyqfC+RCs2gDTTta
+	 z6DDT+RAoM1tg==
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -34,50 +34,23 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20251021-improve_efficiency_of_clk_divider-v1-2-e2bf7f625af6@amlogic.com>
-References: <20251021-improve_efficiency_of_clk_divider-v1-0-e2bf7f625af6@amlogic.com> <20251021-improve_efficiency_of_clk_divider-v1-2-e2bf7f625af6@amlogic.com>
-Subject: Re: [PATCH 2/2] clk: divider: improve the execution efficiency of determine_rate()
+In-Reply-To: <20251022-da850-reset-lookup-v2-1-c80f03831f63@linaro.org>
+References: <20251022-da850-reset-lookup-v2-0-c80f03831f63@linaro.org> <20251022-da850-reset-lookup-v2-1-c80f03831f63@linaro.org>
+Subject: Re: [PATCH v2 1/2] clk: davinci: psc: drop unused reset lookup
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Chuan Liu <chuan.liu@amlogic.com>
-To: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>, Michael Turquette <mturquette@baylibre.com>, chuan.liu@amlogic.com
-Date: Sat, 25 Oct 2025 18:25:44 -0700
-Message-ID: <176144194442.3953.13998249458455926261@lazor>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+To: Bartosz Golaszewski <brgl@bgdev.pl>, David Lechner <david@lechnology.com>, Michael Turquette <mturquette@baylibre.com>, Philipp Zabel <p.zabel@pengutronix.de>
+Date: Sat, 25 Oct 2025 18:38:02 -0700
+Message-ID: <176144268240.3953.1578810481049748800@lazor>
 User-Agent: alot/0.11
 
-Quoting Chuan Liu via B4 Relay (2025-10-21 03:12:31)
-> From: Chuan Liu <chuan.liu@amlogic.com>
+Quoting Bartosz Golaszewski (2025-10-22 06:51:31)
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 >=20
-> There is no need to evaluate further divider values once _is_best_div()
-> finds one that matches the target rate.
+> We no longer support any non-DT DaVinci boards so there are no more
+> users of legacy reset lookup.
 >=20
-> Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 > ---
->  drivers/clk/clk-divider.c | 3 +++
->  1 file changed, 3 insertions(+)
->=20
-> diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
-> index 2601b6155afb..b92c4f800fa9 100644
-> --- a/drivers/clk/clk-divider.c
-> +++ b/drivers/clk/clk-divider.c
-> @@ -339,6 +339,9 @@ static int clk_divider_bestdiv(struct clk_hw *hw, str=
-uct clk_hw *parent,
->                         best =3D now;
->                         *best_parent_rate =3D parent_rate;
->                 }
-> +
-> +               if (best =3D=3D rate)
-> +                       break;
 
-This needs a comment. I'm not even sure if it is correct either, because
-the other exit from this loop happens if the parent rate can be
-unchanged. I don't think we have any KUnit tests for this file, so
-please add some tests that deal with this case explicitly (the parent
-rate being unchanged as the desirable part).
-
-A general comment: these patches have no benefit described in the commit
-text. Do you see any performance improvement with this patch? I sorta
-doubt this really matters because the number of dividers are typically
-small. A single sentence commit text that only says there is no need
-doesn't convince me that any work has been put in to research why the
-code was written this way or even prove that making this change improves
-anything.
+Acked-by: Stephen Boyd <sboyd@kernel.org>
