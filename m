@@ -1,77 +1,83 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A2032E54A0
-	for <linux-clk@vger.kernel.org>; Mon, 27 Oct 2025 20:26:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D3C73054FA;
+	Mon, 27 Oct 2025 20:37:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761596814; cv=none; b=ZHX018Gc5UdzK+Tzy0SbpXPnmnHv774ahTa8ZrRdHRzIssAt/RAsplwiNct6tW1V+MfKWU4hU++8aSpmV/s2lzLLyZfVRB+d/X8/V313ETdASGqfKMNTZrBh36h/KicVbrxPIC03YYdFxZvLrM6WDhxiGZS331hmAWTLuQ2R7mo=
+	t=1761597457; cv=none; b=nUMj47UFRN84F7LSYpJKZ+5h/03rxDtrnLczOeo60GDa14LI+nNVc7Ygi/FwceYxNaFELyvFqlJKhiNAGZgu4qHXwp/RYrtLAI1cqwRhHQGMkyYiZL0yR6cEyoktCfsqZbdRLE8S+UsxWrrEqEQ9aY1PJQKnnz8fTuVazmHKEzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761596814; c=relaxed/simple;
-	bh=7yChQB4/5T+chrdHyP+j5cj+seqbPo3q/T88JzHOM2U=;
+	s=arc-20240116; t=1761597457; c=relaxed/simple;
+	bh=5m1IrsDTkf+F/nhzqJRjiWrZIfJDK8f7MvjheZ4CUKk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qpyajzDPuUxbZgnjksQ5BZ888zfe6q30xgk21/BLvSnO79zCG9N0yc8jGKdthbnj78EuI6Lm3VTSO9NZhUqc7QekROreagw1gLJpnEm7SWC8JVPy/hI0pPHXmgVHQo21Dqhu+vgrTMDcgwsz6Y5dwUAKbKTVKVF8Hy3SHlLlC4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EMGLz+AY; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=CP/dmW+0WfJj5gL3EzZQNEGCMci9r4BvFTFa9PUQCi+rnzXaStbsVHZAH1xgaIDLUE88y44xzIbzmmrZkeS4J0Bhz7GmzGC1gjqFCMOZeSiKM4sHu9G+2iOFTBecMbrqKm8pZySH/FRab3/ipu2oxGIYDHNqf4vfwSvR/thYWAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=D0FvDvo6; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EMGLz+AY"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761596811;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Y/SBV90iCKGz6XON109DoFy6Jo9KP1hBDt8Ha5ZIeUs=;
-	b=EMGLz+AYS+vgGUZJV8T7VtbGoQAzCaM7VokDn9t/naHm20XWuztcxBHmo7QW5geNydedPJ
-	xtirCq1wnTloYTsEHk7y45SXDG5NX9vlaU1XijapsYeO9BOKUrlBrECfTVG7F44/oWqerQ
-	5kbzHn5lQXsBqqZVJO9O4sY3D1mvdM8=
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
- [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-130-OnP7kbazM3Ou1EMmey8FvA-1; Mon, 27 Oct 2025 16:26:50 -0400
-X-MC-Unique: OnP7kbazM3Ou1EMmey8FvA-1
-X-Mimecast-MFC-AGG-ID: OnP7kbazM3Ou1EMmey8FvA_1761596809
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-8a5b03118f4so224014585a.1
-        for <linux-clk@vger.kernel.org>; Mon, 27 Oct 2025 13:26:49 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761596809; x=1762201609;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Y/SBV90iCKGz6XON109DoFy6Jo9KP1hBDt8Ha5ZIeUs=;
-        b=c+pcfJM8HZLWiiyZoMH0stAhNQ5BSLjMG1/aNr6NBRq2+vrbVhqkzPIF1sp7wqp5Nf
-         tLosJOhAurDEb4eCmQ/4OYdJUIOXHvEdODBnaTJPmJYZXYijMqeQwxoRmbw9uIl5EgG8
-         D/TwGqpxVguBUgwC1bGolDrHcqaEP+osq91U2CQldF9rziF24tkMgliEMhjgP3QWJl+A
-         z/RHqsKK0/8xCEaKyP5eC0+nRg7+vslvjTYQ1d+laPPywGrOWllarsA//qMRcswUxDkd
-         5zM5+AIsapPqeWzyYZO1TKZL7K/lg1vE/MBSFtfzpDwnScbguqSkKsjukZ35DuJnaT0g
-         2S3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXNinNWyVxRHekRkrTZnCIFzj8DS1WWIZbT/ETYJ/x1Ise79PDyR5WDcQ20aotN1d5NtCea3CWx6/4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyXSRxsA7jwFlZ1GmAdw5PTLXgipc5DQwZ8WAk4vZ91K0XSlTAV
-	eLlxiDFiZE1SGArUF9g9WFZ4eDq8Svc5oUiIMQgIMl4UcTeD7Svyqeqq6vKbIo9GBRdIAq9eT/I
-	+UTMx/0x6RL26YPrXqfyjbwuXE6B/jYA2JPKjx4JBWMN+QK5i8DcG+f/v5Q/4vcjXvYXm5g==
-X-Gm-Gg: ASbGncvy3decuN0hTnFrPxJeus8IE9MGgaoWsBktDJftlCb/fuaL95gxG92NavYHOV7
-	LWbxUVD1R+RD9YBm2WitBShGVzsRfKaHxmoxrPahjxKSW1R+Nj2o50S9gY1JF2ZaHuz1xufQ9dv
-	uk1Av9GgvdeyGiKCZTMd6WNUxCMZ804A8wGbt/DMpUOQ4olBwNRqMYmOVSZpOsk/8NAZj+1WLAF
-	xx8v2ImOm5QrP7DIIXp5RXfATKV02GXYOGPpeKmII2qXU6G3g2wj7pDql27FGlKpg+8VVjhVLGJ
-	8t6xMAJpn4NidRmUoxr+o8q68aKDUsYyW7dH6Mau2g+j6u7HQ1Ae58W9enDJjcSEoJlXqsH+ax6
-	yVclJ6f/5X0g2qpejF+eE3Ltcm3KeLKkejQRq8Zt5X3aBEOHLLJrXo8w7Mb3pjhxVMQ==
-X-Received: by 2002:a05:620a:2544:b0:88e:6bac:92e7 with SMTP id af79cd13be357-8a7283cf657mr93233185a.44.1761596809052;
-        Mon, 27 Oct 2025 13:26:49 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHUEmCLFiys53M27OcwnIWGH/VtfZVuFONe30VKZoy1ylmoq5yRl+2RmIUCn1F3cGE5/JrVxw==
-X-Received: by 2002:a05:620a:2544:b0:88e:6bac:92e7 with SMTP id af79cd13be357-8a7283cf657mr93230885a.44.1761596808648;
-        Mon, 27 Oct 2025 13:26:48 -0700 (PDT)
-Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-89f24cd5617sm667155385a.19.2025.10.27.13.26.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Oct 2025 13:26:48 -0700 (PDT)
-Date: Mon, 27 Oct 2025 16:26:44 -0400
-From: Brian Masney <bmasney@redhat.com>
-To: Chen-Yu Tsai <wenst@chromium.org>
-Cc: Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] clk: tests: Add tests for clk lookup by name
-Message-ID: <aP_VhHGLj3-JvgTB@redhat.com>
-References: <20251015090701.2049164-1-wenst@chromium.org>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="D0FvDvo6"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 199381A16C2;
+	Mon, 27 Oct 2025 20:37:31 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id D91106062C;
+	Mon, 27 Oct 2025 20:37:30 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id B6F94102F2494;
+	Mon, 27 Oct 2025 21:36:42 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1761597449; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=ivu3nqaTqww2kM8ddgXsb86XR8Ecjso6qu9XWZHw9NQ=;
+	b=D0FvDvo6wBdzyM4yGf/Mo92JGsnDp3FEhnzQXToKT1lTmRgmCAobeQwwgIerEldSavB9Wj
+	8Fa1YqUSJN1a+KiX1LsgxoTiLAWFpjtTkZ/psXHq539twWXUsfVfZ1tOA47yFwLd40ImsE
+	G9WDXQxl4673JnnqnSaS0aJnztT1jPuWGeK5RQylZ1VZl0DiiBjKRSdLHbVPGru9aMBn/L
+	/NPFjf5YF1MLpjQf7UlDDcAIkfmZHS4oVHjAeodKNVAVJDdwuc8RjEgecO9ymeKN374J5m
+	aI0g1qxMk56Vwb3LCXgHJanQvqdAAA00oe5CNpFNb2x5v0Y/CqIa0frpfHITdQ==
+Date: Mon, 27 Oct 2025 21:36:40 +0100
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	David Miller <davem@davemloft.net>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, Joel Stanley <joel@jms.id.au>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	Crt Mori <cmo@melexis.com>, Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Jacky Huang <ychuang3@nuvoton.com>,
+	Shan-Chun Hung <schung@nuvoton.com>,
+	Yury Norov <yury.norov@gmail.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	Jakub Kicinski <kuba@kernel.org>, Alex Elder <elder@ieee.org>,
+	David Laight <david.laight.linux@gmail.com>,
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
+	Jason Baron <jbaron@akamai.com>, Borislav Petkov <bp@alien8.de>,
+	Tony Luck <tony.luck@intel.com>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Kim Seer Paller <kimseer.paller@analog.com>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Richard Genoud <richard.genoud@bootlin.com>,
+	Cosmin Tanislav <demonsingur@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Jianping Shen <Jianping.Shen@de.bosch.com>,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-renesas-soc@vger.kernel.org, linux-crypto@vger.kernel.org,
+	linux-edac@vger.kernel.org, qat-linux@intel.com,
+	linux-gpio@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
+	linux-iio@vger.kernel.org, linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 01/23] clk: at91: pmc: #undef field_{get,prep}()
+ before definition
+Message-ID: <20251027203640291d726b@mail.local>
+References: <cover.1761588465.git.geert+renesas@glider.be>
+ <a26cfb39f4ac309ffbff339ffa5f54db12bd8c12.1761588465.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -80,20 +86,46 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251015090701.2049164-1-wenst@chromium.org>
-User-Agent: Mutt/2.2.14 (2025-02-20)
+In-Reply-To: <a26cfb39f4ac309ffbff339ffa5f54db12bd8c12.1761588465.git.geert+renesas@glider.be>
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Wed, Oct 15, 2025 at 05:06:59PM +0800, Chen-Yu Tsai wrote:
-> Clk lookup (by name) recently gained some performance improvements at
-> the expense of more complexity within the lookup code.
+On 27/10/2025 19:41:35+0100, Geert Uytterhoeven wrote:
+> Prepare for the advent of globally available common field_get() and
+> field_prep() macros by undefining the symbols before defining local
+> variants.  This prevents redefinition warnings from the C preprocessor
+> when introducing the common macros later.
 > 
-> To make sure that this works as intended and doesn't break, add some
-> basic tests for this part of the CCF.
-> 
-> A new "clk_hw_lookup()" function is added purely for running kunit
-> tests.
-> 
-> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+> Suggested-by: Yury Norov <yury.norov@gmail.com>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Reviewed-by: Brian Masney <bmasney@redhat.com>
+Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
+> --
+> v5:
+>   - New.
+> ---
+>  drivers/clk/at91/pmc.h | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/clk/at91/pmc.h b/drivers/clk/at91/pmc.h
+> index 5daa32c4cf2540d7..78a87d31463e98b0 100644
+> --- a/drivers/clk/at91/pmc.h
+> +++ b/drivers/clk/at91/pmc.h
+> @@ -117,7 +117,9 @@ struct at91_clk_pms {
+>  	unsigned int parent;
+>  };
+>  
+> +#undef field_get
+>  #define field_get(_mask, _reg) (((_reg) & (_mask)) >> (ffs(_mask) - 1))
+> +#undef field_prep
+>  #define field_prep(_mask, _val) (((_val) << (ffs(_mask) - 1)) & (_mask))
+>  
+>  #define ndck(a, s) (a[s - 1].id + 1)
+> -- 
+> 2.43.0
+> 
+
+-- 
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
