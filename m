@@ -1,213 +1,215 @@
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51B3030CDA4;
-	Mon, 27 Oct 2025 15:46:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E8BA30C60C;
+	Mon, 27 Oct 2025 16:08:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761579994; cv=none; b=LLiP4OOtkwhjOZL46pwhEABIpqT2pB2i4zGWyIX0TG46ZPdpu5S0JDtcIHryvF5E+fjSlQM6MlMZvwwZE431QQXxrmHRXbb4nctbNFKHKESWx7SsjWomVtVXxiyFQCmmBTeSe2gyyc1dd1hR8OJl6aq/l5llM6xOuJURFkf4nZo=
+	t=1761581320; cv=none; b=X4NoJUruUn2xtnDSALVBtSs2yBgH4dLo6w0QWXYEA2Oa+UMJeqMw29EgVXfexLfm+IDuAx1vtE1x5uD5bPnawT0D4dTMHdQbqhxWQG9nePRuUZUZeNFqDY5Hgw5omtr1A6UVB8x4TNedaV06shJrcvNT9663+eit9C5IJ9R+gQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761579994; c=relaxed/simple;
-	bh=OgYwp+4Of+GnzM9iKojiEuv3CK3wd1DkCdWSWjoRKVg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ehjhVIgqp2Hhb5kYpSlhyoK7tP+OUWi5RyebsJxa2DUz1Cx5ihmgCIMMZBetcMFQPK+p5QU85TzeuETVciR2mnSe2mVy8rtjToCDI834DMYpDlh3G3iPmuvGOzDPvGZHLww6Vifan1byHCLmMGzQ77LPkfGmKziwSq0u/2ZX1Jc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-X-CSE-ConnectionGUID: irhTME7/SUuKH1gXI4bQ1w==
-X-CSE-MsgGUID: soVT05rAThO0UrNG9xdhPA==
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 28 Oct 2025 00:46:25 +0900
-Received: from localhost.localdomain (unknown [10.226.93.103])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 05AF64003EA1;
-	Tue, 28 Oct 2025 00:46:22 +0900 (JST)
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH 01/19] clk: renesas: r9a09g047: Add RSCI clocks/resets
-Date: Mon, 27 Oct 2025 15:45:48 +0000
-Message-ID: <20251027154615.115759-2-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251027154615.115759-1-biju.das.jz@bp.renesas.com>
-References: <20251027154615.115759-1-biju.das.jz@bp.renesas.com>
+	s=arc-20240116; t=1761581320; c=relaxed/simple;
+	bh=0qurQEcCeZYwnzmNk0lbdUhOqCeujh+OZZ7pr7d4vWA=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=YLyDRQMNWTeM6dO25cRGNlHZsqx/zW+ntLdrwp46ZicULLMc93GCxxnGAiYvFQehaqvxzCbt3yf3I/dtptFoF2CLOJiO49QxRSaCBxH4frLxDvoYsQIPsmahFOx/AE4s9zttkG0Qiy6WTo9ZBLP8XwANHTaTiJhcaZ2p1hyZk4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bg1mmsGy; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bg1mmsGy"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73763C4CEF1;
+	Mon, 27 Oct 2025 16:08:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761581319;
+	bh=0qurQEcCeZYwnzmNk0lbdUhOqCeujh+OZZ7pr7d4vWA=;
+	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
+	b=bg1mmsGyeYPsovM1F0Tq4nEw20gfWYynK3MHZ7jxJuJY17d7vtN6CIx7db4Q3pvu5
+	 puDkrsmy7UcPEk9/YB9PY1gbwXT9eHUKLt4fqTnuARzUokgMvBXp2IvGAA4vzj5Sjn
+	 ggpK0qqihbpjmlAHkS/EKn6i9xM7FjMcUh8ZH9w6ID6+7zhXwRu/w4riSqFJIp5FRJ
+	 4c7MNB+jl1JZX2epbGuIhYgMCi/XcJC60t7eXSh355R7OW0zbj/JHyr8tZ8eEKvTfn
+	 XI+W5Dl/UOIJ8BCWaWyuRpmuNy65UCSNiIDMfZNNOkm3rPwdCSkAxCcrGp9djd/z++
+	 66WZ+4huDCMXw==
+Message-ID: <7c5a1a6e-cad2-46c3-b5cd-3e92ca6d99a7@kernel.org>
+Date: Mon, 27 Oct 2025 17:08:31 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+From: Hans Verkuil <hverkuil+cisco@kernel.org>
+Subject: Re: [PATCH v5 00/23] tegra-video: add CSI support for Tegra20 and
+ Tegra30
+To: Svyatoslav Ryhel <clamor95@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Thierry Reding
+ <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>,
+ Sowjanya Komatineni <skomatineni@nvidia.com>,
+ Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Prashant Gaikwad <pgaikwad@nvidia.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Mikko Perttunen <mperttunen@nvidia.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ =?UTF-8?Q?Jonas_Schw=C3=B6bel?= <jonasschwoebel@yahoo.de>,
+ Dmitry Osipenko <digetx@gmail.com>,
+ Charan Pedumuru <charan.pedumuru@gmail.com>,
+ Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>, Aaron Kling
+ <webgeek1234@gmail.com>, Arnd Bergmann <arnd@arndb.de>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-staging@lists.linux.dev
+References: <20251022142051.70400-1-clamor95@gmail.com>
+Content-Language: en-US, nl
+In-Reply-To: <20251022142051.70400-1-clamor95@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Add RSCI clock and reset entries.
+Hi Svyatoslav,
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
- drivers/clk/renesas/r9a09g047-cpg.c | 126 ++++++++++++++++++++++++++++
- 1 file changed, 126 insertions(+)
+On 22/10/2025 16:20, Svyatoslav Ryhel wrote:
+> Add support for MIPI CSI device found in Tegra20 and Tegra30 SoC along
+> with a set of changes required for that.
 
-diff --git a/drivers/clk/renesas/r9a09g047-cpg.c b/drivers/clk/renesas/r9a09g047-cpg.c
-index 68f8b08bd16f..feb49caa9257 100644
---- a/drivers/clk/renesas/r9a09g047-cpg.c
-+++ b/drivers/clk/renesas/r9a09g047-cpg.c
-@@ -44,6 +44,9 @@ enum clk_ids {
- 	CLK_PLLCLN_DIV8,
- 	CLK_PLLCLN_DIV16,
- 	CLK_PLLCLN_DIV20,
-+	CLK_PLLCLN_DIV64,
-+	CLK_PLLCLN_DIV256,
-+	CLK_PLLCLN_DIV1024,
- 	CLK_PLLDTY_ACPU,
- 	CLK_PLLDTY_ACPU_DIV2,
- 	CLK_PLLDTY_ACPU_DIV4,
-@@ -142,6 +145,9 @@ static const struct cpg_core_clk r9a09g047_core_clks[] __initconst = {
- 	DEF_FIXED(".pllcln_div8", CLK_PLLCLN_DIV8, CLK_PLLCLN, 1, 8),
- 	DEF_FIXED(".pllcln_div16", CLK_PLLCLN_DIV16, CLK_PLLCLN, 1, 16),
- 	DEF_FIXED(".pllcln_div20", CLK_PLLCLN_DIV20, CLK_PLLCLN, 1, 20),
-+	DEF_FIXED(".pllcln_div64", CLK_PLLCLN_DIV64, CLK_PLLCLN, 1, 64),
-+	DEF_FIXED(".pllcln_div256", CLK_PLLCLN_DIV256, CLK_PLLCLN, 1, 256),
-+	DEF_FIXED(".pllcln_div1024", CLK_PLLCLN_DIV1024, CLK_PLLCLN, 1, 1024),
- 
- 	DEF_DDIV(".plldty_acpu", CLK_PLLDTY_ACPU, CLK_PLLDTY, CDDIV0_DIVCTL2, dtable_2_64),
- 	DEF_FIXED(".plldty_acpu_div2", CLK_PLLDTY_ACPU_DIV2, CLK_PLLDTY_ACPU, 1, 2),
-@@ -218,6 +224,106 @@ static const struct rzv2h_mod_clk r9a09g047_mod_clks[] __initconst = {
- 						BUS_MSTOP(5, BIT(13))),
- 	DEF_MOD("wdt_3_clk_loco",		CLK_QEXTAL, 5, 2, 2, 18,
- 						BUS_MSTOP(5, BIT(13))),
-+	DEF_MOD("rsci0_pclk",			CLK_PLLCM33_DIV16, 5, 13, 2, 29,
-+						BUS_MSTOP(11, BIT(3))),
-+	DEF_MOD("rsci0_tclk",			CLK_PLLCM33_DIV16, 5, 14, 2, 30,
-+						BUS_MSTOP(11, BIT(3))),
-+	DEF_MOD("rsci0_ps_ps3_n",		CLK_PLLCLN_DIV1024, 5, 15, 2, 31,
-+						BUS_MSTOP(11, BIT(3))),
-+	DEF_MOD("rsci0_ps_ps2_n",		CLK_PLLCLN_DIV256, 6, 0, 3, 0,
-+						BUS_MSTOP(11, BIT(3))),
-+	DEF_MOD("rsci0_ps_ps1_n",		CLK_PLLCLN_DIV64, 6, 1, 3, 1,
-+						BUS_MSTOP(11, BIT(3))),
-+	DEF_MOD("rsci1_pclk",			CLK_PLLCM33_DIV16, 6, 2, 3, 2,
-+						BUS_MSTOP(11, BIT(4))),
-+	DEF_MOD("rsci1_tclk",			CLK_PLLCM33_DIV16, 6, 3, 3, 3,
-+						BUS_MSTOP(11, BIT(4))),
-+	DEF_MOD("rsci1_ps_ps3_n",		CLK_PLLCLN_DIV1024, 6, 4, 3, 4,
-+						BUS_MSTOP(11, BIT(4))),
-+	DEF_MOD("rsci1_ps_ps2_n",		CLK_PLLCLN_DIV256, 6, 5, 3, 5,
-+						BUS_MSTOP(11, BIT(4))),
-+	DEF_MOD("rsci1_ps_ps1_n",		CLK_PLLCLN_DIV64, 6, 6, 3, 6,
-+						BUS_MSTOP(11, BIT(4))),
-+	DEF_MOD("rsci2_pclk",			CLK_PLLCM33_DIV16, 6, 7, 3, 7,
-+						BUS_MSTOP(11, BIT(5))),
-+	DEF_MOD("rsci2_tclk",			CLK_PLLCM33_DIV16, 6, 8, 3, 8,
-+						BUS_MSTOP(11, BIT(5))),
-+	DEF_MOD("rsci2_ps_ps3_n",		CLK_PLLCLN_DIV1024, 6, 9, 3, 9,
-+						BUS_MSTOP(11, BIT(5))),
-+	DEF_MOD("rsci2_ps_ps2_n",		CLK_PLLCLN_DIV256, 6, 10, 3, 10,
-+						BUS_MSTOP(11, BIT(5))),
-+	DEF_MOD("rsci2_ps_ps1_n",		CLK_PLLCLN_DIV64, 6, 11, 3, 11,
-+						BUS_MSTOP(11, BIT(5))),
-+	DEF_MOD("rsci3_pclk",			CLK_PLLCM33_DIV16, 6, 12, 3, 12,
-+						BUS_MSTOP(11, BIT(6))),
-+	DEF_MOD("rsci3_tclk",			CLK_PLLCM33_DIV16, 6, 13, 3, 13,
-+						BUS_MSTOP(11, BIT(6))),
-+	DEF_MOD("rsci3_ps_ps3_n",		CLK_PLLCLN_DIV1024, 6, 14, 3, 14,
-+						BUS_MSTOP(11, BIT(6))),
-+	DEF_MOD("rsci3_ps_ps2_n",		CLK_PLLCLN_DIV256, 6, 15, 3, 15,
-+						BUS_MSTOP(11, BIT(6))),
-+	DEF_MOD("rsci3_ps_ps1_n",		CLK_PLLCLN_DIV64, 7, 0, 3, 16,
-+						BUS_MSTOP(11, BIT(6))),
-+	DEF_MOD("rsci4_pclk",			CLK_PLLCM33_DIV16, 7, 1, 3, 17,
-+						BUS_MSTOP(11, BIT(7))),
-+	DEF_MOD("rsci4_tclk",			CLK_PLLCM33_DIV16, 7, 2, 3, 18,
-+						BUS_MSTOP(11, BIT(7))),
-+	DEF_MOD("rsci4_ps_ps3_n",		CLK_PLLCLN_DIV1024, 7, 3, 3, 19,
-+						BUS_MSTOP(11, BIT(7))),
-+	DEF_MOD("rsci4_ps_ps2_n",		CLK_PLLCLN_DIV256, 7, 4, 3, 20,
-+						BUS_MSTOP(11, BIT(7))),
-+	DEF_MOD("rsci4_ps_ps1_n",		CLK_PLLCLN_DIV64, 7, 5, 3, 21,
-+						BUS_MSTOP(11, BIT(7))),
-+	DEF_MOD("rsci5_pclk",			CLK_PLLCM33_DIV16, 7, 6, 3, 22,
-+						BUS_MSTOP(11, BIT(8))),
-+	DEF_MOD("rsci5_tclk",			CLK_PLLCM33_DIV16, 7, 7, 3, 23,
-+						BUS_MSTOP(11, BIT(8))),
-+	DEF_MOD("rsci5_ps_ps3_n",		CLK_PLLCLN_DIV1024, 7, 8, 3, 24,
-+						BUS_MSTOP(11, BIT(8))),
-+	DEF_MOD("rsci5_ps_ps2_n",		CLK_PLLCLN_DIV256, 7, 9, 3, 25,
-+						BUS_MSTOP(11, BIT(8))),
-+	DEF_MOD("rsci5_ps_ps1_n",		CLK_PLLCLN_DIV64, 7, 10, 3, 26,
-+						BUS_MSTOP(11, BIT(8))),
-+	DEF_MOD("rsci6_pclk",			CLK_PLLCM33_DIV16, 7, 11, 3, 27,
-+						BUS_MSTOP(11, BIT(9))),
-+	DEF_MOD("rsci6_tclk",			CLK_PLLCM33_DIV16, 7, 12, 3, 28,
-+						BUS_MSTOP(11, BIT(9))),
-+	DEF_MOD("rsci6_ps_ps3_n",		CLK_PLLCLN_DIV1024, 7, 13, 3, 29,
-+						BUS_MSTOP(11, BIT(9))),
-+	DEF_MOD("rsci6_ps_ps2_n",		CLK_PLLCLN_DIV256, 7, 14, 3, 30,
-+						BUS_MSTOP(11, BIT(9))),
-+	DEF_MOD("rsci6_ps_ps1_n",		CLK_PLLCLN_DIV64, 7, 15, 3, 31,
-+						BUS_MSTOP(11, BIT(9))),
-+	DEF_MOD("rsci7_pclk",			CLK_PLLCM33_DIV16, 8, 0, 4, 0,
-+						BUS_MSTOP(11, BIT(10))),
-+	DEF_MOD("rsci7_tclk",			CLK_PLLCM33_DIV16, 8, 1, 4, 1,
-+						BUS_MSTOP(11, BIT(10))),
-+	DEF_MOD("rsci7_ps_ps3_n",		CLK_PLLCLN_DIV1024, 8, 2, 4, 2,
-+						BUS_MSTOP(11, BIT(10))),
-+	DEF_MOD("rsci7_ps_ps2_n",		CLK_PLLCLN_DIV256, 8, 3, 4, 3,
-+						BUS_MSTOP(11, BIT(10))),
-+	DEF_MOD("rsci7_ps_ps1_n",		CLK_PLLCLN_DIV64, 8, 4, 4, 4,
-+						BUS_MSTOP(11, BIT(10))),
-+	DEF_MOD("rsci8_pclk",			CLK_PLLCM33_DIV16, 8, 5, 4, 5,
-+						BUS_MSTOP(11, BIT(11))),
-+	DEF_MOD("rsci8_tclk",			CLK_PLLCM33_DIV16, 8, 6, 4, 6,
-+						BUS_MSTOP(11, BIT(11))),
-+	DEF_MOD("rsci8_ps_ps3_n",		CLK_PLLCLN_DIV1024, 8, 7, 4, 7,
-+						BUS_MSTOP(11, BIT(11))),
-+	DEF_MOD("rsci8_ps_ps2_n",		CLK_PLLCLN_DIV256, 8, 8, 4, 8,
-+						BUS_MSTOP(11, BIT(11))),
-+	DEF_MOD("rsci8_ps_ps1_n",		CLK_PLLCLN_DIV64, 8, 9, 4, 9,
-+						BUS_MSTOP(11, BIT(11))),
-+	DEF_MOD("rsci9_pclk",			CLK_PLLCM33_DIV16, 8, 10, 4, 10,
-+						BUS_MSTOP(11, BIT(12))),
-+	DEF_MOD("rsci9_tclk",			CLK_PLLCM33_DIV16, 8, 11, 4, 11,
-+						BUS_MSTOP(11, BIT(12))),
-+	DEF_MOD("rsci9_ps_ps3_n",		CLK_PLLCLN_DIV1024, 8, 12, 4, 12,
-+						BUS_MSTOP(11, BIT(12))),
-+	DEF_MOD("rsci9_ps_ps2_n",		CLK_PLLCLN_DIV256, 8, 13, 4, 13,
-+						BUS_MSTOP(11, BIT(12))),
-+	DEF_MOD("rsci9_ps_ps1_n",		CLK_PLLCLN_DIV64, 8, 14, 4, 14,
-+						BUS_MSTOP(11, BIT(12))),
- 	DEF_MOD("scif_0_clk_pck",		CLK_PLLCM33_DIV16, 8, 15, 4, 15,
- 						BUS_MSTOP(3, BIT(14))),
- 	DEF_MOD("i3c_0_pclkrw",			CLK_PLLCLN_DIV16, 9, 0, 4, 16,
-@@ -351,6 +457,26 @@ static const struct rzv2h_reset r9a09g047_resets[] __initconst = {
- 	DEF_RST(7, 6, 3, 7),		/* WDT_1_RESET */
- 	DEF_RST(7, 7, 3, 8),		/* WDT_2_RESET */
- 	DEF_RST(7, 8, 3, 9),		/* WDT_3_RESET */
-+	DEF_RST(8, 1, 3, 18),		/* RSCI0_PRESETN */
-+	DEF_RST(8, 2, 3, 19),		/* RSCI0_TRESETN */
-+	DEF_RST(8, 3, 3, 20),		/* RSCI1_PRESETN */
-+	DEF_RST(8, 4, 3, 21),		/* RSCI1_TRESETN */
-+	DEF_RST(8, 5, 3, 22),		/* RSCI2_PRESETN */
-+	DEF_RST(8, 6, 3, 23),		/* RSCI2_TRESETN */
-+	DEF_RST(8, 7, 3, 24),		/* RSCI3_PRESETN */
-+	DEF_RST(8, 8, 3, 25),		/* RSCI3_TRESETN */
-+	DEF_RST(8, 9, 3, 26),		/* RSCI4_PRESETN */
-+	DEF_RST(8, 10, 3, 27),		/* RSCI4_TRESETN */
-+	DEF_RST(8, 11, 3, 28),		/* RSCI5_PRESETN */
-+	DEF_RST(8, 12, 3, 29),		/* RSCI5_TRESETN */
-+	DEF_RST(8, 13, 3, 30),		/* RSCI6_PRESETN */
-+	DEF_RST(8, 14, 3, 31),		/* RSCI6_TRESETN */
-+	DEF_RST(8, 15, 4, 0),		/* RSCI7_PRESETN */
-+	DEF_RST(9, 0, 4, 1),		/* RSCI7_TRESETN */
-+	DEF_RST(9, 1, 4, 2),		/* RSCI8_PRESETN */
-+	DEF_RST(9, 2, 4, 3),		/* RSCI8_TRESETN */
-+	DEF_RST(9, 3, 4, 4),		/* RSCI9_PRESETN */
-+	DEF_RST(9, 4, 4, 5),		/* RSCI9_TRESETN */
- 	DEF_RST(9, 5, 4, 6),		/* SCIF_0_RST_SYSTEM_N */
- 	DEF_RST(9, 6, 4, 7),		/* I3C_0_PRESETN */
- 	DEF_RST(9, 7, 4, 8),		/* I3C_0_TRESETN */
--- 
-2.43.0
+Other than patch 06/23 that looked iffy (although the original code was iffy as
+already), for which I posted a review, this series looks almost ready.
+
+Should the clk patches be merged together with the media patches? Or can those
+go in via the clk subsystem? If it is the latter, then I'll need an Acked-by from the
+clk subsystem maintainer.
+
+Regarding the bindings: all except 21/23 are Acked.
+
+I have one question regarding testing: in the past I tested this driver with a
+Jetson TX1 devkit and a camera sensor. One of the main reasons this driver is still
+in staging is that I never got that to work reliably: after 10-30 minutes it would
+lose sync and streaming would stop.
+
+Unfortunately I never had the time to dig deeper into that.
+
+So have you tested this with a camera sensor? And if so, does it stream reliably?
+I.e. just let it stream for 24 hours and see if that works.
+
+If it is reliable for you, then I think this driver should be moved to drivers/media.
+
+Regards,
+
+	Hans
+
+> 
+> ---
+> Changes in v2:
+> - vi_sensor gated through csus
+> - TEGRA30_CLK_CLK_MAX moved to clk-tegra30
+> - adjusted commit titles and messages
+> - clk_register_clkdev dropped from pad clock registration
+> - removed tegra30-vi/vip and used tegra20 fallback
+> - added separate csi schema for tegra20-csi and tegra30-csi
+> - fixet number of VI channels
+> - adjusted tegra_vi_out naming
+> - fixed yuv_input_format to main_input_format
+> - MIPI calibration refsctored for Tegra114+ and added support for
+>   pre-Tegra114 to use CSI as a MIPI calibration device
+> - switched ENOMEM to EBUSY
+> - added check into tegra_channel_get_remote_csi_subdev
+> - moved avdd-dsi-csi-supply into CSI
+> - next_fs_sp_idx > next_fs_sp_value
+> - removed host1x_syncpt_incr from framecounted syncpoint
+> - csi subdev request moved before frame cycle
+> 
+> Changes in v3:
+> - tegra20 and tegra30 csi schema merged
+> - removed unneeded properties and requirements from schema
+> - improved vendor specific properties description
+> - added tegra20 csus parent mux
+> - improved commit descriptions
+> - redesigned MIPI-calibration to expose less SoC related data into header
+> - commit "staging: media: tegra-video: csi: add support for SoCs with integrated
+>   MIPI calibration" dropped as unneeded
+> - improved tegra_channel_get_remote_device_subdev logic
+> - avdd-dsi-csi-supply moved from vi to csi for p2597 and p3450-0000
+> - software syncpoint counters switched to direct reading
+> - adjusted planar formats offset calculation
+> 
+> Changes in v4:
+> - removed ifdefs from tegra_mipi_driver
+> - document Tegra132 MIPI calibration device
+> - switched to use BIT macro in tegra114-mipi
+> - pinctrl changes moved to a separate patch
+> - ERESTARTSYS workaround preserved for now
+> - tegra_mipi_add_provider replaced with devm_tegra_mipi_add_provider
+> - reworked bytesperline and sizeimage calculaion
+> 
+> Changes in v5:
+> - dropped patch 1/24 of v4 since it was picked to pinctrl tree
+> - added reasoning for tegra132 comaptible into commit desctiption
+> - moved clocks into common section in tegra20-csi schema
+> - added note regarding ERESTARTSYS
+> ---
+> 
+> Svyatoslav Ryhel (23):
+>   clk: tegra: set CSUS as vi_sensor's gate for Tegra20, Tegra30 and
+>     Tegra114
+>   dt-bindings: clock: tegra30: Add IDs for CSI pad clocks
+>   clk: tegra30: add CSI pad clock gates
+>   dt-bindings: display: tegra: document Tegra30 VI and VIP
+>   staging: media: tegra-video: expand VI and VIP support to Tegra30
+>   staging: media: tegra-video: vi: adjust get_selection op check
+>   staging: media: tegra-video: vi: add flip controls only if no source
+>     controls are provided
+>   staging: media: tegra-video: csi: move CSI helpers to header
+>   gpu: host1x: convert MIPI to use operation function pointers
+>   dt-bindings: display: tegra: document Tegra132 MIPI calibration device
+>   staging: media: tegra-video: vi: improve logic of source requesting
+>   staging: media: tegra-video: csi: move avdd-dsi-csi-supply from VI to
+>     CSI
+>   arm64: tegra: move avdd-dsi-csi-supply into CSI node
+>   staging: media: tegra-video: tegra20: set correct maximum width and
+>     height
+>   staging: media: tegra-video: tegra20: add support for second output of
+>     VI
+>   staging: media: tegra-video: tegra20: adjust format align calculations
+>   staging: media: tegra-video: tegra20: set VI HW revision
+>   staging: media: tegra-video: tegra20: increase maximum VI clock
+>     frequency
+>   staging: media: tegra-video: tegra20: expand format support with
+>     RAW8/10 and YUV422/YUV420p 1X16
+>   staging: media: tegra-video: tegra20: adjust luma buffer stride
+>   dt-bindings: display: tegra: document Tegra20 and Tegra30 CSI
+>   ARM: tegra: add CSI nodes for Tegra20 and Tegra30
+>   staging: media: tegra-video: add CSI support for Tegra20 and Tegra30
+> 
+>  .../display/tegra/nvidia,tegra114-mipi.yaml   |   1 +
+>  .../display/tegra/nvidia,tegra20-csi.yaml     | 138 +++
+>  .../display/tegra/nvidia,tegra20-vi.yaml      |  19 +-
+>  .../display/tegra/nvidia,tegra20-vip.yaml     |   9 +-
+>  arch/arm/boot/dts/nvidia/tegra20.dtsi         |  19 +-
+>  arch/arm/boot/dts/nvidia/tegra30.dtsi         |  24 +-
+>  .../arm64/boot/dts/nvidia/tegra210-p2597.dtsi |   4 +-
+>  .../boot/dts/nvidia/tegra210-p3450-0000.dts   |   4 +-
+>  drivers/clk/tegra/clk-tegra114.c              |   7 +-
+>  drivers/clk/tegra/clk-tegra20.c               |  20 +-
+>  drivers/clk/tegra/clk-tegra30.c               |  21 +-
+>  drivers/gpu/drm/tegra/dsi.c                   |   1 +
+>  drivers/gpu/host1x/Makefile                   |   1 +
+>  drivers/gpu/host1x/mipi.c                     | 525 ++---------
+>  drivers/gpu/host1x/tegra114-mipi.c            | 483 +++++++++++
+>  drivers/staging/media/tegra-video/Makefile    |   1 +
+>  drivers/staging/media/tegra-video/csi.c       |  70 +-
+>  drivers/staging/media/tegra-video/csi.h       |  16 +
+>  drivers/staging/media/tegra-video/tegra20.c   | 820 +++++++++++++++---
+>  drivers/staging/media/tegra-video/vi.c        |  56 +-
+>  drivers/staging/media/tegra-video/vi.h        |   6 +-
+>  drivers/staging/media/tegra-video/video.c     |   8 +-
+>  drivers/staging/media/tegra-video/vip.c       |   4 +-
+>  include/dt-bindings/clock/tegra30-car.h       |   3 +-
+>  include/linux/host1x.h                        |  10 -
+>  include/linux/tegra-mipi-cal.h                |  57 ++
+>  26 files changed, 1657 insertions(+), 670 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-csi.yaml
+>  create mode 100644 drivers/gpu/host1x/tegra114-mipi.c
+>  create mode 100644 include/linux/tegra-mipi-cal.h
+> 
 
