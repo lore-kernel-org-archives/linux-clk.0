@@ -1,223 +1,339 @@
-Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazon11023090.outbound.protection.outlook.com [40.107.44.90])
+Received: from mail-m3291.qiye.163.com (mail-m3291.qiye.163.com [220.197.32.91])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E14233191C4;
-	Mon, 27 Oct 2025 08:47:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.44.90
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761554864; cv=fail; b=b3NIoCfdhuln7+k6bS3C3l534LX20xN9PpgxmwZDfoEEXYKV2Ro3oaZSSFddvSulvMBcP2AFYA4xsKvefpt5M7NKTjEQ1rvsoaoWBoKQazmZTofV8l2MDgLfcWeo8I1JvVLiVWa5CVG2xBr3V7bnEnlwbptmigiWklLWwFolg2w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761554864; c=relaxed/simple;
-	bh=9+T1fdfYKverjItwr5Qrv2UqjKZ7b07VYzM82Cst9xU=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=ngygHsAEb8rXn5m+4QmC3I3VaM80AEyZA47/CCs3qHODslC7SHx4neMOo8qGOP2ugaxty8Vc9F/SJhTEHZlf0EY2sJJRFmgGe6uCidTJf9dUCUVMaE6M/BFkTURncva9X/jm9sNDVCr3IKVPT1oVO8lDVBAZEAVQovagro1wD+s=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b=Rbhu4H1s; arc=fail smtp.client-ip=40.107.44.90
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amlogic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 513882FBE0E;
+	Mon, 27 Oct 2025 08:57:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.91
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761555440; cv=none; b=q1Qc58RwiVsnxjJ+462LsD56e8VGV8Ra9eFRxW8ulBrrD0UnLwshCQpJM4lNnYCAOIrzeQtjUkKimrNxMRB5N4fpk/jrmI1fK7naYmkwqrQijGVLc+2pPWBMWrmHKLUzZEp5sPREUGLzWxqWxKbc2uRCrsOrZgyEOYFptoYbw8M=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761555440; c=relaxed/simple;
+	bh=EhdkYAZpvq92qEuzwBPeEULq8Eb6F4v8ckyLbH1yC70=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=iwjn/uXAX6//eC26LMSPtJPVDgMis2UEKKcxGpDZW20kJHtrJXOsFWH7pArWrScKibCzFlBBti95/jgMHJRQwoqmu9TVcJMKA3FgCadOsz6hJKkdbzp4Ymmdw+CAXw0XeL63Mqj5VqD/O5TChBmVpBN0XjkCZsMxaTerOBPpLA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=bDwNXqDM; arc=none smtp.client-ip=220.197.32.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b="Rbhu4H1s"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=gUSOIpH7OI8EuFETsHApxP+UBNESThumtlorOD98pLf0QxGIjmCHCHE995d345YRMvR40lRuEmc/M3iABMocp3KpiaKc6iBSz3/TM1O02uly1Q1nPswM8rCmtP/B9334zyiiKg3mshAM5SvSFUxikxzJPuwcwO270fQjjicqODXgdeZ/oFuvZIIR3LGFfB8usjMk0br64kiQp11aDbvjPYjKXugq1X87Mlzo+ONdDjJcNNSBKmkqmfEoGEv0TnQiEkAp5vgc2p19ZV1WK1gCpBHMdbeYhyy1ZixEn5zPijM1itBQSUPWd+7DmCiiTIAcF1lg+tCSAYdWFrjB0Scdpg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=V/LwD2/UG2+N6HOaszl8a20y8EbFS1tUEw67A9Cc+Wk=;
- b=WB0Ljum5OBOucjgEdnyYX7z34FEixvBDkQ8642OlyQ0wVuHqxx0XK9AeIe/1FKYrcGe1nqbszLnot9XlFoGhWiUlEEzG+UG09yVdrBvMQRjPvaFTuOsm7lohAxThOH7meU89pjIyg0UdPbapX6lDT0c4JjXVojHR6vS2xNdce1FpSJ0uAnM88sAoylaYz4UBLX3ay0w3jluOCZmmNJcChR9Z6IJjc8R+8ZO1GTkrgNl4k6K/VBXgfpHWgqkwlavA74ttRL3V8VczrQ4o7GoDiQw2kL60cAYXzmsO/pIy1Mw/o7YiRAqRWT0mDGBxOQ/4s6o1NxTDAOExtflwtk0rug==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
- dkim=pass header.d=amlogic.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amlogic.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=V/LwD2/UG2+N6HOaszl8a20y8EbFS1tUEw67A9Cc+Wk=;
- b=Rbhu4H1svjtnDqncIewImjm/nDIZqtKUrViRcTN7gS6kZ2mkZIIp9E5hLyltvPZgxvDKqX52qswa2OttKzvaTg2tARlk+FY3CMARZPHosPejRAOQUUPYgkgmDmrTnHBAT11MJxXi39r042fh93ayRtoTGGS8pRo9Uz4ZznavBIeRPmEf/X0i1pLc5jTM/6eVbsAGNFozGD5OcNGfEbaqN60frlQObAGbfm+okbNr1Oyv0HoLMNZMbO2VElQEkD7/9GmGYNPSuUgkv52zuZDMo0BdydqeCXn/FFGFqxfQ2lApxOsNmhP+sLbyPVjS+KJ+ZGR0kcYCl09wJu4UKcd2jw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amlogic.com;
-Received: from KL1PR03MB5778.apcprd03.prod.outlook.com (2603:1096:820:6d::13)
- by SEYPR03MB9464.apcprd03.prod.outlook.com (2603:1096:101:2d7::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.17; Mon, 27 Oct
- 2025 08:47:36 +0000
-Received: from KL1PR03MB5778.apcprd03.prod.outlook.com
- ([fe80::e1e:5c95:a889:828e]) by KL1PR03MB5778.apcprd03.prod.outlook.com
- ([fe80::e1e:5c95:a889:828e%5]) with mapi id 15.20.9253.017; Mon, 27 Oct 2025
- 08:47:35 +0000
-Message-ID: <803c98f4-a9a4-4b85-94d3-38bf2d1e6eac@amlogic.com>
-Date: Mon, 27 Oct 2025 16:47:02 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] clk: divider: improve the execution efficiency of
- determine_rate()
-To: Stephen Boyd <sboyd@kernel.org>,
- Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251021-improve_efficiency_of_clk_divider-v1-0-e2bf7f625af6@amlogic.com>
- <20251021-improve_efficiency_of_clk_divider-v1-2-e2bf7f625af6@amlogic.com>
- <176144194442.3953.13998249458455926261@lazor>
-From: Chuan Liu <chuan.liu@amlogic.com>
-In-Reply-To: <176144194442.3953.13998249458455926261@lazor>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SG2P153CA0006.APCP153.PROD.OUTLOOK.COM (2603:1096::16) To
- KL1PR03MB5778.apcprd03.prod.outlook.com (2603:1096:820:6d::13)
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="bDwNXqDM"
+Received: from rockchip.. (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 27504ffd8;
+	Mon, 27 Oct 2025 16:41:50 +0800 (GMT+08:00)
+From: Elaine Zhang <zhangqing@rock-chips.com>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	sugar.zhang@rock-chips.com,
+	zhangqing@rock-chips.com,
+	heiko@sntech.de,
+	robh@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org,
+	conor+dt@kernel.org
+Cc: devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	huangtao@rock-chips.com,
+	finley.xiao@rock-chips.com
+Subject: [PATCH v5 1/7] clk: rockchip: Implement rockchip_clk_register_armclk_multi_pll()
+Date: Mon, 27 Oct 2025 16:41:41 +0800
+Message-Id: <20251027084147.4148739-2-zhangqing@rock-chips.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20251027084147.4148739-1-zhangqing@rock-chips.com>
+References: <20251027084147.4148739-1-zhangqing@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: KL1PR03MB5778:EE_|SEYPR03MB9464:EE_
-X-MS-Office365-Filtering-Correlation-Id: 421da696-aac0-4951-24c9-08de15357966
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?UHhZVVZSd29wZERGSHV5QlpwRE9oeEphL0FIUWNuL3FjVzRBWldxRzdiOVJQ?=
- =?utf-8?B?dzJuMjZkZWo3enVvVzhkZ2ZNaDZ0R3owUkdWelkvQnhTS1kraEY4aHE5V0l2?=
- =?utf-8?B?SFBtT3VBbVcxVXpwY0UvRy9xTDVsSm9KOFE1aGkwaldIdjZudDlBOThzYkIy?=
- =?utf-8?B?NGJiUUJjaFhMeis3U2tJNjdUeWZPT3Q3UXJVK2o1U1BFNytLbUZlNDRZalNL?=
- =?utf-8?B?R3d1c0cwMU0zRnNUUHNHN3lBL0NxK21BQVNCYmVrT2RRZDV5eTI5ZmkvOEhK?=
- =?utf-8?B?czVVUGQwSTUzaHN6dHpxZE53N2RNRGNBVm1YYkRTcjNuNXZjZkRVeGo5bDc4?=
- =?utf-8?B?aGhRQ0FiK0U1RWVGMmdvWDh1WnZtb3VubkhBQ0hCMDlnUDlwM2liQTh5NkFi?=
- =?utf-8?B?bUwwaFBvQkJkbzRvU3Y1cUhELy82SnhDemNPMWJLa1pjY3EvakdZbmdHTmJq?=
- =?utf-8?B?bCtnWnNPQkxHNXFwaFVZMVlPTWZielBNV0FtLzdCMjBJQ2hBZU84d05FM2RW?=
- =?utf-8?B?MDN5cW1tKzdKOXpUb3dIUG9WbHVrMlArc0pJWHB5MlVmb25ZSWN3Y29POGVM?=
- =?utf-8?B?KzVlcWZiYjVnSzRUakhJS0tCRWs0M2cwb2V5L0QrVUV0SElxK1FIY1BLaWt4?=
- =?utf-8?B?R0lNbXYxZ3NNS3NYbGhWcDBUWDFvK2krUzgwTktva2xJVm9abXEzaHdNR0ZZ?=
- =?utf-8?B?UHpKQTJxRW5KbEs3TkZhaXl1eVlNdGdiRUtsYUwwcVg5ZjAwZmtkZVJhaHFp?=
- =?utf-8?B?RlVXd0NxeWtsOVR3WnJFZ2MzOEtsbDZ4WnZQa09KT0RQUWp2ZnBFUDYxZUFu?=
- =?utf-8?B?MnNZOStzOGpVVThoTUh6T0dmZmlrK1VzSktxYTh5Q1lzZzhBTUJnVGFLVmln?=
- =?utf-8?B?SzNtbnRwQk9OU3hEMy9vZE1XRUJyMCs0SDFhK3JLazZzdzJHb00xVDBVN3pE?=
- =?utf-8?B?R1BFQ05QTGU4alBrNmtvS3hEelFpL0t0dGJPSVdkYU02a1hYZkpDL1B6YVlM?=
- =?utf-8?B?aGEzWGtuTng0a0VYK29VemFxcmRpY0szWWFkRG11WHRsSmJMdFBSSWlmalJW?=
- =?utf-8?B?SHFGM0h0anhVd2dRTE9Ua1M1cnlWV20xUnhnT0xROEZmbHJ0SWNFM1BWWC82?=
- =?utf-8?B?bnE1dFUxYndNMVhOUVcwNmQ1N2pxYTI0NG9HNFE1VDVzWXNkcmRQR3U1WDBq?=
- =?utf-8?B?THo4MTYzVkFiYUJPdU9uUHNadDJDV1pvdHZ4WEhkQ01kK1hZZm5mTTVLdnB6?=
- =?utf-8?B?dzRYN0VtR1d1c3duT0F4RVFGNTdIbXlSbWx6cGIwTjZvVmN4QVYwTEFEdGNO?=
- =?utf-8?B?algwemxqY09MaWhZbDVDdW9aRHRCbVN4RWtzam9lUkRPU1R1WE9mdkVKQjVG?=
- =?utf-8?B?NHJXZ1BveDRNNjhOanhiMm5wWHg4TllSLzlJRlpNYlloVDlMdmRGYzFJdDlW?=
- =?utf-8?B?b29Zakl5RExsWDBpb1FDWUR4T1hHWEErSEdzN0RWWGNBQVUycm9zZEo3MFlT?=
- =?utf-8?B?dzRVRTQvTjNycHJZS3pyV2FjczJWcXZhdW9LMEM2c0NIWnc5NzVYcW5MdWRL?=
- =?utf-8?B?Wk5nbGlOWWVLZjI0UzVJc3dyUW5MZ1NPenB4cklNV3dRaXV4SUNQZDVkeWlW?=
- =?utf-8?B?NHpJZzVNWHdnVFJaUHBWTm1qbzV0VEZEVmpZV1NRZnprajFUYUFnYUNzOVN2?=
- =?utf-8?B?UGp6U0ZLTWFvSUU4S2szU21GWVFQQWpLNlpvT0ZPOFF4amMwZU5uYy9LMmlE?=
- =?utf-8?B?K25kc3ZMMXpORmdqeFZEdURhWmVoUzAwZFZBbDhhZ0tXRTRCcmhhR3M5cjBv?=
- =?utf-8?B?TFZGbU5jVXpocXFiczdLMXVLaEZMR091clFYWTRqc05CckRwOEZDcjhHRXVK?=
- =?utf-8?B?bU9sUkpIdEV3OWFsKytyRWoyMndYMzFYc09jY3ZzRlM0KzV4cURIS3k3N3FB?=
- =?utf-8?Q?1tdGxNhKN+lPB0BDGF78xfWqLrocrtnK?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR03MB5778.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?WTc1V3JSL3hPTmRSUGY3MitDOHRLa1ErbDBmdHlXWVR0dWNmZGk0amMxNlh1?=
- =?utf-8?B?VXFTU3l2L1NqdnJERjRidDY5ZVdBUXRTUlVNWUpvY1lndFNSVEtBOW5SVWt0?=
- =?utf-8?B?WmJEbit4ZUM3TDVFTzh4TC9JQk5CZmQwZ1gwbGtMTWFqUHRHeEIzcUhaOGZv?=
- =?utf-8?B?LzYvVmtJNzlJZkNHc3JubjBYbG95UVBMWFZ4NG9KSDdhc1lsUjlid3Bhazl6?=
- =?utf-8?B?eXNMdlVERWpzcllTdFR5WFJmSEl4TEdqajIvbC9QNFhmOGFibDJGeUNJTUxn?=
- =?utf-8?B?WW4ya3dHa3JUTi9hRXl6dEF3eXN6RjZwWUdaa2VpelMxdGxFeExHaUh2MFVy?=
- =?utf-8?B?cFVaYjRjT2x0Rk5nSUJxQTF5ZU80SGhxUklKQjd2akQ3V0t1MlJkcnd2NlZD?=
- =?utf-8?B?WEQ4c0VGYVU4WEthNWt3VmlKTWU1TG9IV3ZjenVKY0tTakdhbnZNRVNmbEx3?=
- =?utf-8?B?UEdCYVpIaXE5bnUzQlVNQXArcmZTWFVnSlNSTGh2MlFKcmptLzd0d3FuU2R0?=
- =?utf-8?B?WXI5WURDZ1ByVVErVmF3cm1qMWFHZGQ5UzB2RjQ0eEdLMWhCZjdyVmZ2SXgx?=
- =?utf-8?B?aS81RWtrZUtaVG1oenBPc2crb2JFSTFrZVo1bXoyVnJSRXlyZVlOMTJYa21E?=
- =?utf-8?B?ZkFPM05FTmZrTU8zQnVHUGZELzZkR3NHTDk3dW9hRmNLNjJQK3c2Y0JJQkRz?=
- =?utf-8?B?UENTcG1RUWRhL1cwUnRTZFJjYkUzYTB2a21zeHBQbERTeW5PMmZ2Sm9vcWxF?=
- =?utf-8?B?cHpUT2ZRczhqT0drWDdFZVZ1MVZsSjQ4SXBpUXBBVFlUaE5jNGw1RkNoMURj?=
- =?utf-8?B?NTl6T2x1bzNHQWRVL3BzMVRyNHVQR01yNzh2czJNMUxKZE1JWVQyTEl4MGxT?=
- =?utf-8?B?MFVITXUrZWVTcnBadW5NRlhjeW94WGRIUTFNaE1TaURKTncwemNGalpJU0h5?=
- =?utf-8?B?dEJWaGszd0swSlpEc3RvTzFMUzc4VXJMWDdWb2pVVVlLL1I5MjJJV1dFY2sw?=
- =?utf-8?B?R1FwTlNZek9RZDR1a3RmVUVYRnN4ZXBWeTB5Qm9hU1EzNld3YkNDWWRsOWpN?=
- =?utf-8?B?a3BxQlBtdHlITUVYTVNvSVk3VXJ5NW95UVlrTnQybmhlT3ZrUUhjZ1RqOWJF?=
- =?utf-8?B?VFNiTHZHS1hRZEw3NGVBR2VFN2M5aG9BaytuNDRxUjRCcG5nd2FsNzByajFp?=
- =?utf-8?B?bDZ0TzMwNUsvU0xtYjBJZ0JhaGlzS0JFd3IvR1N3VUZCNUZkdGI4MjF2NFYy?=
- =?utf-8?B?UWN4K0s5N1NTTVNTRHpTVjVVRmMwVHlLSXcweFZKUzdyakErVmRDRWdjaWdT?=
- =?utf-8?B?cXJsaktDM0l4QVI0MmxZMURONFVXSFhKc0ppblh6MEV3YlRKUXh2b2h2Rjgr?=
- =?utf-8?B?TkZDbkpPTTVlT3FJTHM0TkZvL1JsVHA4TmhiRGREMktJZ3h3OWRQRlBFK2V5?=
- =?utf-8?B?N0ZYYVdDVkwrRnd2eStDMHgyUlEzQXJYeUd1aHZBMFJteTYxbFZuU1RJbWpq?=
- =?utf-8?B?SVBCNGRUNWIvemdtUHd0bmQwMGN1SEJHT1l3VHZGWk5PeTRKOTBhcUtIdUVX?=
- =?utf-8?B?MXZKdkJrVDVlZE1idTNyc3I3MTNDYVR1Wk9EYkZseDJ5a3NTcUtZbDM5d0tz?=
- =?utf-8?B?aDZobzB5citlcmtwUWxzQUh4dE00WTVZM054Y1BWUDlnWUFmaXgxWjhvazFN?=
- =?utf-8?B?VkNiQ0hjbllJSmh2Vzh0TDJZbzNFMUZtUysvUUdJSEhKbWJURlhnWUUrWGZt?=
- =?utf-8?B?U0ZUbVhkL0YyOSt0dWpQbjdMSS9TOTBzV2h6Zkx2SHQyRXZxb1QyM2hMUHRz?=
- =?utf-8?B?Tnd2Z3UrSWZaSkM0RWRCb2FHSERQSDBKVEFMWXM4RXMrVDFtcEJkTk1TaUFK?=
- =?utf-8?B?NC80Uzc1RnFpMXdqeXF1anl4dURFQk4rcndjSEJaVUdZRHdRdWd3bElBeWtV?=
- =?utf-8?B?blFMUEJKNUR1N0J5QmlnWW05Y3VpU2JtUU0wT2FoSkh0R0tON3ZZY0trR29j?=
- =?utf-8?B?YkdqVFNiWGxDTlBGT2h1Y0d3ZmgwZkpvODl0aVJET3ZzbDAzd21zb3Q4TjFG?=
- =?utf-8?B?NmJyMUNSOTRZTW0zclU4bWNKd2I4eXIrdHVlNnpMWVRtSTQyWTBLaGZLSFVq?=
- =?utf-8?Q?a+spURL30wbCVxtwcr1aj26FM?=
-X-OriginatorOrg: amlogic.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 421da696-aac0-4951-24c9-08de15357966
-X-MS-Exchange-CrossTenant-AuthSource: KL1PR03MB5778.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Oct 2025 08:47:35.1078
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: kDMhoB5isAgJaEzcY0P3l/UrjbjN1UdeQcvxIwimCfz1HcJayxqT2aJDNoHISg51rzsmz45v1PjUKLC5cAg9Rg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR03MB9464
+Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a9a24d4b3b103a3kunmca0e4b6150f5a3
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQxpIHVZJT0MfSExMSktJT0xWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+DKIM-Signature: a=rsa-sha256;
+	b=bDwNXqDMDuMDx1WX2SGjdFz8RVOoQSAPOLUU/y/s45RiR2GQNWAlkkc+J8mkM1U8QL1Kd+KkkCWYhy+cx0qXROGc22VehcDp1CVwqX9QyK3Muif2IjoenMB/iL/uvPLMd6E7W1ZanZ0rkxT4Sek+Sxhn5h5iTxXev/gd+C6L+lQ=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=Vt1xPRkUMcE8svXTy4dUISsmpUifWdbpaIRSmoEuGbY=;
+	h=date:mime-version:subject:message-id:from;
 
-Hi Stephen,
+The current path will have an independent PLL(LPLL\BPLL)
+exclusively for the CPU to use.
+As follows:
 
-Thanks for your review.
+            |-\
+    --lpll--|  \
+            |mux|--[gate]--[div]--clk_core--
+    --gpll--|  /
+            |-/
 
-On 10/26/2025 9:25 AM, Stephen Boyd wrote:
-> [ EXTERNAL EMAIL ]
-> 
-> Quoting Chuan Liu via B4 Relay (2025-10-21 03:12:31)
->> From: Chuan Liu <chuan.liu@amlogic.com>
->>
->> There is no need to evaluate further divider values once _is_best_div()
->> finds one that matches the target rate.
->>
->> Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
->> ---
->>   drivers/clk/clk-divider.c | 3 +++
->>   1 file changed, 3 insertions(+)
->>
->> diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
->> index 2601b6155afb..b92c4f800fa9 100644
->> --- a/drivers/clk/clk-divider.c
->> +++ b/drivers/clk/clk-divider.c
->> @@ -339,6 +339,9 @@ static int clk_divider_bestdiv(struct clk_hw *hw, struct clk_hw *parent,
->>                          best = now;
->>                          *best_parent_rate = parent_rate;
->>                  }
->> +
->> +               if (best == rate)
->> +                       break;
-> 
-> This needs a comment. I'm not even sure if it is correct either, because
-> the other exit from this loop happens if the parent rate can be
+The new chip does not have a dedicated PLL for the cpu;
+it is distributed nearby from the common PLL.
+If there are special frequency requirements that require the
+use of pvtpll, explanations will be submitted later.
 
-You're right.  Sorry, I was mainly focusing on the number of
-iterations in the for loop earlier and missed the fact that the
-parent clock directly participates in the division without changing.
+The clock path of new soc CPU simplified as follows:
 
-> unchanged. I don't think we have any KUnit tests for this file, so
-> please add some tests that deal with this case explicitly (the parent
-> rate being unchanged as the desirable part).
+    --gpll--|--\
+            |   \
+            |    \
+            |     \
+   --v0pll--| mux |--[gate]--[div]--clk_core--
+            |     /
+            |    /
+   --v1pll--|   /
+            |--/
 
-I'll take some time to get familiar with the principles and methods
-of KUnit testing, and I'd be happy to help improve it.
+Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+---
+ drivers/clk/rockchip/clk-cpu.c | 165 +++++++++++++++++++++++++++++++++
+ drivers/clk/rockchip/clk.c     |  24 +++++
+ drivers/clk/rockchip/clk.h     |  15 +++
+ 3 files changed, 204 insertions(+)
 
-> 
-> A general comment: these patches have no benefit described in the commit
-> text. Do you see any performance improvement with this patch? I sorta
-> doubt this really matters because the number of dividers are typically
-> small. A single sentence commit text that only says there is no need
-> doesn't convince me that any work has been put in to research why the
-> code was written this way or even prove that making this change improves
-> anything.
-
-This patch came about because I noticed that the mux has a similar
-logic:
-- Even after finding a suitable clock source, it continues to iterate
-through and calculate other sources (and even if a later source has
-the same rate, it won't replace the current one).
-
- From there, I went on to examine the divider logic, but I missed the
-detail that the parent clock doesn't change in the divider. Sorry
-that this unreasonable patch ended up taking up your time.
+diff --git a/drivers/clk/rockchip/clk-cpu.c b/drivers/clk/rockchip/clk-cpu.c
+index dcc9dcb597ae..6e91a3041a03 100644
+--- a/drivers/clk/rockchip/clk-cpu.c
++++ b/drivers/clk/rockchip/clk-cpu.c
+@@ -396,3 +396,168 @@ struct clk *rockchip_clk_register_cpuclk(const char *name,
+ 	kfree(cpuclk);
+ 	return ERR_PTR(ret);
+ }
++
++static int rockchip_cpuclk_multi_pll_pre_rate_change(struct rockchip_cpuclk *cpuclk,
++						     struct clk_notifier_data *ndata)
++{
++	unsigned long new_rate = roundup(ndata->new_rate, 1000);
++	const struct rockchip_cpuclk_rate_table *rate;
++	unsigned long flags;
++
++	rate = rockchip_get_cpuclk_settings(cpuclk, new_rate);
++	if (!rate) {
++		pr_err("%s: Invalid rate : %lu for cpuclk\n",
++		       __func__, new_rate);
++		return -EINVAL;
++	}
++
++	if (new_rate > ndata->old_rate) {
++		spin_lock_irqsave(cpuclk->lock, flags);
++		rockchip_cpuclk_set_dividers(cpuclk, rate);
++		spin_unlock_irqrestore(cpuclk->lock, flags);
++	}
++
++	return 0;
++}
++
++static int rockchip_cpuclk_multi_pll_post_rate_change(struct rockchip_cpuclk *cpuclk,
++						      struct clk_notifier_data *ndata)
++{
++	unsigned long new_rate = roundup(ndata->new_rate, 1000);
++	const struct rockchip_cpuclk_rate_table *rate;
++	unsigned long flags;
++
++	rate = rockchip_get_cpuclk_settings(cpuclk, new_rate);
++	if (!rate) {
++		pr_err("%s: Invalid rate : %lu for cpuclk\n",
++		       __func__, new_rate);
++		return -EINVAL;
++	}
++
++	if (new_rate < ndata->old_rate) {
++		spin_lock_irqsave(cpuclk->lock, flags);
++		rockchip_cpuclk_set_dividers(cpuclk, rate);
++		spin_unlock_irqrestore(cpuclk->lock, flags);
++	}
++
++	return 0;
++}
++
++static int rockchip_cpuclk_multi_pll_notifier_cb(struct notifier_block *nb,
++						 unsigned long event, void *data)
++{
++	struct clk_notifier_data *ndata = data;
++	struct rockchip_cpuclk *cpuclk = to_rockchip_cpuclk_nb(nb);
++	int ret = 0;
++
++	pr_debug("%s: event %lu, old_rate %lu, new_rate: %lu\n",
++		 __func__, event, ndata->old_rate, ndata->new_rate);
++	if (event == PRE_RATE_CHANGE)
++		ret = rockchip_cpuclk_multi_pll_pre_rate_change(cpuclk, ndata);
++	else if (event == POST_RATE_CHANGE)
++		ret = rockchip_cpuclk_multi_pll_post_rate_change(cpuclk, ndata);
++
++	return notifier_from_errno(ret);
++}
++
++struct clk *rockchip_clk_register_cpuclk_multi_pll(const char *name,
++						   const char *const *parent_names,
++						   u8 num_parents, void __iomem *base,
++						   int muxdiv_offset, u8 mux_shift,
++						   u8 mux_width, u8 mux_flags,
++						   int div_offset, u8 div_shift,
++						   u8 div_width, u8 div_flags,
++						   unsigned long flags, spinlock_t *lock,
++						   const struct rockchip_cpuclk_rate_table *rates,
++						   int nrates)
++{
++	struct rockchip_cpuclk *cpuclk;
++	struct clk_hw *hw;
++	struct clk_mux *mux = NULL;
++	struct clk_divider *div = NULL;
++	const struct clk_ops *mux_ops = NULL, *div_ops = NULL;
++	int ret;
++
++	if (num_parents > 1) {
++		mux = kzalloc(sizeof(*mux), GFP_KERNEL);
++		if (!mux)
++			return ERR_PTR(-ENOMEM);
++
++		mux->reg = base + muxdiv_offset;
++		mux->shift = mux_shift;
++		mux->mask = BIT(mux_width) - 1;
++		mux->flags = mux_flags;
++		mux->lock = lock;
++		mux_ops = (mux_flags & CLK_MUX_READ_ONLY) ? &clk_mux_ro_ops
++							: &clk_mux_ops;
++	}
++
++	if (div_width > 0) {
++		div = kzalloc(sizeof(*div), GFP_KERNEL);
++		if (!div) {
++			ret = -ENOMEM;
++			goto free_mux;
++		}
++
++		div->flags = div_flags;
++		if (div_offset)
++			div->reg = base + div_offset;
++		else
++			div->reg = base + muxdiv_offset;
++		div->shift = div_shift;
++		div->width = div_width;
++		div->lock = lock;
++		div_ops = (div_flags & CLK_DIVIDER_READ_ONLY)
++						? &clk_divider_ro_ops
++						: &clk_divider_ops;
++	}
++
++	hw = clk_hw_register_composite(NULL, name, parent_names, num_parents,
++				       mux ? &mux->hw : NULL, mux_ops,
++				       div ? &div->hw : NULL, div_ops,
++				       NULL, NULL, flags);
++	if (IS_ERR(hw)) {
++		ret = PTR_ERR(hw);
++		goto free_div;
++	}
++
++	cpuclk = kzalloc(sizeof(*cpuclk), GFP_KERNEL);
++	if (!cpuclk) {
++		ret = -ENOMEM;
++		goto unregister_clk;
++	}
++
++	cpuclk->reg_base = base;
++	cpuclk->lock = lock;
++	cpuclk->clk_nb.notifier_call = rockchip_cpuclk_multi_pll_notifier_cb;
++	ret = clk_notifier_register(hw->clk, &cpuclk->clk_nb);
++	if (ret) {
++		pr_err("%s: failed to register clock notifier for %s\n",
++		       __func__, name);
++		goto free_cpuclk;
++	}
++
++	if (nrates > 0) {
++		cpuclk->rate_count = nrates;
++		cpuclk->rate_table = kmemdup(rates,
++					     sizeof(*rates) * nrates,
++					     GFP_KERNEL);
++		if (!cpuclk->rate_table) {
++			ret = -ENOMEM;
++			goto free_cpuclk;
++		}
++	}
++
++	return hw->clk;
++
++free_cpuclk:
++	kfree(cpuclk);
++unregister_clk:
++	clk_hw_unregister_composite(hw);
++free_div:
++	kfree(div);
++free_mux:
++	kfree(mux);
++
++	return ERR_PTR(ret);
++}
+diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
+index 19caf26c991b..2601df3b1066 100644
+--- a/drivers/clk/rockchip/clk.c
++++ b/drivers/clk/rockchip/clk.c
+@@ -722,6 +722,30 @@ void rockchip_clk_register_armclk(struct rockchip_clk_provider *ctx,
+ }
+ EXPORT_SYMBOL_GPL(rockchip_clk_register_armclk);
+ 
++void rockchip_clk_register_armclk_multi_pll(struct rockchip_clk_provider *ctx,
++					    struct rockchip_clk_branch *list,
++					    const struct rockchip_cpuclk_rate_table *rates,
++					    int nrates)
++{
++	struct clk *clk;
++
++	clk = rockchip_clk_register_cpuclk_multi_pll(list->name, list->parent_names,
++						     list->num_parents, ctx->reg_base,
++						     list->muxdiv_offset, list->mux_shift,
++						     list->mux_width, list->mux_flags,
++						     list->div_offset, list->div_shift,
++						     list->div_width, list->div_flags,
++						     list->flags, &ctx->lock, rates, nrates);
++	if (IS_ERR(clk)) {
++		pr_err("%s: failed to register clock %s: %ld\n",
++		       __func__, list->name, PTR_ERR(clk));
++		return;
++	}
++
++	rockchip_clk_set_lookup(ctx, clk, list->id);
++}
++EXPORT_SYMBOL_GPL(rockchip_clk_register_armclk_multi_pll);
++
+ void rockchip_clk_protect_critical(const char *const clocks[],
+ 				   int nclocks)
+ {
+diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
+index 7c5e74c7a2e2..23653a942403 100644
+--- a/drivers/clk/rockchip/clk.h
++++ b/drivers/clk/rockchip/clk.h
+@@ -622,6 +622,17 @@ struct clk *rockchip_clk_register_cpuclk(const char *name,
+ 			const struct rockchip_cpuclk_rate_table *rates,
+ 			int nrates, void __iomem *reg_base, spinlock_t *lock);
+ 
++struct clk *rockchip_clk_register_cpuclk_multi_pll(const char *name,
++						   const char *const *parent_names,
++						   u8 num_parents, void __iomem *base,
++						   int muxdiv_offset, u8 mux_shift,
++						   u8 mux_width, u8 mux_flags,
++						   int div_offset, u8 div_shift,
++						   u8 div_width, u8 div_flags,
++						   unsigned long flags, spinlock_t *lock,
++						   const struct rockchip_cpuclk_rate_table *rates,
++						   int nrates);
++
+ struct clk *rockchip_clk_register_mmc(const char *name,
+ 				const char *const *parent_names, u8 num_parents,
+ 				void __iomem *reg,
+@@ -1208,6 +1219,10 @@ void rockchip_clk_register_armclk(struct rockchip_clk_provider *ctx,
+ 			const struct rockchip_cpuclk_reg_data *reg_data,
+ 			const struct rockchip_cpuclk_rate_table *rates,
+ 			int nrates);
++void rockchip_clk_register_armclk_multi_pll(struct rockchip_clk_provider *ctx,
++					    struct rockchip_clk_branch *list,
++					    const struct rockchip_cpuclk_rate_table *rates,
++					    int nrates);
+ void rockchip_clk_protect_critical(const char *const clocks[], int nclocks);
+ void rockchip_register_restart_notifier(struct rockchip_clk_provider *ctx,
+ 					unsigned int reg, void (*cb)(void));
+-- 
+2.34.1
 
