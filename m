@@ -1,38 +1,38 @@
 Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 172282FB63B;
-	Mon, 27 Oct 2025 11:13:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFB682FC871;
+	Mon, 27 Oct 2025 11:13:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761563632; cv=none; b=L8n6J49ocvJLnzF8t6D4UBhPMkM4pNJ7i5yASmkATeT8ICXPsq/UqjMLC9c0MBoucpUXX2VkJ0D3PNmSubcq/1+3xHFaCtCz2kWlFIII+4JWlAtgopI+vkXaLAf7n6FRPKy8n6g+uEK7wQgP8Syc13TxjwTqIuRIhYXAIF+0T0E=
+	t=1761563634; cv=none; b=HYKr25Yfp/ImQK7cPgK/Sc6StMTMj581nfOg3nMUoUq3qlVhJJU/FkWIORycFNhPr7NueQFYfHsYtQOPZsQL6iSeqPy4TtSLEXPTNH+iWUnhcCRDAnlqsh16ni74V0cRzOGkvY3mjrtbSw6jhjYF94V7jPainvbT/edEqDfSLHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761563632; c=relaxed/simple;
-	bh=f5P3+e3xtzKeCpgjf0REjVgwacDa/HF6QyCwbdP8mxs=;
+	s=arc-20240116; t=1761563634; c=relaxed/simple;
+	bh=ucrpNpirVQvPM327pg6rTANwRDYsaRl287bHhoFYCAc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GQjtr8ggIZQZ7JaZ8ZtbraT1A2LEfsVguomJ5aYN9YRf/vVxJgaMADYaDTsFHlFUTYSsS80Bffn9aTMWhjMIJZ5i2GOygDThtcTUW3Glr/FMMNnilHuFKMrrsmlXm1ML+vI8dV142b3yZJ/WJCfTJ8rpNJB09uVq23/jYyJ90/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Xyxvd/U1; arc=none smtp.client-ip=148.251.105.195
+	 MIME-Version; b=OYb7D6ZhweK6x49nmITjgeevyLPoNXruvgshtcj/i1BF+yZzEA0rJKIesK8zrJnJyHd1OvobVq0ttIjKwCyPiOSexgNmT9RDWR9MVOtDn12riUlVuXn0veS6r6910U0YB+kX75z89hQy5ztxhobKLvjlj1gt9m3CN/nPyy9QEjI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=FCs0edno; arc=none smtp.client-ip=148.251.105.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Xyxvd/U1"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="FCs0edno"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1761563629;
-	bh=f5P3+e3xtzKeCpgjf0REjVgwacDa/HF6QyCwbdP8mxs=;
+	s=mail; t=1761563630;
+	bh=ucrpNpirVQvPM327pg6rTANwRDYsaRl287bHhoFYCAc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Xyxvd/U1O2a3lCyj/QysGL0noPhkvEb7ZearpAdcQoN6BXRe8Dt7PpdbzbncKghY8
-	 jgrCcHOhdOxIkemvrtoxwVUERBEfcSICh++GmgL7Jso0rOgCl2Woehj0iDdQ+qGIA4
-	 cK/yK2FfFbFJtuW1AHq7t7IDgMg3PSDjf6LLGYI7hyqpiR7ZjGELWKVKpxJq1IZNie
-	 xOzwvxEtrRC30UTtyFx1KOo+rsMYUo2+hNTtaN8QakQlIlyGmgk+h4e0psdbZ7/jct
-	 tXuVgNUFQ7cI5XkmiIbGLhF/rDJLywAyM0QLJPTt/B0u+grXtAld7yOkQ3zvsZkiDP
-	 lJLhahC/Mxh4w==
+	b=FCs0ednoSHr8wECBLTOdDOvYrQt2Qrw38wbiQycTkb1wWBRKSAS3ZoZfMatuoYb3l
+	 aAK3pKR5dqgNdCG+svR4/JFHSVgp0xavNfvMcPNoTtGDTam1yKsf/J7cyvxGPWO3QZ
+	 sphyvUi3rEfETvHN9cOl+OlUOAs4SnPve/4dnEQMISWMB1r18OZmG4lofATZrmCJtA
+	 pU7zDZdWVObi20/YrUDuLgDYwv7Woy3l325lRG8VRx78yydJ3glukod4QvZ/oTPu/C
+	 S3ek2WNLCeH8OpNlwOUzOvjbHNtjOkIaRLKpx8n3AaKiBZzvVX++AtdOf3v5gbFrK+
+	 B9WU8JNA9DPxA==
 Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id ADD0817E1413;
-	Mon, 27 Oct 2025 12:13:48 +0100 (CET)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 4E30C17E141E;
+	Mon, 27 Oct 2025 12:13:50 +0100 (CET)
 From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 To: sboyd@kernel.org
 Cc: mturquette@baylibre.com,
@@ -51,9 +51,9 @@ Cc: mturquette@baylibre.com,
 	linux-arm-kernel@lists.infradead.org,
 	linux-mediatek@lists.infradead.org,
 	kernel@collabora.com
-Subject: [PATCH v2 4/7] clk: mediatek: Add and wire up mtk_spmi_clk_register_gates()
-Date: Mon, 27 Oct 2025 12:13:40 +0100
-Message-ID: <20251027111343.21723-5-angelogioacchino.delregno@collabora.com>
+Subject: [PATCH v2 6/7] dt-bindings: clock: Describe MT6685 PM/Clock IC Clock Controller
+Date: Mon, 27 Oct 2025 12:13:42 +0100
+Message-ID: <20251027111343.21723-7-angelogioacchino.delregno@collabora.com>
 X-Mailer: git-send-email 2.51.1
 In-Reply-To: <20251027111343.21723-1-angelogioacchino.delregno@collabora.com>
 References: <20251027111343.21723-1-angelogioacchino.delregno@collabora.com>
@@ -65,81 +65,82 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In preparation for adding means to register SPMI clock controllers
-add a new mtk_spmi_clk_register_gates() function and wire it up to
-mtk_clk_simple_probe_internal().
+Add bindings to describe the SCK_TOP clock controller embedded
+in the MT6685 IC, reachable over the SPMI bus.
 
 Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 ---
- drivers/clk/mediatek/clk-gate.c | 10 ++++++++++
- drivers/clk/mediatek/clk-gate.h |  6 ++++++
- drivers/clk/mediatek/clk-mtk.c  |  8 ++++++--
- 3 files changed, 22 insertions(+), 2 deletions(-)
+ .../bindings/clock/mediatek,mt6685-clock.yaml | 36 +++++++++++++++++++
+ .../dt-bindings/clock/mediatek,mt6685-clock.h | 17 +++++++++
+ 2 files changed, 53 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/mediatek,mt6685-clock.yaml
+ create mode 100644 include/dt-bindings/clock/mediatek,mt6685-clock.h
 
-diff --git a/drivers/clk/mediatek/clk-gate.c b/drivers/clk/mediatek/clk-gate.c
-index 8d1cc6a98a5f..1bc09c5ca897 100644
---- a/drivers/clk/mediatek/clk-gate.c
-+++ b/drivers/clk/mediatek/clk-gate.c
-@@ -319,6 +319,16 @@ int mtk_clk_register_gates(struct device *dev, struct device_node *node,
- }
- EXPORT_SYMBOL_GPL(mtk_clk_register_gates);
- 
-+int mtk_spmi_clk_register_gates(struct device *dev, struct device_node *node,
-+				const struct mtk_gate *clks, int num,
-+				struct clk_hw_onecell_data *clk_data,
-+				struct regmap *regmap)
-+{
-+	return mtk_clk_register_all_gates(dev, node, regmap, NULL,
-+					  clks, num, clk_data);
-+}
-+EXPORT_SYMBOL_GPL(mtk_spmi_clk_register_gates);
+diff --git a/Documentation/devicetree/bindings/clock/mediatek,mt6685-clock.yaml b/Documentation/devicetree/bindings/clock/mediatek,mt6685-clock.yaml
+new file mode 100644
+index 000000000000..fb8703f7ee61
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/mediatek,mt6685-clock.yaml
+@@ -0,0 +1,36 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/mediatek,mt6685-clock.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
- void mtk_clk_unregister_gates(const struct mtk_gate *clks, int num,
- 			      struct clk_hw_onecell_data *clk_data)
- {
-diff --git a/drivers/clk/mediatek/clk-gate.h b/drivers/clk/mediatek/clk-gate.h
-index 4f05b9855dae..924219344021 100644
---- a/drivers/clk/mediatek/clk-gate.h
-+++ b/drivers/clk/mediatek/clk-gate.h
-@@ -14,6 +14,7 @@ struct clk_hw_onecell_data;
- struct clk_ops;
- struct device;
- struct device_node;
-+struct regmap;
- 
- extern const struct clk_ops mtk_clk_gate_ops_setclr;
- extern const struct clk_ops mtk_clk_gate_ops_setclr_inv;
-@@ -57,6 +58,11 @@ int mtk_clk_register_gates(struct device *dev, struct device_node *node,
- 			   const struct mtk_gate *clks, int num,
- 			   struct clk_hw_onecell_data *clk_data);
- 
-+int mtk_spmi_clk_register_gates(struct device *dev, struct device_node *node,
-+				const struct mtk_gate *clks, int num,
-+				struct clk_hw_onecell_data *clk_data,
-+				struct regmap *regmap);
++title: MediaTek Clock Controller for MT6685 SPMI PM/Clock IC
 +
- void mtk_clk_unregister_gates(const struct mtk_gate *clks, int num,
- 			      struct clk_hw_onecell_data *clk_data);
- 
-diff --git a/drivers/clk/mediatek/clk-mtk.c b/drivers/clk/mediatek/clk-mtk.c
-index bf57c65b01ff..a33011358f08 100644
---- a/drivers/clk/mediatek/clk-mtk.c
-+++ b/drivers/clk/mediatek/clk-mtk.c
-@@ -552,8 +552,12 @@ int mtk_clk_simple_probe_internal(struct platform_device *pdev,
- 	}
- 
- 	if (mcd->clks) {
--		r = mtk_clk_register_gates(&pdev->dev, node, mcd->clks,
--					   mcd->num_clks, clk_data);
-+		if (regmap)
-+			r = mtk_spmi_clk_register_gates(&pdev->dev, node, mcd->clks,
-+							mcd->num_clks, clk_data, regmap);
-+		else
-+			r = mtk_clk_register_gates(&pdev->dev, node, mcd->clks,
-+						   mcd->num_clks, clk_data);
- 		if (r)
- 			goto unregister_dividers;
- 	}
++maintainers:
++  - AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
++
++description: |
++  The clock architecture in MediaTek PMICs+Clock ICs is structured like below:
++  Crystal(XO) or Internal ClockGen -->
++          dividers -->
++                  muxes -->
++                          clock gate
++
++  This device provides clock gate control in different IP blocks.
++
++properties:
++  compatible:
++    const: mediatek,mt6685-sck-top
++
++  reg:
++    maxItems: 1
++
++  '#clock-cells':
++    const: 1
++
++required:
++  - compatible
++  - reg
++  - '#clock-cells'
++
++additionalProperties: false
+diff --git a/include/dt-bindings/clock/mediatek,mt6685-clock.h b/include/dt-bindings/clock/mediatek,mt6685-clock.h
+new file mode 100644
+index 000000000000..acc5e2e15ce1
+--- /dev/null
++++ b/include/dt-bindings/clock/mediatek,mt6685-clock.h
+@@ -0,0 +1,17 @@
++/* SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause */
++/*
++ * Copyright (c) 2025 Collabora Ltd.
++ *                    AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
++ */
++
++#ifndef _DT_BINDINGS_CLK_MT6685_H
++#define _DT_BINDINGS_CLK_MT6685_H
++
++/* SCK_TOP_CKPDN */
++#define CLK_RTC_SEC_MCLK		0
++#define CLK_RTC_EOSC32			1
++#define CLK_RTC_SEC_32K			2
++#define CLK_RTC_MCLK			3
++#define CLK_RTC_32K			4
++
++#endif /* _DT_BINDINGS_CLK_MT6685_H */
 -- 
 2.51.1
 
