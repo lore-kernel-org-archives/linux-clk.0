@@ -1,56 +1,49 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DF4230AD10;
-	Mon, 27 Oct 2025 14:06:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CCC3306B1A;
+	Mon, 27 Oct 2025 14:06:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761573994; cv=none; b=GUCUpBuaKLxLR7EFiD0PuQZ3lvWClvd7c0TDs9AUozSVbeLRTTgXuMzzkclqH7+TFfqwNSG98qeDFqPrUP/+CPFz1rJ/G1aAoFobZapzKKJixb2SoE9ahQLc1CZlzCAjt/+OdeoligZbc/sLwWZkjFM21p0fJaNDakJBmR2buKM=
+	t=1761573997; cv=none; b=UVckN32p6CaovnF/JPLCluz1VpHc31aMlfzPI9pj0SpFfVw5QEGk8rT3a/pQVqB1Qaw2EIolocFB9YYVsOFRiawKMbDoNGIQOkucKpkoffQaIhoeSynjWsVpK621U2uVwHJUSZfjl18xEQTDEYrTQmI6QpwuWZ0H+AAsTqmpX8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761573994; c=relaxed/simple;
-	bh=QYT+Go/B5vKb+uKtNJ6OHFJJ9fIKx9dRJXaI27N7JHM=;
+	s=arc-20240116; t=1761573997; c=relaxed/simple;
+	bh=RC/N8kYs/btrHrDEGthc/bqFWFgmuClfeq+/3MsnWJo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XzfJekoiadZSEqVFobFcbHWRQMiOZoFEYoTkdZog34tzRidQLj1OKWOBssgBn6bF3Nu0/Uf5i2GfWTsAtqXxy24JmeZAFTqO3J3GndbGKt0YyQeX9y8Cscl32bYd/2nvIlXf+H576M/1A2Qjm2+LeovpbSVDYmYia3OBv22v5kA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MTIL6WRS; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=fukBcaTpRDqBb5OzvBzuTImtkRN7sc8PZFxxIp+9bE1lzrqiLT5o3ClTCbID3gxulOKFM4Y32nSvEKnblcQlBYdqE6AgCUq+6/hCtd0y/lTP2godV9yVcFJLbo+22I4n7XqTeLf2ZH8Syuinp6BBNb8rItKVX0Pw+oWnJoDIQMw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bVzZxIJ+; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MTIL6WRS"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E547C113D0;
-	Mon, 27 Oct 2025 14:06:32 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bVzZxIJ+"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD6F3C4CEFF;
+	Mon, 27 Oct 2025 14:06:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761573993;
-	bh=QYT+Go/B5vKb+uKtNJ6OHFJJ9fIKx9dRJXaI27N7JHM=;
+	s=k20201202; t=1761573996;
+	bh=RC/N8kYs/btrHrDEGthc/bqFWFgmuClfeq+/3MsnWJo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=MTIL6WRS9til3BqgOyvmMD4W+wJcKaDdgtOBAfEIXQJ3NdX/egkY3dlEpk15fOpxV
-	 j1Apzm309bKfFRrp9fZ7H72IPN6ZC+HiOoMyoLRc6VCngaAHia3PG+Br5H5cXq8e0u
-	 MjriOK5zBN1QghSDtDbbMxrHtAia9kYa7N8vxiqoHe0rUwG+dM94l0aP/Yczf7ULTR
-	 EDAYyvk1rU9oEXots+oIon3kz/MobgskNQdWi740505kyYv8/GX+HxtSpmqKNQvCoR
-	 WeHdFznASTXQGih4fQl9mDCNbwjCpOw5zn6Y5XZg6E0WiybezmRq4uPNICXCA8+mZy
-	 kHE2ytskvs5Ug==
+	b=bVzZxIJ+/XQuFEu9q85eRiTCAseNuQW2TJIcyFHoVZ+H4Wk2VFy9hULJcb+pmSqk3
+	 V8jpIwqvW1zjKITcZPormIGR/UvI9SkKzn7Xs1okCKQ3hoirqUI3jedDjmdLZ7VKMN
+	 hGXmZO/veFqPI2e8E6jIMK++fCaE/yfDcEWcYEwaqkrrUzO+RKSfshWwTc8aPTLgw2
+	 cm4qnM0ss+rcdrYwslLyoYyBNqJP9P4NeLGVPnv9NSUGhQ7GrSrAlwlao7WFSOEBp1
+	 /A1fiAXbztXvbCPV7gMEhtLZt0P+4OakSiVcXcaacV8BA1q521/XTQJ9ZbcvW6WuSr
+	 3Ekr48ta1di7g==
 From: Bjorn Andersson <andersson@kernel.org>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Georgi Djakov <djakov@kernel.org>,
-	Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>,
-	Michael Turquette <mturquette@baylibre.com>,
+To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
-	Dmitry Baryshkov <lumag@kernel.org>,
-	Taniya Das <quic_tdas@quicinc.com>,
-	Konrad Dybcio <konradybcio@kernel.org>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Danila Tikhonov <danila@jiaxyga.com>,
+	Taniya Das <taniya.das@oss.qualcomm.com>,
+	Luca Weiss <luca.weiss@fairphone.com>
+Cc: ~postmarketos/upstreaming@lists.sr.ht,
+	phone-devel@vger.kernel.org,
 	linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	Krzysztof Kozlowski <krzk@kernel.org>,
 	linux-clk@vger.kernel.org,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: (subset) [PATCH 0/4] Bring the IP0 resource from ICC to clk-rpmh on QCS615
-Date: Mon, 27 Oct 2025 09:09:08 -0500
-Message-ID: <176157405442.8818.7885007140359472063.b4-ty@kernel.org>
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] Fix Agera PLL config of CAMCC for SM6350 & SM7150
+Date: Mon, 27 Oct 2025 09:09:11 -0500
+Message-ID: <176157405463.8818.13339628165200674226.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250627-topic-qcs615_icc_ipa-v1-0-dc47596cde69@oss.qualcomm.com>
-References: <20250627-topic-qcs615_icc_ipa-v1-0-dc47596cde69@oss.qualcomm.com>
+In-Reply-To: <20251021-agera-pll-fixups-v1-0-8c1d8aff4afc@fairphone.com>
+References: <20251021-agera-pll-fixups-v1-0-8c1d8aff4afc@fairphone.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -61,20 +54,24 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Fri, 27 Jun 2025 21:37:54 +0200, Konrad Dybcio wrote:
-> This is how it should have been right from the beginning, but it seems
-> like nobody took a good look at the initial submission.
+On Tue, 21 Oct 2025 20:08:53 +0200, Luca Weiss wrote:
+> On SM6350 I noticed that CAMCC_MCLK* refuses to turn on (being stuck on
+> off). The cause seems that PLL2 (of type Agera) is not configured
+> correctly due to the implementation in clk-alpha-pll.c differing between
+> downstream (e.g. msm-4.19) and upstream, and therefore the USER_CTL
+> value is not configured.
 > 
-> This series is essentially the same as the previous [1] again.
-> 
-> Compile-tested only.
+> While looking around, it looks like camcc-sm7150.c has exactly the same
+> issue, so fix that one as well.
 > 
 > [...]
 
 Applied, thanks!
 
-[4/4] clk: qcom: rpmh: Define RPMH_IPA_CLK on QCS615
-      commit: 17e4db05930e455770b15b77708a07681ed24efc
+[1/2] clk: qcom: camcc-sm6350: Fix PLL config of PLL2
+      commit: ab0e13141d679fdffdd3463a272c5c1b10be1794
+[2/2] clk: qcom: camcc-sm7150: Fix PLL config of PLL2
+      commit: 415aad75c7e5cdb72e0672dc1159be1a99535ecd
 
 Best regards,
 -- 
