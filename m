@@ -1,49 +1,48 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CCC3306B1A;
-	Mon, 27 Oct 2025 14:06:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6637B30CDA0;
+	Mon, 27 Oct 2025 14:06:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761573997; cv=none; b=UVckN32p6CaovnF/JPLCluz1VpHc31aMlfzPI9pj0SpFfVw5QEGk8rT3a/pQVqB1Qaw2EIolocFB9YYVsOFRiawKMbDoNGIQOkucKpkoffQaIhoeSynjWsVpK621U2uVwHJUSZfjl18xEQTDEYrTQmI6QpwuWZ0H+AAsTqmpX8w=
+	t=1761573999; cv=none; b=G1zobqkK8e48apuq7EFVmma7nloVQycO6ql0j9Nd1OgVG/QdsOTIvIJUZVjzbobtwJmO9ebf6Z2QpXBVMo0SlPuMPkg6ji3PUk2xpLLyyRAGqJMoLZ8uC9KcEQbo9KIzCMDrnjUjzJOg69N36ErgIAT79LxSCU2Isx4J6Dt+Y+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761573997; c=relaxed/simple;
-	bh=RC/N8kYs/btrHrDEGthc/bqFWFgmuClfeq+/3MsnWJo=;
+	s=arc-20240116; t=1761573999; c=relaxed/simple;
+	bh=b/eAFThjMpzWZeJJoAe5hP8+7S7Q7G4nzKJj3iBtVNI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fukBcaTpRDqBb5OzvBzuTImtkRN7sc8PZFxxIp+9bE1lzrqiLT5o3ClTCbID3gxulOKFM4Y32nSvEKnblcQlBYdqE6AgCUq+6/hCtd0y/lTP2godV9yVcFJLbo+22I4n7XqTeLf2ZH8Syuinp6BBNb8rItKVX0Pw+oWnJoDIQMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bVzZxIJ+; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=lrNEE9eiyTmwasnr5ykSNsccUmWSvwTU/Efn2AryphVcsJDbBRHQrxz7WQUpT+sflElE4Aq147r5r27c/6dZEq54mOEN+70NcyD2CBahZy9SC1fKqzMEagzxURpEH235cBxTkR48CuKx4QHK4/U8eLTTcryTI4EGPyqPvc833WI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qew9c9jJ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bVzZxIJ+"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD6F3C4CEFF;
-	Mon, 27 Oct 2025 14:06:35 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qew9c9jJ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D5F7C116C6;
+	Mon, 27 Oct 2025 14:06:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761573996;
-	bh=RC/N8kYs/btrHrDEGthc/bqFWFgmuClfeq+/3MsnWJo=;
+	s=k20201202; t=1761573999;
+	bh=b/eAFThjMpzWZeJJoAe5hP8+7S7Q7G4nzKJj3iBtVNI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=bVzZxIJ+/XQuFEu9q85eRiTCAseNuQW2TJIcyFHoVZ+H4Wk2VFy9hULJcb+pmSqk3
-	 V8jpIwqvW1zjKITcZPormIGR/UvI9SkKzn7Xs1okCKQ3hoirqUI3jedDjmdLZ7VKMN
-	 hGXmZO/veFqPI2e8E6jIMK++fCaE/yfDcEWcYEwaqkrrUzO+RKSfshWwTc8aPTLgw2
-	 cm4qnM0ss+rcdrYwslLyoYyBNqJP9P4NeLGVPnv9NSUGhQ7GrSrAlwlao7WFSOEBp1
-	 /A1fiAXbztXvbCPV7gMEhtLZt0P+4OakSiVcXcaacV8BA1q521/XTQJ9ZbcvW6WuSr
-	 3Ekr48ta1di7g==
+	b=qew9c9jJ7L+FLFBJMi97WLJPncTHOd2nMeIUkXid8gPeQPX10+yJWWsE37O63zDQl
+	 a80q04U2MKNTDIVZZex6ZfVwHJ2ul/AZAV122L/J2mTuFsiLi+vqwrzuDMjX0FNt89
+	 uGFaLaNPU0gfTTzjjbVMd9ANMLt14DoECvJXhRNcvvOesbKIu08RLQjwG5bqFPN0zk
+	 Dp7dsANW9fSSPMsR6HGP+98NHtLUd0iI1T7Xmr+1lkyRBxU1S4FPQ82nMQjf/wlLLP
+	 HJXt41sdCFidNCbi0KrkQdTAyMiPqzyn8RE0m3WJcEOpSlf8DHzuODy1emCBwTtKc8
+	 MOI7+sce8nXlA==
 From: Bjorn Andersson <andersson@kernel.org>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Danila Tikhonov <danila@jiaxyga.com>,
-	Taniya Das <taniya.das@oss.qualcomm.com>,
-	Luca Weiss <luca.weiss@fairphone.com>
-Cc: ~postmarketos/upstreaming@lists.sr.ht,
-	phone-devel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	Taniya Das <quic_tdas@quicinc.com>,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+	Nathan Chancellor <nathan@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] Fix Agera PLL config of CAMCC for SM6350 & SM7150
-Date: Mon, 27 Oct 2025 09:09:11 -0500
-Message-ID: <176157405463.8818.13339628165200674226.b4-ty@kernel.org>
+	patches@lists.linux.dev,
+	stable@vger.kernel.org
+Subject: Re: [PATCH 0/2] Kconfig fixes for QCOM clk drivers when targeting ARCH=arm
+Date: Mon, 27 Oct 2025 09:09:13 -0500
+Message-ID: <176157405453.8818.5432788260760736209.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251021-agera-pll-fixups-v1-0-8c1d8aff4afc@fairphone.com>
-References: <20251021-agera-pll-fixups-v1-0-8c1d8aff4afc@fairphone.com>
+In-Reply-To: <20250930-clk-qcom-kconfig-fixes-arm-v1-0-15ae1ae9ec9f@kernel.org>
+References: <20250930-clk-qcom-kconfig-fixes-arm-v1-0-15ae1ae9ec9f@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -54,24 +53,18 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Tue, 21 Oct 2025 20:08:53 +0200, Luca Weiss wrote:
-> On SM6350 I noticed that CAMCC_MCLK* refuses to turn on (being stuck on
-> off). The cause seems that PLL2 (of type Agera) is not configured
-> correctly due to the implementation in clk-alpha-pll.c differing between
-> downstream (e.g. msm-4.19) and upstream, and therefore the USER_CTL
-> value is not configured.
+On Tue, 30 Sep 2025 11:56:07 -0700, Nathan Chancellor wrote:
+> This series resolves two new Kconfig warnings that I see in my test
+> framework from an ARM configuration getting bumped to 6.17 and enabling
+> these configurations in the process.
 > 
-> While looking around, it looks like camcc-sm7150.c has exactly the same
-> issue, so fix that one as well.
-> 
-> [...]
 
 Applied, thanks!
 
-[1/2] clk: qcom: camcc-sm6350: Fix PLL config of PLL2
-      commit: ab0e13141d679fdffdd3463a272c5c1b10be1794
-[2/2] clk: qcom: camcc-sm7150: Fix PLL config of PLL2
-      commit: 415aad75c7e5cdb72e0672dc1159be1a99535ecd
+[1/2] clk: qcom: Fix SM_VIDEOCC_6350 dependencies
+      commit: f0691a3f7558d33b5b4a900e8312613fbe4afb9d
+[2/2] clk: qcom: Fix dependencies of QCS_{DISP,GPU,VIDEO}CC_615
+      commit: 7ec1ba01ae37897f0ecf6ab0c980378cb8a2f388
 
 Best regards,
 -- 
