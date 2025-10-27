@@ -1,37 +1,38 @@
 Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09E412FB098;
-	Mon, 27 Oct 2025 11:13:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09EC12FB09C;
+	Mon, 27 Oct 2025 11:13:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761563630; cv=none; b=FQrJbQI2H93hmfaWiO3/NC2V0RShpfEXCcFmbxdDnkc+3L6N8vJDk51m5hORP/b4d+mMWqqPC5Ndv11/UiDaONg9cG/CNZ2wb+2m7yjZ/KLp+2lqQJsaRMiR7+Rf0Bsi/TSXvhyOaan+v8vFjioF+U9tNC4ryAVax84Gn+JZGSU=
+	t=1761563630; cv=none; b=ldKgbTq+EW5PQSXKMRjANJZoXYl9PPYt2D3mUPyG24ijLx7dPk71Akh44cgNAceWuay2ud502zlFk4+E/b45PHk1BDg8/oUxyg4O7WArCK+uT7f6LY5brlIDGHVOyDGLNbjvlcZKrULbJU+F/n5umEyEdagn5lkdmSzTO1mgUEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1761563630; c=relaxed/simple;
-	bh=1FmWkgn1cw8Kk0c9UURvXKaVtFGzcFCFQwq2r0o0m5U=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tPjucboEvHuiHAiPcKZyydawV/hvOEfhEIZgeCNAGLJD0kQ+3uZ0e0l7sFRl/zKPgYVnc0fppg2WdBPMucHg+I3gbWv098h8gcU89UCsG/2yhl+/aQeNem8d8D5STtxleMn9TCJ8AgvDXva7tsSvF8z7qMtlOVCFcoWRe5EjRQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=I7YEEMNd; arc=none smtp.client-ip=148.251.105.195
+	bh=GnXom17LPeRNQIG22zsGuukZcFHtFvIHWJ7Waw4tsSg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=tfaR7a5CqKPPGOWnJSF62RmT9sycl715VttrodLyTswRHDk1062FBHzjyndYsHX30M0rluNavuWPQh89dAjuhSZ25iPpEF2fxt7Q5WffFNxhR34h/wHGe2Kp+cxi9XUBZSzuLa1O74yZSYZjWuskZFKdjPZkZJXJs/9pEdg2dMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=YhLo3hnY; arc=none smtp.client-ip=148.251.105.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="I7YEEMNd"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="YhLo3hnY"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
 	s=mail; t=1761563626;
-	bh=1FmWkgn1cw8Kk0c9UURvXKaVtFGzcFCFQwq2r0o0m5U=;
-	h=From:To:Cc:Subject:Date:From;
-	b=I7YEEMNdqMjwOqcWs+rHHHUxdtCWl6yZ2KXOFJKPsupG2tZWPdkztXTti5bKn5lFK
-	 dfLfCYmUcLqcquwHGXxpsWECbQOli/Bo2nrycX9xO4rdYkequF1nbgN4UuMeg6RzUu
-	 9MIyl5xwKnOZwEF9PDIiTfpceLRnsGHhOgVj+VIZIuZUeLcX2UdX28R/ufo9mxxT9w
-	 tvMs81/2tbWHHHxwrNVuwMDtLkf60ZwuwwgCHZYoRuR2UvBMAHK0PJt3DQ/Ci0iyRz
-	 vCnQYnmn47Ha0iG7ZGJZpJTmLFe9dQw22NlpuXmTmx3oa7RhiwCbUjZjilqQqpmBzc
-	 GxYo2Gb5tonVA==
+	bh=GnXom17LPeRNQIG22zsGuukZcFHtFvIHWJ7Waw4tsSg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=YhLo3hnYFIORfQSJhhO3fVp1Np3qphJn4ftm9mVOpuYmYzk786LG2IK0zdPOKQ51f
+	 vzhzWsct1XLj2KNusefo00Drw00bXa3ETa4gSXFNPBAU1xiQAurVMuh0uGtU/sIGX+
+	 OoerBTMQnJ12YQK4iOtbUFIvS1AJMaQDe1uddGD0L4PUTeH7D6/+F66o4xxqFkcAF5
+	 n0ne2fIIiq8eG/ye1vA06BlH9GSf8AZbI4H+F7pCDTiADtwFtKDi7cDjv6pgLANVyz
+	 ruNQNyP7wReHF2fBSBacq1aAl3+H/xZ+G5sLEBtk97Q0h5RX/Pd98KrFjtDcmZx+L4
+	 /MJnoHrIInQ7g==
 Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 71FDF17E1276;
-	Mon, 27 Oct 2025 12:13:45 +0100 (CET)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 46B4A17E12AE;
+	Mon, 27 Oct 2025 12:13:46 +0100 (CET)
 From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 To: sboyd@kernel.org
 Cc: mturquette@baylibre.com,
@@ -50,10 +51,12 @@ Cc: mturquette@baylibre.com,
 	linux-arm-kernel@lists.infradead.org,
 	linux-mediatek@lists.infradead.org,
 	kernel@collabora.com
-Subject: [PATCH v2 0/7] clk: mediatek: Add support for SPMI Clock Controllers
-Date: Mon, 27 Oct 2025 12:13:36 +0100
-Message-ID: <20251027111343.21723-1-angelogioacchino.delregno@collabora.com>
+Subject: [PATCH v2 1/7] clk: mediatek: Split out registration from mtk_clk_register_gates()
+Date: Mon, 27 Oct 2025 12:13:37 +0100
+Message-ID: <20251027111343.21723-2-angelogioacchino.delregno@collabora.com>
 X-Mailer: git-send-email 2.51.1
+In-Reply-To: <20251027111343.21723-1-angelogioacchino.delregno@collabora.com>
+References: <20251027111343.21723-1-angelogioacchino.delregno@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -62,51 +65,85 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Changes in v2:
- - Fixed description in mediatek,mt6685-clock.yaml
+In preparation for adding support for clock controllers over SPMI
+bus, split out the actual registration iterator out of the function
+mtk_clk_register_gates() to a new mtk_clk_register_all_gates()
+private function, taking a handle to regmap and hwv_regmap as
+parameters.
 
-Some new PMICs, Clock IC and combos are complex SPMI 2.0 devices that
-contain multiple IPs, including clock controllers.
+Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+---
+ drivers/clk/mediatek/clk-gate.c | 43 ++++++++++++++++++++-------------
+ 1 file changed, 26 insertions(+), 17 deletions(-)
 
-This series expands the MediaTek clock helpers to allow registering
-clock controllers over SPMI, and adds a clock driver for the MT6685
-SCK_TOP clock controller.
-
-For now, only gate clocks are supported to reduce the complexity of
-this change.
-
-NOTE: This series depends on series [1] "SPMI: Implement sub-devices
-and migrate drivers"
-
-[1]: https://lore.kernel.org/all/20251021083219.17382-1-angelogioacchino.delregno@collabora.com
-
-AngeloGioacchino Del Regno (7):
-  clk: mediatek: Split out registration from mtk_clk_register_gates()
-  clk: mediatek: clk-gate: Simplify and optimize registration iter
-  clk: mediatek: clk-mtk: Split and rename __mtk_clk_simple_probe()
-  clk: mediatek: Add and wire up mtk_spmi_clk_register_gates()
-  clk: mediatek: Add support to register SPMI Clock Controllers
-  dt-bindings: clock: Describe MT6685 PM/Clock IC Clock Controller
-  clk: mediatek: Add support for MT6685 PM/Clock IC Clock Controller
-
- .../bindings/clock/mediatek,mt6685-clock.yaml | 36 ++++++++++
- drivers/clk/mediatek/Kconfig                  | 15 ++++
- drivers/clk/mediatek/Makefile                 |  7 +-
- drivers/clk/mediatek/clk-gate.c               | 70 ++++++++++++-------
- drivers/clk/mediatek/clk-gate.h               |  6 ++
- drivers/clk/mediatek/clk-mt6685.c             | 70 +++++++++++++++++++
- drivers/clk/mediatek/clk-mtk-spmi.c           | 62 ++++++++++++++++
- drivers/clk/mediatek/clk-mtk-spmi.h           | 31 ++++++++
- drivers/clk/mediatek/clk-mtk.c                | 66 ++++++++++++-----
- drivers/clk/mediatek/clk-mtk.h                |  5 ++
- .../dt-bindings/clock/mediatek,mt6685-clock.h | 17 +++++
- 11 files changed, 338 insertions(+), 47 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/mediatek,mt6685-clock.yaml
- create mode 100644 drivers/clk/mediatek/clk-mt6685.c
- create mode 100644 drivers/clk/mediatek/clk-mtk-spmi.c
- create mode 100644 drivers/clk/mediatek/clk-mtk-spmi.h
- create mode 100644 include/dt-bindings/clock/mediatek,mt6685-clock.h
-
+diff --git a/drivers/clk/mediatek/clk-gate.c b/drivers/clk/mediatek/clk-gate.c
+index f6b1429ff757..fd8cec95cd8d 100644
+--- a/drivers/clk/mediatek/clk-gate.c
++++ b/drivers/clk/mediatek/clk-gate.c
+@@ -252,30 +252,17 @@ static void mtk_clk_unregister_gate(struct clk_hw *hw)
+ 	kfree(cg);
+ }
+ 
+-int mtk_clk_register_gates(struct device *dev, struct device_node *node,
+-			   const struct mtk_gate *clks, int num,
+-			   struct clk_hw_onecell_data *clk_data)
++static int mtk_clk_register_all_gates(struct device *dev, struct device_node *node,
++				      struct regmap *regmap, struct regmap *hwv_regmap,
++				      const struct mtk_gate *clks, int num,
++				      struct clk_hw_onecell_data *clk_data)
+ {
+ 	int i;
+ 	struct clk_hw *hw;
+-	struct regmap *regmap;
+-	struct regmap *regmap_hwv;
+ 
+ 	if (!clk_data)
+ 		return -ENOMEM;
+ 
+-	regmap = device_node_to_regmap(node);
+-	if (IS_ERR(regmap)) {
+-		pr_err("Cannot find regmap for %pOF: %pe\n", node, regmap);
+-		return PTR_ERR(regmap);
+-	}
+-
+-	regmap_hwv = mtk_clk_get_hwv_regmap(node);
+-	if (IS_ERR(regmap_hwv))
+-		return dev_err_probe(
+-			dev, PTR_ERR(regmap_hwv),
+-			"Cannot find hardware voter regmap for %pOF\n", node);
+-
+ 	for (i = 0; i < num; i++) {
+ 		const struct mtk_gate *gate = &clks[i];
+ 
+@@ -311,6 +298,28 @@ int mtk_clk_register_gates(struct device *dev, struct device_node *node,
+ 
+ 	return PTR_ERR(hw);
+ }
++
++int mtk_clk_register_gates(struct device *dev, struct device_node *node,
++			   const struct mtk_gate *clks, int num,
++			   struct clk_hw_onecell_data *clk_data)
++{
++	struct regmap *regmap, *regmap_hwv;
++
++	regmap = device_node_to_regmap(node);
++	if (IS_ERR(regmap)) {
++		pr_err("Cannot find regmap for %pOF: %pe\n", node, regmap);
++		return PTR_ERR(regmap);
++	}
++
++	regmap_hwv = mtk_clk_get_hwv_regmap(node);
++	if (IS_ERR(regmap_hwv))
++		return dev_err_probe(
++			dev, PTR_ERR(regmap_hwv),
++			"Cannot find hardware voter regmap for %pOF\n", node);
++
++	return mtk_clk_register_all_gates(dev, node, regmap, regmap_hwv,
++					  clks, num, clk_data);
++}
+ EXPORT_SYMBOL_GPL(mtk_clk_register_gates);
+ 
+ void mtk_clk_unregister_gates(const struct mtk_gate *clks, int num,
 -- 
 2.51.1
 
