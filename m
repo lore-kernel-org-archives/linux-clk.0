@@ -1,64 +1,64 @@
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15F012FF67F
-	for <linux-clk@vger.kernel.org>; Mon, 27 Oct 2025 11:46:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 667F32FE589
+	for <linux-clk@vger.kernel.org>; Mon, 27 Oct 2025 11:46:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761565573; cv=none; b=PhST8Qtwaq4oDQTPwrunKlZmjYEChFGzfVg0+htwehWbvUXieCLVROMb2MYU/weN4PT7dxqw0hYeLiwAu6qhU750WOWnHJuNEcD3meZOKB7OVAr2bn3qM42NvmWcYKtM5ZJnifncSTEWc4mgsrOWPHh4gnUCr6Fn/2qKQA8ItqA=
+	t=1761565590; cv=none; b=BSXLtDWGrSM0790yrLOvPYqbv7kMosSpwWs1d5mX9ogYJfRk/ABbum76vSIx4a5zWGn28JblbffznkG0a2JG8h3+OvoxvmuoDM5MgWbd8YRJJq3G3FTQNaxgnLaPFL96dCd6sKaDLnb8IdLq6ciMzNnm02LU9MOvOiti53UHSgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761565573; c=relaxed/simple;
-	bh=o5X3qid/yfHH+BoyJqJHvmRGKTTPXZaHJ8WFRZQcNlE=;
+	s=arc-20240116; t=1761565590; c=relaxed/simple;
+	bh=X8Txm7kc9NXs2r256KmcYLuDmAR0emVi9S0sVtw0zWA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qNlYIUvYgTm+6Q/Kd3v5ZRXZ+40xaqnO+pYXAGo/KL4NmnvcR8rHyE7JHvkMYWB9MMlpwWRZHwmx0fWIn+JuTJg6JJ9yhXNTmoX3x1a97Xxvf+3/3cjI2H0BExReRU1bUo8DH2ILZFi3EZXWtI2Fq6uHZGlBElOSqi/SkgZ9BqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UHAh0e/6; arc=none smtp.client-ip=209.85.167.41
+	 Content-Type:Content-Disposition:In-Reply-To; b=hD5WLmnMKmN2b4JzO3/Zd9bwUDJnucHZLBkuOeDHAO4DyCMs+uiq/MGWr/E6/V9zuWLzQIoYuLQ9jZle9BiS/L8JHJgb+sEygVPWZpjwpcJnMRRjqMPpNH9hUvHqVTkTw4ckD2eW1N1kFoGdnylZLOEUoq0RSiIhMcDl9cq283w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zzn0a5qA; arc=none smtp.client-ip=209.85.208.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UHAh0e/6"
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-586883eb9fbso5518134e87.1
-        for <linux-clk@vger.kernel.org>; Mon, 27 Oct 2025 04:46:10 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zzn0a5qA"
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-362acd22c78so42198561fa.2
+        for <linux-clk@vger.kernel.org>; Mon, 27 Oct 2025 04:46:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761565569; x=1762170369; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1761565586; x=1762170386; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=5wthRWPyiVp8yh4VwotqDPqYh//R/kAW37sGEOtokSs=;
-        b=UHAh0e/6RVCghKxy6if56ZY65mQbkLTGI+qrMbV4hqVAxukBmuRSvZtNf/fs+Afw61
-         qJslBlMXM31vuLRC14d6QIz6Cg2TVOeINjbjITwCU2hfQo9jel9cFBbbaa4UTY4wLCkp
-         rp1ytV8xR46a9YoCFPjMm2mnTEdtUCWKCOtcr6gnj92T4/3UNloEdwwEA5dN4k1lmgUe
-         diWXbfRr1w5zsRPEATqhEDZIgW8DM1xx6CQBxh6r8E2y4PvAYWSf0hBWABXuDDCj7cjz
-         KMIf4c2R9lMbQcYUzKjRyEp+FriZUEFcGLul+avSMf0e4N3uQlMQYyBahw82MI2nHFZ1
-         2s+w==
+        bh=q8/LJkLd6VtsTiiJs7/2Xg8b/Gt7K4vmantUteWzghg=;
+        b=Zzn0a5qACylBxIJxs7qh0SSk247rpH3cEUne5bvCp8DQ+wwZUfPPpm9EgJJqcStFVB
+         nSAgGecjNY98RMeECl8/vErgBsrnVhliFDH+1v66fPDiqx43cRdRCXnDmeiNWa11gCJw
+         GnBxYEuqcy4wAEXUPRQsirWKE7ZzOwBd3Q/bkwVbEFguEGCESgf1KR19GKfY6DKKmiyX
+         GPj0GAmVbpZQzrAE2oph7TxEe7ml5pu6jxCNAdcnct0VFd6b85ccGQna0c0rmzRS42Q7
+         pP5i/O+iq5AGkIPd8fk7XDzknD1vuiy+Xtb9DOluLKVdmdZ994XWaDaoyydXKmtFCF+i
+         h0yw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761565569; x=1762170369;
+        d=1e100.net; s=20230601; t=1761565586; x=1762170386;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=5wthRWPyiVp8yh4VwotqDPqYh//R/kAW37sGEOtokSs=;
-        b=TTqV/b9JDLmBBCB0JyButhMO2FL3pusWZj9MgN1e5vNb7iPUWPs04wj/uNRWd/hSb9
-         ooS0X9o9rlcBfmuVL92Mil9N+OJ58Mn+uMWunO8K9By2Cjfand1rciJVzq1JgMshVjM5
-         fkp0GhWigRHjP5TvRA2oG47rpBX8mQSPlaMekASZPkTDori88zZESY97Ox58RofgmIx9
-         wtDpJ2dbm5aVduSNzP2G2dwwuIq4Nf4p16PIvus1h8m1LBRAQFaqnBTARSLVKYrjf1+R
-         uBisUsoHs6IdBIbISFy4QjTC+uismw3DfIx2yXxmLGTXdHbmlBH/N8xOak6o0Hxo8xHZ
-         VuTw==
-X-Forwarded-Encrypted: i=1; AJvYcCXsHx0fyfCe1eJxXltsAkXgDm6V+Y4Bv/SPnGtJCo0tGtUq0yFa9vryj6uJgdp3Edbdfm/SDSk8o9M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyI+fFk7XSaQl5h/TX5iuZJXs/9Z1QTS2wihOKj/SmG5gNqT8VJ
-	hQPqAlVsL0KmB4wicWL+KUurtBrgkL2gB2LvtSx4hr3NS5F5vYC/Ym7J
-X-Gm-Gg: ASbGncv7uJTLRhk/yUWgVtBoDYY5WmW8iFJegxgPb6I+p2YwVYjYH1LuKCr9SSLpKCg
-	bkg9WJWoKY0H/jFxzjxAtinK2VmzS/U5WGaJj9ZoxfkuUCYHj+slz3BnPvyzv3NqmkSBpf/afrR
-	W9M0n4VWwi9qFGP7rJC0voAUvXhjtTMbHPKcTPF1i216mZFbS05qd4laIgfT/iZb3dXuJYe2eyy
-	VTBzDFnmlJ+u2Zl1Y2WejTOih1Jh9LkpBXyKkS6p12vz9/DzBsM4hqpVCG+0whfFhkkics1JCiq
-	P+jjufx0OzeJ8T6gmknM/T/cEIe/z0WLsrpelJ4P4L/9+C7utSjaIUZu8faGLG6Fq/Zc3MstymG
-	BBwNPPA8HD1a90l2+WqvrwOzpYIBOpteHeG9OA7MDe+kwlDy34NJljeAaJU8/rKPGe9DPmB3JMS
-	Rt1PPqc9E=
-X-Google-Smtp-Source: AGHT+IGpx5VaEstHr/dfUOeY/sT/AIsaR48RyvzDra31HtwNJ+UB6/DopkQBca9Vf1sT5NaznaxtPQ==
-X-Received: by 2002:a05:6512:4047:20b0:591:eab5:d8dc with SMTP id 2adb3069b0e04-591eab5dd39mr5211536e87.35.1761565568841;
-        Mon, 27 Oct 2025 04:46:08 -0700 (PDT)
+        bh=q8/LJkLd6VtsTiiJs7/2Xg8b/Gt7K4vmantUteWzghg=;
+        b=KjajVndtDHfqoqTPhz4/QKFUf03aR3fSHiFs8URlUneCO/pndjVOrl9PkHMmC007oR
+         SxjPiLHGeJOYGjqD44ycE7AA9HavSG03diRUXE3X5KJlZtQJlGPfG78mlL7x+PKXax33
+         FXiAPAKG2+CpJqw5hbPTMnbBBrqpgpuqpsItqU1uBksCJbXAte07h9fgURaai3+l4WkM
+         QIsmCEfvcmC8JoVl9v/sDfjVkjdj1AzvPX/HyhSkqlpREHMJYei4eH9d14voYmAHVYTs
+         WxYZdco+W0dK736O5QfabvhsK5bPmcaBjKbS4vFsKgaWbR87/ecgnmwNOW0mFL52zSor
+         O5pQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVZHkGdthYzW7VzOfevF2DGcUtz9vX1ypZ0a13Cm/xOjzsapBQZ1z/R5YYseMxirA1Kuw60cmPbnXc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/BuYlh8RGm4WIhKqZepjpqUPSFi5OYGzXYthr4LV2FAbj0dom
+	OX1tEjD43xLnak8MuOWnNq7OJvIAU/1/PUhNbbNw8B1iKsbEYnFl2JCZ
+X-Gm-Gg: ASbGnctw50ouumV0GKXISjUna/o6RZXKiTFViGJE1yhyCal4zvTu6J0gGTTVouaZCUE
+	VIV1HWIB732KjaT4DJ3aX9bwemYuPjFLeXWbypf6jgC4YfgEm9AqeYerJWd4nwNcVtJhhgsdC9Y
+	fodL/S9QXLABwbe6fwgxqjGSKBWe0dVUV8H+XBSmloLbyiVLCK5vVJ9kCCMSi6LrcuFkGxnHy8k
+	u2Pg3WNoPy060uf0SOHf9WAgC8D+fyES07qlHTW6GN31wfXvwfK/7QrhkTDdVYYFBtkq4FMfJnd
+	qFBlS9XgIcUiQmwlafC8fndEWPQhuOqZjkVRGPs/JLT6oZcgoXzl1t3/YghwnJNzbHlgkX4Aqwu
+	1a3DpL7gXRTfbYQxKWtmLE1tXNczir14CZ/RegVZ21kOiV3XOrDEJP9fq1ek4Hor3GvwoSxP0p6
+	k3B+AIxca+yzaniez6Pw==
+X-Google-Smtp-Source: AGHT+IGoMGmaOl5pCr2S2zDRvn1ZEtFuP5D29PR12nByl2G/phztcf3r74wdfl+o7a+i+LtD36g7XQ==
+X-Received: by 2002:a05:651c:1989:b0:36d:6d71:4ec5 with SMTP id 38308e7fff4ca-377978ab84emr116585471fa.17.1761565585321;
+        Mon, 27 Oct 2025 04:46:25 -0700 (PDT)
 Received: from mva-rohm ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-59301f558a3sm2221582e87.51.2025.10.27.04.46.07
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-378ee0d43c7sm18901911fa.40.2025.10.27.04.46.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Oct 2025 04:46:07 -0700 (PDT)
-Date: Mon, 27 Oct 2025 13:46:04 +0200
+        Mon, 27 Oct 2025 04:46:24 -0700 (PDT)
+Date: Mon, 27 Oct 2025 13:46:19 +0200
 From: Matti Vaittinen <mazziesaccount@gmail.com>
 To: Matti Vaittinen <mazziesaccount@gmail.com>,
 	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
@@ -80,8 +80,8 @@ Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
 	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
 	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
 	linux-rtc@vger.kernel.org
-Subject: [PATCH v2 05/15] dt-bindings: leds: bd72720: Add BD72720
-Message-ID: <fae1285b43acdd19cebfcfbcf4530bf90064f601.1761564043.git.mazziesaccount@gmail.com>
+Subject: [PATCH v2 06/15] mfd: rohm-bd71828: Use regmap_reg_range()
+Message-ID: <2ad8c8b15a9eef421b5a1f83a38fd899677ac3c8.1761564043.git.mazziesaccount@gmail.com>
 References: <cover.1761564043.git.mazziesaccount@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -90,80 +90,125 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="4hcLA+ux7eVKOsxx"
+	protocol="application/pgp-signature"; boundary="yX+aGkytnEYWZinw"
 Content-Disposition: inline
 In-Reply-To: <cover.1761564043.git.mazziesaccount@gmail.com>
 
 
---4hcLA+ux7eVKOsxx
+--yX+aGkytnEYWZinw
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Add the ROHM BD72720 documentation to the binding documents.
+The regmap range tables tend to be somewhat verbose. Using the
+regmap_reg_range() can make the definitions slightly mode compact.
+
+Tidy the regmap range tables by using the regmap_reg_range().
 
 Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
 ---
-
-NOTE: The Linux LED driver does currently have: values
-bd72720-grnled and bd72720-ambled for the rohm,led-compatible. These are
-handled identically to the existing bd71828-grnled and bd71828-ambled
-and should be removed from the driver. Thus they are not documented in
-the binding document.
-
-Furthermore, the BD72720 Linux driver does not use the compatible property
-=66rom the LED node. The Linux driver is load and probed based on the PMIC
-compatible in the MFD node. Thus no compatible string for the BD72720
-LED node is added.
-
----
 Revision history:
- RFCv1 =3D>:
- - No changes
+ RFCv1 =3D> v2:
+ - New patch
 ---
- .../devicetree/bindings/leds/rohm,bd71828-leds.yaml        | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/mfd/rohm-bd71828.c | 64 +++++++++++---------------------------
+ 1 file changed, 18 insertions(+), 46 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/leds/rohm,bd71828-leds.yaml =
-b/Documentation/devicetree/bindings/leds/rohm,bd71828-leds.yaml
-index b7a3ef76cbf4..64cc40523e3d 100644
---- a/Documentation/devicetree/bindings/leds/rohm,bd71828-leds.yaml
-+++ b/Documentation/devicetree/bindings/leds/rohm,bd71828-leds.yaml
-@@ -10,11 +10,12 @@ maintainers:
-   - Matti Vaittinen <mazziesaccount@gmail.com>
+diff --git a/drivers/mfd/rohm-bd71828.c b/drivers/mfd/rohm-bd71828.c
+index 84a64c3b9c9f..2a43005b67ee 100644
+--- a/drivers/mfd/rohm-bd71828.c
++++ b/drivers/mfd/rohm-bd71828.c
+@@ -157,55 +157,27 @@ static struct mfd_cell bd71828_mfd_cells[] =3D {
+ };
 =20
- description: |
--  This module is part of the ROHM BD71828 MFD device. For more details
--  see Documentation/devicetree/bindings/mfd/rohm,bd71828-pmic.yaml.
-+  This module is part of the ROHM BD71828 and BD72720 MFD device. For more
-+  details see Documentation/devicetree/bindings/mfd/rohm,bd71828-pmic.yaml
-+  and Documentation/devicetree/bindings/mfd/rohm,bd72720-pmic.yaml
+ static const struct regmap_range bd71815_volatile_ranges[] =3D {
+-	{
+-		.range_min =3D BD71815_REG_SEC,
+-		.range_max =3D BD71815_REG_YEAR,
+-	}, {
+-		.range_min =3D BD71815_REG_CONF,
+-		.range_max =3D BD71815_REG_BAT_TEMP,
+-	}, {
+-		.range_min =3D BD71815_REG_VM_IBAT_U,
+-		.range_max =3D BD71815_REG_CC_CTRL,
+-	}, {
+-		.range_min =3D BD71815_REG_CC_STAT,
+-		.range_max =3D BD71815_REG_CC_CURCD_L,
+-	}, {
+-		.range_min =3D BD71815_REG_VM_BTMP_MON,
+-		.range_max =3D BD71815_REG_VM_BTMP_MON,
+-	}, {
+-		.range_min =3D BD71815_REG_INT_STAT,
+-		.range_max =3D BD71815_REG_INT_UPDATE,
+-	}, {
+-		.range_min =3D BD71815_REG_VM_VSYS_U,
+-		.range_max =3D BD71815_REG_REX_CTRL_1,
+-	}, {
+-		.range_min =3D BD71815_REG_FULL_CCNTD_3,
+-		.range_max =3D BD71815_REG_CCNTD_CHG_2,
+-	},
++	regmap_reg_range(BD71815_REG_SEC, BD71815_REG_YEAR),
++	regmap_reg_range(BD71815_REG_CONF, BD71815_REG_BAT_TEMP),
++	regmap_reg_range(BD71815_REG_VM_IBAT_U, BD71815_REG_CC_CTRL),
++	regmap_reg_range(BD71815_REG_CC_STAT, BD71815_REG_CC_CURCD_L),
++	regmap_reg_range(BD71815_REG_VM_BTMP_MON, BD71815_REG_VM_BTMP_MON),
++	regmap_reg_range(BD71815_REG_INT_STAT, BD71815_REG_INT_UPDATE),
++	regmap_reg_range(BD71815_REG_VM_VSYS_U, BD71815_REG_REX_CTRL_1),
++	regmap_reg_range(BD71815_REG_FULL_CCNTD_3, BD71815_REG_CCNTD_CHG_2),
+ };
 =20
-   The LED controller is represented as a sub-node of the PMIC node on the =
-device
--  tree.
-+  tree. This should be located under "leds" - node in PMIC node.
+ static const struct regmap_range bd71828_volatile_ranges[] =3D {
+-	{
+-		.range_min =3D BD71828_REG_PS_CTRL_1,
+-		.range_max =3D BD71828_REG_PS_CTRL_1,
+-	}, {
+-		.range_min =3D BD71828_REG_PS_CTRL_3,
+-		.range_max =3D BD71828_REG_PS_CTRL_3,
+-	}, {
+-		.range_min =3D BD71828_REG_RTC_SEC,
+-		.range_max =3D BD71828_REG_RTC_YEAR,
+-	}, {
+-		/*
+-		 * For now make all charger registers volatile because many
+-		 * needs to be and because the charger block is not that
+-		 * performance critical.
+-		 */
+-		.range_min =3D BD71828_REG_CHG_STATE,
+-		.range_max =3D BD71828_REG_CHG_FULL,
+-	}, {
+-		.range_min =3D BD71828_REG_INT_MAIN,
+-		.range_max =3D BD71828_REG_IO_STAT,
+-	},
++	regmap_reg_range(BD71828_REG_PS_CTRL_1, BD71828_REG_PS_CTRL_1),
++	regmap_reg_range(BD71828_REG_PS_CTRL_3, BD71828_REG_PS_CTRL_3),
++	regmap_reg_range(BD71828_REG_RTC_SEC, BD71828_REG_RTC_YEAR),
++	/*
++	 * For now make all charger registers volatile because many
++	 * needs to be and because the charger block is not that
++	 * performance critical.
++	 */
++	regmap_reg_range(BD71828_REG_CHG_STATE, BD71828_REG_CHG_FULL),
++	regmap_reg_range(BD71828_REG_INT_MAIN, BD71828_REG_IO_STAT),
+ };
 =20
-   The device has two LED outputs referred as GRNLED and AMBLED in data-she=
-et.
-=20
+ static const struct regmap_access_table bd71815_volatile_regs =3D {
 --=20
 2.51.0
 
 
---4hcLA+ux7eVKOsxx
+--yX+aGkytnEYWZinw
 Content-Type: application/pgp-signature; name=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCgAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmj/W3sACgkQeFA3/03a
-ocW9fgf/RpKlDcHIMKbMyCIcpDbELXKdqHFVQmRDH0oXD++RG0QLz4MUO5Meanix
-Lrn+YT27QBVb307Hptc/7Ui9Ot+0VgjqhoF8Kam4X5M7ZTI2GFD9oIDIzzUv6G7s
-zbax4mKZSypJulHy0njs+VSFo37GrNcXe3oEzgEUxs7kkSz6vQEAvm6lrRZQd6Gm
-0KE3eVgWb8y0ImoU9FBdjOfc6cvE0irhzNKx1POEAnePyzqwo1OlVB9p3WI9IB7c
-D1k3RxGwMXtl6Ze18F06LcJvEpkZUH597P+JODLa3ks12bveEQ1ncLgRlgoe6vZt
-jq5wDk7fUJq9ysDNwnZpCtWENVcbcw==
-=m6hY
+iQEzBAEBCgAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmj/W4sACgkQeFA3/03a
+ocVpYwgApX+kp0HBYeSpSy5UViGym7Dedvy9fcHINt+oeCJZEs7sGMWWjus+vkfI
+u8E7Cm85Di9wLPSGkApvouqpjSIQiHdypYDtFN+gTkgmUHN0hk4UlplixA1ndJmW
+BYkG4Ns5RmDWoXUprdSh0AWjE/NOxPmfG0EmDOaUvzAkuTFrxHK/bNFJZOdLv4fX
+qmLQqmsvRV1AxvZwwxSBVj9dTQ9KFR8q1rhlo2G3Bmxs7wDIaXNZuu32OTY59Eeg
+DNhxIXic+lhDozq7w2x/MK6p5mUYW8g1WH6PfdYcT0fxuGxD3PpnVV+Wu7A1cJTt
+lpR//jRSTmONw5WWN7qp5BMEbfys8A==
+=cZvA
 -----END PGP SIGNATURE-----
 
---4hcLA+ux7eVKOsxx--
+--yX+aGkytnEYWZinw--
