@@ -1,92 +1,221 @@
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F58518D656
-	for <linux-clk@vger.kernel.org>; Mon, 27 Oct 2025 10:04:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C6C61DF252;
+	Mon, 27 Oct 2025 10:24:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761559478; cv=none; b=jd7Et+Z02WH91FT1ns7AgxMtjodv0o0SBpNRk6/2FmuoCZppNbYgQoJbdbeYkS7UM0Z6bwSJBExjHzlIE8OpE4bdWj+K14sCHDy2xxWlh0VzG/lWcJlbQ4TcKRyr6wSJ/wGk99wHqa02oOrJhJHCqUzkcpOxLtVhPjR+xUSZNUI=
+	t=1761560653; cv=none; b=khkcz6+eR2RrST+qZg8aeiyi1GQa2AFQ3A9bq/+GXyOkWDdTWzZWFglDvIXDEeNpJGkbMMZyhLk7ExozGtMuIjLeakGd+3OS2OvQPZ4El+gxr9WJ5PRo8iMeisbqAUbGEZVXA+otIzgy7PRSFLciizbdq82AaUOH9HCLBamfBA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761559478; c=relaxed/simple;
-	bh=bZ+q597kUNGqIq8Y48TGj7KcH72hkRPIAwT7wzsSsNE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SrZAcyQGAhMplor5NU0McRg3ZmVzwXDKEiTmSXHONb510AFrgV1TWPyGJlw5kFM324QjKt6kciCDMtZLufYCXr412XELyP29bdgSqZTr5ZcIUzxj+T5yMTyPNrXLq8DWpRt7X8WMvpcpMh7v7dd+6CBfWtFFSSuREIMbmi1BVbo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WD1KCBdt; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1761560653; c=relaxed/simple;
+	bh=vTOgKCvRxuU4DjEERkogKbYBwYp5CJEVMp8MP00NiNA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ptJUlZLlDdJZdej3uy6dKr4XecmiH2fUixOXr3+Qr9EEpaQ/wKmoS9+Xp81sjh603IzUy4MXoEC+UCyMO3SjK3lgd0ZEheVhzGt6C3uDk/xEW0l8h+BAH4/KagX7692saNezzVA933ldG4CpPbKHat9oqMNUwDBTW3N/R3Sh7kU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Q/x+HhBG; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WD1KCBdt"
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-290aaff555eso40948875ad.2
-        for <linux-clk@vger.kernel.org>; Mon, 27 Oct 2025 03:04:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761559475; x=1762164275; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bZ+q597kUNGqIq8Y48TGj7KcH72hkRPIAwT7wzsSsNE=;
-        b=WD1KCBdtVr6Uaf9+9XtB5USN+vvFfrFollNT/kQurwRdF5GgPxZU6Piej6sbf/Nmso
-         pS3WSR2v5QqFrKbcDiAWkIf6U5tgqeh2lJ3tNNAsToEv7ldL0UerM22oPjbPXurjPPKy
-         Zfh9h48ml1aDyZoqIwPT8djKKyIGTTg8iNowpKfnZ4/qWLgPq72lNYYFbu152iDyUgjO
-         zyOq9DUHZUfTg0U/SLqr/LAfqxg8x+pGcheMMrfV7kR6fzZOSGG7vE1GiXHC2IZD+UTG
-         MfDj/5pDUVv5aVrizCoakLxOHa8njkfTRA5kk8mTbz1nxtqF5NmyKqIXGd+8TJFPoWtI
-         iqsw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761559475; x=1762164275;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bZ+q597kUNGqIq8Y48TGj7KcH72hkRPIAwT7wzsSsNE=;
-        b=F1kuPzHyCBAe8hrHkYYdBL8NQrp1v7E17BYb75aqTvOjHV0VewqWm+TOpxHBUV0fpI
-         p1BhwBoD0VEB5sC65GJdlNz5OUiUdR/YPMLbKyH5OPiBeWmHryROwlkkBZymVEpPEPAm
-         G2R+eIRkEz4wdiZEgjbClRSUm0rAfF4MKXw1peR12BmG8EkqddhmpvgeuX2Tydw8uZru
-         bYcUdHjMHkaYu31VrykTgrnrck6ncmwtbg+GmCh/Iw4ul6NxeC65EmpqWmyASMiessEP
-         U1720xUo6N2mtBR80CNdfD49ELOgeryItnXhU5WhfMujclG5tbYfdy5qmPY7wfUdhfGT
-         X02g==
-X-Forwarded-Encrypted: i=1; AJvYcCUEIj19Yww2SIi0A3q0fV38ABxxMxGd7xUiVZmsM5/rHiYC4qDz70qKEV1XL6M0l523lwDcu9g+GH4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFqZgY1Vwf3BiRH2W77/MYx1YmhhSsKd3IX5P/dLHjVwy+Cca8
-	d1BhTKCPWS8M26mbYiDaZLtyruD87rLeCkrIYPAWiPoVw6kB499r2phDCxdTX4rTGNPK67Aou3c
-	9PYUxPl/6eBM4DCw8QKFqHGWmwPeig+E=
-X-Gm-Gg: ASbGnctrCTB/N8w1+12ZgYcYPd0XpBRPGu1M1QCbee29Zt3/hJvfjlnCXOR0A38O3oH
-	j5KeoaRs5NUCf9naIgFpH14uNG3GMIrHBeZZe9QlBoJ3yNEfqQuqV3l8C9BdT3OZWAsFTL4WoR9
-	mvyQjwyY+fsHBDJQX1XJH7j64ab/AfejWf2+YsC2fi/Makh0BYQs7xEBRSFQH0rZDtVblbbeKgl
-	KZwjNzBCJtF6RVlhE50ABgsiiMlE9iE9650xvlejkr1wDKLt/OzpygMqD3CGikyPIvXpmqaFCn/
-	IXVEgW/wmIlbLw==
-X-Google-Smtp-Source: AGHT+IGw9d1pKeseKB3lkBBW02LMj7kEUpU+h4+fmOwbWm1TH6VnLmuaWiTPpQmTwuE7imUFGIVOUC22U7kWNosjmns=
-X-Received: by 2002:a17:902:ec88:b0:293:57e:cd70 with SMTP id
- d9443c01a7336-293057ecfddmr246648875ad.28.1761559475507; Mon, 27 Oct 2025
- 03:04:35 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Q/x+HhBG"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1761560649;
+	bh=vTOgKCvRxuU4DjEERkogKbYBwYp5CJEVMp8MP00NiNA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Q/x+HhBGKnpTKn2N5nEE4FDydXMkf2mF7Es8DR3RffdoxC92ZTWgWqrrHpCDaCZuk
+	 oIPsuFiydf4481020UeYYiimLYzj0qXpN0RMHnulqg9acGnOxUu7NgCSBD2Tn+0vUS
+	 lhzb/YrkoCdluGk3mbqla60dMsoJJTmeeFZT+uFyUzggR3iq9rhpwTCRA9SWtKwQGN
+	 YEKZe/l1nG5CT8Vky2wFRmPLhn6GYDO3kgm7esVXiXS/1iaLl06ulab1Xlh79VJ1Ti
+	 bZNwvWwufZ8iPqwwMYmOA4iClBJ4EljDeZB9RRfEEXm3Jd8wejSZwITHLpgS4s+kJP
+	 lyX80kJgnefkg==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 7C1CB17E0DC0;
+	Mon, 27 Oct 2025 11:24:08 +0100 (CET)
+Message-ID: <e9de0c51-01f1-4aa2-8950-cbfa54347729@collabora.com>
+Date: Mon, 27 Oct 2025 11:24:07 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251017112025.11997-1-laurentiumihalcea111@gmail.com> <20251017112025.11997-9-laurentiumihalcea111@gmail.com>
-In-Reply-To: <20251017112025.11997-9-laurentiumihalcea111@gmail.com>
-From: Daniel Baluta <daniel.baluta@gmail.com>
-Date: Mon, 27 Oct 2025 12:07:00 +0200
-X-Gm-Features: AWmQ_bkbCiTHPHYYWScVXCVLYPxiC042hgQVGHC_daQ-QvhcSia1ZdA6dYYMWm4
-Message-ID: <CAEnQRZAN0Kn=3hnw6dvCDsXXrQc17E87_hRT1R78ueKh+PzKjw@mail.gmail.com>
-Subject: Re: [PATCH v2 8/8] arm64: dts: imx8ulp: add sim lpav node
-To: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
-Cc: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Shawn Guo <shawnguo@kernel.org>, Fabio Estevam <festevam@gmail.com>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Daniel Baluta <daniel.baluta@nxp.com>, 
-	Shengjiu Wang <shengjiu.wang@nxp.com>, linux-clk@vger.kernel.org, imx@lists.linux.dev, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Pengutronix Kernel Team <kernel@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 6/7] dt-bindings: clock: Describe MT6685 PM/Clock IC
+ Clock Controller
+To: Conor Dooley <conor@kernel.org>
+Cc: sboyd@kernel.org, mturquette@baylibre.com, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, matthias.bgg@gmail.com,
+ laura.nao@collabora.com, nfraprado@collabora.com, wenst@chromium.org,
+ y.oudjana@protonmail.com, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ kernel@collabora.com
+References: <20251024083301.25845-1-angelogioacchino.delregno@collabora.com>
+ <20251024083301.25845-7-angelogioacchino.delregno@collabora.com>
+ <20251024-trophy-clause-7db540d073fa@spud>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20251024-trophy-clause-7db540d073fa@spud>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Oct 17, 2025 at 2:24=E2=80=AFPM Laurentiu Mihalcea
-<laurentiumihalcea111@gmail.com> wrote:
->
-> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
->
-> Add DT node for the SIM LPAV module.
->
-> Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+Il 24/10/25 18:25, Conor Dooley ha scritto:
+> On Fri, Oct 24, 2025 at 10:33:00AM +0200, AngeloGioacchino Del Regno wrote:
+>> Add bindings to describe the SCK_TOP clock controller embedded
+>> in the MT6685 IC, reachable over the SPMI bus.
+>>
+>> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+>> ---
+>>
+>> NOTE: This does not contain any example because the MT6685 RTC
+>>        will be added to the mfd binding for MediaTek SPMI PMICs
+>>        and examples will be there.
+>>
+>> ** For reviewing purposes, this is how the example will look like: **
+>>
+>>    - |
+>>      #include <dt-bindings/interrupt-controller/irq.h>
+>>      #include <dt-bindings/spmi/spmi.h>
+>>
+>>      spmi {
+>>        #address-cells = <2>;
+>>        #size-cells = <0>;
+>>
+>>        pmic@9 {
+>>          compatible = "mediatek,mt6363";
+>>          reg = <0x9 SPMI_USID>;
+>>          interrupts = <9 1 IRQ_TYPE_LEVEL_HIGH>;
+>>          interrupt-controller;
+>>          #address-cells = <1>;
+>>          #interrupt-cells = <3>;
+>>          #size-cells = <0>;
+>>
+>>          clock-controller@514 {
+>>            compatible = "mediatek,mt6685-sck-top";
+>>            reg = <0x514>;
+>>            #clock-cells = <1>;
+>>          };
+>>
+>>          rtc@580 {
+>>            compatible = "mediatek,mt6685-rtc";
+>>            reg = <0x580>;
+>>            interrupts = <9 0 IRQ_TYPE_LEVEL_HIGH>;
+>>          };
+>>        };
+>>      };
+>>
+>>   .../bindings/clock/mediatek,mt6685-clock.yaml | 37 +++++++++++++++++++
+>>   .../dt-bindings/clock/mediatek,mt6685-clock.h | 17 +++++++++
+>>   2 files changed, 54 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/clock/mediatek,mt6685-clock.yaml
+>>   create mode 100644 include/dt-bindings/clock/mediatek,mt6685-clock.h
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/mediatek,mt6685-clock.yaml b/Documentation/devicetree/bindings/clock/mediatek,mt6685-clock.yaml
+>> new file mode 100644
+>> index 000000000000..5407ebf2f3b5
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/clock/mediatek,mt6685-clock.yaml
+>> @@ -0,0 +1,37 @@
+>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/clock/mediatek,mt6685-clock.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: MediaTek Clock Controller for MT6685 SPMI PM/Clock IC
+>> +
+>> +maintainers:
+>> +  - AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+>> +
+>> +description: |
+>> +  The clock architecture in MediaTek PMICs+Clock ICs is structured like below:
+>> +  Crystal(XO) or Internal ClockGen -->
+>> +          dividers -->
+>> +                      muxes
+>> +                           -->
+>> +                              clock gate
+> 
+> Is this the intended formatting? Looks weird with "dividers" being
+> unaligned with the --> above it, but maybe you were just going for x
+> number of spaces?
+> 
 
-Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
+Yeah I was just going for x number of spaces, otherwise that may become a bit
+"too long"...
+
+>> +
+>> +  The device nodes provide clock gate control in different IP blocks.
+> 
+> I think this is more understandable as "This device provides clock gate
+> control", if this sck-top is only doing gating. Otherwise, not clear if
+> the dividers and muxes are here or elsewhere.
+
+-> Datasheets are incomplete (sad-face-here) <-
+
+Most of the information here is grabbed from more than one downstream kernel
+for more than one SoC/device, and assembled together.
+
+The XO/clockgen and dividers are not in SCKTOP - those should be partially in
+the "TOP" portion (yeah, there's a top and a sck-top), and partially in another
+block that controls only the clockgen.
+
+I didn't want to implement those two, even though I almost precisely know how to
+do that (and I did it in some local tests), because I could only gather partial
+information and I didn't feel confident in upstreaming something that I'm not
+entirely sure about.
+
+Same goes for the MUX part: there's some here, some there, one in scktop as well
+(but I didn't describe it because again incomplete info, and even downstream the
+only mux in scktop seems to be unused).
+
+So yeah - apart from one mux, anything before clock gate is elsewhere... I can
+change that statement to the one you proposed, looks a bit better than what I
+came up with, so thanks for that :-D
+
+> 
+>> +properties:
+>> +  compatible:
+>> +    const: mediatek,mt6685-sck-top
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +  '#clock-cells':
+>> +    const: 1
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +  - '#clock-cells'
+>> +
+>> +additionalProperties: false
+>> diff --git a/include/dt-bindings/clock/mediatek,mt6685-clock.h b/include/dt-bindings/clock/mediatek,mt6685-clock.h
+>> new file mode 100644
+>> index 000000000000..acc5e2e15ce1
+>> --- /dev/null
+>> +++ b/include/dt-bindings/clock/mediatek,mt6685-clock.h
+>> @@ -0,0 +1,17 @@
+>> +/* SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause */
+>> +/*
+>> + * Copyright (c) 2025 Collabora Ltd.
+>> + *                    AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+>> + */
+>> +
+>> +#ifndef _DT_BINDINGS_CLK_MT6685_H
+>> +#define _DT_BINDINGS_CLK_MT6685_H
+>> +
+>> +/* SCK_TOP_CKPDN */
+>> +#define CLK_RTC_SEC_MCLK		0
+>> +#define CLK_RTC_EOSC32			1
+>> +#define CLK_RTC_SEC_32K			2
+>> +#define CLK_RTC_MCLK			3
+>> +#define CLK_RTC_32K			4
+>> +
+>> +#endif /* _DT_BINDINGS_CLK_MT6685_H */
+>> -- 
+>> 2.51.1
+>>
+
+
