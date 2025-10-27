@@ -1,74 +1,122 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F6CB3431F2;
-	Mon, 27 Oct 2025 22:35:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55FA4331A42
+	for <linux-clk@vger.kernel.org>; Mon, 27 Oct 2025 22:42:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761604516; cv=none; b=Vxt0WBswkzSrjawnbUPSTB3MZVYKAwJEbn/qpUE+Gre9fz2uiG7kPV75HWDXImeH/SnOOtKOoADCXcDfrwwJpsOLwCOBcOQix9Q6gnsvzFlgx71wEcHC+yKlFmwWFdMcTCfwnZWDCr0I+neXpHUO6oCdL9A3Zd6p2CsUr0MIuQc=
+	t=1761604954; cv=none; b=RZBTG8shNYZ4vOujG8MT8ayhx6qeR49BGZmu+cS75CVTRCN1izI56oEli0Ox20hMHGCX/1aIVR2IgzSKsKVzmXLtUSZ9lUqgIMkK4McD8MQluEiynTZaie3qByE0vlW6N9jxRq3eRkVHPkuutUU0qtlkyGJ1Eykog9HrkRFOZXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761604516; c=relaxed/simple;
-	bh=f5JyND1iZERpNMqOTyNPKRhwmnoEKCl56MPsiCT9H34=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QBGmVgGJH+u8q814xquXj0uYWxzrKG3gBarFzh317enWUjubXkfrMGFJEw1DHBuArd8cSasAT5uRuLM3cRDyAKDA3pMDGadBkFtfPEnimwHedq7knxaR08ChpG6VveQMWn4zQ8DRC5X/IpkiWlYS2dLTkEb6HKCn4/5g+f47VD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nDdycJC8; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1761604954; c=relaxed/simple;
+	bh=mdMs/b0H8ZKYdk7N+cLM+Uj/aE/vejpLNMBlaSFUExo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PKOXYYX4mMq3VmmC6TNttCXzp66Fe+ktBgiekGvWVGJDoivJVqn+7OmEYU/mNYmJ9k/b2Q31ks8KZGlVuEMWkLfpBLtetE7oaFSGIDYD5i95SrNRYsZlUHi4vK8514rvY2EbQJ6mYtWwpmvOfeNdtYAbMJ3UuYxJr2aDnfBHUwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KZZdxYt0; arc=none smtp.client-ip=209.85.128.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nDdycJC8"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6913FC4CEF1;
-	Mon, 27 Oct 2025 22:35:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761604516;
-	bh=f5JyND1iZERpNMqOTyNPKRhwmnoEKCl56MPsiCT9H34=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=nDdycJC8h5VyIOkbP0l6+z116B9fdwFm3z773OPkKw9JkGnhbRKGzjF8sdB8ZWM/0
-	 t7UdAAXEBBAZ7bicHsVMAS0d2isBib04Fmx6W9cl+5Q0RtqAtjof4S7QI5KezAoNF5
-	 5CLu6d3TjOL1sEE242OQdW7t4hI88fjG/5i7qM/zvyfAXiGy8GeHcrPuw5swnV/Krr
-	 XCr+1ZVIOKqY+SX/S+OOeV/IrVNazJXxkJW2eZjhN0165kvBUJOce81bAiWVc1NyW0
-	 /I1nsBvx6OFgRRdQ2x41HJzsAY1okZCpXTKAIbQdUnv5Ty88iK3AqY5aIOuFS8HPxf
-	 27Xm1kI6ZRoGA==
-From: Bjorn Andersson <andersson@kernel.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Luca Weiss <luca.weiss@fairphone.com>
-Cc: ~postmarketos/upstreaming@lists.sr.ht,
-	phone-devel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: (subset) [PATCH 0/3] Add MDSS_CORE reset for SM6350 MDSS
-Date: Mon, 27 Oct 2025 17:37:09 -0500
-Message-ID: <176160465186.73268.14240222712087541285.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250919-sm6350-mdss-reset-v1-0-48dcac917c73@fairphone.com>
-References: <20250919-sm6350-mdss-reset-v1-0-48dcac917c73@fairphone.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KZZdxYt0"
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-781014f4e12so65409187b3.1
+        for <linux-clk@vger.kernel.org>; Mon, 27 Oct 2025 15:42:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1761604951; x=1762209751; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FEbWuq+sA3qayyKc6Q0Zwp+mZTGvAg5r2iKjERsSY7s=;
+        b=KZZdxYt0Z2WZKZuPgT5rRan52bxSrRh4T492YeoJIxeDY4LeXNDR+R3yOnRnZyzVb8
+         KBlWPmFy+95MRsIPWWq05i/z4Vn8LC7vRp0/hibWv4bpyEPuRJpN8p04JKGNALA59BXB
+         r3b3PPsDTPdzYTJGjWqbufP1y7+F4e3Z/hYN3mc3SqLZRCp6/byeKiquedgj54rR/WoW
+         zQl9+qIucwctk7wZ2brLUUZ0eQi/1r9U9SISaTDla8dXL6QC8+0YkkCn12F12/lVVHm5
+         EdDcsB2o5zlBZs5CEApaknmyKahuQv4I3nfHGGpBcs/xheH7rog0kOa5jFGtyALH4ZMW
+         qI4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761604951; x=1762209751;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FEbWuq+sA3qayyKc6Q0Zwp+mZTGvAg5r2iKjERsSY7s=;
+        b=utcysUzpnSMC4yxUbJPqpDfapOZH2zDeA/DV+9923wxeFMqdnvdLFGeN8UGx+C6WY2
+         0FZYEqsQRz7siRxdx25QZGRt+tHUlPMu09gqUebAL8sTnMwbTPs+/USs4+lUm9qHvG7w
+         IbipXscNk+xvW8rCmhkfjV4WDwwn+wch+zWCzBW729tR+DwuLioh9/bbL7dqvGImSnzu
+         kPx2JQf9MUxX75+dWgpixSSebE7wKSsPjGK7d1kdCiBSN+jvpq8u3occCCOmNXJICC4u
+         KBLp5dQgyLBplA+FAMIZhEyUg8/dfXcbe63+aiLa1Yvt3fxvo2iPq/wmYA1SomhTqt8d
+         8fsw==
+X-Forwarded-Encrypted: i=1; AJvYcCXbtCQldFO2709WX4H85QmHMe+18Si40yTSujMHlj/La1C0/m2w7dWKDF0GGJJmuMR9WkkiYMPE8lo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQek8/3dMv4c1P7NWXJaN0sVM6c43rw8RutZ1OCP5HbHqDlJKB
+	7SL/5Mb2RRRd/IFehAuWIJj+q/lmzRXQGoSsGjAl1Z9HLpVa9rCIGIB62OmrYLFP4f4Sk7X8UgE
+	pmvX0RZb3/49shZkk5VQpOlsz/K1Wpw0IFWMJEctYQA==
+X-Gm-Gg: ASbGnctAi0OY6O1xnLege8HYOm6XZbrDZDSV/q7fTM1BU5YnW/Mf4V/HsJs8AZjHeU/
+	q32+jDt3XqIC7vkNbkQyesx2sWsxNLCQOudeKj4yRgoQV47WVYSmpmFPTVFlsLYar/V9T6IpQKi
+	vnXWeBbXDoIEGoR57h3NjKUyFB37n6rp9a/s1VE5krhymJHUbmxDcjJSsy3wb4HjCjmGbmQ/TZ7
+	6E+wMZvvZpjyFIZPZT36imfRzYgxM5QQTrb3F7P4NOTn6ZnVEgfN8Rksjd+
+X-Google-Smtp-Source: AGHT+IFea0a7SdSezzmFvdSfx4jiKtpkMteXYqF7MqSlxI3OsRPCoABiY/0t3pyhk2zywEU29O2vl188K3Ur1ROhIiE=
+X-Received: by 2002:a05:690c:3684:b0:783:697a:5daa with SMTP id
+ 00721157ae682-78617ed7dc7mr16221547b3.30.1761604951123; Mon, 27 Oct 2025
+ 15:42:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <cover.1761564043.git.mazziesaccount@gmail.com> <a5957c4f83724d4f32527fb892fc340af4eeddde.1761564043.git.mazziesaccount@gmail.com>
+In-Reply-To: <a5957c4f83724d4f32527fb892fc340af4eeddde.1761564043.git.mazziesaccount@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 27 Oct 2025 23:42:18 +0100
+X-Gm-Features: AWmQ_bnqjdOEx6PHBZRMUEpMuG3EOvSnhd1cnxA8WMLK3e2WMcsLHGdno_I3fzM
+Message-ID: <CACRpkdYEUdJRvNPKhxx7orYHH3OE6BXXjrG9JVJo5MDHGKE88A@mail.gmail.com>
+Subject: Re: [PATCH v2 04/15] dt-bindings: mfd: ROHM BD72720
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, Lee Jones <lee@kernel.org>, 
+	Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Andreas Kemnade <andreas@kemnade.info>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, linux-leds@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Matti,
 
-On Fri, 19 Sep 2025 11:57:22 +0200, Luca Weiss wrote:
-> With v6.17-rc kernel, the display stack needs reference to the
-> MDSS_CORE, otherwise display init becomes quite broken.
-> 
-> Add the resets into the dispcc driver and add a reference to the dts.
-> 
-> 
+thanks for your patch!
 
-Applied, thanks!
+On Mon, Oct 27, 2025 at 12:45=E2=80=AFPM Matti Vaittinen
+<mazziesaccount@gmail.com> wrote:
 
-[3/3] arm64: dts: qcom: sm6350: Add MDSS_CORE reset to mdss
-      commit: f618fef3f1a97395f73d028d925b021b0b204bea
+> +  rohm,clkout-open-drain:
+> +    description: clk32kout mode. Set to 1 for "open-drain" or 0 for "cmo=
+s".
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    minimum: 0
+> +    maximum: 1
 
-Best regards,
--- 
-Bjorn Andersson <andersson@kernel.org>
+I think CMOS is the same as "push-pull" ( I could be wrong, but I think I'v=
+e
+seen that before) so I would probably try to use the pin config standard
+names as strings here but I'm not sure.
+
+rohm,clkout-bias-open-drain;
+rohm,clkout-bias-push-pull;
+
+Mutually exclusive.
+
+Or maybe use the pattern from rohm,pin-dvs0
+with string enumerators?
+
+rohm,clkout-bias =3D "open-drain";
+rohm,clkout-bias =3D "push-pull";
+
+?
+
+> +examples:
+
+Maybe add some of the exotic string options into the example so
+people will get it right?
+
+Yours,
+Linus Walleij
