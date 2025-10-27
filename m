@@ -1,107 +1,106 @@
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtpbg150.qq.com (smtpbg150.qq.com [18.132.163.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE68B3002B5
-	for <linux-clk@vger.kernel.org>; Sun, 26 Oct 2025 23:19:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED63122129B;
+	Mon, 27 Oct 2025 01:22:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.132.163.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761520751; cv=none; b=ofv2WWM9XYG2x6ukk8Ao9QqhFvlD0JBSnSIKoUNVHqBE5ZFT3mqjwEYcDDlmXia2lfVeGE/gvRoKpQ6boJBDswHAvAkRoS7qCEzTKn4VZUhbn/4sF9nMKjpmfKqILA2Z2pQMeXyI5Af6ud4qSSHce/05CcSPNOpe+vVRVtmQe2A=
+	t=1761528185; cv=none; b=NhZ7I2FnOPnmeOoTaTvsBLGKXcKs/6NUKExN2Vvrd0vHAITRLu4ZHSYLMtlMTrBOTw78FmOLoX8p7yjZmXEAYGylSB+mO+oz7xyYzZmli7oq0mZjXgpe5Akb/fso9lud89ZMwMu2p8gVHOA61/NpowcCUp6T7WSqjQY3ABy3CJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761520751; c=relaxed/simple;
-	bh=/WJ8idmdTVW0xynvaxgMdxuq6tLbTzgU7ly7Ov4QECY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=n2sgzPCPiujvf6H5X5LECm7GfUu12buhbPCEyzsYExHd6o9Dy9YRkA5MM2tYxMSfD0eiWFscAlCTMBBJlZQaJU1cbvscooyfBigqd22af77pYG+UTS62k7yR8cV1qNCSMGs/sMXa53nLYEDQXfzExgrW7tWJtoDsltsJrhuTLBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k4zCOhnf; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1761528185; c=relaxed/simple;
+	bh=2NVjVK98UhB3Y21CFxnmh/3oR38w9ufdRbfalTn5BRg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZQItbB250PRXqsiaX0MNNddpgnF/ykeRv6NVyXeX2kcg9Genku25rnfOeUokXU+DxtS0IvuSSk+k0u3c/PFUG+EyEz33ulQW+I8FYsRfrUHriq2Up8Z04zfYagZXlga5q4m8rJFaU0q/37O5GmBs3vQ96i4zsoZiaZPbvQtED7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=Zn2iSZVO; arc=none smtp.client-ip=18.132.163.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k4zCOhnf"
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-7a23208a0c2so3002459b3a.0
-        for <linux-clk@vger.kernel.org>; Sun, 26 Oct 2025 16:19:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761520749; x=1762125549; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z+4rHLxk6jb9+WTlkBO1/v2Aj724T4zzmauAn+prGgM=;
-        b=k4zCOhnfMWdvMNdATvR+lZrelGH029R91TbJIaNm/js/eKlikY0X3I+psUK5F7TnHF
-         n0Fsk2zSa+XbPAyzwx/8b4EeNzLyZ2gzUM2xI6kjszRGhkg8mq1vQl+Ys1miM4waLxpR
-         jHQEZmVo3+v9gHWEo2QSLBCNMiDz7sVbMpbB47LKU82dfX7xNEV9aQv9XymSBA4RPPNT
-         7lodteKLrVpZxvKmF+6KtR4hw6yXuSfVchGrnJPeGmhv4KnXHgBpJOwz+Zm5mDFls9Pw
-         o8SVAVibJ2cwGuuKRv82oev8WzK8GYXrKJz7c1AFwcejzVxrGwtvFPcITTVtqHSVDITr
-         453A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761520749; x=1762125549;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Z+4rHLxk6jb9+WTlkBO1/v2Aj724T4zzmauAn+prGgM=;
-        b=TftTsGBiG79PnpW2+Z4f/s4IO+Esqef/szdhcLhSZcc08lfBoe7gLyObVjhQHaWbkK
-         n4kr7JmG7UnJqyQ1Jt2gKbqMQ4horfOF5inRLB7x/KuPlQnFh/TeqjsIXnyhhmLxE3kz
-         eEouje3mPthLPcso1JICk0xyXHfzMkX70Gc2s79qq6mv8AfKTs14FqEF9Epx4NbLGH+s
-         MgrGtE6S41fo2fpKoDFQ1qcJ24pizo3V29jVraY/J+nW2p35cAuL0H/4G82AgpiL01Ux
-         t1C13YTg+QyKQJxO4Jye7sff2JqV64kmWGRstJ2g/sLC+du9MX+fR76eHRnnKW5nKffg
-         n6ig==
-X-Gm-Message-State: AOJu0YzFHmgLzbLcj1VmWYCSivfHR585FXztHZmrY0Lbev2FkoxMQimw
-	RorgJZIAC3N0vA+ZKBvI7bdcuIo9sSK11lyrtWSmGAHIbG2ix0gkMAZ2
-X-Gm-Gg: ASbGncuEva9aDmvs6pdcPXLHBrJjcgfkhlrFVx5+p3oevlCXYAjawaXTtPnLFGIUa6j
-	igJKypq78rL36IQ8f/ve58LveAUhsB+57dxinvb5D/d6zjn8Q+ONre7kZFOKZw88yjYtH6EPdYR
-	tqJmIG3mQa4hufUeQEH3j3IE2IYdu+eI09yULtcUKqqEYJj3syvGPsBn5YxgK9aiKdEhN+58odb
-	p+nDGTvLiHBT48oumBN/L7SB+kFKQaG890ABHpBwtiA+z2rzkLbLllH61GgQnqEnfYdCJtqVMor
-	D+CRHE+VJj7LinIdUKcd3HtQpSWku5DXU3YK4P7A3QnWTfTePgHePrQYSAGV/ZFS8hMxlqVpKfG
-	lnDXT1ebM1CdEdr5U8/9MRm7QRSLqZ0EjnbkK35V6a2iPQkWmcH4tqc6PIdNDXCdvvDHihq5ieh
-	r9cDjuY+DRhu/7gIa1LsXZww==
-X-Google-Smtp-Source: AGHT+IEN4o7iKPho66M4NW9RdMeb44MBPT3fDS+h+9MUllLBI3rDk+XvZ4kv8Y7LCuF6ZJtVcrt2Nw==
-X-Received: by 2002:a05:6a21:33a7:b0:2dc:40f5:3c6c with SMTP id adf61e73a8af0-334a864aa37mr45862799637.54.1761520749111;
-        Sun, 26 Oct 2025 16:19:09 -0700 (PDT)
-Received: from fedora ([172.59.161.218])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33fed7e9571sm6242596a91.9.2025.10.26.16.19.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 26 Oct 2025 16:19:08 -0700 (PDT)
-From: Alex Tran <alex.t.tran@gmail.com>
-To: pdeschrijver@nvidia.com,
-	pgaikwad@nvidia.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	thierry.reding@gmail.com,
-	jonathanh@nvidia.com
-Cc: linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Alex Tran <alex.t.tran@gmail.com>
-Subject: [PATCH v1] clk: tegra: clk-dfll: scale force_val with coefficient according to whether cg_scale is set
-Date: Sun, 26 Oct 2025 16:18:59 -0700
-Message-ID: <20251026231859.823231-1-alex.t.tran@gmail.com>
-X-Mailer: git-send-email 2.51.0
+	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="Zn2iSZVO"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
+	s=mxsw2412; t=1761528144;
+	bh=YFqnaQXbGn6xdpcNOP814zAlTHleVU+KgUL5SVGaMpQ=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version;
+	b=Zn2iSZVOMGKCMCIrlqbX47mDEBSdSWKQDLrpXpijLy8IV/gXgDFHrTgCadW6m42gU
+	 /Joi1frrfTu5Bi2dEMGPf/gULXGb8PTRgJFsoYuXRgIo1iG3mk6Z07ql+EMzhzse0I
+	 PueuHILhxM13QOUR68VCJNqeFxXvjhudFK4AqlKQ=
+X-QQ-mid: zesmtpsz5t1761528136ta7becb60
+X-QQ-Originating-IP: Qzn6Gh3dF5mQyqK/6O3ihXXcFnqBQdYjHjd+FkTWnwk=
+Received: from = ( [183.48.247.177])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Mon, 27 Oct 2025 09:22:14 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 13636534776712087437
+EX-QQ-RecipientCnt: 17
+Date: Mon, 27 Oct 2025 09:22:14 +0800
+From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+To: Junhui Liu <junhui.liu@pigmoral.tech>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+	Troy Mitchell <troy.mitchell@linux.spacemit.com>,
+	Conor Dooley <conor.dooley@microchip.com>
+Subject: Re: [PATCH v2 0/6] clk/reset: anlogic: add support for DR1V90 SoC
+Message-ID: <0E60AA15166FED21+aP7JRmPzDIq2WhWw@kernel.org>
+References: <20251026-dr1v90-cru-v2-0-43b67acd6ddd@pigmoral.tech>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251026-dr1v90-cru-v2-0-43b67acd6ddd@pigmoral.tech>
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpsz:linux.spacemit.com:qybglogicsvrgz:qybglogicsvrgz3a-0
+X-QQ-XMAILINFO: N+/GyfuFbcLi0yesWPY/w8SSsQTT4ZUmo8kWT9abRFNYSwRm+J+l2MRV
+	q+AxTMB0a/xvOWKW49aFyy2U7RcHsbJEjeDkYCAyKwneTlcOOF4muRpVuIiijuiGLnPw5KR
+	uX5Fp0CaX/l2cowEzpze9nPRco8R6i3j5+/Zd8xhkz3/ZPNHhIUVj6WKbyJRW5DJR4gVJrD
+	zqoR88dc1kLKULG6mp9R/qcQ8spmmipOoJLZCuB0+cow/NsfHXUxeMyJPB3AxDvi2jNs0px
+	npY+ORtW39JJsMkJrnbpPu9vpNAAQnw3twPHCTH9Kn4f6OTC6t6m7jnAXyqoLezMUbgwIeZ
+	O48sbZKK04wsBJdLLJk3FXh+bPhyN4jfdKgptrhHWODTu0kdSPPjlCyFQo1mkDdvhqoU2fv
+	/yslAgxrZtsLA5VXLzqmXyyW9MlCW+w4M+bb4+fpgKNVd7roN4PRkyrT9tX2a5ehYmAkZkW
+	WlsMW6rLUeDr17+lqf2ZFE1y3e/EFmc/d11YujXkX1WAnpV8uBFG3KhxOWHcHfkEyVmifGi
+	wJa+2hpiCbQXPzqWDdAluilnmR+pQFJ3BmBJA3F1X9TTXkKfhdRxbFQmKh4Z71GHv3fdSGh
+	GCzfZDCVHkWb7nbOxq03QIKkQoEw0aCpKKo/MJWZ/AQ7WzpIBCrcvfJvl1E60/cWmbqcXkh
+	TDcLoLjOmnKZMWP5O29aoNhszk/2CdzWB9l1cObGr/WsCJPGVdqHWC4bmmN+amocB1VMwNW
+	8gDzE+6UQI2bTRcVQTLbgEZTsLUnzIFNsx+ffA/jghL/5E/P4q36MASazckLFCh+JMsE2MO
+	YGOaMTE/ncKRadQJArj2FvqK46nG6P9G7559kQD6ZcUfZwpN8b2kr3GE6X0Xv/dsj0eftYh
+	UDrSGkIgKV+hOPf/jabZVs2eNU++US9clQ725Hgr5BCy1W2bzEBFhGkOsV/XUbKElC35D0F
+	CqLEdSa3WXWMkXWedbY0US0LjpCB5M/z6XWKYBC+G6z/ebIHGXzr+0x+NQ4foIzyb+tvx1E
+	dEUikEzlomI9hG3oKUD6FAAR/54BGkd16lDew9nB1VEDFKGoXvEgROHarYn+w=
+X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
+X-QQ-RECHKSPAM: 0
 
-force_val was hard coded to use a coefficient of 128,
-regardless of the cg_scale configuration. This should instead match the
-DFLL_PARAMS_CG_SCALE bit, use a coefficient of 128 when
-cg_scale is set, or 1 when not set.
+On Sun, Oct 26, 2025 at 10:00:40PM +0800, Junhui Liu wrote:
+> This adds Clock and Reset Unit (CRU) support for the Anlogic DR1V90 SoC,
+> as well as corresponding dts bindings and dts integration.
+> 
+> The CRU driver framework is built around the clock controller as the
+> primary device, with the reset controller implemented as an auxiliary
+> device. The clock part refers to the vendor's code [1] to determine the
+> structure of the clock tree.
+> 
+> The Anlogic DR1 series includes not only the DR1V90 (based on the Nuclei
+> UX900 RISC-V core), but also the DR1M90 (based on the Cortex-A35 ARM64
+> core). Most of the clock tree and CRU design can be shared between them.
+> This series only adds CRU support for DR1V90. Nevertheless, the driver
+> is structured to make future extension to other DR1 variants like
+> DR1M90.
+> 
+> This depends on the basic dt series for DR1V90 SoC [2].
+> 
+> Link: https://gitee.com/anlogic/linux/blob/anlogic-6.1.54/drivers/clk/anlogic/anl_dr1x90_crp.c [1]
+> Link: https://lore.kernel.org/all/20251021-dr1v90-basic-dt-v3-0-5478db4f664a@pigmoral.tech/ [2]
+> ---
+Do we really need a cover-letter? Since you only have one patch, Is it
+better to put the above information below the --- line in the actual patch?
 
-Signed-off-by: Alex Tran <alex.t.tran@gmail.com>
----
- drivers/clk/tegra/clk-dfll.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll.c
-index 22dc29432eff..3362983eedcf 100644
---- a/drivers/clk/tegra/clk-dfll.c
-+++ b/drivers/clk/tegra/clk-dfll.c
-@@ -882,7 +882,7 @@ static void dfll_set_frequency_request(struct tegra_dfll *td,
- {
- 	u32 val = 0;
- 	int force_val;
--	int coef = 128; /* FIXME: td->cg_scale? */
-+	int coef = td->cg_scale ? 128 : 1;
- 
- 	force_val = (req->lut_index - td->lut_safe) * coef / td->cg;
- 	force_val = clamp(force_val, FORCE_MIN, FORCE_MAX);
--- 
-2.51.0
-
+                                      - Troy
