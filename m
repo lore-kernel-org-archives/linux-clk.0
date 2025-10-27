@@ -1,188 +1,206 @@
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 877631F7586
-	for <linux-clk@vger.kernel.org>; Mon, 27 Oct 2025 21:05:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 176E131062D;
+	Mon, 27 Oct 2025 21:08:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761599114; cv=none; b=QRD7GHpahVmhunUc1WlYUW0L8LrK/a2VMc6WUq797d2S8qxGd9pwKlO/kf029mL3gEZ7jMK4EOn3HbwPOE5I/nBMXy7p92nKbsQN15XN4dPiX7TV0nUOYH1MPYoNLgG8KRM8YRTrbWpNg+VOXct4EUSk544Rms/YBqAyVr39Fwk=
+	t=1761599298; cv=none; b=s01HyFu3LQeTpRgUat/Ve4j2OucdMNso0sGuDTxh0A9234Jx8fqYbv8pthu/qYZP7MI4FyxoFAjhVOX+Po2fzri7IY2t+MLCQ5k0bMuc18OIVIUCjvgnir4ipYQ1Xi/K3a99NwgyR9ULhk8PrutCQGrPA4ri46fXv9ptguJhMp4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761599114; c=relaxed/simple;
-	bh=XIDl/ERO9aKNyZxFoRMGRXdIovseLN8Xy2xPzQVYRgI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=akNG64bMjDP8FlHxZtSNBEXlGoedh5XWFuIEVuoxqwt9DaiECuloBBcOj49/5lOeqB7MOnsrPDMvBKPy+9NYAGxIw4WUMviJdsqCI1Vt8rEOcxRMvUN5lDydfPZqOxtM7BoPJek/PtNvjWCRshGtWeK2E5VfLX+WVKDOgx9qYZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ghoEx6N+; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1761599298; c=relaxed/simple;
+	bh=ma+k8nldqJngQini1R8j787y6UpbAMZD6PHdP4b+ilU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pp8Gkvx0hCKjhreYlGa2mBQD+M/mUiTKi3pgRCavAZcvOTp2JU0YAM/dMGnnY4zgW4lN7C/wzP9h4J8ksa60GxNyuHNFuxbXz3SzY35i092o0c/1o8W5Awvz1tgn9OQLMNU9B65BZd1g7fnYpDdl+G6PxROALyMI1o6m3qdJJYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jl7iaCs8; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ghoEx6N+"
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-426fc536b5dso3564958f8f.3
-        for <linux-clk@vger.kernel.org>; Mon, 27 Oct 2025 14:05:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761599111; x=1762203911; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BoP6sWXXFNGFX4Zpq9+V9L/LMjEEOr7rE32h6+1IRjs=;
-        b=ghoEx6N+UTJ262ic2N/Gf8mx2wyMC1iHx3o3Wl14zxTLiw/ZdGXPNGh7R0Sbl6Mq3w
-         WVxl89hJDpR3uL9qrAREUeV1PsUPryL5UKbsPrTqQfdyqkgQKAxGwr/8TFWJYoEemRg4
-         wbCrdVEC9SER9akg8ocru8R2dLPNSPLU26v7N67U4S33wmVYHaJ8TH8J6wV4VgOMLlBZ
-         PIaYaCtweQOKyC56/LRlRDVMZPCAGlbgxD1gcMgbrWGc4ehZuTpUwP41j23ijgB0sw54
-         BcMaMxFz2ihBGuDSe6qusxVwE8wfdTF9d3Pz9Wlvr4CjbqOpVqh8z/MdDJ5xiGxQFucl
-         Y4mA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761599111; x=1762203911;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BoP6sWXXFNGFX4Zpq9+V9L/LMjEEOr7rE32h6+1IRjs=;
-        b=aRC8Ld57aKcJ/gA8RyMuOhPboWKvIsWxQM9f0lK/mqgoGmYOKn2cOzNXTJJc+6zhE1
-         WwdN8TlmRvFSqF5Ybm88FFM4woNuUgPP3Jw4QWoaV2ME0OANERCHeM8n5YHep1binaS7
-         g6rMVvvQ2fmZsKWg27eSo9Dx57iRnw35ItYaVWbRQwcZNokkaRRs193APzJHCAmFZGcy
-         8mhjELbgPc1n2W/v/kxrhOnB3zFgpNAC0zIL8jn3cjfx3gq8Dh6HoVgDQPTXDuSAgBoe
-         dXOIwXdPkxpTqLkwmXhR8eJif+DjH8MkpU6E3AEoQDWetB0QgcGadbtbPYPKRg0PqLW7
-         7keA==
-X-Forwarded-Encrypted: i=1; AJvYcCVR2RS7s5L3Ta6nYQk4jWIcJPIcv88nhuwJVXia7K3nuatv7atkA8gGJCyekaU4B23xE9Ru/fGzoyU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxbgOvTjX51CaEScSYpNyryePbrPt3RATnh7wdzGTfa3ZqbqaUy
-	OTpK66fHKyFqSN6KZBDL+4Pp9jVAzc5B1NTm5PSIrO+0Z1jcG6eNsy4k6PLUYYwRM59yv0gh027
-	dHBiqbLC3/uR52VjHUq47JNtHWutmQAiijC0E
-X-Gm-Gg: ASbGncuWIDDEU+XKklvApSssojR2Cnd94F3ILOVk7UExH0XfFjp1w0Mo/2G5PqRgiFx
-	nfkB9Lt7gKT0ajoI5M3evaG+LSpQOsMHBHiKnR3Jjpu/j0kmQvrgXoEMFwI2XhH58kEsansDr/7
-	LcOgCDYr4rG1Mip7WEfwFU9PmwMYnE654lkQvNTSDot2r6GujvAcM7RhGc5HNCjqG5sO4IAp7VD
-	fma1F0oNBErdO48XxorEcSswpCA2xYjFXYYqsb4p/U76xjWh1X+02JHKeG8
-X-Google-Smtp-Source: AGHT+IHk2BlyZjRFVUILloQdhusl5C3XR9jf4ug3ST318DPm7lP7GrQepTteSylu4Lm1lrHkxRCafckMptsRpnQAp2c=
-X-Received: by 2002:a5d:5c8a:0:b0:429:8d46:fc40 with SMTP id
- ffacd0b85a97d-429a7e4f541mr1140944f8f.25.1761599110650; Mon, 27 Oct 2025
- 14:05:10 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jl7iaCs8"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BEFAC4CEF1;
+	Mon, 27 Oct 2025 21:08:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761599297;
+	bh=ma+k8nldqJngQini1R8j787y6UpbAMZD6PHdP4b+ilU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Jl7iaCs8Q/W05FCWMpt5JBolxcz4wFF64dKoBRAh5fVrVlJ+/EsrIOf7ioNgK1QXc
+	 WdsZjLMaZ0/yDnCatimSNRhdvrt3r2AzuVhFZIQnUPpZXLUNvwByaqCEv0IeBjJ71k
+	 kyn2W5Ic6Kr88x/f01dOPrd/RdxHPh6q33grRot0gbXArIUJn+9KXJcflzJa0dnXnL
+	 OymRKx4LXpUm/4+s9CMYLqnIATkp6Ci2GtCKPEGlOA+5cl6UY4rTNMLzob3nNgY92y
+	 JoJNv5RBsTCVSem6xmtAxyqx3doHWQNMuEGkB3/6HcRveaMrV96oKbhGC8oKLPx6ma
+	 cknD2Iobo5lpA==
+Date: Mon, 27 Oct 2025 16:08:16 -0500
+From: Rob Herring <robh@kernel.org>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+	Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Sebastian Reichel <sre@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Andreas Kemnade <andreas@kemnade.info>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-rtc@vger.kernel.org
+Subject: Re: [PATCH v2 03/15] dt-bindings: power: supply: BD72720 managed
+ battery
+Message-ID: <20251027210816.GB1565353-robh@kernel.org>
+References: <cover.1761564043.git.mazziesaccount@gmail.com>
+ <e8d0273bcf0ac67382e17c40be87d345e28ac06c.1761564043.git.mazziesaccount@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251014151325.160062-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20251014151325.160062-3-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdXU_aOg+bfRBJ7UOQW59QUxqa4a7WXTj27RyCyiNHV8qA@mail.gmail.com>
-In-Reply-To: <CAMuHMdXU_aOg+bfRBJ7UOQW59QUxqa4a7WXTj27RyCyiNHV8qA@mail.gmail.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Mon, 27 Oct 2025 21:04:43 +0000
-X-Gm-Features: AWmQ_bnLKxvnu2wt9shyDeaA5MSq9GtqCcfZY2URt6Hj7wb0HhH2yB8dTxpJ5hg
-Message-ID: <CA+V-a8soq2HJD0dM8GPhprpd_tyW735MSC-FkHwrY6wb-dqTZQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2] clk: renesas: r9a09g077: Add xSPI core and module clocks
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e8d0273bcf0ac67382e17c40be87d345e28ac06c.1761564043.git.mazziesaccount@gmail.com>
 
-Hi Geert,
+On Mon, Oct 27, 2025 at 01:45:23PM +0200, Matti Vaittinen wrote:
+> The BD72720 PMIC has a battery charger + coulomb counter block. These
+> can be used to manage charging of a lithium-ion battery and to do fuel
+> gauging.
+> 
+> ROHM has developed a so called "zero-correction" -algorithm to improve
+> the fuel-gauging accuracy close to the point where battery is depleted.
+> This relies on battery specific "VDR" tables, which are measured from
+> the battery, and which describe the voltage drop rate. More thorough
+> explanation about the "zero correction" and "VDR" parameters is here:
+> https://lore.kernel.org/all/676253b9-ff69-7891-1f26-a8b5bb5a421b@fi.rohmeurope.com/
+> 
+> Document the VDR zero-correction specific battery properties used by the
+> BD72720 and some other ROHM chargers.
+> 
+> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+> ---
+> Revision history:
+>  RFCv1 => v2:
+>  - Add units to rohm,volt-drop-soc (tenths of %)
+>  - Give real temperatures matching the VDR tables, instead of vague
+>    'high', 'normal', 'low', 'very low'. (Add table of temperatures and
+>    use number matching the right temperature index in the VDR table name).
+>  - Fix typoed 'algorithm' in commit message.
+> 
+> The parameters are describing the battery voltage drop rates - so they
+> are properties of the battery, not the charger. Thus they do not belong
+> in the charger node.
+> 
+> The right place for them is the battery node, which is described by the
+> generic "battery.yaml". I was not comfortable with adding these
+> properties to the generic battery.yaml because they are:
+>   - Meaningful only for those charger drivers which have the VDR
+>     algorithm implemented. (And even though the algorithm is not charger
+>     specific, AFAICS, it is currently only used by some ROHM PMIC
+>     drivers).
+>   - Technique of measuring the VDR tables for a battery is not widely
+>     known. AFAICS, only folks at ROHM are measuring those for some
+>     customer products. We do have those tables available for some of the
+>     products though (Kobo?).
+> ---
+>  .../power/supply/rohm,vdr-battery.yaml        | 80 +++++++++++++++++++
+>  1 file changed, 80 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/power/supply/rohm,vdr-battery.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/power/supply/rohm,vdr-battery.yaml b/Documentation/devicetree/bindings/power/supply/rohm,vdr-battery.yaml
+> new file mode 100644
+> index 000000000000..1ab3418d4338
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/power/supply/rohm,vdr-battery.yaml
+> @@ -0,0 +1,80 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/power/supply/rohm,vdr-battery.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Battery managed by the BD72720 PMIC
+> +
+> +maintainers:
+> +  - Matti Vaittinen <mazziesaccount@gmail.com>
+> +
+> +description:
+> +  A battery which has VDR parameters measuerd for ROHM chargers.
+> +
+> +allOf:
+> +  - $ref: battery.yaml#
+> +
+> +properties:
+> +  rohm,voltage-vdr-thresh-microvolt:
+> +    description: Threshold for starting the VDR correction
 
-Thank you for the review.
+No constraints? Is 4000V okay?
 
-On Fri, Oct 24, 2025 at 11:08=E2=80=AFAM Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
->
-> Hi Prabhakar,
->
-> On Tue, 14 Oct 2025 at 17:13, Prabhakar <prabhakar.csengg@gmail.com> wrot=
-e:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > Add module and core clocks used by xSPI (Expanded SPI) IP on the
-> > R9A09G077 SoC.
-> >
-> > The xSPI block uses PCLKH as its bus clock, while the operation clock
-> > (XSPI_CLKn) is derived from PLL4. To support this, define new selectors
-> > and dividers (FSELXSPI0/1 and DIVSEL_XSPI0/1) in SCKCR.
-> >
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Thanks for your patch!
->
-> > --- a/drivers/clk/renesas/r9a09g077-cpg.c
-> > +++ b/drivers/clk/renesas/r9a09g077-cpg.c
->
-> > @@ -105,6 +113,15 @@ static const struct clk_div_table dtable_1_2[] =3D=
- {
-> >         {0, 0},
-> >  };
-> >
-> > +static const struct clk_div_table dtable_6_8_16_32_64[] =3D {
-> > +       {6, 64},
-> > +       {5, 32},
-> > +       {4, 16},
-> > +       {3, 8},
-> > +       {2, 6},
-> > +       {0, 0},
-> > +};
-> > +
-> >  static const struct clk_div_table dtable_24_25_30_32[] =3D {
-> >         {0, 32},
-> >         {1, 30},
-> > @@ -119,6 +136,7 @@ static const char * const sel_clk_pll0[] =3D { ".lo=
-co", ".pll0" };
-> >  static const char * const sel_clk_pll1[] =3D { ".loco", ".pll1" };
-> >  static const char * const sel_clk_pll2[] =3D { ".loco", ".pll2" };
-> >  static const char * const sel_clk_pll4[] =3D { ".loco", ".pll4" };
-> > +static const char * const sel_clk_pll4d1_div3_div4[] =3D { ".pll4d1_di=
-v3", ".pll4d1_div4" };
-> >
-> >  static const struct cpg_core_clk r9a09g077_core_clks[] __initconst =3D=
- {
-> >         /* External Clock Inputs */
-> > @@ -154,6 +172,15 @@ static const struct cpg_core_clk r9a09g077_core_cl=
-ks[] __initconst =3D {
-> >         DEF_DIV(".sci5async", CLK_SCI5ASYNC, CLK_PLL4D1, DIVSCI5ASYNC,
-> >                 dtable_24_25_30_32),
-> >
-> > +       DEF_FIXED(".pll4d1_div3", CLK_PLL4D1_DIV3, CLK_PLL4D1, 3, 1),
-> > +       DEF_FIXED(".pll4d1_div4", CLK_PLL4D1_DIV4, CLK_PLL4D1, 4, 1),
-> > +       DEF_MUX(".divselxspi0", CLK_DIVSELXSPI0_SCKCR, DIVSEL_XSPI0,
-> > +               sel_clk_pll4d1_div3_div4,
-> > +               ARRAY_SIZE(sel_clk_pll4d1_div3_div4), CLK_MUX_HIWORD_MA=
-SK),
-> > +       DEF_MUX(".divselxspi1", CLK_DIVSELXSPI1_SCKCR, DIVSEL_XSPI1,
-> > +               sel_clk_pll4d1_div3_div4,
-> > +               ARRAY_SIZE(sel_clk_pll4d1_div3_div4), CLK_MUX_HIWORD_MA=
-SK),
-> > +
-> >         /* Core output clk */
-> >         DEF_DIV("CA55C0", R9A09G077_CLK_CA55C0, CLK_SEL_CLK_PLL0, DIVCA=
-55C0,
-> >                 dtable_1_2),
-> > @@ -178,9 +205,15 @@ static const struct cpg_core_clk r9a09g077_core_cl=
-ks[] __initconst =3D {
-> >         DEF_FIXED("ETCLKC", R9A09G077_ETCLKC, CLK_SEL_CLK_PLL1, 10, 1),
-> >         DEF_FIXED("ETCLKD", R9A09G077_ETCLKD, CLK_SEL_CLK_PLL1, 20, 1),
-> >         DEF_FIXED("ETCLKE", R9A09G077_ETCLKE, CLK_SEL_CLK_PLL1, 40, 1),
-> > +       DEF_DIV("XSPI_CLK0", R9A09G077_XSPI_CLK0, CLK_DIVSELXSPI0_SCKCR=
-,
-> > +               FSELXSPI0, dtable_6_8_16_32_64),
-> > +       DEF_DIV("XSPI_CLK1", R9A09G077_XSPI_CLK1, CLK_DIVSELXSPI1_SCKCR=
-,
-> > +               FSELXSPI1, dtable_6_8_16_32_64),
-> >  };
->
-> Perhaps we need a custom clock for this?
-> According to Section 7.3.1 "SCKCR : System Clock Control Register",
-> some divider combinations are prohibited:
->   - 4 x 6,
->   - 4 x 32,
->   - 4 x 64.
-> The last two are probably not an issue iff the xSPI driver never tries
-> to set the corresponding clock rates.
-> However, the first one may be an issue, as both 3 x 8 (valid) and 4 x 6
-> (prohibited) yield the same resulting divider, and I believe we cannot
-> be sure the clock core will never pick the prohibited combination.
->
-Agreed, I think I will have to compose both MUX and the divider into a
-single clock so that the dividers can be adjusted based on the MUX
-value, or do you have any suggestion to just adjust the divider clocks
-and leave the MUX clocks as is?
+> +
+> +  rohm,volt-drop-soc:
+> +    description: Table of capacity values matching the values in VDR tables.
+> +      The value should be given as tenths of a percentage.
 
-Cheers,
-Prabhakar
+We have a standard unit for this too. '-bp' or basis points (1/100 of 
+percent).
+
+> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+> +
+> +  rohm,volt-drop-temperatures-millicelsius:
+> +    description: An array containing the temperature in milli celsius, for each
+> +      of the VDR lookup table.
+> +
+> +patternProperties:
+> +  '^rohm,volt-drop-[0-9]-microvolt':
+> +    description: Table of the voltage drop rate (VDR) values. Each entry in the
+> +      table should match a capacity value in the rohm,volt-drop-soc table.
+> +      Furthermore, the values should be obtained for the temperature given in
+> +      rohm,volt-drop-temperatures-millicelsius table at index matching the
+> +      number in this table's name.
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    power {
+> +      #address-cells = <1>;
+> +      #size-cells = <0>;
+> +
+> +      battery: battery {
+> +        compatible = "simple-battery";
+> +
+> +        ocv-capacity-celsius = <25>;
+> +        ocv-capacity-table-0 = <4200000 100 4184314 100 4140723 95 4099487 90
+> +          4060656 85 4024350 80 3991121 75 3954379 70 3913265 65 3877821 60
+> +          3855577 55 3837466 50 3822194 45 3809012 40 3795984 35 3780647 30
+> +          3760505 25 3741532 20 3718837 15 3696698 10 3690594 5 3581427 0>;
+> +
+> +        rohm,volt-drop-soc = <1000 1000 950 900 850 800 750 700 650 600 550 500
+> +          450 400 350 300 250 200 150 100 50 00 (-50)>;
+> +
+> +        rohm,volt-drop-temperatures-millicelsius = <45000 25000 5000 0>;
+> +
+> +        rohm,volt-drop-0-microvolt =  <100 100 102 104 106 109 114 124
+> +          117 107 107 109 112 116 117 108 109 109 108 109 122 126 130>;
+> +
+> +        rohm,volt-drop-1-microvolt = <100 100 102 105 98 100 105 102
+> +          101 99 98 100 103 105 109 117 111 109 110 114 128 141 154>;
+> +
+> +        rohm,volt-drop-2-microvolt = <100 100 98 107 112 114 118 118 112
+> +          108 108 110 111 113 117 123 131 144 157 181 220 283 399>;
+> +
+> +        rohm,volt-drop-3-temp-microvolt = <86 86 105 109 114 110 115 115
+> +          110 108 110 112 114 118 124 134 136 160 177 201 241 322 403>;
+> +
+> +        rohm,voltage-vdr-thresh-microvolt = <4150000>;
+> +
+> +        charge-full-design-microamp-hours = <1799000>;
+> +        voltage-max-design-microvolt = <4200000>;
+> +        voltage-min-design-microvolt = <3500000>;
+> +        degrade-cycle-microamp-hours = <131>;
+> +      };
+> +    };
+> -- 
+> 2.51.0
+> 
+
+
