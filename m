@@ -1,107 +1,146 @@
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 307F52D877B
-	for <linux-clk@vger.kernel.org>; Tue, 28 Oct 2025 09:50:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD7A2302CC2;
+	Tue, 28 Oct 2025 09:52:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761645016; cv=none; b=dODm4puxV0O6nYlFc9C2Y4dJ0d8+fFvoO/Fy2Jip4MBQHqQUQyds58vsicVERyXnZrMiuQUp7aB2pe1yCa3HTy9Xt2kF7zmTuMP8fX8frTNU2LkfS5QdYQ+XBRAU/SOuhUkujp9OVVmymbtEBEw23GlvsM12ENgDHB4uIo35yys=
+	t=1761645155; cv=none; b=R6AW3v3SYeffjjBXgFU7oH4MhQZq1KMLhcRrDeRftSmgY/mT6hOD3HQ0nDMPoG4dhU2kfFcNk+m5GBhqDqDKShO6USxstlRcwlBD1z9NsCT77NubYBbzuEo9F/sN/PDIDU+L8umI91++JVKoXnWJoFIDlvv5BKtV/1xFyc6CZ+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761645016; c=relaxed/simple;
-	bh=tmDSIyiMjLOS6FNqDMNTo7i77Y8KzxKQl8j6kjAwCZc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kdv24etXaG69cWVnnrV0fBe3teHD4cDgSaF3FpiXpiBhIGwV6bLwnYTrtNOD9wERFx99Xe4REoei9vzVhXvpBnAF3vrC/7Poup6TtWfCUamJtPe7kStqtpa46lY4RUNuG1gtTYePrFcjKihL06L7iHfymUc19LZM9IG76GdIB+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Boa0le8U; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1761645155; c=relaxed/simple;
+	bh=ioK5ZOkw4s9KW/LEkvm0WElrqFYWX7BayiBP0MdRiGo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=hFFXRC1v9DoBtznt54nCRO5blqMEHbolPSpPv5OBGLzhGIQH+9eDLJax6p+Il07vsVAiOI4gV+TDVo8eRCoIez57TMpPzUIgFzHnsF7ujkg+mvDKmUHoabANN+jcocQsjQJkGG1WeaIzsbbg4F44FPbdq2lyn6oq5IwsbHr3c/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cnPdGatQ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Boa0le8U"
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-591c9934e0cso8312379e87.0
-        for <linux-clk@vger.kernel.org>; Tue, 28 Oct 2025 02:50:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761645011; x=1762249811; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tmDSIyiMjLOS6FNqDMNTo7i77Y8KzxKQl8j6kjAwCZc=;
-        b=Boa0le8UkZNqBDBjPXJKdWx/2/cJoVf1XBCA4PQ9QTG+xaY/mj1iJVVf70MZw4szCb
-         4Yx4H9wPsY8wkJK3zOZskLCZ5uR7GQh9htSu5/4ktQS24RDeCkhYXnI3pVuEhTAlupnc
-         4sVVMKfSnikM1u+UGhpiA0cWVkZhNrZVgfSVD6sBiZ6+dhObQP0zdF6XS+NvEeCSVJRM
-         E9UXaooUkutkH+Wgbr+5WKjCjhtK65aqIPFkoYjMNIMRWpX0hVkPCGSbuL6NJ6tpmAnI
-         fljB54KPycwuJd+t/9vz8FdKGWdhIfsDaseguPpbzfRXAz4EMTxDs0iyN+610pdFWbMP
-         sCpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761645011; x=1762249811;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tmDSIyiMjLOS6FNqDMNTo7i77Y8KzxKQl8j6kjAwCZc=;
-        b=X6VLlq+HeyMMObmRKpZEBVDtGR1iH2HsXG/o3kjsxld/06AiFH/9BbtDVDll+j8jXr
-         424l8GwyGqQrANP7n9MKQuDa+a1psPke/FFWNozM/1cAFgIW4ekuTOQR/v0dTn4CL3vQ
-         gXkbZXIqeEkjzDxhAOWEgAJ3DpsMrMNUcgDsWgTZoj3iFpQ4l9W79UrW8aVAldkGLJ3p
-         V4TsleQsUDux+OvrqDldiOjUyzc2eB3Vg9KNGdD2BB4/pjJ12doVjTH3XBJkHN7jeADJ
-         Lz59CgyYAJD1ZfCg9WeA6adZgrtd9Rkes4NrQj7mVps47Nx+it5zwmZR+BzL0B4EPTXE
-         Up6g==
-X-Forwarded-Encrypted: i=1; AJvYcCW4WmssXG2+F3kkH8gs4pTDMdRYy/Xbhl1ZMuAl4k+ongMvcrgfknN6LwIuD1+q2xD3C3lvsDe0cc8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YybLBKFkBenmWk5eH1MMwLLe56h1BujVzEhLSVqZFt/61u6NSwb
-	utk7xXIfTyp8szbKcqfWsIFrYkCqT4EJmVQSdlx8mTtQHnNxXuNq0e2THb+RoCr1OMFSY0TXqdA
-	/AFXaRWXomG8wTDVQwhXl5Jj3005q9enxvydlPpsxow==
-X-Gm-Gg: ASbGncu9rzHEnI6gP9VtZBzQpzLLcrHxZ3pesFGOSrD+ny6RYJ2INPKKNnjNI4qyXf+
-	ouik2p6mc+fEeUfYAxlG4IxSvBqu6uOpmmdxcRbSFbB9q1Pxir02vqGIifsepBcaaiTC1YC8ctX
-	4suAQrzs0g9Gk3sgCm2sEJ7aQqaMFGUd7QXfPnIkiA/T8n+GjnmsIFHnF5id3onG65f4qqrXyRN
-	UsiJ6yHfFgk6Si5LFuCVSndwOshbiw3rDazMsBdIsyNY9ulLaT4fEbWLCS0YPjah18fhXs=
-X-Google-Smtp-Source: AGHT+IHu10ZcVMp1t6exa1PSxkHFxphXG1r4t9C5bsmjcMdzTg/t9I8b6zTS7ONgJ3VxrVunoD4N4GDJPwxaS7n75Xw=
-X-Received: by 2002:a05:6512:3f15:b0:592:f521:2334 with SMTP id
- 2adb3069b0e04-5930e993ec9mr1158884e87.8.1761645011316; Tue, 28 Oct 2025
- 02:50:11 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cnPdGatQ"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 52D41C4CEE7;
+	Tue, 28 Oct 2025 09:52:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761645155;
+	bh=ioK5ZOkw4s9KW/LEkvm0WElrqFYWX7BayiBP0MdRiGo=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=cnPdGatQY7oNXrgJarKlBFwdDpB51nLLwuQnJwUQdP13EKXfX49BtT6TMx4qZlc1s
+	 PypORfEoWDv3VpYJ4uKBTX8cEIeuTgKXdqyJuGGEFisylEksEhMqYp4QFcxcpcQNEO
+	 2UhkOKfCnUaTvU/ABFm5QTUcIG+SF1cTQiRluz05XNDT6SKqJQjAD+3QlntB3AJDgf
+	 C9XGBYzZktAD5esBpKyKlXJYSJQ6bWo4j/tHOLseFvcpSBTmqqq2G1Mer/cvuRoh/S
+	 X72aS2Ih86/UzDBpsiKUFzAMRIMtU9P4jyDm2MGRNRGXON/4JLx/ff0Q71e6mGfoI6
+	 S/Y/fieVndVCQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42D42CCF9E0;
+	Tue, 28 Oct 2025 09:52:35 +0000 (UTC)
+From: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
+Subject: [PATCH v4 0/8] clk: amlogic: Add A5 SoC PLLs and Peripheral clock
+Date: Tue, 28 Oct 2025 17:52:26 +0800
+Message-Id: <20251028-a5-clk-v4-0-e62ca0aae243@amlogic.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251022165509.3917655-2-robh@kernel.org> <CACRpkdYioyktQ5is6TJnkgX=MHk2-zf-XO-gx6sKcST2GABNiA@mail.gmail.com>
- <CAL_JsqJh=ccCR_TR2sgMJJ9ChkBC4zx0d0s_imGjHNt0Mbp=Bg@mail.gmail.com>
-In-Reply-To: <CAL_JsqJh=ccCR_TR2sgMJJ9ChkBC4zx0d0s_imGjHNt0Mbp=Bg@mail.gmail.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 28 Oct 2025 10:49:59 +0100
-X-Gm-Features: AWmQ_bk9HCEe5H9YQN8PNyspfsZbmH034UWjFM55zKwIU8N8qdRalyjCgv2QCTw
-Message-ID: <CACRpkdY0+0UTkpXurB3E1Skce+Kcbti9-Z_2-d-f4yM-HuK_Dw@mail.gmail.com>
-Subject: Re: [PATCH v2] dt-bindings: arm: Convert Marvell CP110 System
- Controller to DT schema
-To: Rob Herring <robh@kernel.org>
-Cc: Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@bootlin.com>, 
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Richard Cochran <richardcochran@gmail.com>, 
-	Miquel Raynal <miquel.raynal@bootlin.com>, linux-arm-kernel@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, netdev@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAFqSAGkC/1WMQQqDMBBFryJZNyUTo2hXvUfpIo5THaqmJCW0i
+ HdvFBS6fJ//3iwCeaYgLtksPEUO7KYE5pQJ7O3UkeQ2sdBKG1UDSFtIHJ4yL9DUFpvcEIh0fnl
+ 68GcL3e6Jew5v579bN8K67gmzJyJIJQsijeYBjarwasfBdYxndKNYI1EfIoBWh6iTmLgqNVBdQ
+ vsvLsvyA9CB407XAAAA
+To: Chuan Liu <chuan.liu@amlogic.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Jerome Brunet <jbrunet@baylibre.com>, 
+ Xianwei Zhao <xianwei.zhao@amlogic.com>, 
+ Kevin Hilman <khilman@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org, 
+ linux-arm-kernel@lists.infradead.org
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1761645153; l=3354;
+ i=chuan.liu@amlogic.com; s=20240902; h=from:subject:message-id;
+ bh=ioK5ZOkw4s9KW/LEkvm0WElrqFYWX7BayiBP0MdRiGo=;
+ b=cRSuEim5T63EspU1g2+LpOzydALrYZiEHD7YePKx/x6fZFEcKe8Kxz7OB6JV43dZgm+0QTOxt
+ pji4lf70lpKCA2UMsg8tEWBYOW8c9TzZ3g2vh6j60OAlgOc9XkvKkIk
+X-Developer-Key: i=chuan.liu@amlogic.com; a=ed25519;
+ pk=fnKDB+81SoWGKW2GJNFkKy/ULvsDmJZRGBE7pR5Xcpo=
+X-Endpoint-Received: by B4 Relay for chuan.liu@amlogic.com/20240902 with
+ auth_id=203
+X-Original-From: Chuan Liu <chuan.liu@amlogic.com>
+Reply-To: chuan.liu@amlogic.com
 
-On Tue, Oct 28, 2025 at 12:26=E2=80=AFAM Rob Herring <robh@kernel.org> wrot=
-e:
-> On Mon, Oct 27, 2025 at 4:58=E2=80=AFPM Linus Walleij <linus.walleij@lina=
-ro.org> wrote:
-> > On Wed, Oct 22, 2025 at 6:56=E2=80=AFPM Rob Herring (Arm) <robh@kernel.=
-org> wrote:
-> >
-> > > Convert the Marvell CP110 System Controller binding to DT schema
-> > > format.
-> > >
-> > > There's not any specific compatible for the whole block which is a
-> > > separate problem, so just the child nodes are documented. Only the
-> > > pinctrl and clock child nodes need to be converted as the GPIO node
-> > > already has a schema.
-> > >
-> > > Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> >
-> > Patch applied!
->
-> I already applied as it is clock and pinctrl.
+The patchset adds support for the peripheral and PLL clock controller
+on the Amlogic A5 SoC family, such as A113X2.
 
-Yeah I saw, I dropped it now!
+Due to work arrangements, I will take over this patchset and be
+responsible for submitting and maintaining its subsequent revisions.
 
-Yours,
-Linus Walleij
+I previously resubmitted these patches in another patchset [1],
+Jerome pointed out that it made tracking more difficult. Therefore,
+I’m continuing the submission here based on Xianwei’s v3 version.
+Sorry for this causes any inconvenience to anyone.
+
+[1] https://lore.kernel.org/all/20250930-a4_a5_add_clock_driver-v1-0-a9acf7951589@amlogic.com/
+
+Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
+Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
+
+---
+Changes in v4:
+- dt-binding for peripheral clocks (kept Rob’s 'Reviewed-by' here):
+  - Added optional clock source rtc pll.
+  - Renamed rtc_clk’s clkid to better reflect its function.
+- PLL/Clock driver:
+  - Adapted to Jerome’s refactored driver interface, naming
+conventions, and macros.
+  - Updated related CONFIG entries in Kconfig.
+- Added dts patch of PLL/Clock.
+- Link to v3: https://lore.kernel.org/r/20250103-a5-clk-v3-0-a207ce83b9e9@amlogic.com
+
+Changes in v3:
+- Rename xtal_24m to xtal, and modify some description of Kconfig.
+- Drop some comment of PLL source code.
+- Move definition of A5_CLK_GATE_FW frome common code into A5 peripheral source code.
+- Use hw instead of name to describe parent_data.
+- Making SCMI binding the first to submit.
+- Link to v2: https://lore.kernel.org/r/20241120-a5-clk-v2-0-1208621e961d@amlogic.com
+
+Changes in v2:
+- Move some sys clock and axi clock from peripheral to scmi impletement.
+- Remove  ARM_SCMI_PROTOCOL in Kconfig and correct name A5 but not A4.
+- Add two optional clock inputs for the peripheral(ddr pll and clk-measure)
+- Make some changes and adjustments according to suggestions.
+- Link to v1: https://lore.kernel.org/r/20240914-a5-clk-v1-0-5ee2c4f1b08c@amlogic.com
+
+---
+Chuan Liu (8):
+      dt-bindings: clock: Add Amlogic A5 SCMI clock controller support
+      dt-bindings: clock: Add Amlogic A5 PLL clock controller
+      dt-bindings: clock: Add Amlogic A5 peripherals clock controller
+      clk: amlogic: Add A5 PLL clock controller driver
+      clk: amlogic: Add A5 clock peripherals controller driver
+      arm64: dts: amlogic: A5: Add scmi-clk node
+      arm64: dts: amlogic: A5: Add PLL controller node
+      arm64: dts: amlogic: A5: Add peripheral clock controller node
+
+ .../clock/amlogic,a5-peripherals-clkc.yaml         | 134 ++++
+ .../bindings/clock/amlogic,a5-pll-clkc.yaml        |  63 ++
+ arch/arm64/boot/dts/amlogic/amlogic-a5.dtsi        |  86 ++
+ drivers/clk/meson/Kconfig                          |  27 +
+ drivers/clk/meson/Makefile                         |   2 +
+ drivers/clk/meson/a5-peripherals.c                 | 883 +++++++++++++++++++++
+ drivers/clk/meson/a5-pll.c                         | 476 +++++++++++
+ .../clock/amlogic,a5-peripherals-clkc.h            | 132 +++
+ include/dt-bindings/clock/amlogic,a5-pll-clkc.h    |  24 +
+ include/dt-bindings/clock/amlogic,a5-scmi-clkc.h   |  44 +
+ 10 files changed, 1871 insertions(+)
+---
+base-commit: f7d2388eeec24966fc4d5cf32d706f0514f29ac5
+change-id: 20240911-a5-clk-35c49acb34e1
+
+Best regards,
+-- 
+Chuan Liu <chuan.liu@amlogic.com>
+
+
