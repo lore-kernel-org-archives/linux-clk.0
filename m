@@ -1,132 +1,103 @@
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B23A3081D0;
-	Tue, 28 Oct 2025 11:29:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761650988; cv=pass; b=SBhXhRccidzMz5jSa5GkWHFvJZYp8dU2iYwk3WzAPi+Eznat81JdmzmAC+i/GLlQQTwtqWbUFSwdYuSIXACZlsksKbv0vv9iXNnD8XeraAqKBQcN50OImukRbItbwYX4KGeYjBNInZFjQyu2+5m5b1VSQbLVSkLu9d5ex/hDHQ8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761650988; c=relaxed/simple;
-	bh=tYbeQ90vGGHXXE7MCg3eqhYlsB9W8v0Z3SOU4Enjgp4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XaRm6YOtu1nBW8ZNpn/PQ+4xYwUGu5nlubo3T3DaM7CV07aJdGIDi/rq1VG1NuIxMJNyblieY0dnDiewr9I0y2SpuFcNZScVRo/n2jWos5f1TlEMGLg8mzAthNdn/7CTK+DZvX2zpcrE8u+6TmmQashI3+rCbVAIEXUCNdjFbUY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech; spf=pass smtp.mailfrom=pigmoral.tech; dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b=njF1zKZ/; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pigmoral.tech
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D01430C626;
+	Tue, 28 Oct 2025 11:47:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761652030; cv=none; b=uOoai+xg9oKT/SBcoYOPcGU3t5PZmkHBn6Q7M5+jUgjVwqqkdNhwqt2xXsRmS0O1/WDR6rYY7qL/c+Ik1jNNlw/ZY3D2/xbCzLBPA2vGZJhc7ornLujuykOzXo1+Ds39g6sA2Rg7pH+KOHqS9Pl5JI+g0tJGxRnsweTHxIcw9Lk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761652030; c=relaxed/simple;
+	bh=dhVlfFBuIJdMHGGksIj7RamXnkNaK+qKXIFsvtZ4AgI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=PYQT5yW93hjL8K0FbyXSHkTAp3bSCyW6q5X8BZ9ssoPk2yFqfNF7tuYNVzZBRn6h21DEcqngcpZikBWx0Iv6Exlf/cJifuafriyrNIIFw5w2SDXrhr/l8dpzdU26VJWCxvg8zcDpAtnrJCcQhNg8pH49n2dpokz5kpCyyV8u6Vg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=CKNhenZu; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b="njF1zKZ/"
-ARC-Seal: i=1; a=rsa-sha256; t=1761650958; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=OPE5nDWfuugw1kKa6IcPSetaU8VLCXsoaM0Nn5DkvqFPMPAtCpyRR74CKCvp8fgDrbw03ZqetOY2b58Bha7NWrdpabp+hq08LOC1lmHwhRSWOS6wlcrFbnJds11Xf4yLCMa7oe+aRw2gC1FZtUsCVunrhmyG6A3MWg321jayJrk=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1761650958; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=htCIUeie1Fllw0gMKXGW6GDJsuGaHCRZYsDOba4fJdw=; 
-	b=leSEemltU/maU1r+O9yiGVP2P+FEnVzaaExpVFmnPiimQwOvEUCH4NyS4TKf04DShFVxd3dXUgZLI7YlDzBBSUwJs0eAFMYZZR5znF/caGAnK3TWtzJVzi/FYnFDsgw6XXpTnTPcNwqryZqsg/7AnUp9w8Xd25liHtm9HHUeEPo=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=pigmoral.tech;
-	spf=pass  smtp.mailfrom=junhui.liu@pigmoral.tech;
-	dmarc=pass header.from=<junhui.liu@pigmoral.tech>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1761650958;
-	s=zmail; d=pigmoral.tech; i=junhui.liu@pigmoral.tech;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=htCIUeie1Fllw0gMKXGW6GDJsuGaHCRZYsDOba4fJdw=;
-	b=njF1zKZ/WbjS+4NeXpMU3JLnnb5YjV33OKRR0aHXNhR7Jcwqy0kdZzM/JEXoeWlU
-	ZXYj5TwdKFdb/ALbBzm3sGGOLbFJDdp6qQsqwvO3yuoa7Mbt1j6PoZgPYh1hF31oXew
-	mEHjaI416JMXgTPtRsi4dT4ijkPqBbzoflyteJ64=
-Received: by mx.zohomail.com with SMTPS id 1761650955763658.116487530986;
-	Tue, 28 Oct 2025 04:29:15 -0700 (PDT)
-Message-ID: <e66945e7-9be0-4208-8b60-ec534db4fde5@pigmoral.tech>
-Date: Tue, 28 Oct 2025 19:29:05 +0800
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="CKNhenZu"
+Received: from mail.ideasonboard.com (unknown [IPv6:2401:4900:1c69:314e:ee86:ae6e:30:9d13])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id E03EF11D5;
+	Tue, 28 Oct 2025 12:45:16 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1761651917;
+	bh=dhVlfFBuIJdMHGGksIj7RamXnkNaK+qKXIFsvtZ4AgI=;
+	h=From:Date:Subject:To:Cc:From;
+	b=CKNhenZuEDjQ4yRNCvaMBiAYGCYEwQB7dUHnLJ3EXj1blYl3u5grUKo6VF5Jr5VY0
+	 pSDRbAe1iHlfefiG4oNb6eJgab/D4r2fp8tLTsZI6a5pKc8esVHuUewoFZuQF5f8aT
+	 7FKMmXsgRdDA2hckki2lp02iI1jeIoHao5LfZjqA=
+From: Jai Luthra <jai.luthra@ideasonboard.com>
+Date: Tue, 28 Oct 2025 17:16:47 +0530
+Subject: [PATCH] clk: bcm: rpi: Mark ISP clock as critical
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/6] reset: anlogic: add support for Anlogic DR1V90
- resets
-To: Philipp Zabel <p.zabel@pengutronix.de>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Paul Walmsley <pjw@kernel.org>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Alexandre Ghiti <alex@ghiti.fr>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-riscv@lists.infradead.org, devicetree@vger.kernel.org
-References: <20251026-dr1v90-cru-v2-0-43b67acd6ddd@pigmoral.tech>
- <20251026-dr1v90-cru-v2-4-43b67acd6ddd@pigmoral.tech>
- <36d28431c41ec9ed86487135d81e50b136ee0fae.camel@pengutronix.de>
-From: Junhui Liu <junhui.liu@pigmoral.tech>
-In-Reply-To: <36d28431c41ec9ed86487135d81e50b136ee0fae.camel@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251028-rpi-isp-clk-v1-1-2a54fecb495c@ideasonboard.com>
+X-B4-Tracking: v=1; b=H4sIACatAGkC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1NDAyML3aKCTN3M4gLd5Jxs3dQk02QTC2MTs1RTQyWgjoKi1LTMCrBp0bG
+ 1tQDTw4FaXQAAAA==
+X-Change-ID: 20251028-rpi-isp-clk-eb5c48346e51
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, 
+ Florian Fainelli <florian.fainelli@broadcom.com>, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+ Stefan Wahren <wahrenst@gmx.net>, 
+ =?utf-8?q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>
+Cc: linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Jai Luthra <jai.luthra@ideasonboard.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1172;
+ i=jai.luthra@ideasonboard.com; h=from:subject:message-id;
+ bh=dhVlfFBuIJdMHGGksIj7RamXnkNaK+qKXIFsvtZ4AgI=;
+ b=owEBbQKS/ZANAwAKAUPekfkkmnFFAcsmYgBpAK0zbSf9BdGRuZCYvi6Lckjwz2ResH+/mIgE/
+ d5g1BPrRfmJAjMEAAEKAB0WIQRN4NgY5dV16NRar8VD3pH5JJpxRQUCaQCtMwAKCRBD3pH5JJpx
+ RbGKD/9SUdtmw4sJCgNYzoCpg/x3H9l8i92BGJffd5WLRFBDnuEqUidpH+jBcoH8M3Zdq9/W0j0
+ oV+MUIB0lqk0Cn7gyCEMOr4UWj0gCCv5dxwNSmbzegTfx9ZhDy8ECJf45nlstK1f+BqLGVHeyzu
+ NonV+QV1iFgr48k0NMmDBS28Kox5nhUpYhSkHpJ0MMqifRcEObQ7uVbsNEe9wrTerhFQSGxmsdO
+ 1BDkJBeRPRwUDV0BhY3ujT85s58imP72fPKZuM9fgWUK2dX1uuYrMbOK42A58OeQNh8tV1KksyG
+ 2N38UnFj8wwpZwZh66N+2EZCa+B6rc1X81639KO34h//8XuAUbsKw0zoWkWN1iFsGfvj04jnZfz
+ be/7sDbL1vmosrRbrYmm0UWvCT+iYQCjTYoHoPSI6C9H2SqrPibDlNPOebWT/Sx1U2+GZdBgXoe
+ 3gomg+VvbkTn8GYMjEICrMN6ENuLfMWBoUythy7ZssffidblaofbJ/EnrfjfSgucnf5Wa28RdaV
+ LT0td2cdJhYLWfOFET2pMtHnquSjPYZz+c8Yq7MBHWo6YOduGqElJpGS/SbcYTenLtGsZkplcUc
+ JTFRBoS2i6KneOxpyBTmty2+2ksAapJ9RRO39b8hR5RQz8tYD9BmhX6i+dG43wIuZSiQ3MBQo0F
+ wBIpvjcaN04mcOw==
+X-Developer-Key: i=jai.luthra@ideasonboard.com; a=openpgp;
+ fpr=4DE0D818E5D575E8D45AAFC543DE91F9249A7145
 
-Hi Philipp,
-Thanks for your review.
+The ISP clock should also be marked critical to prevent the clock
+framework from disabling it on boot, which can lead to bus lockups when
+the kernel tries to submit buffers to the VC4 ISP firmware.
 
-On 10/28/25 4:17 PM, Philipp Zabel wrote:
-> On So, 2025-10-26 at 22:00 +0800, Junhui Liu wrote:
->> Add reset controller support for the Anlogic DR1V90 SoC, which is an
->> auxiliary device associated with the Clock and Reset Unit (CRU). All
->> resets are active-low.
->>
->> Signed-off-by: Junhui Liu <junhui.liu@pigmoral.tech>
->> ---
->>   drivers/reset/Kconfig        |   9 +++
->>   drivers/reset/Makefile       |   1 +
->>   drivers/reset/reset-dr1v90.c | 135 +++++++++++++++++++++++++++++++++++++++++++
->>   3 files changed, 145 insertions(+)
->>
-> [...]
->> diff --git a/drivers/reset/reset-dr1v90.c b/drivers/reset/reset-dr1v90.c
->> new file mode 100644
->> index 0000000000000000000000000000000000000000..eb9064e3ab454fb39adc1ad426f458e39bb6169e
->> --- /dev/null
->> +++ b/drivers/reset/reset-dr1v90.c
->> @@ -0,0 +1,135 @@
-> [...]
->> +static const struct dr1v90_reset_map dr1v90_resets[] = {
->> +	[RESET_OCM]		= { 0x74, BIT(4)},
-> [...]
->> +	[RESET_NIC_HP0]		= { 0x78, BIT(0)},
-> [...]
->> +	[RESET_USB0]		= { 0x7C, BIT(0)},
-> The registers 0x74, 0x78, and 0x7C are exclusively used for resets?
+Link: https://github.com/raspberrypi/linux/issues/7100
+Fixes: 919d6924ae9b ("clk: bcm: rpi: Turn firmware clock on/off when preparing/unpreparing")
+Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
+---
+ drivers/clk/bcm/clk-raspberrypi.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Yes, these three registers only contain bits for resets according to the
-register list doc.
+diff --git a/drivers/clk/bcm/clk-raspberrypi.c b/drivers/clk/bcm/clk-raspberrypi.c
+index 1a9162f0ae31e330c46f6eafdd00350599b0eede..dcc3ae5fb91650b042d52f02499922786b43afde 100644
+--- a/drivers/clk/bcm/clk-raspberrypi.c
++++ b/drivers/clk/bcm/clk-raspberrypi.c
+@@ -151,6 +151,7 @@ raspberrypi_clk_variants[RPI_FIRMWARE_NUM_CLK_ID] = {
+ 	[RPI_FIRMWARE_ISP_CLK_ID] = {
+ 		.export = true,
+ 		.minimize = true,
++		.flags = CLK_IS_CRITICAL,
+ 	},
+ 	[RPI_FIRMWARE_PIXEL_BVB_CLK_ID] = {
+ 		.export = true,
 
->
-> [...]
->> +};
->> +
->> +static int dr1v90_reset_control_update(struct reset_controller_dev *rcdev,
->> +				       unsigned long id, bool assert)
->> +{
->> +	struct dr1v90_reset_controller *rstc = to_dr1v90_reset_controller(rcdev);
->> +	u32 offset = dr1v90_resets[id].offset;
->> +	u32 bit = dr1v90_resets[id].bit;
->> +	u32 reg;
->> +
->> +	reg = readl(rstc->base + offset);
->> +	if (assert)
->> +		reg &= ~bit;
->> +	else
->> +		reg |= bit;
->> +	writel(reg, rstc->base + offset);
-> There should be a lock around this read-modify-write access.
+---
+base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
+change-id: 20251028-rpi-isp-clk-eb5c48346e51
 
-Okay, I will add a lock in the next version.
-
->
-> regards
-> Philipp
-
--- 
 Best regards,
-Junhui Liu
+-- 
+Jai Luthra <jai.luthra@ideasonboard.com>
 
