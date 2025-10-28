@@ -1,115 +1,116 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA71B7494;
-	Tue, 28 Oct 2025 07:52:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24DC22D8790
+	for <linux-clk@vger.kernel.org>; Tue, 28 Oct 2025 08:18:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761637930; cv=none; b=OR8NJ1pMmtmxJB9AqI4CFcMvLjIaQ6PJvO2K8lz3pEQJwvo+Ss9PYbTCqdGyknNvOlTGDvkiLY4/nFJ+smD7E03slsus9tsGfTMRSWDx6sl/RtQTiHQU9NGd9YlGSliqWHYZiHmfJ/sNqciPpGhm621CQUbIwiSiNuMJAsedLRA=
+	t=1761639500; cv=none; b=bXeJl5gui3+zkXZhzH8WGMcLpgMygPhT5jeA7ncEHk0JIepiM35iiD9xmgFAb/cwoQoE3IiA6Po9ZG31AiqCKlirH79MBlNqkl+BfAn4QAzzFVV6iAhf5W41kfszhnkeI0LgcWVaFTK8G5yl8ftxlkLTQQZQJiKEhq7dzB71hlc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761637930; c=relaxed/simple;
-	bh=lgCu1/5LkJDVUKGcQ1LJt6hU1F8MpL35/q8ICEa7ZPU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KSCG6foGYtxgE1uL2xO9aHVsC9nhUVTojOQwus3lWWYAdaXvD0eMH157OFB9PFD+Jmq+i4LycV/tK4eR7fIwuG6qcZTyCLtjvuF28lzEdOVkVeJEtBFNLIJR6keV3J+gpkUEp2ArXq6m31tYe4XSzsCQ9VrKjHgV6vTpX2857Xw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eeZ0Tj72; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eeZ0Tj72"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF514C4CEE7;
-	Tue, 28 Oct 2025 07:52:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761637930;
-	bh=lgCu1/5LkJDVUKGcQ1LJt6hU1F8MpL35/q8ICEa7ZPU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eeZ0Tj72+n38VyiBnwzBzv1JPxT5YjRmABluQrQbslUPzrY4kOjj2dZbDJn+VKxVX
-	 QE4fZj6gTStX4n5HsGpMaSXgVAhZ+8sC6W3k2yfrzQi/FS5BfbFSmqjNtPow4aVUkg
-	 5DdvTG6gAECtFsUFZwk25O92EL6Ytj9Sf/i8d5n5tAvZb9+b9HIpIO2qNo6AoI1zbc
-	 uj3JznohxOTHbhva7pBZea7/H0kbzXJxVEhRbWpRCEKWiO5oxrTRcBgBQYjbVQsXEo
-	 U2OLHi4bSp94ssMT2o94756zksQZG9E2cv82F00lUI88X6OPvu6fGDPhE0qiZ7i57x
-	 tJY3u1FKZhsLA==
-Date: Tue, 28 Oct 2025 08:52:07 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Elaine Zhang <zhangqing@rock-chips.com>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, sugar.zhang@rock-chips.com, 
-	heiko@sntech.de, robh@kernel.org, krzysztof.kozlowski+dt@linaro.org, 
-	conor+dt@kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	huangtao@rock-chips.com, finley.xiao@rock-chips.com
-Subject: Re: [PATCH v5 4/7] dt-bindings: clock: Add support for rockchip
- pvtpll
-Message-ID: <20251028-hasty-amusing-guan-e57f62@kuoka>
-References: <20251027084147.4148739-1-zhangqing@rock-chips.com>
- <20251027084147.4148739-5-zhangqing@rock-chips.com>
+	s=arc-20240116; t=1761639500; c=relaxed/simple;
+	bh=4pr8j+vyLR4qOLCMAuSM0l2HxTbXCqaGmlHYbv487bk=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=BICH8AnLVbu0DA1rUlll7JJTLUevNeYkNgogisazKkmdGiw3ayA5bElQsMdgjg0GVJVytjCEMYLMmq9CIC2jI1AV7nkYavzt19pQON8MVlaJxbHemRsacln5Pi4V1BA/lvTo1xuMVnHUBTHKzapKtQ/LUCfBDucrajSds9GCE4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1vDeu0-000287-GT; Tue, 28 Oct 2025 09:18:00 +0100
+Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1vDetx-005qNe-2y;
+	Tue, 28 Oct 2025 09:17:57 +0100
+Received: from pza by lupine with local (Exim 4.98.2)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1vDetx-000000002YE-3YQN;
+	Tue, 28 Oct 2025 09:17:57 +0100
+Message-ID: <36d28431c41ec9ed86487135d81e50b136ee0fae.camel@pengutronix.de>
+Subject: Re: [PATCH v2 4/6] reset: anlogic: add support for Anlogic DR1V90
+ resets
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Junhui Liu <junhui.liu@pigmoral.tech>, Michael Turquette
+	 <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring
+	 <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+	 <conor+dt@kernel.org>, Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt
+	 <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti
+	 <alex@ghiti.fr>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org
+Date: Tue, 28 Oct 2025 09:17:57 +0100
+In-Reply-To: <20251026-dr1v90-cru-v2-4-43b67acd6ddd@pigmoral.tech>
+References: <20251026-dr1v90-cru-v2-0-43b67acd6ddd@pigmoral.tech>
+	 <20251026-dr1v90-cru-v2-4-43b67acd6ddd@pigmoral.tech>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.1-1 
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251027084147.4148739-5-zhangqing@rock-chips.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 
-On Mon, Oct 27, 2025 at 04:41:44PM +0800, Elaine Zhang wrote:
-> +  reg:
-> +    maxItems: 1
+On So, 2025-10-26 at 22:00 +0800, Junhui Liu wrote:
+> Add reset controller support for the Anlogic DR1V90 SoC, which is an
+> auxiliary device associated with the Clock and Reset Unit (CRU). All
+> resets are active-low.
+>=20
+> Signed-off-by: Junhui Liu <junhui.liu@pigmoral.tech>
+> ---
+>  drivers/reset/Kconfig        |   9 +++
+>  drivers/reset/Makefile       |   1 +
+>  drivers/reset/reset-dr1v90.c | 135 +++++++++++++++++++++++++++++++++++++=
+++++++
+>  3 files changed, 145 insertions(+)
+>=20
+[...]
+> diff --git a/drivers/reset/reset-dr1v90.c b/drivers/reset/reset-dr1v90.c
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..eb9064e3ab454fb39adc1ad42=
+6f458e39bb6169e
+> --- /dev/null
+> +++ b/drivers/reset/reset-dr1v90.c
+> @@ -0,0 +1,135 @@
+[...]
+> +static const struct dr1v90_reset_map dr1v90_resets[] =3D {
+> +	[RESET_OCM]		=3D { 0x74, BIT(4)},
+[...]
+> +	[RESET_NIC_HP0]		=3D { 0x78, BIT(0)},
+[...]
+> +	[RESET_USB0]		=3D { 0x7C, BIT(0)},
+
+The registers 0x74, 0x78, and 0x7C are exclusively used for resets?
+
+[...]
+> +};
 > +
-> +  "#clock-cells":
-> +    const: 0
+> +static int dr1v90_reset_control_update(struct reset_controller_dev *rcde=
+v,
+> +				       unsigned long id, bool assert)
+> +{
+> +	struct dr1v90_reset_controller *rstc =3D to_dr1v90_reset_controller(rcd=
+ev);
+> +	u32 offset =3D dr1v90_resets[id].offset;
+> +	u32 bit =3D dr1v90_resets[id].bit;
+> +	u32 reg;
 > +
-> +  clocks:
-> +    maxItems: 1
-> +
-> +  clock-output-names:
-> +    maxItems: 1
-> +
-> +  rockchip,cru:
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +    description: |
-> +      Phandle to the main Clock and Reset Unit (CRU) controller.
-> +      Required for PVTPLLs that need to interact with the main CRU
-> +      for clock management operations.
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - "#clock-cells"
+> +	reg =3D readl(rstc->base + offset);
+> +	if (assert)
+> +		reg &=3D ~bit;
+> +	else
+> +		reg |=3D bit;
+> +	writel(reg, rstc->base + offset);
 
-Missing clocks.
+There should be a lock around this read-modify-write access.
 
-> +  - clock-output-names
-
-Missing rockchip,cru
-
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    pvtpll@20480000 {
-
-Node names should be generic. See also an explanation and list of
-examples (not exhaustive) in DT specification:
-https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
-If you cannot find a name matching your device, please check in kernel
-sources for similar cases or you can grow the spec (via pull request to
-DT spec repo).
-
-> +      compatible = "rockchip,rv1126b-core-pvtpll";
-> +      reg = <0x20480000 0x100>;
-> +      #clock-cells = <0>;
-> +      clock-output-names = "clk_core_pvtpll";
-
-Incomplete example - missing clock.
-
-> +    };
-> +
-> +  - |
-> +    pvtpll@21c60000 {
-
-Drop all other examples, no need to repeat the same.
-
-They weren't even here before!
-
-Best regards,
-Krzysztof
-
+regards
+Philipp
