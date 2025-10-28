@@ -1,86 +1,97 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E48F34C821;
-	Tue, 28 Oct 2025 17:47:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3260534D4D4;
+	Tue, 28 Oct 2025 17:59:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761673664; cv=none; b=Bvov0VGqyJz6JG4YRhTdYmnu5DLQVyyI721JQojg3aH93SM5s/Cd8vt8vZos17vnfpC5M9yYS5tb8f60j1udoOSZ8pJGZFAfdyJ0SE/OKn9M5aBkI/VyWz8Hnpug2TNVau8clA0YvnR6jTKCsW0swewWnT+nl7doAMqO08nO/qU=
+	t=1761674391; cv=none; b=p1c38hKyTQslZEVWamj6syTGqAjrQd932xvwGDfn0RBowUHTDgK4n0I+s4sYBNT/0uT0aHyfRQcm4wEcu9F2KArfEM3Nl7z5N3/eb57yX50FrUmwRSF0soz5P3CvzL2mQr/7FIjqu32GnDsfMr/80LEr5HWBk6nnFWJP94LvZZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761673664; c=relaxed/simple;
-	bh=Cf95w80aUdBCexcAXXklVfncQajwu0vJl7eWpjuz120=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UzoA3Pqtz0u0EwYNJXjfiGA4FdAvBw32BVyIybT6KIfbwV9tZSHhVGnkDfJH4mSWIHYUT3onbHYRQZy8l7unfQbZ4e3/VeaFOuAZZz4fuWG5WIr8dRMT5xnWHTPxewjJpPsE1ADDfkbyjtkCDrR1poztYvk07QyBFkTHLw+lFaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b2nS80rP; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1761674391; c=relaxed/simple;
+	bh=5NrAtnDMjFJ5Ghvd4YzRYA7Yl9j9ybNfKvOu24MzvDY=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=tuj/aeAStamERORJsp+VCdf5k188O0WGBE8AKdFi8Cxr6JSZMeSZ0dlz9auYgJydMo4JQjQzW21IBF5c42rVf4v4Gf+dYwXhulv906e597aLn70gfov1MONhXzbQzyx1T2uo+5jj5eD4AIl7wYLxd++/zNHaimdas77OvvFvzHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=DWsbCydV; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b2nS80rP"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7711CC4CEE7;
-	Tue, 28 Oct 2025 17:47:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761673663;
-	bh=Cf95w80aUdBCexcAXXklVfncQajwu0vJl7eWpjuz120=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=b2nS80rP0T20ccHauAlWnqkCpTXh+lxp06dydw70FiFbZOkURPrwzQPiFlKQXJpDQ
-	 9GlU5pgZodK7khU5a3Y7SHRv0+ydEpMhp7Xxroge7zYmIfIUN6SWtToe+ijInmYFdB
-	 TsyU01hZm0IcnWZFvpGra89rRDPj8P+A1zE5KQFESZTdhlTqkCaLrlo76fOum6xS9V
-	 RT30RsCm57QhhOKbkejmY9WU2K78zxjLPyXqU78qqVKlT8DbtP5r2qaOc2VcXBNcft
-	 9te8eMunTbcHGf+NQ2KO3CcGDJiOiuDPXQoFR5oyLpA5/yGlDnpumQbIV2JFmUO2sW
-	 u7FRTRCO+3NLA==
-Date: Tue, 28 Oct 2025 13:47:42 -0400
-From: Sasha Levin <sashal@kernel.org>
-To: Brian Masney <bmasney@redhat.com>
-Cc: patches@lists.linux.dev, stable@vger.kernel.org,
-	Sudeep Holla <sudeep.holla@arm.com>, Peng Fan <peng.fan@nxp.com>,
-	mturquette@baylibre.com, sboyd@kernel.org, arm-scmi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH AUTOSEL 6.17-6.12] clk: scmi: migrate round_rate() to
- determine_rate()
-Message-ID: <aQEBvswDDxZ0r-0t@laps>
-References: <20251026144958.26750-1-sashal@kernel.org>
- <20251026144958.26750-39-sashal@kernel.org>
- <aP6rvQD-bwSkhfU5@redhat.com>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="DWsbCydV"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 68D811A1713;
+	Tue, 28 Oct 2025 17:59:47 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 317B860692;
+	Tue, 28 Oct 2025 17:59:47 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 5BF2A102F12E3;
+	Tue, 28 Oct 2025 18:59:37 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1761674385; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=5NrAtnDMjFJ5Ghvd4YzRYA7Yl9j9ybNfKvOu24MzvDY=;
+	b=DWsbCydV//xvHJDzeBuKG+WnZG/edBwN8WM2T9lhTpTinwkZ0dIA2UZjyoX14KfXZp5A+L
+	6yMwepOhql+aaE6JDeDrZ0EkwWn+ZxHeml10mbFfmmD13E+s8mjiqKcU0M97nBX73UzWLN
+	BChe1d7SvfH6cinPba30dyagwWao6+OzFRhWx8huv/FYdeRLnV7o86wnuvqYDKG0YYWn+4
+	QGMv7SyPDnzCpT0vivKdNDoa7R7uZ/QonZ1SmGW0IbNzV67hjVN/wI/KjhEd7tWvm7OIpW
+	hFqkFFciyjrLYjfMEBIhI9DaTrqZqLbBT4CR+3wepCvI3BKcXwIXPJWwlyH2Yw==
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <aP6rvQD-bwSkhfU5@redhat.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 28 Oct 2025 18:59:36 +0100
+Message-Id: <DDU5G3UHOYM7.2WNR6PPEK6ST1@bootlin.com>
+Cc: <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+ <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <linux-media@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+ <linux-staging@lists.linux.dev>
+Subject: Re: [PATCH v5 00/23] tegra-video: add CSI support for Tegra20 and
+ Tegra30
+From: "Luca Ceresoli" <luca.ceresoli@bootlin.com>
+To: "Svyatoslav Ryhel" <clamor95@gmail.com>, "Maarten Lankhorst"
+ <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
+ "Thomas Zimmermann" <tzimmermann@suse.de>, "David Airlie"
+ <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Rob Herring"
+ <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor
+ Dooley" <conor+dt@kernel.org>, "Thierry Reding" <thierry.reding@gmail.com>,
+ "Jonathan Hunter" <jonathanh@nvidia.com>, "Sowjanya Komatineni"
+ <skomatineni@nvidia.com>, "Prashant Gaikwad" <pgaikwad@nvidia.com>,
+ "Michael Turquette" <mturquette@baylibre.com>, "Stephen Boyd"
+ <sboyd@kernel.org>, "Mikko Perttunen" <mperttunen@nvidia.com>, "Mauro
+ Carvalho Chehab" <mchehab@kernel.org>, "Greg Kroah-Hartman"
+ <gregkh@linuxfoundation.org>, =?utf-8?q?Jonas_Schw=C3=B6bel?=
+ <jonasschwoebel@yahoo.de>, "Dmitry Osipenko" <digetx@gmail.com>, "Charan
+ Pedumuru" <charan.pedumuru@gmail.com>, "Diogo Ivo"
+ <diogo.ivo@tecnico.ulisboa.pt>, "Aaron Kling" <webgeek1234@gmail.com>,
+ "Arnd Bergmann" <arnd@arndb.de>
+X-Mailer: aerc 0.20.1
+References: <20251022142051.70400-1-clamor95@gmail.com>
+In-Reply-To: <20251022142051.70400-1-clamor95@gmail.com>
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Sun, Oct 26, 2025 at 07:16:13PM -0400, Brian Masney wrote:
->Hi Sasha,
->
->On Sun, Oct 26, 2025 at 10:49:17AM -0400, Sasha Levin wrote:
->> From: Brian Masney <bmasney@redhat.com>
->>
->> [ Upstream commit 80cb2b6edd8368f7e1e8bf2f66aabf57aa7de4b7 ]
->>
->> This driver implements both the determine_rate() and round_rate() clk
->> ops, and the round_rate() clk ops is deprecated. When both are defined,
->> clk_core_determine_round_nolock() from the clk core will only use the
->> determine_rate() clk ops.
->>
->> The existing scmi_clk_determine_rate() is a noop implementation that
->> lets the firmware round the rate as appropriate. Drop the existing
->> determine_rate implementation and convert the existing round_rate()
->> implementation over to determine_rate().
->>
->> scmi_clk_determine_rate() was added recently when the clock parent
->> support was added, so it's not expected that this change will regress
->> anything.
->>
->> Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
->> Reviewed-by: Peng Fan <peng.fan@nxp.com>
->> Tested-by: Peng Fan <peng.fan@nxp.com> #i.MX95-19x19-EVK
->> Signed-off-by: Brian Masney <bmasney@redhat.com>
->> Signed-off-by: Sasha Levin <sashal@kernel.org>
->
->Please drop this commit from all stable backports.
+Hello Svyatoslav,
 
-Ack, thanks for the review!
+On Wed Oct 22, 2025 at 4:20 PM CEST, Svyatoslav Ryhel wrote:
+> Add support for MIPI CSI device found in Tegra20 and Tegra30 SoC along
+> with a set of changes required for that.
 
--- 
-Thanks,
-Sasha
+Whole v5 series (including patches 21-23):
+Tested-by: Luca Ceresoli <luca.ceresoli@bootlin.com> # tegra20, parallel ca=
+mera
+
+As you seem to have issues with sending a long series over e-mail, I may
+suggest looking at b4 [0] for the future. It automates many boring and
+repetitive tasks in handling a patch series, and also offers a way to send
+e-mails when an SMTP server is problematic e.g. due to limitations in
+e-mails per hour.
+
+[0] https://b4.docs.kernel.org
+
+Luca
+
+--
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
