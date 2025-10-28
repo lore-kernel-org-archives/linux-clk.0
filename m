@@ -1,116 +1,66 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24DC22D8790
-	for <linux-clk@vger.kernel.org>; Tue, 28 Oct 2025 08:18:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E0C724C068;
+	Tue, 28 Oct 2025 08:25:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761639500; cv=none; b=bXeJl5gui3+zkXZhzH8WGMcLpgMygPhT5jeA7ncEHk0JIepiM35iiD9xmgFAb/cwoQoE3IiA6Po9ZG31AiqCKlirH79MBlNqkl+BfAn4QAzzFVV6iAhf5W41kfszhnkeI0LgcWVaFTK8G5yl8ftxlkLTQQZQJiKEhq7dzB71hlc=
+	t=1761639943; cv=none; b=hOP4joPez2/020lje2I1+pv6K2N5rSsMNmBK0n1j3B1lYamw0OvVp6e9+FKGD+bSyLZpWQkFNtE4te+voehswezbAu0Mh3c3O32NRCdshb2ogP5e8Lm93rOr1GmaD6/778QsqdJW56oWF7VqDVn0FbcIgywQhSDaGFFoLpGqhvQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761639500; c=relaxed/simple;
-	bh=4pr8j+vyLR4qOLCMAuSM0l2HxTbXCqaGmlHYbv487bk=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=BICH8AnLVbu0DA1rUlll7JJTLUevNeYkNgogisazKkmdGiw3ayA5bElQsMdgjg0GVJVytjCEMYLMmq9CIC2jI1AV7nkYavzt19pQON8MVlaJxbHemRsacln5Pi4V1BA/lvTo1xuMVnHUBTHKzapKtQ/LUCfBDucrajSds9GCE4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1vDeu0-000287-GT; Tue, 28 Oct 2025 09:18:00 +0100
-Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1vDetx-005qNe-2y;
-	Tue, 28 Oct 2025 09:17:57 +0100
-Received: from pza by lupine with local (Exim 4.98.2)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1vDetx-000000002YE-3YQN;
-	Tue, 28 Oct 2025 09:17:57 +0100
-Message-ID: <36d28431c41ec9ed86487135d81e50b136ee0fae.camel@pengutronix.de>
-Subject: Re: [PATCH v2 4/6] reset: anlogic: add support for Anlogic DR1V90
- resets
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Junhui Liu <junhui.liu@pigmoral.tech>, Michael Turquette
-	 <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring
-	 <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	 <conor+dt@kernel.org>, Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt
-	 <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti
-	 <alex@ghiti.fr>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org
-Date: Tue, 28 Oct 2025 09:17:57 +0100
-In-Reply-To: <20251026-dr1v90-cru-v2-4-43b67acd6ddd@pigmoral.tech>
-References: <20251026-dr1v90-cru-v2-0-43b67acd6ddd@pigmoral.tech>
-	 <20251026-dr1v90-cru-v2-4-43b67acd6ddd@pigmoral.tech>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1-1 
+	s=arc-20240116; t=1761639943; c=relaxed/simple;
+	bh=BGLHI15OIhr0mx0wtAC1PBfsCC3+JWLqQ+LEeMy407M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J0CNrNhxb+w6P5Qoe6FCUM0V+b52JDGpDiWzzRlCx4CE1ahT0GHfkTHlMgtgNrZpdQ/6kRqVwG2Yly/wucbuSBqyAUBaQWf8OIR1Ata7LycBKfgNJvw6+RwJ4TPn3kG4UZlxbNcjXBnvjt0qg6/Uwe+KGaX2inuF9TcSR2SPzNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bErXYxOq; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bErXYxOq"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 674FCC4CEE7;
+	Tue, 28 Oct 2025 08:25:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761639942;
+	bh=BGLHI15OIhr0mx0wtAC1PBfsCC3+JWLqQ+LEeMy407M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bErXYxOqO9j4761ugrqbIqEfKLRzl229Sce6osceYbs2ZVoNaiX+EndqE7zv6xkwl
+	 +C7EdozcnXILbJNBSeCr2yx0PlfksKFhd3RU9WU1/Irtpu7wP5ku7fbp10jHsqL21f
+	 iSKh7om+vJNcc+uk8r6BL3rXrv8IJxoUa3rzEvXjPmOGBelnVw/+NNCofKVsQppzI3
+	 H8fNAJ5azfpGktLvMO51b14NP43VtdXZ5nRXk3cV55MC2QQQRWfcWOugNqmQiz3uGf
+	 OyFQDqWNzBaDIeOOolTVurFoF0mQ214tnY4eNVquKBnHRZxoB38FAHzPU6Q+fIL3pG
+	 RN38roBS+tehg==
+Date: Tue, 28 Oct 2025 09:25:40 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, 
+	Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
+	Mark Brown <broonie@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Andreas Kemnade <andreas@kemnade.info>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org
+Subject: Re: [PATCH v2 05/15] dt-bindings: leds: bd72720: Add BD72720
+Message-ID: <20251028-discerning-opal-mushroom-df7859@kuoka>
+References: <cover.1761564043.git.mazziesaccount@gmail.com>
+ <fae1285b43acdd19cebfcfbcf4530bf90064f601.1761564043.git.mazziesaccount@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <fae1285b43acdd19cebfcfbcf4530bf90064f601.1761564043.git.mazziesaccount@gmail.com>
 
-On So, 2025-10-26 at 22:00 +0800, Junhui Liu wrote:
-> Add reset controller support for the Anlogic DR1V90 SoC, which is an
-> auxiliary device associated with the Clock and Reset Unit (CRU). All
-> resets are active-low.
->=20
-> Signed-off-by: Junhui Liu <junhui.liu@pigmoral.tech>
+On Mon, Oct 27, 2025 at 01:46:04PM +0200, Matti Vaittinen wrote:
+> Add the ROHM BD72720 documentation to the binding documents.
+> 
+> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
 > ---
->  drivers/reset/Kconfig        |   9 +++
->  drivers/reset/Makefile       |   1 +
->  drivers/reset/reset-dr1v90.c | 135 +++++++++++++++++++++++++++++++++++++=
-++++++
->  3 files changed, 145 insertions(+)
->=20
-[...]
-> diff --git a/drivers/reset/reset-dr1v90.c b/drivers/reset/reset-dr1v90.c
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..eb9064e3ab454fb39adc1ad42=
-6f458e39bb6169e
-> --- /dev/null
-> +++ b/drivers/reset/reset-dr1v90.c
-> @@ -0,0 +1,135 @@
-[...]
-> +static const struct dr1v90_reset_map dr1v90_resets[] =3D {
-> +	[RESET_OCM]		=3D { 0x74, BIT(4)},
-[...]
-> +	[RESET_NIC_HP0]		=3D { 0x78, BIT(0)},
-[...]
-> +	[RESET_USB0]		=3D { 0x7C, BIT(0)},
 
-The registers 0x74, 0x78, and 0x7C are exclusively used for resets?
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-[...]
-> +};
-> +
-> +static int dr1v90_reset_control_update(struct reset_controller_dev *rcde=
-v,
-> +				       unsigned long id, bool assert)
-> +{
-> +	struct dr1v90_reset_controller *rstc =3D to_dr1v90_reset_controller(rcd=
-ev);
-> +	u32 offset =3D dr1v90_resets[id].offset;
-> +	u32 bit =3D dr1v90_resets[id].bit;
-> +	u32 reg;
-> +
-> +	reg =3D readl(rstc->base + offset);
-> +	if (assert)
-> +		reg &=3D ~bit;
-> +	else
-> +		reg |=3D bit;
-> +	writel(reg, rstc->base + offset);
+Best regards,
+Krzysztof
 
-There should be a lock around this read-modify-write access.
-
-regards
-Philipp
