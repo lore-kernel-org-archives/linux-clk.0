@@ -1,103 +1,82 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D01430C626;
-	Tue, 28 Oct 2025 11:47:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95E5A217736;
+	Tue, 28 Oct 2025 13:32:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761652030; cv=none; b=uOoai+xg9oKT/SBcoYOPcGU3t5PZmkHBn6Q7M5+jUgjVwqqkdNhwqt2xXsRmS0O1/WDR6rYY7qL/c+Ik1jNNlw/ZY3D2/xbCzLBPA2vGZJhc7ornLujuykOzXo1+Ds39g6sA2Rg7pH+KOHqS9Pl5JI+g0tJGxRnsweTHxIcw9Lk=
+	t=1761658350; cv=none; b=Z8qqI1ccfO5Km2xPHGql/gQSv5XvW4J8s17mkSJ00e+PqDi0AzU5L2SEL7K4WjOhmkU+qAl6o+H1HThMBkznzgn87qERJ9+p4hN7U9qMieOPA/hEZEM7QLYkFZQ1o5adQVvNyG+XvPK4qG4ANkduPiwMkvL9iQOqddA+H4QRcuc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761652030; c=relaxed/simple;
-	bh=dhVlfFBuIJdMHGGksIj7RamXnkNaK+qKXIFsvtZ4AgI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=PYQT5yW93hjL8K0FbyXSHkTAp3bSCyW6q5X8BZ9ssoPk2yFqfNF7tuYNVzZBRn6h21DEcqngcpZikBWx0Iv6Exlf/cJifuafriyrNIIFw5w2SDXrhr/l8dpzdU26VJWCxvg8zcDpAtnrJCcQhNg8pH49n2dpokz5kpCyyV8u6Vg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=CKNhenZu; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="CKNhenZu"
-Received: from mail.ideasonboard.com (unknown [IPv6:2401:4900:1c69:314e:ee86:ae6e:30:9d13])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id E03EF11D5;
-	Tue, 28 Oct 2025 12:45:16 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1761651917;
-	bh=dhVlfFBuIJdMHGGksIj7RamXnkNaK+qKXIFsvtZ4AgI=;
-	h=From:Date:Subject:To:Cc:From;
-	b=CKNhenZuEDjQ4yRNCvaMBiAYGCYEwQB7dUHnLJ3EXj1blYl3u5grUKo6VF5Jr5VY0
-	 pSDRbAe1iHlfefiG4oNb6eJgab/D4r2fp8tLTsZI6a5pKc8esVHuUewoFZuQF5f8aT
-	 7FKMmXsgRdDA2hckki2lp02iI1jeIoHao5LfZjqA=
-From: Jai Luthra <jai.luthra@ideasonboard.com>
-Date: Tue, 28 Oct 2025 17:16:47 +0530
-Subject: [PATCH] clk: bcm: rpi: Mark ISP clock as critical
+	s=arc-20240116; t=1761658350; c=relaxed/simple;
+	bh=7xzSZEKPMcMr6ZLDcdxFVSipxoAqy3mVToNORHLTl3I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ImwX8HChwTnAWoLbPScyhqUMwTdQ/PDP3YhSZb206MPqDeYBevN6KfPSvBeom17jdzKqw8BfhfKBXaFS/6jO5iGRHlXMPjawVhNlVGUjiFpNMErXLISgQC8xdHN3nUHfXqM1bd9NcEhdY5b3g8tVXwTq84Q0ik7THSerQF7Aljc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; arc=none smtp.client-ip=210.160.252.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
+X-CSE-ConnectionGUID: yAzQ4Cw7T8+IvhaCA/kGHg==
+X-CSE-MsgGUID: 38qbawjiTh2L8qoZHAb/sg==
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 28 Oct 2025 22:32:27 +0900
+Received: from demon-pc.localdomain (unknown [10.226.92.5])
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 65B5E41B5F52;
+	Tue, 28 Oct 2025 22:32:22 +0900 (JST)
+From: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+To: 
+Cc: Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Mark Brown <broonie@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	linux-spi@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+Subject: [PATCH 00/14] Add RSPI support for RZ/T2H and RZ/N2H
+Date: Tue, 28 Oct 2025 15:31:31 +0200
+Message-ID: <20251028133151.1487327-1-cosmin-gabriel.tanislav.xa@renesas.com>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251028-rpi-isp-clk-v1-1-2a54fecb495c@ideasonboard.com>
-X-B4-Tracking: v=1; b=H4sIACatAGkC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1NDAyML3aKCTN3M4gLd5Jxs3dQk02QTC2MTs1RTQyWgjoKi1LTMCrBp0bG
- 1tQDTw4FaXQAAAA==
-X-Change-ID: 20251028-rpi-isp-clk-eb5c48346e51
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, 
- Florian Fainelli <florian.fainelli@broadcom.com>, 
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
- Stefan Wahren <wahrenst@gmx.net>, 
- =?utf-8?q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>
-Cc: linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Jai Luthra <jai.luthra@ideasonboard.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1172;
- i=jai.luthra@ideasonboard.com; h=from:subject:message-id;
- bh=dhVlfFBuIJdMHGGksIj7RamXnkNaK+qKXIFsvtZ4AgI=;
- b=owEBbQKS/ZANAwAKAUPekfkkmnFFAcsmYgBpAK0zbSf9BdGRuZCYvi6Lckjwz2ResH+/mIgE/
- d5g1BPrRfmJAjMEAAEKAB0WIQRN4NgY5dV16NRar8VD3pH5JJpxRQUCaQCtMwAKCRBD3pH5JJpx
- RbGKD/9SUdtmw4sJCgNYzoCpg/x3H9l8i92BGJffd5WLRFBDnuEqUidpH+jBcoH8M3Zdq9/W0j0
- oV+MUIB0lqk0Cn7gyCEMOr4UWj0gCCv5dxwNSmbzegTfx9ZhDy8ECJf45nlstK1f+BqLGVHeyzu
- NonV+QV1iFgr48k0NMmDBS28Kox5nhUpYhSkHpJ0MMqifRcEObQ7uVbsNEe9wrTerhFQSGxmsdO
- 1BDkJBeRPRwUDV0BhY3ujT85s58imP72fPKZuM9fgWUK2dX1uuYrMbOK42A58OeQNh8tV1KksyG
- 2N38UnFj8wwpZwZh66N+2EZCa+B6rc1X81639KO34h//8XuAUbsKw0zoWkWN1iFsGfvj04jnZfz
- be/7sDbL1vmosrRbrYmm0UWvCT+iYQCjTYoHoPSI6C9H2SqrPibDlNPOebWT/Sx1U2+GZdBgXoe
- 3gomg+VvbkTn8GYMjEICrMN6ENuLfMWBoUythy7ZssffidblaofbJ/EnrfjfSgucnf5Wa28RdaV
- LT0td2cdJhYLWfOFET2pMtHnquSjPYZz+c8Yq7MBHWo6YOduGqElJpGS/SbcYTenLtGsZkplcUc
- JTFRBoS2i6KneOxpyBTmty2+2ksAapJ9RRO39b8hR5RQz8tYD9BmhX6i+dG43wIuZSiQ3MBQo0F
- wBIpvjcaN04mcOw==
-X-Developer-Key: i=jai.luthra@ideasonboard.com; a=openpgp;
- fpr=4DE0D818E5D575E8D45AAFC543DE91F9249A7145
+Content-Transfer-Encoding: 8bit
 
-The ISP clock should also be marked critical to prevent the clock
-framework from disabling it on boot, which can lead to bus lockups when
-the kernel tries to submit buffers to the VC4 ISP firmware.
+Compared to the previously supported RZ/V2H, the Renesas RZ/T2H
+(R9A09G077) and RZ/N2H (R9A09G087) SoCs have a smaller FIFO, no resets,
+and only two clocks: PCLKSPIn and PCLK. PCLKSPIn, being the clock from
+which the SPI transfer clock is generated, is the equivalent of the TCLK
+from V2H. They also support generating the SPI transfer clock from PCLK.
 
-Link: https://github.com/raspberrypi/linux/issues/7100
-Fixes: 919d6924ae9b ("clk: bcm: rpi: Turn firmware clock on/off when preparing/unpreparing")
-Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
----
- drivers/clk/bcm/clk-raspberrypi.c | 1 +
- 1 file changed, 1 insertion(+)
+Cosmin Tanislav (14):
+  clk: renesas: r9a09g077: add SPI module clocks
+  spi: rzv2h-rspi: make resets optional
+  spi: rzv2h-rspi: make FIFO size chip-specific
+  spi: rzv2h-rspi: make clocks chip-specific
+  spi: rzv2h-rspi: move register writes out of rzv2h_rspi_setup_clock()
+  spi: rzv2h-rspi: avoid recomputing transfer frequency
+  spi: rzv2h-rspi: make transfer clock rate finding chip-specific
+  spi: rzv2h-rspi: add support for using PCLK for transfer clock
+  spi: rzv2h-rspi: add support for variable transfer clock
+  spi: rzv2h-rspi: add support for loopback mode
+  dt-bindings: spi: renesas,rzv2h-rspi: document RZ/T2H and RZ/N2H
+  spi: rzv2h-rspi: add support for RZ/T2H and RZ/N2H
+  arm64: dts: renesas: r9a09g077: Add SPIs support
+  arm64: dts: renesas: r9a09g087: Add SPIs support
 
-diff --git a/drivers/clk/bcm/clk-raspberrypi.c b/drivers/clk/bcm/clk-raspberrypi.c
-index 1a9162f0ae31e330c46f6eafdd00350599b0eede..dcc3ae5fb91650b042d52f02499922786b43afde 100644
---- a/drivers/clk/bcm/clk-raspberrypi.c
-+++ b/drivers/clk/bcm/clk-raspberrypi.c
-@@ -151,6 +151,7 @@ raspberrypi_clk_variants[RPI_FIRMWARE_NUM_CLK_ID] = {
- 	[RPI_FIRMWARE_ISP_CLK_ID] = {
- 		.export = true,
- 		.minimize = true,
-+		.flags = CLK_IS_CRITICAL,
- 	},
- 	[RPI_FIRMWARE_PIXEL_BVB_CLK_ID] = {
- 		.export = true,
+ .../bindings/spi/renesas,rzv2h-rspi.yaml      |  62 +++-
+ arch/arm64/boot/dts/renesas/r9a09g077.dtsi    |  72 ++++
+ arch/arm64/boot/dts/renesas/r9a09g087.dtsi    |  72 ++++
+ drivers/clk/renesas/r9a09g077-cpg.c           |  22 ++
+ drivers/spi/spi-rzv2h-rspi.c                  | 335 +++++++++++++++---
+ 5 files changed, 494 insertions(+), 69 deletions(-)
 
----
-base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
-change-id: 20251028-rpi-isp-clk-eb5c48346e51
-
-Best regards,
 -- 
-Jai Luthra <jai.luthra@ideasonboard.com>
+2.51.1
 
