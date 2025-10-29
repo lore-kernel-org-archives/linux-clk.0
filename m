@@ -1,100 +1,106 @@
-Received: from smtpbgbr2.qq.com (smtpbgbr2.qq.com [54.207.22.56])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B56C12609D4;
-	Wed, 29 Oct 2025 01:05:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.22.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEA25229B2E;
+	Wed, 29 Oct 2025 06:03:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761699911; cv=none; b=HWagVsyyVw3mQ96B/nw0FJaqCRmF+7DYJTTOtxXyipY0FX2BywgTiZFYkcbbYKDxR5imi9Qwrxt3+knijnjK3vuOO+YdNZf8nRZiI3+rODpXBLb2T/yqCoE5NDggr+9RkjzAGysG5lbWuUW8hwtSzyu1VkLRr94TFGQKs/eFmGs=
+	t=1761717785; cv=none; b=lWPj2iT2xVG9hfwKznvWqMMFbcZyl+QjwPLOO0KgjmHqbvnqruf4Db5A5BL62XqRqyCES8Y54KjztaVdwIykx0YbT8wzp0gaA4KFKxWwGHGfYJdNael8gNh6Q+KBC8NqOXGd8qrMgCzOqPHd9xgQRqo22B5VcdWBgqSJMooidJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761699911; c=relaxed/simple;
-	bh=NJjvyvfgKJfTUHiq8JgYMwcQRN5gc8bcfferGDUhiAs=;
+	s=arc-20240116; t=1761717785; c=relaxed/simple;
+	bh=YrHXSkSziP250cVRScq0phJVMi2r3oBtH0D/zUlpBuo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bNt20MFpZQsSxS6tstk/eSCOhuMzbQ8bKY9zCmSsC2PJ2tHDWvsymf8mUom4l5/qNoTIhBiuJuY8YfYdhB5+CS9y7IgKzd73Lk4pCBnPMm9ZOhSZwFnTKCehZgYGNl0wxAJWeV4Wbq5MDNLHdmROz1WwXc9ktF7Ad357WNgkTxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=fuf3whdF; arc=none smtp.client-ip=54.207.22.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=tppksPYV6dUIjrIaWEOvHd8JKSz4XaBqTeEN0/IV6VNXiDqBaa7mQ0ZJ5tuFY/k+JdF16Is7K5NFjlUomN6Fgmy57NKt5+IPfBjCDEJjGZd9U/HrmqScbIpDn+fNV+SOtRumQlAy0BtoSF/VJKRwzOvVyQjjlOVzBxjF0HmXQjM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XVp8mbJ+; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="fuf3whdF"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
-	s=mxsw2412; t=1761699826;
-	bh=WhJq3Ipi1fnHde+8mqcuR7GcMe5QQYJXmTD2tu08/bk=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version;
-	b=fuf3whdFbHh6qrUHjLsaIs5jmpVY42jdMsHK8hMiW51zk4xaHisUDNbGj92mM1TOj
-	 wLO94+iGZHGmpCblqSpKzzHAwIhq0jBE+ZmjPu1bw/rPKrDDGNu6XxNewU2Qfr2V8N
-	 kWgd0sMxx/sz3AmQj/TmLIEuxHQXmq7prORw7BQE=
-X-QQ-mid: esmtpgz14t1761699818t16bf4f72
-X-QQ-Originating-IP: 4PI68DuhWu4P70idAW3AQJNj1pCz19XsCYRw2ixuntQ=
-Received: from = ( [61.145.255.150])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Wed, 29 Oct 2025 09:03:37 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 11185435277983628578
-EX-QQ-RecipientCnt: 9
-Date: Wed, 29 Oct 2025 09:03:37 +0800
-From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-To: Encrow Thorne <jyc0019@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Yixun Lan <dlan@gentoo.org>
-Cc: linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org,
-	spacemit@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Subject: Re: [PATCH] clk: spacemit: fix comment typo
-Message-ID: <B07B2D0180A31C0F+aQFn6XlzuhgGRnWq@kernel.org>
-References: <20251029-b4-fix-ccu-mix-typo-v1-1-caddb3580e64@gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XVp8mbJ+"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04849C4CEF7;
+	Wed, 29 Oct 2025 06:03:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761717785;
+	bh=YrHXSkSziP250cVRScq0phJVMi2r3oBtH0D/zUlpBuo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XVp8mbJ+f1AtJM7ysqo48j/jMtEJGVLZ3OCElTVXnsOlhlWDFU29YM4/4SZjtN5r4
+	 T/Hj4DbRRVO71H4yIaZpgpNwoWEfN/MQ2lU2qflBqvePiFKnJruIcyqv73CxnglftJ
+	 y04Zkqi5qCXuxVoC6r4qDnl30bAij2NoXzmrgfkP+Xk9g4+m5hVebK540ljoAsf1GH
+	 bowdD/Ip6rq9Cbz6GcdbyRowL4Da3GTvNByAeyjaZfQl1ukT2IUofkigJCCfqlsx5J
+	 MRzttXvdsA5qjqrwiS6ECbL3RXL7RIAajDLtq3/jWOPUnjyoKmyqVZuBZuLhyJTk15
+	 Wa/8WDnbnb+gQ==
+Date: Wed, 29 Oct 2025 07:03:02 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, 
+	Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
+	Mark Brown <broonie@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Andreas Kemnade <andreas@kemnade.info>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org
+Subject: Re: [PATCH v2 02/15] dt-bindings: Add trickle-charge upper limit
+Message-ID: <20251029-adamant-mamba-of-patience-cddb65@kuoka>
+References: <cover.1761564043.git.mazziesaccount@gmail.com>
+ <b13b733e7e0fba05652f49f727412fed9e0ceb02.1761564043.git.mazziesaccount@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251029-b4-fix-ccu-mix-typo-v1-1-caddb3580e64@gmail.com>
-X-QQ-SENDSIZE: 520
-Feedback-ID: esmtpgz:linux.spacemit.com:qybglogicsvrgz:qybglogicsvrgz3a-0
-X-QQ-XMAILINFO: ODcDgdcDagQK0jLi0Idn8OOQ9rSlepOuej7hvMXc4bjdk5Yui8m8tUy+
-	cJOIZERoNVpe/jtWHzbVw00LpDJREvFZcEsSmzOVxwdvwj8mTE/wRNmnaLa2jTJQTukw1Hc
-	OVyPjYBPaeHZEyLTcCfBJuqtU5jXJwUXK5gGGixygfTD2EN9J38hiicIwMkDFyVc+lbFZCv
-	p21JZc95IZf1Uv0QZtw6HzM5DPwxDIAW+Ocfl3P/I6G6g4T1BNlYNRKzjsqmESr1nreYESd
-	f4d1FAeCvY4wRzduKULyuJ+i7ebefj6IPtQl4Aj0VT8iKXn1wlIxHF8CK/Tem3U31vxGuIJ
-	AoYO4Y1gEhNPpaLTvNowvo7btvEjtvML8K38uvCQ7nxsFejmiGffQ5nR3pmvctpb8tKeqkR
-	rIYAESlU/D3r3wwd6+sf4tZyWb9B4uwdzifHMyaMk5Ngg6pLTkGQbJNQByqAs8gUIxTjQ7j
-	BzPR1Bnb/c9Dp1SfsK0kt12lgy2/BlM2dcgD/jTQ5TS4+sBt/fEaLxXPZQ56O9rn/YIidxc
-	lv5oDiPBncbJZ74E4akd+oxr/2QziAM8WlZNq/5xKXU3fTN6QxB3KYpmM+70+GArn2i7ReG
-	7EODMVWRz0omCyVVeJvivhBisVGJ+87aUc0zo7Kz6PgDQ1RZtDg66hvYe4XtufUQSzPqej7
-	1Tdeu9bxwviEwvc0xqINLQGYgpc5MXeyOjSwyz44J5Ke7RVQIvv7E7E/eHP7ClfaGtF6VjS
-	yR181FenqW6naMwMCvf720DGPnnrnZvLLxA17Oqf4x3OQDzAET6M2EjzC4YpnO773ONgekv
-	bGTjWuzQ99itpwXuOvTao5+MHbub8+kN6fVtuIL1PlQtLEBP+BhygoWu+OXXIMx6+IM7eNh
-	j878rfnZqNxOMs0UfshFgx8x7jiLvZGm90Efn1x5wHfLPgU6nQSw7uB29JTAVm8M/VGhpYW
-	HCHLoxKp9ROyh29mdKscTqqHk9pdUNiji2/RtUWM8eQ29Pk4KtkHZZ5zAML/lVoJzSeAwlw
-	a3K3/jUSJjZVfm0judYBiqOySdpVo=
-X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
-X-QQ-RECHKSPAM: 0
+In-Reply-To: <b13b733e7e0fba05652f49f727412fed9e0ceb02.1761564043.git.mazziesaccount@gmail.com>
 
-On Wed, Oct 29, 2025 at 12:05:39AM +0800, Encrow Thorne wrote:
-> ccumix.h was copied from ccudiv.h and the comment after #endif was not
-> updated.
+On Mon, Oct 27, 2025 at 01:45:05PM +0200, Matti Vaittinen wrote:
+> Some of the chargers for lithium-ion batteries use a trickle-charging as
+> a first charging phase for very empty batteries, to "wake-up" the battery.
+
+In the few cases I was dealing with charging circuits, trickle charging
+was used in context of top-off charging, so when battery is 100%. It's
+also documented at Wiki like that:
+https://en.wikipedia.org/wiki/Trickle_charging
+
+> Trickle-charging is a low current, constant current phase. After the
+> voltage of the very empty battery has reached an upper limit for
+> trickle charging, the pre-charge phase is started with a higher current.
 > 
-> This patch fixes the incorrect comment to match the filename.
+> Allow defining the upper limit for trickle charging voltage, after which
+> the charging should be changed to the pre-charging.
+
+pre-charging is the trickle charging, no? Or you want to say that
+trickle-charging is pre-pre-charging? But then what is pre-charging in
+this binding?
+
 > 
-> Signed-off-by: Encrow Thorne <jyc0019@gmail.com>
+> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> 
 > ---
->  drivers/clk/spacemit/ccu_mix.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Revision history:
+>  RFCv1 =>:
+>  - No changes
+> ---
+>  Documentation/devicetree/bindings/power/supply/battery.yaml | 3 +++
+>  1 file changed, 3 insertions(+)
 > 
-> diff --git a/drivers/clk/spacemit/ccu_mix.h b/drivers/clk/spacemit/ccu_mix.h
-> index 54d40cd39b27..c406508e3504 100644
-> --- a/drivers/clk/spacemit/ccu_mix.h
-> +++ b/drivers/clk/spacemit/ccu_mix.h
-> @@ -220,4 +220,4 @@ extern const struct clk_ops spacemit_ccu_div_gate_ops;
->  extern const struct clk_ops spacemit_ccu_mux_gate_ops;
->  extern const struct clk_ops spacemit_ccu_mux_div_ops;
->  extern const struct clk_ops spacemit_ccu_mux_div_gate_ops;
-> -#endif /* _CCU_DIV_H_ */
-> +#endif /* _CCU_MIX_H_ */
-There's no reason to discourage beginners from starting with comment fixes.
-Nice catch! Encrow.
+> diff --git a/Documentation/devicetree/bindings/power/supply/battery.yaml b/Documentation/devicetree/bindings/power/supply/battery.yaml
+> index 491488e7b970..66bed24b3dee 100644
+> --- a/Documentation/devicetree/bindings/power/supply/battery.yaml
+> +++ b/Documentation/devicetree/bindings/power/supply/battery.yaml
+> @@ -66,6 +66,9 @@ properties:
+>    trickle-charge-current-microamp:
+>      description: current for trickle-charge phase
+>  
+> +  tricklecharge-upper-limit-microvolt:
 
-Reviewd-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+Please keep existing format, look three lines above. trickle-charge-....
+
+But I believe this is wrong. Trickle charging does not switch to
+anything more, there is no fast charging after trickle. You have some
+sort of pre-pre-charging, which is just pre-charging.
+
+Best regards,
+Krzysztof
+
