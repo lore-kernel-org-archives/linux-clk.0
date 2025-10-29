@@ -1,105 +1,114 @@
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9FDB346E7E
-	for <linux-clk@vger.kernel.org>; Wed, 29 Oct 2025 13:09:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23C0A29D293
+	for <linux-clk@vger.kernel.org>; Wed, 29 Oct 2025 13:26:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761743360; cv=none; b=YCaUg0KXsTweK7jVilMV8mx6Tlsjb8MHgogwUYP9y/cBdRJ1sj6ZQYh9NU644IO2cEQ1GLb3e+SI8hp6UbSaXP5JZetXXecKA0mDZamraJdcZXqTtDN45S9H+m82Xf49/o90pv2Awe3xXzWC1BJoo/JxKV+ccTch/mZlqeDA7UI=
+	t=1761744384; cv=none; b=rMjjIKwrJmMmOz/SEe37chiQXVuhAUhgr+XTlRth3R9fzoU0fcDQ7lkWNp1mpUWrXOKu3mN7OZeWSkXz8gxoHPGd8DByc/sDaOy8IOBW+1G3wII6TmQKmJEU0Yb0hWS6hArtx5IWO8SuToUTApArIzNBdjnuWZK7w1DbCzq/Xdw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761743360; c=relaxed/simple;
-	bh=hX/L3l6he6aKhXrW+BbwyLOLFGJnEz73yJiqxGhKoaY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:Content-Type:
-	 References; b=YC70JJTsRi7S2fTMZgOr7jBgzGuHa2MAc7LP8FjgLAcXgiuRcIteydXbA1mRxOokwcc4MmghYzz3e7/0Tuc3UMzej1VexIJo9kIrzP5orcKVqwh3H/RuZHO4MN4ZKS2gY4xdcX35OxsqhDXgvCGyJJ2kCNDV4WuXVPkmJA2+Hl0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=F0bjp2pv; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1761744384; c=relaxed/simple;
+	bh=aSKuU9xIOHp+USY+0olHQZuj/v2CpxFRMmxMh6Q5UbY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EUaI9uF0FqOPJYhIedowIVEE8FWS7SYvB050Ettx9f3tJW8PYNDHlo6CBQoqrt3WSKL6JRDqTagQuT5W7ZwHcvmWmcK6Zts6PsHddmImPhUSPQ1AOdZxJJeYvHVweLDTPHdDVK+wnVQ38hJOhZukGcvZW1v1pfY8sdg4vgM6/UQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iUmnKqAV; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="F0bjp2pv"
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20251029130915epoutp03d425488356e4e0fbe471f715ba1d754f~y_D_CS63I1537715377epoutp03n
-	for <linux-clk@vger.kernel.org>; Wed, 29 Oct 2025 13:09:15 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20251029130915epoutp03d425488356e4e0fbe471f715ba1d754f~y_D_CS63I1537715377epoutp03n
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1761743355;
-	bh=mhdCUOJguwRxW0Me6zDM1dADDQ0Txm6u4urbm0RY+sY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=F0bjp2pvXZzSe9z4xpB0A9o7CfsedzMP+nonWQoLrSGd9+/sd+0VNviFOO86Qkvcn
-	 GwBUC+xGljVPf4btFlDtbtalMcxyI9RyONiIMIkHUYgH2VWz9fargriXNLdhVHEe1v
-	 J90dpC4kdTAxMaT83iVIVErLynCZAFqviEm9iJCs=
-Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
-	20251029130914epcas5p1d645530f0d84d710a5b3096904e87d8f~y_D8guElW2691926919epcas5p1t;
-	Wed, 29 Oct 2025 13:09:14 +0000 (GMT)
-Received: from epcas5p1.samsung.com (unknown [182.195.38.92]) by
-	epsnrtp03.localdomain (Postfix) with ESMTP id 4cxSHs2873z3hhT3; Wed, 29 Oct
-	2025 13:09:13 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20251029130912epcas5p2f6596fefe3fe5513958b8209e78fa2c6~y_D6vKxIV3210832108epcas5p2o;
-	Wed, 29 Oct 2025 13:09:12 +0000 (GMT)
-Received: from Jaguar.samsungds.net (unknown [107.109.115.6]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20251029130900epsmtip26950c5dad6ff42f9f52bc58d8e51c136~y_DvcRhBp1199811998epsmtip2e;
-	Wed, 29 Oct 2025 13:08:59 +0000 (GMT)
-From: Ravi Patel <ravi.patel@samsung.com>
-To: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	jesper.nilsson@axis.com, lars.persson@axis.com, mturquette@baylibre.com,
-	sboyd@kernel.org, alim.akhtar@samsung.com, s.nawrocki@samsung.com,
-	cw00.choi@samsung.com
-Cc: ravi.patel@samsung.com, ksk4725@coasia.com, smn1196@coasia.com,
-	linux-arm-kernel@axis.com, krzk@kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	pjsin865@coasia.com, gwk1013@coasia.com, bread@coasia.com,
-	jspark@coasia.com, limjh0823@coasia.com, lightwise@coasia.com,
-	hgkim05@coasia.com, mingyoungbo@coasia.com, shradha.t@samsung.com,
-	swathi.ks@samsung.com, kenkim@coasia.com
-Subject: [PATCH v3 4/4] dt-bindings: samsung: exynos-pmu: Add compatible for
- ARTPEC-9 SoC
-Date: Wed, 29 Oct 2025 18:37:31 +0530
-Message-Id: <20251029130731.51305-5-ravi.patel@samsung.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20251029130731.51305-1-ravi.patel@samsung.com>
-X-CMS-MailID: 20251029130912epcas5p2f6596fefe3fe5513958b8209e78fa2c6
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-541,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20251029130912epcas5p2f6596fefe3fe5513958b8209e78fa2c6
-References: <20251029130731.51305-1-ravi.patel@samsung.com>
-	<CGME20251029130912epcas5p2f6596fefe3fe5513958b8209e78fa2c6@epcas5p2.samsung.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iUmnKqAV"
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-378d246f0f1so78111651fa.3
+        for <linux-clk@vger.kernel.org>; Wed, 29 Oct 2025 06:26:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1761744380; x=1762349180; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aSKuU9xIOHp+USY+0olHQZuj/v2CpxFRMmxMh6Q5UbY=;
+        b=iUmnKqAV2ZqMdwnarD5Ij79DsuDs8d9nv9eDEmFWWJiu41QA9o1q9vb8Pkbw3xbwmL
+         c6QCK4LsJtvpN8Y7BhbLijAl1jzxLs/rlhWG9ZVtfRggaPEayDKQmSSxpfpjumVUz0H5
+         I8GBQUEMGUmH5HGOvkZB47Y6tPmwj/vITe7gdeYhYEY9X5hUMk4F8RQ/Hv0XqxijV+c+
+         nb6NKK0uARBBlJV1IRx5XEZ8x3KkQqHeyeRmN11znwsMl4mZwxGKDovmKAqV81udKgkq
+         VTaAMZFkD/rpE6QxRLyak22lIf8mIBCRZqn4bUBxHJiRW7plr8/Hq7YjCbztGtpv29yI
+         C6+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761744380; x=1762349180;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=aSKuU9xIOHp+USY+0olHQZuj/v2CpxFRMmxMh6Q5UbY=;
+        b=XhP53VpcBDUIjRpXXG9qDVuSZoDfqdRWy2f6k0Vj90gEHAx7JAu39furmSnrPnU5ni
+         8haDqK62i8KcFgUTb0OWpCAZZOZifF7c6wfDK/v8It/X1+RXPx1nj0rH7a23Pyk3+xCS
+         i3FMEIUZcHXEPAh4LmFbZMNldgfdj4qV4t8aXoUlP/2AX/CXbmkIURPujSpz9AMtXlWo
+         mpq6E1S4SsTzNGBki3/GA38itDAYzWXE3edAIMTnFYzaq0b8dm2WrXXHwRbyChJSWRI+
+         S1C//PXN+Fk/d0dCU6WaIEFLGF1jty/zbQTN4EAVDxc0B/QUYAau46+ChvnrGetJs7rr
+         Cpog==
+X-Forwarded-Encrypted: i=1; AJvYcCXyZevz/CB7OOBzcdyV8y3BmNfOltATjbT6NC6mpubFZSLGOTRneDWSim9lsUoIGhNljCn9y/ySsLA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSDuWEvvm2pf7ahzvnRHNn/hC9itYIE289N4FMf5Lv2MjfmdYU
+	xygU0+z0AUzecHgqkYJOILdpBPWu4fIVXah7t9ZSOOo8p8/mdX+WQQ37K8u/uWjMn3iHpz7x9Lo
+	3UNrIpkGUfbcs2h7mFFVSQDikv5fwJ+nWMU9eDxcTqQ==
+X-Gm-Gg: ASbGncutjbdTB6me/jyKSWvXKrBqiQjoW1Kfn8HMG9Y1bS/4i8Qyto40de1U1taqtA/
+	jykuA4TiOFkzo3pK/1cf1Q0eDm9JI0k7kvawHCQvewGG6py/+aVK2yQeTORSX25Qw1i3hqyuLHE
+	yxhtH07h16VeGjMJOCvi4usxz6/cKdh5SBvxvckwIYopfsJcFzOLy7vKCfIjdduplxBye718xA7
+	KLYduf2pPrlhgBA+WdI47DyMiknEP5Tu1O/ECFjfYdJB1qeDB7HgdEfPORt
+X-Google-Smtp-Source: AGHT+IFc/hCvDE1Zso/0IxQN+geIgWUqlAHmVbZSzAYj2L1gPzKHQM2rtOb3cVJ3wqFIdmrbO8L60WWStqgI5NAbuCE=
+X-Received: by 2002:a2e:9a12:0:b0:36a:f4d3:82e9 with SMTP id
+ 38308e7fff4ca-37a023ba912mr9579411fa.6.1761744380200; Wed, 29 Oct 2025
+ 06:26:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <cover.1761564043.git.mazziesaccount@gmail.com>
+ <b13b733e7e0fba05652f49f727412fed9e0ceb02.1761564043.git.mazziesaccount@gmail.com>
+ <20251029-adamant-mamba-of-patience-cddb65@kuoka> <a81fba66-adf0-440f-96e1-bf3a83d504d8@gmail.com>
+In-Reply-To: <a81fba66-adf0-440f-96e1-bf3a83d504d8@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 29 Oct 2025 14:26:08 +0100
+X-Gm-Features: AWmQ_bkO8UFcogwNBcRXNNMdmHiXiiZyPgTHaU5THyaD5CILTj16yxOphtBr7r4
+Message-ID: <CACRpkdZcszMZEU2Wzx8kaoR46ytziqtedmCrsjEL3QOrDtDgzg@mail.gmail.com>
+Subject: Re: [PATCH v2 02/15] dt-bindings: Add trickle-charge upper limit
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, 
+	Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Andreas Kemnade <andreas@kemnade.info>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, linux-leds@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: SungMin Park <smn1196@coasia.com>
+On Wed, Oct 29, 2025 at 7:22=E2=80=AFAM Matti Vaittinen
+<mazziesaccount@gmail.com> wrote:
 
-Add Axis ARTPEC-9 pmu compatible to the bindings documentation.
-It reuses the older samsung,exynos7-pmu design.
+> > But I believe this is wrong. Trickle charging does not switch to
+> > anything more, there is no fast charging after trickle. You have some
+> > sort of pre-pre-charging, which is just pre-charging.
+>
+> There is trickle, pre and fast-charge phases. Furthermore, the
+> fast-charge is further divided to CC and CV. Finally, if my memory
+> serves me well, Linus W did explain me that some chargers use
+> 'trickle-charging' as a _last_ charging phase for a full battery. Thus
+> the term 'trickle-charging' is slightly confusing - but it is already
+> used by the existing bindings...
+>
+> https://lore.kernel.org/all/20211116001755.2132036-1-linus.walleij@linaro=
+.org/
 
-Signed-off-by: SungMin Park <smn1196@coasia.com>
-Signed-off-by: Ravi Patel <ravi.patel@samsung.com>
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
----
- Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml | 1 +
- 1 file changed, 1 insertion(+)
+I think we need to refer to a textbook or IEEE articles to get this
+terminology right.
 
-diff --git a/Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml b/Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml
-index be1441193fee..9d3e8e9817fb 100644
---- a/Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml
-+++ b/Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml
-@@ -52,6 +52,7 @@ properties:
-           - const: syscon
-       - items:
-           - enum:
-+              - axis,artpec9-pmu
-               - samsung,exynos2200-pmu
-               - samsung,exynos7870-pmu
-               - samsung,exynos7885-pmu
---
-2.17.1
+As you say it appears "trickle-charging" is ambiguous.
 
+Maybe what Krzysztof suggest to use: "pre-pre-charging" or
+"empty-battery-charging" or something like this is needed.
+
+But we really need a trustworthy academic source here.
+
+Yours,
+Linus Walleij
