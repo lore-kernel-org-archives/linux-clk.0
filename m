@@ -1,66 +1,66 @@
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C27C93469FF
-	for <linux-clk@vger.kernel.org>; Wed, 29 Oct 2025 12:22:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7212C35BDD8
+	for <linux-clk@vger.kernel.org>; Wed, 29 Oct 2025 12:23:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761740557; cv=none; b=kO3KGmzpKvhS6aRzVBZmjMdlfhPNzeQNyrs5/VAtcAPFKr6dlECQ2yNDD7Bz9Ps4D3FpWE/bLCxXlCiITreXBhUV7etufaDrh6LA2w16642IEXp/6DWeBgNJK2Q4g3ajLbZr7OKIIXLT+O03vVF5/UG5puFLH2tUyqaSPbp6rsU=
+	t=1761740593; cv=none; b=WJWiKp0hHbvDyBv6GrzlbEVAoyH4K6462bO3VErHJxxOoJENr35bjsQziJD6FkpWq/gOYBiDAYHjAyTWZBduRXHFWmh+gFhvh8nu3vNtHalMXUiJMMkcJevKLR5PEQA7LYo8Wd2eNdeKdrgAni5YOUyv+6Z1cupZSOMZSfU1YPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761740557; c=relaxed/simple;
-	bh=2uVsXjqYAFXDMXZsaLDabWe8n3+FWhGwBNQ1WHtgWew=;
+	s=arc-20240116; t=1761740593; c=relaxed/simple;
+	bh=4q7J4aubuQWsGwr0ektsFotDhPgrwX82ZQ+g0OMBrag=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AJHHruDGjCtPLHeq0Lga00tQk7poMfwg8d/3eq3DvT6rzGBwrrHizgHEELgN8BvadjMYoH9gy9ebeqDwTaJVunE8Qun9k9Lhg/IRYh8lN6xBz9AEs7+Mcvbtq4xNR8ehSMoeCWhSDC7MSH9S32YR9mOK6jhzcbZFj6hEO8neCcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B+WtS5yz; arc=none smtp.client-ip=209.85.208.169
+	 In-Reply-To:Content-Type; b=Ca45EuMF10vZBU5+1VELCdPz1o3vGJLVrLVCEd4AghGjV/D+6Te7sX3EdxeIm0ksKkvgapWlsM5qHIGfjROEzOHQdVHdpiJpxoiVxIvij8srSl5duh4t0YXl75Bn7RSwvyRwO5Ay8ySddcHNPnlLi6+3MWu1RyeiM4NhWSqdMBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aKusNya+; arc=none smtp.client-ip=209.85.208.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B+WtS5yz"
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-378d50162e0so82411561fa.2
-        for <linux-clk@vger.kernel.org>; Wed, 29 Oct 2025 05:22:34 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aKusNya+"
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-378cfd75fb0so76359481fa.1
+        for <linux-clk@vger.kernel.org>; Wed, 29 Oct 2025 05:23:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761740553; x=1762345353; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1761740588; x=1762345388; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=zZgl3eI7vg5tzy1n/3yyz3iAkoVI/IBOnqdMyOqmVk0=;
-        b=B+WtS5yzyIwpvOorO9CU/ozNNAtHkPHMMAjXFP3xqgEmQKRpMc19hxES+whEnMzcAP
-         Ua+K9G9dmrezmc9/NmRa4iUEjIzTGkY1sJNOcurg27zKfDjsSk7k88GPK2LpN7RGussR
-         n+9Antt2eU4T73u4NMvzOvv/58cz8kQd++01nlo8U7vF2ynyxq+t2vixohCpa7fsUsUE
-         D7SujO1reH5jhOVg+/rZ7B7kvE2acaQV9nMuMgCcVuLUHdsm5psGYhPJw8Q/kyO8Vcnf
-         AhU+tfTqYZReepGb7uXKa+w8I9df0RLPciZwLiEN+nq1O9XO/trAbUFiWpQdpFoyvC53
-         Vq4A==
+        bh=UwOTcdAl6vDZ/MWyMdXE0a7QobEAic8ni59wBqX8fPs=;
+        b=aKusNya+J1epch69ax/IhqtTcFFpOXJlXycJ3taG2vAOmbfp5vZwMNwAwBFguwg3/Z
+         iA5ZMqVWcGfEE/fkTY2j6W8/t6u/Amc3PuCCNe8K3HEP9bi88kUMQEnLT50SmA0xR8oz
+         kjgeFGRrAQY7/0L/g/TilJzqMIeIakGJOXRFkr3nWwMw69QcKH4JjpCPNH/8JsOMzS/K
+         G//42m3pFRCNn1P2pYqDJZZ7i0fwtn36IiINOJPRcWNJ7n5RPen4uWKfsa00ir6XNTiv
+         s4+BR3zF4LXbN2b/x5+DHA325CzYi4Y9bsxThtoQgnfy0Y14RIJAMO5CBUtgcTLfo4Dc
+         lfcA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761740553; x=1762345353;
+        d=1e100.net; s=20230601; t=1761740588; x=1762345388;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zZgl3eI7vg5tzy1n/3yyz3iAkoVI/IBOnqdMyOqmVk0=;
-        b=IbnWIUDOk6rVmSIAfG7KTErpqY+TqkzsS65VBJgylVkHyQ78cQA4aT8aZP659hi+qs
-         vgW8NhGpKuUtVckMmoXj8+jiazLYJ7W8DEYxAsIlTmefSb0lwLPlongQz0q3KQc9kId/
-         zT3CqfZyZMua+tFZ6cmfEDIqpVd3KsJvWdavJa77SkinyBpjyiI4NHk54+V7rwcr8vc5
-         cLppANXiFFmnsaY1gEo5GUgZt65b6yBVqg2Tgva5RimIc3QX55HSPNe8e2l3kaH6S8V3
-         F/1RhGMyI3utmT3GHYvfRa+DQ1i2DwdQAesAOItiCflN45nJybdrTK/PbeuzW2Um29zo
-         ZrGA==
-X-Forwarded-Encrypted: i=1; AJvYcCWDwSxECqZzN7QpRsnMcvcV7nmTm1Z8hmpSmacyEHXeTsqPRZ//NkvSr5kV/bgC4J0Gy58zvaaCr1Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCqPcb2ezaFkdsgv6syQ8E8mM9jtClVDKGLsPt0+Xp+0aegkIH
-	rKXIc2BkzmUh9j4knziO2Zq3YZIvuwDQKupU3MVejI7beYQIfkK73FrJ
-X-Gm-Gg: ASbGncuvnjjoTTU+XFdiVWaBVq87fEEoGaQ+1+17V5B5kV0qeVTd9g1drt/yoBT1IXj
-	vb1AcC5MrgIDTHdzgxxUgphK9ySHXn9k/SRxJtUhcnn9Q8YlpYWNM2Jfuivj/hknO5c8hYM94mS
-	Ad4N3wdqxqvDtJkQFZS2fyLvLstB3bwZ6ujgyJHJ0uoHs7xP/SmJMKjbF3c3TbBmru9mMUJmupr
-	25QC/Al6x/kYuirDa+13+ffoDSMRJlJeeOBJOe0TuWSEzeAhC1UxEBYOpoF4uUktFW50iUy44T7
-	vaBoTgz/mpxFqEz7wI4wFbw3lZ+vwvt/Qf/P8wASXjYo3MqF2j+q0CUmGHyFdd41J7dnk7huwNV
-	yJRWpHjqiey4jOMpfhpTwj3HZWRQxH6mtH8Xoabjh4w6CMRd9dU6YDp0r0ZEz6k39ED/FUpRKZj
-	HIPkjfvM0Spg==
-X-Google-Smtp-Source: AGHT+IE2iQbJln+N7SD4pplQmz5pd5RsqX+x6DtY4QwXN3fjqhUrh1ZJZX1iVGCG3vRTmo+/4QF4Bg==
-X-Received: by 2002:a05:651c:1542:b0:36d:114b:52e2 with SMTP id 38308e7fff4ca-37a024017b7mr7425661fa.34.1761740552495;
-        Wed, 29 Oct 2025 05:22:32 -0700 (PDT)
+        bh=UwOTcdAl6vDZ/MWyMdXE0a7QobEAic8ni59wBqX8fPs=;
+        b=ugFL6BIirk1Fv+57R01CWmwAFtf7Oy3GKcbKvPBkMd3UmFmall7Bj0wHJzZ/Z9+bqq
+         oMPxKHAfXA0g1QcSiZphb8mq9D96G0y8nQ0wbShxvbU00Hypi16yIJuPtBAwgl9IEMQD
+         rcRsttjiDO8h3kqRT+UFltwEFZeo+I6spafIbtUxGycNba9Jh71cUDoW4gVaKtzecDn1
+         6/TccETdAZ4D7X0iGvaF4bxlvvHne3hGOaXJOI1DOplud1YPtUE7fEtQgKLQ80haKswB
+         J78ZHEk5oG9ucp9Tb++oqmzDwd5/Xnb9Ds60QZwGj6f5GWvubXlO8Vbml4MhL0gDFR7a
+         P3bw==
+X-Forwarded-Encrypted: i=1; AJvYcCWr0+GsZaMvMIw9Bf3rNcYfE7GIA9FesrPmBGU4EoxrsGR5x+YZwwD+CQ4dAzt+Oj+ZIpK9CR0AGSI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyp1oS+4bcj+KL84i7ewYCwjxi0W1pKZh+wuu3gy+64JZ7msWWE
+	idkcDMfAL6WCUfos+QcFSSHqs7LuIKKlNvjGrnLwhj8lAYi1/old7LSc
+X-Gm-Gg: ASbGncvuWz7NXTExAfqs8qsCQ0mmyOoSJtNKQ2ryD4VearpwCJywaWrXNckvRfKSJ4b
+	lj9fAK2vZfJFneFAw0OCNOfC6oJI5/VzS5mZrIfsJ2QPUhgs7DGHzpPsztrRYfzjR6TpT8+QdeI
+	S2sLMOgiGKhFOHte3NcVpx/19G6mic9nZaev9Lq3bhHjRFyT/JsCvmceJVDtviA5YM2KuCZXnZE
+	k4Stx2JajTX3KKeUG7YYcdBs0RwRFzcMgt6E+HcRX8+bouvmO03hR05RjoOvBFbi33NYbPQ+0gb
+	vk34CvULVfqQfqu/Sv/1oTMWa20Pj6Pue74nzOe95QIdCND/WiAnjtPLdkFAsVINca+2V7gReuq
+	AxMAVHV7g6qlel/cruttAi9JnWJW5IwiHhr0XdUYU0nVW8M71KHUrLVWAlcKS8aqI0w5y7P3Ct4
+	JmSkWNvZ9Peg==
+X-Google-Smtp-Source: AGHT+IFFUkHYksyaF7YXcZrhW6iSWoG+pahPESVLSjEUcjb9W1AN2WMoPe9CQ3dBxP/T6OWyot0tAg==
+X-Received: by 2002:a05:651c:1ca:b0:378:ec26:bac with SMTP id 38308e7fff4ca-37a023c5e6fmr9540811fa.15.1761740588247;
+        Wed, 29 Oct 2025 05:23:08 -0700 (PDT)
 Received: from [10.38.18.54] ([213.255.186.37])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-378ee09229asm33470711fa.9.2025.10.29.05.22.31
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-59301f5f98esm3814707e87.57.2025.10.29.05.23.07
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 Oct 2025 05:22:31 -0700 (PDT)
-Message-ID: <c28bbb75-36b0-4776-b81c-c5dc2dd5ae28@gmail.com>
-Date: Wed, 29 Oct 2025 14:22:30 +0200
+        Wed, 29 Oct 2025 05:23:07 -0700 (PDT)
+Message-ID: <49612d39-e2ba-4cf1-8bd2-3da1e9869069@gmail.com>
+Date: Wed, 29 Oct 2025 14:23:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -69,15 +69,15 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v2 04/15] dt-bindings: mfd: ROHM BD72720
-To: Rob Herring <robh@kernel.org>
+To: Andreas Kemnade <andreas@kemnade.info>
 Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
  Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Sebastian Reichel <sre@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Sebastian Reichel <sre@kernel.org>,
  Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
  <sboyd@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
- Bartosz Golaszewski <brgl@bgdev.pl>, Andreas Kemnade <andreas@kemnade.info>,
+ Bartosz Golaszewski <brgl@bgdev.pl>,
  Alexandre Belloni <alexandre.belloni@bootlin.com>,
  linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
@@ -85,15 +85,17 @@ Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
  linux-rtc@vger.kernel.org
 References: <cover.1761564043.git.mazziesaccount@gmail.com>
  <a5957c4f83724d4f32527fb892fc340af4eeddde.1761564043.git.mazziesaccount@gmail.com>
- <20251027211351.GC1565353-robh@kernel.org>
+ <20251027222030.560def67@kemnade.info>
 Content-Language: en-US, en-AU, en-GB, en-BW
 From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <20251027211351.GC1565353-robh@kernel.org>
+In-Reply-To: <20251027222030.560def67@kemnade.info>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 27/10/2025 23:13, Rob Herring wrote:
-> On Mon, Oct 27, 2025 at 01:45:46PM +0200, Matti Vaittinen wrote:
+On 27/10/2025 23:20, Andreas Kemnade wrote:
+> On Mon, 27 Oct 2025 13:45:46 +0200
+> Matti Vaittinen <mazziesaccount@gmail.com> wrote:
+> 
 >> The ROHM BD72720 is a power management IC integrating regulators, GPIOs,
 >> charger, LEDs, RTC and a clock gate.
 >>
@@ -101,189 +103,21 @@ On 27/10/2025 23:13, Rob Herring wrote:
 >>
 >> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
 >>
->> ---
->> Revision history:
->>   RFCv1 => v2:
->>   - Typofixes
->> ---
->>   .../bindings/mfd/rohm,bd72720-pmic.yaml       | 269 ++++++++++++++++++
->>   1 file changed, 269 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd72720-pmic.yaml
->>
->> diff --git a/Documentation/devicetree/bindings/mfd/rohm,bd72720-pmic.yaml b/Documentation/devicetree/bindings/mfd/rohm,bd72720-pmic.yaml
->> new file mode 100644
->> index 000000000000..b0d4bc01d199
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/mfd/rohm,bd72720-pmic.yaml
->> @@ -0,0 +1,269 @@
->> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/mfd/rohm,bd72720-pmic.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> [...]
 >> +
->> +title: ROHM BD72720 Power Management Integrated Circuit
->> +
->> +maintainers:
->> +  - Matti Vaittinen <mazziesaccount@gmail.com>
->> +
->> +description: |
->> +  BD72720 is a single-chip power management IC for battery-powered portable
->> +  devices. The BD72720 integrates 10 bucks and 11 LDOs, and a 3000 mA
->> +  switching charger. The IC also includes a Coulomb counter, a real-time
->> +  clock (RTC), GPIOs and a 32.768 kHz clock gate.
->> +
->> +# In addition to the properties found from the charger node, the ROHM BD72720
->> +# uses properties from a static battery node. Please see the:
->> +# Documentation/devicetree/bindings/power/supply/rohm,vdr-battery.yaml
-> 
-> Why is all of this a comment?
-
-Hi Rob,
-
-Thanks for (all the) reviews! Much appreciated.
-
-I added these as comments because they aren't meant to be in the BD72720 
-charger-node (which is described by this driver), but in a static 
-battery node. The battery node does not belong in the charger node.
-
-My idea was still to document (for integrator) the battery properties 
-this charger uses from a static battery node when present. Only thing we 
-include directly to this node is the:
-monitored-battery = <&battery>; - reference.
-
-> 
->> +#
->> +# Following properties are used
->> +# when present:
->> +#
->> +# charge-full-design-microamp-hours: Battry capacity in mAh
->> +# voltage-max-design-microvolt:      Maximum voltage
->> +# voltage-min-design-microvolt:      Minimum voltage system is still operating.
->> +# degrade-cycle-microamp-hours:      Capacity lost due to aging at each full
->> +#                                    charge cycle.
->> +# ocv-capacity-celsius:              Array of OCV table temperatures. 1/table.
->> +# ocv-capacity-table-<N>:            Table of OCV voltage/SOC pairs. Corresponds
->> +#                                    N.th temperature in ocv-capacity-celsius
->> +#
->> +# ROHM specific properties:
->> +# rohm,voltage-vdr-thresh-microvolt: Threshold for starting the VDR correction
->> +# rohm,volt-drop-soc:                Table of capacity values matching the
->> +#                                    values in VDR tables.
->> +# rohm,volt-drop-high-temp-microvolt: VDR table for high temperature
->> +# rohm,volt-drop-normal-temp-microvolt: VDR table for normal temperature
->> +# rohm,volt-drop-low-temp-microvolt:  VDR table for low temperature
->> +# rohm,volt-drop-very-low-temp-microvolt: VDR table for very low temperature
->> +#
->> +# VDR tables are (usually) determined for a specific battery by ROHM.
->> +# The battery node would then be referred from the charger node:
->> +#
->> +# monitored-battery = <&battery>;
->> +
->> +properties:
->> +  compatible:
->> +    const: rohm,bd72720
->> +
->> +  reg:
->> +    description:
->> +      I2C slave address.
->> +    maxItems: 1
->> +
->> +  interrupts:
->> +    maxItems: 1
->> +
->> +  gpio-controller: true
->> +
->> +  "#gpio-cells":
->> +    const: 2
+>> +  rohm,charger-sense-resistor-milli-ohms:
+>> +    minimum: 10
+>> +    maximum: 50
 >> +    description: |
+>> +      BD72720 has a SAR ADC for measuring charging currents. External sense
+>> +      resistor (RSENSE in data sheet) should be used. If some other but
+>> +      30 mOhm resistor is used the resistance value should be given here in
+>> +      milli Ohms.
+>> +
+> rohm,bd71828.yaml has rohm,charger-sense-resistor-micro-ohms, lets
+> keep that unified.
 
-// snip
-
->> +
->> +  rohm,pin-dvs0:
->> +    $ref: /schemas/types.yaml#/definitions/string
->> +    description:
->> +      BD72720 has 4 different OTP options to determine the use of dvs0-pin.
->> +      OTP0 - regulator RUN state control.
->> +      OTP1 - GPI.
->> +      OTP2 - GPO.
->> +      OTP3 - Power sequencer output.
->> +      This property specifies the use of the pin.
->> +    enum:
->> +      - dvs-input
->> +      - gpi
->> +      - gpo
->> +
->> +  rohm,pin-dvs1:
->> +    $ref: /schemas/types.yaml#/definitions/string
->> +    description:
->> +      see rohm,pin-dvs0
->> +    enum:
->> +      - dvs-input
->> +      - gpi
->> +      - gpo
-> 
-> These 2 could be combined into a single entry in patternProperties.
-> 
->> +
->> +  rohm,pin-exten0:
->> +    $ref: /schemas/types.yaml#/definitions/string
->> +    description: BD72720 has an OTP option to use exten0-pin for different
->> +      purposes. Set this property accordingly.
->> +    const: gpo
->> +
->> +  rohm,pin-exten1:
->> +    $ref: /schemas/types.yaml#/definitions/string
->> +    description: BD72720 has an OTP option to use exten1-pin for different
->> +      purposes. Set this property accordingly.
->> +    const: gpo
-> 
-> And these 2 also.
-> 
->> +
->> +  rohm,pin-fault_b:
->> +    $ref: /schemas/types.yaml#/definitions/string
->> +    description: BD72720 has an OTP option to use fault_b-pin for different
->> +      purposes. Set this property accordingly.
->> +    const: gpo
-> 
-> Seems like different purposes would have more than 1 option.
-
-They do. I only omitted them because I don't think knowing those 
-use-cases is relevant for the software. OTOH, maybe they some day can be 
-so I will revise the other uses and make more complete list. Thanks.
-
-> 
->> +
->> +required:
->> +  - compatible
->> +  - reg
->> +  - interrupts
->> +  - clocks
->> +  - "#clock-cells"
->> +  - regulators
->> +  - gpio-controller
->> +  - "#gpio-cells"
->> +
->> +additionalProperties: false
->> +
->> +examples:
->> +  - |
->> +    #include <dt-bindings/interrupt-controller/irq.h>
->> +    #include <dt-bindings/leds/common.h>
->> +    i2c {
->> +        #address-cells = <1>;
->> +        #size-cells = <0>;
->> +        pmic: pmic@4b {
->> +            compatible = "rohm,bd71828";
->> +            reg = <0x4b>;
-> 
-> Just 1 complete example in the mfd schema and drop this example.
-
-Hmm? This is the MFD schema, right? :)
+Absolutely! Good catch, thanks!
 
 Yours,
 	-- Matti
-
-
