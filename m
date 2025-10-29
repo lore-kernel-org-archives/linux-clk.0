@@ -1,100 +1,105 @@
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9316433F8BE;
-	Wed, 29 Oct 2025 15:42:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8622CEAF9;
+	Wed, 29 Oct 2025 15:56:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761752572; cv=none; b=Ltx4SegrnTJ7p+CFAnHu/0EAXA8pQxqJqyj1y3QJmhhmCqNDhUqXhyZkrb8UgSZbpgHR1qSBjNu85Exs8/jZY3pFFF3c7wdLVBEXwwvY1YJQBR/bDt0DFwOIkh5Srdfc+ZWzx7pxcuF0HjVoJSJMfwk2CFgiToKXMvK8CMeDLGk=
+	t=1761753383; cv=none; b=rboc6HbPAZI5KdnuRPDFnZs/gtPkue9oVaWZTcEzsFtWC4KiR5Z1q4ACijf/FTvwGUzQpDjzsugievL0S1jkL0eKb4pe9z1A3gqkMrvsWedZQ4lPkD6SGe7rKjOa1PLNNpo7CwYQJczkDvRGc6k5sTDuJKp1M+1TZLdFrX680Wc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761752572; c=relaxed/simple;
-	bh=mTyubcT0QXbiYSYuJBtiOy+znibfDRYqoP4/3JvVdrk=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=JDnuKSQhfR3rJ19SuMHH6CuDsXh8hJbCvmFDDxdh1MbP8wWCAmD0fbrG0R7vKM5hnbL8+QCPiMbg/Dl2BeW1rSV2p5htDKD1XVRaR5hKY+tKDRYtJVTr+VWEoTymGTBlYoCQVukBqJ+BAqUAMIWsUJVZABMo6CFXKP8LD3WuyGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=1wwya0A+; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1761753383; c=relaxed/simple;
+	bh=45hzUricmZcE/m3PSKmMJCOrd0GfzpFZMPu02fao4eA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MZorMmQAEVolBkIp9CNISt1bJaBgmBsjtKh8Yu10u+EkjW1RFRuuLIB2OzlGXhgvdN4AnoXzLRBlhFV3xp83xUIjKO4pLqnI9dH+U6vw+FpA7gI/iMvGJ/556UNj5VQjPbz6QQ5LF0apVGEfT70r/uP7GiwhdWO/awlNe+qv4U8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZJkeJoF/; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="1wwya0A+"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 9F69C1A1751;
-	Wed, 29 Oct 2025 15:42:46 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 6CDF3606E8;
-	Wed, 29 Oct 2025 15:42:46 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 3FA7D117F82C5;
-	Wed, 29 Oct 2025 16:42:42 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1761752565; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=mTyubcT0QXbiYSYuJBtiOy+znibfDRYqoP4/3JvVdrk=;
-	b=1wwya0A+6J55bXJZ9i9zxIM9ypamlJUH+c9TrZ/M9MZrRukaDz3uACmVjIVbMqScFwybpX
-	+S1t9r/X8A5FxjJQ053o1+VlfzT3sEbVrL9J0es/RK8clpfRafAF8jipRoU09A/j6G83e0
-	KmO/BC2JWXI9sRkx3UMyDpVuAL53/ksHYqNY23lNEGTOPL7FiGaYlWKGjtejhbGoeeqRLL
-	LXAPhJ+uKDc9cuVFCeCJ/0ZpB+dJrh/DhvGl3nxA+Vc6dAG7aA+HjsGzZ3tt8+FE1eMcWU
-	xn7FnhuyfnKVUZqcN+FRdcG3NiFj6jA8J4HcsVPAP7QAGUlsr9Q0RHQkbRjWJg==
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZJkeJoF/"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A41A6C4CEF7;
+	Wed, 29 Oct 2025 15:56:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761753383;
+	bh=45hzUricmZcE/m3PSKmMJCOrd0GfzpFZMPu02fao4eA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ZJkeJoF/41dpRB3s4d1tCl4hh3H0Ns0as8MgvaqEm2g2B9aQU8gBi5mVeT7jN43WP
+	 nGD0JtFNGuf6tftz+Mi5Hz99Vq6oWPLuz59Eth7INbtxtWPt0ikTJIp18SbWeoX35v
+	 nkHxty5SbUpf5RVKfiTMjF/YBaieyIb7EXESnPKBgrfgAU+XfywJVPUKHw7mgreiFX
+	 Lp1omNrggPstJ8CutLKSPu5KiAIgVxrjyeY7nCUl0GShY7g0Y+tPV3Hg8/NIm6bMKl
+	 P+INkvMLtaEEy+gv98UhjluT2A5oCN3/3wZ+va0xx+JUOeu6UqtP3S7avidxAZFwgY
+	 cErj99ubLe/Hw==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>
+Cc: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] dt-bindings: clock: sprd,sc9860-clk: Allow "reg" for gate clocks
+Date: Wed, 29 Oct 2025 10:56:13 -0500
+Message-ID: <20251029155615.1167903-1-robh@kernel.org>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 29 Oct 2025 16:42:41 +0100
-Message-Id: <DDUX5TR1VIR9.1KDDNA4XZ6JYW@bootlin.com>
-Subject: Re: [PATCH 2/7] phy: Add driver for EyeQ5 Ethernet PHY wrapper
-Cc: <linux-mips@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux-phy@lists.infradead.org>,
- <linux-clk@vger.kernel.org>, =?utf-8?q?Beno=C3=AEt_Monin?=
- <benoit.monin@bootlin.com>, "Maxime Chevallier"
- <maxime.chevallier@bootlin.com>, "Tawfik Bayouk"
- <tawfik.bayouk@mobileye.com>, "Thomas Petazzoni"
- <thomas.petazzoni@bootlin.com>
-To: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>, "Vladimir
- Kondratiev" <vladimir.kondratiev@mobileye.com>,
- =?utf-8?q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>, "Rob
- Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
- "Conor Dooley" <conor+dt@kernel.org>, "Vinod Koul" <vkoul@kernel.org>,
- "Kishon Vijay Abraham I" <kishon@kernel.org>, "Michael Turquette"
- <mturquette@baylibre.com>, "Stephen Boyd" <sboyd@kernel.org>, "Philipp
- Zabel" <p.zabel@pengutronix.de>, "Thomas Bogendoerfer"
- <tsbogend@alpha.franken.de>
-From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-X-Mailer: aerc 0.21.0-0-g5549850facc2
-References: <20251022-macb-phy-v1-0-f29f28fae721@bootlin.com>
- <20251022-macb-phy-v1-2-f29f28fae721@bootlin.com>
-In-Reply-To: <20251022-macb-phy-v1-2-f29f28fae721@bootlin.com>
-X-Last-TLS-Session-Version: TLSv1.3
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Hello all,
+The gate bindings have an artificial split between a "syscon" and clock
+provider node. Allow "reg" properties so this split can be removed.
 
-On Wed Oct 22, 2025 at 5:39 PM CEST, Th=C3=A9o Lebrun wrote:
-> EyeQ5 embeds a system-controller called OLB. It features many unrelated
-> registers, and some of those are registers used to configure the
-> integration of the RGMII/SGMII Cadence PHY used by MACB/GEM instances.
->
-> Wrap in a neat generic PHY provider, exposing two PHYs with standard
-> phy_init() / phy_set_mode() / phy_power_on() operations.
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+---
+ .../bindings/clock/sprd,sc9860-clk.yaml       | 26 -------------------
+ 1 file changed, 26 deletions(-)
 
-I am curious if anyone has feedback on this generic PHY driver? Patches
-on MACB landed in net-next [0]. If the phy-eyeq5-eth driver approach
-doesn't fly then I should sync with net land to revert MACB patches as
-they are useless unless we have phy-eyeq5-eth merged.
-
-V2 changelog at the moment (will wait a few more days before sending):
- - Acked-by: Conor Dooley on dt-bindings patch.
- - ptrdiff_t is printed using %td not %ld; warning on 32-bit archs [1].
-
-[0]: https://lore.kernel.org/lkml/176166121351.2249512.7238254409117352079.=
-git-patchwork-notify@kernel.org/
-[1]: https://netdev.bots.linux.dev/static/nipa/1014126/14277857/build_32bit=
-/stderr
-
-Thanks!
-
---
-Th=C3=A9o Lebrun, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+diff --git a/Documentation/devicetree/bindings/clock/sprd,sc9860-clk.yaml b/Documentation/devicetree/bindings/clock/sprd,sc9860-clk.yaml
+index 502cd723511f..b131390207d6 100644
+--- a/Documentation/devicetree/bindings/clock/sprd,sc9860-clk.yaml
++++ b/Documentation/devicetree/bindings/clock/sprd,sc9860-clk.yaml
+@@ -114,25 +114,6 @@ allOf:
+         - reg
+       properties:
+         sprd,syscon: false
+-  - if:
+-      properties:
+-        compatible:
+-          contains:
+-            enum:
+-              - sprd,sc9860-agcp-gate
+-              - sprd,sc9860-aon-gate
+-              - sprd,sc9860-apahb-gate
+-              - sprd,sc9860-apapb-gate
+-              - sprd,sc9860-cam-gate
+-              - sprd,sc9860-disp-gate
+-              - sprd,sc9860-pll
+-              - sprd,sc9860-pmu-gate
+-              - sprd,sc9860-vsp-gate
+-    then:
+-      required:
+-        - sprd,syscon
+-      properties:
+-        reg: false
+ 
+ additionalProperties: false
+ 
+@@ -142,13 +123,6 @@ examples:
+       #address-cells = <2>;
+       #size-cells = <2>;
+ 
+-      pmu-gate {
+-        compatible = "sprd,sc9860-pmu-gate";
+-        clocks = <&ext_26m>;
+-        #clock-cells = <1>;
+-        sprd,syscon = <&pmu_regs>;
+-      };
+-
+       clock-controller@20000000 {
+         compatible = "sprd,sc9860-ap-clk";
+         reg = <0 0x20000000 0 0x400>;
+-- 
+2.51.0
 
