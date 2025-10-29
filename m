@@ -1,139 +1,81 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mo-csw.securemx.jp (mo-csw1121.securemx.jp [210.130.202.132])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F207F50F;
-	Wed, 29 Oct 2025 06:17:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8E9730103A;
+	Wed, 29 Oct 2025 06:19:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.130.202.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761718647; cv=none; b=MClisvuwDFRMtcBGL7mOasAAEkbNINMX2MsV3vJUzjmmQ73ey8RnbNVQx/0HDmrl2AXbyBT/GJAJq4CfvWFjhgSL98qpeens32LFqAwez7ekF/YMjidohacftA7kyJWqWtC7vndj5MWxQOkwbOPrpHE0ZTSzAWBcqxtoql0D75I=
+	t=1761718784; cv=none; b=lKpabQuzWOJMdP7TmVZHyWvLsOojvn/ATp8ONv1HioxrtKCaahUMA24oGj0RF6x2igUcHKckOTQiDM5pK8hQOWr3coJcRLANTem4NX4gWQ9SxAm7ouINtm4TRGkygH5ARW+Q5h5MwwztnpJ7Qm89PrVyocTziXCDrUvXdA6SzUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761718647; c=relaxed/simple;
-	bh=zevlYuJVtJmxSv+AqIyuWxXGW6MxwboAX71gP0JuUKk=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=DftSaAEZnCBHdUM40abm8AUxhzO5TguscI/NGRrgqLrmi7sn2eIh3Z2zo6UIPMKmKIPlkvSmNiQt9tLVUMtvGgOckWmOQMvgA+EkBaShuj4vWU8eM4YnY2tXBx0GjM693MPNXOAT+99OE7fvFq5vEUu0eHSQF5Irh5oVhODznj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fPYf3h62; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1761718784; c=relaxed/simple;
+	bh=7IRI7cKE8uYS1V2bg4Jc9AQa03FWztuEHP3zHwMpPkU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JrdmAfh2EuStm4mZOeLh5HMLOxuI//OioEEluGLjdX2zVfACk3jQcLocAMwSuwXLNMpfz9tRDo4oQZRvlAg7BUbAaPGpZk3NSS4e1a1S3zYEhrJWs19zw1bQOm6/Ky8jUNu40GQ6XAVnhdUlDnZPiBEUIE/RAtj3+mCdmVA6Q9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=toshiba.co.jp; spf=pass smtp.mailfrom=toshiba.co.jp; dkim=pass (2048-bit key) header.d=toshiba.co.jp header.i=yuji2.ishikawa@toshiba.co.jp header.b=WaevSnEZ; arc=none smtp.client-ip=210.130.202.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=toshiba.co.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=toshiba.co.jp
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fPYf3h62"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 183DEC4CEF7;
-	Wed, 29 Oct 2025 06:17:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761718646;
-	bh=zevlYuJVtJmxSv+AqIyuWxXGW6MxwboAX71gP0JuUKk=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=fPYf3h62SwTnTOGmE0GMx3saPu0+iHyq/eonH5cEmcFhBMkHv+fjut/T130sFDBk4
-	 Az1v75fxjFLiBp3pw5e+WY2IYTu7Zk0zLHtg9Phr6WPlegaqK0d+qp0QpYb+e2L1F2
-	 JS8/xYZ3l1WnQF7jBUXhEvyKRaa1HrjNRZc7Blpvy3nc1hYYbNOWAbZj60D+WgiZmq
-	 HITVF9BGgMv+yaCxVGJXfapYaefEevKmm8S0p0yJlF0Wz6Dou6Rlc8JcbKQAuu2tnA
-	 wNnMg4PR1mm7SM4cAHRl9N6YgCSFVjTF56xItkoA2YtXgusdWS7+D1h0yEBRMqjR9a
-	 D2g3VsRzOeDMg==
-Message-ID: <b30eed8e-c8f8-4077-9e6a-0217c5827981@kernel.org>
-Date: Wed, 29 Oct 2025 07:17:20 +0100
+	dkim=pass (2048-bit key) header.d=toshiba.co.jp header.i=yuji2.ishikawa@toshiba.co.jp header.b="WaevSnEZ"
+DKIM-Signature: v=1;a=rsa-sha256;c=relaxed/simple;d=toshiba.co.jp;h=From:To:Cc
+	:Subject:Date:Message-Id:MIME-Version:Content-Transfer-Encoding;i=
+	yuji2.ishikawa@toshiba.co.jp;s=key1.smx;t=1761718745;x=1762928345;bh=7IRI7cKE
+	8uYS1V2bg4Jc9AQa03FWztuEHP3zHwMpPkU=;b=WaevSnEZ3HXfj24etvWDWgKc9lE4EesOCOcvnl
+	CoL6V9wTFkN3HcvOq9YlzcevVL1i4lrukjCarPdlOCTT9jM8EbjFRzaICvhcwZeRIQdCQ0CUa2St4
+	t4lzP4vOs93L6Ea3cZMmBD3q7r2/YYIGSoAMYIah2ASyx4LhP/A8deqYX9/FFm09cMofHJMJC3QLH
+	lco+iFVTMNouV6ubrcYQDqbOHrqn5J5cfmnlZVnYq9xg2VUNpRior0dejle75aFkg/stYarMI1AOK
+	KJhHq5GdzkLNliCsCLqjkP4QNdU+cJRaYqBY85+GJ4v9RpHLlDvJB+cx5sPjgTYLF5muQ5p0Q==;
+Received: by mo-csw.securemx.jp (mx-mo-csw1121) id 59T6J33j2256398; Wed, 29 Oct 2025 15:19:04 +0900
+X-Iguazu-Qid: 2rWh3gygZ7fVXby91M
+X-Iguazu-QSIG: v=2; s=0; t=1761718743; q=2rWh3gygZ7fVXby91M; m=wSwLD5HeGHQFTolYcdrp9j4UtZ4oS71nko3BIBDjozc=
+Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	 id 4cxHBZ5nD0z4vym; Wed, 29 Oct 2025 15:19:02 +0900 (JST)
+X-SA-MID: 53851507
+From: Yuji Ishikawa <yuji2.ishikawa@toshiba.co.jp>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Yuji Ishikawa <yuji2.ishikawa@toshiba.co.jp>
+Subject: [PATCH v2 0/2] clk: visconti: Add support for VIIF on Toshiba Visconti TMPV770x SoC
+Date: Wed, 29 Oct 2025 15:13:42 +0900
+X-TSB-HOP2: ON
+Message-Id: <20251029061344.451222-1-yuji2.ishikawa@toshiba.co.jp>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 02/15] dt-bindings: Add trickle-charge upper limit
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
- Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Sebastian Reichel <sre@kernel.org>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
- Bartosz Golaszewski <brgl@bgdev.pl>, Andreas Kemnade <andreas@kemnade.info>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-rtc@vger.kernel.org
-References: <cover.1761564043.git.mazziesaccount@gmail.com>
- <b13b733e7e0fba05652f49f727412fed9e0ceb02.1761564043.git.mazziesaccount@gmail.com>
- <20251029-adamant-mamba-of-patience-cddb65@kuoka>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
- QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
- +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
- ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
- 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
- hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
- tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
- 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
- naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
- hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
- whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
- qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
- RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
- Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
- H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
- dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
- AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
- jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
- zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
- XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20251029-adamant-mamba-of-patience-cddb65@kuoka>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 29/10/2025 07:03, Krzysztof Kozlowski wrote:
-> On Mon, Oct 27, 2025 at 01:45:05PM +0200, Matti Vaittinen wrote:
->> Some of the chargers for lithium-ion batteries use a trickle-charging as
->> a first charging phase for very empty batteries, to "wake-up" the battery.
-> 
-> In the few cases I was dealing with charging circuits, trickle charging
-> was used in context of top-off charging, so when battery is 100%. It's
-> also documented at Wiki like that:
-> https://en.wikipedia.org/wiki/Trickle_charging
-> 
->> Trickle-charging is a low current, constant current phase. After the
->> voltage of the very empty battery has reached an upper limit for
->> trickle charging, the pre-charge phase is started with a higher current.
->>
->> Allow defining the upper limit for trickle charging voltage, after which
->> the charging should be changed to the pre-charging.
-> 
-> pre-charging is the trickle charging, no? Or you want to say that
-> trickle-charging is pre-pre-charging? But then what is pre-charging in
-> this binding?
+This series adds support for Video Input Interface (VIIF) module to the
+clock and reset driver of Toshiba Visconti TMPV770x SoC. It provides the
+definition of identifiers for clocks and resets, and the control sequence
+of registers.
+
+Changelog v2:
+- dt-bindings: Do not modify existing identifiers to avoid breaking ABI.
+- clk: Update clk_gate_tables to reflect changes in bindings identifiers.
+
+Yuji Ishikawa (2):
+  dt-bindings: clock: Add identifiers for VIIF on Toshiba Visconti
+    TMPV770x SoC
+  clk: visconti: Add definition of VIIF on Toshiba Visconti TMPV770x SoC
+
+ drivers/clk/visconti/clkc-tmpv770x.c         | 71 ++++++++++++++++++++
+ include/dt-bindings/clock/toshiba,tmpv770x.h | 15 ++++-
+ include/dt-bindings/reset/toshiba,tmpv770x.h | 10 ++-
+ 3 files changed, 93 insertions(+), 3 deletions(-)
+
+-- 
+2.34.1
 
 
-Now I see that you added initial trickle-charging in commit
-e3420b49949c79d6182dd8128fa7a3958da01b07. I looked at TI chargers for
-LiIon/LiPo batteries and few popular models use the same meaning/cycles
-as you here. Probably in LiIon/LiPo you cannot or should not use trickle
-for top-off charging (CV phase).
-
-For NiMh these TI chargers use term "Trickle Maintenance Charge" (e.g.
-bq24400), so in separate or this patch please also clarify the
-description of properties that this is trickle-charging for LiIon/LiPo
-batteries, so the pre-pre charging.
-
-Best regards,
-Krzysztof
