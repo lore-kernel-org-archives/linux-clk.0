@@ -1,134 +1,160 @@
-Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com [209.85.221.174])
+Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6816262FFF
-	for <linux-clk@vger.kernel.org>; Wed, 29 Oct 2025 14:42:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 549562D738E
+	for <linux-clk@vger.kernel.org>; Wed, 29 Oct 2025 14:43:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761748970; cv=none; b=CadStNAtcblnoipdZQuOUPzccX7B07YafXeuPb9qP47CqAc8duZR59K4wk/k+Fhu2yqs2hTyvHr6bty80fJqoFog2+IClD2Zlr13BvuK3Ux9AIxvWCiqr9GqqtS1eFngKLTo0QnBqzwuiB75ABPC86ND7UluoQn1APK0crCE6Qg=
+	t=1761749021; cv=none; b=orEeaJl8bjcsdfyDYpcaSrmoMD7RyV4PFoi/cRtF4i3P8GmIgzcKXq8jjxm4P14H3HDt0Qtp/0zS16BfBx+zf8mjEoIvEMA8Cp9cxTU7AOfIW3mt3m+DSd5w3tN5grhwFCZ9UR4zCQxBeY0Cjbsbcm2VchLfOkU6iSOSIIAmri4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761748970; c=relaxed/simple;
-	bh=QXFJ9Wye89l5k56IzhXHnCZ5vP4dVOGIaGxaTnibrdI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=t2K3pfPNj6W3eGIGTY+sKW3e46Fcb3sXwS+HSPTA7RgHl2PFFQYYv6SZ8GawsE/qUcHK4kkmqUo3b0UTL0kIki6QwQGGETeH1wv92L6LGqW2pzsZaqA7XjHivM3cTeTFQS/5+uJMMXThhz+HJ6Jbl2VcsgoR9DrPtaBBQU8+9K8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	s=arc-20240116; t=1761749021; c=relaxed/simple;
+	bh=Wgk3sH20qHeZBfqYYvcjCmo4mWJP4A+tn2y/6jju0pk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lfbIxgHQW9MTS9H62/gHLh+IJVYFKkBFTtgU4hcdGUs8PAlRCRc+oGsMOjLjZGipLjcEjKbpMqpSi77K7mXBgxNP85baozm4onlnbgxvQt8Ti+bZn0FJO03WH4Hf4mH0oppPkzxVBjHse66WSYGk9f1OKda0k/CAqqryyRKDgC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TAIsqD2Z; arc=none smtp.client-ip=209.85.222.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-557d71a96f3so807864e0c.0
-        for <linux-clk@vger.kernel.org>; Wed, 29 Oct 2025 07:42:48 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TAIsqD2Z"
+Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-89ec7919a62so610094285a.2
+        for <linux-clk@vger.kernel.org>; Wed, 29 Oct 2025 07:43:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761749018; x=1762353818; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=YCEuo11ZBMvPKplSQXGviQNPwjkOhxFZqewnhvYiFAE=;
+        b=TAIsqD2Zns/vh6XEVxrMyZ9XiuMEDvnnK9GumKlk7zWINRHoMaoOl52OOx0Lv3wX8E
+         FjgJ1Sm+Ey5eB0PUO3wZTVtavS9oGJO4zX/CUrLLVqZ8sx8q3ZG1uLFEEbBv2ZdVYajt
+         Dsx6B18zxGO3c2fhfoTsIh8TM1Cz97PLXclZQKnVjwOunoDH5Kn+aeHtJiKRTNrK3eoj
+         cIPxW133XNU4KYCPbPC5CPEARUrEFJBY+QO9p5tF3RLTzbyE5eHRPa2N0WdMynNJgw0P
+         zhvL6d3CV0BX+AxHb9gKsR2IAi8Cjq81a8HPF3uWXZ5j8dblvIysIgyQc/LTj9vaalmW
+         bZCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761748967; x=1762353767;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ohi/8MFIs+pUNYTuSKDH5KUVpFMJO5wn0YyhdMa7QIc=;
-        b=XLPCnzD3kgvxfuOQWuKl3A1chQfx13svn/6+KsIrU0o2uIUGV0rU6WYdXAw4Gt8pk7
-         LSbqXVQ5m96eTKMGYykaEW0Hf2dud/VjyPH2RNI6zN4q3PZQyfl95oihbr1lUJbI39TX
-         2kW4UcGw9r/vqr/ClMrjxRYt2h9XjXwZI3PRL6qVATStMZKoHCYj9ljbRGv6TTXGEAOw
-         PtocpIutQDmL4Wi5uEFtnfquRyG5iZn4igkYcKG1ufMaQavSoJNvLXD6OEUZIHrh1rcQ
-         mVSWjx4yzasi9SfCwQcYKaMJOTDE7gWnqprP5Khg37GtNP/Ku4ER90oxWhAL9ivM/Nzv
-         lMtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXmtTqF04RRLBtS14/7i2BTvrZai1zIx0KoyLtgsq8XIzsmDV1UMp5DCReiMVYevCU5jgNrIDk249g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8h6Hczb/FIRJ0HFJkY4qGUjTtaiNiXXPTfeIdpOvI/dBsOMn2
-	D+G3hr2OBAkGvWBt62qe9EEbxJTk3ZUH60JOFUgrDZeJvkazkoBfSo6ECS1fPbA0
-X-Gm-Gg: ASbGncugdjpqJo6EW4UWk2Q9QU95gPiOwuRNm8YEOqAFZ2ZOITm0+QP8/9n1fuxqnJJ
-	pvj6VIjBLKoP6LgnWp/zhx3tm2RHkQjTGuYNNloIHC1ulyO8NGULIgK5q8fEf8YtZYgmZbcPSmK
-	q9VJ+ZvsqJzbCNlJPH6btcACdHeuyR597ImvLkDZ+QVRioqxUlxT/b63pgrjfOQ0J3baHgzT0bd
-	0OusxmlAOQOrXvVqMLlggTmmkJJTnXrOQjWjQD1ASbTG8EPxohWwnYD/VOA079zU3rTjeVSoQm0
-	29YQkOvaCytEsCPkvxKJprODyJpTWSiDLu4h8Ok0Gj4IVOxLLeei6TGCQp3oFht8oQs7NZoAbSI
-	7qSCW0heaLRkRadrdmcemlA/V5SmvUZ4p0s8ELJLTiFpNZaaIupp3O0k2L92kuDyanoOtDy6fOW
-	tZUR4I2kcU/vtjiFECcWUhposD43hVzDisj4ZqzFKlTYWp9DiHd8duUJZBNcCkqQs=
-X-Google-Smtp-Source: AGHT+IFsXeSWa5zC7nELxKZKhsOEfG9Wm2H14xMdQlADDXSVDu4fFgXqGJWF6PSD3Aw3IqU5InQpRQ==
-X-Received: by 2002:a05:6122:901:b0:557:c538:699e with SMTP id 71dfb90a1353d-55813ce857dmr1256159e0c.5.1761748967361;
-        Wed, 29 Oct 2025 07:42:47 -0700 (PDT)
-Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com. [209.85.217.42])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-557ddb5b68bsm5438956e0c.15.2025.10.29.07.42.47
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 Oct 2025 07:42:47 -0700 (PDT)
-Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-5d96756a292so1312145137.0
-        for <linux-clk@vger.kernel.org>; Wed, 29 Oct 2025 07:42:47 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWebwhmhP50OgZKWxWrok+sJmALy6wiqMY3fzwa50jXsGSsnPnxa7XS4BJ7+5Z4fdkfGszUPuRUHOk=@vger.kernel.org
-X-Received: by 2002:a05:6102:2acd:b0:5db:9b88:1fec with SMTP id
- ada2fe7eead31-5db9b88219emr535412137.9.1761748503547; Wed, 29 Oct 2025
- 07:35:03 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761749018; x=1762353818;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YCEuo11ZBMvPKplSQXGviQNPwjkOhxFZqewnhvYiFAE=;
+        b=NaUqOkLqAX13GmqSyafIkOy9m1lnWCirk5oZoRunCDgHD4N5V5JIcFVS2ODNEh7/Zy
+         snoZjNUWgGU5ItsN310gCCLIVh8s/xnhVkdHeifa3SUcFfeOr0YLY4F8yz2WcyUydpuE
+         rS9Ih/mIABhY1fPESHj2mxloHaTj0Tkn2KLQR9x/z3fg9I0l8ZwB8KheC/sx4/nalol+
+         3QUa8tQ4M00Vlugm9T3bT8Qoba4BDcCIDJ65yCwmwfstziOGUfTguYa9xC+/zWOtGzFM
+         1hGuDbJ8aVk67eRaOL3mP1epdWHoC1Jwx6X5zB+UJ0sBRHJFx/PxAztD8/TdPE0tzwTy
+         +InQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWmuDVi8u/TkqU0kVecueW+rwNzvKBe0q9N8TpfaRQJNGI3OOgLkIFKDEz2Bv0AHUrMOy4UYWIHI9M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy18zWmVmmbhKRuUwCBLzYjCWzEqHxbFwOskQjKWwIzOOrSDkaE
+	lCT9wzXo9eHgXKdOSuZnMgToJnUxjbOqH+CoIBy9+Tt69TmaquFeLPK4
+X-Gm-Gg: ASbGncvh4xpx4Ea+zMlhpUk9E+D+/wRjrp0KkxvPiGHjxMt8O0FSCY0bi4Dv1AV8UWd
+	mQVY2dI/OJsEEIeZNSmsDiFdFLkGSggrgONRpCo1tSWRrj/m+SG3tvHY18nAbfsvRe/mlHmVbiH
+	yKde4KWOzHWiHWOeirfz/635qq9avwxq552QJh5EbfL+JTae4RS517q0eOmtCQmgJzR92kQHxwp
+	wML/BRPiwrTmPg1WSwVCB/kpmLmvYGI/U7MAYPmAFWhk4pr6M1OA71mSaNYDSQDhb2ffDyPkzxn
+	WzJm89DSm2w+vrEFFzyenbwsHW95WLz1duodPD8OqroaPDg3jF9QhujS/3GOcOR3PSgtVh61qao
+	ZjROkWfJTWc6SLdVkzKtlBkY060loAd/ounvw2fjoUgM1yIFQhVWw+o/zhmSmQdegXqKwwiPt
+X-Google-Smtp-Source: AGHT+IHRIj9y57LgRm08PCQ5ag8nDTxAHjyPqcFEyJpmfMgUHtOJ1iinv/hiv9ZRE6XSrJXIT+Ycrw==
+X-Received: by 2002:a05:620a:710c:b0:89f:5a59:bf30 with SMTP id af79cd13be357-8a8e58b5164mr388519285a.78.1761749017372;
+        Wed, 29 Oct 2025 07:43:37 -0700 (PDT)
+Received: from localhost ([12.22.141.131])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8a8179460fasm337345285a.57.2025.10.29.07.43.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Oct 2025 07:43:36 -0700 (PDT)
+Date: Wed, 29 Oct 2025 10:43:35 -0400
+From: Yury Norov <yury.norov@gmail.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	David Miller <davem@davemloft.net>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, Joel Stanley <joel@jms.id.au>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	Crt Mori <cmo@melexis.com>, Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Jacky Huang <ychuang3@nuvoton.com>,
+	Shan-Chun Hung <schung@nuvoton.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	Jakub Kicinski <kuba@kernel.org>, Alex Elder <elder@ieee.org>,
+	David Laight <david.laight.linux@gmail.com>,
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
+	Jason Baron <jbaron@akamai.com>, Borislav Petkov <bp@alien8.de>,
+	Tony Luck <tony.luck@intel.com>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Kim Seer Paller <kimseer.paller@analog.com>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Richard Genoud <richard.genoud@bootlin.com>,
+	Cosmin Tanislav <demonsingur@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Jianping Shen <Jianping.Shen@de.bosch.com>,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-renesas-soc@vger.kernel.org, linux-crypto@vger.kernel.org,
+	linux-edac@vger.kernel.org, qat-linux@intel.com,
+	linux-gpio@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
+	linux-iio@vger.kernel.org, linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 07/23] pinctrl: ma35: #undef field_{get,prep}() before
+ local definition
+Message-ID: <aQIoF_TPNq13Hc3O@yury>
+References: <cover.1761588465.git.geert+renesas@glider.be>
+ <03a492c8af84a41e47b33c9a974559805d070d8d.1761588465.git.geert+renesas@glider.be>
+ <CACRpkda6ykSZ0k9q4ChBW5NuPZvmjVjH2LPxyp3RB-=fJLBPFg@mail.gmail.com>
+ <aQIlB8KLhVuSqQvt@yury>
+ <CAMuHMdUTR2VnQ++j_ccUN3-GzKmSzS3H3QNyYqZNacfOBXD50Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1761588465.git.geert+renesas@glider.be> <ac3e718c5de6a23375055dd3c2e4ed6daf7542d5.1761588465.git.geert+renesas@glider.be>
- <CACRpkdYMv+R-NJ5R4+UyhK1+DJia0z72kZgt45+0eubXMuGpEw@mail.gmail.com>
-In-Reply-To: <CACRpkdYMv+R-NJ5R4+UyhK1+DJia0z72kZgt45+0eubXMuGpEw@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 29 Oct 2025 15:34:52 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdUvLH-8yNRoqBdTB+mcmOUedwVGpJ_HGdq8sqgLNB4dvw@mail.gmail.com>
-X-Gm-Features: AWmQ_blZ8dUVr2aBwtWAAkAOaE93AtUSPNFDpslgvmXepFfW4tMWIOUWnRJkksY
-Message-ID: <CAMuHMdUvLH-8yNRoqBdTB+mcmOUedwVGpJ_HGdq8sqgLNB4dvw@mail.gmail.com>
-Subject: Re: [PATCH v5 18/23] pinctrl: ma35: Convert to common
- field_{get,prep}() helpers
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Nicolas Ferre <nicolas.ferre@microchip.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
-	Giovanni Cabiddu <giovanni.cabiddu@intel.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
-	David Miller <davem@davemloft.net>, Bartosz Golaszewski <brgl@bgdev.pl>, Joel Stanley <joel@jms.id.au>, 
-	Andrew Jeffery <andrew@codeconstruct.com.au>, Crt Mori <cmo@melexis.com>, 
-	Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Jacky Huang <ychuang3@nuvoton.com>, 
-	Shan-Chun Hung <schung@nuvoton.com>, Yury Norov <yury.norov@gmail.com>, 
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
-	Johannes Berg <johannes@sipsolutions.net>, Jakub Kicinski <kuba@kernel.org>, Alex Elder <elder@ieee.org>, 
-	David Laight <david.laight.linux@gmail.com>, Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
-	Jason Baron <jbaron@akamai.com>, Borislav Petkov <bp@alien8.de>, Tony Luck <tony.luck@intel.com>, 
-	Michael Hennerich <Michael.Hennerich@analog.com>, Kim Seer Paller <kimseer.paller@analog.com>, 
-	David Lechner <dlechner@baylibre.com>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	Andy Shevchenko <andy@kernel.org>, Richard Genoud <richard.genoud@bootlin.com>, 
-	Cosmin Tanislav <demonsingur@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Jianping Shen <Jianping.Shen@de.bosch.com>, linux-clk@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org, 
-	linux-crypto@vger.kernel.org, linux-edac@vger.kernel.org, qat-linux@intel.com, 
-	linux-gpio@vger.kernel.org, linux-aspeed@lists.ozlabs.org, 
-	linux-iio@vger.kernel.org, linux-sound@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMuHMdUTR2VnQ++j_ccUN3-GzKmSzS3H3QNyYqZNacfOBXD50Q@mail.gmail.com>
 
-Hi Linus,
-
-On Wed, 29 Oct 2025 at 15:21, Linus Walleij <linus.walleij@linaro.org> wrot=
-e:
-> On Mon, Oct 27, 2025 at 7:44=E2=80=AFPM Geert Uytterhoeven
-> <geert+renesas@glider.be> wrote:
->
-> > Drop the driver-specific field_get() and field_prep() macros, in favor
-> > of the globally available variants from <linux/bitfield.h>.
+On Wed, Oct 29, 2025 at 03:33:49PM +0100, Geert Uytterhoeven wrote:
+> Hi Yury,
+> 
+> On Wed, 29 Oct 2025 at 15:30, Yury Norov <yury.norov@gmail.com> wrote:
+> > On Wed, Oct 29, 2025 at 03:19:45PM +0100, Linus Walleij wrote:
+> > > On Mon, Oct 27, 2025 at 7:43 PM Geert Uytterhoeven
+> > > <geert+renesas@glider.be> wrote:
+> > > > Prepare for the advent of globally available common field_get() and
+> > > > field_prep() macros by undefining the symbols before defining local
+> > > > variants.  This prevents redefinition warnings from the C preprocessor
+> > > > when introducing the common macros later.
+> > > >
+> > > > Suggested-by: Yury Norov <yury.norov@gmail.com>
+> > > > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > >
+> > > Do you want me to just merge this patch to the pinctrl tree or do
+> > > you have other plans?
 > >
-> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > ---
-> > v5:
-> >   - Extracted from "bitfield: Add non-constant field_{prep,get}()
-> >     helpers".
->
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> > There's a couple nits from Andy, and also a clang W=1 warning to
+> > address. So I think, v6 is needed.
+> 
+> Indeed....
+> 
+> > But overlall, the series is OK, and I'd like to take it in bitmaps
+> > branch as it's more related to bits rather than a particular
+> > subsystem.
+> 
+> OK, fine for me (if I can still get an immutable branch ;-)
+> 
+> Note that as of today there are two more to fix in next:
+> commit d21b4338159ff7d7 ("mtd: rawnand: sunxi: introduce ecc_mode_mask
+> in sunxi_nfc_caps") in next-20251029
+> commit 6fc2619af1eb6f59 ("mtd: rawnand: sunxi: rework pattern found
+> registers") in next-20251029
 
-Thanks!
+Oh, OK. Didn't actually want to undercut you. :) So, at your
+discretion. Just let me know what you'd prefer.
 
-> I guess this needs to go with the rest of the patches?
-
-There is no hard requirement for that, but if 07/23 goes in, why not
-include this one, too?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Thanks,
+Yury
