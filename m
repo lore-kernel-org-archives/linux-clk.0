@@ -1,152 +1,91 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BFB132D44A;
-	Thu, 30 Oct 2025 05:24:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32CF68462;
+	Thu, 30 Oct 2025 06:16:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761801858; cv=none; b=Hj8+Dxqwgya1+bHyO4nY8nSBebDESEPDnXMByn9VVEapoFumGdE/InYz+7Io3U6mqaIplULnVkifXTGacSlGjl9xicxezPWFKbc1mcNXyvYQ+DGPg4zUpJxX6b7K3vpah5Q1HxYDGRlN2tDRFFq1tioXefoHsFQdA6FgHJp7ju4=
+	t=1761805013; cv=none; b=PmAlsY0JjfHrDqf7eRB2r8RNqeUJo1A3xVgo3RbfVD9dv5g2fJ8EYPcZvuFhElNzWnyft4Bk2pg+lqsXhlYl3M89WSU7FSPdCm5lPM6IXympb+aWLRR5aLtRxpeAZDBcKJZnVOFbLqjpORYwOHFBmaqBiL9colmzN6UlmtP6v7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761801858; c=relaxed/simple;
-	bh=zzksamsMZJOf1VT2cpshTei0QB7OGy3UaCYmRF0l4+I=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=i10stj/ylXsYAywOcobpKqKojGZPqzjXuDtHs25Iy8z6rJP05hr/8+VWbInSFaKRWG1uhyZlXIya3iAtrQ7uBlZsG20awelRxu1gerp/3V7nl60vDOkhBj+y5ZIzze6sbeDcRntp5zbsnBBIUrtYfTgl+L2muGxbs4pH4x29YV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Re3PalxX; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Re3PalxX"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id EEB10C19422;
-	Thu, 30 Oct 2025 05:24:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761801858;
-	bh=zzksamsMZJOf1VT2cpshTei0QB7OGy3UaCYmRF0l4+I=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=Re3PalxXppg+X4cVfexljdnK7Rq7OkfLbTIsQpYACW5uPSmp9dwiuqRk/owTZwAz/
-	 ZvZNS1V714JLYIR2jWFh6W++HPwQcTGIgNhxt8aAwcrOFpt8tVnCDxAtO6JSEWcy0T
-	 wbEecwKaAoepL3qNOJG7A9aslcpoKnUsY+wOemOxm3Jz1O9/s3TxMBxFLQ7lkOR1iD
-	 pRg2/Jx+oVmMTtIrbWYjDqe8C7TjVKhi7Dvavzbu8k59p96SgLyOrGx76cZAIQhhvb
-	 jtesJy/LMawdLz/d0VXxknKYgCW7gc8GH+A6P4ZyhQQM8dkXe0oG4N4FQyPeFC6Ilb
-	 p2hIcnSa4h5gA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7B6FCCF9F6;
-	Thu, 30 Oct 2025 05:24:17 +0000 (UTC)
-From: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
-Date: Thu, 30 Oct 2025 13:24:15 +0800
-Subject: [PATCH v2 5/5] clk: amlogic: Change the active level of l_detect
+	s=arc-20240116; t=1761805013; c=relaxed/simple;
+	bh=ygtg1j5dzLlWrtmXM3o9ySTcesraAzD8Z1P8WjXgFpY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gj0VFkoEO6JuNkP+pU8vw7DjVscqRQf7Qb4rFvsSpUn2G1rF9sd7NiMu8sELoeanYA6Rez02Z+odQK3/OkI7E1WI35PTQJ4ROHXhHOZ4zQHyODDETT3eSmaSD+kjbVRHsfLhwcKIVeHOuA4JE4DLe6xnPIEN0khVRCS8xaVo/Vo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from DESKTOP-L0HPE2S (unknown [124.16.141.245])
+	by APP-03 (Coremail) with SMTP id rQCowAD3fWLCAgNplyJ7Bg--.30340S2;
+	Thu, 30 Oct 2025 14:16:35 +0800 (CST)
+From: Haotian Zhang <vulab@iscas.ac.cn>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Haotian Zhang <vulab@iscas.ac.cn>
+Subject: [PATCH] clk: renesas: r9a06g032: Fix memory leak in error path
+Date: Thu, 30 Oct 2025 14:16:03 +0800
+Message-ID: <20251030061603.1954-1-vulab@iscas.ac.cn>
+X-Mailer: git-send-email 2.50.1.windows.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251030-optimize_pll_driver-v2-5-37273f5b25ab@amlogic.com>
-References: <20251030-optimize_pll_driver-v2-0-37273f5b25ab@amlogic.com>
-In-Reply-To: <20251030-optimize_pll_driver-v2-0-37273f5b25ab@amlogic.com>
-To: Neil Armstrong <neil.armstrong@linaro.org>, 
- Jerome Brunet <jbrunet@baylibre.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Kevin Hilman <khilman@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Chuan Liu <chuan.liu@amlogic.com>, da@libre.computer
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1761801855; l=2920;
- i=chuan.liu@amlogic.com; s=20240902; h=from:subject:message-id;
- bh=EZQlp+ntQWH8wulP13OMEjecr2IO8R7gTLRrdJNlJqE=;
- b=tkTJCiK33Lo/TFJ+LelyksSbZKnetVKLe70d7ctvoJhRiAucDH840dF3/2GnHDeDNQika1syG
- p2IuaWbAkHsB2RTAIEHlBjlOt/J8081nbUxgd6kHxUu9KBv1e/jPZwI
-X-Developer-Key: i=chuan.liu@amlogic.com; a=ed25519;
- pk=fnKDB+81SoWGKW2GJNFkKy/ULvsDmJZRGBE7pR5Xcpo=
-X-Endpoint-Received: by B4 Relay for chuan.liu@amlogic.com/20240902 with
- auth_id=203
-X-Original-From: Chuan Liu <chuan.liu@amlogic.com>
-Reply-To: chuan.liu@amlogic.com
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:rQCowAD3fWLCAgNplyJ7Bg--.30340S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7CF18AFy8uFWfCw47uFWxJFb_yoW8GrW3pF
+	srXFy5AFnYqayUX3W0va4kuFZYyasrKa48ury8C3Z3urnxJFy8JF4xWFWvkFy5JrZ3Zw1j
+	qan5Cay8CF1DZFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvm14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVWxJr
+	0_GcWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7CjxVAaw2AFwI0_
+	JF0_Jw1lc2xSY4AK67AK6r47MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r
+	4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF
+	67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2I
+	x0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2
+	z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnU
+	UI43ZEXa7VUj_HUPUUUUU==
+X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiCRELA2kC7AZEewAAsu
 
-From: Chuan Liu <chuan.liu@amlogic.com>
+The current code uses of_iomap() to map registers but never calls
+iounmap() on any error path after the mapping. This causes a memory
+leak when probe fails after successful ioremap, for example when
+of_clk_add_provider() or r9a06g032_add_clk_domain() fails.
 
-l_detect controls the enable/disable of the PLL lock-detect module.
+Replace of_iomap() with devm_of_iomap() to automatically unmap the
+region on probe failure. Update the error check accordingly to use
+IS_ERR() and PTR_ERR() since devm_of_iomap() returns ERR_PTR on error.
 
-The enable signal is normally active-high. This design ensures that
-the module remains disabled during the power-on process, preventing
-power fluctuations from affecting its operating state.
-
-For A1, the l_detect signal is active-low:
-0 -> Enable lock-detect module;
-1 -> Disable lock-detect module.
-
-Here, a flag CLK_MESON_PLL_L_DETECT_N is added to handle cases like
-A1, where the signal is active-low.
-
-Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
+Fixes: 4c3d88526eba ("clk: renesas: Renesas R9A06G032 clock driver")
+Signed-off-by: Haotian Zhang <vulab@iscas.ac.cn>
 ---
- drivers/clk/meson/a1-pll.c  |  1 +
- drivers/clk/meson/clk-pll.c | 16 ++++++++++++----
- drivers/clk/meson/clk-pll.h |  2 ++
- 3 files changed, 15 insertions(+), 4 deletions(-)
+ drivers/clk/renesas/r9a06g032-clocks.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/meson/a1-pll.c b/drivers/clk/meson/a1-pll.c
-index 1f82e9c7c14e..bfe559c71402 100644
---- a/drivers/clk/meson/a1-pll.c
-+++ b/drivers/clk/meson/a1-pll.c
-@@ -137,6 +137,7 @@ static struct clk_regmap a1_hifi_pll = {
- 		.range = &a1_hifi_pll_range,
- 		.init_regs = a1_hifi_pll_init_regs,
- 		.init_count = ARRAY_SIZE(a1_hifi_pll_init_regs),
-+		.flags = CLK_MESON_PLL_L_DETECT_N
- 	},
- 	.hw.init = &(struct clk_init_data){
- 		.name = "hifi_pll",
-diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
-index c6eebde1f516..d729e933aa1c 100644
---- a/drivers/clk/meson/clk-pll.c
-+++ b/drivers/clk/meson/clk-pll.c
-@@ -384,8 +384,12 @@ static int meson_clk_pll_enable(struct clk_hw *hw)
- 		meson_parm_write(clk->map, &pll->rst, 1);
+diff --git a/drivers/clk/renesas/r9a06g032-clocks.c b/drivers/clk/renesas/r9a06g032-clocks.c
+index dcda19318b2a..0f5c91b5dfa9 100644
+--- a/drivers/clk/renesas/r9a06g032-clocks.c
++++ b/drivers/clk/renesas/r9a06g032-clocks.c
+@@ -1333,9 +1333,9 @@ static int __init r9a06g032_clocks_probe(struct platform_device *pdev)
+ 	if (IS_ERR(mclk))
+ 		return PTR_ERR(mclk);
  
- 	/* Disable the PLL lock-detect module */
--	if (MESON_PARM_APPLICABLE(&pll->l_detect))
--		meson_parm_write(clk->map, &pll->l_detect, 1);
-+	if (MESON_PARM_APPLICABLE(&pll->l_detect)) {
-+		if (pll->flags & CLK_MESON_PLL_L_DETECT_N)
-+			meson_parm_write(clk->map, &pll->l_detect, 1);
-+		else
-+			meson_parm_write(clk->map, &pll->l_detect, 0);
-+	}
+-	clocks->reg = of_iomap(np, 0);
+-	if (WARN_ON(!clocks->reg))
+-		return -ENOMEM;
++	clocks->reg = devm_of_iomap(dev, np, 0, NULL);
++	if (IS_ERR(clocks->reg))
++		return PTR_ERR(clocks->reg);
  
- 	/* Enable the pll */
- 	meson_parm_write(clk->map, &pll->en, 1);
-@@ -413,8 +417,12 @@ static int meson_clk_pll_enable(struct clk_hw *hw)
- 	udelay(20);
+ 	r9a06g032_init_h2mode(clocks);
  
- 	/* Enable the lock-detect module */
--	if (MESON_PARM_APPLICABLE(&pll->l_detect))
--		meson_parm_write(clk->map, &pll->l_detect, 0);
-+	if (MESON_PARM_APPLICABLE(&pll->l_detect)) {
-+		if (pll->flags & CLK_MESON_PLL_L_DETECT_N)
-+			meson_parm_write(clk->map, &pll->l_detect, 0);
-+		else
-+			meson_parm_write(clk->map, &pll->l_detect, 1);
-+	}
- 
- 	if (meson_clk_pll_wait_lock(hw)) {
- 		/* disable PLL when PLL lock failed. */
-diff --git a/drivers/clk/meson/clk-pll.h b/drivers/clk/meson/clk-pll.h
-index 949157fb7bf5..83295a24721f 100644
---- a/drivers/clk/meson/clk-pll.h
-+++ b/drivers/clk/meson/clk-pll.h
-@@ -29,6 +29,8 @@ struct pll_mult_range {
- 
- #define CLK_MESON_PLL_ROUND_CLOSEST	BIT(0)
- #define CLK_MESON_PLL_NOINIT_ENABLED	BIT(1)
-+/* l_detect signal is active-low */
-+#define CLK_MESON_PLL_L_DETECT_N	BIT(2)
- 
- struct meson_clk_pll_data {
- 	struct parm en;
-
 -- 
-2.42.0
-
+2.50.1.windows.1
 
