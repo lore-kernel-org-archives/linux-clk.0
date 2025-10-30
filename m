@@ -1,65 +1,53 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A56D13208;
-	Thu, 30 Oct 2025 15:23:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23CBE24337B;
+	Thu, 30 Oct 2025 15:33:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761837809; cv=none; b=msH1U8Wiv43KG00Vlox/h8wdYLuoyBZ0g4jSEbVEKdf/oir0sVf6hHgXNd9M7c2kn1tG0sMx7oH8FoYZrw6ljF9R1WenDEtms1qXLIwMHg+zh9WTjyepD6Y2uNdPkvhJtkXfD2hCmA45lv00jnC4YONaaNxHLzrlMAbV0WS+kAA=
+	t=1761838429; cv=none; b=KAHGug5LGqflQBWEdbYA0kApY8MkPUuHP4fWOww6b11x8Kp5qTBOD47UY0HRy6w08SPlQwJYzE19u1i7otlXjn4QNlcOwVFOkZf7u2XPAR4OXfZ5eo3CoQ3pEWPINHaWxqDzbR4ivezRnEzTF0uc11tFX42lS8PIwagMVoxlfYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761837809; c=relaxed/simple;
-	bh=DeegVoD/FpDij0JSaJoj94TY1CnINwyeRhD2sowD2hk=;
+	s=arc-20240116; t=1761838429; c=relaxed/simple;
+	bh=ZzSPTat0BVGngdsnYNxP8Ek97A8svu5diunoCTC10/E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k58NVCGFyXDVYu5QuoBciH7Ee0wQ1kdG5tD6QZ+FFiEGiaR4SjHeNJ4EpRl03jWvgIzp2cwfoJxYWWCJ+AywEVzBXsnpLtoZbMS8asZyfstI6u9WDs3Hhcip6gQqXiCTmOhP9uAKVPHLTd2fmSCjvICvJ7cRitAcg29Bt7Z+vko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FA88wTSO; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=M5DPkLVfJ+8IFReXsfBQ5rhciNK9TWBPZG6NjvyS9RJm9cMUTdkG7AZHOwtn7Lftax+a1tr0/aTxkDXLTUI8XKUglDRSIlvIj1Dig4TWHKUBqlBr+bTdQjpZ/Xv/WXe053jQ9yeZ/wAVMUYsNq72fHMieE+i1oOu4epLJz3UIME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=ovu6xwBm; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FA88wTSO"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D6FDC4CEFF;
-	Thu, 30 Oct 2025 15:23:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761837809;
-	bh=DeegVoD/FpDij0JSaJoj94TY1CnINwyeRhD2sowD2hk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FA88wTSOrmHFd7V1HulHrQjr6P3mVPZ7KY4wbyBFaC5Dsk5ivyms3bifB3pOi9rIS
-	 gpKLD607l/e92oCqdYMmcKT8rQQKkIlwuB63YBXi9fLchTTT8GMo0h/rcSM/1DmRI+
-	 d2mLYU7KBwbnmnCxAsP5ZA0HjE1VXoMpIQ0/QtIDO6QZb0GP1hiOxiOGKoqnfgL1CW
-	 Ribgl8/BtOC04OBJ+7wBHSIwZFWxHZk2sMvoWne2PbU+3xoNfSmRuvaGcpeEeZGGGB
-	 7k4WQxwIVOTVVQb6tGuJfqRcCtJ7/15gA70oDA/D5eB+c4LlmyQ0feVtknRcYafCZJ
-	 GIS6Cw4DP8+ug==
-Date: Thu, 30 Oct 2025 16:23:24 +0100
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Danilo Krummrich <dakr@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	Peter Rosin <peda@axentia.se>, Arnd Bergmann <arnd@arndb.de>, 
-	Saravana Kannan <saravanak@google.com>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Charles Keepax <ckeepax@opensource.cirrus.com>, Richard Fitzgerald <rf@opensource.cirrus.com>, 
-	David Rhodes <david.rhodes@cirrus.com>, Linus Walleij <linus.walleij@linaro.org>, 
-	Ulf Hansson <ulf.hansson@linaro.org>, Mark Brown <broonie@kernel.org>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Daniel Scally <djrscally@gmail.com>, 
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Len Brown <lenb@kernel.org>, Davidlohr Bueso <dave@stgolabs.net>, 
-	Jonathan Cameron <jonathan.cameron@huawei.com>, Dave Jiang <dave.jiang@intel.com>, 
-	Alison Schofield <alison.schofield@intel.com>, Vishal Verma <vishal.l.verma@intel.com>, 
-	Ira Weiny <ira.weiny@intel.com>, Dan Williams <dan.j.williams@intel.com>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Wolfram Sang <wsa@kernel.org>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org, linux-pci@vger.kernel.org, 
-	linux-sound@vger.kernel.org, patches@opensource.cirrus.com, linux-gpio@vger.kernel.org, 
-	linux-pm@vger.kernel.org, linux-spi@vger.kernel.org, linux-acpi@vger.kernel.org, 
-	linux-cxl@vger.kernel.org, Allan Nielsen <allan.nielsen@microchip.com>, 
-	Horatiu Vultur <horatiu.vultur@microchip.com>, Steen Hegelund <steen.hegelund@microchip.com>, 
-	Luca Ceresoli <luca.ceresoli@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v4 18/29] i2c: mux: Create missing devlink between mux
- and adapter physical device
-Message-ID: <6tgbavtf2dqc44ebfighrs5chzx4j4zdmjk77fmulwqbhrex2b@lou7ekbsjekr>
-References: <20251015071420.1173068-1-herve.codina@bootlin.com>
- <20251015071420.1173068-19-herve.codina@bootlin.com>
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="ovu6xwBm"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=3CEDXVoec8wgc5r2G05gXNhADvg0k7pAjCJbkzmWMlA=; b=ovu6xwBmi6bbWyq6A8FW+QrVkd
+	Eb+1PnSyeh713Skmfl6rcJR1qspA/xanxl31WsekKebS1S8V8v16pYytvmELyn6IXIma8cARUviHU
+	xAa1j73OqMptSya4dNwgvfgzLPS26sqAJCQhWpNzQq3AbdWudOvwwZinVKTylZkWaB7M=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1vEUei-00CWVh-V7; Thu, 30 Oct 2025 16:33:40 +0100
+Date: Thu, 30 Oct 2025 16:33:40 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Josua Mayer <josua@solid-run.com>
+Cc: Gregory Clement <gregory.clement@bootlin.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rabeeh Khoury <rabeeh@solid-run.com>,
+	Yazan Shhady <yazan.shhady@solid-run.com>,
+	Mikhail Anikin <mikhail.anikin@solid-run.com>,
+	Jon Nettleton <jon@solid-run.com>,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 2/2] clk: mvebu: cp110 add CLK_IGNORE_UNUSED to pcie_x10,
+ pcie_x11 & pcie_x4
+Message-ID: <05d450d8-8df9-490f-ac53-3f45544f1c29@lunn.ch>
+References: <20251030-cn913x-pci-clk-v1-0-e034d5903df1@solid-run.com>
+ <20251030-cn913x-pci-clk-v1-2-e034d5903df1@solid-run.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -68,80 +56,32 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251015071420.1173068-19-herve.codina@bootlin.com>
+In-Reply-To: <20251030-cn913x-pci-clk-v1-2-e034d5903df1@solid-run.com>
 
-Hi Herve,
-
-...
-
-> When an i2c mux is involved in an i2c path, the struct dev topology is
-> the following:
-
-supernitpick: I'd leave blank line here.
-
->     +----------------+                +-------------------+
->     | i2c controller |                |      i2c mux      |
->     |     device     |                |      device       |
->     |       ^        |                |                   |
->     |       |        |                |                   |
->     |  dev's parent  |                |                   |
->     |       |        |                |                   |
->     |   i2c adapter  |                | i2c adapter chanX |
->     |     device  <---- dev's parent ------  device       |
->     |   (no driver)  |                |    (no driver)    |
->     +----------------+                +-------------------+
+On Thu, Oct 30, 2025 at 04:16:26PM +0100, Josua Mayer wrote:
+> CP110 based platforms rely on the bootloader for pci port
+> initialization.
+> TF-A actively prevents non-uboot re-configuration of pci lanes, and many
+> boards do not have software control over the pci card reset.
 > 
-
-...
-
-> No relationship exists between the i2c mux device itself and the i2c
-> controller device (physical device) in order to have the i2c mux device
-> calling i2c_del_adapter() to remove its downtream adapters and so,
-
-/downtream/downstream/
-
-> release references taken to the upstream adapter.
-
-...
-
-> +	/*
-> +	 * There is no relationship set between the mux device and the physical
-> +	 * device handling the parent adapter. Create this missing relationship
-> +	 * in order to remove the i2c mux device (consumer) and so the dowstream
-> +	 * channel adapters before removing the physical device (supplier) which
-> +	 * handles the i2c mux upstream adapter.
-> +	 */
-> +	parent_physdev = i2c_get_adapter_physdev(parent);
-> +	if (!parent_physdev) {
-> +		dev_err(muxc->dev, "failed to get the parent physical device\n");
-> +		ret = -EINVAL;
-
--ENODEV?
-
-> +		goto err_free_priv;
-> +	}
-> +	dl = device_link_add(muxc->dev, parent_physdev, DL_FLAG_AUTOREMOVE_CONSUMER);
-
-Not to call twice put_device, I would add it once here and then
-check for !dl.
-
-> +	if (!dl) {
-> +		dev_err(muxc->dev, "failed to create device link to %s\n",
-> +			dev_name(parent_physdev));
-> +		put_device(parent_physdev);
-> +		ret = -EINVAL;
-
-same here, should this be -ENODEV?
-
-Andi
-
-> +		goto err_free_priv;
-> +	}
-> +	put_device(parent_physdev);
-> +
->  	if (force_nr) {
->  		priv->adap.nr = force_nr;
->  		ret = i2c_add_numbered_adapter(&priv->adap);
-> -- 
-> 2.51.0
+> If a pci port had link at boot-time and the clock is stopped at a later
+> point, the link fails and can not be recovered.
 > 
+> PCI controller driver probe - and by extension ownership of a driver for
+> the pci clocks - may be delayed especially on large modular kernels,
+> causing the clock core to start disabling unused clocks.
+> 
+> Add the CLK_IGNORE_UNUSED flag to the three pci port's clocks to ensure
+> they are not stopped before the pci controller driver has taken
+> ownership and tested for an existing link.
+> 
+> This fixes failed pci link detection when controller driver probes late,
+> e.g. with arm64 defconfig and CONFIG_PHY_MVEBU_CP110_COMPHY=m.
+
+Seems like a reasonable compromise, given that TF-A could be classed
+as broken. This must also prevent suspend/resume powering off PCI
+devices, and then reconnecting them on resume.
+
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+
+    Andrew
