@@ -1,263 +1,152 @@
-Received: from TYPPR03CU001.outbound.protection.outlook.com (mail-japaneastazon11022136.outbound.protection.outlook.com [52.101.126.136])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99B6230E857;
-	Thu, 30 Oct 2025 09:15:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.126.136
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761815760; cv=fail; b=u/OfFza7dGewxjFr2XQOrbz/KnMQvAXSy5URGHjown0mamOaOgp3ryrJmFkvPuH+u9osh0tPs43UR0qcFWcZYP+sL6R7VYVgVEkU9Z3AnNTrsa0ISMmisbC92oGdT+hCm+CYHEFUe1cMAitNt76w43ycY4m2fsjo6UMhMJHj6Yg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761815760; c=relaxed/simple;
-	bh=G/6ZuU3Gkavuy+hIpA3DcBHjxOi8iV/cob5aCXcmHCM=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=ntzknBFukJp1ZhBeMHah5IWjLngm2HVzO1YtgvN9L7spu2jlJ7YaQL4OERm2TlEipA4VoTFTE3otjveg3Gtljfx5d1eMxH+O5SvT4dFqyzSNbTvkGtUxPM8KYikWnPXCJi3L6Q3atWd1ZFs5uzr5AFe8yC2ICtKIpvJxdJEVTSI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b=Cr/eYB0e; arc=fail smtp.client-ip=52.101.126.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amlogic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCAE0313E22
+	for <linux-clk@vger.kernel.org>; Thu, 30 Oct 2025 09:17:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761815828; cv=none; b=O8eYHmero9+Lg1vfh6I1LLR8KAcAcXKTNgsky5SxY2AixJKQcfaImX4exWTPnN+PdWKKvP4m6FJmnaTXgTyGzarCG/n3jiQAGBUQRvP9Zs6ryQtQJrYmt583+D1eLYLAkJTVxNt0eXnB4kqC6jk3/Q9qMVW/GtOZTTqndycVCM4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761815828; c=relaxed/simple;
+	bh=B6ER36m7Iv0Bd6NkigQuIXl1EBA+qHiW6lMI6ZMVbVs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OvEnm8hEOEnM/X6bLx8QqPa18gcXBclMbYrVe2PMd0MVSE/8net21yIPFkWxAhns2gmXfd8uPzWhv9FWTJMGfntGPjWe612ozDwy7LxRu9q2I8Y6N/1WCIaYiskstOmoj9QeS8c0emcVvioJkLIcfQEvgVBrZ4Ta2wbTcct7lDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=fOc7cwYG; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=ZdvJOZR8; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b="Cr/eYB0e"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=cQcbYM7l6+kSj2h6p8UKe68QvnLftde/V45sZDesCJm8PkZR3OiApmdpgdaTL868YIUZALXC5T1YTV4CPxDaBytlVQfYPuqFQke9euT1yPVQr0hpwWicMRhjigcs5AhYaNOKKEmalzQaRApqmsDA3pEp3OoVr6t4mrhtlWBz7czofKEirBwsxROvwbqrbvk9aqfAuXfOzYY3suX/lvePZj7agdr5weFzQhqOPMwvpl6auUek9LPXYqeNifohx54NaX/iIIdcH0sn0ReHpb5TNQX3dl2mAAgfFUK/KKNEBj9I1SQNwuqY968/ebDO3N9davDlSjxtiQ36h9s3wtdz2A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=PQiJDPnbQT0AreR9PkjMbtGDTjJDICmALyTbkdmaZf0=;
- b=hKP52Dyw7JOWcIpuzV5EMgCBn9aKzyK33SR4pz0TtNQOZI2KlEStUTaglRbQPxjS10tf3AIyMKnsoHtHev/x7m67aguio4K2NMnZejNQdnMm2zhEVSjx/yRkwPn0D5sxLYhXfG6C6znkqCQesN8qlQdbHfjwiVgQ+CRCKWF9Pj7elrfGZ8PZUvzpAjKxv5TlUWRpIKq+0ys9riXeT3ODggUOBVu17wOqVeEHRCXwbrfl5U2yIh4riQ+mpux57fx0NOA73pcU+uaDGbHKzTQ3dzwcydFY/8CA5wmJBx0Jum4Ja1bnN5L8fVRL8WNvgFCOw6obsYWgBHGoWdwIqBql/Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
- dkim=pass header.d=amlogic.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amlogic.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=PQiJDPnbQT0AreR9PkjMbtGDTjJDICmALyTbkdmaZf0=;
- b=Cr/eYB0e3CVmLRR42t9MgUwhZJCZHYbJnQI5dJaQsH3yxLmD84Rz6WV9OJpVlycrvZ7RN7vLPSLfZUrkKL7qa0C+5Ssh1//eAoQ46+XaMCez0B3Z0gAGTibBqFPPSKU7f98Bj6iVnCjcWhAcInYJys/0IpBT5KA54RzN6ya65f6lh+U2Yujqag18LoJ/Ywh84Aqk7DNhYUT9MvaOJFPGNPAaQ8jkTlG+tay5A0r1swy3Fa7uu17p5lY1hFvc71ogMFXNCr1ro40qRzbAnHW/lInAp34MzWcLBfyjJmX8HBa3oQligvIWJxyhf4JoX654o07Z4iRuIPNLdW47m6GyaA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amlogic.com;
-Received: from KL1PR03MB5778.apcprd03.prod.outlook.com (2603:1096:820:6d::13)
- by KUZPR03MB9526.apcprd03.prod.outlook.com (2603:1096:d10:56::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.12; Thu, 30 Oct
- 2025 09:15:55 +0000
-Received: from KL1PR03MB5778.apcprd03.prod.outlook.com
- ([fe80::e1e:5c95:a889:828e]) by KL1PR03MB5778.apcprd03.prod.outlook.com
- ([fe80::e1e:5c95:a889:828e%5]) with mapi id 15.20.9275.013; Thu, 30 Oct 2025
- 09:15:55 +0000
-Message-ID: <4f245c6a-5a03-4321-bbf8-61249a7a550f@amlogic.com>
-Date: Thu, 30 Oct 2025 17:15:22 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/5] clk: amlogic: Add handling for PLL lock failure
-To: Jerome Brunet <jbrunet@baylibre.com>,
- Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Kevin Hilman <khilman@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- da@libre.computer
-References: <20251030-optimize_pll_driver-v2-0-37273f5b25ab@amlogic.com>
- <20251030-optimize_pll_driver-v2-3-37273f5b25ab@amlogic.com>
- <1jikfwzt5x.fsf@starbuckisacylon.baylibre.com>
-From: Chuan Liu <chuan.liu@amlogic.com>
-In-Reply-To: <1jikfwzt5x.fsf@starbuckisacylon.baylibre.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SG2PR01CA0197.apcprd01.prod.exchangelabs.com
- (2603:1096:4:189::8) To KL1PR03MB5778.apcprd03.prod.outlook.com
- (2603:1096:820:6d::13)
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="fOc7cwYG";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="ZdvJOZR8"
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59U7bYds1655009
+	for <linux-clk@vger.kernel.org>; Thu, 30 Oct 2025 09:17:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Wjg1/j1eaIn0ChUOMAcpTE5peaMAgfC7A+tzK3TiVOA=; b=fOc7cwYGWbchEP3+
+	dc9j6A4aqjC1n1Ltx36/UxLjloB2Je05qikLFspDdVpszGTXlpBGQ1DavO/AxVUu
+	Rz6aOTcgDR7YSspOPDoWNpqWL2UZ5NjsO+e1+ASdVrDhKOGvEtsKonL9PxDPdAMf
+	zVYR8LUwqCOTl0MXQGw3Mky9glOrqiIRL32S1uQ1zZh1EP5Vw0oUr96mrYU+4hbo
+	hyeNn8aO218zHDT1AFLfYVRwPdmOUY1K8Xg+rBDCD5gmibLrqoPMm5nza4ZQM6tE
+	Ky0MFAvPuzHlebpExdtdOStMMNarHdwKvYEjf4xjYsmqWco/mT7w7E4pYrsdSNZa
+	GTwH5w==
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a3tptsrdh-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Thu, 30 Oct 2025 09:17:05 +0000 (GMT)
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4e8b86d977fso2486811cf.1
+        for <linux-clk@vger.kernel.org>; Thu, 30 Oct 2025 02:17:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1761815825; x=1762420625; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Wjg1/j1eaIn0ChUOMAcpTE5peaMAgfC7A+tzK3TiVOA=;
+        b=ZdvJOZR8glrYYaf8sb6c5+9FnSEEfp6lfH8x1LXmktmaDlYS84Ac1NLHs6pa0kXNuH
+         5O4c7nM2FRFRjHtYW4g30lLPs7ykmp0q5qyE9urAZDvQHvXUYw0GAxr8QPypePrD+oSN
+         CkLrFUJT7B/mZDO8K/kuw4pN+09kUz3nMD62J8MUJe/rwWejv20KOOIQfqgvOXwfC5xC
+         Xtk1tB3GXdNmkieosNWwk0KeG3NDr8tlv4P5/LQXfJBxueXVvEhqOjpLPTOsvqffr0oA
+         7+zNaBu4DIKurULlO8XGUaWisbJI3vIyoJYGhZn++RlsAoOPwFrGot1ySqI/0FTCOokh
+         p1Tg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761815825; x=1762420625;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Wjg1/j1eaIn0ChUOMAcpTE5peaMAgfC7A+tzK3TiVOA=;
+        b=FSJyLXFCHlhm1wNWTZ71zmp3sAqi+Tam4jwyTbA/kQP2UoHUnRtBqlvWXuJ9GbQ4ia
+         SmHshACfI64ifkoRU9CQ0KD7qcvxWptotspespOhA7U2euRyZoC3jAsp5o8w9vQednSe
+         lnW+A0JOwCnKvSQiFvwQsyzly7CEh71tBrbl1EW3uG9i5AZWXrEUXBB3EczAvMsVSCAb
+         cyNAFhQ0dRUaBXuGtpXvShK9OWk48kpeTnAtq9sRfoFNJKdDz9hsosFLAar6e93zEK+J
+         BWoelU/cjmwJE4sscFdYZvbLcX+fIHxoyz+UDbWXqhX0Yu8zQrIRVa/v9BzdhxylX86I
+         tfYA==
+X-Forwarded-Encrypted: i=1; AJvYcCVSg4bgWBQmb9/npImbPS/pdzagOZ4t1NI7AlHU3HrZMHrFgyRIlI6gRR2xGWbeF4nDksp6pSDYL18=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzH7O8fOCPwPVNCMf6HX/lWR5aDUx0bOQeYXn2ZsyDmPTD0/zhS
+	JVXHA5kdPYqHvcUGAT9vp9KgHfdtSLeRWsIYnw1aqHMBbv97+a1Hmxc7EDH8hnGsVNbjktIgb9b
+	pfKkWsbNdFJ2PNU+9Lh76LQ3vSWFkRy8sDO4AvYAkS/QXruigo/DJQR4e7IU5JgQ=
+X-Gm-Gg: ASbGncvwJtnOKqVr/eypM+t5eGMbXDcAKB9aN2+qjYPcQTqZDv1x2qRaRoUo2WIn97h
+	WpKHl5GK8C9upsK9nWaHFNPWKiyy64WNbVuiLP0nwuKP52S2aGOxCoy1bDRJs/dsAdfUUiacKkn
+	FSrrdS/62U098H3zjxBIC8R/D8Te9XTKhs0MZQA9FcqjHm3nyjhSK8Ze0lX0Mcqzc5EFT+Nv7Z0
+	OJSp+svF9ontdIluFeHQCykqrDXdzeO9O0MBuygm+esoBcA2kccaNiy5+y5LpEcHMXiSM6l210c
+	2N8PMVlNYxMIHyawY+8K830rZgrWpnavb8aux6IVertNykNYWN4KX6AZ+k7WXC2TkPm6re5Yfim
+	hUSbOU8L3QBhTDmayg2PD8qZfUhoOf1ErrUsWfQUp8k1T0vwbmaHmwaI4
+X-Received: by 2002:a05:622a:1911:b0:4ec:9b98:7dca with SMTP id d75a77b69052e-4ed15c3228cmr53519951cf.12.1761815824868;
+        Thu, 30 Oct 2025 02:17:04 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFBY5bJcBdjoLKiu4VhBE0Nq2T68hoCiUIh6ldHo/x4Js0PebzZ+30OGsg7Lfh1G10OjaHw5Q==
+X-Received: by 2002:a05:622a:1911:b0:4ec:9b98:7dca with SMTP id d75a77b69052e-4ed15c3228cmr53519851cf.12.1761815824355;
+        Thu, 30 Oct 2025 02:17:04 -0700 (PDT)
+Received: from [192.168.119.202] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b6d8ceeaffasm1722207166b.45.2025.10.30.02.17.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 30 Oct 2025 02:17:03 -0700 (PDT)
+Message-ID: <8a725785-2eec-4acf-bcc1-427c0e88726a@oss.qualcomm.com>
+Date: Thu, 30 Oct 2025 10:17:01 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: KL1PR03MB5778:EE_|KUZPR03MB9526:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6a689233-76e4-4c30-79b2-08de1794ee03
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?NkZ1ZFJMYjgxck84TzdBeldPb1ZZbmR2UnprNit4dlV4dTduSDZQMmE5TzNZ?=
- =?utf-8?B?RlhKYzJoQ3JaYWVPMTBQa1NDZTBya3J1dVlJOERPWE50eDJBVFpxRXlteXh4?=
- =?utf-8?B?VEcwOXBBck4xbnZmNExOdEhpclFCbElqd1d2aWRYOTRBTmI2T1JFV2Jzb3F2?=
- =?utf-8?B?U2NnT2JYVEVMQTdwajRSSkZtNWd6TGFSSDhLYkE3aTNvTEpDZ1dwdHRINjR4?=
- =?utf-8?B?WTdJRzVFSTdyK241cVFPMktJdFBRYVVYOGxvdTBSZXc0MmlmdTF5YjBGVXEv?=
- =?utf-8?B?emVKcHR6aHBleFp1ZUdnTFVoTVkyckFrRmVQQUVPU0dtV1ArZyt4VG8zWWNQ?=
- =?utf-8?B?cklZTW1UMUdrUVNPYSt6Wm16UGxLUmE4OUIwcERGRlREeVFYTW0yeGFRVUtZ?=
- =?utf-8?B?MnBmWVprdXcrMGtmUzVBSitqV05RNCtOU3lHNHF0c1RibVd0UERvL3UyOFRu?=
- =?utf-8?B?RmoyVUVqNHRzRy9qWnVhdStPOTRqdUZrRGFZTWRRZU82d3FHeHdMNXppSVp4?=
- =?utf-8?B?YnZxUER6ZVlTaFp3U0J6RzFvaC9tMXhsbUpCa25tN3ZnSEVsaUlkOGxsc3NC?=
- =?utf-8?B?YlV6NnZ3SWRtQmRRaWlBWlRIYjd1MW10cGZVYjEyS3BleUQwS2JSaTdHMEkr?=
- =?utf-8?B?TWVPQ1dxYlBYUWcxNVJZRDV1THRMT1FZWDR0UnR3dGVRUFYzYjdRVFJuMW5S?=
- =?utf-8?B?b09neGlXT1hrNVVWRDkwT0ZGN0trZU0yZUNYdDU0dng2dFdlSHZVQ1U5cjVh?=
- =?utf-8?B?UVlFODFyaFZHbU9ETlkrSGJiVFFDS0p1eEF4UnQ0M05CaTloUGFhOGxRTVE5?=
- =?utf-8?B?N0VuZTZ2cnBrOW5udzI5Y2tRbTdTdHJ5bWIvUGlPRy9scGZheTBtNCtpOWlP?=
- =?utf-8?B?Yk1OcURsVHcyMXZ4ZXJpSE1MMDVuRlRsaGFqNzA4RUlZZjNwa2xCcTJjWTAr?=
- =?utf-8?B?Mys4QVVaWkl2cDg1TjNSOTdoMmZyZ2J5Q0ZOcDVEd3JhRUhjaHhmNi9SWmUx?=
- =?utf-8?B?Q0xGTmZSMnZ6ZjFjZlh1TTFjWkVLcEdOVEwxWTVGVExTNEE3ejRHZzZZRjY1?=
- =?utf-8?B?TjhGazBCSUthbmpCVkF3aGtwRnRVeWFiOEUwSWdRSk1IajBFR1czNUFUVWJl?=
- =?utf-8?B?WlZsRlc3R21XSjRBL256d0o1clBGeENjSUF5aHhSa3B3ZUtRQURFQmpaMmE3?=
- =?utf-8?B?T3dUNlRFWCtIN2dyRFN5YVFBVXdEdlRDdU5Mbng5SWFEeWhNSWoxQ3dJbjNL?=
- =?utf-8?B?TUZ1TEVRUFAvMTdxWWprU0ZpSlNRU2g1Qld6c21hQjArR1hpSCt1eXRIb0Ny?=
- =?utf-8?B?dkpkT09RVnBiaDl4eUp4anRnN2krUnZQY3R4T1Q0YkZhemtVTE1STFZvb0h1?=
- =?utf-8?B?Nm1PR2M3SlFrRTFOU0YyNzZFY2tHMDhCdnlKejAxZklLaXZ1dzJkZDRidGEr?=
- =?utf-8?B?Tm5HUFJHZUNzM2VGVTlnWGZyNDlMUXR0ZTk0bGF3OGcxVElGVlVhQlRxNGkv?=
- =?utf-8?B?bmJhVXNrSU5KcjZnSzVlaTJIdVhteVlMZFhyZnp2RE1NSUFHTVk1WTJ6U1dk?=
- =?utf-8?B?SjJVWWFQNG9DcTN6Z3VkZTZnQm1JSzRhZFErbytNTDhRcHc1RHErOEs0Ty90?=
- =?utf-8?B?a1k0QVJvL2hjYWZheXhXRktnbFBST3cxLytvcFkvVWxvdi9kcnV3bjJNQkRr?=
- =?utf-8?B?SEk3b2h3RnRmVUliTnFZZ3kvS3dXbmllY2NubkQ5QVpsUFZieVpCU0dObHlu?=
- =?utf-8?B?aTN3cVNhUWxiVk5jbW1wbUUzTCtabk9XMStLVy9UZ0cxUGVKcFVvdGxMK291?=
- =?utf-8?B?dHJNTGs1WHZPOU9QdmZFMlFZbS9kSjBUUnFCNDVPR1hEQzRhUElBT1ovK2dN?=
- =?utf-8?B?Z2tkaDA5YTJJT1MwQkpBeHJQc28xbDBBZzRoS2xhUUNydmhNM010S0YxZyt2?=
- =?utf-8?Q?ufQBFCZdlBaAK/HxzPsbLyIHOgmex1dc?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR03MB5778.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?aHpKRHYvdFNkQUZJNytQVHZSa01NUVh6MC9JUDgvRG9Wb1p0SHNNOXVUbDRs?=
- =?utf-8?B?ZXlVRUVUb2x0dWNrbDdFM2psMW1HOS96MWdVTE1GajRJM0tScmxWODQ2Rld0?=
- =?utf-8?B?WUw5RElhQ1RESUVXNklUSE5SRWRhTlZoMUpTbEowM1NrMVdrTWVGTzhSQ21q?=
- =?utf-8?B?dWVFU3h0NnVyZXlLL21GNTFLSG9tRGdudFBCcllMN1ZwQ3Y2amkyVmQ0Z3M3?=
- =?utf-8?B?a1pGenNwZU5VMmNURE5aM3NoRjc1R3lTUXNuUHUwYm1nN2daU3NzRXVReFlE?=
- =?utf-8?B?VUNwZUY5SnVkT2tJcHV4RGl5aW9rcXJhc2VhRW0xSVROUkp4VldMYW12ek1S?=
- =?utf-8?B?a1FnaURPRk02N3VURzJ3U1JCclNvVVd3RC9Tek9MKzBnUmxDSmdMVVBUZXBa?=
- =?utf-8?B?REhDaUdzNHRRd1l4dDcya3p1K0Fldkh6dGF5emxqeDlrNURwaFBIaUpQeUFK?=
- =?utf-8?B?aFZ5MFJldFo5bUI3UXJMZnhBUFJkaFJDRThjWjBFSE93YWYzNTJYYjQrN3FV?=
- =?utf-8?B?OG1RTUNwcE00SGIrSjN3VjJMcVZLREhYNEFxbDNScXMrd2ZXWWVURHdta2NG?=
- =?utf-8?B?eVhJN1BjSmo4WlExN0wyNXJVSldWK1g2R3hPVE9vSFlKSGk4bWtmVW50ZTJH?=
- =?utf-8?B?UzhqeW1hL21UdlNhVzhPY1hHRzhvUWVYN2J6aUR6UWRpV3NhZFk0NElFcUhv?=
- =?utf-8?B?N0ljbTlpZHkyb1FOS1JWd1YybHNhQ0wxV1pJZWRmQ2JIN01oQXBDVU1xMVBJ?=
- =?utf-8?B?NGlUeGdoRE5INjRubVE3Qm9wR1pXZW5CeXpOc3AzcXgrWWdkTVBYeEwxa05Z?=
- =?utf-8?B?VXpCbi9RYjU2NnVLcUEzbnJrM3Ftc0ovTDUreWxJRzZ0aHJvK0JuTERNWlc0?=
- =?utf-8?B?bjU3Nlpkc1BYWkhXeHF0MnRxbWJEb1MxQzAxYWllNS9rcWxPMy9DOFEwUDBl?=
- =?utf-8?B?RnNPUTNyT1liTUwvdWc3ODBFQlk1MVNOSjRlMVMwdUpseTR3TXczMmlpL0xI?=
- =?utf-8?B?WkZmcUovVlJOMkdRVlVkUEZtV2Z0VmJZNmszKzNKVlFPSGFlZC9UeDhsUzVx?=
- =?utf-8?B?TzF5ODFNK2ZVaG9lNWVBNzNkY05vVDR5MnF0SVQvbTVxZlhwWHJSUk4yU1B6?=
- =?utf-8?B?YUVFNGxZckJETEpsWkFvMzdTUVM4bkNmNGdEdENTYXliVzBEQ2Z0RGRZamZI?=
- =?utf-8?B?N09xb09IM0hjS01OUmlkUXpVRk5obTVNaVBsMzJ4YVc1aTN4VjdNd0lpOXRU?=
- =?utf-8?B?N3dUMDdMc0hnWVlzdmg1Vlc1MS8wM203TGR3bUxFY0Y0MHdCRG4wL3ZyL2dR?=
- =?utf-8?B?NE5nVkRURGlqUFhPRDZQQTJjbURUTXZHcjQwM3BpOThVazZtdGdoUVlhRENE?=
- =?utf-8?B?QStFT0R4UmxFU1k1THV6TnRGRE1SNkVxemhJTWF5Y3lyV1lPMGpqd3NiaTBh?=
- =?utf-8?B?ODA2WkNHbUx3QTNwS2ZEN1VrbUo5Rk9OaDloZzBqdnpYS0liZUpxRXlEa00z?=
- =?utf-8?B?cDNXTC9kUmNNOFFKWWRZTVA3UjB3N1dFMlBGLys0RDFuQ21XSXZ0Z0x5OGJD?=
- =?utf-8?B?dHc1YnUrYnhQM1E1c00xWERuTTJ6MjRqbWZPRmpQNnF4bHBvQjFMWGtCSGtx?=
- =?utf-8?B?MkZ1bWtVYmluK3VkREZLSkVBRmo2c2svU3FXUlN1eUg1YlhKR0J4eHBKSlhB?=
- =?utf-8?B?L010cFR5WHk3eXNzZzY1OUhvMlh5MlhUemlXMmFnM09CZm5LdXZoaFUrVFVq?=
- =?utf-8?B?VldsQmJzMElmVmp5d0MrcVg4S3FJZ3ZvSnphdDRLS095YXFwejJyUEZYNjFU?=
- =?utf-8?B?TWFNcUZ3RjNHa2U1VWZ2WmtjVFJKc282anJzanBSRmIwN1E2TmprWWVtQ3Mv?=
- =?utf-8?B?UnZtODBkTERRbTF2Q1VtTWNXT3ladXQxWFRvYkVObHZpTnFlclVCTTdjWFVW?=
- =?utf-8?B?SDh6enNSRE1QejN3dDJZUmVBV0Q0SzJybGhIVXlNY1pxUG5adldFd29WQWw2?=
- =?utf-8?B?c2duclpsV2JBdlN3T2llQldLaXBrWXhjUGY0SE0wSm1lcTJNZlNkMnllZTZF?=
- =?utf-8?B?MWNEQzFDaW1qMXEzbldhMFI3aUp4SS9GMytvSGZ2ZHJ5K2RReGFGUHlHKy9K?=
- =?utf-8?Q?bCPzp8HFT8IuX8h5bjqEGere3?=
-X-OriginatorOrg: amlogic.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6a689233-76e4-4c30-79b2-08de1794ee03
-X-MS-Exchange-CrossTenant-AuthSource: KL1PR03MB5778.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Oct 2025 09:15:55.0552
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ci0guYXqZ9Bvm0zCuF0I3dl6FjnSnGWMX8oY58oN366uY+uEzut3sWE27Pl3voCdx6EcsV0n932naP01FDLQJg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KUZPR03MB9526
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] clk: qcom: gcc-qcs615: Update the SDCC clock to use
+ shared_floor_ops
+To: Taniya Das <quic_tdas@quicinc.com>,
+        Taniya Das <taniya.das@oss.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+ <sboyd@kernel.org>, Dmitry Baryshkov <lumag@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
+        Imran Shaik <imran.shaik@oss.qualcomm.com>,
+        Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
+        Abel Vesa <abel.vesa@linaro.org>
+References: <20251029-sdcc_rcg2_shared_ops-v3-1-ecf47d9601d1@oss.qualcomm.com>
+ <c361ea17-7480-4a10-b446-5072e8edd76d@oss.qualcomm.com>
+ <557ff048-7e5d-409e-bf21-98328a834bc8@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <557ff048-7e5d-409e-bf21-98328a834bc8@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDMwMDA3NSBTYWx0ZWRfX6ZMrhBswdFbd
+ O/qyRaJyoFl7OKxwd/UdA1EgHcIKOyZDOBrR6avTRI3/0jz7xgp2mKyTPvlJ4/cXgavBuHRUyKF
+ sxc5bpHEM2RwCoROUPothk8phl8aJLkZKX8uA2xcCNVKQZF2zuJ4+u8hEHS9WJZbarwr9HUA3jV
+ UvrzKfoE+J0Bw6hO1zFXX81PYSEF3opmams9Ij+wbavms4sVW3mRTu99jtEcyMBGtIpnAIb9Ask
+ kaJMCXdsa2YALNCF1w1WX9hY5DsCDDGvRPKC2kAhPoUOksPDlJzwonW4Fq1vQPCV7j5faZBVqgR
+ Lju1N+subkWbtk8CE9VoFQfl0DSJe6ZH9H896RL/TJtOMkPSvFAsuyrrQPrqeo5gMVN2hNnNAYv
+ GedvAsXzDLngOloOWhDKob+noKA3RA==
+X-Proofpoint-GUID: Qi-bbuDiMtXdE8M6GcuJ8_clpDt9dqTL
+X-Authority-Analysis: v=2.4 cv=MuRfKmae c=1 sm=1 tr=0 ts=69032d11 cx=c_pps
+ a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=jRDqj1xAgmH_Y79Tyd0A:9 a=QEXdDO2ut3YA:10
+ a=dawVfQjAaf238kedN5IG:22
+X-Proofpoint-ORIG-GUID: Qi-bbuDiMtXdE8M6GcuJ8_clpDt9dqTL
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-10-30_02,2025-10-29_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 impostorscore=0 suspectscore=0 spamscore=0
+ lowpriorityscore=0 clxscore=1015 bulkscore=0 phishscore=0 malwarescore=0
+ adultscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
+ definitions=main-2510300075
 
-Hi Jerome,
+On 10/29/25 11:31 AM, Taniya Das wrote:
+> 
+> 
+> On 10/29/2025 3:17 PM, Konrad Dybcio wrote:
+>> I noticed none of SM8[1234567]50 / hamoa / glymur uses _shared_ here.. 
+>>
+>> I see that e.g. SM8250's downstream sets it though - should some of
+>> these be fixed up too?
+> 
+> I wanted to fix them as well, just trying to check the downstream
+> history of these clocks and then update them.
 
-On 10/30/2025 4:32 PM, Jerome Brunet wrote:
-> [ EXTERNAL EMAIL ]
-> 
-> On Thu 30 Oct 2025 at 13:24, Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org> wrote:
-> 
->> From: Chuan Liu <chuan.liu@amlogic.com>
->>
->> If the PLL fails to lock, it should be disabled, This makes the logic
->> more complete, and also helps save unnecessary power consumption when
->> the PLL is malfunctioning.
->>
->> Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
->> ---
->>   drivers/clk/meson/clk-pll.c | 41 +++++++++++++++++++++++------------------
->>   1 file changed, 23 insertions(+), 18 deletions(-)
->>
->> diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
->> index f81ebf6cc981..6c794adb8ccd 100644
->> --- a/drivers/clk/meson/clk-pll.c
->> +++ b/drivers/clk/meson/clk-pll.c
->> @@ -353,6 +353,23 @@ static int meson_clk_pcie_pll_enable(struct clk_hw *hw)
->>        return -EIO;
->>   }
->>
->> +static void meson_clk_pll_disable(struct clk_hw *hw)
->> +{
->> +     struct clk_regmap *clk = to_clk_regmap(hw);
->> +     struct meson_clk_pll_data *pll = meson_clk_pll_data(clk);
->> +
->> +     /* Put the pll is in reset */
->> +     if (MESON_PARM_APPLICABLE(&pll->rst))
->> +             meson_parm_write(clk->map, &pll->rst, 1);
->> +
->> +     /* Disable the pll */
->> +     meson_parm_write(clk->map, &pll->en, 0);
->> +
->> +     /* Disable PLL internal self-adaption current module */
->> +     if (MESON_PARM_APPLICABLE(&pll->current_en))
->> +             meson_parm_write(clk->map, &pll->current_en, 0);
->> +}
->> +
->>   static int meson_clk_pll_enable(struct clk_hw *hw)
->>   {
->>        struct clk_regmap *clk = to_clk_regmap(hw);
->> @@ -397,29 +414,17 @@ static int meson_clk_pll_enable(struct clk_hw *hw)
->>                meson_parm_write(clk->map, &pll->l_detect, 0);
->>        }
->>
->> -     if (meson_clk_pll_wait_lock(hw))
->> +     if (meson_clk_pll_wait_lock(hw)) {
->> +             /* disable PLL when PLL lock failed. */
->> +             meson_clk_pll_disable(hw);
->> +             pr_warn("%s: PLL lock failed!!!\n", clk_hw_get_name(hw));
->> +
-> 
-> This is something that's likely to spam, so pr_warn_once() (if you must warn)
-> and I don't think 3 "!" are necessary to convey the message.
-> 
+Nice, thanks 
 
-In the next version, I'll remove the "!", and replace pr_warn to
-pr_warn_once.
-
-Some drivers that reference the clock may not check the function’s
-return value (even though that's not ideal), so adding this warning
-makes the issue more noticeable.
-
->>                return -EIO;
->> +     }
->>
->>        return 0;
->>   }
->>
->> -static void meson_clk_pll_disable(struct clk_hw *hw)
->> -{
->> -     struct clk_regmap *clk = to_clk_regmap(hw);
->> -     struct meson_clk_pll_data *pll = meson_clk_pll_data(clk);
->> -
->> -     /* Put the pll is in reset */
->> -     if (MESON_PARM_APPLICABLE(&pll->rst))
->> -             meson_parm_write(clk->map, &pll->rst, 1);
->> -
->> -     /* Disable the pll */
->> -     meson_parm_write(clk->map, &pll->en, 0);
->> -
->> -     /* Disable PLL internal self-adaption current module */
->> -     if (MESON_PARM_APPLICABLE(&pll->current_en))
->> -             meson_parm_write(clk->map, &pll->current_en, 0);
->> -}
->> -
->>   static int meson_clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
->>                                  unsigned long parent_rate)
->>   {
-> 
-> --
-> Jerome
+Konrad
 
