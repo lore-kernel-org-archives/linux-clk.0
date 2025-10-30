@@ -1,88 +1,190 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 128D4242D9B;
-	Thu, 30 Oct 2025 13:36:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB3C8244694
+	for <linux-clk@vger.kernel.org>; Thu, 30 Oct 2025 13:40:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761831365; cv=none; b=H48YjjhXceLVh6IfUsjvxQRwo4WfLig8iQeOrGGbM9ybCQz+ODAnJPF03Gcrh2zpxgbLPqU4DbJyHJ7wR+nGdE9l+IDWDMMgk8rGYXjy7RhRiEW27prADr0EoytN6VbRTz6DsliHqS3TootTRofsR7g8jr3jX1tbPZCsYf2OIgk=
+	t=1761831647; cv=none; b=kol74I2f88SoBEsJMoaZ97TXBLcrjQHjIsHKFOuIoQdq3uUSQIFzvp7iHc1436LTwkrbYUTM8BTsMooODMzNubnR/kk/1hE/cQXKyvhVxV2S4fvWGMYRJWHkb7IO2R3Gc+RFEuTzS42wwrXmuXOD47hmZfL9jzmgsvaUj6WKH7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761831365; c=relaxed/simple;
-	bh=skDcBwIOHhfQXGcqlGA/LEwUkbZKYplwlozeBad9QOY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZSEqmRsznyhjzBuwGvrlS7v+TIuCDZu5kHfr8fKIFFuYmFOUo20dMo/pP3bI6k2/N8UMXUEgYMpfIQdzC84ZzO+l6MJDFq/8eFRhFEfGOqMPwaE/I4lrZhWKrl9pRSrOwqcEeynX/PvAXWi5jLfQncJOjevJpZb0Rjtay0cXF/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aIFeA7NJ; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aIFeA7NJ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B435C4CEF1;
-	Thu, 30 Oct 2025 13:36:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761831364;
-	bh=skDcBwIOHhfQXGcqlGA/LEwUkbZKYplwlozeBad9QOY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aIFeA7NJUJOWrSDA9pGqC8MaKPLKi+lpQRRuXL7ckWZUVsDUHN4irB5QDZoyh9bVq
-	 3+WYnAHHUAvSeAtQ2cniycQkp4C8ZE6rJG8H/eeavKFZaMcKjen27K1eD+DBX4qeXA
-	 AbnmRO3D/tv3/zzhUqzMU1XXy9C6kD3bblXjaYY6LtT+nyMcjCgmF1NLpd/8ZrrZAi
-	 /4rcT5otqRcLDavdndxtpebWbN3OUiQBa8UhLYXDv5UD1/Uuub6fsECRRKnmduHQAi
-	 9yoxuYx4CR0Ms16r/IyQ/2t9DlRPJDoNC12vVChYZMb0Cd6eoRZoqQz7YTMv8aNWer
-	 Ags2ZLTy+g3vA==
-Date: Thu, 30 Oct 2025 14:35:59 +0100
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Danilo Krummrich <dakr@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	Peter Rosin <peda@axentia.se>, Arnd Bergmann <arnd@arndb.de>, 
-	Saravana Kannan <saravanak@google.com>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Charles Keepax <ckeepax@opensource.cirrus.com>, Richard Fitzgerald <rf@opensource.cirrus.com>, 
-	David Rhodes <david.rhodes@cirrus.com>, Linus Walleij <linus.walleij@linaro.org>, 
-	Ulf Hansson <ulf.hansson@linaro.org>, Mark Brown <broonie@kernel.org>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Daniel Scally <djrscally@gmail.com>, 
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Len Brown <lenb@kernel.org>, Davidlohr Bueso <dave@stgolabs.net>, 
-	Jonathan Cameron <jonathan.cameron@huawei.com>, Dave Jiang <dave.jiang@intel.com>, 
-	Alison Schofield <alison.schofield@intel.com>, Vishal Verma <vishal.l.verma@intel.com>, 
-	Ira Weiny <ira.weiny@intel.com>, Dan Williams <dan.j.williams@intel.com>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Wolfram Sang <wsa@kernel.org>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org, linux-pci@vger.kernel.org, 
-	linux-sound@vger.kernel.org, patches@opensource.cirrus.com, linux-gpio@vger.kernel.org, 
-	linux-pm@vger.kernel.org, linux-spi@vger.kernel.org, linux-acpi@vger.kernel.org, 
-	linux-cxl@vger.kernel.org, Allan Nielsen <allan.nielsen@microchip.com>, 
-	Horatiu Vultur <horatiu.vultur@microchip.com>, Steen Hegelund <steen.hegelund@microchip.com>, 
-	Luca Ceresoli <luca.ceresoli@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v4 17/29] i2c: mux: Set adapter physical device
-Message-ID: <llu7m5f2qi6o5nzgssxw3qpp4sya6a2qrg4gna7y6atl2y7amk@ld5wow6brflb>
-References: <20251015071420.1173068-1-herve.codina@bootlin.com>
- <20251015071420.1173068-18-herve.codina@bootlin.com>
+	s=arc-20240116; t=1761831647; c=relaxed/simple;
+	bh=isL6VAbzP+Fzay1Fnne65npENcp69zfoG4XwP/FfAdI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=rX5a3sOkB6h+ux5bKqW1dLRXO5dKE0mrFs3fXuzhmA/2qSfht3FesiFGnUSGWOIZ6SZRXFFmBXV87PO9wWpieSdUlDI0ahtqIX1cDja31aaaUcGyqHDYkpuMzl6GflzkYFxjtiNiulyMbxYS/3+RUi1cFUtaU2K7dIoUcG3IZow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1vEStC-0002QT-NZ; Thu, 30 Oct 2025 14:40:30 +0100
+Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1vEStC-006DiW-0z;
+	Thu, 30 Oct 2025 14:40:30 +0100
+Received: from pza by lupine with local (Exim 4.98.2)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1vEStC-00000000AGH-0uQV;
+	Thu, 30 Oct 2025 14:40:30 +0100
+Message-ID: <4e3c3c3d6c1a0d2905a90e5f1c0b2cb8f67bc43b.camel@pengutronix.de>
+Subject: Re: [PATCH v6 1/7] reset: mpfs: add non-auxiliary bus probing
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Conor Dooley <conor@kernel.org>, claudiu.beznea@tuxon.dev
+Cc: Conor Dooley <conor.dooley@microchip.com>, Daire McNamara
+	 <daire.mcnamara@microchip.com>, pierre-henry.moussay@microchip.com, 
+	valentina.fernandezalanis@microchip.com, Michael Turquette
+	 <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring
+	 <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Thu, 30 Oct 2025 14:40:30 +0100
+In-Reply-To: <20251029-macarena-neglector-318431fec367@spud>
+References: <20251029-chewing-absolve-c4e6acfe0fa4@spud>
+	 <20251029-macarena-neglector-318431fec367@spud>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.1-1+deb13u1 
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251015071420.1173068-18-herve.codina@bootlin.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 
-Hi Herve,
+On Mi, 2025-10-29 at 16:11 +0000, Conor Dooley wrote:
+> From: Conor Dooley <conor.dooley@microchip.com>
+>=20
+> While the auxiliary bus was a nice bandaid, and meant that re-writing
+> the representation of the clock regions in devicetree was not required,
+> it has run its course. The "mss_top_sysreg" region that contains the
+> clock and reset regions, also contains pinctrl and an interrupt
+> controller, so the time has come rewrite the devicetree and probe the
+> reset controller from an mfd devicetree node, rather than implement
+> those drivers using the auxiliary bus. Wanting to avoid propagating this
+> naive/incorrect description of the hardware to the new pic64gx SoC is a
+> major motivating factor here.
+>=20
+> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+> ---
+> v6:
+> - depend on MFD_SYSCON
+> - return regmap_update_bits() result directly instead of an additional
+>   return 0
+>=20
+> v4:
+> - Only use driver specific lock for non-regmap writes
+>=20
+> v2:
+> - Implement the request to use regmap_update_bits(). I found that I then
+>   hated the read/write helpers since they were just bloat, so I ripped
+>   them out. I replaced the regular spin_lock_irqsave() stuff with a
+>   guard(spinlock_irqsave), since that's a simpler way of handling the two
+>   different paths through such a trivial pair of functions.
+> ---
+>  drivers/reset/Kconfig      |  1 +
+>  drivers/reset/reset-mpfs.c | 79 ++++++++++++++++++++++++++++++--------
+>  2 files changed, 63 insertions(+), 17 deletions(-)
+>=20
+> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
+> index 78b7078478d4..0ec4b7cd08d6 100644
+> --- a/drivers/reset/Kconfig
+> +++ b/drivers/reset/Kconfig
+> @@ -200,6 +200,7 @@ config RESET_PISTACHIO
+>  config RESET_POLARFIRE_SOC
+>  	bool "Microchip PolarFire SoC (MPFS) Reset Driver"
+>  	depends on MCHP_CLK_MPFS
+> +	depends on MFD_SYSCON
+>  	select AUXILIARY_BUS
+>  	default MCHP_CLK_MPFS
+>  	help
+> diff --git a/drivers/reset/reset-mpfs.c b/drivers/reset/reset-mpfs.c
+> index f6fa10e03ea8..25de7df55301 100644
+> --- a/drivers/reset/reset-mpfs.c
+> +++ b/drivers/reset/reset-mpfs.c
+> @@ -7,13 +7,16 @@
+>   *
+>   */
+>  #include <linux/auxiliary_bus.h>
+> +#include <linux/cleanup.h>
+>  #include <linux/delay.h>
+>  #include <linux/io.h>
+> +#include <linux/mfd/syscon.h>
+>  #include <linux/module.h>
+>  #include <linux/of.h>
+>  #include <linux/platform_device.h>
+> -#include <linux/slab.h>
+> +#include <linux/regmap.h>
+>  #include <linux/reset-controller.h>
+> +#include <linux/slab.h>
+>  #include <dt-bindings/clock/microchip,mpfs-clock.h>
+>  #include <soc/microchip/mpfs.h>
+> =20
+> @@ -27,11 +30,14 @@
+>  #define MPFS_SLEEP_MIN_US	100
+>  #define MPFS_SLEEP_MAX_US	200
+> =20
+> +#define REG_SUBBLK_RESET_CR	0x88u
+> +
+>  /* block concurrent access to the soft reset register */
+>  static DEFINE_SPINLOCK(mpfs_reset_lock);
+> =20
+>  struct mpfs_reset {
+>  	void __iomem *base;
+> +	struct regmap *regmap;
+>  	struct reset_controller_dev rcdev;
+>  };
+> =20
+> @@ -46,41 +52,46 @@ static inline struct mpfs_reset *to_mpfs_reset(struct=
+ reset_controller_dev *rcde
+>  static int mpfs_assert(struct reset_controller_dev *rcdev, unsigned long=
+ id)
+>  {
+>  	struct mpfs_reset *rst =3D to_mpfs_reset(rcdev);
+> -	unsigned long flags;
+>  	u32 reg;
+> =20
+> -	spin_lock_irqsave(&mpfs_reset_lock, flags);
+> +	if (rst->regmap)
+> +		return regmap_update_bits(rst->regmap, REG_SUBBLK_RESET_CR, BIT(id), B=
+IT(id));
 
-On Wed, Oct 15, 2025 at 09:14:04AM +0200, Herve Codina wrote:
-> For i2c muxes, the parent of the mux adapter device is the adapter
-> device the mux is connected to.
-> 
-> This parent is not the physical device related to the mux adapter.
-> Indeed, the physical device of the mux adapter is the mux device itself.
-> 
-> Fill the adap.physdev with the mux device.
-> 
-> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+This could use regmap_set_bits().
 
-Reviewed-by: Andi Shyti <andi.shyti@kernel.org>
+> +
+> +	guard(spinlock_irqsave)(&mpfs_reset_lock);
+> =20
+>  	reg =3D readl(rst->base);
+>  	reg |=3D BIT(id);
+>  	writel(reg, rst->base);
 
-Thanks,
-Andi
+Since I've just seen this in the i.MX8ULP series [1], it would be
+cleaner to convert the aux driver to regmap as well. The readl/writel()
+code paths could be dropped then.
+
+[1] https://lore.kernel.org/lkml/20251029135229.890-1-laurentiumihalcea111@=
+gmail.com/
+
+[...]
+>  static int mpfs_deassert(struct reset_controller_dev *rcdev, unsigned lo=
+ng id)
+>  {
+>  	struct mpfs_reset *rst =3D to_mpfs_reset(rcdev);
+> -	unsigned long flags;
+>  	u32 reg;
+> =20
+> -	spin_lock_irqsave(&mpfs_reset_lock, flags);
+> +	if (rst->regmap)
+> +		return regmap_update_bits(rst->regmap, REG_SUBBLK_RESET_CR, BIT(id), 0=
+);
+
+And this could use regmap_clear_bits().
+
+regards
+Philipp
