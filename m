@@ -1,37 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 283412D063D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2843932C94A;
 	Thu, 30 Oct 2025 05:24:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761801858; cv=none; b=Pdxm1phoufvKryhexvnZ8pjqddx165lpMyrp2N11j7nWSeFZCvtoeAh1RC3K/coclEpKclzIyTJr6+xccAvFIYn72PfMhoAlSz9EysOoGQL2O58Z8ECqLKk7NeiEZOOMqk/FDCNQy5s1ybFnRE8H5yuqMiZC75h+d3oFbEYjvtc=
+	t=1761801858; cv=none; b=htGg8+DVB873HcSQ7F+pd8GM9Lwkr4OWYuWFX7M+Of7tSA1Gxoa27eSlDAv8q2sIP2byH8qgCcEQH848xGAcp/8gjfFpWypEfZHODAc1wI9ICPLGs9kpuTAGy7g0AO2cvkE5CZXXbwRgNH9q/osxAoTCJ4tWPtpX9C7dX89/e7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1761801858; c=relaxed/simple;
-	bh=7PrPtqlO+xwMN6puDCOh8Tf+yRQi8msCbeKY70lBqSA=;
+	bh=5tLSRE6BInQejsiPR/fc5RiDlVZ9iOn8Or4TkaTc/g4=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Ja56smi5MWd4WdUfKcEmZanPTXK39/ij/HAbcZk2ijYisFZuKlm4ZmKc23VbMqA4/wF7kD4w0JA+bVQOuTsuAnHEVV1ERlQ7GUb77knW0qhKJs2iAJ9OJzM7O+0rLTP6WlipFhR3MZkQP+fI4Sc8/lLmU5iNuHUbCOJtIaK6mt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ba0sn1gg; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=httRM+SjbE9pMKNf5waiFPZ55C6F0jQj8sO4QhiWMBJabg8axvmpXCwC1RMrT05JrsEPZKHRqeNPg6vYEDtoL96uv0Wh74zEIyrAYJGXUV/Zyl3QjkaUKQmboX+6cMDlHqwcEYIg+v+EouHD31MqSPJ16VCkGiBvTlyZ3uvVMQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d91xdU3D; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ba0sn1gg"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id CB1EEC113D0;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d91xdU3D"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id B4D78C4CEFF;
 	Thu, 30 Oct 2025 05:24:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1761801857;
-	bh=7PrPtqlO+xwMN6puDCOh8Tf+yRQi8msCbeKY70lBqSA=;
+	bh=5tLSRE6BInQejsiPR/fc5RiDlVZ9iOn8Or4TkaTc/g4=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=ba0sn1ggI/79H0CiA2KfZtb+PuJZfu0J6FUZhhW/kSpdorEYmTY5veZhUeycILUuB
-	 UcL7ghxSH9Epb5IloiBr/MklFdp5Dc12GnK0/7bAuhm7ZjGczYrhWeO3Xt/HPxnmfd
-	 OgqV7y8PG06UoOYdxabsXtfDTJ+3sVexvebrS0LyC3okbCUlt7QT9tBMnnwKMhBPgH
-	 hE88iu134EiV5UPHwVQiuTnjwRp1aOhS06jv5WhohA2F/ci+hHzUIxB47PqwG4H1Xi
-	 HIWxyzvEr1R9PtSWJQ7D5Rl3DHPqx7ta/BSd0yRBHWyY8UR2dFcGeaGlCPtvfTIhMK
-	 EWe7v5WzMD0kg==
+	b=d91xdU3DbJl+qQa6lgSQtM7avaR4NNy5V/BBKTRM7wJ+HAfoxiT8FRJTX63UPixo1
+	 AJFPG8ySkx0ZyRFxWRRXEbyG1SbzTXHnG+eRluzSORyzg/u/MN4tousMEBE1uNEIGO
+	 fsWmpwSrtd4YoejlXGH5+fGOPz42aara+mOHhVrTFrMT2m5yhlVevAPQFW53tHWriK
+	 S/DSuVjw1oDxtzGp0BiREnjg9KKiV78RRYc9KYGbcvdDhdBBl89GuHNoCMWsAOw7B0
+	 OrTDqQo3r6XJPKOvys5HzBP5VjGlBbAqPMhYGZVKMhiERNLgFa4V58oqDQa3cbVOIR
+	 oaazgjXuWGsTw==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE853CCF9F8;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EE23CCF9EA;
 	Thu, 30 Oct 2025 05:24:17 +0000 (UTC)
 From: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
-Date: Thu, 30 Oct 2025 13:24:13 +0800
-Subject: [PATCH v2 3/5] clk: amlogic: Add handling for PLL lock failure
+Date: Thu, 30 Oct 2025 13:24:11 +0800
+Subject: [PATCH v2 1/5] clk: amlogic: Fix out-of-range PLL frequency
+ setting
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -40,7 +41,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251030-optimize_pll_driver-v2-3-37273f5b25ab@amlogic.com>
+Message-Id: <20251030-optimize_pll_driver-v2-1-37273f5b25ab@amlogic.com>
 References: <20251030-optimize_pll_driver-v2-0-37273f5b25ab@amlogic.com>
 In-Reply-To: <20251030-optimize_pll_driver-v2-0-37273f5b25ab@amlogic.com>
 To: Neil Armstrong <neil.armstrong@linaro.org>, 
@@ -52,11 +53,11 @@ Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
  Chuan Liu <chuan.liu@amlogic.com>, da@libre.computer
 X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1761801855; l=2331;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1761801855; l=991;
  i=chuan.liu@amlogic.com; s=20240902; h=from:subject:message-id;
- bh=vrUlJ1HmRnCEyEkq2xDw1ggVFh4RddetWLmGLf94sV4=;
- b=cSkp9cTFFGr5sg6ASQ8L33zSJKDZR942ZJ8M8anl9qJse6qqWwezMYBS2WJrFMSpurm2Vpguh
- xbNHhPo/ZlBCEu/7QDJNyKvbgOsc82743NVagBbUZHSXjb5k+QBmYDc
+ bh=6onhzW3ODDG4bFoHZLKVZ14BJkN4o2IaabjNVGrsFP0=;
+ b=1KGZg2CEt0fhJufxEmdvITvTntwRDyum3Rdl62EXQsiDSKUog/TKBEitbhD1QajWng+8BLt18
+ T+rrPWVi0uQBAvwQMD9AjZ6uyKVd2rP99mLY1neIEaParGQ9LNvQWUW
 X-Developer-Key: i=chuan.liu@amlogic.com; a=ed25519;
  pk=fnKDB+81SoWGKW2GJNFkKy/ULvsDmJZRGBE7pR5Xcpo=
 X-Endpoint-Received: by B4 Relay for chuan.liu@amlogic.com/20240902 with
@@ -66,79 +67,33 @@ Reply-To: chuan.liu@amlogic.com
 
 From: Chuan Liu <chuan.liu@amlogic.com>
 
-If the PLL fails to lock, it should be disabled, This makes the logic
-more complete, and also helps save unnecessary power consumption when
-the PLL is malfunctioning.
+If the calculated 'm' falls into the range:
 
+    pll->range->max < m < (1 << pll->m.width)
+
+Here an incorrect 'm' value could be obtained, so an additional
+condition is added to ensure that the calculated 'm' stays within a
+valid range.
+
+Fixes: 8eed1db1adec6 ("clk: meson: pll: update driver for the g12a")
 Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
 ---
- drivers/clk/meson/clk-pll.c | 41 +++++++++++++++++++++++------------------
- 1 file changed, 23 insertions(+), 18 deletions(-)
+ drivers/clk/meson/clk-pll.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
-index f81ebf6cc981..6c794adb8ccd 100644
+index 1ea6579a760f..629f6af18ea1 100644
 --- a/drivers/clk/meson/clk-pll.c
 +++ b/drivers/clk/meson/clk-pll.c
-@@ -353,6 +353,23 @@ static int meson_clk_pcie_pll_enable(struct clk_hw *hw)
- 	return -EIO;
- }
+@@ -191,7 +191,7 @@ static int meson_clk_get_pll_range_index(unsigned long rate,
+ 	*m = meson_clk_get_pll_range_m(rate, parent_rate, *n, pll);
  
-+static void meson_clk_pll_disable(struct clk_hw *hw)
-+{
-+	struct clk_regmap *clk = to_clk_regmap(hw);
-+	struct meson_clk_pll_data *pll = meson_clk_pll_data(clk);
-+
-+	/* Put the pll is in reset */
-+	if (MESON_PARM_APPLICABLE(&pll->rst))
-+		meson_parm_write(clk->map, &pll->rst, 1);
-+
-+	/* Disable the pll */
-+	meson_parm_write(clk->map, &pll->en, 0);
-+
-+	/* Disable PLL internal self-adaption current module */
-+	if (MESON_PARM_APPLICABLE(&pll->current_en))
-+		meson_parm_write(clk->map, &pll->current_en, 0);
-+}
-+
- static int meson_clk_pll_enable(struct clk_hw *hw)
- {
- 	struct clk_regmap *clk = to_clk_regmap(hw);
-@@ -397,29 +414,17 @@ static int meson_clk_pll_enable(struct clk_hw *hw)
- 		meson_parm_write(clk->map, &pll->l_detect, 0);
- 	}
- 
--	if (meson_clk_pll_wait_lock(hw))
-+	if (meson_clk_pll_wait_lock(hw)) {
-+		/* disable PLL when PLL lock failed. */
-+		meson_clk_pll_disable(hw);
-+		pr_warn("%s: PLL lock failed!!!\n", clk_hw_get_name(hw));
-+
- 		return -EIO;
-+	}
+ 	/* the pre-divider gives a multiplier too big - stop */
+-	if (*m >= (1 << pll->m.width))
++	if (*m > pll->range->max || *m >= (1 << pll->m.width))
+ 		return -EINVAL;
  
  	return 0;
- }
- 
--static void meson_clk_pll_disable(struct clk_hw *hw)
--{
--	struct clk_regmap *clk = to_clk_regmap(hw);
--	struct meson_clk_pll_data *pll = meson_clk_pll_data(clk);
--
--	/* Put the pll is in reset */
--	if (MESON_PARM_APPLICABLE(&pll->rst))
--		meson_parm_write(clk->map, &pll->rst, 1);
--
--	/* Disable the pll */
--	meson_parm_write(clk->map, &pll->en, 0);
--
--	/* Disable PLL internal self-adaption current module */
--	if (MESON_PARM_APPLICABLE(&pll->current_en))
--		meson_parm_write(clk->map, &pll->current_en, 0);
--}
--
- static int meson_clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
- 				  unsigned long parent_rate)
- {
 
 -- 
 2.42.0
