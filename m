@@ -1,190 +1,156 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [121.127.44.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB3C8244694
-	for <linux-clk@vger.kernel.org>; Thu, 30 Oct 2025 13:40:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA25E56B81
+	for <linux-clk@vger.kernel.org>; Thu, 30 Oct 2025 14:06:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.127.44.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761831647; cv=none; b=kol74I2f88SoBEsJMoaZ97TXBLcrjQHjIsHKFOuIoQdq3uUSQIFzvp7iHc1436LTwkrbYUTM8BTsMooODMzNubnR/kk/1hE/cQXKyvhVxV2S4fvWGMYRJWHkb7IO2R3Gc+RFEuTzS42wwrXmuXOD47hmZfL9jzmgsvaUj6WKH7Q=
+	t=1761833209; cv=none; b=fPUzbOJ+16YwxRwy40AMAKVvbQu58DkGrRJ0OOaEgRSq2nZbMCETZm9gLnwE410f9ejezuIL4SzSFHErYW4qc6q8Llk/MaSrHvdVUMU+kSN2rfEZ93hdyamlTP5Sv0pauxALcRwaARhqmVukBArFHGdvFOmb6v/sKRA2IpojZrQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761831647; c=relaxed/simple;
-	bh=isL6VAbzP+Fzay1Fnne65npENcp69zfoG4XwP/FfAdI=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=rX5a3sOkB6h+ux5bKqW1dLRXO5dKE0mrFs3fXuzhmA/2qSfht3FesiFGnUSGWOIZ6SZRXFFmBXV87PO9wWpieSdUlDI0ahtqIX1cDja31aaaUcGyqHDYkpuMzl6GflzkYFxjtiNiulyMbxYS/3+RUi1cFUtaU2K7dIoUcG3IZow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1vEStC-0002QT-NZ; Thu, 30 Oct 2025 14:40:30 +0100
-Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1vEStC-006DiW-0z;
-	Thu, 30 Oct 2025 14:40:30 +0100
-Received: from pza by lupine with local (Exim 4.98.2)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1vEStC-00000000AGH-0uQV;
-	Thu, 30 Oct 2025 14:40:30 +0100
-Message-ID: <4e3c3c3d6c1a0d2905a90e5f1c0b2cb8f67bc43b.camel@pengutronix.de>
-Subject: Re: [PATCH v6 1/7] reset: mpfs: add non-auxiliary bus probing
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Conor Dooley <conor@kernel.org>, claudiu.beznea@tuxon.dev
-Cc: Conor Dooley <conor.dooley@microchip.com>, Daire McNamara
-	 <daire.mcnamara@microchip.com>, pierre-henry.moussay@microchip.com, 
-	valentina.fernandezalanis@microchip.com, Michael Turquette
-	 <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring
-	 <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Thu, 30 Oct 2025 14:40:30 +0100
-In-Reply-To: <20251029-macarena-neglector-318431fec367@spud>
-References: <20251029-chewing-absolve-c4e6acfe0fa4@spud>
-	 <20251029-macarena-neglector-318431fec367@spud>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1-1+deb13u1 
+	s=arc-20240116; t=1761833209; c=relaxed/simple;
+	bh=vlrXieZJIM0Rlm26RWHo1ECEZXEB57lq6Fdh4/guU8g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HcqVeI0ZiZfFSy/36LWMeWih3vmnEkrBZrt0Xcej/wXu2ZaSSj/OSDYKHqRVp7F5Iut6yR8ZG0Jf/TAdVuwxPHDVBUzZljgAv/8PSA12vHShSkwmW4ylUGLV6cyuCVk8fpPsPRcMsC5p5q/88bN3VMZEMlCRt5D5MmoOqwAoSNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=rmpFv0MC; arc=none smtp.client-ip=121.127.44.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="rmpFv0MC"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
+ h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
+ Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
+ s=fe-e1b5cab7be; t=1761833201;
+ bh=11fSyszQtR3jkoioIebSh0k83RLr07LvekxLFqOoF38=;
+ b=rmpFv0MCFYgKoBUSIgJHo6N8yf8sAKdFvtG9ZrNtHT0HDKR1UDRTi23nfFSGYLtMVQgaJvNwJ
+ kFHUBUCfpPjinps0Czw2tGCC5ATfu1WSU9VpdvHWo2wFLN7oe1XpC9FILUJkN+stgyBu3LlzazO
+ Tu+GkPEfBjzD508ORv2s9mdlrbxmwb3egUPUquKd1w7no+Xu2tPhQVmRhg7hIJaDh/JVcTa7gFR
+ FNjr67weGDgMEYU4Sp4kijBsFmYfhxcs7FxeT55RRVjh5TF8mp9V6wl7mgPbz5D9P0BUSHDRfQC
+ rW2dw/8GyBGI8vfergAdUNJc8rgnZc4bLvQcOCPYbhmA==
+X-Forward-Email-ID: 69036e450fa9097cfdeb6e32
+X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
+ 121.127.44.73
+X-Forward-Email-Version: 1.4.1
+X-Forward-Email-Website: https://forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Report-Abuse-To: abuse@forwardemail.net
+Message-ID: <241e4a1d-039c-4738-b492-6325ad354b2e@kwiboo.se>
+Date: Thu, 30 Oct 2025 14:55:12 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 6/7] dt-bindings: clock: rockchip: Add RK3506 clock and
+ reset unit
+To: Elaine Zhang <zhangqing@rock-chips.com>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, sugar.zhang@rock-chips.com,
+ heiko@sntech.de, robh@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+ conor+dt@kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ huangtao@rock-chips.com, finley.xiao@rock-chips.com
+References: <20251027084147.4148739-1-zhangqing@rock-chips.com>
+ <20251027084147.4148739-7-zhangqing@rock-chips.com>
+Content-Language: en-US
+From: Jonas Karlman <jonas@kwiboo.se>
+In-Reply-To: <20251027084147.4148739-7-zhangqing@rock-chips.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mi, 2025-10-29 at 16:11 +0000, Conor Dooley wrote:
-> From: Conor Dooley <conor.dooley@microchip.com>
->=20
-> While the auxiliary bus was a nice bandaid, and meant that re-writing
-> the representation of the clock regions in devicetree was not required,
-> it has run its course. The "mss_top_sysreg" region that contains the
-> clock and reset regions, also contains pinctrl and an interrupt
-> controller, so the time has come rewrite the devicetree and probe the
-> reset controller from an mfd devicetree node, rather than implement
-> those drivers using the auxiliary bus. Wanting to avoid propagating this
-> naive/incorrect description of the hardware to the new pic64gx SoC is a
-> major motivating factor here.
->=20
-> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+Hi Elaine,
+
+On 10/27/2025 9:41 AM, Elaine Zhang wrote:
+> From: Finley Xiao <finley.xiao@rock-chips.com>
+> 
+> Add device tree bindings for clock and reset unit on RK3506 SoC.
+> Add clock and reset IDs for RK3506 SoC.
+> 
+> Signed-off-by: Finley Xiao <finley.xiao@rock-chips.com>
 > ---
-> v6:
-> - depend on MFD_SYSCON
-> - return regmap_update_bits() result directly instead of an additional
->   return 0
->=20
-> v4:
-> - Only use driver specific lock for non-regmap writes
->=20
-> v2:
-> - Implement the request to use regmap_update_bits(). I found that I then
->   hated the read/write helpers since they were just bloat, so I ripped
->   them out. I replaced the regular spin_lock_irqsave() stuff with a
->   guard(spinlock_irqsave), since that's a simpler way of handling the two
->   different paths through such a trivial pair of functions.
-> ---
->  drivers/reset/Kconfig      |  1 +
->  drivers/reset/reset-mpfs.c | 79 ++++++++++++++++++++++++++++++--------
->  2 files changed, 63 insertions(+), 17 deletions(-)
->=20
-> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-> index 78b7078478d4..0ec4b7cd08d6 100644
-> --- a/drivers/reset/Kconfig
-> +++ b/drivers/reset/Kconfig
-> @@ -200,6 +200,7 @@ config RESET_PISTACHIO
->  config RESET_POLARFIRE_SOC
->  	bool "Microchip PolarFire SoC (MPFS) Reset Driver"
->  	depends on MCHP_CLK_MPFS
-> +	depends on MFD_SYSCON
->  	select AUXILIARY_BUS
->  	default MCHP_CLK_MPFS
->  	help
-> diff --git a/drivers/reset/reset-mpfs.c b/drivers/reset/reset-mpfs.c
-> index f6fa10e03ea8..25de7df55301 100644
-> --- a/drivers/reset/reset-mpfs.c
-> +++ b/drivers/reset/reset-mpfs.c
-> @@ -7,13 +7,16 @@
->   *
->   */
->  #include <linux/auxiliary_bus.h>
-> +#include <linux/cleanup.h>
->  #include <linux/delay.h>
->  #include <linux/io.h>
-> +#include <linux/mfd/syscon.h>
->  #include <linux/module.h>
->  #include <linux/of.h>
->  #include <linux/platform_device.h>
-> -#include <linux/slab.h>
-> +#include <linux/regmap.h>
->  #include <linux/reset-controller.h>
-> +#include <linux/slab.h>
->  #include <dt-bindings/clock/microchip,mpfs-clock.h>
->  #include <soc/microchip/mpfs.h>
-> =20
-> @@ -27,11 +30,14 @@
->  #define MPFS_SLEEP_MIN_US	100
->  #define MPFS_SLEEP_MAX_US	200
-> =20
-> +#define REG_SUBBLK_RESET_CR	0x88u
+>  .../bindings/clock/rockchip,rk3506-cru.yaml   |  51 ++++
+>  .../dt-bindings/clock/rockchip,rk3506-cru.h   | 285 ++++++++++++++++++
+>  .../dt-bindings/reset/rockchip,rk3506-cru.h   | 211 +++++++++++++
+>  3 files changed, 547 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3506-cru.yaml
+>  create mode 100644 include/dt-bindings/clock/rockchip,rk3506-cru.h
+>  create mode 100644 include/dt-bindings/reset/rockchip,rk3506-cru.h
+
+[snip]
+
+> diff --git a/include/dt-bindings/reset/rockchip,rk3506-cru.h b/include/dt-bindings/reset/rockchip,rk3506-cru.h
+> new file mode 100644
+> index 000000000000..f38cc066009b
+> --- /dev/null
+> +++ b/include/dt-bindings/reset/rockchip,rk3506-cru.h
+> @@ -0,0 +1,211 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+> +/*
+> + * Copyright (c) 2023-2025 Rockchip Electronics Co., Ltd.
+> + * Author: Finley Xiao <finley.xiao@rock-chips.com>
+> + */
 > +
->  /* block concurrent access to the soft reset register */
->  static DEFINE_SPINLOCK(mpfs_reset_lock);
-> =20
->  struct mpfs_reset {
->  	void __iomem *base;
-> +	struct regmap *regmap;
->  	struct reset_controller_dev rcdev;
->  };
-> =20
-> @@ -46,41 +52,46 @@ static inline struct mpfs_reset *to_mpfs_reset(struct=
- reset_controller_dev *rcde
->  static int mpfs_assert(struct reset_controller_dev *rcdev, unsigned long=
- id)
->  {
->  	struct mpfs_reset *rst =3D to_mpfs_reset(rcdev);
-> -	unsigned long flags;
->  	u32 reg;
-> =20
-> -	spin_lock_irqsave(&mpfs_reset_lock, flags);
-> +	if (rst->regmap)
-> +		return regmap_update_bits(rst->regmap, REG_SUBBLK_RESET_CR, BIT(id), B=
-IT(id));
-
-This could use regmap_set_bits().
-
+> +#ifndef _DT_BINDINGS_REST_ROCKCHIP_RK3506_H
+> +#define _DT_BINDINGS_REST_ROCKCHIP_RK3506_H
 > +
-> +	guard(spinlock_irqsave)(&mpfs_reset_lock);
-> =20
->  	reg =3D readl(rst->base);
->  	reg |=3D BIT(id);
->  	writel(reg, rst->base);
+> +/* CRU-->SOFTRST_CON00 */
+> +#define SRST_NCOREPORESET0_AC		0
+> +#define SRST_NCOREPORESET1_AC		1
+> +#define SRST_NCOREPORESET2_AC		2
+> +#define SRST_NCORESET0_AC		3
+> +#define SRST_NCORESET1_AC		4
+> +#define SRST_NCORESET2_AC		5
+> +#define SRST_NL2RESET_AC		6
+> +#define SRST_ARESETN_CORE_BIU_AC	7
+> +#define SRST_HRESETN_M0_AC		8
+> +
+> +/* CRU-->SOFTRST_CON02 */
+> +#define SRST_NDBGRESET			9
+> +#define SRST_PRESETN_CORE_BIU		10
+> +#define SRST_RESETN_PMU			11
+> +
+> +/* CRU-->SOFTRST_CON03 */
+> +#define SRST_PRESETN_DBG		12
+> +#define SRST_POTRESETN_DBG		13
+> +#define SRST_PRESETN_CORE_GRF		14
+> +#define SRST_RESETN_CORE_EMA_DETECT	15
+> +#define SRST_RESETN_REF_PVTPLL_CORE	16
+> +#define SRST_PRESETN_GPIO1		17
+> +#define SRST_DBRESETN_GPIO1		18
+> +
+> +/* CRU-->SOFTRST_CON04 */
+> +#define SRST_ARESETN_CORE_PERI_BIU	19
+> +#define SRST_ARESETN_DSMC		20
+> +#define SRST_PRESETN_DSMC		21
+> +#define SRST_RESETN_FLEXBUS		22
+> +#define SRST_ARESETN_FLEXBUS		23
+> +#define SRST_HRESETN_FLEXBUS		24
+> +#define SRST_ARESETN_DSMC_SLV		25
+> +#define SRST_HRESETN_DSMC_SLV		26
+> +#define SRST_RESETN_DSMC_SLV		27
+> +
+> +/* CRU-->SOFTRST_CON05 */
+> +#define SRST_ARESETN_BUS_BIU		28
+> +#define SRST_HRESETN_BUS_BIU		29
+> +#define SRST_PRESETN_BUS_BIU		30
+> +#define SRST_ARESETN_SYSRAM		31
+> +#define SRST_HRESETN_SYSRAM		32
+> +#define SRST_ARESETN_DMAC0		33
+> +#define SRST_ARESETN_DMAC1		34
+> +#define SRST_HRESETN_M0			35
+> +#define SRST_RESETN_M0_JTAG		36
+> +#define SRST_HRESETN_CRYPTO		37
 
-Since I've just seen this in the i.MX8ULP series [1], it would be
-cleaner to convert the aux driver to regmap as well. The readl/writel()
-code paths could be dropped then.
+Is there a reason why this (and the RV1126B) reset names now include the
+RESETN name in all reset constant?
 
-[1] https://lore.kernel.org/lkml/20251029135229.890-1-laurentiumihalcea111@=
-gmail.com/
+For RK3528 and prior mainline SoCs the RESETN part of the name has been
+striped from the constant, suggest we also strip the RESETN part for
+RK3506 and RV1126B for consistency with other RK SoCs.
 
-[...]
->  static int mpfs_deassert(struct reset_controller_dev *rcdev, unsigned lo=
-ng id)
->  {
->  	struct mpfs_reset *rst =3D to_mpfs_reset(rcdev);
-> -	unsigned long flags;
->  	u32 reg;
-> =20
-> -	spin_lock_irqsave(&mpfs_reset_lock, flags);
-> +	if (rst->regmap)
-> +		return regmap_update_bits(rst->regmap, REG_SUBBLK_RESET_CR, BIT(id), 0=
-);
+Regards,
+Jonas
 
-And this could use regmap_clear_bits().
-
-regards
-Philipp
+[snip]
