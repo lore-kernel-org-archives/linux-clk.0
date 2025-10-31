@@ -1,129 +1,110 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9750233DEE9;
-	Fri, 31 Oct 2025 10:44:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1A5A277026;
+	Fri, 31 Oct 2025 10:58:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761907441; cv=none; b=Y+2GmgJw+JU1Kdz+hCxw7AUWRrBRMgRCgYC8nSLeAaaDsMHaPiS1pyzrYTmkeSkVSUDnknuqDTHUFd6vJ84tT7DlmZP4kjmXadwpoG87VBaR8Na+ZrQ6MG75thRGB+W+l49goBLAKKfbSIz/CTzXcABFfa+w80RIiRm6AcXm5a4=
+	t=1761908314; cv=none; b=q970AYMmk7I8V5VkLefhbdLsxI0k+Y4fNI/9Ro/7RcZci1ZGUFyCZiQTtV+o4hBCUXjwIkg5W933b3pGPfVkcJZevWlcxF7DcEMSikR/t0YudAtR31/kIkJyK5hxWPkBdjT0/juM0fEPDFkm4FXG6yGg2DMT7uuKj1zTfjQjAak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761907441; c=relaxed/simple;
-	bh=POWscKc56oOgEfXEl8SSi8BMadwVxaM+2XZTda17o8c=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=j12TTq0MZQBBxM7nnE5+aI9n3j4fhkEmxCOYrXjqTJ4Evsw0stEUSzASElWmnhddmA02oub+EVKYoZxfGPouM7qBT3D1hfMdFtYM29ZYHGrHhsoTQ598GWiWCqvKvvf2He8aluyNH6aNgnVU0sezjVIAIdwFXTr8YOzojftnlK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03B91C116B1;
-	Fri, 31 Oct 2025 10:43:59 +0000 (UTC)
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [GIT PULL] clk: renesas: Updates for v6.19
-Date: Fri, 31 Oct 2025 11:43:56 +0100
-Message-ID: <cover.1761906750.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1761908314; c=relaxed/simple;
+	bh=LpJlMhIspbUx/F0UxN1zmCEQJYnhFqHunkuXu4FDahw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TFst/7ucOwF/EcFoO++N4FgKS3xu07x0DJfrbVCAF87f5S+A8PJ/uAd0NHGkFXG3LTGi6tUR/W4ZPtLfkcNzho5Irc3GcPGvX14pU8L++6tIP/wgGCjMjDJH0kImir5nCXeGUEG4yIFOB01cbJqoWaCoysxaPk5dXPeJmcmW3CQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=USDSA+cG; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="USDSA+cG"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 997A4C4CEFD;
+	Fri, 31 Oct 2025 10:58:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761908314;
+	bh=LpJlMhIspbUx/F0UxN1zmCEQJYnhFqHunkuXu4FDahw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=USDSA+cGrJsbV4SfrArJT9UeuUOBBAM7kuSDKgISSb3ZnEgJGLXh8TkjAvXKVk7xr
+	 6Da2tW9iYt/uCbZYRfsDzpuukpW99fukSAJ6lfBo/o0EJF2EGHYag/6C8hwxdQAdVL
+	 0TiRBVZ8A2q6/Pt2BTSsldapIL7vtul06kMM077jeUstGgEJvESewl7+/HsD7GvTD4
+	 Bx2DOKQ07GV6bq5qFI6sCXgfZ6jfgsZiNrLhqNQgKYPyTwmHGqVRgoDVif7wZ9ZB+o
+	 YqVbvd9AtKIejRvD6oUtQwxtQsceAmRqM7mE95aerQr+NKX0Gw6gyWmXIPfzLzRiQf
+	 n5C3XWgBXCcgw==
+Date: Fri, 31 Oct 2025 10:58:29 +0000
+From: Conor Dooley <conor@kernel.org>
+To: claudiu beznea <claudiu.beznea@tuxon.dev>
+Cc: Conor Dooley <conor.dooley@microchip.com>,
+	Daire McNamara <daire.mcnamara@microchip.com>,
+	pierre-henry.moussay@microchip.com,
+	valentina.fernandezalanis@microchip.com,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 1/7] reset: mpfs: add non-auxiliary bus probing
+Message-ID: <20251031-mosaic-trimness-d683527a6866@spud>
+References: <20251029-chewing-absolve-c4e6acfe0fa4@spud>
+ <20251029-macarena-neglector-318431fec367@spud>
+ <a996e76e-8201-4b72-b4fa-0ea9ac62e6b1@tuxon.dev>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="2eMSdNOwjosdKxAa"
+Content-Disposition: inline
+In-Reply-To: <a996e76e-8201-4b72-b4fa-0ea9ac62e6b1@tuxon.dev>
 
-	Hi Mike, Stephen,
 
-The following changes since commit 3a8660878839faadb4f1a6dd72c3179c1df56787:
+--2eMSdNOwjosdKxAa
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-  Linux 6.18-rc1 (2025-10-12 13:42:36 -0700)
+On Fri, Oct 31, 2025 at 09:20:17AM +0200, claudiu beznea wrote:
+> On 10/29/25 18:11, Conor Dooley wrote:
+> > -static int mpfs_reset_probe(struct auxiliary_device *adev,
+> > -			    const struct auxiliary_device_id *id)
+> > +static int mpfs_reset_mfd_probe(struct platform_device *pdev)
+> >   {
+> > -	struct device *dev =3D &adev->dev;
+> >   	struct reset_controller_dev *rcdev;
+> > +	struct device *dev =3D &pdev->dev;
+> > +	struct mpfs_reset *rst;
+> > +
+> > +	rst =3D devm_kzalloc(dev, sizeof(*rst), GFP_KERNEL);
+> > +	if (!rst)
+> > +		return -ENOMEM;
+> > +
+> > +	rcdev =3D &rst->rcdev;
+> > +	rcdev->dev =3D dev;
+> > +	rcdev->ops =3D &mpfs_reset_ops;
+> > +
+> > +	rcdev->of_node =3D pdev->dev.parent->of_node;
+> > +	rcdev->of_reset_n_cells =3D 1;
+> > +	rcdev->of_xlate =3D mpfs_reset_xlate;
+> > +	rcdev->nr_resets =3D MPFS_NUM_RESETS;
+> > +
+> > +	rst->regmap =3D device_node_to_regmap(pdev->dev.parent->of_node);
+> > +	if (IS_ERR(rst->regmap))
+> > +		dev_err_probe(dev, PTR_ERR(rst->regmap), "Failed to find syscon regm=
+ap\n");
+>=20
+> Do you want to continue registering the reset controller here? rcdev->base
+> is NULL, thus the reset controller ops will fail, if I'm not wrong.
 
-are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/renesas-clk-for-v6.19-tag1
+Oh, good point. That line is missing a return.
 
-for you to fetch changes up to 07525a693a5ff6592668a0fd647153e4b4933cae:
+--2eMSdNOwjosdKxAa
+Content-Type: application/pgp-signature; name="signature.asc"
 
-  clk: renesas: r9a09g056: Add clock and reset entries for ISP (2025-10-27 12:15:00 +0100)
+-----BEGIN PGP SIGNATURE-----
 
-----------------------------------------------------------------
-clk: renesas: Updates for v6.19
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaQSWVQAKCRB4tDGHoIJi
+0kU4AP0auWGgL7fvd2ZpPml/M7wJExlNMK6dDbH0jluNcknvYAD+MyFTGGUMPK0D
+94ntVM/k3LljGZVFZDJ9Lovn1G4vFQw=
+=xnj6
+-----END PGP SIGNATURE-----
 
-  - Various fixes for the module reset procedure on R-Car Gen4 SoCs,
-  - Add ADC and thermal (TSU) clocks on RZ/T2H and RZ/N2H,
-  - Add USB clocks and resets on RZ/G3E,
-  - Add ISP and display (DSI, LCDC) clocks and resets on RZ/V2H and RZ/V2N,
-  - Add thermal (TSU) and RTC clocks and resets on RZ/V2H,
-  - Add reset support on RZ/T2H and RZ/N2H,
-  - Fix the module stop disable procedure on RZ/T2H and RZ/N2H,
-  - Add camera (CRU) clocks and resets on RZ/V2N,
-  - Miscellaneous fixes and improvements.
-
-Note that this includes:
-  1. DT binding definition updates for the RZ/G3E SoC, which are shared
-     by clock driver and DT source files,
-  2. The RZ/V2H Clock Pulse Generator PLLDSI API, which is shared by
-     clock and MIPI DSI driver source files.
-
-Thanks for pulling!
-
-----------------------------------------------------------------
-Cosmin Tanislav (2):
-      clk: renesas: r9a09g077: Add ADC module clocks
-      clk: renesas: r9a09g077: Add TSU module clock
-
-Daniel Scally (1):
-      clk: renesas: r9a09g057: Add clock and reset entries for ISP
-
-Geert Uytterhoeven (5):
-      clk: renesas: cpg-lib: Remove unneeded semicolon
-      clk: renesas: Use IS_ERR() for pointers that cannot be NULL
-      Merge tag 'renesas-r9a09g047-dt-binding-defs-tag5' into renesas-clk-for-v6.19
-      clk: renesas: cpg-mssr: Spelling s/offets/offsets/
-      Merge tag 'clk-renesas-rzv2h-plldsi-tag' into renesas-clk-for-v6.19
-
-Lad Prabhakar (9):
-      clk: renesas: cpg-mssr: Add module reset support for RZ/T2H
-      clk: renesas: cpg-mssr: Add read-back and delay handling for RZ/T2H MSTP
-      clk: renesas: rzv2h: Add instance field to struct pll
-      clk: renesas: rzv2h: Use GENMASK for PLL fields
-      clk: renesas: rzv2h: Add support for DSI clocks
-      clk: renesas: r9a09g057: Add clock and reset entries for DSI and LCDC
-      clk: renesas: r9a09g056: Add clocks and resets for DSI and LCDC modules
-      clk: renesas: r9a09g056: Add support for PLLVDO, CRU clocks, and resets
-      clk: renesas: r9a09g056: Add clock and reset entries for ISP
-
-Marek Vasut (2):
-      clk: renesas: cpg-mssr: Add missing 1ms delay into reset toggle callback
-      clk: renesas: cpg-mssr: Read back reset registers to assure values latched
-
-Ovidiu Panait (2):
-      clk: renesas: r9a09g057: Add clock and reset entries for TSU
-      clk: renesas: r9a09g057: Add clock and reset entries for RTC
-
-Tommaso Merciai (2):
-      dt-bindings: clock: renesas,r9a09g047-cpg: Add USB2 PHY core clocks
-      clk: renesas: r9a09g047: Add clock and reset entries for USB2
-
- drivers/clk/renesas/r9a09g047-cpg.c               |  18 +-
- drivers/clk/renesas/r9a09g056-cpg.c               | 109 +++++
- drivers/clk/renesas/r9a09g057-cpg.c               |  86 ++++
- drivers/clk/renesas/r9a09g077-cpg.c               |   4 +
- drivers/clk/renesas/rcar-cpg-lib.c                |   2 +-
- drivers/clk/renesas/renesas-cpg-mssr.c            | 181 ++++++--
- drivers/clk/renesas/rzg2l-cpg.c                   |   2 +-
- drivers/clk/renesas/rzv2h-cpg.c                   | 514 +++++++++++++++++++++-
- drivers/clk/renesas/rzv2h-cpg.h                   |  31 +-
- include/dt-bindings/clock/renesas,r9a09g047-cpg.h |   2 +
- include/linux/clk/renesas.h                       | 145 ++++++
- 11 files changed, 1047 insertions(+), 47 deletions(-)
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+--2eMSdNOwjosdKxAa--
