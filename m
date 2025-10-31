@@ -1,22 +1,22 @@
-Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
+Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42A0427FD72
-	for <linux-clk@vger.kernel.org>; Fri, 31 Oct 2025 02:28:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A63027990B
+	for <linux-clk@vger.kernel.org>; Fri, 31 Oct 2025 02:28:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761877717; cv=none; b=S7iVTimiE6aapKSl1t5044OTHQOcNumkVgQBHAT2RJdTMh/WbVF+0wI8IzJ2fa6kjGSc2Q168Hrl3vx/vFeGgufTaHijpSDWQwUfz9951ndqlkuttJa06MTvr9pp1fXzQE4DTZCtGnufi+9u/hKPKKPxVlQOa1vu2IDnCbHdReo=
+	t=1761877721; cv=none; b=o/y+5dDey1aNhbsg8AwvH7s3XqsxHHi9rCLiQuJWhzGDu38+MduSxhP6V9UiCmhN114MGZt2RTVhMUYW7NyF4S9PaUskRB8UkGCpCh5WkH1hXV5dqP0DDWXxr5QoS78rTIjVk2ZHeZmB5EhMMMS+2lx3clhp6JSg2J+dQIWIf5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761877717; c=relaxed/simple;
-	bh=KCWVlcgb2vlTFeuNn6M9x7iyQu3pcLnS9YetBihR8wo=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=hkvxA84aJo6DVVHURvWtQV0gUcysOQSWXcQYVfkDK3PVxYKtURHPlXQjEY9DKM+ZGZi/DiHuyhsl6ZWjOqvXnKwD6DZFD5ZdrdCK4Gh5eYN9YfZLFHXUaQsgeSyTnQ4sgMYgorXLpw2oHK4wDFKTV0q21a7HnXVG2EcPVlgW9QY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=permerror (bad message/signature format); arc=none smtp.client-ip=95.215.58.170
+	s=arc-20240116; t=1761877721; c=relaxed/simple;
+	bh=7XisM2rwpdDlhZ2y1kfdlXbHH1vW3/EhUUIBGKIvWfM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=TGDJy2A+dRMe6+e+0W+ntxFWgbTMN7k+cspFQZMwOW5JZ4nd6To2+hCOI2a1ozY3VEs4I9B11m0K77RsXSAJy7EBwyiAvqykmus0CUVyoGwAU5BsJIh/o/7Sk+P6Ib/yDQZeRc6Q/albQADsOCbKyS51iM69NuIKG0iAVwx/EXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=permerror (bad message/signature format); arc=none smtp.client-ip=95.215.58.181
 Authentication-Results:smtp.subspace.kernel.org; dkim=permerror (bad message/signature format)
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 From: Alexey Minnekhanov
-Subject: [PATCH 0/3] SDM630/660: Add missing MDSS reset
-Date: Fri, 31 Oct 2025 05:27:42 +0300
-Message-Id: <20251031-sdm660-mdss-reset-v1-0-14cb4e6836f2@postmarketos.org>
+Date: Fri, 31 Oct 2025 05:27:44 +0300
+Subject: [PATCH 2/3] clk: qcom: mmcc-sdm660: Add missing MDSS reset
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -25,10 +25,9 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAJ4eBGkC/x3MQQqAIBBA0avErBtQS4muEi0sp5qFFk5EEN09a
- fkW/z8glJkE+uqBTBcL76lA1xXMm08rIYdiMMpYrRqNEqJzCmMQwUxCJyptfeu8abrJQumOTAv
- f/3MY3/cDZTCz6GMAAAA=
-X-Change-ID: 20251031-sdm660-mdss-reset-015a46a238b5
+Message-Id: <20251031-sdm660-mdss-reset-v1-2-14cb4e6836f2@postmarketos.org>
+References: <20251031-sdm660-mdss-reset-v1-0-14cb4e6836f2@postmarketos.org>
+In-Reply-To: <20251031-sdm660-mdss-reset-v1-0-14cb4e6836f2@postmarketos.org>
 To: Bjorn Andersson <andersson@kernel.org>, 
  Michael Turquette <mturquette@baylibre.com>, 
  Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
@@ -40,27 +39,30 @@ Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
  Alexey Minnekhanov <alexeymin@postmarketos.org>
 X-Migadu-Flow: FLOW_OUT
 
-Since kernel 6.17 display stack needs to reset the hardware properly to
-ensure that we don't run into issues with the hardware configured by the
-bootloader. MDSS reset is necessary to have working display when the
-bootloader has already initialized it for the boot splash screen.
+From: Alexey Minnekhanov <alexeymin@postmarketos.org>
 
-Signed-off-by: Alexey Minnekhanov <<alexeymin@postmarketos.org>>
+Add offset for display subsystem reset in multimedia clock controller
+block.
+
+Cc: <stable@vger.kernel.org> # 6.17
+Signed-off-by: Alexey Minnekhanov <alexeymin@postmarketos.org>
 ---
-Alexey Minnekhanov (3):
-      dt-bindings: clock: mmcc-sdm660: Add missing MDSS reset
-      clk: qcom: mmcc-sdm660: Add missing MDSS reset
-      arm64: dts: qcom: sdm630: Add missing MDSS reset
+ drivers/clk/qcom/mmcc-sdm660.c | 1 +
+ 1 file changed, 1 insertion(+)
 
- arch/arm64/boot/dts/qcom/sdm630.dtsi         | 1 +
- drivers/clk/qcom/mmcc-sdm660.c               | 1 +
- include/dt-bindings/clock/qcom,mmcc-sdm660.h | 1 +
- 3 files changed, 3 insertions(+)
----
-base-commit: e53642b87a4f4b03a8d7e5f8507fc3cd0c595ea6
-change-id: 20251031-sdm660-mdss-reset-015a46a238b5
+diff --git a/drivers/clk/qcom/mmcc-sdm660.c b/drivers/clk/qcom/mmcc-sdm660.c
+index b723c536dfb6..dbd3f561dc6d 100644
+--- a/drivers/clk/qcom/mmcc-sdm660.c
++++ b/drivers/clk/qcom/mmcc-sdm660.c
+@@ -2781,6 +2781,7 @@ static struct gdsc *mmcc_sdm660_gdscs[] = {
+ };
+ 
+ static const struct qcom_reset_map mmcc_660_resets[] = {
++	[MDSS_BCR] = { 0x2300 },
+ 	[CAMSS_MICRO_BCR] = { 0x3490 },
+ };
+ 
 
-Best regards,
 -- 
-Alexey Minnekhanov <<alexeymin@postmarketos.org>>
+2.51.0
 
