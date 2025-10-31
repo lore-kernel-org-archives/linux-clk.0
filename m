@@ -1,142 +1,151 @@
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 986B62BEFFB;
-	Fri, 31 Oct 2025 15:20:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 309AE283FF5
+	for <linux-clk@vger.kernel.org>; Fri, 31 Oct 2025 16:28:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761924030; cv=none; b=eWvEBfYoofgZYGGNvXRoATYIRW25fSwPcbDNByHzyfPUadCk56dguPOzT7QeGUN5pI3ifB6hI2IR7XKD2bAJ76vI8s/QoJFJpJ8cejGgp6HqWUbP1wwKly05czU8zU3r54WechXzFo/UxXjt33gr0vqZZ8mnhCYYrXTo5Oiiy0Q=
+	t=1761928083; cv=none; b=QxLqhXYkDQaVpupvBd1g7GuS67hRXUJxZZSD2Zf6q4cTOEWis6QM92rwaWR/VrVShBSiJOA1TH/D5R77Oz5zhgMGX8bvu3HneIgsmho467iVRsEOCN3q0I27ubAF1Pc/uT2JZLARNJjoGC1rXTXxz4oYpIc+gd9onhXteV1TvIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761924030; c=relaxed/simple;
-	bh=y3b+wUCsWckPBCTPgAZadRRNBEdlpxrfsSHKNnGesNY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IIaBcq2DZFuFNWCJ69Rp0+KvIfpGueRbZrey+b0r4YUEldPX23/cFLYyPXuR7y7OVFEDeUfC36Mk+wy6edhs8knsppObLPKWJzX7olzwvTmKIcm7U2PRpgMev9arNBx8aTv5dw3R4a0H4WpDPy2dAuPOut7Zp8NffcGGgLtXzO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ZXX1Bma9; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1761928083; c=relaxed/simple;
+	bh=kDssZKzypBLff+1ZVIfB58ENRKA3B3YlfDeq0xu5XOQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=sv0yF8nLV7ZgTU6IEMqr96+d74LMl2EkOj9bLaXRU5Sf6F93d4J9AYqPjuQYMsktkEq7vPla6yeVRrhn9f7eLknkq8bHnvHmGubi626RZnTsXvu0qVzsVAio0KCn6rCa2Lll0FVSgTP496/N8qszp0tx9uUD7FtISm/YPxHLWv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=YF4uSIPm; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ZXX1Bma9"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 36A3FC0E957;
-	Fri, 31 Oct 2025 15:20:05 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 9CDE360710;
-	Fri, 31 Oct 2025 15:20:25 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 067DE11818041;
-	Fri, 31 Oct 2025 16:20:05 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1761924023; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=goHQM/1NASiwEpJFuU+gt1w80LtYcWXr5Gc0K9tmMcc=;
-	b=ZXX1Bma9X3KMNXlEJ6m3KmzgeWaoHvqKZUDGbtyXcyczSWNcqa1WxZl7PaaP3QnmzL9gq4
-	h0YuPlq7t/ag22Qc0RV6DUkEOizZ8aU4YvVAi5tQ0oCrNCN9uTlgnrGvmTf6uzjWAFrc/P
-	iOZon5nGEinDurKqvP8UIygDFPUWAiUqm59zHUbmHyOs3e60XOGs63ifmZhf114mLUKRqK
-	bIKj+JoZJxnMO/w5PK2AbEIM7ADXeVegLKetdhc6qx0E6UYxyvcnSln30z+BZXKje9+TfM
-	AmSNEEcgTn5HJwFcJWmSNYyzhr1jXdHX0RhRB0lSnwspgtNFDoD+bFqnfo/hgQ==
-Date: Fri, 31 Oct 2025 16:20:04 +0100
-From: Herve Codina <herve.codina@bootlin.com>
-To: Rob Herring <robh@kernel.org>
-Cc: Andrew Lunn <andrew@lunn.ch>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
- Danilo Krummrich <dakr@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha
- Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team
- <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Michael
- Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Andi
- Shyti <andi.shyti@kernel.org>, Wolfram Sang
- <wsa+renesas@sang-engineering.com>, Peter Rosin <peda@axentia.se>, Arnd
- Bergmann <arnd@arndb.de>, Saravana Kannan <saravanak@google.com>, Bjorn
- Helgaas <bhelgaas@google.com>, Charles Keepax
- <ckeepax@opensource.cirrus.com>, Richard Fitzgerald
- <rf@opensource.cirrus.com>, David Rhodes <david.rhodes@cirrus.com>, Linus
- Walleij <linus.walleij@linaro.org>, Ulf Hansson <ulf.hansson@linaro.org>,
- Mark Brown <broonie@kernel.org>, Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>, Daniel Scally <djrscally@gmail.com>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>, Sakari Ailus
- <sakari.ailus@linux.intel.com>, Len Brown <lenb@kernel.org>, Davidlohr
- Bueso <dave@stgolabs.net>, Jonathan Cameron <jonathan.cameron@huawei.com>,
- Dave Jiang <dave.jiang@intel.com>, Alison Schofield
- <alison.schofield@intel.com>, Vishal Verma <vishal.l.verma@intel.com>, Ira
- Weiny <ira.weiny@intel.com>, Dan Williams <dan.j.williams@intel.com>, Geert
- Uytterhoeven <geert+renesas@glider.be>, Wolfram Sang <wsa@kernel.org>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org,
- linux-pci@vger.kernel.org, linux-sound@vger.kernel.org,
- patches@opensource.cirrus.com, linux-gpio@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-spi@vger.kernel.org,
- linux-acpi@vger.kernel.org, linux-cxl@vger.kernel.org, Allan Nielsen
- <allan.nielsen@microchip.com>, Horatiu Vultur
- <horatiu.vultur@microchip.com>, Steen Hegelund
- <steen.hegelund@microchip.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v4 05/29] dt-bindings: bus: Add simple-platform-bus
-Message-ID: <20251031162004.180d5e3f@bootlin.com>
-In-Reply-To: <20251030141448.GA3853761-robh@kernel.org>
-References: <20251015071420.1173068-1-herve.codina@bootlin.com>
-	<20251015071420.1173068-6-herve.codina@bootlin.com>
-	<20251030141448.GA3853761-robh@kernel.org>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="YF4uSIPm"
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-421851bca51so2182401f8f.1
+        for <linux-clk@vger.kernel.org>; Fri, 31 Oct 2025 09:28:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1761928079; x=1762532879; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:user-agent
+         :references:in-reply-to:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kDssZKzypBLff+1ZVIfB58ENRKA3B3YlfDeq0xu5XOQ=;
+        b=YF4uSIPmORgEQuR6NjPLFaZARAJ4qoW7zQLa6q9emUZ9Vo3PoXVD2S5AjYuvWrBRxn
+         w0N70No6hi9ZSHAzNVhQpk+yjXkaAsYaRVfqTdiEXxV5Hs1HjttqkAoI5FS+I4jKeY6i
+         wYxdBNlQZmSE59DIUPMjS5vJpmBsJZk8RWVUtewZ/ZLv9y80vwFSomxyXZQNvAFl2qe0
+         JGNndhthQkt+pQRaA9ZMDIiOzNhwKXM3mzQaTm91pHpE+d09XFRPUmIQealJ+a6FPWRF
+         LWMXaC4IDI95BcpRFX09Z9Vbu4wsGJwBikG/7PUN/UHat3pOrAchinnX6sGxNoGPbWzV
+         CN+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761928079; x=1762532879;
+        h=content-transfer-encoding:mime-version:message-id:date:user-agent
+         :references:in-reply-to:subject:cc:to:from:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=kDssZKzypBLff+1ZVIfB58ENRKA3B3YlfDeq0xu5XOQ=;
+        b=clEV51vVkg4LMJrSkzj49sL8QHh4vfuAdtMBNt8aRgzpFjnKEqGXleYX01Sv4jWKFg
+         kb2XQUpWZZscIaAg3iwBQqA9FhuUncxVlb1SRQpinmum7hl5iG8ZheBMH+do6Mafv7c6
+         ai/LmTN3Y3DfwYDYxbuu/OQWyUpo+oETJ8Xc7rui8+FIpsF9kvpOVHkKrsGKbGH3iGJZ
+         4inGnY16lt2ndMOFoFbK5DqM6QhgvpRv4GgQtVAHXvGgo9dzm+zXrZLFLEJmIjwPOuk1
+         WGytPf5CvJme04JXP4qu/3PlV62IoWl5vATzH5bd4e4PE1q5dApN4yd1tl+9KeQF0lOo
+         BhoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXo58Jb2ZYW/Q2Ll+RXvYc1Z66JMJSy5lCCzUjvfSyHjShEOvQfw6g79aPwCBC7HpnmazbS3DnmXVA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+70NJ1i0GA6951dZI4WeN200FrsSuPQ6S7nzCgutrKg8nbbHi
+	iBYPuJ4r1X0/LIMA7Go2tCavEdQ5UY5yIwGzBb1R7Xh0LD9QbL5Q6l3raR4jgKTJw7o=
+X-Gm-Gg: ASbGnctDB0z2uDCfy18qRGOXyZb318kfJr6g2VyqinPlPbULMn0DScKul14s943lgPS
+	wpoidu2CgtLg3heq9h0kK+DUj++xLJj4XJVUc9aNApmF0rK9DqZYWFV9PsK0wPZyvWOzwKfWpiz
+	+6zerKDCSbS5sc3DfWqyF0PU51ugxC40vY9/PyiPwkX+TLKlJDLRqlGqNoiTEyJBllUOlXddx5H
+	+A8ZgVFVTRFcR2/EvA4l8jaB1XmqZSzZCa//EvVNhzZ6GV/orcF6QSvzKcGFCY+/FFUc8c9E9Zp
+	A+XzXHzDsWdyB2cOelfVQQYGhXcU7l2tJOWdG2wnHLKFhp5OXkqWF3ATmjNci3bP19D5SuKONGB
+	VuEZBD9rXhrJhYewsbzuB2DxY5u2qP3hrF46ple2JqSnpYEPcuB6qFKkDe5uXLcWaQZRTsmn3jW
+	jkLhP0qMovZQ==
+X-Google-Smtp-Source: AGHT+IFrsbEnwLrCCUR6Iu0VY5Uzhd0sq8qEcvcS/A9/eiqg3la7OAXHkma7L0rV7CnkzwdcPd10ig==
+X-Received: by 2002:a05:6000:178f:b0:429:bb21:94e1 with SMTP id ffacd0b85a97d-429bd6a0caemr3886114f8f.41.1761928079286;
+        Fri, 31 Oct 2025 09:27:59 -0700 (PDT)
+Received: from localhost ([2a01:e0a:3c5:5fb1:b8e9:e124:10fc:8444])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-429c112413esm4367494f8f.12.2025.10.31.09.27.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 31 Oct 2025 09:27:58 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Chuan Liu <chuan.liu@amlogic.com>
+Cc: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>,  Neil
+ Armstrong <neil.armstrong@linaro.org>,  Michael Turquette
+ <mturquette@baylibre.com>,  Stephen Boyd <sboyd@kernel.org>,  Kevin Hilman
+ <khilman@baylibre.com>,  Martin Blumenstingl
+ <martin.blumenstingl@googlemail.com>,  linux-amlogic@lists.infradead.org,
+  linux-clk@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
+  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 0/4] clk: amlogic: optimize the PLL driver
+In-Reply-To: <9751014d-926e-4d42-b8e1-5a4d3e734457@amlogic.com> (Chuan Liu's
+	message of "Fri, 31 Oct 2025 23:09:13 +0800")
+References: <20251031-optimize_pll_driver-v3-0-92f3b2f36a83@amlogic.com>
+	<1jms57xx05.fsf@starbuckisacylon.baylibre.com>
+	<9751014d-926e-4d42-b8e1-5a4d3e734457@amlogic.com>
+User-Agent: mu4e 1.12.9; emacs 30.1
+Date: Fri, 31 Oct 2025 17:27:58 +0100
+Message-ID: <1j5xbvxchd.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi Rob,
+On Fri 31 Oct 2025 at 23:09, Chuan Liu <chuan.liu@amlogic.com> wrote:
 
-On Thu, 30 Oct 2025 09:14:48 -0500
-Rob Herring <robh@kernel.org> wrote:
+> Hi Jerome,
+>
+> On 10/31/2025 5:04 PM, Jerome Brunet wrote:
+>> [ EXTERNAL EMAIL ]
+>> On Fri 31 Oct 2025 at 16:10, Chuan Liu via B4 Relay
+>> <devnull+chuan.liu.amlogic.com@kernel.org> wrote:
+>>=20
+>>> This patch series consists of four topics involving the amlogic PLL
+>>> driver:
+>>> - Fix out-of-range PLL frequency setting.
+>>> - Improve the issue of PLL lock failures.
+>>> - Add handling for PLL lock failure.
+>>> - Optimize PLL enable timing.
+>>>
+>>> For easier review and management, these are submitted as a single
+>>> patch series.
+>>>
+>>> The PLL timing optimization changes were merged into our internal
+>>> repository quite some time ago and have been verified on a large
+>>> number of SoCs:
+>>> - Already supported upstream: G12A, G12B, SM1, S4, A1, C3.
+>>> - Planned for upstream support: T7, A5, A4, S7, S7D, S6, etc.
+>>>
+>>> Based on the upstream code base, I have performed functional testing
+>>> on G12A, A1, A5, A4, T7, S7, S7D, and S6, all of which passed.
+>>>
+>>> Additionally, stress testing using scripts was conducted on A5 and
+>>> A1, with over 40,000 and 50,000 iterations respectively, and no
+>>> abnormalities were observed. Below is a portion of the stress test
+>>> log (CLOCK_ALLOW_WRITE_DEBUGFS has been manually enabled):
+>> Okay, this little game has been going on long enough.
+>> You've posted v2 24h hours ago
+>> You've got feedback within hours
+>> There was still a 1 question pending
+>> The rest of community had no chance to review.
+>>=20
+>
+> There might be a serious misunderstanding here.
+>
+> In recent years, we've mainly been maintaining our code in our
+> internal repository, which has led to some differences between our
+> internal codebase and the upstream version. The patches that account
+> for these differences are already queued for submission, and several
+> SoCs are also waiting in line to be submitted. As a result, quite a
+> few patches have piled up, waiting to go upstream.
+>
+> Previously, I had been waiting for your clock driver restructuring
+> patches to be ready (which have recently been merged), so for almost
+> a year, we haven't made much progress on clock driver=E2=80=93related
+> upstreaming.
 
-> On Wed, Oct 15, 2025 at 09:13:52AM +0200, Herve Codina wrote:
-> > A Simple Platform Bus is a transparent bus that doesn't need a specific
-> > driver to perform operations at bus level.
-> > 
-> > Similar to simple-bus, a Simple Platform Bus allows to automatically
-> > instantiate devices connected to this bus.
-> > 
-> > Those devices are instantiated only by the Simple Platform Bus probe
-> > function itself.  
-> 
-> Don't let Greg see this... :)
-> 
-> I can't say I'm a fan either. "Platform bus" is a kernel thing, and the 
-> distinction here between the 2 compatibles is certainly a kernel thing.
-> 
-> I think this needs to be solved within the kernel.
+Ohoh now you are just teasing me !
 
-I fully agree with that.
+That work was made necessary because of all the copy/paste Amlogic was
+submitting. Despite many requests, this was never addressed so I had
+to step in.
 
-> 
-> What I previously said is define a list of compatibles to not 
-> instantiate the child devices. This would essentially be any case having 
-> a specific compatible and having its own driver. So if someone has 
-> 'compatible = "vendor,not-so-simple-bus", "simple-bus"', when and if 
-> they add a driver for "vendor,not-so-simple-bus", then they have to add 
-> the compatible to the list in the simple-pm-bus driver. I wouldn't 
-> expect this to be a large list. There's only a handful of cases where 
-> "simple-bus" has a more specific compatible. And only a few of those 
-> have a driver. A more general and complicated solution would be making 
-> linux handle 2 (or more) drivers matching a node and picking the driver 
-> with most specific match. That gets complicated with built-in vs. 
-> modules. I'm not sure we really need to solve that problem.
+If you want things to go faster, then *really* pay attention to the review
+you are getting, do not ask question to ignore the answers and stop
+making people repeat themselves over and over.
 
-Right. Let discard the "more general and complicated solution" and focus
-on the list of compatible to avoid child devices instantiation.
-
-Do you mean that, for "simple-bus" compatible we should:
- - Remove the recursive device instantiation from of_platform_populate().
- - In simple-bus probe(), check the device we probe against the
-   'no_instantiate_children' list
-      - If it matches, do not instantiate chidren
-      - If it doesn't match instantiate children
-
-Is that correct?
-
-Best regards,
-Hervé
