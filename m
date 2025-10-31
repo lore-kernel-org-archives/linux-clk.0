@@ -1,128 +1,166 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com [209.85.217.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 296DD335BB4;
-	Fri, 31 Oct 2025 08:10:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAC803115AF
+	for <linux-clk@vger.kernel.org>; Fri, 31 Oct 2025 08:52:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761898232; cv=none; b=eOBM5bJ5d/G474J6arx7ERjxGuEg066jMOBRDioKrmKRIwa3HV/6sq/2ZfzFiKS0OP4rbuvdTYDfOZgk4gUh5r7Bd9Z54FP5Eyo0XXRtjTFRkuQzZYTASlwGLl/4/kLZW0RlkHvDGvRDUeC6SCyrL2tYRKnHWYPqzd6VsuOfsl4=
+	t=1761900752; cv=none; b=rSEJRXf3es9BjDiSnQHJT45y4OZ1hL2wRLUAaM5scO5ltSlF/eV8hKOYpPlGIYbAVaUHeQ2F43o04je5hIzHDyBfZ7i3Si67cGLkREzJdIWEwOniQwVReZhtcfNIgxFf7OVqzKIJWqBS7rIIIAoNiQoOccWYen2VQAChOIWDHU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761898232; c=relaxed/simple;
-	bh=6ESWC7weu+fkakS/P318zzkxwK20bhDH2SY7HZ3vBd4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=VWuJG9ADdBaTZVm4LGn7rXj1WmxaIcnwKfiQySfYVry9WAn8MrQOzN5G7ZRyHNFFACdScgbHJ0BEx7Df3hJAUmLGI9uFIlr/93nUSNuQxnH29JwtfQHD+FI7HtLM+wgaYICJaOQquetE2C/REHHbSxJ69aaLlLYKRPCyGftxbyg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TA0APZqY; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TA0APZqY"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id E9AF6C19424;
-	Fri, 31 Oct 2025 08:10:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761898232;
-	bh=6ESWC7weu+fkakS/P318zzkxwK20bhDH2SY7HZ3vBd4=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=TA0APZqYRrCONMPdDPvTaxyKas30+zpO3qlC5h0QacSccmboZAZwOmgto7v+aINr0
-	 RquKFP8xA1ZM4h0z6SJ8CaDXbEyDhB8nfvBsJTFCs4O/gvlv5MTS2fC0BCJS/H8TUm
-	 8upEULcZZcKPynxXnmfgMD92mVO6+jyGkFsRfZ7aCIuFZGSSGpGUlkTYJHRGYoEZ0/
-	 0K8YwZQF4J4kiqlhiO9iFiiL8j6FzUn7R3zoE8YmjSSiQDwHrh2qvYQMYM+CsKqPZT
-	 fFursmhuoa7zdd7nUr7yXo3QbqaQZKFg91r9m8W/gZ/9qyQ3rYlZPOc/KywCo3snA+
-	 NZFAGnBDl2k5g==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1091CCFA00;
-	Fri, 31 Oct 2025 08:10:31 +0000 (UTC)
-From: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
-Date: Fri, 31 Oct 2025 16:10:11 +0800
-Subject: [PATCH v3 4/4] clk: amlogic: Optimize PLL enable timing
+	s=arc-20240116; t=1761900752; c=relaxed/simple;
+	bh=NYbl8HJcgb3R5SVJ9GXGI/Jq2+mOIag8w0HzHBPHPoY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=l+STfLx5nrawuab7FYIFuKRGgZndpzhbQ7zWlnjlr7YbvH0KSt8TddoKNYgpKjN1nMzWXDTWekcxmg9QRwlWtXD8QCIWOAPE5njtEpg9rZNHsdMHvqPZmaaKqPl7ZQxli+DZi7T3L8zUaFGgUK+ti6n8vaNcJ+lPR1mf+7aObR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-59a8c1eb90cso1256589137.0
+        for <linux-clk@vger.kernel.org>; Fri, 31 Oct 2025 01:52:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761900750; x=1762505550;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lQVVX5c2GB+a2QgL3UYe6DKU+bmVaydohzEFkpxq/1c=;
+        b=NK573R9AYVVlFv3vhLjfGMtqdfjLG8Mv6pHnbAL2Qh3W6/Xyp7V6NIjiZ5pu5insOp
+         1HhJ/XOSMY2YPRgs0LSwlzshUqb4TDkNR89xxJFJZ0ACXj6oCN4w8wn8dizMYVz0q/rS
+         WNa9tgsoWqR/JuXAxRnUD9uQkLR3Pax44QGpsI5p1raFrJIkoP1xhDjIF7yqQ5UgHnVo
+         BeaDHujJzIU6Tc2A8vnac1Z4TqMGSd4U3usHmoUUgQX1n8mlMG4WvSF7i6vjVs+G6RmU
+         GSMO09Uo5Ma5yyOrr/LY6rj7Fif1YAvELK1FBSn5QxrYObmzscwOhAwWbYSE7PxjUzFQ
+         Z8ag==
+X-Forwarded-Encrypted: i=1; AJvYcCX5yF0/glBlKJhnSubEuSrZ+MZEFN+7z0c5U8rxOJdGzyIql9Sm4k7VQTaxlaEFa+n0ikxhpu3rXug=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwwRHfjVU8XFGVXVmmUoLpfbUvuGfWrX6QjgA2Kn+x/dgQ4sTIz
+	p68xpEfLPqu9TR+wI0XLqbssRAzeyefoAzbD6a4HarY0Ded9wckBXDA2PXQYBlje
+X-Gm-Gg: ASbGncv5KYF71us8cvtRfI1m56LJ/tunOrMkoWKETlCTdNHNyxTfuJOCv5bIHRU8tPj
+	19R7VsV9JCffEZ6a7shhNZGm8BxW3t7DGp+iopNeQGXw2It3TPpR+OHOmb5vtPRT4RbK3mKkGrs
+	w8e0QMikva+f341c9HHaQy8t5y8qAaV4qH9PKPoBFmNBHtWqzSFcPKq10mXupw1K3mSsLfNVSnj
+	U4j1aIX5GC06Ap7VbP1pv540+tIj9LrRP+VBxOvF+LcQ5RD8NR3eKcLir0k/xDCdcyGVGglbm5w
+	tm0/DuofOZD9Z2VPh7lsZpPaOwxhR9kpolcWxGFV+SHSwbwlj6CthLEsz45O5/CJ07VZqgTs2wY
+	kuFhPncBFNpBZNsSkmv4XopI/pJeCltUFu2K/OHRsk0hcs5b6adkdvA/nV5FOksfODLuqrJw4Lq
+	F2B15s6lNV+pWdkQG1R1KOWnACArfS/Y7mV11jww==
+X-Google-Smtp-Source: AGHT+IGt4IKjhXVko1Oo8KvoKbCXr6dl6nofbRmz5DUhX5HTsbkxaaZAfE1lqDR1oJiKiXh/haJg4g==
+X-Received: by 2002:a05:6102:f09:b0:59c:110b:d0e with SMTP id ada2fe7eead31-5dbb12f5b72mr671874137.22.1761900749612;
+        Fri, 31 Oct 2025 01:52:29 -0700 (PDT)
+Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com. [209.85.222.42])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-5dbb617acf9sm404644137.3.2025.10.31.01.52.27
+        for <linux-clk@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 31 Oct 2025 01:52:28 -0700 (PDT)
+Received: by mail-ua1-f42.google.com with SMTP id a1e0cc1a2514c-932c247fb9aso958791241.2
+        for <linux-clk@vger.kernel.org>; Fri, 31 Oct 2025 01:52:27 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXbPbwHw4olim0w09bG7VLJtVVkdpVqSXsXx/7yytrrt7PUfRBya5YFJDSCDG9PrNlntH0hzTZyjbE=@vger.kernel.org
+X-Received: by 2002:a05:6102:c13:b0:5d5:f6ae:38c6 with SMTP id
+ ada2fe7eead31-5dbb136ecc7mr717064137.37.1761900747573; Fri, 31 Oct 2025
+ 01:52:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20251031-optimize_pll_driver-v3-4-92f3b2f36a83@amlogic.com>
-References: <20251031-optimize_pll_driver-v3-0-92f3b2f36a83@amlogic.com>
-In-Reply-To: <20251031-optimize_pll_driver-v3-0-92f3b2f36a83@amlogic.com>
-To: Neil Armstrong <neil.armstrong@linaro.org>, 
- Jerome Brunet <jbrunet@baylibre.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Kevin Hilman <khilman@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Chuan Liu <chuan.liu@amlogic.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1761898227; l=2090;
- i=chuan.liu@amlogic.com; s=20240902; h=from:subject:message-id;
- bh=3bVoQCKgnuZ/IY+cWp9z2timk+2eNG6PU6hMfKQ9QKc=;
- b=PaR4cC+nx1zlBGR24Xc20vUT2lEJgJbv9J7AWiZu9QbNIDq2BkxtlT0lPMVoKhLR7ofEt/Xpz
- XzFQVzImYksCF6+t+rElWpS5+OSqL/J/xLPNCqFmzWFOpoFoJvkbaTD
-X-Developer-Key: i=chuan.liu@amlogic.com; a=ed25519;
- pk=fnKDB+81SoWGKW2GJNFkKy/ULvsDmJZRGBE7pR5Xcpo=
-X-Endpoint-Received: by B4 Relay for chuan.liu@amlogic.com/20240902 with
- auth_id=203
-X-Original-From: Chuan Liu <chuan.liu@amlogic.com>
-Reply-To: chuan.liu@amlogic.com
+References: <20251015071420.1173068-1-herve.codina@bootlin.com> <20251015071420.1173068-6-herve.codina@bootlin.com>
+In-Reply-To: <20251015071420.1173068-6-herve.codina@bootlin.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 31 Oct 2025 09:52:16 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdVnsWMB24BTFKwggEXKOtqJ96GWZh2Xz+ogocQHM+=+6Q@mail.gmail.com>
+X-Gm-Features: AWmQ_bm5vGlc5XXZic8RvnXrZNNcCRnf0-7M9Km7uh4sqx0Aign1FjKoX2MZmow
+Message-ID: <CAMuHMdVnsWMB24BTFKwggEXKOtqJ96GWZh2Xz+ogocQHM+=+6Q@mail.gmail.com>
+Subject: Re: [PATCH v4 05/29] dt-bindings: bus: Add simple-platform-bus
+To: Herve Codina <herve.codina@bootlin.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>, 
+	Wolfram Sang <wsa+renesas@sang-engineering.com>, Peter Rosin <peda@axentia.se>, 
+	Arnd Bergmann <arnd@arndb.de>, Saravana Kannan <saravanak@google.com>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Charles Keepax <ckeepax@opensource.cirrus.com>, 
+	Richard Fitzgerald <rf@opensource.cirrus.com>, David Rhodes <david.rhodes@cirrus.com>, 
+	Linus Walleij <linus.walleij@linaro.org>, Ulf Hansson <ulf.hansson@linaro.org>, 
+	Mark Brown <broonie@kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Daniel Scally <djrscally@gmail.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, Len Brown <lenb@kernel.org>, 
+	Davidlohr Bueso <dave@stgolabs.net>, Jonathan Cameron <jonathan.cameron@huawei.com>, 
+	Dave Jiang <dave.jiang@intel.com>, Alison Schofield <alison.schofield@intel.com>, 
+	Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
+	Dan Williams <dan.j.williams@intel.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Wolfram Sang <wsa@kernel.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org, 
+	linux-pci@vger.kernel.org, linux-sound@vger.kernel.org, 
+	patches@opensource.cirrus.com, linux-gpio@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linux-spi@vger.kernel.org, 
+	linux-acpi@vger.kernel.org, linux-cxl@vger.kernel.org, 
+	Allan Nielsen <allan.nielsen@microchip.com>, Horatiu Vultur <horatiu.vultur@microchip.com>, 
+	Steen Hegelund <steen.hegelund@microchip.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Chuan Liu <chuan.liu@amlogic.com>
+Hi Herv=C3=A9,
 
-l_detect controls the enablement of the PLL lock detection module.
-It should remain disabled while the internal PLL circuits are
-reaching a steady state; otherwise, the lock signal may be falsely
-triggered high.
+On Wed, 15 Oct 2025 at 09:17, Herve Codina <herve.codina@bootlin.com> wrote=
+:
+> A Simple Platform Bus is a transparent bus that doesn't need a specific
+> driver to perform operations at bus level.
+>
+> Similar to simple-bus, a Simple Platform Bus allows to automatically
+> instantiate devices connected to this bus.
+>
+> Those devices are instantiated only by the Simple Platform Bus probe
+> function itself.
+>
+> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
 
-A 20 us delay has been added before enabling the PLL, so there’s no
-need for an additional 10 us delay before enabling current_en.
+Thanks for your patch!
 
-Currently, only A1 supports both l_detect and current_en, so this
-patch will only affect A1.
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/bus/simple-platform-bus.yaml
+> @@ -0,0 +1,50 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/bus/simple-platform-bus.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Simple Platform Bus
+> +
+> +maintainers:
+> +  - Herve Codina <herve.codina@bootlin.com>
+> +
+> +description: |
+> +  A Simple Platform Bus is a transparent bus that doesn't need a specifi=
+c
+> +  driver to perform operations at bus level.
+> +
+> +  Similar to simple-bus, a Simple Platform Bus allows to automatically
+> +  instantiate devices connected to this bus. Those devices are instantia=
+ted
+> +  only by the Simple Platform Bus probe function itself.
 
-Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
----
- drivers/clk/meson/clk-pll.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+So what are the differences with simple-bus? That its children are
+instantiated "only by the Simple Platform Bus probe function itself"?
+If that is the case, in which other places are simple-bus children
+instantiated?
 
-diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
-index cdb39a723bd0..c9b941adf688 100644
---- a/drivers/clk/meson/clk-pll.c
-+++ b/drivers/clk/meson/clk-pll.c
-@@ -383,6 +383,10 @@ static int meson_clk_pll_enable(struct clk_hw *hw)
- 	if (MESON_PARM_APPLICABLE(&pll->rst))
- 		meson_parm_write(clk->map, &pll->rst, 1);
- 
-+	/* Disable the PLL lock-detect module */
-+	if (MESON_PARM_APPLICABLE(&pll->l_detect))
-+		meson_parm_write(clk->map, &pll->l_detect, 1);
-+
- 	/* Enable the pll */
- 	meson_parm_write(clk->map, &pll->en, 1);
- 
-@@ -401,20 +405,18 @@ static int meson_clk_pll_enable(struct clk_hw *hw)
- 	 * Compared with the previous SoCs, self-adaption current module
- 	 * is newly added for A1, keep the new power-on sequence to enable the
- 	 * PLL. The sequence is:
--	 * 1. enable the pll, delay for 10us
-+	 * 1. enable the pll, delay for 20us
- 	 * 2. enable the pll self-adaption current module, delay for 40us
- 	 * 3. enable the lock detect module
- 	 */
- 	if (MESON_PARM_APPLICABLE(&pll->current_en)) {
--		udelay(10);
- 		meson_parm_write(clk->map, &pll->current_en, 1);
- 		udelay(40);
- 	}
- 
--	if (MESON_PARM_APPLICABLE(&pll->l_detect)) {
--		meson_parm_write(clk->map, &pll->l_detect, 1);
-+	/* Enable the lock-detect module */
-+	if (MESON_PARM_APPLICABLE(&pll->l_detect))
- 		meson_parm_write(clk->map, &pll->l_detect, 0);
--	}
- 
- 	if (meson_clk_pll_wait_lock(hw)) {
- 		/* disable PLL when PLL lock failed. */
+Do we need properties related to power-management (clocks, power-domains),
+or will we need a "simple-pm-platform-bus" later? ;-)
 
--- 
-2.42.0
+FTR, I still think we wouldn't have needed the distinction between
+"simple-bus" and "simple-pm-bus"...
 
+Gr{oetje,eeting}s,
 
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
