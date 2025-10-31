@@ -1,341 +1,142 @@
-Received: from TYPPR03CU001.outbound.protection.outlook.com (mail-japaneastazon11022110.outbound.protection.outlook.com [52.101.126.110])
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A865229B2A;
-	Fri, 31 Oct 2025 15:09:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.126.110
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761923397; cv=fail; b=pmSLSV7z4Y0nFwBhFI2ovBRWmakRn/+3q/lTD9TCUcHinChonHcg/49SHawzjR8lpxg567Bq8rweOhZklfJS86unPEBfsS8QlNrWEn/ojdisYJxfzn8spK+eiIJb1qDPHtuOB3m5Qjwv3P1OwViMMRVsTdUXgZWnWUEBz6741y8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761923397; c=relaxed/simple;
-	bh=N1VyoMVnlLiO+ZGSJINZv0dYAFJnhMObIdgQSy8FkOc=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=f+rjJyk1CypD5Tm2K4t1d14/ta7Jq0cUZzSYnhtcJvaC6bzavn/sT63dMFX/tyMvVXFq47Lw2FR9bqLF4SeM1xLiShc3Y4juWKFXyXqAKXoqvi9RinyZ3OnyriTetTcHSkUhKwAxyITvMX7r37veLbgku7JjINoZJezoRNFVYHk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b=xvUwvMY4; arc=fail smtp.client-ip=52.101.126.110
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amlogic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 986B62BEFFB;
+	Fri, 31 Oct 2025 15:20:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761924030; cv=none; b=eWvEBfYoofgZYGGNvXRoATYIRW25fSwPcbDNByHzyfPUadCk56dguPOzT7QeGUN5pI3ifB6hI2IR7XKD2bAJ76vI8s/QoJFJpJ8cejGgp6HqWUbP1wwKly05czU8zU3r54WechXzFo/UxXjt33gr0vqZZ8mnhCYYrXTo5Oiiy0Q=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761924030; c=relaxed/simple;
+	bh=y3b+wUCsWckPBCTPgAZadRRNBEdlpxrfsSHKNnGesNY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IIaBcq2DZFuFNWCJ69Rp0+KvIfpGueRbZrey+b0r4YUEldPX23/cFLYyPXuR7y7OVFEDeUfC36Mk+wy6edhs8knsppObLPKWJzX7olzwvTmKIcm7U2PRpgMev9arNBx8aTv5dw3R4a0H4WpDPy2dAuPOut7Zp8NffcGGgLtXzO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ZXX1Bma9; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b="xvUwvMY4"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=VXlhQQcmgMN5q8JhHrqc7xGCXi8FIO0SwyH/DxxM36Ggmg0C+ii3m+iZD3Si+i/8Eg9yXvIApLyvxw5YqGbtpL/imCqZnwtlxymYQhOMwWkYIMePL3SgKB5RfiqOrbhqsxIQl/zMdEfyBvufCUMhYTBNUSWx1rxJWsoSVaqGDCaLy5WUgiytCYCLPLwTOGIQTx1k39+BL4I5Lfgyn/M/Ipojjn6vMfB6hmgHiilw8CNnQde71FUwLTSHEmid2sTowAVJHdXXZCEJJegGDeV/BpmgFVh+3Zj82m7nGTOdgJW1J49q7oiN+xPzng3uCCM6L9N8Rv/Yjrh8eSFn4TUTDg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=W06SwcKg6XitF9J9EFGEtaEtrLCBZ8wqGT9G+1+hPVk=;
- b=THHnV+fC8t7XrjT7rFaeb7p0LmY5T6IhKKR3o5r9b5D94b9+dwwePNeB3ICpUb+A7VyqICCwlkNUbN8awZy/OAHgLl8wJsYstOO1ID3R2WsPTqTsDbAF4caNkyHN2La/OlMgWYs5iOK3/JJPKbInbydqtUigytvGIjETE5KtyMY989euuGjuwXBoa66FHTqiRoqe2fHR9XE6v7MHt+uSYz5DGxuLdO/APFvU0AwRPHFgES5d1l77DwNhEu6WbMnDw7UNHAiZYtOIfcYoddg0uP1ENc4Q+XHvz2il2X8fTOVSbacjW6Ilz7RjAeUwcAKPFQ/QzAyzZodF7wpJjciWjA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
- dkim=pass header.d=amlogic.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amlogic.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=W06SwcKg6XitF9J9EFGEtaEtrLCBZ8wqGT9G+1+hPVk=;
- b=xvUwvMY4yZx5YWJcPfl56QMap9eABwiLypI3XNP39UHhcfro4VKnm4ZndZxlWtpYlxj3pxMsCcnquVQeniI49Q9nB91FC4APtlS2r8gGOLMxMXx8wywv4cBimtSrAPNxwVxcu4V+IO1ZhXCpBulMmu4D2zWSk2ZMQyXsXrVNdsa3T2jkrRc67CkedhQVYeQ62cscENZ9NnHooaggIEzNLj6uh+sbFVIWzPmNmZjTqWOWqvcEJmpg2oxNEyRq42cy224Jv6//PtHeyLym9pfN5/z0XBh0EkkYAYTIhciSda9rSn8dmr1MBawEYCNPbDGa2jWVXqmimL0juqWPR2TMqA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amlogic.com;
-Received: from KL1PR03MB5778.apcprd03.prod.outlook.com (2603:1096:820:6d::13)
- by SEYPR03MB7119.apcprd03.prod.outlook.com (2603:1096:101:d4::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.14; Fri, 31 Oct
- 2025 15:09:47 +0000
-Received: from KL1PR03MB5778.apcprd03.prod.outlook.com
- ([fe80::e1e:5c95:a889:828e]) by KL1PR03MB5778.apcprd03.prod.outlook.com
- ([fe80::e1e:5c95:a889:828e%5]) with mapi id 15.20.9275.013; Fri, 31 Oct 2025
- 15:09:46 +0000
-Message-ID: <9751014d-926e-4d42-b8e1-5a4d3e734457@amlogic.com>
-Date: Fri, 31 Oct 2025 23:09:13 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/4] clk: amlogic: optimize the PLL driver
-To: Jerome Brunet <jbrunet@baylibre.com>,
- Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Kevin Hilman <khilman@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20251031-optimize_pll_driver-v3-0-92f3b2f36a83@amlogic.com>
- <1jms57xx05.fsf@starbuckisacylon.baylibre.com>
-From: Chuan Liu <chuan.liu@amlogic.com>
-In-Reply-To: <1jms57xx05.fsf@starbuckisacylon.baylibre.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: TYCP286CA0187.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:382::11) To KL1PR03MB5778.apcprd03.prod.outlook.com
- (2603:1096:820:6d::13)
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ZXX1Bma9"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 36A3FC0E957;
+	Fri, 31 Oct 2025 15:20:05 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 9CDE360710;
+	Fri, 31 Oct 2025 15:20:25 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 067DE11818041;
+	Fri, 31 Oct 2025 16:20:05 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1761924023; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=goHQM/1NASiwEpJFuU+gt1w80LtYcWXr5Gc0K9tmMcc=;
+	b=ZXX1Bma9X3KMNXlEJ6m3KmzgeWaoHvqKZUDGbtyXcyczSWNcqa1WxZl7PaaP3QnmzL9gq4
+	h0YuPlq7t/ag22Qc0RV6DUkEOizZ8aU4YvVAi5tQ0oCrNCN9uTlgnrGvmTf6uzjWAFrc/P
+	iOZon5nGEinDurKqvP8UIygDFPUWAiUqm59zHUbmHyOs3e60XOGs63ifmZhf114mLUKRqK
+	bIKj+JoZJxnMO/w5PK2AbEIM7ADXeVegLKetdhc6qx0E6UYxyvcnSln30z+BZXKje9+TfM
+	AmSNEEcgTn5HJwFcJWmSNYyzhr1jXdHX0RhRB0lSnwspgtNFDoD+bFqnfo/hgQ==
+Date: Fri, 31 Oct 2025 16:20:04 +0100
+From: Herve Codina <herve.codina@bootlin.com>
+To: Rob Herring <robh@kernel.org>
+Cc: Andrew Lunn <andrew@lunn.ch>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ Danilo Krummrich <dakr@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha
+ Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team
+ <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Michael
+ Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Andi
+ Shyti <andi.shyti@kernel.org>, Wolfram Sang
+ <wsa+renesas@sang-engineering.com>, Peter Rosin <peda@axentia.se>, Arnd
+ Bergmann <arnd@arndb.de>, Saravana Kannan <saravanak@google.com>, Bjorn
+ Helgaas <bhelgaas@google.com>, Charles Keepax
+ <ckeepax@opensource.cirrus.com>, Richard Fitzgerald
+ <rf@opensource.cirrus.com>, David Rhodes <david.rhodes@cirrus.com>, Linus
+ Walleij <linus.walleij@linaro.org>, Ulf Hansson <ulf.hansson@linaro.org>,
+ Mark Brown <broonie@kernel.org>, Andy Shevchenko
+ <andriy.shevchenko@linux.intel.com>, Daniel Scally <djrscally@gmail.com>,
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>, Sakari Ailus
+ <sakari.ailus@linux.intel.com>, Len Brown <lenb@kernel.org>, Davidlohr
+ Bueso <dave@stgolabs.net>, Jonathan Cameron <jonathan.cameron@huawei.com>,
+ Dave Jiang <dave.jiang@intel.com>, Alison Schofield
+ <alison.schofield@intel.com>, Vishal Verma <vishal.l.verma@intel.com>, Ira
+ Weiny <ira.weiny@intel.com>, Dan Williams <dan.j.williams@intel.com>, Geert
+ Uytterhoeven <geert+renesas@glider.be>, Wolfram Sang <wsa@kernel.org>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org,
+ linux-pci@vger.kernel.org, linux-sound@vger.kernel.org,
+ patches@opensource.cirrus.com, linux-gpio@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-spi@vger.kernel.org,
+ linux-acpi@vger.kernel.org, linux-cxl@vger.kernel.org, Allan Nielsen
+ <allan.nielsen@microchip.com>, Horatiu Vultur
+ <horatiu.vultur@microchip.com>, Steen Hegelund
+ <steen.hegelund@microchip.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v4 05/29] dt-bindings: bus: Add simple-platform-bus
+Message-ID: <20251031162004.180d5e3f@bootlin.com>
+In-Reply-To: <20251030141448.GA3853761-robh@kernel.org>
+References: <20251015071420.1173068-1-herve.codina@bootlin.com>
+	<20251015071420.1173068-6-herve.codina@bootlin.com>
+	<20251030141448.GA3853761-robh@kernel.org>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: KL1PR03MB5778:EE_|SEYPR03MB7119:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4fd6f002-594e-4ec9-ec84-08de188f8781
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?bVUwT1JpRXY5ZjNMR2NBbGZ0cU81bzBFTlpDV1JMVy84eWhFTjBrN2RGb2pz?=
- =?utf-8?B?Z3hGcDUwdk1TdytTeGJsb2pmN1BHM3RySC8weC9ydWlaQzROMmJoN1ovZVB0?=
- =?utf-8?B?U1JGLzQ4MVJPRnhPWDFGV2FLWGMvZi8zbGdtQmt0dkFVcTJraERJRzQyWUNh?=
- =?utf-8?B?bVFGMnJEUnRZdS9wWDVlMHk5d2ZHeDNId013SnRPN3RUalVTeGN3QkdWZDM0?=
- =?utf-8?B?SXN4NlUyZER1ei8yR05qMHk2aXpJWk93a01KSzcyYkVPN0FrQmRDZmJrQzcy?=
- =?utf-8?B?dXc5N0xubXRneEFJSFcvWlRpM1JacGlNVWhOZDZraWk2SnhsTkdDUEFkaG1x?=
- =?utf-8?B?MzV4cVQ3Y1VUVVdSMm9xSVRwTDZpSkhOd0R6ZWllWStQb3BHd0hnditxVk9x?=
- =?utf-8?B?M1RUMVR6MDAxSlVQZDNSMTc1bkIzWHFPZjhZOUJYVHNDaXdRZWdYdnJMM3hl?=
- =?utf-8?B?OWhOWXkxd0ZjODVmLzlPMHpXTHhPbktNdkxyMWRTejROSk5rY3ZHOXIxeTNI?=
- =?utf-8?B?VDVpcDVXcVczNVJVZjQydHFraUJybWNmdFEyVERrMzllSHp1cmNQTjFMcUpz?=
- =?utf-8?B?SWxqVm1vSmFnaHRsNGxqWE43cWhxKzJ5VWRXS21IWDhzNTlnOFpZNi9CSmxu?=
- =?utf-8?B?d0UwL3JhQ29uWVpmdFNKd2FrS3EvaHJXVkZ1b29xa3ZtM2dIRUxLSmN3aXJQ?=
- =?utf-8?B?S0VtWTFJaUtmNWtoYnBEdGlBNDR6bzJ2TU8vNVh4U2w3MTA5Z2I5L0ZTdWpS?=
- =?utf-8?B?b05TZnNWQm1SL0VONzUvcEZiS2oxWnUrbzNEekRxRzBBL0dJeGpwVC9KMnFF?=
- =?utf-8?B?ZzhhNGdTKzRvRlBPamY4aExXTi8wVC9nMWRFSUprMkJPTnRHaXFzZWJQMDlQ?=
- =?utf-8?B?R3lJblYwcWNUZFo2SnJ0NW5IY1kxRWpmN0RtYmFWMWs1VFVReUVwV29vaGp3?=
- =?utf-8?B?RThJVFBzcjM1Uy9lQjlGajJBUllscVcvTGEvMmpHUTd1UmUrek13STdOUWht?=
- =?utf-8?B?TUZvSVFOSDNZVndOTzkvMXFmWFBMR2FlTmNQc0tkMVZ5ZHV4Vm94UTQrVUdW?=
- =?utf-8?B?cTAyUlc2cXh1SGEwSlR6VXUrb3p6MC9QVzFmcldUUkczMStDTnJoSmZ6OXRN?=
- =?utf-8?B?MDBTSHBUSU9hZjdkMTNnRm4vMDh6YStLdTQ2QUhSTGVvTDA3S1dScXhHYjBp?=
- =?utf-8?B?UFlvMHVsT2w4VHRIZnFDSG5lV3EwWlZoVXhxSkxZbzBWZDlzaEdqMGppWDVI?=
- =?utf-8?B?elVFNzkzdVhoWGJYUlRuV2p3QnpqN1BrNkk3R3ZsakdmdXhUakMybEFRM0JK?=
- =?utf-8?B?aHUweGhqZGxNeWxUbk04czRoUm5Yb3JPRzcva1M5NTdyN2I5WUxoMlppVnMr?=
- =?utf-8?B?WmNxSG96cjYxTXEwbjllMUc3UFRGTjdVdTV0bFFIbmxidTUrSVBWS3MwQ3FN?=
- =?utf-8?B?QlhwbW0raC9HaHpLRFlOcWRkSFk2aFgwV0VJMHc4NEdzZGZiL1ZneVM3QlRH?=
- =?utf-8?B?cVNmNlFVcUZjUmZSMHBDME5qR21oYmgrU2xHWFE0R0xBUWRBbFgyM1NRN2ky?=
- =?utf-8?B?Z0gxZUlTRzVlK0ZRVlhwMXg3YjBocE82ZDNKVDdnYjdDa0tRT2QxSXpldlpR?=
- =?utf-8?B?MGJXUGdJWFo5aExuSmxYL0VtSkl4aTNxblJVRVRDMHZPeXdvQndtWVdIWWw3?=
- =?utf-8?B?eTNTR3Q2QkRTakdaWDlTOGJqc0RaMHM0WFdsazQ0dUVkcWVvWlZVSGVmTlU2?=
- =?utf-8?B?eHd3a2RCUDAvaFhrYWdrNSs1QWovN25KcVEvbEY4OFlmOE92TFlCRVJ5STdZ?=
- =?utf-8?B?ZVhwVjI1VEFqV0JUSzhES2hoV0FvYmlZWkg0cFoweCtZQ0xVUzVTczV1ZEYv?=
- =?utf-8?B?VFFWV3lSYUgzRUwvaGRyaXF3cDl4MXpvOXoxZytaNTJLOW04VkEwcmZRRnoy?=
- =?utf-8?B?Tmg5NkY3TkVDemVtekdkNVp6Y2dEcmc5aVVhVzljazJxb3BqVUlGQXVhVEdx?=
- =?utf-8?B?bEt5bjlxSCt3PT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR03MB5778.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(1800799024)(376014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?S3FGZlJ4Vkwrb0c5Zm5VTXpNdGdWeWN2dGJnMVkvSGNMTmlra3NLclhWazg5?=
- =?utf-8?B?ZHBjT0UwRHBOaU5aSjd1bHM0bzhiTU1oQTVuWld0QkphYmxSSFNUNG5Lcm92?=
- =?utf-8?B?ZkZLNTdzMVpyY2xWak1zQUpBTEN1ejRONlE4N250UHhKNTZqOWNrK1l4NDlO?=
- =?utf-8?B?aU0vQVdrelRlVGpEQ2luWkFmcHNFU1NIcTVpNVVqMUpxNXRYZzh3c0lJTzdr?=
- =?utf-8?B?YlljK3h0cktmZDlGNzU2azVoT0FaQXN1ZG55MWdqNmYvV2hOK1dUSHVuQ2FQ?=
- =?utf-8?B?dlNJdExZVnp3V0lFMDVaTytZb1VLOElUMkR3eVJaRHpPcVROTGFtQmxLcUdF?=
- =?utf-8?B?b2VMTERRZkU1ajY0ZkhHRkl3MnVDV2p6aTNBNWRFSkFXb2RqRU15YUx6L2pj?=
- =?utf-8?B?L1dqd3hJVkkydlBDYnltMDJuN1MvbEtyWXVWQStUZExaUDJyVGtSM3dZOTd5?=
- =?utf-8?B?S09BeWM2UmdFdnRQVmdyQzA3bnpyajNlR3lqWjVFeC8va3dHSnFSYzE3ak5K?=
- =?utf-8?B?NGROclVjWjJ1U05ZbFM3NHFTRVpjVzZTWk81TFpqeXRHR1dpR2ZtL1ZlZmhX?=
- =?utf-8?B?VWxoaURLTEFsQkFEbFNOZ3VONWNmRFdZc1JSem5TRHI3cGoyYk1JYnNadzlK?=
- =?utf-8?B?Yk81OXV0a2ZLNzcvKzNHb2ErbENiTytSdzRHbkRnZTk1K1FyMHdkcGRhdzdN?=
- =?utf-8?B?YjVKcnNmRWZSYWJ1ZkVOOGUyM2RydmNrQnhwZU44bGpKSUh6bm1yOFY0bHVi?=
- =?utf-8?B?M3ZPWDZSaEpzcjd2UzFPZ2llTTNyTGNNSDV5UUx6MHdoR2J6UEJoTHlpYUFv?=
- =?utf-8?B?OU9CZnhjUDk4NnY0K2IwdHladlJhWVlKdjNWTWdzU0FxWm5MQW14VmNEMDVI?=
- =?utf-8?B?dm5Lc2RiM3JRNTRCZzViSXp5M2ZwTURRMHM5TklueVRTUktjcnZlY1psK0tt?=
- =?utf-8?B?d2FGQnhXZFVPc0NueEs2UC9lSFY1eFI0M3l0b3BDTVNIWk0vY1dyYVA5U0hK?=
- =?utf-8?B?M3dxaTR3ckNrUDRLM0h1QkFEY0NkUXFMUWxhalh1V0FBcCtWOVc0L1NsUHlN?=
- =?utf-8?B?SFpCTis5dS9OZnIxQ054bGVROHczWnNCZGJ0YngrejY2MXZvd2hwZmhlL283?=
- =?utf-8?B?c01FaEV5YjhnZDlPSk1XaG4zdC9oczZxMjg1MDVxTEVlQkRybFYvZzhqY0Rh?=
- =?utf-8?B?dGVZSjczbXNnbldvdjVXYUtsZ21hV01oM2Zxcy8xUEF4YVg1Tmg2MzV2eU14?=
- =?utf-8?B?dFpVWnp0UXJta0JadHdxakVYa1hieVNSSG5XNnJoczlrbkJoVVcwV1pvRVlM?=
- =?utf-8?B?U1dFdlpjaGV4RVJURWdxbkpZVDdDUFRMQUVYRVV1ZEN6VWNVMXR0cFVlclFt?=
- =?utf-8?B?OHJXOXRxQ1NLblJubHNEWjVONHBOaVFzWHBNbUNsKzd3NWdLc05oc3RqRVJm?=
- =?utf-8?B?ekxwYjdnUnJPNTJyYjg0UzlGdml1RmxaSklWSzNNVjhGQmluZTJXN3FpV0Yx?=
- =?utf-8?B?clpSeW56dWhTd2ZXempuR2FrL1dJRFFXRGE4U3BoNDRORElBK216Tk1TempT?=
- =?utf-8?B?U2RsK3pWV084TEkwUVFYMjZBd0xhSk9KM3VldG5IU2lGWXJYS0ZGdjFqdXNq?=
- =?utf-8?B?TjZlUHhiZzhNanpNUk1LZC9kVDB0bmtMYjlrVUppWHg3VHZmMU1raWRvZnZx?=
- =?utf-8?B?MmNQdXN4Z3J0YThRc3FzVjhKWjVnNzhFblpRanp4NCtacGEyZGZlSTMwem9X?=
- =?utf-8?B?eVhvbXlRMFdWY1ZrZENHa2tLNkRBTks2M3JNV1VSYkovdSt5OTNzOUtMNHBG?=
- =?utf-8?B?MjU3TnZPUmV1UW80em9pUHZUNFBQY3BIUmRqaXdZWXBRRmZDL2JOZ2tDckxB?=
- =?utf-8?B?WnQrZFRrTHZPMEh3bGovRmZXMUplVmZMcVhFWUhva0szejZ1RjJlN2h5UnRP?=
- =?utf-8?B?TVMzQzN2ZXY2UmphcWQ1NE9QSjkzd2dJdHhwdUZoaU8rYm4vNzhRT0pwbzBp?=
- =?utf-8?B?em9PN21BaUh2UnVCR1BlOXFmL1lObXNwKy9iUUkrdzFpNzhObkVTOU9jWlpz?=
- =?utf-8?B?cFVmK2M2QzhvR2V4c0pyQndJT1FjSVhKNDZPMFZHYWs1UWh5RmVtY3NuUUZM?=
- =?utf-8?Q?8iKi9tVDmrPAgtzbnqqSXjuKz?=
-X-OriginatorOrg: amlogic.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4fd6f002-594e-4ec9-ec84-08de188f8781
-X-MS-Exchange-CrossTenant-AuthSource: KL1PR03MB5778.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Oct 2025 15:09:46.8245
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: RIcI0uuUi9hHIfriA+zXzu1792/2WzuGCKp+rRgX8OaPtbcTSbuxe0+LhgfAZyF7lairxirGZklbes5mrBIxYQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR03MB7119
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-Hi Jerome,
+Hi Rob,
 
-On 10/31/2025 5:04 PM, Jerome Brunet wrote:
-> [ EXTERNAL EMAIL ]
+On Thu, 30 Oct 2025 09:14:48 -0500
+Rob Herring <robh@kernel.org> wrote:
+
+> On Wed, Oct 15, 2025 at 09:13:52AM +0200, Herve Codina wrote:
+> > A Simple Platform Bus is a transparent bus that doesn't need a specific
+> > driver to perform operations at bus level.
+> > 
+> > Similar to simple-bus, a Simple Platform Bus allows to automatically
+> > instantiate devices connected to this bus.
+> > 
+> > Those devices are instantiated only by the Simple Platform Bus probe
+> > function itself.  
 > 
-> On Fri 31 Oct 2025 at 16:10, Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org> wrote:
+> Don't let Greg see this... :)
 > 
->> This patch series consists of four topics involving the amlogic PLL
->> driver:
->> - Fix out-of-range PLL frequency setting.
->> - Improve the issue of PLL lock failures.
->> - Add handling for PLL lock failure.
->> - Optimize PLL enable timing.
->>
->> For easier review and management, these are submitted as a single
->> patch series.
->>
->> The PLL timing optimization changes were merged into our internal
->> repository quite some time ago and have been verified on a large
->> number of SoCs:
->> - Already supported upstream: G12A, G12B, SM1, S4, A1, C3.
->> - Planned for upstream support: T7, A5, A4, S7, S7D, S6, etc.
->>
->> Based on the upstream code base, I have performed functional testing
->> on G12A, A1, A5, A4, T7, S7, S7D, and S6, all of which passed.
->>
->> Additionally, stress testing using scripts was conducted on A5 and
->> A1, with over 40,000 and 50,000 iterations respectively, and no
->> abnormalities were observed. Below is a portion of the stress test
->> log (CLOCK_ALLOW_WRITE_DEBUGFS has been manually enabled):
+> I can't say I'm a fan either. "Platform bus" is a kernel thing, and the 
+> distinction here between the 2 compatibles is certainly a kernel thing.
 > 
-> Okay, this little game has been going on long enough.
+> I think this needs to be solved within the kernel.
+
+I fully agree with that.
+
 > 
-> You've posted v2 24h hours ago
-> You've got feedback within hours
-> There was still a 1 question pending
-> The rest of community had no chance to review.
-> 
+> What I previously said is define a list of compatibles to not 
+> instantiate the child devices. This would essentially be any case having 
+> a specific compatible and having its own driver. So if someone has 
+> 'compatible = "vendor,not-so-simple-bus", "simple-bus"', when and if 
+> they add a driver for "vendor,not-so-simple-bus", then they have to add 
+> the compatible to the list in the simple-pm-bus driver. I wouldn't 
+> expect this to be a large list. There's only a handful of cases where 
+> "simple-bus" has a more specific compatible. And only a few of those 
+> have a driver. A more general and complicated solution would be making 
+> linux handle 2 (or more) drivers matching a node and picking the driver 
+> with most specific match. That gets complicated with built-in vs. 
+> modules. I'm not sure we really need to solve that problem.
 
-There might be a serious misunderstanding here.
+Right. Let discard the "more general and complicated solution" and focus
+on the list of compatible to avoid child devices instantiation.
 
-In recent years, we've mainly been maintaining our code in our
-internal repository, which has led to some differences between our
-internal codebase and the upstream version. The patches that account
-for these differences are already queued for submission, and several
-SoCs are also waiting in line to be submitted. As a result, quite a
-few patches have piled up, waiting to go upstream.
+Do you mean that, for "simple-bus" compatible we should:
+ - Remove the recursive device instantiation from of_platform_populate().
+ - In simple-bus probe(), check the device we probe against the
+   'no_instantiate_children' list
+      - If it matches, do not instantiate chidren
+      - If it doesn't match instantiate children
 
-Previously, I had been waiting for your clock driver restructuring
-patches to be ready (which have recently been merged), so for almost
-a year, we haven't made much progress on clock driver–related
-upstreaming.
+Is that correct?
 
-Other drivers that depend on the clock driver have also been blocked.
-This situation has been very stressful for me. I've been doing my
-best to update versions as soon as possible in response to review
-feedback.
-
-> and yet, here the v3 already ! still with bearing pr_warn().
-> 
-
-Regarding pr_warn(), I explained in a previous email why I didn't
-choose to use pr_warn_once(). The quick iteration of versions wasn't
-an intentional disregard of your suggestions.
-
-It's just that the upstream submission process has been severely
-jammed. I admit I've been anxious, because at the previous pace, our
-chips have already been in mass production for quite some time while
-our clock driver still hasn't been submitted upstream, which puts us
-in a difficult position, so please understand.
-
-> Chuan, the community is not dedicated to reviewing your submission.
-> Time and time again you ignore the feedback provided in reviews and the
-> documentation. I've had enough of your sloppy submission.
-> 
-> I will not review or apply anything from you in this cycle.
-> 
-> You have been warned multiple times. Every time you ignore a review,
-> you'll get ignored in return. This is how it will be from now on.
-> 
-
-Seeing your message was really disheartening. I want to clarify that
-I've always been very grateful to and respectful of you, as well as
-Neil, Martin, and others. Throughout the upstreaming process, your
-feedback has been extremely helpful.
-
-I've always taken your reviews seriously and communicate frendly. I
-truly never meant to ignore your comments, please don't misunderstand.
-
->>
->> - For A5:
->>    # echo 491520000 > /sys/kernel/debug/clk/hifi_pll/clk_rate
->>    # cnt=0
->>    # while true; do
->>    >     echo "------------ cnt=$cnt -----------"
->>    >     echo 1 > /sys/kernel/debug/clk/hifi_pll/clk_prepare_enable
->>    >     en=$(cat /sys/kernel/debug/clk/hifi_pll/clk_prepare_enable 2>/dev/null)
->>    >     if [ "$en" != "1" ]; then
->>    >         echo "[ERROR] PLL enable test failed! (clk_prepare_enable=$en)"
->>    >         break
->>    >     fi
->>    >
->>    >     echo 0 > /sys/kernel/debug/clk/hifi_pll/clk_prepare_enable
->>    >     cnt=$((cnt + 1))
->>    >     echo -e "sleep time: 1 s."
->>    >     sleep 1
->>    > done &
->>    # ------------ cnt=0 -----------
->>    sleep time: 1 s.
->>    ------------ cnt=1 -----------
->>    sleep time: 1 s.
->>    ------------ cnt=2 -----------
->>    sleep time: 1 s.
->>    ...
->>    ------------ cnt=42076 -----------
->>    sleep time: 1 s.
->>
->> - For A1:
->>    # echo 983040000 > /sys/kernel/debug/clk/hifi_pll/clk_rate
->>    # cnt=0
->>    # while true; do
->>    >     echo "------------ cnt=$cnt -----------"
->>    >     echo 1 > /sys/kernel/debug/clk/hifi_pll/clk_prepare_enable
->>    >     en=$(cat /sys/kernel/debug/clk/hifi_pll/clk_prepare_enable 2>/dev/null)
->>    >     if [ "$en" != "1" ]; then
->>    >         echo "[ERROR] PLL enable test failed! (clk_prepare_enable=$en)"
->>    >         break
->>    >     fi
->>    >
->>    >     echo 0 > /sys/kernel/debug/clk/hifi_pll/clk_prepare_enable
->>    >     cnt=$((cnt + 1))
->>    >     echo -e "sleep time: 1 s."
->>    >     sleep 1
->>    > done &
->>    # ------------ cnt=0 -----------
->>    sleep time: 1 s.
->>    ------------ cnt=1 -----------
->>    sleep time: 1 s.
->>    ------------ cnt=2 -----------
->>    sleep time: 1 s.
->>    ...
->>    ------------ cnt=55051 -----------
->>    sleep time: 1 s.
->>
->> Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
->> ---
->> Changes in v3:
->> - Fix some formatting issues.
->> - Move the 20 us delay after reset into the corresponding if
->> condition (no delay is needed if there is no reset).
->> - Move the code that releases rst back to execute before current_en.
->> - Remove the patch that changes the active level of l_detect.
->> - Link to v2: https://lore.kernel.org/r/20251030-optimize_pll_driver-v2-0-37273f5b25ab@amlogic.com
->>
->> Changes in v2:
->> - Modify the judgment condition of 'm' out of range.
->> - Split the PLL timing optimization patch to make it easier to review.
->> - Link to v1: https://lore.kernel.org/r/20251022-optimize_pll_driver-v1-0-a275722fb6f4@amlogic.com
->>
->> ---
->> Chuan Liu (4):
->>        clk: amlogic: Fix out-of-range PLL frequency setting
->>        clk: amlogic: Improve the issue of PLL lock failures
->>        clk: amlogic: Add handling for PLL lock failure
->>        clk: amlogic: Optimize PLL enable timing
->>
->>   drivers/clk/meson/clk-pll.c | 64 +++++++++++++++++++++++++++------------------
->>   1 file changed, 39 insertions(+), 25 deletions(-)
->> ---
->> base-commit: 01f3a6d1d59b8e25a6de243b0d73075cf0415eaf
->> change-id: 20251020-optimize_pll_driver-7bef91876c41
->>
->> Best regards,
-> 
-> --
-> Jerome
-
+Best regards,
+Hervé
