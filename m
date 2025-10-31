@@ -1,64 +1,157 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAA6C18626;
-	Fri, 31 Oct 2025 14:21:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4DCB34B698;
+	Fri, 31 Oct 2025 14:29:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761920513; cv=none; b=l3DTbE09s9zvJix3mjlFHR72h/cgD/Xq3FlyQSah7SVs5jOabyrO6dGoSL1Jm30XOwWwAmHa8Qi0P+LmfjNN1FEMVeXJirIlCR9AorsljU/JmYge7iy9g57AnNAwOhTPb6IMicPJ5ANh69v26wYzB1H+DbBMTmhbz6ImNYRZPY8=
+	t=1761920995; cv=none; b=KBqgEEayQyUxQ6nZOoRnWZkCwz4Zl82LXi5xoWwb8tLr+pKawqij2Rs2lx9aWE35ffUP8FEz3KZ76lFRn0j2dD2iEE+9Wlf2A9AmmMYn6j0lyK3RkNtlWVpDWdoQ45soAjnXhG1P9yY4tNoSO42ZkqNMRucXyqdsQo7jLnLDIDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761920513; c=relaxed/simple;
-	bh=HC0DE5hT5733A14iCFz7Atbo4IQ4lqqAvSwnLflL308=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oHehJHvpFiu1NeiAXAW2r6fp8t9w8MgN0jn32vU1rmhDMjmnl73rn47kxmwKVUlLPb2OacNGl4ZQLK0y6wMPqpDqvuaAYm9r1D84C67+lKYCh1BCdMlMXsUfPexZln790TxKqLrxGrZu254qnI9fO9dVEPPw4tIvyrorUUEYl5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=HMsl3vf7; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1761920995; c=relaxed/simple;
+	bh=DpRmmnQNFBCQ/QafgwFnqLT9Yw/H1JWWO9tLoLVtAy4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=VnCbutT55tMdvFBxqs0VB1p4JZNXfqLhaBOHPdTYYr5YIGi2mpcAGj7J1SlpAIPmkh5oEPaLR/YT0nhK4OsaYf6eLkRjKRkB/o4Q0FIUvI4lc8svUn912wzHYg7/NxtMjVEIgpTe4KYMRoRWjMhRtU2E/dhKO/2I4vF3w8kmNhc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=m/llmHWP; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="HMsl3vf7"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34F1BC4CEE7;
-	Fri, 31 Oct 2025 14:21:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1761920513;
-	bh=HC0DE5hT5733A14iCFz7Atbo4IQ4lqqAvSwnLflL308=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HMsl3vf79NC7JSp6P07U/L1dmuyf3CO6ADs8mOnZDgVbjs/WkI4IbkvBZLj5n6ig/
-	 U1kr+gMlpbAUnfudiMTgGVxMrJlObdS0HtRm++WW8SbqToqxvvIHZO4JQ++PzW/d0A
-	 xlJKtYeLL72GKECECnhuKTpJCE0IBT1f2GNFbyyo=
-Date: Fri, 31 Oct 2025 10:21:49 -0400
-From: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
-To: Alexey Minnekhanov <alexeymin@postmarketos.org>
-Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
-	Bjorn Andersson <andersson@kernel.org>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, stable@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
-Subject: Re: [PATCH 0/3] SDM630/660: Add missing MDSS reset
-Message-ID: <20251031-pastel-precise-capuchin-6d8c8f@lemur>
-References: <20251031-sdm660-mdss-reset-v1-0-14cb4e6836f2@postmarketos.org>
- <25579815-5727-41e8-a858-5cddcc2897b7@oss.qualcomm.com>
- <722a6cf2-7109-47e9-9957-cde5171d7053@postmarketos.org>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="m/llmHWP"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id D63C34E4143C;
+	Fri, 31 Oct 2025 14:29:51 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 9DC5860704;
+	Fri, 31 Oct 2025 14:29:51 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id C4B4A11818003;
+	Fri, 31 Oct 2025 15:29:31 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1761920989; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=H1xEmCgdr5BM399Kc4ZsWwaTbhEQ52MJYYiQpqbSK6Q=;
+	b=m/llmHWPK2GTOxgP86qebD1Z2Edet7KZozbxg7xHP71zP8WGHqlNCsjTjzbgRJW6AoYEg9
+	PGGuEBK7TNuc+3zADlLbC1jrjiYc/TXhPfAwEtjv3025kcM3TvB0cUwMNtHDn+fuYXbapk
+	18lKsj6lpv1/ObuOPQiBVRZx/Tm+zaLVFOXH7eT76X6+OiJSchpc3v+iGXicmC9AbAQ7Fi
+	n3R42rQTkma0JCEYRFgzMb9znRzRns4yCbMUv4DSU7pRjgiVIxLEd6NnupsCZT4TGW2iAp
+	n6HmKRiLt0yJEP375+9QgT+CNjKgF6b7Kiq48SW1im8mtyVm7PYpr3cu982RMw==
+Date: Fri, 31 Oct 2025 15:29:30 +0100
+From: Herve Codina <herve.codina@bootlin.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Andrew Lunn <andrew@lunn.ch>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, Shawn Guo
+ <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix
+ Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>, Wolfram Sang
+ <wsa+renesas@sang-engineering.com>, Peter Rosin <peda@axentia.se>, Arnd
+ Bergmann <arnd@arndb.de>, Saravana Kannan <saravanak@google.com>, Bjorn
+ Helgaas <bhelgaas@google.com>, Charles Keepax
+ <ckeepax@opensource.cirrus.com>, Richard Fitzgerald
+ <rf@opensource.cirrus.com>, David Rhodes <david.rhodes@cirrus.com>, Linus
+ Walleij <linus.walleij@linaro.org>, Ulf Hansson <ulf.hansson@linaro.org>,
+ Mark Brown <broonie@kernel.org>, Andy Shevchenko
+ <andriy.shevchenko@linux.intel.com>, Daniel Scally <djrscally@gmail.com>,
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>, Sakari Ailus
+ <sakari.ailus@linux.intel.com>, Len Brown <lenb@kernel.org>, Davidlohr
+ Bueso <dave@stgolabs.net>, Jonathan Cameron <jonathan.cameron@huawei.com>,
+ Dave Jiang <dave.jiang@intel.com>, Alison Schofield
+ <alison.schofield@intel.com>, Vishal Verma <vishal.l.verma@intel.com>, Ira
+ Weiny <ira.weiny@intel.com>, Dan Williams <dan.j.williams@intel.com>, Geert
+ Uytterhoeven <geert+renesas@glider.be>, Wolfram Sang <wsa@kernel.org>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org,
+ linux-pci@vger.kernel.org, linux-sound@vger.kernel.org,
+ patches@opensource.cirrus.com, linux-gpio@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-spi@vger.kernel.org,
+ linux-acpi@vger.kernel.org, linux-cxl@vger.kernel.org, Allan Nielsen
+ <allan.nielsen@microchip.com>, Horatiu Vultur
+ <horatiu.vultur@microchip.com>, Steen Hegelund
+ <steen.hegelund@microchip.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v4 05/29] dt-bindings: bus: Add simple-platform-bus
+Message-ID: <20251031152930.3c51a313@bootlin.com>
+In-Reply-To: <CAMuHMdVnsWMB24BTFKwggEXKOtqJ96GWZh2Xz+ogocQHM+=+6Q@mail.gmail.com>
+References: <20251015071420.1173068-1-herve.codina@bootlin.com>
+	<20251015071420.1173068-6-herve.codina@bootlin.com>
+	<CAMuHMdVnsWMB24BTFKwggEXKOtqJ96GWZh2Xz+ogocQHM+=+6Q@mail.gmail.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <722a6cf2-7109-47e9-9957-cde5171d7053@postmarketos.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Fri, Oct 31, 2025 at 03:42:47PM +0300, Alexey Minnekhanov wrote:
-> This is a result of me first time trying to use b4 and misconfiguration
-> of git: user.email contained my email inside '<' and '>' which somehow
-> caused the prep/send process to generate emails with broken half-empty
-> "From:" field, containing only name and surname without email.
+On Fri, 31 Oct 2025 09:52:16 +0100
+Geert Uytterhoeven <geert@linux-m68k.org> wrote:
 
-There is now a patch in master to handle this situation. Sorry about that.
+> Hi Hervé,
+> 
+> On Wed, 15 Oct 2025 at 09:17, Herve Codina <herve.codina@bootlin.com> wrote:
+> > A Simple Platform Bus is a transparent bus that doesn't need a specific
+> > driver to perform operations at bus level.
+> >
+> > Similar to simple-bus, a Simple Platform Bus allows to automatically
+> > instantiate devices connected to this bus.
+> >
+> > Those devices are instantiated only by the Simple Platform Bus probe
+> > function itself.
+> >
+> > Signed-off-by: Herve Codina <herve.codina@bootlin.com>  
+> 
+> Thanks for your patch!
+> 
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/bus/simple-platform-bus.yaml
+> > @@ -0,0 +1,50 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/bus/simple-platform-bus.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Simple Platform Bus
+> > +
+> > +maintainers:
+> > +  - Herve Codina <herve.codina@bootlin.com>
+> > +
+> > +description: |
+> > +  A Simple Platform Bus is a transparent bus that doesn't need a specific
+> > +  driver to perform operations at bus level.
+> > +
+> > +  Similar to simple-bus, a Simple Platform Bus allows to automatically
+> > +  instantiate devices connected to this bus. Those devices are instantiated
+> > +  only by the Simple Platform Bus probe function itself.  
+> 
+> So what are the differences with simple-bus? That its children are
+> instantiated "only by the Simple Platform Bus probe function itself"?
+> If that is the case, in which other places are simple-bus children
+> instantiated?
 
-> And then
-> perhaps email server closer to your side decided to "fill the gaps" and
-> append some non-existent web.codeaurora.org part? At least I don't have
-> any better guess.
+In of_platform_populate(). It call of_platform_bus_create() which is
+recursive:
+  https://elixir.bootlin.com/linux/v6.14/source/drivers/of/platform.c#L374
 
-That's correct, that's the internal DNS name of one of our relays.
+So children are instantiated out of the bus probe().
 
--K
+
+> 
+> Do we need properties related to power-management (clocks, power-domains),
+> or will we need a "simple-pm-platform-bus" later? ;-)
+> 
+> FTR, I still think we wouldn't have needed the distinction between
+> "simple-bus" and "simple-pm-bus"...
+
+I would like that. Using simple-pm-bus solves my issue but I don't have any
+clocks or power-domains to set. The simple-pm-bus bus requires at least
+one of them. Even if the driver itself solved my issue, I cannot be
+compliant with its binding.
+
+Best regards,
+Hervé
