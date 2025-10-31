@@ -1,151 +1,108 @@
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 309AE283FF5
-	for <linux-clk@vger.kernel.org>; Fri, 31 Oct 2025 16:28:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AF0D301494;
+	Fri, 31 Oct 2025 17:02:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761928083; cv=none; b=QxLqhXYkDQaVpupvBd1g7GuS67hRXUJxZZSD2Zf6q4cTOEWis6QM92rwaWR/VrVShBSiJOA1TH/D5R77Oz5zhgMGX8bvu3HneIgsmho467iVRsEOCN3q0I27ubAF1Pc/uT2JZLARNJjoGC1rXTXxz4oYpIc+gd9onhXteV1TvIg=
+	t=1761930158; cv=none; b=HifQ7DDjD3Ukmcb3gYgLQEfHi3w8TmF1iWTZYa4UNSPQsWBRodJq+CiXa0snigEeZoxEBLeA6m4MRXDeB/2imwgy7yZj+f+nXyz0OSC3l0fTIens9R/2WKfGc10cxiOsa90PH/Vgf1LgBumbgXMIfP5KRJcsv/a006GUSCnvGGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761928083; c=relaxed/simple;
-	bh=kDssZKzypBLff+1ZVIfB58ENRKA3B3YlfDeq0xu5XOQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=sv0yF8nLV7ZgTU6IEMqr96+d74LMl2EkOj9bLaXRU5Sf6F93d4J9AYqPjuQYMsktkEq7vPla6yeVRrhn9f7eLknkq8bHnvHmGubi626RZnTsXvu0qVzsVAio0KCn6rCa2Lll0FVSgTP496/N8qszp0tx9uUD7FtISm/YPxHLWv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=YF4uSIPm; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1761930158; c=relaxed/simple;
+	bh=yDv6EgtiAeu4cOA0bFneDjrfyEEmzUj26cMNw39epTU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Knq8Vbjf/Z3JMotImY45v6aKFBx9arRfmuN+tZHrXj227T0Cmo+jOoXjrDK/vAl6BREamnBWu1mW8aRZ5TBK7h9K4jVanDFxtoi8O1ZzTXAvcXg3oJ3YEPfsN+CYP3/qICEmx/C9LyF+/XtNQmOyqlGyiRpc2iylOsOkOr10CBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kdDMZSni; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="YF4uSIPm"
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-421851bca51so2182401f8f.1
-        for <linux-clk@vger.kernel.org>; Fri, 31 Oct 2025 09:28:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1761928079; x=1762532879; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:user-agent
-         :references:in-reply-to:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kDssZKzypBLff+1ZVIfB58ENRKA3B3YlfDeq0xu5XOQ=;
-        b=YF4uSIPmORgEQuR6NjPLFaZARAJ4qoW7zQLa6q9emUZ9Vo3PoXVD2S5AjYuvWrBRxn
-         w0N70No6hi9ZSHAzNVhQpk+yjXkaAsYaRVfqTdiEXxV5Hs1HjttqkAoI5FS+I4jKeY6i
-         wYxdBNlQZmSE59DIUPMjS5vJpmBsJZk8RWVUtewZ/ZLv9y80vwFSomxyXZQNvAFl2qe0
-         JGNndhthQkt+pQRaA9ZMDIiOzNhwKXM3mzQaTm91pHpE+d09XFRPUmIQealJ+a6FPWRF
-         LWMXaC4IDI95BcpRFX09Z9Vbu4wsGJwBikG/7PUN/UHat3pOrAchinnX6sGxNoGPbWzV
-         CN+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761928079; x=1762532879;
-        h=content-transfer-encoding:mime-version:message-id:date:user-agent
-         :references:in-reply-to:subject:cc:to:from:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=kDssZKzypBLff+1ZVIfB58ENRKA3B3YlfDeq0xu5XOQ=;
-        b=clEV51vVkg4LMJrSkzj49sL8QHh4vfuAdtMBNt8aRgzpFjnKEqGXleYX01Sv4jWKFg
-         kb2XQUpWZZscIaAg3iwBQqA9FhuUncxVlb1SRQpinmum7hl5iG8ZheBMH+do6Mafv7c6
-         ai/LmTN3Y3DfwYDYxbuu/OQWyUpo+oETJ8Xc7rui8+FIpsF9kvpOVHkKrsGKbGH3iGJZ
-         4inGnY16lt2ndMOFoFbK5DqM6QhgvpRv4GgQtVAHXvGgo9dzm+zXrZLFLEJmIjwPOuk1
-         WGytPf5CvJme04JXP4qu/3PlV62IoWl5vATzH5bd4e4PE1q5dApN4yd1tl+9KeQF0lOo
-         BhoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXo58Jb2ZYW/Q2Ll+RXvYc1Z66JMJSy5lCCzUjvfSyHjShEOvQfw6g79aPwCBC7HpnmazbS3DnmXVA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+70NJ1i0GA6951dZI4WeN200FrsSuPQ6S7nzCgutrKg8nbbHi
-	iBYPuJ4r1X0/LIMA7Go2tCavEdQ5UY5yIwGzBb1R7Xh0LD9QbL5Q6l3raR4jgKTJw7o=
-X-Gm-Gg: ASbGnctDB0z2uDCfy18qRGOXyZb318kfJr6g2VyqinPlPbULMn0DScKul14s943lgPS
-	wpoidu2CgtLg3heq9h0kK+DUj++xLJj4XJVUc9aNApmF0rK9DqZYWFV9PsK0wPZyvWOzwKfWpiz
-	+6zerKDCSbS5sc3DfWqyF0PU51ugxC40vY9/PyiPwkX+TLKlJDLRqlGqNoiTEyJBllUOlXddx5H
-	+A8ZgVFVTRFcR2/EvA4l8jaB1XmqZSzZCa//EvVNhzZ6GV/orcF6QSvzKcGFCY+/FFUc8c9E9Zp
-	A+XzXHzDsWdyB2cOelfVQQYGhXcU7l2tJOWdG2wnHLKFhp5OXkqWF3ATmjNci3bP19D5SuKONGB
-	VuEZBD9rXhrJhYewsbzuB2DxY5u2qP3hrF46ple2JqSnpYEPcuB6qFKkDe5uXLcWaQZRTsmn3jW
-	jkLhP0qMovZQ==
-X-Google-Smtp-Source: AGHT+IFrsbEnwLrCCUR6Iu0VY5Uzhd0sq8qEcvcS/A9/eiqg3la7OAXHkma7L0rV7CnkzwdcPd10ig==
-X-Received: by 2002:a05:6000:178f:b0:429:bb21:94e1 with SMTP id ffacd0b85a97d-429bd6a0caemr3886114f8f.41.1761928079286;
-        Fri, 31 Oct 2025 09:27:59 -0700 (PDT)
-Received: from localhost ([2a01:e0a:3c5:5fb1:b8e9:e124:10fc:8444])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-429c112413esm4367494f8f.12.2025.10.31.09.27.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Oct 2025 09:27:58 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Chuan Liu <chuan.liu@amlogic.com>
-Cc: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>,  Neil
- Armstrong <neil.armstrong@linaro.org>,  Michael Turquette
- <mturquette@baylibre.com>,  Stephen Boyd <sboyd@kernel.org>,  Kevin Hilman
- <khilman@baylibre.com>,  Martin Blumenstingl
- <martin.blumenstingl@googlemail.com>,  linux-amlogic@lists.infradead.org,
-  linux-clk@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
-  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/4] clk: amlogic: optimize the PLL driver
-In-Reply-To: <9751014d-926e-4d42-b8e1-5a4d3e734457@amlogic.com> (Chuan Liu's
-	message of "Fri, 31 Oct 2025 23:09:13 +0800")
-References: <20251031-optimize_pll_driver-v3-0-92f3b2f36a83@amlogic.com>
-	<1jms57xx05.fsf@starbuckisacylon.baylibre.com>
-	<9751014d-926e-4d42-b8e1-5a4d3e734457@amlogic.com>
-User-Agent: mu4e 1.12.9; emacs 30.1
-Date: Fri, 31 Oct 2025 17:27:58 +0100
-Message-ID: <1j5xbvxchd.fsf@starbuckisacylon.baylibre.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kdDMZSni"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761930157; x=1793466157;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=yDv6EgtiAeu4cOA0bFneDjrfyEEmzUj26cMNw39epTU=;
+  b=kdDMZSnirkeTKx9eF6/GSp8gQaTt50P4ivFZ+4stDPZhzyrJYL8ACEwl
+   OQnI9PF5ym02x43l5r79ATF7THyoRPoKtJoKrtiGu0YNOD067w+JdBe5l
+   qTNtdPZntLG5pes3cQeFovPsc/Ofd1HZe+eX6/eiTZ2JWMUK78wNF0VzM
+   T66wgldN3bhzw1ZQdHy2UoLBl0EhlKCGKGW2okL/6rCOpbl4dviYoLmLB
+   FvAcJUzbp+u7X3IkYTLk0KvKxqdqs2kOIMRdE05uddYuhvTe4u1uCEAS5
+   SmcAiDZrtcceL5nHEFgXetpDf+gcoO0/5RSoG+WKdPTMUNHumUtJ6Hx0+
+   w==;
+X-CSE-ConnectionGUID: Z/W6X/zMSKe1aaMhQIcgBw==
+X-CSE-MsgGUID: yZ4Po6iUT1GkWcSuf9oSIA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11599"; a="67956445"
+X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
+   d="scan'208";a="67956445"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 10:02:36 -0700
+X-CSE-ConnectionGUID: D1sa5WS/TvqpPNu3Vd6RTA==
+X-CSE-MsgGUID: tBaFbmKcS9O0+gxgVl/e3A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
+   d="scan'208";a="216937489"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by orviesa002.jf.intel.com with ESMTP; 31 Oct 2025 10:02:31 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vEsWC-000NUM-38;
+	Fri, 31 Oct 2025 17:02:28 +0000
+Date: Sat, 1 Nov 2025 01:02:26 +0800
+From: kernel test robot <lkp@intel.com>
+To: Peter Griffin <peter.griffin@linaro.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Sam Protsenko <semen.protsenko@linaro.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Will McVicker <willmcvicker@google.com>, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, kernel-team@android.com,
+	Peter Griffin <peter.griffin@linaro.org>
+Subject: Re: [PATCH v2 3/4] clk: samsung: Implement automatic clock gating
+ mode for CMUs
+Message-ID: <202511010049.sebVqntI-lkp@intel.com>
+References: <20251029-automatic-clocks-v2-3-f8edd3a2d82b@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251029-automatic-clocks-v2-3-f8edd3a2d82b@linaro.org>
 
-On Fri 31 Oct 2025 at 23:09, Chuan Liu <chuan.liu@amlogic.com> wrote:
+Hi Peter,
 
-> Hi Jerome,
->
-> On 10/31/2025 5:04 PM, Jerome Brunet wrote:
->> [ EXTERNAL EMAIL ]
->> On Fri 31 Oct 2025 at 16:10, Chuan Liu via B4 Relay
->> <devnull+chuan.liu.amlogic.com@kernel.org> wrote:
->>=20
->>> This patch series consists of four topics involving the amlogic PLL
->>> driver:
->>> - Fix out-of-range PLL frequency setting.
->>> - Improve the issue of PLL lock failures.
->>> - Add handling for PLL lock failure.
->>> - Optimize PLL enable timing.
->>>
->>> For easier review and management, these are submitted as a single
->>> patch series.
->>>
->>> The PLL timing optimization changes were merged into our internal
->>> repository quite some time ago and have been verified on a large
->>> number of SoCs:
->>> - Already supported upstream: G12A, G12B, SM1, S4, A1, C3.
->>> - Planned for upstream support: T7, A5, A4, S7, S7D, S6, etc.
->>>
->>> Based on the upstream code base, I have performed functional testing
->>> on G12A, A1, A5, A4, T7, S7, S7D, and S6, all of which passed.
->>>
->>> Additionally, stress testing using scripts was conducted on A5 and
->>> A1, with over 40,000 and 50,000 iterations respectively, and no
->>> abnormalities were observed. Below is a portion of the stress test
->>> log (CLOCK_ALLOW_WRITE_DEBUGFS has been manually enabled):
->> Okay, this little game has been going on long enough.
->> You've posted v2 24h hours ago
->> You've got feedback within hours
->> There was still a 1 question pending
->> The rest of community had no chance to review.
->>=20
->
-> There might be a serious misunderstanding here.
->
-> In recent years, we've mainly been maintaining our code in our
-> internal repository, which has led to some differences between our
-> internal codebase and the upstream version. The patches that account
-> for these differences are already queued for submission, and several
-> SoCs are also waiting in line to be submitted. As a result, quite a
-> few patches have piled up, waiting to go upstream.
->
-> Previously, I had been waiting for your clock driver restructuring
-> patches to be ready (which have recently been merged), so for almost
-> a year, we haven't made much progress on clock driver=E2=80=93related
-> upstreaming.
+kernel test robot noticed the following build warnings:
 
-Ohoh now you are just teasing me !
+[auto build test WARNING on 72fb0170ef1f45addf726319c52a0562b6913707]
 
-That work was made necessary because of all the copy/paste Amlogic was
-submitting. Despite many requests, this was never addressed so I had
-to step in.
+url:    https://github.com/intel-lab-lkp/linux/commits/Peter-Griffin/dt-bindings-clock-google-gs101-clock-add-samsung-sysreg-property-as-required/20251030-053356
+base:   72fb0170ef1f45addf726319c52a0562b6913707
+patch link:    https://lore.kernel.org/r/20251029-automatic-clocks-v2-3-f8edd3a2d82b%40linaro.org
+patch subject: [PATCH v2 3/4] clk: samsung: Implement automatic clock gating mode for CMUs
+config: riscv-randconfig-002-20251031 (https://download.01.org/0day-ci/archive/20251101/202511010049.sebVqntI-lkp@intel.com/config)
+compiler: clang version 17.0.6 (https://github.com/llvm/llvm-project 6009708b4367171ccdbf4b5905cb6a803753fe18)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251101/202511010049.sebVqntI-lkp@intel.com/reproduce)
 
-If you want things to go faster, then *really* pay attention to the review
-you are getting, do not ask question to ignore the answers and stop
-making people repeat themselves over and over.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202511010049.sebVqntI-lkp@intel.com/
 
+All warnings (new ones prefixed by >>):
+
+>> Warning: drivers/clk/samsung/clk.c:458 function parameter 'np' not described in 'samsung_cmu_register_clocks'
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
