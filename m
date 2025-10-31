@@ -1,66 +1,66 @@
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2572B3271F9
-	for <linux-clk@vger.kernel.org>; Fri, 31 Oct 2025 07:14:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07F59329367
+	for <linux-clk@vger.kernel.org>; Fri, 31 Oct 2025 07:20:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761894860; cv=none; b=HnKiwdZAGBULCI5IUWePkPSUOOXl3dmmeDpZqDwaz4SQzMJt9PKzaTH6tJsZzQZKEfZNKkwkRQT1Ivh5OHMrU5m69dE3O820nyymgUCdNKL2BD5m7HmqAfKKU30rA9ZTcHt4m5qKRO/+8m6//fvJNLKovVAiSnbbSl/Qt79lNRE=
+	t=1761895223; cv=none; b=u7toKs2LNT4TfB+aYv1cMas253/O+gZqYVNwtvMVC9cY52PU3RQ2/Dx9TOg7KJXPDIRpl8PeR22tc+R6hwhBCbeiqgZPNzIS0TCKgeMHqtkvIoSB5Vq0WhgKNCv+opsoi/IBiMcwWQv7QpE14mJser/gb2Mx5WtTtstA6gOfD0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761894860; c=relaxed/simple;
-	bh=8+WhJyitrbTeGgxZoKEsA3Xi9RoN5HyOhUdLoDNVsaI=;
+	s=arc-20240116; t=1761895223; c=relaxed/simple;
+	bh=mMqYgeH0UeWOZ3VddzUW82YN8pgLCvc0+QOH5FcuQZE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EZygULlQeDb4O5wUI8NXbJybUvR/EtqPkd4G9H8mwP9+BnZJFeK0/dexZTzMK8O4hHkaJjuwLGWbE7cN54PP5orHTcKJseokQw6+YHKhI6ma5489Z3V6INe6/6+ZGMMZGJiR6J/FaKmgDQ4OPSHEu1nxBtF2/g8Cav5mJ3SDoIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=lVV3yd2J; arc=none smtp.client-ip=209.85.221.46
+	 In-Reply-To:Content-Type; b=jVAHBLLmaAObWpRD7dfD4JClLD1kVdF8Fd4gMEpwBqreOUuDxOVH89/PFOraMMolMdG4GkSgjn5TuafnrIMFC1zeiq8sZEwJgjynCUfl369IqT0+xDkQm62/KMV2WYN3VE9ggetCD/kobTnlxjKs25tZtwT5WaMQEoHKVVUyqQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=MlGTlh8H; arc=none smtp.client-ip=209.85.221.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="lVV3yd2J"
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-429bcddad32so540103f8f.3
-        for <linux-clk@vger.kernel.org>; Fri, 31 Oct 2025 00:14:16 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="MlGTlh8H"
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-421851bcb25so1094269f8f.2
+        for <linux-clk@vger.kernel.org>; Fri, 31 Oct 2025 00:20:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1761894855; x=1762499655; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1761895219; x=1762500019; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=F01LUjN81T2gEebzFvJeRYUSPOsICmfNBzp6TVdzeN0=;
-        b=lVV3yd2JyyAbEBkevywl1AinDE47ZC4SaYnmFPu577PBVp7aktF9rXCtMEjm3PphFz
-         G4mIjC4PyJRmwB8VP20Btq2pE9FylDJQ32kng+SWijQltfPu0gF3Dk0sve5+nnPFuMFj
-         TkTf5ARVcDUkV9eup3RCSkvikx9xuAvlrWvlT+U+DrgxM1otiYsMEEX0VXLjhlOy/c10
-         eiYRrnQU3AQH/VHOq88jGD4FCDGeWdWOmmD+iIHC4w8XbfIV5QmDA04HUMVLn7gFvody
-         VOmeDZ8z9uqz52KmS38WpFvActV0cU4PDXeAegYzV7UBuqkgwT2yn7joe/l1RrTJIVhq
-         PUqA==
+        bh=c6jwEFLJ69MPfiwc21mJzxfsviakHrUqtdfEeBD68fU=;
+        b=MlGTlh8HtbGjg1KsOvbgFVC/CY85a3wgucZZ+tICTarzcjGzQ81jwGuSL/20Waikjk
+         ZOLuCmZucuYxu0mbzrEXy1U1fc8P1yCa4MDU/ktgHnDGjUtrIf+xLOlOhC1NraRNfA/8
+         PthQaH/2KtwRpHIy1PC90zf8P1W8N3ikn7aq3C4RKhvCU2wAontHEXC+qikfJAY8ln59
+         hio84PduTWYeLrzHZglmOA2dW+vuHGsgL/yiuNQ9LqTg+49PPDE0CnsHBKPCObDQeL/U
+         kv3CwTHUT/gbWyjga4i71jLFFzrko+xkR5dlCmAE6729/ZitBSZPE0A4uyUobeI+fLHY
+         M12w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761894855; x=1762499655;
+        d=1e100.net; s=20230601; t=1761895219; x=1762500019;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=F01LUjN81T2gEebzFvJeRYUSPOsICmfNBzp6TVdzeN0=;
-        b=gOtzH2lCNS+hp/oSxNkrAFBF9vCE43qPixEK9G0gP7HQMY/tLVmrRE2kb0TLOFLw/h
-         oZlhezQBHkk3PTFUJe2BCXUusVNfwWMyMcQvIBS6PP2XClN0cBQiBBWxweIEu3HKlmzC
-         Y0qsOFD/sdGdjI4Ou8Cj4alfp+899v7BIMQl8i37GlUnuvaHHjpnzd3sAsPY4yeJCUoL
-         LTdIS2xPE6i5iWjwQdAxvRiJTdiG+rxAtTmQ4Ef6BdlDcMj5+OJWNsBogGgkpDrnmE9r
-         CR3sGx9IsYM6l/Po5wL24WJUcYR4x0I6cZFznqSllDNOY9HiL46/iEtEwMf9D8MoKTBp
-         itAg==
-X-Forwarded-Encrypted: i=1; AJvYcCWMDqctI1lqZ1P3BKTAkVlxsbXbM4xZE2E/nY2Ulvp3CCI7YNc9fwx0IP3RStkPH9zMrSHM134sMXY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFfFJRZDk3qK6O3rK3V0RicqMNG2VMnpQdoUyvh7CA+IiLnilH
-	XSPEHeat/r0Ydlu28hhqXa1dXO8tGFpiBQsXIRsGEoYfFrxRPFrVQWzuAy4qV7IYhmE=
-X-Gm-Gg: ASbGncugb2dg6EdLWM55zen3qdOQti5Nuat5m3LRUDNdv1sd9uqFPI2KqVv72xDk9/S
-	lXPm4pZYr6z6eesJM2FTHosISor/Qc8RJYW0G97A/xQSno6nusWaqCL+ba8pldveSYmnVateEcL
-	gXA1uL1ChMiUN4sYfZJrBziQ8qR+DYI655dEMt1i1+bIqPx1P573ZxIc2tlyTHMSeUUEr/r+ZAv
-	bKoFK+qk+8PlLvxdc+lf3Utj40sn16U+1spovyJZwzl2UaNYkGgEEw1QPaG9Y5rlungxGBpA/YK
-	Y38Nb0XA3pUkGG3kkO9IR8LGPQNBox1o6CexDLlCjNcCjR3np2OqOn5btW0yMP5h+xFzHzpRFsg
-	AMS4Qkq5AZ0lRnguoV38KCBKskBMEhY4PxDsdB1/b/tbhLp1yLKDcxlWMjGjQW23JEMCRYW38b+
-	kk7QWConU=
-X-Google-Smtp-Source: AGHT+IGFXoXIYQM0033JrSO0/egQMm5kDokRkBfCt8uk6iJ6QGivvStg+2qhnCmO5P2IzbdiAPo8og==
-X-Received: by 2002:a05:6000:2288:b0:427:5cf:a284 with SMTP id ffacd0b85a97d-429bd6c2d51mr1752732f8f.60.1761894855232;
-        Fri, 31 Oct 2025 00:14:15 -0700 (PDT)
+        bh=c6jwEFLJ69MPfiwc21mJzxfsviakHrUqtdfEeBD68fU=;
+        b=RaBURjmx04IyDxR+BbqlmcYnr7zHyygdZowEiloRxu3ryQ8W7X1TBeUceaRIudsQyB
+         93H8MqayhjOTRzkYvog6BacX/sGk2GK4PnLmqjJLs7QfS92oS5iX5PcFptuBNlnbZWSS
+         9uVyyRbWIloXzMPg4DwXx5XfLZ8kmii3UXasAkdEk/WFa3z9Aqx+7ydwgjzDurMGSz8r
+         lf6quKD/Qmp8cha2/exeDu9QmZpK/r7E9cTbafKAr3lF0NYITrJZZMK2DlyBnl4TsX/l
+         8uMFtwdogO8Yhm5CIorfgGo5tsxmPGEwsYdb33+hQcIWCvXYY3bGaxZPrEl/vlWvkD3k
+         wSCg==
+X-Forwarded-Encrypted: i=1; AJvYcCU8chgBIVESS4BDTSxbyqbsDKNiTRIF80pYkYsu3zBZdBRPCGQgSEP4rZUOquI3a6aAy5hNNa0/pcE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1xHbID3lcg861IVaFG+COW6Qp/LwGtrhiP/iV/wMX+uhhCuj1
+	N5FQhFlhednHPEQeTHGYFze/fMmS/mM+RXvrHy6rh2jZbbx3Lm1w+Lv9NqMfsmS/CMA=
+X-Gm-Gg: ASbGncvOQn4XS1mrP+c1en26sQTR3fpkKUdAriYTwlj3HXxAm1SCiRwxpc3L7zF5jjJ
+	rPKBnwL8YAbuvDgN8bKHCeBpWvFcjLRzxA0T+DIMIq1sZu6KWvl+RXDTN7GZwVRPFurGV7YcxD4
+	9uNZd3OCspjs8fRv3hX/QB19H62LqKM5ZSgaxnXBVpH3UjJMFsdRgUd5FzLAMApYS88a5KFu3sv
+	8fN4oj5NMOV3ovz37TPYQigRgqqd5cazsI0T35E+RTYZE/+Em45clFNKCJQeYGkXIrH48Qb3vyX
+	OspqhjFcmURZMHOTif30axlq1MgeFt5SCRGiyjMs8JbNcLGRwXpvBWIvfgt+S93MVjzGg/ObSnX
+	d0C7+AUHpDbng0QS1Eo4IvunAnVAZ0bH0zTvWbnqQS5hpFH0sRQr8VAVxzucXJuRxBN7iT0N6ps
+	fy6TN3adcc+OusT382zQ==
+X-Google-Smtp-Source: AGHT+IESPn1B27UDKqe6BRuoLyrklQLHzvgJJAtmUoGoNQEqfAcuNcYhohI3pcW3sVc+wl9uzkERfw==
+X-Received: by 2002:a05:6000:2908:b0:3e7:5f26:f1e5 with SMTP id ffacd0b85a97d-429bd680e96mr1864170f8f.23.1761895219281;
+        Fri, 31 Oct 2025 00:20:19 -0700 (PDT)
 Received: from [10.31.13.216] ([82.77.28.160])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429c114c944sm1868250f8f.20.2025.10.31.00.14.13
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429c13f192fsm1969656f8f.38.2025.10.31.00.20.17
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 31 Oct 2025 00:14:14 -0700 (PDT)
-Message-ID: <62133fe3-cce8-4405-82b9-8ded092c7eea@tuxon.dev>
-Date: Fri, 31 Oct 2025 09:14:13 +0200
+        Fri, 31 Oct 2025 00:20:18 -0700 (PDT)
+Message-ID: <a996e76e-8201-4b72-b4fa-0ea9ac62e6b1@tuxon.dev>
+Date: Fri, 31 Oct 2025 09:20:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -68,7 +68,7 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 3/7] clk: microchip: mpfs: use regmap for clocks
+Subject: Re: [PATCH v6 1/7] reset: mpfs: add non-auxiliary bus probing
 To: Conor Dooley <conor@kernel.org>
 Cc: Conor Dooley <conor.dooley@microchip.com>,
  Daire McNamara <daire.mcnamara@microchip.com>,
@@ -80,30 +80,187 @@ Cc: Conor Dooley <conor.dooley@microchip.com>,
  linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org
 References: <20251029-chewing-absolve-c4e6acfe0fa4@spud>
- <20251029-surfboard-refocus-ca9b135ab123@spud>
+ <20251029-macarena-neglector-318431fec367@spud>
 Content-Language: en-US
 From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <20251029-surfboard-refocus-ca9b135ab123@spud>
+In-Reply-To: <20251029-macarena-neglector-318431fec367@spud>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-
+Hi, Conor,
 
 On 10/29/25 18:11, Conor Dooley wrote:
-> From: Conor Dooley<conor.dooley@microchip.com>
+> From: Conor Dooley <conor.dooley@microchip.com>
 > 
-> Convert the PolarFire SoC clock driver to use regmaps instead of iomem
-> addresses as a preparatory work for supporting the new binding for this
-> device that will only provide the second of the two register regions, and
-> will require the use of syscon regmap to access the "cfg" and "periph"
-> clocks currently supported by the driver.
+> While the auxiliary bus was a nice bandaid, and meant that re-writing
+> the representation of the clock regions in devicetree was not required,
+> it has run its course. The "mss_top_sysreg" region that contains the
+> clock and reset regions, also contains pinctrl and an interrupt
+> controller, so the time has come rewrite the devicetree and probe the
+> reset controller from an mfd devicetree node, rather than implement
+> those drivers using the auxiliary bus. Wanting to avoid propagating this
+> naive/incorrect description of the hardware to the new pic64gx SoC is a
+> major motivating factor here.
 > 
-> This is effectively a revert of commit 4da2404bb003 ("clk: microchip:
-> mpfs: convert cfg_clk to clk_divider") and commit d815569783e6 ("clk:
-> microchip: mpfs: convert periph_clk to clk_gate") as it resurrects the
-> ops structures removed in those commits, with the readl()s and
-> writel()s replaced by regmap_read()s and regmap_writes()s.
+> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+> ---
+> v6:
+> - depend on MFD_SYSCON
+> - return regmap_update_bits() result directly instead of an additional
+>    return 0
 > 
-> Signed-off-by: Conor Dooley<conor.dooley@microchip.com>
+> v4:
+> - Only use driver specific lock for non-regmap writes
+> 
+> v2:
+> - Implement the request to use regmap_update_bits(). I found that I then
+>    hated the read/write helpers since they were just bloat, so I ripped
+>    them out. I replaced the regular spin_lock_irqsave() stuff with a
+>    guard(spinlock_irqsave), since that's a simpler way of handling the two
+>    different paths through such a trivial pair of functions.
+> ---
+>   drivers/reset/Kconfig      |  1 +
+>   drivers/reset/reset-mpfs.c | 79 ++++++++++++++++++++++++++++++--------
+>   2 files changed, 63 insertions(+), 17 deletions(-)
+> 
+> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
+> index 78b7078478d4..0ec4b7cd08d6 100644
+> --- a/drivers/reset/Kconfig
+> +++ b/drivers/reset/Kconfig
+> @@ -200,6 +200,7 @@ config RESET_PISTACHIO
+>   config RESET_POLARFIRE_SOC
+>   	bool "Microchip PolarFire SoC (MPFS) Reset Driver"
+>   	depends on MCHP_CLK_MPFS
+> +	depends on MFD_SYSCON
+>   	select AUXILIARY_BUS
+>   	default MCHP_CLK_MPFS
+>   	help
+> diff --git a/drivers/reset/reset-mpfs.c b/drivers/reset/reset-mpfs.c
+> index f6fa10e03ea8..25de7df55301 100644
+> --- a/drivers/reset/reset-mpfs.c
+> +++ b/drivers/reset/reset-mpfs.c
+> @@ -7,13 +7,16 @@
+>    *
+>    */
+>   #include <linux/auxiliary_bus.h>
+> +#include <linux/cleanup.h>
+>   #include <linux/delay.h>
+>   #include <linux/io.h>
+> +#include <linux/mfd/syscon.h>
+>   #include <linux/module.h>
+>   #include <linux/of.h>
+>   #include <linux/platform_device.h>
+> -#include <linux/slab.h>
+> +#include <linux/regmap.h>
+>   #include <linux/reset-controller.h>
+> +#include <linux/slab.h>
+>   #include <dt-bindings/clock/microchip,mpfs-clock.h>
+>   #include <soc/microchip/mpfs.h>
+>   
+> @@ -27,11 +30,14 @@
+>   #define MPFS_SLEEP_MIN_US	100
+>   #define MPFS_SLEEP_MAX_US	200
+>   
+> +#define REG_SUBBLK_RESET_CR	0x88u
+> +
+>   /* block concurrent access to the soft reset register */
+>   static DEFINE_SPINLOCK(mpfs_reset_lock);
+>   
+>   struct mpfs_reset {
+>   	void __iomem *base;
+> +	struct regmap *regmap;
+>   	struct reset_controller_dev rcdev;
+>   };
+>   
+> @@ -46,41 +52,46 @@ static inline struct mpfs_reset *to_mpfs_reset(struct reset_controller_dev *rcde
+>   static int mpfs_assert(struct reset_controller_dev *rcdev, unsigned long id)
+>   {
+>   	struct mpfs_reset *rst = to_mpfs_reset(rcdev);
+> -	unsigned long flags;
+>   	u32 reg;
+>   
+> -	spin_lock_irqsave(&mpfs_reset_lock, flags);
+> +	if (rst->regmap)
+> +		return regmap_update_bits(rst->regmap, REG_SUBBLK_RESET_CR, BIT(id), BIT(id));
+> +
+> +	guard(spinlock_irqsave)(&mpfs_reset_lock);
+>   
+>   	reg = readl(rst->base);
+>   	reg |= BIT(id);
+>   	writel(reg, rst->base);
+>   
+> -	spin_unlock_irqrestore(&mpfs_reset_lock, flags);
+> -
+>   	return 0;
+>   }
+>   
+>   static int mpfs_deassert(struct reset_controller_dev *rcdev, unsigned long id)
+>   {
+>   	struct mpfs_reset *rst = to_mpfs_reset(rcdev);
+> -	unsigned long flags;
+>   	u32 reg;
+>   
+> -	spin_lock_irqsave(&mpfs_reset_lock, flags);
+> +	if (rst->regmap)
+> +		return regmap_update_bits(rst->regmap, REG_SUBBLK_RESET_CR, BIT(id), 0);
+> +
+> +	guard(spinlock_irqsave)(&mpfs_reset_lock);
+>   
+>   	reg = readl(rst->base);
+>   	reg &= ~BIT(id);
+>   	writel(reg, rst->base);
+>   
+> -	spin_unlock_irqrestore(&mpfs_reset_lock, flags);
+> -
+>   	return 0;
+>   }
+>   
+>   static int mpfs_status(struct reset_controller_dev *rcdev, unsigned long id)
+>   {
+>   	struct mpfs_reset *rst = to_mpfs_reset(rcdev);
+> -	u32 reg = readl(rst->base);
+> +	u32 reg;
+> +
+> +	if (rst->regmap)
+> +		regmap_read(rst->regmap, REG_SUBBLK_RESET_CR, &reg);
+> +	else
+> +		reg = readl(rst->base);
+>   
+>   	/*
+>   	 * It is safe to return here as MPFS_NUM_RESETS makes sure the sign bit
+> @@ -130,11 +141,45 @@ static int mpfs_reset_xlate(struct reset_controller_dev *rcdev,
+>   	return index - MPFS_PERIPH_OFFSET;
+>   }
+>   
+> -static int mpfs_reset_probe(struct auxiliary_device *adev,
+> -			    const struct auxiliary_device_id *id)
+> +static int mpfs_reset_mfd_probe(struct platform_device *pdev)
+>   {
+> -	struct device *dev = &adev->dev;
+>   	struct reset_controller_dev *rcdev;
+> +	struct device *dev = &pdev->dev;
+> +	struct mpfs_reset *rst;
+> +
+> +	rst = devm_kzalloc(dev, sizeof(*rst), GFP_KERNEL);
+> +	if (!rst)
+> +		return -ENOMEM;
+> +
+> +	rcdev = &rst->rcdev;
+> +	rcdev->dev = dev;
+> +	rcdev->ops = &mpfs_reset_ops;
+> +
+> +	rcdev->of_node = pdev->dev.parent->of_node;
+> +	rcdev->of_reset_n_cells = 1;
+> +	rcdev->of_xlate = mpfs_reset_xlate;
+> +	rcdev->nr_resets = MPFS_NUM_RESETS;
+> +
+> +	rst->regmap = device_node_to_regmap(pdev->dev.parent->of_node);
+> +	if (IS_ERR(rst->regmap))
+> +		dev_err_probe(dev, PTR_ERR(rst->regmap), "Failed to find syscon regmap\n");
 
-Reviewed-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Do you want to continue registering the reset controller here? rcdev->base is 
+NULL, thus the reset controller ops will fail, if I'm not wrong.
+
+Thank you,
+Claudiu
+
