@@ -1,58 +1,59 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B851C264628;
-	Sat,  1 Nov 2025 06:34:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3A2C258ECC;
+	Sat,  1 Nov 2025 07:57:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761978873; cv=none; b=g32AaDcr7o9xtZuwdJm5z2OxOWwDFlknuZOOH3o1GDoaEL0DSUc7WeSZqJ19cMn5+dr1PTgvBYIOeu0bOYrjZuHipk7LDmmwWk2fOdGF98AwATpIa3OesftTI3D6DK0i6SkU9XiYr0TKAUf518PFWklA3uwLlHZ2XtdE+LkR7WI=
+	t=1761983838; cv=none; b=cLLRtPMD4pKo/rAiU+mGYzdcQch1vX4zh9l44S5WaKfgu34S/TAEdemlG523Y0d+u6Yqb//k3rbPr9Smga069ZGc1hjGn/nzPbv0JOsH33pz+nNf6vSkbOL6MwDi52P/2SA4lrcpeMyDxX3Dcc706I6KnTMbcBUzrywvYzc8WUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761978873; c=relaxed/simple;
-	bh=svHrHLDDhTnGKlEJaxJBVr2ClX4h1Mz3MZ8oZRBL50U=;
+	s=arc-20240116; t=1761983838; c=relaxed/simple;
+	bh=5l6XRwzZKsnytv0pszvZHGNvjbLNPdZfFglWR7zjF60=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CwXLrempom2u35fBbUqZUzhV/2sKt/4Fq5DLOb4na+lsCtqs+lcfLTrmfKxCeCaL84PVZMjGJidusuiunvQCEcMnQ1aCSvxaI5y6eRIKQAF6r5smP330NN4REiBua/aWyItSrEyz/BWdwIa2iPTe3v+0AOD9bNrxwNGXrFeOMNg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=d4VCR4kL; arc=none smtp.client-ip=192.198.163.10
+	 Content-Type:Content-Disposition:In-Reply-To; b=o83m3CCL7VgwCbkPnuZskA+YKYHeE4YiTAF72M+Tsds9JhlsDKHkRHFCniLDyV3cwl2osDafWmHZdt76Xoee7vNjWqzLZPMb5iD4diX/B0yGHdiV6vg8yGwTOn/XKDo6b35JvzbaxbkAenVtiMWRagmIn+bG9K7iN0178wQp3Lo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LJlkvtxw; arc=none smtp.client-ip=192.198.163.14
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="d4VCR4kL"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LJlkvtxw"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761978872; x=1793514872;
+  t=1761983837; x=1793519837;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=svHrHLDDhTnGKlEJaxJBVr2ClX4h1Mz3MZ8oZRBL50U=;
-  b=d4VCR4kL9JTiesVZ/NxAm8wam6Sl8XhwNH7aBZehuSIwtdQBrMOvOO3y
-   9RbCkkalv3gO6pJzFykypLZczQETx46JVTQ4orCCJUGm2hfwmD0eFZic/
-   vUWyZFErb6AEu5q3b/Ezs2Pf3fIM2DCRW2cBPpvt82QmGdlOJXmUHipn/
-   VJijaCFyfcyZGM884rIHslom/DhfL6bpFEdDwd7GiedQIfwc9GmdontBG
-   yd60vSm1/73UpAHsX52XsAFQLg5nkwpo73wrYpyOSZtfab7XRQKtmOfUr
-   EA6XtWTDDDV/zUuV8ILBtWK8MNRBRRQg86T35yW9tJzV8L9rN6pCBc5ZM
+  bh=5l6XRwzZKsnytv0pszvZHGNvjbLNPdZfFglWR7zjF60=;
+  b=LJlkvtxwOEkUVQtBPS5fYpk0v/qVx0qApxCyvjGxHDS4XFz0/WLstrIe
+   Q5YdrMQnZlqCgbkKq39/+8uJF2DTNb1sfy5P58jzMSSjMXkNtZ9/mKBJo
+   btJwACIAWM6SGY+iJa8Iq2JcuKlo/z6B+qSbxJMvBX0W9iurcxh/F8pxQ
+   jHw5XlzeyDYCoOhfUDBhAZoHCi//raaAEoEF9yrr/ipHWkFNQU0tSOVKq
+   eH42wyY8hnbS1vCSqvv/ox+W7fzpBpXry2wlTr9ClS4MOOU0/NsoX4G4J
+   MlpPhA34oNh4zLJaO3KNVBC51EO1Fzl8eCTeWqm6Mha9jOEGkQTnONGLf
    A==;
-X-CSE-ConnectionGUID: 41Wf7znTQ0aRTHLPiR+r1Q==
-X-CSE-MsgGUID: eR0A5ImES9GmU15wf2ZN7Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11599"; a="75485753"
+X-CSE-ConnectionGUID: rRRCmi9TQu61sAhAZI4fag==
+X-CSE-MsgGUID: L0V/SIpgTtKmQzMVN9r86A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11599"; a="64169420"
 X-IronPort-AV: E=Sophos;i="6.19,271,1754982000"; 
-   d="scan'208";a="75485753"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 23:34:31 -0700
-X-CSE-ConnectionGUID: TOVc8IFERiOx9yzGOalz9w==
-X-CSE-MsgGUID: bHthRj8XTdGc0S/Gcn+6Vw==
+   d="scan'208";a="64169420"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2025 00:57:15 -0700
+X-CSE-ConnectionGUID: R1dMWY33SMC/exy6kVUwnw==
+X-CSE-MsgGUID: a8gUVw5kSwqTYqY+tMzaWw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.19,271,1754982000"; 
-   d="scan'208";a="185632982"
+   d="scan'208";a="223659476"
 Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by orviesa006.jf.intel.com with ESMTP; 31 Oct 2025 23:34:26 -0700
+  by orviesa001.jf.intel.com with ESMTP; 01 Nov 2025 00:57:10 -0700
 Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1vF5Bw-000Nxw-1a;
-	Sat, 01 Nov 2025 06:34:24 +0000
-Date: Sat, 1 Nov 2025 14:33:29 +0800
+	id 1vF6Tz-000O1Q-2M;
+	Sat, 01 Nov 2025 07:57:07 +0000
+Date: Sat, 1 Nov 2025 15:56:49 +0800
 From: kernel test robot <lkp@intel.com>
 To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
 	sboyd@kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, mturquette@baylibre.com, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, matthias.bgg@gmail.com,
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	mturquette@baylibre.com, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, matthias.bgg@gmail.com,
 	angelogioacchino.delregno@collabora.com, laura.nao@collabora.com,
 	nfraprado@collabora.com, wenst@chromium.org,
 	y.oudjana@protonmail.com, linux-clk@vger.kernel.org,
@@ -61,7 +62,7 @@ Cc: oe-kbuild-all@lists.linux.dev, mturquette@baylibre.com, robh@kernel.org,
 	linux-mediatek@lists.infradead.org, kernel@collabora.com
 Subject: Re: [PATCH v2 7/7] clk: mediatek: Add support for MT6685 PM/Clock IC
  Clock Controller
-Message-ID: <202511011423.LH8doBcv-lkp@intel.com>
+Message-ID: <202511011537.ccyYOMhK-lkp@intel.com>
 References: <20251027111343.21723-8-angelogioacchino.delregno@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -87,34 +88,36 @@ url:    https://github.com/intel-lab-lkp/linux/commits/AngeloGioacchino-Del-Regn
 base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
 patch link:    https://lore.kernel.org/r/20251027111343.21723-8-angelogioacchino.delregno%40collabora.com
 patch subject: [PATCH v2 7/7] clk: mediatek: Add support for MT6685 PM/Clock IC Clock Controller
-config: arm-allmodconfig (https://download.01.org/0day-ci/archive/20251101/202511011423.LH8doBcv-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 15.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251101/202511011423.LH8doBcv-lkp@intel.com/reproduce)
+config: arm64-allmodconfig (https://download.01.org/0day-ci/archive/20251101/202511011537.ccyYOMhK-lkp@intel.com/config)
+compiler: clang version 19.1.7 (https://github.com/llvm/llvm-project cd708029e0b2869e80abe31ddb175f7c35361f90)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251101/202511011537.ccyYOMhK-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202511011423.LH8doBcv-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202511011537.ccyYOMhK-lkp@intel.com/
 
 All errors (new ones prefixed by >>):
 
-   drivers/clk/mediatek/clk-mtk-spmi.c: In function 'mtk_spmi_clk_simple_probe':
->> drivers/clk/mediatek/clk-mtk-spmi.c:48:20: error: implicit declaration of function 'devm_spmi_subdevice_alloc_and_add' [-Wimplicit-function-declaration]
+>> drivers/clk/mediatek/clk-mtk-spmi.c:48:13: error: call to undeclared function 'devm_spmi_subdevice_alloc_and_add'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
       48 |         sub_sdev = devm_spmi_subdevice_alloc_and_add(&pdev->dev, sparent);
-         |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->> drivers/clk/mediatek/clk-mtk-spmi.c:48:18: error: assignment to 'struct spmi_subdevice *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+         |                    ^
+>> drivers/clk/mediatek/clk-mtk-spmi.c:48:11: error: incompatible integer to pointer conversion assigning to 'struct spmi_subdevice *' from 'int' [-Wint-conversion]
       48 |         sub_sdev = devm_spmi_subdevice_alloc_and_add(&pdev->dev, sparent);
-         |                  ^
-   In file included from drivers/clk/mediatek/clk-mtk-spmi.c:16:
->> drivers/clk/mediatek/clk-mtk-spmi.c:52:53: error: invalid use of undefined type 'struct spmi_subdevice'
+         |                  ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>> drivers/clk/mediatek/clk-mtk-spmi.c:52:46: error: incomplete definition of type 'struct spmi_subdevice'
       52 |         regmap = devm_regmap_init_spmi_ext(&sub_sdev->sdev, &mtk_spmi_clk_regmap_config);
-         |                                                     ^~
-   include/linux/regmap.h:775:20: note: in definition of macro '__regmap_lockdep_wrapper'
+         |                                             ~~~~~~~~^
+   include/linux/regmap.h:1116:5: note: expanded from macro 'devm_regmap_init_spmi_ext'
+    1116 |                                 dev, config)
+         |                                 ^~~
+   include/linux/regmap.h:775:6: note: expanded from macro '__regmap_lockdep_wrapper'
      775 |                 fn(__VA_ARGS__, &_key,                                  \
          |                    ^~~~~~~~~~~
-   drivers/clk/mediatek/clk-mtk-spmi.c:52:18: note: in expansion of macro 'devm_regmap_init_spmi_ext'
-      52 |         regmap = devm_regmap_init_spmi_ext(&sub_sdev->sdev, &mtk_spmi_clk_regmap_config);
-         |                  ^~~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/clk/mediatek/clk-mtk-spmi.c:31:9: note: forward declaration of 'struct spmi_subdevice'
+      31 |         struct spmi_subdevice *sub_sdev;
+         |                ^
+   3 errors generated.
 
 
 vim +/devm_spmi_subdevice_alloc_and_add +48 drivers/clk/mediatek/clk-mtk-spmi.c
