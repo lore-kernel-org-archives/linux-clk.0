@@ -1,63 +1,63 @@
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2F2623E33D
-	for <linux-clk@vger.kernel.org>; Sat,  1 Nov 2025 05:00:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E31127B4EB
+	for <linux-clk@vger.kernel.org>; Sat,  1 Nov 2025 05:01:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761973258; cv=none; b=to16vXQ5eMkR02V9WxZFesXKg2oW7X1dDeaf+harkmHnBlSAjS6UY4QRvEPA4qzFSvlvfvGT9nctFkFL9L+04RUIv3BFvg0fvQvVcxz8HVTn+PUP93X5d97D8QbY1XnN2a4NhOye7hJLRE6ResUCm+AbBhxAYLP+KzsVct+9eX8=
+	t=1761973262; cv=none; b=uJMKkK1d+T1bpgJripmBv5dQV2W14TF8gk4K/rzvbsTldtSDlbniL6/NFwP8oZa3iy+2f0ayhV6p25+6uWLVwYzxoTaZCp/JsFUQPt9VvJ+MJnq1RHVbHa0gAsYDh59r1zgUDYzOgUI7MLrLuwxtBExTwIeGlQEzOP2wvcasXAw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761973258; c=relaxed/simple;
-	bh=16CUY4BHukYrONigdNf6hHwKpWDcA0Nh385BQ5R55XA=;
+	s=arc-20240116; t=1761973262; c=relaxed/simple;
+	bh=mmU7WCoMHpBBlDdOEGbM2mXzlQw3CRiu4W4BbEsf90I=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=uVS7fOFZL3S6WhTXCYwkSvsq5ojt9zxGBecQqIK5sJM9TH+Vzs2ys/NIYRD7HOXZhxRWSZzTYEYoMApfz9Ngmtfp7v+71ir5B81BW9r8WBhhwhY3Ay0bIaiOQn11V9fuHNamwP55QmDta2FvCq2bibsgX9IErTajWOwMuiC2OC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aGmNCzlz; arc=none smtp.client-ip=209.85.210.174
+	 MIME-Version; b=DZn11vslqlxqxaJeU9yFSU1wcG0foNdNblYuGOnLhLOOIq2o5BBbctdSVNZJuKs1UPYl9xYl2J6j3Zsenvv8UWwJIltw/C+qWnJgo3XKFvdl7aqjeEvqJZUBrviXRtqlAupAnwZwXNuWJkMYhes34LAoA7Gx4dPtyL4qPgkgqGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TQmJzrvj; arc=none smtp.client-ip=209.85.216.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aGmNCzlz"
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-7a2738daea2so2910786b3a.0
-        for <linux-clk@vger.kernel.org>; Fri, 31 Oct 2025 22:00:55 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TQmJzrvj"
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-340a5c58bf1so771898a91.2
+        for <linux-clk@vger.kernel.org>; Fri, 31 Oct 2025 22:01:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761973255; x=1762578055; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1761973260; x=1762578060; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=oiw7k5BoI+E1avLBAbhUpCYSAa1PLmht1gV7sVpOsMA=;
-        b=aGmNCzlzq7yYoC2K6jmqxllEEan/sdZdJHhvtVZj1vHUpGCPUv8s29CfFDD2Gs15ny
-         5jVCw+cg9BgI0HMElFeZuhWkVQfGNxJXz0C3wUKyKcrIharSt5dMBdAFAsqAu6/R8515
-         VKn5x6KjmnmMC8+n88SpTnPapc1se7M60tnFUxYmSZEx4wAwLuBnUP1m9xZDdiEqdeRf
-         TO2GC5YI4X1+Kl+xTwODewTtU4NbYkv3q/SiQTWm4PRsg6QsGg3Lt6sxNE1RpG8dzybe
-         Qmtuox+KBCJvy+fPO+y8SkGACl7ObB5ZYz6zhwEcKE3uW62k1IOPYdI+Om33ayLmgBJH
-         wJLQ==
+        bh=UDfOhi/a+fMA4qrrAJ/OYD7QRWDm3djMuAPp7/xxNPo=;
+        b=TQmJzrvj4L8iJx3pwT2M5ylCRmrL99wGQ477FV+T17xuamoMWF6AJw2mFJn/Jcy3V0
+         J86hDMlr8j6G0Hk1IoaQoQrlJ8G7pb1akTuatctnHx6oLuUV0a+fjbvgy4vZiJwtka3G
+         cyafJIiXHOIkb8rZVxCBZFdNtNV+rwClklz01v3kpYa8bZHWOjvaK30c5aCpVUCV23jG
+         xwmHOk93+j6um/hYKWsl7+6/RMnO2tHxXEMwI/5GhWFqIdlSwomSzhxYNL3k0yaJgwPf
+         ytmvlcgWAXYmIxfLoS3IEJ6+xlq2GkrGoK7reAV8Qt7LPD29LGHT12UGnfu3HoiEvzhj
+         ByFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761973255; x=1762578055;
+        d=1e100.net; s=20230601; t=1761973260; x=1762578060;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=oiw7k5BoI+E1avLBAbhUpCYSAa1PLmht1gV7sVpOsMA=;
-        b=JJZ/GlyXC+lhme5xZfBisaVfa1mxro8XxqzoV9LyK2XOaOuAyNvEXLYRaqbK7Ojj2W
-         frhLSQQN/EusMzsN5V9PfkfdbYDGE0DTtzRf7GILX14wKf8FIlmqUKyOHhcV38f68YA7
-         U8l9IPygCfvTPLxnT0Y/aTgwOWdU3SIoCpon4dU9SG2Buk2txz7WC0XUt1i4fsMs9jli
-         xOjOM+vlUr68KU/Qx+DFugP14OD6nbqvgx5k6Tao+ZiHYAFBSWCWVRLt9pvWptvUYq0I
-         YmaLkBz4d8GdRNFKjhNqowWBYWHZT4ZVgIroDrh7mluevDqNJJP+0YKA/IL8E0nI1BsT
-         CnXA==
-X-Gm-Message-State: AOJu0YzwWXGMNnH8NTrkOuaYg5f13/YIXiU4T8NqtGD0k38AsEXYXVaH
-	rGTn9yGk7CQvIK5tD19w1Dm6DSjU9srMEuVVHmaIHorGgJ6HIsicw773
-X-Gm-Gg: ASbGncsFqMG/x9RrR8aNCQt126plmDQ7CQCjnTayyj7KTrEjluMEQJYzjOKQF7OoiVh
-	zpeww/3YtJumD5Uq3rZadCBhwaLrNJwjGp9uyRUw5p+WJ1Z0HTKdr2B45b4jT7PzpixfdB+SEhJ
-	sWWrmYG6yPcW3oF1Qhre+TzGhW0D8e1rAe1CXWrKm9hr7djhWVOwBIF0jdmiG+2FsmJ1iGr46zJ
-	MwdFrCgIxjdcqUGR3iKsRuQAo8r04Rwh7J26cCL2FtJkI+0XYtWDyKI8pw72DcjpxuO4bkD/d5C
-	fyzTFaFIiCVAGlMXrPs1PIIpWdlpv1Mo+sj3reP+1QxVkmGOV1MBvklrxE1K/eJlTKfJNy1bouY
-	s6GpUuRw/PyUw/OraMnSUDOWP0s0o/InpO/OVKs7r0njVW8HVS/2a7/RpJg8PwKB9Paqem0WV+P
-	+/DuI+UeAPBp5XKypKqF4f8nWiF0noJas=
-X-Google-Smtp-Source: AGHT+IFd2bk88eDysEPUx421uqVUQRIoZmTj+xtwyXu5exUwOlKOq6uKKxTjYZHf2N0IRzsbcLrjcg==
-X-Received: by 2002:a05:6a20:549d:b0:2f3:b278:eaa5 with SMTP id adf61e73a8af0-348cd213c93mr8457177637.60.1761973255036;
-        Fri, 31 Oct 2025 22:00:55 -0700 (PDT)
+        bh=UDfOhi/a+fMA4qrrAJ/OYD7QRWDm3djMuAPp7/xxNPo=;
+        b=J2DiesCTxxnfpZ1UGYrhtfrDxHhNFnD/foY7RYWRMHScG1Flt4oIj5lAjXIbvK6w14
+         ufYnQtcytIoYyRj4dYhDX0ANSJZRxa2ewW1V0Os47mSZM0xQimxkexCId7j30R7/9FDM
+         e9zYIH6343G7eYiUW2/9bnZ9hmHQvU/zvXG0sHH3sQZy5Z/KKmSGTDEOSC403g9jvAoB
+         cDXWuBYQntygWTAdObeLVmKqJLH4DdEh6AAx8l8IS4hJDazZmCXDv3l+PuJkpuUkScxZ
+         Z3uxxKQk2VxeA9D8kr5k7gMKZ1viQY7TqJQmyVffbiRCnRV1wMUld58J7g0ZwIoudb2M
+         j5zg==
+X-Gm-Message-State: AOJu0Yyux49b+4sItUTxewfp8yZZR3xoaE0oysViBzpWEHwUJSpdPpAn
+	Kl4o1KKya2lpOxSt4Q73bNFutnJj+wRd99Uh/dV0RSjg6Sz1yT6Jorvc
+X-Gm-Gg: ASbGnct+KZ6023Ie5FPzcFiJj48kVBCd1LMJrAOl/lnxm3Lhk8OsPtiSed8KnAMG/tK
+	jL8zYM/C7m5G0gIYd0PvHbP7Pw2TATVpJcwX3QBT0RMx/Adn+eFOsJENgVKrLFpqyTTCpPAEm/w
+	8u5YM+G3r4NAnd9klnyb4yGCcKgoAHID5gnmgXz+mAFVomRysG7pkG5xMK06Fz2CHTZ2H9Yikoc
+	3rtHqO0nzbCBrvdw7l2dRiYF/dW7mUOxxbZ7IjSzukGFYKo/mELaPd+7lsOzYOyig9oc4NdnUdN
+	n8GVDV2dxNJolJJABny+I2j+cPKpnk6fqzypuKLUHZNsEUtjiA4YA7NMG7fwXHEmCHSF399umAb
+	PJJI7y1TkE/yA3XzuO0y+umfBiNr4E2SqOr2xW+Be+chTSt+ZWLG6LvDoHTFBSMXCETV4jvKw+B
+	AT5HSK9AQyP9Vm1l+aKaFW
+X-Google-Smtp-Source: AGHT+IFVFBkXLeknHGrVPrf+9NXafeqPq51bDE4YzC1y7r8qfI4ybJ4GeXk3WxHgPmovadiop8e7BA==
+X-Received: by 2002:a17:90b:3b52:b0:329:cb75:fef2 with SMTP id 98e67ed59e1d1-34082fc69d6mr7936643a91.3.1761973260531;
+        Fri, 31 Oct 2025 22:01:00 -0700 (PDT)
 Received: from iku.. ([2401:4900:1c06:600d:690:cbc4:d4d9:22c2])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b93b8aa3ff1sm3761095a12.14.2025.10.31.22.00.49
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b93b8aa3ff1sm3761095a12.14.2025.10.31.22.00.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Oct 2025 22:00:54 -0700 (PDT)
+        Fri, 31 Oct 2025 22:00:59 -0700 (PDT)
 From: Prabhakar <prabhakar.csengg@gmail.com>
 X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: Geert Uytterhoeven <geert+renesas@glider.be>,
@@ -75,9 +75,9 @@ Cc: linux-clk@vger.kernel.org,
 	Biju Das <biju.das.jz@bp.renesas.com>,
 	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 2/4] dt-bindings: clock: renesas,r9a09g056-cpg: Add USB3.0 core clocks
-Date: Sat,  1 Nov 2025 05:00:32 +0000
-Message-ID: <20251101050034.738807-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 3/4] clk: renesas: r9a09g057: Add USB3.0 clocks/resets
+Date: Sat,  1 Nov 2025 05:00:33 +0000
+Message-ID: <20251101050034.738807-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251101050034.738807-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20251101050034.738807-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -91,26 +91,61 @@ Content-Transfer-Encoding: 8bit
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Add definitions for USB3.0 core clocks in the R9A09G056 CPG DT bindings
-header file.
+Add USB3.0 clock and reset entries.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- include/dt-bindings/clock/renesas,r9a09g056-cpg.h | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/clk/renesas/r9a09g057-cpg.c | 16 +++++++++++++++-
+ 1 file changed, 15 insertions(+), 1 deletion(-)
 
-diff --git a/include/dt-bindings/clock/renesas,r9a09g056-cpg.h b/include/dt-bindings/clock/renesas,r9a09g056-cpg.h
-index a9af5af9e3a1..234dcf4f0f91 100644
---- a/include/dt-bindings/clock/renesas,r9a09g056-cpg.h
-+++ b/include/dt-bindings/clock/renesas,r9a09g056-cpg.h
-@@ -21,5 +21,7 @@
- #define R9A09G056_GBETH_0_CLK_PTP_REF_I		10
- #define R9A09G056_GBETH_1_CLK_PTP_REF_I		11
- #define R9A09G056_SPI_CLK_SPI			12
-+#define R9A09G056_USB3_0_REF_ALT_CLK_P		13
-+#define R9A09G056_USB3_0_CLKCORE		14
+diff --git a/drivers/clk/renesas/r9a09g057-cpg.c b/drivers/clk/renesas/r9a09g057-cpg.c
+index c9f6d91884c3..400d9e94f2e9 100644
+--- a/drivers/clk/renesas/r9a09g057-cpg.c
++++ b/drivers/clk/renesas/r9a09g057-cpg.c
+@@ -17,7 +17,7 @@
  
- #endif /* __DT_BINDINGS_CLOCK_RENESAS_R9A09G056_CPG_H__ */
+ enum clk_ids {
+ 	/* Core Clock Outputs exported to DT */
+-	LAST_DT_CORE_CLK = R9A09G057_SPI_CLK_SPI,
++	LAST_DT_CORE_CLK = R9A09G057_USB3_1_CLKCORE,
+ 
+ 	/* External Input Clocks */
+ 	CLK_AUDIO_EXTAL,
+@@ -235,6 +235,10 @@ static const struct cpg_core_clk r9a09g057_core_clks[] __initconst = {
+ 		  CLK_PLLETH_DIV_125_FIX, 1, 1),
+ 	DEF_FIXED_MOD_STATUS("spi_clk_spi", R9A09G057_SPI_CLK_SPI, CLK_PLLCM33_XSPI, 1, 2,
+ 			     FIXED_MOD_CONF_XSPI),
++	DEF_FIXED("usb3_0_ref_alt_clk_p", R9A09G057_USB3_0_REF_ALT_CLK_P, CLK_QEXTAL, 1, 1),
++	DEF_FIXED("usb3_0_core_clk", R9A09G057_USB3_0_CLKCORE, CLK_QEXTAL, 1, 1),
++	DEF_FIXED("usb3_1_ref_alt_clk_p", R9A09G057_USB3_1_REF_ALT_CLK_P, CLK_QEXTAL, 1, 1),
++	DEF_FIXED("usb3_1_core_clk", R9A09G057_USB3_1_CLKCORE, CLK_QEXTAL, 1, 1),
+ };
+ 
+ static const struct rzv2h_mod_clk r9a09g057_mod_clks[] __initconst = {
+@@ -360,6 +364,14 @@ static const struct rzv2h_mod_clk r9a09g057_mod_clks[] __initconst = {
+ 						BUS_MSTOP(8, BIT(4))),
+ 	DEF_MOD("sdhi_2_aclk",			CLK_PLLDTY_ACPU_DIV4, 10, 14, 5, 14,
+ 						BUS_MSTOP(8, BIT(4))),
++	DEF_MOD("usb3_0_aclk",			CLK_PLLDTY_DIV8, 10, 15, 5, 15,
++						BUS_MSTOP(7, BIT(12))),
++	DEF_MOD("usb3_0_pclk_usbtst",		CLK_PLLDTY_ACPU_DIV4, 11, 0, 5, 16,
++						BUS_MSTOP(7, BIT(14))),
++	DEF_MOD("usb3_1_aclk",			CLK_PLLDTY_DIV8, 11, 1, 5, 17,
++						BUS_MSTOP(7, BIT(13))),
++	DEF_MOD("usb3_1_pclk_usbtst",		CLK_PLLDTY_ACPU_DIV4, 11, 2, 5, 18,
++						BUS_MSTOP(7, BIT(15))),
+ 	DEF_MOD("usb2_0_u2h0_hclk",		CLK_PLLDTY_DIV8, 11, 3, 5, 19,
+ 						BUS_MSTOP(7, BIT(7))),
+ 	DEF_MOD("usb2_0_u2h1_hclk",		CLK_PLLDTY_DIV8, 11, 4, 5, 20,
+@@ -501,6 +513,8 @@ static const struct rzv2h_reset r9a09g057_resets[] __initconst = {
+ 	DEF_RST(10, 7, 4, 24),		/* SDHI_0_IXRST */
+ 	DEF_RST(10, 8, 4, 25),		/* SDHI_1_IXRST */
+ 	DEF_RST(10, 9, 4, 26),		/* SDHI_2_IXRST */
++	DEF_RST(10, 10, 4, 27),		/* USB3_0_ARESETN */
++	DEF_RST(10, 11, 4, 28),		/* USB3_1_ARESETN */
+ 	DEF_RST(10, 12, 4, 29),		/* USB2_0_U2H0_HRESETN */
+ 	DEF_RST(10, 13, 4, 30),		/* USB2_0_U2H1_HRESETN */
+ 	DEF_RST(10, 14, 4, 31),		/* USB2_0_U2P_EXL_SYSRST */
 -- 
 2.43.0
 
