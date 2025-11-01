@@ -1,167 +1,223 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3A2C258ECC;
-	Sat,  1 Nov 2025 07:57:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C7E83D76;
+	Sat,  1 Nov 2025 08:53:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761983838; cv=none; b=cLLRtPMD4pKo/rAiU+mGYzdcQch1vX4zh9l44S5WaKfgu34S/TAEdemlG523Y0d+u6Yqb//k3rbPr9Smga069ZGc1hjGn/nzPbv0JOsH33pz+nNf6vSkbOL6MwDi52P/2SA4lrcpeMyDxX3Dcc706I6KnTMbcBUzrywvYzc8WUI=
+	t=1761987236; cv=none; b=ID97KBQkWA4+mFqgDLB0aRM6Jbis93Bxfjban8FuQ6tHunr5GKcnOWLyu5gdSl+C7gL6YM3lVCJhxOWEpXz/QD+hr+ei602kO+JIHlStxBEtl/2ygTP6g7Jx7yCbX1Ii2bh0ngEKAjVvgq/wLlUQ6JD3tX6NCabWUFR0SuQWkEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761983838; c=relaxed/simple;
-	bh=5l6XRwzZKsnytv0pszvZHGNvjbLNPdZfFglWR7zjF60=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o83m3CCL7VgwCbkPnuZskA+YKYHeE4YiTAF72M+Tsds9JhlsDKHkRHFCniLDyV3cwl2osDafWmHZdt76Xoee7vNjWqzLZPMb5iD4diX/B0yGHdiV6vg8yGwTOn/XKDo6b35JvzbaxbkAenVtiMWRagmIn+bG9K7iN0178wQp3Lo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LJlkvtxw; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1761987236; c=relaxed/simple;
+	bh=7aX/PBEQrcbuyC9aErsxSQEAD1hQ8eoMRzgU5nSYlKI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=idFaAB03ulj1ez4FY7TnKvkAN/OCrIoUgkvLMj4Ykn56558bYAfQyoLYwbsPu/Ldy8vqOl4+h8jIb+v8tp7fFCUR2fk2kzl8DUEDwYVw1DtLoRcMCTT6B1pEswI/nFAfN0nlF7sH/jnB8PoN4v7wvIjc05KZhCcDo8pzqrkryuc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=A2VnnmlP; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LJlkvtxw"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761983837; x=1793519837;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=5l6XRwzZKsnytv0pszvZHGNvjbLNPdZfFglWR7zjF60=;
-  b=LJlkvtxwOEkUVQtBPS5fYpk0v/qVx0qApxCyvjGxHDS4XFz0/WLstrIe
-   Q5YdrMQnZlqCgbkKq39/+8uJF2DTNb1sfy5P58jzMSSjMXkNtZ9/mKBJo
-   btJwACIAWM6SGY+iJa8Iq2JcuKlo/z6B+qSbxJMvBX0W9iurcxh/F8pxQ
-   jHw5XlzeyDYCoOhfUDBhAZoHCi//raaAEoEF9yrr/ipHWkFNQU0tSOVKq
-   eH42wyY8hnbS1vCSqvv/ox+W7fzpBpXry2wlTr9ClS4MOOU0/NsoX4G4J
-   MlpPhA34oNh4zLJaO3KNVBC51EO1Fzl8eCTeWqm6Mha9jOEGkQTnONGLf
-   A==;
-X-CSE-ConnectionGUID: rRRCmi9TQu61sAhAZI4fag==
-X-CSE-MsgGUID: L0V/SIpgTtKmQzMVN9r86A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11599"; a="64169420"
-X-IronPort-AV: E=Sophos;i="6.19,271,1754982000"; 
-   d="scan'208";a="64169420"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2025 00:57:15 -0700
-X-CSE-ConnectionGUID: R1dMWY33SMC/exy6kVUwnw==
-X-CSE-MsgGUID: a8gUVw5kSwqTYqY+tMzaWw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,271,1754982000"; 
-   d="scan'208";a="223659476"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by orviesa001.jf.intel.com with ESMTP; 01 Nov 2025 00:57:10 -0700
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vF6Tz-000O1Q-2M;
-	Sat, 01 Nov 2025 07:57:07 +0000
-Date: Sat, 1 Nov 2025 15:56:49 +0800
-From: kernel test robot <lkp@intel.com>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	sboyd@kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	mturquette@baylibre.com, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com, laura.nao@collabora.com,
-	nfraprado@collabora.com, wenst@chromium.org,
-	y.oudjana@protonmail.com, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, kernel@collabora.com
-Subject: Re: [PATCH v2 7/7] clk: mediatek: Add support for MT6685 PM/Clock IC
- Clock Controller
-Message-ID: <202511011537.ccyYOMhK-lkp@intel.com>
-References: <20251027111343.21723-8-angelogioacchino.delregno@collabora.com>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="A2VnnmlP"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 0D5511A17DF;
+	Sat,  1 Nov 2025 08:53:50 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id BD3FD6070B;
+	Sat,  1 Nov 2025 08:53:49 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 558F411818085;
+	Sat,  1 Nov 2025 09:53:41 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1761987227; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=5WyJ7KLCTmA5rRb0bRTlxs5HWJzEizch8fWH5kQRtnI=;
+	b=A2VnnmlPLPE5gbwOjgo02mjFmC3ZBtPbAW+WKC2SYyheozrWVVXP3kdPCVOp9LDd+VJpke
+	lppza4wAilTS5Q0nmctwJI9Z78Eszhjx0Bc4Ddj+D+lvUmIIwXww1vJblT6MuNBjIesYLA
+	mIVGxxHVERptfNxlePu5Bl2eLnrjrTC0TvcuhHnWQ/mewmNWOv3KA3oUUHF46otE0sOLWs
+	QWK46IQ4VxqWvPyNxL0jQDjJTUL3cxFNiCQM6ICRZje5fnUm00iZaw654mrNUEgSdhGAex
+	PfRgHqVpAM2ulBkhGJBXs6jUectxbkRPaqcDjiIdk55lMdNNZ6hvPgsmAeeldA==
+From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+Subject: [PATCH v2 0/7] Add generic PHY driver used by MACB/GEM on EyeQ5
+Date: Sat, 01 Nov 2025 09:53:28 +0100
+Message-Id: <20251101-macb-phy-v2-0-c1519eef16d3@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251027111343.21723-8-angelogioacchino.delregno@collabora.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAIjKBWkC/23MQQ7CIBCF4as0sxYDE03VlfdougA6yCQWGmiIT
+ cPdxa5d/i8v3w6ZElOGR7dDosKZY2iBpw6s1+FFgqfWgBKvSiKKWVsjFr8JVMZeSE3OmB7afUn
+ k+HNQw9jac15j2g65qN/6BylKSOHw7vDmNPWonibG9c3hbOMMY631C2tZV8uiAAAA
+X-Change-ID: 20251022-macb-phy-21bc4e1dfbb7
+To: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
+ =?utf-8?q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Cc: linux-mips@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, 
+ linux-clk@vger.kernel.org, 
+ =?utf-8?q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>, 
+ Maxime Chevallier <maxime.chevallier@bootlin.com>, 
+ Tawfik Bayouk <tawfik.bayouk@mobileye.com>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>, 
+ Conor Dooley <conor.dooley@microchip.com>, 
+ Jerome Brunet <jbrunet@baylibre.com>, Andrew Lunn <andrew@lunn.ch>
+X-Mailer: b4 0.14.3
+X-Last-TLS-Session-Version: TLSv1.3
 
-Hi AngeloGioacchino,
+EyeQ5 SoCs integrate two GEM instances. A system-controller register
+region named "OLB" has some control over the Ethernet PHY integration.
 
-kernel test robot noticed the following build errors:
+Past iterations [0] touched those syscon registers directly from MACB.
+It was a bad idea. Extend the current OLB ecosystem with a new generic
+PHY driver.
+ - OLB is carried by one main platform driver: clk-eyeq.
+ - It instantiates auxiliary devices: reset-eyeq & pinctrl-eyeq5.
+ - We add a new one: phy-eyeq5-eth.
 
-[auto build test ERROR on clk/clk-next]
-[also build test ERROR on linus/master v6.18-rc3 next-20251031]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Here is a DT overview:
 
-url:    https://github.com/intel-lab-lkp/linux/commits/AngeloGioacchino-Del-Regno/clk-mediatek-Split-out-registration-from-mtk_clk_register_gates/20251027-191633
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
-patch link:    https://lore.kernel.org/r/20251027111343.21723-8-angelogioacchino.delregno%40collabora.com
-patch subject: [PATCH v2 7/7] clk: mediatek: Add support for MT6685 PM/Clock IC Clock Controller
-config: arm64-allmodconfig (https://download.01.org/0day-ci/archive/20251101/202511011537.ccyYOMhK-lkp@intel.com/config)
-compiler: clang version 19.1.7 (https://github.com/llvm/llvm-project cd708029e0b2869e80abe31ddb175f7c35361f90)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251101/202511011537.ccyYOMhK-lkp@intel.com/reproduce)
+   olb: system-controller@e00000 {
+           compatible = "mobileye,eyeq5-olb", "syscon";
+           reg = <0 0xe00000 0x0 0x400>;
+           // ...
+           #reset-cells = <2>;
+           #clock-cells = <1>;
+           #phy-cells = <1>; // <= this is new
+   };
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202511011537.ccyYOMhK-lkp@intel.com/
+   macb0: ethernet@2a00000 {
+           compatible = "mobileye,eyeq5-gem";
+           phys = <&olb 0>; // <= GEM device consumes the PHY
+           // ...
+   };
 
-All errors (new ones prefixed by >>):
+   macb1: ethernet@2b00000 {
+           compatible = "mobileye,eyeq5-gem";
+           phys = <&olb 1>; // <= same thing for the second instance
+           // ...
+   };
 
->> drivers/clk/mediatek/clk-mtk-spmi.c:48:13: error: call to undeclared function 'devm_spmi_subdevice_alloc_and_add'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-      48 |         sub_sdev = devm_spmi_subdevice_alloc_and_add(&pdev->dev, sparent);
-         |                    ^
->> drivers/clk/mediatek/clk-mtk-spmi.c:48:11: error: incompatible integer to pointer conversion assigning to 'struct spmi_subdevice *' from 'int' [-Wint-conversion]
-      48 |         sub_sdev = devm_spmi_subdevice_alloc_and_add(&pdev->dev, sparent);
-         |                  ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->> drivers/clk/mediatek/clk-mtk-spmi.c:52:46: error: incomplete definition of type 'struct spmi_subdevice'
-      52 |         regmap = devm_regmap_init_spmi_ext(&sub_sdev->sdev, &mtk_spmi_clk_regmap_config);
-         |                                             ~~~~~~~~^
-   include/linux/regmap.h:1116:5: note: expanded from macro 'devm_regmap_init_spmi_ext'
-    1116 |                                 dev, config)
-         |                                 ^~~
-   include/linux/regmap.h:775:6: note: expanded from macro '__regmap_lockdep_wrapper'
-     775 |                 fn(__VA_ARGS__, &_key,                                  \
-         |                    ^~~~~~~~~~~
-   drivers/clk/mediatek/clk-mtk-spmi.c:31:9: note: forward declaration of 'struct spmi_subdevice'
-      31 |         struct spmi_subdevice *sub_sdev;
-         |                ^
-   3 errors generated.
+The Linux MACB driver already consumes a generic PHY for some other
+compatibles, this is nothing new. The MACB series [1] has been merged
+into net-next/main.
 
+--
 
-vim +/devm_spmi_subdevice_alloc_and_add +48 drivers/clk/mediatek/clk-mtk-spmi.c
+One topic to talk about: the whole "we must assign child->of_node
+manually". Auxiliary driver core does not do it automatically, so
+either the parent (clk-eyeq) or the children must do it.
 
-80a000281742dc AngeloGioacchino Del Regno 2025-10-27  21  
-80a000281742dc AngeloGioacchino Del Regno 2025-10-27  22  int mtk_spmi_clk_simple_probe(struct platform_device *pdev)
-80a000281742dc AngeloGioacchino Del Regno 2025-10-27  23  {
-80a000281742dc AngeloGioacchino Del Regno 2025-10-27  24  	struct regmap_config mtk_spmi_clk_regmap_config = {
-80a000281742dc AngeloGioacchino Del Regno 2025-10-27  25  		.reg_bits = 16,
-80a000281742dc AngeloGioacchino Del Regno 2025-10-27  26  		.val_bits = 8,
-80a000281742dc AngeloGioacchino Del Regno 2025-10-27  27  		.fast_io = true
-80a000281742dc AngeloGioacchino Del Regno 2025-10-27  28  	};
-80a000281742dc AngeloGioacchino Del Regno 2025-10-27  29  	struct device_node *node = pdev->dev.of_node;
-80a000281742dc AngeloGioacchino Del Regno 2025-10-27  30  	const struct mtk_spmi_clk_desc *mscd;
-80a000281742dc AngeloGioacchino Del Regno 2025-10-27  31  	struct spmi_subdevice *sub_sdev;
-80a000281742dc AngeloGioacchino Del Regno 2025-10-27  32  	struct spmi_device *sparent;
-80a000281742dc AngeloGioacchino Del Regno 2025-10-27  33  	struct regmap *regmap;
-80a000281742dc AngeloGioacchino Del Regno 2025-10-27  34  	int ret;
-80a000281742dc AngeloGioacchino Del Regno 2025-10-27  35  
-80a000281742dc AngeloGioacchino Del Regno 2025-10-27  36  	ret = of_property_read_u32(node, "reg", &mtk_spmi_clk_regmap_config.reg_base);
-80a000281742dc AngeloGioacchino Del Regno 2025-10-27  37  	if (ret)
-80a000281742dc AngeloGioacchino Del Regno 2025-10-27  38  		return ret;
-80a000281742dc AngeloGioacchino Del Regno 2025-10-27  39  
-80a000281742dc AngeloGioacchino Del Regno 2025-10-27  40  	/* If the max_register was not declared the pdata is not valid */
-80a000281742dc AngeloGioacchino Del Regno 2025-10-27  41  	mscd = device_get_match_data(&pdev->dev);
-80a000281742dc AngeloGioacchino Del Regno 2025-10-27  42  	if (mscd->max_register == 0)
-80a000281742dc AngeloGioacchino Del Regno 2025-10-27  43  		return -EINVAL;
-80a000281742dc AngeloGioacchino Del Regno 2025-10-27  44  
-80a000281742dc AngeloGioacchino Del Regno 2025-10-27  45  	mtk_spmi_clk_regmap_config.max_register = mscd->max_register;
-80a000281742dc AngeloGioacchino Del Regno 2025-10-27  46  
-80a000281742dc AngeloGioacchino Del Regno 2025-10-27  47  	sparent = to_spmi_device(pdev->dev.parent);
-80a000281742dc AngeloGioacchino Del Regno 2025-10-27 @48  	sub_sdev = devm_spmi_subdevice_alloc_and_add(&pdev->dev, sparent);
-80a000281742dc AngeloGioacchino Del Regno 2025-10-27  49  	if (IS_ERR(sub_sdev))
-80a000281742dc AngeloGioacchino Del Regno 2025-10-27  50  		return PTR_ERR(sub_sdev);
-80a000281742dc AngeloGioacchino Del Regno 2025-10-27  51  
-80a000281742dc AngeloGioacchino Del Regno 2025-10-27 @52  	regmap = devm_regmap_init_spmi_ext(&sub_sdev->sdev, &mtk_spmi_clk_regmap_config);
-80a000281742dc AngeloGioacchino Del Regno 2025-10-27  53  	if (IS_ERR(regmap))
-80a000281742dc AngeloGioacchino Del Regno 2025-10-27  54  		return PTR_ERR(regmap);
-80a000281742dc AngeloGioacchino Del Regno 2025-10-27  55  
-80a000281742dc AngeloGioacchino Del Regno 2025-10-27  56  	return mtk_clk_simple_probe_internal(pdev, node, mscd->desc, regmap);
-80a000281742dc AngeloGioacchino Del Regno 2025-10-27  57  }
-80a000281742dc AngeloGioacchino Del Regno 2025-10-27  58  EXPORT_SYMBOL_GPL(mtk_spmi_clk_simple_probe);
-80a000281742dc AngeloGioacchino Del Regno 2025-10-27  59  
+In OLB land, until now, children were doing it with a
+device_set_of_node_from_dev(dev, dev->parent) call in probe.
 
+Recently, Jerome Brunet added devm_auxiliary_device_create():
+eaa0d30216c1 ("driver core: auxiliary bus: add device creation
+helpers"). Using that cleans up clk-eyeq but means we must remove
+device_set_of_node_from_dev() from reset-eyeq in the same patch series,
+as the helpers do the dev->of_node assignement from the parent driver.
+
+That explains why the ideal patch:
+[PATCH 4/7] clk: eyeq: add EyeQ5 children auxiliary device for generic PHYs
+Turned into those three:
+[PATCH 3/7] clk: eyeq: use the auxiliary device creation helper
+[PATCH 4/7] clk: eyeq: add EyeQ5 children auxiliary device for generic PHYs
+[PATCH 5/7] reset: eyeq: drop device_set_of_node_from_dev() done by parent
+
+--
+
+About merging, it'll probably be complex. I see no build dependencies,
+but the board will be in an odd state if only some patches are applied.
+Some dev_warn() at boot and dev->of_node refcounting issues at unload.
+
+ - [PATCH 1/7] dt-bindings: soc: mobileye: OLB is an Ethernet PHY provider on EyeQ5
+   We touch dt-bindings because OLB becomes a PHY provider.
+   => linux-mips (?)
+
+ - [PATCH 2/7] phy: Add driver for EyeQ5 Ethernet PHY wrapper
+   We add the generic PHY driver in drivers/phy/phy-eyeq5-eth.c with the
+   usual Kconfig, Makefile and MAINTAINERS changes.
+   => linux-phy (?)
+
+ - [PATCH 6/7] MIPS: mobileye: eyeq5: add two Cadence GEM Ethernet controllers
+   [PATCH 7/7] MIPS: mobileye: eyeq5-epm: add two Cadence GEM Ethernet PHYs
+   DTS patches to add both the #phy-cells of OLB and the MACB instances.
+   => linux-mips
+
+ - [PATCH 4/7] clk: eyeq: add EyeQ5 children auxiliary device for generic PHYs
+   We must update clk-eyeq because it instantiates a new auxdev.
+   => linux-clk
+
+ - [PATCH 3/7] clk: eyeq: use the auxiliary device creation helper
+   [PATCH 5/7] reset: eyeq: drop device_set_of_node_from_dev() done by parent
+   With the dev->of_node assignement, we must also correct reset-eyeq.
+   => separate them into linux-clk and linux-reset?
+
+Have a nice day,
+Thanks,
+Théo
+
+[0]: https://lore.kernel.org/lkml/20250627-macb-v2-15-ff8207d0bb77@bootlin.com/
+[1]: https://lore.kernel.org/lkml/20251022-macb-eyeq5-v2-0-7c140abb0581@bootlin.com/
+[2]: https://lore.kernel.org/all/20251021-macb-eyeq5-v1-0-3b0b5a9d2f85@bootlin.com/
+
+Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
+---
+Changes in v2:
+- Take Acked-by: Conor Dooley on dt-bindings-patch.
+- s/%ld/%tu/ for printing ptrdiff_t; warnings on 32-bit archs.
+  Reported by NIPA's netdev/build_32bit test.
+  https://patchwork.kernel.org/project/netdevbpf/patch/20251021-macb-eyeq5-v1-7-3b0b5a9d2f85@bootlin.com/
+  https://netdev.bots.linux.dev/static/nipa/1014126/14277857/build_32bit/stderr
+- Link to v1: https://lore.kernel.org/r/20251022-macb-phy-v1-0-f29f28fae721@bootlin.com
+
+Changes since MACB V1:
+- Drop the old "mobileye,olb" properties from DT patches; found while
+  running dtbs_check and dt_binding_check.
+- Drop all patches targeting net-next. That is MACB dt-bindings patch
+  and MACB driver code. See there here [1].
+- Link to v1: https://lore.kernel.org/lkml/20251021-macb-eyeq5-v1-0-3b0b5a9d2f85@bootlin.com/
+
+Past versions of MACB patches:
+ - March 2025: [PATCH net-next 00/13] Support the Cadence MACB/GEM
+   instances on Mobileye EyeQ5 SoCs
+   https://lore.kernel.org/lkml/20250321-macb-v1-0-537b7e37971d@bootlin.com/
+ - June 2025: [PATCH net-next v2 00/18] Support the Cadence MACB/GEM
+   instances on Mobileye EyeQ5 SoCs
+   https://lore.kernel.org/lkml/20250627-macb-v2-0-ff8207d0bb77@bootlin.com/
+ - August 2025: [PATCH net v3 00/16] net: macb: various fixes & cleanup
+   https://lore.kernel.org/lkml/20250808-macb-fixes-v3-0-08f1fcb5179f@bootlin.com/
+
+---
+Jerome Brunet (1):
+      clk: eyeq: use the auxiliary device creation helper
+
+Théo Lebrun (6):
+      dt-bindings: soc: mobileye: OLB is an Ethernet PHY provider on EyeQ5
+      phy: Add driver for EyeQ5 Ethernet PHY wrapper
+      clk: eyeq: add EyeQ5 children auxiliary device for generic PHYs
+      reset: eyeq: drop device_set_of_node_from_dev() done by parent
+      MIPS: mobileye: eyeq5: add two Cadence GEM Ethernet controllers
+      MIPS: mobileye: eyeq5-epm: add two Cadence GEM Ethernet PHYs
+
+ .../bindings/soc/mobileye/mobileye,eyeq5-olb.yaml  |   7 +-
+ MAINTAINERS                                        |   1 +
+ arch/mips/boot/dts/mobileye/eyeq5-epm5.dts         |  26 +++
+ arch/mips/boot/dts/mobileye/eyeq5.dtsi             |  45 ++++
+ drivers/clk/clk-eyeq.c                             |  60 ++---
+ drivers/phy/Kconfig                                |  13 ++
+ drivers/phy/Makefile                               |   1 +
+ drivers/phy/phy-eyeq5-eth.c                        | 254 +++++++++++++++++++++
+ drivers/reset/reset-eyeq.c                         |  24 +-
+ 9 files changed, 363 insertions(+), 68 deletions(-)
+---
+base-commit: 01cc760632b875c4ad0d8fec0b0c01896b8a36d4
+change-id: 20251022-macb-phy-21bc4e1dfbb7
+
+Best regards,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Théo Lebrun <theo.lebrun@bootlin.com>
+
