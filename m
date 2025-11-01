@@ -1,41 +1,42 @@
 Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A516B29E114
-	for <linux-clk@vger.kernel.org>; Sat,  1 Nov 2025 08:53:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 534E72BCF7F;
+	Sat,  1 Nov 2025 08:53:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761987240; cv=none; b=N5+QXZpmKuYPQJDXn42rOeTdK4z3uR1owSO+2LAIOmjrxFtpaMymo5dIPfVNJxrpsf6CwvOZyZbYwVLniDDTANERQddf5C0EBGQKB1vbeoLzlq8nvBqFLW73MlbY8TAxdRqxk+e4QNfBWWrst44R7wFWPbdFPsSr1owduTY1Vko=
+	t=1761987241; cv=none; b=MI+vekvkI4Eyjjg5zEcW+MhA8sDwV6124CXh3ESXH7KLNRfxdMvimN4cNbI2w9eCsWBjk6g+a8l7BBRuJ/dmrgmV2ugpoklflyRF0R+/CVaiORNVc7HljNHDGk8YN8224P1z4Iwq7YbfYo3Xr16Ybfhoqe9kAl44xPrUtEpxnzo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761987240; c=relaxed/simple;
-	bh=sir3J4gSwhHTRdJ1BAz2vNiZTw6r2T/fSmbbEzzZvdM=;
+	s=arc-20240116; t=1761987241; c=relaxed/simple;
+	bh=wu8G+IZgPrTONrj+B2Dn95z8cx1Ol1tERVibzQhVlnU=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=bwyQJbEYGzYk5xs8a5OA3CQQKYmnY1kZqEtysQac3kj8tK/z5oQu77cSST+i5gLXjS6TQrKyRMkvE7Cfmo+rsfNzd9kdQXPrSDd39Afc/vY/jt6AB+DcFtkHgl0Z/KY6F2sO5OamGPXQFTJ0FpyfbtKzH1FNSGlZLEXbp5y2SVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ur6+f2I6; arc=none smtp.client-ip=185.246.85.4
+	 In-Reply-To:To:Cc; b=n9JuGEQaYedcsk7uKRSM1E7oNkTHHKtDf1HT/kR4RcSxIVoMkv+5rGaSgof4Pd6KCf8ay7nZHCPN7aH1I5vUExbwDW8djjbVgK/0bNWob/UVtU1pyY/uB0ZffvxyYWkofU53qbswwQvoK34sZ2XlLKyeH8/ama+D7mtAgkJN268=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=fecgiAoz; arc=none smtp.client-ip=185.246.85.4
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ur6+f2I6"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="fecgiAoz"
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id E5EC34E41461;
-	Sat,  1 Nov 2025 08:53:56 +0000 (UTC)
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 36A394E4145F;
+	Sat,  1 Nov 2025 08:53:52 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id BBA816070B;
-	Sat,  1 Nov 2025 08:53:56 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 95DCC11818085;
-	Sat,  1 Nov 2025 09:53:53 +0100 (CET)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 0C3316070B;
+	Sat,  1 Nov 2025 08:53:52 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 92B0311819FA5;
+	Sat,  1 Nov 2025 09:53:48 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1761987235; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1761987230; h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=M7/ONsHb0ArB5bCF7FZGbfdHV5WjqY9DA/Z65CQxU0E=;
-	b=ur6+f2I60wWilWKPzeIyRqKp36UB7FSXahjp7rZLLr4w5C6m4aTYRWab8UAlSBk4/avmwP
-	GzTPS52IzkUIpWLm+LhOEqU57KiejmFAPJo26RhF6+sPZHLTIYDTthZ7DK122pW4JVTIzL
-	ITMZMnwPYjJkQuEWrSI4gNhHyyGCP0rBFhSaYfhq9SiiXCjNyRMqpReDyQ3JI/8rOqXEDc
-	kr6Pz2E1YZkj/c7JJm077PWKYaaJZJ9r9RBPyeQhVGCCznBLK4OcYo1Rmk+qPXhVVLslaW
-	D/RVbCEqYx8r6HBgFCpQSwLO8ce1kehfz/oNvueuELjP2x5KGK1V3KE17P8MdQ==
+	bh=l1njwaNJfY/idU4bWOeSP7L5Sk9yZg7tVmJjcviOeuM=;
+	b=fecgiAoz4IUW1RspPnzQy5eVeDGXcAD3MQojpgVo4RhHzrUFBh0i1l++QoJgT707t26PDF
+	Q+ItXXIPHEkEgqUNlhCULKrKxoanTFhFQtILmS+Gr4JEtVghm4vr11h9S/pHG/bX6ySyaW
+	lQAK+TP1WFHLwIIr8y8myx8Il6WYppjvT4qjtI9IYP0cqls3HEtVZhh+3Y9+NoClckgR6f
+	E9vqY5ume3nxHDSWMLr9OoUbhKiWi9+uM6hQVNe67XGQ650nEuQBKZdicBa/brul6LFT/2
+	+xAr198Rje+joznAuqAEEkJUY56ztit3YkIUfFy3sOJdWPIRO1wGT3yK62eJeQ==
 From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-Date: Sat, 01 Nov 2025 09:53:31 +0100
-Subject: [PATCH v2 3/7] clk: eyeq: use the auxiliary device creation helper
+Date: Sat, 01 Nov 2025 09:53:29 +0100
+Subject: [PATCH v2 1/7] dt-bindings: soc: mobileye: OLB is an Ethernet PHY
+ provider on EyeQ5
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -44,7 +45,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20251101-macb-phy-v2-3-c1519eef16d3@bootlin.com>
+Message-Id: <20251101-macb-phy-v2-1-c1519eef16d3@bootlin.com>
 References: <20251101-macb-phy-v2-0-c1519eef16d3@bootlin.com>
 In-Reply-To: <20251101-macb-phy-v2-0-c1519eef16d3@bootlin.com>
 To: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
@@ -63,108 +64,52 @@ Cc: linux-mips@vger.kernel.org, devicetree@vger.kernel.org,
  Tawfik Bayouk <tawfik.bayouk@mobileye.com>, 
  Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
  =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>, 
- Jerome Brunet <jbrunet@baylibre.com>
+ Conor Dooley <conor.dooley@microchip.com>
 X-Mailer: b4 0.14.3
 X-Last-TLS-Session-Version: TLSv1.3
 
-From: Jerome Brunet <jbrunet@baylibre.com>
+OLB on EyeQ5 ("mobileye,eyeq5-olb" compatible) is now declared as a
+generic PHY provider. Under the hood, it provides Ethernet RGMII/SGMII
+PHY support for both MAC instances.
 
-The auxiliary device creation of this driver is simple enough to
-use the available auxiliary device creation helper.
-
-Use it and remove some boilerplate code.
-
-Tested-by: Théo Lebrun <theo.lebrun@bootlin.com>  # On Mobileye EyeQ5
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
 ---
- drivers/clk/clk-eyeq.c | 57 +++++++++++---------------------------------------
- 1 file changed, 12 insertions(+), 45 deletions(-)
+ .../devicetree/bindings/soc/mobileye/mobileye,eyeq5-olb.yaml       | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/clk-eyeq.c b/drivers/clk/clk-eyeq.c
-index ea1c3d78e7cd..664ce7d7868d 100644
---- a/drivers/clk/clk-eyeq.c
-+++ b/drivers/clk/clk-eyeq.c
-@@ -322,38 +322,18 @@ static void eqc_probe_init_fixed_factors(struct device *dev,
- 	}
- }
+diff --git a/Documentation/devicetree/bindings/soc/mobileye/mobileye,eyeq5-olb.yaml b/Documentation/devicetree/bindings/soc/mobileye/mobileye,eyeq5-olb.yaml
+index 6d11472ba5a7..56401d76a9b5 100644
+--- a/Documentation/devicetree/bindings/soc/mobileye/mobileye,eyeq5-olb.yaml
++++ b/Documentation/devicetree/bindings/soc/mobileye/mobileye,eyeq5-olb.yaml
+@@ -51,6 +51,9 @@ properties:
+   clock-names:
+     const: ref
  
--static void eqc_auxdev_release(struct device *dev)
--{
--	struct auxiliary_device *adev = to_auxiliary_dev(dev);
--
--	kfree(adev);
--}
--
--static int eqc_auxdev_create(struct device *dev, void __iomem *base,
--			     const char *name, u32 id)
-+static void eqc_auxdev_create_optional(struct device *dev, void __iomem *base,
-+				       const char *name)
- {
- 	struct auxiliary_device *adev;
--	int ret;
++  '#phy-cells':
++    const: 1
++
+ patternProperties:
+   '-pins?$':
+     type: object
+@@ -310,7 +313,7 @@ allOf:
+       properties:
+         '#reset-cells': false
  
--	adev = kzalloc(sizeof(*adev), GFP_KERNEL);
--	if (!adev)
--		return -ENOMEM;
--
--	adev->name = name;
--	adev->dev.parent = dev;
--	adev->dev.platform_data = (void __force *)base;
--	adev->dev.release = eqc_auxdev_release;
--	adev->id = id;
--
--	ret = auxiliary_device_init(adev);
--	if (ret)
--		return ret;
--
--	ret = auxiliary_device_add(adev);
--	if (ret)
--		auxiliary_device_uninit(adev);
--
--	return ret;
-+	if (name) {
-+		adev = devm_auxiliary_device_create(dev, name,
-+						    (void __force *)base);
-+		if (!adev)
-+			dev_warn(dev, "failed creating auxiliary device %s.%s\n",
-+				 KBUILD_MODNAME, name);
-+	}
- }
+-    # Only EyeQ5 has pinctrl in OLB.
++    # Only EyeQ5 has pinctrl and PHY in OLB.
+   - if:
+       not:
+         properties:
+@@ -320,6 +323,8 @@ allOf:
+     then:
+       patternProperties:
+         '-pins?$': false
++      properties:
++        '#phy-cells': false
  
- static int eqc_probe(struct platform_device *pdev)
-@@ -365,7 +345,6 @@ static int eqc_probe(struct platform_device *pdev)
- 	unsigned int i, clk_count;
- 	struct resource *res;
- 	void __iomem *base;
--	int ret;
- 
- 	data = device_get_match_data(dev);
- 	if (!data)
-@@ -379,21 +358,9 @@ static int eqc_probe(struct platform_device *pdev)
- 	if (!base)
- 		return -ENOMEM;
- 
--	/* Init optional reset auxiliary device. */
--	if (data->reset_auxdev_name) {
--		ret = eqc_auxdev_create(dev, base, data->reset_auxdev_name, 0);
--		if (ret)
--			dev_warn(dev, "failed creating auxiliary device %s.%s: %d\n",
--				 KBUILD_MODNAME, data->reset_auxdev_name, ret);
--	}
--
--	/* Init optional pinctrl auxiliary device. */
--	if (data->pinctrl_auxdev_name) {
--		ret = eqc_auxdev_create(dev, base, data->pinctrl_auxdev_name, 0);
--		if (ret)
--			dev_warn(dev, "failed creating auxiliary device %s.%s: %d\n",
--				 KBUILD_MODNAME, data->pinctrl_auxdev_name, ret);
--	}
-+	/* Init optional auxiliary devices. */
-+	eqc_auxdev_create_optional(dev, base, data->reset_auxdev_name);
-+	eqc_auxdev_create_optional(dev, base, data->pinctrl_auxdev_name);
- 
- 	if (data->pll_count + data->div_count + data->fixed_factor_count == 0)
- 		return 0; /* Zero clocks, we are done. */
+ examples:
+   - |
 
 -- 
 2.51.1
