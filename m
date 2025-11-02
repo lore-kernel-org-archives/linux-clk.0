@@ -1,108 +1,71 @@
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F024C1F4169;
-	Sun,  2 Nov 2025 17:42:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7449B2E2DDA;
+	Sun,  2 Nov 2025 18:06:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762105358; cv=none; b=MUyJ7GmPs7c8i3yvpDPniD7cpxB/p1vyfxSpXiLQpMSL3o0WcAdZNInRigLZBOTk6bBUMLlOfWmmrQNIsTwxnalPgJvK4RI9RPMi6/CRMrQ6VHBEbSPkyIq1tLhJKUWFHT3dQEWixFq7Z9/5cbCVr1HLidD1NfvRmCy4lJCttsU=
+	t=1762106793; cv=none; b=druVecMJog6bnsVZVP0BXC1NEV0rqBqeElNyQQ4FLlyFXY4zwajubOQ62osWW856LIDaU5oK1PfFQy1hCQO2VPrH+mHR33uyGXQekAaSQpqbkuzMMOBNo/Xd+k9QwqEvydT2V3w9vwHnhP9n91cz8xeyCMkRptGrZmZUdSBOZyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762105358; c=relaxed/simple;
-	bh=eWf1ssYER9+ZZB8rUrrghh1FssKnX/b4h4BzwdjLbu8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GpLmFLfb2YWS6j09y+sQFrvr+9HnNpQg8ugrQK6QyWCWyC90VSeb9LUKnW7OKLxqY/WENXZaBb9Lhashi5EWG+40C43SZ8I8GcXehmags8EFEqrutdmgembhZiQIh3C13KlH/mU+rof3rmqrnzd6uGJlCC07cz0aIn/lyKuoRB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=VP9PRTxK; arc=none smtp.client-ip=80.241.56.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+	s=arc-20240116; t=1762106793; c=relaxed/simple;
+	bh=lWMvqmA7dRJSCZPnb3RdlM44s3Ozd1L7i9a1xotMPJU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZzBFBRY5PTZv4nQ2VXN9VxdxuqxKgL6DcOifAuFN418xxyP+80HZTbD158+HvUz9N7lQR2CAeILSS3TUp/RoGlX3ThcgB3BpUTntNJ1wok08lorOfWAzleoZaUjB8ODI9hkOxCH4VhgLgtEFoRJcmbFX2vApjV3kn0a4yLzypww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lpT3efb+; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="VP9PRTxK"
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4d029P19yRz9sxG;
-	Sun,  2 Nov 2025 18:42:33 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1762105353;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ebfnwj7tMpis+tR7jktZ8bbJq6Qt0Nfjii5Z7X6heM8=;
-	b=VP9PRTxKRANrUVATpLf4VpHENaXsPDbREzODzM8r+WFvGQ/++XvFMtw1qGHV1h4Fo1h4X3
-	gHHeLPJ/jPdlwUlGKqEHK2dYKhnla7T79zRVnSJXaQmA4SX+bs2tO/8fzM57LLD2pPKhlm
-	6fV254HOzBLCUrKXWx+uCcOLffONq80p+E5lp9R0asgGAPQnpqfppepsesVxCq76SN8KqS
-	F86GqtTjt+N0bdPjUTLOHmFph/dNbTnjmQyJ5gslpeBuNUb2qdlANqP6qI8l1Wc/31bNMp
-	NfXHS6y9WXwQFuuVxsAxcoH5NpZL6L6nAbpNXI1GCNEDQK1uwa8tCrehg0kZQg==
-Message-ID: <636f24ff-e775-468e-a13b-b86542098c74@mailbox.org>
-Date: Sun, 2 Nov 2025 18:42:26 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lpT3efb+"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 344F3C116C6;
+	Sun,  2 Nov 2025 18:06:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762106793;
+	bh=lWMvqmA7dRJSCZPnb3RdlM44s3Ozd1L7i9a1xotMPJU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=lpT3efb+TmcFHbmgLxu85M9YKsevuI9vP6AjWGFT8bZBp93DbOUl8J2Ra37NrVXzE
+	 OlVG8nvncUjoVKtmH6aHtAuDZnQgNMO+ONjnBTL56qtpxYPMttBOXma4Qi6baSNMiv
+	 l74CHWC5cnuPatjREnVWXA3GcJIZhvcKcZPTSpUNwttNrgwMzs58e+AdEZNOoAUn3e
+	 BqBZeDFpSBQD6EY7Flmoxl7ikZhfv/WTm4Y74ajcVNg2ZIj4qJ7A2NwUW3qlGYONfJ
+	 rvH+ahW+ABgX8gqzC3OhYF1n0Urgst5MQQb1TxH9xq95csGlwMOJl0Q82scA650IeF
+	 aZNIuP4gmBMLw==
+From: Bjorn Andersson <andersson@kernel.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Abel Vesa <abel.vesa@linaro.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	Taniya Das <taniya.das@oss.qualcomm.com>
+Cc: Rajendra Nayak <quic_rjendra@quicinc.com>,
+	Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
+	Imran Shaik <imran.shaik@oss.qualcomm.com>,
+	Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
+	linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: qcom: tcsrcc-glymur: Update register offsets for clock refs
+Date: Sun,  2 Nov 2025 12:09:50 -0600
+Message-ID: <176210698635.937813.9857656198318701507.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20251031-tcsrcc_glymur-v1-1-0efb031f0ac5@oss.qualcomm.com>
+References: <20251031-tcsrcc_glymur-v1-1-0efb031f0ac5@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v1] dts: arm64: freescale: move imx9*-clock.h
- imx9*-power.h into dt-bindings
-To: Peng Fan <peng.fan@nxp.com>, "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Abel Vesa <abelvesa@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, "devicetree@vger.kernel.org"
- <devicetree@vger.kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- E Shattow <e@freeshell.de>, Geert Uytterhoeven <geert@linux-m68k.org>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>
-References: <20250831200516.522179-1-e@freeshell.de>
- <20250901032203.GA393@nxa18884-linux.ap.freescale.net>
- <3a165d77-3e36-4c0d-a193-aa9b27e0d523@mailbox.org>
- <05f7d69a-9c05-4b47-ab04-594c37e975eb@kernel.org>
- <51daddc4-1b86-4688-98cb-ef0f041d4126@mailbox.org>
- <8920d24b-e796-4b02-b43b-8a5deed3e8fb@kernel.org>
- <be2fc937-b7a6-49a7-b57d-6e3f16f4ccc3@mailbox.org>
- <20250904093442.GA13411@nxa18884-linux.ap.freescale.net>
- <afe58aa6-0c3e-4508-8133-8e7621a0484a@mailbox.org>
- <PAXPR04MB845970863A16718967270D1A880EA@PAXPR04MB8459.eurprd04.prod.outlook.com>
-Content-Language: en-US
-From: Marek Vasut <marek.vasut@mailbox.org>
-In-Reply-To: <PAXPR04MB845970863A16718967270D1A880EA@PAXPR04MB8459.eurprd04.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-MBO-RS-META: siz7namta7ztp8gt3hs83jgy4x3gfjit
-X-MBO-RS-ID: 6783862ee9dc7f685d6
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On 9/10/25 9:07 AM, Peng Fan wrote:
 
-Hello Peng,
-
->>> Marek,
->>>     Some U-Boot code indeed directly use the IDs to configure the clock
->> without
->>>     relying on any drivers. Since the SCMI IDs could not be moved to
->>> dt-bindings,
->>
->> Why can they not be moved to DT bindings ?
+On Fri, 31 Oct 2025 15:32:25 +0530, Taniya Das wrote:
+> Update the register offsets for all the clock ref branches to match the
+> new address mapping in the TCSR subsystem.
 > 
-> DT maintainers suggested to keep the files under
-> arch/arm64/boot/dts/freescale/
 > 
-> https://lore.kernel.org/all/75ab9162-ed02-479d-92a1-7cfabff6b32e@linaro.org/
 
-I think the larger question really is -- are the SCMI clock IDs part of 
-DT ABI or not ? The SCMI clock IDs are part of firmware ABI, for sure. 
-Does that imply they are part of DT ABI too ?
+Applied, thanks!
 
-Or, is there by any chance a plan to allow e.g. resolution of SCMI clock 
-IDs by their shortnames, and allow SCMI clock IDs to change across 
-different firmware versions, even on the same platform ?
+[1/1] clk: qcom: tcsrcc-glymur: Update register offsets for clock refs
+      commit: a4aa1ceb89f5c0d27a55671d88699cf5eae7331b
 
--- 
 Best regards,
-Marek Vasut
+-- 
+Bjorn Andersson <andersson@kernel.org>
