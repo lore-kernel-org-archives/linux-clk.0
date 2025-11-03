@@ -1,180 +1,141 @@
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A697D30504A;
-	Mon,  3 Nov 2025 13:35:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 283E0272E63
+	for <linux-clk@vger.kernel.org>; Mon,  3 Nov 2025 13:50:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762176914; cv=none; b=pVZrzAhkFqrIhydmc5zGxgeAO2p6EzP9L3TyQN0rJPOzvsda/qyoThus+AhpduhKZQyOzPkNXQ6AGQhh2CbVanA/odELJHIRWqoh8IjYO0pvAWbKALGihmGd9hkPY9u1rzzTYX5kYSk+bfSwdG17Hzz4l8GCBgxHC48ur0eAPQA=
+	t=1762177807; cv=none; b=gGulwYcWH+GfFcvSb6iIOF5bk9m7j8OyUYraG2XdTkCDZsgOKFHT4fkT4RNOxRd6QUiStAmqNe9PYcX8fCslGvl4owZyS067bGPWYlunFkgB3sUC1MJSaNpaoOR1QqOVR9RI58DZlFJ7lFHKIXlFP4NXoSrljZ/kvXIbXLLhQWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762176914; c=relaxed/simple;
-	bh=HUhCBMZvZipHgUmjcVZ0eOSnMcg+HbQiCeJ/7jxn+Gg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=P6p/dLO60d+vtjssYhbMGrfTt+v/z6HcloMASoeQsnvO97hK4x3hSMMuGUEuDVKjpijL/da5jfWHB91CVgzDfuZ/IJD1mqn42ZCUxrl3dn7x4B+0HYI8+H1dN+Bwcy2EubRCnHKz2vys0hke6Kbdxm8WyQfcq+ja+rA21zxZXTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=iSuStlNC; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1762177807; c=relaxed/simple;
+	bh=TsvnfzRwsbf7wGlFzdjo71TLJrNDdp/a+dRwvaix3co=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jmBIgqmWdiKnr+9E+34Rbj/dKKrcpE6G+S3dpvvHOukzFttJ9Js4ha41d/+SJ97zpDTglXGa5d1ngAvqXg8bAJ9LASyHnF3K62Dd+hB3tUgYqzRoY9p4lJ9Hjs0pXJ8KWndFa6kxEe18kQcQDyuA+QHeygK5fKTYjbw75yk2qJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=um5xxoi7; arc=none smtp.client-ip=209.85.160.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="iSuStlNC"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id D1B854E414CE;
-	Mon,  3 Nov 2025 13:35:09 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 9CE9160628;
-	Mon,  3 Nov 2025 13:35:09 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id F194010B500FE;
-	Mon,  3 Nov 2025 14:34:53 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1762176907; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=koLz65BvAsRdOTOjAYYzE2T1rPDi7AByKsxkPawhxGI=;
-	b=iSuStlNC/qPWehMW5QtSxmK7/Ek+OmtM952H+Xk5cz64yvAI1dRLRJl2LFnH1Saj3uIcSn
-	Tfo0dDHHxzLe5rPhwCbyehjx3KhF+kWXpLRNtBcibrsD5eWlEhe06L8+GQDP7gihuHb7M4
-	aMb4hr5u64HA2jT9649n28R3LSuMyiMLHcAn1aj1T2djrGGH2TKUKnNVTaabRGpAWKTAUy
-	xDNG39m9CDfMAnKBAqtJttRhZlsDSxkcO7NokNzenCtkiwC6nxpHFV3TZc+Gz2qOhJ3anH
-	P5/UUwG3W53ojB0Z3tCqPkFB8BoZl0mckys6ra3FPqO4z9ocBaUZIcIEe7GxPQ==
-Date: Mon, 3 Nov 2025 14:34:52 +0100
-From: Herve Codina <herve.codina@bootlin.com>
-To: Andi Shyti <andi.shyti@kernel.org>
-Cc: Andrew Lunn <andrew@lunn.ch>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, Shawn Guo
- <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix
- Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Wolfram Sang <wsa+renesas@sang-engineering.com>, Peter
- Rosin <peda@axentia.se>, Arnd Bergmann <arnd@arndb.de>, Saravana Kannan
- <saravanak@google.com>, Bjorn Helgaas <bhelgaas@google.com>, Charles Keepax
- <ckeepax@opensource.cirrus.com>, Richard Fitzgerald
- <rf@opensource.cirrus.com>, David Rhodes <david.rhodes@cirrus.com>, Linus
- Walleij <linus.walleij@linaro.org>, Ulf Hansson <ulf.hansson@linaro.org>,
- Mark Brown <broonie@kernel.org>, Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>, Daniel Scally <djrscally@gmail.com>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>, Sakari Ailus
- <sakari.ailus@linux.intel.com>, Len Brown <lenb@kernel.org>, Davidlohr
- Bueso <dave@stgolabs.net>, Jonathan Cameron <jonathan.cameron@huawei.com>,
- Dave Jiang <dave.jiang@intel.com>, Alison Schofield
- <alison.schofield@intel.com>, Vishal Verma <vishal.l.verma@intel.com>, Ira
- Weiny <ira.weiny@intel.com>, Dan Williams <dan.j.williams@intel.com>, Geert
- Uytterhoeven <geert+renesas@glider.be>, Wolfram Sang <wsa@kernel.org>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org,
- linux-pci@vger.kernel.org, linux-sound@vger.kernel.org,
- patches@opensource.cirrus.com, linux-gpio@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-spi@vger.kernel.org,
- linux-acpi@vger.kernel.org, linux-cxl@vger.kernel.org, Allan Nielsen
- <allan.nielsen@microchip.com>, Horatiu Vultur
- <horatiu.vultur@microchip.com>, Steen Hegelund
- <steen.hegelund@microchip.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v4 18/29] i2c: mux: Create missing devlink between mux
- and adapter physical device
-Message-ID: <20251103143452.080c3503@bootlin.com>
-In-Reply-To: <6tgbavtf2dqc44ebfighrs5chzx4j4zdmjk77fmulwqbhrex2b@lou7ekbsjekr>
-References: <20251015071420.1173068-1-herve.codina@bootlin.com>
-	<20251015071420.1173068-19-herve.codina@bootlin.com>
-	<6tgbavtf2dqc44ebfighrs5chzx4j4zdmjk77fmulwqbhrex2b@lou7ekbsjekr>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="um5xxoi7"
+Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-3d70c5bb455so1562582fac.1
+        for <linux-clk@vger.kernel.org>; Mon, 03 Nov 2025 05:50:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1762177805; x=1762782605; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=TsvnfzRwsbf7wGlFzdjo71TLJrNDdp/a+dRwvaix3co=;
+        b=um5xxoi7PE4OhjtKGJvEvCeyYFBwGy1zApiTqqB7sKGLSYFl80c+2hH/3pAxUx8P6b
+         8KV7THTdS77RGxeo1t0c6p3/IS1FPlve8AC7JbTl8OfbB4Hd5gbbIiborjTbTVXoFbak
+         e8+QZPJU8kzlS80ytgNWEzWaxBUrhuWH9wWSjEN6H2Ilp9sMWWyIl5cDrxTHN0/cAPt4
+         lG0Vms3mTpQ1fDfS58weNnwbbRQtygbrjvddSppLNkxsLTW+d/I8BBuIANRPwqm3Hti4
+         C3ivvlXD6yNV/0V5sNVScc5/NQf8RBfF59Hl9SyZwBB5xWzczcTL7MxuLRrxvtm9U97/
+         t+WA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762177805; x=1762782605;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TsvnfzRwsbf7wGlFzdjo71TLJrNDdp/a+dRwvaix3co=;
+        b=Yf0Pga3V9b6m32Jc15pHpYA9eQWxjvCa/7sdQJPQ/IeWU/KVWuDZ9rWylwAUEQJurK
+         O/IFJ+jNWyhEBFJLwFN6x2eDhQqbYh+2t9wjut0r/YumPT8BFbzRnhTp+Z2OWHDaMXXe
+         v13KUhyR+c5hFVSdvEABRzci3cEPNL0xfJoOsOyqGiQ/QpzxApF2VQQ4gHjfPyjpJObk
+         1FW81h0dYRPjA/vibszCWa9OzVHB+T971YnWBN/RPvqfzCcysMnDTO3hx+ByWpKweiig
+         3Pi4nfdOuVzXqSEyQb564oGIPV8bDE8XTzLf/j1zMpQ0dGlbsUQ9H2Gtq0ZFswbO8DZJ
+         Uk2g==
+X-Forwarded-Encrypted: i=1; AJvYcCXwoJeVI9GZ/DwOel0MQ+AAAapy69sksfa+2sRmvqx8V+l9QImbK6QoMzf1uwKnPCn5KQWRg1x8MCg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWhatsVMbWZk3BAvECesbZqd4jb6dQ01U+JBnnUbdZ/X6RUZ6h
+	zYGkCVDEWTJLju6cWAJQz3p7WnmPMX0WfcYer1CHyz4HDWei8KFegRwb/rdSq1PFpAM2m7qbXen
+	eyVzXh8D9QS8bbb1y0PSyi1pQjBPVhhx+vN/XcxUjlw==
+X-Gm-Gg: ASbGncvvkrUqSSRvEJMn2pHioPug78M+QaX7vi6beb+3WPdVTEFmR8o6J07LXw6nkQz
+	LTfuRxlh2B14rUTdGyCM0+1h9u4/KEhkvYFwB9A14lKOh3zuKIZQIL88uG4RcNFdjfcB1JdyqCr
+	7Z/uQdogtIbnJJu4jlXigHscCQWI36LSjjK0zypBs+q6wbKtdvQEwRASQFsNZMJVTGH7dJDbfDz
+	sHBBwp/g6yGTchuPl0aqIRikMP0RFky8AX0R5YMSXTopmMv3ciAQTZgaHoFZI0z6HWkYwnv
+X-Google-Smtp-Source: AGHT+IEvvbnuEgVymC79WaE8covKlgmCh0NOsdeyracVXZX/SVCozVOiOeq8HhVtYvKE2fZAbBNornSKI+Cu+lra0Ak=
+X-Received: by 2002:a05:6870:8e07:b0:337:74c4:8f18 with SMTP id
+ 586e51a60fabf-3dacc5d1f80mr5149154fac.6.1762177804047; Mon, 03 Nov 2025
+ 05:50:04 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+References: <20251102-automatic-clocks-v3-0-ff10eafe61c8@linaro.org>
+ <20251102-automatic-clocks-v3-1-ff10eafe61c8@linaro.org> <20251103-smoky-rustling-bloodhound-7590ce@kuoka>
+In-Reply-To: <20251103-smoky-rustling-bloodhound-7590ce@kuoka>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Mon, 3 Nov 2025 13:49:53 +0000
+X-Gm-Features: AWmQ_blfrAzZoKwokZQZXo0nzPx9hZ0JYCMuGx_l22LwSjR0d1KXfaSrBbDofEM
+Message-ID: <CADrjBPpjX_qSehbNkaAG03f=whs09qFzzgNiY3sztk7v0QeCFw@mail.gmail.com>
+Subject: Re: [PATCH v3 1/4] dt-bindings: clock: google,gs101-clock: add
+ samsung,sysreg property as required
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	=?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+	Tudor Ambarus <tudor.ambarus@linaro.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Sam Protsenko <semen.protsenko@linaro.org>, 
+	Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
+	Will McVicker <willmcvicker@google.com>, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+	kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Andi,
+Hi Krzysztof,
 
-On Thu, 30 Oct 2025 16:23:24 +0100
-Andi Shyti <andi.shyti@kernel.org> wrote:
+Thanks for the review feedback!
 
-> Hi Herve,
-> 
-> ...
-> 
-> > When an i2c mux is involved in an i2c path, the struct dev topology is
-> > the following:  
-> 
-> supernitpick: I'd leave blank line here.
+On Mon, 3 Nov 2025 at 09:41, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>
+> On Sun, Nov 02, 2025 at 08:27:14PM +0000, Peter Griffin wrote:
+> > Each CMU (with the exception of cmu_top) has a corresponding sysreg bank
+> > that contains the BUSCOMPONENT_DRCG_EN and MEMCLK registers.
+> >
+> > If present these registers need to be initialised
+>
+>
+> ... for what exactly? What would happen if this was not initialized?
 
-Will be added.
+The BUSCOMPONENT_DRCG_EN register enables dynamic root clock gating of
+bus components. So it is related to the automatic clock gating feature
+that is being enabled in this series. Things still work without
+initializing this register, but the bus components won't be
+automatically clock gated leading to increased dynamic power
+consumption. Similarly the memclk register enables/disables sram clock
+gate. Up until now we've not been initializing the registers as
+everything from Linux PoV has been in manual clock gating mode and
+until starting to implement this I wasn't aware there were some clock
+related registers in the corresponding sysreg. Additionally with
+Andre's work enabling power domains it has become clear we should be
+saving/restoring these two sysreg clock registers when the power
+domain is turned off and on.
 
-> 
-> >     +----------------+                +-------------------+
-> >     | i2c controller |                |      i2c mux      |
-> >     |     device     |                |      device       |
-> >     |       ^        |                |                   |
-> >     |       |        |                |                   |
-> >     |  dev's parent  |                |                   |
-> >     |       |        |                |                   |
-> >     |   i2c adapter  |                | i2c adapter chanX |
-> >     |     device  <---- dev's parent ------  device       |
-> >     |   (no driver)  |                |    (no driver)    |
-> >     +----------------+                +-------------------+
-> >   
-> 
-> ...
-> 
-> > No relationship exists between the i2c mux device itself and the i2c
-> > controller device (physical device) in order to have the i2c mux device
-> > calling i2c_del_adapter() to remove its downtream adapters and so,  
-> 
-> /downtream/downstream/
+> What is the exact justification for ABI break - wasn't this working
+> before? Or new feature will not work (thus no ABI break allowed)?
 
-Will be fixed
+No, automatic clocks and dynamic root clock gating were not working
+prior to this series. Currently power domains and system wide
+suspend/resume aren't enabled upstream either. As we work on enabling
+these features we are finding some things that in an ideal world we
+would have known about earlier. Unfortunately it's not so obvious just
+from studying the downstream code either as they rely heavily on
+CAL-IF layer that has peeks/pokes all over the memory map especially
+for power/clock related functionality.
 
-> 
-> > release references taken to the upstream adapter.  
-> 
-> ...
-> 
-> > +	/*
-> > +	 * There is no relationship set between the mux device and the physical
-> > +	 * device handling the parent adapter. Create this missing relationship
-> > +	 * in order to remove the i2c mux device (consumer) and so the dowstream
-> > +	 * channel adapters before removing the physical device (supplier) which
-> > +	 * handles the i2c mux upstream adapter.
-> > +	 */
-> > +	parent_physdev = i2c_get_adapter_physdev(parent);
-> > +	if (!parent_physdev) {
-> > +		dev_err(muxc->dev, "failed to get the parent physical device\n");
-> > +		ret = -EINVAL;  
-> 
-> -ENODEV?
+Whilst it is technically an ABI break, I've tried to implement it in a
+backwards compatible way (i.e. an old DT without the samsung,sysreg
+phandle specified) will just fallback to the current behavior of not
+initializing these registers. Things will still work to the extent
+they did prior to this series. With a new DT the registers will be
+initialized, and dynamic power consumption will be better.
 
-Yes, -ENODEV makes sense here. Will be changed in the next iteration.
+>
+> You need to provide rationale and "driver needs to do something" is not
+> enough, because everything could be justified that way.
 
-> 
-> > +		goto err_free_priv;
-> > +	}
-> > +	dl = device_link_add(muxc->dev, parent_physdev, DL_FLAG_AUTOREMOVE_CONSUMER);  
-> 
-> Not to call twice put_device, I would add it once here and then
-> check for !dl.
+Apologies for not being more verbose in the commit message on the
+technical details, hopefully the above helps explain it better.
 
-As Andy already mentioned, we cannot do that. Indeed, dev_name(parent_physdev)
-is called in the error path and so the device reference has to be kept.
+regards,
 
-> 
-> > +	if (!dl) {
-> > +		dev_err(muxc->dev, "failed to create device link to %s\n",
-> > +			dev_name(parent_physdev));
-> > +		put_device(parent_physdev);
-> > +		ret = -EINVAL;  
-> 
-> same here, should this be -ENODEV?
-
-For this one, I am not so sure.
-
-The failure is related to the device link creation and probably due to some
-devlink invalid internal flags or state instead of a missing device.
-
-That's said, if you really want the -ENODEV here, let me know.
-
-Best regards,
-Hervé
+Peter
