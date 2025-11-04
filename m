@@ -1,258 +1,339 @@
-Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013041.outbound.protection.outlook.com [40.107.159.41])
+Received: from mail-m49200.qiye.163.com (mail-m49200.qiye.163.com [45.254.49.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38DEF26B77B;
-	Tue,  4 Nov 2025 03:09:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.41
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762225745; cv=fail; b=fhsrXuqkKpli+qsJ2eY8aGQPSh1yUBugGQ25MLx3/k0LPwGvFDCYZ/9miEYoxDoSS88u6xa8mXnLJ/+/kidKVEvWMVOc6/5dTxrFz5nyRQ5Ekqvbk4HOOLnCd8QGkfbxwDh02zgZgEiEfYVBRX6eWKM9JrXOyyF0XfXnGeEX94Y=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762225745; c=relaxed/simple;
-	bh=CWYuMcBBInboqVTXAz8hIw8h+hXVyZnm6AInKoqoDNs=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=iwYBmOSg9mLI5LIH5IGZxuybQs/vDTUe+b/wiZI3c5I8RqBkR4tekXxlEa6DqooxULvmVBnOeh8JipDzrn6ZvzrnD4lZUqGBB16uOZ+qI2rBZCzq000D8PJD8nBk7bLREurMz6IcDRFxecjigVO33ISiCSxo/NokYuy7TCQpw4g=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=cS/TLAbK; arc=fail smtp.client-ip=40.107.159.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 317BD26CE22;
+	Tue,  4 Nov 2025 03:11:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.200
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762225917; cv=none; b=BpN4iYDaXWh3OeS2vTHDtRSllJRwHsnqSaRUjnZfM+fl5GeBEHcVh4T0lX2dr0fBVpfSrwLzhyDENITe8CJvck/+qSc1z6Rg/9+d/FuQtylqjYOOZzdeTWLMigf+Hs+isBPZK/yopQCMLQXkt9XOXZfjzJe3DhABXfiP+2MKu5k=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762225917; c=relaxed/simple;
+	bh=EhdkYAZpvq92qEuzwBPeEULq8Eb6F4v8ckyLbH1yC70=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=bZNEf4uf3cDboAejL2FXfxjA6Wr81oMkLNbWiio8UBeB4oeQ7p3cc8lHfpNtrcV6e2raJ/hMaVOc0aNzFsgezZorQvc0i+X9Sad3w9nnzSBqxeerMmeP/Ooy1SW1c7AYtoOS3TG8AjzZkdqfM0urxG/4PGBps61/MzGMjr3orhA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=j1G7yWCO; arc=none smtp.client-ip=45.254.49.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="cS/TLAbK"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jW24xjfHn+4+BthtnNHCNsZUpaPQHJMjQBTEFHZm9Sx8Anzy6viXYXgoxA+cFaDLO5t67pSi8RVQDmXK3dt4Ggkqa2zX5anttEUMP7ODvUYhCQZ+KyiGGYcrNiUxDfbXd+KDOA6EFj6dQcs9lEohdKivZ/dJo00fINVKlGpWR/HWOjmzzx5gRCqpOSeHgh37IGdzlabriqxAeMNTUZCzNrJbJdUK0QnxoDqDnZcobvNTmMkMrKMBI2diAeonEqP40THdDt+mkFhnWfXRH5VpvLqrqSA/iJskxnISV33kXVsjK9SKha5a1eyi9/a0gRC4iODvOeeLExR0C441D8GFfg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=e4cvXBcIS7dUHX8JKHOsfsnAr8qRZvG/okWhClBz2KY=;
- b=K7z0rdBF2NFO+VDYIU0Eej6C7l27bN8FrEi4eZ6TObbAtV0AOU8Mhgsgadwnp0XaJ4tedTd8PZAMfM5GGxqIelHHQfVLNmCEAovTIVqFSOhOv1UvOr8qEzGRnSqXV+WtaObDIyWvhGEsk3tCzJ48FyyZqKnz+e6dvtgQgMMSTd6EDmobudBTNUVsTBs6J8is8guYmGF1fA/lzzKiunxUTcXt00x2BbzlKFYogo0eJ+XRpiVSamUqBBGFzdgDGCT8ymL1UOili4bD1ZJB6OdPV8YeOKdbwme+qwEpN0YcMh1+NAWE8zBdfdsnW/YrvdstjKlB0r5pLdCfbmJj7MzAqA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=e4cvXBcIS7dUHX8JKHOsfsnAr8qRZvG/okWhClBz2KY=;
- b=cS/TLAbK5QjDqwvYfplH44cv+oxHSpqqQxcjxoMr0xWvZhPX1Q1+8cHeV2aw43l2QdlAlQ7m9wk1icAypsnvMhMJ1IPeVXn3h9/Hzw36cNzR7U9M2+goUZqwT/O2tHRC8fKfXj1UwfDpVh3O1lc8xPNqgkOZB1p8ioKlyAdQu4QQ/bCLIAnZVCp0WIeF02RYHBfOJwrjI5f9X0fqKVpdotLPEsAiBQqYG3deCN0z9bBEZxJ36q44/RxWo5veK/wYPPwuaVCIreWNnx5EI60CmWGXc88Im4+cPrpljoxyjvBQ3obxMLkApSquKs0BHSgq+rJ9EPouBvAxpm+9HmOupQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
- by VI1PR04MB9954.eurprd04.prod.outlook.com (2603:10a6:800:1d7::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.16; Tue, 4 Nov
- 2025 03:08:59 +0000
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::4609:64af:8a4b:fd64]) by AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::4609:64af:8a4b:fd64%6]) with mapi id 15.20.9253.017; Tue, 4 Nov 2025
- 03:08:59 +0000
-Message-ID: <9f77105f-4754-4a39-848d-c1f92e4f47d9@nxp.com>
-Date: Tue, 4 Nov 2025 11:09:26 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] drm/imx: dc-plane: Add more RGB swizzling options
-To: Marek Vasut <marek.vasut@mailbox.org>, dri-devel@lists.freedesktop.org
-Cc: Abel Vesa <abelvesa@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Fabio Estevam <festevam@gmail.com>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Lucas Stach <l.stach@pengutronix.de>, Peng Fan <peng.fan@nxp.com>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Rob Herring <robh@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, devicetree@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org
-References: <20251102162359.49263-1-marek.vasut@mailbox.org>
-From: Liu Ying <victor.liu@nxp.com>
-Content-Language: en-US
-In-Reply-To: <20251102162359.49263-1-marek.vasut@mailbox.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SI2P153CA0003.APCP153.PROD.OUTLOOK.COM
- (2603:1096:4:140::20) To AM7PR04MB7046.eurprd04.prod.outlook.com
- (2603:10a6:20b:113::22)
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="j1G7yWCO"
+Received: from rockchip.. (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 28455728e;
+	Tue, 4 Nov 2025 11:06:36 +0800 (GMT+08:00)
+From: Elaine Zhang <zhangqing@rock-chips.com>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	sugar.zhang@rock-chips.com,
+	zhangqing@rock-chips.com,
+	heiko@sntech.de,
+	robh@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org,
+	conor+dt@kernel.org
+Cc: devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	huangtao@rock-chips.com,
+	finley.xiao@rock-chips.com
+Subject: [PATCH v6 1/5] clk: rockchip: Implement rockchip_clk_register_armclk_multi_pll()
+Date: Tue,  4 Nov 2025 11:06:29 +0800
+Message-Id: <20251104030633.2721038-2-zhangqing@rock-chips.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20251104030633.2721038-1-zhangqing@rock-chips.com>
+References: <20251104030633.2721038-1-zhangqing@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM7PR04MB7046:EE_|VI1PR04MB9954:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3837d1f9-5441-44ca-0089-08de1b4f7fef
-X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
- BCL:0;ARA:13230040|1800799024|19092799006|7416014|376014|366016|7053199007;
-X-Microsoft-Antispam-Message-Info:
- =?utf-8?B?MEpHVXBxQkF3YlJnMkZMRGY1MnoxVkxKZVhQMkVGUHpySGFiK01tSEhKbGow?=
- =?utf-8?B?U29OV2MrZGFscVA5T0EwVjdpcENSV0tlSzVOaEoydXRzKzBFT25vUkt3OWJk?=
- =?utf-8?B?bmlMVS8vUVRMZXBjRlhzZnYzaXhYbGlKUmsxK1RkRE9Kc2tqZGI5WjNFZVdv?=
- =?utf-8?B?ZTdWaUVoYUtGSmcwdXVHUTBLVzJoTUd6RUdEY1VhQTlxdWV6YU13a1hyUjFT?=
- =?utf-8?B?N2hEZVZ6WWU4dUtYdUUzTExyN1lEUWp6UUZ1eEYwRWZadUxmL2NlTHUyQzBO?=
- =?utf-8?B?WklJNEgvWVlvcjhPbWVLSEZCcThQMVYxY3B2bVUycTJmK2ZLZ2NOUlVkbG9Z?=
- =?utf-8?B?dVhzL1M0TzlGYk5uSHFESVFUbUpmRjNXejUxTjl3T0ZWMUFGUEVjaGp3ajl2?=
- =?utf-8?B?dnFyeHVVVHd0NloxTmpQMkJzQUJVbld2S296VkVxY1JjKzllZlFKalRSZmNT?=
- =?utf-8?B?dEhFc1EzQzBrdXplTXFpeVFGSzl5V2FqVmRDWHBwVXVRaElIa2lTdWlSb29J?=
- =?utf-8?B?SlVNRHI1LzR1L0xMMFRPWHJKVFN4allGMTFpT2xveHNGZkFKYk5HcTh5WlJv?=
- =?utf-8?B?cXJCaFQ1QzNCdmNTRE82My9sQ2RBNGJNYnVIT3F0N1kxczA5NGZNYmpJTStm?=
- =?utf-8?B?bEV0Vkc0cE9LclFEL2xGUCtSeitxaDYxb25YTko4SlBPbks1emdKNEJDR0h0?=
- =?utf-8?B?K2pnSW1VcmFHdytJOGliQjZPL2dvZEhaSkF0dWR6dmdseDdqYnVjVkNXYzVZ?=
- =?utf-8?B?SGEzTEg5UG5LRGNJOWJtSDhZQnk3K3dFYXl0Q3BDM3RuaDhZZGkwRm90RVJ2?=
- =?utf-8?B?U2lIZE1uS254K25WYTlTNFZkS1ZDMVY0aGFBYzRwdjh2TGliNjFYeEFJMFZB?=
- =?utf-8?B?OGlrcDdzbHdCbjhqSmRxKzhlYWJDYWdhMzBFTUZ3U1NCeVAxVzVNQThjZXd4?=
- =?utf-8?B?QUNPN2FFSy9LMUdzcGN6TkRpUVRGSUNrSnQ2SlBVS2ZwdWlLVU9DaGdLZ1Zi?=
- =?utf-8?B?WGgrcEIyQkV4S1VwL2ljQjFHZlAxNi9OOE41aHB5a1h5WU1HUUpUS0ZRNFNK?=
- =?utf-8?B?RjR2V3g0QTlCeU9UU01zdnJUQitDSWtLYWVCWW0rdUdZNndYYzlXV0RNRys2?=
- =?utf-8?B?ZmFHV0Jjd2RsYXMwOWxySW1jLzZYelFtVnc2aU5IWXlDdFJJL0RTanBremxY?=
- =?utf-8?B?SjMrTUNVTnlOTmM0RWdXMTdpcWJ3VTQzYVVqUTFXaEZKUkdzanFoQ3gxZG02?=
- =?utf-8?B?SkpyVmNtU2RwWTBwcVRMUzNUVUovRmZ5K3JVUEVBc05sRitJeG9oVWxsb0kv?=
- =?utf-8?B?MEtvRHorKzZqZGd1Ymw3djFZZTdPNEhlRGdZUm0zTWhDN0Rra2pqbFFNcmZZ?=
- =?utf-8?B?ajk2RTNhcGU4bnFKY1IzNllvdkc5djFveTZ4RTVrTUxOUFJOV01kUkpmQ1Fs?=
- =?utf-8?B?L2JTd2NZMmNzenJKcCsxK1owdGtrMlRUMHFiNU9FSGcyY1p6d1V3Z0o5L2JL?=
- =?utf-8?B?dHdraElYKzN0ZkRDUEg0bWZjRFhiSENRN3VvWEhDcDhkTUVNcWduTmhHUHoy?=
- =?utf-8?B?ak5uS3NKMm96dHpqNUFpZS9HUkNMZlpxTnhyQnpMSmtlNVRiOUREYlB3NXY4?=
- =?utf-8?B?Z3JLcFdpNWMwL3ZOcVIwQUszQS9oRUNTL0tmdWhPaXNJeHppbmhRTkNIbHVQ?=
- =?utf-8?B?M3BKL0pvbit4SHBmb3o3R29aN2hMRnRxM2hNZzQ0RE9mN3lCR3JpMGtvem1i?=
- =?utf-8?B?SGJpRnNZVUt0UVZ6Tmp2RUVNZUgrWkZVY2dtT2lvLzd4NW5tSUVMc2QrTFVW?=
- =?utf-8?B?WHZ6dkRWU0J2ZEZpOVRGV1FSSExUL2p6cVBvNHhlUzI0dDZIWkR3TWZldUhL?=
- =?utf-8?B?RVJqZStuUTlFSTJIMWk3SFhCV0d0MnJvem9EOWYvV0k0SVRVSktrLzdwZDI3?=
- =?utf-8?Q?fCZhxAsL1fHq+R8teIyrwsIB8o7cElMT?=
-X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(19092799006)(7416014)(376014)(366016)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
- =?utf-8?B?YngxNlR4dVhoTTBhTVdkRmJrOG1ISWovM2g4OG5xcGlyWFRBRlpGSU5weTNB?=
- =?utf-8?B?aml6WjJacTVvczZkWWxoNkM2aXhHbDVvK0ZTQVphTDVlL3B2MHJxT3BRamZX?=
- =?utf-8?B?SXJiUDdISDUyUVBWMTVzTFNoUG9qcE5rSy9KSHFtVkFlL1JnM2RhTUNPclBS?=
- =?utf-8?B?dTgvcHdKT2tuQzAzOXlQaGlkYXlTK3ZkYVV5cG5FNk9MR1JaT0swNWVLc0ow?=
- =?utf-8?B?L25URFM2WUFjYzQzQ1hyMENBMUhja0pSTTM3L2M2elE4elMxN2dTRHltU2Q1?=
- =?utf-8?B?TXFkRDU2UC9uSmptTzJMRWVzQXNXUjBaNWY4T1dJZnR6WWdyS0tnTXlBRGla?=
- =?utf-8?B?YzN1bUhkNEE2TVRUUlM1bFRHOTd0c3M3bHNkYldEWUdrVVhWS0hRdnVqelg5?=
- =?utf-8?B?WUhCTkJNcWhqWk9HeFBlU3BKNjJXYXlTd1A4UzZvcDNsWWVaeDUzZGhIMzRk?=
- =?utf-8?B?bSt3a1puRkNqeHM2ZjBXMTRhOW55TDRxbERGOVVsaEk0bGF6Nmd3eFVnUFlr?=
- =?utf-8?B?T2pmd2poRGVzL3Zvc3lpaFhodTRVdzBIeG9XT2pDeUxFRGNNL3hhODVLcVRW?=
- =?utf-8?B?Mm9OSFBkb1NXZUNPelJJeUUxQ1JkOTNhTWpmRUgvZDlzaHREY3FIdkFwUnVX?=
- =?utf-8?B?MW9JVitSVnRPRVF6a0l3MXFKZWx2cFhZNER4dFpQa3h2bzhnMHhBenphS1Zt?=
- =?utf-8?B?NmU1U0RyQ0FFMjhtSDlJaWhrNTZhZG1JZ0I3Y0QrZXVQM3hRb1VDZ2U2MFB2?=
- =?utf-8?B?QWZWVCt4a0NZdzZXUWR3bXNIQ0NJNno0T2xsakVJZWFuQ1VNK1BvZFhiamVs?=
- =?utf-8?B?KzE3L1R5VUJreXVZZmhpQmR1WmNrU3NjbFFkVE1yQ3Bna1NmTmVKN08xbktF?=
- =?utf-8?B?ZGpxamFubjM4ZXdWZENpREFCTEdaSVdlTDFYRkFKVndUeGdzekE0LytncHRy?=
- =?utf-8?B?eXpOLzY2Rzc1SEVEcmhHUzJWMWc1SVcwZzNMV3dEWTJxTGttYW54Y0xvR0VI?=
- =?utf-8?B?Y1V1ZFk1NmtVWk9hNXJReS9EUXFya2FIQTJwUy9DNWdRbkFxei9XdEYvVEhB?=
- =?utf-8?B?UDJUUGQ5a3ZUaGpoMzRYQzNRWXRRSmZOcUNpWGNvMEprQVcwOXJYYVFBa2tW?=
- =?utf-8?B?VldBeXlkaVhNemI1QklxY1BYWVhLRURJZHdhNm5OQklBbFVxYTZiWm5HcUV2?=
- =?utf-8?B?c1BCdkdTclFpWHNhTC9hZnNpNWZYQm44dUZuNGRkWUxsNEdpckZRZHY0N0pi?=
- =?utf-8?B?TFNncGNLREdBUGlNenlwZ2c1VjRFcG5aSkVad2l5dTExTVZDTXJJNnRyMmFS?=
- =?utf-8?B?bFBQQmgyTURXVXlmY1pMVUpmVGR0czU0Rm5OZlduWGVKM1RLaTdLY1dhdmNR?=
- =?utf-8?B?cjNHN0RrSkN6cDNubllJbTN4d3krR0pKa0Y1Nk55bHlWMHpQTVMrdjhHQmZx?=
- =?utf-8?B?Q09qamIvNHlwVkMzQ1JyMzI2Q2k2aHIvZUlHNmw4U0RrMy9iRE01Ykg1NEpM?=
- =?utf-8?B?WGUwVlRmTkhSM2dXZDE1Mk96bzRDVDUyMVExaGNkNzU2SklySDBMMGdkRGNH?=
- =?utf-8?B?bmxiS05PL2RmOVpIZDZvMnpxaFpjTEt6OTNVZUVKVXFVNzgvdVBKeTV5RGVH?=
- =?utf-8?B?a0IxRVhRaU5yZmJHY0ZmaTgxbnl1NHNKTUd6RnhZb3RRT3JrcUpZaityNkJH?=
- =?utf-8?B?QmtzZTBwa1VYcm9leUs4L0M0RCtPU3FOMkRoeVBUSXl6ZVcxNjFSbTFySmlH?=
- =?utf-8?B?RWhmWHdLSFlwQ0hIaUw0WkN1MnhCT2NVRDkwNFdRaDFKZmMyMENiWFRhb0lv?=
- =?utf-8?B?ekZmNHZvTTl4T2VReW12bXhoa2pHRHRSczBhR2NXeGI4anl3TXVTMFlYY1ZW?=
- =?utf-8?B?QThsY1NBYXBuRGRzTG52a2FIa2h5OTQvQnZvcEs0NFVTNStxZm5SdDJaOHAy?=
- =?utf-8?B?N010eXdhNytua0pweldYNnZ0b05kUmFYMHhKRytMUjFMWUlWbUdiOVdBd0pU?=
- =?utf-8?B?cnF1YTkzdXdBTzUvYksyYk53QktQbTNoU1dubTNwSUhGeWt0Wkk1cURFdlFX?=
- =?utf-8?B?NzUzUHVEVklGSGx5S0JOTzZKMWJEU0xtT3hnRytETDdvS2FwV1lxZk1DMWty?=
- =?utf-8?Q?kP3gBUZMa5/SzthXyJ6GsPuQd?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3837d1f9-5441-44ca-0089-08de1b4f7fef
-X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Nov 2025 03:08:59.7152
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 2iiHu3NXYz4saOuivoElBgZPf8ka63qjWPBHG48keLIW7BucEy61aoGMudwl6H5slkqffNO3UhPS+le3/aXVGA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB9954
+Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a9a4cd4a82903a3kunm9587110c91901d
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQ0xJSFZCH0hNQ09JTUNPGR5WFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+DKIM-Signature: a=rsa-sha256;
+	b=j1G7yWCOxxAJSGw3AvQo66Afx8M7lPU3LaUCHkKbJDodChdqhX1agIO+gPpeET+Icl8Pb+2YA7cHUnE3ELhdMF0EVUCT8wZ68vcIGXTfCPm4RJ1kCLq4u41TdrEdkLOF7yWqopPfJIm5A+VQeeH17r27pE8NWIemldEgzXHO9mM=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=Vt1xPRkUMcE8svXTy4dUISsmpUifWdbpaIRSmoEuGbY=;
+	h=date:mime-version:subject:message-id:from;
 
-On 11/3/25 00:23, Marek Vasut wrote:
-> Add additional buffer format swizzling options beyond XR24, the
-> hardware is capable of sampling other formats, fill them in.
-> 
-> Signed-off-by: Marek Vasut <marek.vasut@mailbox.org>
-> ---
-> Cc: Abel Vesa <abelvesa@kernel.org>
-> Cc: Conor Dooley <conor+dt@kernel.org>
-> Cc: Fabio Estevam <festevam@gmail.com>
-> Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
-> Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
-> Cc: Liu Ying <victor.liu@nxp.com>
-> Cc: Lucas Stach <l.stach@pengutronix.de>
-> Cc: Peng Fan <peng.fan@nxp.com>
-> Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
-> Cc: Rob Herring <robh@kernel.org>
-> Cc: Shawn Guo <shawnguo@kernel.org>
-> Cc: Thomas Zimmermann <tzimmermann@suse.de>
-> Cc: devicetree@vger.kernel.org
-> Cc: dri-devel@lists.freedesktop.org
-> Cc: imx@lists.linux.dev
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-clk@vger.kernel.org
-> ---
-> V2: - Adjust commit subject
->     - Drop the alpha formats for now, add RGB888/BGR888 to dc_plane_formats[]
-> ---
->  drivers/gpu/drm/imx/dc/dc-fu.c    | 24 ++++++++++++++++++++++++
->  drivers/gpu/drm/imx/dc/dc-plane.c |  6 ++++++
->  2 files changed, 30 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/imx/dc/dc-fu.c b/drivers/gpu/drm/imx/dc/dc-fu.c
-> index 1d8f74babef8a..b4a3f8c58cbb0 100644
-> --- a/drivers/gpu/drm/imx/dc/dc-fu.c
-> +++ b/drivers/gpu/drm/imx/dc/dc-fu.c
-> @@ -65,6 +65,30 @@ static const struct dc_fu_pixel_format pixel_formats[] = {
->  		DRM_FORMAT_XRGB8888,
->  		R_BITS(8)   | G_BITS(8)   | B_BITS(8)   | A_BITS(0),
->  		R_SHIFT(16) | G_SHIFT(8)  | B_SHIFT(0)  | A_SHIFT(0),
-> +	}, {
-> +		DRM_FORMAT_XBGR8888,
-> +		R_BITS(8)   | G_BITS(8)   | B_BITS(8)   | A_BITS(0),
-> +		R_SHIFT(0)  | G_SHIFT(8)  | B_SHIFT(16) | A_SHIFT(0),
-> +	}, {
-> +		DRM_FORMAT_RGBX8888,
-> +		R_BITS(8)   | G_BITS(8)   | B_BITS(8)   | A_BITS(0),
-> +		R_SHIFT(24) | G_SHIFT(16) | B_SHIFT(8)  | A_SHIFT(0),
-> +	}, {
-> +		DRM_FORMAT_BGRX8888,
-> +		R_BITS(8)   | G_BITS(8)   | B_BITS(8)   | A_BITS(0),
-> +		R_SHIFT(8)  | G_SHIFT(16) | B_SHIFT(24) | A_SHIFT(0),
-> +	}, {
-> +		DRM_FORMAT_RGB888,
-> +		R_BITS(8)   | G_BITS(8)   | B_BITS(8)   | A_BITS(0),
-> +		R_SHIFT(16) | G_SHIFT(8)  | B_SHIFT(0)  | A_SHIFT(0),
-> +	}, {
-> +		DRM_FORMAT_BGR888,
-> +		R_BITS(8)   | G_BITS(8)   | B_BITS(8)   | A_BITS(0),
-> +		R_SHIFT(0)  | G_SHIFT(8)  | B_SHIFT(16) | A_SHIFT(0),
-> +	}, {
-> +		DRM_FORMAT_RGB565,
-> +		R_BITS(5)   | G_BITS(6)   | B_BITS(5)   | A_BITS(0),
-> +		R_SHIFT(11) | G_SHIFT(5)  | B_SHIFT(0)  | A_SHIFT(0),
->  	},
->  };
->  
-> diff --git a/drivers/gpu/drm/imx/dc/dc-plane.c b/drivers/gpu/drm/imx/dc/dc-plane.c
-> index e40d5d66c5c1f..4fd58afef16bb 100644
-> --- a/drivers/gpu/drm/imx/dc/dc-plane.c
-> +++ b/drivers/gpu/drm/imx/dc/dc-plane.c
-> @@ -33,6 +33,12 @@ do {									\
->  
->  static const uint32_t dc_plane_formats[] = {
->  	DRM_FORMAT_XRGB8888,
-> +	DRM_FORMAT_XBGR8888,
-> +	DRM_FORMAT_RGBX8888,
-> +	DRM_FORMAT_BGRX8888,
-> +	DRM_FORMAT_RGB888,
-> +	DRM_FORMAT_BGR888,
+The current path will have an independent PLL(LPLL\BPLL)
+exclusively for the CPU to use.
+As follows:
 
-Can you please drop the above two formats, as I said in v1 comment that it
-would the driver a lot more complicated when prefetch engines are added?
+            |-\
+    --lpll--|  \
+            |mux|--[gate]--[div]--clk_core--
+    --gpll--|  /
+            |-/
 
-> +	DRM_FORMAT_RGB565,
->  };
->  
->  static const struct drm_plane_funcs dc_plane_funcs = {
+The new chip does not have a dedicated PLL for the cpu;
+it is distributed nearby from the common PLL.
+If there are special frequency requirements that require the
+use of pvtpll, explanations will be submitted later.
 
+The clock path of new soc CPU simplified as follows:
 
+    --gpll--|--\
+            |   \
+            |    \
+            |     \
+   --v0pll--| mux |--[gate]--[div]--clk_core--
+            |     /
+            |    /
+   --v1pll--|   /
+            |--/
+
+Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+---
+ drivers/clk/rockchip/clk-cpu.c | 165 +++++++++++++++++++++++++++++++++
+ drivers/clk/rockchip/clk.c     |  24 +++++
+ drivers/clk/rockchip/clk.h     |  15 +++
+ 3 files changed, 204 insertions(+)
+
+diff --git a/drivers/clk/rockchip/clk-cpu.c b/drivers/clk/rockchip/clk-cpu.c
+index dcc9dcb597ae..6e91a3041a03 100644
+--- a/drivers/clk/rockchip/clk-cpu.c
++++ b/drivers/clk/rockchip/clk-cpu.c
+@@ -396,3 +396,168 @@ struct clk *rockchip_clk_register_cpuclk(const char *name,
+ 	kfree(cpuclk);
+ 	return ERR_PTR(ret);
+ }
++
++static int rockchip_cpuclk_multi_pll_pre_rate_change(struct rockchip_cpuclk *cpuclk,
++						     struct clk_notifier_data *ndata)
++{
++	unsigned long new_rate = roundup(ndata->new_rate, 1000);
++	const struct rockchip_cpuclk_rate_table *rate;
++	unsigned long flags;
++
++	rate = rockchip_get_cpuclk_settings(cpuclk, new_rate);
++	if (!rate) {
++		pr_err("%s: Invalid rate : %lu for cpuclk\n",
++		       __func__, new_rate);
++		return -EINVAL;
++	}
++
++	if (new_rate > ndata->old_rate) {
++		spin_lock_irqsave(cpuclk->lock, flags);
++		rockchip_cpuclk_set_dividers(cpuclk, rate);
++		spin_unlock_irqrestore(cpuclk->lock, flags);
++	}
++
++	return 0;
++}
++
++static int rockchip_cpuclk_multi_pll_post_rate_change(struct rockchip_cpuclk *cpuclk,
++						      struct clk_notifier_data *ndata)
++{
++	unsigned long new_rate = roundup(ndata->new_rate, 1000);
++	const struct rockchip_cpuclk_rate_table *rate;
++	unsigned long flags;
++
++	rate = rockchip_get_cpuclk_settings(cpuclk, new_rate);
++	if (!rate) {
++		pr_err("%s: Invalid rate : %lu for cpuclk\n",
++		       __func__, new_rate);
++		return -EINVAL;
++	}
++
++	if (new_rate < ndata->old_rate) {
++		spin_lock_irqsave(cpuclk->lock, flags);
++		rockchip_cpuclk_set_dividers(cpuclk, rate);
++		spin_unlock_irqrestore(cpuclk->lock, flags);
++	}
++
++	return 0;
++}
++
++static int rockchip_cpuclk_multi_pll_notifier_cb(struct notifier_block *nb,
++						 unsigned long event, void *data)
++{
++	struct clk_notifier_data *ndata = data;
++	struct rockchip_cpuclk *cpuclk = to_rockchip_cpuclk_nb(nb);
++	int ret = 0;
++
++	pr_debug("%s: event %lu, old_rate %lu, new_rate: %lu\n",
++		 __func__, event, ndata->old_rate, ndata->new_rate);
++	if (event == PRE_RATE_CHANGE)
++		ret = rockchip_cpuclk_multi_pll_pre_rate_change(cpuclk, ndata);
++	else if (event == POST_RATE_CHANGE)
++		ret = rockchip_cpuclk_multi_pll_post_rate_change(cpuclk, ndata);
++
++	return notifier_from_errno(ret);
++}
++
++struct clk *rockchip_clk_register_cpuclk_multi_pll(const char *name,
++						   const char *const *parent_names,
++						   u8 num_parents, void __iomem *base,
++						   int muxdiv_offset, u8 mux_shift,
++						   u8 mux_width, u8 mux_flags,
++						   int div_offset, u8 div_shift,
++						   u8 div_width, u8 div_flags,
++						   unsigned long flags, spinlock_t *lock,
++						   const struct rockchip_cpuclk_rate_table *rates,
++						   int nrates)
++{
++	struct rockchip_cpuclk *cpuclk;
++	struct clk_hw *hw;
++	struct clk_mux *mux = NULL;
++	struct clk_divider *div = NULL;
++	const struct clk_ops *mux_ops = NULL, *div_ops = NULL;
++	int ret;
++
++	if (num_parents > 1) {
++		mux = kzalloc(sizeof(*mux), GFP_KERNEL);
++		if (!mux)
++			return ERR_PTR(-ENOMEM);
++
++		mux->reg = base + muxdiv_offset;
++		mux->shift = mux_shift;
++		mux->mask = BIT(mux_width) - 1;
++		mux->flags = mux_flags;
++		mux->lock = lock;
++		mux_ops = (mux_flags & CLK_MUX_READ_ONLY) ? &clk_mux_ro_ops
++							: &clk_mux_ops;
++	}
++
++	if (div_width > 0) {
++		div = kzalloc(sizeof(*div), GFP_KERNEL);
++		if (!div) {
++			ret = -ENOMEM;
++			goto free_mux;
++		}
++
++		div->flags = div_flags;
++		if (div_offset)
++			div->reg = base + div_offset;
++		else
++			div->reg = base + muxdiv_offset;
++		div->shift = div_shift;
++		div->width = div_width;
++		div->lock = lock;
++		div_ops = (div_flags & CLK_DIVIDER_READ_ONLY)
++						? &clk_divider_ro_ops
++						: &clk_divider_ops;
++	}
++
++	hw = clk_hw_register_composite(NULL, name, parent_names, num_parents,
++				       mux ? &mux->hw : NULL, mux_ops,
++				       div ? &div->hw : NULL, div_ops,
++				       NULL, NULL, flags);
++	if (IS_ERR(hw)) {
++		ret = PTR_ERR(hw);
++		goto free_div;
++	}
++
++	cpuclk = kzalloc(sizeof(*cpuclk), GFP_KERNEL);
++	if (!cpuclk) {
++		ret = -ENOMEM;
++		goto unregister_clk;
++	}
++
++	cpuclk->reg_base = base;
++	cpuclk->lock = lock;
++	cpuclk->clk_nb.notifier_call = rockchip_cpuclk_multi_pll_notifier_cb;
++	ret = clk_notifier_register(hw->clk, &cpuclk->clk_nb);
++	if (ret) {
++		pr_err("%s: failed to register clock notifier for %s\n",
++		       __func__, name);
++		goto free_cpuclk;
++	}
++
++	if (nrates > 0) {
++		cpuclk->rate_count = nrates;
++		cpuclk->rate_table = kmemdup(rates,
++					     sizeof(*rates) * nrates,
++					     GFP_KERNEL);
++		if (!cpuclk->rate_table) {
++			ret = -ENOMEM;
++			goto free_cpuclk;
++		}
++	}
++
++	return hw->clk;
++
++free_cpuclk:
++	kfree(cpuclk);
++unregister_clk:
++	clk_hw_unregister_composite(hw);
++free_div:
++	kfree(div);
++free_mux:
++	kfree(mux);
++
++	return ERR_PTR(ret);
++}
+diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
+index 19caf26c991b..2601df3b1066 100644
+--- a/drivers/clk/rockchip/clk.c
++++ b/drivers/clk/rockchip/clk.c
+@@ -722,6 +722,30 @@ void rockchip_clk_register_armclk(struct rockchip_clk_provider *ctx,
+ }
+ EXPORT_SYMBOL_GPL(rockchip_clk_register_armclk);
+ 
++void rockchip_clk_register_armclk_multi_pll(struct rockchip_clk_provider *ctx,
++					    struct rockchip_clk_branch *list,
++					    const struct rockchip_cpuclk_rate_table *rates,
++					    int nrates)
++{
++	struct clk *clk;
++
++	clk = rockchip_clk_register_cpuclk_multi_pll(list->name, list->parent_names,
++						     list->num_parents, ctx->reg_base,
++						     list->muxdiv_offset, list->mux_shift,
++						     list->mux_width, list->mux_flags,
++						     list->div_offset, list->div_shift,
++						     list->div_width, list->div_flags,
++						     list->flags, &ctx->lock, rates, nrates);
++	if (IS_ERR(clk)) {
++		pr_err("%s: failed to register clock %s: %ld\n",
++		       __func__, list->name, PTR_ERR(clk));
++		return;
++	}
++
++	rockchip_clk_set_lookup(ctx, clk, list->id);
++}
++EXPORT_SYMBOL_GPL(rockchip_clk_register_armclk_multi_pll);
++
+ void rockchip_clk_protect_critical(const char *const clocks[],
+ 				   int nclocks)
+ {
+diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
+index 7c5e74c7a2e2..23653a942403 100644
+--- a/drivers/clk/rockchip/clk.h
++++ b/drivers/clk/rockchip/clk.h
+@@ -622,6 +622,17 @@ struct clk *rockchip_clk_register_cpuclk(const char *name,
+ 			const struct rockchip_cpuclk_rate_table *rates,
+ 			int nrates, void __iomem *reg_base, spinlock_t *lock);
+ 
++struct clk *rockchip_clk_register_cpuclk_multi_pll(const char *name,
++						   const char *const *parent_names,
++						   u8 num_parents, void __iomem *base,
++						   int muxdiv_offset, u8 mux_shift,
++						   u8 mux_width, u8 mux_flags,
++						   int div_offset, u8 div_shift,
++						   u8 div_width, u8 div_flags,
++						   unsigned long flags, spinlock_t *lock,
++						   const struct rockchip_cpuclk_rate_table *rates,
++						   int nrates);
++
+ struct clk *rockchip_clk_register_mmc(const char *name,
+ 				const char *const *parent_names, u8 num_parents,
+ 				void __iomem *reg,
+@@ -1208,6 +1219,10 @@ void rockchip_clk_register_armclk(struct rockchip_clk_provider *ctx,
+ 			const struct rockchip_cpuclk_reg_data *reg_data,
+ 			const struct rockchip_cpuclk_rate_table *rates,
+ 			int nrates);
++void rockchip_clk_register_armclk_multi_pll(struct rockchip_clk_provider *ctx,
++					    struct rockchip_clk_branch *list,
++					    const struct rockchip_cpuclk_rate_table *rates,
++					    int nrates);
+ void rockchip_clk_protect_critical(const char *const clocks[], int nclocks);
+ void rockchip_register_restart_notifier(struct rockchip_clk_provider *ctx,
+ 					unsigned int reg, void (*cb)(void));
 -- 
-Regards,
-Liu Ying
+2.34.1
+
