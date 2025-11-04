@@ -1,70 +1,71 @@
-Received: from OS8PR02CU002.outbound.protection.outlook.com (mail-japanwestazon11022123.outbound.protection.outlook.com [40.107.75.123])
+Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010007.outbound.protection.outlook.com [52.101.84.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA5C12C027D;
-	Tue,  4 Nov 2025 05:28:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.75.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD11329C327;
+	Tue,  4 Nov 2025 05:36:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.7
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762234131; cv=fail; b=oqa6eKSlOHE1Q3OuJqi8TEuyps00EykuMW69eoWbvDIeHygTAIpNUsvwIWjrhH1NDdYf1ixCnng9Dl/3/OY7ztaza3BLFnhnLVj3hNBHzY6MyUvHJtxEs7IeFnq8aN4q6p0DUWb2MJbDL0Cy/++3n4RRShROLz+gnplUhTRE7tM=
+	t=1762234620; cv=fail; b=Fe2nL/i1PmbGXWWkMvdrfZi5xmobvk1vcIEAej61Ofj/QsPm3lLyc1p6sbCxhnKJYLkhcoUrXn1rbvqQj1Dpig0jRRvReLJ+1MvzBoVQ+6sqnRS9+zs3A3KLBQlpDZMhbAycXRFFFLN4elaYhpycjudeovtmAcjBdCji+PonpbQ=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762234131; c=relaxed/simple;
-	bh=oxu6iXSRyPTWD87gZwcjc4a4wPnfu/CnvKdHNA96JqU=;
+	s=arc-20240116; t=1762234620; c=relaxed/simple;
+	bh=6Sd+ncMeu1UO8skHiq3SRDKIP50fWF34JUKiRZI3H4c=;
 	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=S7G9LJXiHrqdWIGYbGYv5LdEfDZ8XJSd6YEKybnGwBEoDsUfvJEWPVNYI8PNLOZTEUrEFEJiXS5wo2s9kJbiZY/uPrzFzY8FHZ6MxUNFIQfXVAz9deZhym60+FSQpbeKxJymUfECICvuwodaJ9tvTps9tiZTpc7lYsrpF6t/FFo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b=XaZk3B4U; arc=fail smtp.client-ip=40.107.75.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amlogic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
+	 Content-Type:MIME-Version; b=g0QSP8SSMFozkJbouScypqvwbNF+dMP6WxCATF37snDR8/eCyvMXdZSELHPyYIgisAFSlAzuIkFU6d9iTxVwnsq3s42YAfvUGjElYfXRZ1QPyAnl5rri1fZDqvDPN8AegYXxtb37q+4c4IQpIe5QPCymBYN1R5aF3IhB3d7pL8g=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Hcx621kf; arc=fail smtp.client-ip=52.101.84.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b="XaZk3B4U"
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Hcx621kf"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=xAOVrcZb8NM7Hes8gJHlx9/TWaAsI5f9J2pQnBk1nnrkTdIGMSd7ko+QBSLPRUHZrDFHgunjxiYETXji2JUqPahcCmFPd59YGc3fL6BRBg5q5zyozn1w9GyumrNcmQqm/oYxAiAwWzEUIRgXaO4u9wH6ztryLPlDN9U8FpUOigGpKjB/VdhOhmGl+8atMjcRI73jC5aUu3Ut6swAuXPzpacKHsXNRnKv2boq3/GWiLPm+8CW8NbjhjcBEPoDz3TibS8rd18aX4WfGJc//ncWSNMiIx0mf+JcThc3R7kPRw3sKbCowRGYBeGjuZu2JiLSq3qtIQT0E744l7kdPH+lxw==
+ b=CWpdXCZQqpzvCGptBF8RNyO1Q9IYBYDWHebKqUNZkMkjwiNUO0/4fDsY4myCpeRxSQw3SMST9g28UQpMIsPaqoM6xR/KT6OBPGZ4VJdWZs+G9ORywh39WnnuYdP2/Ywf9F2+438jcy4Ddk4UWkoRaEWRnP4vEVD5u78GLawkBZUH+L1aD4PEMfRh8sBK1uJVRuuVbu5Aosq7LRJM050kfsIWXKpI/8lqbml9MvQ+O2yaGXlYCn0gBR0T1j7n/3phNxUjLjVFhMaqhBmKTdl6UhdkEwdKpz01rGvitBPr5npO8ej3ipmQb7hVxli0cWs/c9AISgnRJwfS/FsFmASf7Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=1i+PNdAcUEsp0BMwfot0bE3vOIU0AfEh/HHg9XLLYBI=;
- b=xQiQE75Jv0RkEzS2rCAhQxiLLce9rw78KwHYpPWRYsjuHeDg3gSZxcVV00vzJCeCZXjqckGxhRMZbR0s8n8e3ofEaGw8ojHiKIoZD2CZa/RoPzJzkRg1TZAHtv3ODklXDbo2puYaSD1QDt1IugsCQNebks2TkUtiqS/Bd/YGN+bIgPcliJEQU2eA/cQNsDxgFwZKHUndG09AN0vZNBfCuuKWuOnL57XRGrmlazn8vXR29iyyGnamZHOPfSy2O1ku1s5IokKfj0tiu1FBrD4QMr0JSZpn5IrsT7o8JdBZjZld5P0W2govsSCSeunbegBSe8uQYdWDjCT3lP6wSBM/RQ==
+ bh=PzE4RKLKWSsGNJSLz8tXoFIlKeY2KC7joNrdP9tlAnQ=;
+ b=we7rdx8LKyqG5PH0985e4E/S0Q6yg+MIZxINsSRevLWAH0MoKgRF8DtyQ519AQYLADgkgg6ZOw1ScBrb8u8UhlOVbmhnWyZt9JvpX+tAUw+r8+2Zio/eCepCyT2fWWcSGXO8oSciUW5LvzGQfB6ENsSCzwHT/0DQoDOgIKoa86AQz2bnnV+QMaSQyxnatFYCcXusooUOcr3N68z7IlP2WqKTtNpNCMVXXIQWydKl8XMjI2iyRvgW7J1CSqFoaG2EAlUbkSVKl5oTJWqlxQgD/j9c7YZMLEjCyfldI0+YQ+UluupQVcGqeVqZ+LWfBSwAtakb/j6wDIqnw4yP+m4YHg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
- dkim=pass header.d=amlogic.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amlogic.com;
- s=selector1;
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1i+PNdAcUEsp0BMwfot0bE3vOIU0AfEh/HHg9XLLYBI=;
- b=XaZk3B4UB7mJ8QZhOBHKqqu+v1q8IlKsK0+AKBlFx45HTXwPq59emdOaoxwsT4iLlkq0kXQqbrarGleXAUCemHjcjtnaiDPFks6gnNelCYp0Znd+lqpabOwGpDHCXfmhKK50K+Z1PgOUb8eH7XypySrFuZfAvZgh/iK7bQ9a+3uVTW+6vgkICGDBhD0JiOZkidhMFms8zkikMItYoUEOWTdQb0Kcn8BUQFoBT05nQE2nkCieV99RTthqaWORJqhK/hfu5Adq96PiaP4xxPFnewgvYytGhSbfUQz7xKP8Nd41+djsOOVz0W4LpIggaE+olqQlrlD+H4//YmbMNbNZZA==
+ bh=PzE4RKLKWSsGNJSLz8tXoFIlKeY2KC7joNrdP9tlAnQ=;
+ b=Hcx621kfF8e7NN9HfChiCjwNt3FWSejiKU6Y8UBOBXEJxQV97XPbEstvv0aGBNJuRQTHdkRIvf0LM0q/bzk4b87iMktrP+RwE4anz+5LPw9bqZFyIX13/7oJGDPtx1l54eHuIIp5hJpYhPgwAsmoBUso7cb11++V3+vtrna4+7lKwMdAHlGBnGogwDCFy+sUVTfWpd/rbS2cdsHksSaanDgWfB4hIM8wyzrzySCsPe5H0CRWzZcxkH2Nn/sOrw5pJAx9W1luX76wfdIvU37QcpnpHF6fWRrXuCGgKdRs+eq+cuCfFGiGKhAVe2n6byF8H2dAYWG4xtklbrcjQaGc4Q==
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amlogic.com;
-Received: from KL1PR03MB5778.apcprd03.prod.outlook.com (2603:1096:820:6d::13)
- by TYZPR03MB8585.apcprd03.prod.outlook.com (2603:1096:405:ac::8) with
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
+ by DU2PR04MB8663.eurprd04.prod.outlook.com (2603:10a6:10:2de::24) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.15; Tue, 4 Nov
- 2025 05:28:46 +0000
-Received: from KL1PR03MB5778.apcprd03.prod.outlook.com
- ([fe80::e1e:5c95:a889:828e]) by KL1PR03MB5778.apcprd03.prod.outlook.com
- ([fe80::e1e:5c95:a889:828e%5]) with mapi id 15.20.9275.013; Tue, 4 Nov 2025
- 05:28:45 +0000
-Message-ID: <7a3c9205-8fb8-440c-bebe-090f1c49689e@amlogic.com>
-Date: Tue, 4 Nov 2025 13:28:13 +0800
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.16; Tue, 4 Nov
+ 2025 05:36:53 +0000
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::4609:64af:8a4b:fd64]) by AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::4609:64af:8a4b:fd64%6]) with mapi id 15.20.9253.017; Tue, 4 Nov 2025
+ 05:36:53 +0000
+Message-ID: <673c5737-6a8b-4008-962f-5d63ef5684b4@nxp.com>
+Date: Tue, 4 Nov 2025 13:37:19 +0800
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/4] clk: amlogic: optimize the PLL driver
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Kevin Hilman <khilman@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20251031-optimize_pll_driver-v3-0-92f3b2f36a83@amlogic.com>
- <1jms57xx05.fsf@starbuckisacylon.baylibre.com>
- <9751014d-926e-4d42-b8e1-5a4d3e734457@amlogic.com>
- <1j5xbvxchd.fsf@starbuckisacylon.baylibre.com>
-From: Chuan Liu <chuan.liu@amlogic.com>
-In-Reply-To: <1j5xbvxchd.fsf@starbuckisacylon.baylibre.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SI2PR01CA0036.apcprd01.prod.exchangelabs.com
- (2603:1096:4:192::22) To KL1PR03MB5778.apcprd03.prod.outlook.com
- (2603:1096:820:6d::13)
+Subject: Re: [PATCH v2] drm/bridge: fsl-ldb: Parse register offsets from DT
+To: Marek Vasut <marek.vasut@mailbox.org>, dri-devel@lists.freedesktop.org
+Cc: Abel Vesa <abelvesa@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Fabio Estevam <festevam@gmail.com>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Lucas Stach <l.stach@pengutronix.de>, Peng Fan <peng.fan@nxp.com>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Rob Herring <robh@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, devicetree@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org
+References: <20251102170257.65491-1-marek.vasut@mailbox.org>
+ <4beeffe0-6ae4-4039-9904-3ec318533a1d@nxp.com>
+ <0c4bb240-6f5d-46c2-8a0d-7446ad3a9d31@mailbox.org>
+From: Liu Ying <victor.liu@nxp.com>
+Content-Language: en-US
+In-Reply-To: <0c4bb240-6f5d-46c2-8a0d-7446ad3a9d31@mailbox.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SI1PR02CA0026.apcprd02.prod.outlook.com
+ (2603:1096:4:1f4::11) To AM7PR04MB7046.eurprd04.prod.outlook.com
+ (2603:10a6:20b:113::22)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -72,201 +73,154 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: KL1PR03MB5778:EE_|TYZPR03MB8585:EE_
-X-MS-Office365-Filtering-Correlation-Id: fd8729ca-e3ca-4c13-1a62-08de1b630631
+X-MS-TrafficTypeDiagnostic: AM7PR04MB7046:EE_|DU2PR04MB8663:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8f51bca7-49db-4e6c-5753-08de1b6428d7
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
+X-Microsoft-Antispam:
+ BCL:0;ARA:13230040|376014|7416014|19092799006|1800799024|366016|13003099007;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?VU1Qb2xYZ0cvUXBzcnJETzdZV0RLRGsxbzh5cW1hRXlUOFNIOXNNREpWT3dV?=
- =?utf-8?B?ZHg5TEIwWFI2NU4rak1VYkI0bER1Z3VjdCtEYUNabXQzQm1LQVRDa0ZqeXpM?=
- =?utf-8?B?Q0NYZ1JFQ0QvSDVaeFljZTlYN3p3a0NOdndlT2pYVGVCcGxpbVgrSnBRcXhP?=
- =?utf-8?B?Nkpic2RSMnM0bWxlQU1IckdGNWwxaXFLaDhseFA3Z2dXeVNIVEFmWVlPN1ZG?=
- =?utf-8?B?eTJSUzNucjVvTUJFZ3owV0dGVEl2SEJBaktXUkV4T2x5S1VGMFZRUUtZV0xU?=
- =?utf-8?B?YWIwSWhTUW5RKy84emd2Tjl0cm44Unc5aEk1SWV0YnNTczkvOTV1Q3AvTER3?=
- =?utf-8?B?VWt1aGJURnU2bjdjL0ZNdTlLR2pneW1RS0NPTGo1bUZRQUtTOXZNanV3Zlo1?=
- =?utf-8?B?QXlsVTBuTXFTNFJPWjhEdjF0cm0wQ2NWc3hYWFJsc056TzlMZmpRK3RIK1A2?=
- =?utf-8?B?TVFRdUJHVmVsM0U4cW5FMkpRZzUwM25lVDNOQ0UxK1VUTGVuTEpaWmlnZnpY?=
- =?utf-8?B?YjNBL0NuREQrdzV0R2s3MGVYb05HLzB0K0pPSk9sOTVPWG41eVBBTVZDcVY4?=
- =?utf-8?B?TWxCUyt6OUNYOWxqVURiQ0VhM1VSZGRCQmRxQzNrTndjTlFMbVhKK2tieHkr?=
- =?utf-8?B?amwweTRRVkZXNjdsZmpJNEUvS1YxbndjdGt5bmVaQTNnM21FZi9lVUIvMTRy?=
- =?utf-8?B?RHJkTXd1dHZXS1BDRktpQXlPRWVieUxWMXRlaUljQ1VqVHltYzdSTHZDV0hs?=
- =?utf-8?B?Zm9XM0NPbnZuVXpqWUdxdWhvcG1oMDV6Z09RbUpoY05BS0pBSDZqdFBEMm1W?=
- =?utf-8?B?anF5bVZ6NzRqVGw5Y1JiRUljalk1aWhneThUcnJQR3V6ZDZOS21qYi8rWm9J?=
- =?utf-8?B?YloxSDNhMEc3ZW9KSW8xZnVpZWdONkIzcGtsMTI5cmRWWXNzV0V0bDRQQ2Rn?=
- =?utf-8?B?alkwZmttU0hnQk5oSVZxWFU4djVTVnhIL1ZseWZYWS9YbVRHR1NMVFVLTGt2?=
- =?utf-8?B?cUVKUTBCQXM1aGFkb3R3Y2syUkQzMkE5bGE4b3hBV1VXQW4xT25KTEd3RWpW?=
- =?utf-8?B?NGh3bmdwR29VOTJ2NEp1Q3l1N0h6YTByclM3b1pMUGQ2bU1LTHh3eUJ6Znly?=
- =?utf-8?B?b09RNDBVdU9ibFdPTnR6U3ZvamdIUTZwN1pwUjEwZTZER2VFQjFiVDVSSkVv?=
- =?utf-8?B?N2xvMlFCZTMxeThlVnFvdE1WL1k4QUJXcElyQkdrNW4ydXczWXdHT3hEVktt?=
- =?utf-8?B?bnQyU3YvcGJ2a0ppRE5yY1U0d2JZeERRYVliSll5cHB5UGlUZ0N0NThIeVVK?=
- =?utf-8?B?cFA1cm45alVaTjZTNzNZSkk2QkVaY3p3a0lqVEZOUXhZRDBDTGZlZkxjUG9C?=
- =?utf-8?B?RUx2dlR5TWI1UllvZWVJeDNvY09tWUw0TlhtZU5TNkh0NGV3VnY2ektKTHRW?=
- =?utf-8?B?N2xzY3ZZQkhtZmxBZEo0blJsQjNEVUsrenpRTU1qcmwvSlpRd0h4VFk1Q0FI?=
- =?utf-8?B?b005Z2NZdTF4ZHRpQXRYUUk3VkxWOWwwRzg5Mjl2dVVPaW5UTk82WkZrN2Zt?=
- =?utf-8?B?cmMwYUxTcWlLdEQ4eUt1NUpOT2FpQ1ZlWlJWS1dNYzZqTVFRZ1BDRnBrbnRR?=
- =?utf-8?B?eEI0YjFIR3JhMHpjbktOWDBUc1RTYmZaNTBQNkFDY0twNmQ2L1pYbUhZR29i?=
- =?utf-8?B?VVdjbUVzbjhLZE9uMk5YdFArYXNQTVZ5YTI5UUtpN294dm41MDdtRmg1SUVs?=
- =?utf-8?B?NXlMRmRYd0UrdTVoczRrcEFLemhxVXltTnFYdGtxbTViQS9qVGdlSnAvOVpp?=
- =?utf-8?B?ZVNiaCtZMEhmK2pjSHg1SXlMRlRwdlk0R2lrVXdSVE96YlV1NTZnT0w2a29s?=
- =?utf-8?B?ZHBkK2hjVmJIb3RXdW1uc0Z6d1F1ZS93RG14dW53bTRSQmZBZ3NvWjlGTHZi?=
- =?utf-8?Q?tj6K/fCf/MgvyaBwXgKvZJLdcFL0N3T3?=
+ =?utf-8?B?Q1A1T3lvZ01oeDU4Q3AveGZJSk5Ca1F2KzBMR2tDcFpPclJGTlh4bUVIQ05H?=
+ =?utf-8?B?UURBaVYraGtraFBzd0pRd0tMMWVlWFY2WVpsZ1ZCM3BtNmdtOWp3MzNDeEtU?=
+ =?utf-8?B?K2RidlIrd0ZGVDFZUjYwaDBVQXJZZ04ydzkrYXNUWEhRVFNJSHJaVCtxNmZK?=
+ =?utf-8?B?VWJZRERRSSsyQ1FLVDgxUW5KS1Y0amc1US9tOGpaQTkxdlhqL0xXMkRmYjIw?=
+ =?utf-8?B?a1JjRm9RUHduSGUrNER4dEg2UGhZUThRWlFXL3M2TE1WTDRwS0NrS0VIcTRt?=
+ =?utf-8?B?R3pJVkxDVkl6UG9MSE5MajJObTUxSUVubjl6SzBxYllyY0JHQUo1VFBLK29a?=
+ =?utf-8?B?WEpqdEh0ZFEvY082NURQdkpCNDlPODY0TjhzSkR5WWlVR2FCQkhwa2htUVU1?=
+ =?utf-8?B?c1JJdHN5Wm5zc1RqV1NJQ0xoODlwbkhUdXFCVHpKeHhoY3lNV3VZelRRSUFX?=
+ =?utf-8?B?eGprTmFjM2FZUVJhQVVqU0t1QlFnQUpoRzJESzhlSFpGSFRLaFFEVkdHU0t6?=
+ =?utf-8?B?QmxNcU9GdnovbVVOQ3RFaVFvMHp0SjhvUi9tNGl0RmQrRjZOT0YxNzVTck9s?=
+ =?utf-8?B?NkNaRFMzZWJlUmpJTnhIUTZITEZvUWsrR3dqejZpNngzbUFRNTF1TndFV3Ns?=
+ =?utf-8?B?SnhDS2k0cmpuRUpEWCs4VHFnTkh4aFprclBnKzdWM1M1ZFhHeDd2VnRXSzlt?=
+ =?utf-8?B?SzIwQ0trejlENUgwVC9hTDBGOUtJMytLM3NYZGtGd09kOVoxQlJtRG5IZTBt?=
+ =?utf-8?B?T3NhYWoydFpIZTFldTE1VUJHNGxTTVhDMGQwNXh4WjY2MGN5TUg2bEhQa1Fh?=
+ =?utf-8?B?ZlQ3TzV5WGxPR0l5NXcxWktpOUJ1dlNpU0VRcGRiTFowaHZLMFU5bWFtL0Fl?=
+ =?utf-8?B?U1c5R0RjeHJuRHJScjliR0FaN01yWU9aV09KRlFYR2pHWG1hTzhQc2dCQjEy?=
+ =?utf-8?B?eW9SZHB5eTRqWUVBM1JnOExSb0VsUzgrNFNzbTdJTlR5bHJHbVFMN2JSWldY?=
+ =?utf-8?B?M3I1VUVNWndHTEwzZ3hQWGFpOU4zMkN4dUJYTVgxRURTZFdsY05MQXRmK2Fm?=
+ =?utf-8?B?N21zSjZnZVFhZnpFUzRqMGZEMXI0R3UyZlFVakNoY3Y3b3lYTzV6V2lVME55?=
+ =?utf-8?B?YUYzUTBwc21sc1RhNExTWkN5V3R6K0p0OUExSHFna2FDaHlTSjcwaEdydU5X?=
+ =?utf-8?B?RmJjYTdsemw4RkcwM2kwcVNObm9FQkJucHBCOVNDSW1ibTdLbkNCVTMyTG5o?=
+ =?utf-8?B?TElPd0Qxbi9UWkVCRE5KY21lRVdhYjQrUjRWZkxwaFFrZXZpN0tsNDhHMjJu?=
+ =?utf-8?B?ZkNGMTFaV1JpK2R0VXdpYU9jQysxaVRWRk54NHBGWkh0Z2NiNk1PY0VBZzRD?=
+ =?utf-8?B?SW55clVRMlFUT3RJTnhjNVBBcmhmZFlLNTRUTVRQc0I4Y1daSDkyMWxIZWdS?=
+ =?utf-8?B?ZW1SZGprUFB6NEhiaFEvMDI2UW1JUUZDTno4anpBVjFsSm4rR2JMQS9QUjFu?=
+ =?utf-8?B?L25OUVROUXNoc2ZYT2Nkek03cXhOQ3JRWkw1bEpVMXNMTWhCSCtUbUlyMFBQ?=
+ =?utf-8?B?U1JYaGlCR1JwYlJMZFhNRHUxZmlrTXhVdXI4amJrRkplRStFWTVySXZDTjRI?=
+ =?utf-8?B?Nkh2azBtWktHQXJEWU1nN2M3aGRHeW0vR2ZSOFBCNWVOZnIvS0FyY21aV1Ex?=
+ =?utf-8?B?MzhvUy96N0svT0M5RW1mTWNYTjF3bGgyT1pyZ053RXJlUjEyeG81Zk45N0Vr?=
+ =?utf-8?B?N280bU8rZE5Hc3BxU0pMU3pOODdTNU4zWGdlc05SNXlBQXVNbTRGdnArNlEz?=
+ =?utf-8?B?Z3NJT0psNmJSQUw0RUNFcGZKZlJMT24rK2dOVXIyRVZoL3lBWUpxQTNQZUtP?=
+ =?utf-8?B?WFkxOUhHWTZlWUluMFhkMEtjZkZxNG1KNXhlZm1MUmF6MVE9PQ==?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR03MB5778.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1102;
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(19092799006)(1800799024)(366016)(13003099007);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?QzBzUDJGVHBSSS9kNGhLaXMyOUoxbFBIUEd0bGpEY3kzOHA1bjZlZ3d2cGlN?=
- =?utf-8?B?aVBhNU92Qm1UUi9vOGwwaUhxVGQvZUcvWW1JY0dZdit2Nk9udkdaTTl3M2Fm?=
- =?utf-8?B?NkVPa2FsbDhZc1dIcFIySDh6UE4wOWRBQzlxblQ4MThyYVV3QlFITGRVWGZv?=
- =?utf-8?B?dlAxRHBjK21Wd2ExZWU1aUdsc1YrRUpoTzljdDZWMjcwQTdHRmVJckI4RE42?=
- =?utf-8?B?L1QzUENxZ3k4UldzT3c3c0t3bEpGdFVNUERIcTAzZE4rU0tuaXRwZWFYQTQv?=
- =?utf-8?B?ZlZqNXJ0aitqUk4zQWt1eUc4bEFid0pxN04vOWRNMTlKQ1RvQUxXdmFkc0NO?=
- =?utf-8?B?Q1J3WXptSlltUEh0bmJ2YkVzUHMwYlVxK24rME1uMmh0ZEtTSjZUVTZOTnEy?=
- =?utf-8?B?ZDU1TEJXdUptcDFEeGtwK3ljVWI4Wk1VZnFUcnNyNU9IWnBGS2NhSDBMRkVP?=
- =?utf-8?B?RnlkZkY4Q25JTHIyNk13dGRyYjBVc256YzFvVi9hSHFjdUdoTXhKWU8xZ25s?=
- =?utf-8?B?eUpTWjh2bHB5MlF3Q0ZiMm94WGp1TVRYeEh6d3UvOFBxSEticTh4RFN4MXVo?=
- =?utf-8?B?cDdwci9md0xaNlNENHhoQi90VTc2Nm1OcDg5NUFheTNIQnF4bytSbFJ6eERm?=
- =?utf-8?B?L25VaEhuOTRGRytjeG0wMmIwZkdCWXdtb1I2UTlsRmE3eDkweW9zeDhnMVk5?=
- =?utf-8?B?bDRNd3lQVkVBdFRleC9GellvN20rWStoUnphNFRoZzVIdWNoZzNnSzhEWHVR?=
- =?utf-8?B?YXdjWVlUZFNvOVhRU0J4ZTkrRmNTVHM5UU5GTko3WWg3VnltUWMxU2lZZU50?=
- =?utf-8?B?Qlh2Y1NsVXJnWG83ekJVNmlSOE93UitPM09pNlJVMCt2c3lxaE9td2lJVUJD?=
- =?utf-8?B?ZVZ1WDBVdVRsOWIwTUpqWUVyV1E0RmhMOWdHWDNtNFg1YnhYaHpYdktqanRX?=
- =?utf-8?B?Vk9oZXBpbDN1NTFJNXlIZ2J6aGVrUkxrdFk3RnVPai9IMnpHcTQvR01kb2Fk?=
- =?utf-8?B?WE9WTzQ5eHRhWHRzV1BOb3RjSEw2aDRFZmFEOFJJUEZRTGpjWmxCMkFxM2pJ?=
- =?utf-8?B?NjNXWm9zVnJyQ2FWSDBZdmo2WmJyN1lncU1vc3I1NjBIcldEVUt1UnY2a3FD?=
- =?utf-8?B?THBsUnlXVXRCN0o4QkRQTW5pZnkrMzBkc0Z0SXFrVW8rYmJBOEo3b2wrZUJU?=
- =?utf-8?B?Ly9JSXIrZjhaWVFjaGF6Zy9KUnZxZWNZaWcyRlhNVXFKUkg4ZEpyRXBqalZ0?=
- =?utf-8?B?MGxqUGVlelRJTGpuTTNZZnJRWExnYUUzdXdsSDdUb1pOM2RCZkxlNU55WDhE?=
- =?utf-8?B?b2pyVmhGYWsvemV1ZWNtSFU5blp1Rm9aZEpxTGs0SEVDMUNuZVV5L3pvVzc3?=
- =?utf-8?B?ek00RVdjcHdENy9WcHRiaTQ3ZUVDYWpOcjZaNDZDOEZVZjFOUE8vRXlwZ0Z6?=
- =?utf-8?B?ZWZ5YXZlcFdUZC9RVDFTTlBQeHNhYlpBeDZIOVFuK3pCb1V2M2NkcGJjSkZw?=
- =?utf-8?B?cUZHd050OUpYZE1oOVJWSkdKSWhHeWhHelZiNXBNeFV4N1pra1JkbUNNTUln?=
- =?utf-8?B?K0lqQVBxVE82aTRvOHNLd2lNSnp3ejhKeDVFUDVPTW96TVp2OHQzYjJlQ2pC?=
- =?utf-8?B?cXdCUGZLZ0laZUV1cTY0aUxITmhYeEt0WW52S0lNUTk3TGUya1Y1K3QwMjQ2?=
- =?utf-8?B?YTVQSjhYWGZwNGs1cGFIZE9BZ1JvbFgyeUlTOWRmRmFteGFMTEFvVm96eDBq?=
- =?utf-8?B?MURmYXhBbkFhdzR2QW95Ym02WjlaNDhzY2U4NmpxWmNSaGFkZTZUUlpnTGlK?=
- =?utf-8?B?WXpNQTh5NXh0OU5Gd2dKUUJmMk5YQlBlRzNyUmZSQ1AzeEhoQjhZR0ZKQnVB?=
- =?utf-8?B?aUt4M1lBc2ppK1J4YzhRQy85TzVOeityU0U3L3ErbzVVV1NZdDM4SkFwUlY1?=
- =?utf-8?B?d05kQklBTVcyVngwNWNRb05qRHdqSlpPUnFZSC9WczVjWFNxSHRhZWFpQ3ow?=
- =?utf-8?B?YTYvRDR0M3JIeFEvdFUvVnJ6QmdndXAydUJOMlZSZ1hHZWEwRUZyR1hvOG5K?=
- =?utf-8?B?b1VtRUFrZ1NVcVI1ZkRlUy93dUs2ZEp6UHJPckFmVXl2QWs4NzdQRW5wN21l?=
- =?utf-8?Q?GfriSl628xnQZLOqZK+2F9OxF?=
-X-OriginatorOrg: amlogic.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fd8729ca-e3ca-4c13-1a62-08de1b630631
-X-MS-Exchange-CrossTenant-AuthSource: KL1PR03MB5778.apcprd03.prod.outlook.com
+ =?utf-8?B?dXFyUFEzbVV4VlBTNHgxK09wbHBiNWt1ZjlYd2pzUFFyZnY1bm4ybVBWcmgy?=
+ =?utf-8?B?SGxpc0FUVTBjRFJmekVXZUZ4bCtKRlBvaEZGUEFNL1YwSE1xTHYrZFV0U3R3?=
+ =?utf-8?B?N2w5VDNNRjQ3UDJiSlFEdzZRUFB0VFBLNU5Cbkp0Z0xEZW9WZE5oSmozM0hz?=
+ =?utf-8?B?SmhyQXIzbmFXZXJTUGVMQjMxdW9uNEhZajNnbjlHRUxIMEdaZEo3OUtUSW5R?=
+ =?utf-8?B?aGpwcFF5bVRmSENudHdCWDR1cGZUTUc2Zk00NUZnbTBaOCt6TU1yS0tTemZO?=
+ =?utf-8?B?d1lPT2pYa3BVWTF4SGxsTWFZMzB3VGZPV2JRSmN4alFKeFpJeUtGSkJRbkZz?=
+ =?utf-8?B?L2I2dWFIYVdLcDJPNTRVRzRZa2o2b2JrSDNHMHpFYTFmWVdQaFZiSzgrZzBK?=
+ =?utf-8?B?aHhLczQ0UUF6eGFTZHNaU2NuZEo0Sy9kUXBaanNMVGpBUTBpNldVUDU5eFlC?=
+ =?utf-8?B?SDF0VWFHYkx1NGRNWnlWcjFSUWJxKzZsNjF0YVViSzV3MlFZV0dpcDZzcGM1?=
+ =?utf-8?B?MzZpeU40WUJyU0ltTE4zdVpDRFZPVGwyZFV1NDlTUVpTdDJaYUQ0SmJuTFhu?=
+ =?utf-8?B?RlI4L2hLMWl3aHgxQzZrNGpGU0h1bk9rdWNSZTU5SnFyMGNKbWQ4KzczWWlI?=
+ =?utf-8?B?UFFxRFJEenJrN3dIcHZlcjdlUHBQMk1WMGZRcVlvZEkvNFBRVmNScDlPWWwz?=
+ =?utf-8?B?VHRSNVNMZUU2NlQrR0diM0RocGFMYjJSWWhOZ1pyWjBvakxqemZmOGFBRk8r?=
+ =?utf-8?B?OTJBK0hMUGN0YkFEa2dyV202VWNRb2R5UE84S1p4a0o4bHhEWVFFOE9rMEtS?=
+ =?utf-8?B?NWltbEIwdjN6Q2JsK3JvSU4vTXRtbU9Scml2TDRBYzVVRXU3d1o0eVdReThU?=
+ =?utf-8?B?UVNIUEROeU51bCtYM0ViSUx3NVczaVhRTHZna3pmbGZQekhZU0Q4SlQzN0sz?=
+ =?utf-8?B?OVFRZlFEVC9ONWY5MWx0WS9IU3lNc3hFQ0tLM1ZpaWlLdDZ5NHNqTzFjdnpk?=
+ =?utf-8?B?eTUxSTRjdEI5aUN2RWxHczU3amlGajQ0UEtEWTdycEpMRFVoTE1KcFNRWlN6?=
+ =?utf-8?B?VFdhSHdwVkdBeXc5ZGMwM005TDRobXJyU2NhUzlCMk1obkJibmxQcEE2d3k1?=
+ =?utf-8?B?SU01NkJGSzQ3N2F1TFNjNUs0TjJTSkM4TGVOc3hEOGlLZExoMG9uYnRrR2RO?=
+ =?utf-8?B?WXF6MGQ3Y2llNjNZeTE0bm5GK25ZM3B5RkpIVW5jQlBnbmtkT1BxQWF6eFRa?=
+ =?utf-8?B?U01KVGk5ZThJYk4yQnJHQWEvWFZMTjM2UmVxeGhmNHdiU0lCMTR4SzltTWJx?=
+ =?utf-8?B?Ly9MOVh1cCsybVFRTUt6QU0wLzNwY09HK25PcUxGUnJ4c05iQ1QvL05BYVlT?=
+ =?utf-8?B?MUV0aG1wb1ZlSmtabUpCWk53aVcybHRUWHVOTkY4cnhVUHN5MXZSVk5LSUtZ?=
+ =?utf-8?B?QjlyRm1pWjJsdVNxVDZ2cmgyN1dYcVpXRnFwMjhWc2dRSzZibFBqV0dRL0I3?=
+ =?utf-8?B?L3JlYS9CazVTbVR2alRBNXdFUUgzdFEvK2pXcXc1ckxZTXZGemlsdmo5czVv?=
+ =?utf-8?B?eDY1UHdIN1FUYkhCYlQ0TnlEemRTL29JSS9xRFVVRzJDRGpVNzU1bDRnV3NK?=
+ =?utf-8?B?NUdtYVQwV3h1ejJybkxlcWVNSnRjOENKWTNPWWFYd2RPMENFU0dxeHNDOUFP?=
+ =?utf-8?B?NmhyZmpvZklYWnhpZ2swbWZNenpUVGJJRWRzc2FYTDhZb0Q3d3AwUDY4YW00?=
+ =?utf-8?B?WXJQSFYzZHljYmlxR0FNcHpoWnA5ZEswZmFwQzFzNi92dWVNVjBKMXpCUDZx?=
+ =?utf-8?B?T3MvZDJ6VklNM21jZVJZeFVYNVN5YW80aEMrZmpyK2Y4ek1IenZ4NlMvU3ZV?=
+ =?utf-8?B?MlE0UlNLQ3lRVnBGYURQWjhyR3JhbjZ4Wk42RXVDRDR5bm81V2xmQ1hpN3dp?=
+ =?utf-8?B?R296dXM4V29XVGwzYzhOaWI2SkFobStmTE5QZEJDc1lEWXQ1M3NpQlRMYjZz?=
+ =?utf-8?B?S1grUS9teCtYWVhta0tieFZJeG9jeDBMVTlISHQyVmw1TGJITXRaRGxZTDRu?=
+ =?utf-8?B?cFdyRHgrSy85ZGxLcGNPUWI1ZjFUVUZWZlFiZEppK1gra3FJbEFGMlliV2t6?=
+ =?utf-8?Q?dp7KIWoA1KVvYeb2akwq11ZPY?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8f51bca7-49db-4e6c-5753-08de1b6428d7
+X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Nov 2025 05:28:45.7132
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Nov 2025 05:36:53.1946
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Kh2zuqNZ+28MvhTdsrblBPTvM4rg7e1cd0kgBRyti94fZFzOoXKq097DasAVZ1GjAeszj4h2/EiYYnOxQ1B0HA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR03MB8585
+X-MS-Exchange-CrossTenant-UserPrincipalName: oidiTaBCbPM5pr7+57LYQNyFpBLTjMkxs1E6CG6yY8L0pr5RrsbdwiNS7u2b5L45O1pnkyVJPQJALBvxeeMNsg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU2PR04MB8663
 
-
-
-On 11/1/2025 12:27 AM, Jerome Brunet wrote:
-> [ EXTERNAL EMAIL ]
+On 11/04/2025, Marek Vasut wrote:
+> On 11/4/25 3:39 AM, Liu Ying wrote:
 > 
-> On Fri 31 Oct 2025 at 23:09, Chuan Liu <chuan.liu@amlogic.com> wrote:
+> Hello Liu,
+
+Hello Marek,
+
 > 
->> Hi Jerome,
+>>> @@ -61,24 +62,13 @@ enum fsl_ldb_devtype {
+>>>   };
+>>>     struct fsl_ldb_devdata {
+>>> -    u32 ldb_ctrl;
+>>> -    u32 lvds_ctrl;
+>>>       bool lvds_en_bit;
+>>> -    bool single_ctrl_reg;
+>>>   };
+>>>     static const struct fsl_ldb_devdata fsl_ldb_devdata[] = {
 >>
->> On 10/31/2025 5:04 PM, Jerome Brunet wrote:
->>> [ EXTERNAL EMAIL ]
->>> On Fri 31 Oct 2025 at 16:10, Chuan Liu via B4 Relay
->>> <devnull+chuan.liu.amlogic.com@kernel.org> wrote:
->>>
->>>> This patch series consists of four topics involving the amlogic PLL
->>>> driver:
->>>> - Fix out-of-range PLL frequency setting.
->>>> - Improve the issue of PLL lock failures.
->>>> - Add handling for PLL lock failure.
->>>> - Optimize PLL enable timing.
->>>>
->>>> For easier review and management, these are submitted as a single
->>>> patch series.
->>>>
->>>> The PLL timing optimization changes were merged into our internal
->>>> repository quite some time ago and have been verified on a large
->>>> number of SoCs:
->>>> - Already supported upstream: G12A, G12B, SM1, S4, A1, C3.
->>>> - Planned for upstream support: T7, A5, A4, S7, S7D, S6, etc.
->>>>
->>>> Based on the upstream code base, I have performed functional testing
->>>> on G12A, A1, A5, A4, T7, S7, S7D, and S6, all of which passed.
->>>>
->>>> Additionally, stress testing using scripts was conducted on A5 and
->>>> A1, with over 40,000 and 50,000 iterations respectively, and no
->>>> abnormalities were observed. Below is a portion of the stress test
->>>> log (CLOCK_ALLOW_WRITE_DEBUGFS has been manually enabled):
->>> Okay, this little game has been going on long enough.
->>> You've posted v2 24h hours ago
->>> You've got feedback within hours
->>> There was still a 1 question pending
->>> The rest of community had no chance to review.
->>>
+>> As I pointed out in v1 comment, this patch should remove struct
+>> fsl_ldb_devdata.
+> 
+> The lvds_en_bit is still needed , and I plan to add MX95 support here,
+> which would extend this again. Going back and forth makes little sense.
+
+lvds_en_bit is indeed needed and it doesn't have to be in struct
+fsl_ldb_devdata.  Given that it's not clear if i.MX95 LDB support would
+be in fsl-ldb.c or not and it's trivial to add struct fsl_ldb_devdata
+back if needed, I think this patch should remove struct fsl_ldb_devdata.
+
+> 
+> [...]
+> 
+>>> @@ -309,6 +302,27 @@ static int fsl_ldb_probe(struct platform_device *pdev)
+>>>       fsl_ldb->dev = &pdev->dev;
+>>>       fsl_ldb->bridge.of_node = dev->of_node;
+>>>   +    /* No "reg-names" property likely means single-register LDB */
+>>> +    idx = of_property_match_string(dev->of_node, "reg-names", "ldb");
 >>
->> There might be a serious misunderstanding here.
->>
->> In recent years, we've mainly been maintaining our code in our
->> internal repository, which has led to some differences between our
->> internal codebase and the upstream version. The patches that account
->> for these differences are already queued for submission, and several
->> SoCs are also waiting in line to be submitted. As a result, quite a
->> few patches have piled up, waiting to go upstream.
->>
->> Previously, I had been waiting for your clock driver restructuring
->> patches to be ready (which have recently been merged), so for almost
->> a year, we haven't made much progress on clock driver–related
->> upstreaming.
+>> You don't need to match reg-names.  Instead, just call of_property_read_reg()
+>> twice to get the first reg and the second reg by passing indexes 0 and 1 to it.
+>> If the second reg is not found, then set fsl_ldb->single_ctrl_reg to true.
 > 
-> Ohoh now you are just teasing me !
+> This wouldn't work if the two entries were ordered the other way around in,
+> DT, i.e. first "ldb" second "lvds" and vice-versa. That's why properties
+> with multiple values also have the -names property that goes with them.
 
-I must clarify that there seems to have been a misunderstanding. We
-are increasingly focusing on the development of upstream ecosystem
-and actively working to make it more comprehensive.
+Isn't the order checked by schema fsl,ldb.yaml?  Let the schema do it's job.
+"ldb" is the first item and "lvds" is the second one.  If you swap the two
+for the example in the schema, dt_binding_check would complain:
 
-> 
-> That work was made necessary because of all the copy/paste Amlogic was
-> submitting. Despite many requests, this was never addressed so I had
-> to step in.
+DTC [C] Documentation/devicetree/bindings/display/bridge/fsl,ldb.example.dtb
+Documentation/devicetree/bindings/display/bridge/fsl,ldb.example.dtb: bridge@5c (fsl,imx8mp-ldb): reg-names:0: 'ldb' was expected
+	from schema $id: http://devicetree.org/schemas/display/bridge/fsl,ldb.yaml#
+Documentation/devicetree/bindings/display/bridge/fsl,ldb.example.dtb: bridge@5c (fsl,imx8mp-ldb): reg-names:1: 'lvds' was expected
+	from schema $id: http://devicetree.org/schemas/display/bridge/fsl,ldb.yaml#
 
-I fully understand your perspective, especially given the challenging
-process of upstreaming our clock driver due to historical reasons. I
-have always maintained a friendly attitude and kept communication
-open with you. My intention here is solely to provide context and
-avoid any further misunderstandings.
-
-First, I acknowledge your approach: these optimizations are
-beneficial.
-
-Over the years, we have also recognized these issues and have
-implemented a series of improvements in our internal repository, such
-as:
-   - Reducing driver code volume and improving reusability,
-   - Standardizing naming conventions (e.g., clock names, clock IDs)
-   - Optimizing image size
-   - Enhancing driver execution efficiency
-   - Ensuring compatibility between ARM and ARM64 architectures
-
-To address the challenges encountered, we have also contributed to
-optimizing SoC hardware design. Improvements have already been
-observed in newer SoCs, and we plan to gradually submit the related
-drivers to the community in the future.
-
-> 
-> If you want things to go faster, then *really* pay attention to the review
-> you are getting, do not ask question to ignore the answers and stop
-> making people repeat themselves over and over.
-> 
-
-Thank you and the other reviewers for taking the time to review my
-patch.
-
-There may have been instances where I misunderstood your comments,
-but I never intentionally ignored your feedback. Moving forward, I
-will actively submit our company's drivers to the upstream, and I
-certainly hope not to be perceived as uncooperative from the start.
-
-
+-- 
+Regards,
+Liu Ying
