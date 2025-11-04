@@ -1,234 +1,332 @@
-Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010014.outbound.protection.outlook.com [52.101.69.14])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D45223EA87;
-	Tue,  4 Nov 2025 03:31:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.14
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762227097; cv=fail; b=mb81aiYob1WYpFALSQZJEGUPIocCLHEB+CXq4jZyao1RbQQb538DwV5ddTW7+E+/SJNGjck9h1CsuOP5+nHvFcKE/m6ijHEWWdprOjT1aNltXv8w1v69/AK3hX4k8PnozRoLfPN4yWDbDiMiwdccpA2B6ff6Aoaf+e9CuflArPo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762227097; c=relaxed/simple;
-	bh=UM+lb38p8QVZSSUJ8OmxSsiWXlqhOWQdyZT0B3gvpDY=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=eqzew/qI7Wo0SY+M3Yz9qPf2lHI9x3mbOXWOeuNFiXZ34i9O2/Mwz7tpYuLkigv4q2h4OH7eoDDNHxuuALv4FPAdiPHlR/n4RTEG7yftM2QXCV7+dyG8Zwlryay+m0wr1vEJbHS2Ly4Gj/54QS+H3Qv0HSc+lcSpquLfHA+Ku4I=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=lpEsAltq; arc=fail smtp.client-ip=52.101.69.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05F28284B2F
+	for <linux-clk@vger.kernel.org>; Tue,  4 Nov 2025 03:36:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762227362; cv=none; b=gKILcKpw/AtW42Ay9JOoj4qir/i2/uTDy/C2SwiJ1I1l/97fBtQT4vmw4gqkJuws+O08xJoTd/yULz7vkK0cWQhtGuDXg0bk31NxcDMGhQmDXTQnIeVlMXY4y2gzYu/3d5nTmWCW+tvC4sYoOElD5dOENCCHwOSWQG8VW1c01g4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762227362; c=relaxed/simple;
+	bh=sONvN48WvUykuvXU9ekPNNHwgbAw4IZu0rPtno0aFkE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LsLxdNpK7x5HVxEY70lZK18CYItTBZ1a7EWuUl81at6pKwoG6B/E/0SFJzOag/Md4T0YzPRwFB96QT/9vEu4cQXqh0T5ZTZ17TzVFHBnXS8JDAjOBIU1FZXraddFbL+3mUbHhI7lUpk8hBoA8VH2ExBaG2lYYBveD33NPZ64IaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Pyni/L2y; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=W0San4eI; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="lpEsAltq"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=L+XtxCn3GYPTIM5A3pca1ssAzSZ7TLwhwdyPxAdz3+JBGYV7xgiQjr9neKNky5RxrdmFDVcUK9c+9iF5ZlYGthB45DEddzPuF40Oyc3MXroC9/ntpm89PpoSGRuCgnn8lKwJir8FgqY73QH3QXbvd0e2FNYDcFIdx9AjBRVx/0XA0zIu0TYX5CFdyOKWMFY+56ufkbbwRoQp7/Xjojo2TTxMqrVJyCyqS0oAsMnIS5xXUQjwRnnEHH6EeZP93UBMWvtZ/BTZ0nvxH+Nd4vPSz8Ct8GvBUufMMOFzsQlWZQn0zOg0vJdQXadJCvg0WVEL0YJoEcp2gWK8ZF1Haj0xBg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zgTsoopUoUCPxGvbnjhOqS9Z8iPdIyOuU3+TzGJnGsg=;
- b=kvuZYPNgUJTQNhDGljIfTbA5BMpiG1jLuJAEKICFGJ6E77KlT7o+jcV3EhccHyi64fU0xnyosAxvTf4iuX0lI+nNzDcdga18akoVarncWGBdrYPE0gpEGe3kjVXwllCOemhbtKVoRi5TVubtZk0NKlDTb8T7wt5nXh+fb5sr3t94ZDTQU4+qlLuIaCuzpaUYVUaFd9n4OpPhOxQ24HRYNHBTFs6vRPEvMycYOw/5xyTtXkNDfulKnwx3OrJggvtK7RwYY4MeiyhBUbbjGI1TU6YTAhTEMqsxEDWJy2qFJrYpuQMY6zRIb+wsBCgwo0WGMxgRk7+95CVMItGeE4LkSQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zgTsoopUoUCPxGvbnjhOqS9Z8iPdIyOuU3+TzGJnGsg=;
- b=lpEsAltqgwMBDXAS7bxdMBeoWXb+YUA8VBvIwtR7Kb0CJ7eCWdpNPo2I4RQJFlx4iNjIxxBxQX1lO1DKadcC+lQBnr2QufMUtPHwgqP64GwiA2kFEtTrJ4mz2CiaHzngYq49B2jDtp4xUF/3H0BXVPbM8Edfs+TEKsHCoxVpAoZzFoaVIYOCAaZOSD7I1EVoKncvNPSw4kThkUr5StYi5Q8UvFu+7oUB+orf5MTNp4FITR3rjNW5B3+isrNm9F+yg0160YS7LH4GLnKZVHfmms7Jn+3qVm+G6sjEVSR5+Io8u5/taAha0/SWCNSJnH5Jwchaa8jnFCtYr1YEd/UA9A==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
- by VI0PR04MB11072.eurprd04.prod.outlook.com (2603:10a6:800:259::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.16; Tue, 4 Nov
- 2025 03:31:31 +0000
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::4609:64af:8a4b:fd64]) by AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::4609:64af:8a4b:fd64%6]) with mapi id 15.20.9253.017; Tue, 4 Nov 2025
- 03:31:31 +0000
-Message-ID: <130e27d8-9e3f-4da0-8709-59c876638581@nxp.com>
-Date: Tue, 4 Nov 2025 11:31:57 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 01/39] dt-bindings: display: imx: Document i.MX95 Display
- Controller DomainBlend
-To: Marek Vasut <marek.vasut@mailbox.org>, Rob Herring <robh@kernel.org>
-Cc: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
- Abel Vesa <abelvesa@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Fabio Estevam <festevam@gmail.com>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Lucas Stach <l.stach@pengutronix.de>, Peng Fan <peng.fan@nxp.com>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Shawn Guo <shawnguo@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "imx@lists.linux.dev" <imx@lists.linux.dev>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-References: <20251011170213.128907-1-marek.vasut@mailbox.org>
- <20251011170213.128907-2-marek.vasut@mailbox.org>
- <20251015132442.GA3241958-robh@kernel.org>
- <5c5bb009-3463-4282-946f-3ae93fab11ec@nxp.com>
- <c712dae1-00a5-4cc0-baef-2ce014bd470f@mailbox.org>
- <AM7PR04MB7046685E946417FD795C810198F7A@AM7PR04MB7046.eurprd04.prod.outlook.com>
- <30dc382c-6b26-4b2a-81ab-67ac5bbf7150@mailbox.org>
-From: Liu Ying <victor.liu@nxp.com>
-Content-Language: en-US
-In-Reply-To: <30dc382c-6b26-4b2a-81ab-67ac5bbf7150@mailbox.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SGAP274CA0019.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b6::31)
- To AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Pyni/L2y";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="W0San4eI"
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A438mlw3595114
+	for <linux-clk@vger.kernel.org>; Tue, 4 Nov 2025 03:36:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	aLTdB4QZiAIA7IonEaxgSWsE3Df8dp078mbN912dQ/g=; b=Pyni/L2ylc6Cj6vk
+	1eA5YCtnKfK43id8UAZSnhhf7tKxr4fWwg9VufNBTxuMPhFaInMaGfI3ovrYRuzh
+	Tvc4qYgrMdKnsMAxyyTOaBmHYpPbJNGZEqLrEzBukmcEWrPic3oQMNIQCv5x5Ovq
+	Wm9IQP96QKNnlnf9sTSKCvpRQAcNsDas6OZW23yYSRjJKjfUV7za2X+rePUUePzm
+	17+pxdOEwaRwBLyAuNr3iJd9UqfkWvq+szsRGzxi/lKggjpUoRPDoAA1HxDln1nr
+	rY5saRrAZTpmRS2gyws/mN7wA0fk70ZDx9pIoZsMp4IkrWvwLJ7EO8mRWqgIsjR7
+	hgNMBg==
+Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com [209.85.210.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a70exhh75-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Tue, 04 Nov 2025 03:36:00 +0000 (GMT)
+Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-7abb04253faso187505b3a.0
+        for <linux-clk@vger.kernel.org>; Mon, 03 Nov 2025 19:36:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1762227360; x=1762832160; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=aLTdB4QZiAIA7IonEaxgSWsE3Df8dp078mbN912dQ/g=;
+        b=W0San4eIapIY54/JaL8LCsFidl80DcNT4GSRg7FuNb2NG1oGsM7JxB5qpdjfB9fv8T
+         iHN7n/l6xhHTKcOKZVxHCWI2DlFm/wEWSvypqQZ/hpLe+IaWrBbYHGpo9bTu8NxjugoI
+         bhRz2R2dDGstZL+aYFl6Uh6RJE+P4bS0Y7J7IAoS+AJm/hcJrghN0rAbt3zhCpmkBcIG
+         7QMk4Ma/jCD83+GkiuyHVrlQl0Psw1acLmscDYp8cjMSAHk/rnMAuX9dabReIVub5/vi
+         qCzLO7cY/9LhR8PUAcFouo8jTbDT97X6rukQRbAPeybR6R+6JZcgf/iFZPiq7lOCcq6V
+         Xq3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762227360; x=1762832160;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=aLTdB4QZiAIA7IonEaxgSWsE3Df8dp078mbN912dQ/g=;
+        b=k0X+SfH5loZSF7Lxs/2LVD9P/KKUHfSCJ4z6pugxPWxCs63CMSvnEV1beWAIaUXRZ0
+         zKDD1pLc2b3B2H3oqVz647WugjkGtJyj8PclYhmuUblE49Kf5RIr8seKCrAwjgRZ5jaH
+         z4PcQL2b5YdA3ulvXOaT4e9Mood/8LrE5C+YKrnymTc7urwF/XZSlXU02mHjTgNgotBE
+         xAYpD9rOf6JB0OsHxpAItGswsPlzrKOd5nBpN10iPuWap1t644hkfrBCdfH5IzqDGi3y
+         h/VDFP3FUx8QbfXqyGeIzA61H4obGJHz7fnhmQ/CREcTj6Uui7a1BCi/V8PEtv01JGAZ
+         MqVg==
+X-Forwarded-Encrypted: i=1; AJvYcCXZNXwpzsUi898EeYNeldPlrl97rsS/1dJwY90+Y0df4cRdOq0WfwqtvLT1vJ4456DsjONpjM+buGU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfVJMn6ip0jh+CzBPtKDq1N2mfETKk7A/hsZU7FVJq1EAO5nRd
+	WTEQlEGCKGHBrBVXoQ/ghQqXTmRu09CJ+sE/vIbCbgktHmCqn6io0lcLAmU3D7qq1+Q7rgSB+sP
+	TH4ZRH8YKwgK41/xKJYG1PoIzYa6jzqh38r6cz7hX/mTszndEb1AKiuoZtKbCh2U=
+X-Gm-Gg: ASbGncvL1jNbadz4pJnfKpvN5w4SdgVmaEOolFB/eHJfjk84HhjACo7HUqb7lyCF9+7
+	NIqyqVSh8+cfziMi726aw/5L9cYWCKoKvMpSZL5M8RDQP4DGyFAsbxHF6Uo476Hli1UYWNM0Lec
+	6rpJpOd3FECJa+yPeU1k5WKf2MvyOlHdtNfT/+qUVQj1VBhdZMfZRr2FWCCqUpXIz5jlaLovjbm
+	RXWq+r1/3k/CYy2EDr7Wcd2oxu+47Rq7kdWW9UOjiO7QObUPa57uoHoT5xY034hCNafs/g9FXGM
+	peFOayctIarvatYEz7Z/2C0zYEJb8dexl9gYjNzucTsoqDTWyYZJSioVitsJSd00WhfGuVEHJ9n
+	X4XwFzom1hBKlLksjHX6gjBSs4T+Ow4Zzlhiy46dl+/8nI5h+dRfNKK0MgzAMfpeMYA==
+X-Received: by 2002:a05:6a00:bd81:b0:781:aad7:214b with SMTP id d2e1a72fcca58-7a776aa91a3mr9906668b3a.2.1762227359672;
+        Mon, 03 Nov 2025 19:35:59 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IF/JJ3RM7NecDosGss89bhfFDhSWMYNVNuNntMqK71YqzsrihWyXJGLge+Rp0OpNCDluamzbA==
+X-Received: by 2002:a05:6a00:bd81:b0:781:aad7:214b with SMTP id d2e1a72fcca58-7a776aa91a3mr9906642b3a.2.1762227359078;
+        Mon, 03 Nov 2025 19:35:59 -0800 (PST)
+Received: from [10.133.33.149] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7acd3246d33sm1064594b3a.13.2025.11.03.19.35.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 Nov 2025 19:35:58 -0800 (PST)
+Message-ID: <359f88fb-a207-499f-aad0-e12ea3da222b@oss.qualcomm.com>
+Date: Tue, 4 Nov 2025 11:35:53 +0800
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM7PR04MB7046:EE_|VI0PR04MB11072:EE_
-X-MS-Office365-Filtering-Correlation-Id: ba05b1e9-e25a-42e8-2dad-08de1b52a5b9
-X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
- BCL:0;ARA:13230040|376014|7416014|1800799024|19092799006|366016;
-X-Microsoft-Antispam-Message-Info:
- =?utf-8?B?THBoRmpKeEdkMnk5MDU5RHcwcEhOb2pZRlFoZlovMis4RjdjbUU3a29xZHZI?=
- =?utf-8?B?UjVQRzZBRSt0OUhaeU9mWUQwR2tmUXdkZE9ack9qTHd5K01ZTi96QUJoRzhJ?=
- =?utf-8?B?RGJjanVZWlFsVU1ZWEYzbG1RNjdZOG5rKy9mcDFXd1ZQRXRJeGxKUmp1aHBR?=
- =?utf-8?B?VjlwaWlFcDEwWTBvOXd2bmFpMjBLVHBrQ2dsQVg3ZVNoK2NRdkYrNHRYR2ZE?=
- =?utf-8?B?a1NhSFgvTXdjNk9HVUNWcnFDMXU3MGEvNFE5OTZPOWFBdWlnMnVSb0l3a2pr?=
- =?utf-8?B?ZEZrSktEcjZ5bkc3bjloaDM5QXNIbmdnZXlGRit3STc2VkwwZW1ueTNGSFBs?=
- =?utf-8?B?Q3YzbXRhYVgrbHFhTis5N2R4czRqRWhlZUUxK3NnVENhQ09peU5XcEVWNmgz?=
- =?utf-8?B?VlJWdkwzSS9sUW5RV1lURmlkRDJ1WE1wNmFleFArQVNHSHlLbDVrdmpreDdL?=
- =?utf-8?B?YTZsZDF1TTBselJnT3B1U1d1Q3h6eUw2UnF0L3ZpQXVPdXJmKzg3ckgxaW43?=
- =?utf-8?B?cTRsbnJKaENIZGt0c0NhSGFLYkRPNTI5SWJISlkzT1hiR0lmMVA5ajVySDhE?=
- =?utf-8?B?TnROdlBNeG5XeGp1Zko0a0xoczJ6ZUxDRzFzaW84QU41M3MrYzhMRDFwMURP?=
- =?utf-8?B?MytVcDBja2tMaWwvZGVIS1ZxTmlEVmV3K1FLbHQrNUdFK2lQZHUyNHBjNW8v?=
- =?utf-8?B?Ni9Hd2dqdDhrSUJvMHRYclJzWktpSTU5d210a20zVk9xTzExSHpUQjBsRThK?=
- =?utf-8?B?eXZGRXhOajBRSzJocENTK3V2VnQ4RENLcXpxVWJLYklMM3BnQmxqa1dLQU51?=
- =?utf-8?B?MWtXOGl1d2NQN3JQM1U2M0E1dCt2QmNTdVk1ZzNNSTF6cGp0Q1I1Wjhjam8x?=
- =?utf-8?B?TDZkTXRZNlZOZ0x3S1R4NE56VmhRRWV6ZWNhelIwTTJkMUVLZEwvZ0NoVzY2?=
- =?utf-8?B?cVJxUThkTjQ2NDdkSmhvK0d2dlVoWXdTYUpjcjVLTm5wUmo5dTV1MGQ1V0JL?=
- =?utf-8?B?RVJIZUNpc2pIZndVeHBpQWZ3cTV2dEpiaEgxbk1uYXFWWXVRdFpGVTJlWnJ1?=
- =?utf-8?B?WWo3QWhTNi9lbExGVnEybmlOVmh2RzFNcm5TSittbjVVeDBKaHg3RXlvZGFo?=
- =?utf-8?B?eGUrUHJ1WTJiVnBZdUdYRElPUlh1TGNzcFFZckRtcVIxUkkvOGNFcVQ3VHNm?=
- =?utf-8?B?NG11U01pZENvaDlJMy9jaEY3NlZ5SUhuVXJNbE5OZWpYSm1Wd3dLNFBCSUJZ?=
- =?utf-8?B?YlFuWkMvV1pjc21Ua1U4bUlTVTd0QWcwZVU2bE1qQ3J5OVNHZHFmVDBDQ0VD?=
- =?utf-8?B?STM3QUNKVGZNelpkM2trNDRWMnYvK09mbG84TW1hZExBVWR1MitCSHFLRnVU?=
- =?utf-8?B?R1BjaWpxMXBOTVVQekZIdHlVTkI5MDRoS0FFSVVYaUEvbzcxdER0KzdJWml6?=
- =?utf-8?B?NjNUYWZ0eFhRMGhrSW05WHl6M2s1VDVzaXJaMFl1Z0poTHpBY05TYWRXSHQw?=
- =?utf-8?B?YUhuREltRjRDQURPQTBKY2RzQVFhUHlESG5GOVR3WTJqMm91cGhyN0hSc3J5?=
- =?utf-8?B?Wmx2VmVaMm5BY0FYamV0RmJvZ21ScGhtMndUOFBwVVphSjU1L2p0QjBpRk9S?=
- =?utf-8?B?S1ROTElvcWNpbnpoU3RuVTB3K0VUZnc0TURLd0QrdGE3eUZpdGN0b2Jhc3FB?=
- =?utf-8?B?T0I2NzA3eXQ2TnIyS3A3RXkwWnh4RU1pYmorRnZWdktpb1dVODJ6aExSOXZD?=
- =?utf-8?B?dSt1RGxSZml0NVE1dzZyVlVuQkJHbU9YUlF3QWw0NXMyMkx5RlphTDlENmgx?=
- =?utf-8?B?TDdWdHp4MnYrWndpSlJ1L3JaakR4bWlodmNSSVVPTkN5TDhLMXF2ZGFGNWtI?=
- =?utf-8?B?dGJiYTlwWlZoN0t3dlJiNUw0VUx5aWZrREF3NFV1MjRHTFltdjFHak9EN1hI?=
- =?utf-8?Q?yRCNSkAeepRO6V2/9otoDYg47uECAXRs?=
-X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(19092799006)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
- =?utf-8?B?MktSblJNODg5WWVFZVdCanM1VGZabE9OZS9wWCtHTlc0MnNmaGEvVDhzQUt3?=
- =?utf-8?B?UGpEUWlVUGNuaDQ3R2k2WHp3TUhuaktHOGZWZFp5dSs0eGFKNHF2aklqYXlM?=
- =?utf-8?B?d252YVZheHFQdkNOSW1UWU04QXZ3VEhoUWVERzRudXk4UTYzSDFNV0hNWFUr?=
- =?utf-8?B?TjlXdnRhNisyVWhHeFVGQ2lhd3JFYWlPanFBRHVRTjc5Tzd0SW95czNucmxD?=
- =?utf-8?B?TEJwbnZLYUhObTQwdDRPeUIzNiszY0pub1VQOFhVWjJkQVczS1V4K0ZobFZu?=
- =?utf-8?B?ZzRneGpjVXFwOW42Ry9vRlhSL2NadjFXK1QrKzA3bTRWbytlMkZhZlh5d2tR?=
- =?utf-8?B?aHh5cEF6Z1BGRXBFTVNsQmYyd0RLRDNHRjN5OUtUMGh0c0pFYmtFODVEd2th?=
- =?utf-8?B?RjkyR2lqYjAxdHk2ZWNzMWluSCtRQWUzcXJrcFdGVXh0TFJOQytsOUxkOUI1?=
- =?utf-8?B?b3hoYVlCQ05BZlFKcDdxbmpnWElnd0l5NndDbFN6Nm80S2R6T3ViWTVCUzZi?=
- =?utf-8?B?SDM3YmFNSHg3SzRXd2h0V2E2Q2JwUTZnVGZpWkRHNEZTVkNBWkRWVFRTNHIr?=
- =?utf-8?B?eTdoRldWekQvMGY3VEd3a1BFY2tSSWNIcTF6anpyK0p0a2dZcThncFJvczBk?=
- =?utf-8?B?aXVVV0dhWGQ4Tm9XUWNGaVUvQmppTkhyUGJ2T3hsTEtObmlzU2gzbnFKaHdj?=
- =?utf-8?B?UVVteTRwZ0NiREEwTkh4Tjg2UlI2UWV1WHJ5bGttSnIyNjFZaTY0MXJremps?=
- =?utf-8?B?K0JBQjl3ZmFnWkQxRGsxczBBUERtUWR0TUFIR3ZQVk9IMm4xbWo1TTdER3VN?=
- =?utf-8?B?cDFRNTRmZW5ROVpvM1BqQmFjK1F3ZW02Sjl0ei9vVmF0dnBYS1g1cWh4RGV4?=
- =?utf-8?B?T2pzalB2dnJuRk1NcGx6MEl0aThkb0NaVlozY1JVY2dMbUZkR3lBRUtieTVn?=
- =?utf-8?B?L0ZNWGxYYUlZTU1mVW1xZnU0MlMzemVrUEVGam9BREcrR25mZVFjQ2t6TmhC?=
- =?utf-8?B?eWdRNmdIVXZPelJmWFQ2ejJoWmlnUDdlNjZudkV3MEpLK0RGemRlcS9lWTA4?=
- =?utf-8?B?c2lyYWMwZFFqNmpqNWVab3A0OXoxNVNpVmVFaHQzQ1B3S0lIQjJ5bFZNVWNM?=
- =?utf-8?B?ek9FRU1ULzZIV0F0UDl3R0JRb1VjSUVKYTFiTno4NEJXL1dOcW03M3hNVkJq?=
- =?utf-8?B?dnEyZWFqdFJoQlVySWF4ODI0U1A4WTd6L0tJWW95WTJIZkdtVFlzbEs1djBk?=
- =?utf-8?B?QkpZcE52MGErSGdmQUtoOGJ6L1VaYjM1ckFiSkZlZitNYzR1Njk0R2g3b2JN?=
- =?utf-8?B?OEpuUmQ2QnRNc0NyR2VXWHNnd2wxYU04VHEzQUN0c2RVYzgyWDVyZ1YrVHp2?=
- =?utf-8?B?bktmUTJxRkllamZLd2hYemVITCtPQktWdXRicE1HYW9aUUFYMUxJUVR5c2VG?=
- =?utf-8?B?L3lZM29BNm1BNjA4Rjk2ekZBNmswazZXcmxmaklpK2JwS3Vub0JMcytlMnAy?=
- =?utf-8?B?M1YzSHV5NXQxSE1TMWNlKzdHbFFHMUw5ZUNObEJTM1lKYnpCUzJzdnhEOFVE?=
- =?utf-8?B?dUVJc2srdXp6MDhQNFBTRTlkaGFOYVlab3JiY1FSRmpKbVR4Y1IwTytPZTBp?=
- =?utf-8?B?anhmeGxWVlpQVkpQdEp5ZTZ1SzJPT1hDTHhJVU9xZzM5Vk9PQTdzck96aWNO?=
- =?utf-8?B?NVNwTnloZTU3QVpmbW9ldkF2cTBoaHlIRmkveTdOOFNwRkpLb0YyVUF2ME1S?=
- =?utf-8?B?blIweHZmUWhpeUR6TlBMakRDeHVFdHVsS3VBL3dDMFRBcmphZVRiKzYwOWxJ?=
- =?utf-8?B?YnBjOGJnMUZicUEvUXVWc1pyRUFhYW9zRmdhSVZlZ3dxZ202cVlYeTF5TEs3?=
- =?utf-8?B?VGprQlNGRURrbEdXaHNkck9vTnhWWkRHNTV3d0NNVVQra01hTDhDQUFwNjZR?=
- =?utf-8?B?eHRqeUtCaTBGd2xmMEpweDhKRTFtQzlRZ2FaM1pkaGt2NzZvYlJjK1ZZYXpD?=
- =?utf-8?B?QlVIMXdIOHRhOGRtUmM4TWljcUVXdlg3Und3RkhQYXFYSzREVXpZWjdQQ3Zh?=
- =?utf-8?B?K2czQzZnaVcvM2gvM0pMSHQ3b2ZFZDZBcEIxSUUxK2VuOGd1MSt3SWl1bGFU?=
- =?utf-8?Q?v0hZsqPM7x0a1SptY6ZUItrXZ?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ba05b1e9-e25a-42e8-2dad-08de1b52a5b9
-X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Nov 2025 03:31:31.6342
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: OhQu+536KtPkbdbxC4hqAj0OjjZeXK6kWETJErxZo0o+A0ceO+q11bTU1M4DCUhUMxLRPFM2LYkCuFPWu79hOg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR04MB11072
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 5/6] clk: qcom: Add TCSR clock driver for Kaanapali
+To: Taniya Das <taniya.das@oss.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>, jingyi.wang@oss.qualcomm.com
+Cc: Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
+        Imran Shaik <imran.shaik@oss.qualcomm.com>,
+        Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251030-gcc_kaanapali-v2-v2-0-a774a587af6f@oss.qualcomm.com>
+ <20251030-gcc_kaanapali-v2-v2-5-a774a587af6f@oss.qualcomm.com>
+From: "Aiqun(Maria) Yu" <aiqun.yu@oss.qualcomm.com>
+Content-Language: en-US
+In-Reply-To: <20251030-gcc_kaanapali-v2-v2-5-a774a587af6f@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=APHuRV3Y c=1 sm=1 tr=0 ts=690974a0 cx=c_pps
+ a=mDZGXZTwRPZaeRUbqKGCBw==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=vSTseKTzBe5nLB2U_wEA:9
+ a=QEXdDO2ut3YA:10 a=zc0IvFSfCIW2DFIPzwfm:22
+X-Proofpoint-GUID: CGsBArMBfItQ-fxw7NB18Wd73JdgpJCW
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA0MDAyNyBTYWx0ZWRfXx96cutoHDk+J
+ b++YM5YgtcC5H/bruEoV2KjipnPT8fA3vmLHO1PdJg+4r2yx6nvPYBA+leCk3/TpbaUfgT8MaCP
+ OkisX8B2ltSzy6zeFpXY4cPIOnraKjxeOCnJR/Z7sapRtjVQhmlVhRqhoqcWh4aWwftza8mFTuP
+ 1mmPBb71ZiPbdVFJytOasF3/CXBQQIWdwohsNQICLYq88WE2o0ZYPsx7vJHHAc5sFRfJKrJ6Fwz
+ s4vGzHqi1EsrDsQzrc9uD+hcBhGMTxGwcTu5N4oWfrfh6zGE4YF0YIU7sGiSWG0BuYFy1X2CvOH
+ FAAXfQxJ7zPE7XBfNPwkppTTVmkFcbkfAoN1TsFIOdpAOqX0hN0lAoFof5Q5zsRHklNoQ6B2xVK
+ 7RknJ3i7/KuWcHezvHZzL62zhjIGmg==
+X-Proofpoint-ORIG-GUID: CGsBArMBfItQ-fxw7NB18Wd73JdgpJCW
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-03_06,2025-11-03_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 clxscore=1015 impostorscore=0 priorityscore=1501 phishscore=0
+ suspectscore=0 adultscore=0 bulkscore=0 spamscore=0 lowpriorityscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511040027
 
-On 11/02/2025, Marek Vasut wrote:
-> On 10/18/25 8:09 AM, Ying Liu wrote:
+On 10/30/2025 7:09 PM, Taniya Das wrote:
+> Add the TCSR clock controller that provides the refclks on Kaanapali
+> platform for PCIe, USB and UFS subsystems.
 > 
-> Hello Liu,
+> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
+> ---
+>  drivers/clk/qcom/Kconfig            |   8 ++
+>  drivers/clk/qcom/Makefile           |   1 +
+>  drivers/clk/qcom/tcsrcc-kaanapali.c | 141 ++++++++++++++++++++++++++++++++++++
+>  3 files changed, 150 insertions(+)
+> 
+> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+> index 4a78099e706c2cee5162d837cad3723db75039d0..8ec1803af76cb87da59ca3ef28127c06f3e26d2b 100644
+> --- a/drivers/clk/qcom/Kconfig
+> +++ b/drivers/clk/qcom/Kconfig
+> @@ -46,6 +46,14 @@ config CLK_GLYMUR_TCSRCC
+>  	  Support for the TCSR clock controller on GLYMUR devices.
+>  	  Say Y if you want to use peripheral devices such as USB/PCIe/EDP.
+>  
+> +config CLK_KAANAPALI_TCSRCC
+> +	tristate "KAANAPALI TCSR Clock Controller"
+> +	depends on ARM64 || COMPILE_TEST
+> +	select QCOM_GDSC
+> +	help
+> +	  Support for the TCSR clock controller on Kaanapali devices.
+> +	  Say Y if you want to use peripheral devices such as PCIe, USB, UFS.
+> +
+>  config CLK_X1E80100_CAMCC
+>  	tristate "X1E80100 Camera Clock Controller"
+>  	depends on ARM64 || COMPILE_TEST
+> diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+> index 5a0fd1d843c87a6f0a805706fcfad91c3f705340..2350631814779ad086d5c8304b250b0cc2f5203b 100644
+> --- a/drivers/clk/qcom/Makefile
+> +++ b/drivers/clk/qcom/Makefile
+> @@ -24,6 +24,7 @@ obj-$(CONFIG_CLK_GFM_LPASS_SM8250) += lpass-gfm-sm8250.o
+>  obj-$(CONFIG_CLK_GLYMUR_DISPCC) += dispcc-glymur.o
+>  obj-$(CONFIG_CLK_GLYMUR_GCC) += gcc-glymur.o
+>  obj-$(CONFIG_CLK_GLYMUR_TCSRCC) += tcsrcc-glymur.o
+> +obj-$(CONFIG_CLK_KAANAPALI_TCSRCC) += tcsrcc-kaanapali.o
+>  obj-$(CONFIG_CLK_X1E80100_CAMCC) += camcc-x1e80100.o
+>  obj-$(CONFIG_CLK_X1E80100_DISPCC) += dispcc-x1e80100.o
+>  obj-$(CONFIG_CLK_X1E80100_GCC) += gcc-x1e80100.o
+> diff --git a/drivers/clk/qcom/tcsrcc-kaanapali.c b/drivers/clk/qcom/tcsrcc-kaanapali.c
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..14cfa75e892cc5ee1b03909f8c03d92de8ae2cd6
+> --- /dev/null
+> +++ b/drivers/clk/qcom/tcsrcc-kaanapali.c
+> @@ -0,0 +1,141 @@
+> +// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +/*
+> + * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+> + */
+> +
+> +#include <linux/clk-provider.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/regmap.h>
+> +
+> +#include <dt-bindings/clock/qcom,sm8750-tcsr.h>
+> +
+> +#include "clk-branch.h"
+> +#include "clk-regmap.h"
+> +#include "clk-regmap-divider.h"
+> +#include "clk-regmap-mux.h"
+> +#include "common.h"
+> +
+> +enum {
+> +	DT_BI_TCXO_PAD,
+> +};
+> +
+> +static struct clk_branch tcsr_pcie_0_clkref_en = {
+> +	.halt_reg = 0x0,
+> +	.halt_check = BRANCH_HALT_DELAY,
+> +	.clkr = {
+> +		.enable_reg = 0x0,
+> +		.enable_mask = BIT(0),
+> +		.hw.init = &(const struct clk_init_data) {
+> +			.name = "tcsr_pcie_0_clkref_en",
+> +			.ops = &clk_branch2_ops,
+> +		},
+> +	},
+> +};
+> +
+> +static struct clk_branch tcsr_ufs_clkref_en = {
+> +	.halt_reg = 0x10,
+> +	.halt_check = BRANCH_HALT_DELAY,
+> +	.clkr = {
+> +		.enable_reg = 0x10,
+> +		.enable_mask = BIT(0),
+> +		.hw.init = &(const struct clk_init_data) {
+> +			.name = "tcsr_ufs_clkref_en",
+> +			.parent_data = &(const struct clk_parent_data){
+> +				.index = DT_BI_TCXO_PAD,
+> +			},
+> +			.num_parents = 1,
+> +			.ops = &clk_branch2_ops,
+> +		},
+> +	},
+> +};
+> +
+> +static struct clk_branch tcsr_usb2_clkref_en = {
+> +	.halt_reg = 0x18,
+> +	.halt_check = BRANCH_HALT_DELAY,
+> +	.clkr = {
+> +		.enable_reg = 0x18,
+> +		.enable_mask = BIT(0),
+> +		.hw.init = &(const struct clk_init_data) {
+> +			.name = "tcsr_usb2_clkref_en",
+> +			.parent_data = &(const struct clk_parent_data){
+> +				.index = DT_BI_TCXO_PAD,
+> +			},
+> +			.num_parents = 1,
+> +			.ops = &clk_branch2_ops,
+> +		},
+> +	},
+> +};
+> +
+> +static struct clk_branch tcsr_usb3_clkref_en = {
+> +	.halt_reg = 0x8,
+> +	.halt_check = BRANCH_HALT_DELAY,
+> +	.clkr = {
+> +		.enable_reg = 0x8,
+> +		.enable_mask = BIT(0),
+> +		.hw.init = &(const struct clk_init_data) {
+> +			.name = "tcsr_usb3_clkref_en",
+> +			.parent_data = &(const struct clk_parent_data){
+> +				.index = DT_BI_TCXO_PAD,
+> +			},
+> +			.num_parents = 1,
+> +			.ops = &clk_branch2_ops,
+> +		},
+> +	},
+> +};
+> +
+> +static struct clk_regmap *tcsr_cc_kaanapali_clocks[] = {
+> +	[TCSR_PCIE_0_CLKREF_EN] = &tcsr_pcie_0_clkref_en.clkr,
+> +	[TCSR_UFS_CLKREF_EN] = &tcsr_ufs_clkref_en.clkr,
+> +	[TCSR_USB2_CLKREF_EN] = &tcsr_usb2_clkref_en.clkr,
+> +	[TCSR_USB3_CLKREF_EN] = &tcsr_usb3_clkref_en.clkr,
+> +};
+> +
+> +static const struct regmap_config tcsr_cc_kaanapali_regmap_config = {
+> +	.reg_bits = 32,
+> +	.reg_stride = 4,
+> +	.val_bits = 32,
+> +	.max_register = 0x18,
+> +	.fast_io = true,
+> +};
+> +
+> +static const struct qcom_cc_desc tcsr_cc_kaanapali_desc = {
+> +	.config = &tcsr_cc_kaanapali_regmap_config,
+> +	.clks = tcsr_cc_kaanapali_clocks,
+> +	.num_clks = ARRAY_SIZE(tcsr_cc_kaanapali_clocks),
+> +};
+> +
+> +static const struct of_device_id tcsr_cc_kaanapali_match_table[] = {
+> +	{ .compatible = "qcom,kaanapali-tcsr" },
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(of, tcsr_cc_kaanapali_match_table);
+> +
+> +static int tcsr_cc_kaanapali_probe(struct platform_device *pdev)
+> +{
+> +	return qcom_cc_probe(pdev, &tcsr_cc_kaanapali_desc);
+> +}
+> +
+> +static struct platform_driver tcsr_cc_kaanapali_driver = {
+> +	.probe = tcsr_cc_kaanapali_probe,
+> +	.driver = {
+> +		.name = "tcsr_cc-kaanapali",
+> +		.of_match_table = tcsr_cc_kaanapali_match_table,
+> +	},
+> +};
+> +
+> +static int __init tcsr_cc_kaanapali_init(void)
+> +{
+> +	return platform_driver_register(&tcsr_cc_kaanapali_driver);
+> +}
+> +subsys_initcall(tcsr_cc_kaanapali_init);
+> +
+> +static void __exit tcsr_cc_kaanapali_exit(void)
+> +{
+> +	platform_driver_unregister(&tcsr_cc_kaanapali_driver);
+> +}
+> +module_exit(tcsr_cc_kaanapali_exit);
+> +
+> +MODULE_DESCRIPTION("QTI TCSR_CC KAANAPALI Driver");
+> +MODULE_LICENSE("GPL");
+> 
 
-Hello Marek,
-
-> 
->>>> BTW, I confirm that two Domain Blend Units exist in i.MX95 DC while they
->>> don't
->>>> exist in i.MX8qxp/qm DCs.  And, as you can see, this unit supports multiple
->>>> modes, this would impact how an OS implements a display driver a lot,
->>> especially
->>>> Blend mode and SidebySide mode.
->>>
->>> There is one thing which specifically concerns me about the DB, it seems
->>> to be capable of blending two inputs from different security domains, is
->>> that correct ?
->>
->> For now, I know nothing more than the DT binding description here, i.e.,
->> two inputs are combined to one output in four modes. And, DB cannot be
->> bypassed IIUC.
-> 
-> I see.
-> 
->>>> As patch 39 shows, there are 3 interrupts - domainblend{0,1}_shdload,
->>>> domainblend{0,1}_framecomplete and domainblend{0,1}_seqcomplete.
->>> It seems we currently do not use either clock or interrupts on either
->>> domainblend or layerblend IPs, but maybe DB and LB are different and LB
->>> really has no clock/interrupts ?
->>
->> If you take a look at NXP downstream kernel, it uses
->> domainblend{0,1}_shdload IRQs in CRTC driver and I believe that upstream
->> driver should use them too.
-> 
-> Can you please tell me what exactly is this IRQ signalling ?
-
-DB's shadow load done event.  AFAIK, this IRQ needs to be waited for when
-enabling i.MX95 DC display engine, also maybe when changing DB's AlphaControl
-and BlendControl registers as they are shadowed(OFC, shadow mechanism needs
-to be enabled with StatiControl and ControlTrigger registers).
-
-> 
->> DB and LB are different. DB is in Display Engine, while LB is in Pixel Engine.
->> This pipeline sort of tells how LD and DB are connected: LB -> ED -> DB.
->>
->> LB has no interrupts.  And since it processes pixels in Pixel Engine with AXI
->> CLK and it can be configured via the AHB interface of DC with CFG CLK, I'd
->> say it kind of inherits AXI CLK and CFG CLK from Pixel Engine and DC
->> respectively.  See the diagram in fsl,imx8qxp-dc.yaml, you'll find those
->> clocks.
-> 
-> Thank you for the clarification. And sorry for my late reply.
-> 
-
+Remind for review.
+I can see the previous comments was well addressed.
 
 -- 
-Regards,
-Liu Ying
+Thx and BRs,
+Aiqun(Maria) Yu
