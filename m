@@ -1,97 +1,99 @@
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B4BD29AB05;
-	Mon,  3 Nov 2025 23:49:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6786245019;
+	Tue,  4 Nov 2025 01:54:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762213778; cv=none; b=IMm5zYPT1/mgovuRHjhXgaPQPhH3GLd+wM1RF1BQrd34dHX49RvB3pCw6dpNpSe3Wrb0Bb3E+Qu5hFo2dBz4F8WnEbd8HldnjcUdiCLxG7vy9WZ6qF3FWpYerQgXtyyw1q5fGN6F7kzw/zl7CwSIQ1MUY6B1wfKhzsfNc/JKgEo=
+	t=1762221291; cv=none; b=dXKpIAPthXGnTJ+2NJZ5AlgYuhDFhXwLsTMixd3pWnkW84lrm3zCjXE6bkcLU+tnDAMPQt5FZlipP6DTCCOy8IsUhy+lj96e92N4meqmyX48k+vv8x0lKmeT+vHgup9qAIElZ5PfPht9d7nEfTotVcSYuzJlZ/yk0JbMypdcJYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762213778; c=relaxed/simple;
-	bh=EZfbPK9Xr3tF39XaRIdfqxz2Twswx4WKAnIksHi+JwQ=;
+	s=arc-20240116; t=1762221291; c=relaxed/simple;
+	bh=gKUL+8Ptu4jH1CeENsJt01k4NTTpT6BEfmtzAkitn/c=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tKkik4U7XjRfymGvRDtdU2NF/YIayOYUEPROSKtTHiCORotztPb7Bkr5ExQ9Z/VIzG0iawaxu+Yld7T/cNUjJpaj1Erke0IWnKzv2Im2X61uxcJ3hEsbs090pmyKBb53J5nzaXcL8J1LUvwIF26nCHl6QQB3uuoFwIFCj32B25A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=jPRaZV2C; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+	 MIME-Version:Content-Type; b=WMAsxTjO8TRixdaxQbfCCiihRPqFoz7OKI37B1a9AegiV1CK2IBpZw2GM30t/s+oFhA2BnQGbxqcInZ1IorERb+HOKI4EX7ZXpZJH94QCavcl+NR+7DO/CDgY6KOI9c/XH4SeLkS+hW4dI/euILbULRwUcrmhI8yeZg8Qmxecbo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Iw5gBglO; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="jPRaZV2C"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Transfer-Encoding:MIME-Version:References:
-	In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To:Content-Type;
-	bh=6Bed2wzgyyzbCuzjQG7pgG0QKZQhz1UrIXWqdynClIA=; b=jPRaZV2Cbv2PhwnmHKuc/iD6gI
-	koYH4ETx2vTXbfOikR75/Pq2MDgkgafTkehFPL7QPz+8p8oHUMZxwlBk1BgYErTeBkN5+eokdgV+k
-	HUclx4q1AUiazl5Rhu0EAwJzzstoWiD3M+Ev1fFvNkT12RWwgGm76FadoEU/2UUrC1VFqWzRxApca
-	F9YibWggOr0bKp3LHE/124KYsEfzdhVlaUSA5xnJh0VP7lDPAmKC79+MekW4a+lrDdYmyrNc0vjkE
-	cMqxuTd/rfEItk8RB6iXKfH6rAshs1f+VBpto3EQlkGRTzI4qL1q6Pc63TXrOXUA2xShK2G6juOXY
-	DC+77tgQ==;
-Received: from i53875a3a.versanet.de ([83.135.90.58] helo=phil.fritz.box)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1vG4Ik-0007vT-Pk; Tue, 04 Nov 2025 00:49:30 +0100
-From: Heiko Stuebner <heiko@sntech.de>
-To: heiko@sntech.de
-Cc: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Iw5gBglO"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40C26C4CEFD;
+	Tue,  4 Nov 2025 01:54:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762221291;
+	bh=gKUL+8Ptu4jH1CeENsJt01k4NTTpT6BEfmtzAkitn/c=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Iw5gBglOBPxTFpiqMwUPSIono3rugFs+B7D+gMvBjMh7BoSe46Cc4/mTlLSBy9KxP
+	 Aj+QGrJ1mNXSWNwsbgomDfJPBf/dhN9cKq9NSPM5LH+okuGoV3Tpg3cc5lyZ2GlC+l
+	 4y5kJGH8fNG5CvLC0EF0sgAUk2R+ZKSC7tERZ+d0/b3bzi376K9WvURm8vgmDGnSRC
+	 25gmNyfEn5Etjwc1EnnAhF/RJ4iyOLwta+9/r1ykmAtiQtVpDDGOCdGjgeROXALHLq
+	 AUXlZfLQYFRVonhuXBJWmC0DF8mX1U3pu/l+VoIedFbnaV8mAN26QA1TYKZQ1IENhc
+	 gSu8pLnSM2fPg==
+From: Bjorn Andersson <andersson@kernel.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	jingyi.wang@oss.qualcomm.com,
+	Taniya Das <taniya.das@oss.qualcomm.com>
+Cc: aiqun.yu@oss.qualcomm.com,
+	Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
+	Imran Shaik <imran.shaik@oss.qualcomm.com>,
+	Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
+	linux-arm-msm@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	michael.riesch@collabora.com
-Subject: [PATCH 3/3] arm64: dts: rockchip: add missing clocks for cpu cores on rk356x
-Date: Tue,  4 Nov 2025 00:49:26 +0100
-Message-ID: <20251103234926.416137-4-heiko@sntech.de>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20251103234926.416137-1-heiko@sntech.de>
-References: <20251103234926.416137-1-heiko@sntech.de>
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: (subset) [PATCH v2 0/6] Add support for Clock controllers for Kaanapali
+Date: Mon,  3 Nov 2025 19:58:17 -0600
+Message-ID: <176222149552.1132260.12639291385565534252.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20251030-gcc_kaanapali-v2-v2-0-a774a587af6f@oss.qualcomm.com>
+References: <20251030-gcc_kaanapali-v2-v2-0-a774a587af6f@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-All cpu cores are supplied by the same clock, but all except the first
-core are missing that clocks reference - add the missing ones.
 
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
----
- arch/arm64/boot/dts/rockchip/rk356x-base.dtsi | 3 +++
- 1 file changed, 3 insertions(+)
+On Thu, 30 Oct 2025 16:39:03 +0530, Taniya Das wrote:
+> Add support for Global clock controller(GCC), TCSR and the RPMH clock
+> controller for the Qualcomm Kaanapali SoC.
+> 
+> Kaanapali(Snapdragon SoC from Qualcomm):
+> https://www.qualcomm.com/products/mobile/snapdragon/smartphones/snapdragon-8-series-mobile-platforms/snapdragon-8-elite-gen-5
+> 
+> Changes in v2:
+>   - Update the commit message for all dt-bindings to incorporate
+>     "SoC/platform" inplace of drivers [Krzysztof]
+>   - Add RB tag from [Krzysztof] for dt-bindings
+>   - Split the TCSRCC to a new driver instead of reusing the SM8750
+>     driver with offset updates [Dmitry]
+>   - Update the new RPMH clocks to use 'clkN' convention [Dmitry]
+>   - Add RB tag from [Dmitry] for GCC
+>   - This series does not have any strict PLL code dependencies [Bjorn], thus
+>     drop them and will be added in the Multimedia clock controller
+>     series. Drop the following patches.
+> 	- Update the PLL support for cal_l
+> 	- Add support for controlling Pongo EKO_T PLL
+> 	- Add support for controlling Rivian PLL
+>   - Link to v1: https://lore.kernel.org/lkml/20250924-knp-clk-v1-0-29b02b818782@oss.qualcomm.com/
+> 
+> [...]
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk356x-base.dtsi b/arch/arm64/boot/dts/rockchip/rk356x-base.dtsi
-index d0c76401b45e..a1815f8a96e1 100644
---- a/arch/arm64/boot/dts/rockchip/rk356x-base.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk356x-base.dtsi
-@@ -69,6 +69,7 @@ cpu1: cpu@100 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a55";
- 			reg = <0x0 0x100>;
-+			clocks = <&scmi_clk SCMI_CLK_CPU>;
- 			#cooling-cells = <2>;
- 			enable-method = "psci";
- 			i-cache-size = <0x8000>;
-@@ -84,6 +85,7 @@ cpu2: cpu@200 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a55";
- 			reg = <0x0 0x200>;
-+			clocks = <&scmi_clk SCMI_CLK_CPU>;
- 			#cooling-cells = <2>;
- 			enable-method = "psci";
- 			i-cache-size = <0x8000>;
-@@ -99,6 +101,7 @@ cpu3: cpu@300 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a55";
- 			reg = <0x0 0x300>;
-+			clocks = <&scmi_clk SCMI_CLK_CPU>;
- 			#cooling-cells = <2>;
- 			enable-method = "psci";
- 			i-cache-size = <0x8000>;
+Applied, thanks!
+
+[1/6] dt-bindings: clock: qcom-rpmhcc: Add RPMHCC for Kaanapali
+      commit: 15c320b286a128131193ad270d7aac23bba4c219
+[2/6] dt-bindings: clock: qcom: Document the Kaanapali TCSR Clock Controller
+      commit: 395e0e794f9a485d9a5d6af062f096b97beecc11
+[3/6] dt-bindings: clock: qcom: Add Kaanapali Global clock controller
+      commit: 342d2a607450f256105781d29aa6300921c6152e
+
+Best regards,
 -- 
-2.47.2
-
+Bjorn Andersson <andersson@kernel.org>
