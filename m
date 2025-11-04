@@ -1,777 +1,644 @@
-Received: from OS8PR02CU002.outbound.protection.outlook.com (mail-japanwestazon11022090.outbound.protection.outlook.com [40.107.75.90])
+Received: from mail-m15593.qiye.163.com (mail-m15593.qiye.163.com [101.71.155.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 535C63126B6;
-	Tue,  4 Nov 2025 09:18:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.75.90
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762247883; cv=fail; b=ixqkW/hYZtrpJ3B8iWWRrozAKVAeObsMmbN1P3Hh3ahveuj60jFjooE4TtX8XTuPswx4chvfjDDwooJpBSE5zFjDDZkT0iO9w4sSMYpBIX2d43/6E9lEtKY9YPcva7RFU0l9WksR8xEslrualHcX6bA0FbfuD8AtfPXu4/6lcto=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762247883; c=relaxed/simple;
-	bh=NhJbZCaI66HlW3RUuQ5d4Y0FxrS1UZtk1aBtkBYANjQ=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=lAeqiHy8NakooIpvq5l8dxhArL6jFDBkKYfJ/w2pLeof3/P+DVp3rXwbhltakl6J34AR31n/6G/TfduE4RwZWvGEOxqoSTlDVImU5rVN9s5p7IAJsgm0iu6wZJp/FSzvUe4Pk5d4pmUDTxbDpnslBCpq8rcucG0o8sMu7SDCeUI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b=WeIfWpDN; arc=fail smtp.client-ip=40.107.75.90
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amlogic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65AF8313E0C;
+	Tue,  4 Nov 2025 09:56:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.93
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762250190; cv=none; b=iUeGq/C2pv0/PIOJPxj6A4UwV9wQpHiIQl3atuNxK4bw65ejTG+LHxMDIJF+QeZ4ZS+4dsAD/yC67wLS5BegAurbNLINNxJtFGZpzuLl+pBsmGr83TW8Eh5GXaKHKfTzkGziEtwi74T/bG6PuS2R0OaAcD58AjkteNWy06oXIQg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762250190; c=relaxed/simple;
+	bh=VfWjf4ISuaaT6NyoPZ/iJcSJFf52ys6iGFJZPPArPRk=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=V1/t+ZWW1ohagJkVVrR7/lCAhC1rR3N5MrVfKevBOKIABWG/KoO/EODFDELRFPZH6V4xOYVRUo0UXkWpVD1o3Rp8VnMTQwu5Si/Q/WEuIJ4dIeJYwi1bkP25Hcp9pCgnUjHsihsiT4/RkY/MpkWfkdKOKrnuW7dzXAtoNaK+DaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=NyrOsScE; arc=none smtp.client-ip=101.71.155.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b="WeIfWpDN"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=kTQKg7eWCNbgpxrvtxbDj7lvVMCNpKRvQ30Pq8e2JlayHms5Uebnj2szt0edkXAx7qPorQVthbjQtJYnZ7E30L5qNGcuqaUBp37ENpaOO8E0tC72Ln4kBcm0hiDUHrnD6uWiU+YMra0XH1WaNqM63nbTWoFUnxAZBy+RCWAlino8PjM7MmEqHCW4awFkKDqRhpyjvdam46/wu8149LvgKs0Wn4BRcG+qjg3EysIPRJYmGEMyNbw8gJ2WF3JfFaqOGxv2B98ycWpHfTc91w005YBZGY1HJZ3slAsW1eHtdyK742zXSwvjodDM5DLGvojYdOQx/ITjkuo60slFWxlDWA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=BjHqNBkLZXqvcbKecPGGHsl08expU5vi3Egw/B9Dpvg=;
- b=XiJF8MXX/6TobtWSzuU6+NGDaMej5BaceV+9kbeS64yUVH0lA2r9vFwBuLj/0UZGHJNx9tZDtpNthWNVx9TvonfrQdCqqr4QYAzNKXKYHdmK5BCyMaGZKkqR4BYIysu8FgECJbXdYid8eU3WqE6LOnfcdenX1034NDwEygpRay5LkNrf32EZ9ac6kK+UXV5Vnx8DSLP5oyp/D80xbOyqSYiFYIhtrHCB+2SqZIR5zhmssrESFIUKwm7QjuMwySp+cdzzDRCgR9GHjdbfLfcKXJIfgljYGf9FCp5e8t0oLxucOu400QocBShYFG1lESJHP+KKEZ56CHF0ByUUxxPOsA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
- dkim=pass header.d=amlogic.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amlogic.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BjHqNBkLZXqvcbKecPGGHsl08expU5vi3Egw/B9Dpvg=;
- b=WeIfWpDNZP0Lzd+PyYSDMiVWzxpn22FKC9T/pEv1MkPCaAjxs8WGNP0rmz3WBLdIY6aNvwLmA4+SW1fvfG9Z2j6kXy0RTRzKKwqQQywhfKGx20Y3hGkoRT7MZo3PjQ41UURmtwFvcLjsbsf1zTvtVZgcWwqz/e6UkwQa7JUTrAJ4hoXpessYxO7RnuAhl/E0SSZqQTnQI+znPE9NHi4+Blr3FpVlzEaG+KMAiktGkhtTcVcfUNM0glwGoZrDWnBY2OviwIhTrpnUHfc+uspqFVCSQydHsZ1lecp5v+zW+EdwaRNBfun6BmSCcgeerP3I/FDRAp2Ot10gvNCl94Xe2Q==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amlogic.com;
-Received: from SEZPR03MB7146.apcprd03.prod.outlook.com (2603:1096:101:ee::14)
- by JH0PR03MB7927.apcprd03.prod.outlook.com (2603:1096:990:34::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.16; Tue, 4 Nov
- 2025 09:17:57 +0000
-Received: from SEZPR03MB7146.apcprd03.prod.outlook.com
- ([fe80::f608:5d7a:df6:35f8]) by SEZPR03MB7146.apcprd03.prod.outlook.com
- ([fe80::f608:5d7a:df6:35f8%3]) with mapi id 15.20.9275.013; Tue, 4 Nov 2025
- 09:17:57 +0000
-Message-ID: <3b9a5978-aa02-486b-85f5-6443dc607dd5@amlogic.com>
-Date: Tue, 4 Nov 2025 17:17:50 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 5/5] clk: meson: t7: add t7 clock peripherals
- controller driver
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Xianwei Zhao <xianwei.zhao@amlogic.com>, Chuan Liu
- <chuan.liu@amlogic.com>, Neil Armstrong <neil.armstrong@linaro.org>,
- Kevin Hilman <khilman@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Dmitry Rokosov <ddrokosov@sberdevices.ru>, robh+dt <robh+dt@kernel.org>,
- Rob Herring <robh@kernel.org>, devicetree <devicetree@vger.kernel.org>,
- linux-clk <linux-clk@vger.kernel.org>,
- linux-amlogic <linux-amlogic@lists.infradead.org>,
- linux-kernel <linux-kernel@vger.kernel.org>,
- linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-References: <20251030094345.2571222-1-jian.hu@amlogic.com>
- <20251030094345.2571222-6-jian.hu@amlogic.com>
- <1jbjlnxuug.fsf@starbuckisacylon.baylibre.com>
-From: Jian Hu <jian.hu@amlogic.com>
-In-Reply-To: <1jbjlnxuug.fsf@starbuckisacylon.baylibre.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SG2P153CA0027.APCP153.PROD.OUTLOOK.COM (2603:1096:4:c7::14)
- To SEZPR03MB7146.apcprd03.prod.outlook.com (2603:1096:101:ee::14)
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="NyrOsScE"
+Received: from rockchip.. (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 28457011d;
+	Tue, 4 Nov 2025 11:06:42 +0800 (GMT+08:00)
+From: Elaine Zhang <zhangqing@rock-chips.com>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	sugar.zhang@rock-chips.com,
+	zhangqing@rock-chips.com,
+	heiko@sntech.de,
+	robh@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org,
+	conor+dt@kernel.org
+Cc: devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	huangtao@rock-chips.com,
+	finley.xiao@rock-chips.com
+Subject: [PATCH v6 4/5] dt-bindings: clock: rockchip: Add RK3506 clock and reset unit
+Date: Tue,  4 Nov 2025 11:06:32 +0800
+Message-Id: <20251104030633.2721038-5-zhangqing@rock-chips.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20251104030633.2721038-1-zhangqing@rock-chips.com>
+References: <20251104030633.2721038-1-zhangqing@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SEZPR03MB7146:EE_|JH0PR03MB7927:EE_
-X-MS-Office365-Filtering-Correlation-Id: 50300e5e-a965-4567-c45b-08de1b830a95
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?RGlJYjg2djhkOXhPOG9uWkwwUXFBL3NBb0oxcUo2WjJ3SEtEakNXaTJVNFJP?=
- =?utf-8?B?UnNuMi9OOXhIT2JuaE5sMXJESTYyc2xRZmlBeDRuK3dnc2xBa1Eza25GRGkw?=
- =?utf-8?B?YWp6OWRuRG9FZnpVQlNaRGtzTHgzb2xJTHlZMlZLSGgzRXBiSFI3SmtUZnYx?=
- =?utf-8?B?QytQaWFjNmJiQjdPU281RWFUYnMvVXB2bTA5Q2NVL0N1Y3o0aURxenREcDJT?=
- =?utf-8?B?WVpBS3g4RlNuQzBHRmYrOHl6UkRLblBITmQraWRXSjhtQVAwbUZ2N25Jb2Zu?=
- =?utf-8?B?MXN1WkpJZWJQNHdNSDdoR2txcWVtZjNMYWFjWWxGa1huWGJabENXRGwyZUYz?=
- =?utf-8?B?MG90YWdYSnlPMkhGaFJEbk9ZWFpGNkJFdnJlazJ4bXhvelAzeTFhR1ZjK05H?=
- =?utf-8?B?WHNHUjgvWTJIWUJTVnozTlFMQUlGQm9jWDhzUmZTZ2FKOGpqbjhhOS83dGlQ?=
- =?utf-8?B?Nm9pQzQyVXNvWk5remFBU25vbURoc2liQkxHU0g0QWJMUGF1YjNRM1NHVTNT?=
- =?utf-8?B?WWZxNlhuNkFON0NET2NtQnVlb1B3c1RTYVRIMTk5MS9BWVpHMTV6VzlSN1c5?=
- =?utf-8?B?cUxXdFhzV1ZVUDIxdkVmVFVIOW4xQlVjZm5WeDh2Rld2NXozM29PdDhoNWlm?=
- =?utf-8?B?aGx4VmJsNENPZlFJaUNLTG1aWDlwdWFreFdiblViVms5TGl6aFZVVlYra2Q3?=
- =?utf-8?B?N213eWxBRjZHeWFxRXVGNFVDVldZQXZYSEpWc1ozYUI4TG44MWErVFZORkFo?=
- =?utf-8?B?K2R6c3IwVTNoVVdNSGNBS3NRdU9yUzNGSk9KNmVJbmd3OUJSU2FPMHd6amlL?=
- =?utf-8?B?WmJ5eFc3akM1WHRtb0s5ZUh2LzdnTndUMlIwZWFjR1dJWGJlS3RUWVFmVkp4?=
- =?utf-8?B?bnJLVm5LS2JValNDbTFRTWZmMVpicXd2SGtxa2k3WlV2RVNZaGZwQUwzc1ox?=
- =?utf-8?B?VHdRcUZQaVk3MTZpSjYvc1k2bU9tZ2F0dU5rNEM2UUtpSzlyRGRweVRYY0ZL?=
- =?utf-8?B?aENDcGxnWDRtSmYxNWZLT1BGZHgzTm9TYVB2ME5DSkdSaEQ4dzEwa1Mxc3FS?=
- =?utf-8?B?TVN4SUlzd2ZIMExldkpraXFEblhYYTZFa1hta3ppVUN1NWZMcnV6ZXY2OVhB?=
- =?utf-8?B?OUhKdDhuRTA0Wjl2OFFQeDRMdGt4R0tGeEdJRzRSVTUrbGdJOHFTNmw4TlRn?=
- =?utf-8?B?TTV0VHk1NFVzVTJLM2trV0RodkZkaWFhYVU1aTlYLzFDZ2xEUDBQTER0Nk1i?=
- =?utf-8?B?T041L1pJb3E5eG56Rk03MVVpZ283Q1llTVllNHBkUzE3YndNUm1SUTlaWnEr?=
- =?utf-8?B?cFErMnBHemc1RTZ5SHcyaHR0a3gwTmN1cDlNZER3WGhwRFJSRk8rWGxmOTJC?=
- =?utf-8?B?czc4T1R4RU5WQVdsZWVtYzZYSWlwM21XaHBPSUxXSFd3Y2RJN2ZTdFpqckVN?=
- =?utf-8?B?NWdkZDU3bzY2ek1QZDYxTGoyMktIcy9mM1ZDdmRzSjRhOFYyb0tiTkxQM2tq?=
- =?utf-8?B?YVFreG5WNExlTjY2UWI1TEt2OUQxQ2gyK05IMThBTncrUGJGZWw5QjNKa29F?=
- =?utf-8?B?M2IvWGZLN2l4U24rT1pIQXBzcnRhbmRkZUJxUW9oQWR2Q25rZHIzSC9ZcE9O?=
- =?utf-8?B?a1RpeWVRZVZlZVF4L3pnbmR2UWUxWk5HcFZxL2JQZURLaHE1c1R5b3AwMk5u?=
- =?utf-8?B?OGVLa1orcHRGZldrVS9qRmNxNEZtd3RVOG9BOThocER6aWJRM3p2VUVLRUxN?=
- =?utf-8?B?WkVxYTBDclFFbHVXcFRPNUIyejlST3Y0MndsdHVEWCtVTC84NzBPSG5lZUtP?=
- =?utf-8?B?dS95bEVBMTQyRXowUXVSd1paZDA2RXkvUFFnY3paSlBlV0cyaDgwclBxM2dy?=
- =?utf-8?B?QTdzZnV6MzNpSVM1SVhsK2d3dU1QUmdDMWlIQVVVTVdEdTZLTnhoeUdMVEhv?=
- =?utf-8?Q?6g0PjabMKCeJ7bazmOIQDE1A3Ok04JMi?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR03MB7146.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ZkJyY1pkZzgyTWJnamVCR3J0VUNKSlY0UGY3OXhlVDFiZDErbTI0eHd6bU1Z?=
- =?utf-8?B?emtZaVUrRzJmN2xENzdKb0dzNTJwRVhOMTcveUxuUFRYNWdKMTZsUG0zOUU4?=
- =?utf-8?B?YmZqUnVWY0szMXpvMjk5RUdGNHdjRnhEemxUT1c4RUpac2loMldFSm85SUZ3?=
- =?utf-8?B?S3NicUlNTjQ1dTZXVDI2U0tsblZRVDlteUg2TDBjZTA2dFRFQ21kT1NDdGRM?=
- =?utf-8?B?RGV3djJ2STlEamw5QmlZRUZQUyt0enRvbnRscXBEZmRMVUlvQStLdVpVcDk2?=
- =?utf-8?B?MDU5NGx3TzkzSHBYSng2NlRpOFNvbGlNZE9aQzJTNDhRbE82SWhvbHNlWXlU?=
- =?utf-8?B?Ym4vaFMydHpaZWN3VEVKcWFZQnc2OUpjTDUvRG5JZm5CYytIbVMzcVMva1BF?=
- =?utf-8?B?OVRDMkdkZ0dnM2kxV1JjY25rS2h6c29KODFhMjJXSDkvRG45MzdmZnY1eWpw?=
- =?utf-8?B?cVBlRU11VzJWYko5bEdORTlSeXFCNUs5YUEvNG1MWGVxYWhkUTNmbmIxbzRJ?=
- =?utf-8?B?ZHNxcTBod2l0dzVtK0JxRHpESlFLVGppejgvRDgrZG1TWE5IMU9KRHh5R3Iw?=
- =?utf-8?B?QW5tUmhSOXRwT0J2VUpxbDcrT2V2dk43cG5TdU1hZEZyU01Jby8yZmJUQjA2?=
- =?utf-8?B?V0JUc3NZSUhoZUFjSzU4di8rVll3S3h0SDlpWG1yc2lNNGNQbkRiaGFXK0ZW?=
- =?utf-8?B?WGxHM2NBdFlHaE16NXF2TkZnQ1o2cGdkUWxrRU14TFhCczRiKzI2aUcrOUc5?=
- =?utf-8?B?UWVnN083Si9tcmdMTGNaZXlzSG5aNWFzK0RtWXNoNFBFMkVhZjZyZHVsSWFp?=
- =?utf-8?B?TnVoUVdjS2plZWc2MWdNaDRDOUlQa2Rkd0M5c0wzVENKQkxJQkM0L3M5YkF4?=
- =?utf-8?B?VzBBRnBwUENLUXRVTnRqMjdTckV3NXgvdVFoVWZ1UzlFeHdqOEZUQkJ6Szhq?=
- =?utf-8?B?YzV3amh6K09Db0M1L1I4OS9iWDJ4MVJlUFVpYlIrZ05YbzJ1ZGlqM3cyalZU?=
- =?utf-8?B?WVFkL3N6M0ZLNW05OEVpYy9BeU9xdnh6eHlvdEpjbzdXWnB1R01heEU3QWxh?=
- =?utf-8?B?c1E4UVg4L0wwQkJuTmZPU2p6SVp3cUYxa2RSOGlmSzYvMk85WUszazN1ZlA4?=
- =?utf-8?B?cG9zYThoWTZrMitiYVg0TjJOZ2xYTlZIakxZbGRQd1FFM2tQVngrS0p3OVFu?=
- =?utf-8?B?MERxbGFER2xuQjc0YUtwclNCYlVPUFRCMVNvbWtnUVZjRVk0RXJrT0J3c21p?=
- =?utf-8?B?WW13UzYzZk4zNXdwYW1nY3JoS01tZll2Y3VkSEp6bXpTY1A5ZHl0ZzNmV0xs?=
- =?utf-8?B?QTRYTWNsZ2MxajdPNlBuMWVJaW1rVGxvR3VTcUJYcGt5YUFua09EdTJVRTJl?=
- =?utf-8?B?TTNRTlVTSDJmMVp0ZjdoejB6YmhiNWZyblNXMDR3YWVKRmZscSs0VHU3M25Y?=
- =?utf-8?B?UkdEVE1TVkVrQm1aaDVNUjRTNEVDcEFtRmQwRWc0ZktwQktLV1NyRGVncFE4?=
- =?utf-8?B?SmpzVFA2T1h6bWVtSzd6a0pMVlV4R0QzdThMYmZvVXZZUlhuNkhubXR2TmNF?=
- =?utf-8?B?bTNQNVlyVDQzb1NQVHVRQXpvSUJ0VUFnTW85aXFEWSt3b045ZCt0OFJwdTk3?=
- =?utf-8?B?em4rTGxLbFpMTSt0bFcrY1FnU04xbVRPVlJPSDc4akJNb05BTU4xZWVQOUZn?=
- =?utf-8?B?dHhEZGs3MDIydEgySGx3V2l4SGhyUHE0cUhrZVdoN05qajhkZURFQ3U5UW1F?=
- =?utf-8?B?R25DbFVKZysvNEw1QjJWc1RXRUEwVFo0Ri9zL2pGbFljU3hodE5QeGd0RlFw?=
- =?utf-8?B?bDVMazFLNnpHOXRiKzdrM2lVTVBhRlVxL3A2VDE1bjNTbXQzS1dFVHpDOWRp?=
- =?utf-8?B?YUoxbWFGY1JDK0haZ2xZSkJhN0NzdTYrbDY0UW8rTGd4Tk5VMEx4R20ydE5x?=
- =?utf-8?B?LzFOU3NFbExiOVFPVnBYZlM5WGF0UEcySVVGQVYxeG1aM1daaW9QTDZ0K0hZ?=
- =?utf-8?B?S0Q3UW13VGUyRFp1WkthV25iQmt2Zm15SU9WNzJHOHN3dWFvaXZ0ZGJUcUww?=
- =?utf-8?B?R1BxS2FKVndpMURMVlkxcGFVTHM5eENkREloWE1idVNCc0tQN3krZjBOdUY0?=
- =?utf-8?Q?o8rC7YGB9jP45gvyhldPcn7Ur?=
-X-OriginatorOrg: amlogic.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 50300e5e-a965-4567-c45b-08de1b830a95
-X-MS-Exchange-CrossTenant-AuthSource: SEZPR03MB7146.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Nov 2025 09:17:56.9222
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: rlBfUo8vOywT4lF7vQo5QN8NVox1fFRNd4zL2Ske/s/HfKek3wUv9vOY6pkoeuOy9vKLEaih4d4MkbZSLB7zDw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: JH0PR03MB7927
+Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a9a4cd4be1d03a3kunm9587110c9190cf
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQ0wZS1ZOTU5MQ09ITkNKTR1WFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpKQk
+	1VSktLVUpCWQY+
+DKIM-Signature: a=rsa-sha256;
+	b=NyrOsScEoJcI3G4jvrrlUwz42ulLT5ELrLhkwIsosehI7RZgCVs7TU6Rx//zDrPP5EakXka7jNzyVgBLeGCGbNI91neHMb1WLDpEHXk5bsn+qcgPVKXOVAKRcb9BNM9QLQMSMr4PJK41vCX9YD8lhejT/a9E8tZ73c5rDCAkeUw=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=nXPRP4/Lwggeqy914YG8ScreKEHBKb/NMI4Pm8Hn73Y=;
+	h=date:mime-version:subject:message-id:from;
 
-Hi, Jerome
+From: Finley Xiao <finley.xiao@rock-chips.com>
 
-Thanks for your review.
+Add device tree bindings for clock and reset unit on RK3506 SoC.
+Add clock and reset IDs for RK3506 SoC.
 
-On 2025/10/31 17:51, Jerome Brunet wrote:
-> [ EXTERNAL EMAIL ]
->
-> On Thu 30 Oct 2025 at 17:43, Jian Hu <jian.hu@amlogic.com> wrote:
->
->> Add Peripheral clock controller driver for the Amlogic T7 SoC family.
->>
->> Signed-off-by: Jian Hu <jian.hu@amlogic.com>
->> ---
->>   drivers/clk/meson/Kconfig          |   13 +
->>   drivers/clk/meson/Makefile         |    1 +
->>   drivers/clk/meson/t7-peripherals.c | 1734 ++++++++++++++++++++++++++++
->>   3 files changed, 1748 insertions(+)
->>   create mode 100644 drivers/clk/meson/t7-peripherals.c
->>
->> ......
->> +
->> +static struct clk_regmap t7_rtc_32k_in = {
->> +     .data = &(struct clk_regmap_gate_data){
->> +             .offset = RTC_BY_OSCIN_CTRL0,
->> +             .bit_idx = 31,
->> +     },
->> +     .hw.init = &(struct clk_init_data) {
->> +             .name = "rtc_32k_in",
->> +             .ops = &clk_regmap_gate_ops,
->> +             .parent_data = &(const struct clk_parent_data) {
->> +                     .fw_name = "xtal",
->> +             },
->> +             .num_parents = 1,
->> +     },
->> +};
->> +
->> +static const struct meson_clk_dualdiv_param t7_clk_32k_div_table[] = {
->> +     {
->> +             .n1     = 733, .m1      = 8,
->> +             .n2     = 732, .m2      = 11,
->> +             .dual   = 1,
->> +     },
->> +     {}
->> +};
->> +
->> +static struct clk_regmap t7_rtc_32k_div = {
->> +     .data = &(struct meson_clk_dualdiv_data){
->> +             .n1 = {
->> +                     .reg_off = RTC_BY_OSCIN_CTRL0,
->> +                     .shift   = 0,
->> +                     .width   = 12,
->> +             },
->> +             .n2 = {
->> +                     .reg_off = RTC_BY_OSCIN_CTRL0,
->> +                     .shift   = 12,
->> +                     .width   = 12,
->> +             },
->> +             .m1 = {
->> +                     .reg_off = RTC_BY_OSCIN_CTRL1,
->> +                     .shift   = 0,
->> +                     .width   = 12,
->> +             },
->> +             .m2 = {
->> +                     .reg_off = RTC_BY_OSCIN_CTRL1,
->> +                     .shift   = 12,
->> +                     .width   = 12,
->> +             },
->> +             .dual = {
->> +                     .reg_off = RTC_BY_OSCIN_CTRL0,
->> +                     .shift   = 28,
->> +                     .width   = 1,
->> +             },
->> +             .table = t7_clk_32k_div_table,
->> +     },
->> +     .hw.init = &(struct clk_init_data){
->> +             .name = "rtc_32k_div",
->> +             .ops = &meson_clk_dualdiv_ops,
->> +             .parent_hws = (const struct clk_hw *[]) {
->> +                     &t7_rtc_32k_in.hw
->> +             },
->> +             .num_parents = 1,
->> +     },
->> +};
->> +
->> +static struct clk_regmap t7_rtc_32k_force_sel = {
->> +     .data = &(struct clk_regmap_mux_data) {
->> +             .offset = RTC_BY_OSCIN_CTRL1,
->> +             .mask = 0x1,
->> +             .shift = 24,
->> +     },
->> +     .hw.init = &(struct clk_init_data){
->> +             .name = "rtc_32k_force_sel",
->> +             .ops = &clk_regmap_mux_ops,
->> +             .parent_hws = (const struct clk_hw *[]) {
->> +                     &t7_rtc_32k_div.hw,
->> +                     &t7_rtc_32k_in.hw,
->> +             },
->> +             .num_parents = 2,
->> +             .flags = CLK_SET_RATE_PARENT,
->> +     },
->> +};
->> +
->> +static struct clk_regmap t7_rtc_32k_out = {
->> +     .data = &(struct clk_regmap_gate_data){
->> +             .offset = RTC_BY_OSCIN_CTRL0,
->> +             .bit_idx = 30,
->> +     },
->> +     .hw.init = &(struct clk_init_data) {
->> +             .name = "rtc_32k_out",
->> +             .ops = &clk_regmap_gate_ops,
->> +             .parent_hws = (const struct clk_hw *[]) {
->> +                     &t7_rtc_32k_force_sel.hw
->> +             },
->> +             .num_parents = 1,
->> +             .flags = CLK_SET_RATE_PARENT,
->> +     },
->> +};
->> +
->> +static struct clk_regmap t7_rtc_32k_mux0_0 = {
->> +     .data = &(struct clk_regmap_mux_data) {
->> +             .offset = RTC_CTRL,
->> +             .mask = 0x1,
->> +             .shift = 0,
->> +     },
->> +     .hw.init = &(struct clk_init_data){
->> +             .name = "rtc_32k_mux0_0",
->> +             .ops = &clk_regmap_mux_ops,
->> +             .parent_data = (const struct clk_parent_data []) {
->> +                     { .fw_name = "xtal", },
->> +                     { .hw = &t7_rtc_32k_out.hw },
->> +             },
->> +             .num_parents = 2,
->> +             .flags = CLK_SET_RATE_PARENT,
->> +     },
->> +};
->> +
->> +static struct clk_regmap t7_rtc_32k_mux0_1 = {
-> mux0_0 and mux0_1 ? Those are  terrible names to search and grep.
-> Is this really what your documentation is using ? If not, please come up
-> with something better
+Signed-off-by: Finley Xiao <finley.xiao@rock-chips.com>
+---
+ .../bindings/clock/rockchip,rk3506-cru.yaml   |  51 ++++
+ .../dt-bindings/clock/rockchip,rk3506-cru.h   | 285 ++++++++++++++++++
+ .../dt-bindings/reset/rockchip,rk3506-cru.h   | 211 +++++++++++++
+ 3 files changed, 547 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3506-cru.yaml
+ create mode 100644 include/dt-bindings/clock/rockchip,rk3506-cru.h
+ create mode 100644 include/dt-bindings/reset/rockchip,rk3506-cru.h
 
+diff --git a/Documentation/devicetree/bindings/clock/rockchip,rk3506-cru.yaml b/Documentation/devicetree/bindings/clock/rockchip,rk3506-cru.yaml
+new file mode 100644
+index 000000000000..ecb5fa497747
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/rockchip,rk3506-cru.yaml
+@@ -0,0 +1,51 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/rockchip,rk3506-cru.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Rockchip RK3506 Clock and Reset Unit (CRU)
++
++maintainers:
++  - Finley Xiao <finley.xiao@rock-chips.com>
++  - Heiko Stuebner <heiko@sntech.de>
++
++description: |
++  The RK3506 CRU generates the clock and also implements reset for SoC
++  peripherals.
++
++properties:
++  compatible:
++    const: rockchip,rk3506-cru
++
++  reg:
++    maxItems: 1
++
++  "#clock-cells":
++    const: 1
++
++  "#reset-cells":
++    const: 1
++
++  clocks:
++    maxItems: 1
++
++  clock-names:
++    const: xin24m
++
++required:
++  - compatible
++  - reg
++  - "#clock-cells"
++  - "#reset-cells"
++
++additionalProperties: false
++
++examples:
++  - |
++    clock-controller@ff9a0000 {
++      compatible = "rockchip,rk3506-cru";
++      reg = <0xff9a0000 0x20000>;
++      #clock-cells = <1>;
++      #reset-cells = <1>;
++    };
+diff --git a/include/dt-bindings/clock/rockchip,rk3506-cru.h b/include/dt-bindings/clock/rockchip,rk3506-cru.h
+new file mode 100644
+index 000000000000..71d7dda23cc9
+--- /dev/null
++++ b/include/dt-bindings/clock/rockchip,rk3506-cru.h
+@@ -0,0 +1,285 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
++/*
++ * Copyright (c) 2023-2025 Rockchip Electronics Co., Ltd.
++ * Author: Finley Xiao <finley.xiao@rock-chips.com>
++ */
++
++#ifndef _DT_BINDINGS_CLK_ROCKCHIP_RK3506_H
++#define _DT_BINDINGS_CLK_ROCKCHIP_RK3506_H
++
++/* cru plls */
++#define PLL_GPLL			0
++#define PLL_V0PLL			1
++#define PLL_V1PLL			2
++
++/* cru-clocks indices */
++#define ARMCLK				3
++#define CLK_DDR				4
++#define XIN24M_GATE			5
++#define CLK_GPLL_GATE			6
++#define CLK_V0PLL_GATE			7
++#define CLK_V1PLL_GATE			8
++#define CLK_GPLL_DIV			9
++#define CLK_GPLL_DIV_100M		10
++#define CLK_V0PLL_DIV			11
++#define CLK_V1PLL_DIV			12
++#define CLK_INT_VOICE_MATRIX0		13
++#define CLK_INT_VOICE_MATRIX1		14
++#define CLK_INT_VOICE_MATRIX2		15
++#define CLK_FRAC_UART_MATRIX0_MUX	16
++#define CLK_FRAC_UART_MATRIX1_MUX	17
++#define CLK_FRAC_VOICE_MATRIX0_MUX	18
++#define CLK_FRAC_VOICE_MATRIX1_MUX	19
++#define CLK_FRAC_COMMON_MATRIX0_MUX	20
++#define CLK_FRAC_COMMON_MATRIX1_MUX	21
++#define CLK_FRAC_COMMON_MATRIX2_MUX	22
++#define CLK_FRAC_UART_MATRIX0		23
++#define CLK_FRAC_UART_MATRIX1		24
++#define CLK_FRAC_VOICE_MATRIX0		25
++#define CLK_FRAC_VOICE_MATRIX1		26
++#define CLK_FRAC_COMMON_MATRIX0		27
++#define CLK_FRAC_COMMON_MATRIX1		28
++#define CLK_FRAC_COMMON_MATRIX2		29
++#define CLK_REF_USBPHY_TOP		30
++#define CLK_REF_DPHY_TOP		31
++#define ACLK_CORE_ROOT			32
++#define PCLK_CORE_ROOT			33
++#define PCLK_DBG			34
++#define PCLK_CORE_GRF			35
++#define PCLK_CORE_CRU			36
++#define CLK_CORE_EMA_DETECT		37
++#define CLK_REF_PVTPLL_CORE		38
++#define PCLK_GPIO1			39
++#define DBCLK_GPIO1			40
++#define ACLK_CORE_PERI_ROOT		41
++#define HCLK_CORE_PERI_ROOT		42
++#define PCLK_CORE_PERI_ROOT		43
++#define CLK_DSMC			44
++#define ACLK_DSMC			45
++#define PCLK_DSMC			46
++#define CLK_FLEXBUS_TX			47
++#define CLK_FLEXBUS_RX			48
++#define ACLK_FLEXBUS			49
++#define HCLK_FLEXBUS			50
++#define ACLK_DSMC_SLV			51
++#define HCLK_DSMC_SLV			52
++#define ACLK_BUS_ROOT			53
++#define HCLK_BUS_ROOT			54
++#define PCLK_BUS_ROOT			55
++#define ACLK_SYSRAM			56
++#define HCLK_SYSRAM			57
++#define ACLK_DMAC0			58
++#define ACLK_DMAC1			59
++#define HCLK_M0				60
++#define PCLK_BUS_GRF			61
++#define PCLK_TIMER			62
++#define CLK_TIMER0_CH0			63
++#define CLK_TIMER0_CH1			64
++#define CLK_TIMER0_CH2			65
++#define CLK_TIMER0_CH3			66
++#define CLK_TIMER0_CH4			67
++#define CLK_TIMER0_CH5			68
++#define PCLK_WDT0			69
++#define TCLK_WDT0			70
++#define PCLK_WDT1			71
++#define TCLK_WDT1			72
++#define PCLK_MAILBOX			73
++#define PCLK_INTMUX			74
++#define PCLK_SPINLOCK			75
++#define PCLK_DDRC			76
++#define HCLK_DDRPHY			77
++#define PCLK_DDRMON			78
++#define CLK_DDRMON_OSC			79
++#define PCLK_STDBY			80
++#define HCLK_USBOTG0			81
++#define HCLK_USBOTG0_PMU		82
++#define CLK_USBOTG0_ADP			83
++#define HCLK_USBOTG1			84
++#define HCLK_USBOTG1_PMU		85
++#define CLK_USBOTG1_ADP			86
++#define PCLK_USBPHY			87
++#define ACLK_DMA2DDR			88
++#define PCLK_DMA2DDR			89
++#define STCLK_M0			90
++#define CLK_DDRPHY			91
++#define CLK_DDRC_SRC			92
++#define ACLK_DDRC_0			93
++#define ACLK_DDRC_1			94
++#define CLK_DDRC			95
++#define CLK_DDRMON			96
++#define HCLK_LSPERI_ROOT		97
++#define PCLK_LSPERI_ROOT		98
++#define PCLK_UART0			99
++#define PCLK_UART1			100
++#define PCLK_UART2			101
++#define PCLK_UART3			102
++#define PCLK_UART4			103
++#define SCLK_UART0			104
++#define SCLK_UART1			105
++#define SCLK_UART2			106
++#define SCLK_UART3			107
++#define SCLK_UART4			108
++#define PCLK_I2C0			109
++#define CLK_I2C0			110
++#define PCLK_I2C1			111
++#define CLK_I2C1			112
++#define PCLK_I2C2			113
++#define CLK_I2C2			114
++#define PCLK_PWM1			115
++#define CLK_PWM1			116
++#define CLK_OSC_PWM1			117
++#define CLK_RC_PWM1			118
++#define CLK_FREQ_PWM1			119
++#define CLK_COUNTER_PWM1		120
++#define PCLK_SPI0			121
++#define CLK_SPI0			122
++#define PCLK_SPI1			123
++#define CLK_SPI1			124
++#define PCLK_GPIO2			125
++#define DBCLK_GPIO2			126
++#define PCLK_GPIO3			127
++#define DBCLK_GPIO3			128
++#define PCLK_GPIO4			129
++#define DBCLK_GPIO4			130
++#define HCLK_CAN0			131
++#define CLK_CAN0			132
++#define HCLK_CAN1			133
++#define CLK_CAN1			134
++#define HCLK_PDM			135
++#define MCLK_PDM			136
++#define CLKOUT_PDM			137
++#define MCLK_SPDIFTX			138
++#define HCLK_SPDIFTX			139
++#define HCLK_SPDIFRX			140
++#define MCLK_SPDIFRX			141
++#define MCLK_SAI0			142
++#define HCLK_SAI0			143
++#define MCLK_OUT_SAI0			144
++#define MCLK_SAI1			145
++#define HCLK_SAI1			146
++#define MCLK_OUT_SAI1			147
++#define HCLK_ASRC0			148
++#define CLK_ASRC0			149
++#define HCLK_ASRC1			150
++#define CLK_ASRC1			151
++#define PCLK_CRU			152
++#define PCLK_PMU_ROOT			153
++#define MCLK_ASRC0			154
++#define MCLK_ASRC1			155
++#define MCLK_ASRC2			156
++#define MCLK_ASRC3			157
++#define LRCK_ASRC0_SRC			158
++#define LRCK_ASRC0_DST			159
++#define LRCK_ASRC1_SRC			160
++#define LRCK_ASRC1_DST			161
++#define ACLK_HSPERI_ROOT		162
++#define HCLK_HSPERI_ROOT		163
++#define PCLK_HSPERI_ROOT		164
++#define CCLK_SRC_SDMMC			165
++#define HCLK_SDMMC			166
++#define HCLK_FSPI			167
++#define SCLK_FSPI			168
++#define PCLK_SPI2			169
++#define ACLK_MAC0			170
++#define ACLK_MAC1			171
++#define PCLK_MAC0			172
++#define PCLK_MAC1			173
++#define CLK_MAC_ROOT			174
++#define CLK_MAC0			175
++#define CLK_MAC1			176
++#define MCLK_SAI2			177
++#define HCLK_SAI2			178
++#define MCLK_OUT_SAI2			179
++#define MCLK_SAI3_SRC			180
++#define HCLK_SAI3			181
++#define MCLK_SAI3			182
++#define MCLK_OUT_SAI3			183
++#define MCLK_SAI4_SRC			184
++#define HCLK_SAI4			185
++#define MCLK_SAI4			186
++#define HCLK_DSM			187
++#define MCLK_DSM			188
++#define PCLK_AUDIO_ADC			189
++#define MCLK_AUDIO_ADC			190
++#define MCLK_AUDIO_ADC_DIV4		191
++#define PCLK_SARADC			192
++#define CLK_SARADC			193
++#define PCLK_OTPC_NS			194
++#define CLK_SBPI_OTPC_NS		195
++#define CLK_USER_OTPC_NS		196
++#define PCLK_UART5			197
++#define SCLK_UART5			198
++#define PCLK_GPIO234_IOC		199
++#define CLK_MAC_PTP_ROOT		200
++#define CLK_MAC0_PTP			201
++#define CLK_MAC1_PTP			202
++#define CLK_SPI2			203
++#define ACLK_VIO_ROOT			204
++#define HCLK_VIO_ROOT			205
++#define PCLK_VIO_ROOT			206
++#define HCLK_RGA			207
++#define ACLK_RGA			208
++#define CLK_CORE_RGA			209
++#define ACLK_VOP			210
++#define HCLK_VOP			211
++#define DCLK_VOP			212
++#define PCLK_DPHY			213
++#define PCLK_DSI_HOST			214
++#define PCLK_TSADC			215
++#define CLK_TSADC			216
++#define CLK_TSADC_TSEN			217
++#define PCLK_GPIO1_IOC			218
++#define PCLK_OTPC_S			219
++#define CLK_SBPI_OTPC_S			220
++#define CLK_USER_OTPC_S			221
++#define PCLK_OTP_MASK			222
++#define PCLK_KEYREADER			223
++#define HCLK_BOOTROM			224
++#define PCLK_DDR_SERVICE		225
++#define HCLK_CRYPTO_S			226
++#define HCLK_KEYLAD			227
++#define CLK_CORE_CRYPTO			228
++#define CLK_PKA_CRYPTO			229
++#define CLK_CORE_CRYPTO_S		230
++#define CLK_PKA_CRYPTO_S		231
++#define ACLK_CRYPTO_S			232
++#define HCLK_RNG_S			233
++#define CLK_CORE_CRYPTO_NS		234
++#define CLK_PKA_CRYPTO_NS		235
++#define ACLK_CRYPTO_NS			236
++#define HCLK_CRYPTO_NS			237
++#define HCLK_RNG			238
++#define CLK_PMU				239
++#define PCLK_PMU			240
++#define CLK_PMU_32K			241
++#define PCLK_PMU_CRU			242
++#define PCLK_PMU_GRF			243
++#define PCLK_GPIO0_IOC			244
++#define PCLK_GPIO0			245
++#define DBCLK_GPIO0			246
++#define PCLK_GPIO1_SHADOW		247
++#define DBCLK_GPIO1_SHADOW		248
++#define PCLK_PMU_HP_TIMER		249
++#define CLK_PMU_HP_TIMER		250
++#define CLK_PMU_HP_TIMER_32K		251
++#define PCLK_PWM0			252
++#define CLK_PWM0			253
++#define CLK_OSC_PWM0			254
++#define CLK_RC_PWM0			255
++#define CLK_MAC_OUT			256
++#define CLK_REF_OUT0			257
++#define CLK_REF_OUT1			258
++#define CLK_32K_FRAC			259
++#define CLK_32K_RC			260
++#define CLK_32K				261
++#define CLK_32K_PMU			262
++#define PCLK_TOUCH_KEY			263
++#define CLK_TOUCH_KEY			264
++#define CLK_REF_PHY_PLL			265
++#define CLK_REF_PHY_PMU_MUX		266
++#define CLK_WIFI_OUT			267
++#define CLK_V0PLL_REF			268
++#define CLK_V1PLL_REF			269
++#define CLK_32K_FRAC_MUX		270
++
++#endif
+diff --git a/include/dt-bindings/reset/rockchip,rk3506-cru.h b/include/dt-bindings/reset/rockchip,rk3506-cru.h
+new file mode 100644
+index 000000000000..f38cc066009b
+--- /dev/null
++++ b/include/dt-bindings/reset/rockchip,rk3506-cru.h
+@@ -0,0 +1,211 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
++/*
++ * Copyright (c) 2023-2025 Rockchip Electronics Co., Ltd.
++ * Author: Finley Xiao <finley.xiao@rock-chips.com>
++ */
++
++#ifndef _DT_BINDINGS_REST_ROCKCHIP_RK3506_H
++#define _DT_BINDINGS_REST_ROCKCHIP_RK3506_H
++
++/* CRU-->SOFTRST_CON00 */
++#define SRST_NCOREPORESET0_AC		0
++#define SRST_NCOREPORESET1_AC		1
++#define SRST_NCOREPORESET2_AC		2
++#define SRST_NCORESET0_AC		3
++#define SRST_NCORESET1_AC		4
++#define SRST_NCORESET2_AC		5
++#define SRST_NL2RESET_AC		6
++#define SRST_ARESETN_CORE_BIU_AC	7
++#define SRST_HRESETN_M0_AC		8
++
++/* CRU-->SOFTRST_CON02 */
++#define SRST_NDBGRESET			9
++#define SRST_PRESETN_CORE_BIU		10
++#define SRST_RESETN_PMU			11
++
++/* CRU-->SOFTRST_CON03 */
++#define SRST_PRESETN_DBG		12
++#define SRST_POTRESETN_DBG		13
++#define SRST_PRESETN_CORE_GRF		14
++#define SRST_RESETN_CORE_EMA_DETECT	15
++#define SRST_RESETN_REF_PVTPLL_CORE	16
++#define SRST_PRESETN_GPIO1		17
++#define SRST_DBRESETN_GPIO1		18
++
++/* CRU-->SOFTRST_CON04 */
++#define SRST_ARESETN_CORE_PERI_BIU	19
++#define SRST_ARESETN_DSMC		20
++#define SRST_PRESETN_DSMC		21
++#define SRST_RESETN_FLEXBUS		22
++#define SRST_ARESETN_FLEXBUS		23
++#define SRST_HRESETN_FLEXBUS		24
++#define SRST_ARESETN_DSMC_SLV		25
++#define SRST_HRESETN_DSMC_SLV		26
++#define SRST_RESETN_DSMC_SLV		27
++
++/* CRU-->SOFTRST_CON05 */
++#define SRST_ARESETN_BUS_BIU		28
++#define SRST_HRESETN_BUS_BIU		29
++#define SRST_PRESETN_BUS_BIU		30
++#define SRST_ARESETN_SYSRAM		31
++#define SRST_HRESETN_SYSRAM		32
++#define SRST_ARESETN_DMAC0		33
++#define SRST_ARESETN_DMAC1		34
++#define SRST_HRESETN_M0			35
++#define SRST_RESETN_M0_JTAG		36
++#define SRST_HRESETN_CRYPTO		37
++
++/* CRU-->SOFTRST_CON06 */
++#define SRST_HRESETN_RNG		38
++#define SRST_PRESETN_BUS_GRF		39
++#define SRST_PRESETN_TIMER0		40
++#define SRST_RESETN_TIMER0_CH0		41
++#define SRST_RESETN_TIMER0_CH1		42
++#define SRST_RESETN_TIMER0_CH2		43
++#define SRST_RESETN_TIMER0_CH3		44
++#define SRST_RESETN_TIMER0_CH4		45
++#define SRST_RESETN_TIMER0_CH5		46
++#define SRST_PRESETN_WDT0		47
++#define SRST_TRESETN_WDT0		48
++#define SRST_PRESETN_WDT1		49
++#define SRST_TRESETN_WDT1		50
++#define SRST_PRESETN_MAILBOX		51
++#define SRST_PRESETN_INTMUX		52
++#define SRST_PRESETN_SPINLOCK		53
++
++/* CRU-->SOFTRST_CON07 */
++#define SRST_PRESETN_DDRC		54
++#define SRST_HRESETN_DDRPHY		55
++#define SRST_PRESETN_DDRMON		56
++#define SRST_RESETN_DDRMON_OSC		57
++#define SRST_PRESETN_DDR_LPC		58
++#define SRST_HRESETN_USBOTG0		59
++#define SRST_RESETN_USBOTG0_ADP		60
++#define SRST_HRESETN_USBOTG1		61
++#define SRST_RESETN_USBOTG1_ADP		62
++#define SRST_PRESETN_USBPHY		63
++#define SRST_RESETN_USBPHY_POR		64
++#define SRST_RESETN_USBPHY_OTG0		65
++#define SRST_RESETN_USBPHY_OTG1		66
++
++/* CRU-->SOFTRST_CON08 */
++#define SRST_ARESETN_DMA2DDR		67
++#define SRST_PRESETN_DMA2DDR		68
++
++/* CRU-->SOFTRST_CON09 */
++#define SRST_RESETN_USBOTG0_UTMI	69
++#define SRST_RESETN_USBOTG1_UTMI	70
++
++/* CRU-->SOFTRST_CON10 */
++#define SRST_ARESETN_DDRC_0		71
++#define SRST_ARESETN_DDRC_1		72
++#define SRST_ARESETN_DDR_BIU		73
++#define SRST_RESETN_DDRC		74
++#define SRST_RESETN_DDRMON		75
++
++/* CRU-->SOFTRST_CON11 */
++#define SRST_HRESETN_LSPERI_BIU		76
++#define SRST_PRESETN_UART0		77
++#define SRST_PRESETN_UART1		78
++#define SRST_PRESETN_UART2		79
++#define SRST_PRESETN_UART3		80
++#define SRST_PRESETN_UART4		81
++#define SRST_RESETN_UART0		82
++#define SRST_RESETN_UART1		83
++#define SRST_RESETN_UART2		84
++#define SRST_RESETN_UART3		85
++#define SRST_RESETN_UART4		86
++#define SRST_PRESETN_I2C0		87
++#define SRST_RESETN_I2C0		88
++
++/* CRU-->SOFTRST_CON12 */
++#define SRST_PRESETN_I2C1		89
++#define SRST_RESETN_I2C1		90
++#define SRST_PRESETN_I2C2		91
++#define SRST_RESETN_I2C2		92
++#define SRST_PRESETN_PWM1		93
++#define SRST_RESETN_PWM1		94
++#define SRST_PRESETN_SPI0		95
++#define SRST_RESETN_SPI0		96
++#define SRST_PRESETN_SPI1		97
++#define SRST_RESETN_SPI1		98
++#define SRST_PRESETN_GPIO2		99
++#define SRST_DBRESETN_GPIO2		100
++
++/* CRU-->SOFTRST_CON13 */
++#define SRST_PRESETN_GPIO3		101
++#define SRST_DBRESETN_GPIO3		102
++#define SRST_PRESETN_GPIO4		103
++#define SRST_DBRESETN_GPIO4		104
++#define SRST_HRESETN_CAN0		105
++#define SRST_RESETN_CAN0		106
++#define SRST_HRESETN_CAN1		107
++#define SRST_RESETN_CAN1		108
++#define SRST_HRESETN_PDM		109
++#define SRST_MRESETN_PDM		110
++#define SRST_RESETN_PDM			111
++#define SRST_RESETN_SPDIFTX		112
++#define SRST_HRESETN_SPDIFTX		113
++#define SRST_HRESETN_SPDIFRX		114
++#define SRST_RESETN_SPDIFRX		115
++#define SRST_MRESETN_SAI0		116
++
++/* CRU-->SOFTRST_CON14 */
++#define SRST_HRESETN_SAI0		117
++#define SRST_MRESETN_SAI1		118
++#define SRST_HRESETN_SAI1		119
++#define SRST_HRESETN_ASRC0		120
++#define SRST_RESETN_ASRC0		121
++#define SRST_HRESETN_ASRC1		122
++#define SRST_RESETN_ASRC1		123
++
++/* CRU-->SOFTRST_CON17 */
++#define SRST_HRESETN_HSPERI_BIU		124
++#define SRST_HRESETN_SDMMC		125
++#define SRST_HRESETN_FSPI		126
++#define SRST_SRESETN_FSPI		127
++#define SRST_PRESETN_SPI2		128
++#define SRST_ARESETN_MAC0		129
++#define SRST_ARESETN_MAC1		130
++
++/* CRU-->SOFTRST_CON18 */
++#define SRST_MRESETN_SAI2		131
++#define SRST_HRESETN_SAI2		132
++#define SRST_HRESETN_SAI3		133
++#define SRST_MRESETN_SAI3		134
++#define SRST_HRESETN_SAI4		135
++#define SRST_MRESETN_SAI4		136
++#define SRST_HRESETN_DSM		137
++#define SRST_MRESETN_DSM		138
++#define SRST_PRESETN_AUDIO_ADC		139
++#define SRST_MRESETN_AUDIO_ADC		140
++
++/* CRU-->SOFTRST_CON19 */
++#define SRST_PRESETN_SARADC		141
++#define SRST_RESETN_SARADC		142
++#define SRST_RESETN_SARADC_PHY		143
++#define SRST_PRESETN_OTPC_NS		144
++#define SRST_RESETN_SBPI_OTPC_NS	145
++#define SRST_RESETN_USER_OTPC_NS	146
++#define SRST_PRESETN_UART5		147
++#define SRST_RESETN_UART5		148
++#define SRST_PRESETN_GPIO234_IOC	149
++
++/* CRU-->SOFTRST_CON21 */
++#define SRST_ARESETN_VIO_BIU		150
++#define SRST_HRESETN_VIO_BIU		151
++#define SRST_HRESETN_RGA		152
++#define SRST_ARESETN_RGA		153
++#define SRST_RESETN_CORE_RGA		154
++#define SRST_ARESETN_VOP		155
++#define SRST_HRESETN_VOP		156
++#define SRST_RESETN_VOP			157
++#define SRST_PRESETN_DPHY		158
++#define SRST_PRESETN_DSI_HOST		159
++#define SRST_PRESETN_TSADC		160
++#define SRST_RESETN_TSADC		161
++
++/* CRU-->SOFTRST_CON22 */
++#define SRST_PRESETN_GPIO1_IOC		162
++
++#endif
+-- 
+2.34.1
 
-ok, I will update rtc clock name.  It is a mux clock,  and the parents are
-
-'xtal,  rtc_32k_out, pad, xtal' controlled by RTC_CTRL bit [0:1]. the 
-first and last parent are same.
-
-here was defined as two mux clocks. I will use one mux clock here.
-
-After updated, the rtc clocks are:
-
-     rtc_dualdiv_in
-
-     rtc_dualdiv_div
-
-     rtc_dualdiv_sel
-
-     rtc_dualdiv
-
-     rtc
-
->> +     .data = &(struct clk_regmap_mux_data) {
->> +             .offset = RTC_CTRL,
->> +             .mask = 0x1,
->> +             .shift = 0,
->> +     },
->> +     .hw.init = &(struct clk_init_data){
->> +             .name = "rtc_32k_mux0_1",
->> +             .ops = &clk_regmap_mux_ops,
->> +             .parent_data = (const struct clk_parent_data []) {
->> +                     { .fw_name = "pad", },
->> +                     { .fw_name = "xtal", },
->> +             },
->> +             .num_parents = 2,
->> +             .flags = CLK_SET_RATE_PARENT,
-> You probably want CLK_SET_RATE_NO_REPARENT for clock with a pad source
-> like this.
-
-
-ok, I will add this flag when for clock with pad source.
-
->> +     },
->> +};
->> +
->> +static struct clk_regmap t7_rtc = {
->> +     .data = &(struct clk_regmap_mux_data) {
->> +             .offset = RTC_CTRL,
->> +             .mask = 0x1,
->> +             .shift = 1,
->> +     },
->> +     .hw.init = &(struct clk_init_data){
->> +             .name = "rtc",
->> +             .ops = &clk_regmap_mux_ops,
->> +             .parent_hws = (const struct clk_hw *[]) {
->> +                     &t7_rtc_32k_mux0_0.hw,
->> +                     &t7_rtc_32k_mux0_1.hw,
->> +             },
->> +             .num_parents = 2,
->> +             .flags = CLK_SET_RATE_PARENT,
->> +     },
->> +};
->> +
->> +static struct clk_regmap t7_ceca_32k_in = {
->> +     .data = &(struct clk_regmap_gate_data){
->> +             .offset = CECA_CTRL0,
->> +             .bit_idx = 31,
->> +     },
->> +     .hw.init = &(struct clk_init_data) {
->> +             .name = "ceca_32k_in",
->> +             .ops = &clk_regmap_gate_ops,
->> +             .parent_data = &(const struct clk_parent_data) {
->> +                     .fw_name = "xtal",
->> +             },
->> +             .num_parents = 1,
->> +     },
->> +};
->> +
->> +static struct clk_regmap t7_ceca_32k_div = {
->> +     .data = &(struct meson_clk_dualdiv_data){
->> +             .n1 = {
->> +                     .reg_off = CECA_CTRL0,
->> +                     .shift   = 0,
->> +                     .width   = 12,
->> +             },
->> +             .n2 = {
->> +                     .reg_off = CECA_CTRL0,
->> +                     .shift   = 12,
->> +                     .width   = 12,
->> +             },
->> +             .m1 = {
->> +                     .reg_off = CECA_CTRL1,
->> +                     .shift   = 0,
->> +                     .width   = 12,
->> +             },
->> +             .m2 = {
->> +                     .reg_off = CECA_CTRL1,
->> +                     .shift   = 12,
->> +                     .width   = 12,
->> +             },
->> +             .dual = {
->> +                     .reg_off = CECA_CTRL0,
->> +                     .shift   = 28,
->> +                     .width   = 1,
->> +             },
->> +             .table = t7_clk_32k_div_table,
->> +     },
->> +     .hw.init = &(struct clk_init_data){
->> +             .name = "ceca_32k_div",
->> +             .ops = &meson_clk_dualdiv_ops,
->> +             .parent_hws = (const struct clk_hw *[]) {
->> +                     &t7_ceca_32k_in.hw
->> +             },
->> +             .num_parents = 1,
->> +     },
->> +};
->> +
->> +static struct clk_regmap t7_ceca_32k_sel_pre = {
->> +     .data = &(struct clk_regmap_mux_data) {
->> +             .offset = CECA_CTRL1,
->> +             .mask = 0x1,
->> +             .shift = 24,
->> +     },
->> +     .hw.init = &(struct clk_init_data){
->> +             .name = "ceca_32k_sel_pre",
->> +             .ops = &clk_regmap_mux_ops,
->> +             .parent_hws = (const struct clk_hw *[]) {
->> +                     &t7_ceca_32k_div.hw,
->> +                     &t7_ceca_32k_in.hw,
->> +             },
->> +             .num_parents = 2,
->> +             .flags = CLK_SET_RATE_PARENT,
->> +     },
->> +};
->> +
->> +static struct clk_regmap t7_ceca_32k_sel = {
->> +     .data = &(struct clk_regmap_mux_data) {
->> +             .offset = CECA_CTRL1,
->> +             .mask = 0x1,
->> +             .shift = 31,
->> +     },
->> +     .hw.init = &(struct clk_init_data){
->> +             .name = "ceca_32k_sel",
->> +             .ops = &clk_regmap_mux_ops,
->> +             .parent_hws = (const struct clk_hw *[]) {
->> +                     &t7_ceca_32k_sel_pre.hw,
->> +                     &t7_rtc.hw,
->> +             },
->> +             .num_parents = 2,
->> +             .flags = CLK_SET_RATE_PARENT,
->> +     },
->> +};
->> +
->> +static struct clk_regmap t7_ceca_32k_out = {
-> Is the "_out" really necessary ? usually the last element just the base
-> clock name. Same for the other occurence.
-
-
-ok, I will rename as ceca here. Same with cecb clocks.
-
->> +     .data = &(struct clk_regmap_gate_data){
->> +             .offset = CECA_CTRL0,
->> +             .bit_idx = 30,
->> +     },
->> +     .hw.init = &(struct clk_init_data){
->> +             .name = "ceca_32k_out",
->> +             .ops = &clk_regmap_gate_ops,
->> +             .parent_hws = (const struct clk_hw *[]) {
->> +                     &t7_ceca_32k_sel.hw
->> +             },
->> +             .num_parents = 1,
->> +             .flags = CLK_SET_RATE_PARENT,
->> +     },
->> +};
->> +
->> ......
->> +static const struct clk_parent_data t7_dsp_ab_parent_data[] = {
->> +     { .fw_name = "xtal", },
->> +     { .fw_name = "fdiv2p5", },
->> +     { .fw_name = "fdiv3", },
->> +     { .fw_name = "fdiv5", },
->> +     { .fw_name = "hifi", },
->> +     { .fw_name = "fdiv4", },
->> +     { .fw_name = "fdiv7", },
->> +     { .hw = &t7_rtc.hw },
->> +};
->> +
->> +static struct clk_regmap t7_dspa_a_sel = {
->> +     .data = &(struct clk_regmap_mux_data){
->> +             .offset = DSPA_CLK_CTRL0,
->> +             .mask = 0x7,
->> +             .shift = 10,
->> +     },
->> +     .hw.init = &(struct clk_init_data){
->> +             .name = "dspa_a_sel",
->> +             .ops = &clk_regmap_mux_ops,
->> +             .parent_data = t7_dsp_ab_parent_data,
->> +             .num_parents = ARRAY_SIZE(t7_dsp_ab_parent_data),
->> +     },
->> +};
->> +
->> +static struct clk_regmap t7_dspa_a_div = {
->> +     .data = &(struct clk_regmap_div_data){
->> +             .offset = DSPA_CLK_CTRL0,
->> +             .shift = 0,
->> +             .width = 10,
->> +     },
->> +     .hw.init = &(struct clk_init_data){
->> +             .name = "dspa_a_div",
->> +             .ops = &clk_regmap_divider_ops,
->> +             .parent_hws = (const struct clk_hw *[]) {
->> +                     &t7_dspa_a_sel.hw
->> +             },
->> +             .num_parents = 1,
->> +             .flags = CLK_SET_RATE_PARENT,
->> +     },
->> +};
->> +
->> +static struct clk_regmap t7_dspa_a = {
->> +     .data = &(struct clk_regmap_gate_data){
->> +             .offset = DSPA_CLK_CTRL0,
->> +             .bit_idx = 13,
->> +     },
->> +     .hw.init = &(struct clk_init_data) {
->> +             .name = "dspa_a",
->> +             .ops = &clk_regmap_gate_ops,
->> +             .parent_hws = (const struct clk_hw *[]) {
->> +                     &t7_dspa_a_div.hw
->> +             },
->> +             .num_parents = 1,
->> +             .flags = CLK_SET_RATE_GATE | CLK_SET_RATE_PARENT,
->> +     },
->> +};
->> +
->> +static struct clk_regmap t7_dspa_b_sel = {
->> +     .data = &(struct clk_regmap_mux_data){
->> +             .offset = DSPA_CLK_CTRL0,
->> +             .mask = 0x7,
->> +             .shift = 26,
->> +     },
->> +     .hw.init = &(struct clk_init_data){
->> +             .name = "dspa_b_sel",
->> +             .ops = &clk_regmap_mux_ops,
->> +             .parent_data = t7_dsp_ab_parent_data,
->> +             .num_parents = ARRAY_SIZE(t7_dsp_ab_parent_data),
->> +     },
->> +};
->> +
->> +static struct clk_regmap t7_dspa_b_div = {
->> +     .data = &(struct clk_regmap_div_data){
->> +             .offset = DSPA_CLK_CTRL0,
->> +             .shift = 16,
->> +             .width = 10,
->> +     },
->> +     .hw.init = &(struct clk_init_data){
->> +             .name = "dspa_b_div",
->> +             .ops = &clk_regmap_divider_ops,
->> +             .parent_hws = (const struct clk_hw *[]) {
->> +                     &t7_dspa_b_sel.hw
->> +             },
->> +             .num_parents = 1,
->> +             .flags = CLK_SET_RATE_PARENT,
->> +     },
->> +};
->> +
->> +static struct clk_regmap t7_dspa_b = {
->> +     .data = &(struct clk_regmap_gate_data){
->> +             .offset = DSPA_CLK_CTRL0,
->> +             .bit_idx = 29,
->> +     },
->> +     .hw.init = &(struct clk_init_data) {
->> +             .name = "dspa_b",
->> +             .ops = &clk_regmap_gate_ops,
->> +             .parent_hws = (const struct clk_hw *[]) {
->> +                     &t7_dspa_b_div.hw
->> +             },
->> +             .num_parents = 1,
->> +             .flags = CLK_SET_RATE_GATE | CLK_SET_RATE_PARENT,
->> +     },
->> +};
-> You have several instances of these glitch free mux (dsp here, anakin
-> below, etc ...). That's quite verbose.
->
-> I suggest defining T7_COMP_GATE() such that flags is a parameter
-> Then use it for the sel, div and gate of element.
->
-> You'll just have to fully define the final mux element, like you have
-> below.
-
-
-ok, I will use T7_COMP_SEL/DIV/GATE for dspa, dspb, anakin clocks. and 
-leave the final mux.
-
->> +
->> +static struct clk_regmap t7_dspa = {
->> +     .data = &(struct clk_regmap_mux_data){
->> +             .offset = DSPA_CLK_CTRL0,
->> +             .mask = 0x1,
->> +             .shift = 15,
->> +     },
->> +     .hw.init = &(struct clk_init_data){
->> +             .name = "dspa",
->> +             .ops = &clk_regmap_mux_ops,
->> +             .parent_hws = (const struct clk_hw *[]) {
->> +                     &t7_dspa_a.hw,
->> +                     &t7_dspa_b.hw,
->> +             },
->> +             .num_parents = 2,
->> +             .flags = CLK_SET_RATE_PARENT,
->> +     },
->> +};
->> +
->> ......
->> +
->> +static struct clk_regmap t7_anakin_0 = {
-> Nitpick: for the DSP it was a/b, here it is 0/1
-> Could you pick one way or the other and stick to it ?
-
-
-ok , I will use 0/1 for DSP.
-
->> +     .data = &(struct clk_regmap_gate_data){
->> +             .offset = ANAKIN_CLK_CTRL,
->> +             .bit_idx = 8,
->> +     },
->> +     .hw.init = &(struct clk_init_data) {
->> +             .name = "anakin_0",
->> +             .ops = &clk_regmap_gate_ops,
->> +             .parent_hws = (const struct clk_hw *[]) { &t7_anakin_0_div.hw },
->> +             .num_parents = 1,
->> +             .flags = CLK_SET_RATE_GATE | CLK_SET_RATE_PARENT,
->> +     },
->> +};
->> +
->> +static struct clk_regmap t7_anakin_1_sel = {
->> +     .data = &(struct clk_regmap_mux_data){
->> +             .offset = ANAKIN_CLK_CTRL,
->> +             .mask = 0x7,
->> +             .shift = 25,
->> +     },
->> +     .hw.init = &(struct clk_init_data){
->> +             .name = "anakin_1_sel",
->> +             .ops = &clk_regmap_mux_ops,
->> +             .parent_data = t7_anakin_parent_data,
->> +             .num_parents = ARRAY_SIZE(t7_anakin_parent_data),
->> +     },
->> +};
->> +
->> +static struct clk_regmap t7_anakin_1_div = {
->> +     .data = &(struct clk_regmap_div_data){
->> +             .offset = ANAKIN_CLK_CTRL,
->> +             .shift = 16,
->> +             .width = 7,
->> +     },
->> +     .hw.init = &(struct clk_init_data){
->> +             .name = "anakin_1_div",
->> +             .ops = &clk_regmap_divider_ops,
->> +             .parent_hws = (const struct clk_hw *[]) {
->> +                     &t7_anakin_1_sel.hw
->> +             },
->> +             .num_parents = 1,
->> +             .flags = CLK_SET_RATE_PARENT,
->> +     },
->> +};
->> +
->> +static struct clk_regmap t7_anakin_1 = {
->> +     .data = &(struct clk_regmap_gate_data){
->> +             .offset = ANAKIN_CLK_CTRL,
->> +             .bit_idx = 24,
->> +     },
->> +     .hw.init = &(struct clk_init_data) {
->> +             .name = "anakin_1",
->> +             .ops = &clk_regmap_gate_ops,
->> +             .parent_hws = (const struct clk_hw *[]) {
->> +                     &t7_anakin_1_div.hw
->> +             },
->> +             .num_parents = 1,
->> +             .flags = CLK_SET_RATE_GATE | CLK_SET_RATE_PARENT,
->> +     },
->> +};
->> +
->> +static struct clk_regmap t7_anakin = {
->> +     .data = &(struct clk_regmap_mux_data){
->> +             .offset = ANAKIN_CLK_CTRL,
->> +             .mask = 1,
->> +             .shift = 31,
->> +     },
->> +     .hw.init = &(struct clk_init_data){
->> +             .name = "anakin_sel",
->> +             .ops = &clk_regmap_mux_ops,
->> +             .parent_hws = (const struct clk_hw *[]) {
->> +                     &t7_anakin_0.hw,
->> +                     &t7_anakin_1.hw
->> +             },
->> +             .num_parents = 2,
->> +             .flags = CLK_SET_RATE_PARENT
->> +     },
->> +};
->> +
->> +static struct clk_regmap t7_anakin_clk = {
->> +     .data = &(struct clk_regmap_gate_data){
->> +             .offset = ANAKIN_CLK_CTRL,
->> +             .bit_idx = 30,
->> +     },
->> +     .hw.init = &(struct clk_init_data) {
->> +             .name = "anakin_clk",
-> Again, not a great name, especially considering the one above.
-> Is this really really how the doc refers to these 2 clocks ?
-
-
-bit30 gate clock is after bit31 mux clock,  and the gate clock is the 
-final output clock, it is used to gate anakin clock.
-
-I will rename bit31 as anakin_pre, rename bit30 as anakin.
-
->> +             .ops = &clk_regmap_gate_ops,
->> +             .parent_hws = (const struct clk_hw *[]) {
->> +                     &t7_anakin.hw
->> +             },
->> +             .num_parents = 1,
->> +             .flags = CLK_SET_RATE_PARENT
->> +     },
->> +};
->> +
->> ......
->> +
->> +/* parent index 2, 3, 4, 5, 6 not connect any clock signal, they are empty */
-> Remove "they are empty" ... the rest is fine
-
-
-ok.
-
->
->> +static u32 t7_eth_rmii_table[] = { 0, 1, 7 };
-> t7_eth_rmii_parents_val_table[] ... consistency (please check for other occurences)
-
-
-ok, I will update the table name.
-
->> +
->> +static const struct clk_parent_data t7_eth_rmii_parents[] = {
->> +     { .fw_name = "fdiv2", },
->> +     { .fw_name = "gp1", },
->> +     { .fw_name = "ext_rmii", },
->> +};
->> +
->> ......
->> +
->> +static struct platform_driver t7_peripherals_clkc_driver = {
->> +     .probe = meson_clkc_mmio_probe,
->> +     .driver = {
->> +             .name = "t7-peripherals-clkc",
->> +             .of_match_table = t7_peripherals_clkc_match_table,
->> +     },
->> +};
->> +
->> +MODULE_DESCRIPTION("Amlogic T7 Peripherals Clock Controller driver");
->> +module_platform_driver(t7_peripherals_clkc_driver);
-> This is an odd placement for this.
-> Please move this right after the platform_driver definition. Same goes
-> for the other controller
-
-
-ok, I will move it after t7_peripherals_clkc_driver. same with T7 PLL 
-driver.
-
->> +MODULE_AUTHOR("Jian Hu <jian.hu@amlogic.com>");
->> +MODULE_LICENSE("GPL");
->> +MODULE_IMPORT_NS("CLK_MESON");
-> --
-> Jerome
