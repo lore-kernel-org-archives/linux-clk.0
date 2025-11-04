@@ -1,35 +1,43 @@
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+Received: from mail-m19731116.qiye.163.com (mail-m19731116.qiye.163.com [220.197.31.116])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E37418EFD1;
-	Tue,  4 Nov 2025 04:05:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD25D4400;
+	Tue,  4 Nov 2025 04:22:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762229133; cv=none; b=lOszF+mIllwb/o5G2NxGqM84Ba4BvHB2Dp5ktDHsn9TbjfnA5ibMiunlxFVPAW2O2Uje8CJPMp4/ODB7w6TGAkAggA6rIkExYMzQankZDEaPDEb51GergXFfYkSQruxqDcdd5Fhf3c/TQf12624sumDHH3KUKbAjYnwQg2pskN0=
+	t=1762230145; cv=none; b=Rdxyvrv1LdxAfjNlr38uvwW3fb+hn7fy3XBugL+if5sNBU4obNtKN1+vitfkojne7x/xDRveWc6r8Q0gMqDtD8WnLykhSySmENMKYaNuXDPvk5kEqy3BAasRQus6+eIacqyNPnLhVroOv+xgYJ8NFOu8awaNlvI84G/2OhxRdxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762229133; c=relaxed/simple;
-	bh=9aFU8M1H4GhB4GO8OLI/CJPOoAF5GXOiQ8AtQbX7n6Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tBV2Ipwr5fOcByPkMxt6A0c9vJDBO3B2G5z5zg/0NuUZrkO1JZ4a4zKyLI+IMeDPn7Ck3MSoce7oAOR3qAjvNrqfU+1Jcwoewu2zE6lvwDLck6OB71zZIuzwCnk3vYaSPd/oRyL+QVyzV/0ZpUzznSpD94AFBy5urcRQBMRU720=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from DESKTOP-L0HPE2S (unknown [124.16.141.245])
-	by APP-05 (Coremail) with SMTP id zQCowAB3IO94ewlpspxhAQ--.25862S2;
-	Tue, 04 Nov 2025 12:05:14 +0800 (CST)
-From: Haotian Zhang <vulab@iscas.ac.cn>
+	s=arc-20240116; t=1762230145; c=relaxed/simple;
+	bh=+cDITxWMRRlIR6uaBSj7GFSQNSWhi3HepHd7zm/iIOo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=CpYt7qyLEx5xdnvmDTEASM4+xfGLrc9UAePlZ2SqKL/go768hq+TKf0z/Uo8vUYiwsn50NsKz5NQHU6s4HdyPE7Dk81EsQtYZXlFk8R7SGA5QQYTpHr+ZWd3hMxfHW6yg4Bzg+rJzN2rthnNBgEibyDCx6UfGN/kbiFS8kUVjAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=K4Au9i2S; arc=none smtp.client-ip=220.197.31.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="K4Au9i2S"
+Received: from rockchip.. (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 284557283;
+	Tue, 4 Nov 2025 11:06:34 +0800 (GMT+08:00)
+From: Elaine Zhang <zhangqing@rock-chips.com>
 To: mturquette@baylibre.com,
 	sboyd@kernel.org,
-	matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
+	sugar.zhang@rock-chips.com,
+	zhangqing@rock-chips.com,
+	heiko@sntech.de,
+	robh@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org,
+	conor+dt@kernel.org
+Cc: devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Haotian Zhang <vulab@iscas.ac.cn>
-Subject: [PATCH] clk: mediatek: mt8173-apmixed: Fix ioremap resource leak in remove function
-Date: Tue,  4 Nov 2025 12:04:31 +0800
-Message-ID: <20251104040431.1452-1-vulab@iscas.ac.cn>
-X-Mailer: git-send-email 2.50.1.windows.1
+	linux-clk@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	huangtao@rock-chips.com,
+	finley.xiao@rock-chips.com
+Subject: [PATCH v6 0/5] clk: rockchip: Add clock controller for the RV1126B and RK3506
+Date: Tue,  4 Nov 2025 11:06:28 +0800
+Message-Id: <20251104030633.2721038-1-zhangqing@rock-chips.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -37,73 +45,95 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowAB3IO94ewlpspxhAQ--.25862S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Zr45WrW5JFW3XFyfuw48WFg_yoW8AF17pF
-	ykKFWakay8tw4Uur1vy3yvkF1Fva1Iqa45KFy7W3s3ZwnxGrZ2yF1rKayvva4xArWkKr1D
-	tr1UurWxCFW7AFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkG14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY1x0262kKe7AKxVWU
-	tVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14
-	v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkG
-	c2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI
-	0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4U
-	MIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUd-B_UUU
-	UU=
-X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiBgsQA2kJG3SlGQABss
+X-HM-Tid: 0a9a4cd4a1b403a3kunm9587110c918fde
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGk1CTFZMH01CGUNKQkwdQx5WFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+DKIM-Signature: a=rsa-sha256;
+	b=K4Au9i2SFIxNVq9p94aqo3OXsYh2V2ibsORhKBt7KdxuXuFNXn71AvQQpze9cFXz6HjWhdz0KGWjURxrYZuXbuWZF5/t46IZqcNLQergoOaoilwO5lrOo05F/d5A9tKM1cuUSwGakLeLFtFEVkBYLihKxVi7V1LgRcd6ZTzCNEA=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=+ql7Ht2EpcfyxE1psTfRTiM+5p/mdQ53YcPClRBEBfM=;
+	h=date:mime-version:subject:message-id:from;
 
-The driver uses of_iomap() to map I/O memory in probe function, but
-forgets to call iounmap() in the remove function, leading to a resource
-leak when the driver is unloaded.
+Add yaml and dt-bindings for the RV1126B and RK3506.
+RK3506 depend on patches 1/5, so it is merged and submitted.
 
-Replace of_iomap() with devm_of_iomap() to automatically manage the
-I/O memory mapping. Remove the now-unnecessary unmap_io label and
-iounmap() call from the error path.
+Change in V6:
+Drop pvtpll, others no change.
+There are many questions about pvtpll and have some dependency issues.
+They will be submitted separately later.
 
-Fixes: 4c02c9af3cb9 ("clk: mediatek: mt8173: Break down clock drivers and allow module build")
-Signed-off-by: Haotian Zhang <vulab@iscas.ac.cn>
----
- drivers/clk/mediatek/clk-mt8173-apmixedsys.c | 14 +++++---------
- 1 file changed, 5 insertions(+), 9 deletions(-)
+Change in V5:
+[PATCH v5 1/7]: No change
+[PATCH v5 2/7]: No change
+[PATCH v5 3/7]: Drop RV1126B_GRF_SOC_STATUS0
+[PATCH v5 4/7]: Drop syscon
+[PATCH v5 5/7]: No change
+[PATCH v5 6/7]: Add clocks and clock-names, fix id define
+[PATCH v5 7/7]: Drop RK3506_GRF_SOC_STATUS
 
-diff --git a/drivers/clk/mediatek/clk-mt8173-apmixedsys.c b/drivers/clk/mediatek/clk-mt8173-apmixedsys.c
-index 95385bb67d55..ae759ef51f03 100644
---- a/drivers/clk/mediatek/clk-mt8173-apmixedsys.c
-+++ b/drivers/clk/mediatek/clk-mt8173-apmixedsys.c
-@@ -146,15 +146,13 @@ static int clk_mt8173_apmixed_probe(struct platform_device *pdev)
- 	struct clk_hw *hw;
- 	int r;
- 
--	base = of_iomap(node, 0);
--	if (!base)
--		return -ENOMEM;
-+	base = devm_of_iomap(&pdev->dev, node, 0, NULL);
-+	if (IS_ERR(base))
-+		return PTR_ERR(base);
- 
- 	clk_data = mtk_alloc_clk_data(CLK_APMIXED_NR_CLK);
--	if (IS_ERR_OR_NULL(clk_data)) {
--		r = -ENOMEM;
--		goto unmap_io;
--	}
-+	if (IS_ERR_OR_NULL(clk_data))
-+		return -ENOMEM;
- 
- 	fhctl_parse_dt(fhctl_node, pllfhs, ARRAY_SIZE(pllfhs));
- 	r = mtk_clk_register_pllfhs(node, plls, ARRAY_SIZE(plls),
-@@ -188,8 +186,6 @@ static int clk_mt8173_apmixed_probe(struct platform_device *pdev)
- 				  ARRAY_SIZE(pllfhs), clk_data);
- free_clk_data:
- 	mtk_free_clk_data(clk_data);
--unmap_io:
--	iounmap(base);
- 	return r;
- }
- 
+Change in V4:
+[PATCH v4 1/7]: No change
+[PATCH v4 2/7]: remove label
+[PATCH v4 3/7]: No change
+[PATCH v4 4/7]: remove label,fix order
+[PATCH v4 5/7]: No change
+[PATCH v4 6/7]: Add yaml and dt-bindings for the RK3506
+[PATCH v4 7/7]: Add clock controller for the RK3506
+
+Change in V3:
+[PATCH v3 1/5]: No change
+[PATCH v3 2/5]: Fix define error
+[PATCH v3 3/5]: update driver,fix errir
+[PATCH v3 4/5]: fix error
+[PATCH v3 5/5]: No change
+
+Change in V2:
+[PATCH v2 1/5]: update commit message, rename v2 to multi_pll
+[PATCH v2 2/5]: Modify DT binding headers license
+[PATCH v2 3/5]: update driver
+[PATCH v2 4/5]: fix error
+[PATCH v2 5/5]: update commit message
+
+Elaine Zhang (4):
+  clk: rockchip: Implement rockchip_clk_register_armclk_multi_pll()
+  dt-bindings: clock, reset: Add support for rv1126b
+  clk: rockchip: Add clock controller for the RV1126B
+  clk: rockchip: Add clock and reset driver for RK3506
+
+Finley Xiao (1):
+  dt-bindings: clock: rockchip: Add RK3506 clock and reset unit
+
+ .../bindings/clock/rockchip,rk3506-cru.yaml   |   51 +
+ .../bindings/clock/rockchip,rv1126b-cru.yaml  |   52 +
+ drivers/clk/rockchip/Kconfig                  |   14 +
+ drivers/clk/rockchip/Makefile                 |    2 +
+ drivers/clk/rockchip/clk-cpu.c                |  165 +++
+ drivers/clk/rockchip/clk-rk3506.c             |  869 +++++++++++++
+ drivers/clk/rockchip/clk-rv1126b.c            | 1103 +++++++++++++++++
+ drivers/clk/rockchip/clk.c                    |   24 +
+ drivers/clk/rockchip/clk.h                    |   96 ++
+ drivers/clk/rockchip/rst-rk3506.c             |  226 ++++
+ drivers/clk/rockchip/rst-rv1126b.c            |  444 +++++++
+ .../dt-bindings/clock/rockchip,rk3506-cru.h   |  285 +++++
+ .../dt-bindings/clock/rockchip,rv1126b-cru.h  |  392 ++++++
+ .../dt-bindings/reset/rockchip,rk3506-cru.h   |  211 ++++
+ .../dt-bindings/reset/rockchip,rv1126b-cru.h  |  405 ++++++
+ 15 files changed, 4339 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3506-cru.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rv1126b-cru.yaml
+ create mode 100644 drivers/clk/rockchip/clk-rk3506.c
+ create mode 100644 drivers/clk/rockchip/clk-rv1126b.c
+ create mode 100644 drivers/clk/rockchip/rst-rk3506.c
+ create mode 100644 drivers/clk/rockchip/rst-rv1126b.c
+ create mode 100644 include/dt-bindings/clock/rockchip,rk3506-cru.h
+ create mode 100644 include/dt-bindings/clock/rockchip,rv1126b-cru.h
+ create mode 100644 include/dt-bindings/reset/rockchip,rk3506-cru.h
+ create mode 100644 include/dt-bindings/reset/rockchip,rv1126b-cru.h
+
+
+base-commit: 9893549e592ad22d0a18de97acfb30204109290a
 -- 
-2.50.1.windows.1
+2.34.1
 
