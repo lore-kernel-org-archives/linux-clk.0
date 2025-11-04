@@ -1,63 +1,63 @@
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBBC92F5339
-	for <linux-clk@vger.kernel.org>; Tue,  4 Nov 2025 12:04:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AED0C2F60D5
+	for <linux-clk@vger.kernel.org>; Tue,  4 Nov 2025 12:04:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762257851; cv=none; b=pu7UsNKDyGO0h99x2NkLtqiEX1Ebvq5rx5WRm5cPM6IjiqKF8Eu0UZ8xcA+H2NNlG+isGxw/fvauYgl0LHUv/l5NaqDkRSrYF24uL0Hd4pNLxEtKH1m0kAfN7eWTqn8GZMyUSOdxm9ZducqSTO03dxbYewjuJC8/qCxEtFBUBEI=
+	t=1762257854; cv=none; b=hTxNXpAVihR5xaUwXQdj9g/msocPE6RtjGG37RMhXicHP8FXW5uu49LQJOaG/roiumMtcRHNbbCEIKTyktQXvv3et683SVskxw0XMUm9fT4/8oJme750Swa9rDqkavlKjb21a88Bs9u+PInRsXuUtmFqHPdlchgr5+ugFZ1VkeE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762257851; c=relaxed/simple;
-	bh=0QxHrm9C2RbfZnvci62gAmEYua+kGV1/O6mGjSHQSUo=;
+	s=arc-20240116; t=1762257854; c=relaxed/simple;
+	bh=jfUNe2KhyNhQkqz/RyX9v7SWqUEpKz/Cnc+k9Uq1/I8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fxBBk5wNKnAHHwswXa/HeQn1KmGgMGRHq3wg7IdQDvfGkousjgLhix3WUw0jJARCvy1Iw0E06C65jJC77KKkSOLEjoMd/elD5lDcaNK/34Mvu1CtSaR0R/D6YVmxuyub73ZzoJX4Sj10+n3vitUkqn7BFw6buzZnhA94L1BYp9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bNlrS3IZ; arc=none smtp.client-ip=209.85.218.47
+	 MIME-Version; b=M1oWuXbFMK+5rxleKx9sv7XHHWNHo2L3pyjyWCScKdH6fb1hFbYLiD4pdun7/IpfJ3irdxJwLFNdT6h2ya8pvqBOo9ud+n4XELy5lR73+ntpdPAUW1M27E47dBN2dXWn9iZvMvj2j2BHIsaraT9z7+D0flstT4QJA5pOR9oDwvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gynOdpPo; arc=none smtp.client-ip=209.85.218.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bNlrS3IZ"
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-b403bb7843eso201028766b.3
-        for <linux-clk@vger.kernel.org>; Tue, 04 Nov 2025 04:04:09 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gynOdpPo"
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-b50206773adso1117306366b.0
+        for <linux-clk@vger.kernel.org>; Tue, 04 Nov 2025 04:04:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762257848; x=1762862648; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1762257851; x=1762862651; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=IfVnfMnUFwyLNqs4rPjMOiNJ9iATrzCn1X86BIPjvdo=;
-        b=bNlrS3IZb9sx57ttYwdoqDRysWYmOkUo3MJyndNkj0GrnDoGmlCYlc6HcPisxfprpo
-         du0zjFNjXH/BxKEkLpXYjHltil0Hx0RcpArKozWm+J/C8kogT1VqLSGNTL4sryV0eQPQ
-         sMS6ZzAvUI2dITToySaxBM9GbvKQQHZvWvbcC6Dhuul6h9reMhRSF6i7aYNm3kuVBXUA
-         /nQ6OOgxTRPT++cOeL3wHhXD2qT1fNtK55AcYUEBXE4Oa7mQ/XwFswnaHCTPZr+lOfYo
-         c7AooofcIg/IJ8QBIy1Xg4PmjCP+PD9R2ksr0AtTB2b73M0F1MWwDj/Jal19IZxPnm2l
-         mSDQ==
+        bh=ZCzqKD3xSHfSBn+d7Ai/gvl8AIDeYTTV+y/cpT/4lgg=;
+        b=gynOdpPowwwAXbxSGWNeQNQbLOBclp/ZYWjuGLZlUCWV/d7fo3nrxw2V1/7TeDQNGb
+         +rUNtF8ZVk0gjKsrOZTze3ApPRVvi6jduTNUTAlcKHW13uT74+ygIHPoyfnIuVjE3dRA
+         b6mTtBr2/GHo9/ZlIpvDFhLLccxJKxjJcNhLCeN3feourza0zpKoJCjO9a8fQVHx+XhG
+         R+zHNVe6hDouB0bRIRz7nmvDUtb9HAw1wTCd0Pn3YvwIKNovT8D9eXGDc5aIT0FGmCr5
+         2OM0N9OshLD1VaxdzqqJGonU1Eii6BWQgJF6ISjX6Xc12tN2qbXdln1SQWxcyfBATFGE
+         0DpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762257848; x=1762862648;
+        d=1e100.net; s=20230601; t=1762257851; x=1762862651;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=IfVnfMnUFwyLNqs4rPjMOiNJ9iATrzCn1X86BIPjvdo=;
-        b=aAYcMApdSkp00SVKq5QW7ROd4BvChDy5AqtCztAu5LTxSd1BmyR82Xut7vISHW8d4F
-         iNhykf7v0zfXLLaQyLbsm7FX9n5H4Pn8mH7C5vH06md3bTYID1/Qo/exnfqUaB10h5uC
-         zAvVwAgd6Oqb7ZjDIxJntTuzunB4oqRpVYwr0eIIfcevI2qz/smpRzZjgU46xuXJjoW9
-         yqqAvtBtOAsekFYI5Ps1gq+tRF+eSpzMiDNO0N03YZYBgogf4kl2690cGi8W1+U711b/
-         CjivuCgcBNIanYN5/pl0XB4ZRAtiPEKVo72zhOCT2/N85ruog6IvXGfJqrmbuLDl7HsG
-         y5TQ==
-X-Gm-Message-State: AOJu0Yx1EmT1cc2zBo59HxEV7oYCJueMGUrZMnc4QAwkd+KB1iaSbGeJ
-	l5/OpFziuL5j82K9vQIErPzi/jerMRerFFYo97mTtq/WQ1VIZwga1COK
-X-Gm-Gg: ASbGnctVErHvWP7LsOjxK3nPN9RfruwBiF10X1/JwEt9G/5oaRA9WCwUAACkjv2fcLi
-	XqshfntYXxjLksm9ys3as5NhWK4vg74pqm8wXL54MLA43ncdrpsoC0PsZlRR/IksxUmlmMmhSo7
-	DtqAc5WvoWWdmEB4e4lcZxM88zrwrDFpdUlqncp0PwVptUS4amMRC+T3VJpd+UuVPnXcB5crN0K
-	vMqkmDOYyxeGsOBf2lMsGDOzwrDerq3+ZtILPG2Nc0CfVFOrfuj2GB7HTe0q1VRHk7HVh+gbK16
-	WYKX+mRr8VIaAdNvYr4CjHnfDWX7VmFo/VmzBJj992LAVgTC8WrMZhgGjc4fPZMtl1+IVBTw5wD
-	blKHFrPI9NBcPhY9989Y7+5aXJWjURYzC3P7rONhAtoh7KaQfuVOqfcoH9GQwG4WfRuYZgweI+U
-	zocrqsoJs8gOR74EoKh9br1imC1Q==
-X-Google-Smtp-Source: AGHT+IEFmmFqmwF7IJGHYHQFLdfcj+i6AuRD6y5QTSlNabPHEjYgdTalWazPTsjhrKIiVzJb3z4NAQ==
-X-Received: by 2002:a17:907:8692:b0:b71:a627:3d8c with SMTP id a640c23a62f3a-b71a6274340mr486414566b.56.1762257848026;
-        Tue, 04 Nov 2025 04:04:08 -0800 (PST)
+        bh=ZCzqKD3xSHfSBn+d7Ai/gvl8AIDeYTTV+y/cpT/4lgg=;
+        b=uP0z2CAoNkXBnOL0Ss0gzgw9saU66ZShJmQwaVc104vjYmvtBmmXypt3QXX8Y56+L6
+         lFLM4xxvzYER/GhE2EP4l7VObXdVaCtM2e5ysZyV0UpIInCbu0QjgfbtpcDhBpoBXpFT
+         R5sJoS+5CCZTe6GeWGZ+OTt2SWibRTAjV117ye/s8OmGpPkBdbZoJf138nf6CCZewfLT
+         0kOjLKBjObpd5GJdkX+z+gnyo7a7J7px8uh9fChZGRRsZoW3IS4Mfz+oC9ZSl2g575aA
+         IgZs96Ex9f8Kl9HnIFgTzuSGQq+sgiX+ZgH3tyDm3FuD2Ho4pQnPj9csLC2ufJ87exFg
+         m2Bg==
+X-Gm-Message-State: AOJu0YyCPCaxorlX6I8Ylcf5FBHKRadgXY0ZWWrAaxdbhLKVBHEMGcIH
+	b62/HdfLWR77sU6U0kvKSB8XcL2/OHZJt4XrkIiqL2fzYnRi6wlV4rT4
+X-Gm-Gg: ASbGncu/mG2xju/aW2JHKRdk4gvQYUIH2gE0HOQaJ3xoS4UfSW7TDBdIikP8DyNTBuM
+	1hgawfSGUQKxvlF7C7bIbpSvHTAeWv7aPXL36ka9+SH7QNKdHnxsziNuVAGEnh2+TnsW6/sNaKp
+	H/1gx5t0s2fpwysgjLi0skq5GnqqAbfwaD7SUaJ8+HGgLS3Et1nfe3pxc08KDsiki+y/O5UbwSC
+	OD4JUmjJ+wKFUPlzw+AMTPoHgAFEtryQrxJIRw4mrHrpBi9rSzkoHjB05UU68O/nJrhGalapOIu
+	flbogipcgLIUKXX3atfXoIGFCx3WQfI8yjD3/ERmUIlhHUY7O83rXKrMdYPXEtYhQ4p7uiXAddV
+	H4P9mo4BFF+yxb29mFkklGCcsB7yE/7csycfzFfaMDAVd0FCmoIIVEHw6hRhKqtJZLOI0X5PGgp
+	mDex4PGqMPbBQ1nelYQxfK9mT/MA==
+X-Google-Smtp-Source: AGHT+IE2RvpbkP9lMyxDB9hrGIqiXzETjyBqy83rux3b/+zJ7/joFNzbydou1+hhLeq8yhwIAz+fmQ==
+X-Received: by 2002:a17:907:26c5:b0:b6d:5dbb:a1e1 with SMTP id a640c23a62f3a-b72159d5c65mr316758166b.5.1762257850774;
+        Tue, 04 Nov 2025 04:04:10 -0800 (PST)
 Received: from SMW024614.wbi.nxp.com ([128.77.115.157])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b723fa038e0sm200894166b.54.2025.11.04.04.04.06
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b723fa038e0sm200894166b.54.2025.11.04.04.04.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Nov 2025 04:04:07 -0800 (PST)
+        Tue, 04 Nov 2025 04:04:10 -0800 (PST)
 From: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
 To: Abel Vesa <abelvesa@kernel.org>,
 	Michael Turquette <mturquette@baylibre.com>,
@@ -76,9 +76,9 @@ Cc: linux-clk@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	Pengutronix Kernel Team <kernel@pengutronix.de>
-Subject: [PATCH v4 6/8] reset: imx8mp-audiomix: Extend the driver usage
-Date: Tue,  4 Nov 2025 04:02:59 -0800
-Message-ID: <20251104120301.913-7-laurentiumihalcea111@gmail.com>
+Subject: [PATCH v4 7/8] reset: imx8mp-audiomix: Support i.MX8ULP SIM LPAV
+Date: Tue,  4 Nov 2025 04:03:00 -0800
+Message-ID: <20251104120301.913-8-laurentiumihalcea111@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251104120301.913-1-laurentiumihalcea111@gmail.com>
 References: <20251104120301.913-1-laurentiumihalcea111@gmail.com>
@@ -92,75 +92,92 @@ Content-Transfer-Encoding: 8bit
 
 From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
 
-Switch to per-device reset map to allow reusing the driver for other NXP
-block control IPs.
+Support i.MX8ULP's SIM LPAV by adding its reset map definition.
 
 Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
 Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
 ---
- drivers/reset/reset-imx8mp-audiomix.c | 18 ++++++++++++++++--
- 1 file changed, 16 insertions(+), 2 deletions(-)
+ drivers/reset/reset-imx8mp-audiomix.c | 45 +++++++++++++++++++++++++++
+ 1 file changed, 45 insertions(+)
 
 diff --git a/drivers/reset/reset-imx8mp-audiomix.c b/drivers/reset/reset-imx8mp-audiomix.c
-index 18a7f68aa59f..745b7e22b954 100644
+index 745b7e22b954..af8d585d6c18 100644
 --- a/drivers/reset/reset-imx8mp-audiomix.c
 +++ b/drivers/reset/reset-imx8mp-audiomix.c
-@@ -23,7 +23,12 @@ struct imx8mp_reset_map {
- 	bool active_low;
+@@ -3,6 +3,7 @@
+  * Copyright 2024 NXP
+  */
+ 
++#include <dt-bindings/reset/fsl,imx8ulp-sim-lpav.h>
+ #include <dt-bindings/reset/imx8mp-reset-audiomix.h>
+ 
+ #include <linux/auxiliary_bus.h>
+@@ -17,6 +18,8 @@
+ #define IMX8MP_AUDIOMIX_EARC_RESET_OFFSET	0x200
+ #define IMX8MP_AUDIOMIX_DSP_RUNSTALL_OFFSET	0x108
+ 
++#define IMX8ULP_SIM_LPAV_SYSCTRL0_OFFSET	0x8
++
+ struct imx8mp_reset_map {
+ 	unsigned int offset;
+ 	unsigned int mask;
+@@ -51,6 +54,44 @@ static const struct imx8mp_reset_info imx8mp_reset_info = {
+ 	.num_lines = ARRAY_SIZE(imx8mp_reset_map),
  };
  
--static const struct imx8mp_reset_map reset_map[] = {
-+struct imx8mp_reset_info {
-+	const struct imx8mp_reset_map *map;
-+	int num_lines;
++static const struct imx8mp_reset_map imx8ulp_reset_map[] = {
++	[IMX8ULP_SIM_LPAV_HIFI4_DSP_DBG_RST] = {
++		.offset = IMX8ULP_SIM_LPAV_SYSCTRL0_OFFSET,
++		.mask = BIT(25),
++		.active_low = false,
++	},
++	[IMX8ULP_SIM_LPAV_HIFI4_DSP_RST] = {
++		.offset = IMX8ULP_SIM_LPAV_SYSCTRL0_OFFSET,
++		.mask = BIT(16),
++		.active_low = false,
++	},
++	[IMX8ULP_SIM_LPAV_HIFI4_DSP_STALL] = {
++		.offset = IMX8ULP_SIM_LPAV_SYSCTRL0_OFFSET,
++		.mask = BIT(13),
++		.active_low = false,
++	},
++	[IMX8ULP_SIM_LPAV_DSI_RST_BYTE_N] = {
++		.offset = IMX8ULP_SIM_LPAV_SYSCTRL0_OFFSET,
++		.mask = BIT(5),
++		.active_low = true,
++	},
++	[IMX8ULP_SIM_LPAV_DSI_RST_ESC_N] = {
++		.offset = IMX8ULP_SIM_LPAV_SYSCTRL0_OFFSET,
++		.mask = BIT(4),
++		.active_low = true,
++	},
++	[IMX8ULP_SIM_LPAV_DSI_RST_DPI_N] = {
++		.offset = IMX8ULP_SIM_LPAV_SYSCTRL0_OFFSET,
++		.mask = BIT(3),
++		.active_low = true,
++	},
 +};
 +
-+static const struct imx8mp_reset_map imx8mp_reset_map[] = {
- 	[IMX8MP_AUDIOMIX_EARC_RESET] = {
- 		.offset	= IMX8MP_AUDIOMIX_EARC_RESET_OFFSET,
- 		.mask = BIT(0),
-@@ -41,9 +46,15 @@ static const struct imx8mp_reset_map reset_map[] = {
- 	},
- };
- 
-+static const struct imx8mp_reset_info imx8mp_reset_info = {
-+	.map = imx8mp_reset_map,
-+	.num_lines = ARRAY_SIZE(imx8mp_reset_map),
++static const struct imx8mp_reset_info imx8ulp_reset_info = {
++	.map = imx8ulp_reset_map,
++	.num_lines = ARRAY_SIZE(imx8ulp_reset_map),
 +};
 +
  struct imx8mp_audiomix_reset {
  	struct reset_controller_dev rcdev;
  	struct regmap *regmap;
-+	const struct imx8mp_reset_info *rinfo;
- };
- 
- static struct imx8mp_audiomix_reset *to_imx8mp_audiomix_reset(struct reset_controller_dev *rcdev)
-@@ -55,6 +66,7 @@ static int imx8mp_audiomix_update(struct reset_controller_dev *rcdev,
- 				  unsigned long id, bool assert)
- {
- 	struct imx8mp_audiomix_reset *priv = to_imx8mp_audiomix_reset(rcdev);
-+	const struct imx8mp_reset_map *reset_map = priv->rinfo->map;
- 	unsigned int mask, offset, active_low, shift, val;
- 
- 	mask = reset_map[id].mask;
-@@ -141,7 +153,8 @@ static int imx8mp_audiomix_reset_probe(struct auxiliary_device *adev,
- 		return -ENOMEM;
- 
- 	priv->rcdev.owner     = THIS_MODULE;
--	priv->rcdev.nr_resets = ARRAY_SIZE(reset_map);
-+	priv->rinfo           = (void *)id->driver_data;
-+	priv->rcdev.nr_resets = priv->rinfo->num_lines;
- 	priv->rcdev.ops       = &imx8mp_audiomix_reset_ops;
- 	priv->rcdev.of_node   = dev->parent->of_node;
- 	priv->rcdev.dev	      = dev;
-@@ -164,6 +177,7 @@ static int imx8mp_audiomix_reset_probe(struct auxiliary_device *adev,
- static const struct auxiliary_device_id imx8mp_audiomix_reset_ids[] = {
- 	{
+@@ -179,6 +220,10 @@ static const struct auxiliary_device_id imx8mp_audiomix_reset_ids[] = {
  		.name = "clk_imx8mp_audiomix.reset",
-+		.driver_data = (kernel_ulong_t)&imx8mp_reset_info,
+ 		.driver_data = (kernel_ulong_t)&imx8mp_reset_info,
  	},
++	{
++		.name = "clk_imx8ulp_sim_lpav.reset",
++		.driver_data = (kernel_ulong_t)&imx8ulp_reset_info,
++	},
  	{ }
  };
+ MODULE_DEVICE_TABLE(auxiliary, imx8mp_audiomix_reset_ids);
 -- 
 2.43.0
 
