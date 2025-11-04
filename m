@@ -1,47 +1,43 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85B347083C;
-	Tue,  4 Nov 2025 17:24:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4598F3314B8;
+	Tue,  4 Nov 2025 17:25:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762277090; cv=none; b=X5CO7vIBxS5Adh98LecU2EbS/pZSQM4MmoZnOYsJkR/l++sJ7oYgDsVqeIgZgn9qDrr2gqvwIieTJBhL64QmtR+I5u8+4vfzmllGuByd5QzSzeTQdrQKKodDivlRxTo2aqbwgt7pipIPwkbUyhHZg7nEORg+gL+s3GJLtKw7MNg=
+	t=1762277123; cv=none; b=twSXCqpTgLHvQ3k86oLtBdmed1K3u1S8zuWbC853xutIb25KbcGMovtTNLeH004zLno6Yvjom/rJAlLbAbrRJ6KvKtYltkhJ63q63VkjkpmSXvz7s/qyCQB0sWLo5aCth14Vv5+tETF1TJD075vpulgWo8RMTHwcLRyF6L5Pbvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762277090; c=relaxed/simple;
-	bh=+TLOnLbCL5l5MRbrs9lE6WIYNLgYsCpPv21pat0QuSY=;
+	s=arc-20240116; t=1762277123; c=relaxed/simple;
+	bh=7aYmwGwBDUYQ7VqbcwEdBsnlFLdnNbLvQp2h4mZD/aU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Eg1b+rC0YxvKAJTzcz23ougO6H/OH72DE8otKCtYVfON/nc49qNU6bticHHbWFjMQc0hvlq2dqxIXiFTkFV7+0xQqhsYLZ9ICr88LSwjrSBEtjiiny2J/KnLAjVPcFycGbJ8d0XQjmaBSHQhZBHb2GyUXivRsIx+DDu93bTkdY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=StnnIrCp; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=b5R9STgig/+R1cf0902zFJhefdXaVLM3Kjt9jwiQqL1vAveNlQtmpRHS8eEW3g6QpfHrSh7dVI4M64QGJiicL8brv1h7/YbL1wlMXvAGKpSL+ucf5UV2CeVjtDiKqa79WNXaOsL+yzbw5FdJVwk4Jujfp42qcWyjxzU4+igEkXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cyN4zn6O; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="StnnIrCp"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50A87C116B1;
-	Tue,  4 Nov 2025 17:24:47 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cyN4zn6O"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D3F7C4CEF8;
+	Tue,  4 Nov 2025 17:25:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762277090;
-	bh=+TLOnLbCL5l5MRbrs9lE6WIYNLgYsCpPv21pat0QuSY=;
+	s=k20201202; t=1762277122;
+	bh=7aYmwGwBDUYQ7VqbcwEdBsnlFLdnNbLvQp2h4mZD/aU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=StnnIrCpIfexi/XSVYxGF69H/0GE6GfX4k0z09VgVzz6spCyoC63cdDjQxX2Et2sC
-	 DK12ugrCfT7NjtLoeCgPr68r2E/Ou8XvbluyT+GgSHgZHPAN/5LlEpM6sLarbwJGzA
-	 9xFLcoxud8n3NyihCoucL/+JZj+y4ZxeUmVza7LlWQiubpBPS8Jkq7SQMjM4ikKprZ
-	 e3Sybkc/3kEd9qnVjnzWcxiBRm6uU4ZgqZL8ds/aeQjp0pueUZtsGhiHPCxvdFLfZX
-	 MNfuCVvRVwsHIsJ1u66oicV3hGIAcfRa3XxNCVFfboDEsywLYraCBz2PA02AHmYAWZ
-	 PF+Un6+lVAXzA==
-Date: Tue, 4 Nov 2025 17:24:45 +0000
+	b=cyN4zn6Oxil+gSh9XzVLNVS0iBN2c6eW5echRWW64joxBsDwbB/7MqVQq4RbAKzbv
+	 cax5Xfn0745ta9Ysb4JhfbvqZN/do26aorgSP5rd8RYyzF/s+0x8KAO7vn0OV/2/ZY
+	 XRz6jJa7nY+toZh4NjW7AM7S4RAv336NWkkaKeROwDNlEAysrHqLQgctDRaPt7dDrx
+	 gGvaM2Oq428uCIFD0UPwwEUs+ZW9Nwt/7DsbasYljox5YtkCv8A3XKdIewCL3L/R0Z
+	 7j4k4/0t7HMhhUcIfIJLhjBbFgCGgPFlXHTNwQQ3dju3nisceqj+qZZYptdPfQB9ad
+	 6l8ofBQOl7MUw==
+Date: Tue, 4 Nov 2025 17:25:18 +0000
 From: Conor Dooley <conor@kernel.org>
-To: zhangqing <zhangqing@rock-chips.com>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, sugar.zhang@rock-chips.com,
-	heiko@sntech.de, robh@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-	conor+dt@kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
 	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-	huangtao@rock-chips.com, finley.xiao@rock-chips.com
-Subject: Re: [PATCH v5 6/7] dt-bindings: clock: rockchip: Add RK3506 clock
- and reset unit
-Message-ID: <20251104-nutty-lunchroom-36a5879db0b9@spud>
-References: <20251027084147.4148739-1-zhangqing@rock-chips.com>
- <20251027084147.4148739-7-zhangqing@rock-chips.com>
- <20251027-await-wound-0aee2d20e0a3@spud>
- <6ff7370e-0e57-487d-a6d9-05958ab21e98@rock-chips.com>
+	michael.riesch@collabora.com
+Subject: Re: [PATCH 1/3] dt-bindings: clock: rk3568: Add SCMI clock ids
+Message-ID: <20251104-royal-stir-ee4df643e3ff@spud>
+References: <20251103234926.416137-1-heiko@sntech.de>
+ <20251103234926.416137-2-heiko@sntech.de>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -49,102 +45,27 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="GbKegIoFUbmOWI8i"
+	protocol="application/pgp-signature"; boundary="cRAjLMPfblXcgdZS"
 Content-Disposition: inline
-In-Reply-To: <6ff7370e-0e57-487d-a6d9-05958ab21e98@rock-chips.com>
+In-Reply-To: <20251103234926.416137-2-heiko@sntech.de>
 
 
---GbKegIoFUbmOWI8i
-Content-Type: text/plain; charset=utf-8
+--cRAjLMPfblXcgdZS
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 04, 2025 at 09:48:56AM +0800, zhangqing wrote:
->=20
-> =E5=9C=A8 2025/10/28 0:47, Conor Dooley =E5=86=99=E9=81=93:
-> > On Mon, Oct 27, 2025 at 04:41:46PM +0800, Elaine Zhang wrote:
-> > > From: Finley Xiao<finley.xiao@rock-chips.com>
-> > >=20
-> > > Add device tree bindings for clock and reset unit on RK3506 SoC.
-> > > Add clock and reset IDs for RK3506 SoC.
-> > >=20
-> > > Signed-off-by: Finley Xiao<finley.xiao@rock-chips.com>
-> > > ---
-> > >   .../bindings/clock/rockchip,rk3506-cru.yaml   |  51 ++++
-> > >   .../dt-bindings/clock/rockchip,rk3506-cru.h   | 285 +++++++++++++++=
-+++
-> > >   .../dt-bindings/reset/rockchip,rk3506-cru.h   | 211 +++++++++++++
-> > >   3 files changed, 547 insertions(+)
-> > >   create mode 100644 Documentation/devicetree/bindings/clock/rockchip=
-,rk3506-cru.yaml
-> > >   create mode 100644 include/dt-bindings/clock/rockchip,rk3506-cru.h
-> > >   create mode 100644 include/dt-bindings/reset/rockchip,rk3506-cru.h
-> > >=20
-> > > diff --git a/Documentation/devicetree/bindings/clock/rockchip,rk3506-=
-cru.yaml b/Documentation/devicetree/bindings/clock/rockchip,rk3506-cru.yaml
-> > > new file mode 100644
-> > > index 000000000000..ecb5fa497747
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/clock/rockchip,rk3506-cru.yaml
-> > > @@ -0,0 +1,51 @@
-> > > +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> > > +%YAML 1.2
-> > > +---
-> > > +$id:http://devicetree.org/schemas/clock/rockchip,rk3506-cru.yaml#
-> > > +$schema:http://devicetree.org/meta-schemas/core.yaml#
-> > > +
-> > > +title: Rockchip RK3506 Clock and Reset Unit (CRU)
-> > > +
-> > > +maintainers:
-> > > +  - Finley Xiao<finley.xiao@rock-chips.com>
-> > > +  - Heiko Stuebner<heiko@sntech.de>
-> > > +
-> > > +description: |
-> > > +  The RK3506 CRU generates the clock and also implements reset for S=
-oC
-> > > +  peripherals.
-> > > +
-> > > +properties:
-> > > +  compatible:
-> > > +    const: rockchip,rk3506-cru
-> > > +
-> > > +  reg:
-> > > +    maxItems: 1
-> > > +
-> > > +  "#clock-cells":
-> > > +    const: 1
-> > > +
-> > > +  "#reset-cells":
-> > > +    const: 1
-> > > +
-> > > +  clocks:
-> > > +    maxItems: 1
-> > Can you explain somewhere why the input clock is not required?
-> > Feels like it really should be required, if it is what the output clocks
-> > are generated from, but I can also see why it might be optional either.
-> > pw-bot: changes-requested
->=20
-> Our default hardware input clock is 24M.
->=20
-> =C2=A0Some Socs and hardware input clocks support 24M=E3=80=8124.576M=E3=
-=80=8126M. For
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+pw-bot: not-applicable
 
-Other SoCs get other compatibles, so that is not relevant.
-
-> different input frequencies, there is a need to configure clocks.
-
-That seems like it should be required, because there's always one being
-provided.
-
---GbKegIoFUbmOWI8i
+--cRAjLMPfblXcgdZS
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaQo23QAKCRB4tDGHoIJi
-0s2JAQDVZlJVC+3VPu0Seil/rz3PFRN98sMD7cctohGiuYB3fgEAoRehJnbC+mUT
-NA+BG6kXfU+6fIkftGl4HWzd5sYovQg=
-=3/I5
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaQo2/gAKCRB4tDGHoIJi
+0hsdAP9ntPaYIuuUM8fCimgWccu0AE1sB4lF0aTfYVW5HORKCwEA/hh8sno8jBWE
+x5UzPmkmc96+i5yN6Z1Q/6Jn4oTmCwg=
+=oiSb
 -----END PGP SIGNATURE-----
 
---GbKegIoFUbmOWI8i--
+--cRAjLMPfblXcgdZS--
