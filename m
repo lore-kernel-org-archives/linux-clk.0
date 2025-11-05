@@ -1,143 +1,78 @@
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C84D285060
-	for <linux-clk@vger.kernel.org>; Wed,  5 Nov 2025 18:13:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6FDE265630;
+	Wed,  5 Nov 2025 22:26:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762366403; cv=none; b=uGros8qRYWyAR9yD71Hu2FtHGTeRJ8vs+KSwSJtAz8EdyPqXODVi7zfaph8zd8VKaZXZWoVUUTZHAVuhWnJ/hK7iRt9YyFEOTSLcqd3WRbdakpomiPlg5oRC9LbRw9EQj6lTgLj+meZLzT6gE1jau0iJ1CiGwdXiI6mcGP9EiOE=
+	t=1762381563; cv=none; b=Fuf66zOkQr4aZQ72X6cwcTdb5aFQnQnpUIKZWsW3kV+kMcxGHsmyBEdRKYQZTOkz1QxbN2ZOtRbIRWWh50S/FAbLvI3G/NI8cBrdLOZdaEr+IW9h6MwAfdYScWWu2eH2oH5Lrn/iZ9in6spGx87ohZu1kcXLMlD9tucYrDQomSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762366403; c=relaxed/simple;
-	bh=Ug4epuCkcaJAg+e8KIyZD2/iemxtXmnOnHGjOrCEs/o=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=LpITA+CZvUYMLqW3znVuGX5Zq3iS/n1W7D3kZIbixHHhBcYe0jfKlLcRLbVGkV6FLSvaejMbWjkTeaUVr+nP5c9ow5+guRXPyQNY3P4P7sZMyRFZYTTd3foCgF4wbSFrjkLLpmAykJicu2J2+iij8qKbZqxHZ6hbDBvH0EDA7Tg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=vVMTH8oh; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="vVMTH8oh"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id E7D404E4153C;
-	Wed,  5 Nov 2025 18:03:56 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id A597E60693;
-	Wed,  5 Nov 2025 18:03:56 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id B833410B510C2;
-	Wed,  5 Nov 2025 19:03:50 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1762365835; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=FCxsKgZxhNgnJkvj/KGRREoRR8EGeTXpZ8jT6eg79s4=;
-	b=vVMTH8ohHbUDKCAY5bjisKQTkA5E7XO7aW5dd5QnefShbzI9TBfbfer0ecT2S47DQwHrk5
-	ocCj35krYsCkye6YFFj6xLJ+WP1uNrYBY0Fe0lBr7p8+AF0Ai1lkzetCQFaV2UOuKI3TKM
-	n90TQy49xvU3plCaFhv4lmVSFeI0EOyUpv0wqv2HkAGFLiwmTVw+dG9C6XpBg/PxhE5h34
-	/2w62xT5eU9HLv3N4Iy4hdHByhGz6phq74ak7WZI2a8AkNBcPqoqF1NyYe2FpvCRePQGHa
-	hkZl8u3GOYy2zs/p8h2JCbNB6dHcXA0M+PbQZn6aBzZ9gsfEyNRhfqCKOWWWMg==
+	s=arc-20240116; t=1762381563; c=relaxed/simple;
+	bh=z2H0JEB4BDaELhrp890z0u572Y8e6546LBsxIKLhXJo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VqUKPmd9I0PjrpE745Vod+YEp5kzE3tk/lFfLhPRBmclblJWVPD3WxO/kVsPqA8Xvvdl2wrr3TOMHOWrwOXOLHCyYQei3XSQYr7eWk/AOjVlERPHScP+wlDUVrjWfSTGjiJqx4R2iwxl4Wa5HXayFauQR/yru+rKs2oyI4EwZEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; arc=none smtp.client-ip=210.160.252.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
+X-CSE-ConnectionGUID: TJ4jYchEQBKmVX/WCc6/DQ==
+X-CSE-MsgGUID: uVVeu0XKRuO2msvyNwliAA==
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 06 Nov 2025 07:25:59 +0900
+Received: from lenovo-p330 (unknown [132.158.152.96])
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id BCD71409F5BB;
+	Thu,  6 Nov 2025 07:25:55 +0900 (JST)
+From: Chris Brandt <chris.brandt@renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Hien Huynh <hien.huynh.px@renesas.com>,
+	Nghia Vo <nghia.vo.zn@renesas.com>,
+	Hugo Villeneuve <hugo@hugovil.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH v4 0/2] Remove hard coded values for MIPI-DSI
+Date: Wed,  5 Nov 2025 17:25:28 -0500
+Message-ID: <20251105222530.979537-1-chris.brandt@renesas.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 05 Nov 2025 19:03:50 +0100
-Message-Id: <DE0YJPERKME9.2CYGFAPULFMZV@bootlin.com>
-Cc: "Abel Vesa" <abelvesa@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>,
- "Fabio Estevam" <festevam@gmail.com>, "Krzysztof Kozlowski"
- <krzk+dt@kernel.org>, "Laurent Pinchart"
- <Laurent.pinchart@ideasonboard.com>, "Liu Ying" <victor.liu@nxp.com>,
- "Lucas Stach" <l.stach@pengutronix.de>, "Peng Fan" <peng.fan@nxp.com>,
- "Pengutronix Kernel Team" <kernel@pengutronix.de>, "Rob Herring"
- <robh@kernel.org>, "Shawn Guo" <shawnguo@kernel.org>, "Thomas Zimmermann"
- <tzimmermann@suse.de>, <devicetree@vger.kernel.org>, <imx@lists.linux.dev>,
- <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v2] drm/bridge: fsl-ldb: Parse register offsets from DT
-From: "Luca Ceresoli" <luca.ceresoli@bootlin.com>
-To: "Marek Vasut" <marek.vasut@mailbox.org>,
- <dri-devel@lists.freedesktop.org>, "Laurentiu Palcu"
- <laurentiu.palcu@oss.nxp.com>
-X-Mailer: aerc 0.20.1
-References: <20251102170257.65491-1-marek.vasut@mailbox.org>
- <DDZ6KCUVYB55.330X4X5ETRXR3@bootlin.com>
- <25cd3b11-8417-44d3-af28-fa73419c713b@mailbox.org>
-In-Reply-To: <25cd3b11-8417-44d3-af28-fa73419c713b@mailbox.org>
-X-Last-TLS-Session-Version: TLSv1.3
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Hi Marek,
+When the initial drivers were submitted, some of the timing was hard coded and
+did not allow for any MIPI-DSI panel to be attached.
+In general, panels or bridges can only be supported if MIPI-DSI lanes were 4.
+If the number of lanes were 3,2,1, the math no longer works out.
 
-On Tue Nov 4, 2025 at 12:08 AM CET, Marek Vasut wrote:
-> On 11/3/25 4:55 PM, Luca Ceresoli wrote:
->
-> Hello Luca,
->
->> On Sun Nov 2, 2025 at 6:02 PM CET, Marek Vasut wrote:
->>> The DT binding for this bridge describe register offsets for the LDB,
->>> parse the register offsets from DT instead of hard-coding them in the
->>> driver. No functional change.
->>>
->>> Signed-off-by: Marek Vasut <marek.vasut@mailbox.org>
->>
->> I was initially a bit skeptical because normally register offsets are
->> derived from the compatible string, not from device tree. But then I
->> realized this is about the LDB which has its two registers in the
->> MEDIA_BLK. This means all in all this looks somewhat like an integration
->> aspect (the LDB component uses two resources of the MEDIA_CLK component)
->> and your patch mekse sense.
->>
->> So my only remark is that the above may be in the commit message, to mak=
-e
->> the "why" clear from the beginning. It took a bit of research for me to
->> find out.
->
-> Actually, the LDB was always meant to parse the 'reg' offsets out of the
-> DT, it then went somewhat ... wrong ... and we ended up with hard-coded
-> reg<->compatible mapping. It was never intended to be that way. That is
-> all there is to it, there isn't any deeper reason behind it.
->
-> What would you add into the commit message ?
+A new API was created for the clock driver because the behaivior of the clock
+driver depends on DPI vs MIPI, the bpp, and the number of MIPI lanes.
 
-The above paragraph is a good draft of what I woudl add.
 
->> [0] https://lore.kernel.org/dri-devel/20251103-dcif-upstreaming-v6-3-76f=
-cecfda919@oss.nxp.com/
->>
->>> @@ -309,6 +302,27 @@ static int fsl_ldb_probe(struct platform_device *p=
-dev)
->>>   	fsl_ldb->dev =3D &pdev->dev;
->>>   	fsl_ldb->bridge.of_node =3D dev->of_node;
->>>
->>> +	/* No "reg-names" property likely means single-register LDB */
->>
->> Uh? If it is "likely" it means we are not sure this code is not introduc=
-ing
->> regressions, and that would be bad.
->
-> I can drop the 'likely' part.
+Testing:
+* RZ/G2L SMARC  (MIPI-DSI to HDMI bridge, lanes = 4)
+* RZ/G2L-SBC    (MIPI-DSI to LCD panel, lanes = 2)
+* RZ/G2UL SMARC (DPI to HDMI bridge)
+* Multiple monitors, multiple resolutions
 
-If you are sure it's not "likely" but "sure", then OK. However it all
-depends on the bindings, which leads to the below question.
 
->>> +	idx =3D of_property_match_string(dev->of_node, "reg-names", "ldb");
->>> +	if (idx < 0) {
->>> +		fsl_ldb->single_ctrl_reg =3D true;
->>> +		idx =3D 0;
->>> +	}
->>
->>  From the bindings I understand that having two 'reg' values and no
->> 'reg-names' at all is legal. Your patch implies differently. Who's right
->> here?
-> I think if you have two two reg values, you should have reg-names , so
-> the binding should be updated ?
 
-If the bindings are unclear or ambiguous (or wrong) then they should be
-fixed in the first place. With bad bindings we can either have a bad but
-compliant implementation or a good but non-compliant implementation.
+Chris Brandt (2):
+  clk: renesas: rzg2l: Remove DSI clock rate restrictions
+  drm: renesas: rz-du: Set DSI divider based on target MIPI device
 
-Best regards,
-Luca
+ drivers/clk/renesas/rzg2l-cpg.c               | 147 ++++++++++++++++--
+ .../gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c    |  18 +++
+ include/linux/clk/renesas.h                   |  12 ++
+ 3 files changed, 164 insertions(+), 13 deletions(-)
 
 --
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+2.50.1
+
