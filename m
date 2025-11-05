@@ -1,111 +1,93 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAD67313E26
-	for <linux-clk@vger.kernel.org>; Wed,  5 Nov 2025 12:34:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F67C3164D2
+	for <linux-clk@vger.kernel.org>; Wed,  5 Nov 2025 13:09:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762346051; cv=none; b=MpQj5M1zaak+viafeYySWkJ8XX0En+CWlZYPVw3VmUA5aaltsoUbC4BRmpB54cfQB3ByBTJCdC7rbXbiVvf0ynjRmw889H+Y/XUvQ4bgG0DOO9ygVw6Ccm3OBAq5O1g7833fnNP9ZUTvfDa9pNh5I9n8e0xGThvExydelKVpZzU=
+	t=1762348170; cv=none; b=Ya0UigeFGWG7gSW3jWG6aD7kWiHbjCbfKRARu2gft8Mpv0+7JPVp+kC8TjJek0P7TwJnSVFGWR6zesKYHyon8qIDuaa79EErCJMez/DSggGZlC5+YW1sFMqQAlIDFzVp/1cHTsLLH1x2hFi9avQLwTRrmD5Kklgc3vr6y9PchWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762346051; c=relaxed/simple;
-	bh=gCn5g/zKNokWUSs7zi6RB7++8iJp66x+WsOsStoRHpA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b33jPAVWVqe0ZmTe+t5cApEYz/vgfDFHUVe3t3o8x8OluDx6T3HigVtIT/najY/8F6yStahQuNoC58KmIwdmgvVzNIlEE9NLcklLuIL118bEsqiTcIafaQJcB+UQ/ijmRJ9wf9P/7TsYACo9bhxXMErILyLjdokzYdE+hBU8ud4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1vGci5-0002pr-I7; Wed, 05 Nov 2025 13:33:57 +0100
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1vGci4-007C4y-3B;
-	Wed, 05 Nov 2025 13:33:57 +0100
-Received: from pengutronix.de (p54b152ce.dip0.t-ipconnect.de [84.177.82.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id A4A534984AD;
-	Wed, 05 Nov 2025 12:33:56 +0000 (UTC)
-Date: Wed, 5 Nov 2025 13:33:54 +0100
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Sascha Hauer <s.hauer@pengutronix.de>, Stephen Boyd <sboyd@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, kernel@pengutronix.de, Linus Walleij <linus.walleij@linaro.org>, 
-	linux-gpio@vger.kernel.org, Alvin =?utf-8?Q?=C5=A0ipraga?= <alsi@bang-olufsen.dk>
-Subject: Re: [PATCH v7 0/2] clk: add support for TI CDCE6214
-Message-ID: <20251105-faithful-carmine-bat-257e39-mkl@pengutronix.de>
-References: <20251001-clk-cdce6214-v7-0-5f8b44da95a5@pengutronix.de>
+	s=arc-20240116; t=1762348170; c=relaxed/simple;
+	bh=uguI1xGoSqMV/a92i80LW5vKXiSNa4y8fhfB+Wp0GW4=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
+	 References:In-Reply-To; b=RNgbw/hrvjO/Gdo/h01/OcWEoHyPFFTy/ty8W7NUE8XqmKoLfTKn5DuchWXsUh0H2Y1jvUqdLqP4q2NmLrjTetJzgoCUftT3F1TNQparqcLwFfdEvEE5nKdA2r+0h3f6lgw/kpjG1H3Dom9PEx3kjwLxJDt5gykPEWCBfLQXP2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow-tech.com; spf=pass smtp.mailfrom=cknow-tech.com; dkim=pass (2048-bit key) header.d=cknow-tech.com header.i=@cknow-tech.com header.b=MNTmIoYg; arc=none smtp.client-ip=95.215.58.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow-tech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow-tech.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=cknow-tech.com header.i=@cknow-tech.com header.b="MNTmIoYg"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="zkha7kfojqx7pggw"
-Content-Disposition: inline
-In-Reply-To: <20251001-clk-cdce6214-v7-0-5f8b44da95a5@pengutronix.de>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
-
-
---zkha7kfojqx7pggw
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
+Mime-Version: 1.0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow-tech.com;
+	s=key1; t=1762348154;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JviihLCt3v6d6CZovBHWlp8JXmmPFCMHNUL+edx3LHs=;
+	b=MNTmIoYgYT8/lE217Au/8HIwzXrmYeDqSa3iJuB2cz2XV0ASGUqU4Jn+7U+k5/x8VuoUmh
+	wQM4ZwYXWDcsU7vOdXVFhoiwmcJe7dDaRSDvVJVGfGz3wrclxU+mpJ5dFoCmivN9vdAS18
+	sLVRoR2CRPiYUem7AmPTd7Whw6gsk+L6BDCkstcw4el/O7xgCyJ01yh2kvge79opSk7jAy
+	OvgqFm3rNxMCWNc1v/M/5WWG/ItEEUahS0kpFDtVv8XJR7SdC5LjYLCGmfRgRPrUFeg2dG
+	novMFhyOvhRD7jHLq93j6hNgrs0VqfXyipAM92miup/izAs0i8wqEVgnQ13kZw==
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v7 0/2] clk: add support for TI CDCE6214
-MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 05 Nov 2025 14:08:59 +0100
+Message-Id: <DE0S9YBDI0NK.2892TZHYSQLFM@cknow-tech.com>
+To: "Heiko Stuebner" <heiko@sntech.de>
+Cc: <mturquette@baylibre.com>, <sboyd@kernel.org>, <robh@kernel.org>,
+ <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <linux-clk@vger.kernel.org>,
+ <linux-arm-kernel@lists.infradead.org>,
+ <linux-rockchip@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+ <michael.riesch@collabora.com>
+Subject: Re: [PATCH 1/3] dt-bindings: clock: rk3568: Add SCMI clock ids
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "Diederik de Haas" <diederik@cknow-tech.com>
+References: <20251103234926.416137-1-heiko@sntech.de>
+ <20251103234926.416137-2-heiko@sntech.de>
+In-Reply-To: <20251103234926.416137-2-heiko@sntech.de>
+X-Migadu-Flow: FLOW_OUT
 
-On 01.10.2025 10:12:52, Sascha Hauer wrote:
-> The CDCE6214 is a Ultra-Low Power Clock Generator With One PLL, Four
-> Differential Outputs, Two Inputs, and Internal EEPROM.
+On Tue Nov 4, 2025 at 12:49 AM CET, Heiko Stuebner wrote:
+> The Trusted Firmware on RK3568 exposes 3 clocks via the SCMI clock
+> interface. Add descriptive IDs for them.
 >
-> This series adds a common clk framework driver for this chip along with
-> the dt-bindings document. The cdce6214 needs several pins to be
-> configured for different input/output modes which are abstracted with a
-> pinctrl driver.
+> The clock ids are used in both the older vendor-binary TF-A, as well
+> as the recently merged upstream SCMI clock implementation.
 >
-> In v5 I tried to split up the patch into a non controversial part (to be
-> applied) and a part which needs more discussion (to be applied later).
-> That was not very well received, so I merged it back in v6. I didn't
-> mention that explicitly in v6, so doing it now.
+> Link: https://review.trustedfirmware.org/c/TF-A/trusted-firmware-a/+/3126=
+5
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> ---
+>  include/dt-bindings/clock/rk3568-cru.h | 6 ++++++
+>  1 file changed, 6 insertions(+)
 >
-> v7 contains only small changes, mostly binding updates requested by Rob.
+> diff --git a/include/dt-bindings/clock/rk3568-cru.h b/include/dt-bindings=
+/clock/rk3568-cru.h
+> index f01f0e9ce8f1..1e0aef8a645d 100644
+> --- a/include/dt-bindings/clock/rk3568-cru.h
+> +++ b/include/dt-bindings/clock/rk3568-cru.h
+> @@ -483,6 +483,12 @@
+> =20
+>  #define PCLK_CORE_PVTM		450
+> =20
+> +/* scmi-clocks indices */
+> +
+> +#define SCMI_CLK_CPU		0
+> +#define SCMI_CLK_GPU		1
+> +#define SCMI_CLK_NPU		2
+> +
 
-Stephen, can you have a look at this driver?
+This corresponds with the id's in ``clock_table`` in TF-A's
+``plat/rockchip/rk3568/drivers/scmi/rk3568_clk.c`` file, so
 
-regards,
-Marc
+Reviewed-by: Diederik de Haas <diederik@cknow-tech.com>
 
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+>  /* pmu soft-reset indices */
+>  /* pmucru_softrst_con0 */
+>  #define SRST_P_PDPMU_NIU	0
 
---zkha7kfojqx7pggw
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmkLRC0ACgkQDHRl3/mQ
-kZxqYggAnHJDddCzeqWgG147r7JWWDFTfHfEFiDVWIp0YDRhKWDG65s68wtn+abi
-iz8fl/ZgilSA0arzB+3KuOd0o9Oq+TWoQnQSvzizXTWEC2h3om6ftKTQyKaeLTJ9
-s4ytynRL5yOsWmfzfCzK//uzdtSl0f6G8QcN/xCIwJBFktfKgSDM6slvTcFjLkkR
-6B3dUaef+cKmo+tWEsUSV2zUXhz/xT6kM/mvDUQXQ4s8Qy+J5PE3dj1/pM0bk4u4
-3o/7KM7LRYR9xc3b7E9vqxqjwh86ywI/pHo+hZhSMzoEunEKqPU84O4U4hgGsCQ3
-kJwhpH4C46uYjsjss6luSJ1tqbi00w==
-=9R3o
------END PGP SIGNATURE-----
-
---zkha7kfojqx7pggw--
