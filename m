@@ -1,111 +1,94 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C2042F1FF6;
-	Wed,  5 Nov 2025 09:00:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 543BE2F7AB4;
+	Wed,  5 Nov 2025 09:14:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762333217; cv=none; b=l54zp86arSGkjCC7mt+WbaO2FZW9BDGC/5MCmOVgQSIGBonUdf/IPv6WxMg71wvd+UML6DPTBX626oQqxYuc9un37403EvKZ1bIOSOaSfCm5ZSvpPz0i++a5IiLlS3/fT2qjcbt1eFbxkGy2OhZXQvlK00UY/WNehYjZssJa2DQ=
+	t=1762334064; cv=none; b=N5kv3DR+PXpEEVwz0FZGVHOAlMTDTIrBU0iHbXHf4vawp6oUQO3myBUX7heFsdRXXYakll7a3K2JSjEdCMzo1dzFdngZW2x85wApVzTwvCMISXYfyR8ZyY7ZdzXEoj0NKigpFjg8RBzrBRCGscFHp6OG9jL3bchBqCHQgsjskE8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762333217; c=relaxed/simple;
-	bh=mALZctJs/9dp1bCogwM4mpUTnfClhw7K46Gj7Mnbab4=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=sSa7q+Y8oX0YYNZFAJsQAUCwUFfsKjMDQEQgPCwxzX39WIqXlGetQpVIRxsfGiyMav+zxBHzwYv8BGbSFxGHhuziDZLpUKk8fgBGS/vqashRGtNfxDSrjPzClEJ7Rmu8gWEJ/2wOr5fYvrWrXNKnlO2KrzAqnqLxOORqAszB3Vw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qQSpMrp5; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1762334064; c=relaxed/simple;
+	bh=KwmEx9hgVk7y+RSTS2QImEXQ30/Rh4I9Ht/dNmvoaNI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=isoOnzstEqf6s1L5cdl/LQNpdIcP4DxV5LfqyQZ0JBxC3fLYdBit/Zu1TzqB1bB0/XSEeWZEaaCjVBE2X+oFgCQD1Dw6bKmOafHnoVzfb9N/SWEQqd2ZtRmLw6ukMG/5hwDYTuUPsqG4wcFUy6dEv+vePZTQJl/x/f5smRx7mOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pH7cu0yH; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qQSpMrp5"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C117C116B1;
-	Wed,  5 Nov 2025 09:00:17 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pH7cu0yH"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52BBCC4CEF8;
+	Wed,  5 Nov 2025 09:14:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762333217;
-	bh=mALZctJs/9dp1bCogwM4mpUTnfClhw7K46Gj7Mnbab4=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=qQSpMrp5d8GejVnUMCtTUq+S+CG7Fiy+dV9P8kLzL52NrEgebzlTCImpwXC0FVBK/
-	 HZw6zZhvbi878frUBVJJAxMGpZIxejTFy0G5t7ebsJ7uRGoJ5PqqgRg9hBdvwZwTzY
-	 9UXXwNmxqtCkYuRuqdd1MbHA+RUF/x3ww2zSLO7Kz6yEZQ8LzfPb6Bnn17TWs4mXgJ
-	 y6psk5nuzGdNb2h5b5M7kEo+uUo7LONkzzjfMg4obPCT6fxidMc3CX/KkKnMnjJAWj
-	 axrZg6zaQ7VU3KSl7t2dMYEL61fBRnNz+gAMlwlO1tz0rguRjaL2IbElUAHYwrK/MV
-	 jdzFugz98u//Q==
-Date: Wed, 05 Nov 2025 03:00:15 -0600
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+	s=k20201202; t=1762334063;
+	bh=KwmEx9hgVk7y+RSTS2QImEXQ30/Rh4I9Ht/dNmvoaNI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pH7cu0yHXFCgGt/0ca4SBMfZGTNDILeOA0KZMzEsw4w+vZj60tTfcxwaYWfKrwu3w
+	 o7J1IPVKRIdWcEBAZSy/fj8XR3vKj2Hu9atKHPZUXmsS3655T9txDKldlerftBkxNA
+	 8amFqn5ek/xXu6qOJuS8XsPTqzFH7AwCIMGCXdvGpn0Pqz+q9PMRD2xf9kFvhFFv8A
+	 2GKm8Hm4v8/Nnh9pmVXUzvFD6JMXXBrVjnDBjvTNt50KX4ZRa1Q2WD1/F1jBIUdCxh
+	 FJDEWEvqtokO1UTT+PmsVKu4AYcEr14JwL9Y+fowwcjRFKaDJ/1WMs4Ek1Lh0bP8E7
+	 ihgx6P3BrvcFw==
+Date: Wed, 5 Nov 2025 10:14:21 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Konrad Dybcio <konradybcio@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Johan Hovold <johan+linaro@kernel.org>, 
+	Mathieu Poirier <mathieu.poirier@linaro.org>, Manivannan Sadhasivam <mani@kernel.org>, 
+	Vinod Koul <vkoul@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Taniya Das <quic_tdas@quicinc.com>, 
+	Imran Shaik <quic_imrashai@quicinc.com>, Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, 
+	Jagadeesh Kona <quic_jkona@quicinc.com>, Ulf Hansson <ulf.hansson@linaro.org>, 
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-pm@vger.kernel.org, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH 2/5] dt-bindings: remoteproc: qcom,sc8280xp-pas: Fix CDSP
+ power desc
+Message-ID: <20251105-dramatic-denim-kangaroo-cef9ed@kuoka>
+References: <20251104-topic-8280_mxc-v1-0-df545af0ef94@oss.qualcomm.com>
+ <20251104-topic-8280_mxc-v1-2-df545af0ef94@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Stephen Boyd <sboyd@kernel.org>, linux-pm@vger.kernel.org, 
- Alexandre Belloni <alexandre.belloni@bootlin.com>, 
- linux-clk@vger.kernel.org, Matti Vaittinen <mazziesaccount@gmail.com>, 
- Conor Dooley <conor+dt@kernel.org>, Sebastian Reichel <sre@kernel.org>, 
- Lee Jones <lee@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
- linux-rtc@vger.kernel.org, linux-gpio@vger.kernel.org, 
- Michael Turquette <mturquette@baylibre.com>, devicetree@vger.kernel.org, 
- Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, 
- Liam Girdwood <lgirdwood@gmail.com>, Pavel Machek <pavel@kernel.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, Mark Brown <broonie@kernel.org>, 
- Andreas Kemnade <andreas@kemnade.info>, linux-kernel@vger.kernel.org, 
- linux-leds@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>
-To: Matti Vaittinen <matti.vaittinen@linux.dev>
-In-Reply-To: <4c7ea0c83f4bb4af65439a9b8951d50ee705d22c.1762327887.git.mazziesaccount@gmail.com>
-References: <cover.1762327887.git.mazziesaccount@gmail.com>
- <4c7ea0c83f4bb4af65439a9b8951d50ee705d22c.1762327887.git.mazziesaccount@gmail.com>
-Message-Id: <176233321210.143104.455177775703669783.robh@kernel.org>
-Subject: Re: [PATCH v3 05/16] dt-bindings: mfd: ROHM BD72720
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251104-topic-8280_mxc-v1-2-df545af0ef94@oss.qualcomm.com>
 
-
-On Wed, 05 Nov 2025 09:37:05 +0200, Matti Vaittinen wrote:
-> From: Matti Vaittinen <mazziesaccount@gmail.com>
+On Tue, Nov 04, 2025 at 08:31:07PM +0100, Konrad Dybcio wrote:
+> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 > 
-> The ROHM BD72720 is a power management IC integrating regulators, GPIOs,
-> charger, LEDs, RTC and a clock gate.
+> The power requirements for the CDSP instances on SC8280XP aren't fully
+> described, with only one of the three present. Fix that.
 > 
-> Add dt-binding doc for ROHM BD72720.
-> 
-> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
-> 
+> Fixes: ee651cd1e944 ("dt-bindings: remoteproc: qcom: pas: Add sc8280xp adsp and nsp pair")
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 > ---
-> Revision history:
->  v2 => v3:
->  - Styling
->  - Document all pin functions
->  - use pattern-properties
->  - re-use existing Rsense binding
->  - correct the example
+>  Documentation/devicetree/bindings/remoteproc/qcom,sc8280xp-pas.yaml | 4 ++++
+>  1 file changed, 4 insertions(+)
 > 
->  RFCv1 => v2:
->  - Typofixes
-> ---
->  .../bindings/mfd/rohm,bd72720-pmic.yaml       | 273 ++++++++++++++++++
->  1 file changed, 273 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd72720-pmic.yaml
-> 
+> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sc8280xp-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sc8280xp-pas.yaml
+> index 96d53baf6e00..5dbda3a55047 100644
+> --- a/Documentation/devicetree/bindings/remoteproc/qcom,sc8280xp-pas.yaml
+> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,sc8280xp-pas.yaml
+> @@ -91,9 +91,13 @@ allOf:
+>          power-domains:
+>            items:
+>              - description: NSP power domain
+> +            - description: CX power domain
+> +            - description: MXC power domain
+>          power-domain-names:
+>            items:
+>              - const: nsp
+> +            - const: cx
+> +            - const: mxc
 
-My bot found errors running 'make dt_binding_check' on your patch:
+Heh, so if this was described since beginning entire binding would fit
+100% into qcom,sm8550-pas.yaml, instead having this now in different
+file because of different order. Not great. :(
 
-yamllint warnings/errors:
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mfd/rohm,bd72720-pmic.yaml: Unresolvable reference: /schemas/regulator/rohm,bd77270-regulator.yaml
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mfd/rohm,bd72720-pmic.example.dtb: pmic@4b (rohm,bd71828): 'rohm,pin-dvs0', 'rohm,pin-dvs1', 'rohm,pin-exten0', 'rohm,pin-exten1', 'rohm,pin-fault_b' do not match any of the regexes: '^pinctrl-[0-9]+$'
-	from schema $id: http://devicetree.org/schemas/mfd/rohm,bd71828-pmic.yaml
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/4c7ea0c83f4bb4af65439a9b8951d50ee705d22c.1762327887.git.mazziesaccount@gmail.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+Best regards,
+Krzysztof
 
