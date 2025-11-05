@@ -1,21 +1,21 @@
-Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
+Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F67C3164D2
-	for <linux-clk@vger.kernel.org>; Wed,  5 Nov 2025 13:09:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19B15311942
+	for <linux-clk@vger.kernel.org>; Wed,  5 Nov 2025 13:16:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762348170; cv=none; b=Ya0UigeFGWG7gSW3jWG6aD7kWiHbjCbfKRARu2gft8Mpv0+7JPVp+kC8TjJek0P7TwJnSVFGWR6zesKYHyon8qIDuaa79EErCJMez/DSggGZlC5+YW1sFMqQAlIDFzVp/1cHTsLLH1x2hFi9avQLwTRrmD5Kklgc3vr6y9PchWw=
+	t=1762348618; cv=none; b=gW19p5QUoE44Je9QPDHK+oNX+el495XUW4jyxV79ztdZtqicGKBwwa79+ON0tS2BCKeRUyhbaFwdxHjkUc1C9Jn7bEyVCu+KkEGbyuoOBO0tMOCnI1E97hJR7QcVnvC7Pqxcw91zn1KOlVEZcwUukF8nOQaStlC8mzX8acq7jac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762348170; c=relaxed/simple;
-	bh=uguI1xGoSqMV/a92i80LW5vKXiSNa4y8fhfB+Wp0GW4=;
+	s=arc-20240116; t=1762348618; c=relaxed/simple;
+	bh=fUTwJNDHUgzPs1TItc0+dwsS8UK7KycrT4JxNbiktpg=;
 	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
-	 References:In-Reply-To; b=RNgbw/hrvjO/Gdo/h01/OcWEoHyPFFTy/ty8W7NUE8XqmKoLfTKn5DuchWXsUh0H2Y1jvUqdLqP4q2NmLrjTetJzgoCUftT3F1TNQparqcLwFfdEvEE5nKdA2r+0h3f6lgw/kpjG1H3Dom9PEx3kjwLxJDt5gykPEWCBfLQXP2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow-tech.com; spf=pass smtp.mailfrom=cknow-tech.com; dkim=pass (2048-bit key) header.d=cknow-tech.com header.i=@cknow-tech.com header.b=MNTmIoYg; arc=none smtp.client-ip=95.215.58.179
+	 References:In-Reply-To; b=W4AoFsRwpADSXTtwlrmvTQT80/gL6N/z0HX+3tdX9DOafPg+Gvs1QiqJDcBXXhqgq5y08VeD6rQoT4ISWhmHQvTiABoybW0qpv4IOpLcwsOUKZMxnkrnmrMlDomfjrn3f8B7QHCdwfc6qUYe1Pkx8uTNzpZEnhMhvc/cQMVo+AQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow-tech.com; spf=pass smtp.mailfrom=cknow-tech.com; dkim=pass (2048-bit key) header.d=cknow-tech.com header.i=@cknow-tech.com header.b=nuFi3+XJ; arc=none smtp.client-ip=91.218.175.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow-tech.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow-tech.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow-tech.com header.i=@cknow-tech.com header.b="MNTmIoYg"
+	dkim=pass (2048-bit key) header.d=cknow-tech.com header.i=@cknow-tech.com header.b="nuFi3+XJ"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -23,71 +23,69 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow-tech.com;
-	s=key1; t=1762348154;
+	s=key1; t=1762348604;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=JviihLCt3v6d6CZovBHWlp8JXmmPFCMHNUL+edx3LHs=;
-	b=MNTmIoYgYT8/lE217Au/8HIwzXrmYeDqSa3iJuB2cz2XV0ASGUqU4Jn+7U+k5/x8VuoUmh
-	wQM4ZwYXWDcsU7vOdXVFhoiwmcJe7dDaRSDvVJVGfGz3wrclxU+mpJ5dFoCmivN9vdAS18
-	sLVRoR2CRPiYUem7AmPTd7Whw6gsk+L6BDCkstcw4el/O7xgCyJ01yh2kvge79opSk7jAy
-	OvgqFm3rNxMCWNc1v/M/5WWG/ItEEUahS0kpFDtVv8XJR7SdC5LjYLCGmfRgRPrUFeg2dG
-	novMFhyOvhRD7jHLq93j6hNgrs0VqfXyipAM92miup/izAs0i8wqEVgnQ13kZw==
+	bh=06qBPm1fhFSKR8WuXfgSJkBHchOvYaGI3r+Tq1ruRHM=;
+	b=nuFi3+XJIUC4IMIZbpTNvnro4Irl5tYMnQEv6fg/Kkvl/IljVEvTDKotl6REwLqxDISxs1
+	jThgRGnSFy2QBbD3kavo6bUiH81wPE88IxmoVUcgZFaqwcJLuolnq0lVd9iUCAbB9WtBZJ
+	DXX7B1rwDawDtBkYA6jbdjAFiuSeJaLipBy5O2IdmxEimmOSL2m/teOlY/62usQ0UKCA72
+	YkJeImAlO5eo6SX7oI+p+l20fKbwhNW8ixTRCMvu3x/THQH8TppAJ4pAC9gO8W/4fDyLSb
+	ORun7XhsHZ7QsaF72kfVFoe81YBN2F09k+BeOKzG5qgJotzcvXV4PRBCVeQZOQ==
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Date: Wed, 05 Nov 2025 14:08:59 +0100
-Message-Id: <DE0S9YBDI0NK.2892TZHYSQLFM@cknow-tech.com>
+Date: Wed, 05 Nov 2025 14:16:42 +0100
+Message-Id: <DE0SFV203UMS.1ZV2JE6QEPN29@cknow-tech.com>
 To: "Heiko Stuebner" <heiko@sntech.de>
 Cc: <mturquette@baylibre.com>, <sboyd@kernel.org>, <robh@kernel.org>,
  <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <linux-clk@vger.kernel.org>,
  <linux-arm-kernel@lists.infradead.org>,
  <linux-rockchip@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
  <michael.riesch@collabora.com>
-Subject: Re: [PATCH 1/3] dt-bindings: clock: rk3568: Add SCMI clock ids
+Subject: Re: [PATCH 2/3] arm64: dts: rockchip: use SCMI clock id for cpu
+ clock on rk356x
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 From: "Diederik de Haas" <diederik@cknow-tech.com>
 References: <20251103234926.416137-1-heiko@sntech.de>
- <20251103234926.416137-2-heiko@sntech.de>
-In-Reply-To: <20251103234926.416137-2-heiko@sntech.de>
+ <20251103234926.416137-3-heiko@sntech.de>
+In-Reply-To: <20251103234926.416137-3-heiko@sntech.de>
 X-Migadu-Flow: FLOW_OUT
 
+Hi Heiko,
+
 On Tue Nov 4, 2025 at 12:49 AM CET, Heiko Stuebner wrote:
-> The Trusted Firmware on RK3568 exposes 3 clocks via the SCMI clock
-> interface. Add descriptive IDs for them.
->
-> The clock ids are used in both the older vendor-binary TF-A, as well
-> as the recently merged upstream SCMI clock implementation.
->
-> Link: https://review.trustedfirmware.org/c/TF-A/trusted-firmware-a/+/3126=
-5
+> Instead of hard-coding 0, use the more descriptive ID from the binding
+> to reference the SCMI clock for the cpu on rk356x.
+
+Any particular reason you only did it for the cpu, but not the gpu?
+
 > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 > ---
->  include/dt-bindings/clock/rk3568-cru.h | 6 ++++++
->  1 file changed, 6 insertions(+)
+>  arch/arm64/boot/dts/rockchip/rk356x-base.dtsi | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> diff --git a/include/dt-bindings/clock/rk3568-cru.h b/include/dt-bindings=
-/clock/rk3568-cru.h
-> index f01f0e9ce8f1..1e0aef8a645d 100644
-> --- a/include/dt-bindings/clock/rk3568-cru.h
-> +++ b/include/dt-bindings/clock/rk3568-cru.h
-> @@ -483,6 +483,12 @@
-> =20
->  #define PCLK_CORE_PVTM		450
-> =20
-> +/* scmi-clocks indices */
-> +
-> +#define SCMI_CLK_CPU		0
-> +#define SCMI_CLK_GPU		1
-> +#define SCMI_CLK_NPU		2
-> +
+> diff --git a/arch/arm64/boot/dts/rockchip/rk356x-base.dtsi b/arch/arm64/b=
+oot/dts/rockchip/rk356x-base.dtsi
+> index a3361527d4fe..d0c76401b45e 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk356x-base.dtsi
+> +++ b/arch/arm64/boot/dts/rockchip/rk356x-base.dtsi
+> @@ -53,7 +53,7 @@ cpu0: cpu@0 {
+>  			device_type =3D "cpu";
+>  			compatible =3D "arm,cortex-a55";
+>  			reg =3D <0x0 0x0>;
+> -			clocks =3D <&scmi_clk 0>;
+> +			clocks =3D <&scmi_clk SCMI_CLK_CPU>;
 
-This corresponds with the id's in ``clock_table`` in TF-A's
-``plat/rockchip/rk3568/drivers/scmi/rk3568_clk.c`` file, so
+Regardless of the above comment, feel free to add
 
 Reviewed-by: Diederik de Haas <diederik@cknow-tech.com>
 
->  /* pmu soft-reset indices */
->  /* pmucru_softrst_con0 */
->  #define SRST_P_PDPMU_NIU	0
+Cheers,
+  Diederik
+
+>  			#cooling-cells =3D <2>;
+>  			enable-method =3D "psci";
+>  			i-cache-size =3D <0x8000>;
 
