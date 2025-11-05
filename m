@@ -1,94 +1,86 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 543BE2F7AB4;
-	Wed,  5 Nov 2025 09:14:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 617272FF164;
+	Wed,  5 Nov 2025 09:14:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762334064; cv=none; b=N5kv3DR+PXpEEVwz0FZGVHOAlMTDTIrBU0iHbXHf4vawp6oUQO3myBUX7heFsdRXXYakll7a3K2JSjEdCMzo1dzFdngZW2x85wApVzTwvCMISXYfyR8ZyY7ZdzXEoj0NKigpFjg8RBzrBRCGscFHp6OG9jL3bchBqCHQgsjskE8=
+	t=1762334091; cv=none; b=RNWpXcNB1rTaZoTsrSbqX5jaa7JD5Apz3f4T5MO0D5JN2m5AA9xBAD7joCZ3NeQZmXXBQEnRvXDFEzOQPAvteFsRy2JE6upp3XfMUFrjs9NttxIh5czPc3tfP2yGokGKJiA02kn+3WtoQOKK7YS4KI5gtLosGWxi6JA4c9mtr80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762334064; c=relaxed/simple;
-	bh=KwmEx9hgVk7y+RSTS2QImEXQ30/Rh4I9Ht/dNmvoaNI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=isoOnzstEqf6s1L5cdl/LQNpdIcP4DxV5LfqyQZ0JBxC3fLYdBit/Zu1TzqB1bB0/XSEeWZEaaCjVBE2X+oFgCQD1Dw6bKmOafHnoVzfb9N/SWEQqd2ZtRmLw6ukMG/5hwDYTuUPsqG4wcFUy6dEv+vePZTQJl/x/f5smRx7mOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pH7cu0yH; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pH7cu0yH"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52BBCC4CEF8;
-	Wed,  5 Nov 2025 09:14:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762334063;
-	bh=KwmEx9hgVk7y+RSTS2QImEXQ30/Rh4I9Ht/dNmvoaNI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pH7cu0yHXFCgGt/0ca4SBMfZGTNDILeOA0KZMzEsw4w+vZj60tTfcxwaYWfKrwu3w
-	 o7J1IPVKRIdWcEBAZSy/fj8XR3vKj2Hu9atKHPZUXmsS3655T9txDKldlerftBkxNA
-	 8amFqn5ek/xXu6qOJuS8XsPTqzFH7AwCIMGCXdvGpn0Pqz+q9PMRD2xf9kFvhFFv8A
-	 2GKm8Hm4v8/Nnh9pmVXUzvFD6JMXXBrVjnDBjvTNt50KX4ZRa1Q2WD1/F1jBIUdCxh
-	 FJDEWEvqtokO1UTT+PmsVKu4AYcEr14JwL9Y+fowwcjRFKaDJ/1WMs4Ek1Lh0bP8E7
-	 ihgx6P3BrvcFw==
-Date: Wed, 5 Nov 2025 10:14:21 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Konrad Dybcio <konradybcio@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Johan Hovold <johan+linaro@kernel.org>, 
-	Mathieu Poirier <mathieu.poirier@linaro.org>, Manivannan Sadhasivam <mani@kernel.org>, 
-	Vinod Koul <vkoul@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Taniya Das <quic_tdas@quicinc.com>, 
-	Imran Shaik <quic_imrashai@quicinc.com>, Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, 
-	Jagadeesh Kona <quic_jkona@quicinc.com>, Ulf Hansson <ulf.hansson@linaro.org>, 
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-pm@vger.kernel.org, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH 2/5] dt-bindings: remoteproc: qcom,sc8280xp-pas: Fix CDSP
- power desc
-Message-ID: <20251105-dramatic-denim-kangaroo-cef9ed@kuoka>
-References: <20251104-topic-8280_mxc-v1-0-df545af0ef94@oss.qualcomm.com>
- <20251104-topic-8280_mxc-v1-2-df545af0ef94@oss.qualcomm.com>
+	s=arc-20240116; t=1762334091; c=relaxed/simple;
+	bh=eL0wacU/2NLr6zm6Ej+O3DjycwAJ/fCpJmPu54OPFlI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=n/Bo5mremd04QIi8EDk/8XVyw+c91EETC8ff7k7h6yuks5SWso6TpdbpB5xQd0LS00L3chZ6Inh7yGRrwoI6GSIt3tiEEdKWeTQhE4KCu1eU12Qwtg81VrOvS5CuI7y6Ot67hRURwjBPjENpx7VoNt4ipD6kV5hJP8prgPCQWKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; arc=none smtp.client-ip=210.160.252.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
+X-CSE-ConnectionGUID: DLeC+zhwSTOm5VfOxc1wQQ==
+X-CSE-MsgGUID: ocVJPaBrS3yveVlD/YAymA==
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 05 Nov 2025 18:14:41 +0900
+Received: from demon-pc.localdomain (unknown [10.226.92.38])
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 686E44175EC6;
+	Wed,  5 Nov 2025 18:14:36 +0900 (JST)
+From: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+To: 
+Cc: Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Mark Brown <broonie@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	linux-spi@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+Subject: [PATCH 00/14] Add RSPI support for RZ/T2H and RZ/N2H
+Date: Wed,  5 Nov 2025 11:13:44 +0200
+Message-ID: <20251105091401.1462985-1-cosmin-gabriel.tanislav.xa@renesas.com>
+X-Mailer: git-send-email 2.51.2
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251104-topic-8280_mxc-v1-2-df545af0ef94@oss.qualcomm.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Nov 04, 2025 at 08:31:07PM +0100, Konrad Dybcio wrote:
-> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> 
-> The power requirements for the CDSP instances on SC8280XP aren't fully
-> described, with only one of the three present. Fix that.
-> 
-> Fixes: ee651cd1e944 ("dt-bindings: remoteproc: qcom: pas: Add sc8280xp adsp and nsp pair")
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> ---
->  Documentation/devicetree/bindings/remoteproc/qcom,sc8280xp-pas.yaml | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sc8280xp-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sc8280xp-pas.yaml
-> index 96d53baf6e00..5dbda3a55047 100644
-> --- a/Documentation/devicetree/bindings/remoteproc/qcom,sc8280xp-pas.yaml
-> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,sc8280xp-pas.yaml
-> @@ -91,9 +91,13 @@ allOf:
->          power-domains:
->            items:
->              - description: NSP power domain
-> +            - description: CX power domain
-> +            - description: MXC power domain
->          power-domain-names:
->            items:
->              - const: nsp
-> +            - const: cx
-> +            - const: mxc
+Compared to the previously supported RZ/V2H, the Renesas RZ/T2H
+(R9A09G077) and RZ/N2H (R9A09G087) SoCs have a smaller FIFO, no resets,
+and only two clocks: PCLKSPIn and PCLK. PCLKSPIn, being the clock from
+which the SPI transfer clock is generated, is the equivalent of the TCLK
+from V2H. They also support generating the SPI transfer clock from PCLK.
 
-Heh, so if this was described since beginning entire binding would fit
-100% into qcom,sm8550-pas.yaml, instead having this now in different
-file because of different order. Not great. :(
+V2:
+ * fix missing unwind goto quit_resets
+ * add resets: false and reset-names: false
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cosmin Tanislav (14):
+  clk: renesas: r9a09g077: add SPI module clocks
+  spi: rzv2h-rspi: make resets optional
+  spi: rzv2h-rspi: make FIFO size chip-specific
+  spi: rzv2h-rspi: make clocks chip-specific
+  spi: rzv2h-rspi: move register writes out of rzv2h_rspi_setup_clock()
+  spi: rzv2h-rspi: avoid recomputing transfer frequency
+  spi: rzv2h-rspi: make transfer clock rate finding chip-specific
+  spi: rzv2h-rspi: add support for using PCLK for transfer clock
+  spi: rzv2h-rspi: add support for variable transfer clock
+  spi: rzv2h-rspi: add support for loopback mode
+  dt-bindings: spi: renesas,rzv2h-rspi: document RZ/T2H and RZ/N2H
+  spi: rzv2h-rspi: add support for RZ/T2H and RZ/N2H
+  arm64: dts: renesas: r9a09g077: Add SPIs support
+  arm64: dts: renesas: r9a09g087: Add SPIs support
 
-Best regards,
-Krzysztof
+ .../bindings/spi/renesas,rzv2h-rspi.yaml      |  65 +++-
+ arch/arm64/boot/dts/renesas/r9a09g077.dtsi    |  72 ++++
+ arch/arm64/boot/dts/renesas/r9a09g087.dtsi    |  72 ++++
+ drivers/clk/renesas/r9a09g077-cpg.c           |  22 ++
+ drivers/spi/spi-rzv2h-rspi.c                  | 339 +++++++++++++++---
+ 5 files changed, 501 insertions(+), 69 deletions(-)
+
+-- 
+2.51.2
 
