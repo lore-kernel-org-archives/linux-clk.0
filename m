@@ -1,83 +1,108 @@
 Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEEE82F5A34;
-	Wed,  5 Nov 2025 23:26:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A85D2F5A06;
+	Wed,  5 Nov 2025 23:43:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762385202; cv=none; b=CwBPNoZY2YSxHxT/g525LLpETDLPezokxvILu4B/bC1VtItWHuGq/+iaDQeMuM/u9fUpDTPpOK6TkLWCFSY3dW0c9gr9frjMzyZDf6IhwXCJ+LPrElVv/XrlwqgWJ5RXB13CHohchXjMGOnugRgvodKPJK0Yqwysr9ugjswL1SY=
+	t=1762386217; cv=none; b=ttQqMeRyxxsoOuuKvKII+4SCLC266hiN6M51jjwFdmvwbd23bXNWxf2lsCaixtIiM7aSpPvFsNeV13AfoYSjgED4mN6FGvY0Pc94aF8RJ0vtpYNKQTqqExjMVQyf+nj/1mD0LLcfWX62NwbT1E118gW4brpiyWMZOgIPVpCuhw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762385202; c=relaxed/simple;
-	bh=8Y8zXnhTAD7Fw9x7SklREnVNca5N1r1NY3A4jE2jDTI=;
+	s=arc-20240116; t=1762386217; c=relaxed/simple;
+	bh=X5LSadPdbxiYrUIw1dL7CsFHmVdyRdU/x3HkzDa/SmA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=d8UBVxLaCPzJE3OGVu13eD/BOU/gUpEFOPJ9asqkaElXHSoHCQOCiQgNYIYluusivS5d1tkrb4rXWejkynsjlq9ZnOjoJ5VeL733ZCVh0mVo6egwA8ts+e6+H60tusajQNB4vz8QD3aGV0F0CLS4Ri91idNX6/qJ+sQvyVlZxiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=z6DV5tbd; arc=none smtp.client-ip=185.11.138.130
+	 MIME-Version:Content-Type; b=MaR8UnE/aO0m8SnD1kD1pBwxDFTMexIHdnsfQAV4/WkW794LyzmTA2tpi5Z34fjbpz8y+nyyHt5hyGQ/yHf2xgZqgIiOZE9mDzr9hdPvl6wNqBl/vsnDFe+0HVv6RJsvbPTFGt2VD6rtfG3tOud6fkEVL0fT5EuMT/DOT3LI/c8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=cfli0nwc; arc=none smtp.client-ip=185.11.138.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="z6DV5tbd"
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="cfli0nwc"
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
 	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
-	bh=hvqWhgq6E9yIB8u3zsh04lPjz8o3zonnYZU1K7EJUgc=; b=z6DV5tbdOsfeSMjMAfXbHs/8My
-	NXwEqvACRlFCms94Wu6NvxfSPC1rd2g5ahqikshqIpgsylZreaZ3onosBto0Moe7LnDMplW39kwC4
-	OFwTDnHb37ks2Y1oeJV4q3rCANfyzqa/4yewEqIiX+kYc7NL8VtRxjov05bD0nB+vYevyFfVefNNa
-	TnYonKLAyLyFonw790VLuLDGxG6zL1wtfLwBiw6fbFYoZn5iZ8HT+rZ8nSlUnx6t74gleKdOI2t8Y
-	PsS4aDwFS2vb4PmJLmS0nXPeMt2m081CZ1dDibd/Xd2rM9OitiUxQLcQIf8wisIPExFcR+dLBQDLF
-	3ehSkZYw==;
-Received: from i53875bde.versanet.de ([83.135.91.222] helo=phil.fritz.box)
+	bh=vqGD0QYI7TiTsk6Wh+7QyORQeVGQ1Q1viVMxjGD/NsM=; b=cfli0nwcgYEtYaOCBzK2Fuw+we
+	hezAoitjvDzh6bFK9jUW/nj2qqVYaDTVNY1sOs/SOeFcH8JhQjbA7aZrby9THQVAGI+C0JlQNOvce
+	h4g3Sz7OcY/x78yJxDFeZ8pt1BLLt0MVb1A9TOGWFjkZ6xDSqAkIBfO9nrPuKKCeg4ZTFn8CwvoFG
+	MpD0mgzYOAsLqnW7yWE2ZRq4hr8EWFp3uomyB+EvGHHlTu0S1QWMg8dgAex5Rcqp7Nm/ymvtTFlGU
+	Q+eGzHOpp+CmMTSrrmsvX2vppJoJfUriPDuzid+V3hs3kZv/2QV1bFN+rt2LskszVrOdW/ymSePrd
+	kAHdXf8w==;
+Received: from i53875bde.versanet.de ([83.135.91.222] helo=phil.localnet)
 	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.94.2)
 	(envelope-from <heiko@sntech.de>)
-	id 1vGmtf-0001FA-Qo; Thu, 06 Nov 2025 00:26:35 +0100
+	id 1vGn9z-0001MR-L9; Thu, 06 Nov 2025 00:43:27 +0100
 From: Heiko Stuebner <heiko@sntech.de>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	michael.riesch@collabora.com
-Subject: Re: [PATCH 0/3] SCMI clocks on RK356x
-Date: Thu,  6 Nov 2025 00:26:33 +0100
-Message-ID: <176238518187.156498.15783284183828303705.b4-ty@sntech.de>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20251103234926.416137-1-heiko@sntech.de>
-References: <20251103234926.416137-1-heiko@sntech.de>
+To: Diederik de Haas <diederik@cknow-tech.com>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org, michael.riesch@collabora.com
+Subject:
+ Re: [PATCH 2/3] arm64: dts: rockchip: use SCMI clock id for cpu clock on
+ rk356x
+Date: Thu, 06 Nov 2025 00:43:26 +0100
+Message-ID: <5996423.DvuYhMxLoT@phil>
+In-Reply-To: <DE0SFV203UMS.1ZV2JE6QEPN29@cknow-tech.com>
+References:
+ <20251103234926.416137-1-heiko@sntech.de>
+ <20251103234926.416137-3-heiko@sntech.de>
+ <DE0SFV203UMS.1ZV2JE6QEPN29@cknow-tech.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+
+Am Mittwoch, 5. November 2025, 14:16:42 Mitteleurop=C3=A4ische Normalzeit s=
+chrieb Diederik de Haas:
+> Hi Heiko,
+>=20
+> On Tue Nov 4, 2025 at 12:49 AM CET, Heiko Stuebner wrote:
+> > Instead of hard-coding 0, use the more descriptive ID from the binding
+> > to reference the SCMI clock for the cpu on rk356x.
+>=20
+> Any particular reason you only did it for the cpu, but not the gpu?
+
+Didn't think of if at the time :-) .
+
+Will prepare another one for the GPU.
 
 
-On Tue, 04 Nov 2025 00:49:23 +0100, Heiko Stuebner wrote:
-> This cleans up the existing use of SCMI clocks on the RK356x SoCs.
-> 
-> 
-> Heiko Stuebner (3):
->   dt-bindings: clock: rk3568: Add SCMI clock ids
->   arm64: dts: rockchip: use SCMI clock id for cpu clock on rk356x
->   arm64: dts: rockchip: add missing clocks for cpu cores on rk356
-> 
-> [...]
+Heiko
 
-Applied, thanks!
+>=20
+> > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> > ---
+> >  arch/arm64/boot/dts/rockchip/rk356x-base.dtsi | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/arch/arm64/boot/dts/rockchip/rk356x-base.dtsi b/arch/arm64=
+/boot/dts/rockchip/rk356x-base.dtsi
+> > index a3361527d4fe..d0c76401b45e 100644
+> > --- a/arch/arm64/boot/dts/rockchip/rk356x-base.dtsi
+> > +++ b/arch/arm64/boot/dts/rockchip/rk356x-base.dtsi
+> > @@ -53,7 +53,7 @@ cpu0: cpu@0 {
+> >  			device_type =3D "cpu";
+> >  			compatible =3D "arm,cortex-a55";
+> >  			reg =3D <0x0 0x0>;
+> > -			clocks =3D <&scmi_clk 0>;
+> > +			clocks =3D <&scmi_clk SCMI_CLK_CPU>;
+>=20
+> Regardless of the above comment, feel free to add
+>=20
+> Reviewed-by: Diederik de Haas <diederik@cknow-tech.com>
+>=20
+> Cheers,
+>   Diederik
+>=20
+> >  			#cooling-cells =3D <2>;
+> >  			enable-method =3D "psci";
+> >  			i-cache-size =3D <0x8000>;
+>=20
+>=20
 
-[1/3] dt-bindings: clock: rk3568: Add SCMI clock ids
-      commit: 88b6a93af4345e901206d0576bdb4e88ea3eaeb8
-[2/3] arm64: dts: rockchip: use SCMI clock id for cpu clock on rk356x
-      commit: ff8912700f31782021ec28c530de1482fa99eab3
-[3/3] arm64: dts: rockchip: add missing clocks for cpu cores on rk356x
-      commit: e06a419eaab9cee7cd5bbb0cfcfbe49e443a9d75
 
-Best regards,
--- 
-Heiko Stuebner <heiko@sntech.de>
+
+
