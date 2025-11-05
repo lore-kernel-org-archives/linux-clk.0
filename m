@@ -1,125 +1,81 @@
-Received: from fout-a8-smtp.messagingengine.com (fout-a8-smtp.messagingengine.com [103.168.172.151])
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C1122F533B;
-	Wed,  5 Nov 2025 23:18:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83CE02F5A33;
+	Wed,  5 Nov 2025 23:26:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762384707; cv=none; b=lbAiKWsZ6vZSiu2pTvAvJ47LbVbEeNkxurqDVnbgr/BzULb84MYrbP5Q7YGXZ6Zja6Gw9qdXqHRhG7mtMrmD+posaCpn+LFLqA+ycdTqPIDZQf9r3kAb76HjEHD0FYk8Z1oeNv3F7wnmRAC1JxoPpa/9b4vckx8+uOkxX0go1oU=
+	t=1762385202; cv=none; b=WROLFxHYdzzNB2wyBkTOJWBuXQ30W++v2pdhK59cy3kptybuqFYlOjCCK2niRzCvCyY7FOszw75uScVphm+Qsfr3hernxH8Kz/oenkmtEyQJC/YgO31Sw4zTbJgwtgI3mumhpSG3yeMhUQqzPkpeyUcyMLjQ1bUPkC27o4LTdME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762384707; c=relaxed/simple;
-	bh=VBxJGzUIs0zvPeG/KIgXvl/V4XXjvzSMYuw/cRZMSjk=;
+	s=arc-20240116; t=1762385202; c=relaxed/simple;
+	bh=PIMhTwuVjXBk97J04AF7ttzGsns0vWw8LEqI5Oe/Y7g=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qLXAZHGPideZusuU4++k64YqXvhCsxK/Hj8GqqVLFkFvarLUL1ipp1akKeirpk7ZWmUjQthek8n4HaAR4LrdowVPZmcBxZAc8h89pJ2cycZuJ0QRbnNDuT7ZjMgQfcPMs+nmWB3N7lw27JyCf9UGuDzVdgYizJUiqIrvRjiMVec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=I/OLZibq; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=NINpg2lG; arc=none smtp.client-ip=103.168.172.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
+	 MIME-Version:Content-Type; b=sBv9gLPk4RTdaFLYwSGQJfPbY2iwp2Ag1oOVR79U4aczSqYxm7GR2q8x8uzQj5gy8I33VMTAnnNLUcChJcT5vYdxZCoEMKmAYR00DqDP5uMA8+/Z9ooFCYQ1LFjXl+vJBvJBDlBYmMXl/6UjQeMtpQ7O2US7QkEDFhLvrqgp22I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=LX5iBlkR; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="I/OLZibq";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="NINpg2lG"
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
-	by mailfout.phl.internal (Postfix) with ESMTP id D3343EC0176;
-	Wed,  5 Nov 2025 18:18:24 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-03.internal (MEProxy); Wed, 05 Nov 2025 18:18:24 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1762384704;
-	 x=1762471104; bh=7jaQjpSsB8lMJo/M0U6io98IEjwBYyqHBM3EcAH4An4=; b=
-	I/OLZibq3PkueWmzaenBo5o1xv4E1FTGgb1tytZss3AXl0mGNBZvxFUpbxgMnj2n
-	nNdzditXCzk8KB2xsIevh3ZwA8+g7yqVrJYAbo/QiU0UpZ9VOmBOf/rXQauWPtHz
-	DWe/GSjjn0kXwTBvJfK2wRsnAKquO+zj+9LUVfnxMSKpGfUbP0+PMAefNFY+4J6L
-	VHdCg5AJpO+NFsxvCyUTY7YyCAofJKrLBQYP1oYhpUwHeu9JX7PpFza6+vbiSSKu
-	d61Gk+Wy/FgifnPdkb9tnXhvJD2XjkdjCQL8M+T/S6YnLCrmJKeow4lnVpbgjdIT
-	MCzoE2hNdK44CO/NGXeEMQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762384704; x=
-	1762471104; bh=7jaQjpSsB8lMJo/M0U6io98IEjwBYyqHBM3EcAH4An4=; b=N
-	INpg2lG0j9veOyilmbxiA7D/4rOEBENflG1ay6bEbcQUHjt8OqixGd8Fw7D3RPUr
-	Bmw6Y+4VdtG3wGr7kaqDm2B6WO95qEsyNBPQaoLTHQM2iKfD71Rcxx5psviiIyjd
-	RcdXKnGQkjZ9j+Cr+fTw/oXaiQL+6ul8Se0xOWCBnUzP62rRvsGTKeT3Hc7asvF0
-	AlaLHVRTc+0xCXAZgR0PsDqapdJp2PTyLBWWQLi2PW/LbDcukuG6u7sDXXikZ0kY
-	2AClLkVsYrvU9AEgVBXkutatNOggCEBhBly03gMNcRBtsoGgg/VJS2iL5IPOH9U4
-	IJG+DC3IA4wQFty3dZ0pQ==
-X-ME-Sender: <xms:QNsLaZ1w8qO9drc5y0hzUTlFE6Q_d6mpiuqbIfchDIzk3QTMZlajAw>
-    <xme:QNsLaWF4JW9TqO4IKW5qnsx23uJHBy6L9zmYCPqANyjCYwNQ6FNqrI0QubXj7nweO
-    a0pILuDSZPe7mFqnED7E_fCJ6UirjPETCdajjhUhJMuhyZPFdeOqKI>
-X-ME-Received: <xmr:QNsLaUvQR6jEPcfdT1hdOB3hRMpPW41OnWfS7CijFg63qDNnH3sBzcJ2SIaAA77FvqdHr6jFs2OLZuFsTikXVIp3>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddukeehvddtucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhephffvvefufffkofgjfhggtgfgsehtkeertdertdejnecuhfhrohhmpefpihhklhgr
-    shcuufpnuggvrhhluhhnugcuoehnihhklhgrshdrshhouggvrhhluhhnugdorhgvnhgvsh
-    grshesrhgrghhnrghtvggthhdrshgvqeenucggtffrrghtthgvrhhnpeehiefgueevuedt
-    fefhheegkeevtdelueeukeevfeduhefhhfejfffggeffleefgeenucevlhhushhtvghruf
-    hiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehnihhklhgrshdrshhouggvrhhl
-    uhhnugesrhgrghhnrghtvggthhdrshgvpdhnsggprhgtphhtthhopedutddpmhhouggvpe
-    hsmhhtphhouhhtpdhrtghpthhtohepghgvvghrthdorhgvnhgvshgrshesghhlihguvghr
-    rdgsvgdprhgtphhtthhopehmthhurhhquhgvthhtvgessggrhihlihgsrhgvrdgtohhmpd
-    hrtghpthhtohepshgsohihugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhhosghh
-    sehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdroh
-    hrghdprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthht
-    oheplhhinhhugidqrhgvnhgvshgrshdqshhotgesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-    dprhgtphhtthhopehlihhnuhigqdgtlhhksehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhr
-    tghpthhtohepuggvvhhitggvthhrvggvsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:QNsLaZoiTf2LUU77lbNOtsGdfUNUrRpmGecuFQfyZ8vcNJnZ2SX5wA>
-    <xmx:QNsLabXZYCItTGQ2IHU_8SXlZy3c4RaHFW8cDUTfAJitNhyfNRvQww>
-    <xmx:QNsLaR3WKbIR4_ZUXssKNJobh4clEYuEdLj3MjA-RADazobj0s86iA>
-    <xmx:QNsLaQt8OPL82ENC1UjVfnSEU3ZaJ_B7PF-yzyrXYrA1MjM62-CgAg>
-    <xmx:QNsLaSx5uMdnEAWy_xCAlwTZycVS9AeQX6DO4817TG_7NDupbsx51KpD>
-Feedback-ID: i80c9496c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 5 Nov 2025 18:18:24 -0500 (EST)
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-renesas-soc@vger.kernel.org,
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="LX5iBlkR"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
+	bh=wuFVci0OU2fN9OEAMkFdaSsZ4Y0TcQDJ7JJBOCcok8A=; b=LX5iBlkRbRi0vlWqwXCQ19fKzd
+	PHiS9qvugmYaEiXl/VFD5u79R8DBHhkPPU7xiwOQ/p1yMwU9ZEpGRHg5l3P9Ota3u/XbA6C7Bd6qw
+	bJXdjlDsmsgpCBTbeSTB030wIhy5ryWXtcBdhL2qKqw8wrDL2GIMsIzDesWCtvredOEKixoI0RZvM
+	EiXJgRTHQwko2nq8WBYtNfSAv2CW5bIJp7sYFwLC1Rr68fFJ8Yq8iu4kcFTTAlgbI78jsXo3u7LWP
+	9j0qZHZtwP8Lypfsqv+cX6S1UXqH1i7M9IjnVUdgIuuXFLaclY8uNbxwU1T2D1kX1H/Bq51Ww7kmD
+	NVzwMjSg==;
+Received: from i53875bde.versanet.de ([83.135.91.222] helo=phil.fritz.box)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1vGmtf-0001FA-Bj; Thu, 06 Nov 2025 00:26:35 +0100
+From: Heiko Stuebner <heiko@sntech.de>
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
 	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org
-Cc: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 2/2] clk: renesas: r8a779a0: Add 3dge module clock
-Date: Thu,  6 Nov 2025 00:18:15 +0100
-Message-ID: <20251105231815.1927239-3-niklas.soderlund+renesas@ragnatech.se>
-X-Mailer: git-send-email 2.51.1
-In-Reply-To: <20251105231815.1927239-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20251105231815.1927239-1-niklas.soderlund+renesas@ragnatech.se>
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	michael.riesch@collabora.com
+Subject: Re: [PATCH 0/2] Drop RK3568's variant of the CLK_NR_CLKS constant
+Date: Thu,  6 Nov 2025 00:26:32 +0100
+Message-ID: <176238518188.156498.3345794880564705981.b4-ty@sntech.de>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20251103234032.413563-1-heiko@sntech.de>
+References: <20251103234032.413563-1-heiko@sntech.de>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-Describe the 3DGE module clock needed to operate the PowerVR GPU.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/clk/renesas/r8a779a0-cpg-mssr.c | 1 +
- 1 file changed, 1 insertion(+)
+On Tue, 04 Nov 2025 00:40:30 +0100, Heiko Stuebner wrote:
+> This drops the use of the CLK_NR_CLKS constant from the rk3568 clock
+> driver and after that, drops the constant from the binding that should
+> not have been part of it in the first place.
+> 
+> Heiko Stuebner (2):
+>   clk: rockchip: rk3568: Drop CLK_NR_CLKS usage
+>   dt-bindings: clock: rk3568: Drop CLK_NR_CLKS define
+> 
+> [...]
 
-diff --git a/drivers/clk/renesas/r8a779a0-cpg-mssr.c b/drivers/clk/renesas/r8a779a0-cpg-mssr.c
-index a35110349769..c77b9b6977ec 100644
---- a/drivers/clk/renesas/r8a779a0-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a779a0-cpg-mssr.c
-@@ -144,6 +144,7 @@ static const struct cpg_core_clk r8a779a0_core_clks[] __initconst = {
- };
- 
- static const struct mssr_mod_clk r8a779a0_mod_clks[] __initconst = {
-+	DEF_MOD("3dge",		  0,	R8A779A0_CLK_ZG),
- 	DEF_MOD("isp0",		 16,	R8A779A0_CLK_S1D1),
- 	DEF_MOD("isp1",		 17,	R8A779A0_CLK_S1D1),
- 	DEF_MOD("isp2",		 18,	R8A779A0_CLK_S1D1),
+Applied, thanks!
+
+[1/2] clk: rockchip: rk3568: Drop CLK_NR_CLKS usage
+      commit: 2a42e3210d4331dddfb04b020050bd774cf99659
+[2/2] dt-bindings: clock: rk3568: Drop CLK_NR_CLKS define
+      commit: ca38f0f65eefd79889b409c89c6932d7e2fe0993
+
+Best regards,
 -- 
-2.51.1
-
+Heiko Stuebner <heiko@sntech.de>
