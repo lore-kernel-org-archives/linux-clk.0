@@ -1,146 +1,214 @@
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0DAF2FE05F;
-	Wed,  5 Nov 2025 09:16:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACF792FF17D
+	for <linux-clk@vger.kernel.org>; Wed,  5 Nov 2025 09:21:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762334173; cv=none; b=Ul5cXr2JTYrWSe2rS8DO1KAAMj4q4SImiE8CpTCubts8Tf1pjg2865UDOzYMvqA3ut7zM1UUFvjXDY/vFw/dLW10aJgiB5Vtpcj9rZPJc8dXmKM9YHKpYZgSYJv4FVQZNVgi41yaPwh1aSEgQmCP5Kh6lwOvpCzDaPBQVtUCzkI=
+	t=1762334500; cv=none; b=LqeMoExKNG6xYfBGoUOPnD1ljmKD4ic7Nckyj7sNB7KQ1Kei3ksvVjUe4y7YzH2H1qZsYNwdiVd8snoxr1mPDcfKMtYrXukVsd81hAXDwjimtVAIC2wHc552VjYR6dvuJx+4dt/zCJhQTUgjzPpwJC5BhQpVePHOkXg4bNxIy+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762334173; c=relaxed/simple;
-	bh=NV+kxczdklyaqUqzxTzGJ5qDBsNZChgauWrrrIEhPwk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=aesZtFvjYIVGs7/8HrYN3+CRa2FOBcJglSuDkn9Atb8uzvBhXgxRl7/5PQHxhRtZNtGiR4umyxZBQ3/u9SC+oQQ/p1RngXhbsQyI87/fJlBtQBo4HEA4ka0mKtV16w60ayzZlblbQks9tJDmWGstbjC7aZCi1sD9Uu9e82Y5YbM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; arc=none smtp.client-ip=210.160.252.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
-X-CSE-ConnectionGUID: Vs/xDU7nTB6ng+5s/B+t4A==
-X-CSE-MsgGUID: q5irnGr9RaCEx4XCNsA/uw==
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 05 Nov 2025 18:16:11 +0900
-Received: from demon-pc.localdomain (unknown [10.226.92.38])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id B19784176E30;
-	Wed,  5 Nov 2025 18:16:06 +0900 (JST)
-From: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
-To: 
-Cc: Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Mark Brown <broonie@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	linux-spi@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
-Subject: [PATCH 14/14] arm64: dts: renesas: r9a09g087: Add SPIs support
-Date: Wed,  5 Nov 2025 11:13:58 +0200
-Message-ID: <20251105091401.1462985-15-cosmin-gabriel.tanislav.xa@renesas.com>
-X-Mailer: git-send-email 2.51.2
-In-Reply-To: <20251105091401.1462985-1-cosmin-gabriel.tanislav.xa@renesas.com>
-References: <20251105091401.1462985-1-cosmin-gabriel.tanislav.xa@renesas.com>
+	s=arc-20240116; t=1762334500; c=relaxed/simple;
+	bh=edPMV5f4+rFOo6X5Ti0mgKPSsr8IMaRSu9nvfdUv6f0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=i5lFAgxGeiZUFWjyQtfdgVNvk9SRaIZL3jIgiWsB1c8Rg/nwjUmUQY+FzgQSPZUbrQd88YetPkIDSEl1OaXoQPzigcBNT79toCqRhISbTEU6vCPMKRw0e4qPz+U8UAev+E42Ef0z+DcV6vc7//z6LK3hivD3630x1nywlwUaiK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=TQpg7/52; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=ZR+wDkz0; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="TQpg7/52";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="ZR+wDkz0"
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A582o133090222
+	for <linux-clk@vger.kernel.org>; Wed, 5 Nov 2025 09:21:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	IsACQYPCm1rz0cB2gcKTd/VxCtL9e1W9lNXbjFsOf50=; b=TQpg7/52eFhlPrnp
+	LhDJOjOfgaikifBBd68Bt76e2RwDhz/AwoHRTuEW6a/g2LQnj33yWoiW6wDv96Jy
+	Mx30mkQKP3xSe7pePqyeTeIo7PmQ4uyAmFJQ7/hKzFI0P39bGXtptuTZ0fuGSBwB
+	CtmboPIDKGPYuUnqFcba/+6KtWObmigfXiekwu/vfBSksTeVkh90Kr1ih6TgwasH
+	OcsuD9R0l+CtPsRoRD3VeqNZbEaIb4ePPyxMyDy5x41tuxXQCREDbVS8APJ/RueQ
+	PVkWQaiQD5yT4X/DHEWzQM2Zyin1Km2hjjXAMB35awqsj/alAkYOIHUuH6OxEqwF
+	1hwJdw==
+Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com [209.85.216.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a7s5e9u07-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Wed, 05 Nov 2025 09:21:37 +0000 (GMT)
+Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-34176460924so1844966a91.3
+        for <linux-clk@vger.kernel.org>; Wed, 05 Nov 2025 01:21:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1762334497; x=1762939297; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=IsACQYPCm1rz0cB2gcKTd/VxCtL9e1W9lNXbjFsOf50=;
+        b=ZR+wDkz0n2WeQXpUYJ/S/iEObUKhXRxEXHLs3JuobM+mVwi8F2RLF7cpuiwNJpR2xk
+         vJTwgWMlDOsAfZBiZRTDbNfGiS4hpcPxa7NQQFUfJXiUclTV3k1V2Iaw0Lzj7Psnve4r
+         kyI3UY1uzBTG/YXugIHmafhyQ+Mew7ApgsVw2JM86RaqSEYOiOoP8F45yzTa4H+Mms4v
+         S8LBrQDkpnIHrIznJfpmIwio4jkoZ6k7bl5diiWiSSyHMWYYPlxwd2hV6kL+d3IEvqTA
+         hxw7DOkah+E6bpTkuO4kRy7IbHvxI2KXM81HazrZ+BEp3UmxlLGegELOWMWY8ElrHP5F
+         80Vw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762334497; x=1762939297;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IsACQYPCm1rz0cB2gcKTd/VxCtL9e1W9lNXbjFsOf50=;
+        b=TFsr1h5hwdo/CWoTtIgILVq8CiMdBH6lq5D7RKPUJeLckXFgTA8g9ZrnnIoLSPstq8
+         +I4vNa8osXZwQV6jMwiHd/EBM8izkL6Z5wQmj+nOZh03D8UJiOQ2SKO9F5qHWh1iHALI
+         vXKYWYcdDKmO5FOJdw3XjcGrE5H59v6u4EOeaQ292GdMgCKIzsLYEjPnWgsp/cQ6ADT4
+         ctRocvmpvCJihMHPASn/2v20M+8SZAxv8OuoYdq+ym7afq0NFNYcNz57P1aodHHR2Ol3
+         Wc5IGfXr9fkCYpNmg8LemExpNZ7Yzcy5wbXdhpAT4r261ybbMJ3KLoKFnwvvkW/EkK56
+         Lrew==
+X-Forwarded-Encrypted: i=1; AJvYcCXeyvBpVuvLIcCbuTA2Z34L7w8xwliGSwurcfoBhbJUgt0tnrtV4b+BCbKJ76VgnmbvOv57qq8LxOM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHEBDRLQaQV786ScfFoL627brSGhCdsWpJXy2NTr6f0mpgmzdn
+	uys00KV1E0hU74y2F+GMniPGBM/jPZubKfGwc4uJzsQl+MHp6CJ+jcPT1EoWbXew4KdCD23Gl2O
+	Lp5YFLa1KljOqQaG44yIIfBVhJKy3gZlOOLmGfKHR/dL60EynRENeZSi97KRQ6so=
+X-Gm-Gg: ASbGncvQ6hEsV3S0Yo417Lej/WNTcVxLCKL6S4lF5W+5JQBt3/3zGwpOQSZSM2rZBM8
+	TOg+WftzLTUFtu76I1oR/qMZ1U2pqEUzFjm+zY35fslAtJ03rV7E5p4Ha183Ty94bHYxk6yXRt+
+	zrYNKb8OIY+X2RLW6nbGLHy8IkpAUjQgYfRZi1GmNnKPTyir67AIcZq9Eisf5XOzfTbRVcpwdJz
+	duJiwUtRuwMA794RGK/nl9pUl8CYcG24lc6PtADHPwpll3p4Qa68Qm1xwi5ih3AbtpZzIKx67WG
+	+jlojRh9UIWDYV4+zk94/mrYydYNqBGNYCQOBevKs8atxUqE1DUF2MAoN63OGMHGLr67D9DFfde
+	J/iU+S53/33XZsuWZA+Km3bFEdw==
+X-Received: by 2002:a17:90b:3bcc:b0:341:212b:fdd1 with SMTP id 98e67ed59e1d1-341a6c494a6mr3530324a91.16.1762334496575;
+        Wed, 05 Nov 2025 01:21:36 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFQpzk6XoGY00QwbdKuVcQLA2m3DPrvsCtENWGLbUBFoSKr4BBAUYZ4VuPu8w72h9csLCtO6Q==
+X-Received: by 2002:a17:90b:3bcc:b0:341:212b:fdd1 with SMTP id 98e67ed59e1d1-341a6c494a6mr3530288a91.16.1762334496022;
+        Wed, 05 Nov 2025 01:21:36 -0800 (PST)
+Received: from [10.218.33.29] ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-341a69b629fsm2229043a91.20.2025.11.05.01.21.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 05 Nov 2025 01:21:35 -0800 (PST)
+Message-ID: <1e464f5d-f4ed-4ee5-b966-fc7de586340a@oss.qualcomm.com>
+Date: Wed, 5 Nov 2025 14:51:00 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/5] arm64: dts: qcom: sc8280xp: Add missing VDD_MXC links
+To: Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Johan Hovold <johan+linaro@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Manivannan Sadhasivam <mani@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+ <sboyd@kernel.org>, Taniya Das <quic_tdas@quicinc.com>,
+        Imran Shaik <quic_imrashai@quicinc.com>,
+        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>,
+        Ulf Hansson
+ <ulf.hansson@linaro.org>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-pm@vger.kernel.org,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>
+References: <20251104-topic-8280_mxc-v1-0-df545af0ef94@oss.qualcomm.com>
+ <20251104-topic-8280_mxc-v1-5-df545af0ef94@oss.qualcomm.com>
+Content-Language: en-US
+From: Imran Shaik <imran.shaik@oss.qualcomm.com>
+In-Reply-To: <20251104-topic-8280_mxc-v1-5-df545af0ef94@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: 7RMmxGEugbyMJP86V3_fFxCYiQr0-1no
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA1MDA2OSBTYWx0ZWRfX2ZTakIRmS7V3
+ +34zjlhtFWwtPdpQSqVH+jcaqllq9Egb3doWC1jqHc/iy1DG35rJm1NfBNQhaL6K8Vun8ZNGbpZ
+ NRMcJLgHqwIJRrHSFKrmgp8m+FqhEchNjSD7y29eDVMSS94sgkihk0uzqmUr+ZYPgLT4++SIF+o
+ pKErGEJ/LVCleirc4ZKkH5rf4yUfPN6MVYHAyzR31xJCIacRW4ReeTM8k7yUGrKUoKGAxQRewJl
+ IsoTv1xW30hVVirLW+i3zos+XSHZ0+rkHlt1H0gpfF/5gBKbuZ+9LB1UU/cj2PzLH0XwYc7gJ4F
+ 0BXisBo3qvhFv5HCXgrsn/uPbctjUgONwCvsBbE1keigkXY3+I1+gsp+NPkrphpJkALinmBvtEw
+ MQ7aTr49pz/Vw5aTeSAaU0hatgpfeg==
+X-Authority-Analysis: v=2.4 cv=OayVzxTY c=1 sm=1 tr=0 ts=690b1721 cx=c_pps
+ a=vVfyC5vLCtgYJKYeQD43oA==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=Z_SZGEFGBxMoMc4a6_cA:9
+ a=NqO74GWdXPXpGKcKHaDJD/ajO6k=:19 a=QEXdDO2ut3YA:10 a=rl5im9kqc5Lf4LNbBjHf:22
+X-Proofpoint-ORIG-GUID: 7RMmxGEugbyMJP86V3_fFxCYiQr0-1no
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-05_03,2025-11-03_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 clxscore=1015 phishscore=0 adultscore=0 impostorscore=0
+ bulkscore=0 suspectscore=0 spamscore=0 lowpriorityscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511050069
 
-Add support for the four SPI peripherals on the Renesas RZ/N2H Soc.
 
-Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
----
- arch/arm64/boot/dts/renesas/r9a09g087.dtsi | 72 ++++++++++++++++++++++
- 1 file changed, 72 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g087.dtsi b/arch/arm64/boot/dts/renesas/r9a09g087.dtsi
-index db117b6f75a1..a19349dc8e53 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g087.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a09g087.dtsi
-@@ -188,6 +188,78 @@ sci5: serial@81005000 {
- 			status = "disabled";
- 		};
- 
-+		rspi0: spi@80007000 {
-+			compatible = "renesas,r9a09g087-rspi", "renesas,r9a09g077-rspi";
-+			reg = <0x0 0x80007000 0x0 0x400>;
-+			interrupts = <GIC_SPI 636 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 637 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 638 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 634 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 635 IRQ_TYPE_EDGE_RISING>;
-+			interrupt-names = "idle", "error", "end", "rx", "tx";
-+			clocks = <&cpg CPG_CORE R9A09G087_CLK_PCLKM>,
-+				 <&cpg CPG_MOD 104>;
-+			clock-names = "pclk", "pclkspi";
-+			power-domains = <&cpg>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		rspi1: spi@80007400 {
-+			compatible = "renesas,r9a09g087-rspi", "renesas,r9a09g077-rspi";
-+			reg = <0x0 0x80007400 0x0 0x400>;
-+			interrupts = <GIC_SPI 641 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 642 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 643 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 639 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 640 IRQ_TYPE_EDGE_RISING>;
-+			interrupt-names = "idle", "error", "end", "rx", "tx";
-+			clocks = <&cpg CPG_CORE R9A09G087_CLK_PCLKM>,
-+				 <&cpg CPG_MOD 105>;
-+			clock-names = "pclk", "pclkspi";
-+			power-domains = <&cpg>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		rspi2: spi@80007800 {
-+			compatible = "renesas,r9a09g087-rspi", "renesas,r9a09g077-rspi";
-+			reg = <0x0 0x80007800 0x0 0x400>;
-+			interrupts = <GIC_SPI 646 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 647 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 648 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 644 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 645 IRQ_TYPE_EDGE_RISING>;
-+			interrupt-names = "idle", "error", "end", "rx", "tx";
-+			clocks = <&cpg CPG_CORE R9A09G087_CLK_PCLKM>,
-+				 <&cpg CPG_MOD 106>;
-+			clock-names = "pclk", "pclkspi";
-+			power-domains = <&cpg>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		rspi3: spi@81007000 {
-+			compatible = "renesas,r9a09g087-rspi", "renesas,r9a09g077-rspi";
-+			reg = <0x0 0x81007000 0x0 0x400>;
-+			interrupts = <GIC_SPI 651 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 652 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 653 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 649 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 650 IRQ_TYPE_EDGE_RISING>;
-+			interrupt-names = "idle", "error", "end", "rx", "tx";
-+			clocks = <&cpg CPG_CORE R9A09G087_CLK_PCLKM>,
-+				 <&cpg CPG_MOD 602>;
-+			clock-names = "pclk", "pclkspi";
-+			power-domains = <&cpg>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
- 		wdt0: watchdog@80082000 {
- 			compatible = "renesas,r9a09g087-wdt", "renesas,r9a09g077-wdt";
- 			reg = <0 0x80082000 0 0x400>,
--- 
-2.51.2
+On 11/5/2025 1:01 AM, Konrad Dybcio wrote:
+> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> 
+> To make sure that power rail is voted for, wire it up to its consumers.
+> 
+> Fixes: 9bd07f2c558f ("arm64: dts: qcom: sc8280xp: Add in CAMCC for sc8280xp")
+> Fixes: 152d1faf1e2f ("arm64: dts: qcom: add SC8280XP platform")
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> ---
+>  arch/arm64/boot/dts/qcom/sc8280xp.dtsi | 22 ++++++++++++++++------
+>  1 file changed, 16 insertions(+), 6 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sc8280xp.dtsi b/arch/arm64/boot/dts/qcom/sc8280xp.dtsi
+> index 5334adebf278..643a61cc91b4 100644
+> --- a/arch/arm64/boot/dts/qcom/sc8280xp.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sc8280xp.dtsi
+> @@ -4586,8 +4586,10 @@ camcc: clock-controller@ad00000 {
+>  				 <&rpmhcc RPMH_CXO_CLK>,
+>  				 <&rpmhcc RPMH_CXO_CLK_A>,
+>  				 <&sleep_clk>;
+> -			power-domains = <&rpmhpd SC8280XP_MMCX>;
+> -			required-opps = <&rpmhpd_opp_low_svs>;
+> +			power-domains = <&rpmhpd SC8280XP_MMCX>,
+> +					<&rpmhpd SC8280XP_MXC>;
+
+I see that none of the CAMCC PLLs/clocks are on MXC rail on SC8280XP target.
+So, MXC support is not required for CAMCC.
+
+Thanks,
+Imran
+
+> +			required-opps = <&rpmhpd_opp_low_svs>,
+> +					<&rpmhpd_opp_low_svs>;
+>  			#clock-cells = <1>;
+>  			#reset-cells = <1>;
+>  			#power-domain-cells = <1>;
+> @@ -5788,8 +5790,12 @@ remoteproc_nsp0: remoteproc@1b300000 {
+>  			clocks = <&rpmhcc RPMH_CXO_CLK>;
+>  			clock-names = "xo";
+>  
+> -			power-domains = <&rpmhpd SC8280XP_NSP>;
+> -			power-domain-names = "nsp";
+> +			power-domains = <&rpmhpd SC8280XP_NSP>,
+> +					<&rpmhpd SC8280XP_CX>,
+> +					<&rpmhpd SC8280XP_MXC>;
+> +			power-domain-names = "nsp",
+> +					     "cx",
+> +					     "mxc";
+>  
+>  			memory-region = <&pil_nsp0_mem>;
+>  
+> @@ -5919,8 +5925,12 @@ remoteproc_nsp1: remoteproc@21300000 {
+>  			clocks = <&rpmhcc RPMH_CXO_CLK>;
+>  			clock-names = "xo";
+>  
+> -			power-domains = <&rpmhpd SC8280XP_NSP>;
+> -			power-domain-names = "nsp";
+> +			power-domains = <&rpmhpd SC8280XP_NSP>,
+> +					<&rpmhpd SC8280XP_CX>,
+> +					<&rpmhpd SC8280XP_MXC>;
+> +			power-domain-names = "nsp",
+> +					     "cx",
+> +					     "mxc";
+>  
+>  			memory-region = <&pil_nsp1_mem>;
+>  
+> 
 
