@@ -1,185 +1,132 @@
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fhigh-a1-smtp.messagingengine.com (fhigh-a1-smtp.messagingengine.com [103.168.172.152])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60F052FB0BD
-	for <linux-clk@vger.kernel.org>; Thu,  6 Nov 2025 20:27:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23AE6BA3F;
+	Thu,  6 Nov 2025 21:16:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762460879; cv=none; b=pmGjbe2wmePZzwhCO/joiztBZYZaeby+65uReDpahgwV0TofEhn16FN1neKpH6h5JcvdOCyHqG+kqsQlsayq90oNWRGpcZakiMowGehfyArevKK8mrxIkrgYMFlKXx5xO5kd3Zjfk1BFlkDSq+CCGNOF254vmD4W3WZpabKdTxQ=
+	t=1762463793; cv=none; b=DfnGbw2gGWsctAG21vTgN7FvoOdEgkXrskikVmrXDgQlifvojqRg65VcI+0LNGDHUun7IV7qa4g1YMQcWkXijK+8d07p3gXtvMtcMLEMggeCvuO4SYC6BgODxoyWrpaubsLOLQEktGwfL5pkXlNuuE3J45qmRpCkwNgYuW1RD9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762460879; c=relaxed/simple;
-	bh=0t6MlGhVM0XL2fZZuOAF1ghwnWWRlF6HQII+byj8QnE=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d2SQek6L17cyJOthYIdTLD8hyCopMchp0aFnzYrhPJEg+THrK/x/cDZKG02LiE2sU7eNXEbx7gCFLeyrdVJz4mwiv9WzbV+gM+o8Agyi0fZ505quUNoH0lnDaBT/bSIeO8M7NHNR515o59f+Pxbc0O6GvvfYNW2HV2N1R9H42YM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R3Cblq2R; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1762463793; c=relaxed/simple;
+	bh=pD7zixxOaQisBmcpJPLdLq646Y3FKks9l0Dg9rBE4UA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Ymj3HbkVR0QdeahVGRDXzGVjmeV08THqTT96mJSE3CWm5omQ+m3vymw6j5fDpU5a1oC+9ESlLODyykrxD8Np8ufD4ebKSkW/CrUCiIQCklxaKv2YI4qvtyP6tc67fLmy7Y2Q09iOg32bJq/LlxCUNJN1tLEcBJdPeNZGb9pJ25s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=cnrdhx6/; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=wnDYRAIT; arc=none smtp.client-ip=103.168.172.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R3Cblq2R"
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-477632b0621so177415e9.2
-        for <linux-clk@vger.kernel.org>; Thu, 06 Nov 2025 12:27:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762460876; x=1763065676; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:subject:cc:to:from:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=1z2wjiHhvsejiQn/+tOEpXB/N3K2BinmsJSUyaKjfEc=;
-        b=R3Cblq2Rgj4Z5SJ5m5pLvvpB01wYiiu1oGpnbvR1GiSq7p0R3aa9+bkVF0b5p+aIfn
-         kEa7Bw59OcJ0+2rXR+rNywOL9rgkb2gsJQlOv0cRMzb2pD0QXZeGL2va+wjAGDwOS4e7
-         Mb54PQeZjRsNbs2H8CdKGEOyaj6b4eKPa+kiNUfdrd7d/CCuRTFbP5S+I1mBw0Eyhnzx
-         6jFmGs/SMDPPOtzH0c+6GbSdD0YokzbEJVUx3ZX/23ErKK5CfmxToQi1hrFqU5jySmfq
-         /rh/sOS++A8xI1MymlGzAb0s/GNe5Mw9U3VEY/uEfUZh22WRFYxlFhqz2OfQXmAMLT4Y
-         0IKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762460876; x=1763065676;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:subject:cc:to:from:date:message-id:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1z2wjiHhvsejiQn/+tOEpXB/N3K2BinmsJSUyaKjfEc=;
-        b=DRgvIygqAv/f6aEmS87NKD0vPL5tlcbu9W/50zbnUjrzzD8rHUHlGdtF523ojyZ1mj
-         ffdecraU6inm6U4zJICubuRcPP9J4dFSjIKe4vh8oyAOOOo9Wcoxvw/3gfI5eC8b42LR
-         MA0FsL/dHyH47K9RSMhScVVuwIXHZOWQx/RYF2cLs/BsOvEIH1kC6fS3yF/mtcOUKnfc
-         i00LvhNRaW/HK3eyZIYgvTbahM1I6CTTuT1Q718mGxH3UERYKg8g+1SVtd1l3r76IEvk
-         kNuQHgdGcSiCCejjO79c7fC3I5j4YQEMIBGV+OEQWkcSuvg6PrCoV8Fk/cSq/iOqd84N
-         vP2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXmwjW77GivWN2cWLxfJ0LRUZyRx1OiSlD0sg+8HIz5To4yUjpEXY/8FIloyyHDoCW9K5v+IwHL8nc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YytR/uOgw4mg6gs2nENp7hV6uWyEVtyPt70dWbrSgtHHn+qJDz3
-	TWUVCT60RojEXQ8p1NvPXbhbhKzjkzpKTrBpI3oOjXzo4ybsG3cRjG0a
-X-Gm-Gg: ASbGncsSs0VgUo29plyvh1IPaU3os4hTMLxqpfKm1+t7cbOYbUSwzxxHMy81aEmHJpT
-	G5mDzVmUS/i1dombkFG58VFNpiNjBb2b33ewqWv5Gl4dW6oKHiI4UqBy2jn9b0FmwA23O5zgod3
-	6PLKtEtwTZmRosmjNk8Xapg1ZesMDQktfqgqwkOv+AtSVI91cmJ/A0+gd8Qm7AhJPZxq/sr1mFL
-	luxbX+hKr2sa9SEPW38svmvHqtXexD0Uem2f6r2rrtKYulEOOlYppoIZ/33vSci1mY2nhSDx49x
-	RLqE7ttwrxC31OIVuPJUMkRmX2JcSEtLrSHHsKDpLbVR6lmE1EdaSZY7heT7esLybVxjmQ7Btmm
-	wP0fGfFFOrDaLmqCRP8b2VxjITW1N33Y+hfLaMR+8Epy/CJyZtcYZE3Q0AHVd36MZ5ndUVTO8Uj
-	Spg+YYsTHHs5tvTjwlEEjCSHVnmPr1
-X-Google-Smtp-Source: AGHT+IHdBsgSQPK7gktxEdVBPh+hNOGF+tzMsBrl2JJsqB6qaGdVHc6sEdU0SVSxEKKOa2H7wzBBRg==
-X-Received: by 2002:a05:600c:4e88:b0:46e:4b79:551 with SMTP id 5b1f17b1804b1-4776bcc34d8mr5465515e9.31.1762460875637;
-        Thu, 06 Nov 2025 12:27:55 -0800 (PST)
-Received: from Ansuel-XPS. (93-34-90-37.ip49.fastwebnet.it. [93.34.90.37])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4775ce32653sm125100735e9.13.2025.11.06.12.27.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Nov 2025 12:27:55 -0800 (PST)
-Message-ID: <690d04cb.050a0220.1f914.57e6@mx.google.com>
-X-Google-Original-Message-ID: <aQ0EyPS8NmP2gehc@Ansuel-XPS.>
-Date: Thu, 6 Nov 2025 21:27:52 +0100
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="cnrdhx6/";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="wnDYRAIT"
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 04CAC140015F;
+	Thu,  6 Nov 2025 16:16:30 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-03.internal (MEProxy); Thu, 06 Nov 2025 16:16:30 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:message-id:mime-version:reply-to
+	:subject:subject:to:to; s=fm2; t=1762463790; x=1762550190; bh=2z
+	1keW3T+Q8BNwuQODT36eGaSqAnI0JeLU7azFOAqWs=; b=cnrdhx6/P+s6yXmJUy
+	Bwp319WmCNLT6BpVIe93ybRNA0iaivbYkGzPYw9ODVH+qrTk6NDNiua+e3UUoV1u
+	bdq3D+CuQ9mzi2vAVnPZo2D3d8IvRkD6YfUckURV3mRfdbevPds61rEWdi8ici37
+	3wO1u64/8aYWhZDHVnmQN3iI9gK2TqSvMHHQoVnl3e0AwwBXhcGLv4+gWJi2QqXn
+	d9NyvXZsdohPb4kRZafEnViZetJqRROSXU9wXRrFFiQLeH9irlB32aovRxXLFDLO
+	CTv4rCIkg9AH0ghryJYkTaxQSX0K7OmcPzuz/xN2o9QV1cd3TCXYNIEmse64x1up
+	xkkw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm3; t=1762463790; x=1762550190; bh=2z1keW3T+Q8BNwuQODT36eGaSqAn
+	I0JeLU7azFOAqWs=; b=wnDYRAITsJNY3zvQqV4y/rWazwMDmfMzXc/4zualzn1h
+	lFgB7lb2M4ONEI0ECgkhBhlwbB2mWF6I00GtcN0zeltktuOqBNGtI4+AvMaSXd6X
+	wtXbd1lpVZsaN8OH2u4r1islJE3eeyqBWsubt0mBapm5v0oRDSUj0xG0H7xfrkpi
+	3tUZFHYXrFehf6OF/b/DLU0M1VzUvaCpR/sSoV0qlJzSFtEwPJ6hUZ8kEnGAVV6T
+	YhG/1J5ok0LyGO87er8zMClPdDrjtIrq5k2lbPvzQLRutIJMQs7aeyqD/Ji2Mcyz
+	3brWvA69jdwQAMnY34AtHRYyIZ5h5TwpKXHSCWFFRA==
+X-ME-Sender: <xms:LRANabhszhCwL6rc1jzSJaHyNZp4GSguenREa_tJY02NAixK7Pezbw>
+    <xme:LRANaeARNECPdTc-ISWFMSEqGAGUWlhjHI_5l4mrvtAPM4sNSL4V1TLlyy_p_TVdH
+    38ZrcUUNOUcxTfHuEixkdjkUcXvBCVitRnIyg2JWE8C1G00GXHKj-Eu>
+X-ME-Received: <xmr:LRANaV5Fe2xcRacEaA9wxpJhi40RtqAWgrZhv9tx2ZjYvrOpvhW4p-2nC0nR72OhIPIXM5AFb9IfmGCzL5WB2Wbc>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddukeejkeegucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhephffvvefufffkofggtgfgsehtkeertdertdejnecuhfhrohhmpefpihhklhgrshcu
+    ufpnuggvrhhluhhnugcuoehnihhklhgrshdrshhouggvrhhluhhnugdorhgvnhgvshgrsh
+    esrhgrghhnrghtvggthhdrshgvqeenucggtffrrghtthgvrhhnpeehudelteetkefgffef
+    udefuedvjeeivdekhfevieefgeffheeltddvvefhfeetgeenucevlhhushhtvghrufhiii
+    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehnihhklhgrshdrshhouggvrhhluhhn
+    ugesrhgrghhnrghtvggthhdrshgvpdhnsggprhgtphhtthhopedutddpmhhouggvpehsmh
+    htphhouhhtpdhrtghpthhtohepghgvvghrthdorhgvnhgvshgrshesghhlihguvghrrdgs
+    vgdprhgtphhtthhopehmthhurhhquhgvthhtvgessggrhihlihgsrhgvrdgtohhmpdhrtg
+    hpthhtohepshgsohihugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhhosghhsehk
+    vghrnhgvlhdrohhrghdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrgh
+    dprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohep
+    lhhinhhugidqrhgvnhgvshgrshdqshhotgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprh
+    gtphhtthhopehlihhnuhigqdgtlhhksehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghp
+    thhtohepuggvvhhitggvthhrvggvsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:LRANabEN6SlV4IDtS4gX42a0buxgzFytVzHzHFnHcL-J4IpV5Dm95Q>
+    <xmx:LRANaYCcLuGqgbO313C53tJ1L18uscMpBe3VWjmf82wzDyAITjFlzA>
+    <xmx:LRANaYwo7Gkk3jbBigVk8XyKpvWEti6wNkYsP4zVOSa2e4cgrfvA4Q>
+    <xmx:LRANaU5PWQbB2U9HCrtSuv4HHMMQA_JULXuNpsWdWojJtYhAiMqpDw>
+    <xmx:LRANaX_J2_5Re_fvef4RyoO9MZ2_ZLOnLXQoJ7IPil9vX_Mm91w4LQHa>
+Feedback-ID: i80c9496c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 6 Nov 2025 16:16:28 -0500 (EST)
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Felix Fietkau <nbd@nbd.name>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/5] clk: en7523: generalize register clocks function
-References: <20251106195935.1767696-1-ansuelsmth@gmail.com>
- <20251106195935.1767696-3-ansuelsmth@gmail.com>
- <bc9074b9-27b5-4a31-ab85-ef7fcc309523@wanadoo.fr>
+	linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org
+Cc: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v2 0/4] clk: renesas: r8a779a0: Add clocks needed for GPU
+Date: Thu,  6 Nov 2025 22:16:00 +0100
+Message-ID: <20251106211604.2766465-1-niklas.soderlund+renesas@ragnatech.se>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <bc9074b9-27b5-4a31-ab85-ef7fcc309523@wanadoo.fr>
 
-On Thu, Nov 06, 2025 at 09:25:23PM +0100, Christophe JAILLET wrote:
-> Le 06/11/2025 à 20:59, Christian Marangi a écrit :
-> > Generalize register clocks function for Airoha EN7523 and EN7581 clocks
-> > driver. The same logic is applied for both clock hence code can be
-> > reduced and simplified by putting the base_clocks struct in the soc_data
-> > and passing that to a generic register clocks function.
-> > 
-> > While at it rework some function to return error and use devm variant
-> > for clk_hw_regiser.
-> > 
-> > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> > ---
-> >   drivers/clk/clk-en7523.c | 148 +++++++++++++++++----------------------
-> >   1 file changed, 66 insertions(+), 82 deletions(-)
-> 
-> ...
-> 
-> > +static int en75xx_register_clocks(struct device *dev,
-> > +				  const struct en_clk_soc_data *soc_data,
-> > +				  struct clk_hw_onecell_data *clk_data,
-> > +				  struct regmap *map, struct regmap *clk_map)
-> > +{
-> > +	struct clk_hw *hw;
-> > +	u32 rate;
-> > +	int i;
-> > +
-> > +	for (i = 0; i < soc_data->num_clocks - 1; i++) {
-> > +		const struct en_clk_desc *desc = &soc_data->base_clks[i];
-> > +		u32 val, reg = desc->div_reg ? desc->div_reg : desc->base_reg;
-> > +		int err;
-> > +
-> > +		err = regmap_read(map, desc->base_reg, &val);
-> > +		if (err) {
-> > +			pr_err("Failed reading fixed clk rate %s: %d\n",
-> 
-> Would it be better to use dev_err()? (here and in other places)
->
+Hi Geert,
 
-Yes but I wanted to limit the changes. Is it possible to do it later?
+This small series adds the clocks needed to use the GPU on V3U. Patch 
+1/4 adds the core clock ID so it can be used by both driver and 
+bindings. Patch 2/4 extends the Gen4 CPG driver to allow the ZG clock to 
+be described. And finally patch 3/4 and 4/4 adds the clocks needed to 
+operate the GPU.
 
-> > +			       desc->name, err);
-> > +			return err;
-> > +		}
-> > +		rate = en7523_get_base_rate(desc, val);
-> > +
-> > +		err = regmap_read(map, reg, &val);
-> > +		if (err) {
-> > +			pr_err("Failed reading fixed clk div %s: %d\n",
-> > +			       desc->name, err);
-> > +			return err;
-> > +		}
-> > +		rate /= en7523_get_div(desc, val);
-> > +
-> > +		hw = clk_hw_register_fixed_rate(dev, desc->name, NULL, 0, rate);
-> 
-> I think that the issue was already there before, but should we have a
-> corresponding clk_hw_unregister_fixed_rate() somewhere in this driver?
-> 
-> I've not seen any.
-> 
-> Or use devm_clk_hw_register_fixed_rate()?
-> 
+With this and the corresponding DT patches I can operate the GPU on V3U.
 
-Well yes, I didn't move to devm as it's already planned to move to full
-clk with .set_rate and realtime .get_rate. Is it possible to also delay
-this in a later series?
+    powervr fd000000.gsx: [drm] loaded firmware powervr/rogue_15.5.1.64_v1.fw
+    powervr fd000000.gsx: [drm] FW version v1.0 (build 6889268 OS)
+    powervr fd000000.gsx: [drm] Unsupported quirks in firmware image
+    [drm] Initialized powervr 1.0.0 for fd000000.gsx on minor 1
 
-(thanks for the review)
+And run test applications such as gears.
 
-> > +		if (IS_ERR(hw)) {
-> > +			pr_err("Failed to register clk %s: %ld\n",
-> > +			       desc->name, PTR_ERR(hw));
-> > +			return PTR_ERR(hw);
-> > +		}
-> > +
-> > +		clk_data->hws[desc->id] = hw;
-> > +	}
-> > +
-> > +	hw = en7523_register_pcie_clk(dev, clk_map);
-> > +	if (IS_ERR(hw))
-> > +		return PTR_ERR(hw);
-> > +
-> > +	clk_data->hws[EN7523_CLK_PCIE] = hw;
-> > +
-> > +	return 0;
-> > +}
-> > +
-> >   static int en7581_pci_is_enabled(struct clk_hw *hw)
-> >   {
-> >   	struct en_clk_gate *cg = container_of(hw, struct en_clk_gate, hw);
-> 
-> ...
-> 
-> CJ
+See individual patches for changelog.
+
+Niklas SÃ¶derlund (4):
+  dt-bindings: clock: r8a779a0: Add ZG core clock
+  clk: renesas: rcar-gen4: Add support for clocks dividers in FRQCRB
+  clk: renesas: r8a779a0: Add ZG Core clock
+  clk: renesas: r8a779a0: Add 3dge module clock
+
+ drivers/clk/renesas/r8a779a0-cpg-mssr.c       | 7 ++++++-
+ drivers/clk/renesas/rcar-gen4-cpg.c           | 9 +++++++--
+ include/dt-bindings/clock/r8a779a0-cpg-mssr.h | 1 +
+ 3 files changed, 14 insertions(+), 3 deletions(-)
 
 -- 
-	Ansuel
+2.51.1
+
