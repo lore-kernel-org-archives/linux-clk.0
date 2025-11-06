@@ -1,199 +1,156 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35A0930BF7D
-	for <linux-clk@vger.kernel.org>; Thu,  6 Nov 2025 09:15:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6225F2E1EE5;
+	Thu,  6 Nov 2025 10:41:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762420530; cv=none; b=LgmqzaXKnZrhePplVfNtwsEA2UG08l3o3cIIEgx7zkeALfjrkHNobNianE6srbUHekIDrGY+3cTmKS+50GDjE5NsBXNSFPu8ncid/8tTlKDMQaRdXq0rBKxdH1G9J54QaRuh653i2E8/2+73rslXfMOPsnDUuvort1YJvepEUP0=
+	t=1762425670; cv=none; b=Z9/0b7dxn4AmNJclLwTUEBzSDsToBvYA0V5U/k1Cisj66brgukrNI72srJdARG3ISVHzBInpVPyQWXKd6NliT9pi2R1BQ0HWCtH1JqNLI0PS3PdGc9VQGAbSbU+3NSVuKEUo+IJRlV68+BnXuBXlQ/BZuSug8l03ZZUfE1KY/mo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762420530; c=relaxed/simple;
-	bh=IqDU06J8KRhHUMTkW8BrYVFpwrOQjixDrvjAH5rTJAk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cSnKA3+z/A0kKh8cDQL4iZvvE9L/LwNNFMycDvikPP2HktwHW26AzxY44AyiANy8EqUnmlOaVaN/3FdsmW7ayxl1kOLDgzEHNEvLvWfnNjp7376PXBd9+d3i9Xt/jR7PWmsm5ieNWPqZ/ZQ99Gq4/tI3mXH3d/XrJCLX4XwSUHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=cDNgVcAp; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=WNyppZ41; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1762425670; c=relaxed/simple;
+	bh=wlTKicE4vKhM9gisZDttSjvvCGuHx5DPhO7+hmvYxjk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZV3RqcP+uTtFHenROse3ollvsVz/v+CsrkigCAjVosPn02YF/5zaSpEelYtTfBgINxCCQh6rIpiK3JANfvopxLTmZfAsEIB4JXCuB5TBgeG/74JE1AhCnh7z2ckF/7tK3zTzuUYCvJpySW6HTSotNQGX9bdPjGEWFDlM6nSf9o4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=NiHV8lXi; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="cDNgVcAp";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="WNyppZ41"
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A67jmlX2164533
-	for <linux-clk@vger.kernel.org>; Thu, 6 Nov 2025 09:15:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	fSBcZQ0RQcmst4/RrknYi9gdsm4mdIdNyFnHTvoBzKs=; b=cDNgVcApKbRwtG7v
-	L5rHIcBYbNNuzNB8KDmIvCcdBIvVgdJM9C19bJ4ettuFGcrKpRk4XFZ8Biy6xQ/J
-	h0Qlfn87zo/YE3YTQyJpp1VRw/SuQKs2tCerqQhQSMha/BOn5RsomcgOe1I1YG8M
-	s/LaKbPVyi3eig/hC5TPmyYXnqcIk6FMtGp5czn7EYUHBNsVSwrPU2jE+VPJsYvW
-	d9q43herYiIKYu/IoMaHdzWUOmA5UnToWOgp9qJ8gul3ZAjsfz2bmHUZIgJ2y9zK
-	5XqYbkFUx7Tz5ac5CiD6DCtUtKVVFP5ljPBECo7kULDBQO8gAPuO5ZdBGktzpwfO
-	uDXRkg==
-Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a8g6esf89-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Thu, 06 Nov 2025 09:15:27 +0000 (GMT)
-Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-3408686190eso612550a91.3
-        for <linux-clk@vger.kernel.org>; Thu, 06 Nov 2025 01:15:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1762420527; x=1763025327; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fSBcZQ0RQcmst4/RrknYi9gdsm4mdIdNyFnHTvoBzKs=;
-        b=WNyppZ41ePsCf26j0StWs/LI5b+bzeO+VIJ6njMdszO/66mchsnyGTcq09zxHL0SNM
-         hyCkTgIN7vK6jiv13cfzAmsQAFt9w2d0lVm+egqUueikUElQJK/nINmwwYtbgyLGzzJm
-         IjQCm0//b6iFEYQvfcCaBqL4uZ1F9gilGCQnxDfCd9/iuKhMF7zZsfZtRSn4IbnbZUuq
-         OANPsu0HKfR+xacY68McIH0eFJpvv575NFg9AZBw6aIQ0KrPPp9abpyhVtKRCiJiqhQP
-         eKlUCkUedeUTnCeIQYO50tIzZt/h+aOvbgGOLlLHMwW2XtoNH/EYlWvKQLaS3TsgUZ2s
-         06Jg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762420527; x=1763025327;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fSBcZQ0RQcmst4/RrknYi9gdsm4mdIdNyFnHTvoBzKs=;
-        b=R7RzK+0n9y26338wP1A1ckQuPHr8u8NZfq3iob82zrnaKo80UBl8UQpoyI0fjsa1Iw
-         kZW+pf64ly8KqzgKbnHMb3TuR73ECdTVIhjmAiiBYV4JGrUba9HpA9TXlSncTuSZ07jY
-         tnMJ3AON/MP9r2twy5cqMzVypWABmjGoSHQSI8Aq+C/1+3UDQQn4O8qN/VVYaVS5zeLK
-         y8JJU6hGt1Vf5jcBtSUErIIYoZqZ2+F43QiZQmxzCiBIsnc4TEYbH0XRDa5MUHMBbTyX
-         XhPLrwgaj4CpmmG3NwWHNv/MJLceFozq6DsIkERyNfkM4dOwjOmoz9QvecGlawUbrI3k
-         T4sA==
-X-Forwarded-Encrypted: i=1; AJvYcCVaPnq8RJCFkoRo8Gji06c4Q4yWXYmulsAIUfOlpxhSir5O55CyHP+SqvI9RY7rRzP1hX+E795NwQA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKqmNMwmF3mxbqyaZDrzimBrnmXX2fzfgbgtlXBEYXy3pgp2EE
-	D4EdIx0zIgOFjx4B9QoGmuoEoo3mLIMY4uTs0+FW2QNWOasO8U8VqU0AB0c3fdP6+ptvhI0w1x1
-	puDVpekDprHxPSFSyVDime+wTIGCSzuOLm4++W9uyFGx6nQaWufCVY4+4gjL3gmo=
-X-Gm-Gg: ASbGncvymqetMKBVRvs+gWqir32MZGApJURaQJORVAmxhwSJtTje3PGLsY/dLSak2nw
-	ahwOs9Pz+5kSsZnqnuflmffoxRvhjoGgYtSFjEOuzuRNLDGgUlBICcBdctVZTkQdFWZW7DatRXC
-	PiyZlSahXFkb784nyzS1/SFl3LVpFESW+WeyOJtTkTOXLiGsVR/iHUVmo0LT+tx7Z9KnW8uP7CN
-	Ny6vseTXlISHn77ua1awjNYCzWFMdxAySKyn/d88/KcaYDF8uuf+0GZ7Hrv8TEzsbeJCn2/nz7M
-	3c/QqawxTu3KQ8hcp2uVf6EAD6PPsde1k3YQWqiv2NGNPHv6XlXmaiG8Fg829uAUuK9Y/C6URBk
-	8dY+gPf5wH3QM1Av5ZfHA+OQ6WQ==
-X-Received: by 2002:a17:90b:2888:b0:33e:30b2:d20 with SMTP id 98e67ed59e1d1-341a70082demr8272617a91.33.1762420526756;
-        Thu, 06 Nov 2025 01:15:26 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHun9YYghwsNEVAON0drNEeOBr3tdiHVJCshN/1Daostzc8S6e6a1xDbSuel5MNU+po1yNqkw==
-X-Received: by 2002:a17:90b:2888:b0:33e:30b2:d20 with SMTP id 98e67ed59e1d1-341a70082demr8272554a91.33.1762420526210;
-        Thu, 06 Nov 2025 01:15:26 -0800 (PST)
-Received: from [10.218.33.29] ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-341d08afb02sm1083005a91.0.2025.11.06.01.15.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Nov 2025 01:15:25 -0800 (PST)
-Message-ID: <25e8453b-91fb-49f2-a61b-fd7b3267e558@oss.qualcomm.com>
-Date: Thu, 6 Nov 2025 14:44:58 +0530
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="NiHV8lXi"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 816B8C0FA83;
+	Thu,  6 Nov 2025 10:40:45 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 846B96068C;
+	Thu,  6 Nov 2025 10:41:06 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 9313411850DB0;
+	Thu,  6 Nov 2025 11:41:02 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1762425665; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=SaqnAYTHX2kejKwlwzUJIjgXWYbAMy9QqRlDeeqtVyQ=;
+	b=NiHV8lXistQAmVxLkr5lIcVHDmO3CV6+qfDyqqLLrxX3V7V8kWU0xeITUVlajGcaXaW/o0
+	dKyh5YOvXvYn8k34NOKH3BkI1+5kVaSersgnu3jnpMUAUZDj6iX8Zepr8lsmEq/9MhxzLj
+	ekExIRwa44ZTNDP0bXUH/mDadvwuEPKnFpKqOjkJX6pRN4RFbA023QRd1BcICT6x1Fv28/
+	Buk2d5mKhIUBXbmAeTDJ8EeiJmggujqPG9ru7BpBdMGcazGjZVTdjWEwLEmm86LtPEnO98
+	BCZs/B9xnfTISoiPjeZzz3MS2S04vwlBFMS6WcOF9pyi6lcIH8XyzCo/sHL93A==
+Date: Thu, 6 Nov 2025 11:41:01 +0100
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
+Cc: geert <geert@linux-m68k.org>,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+	"robh@kernel.org" <robh@kernel.org>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"magnus.damm" <magnus.damm@gmail.com>,
+	"mturquette@baylibre.com" <mturquette@baylibre.com>,
+	"sboyd@kernel.org" <sboyd@kernel.org>,
+	"p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+	"linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v2 2/6] dt-bindings: rtc: renesas,rz-rtca3: Add RZ/V2H
+ support
+Message-ID: <2025110610410184fb6c28@mail.local>
+References: <20251021080705.18116-1-ovidiu.panait.rb@renesas.com>
+ <20251021080705.18116-3-ovidiu.panait.rb@renesas.com>
+ <CAMuHMdUR=_5Ex57gvgFXyxhSDkqdd0DjcTqV0m59tquxKzQnNg@mail.gmail.com>
+ <TY7PR01MB14910AA199960CAB587D3E9F1D3C2A@TY7PR01MB14910.jpnprd01.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/5] arm64: dts: qcom: sc8280xp: Add missing VDD_MXC links
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Johan Hovold <johan+linaro@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Manivannan Sadhasivam <mani@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>, Taniya Das <quic_tdas@quicinc.com>,
-        Imran Shaik <quic_imrashai@quicinc.com>,
-        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>,
-        Ulf Hansson
- <ulf.hansson@linaro.org>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-pm@vger.kernel.org,
-        Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>
-References: <20251104-topic-8280_mxc-v1-0-df545af0ef94@oss.qualcomm.com>
- <20251104-topic-8280_mxc-v1-5-df545af0ef94@oss.qualcomm.com>
- <1e464f5d-f4ed-4ee5-b966-fc7de586340a@oss.qualcomm.com>
- <7f7179b7-73a0-40f3-b921-888b3e21537c@oss.qualcomm.com>
-Content-Language: en-US
-From: Imran Shaik <imran.shaik@oss.qualcomm.com>
-In-Reply-To: <7f7179b7-73a0-40f3-b921-888b3e21537c@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA2MDA3NCBTYWx0ZWRfX1+dOKZSSGOHb
- ILy/2kRsv629rGYeoRHE+YeOaeZZcvnZJ2bWqFV4LQveTg6NyHTby2eLZkDC6klJJ7M0l3g7FRk
- L4aapLUpkshKqx0iZ2VCl+MMbUfbfarTVroX02mkS89kjQGENp80qxs/IeQG4WUdryIEhmAMH3y
- SeUbOrLyOPg9/oSg12Jk6RkIHRGEON7P9eQfXAXRQPKNsRO2EswQeVXSsdFBGIPcu9HkcN49RMa
- 9q9aHbsnZ5cBjjnf87d7qGyTBtTX6ZrpA/pboVJPbcDx885QCM2R7xK+/PBTv0mQC5YWWrzP58l
- AqyVfrV9LpHAdP4n0MKndWeBwokx3EgaubN8zql6caaC0ZbrQnJIZpTlz2oOAO1z0l/mZIDaxkX
- fjOR4Buqpb16rwtUUWmHCTFryocnRw==
-X-Authority-Analysis: v=2.4 cv=D5FK6/Rj c=1 sm=1 tr=0 ts=690c672f cx=c_pps
- a=RP+M6JBNLl+fLTcSJhASfg==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=IzPYbt_51FXaukp9Qk0A:9
- a=NqO74GWdXPXpGKcKHaDJD/ajO6k=:19 a=QEXdDO2ut3YA:10 a=iS9zxrgQBfv6-_F4QbHw:22
-X-Proofpoint-GUID: c0B8ADBXJ92gm1iQ8A-tRhR1UWjR75DY
-X-Proofpoint-ORIG-GUID: c0B8ADBXJ92gm1iQ8A-tRhR1UWjR75DY
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-06_02,2025-11-06_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 spamscore=0 phishscore=0 suspectscore=0 impostorscore=0
- adultscore=0 priorityscore=1501 clxscore=1015 lowpriorityscore=0
- malwarescore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
- definitions=main-2511060074
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <TY7PR01MB14910AA199960CAB587D3E9F1D3C2A@TY7PR01MB14910.jpnprd01.prod.outlook.com>
+X-Last-TLS-Session-Version: TLSv1.3
 
-
-
-On 11/5/2025 4:32 PM, Konrad Dybcio wrote:
-> On 11/5/25 10:21 AM, Imran Shaik wrote:
->>
->>
->> On 11/5/2025 1:01 AM, Konrad Dybcio wrote:
->>> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
->>>
->>> To make sure that power rail is voted for, wire it up to its consumers.
->>>
->>> Fixes: 9bd07f2c558f ("arm64: dts: qcom: sc8280xp: Add in CAMCC for sc8280xp")
->>> Fixes: 152d1faf1e2f ("arm64: dts: qcom: add SC8280XP platform")
->>> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
->>> ---
->>>  arch/arm64/boot/dts/qcom/sc8280xp.dtsi | 22 ++++++++++++++++------
->>>  1 file changed, 16 insertions(+), 6 deletions(-)
->>>
->>> diff --git a/arch/arm64/boot/dts/qcom/sc8280xp.dtsi b/arch/arm64/boot/dts/qcom/sc8280xp.dtsi
->>> index 5334adebf278..643a61cc91b4 100644
->>> --- a/arch/arm64/boot/dts/qcom/sc8280xp.dtsi
->>> +++ b/arch/arm64/boot/dts/qcom/sc8280xp.dtsi
->>> @@ -4586,8 +4586,10 @@ camcc: clock-controller@ad00000 {
->>>  				 <&rpmhcc RPMH_CXO_CLK>,
->>>  				 <&rpmhcc RPMH_CXO_CLK_A>,
->>>  				 <&sleep_clk>;
->>> -			power-domains = <&rpmhpd SC8280XP_MMCX>;
->>> -			required-opps = <&rpmhpd_opp_low_svs>;
->>> +			power-domains = <&rpmhpd SC8280XP_MMCX>,
->>> +					<&rpmhpd SC8280XP_MXC>;
->>
->> I see that none of the CAMCC PLLs/clocks are on MXC rail on SC8280XP target.
->> So, MXC support is not required for CAMCC.
+On 06/11/2025 09:13:53+0000, Ovidiu Panait wrote:
+> Hi Geert,
 > 
-> Hm, to the extent that camss is supported upstream, I could indeed
-> boot without pd_ignore_unused and the camera actually kept working..
+> > -----Original Message-----
+> > From: Geert Uytterhoeven <geert@linux-m68k.org>
+> > Sent: Thursday, November 6, 2025 10:47 AM
+> > To: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
+> > Cc: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>;
+> > alexandre.belloni@bootlin.com; robh@kernel.org; krzk+dt@kernel.org;
+> > conor+dt@kernel.org; magnus.damm <magnus.damm@gmail.com>;
+> > mturquette@baylibre.com; sboyd@kernel.org; p.zabel@pengutronix.de; linux-
+> > rtc@vger.kernel.org; linux-renesas-soc@vger.kernel.org;
+> > devicetree@vger.kernel.org; linux-kernel@vger.kernel.org; linux-
+> > clk@vger.kernel.org
+> > Subject: Re: [PATCH v2 2/6] dt-bindings: rtc: renesas,rz-rtca3: Add RZ/V2H
+> > support
+> > 
+> > Hi Ovidiu,
+> > 
+> > Sorry, I still had outstanding review comments I hadn't sent yet, as
+> > I hadn't finished my review yet.
+> > 
+> > On Tue, 21 Oct 2025 at 10:07, Ovidiu Panait
+> > <ovidiu.panait.rb@renesas.com> wrote:
+> > > The Renesas RZ/V2H RTC IP is based on the same RTCA3 IP as RZ/G3S
+> > > (r9a08g045), with the following differences:
+> > > - It lacks the time capture functionality
+> > > - The maximum supported periodic interrupt frequency is 128Hz instead
+> > >   of 256Hz
+> > > - It requires two reset lines instead of one
+> > >
+> > > Add new compatible string "renesas,r9a09g057-rtca3" for RZ/V2H and
+> > update
+> > > the binding accordingly:
+> > > - Allow "resets" to contain one or two entries depending on the SoC.
+> > > - Add "reset-names" property, but make it required only for RZ/V2H.
+> > >
+> > > Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
+> > > ---
+> > > v2 changes:
+> > > - Added "reset-names" property and made it required for RZ/V2H.
+> > 
+> > Thanks for the update!
+> > 
+> > > --- a/Documentation/devicetree/bindings/rtc/renesas,rz-rtca3.yaml
+> > > +++ b/Documentation/devicetree/bindings/rtc/renesas,rz-rtca3.yaml
+> > 
+> > > @@ -61,6 +63,39 @@ required:
+> > >    - power-domains
+> > >    - resets
+> > >
+> > > +allOf:
+> > > +  - $ref: rtc.yaml#
+> > > +
+> > > +  - if:
+> > > +      properties:
+> > > +        compatible:
+> > > +          contains:
+> > > +            const: renesas,r9a08g045-rtca3
+> > > +    then:
+> > > +      properties:
+> > > +        resets:
+> > > +          items:
+> > > +            - description: VBATTB module reset
+> > > +        reset-names:
+> > > +          const: vbattb
+> > 
+> > Please add this property to the example at the bottom, too.
+> > 
 > 
-> I see in docs that there are links between MXC and various IPs within
-> camera so I'm a little confused. Would you know more?
+> Thanks for your review!
+> 
+> Please see the latest v3 series:
+> https://lore.kernel.org/all/20251103121848.6539-1-ovidiu.panait.rb@renesas.com/
+> 
+> The first two patches were applied by Alexandre in the meantime.
+> 
+> Alexandre, would it be possible to drop the patches from your queue and I
+> will send v4 to address the latest feedback from Geert and Conor? 
 > 
 
-Not sure on the rail requirements from the camera core side, but from the
-camera clock controller side, we don't need the MXC support.
+Sure, I'll drop them later today.
 
-Thanks,
-Imran
-
-> 
-> I wasn't able to test venus because it locks up either way..
-> 
-> Konrad
-
+-- 
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
