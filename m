@@ -1,166 +1,70 @@
-Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [13.75.44.102])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E68F92F998D;
-	Thu,  6 Nov 2025 07:57:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.75.44.102
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 020C42FFDCE;
+	Thu,  6 Nov 2025 08:00:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762415874; cv=none; b=CkYQuUllxuFHQCpEu+qUCIEidX8p6Fpf08IQvcL+8OQrcRUrd10/KR8vRmoORcqD1EahSEa+iP8MUNTS+TttuLIUgBLpHHsj9j7ZTG2DTiN4rLYF92ht5Zsdd6PStSWIh3U7W1wwLzlGTSN9ktBeha5AIi586MLCDC3IdSBivMo=
+	t=1762416049; cv=none; b=EgQOXpMuUvAUjEUEsaEtRq0sl/RLB/WzWBw1c+VoRpiKVH/MqxdiEaNUOh8AFOvOyyQFkpnY8U5m3QyuINPB97E/Qxw+ws8KcVMy9+Dei29dF1ix321MpksfJeOwdNfoeHylsiiieoyk7rgcUU+7tG3kC5oTZ6p949Or6j8Au68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762415874; c=relaxed/simple;
-	bh=/B7Oh12d2xTf8mWXno5DcMQEJl6CAu+PUAlme1sQfes=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=rnxKppYSd1rXh945OB4CE1U+CmUc9VUGtQHlK1ltWscpY0iO0JUZcMA+xYyYbiNBjEIpM1zq/nmaNMKypqJMzWcGstRPK5ScJknTWA4LNAHLPo48/Xk4x9D0rg+rdptpamSJRdawlJCARuQSMiIGuEXp+asmn2HLl7+bDErfjCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=13.75.44.102
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
-Received: from dongxuyang$eswincomputing.com ( [10.12.96.41] ) by
- ajax-webmail-app2 (Coremail) ; Thu, 6 Nov 2025 15:57:36 +0800 (GMT+08:00)
-Date: Thu, 6 Nov 2025 15:57:36 +0800 (GMT+08:00)
-X-CM-HeaderCharset: UTF-8
-From: "Xuyang Dong" <dongxuyang@eswincomputing.com>
-To: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: ningyu@eswincomputing.com, linmin@eswincomputing.com,
-	huangyifeng@eswincomputing.com, pinkesh.vaghela@einfochips.com
-Subject: Re: [PATCH v7 0/2] Add driver support for ESWIN eic700 SoC clock
- controller
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version 2024.2-cmXT6 build
- 20241203(6b039d88) Copyright (c) 2002-2025 www.mailtech.cn
- mispb-72143050-eaf5-4703-89e0-86624513b4ce-eswincomputing.com
-In-Reply-To: <20251023071658.455-1-dongxuyang@eswincomputing.com>
-References: <20251023071658.455-1-dongxuyang@eswincomputing.com>
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	s=arc-20240116; t=1762416049; c=relaxed/simple;
+	bh=45on0mQEJNXhkLCVWCtk8c5NFmV1NROMIVn+DN3yc9I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K188KMISaDW/Dfng4f5WOwm5eHwOhG4EXI54tnAxd1/J+I4ig9U2dmsR9HkQnZMStIUhRsmR3P1tnMcMrkQIiLRmsy75QB8MTP+Npp4ebS0nlu0MCuvnTtDsZmNl9rBE5lmpxd9Kg9LK+gO3jMBF85k3e/mVuO3XMoFNa4PflWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kaMpff5u; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kaMpff5u"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0062C16AAE;
+	Thu,  6 Nov 2025 08:00:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762416048;
+	bh=45on0mQEJNXhkLCVWCtk8c5NFmV1NROMIVn+DN3yc9I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kaMpff5u+ZOX4yqZ7ZCmCQf0fgdVehDztu3JJEmtCK/Hp3IAgVy+2xpwxobUW48MX
+	 lj1CNwO3w5y8uXdB3nNoKXYjByBBHbHHf6uTZ1ylwmAclhvy0eBQ2EfM1Tky/OdhJq
+	 4iycXMhK/JZ5oAn8uvP7jUynCZjsnpIqVkNDrTRiuc8r8N9fEKg8m1VXoJr//K+5Z6
+	 GMCpHxhrwdx7fvRIOVv0Y9sFcQ2n4GsUbCBW1eVvWFoufuharfV/eIrPEL/DYbJkRU
+	 SpjL5e0+atV1eFRhudCKki9uSYOnO/kCNBEBoilQFpB2qKnKY8jGGfObVbOWdjVKeE
+	 bykQC3xIZGxxw==
+Date: Thu, 6 Nov 2025 09:00:46 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, 
+	Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
+	Mark Brown <broonie@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+	linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-rtc@vger.kernel.org, Andreas Kemnade <andreas@kemnade.info>
+Subject: Re: [PATCH v3 02/16] dt-bindings: battery: Clarify trickle-charge
+Message-ID: <20251106-aloof-unyielding-turaco-c9a51a@kuoka>
+References: <cover.1762327887.git.mazziesaccount@gmail.com>
+ <742fcdcc8b6dcb5989418e8c1cf5a7d7ba5434a5.1762327887.git.mazziesaccount@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <1abb85b.c11.19a582bcbbc.Coremail.dongxuyang@eswincomputing.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:TQJkCgBnq67wVAxp0Ko6AA--.974W
-X-CM-SenderInfo: pgrqw5xx1d0w46hv4xpqfrz1xxwl0woofrz/1tbiAQESAmkLfAAUD
-	gAAsU
-X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWxJw
-	CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
-	daVFxhVjvjDU=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <742fcdcc8b6dcb5989418e8c1cf5a7d7ba5434a5.1762327887.git.mazziesaccount@gmail.com>
 
-SGkgYWxsLAoKICBHZW50bGUgcGluZy4gTG9va2luZyBmb3J3YXJkIHRvIHlvdXIgcmVwbHkuIFRo
-YW5rIHlvdSB2ZXJ5IG11Y2ghCgpCZXN0IHJlZ2FyZHMsClh1eWFuZyBEb25nCgo+IAo+IFVwZGF0
-ZXM6Cj4gICBDaGFuZ2VzIGluIHY3Ogo+ICAgLSBVcGRhdGVkIFlBTUwgZmlsZQo+ICAgICAtIEFk
-ZGVkICJBY2tlZC1ieTogQ29ub3IgRG9vbGV5IDxjb25vci5kb29sZXlAbWljcm9jaGlwLmNvbT4i
-IGZvciBiaW5kaW5ncy4KPiAgIC0gVXBkYXRlZCBkcml2ZXIgZmlsZQo+ICAgICAtIEFkZGVkIGRl
-c2NyaXB0aW9uIGZvciBjbGsgb2YgZXN3aW5fY2FsY19wbGwoKS4KPiAgICAgLSBBZGRlZCBtYWNy
-byBFSUM3NzAwX01VWF9UQkwgdG8gbWFuYWdlIG11eCBjbG9jay10cmVlLgo+ICAgICAtIEFkZGVk
-IGVzd2luX2Nsa19yZWdpc3Rlcl9tdXhfdGJsKCkgdG8gcmVnaXN0ZXIgbXV4IGNsb2NrcyB3aXRo
-Cj4gICAgICAgZGlzY29udGludW91cyBwYXJlbnQgaW5kZXhlcy4KPiAKPiAgIC0gTGluayB0byB2
-NjogaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvYWxsLzIwMjUxMDA5MDkyMDI5LjE0MC0xLWRvbmd4
-dXlhbmdAZXN3aW5jb21wdXRpbmcuY29tLwo+IAo+ICAgQ2hhbmdlcyBpbiB2NjoKPiAgIC0gUmVt
-b3ZlZCBjb25maWcgb3B0aW9uIHBhdGNoIGRlcGVuZGVuY3kgZnJvbSBjb3ZlciBsZXR0ZXIsIGJl
-Y2F1c2UgdGhlIHBhdGNoCj4gICAgIHdhcyBhcHBsaWVkLgo+ICAgLSBVcGRhdGVkIFlBTUwgZmls
-ZQo+ICAgICAtIEFkZGVkIGFuIG9zY2lsbGF0b3IgYXMgdGhlIGNsb2NrIGlucHV0LCBuYW1lZCB4
-dGFsMjRtLgo+ICAgICAtIEFkZGVkIGNsb2NrcyBwcm9wZXJ0eS4KPiAgIC0gVXBkYXRlZCBkcml2
-ZXIgZmlsZQo+ICAgICAtIFJlcGxhY2VkIGZpeGVkX3JhdGVfY2xrX3h0YWxfMjRtIHdpdGggeHRh
-bDI0bS4KPiAgICAgLSBEcm9wcGVkIGZpeGVkX3JhdGVfY2xrX3h0YWxfMjRtIGZyb20gZHJpdmVy
-LiBCZWNhdXNlIGNsb2NrIHh0YWwyNG0gd2FzCj4gICAgICAgcmVnaXN0ZXJlZCBieSBmaXhlZC1j
-bG9jayBhcyBvc2NpbGxhdG9yLgo+IAo+ICAgLSBMaW5rIHRvIHY1OiBodHRwczovL2xvcmUua2Vy
-bmVsLm9yZy9hbGwvMjAyNTA5MjMwODQ2MzcuMTIyMy0xLWRvbmd4dXlhbmdAZXN3aW5jb21wdXRp
-bmcuY29tLwo+IAo+ICAgQ2hhbmdlcyBpbiB2NToKPiAgIC0gUmVtb3ZlZCB2ZW5kb3IgcHJlZml4
-IHBhdGNoIGRlcGVuZGVuY3kgZnJvbSBjb3ZlciBsZXR0ZXIsIGJlY2F1c2UgdGhlIHBhdGNoCj4g
-ICAgIHdhcyBhcHBsaWVkLgo+ICAgLSBVcGRhdGVkIFlBTUwgZmlsZQo+ICAgICAtIFBsYWNlZCB0
-aGUgcmVxdWlyZWQgYWZ0ZXIgYWxsIHByb3BlcnRpZXMuCj4gICAgIC0gUmVtb3ZlZCBwYXR0ZXJu
-UHJvcGVydGllcy4gQWxzbyByZW1vdmVkIGNvbXBhdGlibGUgb2YgZXN3aW4scGxsLWNsb2NrLAo+
-ICAgICAgIGVzd2luLG11eC1jbG9jaywgZXN3aW4sZGl2aWRlci1jbG9jayBhbmQgZXN3aW4sZ2F0
-ZS1jbG9jayBhcyB3ZSBoYXZlIG1vdmVkCj4gICAgICAgY2xvY2sgdHJlZSBmcm9tIERUUyB0byBM
-aW51eCBkcml2ZXIuCj4gICAgIC0gUmVtb3ZlZCB0aGUgY2xvY2sgdHJlZSBmcm9tIERUUy4gVXNl
-ZCBjbG9jay1jb250cm9sbGVyIHRvIG1hbmFnZSBhbGwKPiAgICAgICBjbG9jay4gUmVtb3ZlZCBh
-bGwgY2hpbGQgbm9kZXMgaW4gY2xvY2stY29udHJvbGxlci4KPiAgICAgLSBSZW1vdmVkICcjYWRk
-cmVzcy1jZWxscycgYW5kICcjc2l6ZS1jZWxscycgcHJvcGVydGllcywgYmVjYXVzZSB0aGUgY2xv
-Y2sKPiAgICAgICBjb250cm9sbGVyIGRpZCBub3QgbmVlZCB0byBkZWZpbmUgdGhlc2UgcHJvcGVy
-dGllcy4KPiAgICAgLSBSZW1vdmVkIGVpYzc3MDAtY2xvY2tzLmR0c2kuCj4gICAgIC0gQWRkZWQg
-ZHQtYmluZGluZ3MgaGVhZGVyIGZvciBjbG9jayBJRHMuIEJlY2F1c2UgdXNlZCB0aGUgSURzIHRv
-IHJlZ2lzdGVyCj4gICAgICAgY2xvY2tzLgo+ICAgLSBVcGRhdGVkIGRyaXZlciBmaWxlCj4gICAg
-IC0gTW9kaWZpZWQgdGhlIGNvbW1pdCBmb3IgY2xvY2sgZHJpdmVyLiBEcm9wcGVkIGluZGVudGF0
-aW9uIGluIGNvbW1pdC4KPiAgICAgLSBSZW1vdmVkIENMS19PRl9ERUNMQVJFKCkuIFVzZWQgKmNs
-a19od19yZWdpc3RlciogdG8gcmVnaXN0ZXIgY2xvY2tzLiBVc2VkCj4gICAgICAgZGV2bV9vZl9j
-bGtfYWRkX2h3X3Byb3ZpZGVyLgo+ICAgICAtIERyb3BwZWQgc2luZ2xldG9ucy4KPiAgICAgLSBD
-aGVja2VkIHRoZSB2YWx1ZSByaWdodCBhZnRlciBvYnRhaW5pbmcgaXQuCj4gICAgIC0gUmVtb3Zl
-ZCB0aGUgZGVmaW5pdGlvbnMgb2YgbWFjcm8gZnJlcXVlbmN5IGluIGNsay5oIGxpa2UgQ0xLX0ZS
-RVFfMjRNLgo+ICAgICAtIE1vZGlmaWVkIGRlc2NyaXB0aW9uIG9mIGhlbHAgaW4gS2NvbmZpZy4K
-PiAgICAgLSBBZGRlZCBDT01QSUxFX1RFU1QuIEFkZGVkIENPTU1PTl9DTEtfRVNXSU4gZm9yIGNs
-ay5vLiBBbmQgYWRkZWQKPiAgICAgICAic2VsZWN0IENPTU1PTl9DTEtfRVNXSU4iIGZvciBjbGst
-ZWljNzcwMC5jLiBXaXRob3V0IENPTU1PTl9DTEtfRUlDNzcwMCwKPiAgICAgICBjbGsuYyBjb3Vs
-ZCBub3QgYmUgY29tcGlsZWQuCj4gICAgIC0gVXNlZCAuZGV0ZXJtaW5lZF9yYXRlLgo+ICAgICAt
-IEFkZGVkIG1hY3JvIGRlZmluaXRpb25zIG9mIEVJQzc3MDBfRElWLCBFSUM3NzAwX0ZJWEVELCBF
-SUM3NzAwX0ZBQ1RPUiwKPiAgICAgICBFSUM3NzAwX01VWCBhbmQgRUlDNzcwMF9QTEwgdG8gbWFu
-YWdlIGNsb2NrIHRyZWUuCj4gICAgIC0gQWRkZWQgY2xrLWVpYzc3MDAuaCB0byBwbGFjZSBlaWM3
-NzAwIFNvQyBjbG9jayByZWdpc3RlcnMuCj4gICAgIC0gUmVtb3ZlZCByZWZkaXZfdmFsIGFuZCBw
-b3N0ZGl2MV92YWwgZnJvbSBjbGtfcGxsX3JlY2FsY19yYXRlKCkuIEJlY2F1c2UKPiAgICAgICB0
-aGVzZSB2YWx1ZXMgd2VyZSB1bnVzZWQuCj4gCj4gICAtIExpbmsgdG8gdjQ6IGh0dHBzOi8vbG9y
-ZS5rZXJuZWwub3JnL2FsbC8yMDI1MDgxNTA5MzUzOS45NzUtMS1kb25neHV5YW5nQGVzd2luY29t
-cHV0aW5nLmNvbS8KPiAKPiAgIENoYW5nZXMgaW4gdjQ6Cj4gICAtIFVwZGF0ZWQgWUFNTCBmaWxl
-Cj4gICAgIC0gQ2hhbmdlZCBuYW1lIGZyb20gY3B1LWRlZmF1bHQtZnJlcXVlbmN5IHRvIGNwdS1k
-ZWZhdWx0LWZyZXEtaHouCj4gICAgIC0gRHJvcHBlZCAkcmVmIG9mIGNwdS1kZWZhdWx0LWZyZXF1
-ZW5jeS4KPiAgICAgLSBBZGRlZCBjcHUtZGVmYXVsdC1mcmVxdWVuY3kgZm9yIHJlcXVpcmVkLgo+
-ICAgICAtIFJlbW92ZWQgY3B1LWRlZmF1bHQtZnJlcXVlbmN5IGluIHVwZGF0ZWQgZmlsZSwgYmVj
-YXVzZSB0aGVyZSB3YXMgbm8KPiAgICAgICBuZWVkIHRvIGFkZCBjcHUtZGVmYXVsdC1mcmVxdWVu
-Y3kuCj4gICAgIC0gTW92ZWQgRElWSURFUiB0byBESVYuCj4gICAgIC0gQXJyYW5nZWQgdGhlIElE
-cyBpbiBvcmRlci4KPiAgICAgLSBEcm9wcGVkIEVJQzc3MDBfTlJfQ0xLUy4KPiAgICAgLSBSZW1v
-dmVkIGR0LWJpbmRpbmdzIGVzd2luLGVpYzc3MDAtY2xvY2suaC4gQmVjYXVzZSBJRHMgd2FzIG5v
-dCB1c2VkLAo+ICAgICAgIGFuZCB1c2VkIGNsb2NrIGRldmljZSBub2Rlcy4KPiAgICAgLSBBY2Nv
-cmRpbmcgdG8gdGhlIHVwZGF0ZWQgZHJpdmVyIGNvZGVzLCB0aGUgWUFNTCBoYXMgYmVlbiB1cGRh
-dGVkLgo+ICAgLSBVcGRhdGVkIGRyaXZlciBmaWxlCj4gICAgIC0gUmVtb3ZlIHVuZG9jdW1lbnRl
-ZCBwYXJhbWV0ZXJzICJjcHVfbm9fYm9vc3RfMV82Z2h6IiBhbmQKPiAgICAgICAiY3B1LWRlZmF1
-bHQtZnJlcXVlbmN5Ii4KPiAgICAgLSBNb2RpZmllZCB0aGUgY29tbWVudCBhbmQgdXNlZCB0aGUg
-Y29ycmVjdCBMaW51eCBjb2Rpbmcgc3R5bGUuCj4gICAgIC0gUmVtb3ZlZCBjb2RlcyBvZiB2b2x0
-YWdlLCBiZWNhdXNlIGl0IHdhcyBub3QgdGhlIGNsb2NrIGRyaXZlci4KPiAgICAgLSBVcGRhdGVk
-IHRoZSBmb3JtdWxhIG9mIGNsb2NrIGZyZXF1ZW5jeSBjYWxjdWxhdGlvbi4gUmVtb3ZlZCB0aGUg
-bG9naWMKPiAgICAgICB0aGF0IG9ubHkgdXNlZCByZWdpc3RlciBzZWxlY3Rpb24uCj4gICAgIC0g
-VXNlZCBDTEtfT0ZfREVDTEFSRSgpIHRvIHJlZ2lzdGVyIGNsb2Nrcy4gUmVnaXN0ZXJlZCBwbGwt
-Y2xvY2ssCj4gICAgICAgbXV4LWNsb2NrLCBkaXZpZGVyLWNsb2NrLCBhbmQgZ2F0ZS1jbG9jayBp
-biBjbGstZWljNzcwMC5jLgo+ICAgICAgIFRoZSBzcGVjaWZpYyBpbXBsZW1lbnRhdGlvbiBvZiBj
-bG9jayByZWdpc3RyYXRpb24gd2FzIGluIGNsay5jLgo+ICAgICAtIEFkZGVkIGVpYzc3MDAtY2xv
-Y2tzLmR0c2kuCj4gICAgIC0gTW92ZWQgZGV2aWNlIGluZm9ybWF0aW9uIHRvIERUUy4gUHV0IGFs
-bCBjbG9ja3MnIG5vZGUgaW4gdGhlCj4gICAgICAgZWljNzcwMC1jbG9ja3MuZHRzaS4KPiAKPiAg
-IC0gTGluayB0byB2MzogaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvYWxsLzIwMjUwNjI0MTAzMjEy
-LjI4Ny0xLWRvbmd4dXlhbmdAZXN3aW5jb21wdXRpbmcuY29tLwo+IAo+ICAgQ2hhbmdlcyBpbiB2
-MzoKPiAgIC0gVXBkYXRlIGV4YW1wbGUsIGRyb3AgY2hpbGQgbm9kZSBhbmQgYWRkICcjY2xvY2st
-Y2VsbHMnIHRvIHRoZSBwYXJlbnQKPiAgICAgbm9kZS4KPiAgIC0gQ2hhbmdlIHBhcmVudCBub2Rl
-IGZyb20gc3lzLWNyZyB0byBjbG9jay1jb250cm9sbGVyIGZvciB0aGlzIHlhbWwuCj4gICAtIERy
-b3AgInN5c2NvbiIsICJzaW1wbGUtbWZkIiB0byBjbGVhciB3YXJuaW5ncy9lcnJvcnMgYnkgdXNp
-bmcgIm1ha2UKPiAgICAgZHRfYmluZGluZ19jaGVjayIuIEFuZCB0aGVzZSBhcmUgbm90IG5lY2Vz
-c2FyeS4KPiAgIC0gQWRkICJjcHUtZGVmYXVsdC1mcmVxdWVuY3kiIGRlZmluaXRpb24gaW4geWFt
-bCBmb3IgInVuZG9jdW1lbnRlZCBBQkkiLgo+ICAgLSBEcm9wIFJldmlld2VkLWJ5LCB0aGlzIGlz
-IG1pc3VuZGVyc3RhbmRpbmcuIFdlIGhhdmUgbm90IHJlY2VpdmVkIHN1Y2gKPiAgICAgYW4gZW1h
-aWwuCj4gICAtIExpbmsgdG8gdjI6IGh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL2FsbC8yMDI1MDUy
-MzA5MDc0Ny4xODMwLTEtZG9uZ3h1eWFuZ0Blc3dpbmNvbXB1dGluZy5jb20vCj4gCj4gICBDaGFu
-Z2VzIGluIHYyOgo+ICAgLSBVcGRhdGUgZXhhbXBsZSwgZHJvcCBjaGlsZCBub2RlLgo+ICAgLSBD
-bGVhciB3YXJuaW5ncy9lcnJvcnMgZm9yIHVzaW5nICJtYWtlIGR0X2JpbmRpbmdfY2hlY2siLgo+
-ICAgLSBDaGFuZ2UgdG8gdGhlIGNvcnJlY3QgZm9ybWF0Lgo+ICAgLSBEcm9wIHNvbWUgbm9uLXN0
-YW5hcmQgY29kZS4KPiAgIC0gVXNlIGRldl9lcnJfcHJvYmUoKSBpbiBwcm9iZSBmdW5jdGlvbnMu
-Cj4gICAtIExpbmsgdG8gdjE6IGh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL2FsbC8yMDI1MDUxNDAw
-MjIzMy4xODctMS1kb25neHV5YW5nQGVzd2luY29tcHV0aW5nLmNvbS8KPiAKPiBYdXlhbmcgRG9u
-ZyAoMik6Cj4gICBkdC1iaW5kaW5nczogY2xvY2s6IGVzd2luOiBEb2N1bWVudGF0aW9uIGZvciBl
-aWM3NzAwIFNvQwo+ICAgY2xvY2s6IGVzd2luOiBBZGQgZWljNzcwMCBjbG9jayBkcml2ZXIKPiAK
-PiAgLi4uL2JpbmRpbmdzL2Nsb2NrL2Vzd2luLGVpYzc3MDAtY2xvY2sueWFtbCAgIHwgICA0NiAr
-Cj4gIGRyaXZlcnMvY2xrL0tjb25maWcgICAgICAgICAgICAgICAgICAgICAgICAgICB8ICAgIDEg
-Kwo+ICBkcml2ZXJzL2Nsay9NYWtlZmlsZSAgICAgICAgICAgICAgICAgICAgICAgICAgfCAgICAx
-ICsKPiAgZHJpdmVycy9jbGsvZXN3aW4vS2NvbmZpZyAgICAgICAgICAgICAgICAgICAgIHwgICAx
-NSArCj4gIGRyaXZlcnMvY2xrL2Vzd2luL01ha2VmaWxlICAgICAgICAgICAgICAgICAgICB8ICAg
-IDggKwo+ICBkcml2ZXJzL2Nsay9lc3dpbi9jbGstZWljNzcwMC5jICAgICAgICAgICAgICAgfCAx
-MDMzICsrKysrKysrKysrKysrKysrCj4gIGRyaXZlcnMvY2xrL2Vzd2luL2Nsay1laWM3NzAwLmgg
-ICAgICAgICAgICAgICB8ICAxMjIgKysKPiAgZHJpdmVycy9jbGsvZXN3aW4vY2xrLmMgICAgICAg
-ICAgICAgICAgICAgICAgIHwgIDQ4MSArKysrKysrKwo+ICBkcml2ZXJzL2Nsay9lc3dpbi9jbGsu
-aCAgICAgICAgICAgICAgICAgICAgICAgfCAgMjU2ICsrKysKPiAgLi4uL2R0LWJpbmRpbmdzL2Ns
-b2NrL2Vzd2luLGVpYzc3MDAtY2xvY2suaCAgIHwgIDI4MCArKysrKwo+ICAxMCBmaWxlcyBjaGFu
-Z2VkLCAyMjQzIGluc2VydGlvbnMoKykKPiAgY3JlYXRlIG1vZGUgMTAwNjQ0IERvY3VtZW50YXRp
-b24vZGV2aWNldHJlZS9iaW5kaW5ncy9jbG9jay9lc3dpbixlaWM3NzAwLWNsb2NrLnlhbWwKPiAg
-Y3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvY2xrL2Vzd2luL0tjb25maWcKPiAgY3JlYXRlIG1v
-ZGUgMTAwNjQ0IGRyaXZlcnMvY2xrL2Vzd2luL01ha2VmaWxlCj4gIGNyZWF0ZSBtb2RlIDEwMDY0
-NCBkcml2ZXJzL2Nsay9lc3dpbi9jbGstZWljNzcwMC5jCj4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBk
-cml2ZXJzL2Nsay9lc3dpbi9jbGstZWljNzcwMC5oCj4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2
-ZXJzL2Nsay9lc3dpbi9jbGsuYwo+ICBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9jbGsvZXN3
-aW4vY2xrLmgKPiAgY3JlYXRlIG1vZGUgMTAwNjQ0IGluY2x1ZGUvZHQtYmluZGluZ3MvY2xvY2sv
-ZXN3aW4sZWljNzcwMC1jbG9jay5oCj4gCj4gLS0KPiAyLjQzLjAK
+On Wed, Nov 05, 2025 at 09:36:16AM +0200, Matti Vaittinen wrote:
+> From: Matti Vaittinen <mazziesaccount@gmail.com>
+> 
+> The term 'trickle-charging' is used to describe a very slow charging
+> phase, where electrons "trickle-in" the battery.
+> 
+> There are two different use-cases for this type of charging. At least
+> some Li-Ion batteries can benefit from very slow, constant current,
+> pre-pre phase 'trickle-charging', if a battery is very empty.
+
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+Best regards,
+Krzysztof
+
