@@ -1,84 +1,86 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F5EC254855
-	for <linux-clk@vger.kernel.org>; Thu,  6 Nov 2025 23:26:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C41D033C532
+	for <linux-clk@vger.kernel.org>; Thu,  6 Nov 2025 23:26:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762471596; cv=none; b=g4EgmaxegMDAo9UYDUBgV7vvJ+KpKB5owlM/UI4eYyKt0OOdxpZgH4fcNiJb4pBz14DpifjkuDFGJjrBcGzeBARgF0H0bjAgal9oI3qHYkCiwrQlPewD95BnH4w3xaprT5Q5Ml8G5q54A33KSX00xIfYnMyl45gxuciYmEy8/w8=
+	t=1762471600; cv=none; b=SX3gkqmM5xHg1v7nAuJIEIKPzJeZkHyRJdX/1mGs0HPuc37AMw9xgSLfwlOl4NmW0gXnyUEceVj1nV0WsVRyJ46gAhIhwh+1U6R5VqyWbuEpSxNXILsRo547WUfH/duQjFcfwk4DUjdpELt0RPgMUXE9ODNEf7lXOzsbwGkQju0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762471596; c=relaxed/simple;
-	bh=jDqYCzSqbnGJibZ0TWHt2xeNKFTolxoBt5YB5hnyZ0M=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=D9eLOOqOIcJig+Fq611voywH91jFqZTcpzlR83sc0ZroVUEsSLV2R4/IMiL4yx3lcx8m/673f67EINuBW7CV1Sruf62S5syYb0mCJSvLmt2iCq99G6CvrjZ1MsyMDKCPLv+Sk/ukRgeDcVpsy42cUcY4y48WBQqYHI1ZD+xL5T8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=T+zN1AoM; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=XWVps1pF; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1762471600; c=relaxed/simple;
+	bh=tPB5NIPC9Tahtwhg+nx3O+ru7wuSB+giCQQ8ld+ZnPc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=CYiYHF+GXqjeQILONHRVL7T8nJvtmZ8N9TMjLpO67PJ2K2zwRqSz31fqpyzVpSD6f3G6uSHT9jTdvzVs5zcP8sdMwefYN7kFq0LkwyGCPUHo53Bmx1c+My+ybBO6Pxquhz2/vxYseefnl4z/EZ1DL+G6WQRHYXrYS5pyUqFrtC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=c/zcMhy9; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=LLAsugIZ; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="T+zN1AoM";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="XWVps1pF"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="c/zcMhy9";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="LLAsugIZ"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762471593;
+	s=mimecast20190719; t=1762471597;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=FAJMsAfnDQTxhU296hQyXnd4WVpQmvZ3EitymZm2I2M=;
-	b=T+zN1AoMeZpdvOv91H8N/gUuoFQ2JTvQJN5f217gJBtcLHCIXQDXD22JacUxePD3y54DaR
-	DXUqonWLc3AS49pWrYzofRYkjMT1ovvsbYiMN5r0SptMty3//olWsjoNTKSP+cMyLI8eth
-	Hf382tB98B9zV+3sMMgQiWnvMIaJVQ0=
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
- [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OIXhuN2h868r2lVLARvPty5kJy7WhDgZbJDR4n+1yHA=;
+	b=c/zcMhy9EZznNvYlR2w9uJLmMmoApPz04cw4phZLhhJg1JheGn0mS6B/zK8dQvFPin10b8
+	n1OcRTvM4oDTAVjlvz+i8DXK9NwrKs23IKVBR0A7dKJdZzaPKXBbeJvyjNfiHSSnLgSL7F
+	0nLdfPeeqIN7hxn33HJcts/SwyaVIvA=
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
+ [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-653-Y9tG0iq6PuKsHsB4130rHg-1; Thu, 06 Nov 2025 18:26:32 -0500
-X-MC-Unique: Y9tG0iq6PuKsHsB4130rHg-1
-X-Mimecast-MFC-AGG-ID: Y9tG0iq6PuKsHsB4130rHg_1762471591
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-88021ab477cso4776596d6.0
-        for <linux-clk@vger.kernel.org>; Thu, 06 Nov 2025 15:26:32 -0800 (PST)
+ us-mta-152-VmT0VcUbMmahySxn7vl9KQ-1; Thu, 06 Nov 2025 18:26:36 -0500
+X-MC-Unique: VmT0VcUbMmahySxn7vl9KQ-1
+X-Mimecast-MFC-AGG-ID: VmT0VcUbMmahySxn7vl9KQ_1762471596
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-88050bdc2abso5870346d6.2
+        for <linux-clk@vger.kernel.org>; Thu, 06 Nov 2025 15:26:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1762471591; x=1763076391; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=FAJMsAfnDQTxhU296hQyXnd4WVpQmvZ3EitymZm2I2M=;
-        b=XWVps1pFWiOcvJuzfEZq8UsAn+Ly0WWYecgvlw7CcOLg2Eqjlb201KmCVIguduHOyp
-         62SVAtGllkLy0re0Ld1akJU4qqUn+qndmSWt4gWfQYGQhJ1utrPt9pg77T6q68qcpdgi
-         h8gWiBqcdpp7dOhGhKUkOIV5JqeekvSy3HH6WX6B5pQd6eylRztv1qQ9NxYqToleRSok
-         PuJW6S4vGqVIb8Eq2KaNNNMKeEkWvwtDgRiIjDCbjkfiZe2jIfvGrMB54qRmxHAaPX/E
-         s95GBGe03Q2kEDperlfJ+mToH23vDjje79IqGxwnd3wCg85rx3oQIiZIV7puGnTp6aDO
-         4GVw==
+        d=redhat.com; s=google; t=1762471596; x=1763076396; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OIXhuN2h868r2lVLARvPty5kJy7WhDgZbJDR4n+1yHA=;
+        b=LLAsugIZ5U6NlPGYm5+PaOx6v4LtD5y/PuN+RQFAO3hNTa61WpjvimE2I8K2GTmXF8
+         kfFiIHTfHwXLh/QY+nbrxIdXAE1ezYCSOFounFNgpD9ibnsOLCmbp8pJEHWc+kMLH1Fe
+         oStQTWuN+BXOPPo4fAKs8eSqPI7Gm/uw4UamvuHEn9Y3fked6Z6P5m04TNXTWObzyosZ
+         GGNfUv9ergKBdh2RdqEbWB0FZX9ZYD4Pk5ycYNkQ0zKAAp4fv9fnmK88JhC0ewrSBhzq
+         qFJtdbgst/uR70jZTrlgLu2BlEpyWSWcsWndT75G5ST7oWSMQcXaVNPnNFfH2YgKARF4
+         pAfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762471591; x=1763076391;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FAJMsAfnDQTxhU296hQyXnd4WVpQmvZ3EitymZm2I2M=;
-        b=gjrb2zhmYyKHOuB6lBJrHQvDJinXNBzB1B3jQL+kcPvXo2PJ9Aaer+1yLfB0roswPv
-         Iqj3wbuhZaoM9uHleVZgXt8wCf/t+zIGiWNYG2rVBuOtMUbbCHcVlyxwUZFCVVecbFeW
-         OKP+omSyDjcV4qrSQNyVrwnYAIeDstuzzedJ5KUMGt4J66TO1G5LXpH/iWZyIzfapWmW
-         yPNLFupnDT8irUqZFzokDsu2wMpp5IJyAO5rYEihQKsvsCs4lk4/pgwUjurPrxIymALq
-         7A55p3w77V3oK9fLiUKdOzAtGxNHjnPrflSHAV8InorA7YBkyR+gBv183ePNdYEVh3im
-         sZ5A==
-X-Gm-Message-State: AOJu0Yx0s2N3RVCsdCx6z8P1WnBvEGyQgj4fHDjomvgJlRrIPzx9a7Oc
-	8SFwxmJpXiKZJb/Uv/9Rcnfj/QeivqpP/7R8Z9znOU+/uSd8xsLG4rCRU9IWHGD/CY8Usj0ZSHQ
-	eINYeVGLpD4reS9aNkXat2NXLb+r3VDJqs4iIBxh3KzPgGJHT40Yj/2FTvUVWAg==
-X-Gm-Gg: ASbGncvu+Xl+b6S0Vq9qe0yPEr0ChFJ1MoBJDcQJUSHDwsNszu8doTtvAHUEHEuj2Jy
-	tPNJH8rRIatuJOjMRjCr5qtUp7KXDbc+bzCzuoUXbzYYn8eA1LnyzElOOQJ+r9jTkW5cmL6sbEJ
-	wGlLNo4jE82VTonXEgm3I3H7slRnLHzvh/p3TTXmZn8nbbmXDdr4UloAYHm3gu2x83M8894WE0u
-	BkcBeZzg4TGhJWuehyYx0yWfbnc4qvsMfjGr13/lh3KqYIkCPR9D8cWx1yuzIh9ewgXFRJSGKFM
-	vkExtJmBhJQHuAWEDj5jRug+JROPG19WksnwCfXqP6gNLFHJMdC1kCgkVqR4mfkz2GLQNHwPdR5
-	w07tMdkS+G9BpL60hEThkZFqMQKllLrknHUbBlht5nQ==
-X-Received: by 2002:a05:6214:b6c:b0:880:5d38:5411 with SMTP id 6a1803df08f44-881834dfe09mr19201046d6.57.1762471591431;
-        Thu, 06 Nov 2025 15:26:31 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IH+ZOm7tarylyJioRDN+UtrP4l5Py54SY0NPKQjKouDoS43pKzvH1MTEWiaIrH2Yah85AxhDw==
-X-Received: by 2002:a05:6214:b6c:b0:880:5d38:5411 with SMTP id 6a1803df08f44-881834dfe09mr19200796d6.57.1762471591096;
-        Thu, 06 Nov 2025 15:26:31 -0800 (PST)
+        d=1e100.net; s=20230601; t=1762471596; x=1763076396;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=OIXhuN2h868r2lVLARvPty5kJy7WhDgZbJDR4n+1yHA=;
+        b=Cu4tdQkE50asx9x0FRs0t5BwkXWHP0Lp05cWQ9EzOKxAp7x7ptfmzDhZWY8Pwv2/P7
+         m9ygQk5M3fVqQ+vGQS+/+T5Owjtu6SUuG9AyhbKTDl4OoOasfg0F7j/SMMRBGaseNpYf
+         fQzOjnNU8rjQU0gXoqut5yVDsFoNgHhcD7jXMf5FOqzOX1/fdEJ2DghiOsMQa4GkXYMp
+         aMKn1tRAzuVf6tW36kbyYmXBlviZY0Lg/UFjvH2N6eMHM2SwHYm57h51rq8LkdbnR2JM
+         bbBvsnA3Pvs9w6v3gB01lDiBuGNMETHyMpK1X035E/wVPKqXenlX+lGr4TTk/Z30aw9E
+         eUjA==
+X-Gm-Message-State: AOJu0Yx6qB/iuNCxw5rBCyTMEavZ6dJaphsWjB71LWxeFJWx6NdKcJtW
+	4TGTzeKkqpFFgNcmkQ3zc3ewk6PdFnyq707Jg8DofT+3D9kQ0Ql3/RMOAOsZAD4wlAsWCFuFBeT
+	28nCYPMS8yj36HH1vQxGNh9vt7+fhnz5tI1OD6+wAIw2E99jK3k1XZbr2dLI4Ew==
+X-Gm-Gg: ASbGncvtWHLs9hg+ZKgPe/oV1hXSjOgQJQuJU+L7DBIhpczNz/G1Bm88qlNST0pVXKj
+	eGdGRRtnea80Qo0JPtFzr2L1w0eMUKqo2b6w89dYT6WMgYyk+D3NJ09BFPgIfTk19gBft1cM2+4
+	hMw0kRA45JMyge7bwVs26J7jmBJZJb08SuaF6jpsfaeCz727CkpdXM1SWX3T95mMWbyNXBYRLj/
+	Kdyl5ta/oHaFRRACh2YY2aX3biUeT5b+Mtu7kg5C6dVOcXPH1CmtWaLYRC+LPjrVmORP+WTjVBq
+	K70rwtJCJ/OzizZMayjiDkEH5t1gg0krlTa1+mu5/7tVJ/LbbZ7Wn+ui5w2rCMEw3bHCHN4phlj
+	EleOSyor2UDZWs5nPLZvQZt9CWFYMiM0XeLl4bwf4BQ==
+X-Received: by 2002:a05:6214:1c84:b0:880:5382:ff0a with SMTP id 6a1803df08f44-88167b1b487mr14732406d6.27.1762471596157;
+        Thu, 06 Nov 2025 15:26:36 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEwsDTQJb9qqBYb9v62fMP1IlTO5wvFmMfSLsEpd/QskmRbsWz9CRa2AbIiAewvIcXXmKGXjw==
+X-Received: by 2002:a05:6214:1c84:b0:880:5382:ff0a with SMTP id 6a1803df08f44-88167b1b487mr14732096d6.27.1762471595757;
+        Thu, 06 Nov 2025 15:26:35 -0800 (PST)
 Received: from [10.197.115.224] (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-88082a3aa91sm27389196d6.56.2025.11.06.15.26.26
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-88082a3aa91sm27389196d6.56.2025.11.06.15.26.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Nov 2025 15:26:30 -0800 (PST)
+        Thu, 06 Nov 2025 15:26:35 -0800 (PST)
 From: Brian Masney <bmasney@redhat.com>
-Subject: [PATCH RESEND v2 0/9] phy: convert from clk round_rate() to
- determine_rate()
-Date: Thu, 06 Nov 2025 18:25:46 -0500
-Message-Id: <20251106-phy-clk-route-rate-v2-resend-v1-0-e2058963bfb1@redhat.com>
+Date: Thu, 06 Nov 2025 18:25:47 -0500
+Subject: [PATCH v2 RESEND 1/9] phy: freescale: phy-fsl-samsung-hdmi:
+ convert from round_rate() to determine_rate()
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -87,10 +89,9 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAHsuDWkC/x3MsQrCMBCA4VcJN3uQCxjU2a4OdRSHND3toaTl0
- gal9N0NLj98y79CZhXOcDIrKBfJMqYK2hmIQ0hPRumrwVm3J7Iep+GL8f1CHZeZUUNNcaicOfU
- YDj52jiwdfQd1MSk/5PPf36A40zbX5nKG+7b9AEy+0JR5AAAA
-X-Change-ID: 20251106-phy-clk-route-rate-v2-resend-a86cb210196b
+Message-Id: <20251106-phy-clk-route-rate-v2-resend-v1-1-e2058963bfb1@redhat.com>
+References: <20251106-phy-clk-route-rate-v2-resend-v1-0-e2058963bfb1@redhat.com>
+In-Reply-To: <20251106-phy-clk-route-rate-v2-resend-v1-0-e2058963bfb1@redhat.com>
 To: Vinod Koul <vkoul@kernel.org>, 
  Kishon Vijay Abraham I <kishon@kernel.org>, 
  Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
@@ -103,200 +104,66 @@ To: Vinod Koul <vkoul@kernel.org>,
 Cc: linux-clk@vger.kernel.org, linux-phy@lists.infradead.org, 
  linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
  linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
- linux-rockchip@lists.infradead.org, Brian Masney <bmasney@redhat.com>, 
- Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+ linux-rockchip@lists.infradead.org, Brian Masney <bmasney@redhat.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6371; i=bmasney@redhat.com;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1978; i=bmasney@redhat.com;
  s=20250903; h=from:subject:message-id;
- bh=jDqYCzSqbnGJibZ0TWHt2xeNKFTolxoBt5YB5hnyZ0M=;
- b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGDJ59Rb4nLOympMWNK85V7P7kd+6ig8Z8iyrkpyO9LTVv
- L2wiNO+o5SFQYyLQVZMkWVJrlFBROoq23t3NFlg5rAygQxh4OIUgImYr2P4nzJZcP7j4OSiJU++
- 3zk4k8+2/Frr8mwdjUeuGTeL89leCzH8U557+Ny5Q6xsLO8TtE7MrRS0OtKyeXV28qwN2VKNB9I
- aWAE=
+ bh=tPB5NIPC9Tahtwhg+nx3O+ru7wuSB+giCQQ8ld+ZnPc=;
+ b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGDJ59RZ8qZ1y68Ds1+V38qKsPZ31ou/Hv9tT5Oq986XlN
+ sMCmfTQjlIWBjEuBlkxRZYluUYFEamrbO/d0WSBmcPKBDKEgYtTACZir8XI8K3jqEHi251Sx7c/
+ Yjraoi5f92KzyTYZ7+2Xkg/s6jMsmcHwP/jWullLg5MdIhTUAyNY/z+5IpspNzcipfx2v2sub7g
+ DAwA=
 X-Developer-Key: i=bmasney@redhat.com; a=openpgp;
  fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
 
-This is a resend of my previous v2 series since I haven't receieved any
-feedback.
-
-https://lore.kernel.org/linux-phy/20250810-phy-clk-round-rate-v2-0-9162470bb9f2@redhat.com/T/
-
-I'm hoping to get this merged for v6.19 so that I can remove the
-round_rate() clk op from the clk core for v6.20. The clk maintainer
-(Stephen) mentioned this work in his last pull to Linus:
-
-https://lore.kernel.org/linux-clk/20251007051720.11386-1-sboyd@kernel.org/
-
-The round_rate() clk ops is deprecated in the clk framework in favor
-of the determine_rate() clk ops, so let's go ahead and convert the
-drivers in the phy subsystem using the Coccinelle semantic patch
-posted below. I did a few minor cosmetic cleanups of the code in a
-few cases.
-
-Changes since v2 RESEND:
-- Collected up 3 Reviewed-by tags
-
-Changes since v1:
-- Patch 8 (phy-rockchip-samsung-hdptx): fix returning error code
-  (Cristian)
-
-Coccinelle semantic patch:
-
-    virtual patch
-
-    // Look up the current name of the round_rate function
-    @ has_round_rate @
-    identifier round_rate_name =~ ".*_round_rate";
-    identifier hw_param, rate_param, parent_rate_param;
-    @@
-
-    long round_rate_name(struct clk_hw *hw_param, unsigned long rate_param,
-                  unsigned long *parent_rate_param)
-    {
-    	...
-    }
-
-    // Rename the route_rate function name to determine_rate()
-    @ script:python generate_name depends on has_round_rate @
-    round_rate_name << has_round_rate.round_rate_name;
-    new_name;
-    @@
-
-    coccinelle.new_name = round_rate_name.replace("_round_rate", "_determine_rate")
-
-    // Change rate to req->rate; also change occurrences of 'return XXX'.
-    @ chg_rate depends on generate_name @
-    identifier has_round_rate.round_rate_name;
-    identifier has_round_rate.hw_param;
-    identifier has_round_rate.rate_param;
-    identifier has_round_rate.parent_rate_param;
-    identifier ERR =~ "E.*";
-    expression E;
-    @@
-
-    long round_rate_name(struct clk_hw *hw_param, unsigned long rate_param,
-                  unsigned long *parent_rate_param)
-    {
-    <...
-    (
-    -return -ERR;
-    +return -ERR;
-    |
-    - return rate_param;
-    + return 0;
-    |
-    - return E;
-    + req->rate = E;
-    +
-    + return 0;
-    |
-    - rate_param
-    + req->rate
-    )
-    ...>
-    }
-
-    // Coccinelle only transforms the first occurrence of the rate parameter
-    // Run a second time. FIXME: Is there a better way to do this?
-    @ chg_rate2 depends on generate_name @
-    identifier has_round_rate.round_rate_name;
-    identifier has_round_rate.hw_param;
-    identifier has_round_rate.rate_param;
-    identifier has_round_rate.parent_rate_param;
-    @@
-
-    long round_rate_name(struct clk_hw *hw_param, unsigned long rate_param,
-                  unsigned long *parent_rate_param)
-    {
-    <...
-    - rate_param
-    + req->rate
-    ...>
-    }
-
-    // Change parent_rate to req->best_parent_rate
-    @ chg_parent_rate depends on generate_name @
-    identifier has_round_rate.round_rate_name;
-    identifier has_round_rate.hw_param;
-    identifier has_round_rate.rate_param;
-    identifier has_round_rate.parent_rate_param;
-    @@
-
-    long round_rate_name(struct clk_hw *hw_param, unsigned long rate_param,
-                  unsigned long *parent_rate_param)
-    {
-    <...
-    (
-    - *parent_rate_param
-    + req->best_parent_rate
-    |
-    - parent_rate_param
-    + &req->best_parent_rate
-    )
-    ...>
-    }
-
-    // Convert the function definition from round_rate() to determine_rate()
-    @ func_definition depends on chg_rate @
-    identifier has_round_rate.round_rate_name;
-    identifier has_round_rate.hw_param;
-    identifier has_round_rate.rate_param;
-    identifier has_round_rate.parent_rate_param;
-    identifier generate_name.new_name;
-    @@
-
-    - long round_rate_name(struct clk_hw *hw_param, unsigned long rate_param,
-    -               unsigned long *parent_rate_param)
-    + int new_name(struct clk_hw *hw, struct clk_rate_request *req)
-    {
-        ...
-    }
-
-    // Update the ops from round_rate() to determine_rate()
-    @ ops depends on func_definition @
-    identifier has_round_rate.round_rate_name;
-    identifier generate_name.new_name;
-    @@
-
-    {
-        ...,
-    -   .round_rate = round_rate_name,
-    +   .determine_rate = new_name,
-        ...,
-    }
-
-Note that I used coccinelle 1.2 instead of 1.3 since the newer version
-adds unnecessary braces as described in this post.
-https://lore.kernel.org/cocci/67642477-5f3e-4b2a-914d-579a54f48cbd@intel.com/
+The round_rate() clk ops is deprecated, so migrate this driver from
+round_rate() to determine_rate() using the Coccinelle semantic patch
+on the cover letter of this series.
 
 Signed-off-by: Brian Masney <bmasney@redhat.com>
 ---
-Brian Masney (9):
-      phy: freescale: phy-fsl-samsung-hdmi: convert from round_rate() to determine_rate()
-      phy: mediatek: phy-mtk-hdmi-mt2701: convert from round_rate() to determine_rate()
-      phy: mediatek: phy-mtk-hdmi-mt8173: convert from round_rate() to determine_rate()
-      phy: mediatek: phy-mtk-hdmi-mt8195: convert from round_rate() to determine_rate()
-      phy: mediatek: phy-mtk-mipi-dsi-mt8173: convert from round_rate() to determine_rate()
-      phy: mediatek: phy-mtk-mipi-dsi-mt8183: convert from round_rate() to determine_rate()
-      phy: rockchip: phy-rockchip-inno-hdmi: convert from round_rate() to determine_rate()
-      phy: rockchip: phy-rockchip-samsung-hdptx: convert from round_rate() to determine_rate()
-      phy: ti: phy-j721e-wiz: convert from round_rate() to determine_rate()
+ drivers/phy/freescale/phy-fsl-samsung-hdmi.c | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
- drivers/phy/freescale/phy-fsl-samsung-hdmi.c      | 13 ++++++----
- drivers/phy/mediatek/phy-mtk-hdmi-mt2701.c        |  8 +++---
- drivers/phy/mediatek/phy-mtk-hdmi-mt8173.c        | 16 ++++++------
- drivers/phy/mediatek/phy-mtk-hdmi-mt8195.c        | 10 ++++----
- drivers/phy/mediatek/phy-mtk-mipi-dsi-mt8173.c    | 10 +++++---
- drivers/phy/mediatek/phy-mtk-mipi-dsi-mt8183.c    | 10 +++++---
- drivers/phy/rockchip/phy-rockchip-inno-hdmi.c     | 30 ++++++++++++-----------
- drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c | 14 ++++++-----
- drivers/phy/ti/phy-j721e-wiz.c                    | 11 ++++++---
- 9 files changed, 68 insertions(+), 54 deletions(-)
----
-base-commit: df5d79720b152e7ff058f11ed7e88d5b5c8d2a0c
-change-id: 20251106-phy-clk-route-rate-v2-resend-a86cb210196b
+diff --git a/drivers/phy/freescale/phy-fsl-samsung-hdmi.c b/drivers/phy/freescale/phy-fsl-samsung-hdmi.c
+index 191c282246d96e3f6c5a8d17abe078892882bf44..d010fec15671d33cc363af79e9f1c3f26ecb3464 100644
+--- a/drivers/phy/freescale/phy-fsl-samsung-hdmi.c
++++ b/drivers/phy/freescale/phy-fsl-samsung-hdmi.c
+@@ -570,17 +570,20 @@ const struct phy_config *fsl_samsung_hdmi_phy_find_settings(struct fsl_samsung_h
+ 	return fract_div_phy;
+ }
+ 
+-static long fsl_samsung_hdmi_phy_clk_round_rate(struct clk_hw *hw,
+-						unsigned long rate, unsigned long *parent_rate)
++static int fsl_samsung_hdmi_phy_clk_determine_rate(struct clk_hw *hw,
++						   struct clk_rate_request *req)
+ {
+ 	struct fsl_samsung_hdmi_phy *phy = to_fsl_samsung_hdmi_phy(hw);
+-	const struct phy_config *target_settings = fsl_samsung_hdmi_phy_find_settings(phy, rate);
++	const struct phy_config *target_settings = fsl_samsung_hdmi_phy_find_settings(phy,
++										      req->rate);
+ 
+ 	if (target_settings == NULL)
+ 		return -EINVAL;
+ 
+ 	dev_dbg(phy->dev, "round_rate, closest rate = %u\n", target_settings->pixclk);
+-	return target_settings->pixclk;
++	req->rate = target_settings->pixclk;
++
++	return 0;
+ }
+ 
+ static int fsl_samsung_hdmi_phy_clk_set_rate(struct clk_hw *hw,
+@@ -599,7 +602,7 @@ static int fsl_samsung_hdmi_phy_clk_set_rate(struct clk_hw *hw,
+ 
+ static const struct clk_ops phy_clk_ops = {
+ 	.recalc_rate = phy_clk_recalc_rate,
+-	.round_rate = fsl_samsung_hdmi_phy_clk_round_rate,
++	.determine_rate = fsl_samsung_hdmi_phy_clk_determine_rate,
+ 	.set_rate = fsl_samsung_hdmi_phy_clk_set_rate,
+ };
+ 
 
-Best regards,
 -- 
-Brian Masney <bmasney@redhat.com>
+2.51.0
 
