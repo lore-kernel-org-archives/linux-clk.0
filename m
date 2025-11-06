@@ -1,97 +1,122 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 837FB330326;
-	Thu,  6 Nov 2025 13:34:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37BA6332EA8;
+	Thu,  6 Nov 2025 13:34:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762436079; cv=none; b=Yivu7YZAWgQCINGE2Z39l1pAQYsCl9uE9gJdcwpxvi/JIofCC7rM+EJz5a3BDOanjH8l2JrR4CXdvU16o5KDyYARSoqzsncvxJ1JtM2U2zEI6UtIgXPPWT4TMybIDkIYHTYd6ZvHvaz2a28JTYoFS6ML0gGHv9oluqd0zEJLvI4=
+	t=1762436083; cv=none; b=F/eZbo63IS2ZDKorN2p9O/dt5+scPb2vCt5JKl+vvLbcJLhXC+CFtwgeIZ/lLnbKxGX5B4jZ17xRpnNGuAAsY3NSl4LK9dfzsibFvn1BITtSgnLMdk01bFp4bHgXfguEHBGZoy2dn1r1X6lIXbgBBJwOq9bwVjTMB15aF0rN5Ig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762436079; c=relaxed/simple;
-	bh=UxsA7mpBbTvyv+g/LrSCFPsTpp7DeoIh9dJ/dkCgAxY=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=JJldS6UEMbX0Tu25rGi/tFofkreOxFWVxd85ZqBSfvU3J7V+I+ClQBBoRBZVthzPB4eUpH+8b5xR2XD5WBDz3IlOw5oadTWSan1I1CzE/ImflH1flk1yESAKjx+4mzuQKOZeY5gh0/cPxqzH2hHSYQQnAr/y23EQLSN92BRHIuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=llznu7vx; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="llznu7vx"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB4C6C116C6;
-	Thu,  6 Nov 2025 13:34:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762436078;
-	bh=UxsA7mpBbTvyv+g/LrSCFPsTpp7DeoIh9dJ/dkCgAxY=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=llznu7vxVvCdwnCl/IdM4fTDwJiq1ztqiQ6zJ2Ed1+c3HAjvpQk1TkOwDcnTxNJRZ
-	 wWff58/kXcPtX0BGe7JdTaR4eGFQSAUwCj2ySVW6AYwbPeVsN463BW05DfIpCWw/hl
-	 Jj06IfZCO6KqhJ0grsxnLXj72NGc6eQw5N1vyoBG8o7dBfKxaUqBZ/Bg5VwJpot8/O
-	 CvuRqY0Q0zTKdoKJinZos92gB/UOC/NIbZwxyhbXL+BeTpjbnSQOo7CUBr7c+L9Zc6
-	 P4WKltBa+np+i9Frx4hv7oveioFV9m0sYcgu5mhVs4L50JnJ7xN3RgtvTtIp0le4rg
-	 jmxcZgsRfxNtg==
-Date: Thu, 06 Nov 2025 07:34:37 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1762436083; c=relaxed/simple;
+	bh=VvNmR++yh7WAnYFx+zWDkYTT93AZwSa+4wC/ospG4vo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=TSOizJyhC7ZlmGohOe8dl4bTrqym0OrnLVQx3N3COwxHIpyQ26UvbuWYUsh4SJV24DKhv4+WDH7cFIBJCmo6HHw3KbOrjS+AiHwgGqh7BXEIPbPwfgMff4GezIciMSu6YGCTzyhdBL8m99NmpzbXHw0A3ltBS7yfDJRhyYxvlhM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70790C4CEF7;
+	Thu,  6 Nov 2025 13:34:32 +0000 (UTC)
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Yury Norov <yury.norov@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	David Miller <davem@davemloft.net>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Joel Stanley <joel@jms.id.au>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	Crt Mori <cmo@melexis.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Jacky Huang <ychuang3@nuvoton.com>,
+	Shan-Chun Hung <schung@nuvoton.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Alex Elder <elder@ieee.org>,
+	David Laight <david.laight.linux@gmail.com>,
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
+	Jason Baron <jbaron@akamai.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Tony Luck <tony.luck@intel.com>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Kim Seer Paller <kimseer.paller@analog.com>,
+	David Lechner <dlechner@baylibre.com>,
+	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Richard Genoud <richard.genoud@bootlin.com>,
+	Cosmin Tanislav <demonsingur@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Jianping Shen <Jianping.Shen@de.bosch.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-crypto@vger.kernel.org,
+	linux-edac@vger.kernel.org,
+	qat-linux@intel.com,
+	linux-gpio@vger.kernel.org,
+	linux-aspeed@lists.ozlabs.org,
+	linux-iio@vger.kernel.org,
+	linux-sound@vger.kernel.org,
+	linux-mtd@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v6 01/26] clk: at91: pmc: #undef field_{get,prep}() before definition
+Date: Thu,  6 Nov 2025 14:33:49 +0100
+Message-ID: <939d8c6da1f468026b1bb201413ba08b1d0751fd.1762435376.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <cover.1762435376.git.geert+renesas@glider.be>
+References: <cover.1762435376.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linux-kernel@vger.kernel.org, sirius.wang@mediatek.com, 
- Ulf Hansson <ulf.hansson@linaro.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-pm@vger.kernel.org, 
- linux-clk@vger.kernel.org, netdev@vger.kernel.org, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
- Richard Cochran <richardcochran@gmail.com>, jh.hsu@mediatek.com, 
- devicetree@vger.kernel.org, linux-mediatek@lists.infradead.org, 
- Qiqi Wang <qiqi.wang@mediatek.com>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- linux-arm-kernel@lists.infradead.org, 
- Michael Turquette <mturquette@baylibre.com>, vince-wl.liu@mediatek.com, 
- Project_Global_Chrome_Upstream_Group@mediatek.com
-To: "irving.ch.lin" <irving-ch.lin@mediatek.com>
-In-Reply-To: <20251106124330.1145600-3-irving-ch.lin@mediatek.com>
-References: <20251106124330.1145600-1-irving-ch.lin@mediatek.com>
- <20251106124330.1145600-3-irving-ch.lin@mediatek.com>
-Message-Id: <176243607706.3652517.3944575874711134298.robh@kernel.org>
-Subject: Re: [PATCH v3 02/21] dt-bindings: power: mediatek: Add MT8189
- power domain definitions
+Content-Transfer-Encoding: 8bit
 
+Prepare for the advent of globally available common field_get() and
+field_prep() macros by undefining the symbols before defining local
+variants.  This prevents redefinition warnings from the C preprocessor
+when introducing the common macros later.
 
-On Thu, 06 Nov 2025 20:41:47 +0800, irving.ch.lin wrote:
-> From: Irving-CH Lin <irving-ch.lin@mediatek.com>
-> 
-> Add device tree bindings for the power domains of MediaTek MT8189 SoC.
-> 
-> Signed-off-by: Irving-CH Lin <irving-ch.lin@mediatek.com>
-> ---
->  .../power/mediatek,power-controller.yaml      |  1 +
->  .../dt-bindings/power/mediatek,mt8189-power.h | 38 +++++++++++++++++++
->  2 files changed, 39 insertions(+)
->  create mode 100644 include/dt-bindings/power/mediatek,mt8189-power.h
-> 
+Suggested-by: Yury Norov <yury.norov@gmail.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+---
+v6:
+  - Add Acked-by,
 
-My bot found errors running 'make dt_binding_check' on your patch:
+v5:
+  - New.
+---
+ drivers/clk/at91/pmc.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-yamllint warnings/errors:
-./Documentation/devicetree/bindings/clock/mediatek,mt8189-clock.yaml:25:9: [warning] wrong indentation: expected 10 but found 8 (indentation)
-
-dtschema/dtc warnings/errors:
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20251106124330.1145600-3-irving-ch.lin@mediatek.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+diff --git a/drivers/clk/at91/pmc.h b/drivers/clk/at91/pmc.h
+index 5daa32c4cf2540d7..78a87d31463e98b0 100644
+--- a/drivers/clk/at91/pmc.h
++++ b/drivers/clk/at91/pmc.h
+@@ -117,7 +117,9 @@ struct at91_clk_pms {
+ 	unsigned int parent;
+ };
+ 
++#undef field_get
+ #define field_get(_mask, _reg) (((_reg) & (_mask)) >> (ffs(_mask) - 1))
++#undef field_prep
+ #define field_prep(_mask, _val) (((_val) << (ffs(_mask) - 1)) & (_mask))
+ 
+ #define ndck(a, s) (a[s - 1].id + 1)
+-- 
+2.43.0
 
