@@ -1,71 +1,71 @@
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3800321430
-	for <linux-clk@vger.kernel.org>; Thu,  6 Nov 2025 14:28:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C67181DA60D
+	for <linux-clk@vger.kernel.org>; Thu,  6 Nov 2025 14:29:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762439321; cv=none; b=J6TKdd1SG6x7avVeZhSrC4UmB8uwIwlaEqW5Y5Ax5qQyG1VFENh2VPngn0MV1z9+nPR/zeTaiV8WLM6l3zSlfjOfn+oJP7WJ+c5wJDfeVlYSaAvyVo6YEUwnuHQL7023rNvgLDz4vcV5dBE/jmAojRs6WdChSTKFsxpxWs+PU0k=
+	t=1762439352; cv=none; b=WCtm+eIEDQD0iE357POQamPlPkMjcn/Nez0qKMXKqfBIDIWbwOXydD5BQkGw+FSdnKQ/sHDLMD88vp25XVpuxR5xRuOTWNzN+QL/WGIKQJUll4JCUnJqnmDsOFOjR1zFH5WX40kF2c4VhLIopMvfABr5/arj/o7+qEo2Iz8WwW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762439321; c=relaxed/simple;
-	bh=3lgjqrw9oTLBZNzeCWRnYqfLBcostxc+8B8DcxRaSTo=;
+	s=arc-20240116; t=1762439352; c=relaxed/simple;
+	bh=NdOeY7lnDOPuK6VEus4jY0bG+2eiDkIJXg9ctj3EdoA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PMgEvmnf6mK0fGbsJC85h4mhslBNAkybYtMuOqbjSX5b40mwYJPbydmJhO67apcZ7+IHQodiLK20+F0qT7lGk8S/3MP8oDQR9cGxszoku1mK0C7RsnaMUyfh1I/z0i9xWslZoxoXX446UN5ckYA3UHCYmKOgYlZYCcyXbOaezp0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.44
+	 To:Cc:Content-Type; b=sj8ZGy8mWAQE/JFjsl3lPBSWLOglYGrt7NPFcnJzljTfuot5W199RtXd2REwSXMrlD1nBdiKDNO4yO/YNuhFeMi/anGQ1s+lO2gCaGUcoIAfTEoZN3h0PoZi18VF5nBwXMgo2i1GO32ggSSlLOeLI7pYVfBL4rBJNf4QkxUVDhc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-640f0f82da9so1803878a12.1
-        for <linux-clk@vger.kernel.org>; Thu, 06 Nov 2025 06:28:39 -0800 (PST)
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-64088c6b309so1550944a12.0
+        for <linux-clk@vger.kernel.org>; Thu, 06 Nov 2025 06:29:09 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762439317; x=1763044117;
+        d=1e100.net; s=20230601; t=1762439347; x=1763044147;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=aFuhrM5Zx5faMXjiCvShw5ZF0br2pRJWjGUrf3CbngU=;
-        b=DGTNHmKTNQaY2s8I80SajfchNxRxmpKUXd6CTBg+cHbWAj6iBgSjjFtssqfQGyfoT2
-         fk3l6otzLC/zsKMR1Snq+Gn7FT1bo23s37Go7euai8pQWKt99/qn3I6Ksztuqi5kBBJB
-         SpiOG2A9Rv3XTLtHuol2OTUPlS4pb5UO7AY4q0ctp3QNM+mv6M3I1mQHUuCbZ0NEiP6U
-         SXm3TxGgo3a2WUJ14AJaMSy6B3cK+8bpE62zQkn7kBeGz58lPHmJ8BtncuNb6YGCJ5ah
-         X6F7OsyFL5dcHMFbDKMP+24DqmEfScslhzT9skwLlMXaeHr9KftRw87b+uE1NoEakq0X
-         UDfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWVq0ln4ovJo8zeN07VowkHGpDNQvlZy3jdGl6VD6IIXPortEkCAVUOhyfs4SlCeSqX3jYIAq2AtVw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzcEHWruUjy9YSr1UcyXZFcJqs9e+ppBTCI8BXQfhZa7sIEHXAS
-	UlkdAWKSx/O9VyV82rgpSJd7a8NObPeP+TVhpb8xWmHLr5pjxNblKf4nCvz6bnvnixo=
-X-Gm-Gg: ASbGnctEfvzSjiyeA6pNfiIjtHfU6AQE3B2pR41+gIxRGnsAhBbi4mcr3JQp7NgJpcF
-	e3wjWfUMgcKarLXmtTKdWFVF4uVrAybsWr892rrrc6QDx1i05UkAf79ZHxwW/e2vNOJDIpjnH1P
-	0uJ6s/OTDxHRumT3KYdyMqVGfElSB04xulEAF7skFnNvIjavOHV8DQRj4SqJyNGZdE2ShLipd2f
-	zooIEyZ4CQSttFpww1z5gOUhVR8sJ1gUPU7FDZwlk3CjqiJPnQNBBU90wC2C5shV6f5ulBCwYdy
-	Et7absgfEfR0jaMmKW3XOCmeWKRgEswM2//gTNL4e/KBxmqx8crZZbZPlfcRlhrYMsFkSINJfsm
-	wYRbv/Ztd0sotVf/sPtitpmPRjQkCYGjLGwi2riufj9TgJBGd2SAtTkNjacS8UaCuMRuuNJFYZt
-	Cb9jMbPcBRFYYB/GPvZXEd/AotRPtM66kIkli0pw==
-X-Google-Smtp-Source: AGHT+IE2IwQyhNTHkSR4xzkbxlFz73hvo+YxIc8UwRsB6/GYZ4OQwbmYvASLzmXv6B+9vEyFwThlXg==
-X-Received: by 2002:a05:6402:42ce:b0:640:bbd1:7d99 with SMTP id 4fb4d7f45d1cf-641058cd1b6mr6801360a12.16.1762439316625;
-        Thu, 06 Nov 2025 06:28:36 -0800 (PST)
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com. [209.85.208.52])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6411f8141e6sm2119783a12.15.2025.11.06.06.28.36
+        bh=t3Qbwr2Y/2kUNO17tUXtWv3yos6fo6dQ6sGg+S6eon0=;
+        b=VKX610E+/5We9EVMELhKndIkiMW4kwwp+v+wP5I4pywPtVex4eohsp711DvSx9UMPG
+         Ohamx89Q91mClWmD9sAnJKBK1rURTnic6SNvgVk/yB/wQyBUUIQQz5KSdlMDNgTu//xc
+         nrWjt2Kv2YuHZvJPhi1v80YQvhsCEiEpRIZNjs5yXUKAEhSFkDZCD8j356HjEblB4B/Q
+         aYp9ui4dWvNprQSaE2nI7ZEmkpqAVxMqLDTASUIkwlw15I1pO98CTJDeoCckl3hYmk1q
+         aQDPcVbI9NSIMipcVMihfv+pV77fQ+3Ld5pmarrCQ6LfBFUMFaPp6+ZcVMnqI9WJqsk6
+         mPzw==
+X-Forwarded-Encrypted: i=1; AJvYcCVxGHrR/NzZO0Dyu8vDB7SPkYJjrsJADPZLDCOzDDwN2KbII0vaDz7KnslUPEGh94tUtBQI1OdwsvE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5+zhrRoRUm+a96x6qHtGgwsyuj2elQh3Plz355Dv/auV6kwFn
+	Fiv2Y0qxLInE0zfIdEAD+0Dq95t0IS5SgMuePtNgD+MO1fBGznlHZhatpTI2qvqr2F0=
+X-Gm-Gg: ASbGncvIfMkjojoWAqeYqiOlb3Moj96NuJL0UC/ogrp3r2qeJzgSHXwVB7tdnoMnAyw
+	TrrhVbweNQqMnCTbmls5UtpiHLw9DbWJQYZ9L9PYUfwCvd43GtaB2QxHiHOk70rL84m3QCfcBMd
+	bSBhjjepRpA1+MNF4rg18Qb+Uf2tCuIc8x+sluDFHYMUBrBcsWuUdai0Pnq/YbIs0FheoVVxDQi
+	j89G6g0N6BOt/zzZZR0MtwVgKLyrDNlqmbcFk1QqVozcqfD/klhAJyAw6r96rZ2AbKb11G68p/d
+	a78aRTKbccXZmovP6FojEmRRBEx6PyMhxIaEXtQ/FpPCjpzwqlxJ94PpR1f7PqFfIWZiCvgydbW
+	KPk5TNnWT2XDZx5tS59ikYwoSzhJE3axtQWJtQC/g7qEPJM7FKDRs7ab/62LWrIcGIeEQ46kcwB
+	MoOI5cGPE+T0BzpVb4bgwFarXB8ss9UPhP24MSFg==
+X-Google-Smtp-Source: AGHT+IGIggH/yaiwpGZDYqTKB7m9nhz19eoaK5HTHR6d9vDwHwfEasp7UXeqvf383VMacI7k87ctvw==
+X-Received: by 2002:a05:6402:13cb:b0:640:7690:997e with SMTP id 4fb4d7f45d1cf-6410589b532mr7807665a12.3.1762439347001;
+        Thu, 06 Nov 2025 06:29:07 -0800 (PST)
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com. [209.85.208.45])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6411f86e0cesm1972497a12.33.2025.11.06.06.29.05
         for <linux-clk@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Nov 2025 06:28:36 -0800 (PST)
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-640f8a7aba2so1509494a12.0
-        for <linux-clk@vger.kernel.org>; Thu, 06 Nov 2025 06:28:36 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWsGP4YbRtXBAgOT3C8iMTSO7BLtUdLmidgQryni0nfIWdJzUPoemh4rBWcA5HOkxqS1hjcv9Ve+0k=@vger.kernel.org
-X-Received: by 2002:a05:6402:510a:b0:640:c918:e3b with SMTP id
- 4fb4d7f45d1cf-64105a58158mr7216116a12.26.1762439315884; Thu, 06 Nov 2025
- 06:28:35 -0800 (PST)
+        Thu, 06 Nov 2025 06:29:05 -0800 (PST)
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-64088c6b309so1550846a12.0
+        for <linux-clk@vger.kernel.org>; Thu, 06 Nov 2025 06:29:05 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUARHKP9rL2Y7+D+X6PcNBml0xRmeL4vS/DGWYCYD9BYrfn2fxYyKCCiXfpvNbN9rVhe64gCdR9xTc=@vger.kernel.org
+X-Received: by 2002:a05:6402:304d:20b0:63b:ee76:3f7a with SMTP id
+ 4fb4d7f45d1cf-64105b6b3ecmr5978777a12.26.1762439345346; Thu, 06 Nov 2025
+ 06:29:05 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251105231815.1927239-1-niklas.soderlund+renesas@ragnatech.se> <20251105231815.1927239-2-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20251105231815.1927239-2-niklas.soderlund+renesas@ragnatech.se>
+References: <20251105231815.1927239-1-niklas.soderlund+renesas@ragnatech.se> <20251105231815.1927239-3-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20251105231815.1927239-3-niklas.soderlund+renesas@ragnatech.se>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 6 Nov 2025 15:28:21 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdUZCakYhCCZGW5Z8-GrfNR5QYAGHSEZD1PvkBt+5SjbLg@mail.gmail.com>
-X-Gm-Features: AWmQ_bmsJvzm6kKqBB7MkT_bl8ohnK3R2hPjSvFu5w5eS7KUaBTh6zw_38RYicg
-Message-ID: <CAMuHMdUZCakYhCCZGW5Z8-GrfNR5QYAGHSEZD1PvkBt+5SjbLg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] clk: renesas: r8a779a0: Add ZG Core clock
+Date: Thu, 6 Nov 2025 15:28:49 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdV0ydbmuQSi03Z+S-PDCfCniMEv8mJmyjTk+fow=psHoQ@mail.gmail.com>
+X-Gm-Features: AWmQ_blCLPFn8r02Z5U7Y2OzAl3U_Qf6uQ1OKqEvZIhri73Mjip1xcYunGdvcMY
+Message-ID: <CAMuHMdV0ydbmuQSi03Z+S-PDCfCniMEv8mJmyjTk+fow=psHoQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] clk: renesas: r8a779a0: Add 3dge module clock
 To: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
 Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
 	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
@@ -74,73 +74,20 @@ Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Niklas,
-
 On Thu, 6 Nov 2025 at 00:18, Niklas S=C3=B6derlund
 <niklas.soderlund+renesas@ragnatech.se> wrote:
-> Describe the ZG Core clock needed to operate the PowerVR GPU.
+> Describe the 3DGE module clock needed to operate the PowerVR GPU.
 >
 > Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.=
 se>
 
-Thanks for your patch!
-
-> --- a/drivers/clk/renesas/r8a779a0-cpg-mssr.c
-> +++ b/drivers/clk/renesas/r8a779a0-cpg-mssr.c
-
-> @@ -35,6 +35,7 @@ enum clk_ids {
->         /* Internal Core Clocks */
->         CLK_MAIN,
->         CLK_PLL1,
-> +       CLK_PLL4,
-
-Please preserve sort order (see CLK_PLL5 below, out of context).
-
->         CLK_PLL20,
->         CLK_PLL21,
->         CLK_PLL30,
-
-> @@ -98,6 +103,7 @@ static const struct cpg_core_clk r8a779a0_core_clks[] =
-__initconst =3D {
->         /* Core Clock Outputs */
->         DEF_GEN4_Z("z0",        R8A779A0_CLK_Z0,        CLK_TYPE_GEN4_Z, =
-       CLK_PLL20,      2, 0),
->         DEF_GEN4_Z("z1",        R8A779A0_CLK_Z1,        CLK_TYPE_GEN4_Z, =
-       CLK_PLL21,      2, 8),
-> +       DEF_FIXED("zg",         R8A779A0_CLK_ZG,        CLK_PLL4_DIV2,  2=
-, 1),
-
-ZG is not a fixed clock, but has a programmable divider through the
-FRQCRB.ZGFC register field.  Hence it should use CLK_TYPE_GEN4_Z.
-As currently drivers/clk/renesas/rcar-gen4-cpg.c:cpg_z_clk_register()
-supports only the FRQCRC(0) and FRQCRC1 registers, you will have to
-extend the offset-to-register mapping support for that, too.
-
->         DEF_FIXED("zx",         R8A779A0_CLK_ZX,        CLK_PLL20_DIV2, 2=
-, 1),
->         DEF_FIXED("s1d1",       R8A779A0_CLK_S1D1,      CLK_S1,         1=
-, 1),
->         DEF_FIXED("s1d2",       R8A779A0_CLK_S1D2,      CLK_S1,         2=
-, 1),
-
-> --- a/include/dt-bindings/clock/r8a779a0-cpg-mssr.h
-> +++ b/include/dt-bindings/clock/r8a779a0-cpg-mssr.h
-> @@ -51,5 +51,6 @@
->  #define R8A779A0_CLK_CBFUSA            40
->  #define R8A779A0_CLK_R                 41
->  #define R8A779A0_CLK_OSC               42
-> +#define R8A779A0_CLK_ZG                        43
->
->  #endif /* __DT_BINDINGS_CLOCK_R8A779A0_CPG_MSSR_H__ */
-
-This should be a separate patch, so I can queue it in a branch shared
-by clock driver and DT source files.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
 Gr{oetje,eeting}s,
 
                         Geert
 
---=20
+--
 Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
 .org
 
