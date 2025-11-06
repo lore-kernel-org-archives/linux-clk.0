@@ -1,160 +1,117 @@
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD97B2DEA72
-	for <linux-clk@vger.kernel.org>; Thu,  6 Nov 2025 16:45:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F14134B677
+	for <linux-clk@vger.kernel.org>; Thu,  6 Nov 2025 17:06:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762447506; cv=none; b=qv3qRbvZYca3NWLpQPJEIpyFdPTtvWNKY6V9aLV0LfZNJdUVZpWabT53m7hylV7bUadK9WsxIOnVgWRA7RrO+qROhhTkzadxAjjuyyFkWz51OOHJ8VaAaKOGvvSZ8AqUUFKt7v0k+GN3ZMNJTYVNdtkv+Nf49qA4UrQ7kIIUx14=
+	t=1762448774; cv=none; b=cCqKSBAJlFx0fJ0TJwU1N+v72KdAzbMnqJlAU8VtGT+TiewEccpgvGJc9tqMcMuIElmbnqw+DA/Z7Dq6lWjq0rYlc5TUsHrMzeeiEapDhSz06HF/BQJ6igB+Vf4rswRn45fBq2ChiT4JKmj41o5u+JteikFGLn3kAW2y6urrzrk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762447506; c=relaxed/simple;
-	bh=X9BEWwB0FNpTpkWJhm+qaXY0I7iml0fSupTwank2kMM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rMcZ4mWRG5Kg2yCBPCudHaYc/X87HPhvZP1BHd7onWgSaPZ/ZQws6KhE0Y/9mkSc48B8k4ebTBD50n5us8aUL3hrNDc+yjcHYnXie/yw8nfwxQnTps3lpEPneJE80c0qgKVyCl2sQRemJVTIJO6W5WYQWJWIkpVr+6pVCyJZ3+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Es1QkEdA; arc=none smtp.client-ip=209.85.128.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1762448774; c=relaxed/simple;
+	bh=Ly8zzWDq2H5KxZ3JO5w8PK/DzLvp+XmT9nBrLcr/RRM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=U0LYwKj8p9PfT0KgWIR1DyaLYjBWDQojEubvYUgz7o8EtdwlL46telSHKkdfqnQOwAijWKbHoIrJ8uj56CudoaI8ohogholsSYa+7b96hVUFdjUeMg3lOQZIQ1be6A0FbN5TbGFJ0twXSNum9+AVmVEQBb8KGZaudQEucDpeWmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=beM6iXGr; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Es1QkEdA"
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-781014f4e12so12337147b3.1
-        for <linux-clk@vger.kernel.org>; Thu, 06 Nov 2025 08:45:03 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="beM6iXGr"
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-640ef485673so207818a12.1
+        for <linux-clk@vger.kernel.org>; Thu, 06 Nov 2025 09:06:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762447503; x=1763052303; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=YCzuZ/teXYU7yevuP9B3flHK19xr/xlr710i4rE8skU=;
-        b=Es1QkEdA/zBpIPzi+HGQl/7UQTc0u7rQ8nQ0oNHOJvYpsDrh52P+nfcZ1rRMFmekG8
-         oWKW1fPLFi0yEr9g8nCV4eIarl2Kv6/bIY91CoJxqjC4yot5jHJvoora0gdiknA3GU5/
-         RdStclCYNas64mysPuwfygU09X9y4gu0ZUbgVKQIBgM9pLWf4tzdiQpuBD/RsrJTUmiL
-         o/sCo5ZnjxyWXd/cYR+X3YeriM6gB0Nn6LZO5rVnBQNmPEwaWl+/x71i20PG8OY4Fi+S
-         cbK27KlFofPjN4icMa0L/Tu7aA857zVeADmHxcoOlL6BaEvh0ikqYMl4fChbZSHxKrt/
-         O3pA==
+        d=linaro.org; s=google; t=1762448770; x=1763053570; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=SiD3EO1rNl1PZIk/GGWVSfbo4R6DA7FH3uGtcXk+fNc=;
+        b=beM6iXGryiZi6x8KgRSwPGIT6UxI+yuleUvMYB2ouZbMRGotti0L7CeJJOvgTImMfO
+         /gd7oWoEHPQC6fx8D96llTPtjiPeprMPypwFAs3VcOt9WzxG7coCpB0c3xEMRUb62aBK
+         6d9cF6akWDL3RV6P9OWBUp1OpeL5aj0wJNr0uW6Zj03Q2Me4YtkqH/wqRNaGBnbHGpvQ
+         3hGrij9D/xrHSKvMjXBFU0GFFZMqp8no3bZNAwA3pqaoFn2W23P7HSMRmrNlukcEMS60
+         u9Fsg/xNBPUsnC+rReuH0j28QeiRel1xqXIKnkDu03UQRVLCKaBDm9WEla46zHa5D7S6
+         5mjg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762447503; x=1763052303;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1762448770; x=1763053570;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=YCzuZ/teXYU7yevuP9B3flHK19xr/xlr710i4rE8skU=;
-        b=Ng/qlhkVknm5Qa2h9orF/Q3aSajWYfylsnQZZ/uz4W0DJPHJHisTgfr1K2c3U6uQF0
-         u52Icaig+mEkCWvfpnGbdFu7CRt4R3G3JJjdOySA1t8YcFYjpmAPo/fubfL+WaCbl6W4
-         eKe5fYKe9sb7N6QOKPqrIprGAPtRsivIxOxoWeM+YfKuI79LcCfNgrH8ntyKxUXMbSDy
-         DntMFKMl1ajsBaoo31+cY4ZYkMbolfBp902llWUTTl2yeOcRi5C3Qyz58Y3+NFyEtYNG
-         +Vb13WO6pU1jq1juJFkZFqknyrGTwdJKzbYpgui13K7yC28wGH8d7Ia1fjz3XYYPrtzG
-         rRlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV+gzWpsXtL6CE3Ix9VPsnpVNMwsq2Jgd2EFsdbaBx3FocmoCdu0zsggzxOR+J142dJ7yucOhfXKqE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDRCRo9FwlnQtxGltgVXMoi3h+nWNhDu0TwApiyPR1p6U6Scg7
-	UYedEp9zNW0/Qjc7kzFfMJRWlE6sjkYoCk/x/0GRNtcYzhep5F3UI5xe
-X-Gm-Gg: ASbGncsiKb3fynZUo8x379O4Uqz6pQSZmlcC+4v0hCR2ux/tE0MNXoj2Z4uJdn22N23
-	f3s6ESWxKbA+UgKc9dpjtNODNwlGnb4nm/0gThHP1I1t+EL1BryItmU5Rn5rvN7eDhXUeFvu4VE
-	toxDLQqXMYMMa6F8NjbS6PgDE2aSWkUlYYvcybB44dut9jImwOv2MnZq+aoJ6sPwWR7Xn+Q1Tcg
-	Z3ke5clsNdCXM1RIlFGmush1Ni1Jv5q8pzL+iLDT5IIBBz3E6O9oYDgny9vLETM0oXGznU9sEY3
-	ioShglrjOscT4xD/c0Ojw7oNMfri8lYpEZPJef2kArVbUJ3XnrQJcByuYerob/kX+gxmo75Uag9
-	dQBUtJlUUULpESCDXFIHuRLML4v4HsevAyr4iCHgduV+oUiuh6jSkoBTmvtPHNOKdUfSckXQNFc
-	DAd+vr84hKZbw9xlhpcv2SOzsffloI/mCXSbg8BwZIXA0=
-X-Google-Smtp-Source: AGHT+IFgqblsjDg64jVhZU34czKFHTApBwHTvzKvobAZn60rv4BaSs97biLpVcByf7R85pQynTZCWw==
-X-Received: by 2002:a05:690c:46c3:b0:786:45ce:9bd3 with SMTP id 00721157ae682-786a41b2455mr71656237b3.34.1762447502815;
-        Thu, 06 Nov 2025 08:45:02 -0800 (PST)
-Received: from localhost (c-73-105-0-253.hsd1.fl.comcast.net. [73.105.0.253])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-787b13b6954sm9471997b3.5.2025.11.06.08.45.01
+        bh=SiD3EO1rNl1PZIk/GGWVSfbo4R6DA7FH3uGtcXk+fNc=;
+        b=vgsbmX2xZ10i3R9cdte2HTcWyTOSsPZi5l/SEjwMa7XIk8aNYwb01HdsHTP5iIFA80
+         zv+l+GU7tn9IUK3SGOTVbUwhy2isKdczQpQlbPHvSR7IRoGNcpyvmP6PgMvf+JqOqMJs
+         2KssrbcFwlOwEzpj4GEJc4WEJXUvq6ummB4AnGfzgU3mjIp4IVNI+hUkV4Qvr6Vt6PKE
+         NVpHsB2YbtZze9Qv8xclAyujgUvViPkH6QIJSZ6059LDdNO6vRgCD5/cSRkcb89fkwOl
+         aSzOxHzD94WIvUiph3Os5YY/YHPaEf1eVFPeQNMcNsnMDDHaqiIN8ZZW7kizyEIhMhWH
+         eN2w==
+X-Forwarded-Encrypted: i=1; AJvYcCX4viz5gGFrVF34G+7n3IsVCc0r3K66eTWMQ85vmfLiioM/FRaoHh51XHbXORudW8wcXrY6Rx7PkrI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9DeKO43hukURcnk5MI85BrerZrzLgVZfIefPmaribi6htMe7z
+	WVkesSJEMA8XyX6kdnVhBjmZ5e2PFg7CeN+3w4JoHFnfYuUP+uxI2JUGKJkCD03F+1s=
+X-Gm-Gg: ASbGncuJtvXYQF1cnaEK3LdT3awCgiwpo3dZ3wOltjeGnJYve1wLIXz9E739nHaDw7l
+	cUBbxz70iYIrqeMBg8ffvGf3nE4kXA1IdyOTr8dMt7TnbeiEY15F4+zo02OcTq5V7IU+nW4d9V6
+	ojMeeN5LRzBAYdUE+2biKtEAsuSBdqz82rDIsocRMRcKoGkgH0jIlOkovFJoBT9CInG+0hpWMXR
+	q7EcPQhFYesfQp40rHVvO0kor+9QyafmyhZStNs5u+4WAuBjXeJ+qB9Nsy6qUQNWefqodblC8Qo
+	hNX178cLFU7NVc/wmXWkwfRZfg3feeuPKvQ3kYVR2KDdW+sJqLmqTEqlwoRek6Cy65oaCqmTjd3
+	8uygMn1ptfInLPcS9Dzv3fBlRsQuktsEbk/N8+fEoIg+CYjacljv8VFlRHCfyK20ai7G7eLbdVK
+	mrotHGW7KbsnQ4PG4TkgCgxQ==
+X-Google-Smtp-Source: AGHT+IGDODSfRoR2BHtZkTmzc88EZHUFY0L8k5fsPa/cX950AkjWDwLIrCB/BW+c3xdPiiHowTZolg==
+X-Received: by 2002:a05:6402:268c:b0:62f:3041:c7d4 with SMTP id 4fb4d7f45d1cf-6413f20f99bmr22030a12.7.1762448770423;
+        Thu, 06 Nov 2025 09:06:10 -0800 (PST)
+Received: from kuoka.. ([178.197.219.123])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6411f713959sm2302957a12.5.2025.11.06.09.06.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Nov 2025 08:45:02 -0800 (PST)
-Date: Thu, 6 Nov 2025 11:45:01 -0500
-From: Yury Norov <yury.norov@gmail.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>,
+        Thu, 06 Nov 2025 09:06:09 -0800 (PST)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	David Miller <davem@davemloft.net>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	Crt Mori <cmo@melexis.com>, Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Jacky Huang <ychuang3@nuvoton.com>,
-	Shan-Chun Hung <schung@nuvoton.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	Jakub Kicinski <kuba@kernel.org>, Alex Elder <elder@ieee.org>,
-	David Laight <david.laight.linux@gmail.com>,
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
-	Jason Baron <jbaron@akamai.com>, Borislav Petkov <bp@alien8.de>,
-	Tony Luck <tony.luck@intel.com>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Kim Seer Paller <kimseer.paller@analog.com>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Richard Genoud <richard.genoud@bootlin.com>,
-	Cosmin Tanislav <demonsingur@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Jianping Shen <Jianping.Shen@de.bosch.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-renesas-soc@vger.kernel.org, linux-crypto@vger.kernel.org,
-	linux-edac@vger.kernel.org, qat-linux@intel.com,
-	linux-gpio@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
-	linux-iio@vger.kernel.org, linux-sound@vger.kernel.org,
-	linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 00/26] Non-const bitfield helpers
-Message-ID: <aQzQjSMOSrUIgMCL@yury>
-References: <cover.1762435376.git.geert+renesas@glider.be>
+	Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH] clk: sprd: sc9860: Simplify with of_device_get_match_data()
+Date: Thu,  6 Nov 2025 18:06:08 +0100
+Message-ID: <20251106170607.445196-2-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1762435376.git.geert+renesas@glider.be>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Nov 06, 2025 at 02:33:48PM +0100, Geert Uytterhoeven wrote:
-> 	Hi all,
-> 
-> <linux/bitfield.h> contains various helpers for accessing bitfields, as
-> typically used in hardware registers for memory-mapped I/O blocks.
-> These helpers ensure type safety, and deduce automatically shift values
-> from mask values, avoiding mistakes due to inconsistent shifts and
-> masks, and leading to a reduction in source code size.
-> 
-> The existing FIELD_{GET,PREP}() macros are limited to compile-time
-> constants.  However, it is very common to prepare or extract bitfield
-> elements where the bitfield mask is not a compile-time constant (e.g. it
-> comes from a table, or is created by shifting a compile-time constant).
-> To avoid this limitation, the AT91 clock driver introduced its own
-> field_{prep,get}() macros.  During the past four years, these have been
-> copied to multiple drivers, and more copies are on their way[1], leading
-> to the obvious review comment "please move this to <linux/bitfield.h>".
-> 
-> Hence this series
->   1. Takes preparatory steps in drivers definining local
->      field_{get,prep}() macros (patches 1-11),
->   2. Introduces __FIELD_{PREP,GET}() helpers to avoid clang W=1 warnings
->      (patch 12),
->   3. Makes field_{prep,get}() available for general use (patch 13),
->   4. Converts drivers with local variants to the common helpers (patches
->      14-24),
->   5. Converts a few Renesas drivers to the existing FIELD_{GET,PREP}()
->      and the new field_{get,prep}() helpers (patches 25-26).
-> 
-> Alternatives would be to use the typed {u*,be*,le*,...}_{get,encode}_bits()
-> macros instead (which currently do not work with non-constant masks
-> either, and the first attempt to change that generates much worse code),
-> or to store the low bit and width of the mask instead (which would
-> require changing all code that passes masks directly, and also generates
-> worse code).
+Driver's probe function matches against driver's of_device_id table,
+where each entry has non-NULL match data, so of_match_node() can be
+simplified with of_device_get_match_data().
 
-Everyone please send your tags. I'm going to merge it in
-bitmap-for-next before Monday.
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ drivers/clk/sprd/sc9860-clk.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-Thanks,
-Yury
+diff --git a/drivers/clk/sprd/sc9860-clk.c b/drivers/clk/sprd/sc9860-clk.c
+index cc5ed2dd8267..c106b6422649 100644
+--- a/drivers/clk/sprd/sc9860-clk.c
++++ b/drivers/clk/sprd/sc9860-clk.c
+@@ -2021,17 +2021,15 @@ MODULE_DEVICE_TABLE(of, sprd_sc9860_clk_ids);
+ 
+ static int sc9860_clk_probe(struct platform_device *pdev)
+ {
+-	const struct of_device_id *match;
+ 	const struct sprd_clk_desc *desc;
+ 	int ret;
+ 
+-	match = of_match_node(sprd_sc9860_clk_ids, pdev->dev.of_node);
+-	if (!match) {
+-		pr_err("%s: of_match_node() failed", __func__);
++	desc = of_device_get_match_data(&pdev->dev);
++	if (!desc) {
++		pr_err("%s: of_device_get_match_data() failed", __func__);
+ 		return -ENODEV;
+ 	}
+ 
+-	desc = match->data;
+ 	ret = sprd_clk_regmap_init(pdev, desc);
+ 	if (ret)
+ 		return ret;
+-- 
+2.48.1
+
