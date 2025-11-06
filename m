@@ -1,169 +1,268 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4595302CC1
-	for <linux-clk@vger.kernel.org>; Thu,  6 Nov 2025 10:51:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AA2D32C942;
+	Thu,  6 Nov 2025 12:43:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762426314; cv=none; b=f4OF0HtLK0Sn+RXUkijCXgTK9JLHIrbcqr70ePt9Fctyq+gUTJvvsrcjSr/WHN68jYDLkbnwCkWm18WsIw0uvxN5uQ8ao2WD2b1S+co4PG64a4jLhBHQClVKYArxOajIu+rYm8gkjFUZbLpgScocmftKiUU5EiNMUXZQPfG2qB8=
+	t=1762433026; cv=none; b=OevPI1pM8jOsxdBPtO4NMWqtIavb25kiNaLI10Jmb+RsGYuqhm3/Fg8L2CzXe/Q37F73dD0M0Plw/zRhJH+4LEAJSxfulYLVAkXsCe3Qf5ho/ZOCxRGniEihf6eD70n6LZBvf1wRAJiZBJIRXKbV8NvZM3PbS/RVcr96T571fRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762426314; c=relaxed/simple;
-	bh=itQfKCyAMWt8v5ABjQ4YIGdNfHovzQUz4scVas16PAM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=WE6S3XVizf/lW62DWaaJVOfBiNJjtE2pssgtsInoMKp+oQp7Db5Vts8S0xPCTjz3mp8NgSg3qkcJvGpClCmXXUriHDMFHqRJgOd7EtYzdM1Y6DvlAzFTcL/w6JyWf7O+qmZFLEINCC4B/FZAg2gswwfGAoHY5cG2oRbMjwm0fp0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1vGxaR-00027U-O1; Thu, 06 Nov 2025 11:51:27 +0100
-Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1vGxaR-007LZi-0X;
-	Thu, 06 Nov 2025 11:51:27 +0100
-Received: from pza by lupine with local (Exim 4.98.2)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1vGxaR-000000004PL-0HZk;
-	Thu, 06 Nov 2025 11:51:27 +0100
-Message-ID: <56a49462312d89fd0de6da273f698c0f89e73ada.camel@pengutronix.de>
-Subject: Re: [PATCH v2 0/7] Add generic PHY driver used by MACB/GEM on EyeQ5
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: =?ISO-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>, Vladimir
- Kondratiev <vladimir.kondratiev@mobileye.com>, =?ISO-8859-1?Q?Gr=E9gory?=
- Clement	 <gregory.clement@bootlin.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,  Kishon Vijay Abraham
- I	 <kishon@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd	 <sboyd@kernel.org>, Thomas Bogendoerfer
- <tsbogend@alpha.franken.de>
-Cc: linux-mips@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, 
-	linux-clk@vger.kernel.org, =?ISO-8859-1?Q?Beno=EEt?= Monin	
- <benoit.monin@bootlin.com>, Maxime Chevallier
- <maxime.chevallier@bootlin.com>,  Tawfik Bayouk
- <tawfik.bayouk@mobileye.com>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>, Conor Dooley	 <conor.dooley@microchip.com>,
- Jerome Brunet <jbrunet@baylibre.com>, Andrew Lunn	 <andrew@lunn.ch>
-Date: Thu, 06 Nov 2025 11:51:26 +0100
-In-Reply-To: <20251101-macb-phy-v2-0-c1519eef16d3@bootlin.com>
-References: <20251101-macb-phy-v2-0-c1519eef16d3@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1-1+deb13u1 
+	s=arc-20240116; t=1762433026; c=relaxed/simple;
+	bh=deBh6sN7jnovclPpE/m4WkMZBUHuC8Gxz8lw0C7HMhs=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Gc06e5C9vTO4SohAWetop/E5Bm+7UbgwSvEcbh0L9BslFdjqeM7PLNxVI3g1Z9y3biwtVdPL1M+r+syj7D0Lohcq7yVqtOVn2upD55okhFXTGH3NT1tCI/A+OGJwuZWvV4Wbt28vpKsy7SlSre6YpGjEpaE5tX10+/pV1Dq33dM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=QCXtz6b7; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="QCXtz6b7"
+X-UUID: 37b6b19abb0e11f0b33aeb1e7f16c2b6-20251106
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=tkjuVVayDuW7MvowDSdoHxXBhJHpKe5iFYRerieWYOI=;
+	b=QCXtz6b7e4pt892gMwQ7YuCu2WsqntpA3V/u3HlQAW9T2T8SabkVSBrUlGbcMdSU3bdMeqhCBiKLV5HrMLug6SCYVTPZCeMHiEj7C+bRlMiXVasPGw9Kf9KJldhmnRSDf3lh5mKlVxnmtvBFzPUEnnhixS4upXCmxWktwubMVec=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.6,REQID:df885c5d-2369-4ce0-a061-deee50301c44,IP:0,UR
+	L:0,TC:0,Content:-5,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:-5
+X-CID-META: VersionHash:a9d874c,CLOUDID:ba351d6b-d4bd-4ab9-8221-0049857cc502,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:81|82|102|836|888|898,TC:-5,Content:
+	0|15|50,EDM:-3,IP:nil,URL:0,File:130,RT:0,Bulk:nil,QS:nil,BEC:nil,COL:0,OS
+	I:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: 37b6b19abb0e11f0b33aeb1e7f16c2b6-20251106
+Received: from mtkmbs14n1.mediatek.inc [(172.21.101.75)] by mailgw02.mediatek.com
+	(envelope-from <irving-ch.lin@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 226673906; Thu, 06 Nov 2025 20:43:38 +0800
+Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
+ mtkmbs11n1.mediatek.inc (172.21.101.185) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Thu, 6 Nov 2025 20:43:37 +0800
+Received: from mtksitap99.mediatek.inc (10.233.130.16) by
+ mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1748.26 via Frontend Transport; Thu, 6 Nov 2025 20:43:37 +0800
+From: irving.ch.lin <irving-ch.lin@mediatek.com>
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
+	<matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, Ulf Hansson
+	<ulf.hansson@linaro.org>, Richard Cochran <richardcochran@gmail.com>
+CC: Qiqi Wang <qiqi.wang@mediatek.com>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-pm@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>,
+	<sirius.wang@mediatek.com>, <vince-wl.liu@mediatek.com>,
+	<jh.hsu@mediatek.com>, <irving-ch.lin@mediatek.com>
+Subject: [PATCH v3 04/21] clk: mediatek: Add MT8189 apmixedsys clock support
+Date: Thu, 6 Nov 2025 20:41:49 +0800
+Message-ID: <20251106124330.1145600-5-irving-ch.lin@mediatek.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20251106124330.1145600-1-irving-ch.lin@mediatek.com>
+References: <20251106124330.1145600-1-irving-ch.lin@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Sa, 2025-11-01 at 09:53 +0100, Th=C3=A9o Lebrun wrote:
-> EyeQ5 SoCs integrate two GEM instances. A system-controller register
-> region named "OLB" has some control over the Ethernet PHY integration.
->=20
-> Past iterations [0] touched those syscon registers directly from MACB.
-> It was a bad idea. Extend the current OLB ecosystem with a new generic
-> PHY driver.
->  - OLB is carried by one main platform driver: clk-eyeq.
->  - It instantiates auxiliary devices: reset-eyeq & pinctrl-eyeq5.
->  - We add a new one: phy-eyeq5-eth.
->=20
-> Here is a DT overview:
->=20
->    olb: system-controller@e00000 {
->            compatible =3D "mobileye,eyeq5-olb", "syscon";
->            reg =3D <0 0xe00000 0x0 0x400>;
->            // ...
->            #reset-cells =3D <2>;
->            #clock-cells =3D <1>;
->            #phy-cells =3D <1>; // <=3D this is new
->    };
->=20
->    macb0: ethernet@2a00000 {
->            compatible =3D "mobileye,eyeq5-gem";
->            phys =3D <&olb 0>; // <=3D GEM device consumes the PHY
->            // ...
->    };
->=20
->    macb1: ethernet@2b00000 {
->            compatible =3D "mobileye,eyeq5-gem";
->            phys =3D <&olb 1>; // <=3D same thing for the second instance
->            // ...
->    };
->=20
-> The Linux MACB driver already consumes a generic PHY for some other
-> compatibles, this is nothing new. The MACB series [1] has been merged
-> into net-next/main.
->=20
-> --
->=20
-> One topic to talk about: the whole "we must assign child->of_node
-> manually". Auxiliary driver core does not do it automatically, so
-> either the parent (clk-eyeq) or the children must do it.
->=20
-> In OLB land, until now, children were doing it with a
-> device_set_of_node_from_dev(dev, dev->parent) call in probe.
->=20
-> Recently, Jerome Brunet added devm_auxiliary_device_create():
-> eaa0d30216c1 ("driver core: auxiliary bus: add device creation
-> helpers"). Using that cleans up clk-eyeq but means we must remove
-> device_set_of_node_from_dev() from reset-eyeq in the same patch series,
-> as the helpers do the dev->of_node assignement from the parent driver.
->=20
-> That explains why the ideal patch:
-> [PATCH 4/7] clk: eyeq: add EyeQ5 children auxiliary device for generic PH=
-Ys
-> Turned into those three:
-> [PATCH 3/7] clk: eyeq: use the auxiliary device creation helper
-> [PATCH 4/7] clk: eyeq: add EyeQ5 children auxiliary device for generic PH=
-Ys
-> [PATCH 5/7] reset: eyeq: drop device_set_of_node_from_dev() done by paren=
-t
->=20
-> --
->=20
-> About merging, it'll probably be complex. I see no build dependencies,
-> but the board will be in an odd state if only some patches are applied.
-> Some dev_warn() at boot and dev->of_node refcounting issues at unload.
->=20
->  - [PATCH 1/7] dt-bindings: soc: mobileye: OLB is an Ethernet PHY provide=
-r on EyeQ5
->    We touch dt-bindings because OLB becomes a PHY provider.
->    =3D> linux-mips (?)
->=20
->  - [PATCH 2/7] phy: Add driver for EyeQ5 Ethernet PHY wrapper
->    We add the generic PHY driver in drivers/phy/phy-eyeq5-eth.c with the
->    usual Kconfig, Makefile and MAINTAINERS changes.
->    =3D> linux-phy (?)
->=20
->  - [PATCH 6/7] MIPS: mobileye: eyeq5: add two Cadence GEM Ethernet contro=
-llers
->    [PATCH 7/7] MIPS: mobileye: eyeq5-epm: add two Cadence GEM Ethernet PH=
-Ys
->    DTS patches to add both the #phy-cells of OLB and the MACB instances.
->    =3D> linux-mips
->=20
->  - [PATCH 4/7] clk: eyeq: add EyeQ5 children auxiliary device for generic=
- PHYs
->    We must update clk-eyeq because it instantiates a new auxdev.
->    =3D> linux-clk
->=20
->  - [PATCH 3/7] clk: eyeq: use the auxiliary device creation helper
->    [PATCH 5/7] reset: eyeq: drop device_set_of_node_from_dev() done by pa=
-rent
->    With the dev->of_node assignement, we must also correct reset-eyeq.
->    =3D> separate them into linux-clk and linux-reset?
+From: Irving-CH Lin <irving-ch.lin@mediatek.com>
 
-Since 3 and 4 should go via clk, and 5 has a dependency on 3, I would
-suggest merging them all together.
+Add support for the MT8189 apmixedsys clock controller, which provides
+PLLs generated from SoC 26m.
 
-regards
-Philipp
+Signed-off-by: Irving-CH Lin <irving-ch.lin@mediatek.com>
+---
+ drivers/clk/mediatek/Kconfig                 |  13 ++
+ drivers/clk/mediatek/Makefile                |   1 +
+ drivers/clk/mediatek/clk-mt8189-apmixedsys.c | 135 +++++++++++++++++++
+ 3 files changed, 149 insertions(+)
+ create mode 100644 drivers/clk/mediatek/clk-mt8189-apmixedsys.c
+
+diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
+index 0e8dd82aa84e..2c898fd8a34c 100644
+--- a/drivers/clk/mediatek/Kconfig
++++ b/drivers/clk/mediatek/Kconfig
+@@ -815,6 +815,19 @@ config COMMON_CLK_MT8188_WPESYS
+ 	help
+ 	  This driver supports MediaTek MT8188 Warp Engine clocks.
+ 
++config COMMON_CLK_MT8189
++	bool "Clock driver for MediaTek MT8189"
++	depends on ARM64 || COMPILE_TEST
++	select COMMON_CLK_MEDIATEK
++	select COMMON_CLK_MEDIATEK_FHCTL
++	default ARCH_MEDIATEK
++	help
++	  Enable this option to support the clock management for MediaTek MT8189 SoC. This
++	  includes handling of all primary clock functions and features specific to the MT8189
++	  platform. Enabling this driver ensures that the system's clock functionality aligns
++	  with the MediaTek MT8189 hardware capabilities, providing efficient management of
++	  clock speeds and power consumption.
++
+ config COMMON_CLK_MT8192
+ 	tristate "Clock driver for MediaTek MT8192"
+ 	depends on ARM64 || COMPILE_TEST
+diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
+index d8736a060dbd..66577ccb9b93 100644
+--- a/drivers/clk/mediatek/Makefile
++++ b/drivers/clk/mediatek/Makefile
+@@ -123,6 +123,7 @@ obj-$(CONFIG_COMMON_CLK_MT8188_VDOSYS) += clk-mt8188-vdo0.o clk-mt8188-vdo1.o
+ obj-$(CONFIG_COMMON_CLK_MT8188_VENCSYS) += clk-mt8188-venc.o
+ obj-$(CONFIG_COMMON_CLK_MT8188_VPPSYS) += clk-mt8188-vpp0.o clk-mt8188-vpp1.o
+ obj-$(CONFIG_COMMON_CLK_MT8188_WPESYS) += clk-mt8188-wpe.o
++obj-$(CONFIG_COMMON_CLK_MT8189) += clk-mt8189-apmixedsys.o
+ obj-$(CONFIG_COMMON_CLK_MT8192) += clk-mt8192-apmixedsys.o clk-mt8192.o
+ obj-$(CONFIG_COMMON_CLK_MT8192_AUDSYS) += clk-mt8192-aud.o
+ obj-$(CONFIG_COMMON_CLK_MT8192_CAMSYS) += clk-mt8192-cam.o
+diff --git a/drivers/clk/mediatek/clk-mt8189-apmixedsys.c b/drivers/clk/mediatek/clk-mt8189-apmixedsys.c
+new file mode 100644
+index 000000000000..8d67888737a2
+--- /dev/null
++++ b/drivers/clk/mediatek/clk-mt8189-apmixedsys.c
+@@ -0,0 +1,135 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2025 MediaTek Inc.
++ * Author: Qiqi Wang <qiqi.wang@mediatek.com>
++ */
++
++#include <linux/clk.h>
++#include <linux/delay.h>
++#include <linux/mfd/syscon.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++#include <linux/of_device.h>
++#include <linux/platform_device.h>
++#include <linux/slab.h>
++
++#include "clk-mtk.h"
++#include "clk-pll.h"
++
++#include <dt-bindings/clock/mediatek,mt8189-clk.h>
++
++#define MT8189_PLL_FMAX		(3800UL * MHZ)
++#define MT8189_PLL_FMIN		(1500UL * MHZ)
++#define MT8189_PLLEN_OFS	0x70
++#define MT8189_INTEGER_BITS	8
++
++#define PLL_SETCLR(_id, _name, _reg, _en_setclr_bit,		\
++			_rstb_setclr_bit, _flags, _pd_reg,	\
++			_pd_shift, _tuner_reg, _tuner_en_reg,	\
++			_tuner_en_bit, _pcw_reg, _pcw_shift,	\
++			_pcwbits) {				\
++		.id = _id,					\
++		.name = _name,					\
++		.en_reg = MT8189_PLLEN_OFS,			\
++		.reg = _reg,					\
++		.pll_en_bit = _en_setclr_bit,			\
++		.rst_bar_mask = BIT(_rstb_setclr_bit),		\
++		.flags = _flags,				\
++		.fmax = MT8189_PLL_FMAX,			\
++		.fmin = MT8189_PLL_FMIN,			\
++		.pd_reg = _pd_reg,				\
++		.pd_shift = _pd_shift,				\
++		.tuner_reg = _tuner_reg,			\
++		.tuner_en_reg = _tuner_en_reg,			\
++		.tuner_en_bit = _tuner_en_bit,			\
++		.pcw_reg = _pcw_reg,				\
++		.pcw_shift = _pcw_shift,			\
++		.pcwbits = _pcwbits,				\
++		.pcwibits = MT8189_INTEGER_BITS,		\
++	}
++
++static const struct mtk_pll_data apmixed_plls[] = {
++	PLL_SETCLR(CLK_APMIXED_ARMPLL_LL, "armpll-ll", 0x204, 18,
++		   0, PLL_AO, 0x208, 24, 0, 0, 0, 0x208, 0, 22),
++	PLL_SETCLR(CLK_APMIXED_ARMPLL_BL, "armpll-bl", 0x214, 17,
++		   0, PLL_AO, 0x218, 24, 0, 0, 0, 0x218, 0, 22),
++	PLL_SETCLR(CLK_APMIXED_CCIPLL, "ccipll", 0x224, 16,
++		   0, PLL_AO, 0x228, 24, 0, 0, 0, 0x228, 0, 22),
++	PLL_SETCLR(CLK_APMIXED_MAINPLL, "mainpll", 0x304, 15,
++		   23, HAVE_RST_BAR | PLL_AO,
++		   0x308, 24, 0, 0, 0, 0x308, 0, 22),
++	PLL_SETCLR(CLK_APMIXED_UNIVPLL, "univpll", 0x314, 14,
++		   23, HAVE_RST_BAR, 0x318, 24, 0, 0, 0, 0x318, 0, 22),
++	PLL_SETCLR(CLK_APMIXED_MMPLL, "mmpll", 0x324, 13,
++		   23, HAVE_RST_BAR, 0x328, 24, 0, 0, 0, 0x328, 0, 22),
++	PLL_SETCLR(CLK_APMIXED_MFGPLL, "mfgpll", 0x504, 7,
++		   0, 0, 0x508, 24, 0, 0, 0, 0x508, 0, 22),
++	PLL_SETCLR(CLK_APMIXED_APLL1, "apll1", 0x404, 11,
++		   0, 0, 0x408, 24, 0x040, 0x00c, 0, 0x40c, 0, 32),
++	PLL_SETCLR(CLK_APMIXED_APLL2, "apll2", 0x418, 10,
++		   0, 0, 0x41c, 24, 0x044, 0x00c, 1, 0x420, 0, 32),
++	PLL_SETCLR(CLK_APMIXED_EMIPLL, "emipll", 0x334, 12,
++		   0, PLL_AO, 0x338, 24, 0, 0, 0, 0x338, 0, 22),
++	PLL_SETCLR(CLK_APMIXED_APUPLL2, "apupll2", 0x614, 2,
++		   0, 0, 0x618, 24, 0, 0, 0, 0x618, 0, 22),
++	PLL_SETCLR(CLK_APMIXED_APUPLL, "apupll", 0x604, 3,
++		   0, 0, 0x608, 24, 0, 0, 0, 0x608, 0, 22),
++	PLL_SETCLR(CLK_APMIXED_TVDPLL1, "tvdpll1", 0x42c, 9,
++		   0, 0, 0x430, 24, 0, 0, 0, 0x430, 0, 22),
++	PLL_SETCLR(CLK_APMIXED_TVDPLL2, "tvdpll2", 0x43c, 8,
++		   0, 0, 0x440, 24, 0, 0, 0, 0x440, 0, 22),
++	PLL_SETCLR(CLK_APMIXED_ETHPLL, "ethpll", 0x514, 6,
++		   0, 0, 0x518, 24, 0, 0, 0, 0x518, 0, 22),
++	PLL_SETCLR(CLK_APMIXED_MSDCPLL, "msdcpll", 0x524, 5,
++		   0, 0, 0x528, 24, 0, 0, 0, 0x528, 0, 22),
++	PLL_SETCLR(CLK_APMIXED_UFSPLL, "ufspll", 0x534, 4,
++		   0, 0, 0x538, 24, 0, 0, 0, 0x538, 0, 22),
++};
++
++static const struct of_device_id of_match_clk_mt8189_apmixed[] = {
++	{ .compatible = "mediatek,mt8189-apmixedsys" },
++	{ /* sentinel */ }
++};
++
++static int clk_mt8189_apmixed_probe(struct platform_device *pdev)
++{
++	int r;
++	struct clk_hw_onecell_data *clk_data;
++	struct device_node *node = pdev->dev.of_node;
++
++	clk_data = mtk_alloc_clk_data(ARRAY_SIZE(apmixed_plls));
++	if (!clk_data)
++		return -ENOMEM;
++
++	r = mtk_clk_register_plls(node, apmixed_plls,
++				  ARRAY_SIZE(apmixed_plls), clk_data);
++	if (r)
++		goto free_apmixed_data;
++
++	r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
++	if (r)
++		goto unregister_plls;
++
++	platform_set_drvdata(pdev, clk_data);
++
++	return 0;
++
++unregister_plls:
++	mtk_clk_unregister_plls(apmixed_plls, ARRAY_SIZE(apmixed_plls),
++				clk_data);
++free_apmixed_data:
++	mtk_free_clk_data(clk_data);
++	return r;
++}
++
++static struct platform_driver clk_mt8189_apmixed_drv = {
++	.probe = clk_mt8189_apmixed_probe,
++	.driver = {
++		.name = "clk-mt8189-apmixed",
++		.of_match_table = of_match_clk_mt8189_apmixed,
++	},
++};
++
++module_platform_driver(clk_mt8189_apmixed_drv);
++MODULE_LICENSE("GPL");
+-- 
+2.45.2
+
