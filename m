@@ -1,33 +1,41 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [149.28.215.223])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60C75307499;
-	Fri,  7 Nov 2025 10:57:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 902C42765C5
+	for <linux-clk@vger.kernel.org>; Fri,  7 Nov 2025 14:41:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.215.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762513036; cv=none; b=fjwLyxMFhCHdzDtMH0EeLSWBixYxkT0SqV2Mzv2FpDyeetfDWOW01qiZPDE2gGW8hF5sjzD235qsI68gIdEazARQ+jwHrKAAYLmlpyc7b62sVEUhctb7stu3klmAzQT8OOLwEuolrPgaQyYeEpyn6DopqZ+d1MmjVmM6m4yp2AU=
+	t=1762526495; cv=none; b=oZcNXGlYka6toZ7rjs73cUT+JEO4+vPpxYFcYGOx/gx0PRqvRjIGixjkhV9EpAvwGcp0gHY91iUGPwsw8tKNihFSeWrvGJvz4HXd1dYvt1n6nQ3KjWAregvsFohdLn4Vn784zaJt/N0tPy3Y2Qjc+mi/WLoqBoW/8ah7ZUjOrio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762513036; c=relaxed/simple;
-	bh=QLbyTouXhOb4/Zpi7RYwZgHIthnaNX8+ZbHGOCrgXGk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=QjDhYu9JQ2V30ophU2ZzpSSmvVcazH8V7S1OLAu4yPo5kQvwmFCJeG1Zk47zGJNlOHLO1ikJSo1t5DF0Ttn84vjRnUB5R71p7AIoBRO4tQw61Q5KdARVSY4YvJATfHOGKYSj+lETWKSpIT3ZCZ6Y4u9ey6gItYONUqLrDXq0je0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MGmIBoUM; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1762526495; c=relaxed/simple;
+	bh=rzx2U3ZPIYKyLywBf1c4Lqbu9Kgk7+2zJBa+iQQn1cI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fNbfVBUluUhULNBTojr09pdAAdPPGzsGH3BnDCep0JqOr8oz5XNPcyPDOlA973phbaX1uHyUL9GO9MT+9I/2Hjoq2mudjoHUBpUrzcXjPR/jWaWHxgzOCqLnIMlGnNvFX2/DB1TmlkA5250sFQPvnFe50qN900FUFpAVk2stlFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=WiLhOPCi; arc=none smtp.client-ip=149.28.215.223
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MGmIBoUM"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 544ADC116B1;
-	Fri,  7 Nov 2025 10:57:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762513035;
-	bh=QLbyTouXhOb4/Zpi7RYwZgHIthnaNX8+ZbHGOCrgXGk=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=MGmIBoUMU7msKzFt5CuY05JqQIU3sV+fXtQccgZFrNDmE1NsdK0DdSkFNAiVeTtLs
-	 XrMLNg/xXoKhFhmws6apBi+k6zdFS0zQoJcpziZly9qpgdrJ5Ha2uNpClSrKA1nF/N
-	 HVkK9lCxB1U9Cmny/iWjH7VawepWyOEc0TgiN8FcZyfPuTLaab6V+ENvXPA/4ThPI+
-	 bV+Tvbb1wyOLfxkrkVOu9iRtL8vr3iKnNvr5Sn8WEbCQXKtpt+TBhsVumnzVERBQFs
-	 YjDoq5YqhfvEjHxbBxQ8SqEh1Lmeoq3YJBvindBR/49Mphw8PJZ8moXN4oKKk1PAUe
-	 rlAGaSmIORIgQ==
-Message-ID: <aad2b097-50df-45c5-9196-07d43dc8b1e4@kernel.org>
-Date: Fri, 7 Nov 2025 11:57:11 +0100
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="WiLhOPCi"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
+ h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
+ Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
+ s=fe-e1b5cab7be; t=1762526491;
+ bh=dBnEo9kQFWn16Gia7CBsD427l5/li0reZ07Ety+v/ps=;
+ b=WiLhOPCiRjoV0WYthVc32NJdNtuUF5oUUE4n5uA1N4M2nM/Br3QvdOH9+2UejrjCXmbvuAKvL
+ E7ckW7fAq5eZQLCbkYZjEiSSrdOAMmD/DNHw8cO0Fcyw/xDxll4Zl+5dWKjU+RZK30NkbQkglBa
+ EY+ujzMBuZ9UGdG3xaPvXgv1DUF29HHcLyAyoWwpu9Fmk0gxhHov95CbyipuwIQcvPhkbqJG4Pm
+ k54rsVMbCq+DkFFrV8zPUPdl5YuCiBSOE2DqK4s0z/GKLDDnAh/XKL2u2s9fiw21F1/PYwJAwot
+ ibA3bV7n6csVxv2VwqVWsTLDMUQuP6sA5ZFjjjLyYUAw==
+X-Forward-Email-ID: 690e02ab07551ffa40a0e268
+X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
+ 149.28.215.223
+X-Forward-Email-Version: 1.4.3
+X-Forward-Email-Website: https://forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Report-Abuse-To: abuse@forwardemail.net
+Message-ID: <3be7a6e4-4025-42b4-a73f-a9d05e64191d@kwiboo.se>
+Date: Fri, 7 Nov 2025 15:31:02 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,78 +43,90 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 4/5] dt-bindings: clock: airoha: Document support for
- AN7583 clock
-To: Christian Marangi <ansuelsmth@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
- Felix Fietkau <nbd@nbd.name>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251106195935.1767696-1-ansuelsmth@gmail.com>
- <20251106195935.1767696-5-ansuelsmth@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v6 2/5] dt-bindings: clock, reset: Add support for rv1126b
+To: Elaine Zhang <zhangqing@rock-chips.com>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, sugar.zhang@rock-chips.com,
+ heiko@sntech.de, robh@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+ conor+dt@kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ huangtao@rock-chips.com, finley.xiao@rock-chips.com,
+ Conor Dooley <conor.dooley@microchip.com>
+References: <20251104030633.2721038-1-zhangqing@rock-chips.com>
+ <20251104030633.2721038-3-zhangqing@rock-chips.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20251106195935.1767696-5-ansuelsmth@gmail.com>
+From: Jonas Karlman <jonas@kwiboo.se>
+In-Reply-To: <20251104030633.2721038-3-zhangqing@rock-chips.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 06/11/2025 20:59, Christian Marangi wrote:
-> Document support for Airoha AN7583 clock based on the EN7523
-> clock schema.
+Hi Elaine,
+
+On 11/4/2025 4:06 AM, Elaine Zhang wrote:
+> Add clock and reset ID defines for rv1126b.
+> Also add documentation for the rv1126b CRU core.
 > 
-> Add additional binding for additional clock and reset lines.
-> 
-> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+> Acked-by: Conor Dooley <conor.dooley@microchip.com>
 > ---
+>  .../bindings/clock/rockchip,rv1126b-cru.yaml  |  52 +++
+>  .../dt-bindings/clock/rockchip,rv1126b-cru.h  | 392 +++++++++++++++++
+>  .../dt-bindings/reset/rockchip,rv1126b-cru.h  | 405 ++++++++++++++++++
+>  3 files changed, 849 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rv1126b-cru.yaml
+>  create mode 100644 include/dt-bindings/clock/rockchip,rv1126b-cru.h
+>  create mode 100644 include/dt-bindings/reset/rockchip,rv1126b-cru.h
 
+[snip]
 
+> diff --git a/include/dt-bindings/clock/rockchip,rv1126b-cru.h b/include/dt-bindings/clock/rockchip,rv1126b-cru.h
+> new file mode 100644
+> index 000000000000..d6040058c21f
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/rockchip,rv1126b-cru.h
+> @@ -0,0 +1,392 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR MIT) */
+> +/*
+> + * Copyright (c) 2025 Rockchip Electronics Co., Ltd.
+> + * Author: Elaine Zhang <zhangqing@rock-chips.com>
+> + */
+> +
+> +#ifndef _DT_BINDINGS_CLK_ROCKCHIP_RV1126B_H
+> +#define _DT_BINDINGS_CLK_ROCKCHIP_RV1126B_H
+> +
+> +/* pll clocks */
+> +#define PLL_GPLL				1
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+The clock indices should typically start at 0 not 1.
 
-Best regards,
-Krzysztof
+[snip]
+
+> +#define HCLK_RKRNG_NS				362
+> +#define HCLK_RKRNG_S_NS				363
+> +#define CLK_AISP_PLL_SRC			364
+> +
+> +/* secure clks */
+> +#define CLK_USER_OTPC_S				400
+
+And the indices should typically not contain any jumps in numbers.
+
+Regards,
+Jonas
+
+> +#define CLK_SBPI_OTPC_S				401
+> +#define PCLK_OTPC_S				402
+> +#define PCLK_KEY_READER_S			403
+> +#define HCLK_KL_RKCE_S				404
+> +#define HCLK_RKCE_S				405
+> +#define PCLK_WDT_S				406
+> +#define TCLK_WDT_S				407
+> +#define CLK_STIMER0				408
+> +#define CLK_STIMER1				409
+> +#define PLK_STIMER				410
+> +#define HCLK_RKRNG_S				411
+> +#define CLK_PKA_RKCE_S				412
+> +#define ACLK_RKCE_S				413
+> +
+> +#endif
+
+[snip]
