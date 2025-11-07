@@ -1,127 +1,311 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BFEB38DEC;
-	Fri,  7 Nov 2025 17:00:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 118EE319867
+	for <linux-clk@vger.kernel.org>; Fri,  7 Nov 2025 17:10:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762534843; cv=none; b=Wm7O4G4rIydJo+bt9kFXG2Qvg86uBB6yptuBLOtADjVcgl3+iuI+jHLAXGYCrhmB/IKbcge05szTbxiSsT2lT7FHY30LqFe4JvRM/PYzfoPappn3qcmjKvtqOndvEAPioj2M6jJrBjVv4VhkhaaQRdoZB3BZ0PCr+hCeHrUhTcY=
+	t=1762535429; cv=none; b=DvUuE70IXX2I/H3p0+LH854LFpzowRi4B0+Obg3pW+6iE5ShDt6JHX77qpEmGI5el/7avIgZXkFXA59yiiSx2OFC8yPk6ZzBNbkTe2vwD6mD95vK5Ar4R1gYEFZDVKNnIQCan4J8KWObHd8+kdgDdaodmkjVqI0CRWe0Tf+MG6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762534843; c=relaxed/simple;
-	bh=CrlVePztH8nTQSA2LjyBVfwXsj1YcNT+in2aDO2QsRw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tOA6RdDSz0tbsUszzWZOReuZJ//uLeJ5OmuPDooTHYyoUZZfS0VrFtqqWn+Wm+xGq0IPj/vko0CmAEtguf5/B282fmlDp4od7C0/wVB514FFiKfpgUJkF0ml9R12/xR2OQWNKoPqb18Qylwxqe2d0CxMarWFavjKGfnwW6egFik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AiD6Wk42; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1762535429; c=relaxed/simple;
+	bh=nggFRaJMT4kxsmaafT52w1PekfmTIpa2WR3h4U3kdgY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Me9buow50muPJgr4musjOkSEj5MXtH662vcOwGNyz+OOT3o5rCO8F1JpxVDIgMSxmNn9KtQwq01nPboI2X9sIWgtZY4Ocz9Nlc/+7WX3F/ewDHFzm7uLCoyCpg66+k7KAOWigRHvvfnvFnDuDjSwJituFCIVuqu6RAh6ljdoq9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Pw4wvoVX; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AiD6Wk42"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B8D2C4CEF8;
-	Fri,  7 Nov 2025 17:00:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762534843;
-	bh=CrlVePztH8nTQSA2LjyBVfwXsj1YcNT+in2aDO2QsRw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AiD6Wk42k76uZNmvKVgFryuD3Bx+Dl2OWXtKLC5yVbkrakTswJZcUdzWQddB5K+5S
-	 oCagByaaoI0j3CEissAL+aXxA1tYPrB//3ZUqMgZ5U1K0Qkxf93PBEoxEXndxe2AyN
-	 Wd6F/oCob/9/SQQba+2FGXFhee3U5X72pfLDrshKKPQ6di8QruJwffxqqffyJJYYo/
-	 z6GA3vQLyDZ1w1GBIOdxxE31NFhNkoxBHAcHzNvE2wAo/19tBx4h2+cTBZdTnV1N+i
-	 JoTUwq64X4PAf56soPTIU+1EEAoD44V3SbPdYh4Rx6VjzWpITyqyz7He1ksSZzTdmS
-	 g0khZd3yWbIXQ==
-Date: Fri, 7 Nov 2025 17:00:37 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Cosmin-Gabriel Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
-Cc: Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	"magnus.damm" <magnus.damm@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	"linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	Conor Dooley <conor.dooley@microchip.com>
-Subject: Re: [PATCH 11/14] dt-bindings: spi: renesas,rzv2h-rspi: document
- RZ/T2H and RZ/N2H
-Message-ID: <20251107-overprice-reselect-c3a742a2d8b3@spud>
-References: <20251105091401.1462985-1-cosmin-gabriel.tanislav.xa@renesas.com>
- <20251105091401.1462985-12-cosmin-gabriel.tanislav.xa@renesas.com>
- <20251106-anchovy-font-33e9a3b4efe8@spud>
- <TYYPR01MB10512F74C2D89BFE757AC7E0C85C2A@TYYPR01MB10512.jpnprd01.prod.outlook.com>
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Pw4wvoVX"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-47754b9b050so5531185e9.2
+        for <linux-clk@vger.kernel.org>; Fri, 07 Nov 2025 09:10:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1762535425; x=1763140225; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:user-agent
+         :references:in-reply-to:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=d75/m8OyEpl0fwQUB+HUMKmdvA/o/D0pvjuoB/XRU0Q=;
+        b=Pw4wvoVXLuz2O8jQRjxFUXTcxjqD9gzMsc54sLTyThaZ6J6eC7yZ9kC1QS/3INiTAW
+         ukyp6z01KL4oSimCBERxmCnfDpyGi8Spbb8Ugd12bUFPxxw7xMAfV/TTQOg223YknPec
+         bLeF7lxVfgs1DM0j2AP3DxzS1NqdumVGlweNdv6jiKfaZywKRwPjAgsiu65RGY6ZewwN
+         Ybdr2tNarqI5r6ASsWV3JcM7WpsQ3zoByGd5NrPcXgcCTrV1TiPN2oY4QFSlgDJXhlUU
+         GQgL3alUZ1EcwV8dPaum8jexFXojDCCBZpYJna2hknydNxyxbT7GEKh+Fnph4o/J6Pg2
+         tqVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762535425; x=1763140225;
+        h=content-transfer-encoding:mime-version:message-id:date:user-agent
+         :references:in-reply-to:subject:cc:to:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=d75/m8OyEpl0fwQUB+HUMKmdvA/o/D0pvjuoB/XRU0Q=;
+        b=D3HJ1+GPdR9T5Mi6vOzTcJTN+ed+OiIydsm4XLJhLkFKjFoDslilIN8oyFho64HE15
+         xaI/fU4V9AdtlO/mYNZfjZs4knId+Fp32ODQ1+cCm88uUr35/ZwRxCfTnPU8C4ID8ZqA
+         sw9dvIWfscawwCsEV8s+2v5JPXn1pvcCuK0ELibWKKnXvZs7vx5hbTO3ZkuX+KrIWtyk
+         YvukH2JRBNvLH1I8BNS1H79jtWqFBMC+iYmfQAGaAETaxEJXCRkov4R28L+ehGrOJkIL
+         5hM4+pUqJWBTK+Ax9T3MePDaeUQiRp2gUr5PBfdtZEcpEHTeLvHOTm4o7iWy9Z7K23u3
+         f5Jw==
+X-Forwarded-Encrypted: i=1; AJvYcCWsnfRSx0S5omq3C/eTig6SnBsETfce98ijbzMCae9YCxSZGdXWqO35Z7eNAA1XmR8wErBtWjGW+Xs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzh0vPgrpxdixKvuCGk2rw6PpoitiJoqn2IwkWSndKJ4FoHf8/c
+	kQ5YdVDrLZlHxZShPvaCkfDS4K0SmgjPnf0xJiIMUS1QMiS2Ojig2lhIAQagONWLSYY=
+X-Gm-Gg: ASbGncsZCUN7h4BbhpTDfNXiX8zhYkhxTmI6k4/FwE5BjK++sdgQUUd/9U3FJOWFT4x
+	eOGzVgfxLXueSWohlBOwHSvBpVR2CrAmu1KOvlZhB12iGVKbBdFw3Z8zCj0ZozycpyFOjmzofTA
+	0cHNFeeNyR4mqc7/TnlldLi/na6GREQIcteisojAchrKK48q1OVyZ/ntp8zdfc6nfLJZ5wDxnBW
+	Jqrgq1cZCumIeEjvGoc5ZwHoZNSykmj1CDv8Q6vfRcn5sywMw7TAAxPtuqD6EYJdrDatzjq/5cc
+	dzLbIGWtgyyzKpFOHAJNgcElzuqAnWubIWaTB/B5t6PQx2VZvOgRZf1NR9kVx92QF+7Nes6EZrx
+	NzHKFQcGXAn4woGWdSb6jEn+ZGSJ8RgqjGPT/z1IReTOesIynlvZdQWlY8RxVIrAkLuTxRGUxJB
+	ZFCk6/2a++
+X-Google-Smtp-Source: AGHT+IHs0fGLj1pX9D20cd+qxJYOXVpz1DkRCoiP+yxFDAzBqmLvwRgTWCnCmwGVOrewtrpdAZ4qhA==
+X-Received: by 2002:a05:600c:4ed4:b0:471:786:94d3 with SMTP id 5b1f17b1804b1-4776bcd52bamr34376015e9.22.1762535424637;
+        Fri, 07 Nov 2025 09:10:24 -0800 (PST)
+Received: from localhost ([2a01:e0a:3c5:5fb1:d88d:7650:f1de:19c])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4776bcfd021sm78745585e9.11.2025.11.07.09.10.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Nov 2025 09:10:24 -0800 (PST)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Jian Hu <jian.hu@amlogic.com>
+Cc: Xianwei Zhao <xianwei.zhao@amlogic.com>,  Chuan Liu
+ <chuan.liu@amlogic.com>,  Neil Armstrong <neil.armstrong@linaro.org>,
+  Kevin Hilman <khilman@baylibre.com>,  Stephen Boyd <sboyd@kernel.org>,
+  Michael Turquette <mturquette@baylibre.com>,  Dmitry Rokosov
+ <ddrokosov@sberdevices.ru>,  robh+dt <robh+dt@kernel.org>,  Rob Herring
+ <robh@kernel.org>,  devicetree <devicetree@vger.kernel.org>,  linux-clk
+ <linux-clk@vger.kernel.org>,  linux-amlogic
+ <linux-amlogic@lists.infradead.org>,  linux-kernel
+ <linux-kernel@vger.kernel.org>,  linux-arm-kernel
+ <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v4 5/5] clk: meson: t7: add t7 clock peripherals
+ controller driver
+In-Reply-To: <236a568d-c809-4dc7-be2f-e813d0d85368@amlogic.com> (Jian Hu's
+	message of "Sat, 8 Nov 2025 00:20:33 +0800")
+References: <20251030094345.2571222-1-jian.hu@amlogic.com>
+	<20251030094345.2571222-6-jian.hu@amlogic.com>
+	<1jbjlnxuug.fsf@starbuckisacylon.baylibre.com>
+	<3b9a5978-aa02-486b-85f5-6443dc607dd5@amlogic.com>
+	<1j1pmew1cu.fsf@starbuckisacylon.baylibre.com>
+	<236a568d-c809-4dc7-be2f-e813d0d85368@amlogic.com>
+User-Agent: mu4e 1.12.9; emacs 30.1
+Date: Fri, 07 Nov 2025 18:10:23 +0100
+Message-ID: <1jv7jlvke8.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="8dYth6u/2Yr8gI8Q"
-Content-Disposition: inline
-In-Reply-To: <TYYPR01MB10512F74C2D89BFE757AC7E0C85C2A@TYYPR01MB10512.jpnprd01.prod.outlook.com>
-
-
---8dYth6u/2Yr8gI8Q
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 06, 2025 at 06:02:01PM +0000, Cosmin-Gabriel Tanislav wrote:
->=20
->=20
-> > -----Original Message-----
-> > From: Conor Dooley <conor@kernel.org>
-> > Sent: Thursday, November 6, 2025 7:58 PM
-> > To: Cosmin-Gabriel Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
-> > Cc: Fabrizio Castro <fabrizio.castro.jz@renesas.com>; Mark Brown <broon=
-ie@kernel.org>; Rob Herring
-> > <robh@kernel.org>; Krzysztof Kozlowski <krzk+dt@kernel.org>; Conor Dool=
-ey <conor+dt@kernel.org>; Geert
-> > Uytterhoeven <geert+renesas@glider.be>; magnus.damm <magnus.damm@gmail.=
-com>; Michael Turquette
-> > <mturquette@baylibre.com>; Stephen Boyd <sboyd@kernel.org>; Philipp Zab=
-el <p.zabel@pengutronix.de>;
-> > linux-spi@vger.kernel.org; linux-renesas-soc@vger.kernel.org; devicetre=
-e@vger.kernel.org; linux-
-> > kernel@vger.kernel.org; linux-clk@vger.kernel.org; Conor Dooley <conor.=
-dooley@microchip.com>
-> > Subject: Re: [PATCH 11/14] dt-bindings: spi: renesas,rzv2h-rspi: docume=
-nt RZ/T2H and RZ/N2H
-> >=20
-> > On Wed, Nov 05, 2025 at 11:13:55AM +0200, Cosmin Tanislav wrote:
-> > > The Renesas RZ/T2H (R9A09G077) and RZ/N2H (R9A09G087) SoCs have four =
-SPI
-> > > peripherals.
-> > >
-> > > Compared to the previously supported RZ/V2H, these SoCs have a smaller
-> > > FIFO, no resets, and only two clocks: PCLKSPIn and PCLK. PCLKSPIn,
-> > > being the clock from which the SPI transfer clock is generated, is the
-> > > equivalent of the TCLK from V2H.
-> > >
-> > > Document them, and use RZ/T2H as a fallback for RZ/N2H as the SPIs are
-> > > entirely compatible.
-> > >
-> > > Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.co=
-m>
-> > > Acked-by: Conor Dooley <conor.dooley@microchip.com>
-> >=20
-> > Why is this a v1 with my ack?
->=20
-> I forgot to bump the version to V2. I've sent V3 afterwards to amend it.
+On Sat 08 Nov 2025 at 00:20, Jian Hu <jian.hu@amlogic.com> wrote:
 
-Ah, I didnt notice that. Thanks.
+> On 11/4/2025 6:14 PM, Jerome Brunet wrote:
+>> [ EXTERNAL EMAIL ]
+>>
+>> On Tue 04 Nov 2025 at 17:17, Jian Hu <jian.hu@amlogic.com> wrote:
+>>
+>>>>> +
+>>>>> +static struct clk_regmap t7_dspa =3D {
+>>>>> +     .data =3D &(struct clk_regmap_mux_data){
+>>>>> +             .offset =3D DSPA_CLK_CTRL0,
+>>>>> +             .mask =3D 0x1,
+>>>>> +             .shift =3D 15,
+>>>>> +     },
+>>>>> +     .hw.init =3D &(struct clk_init_data){
+>>>>> +             .name =3D "dspa",
+>>>>> +             .ops =3D &clk_regmap_mux_ops,
+>>>>> +             .parent_hws =3D (const struct clk_hw *[]) {
+>>>>> +                     &t7_dspa_a.hw,
+>>>>> +                     &t7_dspa_b.hw,
+>>>>> +             },
+>>>>> +             .num_parents =3D 2,
+>>>>> +             .flags =3D CLK_SET_RATE_PARENT,
+>>>>> +     },
+>>>>> +};
+>>>>> +
+>>>>> ......
+>>>>> +
+>>>>> +static struct clk_regmap t7_anakin_0 =3D {
+>>>> Nitpick: for the DSP it was a/b, here it is 0/1
+>>>> Could you pick one way or the other and stick to it ?
+>>>
+>>> ok , I will use 0/1 for DSP.
+>> I think I prefer a/b if you don't mind. see below for why ...
+>
+>
+> Mali is named as mali_0, mali_1 in this driver.=C2=A0 =C2=A0And G12A/S4/G=
+XBB series
+> do the same.
 
---8dYth6u/2Yr8gI8Q
-Content-Type: application/pgp-signature; name="signature.asc"
+... A1 use dspa_a dspa_b (etc ...)=20
 
------BEGIN PGP SIGNATURE-----
+>
+> If they are named as anakin_a and anakin_b here, there will be two naming
+> methods.
+>
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaQ4ltQAKCRB4tDGHoIJi
-0p0VAQCHn+nh9KAR8Ekz0Y8X0sS0lpxjC3Wvj8Iie/dDNKAWYwEA4vWuKYtGRFGT
-9WvuIoAJHuKnwtdBfC4q5WumjAlwFg4=
-=fA0E
------END PGP SIGNATURE-----
+Already have that unfortunately
 
---8dYth6u/2Yr8gI8Q--
+> Shall we keep consistent ?
+>
+
+Please try yes
+
+>
+> If use 0/1 to name them.
+>
+> dsp clocks are:
+>
+> =C2=A0 =C2=A0 dspa_0_sel
+>
+> =C2=A0 =C2=A0 dspa_0_div
+>
+> =C2=A0 =C2=A0 dspa_0
+>
+> =C2=A0 =C2=A0 dspa_1_sel
+>
+> =C2=A0 =C2=A0 dspa_1_div
+>
+> =C2=A0 =C2=A0 dspa_1
+>
+> =C2=A0 =C2=A0 dspb_0_sel
+>
+> =C2=A0 =C2=A0 dspb_0_div
+>
+> =C2=A0 =C2=A0 dspb_0
+>
+> =C2=A0 =C2=A0 dspb_1_sel
+>
+> =C2=A0 =C2=A0 dspb_1_div
+>
+> =C2=A0 =C2=A0 dspb_1
+>
+>
+> anakin clocks are:
+>
+> =C2=A0 =C2=A0 anakin_0_sel
+>
+> =C2=A0 =C2=A0 anakin_0_div
+>
+> =C2=A0 =C2=A0 anakin_0
+>
+> =C2=A0 =C2=A0 anakin_1_sel
+>
+> =C2=A0 =C2=A0 anakin_1_div
+>
+> =C2=A0 =C2=A0 anakin_1
+>
+> =C2=A0 =C2=A0 anakin_01_sel
+>
+> =C2=A0 =C2=A0 anakin
+>
+>
+> If use a/b to name them.
+>
+> dsp clocks are:
+>
+> =C2=A0 =C2=A0 dspa_a_sel
+>
+> =C2=A0 =C2=A0 dspa_a_div
+>
+> =C2=A0 =C2=A0 dspa_a
+>
+> =C2=A0 =C2=A0 dspa_b_sel
+>
+> =C2=A0 =C2=A0 dspa_b_div
+>
+> =C2=A0 =C2=A0 dspa_b
+>
+> =C2=A0 =C2=A0 dspb_a_sel
+>
+> =C2=A0 =C2=A0 dspb_a_div
+>
+> =C2=A0 =C2=A0 dspb_a
+>
+> =C2=A0 =C2=A0 dspb_b_sel
+>
+> =C2=A0 =C2=A0 dspb_b_div
+>
+> =C2=A0 =C2=A0 dspb_b
+>
+>
+> anakin clocks are:
+>
+> =C2=A0 =C2=A0 anakin_a_sel
+>
+> =C2=A0 =C2=A0 anakin_a_div
+>
+> =C2=A0 =C2=A0 anakin_a
+>
+> =C2=A0 =C2=A0 anakin_b_sel
+>
+> =C2=A0 =C2=A0 anakin_b_div
+>
+> =C2=A0 =C2=A0 anakin_b
+>
+> =C2=A0 =C2=A0 anakin_ab_sel
+>
+> =C2=A0 =C2=A0 anakin
+>
+>
+> Which one is better?
+
+a/b or 0/1, we already have both
+
+Pick which ever scheme you prefer, just stick to it from now on.
+
+>
+>>>>> +     .data =3D &(struct clk_regmap_gate_data){
+>>>>> +             .offset =3D ANAKIN_CLK_CTRL,
+>>>>> +             .bit_idx =3D 8,
+>>>>> +     },
+>>>>> +     .hw.init =3D &(struct clk_init_data) {
+>>>>> +             .name =3D "anakin_0",
+>>>>> +             .ops =3D &clk_regmap_gate_ops,
+>>>>> +             .parent_hws =3D (const struct clk_hw *[]) { &t7_anakin_=
+0_div.hw },
+>>>>> +             .num_parents =3D 1,
+>>>>> +             .flags =3D CLK_SET_RATE_GATE | CLK_SET_RATE_PARENT,
+>>>>> +     },
+>>>>> +};
+>> [...]
+>>
+>>>>> +
+>>>>> +static struct clk_regmap t7_anakin_clk =3D {
+>>>>> +     .data =3D &(struct clk_regmap_gate_data){
+>>>>> +             .offset =3D ANAKIN_CLK_CTRL,
+>>>>> +             .bit_idx =3D 30,
+>>>>> +     },
+>>>>> +     .hw.init =3D &(struct clk_init_data) {
+>>>>> +             .name =3D "anakin_clk",
+>>>> Again, not a great name, especially considering the one above.
+>>>> Is this really really how the doc refers to these 2 clocks ?
+>>>
+>>> bit30 gate clock is after bit31 mux clock,  and the gate clock is the f=
+inal
+>>> output clock, it is used to gate anakin clock.
+>>>
+>>> I will rename bit31 as anakin_pre, rename bit30 as anakin.
+>> Ok for the last element
+>>
+>> ... but I don't  like "_pre" for a mux selecting one the 2 glitch free
+>> path. It does not help understanding the tree.
+>>
+>> For such mux, when it is not the last element, I would suggest
+>> "_ab_sel" ... at least it is clear what it does so, "anakin_ab_sel" ?
+>>
+>
+> ok, anakin_ab_sel and anakin for these two clocks.
+>
+>
+> Maybe anakin_01_sel and anakin for these two clocks, if you agree to 0/1
+> naming convention.
+>
+>>>>> +             .ops =3D &clk_regmap_gate_ops,
+>>>>> +             .parent_hws =3D (const struct clk_hw *[]) {
+>>>>> +                     &t7_anakin.hw
+>>>>> +             },
+>>>>> +             .num_parents =3D 1,
+>>>>> +             .flags =3D CLK_SET_RATE_PARENT
+>>>>> +     },
+>>>>> +};
+>>>>> +
+
+--=20
+Jerome
