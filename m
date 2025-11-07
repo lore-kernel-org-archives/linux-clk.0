@@ -1,181 +1,186 @@
-Received: from smtp.smtpout.orange.fr (smtp-28.smtpout.orange.fr [80.12.242.28])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from TY3P286CU002.outbound.protection.outlook.com (mail-japaneastazon11010064.outbound.protection.outlook.com [52.101.229.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F66C1F03D2;
-	Fri,  7 Nov 2025 17:28:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.28
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762536514; cv=none; b=sVfIzNlNLyAHFej/1DR+UUFW0yRIBcHBqNVzNrm78tSwBzdpr2c34sVEHsxEqTv/PlVfe4RZCy1jEg+rbDyJ+EnTvze8KLYUAy4+tHKCGg3yZUz41ddktoJ23JMpiPoBGkeMQFBDjB/v7riBIl+2048lcCD1DmnOgtwVetVTFQo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762536514; c=relaxed/simple;
-	bh=dfM61HM/rxV0WPoTqcJsUKa1BcVHLBjV2PdvYgRZZHQ=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=mfjS4PHqEDChBpFa9MSUUU0Iq3s4KppFVwp9VPYhOMPbAwn3/yJTri4OtnNN+HlQPuu182q6X+/9nx8/kt3iMOhaQ034E1Mp4cMIl96rWbt9uF4if1J4xm/rBGLxbLFGzmNI4mDH5p2Q7j3wFDkDXarWbl3ByABqyqAEeFOobOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=PIk1ErRm; arc=none smtp.client-ip=80.12.242.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3419191;
+	Fri,  7 Nov 2025 18:36:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.229.64
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762540593; cv=fail; b=LHJYEfbUgkYA3aHBl7100j+Y7By0ULsIhzX0EpBoALX5aGh5rgv8qneDTghSk3OXy6D6go/OvHVFhDysLIM5UjgkZQnineZlleWhN5hpJ3qLO5uHDLWpXNWjMYZCwKBG6olUG2fuDgCbsOwLFTUHZLEd+KP5vr0H58p2qt0MPi4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762540593; c=relaxed/simple;
+	bh=y1cs/6dRHCjC5YvFhRaOvXKCnHnqbQk0Ov5tD44P7Z0=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=WDjizajGX6ZO6uJzllRen6EVM2G5/Xu7lTTiSe1gCels7Iu30PbWbYpnS9bDjJJqnrQLEHMj67/kE3rISv4BXXKef6ezipKVf7lEJwNOuSR9OtVKJLAa6P1yd+JMlikwGVPmbJChMy1RhZrgPMEH6gxxiBuvlqV4cRxX3HzZV/c=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b=bN94bPUy; arc=fail smtp.client-ip=52.101.229.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="PIk1ErRm"
-Received: from [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
- ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
-	by smtp.orange.fr with ESMTPA
-	id HQEyvYD68QDG2HQEyvK6vV; Fri, 07 Nov 2025 18:27:14 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1762536434;
-	bh=3WKd9Vql/yBxgX3bi4WcVQBZ4YBrQLscU903iq2HwGw=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To;
-	b=PIk1ErRm/ewovuaHK61Z5onXb6LzT+Pp2OhhvdpzMqEPfADF0hX02phFO4EioIH32
-	 S5rprOhnt4hcha+Svufe3VeLhl6RfGa4kixya+HNdG6mwmOkmhUSuyq66WiSZnDnS3
-	 nwdGQgY+TJGJC0Lg5QKqrPKgsy2ZuqvIMZc0/LN5r2O0DRKnAcOnCp8mmS7ffFxPu9
-	 r2VeKS56YIC2IPt0vYNw/nP4OitC6gXVWBpBktdiw4iV+U/9RmU7OmWZh2UflZA9bO
-	 +0klwFyO0mgtwkM2qRF/u5hYSBIalORh73ss/fawz+XW7u7h/sf0F+SgDxQVm2Bdxz
-	 118k1l51j1K0g==
-X-ME-Helo: [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 07 Nov 2025 18:27:14 +0100
-X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
-Message-ID: <530d77b2-8e2a-4689-99cf-742084548fbd@wanadoo.fr>
-Date: Fri, 7 Nov 2025 18:27:11 +0100
+	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="bN94bPUy"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=wudqs+MePM4sIZJn47zKQt44CQXAXoE8k7U6ivfPRflBX4FVLY/QWIYWQe5YEMRrRFad3wV9wjoXX2fGDM9GZQAMu7uaIZcCtwwa66DvmE3EloQ3meSo7XxRw1WARh7AmOlV1yqzl4vavYjaCd0y0IufWgcsio/OFkztSa7VtC4dwK7GOusVpJSZ7fQO0yYOF366r7ebbtJ3LO4GK8YJfDWzFkGVFRPEE5INLq0WBN0KdIZPoyyYgjCr5sPUkkdBkpPHTgv7yadbQWXnqnSJ9B0mJeN66P6/IdaTPLACA30Dcv5PieqiYJzPg8K3FPKcqXno8U4k/lScIVpiKryBDA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=6Orjbl6mg1SauwWtFKxjBhDErvaWz6wN8d7K0Rq6eS4=;
+ b=arhobDIwq43/BwZtWvJ76Fp55U3EZ5i1H9H3ONGJPWSzbE+oGbqmMGu7b37R/PwGM2pUX99TYGYLBhrqy1HApIjBu0V89zMkSw21B7hX+ZjT6aIW6vDXChWJr9TfCb1eyABUNjyZR5atanxVe5pgCdamVUeeEx89j+QSlqBa68MsmuXKVwKYfIcim46kJuaZ73s1Sf6dzfH3UpL6ewzv2m98zr9ZknPoGHUCafbqEPKH7p/9uvA0y0KkzY9uU/kHxg8Unc/sIyFVkLCbBiJ4qW8rshaHSMU4HNRAnoZDgRsOBPJQM43fX8SXbikp3AEUQR9qZUdGIinDLnHK3UCZdQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
+ dkim=pass header.d=renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6Orjbl6mg1SauwWtFKxjBhDErvaWz6wN8d7K0Rq6eS4=;
+ b=bN94bPUyQGyJd+LJvKogBrn439PCIephVe74LH7EZ2Oa1hB3AWiEtacBsTd+ecJRLhtwWoeGJNw+2nreTlNZLVcSZfylkhQqAkd0xuiePMNV6rRqpulQBhnmKGoBJ4cHclqiCBsYSDzqEDndxIzSGr9AZbSG6yi++yQGMmJQP8A=
+Received: from OS3PR01MB8319.jpnprd01.prod.outlook.com (2603:1096:604:1a2::11)
+ by TYVPR01MB10797.jpnprd01.prod.outlook.com (2603:1096:400:2ae::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.12; Fri, 7 Nov
+ 2025 18:36:25 +0000
+Received: from OS3PR01MB8319.jpnprd01.prod.outlook.com
+ ([fe80::6473:1660:bdc2:c983]) by OS3PR01MB8319.jpnprd01.prod.outlook.com
+ ([fe80::6473:1660:bdc2:c983%6]) with mapi id 15.20.9298.010; Fri, 7 Nov 2025
+ 18:36:25 +0000
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Hugo Villeneuve <hugo@hugovil.com>
+CC: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Biju Das
+	<biju.das.jz@bp.renesas.com>, Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>, Hien Huynh <hien.huynh.px@renesas.com>,
+	Nghia Vo <nghia.vo.zn@renesas.com>, "linux-renesas-soc@vger.kernel.org"
+	<linux-renesas-soc@vger.kernel.org>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>, "dri-devel@lists.freedesktop.org"
+	<dri-devel@lists.freedesktop.org>
+Subject: RE: [PATCH v4 1/2] clk: renesas: rzg2l: Remove DSI clock rate
+ restrictions
+Thread-Topic: [PATCH v4 1/2] clk: renesas: rzg2l: Remove DSI clock rate
+ restrictions
+Thread-Index: AQHcTqM02+OCahzeqkGZBdprKCVrd7TnaoQAgAAejkA=
+Date: Fri, 7 Nov 2025 18:36:24 +0000
+Message-ID:
+ <OS3PR01MB83195AF3F1964548E1512FBE8AC3A@OS3PR01MB8319.jpnprd01.prod.outlook.com>
+References: <20251105222530.979537-1-chris.brandt@renesas.com>
+	<20251105222530.979537-2-chris.brandt@renesas.com>
+ <20251107113058.f334957151d1a8dd94dd740b@hugovil.com>
+In-Reply-To: <20251107113058.f334957151d1a8dd94dd740b@hugovil.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=renesas.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: OS3PR01MB8319:EE_|TYVPR01MB10797:EE_
+x-ms-office365-filtering-correlation-id: 21108085-a75b-4e20-dfff-08de1e2c8e67
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|7416014|376014|366016|1800799024|38070700021;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?6I1s69n1xt4RJevxVZQdkcf+LWs4HFtRlaCr8HDR5UDkVnFHJs90ZOup7iMD?=
+ =?us-ascii?Q?un8QAJ6lWxbP4++asa0Dst7SjLb0u2RsQQjVXMNvOj3Rocn7lBJp7DszCX9F?=
+ =?us-ascii?Q?fWsWs/M6lvciL22I5XwVEEwqzhEzSUjib+Ln89/+g2ZCTCIXeqDY51ouOyu0?=
+ =?us-ascii?Q?C7pmkdFpwpzqr1YLqtKKbATLf0YabiJznSznVg/UKEn0rcG9yRQQddIALFpt?=
+ =?us-ascii?Q?GaeQ5ucTvKFaDFxTMNUoTNdZ0ZZBBFdLCyYytclegmWlI+m/tvPQf+DUuvoj?=
+ =?us-ascii?Q?Hegm51wUHY8ayd02FKsQVrvxtETM5QJ8zJvDNMIiZLcDiZZueEbz5XniAIEg?=
+ =?us-ascii?Q?pr4AtUKxiJ7ib2wsX8GbMx5sk5+SwLO1eiaM2BcJmNYJMx2x0yzOmScoJW0K?=
+ =?us-ascii?Q?w0r+pPOYPOCBFM3hRRLlTnvGXlS8MaxzYPctzhDkbXwMT0dzrBomk8mhfcNJ?=
+ =?us-ascii?Q?6g4ZTsIPGTgPyx8hd/W1ZzXhoiQ+cGmn6PPg83BQyl5s5WPJ8ztBIRY+60dN?=
+ =?us-ascii?Q?4FEq8r2v9osWAqAdQNeC1bIsWz8O+Q8cx3xt8CuquXmBLLU/FX3aJeKKqbrw?=
+ =?us-ascii?Q?I376FJpMdVHSpdiObtf31mCbK9cCDlkeVgB+13xKTjpxnTErPL40K8+6ITvy?=
+ =?us-ascii?Q?PFQSjyYezjFJ2Os47lmOjqDTPvFdQN3YjQjhyh4Xw3pvxTTx7d1Lx0e4TrUC?=
+ =?us-ascii?Q?SjDMUU7IagBXzCkyBvUrp5Dj38wuulSW03/N2OblRvE1s+FY/Sweq+NllBEA?=
+ =?us-ascii?Q?X5k9C+SPJZ/hThuDQ93U41eTIwO86CKTG32BAgJ4tgIIvreFb2331+ZjLWLI?=
+ =?us-ascii?Q?yCdhWvWGDYCWFiR+sY8fK5311RIjnq/L0Zz19WkrifFUY1cyC+2PRzNK/YWj?=
+ =?us-ascii?Q?ikEEH2TlVlJGGc6BghFblmi+JGxIH800VDEhtJ23Gi/71COyqT8ocpiIkZim?=
+ =?us-ascii?Q?UMS7TW+GgWoiIQmf6u3l/GgxXlwcSHBfzOZpJeS+OSaaVhr8iiU6ZWDvHK1q?=
+ =?us-ascii?Q?rAHYf3B/7w5lqOdg615zdbVPY19Ovm1IflktJRuP1AP1LgRCYVlkTu908AID?=
+ =?us-ascii?Q?3sscHo2p01F7EmKmQrPhHz/x2FdN6gCggPvIo9wXsyjTT2qploQcDmuNMQ2J?=
+ =?us-ascii?Q?crBIpH22YA51LvqKNbs+3GwbuEHTatx5keR8Eaz7JPwn8Te5TxzwLw6z7Ves?=
+ =?us-ascii?Q?wRDNxb5JNt31bNPtUSZKtBfNSfUKM7IlPHTUl1RXiMsXLXm7DLlRw0Aedidm?=
+ =?us-ascii?Q?PTTjSOs8hreP+vlQG8TcnIASzdYHITGtsKDctf6BLlaQxhWUroid3kVKAjkA?=
+ =?us-ascii?Q?5CMtxLau30XFQfW+bBvwIASNAivCRSjKN5QxETGqkUcINi+WQkZEXEOv2ULk?=
+ =?us-ascii?Q?XCj5w8/kU+J0Ias9Z24GV+Xjv8N0ckOw+WzgqidIzUpE75bIT2BQbKemLdv4?=
+ =?us-ascii?Q?MKM/1ngdsECM6Xlz1bSItUuZzy88BpCq8Vg/EqK1uetaPxnNN7mpdf8hdoVm?=
+ =?us-ascii?Q?ZJbMVehni+Hupjq1AAda2VFZYwubvS83mBvf?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS3PR01MB8319.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?FKlGfEhWd6l+JlEZMpyjvFbVkqWzCN/Da8dQw5/65wP41gHwFL5/bKApxDs/?=
+ =?us-ascii?Q?e3dmN5WedZ0pqZjSnpglb27R7T9jHg/EkL8mT4TmdOE24o57jfVoJK7B0tp3?=
+ =?us-ascii?Q?H4T4Yrd2V2RAVxSsoNZXeUFE0XiHpSOqE45digFb3BrdSubUQXxWdrfZITSI?=
+ =?us-ascii?Q?/DftAwwfR9wirpTXilWK0LbMyM3AZxofc5yGx4GflO3Mm28B65+RUIsyOui8?=
+ =?us-ascii?Q?L7nHIzz59xGPhb5ZoUzu43n5AeKfMJlVp/j+rXagCt+CQnSo7jLWFWcTimCi?=
+ =?us-ascii?Q?yAPLRcONMsLqghMMEFgqJnS/sWAtLHCqO+UhXVI54qHSbUEZz5rtAmpkZxg/?=
+ =?us-ascii?Q?xP71vKR3IwiHDn5aN/p8AletnRs8WFDZEz8Gu0vgwvESlOOz9ppyRxiNXxv2?=
+ =?us-ascii?Q?ivRhUkLu5yquggdkmByZUkuR90jlNO4kGeNGKdVmS2U4atiGC46NBz0VDf1+?=
+ =?us-ascii?Q?NFWJWtD9R5JTJcfUApHQxVig2dawYt2FzbHGfQK0vepecic/5VP9LMHfLVk2?=
+ =?us-ascii?Q?9SO30r+I8ZvOLOzLI748O3+F0ZsSvu+76sLn+4QG7UJRTGMLFkGbLzeXZYmV?=
+ =?us-ascii?Q?UmeeivCVS/CFgh2L2GeAtraGzH6UGDYYUxJ8SCIzfwh25dVEzr6tZAYWSMVl?=
+ =?us-ascii?Q?NmTULPlQ+UaR3vdm89qRyyNmY9JYons2Wn9HvLmLfSwz3fontCfYMYkgE/bG?=
+ =?us-ascii?Q?sSOyDS0cv3aTjmduqg/vdbWMVPLQ+g/FlGQQAv4Ck1MV3nQ+c95Jte70sibw?=
+ =?us-ascii?Q?6q+XHUfUR7nDjQ5bXxT/xTlB6qVqy+rr57vA2EPXc6e05rMeCB9Rkq5mjse1?=
+ =?us-ascii?Q?687SyRaW3ZlB+bPHoPUtZ6Pk3xNWyHVxuHJGoxyX0PaD6OXfsiIoyy883AcM?=
+ =?us-ascii?Q?rLfS2d8i2MWfNwoo0ny7OCGeEJdyvcxiJWwbEcN5vAQs1ccd2anMOO0DRHLN?=
+ =?us-ascii?Q?p3AyELqpKEFJPnyaPxYT0ut0enlcAb1EDp2eipc0nLwgfjwK7jomZFkhgigW?=
+ =?us-ascii?Q?e68i+4TbgC/JN7GlUtGqR+hTejkVeiAxZElq1KCOKOpWTkz6PxZz6dJj0ePN?=
+ =?us-ascii?Q?v6xMfEuJFfK1uI5oNeL/9z/4fm6a4DE4NDnnbwefeUufRzcqtH8PuTYxtjjz?=
+ =?us-ascii?Q?bQ3xTkbtV+DgiSx32Cif4m1utTZbNJOsXCp3lpx3sp43BUYjck3OVBskrCKz?=
+ =?us-ascii?Q?/By96qiUWr7Ker9eUnmdTWHxxC3IYJJVxvIRuzaTguoqLhWptKU/xn6m3Cxh?=
+ =?us-ascii?Q?l1SG0Z/5lQmt00pP4o8Vnp9uXqO0+bjn+lcG4VjUjlf/rjHEH7yp+AvJnqHz?=
+ =?us-ascii?Q?LtGCCFCgbc1bsvKRrOWrgtyK35VjMDuA29jNi1ii4YIVXR0EpYZGEsj4KIBa?=
+ =?us-ascii?Q?32+EujdHf31vbu6h7Pw4Lw6iRFpPkuFKzDB5KDT/Cbx/z5lSn2HtE9T1IbKk?=
+ =?us-ascii?Q?kDu2PZ7dE6pyFUIDAFI0/wx9721imhpSPfe1D3eV+rypw42YhzhFxWp5SLxa?=
+ =?us-ascii?Q?bIFr26dyTVn+TOI0qM1eIXFj+QskFJL0hCJhwQyzttnsaqF3yJcVJ9r+qRIq?=
+ =?us-ascii?Q?yp6qIoQcStHYIzOcM4+Yapzaav7E5DcwKE6piuAY?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH v3 2/5] clk: en7523: generalize register clocks function
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
- Felix Fietkau <nbd@nbd.name>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251106195935.1767696-1-ansuelsmth@gmail.com>
- <20251106195935.1767696-3-ansuelsmth@gmail.com>
- <bc9074b9-27b5-4a31-ab85-ef7fcc309523@wanadoo.fr>
- <690d04cb.050a0220.1f914.57e6@mx.google.com>
-Content-Language: en-US, fr-FR
-In-Reply-To: <690d04cb.050a0220.1f914.57e6@mx.google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: OS3PR01MB8319.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 21108085-a75b-4e20-dfff-08de1e2c8e67
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Nov 2025 18:36:24.9343
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: hSFylHwYMAd1Jmi2K1kZJZDzpAYlWOQnN2ppt/w/pGJDo7ddcEO9bWQxH0LSx1rQ7cmb6H/YDrhxgEeauRl03iA2Sac0AfR3VOEN7/zMmqs=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYVPR01MB10797
 
-Le 06/11/2025 à 21:27, Christian Marangi a écrit :
-> On Thu, Nov 06, 2025 at 09:25:23PM +0100, Christophe JAILLET wrote:
->> Le 06/11/2025 à 20:59, Christian Marangi a écrit :
->>> Generalize register clocks function for Airoha EN7523 and EN7581 clocks
->>> driver. The same logic is applied for both clock hence code can be
->>> reduced and simplified by putting the base_clocks struct in the soc_data
->>> and passing that to a generic register clocks function.
->>>
->>> While at it rework some function to return error and use devm variant
->>> for clk_hw_regiser.
->>>
->>> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
->>> ---
->>>    drivers/clk/clk-en7523.c | 148 +++++++++++++++++----------------------
->>>    1 file changed, 66 insertions(+), 82 deletions(-)
->>
->> ...
->>
->>> +static int en75xx_register_clocks(struct device *dev,
->>> +				  const struct en_clk_soc_data *soc_data,
->>> +				  struct clk_hw_onecell_data *clk_data,
->>> +				  struct regmap *map, struct regmap *clk_map)
->>> +{
->>> +	struct clk_hw *hw;
->>> +	u32 rate;
->>> +	int i;
->>> +
->>> +	for (i = 0; i < soc_data->num_clocks - 1; i++) {
->>> +		const struct en_clk_desc *desc = &soc_data->base_clks[i];
->>> +		u32 val, reg = desc->div_reg ? desc->div_reg : desc->base_reg;
->>> +		int err;
->>> +
->>> +		err = regmap_read(map, desc->base_reg, &val);
->>> +		if (err) {
->>> +			pr_err("Failed reading fixed clk rate %s: %d\n",
->>
->> Would it be better to use dev_err()? (here and in other places)
->>
-> 
-> Yes but I wanted to limit the changes. Is it possible to do it later?
+Hi Hugo,
 
- From my point of view, do as you think is the best. I'm not a 
-maintainer, just a hobbyist looking randomly at patches.
-So, only take my comments when they make sense to you,
+Thank you for your review.
 
-> 
->>> +			       desc->name, err);
->>> +			return err;
->>> +		}
->>> +		rate = en7523_get_base_rate(desc, val);
->>> +
->>> +		err = regmap_read(map, reg, &val);
->>> +		if (err) {
->>> +			pr_err("Failed reading fixed clk div %s: %d\n",
->>> +			       desc->name, err);
->>> +			return err;
->>> +		}
->>> +		rate /= en7523_get_div(desc, val);
->>> +
->>> +		hw = clk_hw_register_fixed_rate(dev, desc->name, NULL, 0, rate);
->>
->> I think that the issue was already there before, but should we have a
->> corresponding clk_hw_unregister_fixed_rate() somewhere in this driver?
->>
->> I've not seen any.
->>
->> Or use devm_clk_hw_register_fixed_rate()?
->>
-> 
-> Well yes, I didn't move to devm as it's already planned to move to full
-> clk with .set_rate and realtime .get_rate. Is it possible to also delay
-> this in a later series?
+On Fri, Nov 7, 2025 11:31 AM, Hugo Villeneuve wrote:
+> > +				if (params->pl5_intin < PLL5_INTIN_MIN ||
+> > +				    params->pl5_intin > PLL5_INTIN_MAX)
+>
+> Your patch comments indicate that you removed +1 and -1 for kernel test r=
+obot issue, but I do not understand why.
+>
+> pl5_intin is still defined as u8 (max 255), and therefore the result of "=
+params->pl5_intin > PLL5_INTIN_MAX" will always be false because PLL5_INTIN=
+_MAX is 320.
+>
+> It seems to me that pl5_intin type should be modified to account for its =
+maximum value (u16?), and this should probably goes into a separate patch (=
+with a Fixed: tag), that can be backported (if necessary).
 
-Same answer, but in this case, even if planned to update things, I don't 
-see the rational for not fixing things with a patch that would be a 
-single line of code.
+You are totally right!
+INTIN is a 12-bit register value.
+It's a bug.
 
-I've always been told that when a serie was sent, first patches should 
-be fixes (that could be backported), then changes, clean-ups (taht are 
-unlikely to be backported)...
+Good catch.
 
-In this case, should the planned work never be merged or never 
-backported, there would be no opportunity to fix the leak in older kernel.
+I'll make that a separate patch so I can CC stable.
 
-Just my 2c.
-
-CJ
-
-> 
-> (thanks for the review)
-> 
->>> +		if (IS_ERR(hw)) {
->>> +			pr_err("Failed to register clk %s: %ld\n",
->>> +			       desc->name, PTR_ERR(hw));
->>> +			return PTR_ERR(hw);
->>> +		}
->>> +
->>> +		clk_data->hws[desc->id] = hw;
->>> +	}
->>> +
->>> +	hw = en7523_register_pcie_clk(dev, clk_map);
->>> +	if (IS_ERR(hw))
->>> +		return PTR_ERR(hw);
->>> +
->>> +	clk_data->hws[EN7523_CLK_PCIE] = hw;
->>> +
->>> +	return 0;
->>> +}
->>> +
->>>    static int en7581_pci_is_enabled(struct clk_hw *hw)
->>>    {
->>>    	struct en_clk_gate *cg = container_of(hw, struct en_clk_gate, hw);
->>
->> ...
->>
->> CJ
-> 
+Chris
 
