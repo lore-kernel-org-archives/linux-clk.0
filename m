@@ -1,163 +1,67 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0464B2D9ED1;
-	Fri,  7 Nov 2025 08:52:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [13.76.142.27])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D82D3164CB;
+	Fri,  7 Nov 2025 09:02:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.76.142.27
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762505550; cv=none; b=hxMRqJtZVoBKK4UCVXJZxXtTIPbg94lDXDs2xGK6PDQ/lREJRaMk1sxTf+ogDD0mqawqKxJK7rJJTGqaIGgXf5PtQOmWvEn2d/Wrx8dM/B3g9szwlpupoNg3gRYDKLW9QRazBZNAOg3FNHtJwjNxXo33knhr0td5UsNLYI0r7A8=
+	t=1762506151; cv=none; b=plgh7+cptrXW2Wf6kkmqym3a7Jj8juX5GoenUkxpxHtggDGsyu50W5Z8njXVyS4plp4w/XAZ0FG1wU2YSMpgdQ86jW5R++oR3oYBAqjsQ6E3OxAkgIwe6xHIvyuuy0kzBtvjiP4PAr+UvD2N6LvBpOA5n7GeIwHfQ1DRONwPXQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762505550; c=relaxed/simple;
-	bh=o/G3wbVvU7m9CXAclIRCBPaXp+MGOiwJ0ei//pu/DU0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WOOxnXBVOHUxHgoEEWU1mS9/o1YyBuwPdQcpqklijWHky7z+QG9M3GzgBQaxxX4C0Jsy9W+2QA3O1lOscGqb1CYsrrrQt7gU3IQ11rj+KDXTKM+nBKRsKf+rO84ENqkSglTuCsYAsItkU7dPVR+7v38gWL+Mrk70v9ttNL9egXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=crnlqXG7; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="crnlqXG7"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23E1DC4CEF8;
-	Fri,  7 Nov 2025 08:52:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762505549;
-	bh=o/G3wbVvU7m9CXAclIRCBPaXp+MGOiwJ0ei//pu/DU0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=crnlqXG7MVhdeTKz9VRa1Aw9qWa6ZS23FJedjohTRuIMpNjqQtK2D4NhBjtU8IlBr
-	 tWwZodNsrZdqM2IdLTh/IuUesGOeXndjWgkET29lGiuR+on9XK5ahFFGQsB5GRLWWg
-	 dMXf7BUKo0mlkhiF+qDC2usfqb5FxCNdl/sBteEq83DyyMQKF3URqxsvinrm/bk4uD
-	 8YJJ3Tgw6CxSmLKT0YtczmaRKR2nn8eTySF7fn0S1B/alX0lg48l4rw65hFa/qeomw
-	 EXYCx5t+scwlUc1Xo23bdLgeqTcU/CzZve3MhQiNftNRUtBi3ihidPEQvmgrkMFFu1
-	 X3L9D227iOU0A==
-Message-ID: <d5275ccc-96a8-48eb-bc4e-e355aae597a3@kernel.org>
-Date: Fri, 7 Nov 2025 09:52:25 +0100
+	s=arc-20240116; t=1762506151; c=relaxed/simple;
+	bh=+soozUbq4KCPWTIh5G7JqfsUDroaOwLTIC6v9IAnJ/g=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=uR67hKnLfymSILnoioGjfenh1/7fGWGXnmKCRI3N028Rslt4ZJ1FBsoUhB8hW7dsLQJSLUBBVQdVL8TMiAUjQI/fD7xxa9TQNYVzwSHURHDwhCrD4buEPzO+NCQFto0xdUMn8E2b8vh8GiuHlwg5dWrExTCcE+RMdPcONsaqCSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=13.76.142.27
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
+Received: from dongxuyang$eswincomputing.com ( [10.12.96.41] ) by
+ ajax-webmail-app2 (Coremail) ; Fri, 7 Nov 2025 17:02:06 +0800 (GMT+08:00)
+Date: Fri, 7 Nov 2025 17:02:06 +0800 (GMT+08:00)
+X-CM-HeaderCharset: UTF-8
+From: "Xuyang Dong" <dongxuyang@eswincomputing.com>
+To: "Troy Mitchell" <troy.mitchell@linux.spacemit.com>,
+	"Krzysztof Kozlowski" <krzk@kernel.org>, mturquette@baylibre.com,
+	sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, bmasney@redhat.com, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: ningyu@eswincomputing.com, linmin@eswincomputing.com,
+	huangyifeng@eswincomputing.com, pinkesh.vaghela@einfochips.com
+Subject: Re: Re: Re: [PATCH v7 0/2] Add driver support for ESWIN eic700 SoC
+ clock controller
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version 2024.2-cmXT6 build
+ 20241203(6b039d88) Copyright (c) 2002-2025 www.mailtech.cn
+ mispb-72143050-eaf5-4703-89e0-86624513b4ce-eswincomputing.com
+In-Reply-To: <1618037D174FDF5F+aQ2hU1J9oLEKCq25@kernel.org>
+References: <20251023071658.455-1-dongxuyang@eswincomputing.com>
+ <1abb85b.c11.19a582bcbbc.Coremail.dongxuyang@eswincomputing.com>
+ <039a3a41-c60f-4296-afd9-2bf3467574ca@kernel.org>
+ <6d2d7ddb.cbd.19a5cf92465.Coremail.dongxuyang@eswincomputing.com>
+ <1618037D174FDF5F+aQ2hU1J9oLEKCq25@kernel.org>
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 4/5] dt-bindings: clock: airoha: Document support for
- AN7583 clock
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
- Felix Fietkau <nbd@nbd.name>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251106195935.1767696-1-ansuelsmth@gmail.com>
- <20251106195935.1767696-5-ansuelsmth@gmail.com>
- <20251107-fancy-premium-lynx-dc9bbd@kuoka>
- <690da391.5d0a0220.33eed5.80b7@mx.google.com>
- <ab520621-b11d-4763-a7b7-fe7dfafdca6c@kernel.org>
- <690dabc8.7b0a0220.35db7d.1d97@mx.google.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <690dabc8.7b0a0220.35db7d.1d97@mx.google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Message-ID: <5a9911a3.d09.19a5d8d32cd.Coremail.dongxuyang@eswincomputing.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:TQJkCgDnK6+OtQ1pYuBJAA--.1101W
+X-CM-SenderInfo: pgrqw5xx1d0w46hv4xpqfrz1xxwl0woofrz/1tbiAgETAmkMzdoxi
+	QACsa
+X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWxJw
+	CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
+	daVFxhVjvjDU=
 
-On 07/11/2025 09:20, Christian Marangi wrote:
-> On Fri, Nov 07, 2025 at 09:12:48AM +0100, Krzysztof Kozlowski wrote:
->> On 07/11/2025 08:45, Christian Marangi wrote:
->>> On Fri, Nov 07, 2025 at 08:42:15AM +0100, Krzysztof Kozlowski wrote:
->>>> On Thu, Nov 06, 2025 at 08:59:31PM +0100, Christian Marangi wrote:
->>>>> Document support for Airoha AN7583 clock based on the EN7523
->>>>> clock schema.
->>>>>
->>>>> Add additional binding for additional clock and reset lines.
->>>>>
->>>>> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
->>>>> ---
->>>>>  .../bindings/clock/airoha,en7523-scu.yaml     |  5 +-
->>>>>  include/dt-bindings/clock/en7523-clk.h        |  3 +
->>>>>  .../dt-bindings/reset/airoha,an7583-reset.h   | 62 +++++++++++++++++++
->>>>>  3 files changed, 69 insertions(+), 1 deletion(-)
->>>>>  create mode 100644 include/dt-bindings/reset/airoha,an7583-reset.h
->>>>>
->>>>> diff --git a/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml b/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
->>>>> index fe2c5c1baf43..2d53b96356c5 100644
->>>>> --- a/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
->>>>> +++ b/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
->>>>> @@ -30,6 +30,7 @@ properties:
->>>>>    compatible:
->>>>>      items:
->>>>>        - enum:
->>>>> +          - airoha,an7583-scu
->>>>
->>>> That's random order. Keep it sorted.
->>>>
->>>> Best regards,
->>>> Krzysztof
->>>>
->>>
->>> Hi Krzysztof,
->>>
->>> I was also not cetrain on the correct order.
->>
->> Why? The rule was expressed on mailing list many, many times and only
->> Sunxi or maybe one more SoC does it differently.
->>
->>>
->>> We have En7523 and en7581 and then An7583.
->>>
->>> So should I put it at last following the number order or the
->>> alphabetical order?
->> All such lists or enumerations are ordered alphanumerically.
->>
-> 
-> Ok so I think the proposed order follows alphanumerically order.
-> 
->            - airoha,An7583-scu
->            - airoha,En7523-scu
->            - airoha,En7581-scu
-> 
-> Maybe the A vs E was confusing?
-
-Yes, my bad, I missed the a/e. The list is correct, sorry.
-
-
-Best regards,
-Krzysztof
+PiA+ID4gPiAKPiA+ID4gPiAgIEdlbnRsZSBwaW5nLiBMb29raW5nIGZvcndhcmQgdG8geW91ciBy
+ZXBseS4gVGhhbmsgeW91IHZlcnkgbXVjaCEKPiA+ID4gCj4gPiA+IFBsZWFzZSBkbyBub3QgdG9w
+IHBvc3QuCj4gPiA+IAo+ID4gPiBZb3UgZGlkIG5vdCBhZGQgYW55IG1haW50YWluZXJzIG9mIHRo
+ZXNlIGRyaXZlcnMsIHNvIEkgd291bGQgbm90IHB1dCBpdAo+ID4gPiBoaWdoIG9uIG91ciBwcmlv
+cml0eSBsaXN0LiAKPiBEbyB5b3UgaGF2ZSBhbnkgcGxhbnMgdG8gYmVjb21lIGEgbWFpbnRhaW5l
+cj8gSWYgc28sIHRoaXMgcGF0Y2ggbWlnaHQgZ2V0Cj4gcmV2aWV3ZWQgd2l0aCBoaWdoZXIgcHJp
+b3JpdHkuIEkgdGhpbmsgdGhhdCdzIHdoYXQgS3J6eXN6dG9mIG1lYW50Lgo+IAo+ICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgIC0gVHJveQoKSGVsbG8gVHJveSwKClllcywgSSBwbGFuIHRv
+IGJlY29tZSB0aGUgbWFpbnRhaW5lciBmb3IgdGhpcyBkcml2ZXIuIEkgd2lsbCBhZGQgbXnCoApt
+YWludGFpbmVyIGluZm9ybWF0aW9uIHRvIHRoZSBNQUlOVEFJTkVSUyBmaWxlIGluIHRoZSBuZXh0
+IHBhdGNoIHNlcmllcy7CoApXb3VsZCB0aGF0IGJlIGFjY2VwdGFibGU/CgpSZWdhcmRzLApYdXlh
+bmcgRG9uZwo=
