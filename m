@@ -1,191 +1,117 @@
-Received: from smtp.forwardemail.net (smtp.forwardemail.net [149.28.215.223])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtpbgjp3.qq.com (smtpbgjp3.qq.com [54.92.39.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A0FF2BE024
-	for <linux-clk@vger.kernel.org>; Fri,  7 Nov 2025 15:09:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.215.223
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7286C2F362F;
+	Fri,  7 Nov 2025 15:55:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.92.39.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762528180; cv=none; b=fnEe6SrJyE+IiUSZvYU36zHDNezyU6AuUSZyKZk0zpErAYIkqlTeOsvvXbp5WYMd3CKw3HHGg+BKUFBhToRXKuebtrcJdNRCZXr269betpZaDt7beqxd08w2DQZAYxzkzqx2PbBZbaAyomYsGPS3jII4yBMXfaV1S+zG0NkefWE=
+	t=1762530951; cv=none; b=kNu5+DeA5KFozLQUJ8FzTMIpIiQBgz8DXWCortQ2+FvZ5srFC9EF7GQhgt2R+MDtWf+vujQu9dgZRRJizblnYWUUoWLMtJvk/Sur3c7HCra5V/vlnmEtgaEgMXeOqj6hJV84J7fJUY23oCsAHPYzToaNSFm0P+gYDDu3SuKBbNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762528180; c=relaxed/simple;
-	bh=ip6vY1YbgFNzJt16QLuYy3gdeQidUIDJGkzB1m/yE+Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cA+cnsBtreE3h/rcc8drrUOktBZ/Z3VW2186WCKJSPGk9NvSwne2Ie3jB8Tg2Wm6b2BBcCOOr43AQ24gkZKK3D5T4oJerMEt5ITEDvxhYAAfUB9RDkVGsIvUT4g/P3GTa/QNu4HxQfe8Li+SqUyPdLSQGfzNGW7CYzrJafmG+2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=wcFXdihT; arc=none smtp.client-ip=149.28.215.223
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
+	s=arc-20240116; t=1762530951; c=relaxed/simple;
+	bh=D9oq68VrORbAYW4+VlHxCsq/enrwgz5myr/oEzlR8GU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jY9SkpWqBaTYeUDqbMLF17tPhNn2TKcFxDmSlFS0CfMNE6gBmFVNzxsK4dF83L9qQebl/kQlJQPr0l3uajTLuuWc0uOgljX1ziZBca2XbAQIwCSt25nvIe9cYeYmTVMXuNnrmIR4kopG1S7hd1Y2PcAVlz9pQ/746HJZ3kKYQCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=xPw8NY22; arc=none smtp.client-ip=54.92.39.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="wcFXdihT"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
- h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
- Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
- s=fe-e1b5cab7be; t=1762528177;
- bh=JtrOP7D+6cn9NXpGOjOJ8EQlpfaQQ1W6MRTCW9ClTm4=;
- b=wcFXdihThdctWN+lvIfgAcgRJZTzBnla127xgzjKmBp6x6B1AjTdtDXwxsMrbBqqEdpE9ubh3
- Scujx3OuaTICSazdOmTXFvA3hOAqGPG7IE3fiitkDqqgjAgJKDl4QJYLPSKMLwzU4dFQuJXJB19
- rmPLjJlIxfIYvpkZUMs5UUop72CQkf7K6kfKELdY5iDJFaOraPDwOu04jNBtoSVAqI/4otnhx+4
- iR8NYVGfIVW0sjWw/9KSMWxwSdR9PqRWgrkxZLN8IUC2OI/keHocEyWi7NnnFPwQcBGLZ90WxLh
- EToFKF25Ddue0E/HAqDIN7cWqsvk4uRwcMduBNsFhdAQ==
-X-Forward-Email-ID: 690e094607551ffa40a0ed33
-X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
- 149.28.215.223
-X-Forward-Email-Version: 1.4.3
-X-Forward-Email-Website: https://forwardemail.net
-X-Complaints-To: abuse@forwardemail.net
-X-Report-Abuse: abuse@forwardemail.net
-X-Report-Abuse-To: abuse@forwardemail.net
-Message-ID: <48108089-775a-428c-8dd1-a75344823ace@kwiboo.se>
-Date: Fri, 7 Nov 2025 15:59:12 +0100
+	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="xPw8NY22"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
+	s=mxsw2412; t=1762530895;
+	bh=x5wU+8XhNn87+1HQLINKbrKQAzx0N1ebWVPXX+dgJtI=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version;
+	b=xPw8NY22mzC3Ek/DIkaAYyEPu261K1jn7dzd+xaLLQ80tD4SRWpmIcMqmOycInKJp
+	 Hmz4h1xicEmP00zC3QW1EiSgKsStDqY73Y0jPCcC5+66dKrv0FdHNl1ZTxwjTGJ4PM
+	 BZvf5QrhRdPut3XQTCyB2ij4ZtbHbj6S8Nx0mcKQ=
+X-QQ-mid: zesmtpip3t1762530885td6bbd925
+X-QQ-Originating-IP: AVnxMsCEYCH+Te+U4txA0lr7Lg9JiGfupg08FrYRM88=
+Received: from = ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Fri, 07 Nov 2025 23:54:44 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 14462180775243901098
+EX-QQ-RecipientCnt: 16
+Date: Fri, 7 Nov 2025 23:54:43 +0800
+From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+To: Xuyang Dong <dongxuyang@eswincomputing.com>,
+	Troy Mitchell <troy.mitchell@linux.spacemit.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>, mturquette@baylibre.com,
+	sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, bmasney@redhat.com, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: ningyu@eswincomputing.com, linmin@eswincomputing.com,
+	huangyifeng@eswincomputing.com, pinkesh.vaghela@einfochips.com
+Subject: Re: Re: Re: [PATCH v7 0/2] Add driver support for ESWIN eic700 SoC
+ clock controller
+Message-ID: <AF4FD688167B825E+aQ4WQ7qbYqtHbSKl@troy-wujie14pro-arch>
+References: <20251023071658.455-1-dongxuyang@eswincomputing.com>
+ <1abb85b.c11.19a582bcbbc.Coremail.dongxuyang@eswincomputing.com>
+ <039a3a41-c60f-4296-afd9-2bf3467574ca@kernel.org>
+ <6d2d7ddb.cbd.19a5cf92465.Coremail.dongxuyang@eswincomputing.com>
+ <1618037D174FDF5F+aQ2hU1J9oLEKCq25@kernel.org>
+ <5a9911a3.d09.19a5d8d32cd.Coremail.dongxuyang@eswincomputing.com>
+ <6C7E97902D2C1367+aQ3EYikxWNtINfyj@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND PATCH v6 4/5] dt-bindings: clock: rockchip: Add RK3506
- clock and reset unit
-To: Elaine Zhang <zhangqing@rock-chips.com>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, sugar.zhang@rock-chips.com,
- heiko@sntech.de, robh@kernel.org, krzysztof.kozlowski+dt@linaro.org,
- conor+dt@kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- huangtao@rock-chips.com, finley.xiao@rock-chips.com
-References: <20251107013757.5013-1-zhangqing@rock-chips.com>
-Content-Language: en-US
-From: Jonas Karlman <jonas@kwiboo.se>
-In-Reply-To: <20251107013757.5013-1-zhangqing@rock-chips.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <6C7E97902D2C1367+aQ3EYikxWNtINfyj@kernel.org>
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpip:linux.spacemit.com:qybglogicsvrgz:qybglogicsvrgz3a-0
+X-QQ-XMAILINFO: Mx7AiMmSgXkmft6XAEvByt6G36aghN8w8JyyIXoHB8vKBLH1P0G/+FhP
+	tdTYPHVBiolV1aOmfp1D7M1IpoMNhlL522lHagqAwFVvDgwMa/viL8H/NOAKeTTMTNAQTLC
+	H6d4t5YjpwgHWjon2w4Fhe9/2z/GEZUWGBDmfwLxd/rPceC8F2TYGdq+ZcWmE1YzunhDf66
+	lic3fpCQiJhN2sY9a5oNKiy2k0zfvP8TjCNgs27wbGocS52ymrNDIS283IbrxX0BygeJYRg
+	nQMIR8/9OE99bfjJs/alebn5XzKizwEiIr+dy1R7AMu/hMuAjUuAkrszVMdH6xzYUTu1ifg
+	3wZAuemoHCkcgd9Fb4ugAfSbIF8ssXWQhhsaOjilh5dfED8e3/xqGThzlXGt2S19V8AsgfM
+	CYXy7/SAfLDrgHuBhQmErmx7+eJzgA3zHi09hSdViK7OCGVp3oQ3zxh2vIlvdboTVR88EyF
+	CZTGHOUTOsVk5L36KcnJ3Yc10am20hh38IGTcpf7ldVdt89/4d5zUQxp+U9oCQM/15iq/3l
+	SHHJlEA1mWwnOH26O1X+Fty/BYRWQSmLPInsd9Jc2ZRFv7B15iP4F2hI0gHCr/DIRfVsa//
+	iQdotmB2Mp5itlvMvrK22sYl2me2ln2yIrj6xCOCO0VFbfiQhz/rBGttKqGuC9D0SFHMkye
+	3uDtNTJ1R+klVxzgkXXTVqiBzBAlon3dyy/90GcoWScVsU2CqGxtetOKbIbzW9Xu0IYrFTL
+	NspYvUvori18UEBftJSp3H9UfUP++FZcBvv6nTOF0+Jch//19PFyVbMJipft6OZMPGvfClc
+	MGF9c3x0kZL65P0XT4B/2MzyZdxKDAZpNI9pzq5QUV7URrb5OTeihG2X0OsCKaJqIRw8KUl
+	gRkY1Dw8QKSOJTxF6dM2AtehL5TspwC3xx7rwdqAMseqZfM9NXyhw4+zLBXH4VyVXA/It8o
+	aUvSyT59Lzp1LGh6J90A08HPU/MTk1rl8RCgMmETf0rX/E20vBcbpu8VWV03AIZ7fIldKG0
+	cq/cNg1iSrIR2ckZOJ/IH0X/dmW4LY4F7UFbRamR3sNngeh1M/EBox+8g8Wf5tyWI6qViqi
+	BPgTfux63KfEAgCqj9VGhFFO31We3/zLbZSevPkkVp7ORNypgpKUpU9LcbtFqFL7A==
+X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
+X-QQ-RECHKSPAM: 0
 
-Hi Elaine,
-
-On 11/7/2025 2:37 AM, Elaine Zhang wrote:
-> From: Finley Xiao <finley.xiao@rock-chips.com>
+On Fri, Nov 07, 2025 at 06:05:22PM +0800, Troy Mitchell wrote:
+> On Fri, Nov 07, 2025 at 05:02:06PM +0800, Xuyang Dong wrote:
+> > > > > > 
+> > > > > >   Gentle ping. Looking forward to your reply. Thank you very much!
+> > > > > 
+> > > > > Please do not top post.
+> > > > > 
+> > > > > You did not add any maintainers of these drivers, so I would not put it
+> > > > > high on our priority list. 
+> > > Do you have any plans to become a maintainer? If so, this patch might get
+> > > reviewed with higher priority. I think that's what Krzysztof meant.
+> > > 
+> > >                               - Troy
+> > 
+> > Hello Troy,
+> > 
+> > Yes, I plan to become the maintainer for this driver. I will add my 
+> > maintainer information to the MAINTAINERS file in the next patch series. 
+> > Would that be acceptable?
+> I think yes.
 > 
-> Add device tree bindings for clock and reset unit on RK3506 SoC.
-> Add clock and reset IDs for RK3506 SoC.
+> And if you send next version, please dont't send to this email:
+                                       ^^^^ no "don't" here..
+> troy.mitchell@linux.dev instead of linux.spacemit.com.
 > 
-> Signed-off-by: Finley Xiao <finley.xiao@rock-chips.com>
-> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
-> ---
->  .../bindings/clock/rockchip,rk3506-cru.yaml   |  51 ++++
->  .../dt-bindings/clock/rockchip,rk3506-cru.h   | 285 ++++++++++++++++++
->  .../dt-bindings/reset/rockchip,rk3506-cru.h   | 211 +++++++++++++
->  3 files changed, 547 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3506-cru.yaml
->  create mode 100644 include/dt-bindings/clock/rockchip,rk3506-cru.h
->  create mode 100644 include/dt-bindings/reset/rockchip,rk3506-cru.h
-
-[snip]
-
-> diff --git a/include/dt-bindings/reset/rockchip,rk3506-cru.h b/include/dt-bindings/reset/rockchip,rk3506-cru.h
-> new file mode 100644
-> index 000000000000..f38cc066009b
-> --- /dev/null
-> +++ b/include/dt-bindings/reset/rockchip,rk3506-cru.h
-> @@ -0,0 +1,211 @@
-> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-> +/*
-> + * Copyright (c) 2023-2025 Rockchip Electronics Co., Ltd.
-> + * Author: Finley Xiao <finley.xiao@rock-chips.com>
-> + */
-> +
-> +#ifndef _DT_BINDINGS_REST_ROCKCHIP_RK3506_H
-> +#define _DT_BINDINGS_REST_ROCKCHIP_RK3506_H
-> +
-> +/* CRU-->SOFTRST_CON00 */
-> +#define SRST_NCOREPORESET0_AC		0
-> +#define SRST_NCOREPORESET1_AC		1
-> +#define SRST_NCOREPORESET2_AC		2
-> +#define SRST_NCORESET0_AC		3
-> +#define SRST_NCORESET1_AC		4
-> +#define SRST_NCORESET2_AC		5
-> +#define SRST_NL2RESET_AC		6
-> +#define SRST_ARESETN_CORE_BIU_AC	7
-> +#define SRST_HRESETN_M0_AC		8
-> +
-> +/* CRU-->SOFTRST_CON02 */
-> +#define SRST_NDBGRESET			9
-> +#define SRST_PRESETN_CORE_BIU		10
-> +#define SRST_RESETN_PMU			11
-> +
-> +/* CRU-->SOFTRST_CON03 */
-> +#define SRST_PRESETN_DBG		12
-> +#define SRST_POTRESETN_DBG		13
-> +#define SRST_PRESETN_CORE_GRF		14
-> +#define SRST_RESETN_CORE_EMA_DETECT	15
-> +#define SRST_RESETN_REF_PVTPLL_CORE	16
-> +#define SRST_PRESETN_GPIO1		17
-> +#define SRST_DBRESETN_GPIO1		18
-> +
-> +/* CRU-->SOFTRST_CON04 */
-> +#define SRST_ARESETN_CORE_PERI_BIU	19
-> +#define SRST_ARESETN_DSMC		20
-> +#define SRST_PRESETN_DSMC		21
-> +#define SRST_RESETN_FLEXBUS		22
-> +#define SRST_ARESETN_FLEXBUS		23
-> +#define SRST_HRESETN_FLEXBUS		24
-> +#define SRST_ARESETN_DSMC_SLV		25
-> +#define SRST_HRESETN_DSMC_SLV		26
-> +#define SRST_RESETN_DSMC_SLV		27
-> +
-> +/* CRU-->SOFTRST_CON05 */
-> +#define SRST_ARESETN_BUS_BIU		28
-> +#define SRST_HRESETN_BUS_BIU		29
-> +#define SRST_PRESETN_BUS_BIU		30
-> +#define SRST_ARESETN_SYSRAM		31
-> +#define SRST_HRESETN_SYSRAM		32
-> +#define SRST_ARESETN_DMAC0		33
-> +#define SRST_ARESETN_DMAC1		34
-> +#define SRST_HRESETN_M0			35
-> +#define SRST_RESETN_M0_JTAG		36
-> +#define SRST_HRESETN_CRYPTO		37
-
-My original question and your reply from v5 follow below.
-
-On 11/7/2025 2:24 AM, zhangqing wrote:
->> Is there a reason why this (and the RV1126B) reset names now include the
->> RESETN name in all reset constant?
->>
->> For RK3528 and prior mainline SoCs the RESETN part of the name has been
->> striped from the constant, suggest we also strip the RESETN part for
->> RK3506 and RV1126B for consistency with other RK SoCs.
->>
-> The current practice is to separate the reset id from the clk id.
+> Thanks.
 > 
-> Follow with others RK socs(RK3528ã€RK3588ã€RK3576.....)
-
-and
-
-On 11/7/2025 2:44 AM, zhangqing wrote:
-> The reset id and rst-rk3506.c were automatically generated from our trm 
-> using tools, while some of the previous chips were filled in manually.
-> 
-> It is not recommended to manually modify the content generated by the 
-> tool to avoid unnecessary errors.
-> 
-> It is not necessary to change SRST_HRESETN_CRYPTO to SRST_H_CRYPTO.
-
-Why do we now need to have two part of the indices name to represent it
-is a reset, i.e. the SRST_ prefix and the RESETN in middle of the name.
-
-	resets = <&cru SRST_ARESETN_MAC1>;
-
-The example above seem unnecessary verbose with 3x reset:
-- resets as prop name
-- SRST_ prefix (software? reset) in the indices name
-- RESETN in the indices name
-
-Maybe the SRST_ prefix could be dropped if we now have RESETN as part of
-the indices name?
-
-Your tool could be updated to strip the verbose naming. For RK3528 I
-used a small script/tool to strip away the RESETN name and to generate
-the macros used in rst driver.
-
-Regards,
-Jonas
-
-[snip]
+>                               - Troy
+> > 
+> > Regards,
+> > Xuyang Dong
