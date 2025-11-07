@@ -1,26 +1,26 @@
-Received: from mail-m15577.qiye.163.com (mail-m15577.qiye.163.com [101.71.155.77])
+Received: from mail-m15599.qiye.163.com (mail-m15599.qiye.163.com [101.71.155.99])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 593ED2E5405;
-	Fri,  7 Nov 2025 01:40:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18C5B2E040D;
+	Fri,  7 Nov 2025 01:44:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762479628; cv=none; b=qxYszHy1xAAnXv8qlibzyHdI32hmKdkeOZbx6XzCo/TA62Jy7NnXn6FaKOY+Uw7Sl1vGdCB+ngHHg2sZ9WZsyzTVJzVGBwCGKEOrVbBRoH3lRKDSotSeYNh6KOnUbJXk1VwX2mw0Bo7AlcPt79JSLE8hQnJq4Wm4tKELf2cF4PA=
+	t=1762479877; cv=none; b=qWZ/Ni+glmcV6rc7yJIxcFm8eSGQ3HSl2e1TH3mXK0hWTxH1L+AugQqimMYuq3mT7fIkkbzwogHqQJf76vFiuvnFKJXKnmV2eUZEkcl+uQD8afZxUEUU2S2SQzSg8eywh6OcHG7Q+7R6GFxxbDlKWIM7yV5Qz4Z0fmPqcqsxGwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762479628; c=relaxed/simple;
-	bh=x3ee7MPdOGqj9S4iiDxNfC1Dqwh6Q/oHmHbk3UsgQw4=;
+	s=arc-20240116; t=1762479877; c=relaxed/simple;
+	bh=qf+hTzZA45c36lhiHT57xugffv6kqPRnIMj+74F4Mq8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RBCnZ6v/zuBylIqa26VqbgiaQsUqPDrChfymZSKJCKRO8h+zoxKyQ5VlOBj+9vHuE2QWPQSgCmc2ny6Kh2UvxEHLjyUav/+i1R2RrpjawSElWvxxcbFg3OCqBF9EmFU3hM1Udgs2VaNbrhj+m3xsemRBS1/H+czWZf0IEjJj7Fc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=i8obIctg; arc=none smtp.client-ip=101.71.155.77
+	 In-Reply-To:Content-Type; b=Imb88FRMklw5os10XuqWxAnk4KKK2ZokXMS3RGyXVi2Nkte+m91rF+0HzQZvB7BGiN8Mhg9seAiUNKvNZWcfV0GnQVdPi+1q3fS7GhE8oqeL7pl0tyeOd4v6BnZW4Kh7acl/BfrZg+yUaBOhLFp14WXrgKP/aaSk0QqDbJ9Hqf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=hjeXRbIZ; arc=none smtp.client-ip=101.71.155.99
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="i8obIctg"
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="hjeXRbIZ"
 Received: from [172.16.12.30] (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 28b3fcd75;
-	Fri, 7 Nov 2025 09:24:58 +0800 (GMT+08:00)
-Message-ID: <f39d34b3-5e52-4490-99d8-db9b32f1324e@rock-chips.com>
-Date: Fri, 7 Nov 2025 09:24:57 +0800
+	by smtp.qiye.163.com (Hmail) with ESMTP id 28b4dfe66;
+	Fri, 7 Nov 2025 09:44:24 +0800 (GMT+08:00)
+Message-ID: <3477bbf7-bfca-44d8-8fe1-5dadcfd59428@rock-chips.com>
+Date: Fri, 7 Nov 2025 09:44:23 +0800
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -44,15 +44,15 @@ From: zhangqing <zhangqing@rock-chips.com>
 In-Reply-To: <241e4a1d-039c-4738-b492-6325ad354b2e@kwiboo.se>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a9a5beaae2203a3kunm52616c82d042dd
+X-HM-Tid: 0a9a5bfc789903a3kunm7546de89d0ba50
 X-HM-MType: 1
 X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQxpLQ1YZTklLHRoZQxkaGh5WFRQJFh
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQkxLS1YYGEIeTkMYHk1KTU9WFRQJFh
 	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpKQk
 	1VSktLVUpCWQY+
 DKIM-Signature: a=rsa-sha256;
-	b=i8obIctgp8PJQDzcSsl2yOaii93gYF/sd2SGLm2fBTKLXepQGj96EsKc9vZxFSs2R+cxyt5utlBL9WeBLT1in7BIZuTmtHSxAf+c2xZvlw+12j4KNs7jUIjsb+/tjhs4OVWDczanwxQx8PLDqO+ovB6kzJPmSTiEtrw91bj+9Ps=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=JrcLPjYRMh28B+ghpJStH6nxi8FMijAngji3KjqZsv8=;
+	b=hjeXRbIZKGqrFICdB1kqNu3dwXdOT+P1jxNTtvyEstHWdhwoifFgOjQZSwrG10dy/VGWPY7VvdZjzRPI8s3aBYrmqWeb5QHSx4A54/3GU2T4PBh9VmTbLlayDjRSknD0tVfueUwKdeeWsTrdBgjqgLj2iyAUVe1GYEkQY8uP6AQ=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=sA/H1zHCsT5ahHBpYi3gh4ZWPxhCbz0Di/+yfh61YqI=;
 	h=date:mime-version:subject:message-id:from;
 
 
@@ -144,10 +144,14 @@ DKIM-Signature: a=rsa-sha256;
 > For RK3528 and prior mainline SoCs the RESETN part of the name has been
 > striped from the constant, suggest we also strip the RESETN part for
 > RK3506 and RV1126B for consistency with other RK SoCs.
+The reset id and rst-rk3506.c were automatically generated from our trm 
+using tools, while some of the previous chips were filled in manually.
 
-The current practice is to separate the reset id from the clk id.
+It is not recommended to manually modify the content generated by the 
+tool to avoid unnecessary errors.
 
-Follow with others RK socs(RK3528、RK3588、RK3576.....)
+It is not necessary to change SRST_HRESETN_CRYPTO to SRST_H_CRYPTO.
+
 >
 > Regards,
 > Jonas
