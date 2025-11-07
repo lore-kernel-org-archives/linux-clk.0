@@ -1,115 +1,183 @@
-Received: from mail.hugovil.com (mail.hugovil.com [162.243.120.170])
+Received: from OS0P286CU011.outbound.protection.outlook.com (mail-japanwestazon11010036.outbound.protection.outlook.com [52.101.228.36])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C151F2877D2;
-	Fri,  7 Nov 2025 19:08:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.120.170
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762542485; cv=none; b=gBumPV20xwXJ07e5Fns0toyBcf90GBvP/211jhVmGpLBnxRzg2+yxuGeF8/ER/oggoMQB/NLP3IS31YoSmCOpJF8M4rbAT9RccyhB0obsMmlWmY1Kc/kYO2hjMDsgq2Eji1tgt5og43mGJVros9YYf5F4ItOVx2DXrny+RC4+QU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762542485; c=relaxed/simple;
-	bh=pDkgsq6PK6UH+iz6ColUvj0tCRATe+ASfJkhfla7JoY=;
-	h=Date:From:To:Cc:Message-Id:In-Reply-To:References:Mime-Version:
-	 Content-Type:Subject; b=VK5grzdkU5o2+VV8Vi3zxMCu5A5Ir7FHkv+nLg51jvXqTcmyx50gKYA+o29ZR1gSbDbTWXAnSCAqsag2o/0R1lexB78f3UsLxcdXeig10xPfVjtwRX3SgTW8JRsUBjPLU77XKH/nHDtkOzJ8LKnH3M/ReojjoM87El2Nw1VHZbA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com; spf=pass smtp.mailfrom=hugovil.com; dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b=knlbwKss; arc=none smtp.client-ip=162.243.120.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hugovil.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1512A267B00;
+	Fri,  7 Nov 2025 21:07:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.228.36
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762549627; cv=fail; b=PpudMH0ustvw7XI2MVY5KZwUkJFRUMszXSX/aLJKhSMkyB1laKSavvbOUIbC0KtxVsLJ0g88qy79Y0aZjf1nVo9HNlj6ahm5Hy9E8ScgnwqoqXNxv037f/lXqLS+fRRIM8Bh9hLV20cwlfJdY6sVphZubv/3CBi5EI8QASBDn7s=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762549627; c=relaxed/simple;
+	bh=lAUjQ2u/8OivjqssBRr8w9Mywq4ez6vgWFe3m899Zxs=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=AAqtzh04epvIfelqedwqD51yIop02qOESphxviO33MMD5YrB8NbyC25L/NAm9YhGZEoB1Sqi8WZvXf1seUoY28WddM2hrYFTx3xclwdsVYu/1LIi4wVy6yYFHAEOw46xPkLvmVa++rJW9MEVrn81705xEP2XkSLCW5nLEspSQgY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b=P6KmBn1d; arc=fail smtp.client-ip=52.101.228.36
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b="knlbwKss"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hugovil.com
-	; s=x; h=Subject:Content-Transfer-Encoding:Mime-Version:Message-Id:Cc:To:From
-	:Date:subject:date:message-id:reply-to;
-	bh=B2YvgcCMt5tmIfe2GmRK2C3L8OlLTXrg19Buak8KA50=; b=knlbwKssPG5AATNsNp46rCIOBr
-	/cn57zM9ph+2/4AuASu1k2Y1pz6EI7j6/hIkaRskLp50DvDDA6x/YalQTU+dpT/ygCfZ1m9jR80or
-	eSIo/zZOzM11sLzGFGIekkfQJQQlYYONIpZcxhq9B35HPHj6EIQ1Me/LInMG/wY5V4b8=;
-Received: from modemcable061.19-161-184.mc.videotron.ca ([184.161.19.61]:59072 helo=debian-lenovo)
-	by mail.hugovil.com with esmtpa (Exim 4.92)
-	(envelope-from <hugo@hugovil.com>)
-	id 1vHRoN-0003uW-Ne; Fri, 07 Nov 2025 14:07:52 -0500
-Date: Fri, 7 Nov 2025 14:07:50 -0500
-From: Hugo Villeneuve <hugo@hugovil.com>
-To: Chris Brandt <Chris.Brandt@renesas.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Biju Das
- <biju.das.jz@bp.renesas.com>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Hien Huynh <hien.huynh.px@renesas.com>,
- Nghia Vo <nghia.vo.zn@renesas.com>, "linux-renesas-soc@vger.kernel.org"
- <linux-renesas-soc@vger.kernel.org>, "linux-clk@vger.kernel.org"
- <linux-clk@vger.kernel.org>, "dri-devel@lists.freedesktop.org"
- <dri-devel@lists.freedesktop.org>
-Message-Id: <20251107140750.00bf68e4b2f5354015e65ad4@hugovil.com>
-In-Reply-To: <OS3PR01MB83195AF3F1964548E1512FBE8AC3A@OS3PR01MB8319.jpnprd01.prod.outlook.com>
+	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="P6KmBn1d"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ZTkDeA9XAtS8s+Sb5qlSY9dpjnJFJhKymis4CN3wlZsC4FGobtM2Jv0lm+RDULbuzx0Fz34cCEsqSURj5bEmpoZkamcDtJjsGSLiqwqYoSWiqUidEBbmQbj/sFWuFdoVBm2vHif7bthoTRo4Q1i4JBLx0z50gr6m4gzcStvoWjZ25ykAuHgdZnU1c+AroOSOy7ZpRLHw6m8Fnnw9USoCjQQGOMujgF1l3n1HvThUdsqcmA55H8KrpMn24PNAHBQj+4vqnJ8HDT22UrUAy83zl3DqCaNnvTf1SIcmkz5GnVvlxE4B3AiPveQGkfTPwCqMEZFR8k+Izhpue/HOcUZ1og==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=cMT3TWEhVwKHWy2zkrjYsM5R/aW8ddEgr/WVJC8n6gw=;
+ b=bCIicIGcu/RtlPP+fAE5zJ0zH4IHNrfb0PvVW+fbaUrQzX2IO7KCXJQPB3Wy04aeejarIjwSAIpxc3GYvg57uEcvHRS1jZwkc6Iam64la9UuCrsy1iNxPbByyXUiKCMtmW3RH3BJXwXj4rrPN0H5LZLDPrJLRpANz4GsBlQdw/mh7ekogiRMy/JiUmTumEHiGdoN1fVdErtIo0uG6LGlOpz5QskIwDWiNq7hsmqMcJhwGxjNLNNSeXIcnuAqYtSWZ7fLQo2bSfs7moOCfsBkoJhaqrfHq9cBpYg0ykhRwShDyj4YpsuGHgQInQTwybIrT6LxZLCF2Y8EFNIz5rNa2g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
+ dkim=pass header.d=renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=cMT3TWEhVwKHWy2zkrjYsM5R/aW8ddEgr/WVJC8n6gw=;
+ b=P6KmBn1dEIdSzezrmoP5RK1xremjIzW+i736kr6fLxGRpOPI25+5E7W7skvDIWwkBN+qNUOGPlZ1PA8FiGH6JLvyCRPP23guZXd+wEWiZtJvavucJJzFMmfvXRegsPfbI1yfaEqAMwQvn6FjQPDa0zd4WJPWz6ZTyPwN5N2TDXk=
+Received: from OS3PR01MB8319.jpnprd01.prod.outlook.com (2603:1096:604:1a2::11)
+ by TY4PR01MB14830.jpnprd01.prod.outlook.com (2603:1096:405:25b::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.11; Fri, 7 Nov
+ 2025 21:07:00 +0000
+Received: from OS3PR01MB8319.jpnprd01.prod.outlook.com
+ ([fe80::6473:1660:bdc2:c983]) by OS3PR01MB8319.jpnprd01.prod.outlook.com
+ ([fe80::6473:1660:bdc2:c983%6]) with mapi id 15.20.9298.010; Fri, 7 Nov 2025
+ 21:07:00 +0000
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Hugo Villeneuve <hugo@hugovil.com>
+CC: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Biju Das
+	<biju.das.jz@bp.renesas.com>, Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>, Hien Huynh <hien.huynh.px@renesas.com>,
+	Nghia Vo <nghia.vo.zn@renesas.com>, "linux-renesas-soc@vger.kernel.org"
+	<linux-renesas-soc@vger.kernel.org>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>, "dri-devel@lists.freedesktop.org"
+	<dri-devel@lists.freedesktop.org>
+Subject: RE: [PATCH v4 1/2] clk: renesas: rzg2l: Remove DSI clock rate
+ restrictions
+Thread-Topic: [PATCH v4 1/2] clk: renesas: rzg2l: Remove DSI clock rate
+ restrictions
+Thread-Index: AQHcTqM02+OCahzeqkGZBdprKCVrd7TnaoQAgAAejkCAAA1GAIAAHs9Q
+Date: Fri, 7 Nov 2025 21:07:00 +0000
+Message-ID:
+ <OS3PR01MB8319E496A32EDBF5719BAB478AC3A@OS3PR01MB8319.jpnprd01.prod.outlook.com>
 References: <20251105222530.979537-1-chris.brandt@renesas.com>
 	<20251105222530.979537-2-chris.brandt@renesas.com>
 	<20251107113058.f334957151d1a8dd94dd740b@hugovil.com>
 	<OS3PR01MB83195AF3F1964548E1512FBE8AC3A@OS3PR01MB8319.jpnprd01.prod.outlook.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+ <20251107140750.00bf68e4b2f5354015e65ad4@hugovil.com>
+In-Reply-To: <20251107140750.00bf68e4b2f5354015e65ad4@hugovil.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=renesas.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: OS3PR01MB8319:EE_|TY4PR01MB14830:EE_
+x-ms-office365-filtering-correlation-id: 76d3edea-dd9e-4307-5c4a-08de1e41981d
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|7416014|376014|366016|1800799024|38070700021;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?i3WKUZ0KHSfs3MiVpaKH49+2EBR71rkeMo+opGw41thhdqPrRtexpnQw0f93?=
+ =?us-ascii?Q?U2HqOwWRwLy6ttU+ZMQoFoPBYAbuCUfSiI7aYqur10Jn7sjZWDu781eS6XSW?=
+ =?us-ascii?Q?cIsRCSm6YeHYerx3YVxFpTR6c2qF/I4F7GJrWh+W7oMvI3Tyo70AWt2EQzd/?=
+ =?us-ascii?Q?dOXgUCsoJE4GnziDNkODMmYgkgJZRm1pFKrcdKleHnI0MedK7Zg/q2esiuGY?=
+ =?us-ascii?Q?JUXsVjmqW+pFhhcWPkSrUDB4u05VoSxPmrh4rSEELjRMI08Fgumurs22fbDG?=
+ =?us-ascii?Q?0hMlAXQWlOkRERG/yVuWMyHmh24oJZbN7I9jIoW60ZG5XYedwhoZZU/rkJJD?=
+ =?us-ascii?Q?lzTOzER5bdSRCwIctRKe8WTebBBFbvLdwSRT7O1rBhvHADues0t4s3VhlaWz?=
+ =?us-ascii?Q?oQRB0ds2c/uz8jmk2ZOdHphqW2ZMJ/fqbTIbqSxfjAoHtBd38q02OlE4G8IC?=
+ =?us-ascii?Q?kuwEf5ebj59F0/HK1MGYfO7H/oqMZtqmczpOpqTp7slKQvcjvixM5PmyNDC+?=
+ =?us-ascii?Q?RoI5tCGVIJssJ8VUsQY9Jd5zIlG1u6IpLDTYKP87U+Y+ysG9lTx2tP/3G/HO?=
+ =?us-ascii?Q?qU2ogK9Ycq7TkCHDYGsBBzk4nb8SXfcjGGx/uWvyI2f2us6q73JWqDH827Bj?=
+ =?us-ascii?Q?c9J8US6ENHzsQTurw2mf5Li5UeK2FVVFqHrQQcjNrpJ8bdXfEKzVAStW1RPj?=
+ =?us-ascii?Q?ybVwlt+lpdzVh4HtROUFsQGItKT3+lzBRsdxDL82vPTZ1hoqCk/4UztoNgoG?=
+ =?us-ascii?Q?eTq93qnHhP63UCbjfOa6gt06lbMpTWs+Bz2/4WcwJFXjKxhnny+ofk12irrA?=
+ =?us-ascii?Q?qbz6kKf7fh+0kLWVXWOg+ZejuKPiUB7rUJfnR86JF2xq0d2ARWZz/vOvSyzX?=
+ =?us-ascii?Q?WaXBNmSZDQLC9Z6myftNWx4A2eGL9r1eXH7Mr3aN5KvUJdupdx+5IQ796ejr?=
+ =?us-ascii?Q?j1L8bcbN8zqNI/O0wbbYAxB3cDrpri5ejEgB2H7tMTXknChVavuaWgi7UceG?=
+ =?us-ascii?Q?d8av6dtL6t/mqzhVX0Gt9IJ15Cn5W91t36+MA2zVSnQh7is+Hl0OrBuMiH+c?=
+ =?us-ascii?Q?vY/JwHTe/N8QW4Xol1ToGvnHfnZpwxKkxmgCzU1YAsh8rIcUT5Rit3PJwmY8?=
+ =?us-ascii?Q?HExyyVWgl9YQ0WbLBVL26cwm+ViCAW9AdbxtCW8nQmfScNNzYiVmLo10BXZT?=
+ =?us-ascii?Q?0YZAvKnJd/Bv5mgMKuPOwv0G/xKljrjcOC7tSlhvqCJBjsOZM3/muP2540TT?=
+ =?us-ascii?Q?KSkY/ulpSzhrlytsYvHb1m8FduOCA8LWO/UzHDsyakbzU4F3OMex00ciJg/b?=
+ =?us-ascii?Q?5Dyksiaj89CcUU2m4lDJdKKKIyrGp7VPHSIcGuo3/YMzGpSM5XMwAmygIE0E?=
+ =?us-ascii?Q?alYGWqLN999YAnmE1FhaEYlyRqmWuCIiz9cKGnKQQkyLixP29tZSw307rVEN?=
+ =?us-ascii?Q?GyodsQwSXwiW5do59XbaIGoVFH0oQ4do+PzwvGR/mOqgx5aDyJXhIfzxJ7ol?=
+ =?us-ascii?Q?suIEMcGz8KjekmTEg1iUun1AuSs/RWhvXz8f?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS3PR01MB8319.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?mSAJY405eYcxCz/KbclMSNxLZYyGb3TzBjmuNq+KMY/+YC8uKghMlrmEBBOO?=
+ =?us-ascii?Q?OWyYduikIIxjrM4qvsyoaUzuitMzwSMU9YtZFCwb0ZW+rilQ5WN8OfWRPoNT?=
+ =?us-ascii?Q?HCS9Q/HA30mOLkqQVtS1r1O2FpgAv9mXjCD0bPEMprCgul7cZd2m5VfoIv0L?=
+ =?us-ascii?Q?0zpsIthKTTrEdDogTn26cgD443UgEkgzPji/WEyHsXXMBwOVhXqAsZl9Y+kN?=
+ =?us-ascii?Q?2SZ1nNXGZ25LTsfWaT80SLp87GPe/i0Jwo8bGDdHbDCdgcIkc+qAoWjsSOW/?=
+ =?us-ascii?Q?FP/ImYjGI2XyNwQi3rsYJJssdmPnlqKe0YWMKFrzSJwUPhqzwKK1/WeeD5bK?=
+ =?us-ascii?Q?c+HITs5mNidpJfA0l+Q5H5t4vaR76JKtvNe9UKc+iU8F0wfFCo03cm+ONU47?=
+ =?us-ascii?Q?rRj6ukfQfwQPUjGW70C8+eDgAOQPTqa8f/ufbgcVRD6ZiM/b5uCaKoI5vlhG?=
+ =?us-ascii?Q?8GAQ9Y90ZxySuDEAcxPUyU9tU5tnZy+Vf0nQ7yEc8bttgpvdnXfcsU8lX9Cb?=
+ =?us-ascii?Q?QORv5+VD3pZhQkvCnwHXwuz42q9MSBu9gQv8fWfGX/wZVvYab4Ve5W5OXDT4?=
+ =?us-ascii?Q?vMOM28CO+xok3QxNat5R6Yj6HtJMgGD2CcvmyM5tVfaz24pAfMyLm3n0ASmB?=
+ =?us-ascii?Q?jarcGaCNfTjGktSwzmT1S7DZklPpDlcPQvZ61fVL+Mp0C2CWAufqzIuIf8n9?=
+ =?us-ascii?Q?9RZLH3xx0xXVq9miK5+jPKT3kXkivJVueRO5XGa5fg08InbZ5R/2QbuEytI8?=
+ =?us-ascii?Q?ADamV70l9lg6GAuBReOqcTPm7AUEaPZUp2POxUUnke2Llq5mlwd3sgB29kf0?=
+ =?us-ascii?Q?aHUf7jhxPkEPdMCBLRl94Yy+L5DwUHnuy/uuUleaWlwyu8UQHOX2XruxrS8k?=
+ =?us-ascii?Q?s2n0FZZr59G4IkrUXpN4JNnbOODS05L/dJ14Kh6GNNz3xYZcFRpe6tVdIImL?=
+ =?us-ascii?Q?zyEmH3MXHkTja7AJv6nVKc21FMUKn/svvtDmKMQW/TxqyAmBXsJEj6+WiJ3J?=
+ =?us-ascii?Q?QNfIDBm1k0rfjg+nEj8+gP4oCsn4k/LJJZ/0XRuzYSjNDLWmN8+jIzRFpvHR?=
+ =?us-ascii?Q?GBl8lPUCjMI9Ty6pySldfOnwwb6naN4Dv30AOvBxhOiANPIbQKVQ2Upj5lK0?=
+ =?us-ascii?Q?iP89x+otHM2dHprTXi88LOiJhFLd/W7i0hlUesdS2thyb1ypMh3yNvw6esWJ?=
+ =?us-ascii?Q?WXfEqWQv8THB4pvi4RS2gQPu29+sOQ7cL2W2Hg/EIQJIwwXgOCPICfVroeiU?=
+ =?us-ascii?Q?bIhXbsew5Tz+jfmz2ZYRO4Us5Q7KJnG3SpBOp8+eJfOlr7HLb68YpHF/BELN?=
+ =?us-ascii?Q?FX9u1/SNny1tjal3Ruw/Y1T4feLiTm24qYIp3r5uRmsNCpuhp/bYvczdduyA?=
+ =?us-ascii?Q?4vWuGro+ggbSi82VdJoHc+AWF8hEU4RI9kdzkYxXXqrMLkWgCiYATqzgca7W?=
+ =?us-ascii?Q?yUHW0vomGva+WC+qmU5fASMmqspol8MyD+NkngNDabm8/lwGW+xW3McHs+AC?=
+ =?us-ascii?Q?9qfR66eT9Nttu68xhzHp5lFEkwawp0pxbsO1ICzI+q6D0LF7loOlj9s6KkLr?=
+ =?us-ascii?Q?Y+4xOZmTwLJ/AV4JxXdMg8NLWRvB88AsF9ozUz75?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 184.161.19.61
-X-SA-Exim-Mail-From: hugo@hugovil.com
-X-Spam-Level: 
-X-Spam-Report: 
-	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-	* -1.8 NICE_REPLY_A Looks like a legit reply (A)
-Subject: Re: [PATCH v4 1/2] clk: renesas: rzg2l: Remove DSI clock rate
- restrictions
-X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
-X-SA-Exim-Scanned: Yes (on mail.hugovil.com)
+MIME-Version: 1.0
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: OS3PR01MB8319.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 76d3edea-dd9e-4307-5c4a-08de1e41981d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Nov 2025 21:07:00.6469
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: z9Gx+FyqbtHWjN6ErG3eI/3v7zHsALThCGqXgZOA2WG7C9HFh6w6tEsDoMj4Dqze+8YjHzp+7XqpUQIABuBBVsia3PAGnP2LnE6FalRCQVU=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY4PR01MB14830
 
-Hi Chris,
+Hi Hugo,
 
-On Fri, 7 Nov 2025 18:36:24 +0000
-Chris Brandt <Chris.Brandt@renesas.com> wrote:
+On Fri, Nov 7, 2025 2:08 PM, Hugo Villeneuve wrote:
+> You can add the "Fixes" tag (not "Fixed" as I incorrectly stated):
+>
+>     Fixes: 1561380ee72f ("clk: renesas: rzg2l: Add FOUTPOSTDIV clk suppor=
+t")
 
-> Hi Hugo,
-> 
-> Thank you for your review.
-> 
-> On Fri, Nov 7, 2025 11:31 AM, Hugo Villeneuve wrote:
-> > > +				if (params->pl5_intin < PLL5_INTIN_MIN ||
-> > > +				    params->pl5_intin > PLL5_INTIN_MAX)
-> >
-> > Your patch comments indicate that you removed +1 and -1 for kernel test robot issue, but I do not understand why.
-> >
-> > pl5_intin is still defined as u8 (max 255), and therefore the result of "params->pl5_intin > PLL5_INTIN_MAX" will always be false because PLL5_INTIN_MAX is 320.
-> >
-> > It seems to me that pl5_intin type should be modified to account for its maximum value (u16?), and this should probably goes into a separate patch (with a Fixed: tag), that can be backported (if necessary).
-> 
-> You are totally right!
-> INTIN is a 12-bit register value.
-> It's a bug.
-> 
-> Good catch.
-> 
-> I'll make that a separate patch so I can CC stable.
+Thanks for looking it up.
 
-You can add the "Fixes" tag (not "Fixed" as I incorrectly stated):
+I'll also add you with a Reported-by
 
-    Fixes: 1561380ee72f ("clk: renesas: rzg2l: Add FOUTPOSTDIV clk support")
+I'll see if there are any other comments, then I'll resubmit the patch seri=
+es by adding this new patch at the beginning.
 
-This is the commit that added the pl5_intin field.
+If nothing else, this review was good because it forced me to go back and r=
+eview internally what the hardware manual
+says as compared to the driver that we have been using for the last couple =
+years.
 
-Original Kernel test robot message also suggested adding:
+Cheers
 
-    Reported-by: kernel test robot <lkp@intel.com>
+Chris
 
-(See https://lore.kernel.org/oe-kbuild-all/202510240111.DvVTqUEp-lkp@intel.com/)
-
-Hugo.
-
-> Chris
-> 
-> 
-
-
--- 
-Hugo Villeneuve <hugo@hugovil.com>
