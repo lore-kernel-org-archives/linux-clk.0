@@ -1,75 +1,91 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9E5D30CD94;
-	Fri,  7 Nov 2025 07:44:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C694F30C630
+	for <linux-clk@vger.kernel.org>; Fri,  7 Nov 2025 07:44:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762501457; cv=none; b=hI5H+1z63HzlQKk56FngA+amSgkhpEguSdOWLhlc5mXEhhgHOViudCC+jaePuuHo+eyLJr6tB8Inm7Hy9WSx1MHuVhtiIgbETiAgGNEcTkS+gaMQxJoS6J6ACFPHU7XPT7yaCbC1lHZLldXrANJ8XYDUjLkS41SmeZnGAzzmx4I=
+	t=1762501501; cv=none; b=Xo+I0nAaysK+z0r1qMkLTmlZE4+6uwFicC27PVQlmvRj7dUwl650JRw+Xx9eCz8H+3rdIqZ2NT5LWFozeDl5iX0cCeqVI+WpdFkjdc9FdGCleoo183Oo/ysqzJqDq1Npu64PzjPOBAFSBRY2EPncJTmcbw6BbEU9yDeazSwMpXI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762501457; c=relaxed/simple;
-	bh=xv1qBxVhmD0FZwRQLqEuOb6rjOT12ZE6uVVaxcXth6Y=;
+	s=arc-20240116; t=1762501501; c=relaxed/simple;
+	bh=Jy3BeTYOT36TAM8NXPaFdaGU0pmDhojDJJ5xupPvs9s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rFw+X2vdBC2b8tvcXxq1aAG6UeTnvRg1FmsI++kvBwN2NSn2p+K0CL1G+Jo777VBN/ihprWu7zS0+T3WS/sFcsEzFjPFA5DE/Bg0B8AfO301ZAS1XGuJF7j6iTC71GpMAwsTgtf0su5AF4NrccpSbDw5py8Cv+NSVt7S7ZO+yOE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mqxM4/I3; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=ASKTHrdlaB5ejmhjzYMPRtJqWXjLw69n3WsW1rQu42vxqWZYr+o3wwlYuZRK3icaC1lyk0nCr8febmpMWE/CqL9tJ32XWABJ9GR77iMgcTxC65hLKCSgNg3u/Z3opQF5WQS8YWYodj7X6ArRRB7LKZiJzlqIAICb5LSchW6gwFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=OlIJKMME; arc=none smtp.client-ip=91.218.175.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mqxM4/I3"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5D8EC113D0;
-	Fri,  7 Nov 2025 07:44:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762501457;
-	bh=xv1qBxVhmD0FZwRQLqEuOb6rjOT12ZE6uVVaxcXth6Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mqxM4/I3Npxa9woU+uSxt6RePMdvi3em+ku1eKC8VFOSybOTQ7QNgqHj6Ws7sdXN3
-	 M+kL9x7g+yn/6wTu4CIrSBXwpXUE4mQesIsna/IKgeX9kpGUNwEtblrCvC5UOQr4pn
-	 GbTS1dilZA73tx6XtsSv2AN14aDOSfN10CsvTMy0j64wVNTlCn1b/cJcghGcZlq1es
-	 KgXyWsqcuJdCRoS3nz98b2fZZfeosvcD1OCfh+qzmS8cZga2b0nN/sZphI7x6GEB8n
-	 R6yxbbk2ehWqp5WS5zGFFcSXK+dAxBj9ro4NvokzKn498P8dA+GxAVs6QE3k/t0gPS
-	 uF0jw+2TDeh7g==
-Date: Fri, 7 Nov 2025 08:44:14 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Felix Fietkau <nbd@nbd.name>, linux-clk@vger.kernel.org, 
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="OlIJKMME"
+Date: Fri, 7 Nov 2025 15:44:45 +0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1762501496;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uaudMcICTPYCbrIDLJ6pWwstd0WXrj4u5ZUrEhHCE6M=;
+	b=OlIJKMMESAjS+E2P6FtTJSqR19t+pmejvIKUVOqCUfUhtQdGzJfxklCl7waOGIWx8+bE0R
+	1P8XUF/tf+ttLYHqD/tk253Zc3cdYkpEMtlxCsbr0vIhZnvQuADq01cak7xQc7B01TCV3g
+	lWXpKR0jamS0ns+rGbNCTHjHWObxpp8=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Troy Mitchell <troy.mitchell@linux.dev>
+To: dongxuyang@eswincomputing.com, mturquette@baylibre.com,
+	sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 5/5] clk: en7523: add support for Airoha AN7583 clock
-Message-ID: <20251107-dramatic-puzzling-cockle-cb9781@kuoka>
-References: <20251106195935.1767696-1-ansuelsmth@gmail.com>
- <20251106195935.1767696-6-ansuelsmth@gmail.com>
+Cc: ningyu@eswincomputing.com, linmin@eswincomputing.com,
+	huangyifeng@eswincomputing.com, pinkesh.vaghela@einfochips.com,
+	Troy Mitchell <troy.mitchell@linux.dev>
+Subject: Re: [PATCH v7 2/2] clock: eswin: Add eic7700 clock driver
+Message-ID: <aQ2jbf2k3rwOZDuB@kernel.org>
+References: <20251023071658.455-1-dongxuyang@eswincomputing.com>
+ <20251023071814.568-1-dongxuyang@eswincomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251106195935.1767696-6-ansuelsmth@gmail.com>
+In-Reply-To: <20251023071814.568-1-dongxuyang@eswincomputing.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, Nov 06, 2025 at 08:59:32PM +0100, Christian Marangi wrote:
+On Thu, Oct 23, 2025 at 03:18:14PM +0800, dongxuyang@eswincomputing.com wrote:
+> From: Xuyang Dong <dongxuyang@eswincomputing.com>
+> 
+> Add clock drivers for the EIC7700 SoC. The clock controller on the ESWIN
+> EIC7700 provides various clocks to different IP blocks within the SoC.
+> 
+> Signed-off-by: Yifeng Huang <huangyifeng@eswincomputing.com>
+> Signed-off-by: Xuyang Dong <dongxuyang@eswincomputing.com>
+> ---
+[...]
+> diff --git a/drivers/clk/eswin/Kconfig b/drivers/clk/eswin/Kconfig
+> new file mode 100644
+> index 000000000000..9bc9008d3156
+> --- /dev/null
+> +++ b/drivers/clk/eswin/Kconfig
+> @@ -0,0 +1,15 @@
+> +# SPDX-License-Identifier: GPL-2.0
 > +
-> +static int an7583_clk_hw_init(struct platform_device *pdev,
-> +			      const struct en_clk_soc_data *soc_data,
-> +			      struct clk_hw_onecell_data *clk_data)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct regmap *map, *clk_map;
-> +	void __iomem *base;
-> +	int err;
+> +config COMMON_CLK_ESWIN
+> +	bool
 > +
-> +	map = syscon_regmap_lookup_by_phandle(dev->of_node, "airoha,chip-scu");
+> +config COMMON_CLK_EIC7700
+> +	bool "EIC7700 Clock Driver"
+We can't build this driver as module?
+If no, see here: https://lore.kernel.org/all/Z%2FlN7qrISpbK6MQY@goko-w.tailce6c49.ts.net/
 
-NAK, undocumented ABI.
+> +	depends on ARCH_ESWIN || COMPILE_TEST
+> +	select COMMON_CLK_ESWIN
+> +	default ARCH_ESWIN
+> +	help
+> +	  This driver provides support for clock controller on ESWIN EIC7700
+> +	  SoC. The clock controller can generates and supplies clock to various
+> +	  peripherals within the SoC.
+> +	  Say yes here to support the clock controller on the EIC7700 SoC.
+[...]
+> diff --git a/drivers/clk/eswin/clk-eic7700.c b/drivers/clk/eswin/clk-eic7700.c
+Can you give us a clock-tree img or pdf?
 
-We talked about this last time and you just ignored entire discussion.
-Nothing in the changelog explains why this stayed, why our discussion
-was resolved like this.
-
-I already complained about very poor changelog and lack of lore links
-and this just adds on top of it.
-
-Best regards,
-Krzysztof
-
+                        - Troy
