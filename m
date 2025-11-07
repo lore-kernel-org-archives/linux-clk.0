@@ -1,163 +1,100 @@
-Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com [209.85.222.50])
+Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com [209.85.221.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C06E031196F
-	for <linux-clk@vger.kernel.org>; Fri,  7 Nov 2025 08:42:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DEA3310644
+	for <linux-clk@vger.kernel.org>; Fri,  7 Nov 2025 08:44:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762504953; cv=none; b=baosAFL7AcFyAlw0UikpYdMvXOBoqCqkC2I75l+o3FKDidD9tALzXoRLXYZ7DK17+D1errUiwIZqzqnyMRKTmwBstJoxvXYTpq/FOSOXf8bj8CRn4i3UrRnbIxan80x5yExKxbnR4NqrTgfvyQxIbI5tBcNzE0Xu/kvNqmfNZuc=
+	t=1762505084; cv=none; b=XdSW/3sVJ+sunjpVSZ8iXDBHv7xtEsSrIwN4UWLWYNgaRcCB8mL8YC5ax/E6SAyH6Smho4qHBcw6lm8GeKipRAFidfFgZP3chfjx28TtvggkyKt07Si4Xddc/k/2SeUPEN5Q9bF13mizIan2gifvPYDg/FYAln42wCX7eBz4/CM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762504953; c=relaxed/simple;
-	bh=9JcvPVILVy97hsdXJNb7VMxu6BBjGO1PhoJ8NRS9yLs=;
+	s=arc-20240116; t=1762505084; c=relaxed/simple;
+	bh=N6xgWoHDs7XMDSylQ0aZJ9sOOduQO7UazwaRI4anKug=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XEyyvDzZekxNujj/8Z8KC0STk0nLEBrHvBm5KBualNVjED1Upr8cMGvwiPFBdTmu3Dgrv2UuhP6A6IbN0z6qvi0HoD0P68/54OrzIMKzdk02l+yiS4quL6NkNvf28dFn1Um6T4Ku7uJmUVMVQXEHik/GO4Z5Z5iQB89CN0BANP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.50
+	 To:Cc:Content-Type; b=XKBBZpyVbneiod3AjWq31QTyit1N/IJiPHUs2/8dHigz/iAAl427nI0H1d0EJg5IRSGhMR0WQuG7jG/g0hfiz0DQdFBHylc/WdvQXYUdGmGdtoP6CJ8oqONORQBRwv7zxPQ4h/ZxBWQlXOik9wl8rew6Wzloo4KAzzH+ZH1sYAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f50.google.com with SMTP id a1e0cc1a2514c-9354847e338so270730241.1
-        for <linux-clk@vger.kernel.org>; Fri, 07 Nov 2025 00:42:31 -0800 (PST)
+Received: by mail-vk1-f170.google.com with SMTP id 71dfb90a1353d-559a849bfe6so135581e0c.1
+        for <linux-clk@vger.kernel.org>; Fri, 07 Nov 2025 00:44:43 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762504950; x=1763109750;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RsHZezS59+NExnNGIIdIy6ER8EF0CQG8kO0yNppcdcI=;
-        b=i7e0BM3XOMy7AnlqpL7NmMuPA+SxLzlAUaZUeJPBaiOSrWhztGpodnTsPouOD/zmL8
-         6Vg1c+MfuGRBlAK81FuMe3HVux3phZftNPZ64JUx9rua7JLVdqWxRTrWhYNb/ktFtVcG
-         EiavoahjSZEsKOf025I62zhdnQvDU8tOwXAF9QRR3/Bk5DLG8LAY8D+J3TErNqKWt/O9
-         8Erl0AzLHitmbbgmlh65IAyQ/GoeduP8rfPL/ENtYFsruZPXxWHzXtmsocvzSd0wfj+d
-         UFfFP2KiXPnSwkuxc7z8Sq9lRyuHvxKhxI3oc9/6i6XemQi/N7EQfgctcFxEdvuYpzPx
-         3/dA==
-X-Forwarded-Encrypted: i=1; AJvYcCXwPuk3JcH1EO6TRUIWKwCBo06TtIxYoeD0f84sK8OLPdmN6FDHQ9vSwStey8t7RqpClsPx1pgFjno=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxG/YqEtc3SBSSEN7NSfnYBd7Bu11fhNki5GLspaxzqwJfXP8uM
-	StDKfuln1ELvFvkuG0Zz4lb6N0RFFyvUWl/L7I1MOG3hJJFP40MFGrfAraOJfcvTEmU=
-X-Gm-Gg: ASbGncv7lZQ7m23/MLbAnVlcJ5iKCpqJ0XRREIUbRQx9w/DjLf4O6ZOv3Wqdjt9OiA/
-	nrTZt0jUtMSBVYwG18jxHC8lV3/rW7ZLcO/2yPk8/3lfJkRbeVbCzssIBD6ev63Y584BNYPj8G1
-	xWB2w2QAvFrqVI3yk2UdzyKz5JefDbSX6tp2oXH4HKmxOS5v4IS4DyHxuhM1VEElCNdCrRUoox3
-	qA9tvn+XvBVQ3/hPC/G4PdJYmAlE/gBWrlndcsZbmB49c9RLVm0Jy1sjLp8xxKwGCIlDSxslMdm
-	drVJsfV2CUQZ+e/51GRhyVZYUMxreQr4/ZjhjWgPdb2rBxBUIOStKRjrGcuLKLn8AEmEqw8WQMs
-	yOn9yIV8hZkoZJw+PRMxO15zK20Xl0JbW8nVO/uZuH3NjX3512pUhlqkKX8m/pWNUukksmtryLA
-	ECV1lopKZRajR0mttDocUzJvH4pYWVUT1pSsv1XDS+rDkUS+c9
-X-Google-Smtp-Source: AGHT+IHgMSsunj2py79siXLls8pkJr4pLspMVEVBj2KGHrFdDzpqI8O/Y6llcxEfi46d9wHX4pd4Zw==
-X-Received: by 2002:a05:6102:54ac:b0:5db:e5d4:6081 with SMTP id ada2fe7eead31-5ddb9b651e1mr288928137.6.1762504950416;
-        Fri, 07 Nov 2025 00:42:30 -0800 (PST)
-Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com. [209.85.217.52])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-5dda2012d0esm2035249137.9.2025.11.07.00.42.30
+        d=1e100.net; s=20230601; t=1762505082; x=1763109882;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=67Ay+8Yya5LB9/YiJJ49ptEwAOu7ahTc/J+O60ROzS4=;
+        b=FYFn37y+l/p0JggmOs4dMUcWo3izyp4PLChY5qsRsAAY0UpystTZfFuh4ni0Gk1/gb
+         j+VMAl6LO3poduVDV8tgLpwditN+Ojis7wG31Yy1m7Sw74ca1R1CqqKf+4zAUS3blpTw
+         7wNfqa1qfq+ZLp6fZgDQPzN3EnqdeoGnve0oPwRBbDDWyvPhXAtPu24+IAzEIrZM7Xp/
+         HuxqgjqZ6V4HCdOgNiUezwE0bRyO3JoqJ2z9iKyU45m6sR716gm6EePBKk50dSeT7NJS
+         HRZ2Gc3Y42RHIkP4XVQ08sSYYu7NRTLDrRsQ3veLGAlCoirh3odrZU5kr1adqEz0PFSH
+         MnjA==
+X-Forwarded-Encrypted: i=1; AJvYcCUaqLXRd9IS/MfwzTJ+AZYMxcJ5yHttjsHEXznhMD0bjSoKBY80C0d5ZedFcdXGwS2noI+ldLV0Rsc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywo0p8JJTSnjgYs8cjBDrfxTjBuccc4l7F4N+mGf/q7yos8VtCK
+	jOqq1ZcS1KeGlAU4qYyfA95yUYl3we9K+9h2fcfPF4zuh4omzn1ea+dCoDf1cXjJ+iU=
+X-Gm-Gg: ASbGncuVCyt+upUPnlulMdBHkZleojA/QuH4OSzqxbSQe4RvdRbWGzoLqVCRm4wkeuo
+	CetOcdKXZIkK6hdqDTdJl34NpwhHzF4Zo/L6tqc0KUc7qgPV0AQKFccJtVTPy2DffpmLDpnyidw
+	sfy+x3GHZQRVBoZlXOpnr02NJqxHwHcdd1QnY1TtF5LxgoxYX5pD436KD0pym5GfnIQnzsHJO7s
+	58dY1WnU2ULrYV81GVCWM53CRa8YGVJty2U4ZPtjUJ56QhI/QLbaXR4frchl16+KO972o/lhGC0
+	qdoJ+oOPSahSxrOZl7HRH1ApNzy1E49TyuwNM5sBqEY1D/y8lpXVXnkLbXnXrXIYZrSWug1ITNe
+	tRRl5ao99OdVxplsFrRErA7tTdcOxwfMXWsI/1XqSmmeADwQE1YGZHS/Y4SDJcb9WIbgGq+3mUi
+	aAzWJ28lyUxtYzDcVzgMXHg0pDNFheb8Ym94DPiVeWYbF1LsWIOeE0
+X-Google-Smtp-Source: AGHT+IGA3E/NLj1ruAUdh8chJWA7A+qUrMZkCnVZ9VVNN6ohuRX9wMtOypvv5+7yRtq9eVDlOnwyuQ==
+X-Received: by 2002:a05:6122:1d94:b0:544:75d1:15ba with SMTP id 71dfb90a1353d-559a3abedd3mr730221e0c.8.1762505082071;
+        Fri, 07 Nov 2025 00:44:42 -0800 (PST)
+Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com. [209.85.221.175])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-55995863f11sm2682016e0c.24.2025.11.07.00.44.41
         for <linux-clk@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 07 Nov 2025 00:42:30 -0800 (PST)
-Received: by mail-vs1-f52.google.com with SMTP id ada2fe7eead31-5d5fbfca7e2so398226137.0
-        for <linux-clk@vger.kernel.org>; Fri, 07 Nov 2025 00:42:30 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVIszQsWqGkXaDMpndDRbNk1u5oXpKzsChQaaRg0nY/+JJZf57URsI6F67PtwMJGOxBBikJYOSWBXY=@vger.kernel.org
-X-Received: by 2002:a05:6102:4425:b0:5db:e32d:a3ff with SMTP id
- ada2fe7eead31-5ddb9e056aemr278996137.19.1762504514580; Fri, 07 Nov 2025
- 00:35:14 -0800 (PST)
+        Fri, 07 Nov 2025 00:44:41 -0800 (PST)
+Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-5599688d06dso141582e0c.2
+        for <linux-clk@vger.kernel.org>; Fri, 07 Nov 2025 00:44:41 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCX0dmULVlN4bMUXRIk7SnMxo64hOhbzugsYTBrc2mkxf/itiIfLMFvD/5fKSgTWzAK3Tm43uxlGYzk=@vger.kernel.org
+X-Received: by 2002:a05:6122:200a:b0:54a:87d3:2f09 with SMTP id
+ 71dfb90a1353d-559a3a111a3mr827903e0c.2.1762505081472; Fri, 07 Nov 2025
+ 00:44:41 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1762435376.git.geert+renesas@glider.be> <cfc32f8530d5c0d4a7fb33c482a4bf549f26ec24.1762435376.git.geert+renesas@glider.be>
- <aQy0T2vUINze_6_q@smile.fi.intel.com> <CAMuHMdXVUJq36GvNUQE8FnHsX+=1jG4GOJ_034r=fgr_Rw4Djg@mail.gmail.com>
- <aQzIIqNnTY41giH_@smile.fi.intel.com> <CAMuHMdW8ndAdGnSHopYFMWvw7wk7wKz_7+N91M1jRHoqK1KBrg@mail.gmail.com>
- <c62eb5a727f149fb9d8b4a4c8d77418a@realtek.com>
-In-Reply-To: <c62eb5a727f149fb9d8b4a4c8d77418a@realtek.com>
+References: <20251106211604.2766465-1-niklas.soderlund+renesas@ragnatech.se> <20251106211604.2766465-2-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20251106211604.2766465-2-niklas.soderlund+renesas@ragnatech.se>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 7 Nov 2025 09:35:03 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdU3hWDOWXxuOJcBA7tphBT7X-0H+g0-oq0tZdKw+O5W3A@mail.gmail.com>
-X-Gm-Features: AWmQ_bkZe8xF0tkRpW5gVlylkcfm2r3jZb2Xa1XdOQVS8F7wx8KXagIs6XSHJvI
-Message-ID: <CAMuHMdU3hWDOWXxuOJcBA7tphBT7X-0H+g0-oq0tZdKw+O5W3A@mail.gmail.com>
-Subject: Re: [PATCH v6 12/26] bitfield: Add less-checking __FIELD_{GET,PREP}()
-To: Ping-Ke Shih <pkshih@realtek.com>
-Cc: Andy Shevchenko <andriy.shevchenko@intel.com>, Yury Norov <yury.norov@gmail.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Nicolas Ferre <nicolas.ferre@microchip.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
-	Giovanni Cabiddu <giovanni.cabiddu@intel.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
-	David Miller <davem@davemloft.net>, Linus Walleij <linus.walleij@linaro.org>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, Joel Stanley <joel@jms.id.au>, 
-	Andrew Jeffery <andrew@codeconstruct.com.au>, Crt Mori <cmo@melexis.com>, 
-	Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Jacky Huang <ychuang3@nuvoton.com>, 
-	Shan-Chun Hung <schung@nuvoton.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
-	Johannes Berg <johannes@sipsolutions.net>, Jakub Kicinski <kuba@kernel.org>, Alex Elder <elder@ieee.org>, 
-	David Laight <david.laight.linux@gmail.com>, Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
-	Jason Baron <jbaron@akamai.com>, Borislav Petkov <bp@alien8.de>, Tony Luck <tony.luck@intel.com>, 
-	Michael Hennerich <Michael.Hennerich@analog.com>, Kim Seer Paller <kimseer.paller@analog.com>, 
-	David Lechner <dlechner@baylibre.com>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	Andy Shevchenko <andy@kernel.org>, Richard Genoud <richard.genoud@bootlin.com>, 
-	Cosmin Tanislav <demonsingur@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Jianping Shen <Jianping.Shen@de.bosch.com>, Nathan Chancellor <nathan@kernel.org>, 
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Miquel Raynal <miquel.raynal@bootlin.com>, 
-	Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, 
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, 
-	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>, 
-	"linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>, "qat-linux@intel.com" <qat-linux@intel.com>, 
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, 
-	"linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>, 
-	"linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>, 
-	"linux-sound@vger.kernel.org" <linux-sound@vger.kernel.org>, 
-	"linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	linux-wireless <linux-wireless@vger.kernel.org>
+Date: Fri, 7 Nov 2025 09:44:30 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdV4gFjba2jPEp65HwvvB3OH_jWkXhurTWFYCk6QiA1FJg@mail.gmail.com>
+X-Gm-Features: AWmQ_blrrptFzMWpvu6Y-7pL5-tJ_1h0P3WXNduygzU8YG1UWYjXmC7OG5BpV9c
+Message-ID: <CAMuHMdV4gFjba2jPEp65HwvvB3OH_jWkXhurTWFYCk6QiA1FJg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/4] dt-bindings: clock: r8a779a0: Add ZG core clock
+To: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Ping-Ke,
-
-On Fri, 7 Nov 2025 at 02:16, Ping-Ke Shih <pkshih@realtek.com> wrote:
-> Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> > The extra checking in field_prep() in case the compiler can
-> > determine that the mask is a constant already found a possible bug
-> > in drivers/net/wireless/realtek/rtw89/core.c:rtw89_roc_end():
-> >
-> >     rtw89_write32_mask(rtwdev, reg, B_AX_RX_FLTR_CFG_MASK, rtwdev->hal.rx_fltr);
-> >
-> > drivers/net/wireless/realtek/rtw89/reg.h:
-> >
-> >     #define B_AX_RX_MPDU_MAX_LEN_MASK GENMASK(21, 16)
-> >     #define B_AX_RX_FLTR_CFG_MASK ((u32)~B_AX_RX_MPDU_MAX_LEN_MASK)
-> >
-> > so it looks like B_AX_RX_FLTR_CFG_MASK is not the proper mask for
-> > this operation...
+On Thu, 6 Nov 2025 at 22:16, Niklas S=C3=B6derlund
+<niklas.soderlund+renesas@ragnatech.se> wrote:
+> Add the core clock used by the GPU on the Renesas R-Car V3U
+> (R8A779A0) SoC.
 >
-> The purpose of the statements is to update values excluding bits of
-> B_AX_RX_MPDU_MAX_LEN_MASK. The use of B_AX_RX_FLTR_CFG_MASK is tricky, but
-> the operation is correct because bit 0 is set, so __ffs(mask) returns 0 in
-> rtw89_write32_mask(). Then, operation looks like
->
->    orig = read(reg);
->    new = (orig & ~mask) | (data & mask);
->    write(new);
+> Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.=
+se>
 
-Thanks for your quick confirmation!
-So the intention really is to clear bits 22-31, and write the rx_fltr
-value to bits 0-15?
-
-if the clearing is not needed, it would be better to use
-#define B_AX_RX_FLTR_CFG_MASK GENMASK(15, 0)
-
-If the clearing is needed, I still think it would be better to
-change B_AX_RX_FLTR_CFG_MASK, and split the clearing off in a separate
-operation, to make it more explicit and obvious for the casual reader.
-
-> Since we don't use FIELD_{GET,PREP} macros with B_AX_RX_FLTR_CFG_MASK, how
-> can you find the problem? Please guide us. Thanks.
-
-I still have "[PATCH/RFC 17/17] rtw89: Use bitfield helpers"
-https://lore.kernel.org/all/f7b81122f7596fa004188bfae68f25a68c2d2392.1637592133.git.geert+renesas@glider.be/
-in my local tree, which started flagging the use of a discontiguous
-mask with the improved checking in field_prep().
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in a branch shared by clock driver and DTS source files.
 
 Gr{oetje,eeting}s,
 
                         Geert
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
                                 -- Linus Torvalds
