@@ -1,67 +1,65 @@
-Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 800252571C5
-	for <linux-clk@vger.kernel.org>; Fri,  7 Nov 2025 07:46:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B21DD26F29F;
+	Fri,  7 Nov 2025 08:00:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762501621; cv=none; b=Xi7a3bHn4UrfIaMC4/RFW2WltUxUAabvo/qNJ3P5hF+6c2dJNfcePIK78pTb5uHgIgXhDBrkf93rf3xRr3cNSrgkum5K017Y/l8YCwV/6OHG3lNrhn68PuIWDxzsiqi3sSpuKvS/8ZoDdFvq5OAzZL5rIokRxuT9hVRSK0cnZHU=
+	t=1762502417; cv=none; b=Er5iPLMOtBo1Z7hC7tMTB12m4Utxb0YnIzItZCTx0BJsbO+axoXJDoVY+8rqJe8Wd0RfR6mQFlOaJCdSTdMUYDNZtMacYAjMT7zjbkIePHL94ebwbgTcSOiwGWkFQeHG2J1yI9vK8jP1RR/BLGAiEdHrgX4bf7hhM66uGMTHA1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762501621; c=relaxed/simple;
-	bh=up3WN4y2iaAHVkgmKOuF19xMqSjPj8hRQ0/2Guibtpo=;
+	s=arc-20240116; t=1762502417; c=relaxed/simple;
+	bh=woTbj8MC4cB2KVfqxJsPDXydNbKs/tT1pE3GnVh3z4s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RLFl+0gIRvXUkNTdVXVdWUzaqBnni/qWGkcszGktXSSN5HZvokGJrjnpczlBqnkNxHJNyP0SR+2E0o8cY8HYIIZX0T5simpKDd169IfkQhFXfVWFCQJj5VYK1erGaeJ539ng83UyMBbOrUclofxUcZ/izCUVjEzGJXu+hCHqsAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=k+bClqF4; arc=none smtp.client-ip=95.215.58.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	 Content-Type:Content-Disposition:In-Reply-To; b=VwPmo3pKDqkD9YeYdbNIguK88iks+yG8oP0O5ABA1PHFkRhllIZCkcQ4m0gTrQAMBeuZ2TuSmOCHWtvvyQ8/uWBrHw82uVXQHB1wCSw/hPwR4Zkq8ZWnrRqb/4aIK0sfaBZR2sDJ8aq6RZdnQBSb2lB17lTknFjzMh4A6lKCZSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qWi+qyBd; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="k+bClqF4"
-Date: Fri, 7 Nov 2025 15:46:40 +0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1762501607;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bWV3OFRTCNAKsBedYT67BomPXMjaLCiUco2GhaTf0fw=;
-	b=k+bClqF4XA4GZLSsMVcC4JpBztPM6DaIwF+4+MhuR0v+m0IO2O9SigAjsrr2iZzzDfgEtI
-	4/4nozJFfpBwrLrYCWO/kTQe007F3NCPNYKHGUMFN8tKGpHg3HFVdcftKPD6uUxYkTZm0u
-	qklEY0aV3aO/4Z1KU5PuZoGxTlcsStQ=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Troy Mitchell <troy.mitchell@linux.dev>
-To: dongxuyang@eswincomputing.com, mturquette@baylibre.com,
-	sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: ningyu@eswincomputing.com, linmin@eswincomputing.com,
-	huangyifeng@eswincomputing.com, pinkesh.vaghela@einfochips.com,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Troy Mitchell <troy.mitchell@linux.dev>
-Subject: Re: [PATCH v7 1/2] dt-bindings: clock: eswin: Documentation for
- eic7700 SoC
-Message-ID: <aQ2j4PtWm5vFBoAZ@kernel.org>
-References: <20251023071658.455-1-dongxuyang@eswincomputing.com>
- <20251023071748.513-1-dongxuyang@eswincomputing.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qWi+qyBd"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03B87C116C6;
+	Fri,  7 Nov 2025 08:00:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762502417;
+	bh=woTbj8MC4cB2KVfqxJsPDXydNbKs/tT1pE3GnVh3z4s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qWi+qyBdt/ViOk43Xt8kcxzdGjo7tr8VhLjX20ivUJCv2V9rHvf68ONmrfuqxBs7l
+	 Cq4vbAkvUTdgJMb18EXZChiBjH5RlvJrD10f6EdHc0RdM/n/Brocdlo7xBrhbj97FR
+	 asOJzpbd5wftbqnBbYda+zVlxCletNQt8z2um0VehgCgJ0Fzx7Z5pLOdsvBf7azg0B
+	 WScy+fB38UjiYZMvJ8F1aDyaBRlyDzKJd3b6T/TYo/+gVZK2/+EANMvj8DJNlYOvGF
+	 Lyo+zPZLYoilNYQpKnkO1DaUmKHalcFEpKQRFIAYN80ONyZ1trXqmORENrKY//36rE
+	 llPhQTvXgxCkw==
+Date: Fri, 7 Nov 2025 09:00:15 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 1/4] dt-bindings: clock: r8a779a0: Add ZG core clock
+Message-ID: <20251107-dangerous-porpoise-of-expression-6a9d68@kuoka>
+References: <20251106211604.2766465-1-niklas.soderlund+renesas@ragnatech.se>
+ <20251106211604.2766465-2-niklas.soderlund+renesas@ragnatech.se>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251023071748.513-1-dongxuyang@eswincomputing.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20251106211604.2766465-2-niklas.soderlund+renesas@ragnatech.se>
 
-On Thu, Oct 23, 2025 at 03:17:48PM +0800, dongxuyang@eswincomputing.com wrote:
-> From: Xuyang Dong <dongxuyang@eswincomputing.com>
-> 
-> Add device tree binding documentation for the ESWIN eic7700
-> clock controller module.
-> 
-> Signed-off-by: Yifeng Huang <huangyifeng@eswincomputing.com>
-> Acked-by: Conor Dooley <conor.dooley@microchip.com>
-> Signed-off-by: Xuyang Dong <dongxuyang@eswincomputing.com>
-LGTM. But as Krzysztof mentioned, it might not be on the
-priority review list.
+On Thu, Nov 06, 2025 at 10:16:01PM +0100, Niklas S=C3=B6derlund wrote:
+> Add the core clock used by the GPU on the Renesas R-Car V3U
+> (R8A779A0) SoC.
+>=20
+> Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.=
+se>
+> ---
+>  include/dt-bindings/clock/r8a779a0-cpg-mssr.h | 1 +
+>  1 file changed, 1 insertion(+)
 
-Acked-by: Troy Mitchell <troy.mitchell@linux.dev>
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+Best regards,
+Krzysztof
+
