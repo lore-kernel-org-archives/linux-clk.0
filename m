@@ -1,117 +1,367 @@
-Received: from smtpbgjp3.qq.com (smtpbgjp3.qq.com [54.92.39.34])
+Received: from TYPPR03CU001.outbound.protection.outlook.com (mail-japaneastazon11022130.outbound.protection.outlook.com [52.101.126.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7286C2F362F;
-	Fri,  7 Nov 2025 15:55:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.92.39.34
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762530951; cv=none; b=kNu5+DeA5KFozLQUJ8FzTMIpIiQBgz8DXWCortQ2+FvZ5srFC9EF7GQhgt2R+MDtWf+vujQu9dgZRRJizblnYWUUoWLMtJvk/Sur3c7HCra5V/vlnmEtgaEgMXeOqj6hJV84J7fJUY23oCsAHPYzToaNSFm0P+gYDDu3SuKBbNs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762530951; c=relaxed/simple;
-	bh=D9oq68VrORbAYW4+VlHxCsq/enrwgz5myr/oEzlR8GU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jY9SkpWqBaTYeUDqbMLF17tPhNn2TKcFxDmSlFS0CfMNE6gBmFVNzxsK4dF83L9qQebl/kQlJQPr0l3uajTLuuWc0uOgljX1ziZBca2XbAQIwCSt25nvIe9cYeYmTVMXuNnrmIR4kopG1S7hd1Y2PcAVlz9pQ/746HJZ3kKYQCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=xPw8NY22; arc=none smtp.client-ip=54.92.39.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBBD8258CE7;
+	Fri,  7 Nov 2025 16:20:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.126.130
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762532438; cv=fail; b=YAeQrhQL26cvGiZpIXTdKazii7Cv+F/qf80PogYnC126yQb13BwR+znQS7QFytqZXMgpnM9Ei3yYX4FfddNuN5V0GfJZY28Lq4Rz6THOr8D2nG/bENf1KAkIfTi5NblDzFTFhEm7qea1BPUVjSI9CLp6VSJY5oCml6AQQEGuJM8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762532438; c=relaxed/simple;
+	bh=aEaOC9Drrr0Qasa7NtmKL3z7YJ2t+fU2FXKLpygtKDE=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=HXDu3xug0J0HClqTUAY1K032ciyDMcj1RQb7NJW4+cmFvhpvlDX80+8jPk8xTweg74E6HPGUaIt5Y1GvsvATedTYO4JQCHedUi3zzzSPG1ljUNGK99JnvTBLf42z4B6X3jdR8PmRnO+RTPtKCXspyR56S8jlMb+i+P8hwnX87Ig=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b=g3TytzeG; arc=fail smtp.client-ip=52.101.126.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amlogic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="xPw8NY22"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
-	s=mxsw2412; t=1762530895;
-	bh=x5wU+8XhNn87+1HQLINKbrKQAzx0N1ebWVPXX+dgJtI=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version;
-	b=xPw8NY22mzC3Ek/DIkaAYyEPu261K1jn7dzd+xaLLQ80tD4SRWpmIcMqmOycInKJp
-	 Hmz4h1xicEmP00zC3QW1EiSgKsStDqY73Y0jPCcC5+66dKrv0FdHNl1ZTxwjTGJ4PM
-	 BZvf5QrhRdPut3XQTCyB2ij4ZtbHbj6S8Nx0mcKQ=
-X-QQ-mid: zesmtpip3t1762530885td6bbd925
-X-QQ-Originating-IP: AVnxMsCEYCH+Te+U4txA0lr7Lg9JiGfupg08FrYRM88=
-Received: from = ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Fri, 07 Nov 2025 23:54:44 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 14462180775243901098
-EX-QQ-RecipientCnt: 16
-Date: Fri, 7 Nov 2025 23:54:43 +0800
-From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-To: Xuyang Dong <dongxuyang@eswincomputing.com>,
-	Troy Mitchell <troy.mitchell@linux.spacemit.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>, mturquette@baylibre.com,
-	sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, bmasney@redhat.com, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: ningyu@eswincomputing.com, linmin@eswincomputing.com,
-	huangyifeng@eswincomputing.com, pinkesh.vaghela@einfochips.com
-Subject: Re: Re: Re: [PATCH v7 0/2] Add driver support for ESWIN eic700 SoC
- clock controller
-Message-ID: <AF4FD688167B825E+aQ4WQ7qbYqtHbSKl@troy-wujie14pro-arch>
-References: <20251023071658.455-1-dongxuyang@eswincomputing.com>
- <1abb85b.c11.19a582bcbbc.Coremail.dongxuyang@eswincomputing.com>
- <039a3a41-c60f-4296-afd9-2bf3467574ca@kernel.org>
- <6d2d7ddb.cbd.19a5cf92465.Coremail.dongxuyang@eswincomputing.com>
- <1618037D174FDF5F+aQ2hU1J9oLEKCq25@kernel.org>
- <5a9911a3.d09.19a5d8d32cd.Coremail.dongxuyang@eswincomputing.com>
- <6C7E97902D2C1367+aQ3EYikxWNtINfyj@kernel.org>
+	dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b="g3TytzeG"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=KNSavJYp+PpcYg9AWQRE5gnYSVbMLpHxtm/sIDJX9uKTspYqN6QQTCWTE9KhWCl+eXreCbqaJHKOPOGYDbPofxUTmzPk5q3JMLexDWrk6ipJUr8f9ARcSWPicsoPQD+Q/3hmeVwi5Id2RFLAewYb68sgLsAa8XHW0ZCGZ0CkVWCQ+bHbWYTvOGyua5ddMvfzoiGSsfGvQkIR3mhPBl2Q61OvhCBITzYvEkK92Oz11SrXQQunIAWyTaBUoQ2xUxw04YVvN6CNdxj8QRzUbFTtWhyhae+Kyk3qx0rL0mCIvoXefezrJfX4EOKF5vi95qRDSLkXYNWhs7MkMTL4H7u52w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=9Y13471qbTRUNnBppMM3NroIypPMTngKMmrh+DNU31k=;
+ b=UZh2Rre+kKJXAM8zOxSBa+AJRQKSVx31rSHZTE/xSMwzU6/yvY3b3Chgduu0CaHgDuHCwkmO3dS9JdCe20yT/coRAsW7EgNglezP53T9O+Vjgb1DpBxVfLUY049HbxqtyZ+RTo/8hjHui3hmw6E6+16FXShvG9UsOWoC30MnWHfOQ7md9PNT+VTbGZll5m46UoCxtNAXGVMvd3dbhhQt29kRYX6iOa8VvwdT3slNngr1OlBapwi1HSMq4ymo7i5JH6dyJllXW7cqh3nGDhB7aRCA2l86PBqX+la2TlcyDXNdfyitZmB1beNGXxGVFWZHDfdiXwL7ViEUszQAUU0wLg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
+ dkim=pass header.d=amlogic.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amlogic.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9Y13471qbTRUNnBppMM3NroIypPMTngKMmrh+DNU31k=;
+ b=g3TytzeGRlQmUqMzgoI7gB/pzc9z1OZxtMs6oZFA99D8Jljr58B0GTi50sqMN06Hpe47qgLvgqmvxNyRDXlYtORkhZSI3TI8q8FqwDC/T4Agpn9gLXSiXYQeX1JDF5AyIPwI/3oKAxkPfESfPemLHyOxJ+P3qBNpxTtelntPqKt1AvtuK6SL7B01LZoiGHxULSZrFURSGcKVj9iAoavSqHyzg2ZPY1SzHKOZDYSDeitO94GEjAQJHROBJ9asUDthIk2TpRdKyTZonMrgJ48FDsHYLJ5CsgXB6bTqHJNjggbPRLu9+qKL/yNIefjhVwBp2waNDhNb8JaKjMLLWv8FVg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amlogic.com;
+Received: from KL1PR03MB7149.apcprd03.prod.outlook.com (2603:1096:820:ca::7)
+ by JH0PR03MB8147.apcprd03.prod.outlook.com (2603:1096:990:39::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.8; Fri, 7 Nov
+ 2025 16:20:34 +0000
+Received: from KL1PR03MB7149.apcprd03.prod.outlook.com
+ ([fe80::a311:33f6:519d:73bf]) by KL1PR03MB7149.apcprd03.prod.outlook.com
+ ([fe80::a311:33f6:519d:73bf%6]) with mapi id 15.20.9298.007; Fri, 7 Nov 2025
+ 16:20:33 +0000
+Message-ID: <236a568d-c809-4dc7-be2f-e813d0d85368@amlogic.com>
+Date: Sat, 8 Nov 2025 00:20:33 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 5/5] clk: meson: t7: add t7 clock peripherals
+ controller driver
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Xianwei Zhao <xianwei.zhao@amlogic.com>, Chuan Liu
+ <chuan.liu@amlogic.com>, Neil Armstrong <neil.armstrong@linaro.org>,
+ Kevin Hilman <khilman@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Dmitry Rokosov <ddrokosov@sberdevices.ru>, robh+dt <robh+dt@kernel.org>,
+ Rob Herring <robh@kernel.org>, devicetree <devicetree@vger.kernel.org>,
+ linux-clk <linux-clk@vger.kernel.org>,
+ linux-amlogic <linux-amlogic@lists.infradead.org>,
+ linux-kernel <linux-kernel@vger.kernel.org>,
+ linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+References: <20251030094345.2571222-1-jian.hu@amlogic.com>
+ <20251030094345.2571222-6-jian.hu@amlogic.com>
+ <1jbjlnxuug.fsf@starbuckisacylon.baylibre.com>
+ <3b9a5978-aa02-486b-85f5-6443dc607dd5@amlogic.com>
+ <1j1pmew1cu.fsf@starbuckisacylon.baylibre.com>
+From: Jian Hu <jian.hu@amlogic.com>
+In-Reply-To: <1j1pmew1cu.fsf@starbuckisacylon.baylibre.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SI2PR04CA0006.apcprd04.prod.outlook.com
+ (2603:1096:4:197::13) To KL1PR03MB7149.apcprd03.prod.outlook.com
+ (2603:1096:820:ca::7)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <6C7E97902D2C1367+aQ3EYikxWNtINfyj@kernel.org>
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpip:linux.spacemit.com:qybglogicsvrgz:qybglogicsvrgz3a-0
-X-QQ-XMAILINFO: Mx7AiMmSgXkmft6XAEvByt6G36aghN8w8JyyIXoHB8vKBLH1P0G/+FhP
-	tdTYPHVBiolV1aOmfp1D7M1IpoMNhlL522lHagqAwFVvDgwMa/viL8H/NOAKeTTMTNAQTLC
-	H6d4t5YjpwgHWjon2w4Fhe9/2z/GEZUWGBDmfwLxd/rPceC8F2TYGdq+ZcWmE1YzunhDf66
-	lic3fpCQiJhN2sY9a5oNKiy2k0zfvP8TjCNgs27wbGocS52ymrNDIS283IbrxX0BygeJYRg
-	nQMIR8/9OE99bfjJs/alebn5XzKizwEiIr+dy1R7AMu/hMuAjUuAkrszVMdH6xzYUTu1ifg
-	3wZAuemoHCkcgd9Fb4ugAfSbIF8ssXWQhhsaOjilh5dfED8e3/xqGThzlXGt2S19V8AsgfM
-	CYXy7/SAfLDrgHuBhQmErmx7+eJzgA3zHi09hSdViK7OCGVp3oQ3zxh2vIlvdboTVR88EyF
-	CZTGHOUTOsVk5L36KcnJ3Yc10am20hh38IGTcpf7ldVdt89/4d5zUQxp+U9oCQM/15iq/3l
-	SHHJlEA1mWwnOH26O1X+Fty/BYRWQSmLPInsd9Jc2ZRFv7B15iP4F2hI0gHCr/DIRfVsa//
-	iQdotmB2Mp5itlvMvrK22sYl2me2ln2yIrj6xCOCO0VFbfiQhz/rBGttKqGuC9D0SFHMkye
-	3uDtNTJ1R+klVxzgkXXTVqiBzBAlon3dyy/90GcoWScVsU2CqGxtetOKbIbzW9Xu0IYrFTL
-	NspYvUvori18UEBftJSp3H9UfUP++FZcBvv6nTOF0+Jch//19PFyVbMJipft6OZMPGvfClc
-	MGF9c3x0kZL65P0XT4B/2MzyZdxKDAZpNI9pzq5QUV7URrb5OTeihG2X0OsCKaJqIRw8KUl
-	gRkY1Dw8QKSOJTxF6dM2AtehL5TspwC3xx7rwdqAMseqZfM9NXyhw4+zLBXH4VyVXA/It8o
-	aUvSyT59Lzp1LGh6J90A08HPU/MTk1rl8RCgMmETf0rX/E20vBcbpu8VWV03AIZ7fIldKG0
-	cq/cNg1iSrIR2ckZOJ/IH0X/dmW4LY4F7UFbRamR3sNngeh1M/EBox+8g8Wf5tyWI6qViqi
-	BPgTfux63KfEAgCqj9VGhFFO31We3/zLbZSevPkkVp7ORNypgpKUpU9LcbtFqFL7A==
-X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
-X-QQ-RECHKSPAM: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: KL1PR03MB7149:EE_|JH0PR03MB8147:EE_
+X-MS-Office365-Filtering-Correlation-Id: a171c256-9e09-489e-756d-08de1e19934a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|10070799003|7416014|376014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?UUVwalhITTZSUmJNRmJTd1RzN0FJUTV6K2JiK1JGaEZrdy9xTHFvclZyZUYv?=
+ =?utf-8?B?VXlpd2V3K25yQmFCd0M2Vk5OOVBNVmI2RHVJTEtxdnFxdnRQTVpWVktBcmZX?=
+ =?utf-8?B?SUtlRThUTHBZOStMN2V2dTFOQnd6NUxpeFZQZWIvdXRBWUtOa2k2dngrSlFR?=
+ =?utf-8?B?Y3JJbnZBR2EwcXNabTlWeUtSQ1JxY3VSenFUYyt6aUtBMm5BYno1bWM3RUZq?=
+ =?utf-8?B?dnR3QWt5aGErU0kzS3NYOTBlbTFkR2cyYjF3Rk1mYkxLZjFqQ1JrZFI0NkF6?=
+ =?utf-8?B?Yy9uVXdCWXovUUUrTUIzWjF4ZWJ3dXdUTzFsNnhLYTVyL1hxdllPS2oxY2RN?=
+ =?utf-8?B?V2o5NXNiUThxUnl0eU02bkMwdlppWFhtVjVYSXdXSE5SaVJ1Y0R3cHB3Tk5Q?=
+ =?utf-8?B?dS83MWFkbDdiYkNtVkNvSWlWMzBTUmFiNXpYS3AxV243TnZWdFhrMjdYS3dN?=
+ =?utf-8?B?NUZKNmY0QmIzS2F1NXFUaUNHYUtIUjBoS3gyYUt2Zlg4STZneDFHcmtKVXk2?=
+ =?utf-8?B?UUFUTjVVbWpPeTZIWjdtZ081Tkd4bE15MkR5OUludStwR2ZRUzU0Q09JSWdO?=
+ =?utf-8?B?OWpZQUNaU0YzYU5NbDRXaEQwNXJQTGdoMURjMjAvd0Q3QUJNWGExSGxyU2cx?=
+ =?utf-8?B?MFdRZ1ZpaWlISFRJSVN6cmp3YnVTRENNaVhZR0U1Q0loUys4RUJKdWdTRElx?=
+ =?utf-8?B?THpxL2pXbURPRmhpUEJncVB5QklMSy9Jd1RRWmxHbEpnVGNnbm9vUVdQR2pF?=
+ =?utf-8?B?d202WllsbUhFakkyd0dyb1BCQUFpN0p5YXZpOFhoaWJOQmFkZTh0YXEzZU84?=
+ =?utf-8?B?TTlDSjJOV083YmRwbUQzMDB3MmQxay8xVEdzNkg5V3ZaVzZtOE42bUhlN29u?=
+ =?utf-8?B?ZWQzQ0swaVUzamU5WkxoV3dNWlAxeHJsUVVFb0lVR25aaHVNd3hZeWEyQmpp?=
+ =?utf-8?B?N2dIU3N1aVVlOGJjZXVNT3J1QjRZRUxIZDhjV29tRXBFYmFZNTQvUVNPdlk3?=
+ =?utf-8?B?bWN3dEp5SGd0YUpRNVpHY1ZaREd3alByc3NsWHlBSG5YNVJWS1E5Szh1a2Vn?=
+ =?utf-8?B?LzJ6elFKbTRFNTVnV2JEdTZRL0kzci8yVGRZRTQwalVreUd3c25VbDBpbWJF?=
+ =?utf-8?B?TEVxN2ZORFdiRGhBSS82dk5GbFJNamNpVEJRd0tPNmJSTmUyMVNYR2JYTmw1?=
+ =?utf-8?B?QnFtM29ldzFpcDg0ZHB6Y2UvMU9Gdjk5Q1VHc25VZGtHeUUvQlp3VTMxMjdz?=
+ =?utf-8?B?Z0FpZGkwWHA0M2NtellvK2VndzU3RDhmMXpLZVR3dWRhL21WZUJpdHZRS2pH?=
+ =?utf-8?B?SUQvTjUxZlNJbEhtbk4zNXcrZVB4WktCakRucitweFgrY2hUMXE2QjQyOHpn?=
+ =?utf-8?B?ZGF3YVg5UE1PQy9PY1RiS29FTXJQNGc3Mk1PMU1uRHE0SS9KOE5GcTZDS1Rz?=
+ =?utf-8?B?emYzQ3VnbGpZdWUvb3ZuM09VNFlpMTlKQWtWNlBJK2wyZDY3bjZxRDZSbGxZ?=
+ =?utf-8?B?aUtWUHFvS2lEZ0NKSm9ETDg1RzVhcE8wYW92VGxlVFkrZkJXbWtuR3p6Szdl?=
+ =?utf-8?B?V25VR0ZWUDh3Zm0zVW5hK2FKajhmTmhiV25oRTdRZXdHMEhyZVVFaVVRYjdL?=
+ =?utf-8?B?UTJYM2ZxNmNLQlpIbXl1d3EwSFlQa2FpVHVrK2d4dk52bFZkZzM4cklhNDdS?=
+ =?utf-8?B?TUtlVUJCakFZdndvSGg2czAyMXVYNzVnUGZueW1CdktwVGpLb3l3SnExS2hr?=
+ =?utf-8?B?VUxCdnp1TnhQdFg3OWszUGlwdG9xbHBOYVlOdFMwWDNXL1FDRHl0bm45bGFj?=
+ =?utf-8?B?ckZDaG10SVhkTlhBd2g0V0FubS9sWHUvczd3VFlpV3ROYzF2VTl5dUpiSWZN?=
+ =?utf-8?B?MkNRd2pVTFFzYU5tKytXdDZkZWlJS1VYWmFvbG56NDl0eW5GUFdEdWpSOHZH?=
+ =?utf-8?Q?cRpMTTlcqnioY1jwY1ORIAXdFqEg7onn?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR03MB7149.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(10070799003)(7416014)(376014)(366016);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?bE1iREVXMG9UbitNWkNGN0J5b3Zld0crNHdNeHNkemVZR2RxbjRRVWRpNmZq?=
+ =?utf-8?B?WTRtQmUzMUJrUHBVQ1ZYMEVoZGNLTXBXMEhuTGtoRmJoVkFDK0VoNS9oQUlJ?=
+ =?utf-8?B?RFlkR2xJcDhWMURheTIzMzgzZWg4SlQ3NjUzYlkyQXVVZzBuTWg1YW96OWZJ?=
+ =?utf-8?B?NWd2Y1gwZURKekt3S0h2WW1VV1VOZUlpSWR1SEZ6bG9haXptWms5T2twL1lM?=
+ =?utf-8?B?L01YbHF0Ry9TTXNmZmZybmp2Y1F0L1FJSDJTems1cEdEeFQ1K1RxUW1YbG5v?=
+ =?utf-8?B?NWcyV3VQbS84V0VFS0FJODRWYXZ1alZPNGZDSmZubGthU211UEFqOVpuTnJq?=
+ =?utf-8?B?VFA3RE5XSXBENUV5bVF2ZlV2VytobUI0NEJrVnVCTkRQQmRVcjdYcytaYm11?=
+ =?utf-8?B?NGFxK1c3M1dpclBtR0YzZ1pkU2pobHUxU2FyRmZqZ01kUXBvRXBuQWNJTmsy?=
+ =?utf-8?B?WDdKRjltZTF5S0thMFNXMHFTRThUMVV1Z2NWK2FZcG1RYndhOUxvOCtTZEZR?=
+ =?utf-8?B?SHdJaThDYmRrNXZrdEtmS2JIZ1lrSW1tZHkxVkk4TDE4T0ttbnUrWHF4NG1n?=
+ =?utf-8?B?RUdJSG84clJrdTNKYjIwZW1aWHQvR1NKclA4T2pTY29JbkladmJZZVNZYmpF?=
+ =?utf-8?B?TmJsemV3T01YVHY5a1FzNU45VGM3TFVrdGlZTDNVdURaTEdBZ1czNWZFM0xX?=
+ =?utf-8?B?RVIvUGFzbjNUVFRLTU50REgrR3JNNlRWbHRINWcyUU1YOEg0eHpMZHRJMFZR?=
+ =?utf-8?B?Q003OVZINTdiK09ZTUtLRVpqTERXemJhbytEUmJ1VUpWTC9JYkMvWVhYTkRH?=
+ =?utf-8?B?aTZ5eWF5b1FIMlhESHRGV29DUTd0eGxRSkV0c3MzUHJFYnZaUXVQRUV6eWF6?=
+ =?utf-8?B?dUNvdkpySnhUUVMvMlNqU3BXUUNFUTVKM3ljdnlUYWE5M1ZZOE9MOXlGVEl6?=
+ =?utf-8?B?Qmc5WWEwUWlIZkk1ZHpRdVNsdkVxU1FiRC82QUZWcFkzaysvYXRVb3JNRHI3?=
+ =?utf-8?B?SGM0TElMOXV1aTJnWEtHZHZLTnlyTHJxSlVWS2FEZlRVanV4ZFk5M2N4T1Mw?=
+ =?utf-8?B?dkpTREI0Y2ZDUEdNYW9ZS09EaG5FNVN4QytsVjNhQWg1V2M0YmFyMEEyNmhM?=
+ =?utf-8?B?NDhhQzBNMkxhdmdIbCtmVVJ0TGtlS1haNHh3dWJMOTFEYjJZR2ZPdmlMNndN?=
+ =?utf-8?B?ejNtamRuTjQvSGVxNlAxYkQ5Mzd4Z29FbUZVcDlnc21TNzFQcHVZV3hhVVBT?=
+ =?utf-8?B?eGJRSVdQYkZ6ZmJWcTRDZ2huVEFUMWlJakNidGZJRzdEcW12UHJJdWphdW94?=
+ =?utf-8?B?NG9reklUTHlNZUJDaVdodU5IOUhIRjBDVmd3V0pUbkFUbVJpSFVWTk16Sk1p?=
+ =?utf-8?B?bjNkMmo2Yk1CTU5TV1ZidVkyQmVDeG80ZENiWXozbTNMRFFhYTNYNUdXK2JW?=
+ =?utf-8?B?VkcrZm80dHlreno5UXd3d0JqVUN1TVdmUEpSUnR4ZVBqcW4yMmRSemowYUlt?=
+ =?utf-8?B?bmZWdnh6eUN1YmRPanJkVnNUMDAwT1JrcW9xYmJOY0V6ZGVvbzFQZVZYRkNO?=
+ =?utf-8?B?dVZ0aFJHYnlObW0wY0FTa1YvN0ZGa1RiWXM4UUlZVUZoSlVtbHIwek1VWDRi?=
+ =?utf-8?B?ZTRZZ0pya0phbitsUDFudU10RjdjMVlVdjQvY3pLd1UrY3lWa1MwbHYvTW1I?=
+ =?utf-8?B?S25IOERUOXNGOXp6czEwRG1Sb1VIZWRhZHhyMmFGZWdPRERnYkdqYnhvT3Rk?=
+ =?utf-8?B?dlduTmt0WUtaYUhKTEZLeERaNW5qWXF5UmNXOHhoT2NZckY1VHhTc1FmWW81?=
+ =?utf-8?B?Wm9jTkFRZzFoL1NNNU5XMGZNWlN6cXNUcXZNUXZNRkNzV3VyZWlsWVppY2E4?=
+ =?utf-8?B?RTZJeXhtYi9UR1g1aDRPNElTcTQySjFQVmZLTi8yWGloYU5FQkd4bGtHSUxR?=
+ =?utf-8?B?YUhWOUNLSGRzcEhFdXpjY3lBT0ZVTTlONXRkeHNDTG9JMjlUbGZOMFNFd2tN?=
+ =?utf-8?B?d0tVdTBHdXdmSm9Md3E2WGlYQlczNXdwYVNhWUFrU0NnNXIwcGFHUUI2UVo2?=
+ =?utf-8?B?SmJESCtpRGw3bVJhVTJaektNZ2tlUUlXa2ZUZDhiZi9CZCtGYnhESUVuSFVH?=
+ =?utf-8?B?YXhOYmkrdkc1a1IzdFl4UnNXTXJ3OTNVWWloSmYvMUVheDYrV29hM3M4ZGtz?=
+ =?utf-8?Q?zejCWXunw1JaRudsEMs8spFbD0oily1iUHIZKZJ8S9iB?=
+X-OriginatorOrg: amlogic.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a171c256-9e09-489e-756d-08de1e19934a
+X-MS-Exchange-CrossTenant-AuthSource: KL1PR03MB7149.apcprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Nov 2025 16:20:32.9779
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Zg221Lc3G6rGYulgIYLTh72CMZn6Qij7fx6Uc983ZDoIBn+vtA0Y4lkSRDfgfM1lqcuOV5OJ1Dc7ejH1seM5Mw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: JH0PR03MB8147
 
-On Fri, Nov 07, 2025 at 06:05:22PM +0800, Troy Mitchell wrote:
-> On Fri, Nov 07, 2025 at 05:02:06PM +0800, Xuyang Dong wrote:
-> > > > > > 
-> > > > > >   Gentle ping. Looking forward to your reply. Thank you very much!
-> > > > > 
-> > > > > Please do not top post.
-> > > > > 
-> > > > > You did not add any maintainers of these drivers, so I would not put it
-> > > > > high on our priority list. 
-> > > Do you have any plans to become a maintainer? If so, this patch might get
-> > > reviewed with higher priority. I think that's what Krzysztof meant.
-> > > 
-> > >                               - Troy
-> > 
-> > Hello Troy,
-> > 
-> > Yes, I plan to become the maintainer for this driver. I will add my�
-> > maintainer information to the MAINTAINERS file in the next patch series.�
-> > Would that be acceptable?
-> I think yes.
-> 
-> And if you send next version, please dont't send to this email:
-                                       ^^^^ no "don't" here..
-> troy.mitchell@linux.dev instead of linux.spacemit.com.
-> 
-> Thanks.
-> 
->                               - Troy
-> > 
-> > Regards,
-> > Xuyang Dong
+
+On 11/4/2025 6:14 PM, Jerome Brunet wrote:
+> [ EXTERNAL EMAIL ]
+>
+> On Tue 04 Nov 2025 at 17:17, Jian Hu <jian.hu@amlogic.com> wrote:
+>
+>>>> +
+>>>> +static struct clk_regmap t7_dspa = {
+>>>> +     .data = &(struct clk_regmap_mux_data){
+>>>> +             .offset = DSPA_CLK_CTRL0,
+>>>> +             .mask = 0x1,
+>>>> +             .shift = 15,
+>>>> +     },
+>>>> +     .hw.init = &(struct clk_init_data){
+>>>> +             .name = "dspa",
+>>>> +             .ops = &clk_regmap_mux_ops,
+>>>> +             .parent_hws = (const struct clk_hw *[]) {
+>>>> +                     &t7_dspa_a.hw,
+>>>> +                     &t7_dspa_b.hw,
+>>>> +             },
+>>>> +             .num_parents = 2,
+>>>> +             .flags = CLK_SET_RATE_PARENT,
+>>>> +     },
+>>>> +};
+>>>> +
+>>>> ......
+>>>> +
+>>>> +static struct clk_regmap t7_anakin_0 = {
+>>> Nitpick: for the DSP it was a/b, here it is 0/1
+>>> Could you pick one way or the other and stick to it ?
+>>
+>> ok , I will use 0/1 for DSP.
+> I think I prefer a/b if you don't mind. see below for why ...
+
+
+Mali is named as mali_0, mali_1 in this driver.   And G12A/S4/GXBB 
+series do the same.
+
+If they are named as anakin_a and anakin_b here, there will be two 
+naming methods.
+
+Shall we keep consistent ?
+
+
+If use 0/1 to name them.
+
+dsp clocks are:
+
+     dspa_0_sel
+
+     dspa_0_div
+
+     dspa_0
+
+     dspa_1_sel
+
+     dspa_1_div
+
+     dspa_1
+
+     dspb_0_sel
+
+     dspb_0_div
+
+     dspb_0
+
+     dspb_1_sel
+
+     dspb_1_div
+
+     dspb_1
+
+
+anakin clocks are:
+
+     anakin_0_sel
+
+     anakin_0_div
+
+     anakin_0
+
+     anakin_1_sel
+
+     anakin_1_div
+
+     anakin_1
+
+     anakin_01_sel
+
+     anakin
+
+
+If use a/b to name them.
+
+dsp clocks are:
+
+     dspa_a_sel
+
+     dspa_a_div
+
+     dspa_a
+
+     dspa_b_sel
+
+     dspa_b_div
+
+     dspa_b
+
+     dspb_a_sel
+
+     dspb_a_div
+
+     dspb_a
+
+     dspb_b_sel
+
+     dspb_b_div
+
+     dspb_b
+
+
+anakin clocks are:
+
+     anakin_a_sel
+
+     anakin_a_div
+
+     anakin_a
+
+     anakin_b_sel
+
+     anakin_b_div
+
+     anakin_b
+
+     anakin_ab_sel
+
+     anakin
+
+
+Which one is better?
+
+>>>> +     .data = &(struct clk_regmap_gate_data){
+>>>> +             .offset = ANAKIN_CLK_CTRL,
+>>>> +             .bit_idx = 8,
+>>>> +     },
+>>>> +     .hw.init = &(struct clk_init_data) {
+>>>> +             .name = "anakin_0",
+>>>> +             .ops = &clk_regmap_gate_ops,
+>>>> +             .parent_hws = (const struct clk_hw *[]) { &t7_anakin_0_div.hw },
+>>>> +             .num_parents = 1,
+>>>> +             .flags = CLK_SET_RATE_GATE | CLK_SET_RATE_PARENT,
+>>>> +     },
+>>>> +};
+> [...]
+>
+>>>> +
+>>>> +static struct clk_regmap t7_anakin_clk = {
+>>>> +     .data = &(struct clk_regmap_gate_data){
+>>>> +             .offset = ANAKIN_CLK_CTRL,
+>>>> +             .bit_idx = 30,
+>>>> +     },
+>>>> +     .hw.init = &(struct clk_init_data) {
+>>>> +             .name = "anakin_clk",
+>>> Again, not a great name, especially considering the one above.
+>>> Is this really really how the doc refers to these 2 clocks ?
+>>
+>> bit30 gate clock is after bit31 mux clock,  and the gate clock is the final
+>> output clock, it is used to gate anakin clock.
+>>
+>> I will rename bit31 as anakin_pre, rename bit30 as anakin.
+> Ok for the last element
+>
+> ... but I don't  like "_pre" for a mux selecting one the 2 glitch free
+> path. It does not help understanding the tree.
+>
+> For such mux, when it is not the last element, I would suggest
+> "_ab_sel" ... at least it is clear what it does so, "anakin_ab_sel" ?
+>
+
+ok, anakin_ab_sel and anakin for these two clocks.
+
+
+Maybe anakin_01_sel and anakin for these two clocks, if you agree to 0/1 
+naming convention.
+
+>>>> +             .ops = &clk_regmap_gate_ops,
+>>>> +             .parent_hws = (const struct clk_hw *[]) {
+>>>> +                     &t7_anakin.hw
+>>>> +             },
+>>>> +             .num_parents = 1,
+>>>> +             .flags = CLK_SET_RATE_PARENT
+>>>> +     },
+>>>> +};
+>>>> +
