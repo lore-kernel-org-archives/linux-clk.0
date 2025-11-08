@@ -1,73 +1,73 @@
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E92A212548
-	for <linux-clk@vger.kernel.org>; Sat,  8 Nov 2025 21:04:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60547212548
+	for <linux-clk@vger.kernel.org>; Sat,  8 Nov 2025 21:04:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762635861; cv=none; b=U/ad5qKJwa6fGwpPKkDL8ePLzIuhlDNzmsiGrRd0UI0VQDr1FjfjUuS+o7g/IaSGpqNRZ9V56PkEtgi0JHoIn+1qB+973FgaSKiUsPWREg/Vn5XqhEZLXgtui3b7fpDq3gE42vIeucWhdtjY6oi/n72DG2EL66ylXPhy4caAerE=
+	t=1762635872; cv=none; b=irxh7HbiFPhDVI8k66B+iJH07QlZUXJXieVDBQb7omeuXjs1R3y31VVEeAfxk43iUHxIJWigQ+zF5BhR+7Yte58vZ/kDMwJ80L+usMe7WCmcKJEwXVx8oY9DCudhCOcJnWibU3+189SAbUGTW9IAvkKhlhyhOmXclWYjBYmhvDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762635861; c=relaxed/simple;
-	bh=RMpaqWIHb1GpGEFIyrRCs/9EV1CvK/Ir7Bz2Pp37Q10=;
+	s=arc-20240116; t=1762635872; c=relaxed/simple;
+	bh=QfBxOPKy7fDifZhi6nSzMhp9yBd8dZHhu1E69GOcGH8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RcYCAjQG4PcnRMVYCKnu8Gnf0Xz1CmI+q37tVbOfKy1Fvi1BqMYVdjLnUgR9xMjiQuoV3EQfZ4SV+8B41CmRQUSMrd2uqh73JZNC0JRMa/xCNpMxwS3Lw+FXgtK8+5HNZ2sxbM8Hc1mc8V6cYz0zsWlEKg4irSV7DohF8VucGIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=lIk5OLR3; arc=none smtp.client-ip=209.85.214.176
+	 To:Cc:Content-Type; b=B12q4pYfXV4m23fhHW/7F4nLAalOqj2A9ccWQZAJvt7wEpsEwcWyNCPqQYUmQBgly0hmLXFOmRPWpiI2xBTe0MOJ4b8z2Sy6/4WAdY+OWe/QbakHDd1YsgMwUHcJWDBlNMBJsUUYwLi6o89/9EJHxyvUacrrqOL4wIOWMQ0Iu/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=NIt5V8vI; arc=none smtp.client-ip=209.85.214.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="lIk5OLR3"
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2957850c63bso18043865ad.0
-        for <linux-clk@vger.kernel.org>; Sat, 08 Nov 2025 13:04:19 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="NIt5V8vI"
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-297f8c26dc7so1984525ad.2
+        for <linux-clk@vger.kernel.org>; Sat, 08 Nov 2025 13:04:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1762635859; x=1763240659; darn=vger.kernel.org;
+        d=googlemail.com; s=20230601; t=1762635871; x=1763240671; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=A/7GraEMhRfGX80xNeYuFThBogqrpJru9RaOOCG7cpM=;
-        b=lIk5OLR3de2fqYe2alimFp2uLysPGH04vYM5/nz7u1JIv9s8Y/ogwHEPPGx5UIoWFE
-         e91kDbMnT4Nl3Baf6US1SU/y7xt+OFsN1Rs8QGohLv6ktwsCVrUw5w3saw8J/UzuWVzj
-         3uZBOqNDypoOGyCM8Xt/imJi8EPVpYS2Pi6sOaSDmrhZraL70yRsZDzBSOTdyh4Ztq0g
-         fNfGl4AKJKuK8+kY6Yn8bhqO54Kr4HLwP9eDmlJJSQQKw5Tbr/rmGRhr8eTsTyG11P/b
-         NNsrpjFYsDEbSjX10kA5HulVQBMKCDYArTb2x5Fl8WJ4Jk0DpZehfk0Fumayp20SprJT
-         m9WQ==
+        bh=QfBxOPKy7fDifZhi6nSzMhp9yBd8dZHhu1E69GOcGH8=;
+        b=NIt5V8vI8gtkwns1f02byN+rk+Uf4rfhvYku3G0xEUuGj/P/ccNfVEJZRsi31AcsyE
+         JAGSSVrxKDlVfKNXl2BOjeMFwWbMmN7YCL9fvUZhr209IBYO39f3rk7npIromLXM2J7l
+         o+K5200niKwKuKR+3UtV7AWAv+SawwXkBL9K3PTc5H9ZmoBuhV6Q8L0jhuSvmIql3msZ
+         B115eMNTFC9sgXb98GngUZZZkhodK2yMjbi9csfI3MhMlxCkK4ux/rWOdLtGsCXkFUm+
+         wc9zvnB7iKNxNt4YM9AEsN2V+kOx7W8Tuluge2zRuTjoiJz1jJCfDCL7ZFlk5JrMqUiS
+         XJog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762635859; x=1763240659;
+        d=1e100.net; s=20230601; t=1762635871; x=1763240671;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=A/7GraEMhRfGX80xNeYuFThBogqrpJru9RaOOCG7cpM=;
-        b=S+bi9ys3VvAM58YECRaWOLLmpf/Ca2rPJHia8wqyAWmtWdJ9Byv5qKnVOu4GyxOVXv
-         FEcNKCOdUlxwy/QbkCeHGRT1ARkd/oj3v4OROaZJv7s8XsPGogMpCdFs2vG3b+zwac0c
-         Ef0puZpF/lIF1KqJpmNAciryinZcpWA51FTV2clOjQN2avefoB5vMSlWE87tKvE7vywq
-         2Zll7/SxLlvRwhFf5A4PIGLZbyCGFtLhIY3S+tgn+2++58XjUmGc3eunbMZUCRTPlD4o
-         Qinyy417qCh04sbm0H/7eg/3gVVTYAK3lEi/lTT1H8KzNk91+hRMtDurMcOn4YBMb61Z
-         izlg==
-X-Forwarded-Encrypted: i=1; AJvYcCXSC5ebdDyyxzoBpv5r/uFiJlBxzbV3QIVnaxzM93Oz4pNtUbtYf+H89g+0a2Xnm2vtDEo1dT25bXI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3Bylw61HwJRXcJd/GZdoRuqWlhxIu4/qMAe01lk/8EfqxhnAL
-	FIChuqpiVHEztRWje8iJjVX42VHge21OadeTsGnES17/3OfLSYLxAt3OedHzoRNSEos+ZKKHLiK
-	XCmC2jheGTrfDzWOVaZ2VGhRW0LaKsUw=
-X-Gm-Gg: ASbGncuYbxe4uXx1fuAXqSZbbO2qFFXUcREJfBTglVW7mX+29x2xJL8bxezt/3+Puoh
-	g4FlTwRg8mZ1d2i8cNUv10R3FthS8HO/bgFgK91NhF5Ug/YGmwAJV7GsG6V8FWq1h+SH9oEDiQU
-	w7iQOqYcL9FzHm3NxZn12E8zUWSID+U5bIFXj3q9UHxSNM+EPz0eLm++4BBb16rFzlBUF7iHSeE
-	9FsRtGlGMxvxNXXPzvtXIufdoxCpfeV4J/Lumvb8K+99KJqTh74un+X7JRucgG2asVYZWIgtwsi
-	uJcZRtW+wX4/sfnm93FkJjT0wtQ5
-X-Google-Smtp-Source: AGHT+IHYseG28VeVAj+noWF9xeZjKVsK8sMaLAuq9kZaFRIKXzdbOlTmekGRfg/kBIVHWNLoWwy6INlqqqY7HWNBhaU=
-X-Received: by 2002:a17:903:1a26:b0:25c:43f7:7e40 with SMTP id
- d9443c01a7336-297e1da7480mr46581775ad.10.1762635858817; Sat, 08 Nov 2025
- 13:04:18 -0800 (PST)
+        bh=QfBxOPKy7fDifZhi6nSzMhp9yBd8dZHhu1E69GOcGH8=;
+        b=YwFrJA/gMXWRelp0Y3Cb3hGxteiUlFtaBw4GpYQwGOaw3yjZJT6mIHXE5eMxTjHlh9
+         5yZ291GrBpTcn/tlb+tffPFWzgm0spS3K0+KYxREhWUxaIhDGo2ffpl31Jae0Wak/Lv/
+         Hsvyc5icMHTtTdgcVeE+NSIXQYM+6Q/JnKvJMNEDP4DTa0IDON/CnTlCP//IGmDY+ZF8
+         0RA+NuVdkGgyQpLOkongy3QZKLVJuTB2o9AHBGfsIBEG1j0WUJ4k1QLlqDzAz/1+WUM3
+         AwVlLwYKasTCH3O/Yj7Uq2wUkXxHnydRbIufrPNfmaHWfbtOnYorjiHqQJxzjCOPP+fO
+         tfUA==
+X-Forwarded-Encrypted: i=1; AJvYcCU9kkt0oHrR1eNvy9mfvu3wLQIMNRjwFcWZtGU29Ar+HKU2/EaVw9Y1iKOxhmrSHin/fcQ2nOb1MDY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYzGX/HH0yy+e0IkmqoHn82F+286vBpIgEptuJ0Yxeu8tth4U2
+	Ptq1mccUQEbjESj0JycGOFbyOwRj/lKRiZH0wOVP0ZRzzfzKqCsPznYB/xz/ix/UMd8UKYu8ANk
+	eJD632okl6stEgyOZDpv9wKYfxeaPeVglNNiR
+X-Gm-Gg: ASbGncuHslJp042mMBN2kBi5JZuIkNrW7EukZ6Wdu+YBP24XgvjWo2hhjuoXaDMGolo
+	UcYIxbRh4NDe1mRXmhZymFG9qP25LZsG+gWagyRoE56YGNdfvh1j6zJ0TnHxbvyhl+C+ii+44Mj
+	y2Odb3DXCFoYS5QIjS3n1GXSL2/vqXGBlNd7UmvoGg83KYKEWVrOOOH2iXa8LcYPRBhhN+YEMOe
+	VtPrUR8ETt+WM4pnd5LROuE1SWF7h2Zm5ZiPE2Fz9wzBCy/SsQBlYpd4YKzip5Xoag5J5pijsdc
+	M2lzxM33JxcgwWTu9YLbGF3RRl3v
+X-Google-Smtp-Source: AGHT+IH7CCB9+sHT4Gkgb/MZHAPPjHtlGiNAPQ/L76vDJz380AHMHqeGOPDuOGCkaP2NZNwlmUNoZ72lWfi2Lh0v9Ds=
+X-Received: by 2002:a17:903:1109:b0:24c:965a:f94d with SMTP id
+ d9443c01a7336-297e56df7b3mr51858835ad.46.1762635870574; Sat, 08 Nov 2025
+ 13:04:30 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251031-optimize_pll_driver-v3-0-92f3b2f36a83@amlogic.com>
-In-Reply-To: <20251031-optimize_pll_driver-v3-0-92f3b2f36a83@amlogic.com>
+References: <20251031-optimize_pll_driver-v3-0-92f3b2f36a83@amlogic.com> <20251031-optimize_pll_driver-v3-2-92f3b2f36a83@amlogic.com>
+In-Reply-To: <20251031-optimize_pll_driver-v3-2-92f3b2f36a83@amlogic.com>
 From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date: Sat, 8 Nov 2025 22:04:07 +0100
-X-Gm-Features: AWmQ_bmagaCbCEB_Hmpf3J-UvtRMuC04_pkThYtgGIcc82yezqw-vegzX0N5NQA
-Message-ID: <CAFBinCBSjKzHZ_k+c70B+YsJHiOS4qbjAgtnWaEeQy11xg94cA@mail.gmail.com>
-Subject: Re: [PATCH v3 0/4] clk: amlogic: optimize the PLL driver
+Date: Sat, 8 Nov 2025 22:04:19 +0100
+X-Gm-Features: AWmQ_blQKnrslPLjhIDEU0j0xcOWcQJDgXAAfDygmB-XCYvmXNGV_pkvKxIws4c
+Message-ID: <CAFBinCDbx96byeCvLY-Cq2d7r4+RipUVuER57mz1zZ4fgqRd4A@mail.gmail.com>
+Subject: Re: [PATCH v3 2/4] clk: amlogic: Improve the issue of PLL lock failures
 To: chuan.liu@amlogic.com
 Cc: Neil Armstrong <neil.armstrong@linaro.org>, Jerome Brunet <jbrunet@baylibre.com>, 
 	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
@@ -80,58 +80,18 @@ Content-Transfer-Encoding: quoted-printable
 On Fri, Oct 31, 2025 at 9:10=E2=80=AFAM Chuan Liu via B4 Relay
 <devnull+chuan.liu.amlogic.com@kernel.org> wrote:
 >
-> This patch series consists of four topics involving the amlogic PLL
-> driver:
-> - Fix out-of-range PLL frequency setting.
-> - Improve the issue of PLL lock failures.
-> - Add handling for PLL lock failure.
-> - Optimize PLL enable timing.
+> From: Chuan Liu <chuan.liu@amlogic.com>
 >
-> For easier review and management, these are submitted as a single
-> patch series.
+> Due to factors such as temperature and process variations, the
+> internal circuits of the PLL may require a longer time to reach a
+> steady state, which can result in occasional lock failures on some
+> SoCs under low-temperature conditions.
 >
-> The PLL timing optimization changes were merged into our internal
-> repository quite some time ago and have been verified on a large
-> number of SoCs:
-> - Already supported upstream: G12A, G12B, SM1, S4, A1, C3.
-> - Planned for upstream support: T7, A5, A4, S7, S7D, S6, etc.
+> After enabling the PLL and releasing its reset, a 20 us delay is
+> added at each step to provide enough time for the internal PLL
+> circuit to stabilize, thus reducing the probability of PLL lock
+> failure.
 >
-> Based on the upstream code base, I have performed functional testing
-> on G12A, A1, A5, A4, T7, S7, S7D, and S6, all of which passed.
-In the past I had most problems with Meson8/8b/8m2 CPU clock scaling
-(via sys_pll).
-So I tested this series locally using the following shell script on an
-Odroid-C1 (Meson8b):
-#!/bin/bash
-
-CPUFREQ=3D"/sys/bus/cpu/devices/cpu0/cpufreq"
-
-echo "userspace" > "${CPUFREQ}/scaling_governor"
-
-while read -ra LINE
-do
-    for (( i=3D0; i<${#LINE[*]}; i++ ))
-    do
-        for (( j=3D0; j<${#LINE[*]}; j++ ))
-        do
-            if [ $i !=3D $j ]
-            then
-                echo "${LINE[i]} -> ${LINE[j]}"
-                echo "${LINE[i]}" > "${CPUFREQ}/scaling_setspeed"
-                sleep 1s
-                echo "${LINE[j]}" > "${CPUFREQ}/scaling_setspeed"
-                sleep 1s
-            fi
-        done
-    done
-done < "${CPUFREQ}/scaling_available_frequencies"
-
-This has been running in a loop for two hours (at an ambient
-temperature of ~13=C2=B0C) and I haven't observed any problem.
-Since most patches are a no-op for my case I'll separately reply to
-patch #2 with my Tested-by (as that's what I've been effectively
-testing).
-
-
-Best regards,
-Martin
+> Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
+Tested-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com> # Odroi=
+d-C1
