@@ -1,94 +1,84 @@
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B115E1F4CB3
-	for <linux-clk@vger.kernel.org>; Sat,  8 Nov 2025 10:06:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF4EB28E9;
+	Sat,  8 Nov 2025 10:53:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762596376; cv=none; b=eVT+7fSfyahKpPTF9qWxC43lTj+3aQlK/74GBmp6SsTz5jKBcXlV6ML57bx/mmh0yyrl3FykOvC+Y678eDpEUGpGNp93oH5pmO/URPvarml0ZTNuR52FWuZB6OjYxevNSn9vgkY+chVOtd+u9qo+PU75RsXCQKlFgejQsT76s9w=
+	t=1762599196; cv=none; b=EK1d316kY3mMiLcEMM3vbFvLS3wQfeOUavCKPynF3mMjLIzo2QOs5zGo7nLaCoVXd8aOna1kf3Pp8ym95rg4G5HRIlZ2GGuW5q8tFycnX7AqogGgvHU37dHYObjaZysZof8yolwYQ9ERpVDGHydMpqR8qnD5A4uHEwmu+UVWywo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762596376; c=relaxed/simple;
-	bh=VAT68V4JAW7j3YsERRqYU0IbuX+/A0bGz5WwsQ6WMMA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RmYf7Bp4X/jNwH1MqauLB20+8xFlLqZrE+avPawM+lCGYYI2n2SFHNXUjNf7oSEcC9caUbirn5WAPjuAd0tAgWU0SwkG0uJxR61K152XKN3mxwD5fiZ065ImW0SP9yLDmkENBT1xoEV8xlrEvPx8Rfy1PMoL3HMTKTuDpq/VUxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=cVzQjiCZ; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="cVzQjiCZ"
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-47118259fd8so10421745e9.3
-        for <linux-clk@vger.kernel.org>; Sat, 08 Nov 2025 02:06:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1762596370; x=1763201170; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=RuDirgtJC0pc2QYVGZiTYLia1kGQp76vyqI+KUDhplM=;
-        b=cVzQjiCZeHSzanBQlpyJKh4+z3LPuU8uh5dXUBFZdHU7g9r5PhBqfFXByH7iEweGLJ
-         mvDmsrmjzqtUK2I40fcZVnGX0nSQ+s5J94RAmrNtLYsGc0St3EZU82tK5wjO+rRiQivS
-         ACW0+OU/D9YAkNVRU4sm3aszjUbDGW5SHPCAmu5++4uJA6h4YnI8w34uYxztK/X71O0J
-         UwCnLOdp/WCU/xfFJxegr/yn18ildIeVXRCucPs1vUwphh0vkqRv0elbGnwNhGn3dyBf
-         zdE+NTHQT4T16PIZgV9KMDdN8x9vyEj889riGRxF1hjtGGt8Ifg8E7OR6JncAUOVv2FS
-         JdyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762596370; x=1763201170;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=RuDirgtJC0pc2QYVGZiTYLia1kGQp76vyqI+KUDhplM=;
-        b=Ft+m8Nax6f3V4d11uNBCZcD1tHfHphpL6d3UYzzXFycTo0s/9qhB0wVOpjf86xmY1J
-         SmKrurQzev9OX4XyLJfxBTu4QBfu+5u5GPtAwuBhkBUA3UBxmO0NYokTHBT0HsDtAaa/
-         nKnF9P8AqAS1p4leUpKlUCOZ8Z4BWCIrHEzASiqhAAPlwZtfPyvqCv6Sh11ICdqnrDiq
-         X48f6JaeMFVL/WgmiSIe9ZDr180wgV8aoTq1+7BpNRCwLDeTK8C1zZ5Wxx6ChzknCpB7
-         UpjgtFgDqyE7JZfd/fGIFtdkYjRFNYyIlLcvtzUxnYGbpS3vSOhhaQhF0YRanuhR/P4d
-         p6iQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXjwAVtHWeIElJUzzeFQ2wW+pw22CKxLCXoUnXLGEdvbqAoMxdbnjGnMFzTFDjR4UrzGdo3utTGn78=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzhk27BdNjvBjVbS5BOV1JtlBu96YprQD6tQodzjHpLTrMcBXVX
-	uaXgUL0/1OEUbyxZ4+5dpZRSO0AdKuKt9sh+8aDxIz14wBbe3H6pOi7+YRIuGPVqUDk=
-X-Gm-Gg: ASbGncuEQycdkg2GV9a+aXFzDM23+3xlqx5dgQfBuTdG7+NA5gLaY0gh3ChJ/M34Faz
-	9tW7XIkJaLVtpdsg2yqXzEqYalujjhooPOjRf7SnwpGakABkUDzowTDTGIUrKd1WqYyGqcHeUXY
-	2T3t6M5LEDoVF5YV1K4lEjlYtivPs+yT0vLf6REcJJh9UdCgGHEyL1OGcGq9uqCE9bX0zggJvx+
-	qWi0lGpWmCg4MZBgkT9/51WIlQYPPsfmRBPSQLzMB5tub2sPHTASv/jLwoRFo5XITG1Bnjnoyxa
-	KHkIROQe4ZEwCG0E4sZlnit/1S0OPu6cmSVgDILJgqYKH1InrCxUq/6mgjYR6t4nilpJmer/S9W
-	73KKthiYcKUTDW1vgIkEBBp20J3c1hAd2vnbxhohrFQvpvVWgT9ZuTZnLumD+Y86o6d5Uc6AxTJ
-	EJ73v7VnzzzSI4X6usnq0=
-X-Google-Smtp-Source: AGHT+IEwTvJbTnqOqFEBuH//I389Jc3uyJjik9sgRzeUh7VNXL0eHgm1ckrlDuEIpXgostqWX0J+ZQ==
-X-Received: by 2002:a05:600c:1c02:b0:46e:4e6d:79f4 with SMTP id 5b1f17b1804b1-4777325b7a4mr18135395e9.15.1762596369980;
-        Sat, 08 Nov 2025 02:06:09 -0800 (PST)
-Received: from [192.168.50.4] ([82.78.167.134])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4776bd084d4sm123069375e9.14.2025.11.08.02.06.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 08 Nov 2025 02:06:08 -0800 (PST)
-Message-ID: <e250fc9e-5de9-47e2-8150-0319b2453fcb@tuxon.dev>
-Date: Sat, 8 Nov 2025 12:06:07 +0200
+	s=arc-20240116; t=1762599196; c=relaxed/simple;
+	bh=+T8UbxmRUBElbs/l/meuBSbogs0rWAfpBjF1yTwFVME=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AVwoFQvw9zVl+MlKnp5Pf+hUMMWupKEQp3G3Oxf0ORWieCGdLqZN0j+5vbcFLk57UGet7/AwaMyQ+rDVm4bkEyWpO4xc4j2UBhyAlmkQQOw8rCkpzTLbZwf8wRMPixM0O0d4grsJ1yK5SSeB5GNRTYwAPM9fXcoTFk1G7VGHFqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.98.2)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1vHgYw-000000008Kw-0aJw;
+	Sat, 08 Nov 2025 10:52:54 +0000
+Date: Sat, 8 Nov 2025 10:52:16 +0000
+From: Daniel Golle <daniel@makrotopia.org>
+To: Frank Wunderlich <linux@fw-web.de>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Sam Shih <sam.shih@mediatek.com>,
+	Frank Wunderlich <frank-w@public-files.de>,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH] clk: mediatek: mt7988-infracfg: fix USB port0 function
+ for U2 only
+Message-ID: <aQ8g4HM5XwlYim--@makrotopia.org>
+References: <20251108090726.7787-1-linux@fw-web.de>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: lan966x: remove unused dt-bindings include
-To: Robert Marko <robert.marko@sartura.hr>, mturquette@baylibre.com,
- sboyd@kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- daniel.machon@microchip.com
-Cc: luka.perkov@sartura.hr, benjamin.ryzman@canonical.com
-References: <20250924202810.1641883-1-robert.marko@sartura.hr>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Content-Language: en-US
-In-Reply-To: <20250924202810.1641883-1-robert.marko@sartura.hr>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251108090726.7787-1-linux@fw-web.de>
 
-
-
-On 9/24/25 23:27, Robert Marko wrote:
-> In preparation for LAN969x support, all instances referring to defines in
-> the LAN966x specific header were dropped, so its safe to drop its inclusion
-> in the driver.
+On Sat, Nov 08, 2025 at 10:07:25AM +0100, Frank Wunderlich wrote:
+> From: Sam Shih <sam.shih@mediatek.com>
 > 
-> Signed-off-by: Robert Marko <robert.marko@sartura.hr>
+> Fix the functionality of USB port0 U2 when U2 is enabled without U3.
+> This change addresses the issue where port0 U3 is shared with PCIE2,
+> ensuring that the port0 U2 function operates correctly without U3 support.
+> 
+> Additionally, add support to enable the U2 function instead of disabling
+> the entire USB port0 in the configuration for the 4 PCIe case. This
+> change ensures that U2 functionality is properly activated.
+> 
+> Fixes: 4b4719437d85 ("clk: mediatek: add drivers for MT7988 SoC")
+> Signed-off-by: Sam Shih <sam.shih@mediatek.com>
+> Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
+> ---
+>  drivers/clk/mediatek/clk-mt7988-infracfg.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/mediatek/clk-mt7988-infracfg.c b/drivers/clk/mediatek/clk-mt7988-infracfg.c
+> index ef8267319d91..da4ad365e30f 100644
+> --- a/drivers/clk/mediatek/clk-mt7988-infracfg.c
+> +++ b/drivers/clk/mediatek/clk-mt7988-infracfg.c
+> @@ -229,8 +229,9 @@ static const struct mtk_gate infra_clks[] = {
+>  			  CLK_IS_CRITICAL),
+>  	GATE_INFRA3_FLAGS(CLK_INFRA_USB_FRMCNT_CK_P1, "infra_usb_frmcnt_ck_p1", "usb_frmcnt_p1_sel",
+>  			  9, CLK_IS_CRITICAL),
+> -	GATE_INFRA3(CLK_INFRA_USB_PIPE, "infra_usb_pipe", "sspxtp_sel", 10),
+> -	GATE_INFRA3(CLK_INFRA_USB_PIPE_CK_P1, "infra_usb_pipe_ck_p1", "usb_phy_sel", 11),
+> +	GATE_INFRA3_FLAGS(CLK_INFRA_USB_PIPE, "infra_usb_pipe", "sspxtp_sel", 10, CLK_IS_CRITICAL),
+> +	GATE_INFRA3_FLAGS(CLK_INFRA_USB_PIPE_CK_P1, "infra_usb_pipe_ck_p1", "usb_phy_sel", 11,
+> +			  CLK_IS_CRITICAL),
 
-Applied to clk-microchip, thanks!
-
+I don't agree that those two clocks are critical. There are boards using
+MT7988 which don't even come with USB at all.
+Instead of marking the clock as criticl, the dependency of the USB host on
+them should be expressed properly.
