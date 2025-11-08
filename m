@@ -1,84 +1,124 @@
-Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+Received: from mail.hugovil.com (mail.hugovil.com [162.243.120.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF4EB28E9;
-	Sat,  8 Nov 2025 10:53:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AB581F7910;
+	Sat,  8 Nov 2025 14:57:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.120.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762599196; cv=none; b=EK1d316kY3mMiLcEMM3vbFvLS3wQfeOUavCKPynF3mMjLIzo2QOs5zGo7nLaCoVXd8aOna1kf3Pp8ym95rg4G5HRIlZ2GGuW5q8tFycnX7AqogGgvHU37dHYObjaZysZof8yolwYQ9ERpVDGHydMpqR8qnD5A4uHEwmu+UVWywo=
+	t=1762613869; cv=none; b=Fl8SuM4TWXg/w4JGI2O0K81fZHFmWvVKMWpz64qSbvhFEgKc31oNKnAImBWCxv4MS0197+XNP9YpdvuJc11JQqFGZPjqirfKHdr9JFE1JxvlKsanv75BVNpGTYz98TWT7KipVy9ivN/AwSzWDX5HqKajFWEz2424cMoR20pXdG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762599196; c=relaxed/simple;
-	bh=+T8UbxmRUBElbs/l/meuBSbogs0rWAfpBjF1yTwFVME=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AVwoFQvw9zVl+MlKnp5Pf+hUMMWupKEQp3G3Oxf0ORWieCGdLqZN0j+5vbcFLk57UGet7/AwaMyQ+rDVm4bkEyWpO4xc4j2UBhyAlmkQQOw8rCkpzTLbZwf8wRMPixM0O0d4grsJ1yK5SSeB5GNRTYwAPM9fXcoTFk1G7VGHFqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
-Received: from local
-	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
-	 (Exim 4.98.2)
-	(envelope-from <daniel@makrotopia.org>)
-	id 1vHgYw-000000008Kw-0aJw;
-	Sat, 08 Nov 2025 10:52:54 +0000
-Date: Sat, 8 Nov 2025 10:52:16 +0000
-From: Daniel Golle <daniel@makrotopia.org>
-To: Frank Wunderlich <linux@fw-web.de>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Sam Shih <sam.shih@mediatek.com>,
-	Frank Wunderlich <frank-w@public-files.de>,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH] clk: mediatek: mt7988-infracfg: fix USB port0 function
- for U2 only
-Message-ID: <aQ8g4HM5XwlYim--@makrotopia.org>
-References: <20251108090726.7787-1-linux@fw-web.de>
+	s=arc-20240116; t=1762613869; c=relaxed/simple;
+	bh=8HlDZj4Jp7gn8u+9Z14GdJCiPGrKol8DDr4U05JS4bI=;
+	h=Date:From:To:Cc:Message-Id:In-Reply-To:References:Mime-Version:
+	 Content-Type:Subject; b=ihq5yJy0qAka30qW03yO+GZQxVHukijd7VS7aPqQ6/nuxLfMqMYoJlqbIFk8yXBNmi25jA5Zb0T0CLsW//+lmNEwgPvvY5pEox2q09Ja3MKG1hz8hiYkzsf7WnlDAE7zdWdFH8Tpn8FCpk7/t2a2GCRu/tm7WSiKULgSqXrnmZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com; spf=pass smtp.mailfrom=hugovil.com; dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b=X3+/1ntP; arc=none smtp.client-ip=162.243.120.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hugovil.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b="X3+/1ntP"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hugovil.com
+	; s=x; h=Subject:Content-Transfer-Encoding:Mime-Version:Message-Id:Cc:To:From
+	:Date:subject:date:message-id:reply-to;
+	bh=dCqeDCHVTC0aJCIbqAO3XCT0AXxUyonF5z42GFLUBzk=; b=X3+/1ntPtv5AqOsrrJKVPTy2/w
+	91S4tWzHAZp4/UdZhK/V82I1cqfw1A8X9dT3SiWcGVQZFF7Jial6nQDHjIRw8G1+bd6rMmgx0eJWy
+	+/MOLLoInivmDPnQEzhRx/KcqkI7iQKVaKDr/i/wOuV/cmk7fkR0McvpF0knev2A7Jg0=;
+Received: from modemcable061.19-161-184.mc.videotron.ca ([184.161.19.61]:32796 helo=debian-lenovo)
+	by mail.hugovil.com with esmtpa (Exim 4.92)
+	(envelope-from <hugo@hugovil.com>)
+	id 1vHkNk-0006C6-Ry; Sat, 08 Nov 2025 09:57:37 -0500
+Date: Sat, 8 Nov 2025 09:57:35 -0500
+From: Hugo Villeneuve <hugo@hugovil.com>
+To: Chris Brandt <Chris.Brandt@renesas.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Biju Das
+ <biju.das.jz@bp.renesas.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Hien Huynh <hien.huynh.px@renesas.com>,
+ Nghia Vo <nghia.vo.zn@renesas.com>, "linux-renesas-soc@vger.kernel.org"
+ <linux-renesas-soc@vger.kernel.org>, "linux-clk@vger.kernel.org"
+ <linux-clk@vger.kernel.org>, "dri-devel@lists.freedesktop.org"
+ <dri-devel@lists.freedesktop.org>
+Message-Id: <20251108095735.fbd3db3e3d24f3f7baacb1b6@hugovil.com>
+In-Reply-To: <TYCPR01MB832759A2410465D46E7095DC8AC3A@TYCPR01MB8327.jpnprd01.prod.outlook.com>
+References: <20251105222530.979537-1-chris.brandt@renesas.com>
+	<20251105222530.979537-2-chris.brandt@renesas.com>
+	<20251107113058.f334957151d1a8dd94dd740b@hugovil.com>
+	<OS3PR01MB83195AF3F1964548E1512FBE8AC3A@OS3PR01MB8319.jpnprd01.prod.outlook.com>
+	<20251107140750.00bf68e4b2f5354015e65ad4@hugovil.com>
+	<OS3PR01MB8319E496A32EDBF5719BAB478AC3A@OS3PR01MB8319.jpnprd01.prod.outlook.com>
+	<20251107171809.6033526ffe5e57ec72bd4f96@hugovil.com>
+	<TYCPR01MB832759A2410465D46E7095DC8AC3A@TYCPR01MB8327.jpnprd01.prod.outlook.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251108090726.7787-1-linux@fw-web.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 184.161.19.61
+X-SA-Exim-Mail-From: hugo@hugovil.com
+X-Spam-Level: 
+X-Spam-Report: 
+	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+	* -1.8 NICE_REPLY_A Looks like a legit reply (A)
+Subject: Re: [PATCH v4 1/2] clk: renesas: rzg2l: Remove DSI clock rate
+ restrictions
+X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
+X-SA-Exim-Scanned: Yes (on mail.hugovil.com)
 
-On Sat, Nov 08, 2025 at 10:07:25AM +0100, Frank Wunderlich wrote:
-> From: Sam Shih <sam.shih@mediatek.com>
-> 
-> Fix the functionality of USB port0 U2 when U2 is enabled without U3.
-> This change addresses the issue where port0 U3 is shared with PCIE2,
-> ensuring that the port0 U2 function operates correctly without U3 support.
-> 
-> Additionally, add support to enable the U2 function instead of disabling
-> the entire USB port0 in the configuration for the 4 PCIe case. This
-> change ensures that U2 functionality is properly activated.
-> 
-> Fixes: 4b4719437d85 ("clk: mediatek: add drivers for MT7988 SoC")
-> Signed-off-by: Sam Shih <sam.shih@mediatek.com>
-> Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
-> ---
->  drivers/clk/mediatek/clk-mt7988-infracfg.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/mediatek/clk-mt7988-infracfg.c b/drivers/clk/mediatek/clk-mt7988-infracfg.c
-> index ef8267319d91..da4ad365e30f 100644
-> --- a/drivers/clk/mediatek/clk-mt7988-infracfg.c
-> +++ b/drivers/clk/mediatek/clk-mt7988-infracfg.c
-> @@ -229,8 +229,9 @@ static const struct mtk_gate infra_clks[] = {
->  			  CLK_IS_CRITICAL),
->  	GATE_INFRA3_FLAGS(CLK_INFRA_USB_FRMCNT_CK_P1, "infra_usb_frmcnt_ck_p1", "usb_frmcnt_p1_sel",
->  			  9, CLK_IS_CRITICAL),
-> -	GATE_INFRA3(CLK_INFRA_USB_PIPE, "infra_usb_pipe", "sspxtp_sel", 10),
-> -	GATE_INFRA3(CLK_INFRA_USB_PIPE_CK_P1, "infra_usb_pipe_ck_p1", "usb_phy_sel", 11),
-> +	GATE_INFRA3_FLAGS(CLK_INFRA_USB_PIPE, "infra_usb_pipe", "sspxtp_sel", 10, CLK_IS_CRITICAL),
-> +	GATE_INFRA3_FLAGS(CLK_INFRA_USB_PIPE_CK_P1, "infra_usb_pipe_ck_p1", "usb_phy_sel", 11,
-> +			  CLK_IS_CRITICAL),
+On Fri, 7 Nov 2025 23:25:40 +0000
+Chris Brandt <Chris.Brandt@renesas.com> wrote:
 
-I don't agree that those two clocks are critical. There are boards using
-MT7988 which don't even come with USB at all.
-Instead of marking the clock as criticl, the dependency of the USB host on
-them should be expressed properly.
+> Hi Hugo,
+> 
+> On Fri, Nov 7, 2025 5:18 PM, Hugo Villeneuve wrote:
+> 
+> > > > +				if (params->pl5_intin < PLL5_INTIN_MIN ||
+> > > > +				    params->pl5_intin > PLL5_INTIN_MAX)
+> > >
+> > >
+> > > And if you want the same behavior as before, shouldn't the comparison be with "<=" and ">=" ?
+> 
+> > I didn't see an answer to my question/comment about comparison with "<=" and ">=" ?
+> 
+> The hardware manual says:
+> 
+> INTIN		20 to 320
+> 
+> So, both 20 and 320 are valid values.
+> 
+> Meaning I only want to 'continue' (ie, skip)   if ( x <=19 || x >= 321 )
+> 
+> or rather
+> 
+> if ( x < 20 || x > 320 )
+> 
+> So the original code of...
+> 
+> +				params->pl5_intin = (foutvco_rate * params->pl5_refdiv) /
+> +						    (EXTAL_FREQ_IN_MEGA_HZ * MEGA);
+> +				if (params->pl5_intin < PLL5_INTIN_MIN + 1 ||
+> +				    params->pl5_intin > PLL5_INTIN_MAX - 1)
+> +					continue;
+> 
+> ....was wrong.
+> 
+> I forgot to mention that in the patch.     :)
+
+Hi Chris,
+thank you, that is clearer now.
+
+Hugo.
+
+> 
+> Thanks,
+> Chris
+> 
+> 
+
+
+-- 
+Hugo Villeneuve <hugo@hugovil.com>
