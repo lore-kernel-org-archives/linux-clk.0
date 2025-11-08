@@ -1,92 +1,129 @@
-Received: from mxout4.routing.net (mxout4.routing.net [134.0.28.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45C201D61B7;
-	Sat,  8 Nov 2025 09:07:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.0.28.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60E0643AA6
+	for <linux-clk@vger.kernel.org>; Sat,  8 Nov 2025 10:00:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762592868; cv=none; b=q2jR29DsfL+a9jSKCrWAVKCFTVXfieEuFQvJs2m8mcbA6nF9R7kbqmhEf+vgxH6MqSwZ30P5d88HvNW6dHhtgw/EQI51N5SCAn0oUVAFqJ+50dsprS7Pnw8Mh/h/0kRa5KSaa468kzwM2NJofvVH2OQAXBp15HN1oeHxqlSaxWY=
+	t=1762596010; cv=none; b=idTAnn1/JuT2QohA6aClCGJ1mxe/yFvSV9zo2kV8e0RUszA0xrb5jOC6pb+CnayzV6Ssoop2DhZJzp7FhdFF61DqVXn8N/HeSLWq5nLtxUn1gna2dqKnSQfKZLPVIZ9qa+Bp8DQrNqDcQvgYWn2hxJoE0qk05gGzbW2YAFB8wXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762592868; c=relaxed/simple;
-	bh=yGnBbrMMINnmH9GttPyMTSVm2IgfOZLXzrUAP9sQ24w=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YKshNayLrQ/eqWfDHuLYX1QzoLzByKhgONwOsgIjc9L19+W5BJAaPweO4385aKJkkD103CL/5FAXWXzGWzUYmwq5PorviMQNMZK3ZLKqgpH4dsmc8UpE7OM7imJ1PpEj9GslacpRy2RXV7FjYUE8VsIKB10Hru3H3vcL9GVJfDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de; spf=pass smtp.mailfrom=fw-web.de; dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b=vYnMheWx; arc=none smtp.client-ip=134.0.28.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fw-web.de
+	s=arc-20240116; t=1762596010; c=relaxed/simple;
+	bh=Auc0X9Uhro11+Rp/Gqlv4V4jLrVrIxiGCG5AoxRW0Fs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fkvMROJVu/XejGFGXHckMBg1t4zoqG0g5js9pgWKdZiH+fB31E2dAgcnS5F2bZJsCvB55bzA+qqfriW4cMV5rPzI4Lh8q4FJowzDt1lY59KGqwxhgXq/MwdWqIrHvWsdFLlXJffAI0uVkeaKpfgmvlEUoKZ9GOaTyKjp3sWQR6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=Ki6Po93p; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="vYnMheWx"
-Received: from mxbulk.masterlogin.de (unknown [192.168.10.85])
-	by mxout4.routing.net (Postfix) with ESMTP id 61B22100823;
-	Sat,  8 Nov 2025 09:07:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailerdienst.de;
-	s=routing; t=1762592856;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=1CyknkAme4elZV84/7MK05eFN3kQAntRvNuaIK/zCqc=;
-	b=vYnMheWxSMz8itfJI9sBWPH1o2+/WDByDnUay0zuG7rM5ziF+ocP284TttKHXLGhCUTqYl
-	tXeI2VMgOWgAT61e7yLUa9fecAiCa8ufoPzVqdCVW66jgJA8Q45bVlmp8K41rNANbiz9Jr
-	LnaiMtpPdTzQl+b4t1pu6ghhuuQJN1Q=
-Received: from frank-u24.. (fttx-pool-217.61.148.22.bambit.de [217.61.148.22])
-	by mxbulk.masterlogin.de (Postfix) with ESMTPSA id 331521226CD;
-	Sat,  8 Nov 2025 09:07:36 +0000 (UTC)
-From: Frank Wunderlich <linux@fw-web.de>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Sam Shih <sam.shih@mediatek.com>,
-	Frank Wunderlich <frank-w@public-files.de>,
-	Daniel Golle <daniel@makrotopia.org>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: [PATCH] clk: mediatek: mt7988-infracfg: fix USB port0 function for U2 only
-Date: Sat,  8 Nov 2025 10:07:25 +0100
-Message-ID: <20251108090726.7787-1-linux@fw-web.de>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="Ki6Po93p"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-47775fb6c56so2428675e9.1
+        for <linux-clk@vger.kernel.org>; Sat, 08 Nov 2025 02:00:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1762596004; x=1763200804; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=HfKm+sCMoLv848O0IaBXkyVHVooRGLLewfD9ZUo50nE=;
+        b=Ki6Po93pFp1HgBALIZkpkYYRL2GonCZUU6T8H35sg+soapI4a55aa9JnPerH43vjBX
+         PD4shcBjc9XZkSvQm/DwxHwvIfvOk7Fg8cSwQkMJ3Y7C7Prt58k7dnN10w+gI4HnTCKR
+         YcGO8OgBWK23Q5lSR3aH+kLka+03k9hcdrEn9jZHR0qRA5qweBJR1hegX0svRHL+PUwf
+         saLKVtKDgg2nMajBbwmPsTLA82AGzYBhB3SBhRMHSDZ5qicJ1WcBIxSBv6gPdt+ZG/9+
+         WY1O1VsFa6DWsZjgVU5y7PNX5Aa28WPmpAraaq9lcwW9tM7ZPCoX+zPY9+edc6U9YNH3
+         eU9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762596004; x=1763200804;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HfKm+sCMoLv848O0IaBXkyVHVooRGLLewfD9ZUo50nE=;
+        b=ol7fdpHpN0HZ8nxYUCiPuRExUrb5mMRidf6vrVqQuNazgwjLEHT7atTDc4k51j1rvp
+         DDCUrzv+N2sN4UkBWOVtWBh4hDXC6PreOCUCbi+YJ6AOEhtpiGHjGwi++tMQIS3VaF0j
+         uC6iZAq7C7H/z9Acfuj467B7/8wU5CP7KW0QSAIc/5NDP+H09ZGlzQR4RTTF7FKM0JmU
+         wpCUi1KYkGPakyh12WO88tbnQZCZ4XmmVmSdebPp2SNnsYodgpxDgPZx1GWBu6ZJyQ0w
+         dzoGglqeKQFstV00bKA5HClQBrtsNTJuB/IsspE7GtIurgFCXy1ZDFYMIbhQzkY3xjB2
+         HnWA==
+X-Gm-Message-State: AOJu0YzB7ST5GCjun7oIoNuW8OfTy6rCCmxAVmwVYCr0U8mDz1awRy3Y
+	PgIKaGv9Iu7k9CgQowNB6edC3MFemo6UPKoXmmEzCnCMtdOXID4df9KshVOJa0MMob0=
+X-Gm-Gg: ASbGncv5kDGnFn+6XV6J/K9GcvKYfongMtER7rETShCfVkZp3J3s7BFEdeFfLLDFjt7
+	hXG51Db2QDtOXhAYWpLw+EzGcPl9Loa1hK0L6Rn/SYXqTUzkPlN5m7b72OicO0RqG4g0qVvvK23
+	P5pe2Vsp7e1KknSi9iS3NKxK6wW78esSt8/g0wXAPLHcEMSQ8cRf68k1FYEjbqCaJRJVKg3+7u/
+	jvHgfDUKytVs0nP7hy3YWgAihpbgzAUsbZxHAOKfiEEdHHGCkD0j0c/MZipOSUAM5sj/T5spGLJ
+	MsgFlr+BCYLCn4KOZJ5D8TBwCNYFBUClmox+qt4mN6BvgPtIutfm8dtnOvjHBScLgmgs3ClsVOM
+	iOWU5mEQ+8bb3Zn/vDtK366dPXcV5mu1RBPagrEwR51VY07R7bBs7ifvPIG1qvW5TlMZ49gPukI
+	oJaWmvzHW5FYr9o6ZgidM=
+X-Google-Smtp-Source: AGHT+IEa5HkAwCtUWAqywoBTOY3tVN9yf0jwTmnq2Cg9AjaVrXNzNWnrvkGMw6skKp8s7Y/nZrMCtg==
+X-Received: by 2002:a05:600c:5253:b0:477:19bc:1fe2 with SMTP id 5b1f17b1804b1-47773228b73mr15623725e9.6.1762596004492;
+        Sat, 08 Nov 2025 02:00:04 -0800 (PST)
+Received: from [192.168.50.4] ([82.78.167.134])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4775ce2cde0sm213265715e9.15.2025.11.08.02.00.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 08 Nov 2025 02:00:04 -0800 (PST)
+Message-ID: <2aaf169a-3dab-4ddc-a095-396619983406@tuxon.dev>
+Date: Sat, 8 Nov 2025 12:00:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND] clk: at91: sam9x7: Use kmalloc_array() instead of
+ kmalloc()
+To: Sidharth Seela <sidharthseela@gmail.com>, mturquette@baylibre.com,
+ sboyd@kernel.org, nicolas.ferre@microchip.com,
+ alexandre.belloni@bootlin.com, varshini.rajendran@microchip.com
+Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
+ david.hunter.linux@gmail.com
+References: <20250924145552.55058-1-sidharthseela@gmail.com>
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Content-Language: en-US
+In-Reply-To: <20250924145552.55058-1-sidharthseela@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Sam Shih <sam.shih@mediatek.com>
+Hi, Sidharth,
 
-Fix the functionality of USB port0 U2 when U2 is enabled without U3.
-This change addresses the issue where port0 U3 is shared with PCIE2,
-ensuring that the port0 U2 function operates correctly without U3 support.
+On 9/24/25 17:55, Sidharth Seela wrote:
+> Replace kmalloc with kmalloc array in clk/at91/sam9x7.c. Refactor to new
+> API, for cases with dynamic size calculations inside kmalloc().
+> 
+> Resend is to correct previously sent patches mailing address.
+> 
+> Signed-off-by: Sidharth Seela <sidharthseela@gmail.com>
+> ---
+> diff --git a/drivers/clk/at91/sam9x7.c b/drivers/clk/at91/sam9x7.c
+> index ffab32b047a0..0c0a746a183d 100644
+> --- a/drivers/clk/at91/sam9x7.c
+> +++ b/drivers/clk/at91/sam9x7.c
+> @@ -748,9 +748,9 @@ static void __init sam9x7_pmc_setup(struct device_node *np)
+>  	if (!sam9x7_pmc)
+>  		return;
+>  
+> -	clk_mux_buffer = kmalloc(sizeof(void *) *
+> -				 (ARRAY_SIZE(sam9x7_gck)),
+> -				 GFP_KERNEL);
+> +	clk_mux_buffer = kmalloc_array(ARRAY_SIZE(sam9x7_gck),
+> +					sizeof(void *),
 
-Additionally, add support to enable the U2 function instead of disabling
-the entire USB port0 in the configuration for the 4 PCIe case. This
-change ensures that U2 functionality is properly activated.
+sizeof(*clk_mux_buffer)
 
-Fixes: 4b4719437d85 ("clk: mediatek: add drivers for MT7988 SoC")
-Signed-off-by: Sam Shih <sam.shih@mediatek.com>
-Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
----
- drivers/clk/mediatek/clk-mt7988-infracfg.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Also, this line should be aligned on the above "(". Please run checkpatch.pl.
 
-diff --git a/drivers/clk/mediatek/clk-mt7988-infracfg.c b/drivers/clk/mediatek/clk-mt7988-infracfg.c
-index ef8267319d91..da4ad365e30f 100644
---- a/drivers/clk/mediatek/clk-mt7988-infracfg.c
-+++ b/drivers/clk/mediatek/clk-mt7988-infracfg.c
-@@ -229,8 +229,9 @@ static const struct mtk_gate infra_clks[] = {
- 			  CLK_IS_CRITICAL),
- 	GATE_INFRA3_FLAGS(CLK_INFRA_USB_FRMCNT_CK_P1, "infra_usb_frmcnt_ck_p1", "usb_frmcnt_p1_sel",
- 			  9, CLK_IS_CRITICAL),
--	GATE_INFRA3(CLK_INFRA_USB_PIPE, "infra_usb_pipe", "sspxtp_sel", 10),
--	GATE_INFRA3(CLK_INFRA_USB_PIPE_CK_P1, "infra_usb_pipe_ck_p1", "usb_phy_sel", 11),
-+	GATE_INFRA3_FLAGS(CLK_INFRA_USB_PIPE, "infra_usb_pipe", "sspxtp_sel", 10, CLK_IS_CRITICAL),
-+	GATE_INFRA3_FLAGS(CLK_INFRA_USB_PIPE_CK_P1, "infra_usb_pipe_ck_p1", "usb_phy_sel", 11,
-+			  CLK_IS_CRITICAL),
- 	GATE_INFRA3(CLK_INFRA_USB_UTMI, "infra_usb_utmi", "top_xtal", 12),
- 	GATE_INFRA3(CLK_INFRA_USB_UTMI_CK_P1, "infra_usb_utmi_ck_p1", "top_xtal", 13),
- 	GATE_INFRA3(CLK_INFRA_USB_XHCI, "infra_usb_xhci", "usb_xhci_sel", 14),
--- 
-2.43.0
+Could you please update the other at91 clock drivers?
+
+[1]
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/coding-style.rst
+
+> +					GFP_KERNEL);
+
+This like could fit on the above one.
+
+Thank you,
+Claudiu
+
+>  	if (!clk_mux_buffer)
+>  		goto err_free;
+>  
 
