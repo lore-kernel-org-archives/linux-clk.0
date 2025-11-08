@@ -1,44 +1,44 @@
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ED092BD00C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 313062BD02A;
 	Sat,  8 Nov 2025 01:05:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762563908; cv=none; b=urEWXXcNBF+Nx3+vo34vkVCzXqV+p5+3y8icnoZMH6IQsYDyJ9/7OgCTI1ErjLH4Rfvi99XICVR8b46mF1uVu4p7Nfn0P7mEHg51bOR3CxiXASGxoLqPhoydiveK/bQ9X8mPTk6JZjJscxD6UZx4K9p5Xi1g5AzTUVG0/6DnhPA=
+	t=1762563908; cv=none; b=ExNBYRxyo0O2Pwc/zGYvszS11QSBGaU+PfrzeR0BtSj/NQ/gcxGg2BFHO0+C4rpJ/PRAAaza95G8NEcHGDKjyGY8yU7g9g01ePf2oL/JtHS4Z9swhTqmHaol15NDzi1+Q5iCmaODHSvgPnbY0s21BrrcUAs4eE6JvkPPYvzI54U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1762563908; c=relaxed/simple;
-	bh=rcaF2LorUPpcp1UoClh6v6q1v5E8XD+OGpP+/qhTLDc=;
+	bh=QFqYOVp2cJw82Nyx03UWkDrYmwXCXjoLwhStiPQw/wY=;
 	h=From:Date:Subject:MIME-Version:Message-Id:In-Reply-To:To:Cc:
-	 Content-Type:References; b=L4vPNU9/k0zqCrsVQk8a55JBe4jprHXzkMXU1umhYrCcmcwIncnL3W2+ANfVrDDHVXMm+3YEfQZpCL0mc+ArEyap4+R99JOz2t08rCvPIQvnV8jAIysRYC3VV5v6LxdDth72YlGNYIKEuVUO7oKQYTxKAFtxRF5FkcQr1xvfvGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=av5z72X9; arc=none smtp.client-ip=210.118.77.12
+	 Content-Type:References; b=j6LgIOVsfZayrw1Ijf8qReF/0zZCHpXy2sbSLJoCJKzs/bRuA8Uy+gYstyPALPiP5JFyTfZr5qC2JcSVejiDZqiwHQRGkkKc4JCjpkQEFB/+AJZs51z+npE4HcMrbHJnKpMP8LPDIsP9ZJMsyYpRO3clH6o3rODPtZaVB41x3DA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=r3kyRRXe; arc=none smtp.client-ip=210.118.77.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="av5z72X9"
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20251108010504euoutp02a1e8506f2ff46898975bf6ef7f8cbe3a~14ohO5j2E3059730597euoutp02B;
-	Sat,  8 Nov 2025 01:05:04 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20251108010504euoutp02a1e8506f2ff46898975bf6ef7f8cbe3a~14ohO5j2E3059730597euoutp02B
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="r3kyRRXe"
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20251108010457euoutp01cedb2c8262766eb1481041d2c81944ca~14obFmMqQ2093120931euoutp01V;
+	Sat,  8 Nov 2025 01:04:57 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20251108010457euoutp01cedb2c8262766eb1481041d2c81944ca~14obFmMqQ2093120931euoutp01V
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1762563904;
-	bh=sLkroN0kK8vOgsvUZLol3ymYXaJvmpdlu3H4vNZDB3s=;
+	s=mail20170921; t=1762563897;
+	bh=KZDMheUIPVF8t1/EjXIGU5z5BgHTqhezvC9uuZ+yk4w=;
 	h=From:Date:Subject:In-Reply-To:To:Cc:References:From;
-	b=av5z72X9vmTVJIgfjcDYU+G0AaynjZtJ4mCte9ed7AUmAdsK7KAF7xkAGAF92Ub7H
-	 KZiTH+M137p34eEhMZknG/ck9WNu0c+8bRbAC72Bndo1XHMTRsw4t+BnQ5zIK56ZqZ
-	 2NPrKnV6bKroX+seOmnySYaUNIxjvQ0+f7EGYcC8=
+	b=r3kyRRXeT9wkwgWjYLENKSzeOqhQIXAOPGkBH8ALiDqiXV+fnr75uGL45pauFAbC2
+	 ucIsQ68pdfqbDCT7et3UH83FEFUxN9aftU5Bft/VMlS/Vb86ReGgyPxHHLb2tfdYi2
+	 M2N8FK5G4jwu+6JeRHL5wdsYGMrtCI7CQNUiNH8M=
 Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20251108010503eucas1p1be26568a176a11990d8d89487531803d~14ogR-4ZD2620826208eucas1p1B;
-	Sat,  8 Nov 2025 01:05:03 +0000 (GMT)
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20251108010456eucas1p2a8b17a5c7403ce133e8ed2dd3481c4f0~14oZ_LScs0821708217eucas1p2A;
+	Sat,  8 Nov 2025 01:04:56 +0000 (GMT)
 Received: from AMDC4942.eu.corp.samsungelectronics.net (unknown
 	[106.210.136.40]) by eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20251108010501eusmtip2aea0981d662f58554103fd4806fde1fb~14oe4RNVP2515425154eusmtip2b;
-	Sat,  8 Nov 2025 01:05:01 +0000 (GMT)
+	20251108010454eusmtip2c99c393e840653a6a60f6de581bc622c~14oYiDJKP2515425154eusmtip2Y;
+	Sat,  8 Nov 2025 01:04:54 +0000 (GMT)
 From: Michal Wilczynski <m.wilczynski@samsung.com>
-Date: Sat, 08 Nov 2025 02:04:41 +0100
-Subject: [PATCH RFC 07/13] drm: bridge: inno_hdmi: Add .disable platform
- operation
+Date: Sat, 08 Nov 2025 02:04:37 +0100
+Subject: [PATCH RFC 03/13] dt-bindings: phy: Add
+ starfive,jh7110-inno-hdmi-phy
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -46,7 +46,7 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251108-jh7110-clean-send-v1-7-06bf43bb76b1@samsung.com>
+Message-Id: <20251108-jh7110-clean-send-v1-3-06bf43bb76b1@samsung.com>
 In-Reply-To: <20251108-jh7110-clean-send-v1-0-06bf43bb76b1@samsung.com>
 To: Michal Wilczynski <m.wilczynski@samsung.com>,  Conor Dooley
 	<conor@kernel.org>, Rob Herring <robh@kernel.org>,  Krzysztof Kozlowski
@@ -72,60 +72,111 @@ Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org, linux-phy@lists.infradead.org, 
 	dri-devel@lists.freedesktop.org, linux-riscv@lists.infradead.org
 X-Mailer: b4 0.15-dev
-X-CMS-MailID: 20251108010503eucas1p1be26568a176a11990d8d89487531803d
+X-CMS-MailID: 20251108010456eucas1p2a8b17a5c7403ce133e8ed2dd3481c4f0
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20251108010503eucas1p1be26568a176a11990d8d89487531803d
+X-RootMTR: 20251108010456eucas1p2a8b17a5c7403ce133e8ed2dd3481c4f0
 X-EPHeader: CA
-X-CMS-RootMailID: 20251108010503eucas1p1be26568a176a11990d8d89487531803d
+X-CMS-RootMailID: 20251108010456eucas1p2a8b17a5c7403ce133e8ed2dd3481c4f0
 References: <20251108-jh7110-clean-send-v1-0-06bf43bb76b1@samsung.com>
-	<CGME20251108010503eucas1p1be26568a176a11990d8d89487531803d@eucas1p1.samsung.com>
+	<CGME20251108010456eucas1p2a8b17a5c7403ce133e8ed2dd3481c4f0@eucas1p2.samsung.com>
 
-The Innosilicon HDMI driver supports platform-specific behavior through
-the `inno_hdmi_plat_ops`. While it provides an `.enable` hook for
-platform-specific power up sequences (like enabling PHYs), it lacks a
-corresponding hook for power down.
+Add the dt-binding for the StarFive JH7110 Innosilicon HDMI PHY.
 
-This patch adds a new `.disable` op to the `inno_hdmi_plat_ops` struct
-and calls it at the beginning of `inno_hdmi_bridge_atomic_disable()`.
-
-This allows platform specific drivers, such as the StarFive JH7110,
-to implement their own power down sequence (e.g., calling
-phy_power_off() and clk_disable_unprepare()).
+This device is a child of the starfive,jh7110-hdmi-mfd node. It
+functions as both a PHY provider for the controller and as a clock
+provider for the variable pixel clock (hdmi_pclk), which it generates
+from its refoclk.
 
 Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
 ---
- drivers/gpu/drm/bridge/inno-hdmi.c | 4 ++++
- include/drm/bridge/inno_hdmi.h     | 1 +
- 2 files changed, 5 insertions(+)
+ .../phy/starfive,jh7110-inno-hdmi-phy.yaml         | 65 ++++++++++++++++++++++
+ MAINTAINERS                                        |  1 +
+ 2 files changed, 66 insertions(+)
 
-diff --git a/drivers/gpu/drm/bridge/inno-hdmi.c b/drivers/gpu/drm/bridge/inno-hdmi.c
-index 9a2370ed2f208caf3dafb4a4d8884516d489263c..37ed7169bfce755cc5bddca16c78d4f112ea33e6 100644
---- a/drivers/gpu/drm/bridge/inno-hdmi.c
-+++ b/drivers/gpu/drm/bridge/inno-hdmi.c
-@@ -887,6 +887,10 @@ static void inno_hdmi_bridge_atomic_disable(struct drm_bridge *bridge,
- 					    struct drm_atomic_state *state)
- {
- 	struct inno_hdmi *hdmi = bridge_to_inno_hdmi(bridge);
-+	const struct inno_hdmi_plat_ops *plat_ops = hdmi->plat_data->ops;
+diff --git a/Documentation/devicetree/bindings/phy/starfive,jh7110-inno-hdmi-phy.yaml b/Documentation/devicetree/bindings/phy/starfive,jh7110-inno-hdmi-phy.yaml
+new file mode 100644
+index 0000000000000000000000000000000000000000..a737ba767d4aa7c6cba197dc0314bdbb163930c8
+--- /dev/null
++++ b/Documentation/devicetree/bindings/phy/starfive,jh7110-inno-hdmi-phy.yaml
+@@ -0,0 +1,65 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/phy/starfive,jh7110-inno-hdmi-phy.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+	if (plat_ops && plat_ops->disable)
-+		plat_ops->disable(hdmi->dev);
++title: StarFive JH7110 Innosilicon INNO HDMI PHY
++
++maintainers:
++  - Michal Wilczynski <m.wilczynski@samsung.com>
++
++description:
++  The PHY portion of the StarFive JH7110 INNO HDMI IP.
++
++properties:
++  compatible:
++    const: starfive,jh7110-inno-hdmi-phy
++
++  clocks:
++    maxItems: 1
++
++  clock-names:
++    const: refoclk
++
++  '#clock-cells':
++    const: 0
++
++  clock-output-names:
++    const: hdmi_pclk
++
++  '#phy-cells':
++    const: 0
++
++required:
++  - compatible
++  - clocks
++  - clock-names
++  - '#clock-cells'
++  - clock-output-names
++  - '#phy-cells'
++
++additionalProperties: false
++
++examples:
++  - |
++    soc {
++        #address-cells = <1>;
++        #size-cells = <1>;
++
++        hdmi_mfd: hdmi@29590000 {
++            compatible = "starfive,jh7110-hdmi-mfd";
++            reg = <0x29590000 0x4000>;
++
++            hdmi_phy: phy {
++                compatible = "starfive,jh7110-inno-hdmi-phy";
++                clocks = <&xin24m>;
++                clock-names = "refoclk";
++                #clock-cells = <0>;
++                clock-output-names = "hdmi_pclk";
++                #phy-cells = <0>;
++            };
++        };
++    };
++
++...
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 99434e54dc39494153677a6ca359d70f2ba2ddb3..a75ba7a44ee84db6a75b91c1a0867a37db2ebcdb 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -24047,6 +24047,7 @@ F:	drivers/net/ethernet/stmicro/stmmac/dwmac-starfive.c
+ STARFIVE JH7110 DISPLAY SUBSYSTEM
+ M:	Michal Wilczynski <m.wilczynski@samsung.com>
+ S:	Maintained
++F:	Documentation/devicetree/bindings/phy/starfive,jh7110-inno-hdmi-phy.yaml
+ F:	Documentation/devicetree/bindings/soc/starfive/starfive,jh7110-vout-subsystem.yaml
  
- 	inno_hdmi_standby(hdmi);
- }
-diff --git a/include/drm/bridge/inno_hdmi.h b/include/drm/bridge/inno_hdmi.h
-index 019680622324197e046a1c606ec25aabe95537b4..ca554c525fd6bf63a4a8b9721e967bc473492f0a 100644
---- a/include/drm/bridge/inno_hdmi.h
-+++ b/include/drm/bridge/inno_hdmi.h
-@@ -16,6 +16,7 @@ struct inno_hdmi_i2c;
- 
- struct inno_hdmi_plat_ops {
- 	void (*enable)(struct device *pdev, struct drm_display_mode *mode);
-+	void (*disable)(struct device *pdev);
- };
- 
- struct inno_hdmi_phy_config {
+ STARFIVE JH7110 DPHY RX DRIVER
 
 -- 
 2.34.1
