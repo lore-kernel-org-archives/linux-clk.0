@@ -1,164 +1,92 @@
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mxout4.routing.net (mxout4.routing.net [134.0.28.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D8DA28980E
-	for <linux-clk@vger.kernel.org>; Sat,  8 Nov 2025 08:34:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45C201D61B7;
+	Sat,  8 Nov 2025 09:07:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.0.28.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762590848; cv=none; b=qSD7FyCSBtR4c0G8FnNZW9HPgPVDyRhRFhr8hUjqhihxXghT8hhhqODf4osa5mQcjo4NwWFexJShx30jiyfQjht0gu+yuQrfjh1C/aIq2c3j7eDN4jjB4NwoynOzvgsqIyMzNe77cdSpRS8MYOWQdzDGHeJh2RfCzX3V20Rotrg=
+	t=1762592868; cv=none; b=q2jR29DsfL+a9jSKCrWAVKCFTVXfieEuFQvJs2m8mcbA6nF9R7kbqmhEf+vgxH6MqSwZ30P5d88HvNW6dHhtgw/EQI51N5SCAn0oUVAFqJ+50dsprS7Pnw8Mh/h/0kRa5KSaa468kzwM2NJofvVH2OQAXBp15HN1oeHxqlSaxWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762590848; c=relaxed/simple;
-	bh=HnNwRPXSXIr3vPDeNssiY+D+lEiNX4tnPtl5uSUQBAU=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=Ibadn6zZr9kCfiWUSWyG7Zn2kyKDuhnixgIDeiy9JyhcXlapnDu2uk5ANOXX/oTO4rntvB3vb6Xe9lG1rua6bWNpNgdg1OxoNS2qxFBCe52HNn//f8FXjo50xHg0kk0CE77W8X/ym0N7SCbq1v/rxOLdAme0T9EMZbXG9R6GwmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hA8LpOsK; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1762592868; c=relaxed/simple;
+	bh=yGnBbrMMINnmH9GttPyMTSVm2IgfOZLXzrUAP9sQ24w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YKshNayLrQ/eqWfDHuLYX1QzoLzByKhgONwOsgIjc9L19+W5BJAaPweO4385aKJkkD103CL/5FAXWXzGWzUYmwq5PorviMQNMZK3ZLKqgpH4dsmc8UpE7OM7imJ1PpEj9GslacpRy2RXV7FjYUE8VsIKB10Hru3H3vcL9GVJfDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de; spf=pass smtp.mailfrom=fw-web.de; dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b=vYnMheWx; arc=none smtp.client-ip=134.0.28.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fw-web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hA8LpOsK"
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-640b4a52950so2300123a12.1
-        for <linux-clk@vger.kernel.org>; Sat, 08 Nov 2025 00:34:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762590844; x=1763195644; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=S2bAn/z92LSkt2g9/ex7wXFtatjYpsStSn9cf/zplSc=;
-        b=hA8LpOsKe/gvz4kYfgxkwVMkNzYfJMY/xcOQxvHuOQAR6qJPTDRcbY7K5Bd0ef4ctH
-         amSYwBozQikGXBDEVQTQQeT9PtM9lt+SVO2A3UMiHsiVDT2IylhEhjmxQPEkjXP1mDTt
-         I23uK/RtiqC1Vm11L466ObJWVcbP/5B52Skq4dxYhQFR+5QOACjTo/WSbflr4RfVo7FT
-         bKjKclVC+qXAF6uOZyK5Sn8x2LZrEAD3Dxna46ZzFOxJm+Hnnkh8wpOmrioNrrQOrtmk
-         8ryPLtf3rN2B0GZ+RVXZ4jgTTL4z4pw6ZJW/iNi5knqrxFWEzTkLYWkF26Ms6MqJrI8T
-         kr/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762590844; x=1763195644;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=S2bAn/z92LSkt2g9/ex7wXFtatjYpsStSn9cf/zplSc=;
-        b=ki25szIj0+8TMQ+JHacuqwDSOBKDTm2Tki30na+P4v5EDrgZEgOCeINDLhQGBhxyJY
-         Je8LBAGbG89/0Ohb1cxiHV9cvnZZfDcWwTrp8a/uA0eu5TyqEXIWVbIpORhaS8rvHTat
-         lQ75lnzp2KkwMr1itJf+tsfHLWUGHgnDIaoLAgoswivO0uGVBUd9CCybll2IghWXM1GS
-         wVjEm6dPjeL+fuMi6dpoY8967CwSsKEeXYguvsayW/2CQ1ayV735YZip+nZysPdi4jt7
-         db7czQ2rArRbXCDNBzRsUJL/qxEWw6TMIlTdFTnYK+2GGPlUfxk3itn331p7eQgid4sm
-         zaPw==
-X-Forwarded-Encrypted: i=1; AJvYcCXSD1i/JDP27Xl/SYcyMqDQ6+18K9+U1grXbPyYJL33R1DsbWcDcf6sFTrL/g4g/eYXANFG0rp8tHc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhR06JaZj+/kq/yr4t4WXkwRdr/xbbPlq2rGyKjJOIDoq2WO8P
-	+lvLor1GnZo4xaPYBj2bpsf1kLdZbUU2M/i2rqpsRShlmz/T9CKWpj5o++K4cJB2hM5myWcddR8
-	s2wYU0InkmBh7+vD2S0d9QUMIwqURJxw=
-X-Gm-Gg: ASbGncs1n9nrrHjclOVGqhVETm9R6Hl5aUXyxK/VdaNCu54rRuR/d7Mpt1e3Xye+JSq
-	ljoPPMGBHqOp18z2i+IzSBzDR0nV0w5qIT7Wp3mpSSu5uoCM5jaeEnJCL+qXqe4Nkn/sXWWBPnR
-	DD8JaImR4lCP0mKwZ5m/Zd0rzMwedemnL1pR2biDp5LS4sNWI0hbBE6NfHu2/wQ/g/21YZIgwtL
-	faFTVpsAWYxILgdsxcK7XpzYK3donedFcQUkqCqUjmXYxWestVHTLlrjiIrVw==
-X-Google-Smtp-Source: AGHT+IFbr8D70I5Hh0mnS7XVwXHbLqUGTeP+fYZpSbGy0noG5yKzFl2DcNr86SrLZ7RYVuNvP7KnNxLcSVBXZ7AYddg=
-X-Received: by 2002:a17:907:2daa:b0:b46:6718:3f30 with SMTP id
- a640c23a62f3a-b72e04c75bcmr186480266b.51.1762590844332; Sat, 08 Nov 2025
- 00:34:04 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="vYnMheWx"
+Received: from mxbulk.masterlogin.de (unknown [192.168.10.85])
+	by mxout4.routing.net (Postfix) with ESMTP id 61B22100823;
+	Sat,  8 Nov 2025 09:07:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailerdienst.de;
+	s=routing; t=1762592856;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=1CyknkAme4elZV84/7MK05eFN3kQAntRvNuaIK/zCqc=;
+	b=vYnMheWxSMz8itfJI9sBWPH1o2+/WDByDnUay0zuG7rM5ziF+ocP284TttKHXLGhCUTqYl
+	tXeI2VMgOWgAT61e7yLUa9fecAiCa8ufoPzVqdCVW66jgJA8Q45bVlmp8K41rNANbiz9Jr
+	LnaiMtpPdTzQl+b4t1pu6ghhuuQJN1Q=
+Received: from frank-u24.. (fttx-pool-217.61.148.22.bambit.de [217.61.148.22])
+	by mxbulk.masterlogin.de (Postfix) with ESMTPSA id 331521226CD;
+	Sat,  8 Nov 2025 09:07:36 +0000 (UTC)
+From: Frank Wunderlich <linux@fw-web.de>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: Sam Shih <sam.shih@mediatek.com>,
+	Frank Wunderlich <frank-w@public-files.de>,
+	Daniel Golle <daniel@makrotopia.org>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: [PATCH] clk: mediatek: mt7988-infracfg: fix USB port0 function for U2 only
+Date: Sat,  8 Nov 2025 10:07:25 +0100
+Message-ID: <20251108090726.7787-1-linux@fw-web.de>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Biju Das <biju.das.au@gmail.com>
-Date: Sat, 8 Nov 2025 08:33:53 +0000
-X-Gm-Features: AWmQ_bmFChOZ2gWu0OVmeSTfILZt9gLDEULm0nND2RwOlaUkwhuiTXJouqHTspM
-Message-ID: <CADT+UeB9_as1=Prxsx+DWJLCrdH=tGG9OfW4_5foXzte=6f=Ug@mail.gmail.com>
-Subject: Re: [PATCH v4 1/2] clk: renesas: rzg2l: Remove DSI clock rate restrictions
-To: "chris.brandt@renesas.com" <chris.brandt@renesas.com>
-Cc: "airlied@gmail.com" <airlied@gmail.com>, 
-	"biju.das.jz@bp.renesas.com" <biju.das.jz@bp.renesas.com>, 
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, 
-	"geert+renesas@glider.be" <geert+renesas@glider.be>, 
-	"hien.huynh.px@renesas.com" <hien.huynh.px@renesas.com>, "hugo@hugovil.com" <hugo@hugovil.com>, 
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, 
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, 
-	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>, 
-	"mripard@kernel.org" <mripard@kernel.org>, "mturquette@baylibre.com" <mturquette@baylibre.com>, 
-	"nghia.vo.zn@renesas.com" <nghia.vo.zn@renesas.com>, "sboyd@kernel.org" <sboyd@kernel.org>, 
-	"simona@ffwll.ch" <simona@ffwll.ch>, "tzimmermann@suse.de" <tzimmermann@suse.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Wed,  5 Nov 2025 17:25:29 -0500
-Chris Brandt <chris.brandt@renesas.com> wrote:
+From: Sam Shih <sam.shih@mediatek.com>
 
-> Convert the limited MIPI clock calculations to a full range of settings
-> based on math including H/W limitation validation.
-> Since the required DSI division setting must be specified from external
-> sources before calculations, expose a new API to set it.
->
-> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-> Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
-> Tested-by: Biju Das <biju.das.jz@bp.renesas.com>
->
-> ---
-> v1->v2:
-> - Remove unnecessary parentheses
-> - Add target argument to new API
-> - DPI mode has more restrictions on DIV_A and DIV_B
->
-> v2->v3:
-> - Removed Empty lines (Hugo)
-> - Add dummy for compile-testing CONFIG_CLK_RZG2L=n case (Geert)
-> - Renamed label found_dsi_div to calc_pll_clk (Hugo)
-> - Renamed label found_clk to clk_valid (Hugo)
-> - Removed 'found' var because not needed
-> - Move 'foutpostdiv_rate =' after if(foutvco_rate > 1500000000) (Hugo)
-> - Move PLL5_TARGET_* for new API to renesas.h (Hugo,Geert)
-> - Convert #define macros PLL5_TARGET_* to enum (Geert)
-> - static {unsigned} int dsi_div_ab; (Geert)
-> - {unsigned} int a, b;  (Geert)
-> - Change "((1 << a) * (b + 1))" to "(b + 1) << a"  (Geert)
-> - Change "foutvco_rate = rate * (1 << xxx ) * ..." to " = rate * ... * << xxx (Geert)
-> - Move (u64) outside of modulo operation to avoid helper on 32-bit compiles (Geert)
-> - Change DIV_ROUND_CLOSEST_ULL() to DIV_ROUND_CLOSEST() (Geert)
-> - void rzg2l_cpg_dsi_div_set_divider({unsinged} int divider, int target)
-> - Change "dsi_div_ab = (1 << AAA) * (BBB + 1)" to " = (BBB + 1) << AAA (Geert)
-> - Added Reviewed-by and Tested-by (Biju)
->
-> v3->v4:
-> - Changed <,> to <=,>=  (Hugo)
-> - Removed duplicate code bock (copy/paste mistake) (Hugo)
-> - Fix dummy for rzg2l_cpg_dsi_div_set_divider when CONFIG_CLK_RZG2L=n (Geert)
-> - Remove comment "Below conditions must be set.." (Hugo)
-> - Remove +1,-1 from pl5_intin comparison math (kernel test robot)
-> - Remove default register settings (PLL5_xxx_DEF) because makes no sense
-> - If any calcualtion error, print a message and return a rate of 0
-> - Rename global var "dsi_div_ab" to "dsi_div_ab_desired"
-> - Check the range of hsclk
-> - The correct clock parent is determined by if the divider is even/odd
-> - Add in all the restrictions from DIV A,B from the hardware manual
-> - No more need to be a recursive function
-> - DPI settings must have DSI_DIV_B be '0' (divide 1/1)
-> ---
->  drivers/clk/renesas/rzg2l-cpg.c | 147 +++++++++++++++++++++++++++++---
->  include/linux/clk/renesas.h     |  12 +++
->  2 files changed, 146 insertions(+), 13 deletions(-)
->
-> diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
-> index 07909e80bae2..1a552ea1c535 100644
-> --- a/drivers/clk/renesas/rzg2l-cpg.c
-> +++ b/drivers/clk/renesas/rzg2l-cpg.c
-> @@ -74,6 +74,17 @@
->  #define MSTOP_OFF(conf)          FIELD_GET(GENMASK(31, 16), (conf))
->  #define MSTOP_MASK(conf)      FIELD_GET(GENMASK(15, 0), (conf))
->
+Fix the functionality of USB port0 U2 when U2 is enabled without U3.
+This change addresses the issue where port0 U3 is shared with PCIE2,
+ensuring that the port0 U2 function operates correctly without U3 support.
 
->
+Additionally, add support to enable the U2 function instead of disabling
+the entire USB port0 in the configuration for the 4 PCIe case. This
+change ensures that U2 functionality is properly activated.
 
-> +       if (dsi_div_target == PLL5_TARGET_DPI) {
-> +               /* Fixed settings for DPI */
-> +             priv->mux_dsi_div_params.clksrc = 0;
-> +             priv->mux_dsi_div_params.dsi_div_a = 3; /* Divided by 8 */
-> +         priv->mux_dsi_div_params.dsi_div_b = 0; /* Divided by 1 */
-> +             dsi_div_ab_desired = 8;                   /* (1 << a) * (b + 1) */
-This block is duplicated may be add a helper function(), if you are
-planning to send another series.
-> +       }
+Fixes: 4b4719437d85 ("clk: mediatek: add drivers for MT7988 SoC")
+Signed-off-by: Sam Shih <sam.shih@mediatek.com>
+Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
+---
+ drivers/clk/mediatek/clk-mt7988-infracfg.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-> +      /* Default settings for DPI */
-> +  priv->mux_dsi_div_params.clksrc = 0;
-> +  priv->mux_dsi_div_params.dsi_div_a = 3; /* Divided by 8 */
-> +      priv->mux_dsi_div_params.dsi_div_b = 0; /* Divided by 1 */
-> +  dsi_div_ab_desired = 8;                        /* (1 << a) * (b + 1) */
->
+diff --git a/drivers/clk/mediatek/clk-mt7988-infracfg.c b/drivers/clk/mediatek/clk-mt7988-infracfg.c
+index ef8267319d91..da4ad365e30f 100644
+--- a/drivers/clk/mediatek/clk-mt7988-infracfg.c
++++ b/drivers/clk/mediatek/clk-mt7988-infracfg.c
+@@ -229,8 +229,9 @@ static const struct mtk_gate infra_clks[] = {
+ 			  CLK_IS_CRITICAL),
+ 	GATE_INFRA3_FLAGS(CLK_INFRA_USB_FRMCNT_CK_P1, "infra_usb_frmcnt_ck_p1", "usb_frmcnt_p1_sel",
+ 			  9, CLK_IS_CRITICAL),
+-	GATE_INFRA3(CLK_INFRA_USB_PIPE, "infra_usb_pipe", "sspxtp_sel", 10),
+-	GATE_INFRA3(CLK_INFRA_USB_PIPE_CK_P1, "infra_usb_pipe_ck_p1", "usb_phy_sel", 11),
++	GATE_INFRA3_FLAGS(CLK_INFRA_USB_PIPE, "infra_usb_pipe", "sspxtp_sel", 10, CLK_IS_CRITICAL),
++	GATE_INFRA3_FLAGS(CLK_INFRA_USB_PIPE_CK_P1, "infra_usb_pipe_ck_p1", "usb_phy_sel", 11,
++			  CLK_IS_CRITICAL),
+ 	GATE_INFRA3(CLK_INFRA_USB_UTMI, "infra_usb_utmi", "top_xtal", 12),
+ 	GATE_INFRA3(CLK_INFRA_USB_UTMI_CK_P1, "infra_usb_utmi_ck_p1", "top_xtal", 13),
+ 	GATE_INFRA3(CLK_INFRA_USB_XHCI, "infra_usb_xhci", "usb_xhci_sel", 14),
+-- 
+2.43.0
 
-Cheers,
-Biju
