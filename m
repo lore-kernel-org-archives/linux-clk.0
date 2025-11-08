@@ -1,204 +1,279 @@
-Received: from OS0P286CU010.outbound.protection.outlook.com (mail-japanwestazon11011056.outbound.protection.outlook.com [40.107.74.56])
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB8BF2ECE9D;
-	Fri,  7 Nov 2025 23:25:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.74.56
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762557947; cv=fail; b=qQ5SQhHjLFGsLJZRPG2o52LWUR3mYk2CeKnU7Wp277I6qIfbgDLu8OkGPZDOkJhFB3zLexlAusdltirJ/4jkEo2dji86lEW+g56Fa/RU0UdXVrQ9YE5KwRhlTqUt4FnCI252cKmFCC8AN4IvuyP4oje/ymWSs3UthmpufZJIg0I=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762557947; c=relaxed/simple;
-	bh=KXRJ0XVU2mwMaVqoex0XM168sO73eAzKLsQmpOI0aOU=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=tz3am3SQbVWhjJqEkeOprtPdpDH5DUchhzSK/WIcsewzxajMZQcZ5D0y+ZlkmUlItDmQ7RWvGxZ26qPtJ80uoOcYI9Cb4OPTmNvI0KdyBG/+UThuP+nQaYtbDqrRxGjJZ1i4xV1koIRkjYVc5RkHw+mct2ziO1G+gfju7EKz8AQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b=Z3PvF9vV; arc=fail smtp.client-ip=40.107.74.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD68E2820D1;
+	Sat,  8 Nov 2025 01:05:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762563905; cv=none; b=E9OndcwF2UOk6B2h4suJ4jM6uywrjIZnxZyHdVs+PTrb/h2wgOzxMQ1YbaMlXg8l0R6ba72UppsFP45F5tWmU+HDHWTUziUvxpYvUErYzV1zdu74LKhF+r/Jm/yRm7isnXHT1C/Lp6+0tDZdT6yJQBlE7cr3NsK14s7RwyAWSkQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762563905; c=relaxed/simple;
+	bh=l7nqdbug9PniaL84G3amMf4pGJK7PjvoEDu0vBpSzh8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:To:Cc:Content-Type:
+	 References; b=NEZ1K1eOMWra1bWfBYK4fAs5rYUdDDe6jnzsDh+Ty3bBqQzAHzcRV4GpyhEMWVnfClGbkV8g6/RdtAsxtlkXyPmtVeR0dwc4AsT0Abbltt1fcIG4oix9BDnXiMR3kooTDg9qMKs7k5tP1ET+ndbIALpX9qR7YyUWh4FtEyypzaM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=sF6AQfFg; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="Z3PvF9vV"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=RvgnDY28ldHldvg0uBIgpc5oVbZQVeVTi/lXM2QBlQg6HsaDRQ8bd1Tsa3wiFG/oyIkXo5IXPJVJLb5PbNeddM8Xk3lRdg1sEiojVZo7n8cMhbHkjVnWwJdKBsdeKi7pyewsiQiOHRMjmrtWGDjjlhFjQGnrkSY37m1BizuFpUYmOp9nxZ1gGAK226/0ZMlxDNjFkRpa64lJs89hjflktKlg3FM7MXiMHzfYtyJqx1yQOpHUDOJsWfjpVnjRt6dIddG34reD2mS2UUDKUcq9gcA7SpGZGC+gzX/fLHZ2Di8Mr3DJVr1Vm+JyVnSe1N44KlC18k+H3ufngmRV9fDDMQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9KWB+qeKRoXtfvRpIY/8yPkj0JwFbVhl0k7h4vHLBkI=;
- b=EsoiZLob0ORaM5wYLRyWBVfI1j4b3+quKpkmR+P3unng5GablKSKfFKmrfaPlqGltZUDRBggqJqsYU5QcsyEzMxUxZNep4wFR60owmt/MfvQOZdJt469rJj9WRECFkK8H1GnG8NznKJQC7PR/96h7FzoFtpHnoGtMmoVJ87uWQatEIdCjsuabkTeUna7SwI4bPJTHk7BWOxBSDIPEvwDPUOqjZuHlCdpKSvDNTKB3Q0eRj/yiElXy9MMpv0unTp5ZyJYKI3GyBXp7O36I+LMfW3Hd4FtZ1Wdqx+ZlYQtzU//fyqudT3LkGEdtx27GgaQvTmGI2IMfJt0+NYLb72hyQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
- dkim=pass header.d=renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9KWB+qeKRoXtfvRpIY/8yPkj0JwFbVhl0k7h4vHLBkI=;
- b=Z3PvF9vVDpZCBk5rWxLRaNW+gA8e/YX5z4QDvEcAuRDyTazS/t/YVRIdpWm18we02C2yrf+F97H14Sp93QpqFIR/a5KFDuTvB4os1nweAt8od7uwpkMHCX2DmqlnEcMGyHiat02D8faynJgJgYJ8Qc9FjcgLVmdvB6gJhcpv5j8=
-Received: from TYCPR01MB8327.jpnprd01.prod.outlook.com (2603:1096:400:15c::5)
- by TYYPR01MB12306.jpnprd01.prod.outlook.com (2603:1096:405:fc::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.10; Fri, 7 Nov
- 2025 23:25:40 +0000
-Received: from TYCPR01MB8327.jpnprd01.prod.outlook.com
- ([fe80::483a:c2dc:6c8a:420a]) by TYCPR01MB8327.jpnprd01.prod.outlook.com
- ([fe80::483a:c2dc:6c8a:420a%5]) with mapi id 15.20.9320.008; Fri, 7 Nov 2025
- 23:25:40 +0000
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Hugo Villeneuve <hugo@hugovil.com>
-CC: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Biju Das
-	<biju.das.jz@bp.renesas.com>, Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>, Hien Huynh <hien.huynh.px@renesas.com>,
-	Nghia Vo <nghia.vo.zn@renesas.com>, "linux-renesas-soc@vger.kernel.org"
-	<linux-renesas-soc@vger.kernel.org>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, "dri-devel@lists.freedesktop.org"
-	<dri-devel@lists.freedesktop.org>
-Subject: RE: [PATCH v4 1/2] clk: renesas: rzg2l: Remove DSI clock rate
- restrictions
-Thread-Topic: [PATCH v4 1/2] clk: renesas: rzg2l: Remove DSI clock rate
- restrictions
-Thread-Index:
- AQHcTqM02+OCahzeqkGZBdprKCVrd7TnaoQAgAAejkCAAA1GAIAAHs9QgAAWXoCAAA3QcA==
-Date: Fri, 7 Nov 2025 23:25:40 +0000
-Message-ID:
- <TYCPR01MB832759A2410465D46E7095DC8AC3A@TYCPR01MB8327.jpnprd01.prod.outlook.com>
-References: <20251105222530.979537-1-chris.brandt@renesas.com>
-	<20251105222530.979537-2-chris.brandt@renesas.com>
-	<20251107113058.f334957151d1a8dd94dd740b@hugovil.com>
-	<OS3PR01MB83195AF3F1964548E1512FBE8AC3A@OS3PR01MB8319.jpnprd01.prod.outlook.com>
-	<20251107140750.00bf68e4b2f5354015e65ad4@hugovil.com>
-	<OS3PR01MB8319E496A32EDBF5719BAB478AC3A@OS3PR01MB8319.jpnprd01.prod.outlook.com>
- <20251107171809.6033526ffe5e57ec72bd4f96@hugovil.com>
-In-Reply-To: <20251107171809.6033526ffe5e57ec72bd4f96@hugovil.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TYCPR01MB8327:EE_|TYYPR01MB12306:EE_
-x-ms-office365-filtering-correlation-id: 04b6f9ae-2d44-4dfe-391f-08de1e54f713
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|376014|7416014|366016|38070700021;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?4eUh9mdndeVy+7EL75FME8mQ0RUdmUshLH9H00E+77nJ4nXE0q2rb8O8WfQ7?=
- =?us-ascii?Q?UUtaEYpqUTtAorlPyFm2+1Y93KnMaq095TJHzDBg9yz3hPLMCbhViH2hPgTm?=
- =?us-ascii?Q?TuLG7ci+Al+SdYDcNnP5m+FyJOSjVRcvfcvb0QpLAJfOQKgG/5B1Qz1KBzBN?=
- =?us-ascii?Q?TOEJvg0o84EwVCpFYZI3QzNmfJBPkmsKIUTIAaTgcxhehuZpM1qM+1oTei3i?=
- =?us-ascii?Q?EhGNsYNqH9fobpvV8Adf+CkF0G52FPPD0XzX3CnWBdg2qXr3Ph87YcuNVlQK?=
- =?us-ascii?Q?4xslmnLXy8ZvGsRxvLKj7nvlR46q3ClodRYV8O9xmMqYyEHkjp6dHaFgF646?=
- =?us-ascii?Q?5kZvHeAJsNiMQEF0X5NJkdZXFU3fnMo85D0hj00xh7WsgoMF/AJ9tpnpmZig?=
- =?us-ascii?Q?0/5R9W4GA+aXwdoiC/ZQnHsH6PoAeOpKHvTsI26oEnxtPEM3onjyJbn+2HpI?=
- =?us-ascii?Q?YczR+8g7G+GAZaqaKSt0YJotbJsVzPhIfwpdufO2vbCnA/IgRHXuOgdEAMfo?=
- =?us-ascii?Q?Yn6WOIpYRUE6Va2SDeTOlZjkTnKJR/5znmK38eLOEACDwbFVxiQPXGQQ6M/F?=
- =?us-ascii?Q?NG7v5de0I8ZtLEjpJqYZgT0w8aNtZleSHjkKHFMimdFXv/UMgE80A56aWAcz?=
- =?us-ascii?Q?g+NqsaQAfMKS+TcTZD9Wg3gfCsPCzAB6bkFPqq3UYO3/4f8Dss0/Xaxw+2WI?=
- =?us-ascii?Q?4okLW8S4Dbf599OTBAp1h/iWTLgkNh+Ps1SoiciBH+njl9HY33lQO0BFVxKh?=
- =?us-ascii?Q?aXaX1RAFdX1o1SscRWtFUfUXH/ItAtDUyBd3J2Z7uDY0K5Io1xQMO9i8N1az?=
- =?us-ascii?Q?9g1MfyAI7lnqO3PUVy74EXEZh81YFFM9SSGGgI+rX9XsHU8J8fPcLuqV8Si+?=
- =?us-ascii?Q?+ZrMbMOv8Mk9VBYAhUR1VrBBPHeOPujgeBvltA65OiDkhiUUn1puW4qJWX4H?=
- =?us-ascii?Q?I9RzmtMF4Oi7dlR+8WwSIuQmtZGL0HmJFOV+I8wZ0STDXa28pzA3Toeq86sQ?=
- =?us-ascii?Q?hz3MMjznsRHh9eWyI3a6B7jkct2514XMUI4B/IKnFfD5Q4wix3sf7xl5fl7t?=
- =?us-ascii?Q?m9p5b+myF+rIETMcLmiaNG0WLCkDXw3yLzM4IG6VebXhpuo5biWVtL7pUTO1?=
- =?us-ascii?Q?X61N6CJFDaJsPE19nTv8PBus1UP4yOIioN0mN3lIPocdu1KpWClbf708aUQi?=
- =?us-ascii?Q?8APjZAT3vkOpYzzhyTY8jlHnwSLwGic8dVYY8aJKJsdBGsIV2HH/6/HfYDWf?=
- =?us-ascii?Q?VVgeuGLkait7NWIvDyxrBUz64jLvRDT0nMm1duvi3KiKfvuR+CxIaleO1jhp?=
- =?us-ascii?Q?0iiBiy//M76KISLElojlATDU3xMsEY6l0zCh5ObjdQRoT2g8Htc3iQsNJKz4?=
- =?us-ascii?Q?r9xKIsGj8xizdOosqCXw5uJYmhuIb0PW7ZdtdsaryYw8u0t1XOpM+D7Hp9u5?=
- =?us-ascii?Q?eYNSI5CHirl6YVVyl8OMaBpSCajO2xO+b2ARw5xbpKnFT0Ved7Fxf9RyOCp+?=
- =?us-ascii?Q?ygRymR2FLZvX6o5LpJschOS7Ox2oLf8BJp1F?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB8327.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?f5WtNYC3q1C1E3uzABJCNHG1CM83uzCw5vTkdNMpkhEY4F7y3xrLr5nWjdm8?=
- =?us-ascii?Q?A6XbRtDoJVKTdUzjXFDn897CdbTo5ZC0u5VPFTuGdZTNkfyC98ppv60Ht2mI?=
- =?us-ascii?Q?XVVsB40f+28zmWBjs82AZWL5vVXWJC3rnp1FfFSgb5PATOmQD9c8c0Xj2WU0?=
- =?us-ascii?Q?mD00liSTnSqMJsuHwu+RCA8H17QH4M7VYs8jomGx10R7sg/VQ7rlHJtKXA8p?=
- =?us-ascii?Q?ucxMSazNlqv6euTN9LXWBj/8hbHnN705qWCAlEya+1DKbO70I26z2i1tHON4?=
- =?us-ascii?Q?+9+o1b+qKP7SHqQc5u/h3f6DPSqaQ+fkC3QDZ22+oVdAEoHLs4DWb330I14h?=
- =?us-ascii?Q?KPH7LeIAwWyrnXPcuOaK2HfegnNDiu3RNXSahUEgPpkYbxD5KkdlXF1KFxM8?=
- =?us-ascii?Q?ndgSL/Xy88Lr1TNcx/13LTktGvCyEevhuzOlbIqOTOTiKNOzJOYnF56WZ4Un?=
- =?us-ascii?Q?arUl6Cdb3D8wQysG2bfKdB4Tl74QZl1OmH39X9OxRzhl1/xiz/f3qNkkN4lr?=
- =?us-ascii?Q?eHQ2xkLskVDllaxpZL1HvOFh+/TKp7K5uASMEXS46xI9Lo6ngjLobi2hPg9o?=
- =?us-ascii?Q?MstGjiDcwAbSNGKighMe5wq91Ogj6e9gIwGy3SA+UThZp+uZjf1w1Hu7jzyk?=
- =?us-ascii?Q?J7QDl8T994e6w1/lbgUTZpww53NK8BAZ8geGYwkxtqn7jZGzWZ1RFSX2h1dc?=
- =?us-ascii?Q?BozSH5DUiO+LlN4P0+biAX+MGF2ZfR86NoMYcUeZAOTxo7AIYs2XRC1TrTjZ?=
- =?us-ascii?Q?9pQBSlUgi+Ovxg0nfowzI4tqWbjIIrOeczLqEzBUfy10DzDGYgyIMTB8MYd0?=
- =?us-ascii?Q?UDrDpsLzyL7jWEY8VjkPuSbU1LEw1QsapV6gLVZevgoDtl2B8WspvGqn5Sew?=
- =?us-ascii?Q?dgIfufhiSwestsBPeIfrACIwIr2JxtJchYre8S1Obah4jjiTyvO2tQUBCKzU?=
- =?us-ascii?Q?qjmGdux92bRa7Ki4HVcuv6I1ZkB60XVhmjUB39BRHsmJkPhLHz0AlqkWhVFX?=
- =?us-ascii?Q?mgDZwNAYCRB5SBy4Y7IeKcYi9AEoL0dUO7sasgpxIibODd1UWdsLwq0m1LfY?=
- =?us-ascii?Q?/2JSOZxZIKwyjy2DbSKmoAbtFo4UqV1Xe3vPGyTyq5YdUn6eUcI/yd/dbE64?=
- =?us-ascii?Q?wrTHZUAHOMxgqPJ0xfHc47Zm6fkECSFfBiGyNF71aIWPmoSfWHN0alG/Cxxy?=
- =?us-ascii?Q?Qy7MTPdm1IxOMCpcUDVYdT5ZvfNRBWi2UaFnMX6iwUJURVI3JDyzjXATNsDf?=
- =?us-ascii?Q?1uxXiPHITdZLMHAKvtfVYMnz5rTstd4PbnCm2dfTRWY+gjin9ChV1wpuiZku?=
- =?us-ascii?Q?oeUR6+AzkGnktiCNh6VnBfOHSEehZSP2tGOLqjq9QuYNcpPrsyZGPDvDYM/s?=
- =?us-ascii?Q?2n1PPbNG3/r8Ga+JCF/6/A9hCtCiJymJxu6ly8OXB4jNXEmmB2R570SyZECX?=
- =?us-ascii?Q?H9kXPhnguw6y2TisF+s6CWiWGA5LCvsgez7MyAH7Ep8OclN6ctJopvcjV63k?=
- =?us-ascii?Q?kI9HQazIzBtc8F8Y7rjKRSvBXdCRdU6GVfXQ9JX8xu7kVRAkPcythSp96nLA?=
- =?us-ascii?Q?6d5SsWl8eyIm08YZE4MNUSrBBdiZAHc3Ls0rJwqO?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="sF6AQfFg"
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20251108010452euoutp029fbdff3d4156603bf43adf6f4f066c9a~14oWreyyy2548125481euoutp02G;
+	Sat,  8 Nov 2025 01:04:52 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20251108010452euoutp029fbdff3d4156603bf43adf6f4f066c9a~14oWreyyy2548125481euoutp02G
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1762563892;
+	bh=vNRWflACSt/TGijhYcNBfeBbUUpxzkp2rju7QvuWPLw=;
+	h=From:Subject:Date:To:Cc:References:From;
+	b=sF6AQfFgkEosuyqO75LUfUFcRORuCmtawXN0NE8YZ1Eriu4lGl7UNLh2OzOF7qzb3
+	 zalukkthOw2ocnMRfHx/hBUSmi48ReWPsuyulux+Lkg9j1Ow7EktIZNY7NtlU/wRFP
+	 VvuZvtqqdKwjCQR2HAjLNqQdHNfe34ugf3N7QqIQ=
+Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20251108010451eucas1p1c7bf340dbd2b1b7cbfb53d6debce7a2e~14oVjG-iM2253622536eucas1p1r;
+	Sat,  8 Nov 2025 01:04:51 +0000 (GMT)
+Received: from AMDC4942.eu.corp.samsungelectronics.net (unknown
+	[106.210.136.40]) by eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20251108010450eusmtip29f2f8b20301dd57342fa5fc2c2450545~14oUF8r5G0912409124eusmtip2Q;
+	Sat,  8 Nov 2025 01:04:50 +0000 (GMT)
+From: Michal Wilczynski <m.wilczynski@samsung.com>
+Subject: [PATCH RFC 00/13] drm: starfive: jh7110: Enable display subsystem
+Date: Sat, 08 Nov 2025 02:04:34 +0100
+Message-Id: <20251108-jh7110-clean-send-v1-0-06bf43bb76b1@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB8327.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 04b6f9ae-2d44-4dfe-391f-08de1e54f713
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Nov 2025 23:25:40.4313
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: g3SYYR7BT6Qn4DPjnn0gFGjRlOMZZROd7pP/CjWOeRXECwWeYHQlDh21oPXzI+7HN1+E5udysYWgz5HcuaBO5n7l+dCr8Vc3yENVsTWxap4=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYYPR01MB12306
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIACOXDmkC/23NwW7DIAyA4VeJOA+EgUISTVOkSXuAXaceWPAau
+	gVaSNplVd99LN2xR9v6fl9IxuQxk7a6kIQnn30MZYCHivSDDTuk3pWZCC42wCXQ/WAAOO2/0Aa
+	aMThqnBBKANRcaFLcIeGH/16bb+T15Zlsb8uEx7n0p//LiDnbtd9Wj7c8KJDliWCq0aAp0B+/2
+	Ng5n1OME4tp9/T34J7UvJa1ksxobTZF2uCWPKTPDrRkfRzvQ94IKFApzUzDpVFFzue58z2GeF7
+	YiKt7txlpiYx+aquTZmBo6jXZXq+/1af5HkABAAA=
+X-Change-ID: 20251031-jh7110-clean-send-7d2242118026
+To: Michal Wilczynski <m.wilczynski@samsung.com>,  Conor Dooley
+	<conor@kernel.org>, Rob Herring <robh@kernel.org>,  Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,  Emil Renner Berthing <kernel@esmil.dk>,  Hal Feng
+	<hal.feng@starfivetech.com>,  Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Conor Dooley <conor+dt@kernel.org>,  Xingyu
+	Wu <xingyu.wu@starfivetech.com>, Vinod Koul <vkoul@kernel.org>,  Kishon
+	Vijay Abraham I <kishon@kernel.org>,  Andrzej Hajda
+	<andrzej.hajda@intel.com>,  Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,  Laurent Pinchart
+	<Laurent.pinchart@ideasonboard.com>,  Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,  David Airlie
+	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,  Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>,  Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,  Lee Jones <lee@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,  Paul Walmsley
+	<paul.walmsley@sifive.com>,  Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
+	<aou@eecs.berkeley.edu>,  Alexandre Ghiti <alex@ghiti.fr>,  Marek Szyprowski
+	<m.szyprowski@samsung.com>, Icenowy Zheng <uwu@icenowy.me>,  Maud Spierings
+	<maudspierings@gocontroll.com>, Andy Yan <andyshrk@163.com>,  Heiko Stuebner
+	<heiko@sntech.de>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-phy@lists.infradead.org, 
+	dri-devel@lists.freedesktop.org, linux-riscv@lists.infradead.org
+X-Mailer: b4 0.15-dev
+X-CMS-MailID: 20251108010451eucas1p1c7bf340dbd2b1b7cbfb53d6debce7a2e
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20251108010451eucas1p1c7bf340dbd2b1b7cbfb53d6debce7a2e
+X-EPHeader: CA
+X-CMS-RootMailID: 20251108010451eucas1p1c7bf340dbd2b1b7cbfb53d6debce7a2e
+References: <CGME20251108010451eucas1p1c7bf340dbd2b1b7cbfb53d6debce7a2e@eucas1p1.samsung.com>
 
-Hi Hugo,
+This series enables the display subsystem on the StarFive JH7110 SoC.
+This hardware has a complex set of dependencies that this series aims to
+solve.
 
-On Fri, Nov 7, 2025 5:18 PM, Hugo Villeneuve wrote:
+The dom_vout (Video Output) block is a wrapper containing the display
+controller (dc8200), the clock generator (voutcrg), and the HDMI IP, all
+of which are managed by a single power domain (PD_VOUT).
 
-> > > +				if (params->pl5_intin < PLL5_INTIN_MIN ||
-> > > +				    params->pl5_intin > PLL5_INTIN_MAX)
-> >
-> >
-> > And if you want the same behavior as before, shouldn't the comparison b=
-e with "<=3D" and ">=3D" ?
+More importantly, the HDMI IP is a monolithic block (controller and PHY
+in one register space) that has a circular dependency with voutcrg:
+1. The HDMI Controller needs clocks (like sysclk, mclk) from voutcrg to
+   function.
+2. The voutcrg (for its pixel MUXes) needs the variable pixel clock,
+   which is generated by the HDMI PHY.
 
-> I didn't see an answer to my question/comment about comparison with "<=3D=
-" and ">=3D" ?
+This series breaks this dependency loop by modeling the hardware
+correctly:
+1. A new vout-subsystem wrapper driver is added. It manages the shared
+   PD_VOUT power domain and top level bus clocks. It uses
+   of_platform_populate() to ensure its children (hdmi_mfd, voutcrg,
+   dc8200) are probed only after power is on.
+2. The monolithic hdmi node is refactored into an MFD. A new hdmi-mfd
+   parent driver is added, which maps the shared register space and
+   creates a regmap.
+3. The MFD populates two children:
+   - hdmi-phy: A new PHY driver that binds to the MFD. Its only
+     dependency is the xin24m reference clock. It acts as the clock
+     provider for the variable pixel clock (hdmi_pclk).
+   - hdmi-controller: A new DRM bridge driver. It consumes clocks from
+     voutcrg and the hdmi_pclk/PHY from its sibling hdmi-phy driver.
+4. The generic inno-hdmi bridge library is refactored to accept a regmap
+   from a parent MFD, making this model possible.
 
-The hardware manual says:
+This MFD split breaks the circular dependency, as the kernel's deferred
+probe can now find a correct, linear probe order: hdmi-phy (probes
+first) -> voutcrg (probes second) -> hdmi-controller (probes third).
 
-INTIN		20 to 320
+This series provides all the necessary dt-bindings, the new drivers, the
+modification to inno-hdmi, and the final device tree changes to enable
+the display.
 
-So, both 20 and 320 are valid values.
+Series depends on patchsets that are not merged yet:
+ - dc8200 driver [1]
+ - th1520 reset (dependency of dc8200 series) [2]
+ - inno-hdmi bridge [3]
 
-Meaning I only want to 'continue' (ie, skip)   if ( x <=3D19 || x >=3D 321 =
-)
+Testing:
+I've tested on my monitor using `modetest` for following modes:
+  #0 2560x1440 59.95 2560 2608 2640 2720 1440 1443 1448 1481 241500
+     flags: phsync, nvsync; type: preferred, driver [DOESN"T WORK]
+  #1 2048x1080 60.00 2048 2096 2128 2208 1080 1083 1093 1111 147180
+     flags: phsync, nvsync; type: driver    [DOESN"T WORK]
+  #2 2048x1080 24.00 2048 2096 2128 2208 1080 1083 1093 1099 58230
+     flags: phsync, nvsync; type: driver     [DOESN'T WORK]
+  #3 1920x1080 60.00 1920 2008 2052 2200 1080 1084 1089 1125 148500
+     flags: phsync, pvsync; type: driver    [WORKS]
+  #4 1920x1080 59.94 1920 2008 2052 2200 1080 1084 1089 1125 148352
+     flags: phsync, pvsync; type: driver    [WORKS]
+  #5 1920x1080 50.00 1920 2448 2492 2640 1080 1084 1089 1125 148500
+     flags: phsync, pvsync; type: driver    [WORKS]
+  #6 1600x1200 60.00 1600 1664 1856 2160 1200 1201 1204 1250 162000
+     flags: phsync, pvsync; type: driver    [WORKS]
+  #7 1280x1024 75.02 1280 1296 1440 1688 1024 1025 1028 1066 135000
+     flags: phsync, pvsync; type: driver    [WORKS]
+  #8 1280x1024 60.02 1280 1328 1440 1688 1024 1025 1028 1066 108000
+     flags: phsync, pvsync; type: driver    [WORKS]
+  #9 1152x864 75.00 1152 1216 1344 1600 864 865 868 900 108000 flags:
+     phsync, pvsync; type: driver   [WORKS]
+  #10 1280x720 60.00 1280 1390 1430 1650 720 725 730 750 74250 flags:
+      phsync, pvsync; type: driver   [WORKS]
+  #11 1280x720 59.94 1280 1390 1430 1650 720 725 730 750 74176 flags:
+      phsync, pvsync; type: driver   [WORKS]
+  #12 1280x720 50.00 1280 1720 1760 1980 720 725 730 750 74250 flags:
+      phsync, pvsync; type: driver   [WORKS]
+  #13 1024x768 75.03 1024 1040 1136 1312 768 769 772 800 78750 flags:
+      phsync, pvsync; type: driver   [WORKS]
+  #14 1024x768 60.00 1024 1048 1184 1344 768 771 777 806 65000 flags:
+      nhsync, nvsync; type: driver   [WORKS]
+  #15 800x600 75.00 800 816 896 1056 600 601 604 625 49500 flags:
+      phsync, pvsync; type: driver  [WORKS]
+  #16 800x600 60.32 800 840 968 1056 600 601 605 628 40000 flags:
+      phsync, pvsync; type: driver  [WORKS]
+  #17 720x576 50.00 720 732 796 864 576 581 586 625 27000 flags: nhsync,
+      nvsync; type: driver   [WORKS]
+  #18 720x480 60.00 720 736 798 858 480 489 495 525 27027 flags: nhsync,
+      nvsync; type: driver   [WORKS]
+  #19 720x480 59.94 720 736 798 858 480 489 495 525 27000 flags: nhsync,
+      nvsync; type: driver   [WORKS]
+  #20 640x480 75.00 640 656 720 840 480 481 484 500 31500 flags: nhsync,
+      nvsync; type: driver   [WORKS]
+  #21 640x480 60.00 640 656 752 800 480 490 492 525 25200 flags: nhsync,
+      nvsync; type: driver   [WORKS]
+  #22 640x480 59.94 640 656 752 800 480 490 492 525 25175 flags: nhsync,
+      nvsync; type: driver   [WORKS]
+  #23 720x400 70.08 720 738 846 900 400 412 414 449 28320 flags: nhsync,
+      pvsync; type: driver   [DOESN'T WORK]
 
-or rather
+I believe this is a PHY tuning issue that can be fixed in the new
+phy-jh7110-inno-hdmi.c driver without changing the overall architecture.
+I plan to continue debugging these modes and will submit follow up fixes
+as needed.
 
-if ( x < 20 || x > 320 )
+The core architectural plumbing is sound and ready for review.
 
-So the original code of...
+Notes:
+- The JH7110 does not have a centralized MAINTAINERS entry like the
+  TH1520, and driver maintainership seems fragmented. I have therefore
+  added a MAINTAINERS entry for the display subsystem and am willing to
+  help with its maintenance.
+- I am aware that the new phy-jh7110-inno-hdmi.c driver (patch 12) is a
+  near duplicate of the existing phy-rockchip-inno-hdmi.c. This
+  duplication is intentional and temporary for this RFC series.  My goal
+  is to first get feedback on the overall architecture (the vout-subsystem
+  wrapper, the hdmi-mfd split, and the dual-function PHY/CLK driver).
 
-+				params->pl5_intin =3D (foutvco_rate * params->pl5_refdiv) /
-+						    (EXTAL_FREQ_IN_MEGA_HZ * MEGA);
-+				if (params->pl5_intin < PLL5_INTIN_MIN + 1 ||
-+				    params->pl5_intin > PLL5_INTIN_MAX - 1)
-+					continue;
+  If this architectural approach is acceptable, I will rework the PHY
+  driver for a formal v1 submission. This will involve refactoring the
+  common logic from the Rockchip PHY into a generic core driver that both
+  the Rockchip and this new StarFive PHY driver will use. 
 
-....was wrong.
+Many thanks to the Icenowy Zheng who developed a dc8200 driver, as well
+as helped me understand how the SoC and the display pipeline works.
 
-I forgot to mention that in the patch.     :)
+[1] - https://lore.kernel.org/all/20250921083446.790374-1-uwu@icenowy.me/
+[2] - https://lore.kernel.org/all/20251014131032.49616-1-ziyao@disroot.org/
+[3] - https://lore.kernel.org/all/20251016083843.76675-1-andyshrk@163.com/
 
-Thanks,
-Chris
+---
+Michal Wilczynski (13):
+      dt-bindings: soc: starfive: Add vout-subsystem IP block
+      dt-bindings: clock: jh7110: Make power-domain optional
+      dt-bindings: phy: Add starfive,jh7110-inno-hdmi-phy
+      dt-bindings: display: bridge: Add starfive,jh7110-hdmi-controller
+      dt-bindings: mfd: Add starfive,jh7110-hdmi-mfd
+      drm: bridge: inno_hdmi: Refactor to support regmap and probe
+      drm: bridge: inno_hdmi: Add .disable platform operation
+      soc: starfive: Add jh7110-vout-subsystem driver
+      soc: starfive: Add jh7110-hdmi-mfd driver
+      clk: starfive: voutcrg: Update the voutcrg
+      drm: bridge: starfive: Add hdmi-controller driver
+      phy: starfive: Add jh7110-inno-hdmi-phy driver
+      riscv: dts: starfive: jh7110: Update DT for display subsystem
+
+ .../bindings/clock/starfive,jh7110-voutcrg.yaml    |   1 -
+ .../starfive,jh7110-inno-hdmi-controller.yaml      | 123 ++++
+ .../bindings/mfd/starfive,jh7110-hdmi-mfd.yaml     |  93 +++
+ .../phy/starfive,jh7110-inno-hdmi-phy.yaml         |  65 ++
+ .../starfive/starfive,jh7110-vout-subsystem.yaml   | 156 +++++
+ MAINTAINERS                                        |  12 +
+ arch/riscv/boot/dts/starfive/jh7110-common.dtsi    | 119 +++-
+ arch/riscv/boot/dts/starfive/jh7110.dtsi           | 111 ++-
+ drivers/clk/starfive/clk-starfive-jh7110-vout.c    |  20 +-
+ drivers/gpu/drm/bridge/Kconfig                     |  11 +
+ drivers/gpu/drm/bridge/Makefile                    |   1 +
+ drivers/gpu/drm/bridge/inno-hdmi.c                 | 103 ++-
+ drivers/gpu/drm/bridge/jh7110-inno-hdmi.c          | 190 +++++
+ drivers/phy/starfive/Kconfig                       |  19 +
+ drivers/phy/starfive/Makefile                      |   1 +
+ drivers/phy/starfive/phy-jh7110-inno-hdmi.c        | 762 +++++++++++++++++++++
+ drivers/soc/Kconfig                                |   1 +
+ drivers/soc/Makefile                               |   1 +
+ drivers/soc/starfive/Kconfig                       |  42 ++
+ drivers/soc/starfive/Makefile                      |   3 +
+ drivers/soc/starfive/jh7110-hdmi-mfd.c             |  67 ++
+ drivers/soc/starfive/jh7110-vout-subsystem.c       | 117 ++++
+ include/drm/bridge/inno_hdmi.h                     |  26 +-
+ 23 files changed, 1974 insertions(+), 70 deletions(-)
+---
+base-commit: 0124ee3e78e4adb40db91280f3e468373e48928e
+change-id: 20251031-jh7110-clean-send-7d2242118026
+prerequisite-message-id: <20251014131032.49616-1-ziyao@disroot.org>
+prerequisite-patch-id: eece7563aeac9481fcfbfe431944006a5106820a
+prerequisite-patch-id: 24ed71d6319e801eb0155e577e078bfbf9253d30
+prerequisite-patch-id: 2d301a1dcaf58d01a78c0aac618a2754639898ba
+prerequisite-patch-id: 216741772e16b2ce583edd515bc8fba5d6470dc1
+prerequisite-patch-id: 9d34dd523d55d473a6de065142f3a7498f9e8db5
+prerequisite-message-id: <20251016083843.76675-1-andyshrk@163.com>
+prerequisite-patch-id: 63253dcea8b1bfbde34e453562ac81e9868148d1
+prerequisite-patch-id: adc84c1e4a7d682989d857b5c112845e699037c6
+prerequisite-message-id: <20250921083446.790374-1-uwu@icenowy.me>
+prerequisite-patch-id: 3d309e1448fd7debfbc014acbddf0dfef9205100
+prerequisite-patch-id: 8307dd02eb848faa843468b8c2242e8cb9c39347
+prerequisite-patch-id: 46e851ad42f8ec46284423c666f0ec44bd947005
+prerequisite-patch-id: 1621e926bea2ff1d4ed54df7812a83b8462ba322
+prerequisite-patch-id: c06c3b7fdded45495ba6b14c4f03fdab7c30aec3
+prerequisite-patch-id: ae59787188ca928a4832dfe268ccfeb87252e6dd
+prerequisite-patch-id: 10d8aaec692a647dc1e0e5d6c73c3969df30d78f
+prerequisite-patch-id: c483ea581aac29d035a0b84124685e17510b4cf5
+
+Best regards,
+-- 
+Michal Wilczynski <m.wilczynski@samsung.com>
 
