@@ -1,216 +1,137 @@
-Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazon11023086.outbound.protection.outlook.com [52.101.127.86])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9662716F265;
-	Sat,  8 Nov 2025 16:59:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.127.86
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762621154; cv=fail; b=DxO9S5furxXz85WgOPMhrvthCFwNGG0kAWkRRBhWVvRzWJkUqkRlUH6VTxM98HcZ537WJTVdKy8Lvyig6IJeHKV+tv4JZ6TrTKTKSBWRytQ/9zAJgLLp4VSpJcFO8ENCZS6c9Sivf3tfmsed7+IcuOhDfaWtwqXO5loWfA4q15A=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762621154; c=relaxed/simple;
-	bh=Azp6xPJfbjtc1U4kDcII1+7NJ9PN7dPoWmtnEeX+Zfg=;
-	h=Message-ID:Date:Cc:Subject:To:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=dvW3CkxzKOsDMN1Ac0gMzM7/Sfv/xcPRpl1i9/2BEs8AncbSJcy5zqMH9sZHiJH8T+g8eNFI645mdxAJzXNdVDZFwdd0cnwFmT4HeC2tgW3gkT9zOrMPF0NfYR00zRH+9wfcUJ7RjIWEEbgr+3vnzsYVL6077CVvmZ8t8zdBI7A=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linumiz.com; spf=pass smtp.mailfrom=linumiz.com; arc=fail smtp.client-ip=52.101.127.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linumiz.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linumiz.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=DFw8Je5OiWl5IiQu47S7kCGdnWdFSfnBlIq5chf2JzKorQl5W7Fklbc8BUlOsU2UQgr8FncFRUpxShvJrue80reoZOS0Gq67ltrbOGibD5kwTnOu1mFBZ4gyiC+pZml12E426Kc9avdMkTC1AtLO1NupJCDV0A4PqwdEOSsTQmQml3+BxpDvojZEuyT0vd0/0pBz0aAiP2IKRWRBqSdWWuD3d5d7T/k4kqf4Z+8YRarYEfT5+mpNKM+RvP5/dqYTPIwtyOEMKiF7GuEhKuymwWsD7f+xB3uIjvUza+Flyj4WXIqQPTLkC9TA4M3M8jgWYLxutHQWAte7lDC5CiN+Fg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Scs0AW7VFbiRh1D1gTYW1MkMBchPrmkaZOiKO/B3WhA=;
- b=Takrz8+LbAevU2w9TgZXfDHtKUdUfvUL6LvPrYinRFHL1eZNBlC7IEkoYp5EOuxGpeaUdF7PvtRJNlAUZt9IMU9/JOqDTfNWCubV0w/d9lTTU06l3Y9Xor4Wao5c4TpBa5T92wVQ4CW9icvCt5H9XmctGur/ftYOktPWceKjG2C1sDMsf/Pj8lGlxy/AUyXFS6V21n6tVLcscXDAFxFpx0OK+oes8tblHDnJAdrkQkthCEpiS1TdLzLRnwxnHJJ2mEpa5QPjiNdmqHFLP8U2Q9a0yh54V5ZElXVBabTYLD59qO5vt4tiwLorlIfM2oQ5pfQU8EYk9Oeb0kkLfbIoKA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=linumiz.com; dmarc=pass action=none header.from=linumiz.com;
- dkim=pass header.d=linumiz.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=linumiz.com;
-Received: from TYZPR06MB6935.apcprd06.prod.outlook.com (2603:1096:405:3c::9)
- by KUXPR06MB7997.apcprd06.prod.outlook.com (2603:1096:d10:42::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.12; Sat, 8 Nov
- 2025 16:59:06 +0000
-Received: from TYZPR06MB6935.apcprd06.prod.outlook.com
- ([fe80::9e42:3253:9a2e:b565]) by TYZPR06MB6935.apcprd06.prod.outlook.com
- ([fe80::9e42:3253:9a2e:b565%6]) with mapi id 15.20.9275.013; Sat, 8 Nov 2025
- 16:59:06 +0000
-Message-ID: <02b20361-23cf-4aa7-8f85-875261e6cdc9@linumiz.com>
-Date: Sat, 8 Nov 2025 17:58:50 +0100
-User-Agent: Mozilla Thunderbird
-Cc: parthiban@linumiz.com, Joerg Roedel <joro@8bytes.org>,
- Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
- Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>, Maxime Ripard <mripard@kernel.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Linus Walleij <linus.walleij@linaro.org>, Vinod Koul <vkoul@kernel.org>,
- Kishon Vijay Abraham I <kishon@kernel.org>, iommu@lists.linux.dev,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-phy@lists.infradead.org
-Subject: Re: [PATCH 17/22] phy: allwinner: phy-sun6i-mipi-dphy: add LVDS
- support
-To: Paul Kocialkowski <paulk@sys-base.io>
-References: <20241227-a133-display-support-v1-0-13b52f71fb14@linumiz.com>
- <20241227-a133-display-support-v1-17-13b52f71fb14@linumiz.com>
- <aFu2VBhCIEdLIPv3@shepard>
-Content-Language: en-US
-From: Parthiban <parthiban@linumiz.com>
-Organization: Linumiz
-In-Reply-To: <aFu2VBhCIEdLIPv3@shepard>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BM1PR01CA0151.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:b00:68::21) To TYZPR06MB6935.apcprd06.prod.outlook.com
- (2603:1096:405:3c::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E92A212548
+	for <linux-clk@vger.kernel.org>; Sat,  8 Nov 2025 21:04:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762635861; cv=none; b=U/ad5qKJwa6fGwpPKkDL8ePLzIuhlDNzmsiGrRd0UI0VQDr1FjfjUuS+o7g/IaSGpqNRZ9V56PkEtgi0JHoIn+1qB+973FgaSKiUsPWREg/Vn5XqhEZLXgtui3b7fpDq3gE42vIeucWhdtjY6oi/n72DG2EL66ylXPhy4caAerE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762635861; c=relaxed/simple;
+	bh=RMpaqWIHb1GpGEFIyrRCs/9EV1CvK/Ir7Bz2Pp37Q10=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RcYCAjQG4PcnRMVYCKnu8Gnf0Xz1CmI+q37tVbOfKy1Fvi1BqMYVdjLnUgR9xMjiQuoV3EQfZ4SV+8B41CmRQUSMrd2uqh73JZNC0JRMa/xCNpMxwS3Lw+FXgtK8+5HNZ2sxbM8Hc1mc8V6cYz0zsWlEKg4irSV7DohF8VucGIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=lIk5OLR3; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="lIk5OLR3"
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2957850c63bso18043865ad.0
+        for <linux-clk@vger.kernel.org>; Sat, 08 Nov 2025 13:04:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20230601; t=1762635859; x=1763240659; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=A/7GraEMhRfGX80xNeYuFThBogqrpJru9RaOOCG7cpM=;
+        b=lIk5OLR3de2fqYe2alimFp2uLysPGH04vYM5/nz7u1JIv9s8Y/ogwHEPPGx5UIoWFE
+         e91kDbMnT4Nl3Baf6US1SU/y7xt+OFsN1Rs8QGohLv6ktwsCVrUw5w3saw8J/UzuWVzj
+         3uZBOqNDypoOGyCM8Xt/imJi8EPVpYS2Pi6sOaSDmrhZraL70yRsZDzBSOTdyh4Ztq0g
+         fNfGl4AKJKuK8+kY6Yn8bhqO54Kr4HLwP9eDmlJJSQQKw5Tbr/rmGRhr8eTsTyG11P/b
+         NNsrpjFYsDEbSjX10kA5HulVQBMKCDYArTb2x5Fl8WJ4Jk0DpZehfk0Fumayp20SprJT
+         m9WQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762635859; x=1763240659;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=A/7GraEMhRfGX80xNeYuFThBogqrpJru9RaOOCG7cpM=;
+        b=S+bi9ys3VvAM58YECRaWOLLmpf/Ca2rPJHia8wqyAWmtWdJ9Byv5qKnVOu4GyxOVXv
+         FEcNKCOdUlxwy/QbkCeHGRT1ARkd/oj3v4OROaZJv7s8XsPGogMpCdFs2vG3b+zwac0c
+         Ef0puZpF/lIF1KqJpmNAciryinZcpWA51FTV2clOjQN2avefoB5vMSlWE87tKvE7vywq
+         2Zll7/SxLlvRwhFf5A4PIGLZbyCGFtLhIY3S+tgn+2++58XjUmGc3eunbMZUCRTPlD4o
+         Qinyy417qCh04sbm0H/7eg/3gVVTYAK3lEi/lTT1H8KzNk91+hRMtDurMcOn4YBMb61Z
+         izlg==
+X-Forwarded-Encrypted: i=1; AJvYcCXSC5ebdDyyxzoBpv5r/uFiJlBxzbV3QIVnaxzM93Oz4pNtUbtYf+H89g+0a2Xnm2vtDEo1dT25bXI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3Bylw61HwJRXcJd/GZdoRuqWlhxIu4/qMAe01lk/8EfqxhnAL
+	FIChuqpiVHEztRWje8iJjVX42VHge21OadeTsGnES17/3OfLSYLxAt3OedHzoRNSEos+ZKKHLiK
+	XCmC2jheGTrfDzWOVaZ2VGhRW0LaKsUw=
+X-Gm-Gg: ASbGncuYbxe4uXx1fuAXqSZbbO2qFFXUcREJfBTglVW7mX+29x2xJL8bxezt/3+Puoh
+	g4FlTwRg8mZ1d2i8cNUv10R3FthS8HO/bgFgK91NhF5Ug/YGmwAJV7GsG6V8FWq1h+SH9oEDiQU
+	w7iQOqYcL9FzHm3NxZn12E8zUWSID+U5bIFXj3q9UHxSNM+EPz0eLm++4BBb16rFzlBUF7iHSeE
+	9FsRtGlGMxvxNXXPzvtXIufdoxCpfeV4J/Lumvb8K+99KJqTh74un+X7JRucgG2asVYZWIgtwsi
+	uJcZRtW+wX4/sfnm93FkJjT0wtQ5
+X-Google-Smtp-Source: AGHT+IHYseG28VeVAj+noWF9xeZjKVsK8sMaLAuq9kZaFRIKXzdbOlTmekGRfg/kBIVHWNLoWwy6INlqqqY7HWNBhaU=
+X-Received: by 2002:a17:903:1a26:b0:25c:43f7:7e40 with SMTP id
+ d9443c01a7336-297e1da7480mr46581775ad.10.1762635858817; Sat, 08 Nov 2025
+ 13:04:18 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYZPR06MB6935:EE_|KUXPR06MB7997:EE_
-X-MS-Office365-Filtering-Correlation-Id: 993e9580-ef5b-49b5-0f81-08de1ee8207c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?T001RHBpK1RzZ1JuN2JkNVdVdUdGc20ydkNPRUs4L29qM1B6N2EwZDV2ZlMw?=
- =?utf-8?B?K3NzT0x6djVWSm5xTWR5eFVwdjgxQ05RdVVvNnViWUE0R2dpWDViQkFaTjdR?=
- =?utf-8?B?M3RBQjZDbytaUk04cmRCaEQ1S1Z6bnROMEZNcENEOE13aVE5VnBGVDB3YUQ3?=
- =?utf-8?B?bHdQUWt1N21HaEE3eWVmN1B1bUY5SS9Fd2hsdHhINExuM3pkMTgxYlBoZFor?=
- =?utf-8?B?U09lVkRORVN6dnFBSWw0L1ZCL21oUm84Tjd6Zlc4aEo1SHp1TUtIWW9YUmdm?=
- =?utf-8?B?eVJpM1JJZ3FvZE9pOFJqYTJ5dy90elFtMEZpT0Y0S3RpaEd6K2l2MmNoN2ds?=
- =?utf-8?B?UVFaUHBLODk5d0FxV1hqWW5QQjZ4S1U5eGt6cTRtMWRxRUpUZHM3YXhIeGZk?=
- =?utf-8?B?SnlQZ0dDeEF0cU5EWThEVUd5YzhxSWlDQ0NhaFg3RXUwRDJtekx0ZnB5MTBI?=
- =?utf-8?B?VzBBSG5EN2FtUllKTmVSc2dKS1FZckx1MExybkdGdHJYQk5mcnE1VGlxNzRL?=
- =?utf-8?B?SnRRT2ZybFd6UG03MVZSMkpkdUliNlczZ2plNERlUlJhdTFleWhlUkhBbi9m?=
- =?utf-8?B?MVVsN0lPSEtSck93TDNrR0hHVWdsMzR3WDFsZ0tuQ0c4WCtPQXBkMkNYTnNE?=
- =?utf-8?B?ZE1oejA0QlBOeHZrYTFNRkNrQ2w3RTdQaHU1SEZRTE9tdSsxZ084U0tMSTVY?=
- =?utf-8?B?U1hGelV4Rkg5bExRQytRUmlsblZSeTN0QWVIeXQ5NkhqN1grR3VRWEs1eHFS?=
- =?utf-8?B?ZzR3aUJtQVh1VUJ3OTA3YzRjWCsrZzhjRHBzdlV6ZmZEcWpzcmtMcERrVit5?=
- =?utf-8?B?WWRRSWVOejNFdEtldmhTS2FIUmZIam5XL3NVZmZzQnVDeDJjUFlUSlZaOHVB?=
- =?utf-8?B?ZnEzRXFuNW5xeEVmL240RkZRWFVXRnF6RmhBYnpSZmo4VHVBaWZpTHdmNW9T?=
- =?utf-8?B?aGRJaDMrVFU1MU1xL3REcjlLZ05yMnRwUTJON0lFNkRTY3RZOWszZThMOGxR?=
- =?utf-8?B?bmRsNkFocWFCU0IzSW5odzNiOHoydzN1V2tIMFIxbm5NRUlXS3YwZFEwZy96?=
- =?utf-8?B?RFJFcE5kU29iU21Hb3ppWE9nNmRQUko3K0dDdHNueGIrUVp4Rkg4V0ZLcE5z?=
- =?utf-8?B?VTdwVkQzSEZBcEZoYWp2Tzg4VEtiU2hKMGwrTlpYKzhSdkpWeXZqVStKSDFk?=
- =?utf-8?B?Zkh6NnFUb2dNdE5wN3U2RUdQUHdZd0d3eHlOOWxSMFdEZHZXcHRyQjVMbHA2?=
- =?utf-8?B?M3pJUmsvKzROc29scFRzWTBxTmlvVS9WSWN4TnhQbXU0cDIyODlOQzR0ZGJ4?=
- =?utf-8?B?eXZJaFhzeUkvTWQ4UnJ3VExiRy9DUDVyd0FtRnZPclJGdEpvdW1yd3N3NnlH?=
- =?utf-8?B?bXNaN0VySXdjYzdOVFQyMnF2K1doQm5jdWFCWG1lVEEzZnVRMEtPc3RFL001?=
- =?utf-8?B?S3QreUJpempIaDIxVXRucHVuS1Qrc0ZIZGdxNTNJK1lyeXBuek5rNW42QkdD?=
- =?utf-8?B?QzRLL3JBVTZlbkwxQXM5UXdCRkEyZTYxQndjWGlKY1BLK3A4SkQwM2YxZUdP?=
- =?utf-8?B?RnBvUXduUk0wZysxbzRCSE5DVmxGVTVIRzhmai8ybGl1QWFvbVlzbWxJYjZ1?=
- =?utf-8?B?QitLN0FmVEVvZzI5WkE0UmVFQ1VNUi9NVVBFdE54Q0dUdE81Qk96NG5DRExs?=
- =?utf-8?B?dHdxY0RXcWRUdHc0WURnT1duY2gyVloyN3B4TGwyTTJoTVM5Zk5ZUUVsRkNQ?=
- =?utf-8?B?bVcvT0hLbTN1aEY4eXIrekpTa2tOU1JwNGpvTFN1QlpLaVRxWlNzWUtHSHMy?=
- =?utf-8?B?U3JIRDFBMVY3eU5rS3IydkF4c1FKNnZiVTJZNUFjbGFZZFlPTncxb2U5UGhV?=
- =?utf-8?B?b1pGZjlDTXZsUDFUTEVlOHlUZFlXaWlnL3Nmd1J5OGQrMlE9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR06MB6935.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Q1dZeUJ1dVp3UHhTMmlnYVhaU2Ewd2ZhbHlidVlQZWZSZWhPUFhsek80dURQ?=
- =?utf-8?B?dEU2OEx2bzgrdktyUzRQSjJKc0ZqbzhNUVU3YURmbFd1SCtONzUvcHc5TTdV?=
- =?utf-8?B?SUR1aFVETExZeHpZQWhjbFFBRmpPaG81SzludXdoREg3MmZ4ZUtSam1UbkxW?=
- =?utf-8?B?UTdKM1MvSXE2aEtnV3Z6QUF1cEVMZDRvK2ZRaEhIRm9SVVZZTy9HRnBxZzQw?=
- =?utf-8?B?UVpmVU9HOVB3Q1dFaDNLakdlMGxhOUNLaU9mNHpHYWx5NC9qc2kzZHpSOVlO?=
- =?utf-8?B?Ry9PRHJ1MHZFWUZSS09qS2RWOG1zM216V2s1M280WjVocjEzdDQxSUtYWUZF?=
- =?utf-8?B?c1FHTk9FdXNya2dMazJOOTIrZmwxVCtVeTl3TmphRTNGK1o3akhJaWErSDlH?=
- =?utf-8?B?ajhSRy9UMUF6Uyt4NzJyUTcxZ1ZwUi9DU1NIRUlzWE9tMTJCd2IwdVlReS9u?=
- =?utf-8?B?ck9kSERDKy9KcytEQVZ6VHo2d2cvOVFnYTFycTZ1UVFoaTFnUS8rRmlRQWpK?=
- =?utf-8?B?NFg0Q2Q0OW85S1pzM2ppTkRHTVI5MHpuV0lhRlhPREVsRFJXeWlLZWkzMTNy?=
- =?utf-8?B?YVk1cDhTaFBSV3ovRkoyS3dXWS9tWUtIWnQ5cVprWXBCNndjaVZkcTluS3RY?=
- =?utf-8?B?U2tObmY4b3hiRnNGSWw3UkZMajJ5VTFJRHN5ck96QTBZZno5eXl2WEtoY3N4?=
- =?utf-8?B?YWFWMitodGZGUk9hVWNsWEJEd0FpQStreEk5ZnRTU3BGc3FqbHFYaUwrZ3Ew?=
- =?utf-8?B?MjVyNkNRTExrQko2MXRkbXRJaTlMK2poWTRkVVljQktXWmx6ODhPZzVIeXB5?=
- =?utf-8?B?T3N6UldDTThzb3ZFRmJvTzk2UTVoTlpXSUVNNHpvejVkNnNlSktycGVjTWFt?=
- =?utf-8?B?Q0ZHQksxSmFBM1EwOUtKeC9iMC9RRFBXaHNTUHMyRFY4R0VmdEpkTyt3czVJ?=
- =?utf-8?B?RzJrenRUVU56b3lHbXBKZzBHK1dTSU5oQVlFV2xwMWF1dTNkTHIxWExHT2xW?=
- =?utf-8?B?RzE5VXBEUEJ0OCs2Z3FhbGxnNm4zMEtSZ3RPWE0xNVB6dU1FaU5xejRPMFpT?=
- =?utf-8?B?aC93eFRlT0UzZU43UnJ2UVcxTW53S1IxQUZOWWVkaHJIeVo2VUtzZjBmcm01?=
- =?utf-8?B?WFV3TkhtNDI1YkszUk1Md2orQ1Z5MlJIMm1EZmtxOFZUVW1UWHNnKzJReThH?=
- =?utf-8?B?SmdEdVJyOTZoc01YMHpjYnM2UEJpMlBubjNTUnY4NXJjQzlJQW9zWGhsS1NW?=
- =?utf-8?B?eEhabGlKTngyaUpBVFNHczJTUXc0dThwbFdSYUc3RXppWUpIT3VUWEI1OGsy?=
- =?utf-8?B?V0RHajM5RWNoVTFDM0hpU3VQM3Q3SUsrTGpMRHh0QmFCU1NKenR0N0ZQeFJI?=
- =?utf-8?B?ZHJyd1NtZXRKZWk3S21mYW5qSkRhTlMwV09ha3ZLaWhwVCtOcWJGVmM4VGZL?=
- =?utf-8?B?Tm44cXQybVZjSlU0N0RISFZjWkhrdkpPcnYzUmNFbDB1NDRUV25vZE9KZC9E?=
- =?utf-8?B?QXVUV3N4R2t6cTVWSk55emRGRXRtUURvdW8waXV1ZnhDTU4xZGlUUTh3VU9T?=
- =?utf-8?B?OVpmVk02ZVc4Mk9SZHQ5SU40M2N6eURyZFpBSmc4WmIvTzcvRUNHV0VLQjBP?=
- =?utf-8?B?R2w5YVZaS2pDVk12MElMdkt2eVE2MmJEUmNmS0xUSGozWWdIV04yaTU5cU1P?=
- =?utf-8?B?NEpaSTlOL29WVnhNUWkwM3NSUEJDTERKNW9rZFU4NTNGQUdpZVpOMnNhY2hV?=
- =?utf-8?B?ODFHb095ZG83andoajMrNUJ3M2l0V0RqbXJmNW1xY1o3Y0F6b1o4KzZvMFo5?=
- =?utf-8?B?V0t4dk9VL0FudkFOY3FRNzZZWklGNE05M3FmUzAzM3ZveTNkUUpLWk1VOFh3?=
- =?utf-8?B?SklIRDY0Q25oS0YyRk4vVmlGcXYyVlhydjk4OU9URS9VaEc0czByT0hJTGk1?=
- =?utf-8?B?OGpzc0pSZno4Rlh5Uldqb09hR01tOWVUTVFOVHJjRC94VUx4REJBNGxMZnZJ?=
- =?utf-8?B?QzJFaUx2MkYyQjR5RndSUFlNOWlBaUNkNzRIZ1dTMURidkZvQ1loaXV1UTVB?=
- =?utf-8?B?RHIvdXRKVjhHb1o4bXZ0dG9WMzdETGhnNzQxZm5zOTJ3YVNQR0FDSWRJbzU5?=
- =?utf-8?B?dEkxTkVYSVVVYmZYVDczVjBkVHlYMkZWOGV1OFVRM2hyY1dadjhtRi82TEFD?=
- =?utf-8?B?SHc9PQ==?=
-X-OriginatorOrg: linumiz.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 993e9580-ef5b-49b5-0f81-08de1ee8207c
-X-MS-Exchange-CrossTenant-AuthSource: TYZPR06MB6935.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Nov 2025 16:59:06.0991
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 808466aa-232a-41f4-ac23-289e3a6840d4
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: utRRfITuyhEzFOR60LtE155/9ufcgj1M8FT1pVYVMlSXf+6SfpmPF+XBiIR5FBn6g6sZIBAh70QCnch05H4QYg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KUXPR06MB7997
+References: <20251031-optimize_pll_driver-v3-0-92f3b2f36a83@amlogic.com>
+In-Reply-To: <20251031-optimize_pll_driver-v3-0-92f3b2f36a83@amlogic.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date: Sat, 8 Nov 2025 22:04:07 +0100
+X-Gm-Features: AWmQ_bmagaCbCEB_Hmpf3J-UvtRMuC04_pkThYtgGIcc82yezqw-vegzX0N5NQA
+Message-ID: <CAFBinCBSjKzHZ_k+c70B+YsJHiOS4qbjAgtnWaEeQy11xg94cA@mail.gmail.com>
+Subject: Re: [PATCH v3 0/4] clk: amlogic: optimize the PLL driver
+To: chuan.liu@amlogic.com
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, Jerome Brunet <jbrunet@baylibre.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Kevin Hilman <khilman@baylibre.com>, linux-amlogic@lists.infradead.org, 
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Dear Paul,
+On Fri, Oct 31, 2025 at 9:10=E2=80=AFAM Chuan Liu via B4 Relay
+<devnull+chuan.liu.amlogic.com@kernel.org> wrote:
+>
+> This patch series consists of four topics involving the amlogic PLL
+> driver:
+> - Fix out-of-range PLL frequency setting.
+> - Improve the issue of PLL lock failures.
+> - Add handling for PLL lock failure.
+> - Optimize PLL enable timing.
+>
+> For easier review and management, these are submitted as a single
+> patch series.
+>
+> The PLL timing optimization changes were merged into our internal
+> repository quite some time ago and have been verified on a large
+> number of SoCs:
+> - Already supported upstream: G12A, G12B, SM1, S4, A1, C3.
+> - Planned for upstream support: T7, A5, A4, S7, S7D, S6, etc.
+>
+> Based on the upstream code base, I have performed functional testing
+> on G12A, A1, A5, A4, T7, S7, S7D, and S6, all of which passed.
+In the past I had most problems with Meson8/8b/8m2 CPU clock scaling
+(via sys_pll).
+So I tested this series locally using the following shell script on an
+Odroid-C1 (Meson8b):
+#!/bin/bash
 
-On 6/25/25 10:41 AM, Paul Kocialkowski wrote:
-> Hi,
-> 
-> Thanks for your work on this!
-> 
-> On Fri 27 Dec 24, 16:38, Parthiban Nallathambi wrote:
->> DPHY in A100/A133 supports both LVDS and DSI. Combo phy register
->> have BIT(2) for enabling LVDS specifically, but enabling it alone
->> isn't functional.
->>
->> Both MIPI and LVDS needs to be enabled in the combo phy to get
->> the display working under LVDS mode. There is no specific enable
->> bit for LVDS apart from the one in combo phy. MIPI got enable
->> control in analog 4 register which must be disabled when using
->> in LVDS mode.
->>
->> Introduce set_mode in phy ops to control only for MIPI DSI.
-> Similar work was already submitted for D1/T113-S3 LVDS support, which seems to
-> be the exact same situation as the A133.
-> 
-> See: https://patchwork.freedesktop.org/series/145276/
-> 
-> I just made a review of that series and find it more elegant in various ways
-> (especially since configuring the registers in set_mode is not the right place).
-> So you probably want to follow-up on that series instead.
-> 
-> Note that both D1/T113-S3 and A133 support a second LVDS output, LVDS1, which
-> uses the traditional TCON0 LVDS PHY. It would be great to be able to support
-> both outputs as well as dual-link modes!
+CPUFREQ=3D"/sys/bus/cpu/devices/cpu0/cpufreq"
 
-I have addressed the remaining part of the comments except this one. I will
-wait for the other series to be addressed by Kuba or if not I will pick to my
-tree and try to address it.
+echo "userspace" > "${CPUFREQ}/scaling_governor"
 
-Does it makes sense to wait for that series to get merged / addressed or it
-makes sense post my series for further review? My previous push was largely
-complete because of mail server issues which I have fixed now and ready to push.
+while read -ra LINE
+do
+    for (( i=3D0; i<${#LINE[*]}; i++ ))
+    do
+        for (( j=3D0; j<${#LINE[*]}; j++ ))
+        do
+            if [ $i !=3D $j ]
+            then
+                echo "${LINE[i]} -> ${LINE[j]}"
+                echo "${LINE[i]}" > "${CPUFREQ}/scaling_setspeed"
+                sleep 1s
+                echo "${LINE[j]}" > "${CPUFREQ}/scaling_setspeed"
+                sleep 1s
+            fi
+        done
+    done
+done < "${CPUFREQ}/scaling_available_frequencies"
 
-Thanks,
-Parthiban> 
-> All the best,
-> 
-> Paul
+This has been running in a loop for two hours (at an ambient
+temperature of ~13=C2=B0C) and I haven't observed any problem.
+Since most patches are a no-op for my case I'll separately reply to
+patch #2 with my Tested-by (as that's what I've been effectively
+testing).
 
+
+Best regards,
+Martin
