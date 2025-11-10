@@ -1,94 +1,144 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD86E3164B5;
-	Mon, 10 Nov 2025 15:13:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A877274B30
+	for <linux-clk@vger.kernel.org>; Mon, 10 Nov 2025 16:05:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762787609; cv=none; b=RWdr8IG83mXxX2ORsWcF6bZKikngO4oJ/pRnZOG/knXuw/xIE42AbpY+QpCgMPWSUuGolSd7NRBYaAkBYbFIeZRWLzF1xsaLBFSeG7CHaiMLNsg0vbuluZ2JdrsjpW7/LVw+LGfCP/Vi77ukVEbnqcVAYkv6vDifbDqSjOWJh3g=
+	t=1762790740; cv=none; b=DvObScjtS2998j9OBvBf0RlusISYEr5d+h6O2bMVR0iOUcgsGtnZYYdkk2vXKRup6+rEInbJaSO+nMtaEzsIZftGEV2FO+QPBJYULoolmwTG3MAULtsAGMytDRncAxWO+lwUCg2xBOpI7Pu6jvSyQjzJLCUZ91fAhi9NWx6zMxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762787609; c=relaxed/simple;
-	bh=v+WhwaNQxNmGiOc1Ncd79H143hIDikEV7iSCtMGSUSs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=F+KrzT1T8tZVT6YhsDMtYEoisb9mFXwZek77lQA9oDMuXKwbV/1Q2uHVo/83tcOzo4kF63n9lOe8Aeks/FyuJU8g6W9s4gXlOOH8pHNvPMZnDjPlxuPmWcCD5cSf53OAXTDDYOMosH3NWq9vas6vq3tQqwBwQ0psJCAAbrcSv9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LiUDi3t4; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1762790740; c=relaxed/simple;
+	bh=onmwgzWvrykN1fzVZiejcYemdHDzwD/isE77f44YfsU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CAZlioBKLgiMzZPvI7Gggi2Fn4IULgYkFQcvJGC8+UilHkqQqAyZjy/21A9ZCfR38eDQlCQM88RZG4APMJdsttX85F95Rw8huuTvU3L4Jp5Cbu93JBG8z0uW0Oox3dAKg5ghzfUc+d/dgkyRqvCIEpT25BiitaecL5vqGdUxKqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TjywY3vc; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LiUDi3t4"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81911C113D0;
-	Mon, 10 Nov 2025 15:13:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762787609;
-	bh=v+WhwaNQxNmGiOc1Ncd79H143hIDikEV7iSCtMGSUSs=;
-	h=From:To:Cc:Subject:Date:From;
-	b=LiUDi3t4vRd8VWatHnlVRBRwc+wUM+x+VJ129NqHQliqbXiDbnYtKkQM0rO2nbXO3
-	 MTtKngRvz5i00KeGbOUn8supigGQx1UZaLJ2dzMIJILD31SeI9/E33zBvsPrfrAziY
-	 p+370/fG3Erg/1e4VAGDbJ1oJy3Je+W+HbC1rsvp0n+zl9XEZ7uR691FXpNps36cE5
-	 RwGVaw1UjdPZZLhFceUF//lYWuRXeVhdp2U9Wnr+UpyP7zbrB80gDQYXaipqQ33Om2
-	 MDr1Hy/5xJ4oO2N2cfFQkS6nfbaVDCeXrdn3JD5RaRPp/mmkqptj+lc+wDUqRi1coR
-	 4t2BPB1xiOckw==
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	linux-clk@vger.kernel.org,
-	Sylwester Nawrocki <snawrocki@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL] clk: samsung: drivers for v6.19
-Date: Mon, 10 Nov 2025 16:12:42 +0100
-Message-ID: <20251110151242.136508-2-krzk@kernel.org>
-X-Mailer: git-send-email 2.48.1
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TjywY3vc"
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-7afc154e411so1861853b3a.1
+        for <linux-clk@vger.kernel.org>; Mon, 10 Nov 2025 08:05:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762790737; x=1763395537; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=TgZgArONH6lr9XvODSMICWYyuVWCZCYNoJZs+MKJ66o=;
+        b=TjywY3vcQXDoDhOBL2QUPL3GrA9bfCkCgSDkEN0ZkZ6QUTpCX2HfscTf7vUlOejh2g
+         yGFpKy7Iv3SR+lxHXIrxE3fIEjJtKsLBe0UAkGofwtSPUihwUfEN0JpTE93NTf7XpPt5
+         WjlBK0qsBbipX+zh5dUAy6p/Tn/ay/UbU+vmReprN4QBeRJuPTLHloueGF/yXZd/7fb0
+         M2DRdOrSsiyNULogKUUgFr53pA9Y3sIDfURklD0RF5RW6XWY6sLeqa1z1JxBhHAnZqfD
+         8jT9emaNuxMfzvFBwLpzcxfSE0/IUWRN5D0MAxLeygtGdoQBGl27tx5cH17RaE1oeBTm
+         3pAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762790737; x=1763395537;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TgZgArONH6lr9XvODSMICWYyuVWCZCYNoJZs+MKJ66o=;
+        b=c1PzX5w+5kcvR8mQYDMh9b5D4dl5JM/awF9Rw7LL7ZKlk6GpyyQpvYGJPkuzi+jWgK
+         rro4/g2R/Ffxhx3DejgQ9zodoUU8ItIHwCDTVeMcZRdlaK2SUA54lXWIjwD2sUyP2j/R
+         pNSkDJPEkDj5M4FmacP6zC06tVD68wxHaxJjZplvuNV30WwJI3vytvI9VEkDV4YvvohE
+         uBF5KR+Jw5+r0kzC3RfDwW+J8oz+6Qb75ZFK4mxauQc+LkpmBba0P/VWDLZCsops5Kjp
+         h/LsTk5/n+s0czuVzAogmq9gxpj6NLT0d7YJFqxjsQJ2ycwUeRCL9sliwrwMt+u/7PpC
+         SvpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXiDIt0oqTUKPmhZ2Tk4zek4pPa7sTgvHQUOSQhoGG2mPddXvSfvSY++TACFPQobQaa0q+9QGF49kU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzP1VfClHlZKtvM1L1Npzsih2cjmbWlYTA6j+LumNN5NIzrSBsK
+	pgHryYLSb/weFJg5uHw1mXxd+uUG2WBg6nuDWqMGIgk50MESHPla8AXn
+X-Gm-Gg: ASbGncua5FUHuZSFcuBcaWmxmdmWaTG8q8CUDPsXGDM+1Os3ShrLN5j6minUoBOPdrs
+	X5C3eA7o65EUySBwo8nn2If14JdzhwPkk7ppaSEdWzXqdO6aPC/WgtQSl5mD2WozOjpA9/MAnhh
+	51OeLEGn1iDWCmfTYBu950Bd2d+jwKjYdfSdn2zMu17qzfTzDJNZgIdHZtnmp8Oda83maZym/qv
+	KVfkFEu6RVJYdxps0R7zMdpnOh/8Z0NXjpHo5HA8JGUsHbZ0DbMYuEuRPIKBBHjnPthlWJcJmzu
+	E9R6ZBxWB2RSOqklXlxkaP3Ns3ujEkZsTkL51mT2Y9RbKxHw2HLNHtpLhrTV06klaB1MAU6rPpV
+	kXqmqxjJeHyhkcSZrTehp1P7iCcHXE1znz9q18WksHk0XLEi0rrJFiHoLJrVoxO6syk09ATjUHu
+	HubZxEMJM=
+X-Google-Smtp-Source: AGHT+IF6WNNBzThjDgikYB/HqeiGseOlAPwbhWtHTRN1quM7bZZi7LqL9mv+idqwSvzAApOMFvrtbQ==
+X-Received: by 2002:a05:6a20:1584:b0:344:bf35:2bfa with SMTP id adf61e73a8af0-353a31550dfmr9952656637.33.1762790736506;
+        Mon, 10 Nov 2025 08:05:36 -0800 (PST)
+Received: from localhost ([2408:841b:d00:77aa:3e0a:b50e:a68d:6665])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-ba902207227sm13072965a12.33.2025.11.10.08.05.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Nov 2025 08:05:36 -0800 (PST)
+Date: Tue, 11 Nov 2025 00:05:29 +0800
+From: Encrow Thorne <jyc0019@gmail.com>
+To: Yixun Lan <dlan@gentoo.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: spacemit: fix comment typo
+Message-ID: <20251110160529.GA18666@hailin-HP-Pavilion-Laptop-14-dv0xxx>
+References: <20251029-b4-fix-ccu-mix-typo-v1-1-caddb3580e64@gmail.com>
+ <20251029223337-GYA1549833@gentoo.org>
+ <20251110141251-GYD1651402@gentoo.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1558; i=krzk@kernel.org; h=from:subject; bh=NMFi2ddzD9bgrisS/6TQO0TkyBRAyNYFx94+jZwEbr0=; b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBpEgDqC/UaGCPFd7MoHs5A4cH0wd5gAMIivlI5p hrkjXr4tYmJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaRIA6gAKCRDBN2bmhouD 13YWD/oD6VZLjGViUOEIYqWSweEQOKX6GoKvMVmCpjo8GyspDLo1rHZl7tc8s/RE2Cyud0u91dv 9vY+pxlKCr8TVLhLI1aK/0xtWcoXXPwYyjcsOrhl/QbWctQm6Yu8GHj0Yvkdf6ZYSEeKshxwiNK NR0mcDrRqoXXVOAahvPETM+ppkJBT8mDB5oDU+GL/m8FCaCJxdLa0kZbMgPyKIvHWtlMKGj3dIg faN0D0bGx1txnOy1QPS5XErhQFCz4yHc1yb2wq8ag1YFAUIvtUsuxt73/OcYrPMMnHulGnrdyQ7 5y12NM5sDfIDFHBMpAbm0KOzQkoOL8a5F3rIHIpnBqnA/w4/2ykZ0bfwdaIx9kfEc9/u/tgLz63 Nqi1I/GoPkkdP1On0jtnKgZ2D4qg8mD/rLIz95xAWf0IFer2I9OQcG+oS/ZPsDBcbVeVsTLT+Nu RAQTTaFaVZK3G06XiDWJfhlKtivbF+6SFlpvSENaYx+akM6i/6tCWmvkMspKQsgI4Sx+uOf0Syy EYjMMl8rgnEaTT1lf0HRDKz4AUzg7FGQ72QpYAcFNEcszVCGh42omri6ECDIJZVwrhN6ErdxPhV x9ApiYlrbRbEECA4ugdPBQ9aUtMNGlLm2jhcOndSDcPkFz6IIeiHSSMdj0BsyLFGvSccVEHAUPA Vf2PkaUDVLGtbRg==
-X-Developer-Key: i=krzk@kernel.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251110141251-GYD1651402@gentoo.org>
 
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+On Mon, Nov 10, 2025 at 10:12:51PM +0800, Yixun Lan wrote:
+> Hi Encrow,
+> 
+> On 06:33 Thu 30 Oct     , Yixun Lan wrote:
+> > Hi Encrow,
+> > 
+> > On 00:05 Wed 29 Oct     , Encrow Thorne wrote:
+> > > ccumix.h was copied from ccudiv.h and the comment after #endif was not
+> > > updated.
+> > > 
+> > > This patch fixes the incorrect comment to match the filename.
+> > 
+> > Just describe in imperative mode, see
+> > (since this is trivial, I could amend it before apply the patch,
+> > so no need to resend)
+> > https://elixir.bootlin.com/linux/v6.16/source/Documentation/process/submitting-patches.rst#L94
+> > 
+> I have no other clock patch queued this cycle, so how about you respin a v2
+> then let's ping Stephen directly for inclusion?
+> 
+> for commit message, I'd suggest simply as below (short/clean, also enough):
+> 
+> Fix incorrect comment to match the filename.
+> 
+ Thanks for your feedback.
+ I’ll send out v2 soon.
 
-The following changes since commit 3a8660878839faadb4f1a6dd72c3179c1df56787:
-
-  Linux 6.18-rc1 (2025-10-12 13:42:36 -0700)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-clk-6.19
-
-for you to fetch changes up to d669ec6be0b1965c67248407d87c848b1b7c12ae:
-
-  clk: samsung: clk-pll: simplify samsung_pll_lock_wait() (2025-10-18 18:12:41 +0200)
-
-----------------------------------------------------------------
-Samsung SoC clock drivers changes for 6.19
-
-1. ExynosAutov920: add support for additional clock controllers (M2M and
-   MFC).
-
-2. Few more cleanups and new bindings.
-
-----------------------------------------------------------------
-André Draszik (2):
-      dt-bindings: clock: google,gs101-clock: add power-domains
-      clk: samsung: clk-pll: simplify samsung_pll_lock_wait()
-
-Raghav Sharma (4):
-      dt-bindings: clock: exynosautov920: add m2m clock definitions
-      dt-bindings: clock: exynosautov920: add mfc clock definitions
-      clk: samsung: exynosautov920: add clock support
-      clk: samsung: exynosautov920: add block mfc clock support
-
- .../bindings/clock/google,gs101-clock.yaml         |  3 +
- .../clock/samsung,exynosautov920-clock.yaml        | 42 ++++++++++
- drivers/clk/samsung/clk-exynosautov920.c           | 90 ++++++++++++++++++++++
- drivers/clk/samsung/clk-pll.c                      | 41 +++-------
- include/dt-bindings/clock/samsung,exynosautov920.h | 10 +++
- 5 files changed, 155 insertions(+), 31 deletions(-)
+ 		- Encrow
+> > > 
+> > > Signed-off-by: Encrow Thorne <jyc0019@gmail.com>
+> > > ---
+> > >  drivers/clk/spacemit/ccu_mix.h | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > 
+> > > diff --git a/drivers/clk/spacemit/ccu_mix.h b/drivers/clk/spacemit/ccu_mix.h
+> > > index 54d40cd39b27..c406508e3504 100644
+> > > --- a/drivers/clk/spacemit/ccu_mix.h
+> > > +++ b/drivers/clk/spacemit/ccu_mix.h
+> > > @@ -220,4 +220,4 @@ extern const struct clk_ops spacemit_ccu_div_gate_ops;
+> > >  extern const struct clk_ops spacemit_ccu_mux_gate_ops;
+> > >  extern const struct clk_ops spacemit_ccu_mux_div_ops;
+> > >  extern const struct clk_ops spacemit_ccu_mux_div_gate_ops;
+> > > -#endif /* _CCU_DIV_H_ */
+> > > +#endif /* _CCU_MIX_H_ */
+> > > 
+> > > ---
+> > > base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
+> > > change-id: 20251028-b4-fix-ccu-mix-typo-038c19fe30c4
+> > > 
+> > > Best regards,
+> > > -- 
+> > > Encrow Thorne <jyc0019@gmail.com>
+> > > 
+> > 
+> > -- 
+> > Yixun Lan (dlan)
+> > 
+> 
+> -- 
+> Yixun Lan (dlan)
