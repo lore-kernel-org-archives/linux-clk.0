@@ -1,148 +1,197 @@
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com [209.85.217.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F89EBE5E
-	for <linux-clk@vger.kernel.org>; Mon, 10 Nov 2025 12:23:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A5D630E82E
+	for <linux-clk@vger.kernel.org>; Mon, 10 Nov 2025 12:49:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762777425; cv=none; b=g7UuhS2qA4VkEF2Ow1DdEVf8/i3+1eLJ9IO0vWU/M3KXMw3NyZD4/KT86Lm7M0GKn2LzXS538RJffLvIi6R+nblwAvhoW+AF+qbhQz+EwwvtPKWwAJrG1f9fisqedwP6A7QlPMtLk/LCKjdoOGB0yxkOw0iTysmrk4CgH9HACv8=
+	t=1762778992; cv=none; b=hxcIRgVxcCnEAyhHU9xdfB/AxQYXfkJWF57h1d98H7cPAAgKJnmWhOd6UiY0NNhMNKGHN2yxIO7YwsNrVTwZZwzRiF6ZKTOuZm1LYMKnalls7LIRkKhatnrK2/NSGPQhXPsLVNegg3XF5p/orI3BqzShtMzuYRRqX+Pac8ela6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762777425; c=relaxed/simple;
-	bh=zWbNCTtGk7yw43CTCAcuX34n6UWU3vWChmXQCsvs42c=;
+	s=arc-20240116; t=1762778992; c=relaxed/simple;
+	bh=cAw6KDVicFMiZpuDduunfg3+w/yg4gN+HRNZWYDOi/o=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XXAc3ZLWP5Fj3WurF64H84toJEVHFXuEHIgpo+cF1rFFWV/6bn7mzx5CIX/4yxTrepIZV+iMjTbgrUURHRlCeTF06Gn6N/2aVhEkr1W71dDHyqzl5AoSGhqrjS3ui2syfy7d7gGJBh0LRAZs3Lrq+KDHAcSPjhO1dCgYAlj4u5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ONEWKk4J; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ONEWKk4J"
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-64166a57f3bso2158286a12.1
-        for <linux-clk@vger.kernel.org>; Mon, 10 Nov 2025 04:23:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762777422; x=1763382222; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=DzW1Nmfxb6NiioFQyuj9BtUlANBvsFTwFmbLEk2yLZU=;
-        b=ONEWKk4Jdnzt6NSTRZZJhlzCozURxOxM0ctQAfFkoskUt8gSf4szk1kjdMhFYIg8da
-         lk8UDMf80yhtQhXAMtrLyOGogfMjhM7aCNMj/aiiuhs4YMPnNzcj8OPu3dEOJnOoKfDe
-         4h3a7YiF82GZBOlVhDihud76n8qXSUIjuIooJDY4F1qPiNWm41wL7t8wsRHdeRekkGCA
-         atwK1xppiGCiDt2iRT9uytUUMqTwTBUT1/mfHGMyPqomVeG166xyCVZHFnlC4/7EuKuC
-         /tioMpR8zcooXpGQ1rgScon2IcGSGCmdLl/LjN1CanUgNO5zxWWeSwCq2KizBMMbQPN4
-         VrVw==
+	 To:Cc:Content-Type; b=IcKEl9jwazG955YDJIgpV1tUFI8fhQ50/v4xHFvejl+SkHEx6PRCfWWZ6b4JEC5fjNcBilJnTsYhv+iKMGxtx34A0Pw8ZtxvD/1TQuyc4VIcs0pqb1/MtuDM2wEDr8u8gP+SzLaTVbpwtQU3nqIl9lpFLf85hb1dEUjLTJwUstM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-5db469a92f7so839006137.0
+        for <linux-clk@vger.kernel.org>; Mon, 10 Nov 2025 04:49:50 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762777422; x=1763382222;
+        d=1e100.net; s=20230601; t=1762778989; x=1763383789;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=DzW1Nmfxb6NiioFQyuj9BtUlANBvsFTwFmbLEk2yLZU=;
-        b=JfdBsyjThVT3f4+C1brwXKX0Usuvw3rrpYEO2XRyznV6qQFsjQE3HVSzqkkE8liRGJ
-         s7fC3u7raiJqSuvB1HWGkfu0PJRg/r3WQR+GhsKlT0iW6JICXVfNs6YfmvciDPByScUH
-         +11Uq7PCMcm1juyfsxdfqcjNXCf6X5euLxoKa+n6blBP8lJSNz4fy7t/oC0d/dXtbSjb
-         ZEypnIAm7H2ByEMnHg2cCvYw0KSWVLlZsmPfQs9BQ7iDVb+rKN6eUHDPd7hJElvrxB16
-         Xzb1CVSc9Y2j2ghy5sZODvIYdw6oh7txzw7rB822t3eTzYSyR2I+AMQcU1D2skdXSJ8J
-         7FKg==
-X-Forwarded-Encrypted: i=1; AJvYcCUnoQkJ0Im4vBkGr2ke/vDCbxkZFbT0ukha23F2mCCSKBpra4QwPriefFyiygGQ+V3xMr1+u6xJaiw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPwV8g2eJkOiWprI+Qe0qNvnocvuNbG6IA6Aun6ytyEBU+Ftt2
-	2lgspOjo1jNHVV4qf02e0oWM7ziXOVj7JBFmy0XDOwDyRov3VG2oRno+bsgkSPiv7Zz4WOiHygy
-	DXA1dKdo5MM5uWPGpW1TiKhjecCX+pFS5AqeWvCA8KQ==
-X-Gm-Gg: ASbGncuMmNaRJK83NdUTwgR0OMqyqGvueoGp8f2hAtPhSGzpPChpu62KguEzcB1W5IY
-	ZjirKuf0olpHB4kZRSM7XP2SUWke/VQ9iK9nOX9mO34GUTcXwf1wbmOPBX4wfdA49V2EpXs+J8e
-	tF9qfqaaarNfNDxm5EqBT2ntl2BRNGxM/N5h0xIl/y6X9/NqxB7DkqnBcRvh1oc1enJ0DE0QMPw
-	Ya40l3ruLXlri2yOMn8OL2OI7J4zWPoiEkvRHSh6KVgzcJj6e+hZXYZlNQ0EK6kVaVF/LleXiyQ
-	Tg66qVo=
-X-Google-Smtp-Source: AGHT+IGm5+Uu79ujlZItIA42GflK7UfV+AyBRUd53fOR/2PdZlplGxgc5r7/bRr9gNtqR7fwtBSp/+VdEs2VA7Pi6Oc=
-X-Received: by 2002:a05:6402:305c:10b0:640:c454:e8 with SMTP id
- 4fb4d7f45d1cf-6415e7fd2c9mr4878827a12.30.1762777421528; Mon, 10 Nov 2025
- 04:23:41 -0800 (PST)
+        bh=Fh17CiieclZAsVeAhUA/WaKqsZ8PVmhh++ya3iPI2Ik=;
+        b=sF7d+f6CtgsntpHnSwLJct8/XYYzFet7edOLTSjet/HRVwJSTkh2NI81jnhkyTQcey
+         WbFee67PQJYQSFy88UDF90yG46aCkk/9IKcNjUQVTMRSMcrbZg2ilOxObLhVBpcIWOMi
+         he6V/uOMY3G0q4rjgjyIBnT3Yo19XoAGs+52BvSgt6xGE+dT75ycrDuhhYTmTS0GoUYc
+         NQM8zu5O6M/DyN3owTm+HDzCVXU5l80IDGync7smSvAFO7IEFV0NgPp1XArzZMkAZAGQ
+         aC0+3ChJG7wFNMWXF70maD0l3n2Tkw5Wd56MKepGcD0wCd2Hgd0JOgt1OC5Ue0NUxNFQ
+         SgTw==
+X-Forwarded-Encrypted: i=1; AJvYcCWgRH5Cq/CwLva+M13Fc5q5p1Yv8UOy6ezy9sUl0gHKQ3pQlEkWv99/uHdbln3onUmWQT6jWj4+i2M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPnsPm02ju+3egZcF8rA5U1Vqno6Wzh9ngkrec3WqyBU8Q3VF9
+	I852zX5wXchNuy8sqz83/+b0h4HuJut+X5FsXGtriV+4O76eJ0UFzB1wHHijPDAy
+X-Gm-Gg: ASbGncvorkQGHBrdGabg31JVpNf5CyeGeSBuHQbE17TG5wmfb+cZRMLv36mAAtAzXgt
+	oUR1CytWTnJ8qyDrrov4Sqyyk8t2ZDr4EimoagdSOeyL5uoQAJnSgF2ltWYaltzwZ4Iw2zNuS/d
+	arxyoLgN4b3bE2+2b8N36YsZGHWLRFnilHCxex9oXFaLbej3eqigdYdeJQ0iNwT1ur68E9Xkh7q
+	oX8zmECIdmNqStsL+0PqBmW3+MnnAYNC3qbNE7MR94vbbbFIm/ieaGBjdnr5So+XFj2q7Pju0YW
+	jh+p3WqNq2R+fo5pFUItIDyXiQoz5AqBuSEIZVvXfKbymPHEFmrrPrvzGwCz895/lhC8PAhAOxk
+	vCwANQ2cYD1HJ/CJhGSc9VJdDZFj8GHDFCEpSMxm01YZ/VkDQjCbtsaJxUjTDdb+iFsQrLKvxAX
+	83LugOdzkpGpMXyq8KamCjIgJacpiin9JUzHVRkw==
+X-Google-Smtp-Source: AGHT+IHvQVKeajMFPe2dCRgrGr47idluvIUoTD4n0uHW4Ot0oaoTVV1Q9rWHvi/076Qc4Ab55Vf33w==
+X-Received: by 2002:a05:6102:dce:b0:5db:e338:ba18 with SMTP id ada2fe7eead31-5ddc4839d63mr2333772137.37.1762778988978;
+        Mon, 10 Nov 2025 04:49:48 -0800 (PST)
+Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com. [209.85.222.52])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-93708522abcsm5819842241.0.2025.11.10.04.49.47
+        for <linux-clk@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 Nov 2025 04:49:47 -0800 (PST)
+Received: by mail-ua1-f52.google.com with SMTP id a1e0cc1a2514c-9371f7571cfso682863241.1
+        for <linux-clk@vger.kernel.org>; Mon, 10 Nov 2025 04:49:47 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXgfZEWxvxaSUCq+aEhmNPMnPaNMf9L+2Stq/SlhIUmFvRGaiZFvAoEO5eqbXyeyogOx6Q3O0ZRLwU=@vger.kernel.org
+X-Received: by 2002:a05:6102:3a0a:b0:5db:f352:afbd with SMTP id
+ ada2fe7eead31-5ddc467ebffmr2222725137.3.1762778986813; Mon, 10 Nov 2025
+ 04:49:46 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251106-clk-pmdomain-mediatek-round-rate-v1-1-49441ea27f84@redhat.com>
-In-Reply-To: <20251106-clk-pmdomain-mediatek-round-rate-v1-1-49441ea27f84@redhat.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Mon, 10 Nov 2025 13:23:03 +0100
-X-Gm-Features: AWmQ_bnh8tp1oLAuPElgvSFmN8WE23c2ga9LAvFWkFMPaVp1NApY8JmtQI4OamU
-Message-ID: <CAPDyKFoq=dJW_FCVykBwH85+RbeZ-SR6=vF0vKw+237TsgOfDA@mail.gmail.com>
-Subject: Re: [PATCH] pmdomain: mediatek: convert from clk round_rate() to determine_rate()
-To: Brian Masney <bmasney@redhat.com>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Nicolas Frattaroli <nicolas.frattaroli@collabora.com>, Maxime Ripard <mripard@kernel.org>, 
-	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org
+References: <20251105104151.1489281-1-cosmin-gabriel.tanislav.xa@renesas.com> <20251105104151.1489281-12-cosmin-gabriel.tanislav.xa@renesas.com>
+In-Reply-To: <20251105104151.1489281-12-cosmin-gabriel.tanislav.xa@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 10 Nov 2025 13:49:35 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdWTH_uuQURgqQrg1RGDMwzdDAWFk__mS9+Gc8mcESfUyA@mail.gmail.com>
+X-Gm-Features: AWmQ_bkfRzk8FN2qNNCBLlLG0XaTRUdRgwFG7IJoHivC4Q2Ld9wLwHCuz85ymR8
+Message-ID: <CAMuHMdWTH_uuQURgqQrg1RGDMwzdDAWFk__mS9+Gc8mcESfUyA@mail.gmail.com>
+Subject: Re: [PATCH v3 11/14] dt-bindings: spi: renesas,rzv2h-rspi: document
+ RZ/T2H and RZ/N2H
+To: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+Cc: Fabrizio Castro <fabrizio.castro.jz@renesas.com>, Mark Brown <broonie@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-spi@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+	Conor Dooley <conor.dooley@microchip.com>
 Content-Type: text/plain; charset="UTF-8"
 
-On Fri, 7 Nov 2025 at 00:40, Brian Masney <bmasney@redhat.com> wrote:
->
-> The round_rate() clk ops is deprecated in the clk framework in favor
-> of the determine_rate() clk ops, so let's convert this driver so that
-> round_rate() can be removed from the clk core.
->
-> Signed-off-by: Brian Masney <bmasney@redhat.com>
+Hi Cosmin,
 
-Applied for next, thanks!
+On Wed, 5 Nov 2025 at 11:44, Cosmin Tanislav
+<cosmin-gabriel.tanislav.xa@renesas.com> wrote:
+> The Renesas RZ/T2H (R9A09G077) and RZ/N2H (R9A09G087) SoCs have four SPI
+> peripherals.
+>
+> Compared to the previously supported RZ/V2H, these SoCs have a smaller
+> FIFO, no resets, and only two clocks: PCLKSPIn and PCLK. PCLKSPIn,
+> being the clock from which the SPI transfer clock is generated, is the
+> equivalent of the TCLK from V2H.
+>
+> Document them, and use RZ/T2H as a fallback for RZ/N2H as the SPIs are
+> entirely compatible.
+>
+> Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+> Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-Kind regards
-Uffe
+Thanks for your patch!
 
+> --- a/Documentation/devicetree/bindings/spi/renesas,rzv2h-rspi.yaml
+> +++ b/Documentation/devicetree/bindings/spi/renesas,rzv2h-rspi.yaml
+> @@ -9,12 +9,15 @@ title: Renesas RZ/V2H(P) Renesas Serial Peripheral Interface (RSPI)
+>  maintainers:
+>    - Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+>
+> -allOf:
+> -  - $ref: spi-controller.yaml#
+> -
+>  properties:
+>    compatible:
+> -    const: renesas,r9a09g057-rspi # RZ/V2H(P)
+> +    oneOf:
+> +      - enum:
+> +          - renesas,r9a09g057-rspi # RZ/V2H(P)
+> +          - renesas,r9a09g077-rspi # RZ/T2H
+> +      - items:
+> +          - const: renesas,r9a09g087-rspi # RZ/N2H
+> +          - const: renesas,r9a09g077-rspi # RZ/T2H
+>
+>    reg:
+>      maxItems: 1
+> @@ -36,13 +39,12 @@ properties:
+>        - const: tx
+>
+>    clocks:
+> +    minItems: 2
+>      maxItems: 3
+>
+>    clock-names:
+> -    items:
+> -      - const: pclk
+> -      - const: pclk_sfr
+> -      - const: tclk
+> +    minItems: 2
+> +    maxItems: 3
+>
+>    resets:
+>      maxItems: 2
+> @@ -62,12 +64,55 @@ required:
+>    - interrupt-names
+>    - clocks
+>    - clock-names
+> -  - resets
+> -  - reset-names
+>    - power-domains
+>    - '#address-cells'
+>    - '#size-cells'
+>
+> +allOf:
+> +  - $ref: spi-controller.yaml#
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - renesas,r9a09g057-rspi
+> +    then:
+> +      properties:
+> +        clocks:
+> +          minItems: 3
+> +          maxItems: 3
 
-> ---
->  drivers/pmdomain/mediatek/mtk-mfg-pmdomain.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/pmdomain/mediatek/mtk-mfg-pmdomain.c b/drivers/pmdomain/mediatek/mtk-mfg-pmdomain.c
-> index af20111067c02a5f9a0d6d751e9e0dc32c1a4d90..9bad577b3ae4bf1b83d4f782bb52f56f779a8974 100644
-> --- a/drivers/pmdomain/mediatek/mtk-mfg-pmdomain.c
-> +++ b/drivers/pmdomain/mediatek/mtk-mfg-pmdomain.c
-> @@ -309,11 +309,11 @@ static unsigned long mtk_mfg_recalc_rate_gpu(struct clk_hw *hw,
->         return readl(mfg->shared_mem + GF_REG_FREQ_OUT_GPU) * HZ_PER_KHZ;
->  }
->
-> -static long mtk_mfg_round_rate(struct clk_hw *hw, unsigned long rate,
-> -                              unsigned long *parent_rate)
-> +static int mtk_mfg_determine_rate(struct clk_hw *hw,
-> +                                 struct clk_rate_request *req)
->  {
->         /*
-> -        * The round_rate callback needs to be implemented to avoid returning
-> +        * The determine_rate callback needs to be implemented to avoid returning
->          * the current clock frequency, rather than something even remotely
->          * close to the frequency that was asked for.
->          *
-> @@ -325,7 +325,7 @@ static long mtk_mfg_round_rate(struct clk_hw *hw, unsigned long rate,
->          * high current frequency, breaking the powersave governor in the process.
->          */
->
-> -       return rate;
-> +       return 0;
->  }
->
->  static unsigned long mtk_mfg_recalc_rate_stack(struct clk_hw *hw,
-> @@ -338,12 +338,12 @@ static unsigned long mtk_mfg_recalc_rate_stack(struct clk_hw *hw,
->
->  static const struct clk_ops mtk_mfg_clk_gpu_ops = {
->         .recalc_rate = mtk_mfg_recalc_rate_gpu,
-> -       .round_rate = mtk_mfg_round_rate,
-> +       .determine_rate = mtk_mfg_determine_rate,
->  };
->
->  static const struct clk_ops mtk_mfg_clk_stack_ops = {
->         .recalc_rate = mtk_mfg_recalc_rate_stack,
-> -       .round_rate = mtk_mfg_round_rate,
-> +       .determine_rate = mtk_mfg_determine_rate,
->  };
->
->  static const struct clk_init_data mtk_mfg_clk_gpu_init = {
->
-> ---
-> base-commit: df5d79720b152e7ff058f11ed7e88d5b5c8d2a0c
-> change-id: 20251106-clk-pmdomain-mediatek-round-rate-649a9bf7d30a
->
-> Best regards,
-> --
-> Brian Masney <bmasney@redhat.com>
->
+No need for maxItems here (already at 3 above).
+
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - renesas,r9a09g077-rspi
+> +              - renesas,r9a09g087-rspi
+
+No need for renesas,r9a09g087-rspi, as it implies renesas,r9a09g077-rspi
+is present, too.
+
+> +    then:
+> +      properties:
+> +        clocks:
+> +          minItems: 2
+
+No need for minItems.
+
+> +          maxItems: 2
+
+The rest LGTM.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
