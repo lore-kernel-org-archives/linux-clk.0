@@ -1,146 +1,103 @@
-Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com [209.85.160.49])
+Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A783428B415
-	for <linux-clk@vger.kernel.org>; Mon, 10 Nov 2025 12:53:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEED71E2307
+	for <linux-clk@vger.kernel.org>; Mon, 10 Nov 2025 13:18:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762779185; cv=none; b=Ud5cIbhG988rCx+OwUlzlDEx1zXvanVAS1gGQn0OpMuzWTkziqX7F07+CPwsIJiy8yxxozcMCFJRR2+/OniODpxHpJGUFR1orAL6qrvniAx/azL1OV5pmvXaAJNX5wK4VEV3jgriJfloDONJZgg51yWtU2vWqIZ30c3XweRJ9uU=
+	t=1762780704; cv=none; b=qRIT7Tpej+BIHzQviUnCmGvYKXa8stpmbVO0YZe1RDLyMr6HRuBec3WdyWbkXSMs/oLaV9Bw1E660Atl6sK8teDJoXs0AwJVf0reGINYbSWx7/UtG4yUavR3gwZgAbFWwPeLVxPQnkho9Bqpe7CVrgPoUDsLwHSITYsjtjwt2As=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762779185; c=relaxed/simple;
-	bh=lajD8QJElBkHp+szQMp4lvfntXaq7B2csoiFGrMzr/8=;
+	s=arc-20240116; t=1762780704; c=relaxed/simple;
+	bh=vDBZRrptiL8B1JchW6TdyIwfOCu0iFp0Ce/dGtkhJC4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UAeBq+OmvgFVYTOAnJ6lukbn9oXHZm+v7wqn0QyWPxd1ytStWZ4wMhjL0M/WCHbcvu8XnP6pHMKQuPgHcK3SObPIb0i/pSVxAo2Lx5AZewbPzM/YfhcqCo0sklNzlgNby58+OpO6eFjI9Kvmt7xM4rku2Je/lfTdfiNeV5O+zFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pHAuyUbP; arc=none smtp.client-ip=209.85.160.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pHAuyUbP"
-Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-3c9859913d0so1684383fac.0
-        for <linux-clk@vger.kernel.org>; Mon, 10 Nov 2025 04:53:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762779183; x=1763383983; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=lajD8QJElBkHp+szQMp4lvfntXaq7B2csoiFGrMzr/8=;
-        b=pHAuyUbPTRgXF6gAyhV8JVy7+EDCorUsZr9eGAo/TITyvpDhI1fXmNQU5oIzJlPQtl
-         +Tq+4arshPmQNek2fkonRGxqSqJYlhxpZ1TRy2SsyMwL6dwDtkkTIjCWJ6S9Nfq1C8xt
-         X5cSR6XyI+b+5nZSLyX9rqdq5a9VBpVp5BBIQQfnEX9fitosoxpIz24ADV3KXortYbl8
-         yxDdW1OYcSBH61IUagKk5zW4GjE5fxgf/hXxSJzyK8jVYPtsYf80RDMPb6WyaXfoJ5MV
-         a9Ku5JpyQZA66zbTkcPvsvG2WtvhaKtwRN4H80iw8QP9yYbSpIrk5Tl84oQF2a0gEG3i
-         8eOA==
+	 To:Cc:Content-Type; b=d5cy9Z66rAppflTUHYrqhGOgrc+ofQYprJwwqk2EVN0DjbmwH9A/5plUPAPnmS8JOMtCkUgusJ93JFpYveaVtLSaoS2qgyVFY/sGI+8p+hQJaLPA8oK+ZQy5Omati4KaprwmMud2WBFnRG9++Yzds5FMSCmMNyTtqYcGLGC3rto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-5599e0ab1e8so1031824e0c.0
+        for <linux-clk@vger.kernel.org>; Mon, 10 Nov 2025 05:18:21 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762779183; x=1763383983;
+        d=1e100.net; s=20230601; t=1762780700; x=1763385500;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=lajD8QJElBkHp+szQMp4lvfntXaq7B2csoiFGrMzr/8=;
-        b=BOvm1XBrujscssk7lcND12kw1lQTgQJc0hkYfzWEd3CTCJk11vtNZZEUiuCno9x2fG
-         NKNnbXIuf0sc8lKi7rsu6/f5r7B8R2IbuQDitPdMe1NZQkENbUDfFX+aNPJTLS+FU8W3
-         gBRxGp+4os4U55l4ELSlj50FOpE9Yx+bfbNjhNXFD0SbW/tEaN8bKNe1Pfbj/oqt53J5
-         EZhVyEnZboVTTibZVLIVfWillQAaazENYcpP3Iojcu3s46X/bDqPBd3qqA1GMLNGp3JY
-         AAODvKfBpu/XueTA/c+NP2UpnRC2aMnTHM7RWkNBIHWqtIA0KUJ21Fkv2Zts3SQULloV
-         Fp2w==
-X-Forwarded-Encrypted: i=1; AJvYcCVx0cg6z6nzzupcwoRyOe7PmikP5jn6TF4VQeasMUykwA3Z5cPi8kkRvyWsyBujGyg3DPamRCKZZmI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy05YS+TgLjng8nEyt13AIvezOzhu1iCaO+F61mrVCJbwCU+J7B
-	Pgv7/0uvQcxUAazrCFZrzEdIwTOzt/EL5/jWfRR3axb344Stm2ypJSamyMWrc4qdXXPl4EzznvC
-	UCxU8f0hPEJk711/pusMQ3oL1tdIFKmSw8SvnjUp+B7ISnggO12DcOEY=
-X-Gm-Gg: ASbGnctvjMHKAGTZKfhm3GHjFLsVT4OzjAsAQjTBeKrA5v6sgtzowHx/4gVEuep+izi
-	csdMAR33ZusTCwhizTUu01lISIu5Z4BDCwGA7GBum1u7tbrXTsyDYRNLrRoVoAeDjXXuU4YidFP
-	3/cHVqlrHJQ7M2nhIkZQWKes4WZFoG6CHToe0FzNrBRLk8zQ4qs9mAEsbD7QqTGVHEeB8BGumnv
-	p3aeFxfYpK+/BlO3JucgyWjJjG5B0i6FSetjPujL2F2VJRdKTH5LaBsSLD2
-X-Google-Smtp-Source: AGHT+IHaOc9Hf++xJ77n1T9F3eaANxA6a255QvjbOAcsfDAumQrnMbLyVAX5itd8dNhL35m/2iP5WQb/9KW6fxXbd5k=
-X-Received: by 2002:a05:6871:60c:b0:3d2:fddc:862c with SMTP id
- 586e51a60fabf-3e7c2452b4cmr4340908fac.7.1762779182758; Mon, 10 Nov 2025
- 04:53:02 -0800 (PST)
+        bh=zJ0ifGUcnHr6Kd16YmJsShuaDbT8XpGIPU3sUDQV+ek=;
+        b=Eo8ZPYLjvlTB30yrDEuOlhOvzWdPrmPQuDwpliPbGdhNkIiCqjtyOvVPMbCS6y4S+0
+         tUAw9VEbrqsnMrAFV68DPjLdpXMn+tF1Cn1JkmeUMtaC+RT2yIAIcTxRbJmeqFnrkxfz
+         r2n81Tn9ucbt3Z1UoNQTD8PAVeN/VtIuCjbEZuwJ14xPC9TLgWT9fDDsE5O3ScdKt+xE
+         mtBN/cN0EHMwf6k+FDbXp2ygntTPpfq9WGzr4ovFI5CusOKkv7d0CuFmZspLbZF7dmBg
+         5+GwqjJ55ru3GuFc6CNQfg0A9GeZYR/Ikw8t2qNuLwW1zvHtwXMrgWfDd/acf/7QOFv+
+         ulkg==
+X-Forwarded-Encrypted: i=1; AJvYcCXonO4K4nupKRXgtXKcLGAmB/uMARHDhrFWJaOtzdMsoGMkbNtRXTYXPjAcSqET5ConpAtxiTV0ZhI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzb1xPY8RTkUlrvKf98ao8gpnYA8KPgenc1/AOM/KjXnfTZDS3w
+	v/pKmnGTm3bEZ5UyF31XUqEc9+KIIe64aBDiz5FNKTfq6zfKA8jbEGo/z4h3eq56
+X-Gm-Gg: ASbGnculSV/xantL4Jq+g399jcEEa4xLnZ8JbrWq7bFOi1XVbJ+Onq7wjHrXcanKGWm
+	1batST60DB0820BvW/nD8h9BnFEi005QuHXfy1GwEIbiI6j+QF6xh+p30ZA76YFvvbxIldstoud
+	L0xU9ouFDls7splcsb0Z0AePSH1NbEvTaKicUfkXSx2/NibCcGg5oLZP9D4eecl9Ph7kIUAkElD
+	FtLBLR51fw40rm9embOvePIRREfQ/8DSSrXaUJcX/8EgwFte0YrK0BI/z/ISJ1h5+8Kx17Vv6GL
+	Dut1Nxbq2ZG/FOgBmDv7B3YK8tJAP3nHee2YJKUURMwxai3JhFUQdLajcj1qS0OmOq2vtJwFJO/
+	74YyP8nFOQLAZpOhTpw2StX8z2S6nOiN6i/ttnTyIC84Qh97Y4bAoW3ZWXBXcZoZXdMPNShSiNW
+	e4cA70EHtjAw7LQedTWdKdTtupqDRo1LbmCzocOw==
+X-Google-Smtp-Source: AGHT+IFR+1JqWetEutWzUavGZeNhWoMGAJu3TH6i+NKfwf9V9vp3+bzLTTr7GMr/Q5sd2+kUlwiEPg==
+X-Received: by 2002:a05:6122:20ab:b0:544:7d55:78d6 with SMTP id 71dfb90a1353d-559b31e18a0mr2743280e0c.2.1762780700521;
+        Mon, 10 Nov 2025 05:18:20 -0800 (PST)
+Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com. [209.85.222.47])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-559958320aasm7154624e0c.20.2025.11.10.05.18.18
+        for <linux-clk@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 Nov 2025 05:18:19 -0800 (PST)
+Received: by mail-ua1-f47.google.com with SMTP id a1e0cc1a2514c-9371aca0a4dso1624904241.1
+        for <linux-clk@vger.kernel.org>; Mon, 10 Nov 2025 05:18:18 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWUnbOixELaE2dRhl4Dy1xaAWuUl3FwQQ1I3Ad37A/WaYDIdYVSOtS6iP/xLdhVkEY601OKyNrDWiE=@vger.kernel.org
+X-Received: by 2002:a05:6102:5492:b0:5d5:f6ae:38ef with SMTP id
+ ada2fe7eead31-5ddc481b944mr2851696137.38.1762780697780; Mon, 10 Nov 2025
+ 05:18:17 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251102-automatic-clocks-v3-0-ff10eafe61c8@linaro.org>
- <20251102-automatic-clocks-v3-1-ff10eafe61c8@linaro.org> <20251103-smoky-rustling-bloodhound-7590ce@kuoka>
- <CADrjBPpjX_qSehbNkaAG03f=whs09qFzzgNiY3sztk7v0QeCFw@mail.gmail.com> <20251104-enthusiastic-cream-gibbon-0e7b88@kuoka>
-In-Reply-To: <20251104-enthusiastic-cream-gibbon-0e7b88@kuoka>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Mon, 10 Nov 2025 12:52:51 +0000
-X-Gm-Features: AWmQ_bmYJGLwRqlUrf73Sc1rVwj8QxtUbwqaYUkACotkTBe74SIkf0KWHru_6Ms
-Message-ID: <CADrjBPpGt3qBGucF1COWZT=OZ+8ithg6=-QefhKUiW4tkC=KrA@mail.gmail.com>
-Subject: Re: [PATCH v3 1/4] dt-bindings: clock: google,gs101-clock: add
- samsung,sysreg property as required
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	=?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
-	Tudor Ambarus <tudor.ambarus@linaro.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Sam Protsenko <semen.protsenko@linaro.org>, 
-	Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
-	Will McVicker <willmcvicker@google.com>, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
-	kernel-team@android.com
+References: <20251028165127.991351-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20251028165127.991351-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20251028165127.991351-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 10 Nov 2025 14:18:06 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdVAyN-XQVoBNncCC5Jka4TMqSeswe8frht9sPOEJB+VLw@mail.gmail.com>
+X-Gm-Features: AWmQ_blg0wBfBRVHEE39XqXvRiX15hbIbJMqYeX6Rvu1lD8v_t2OD6KHWJX8VBE
+Message-ID: <CAMuHMdVAyN-XQVoBNncCC5Jka4TMqSeswe8frht9sPOEJB+VLw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/5] clk: renesas: r9a09g077: Propagate rate changes to
+ parent clocks
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Hi Krzysztof,
-
-On Tue, 4 Nov 2025 at 08:11, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+On Tue, 28 Oct 2025 at 17:51, Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 >
-> On Mon, Nov 03, 2025 at 01:49:53PM +0000, Peter Griffin wrote:
-> > Hi Krzysztof,
-> >
-> > Thanks for the review feedback!
-> >
-> > On Mon, 3 Nov 2025 at 09:41, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> > >
-> > > On Sun, Nov 02, 2025 at 08:27:14PM +0000, Peter Griffin wrote:
-> > > > Each CMU (with the exception of cmu_top) has a corresponding sysreg bank
-> > > > that contains the BUSCOMPONENT_DRCG_EN and MEMCLK registers.
-> > > >
-> > > > If present these registers need to be initialised
-> > >
-> > >
-> > > ... for what exactly? What would happen if this was not initialized?
-> >
-> > The BUSCOMPONENT_DRCG_EN register enables dynamic root clock gating of
-> > bus components. So it is related to the automatic clock gating feature
-> > that is being enabled in this series. Things still work without
-> > initializing this register, but the bus components won't be
-> > automatically clock gated leading to increased dynamic power
-> > consumption. Similarly the memclk register enables/disables sram clock
-> > gate. Up until now we've not been initializing the registers as
-> > everything from Linux PoV has been in manual clock gating mode and
-> > until starting to implement this I wasn't aware there were some clock
-> > related registers in the corresponding sysreg. Additionally with
-> > Andre's work enabling power domains it has become clear we should be
-> > saving/restoring these two sysreg clock registers when the power
-> > domain is turned off and on.
-> >
-> > > What is the exact justification for ABI break - wasn't this working
-> > > before? Or new feature will not work (thus no ABI break allowed)?
-> >
-> > No, automatic clocks and dynamic root clock gating were not working
-> > prior to this series. Currently power domains and system wide
-> > suspend/resume aren't enabled upstream either. As we work on enabling
-> > these features we are finding some things that in an ideal world we
-> > would have known about earlier. Unfortunately it's not so obvious just
-> > from studying the downstream code either as they rely heavily on
-> > CAL-IF layer that has peeks/pokes all over the memory map especially
-> > for power/clock related functionality.
-> >
-> > Whilst it is technically an ABI break, I've tried to implement it in a
-> > backwards compatible way (i.e. an old DT without the samsung,sysreg
-> > phandle specified) will just fallback to the current behavior of not
-> > initializing these registers. Things will still work to the extent
-> > they did prior to this series. With a new DT the registers will be
-> > initialized, and dynamic power consumption will be better.
+> Add the CLK_SET_RATE_PARENT flag to divider clock registration so that rate
+> changes can propagate to parent clocks when needed. This allows the CPG
+> divider clocks to request rate adjustments from their parent, ensuring
+> correct frequency scaling and improved flexibility in clock rate selection.
 >
-> So explain that this is needed for proper and complete power management
-> solution on this SoC, however that is not an ABI break because Linux
-> driver will be stil backwards compatible.
+> Fixes: 065fe720eec6e ("clk: renesas: Add support for R9A09G077 SoC")
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-I'll send a new version shortly with an updated commit message like you suggest.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk for v6.19.
 
-Thanks,
+Gr{oetje,eeting}s,
 
-Peter.
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
