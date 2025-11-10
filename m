@@ -1,117 +1,157 @@
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C20830C605
-	for <linux-clk@vger.kernel.org>; Mon, 10 Nov 2025 11:56:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7373D30CDA1
+	for <linux-clk@vger.kernel.org>; Mon, 10 Nov 2025 12:14:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762775816; cv=none; b=MsFGF/reoJByGGkId9iFkwxsIEikkcbN1wQfTQpMiz0XSjZOIefJmWNYeFcDE0KtTnptfWczJuqmBq4uiOJbJuTdVSglam0rZ09FSXWZaS8dq/BeHk8WvLrgBMlSZ8seNYZvh+1pZIGmOuBZAGs2rNaMu3CjglyQxyJ1QCPTFKA=
+	t=1762776842; cv=none; b=F7Z0DW2USQLrh1r+ckKMSlV1cFnZRctvVcu650K4/FYd1qlvhUpxCR2/wHQenkq0oIuy2DyJXVA/lTQJzomamuZ+b3JARQ+mrRV0X1vJmdJztRtmf+1ugS4mBIYJQIh4QYhpfzl/NiM9wunGMkQ77ucQWRNxj/AsCXZ+AOcZfCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762775816; c=relaxed/simple;
-	bh=oUgierYSU3dRBhCJGCsjS3J9M3HkXvV59r1SNiAzvk0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kwXPk6y5wSU3De5GIJrEwborM9yxv48KeiGJV0T4iUDX/CgXZwB0YI3fDuaZzaX1UJEVeVCLRy/SkxwEYOkuvYTAvoSTVmbx70pTkPZbxekyOv4kqqmYkAnJmgxvMnRtiKD0MTUPyqshRnAjVDQlGIyFO4juCVCLrMr7DVBZbd4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yZ8sbvzu; arc=none smtp.client-ip=209.85.221.49
+	s=arc-20240116; t=1762776842; c=relaxed/simple;
+	bh=7eCwQzIdJ0n4Jk8cIEMb6dznrr42scKRI9w59K+VWtk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=GdYsCuduA/+hOHu52Wy1fA4B+bPTe40F/MAr19bve17HUg8n04FCoIF43Y+/hJbLIfzLPUM+ebC+k5l09SFmHDE9DAU63lQenZPFCpf8wCO8W1Gfy9v4IerzqRi7X+/FX3HQNQnRt5HBrgD2GuCzru6kWK6daxgi0xPFxrSrILg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=miTlchG+; arc=none smtp.client-ip=209.85.221.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yZ8sbvzu"
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-429ce7e79f8so2118693f8f.0
-        for <linux-clk@vger.kernel.org>; Mon, 10 Nov 2025 03:56:53 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="miTlchG+"
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-429c844066fso336054f8f.3
+        for <linux-clk@vger.kernel.org>; Mon, 10 Nov 2025 04:14:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762775812; x=1763380612; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4g2z/CUdSCaQjy9LxpwOngAggO4WOQO9SBX2pApcNyk=;
-        b=yZ8sbvzuAGCw2mrF/znpax5qC41Ec7OITzSh/dmx2az4dedT5WWB6bpqwtSq1I4Nlr
-         oIpLrJxktDxHg06jbPw7jL2jKcc+0jSEAQd3c+S4v1KeOvQi/QSH90zJ/r6OyfXi506r
-         hmTKfE/X0/sdzVMa9BE+0dwJJQdEftjpNt6jt1tHT6/j6tfYT6HVn/algXMNXZKO3VB+
-         dRSM/3B6u/fUySKFFntvkD2WpNch/ElHnxg6XbZjgr8WjqdfdMpnrFgmL2piHu4dwSty
-         M8OWYVWlLYbBk3RJ3adi7uPuosp/yzM+ERCRJasi1lgQxCnJnXtKfsoEfV5hkEUCGeMw
-         hsWA==
+        d=linaro.org; s=google; t=1762776839; x=1763381639; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=C6MHSwghP2d14X8DV+0bLl36z/FEFxYOy9Zl9P0JXo8=;
+        b=miTlchG+584NsrIkCF5niFNAWxJmA7iuI/pUk8kXS3RitDiQtIAM+Ih6uomyYs2jpB
+         rZukutDFI45Qpk61YeRcXdw7rEsnodtX5KRiB8r29ibAj6/IeYugMlSBmWLPGkOZE1Hd
+         GLIsHBnwCbAKs0d3cZ5JoF6PNbMe99O0W7j897+f8i+yE+f6B6wlaQp244NBM4b3B6rU
+         IkotWnI3P6YtFNSSLTfRF+UaQXo0GgC/Hwino04sidYgG//MWQNOOKmqaBQCcZMkUAlO
+         +51W57+bCCNJ5/Abosor4hS2usyMUOek5VxmNr2rez2WmG/IzUMwjA3VxwLHkVc/1pca
+         AfSQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762775812; x=1763380612;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4g2z/CUdSCaQjy9LxpwOngAggO4WOQO9SBX2pApcNyk=;
-        b=Lgf0WV1fyOe0ksz+iMNKYY2go5hq9WHQy+IHbPYe6Sgt4Sq80tiIgtnRQ3Dru3Kiq2
-         kilCGUS19ZEltHNIjxZdLGVfu9KwDy3gyRQHUJ54Apyi1oLBSZdnynuHb96HJdFt8TV0
-         6VjVTU6RN4CLuUM/HmqchCY8/kGpFiFpyIj7Yhsv/LCsuaTPIfBg3bLwFWYuWnD56UYD
-         E4yPXD7K/uq8EWXPdvjgzkMHXPiARpSs7z1pzffNrc2lvDP7zW46yEfykz/QWlbpbBtf
-         eE0wb2bfATLmH16zNN+a8uIV0kLoTCxPT256EU6aHk84BEwBuOIheSNSGmqGo9q3N31/
-         NFFA==
-X-Forwarded-Encrypted: i=1; AJvYcCUj0E0hqeuAqWT1BJsNNCdOueXm/PsByZ2VTtfp/bvwTOxUunXJ9BE3xTN8UM6Qu2PMDLFGAknaJBU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzeUeSd+9zS+XlqSZu7sqtaS9KTDLwjnGUDNoMERsw5kAM1i0G/
-	k9S0ocZPp+03+WSBdOFXXxj1zcMVG1h0XdhoRsUuIiD4anpMYVsZqrcxh/pxBhCEEkM=
-X-Gm-Gg: ASbGncuSsp44ZDfKX74nDWx64w/GjZoidbcq3U/Q/P8d8w7ZVsSMeY14mKYpU6PV4Wq
-	cu+cILp4WWxop8BuzqzJfzWFFJoykKPPpviM4I8IW/rs1ZkXz7LgwL7vq/CvM+CYn4ew6nfqkVb
-	PBzPSP/18jT7bZzibd7IXPfeToc0v/tnvsog+FB8KA9UWNXZvf3+461K4k2NPTiASRMlQI4exKD
-	C0QrR3f2EwQiZHvqDsJ2Sxlv821DFXv3xKHEe2liGVynvLGqON/mKSnTy7S59mvqgoNWANK+fwv
-	t3uVzOJvsQzgoQDYX26ocl57NwB8WKEOtolo/pyG2FzfYX6FQpU54YBVdAVm5Jhcka0hKxRN7wL
-	0C0T0bWdcFqo26DGoHI0MT4AW+rRILyPZouHK4j58wG/0RQqErVWK0WiFD9zcXmyo7t9togFGEw
-	jUW/RcgMNmifjIdqTbAdCO4SdV06CESVLKTIAJqL7ikjgopsYwgbCMeuM=
-X-Google-Smtp-Source: AGHT+IFbcw4K9ivqGLQddDZa5CrYY9iwv64S3IIlLZWbi+XRwqAEU+75TumzHzlJ4CnXK9gTK1CTaA==
-X-Received: by 2002:a5d:5f42:0:b0:429:bca4:6b44 with SMTP id ffacd0b85a97d-42b2dc1f4e9mr6741662f8f.13.1762775812360;
-        Mon, 10 Nov 2025 03:56:52 -0800 (PST)
-Received: from ?IPV6:2a05:6e02:1041:c10:2b20:d700:6e9c:533c? ([2a05:6e02:1041:c10:2b20:d700:6e9c:533c])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-42ac679c5dcsm24735244f8f.44.2025.11.10.03.56.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Nov 2025 03:56:51 -0800 (PST)
-Message-ID: <d36f89d7-2d18-4c24-840c-243d4fa10de0@linaro.org>
-Date: Mon, 10 Nov 2025 12:56:50 +0100
+        d=1e100.net; s=20230601; t=1762776839; x=1763381639;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=C6MHSwghP2d14X8DV+0bLl36z/FEFxYOy9Zl9P0JXo8=;
+        b=gjOtwnuLxKQIyOtsQBpe+9OqZti+xImNKUqAsPE9lc6WjCPR1TN5oLzdClXJH9205r
+         DpnJSQFQ1uotMkSh3tXAMcFBA6A2Tj6zif5qy1R84ymwdGa6HJ/myjb6jTXwogCsdAdI
+         cpzJPLDUxqGBsCp9eybWsWcDFv/wBU9ZW2PPPFnybaiw0WiXCt4iNl9bg7RZfniMFen7
+         jReKxyjBett4klOqVGpTNv0L2gp+6r4Hqka6GEwmjLl/i+Exbv5OHuALyWEgnJYgode/
+         ZUjnvmeF1Mqcw4AXhVQAsUlWWyHLTjsVEpla8JlXgkX79xkt1VW8OVTjvy8dYKO+RO8b
+         YjGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUH5+ZuVp/Nuq8G/QaTdnnuEKxZSmfKVND7EKL0vh6SFypkghoza5V4AMK8iO1PCczRHn2dqM9VRqc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUfjFfp6tlEp06vxn5jy6vUvh/xstBBQnROOVMpn98ckOtmnFz
+	Rp16GKIkwWWZbqW48nKvciVUCFvgFnAAzYc8vNTSFpOV5cgAQsZ9BQXRRbW0EkiPYgQ=
+X-Gm-Gg: ASbGncuQDPkWdovP2UMtlsrmWJ/r64mtT72mu+ZJn7169dKQwTfP9VprcvjH3f3R1Fe
+	ezKJuDHDeEI0Kms+pbdYhX3XQlkNsXv/ui/JnBFT9k2HpCI5+lqXpMmq3EhPSOtgvCsNmeHEaBb
+	Ba6trS8wLkiD8Fy+OHhG4Zfw4Jt5vtYMBZLiNFgYp0MtdgGzN4l36UJDWcQrnFX7I7vvX1KXNP5
+	UJ6oePqeH1sxiXzx/bLSA0Mqp+b0VtUFO/tm0oywvuC0SQajMGrF0fqebZkbHfH7IqiwoOgrsAt
+	zEER+p0uShl84wLoN9Z93zwIPK9LSeracLdZUhQTWUqg8ROKO33deRZCBYZ0nB46E71weFiPSIy
+	1zrY6crVxr0rapuBAURJcsh+abiPi91q19PA6Omas9uNydNObpAgmai3e97xHPdE+X6abXL9e1G
+	W9yqUkrST3Oys=
+X-Google-Smtp-Source: AGHT+IFtCJoEa3fPjznfspradex1PtTFo+De784I9+Mj7ZLYALTxzZRy9e27nwxt5XfS02ZIFIavUQ==
+X-Received: by 2002:a05:6000:26c8:b0:429:c711:22b5 with SMTP id ffacd0b85a97d-42b2dc13946mr3574288f8f.1.1762776838835;
+        Mon, 10 Nov 2025 04:13:58 -0800 (PST)
+Received: from kuoka.. ([178.197.219.123])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42ac6794f6esm24922667f8f.41.2025.11.10.04.13.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Nov 2025 04:13:57 -0800 (PST)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	linux-clk@vger.kernel.org,
+	Sylwester Nawrocki <snawrocki@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [GIT PULL 3/4] samsung: drivers for v6.19
+Date: Mon, 10 Nov 2025 13:13:41 +0100
+Message-ID: <20251110121344.120785-7-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20251110121344.120785-5-krzysztof.kozlowski@linaro.org>
+References: <20251110121344.120785-5-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] dt-bindings: thermal: r9a09g047-tsu: Document
- RZ/V2H TSU
-To: Ovidiu Panait <ovidiu.panait.rb@renesas.com>,
- john.madieu.xa@bp.renesas.com, rafael@kernel.org, rui.zhang@intel.com,
- lukasz.luba@arm.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, geert+renesas@glider.be, magnus.damm@gmail.com,
- mturquette@baylibre.com, sboyd@kernel.org
-Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- linux-clk@vger.kernel.org
-References: <20251020143107.13974-1-ovidiu.panait.rb@renesas.com>
- <20251020143107.13974-3-ovidiu.panait.rb@renesas.com>
-Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <20251020143107.13974-3-ovidiu.panait.rb@renesas.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2406; i=krzysztof.kozlowski@linaro.org;
+ h=from:subject; bh=7eCwQzIdJ0n4Jk8cIEMb6dznrr42scKRI9w59K+VWtk=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBpEdb6Lys/nhK6FyF7WpIVe24IhpaXO7tRMwX2q
+ ee8mfep2SqJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaRHW+gAKCRDBN2bmhouD
+ 13kvD/0ZXTLuTwJf0e2y11S5cpAeAyPebJadjrmUuAPIXoOOz5cBL6EcopBvNIIW6WqyzuabIOG
+ iF28TE+A3Ks1JNt3Ow1Oq9H1nLb3/xdqkVBBjh28w0gtxEgoD/qJyE9zhEclB7uom4Lo7YcDutu
+ vM3VjnnBJcdQyIVVZVwyUBPjrYgdc8fhiIgAlwjfXvG/TYDmnvTv1V68gN/seAfwOEQvzJgVouK
+ Oj0oFbUz9gloMokC8iEI09F2mItSf0456QaxpE19cybMEg0kFnLYOB838bAKW9RwrCiuAw7peZF
+ gGpkMyejtk52dYmkQVhYaZ1QrYfRwoqINBK9DUjR+f6q2G80mEnTXjOqqX5p3sOkv47ngp+JnGj
+ J/u3KQ1px1sgyI3VoRFIhLRU2mHYXYIuQkHa9bVB7epZMabMoOt2V8u8gmI0jax9xvCD2BPfR+H
+ ljdfF5YBzysI0zoVREXr3KIb8oyF39TVyxBHZh7isjgWDuU3ab4ahHO8RuOTp7uklh5j8cZ3qNs
+ m3BJ8H1jU5pY76dszctetAiza/z6fgw7waI+siH/Kc+lvAawwQKYyCKhc/wk+9qIShklQBsPe0s
+ P6DprrLIC13CTefnYCptD+EnAh5VTIgB4J0ib8UjCgpepPRUD7Yd+3mvYgmfk3ENWbFCHXPghtb J7qrPJTJjcUQSDA==
+X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 Content-Transfer-Encoding: 8bit
 
-On 10/20/25 16:31, Ovidiu Panait wrote:
-> The Renesas RZ/V2H SoC includes a Thermal Sensor Unit (TSU) block designed
-> to measure the junction temperature. The device provides real-time
-> temperature measurements for thermal management, utilizing two dedicated
-> channels for temperature sensing.
-> 
-> The Renesas RZ/V2H SoC is using the same TSU IP found on the RZ/G3E SoC,
-> the only difference being that it has two channels instead of one.
-> 
-> Add new compatible string "renesas,r9a09g057-tsu" for RZ/V2H and use
-> "renesas,r9a09g047-tsu" as a fallback compatible to indicate hardware
-> compatibility with the RZ/G3E implementation.
-> 
-> Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
+Hi,
 
-Applied patch 2/3
+Topic branch for Samsung firmware and clock drivers.
 
-Thanks
+Best regards,
+Krzysztof
 
 
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+The following changes since commit 3a8660878839faadb4f1a6dd72c3179c1df56787:
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+  Linux 6.18-rc1 (2025-10-12 13:42:36 -0700)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-drivers-firmware-clk-6.19
+
+for you to fetch changes up to 6837c006d4e72d6add451411bcf407e0dea4ad25:
+
+  firmware: exynos-acpm: add empty method to allow compile test (2025-10-22 07:49:38 +0200)
+
+----------------------------------------------------------------
+Samsung SoC firmware/clock drivers for v6.19
+
+Extend Samsung ACPM (Alive Clock and Power Manager) firmware drivers:
+1. Add support for passing DVFS (Dynamic Voltage and Frequency) messages
+   to configure the clocks in ACPM device.
+
+2. Add Exynos ACPM clock driver, which exposes to Linux several clocks
+   handled by the ACPM (firmware).
+
+----------------------------------------------------------------
+Tudor Ambarus (6):
+      dt-bindings: firmware: google,gs101-acpm-ipc: add ACPM clocks
+      firmware: exynos-acpm: add DVFS protocol
+      firmware: exynos-acpm: register ACPM clocks pdev
+      clk: samsung: add Exynos ACPM clock driver
+      MAINTAINERS: add ACPM clock bindings and driver
+      firmware: exynos-acpm: add empty method to allow compile test
+
+ .../bindings/firmware/google,gs101-acpm-ipc.yaml   |  11 ++
+ MAINTAINERS                                        |   3 +-
+ drivers/clk/samsung/Kconfig                        |  10 ++
+ drivers/clk/samsung/Makefile                       |   1 +
+ drivers/clk/samsung/clk-acpm.c                     | 185 +++++++++++++++++++++
+ drivers/firmware/samsung/Makefile                  |   4 +-
+ drivers/firmware/samsung/exynos-acpm-dvfs.c        |  80 +++++++++
+ drivers/firmware/samsung/exynos-acpm-dvfs.h        |  21 +++
+ drivers/firmware/samsung/exynos-acpm.c             |  26 +++
+ include/dt-bindings/clock/google,gs101-acpm.h      |  26 +++
+ .../linux/firmware/samsung/exynos-acpm-protocol.h  |  19 +++
+ 11 files changed, 384 insertions(+), 2 deletions(-)
+ create mode 100644 drivers/clk/samsung/clk-acpm.c
+ create mode 100644 drivers/firmware/samsung/exynos-acpm-dvfs.c
+ create mode 100644 drivers/firmware/samsung/exynos-acpm-dvfs.h
+ create mode 100644 include/dt-bindings/clock/google,gs101-acpm.h
