@@ -1,100 +1,138 @@
-Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com [209.85.217.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6807F316917
-	for <linux-clk@vger.kernel.org>; Mon, 10 Nov 2025 16:37:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E578186294;
+	Mon, 10 Nov 2025 19:25:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762792658; cv=none; b=q0BLg44vi5Bz3BcumxBED/GT+TxsTjuo/W9cVy2R3B0UE2D4LeCojmFq0OGr433fVeha2Z9ob6ll9z9XPWgR3kGQdMfGU4oLUatX2PW31Zkpt0MLB7E+VV6h0mTlnY66aPKKJe6SqC4ng8056+vo5gl89GhBt8KNlHBXeO1jEp0=
+	t=1762802735; cv=none; b=kC5Q46DzcjdrVP5SkUebDSWsfFsAQWKlaOEF/Oh8YkPdwzlFfccvX4NbdMM+7WPJL8OB7dr0oeJeRiMJrn4C4qdiOJCfmASGBIiPLOKfOlQOHU4IlEcfj9AbMQDllETRsKMkaWku3+k7nbuiHKOtNG36nO14wrYvxvmJJ35qoAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762792658; c=relaxed/simple;
-	bh=ytHIDgU/qJ2cOfjrTacAh9vt9YGb5WOKdUkBnY4rcBM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dcKJtyzWOevZay4y0/BtrfmVf37QKbWnv148aAc+QVmP4csbN3LW5K/rdNe+Vc42ixrhTsrSwlzLqQxhYrW86mzsxsULLWgyHDNJHjiZknSeKyx3p2ShS+M9eosvj53gSX5eJYwVuf9gyn8HdoqppXP2rHvstwnOiky/CVhJ2iY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f47.google.com with SMTP id ada2fe7eead31-5db469a92f7so913531137.0
-        for <linux-clk@vger.kernel.org>; Mon, 10 Nov 2025 08:37:36 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762792655; x=1763397455;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JNNWB8RzQw4ag+R4GGbGdNDxdfn6zllvkiSdySRdu9E=;
-        b=h3/7IGWj21cAYV2iTWnK900eX9j5CFb7WmXMVrb3tIXKjQNyPh3A8/7lodVfS93LIU
-         v6a5KlQ60CJ18T0ikhnpGiQCDN/r6BjqX8yL3mDy4fAYhsfu5FlHLbGXwgBVla+CCvOC
-         ZkS5enHQ2hdXGXJm++IsfHPRml7T0ylUszYDqNKZg9W/VKYTK7vdd8WymM55YPa1Or0T
-         I585ZM77DV5tGaz9LyvsQrFvixBzT54BE308kuwfVHEdYQrwaizy702sLjaHBw3skHUT
-         rl9rpcCwKgo4DjAyk4GlznaHnyqvTNHvoicaz3mstyzYXVioB1fN1J8BFF2v9yKDvaDm
-         lLAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV2zQI1Ol2tRgwKkv/ugCmbQVNuyTAfMhT88iF4I8YApThwWskBnoYmYQwpFNH0KllsGyu6Khmg2QU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/Fs4QuWu518duy7R029/+Ml7kWiaS6+nMD7LogPfk/mHz90Wn
-	+Uh6LMBkRSpDy2Xpae1oiKD1ZZQOUuTyEhcoaQz3uZEraHg+3zhnK3HM35Bf2bmv
-X-Gm-Gg: ASbGncsiTp2HXo+sfeUUOXFGUMseVAS8nyTaSYAlwH7chSHPu67HS9PDp9uAThSpY6D
-	UUNBSxCjG/JEuV1v6l7i27E5Qd83kSEGkLyVMhl5SYQOJPui8/omO7yVQyWb1bHKswY0udugOBi
-	0KG7Lv9UlTXV5qlCSxoIq4Rnw5R92Ds46ShZfs9W1m85EiywXxDk5+fi46LCvBHTaqoVS569HDL
-	3mUJD67FaVVafJfSTSpBbOgFcJmCC8JwiYA3bUrFDNcH+EngI+bOh2/6pOI5G10q1p2RvJPClRs
-	gTIKy67dykHtULMoh4Wz24u8j5/0xemyPOJkKzVRx/Ygm29eL9wCj3GI3QTyYWH2GiHzaw1yPPh
-	kseDwqq3veZTSasFxbDYk2gf8AM9HR9hArXf+tRqNHrT6m1H9RmIYF1l5FCHyPS8Ev9JXxbXfs4
-	zeDJG6SggX38C96Ha9lBrFn9VDPltBze9487Py+F/tvTo9T3zJ
-X-Google-Smtp-Source: AGHT+IEZcZpLLf2Sg7REPMWrgXpiS55tR1SJsXzerzFUdM8RVg6/7LRgISVlJ9Yck3sNvC04GtLlkA==
-X-Received: by 2002:a05:6102:26c6:b0:5db:f9df:34de with SMTP id ada2fe7eead31-5ddc47e33a0mr2380556137.23.1762792654887;
-        Mon, 10 Nov 2025 08:37:34 -0800 (PST)
-Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com. [209.85.217.46])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-937088206a6sm6032135241.6.2025.11.10.08.37.34
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Nov 2025 08:37:34 -0800 (PST)
-Received: by mail-vs1-f46.google.com with SMTP id ada2fe7eead31-5dd6fbe5091so1185638137.1
-        for <linux-clk@vger.kernel.org>; Mon, 10 Nov 2025 08:37:34 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCX3S09Lcx507G6tTTSJpDXgmG/j0+DiiMRHLDWnlSulOGqk+7x0qxZgQNEVJYl9ck49oqT+TsiJ6Is=@vger.kernel.org
-X-Received: by 2002:a05:6102:3753:b0:5dd:89af:459b with SMTP id
- ada2fe7eead31-5ddc467f048mr2635129137.7.1762792654419; Mon, 10 Nov 2025
- 08:37:34 -0800 (PST)
+	s=arc-20240116; t=1762802735; c=relaxed/simple;
+	bh=GrymXJeErTy9u70PVzPmfw43ubyTayEwBn+LiCzgBE4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lwidPniZDUEpXJSoBBNCvebIm4GHk9NH1eJ42d9k2I9XHLz3Wyq18xYiRx9tAcAsh7zJos2yLxCdcdujOaqcm5lb/YjA2TxqrSn8hyyIM+d9djiN5bws++IbDF5VL4NTqKOeCkjTGVVzTVuaUloVm513OF4iS12gpfJIFGMxC1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cpqC+x8V; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cpqC+x8V"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17E9CC16AAE;
+	Mon, 10 Nov 2025 19:25:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762802735;
+	bh=GrymXJeErTy9u70PVzPmfw43ubyTayEwBn+LiCzgBE4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cpqC+x8V3BJ6v7fmFkIt+t3dVhDH0GKKdgDZh1nM0OX818sGDugtU8rjaIBwPdmKF
+	 QiEAvjcAlzFdMnYeBsYbJXlzbd53uuAdTpD+Si2EO8CF5/l2w6IkrAGj7h0drqhYHk
+	 zhs/qLZU8Ti3aUUAB6VDwUTDs4Yc2BpZCv3bMcgTEKKeKpHHPWiGfrGv1HUUY6bbaa
+	 8eiRsMGt3WbjCUNz2oUWjf+1KVcEWr4yHx07JgpWdX5GZ2IBw0Wn0s6pCx+ubse27h
+	 ay/YPZh79ewOXvUjiJMCAOmnLNtXfMj0c/YXq+74ER4kBPBH6xuu+hsRw8IefMlFcX
+	 kRcF6RUdPZdug==
+Date: Mon, 10 Nov 2025 19:25:25 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Michal Wilczynski <m.wilczynski@samsung.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Emil Renner Berthing <kernel@esmil.dk>,
+	Hal Feng <hal.feng@starfivetech.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Xingyu Wu <xingyu.wu@starfivetech.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>, Lee Jones <lee@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Icenowy Zheng <uwu@icenowy.me>,
+	Maud Spierings <maudspierings@gocontroll.com>,
+	Andy Yan <andyshrk@163.com>, Heiko Stuebner <heiko@sntech.de>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-phy@lists.infradead.org,
+	dri-devel@lists.freedesktop.org, linux-riscv@lists.infradead.org
+Subject: Re: [PATCH RFC 08/13] soc: starfive: Add jh7110-vout-subsystem driver
+Message-ID: <20251110-acetone-slinky-0f8e81291371@spud>
+References: <20251108-jh7110-clean-send-v1-0-06bf43bb76b1@samsung.com>
+ <CGME20251108010504eucas1p26e8ee9aa88ab75bebd832eaea81720e9@eucas1p2.samsung.com>
+ <20251108-jh7110-clean-send-v1-8-06bf43bb76b1@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251030061603.1954-1-vulab@iscas.ac.cn>
-In-Reply-To: <20251030061603.1954-1-vulab@iscas.ac.cn>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 10 Nov 2025 17:37:23 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdVrngq2P+uPq79Rgi=Ba8hYBftG8ztSGXxyTvppqwYc1Q@mail.gmail.com>
-X-Gm-Features: AWmQ_bn0aO0m42o8pyfa9vnXYaa3ntXxxVMU8sBWoUFD7yP4GCSqBzv-mQ8MKV0
-Message-ID: <CAMuHMdVrngq2P+uPq79Rgi=Ba8hYBftG8ztSGXxyTvppqwYc1Q@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: r9a06g032: Fix memory leak in error path
-To: Haotian Zhang <vulab@iscas.ac.cn>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="d6w1nrcqngNa0tVG"
+Content-Disposition: inline
+In-Reply-To: <20251108-jh7110-clean-send-v1-8-06bf43bb76b1@samsung.com>
 
-On Thu, 30 Oct 2025 at 07:16, Haotian Zhang <vulab@iscas.ac.cn> wrote:
-> The current code uses of_iomap() to map registers but never calls
-> iounmap() on any error path after the mapping. This causes a memory
-> leak when probe fails after successful ioremap, for example when
-> of_clk_add_provider() or r9a06g032_add_clk_domain() fails.
->
-> Replace of_iomap() with devm_of_iomap() to automatically unmap the
-> region on probe failure. Update the error check accordingly to use
-> IS_ERR() and PTR_ERR() since devm_of_iomap() returns ERR_PTR on error.
->
-> Fixes: 4c3d88526eba ("clk: renesas: Renesas R9A06G032 clock driver")
-> Signed-off-by: Haotian Zhang <vulab@iscas.ac.cn>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-clk for v6.19.
+--d6w1nrcqngNa0tVG
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Gr{oetje,eeting}s,
+On Sat, Nov 08, 2025 at 02:04:42AM +0100, Michal Wilczynski wrote:
+> Add the wrapper driver for the StarFive JH7110 VOUT subsystem.
+>=20
+> This driver is responsible for managing the shared resources for all
+> video output devices. It enables the PD_VOUT power domain, enables the
+> top-level NoC bus clock, and deasserts the main bus reset.
+>=20
+> Once these resources are active, it calls of_platform_populate() to
+> create and probe the child devices (DC8200, VOUTCRG, HDMI MFD) that
+> reside within this subsystem.
+>=20
+> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
+> ---
+>  MAINTAINERS                                  |   1 +
+>  drivers/soc/Kconfig                          |   1 +
+>  drivers/soc/Makefile                         |   1 +
+>  drivers/soc/starfive/Kconfig                 |  25 ++++++
+>  drivers/soc/starfive/Makefile                |   2 +
+>  drivers/soc/starfive/jh7110-vout-subsystem.c | 117 +++++++++++++++++++++=
+++++++
+>  6 files changed, 147 insertions(+)
+>=20
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 052876c6538f980f75ff64e78b6ebea460307904..74e562a6b57ac9f776c4be2d6=
+f0977c62bc03d46 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -24051,6 +24051,7 @@ F:	Documentation/devicetree/bindings/display/brid=
+ge/starfive,jh7110-inno-hdmi-co
+>  F:	Documentation/devicetree/bindings/mfd/starfive,jh7110-hdmi-mfd.yaml
+>  F:	Documentation/devicetree/bindings/phy/starfive,jh7110-inno-hdmi-phy.y=
+aml
+>  F:	Documentation/devicetree/bindings/soc/starfive/starfive,jh7110-vout-s=
+ubsystem.yaml
+> +F:	drivers/soc/starfive/jh7110-vout-subsystem.c
 
-                        Geert
+The parent directory that you've created here for the driver (or created
+in a different patch) should probably be added to the "RISC-V MISC SOC
+SUPPORT" entry, along with the binding directory. Otherwise I'm probably
+not going to see the patches for the former (Emil maintains the
+plarform, but for $reasons I'm the one who applies patches and sends the
+PRs to Arnd). Think it used to be there, but got removed when the last
+(only?) driver was moved out.
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+--d6w1nrcqngNa0tVG
+Content-Type: application/pgp-signature; name="signature.asc"
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaRI8JQAKCRB4tDGHoIJi
+0iL7AQCiyLJiCSE3NKVn/dTVaRDq4/xjTR7nxORX6exO8YKwTAD/f4qo7cSk4n8+
+BG25eAfUyQihtYUjB8FnpYKCw2j6mQ8=
+=kAFU
+-----END PGP SIGNATURE-----
+
+--d6w1nrcqngNa0tVG--
