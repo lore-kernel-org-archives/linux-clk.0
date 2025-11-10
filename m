@@ -1,157 +1,148 @@
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7373D30CDA1
-	for <linux-clk@vger.kernel.org>; Mon, 10 Nov 2025 12:14:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F89EBE5E
+	for <linux-clk@vger.kernel.org>; Mon, 10 Nov 2025 12:23:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762776842; cv=none; b=F7Z0DW2USQLrh1r+ckKMSlV1cFnZRctvVcu650K4/FYd1qlvhUpxCR2/wHQenkq0oIuy2DyJXVA/lTQJzomamuZ+b3JARQ+mrRV0X1vJmdJztRtmf+1ugS4mBIYJQIh4QYhpfzl/NiM9wunGMkQ77ucQWRNxj/AsCXZ+AOcZfCA=
+	t=1762777425; cv=none; b=g7UuhS2qA4VkEF2Ow1DdEVf8/i3+1eLJ9IO0vWU/M3KXMw3NyZD4/KT86Lm7M0GKn2LzXS538RJffLvIi6R+nblwAvhoW+AF+qbhQz+EwwvtPKWwAJrG1f9fisqedwP6A7QlPMtLk/LCKjdoOGB0yxkOw0iTysmrk4CgH9HACv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762776842; c=relaxed/simple;
-	bh=7eCwQzIdJ0n4Jk8cIEMb6dznrr42scKRI9w59K+VWtk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GdYsCuduA/+hOHu52Wy1fA4B+bPTe40F/MAr19bve17HUg8n04FCoIF43Y+/hJbLIfzLPUM+ebC+k5l09SFmHDE9DAU63lQenZPFCpf8wCO8W1Gfy9v4IerzqRi7X+/FX3HQNQnRt5HBrgD2GuCzru6kWK6daxgi0xPFxrSrILg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=miTlchG+; arc=none smtp.client-ip=209.85.221.44
+	s=arc-20240116; t=1762777425; c=relaxed/simple;
+	bh=zWbNCTtGk7yw43CTCAcuX34n6UWU3vWChmXQCsvs42c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XXAc3ZLWP5Fj3WurF64H84toJEVHFXuEHIgpo+cF1rFFWV/6bn7mzx5CIX/4yxTrepIZV+iMjTbgrUURHRlCeTF06Gn6N/2aVhEkr1W71dDHyqzl5AoSGhqrjS3ui2syfy7d7gGJBh0LRAZs3Lrq+KDHAcSPjhO1dCgYAlj4u5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ONEWKk4J; arc=none smtp.client-ip=209.85.208.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="miTlchG+"
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-429c844066fso336054f8f.3
-        for <linux-clk@vger.kernel.org>; Mon, 10 Nov 2025 04:14:00 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ONEWKk4J"
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-64166a57f3bso2158286a12.1
+        for <linux-clk@vger.kernel.org>; Mon, 10 Nov 2025 04:23:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762776839; x=1763381639; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=C6MHSwghP2d14X8DV+0bLl36z/FEFxYOy9Zl9P0JXo8=;
-        b=miTlchG+584NsrIkCF5niFNAWxJmA7iuI/pUk8kXS3RitDiQtIAM+Ih6uomyYs2jpB
-         rZukutDFI45Qpk61YeRcXdw7rEsnodtX5KRiB8r29ibAj6/IeYugMlSBmWLPGkOZE1Hd
-         GLIsHBnwCbAKs0d3cZ5JoF6PNbMe99O0W7j897+f8i+yE+f6B6wlaQp244NBM4b3B6rU
-         IkotWnI3P6YtFNSSLTfRF+UaQXo0GgC/Hwino04sidYgG//MWQNOOKmqaBQCcZMkUAlO
-         +51W57+bCCNJ5/Abosor4hS2usyMUOek5VxmNr2rez2WmG/IzUMwjA3VxwLHkVc/1pca
-         AfSQ==
+        d=linaro.org; s=google; t=1762777422; x=1763382222; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=DzW1Nmfxb6NiioFQyuj9BtUlANBvsFTwFmbLEk2yLZU=;
+        b=ONEWKk4Jdnzt6NSTRZZJhlzCozURxOxM0ctQAfFkoskUt8gSf4szk1kjdMhFYIg8da
+         lk8UDMf80yhtQhXAMtrLyOGogfMjhM7aCNMj/aiiuhs4YMPnNzcj8OPu3dEOJnOoKfDe
+         4h3a7YiF82GZBOlVhDihud76n8qXSUIjuIooJDY4F1qPiNWm41wL7t8wsRHdeRekkGCA
+         atwK1xppiGCiDt2iRT9uytUUMqTwTBUT1/mfHGMyPqomVeG166xyCVZHFnlC4/7EuKuC
+         /tioMpR8zcooXpGQ1rgScon2IcGSGCmdLl/LjN1CanUgNO5zxWWeSwCq2KizBMMbQPN4
+         VrVw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762776839; x=1763381639;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=C6MHSwghP2d14X8DV+0bLl36z/FEFxYOy9Zl9P0JXo8=;
-        b=gjOtwnuLxKQIyOtsQBpe+9OqZti+xImNKUqAsPE9lc6WjCPR1TN5oLzdClXJH9205r
-         DpnJSQFQ1uotMkSh3tXAMcFBA6A2Tj6zif5qy1R84ymwdGa6HJ/myjb6jTXwogCsdAdI
-         cpzJPLDUxqGBsCp9eybWsWcDFv/wBU9ZW2PPPFnybaiw0WiXCt4iNl9bg7RZfniMFen7
-         jReKxyjBett4klOqVGpTNv0L2gp+6r4Hqka6GEwmjLl/i+Exbv5OHuALyWEgnJYgode/
-         ZUjnvmeF1Mqcw4AXhVQAsUlWWyHLTjsVEpla8JlXgkX79xkt1VW8OVTjvy8dYKO+RO8b
-         YjGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUH5+ZuVp/Nuq8G/QaTdnnuEKxZSmfKVND7EKL0vh6SFypkghoza5V4AMK8iO1PCczRHn2dqM9VRqc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUfjFfp6tlEp06vxn5jy6vUvh/xstBBQnROOVMpn98ckOtmnFz
-	Rp16GKIkwWWZbqW48nKvciVUCFvgFnAAzYc8vNTSFpOV5cgAQsZ9BQXRRbW0EkiPYgQ=
-X-Gm-Gg: ASbGncuQDPkWdovP2UMtlsrmWJ/r64mtT72mu+ZJn7169dKQwTfP9VprcvjH3f3R1Fe
-	ezKJuDHDeEI0Kms+pbdYhX3XQlkNsXv/ui/JnBFT9k2HpCI5+lqXpMmq3EhPSOtgvCsNmeHEaBb
-	Ba6trS8wLkiD8Fy+OHhG4Zfw4Jt5vtYMBZLiNFgYp0MtdgGzN4l36UJDWcQrnFX7I7vvX1KXNP5
-	UJ6oePqeH1sxiXzx/bLSA0Mqp+b0VtUFO/tm0oywvuC0SQajMGrF0fqebZkbHfH7IqiwoOgrsAt
-	zEER+p0uShl84wLoN9Z93zwIPK9LSeracLdZUhQTWUqg8ROKO33deRZCBYZ0nB46E71weFiPSIy
-	1zrY6crVxr0rapuBAURJcsh+abiPi91q19PA6Omas9uNydNObpAgmai3e97xHPdE+X6abXL9e1G
-	W9yqUkrST3Oys=
-X-Google-Smtp-Source: AGHT+IFtCJoEa3fPjznfspradex1PtTFo+De784I9+Mj7ZLYALTxzZRy9e27nwxt5XfS02ZIFIavUQ==
-X-Received: by 2002:a05:6000:26c8:b0:429:c711:22b5 with SMTP id ffacd0b85a97d-42b2dc13946mr3574288f8f.1.1762776838835;
-        Mon, 10 Nov 2025 04:13:58 -0800 (PST)
-Received: from kuoka.. ([178.197.219.123])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42ac6794f6esm24922667f8f.41.2025.11.10.04.13.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Nov 2025 04:13:57 -0800 (PST)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	linux-clk@vger.kernel.org,
-	Sylwester Nawrocki <snawrocki@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL 3/4] samsung: drivers for v6.19
-Date: Mon, 10 Nov 2025 13:13:41 +0100
-Message-ID: <20251110121344.120785-7-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20251110121344.120785-5-krzysztof.kozlowski@linaro.org>
-References: <20251110121344.120785-5-krzysztof.kozlowski@linaro.org>
+        d=1e100.net; s=20230601; t=1762777422; x=1763382222;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DzW1Nmfxb6NiioFQyuj9BtUlANBvsFTwFmbLEk2yLZU=;
+        b=JfdBsyjThVT3f4+C1brwXKX0Usuvw3rrpYEO2XRyznV6qQFsjQE3HVSzqkkE8liRGJ
+         s7fC3u7raiJqSuvB1HWGkfu0PJRg/r3WQR+GhsKlT0iW6JICXVfNs6YfmvciDPByScUH
+         +11Uq7PCMcm1juyfsxdfqcjNXCf6X5euLxoKa+n6blBP8lJSNz4fy7t/oC0d/dXtbSjb
+         ZEypnIAm7H2ByEMnHg2cCvYw0KSWVLlZsmPfQs9BQ7iDVb+rKN6eUHDPd7hJElvrxB16
+         Xzb1CVSc9Y2j2ghy5sZODvIYdw6oh7txzw7rB822t3eTzYSyR2I+AMQcU1D2skdXSJ8J
+         7FKg==
+X-Forwarded-Encrypted: i=1; AJvYcCUnoQkJ0Im4vBkGr2ke/vDCbxkZFbT0ukha23F2mCCSKBpra4QwPriefFyiygGQ+V3xMr1+u6xJaiw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPwV8g2eJkOiWprI+Qe0qNvnocvuNbG6IA6Aun6ytyEBU+Ftt2
+	2lgspOjo1jNHVV4qf02e0oWM7ziXOVj7JBFmy0XDOwDyRov3VG2oRno+bsgkSPiv7Zz4WOiHygy
+	DXA1dKdo5MM5uWPGpW1TiKhjecCX+pFS5AqeWvCA8KQ==
+X-Gm-Gg: ASbGncuMmNaRJK83NdUTwgR0OMqyqGvueoGp8f2hAtPhSGzpPChpu62KguEzcB1W5IY
+	ZjirKuf0olpHB4kZRSM7XP2SUWke/VQ9iK9nOX9mO34GUTcXwf1wbmOPBX4wfdA49V2EpXs+J8e
+	tF9qfqaaarNfNDxm5EqBT2ntl2BRNGxM/N5h0xIl/y6X9/NqxB7DkqnBcRvh1oc1enJ0DE0QMPw
+	Ya40l3ruLXlri2yOMn8OL2OI7J4zWPoiEkvRHSh6KVgzcJj6e+hZXYZlNQ0EK6kVaVF/LleXiyQ
+	Tg66qVo=
+X-Google-Smtp-Source: AGHT+IGm5+Uu79ujlZItIA42GflK7UfV+AyBRUd53fOR/2PdZlplGxgc5r7/bRr9gNtqR7fwtBSp/+VdEs2VA7Pi6Oc=
+X-Received: by 2002:a05:6402:305c:10b0:640:c454:e8 with SMTP id
+ 4fb4d7f45d1cf-6415e7fd2c9mr4878827a12.30.1762777421528; Mon, 10 Nov 2025
+ 04:23:41 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2406; i=krzysztof.kozlowski@linaro.org;
- h=from:subject; bh=7eCwQzIdJ0n4Jk8cIEMb6dznrr42scKRI9w59K+VWtk=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBpEdb6Lys/nhK6FyF7WpIVe24IhpaXO7tRMwX2q
- ee8mfep2SqJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaRHW+gAKCRDBN2bmhouD
- 13kvD/0ZXTLuTwJf0e2y11S5cpAeAyPebJadjrmUuAPIXoOOz5cBL6EcopBvNIIW6WqyzuabIOG
- iF28TE+A3Ks1JNt3Ow1Oq9H1nLb3/xdqkVBBjh28w0gtxEgoD/qJyE9zhEclB7uom4Lo7YcDutu
- vM3VjnnBJcdQyIVVZVwyUBPjrYgdc8fhiIgAlwjfXvG/TYDmnvTv1V68gN/seAfwOEQvzJgVouK
- Oj0oFbUz9gloMokC8iEI09F2mItSf0456QaxpE19cybMEg0kFnLYOB838bAKW9RwrCiuAw7peZF
- gGpkMyejtk52dYmkQVhYaZ1QrYfRwoqINBK9DUjR+f6q2G80mEnTXjOqqX5p3sOkv47ngp+JnGj
- J/u3KQ1px1sgyI3VoRFIhLRU2mHYXYIuQkHa9bVB7epZMabMoOt2V8u8gmI0jax9xvCD2BPfR+H
- ljdfF5YBzysI0zoVREXr3KIb8oyF39TVyxBHZh7isjgWDuU3ab4ahHO8RuOTp7uklh5j8cZ3qNs
- m3BJ8H1jU5pY76dszctetAiza/z6fgw7waI+siH/Kc+lvAawwQKYyCKhc/wk+9qIShklQBsPe0s
- P6DprrLIC13CTefnYCptD+EnAh5VTIgB4J0ib8UjCgpepPRUD7Yd+3mvYgmfk3ENWbFCHXPghtb J7qrPJTJjcUQSDA==
-X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
-Content-Transfer-Encoding: 8bit
+References: <20251106-clk-pmdomain-mediatek-round-rate-v1-1-49441ea27f84@redhat.com>
+In-Reply-To: <20251106-clk-pmdomain-mediatek-round-rate-v1-1-49441ea27f84@redhat.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Mon, 10 Nov 2025 13:23:03 +0100
+X-Gm-Features: AWmQ_bnh8tp1oLAuPElgvSFmN8WE23c2ga9LAvFWkFMPaVp1NApY8JmtQI4OamU
+Message-ID: <CAPDyKFoq=dJW_FCVykBwH85+RbeZ-SR6=vF0vKw+237TsgOfDA@mail.gmail.com>
+Subject: Re: [PATCH] pmdomain: mediatek: convert from clk round_rate() to determine_rate()
+To: Brian Masney <bmasney@redhat.com>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Nicolas Frattaroli <nicolas.frattaroli@collabora.com>, Maxime Ripard <mripard@kernel.org>, 
+	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi,
+On Fri, 7 Nov 2025 at 00:40, Brian Masney <bmasney@redhat.com> wrote:
+>
+> The round_rate() clk ops is deprecated in the clk framework in favor
+> of the determine_rate() clk ops, so let's convert this driver so that
+> round_rate() can be removed from the clk core.
+>
+> Signed-off-by: Brian Masney <bmasney@redhat.com>
 
-Topic branch for Samsung firmware and clock drivers.
+Applied for next, thanks!
 
-Best regards,
-Krzysztof
+Kind regards
+Uffe
 
 
-The following changes since commit 3a8660878839faadb4f1a6dd72c3179c1df56787:
-
-  Linux 6.18-rc1 (2025-10-12 13:42:36 -0700)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-drivers-firmware-clk-6.19
-
-for you to fetch changes up to 6837c006d4e72d6add451411bcf407e0dea4ad25:
-
-  firmware: exynos-acpm: add empty method to allow compile test (2025-10-22 07:49:38 +0200)
-
-----------------------------------------------------------------
-Samsung SoC firmware/clock drivers for v6.19
-
-Extend Samsung ACPM (Alive Clock and Power Manager) firmware drivers:
-1. Add support for passing DVFS (Dynamic Voltage and Frequency) messages
-   to configure the clocks in ACPM device.
-
-2. Add Exynos ACPM clock driver, which exposes to Linux several clocks
-   handled by the ACPM (firmware).
-
-----------------------------------------------------------------
-Tudor Ambarus (6):
-      dt-bindings: firmware: google,gs101-acpm-ipc: add ACPM clocks
-      firmware: exynos-acpm: add DVFS protocol
-      firmware: exynos-acpm: register ACPM clocks pdev
-      clk: samsung: add Exynos ACPM clock driver
-      MAINTAINERS: add ACPM clock bindings and driver
-      firmware: exynos-acpm: add empty method to allow compile test
-
- .../bindings/firmware/google,gs101-acpm-ipc.yaml   |  11 ++
- MAINTAINERS                                        |   3 +-
- drivers/clk/samsung/Kconfig                        |  10 ++
- drivers/clk/samsung/Makefile                       |   1 +
- drivers/clk/samsung/clk-acpm.c                     | 185 +++++++++++++++++++++
- drivers/firmware/samsung/Makefile                  |   4 +-
- drivers/firmware/samsung/exynos-acpm-dvfs.c        |  80 +++++++++
- drivers/firmware/samsung/exynos-acpm-dvfs.h        |  21 +++
- drivers/firmware/samsung/exynos-acpm.c             |  26 +++
- include/dt-bindings/clock/google,gs101-acpm.h      |  26 +++
- .../linux/firmware/samsung/exynos-acpm-protocol.h  |  19 +++
- 11 files changed, 384 insertions(+), 2 deletions(-)
- create mode 100644 drivers/clk/samsung/clk-acpm.c
- create mode 100644 drivers/firmware/samsung/exynos-acpm-dvfs.c
- create mode 100644 drivers/firmware/samsung/exynos-acpm-dvfs.h
- create mode 100644 include/dt-bindings/clock/google,gs101-acpm.h
+> ---
+>  drivers/pmdomain/mediatek/mtk-mfg-pmdomain.c | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/pmdomain/mediatek/mtk-mfg-pmdomain.c b/drivers/pmdomain/mediatek/mtk-mfg-pmdomain.c
+> index af20111067c02a5f9a0d6d751e9e0dc32c1a4d90..9bad577b3ae4bf1b83d4f782bb52f56f779a8974 100644
+> --- a/drivers/pmdomain/mediatek/mtk-mfg-pmdomain.c
+> +++ b/drivers/pmdomain/mediatek/mtk-mfg-pmdomain.c
+> @@ -309,11 +309,11 @@ static unsigned long mtk_mfg_recalc_rate_gpu(struct clk_hw *hw,
+>         return readl(mfg->shared_mem + GF_REG_FREQ_OUT_GPU) * HZ_PER_KHZ;
+>  }
+>
+> -static long mtk_mfg_round_rate(struct clk_hw *hw, unsigned long rate,
+> -                              unsigned long *parent_rate)
+> +static int mtk_mfg_determine_rate(struct clk_hw *hw,
+> +                                 struct clk_rate_request *req)
+>  {
+>         /*
+> -        * The round_rate callback needs to be implemented to avoid returning
+> +        * The determine_rate callback needs to be implemented to avoid returning
+>          * the current clock frequency, rather than something even remotely
+>          * close to the frequency that was asked for.
+>          *
+> @@ -325,7 +325,7 @@ static long mtk_mfg_round_rate(struct clk_hw *hw, unsigned long rate,
+>          * high current frequency, breaking the powersave governor in the process.
+>          */
+>
+> -       return rate;
+> +       return 0;
+>  }
+>
+>  static unsigned long mtk_mfg_recalc_rate_stack(struct clk_hw *hw,
+> @@ -338,12 +338,12 @@ static unsigned long mtk_mfg_recalc_rate_stack(struct clk_hw *hw,
+>
+>  static const struct clk_ops mtk_mfg_clk_gpu_ops = {
+>         .recalc_rate = mtk_mfg_recalc_rate_gpu,
+> -       .round_rate = mtk_mfg_round_rate,
+> +       .determine_rate = mtk_mfg_determine_rate,
+>  };
+>
+>  static const struct clk_ops mtk_mfg_clk_stack_ops = {
+>         .recalc_rate = mtk_mfg_recalc_rate_stack,
+> -       .round_rate = mtk_mfg_round_rate,
+> +       .determine_rate = mtk_mfg_determine_rate,
+>  };
+>
+>  static const struct clk_init_data mtk_mfg_clk_gpu_init = {
+>
+> ---
+> base-commit: df5d79720b152e7ff058f11ed7e88d5b5c8d2a0c
+> change-id: 20251106-clk-pmdomain-mediatek-round-rate-649a9bf7d30a
+>
+> Best regards,
+> --
+> Brian Masney <bmasney@redhat.com>
+>
