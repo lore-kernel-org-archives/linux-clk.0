@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E578186294;
-	Mon, 10 Nov 2025 19:25:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34B9918C008;
+	Mon, 10 Nov 2025 19:36:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762802735; cv=none; b=kC5Q46DzcjdrVP5SkUebDSWsfFsAQWKlaOEF/Oh8YkPdwzlFfccvX4NbdMM+7WPJL8OB7dr0oeJeRiMJrn4C4qdiOJCfmASGBIiPLOKfOlQOHU4IlEcfj9AbMQDllETRsKMkaWku3+k7nbuiHKOtNG36nO14wrYvxvmJJ35qoAM=
+	t=1762803367; cv=none; b=mYC7g8XRbZDG5ybP0Bj60Sj+X+OMQHOhgbKvNCvFiN0vggs7+/PXr6EIYSgRH0VlUxKc5l1ej+rEtA2ykvwBqaijwALPF5hmhFsWPW1WifuJcwiX9FM0X4CIXSc/63FowXY6Vdj3cTExV9vIlyDAIugj9DnlRc30rwZzJnLKVU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762802735; c=relaxed/simple;
-	bh=GrymXJeErTy9u70PVzPmfw43ubyTayEwBn+LiCzgBE4=;
+	s=arc-20240116; t=1762803367; c=relaxed/simple;
+	bh=jpF83hZl4+ePN40ExsHilbddxNFc1Cve8pvPWp8/Bmc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lwidPniZDUEpXJSoBBNCvebIm4GHk9NH1eJ42d9k2I9XHLz3Wyq18xYiRx9tAcAsh7zJos2yLxCdcdujOaqcm5lb/YjA2TxqrSn8hyyIM+d9djiN5bws++IbDF5VL4NTqKOeCkjTGVVzTVuaUloVm513OF4iS12gpfJIFGMxC1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cpqC+x8V; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=SK17/0ZwLjgiIjaFM0dVk66zZsLOjpxjaAjQycJBxj67t5VREW+ZAhs+QLQQsOMGxK3osTttxj3mUkKFeI/ABE47rYy5QvmcneCG2h579qjBUzo1ZiBEFF9fKgcs3EMLRgt3YzNWgdzIgxdcU/7IHO1hh3FGKQUBYhR7/FnQXlc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r/JiLWNH; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cpqC+x8V"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17E9CC16AAE;
-	Mon, 10 Nov 2025 19:25:27 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r/JiLWNH"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DACD7C2BCB4;
+	Mon, 10 Nov 2025 19:35:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762802735;
-	bh=GrymXJeErTy9u70PVzPmfw43ubyTayEwBn+LiCzgBE4=;
+	s=k20201202; t=1762803366;
+	bh=jpF83hZl4+ePN40ExsHilbddxNFc1Cve8pvPWp8/Bmc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cpqC+x8V3BJ6v7fmFkIt+t3dVhDH0GKKdgDZh1nM0OX818sGDugtU8rjaIBwPdmKF
-	 QiEAvjcAlzFdMnYeBsYbJXlzbd53uuAdTpD+Si2EO8CF5/l2w6IkrAGj7h0drqhYHk
-	 zhs/qLZU8Ti3aUUAB6VDwUTDs4Yc2BpZCv3bMcgTEKKeKpHHPWiGfrGv1HUUY6bbaa
-	 8eiRsMGt3WbjCUNz2oUWjf+1KVcEWr4yHx07JgpWdX5GZ2IBw0Wn0s6pCx+ubse27h
-	 ay/YPZh79ewOXvUjiJMCAOmnLNtXfMj0c/YXq+74ER4kBPBH6xuu+hsRw8IefMlFcX
-	 kRcF6RUdPZdug==
-Date: Mon, 10 Nov 2025 19:25:25 +0000
+	b=r/JiLWNHjEYRmruV9LdKTJJTd45+gaNqMVxx3rKwEocvH5raBmPhaOaSVmu3LB1qB
+	 v0a/a1UV73eEVavjBqelijRtLfPFA7zKLv5pcjNmrBX6zODp941N/MZ9YvQE2P7+Ta
+	 23tHNDBX6X+G+I1EZMllpz83zr6Mj/te6SLxVm8+Eq9mSpu4z8sygEjiBDcf+ZBRNT
+	 nmcZDBXr7Q/x9Tn8j8zhBnrVMkPBuhyS5p81Tj270JsMuhgtxrYD8fPwYXHH0bQmlJ
+	 LPzeEDTvL4PZR5+MfOyG851q9+zXYhus/EQScPYQGY2xw+9LabgDNqmWOGy5TkWuXL
+	 fmQFkqDEx/eVA==
+Date: Mon, 10 Nov 2025 19:35:57 +0000
 From: Conor Dooley <conor@kernel.org>
 To: Michal Wilczynski <m.wilczynski@samsung.com>
 Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -58,11 +58,10 @@ Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org, linux-phy@lists.infradead.org,
 	dri-devel@lists.freedesktop.org, linux-riscv@lists.infradead.org
-Subject: Re: [PATCH RFC 08/13] soc: starfive: Add jh7110-vout-subsystem driver
-Message-ID: <20251110-acetone-slinky-0f8e81291371@spud>
-References: <20251108-jh7110-clean-send-v1-0-06bf43bb76b1@samsung.com>
- <CGME20251108010504eucas1p26e8ee9aa88ab75bebd832eaea81720e9@eucas1p2.samsung.com>
- <20251108-jh7110-clean-send-v1-8-06bf43bb76b1@samsung.com>
+Subject: Re: [PATCH RFC 00/13] drm: starfive: jh7110: Enable display subsystem
+Message-ID: <20251110-clang-baking-b8b27730356e@spud>
+References: <CGME20251108010451eucas1p1c7bf340dbd2b1b7cbfb53d6debce7a2e@eucas1p1.samsung.com>
+ <20251108-jh7110-clean-send-v1-0-06bf43bb76b1@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -70,69 +69,52 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="d6w1nrcqngNa0tVG"
+	protocol="application/pgp-signature"; boundary="cv1rMoP+ljYav3Y/"
 Content-Disposition: inline
-In-Reply-To: <20251108-jh7110-clean-send-v1-8-06bf43bb76b1@samsung.com>
+In-Reply-To: <20251108-jh7110-clean-send-v1-0-06bf43bb76b1@samsung.com>
 
 
---d6w1nrcqngNa0tVG
+--cv1rMoP+ljYav3Y/
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Nov 08, 2025 at 02:04:42AM +0100, Michal Wilczynski wrote:
-> Add the wrapper driver for the StarFive JH7110 VOUT subsystem.
+On Sat, Nov 08, 2025 at 02:04:34AM +0100, Michal Wilczynski wrote:
+> This series enables the display subsystem on the StarFive JH7110 SoC.
+> This hardware has a complex set of dependencies that this series aims to
+> solve.
 >=20
-> This driver is responsible for managing the shared resources for all
-> video output devices. It enables the PD_VOUT power domain, enables the
-> top-level NoC bus clock, and deasserts the main bus reset.
+> I believe this is a PHY tuning issue that can be fixed in the new
+> phy-jh7110-inno-hdmi.c driver without changing the overall architecture.
+> I plan to continue debugging these modes and will submit follow up fixes
+> as needed.
 >=20
-> Once these resources are active, it calls of_platform_populate() to
-> create and probe the child devices (DC8200, VOUTCRG, HDMI MFD) that
-> reside within this subsystem.
+> The core architectural plumbing is sound and ready for review.
 >=20
-> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
-> ---
->  MAINTAINERS                                  |   1 +
->  drivers/soc/Kconfig                          |   1 +
->  drivers/soc/Makefile                         |   1 +
->  drivers/soc/starfive/Kconfig                 |  25 ++++++
->  drivers/soc/starfive/Makefile                |   2 +
->  drivers/soc/starfive/jh7110-vout-subsystem.c | 117 +++++++++++++++++++++=
-++++++
->  6 files changed, 147 insertions(+)
->=20
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 052876c6538f980f75ff64e78b6ebea460307904..74e562a6b57ac9f776c4be2d6=
-f0977c62bc03d46 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -24051,6 +24051,7 @@ F:	Documentation/devicetree/bindings/display/brid=
-ge/starfive,jh7110-inno-hdmi-co
->  F:	Documentation/devicetree/bindings/mfd/starfive,jh7110-hdmi-mfd.yaml
->  F:	Documentation/devicetree/bindings/phy/starfive,jh7110-inno-hdmi-phy.y=
-aml
->  F:	Documentation/devicetree/bindings/soc/starfive/starfive,jh7110-vout-s=
-ubsystem.yaml
-> +F:	drivers/soc/starfive/jh7110-vout-subsystem.c
+> Notes:
+> - The JH7110 does not have a centralized MAINTAINERS entry like the
+>   TH1520, and driver maintainership seems fragmented. I have therefore
+>   added a MAINTAINERS entry for the display subsystem and am willing to
+>   help with its maintenance.
 
-The parent directory that you've created here for the driver (or created
-in a different patch) should probably be added to the "RISC-V MISC SOC
-SUPPORT" entry, along with the binding directory. Otherwise I'm probably
-not going to see the patches for the former (Emil maintains the
-plarform, but for $reasons I'm the one who applies patches and sends the
-PRs to Arnd). Think it used to be there, but got removed when the last
-(only?) driver was moved out.
+Yeah, bunch of different folks wrote the drivers, so lots of entries.
+Pretty much all as you've done here, authors are responsible for the
+individual components and Emil is the platform maintainer but
+responsible for most drivers.
 
---d6w1nrcqngNa0tVG
+Do you need any feedback dt wise on the RFC, or is it too likely that
+we'll both waste our breath if the DRM folks don't approve of your
+approach for the rest of this series?
+
+--cv1rMoP+ljYav3Y/
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaRI8JQAKCRB4tDGHoIJi
-0iL7AQCiyLJiCSE3NKVn/dTVaRDq4/xjTR7nxORX6exO8YKwTAD/f4qo7cSk4n8+
-BG25eAfUyQihtYUjB8FnpYKCw2j6mQ8=
-=kAFU
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaRI+nQAKCRB4tDGHoIJi
+0mgxAP9S65gNYTUGl4G/hjuQeRD2OPtB7jDPJa2U+Nb1h9guXgD/ZYh57W7dimb0
+HC9nSRLUedngvCWxlTKXCDULpQjSKg8=
+=vQrF
 -----END PGP SIGNATURE-----
 
---d6w1nrcqngNa0tVG--
+--cv1rMoP+ljYav3Y/--
