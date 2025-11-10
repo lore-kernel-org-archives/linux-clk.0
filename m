@@ -1,72 +1,71 @@
-Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176])
+Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com [209.85.222.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEED71E2307
-	for <linux-clk@vger.kernel.org>; Mon, 10 Nov 2025 13:18:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F527310645
+	for <linux-clk@vger.kernel.org>; Mon, 10 Nov 2025 13:18:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762780704; cv=none; b=qRIT7Tpej+BIHzQviUnCmGvYKXa8stpmbVO0YZe1RDLyMr6HRuBec3WdyWbkXSMs/oLaV9Bw1E660Atl6sK8teDJoXs0AwJVf0reGINYbSWx7/UtG4yUavR3gwZgAbFWwPeLVxPQnkho9Bqpe7CVrgPoUDsLwHSITYsjtjwt2As=
+	t=1762780730; cv=none; b=SxN0gVFQjcbzXLgTm9zYMidB40eVv1j/hYaVWWqBpxuB/21GsMZloJCRadGZeeSBuk/Vy2NRyMPIprotEVrHv6capBL4FmeVefMiTYNdfNlmedYLQtsBU2GM+P4ifBVJI0MbwA24NV6YmgreMAm4LVTiiBAxjFCQ5y5u9fg7OUU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762780704; c=relaxed/simple;
-	bh=vDBZRrptiL8B1JchW6TdyIwfOCu0iFp0Ce/dGtkhJC4=;
+	s=arc-20240116; t=1762780730; c=relaxed/simple;
+	bh=KadK8l0y+2kGqkttEVnDkIhHYVAwWa1JA/uwvYjgOO0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=d5cy9Z66rAppflTUHYrqhGOgrc+ofQYprJwwqk2EVN0DjbmwH9A/5plUPAPnmS8JOMtCkUgusJ93JFpYveaVtLSaoS2qgyVFY/sGI+8p+hQJaLPA8oK+ZQy5Omati4KaprwmMud2WBFnRG9++Yzds5FMSCmMNyTtqYcGLGC3rto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.176
+	 To:Cc:Content-Type; b=kLnFqveznh2dt6eCgWC1oy9dJq5Qu8QYM+sKS1okgylSfa/8UdaTOUEkuFZqG/C4kz6bJUUctzuhlONXm4kzJwzmCrB+ByncEatPCGNMyopkO7c6nn6R7QjUihSDdRCg7T6ZS9OeEN8gOvXeT6sUMCjEG2n9/AZVc368Rdx5WR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-5599e0ab1e8so1031824e0c.0
-        for <linux-clk@vger.kernel.org>; Mon, 10 Nov 2025 05:18:21 -0800 (PST)
+Received: by mail-ua1-f44.google.com with SMTP id a1e0cc1a2514c-934fb15ee9dso725761241.1
+        for <linux-clk@vger.kernel.org>; Mon, 10 Nov 2025 05:18:46 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762780700; x=1763385500;
+        d=1e100.net; s=20230601; t=1762780726; x=1763385526;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=zJ0ifGUcnHr6Kd16YmJsShuaDbT8XpGIPU3sUDQV+ek=;
-        b=Eo8ZPYLjvlTB30yrDEuOlhOvzWdPrmPQuDwpliPbGdhNkIiCqjtyOvVPMbCS6y4S+0
-         tUAw9VEbrqsnMrAFV68DPjLdpXMn+tF1Cn1JkmeUMtaC+RT2yIAIcTxRbJmeqFnrkxfz
-         r2n81Tn9ucbt3Z1UoNQTD8PAVeN/VtIuCjbEZuwJ14xPC9TLgWT9fDDsE5O3ScdKt+xE
-         mtBN/cN0EHMwf6k+FDbXp2ygntTPpfq9WGzr4ovFI5CusOKkv7d0CuFmZspLbZF7dmBg
-         5+GwqjJ55ru3GuFc6CNQfg0A9GeZYR/Ikw8t2qNuLwW1zvHtwXMrgWfDd/acf/7QOFv+
-         ulkg==
-X-Forwarded-Encrypted: i=1; AJvYcCXonO4K4nupKRXgtXKcLGAmB/uMARHDhrFWJaOtzdMsoGMkbNtRXTYXPjAcSqET5ConpAtxiTV0ZhI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzb1xPY8RTkUlrvKf98ao8gpnYA8KPgenc1/AOM/KjXnfTZDS3w
-	v/pKmnGTm3bEZ5UyF31XUqEc9+KIIe64aBDiz5FNKTfq6zfKA8jbEGo/z4h3eq56
-X-Gm-Gg: ASbGnculSV/xantL4Jq+g399jcEEa4xLnZ8JbrWq7bFOi1XVbJ+Onq7wjHrXcanKGWm
-	1batST60DB0820BvW/nD8h9BnFEi005QuHXfy1GwEIbiI6j+QF6xh+p30ZA76YFvvbxIldstoud
-	L0xU9ouFDls7splcsb0Z0AePSH1NbEvTaKicUfkXSx2/NibCcGg5oLZP9D4eecl9Ph7kIUAkElD
-	FtLBLR51fw40rm9embOvePIRREfQ/8DSSrXaUJcX/8EgwFte0YrK0BI/z/ISJ1h5+8Kx17Vv6GL
-	Dut1Nxbq2ZG/FOgBmDv7B3YK8tJAP3nHee2YJKUURMwxai3JhFUQdLajcj1qS0OmOq2vtJwFJO/
-	74YyP8nFOQLAZpOhTpw2StX8z2S6nOiN6i/ttnTyIC84Qh97Y4bAoW3ZWXBXcZoZXdMPNShSiNW
-	e4cA70EHtjAw7LQedTWdKdTtupqDRo1LbmCzocOw==
-X-Google-Smtp-Source: AGHT+IFR+1JqWetEutWzUavGZeNhWoMGAJu3TH6i+NKfwf9V9vp3+bzLTTr7GMr/Q5sd2+kUlwiEPg==
-X-Received: by 2002:a05:6122:20ab:b0:544:7d55:78d6 with SMTP id 71dfb90a1353d-559b31e18a0mr2743280e0c.2.1762780700521;
-        Mon, 10 Nov 2025 05:18:20 -0800 (PST)
-Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com. [209.85.222.47])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-559958320aasm7154624e0c.20.2025.11.10.05.18.18
+        bh=9JtWC2opMXjpjODI3FtXSyNgnLs1SnEjuR36TMHiZyU=;
+        b=cFr9UJa8jmnfBS3ritEG0jmQ6sMOhC88CqoiTaSEP12uGE20PCdae5w57Y+PnloQWQ
+         quMuezUbLxxXP2sgIX0Owe7RttI+AkA36s/66LJt7aHdLQbxSwdwcZJv/pzbUXQxTXzL
+         JM13U4I8/cSb9pAf74v2faAbh4EiKl2CQqVfAAStcWXm4wG+kxeBBNtuvqLkWl0ucd2t
+         RlqAy7kMdnlHaINLggKr6qgyBF0OvCiZqBWMwq/vaPc6QJbz/zcbhfaxZM27wSJ+88Jk
+         NDEx2Ww76TqH5IbchAXF8MTXLevoJU/nT98mPvMpz/FozZzXqIosEl1PW0fxWdmscSom
+         KRrA==
+X-Forwarded-Encrypted: i=1; AJvYcCWlZndnHuA3CsHl8Q3x0TDhBHwPD/i12Pu97CkMv/OeWLweb4t48KjajZ5xOC0rKxjKPNM1MIBiqTw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7gKugbhWi5xZkScY/LEVl6bU+4IMjHg7DW9qoqX0riB6oB6S1
+	TcNXImKrcW1J48GzBNzpXupQ4Ig2TthDwVfw7WGSB8M72TS/EY1zbuV0RWK+/zNt
+X-Gm-Gg: ASbGncvD7BPhuvy54nWyNOxmey2rrZArnVngcVwGYnSqMcUp/cq4Uwu7QCuaTdx6vtO
+	6HoMx6VxnsTWVgHUETAcbUFtFtFRR+ApNkTylmEwkXmifqukIZ45dUTbhoA/yFrpBTAfQ4SRwaR
+	ewOUU1DqN0o4PE8Qky6h6S+Wj3+pjJekQtb9bkYd5XbiwInaFgPeyojguwwL4GLgjOvf4QARzWs
+	WKEEkAp8G7Pm++PK8rBTvGN6F5SKZf+cjxl5Ut/ahj8ybS3iPknkJBV0UZGLmuwcYCoeblxc8PW
+	tPMUC02MT8YYjfJcUdaH7ZqgFtHo3OM4v5pP1aERHrsuh8fjbeXINtrDK9P30dNV0Hq/zf1/j64
+	CmbKu0Tgz3+hBCdFOXNXuVm5Ab4hHtKUwmE4o4teBrmofMqtCS7/MNFCSG8PA0RhEkHU30++2nO
+	qBssYl160hGnay20uAMFashetwbHblKBfcUrh4Kw==
+X-Google-Smtp-Source: AGHT+IGhz23OZyAQaOFV5zxn+m8HfkfO4T2PjZ4UAUd6pW4fiZyi5VG2A+SXT9PhjRr3kXnG+iu6+g==
+X-Received: by 2002:a05:6102:3749:b0:5db:ef30:b74f with SMTP id ada2fe7eead31-5ddc467f954mr1908118137.8.1762780725666;
+        Mon, 10 Nov 2025 05:18:45 -0800 (PST)
+Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com. [209.85.217.49])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-5dda205c0efsm5717388137.13.2025.11.10.05.18.43
         for <linux-clk@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Nov 2025 05:18:19 -0800 (PST)
-Received: by mail-ua1-f47.google.com with SMTP id a1e0cc1a2514c-9371aca0a4dso1624904241.1
-        for <linux-clk@vger.kernel.org>; Mon, 10 Nov 2025 05:18:18 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWUnbOixELaE2dRhl4Dy1xaAWuUl3FwQQ1I3Ad37A/WaYDIdYVSOtS6iP/xLdhVkEY601OKyNrDWiE=@vger.kernel.org
-X-Received: by 2002:a05:6102:5492:b0:5d5:f6ae:38ef with SMTP id
- ada2fe7eead31-5ddc481b944mr2851696137.38.1762780697780; Mon, 10 Nov 2025
- 05:18:17 -0800 (PST)
+        Mon, 10 Nov 2025 05:18:44 -0800 (PST)
+Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-5dbd9c7e468so1438161137.3
+        for <linux-clk@vger.kernel.org>; Mon, 10 Nov 2025 05:18:43 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCX6ZkRE2dbcjZGL/WkTy9bQxSHWhhNBKFPOvG5GAZuFLiTK7UR7kxtAFg7qtQOkGOwjUgvZ7p3H4wA=@vger.kernel.org
+X-Received: by 2002:a05:6102:3a0a:b0:5d7:de08:dcd6 with SMTP id
+ ada2fe7eead31-5ddc467ebf4mr2259170137.2.1762780723317; Mon, 10 Nov 2025
+ 05:18:43 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251028165127.991351-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20251028165127.991351-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20251028165127.991351-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20251028165127.991351-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20251028165127.991351-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20251028165127.991351-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 10 Nov 2025 14:18:06 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdVAyN-XQVoBNncCC5Jka4TMqSeswe8frht9sPOEJB+VLw@mail.gmail.com>
-X-Gm-Features: AWmQ_blg0wBfBRVHEE39XqXvRiX15hbIbJMqYeX6Rvu1lD8v_t2OD6KHWJX8VBE
-Message-ID: <CAMuHMdVAyN-XQVoBNncCC5Jka4TMqSeswe8frht9sPOEJB+VLw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/5] clk: renesas: r9a09g077: Propagate rate changes to
- parent clocks
+Date: Mon, 10 Nov 2025 14:18:31 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdUAqP7zdeGfvR_WaLDhvnDCR3WqNy_+qkh66=X7D7NTaA@mail.gmail.com>
+X-Gm-Features: AWmQ_bnxVvrR1Phxc4_ghxbxu9QxxlwIdRwsEpstOMyyybXbOekzQi-mkOZ-Pbk
+Message-ID: <CAMuHMdUAqP7zdeGfvR_WaLDhvnDCR3WqNy_+qkh66=X7D7NTaA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/5] clk: renesas: r9a09g077: Remove stray blank line
 To: Prabhakar <prabhakar.csengg@gmail.com>
 Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
 	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
@@ -77,15 +76,12 @@ Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 28 Oct 2025 at 17:51, Prabhakar <prabhakar.csengg@gmail.com> wrote:
+On Tue, 28 Oct 2025 at 17:52, Prabhakar <prabhakar.csengg@gmail.com> wrote:
 > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 >
-> Add the CLK_SET_RATE_PARENT flag to divider clock registration so that rate
-> changes can propagate to parent clocks when needed. This allows the CPG
-> divider clocks to request rate adjustments from their parent, ensuring
-> correct frequency scaling and improved flexibility in clock rate selection.
+> Remove an unnecessary blank line at the end of
+> r9a09g077_cpg_div_clk_register() to tidy up the code.
 >
-> Fixes: 065fe720eec6e ("clk: renesas: Add support for R9A09G077 SoC")
 > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
