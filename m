@@ -1,75 +1,241 @@
-Received: from zg8tmja5ljk3lje4mi4ymjia.icoremail.net (zg8tmja5ljk3lje4mi4ymjia.icoremail.net [209.97.182.222])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48EF92D979C;
-	Tue, 11 Nov 2025 01:21:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.97.182.222
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEE5B30C60B;
+	Tue, 11 Nov 2025 01:28:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762824107; cv=none; b=tnn9p4r/jIjtNTzH9NqDvhmOg0mGf/1vz377tgLZ3hF9PoG+OFUp2DRbnBNlkI9lOwuuIQvyDZlq/yx7Y3fMDbVc083DSiaCZdxyIu8qG8UecTNxCIM0vsY5IT/Hye8gZ6FE6BVyIUrfdt8J1BnyaDHnCDEMQ3x6KJd29Yt38w0=
+	t=1762824523; cv=none; b=X+JmxgMQTJBqgynYJEtRUy++ZNS/UxFWYTKHB4HKIJeogtil7WoGOdAvv3BHtbpzbcTt/fmeWoFN8q+fGJOlLi026WLhW5Rtxe+FoDF+b5kbgAb11SnVoesJvl67gjaxuAuUu+xy+rTPvWmpHr6Z1IFTWDAHVao4hgbno1u/vEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762824107; c=relaxed/simple;
-	bh=gCjRIKc6GlJ4lkRY0m4vHpiJLg54xIt10H+z+ZH0plc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=l4qwS7wazLWkcdgeUu7DMPb5ly1zSTSX4UkXzWkPjrB/6JAhvEkkkVCFCEYXu6p0AIuCL5XXYJocQupjjNiOsJc/RW5s7abIorwBzbidytAyK/algLFug2TEb5WCrxcyMAnb1oL3BLjjKwSkrqF8o4n7jrTOPvzRex/igwKVgvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=209.97.182.222
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
-Received: from dongxuyang$eswincomputing.com ( [10.12.96.41] ) by
- ajax-webmail-app2 (Coremail) ; Tue, 11 Nov 2025 09:21:32 +0800 (GMT+08:00)
-Date: Tue, 11 Nov 2025 09:21:32 +0800 (GMT+08:00)
-X-CM-HeaderCharset: UTF-8
-From: "Xuyang Dong" <dongxuyang@eswincomputing.com>
-To: "Troy Mitchell" <troy.mitchell@linux.dev>, mturquette@baylibre.com,
-	sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, bmasney@redhat.com, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: ningyu@eswincomputing.com, linmin@eswincomputing.com,
-	huangyifeng@eswincomputing.com, pinkesh.vaghela@einfochips.com
-Subject: Re: Re: [PATCH v7 2/2] clock: eswin: Add eic7700 clock driver
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version 2024.2-cmXT6 build
- 20241203(6b039d88) Copyright (c) 2002-2025 www.mailtech.cn
- mispb-72143050-eaf5-4703-89e0-86624513b4ce-eswincomputing.com
-In-Reply-To: <aQ2jbf2k3rwOZDuB@kernel.org>
-References: <20251023071658.455-1-dongxuyang@eswincomputing.com>
- <20251023071814.568-1-dongxuyang@eswincomputing.com>
- <aQ2jbf2k3rwOZDuB@kernel.org>
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	s=arc-20240116; t=1762824523; c=relaxed/simple;
+	bh=hIEDz7mFJDt47GLd6MQk3+qekT9YS/OeDoeWC9NFHGs=;
+	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
+	 To:Date:Message-ID; b=PiOFKAFBVSmgx+/i3+QupN5lAje3lC8fWqMU4n03T/s3Rz1krklkE7vXsiBQCtVxkbcxcFRxdT3R4nDqn62UvMX4sueyWefGqvEoiqzLoTDMLUAs300AonzDWhAI1yMKsV6Hyipcb4C3nYJcTRZ5lo/+yHHDyBJ8GQfMgueG1SQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cMHl+5eF; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cMHl+5eF"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53E02C16AAE;
+	Tue, 11 Nov 2025 01:28:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762824523;
+	bh=hIEDz7mFJDt47GLd6MQk3+qekT9YS/OeDoeWC9NFHGs=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=cMHl+5eFIDrpf7oqDMGo9dvbPm4kxa9IjFIzGuuSb5W4Y3rIZwnXqqUiBEFBA7xhv
+	 hJCjg3BsZ9Mb+2NpXl84/2ImMsARku4Qafejp5zNOMX5bqWVId20jR+exT9LQFqM4i
+	 cFi6e15yp2PE+YPDsOV2OBAXdstsHYtwQI2SiOBmqogrU6fN2FYV95V8LYRj4kL3ze
+	 +LFfMpKH8OLpwPPWYhTxsb7vTRQ8ixNZ149OfRgDgDfNBaG2vtT/zaSoH518glPhcX
+	 oD9zNGyCyjjYJHJA5XRM5LECNGLkeMzIboYaYNf7zu/mpIg4nE/bwPfS798RnIahQA
+	 kN4YgF/hIMT4w==
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <74be57c4.45.19a7080fca1.Coremail.dongxuyang@eswincomputing.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:TQJkCgBnq66cjxJpoHd6AA--.1284W
-X-CM-SenderInfo: pgrqw5xx1d0w46hv4xpqfrz1xxwl0woofrz/1tbiAgEDAmkSE9sH7
-	gABsZ
-X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWxJw
-	CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
-	daVFxhVjvjDU=
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20251002092036.2504858-1-wenst@chromium.org>
+References: <20251002092036.2504858-1-wenst@chromium.org>
+Subject: Re: [PATCH] clk: tests: Add tests for clk lookup by name
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Chen-Yu Tsai <wenst@chromium.org>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Chen-Yu Tsai <wenst@chromium.org>
+Date: Mon, 10 Nov 2025 17:28:41 -0800
+Message-ID: <176282452107.11952.13260719139557505056@lazor>
+User-Agent: alot/0.11
 
-PiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2Nsay9lc3dpbi9LY29uZmlnIGIvZHJpdmVycy9jbGsv
-ZXN3aW4vS2NvbmZpZwo+ID4gbmV3IGZpbGUgbW9kZSAxMDA2NDQKPiA+IGluZGV4IDAwMDAwMDAw
-MDAwMC4uOWJjOTAwOGQzMTU2Cj4gPiAtLS0gL2Rldi9udWxsCj4gPiArKysgYi9kcml2ZXJzL2Ns
-ay9lc3dpbi9LY29uZmlnCj4gPiBAQCAtMCwwICsxLDE1IEBACj4gPiArIyBTUERYLUxpY2Vuc2Ut
-SWRlbnRpZmllcjogR1BMLTIuMAo+ID4gKwo+ID4gK2NvbmZpZyBDT01NT05fQ0xLX0VTV0lOCj4g
-PiArCWJvb2wKPiA+ICsKPiA+ICtjb25maWcgQ09NTU9OX0NMS19FSUM3NzAwCj4gPiArCWJvb2wg
-IkVJQzc3MDAgQ2xvY2sgRHJpdmVyIgo+IFdlIGNhbid0IGJ1aWxkIHRoaXMgZHJpdmVyIGFzIG1v
-ZHVsZT8KPiBJZiBubywgc2VlIGhlcmU6IGh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL2FsbC9aJTJG
-bE43cXJJU3BiSzZNUVlAZ29rby13LnRhaWxjZTZjNDkudHMubmV0LwogCk9LCgo+ID4gKwlkZXBl
-bmRzIG9uIEFSQ0hfRVNXSU4gfHwgQ09NUElMRV9URVNUCj4gPiArCXNlbGVjdCBDT01NT05fQ0xL
-X0VTV0lOCj4gPiArCWRlZmF1bHQgQVJDSF9FU1dJTgo+ID4gKwloZWxwCj4gPiArCSAgVGhpcyBk
-cml2ZXIgcHJvdmlkZXMgc3VwcG9ydCBmb3IgY2xvY2sgY29udHJvbGxlciBvbiBFU1dJTiBFSUM3
-NzAwCj4gPiArCSAgU29DLiBUaGUgY2xvY2sgY29udHJvbGxlciBjYW4gZ2VuZXJhdGVzIGFuZCBz
-dXBwbGllcyBjbG9jayB0byB2YXJpb3VzCj4gPiArCSAgcGVyaXBoZXJhbHMgd2l0aGluIHRoZSBT
-b0MuCj4gPiArCSAgU2F5IHllcyBoZXJlIHRvIHN1cHBvcnQgdGhlIGNsb2NrIGNvbnRyb2xsZXIg
-b24gdGhlIEVJQzc3MDAgU29DLgo+IFsuLi5dCj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9jbGsv
-ZXN3aW4vY2xrLWVpYzc3MDAuYyBiL2RyaXZlcnMvY2xrL2Vzd2luL2Nsay1laWM3NzAwLmMKPiBD
-YW4geW91IGdpdmUgdXMgYSBjbG9jay10cmVlIGltZyBvciBwZGY/Cj4gCj4gICAgICAgICAgICAg
-ICAgICAgICAgICAgLSBUcm95CgpIaSBUcm95LAoKVGhlIGxpbmsgWzFdIHByb3ZpZGVzIHRoZSBv
-ZmZpY2lhbCBkb2N1bWVudGF0aW9uIGZvciB0aGUgRUlDNzcwMC7CoApTZWN0aW9uIDMuMiBjb3Zl
-cnMgdGhlIGNsb2NrIHN1YnN5c3RlbSwgd2hlcmUgeW91IGNhbiBmaW5kIGRldGFpbGVkwqAKaW5m
-b3JtYXRpb24gYWJvdXQgdGhlIGNsb2NrLXRyZWUuCgpbMV0gaHR0cHM6Ly93d3cuc2lmaXZlLmNv
-bS9kb2N1bWVudC1maWxlL2VpYzc3MDB4LWRhdGFzaGVldAoKUmVnYXJkcywKWHV5YW5nIERvbmcK
+Quoting Chen-Yu Tsai (2025-10-02 02:20:35)
+> Clk lookup (by name) recently gained some performance improvements at
+> the expense of more complexity within the lookup code.
+>=20
+> To make sure that this works as intended and doesn't break, add some
+> basic tests for this part of the CCF.
+>=20
+> A new "clk_hw_lookup()" function is added purely for running kunit
+> tests.
+>=20
+> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+> ---
+>  drivers/clk/clk.c      | 11 +++++++
+>  drivers/clk/clk.h      |  4 +++
+>  drivers/clk/clk_test.c | 66 +++++++++++++++++++++++++++++++++++++++++-
+>  3 files changed, 80 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index 85d2f2481acf..a17d0070d11f 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -778,6 +778,17 @@ struct clk *__clk_lookup(const char *name)
+>         return !core ? NULL : core->hw->clk;
+>  }
+> =20
+> +#if IS_ENABLED(CONFIG_CLK_KUNIT_TEST)
+> +/* This is only provided for kunit tests to test the core lookup functio=
+ns. */
+> +struct clk_hw *clk_hw_lookup(const char *name)
+> +{
+> +       struct clk_core *core =3D clk_core_lookup(name);
+> +
+> +       return !core ? NULL : core->hw;
+> +}
+> +EXPORT_SYMBOL_GPL(clk_hw_lookup);
+> +#endif
 
+I think we can't do this ifdef because we may have some sort of build
+that builds the kunit module after the kernel is built with a different
+configuration. Just do the module import thing instead. I hope that
+avoids this problem.
+
+> +
+>  static void clk_core_get_boundaries(struct clk_core *core,
+>                                     unsigned long *min_rate,
+>                                     unsigned long *max_rate)
+> diff --git a/drivers/clk/clk_test.c b/drivers/clk/clk_test.c
+> index a268d7b5d4cb..b3b5ce0ad897 100644
+> --- a/drivers/clk/clk_test.c
+> +++ b/drivers/clk/clk_test.c
+> @@ -175,6 +175,8 @@ static const struct clk_ops clk_multiple_parents_no_r=
+eparent_mux_ops =3D {
+>         .set_parent =3D clk_multiple_parents_mux_set_parent,
+>  };
+> =20
+> +#define DUMMY_CLK_NAME "test_dummy_rate"
+> +
+>  static int clk_test_init_with_ops(struct kunit *test, const struct clk_o=
+ps *ops)
+>  {
+>         struct clk_dummy_context *ctx;
+> @@ -187,7 +189,7 @@ static int clk_test_init_with_ops(struct kunit *test,=
+ const struct clk_ops *ops)
+>         ctx->rate =3D DUMMY_CLOCK_INIT_RATE;
+>         test->priv =3D ctx;
+> =20
+> -       init.name =3D "test_dummy_rate";
+> +       init.name =3D DUMMY_CLK_NAME;
+>         init.ops =3D ops;
+>         ctx->hw.init =3D &init;
+> =20
+
+Please don't change existing tests in the same patch as introducing
+other tests. A failure in the existing test is difficult to untangle
+from the new test. Tests shouldn't be changed after they're written
+either because we have to be careful that they're still correct when we
+don't have tests for the tests.
+
+> @@ -3541,6 +3543,67 @@ static struct kunit_suite clk_hw_get_dev_of_node_t=
+est_suite =3D {
+>         .test_cases =3D clk_hw_get_dev_of_node_test_cases,
+>  };
+> =20
+> +/*
+> + * Test that clk lookup with a name that is not registered returns NULL.
+> + */
+> +static void clk_lookup_not_registered_clk_returns_NULL(struct kunit *tes=
+t)
+> +{
+> +       KUNIT_EXPECT_PTR_EQ(test, NULL, clk_hw_lookup(DUMMY_CLK_NAME));
+
+Just write
+
+	KUNIT_EXPECT_PTR_EQ(test, NULL, clk_hw_lookup("not_registered"));
+
+so we don't have to look at what the definition of DUMMY_CLK_NAME is.
+
+> +}
+> +
+> +/*
+> + * Test that clk lookup with a name that is registered returns the clk.
+> + */
+> +static void clk_lookup_registered_clk_returns_clk(struct kunit *test)
+> +{
+> +       struct clk_hw *hw;
+> +       struct clk_init_data init =3D {
+> +               .name =3D DUMMY_CLK_NAME,
+> +               .ops =3D &empty_clk_ops,
+> +       };
+
+Please do
+
+	const char *clk_name =3D "valid_clk";
+	struct clk_init_data init =3D {
+		.name =3D clk_name,
+		.ops =3D &empty_clk_ops,
+	};
+
+
+> +
+> +       hw =3D kunit_kzalloc(test, sizeof(*hw), GFP_KERNEL);
+> +       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, hw);
+> +
+> +       hw->init =3D &init;
+> +       KUNIT_ASSERT_EQ(test, 0, clk_hw_register_kunit(test, NULL, hw));
+> +
+> +       KUNIT_EXPECT_PTR_EQ(test, hw, clk_hw_lookup(DUMMY_CLK_NAME));
+
+And=20
+
+	KUNIT_EXPECT_PTR_EQ(test, hw, clk_hw_lookup(clk_name));
+
+so that the name is fully self contained to this function.
+
+> +}
+> +
+> +/*
+> + * Test that clk lookup with a name that was unregistered returns NULL.
+> + */
+> +static void clk_lookup_unregistered_clk_returns_NULL(struct kunit *test)
+> +{
+> +       struct clk_hw *hw;
+> +       struct clk_init_data init =3D {
+> +               .name =3D DUMMY_CLK_NAME,
+> +               .ops =3D &empty_clk_ops,
+> +       };
+> +
+> +       hw =3D kunit_kzalloc(test, sizeof(*hw), GFP_KERNEL);
+> +       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, hw);
+> +
+> +       hw->init =3D &init;
+> +       KUNIT_ASSERT_FALSE(test, clk_hw_register(NULL, hw));
+
+Use KUNIT_ASSERT_EQ instead because clk_hw_register() doesn't return a
+bool. Also, use the kunit registration function clk_hw_register_kunit()
+to simplify the unregistration path which is missing here.
+
+> +
+> +       clk_hw_unregister(hw);
+
+Before we unregister here we should assert that clk_hw_lookup() returns
+non-NULL.
+
+> +
+> +       KUNIT_EXPECT_PTR_EQ(test, NULL, clk_hw_lookup(DUMMY_CLK_NAME));
+
+Same name comment applies here as well.
+
+> +}
+> +
+> +static struct kunit_case clk_lookup_test_cases[] =3D {
+> +       KUNIT_CASE(clk_lookup_not_registered_clk_returns_NULL),
+> +       KUNIT_CASE(clk_lookup_registered_clk_returns_clk),
+> +       KUNIT_CASE(clk_lookup_unregistered_clk_returns_NULL),
+> +       {}
+> +};
+> +
+> +static struct kunit_suite clk_lookup_test_suite =3D {
+> +       .name =3D "clk-lookup",
+> +       .test_cases =3D clk_lookup_test_cases,
+> +};
+> =20
+>  kunit_test_suites(
+>         &clk_assigned_rates_suite,
+> @@ -3560,6 +3623,7 @@ kunit_test_suites(
+>         &clk_register_clk_parent_data_device_suite,
+>         &clk_single_parent_mux_test_suite,
+>         &clk_uncached_test_suite,
+> +       &clk_lookup_test_suite,
+
+Please keep this alphabetically sorted.
+
+>  );
+>  MODULE_DESCRIPTION("Kunit tests for clk framework");
+>  MODULE_LICENSE("GPL v2");
