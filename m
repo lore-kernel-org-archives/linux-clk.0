@@ -1,79 +1,146 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail-m32100.qiye.163.com (mail-m32100.qiye.163.com [220.197.32.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 369C7DDAB;
-	Tue, 11 Nov 2025 01:39:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FF302FB621;
+	Tue, 11 Nov 2025 02:57:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762825172; cv=none; b=Lr/Xhd1GpdZ/tCLt4jRV4pdGxhjwPLgZA0rbKocVznzwKMFu4fJANykD0pFEpGjHbbwG8xdTjfSQiHVdTkTZQL4gbsRnHHmjSCUwVmvEFsFciDmTpGuNSQhQnpX8vUjCRoSQY2FfGTtd6FIxtZWc30lbN7MSZOfxt9KXSP8tWUA=
+	t=1762829873; cv=none; b=UMgIn1r7jQxDuYk1V8z5XwLsbRSwvH/LayL9d3scxv1H+TSTL3ADslHcT9uQxEKEfjBnPOUP/oHS0ImQzJg5hJG6FD9mKcv8buQu5y4cBLQVAkOSRxW+fu7SWL5f+bv2M8dLF25GEirkh236F4bLWC0DQehrSwmWoLel9QtBIZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762825172; c=relaxed/simple;
-	bh=/hQhWs6fIWq4LVxZQYUO5IFlDz6QLmh4TLjAbavYSeo=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=mldEp7dBnA5A5z3OMNHBu7Nx0G7VSQncsttSZrgINuXz1gRKK/pgq5lS0wQJI73vhp2z4T4BFOO+/WV13qUhyo//9OsS2iYkpFt81RVEuSNXvh90dafRMXtIK7jg0Yy5VjZM0E0r2dcwBap9bku9kk0tSz2O6OuSWMtKQWsjyDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cAvMRy35; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1762829873; c=relaxed/simple;
+	bh=J6DVrhIu32a1DsL9j3pib7FJQ2rsiqZcz+UdUgKoBwM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KMOlySMkuy0/K/xr/HKDTG2ruAnq6ym4tKK+e71XcmytCCJvmvJYe1ej32GEIkrpMde6MDsEatuXsv607bGZAP0Euxq0U6AGXQFnENkgj6+4i1DmEIO0J2wJ925HqXN3reB3jwC4qVm+wr+2Yvt1aepD6kW57aWxViFm+Q8x2EA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=BCEcQnvZ; arc=none smtp.client-ip=220.197.32.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cAvMRy35"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECBA8C4CEF5;
-	Tue, 11 Nov 2025 01:39:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762825172;
-	bh=/hQhWs6fIWq4LVxZQYUO5IFlDz6QLmh4TLjAbavYSeo=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=cAvMRy35HQERZPOVzojVm2TlYCAXBcctFxoIXTcorOoTfHhvEszBVwiGaW4gq9sPg
-	 K54ZxzmczCK6gDw3qHe8OLHe9nRHasdiZOsDEtJ37UbUk9xOdUC+8F1YNIyjUNCmd0
-	 I04rD7EV4VNWJxhwUbFAdRCf3A5VA194KT7VVk45J2Kn4fSjcBgJJc9aQMfWMsQyBW
-	 jJB38dVKnn97s0AFhIqGXOADW1OoqnKgG4Y/N8m389F7NC2U99v4HzIO4vJK+5ES1b
-	 as9LbCb9N3fMafkzcQ6f3dbcqsiX8RQKdQuYbMXqXz/AaRo4/K7oxyM7eL1JzTaNfD
-	 JgzrJ/BuVi+yQ==
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="BCEcQnvZ"
+Received: from rockchip.. (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 291f57b9a;
+	Tue, 11 Nov 2025 10:57:39 +0800 (GMT+08:00)
+From: Elaine Zhang <zhangqing@rock-chips.com>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	zhangqing@rock-chips.com,
+	heiko@sntech.de,
+	robh@kernel.org,
+	p.zabel@pengutronix.de,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org
+Cc: devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	finley.xiao@rock-chips.com,
+	sugar.zhang@rock-chips.com
+Subject: [PATCH v7 0/5] clk: rockchip: Add clock controller for the
+Date: Tue, 11 Nov 2025 10:57:33 +0800
+Message-Id: <20251111025738.869847-1-zhangqing@rock-chips.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <17695fcf-f33c-4246-8d5c-b2120e9e03b1@linaro.org>
-References: <20251010-acpm-clk-v6-0-321ee8826fd4@linaro.org> <20251010-acpm-clk-v6-4-321ee8826fd4@linaro.org> <92f1c027-bacc-4537-a158-2e0890e2e8ee@kernel.org> <17695fcf-f33c-4246-8d5c-b2120e9e03b1@linaro.org>
-Subject: Re: [PATCH v6 4/6] clk: samsung: add Exynos ACPM clock driver
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, willmcvicker@google.com, kernel-team@android.com
-To: Alim Akhtar <alim.akhtar@samsung.com>, =?utf-8?q?Andr=C3=A9?= Draszik <andre.draszik@linaro.org>, Catalin Marinas <catalin.marinas@arm.com>, Chanwoo Choi <cw00.choi@samsung.com>, Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Peter Griffin <peter.griffin@linaro.org>, Rob Herring <robh@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tudor Ambarus <tudor.ambarus@linaro.org>, Will Deacon <will@kernel.org>
-Date: Mon, 10 Nov 2025 17:39:30 -0800
-Message-ID: <176282517011.11952.1566372681481575091@lazor>
-User-Agent: alot/0.11
+Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a9a70d8fa7903a3kunmb98a0103a12c3
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGUMdGlZPSxpOGEsaTE9LTUNWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+DKIM-Signature: a=rsa-sha256;
+	b=BCEcQnvZTFefkDLxzQaniJrq258kY0554HnhigINNs7nBJyYu3A2oWIE9PHJ8ZvA5l0JmdYw2ZGk/w0V/70KYnA+m8i+zklcnhGho1YnSUnrajnkirYkw5mql934QjVbXN0nEFpASFOvT4TfhNcVuUQ9DPAXs+QZ0rDet3ZcUew=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=pSFyV42fr1nsJZrV0lgQMM+Bu9D2LULWkHMNlTwXSkc=;
+	h=date:mime-version:subject:message-id:from;
 
-Quoting Tudor Ambarus (2025-10-20 00:45:58)
->=20
->=20
-> On 10/20/25 7:54 AM, Krzysztof Kozlowski wrote:
-> >> diff --git a/drivers/clk/samsung/Kconfig b/drivers/clk/samsung/Kconfig
-> >> index 76a494e95027af26272e30876a87ac293bd56dfa..70a8b82a0136b4d0213d8f=
-f95e029c52436e5c7f 100644
-> >> --- a/drivers/clk/samsung/Kconfig
-> >> +++ b/drivers/clk/samsung/Kconfig
-> >> @@ -95,6 +95,16 @@ config EXYNOS_CLKOUT
-> >>        status of the certains clocks from SoC, but it could also be ti=
-ed to
-> >>        other devices as an input clock.
-> >> =20
-> >> +config EXYNOS_ACPM_CLK
-> >> +    tristate "Clock driver controlled via ACPM interface"
-> >> +    depends on EXYNOS_ACPM_PROTOCOL || (COMPILE_TEST && !EXYNOS_ACPM_=
-PROTOCOL)
-> >=20
-> > I merged the patches but I don't get why we are not enabling it by
-> > default, just like every other clock driver. What is so special here?
->=20
-> Thanks! Are you referring to the depends on line? I needed it otherwise
-> on randconfigs where COMPILE_TEST=3Dy and EXYNOS_ACPM_PROTOCOL=3Dn I get:
->=20
-> ERROR: modpost: "devm_acpm_get_by_node" [drivers/clk/samsung/clk-acpm.ko]=
- undefined!
->=20
+Add yaml and dt-bindings for the RV1126B and RK3506.
+RK3506 depend on patches 1/5, so it is merged and submitted.
 
-I don't understand that part. The depends on statement "COMPILE_TEST &&
-!EXYNOS_ACPM_PROTOCOL" is equivalent to COMPILE_TEST=3Dy and
-EXYNOS_ACPM_PROTOCOL=3Dn, so are you trying to avoid
-EXYNOS_ACPM_PROTOCOL=3Dy when COMPILE_TEST=3Dy?
+Change in V7:
+[PATCH v7 1/5]: No change
+[PATCH v7 2/5]: Redefine clk id(start at 0), drop RESETN for reset id.
+[PATCH v7 3/5]: Drop RESETN for reset id.
+[PATCH v7 4/5]: Fix "description: |", drop RESETN for reset id.
+[PATCH v7 5/5]: Drop RESETN for reset id.
+
+Change in V6:
+Drop pvtpll, others no change.
+There are many questions about pvtpll and have some dependency issues.
+They will be submitted separately later.
+
+Change in V5:
+[PATCH v5 1/7]: No change
+[PATCH v5 2/7]: No change
+[PATCH v5 3/7]: Drop RV1126B_GRF_SOC_STATUS0
+[PATCH v5 4/7]: Drop syscon
+[PATCH v5 5/7]: No change
+[PATCH v5 6/7]: Add clocks and clock-names, fix id define
+[PATCH v5 7/7]: Drop RK3506_GRF_SOC_STATUS
+
+Change in V4:
+[PATCH v4 1/7]: No change
+[PATCH v4 2/7]: remove label
+[PATCH v4 3/7]: No change
+[PATCH v4 4/7]: remove label,fix order
+[PATCH v4 5/7]: No change
+[PATCH v4 6/7]: Add yaml and dt-bindings for the RK3506
+[PATCH v4 7/7]: Add clock controller for the RK3506
+
+Change in V3:
+[PATCH v3 1/5]: No change
+[PATCH v3 2/5]: Fix define error
+[PATCH v3 3/5]: update driver,fix errir
+[PATCH v3 4/5]: fix error
+[PATCH v3 5/5]: No change
+
+Change in V2:
+[PATCH v2 1/5]: update commit message, rename v2 to multi_pll
+[PATCH v2 2/5]: Modify DT binding headers license
+[PATCH v2 3/5]: update driver
+[PATCH v2 4/5]: fix error
+[PATCH v2 5/5]: update commit message
+
+Elaine Zhang (4):
+  clk: rockchip: Implement rockchip_clk_register_armclk_multi_pll()
+  dt-bindings: clock, reset: Add support for rv1126b
+  clk: rockchip: Add clock controller for the RV1126B
+  clk: rockchip: Add clock and reset driver for RK3506
+
+Finley Xiao (1):
+  dt-bindings: clock: rockchip: Add RK3506 clock and reset unit
+
+ .../bindings/clock/rockchip,rk3506-cru.yaml   |   51 +
+ .../bindings/clock/rockchip,rv1126b-cru.yaml  |   52 +
+ drivers/clk/rockchip/Kconfig                  |   14 +
+ drivers/clk/rockchip/Makefile                 |    2 +
+ drivers/clk/rockchip/clk-cpu.c                |  165 +++
+ drivers/clk/rockchip/clk-rk3506.c             |  869 +++++++++++++
+ drivers/clk/rockchip/clk-rv1126b.c            | 1103 +++++++++++++++++
+ drivers/clk/rockchip/clk.c                    |   24 +
+ drivers/clk/rockchip/clk.h                    |   96 ++
+ drivers/clk/rockchip/rst-rk3506.c             |  226 ++++
+ drivers/clk/rockchip/rst-rv1126b.c            |  444 +++++++
+ .../dt-bindings/clock/rockchip,rk3506-cru.h   |  285 +++++
+ .../dt-bindings/clock/rockchip,rv1126b-cru.h  |  392 ++++++
+ .../dt-bindings/reset/rockchip,rk3506-cru.h   |  211 ++++
+ .../dt-bindings/reset/rockchip,rv1126b-cru.h  |  405 ++++++
+ 15 files changed, 4339 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3506-cru.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rv1126b-cru.yaml
+ create mode 100644 drivers/clk/rockchip/clk-rk3506.c
+ create mode 100644 drivers/clk/rockchip/clk-rv1126b.c
+ create mode 100644 drivers/clk/rockchip/rst-rk3506.c
+ create mode 100644 drivers/clk/rockchip/rst-rv1126b.c
+ create mode 100644 include/dt-bindings/clock/rockchip,rk3506-cru.h
+ create mode 100644 include/dt-bindings/clock/rockchip,rv1126b-cru.h
+ create mode 100644 include/dt-bindings/reset/rockchip,rk3506-cru.h
+ create mode 100644 include/dt-bindings/reset/rockchip,rv1126b-cru.h
+
+
+base-commit: fb0a581e0696ccd994e27287941a2a25c58b2ccd
+-- 
+2.34.1
+
