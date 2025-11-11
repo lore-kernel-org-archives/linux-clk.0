@@ -1,97 +1,272 @@
-Received: from mail.hugovil.com (mail.hugovil.com [162.243.120.170])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26E1728468C;
-	Tue, 11 Nov 2025 18:22:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.120.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87351824BD;
+	Tue, 11 Nov 2025 18:23:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762885380; cv=none; b=AukzzZoGzeeDA5oanOwDZem9DCCw2GMSUxP2MGk1Har9M5754NRBxKQ1gleg7IRgYbZpKU1l1EbNpQZrHJUZKf7XEWJfbF0FTuQUqSKYkUX3NDxQxtzSVuMvxiPDkl4N+97TkEZJSinwRAgj+pUyADXIwgf7kudstFQb3w3ex6g=
+	t=1762885438; cv=none; b=AQgdpLOHrct0xqbCaqbqOdmNY3UOs/JhI9CweheVI+dsup6RQWVcPLnOj8eJb/tmttEqhlH3+BLzRxNdhHe/GXTNr3c1TQmwVYetVKKJrJw9TuCk5HYwJ+s6la9S2pYOea2LJJv4DITf9MSIw7OKefYFKFd01dhWaOW2IJOcUk0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762885380; c=relaxed/simple;
-	bh=pg92DuQAodyiWy0CHUz1q/PjaF1nHMriHjTdPyjatQM=;
-	h=Date:From:To:Cc:Message-Id:In-Reply-To:References:Mime-Version:
-	 Content-Type:Subject; b=rWF2t0zE1VlsNoVSs1V+LtbQ9XvGYdV3n+i+DxBM5UHykQvJ9Q8nkhMM25fsOx7NmCnQFJcqEPaXFcvWrTCxAgxyVb9XUZAIIV1uN0UZa6CmewvjxlAjWgV0QDzDvKlAt10vIeRYN+gnLEdoQ8oIniQgddrublr5k33o3rA+KVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com; spf=pass smtp.mailfrom=hugovil.com; dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b=FXkiVCwz; arc=none smtp.client-ip=162.243.120.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hugovil.com
+	s=arc-20240116; t=1762885438; c=relaxed/simple;
+	bh=wEYcTbf1t7TK5WW9GO1kpaI4TRakvg9qgXLkq9cJOpU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d88Oq41nsPZmpwP/xsL/3uTi1HDQ8LEoBJEj/65QdF1LOV02PGmZVDiSJrJ3f1le4zuWB2Y0/hmG9Q3gc0quSFoxUxeKJvvYlSHpibVsXLSpzLHxbJylnKELCvb2c3XcS8CWi8Z6mEKVlY0Cr6TS/hnsqtErwgOou93u1bpLP8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=svEXRkNt; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b="FXkiVCwz"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hugovil.com
-	; s=x; h=Subject:Content-Transfer-Encoding:Mime-Version:Message-Id:Cc:To:From
-	:Date:subject:date:message-id:reply-to;
-	bh=5qHmqOBWb1/TiqiYTrvztJmoHn0qb/fqgcYA800FKLA=; b=FXkiVCwzP8RiTKU36J1kGVZ/iz
-	Xv1eMG612RumMXTA+CGCwjahkE8SV++l9fZA76RTpuJ93/XUmygM+W6sXLWgsqBB0Bo2yOtZWju5c
-	/URepvfHcStwG4YqkEM2UaJ+JSkCI+wXRC2361YU6y1FCdKcziu6OPJaJfXp+ZaEOg7I=;
-Received: from modemcable168.174-80-70.mc.videotron.ca ([70.80.174.168]:36212 helo=pettiford)
-	by mail.hugovil.com with esmtpa (Exim 4.92)
-	(envelope-from <hugo@hugovil.com>)
-	id 1vIt0x-0008Sl-Oj; Tue, 11 Nov 2025 13:22:49 -0500
-Date: Tue, 11 Nov 2025 13:22:46 -0500
-From: Hugo Villeneuve <hugo@hugovil.com>
-To: Chris Brandt <Chris.Brandt@renesas.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Biju Das
- <biju.das.jz@bp.renesas.com>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Hien Huynh <hien.huynh.px@renesas.com>,
- Nghia Vo <nghia.vo.zn@renesas.com>, "linux-renesas-soc@vger.kernel.org"
- <linux-renesas-soc@vger.kernel.org>, "linux-clk@vger.kernel.org"
- <linux-clk@vger.kernel.org>, "dri-devel@lists.freedesktop.org"
- <dri-devel@lists.freedesktop.org>
-Message-Id: <20251111132246.eef0faf1177691a07a1df47e@hugovil.com>
-In-Reply-To: <OS3PR01MB8319C8A2BD72FC7787ACFEFA8ACFA@OS3PR01MB8319.jpnprd01.prod.outlook.com>
-References: <20251105222530.979537-1-chris.brandt@renesas.com>
-	<20251111120148.943a0e193a65469a53a0cbc8@hugovil.com>
-	<OS3PR01MB8319C8A2BD72FC7787ACFEFA8ACFA@OS3PR01MB8319.jpnprd01.prod.outlook.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="svEXRkNt"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FC9CC16AAE;
+	Tue, 11 Nov 2025 18:23:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762885438;
+	bh=wEYcTbf1t7TK5WW9GO1kpaI4TRakvg9qgXLkq9cJOpU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=svEXRkNtCnUwLzz9/rJbkFLcNcd6SGYPjddbxn4Etm9Jt2qrErXd0qB2spLZdptHN
+	 TB6QNXBuh+iOwtSg0W257gr4zpGKitMLxwsFiYmLNnu3FynnkwyB20He99hD08e5Ma
+	 ZRKd8b8TwRtip9skzFP3yG7VSqUpCZyYSD3VY0W/I+Y32F2Wo88CPCOg+px6vQLJXA
+	 PZvLZDa7nxRs1ylhtnkVEypmlO7dV2T95z0lnd4Q6fv7oyREOIhDAYVVoPXDB1ydv4
+	 E5Dt9Ox6dMYp72GWkqCQvv5fHZH7QOHFK50VrpL1bsBfPaycV8x8IVmtToalySQQ0f
+	 oSkwIuzURyHPQ==
+Date: Tue, 11 Nov 2025 18:23:49 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Michal Wilczynski <m.wilczynski@samsung.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Emil Renner Berthing <kernel@esmil.dk>,
+	Hal Feng <hal.feng@starfivetech.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Xingyu Wu <xingyu.wu@starfivetech.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>, Lee Jones <lee@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Icenowy Zheng <uwu@icenowy.me>,
+	Maud Spierings <maudspierings@gocontroll.com>,
+	Andy Yan <andyshrk@163.com>, Heiko Stuebner <heiko@sntech.de>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-phy@lists.infradead.org,
+	dri-devel@lists.freedesktop.org, linux-riscv@lists.infradead.org
+Subject: Re: [PATCH RFC 04/13] dt-bindings: display: bridge: Add
+ starfive,jh7110-hdmi-controller
+Message-ID: <20251111-filler-wisplike-2c30631e82a0@spud>
+References: <20251108-jh7110-clean-send-v1-0-06bf43bb76b1@samsung.com>
+ <CGME20251108010458eucas1p11d128a6dd0aab3171db7c001e69ecfc8@eucas1p1.samsung.com>
+ <20251108-jh7110-clean-send-v1-4-06bf43bb76b1@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 70.80.174.168
-X-SA-Exim-Mail-From: hugo@hugovil.com
-X-Spam-Level: 
-X-Spam-Report: 
-	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-	* -1.9 NICE_REPLY_A Looks like a legit reply (A)
-Subject: Re: [PATCH v4 0/2] Remove hard coded values for MIPI-DSI
-X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
-X-SA-Exim-Scanned: Yes (on mail.hugovil.com)
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ZI6TsvLTJLuPL419"
+Content-Disposition: inline
+In-Reply-To: <20251108-jh7110-clean-send-v1-4-06bf43bb76b1@samsung.com>
 
-On Tue, 11 Nov 2025 17:48:53 +0000
-Chris Brandt <Chris.Brandt@renesas.com> wrote:
 
-> Hi Hugo,
-> 
-> Thank you for testing.
-> 
-> On Tue, Nov 11, 2025 12:02 PM, Hugo Villeneuve wrote:
-> > I just tested your patchset on kernel 6.17.7, and my display no longer works.
-> >
-> > Also tested on torvalds/master tree commit 4427259cc7f7, with similar
-> > results:
-> >
-> >     rzg2l-cpg 11010000.clock-controller: hsclk out of range
-> 
-> I'm pretty sure you are using 4 lanes, and a 24-bit panel, but what is the vclk of your display?
-> 
-> I want to check out the math.
-> 
-> Thank you,
-> Chris
+--ZI6TsvLTJLuPL419
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hi Chris,
-I still don't know on which tree you based your patchset, just to be
-sure that I am not missing anything.
+On Sat, Nov 08, 2025 at 02:04:38AM +0100, Michal Wilczynski wrote:
+> Add the dt-binding for the StarFive JH7110 Innosilicon HDMI controller
+> (DRM bridge).
+>=20
+> This device is the second child of the starfive,jh7110-hdmi-mfd node. It
+> consumes register access clocks (sys, mclk, bclk) from the voutcrg and
+> both the pixel clock (pclk) and the PHY from its hdmi_phy sibling.
+>=20
+> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
+> ---
+>  .../starfive,jh7110-inno-hdmi-controller.yaml      | 123 +++++++++++++++=
+++++++
+>  MAINTAINERS                                        |   1 +
+>  2 files changed, 124 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/display/bridge/starfive,jh=
+7110-inno-hdmi-controller.yaml b/Documentation/devicetree/bindings/display/=
+bridge/starfive,jh7110-inno-hdmi-controller.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..3707c9dbff9c9fdc0ed7db472=
+0a6dd8eabeeb774
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/display/bridge/starfive,jh7110-in=
+no-hdmi-controller.yaml
+> @@ -0,0 +1,123 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/display/bridge/starfive,jh7110-inno-h=
+dmi-controller.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: StarFive JH7110 Innosilicon HDMI Controller
+> +
+> +maintainers:
+> +  - Michal Wilczynski <m.wilczynski@samsung.com>
+> +
+> +description:
+> +  The controller portion of the StarFive JH7110 INNO HDMI IP.
+> +
+> +properties:
+> +  compatible:
+> +    const: starfive,jh7110-inno-hdmi-controller
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    items:
+> +      - description: System clock for register access
+> +      - description: Module clock
+> +      - description: Bus clock
+> +      - description: Pixel clock from PHY
+> +
+> +  clock-names:
+> +    items:
+> +      - const: sys
+> +      - const: mclk
+> +      - const: bclk
+> +      - const: pclk
+> +
+> +  resets:
+> +    maxItems: 1
+> +
+> +  reset-names:
+> +    const: hdmi_tx
+> +
+> +  phys:
+> +    maxItems: 1
+> +
+> +  phy-names:
+> +    const: hdmi-phy
+> +
+> +  ports:
+> +    $ref: /schemas/graph.yaml#/properties/ports
+> +    description:
+> +      A graph node with one input port and one output port.
+> +
+> +required:
+> +  - compatible
+> +  - interrupts
+> +  - clocks
+> +  - clock-names
+> +  - resets
+> +  - reset-names
+> +  - phys
+> +  - phy-names
+> +  - ports
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/starfive,jh7110-crg.h>
+> +    #include <dt-bindings/reset/starfive,jh7110-crg.h>
+> +
+> +    soc {
+> +        #address-cells =3D <1>;
+> +        #size-cells =3D <1>;
+> +
+> +        hdmi_mfd: hdmi@29590000 {
+> +            compatible =3D "starfive,jh7110-hdmi-mfd";
+> +            reg =3D <0x29590000 0x4000>;
+> +
+> +            hdmi_phy: phy {
+> +                compatible =3D "starfive,jh7110-inno-hdmi-phy";
+> +                clocks =3D <&xin24m>;
+> +                clock-names =3D "refoclk";
+> +                #clock-cells =3D <0>;
+> +                clock-output-names =3D "hdmi_pclk";
+> +                #phy-cells =3D <0>;
+> +            };
+> +
+> +            hdmi_controller: controller {
 
-Should it work on 6.17.7 stable tree or torvalds/master tree?
+If this stuff doesn't make sense to have an example of without the phy,
+then just have an example in the parent and drop it from both child
+bindings. Or just drop the parent node and phy, and let the binding
+checking tools "invent" a fake phy for checking purposes.
 
-Hugo.
+> +                compatible =3D "starfive,jh7110-inno-hdmi-controller";
+> +                interrupts =3D <99>;
+> +                clocks =3D <&voutcrg JH7110_VOUTCLK_HDMI_TX_SYS>,
+> +                         <&voutcrg JH7110_VOUTCLK_HDMI_TX_MCLK>,
+> +                         <&voutcrg JH7110_VOUTCLK_HDMI_TX_BCLK>,
+> +                         <&hdmi_phy>;
+> +                clock-names =3D "sys", "mclk", "bclk", "pclk";
+> +                resets =3D <&voutcrg JH7110_VOUTRST_HDMI_TX_HDMI>;
+> +                reset-names =3D "hdmi_tx";
+> +                phys =3D <&hdmi_phy>;
+> +                phy-names =3D "hdmi-phy";
+> +
+> +                ports {
+> +                    #address-cells =3D <1>;
+> +                    #size-cells =3D <0>;
+> +
+> +                    port@0 {
+> +                        reg =3D <0>;
+> +                        hdmi_in: endpoint {
+> +                            remote-endpoint =3D <&dpu_out_dpi0>;
+> +                        };
+> +                    };
+> +
+> +                    port@1 {
+> +                        reg =3D <1>;
+> +                        hdmi_out: endpoint {
+> +                            remote-endpoint =3D <&hdmi_con_in>;
+> +                        };
+> +                    };
+> +                };
+> +            };
+> +        };
+> +    };
+> +
+> +...
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index a75ba7a44ee84db6a75b91c1a0867a37db2ebcdb..66fab45bbee8c1a5f73d09bb4=
+70d28029b8c6139 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -24047,6 +24047,7 @@ F:	drivers/net/ethernet/stmicro/stmmac/dwmac-star=
+five.c
+>  STARFIVE JH7110 DISPLAY SUBSYSTEM
+>  M:	Michal Wilczynski <m.wilczynski@samsung.com>
+>  S:	Maintained
+> +F:	Documentation/devicetree/bindings/display/bridge/starfive,jh7110-inno=
+-hdmi-controller.yaml
+>  F:	Documentation/devicetree/bindings/phy/starfive,jh7110-inno-hdmi-phy.y=
+aml
+>  F:	Documentation/devicetree/bindings/soc/starfive/starfive,jh7110-vout-s=
+ubsystem.yaml
+> =20
+>=20
+> --=20
+> 2.34.1
+>=20
 
--- 
-Hugo Villeneuve
+--ZI6TsvLTJLuPL419
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaRN/NQAKCRB4tDGHoIJi
+0mTRAQDrzGla63doQ7J4bgwmc6WLb+V4M/UVNE1RPfdo2TM/PwD/RU18YcQAMUxv
+zYNvIsiBtHO1QpriMfcWzYUSA0r4WAA=
+=LhXK
+-----END PGP SIGNATURE-----
+
+--ZI6TsvLTJLuPL419--
