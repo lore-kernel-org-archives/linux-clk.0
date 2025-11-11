@@ -1,66 +1,87 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 181C334BA28
-	for <linux-clk@vger.kernel.org>; Tue, 11 Nov 2025 10:29:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3384342144
+	for <linux-clk@vger.kernel.org>; Tue, 11 Nov 2025 10:31:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762856993; cv=none; b=gXjeJ98A3pH++iKqS+sc9kq0DxZWeZazJVyg/rNy8LozNVOfEsRKVKeHDA4KZPFB0OS4SHoNLb+gB2Z+UotXI/tRSZ0gmRgyyBsFB8im2M4WYuaulaa1daA1CNyN/EPTZCDtqMi21rGtLG8aYtsPcZswKkvcV3p3ZIucNoEjIXo=
+	t=1762857070; cv=none; b=Ym2xfpsnyHLQtCSn0VTaxzo7t12QLcMEaa01598VF3sBJLLfjgYrbAVmrdNQPZW83U/1NGvVNAtZ2zUcZhHFGCUwyxroRguGu6Z8kAYxehMOAICtPh+TsmTagh7PLRl/jOawTZ1pt3BOb4tHqU0biLNHkCLmVBN7+fYLZin9lrw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762856993; c=relaxed/simple;
-	bh=HLKGy0mKbpQ8h+3kSmFm7cUNZcoYemdFaDqBdUyA25s=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=qlLZI187VtSPjfdy9O+wPkyouSG38mWm+SxV5khVE8foqQWv2D3VeEGx/f1uBPmDV5ZwyvkA+p9uIv3Gf0UwWcJXT5MoXjURcZuF6e+ZBNVZG075Pq9rx3rs2EkHfxcuvVjR2WcQJE6V7UMIuQXDzbCxT4qONiNadjrDQOPiLJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TLCrMhPQ; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1762857070; c=relaxed/simple;
+	bh=D/ks/HjJ2UmBeeXdNzT0qyT2BCDFWFNaVq/rqrdOsjs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ja/Y+pQ1FsfIvngNzTmTMTaXjHG8KmhuDlljLKUhi6GvEVR5soC0YTZK2u3cNzgLPIaSuVtFvFOuUSpe0678LbQMVzPOlLl7I0UzX4l4JFmZpmkLd98jYlVuZ+1GseJz8udSBgX1Tt8Ppkdei2CbrRjgZprINIdM6+E+/ChZQrg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=kfu1Ayng; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=I5QOmd02; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TLCrMhPQ"
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-477619f8ae5so30206665e9.3
-        for <linux-clk@vger.kernel.org>; Tue, 11 Nov 2025 02:29:51 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="kfu1Ayng";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="I5QOmd02"
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5ABAP6623985493
+	for <linux-clk@vger.kernel.org>; Tue, 11 Nov 2025 10:31:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	HeIjk8zjDMvtq1Ei8/4B5m73Be/4tVAGo5hOoCO2INs=; b=kfu1AyngoTeYb9uT
+	NJJ5mnNQ0m4jzxYcr2AcPYnq2RI2FyLVWi5uouZF48QzWX/XUZcpyozU2wYi5Lxk
+	5qJQejfo5ntH1OkvSAvCSUTiwlwEpImmgnTY7/eaqEWeDy8m64H+W26OLLla9w+7
+	x7HBGlQzgJqwhwI0ZOMnKznAiVZsrBNRiCeHINeZgrDOh2qIE8LXGw8GPeJZiuL9
+	NJMwEojZ4GYZ0/0ZpcB3FUHkGlm+7w//Av7xL3k77Hd9i/enrlRBudxj+3tROWSh
+	fB16r8+wf69n7cS9t5FfLsT0+XIPKh32/CqF/yN2HcaO8GUG+RWnlfqyf0L7wJbn
+	//Z5Fw==
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4abjxqjw5r-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Tue, 11 Nov 2025 10:31:07 +0000 (GMT)
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-29809acd049so31961005ad.3
+        for <linux-clk@vger.kernel.org>; Tue, 11 Nov 2025 02:31:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762856990; x=1763461790; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=mA4OYGuehEdlKuRHHZkCIxOoAid/iNBTle5X4sDzSO8=;
-        b=TLCrMhPQRzB5j1v8TSW+sC6RojrdNXA+tcJLfzUaCy67lu0rwRNX671GZX7SEsO7VJ
-         jf0LIWKMK6zabvAzsT9FcnEJpS6oZPVF50f5PsBDi6j0i4NxgYvSVGc5GgyIyO22tZRw
-         TZwMmziLkzn5BPKWVbOdWRYwZjKSWuNpyjueKv7Kgatde6o7ePHyG5fcb/l9XGktgzlo
-         tWmxMNqjOEMdG8BmqKjM3lqwtnxvbQQiAiDM8u6IllVDiwPnGDAykBzVQ3FkrHsLXxwo
-         Yn/ZInsymFSXOIZiCtFurlKCJMRleUvC6//X8eCPEMGQYrLxeXbnQYNkF4S6ABIlVsLT
-         +e1g==
+        d=oss.qualcomm.com; s=google; t=1762857066; x=1763461866; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=HeIjk8zjDMvtq1Ei8/4B5m73Be/4tVAGo5hOoCO2INs=;
+        b=I5QOmd02ExPcOE3AWp9FptYCMvn7KB6WzSMDHLMaFkbND5J0b1VbaiZbMSVE/7rTkP
+         FkWN4FzJ2t+lo3VIvyU5H7E5hDV0ZIe5FV3scWoLIWFtsIPnkENdtp5xrLYIDRhPyqny
+         9gTLmDi08KsN1jP5ucryTZDU+EhnAyK4hmKjkhUtHDPi0rid21RrwpHeOq3LHg4EI0kd
+         OJ08aRl5f1HS+HAcN/Odab4RT3fmyDFdhm2cBv7RpRidcwCCYnm+ukYYZWwh8T3AUXP2
+         gEZ+rktTCbwtCqC7Bk+RMuW9CX4AJsf4zG5wNKO9tjzsV5IuhZibMyu/Hc+U+pKnrC0I
+         RmCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762856990; x=1763461790;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mA4OYGuehEdlKuRHHZkCIxOoAid/iNBTle5X4sDzSO8=;
-        b=s8f3wAdv459Xxga/dg1TBzbkxsFdwzNQyF9OJKYh3BVwlHKypE2dMbeHXbUUcFNEsP
-         8zSQ6+HOrG+2GLWun5boBGC4m9PDdV5HuNhqVu1Glm95KAXOTzJgBsdTYEmRN7FVZ5tA
-         jJ6ePQHte51Br/jtFFRILdlaNK+rcIylJur4b84hmiAkxo+s7C+D8VpTfVcuh2jdXLxs
-         aXj/qRbNKWbeKvyQdaPTavcDHPUEcHQ5rHevj4w6WRoDqh6jzqKylhNW+i7rnukBqnaZ
-         1Vr1/b3bCdYzmEYRc+Q0Qx/Qke7/Xp5YsBVWlPpEatdUL5R6O5AYoEY0/uc9QNXbWy5V
-         SvLg==
-X-Forwarded-Encrypted: i=1; AJvYcCU5YO91xkFefLIugpGYpGs8b7Ds32gBmXXqIKO07GgbWceRnFRllv0/atwp6ordrGkWFKH6tWWbkp0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFhd7Bty0wXkLZp3NXW0ax3fD2K8gDkfaZEMTTKb2+IKIg3rGd
-	l+03OBT0pRy2bqLuri/NT49R7UACw+48MPgtlLtqQXun901hUFZkfhZh/DR5nQHu1uo=
-X-Gm-Gg: ASbGncuHlUDkIvpw1aU7yAjIuecnozmBnpatHpLfikagOJ55k8qr8OQ1Q+jX+FoRYa7
-	wHl1pQ0eI5ruNSmVvfnudbfyeSb7TQnZzN2GeAC/K/eYxh7xTsqZVJmMP3ZA4bJKWFwb0fCHswE
-	DAsrT6MeylyrpYYzHFzIrk1vYCsvnYPiY4KDfYdfeXwLgbF3nLdgK77/iaANuWesLLnjErCD0uW
-	2HB2n1bVcRPjZ2DwrQ8ICYzMOY7eWxOKBmUnpHKydIPYxRwSfKNbkS3blYAM+PmNLgCyRO75inO
-	3+yGZeAcMA7NfzS7NX3M+oDluArp8wxuZkJWACAKAddTDTx1gmDtzESKgnaq/oISH3S1fOxb3gf
-	eV/UmGTZaGIC6ZqEe/j2fp1njzfip8SLVFq6JyLaFY3gINt+uCDlsvrXRnHrtml86CE0IktJmVh
-	enXGxqdePWOZkPMozrwN6FJFoZWps=
-X-Google-Smtp-Source: AGHT+IEvLEjIZw4+8whQM79OrY00R9vJVyO1rxoxD4fhQm/KifAlq8r0yaMnGCz1oNKbvCj2h/xcDg==
-X-Received: by 2002:a05:600c:c4a3:b0:471:1774:3003 with SMTP id 5b1f17b1804b1-47773290e9dmr106627935e9.29.1762856990270;
-        Tue, 11 Nov 2025 02:29:50 -0800 (PST)
-Received: from [10.11.12.107] ([5.12.85.52])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42ac675caecsm27313955f8f.30.2025.11.11.02.29.46
+        d=1e100.net; s=20230601; t=1762857066; x=1763461866;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HeIjk8zjDMvtq1Ei8/4B5m73Be/4tVAGo5hOoCO2INs=;
+        b=WnH8dpEhjb760pSp51WGpTUW4t4rGr3ie/szlT79m0+gxOj1hDhLAJZ3lsfXHTaeNJ
+         s1ezOKQKo2BVeSjaZXaY2owqsPzv8lc315q+ViZBluehTYZ3WsPsg7gPO+JTpBiJ744o
+         tBvo/ObQDV0tK3eidjNBEtLGuk53Bto0Cot4S50q2qgqpkqokvrnm00kBdQ6nky+/bk3
+         XW+IO6UUZYD4fqsagqFAHHFH/OSYBggeyahJI2sy2NHgHH68um2872CPDH8PmefGU25X
+         MkwwrE5GyngQRjiNem4CgjP0I7A7fLgzlgmmIwIHaT33/WqGJWPHyWMO5Xvxg5eH5z2R
+         pJAg==
+X-Forwarded-Encrypted: i=1; AJvYcCV65MQ5IPwbpBkR76xVlM79itJk4LWFQmIx29i6n5zEekyIQ9tqsFo/CmEBeG7e6mr3X37Yno9z6Zo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzirYVfeY05pBBU+SsyN0aCs0aNILaQGycSnRFdS8rT1dLGzJJu
+	YDsURm+PhmnsYcAyx0QxNgzuRUzjzuE4i0clQRiZwcFLgLKxn6fCGHdMPuIveNYkAio8qJNAE7t
+	odGaZ2SYyjIfzF5aeMxB6M0qOajaRWy38+uk0NrPKSQN9yjFVgXyXY1jq2wjj2ps=
+X-Gm-Gg: ASbGncuCnvk2wdzupHs/VuGo+m2gcky1IFvZVOkZW2XdiXTVZ6MTv766JqfQk2uY/uU
+	mGMcZmerHTVs6ReLxg9T2Bf1uKZ17pDMWbHnDxwanMGAVj4uTluJG2ZSPrrBXOfAAccW9k/k3Qk
+	RSJdko3tb/X5CKa7AniVicHvcpgKU7LZn6j8sQBCimTEFvfeJfK4fiNVwCSOdiqtJnCZA6ANPWR
+	gTuA03kQQUq/VpXJmJVsz/gyZHC5oFDb49d62vHiDv3adWIccGuITIvrgpLaN5gWevMkYxgDCQ3
+	No8utKip1Dqv/OMc+phcOPcn6uA8TUzGiLs4PziAWvyOwT0pBdEbXAkyKfb41o5m5OF6rEJV1y+
+	IpaqQ5GQZZshWF8836he2MQiY6rh8
+X-Received: by 2002:a17:903:40cf:b0:294:cc1d:e2b6 with SMTP id d9443c01a7336-297e56f995fmr165404295ad.59.1762857066562;
+        Tue, 11 Nov 2025 02:31:06 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEewwTQbqnUSdI6gBxX6IS/CzZ1xkFA7zvK6fqr4+b+3SthTOX4KV5cdskV3QmORTNpTCngvQ==
+X-Received: by 2002:a17:903:40cf:b0:294:cc1d:e2b6 with SMTP id d9443c01a7336-297e56f995fmr165403695ad.59.1762857065992;
+        Tue, 11 Nov 2025 02:31:05 -0800 (PST)
+Received: from [10.218.50.9] ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29650c5e5bdsm175441995ad.39.2025.11.11.02.30.59
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Nov 2025 02:29:49 -0800 (PST)
-Message-ID: <5eaaf3cf-a271-467f-b015-9cb9b49590f0@linaro.org>
-Date: Tue, 11 Nov 2025 12:29:44 +0200
+        Tue, 11 Nov 2025 02:31:05 -0800 (PST)
+Message-ID: <e8cbc5e1-4159-4d22-b7d7-5b9b6887dae1@oss.qualcomm.com>
+Date: Tue, 11 Nov 2025 16:00:57 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -68,115 +89,63 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 4/6] clk: samsung: add Exynos ACPM clock driver
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-To: Stephen Boyd <sboyd@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Catalin Marinas <catalin.marinas@arm.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Conor Dooley <conor+dt@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Krzysztof Kozlowski <krzk@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Peter Griffin <peter.griffin@linaro.org>, Rob Herring <robh@kernel.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>, Will Deacon <will@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, willmcvicker@google.com, kernel-team@android.com
-References: <20251010-acpm-clk-v6-0-321ee8826fd4@linaro.org>
- <20251010-acpm-clk-v6-4-321ee8826fd4@linaro.org>
- <92f1c027-bacc-4537-a158-2e0890e2e8ee@kernel.org>
- <17695fcf-f33c-4246-8d5c-b2120e9e03b1@linaro.org>
- <176282517011.11952.1566372681481575091@lazor>
- <c5db97fa-8789-447f-909a-edbdb55383f8@linaro.org>
+Subject: Re: [PATCH v2 4/6] clk: qcom: rpmh: Add support for Kaanapali rpmh
+ clocks
+To: Taniya Das <taniya.das@oss.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>, jingyi.wang@oss.qualcomm.com
+Cc: aiqun.yu@oss.qualcomm.com, Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
+        Imran Shaik <imran.shaik@oss.qualcomm.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251030-gcc_kaanapali-v2-v2-0-a774a587af6f@oss.qualcomm.com>
+ <20251030-gcc_kaanapali-v2-v2-4-a774a587af6f@oss.qualcomm.com>
 Content-Language: en-US
-In-Reply-To: <c5db97fa-8789-447f-909a-edbdb55383f8@linaro.org>
+From: Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>
+In-Reply-To: <20251030-gcc_kaanapali-v2-v2-4-a774a587af6f@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTExMDA4MiBTYWx0ZWRfX7yFqfxeaHrPo
+ A7rx7S+y2IRuaH/0g2619vsHscnstaX5SMw5mdJwDZN1Fo7nsDSIOxHyJxlVm8Ev66aymCUQ8P+
+ j85V5e2p+H+ucDzu+r6kgePuBBOvVG9RUM7zAcTanHJQcCCInV1jxvKYgcia1qPxEJlmGgL22Rw
+ cLcr2Uo2dvZF5D2L2fhS4MN9BeHHe+27Xy8ZK9YxIdKJFFQGyNlyJTW+mTy8UDoTyIjzFTkcm1O
+ Gurr9m8Av2Bn5iaG8CrIMwTTdJOQnL6qozZKHQmV5/8Zm2JSHObACbJdN9k0nvZhsYdbVXEgmOC
+ njnH3WdgBumxcrddWrEg9p9tP2RG6pKUH0i2eVblQm8pdsvDMl94YrDEgUPqxuOsjwdTEtkjp0y
+ HaM+CFRP+0NDRgt0AhwbVSndUQEC8w==
+X-Authority-Analysis: v=2.4 cv=CsKys34D c=1 sm=1 tr=0 ts=6913106b cx=c_pps
+ a=IZJwPbhc+fLeJZngyXXI0A==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=qUnW8hDDCxEGPathPCkA:9
+ a=QEXdDO2ut3YA:10 a=uG9DUKGECoFWVXl0Dc02:22
+X-Proofpoint-ORIG-GUID: NxqUphi9OPlcmWuJf_7f_ZtIBAnCobxw
+X-Proofpoint-GUID: NxqUphi9OPlcmWuJf_7f_ZtIBAnCobxw
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-11_01,2025-11-11_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 impostorscore=0 bulkscore=0 clxscore=1015 phishscore=0
+ adultscore=0 malwarescore=0 priorityscore=1501 lowpriorityscore=0 spamscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511110082
 
 
 
-On 11/11/25 8:24 AM, Tudor Ambarus wrote:
+On 10/30/2025 4:39 PM, Taniya Das wrote:
+> Add the RPMH clocks present in Kaanapali SoC.
 > 
-> 
-> On 11/11/25 3:39 AM, Stephen Boyd wrote:
-> 
-> Hi, Stephen!
-> 
->> Quoting Tudor Ambarus (2025-10-20 00:45:58)
->>>
->>>
->>> On 10/20/25 7:54 AM, Krzysztof Kozlowski wrote:
->>>>> diff --git a/drivers/clk/samsung/Kconfig b/drivers/clk/samsung/Kconfig
->>>>> index 76a494e95027af26272e30876a87ac293bd56dfa..70a8b82a0136b4d0213d8ff95e029c52436e5c7f 100644
->>>>> --- a/drivers/clk/samsung/Kconfig
->>>>> +++ b/drivers/clk/samsung/Kconfig
->>>>> @@ -95,6 +95,16 @@ config EXYNOS_CLKOUT
->>>>>        status of the certains clocks from SoC, but it could also be tied to
->>>>>        other devices as an input clock.
->>>>>  
->>>>> +config EXYNOS_ACPM_CLK
->>>>> +    tristate "Clock driver controlled via ACPM interface"
->>>>> +    depends on EXYNOS_ACPM_PROTOCOL || (COMPILE_TEST && !EXYNOS_ACPM_PROTOCOL)
->>>>
->>>> I merged the patches but I don't get why we are not enabling it by
->>>> default, just like every other clock driver. What is so special here?
->>>
->>> Thanks! Are you referring to the depends on line? I needed it otherwise
->>> on randconfigs where COMPILE_TEST=y and EXYNOS_ACPM_PROTOCOL=n I get:
->>>
->>> ERROR: modpost: "devm_acpm_get_by_node" [drivers/clk/samsung/clk-acpm.ko] undefined!
->>>
->>
->> I don't understand that part. The depends on statement "COMPILE_TEST &&
->> !EXYNOS_ACPM_PROTOCOL" is equivalent to COMPILE_TEST=y and
->> EXYNOS_ACPM_PROTOCOL=n, so are you trying to avoid
->> EXYNOS_ACPM_PROTOCOL=y when COMPILE_TEST=y?
-> 
-> My previous comment was misleading.
-> The depends on line allows CONFIG_EXYNOS_ACPM_CLK to be selected in two
-> main scenarios:
-> 1/ if EXYNOS_ACPM_PROTOCOL is enabled the clock driver that uses it can
->    be enabled (the normal case).
-> 2/ COMPILE_TEST is enabled AND EXYNOS_ACPM_PROTOCOL is NOT enabled. This
->    is the special scenario for build testing. I want to build test the
->    clock driver even if EXYNOS_ACPM_PROTOCOL is NOT enabled. For that I
->    also needed the following patch:
-> 
-> https://lore.kernel.org/linux-samsung-soc/20251021-fix-acpm-clk-build-test-v1-1-236a3d6db7f5@linaro.org/
+> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
+> ---
+>  drivers/clk/qcom/clk-rpmh.c | 42 ++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 42 insertions(+)
 > 
 
-What I described in 2/ EXYNOS_ACPM_PROTOCOL [=n] && EXYNOS_ACPM_CLK [=y] 
-can be achieved with a more relaxed:
-depends on EXYNOS_ACPM_PROTOCOL || COMPILE_TEST
-because of the stub (dummy method) that I referenced in the link above.
-
-It's really what Krzysztof explained in his reply, I wanted to avoid
-the link failure for COMPILE_TEST [=y] when
-EXYNOS_ACPM_PROTOCOL [=m] && EXYNOS_ACPM_CLK [=y].
-
-We have the following possibilities with:
-depends on EXYNOS_ACPM_PROTOCOL || (COMPILE_TEST && !EXYNOS_ACPM_PROTOCOL)
-1/ CONMPILE_TEST=n
-EXYNOS_ACPM_PROTOCOL=n EXYNOS_ACPM_CLK=n
-EXYNOS_ACPM_PROTOCOL=m EXYNOS_ACPM_CLK=n,m
-EXYNOS_ACPM_PROTOCOL=y EXYNOS_ACPM_CLK=n,m,y
-
-2/COMPILE_TEST=y
-EXYNOS_ACPM_PROTOCOL=n EXYNOS_ACPM_CLK=n,m,y
-EXYNOS_ACPM_PROTOCOL=m EXYNOS_ACPM_CLK=n,m
-EXYNOS_ACPM_PROTOCOL=y EXYNOS_ACPM_CLK=n,m,y
-
-We have the following possibilities with:
-depends on EXYNOS_ACPM_PROTOCOL || COMPILE_TEST
-1/ CONMPILE_TEST=n
-EXYNOS_ACPM_PROTOCOL=n EXYNOS_ACPM_CLK=n
-EXYNOS_ACPM_PROTOCOL=m EXYNOS_ACPM_CLK=n,m
-EXYNOS_ACPM_PROTOCOL=y EXYNOS_ACPM_CLK=n,m,y
-
-2/COMPILE_TEST=y
-EXYNOS_ACPM_PROTOCOL=n EXYNOS_ACPM_CLK=n,m,y
-EXYNOS_ACPM_PROTOCOL=m EXYNOS_ACPM_CLK=n,m,y <- link failure when y
-EXYNOS_ACPM_PROTOCOL=y EXYNOS_ACPM_CLK=n,m,y
+Reviewed-by: Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>
 
 Thanks,
-ta
+Jagadeesh
