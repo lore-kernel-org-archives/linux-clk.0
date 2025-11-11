@@ -1,67 +1,75 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2F7C2DBF5E;
-	Tue, 11 Nov 2025 01:14:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from zg8tmja5ljk3lje4mi4ymjia.icoremail.net (zg8tmja5ljk3lje4mi4ymjia.icoremail.net [209.97.182.222])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48EF92D979C;
+	Tue, 11 Nov 2025 01:21:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.97.182.222
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762823645; cv=none; b=eYUtuoQEP0Y2c540ysiC/+HmvwO9/Y7UTJoT5POZuSQHq1uNji89Kc1ZaSXIvOprap573G3fp4tHrKKpdb29UJmJsfnMXFPhc34pGaVuDeHKHTmtPW6VqQtGvx+vhUFrbyY+EWTk1DsV6NuSwOSejMsQhbZC9Oh1WuDWwhVv7Fo=
+	t=1762824107; cv=none; b=tnn9p4r/jIjtNTzH9NqDvhmOg0mGf/1vz377tgLZ3hF9PoG+OFUp2DRbnBNlkI9lOwuuIQvyDZlq/yx7Y3fMDbVc083DSiaCZdxyIu8qG8UecTNxCIM0vsY5IT/Hye8gZ6FE6BVyIUrfdt8J1BnyaDHnCDEMQ3x6KJd29Yt38w0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762823645; c=relaxed/simple;
-	bh=hLfKK5/Ndh+eKDHap1Bdk56Fe5GhqYZjeqm9QLFmsHE=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=Gl4pvQD5x9CxtJXzb+IPk3DCnVITWqYtdEr5nLKJLMzXz6gHmkze6LX6+wa898FVbIJ6nAWvWlZa2L0ryWq5NRRqnUd9KQAE1Oox/m96hV/+rGVRbY2LuCMCVAKHdYU/56ODZSiFsIZyNXnje4j8wV7lx/nf7TstlPAP43pbCPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L1p/GbjX; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L1p/GbjX"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CA3EC4CEF5;
-	Tue, 11 Nov 2025 01:14:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762823644;
-	bh=hLfKK5/Ndh+eKDHap1Bdk56Fe5GhqYZjeqm9QLFmsHE=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=L1p/GbjXK46kKAXlv5v0GUaRYzGkUomhPVi7UP1Ty6+MPvQ97I7Ujpw1f/vsCaW3J
-	 b6TLQKlSnYX8DmaElmGL0Hn+5lR5Y8gJ13D+d5e1ta724iQCEMApJXcVWARaMeOOKN
-	 g4SolZKtnhgYNi3ttqRo/IBtc14o4CgZTG9xeOH46LhLIUhcwt30nII+T11N3Gmg0v
-	 xIauajruBBuh95tAqwxQX1kAv9LDmmgmujlx2Hil3O26b7h7HU9u/S0ZK68mA8tXBe
-	 jNV1BlxAmbc9ZD5nxkNdw1O5ww9KwPVE3BOX2RG1v7kasBWCVzRJVDHPoamBr70dkX
-	 7yK+HO/QpcRMw==
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1762824107; c=relaxed/simple;
+	bh=gCjRIKc6GlJ4lkRY0m4vHpiJLg54xIt10H+z+ZH0plc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=l4qwS7wazLWkcdgeUu7DMPb5ly1zSTSX4UkXzWkPjrB/6JAhvEkkkVCFCEYXu6p0AIuCL5XXYJocQupjjNiOsJc/RW5s7abIorwBzbidytAyK/algLFug2TEb5WCrxcyMAnb1oL3BLjjKwSkrqF8o4n7jrTOPvzRex/igwKVgvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=209.97.182.222
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
+Received: from dongxuyang$eswincomputing.com ( [10.12.96.41] ) by
+ ajax-webmail-app2 (Coremail) ; Tue, 11 Nov 2025 09:21:32 +0800 (GMT+08:00)
+Date: Tue, 11 Nov 2025 09:21:32 +0800 (GMT+08:00)
+X-CM-HeaderCharset: UTF-8
+From: "Xuyang Dong" <dongxuyang@eswincomputing.com>
+To: "Troy Mitchell" <troy.mitchell@linux.dev>, mturquette@baylibre.com,
+	sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, bmasney@redhat.com, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: ningyu@eswincomputing.com, linmin@eswincomputing.com,
+	huangyifeng@eswincomputing.com, pinkesh.vaghela@einfochips.com
+Subject: Re: Re: [PATCH v7 2/2] clock: eswin: Add eic7700 clock driver
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version 2024.2-cmXT6 build
+ 20241203(6b039d88) Copyright (c) 2002-2025 www.mailtech.cn
+ mispb-72143050-eaf5-4703-89e0-86624513b4ce-eswincomputing.com
+In-Reply-To: <aQ2jbf2k3rwOZDuB@kernel.org>
+References: <20251023071658.455-1-dongxuyang@eswincomputing.com>
+ <20251023071814.568-1-dongxuyang@eswincomputing.com>
+ <aQ2jbf2k3rwOZDuB@kernel.org>
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <cover.1761906750.git.geert+renesas@glider.be>
-References: <cover.1761906750.git.geert+renesas@glider.be>
-Subject: Re: [GIT PULL] clk: renesas: Updates for v6.19
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
-To: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>
-Date: Mon, 10 Nov 2025 17:14:02 -0800
-Message-ID: <176282364254.11952.2867679653974215283@lazor>
-User-Agent: alot/0.11
+Message-ID: <74be57c4.45.19a7080fca1.Coremail.dongxuyang@eswincomputing.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:TQJkCgBnq66cjxJpoHd6AA--.1284W
+X-CM-SenderInfo: pgrqw5xx1d0w46hv4xpqfrz1xxwl0woofrz/1tbiAgEDAmkSE9sH7
+	gABsZ
+X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWxJw
+	CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
+	daVFxhVjvjDU=
 
-Quoting Geert Uytterhoeven (2025-10-31 03:43:56)
->         Hi Mike, Stephen,
->=20
-> The following changes since commit 3a8660878839faadb4f1a6dd72c3179c1df567=
-87:
->=20
->   Linux 6.18-rc1 (2025-10-12 13:42:36 -0700)
->=20
-> are available in the Git repository at:
->=20
->   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git=
- tags/renesas-clk-for-v6.19-tag1
->=20
-> for you to fetch changes up to 07525a693a5ff6592668a0fd647153e4b4933cae:
->=20
->   clk: renesas: r9a09g056: Add clock and reset entries for ISP (2025-10-2=
-7 12:15:00 +0100)
->=20
-> ----------------------------------------------------------------
+PiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2Nsay9lc3dpbi9LY29uZmlnIGIvZHJpdmVycy9jbGsv
+ZXN3aW4vS2NvbmZpZwo+ID4gbmV3IGZpbGUgbW9kZSAxMDA2NDQKPiA+IGluZGV4IDAwMDAwMDAw
+MDAwMC4uOWJjOTAwOGQzMTU2Cj4gPiAtLS0gL2Rldi9udWxsCj4gPiArKysgYi9kcml2ZXJzL2Ns
+ay9lc3dpbi9LY29uZmlnCj4gPiBAQCAtMCwwICsxLDE1IEBACj4gPiArIyBTUERYLUxpY2Vuc2Ut
+SWRlbnRpZmllcjogR1BMLTIuMAo+ID4gKwo+ID4gK2NvbmZpZyBDT01NT05fQ0xLX0VTV0lOCj4g
+PiArCWJvb2wKPiA+ICsKPiA+ICtjb25maWcgQ09NTU9OX0NMS19FSUM3NzAwCj4gPiArCWJvb2wg
+IkVJQzc3MDAgQ2xvY2sgRHJpdmVyIgo+IFdlIGNhbid0IGJ1aWxkIHRoaXMgZHJpdmVyIGFzIG1v
+ZHVsZT8KPiBJZiBubywgc2VlIGhlcmU6IGh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL2FsbC9aJTJG
+bE43cXJJU3BiSzZNUVlAZ29rby13LnRhaWxjZTZjNDkudHMubmV0LwogCk9LCgo+ID4gKwlkZXBl
+bmRzIG9uIEFSQ0hfRVNXSU4gfHwgQ09NUElMRV9URVNUCj4gPiArCXNlbGVjdCBDT01NT05fQ0xL
+X0VTV0lOCj4gPiArCWRlZmF1bHQgQVJDSF9FU1dJTgo+ID4gKwloZWxwCj4gPiArCSAgVGhpcyBk
+cml2ZXIgcHJvdmlkZXMgc3VwcG9ydCBmb3IgY2xvY2sgY29udHJvbGxlciBvbiBFU1dJTiBFSUM3
+NzAwCj4gPiArCSAgU29DLiBUaGUgY2xvY2sgY29udHJvbGxlciBjYW4gZ2VuZXJhdGVzIGFuZCBz
+dXBwbGllcyBjbG9jayB0byB2YXJpb3VzCj4gPiArCSAgcGVyaXBoZXJhbHMgd2l0aGluIHRoZSBT
+b0MuCj4gPiArCSAgU2F5IHllcyBoZXJlIHRvIHN1cHBvcnQgdGhlIGNsb2NrIGNvbnRyb2xsZXIg
+b24gdGhlIEVJQzc3MDAgU29DLgo+IFsuLi5dCj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9jbGsv
+ZXN3aW4vY2xrLWVpYzc3MDAuYyBiL2RyaXZlcnMvY2xrL2Vzd2luL2Nsay1laWM3NzAwLmMKPiBD
+YW4geW91IGdpdmUgdXMgYSBjbG9jay10cmVlIGltZyBvciBwZGY/Cj4gCj4gICAgICAgICAgICAg
+ICAgICAgICAgICAgLSBUcm95CgpIaSBUcm95LAoKVGhlIGxpbmsgWzFdIHByb3ZpZGVzIHRoZSBv
+ZmZpY2lhbCBkb2N1bWVudGF0aW9uIGZvciB0aGUgRUlDNzcwMC7CoApTZWN0aW9uIDMuMiBjb3Zl
+cnMgdGhlIGNsb2NrIHN1YnN5c3RlbSwgd2hlcmUgeW91IGNhbiBmaW5kIGRldGFpbGVkwqAKaW5m
+b3JtYXRpb24gYWJvdXQgdGhlIGNsb2NrLXRyZWUuCgpbMV0gaHR0cHM6Ly93d3cuc2lmaXZlLmNv
+bS9kb2N1bWVudC1maWxlL2VpYzc3MDB4LWRhdGFzaGVldAoKUmVnYXJkcywKWHV5YW5nIERvbmcK
 
-Thanks. Pulled into clk-next
