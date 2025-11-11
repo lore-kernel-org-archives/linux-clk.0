@@ -1,114 +1,96 @@
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF82436B05D
-	for <linux-clk@vger.kernel.org>; Tue, 11 Nov 2025 16:10:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F87F3730C2;
+	Tue, 11 Nov 2025 16:46:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762877439; cv=none; b=Ixko32KLQfGZ/LGH3EjRcs4XhLCAEf9HwsBD+D41FQr1xy9qxG81isPmk2PzX40O2oUqhjeNgA1c8FRFK9MhWIHfTnGisjuiGugggIyaExV3En/Zale5MbyfdTykB9YMKv4J4W4kEGeT1YEuHQM1SezvcMRfUkxBvatHRu9ks48=
+	t=1762879597; cv=none; b=mtYG+k9QqbU7wkptDqwY2IoRNfpTxdDfdvwZMwIJxwq0ncOx4G/rA5Chx7a2OGx7JumX7SxTu+W2EE9xcKW1LU+Uoxhr22/5D4zD+ZG31iBrE3veQq5gEdsKaovitgx+dVNd5Z6DRyEIl16SnT9I6pYn0F9TjT0yt4OkE0v5Pa8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762877439; c=relaxed/simple;
-	bh=InVSf2VLeK6C3DaC3wVIKtW20lKJD3AjozSf8c1nhDg=;
+	s=arc-20240116; t=1762879597; c=relaxed/simple;
+	bh=jeDtFvGUXIuVgUDPgyVS9vBhjXcXU//Cn4BpthaOkM0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BL3WbQU6iJQLoqNmC5tfAkipQCV8XUDQgkkuS1M9vwZ0GQL2o/m4MJSRJ5X+VWIVThXjY9MHT3x2wZiA8x2G0UEd/GTiUWFmafusPuqpIfmm5tRKbq/QBMZhu5kkpo2JWDLpqxlQbiPSAgrOxkz1dmpPlR5jEEhTLv9UBQZinU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AVXzhqCf; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	 Content-Type:Content-Disposition:In-Reply-To; b=XJ9mzrGvGm9MhSffnlNF9aa2NflA4mRU5s63vawva//IDSu4AyQiir7MEazbHGxlW0JPB+rppKF6wWngmAG8G1Uxcd7IKsvLW1RNVLPKLKQehnAZ+C9ijoPERWSfmXCBkDV2T2fMPuyKgewWggV81nPeVu6igJkyL5Dtuo/R9R4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=leINhPUn; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AVXzhqCf"
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-477632cc932so17841175e9.3
-        for <linux-clk@vger.kernel.org>; Tue, 11 Nov 2025 08:10:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762877436; x=1763482236; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=VoJADF8RVNix0LYicXeY00wntRyKPKYW1PP4cuBTQ0E=;
-        b=AVXzhqCfOqy/ZlipVxTgK+ZR0HmCtzkMhaFuK8bD391teLceyujymIE6NoVAkk0Tf3
-         ou9Nxd1PoZqaK9Wh3d6Z0MZPUkjSSsexheFWOPkaAqaEwLW4rhoej99nmzTmSSd9VpPt
-         9YF9Ut2BqcmeOw7bOFCu1FQYzyaOu34CXFrf0xMnkyHKtrZZd7QJ170k0E5Garay84oa
-         oXNxkd1jSJyF1NoZ/N82m97xeEc/VONDul6Hbg361Y5TzupQxO7c22AF6D2X3VHE6moG
-         f5sPtZtDJr1iTDoBy/t6Sx81xt1XudMBmvypNhHDEZYztpoH5X5LfL0XgXoss4jgbOrx
-         E47A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762877436; x=1763482236;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VoJADF8RVNix0LYicXeY00wntRyKPKYW1PP4cuBTQ0E=;
-        b=ldLjSdu0yenkUTJ01EEWqUuDJ1VW44TAsiVVALHKxv9c4Yt8Hk9Qd7/+RET8YhE8/5
-         +vDRxEoJvmM+PeZ4uK26pGhvhZycvwWCwz6uoATCiJpOmHk/Xe70EfGft+l81/AZuw9J
-         gH7s63/wZqbaTc77yhlWHDPu+Pf6jTxXwcfPLRlIvuB96HglXDSKDGrUBLXnD21z/Tqa
-         FzkAb75fprlslLDiHAuqapb+6lhvPkXkKuprzb2eoDsPh/m2hrFpsQxZhuql1k5HkeSx
-         Jo45f7MhnXBKHDurxeKjHgxRBKm3Zf027s/J8Gybu4ZWJ/6gKycaGilAMeJ00IkLCBBO
-         Mwdg==
-X-Gm-Message-State: AOJu0Yy0nyQ55FrhvdR+tHCwTETU4P8mB/Sth6DybNrJzNt8XxgZqgnS
-	Ug2bM3vV+/1BogcyQY51g1yUWI7VL8IyQKZBtVk4iou4WRSwdNgyJUPfv4K9GvW2xnA=
-X-Gm-Gg: ASbGnctqw8UpQ1wMalwhOIvIOqhclmICEzdC5ZvF1YPgmNWC00btvFvayfGZ7Isv9qR
-	kNFi/vpaQR6dTf7z5i92Bufd5JTpZYJCV+tiFddSlrFx5iD80+5V+jLgDFuMGj7zkUE2XiRVZ5T
-	UyW7p4a85fTphqQ9Th5Cuo5wc2SppwAocovjZehj/O/PMp5Gjfri7FmEBVNkJtplt1cZNxc6WYP
-	I+UQUZgyqghgHAPmKpL+du5fZTV6Wcv/Fu0yZuS0+8Yb0giIyC9mrgUVtI5Z2B/AP1FG8D+8Rcp
-	WR/vPEFTtonpp76ALfzogQqiPGgK4RN3V9E68ZnYySeGsH19idoSIKGy8kV3QFi4kQAvZPjn/ma
-	0nQG+IN4e2zlaztymp93S8WOlpcDgfV1bf4y2qAvsnpNGsmK56pJzj3Q8qRKyU/7rXzrqkfH0ws
-	Ll/6W1230=
-X-Google-Smtp-Source: AGHT+IGf3h4aOkXPIFGmt6Elh6BLQ2gmD9PXDCWL3w2nhAYHGTWFyL3xlC5Ggf4g6An8feZ4EFRkWg==
-X-Received: by 2002:a05:600c:1d1d:b0:477:561f:6fc8 with SMTP id 5b1f17b1804b1-47773236fb7mr110096475e9.5.1762877436034;
-        Tue, 11 Nov 2025 08:10:36 -0800 (PST)
-Received: from linaro.org ([86.121.7.169])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4775cdcc528sm390576215e9.7.2025.11.11.08.10.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Nov 2025 08:10:35 -0800 (PST)
-Date: Tue, 11 Nov 2025 18:10:33 +0200
-From: Abel Vesa <abel.vesa@linaro.org>
-To: Abel Vesa <abelvesa@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Shawn Guo <shawnguo@kernel.org>, Fabio Estevam <festevam@gmail.com>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Daniel Baluta <daniel.baluta@nxp.com>, 
-	Shengjiu Wang <shengjiu.wang@nxp.com>, Frank Li <Frank.Li@nxp.com>, 
-	Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
-Cc: linux-clk@vger.kernel.org, imx@lists.linux.dev, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Pengutronix Kernel Team <kernel@pengutronix.de>
-Subject: Re: [PATCH v4 0/8] Add support for i.MX8ULP's SIM LPAV
-Message-ID: <rqtqzjjn35pibh42holg7ld6pjkjdyf4taljycu3zw32cr6inr@b7xck2bicm7s>
-References: <20251104120301.913-1-laurentiumihalcea111@gmail.com>
- <176287713958.95002.12532568280694164920.b4-ty@linaro.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="leINhPUn"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1597CC4CEFB;
+	Tue, 11 Nov 2025 16:46:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762879596;
+	bh=jeDtFvGUXIuVgUDPgyVS9vBhjXcXU//Cn4BpthaOkM0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=leINhPUnfTtmVDkHrVZuiuhH38TSZeyEd+IyIWhXZV5UYD4/CMbUIw+80GBULpBci
+	 OdzhLsUuct8gS9MljKSePHzRtP+uWmuVVcmoTFmeU2wTbb68i/huv5Zi4xYkv2Bjei
+	 WoqnrW20p5qK89MuNndzjPVctflnmm1pEqp2JZ5+kvjCnrUD3nWWq5v0ylMN4Y5eci
+	 EwhHhIyRxpqjLBtT9DayUNOGF+1aOfVJobfW+UFDVJGFJEClkfBPj9scudgvc/RRR2
+	 f1Rr4Sbz2BLL7NhetWqTQiO9lVb4yzuH+2VHcyRAFKtSBIqe+7JFPNX3DhyqF7eSes
+	 DXRdIwDAA1e8Q==
+Date: Tue, 11 Nov 2025 16:46:31 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: claudiu.beznea@tuxon.dev, Conor Dooley <conor.dooley@microchip.com>,
+	Daire McNamara <daire.mcnamara@microchip.com>,
+	pierre-henry.moussay@microchip.com,
+	valentina.fernandezalanis@microchip.com,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 1/5] reset: mpfs: add non-auxiliary bus probing
+Message-ID: <20251111-apron-dispersal-6bd72d4a41a1@spud>
+References: <20251110-zookeeper-femur-68a0ae346397@spud>
+ <20251110-evict-gratified-bb816e2799a2@spud>
+ <2fabead977bee651800790f6b0d6323ffdc372c5.camel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ONeNsy8hStpVyMW+"
+Content-Disposition: inline
+In-Reply-To: <2fabead977bee651800790f6b0d6323ffdc372c5.camel@pengutronix.de>
+
+
+--ONeNsy8hStpVyMW+
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <176287713958.95002.12532568280694164920.b4-ty@linaro.org>
+Content-Transfer-Encoding: quoted-printable
 
-On 25-11-11 18:05:39, Abel Vesa wrote:
-> 
-> On Tue, 04 Nov 2025 04:02:53 -0800, Laurentiu Mihalcea wrote:
-> > The LPAV System Integration Module (SIM) is an IP found inside i.MX8ULP's
-> > LPAV subsystem, which offers clock gating, reset line
-> > assertion/de-assertion, and various other misc. options.
-> > 
-> > This series adds support for the IP by introducing a new clock HW provider
-> > driver and by modifying i.MX8MP's AUDIOMIX block control reset driver to
-> > allow it to be used for i.MX8ULP's SIM LPAV as well.
-> > 
-> > [...]
-> 
-> Applied, thanks!
-> 
-> [2/8] dt-bindings: clock: document 8ULP's SIM LPAV
->       commit: 3b521bf8c51246466e2c337f1f2b60acfdfe82d6
-> [3/8] clk: imx: add driver for imx8ulp's sim lpav
->       commit: fdc1dc7dd53b95805d3943ed36785c1ec812915e
+On Mon, Nov 10, 2025 at 12:34:16PM +0100, Philipp Zabel wrote:
+> On Mo, 2025-11-10 at 11:23 +0000, Conor Dooley wrote:
+>=20
+> With the superfluous cleanup include fixed.
+>=20
+> Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+>=20
+> and
+>=20
+> Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
+>=20
+> to be merged with the reset of the series.
 
-I only applied the two ones above. None of the rest.
+Cool, I have dropped the include and pushed the patch to the
+clk-microchip branch:
+https://git.kernel.org/at91/c/4a75fcd2000e1af452343aac6e34387f8e794f37
 
-Sorry for the mess-up.
+I opted to leave the include of regmap.h in mpfs.h unchanged.
 
-> 
-> Best regards,
-> -- 
-> Abel Vesa <abel.vesa@linaro.org>
-> 
+Cheers,
+Conor.
+
+--ONeNsy8hStpVyMW+
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaRNoZAAKCRB4tDGHoIJi
+0u/OAP4opIygXiE1msTAsenTF2y3vFMINksWzjFlo4txUmVtAwEApW/hg6Lu/LrI
+Q6y1spEYrjz9xkO8cWWj/Le7Z07Cuw8=
+=G7cd
+-----END PGP SIGNATURE-----
+
+--ONeNsy8hStpVyMW+--
