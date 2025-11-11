@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B55D26CE04
-	for <linux-clk@vger.kernel.org>; Tue, 11 Nov 2025 01:03:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2F7C2DBF5E;
+	Tue, 11 Nov 2025 01:14:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762822992; cv=none; b=QRd6uTrilIZ0/Q9QwAtb2SRDCWTjyddhIwU2OeUDTsgPW0NKdg4h17UTPBiQ0WdVFDiFRc2upjVt2Uj6kv59e6Yo/TS9F3gAOZlXdSSfyx7Zb+G+zXh8u2J9ZrTplkr/igUhKncCjZozlD2RCWK3nuz6AABjboMhm/P2LkDRROI=
+	t=1762823645; cv=none; b=eYUtuoQEP0Y2c540ysiC/+HmvwO9/Y7UTJoT5POZuSQHq1uNji89Kc1ZaSXIvOprap573G3fp4tHrKKpdb29UJmJsfnMXFPhc34pGaVuDeHKHTmtPW6VqQtGvx+vhUFrbyY+EWTk1DsV6NuSwOSejMsQhbZC9Oh1WuDWwhVv7Fo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762822992; c=relaxed/simple;
-	bh=UazQu8pENsRL3wBMB+6+PXe0UfqoiV+EOCdGH71zGns=;
+	s=arc-20240116; t=1762823645; c=relaxed/simple;
+	bh=hLfKK5/Ndh+eKDHap1Bdk56Fe5GhqYZjeqm9QLFmsHE=;
 	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=p8RPUTtIu5uvaux7i1kK3Ys/1ozboG/Lz6ZXxbYEovSB86AUmMuD8DCsDcXctUl03eXHk/aTEaX9veXKEHdiFmdIarOTPbTRDdbxtf1nYWnMwNtpSd1FpzIYFS9xCQuOjEdA2DVCeU3BOgBAR6Af2bGk3n5lN2s8Ufe4gIkakJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qS1Ge2zq; arc=none smtp.client-ip=10.30.226.201
+	 To:Date:Message-ID; b=Gl4pvQD5x9CxtJXzb+IPk3DCnVITWqYtdEr5nLKJLMzXz6gHmkze6LX6+wa898FVbIJ6nAWvWlZa2L0ryWq5NRRqnUd9KQAE1Oox/m96hV/+rGVRbY2LuCMCVAKHdYU/56ODZSiFsIZyNXnje4j8wV7lx/nf7TstlPAP43pbCPk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L1p/GbjX; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qS1Ge2zq"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10F8DC19422;
-	Tue, 11 Nov 2025 01:03:12 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L1p/GbjX"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CA3EC4CEF5;
+	Tue, 11 Nov 2025 01:14:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762822992;
-	bh=UazQu8pENsRL3wBMB+6+PXe0UfqoiV+EOCdGH71zGns=;
+	s=k20201202; t=1762823644;
+	bh=hLfKK5/Ndh+eKDHap1Bdk56Fe5GhqYZjeqm9QLFmsHE=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=qS1Ge2zq9xCeSMP8DnGWEVzR2qGnaHACIiB7VXtXiirrwD+2VkleAO3TaZRHWeCu6
-	 wwpfFgYLYxklr8RlBWl4/i5T1YKxpYPEHNY10aTv+AHECHmnH2EYjxQrhCIfgsAw6H
-	 4QooTEY4KSEg0STc0QU5/Tb2hVMHinjYnIn50ymrpMDO33B44Jw0iB1OPFfkjn7wDv
-	 2qJ2smvlLcBAtqLE8Z6pWVGEcq97aMdV2DhU9Xpe7qJwgJHkRfn08/FQNwk6DQ3qau
-	 Gnk8r/uUXlo7ec9hQkI/DTgn/LrJYmCxkb5PKQNemFQ7HQNtd5WYgcQO9jbGrEhhis
-	 dt1eWm/jIYHqA==
+	b=L1p/GbjXK46kKAXlv5v0GUaRYzGkUomhPVi7UP1Ty6+MPvQ97I7Ujpw1f/vsCaW3J
+	 b6TLQKlSnYX8DmaElmGL0Hn+5lR5Y8gJ13D+d5e1ta724iQCEMApJXcVWARaMeOOKN
+	 g4SolZKtnhgYNi3ttqRo/IBtc14o4CgZTG9xeOH46LhLIUhcwt30nII+T11N3Gmg0v
+	 xIauajruBBuh95tAqwxQX1kAv9LDmmgmujlx2Hil3O26b7h7HU9u/S0ZK68mA8tXBe
+	 jNV1BlxAmbc9ZD5nxkNdw1O5ww9KwPVE3BOX2RG1v7kasBWCVzRJVDHPoamBr70dkX
+	 7yK+HO/QpcRMw==
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -34,17 +34,19 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20251023114535.262305-1-dinguyen@kernel.org>
-References: <20251023114535.262305-1-dinguyen@kernel.org>
-Subject: Re: [GIT PULL] clk: socfpga: update for v6.19
+In-Reply-To: <cover.1761906750.git.geert+renesas@glider.be>
+References: <cover.1761906750.git.geert+renesas@glider.be>
+Subject: Re: [GIT PULL] clk: renesas: Updates for v6.19
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: dinguyen@kernel.org, linux-clk@vger.kernel.org
-To: Dinh Nguyen <dinguyen@kernel.org>, mturquette@baylibre.com
-Date: Mon, 10 Nov 2025 16:58:00 -0800
-Message-ID: <176282268097.11952.13279204038833025737@lazor>
+Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
+To: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>
+Date: Mon, 10 Nov 2025 17:14:02 -0800
+Message-ID: <176282364254.11952.2867679653974215283@lazor>
 User-Agent: alot/0.11
 
-Quoting Dinh Nguyen (2025-10-23 04:45:35)
+Quoting Geert Uytterhoeven (2025-10-31 03:43:56)
+>         Hi Mike, Stephen,
+>=20
 > The following changes since commit 3a8660878839faadb4f1a6dd72c3179c1df567=
 87:
 >=20
@@ -52,13 +54,13 @@ Quoting Dinh Nguyen (2025-10-23 04:45:35)
 >=20
 > are available in the Git repository at:
 >=20
->   git://git.kernel.org/pub/scm/linux/kernel/git/dinguyen/linux.git tags/s=
-ocfpga_clk_for_v6.19
+>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git=
+ tags/renesas-clk-for-v6.19-tag1
 >=20
-> for you to fetch changes up to 2050b57ecda040010ec797fb07713889372c5041:
+> for you to fetch changes up to 07525a693a5ff6592668a0fd647153e4b4933cae:
 >=20
->   clk: socfpga: agilex5: add clock driver for Agilex5 (2025-10-22 22:52:5=
-8 -0500)
+>   clk: renesas: r9a09g056: Add clock and reset entries for ISP (2025-10-2=
+7 12:15:00 +0100)
 >=20
 > ----------------------------------------------------------------
 
