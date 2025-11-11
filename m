@@ -1,127 +1,123 @@
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79BB936B060
-	for <linux-clk@vger.kernel.org>; Tue, 11 Nov 2025 15:50:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CC5C36B059
+	for <linux-clk@vger.kernel.org>; Tue, 11 Nov 2025 15:56:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762876220; cv=none; b=LMSKLOUjj+K+InTJgYdkspR4P8QU7hDHPKHcuHQG0IBHwwgG5YBs3E2oTW0BUvx/Td7PXpGKyP7/r+tYSwzHB2V/0VHi1Ibo74LKw7wncaVu8vFcKGkulsjLWSbSLqZT0Yb0/LE6HNuKWM+g9KWXISMyDwpsM/jZ74qTplMk/h4=
+	t=1762876594; cv=none; b=l16Ydg8zrdl3UaMdAFreXhFTkt10vo+q5WcjlPSrnrTgHMc/xjEStJaVeD9bsIf9lEIqsDCo5YsQZqujJtwQAJBp3I3qcYQR2n0FUoxTn9NoNS8XzbtwvfgZRrEt9M7d0ECHcH1Ki4nCDi2W70w2QxqMYZSJjDn9bQx9GQN5UE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762876220; c=relaxed/simple;
-	bh=DHlxEl4Cm3VRdwsbOA/YSIyQycDreMiqXswBc5rWTMo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=IpvdXhOAY5BiVf39tf82bg8A9E0dMsRqqRGtcg+MBtFRiq4s9R918eLE+kbwNClscj7hwNsd2x1/2Y6yo7BSdnHmeRUC5Jhk0iYT0A+gt2eCh/AdLsmCqWoRJQnG+x8Ftisr/p+S+JwD3B7rLg8KCTs3kimGaMdkOxkoxKIRmgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l4rKv81/; arc=none smtp.client-ip=209.85.215.174
+	s=arc-20240116; t=1762876594; c=relaxed/simple;
+	bh=R/BxvRnYDhmJfrosntBUW73LUr2aXcwvJAtyfPOFZHg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ni+5dodP/33C284EeN5r74OGfJuzRId0s+jnniaCEeNLdK4CuK3RPO+OfI0e4Meo5nt27UMyGq57177WfLlK481UaZCblG8J4xrSR/dPP3Gpz43k4Ci9kQW1ApCKkXakG+cVqCNm+3nVjN1o3btZeUfSDCKUiOTXfwhyZfbW9u8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VqaX+XIi; arc=none smtp.client-ip=209.85.221.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l4rKv81/"
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-ba599137cf8so756953a12.0
-        for <linux-clk@vger.kernel.org>; Tue, 11 Nov 2025 07:50:18 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VqaX+XIi"
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-42b32a5494dso1350231f8f.2
+        for <linux-clk@vger.kernel.org>; Tue, 11 Nov 2025 07:56:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762876218; x=1763481018; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=kwxwWH0h/k86KA6Lqbt4Xcny5Xif9KRZerM8f0+lE/Q=;
-        b=l4rKv81/JX0GM6mncWXjrWkmY8XtAtwOHkFkeVsXXDSvDNhdrnHd26iM+8gOcPt5gC
-         GPohYZFO16Qc9oUdZsSKtNpFktwtlrc+qHY/BdCsnrVDiB3BIJgLc/q4gknKfvRMT45f
-         XQQAMN0Ahz6MPTKYqxJ9nzAQ2+019pdjfv0POpV7AX8ESgKgOs7mf3Vk3opaGDE8SvPu
-         R/wGNTpq7+JOTqNXG/Dj2XclZxALV6XwWCztoy/hYTk/e3L6b9yaOVyRSVOrDQqWiw97
-         T1paQva5C5UDXfCM7Krvk2h35zF9KRij/x9DuLMSGFPnrrtmzcj+nKoG/nB2XSiaGxhi
-         p9HQ==
+        d=gmail.com; s=20230601; t=1762876590; x=1763481390; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wn1gmvaI3HpYNhR73OUUMc76SwfBuC0tr7WC7he5oYo=;
+        b=VqaX+XIixQFuymwyNS3v2erA4attzBLFXoOwmPv9ZvZnimenfEtc/JIvX8J3e5iItl
+         gNQ+GoHnNSi/dTBLnc1+ZtLvc9s0PDVnmgpnrSRpGG3ftPCNJpARLTqYGw0h0SNtSK4p
+         jnwWc8sWxi3pYuNI9IGw5EHp0Bi9vDUbwwUW9dMGxMD/T2Bqwy/jnppxO6pXdG/cT64x
+         9/6vyJDq1IgK9FBoSARs9a5UOcD7VHp7Di2QD5loYuMtFctYdYy9qT7waxPEYRlWlxi7
+         Qy0OprpeIJ/MP2wFmVuBTdhT7ddNl5TIg5wLozH/2G1UGR5ewyrfiYtxJ6KzuIta5iU5
+         wIEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762876218; x=1763481018;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1762876590; x=1763481390;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=kwxwWH0h/k86KA6Lqbt4Xcny5Xif9KRZerM8f0+lE/Q=;
-        b=XmXFG+hAeClp89mgbxed//PFxUL0EP/3i34Ph8Ww5spsHzLpY/WKAI9FGO1PPcfbUt
-         B51MwFmLEQq1Djmcj4yCuzgnWYXJl3yVXofupfdyW5ZRbIbqxVmELqXxC5oaF9QxUPih
-         9jp4dh8uEYh2e12458ahp+564up9RLCcBS/0qENIvomrOwV3m8tSIX25hfwqFpXnxyby
-         EO2/aefcMcVGpp96tSe/vawNJuB96foYyXT0QL3HBZatoRtRKVcHU5UyLuDG5YKjWar+
-         b8AqKi8ZaDvDjYV7VJgrhEVAtWwtwkXjaWpritjU0RF1aYUtIOnNAy6fB+lfqMeJmPuU
-         acSw==
-X-Gm-Message-State: AOJu0YwFHupsbmZoeQBd1cDNUTPkV1mJMN4Hwx779TNIkyPxgvhZ4wCQ
-	04R/7ZwBx2VbZhAH+Rvue2EI7QKm1Y3I8pspK+AbxYiubwwvRYKRcx5rCAwMwGOT
-X-Gm-Gg: ASbGnctn7fZMIwkTh3/IQld2AtVmqnNveOnIskPqGm3WwUBIaDbAAcb8LbMMzCvKgp6
-	E5c3fNj6tPznsMgkf0S2Z61EnwaC2vLjJKwBQdCIAObqEbBeA4DKF6MkTjoPD5J5SP+dgI69Mx5
-	YuVmjNwlzjyD5UbZaFA0pELGCVObek+AhqlEzUUyBOgv7PKUGyEgjLV3Y+FImUf2CCq/ijwxqZh
-	YSpFy6+SksILrIHJ0+0gNXmWO42Vow0CJEXOp7+04gc93WPLLU5v1JUGYhuUwnfOnEoXx9Y+1UQ
-	dci5MmAwVPYMm9xe65ehnoUzDBbQmuWAuDexyqmpOuzPwUWQpgFU7yWNUweFwYNKHxWrs8QifCi
-	nIF9hndDNgAEJKirC+/qLoazt0IvzJ0bryUJfu/uD2qkuSIiV8/pvw1Fh40/OzwR3LOGlBP/GFL
-	rs/A==
-X-Google-Smtp-Source: AGHT+IFUeZ86WNREaY3JnN9DeD2rSCTPmqw3Crt4HqqKMYEinhAe5X1WLVaqt8s1Jagy5zo/mu0g8Q==
-X-Received: by 2002:a17:902:fc4f:b0:295:55f:8ebb with SMTP id d9443c01a7336-298408213e4mr48838695ad.21.1762876217391;
-        Tue, 11 Nov 2025 07:50:17 -0800 (PST)
-Received: from localhost ([111.55.24.13])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2984dbdb09fsm1087615ad.17.2025.11.11.07.50.15
+        bh=wn1gmvaI3HpYNhR73OUUMc76SwfBuC0tr7WC7he5oYo=;
+        b=DP4P5HSZyBxTWX5YmGnlWJTVNsfIZtVGWZvnClMARVRNVci6cQrGsyvpdQto1SV8bW
+         CcQM/wr6HGcyaXsbkKFIb3I53hYWCP02RnDFpPynOeTFFNmtK7bcQCs0bm4ZW3s7dRaM
+         TPY2+JQNitxlRRUxekcfcT2GzYU1E2N/hOLOQ9Bz47ebMwdqr+h6Cx+KKdAT7ZTkqaIl
+         YO/vQoW68k8ZazkE3n5xyNVm4uYnKQXYOxV2PdqIyxJdvvFz0Xtmnw78yuFRXUUkb34t
+         AAhIYysCl7dgchYcC/SKUX81ePk0C1CDcUn/PurViUOhNskykVv6KDwuhZF9oP8XJkez
+         F3Dw==
+X-Forwarded-Encrypted: i=1; AJvYcCUcWzkWpSUby0orr58A2h2O+xXDkC3KcNdKM2GL56Ay6ZArIrWAFCBICN40xxyrTKaUJnw8ImpxTMI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPVuHQsiZjWhgIypRSKUnbqbG+937NKFbzuaESUQaHOIdWeJor
+	EU5vJVYWDmR9mikfIsfYt1l4pyeHorCpy4gN1sPDVxXCShEaRI95FAMc
+X-Gm-Gg: ASbGncu4d5VgZfkwERLFWAXa7YWDEYW6y5EfIXmU/ooQQTJn7tZB1UjF7rv8Ut6aEgZ
+	4WST5grnXhcd7IwCUzjo1HBRWoD19qz9h8r9Jt0INu1i0ei0YdA1ei09NS/uCYuwHddxlK5uIyA
+	qHehOwX868yvD0SmVCBxzI/Of3ZbN/+f8nxkeaIpasNFV5nA5QEvkrSvcU8KB9TV/RGGpSZkjjm
+	TCETdek5/SpZ0POFAMsn8+yOmd5v89xuuHqHQTigOgaMcxcOJVYgTiy/1RKoO3f6mmN6gqEa0gC
+	u/e5UOOyvry7Tzi7c+tpoIiNf6o0+HETTj7bO8EAXngGVwnVLCJ54Amo1JUfmH+SX+yOHPsAd7C
+	PTO3dJn79NnpdXdkNqFqUb4L1ORnevrixxt4+KsCiPto8zmN8x0KgZAqv50WDFH1VrpHvhxtH+0
+	Zo/tuS+xKhQsPRWUbKVxclF0UYa1mSYjkA3L11XZHn
+X-Google-Smtp-Source: AGHT+IEWa4s/O/cpurErrQ/yBB0qj+qI8Pv0XJdBicVTkdR1kfMMMCiO4Ga983PAXfh6QAJiVG/gdQ==
+X-Received: by 2002:a05:6000:2302:b0:429:b9bc:e81a with SMTP id ffacd0b85a97d-42b2db828edmr9435347f8f.0.1762876590240;
+        Tue, 11 Nov 2025 07:56:30 -0800 (PST)
+Received: from Ansuel-XPS24 (93-34-90-37.ip49.fastwebnet.it. [93.34.90.37])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-42abe63e13csm28676766f8f.19.2025.11.11.07.56.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Nov 2025 07:50:17 -0800 (PST)
-From: Encrow Thorne <jyc0019@gmail.com>
-Date: Tue, 11 Nov 2025 23:50:09 +0800
-Subject: [PATCH v2] clk: spacemit: fix comment typo
+        Tue, 11 Nov 2025 07:56:29 -0800 (PST)
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Felix Fietkau <nbd@nbd.name>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Christian Marangi <ansuelsmth@gmail.com>
+Subject: [PATCH v4 0/5] clk: add support for Airoha AN7583 clock
+Date: Tue, 11 Nov 2025 16:56:16 +0100
+Message-ID: <20251111155623.9024-1-ansuelsmth@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251111-b4-fix-ccu-mix-typo-v2-1-d64b97b48d1f@gmail.com>
-X-B4-Tracking: v=1; b=H4sIADBbE2kC/22NQQqDMBBFryKz7pQkatGuvEdxoeOoA9VIYkNFv
- HtTobuuhvf5/80Onp2wh3uyg+MgXuwcwVwSoLGZB0bpIoNRJtfKFNhm2MsbiV44xbtui0WVFqT
- LnlNFGcTl4jh2TuujjjyKX63bzidBf9Ofr/zrCxo1UtN1bZoXim9ZNUyNPK9kJ6iP4/gAIVCcB
- rYAAAA=
-X-Change-ID: 20251028-b4-fix-ccu-mix-typo-038c19fe30c4
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Yixun Lan <dlan@gentoo.org>
-Cc: linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org, 
- spacemit@lists.linux.dev, linux-kernel@vger.kernel.org, 
- Troy Mitchell <troy.mitchell@linux.spacemit.com>, 
- Encrow Thorne <jyc0019@gmail.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1762876212; l=1164;
- i=jyc0019@gmail.com; s=20251009; h=from:subject:message-id;
- bh=DHlxEl4Cm3VRdwsbOA/YSIyQycDreMiqXswBc5rWTMo=;
- b=y7lORg16U5lsvcS9/DoSo7mwT5fo22eEVpj3gCoSuWbYgbLul4lhSwzA8UAzZmSxgvPPJorn1
- KMkTZ/dZIi5AGLNsXQ9FoACulckMazmMA6jsBicgtNXnh6nT7N+o4BK
-X-Developer-Key: i=jyc0019@gmail.com; a=ed25519;
- pk=nnjLv04DUE0FXih6IcJUOjWFTEoo4xYQOu7m5RRHvZ4=
+Content-Transfer-Encoding: 8bit
 
-Fix incorrect comment to match the filename.
+This small series introduce some cleanup and support for
+clock and reset of Airoha AN7583.
 
-Reviewd-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Signed-off-by: Encrow Thorne <jyc0019@gmail.com>
----
-Hi Stephen,
+The implementation is similar to EN7581 but AN7583 introduce
+new reset and more clock divisor support.
 
-Could you please take a look at this patch for inclusion?
+Changes v4:
+- Add review tag for DT patch
+- Fix clock patch to use en7581-chip-scu compatible
+- Drop PCIE SCU SSR write
 
-Thanks!
----
-Changes in v2:
-- Simplify commit message.
-- Link to v1: https://lore.kernel.org/r/20251029-b4-fix-ccu-mix-typo-v1-1-caddb3580e64@gmail.com
----
- drivers/clk/spacemit/ccu_mix.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes v3:
+- Drop .set_rate patch (will be proposed later)
+- Drop chip-scu binding and related patch
+  Link: https://lore.kernel.org/all/20251106195935.1767696-1-ansuelsmth@gmail.com
 
-diff --git a/drivers/clk/spacemit/ccu_mix.h b/drivers/clk/spacemit/ccu_mix.h
-index 54d40cd39b27..c406508e3504 100644
---- a/drivers/clk/spacemit/ccu_mix.h
-+++ b/drivers/clk/spacemit/ccu_mix.h
-@@ -220,4 +220,4 @@ extern const struct clk_ops spacemit_ccu_div_gate_ops;
- extern const struct clk_ops spacemit_ccu_mux_gate_ops;
- extern const struct clk_ops spacemit_ccu_mux_div_ops;
- extern const struct clk_ops spacemit_ccu_mux_div_gate_ops;
--#endif /* _CCU_DIV_H_ */
-+#endif /* _CCU_MIX_H_ */
+Changes v2:
+- Add .set_rate support
+- Rework DT to EN7581 implementation (clock driver is parent)
+- Add additional cleanup patch
+- Merge binding with schema patch
+- Add chip_scu phandle
 
----
-base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
-change-id: 20251028-b4-fix-ccu-mix-typo-038c19fe30c4
+Christian Marangi (5):
+  clk: en7523: convert driver to regmap API
+  clk: en7523: generalize register clocks function
+  clk: en7523: reword and clean clk_probe variables
+  dt-bindings: clock: airoha: Document support for AN7583 clock
+  clk: en7523: add support for Airoha AN7583 clock
 
-Best regards,
+ .../bindings/clock/airoha,en7523-scu.yaml     |   5 +-
+ drivers/clk/clk-en7523.c                      | 538 +++++++++++++-----
+ include/dt-bindings/clock/en7523-clk.h        |   3 +
+ .../dt-bindings/reset/airoha,an7583-reset.h   |  62 ++
+ 4 files changed, 468 insertions(+), 140 deletions(-)
+ create mode 100644 include/dt-bindings/reset/airoha,an7583-reset.h
+
 -- 
-Encrow Thorne <jyc0019@gmail.com>
+2.51.0
 
