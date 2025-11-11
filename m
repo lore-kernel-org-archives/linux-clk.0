@@ -1,130 +1,105 @@
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F0302F4A19;
-	Tue, 11 Nov 2025 15:33:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BAD326E146
+	for <linux-clk@vger.kernel.org>; Tue, 11 Nov 2025 15:46:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762875221; cv=none; b=mI1fnhUvttK3LuBCGZYtRLDNGglO+r6zlxSfNFC1CtOEAY1WWePlW8sR9xW9tSwHtB2YZXyGUtZhRJZIBUoO4NtVzza5aq49LDJD5Mbelf7PEo9ndSkee6f/vRVhlnfBbw+S4KWTyRg0bFGtFexqlUhHtElLP4XjXsvaxWbObe4=
+	t=1762875976; cv=none; b=JQIxCbGsVj/WT7w7+kBwthjUchrbUw5bYeXmiKK4gDZzMn0qez/sg4SQ4N1IQ3y9B/9XK/kykB4AuKTL13yE/kDjgUY8uHFxgPAozdtRhxNrGN8LnsImWm25kjfxmAiN6/oRmArtQuwFLDT0ur9RnNm+qkVSCqJekoofWk2V2kc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762875221; c=relaxed/simple;
-	bh=7mK0LwpK4L3cDU88CKU+8pBhUXQzJOCLbWqWEmp0U+g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=o0DKxe/O1wIaj49qp0oo2GWUvDkFBeD6tgtD4+P9lZ+rbVoWMnhzpQNAT0Ol3IkRgMvaUpBm50ROMc+0xlka7IX5QLxGgRami0Im3U47FHHO5ubeMbfRtyxlKB7+5RLj5x6OAmGXGw8AAnFlQ1zfJuhb8jfiUGW79QYntJR2QyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Kfe+2Ek/; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1762875976; c=relaxed/simple;
+	bh=taKJtLEON1PLVeXA9coj88ZKEsXEwkJfRELQNcAISPw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=p7iZpH3DNRL46+oNzWYiUm2sdVUTqKGxBd2Vy6ELJeXNc7hNJaaRpa7/i9my0u29eXU2jtQCVBfusGfFANv1hry3GXXcO5G/eLJ8RNk526lh6PkzcbpBFn6jCznAip++pfEvbP1jxRf2t4ZiqVmN+m59OMZwQEV9UgB01wE2OhY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=No4O4oX6; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Kfe+2Ek/"
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20251111153330euoutp017494b02d40dededb563d4b1ef58097a0~2-aoKSf6x0077200772euoutp01-;
-	Tue, 11 Nov 2025 15:33:30 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20251111153330euoutp017494b02d40dededb563d4b1ef58097a0~2-aoKSf6x0077200772euoutp01-
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1762875210;
-	bh=sloWl4MVPqNxu4Lal6cMW3w9aEbG/4Pt1qYZPePhrtE=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=Kfe+2Ek/w+bUpLwTygBNEWcXj2/9RpeCAYPlT7bjoq9HA70uytTNDmVDA9tYZm8xn
-	 PjfXlhu7atr5sek/dPX6o47ChghH0J8IS0BtsFXtYrpuN/fnnz0AbmKOzh7YLkYBX9
-	 OkTday6AnTVrcPFQljKo3ZyNeUQFXkvGD25BUqsQ=
-Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20251111153330eucas1p213a4f040efad6ebe0add9670332c93b9~2-anlypPk2653326533eucas1p2R;
-	Tue, 11 Nov 2025 15:33:30 +0000 (GMT)
-Received: from [192.168.1.44] (unknown [106.210.136.40]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20251111153328eusmtip2a21c5725c16f8d6a9d517389e448b5f7~2-amHRvql2096320963eusmtip2G;
-	Tue, 11 Nov 2025 15:33:28 +0000 (GMT)
-Message-ID: <00e897dc-9966-439b-a74a-7604a1870027@samsung.com>
-Date: Tue, 11 Nov 2025 16:33:28 +0100
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="No4O4oX6"
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-42b312a08a2so2393882f8f.1
+        for <linux-clk@vger.kernel.org>; Tue, 11 Nov 2025 07:46:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1762875973; x=1763480773; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LjeAFk0NqeSfnvCC/Kbape3/pyr7YeM9MWnFnGW40z0=;
+        b=No4O4oX6VjETSUyVcZwE9BL1U9kI1MvLNanTdlzNFmeM7NOKVqpQM+Qua3vq66ZUoH
+         Kn36Thaur9pX+rQVI+R8hErqwR57OkUVaFnvKP2Ge6YJpZT8ZC4QGBUyhYBhOtRm7Cvq
+         d9NvBBlKz0VyYddH0Hcdp4xCX/KzhTQNGVtgFxjDDhCLibFK59YA+nSMbe9VzsjPiTJv
+         pmzVJDgYTbMehSpcPs0ENl0nqx/YD7qxIo5DpBkCGFjkC1lLAfAO6qZH+kP/mAtGKagZ
+         vHPmy9XempCd7tNz7B3ivd6xvSLRXGblubHIN4DPpKQv1inVPgYrzuNbbds6hRnQCZ6j
+         4Yuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762875973; x=1763480773;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=LjeAFk0NqeSfnvCC/Kbape3/pyr7YeM9MWnFnGW40z0=;
+        b=e+G4CEdEDWjpGNKiiMXT5Daa5dAymAcAiaD4RRfzdWIFFH8+g0Psuz5CSmQMJZnzoM
+         G082kO3oHZvw6AJ78iov2o6fd3IpeE+d/Hw37OLjQnOWgwGsW3xO+3QGpwpx7mTpScEt
+         s5eFr9h80a3BdyUqz3aKZMSr4giZZ6MIMWfxQlMApVao/YVGqJxEA40gvPpHKtgJQH7Z
+         gbBpVH7gRsAxrhDbAVrw6xPlayoxgHVxPaZk4d6jyf0qMNnW55v76OrU+UHomrwgftLj
+         cBomxcpK3UwSBilnSDFNeS83m+NY2mcRamTtXrvOqlsoniAcBbpNVW8u91qDnku5SfZo
+         eZgA==
+X-Forwarded-Encrypted: i=1; AJvYcCVDpGrQoazeTlhGNsg0sM4C4Izfp54FrjHuBbfbygx3AlVctRQgIj9TwaEbzeafLeW1lqB+P96FUx8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5jdE9EWjeEq8PlskpMIjIlsXHQdafCAGKGDDtZVGon3QW1/BJ
+	Z25cdV/g/rYyy0YdCL8a0zratg7mvOAQzrwDEUGXfY6P0fzQ5JaVP9tIii38enTXWnA=
+X-Gm-Gg: ASbGncsNqfP4b0p90K/ioHvuCHYOTEdONO/KXVj8QlyoMgQ+xe6IjYvtu2ytoKWjMfv
+	jmP7pHFq7UBDNBc2nFvlJI55tx3hUmbNhWWLMBby1c8TkqMdm+vV3gV5sX+zATqDRqz2Col4gi+
+	rDCcoMAripP4j8Dg/gAKSewbpvezpOHFeHJTa5FZ8PAe/uRfGFQAEUy2zt3ktniMY804bvS6dUQ
+	Sh22xUyCgsM4c/7eS1CzFum7khWuMVVq5GcU2AL8bD4205NfYZgWF+DLr817C0OS4pof/VT3U+Q
+	SksCJg34uEyMUtVwAODyAChIEpvE1RE4BwXcQEAc/JS1G57O+OXki1J1r0asscw/rfCucA9lvxR
+	8S9cXLmjlVUnSvUhQCMfE8q1i2CaHAeabEb/Z5vNzjHC/Xupmyg8aNCqc+G3i0qN5fta116UsYg
+	==
+X-Google-Smtp-Source: AGHT+IEmG4EIM8g9jy0d8DW2Vf3efGjj8YYDTC9Rw1lXYX1N/ZBq6dfai+UY84clpx55CsGPyS3mAA==
+X-Received: by 2002:a05:6000:1884:b0:427:526:16aa with SMTP id ffacd0b85a97d-42b2dcd8cdamr11643317f8f.58.1762875972720;
+        Tue, 11 Nov 2025 07:46:12 -0800 (PST)
+Received: from hackbox.lan ([86.121.7.169])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42b2e96441dsm21387902f8f.23.2025.11.11.07.46.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Nov 2025 07:46:12 -0800 (PST)
+From: Abel Vesa <abel.vesa@linaro.org>
+To: abelvesa@kernel.org,
+	peng.fan@nxp.com,
+	mturquette@baylibre.com,
+	shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	Jacky Bai <ping.bai@nxp.com>
+Cc: kernel@pengutronix.de,
+	festevam@gmail.com,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2] clk: imx: Add some delay before deassert the reset
+Date: Tue, 11 Nov 2025 17:46:00 +0200
+Message-ID: <176287594553.21242.4694990011730156216.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250801072153.1974428-1-ping.bai@nxp.com>
+References: <20250801072153.1974428-1-ping.bai@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 00/13] drm: starfive: jh7110: Enable display
- subsystem
-To: Conor Dooley <conor@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Emil Renner Berthing <kernel@esmil.dk>, Hal Feng
-	<hal.feng@starfivetech.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Xingyu
-	Wu <xingyu.wu@starfivetech.com>, Vinod Koul <vkoul@kernel.org>, Kishon Vijay
-	Abraham I <kishon@kernel.org>, Andrzej Hajda <andrzej.hajda@intel.com>, Neil
-	Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
-	<jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, David Airlie
-	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>, Lee Jones <lee@kernel.org>, Philipp
-	Zabel <p.zabel@pengutronix.de>, Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>, Marek Szyprowski
-	<m.szyprowski@samsung.com>, Icenowy Zheng <uwu@icenowy.me>, Maud Spierings
-	<maudspierings@gocontroll.com>, Andy Yan <andyshrk@163.com>, Heiko Stuebner
-	<heiko@sntech.de>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-phy@lists.infradead.org,
-	dri-devel@lists.freedesktop.org, linux-riscv@lists.infradead.org
-Content-Language: en-US
-From: Michal Wilczynski <m.wilczynski@samsung.com>
-In-Reply-To: <20251110-clang-baking-b8b27730356e@spud>
-Content-Transfer-Encoding: 7bit
-X-CMS-MailID: 20251111153330eucas1p213a4f040efad6ebe0add9670332c93b9
-X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20251108010451eucas1p1c7bf340dbd2b1b7cbfb53d6debce7a2e
-X-EPHeader: CA
-X-CMS-RootMailID: 20251108010451eucas1p1c7bf340dbd2b1b7cbfb53d6debce7a2e
-References: <CGME20251108010451eucas1p1c7bf340dbd2b1b7cbfb53d6debce7a2e@eucas1p1.samsung.com>
-	<20251108-jh7110-clean-send-v1-0-06bf43bb76b1@samsung.com>
-	<20251110-clang-baking-b8b27730356e@spud>
+Content-Transfer-Encoding: 8bit
 
 
-
-On 11/10/25 20:35, Conor Dooley wrote:
-> On Sat, Nov 08, 2025 at 02:04:34AM +0100, Michal Wilczynski wrote:
->> This series enables the display subsystem on the StarFive JH7110 SoC.
->> This hardware has a complex set of dependencies that this series aims to
->> solve.
->>
->> I believe this is a PHY tuning issue that can be fixed in the new
->> phy-jh7110-inno-hdmi.c driver without changing the overall architecture.
->> I plan to continue debugging these modes and will submit follow up fixes
->> as needed.
->>
->> The core architectural plumbing is sound and ready for review.
->>
->> Notes:
->> - The JH7110 does not have a centralized MAINTAINERS entry like the
->>   TH1520, and driver maintainership seems fragmented. I have therefore
->>   added a MAINTAINERS entry for the display subsystem and am willing to
->>   help with its maintenance.
+On Fri, 01 Aug 2025 15:21:53 +0800, Jacky Bai wrote:
+> Some of the PCCs on i.MX8ULP have a sw_rst bit to control the peripheral
+> reset through SW method. For peripherals like GPU that need sync reset,
+> some delay is necessary befere & after release the reset to make sure the
+> HW is reset into a known status. So add some delay before & after release
+> reset.
 > 
-> Yeah, bunch of different folks wrote the drivers, so lots of entries.
-> Pretty much all as you've done here, authors are responsible for the
-> individual components and Emil is the platform maintainer but
-> responsible for most drivers.
 > 
-> Do you need any feedback dt wise on the RFC, or is it too likely that
-> we'll both waste our breath if the DRM folks don't approve of your
-> approach for the rest of this series?
+> [...]
 
-Hi Conor,
+Applied, thanks!
 
-Thank you for your response.
-
-That's a fair point about the risk of the DRM approach being rejected.
-While I can't be certain, I'm hopeful that part is relatively
-straightforward, as it primarily integrates other recently reviewed
-(though not yet merged) components like the inno-hdmi bridge and dc8200
-drivers.
-
-To be honest, I was more concerned that the DT part of the series would
-be more problematic. Given that, I would find it very helpful to get
-your feedback on the DT aspects now, if you have the time.
+[1/1] clk: imx: Add some delay before deassert the reset
+      commit: 25b47635f8729e9536d2652774bd509532eaa522
 
 Best regards,
 -- 
-Michal Wilczynski <m.wilczynski@samsung.com>
+Abel Vesa <abel.vesa@linaro.org>
