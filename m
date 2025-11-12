@@ -1,188 +1,135 @@
-Received: from DM5PR21CU001.outbound.protection.outlook.com (mail-centralusazon11011029.outbound.protection.outlook.com [52.101.62.29])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A0DA33F382;
-	Wed, 12 Nov 2025 15:09:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.62.29
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762960204; cv=fail; b=F+YRyshEMlCRiZd2xoI5x3OvV13fF5ICfh2efWKoVrXVDPQBzd12T/A64CvPGe0HIi50oW30C58P99I3B9gDhT7BS1UwDWCHx42OPA70qzRQhRkmDgu4b5m3WFoARcDF5/cZPf5TbQkHkXSh5pJG9dirki2MeA75MDXusZIjQLs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762960204; c=relaxed/simple;
-	bh=e12uivKGRpekv8Ao5IpbavjxINnDBmqHkpxKyMTKhEs=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uHayI1BPir6VNNLAVwXethU+KYjzJQy4SZlVkNIYUiEelJVTGaTj6cryUR10nLAVGoPF9jEcWxlXwAikVhz85VY899YvKwH/CSwGmRe4A9irvzFZmRpGldkqSQNWiBu2WcFAFYkoBIuN/2n1LNH0nqCCCxNs2mxtXzXyDk/XAI4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=a3z4y3Gt; arc=fail smtp.client-ip=52.101.62.29
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9652B34C140;
+	Wed, 12 Nov 2025 18:36:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762972594; cv=none; b=fdtz/WJC7ic6Ky4Tp4Hw1O7N5HVCI7cbJIe+BUwMH/gQd4DBvREQFalL7ZVXB0pezA4BP9rWyN8Z1GWcM3h25zYVaXS5C/yfRU9jgADOK5S1e52RRFoOBW3ji7l+wu9s2jGUISyDP6Rj91tLNaiLQHlVY0eVOgIZtTXM3o+c8T4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762972594; c=relaxed/simple;
+	bh=WnOMdyUM9PIIBDXqCoag+EQM65Uhfsy8dLkk4QRpRf4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xy2JVq87W2Porhm/HDf/VotzhSiDlCq6KMHvOpy+IS7xXc5YUDdS+sGcy2d2JEwUalbh/Mg5MfEpwWs6IlyWSHuvV01/f0gMy4uzbapZKtQsdhmzeSAGPoWjmIaURhqF1zbjfwjk72xQuIMc9faBe1YaqDygrj+tKWWS/lc+8LY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GI/5YeOf; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="a3z4y3Gt"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=UNct5qNt5lGICe+fQLWJ4I6+c/tULq8HFDmS5zBxknlAk8uIwjxZOUmocSjKy5yDAzNrQxpiypmk6+t5YY47PjJq1+YovX2vtDaxxhPN7IrHQwnZuInJZfe14K/7fro72PABdC7vf7D5oLtALUBdH++c6+dscLsd9q1g/3Eqar/aUAg+o+yL2oaMMllOXH5nrG6xSw8ZSB2fb92U95idcLmUeWqNtpp4Rnqk+W2zKPU1dnUfbt6Z7krYiH9G8fHHzAxui0UKtarhCWCJvDC1Poagmq/LBNomdj/oEAR6BWebT6n6JDjwSCiew9e8WR9p4MxjbdRyrvw/AExxfN3JVA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=TCB58Vy8ZtmmN+K2Jz2+forEBp/DSlYXrIiRl/Y2Ehs=;
- b=ueS4iPMBhCE8hGrrFboc8h+iNQ7dwVKqnXrnX8KCTB3lInuH94tuYG3fZ0nHSo6uET4T2jnwx1G7o9rGFokt5MkfoZixZbQrk+/CG46BTmcUw+kyHJlXvsc6TOCAl1DkN7U9Y+vHBcEdSF8KN5UzLAzNB1dDy0inGtF3caaF87gIs2Eipo+VqCIuDquym3qqxHltytvGpcN4v/qFv3s9q9jnqK1zsjGGXq9Qhq3tqec8I9QBcjqhe9ALBde19VE/IlWmWpR7o4zaIbGeADA9k7XHhAR4uYhVLh2APB6mjhVaqszEw96FwAvpardYxBppW1JvDARmvE5D7/vuj6UCBg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 198.47.21.194) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=ti.com;
- dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=ti.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TCB58Vy8ZtmmN+K2Jz2+forEBp/DSlYXrIiRl/Y2Ehs=;
- b=a3z4y3GtX8nSuI6aRREQZxGI9ipYA61PW5UGNOVZiPH7hjQKornE4iEGzBTXbzM15R1gmvFZcitq1PUiBLsBStFUKSGTUU9ksM8ZIE/En7jWmasNFCu4LQ0TI+qeI32DVaGyvFVH0weuIwqd61PNTP9phftePtdhTtTe4gtm6Us=
-Received: from CY5PR17CA0013.namprd17.prod.outlook.com (2603:10b6:930:17::34)
- by CH0PR10MB5178.namprd10.prod.outlook.com (2603:10b6:610:dd::23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.17; Wed, 12 Nov
- 2025 15:09:57 +0000
-Received: from CY4PEPF0000E9D0.namprd03.prod.outlook.com
- (2603:10b6:930:17:cafe::94) by CY5PR17CA0013.outlook.office365.com
- (2603:10b6:930:17::34) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9320.17 via Frontend Transport; Wed,
- 12 Nov 2025 15:09:57 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.21.194)
- smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
- action=none header.from=ti.com;
-Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
- 198.47.21.194 as permitted sender) receiver=protection.outlook.com;
- client-ip=198.47.21.194; helo=flwvzet200.ext.ti.com; pr=C
-Received: from flwvzet200.ext.ti.com (198.47.21.194) by
- CY4PEPF0000E9D0.mail.protection.outlook.com (10.167.241.135) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9320.13 via Frontend Transport; Wed, 12 Nov 2025 15:09:55 +0000
-Received: from DFLE109.ent.ti.com (10.64.6.30) by flwvzet200.ext.ti.com
- (10.248.192.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.2.2562.20; Wed, 12 Nov
- 2025 09:09:47 -0600
-Received: from DFLE202.ent.ti.com (10.64.6.60) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 12
- Nov 2025 09:09:47 -0600
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE202.ent.ti.com
- (10.64.6.60) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Wed, 12 Nov 2025 09:09:47 -0600
-Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5ACF9l2O2845097;
-	Wed, 12 Nov 2025 09:09:47 -0600
-Date: Wed, 12 Nov 2025 09:09:47 -0600
-From: Nishanth Menon <nm@ti.com>
-To: Adrian =?utf-8?Q?Barna=C5=9B?= <abarnas@google.com>
-CC: Tero Kristo <kristo@kernel.org>, Santosh Shilimkar <ssantosh@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-clk@vger.kernel.org>
-Subject: Re: [PATCH] clk: keystone: Fix discarded const qualifiers
-Message-ID: <20251112150947.i6iionea3cqrpkxe@pacemaker>
-References: <20251028161643.1727046-1-abarnas@google.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GI/5YeOf"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A0D8C4CEF7;
+	Wed, 12 Nov 2025 18:36:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762972592;
+	bh=WnOMdyUM9PIIBDXqCoag+EQM65Uhfsy8dLkk4QRpRf4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GI/5YeOfpZMmZVaVUwRR6Fbye59/PSnaqF/DdPeOXtxbGIbwfNWHeDbyV4p3QU59G
+	 +D16rYwVg8D32b2bSej61a9lz1kZvGXw4j2I4QZjsAGx51e7Ii55bzmRx4GzrabPNV
+	 mH65mLBEOVxrZrmT1myfF7c0stIgBhYKzqvc5IucEk7P5fdNM+Otbxh4ArAdwhvcMi
+	 NckYMl5HBmZIJ/uE9MEYAty8k1PvYxgpB8Jpndc0cf+bWFdSVcpht76AC40ennmRKz
+	 2VRPWg1FFoOgEYPXvOxetk/BAQlONtL5gVFzR85UdiF0GprVVpSdLPLtk9kodpMpah
+	 eazHG4E1gMLGA==
+Date: Wed, 12 Nov 2025 18:36:23 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Icenowy Zheng <uwu@icenowy.me>
+Cc: Michal Wilczynski <m.wilczynski@samsung.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Emil Renner Berthing <kernel@esmil.dk>,
+	Hal Feng <hal.feng@starfivetech.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Xingyu Wu <xingyu.wu@starfivetech.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>, Lee Jones <lee@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Maud Spierings <maudspierings@gocontroll.com>,
+	Andy Yan <andyshrk@163.com>, Heiko Stuebner <heiko@sntech.de>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-phy@lists.infradead.org,
+	dri-devel@lists.freedesktop.org, linux-riscv@lists.infradead.org
+Subject: Re: [PATCH RFC 01/13] dt-bindings: soc: starfive: Add vout-subsystem
+ IP block
+Message-ID: <20251112-skating-robust-81be8dee0a8b@spud>
+References: <20251108-jh7110-clean-send-v1-0-06bf43bb76b1@samsung.com>
+ <CGME20251108010453eucas1p2403ec0dd2c69ae7f3eabe19cf686f345@eucas1p2.samsung.com>
+ <20251108-jh7110-clean-send-v1-1-06bf43bb76b1@samsung.com>
+ <20251111-massager-twistable-1e88f03d82f8@spud>
+ <20251111-unsaid-rockslide-67b88b2e34bd@spud>
+ <0d8e3a626b037dd348378e5ebca8005c1e715871.camel@icenowy.me>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="z01jU0pczI5X5Okr"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251028161643.1727046-1-abarnas@google.com>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000E9D0:EE_|CH0PR10MB5178:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4e1406c2-c47b-4265-d807-08de21fd89e4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|376014|36860700013|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?TWVEanFpZEhzOVkvcm9RYkFYenJwQzczSGVXNTNreEdtWHJQb3lNY21WOE4z?=
- =?utf-8?B?dVRCNWl3dEN0elVVNmU3cXZjKzc2dE1NaVpNZEJOaG1OVHVFQUxob011Tktu?=
- =?utf-8?B?UWdRR3pPSmlXUWhlTEc5TkI3SnN5T0dkMUFscUNKZEI3YXZPOVZxVlpzWUxO?=
- =?utf-8?B?d1RuRVM1VUdydUVPWkdFdmNxVTFWT2wxbmlNZ0VST081NVNVenFhS2NuMlVG?=
- =?utf-8?B?NFNDRlRFWkFoS29vMW5wTkIya3hhajc0aFY4d2Nya3NmM1RHck51MEM0dUZT?=
- =?utf-8?B?SW5zLzVEL2VVYTVudXVIbUVXWGxUcWZwSjJ1UkczV1BiaVg0a2lFeklqMC9X?=
- =?utf-8?B?VDFFK1FySko0SWYrNnBPT1dTbGo1TlFaZ2lLUnlUelNKNXNIKzh1SDNDUGZi?=
- =?utf-8?B?aEo3TlprbGU2eFJhUGVuVkRjaFJGSzJmbFpqYXN5MDBPUHZ4Y0hjanJPSmRq?=
- =?utf-8?B?YStaRW1zdWNRekNOelM4MDZEeEVEaFRZWm1jeG02aFBacEtTdHE2V1FSbkJK?=
- =?utf-8?B?ekpGWHVwY2VrV2lUSDE5SzlFTFZKRnd0YndPdjJhZUtJVWNWR1VhTTNHcFRT?=
- =?utf-8?B?UndDbTZZUXVzZ1VlWkd5Qk5VMkFBZFNNR1lxWUpqV2p2L0s2ZjFyZlJMNStC?=
- =?utf-8?B?VndFMEpabkZCNGZrUlF3MTZSRFRZbzh4ckdwak9KZzliU3lQL09tKzNVVERJ?=
- =?utf-8?B?T29RV01JY0g0MUttZTJSZlY1MFlsOW5yVENMRFVPWEhjZHRtaWpZdnRnaEgz?=
- =?utf-8?B?dm95QjZsOGYwVzlqMW1iVEJzZ3diMVpORVVkNkowbHU1U1E3b3M1azNXenVE?=
- =?utf-8?B?OW1EZXhIOEVFSkFxMEQyaGhvMUxMNzhqYTB4UjY1eEczZDNybWpzKy9OYzFZ?=
- =?utf-8?B?blRwQmFKeWZnQytVTHlhbHpxaTlkeXc2TzJlVFllcGhPQWt0Mzhtczg3b3hh?=
- =?utf-8?B?OUJZeUZDZVV0NS9aaW1BK3kySTk4eC8wRVdwRHZQUWxQNVVFbi94VTQ5UUxn?=
- =?utf-8?B?eW1SZVo5aEd2anh4NFpzeEZtcDRjZnhMSnN2Q2ttVjRGTjduM3IvTXVRT3BG?=
- =?utf-8?B?YkhUSklPU1RtcDlFZjEwSWhNMmwxazQ4OEhNdGYzVC8wWjhCR0JwL0o3b211?=
- =?utf-8?B?UHpQc1YwdmNxYXdKeFpIQ3RGMVlkdExHNS9oVjJJVWNka0o4Y0lJN3A0MzBv?=
- =?utf-8?B?Yy9lQ2dlNG5tYjl1Nis2MjJVcElCYUlIOUxUNytubUZmUEd0Nll4T2VZeW5p?=
- =?utf-8?B?cUpSWE01OGkwOHdZUXlRM1U4VFl5T0k1SUduUnRvL3R4MmpzSTNTdWh0dWtT?=
- =?utf-8?B?U21iZU56TjlDd25oSmdYTHJBbWJHcThmN25oREZzcm5OZGgvS3lEZUM0ZEMw?=
- =?utf-8?B?QWRKVXozdXU0emhRZThJeDA2UTVTdVpjU0Z6OW45Sks0OGFCdVh6VWV0a1hk?=
- =?utf-8?B?NzAya1RNNW9OclRuRTJQQVB6ZWJkMUpMN29mNVBPN0xtWktSa3p2a3JHSEZw?=
- =?utf-8?B?eTlCd1RKR0szZ0NxdHFtNHZJc3FjWjZzeHI0SE1YLyt0bmNuUm9LVTlycTBT?=
- =?utf-8?B?bjNLM3RyQWdhRWpnKyt3aCtZVVNOanF3Tk9jV3BsR2pOcDBmZWtqS0I0eW5O?=
- =?utf-8?B?aGlva0pHZ1RxTlM2ZVZzWEVkaGpKZnpXM2hQL2NnNDNON0h5SHV4UzgxWWx5?=
- =?utf-8?B?U20zRC8wLzVMZ0pCMVg4SVF6UDFGVE9FUy9EV0lvSkozOUtKNkRWeHZlY0Z3?=
- =?utf-8?B?dkE3blZFZ0swdEgwUkpMcVdud1hoNmJTQnpMRzhJdHdDYm0xM0xOMGFwQlZW?=
- =?utf-8?B?N3hPQmV0eTZpeW0xQmg4OXlwU0ZoRXQ2WjMxWWJLaGRqclFpK2t0STJieFNV?=
- =?utf-8?B?SXBGOG1GSkdwQlg4T2xYeHhDZSszSm50Q0c3NnZZeCtSR3ArbTdTaEFjSUk5?=
- =?utf-8?B?aVZ3L1VQclUwckM2d0NvNVEyd0lQWHpRSnU2WFAvakw5VUY2OUNOMVlkZGZG?=
- =?utf-8?B?MjlvbzE1aEtEcGg0a01NV3ZyOFhxTm1HTVAxU2g2NDNGMENoRVhmUjZQSVY5?=
- =?utf-8?B?eldHSlBzakZNaW9iZWN4V3JiQnh0bFZZNjVFVWpockZLYzBRK3Q3R3o2aXdo?=
- =?utf-8?Q?ncIY=3D?=
-X-Forefront-Antispam-Report:
-	CIP:198.47.21.194;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:flwvzet200.ext.ti.com;PTR:ErrorRetry;CAT:NONE;SFS:(13230040)(82310400026)(376014)(36860700013)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: ti.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2025 15:09:55.6200
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4e1406c2-c47b-4265-d807-08de21fd89e4
-X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.21.194];Helo=[flwvzet200.ext.ti.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CY4PEPF0000E9D0.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR10MB5178
+In-Reply-To: <0d8e3a626b037dd348378e5ebca8005c1e715871.camel@icenowy.me>
 
-On 16:16-20251028, Adrian Barnaś wrote:
-> Add const qualifiers to the pointers returned from 'container_of' macro
-> to prevent breaking the const promise on const struct pointers from
-> parameters.
-> 
-> Once you have a mutable container structure pointer, you can change
-> structure fields through it, which violates the const guarantee.
-> 
-> Signed-off-by: Adrian Barnaś <abarnas@google.com>
-> ---
->  drivers/clk/keystone/sci-clk.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/keystone/sci-clk.c b/drivers/clk/keystone/sci-clk.c
-> index a4b42811de55..9d5071223f4c 100644
-> --- a/drivers/clk/keystone/sci-clk.c
-> +++ b/drivers/clk/keystone/sci-clk.c
-> @@ -496,8 +496,8 @@ static int ti_sci_scan_clocks_from_fw(struct sci_clk_provider *provider)
->  static int _cmp_sci_clk_list(void *priv, const struct list_head *a,
->  			     const struct list_head *b)
->  {
-> -	struct sci_clk *ca = container_of(a, struct sci_clk, node);
-> -	struct sci_clk *cb = container_of(b, struct sci_clk, node);
-> +	const struct sci_clk *ca = container_of(a, struct sci_clk, node);
-> +	const struct sci_clk *cb = container_of(b, struct sci_clk, node);
->  
->  	return _cmp_sci_clk(ca, &cb);
->  }
-> -- 
-> 2.51.1.851.g4ebd6896fd-goog
-> 
-> 
-Reviewed-by: Nishanth Menon <nm@ti.com>
 
--- 
-Regards,
-Nishanth Menon
-Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
-https://ti.com/opensource
+--z01jU0pczI5X5Okr
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Nov 12, 2025 at 02:34:39PM +0800, Icenowy Zheng wrote:
+> =E5=9C=A8 2025-11-11=E6=98=9F=E6=9C=9F=E4=BA=8C=E7=9A=84 18:36 +0000=EF=
+=BC=8CConor Dooley=E5=86=99=E9=81=93=EF=BC=9A
+> > On Tue, Nov 11, 2025 at 06:18:16PM +0000, Conor Dooley wrote:
+> > > On Sat, Nov 08, 2025 at 02:04:35AM +0100, Michal Wilczynski wrote:
+> > > > Add the dt-binding documentation for the StarFive JH7110 Video
+
+> > > > +patternProperties:
+> > > > +=C2=A0 "^display@[0-9a-f]+$":
+> > >=20
+> > > Personally I'd like to see these being regular properties, since
+> > > there's
+> > > exactly one possible setup for this.
+> > >=20
+> > > > +=C2=A0=C2=A0=C2=A0 type: object
+> > > > +=C2=A0=C2=A0=C2=A0 description: Verisilicon DC8200 Display Control=
+ler node.
+> > >=20
+> > > Can you add the relevant references here instead of allowing any
+> > > object?
+> >=20
+> > I don't think that if you did, this would pass the binding checks,
+> > because there's no "verisilicon,dc" binding. I think I saw one in
+> > progress, but without the soc-specific compatible that I am going to
+> > require here - if for no reason other than making sure that the
+> > clocks
+> > etc are provided correctly for this device.
+>=20
+> Well I didn't specify any soc-specific compatible because that IP has
+> its own identification registers.
+
+I still require one because I want to make sure that clocks etc are
+handled correctly. You can ignore it in the driver if you wish, but when
+the next user comes along with one more or less clock, I want the
+jh7110 one to be forced to use the correct configuration.
+
+--z01jU0pczI5X5Okr
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaRTTpwAKCRB4tDGHoIJi
+0n08APwON6v69gaWnOdNIAfYHKE57muDvt77iLW9YOkBpmJ8gQD/SCB3VfMB5jCd
+kGuaHJbvedczk5aTkG39KaIgYoNexAc=
+=8HDy
+-----END PGP SIGNATURE-----
+
+--z01jU0pczI5X5Okr--
