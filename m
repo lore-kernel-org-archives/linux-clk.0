@@ -1,371 +1,274 @@
-Received: from mail.hugovil.com (mail.hugovil.com [162.243.120.170])
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3433218AAB;
-	Wed, 12 Nov 2025 04:59:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.120.170
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762923575; cv=none; b=JR/xSzldHC7FqHv4pbUnX/vljP5N8L7XCY52DpbZV4AEae1YCLj3GHtmvFLJE//oCRSy8ammR0Qi3PC0u4hL0SoZ8Tt7o596FNM9/G/wUqUgNok/jAilhyX3ieK9x9JCCjoI4rnSvCSwWinplqaANWV8/nk/CWOr2JwVpzjTUdg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762923575; c=relaxed/simple;
-	bh=woBES5ijY+LKft+pyqRKCciuCtcJhCohJ2VcL+ROTdo=;
-	h=Date:From:To:Cc:Message-Id:In-Reply-To:References:Mime-Version:
-	 Content-Type:Subject; b=De9kRNa6qvDPosqwqRycN3StKYQbcFddxSiH2ynp42YSkFV/2JwP8+FK8YNipZIUndfvyEHa5Ejcxe9fXXoWVGu/igEEk2731eHXs52qJASL/PF+HNLhqet6Zxxpixrff+dvsebjRvHKJfEKsSEEn9BGaHves6ZNQGFQUZMNJrE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com; spf=pass smtp.mailfrom=hugovil.com; dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b=L4N/mXW1; arc=none smtp.client-ip=162.243.120.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hugovil.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7C4B26A1B6;
+	Wed, 12 Nov 2025 06:35:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762929361; cv=pass; b=COzBMRojsLuD651LcIdBKbcTCaBi1/xlPkKzCCgiGcJMwfvabRcRqfaK/Oye7lmMeFx9K1ZjrlzTsofW/xtzfcANNDeXEwR5JNAtWU1TFYJptM9tLQRiBquhS5AuAHp/4tqoEG4iITY6ATJzmV/8bs3qQqi6DIB8Ewt/mdWSie8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762929361; c=relaxed/simple;
+	bh=xKsQlV845zxz9U5PbOytS7Kz5N2R+e9EeH8xknJAi8o=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=LQNQR7+o+1VvXl1Vdw9iqhlWAWqSYwnlZF06mg+e0pZtEsCLYcP+uO+bVLUMeNfySBCLjQqkFJpdJksUJ54ot+3cS7nS6BRq8lKCxuoNVpCDlWN2kE27wD+WPbNXQoJOJMXWPQd2UeIaWbq7HZMQ1RE0Cp5nbP+RRjp7zHAxRwo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=ch5vWKID; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b="L4N/mXW1"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hugovil.com
-	; s=x; h=Subject:Content-Transfer-Encoding:Mime-Version:Message-Id:Cc:To:From
-	:Date:subject:date:message-id:reply-to;
-	bh=ZwVGQrGH2Pn9miA+mBL4YGZmNELIJz3cPUT2NXe3WmM=; b=L4N/mXW1RaUViMZBpspyCJHgct
-	R8SWZhpOgXV5cM+5tkF8LlrFBP5BeE8H0kvUpIO+yNYgOPO/TG6OZSo2dn6cl3KnMWMLUSaZkFBlc
-	0azgSP+/VVOpq9mJdqHg36BuwHWFt+GgEDIcrozqzrf3qpPmW6VqGqUskssTRx2O7Ky8=;
-Received: from modemcable168.174-80-70.mc.videotron.ca ([70.80.174.168]:33412 helo=pettiford)
-	by mail.hugovil.com with esmtpa (Exim 4.92)
-	(envelope-from <hugo@hugovil.com>)
-	id 1vJ2x2-0000wG-C8; Tue, 11 Nov 2025 23:59:25 -0500
-Date: Tue, 11 Nov 2025 23:59:23 -0500
-From: Hugo Villeneuve <hugo@hugovil.com>
-To: Chris Brandt <chris.brandt@renesas.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Biju Das
- <biju.das.jz@bp.renesas.com>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Hien Huynh <hien.huynh.px@renesas.com>,
- Nghia Vo <nghia.vo.zn@renesas.com>, linux-renesas-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org
-Message-Id: <20251111235923.edc2597d320948f4f4d266e6@hugovil.com>
-In-Reply-To: <20251105222530.979537-2-chris.brandt@renesas.com>
-References: <20251105222530.979537-1-chris.brandt@renesas.com>
-	<20251105222530.979537-2-chris.brandt@renesas.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="ch5vWKID"
+ARC-Seal: i=1; a=rsa-sha256; t=1762929296; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=D/jXUG+Y0X6TSNIG7hfAn9bLNf/bI7jb3LNVZKsZ26HwL+hEtPcNqxqY7aGwEt7M29ZHfm6qaz5YgChQ0LL374wcGc7+FvD/CjvcJYVhHnT3r4v5tNF4rIIJMizZAb8op38KK5ANYKjIZQmI+YzDBxRCJRSyplBOLCtarWlsSlA=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1762929296; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=xKsQlV845zxz9U5PbOytS7Kz5N2R+e9EeH8xknJAi8o=; 
+	b=IU8LYBC5vthshjpc/tL2oJm2FOOWp1mCKLpOIQI9xm2Aol7ErxPQFPS7W3JNxn3K2s7dJwfHWenjPIHviiXv0CVYLczvgXt8ZXz6tXt5tEUvdFQqXOSeRnBGKkQXOpThsKaQFEtOJRN+PAZ5qfr8Rv9ve98H1N6IcG8o1wo+3Lg=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=icenowy.me;
+	spf=pass  smtp.mailfrom=uwu@icenowy.me;
+	dmarc=pass header.from=<uwu@icenowy.me>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1762929296;
+	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
+	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
+	bh=xKsQlV845zxz9U5PbOytS7Kz5N2R+e9EeH8xknJAi8o=;
+	b=ch5vWKIDHc0tBmR3ywllKxhno/8vwT3oI99n+5vADEvBFWNPdoCWL/cRrwwsh0zj
+	OeUOrFTlhDc/ZvvRDPLOtE/49nB3JzWLSr5vozXgfAI+wzzcw9Ks3RBj0VWB4IVbEEy
+	qIyTJl2TJOCekgJh8mkAGr+Iz3+YYVQVMRV9Vz18mGOG6+/91Hczxhf5MtXakZFsXGV
+	DHu7drXyK3pdAATJMPFbqjcN+6kcaeGRDzcI31RyG3UZnOQaTgMJ5P/wDKt7RxLDm3g
+	q+rx4ftJyCGvxqcYIPy5jWSZHSUOp0j818HfO0mFy1cPWR2Mp75D7q8vEyvoiHEG4Wn
+	UM0Zu014WA==
+Received: by mx.zohomail.com with SMTPS id 17629292938968.120405118539338;
+	Tue, 11 Nov 2025 22:34:53 -0800 (PST)
+Message-ID: <0d8e3a626b037dd348378e5ebca8005c1e715871.camel@icenowy.me>
+Subject: Re: [PATCH RFC 01/13] dt-bindings: soc: starfive: Add
+ vout-subsystem IP block
+From: Icenowy Zheng <uwu@icenowy.me>
+To: Conor Dooley <conor@kernel.org>, Michal Wilczynski
+	 <m.wilczynski@samsung.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+  Emil Renner Berthing <kernel@esmil.dk>, Hal Feng
+ <hal.feng@starfivetech.com>, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Xingyu
+ Wu <xingyu.wu@starfivetech.com>, Vinod Koul <vkoul@kernel.org>, Kishon
+ Vijay Abraham I <kishon@kernel.org>, Andrzej Hajda
+ <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+ Robert Foss <rfoss@kernel.org>, Laurent Pinchart
+ <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>, David Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+ Thomas Zimmermann <tzimmermann@suse.de>, Lee Jones <lee@kernel.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>, Paul Walmsley
+ <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
+ <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, Marek Szyprowski
+ <m.szyprowski@samsung.com>, Maud Spierings <maudspierings@gocontroll.com>, 
+ Andy Yan <andyshrk@163.com>, Heiko Stuebner <heiko@sntech.de>,
+ devicetree@vger.kernel.org,  linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org,  linux-phy@lists.infradead.org,
+ dri-devel@lists.freedesktop.org,  linux-riscv@lists.infradead.org
+Date: Wed, 12 Nov 2025 14:34:39 +0800
+In-Reply-To: <20251111-unsaid-rockslide-67b88b2e34bd@spud>
+References: <20251108-jh7110-clean-send-v1-0-06bf43bb76b1@samsung.com>
+	 <CGME20251108010453eucas1p2403ec0dd2c69ae7f3eabe19cf686f345@eucas1p2.samsung.com>
+	 <20251108-jh7110-clean-send-v1-1-06bf43bb76b1@samsung.com>
+	 <20251111-massager-twistable-1e88f03d82f8@spud>
+	 <20251111-unsaid-rockslide-67b88b2e34bd@spud>
+Organization: Anthon Open-Source Community
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+User-Agent: Evolution 3.44.4 
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 70.80.174.168
-X-SA-Exim-Mail-From: hugo@hugovil.com
-X-Spam-Level: 
-X-Spam-Report: 
-	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-	* -1.9 NICE_REPLY_A Looks like a legit reply (A)
-Subject: Re: [PATCH v4 1/2] clk: renesas: rzg2l: Remove DSI clock rate
- restrictions
-X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
-X-SA-Exim-Scanned: Yes (on mail.hugovil.com)
+MIME-Version: 1.0
+X-ZohoMailClient: External
 
-Hi Chris,
+5ZyoIDIwMjUtMTEtMTHmmJ/mnJ/kuoznmoQgMTg6MzYgKzAwMDDvvIxDb25vciBEb29sZXnlhpnp
+gZPvvJoKPiBPbiBUdWUsIE5vdiAxMSwgMjAyNSBhdCAwNjoxODoxNlBNICswMDAwLCBDb25vciBE
+b29sZXkgd3JvdGU6Cj4gPiBPbiBTYXQsIE5vdiAwOCwgMjAyNSBhdCAwMjowNDozNUFNICswMTAw
+LCBNaWNoYWwgV2lsY3p5bnNraSB3cm90ZToKPiA+ID4gQWRkIHRoZSBkdC1iaW5kaW5nIGRvY3Vt
+ZW50YXRpb24gZm9yIHRoZSBTdGFyRml2ZSBKSDcxMTAgVmlkZW8KPiA+ID4gT3V0cHV0Cj4gPiA+
+IChWT1VUKSBzdWJzeXN0ZW0uCj4gPiA+IAo+ID4gPiBUaGlzIG5vZGUgYWN0cyBhcyBhIHBhcmVu
+dCBmb3IgYWxsIGRldmljZXMgd2l0aGluIHRoZSBWT1VUIHBvd2VyCj4gPiA+IGRvbWFpbiwKPiA+
+ID4gaW5jbHVkaW5nIHRoZSBEQzgyMDAgZGlzcGxheSBjb250cm9sbGVyLCB0aGUgVk9VVENSRyBj
+bG9jawo+ID4gPiBnZW5lcmF0b3IsCj4gPiA+IGFuZCB0aGUgSERNSSBNRkQgYmxvY2suIEl0cyBk
+cml2ZXIgaXMgcmVzcG9uc2libGUgZm9yIG1hbmFnaW5nCj4gPiA+IHRoZQo+ID4gPiBzaGFyZWQg
+cG93ZXIgZG9tYWluIGFuZCB0b3AtbGV2ZWwgYnVzIGNsb2NrcyBmb3IgdGhlc2UgY2hpbGRyZW4u
+Cj4gPiA+IAo+ID4gPiBJdCBpcyBhIGJpdCBzaW1pbGFyIHRvIHRoZSBkaXNwbGF5IHN1YnN5c3Rl
+bSBxY29tLHNkbTg0NS1tZHNzIERUCj4gPiA+IG5vZGUuCj4gPiA+IAo+ID4gPiBTaWduZWQtb2Zm
+LWJ5OiBNaWNoYWwgV2lsY3p5bnNraSA8bS53aWxjenluc2tpQHNhbXN1bmcuY29tPgo+ID4gPiAt
+LS0KPiA+ID4gwqAuLi4vc3RhcmZpdmUvc3RhcmZpdmUsamg3MTEwLXZvdXQtc3Vic3lzdGVtLnlh
+bWzCoMKgIHwgMTU2Cj4gPiA+ICsrKysrKysrKysrKysrKysrKysrKwo+ID4gPiDCoE1BSU5UQUlO
+RVJTwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHzCoMKgIDUgKwo+ID4gPiDCoDIgZmlsZXMgY2hhbmdl
+ZCwgMTYxIGluc2VydGlvbnMoKykKPiA+ID4gCj4gPiA+IGRpZmYgLS1naXQKPiA+ID4gYS9Eb2N1
+bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3Mvc29jL3N0YXJmaXZlL3N0YXJmaXZlLGpoNzEx
+MC0KPiA+ID4gdm91dC1zdWJzeXN0ZW0ueWFtbAo+ID4gPiBiL0RvY3VtZW50YXRpb24vZGV2aWNl
+dHJlZS9iaW5kaW5ncy9zb2Mvc3RhcmZpdmUvc3RhcmZpdmUsamg3MTEwLQo+ID4gPiB2b3V0LXN1
+YnN5c3RlbS55YW1sCj4gPiA+IG5ldyBmaWxlIG1vZGUgMTAwNjQ0Cj4gPiA+IGluZGV4Cj4gPiA+
+IDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAuLjRhZDk0MjNlYTEzOWE1
+MzdiNGNmZWEyCj4gPiA+IDZiMGVkNGVkMjYzYWExNGExCj4gPiA+IC0tLSAvZGV2L251bGwKPiA+
+ID4gKysrCj4gPiA+IGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3NvYy9zdGFy
+Zml2ZS9zdGFyZml2ZSxqaDcxMTAtCj4gPiA+IHZvdXQtc3Vic3lzdGVtLnlhbWwKPiA+ID4gQEAg
+LTAsMCArMSwxNTYgQEAKPiA+ID4gKyMgU1BEWC1MaWNlbnNlLUlkZW50aWZpZXI6IChHUEwtMi4w
+LW9ubHkgT1IgQlNELTItQ2xhdXNlKQo+ID4gPiArJVlBTUwgMS4yCj4gPiA+ICstLS0KPiA+ID4g
+KyRpZDoKPiA+ID4gaHR0cDovL2RldmljZXRyZWUub3JnL3NjaGVtYXMvc29jL3N0YXJmaXZlL3N0
+YXJmaXZlLGpoNzExMC12b3V0LXN1YnN5c3RlbS55YW1sIwo+ID4gPiArJHNjaGVtYTogaHR0cDov
+L2RldmljZXRyZWUub3JnL21ldGEtc2NoZW1hcy9jb3JlLnlhbWwjCj4gPiA+ICsKPiA+ID4gK3Rp
+dGxlOiBTdGFyRml2ZSBKSDcxMTAgVk9VVCAoVmlkZW8gT3V0cHV0KSBTdWJzeXN0ZW0KPiA+ID4g
+Kwo+ID4gPiArbWFpbnRhaW5lcnM6Cj4gPiA+ICvCoCAtIE1pY2hhbCBXaWxjenluc2tpIDxtLndp
+bGN6eW5za2lAc2Ftc3VuZy5jb20+Cj4gPiA+ICsKPiA+ID4gK2Rlc2NyaXB0aW9uOgo+ID4gPiAr
+wqAgVGhlIEpINzExMCB2aWRlbyBvdXRwdXQgc3Vic3lzdGVtIGlzIGFuIElQIGJsb2NrIHRoYXQg
+Y29udGFpbnMKPiA+ID4gK8KgIHRoZSBkaXNwbGF5IGNvbnRyb2xsZXIgKERDODIwMCksIEhETUkg
+Y29udHJvbGxlci9QSFksIGFuZCBWT1VUCj4gPiA+ICvCoCBjbG9jayBnZW5lcmF0b3IgKFZPVVRD
+UkcpLgo+ID4gPiArCj4gPiA+ICtwcm9wZXJ0aWVzOgo+ID4gPiArwqAgY29tcGF0aWJsZToKPiA+
+ID4gK8KgwqDCoCBjb25zdDogc3RhcmZpdmUsamg3MTEwLXZvdXQtc3Vic3lzdGVtCj4gPiA+ICsK
+PiA+ID4gK8KgIHJlZzoKPiA+ID4gK8KgwqDCoCBtYXhJdGVtczogMQo+ID4gPiArCj4gPiA+ICvC
+oCBwb3dlci1kb21haW5zOgo+ID4gPiArwqDCoMKgIG1heEl0ZW1zOiAxCj4gPiA+ICsKPiA+ID4g
+K8KgIGNsb2NrczoKPiA+ID4gK8KgwqDCoCBtYXhJdGVtczogMQo+ID4gPiArCj4gPiA+ICvCoCBy
+ZXNldHM6Cj4gPiA+ICvCoMKgwqAgbWF4SXRlbXM6IDEKPiA+ID4gKwo+ID4gPiArwqAgcmFuZ2Vz
+OiB0cnVlCj4gPiA+ICsKPiA+ID4gK8KgICcjYWRkcmVzcy1jZWxscyc6Cj4gPiA+ICvCoMKgwqAg
+Y29uc3Q6IDIKPiA+ID4gKwo+ID4gPiArwqAgJyNzaXplLWNlbGxzJzoKPiA+ID4gK8KgwqDCoCBj
+b25zdDogMgo+ID4gPiArCj4gPiA+ICtwYXR0ZXJuUHJvcGVydGllczoKPiA+ID4gK8KgICJeZGlz
+cGxheUBbMC05YS1mXSskIjoKPiA+IAo+ID4gUGVyc29uYWxseSBJJ2QgbGlrZSB0byBzZWUgdGhl
+c2UgYmVpbmcgcmVndWxhciBwcm9wZXJ0aWVzLCBzaW5jZQo+ID4gdGhlcmUncwo+ID4gZXhhY3Rs
+eSBvbmUgcG9zc2libGUgc2V0dXAgZm9yIHRoaXMuCj4gPiAKPiA+ID4gK8KgwqDCoCB0eXBlOiBv
+YmplY3QKPiA+ID4gK8KgwqDCoCBkZXNjcmlwdGlvbjogVmVyaXNpbGljb24gREM4MjAwIERpc3Bs
+YXkgQ29udHJvbGxlciBub2RlLgo+ID4gCj4gPiBDYW4geW91IGFkZCB0aGUgcmVsZXZhbnQgcmVm
+ZXJlbmNlcyBoZXJlIGluc3RlYWQgb2YgYWxsb3dpbmcgYW55Cj4gPiBvYmplY3Q/Cj4gCj4gSSBk
+b24ndCB0aGluayB0aGF0IGlmIHlvdSBkaWQsIHRoaXMgd291bGQgcGFzcyB0aGUgYmluZGluZyBj
+aGVja3MsCj4gYmVjYXVzZSB0aGVyZSdzIG5vICJ2ZXJpc2lsaWNvbixkYyIgYmluZGluZy4gSSB0
+aGluayBJIHNhdyBvbmUgaW4KPiBwcm9ncmVzcywgYnV0IHdpdGhvdXQgdGhlIHNvYy1zcGVjaWZp
+YyBjb21wYXRpYmxlIHRoYXQgSSBhbSBnb2luZyB0bwo+IHJlcXVpcmUgaGVyZSAtIGlmIGZvciBu
+byByZWFzb24gb3RoZXIgdGhhbiBtYWtpbmcgc3VyZSB0aGF0IHRoZQo+IGNsb2Nrcwo+IGV0YyBh
+cmUgcHJvdmlkZWQgY29ycmVjdGx5IGZvciB0aGlzIGRldmljZS4KCldlbGwgSSBkaWRuJ3Qgc3Bl
+Y2lmeSBhbnkgc29jLXNwZWNpZmljIGNvbXBhdGlibGUgYmVjYXVzZSB0aGF0IElQIGhhcwppdHMg
+b3duIGlkZW50aWZpY2F0aW9uIHJlZ2lzdGVycy4KCj4gCj4gPiAKPiA+IENoZWVycywKPiA+IENv
+bm9yLgo+ID4gCj4gPiA+ICsKPiA+ID4gK8KgICJeaGRtaUBbMC05YS1mXSskIjoKPiA+ID4gK8Kg
+wqDCoCB0eXBlOiBvYmplY3QKPiA+ID4gK8KgwqDCoCBkZXNjcmlwdGlvbjogU3RhckZpdmUgSERN
+SSBNRkQgKFBIWSArIENvbnRyb2xsZXIpIG5vZGUuCj4gPiA+ICsKPiA+ID4gK8KgICJeY2xvY2st
+Y29udHJvbGxlckBbMC05YS1mXSskIjoKPiA+ID4gK8KgwqDCoCB0eXBlOiBvYmplY3QKPiA+ID4g
+K8KgwqDCoCBkZXNjcmlwdGlvbjogU3RhckZpdmUgVk9VVCBDbG9jayBHZW5lcmF0b3IgKFZPVVRD
+UkcpIG5vZGUuCj4gPiA+ICsKPiA+ID4gK8KgICJec3lzY29uQFswLTlhLWZdKyQiOgo+ID4gPiAr
+wqDCoMKgIHR5cGU6IG9iamVjdAo+ID4gPiArwqDCoMKgIGRlc2NyaXB0aW9uOiBTdGFyRml2ZSBW
+T1VUIFN5c2NvbiBub2RlLgo+ID4gPiArCj4gPiA+ICtyZXF1aXJlZDoKPiA+ID4gK8KgIC0gY29t
+cGF0aWJsZQo+ID4gPiArwqAgLSByZWcKPiA+ID4gK8KgIC0gcG93ZXItZG9tYWlucwo+ID4gPiAr
+wqAgLSBjbG9ja3MKPiA+ID4gK8KgIC0gcmVzZXRzCj4gPiA+ICvCoCAtIHJhbmdlcwo+ID4gPiAr
+wqAgLSAnI2FkZHJlc3MtY2VsbHMnCj4gPiA+ICvCoCAtICcjc2l6ZS1jZWxscycKPiA+ID4gKwo+
+ID4gPiArYWRkaXRpb25hbFByb3BlcnRpZXM6IGZhbHNlCj4gPiA+ICsKPiA+ID4gK2V4YW1wbGVz
+Ogo+ID4gPiArwqAgLSB8Cj4gPiA+ICvCoMKgwqAgI2luY2x1ZGUgPGR0LWJpbmRpbmdzL2Nsb2Nr
+L3N0YXJmaXZlLGpoNzExMC1jcmcuaD4KPiA+ID4gK8KgwqDCoCAjaW5jbHVkZSA8ZHQtYmluZGlu
+Z3MvcG93ZXIvc3RhcmZpdmUsamg3MTEwLXBtdS5oPgo+ID4gPiArwqDCoMKgICNpbmNsdWRlIDxk
+dC1iaW5kaW5ncy9yZXNldC9zdGFyZml2ZSxqaDcxMTAtY3JnLmg+Cj4gPiA+ICsKPiA+ID4gK8Kg
+wqDCoCBzb2Mgewo+ID4gPiArwqDCoMKgwqDCoMKgwqAgI2FkZHJlc3MtY2VsbHMgPSA8Mj47Cj4g
+PiA+ICvCoMKgwqDCoMKgwqDCoCAjc2l6ZS1jZWxscyA9IDwyPjsKPiA+ID4gKwo+ID4gPiArwqDC
+oMKgwqDCoMKgwqAgdm91dF9zdWJzeXN0ZW06IGRpc3BsYXktc3Vic3lzdGVtQDI5NDAwMDAwIHsK
+PiA+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqAgY29tcGF0aWJsZSA9ICJzdGFyZml2ZSxqaDcx
+MTAtdm91dC1zdWJzeXN0ZW0iOwo+ID4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCByZWcgPSA8
+MHgwIDB4Mjk0MDAwMDAgMHgwIDB4MjAwMDAwPjsKPiA+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKg
+wqAgI2FkZHJlc3MtY2VsbHMgPSA8Mj47Cj4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgICNz
+aXplLWNlbGxzID0gPDI+Owo+ID4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCByYW5nZXM7Cj4g
+PiA+ICsKPiA+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqAgcG93ZXItZG9tYWlucyA9IDwmcHdy
+YyBKSDcxMTBfUERfVk9VVD47Cj4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGNsb2NrcyA9
+IDwmc3lzY3JnIEpINzExMF9TWVNDTEtfTk9DX0JVU19ESVNQX0FYST47Cj4gPiA+ICvCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgIHJlc2V0cyA9IDwmc3lzY3JnIEpINzExMF9TWVNSU1RfTk9DX0JVU19E
+SVNQX0FYST47Cj4gPiA+ICsKPiA+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqAgZGM4MjAwOiBk
+aXNwbGF5QDI5NDAwMDAwIHsKPiA+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBj
+b21wYXRpYmxlID0gInZlcmlzaWxpY29uLGRjIjsKPiA+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoCByZWcgPSA8MHgwIDB4Mjk0MDAwMDAgMHgwIDB4MjgwMD47Cj4gPiA+ICvCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgaW50ZXJydXB0cyA9IDw5NT47Cj4gPiA+ICvCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgY2xvY2tzID0gPCZ2b3V0Y3JnIEpINzExMF9WT1VU
+Q0xLX0RDODIwMF9DT1JFPiwKPiA+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoCA8JnZvdXRjcmcgSkg3MTEwX1ZPVVRDTEtfREM4MjAwX0FYST4sCj4g
+PiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgPCZ2
+b3V0Y3JnIEpINzExMF9WT1VUQ0xLX0RDODIwMF9BSEI+LAo+ID4gPiArwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIDwmdm91dGNyZyBKSDcxMTBfVk9VVENM
+S19EQzgyMDBfUElYMD4sCj4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqAgPCZ2b3V0Y3JnIEpINzExMF9WT1VUQ0xLX0RDODIwMF9QSVgxPjsKPiA+
+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBjbG9jay1uYW1lcyA9ICJjb3JlIiwg
+ImF4aSIsICJhaGIiLCAicGl4MCIsCj4gPiA+ICJwaXgxIjsKPiA+ID4gK8KgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoCByZXNldHMgPSA8JnZvdXRjcmcgSkg3MTEwX1ZPVVRSU1RfREM4MjAw
+X0FYST4sCj4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqAgPCZ2b3V0Y3JnIEpINzExMF9WT1VUUlNUX0RDODIwMF9BSEI+LAo+ID4gPiArwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIDwmdm91dGNyZyBKSDcx
+MTBfVk9VVFJTVF9EQzgyMDBfQ09SRT47Cj4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqAgcmVzZXQtbmFtZXMgPSAiYXhpIiwgImFoYiIsICJjb3JlIjsKPiA+ID4gK8KgwqDCoMKg
+wqDCoMKgwqDCoMKgwqAgfTsKPiA+ID4gKwo+ID4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBo
+ZG1pX21mZDogaGRtaUAyOTU5MDAwMCB7Cj4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqAgY29tcGF0aWJsZSA9ICJzdGFyZml2ZSxqaDcxMTAtaGRtaS1tZmQiOwo+ID4gPiArwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHJlZyA9IDwweDAgMHgyOTU5MDAwMCAweDAgMHg0
+MDAwPjsKPiA+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBpbnRlcnJ1cHRzID0g
+PDk5PjsKPiA+ID4gKwo+ID4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGhkbWlf
+cGh5OiBwaHkgewo+ID4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAg
+Y29tcGF0aWJsZSA9ICJzdGFyZml2ZSxqaDcxMTAtaW5uby1oZG1pLQo+ID4gPiBwaHkiOwo+ID4g
+PiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgY2xvY2tzID0gPCZ4aW4y
+NG0+Owo+ID4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgY2xvY2st
+bmFtZXMgPSAicmVmb2NsayI7Cj4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoCAjY2xvY2stY2VsbHMgPSA8MD47Cj4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoCBjbG9jay1vdXRwdXQtbmFtZXMgPSAiaGRtaV9wY2xrIjsKPiA+ID4g
+K8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgICNwaHktY2VsbHMgPSA8MD47
+Cj4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfTsKPiA+ID4gKwo+ID4gPiAr
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGhkbWlfY29udHJvbGxlcjogY29udHJvbGxl
+ciB7Cj4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBjb21wYXRp
+YmxlID0gInN0YXJmaXZlLGpoNzExMC1pbm5vLWhkbWktCj4gPiA+IGNvbnRyb2xsZXIiOwo+ID4g
+PiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgaW50ZXJydXB0cyA9IDw5
+OT47Cj4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBjbG9ja3Mg
+PSA8JnZvdXRjcmcKPiA+ID4gSkg3MTEwX1ZPVVRDTEtfSERNSV9UWF9TWVM+LAo+ID4gPiArwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgPCZ2
+b3V0Y3JnCj4gPiA+IEpINzExMF9WT1VUQ0xLX0hETUlfVFhfTUNMSz4sCj4gPiA+ICvCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCA8JnZvdXRj
+cmcKPiA+ID4gSkg3MTEwX1ZPVVRDTEtfSERNSV9UWF9CQ0xLPiwKPiA+ID4gK8KgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIDwmaGRtaV9waHk+
+Owo+ID4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgY2xvY2stbmFt
+ZXMgPSAic3lzIiwgIm1jbGsiLCAiYmNsayIsICJwY2xrIjsKPiA+ID4gK8KgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHJlc2V0cyA9IDwmdm91dGNyZwo+ID4gPiBKSDcxMTBf
+Vk9VVFJTVF9IRE1JX1RYX0hETUk+Owo+ID4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqAgcmVzZXQtbmFtZXMgPSAiaGRtaV90eCI7Cj4gPiA+ICvCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBwaHlzID0gPCZoZG1pX3BoeT47Cj4gPiA+ICvCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBwaHktbmFtZXMgPSAiaGRtaS1waHki
+Owo+ID4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIH07Cj4gPiA+ICvCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgIH07Cj4gPiA+ICsKPiA+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqAg
+dm91dGNyZzogY2xvY2stY29udHJvbGxlckAyOTVjMDAwMCB7Cj4gPiA+ICvCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqAgY29tcGF0aWJsZSA9ICJzdGFyZml2ZSxqaDcxMTAtdm91dGNyZyI7
+Cj4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgcmVnID0gPDB4MCAweDI5NWMw
+MDAwIDB4MCAweDEwMDAwPjsKPiA+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBj
+bG9ja3MgPSA8JnN5c2NyZyBKSDcxMTBfU1lTQ0xLX1ZPVVRfU1JDPiwKPiA+ID4gK8KgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCA8JnN5c2NyZyBKSDcxMTBf
+U1lTQ0xLX1ZPVVRfVE9QX0FIQj4sCj4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqAgPCZzeXNjcmcgSkg3MTEwX1NZU0NMS19WT1VUX1RPUF9BWEk+
+LAo+ID4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+IDwmc3lzY3JnCj4gPiA+IEpINzExMF9TWVNDTEtfVk9VVF9UT1BfSERNSVRYMF9NQ0xLPiwKPiA+
+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCA8JnN5
+c2NyZyBKSDcxMTBfU1lTQ0xLX0kyU1RYMF9CQ0xLPiwKPiA+ID4gK8KgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCA8JmhkbWlfcGh5PjsKPiA+ID4gK8KgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBjbG9jay1uYW1lcyA9ICJ2b3V0X3NyYyIsICJ2b3V0
+X3RvcF9haGIiLAo+ID4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoCAidm91dF90b3BfYXhpIiwKPiA+ID4gInZvdXRfdG9wX2hkbWl0
+eDBfbWNsayIsCj4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgICJpMnN0eDBfYmNsayIsICJoZG1pdHgwX3BpeGVsY2xrIjsKPiA+
+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCByZXNldHMgPSA8JnN5c2NyZyBKSDcx
+MTBfU1lTUlNUX1ZPVVRfVE9QX1NSQz47Cj4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqAgcmVzZXQtbmFtZXMgPSAidm91dF90b3AiOwo+ID4gPiArwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgICNjbG9jay1jZWxscyA9IDwxPjsKPiA+ID4gK8KgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoCAjcmVzZXQtY2VsbHMgPSA8MT47Cj4gPiA+ICvCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgIH07Cj4gPiA+ICvCoMKgwqDCoMKgwqDCoCB9Owo+ID4gPiArwqDCoMKgIH07Cj4gPiA+
+ICsKPiA+ID4gKy4uLgo+ID4gPiBkaWZmIC0tZ2l0IGEvTUFJTlRBSU5FUlMgYi9NQUlOVEFJTkVS
+Uwo+ID4gPiBpbmRleAo+ID4gPiAzNDhjYWFhYTkyOWE1MTliYzBlYzVjMGM3YjU4NzQ2OGVmNzUz
+MmQ1Li45OTQzNGU1NGRjMzk0OTQxNTM2NzdhNgo+ID4gPiBjYTM1OWQ3MGYyYmEyZGRiMyAxMDA2
+NDQKPiA+ID4gLS0tIGEvTUFJTlRBSU5FUlMKPiA+ID4gKysrIGIvTUFJTlRBSU5FUlMKPiA+ID4g
+QEAgLTI0MDQ0LDYgKzI0MDQ0LDExIEBAIFM6wqDCoMKgwqDCoE1haW50YWluZWQKPiA+ID4gwqBG
+OsKgwqDCoMKgwqBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbmV0L3N0YXJmaXZl
+LGpoNzExMC0KPiA+ID4gZHdtYWMueWFtbAo+ID4gPiDCoEY6wqDCoMKgwqDCoGRyaXZlcnMvbmV0
+L2V0aGVybmV0L3N0bWljcm8vc3RtbWFjL2R3bWFjLXN0YXJmaXZlLmMKPiA+ID4gwqAKPiA+ID4g
+K1NUQVJGSVZFIEpINzExMCBESVNQTEFZIFNVQlNZU1RFTQo+ID4gPiArTTrCoMKgwqDCoMKgTWlj
+aGFsIFdpbGN6eW5za2kgPG0ud2lsY3p5bnNraUBzYW1zdW5nLmNvbT4KPiA+ID4gK1M6wqDCoMKg
+wqDCoE1haW50YWluZWQKPiA+ID4gK0Y6wqDCoMKgwqDCoERvY3VtZW50YXRpb24vZGV2aWNldHJl
+ZS9iaW5kaW5ncy9zb2Mvc3RhcmZpdmUvc3RhcmZpdmUsago+ID4gPiBoNzExMC12b3V0LXN1YnN5
+c3RlbS55YW1sCj4gPiA+ICsKPiA+ID4gwqBTVEFSRklWRSBKSDcxMTAgRFBIWSBSWCBEUklWRVIK
+PiA+ID4gwqBNOsKgwqDCoMKgwqBKYWNrIFpodSA8amFjay56aHVAc3RhcmZpdmV0ZWNoLmNvbT4K
+PiA+ID4gwqBNOsKgwqDCoMKgwqBDaGFuZ2h1YW5nIExpYW5nIDxjaGFuZ2h1YW5nLmxpYW5nQHN0
+YXJmaXZldGVjaC5jb20+Cj4gPiA+IAo+ID4gPiAtLSAKPiA+ID4gMi4zNC4xCj4gPiA+IAo+IAo+
+IAoK
 
-On Wed,  5 Nov 2025 17:25:29 -0500
-Chris Brandt <chris.brandt@renesas.com> wrote:
-
-> Convert the limited MIPI clock calculations to a full range of settings
-> based on math including H/W limitation validation.
-> Since the required DSI division setting must be specified from external
-> sources before calculations, expose a new API to set it.
-> 
-> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-> Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
-> Tested-by: Biju Das <biju.das.jz@bp.renesas.com>
-> 
-> ---
-> v1->v2:
-> - Remove unnecessary parentheses
-> - Add target argument to new API
-> - DPI mode has more restrictions on DIV_A and DIV_B
-> 
-> v2->v3:
-> - Removed Empty lines (Hugo)
-> - Add dummy for compile-testing CONFIG_CLK_RZG2L=n case (Geert)
-> - Renamed label found_dsi_div to calc_pll_clk (Hugo)
-> - Renamed label found_clk to clk_valid (Hugo)
-> - Removed 'found' var because not needed
-> - Move 'foutpostdiv_rate =' after if(foutvco_rate > 1500000000) (Hugo)
-> - Move PLL5_TARGET_* for new API to renesas.h (Hugo,Geert)
-> - Convert #define macros PLL5_TARGET_* to enum (Geert)
-> - static {unsigned} int dsi_div_ab; (Geert)
-> - {unsigned} int a, b;  (Geert)
-> - Change "((1 << a) * (b + 1))" to "(b + 1) << a"  (Geert)
-> - Change "foutvco_rate = rate * (1 << xxx ) * ..." to " = rate * ... * << xxx (Geert)
-> - Move (u64) outside of modulo operation to avoid helper on 32-bit compiles (Geert)
-> - Change DIV_ROUND_CLOSEST_ULL() to DIV_ROUND_CLOSEST() (Geert)
-> - void rzg2l_cpg_dsi_div_set_divider({unsinged} int divider, int target)
-> - Change "dsi_div_ab = (1 << AAA) * (BBB + 1)" to " = (BBB + 1) << AAA (Geert)
-> - Added Reviewed-by and Tested-by (Biju)
-> 
-> v3->v4:
-> - Changed <,> to <=,>=  (Hugo)
-> - Removed duplicate code bock (copy/paste mistake) (Hugo)
-> - Fix dummy for rzg2l_cpg_dsi_div_set_divider when CONFIG_CLK_RZG2L=n (Geert)
-> - Remove comment "Below conditions must be set.." (Hugo)
-> - Remove +1,-1 from pl5_intin comparison math (kernel test robot)
-> - Remove default register settings (PLL5_xxx_DEF) because makes no sense
-> - If any calcualtion error, print a message and return a rate of 0
-> - Rename global var "dsi_div_ab" to "dsi_div_ab_desired"
-> - Check the range of hsclk
-> - The correct clock parent is determined by if the divider is even/odd
-> - Add in all the restrictions from DIV A,B from the hardware manual
-> - No more need to be a recursive function
-> - DPI settings must have DSI_DIV_B be '0' (divide 1/1)
-> ---
->  drivers/clk/renesas/rzg2l-cpg.c | 147 +++++++++++++++++++++++++++++---
->  include/linux/clk/renesas.h     |  12 +++
->  2 files changed, 146 insertions(+), 13 deletions(-)
-> 
-> diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
-> index 07909e80bae2..1a552ea1c535 100644
-> --- a/drivers/clk/renesas/rzg2l-cpg.c
-> +++ b/drivers/clk/renesas/rzg2l-cpg.c
-> @@ -74,6 +74,17 @@
->  #define MSTOP_OFF(conf)		FIELD_GET(GENMASK(31, 16), (conf))
->  #define MSTOP_MASK(conf)	FIELD_GET(GENMASK(15, 0), (conf))
->  
-> +#define PLL5_FOUTVCO_MIN	800000000
-> +#define PLL5_FOUTVCO_MAX	3000000000
-> +#define PLL5_POSTDIV_MIN	1
-> +#define PLL5_POSTDIV_MAX	7
-> +#define PLL5_REFDIV_MIN		1
-> +#define PLL5_REFDIV_MAX		2
-> +#define PLL5_INTIN_MIN		20
-> +#define PLL5_INTIN_MAX		320
-> +#define PLL5_HSCLK_MIN		10000000
-> +#define PLL5_HSCLK_MAX		187500000
-> +
->  /**
->   * struct clk_hw_data - clock hardware data
->   * @hw: clock hw
-> @@ -129,6 +140,12 @@ struct rzg2l_pll5_param {
->  	u8 pl5_spread;
->  };
->  
-> +/* PLL5 output will be used for DPI or MIPI-DSI */
-> +static int dsi_div_target = PLL5_TARGET_DPI;
-> +
-> +/* Required division ratio for MIPI D-PHY clock depending on number of lanes and bpp. */
-> +static unsigned int dsi_div_ab_desired;
-> +
->  struct rzg2l_pll5_mux_dsi_div_param {
->  	u8 clksrc;
->  	u8 dsi_div_a;
-> @@ -557,23 +574,118 @@ rzg2l_cpg_sd_mux_clk_register(const struct cpg_core_clk *core,
->  }
->  
->  static unsigned long
-> -rzg2l_cpg_get_foutpostdiv_rate(struct rzg2l_pll5_param *params,
-> +rzg2l_cpg_get_foutpostdiv_rate(struct rzg2l_cpg_priv *priv,
-> +			       struct rzg2l_pll5_param *params,
->  			       unsigned long rate)
->  {
->  	unsigned long foutpostdiv_rate, foutvco_rate;
-> +	unsigned long hsclk;
-> +	unsigned int a, b, odd;
-> +	unsigned int dsi_div_ab_calc;
-> +
-> +	if (dsi_div_target == PLL5_TARGET_DSI) {
-> +		/*
-> +		 * VCO-->[POSTDIV1,2]--FOUTPOSTDIV-->|   |-->[1/(DSI DIV A * B)]--> MIPI_DSI_VCLK
-> +		 *            |                      |-->|
-> +		 *            |-->[1/2]---FOUT1PH0-->|   |-->[1/16]---------------> hsclk (MIPI-PHY)
-> +		 */
-> +
-> +		/* Check hsclk */
-> +		hsclk = rate * dsi_div_ab_desired / 16;
-> +		if (hsclk < PLL5_HSCLK_MIN || hsclk > PLL5_HSCLK_MAX) {
-> +			dev_err(priv->dev, "hsclk out of range\n");
-> +			return 0;
-> +		}
-> +
-> +		/* Determine the correct clock source based on even/odd of the divider */
-> +		odd = dsi_div_ab_desired & 1;
-> +		if (odd) {
-> +			/* divider is odd */
-> +			priv->mux_dsi_div_params.clksrc = 0;	/* FOUTPOSTDIV */
-> +			dsi_div_ab_calc = dsi_div_ab_desired;
-> +		} else {
-> +			/* divider is even */
-> +			priv->mux_dsi_div_params.clksrc = 1;	/*  FOUT1PH0 */
-> +			dsi_div_ab_calc = dsi_div_ab_desired / 2;
-> +		}
-> +
-> +		/* Calculate the DIV_DSI_A and DIV_DSI_B based on the desired divider */
-> +		for (a = 0; a < 4; a++) {
-> +			/* FOUT1PH0: Max output of DIV_DSI_A is 750MHz so at least 1/2 to be safe */
-> +			if (!odd && a == 0)
-> +				continue;
-> +
-> +			/* FOUTPOSTDIV: DIV_DSI_A must always be 1/1 */
-> +			if (odd && a != 0)
-> +				continue;
-> +
-> +			for (b = 0; b < 16; b++) {
-> +				/* FOUTPOSTDIV: DIV_DSI_B must always be odd divider 1/(b+1) */
-> +				if (odd && b & 1)
-> +					continue;
-> +
-> +				if ((b + 1) << a == dsi_div_ab_calc) {
-> +					priv->mux_dsi_div_params.dsi_div_a = a;
-> +					priv->mux_dsi_div_params.dsi_div_b = b;
-> +					goto calc_pll_clk;
-> +				}
-> +			}
-> +		}
->  
-> -	params->pl5_intin = rate / MEGA;
-> -	params->pl5_fracin = div_u64(((u64)rate % MEGA) << 24, MEGA);
-> -	params->pl5_refdiv = 2;
-> -	params->pl5_postdiv1 = 1;
-> -	params->pl5_postdiv2 = 1;
-> +		dev_err(priv->dev, "Failed to calculate DIV_DSI_A,B\n");
-> +		return 0;
-> +	}
-> +
-> +	if (dsi_div_target == PLL5_TARGET_DPI) {
-> +		/* Fixed settings for DPI */
-> +		priv->mux_dsi_div_params.clksrc = 0;
-> +		priv->mux_dsi_div_params.dsi_div_a = 3; /* Divided by 8 */
-> +		priv->mux_dsi_div_params.dsi_div_b = 0; /* Divided by 1 */
-> +		dsi_div_ab_desired = 8;			/* (1 << a) * (b + 1) */
-> +	}
-> +
-> +calc_pll_clk:
-> +	/* PLL5 (MIPI_DSI_PLLCLK) = VCO / POSTDIV1 / POSTDIV2 */
-> +	for (params->pl5_postdiv1 = PLL5_POSTDIV_MIN;
-> +	     params->pl5_postdiv1 <= PLL5_POSTDIV_MAX;
-> +	     params->pl5_postdiv1++) {
-> +		for (params->pl5_postdiv2 = PLL5_POSTDIV_MIN;
-> +		     params->pl5_postdiv2 <= PLL5_POSTDIV_MAX;
-> +		     params->pl5_postdiv2++) {
-> +			foutvco_rate = rate * params->pl5_postdiv1 * params->pl5_postdiv2 *
-> +				       dsi_div_ab_desired;
-> +			if (foutvco_rate <= PLL5_FOUTVCO_MIN || foutvco_rate >= PLL5_FOUTVCO_MAX)
-> +				continue;
-> +
-> +			for (params->pl5_refdiv = PLL5_REFDIV_MIN;
-> +			     params->pl5_refdiv <= PLL5_REFDIV_MAX;
-> +			     params->pl5_refdiv++) {
-> +				params->pl5_intin = (foutvco_rate * params->pl5_refdiv) /
-> +						    (EXTAL_FREQ_IN_MEGA_HZ * MEGA);
-> +				if (params->pl5_intin < PLL5_INTIN_MIN ||
-> +				    params->pl5_intin > PLL5_INTIN_MAX)
-> +					continue;
-> +				params->pl5_fracin = div_u64(((u64)
-> +						     (foutvco_rate * params->pl5_refdiv) %
-> +						     (EXTAL_FREQ_IN_MEGA_HZ * MEGA)) << 24,
-> +						     EXTAL_FREQ_IN_MEGA_HZ * MEGA);
-> +				goto clk_valid;
-> +			}
-> +		}
-> +	}
-> +
-> +	dev_err(priv->dev, "Failed to calculate PLL5 settings\n");
-> +	return 0;
-> +
-> +clk_valid:
->  	params->pl5_spread = 0x16;
->  
->  	foutvco_rate = div_u64(mul_u32_u32(EXTAL_FREQ_IN_MEGA_HZ * MEGA,
->  					   (params->pl5_intin << 24) + params->pl5_fracin),
->  			       params->pl5_refdiv) >> 24;
-> -	foutpostdiv_rate = DIV_ROUND_CLOSEST_ULL(foutvco_rate,
-> -						 params->pl5_postdiv1 * params->pl5_postdiv2);
-> +
-> +	foutpostdiv_rate = DIV_ROUND_CLOSEST(foutvco_rate,
-> +					     params->pl5_postdiv1 * params->pl5_postdiv2);
-
-By the way, the change from DIV_ROUND_CLOSEST_ULL to DIV_ROUND_CLOSEST
-suggested by Geert is not related to this patch, and need to go into
-a separate patch with a proper description why.
-
-  
->  	return foutpostdiv_rate;
->  }
-> @@ -607,7 +719,7 @@ static unsigned long rzg2l_cpg_get_vclk_parent_rate(struct clk_hw *hw,
->  	struct rzg2l_pll5_param params;
->  	unsigned long parent_rate;
->  
-> -	parent_rate = rzg2l_cpg_get_foutpostdiv_rate(&params, rate);
-> +	parent_rate = rzg2l_cpg_get_foutpostdiv_rate(priv, &params, rate);
->  
->  	if (priv->mux_dsi_div_params.clksrc)
->  		parent_rate /= 2;
-> @@ -626,6 +738,13 @@ static int rzg2l_cpg_dsi_div_determine_rate(struct clk_hw *hw,
->  	return 0;
->  }
->  
-> +void rzg2l_cpg_dsi_div_set_divider(unsigned int divider, int target)
-> +{
-> +	dsi_div_ab_desired = divider;
-> +	dsi_div_target = target;
-> +}
-> +EXPORT_SYMBOL_GPL(rzg2l_cpg_dsi_div_set_divider);
-> +
->  static int rzg2l_cpg_dsi_div_set_rate(struct clk_hw *hw,
->  				      unsigned long rate,
->  				      unsigned long parent_rate)
-> @@ -858,7 +977,7 @@ static int rzg2l_cpg_sipll5_set_rate(struct clk_hw *hw,
->  
->  	vclk_rate = rzg2l_cpg_get_vclk_rate(hw, rate);
->  	sipll5->foutpostdiv_rate =
-> -		rzg2l_cpg_get_foutpostdiv_rate(&params, vclk_rate);
-> +		rzg2l_cpg_get_foutpostdiv_rate(priv, &params, vclk_rate);
->  
->  	/* Put PLL5 into standby mode */
->  	writel(CPG_SIPLL5_STBY_RESETB_WEN, priv->base + CPG_SIPLL5_STBY);
-> @@ -945,9 +1064,11 @@ rzg2l_cpg_sipll5_register(const struct cpg_core_clk *core,
->  	if (ret)
->  		return ERR_PTR(ret);
->  
-> -	priv->mux_dsi_div_params.clksrc = 1; /* Use clk src 1 for DSI */
-> -	priv->mux_dsi_div_params.dsi_div_a = 1; /* Divided by 2 */
-> -	priv->mux_dsi_div_params.dsi_div_b = 2; /* Divided by 3 */
-> +	/* Default settings for DPI */
-> +	priv->mux_dsi_div_params.clksrc = 0;
-> +	priv->mux_dsi_div_params.dsi_div_a = 3; /* Divided by 8 */
-> +	priv->mux_dsi_div_params.dsi_div_b = 0; /* Divided by 1 */
-> +	dsi_div_ab_desired = 8;			/* (1 << a) * (b + 1) */
->  
->  	return clk_hw->clk;
->  }
-> diff --git a/include/linux/clk/renesas.h b/include/linux/clk/renesas.h
-> index 0ebbe2f0b45e..dc8ae83460f4 100644
-> --- a/include/linux/clk/renesas.h
-> +++ b/include/linux/clk/renesas.h
-> @@ -16,6 +16,11 @@ struct device;
->  struct device_node;
->  struct generic_pm_domain;
->  
-> +enum {
-> +	PLL5_TARGET_DPI,
-> +	PLL5_TARGET_DSI
-> +};
-> +
->  void cpg_mstp_add_clk_domain(struct device_node *np);
->  #ifdef CONFIG_CLK_RENESAS_CPG_MSTP
->  int cpg_mstp_attach_dev(struct generic_pm_domain *unused, struct device *dev);
-> @@ -32,4 +37,11 @@ void cpg_mssr_detach_dev(struct generic_pm_domain *unused, struct device *dev);
->  #define cpg_mssr_attach_dev	NULL
->  #define cpg_mssr_detach_dev	NULL
->  #endif
-> +
-> +#ifdef CONFIG_CLK_RZG2L
-> +void rzg2l_cpg_dsi_div_set_divider(unsigned int divider, int target);
-> +#else
-> +static inline void rzg2l_cpg_dsi_div_set_divider(int divider, int target) { }
-> +#endif
-> +
->  #endif
-> -- 
-> 2.50.1
-> 
-> 
-
-
--- 
-Hugo Villeneuve
