@@ -1,208 +1,167 @@
-Received: from OS0P286CU010.outbound.protection.outlook.com (mail-japanwestazon11011018.outbound.protection.outlook.com [40.107.74.18])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1F3028031D;
-	Wed, 12 Nov 2025 19:06:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.74.18
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762974403; cv=fail; b=NRhyh5Irvel8abiHPtuP8ddRhniCq9tRyNxHoAc+/ISXgPj5JGnReqsRlUeoyXchNjm+0vb2ySfn2NbtXFElpVGymnLue9ehEbA1WDG9W7tRp3QzWmK67BtLSDY5TAWXi6MLRERmIZy70Z3FFgfKpoR7nn7wvkFemQDPKEfQQhc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762974403; c=relaxed/simple;
-	bh=EAcQTaqsa+H3RNW4ZXPhaqvHcBi3cyCt5XSzD3OrNpo=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=DVhIdVuMiNmiDLD7OdmLIefZG4HS0nUpeEDo8R2hIa0HbDB/9t/f8QaZ5UcEL2A/M42mwg5zLLtA2c1eHcs0eIK/DPLmx22hfdVZvSfheRx4Rx0vHGl9EfPlxEKLe6fvLNS5CmBI76OT3GG/6su36yo4iK/aTTQM29OSsOgx7Uk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b=PAsOc0g/; arc=fail smtp.client-ip=40.107.74.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB5F134DB68
+	for <linux-clk@vger.kernel.org>; Wed, 12 Nov 2025 19:29:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762975763; cv=none; b=mZMEcTqG1hELWw24hlRYhY304khyJD1ifhLm6mcStp3Zi3NsDoBgqg3Gng8lPuK677pBKvlpTBb6ZipDbqk08g3L9cJpE0vGTDCjAEN3neOksYEVu4Hom1s/HZ4+BbML2Zgs0EMAjhAgw0Qnz2XZb4tZNeJOQZ7kij7hOlnAUfg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762975763; c=relaxed/simple;
+	bh=cBs5VsCM5bkQCwAVcWEWV1HKeCFrZdeAh6gx6vjF0Ps=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KHwg2yEqL//3yhZQ++AW0ajJauP/lVGFB8J1ShSY7D9VFoIVU5p/SMfFUr/iUBPBIL3sXMtQ7zJG+9MWn2wJxImeOlbJH9IxMFL21AqWp1gHmxqUhWMQw4uH9GvU/jWwAo/dTm4QYnE2kp3DPnpRX48Tiwttsa/fT3NvDrFQ0cg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K352Iz8A; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="PAsOc0g/"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ln5vrA/iTL6Ppa176vbmu834OBw26YfEuOPqVZqZDh/SxjGWMkDv7372y9YEyRJSb8zrUfHKjZPrvBnufIjksE+qzjpZLq+pHe2BQaIKa+f6cN535sPWUoOiqEzS/2yKvwAYRzrRbznt4DCHqGi40WA0C+Q6SJnHyiBOQLFFz5WCZdXYhOa1srrZQv6k//mdhq29rxuEGDbQo/2NG4gZxa+bF3MzJn/XfkkyIoyO/5e0c6I5dNyqP6D6qTBQYXPFzE3T8DkMbtMoUkwNKkb0cGD52Ds29SrN+KKtJuNoY499LmK0bejRl6/RifV96U36Zi32qrBSj1X1oI/5c2+tvA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=EAcQTaqsa+H3RNW4ZXPhaqvHcBi3cyCt5XSzD3OrNpo=;
- b=BjHA0Dg6oWbMG40mLYb86xnmx1EF84cJ53AHRsjyJF6QUU9rg6vbbGqOQ751A1IDnrde88iSDR7ZAEdKZwhHFtAKR7v3UKkthzjVkhGui1SnVx+f3Hxxnh1oSTSuaWBiv7joeFgnsS2nBAWBqkc/VblxKz328r9ZpgNKarQMN4KJaCQIV9kORavEyIoXOS2Z9cBJ5ELKIkABR3+7Or6vyyWhNowVWludXCLn9zWuGTvAOOe/b5Qr2m2QWliMTKWjRVDU1uRcL2aifINwMU442tR1mI+XcKZqK7MB9/WsbcLvCfsag3fNHMSKCZXmYfcOxOtRWQgBw+DRzwlHb7MJnQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
- dkim=pass header.d=renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=EAcQTaqsa+H3RNW4ZXPhaqvHcBi3cyCt5XSzD3OrNpo=;
- b=PAsOc0g/vaNfQtkHNNRvu7ARehmMogYeoS8c/JKwEQs6djEwuGgGJHjxS1gHHU7UPC+OY0mHMoIeNsouKudj1K3wlZ0twE91dFU5H+ab1GhoEu5KHsWADaiAdxF94eioTOq8/SUIE0ovLbKHBGwCHJSelWZWhS3X1fjcUcrH7S4=
-Received: from OS3PR01MB8319.jpnprd01.prod.outlook.com (2603:1096:604:1a2::11)
- by TYCPR01MB8659.jpnprd01.prod.outlook.com (2603:1096:400:15b::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.15; Wed, 12 Nov
- 2025 19:06:36 +0000
-Received: from OS3PR01MB8319.jpnprd01.prod.outlook.com
- ([fe80::6473:1660:bdc2:c983]) by OS3PR01MB8319.jpnprd01.prod.outlook.com
- ([fe80::6473:1660:bdc2:c983%6]) with mapi id 15.20.9320.013; Wed, 12 Nov 2025
- 19:06:35 +0000
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Hugo Villeneuve <hugo@hugovil.com>
-CC: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Biju Das
-	<biju.das.jz@bp.renesas.com>, Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>, Hien Huynh <hien.huynh.px@renesas.com>,
-	Nghia Vo <nghia.vo.zn@renesas.com>, "linux-renesas-soc@vger.kernel.org"
-	<linux-renesas-soc@vger.kernel.org>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, "dri-devel@lists.freedesktop.org"
-	<dri-devel@lists.freedesktop.org>
-Subject: RE: [PATCH v4 0/2] Remove hard coded values for MIPI-DSI
-Thread-Topic: [PATCH v4 0/2] Remove hard coded values for MIPI-DSI
-Thread-Index:
- AQHcTqMq7HmTg5AWsEKO+ner0HLbLrTtvHUAgAAMAXCAAAqeAIAAFFSggAB9PoCAALfM0A==
-Date: Wed, 12 Nov 2025 19:06:35 +0000
-Message-ID:
- <OS3PR01MB8319A5873CD10A7D86F0094E8ACCA@OS3PR01MB8319.jpnprd01.prod.outlook.com>
-References: <20251105222530.979537-1-chris.brandt@renesas.com>
-	<20251111120148.943a0e193a65469a53a0cbc8@hugovil.com>
-	<OS3PR01MB8319C8A2BD72FC7787ACFEFA8ACFA@OS3PR01MB8319.jpnprd01.prod.outlook.com>
-	<20251111132246.eef0faf1177691a07a1df47e@hugovil.com>
-	<TYCPR01MB83273CEE6D5B665179456A2A8ACFA@TYCPR01MB8327.jpnprd01.prod.outlook.com>
- <20251111220347.167dba316bea7effb6e0f849@hugovil.com>
-In-Reply-To: <20251111220347.167dba316bea7effb6e0f849@hugovil.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: OS3PR01MB8319:EE_|TYCPR01MB8659:EE_
-x-ms-office365-filtering-correlation-id: c5a3d24e-7b20-4039-bbb1-08de221e99c7
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|366016|376014|7416014|38070700021;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?5WiopnG5wIDzGVvBQKtOpEZEkjAqTKRwhEBnD9IobqzUjhX+Nl2V+zs+u6Dh?=
- =?us-ascii?Q?rH33Vco5Ll2lsusBzqg1tVWa0dmolk3MQ6fpnIptMC8FevMbXAl4xGMKT3+B?=
- =?us-ascii?Q?OFm0FRYML3V9OCuo723nupT5s76CjQKDyjx9IMGAR+0+dOKjzo1Y5zuJbVmi?=
- =?us-ascii?Q?StUHRZKy7d+vh1TGB8IQwyn11yvgX9TXmRoPzRuT7CsiF/CdUw1kRa7zffkd?=
- =?us-ascii?Q?N5Vhgk8QPX2ZoMGwOdptNPO/F8UkYOmPA9UrZDnu/NO7Cl7rYO8mT1kUDCPq?=
- =?us-ascii?Q?mGMgf3slmkwGO4WkQodXLwvgghYBZYeHUk8mSY0l2GKmc5qQFUe0rfgSQzaf?=
- =?us-ascii?Q?S6WvzswndOifY9w+zieWJBMf21bPBTQZMK/QSLbFGvUpWtho2EBT2xoUHANG?=
- =?us-ascii?Q?i/g7YFxbIklfeV6BiAkRLnQ2W8K/fVZq0thcqfYqSFMQPAYQMhoNuPb5Wkby?=
- =?us-ascii?Q?e3L4MLj/+1pbS/llFEEuttQiuLLQWW422NbVAZbKQ5FccWzm6bsiwhMf42nC?=
- =?us-ascii?Q?MKyE9auVDtc+qmwACKKTQN2N95g/MCbFKB6bX18hXz5vV3iSkf5rFS0GDmVR?=
- =?us-ascii?Q?eLsXRyUsINoptl071lIJGzPEv7xaqcLbgwKvSoLMG4B6+yLTGPk62KGzbkLi?=
- =?us-ascii?Q?zN62J8nwK24PnsDl0V533iHLxv4M+UQOQ3icjUBeauoyXTEmP0KLyu3KRwLq?=
- =?us-ascii?Q?YNpb7Ze0vVU5oY44yrUrUVwpzVqkBrZ7KFru5WI4uIo3tykaJ5tMt7KmjSTr?=
- =?us-ascii?Q?FhVSgWToGt6hHD3dExu1cEMaA5Yw7SSTEt3PYjCDko0y5Q2mC8g4wmosuv/b?=
- =?us-ascii?Q?D1iAGR9MlZpQkZF8Rs34Hzoh/PxXMFKVQegdeoV8SNLCXWXwSy+Dc4w1EVJG?=
- =?us-ascii?Q?E5uDpDrwiztVyQrg1Tw++nRAr55jagKPmVjIHuxrUzrqDjqlJCQ3CNCdnoxt?=
- =?us-ascii?Q?JKxO3b3Gfrt4YI0co7GB6k7JB31X7kk/13BSk+CvD3CMqXJIUHEX06lkkg++?=
- =?us-ascii?Q?4VnHERqZfieGHrcPd3rr7qtgichC+2aRc/w0y9z2jqx5yBhS+lEaVpXfH+dh?=
- =?us-ascii?Q?WUXDx+WZrL2EVH4HhGbJ4SFBrT5wc+Ef+3BLOyjUiVAVzeY6j8jPeHG3sJNQ?=
- =?us-ascii?Q?5nMQ9OzURGOWDecRLymldYm1HT5eM1IfdTq1odNWboVpmVG97vWIpSK3lXVa?=
- =?us-ascii?Q?KsbEHmix+p0EvtjQg2WJ3XkebJswM2oKUPqSyLCZhKvx/kOqR9IDXyLeqpvE?=
- =?us-ascii?Q?f9vdTT1U0BBB3P3aAD4XM6D4+M0/J80tUQbl6odMgeEZcdmMWvhQ0lK5SDqj?=
- =?us-ascii?Q?gV6JP32UJiTWzIWNzdM7jKBCP6UKsGwu/6Ypm25cfLpQuk2a1AWaoXuu9RN4?=
- =?us-ascii?Q?sj4Q4jNuMd2TWtDZszNp7HELpGizT4ObtbIvZuGa6PWTbRJ35eDRVyBGb4sm?=
- =?us-ascii?Q?Yfh8eQIUjai+HwfP9MEs3n5d0UJiwt9jYs5x7aSORFFnPxb3IArToUPunjnG?=
- =?us-ascii?Q?p5O24W3JtFu/65+BuxCRd3+Y4RY5k9krqejD?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS3PR01MB8319.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?QflKJn/fPRZF0+Ll+ND9oIpMF5m7tZRzG1JrpTr6RHg/ajqY7+JiMmOdaSL2?=
- =?us-ascii?Q?sIQ31xHiAd5ZSgsgNH7wgZNDcNP8oO7SYbSueE3Hpx7vY3/ZJpJJrmsauuj2?=
- =?us-ascii?Q?AknzdCpjEaeLv4sWWRK4D+WscOmogH7RmkE2ie52jJws9JYBgTbSSwwxKsJF?=
- =?us-ascii?Q?vTIIMUd4JiO5gzRWgQ2SWpg7jJ2R+CbQnqJINtVNW1Hgn06vSlPPHtkrxggo?=
- =?us-ascii?Q?9k78FokV16lQzIT2WijxxkKG5c1HO/Q2S3F+pWaCe0zxv/Gen0+5+kzEEUbn?=
- =?us-ascii?Q?qdpzIM83yQnPI4rySoz5wpQwO0CY5z56NdzaKFvGaGGhKbJ5RV15UEAeaYGu?=
- =?us-ascii?Q?PvE0K3I6/3ouy+bT3YGy9ul3ZVID2estbbhS7iMIq/Tt9g3oGIzo0NE2ZtVt?=
- =?us-ascii?Q?/xnvuRPlTjakrCRmkWPNC4LA01IdkeFdtxb5dNfNy87S49NNm3ryLyKdlllW?=
- =?us-ascii?Q?NmK6rtgC43FmQoClYcHaLued444WUu7d9twXee32I7sy+vSUTaWnYg8+Iek1?=
- =?us-ascii?Q?dl6vcyBwwVSJy1gmYyVsx342XFB7Ju50l4TfLbgroBO0mucvMzQ8hqWE94vK?=
- =?us-ascii?Q?YpQGShf3xeNvhNRbENifZ0Vwbt8JSTQ71oqzqzkl+yDz27HFnJyXBty2+EWS?=
- =?us-ascii?Q?RScQHIZ8nfyZm/nLJapY0zk7prPJJNiiXYNckqjeMKMhowiKg2D2L1L18B9U?=
- =?us-ascii?Q?6a+mZiiAGcQc2xe1SaReP7Uwn7iHGVVVU6U7Q6WHJM+37/XESrCgmZPS55k3?=
- =?us-ascii?Q?EA02PQ8WZ5QflS3+K3t2bLmgSfpyvHVNIBri919VrXNK/d8mCcritQ1llkbJ?=
- =?us-ascii?Q?4AbJLS9vGsSFn8fuOVoKpqVKITHGc48rEOlED0mAIyEGNlQmVXtR38LOr6FA?=
- =?us-ascii?Q?nA/BbMODjC5phy1knJpGSRErEMarpf0CMfkzvV6IIj9Hpv013Xf0+4/utAao?=
- =?us-ascii?Q?WGIPL9cd+XV8hVC0BTjuZNKf9ixCftkmNVywzxT8R8qXe5/uKkkkhyCAPaFk?=
- =?us-ascii?Q?I/zXuDt3kl7knTWH7rjgkKMq9rmew6oHmDcblJoJUp8J404dSE2E7aMfD6Wi?=
- =?us-ascii?Q?X3A82K0JpfPPo9mUMNbSY2lG3wRNemA9JKdl21iykW8IopMxdPsTVJEngAam?=
- =?us-ascii?Q?SWW82wOlyl233enBQvuCQZvXMhxXGU2CHsAWrh1BEg0/yfJqnwqZRJUvjUfk?=
- =?us-ascii?Q?Edb1nKToTfNGntRuvZJlWg0WU0D5FpbAz0JYrPms006XGMNb/K3nQ3+a1kim?=
- =?us-ascii?Q?K+Z585Ieh81jtNrg59qGHry3o2FYZbowJgSbA4bLQUoi9yG2dKv+v06qaT48?=
- =?us-ascii?Q?Qx4+LnhiCgCyWBh3TRGVzPB/bqXLCBZ6Qjd1X/qHq+JY4QLXpNxVSDa5X27Y?=
- =?us-ascii?Q?c5kzzgjRjELrHpG7qgJy0RbUyz4+90KRaAFgMDuMbEoyg3FwIe1k08QcnyU0?=
- =?us-ascii?Q?rQSe+uQ2l44tvWY4+gEibleXRFCn4ddNg4+j9z71w34Fl+lCXV741+W33vfW?=
- =?us-ascii?Q?uPn5o1LHp1PHSTx9hMw4AzKpo3UIyoDBvMcdylmlD+pyUu3nUjpdbEE1/ZnG?=
- =?us-ascii?Q?ofU7vWSRpx4VSWhqlYdjkP7RFY3G9BJWNdLFAFYL?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K352Iz8A"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56C4FC4AF0D
+	for <linux-clk@vger.kernel.org>; Wed, 12 Nov 2025 19:29:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762975763;
+	bh=cBs5VsCM5bkQCwAVcWEWV1HKeCFrZdeAh6gx6vjF0Ps=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=K352Iz8Ah3njTVW7iehUnnH7mqi0Jd6YwMB4qZkyO+cIO1D7Pz6qNEcuOZXb/AXkw
+	 pcmFXpcyZMls1fI59UI/29eJypzLeW20lErann0mpshHzt3ur4vj67oY3kW4uBN2+D
+	 wdkZ7dKutDKfxp/0HGFCbyl6exwmzFCVe6M/nkpYSoUlXpG0XiZwVxcppdH7WD6Ni9
+	 z+iTp0EgYBh7btC3FXy9oVN5fPG+ADnQ8+SmKYuB+BPDNb5Nlzg2CF6LxSEFIG7x6r
+	 UwVZqF1WwD656gypaRpT/CvjAXPRt6J5giHHLr3kYehrERBJTQ0mYJ1NxiDLglYNmD
+	 Y3PHhD2Z86n6w==
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-640a0812658so45051a12.0
+        for <linux-clk@vger.kernel.org>; Wed, 12 Nov 2025 11:29:23 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUukidBrae95sZLV3drw4/LxKv5Oqk3OC9z60iA+uUc5TDpjY+iKqByGN00YF0VeSWB2FwnAMZPvVk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/gfhXHq4Z3yiqs89RCbxJNEPzM9smFAJRdtvy/vJG9rf8gxoT
+	hLwbJYoIjtFGLNYClT4HHjFxMZKNObh3z0/Exflv6CX4fXvF69dAgAZRSQF7lBLbjof9Bo5RjEz
+	JsuRRSITKRUDUWA8c6ZLX10y6AtXESg==
+X-Google-Smtp-Source: AGHT+IHHsq6g1iGPfNpj/BGp5eL9w+14A+MEbPOCADp6BJOBMQBWxT0j5cv1w9FevsaSK63J53W6goPTLfg5SnHB+/k=
+X-Received: by 2002:a05:6402:34ce:b0:63b:ef0e:dfa7 with SMTP id
+ 4fb4d7f45d1cf-6431a4bfc9cmr3902960a12.6.1762975760981; Wed, 12 Nov 2025
+ 11:29:20 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: OS3PR01MB8319.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c5a3d24e-7b20-4039-bbb1-08de221e99c7
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Nov 2025 19:06:35.6962
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: M+mOHfhcphIzQlfgQugJMATGcZNFfGPqoYigN12u6rRf0yHXyQwkKzFslTiOIrZzIWLMSjzXJtpcarIPNdV55W1Jb2E2NTqOpDjnB+4SEJE=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB8659
+References: <20251015071420.1173068-1-herve.codina@bootlin.com>
+ <20251015071420.1173068-6-herve.codina@bootlin.com> <20251030141448.GA3853761-robh@kernel.org>
+ <20251031162004.180d5e3f@bootlin.com> <20251112142632.GA1610836-robh@kernel.org>
+In-Reply-To: <20251112142632.GA1610836-robh@kernel.org>
+From: Rob Herring <robh@kernel.org>
+Date: Wed, 12 Nov 2025 13:29:09 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJ89EcUvQnS0xYXOrw6wJ30TT5oFA85eCqHYdu43056cw@mail.gmail.com>
+X-Gm-Features: AWmQ_bnvVqS34104BGAfHcYDtcOO0joqpBN-zpybKauFgaXAFRsInCQMBTqH6M4
+Message-ID: <CAL_JsqJ89EcUvQnS0xYXOrw6wJ30TT5oFA85eCqHYdu43056cw@mail.gmail.com>
+Subject: Re: [PATCH v4 05/29] dt-bindings: bus: Add simple-platform-bus
+To: Herve Codina <herve.codina@bootlin.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>, 
+	Wolfram Sang <wsa+renesas@sang-engineering.com>, Peter Rosin <peda@axentia.se>, 
+	Arnd Bergmann <arnd@arndb.de>, Saravana Kannan <saravanak@google.com>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Charles Keepax <ckeepax@opensource.cirrus.com>, 
+	Richard Fitzgerald <rf@opensource.cirrus.com>, David Rhodes <david.rhodes@cirrus.com>, 
+	Linus Walleij <linus.walleij@linaro.org>, Ulf Hansson <ulf.hansson@linaro.org>, 
+	Mark Brown <broonie@kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Daniel Scally <djrscally@gmail.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, Len Brown <lenb@kernel.org>, 
+	Davidlohr Bueso <dave@stgolabs.net>, Jonathan Cameron <jonathan.cameron@huawei.com>, 
+	Dave Jiang <dave.jiang@intel.com>, Alison Schofield <alison.schofield@intel.com>, 
+	Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
+	Dan Williams <dan.j.williams@intel.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Wolfram Sang <wsa@kernel.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org, 
+	linux-pci@vger.kernel.org, linux-sound@vger.kernel.org, 
+	patches@opensource.cirrus.com, linux-gpio@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linux-spi@vger.kernel.org, 
+	linux-acpi@vger.kernel.org, linux-cxl@vger.kernel.org, 
+	Allan Nielsen <allan.nielsen@microchip.com>, Horatiu Vultur <horatiu.vultur@microchip.com>, 
+	Steen Hegelund <steen.hegelund@microchip.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Hugo,
+On Wed, Nov 12, 2025 at 8:26=E2=80=AFAM Rob Herring <robh@kernel.org> wrote=
+:
+>
+> On Fri, Oct 31, 2025 at 04:20:04PM +0100, Herve Codina wrote:
+> > Hi Rob,
+> >
+> > On Thu, 30 Oct 2025 09:14:48 -0500
+> > Rob Herring <robh@kernel.org> wrote:
+> >
+> > > On Wed, Oct 15, 2025 at 09:13:52AM +0200, Herve Codina wrote:
+> > > > A Simple Platform Bus is a transparent bus that doesn't need a spec=
+ific
+> > > > driver to perform operations at bus level.
+> > > >
+> > > > Similar to simple-bus, a Simple Platform Bus allows to automaticall=
+y
+> > > > instantiate devices connected to this bus.
+> > > >
+> > > > Those devices are instantiated only by the Simple Platform Bus prob=
+e
+> > > > function itself.
+> > >
+> > > Don't let Greg see this... :)
+> > >
+> > > I can't say I'm a fan either. "Platform bus" is a kernel thing, and t=
+he
+> > > distinction here between the 2 compatibles is certainly a kernel thin=
+g.
+> > >
+> > > I think this needs to be solved within the kernel.
+> >
+> > I fully agree with that.
+> >
+> > >
+> > > What I previously said is define a list of compatibles to not
+> > > instantiate the child devices. This would essentially be any case hav=
+ing
+> > > a specific compatible and having its own driver. So if someone has
+> > > 'compatible =3D "vendor,not-so-simple-bus", "simple-bus"', when and i=
+f
+> > > they add a driver for "vendor,not-so-simple-bus", then they have to a=
+dd
+> > > the compatible to the list in the simple-pm-bus driver. I wouldn't
+> > > expect this to be a large list. There's only a handful of cases where
+> > > "simple-bus" has a more specific compatible. And only a few of those
+> > > have a driver. A more general and complicated solution would be makin=
+g
+> > > linux handle 2 (or more) drivers matching a node and picking the driv=
+er
+> > > with most specific match. That gets complicated with built-in vs.
+> > > modules. I'm not sure we really need to solve that problem.
+> >
+> > Right. Let discard the "more general and complicated solution" and focu=
+s
+> > on the list of compatible to avoid child devices instantiation.
+> >
+> > Do you mean that, for "simple-bus" compatible we should:
+> >  - Remove the recursive device instantiation from of_platform_populate(=
+).
+>
+> That may be a problem I hadn't considered. While we've solved most probe
+> ordering issues, I think some may remain. Even when of_platform_populate(=
+)
+> is called affects this. For example, I tried removing various arm32
+> of_platform_.*populate() calls which run earlier than the default call,
+> but that broke some platforms. (Looking at the list of remaining ones, I
+> fixed the at91 pinctrl/gpio drivers, but never tried to remove the
+> calls again.)
+>
+> Maybe this can be restricted to cases which are not recursively created
+> from the root node. Not sure how we detect that. Perhaps no OF_POPULATED
+> flag on the parent node? Or we could just enable this for OF_DYNAMIC
+> nodes? That should be sufficient for your usecase.
 
-On Tue, Nov 11, 2025 10:04 PM, Hugo Villeneuve wrote:
-> You still haven't provided the base-commit. There is a ton of branches in=
- renesas-devel.git, so it is not easy to determine the branch/commit you us=
-ed for your patchset.
-> By providing base-commit, you will save everyone a lot of trouble.
+Thinking a bit more about this, I think you don't have to do anything.
+If child nodes already got populated, calling of_platform_populate() a
+second time is essentially a nop. And for cases you care about, that
+wouldn't have happened. Of course, I'd still rather there only be 1
+path that devices could have been instantiated.
 
-https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git
-master branch
-base-commit: dd30a345f284e0d9b1755e3538f8257cf4deb79f
-
-
-> I tried to apply your patches on branch renesas-geert/master, using base-=
-commit: 211ddde0823f
-
-That is what I have been using. I just updated this morning to v6.18-rc5
-
-
-> The problem seems to be that dsi_div_ab_desired is not properly initializ=
-ed, because the number of lanes is uninitialized (0) at this time, and ther=
-efore
-> rzg2l_cpg_dsi_div_set_divider() gets called with its first parameter as z=
-ero.
-
-Hmmm.
-There are 2 ways to set the number of lanes: Device Tree or hard coded in t=
-he panel driver.
-
-What I do not understand is that by the time rzg2l_mipi_dsi_host_attach() i=
-s called, the number of lanes should have already been set.
-
-On your system, where is the number of lanes defined? In the panel driver w=
-hen it is probed?
-
-I am testing with 3 different systems, and I have not seen this issue.
-
-
-> Like I said, it also happens on 6.17.7 stable tree. If I remove your patc=
-hes, everything is fine.
-
-Things are hard coded in the existing driver.
-They work for you today because you are using the same number of lanes as t=
-he Renesas eval board.
-I'm trying to fix support for lanes =3D 3,2,1
-
-
-Thank you,
-Chris
+Rob
