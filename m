@@ -1,167 +1,135 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail.hugovil.com (mail.hugovil.com [162.243.120.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB5F134DB68
-	for <linux-clk@vger.kernel.org>; Wed, 12 Nov 2025 19:29:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD0F523ED6A;
+	Wed, 12 Nov 2025 22:49:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.120.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762975763; cv=none; b=mZMEcTqG1hELWw24hlRYhY304khyJD1ifhLm6mcStp3Zi3NsDoBgqg3Gng8lPuK677pBKvlpTBb6ZipDbqk08g3L9cJpE0vGTDCjAEN3neOksYEVu4Hom1s/HZ4+BbML2Zgs0EMAjhAgw0Qnz2XZb4tZNeJOQZ7kij7hOlnAUfg=
+	t=1762987794; cv=none; b=H3G2gL+v/jywP9vOhQXkffsTiMbgLaQtIVCyRv0SmVVEyJUNIxkdTWPn7RZ2JfSJQeAlyq5M6wIcQ9nYfHsPueboOlyy8cakejzIsHHapDhJ+k4W8M48CX61dAcq4uM1E2JJMiEzay+JT5zQq5jhVezqr+FkyO6ElF9uHIQZ7qM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762975763; c=relaxed/simple;
-	bh=cBs5VsCM5bkQCwAVcWEWV1HKeCFrZdeAh6gx6vjF0Ps=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KHwg2yEqL//3yhZQ++AW0ajJauP/lVGFB8J1ShSY7D9VFoIVU5p/SMfFUr/iUBPBIL3sXMtQ7zJG+9MWn2wJxImeOlbJH9IxMFL21AqWp1gHmxqUhWMQw4uH9GvU/jWwAo/dTm4QYnE2kp3DPnpRX48Tiwttsa/fT3NvDrFQ0cg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K352Iz8A; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1762987794; c=relaxed/simple;
+	bh=NjxPeGLCBXpLu+61v+33yTerJ8wkf9w7wh18YxqCtq4=;
+	h=Date:From:To:Cc:Message-Id:In-Reply-To:References:Mime-Version:
+	 Content-Type:Subject; b=n+mblD3aketcl2KfevF9aYcxtubj5OkcDiXxkYxxKGo4h4jwPZOs/cYPuErAB3W4PskvnjLoF4QXiOET/3jtCYl4DpBwDrs71mzAI/OznOeOW5M76//e7uq8UZ+B5DHtk/FjmUrRl8XFHlRYBwSo2nfrGGt+bqbDLzYO/YxHWy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com; spf=pass smtp.mailfrom=hugovil.com; dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b=ZFEtY/YR; arc=none smtp.client-ip=162.243.120.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hugovil.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K352Iz8A"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56C4FC4AF0D
-	for <linux-clk@vger.kernel.org>; Wed, 12 Nov 2025 19:29:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762975763;
-	bh=cBs5VsCM5bkQCwAVcWEWV1HKeCFrZdeAh6gx6vjF0Ps=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=K352Iz8Ah3njTVW7iehUnnH7mqi0Jd6YwMB4qZkyO+cIO1D7Pz6qNEcuOZXb/AXkw
-	 pcmFXpcyZMls1fI59UI/29eJypzLeW20lErann0mpshHzt3ur4vj67oY3kW4uBN2+D
-	 wdkZ7dKutDKfxp/0HGFCbyl6exwmzFCVe6M/nkpYSoUlXpG0XiZwVxcppdH7WD6Ni9
-	 z+iTp0EgYBh7btC3FXy9oVN5fPG+ADnQ8+SmKYuB+BPDNb5Nlzg2CF6LxSEFIG7x6r
-	 UwVZqF1WwD656gypaRpT/CvjAXPRt6J5giHHLr3kYehrERBJTQ0mYJ1NxiDLglYNmD
-	 Y3PHhD2Z86n6w==
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-640a0812658so45051a12.0
-        for <linux-clk@vger.kernel.org>; Wed, 12 Nov 2025 11:29:23 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUukidBrae95sZLV3drw4/LxKv5Oqk3OC9z60iA+uUc5TDpjY+iKqByGN00YF0VeSWB2FwnAMZPvVk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/gfhXHq4Z3yiqs89RCbxJNEPzM9smFAJRdtvy/vJG9rf8gxoT
-	hLwbJYoIjtFGLNYClT4HHjFxMZKNObh3z0/Exflv6CX4fXvF69dAgAZRSQF7lBLbjof9Bo5RjEz
-	JsuRRSITKRUDUWA8c6ZLX10y6AtXESg==
-X-Google-Smtp-Source: AGHT+IHHsq6g1iGPfNpj/BGp5eL9w+14A+MEbPOCADp6BJOBMQBWxT0j5cv1w9FevsaSK63J53W6goPTLfg5SnHB+/k=
-X-Received: by 2002:a05:6402:34ce:b0:63b:ef0e:dfa7 with SMTP id
- 4fb4d7f45d1cf-6431a4bfc9cmr3902960a12.6.1762975760981; Wed, 12 Nov 2025
- 11:29:20 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b="ZFEtY/YR"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hugovil.com
+	; s=x; h=Subject:Content-Transfer-Encoding:Mime-Version:Message-Id:Cc:To:From
+	:Date:subject:date:message-id:reply-to;
+	bh=rsmMeMMiuH0Pq/mWdMLj2Zy/6l7vJ2cJn1NWyyr+Rzk=; b=ZFEtY/YRQMTfQLCzXadjnLD7TO
+	2M2LgqSqxcVminMlQGegPw3zmk6z3pn6uYyrnnJKDbrXrF7ZJg2e1t+bBpYkk6dLGAD2zrPV1Mfej
+	sYsiOSvmhGy/BJqgkYWXlDew4+OqI1ukcZOFbriKuhsjt8HiN5YFdRd8bG5mYza/hs8M=;
+Received: from [70.80.174.168] (port=39896 helo=pettiford)
+	by mail.hugovil.com with esmtpa (Exim 4.92)
+	(envelope-from <hugo@hugovil.com>)
+	id 1vJJef-0003jx-K0; Wed, 12 Nov 2025 17:49:34 -0500
+Date: Wed, 12 Nov 2025 17:49:32 -0500
+From: Hugo Villeneuve <hugo@hugovil.com>
+To: Chris Brandt <Chris.Brandt@renesas.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Biju Das
+ <biju.das.jz@bp.renesas.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Hien Huynh <hien.huynh.px@renesas.com>,
+ Nghia Vo <nghia.vo.zn@renesas.com>, "linux-renesas-soc@vger.kernel.org"
+ <linux-renesas-soc@vger.kernel.org>, "linux-clk@vger.kernel.org"
+ <linux-clk@vger.kernel.org>, "dri-devel@lists.freedesktop.org"
+ <dri-devel@lists.freedesktop.org>
+Message-Id: <20251112174932.c1ae526d6cda33d1e3856a95@hugovil.com>
+In-Reply-To: <OS3PR01MB8319A5873CD10A7D86F0094E8ACCA@OS3PR01MB8319.jpnprd01.prod.outlook.com>
+References: <20251105222530.979537-1-chris.brandt@renesas.com>
+	<20251111120148.943a0e193a65469a53a0cbc8@hugovil.com>
+	<OS3PR01MB8319C8A2BD72FC7787ACFEFA8ACFA@OS3PR01MB8319.jpnprd01.prod.outlook.com>
+	<20251111132246.eef0faf1177691a07a1df47e@hugovil.com>
+	<TYCPR01MB83273CEE6D5B665179456A2A8ACFA@TYCPR01MB8327.jpnprd01.prod.outlook.com>
+	<20251111220347.167dba316bea7effb6e0f849@hugovil.com>
+	<OS3PR01MB8319A5873CD10A7D86F0094E8ACCA@OS3PR01MB8319.jpnprd01.prod.outlook.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20251015071420.1173068-1-herve.codina@bootlin.com>
- <20251015071420.1173068-6-herve.codina@bootlin.com> <20251030141448.GA3853761-robh@kernel.org>
- <20251031162004.180d5e3f@bootlin.com> <20251112142632.GA1610836-robh@kernel.org>
-In-Reply-To: <20251112142632.GA1610836-robh@kernel.org>
-From: Rob Herring <robh@kernel.org>
-Date: Wed, 12 Nov 2025 13:29:09 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqJ89EcUvQnS0xYXOrw6wJ30TT5oFA85eCqHYdu43056cw@mail.gmail.com>
-X-Gm-Features: AWmQ_bnvVqS34104BGAfHcYDtcOO0joqpBN-zpybKauFgaXAFRsInCQMBTqH6M4
-Message-ID: <CAL_JsqJ89EcUvQnS0xYXOrw6wJ30TT5oFA85eCqHYdu43056cw@mail.gmail.com>
-Subject: Re: [PATCH v4 05/29] dt-bindings: bus: Add simple-platform-bus
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>, 
-	Wolfram Sang <wsa+renesas@sang-engineering.com>, Peter Rosin <peda@axentia.se>, 
-	Arnd Bergmann <arnd@arndb.de>, Saravana Kannan <saravanak@google.com>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Charles Keepax <ckeepax@opensource.cirrus.com>, 
-	Richard Fitzgerald <rf@opensource.cirrus.com>, David Rhodes <david.rhodes@cirrus.com>, 
-	Linus Walleij <linus.walleij@linaro.org>, Ulf Hansson <ulf.hansson@linaro.org>, 
-	Mark Brown <broonie@kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Daniel Scally <djrscally@gmail.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, Len Brown <lenb@kernel.org>, 
-	Davidlohr Bueso <dave@stgolabs.net>, Jonathan Cameron <jonathan.cameron@huawei.com>, 
-	Dave Jiang <dave.jiang@intel.com>, Alison Schofield <alison.schofield@intel.com>, 
-	Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
-	Dan Williams <dan.j.williams@intel.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Wolfram Sang <wsa@kernel.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org, 
-	linux-pci@vger.kernel.org, linux-sound@vger.kernel.org, 
-	patches@opensource.cirrus.com, linux-gpio@vger.kernel.org, 
-	linux-pm@vger.kernel.org, linux-spi@vger.kernel.org, 
-	linux-acpi@vger.kernel.org, linux-cxl@vger.kernel.org, 
-	Allan Nielsen <allan.nielsen@microchip.com>, Horatiu Vultur <horatiu.vultur@microchip.com>, 
-	Steen Hegelund <steen.hegelund@microchip.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 70.80.174.168
+X-SA-Exim-Mail-From: hugo@hugovil.com
+X-Spam-Level: 
+X-Spam-Report: 
+	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+	* -0.7 NICE_REPLY_A Looks like a legit reply (A)
+Subject: Re: [PATCH v4 0/2] Remove hard coded values for MIPI-DSI
+X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
+X-SA-Exim-Scanned: Yes (on mail.hugovil.com)
 
-On Wed, Nov 12, 2025 at 8:26=E2=80=AFAM Rob Herring <robh@kernel.org> wrote=
-:
->
-> On Fri, Oct 31, 2025 at 04:20:04PM +0100, Herve Codina wrote:
-> > Hi Rob,
-> >
-> > On Thu, 30 Oct 2025 09:14:48 -0500
-> > Rob Herring <robh@kernel.org> wrote:
-> >
-> > > On Wed, Oct 15, 2025 at 09:13:52AM +0200, Herve Codina wrote:
-> > > > A Simple Platform Bus is a transparent bus that doesn't need a spec=
-ific
-> > > > driver to perform operations at bus level.
-> > > >
-> > > > Similar to simple-bus, a Simple Platform Bus allows to automaticall=
-y
-> > > > instantiate devices connected to this bus.
-> > > >
-> > > > Those devices are instantiated only by the Simple Platform Bus prob=
-e
-> > > > function itself.
-> > >
-> > > Don't let Greg see this... :)
-> > >
-> > > I can't say I'm a fan either. "Platform bus" is a kernel thing, and t=
-he
-> > > distinction here between the 2 compatibles is certainly a kernel thin=
-g.
-> > >
-> > > I think this needs to be solved within the kernel.
-> >
-> > I fully agree with that.
-> >
-> > >
-> > > What I previously said is define a list of compatibles to not
-> > > instantiate the child devices. This would essentially be any case hav=
-ing
-> > > a specific compatible and having its own driver. So if someone has
-> > > 'compatible =3D "vendor,not-so-simple-bus", "simple-bus"', when and i=
-f
-> > > they add a driver for "vendor,not-so-simple-bus", then they have to a=
-dd
-> > > the compatible to the list in the simple-pm-bus driver. I wouldn't
-> > > expect this to be a large list. There's only a handful of cases where
-> > > "simple-bus" has a more specific compatible. And only a few of those
-> > > have a driver. A more general and complicated solution would be makin=
-g
-> > > linux handle 2 (or more) drivers matching a node and picking the driv=
-er
-> > > with most specific match. That gets complicated with built-in vs.
-> > > modules. I'm not sure we really need to solve that problem.
-> >
-> > Right. Let discard the "more general and complicated solution" and focu=
-s
-> > on the list of compatible to avoid child devices instantiation.
-> >
-> > Do you mean that, for "simple-bus" compatible we should:
-> >  - Remove the recursive device instantiation from of_platform_populate(=
-).
->
-> That may be a problem I hadn't considered. While we've solved most probe
-> ordering issues, I think some may remain. Even when of_platform_populate(=
-)
-> is called affects this. For example, I tried removing various arm32
-> of_platform_.*populate() calls which run earlier than the default call,
-> but that broke some platforms. (Looking at the list of remaining ones, I
-> fixed the at91 pinctrl/gpio drivers, but never tried to remove the
-> calls again.)
->
-> Maybe this can be restricted to cases which are not recursively created
-> from the root node. Not sure how we detect that. Perhaps no OF_POPULATED
-> flag on the parent node? Or we could just enable this for OF_DYNAMIC
-> nodes? That should be sufficient for your usecase.
+Hi Chris,
 
-Thinking a bit more about this, I think you don't have to do anything.
-If child nodes already got populated, calling of_platform_populate() a
-second time is essentially a nop. And for cases you care about, that
-wouldn't have happened. Of course, I'd still rather there only be 1
-path that devices could have been instantiated.
+On Wed, 12 Nov 2025 19:06:35 +0000
+Chris Brandt <Chris.Brandt@renesas.com> wrote:
 
-Rob
+> Hi Hugo,
+> 
+> On Tue, Nov 11, 2025 10:04 PM, Hugo Villeneuve wrote:
+> > You still haven't provided the base-commit. There is a ton of branches in renesas-devel.git, so it is not easy to determine the branch/commit you used for your patchset.
+> > By providing base-commit, you will save everyone a lot of trouble.
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git
+> master branch
+> base-commit: dd30a345f284e0d9b1755e3538f8257cf4deb79f
+> 
+> 
+> > I tried to apply your patches on branch renesas-geert/master, using base-commit: 211ddde0823f
+> 
+> That is what I have been using. I just updated this morning to v6.18-rc5
+> 
+> 
+> > The problem seems to be that dsi_div_ab_desired is not properly initialized, because the number of lanes is uninitialized (0) at this time, and therefore
+> > rzg2l_cpg_dsi_div_set_divider() gets called with its first parameter as zero.
+> 
+> Hmmm.
+> There are 2 ways to set the number of lanes: Device Tree or hard coded in the panel driver.
+>
+> What I do not understand is that by the time rzg2l_mipi_dsi_host_attach() is called, the number of lanes should have already been set.
+
+Let me know if there is something specific you wantme to test for this.
+
+> 
+> On your system, where is the number of lanes defined? In the panel driver when it is probed?
+
+For all my panels, it is set in the device three like this:
+
+...
+	port@1 {
+		dsi0_out: endpoint {
+			data-lanes = <1 2 3 4>;
+			remote-endpoint = <&panel_in>;
+		};
+	};
+...
+
+
+> I am testing with 3 different systems, and I have not seen this issue.
+
+I have 3 different panels, all using different druivers/IC, but I
+tested only one (ilitek-ili9881c driver).
+
+> 
+> > Like I said, it also happens on 6.17.7 stable tree. If I remove your patches, everything is fine.
+> 
+> Things are hard coded in the existing driver.
+> They work for you today because you are using the same number of lanes as the Renesas eval board.
+> I'm trying to fix support for lanes = 3,2,1
+> 
+> 
+> Thank you,
+> Chris
+> 
+
+
+-- 
+Hugo Villeneuve
