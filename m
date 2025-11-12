@@ -1,174 +1,161 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C23C2BE7AC
-	for <linux-clk@vger.kernel.org>; Wed, 12 Nov 2025 09:21:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D24ED28A701;
+	Wed, 12 Nov 2025 14:26:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762939278; cv=none; b=ntnWZyN2UtCt6vb/HD4kaX/NEGwHSOx23E1A3iZi6+X1ACNAMwXvD+yybCNprAoMc0sKtTcWl4eos9HF54PupZZ5tAQ09RQ1LBaM9sQpJ+NkcoieoShhTM6o0HZXQez+TgSe76CCrkOXVugvCQA1gJp0Um7rYtAGo6kxn6GPLPc=
+	t=1762957595; cv=none; b=YyeFQAhQmhtzqfxbtxW7R4RobDeZ3/Lt3aVVoasmI0hxj7pZE1aNpuldL73QA73bUU8RvBw5fm1hHtQyc0OTzYr9xwIngyjqNMAThd29G2grah7kUkSDYQR2PSUXTxuEw7NFeRHma4a6M8vYkpvkFSkS8aUgAeGiIq6YHhJXkn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762939278; c=relaxed/simple;
-	bh=p/3gdJ0mEWz4X0Zw7w1a/Dom8p0nO9b3dR4aFzb7OLI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=btCnBEUTmX+MJIp1dgq6IYS2VjDQF0a8P9Y1cTGDg6sYtXnhStfxFIL0bsF1/3KKzjRCHmwAHMSOReg7k1EIay2kOQkAulWUXuOv+tgKaTxQ1RyEwHZ6ROZG5YEgQPoVghTHs0/Lc2dPnfQHn9rmTqL96xqOHkF9zEiTf81aB18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=NcehQdir; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=eAsbqoQn; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1762957595; c=relaxed/simple;
+	bh=bNLqGrg/bxt16UHYQqXWyzLbnJanuTnn/DSzlHMqam8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qtqkH8KDJQJjkvIg1VxhtdsslmxVSp+JzGZ1eDETk9gLV+3LtC3LZ3UfqxclgnpUPBMBb8ad4aCUNoASSQGa2qV+3aNDjYGnnGss44naSBPz6mMissH6LIF12GL1+ggN/qHjUppwErkbg/iMjZ2pObPxB6Uq57GyoG6Vy5fG0Gw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m4iXCp4z; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="NcehQdir";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="eAsbqoQn"
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5AC6Hxia317477
-	for <linux-clk@vger.kernel.org>; Wed, 12 Nov 2025 09:21:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	TkA+4SpVmmeTiao6KIqZ4pvqPqOwV4VDAKwhI/CEjf8=; b=NcehQdirr5n3hmeP
-	/7bwgJEhQ8aKIJRmaHh8K2vVoGAmx4KtGdfqx6ljdaU7SRykOpSnHG2obj4nHFGK
-	tR8HDnad7YTQLNppdAr0pyIyMV2DHBHB/MJEAvGXkWCg+rAInGaU3L2U627axl19
-	A9iF/8LnT9ssi6onQSUoojLAxoNoY2REqs4F/rci/KEvMnFI+WVBviSSucgoHkOQ
-	yUuu+4J4kGEzDVp+1s4BOBPBrCbRANzK7vo//v7U1jP/IQnfY4hthv8HkKqzNqKw
-	pzu6k202MFLzIctSlsgagq5CzjwQ46i1Fe5vHFEd1AwlYtr1oTzRVFca2JaoDDmw
-	i0048A==
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4acmumghwb-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Wed, 12 Nov 2025 09:21:16 +0000 (GMT)
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4edaa289e0dso2403181cf.3
-        for <linux-clk@vger.kernel.org>; Wed, 12 Nov 2025 01:21:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1762939275; x=1763544075; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=TkA+4SpVmmeTiao6KIqZ4pvqPqOwV4VDAKwhI/CEjf8=;
-        b=eAsbqoQncV/P62M+dFyrxBIGR7TPymNEA6h46e6rAiyEakPWKX/tNVKRgq7fbJALwT
-         wh0mw19GnTchBESfU6AFMo0FaUpQbGLn9vmk/T1fAV9uMOFW65iW6ibS9hm6SNZn14cI
-         ueHi37tQBVI0H0/4O2hgIQmiNliKjIyG4OiPvx6yVUljwdv/QGpmr9WGBiO1nzi/XW+s
-         7kQsfHuspdWoWQ0lkMdffejsQsqAS5972dbrT8cCNrngrOSQwOpBfZOf+4BdOKR3iYHr
-         lWBFobb2LgwawRvUWzm5kfXEVGKwRZUZvUmog7K3cy3NW3ByNd/fuhSGEnC3GPcY/aO3
-         CPyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762939275; x=1763544075;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TkA+4SpVmmeTiao6KIqZ4pvqPqOwV4VDAKwhI/CEjf8=;
-        b=f8iWoYvagkXUPTTu6EiVy6++4ABX85NhkWDW47YzxptUGbzO3HNd9XCxdu17mPWew7
-         c9UkABHPCL8btesBCyaRp5qY0fF5KeykgcQ8GGqqS+9KQDn1VTMtsqMs3XUDJe4kGauN
-         2UVmScPuTsesWaRnBiu2HJttDO6Y6dusXoC5UaNZ76YHORUMMbMYp/D7qOg2xVWLSBXZ
-         rxACY0AZHK73n9zfeZKtLxgtXT+KDY3cWmWxTEtfktnY+jvSm7xnXBw3x1j5aHQhtqz8
-         G9yz4yolDYEEXXeLZBshJlpRrEFS/xMKTOCEuCnNXNqd+eT8fXA814jKEiouH9xXHauf
-         ntug==
-X-Forwarded-Encrypted: i=1; AJvYcCUgMXC3+WbmwXY0kLeiBES947DSbSGl57ZNm0qYkEo6ZTG6YwZIg3TMoNIG+jGYaGr5QpJfMKUqoQw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyzR4+PEYaKWCh9PHXMEa565V3/CxzUQR1/3Ne2tf388BBLTjxX
-	Ykuwc/NLOeK4yCLtiQqEhOX2Cl1xpv/lLAlcsCoumy8Nu8FJGOIi0zAeD7DTXBTra8YNbdRR7fS
-	gh0vrizyveq2WQPXliCTXwMsfy4HRmfGUD+0sF2pEz2R82HTLFk5qiMRQrsk9KFA=
-X-Gm-Gg: ASbGncuK3j+EGy5WL81Ym/yErPVHdI6229i3hbJHWWjgHFSqJ/B0WzKzbpf2gbm7Iwv
-	CZ9z5pR+41qVlUtHot244DSSGIdrsEwMI8fx7TwRm7zvY8TJrRd27wYOYM5sGWdpBU4k/gChFRo
-	A3w7isxh7Rd/dKb8PdJkgM/GzcpT9p7qfOgHF/OduUL9u0EFJUdx//VRHkUGY6pApCA5uoQ8fnK
-	mWTEgXoyGeELN70uQZXKXPPvZMhspKrgpGtsdToknYyCNUWMlfCBb0xawtNsKAxJQK5QLwClXZc
-	hoarVbJiAdt0VXy9RDq4fdil3qOERTSrck/kmOZBEwZ6ubG3j1k2w+aBn9SfDSYtJ4gBAG/3W+v
-	00cDSxXm8gI5aSF/wP6aD2esPO5eHczxfyXjkVLbwTK40HOmbNPt0gdwi
-X-Received: by 2002:a05:622a:1808:b0:4ed:3cfa:638a with SMTP id d75a77b69052e-4eddbd6f1bdmr17859341cf.8.1762939275335;
-        Wed, 12 Nov 2025 01:21:15 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IG1gI36KuIEWI4rn/hNy3hzO7bxb+zuycrzvicz8tGoIOMN6OA9SGPB+GEKzLD3Tiqg9VPG8Q==
-X-Received: by 2002:a05:622a:1808:b0:4ed:3cfa:638a with SMTP id d75a77b69052e-4eddbd6f1bdmr17859171cf.8.1762939274937;
-        Wed, 12 Nov 2025 01:21:14 -0800 (PST)
-Received: from [192.168.119.202] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bf407a22sm1557621166b.29.2025.11.12.01.21.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Nov 2025 01:21:14 -0800 (PST)
-Message-ID: <ec38f267-2d44-446d-b538-78f849ffec9a@oss.qualcomm.com>
-Date: Wed, 12 Nov 2025 10:21:11 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m4iXCp4z"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02366C19422;
+	Wed, 12 Nov 2025 14:26:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762957594;
+	bh=bNLqGrg/bxt16UHYQqXWyzLbnJanuTnn/DSzlHMqam8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=m4iXCp4znKZvCzYkjhXZu1JL4COAdGb7yAm9UmEyz0xmhqXKj2K9504lPVGuTy2Jw
+	 oIs3gFjFC88Pg6vs33x0Y9J4Rt1LUAOWf+RlfjFyxs91gx9kSFDB51FMvZyE5chPXE
+	 aGtArRih0bDKoqGUZ1CFOq9Z1gR5u0u7H+Ia54U4ZgBoOw6F7RHwsyZbtTo73P+YtI
+	 MlFexT96E5ZxLwczc2sajdvyTdAl2dfa5pilRItuDN9x8WGEYbXAh10Kg5gBAGhHeA
+	 FzJ4mZv2YeFA2oWEIhZbh7ljpXAZyuUSAV7u6Cyu3iLC+0hy5axy54UvXp2gQgfYvb
+	 AydcA8t3H0Huw==
+Date: Wed, 12 Nov 2025 08:26:32 -0600
+From: Rob Herring <robh@kernel.org>
+To: Herve Codina <herve.codina@bootlin.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Peter Rosin <peda@axentia.se>, Arnd Bergmann <arnd@arndb.de>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Charles Keepax <ckeepax@opensource.cirrus.com>,
+	Richard Fitzgerald <rf@opensource.cirrus.com>,
+	David Rhodes <david.rhodes@cirrus.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Mark Brown <broonie@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Daniel Scally <djrscally@gmail.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Len Brown <lenb@kernel.org>, Davidlohr Bueso <dave@stgolabs.net>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Wolfram Sang <wsa@kernel.org>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-i2c@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-sound@vger.kernel.org, patches@opensource.cirrus.com,
+	linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-spi@vger.kernel.org, linux-acpi@vger.kernel.org,
+	linux-cxl@vger.kernel.org,
+	Allan Nielsen <allan.nielsen@microchip.com>,
+	Horatiu Vultur <horatiu.vultur@microchip.com>,
+	Steen Hegelund <steen.hegelund@microchip.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v4 05/29] dt-bindings: bus: Add simple-platform-bus
+Message-ID: <20251112142632.GA1610836-robh@kernel.org>
+References: <20251015071420.1173068-1-herve.codina@bootlin.com>
+ <20251015071420.1173068-6-herve.codina@bootlin.com>
+ <20251030141448.GA3853761-robh@kernel.org>
+ <20251031162004.180d5e3f@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/6] clk: qcom: rpmh: Add support for Kaanapali rpmh
- clocks
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        "Aiqun(Maria) Yu" <aiqun.yu@oss.qualcomm.com>
-Cc: Taniya Das <taniya.das@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>, jingyi.wang@oss.qualcomm.com,
-        Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
-        Imran Shaik <imran.shaik@oss.qualcomm.com>,
-        Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251030-gcc_kaanapali-v2-v2-0-a774a587af6f@oss.qualcomm.com>
- <20251030-gcc_kaanapali-v2-v2-4-a774a587af6f@oss.qualcomm.com>
- <swma6lyjfmyhl5ookdzvpjn5qresgsze5wptg45jfgj7ub6a4t@bdgfstw6gzoq>
- <507b121b-98c0-4632-8a61-e9d7a6a13a3e@oss.qualcomm.com>
- <42xj5qgoh3m26y4hmdck5hfyqaxncfaeugymrmrxb7tusxjvm2@wsjztnhbp5jf>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <42xj5qgoh3m26y4hmdck5hfyqaxncfaeugymrmrxb7tusxjvm2@wsjztnhbp5jf>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEyMDA3MyBTYWx0ZWRfX7r1Y8Fojzg6f
- lRQ8f6BJVYjLRwxdIDzAI8Ufy+axS9Zm7WVLA2pT+o1H7NDDkKkTGNZxB2B39W/zi+ccU9g1Te7
- CZJxXacSORlu+LKbWz26yp8DFsoLoHl3k9sTn0rbvpuQG9h+JwsMYSzPwLNnx1Jy0zItQrr3mRm
- /hhe/2sD4StoOs5VKdb0oWOoFTpfoDPgnm2u8kONUMXto/Z0AgNHOVLHfKCC+MhPkOi41wgCFVk
- 3Vef2hMZqhR6IN1KFud+3falR1+PcNV7cENxKN4PImAWNW3OFz6QUO9ljUIU+EFpTXD3L4TY2Ms
- qBnv1W+OYoFNFdPwAnN1+UbZZbR1CtE0IzYI5hoFuJtfjfopMbrE9BIgCCYghvpeVj4yQrGgyBr
- TXDfS2fKCxgV0G2xRup5WnXEjlqXZw==
-X-Proofpoint-ORIG-GUID: TA0GSMsYwWqeUM-DZL3uhSweXnjtGYyh
-X-Authority-Analysis: v=2.4 cv=dZONHHXe c=1 sm=1 tr=0 ts=6914518c cx=c_pps
- a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=k9nrLfKtrhbSy2XMf4sA:9
- a=QEXdDO2ut3YA:10 a=a_PwQJl-kcHnX1M80qC6:22
-X-Proofpoint-GUID: TA0GSMsYwWqeUM-DZL3uhSweXnjtGYyh
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-12_03,2025-11-11_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 clxscore=1015 bulkscore=0 adultscore=0 spamscore=0
- lowpriorityscore=0 impostorscore=0 phishscore=0 malwarescore=0
- priorityscore=1501 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
- definitions=main-2511120073
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251031162004.180d5e3f@bootlin.com>
 
-On 11/11/25 1:16 PM, Dmitry Baryshkov wrote:
-> On Tue, Nov 11, 2025 at 07:44:36PM +0800, Aiqun(Maria) Yu wrote:
->> On 11/11/2025 6:46 PM, Dmitry Baryshkov wrote:
->>> On Thu, Oct 30, 2025 at 04:39:07PM +0530, Taniya Das wrote:
->>>> Add the RPMH clocks present in Kaanapali SoC.
->>>>
->>>> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
->>>> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
->>>> ---
->>>>  drivers/clk/qcom/clk-rpmh.c | 42 ++++++++++++++++++++++++++++++++++++++++++
->>>>  1 file changed, 42 insertions(+)
->>>>
->>>> diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
->>>> index 1a98b3a0c528c24b600326e6b951b2edb6dcadd7..fd0fe312a7f2830a27e6effc0c0bd905d9d5ebed 100644
->>>> --- a/drivers/clk/qcom/clk-rpmh.c
->>>> +++ b/drivers/clk/qcom/clk-rpmh.c
->>>> @@ -395,6 +395,19 @@ DEFINE_CLK_RPMH_VRM(clk4, _a, "C4A_E0", 1);
->>>>  DEFINE_CLK_RPMH_VRM(clk5, _a, "C5A_E0", 1);
->>>>  DEFINE_CLK_RPMH_VRM(clk8, _a, "C8A_E0", 1);
->>>>  
->>>> +DEFINE_CLK_RPMH_VRM(ln_bb_clk1, _a2_e0, "C6A_E0", 2);
->>>> +DEFINE_CLK_RPMH_VRM(ln_bb_clk2, _a2_e0, "C7A_E0", 2);
->>>> +DEFINE_CLK_RPMH_VRM(ln_bb_clk3, _a2_e0, "C8A_E0", 2);
->>
->>
->> Shall this suffix necessary to have e0?
+On Fri, Oct 31, 2025 at 04:20:04PM +0100, Herve Codina wrote:
+> Hi Rob,
 > 
-> Can there be C6A_E1 at some point?
+> On Thu, 30 Oct 2025 09:14:48 -0500
+> Rob Herring <robh@kernel.org> wrote:
+> 
+> > On Wed, Oct 15, 2025 at 09:13:52AM +0200, Herve Codina wrote:
+> > > A Simple Platform Bus is a transparent bus that doesn't need a specific
+> > > driver to perform operations at bus level.
+> > > 
+> > > Similar to simple-bus, a Simple Platform Bus allows to automatically
+> > > instantiate devices connected to this bus.
+> > > 
+> > > Those devices are instantiated only by the Simple Platform Bus probe
+> > > function itself.  
+> > 
+> > Don't let Greg see this... :)
+> > 
+> > I can't say I'm a fan either. "Platform bus" is a kernel thing, and the 
+> > distinction here between the 2 compatibles is certainly a kernel thing.
+> > 
+> > I think this needs to be solved within the kernel.
+> 
+> I fully agree with that.
+> 
+> > 
+> > What I previously said is define a list of compatibles to not 
+> > instantiate the child devices. This would essentially be any case having 
+> > a specific compatible and having its own driver. So if someone has 
+> > 'compatible = "vendor,not-so-simple-bus", "simple-bus"', when and if 
+> > they add a driver for "vendor,not-so-simple-bus", then they have to add 
+> > the compatible to the list in the simple-pm-bus driver. I wouldn't 
+> > expect this to be a large list. There's only a handful of cases where 
+> > "simple-bus" has a more specific compatible. And only a few of those 
+> > have a driver. A more general and complicated solution would be making 
+> > linux handle 2 (or more) drivers matching a node and picking the driver 
+> > with most specific match. That gets complicated with built-in vs. 
+> > modules. I'm not sure we really need to solve that problem.
+> 
+> Right. Let discard the "more general and complicated solution" and focus
+> on the list of compatible to avoid child devices instantiation.
+> 
+> Do you mean that, for "simple-bus" compatible we should:
+>  - Remove the recursive device instantiation from of_platform_populate().
 
-Yes
+That may be a problem I hadn't considered. While we've solved most probe 
+ordering issues, I think some may remain. Even when of_platform_populate() 
+is called affects this. For example, I tried removing various arm32 
+of_platform_.*populate() calls which run earlier than the default call, 
+but that broke some platforms. (Looking at the list of remaining ones, I 
+fixed the at91 pinctrl/gpio drivers, but never tried to remove the 
+calls again.)
 
-Konrad
+Maybe this can be restricted to cases which are not recursively created 
+from the root node. Not sure how we detect that. Perhaps no OF_POPULATED 
+flag on the parent node? Or we could just enable this for OF_DYNAMIC 
+nodes? That should be sufficient for your usecase.
+
+I would like to solve this more generally though. So we could try it in 
+kernelci and/or linux-next and see what happens.
+
+>  - In simple-bus probe(), check the device we probe against the
+>    'no_instantiate_children' list
+>       - If it matches, do not instantiate chidren
+>       - If it doesn't match instantiate children
+
+Right.
+
+Rob
