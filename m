@@ -1,260 +1,113 @@
-Received: from TY3P286CU002.outbound.protection.outlook.com (mail-japaneastazon11010034.outbound.protection.outlook.com [52.101.229.34])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E91802E6116;
-	Wed, 12 Nov 2025 06:56:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.229.34
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762930582; cv=fail; b=psVYHgY2+nTTF2VDrJ5ZbEyWCg3+8QPqmWvt9vf/4DxVTY+wOWvCFPuMA1UeoSaX9h6OQMvVVGtLCkdGfQ2B0Oh5NFlOS0eYW3/cshStYdWP042BGImZoz5OWAlWX20k75YvgvpWidFHeY2zCpnrDM5L5rIOELM8sexr1HnQdY4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762930582; c=relaxed/simple;
-	bh=LE2IJMlyY71frma03+akxAyUk4uI7aOmKsMjEniCtZw=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=jqyDtENDayIkyWx4q9AiNoesxnPxfsFUTEFQDFWYc8hEnHjFxvQ+37do4zIhUNYjnlo0ztKTSkfnpFvr/OmfgcC0ryKu2G5QCwYdS51I9SN6akAmeOdhXM8aTK2TvGKhLbrZT64X3KqKbcQBsREr0+7Z353pjLY45wWCC2/xmII=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=EPlEranA; arc=fail smtp.client-ip=52.101.229.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26B4D285C99;
+	Wed, 12 Nov 2025 08:24:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762935848; cv=none; b=Scd0tbC2TTGN55p88N5RFgF47VGwKXmb7HGVGtjQm4iZh5J9aPXJrlTBHr7sofJb+FV8IvtXJ1fFXfqXOn00ECgPHk5ZSru5pZejuL/uLthSm8n3kOWavGBZXv4aaMFelqqBTAK7Q7nGtHePAkT49ThnYutxZUCKegot2c2eQ/I=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762935848; c=relaxed/simple;
+	bh=nPgIElCsbpJYasIzjMJOq1v5dfPCNLHDI/7LeLitaKo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pHAuKTvqLD0x/m92p0Gmx/MRJvBLsuavNuLoFIXJO/lzuBUfTJBjlo6UB3uLUb/maPo/QatO7NER49tgmsw01F5QpoAfZySKhw13Iqa9H1DlvvkxHko9oFjm/KEBQ8QmZt5KdcOxl31uBxIENShClGCeWac2RTqtJf/nyTwv6mc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NPlPq+RM; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="EPlEranA"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=vw/iy1KzvMXm4Bavn6qu+JowjmWY6txtX9iXMAON6VqIyToqY+p3RLB+oLFxDW44028hjg7c8+IX9ajDLsG5a2klyue99LeouD9gpMBI8goDKAQMUORln7JvagWEVc8nW/JB66up4FWO8qMP8CMHT34Kdhq4Jt8DOxKxXaPVJPyNFDpJcadGDbnvXdiM7JTS2UneULBqX3c8AABKHn5ZK+WDp1eSOrlBo+UCm6yrY16DsHiZGAQwcCD0UzfnmvDzp3nNr79d4hbM01kNLl0/Uvz8PfxXUZMCl8N2Bx6N/w4JI8pJcNH4HCYyvaqU09OMcAlL0EkXsbPXNVVP+fcpyA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=NFrxxMLJrgPbQn3XCpSyX/p2GkTuj9W7p5gSA1rUlVI=;
- b=B3K6WPa6hoMvEKxiQf3qhi5BndwXfKcEmWb6BLMAafCtmB93XBrrygr8e1S1fEA4bhQ8eKwzAIY8RUaFffLh4EHv7KagbDJYMCOIVxEyBUUpqnbim8up6v1Mx7TzzGCU/yPgkcmKfO34vf+J4lZivbst4+L+V3/qDBRWr0xDtX8Gbq0St7gcsCmeAGpv18D34SDdY8ZDxi/H/2DtoreNG7XG9ebhtDgJrb4gXiCkVRv+19McY7IkJs1tEykZYgZWeS6ds25ScAr/f5U7UwbxBI1MJoxKyUNCKMjbyNZ/S65UORPRdrWmriAHZKdB/kTMrHFyFEeSWuJGxFczYUjanQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NFrxxMLJrgPbQn3XCpSyX/p2GkTuj9W7p5gSA1rUlVI=;
- b=EPlEranAfxZdyoyNY3DTldSfJzLtuCAEcshD81Ej+mPb9ERK8xfuTOnrpxy0pHltNTkoIjLUgNQEsTlPMS0VdlVwcsaeNDXVSZNjGKL/tHr+eedfLZ05262moCovb4VhAz+mBbERleZ8wSXdWqRAP7I9MCceicr7mHdXyonTXjE=
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com (2603:1096:400:3d0::7)
- by OS3PR01MB10374.jpnprd01.prod.outlook.com (2603:1096:604:1fa::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.16; Wed, 12 Nov
- 2025 06:56:14 +0000
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::86ef:ca98:234d:60e1]) by TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::86ef:ca98:234d:60e1%6]) with mapi id 15.20.9320.013; Wed, 12 Nov 2025
- 06:56:14 +0000
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: Chris Brandt <Chris.Brandt@renesas.com>, biju.das.au
-	<biju.das.au@gmail.com>
-CC: "airlied@gmail.com" <airlied@gmail.com>, "dri-devel@lists.freedesktop.org"
-	<dri-devel@lists.freedesktop.org>, "geert+renesas@glider.be"
-	<geert+renesas@glider.be>, Hien Huynh <hien.huynh.px@renesas.com>,
-	"hugo@hugovil.com" <hugo@hugovil.com>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, "linux-renesas-soc@vger.kernel.org"
-	<linux-renesas-soc@vger.kernel.org>, "maarten.lankhorst@linux.intel.com"
-	<maarten.lankhorst@linux.intel.com>, "mripard@kernel.org"
-	<mripard@kernel.org>, "mturquette@baylibre.com" <mturquette@baylibre.com>,
-	Nghia Vo <nghia.vo.zn@renesas.com>, "sboyd@kernel.org" <sboyd@kernel.org>,
-	"simona@ffwll.ch" <simona@ffwll.ch>, "tzimmermann@suse.de"
-	<tzimmermann@suse.de>
-Subject: RE: [PATCH v4 1/2] clk: renesas: rzg2l: Remove DSI clock rate
- restrictions
-Thread-Topic: [PATCH v4 1/2] clk: renesas: rzg2l: Remove DSI clock rate
- restrictions
-Thread-Index: AQHcUIhzzvEMa+4Ez0iYgZqH/QRQ77TtxCkggADbmGA=
-Date: Wed, 12 Nov 2025 06:56:14 +0000
-Message-ID:
- <TY3PR01MB11346555E90212D667267082686CCA@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-References:
- <CWLP123MB44995816738B58D66F4729B0FCC0A@CWLP123MB4499.GBRP123.PROD.OUTLOOK.COM>
- <OS3PR01MB8319B194964E67E3F7EFC86E8ACFA@OS3PR01MB8319.jpnprd01.prod.outlook.com>
-In-Reply-To:
- <OS3PR01MB8319B194964E67E3F7EFC86E8ACFA@OS3PR01MB8319.jpnprd01.prod.outlook.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TY3PR01MB11346:EE_|OS3PR01MB10374:EE_
-x-ms-office365-filtering-correlation-id: 8d7e6258-c87c-4eac-1daf-08de21b8920c
-x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|1800799024|376014|7416014|38070700021;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?YnqTXJIPbkfQ4/jDLxhLKhsi5Hdq13Z5W45hx0qgM/qNelpU505TAiJx8xDu?=
- =?us-ascii?Q?FaAJzgLBhZ1YCt5xVIkH8wAq2sdYgeYt4LdNcLAbHHyvVaLowP1p6IDbcuak?=
- =?us-ascii?Q?XdFfT/MdFsX7YZvR1puipBd4QG361pY1hKO+1rN2fzJcKZMTiZVqu6yQzO56?=
- =?us-ascii?Q?JnQjTTh4nMEuWuGu3O8hzHFOl+UaS1JEuB1KxN18ZsiXGYRL8WSD2vSdlVWz?=
- =?us-ascii?Q?7ma8qtjtWXxPWGy8dtqkUzfNL9ZS/QSj5XT6M0efEe89aIDsHLjjfPV0zFZp?=
- =?us-ascii?Q?xxz0soxe/n6wsQYj1XNxuEbU1p65ruaoHq1rhvpHGhu/gKNE/cMTG8YPK54R?=
- =?us-ascii?Q?hzAnMz5zZstan/Tn5mZQC64EOVs5j4i+0nMCDlQj2xlmLI9552EcEfC4kQDn?=
- =?us-ascii?Q?/hogvujm4tv3x72RiTqZvXJ+ckn6x07o2KhU1Or9zil3BW15znG0lvHwrtm8?=
- =?us-ascii?Q?6ACqMPoUcjrjfuxq8ZgLoLmUVLDKRPzw7KETp9gaZqV1P/xoAwAI18m+sJI7?=
- =?us-ascii?Q?58242Mxv1Hs+cOvhvsS5j1WRJ6w65eU7LKRbL200B3eC2GUPN3nXTWO7+Dbn?=
- =?us-ascii?Q?NWdKYiJF1I4lanmERZVpEeF0WgZtViZUCNYK9oPvgwPHIBFP6VFsyUSCw60Y?=
- =?us-ascii?Q?cM2BpfoEM3L7uxPHcMaaBClvWvYGkNVmElKGwkXY+zEtderY6Fi/keGR2p5U?=
- =?us-ascii?Q?6SPdO9zRQlozgMyN+LS3062nGVATqw1UtOKgpDTUBTER4UMWACsSoKqvmpp4?=
- =?us-ascii?Q?XhgvBwh7lzv0eHnZarLSTa3Zzw+WiZWcUi8T5q/vdcXGQLX99IcJUYGA+cdb?=
- =?us-ascii?Q?CHH9jQRBl3tamf+Rywm0RxnawNEbrjQIzMgNyPVGD53i+vzj5nTdGOWxtiCX?=
- =?us-ascii?Q?FUHbzEvfBAgNgI3jeT9vqampB9sLOLCFrmNQwLwFGe0YJVQsj7UEwFHYiNc7?=
- =?us-ascii?Q?YSvkecEKOU7VqYnNQFQWcDvXaFc8igXnnmqzyNS+O/AxuJQZ++ISmsTTwtyX?=
- =?us-ascii?Q?4/2OwwBiLhricY82k7TeLFTn6qHCFLg5wgqKqSpu7k1zWIrETT42AtuiwkOf?=
- =?us-ascii?Q?FQjybcW0THBcovL7A0z1837DeA0Rer0CXVp+2ef/5Bwtxsf9kpnhu1uLbNO4?=
- =?us-ascii?Q?PAf4AJGjRSr28i4NpT+mWBugow0aBVB2YtL5Udp7G3PH2z0l2xLxgLaYNtSl?=
- =?us-ascii?Q?uyxvGgMNGnstR45GVQeo3rzZ4KeOFUXvJvaqHJ+P7NicpFBmRhrg7UZ92Y2u?=
- =?us-ascii?Q?WCC9s/RSAV6CHp9BlqPEPmR7Qs72IWB0hikUcv6yiyXDxxoyyis2i9khOIKe?=
- =?us-ascii?Q?to2T/asNMMErenNEPJ4HA6xmKZZ+7KXWCx27m1WlWocWUQqesZnWjkF1K7JN?=
- =?us-ascii?Q?+UlSn/Hbcnp5uGIrFuggwXNBSubO8yHO84XsXaaQild6eGZodZHUZICDXr7q?=
- =?us-ascii?Q?F/OYZz8cZbO8vdd7XX7yNMxbeglu0YfbF7H5R51IBAKUGlUMZRUTWAJijZv0?=
- =?us-ascii?Q?hF1tZKoS9N1HtsmY9uUk+atG7f86iFktLspA?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11346.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?sUFzJi29JguIDrXHJ+Dm6UZnjlnZx6SOeV+0UeYBeyMpm+gbugATpATsdhIo?=
- =?us-ascii?Q?wAfoC9lmy0CRgbCSy9QCJdmGtRzRGdGnY7wqCf4s+eTv+J6+ycaHao1QJtdo?=
- =?us-ascii?Q?CwJnEwAAbiSck3OFnaukoBYc+jAYu+1hAJMzJRhj4Wp0LJM8m8toOUHIvJzA?=
- =?us-ascii?Q?rzhf7bNZ41AVEJ/YuYtJO4rpDBDLC/rJxRoSLl4jbxUROq6Ji/xCDPGIT4LM?=
- =?us-ascii?Q?ighUO+Mk4WQJT6DjmpYUK6SlTb+2gav6avOQEBHkJgw84xfVg0M6CT9bGm/m?=
- =?us-ascii?Q?3nc4NText9jvjcyjoLq5t9LCed/q/gz5LvZGHsPVfdKysHhKj9W+vuOIf0Ij?=
- =?us-ascii?Q?1hi9w3ybJysgTEEKkCtN5ixETv7gQ514H7uE4JCWYMkh3gTfZxgm122Roc4V?=
- =?us-ascii?Q?f+9nenWuTdadi83SLBnOQyK4mroclOY+h2xx8QAjOxzRZVCo+XCRccsbG1xV?=
- =?us-ascii?Q?0jmfBR3Cu+CBYtbX3SJ4tL+yqGKHCM4y8osyndCFs9RPDioGApcVqBglVO6p?=
- =?us-ascii?Q?zjo/Ztlnx5bwpjSTbBV1eZXMipfcUHw54MlebWxcz8oNdcmeL4JAdz2p26E1?=
- =?us-ascii?Q?ae60jAfjLxn/DSwKZ5BGk8gZ6rdcj55+S6j01ryVuHo2yemzCjNR/niwrLOA?=
- =?us-ascii?Q?2mNsrbkiHuVTsvK8hefd3AhC3dlMV0kueYNeaARHUNqPkG2kVeoq+cU6u1AO?=
- =?us-ascii?Q?57p53VwgzwgZMSTLf0ixmYu+XMW8AjiYk0I4Ts4aYL1rfBWUC37jqQEDqe+m?=
- =?us-ascii?Q?UW03CLyUThimpZpT8BRlllDYaBD3x/rRSNLufghwyz0fnXUxaHxfie1Z6mD0?=
- =?us-ascii?Q?MghkM9/ZCmHOe8Vnd20XXdCoZon/doTL3HI1ohAGkINtur0Ftnjp1EqNrJeZ?=
- =?us-ascii?Q?w5EMBDXYGy/m2M0w3liYWDWVHF8+9NKro7cny4bMY7ygE/0AD3RVFlfZKVjy?=
- =?us-ascii?Q?rBEb+Quyq+sO4s4w8K8dFEt0r6koxBlT7jVDIaKDhZ81sAOTNjV+g4HwSE75?=
- =?us-ascii?Q?1LF7lS0A8AGHVy8BhJLgkyIcS659e/zyEQ4WXd9aOP3WbUK31oIDtBG9mSkl?=
- =?us-ascii?Q?SSmD30uG9CldQ6XjiBrcFXJZTS4/gNac/v2eDDiNtLS7REf9oy2X10LtonUi?=
- =?us-ascii?Q?Fj5ET17gWc0pG40GsOUL4piKXpHTYsjTmcs2sbP6mHPIRg1OJFRWoogrhEsU?=
- =?us-ascii?Q?tRxeXK+MVoXHNS07HF2rrfF8ufZ63hwZfHpTKdp17QH/s4TY55cmQ1j/5U4q?=
- =?us-ascii?Q?u7NxZxV1AXnD2Kck/8fVevTbSex7i8IYPNpLIbq0IxSuA14Q+PvLd4euYHTB?=
- =?us-ascii?Q?C1r+wzQw9FKG1+/A+QGSRfLbCXBo3w3CqIFpQc7N6w/ozU5it6crrINHDGIt?=
- =?us-ascii?Q?AdQJpiwOsQifm21LlsVW/AS1jHlBmbWwj53HJYaSZHxkyFRRnabztlmamTdk?=
- =?us-ascii?Q?tuTgUgWHwp+BweiGGnug/qfLD3nH4Q+Oj9h+u5wjqpnZqQy0AD24DVDZ/349?=
- =?us-ascii?Q?7sLElk4Tq5wvV3xYR596hYI6YVytyoZhj9mhjhIz4ybXcd5uP19zwQqsIpCL?=
- =?us-ascii?Q?4OpBT5UXbYc+JGR7PTy8qTatPoqB/mQWf/qrPocznrk7z0L16x9Gbza5vsmV?=
- =?us-ascii?Q?0g=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NPlPq+RM"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 381D5C116B1;
+	Wed, 12 Nov 2025 08:24:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762935846;
+	bh=nPgIElCsbpJYasIzjMJOq1v5dfPCNLHDI/7LeLitaKo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=NPlPq+RM0G7b72mCTTTtcouVS4XBtI33J8V715Lf4rY7WBJPYTlKN/gXhiIK8tfr0
+	 HfJoQUONE9Jhe65mDcTIJcXMunEVq/erqEbRui/nwWfvQyJOR1ci8zYuJ5UmJTfWNc
+	 1829z/qQewKmdDoxxwyh+OFtvkv8qUjZF2AHwWnOifG5bNRDtfRhphe3TfNS88B1a/
+	 sUiIVOmTcMJdJ3kQzKe3OLarcbZJemcs3kEhP84ts8lzGmD1GtsdfTGjij0Dp+jyNX
+	 7Z65OThEjRjA4yOu6stsirYiJaCMDRbKtn8bA37mBUSG0QwHVkfIJmbkVR4dTckhgY
+	 e7Y1/DTRjsmpg==
+Message-ID: <88893633-ca4f-42d2-8d69-7f065ea34bf0@kernel.org>
+Date: Wed, 12 Nov 2025 09:24:01 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11346.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8d7e6258-c87c-4eac-1daf-08de21b8920c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Nov 2025 06:56:14.0858
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: yLm+yyItuQJE+oZIcbEemC/B92LjjdCgNHxGRsFHwfcVj3hrTKSs2zFe5sz5sc2u9f+jCSZq7d8038QXjYINLrrslv3CaGKdVijHAHOJQ2M=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS3PR01MB10374
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RESEND PATCH v7 4/5] dt-bindings: clock: rockchip: Add RK3506
+ clock and reset unit
+To: Elaine Zhang <zhangqing@rock-chips.com>, mturquette@baylibre.com,
+ sboyd@kernel.org, heiko@sntech.de, robh@kernel.org, p.zabel@pengutronix.de,
+ krzk+dt@kernel.org, conor+dt@kernel.org
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org, finley.xiao@rock-chips.com,
+ sugar.zhang@rock-chips.com
+References: <20251112022111.3828521-1-zhangqing@rock-chips.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
+ QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
+ +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
+ ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
+ 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
+ hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
+ tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
+ 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
+ naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
+ hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
+ whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
+ qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
+ RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
+ Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
+ H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
+ dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
+ AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
+ jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
+ zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
+ XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
+In-Reply-To: <20251112022111.3828521-1-zhangqing@rock-chips.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Chris,
+On 12/11/2025 03:21, Elaine Zhang wrote:
+> From: Finley Xiao <finley.xiao@rock-chips.com>
+> 
+> Add device tree bindings for clock and reset unit on RK3506 SoC.
+> Add clock and reset IDs for RK3506 SoC.
+> 
+> Signed-off-by: Finley Xiao <finley.xiao@rock-chips.com>
+> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
 
-> -----Original Message-----
-> From: Chris Brandt <Chris.Brandt@renesas.com>
-> Sent: 11 November 2025 20:43
-> Subject: RE: [PATCH v4 1/2] clk: renesas: rzg2l: Remove DSI clock rate re=
-strictions
->=20
-> Hi Biju
->=20
-> On Sat, Nov 8, 2025 3:30 AM, Biju Das wrote:
-> > > +	if (dsi_div_target =3D=3D PLL5_TARGET_DPI) {
-> > > +		/* Fixed settings for DPI */
-> > > +		priv->mux_dsi_div_params.clksrc =3D 0;
-> > > +		priv->mux_dsi_div_params.dsi_div_a =3D 3; /* Divided by 8 */
-> > > +		priv->mux_dsi_div_params.dsi_div_b =3D 0; /* Divided by 1 */
-> > > +		dsi_div_ab_desired =3D 8;			/* (1 << a) * (b + 1) */
-> >
-> > This block is duplicated may be add a helper function(), if you are pla=
-nning to send another series.
->=20
-> Actually, I just found another issue with the current driver when it was =
-assuming everything to be
-> hard-coded.
->=20
-> The current code calls rzg2l_cpg_get_vclk_rate()    BEFORE   calling rzg2=
-l_cpg_get_foutpostdiv_rate().
->=20
-> 	vclk_rate =3D rzg2l_cpg_get_vclk_rate(hw, rate);
-> 	sipll5->foutpostdiv_rate =3D
-> 		rzg2l_cpg_get_foutpostdiv_rate(priv, &params, vclk_rate);
->=20
->=20
-> The problem is that rzg2l_cpg_get_vclk_rate() is using the current values=
- of dsi_div_a,  dsi_div_b and
-> clksrc  to calculate a vclk.
-> But, the real values of dsi_div_a, dsi_div_b and clksrc are not set until=
- later in
-> rzg2l_cpg_get_foutpostdiv_rate().
->=20
-> So we have a chicken-and-egg scenario.
->=20
-> We can get around this by using the new "dsi_div_ab_desired" variable bec=
-ause we don't care what the
-> current settings are, we only care what we want them to be.
->=20
-> static unsigned long rzg2l_cpg_get_vclk_rate(struct clk_hw *hw,
-> 					     unsigned long rate)
-> {
-> -	struct sipll5 *sipll5 =3D to_sipll5(hw);
-> -	struct rzg2l_cpg_priv *priv =3D sipll5->priv;
-> -	unsigned long vclk;
-> -
-> -	vclk =3D rate / ((1 << priv->mux_dsi_div_params.dsi_div_a) *
-> -		       (priv->mux_dsi_div_params.dsi_div_b + 1));
-> -
-> -	if (priv->mux_dsi_div_params.clksrc)
-> -		vclk /=3D 2;
-> -
-> -	return vclk;
->=20
-> + 	return rate / dsi_div_ab_desired;
-> }
->=20
->=20
-> Since this function is only called one place in the driver, I suggest we =
-get rid of it and just do:
->=20
-> 	vclk_rate =3D rate / dsi_div_ab_desired;
-> 	sipll5->foutpostdiv_rate =3D
-> 		rzg2l_cpg_get_foutpostdiv_rate(priv, &params, vclk_rate);
->=20
->=20
-> Finally, how this all relates to your comment is that instead of the same=
- code block in 2 places, we
-> can just set the default desired divider and target in rzg2l_cpg_sipll5_r=
-egister() which is always
-> called early.
->=20
-> 	/* Default settings for DPI */
-> -	priv->mux_dsi_div_params.clksrc =3D 0;
-> -	priv->mux_dsi_div_params.dsi_div_a =3D 3; /* Divided by 8 */
-> -	priv->mux_dsi_div_params.dsi_div_b =3D 0; /* Divided by 1 */
-> -	dsi_div_ab_desired =3D 8;			/* (1 << a) * (b + 1) */
-> +	rzg2l_cpg_dsi_div_set_divider(8, PLL5_TARGET_DPI);
->=20
->=20
-> I just did some testing with DPI and DSI, and so far everything works the=
- same.
->=20
->=20
-> What do you think???
 
-OK for me.
+You just again ignored Conor's feedback and resent only this, so his
+questions are buried in the archives.
 
-Thanks,
-Biju
+NAK
+
+Best regards,
+Krzysztof
