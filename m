@@ -1,109 +1,238 @@
-Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com [209.85.217.47])
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 528FF29BDBC
-	for <linux-clk@vger.kernel.org>; Thu, 13 Nov 2025 14:28:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A3B329B8E0
+	for <linux-clk@vger.kernel.org>; Thu, 13 Nov 2025 14:29:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763044125; cv=none; b=NedSEa51GKNjLQXQhavgJtkvErlMz77DcpNFItIBHLQbdCqM2ZdEmTUZf/jbuImIW0vb43hUl41Co0yeTptasDeP4BdH9X4MNhzKMyQvUis1JvB43OZ9SUmnHjQ40B0fdIjwTBPUBad0nMN66zVz4OVO1gEHFxnTbcH7LKXOwNQ=
+	t=1763044163; cv=none; b=R60LP4VSN+sl5BwTH5eHmJrhEmj9vNtVqJ3QkTKgBd0Zf4wcwdLh4oteYIhmydoB6DDV7tsxL1kIfI0DxCm53XEWHZwOwy6LmjDeA3tnDxvKpZuwE4nX0EWe6ehEGWvNVTfqfnZoA5EmtcHSsj0y4c4kl6+zygNMcueCmfMUG6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763044125; c=relaxed/simple;
-	bh=A55pVaLB1a5M/183qzOCCCtVLqILltVvYYcujE/3gBY=;
+	s=arc-20240116; t=1763044163; c=relaxed/simple;
+	bh=enukvQUkWp5qWLLQJutYEr5eHCre8gtyCfegyL8aecU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZPur8Aa+h1bYncTZ4C/BJbPMaERN1IVTTkWbADILJ9Nh+EJBkzbbaDxWI4bKjFzxqTDzuqbhrzPpMx6KHJWRKXDiBZoHfQVPOcZx4zMT+onzi18DW0X4pgZv6BGJysTs7lNO6UYTTzCnezmIgrA9weSLhvPLmnR8jrVrVgffBd4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	 To:Cc:Content-Type; b=dALwQZzyYEKiaPFDja78Svp20tbVNHG27Pbr6maDteY0QeqN6x7a47lw7gHvFM+bL8AT+uxFpr0amiXrtt0mKg+rkJiaun9T6FJjG51YtllRAsugRxo24sxC/mXQ9DiV1AqbIJXeJu/wVFqW2XROF187cAmnhwySBispO/zFiQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MTsXoWdL; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f47.google.com with SMTP id ada2fe7eead31-5de23ddba5eso599373137.3
-        for <linux-clk@vger.kernel.org>; Thu, 13 Nov 2025 06:28:44 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763044123; x=1763648923;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MTsXoWdL"
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-429c48e05aeso545719f8f.1
+        for <linux-clk@vger.kernel.org>; Thu, 13 Nov 2025 06:29:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1763044160; x=1763648960; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=SPVdv+Cr3ZbcMU8t075Et/PpRUdOj7rpDshXN3z13xs=;
-        b=SBH0GaqeJCrh5uddCbJYfekdwz5JfRktyXpvikwnVVKXZYRb9/QTceFFG79Blw1vef
-         4rd2eBPQQyfkpn0nKiMq8W0xC65MBdAZ62+SyQSjj+raUSiYJglk/DsRVo3LmJBvIAo+
-         sFahRg4vXKq58BGtkQyGiugBHiERWN3V5hy8QOk+2DfQQeB2pIcdhF+dkXbx96FMUgd5
-         +okrjaFnbGZXdLkZzVCePnLPrDCQX0pXLzzCbJHFF+p//W5sZJ+8IaMFaqbjoiQ6WvVy
-         0wHpMqX1+BEW93tIk7915144tXD54zQdPsojYfIk3uLZKECzunxN/uBbBcN1ZEyJfzFY
-         rV5g==
-X-Forwarded-Encrypted: i=1; AJvYcCVSBCmiB6BZAXw7YNxCkogXlDTf8do/94YDPIVWk4df6BUxbepNJQSj9Fh/G2msiJXXXrpWcpmFo9E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3Qe8NIz2DIWWAW6AnRbIpeHDIcFPHiTs9YaY7APETOJJPc48W
-	S7GVoUxqQWmvkNuik9bR05CsEsiWtwszuBM5K2yFeX9b7KqohoUoUC2z1hRD+28pzfQ=
-X-Gm-Gg: ASbGncsFrFMnGxqL/oF3Mow7FRwOTz0cq5UmXNTqgiJyzLSR4IAq0lxDSNYj8PNwyy+
-	Uo/SXxcBoPKPYPBc3mpNP4NNYCq+5W0yHPAQXPgfGK7BdmYesys54edjJoAbosr5Bv4Rydkp83S
-	P0k7aGMJK3RMejG86MXH+Zi+cOOQvdTPDyh1iE2DPEJ6EhMDeLVX43stKt/Eni+43VztvyzAcpS
-	RLrOoit3+gd3gRoH4i4JPnDvVR/Ywa1p1EfVumOdOrTjFE+eDGon7zsYrv9d1kV9LNIh74euxSC
-	xvZzZI3fRehPQKt2BnPimUHhQdjMUQl3DWhFWcuP7/f2/Xleg2YEEgdmMRUwZ3h3iwEi4BogjDv
-	ZBP8+tNCKkYhBoS5chRbXaXDCD2rNza64OeBE1X/VHp8j5E4mGd52vSP+dU0VINLQokAKG6itoX
-	4vvrZ/D8j+CxcHAdRX3ZXHWYojDTvJ+Nh+49rcYg==
-X-Google-Smtp-Source: AGHT+IG2WKnfc6MFWNnKSYa7Zx/YRs0Dy9rAmfy50x3czQKKHKOhR4x7IVNiTEXElo+LWO/xHdwmNg==
-X-Received: by 2002:a05:6102:4244:b0:5df:bddd:b590 with SMTP id ada2fe7eead31-5dfbdddb885mr667066137.34.1763044122680;
-        Thu, 13 Nov 2025 06:28:42 -0800 (PST)
-Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com. [209.85.222.51])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-5dfb7232b03sm634403137.11.2025.11.13.06.28.41
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Nov 2025 06:28:41 -0800 (PST)
-Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-935241a7a0eso452568241.2
-        for <linux-clk@vger.kernel.org>; Thu, 13 Nov 2025 06:28:41 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVzodUJ0uc03pcJpyJ3rYEiZ907n3CVZnvN6tea2OQfl6yKSdOCGHQWt9L3/i/sS51H91rnKTTgKRs=@vger.kernel.org
-X-Received: by 2002:a05:6102:4b85:b0:5df:af0f:308c with SMTP id
- ada2fe7eead31-5dfaf0f34c8mr2015901137.38.1763044121413; Thu, 13 Nov 2025
- 06:28:41 -0800 (PST)
+        bh=UNomNoVs3/3wdBsUcq9EZSvX1zLpw+oNIAvlqkMmZEs=;
+        b=MTsXoWdL5q+SKlKFYuluPzOD01u5Un9K0DErqJEcgs6WiRpSbbI5NNZX3gSvFhXKR6
+         QY5Kza6huPV0tgxIbLxCwu1+wExP9MxfVJmtk/5yd1zvprODuYXu1RHE5/b5gCI2lyXe
+         E7vm1+iNcnvO5ULiHvudpmhjgiMXsf0tLRZTL8hu7aTAPyZBOrzazrR8oynNh9FAF9Mh
+         M1qixhxtDwJa+ZIF/HMxw6f8uWUrsiAvWwAMrLz29PO8EChBw4JXcZRqbwXZsERb1tSH
+         0MORytgRr3WbRHs8FX42JeDkoiwqk/im9aMBRG7CmwRK62YZDsl1rlJJXJ24Gt8pjuak
+         vz/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763044160; x=1763648960;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=UNomNoVs3/3wdBsUcq9EZSvX1zLpw+oNIAvlqkMmZEs=;
+        b=qztiAE+sfnKJoFLDvsAHI3Pftd6qpGbBGErzsxJlyx7TGVlt8RXPpzuGcUV+MBksFR
+         uHSoUAp/+hRHJGgbhnSEjXmm+IJBtr5Z3RzLG4xNjUCZu5MOD0AX1FxRQT5NMDGq+2zy
+         rIKM6s3X1nwh8qSCY/FavqMV2NFjNd4LcTSRQSNl/wLzTfv0ltGbUEQ+G8Q8iX5taZxu
+         ElkgfNuqWyaXIpOU+kQnq1JiFhZriheEC/00ZYbdFQVM/YLhyCTyuZ9EhS+/ILhY7Zpj
+         mvrLOj48LLQjxiTjvVCxFdJU6qZ7G39R9xV7+M1qCGsvEspKbYttsZcwe5mUZSvR9hCN
+         BrpA==
+X-Forwarded-Encrypted: i=1; AJvYcCXPe86kfD0abjox/PP77ruvurbyObKEuK5nRZY3lmQ/o3JaRtq3QfkynINo2lwfeH0lrlS5I3hBOis=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw16glVg0ij51reNoyKwty7GwA4s6/H3/mzwCBC4DDxSFzzkyje
+	4rFib2zf+3ahIG5t8sXzvlXVlHdvrCVeLDAn55aiuQo2gSsbl/XPIVzNhq0BfHj9+7SheAOLb7U
+	A712zf8LsfOsMhEVh7lBr1JP7/E1N8Y8=
+X-Gm-Gg: ASbGncsU4GMzBKW3M3+OK31ymDiCFwUmeTVtF4tjBf3Uj1i/gEr0V/+UsUK2pNEBtMl
+	ClyG28SE5iptCiopMcoVJmQRdHsD8vdphaqpF5gkmlYcmh+4XYnNkBCnUSptZIYimqq5s/V5wSp
+	MXpuqsbn4/mxxTgRXfbBAyo2iBZ8Xx1hspK/wDsa7W+9iu4lXG9xETuHRHJsNgMOhuru0o7P8QU
+	0d+N9DLOW3ndSqMPPSzpZcCQLxkSf9VBfcN6vAdLweT+LX31orXAxHYDzs2e4vGUeEIQTft42Kk
+	pR27q4E=
+X-Google-Smtp-Source: AGHT+IEjZesfWe6UAJr9rfneLrz6LT9ITsEcvC5EG+9+SI64dIq/3Wyqp3hO3mKXfLSgOhg9/PSLnT/sN+ozMuJc6zU=
+X-Received: by 2002:a05:6000:230b:b0:429:d253:8619 with SMTP id
+ ffacd0b85a97d-42b52795624mr3292848f8f.5.1763044159375; Thu, 13 Nov 2025
+ 06:29:19 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251020143107.13974-1-ovidiu.panait.rb@renesas.com> <20251020143107.13974-4-ovidiu.panait.rb@renesas.com>
-In-Reply-To: <20251020143107.13974-4-ovidiu.panait.rb@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 13 Nov 2025 15:28:30 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdUz=f5ArCV-w7dcyEdqhsZJrKyf=KwY18mwOgVdt5TQDw@mail.gmail.com>
-X-Gm-Features: AWmQ_bnUzqLPji7mNY2mLpWw72wOSZDLLWSl0uz9lB3HUP0ZZ52peqFQbz3UfMc
-Message-ID: <CAMuHMdUz=f5ArCV-w7dcyEdqhsZJrKyf=KwY18mwOgVdt5TQDw@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] arm64: dts: renesas: r9a09g057: Add TSU nodes
-To: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
-Cc: john.madieu.xa@bp.renesas.com, rafael@kernel.org, 
-	daniel.lezcano@linaro.org, rui.zhang@intel.com, lukasz.luba@arm.com, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	magnus.damm@gmail.com, mturquette@baylibre.com, sboyd@kernel.org, 
-	linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org
+References: <20250915080157.28195-1-clamor95@gmail.com> <20250915080157.28195-7-clamor95@gmail.com>
+ <6112196.aeNJFYEL58@senjougahara>
+In-Reply-To: <6112196.aeNJFYEL58@senjougahara>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Thu, 13 Nov 2025 16:29:08 +0200
+X-Gm-Features: AWmQ_bn3skm8vRUEdsGZ0nnCIIDUv9P1uoNNzH9ij76xxg0XWrgAcalJ4Vq9gRI
+Message-ID: <CAPVz0n12YKGfjvYZZOkMaB18gk74xiprB7=XbcSpPvi9=Jtt4A@mail.gmail.com>
+Subject: Re: [PATCH v3 06/11] clk: tegra: remove EMC to MC clock mux in Tegra114
+To: Mikko Perttunen <mperttunen@nvidia.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Thierry Reding <treding@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Dmitry Osipenko <digetx@gmail.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, 
+	Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-pm@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 20 Oct 2025 at 16:31, Ovidiu Panait
-<ovidiu.panait.rb@renesas.com> wrote:
-> The Renesas RZ/V2H SoC includes a Thermal Sensor Unit (TSU) block designed
-> to measure the junction temperature. The device provides real-time
-> temperature measurements for thermal management, utilizing two dedicated
-> channels for temperature sensing:
-> - TSU0, which is located near the DRP-AI block
-> - TSU1, which is located near the CPU and DRP-AI block
+=D1=87=D1=82, 13 =D0=BB=D0=B8=D1=81=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 07:0=
+5 Mikko Perttunen <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
 >
-> Since TSU1 is physically closer the CPU and the highest temperature
-> spot, it is used for CPU throttling through a passive trip and cooling
-> map. TSU0 is configured only with a critical trip.
+> On Monday, September 15, 2025 5:01=E2=80=AFPM Svyatoslav Ryhel wrote:
+> > Configure EMC without mux for correct EMC driver support.
 >
-> Add TSU nodes along with thermal zones and keep them enabled in the SoC
-> DTSI.
+> Rather than just 'removing EMC to MC clock mux in Tegra114', I would say =
+this patch removes current emc and emc_mux clocks and replaces them with th=
+e proper EMC clock implementation. I would edit the commit subject and comm=
+it message along those lines.
 >
-> Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-devel for v6.19.
+Noted
 
-Gr{oetje,eeting}s,
+> >
+> > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> > ---
+> >  drivers/clk/tegra/clk-tegra114.c | 48 ++++++++++++++++++++++----------
+> >  1 file changed, 33 insertions(+), 15 deletions(-)
+> >
+> > diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-t=
+egra114.c
+> > index 8bde72aa5e68..6b3a140772c2 100644
+> > --- a/drivers/clk/tegra/clk-tegra114.c
+> > +++ b/drivers/clk/tegra/clk-tegra114.c
+> > @@ -622,10 +622,6 @@ static const char *mux_plld_out0_plld2_out0[] =3D =
+{
+> >  };
+> >  #define mux_plld_out0_plld2_out0_idx NULL
+> >
+> > -static const char *mux_pllmcp_clkm[] =3D {
+> > -     "pll_m_out0", "pll_c_out0", "pll_p_out0", "clk_m", "pll_m_ud",
+> > -};
+> > -
+> >  static const struct clk_div_table pll_re_div_table[] =3D {
+> >       { .val =3D 0, .div =3D 1 },
+> >       { .val =3D 1, .div =3D 2 },
+> > @@ -672,7 +668,6 @@ static struct tegra_clk tegra114_clks[tegra_clk_max=
+] __initdata =3D {
+> >       [tegra_clk_csi] =3D { .dt_id =3D TEGRA114_CLK_CSI, .present =3D t=
+rue },
+> >       [tegra_clk_i2c2] =3D { .dt_id =3D TEGRA114_CLK_I2C2, .present =3D=
+ true },
+> >       [tegra_clk_uartc] =3D { .dt_id =3D TEGRA114_CLK_UARTC, .present =
+=3D true },
+> > -     [tegra_clk_emc] =3D { .dt_id =3D TEGRA114_CLK_EMC, .present =3D t=
+rue },
+> >       [tegra_clk_usb2] =3D { .dt_id =3D TEGRA114_CLK_USB2, .present =3D=
+ true },
+> >       [tegra_clk_usb3] =3D { .dt_id =3D TEGRA114_CLK_USB3, .present =3D=
+ true },
+> >       [tegra_clk_vde_8] =3D { .dt_id =3D TEGRA114_CLK_VDE, .present =3D=
+ true },
+> > @@ -1048,14 +1043,7 @@ static __init void tegra114_periph_clk_init(void=
+ __iomem *clk_base,
+> >                                            0, 82, periph_clk_enb_refcnt=
+);
+> >       clks[TEGRA114_CLK_DSIB] =3D clk;
+> >
+> > -     /* emc mux */
+> > -     clk =3D clk_register_mux(NULL, "emc_mux", mux_pllmcp_clkm,
+> > -                            ARRAY_SIZE(mux_pllmcp_clkm),
+> > -                            CLK_SET_RATE_NO_REPARENT,
+> > -                            clk_base + CLK_SOURCE_EMC,
+> > -                            29, 3, 0, &emc_lock);
+> > -
+> > -     clk =3D tegra_clk_register_mc("mc", "emc_mux", clk_base + CLK_SOU=
+RCE_EMC,
+> > +     clk =3D tegra_clk_register_mc("mc", "emc", clk_base + CLK_SOURCE_=
+EMC,
+> >                                   &emc_lock);
+> >       clks[TEGRA114_CLK_MC] =3D clk;
+> >
+> > @@ -1321,6 +1309,28 @@ static int tegra114_reset_deassert(unsigned long=
+ id)
+> >       return 0;
+> >  }
+> >
+> > +#ifdef CONFIG_TEGRA124_CLK_EMC
+> > +static struct clk *tegra114_clk_src_onecell_get(struct of_phandle_args=
+ *clkspec,
+> > +                                             void *data)
+> > +{
+> > +     struct clk_hw *hw;
+> > +     struct clk *clk;
+> > +
+> > +     clk =3D of_clk_src_onecell_get(clkspec, data);
+> > +     if (IS_ERR(clk))
+> > +             return clk;
+> > +
+> > +     hw =3D __clk_get_hw(clk);
+> > +
+> > +     if (clkspec->args[0] =3D=3D TEGRA114_CLK_EMC) {
+> > +             if (!tegra124_clk_emc_driver_available(hw))
+> > +                     return ERR_PTR(-EPROBE_DEFER);
+> > +     }
+> > +
+> > +     return clk;
+> > +}
+> > +#endif
+> > +
+> >  static void __init tegra114_clock_init(struct device_node *np)
+> >  {
+> >       struct device_node *node;
+> > @@ -1362,16 +1372,24 @@ static void __init tegra114_clock_init(struct d=
+evice_node *np)
+> >       tegra_audio_clk_init(clk_base, pmc_base, tegra114_clks,
+> >                            tegra114_audio_plls,
+> >                            ARRAY_SIZE(tegra114_audio_plls), 24000000);
+> > +
+> > +     tegra_clk_apply_init_table =3D tegra114_clock_apply_init_table;
+> > +
+>
+> Is there any particular reason for moving this here? If not, omitting the=
+ change would simplify the patch a bit.
+>
 
-                        Geert
+IIRC, I tried to align with Tegra124 EMC clk driver, I will try to
+drop this change and check if all works as expected.
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> >       tegra_super_clk_gen4_init(clk_base, pmc_base, tegra114_clks,
+> >                                       &pll_x_params);
+> >
+> >       tegra_init_special_resets(1, tegra114_reset_assert,
+> >                                 tegra114_reset_deassert);
+> >
+> > +#ifdef CONFIG_TEGRA124_CLK_EMC
+> > +     tegra_add_of_provider(np, tegra114_clk_src_onecell_get);
+> > +     clks[TEGRA114_CLK_EMC] =3D tegra124_clk_register_emc(clk_base, np=
+,
+> > +                                                        &emc_lock);
+> > +#else
+> >       tegra_add_of_provider(np, of_clk_src_onecell_get);
+> > -     tegra_register_devclks(devclks, ARRAY_SIZE(devclks));
+> > +#endif
+>
+> tegra124_clk_register_emc and tegra124_clk_emc_driver_available have stub=
+ implementations when CONFIG_TEGRA124_CLK_EMC is not enabled, so it would b=
+e cleaner to just call them always.
+>
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Yes, I will adjust this in v4. Thank you.
+
+> >
+> > -     tegra_clk_apply_init_table =3D tegra114_clock_apply_init_table;
+> > +     tegra_register_devclks(devclks, ARRAY_SIZE(devclks));
+> >
+> >       tegra_cpu_car_ops =3D &tegra114_cpu_car_ops;
+> >  }
+> >
+>
+>
+>
+>
