@@ -1,238 +1,169 @@
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A3B329B8E0
-	for <linux-clk@vger.kernel.org>; Thu, 13 Nov 2025 14:29:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8A7723D7D2;
+	Thu, 13 Nov 2025 14:58:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763044163; cv=none; b=R60LP4VSN+sl5BwTH5eHmJrhEmj9vNtVqJ3QkTKgBd0Zf4wcwdLh4oteYIhmydoB6DDV7tsxL1kIfI0DxCm53XEWHZwOwy6LmjDeA3tnDxvKpZuwE4nX0EWe6ehEGWvNVTfqfnZoA5EmtcHSsj0y4c4kl6+zygNMcueCmfMUG6M=
+	t=1763045886; cv=none; b=pJpzZX0OBvJ5DwLCj03Xp+QMzx+riVRe8wc5/21WiVwGz8sDX8+sIj0/45aJLPsz/Zw4in2r+q9wIXkf8PiMfxmxQ7xcQEnHdyEUC/KvH3w0YpZLy+YCfqkl+nmLS2DxKi4EwEU+2ETcjGA9jZAQAmpdt316I+dd2T2YFjzAOUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763044163; c=relaxed/simple;
-	bh=enukvQUkWp5qWLLQJutYEr5eHCre8gtyCfegyL8aecU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dALwQZzyYEKiaPFDja78Svp20tbVNHG27Pbr6maDteY0QeqN6x7a47lw7gHvFM+bL8AT+uxFpr0amiXrtt0mKg+rkJiaun9T6FJjG51YtllRAsugRxo24sxC/mXQ9DiV1AqbIJXeJu/wVFqW2XROF187cAmnhwySBispO/zFiQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MTsXoWdL; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1763045886; c=relaxed/simple;
+	bh=3Uu21/c6Hbs21uxpxbmZo7JhKjwRedtSvTBuDxAnxMI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=bnoZm8SBNOZsSdawEKekpcm89RPqcM6qCt4lQL1o0R3wobLYkGCgwwNg16R/aSLxGSY9/7GT7fbd404fK77bfUVYtGDyqnGdjop0PTlxMt1Jy49YeN+ZlLsT6wHIDYWKOZoH5j1aPRF6ejAO5TcWtdS5RVVqoaYXjamilF1qyE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=T8vElxvm; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MTsXoWdL"
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-429c48e05aeso545719f8f.1
-        for <linux-clk@vger.kernel.org>; Thu, 13 Nov 2025 06:29:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763044160; x=1763648960; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UNomNoVs3/3wdBsUcq9EZSvX1zLpw+oNIAvlqkMmZEs=;
-        b=MTsXoWdL5q+SKlKFYuluPzOD01u5Un9K0DErqJEcgs6WiRpSbbI5NNZX3gSvFhXKR6
-         QY5Kza6huPV0tgxIbLxCwu1+wExP9MxfVJmtk/5yd1zvprODuYXu1RHE5/b5gCI2lyXe
-         E7vm1+iNcnvO5ULiHvudpmhjgiMXsf0tLRZTL8hu7aTAPyZBOrzazrR8oynNh9FAF9Mh
-         M1qixhxtDwJa+ZIF/HMxw6f8uWUrsiAvWwAMrLz29PO8EChBw4JXcZRqbwXZsERb1tSH
-         0MORytgRr3WbRHs8FX42JeDkoiwqk/im9aMBRG7CmwRK62YZDsl1rlJJXJ24Gt8pjuak
-         vz/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763044160; x=1763648960;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=UNomNoVs3/3wdBsUcq9EZSvX1zLpw+oNIAvlqkMmZEs=;
-        b=qztiAE+sfnKJoFLDvsAHI3Pftd6qpGbBGErzsxJlyx7TGVlt8RXPpzuGcUV+MBksFR
-         uHSoUAp/+hRHJGgbhnSEjXmm+IJBtr5Z3RzLG4xNjUCZu5MOD0AX1FxRQT5NMDGq+2zy
-         rIKM6s3X1nwh8qSCY/FavqMV2NFjNd4LcTSRQSNl/wLzTfv0ltGbUEQ+G8Q8iX5taZxu
-         ElkgfNuqWyaXIpOU+kQnq1JiFhZriheEC/00ZYbdFQVM/YLhyCTyuZ9EhS+/ILhY7Zpj
-         mvrLOj48LLQjxiTjvVCxFdJU6qZ7G39R9xV7+M1qCGsvEspKbYttsZcwe5mUZSvR9hCN
-         BrpA==
-X-Forwarded-Encrypted: i=1; AJvYcCXPe86kfD0abjox/PP77ruvurbyObKEuK5nRZY3lmQ/o3JaRtq3QfkynINo2lwfeH0lrlS5I3hBOis=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw16glVg0ij51reNoyKwty7GwA4s6/H3/mzwCBC4DDxSFzzkyje
-	4rFib2zf+3ahIG5t8sXzvlXVlHdvrCVeLDAn55aiuQo2gSsbl/XPIVzNhq0BfHj9+7SheAOLb7U
-	A712zf8LsfOsMhEVh7lBr1JP7/E1N8Y8=
-X-Gm-Gg: ASbGncsU4GMzBKW3M3+OK31ymDiCFwUmeTVtF4tjBf3Uj1i/gEr0V/+UsUK2pNEBtMl
-	ClyG28SE5iptCiopMcoVJmQRdHsD8vdphaqpF5gkmlYcmh+4XYnNkBCnUSptZIYimqq5s/V5wSp
-	MXpuqsbn4/mxxTgRXfbBAyo2iBZ8Xx1hspK/wDsa7W+9iu4lXG9xETuHRHJsNgMOhuru0o7P8QU
-	0d+N9DLOW3ndSqMPPSzpZcCQLxkSf9VBfcN6vAdLweT+LX31orXAxHYDzs2e4vGUeEIQTft42Kk
-	pR27q4E=
-X-Google-Smtp-Source: AGHT+IEjZesfWe6UAJr9rfneLrz6LT9ITsEcvC5EG+9+SI64dIq/3Wyqp3hO3mKXfLSgOhg9/PSLnT/sN+ozMuJc6zU=
-X-Received: by 2002:a05:6000:230b:b0:429:d253:8619 with SMTP id
- ffacd0b85a97d-42b52795624mr3292848f8f.5.1763044159375; Thu, 13 Nov 2025
- 06:29:19 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="T8vElxvm"
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20251113145759euoutp01fef0a97a0ebaf8bd2c8d8fa9cc795730~3mOLljyiZ1322713227euoutp012;
+	Thu, 13 Nov 2025 14:57:59 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20251113145759euoutp01fef0a97a0ebaf8bd2c8d8fa9cc795730~3mOLljyiZ1322713227euoutp012
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1763045879;
+	bh=ogp7tQuY4ykhbwHIKUJTRYSar7oRQokZNx6TlxIJ+5c=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=T8vElxvmkwwSu1Wl5s0VXj6iVdl2A5s7iYFjmFeFPouxsJm1ZPkAuL/pj3v38TcxU
+	 /xoPUpVOskKRLjECmF0grhpoxv/PVum1bvXNYzG6n+Owrs/cxRuPbe4zkZQdEvAzaI
+	 PFjnHtKU80hgiAFcv2hYlDM5zIbRHGRMVNt0srsQ=
+Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20251113145758eucas1p1bca3e4e91b329de9c52de40c7d86d093~3mOLC8LIJ0576905769eucas1p1J;
+	Thu, 13 Nov 2025 14:57:58 +0000 (GMT)
+Received: from [192.168.1.44] (unknown [106.210.136.40]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20251113145757eusmtip2959d20c844dc6203e206300997e642d0~3mOJlt2ga3124231242eusmtip2e;
+	Thu, 13 Nov 2025 14:57:57 +0000 (GMT)
+Message-ID: <e1696331-1271-46a8-adb6-9fed4521f22b@samsung.com>
+Date: Thu, 13 Nov 2025 15:57:57 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250915080157.28195-1-clamor95@gmail.com> <20250915080157.28195-7-clamor95@gmail.com>
- <6112196.aeNJFYEL58@senjougahara>
-In-Reply-To: <6112196.aeNJFYEL58@senjougahara>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Thu, 13 Nov 2025 16:29:08 +0200
-X-Gm-Features: AWmQ_bn3skm8vRUEdsGZ0nnCIIDUv9P1uoNNzH9ij76xxg0XWrgAcalJ4Vq9gRI
-Message-ID: <CAPVz0n12YKGfjvYZZOkMaB18gk74xiprB7=XbcSpPvi9=Jtt4A@mail.gmail.com>
-Subject: Re: [PATCH v3 06/11] clk: tegra: remove EMC to MC clock mux in Tegra114
-To: Mikko Perttunen <mperttunen@nvidia.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thierry Reding <treding@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Dmitry Osipenko <digetx@gmail.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, 
-	Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 00/13] drm: starfive: jh7110: Enable display
+ subsystem
+To: Conor Dooley <conor@kernel.org>, Maxime Ripard <mripard@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>, Dmitry Baryshkov
+	<dmitry.baryshkov@oss.qualcomm.com>, Robert Foss <rfoss@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Emil Renner Berthing <kernel@esmil.dk>, Hal Feng
+	<hal.feng@starfivetech.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Xingyu
+	Wu <xingyu.wu@starfivetech.com>, Vinod Koul <vkoul@kernel.org>, Kishon Vijay
+	Abraham I <kishon@kernel.org>, Andrzej Hajda <andrzej.hajda@intel.com>, Neil
+	Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
+	<jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, David Airlie
+	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>, Lee Jones <lee@kernel.org>, Philipp
+	Zabel <p.zabel@pengutronix.de>, Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alex@ghiti.fr>, Marek Szyprowski
+	<m.szyprowski@samsung.com>, Icenowy Zheng <uwu@icenowy.me>, Maud Spierings
+	<maudspierings@gocontroll.com>, Andy Yan <andyshrk@163.com>, Heiko Stuebner
+	<heiko@sntech.de>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-phy@lists.infradead.org,
+	dri-devel@lists.freedesktop.org, linux-riscv@lists.infradead.org
+Content-Language: en-US
+From: Michal Wilczynski <m.wilczynski@samsung.com>
+In-Reply-To: <20251111-matriarch-diocese-b314e7bdaf81@spud>
+Content-Transfer-Encoding: 7bit
+X-CMS-MailID: 20251113145758eucas1p1bca3e4e91b329de9c52de40c7d86d093
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20251108010451eucas1p1c7bf340dbd2b1b7cbfb53d6debce7a2e
+X-EPHeader: CA
+X-CMS-RootMailID: 20251108010451eucas1p1c7bf340dbd2b1b7cbfb53d6debce7a2e
+References: <CGME20251108010451eucas1p1c7bf340dbd2b1b7cbfb53d6debce7a2e@eucas1p1.samsung.com>
+	<20251108-jh7110-clean-send-v1-0-06bf43bb76b1@samsung.com>
+	<20251110-clang-baking-b8b27730356e@spud>
+	<00e897dc-9966-439b-a74a-7604a1870027@samsung.com>
+	<20251111-footing-eclair-332f5f0769f2@spud>
+	<20251111-matriarch-diocese-b314e7bdaf81@spud>
 
-=D1=87=D1=82, 13 =D0=BB=D0=B8=D1=81=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 07:0=
-5 Mikko Perttunen <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
->
-> On Monday, September 15, 2025 5:01=E2=80=AFPM Svyatoslav Ryhel wrote:
-> > Configure EMC without mux for correct EMC driver support.
->
-> Rather than just 'removing EMC to MC clock mux in Tegra114', I would say =
-this patch removes current emc and emc_mux clocks and replaces them with th=
-e proper EMC clock implementation. I would edit the commit subject and comm=
-it message along those lines.
->
 
-Noted
 
-> >
-> > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > ---
-> >  drivers/clk/tegra/clk-tegra114.c | 48 ++++++++++++++++++++++----------
-> >  1 file changed, 33 insertions(+), 15 deletions(-)
-> >
-> > diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-t=
-egra114.c
-> > index 8bde72aa5e68..6b3a140772c2 100644
-> > --- a/drivers/clk/tegra/clk-tegra114.c
-> > +++ b/drivers/clk/tegra/clk-tegra114.c
-> > @@ -622,10 +622,6 @@ static const char *mux_plld_out0_plld2_out0[] =3D =
-{
-> >  };
-> >  #define mux_plld_out0_plld2_out0_idx NULL
-> >
-> > -static const char *mux_pllmcp_clkm[] =3D {
-> > -     "pll_m_out0", "pll_c_out0", "pll_p_out0", "clk_m", "pll_m_ud",
-> > -};
-> > -
-> >  static const struct clk_div_table pll_re_div_table[] =3D {
-> >       { .val =3D 0, .div =3D 1 },
-> >       { .val =3D 1, .div =3D 2 },
-> > @@ -672,7 +668,6 @@ static struct tegra_clk tegra114_clks[tegra_clk_max=
-] __initdata =3D {
-> >       [tegra_clk_csi] =3D { .dt_id =3D TEGRA114_CLK_CSI, .present =3D t=
-rue },
-> >       [tegra_clk_i2c2] =3D { .dt_id =3D TEGRA114_CLK_I2C2, .present =3D=
- true },
-> >       [tegra_clk_uartc] =3D { .dt_id =3D TEGRA114_CLK_UARTC, .present =
-=3D true },
-> > -     [tegra_clk_emc] =3D { .dt_id =3D TEGRA114_CLK_EMC, .present =3D t=
-rue },
-> >       [tegra_clk_usb2] =3D { .dt_id =3D TEGRA114_CLK_USB2, .present =3D=
- true },
-> >       [tegra_clk_usb3] =3D { .dt_id =3D TEGRA114_CLK_USB3, .present =3D=
- true },
-> >       [tegra_clk_vde_8] =3D { .dt_id =3D TEGRA114_CLK_VDE, .present =3D=
- true },
-> > @@ -1048,14 +1043,7 @@ static __init void tegra114_periph_clk_init(void=
- __iomem *clk_base,
-> >                                            0, 82, periph_clk_enb_refcnt=
-);
-> >       clks[TEGRA114_CLK_DSIB] =3D clk;
-> >
-> > -     /* emc mux */
-> > -     clk =3D clk_register_mux(NULL, "emc_mux", mux_pllmcp_clkm,
-> > -                            ARRAY_SIZE(mux_pllmcp_clkm),
-> > -                            CLK_SET_RATE_NO_REPARENT,
-> > -                            clk_base + CLK_SOURCE_EMC,
-> > -                            29, 3, 0, &emc_lock);
-> > -
-> > -     clk =3D tegra_clk_register_mc("mc", "emc_mux", clk_base + CLK_SOU=
-RCE_EMC,
-> > +     clk =3D tegra_clk_register_mc("mc", "emc", clk_base + CLK_SOURCE_=
-EMC,
-> >                                   &emc_lock);
-> >       clks[TEGRA114_CLK_MC] =3D clk;
-> >
-> > @@ -1321,6 +1309,28 @@ static int tegra114_reset_deassert(unsigned long=
- id)
-> >       return 0;
-> >  }
-> >
-> > +#ifdef CONFIG_TEGRA124_CLK_EMC
-> > +static struct clk *tegra114_clk_src_onecell_get(struct of_phandle_args=
- *clkspec,
-> > +                                             void *data)
-> > +{
-> > +     struct clk_hw *hw;
-> > +     struct clk *clk;
-> > +
-> > +     clk =3D of_clk_src_onecell_get(clkspec, data);
-> > +     if (IS_ERR(clk))
-> > +             return clk;
-> > +
-> > +     hw =3D __clk_get_hw(clk);
-> > +
-> > +     if (clkspec->args[0] =3D=3D TEGRA114_CLK_EMC) {
-> > +             if (!tegra124_clk_emc_driver_available(hw))
-> > +                     return ERR_PTR(-EPROBE_DEFER);
-> > +     }
-> > +
-> > +     return clk;
-> > +}
-> > +#endif
-> > +
-> >  static void __init tegra114_clock_init(struct device_node *np)
-> >  {
-> >       struct device_node *node;
-> > @@ -1362,16 +1372,24 @@ static void __init tegra114_clock_init(struct d=
-evice_node *np)
-> >       tegra_audio_clk_init(clk_base, pmc_base, tegra114_clks,
-> >                            tegra114_audio_plls,
-> >                            ARRAY_SIZE(tegra114_audio_plls), 24000000);
-> > +
-> > +     tegra_clk_apply_init_table =3D tegra114_clock_apply_init_table;
-> > +
->
-> Is there any particular reason for moving this here? If not, omitting the=
- change would simplify the patch a bit.
->
+On 11/11/25 19:37, Conor Dooley wrote:
+> On Tue, Nov 11, 2025 at 06:14:48PM +0000, Conor Dooley wrote:
+>> On Tue, Nov 11, 2025 at 04:33:28PM +0100, Michal Wilczynski wrote:
+>>>
+>>>
+>>> On 11/10/25 20:35, Conor Dooley wrote:
+>>>> On Sat, Nov 08, 2025 at 02:04:34AM +0100, Michal Wilczynski wrote:
+>>>>> This series enables the display subsystem on the StarFive JH7110 SoC.
+>>>>> This hardware has a complex set of dependencies that this series aims to
+>>>>> solve.
+>>>>>
+>>>>> I believe this is a PHY tuning issue that can be fixed in the new
+>>>>> phy-jh7110-inno-hdmi.c driver without changing the overall architecture.
+>>>>> I plan to continue debugging these modes and will submit follow up fixes
+>>>>> as needed.
+>>>>>
+>>>>> The core architectural plumbing is sound and ready for review.
+>>>>>
+>>>>> Notes:
+>>>>> - The JH7110 does not have a centralized MAINTAINERS entry like the
+>>>>>   TH1520, and driver maintainership seems fragmented. I have therefore
+>>>>>   added a MAINTAINERS entry for the display subsystem and am willing to
+>>>>>   help with its maintenance.
+>>>>
+>>>> Yeah, bunch of different folks wrote the drivers, so lots of entries.
+>>>> Pretty much all as you've done here, authors are responsible for the
+>>>> individual components and Emil is the platform maintainer but
+>>>> responsible for most drivers.
+>>>>
+>>>> Do you need any feedback dt wise on the RFC, or is it too likely that
+>>>> we'll both waste our breath if the DRM folks don't approve of your
+>>>> approach for the rest of this series?
+>>>
+>>> Hi Conor,
+>>>
+>>> Thank you for your response.
+>>>
+>>> That's a fair point about the risk of the DRM approach being rejected.
+>>> While I can't be certain, I'm hopeful that part is relatively
+>>> straightforward, as it primarily integrates other recently reviewed
+>>> (though not yet merged) components like the inno-hdmi bridge and dc8200
+>>> drivers.
+>>>
+>>> To be honest, I was more concerned that the DT part of the series would
+>>> be more problematic. Given that, I would find it very helpful to get
+>>> your feedback on the DT aspects now, if you have the time.
+>>
+>> Right. You'll definitely want some actual DRM people to weigh in though
+>> before making changes, I am really not familiar enough with this type of
+>> hardware to know if the breakdown is correct.
+> 
+> It looks generally sane to me chief, but as I said I am not really
+> familiar enough with this sort of hardware to have a real take on it.
+> Sorry, you'll need to get your affirmation about how you've laid stuff
+> out elsewhere :/
 
-IIRC, I tried to align with Tegra124 EMC clk driver, I will try to
-drop this change and check if all works as expected.
+Thanks for the look, Conor.
 
-> >       tegra_super_clk_gen4_init(clk_base, pmc_base, tegra114_clks,
-> >                                       &pll_x_params);
-> >
-> >       tegra_init_special_resets(1, tegra114_reset_assert,
-> >                                 tegra114_reset_deassert);
-> >
-> > +#ifdef CONFIG_TEGRA124_CLK_EMC
-> > +     tegra_add_of_provider(np, tegra114_clk_src_onecell_get);
-> > +     clks[TEGRA114_CLK_EMC] =3D tegra124_clk_register_emc(clk_base, np=
-,
-> > +                                                        &emc_lock);
-> > +#else
-> >       tegra_add_of_provider(np, of_clk_src_onecell_get);
-> > -     tegra_register_devclks(devclks, ARRAY_SIZE(devclks));
-> > +#endif
->
-> tegra124_clk_register_emc and tegra124_clk_emc_driver_available have stub=
- implementations when CONFIG_TEGRA124_CLK_EMC is not enabled, so it would b=
-e cleaner to just call them always.
->
+I appreciate the sanity check on the DT side. I'll focus on getting the
+necessary feedback from the DRM maintainers regarding the architectural
+breakdown before spinning a v2.
 
-Yes, I will adjust this in v4. Thank you.
+[Adding Dmitry Baryshkov and highlighting Maxime, Heiko, and Robert]
 
-> >
-> > -     tegra_clk_apply_init_table =3D tegra114_clock_apply_init_table;
-> > +     tegra_register_devclks(devclks, ARRAY_SIZE(devclks));
-> >
-> >       tegra_cpu_car_ops =3D &tegra114_cpu_car_ops;
-> >  }
-> >
->
->
->
->
+Could you folks take a brief look at the driver split in this series?
+
+Conor has reviewed the DT bindings and they look sane to him, but we
+need to verify that the architectural split between the
+phy-jh7110-inno-hdmi and the DRM bridge driver is acceptable for this
+Innosilicon IP.
+
+I am particularly interested if the current handling of the PHY tuning
+parameters (as described in the cover letter) fits the modern DRM
+bridge/PHY paradigm, or if this should be modeled differently given the
+similarities to Rockchip implementations.
+
+Best regards,
+-- 
+Michal Wilczynski <m.wilczynski@samsung.com>
