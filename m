@@ -1,148 +1,261 @@
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+Received: from mail.hugovil.com (mail.hugovil.com [162.243.120.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 930781DB122;
-	Thu, 13 Nov 2025 00:49:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762994988; cv=pass; b=A3csg2k9ZvMpXq0AvlXChOa7LCTjyctHHzqasTO4J5O4gaNsvXAKc0v7nvfk7vhrQOuTkDo2jNt/JomnPwLDNlR23GH9nrqmG6/IQllFPO/ITMyuOoY7h2Kc/88Nc7eVGj0Lwwduia9M21DpHWXNi37Oila1CdWAxuMsLO4kxio=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762994988; c=relaxed/simple;
-	bh=CaqYrXe8Ge+kPBFlhZjMdu1CeT964d9IlL/4u4InQzg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=RBPg/yhlT2+HMNvhRi6iHGOelPz0+zR1K7KVG2/UInQw+3kLhMfy3P+x+HJz9D/4dvkJ9AMz5o00agZu2DgpMw/uUjOEHQrz5fP4BV171oQy3dhgIsCj/Zvx7pAlPBVGofuSpeqKEdMLRiJ7UmCwfyB7GFs6WPk3KfaNF/E5mTQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=e/XQGG6G; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C35B22C181;
+	Thu, 13 Nov 2025 01:21:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.120.170
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762996914; cv=none; b=fbQyRIeGtZNJMOd8IwtxUETlm1N2HfOAB16virDDfTEEDaZ6aP4Jc6FTEaCMnWKKychcltQUmHOa0zPvgNhPg16a6BuVikBP5LjXF1ln7u7je9z8EgyCOg3n0Lt4KsDEKBdaVuGoe8yB2g96WEmIjOvdA/ny7PKz7Bu7YLf3Ob0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762996914; c=relaxed/simple;
+	bh=XLFNfueYNt+z/iZgpkK/QcLi+OgBgDN/yNLhzjt4vWU=;
+	h=Date:From:To:Cc:Message-Id:In-Reply-To:References:Mime-Version:
+	 Content-Type:Subject; b=MRj03Avl/AP1K4J67ToKxlHnTnYtDBesNjNAafo5wnFWodlWBQmrDmNTxadgWubHwFl8bMYfOzEnVFgCF5wNp+lm5wZR/O6Oz3aB+rUEOrWBP+J0eJ2/lj43z8IzxMBcHQLmbzXhZsVN9E7Ui0dgaphoi0gQ2R6q/TyVGBMHmMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com; spf=pass smtp.mailfrom=hugovil.com; dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b=W332q62A; arc=none smtp.client-ip=162.243.120.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hugovil.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="e/XQGG6G"
-ARC-Seal: i=1; a=rsa-sha256; t=1762994927; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=H6LzGbP5dJZM746g0tHRH07iUvv90mFC1ovHkOxCf70dTMiaabPLP6JE4HObK+VFAaIA8aX8VeNn9qhua0P4h6fcM7z/2ObxAYspfjy/0rVOKWFsMtr0krNQ2zUCRhmEkYWBGmNjV2jmcOJ5OkNSWISSpM3OhJOgoCGA6ftkhuY=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1762994927; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=CaqYrXe8Ge+kPBFlhZjMdu1CeT964d9IlL/4u4InQzg=; 
-	b=E/uPDJNh+zJVd0hkFHDmkNmRzFnMfMIX+VwdBSR0A57MWSIsiA5AJ+oftIrlyy1wBuKh3cP1sJKHCPjTFkbyD/29zM1YMfUxFpnHBUPegAvFsdLRCod2L0LJL2XpklThhtfxdHdWz3LMTMFktAjKmg3xDzRpeUURSNOVfz+FQAk=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=icenowy.me;
-	spf=pass  smtp.mailfrom=uwu@icenowy.me;
-	dmarc=pass header.from=<uwu@icenowy.me>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1762994927;
-	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
-	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
-	bh=CaqYrXe8Ge+kPBFlhZjMdu1CeT964d9IlL/4u4InQzg=;
-	b=e/XQGG6GKNFqKSgfgsMobkmts6s5b2JIFfEeTnauhiARBxrzFOiqcu1y6m50CxBa
-	UC0gn0804/nPbVDNvUgFXc/j59KJ0kBqP3mktrx5smdDG3DgMw9DC3fF280ly+cqXO1
-	HgwRKOgZMZVEHhR08hjQ0v0ZLjAKhh7fu0UXNbRjU15MzSN03RQQZtrBiIb1Me+wVm6
-	ERHC+BkxoP37ZC/xdNyugN4uSw597sCux35E8/jxI9sGdMshHSZa9NvjjoTU8hcDgzG
-	t7fOu8ebnKcmH4OqbUe2M8+RWw5cQvKONtcdeNFm8HAkIwMyKBtQXf9CkIamYZ3dGTq
-	fpfMqJ17Nw==
-Received: by mx.zohomail.com with SMTPS id 176299492610942.753891752546224;
-	Wed, 12 Nov 2025 16:48:46 -0800 (PST)
-Message-ID: <1d54524d7ef939232b4512ca59c78794484103ca.camel@icenowy.me>
-Subject: Re: [PATCH RFC 01/13] dt-bindings: soc: starfive: Add
- vout-subsystem IP block
-From: Icenowy Zheng <uwu@icenowy.me>
-To: Conor Dooley <conor@kernel.org>
-Cc: Michal Wilczynski <m.wilczynski@samsung.com>, Rob Herring
- <robh@kernel.org>,  Krzysztof Kozlowski <krzk+dt@kernel.org>, Emil Renner
- Berthing <kernel@esmil.dk>, Hal Feng <hal.feng@starfivetech.com>, Michael
- Turquette <mturquette@baylibre.com>,  Stephen Boyd <sboyd@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Xingyu Wu <xingyu.wu@starfivetech.com>,
-  Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
- Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong
- <neil.armstrong@linaro.org>,  Robert Foss <rfoss@kernel.org>, Laurent
- Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
- <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
- Thomas Zimmermann <tzimmermann@suse.de>, Lee Jones <lee@kernel.org>,
- Philipp Zabel <p.zabel@pengutronix.de>, Paul Walmsley
- <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
- <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, Marek Szyprowski
- <m.szyprowski@samsung.com>, Maud Spierings <maudspierings@gocontroll.com>, 
- Andy Yan <andyshrk@163.com>, Heiko Stuebner <heiko@sntech.de>,
- devicetree@vger.kernel.org,  linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org,  linux-phy@lists.infradead.org,
- dri-devel@lists.freedesktop.org,  linux-riscv@lists.infradead.org
-Date: Thu, 13 Nov 2025 08:48:33 +0800
-In-Reply-To: <20251112-skating-robust-81be8dee0a8b@spud>
-References: <20251108-jh7110-clean-send-v1-0-06bf43bb76b1@samsung.com>
-	 <CGME20251108010453eucas1p2403ec0dd2c69ae7f3eabe19cf686f345@eucas1p2.samsung.com>
-	 <20251108-jh7110-clean-send-v1-1-06bf43bb76b1@samsung.com>
-	 <20251111-massager-twistable-1e88f03d82f8@spud>
-	 <20251111-unsaid-rockslide-67b88b2e34bd@spud>
-	 <0d8e3a626b037dd348378e5ebca8005c1e715871.camel@icenowy.me>
-	 <20251112-skating-robust-81be8dee0a8b@spud>
-Organization: Anthon Open-Source Community
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4 
+	dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b="W332q62A"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hugovil.com
+	; s=x; h=Subject:Content-Transfer-Encoding:Mime-Version:Message-Id:Cc:To:From
+	:Date:subject:date:message-id:reply-to;
+	bh=hUXyvrqhQtyLwClHbmlnUsvRRtqFNZ/pNPCH03T/U04=; b=W332q62AciNmpdwEmb+vSv3+2w
+	25fh2ZHZqI+/fJ5/f1MZhzkoVARLY0+ISUPFQIrBWxYZ8rUNN9F0GUoNAdudYmLnJe3kR2Fi8Rclm
+	Y90B4JpgjhBYwayebq4hVQ2hf+02QvPyeWuR721yO/kNDuBu5LXydrBpzDHx9sBf80Lc=;
+Received: from modemcable168.174-80-70.mc.videotron.ca ([70.80.174.168]:52266 helo=pettiford)
+	by mail.hugovil.com with esmtpa (Exim 4.92)
+	(envelope-from <hugo@hugovil.com>)
+	id 1vJM1r-00061g-3a; Wed, 12 Nov 2025 20:21:39 -0500
+Date: Wed, 12 Nov 2025 20:21:38 -0500
+From: Hugo Villeneuve <hugo@hugovil.com>
+To: Chris Brandt <Chris.Brandt@renesas.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Biju Das
+ <biju.das.jz@bp.renesas.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Hien Huynh <hien.huynh.px@renesas.com>,
+ Nghia Vo <nghia.vo.zn@renesas.com>, "linux-renesas-soc@vger.kernel.org"
+ <linux-renesas-soc@vger.kernel.org>, "linux-clk@vger.kernel.org"
+ <linux-clk@vger.kernel.org>, "dri-devel@lists.freedesktop.org"
+ <dri-devel@lists.freedesktop.org>
+Message-Id: <20251112202138.1fa192b4ab6d15b404bf825d@hugovil.com>
+In-Reply-To: <OS3PR01MB83195D658E18C009B4FDF2BB8ACDA@OS3PR01MB8319.jpnprd01.prod.outlook.com>
+References: <20251105222530.979537-1-chris.brandt@renesas.com>
+	<20251105222530.979537-2-chris.brandt@renesas.com>
+	<20251111234122.5542a64223c6e286ca89dbd8@hugovil.com>
+	<OS3PR01MB83195D658E18C009B4FDF2BB8ACDA@OS3PR01MB8319.jpnprd01.prod.outlook.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-ZohoMailClient: External
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 70.80.174.168
+X-SA-Exim-Mail-From: hugo@hugovil.com
+X-Spam-Level: 
+X-Spam-Report: 
+	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+	* -0.7 NICE_REPLY_A Looks like a legit reply (A)
+Subject: Re: [PATCH v4 1/2] clk: renesas: rzg2l: Remove DSI clock rate
+ restrictions
+X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
+X-SA-Exim-Scanned: Yes (on mail.hugovil.com)
 
-=E5=9C=A8 2025-11-12=E6=98=9F=E6=9C=9F=E4=B8=89=E7=9A=84 18:36 +0000=EF=BC=
-=8CConor Dooley=E5=86=99=E9=81=93=EF=BC=9A
-> On Wed, Nov 12, 2025 at 02:34:39PM +0800, Icenowy Zheng wrote:
-> > =E5=9C=A8 2025-11-11=E6=98=9F=E6=9C=9F=E4=BA=8C=E7=9A=84 18:36 +0000=EF=
-=BC=8CConor Dooley=E5=86=99=E9=81=93=EF=BC=9A
-> > > On Tue, Nov 11, 2025 at 06:18:16PM +0000, Conor Dooley wrote:
-> > > > On Sat, Nov 08, 2025 at 02:04:35AM +0100, Michal Wilczynski
-> > > > wrote:
-> > > > > Add the dt-binding documentation for the StarFive JH7110
-> > > > > Video
->=20
-> > > > > +patternProperties:
-> > > > > +=C2=A0 "^display@[0-9a-f]+$":
-> > > >=20
-> > > > Personally I'd like to see these being regular properties,
-> > > > since
-> > > > there's
-> > > > exactly one possible setup for this.
-> > > >=20
-> > > > > +=C2=A0=C2=A0=C2=A0 type: object
-> > > > > +=C2=A0=C2=A0=C2=A0 description: Verisilicon DC8200 Display Contr=
-oller node.
-> > > >=20
-> > > > Can you add the relevant references here instead of allowing
-> > > > any
-> > > > object?
-> > >=20
-> > > I don't think that if you did, this would pass the binding
-> > > checks,
-> > > because there's no "verisilicon,dc" binding. I think I saw one in
-> > > progress, but without the soc-specific compatible that I am going
-> > > to
-> > > require here - if for no reason other than making sure that the
-> > > clocks
-> > > etc are provided correctly for this device.
-> >=20
-> > Well I didn't specify any soc-specific compatible because that IP
-> > has
-> > its own identification registers.
->=20
-> I still require one because I want to make sure that clocks etc are
-> handled correctly. You can ignore it in the driver if you wish, but
-> when
-> the next user comes along with one more or less clock, I want the
-> jh7110 one to be forced to use the correct configuration.
+Hi Chris,
 
-I don't think for those generic IPs requiring a SoC-specific compatible
-is a good idea.
+On Thu, 13 Nov 2025 00:39:59 +0000
+Chris Brandt <Chris.Brandt@renesas.com> wrote:
 
-In addition, `vivante,gc` requires no SoC-specific or even model-
-number-specific compatible strings too, and `verisilicon,dc` is from
-the same IP vendor [1] and features the same set of identification
-registers (see also all GC_ prefixed identification registers in [2]).
+> Hi Hugo,
+> 
+> Thank you for your review.
+> 
+> On Tue, Nov 11, 2025 11:41 PM, Hugo Villeneuve wrote:
+> > > +/* Required division ratio for MIPI D-PHY clock depending on number of lanes and bpp. */
+> > >+static unsigned int dsi_div_ab_desired;
+> >
+> > giving a maximum of 24 * 2 / 1 = 48
+> >
+> > So change type to u8?
+> 
+> Done.
+> 
+> I also changed the API function:
 
-[1]
-https://www.design-reuse.com/news/202527446-verisilicon-completes-acquisiti=
-on-of-vivante/
-[2]
-https://github.com/milkv-megrez/rockos-u-boot/blob/c9221cf2fa77d39c0b241ab4=
-b030c708e7ebe279/drivers/video/eswin/eswin_dc_reg.h
+Good idea.
+
+> 
+> -void rzg2l_cpg_dsi_div_set_divider(unsigned int divider, int target);
+> +void rzg2l_cpg_dsi_div_set_divider(u8 divider, int target);
+> 
+> But, I kept "target" as int because it is an enum.
+> Any comment on changing that to "u8" as well???
+
+No, int is good for that enum.
+
+> 
+> 
+> > > +rzg2l_cpg_get_foutpostdiv_rate(struct rzg2l_cpg_priv *priv,
+> > > +			       struct rzg2l_pll5_param *params,
+> > >  			       unsigned long rate)
+> > >  {
+> > >  	unsigned long foutpostdiv_rate, foutvco_rate;
+> > > +	unsigned long hsclk;
+> > > +	unsigned int a, b, odd;
+> > > +	unsigned int dsi_div_ab_calc;
+> > > +
+> >
+> > Based on my tests, it seems we can arrive at this point with a non-initialized dsi_div_ab_desired (0). Since valid
+> > values are from 1 to 128, add a check for this before using it.
+> 
+> I think at first, we need to understand how that is happening and fix that code path.
+> If this function is being called before the dsi_div_ab_desired is set to a valid value, then the code might make bad calculations and decisions.
+
+Agreed.
+
+> 
+> 
+> > > +		/* Determine the correct clock source based on even/odd of the divider */
+> > > +		odd = dsi_div_ab_desired & 1;
+> > > +		if (odd) {
+> > > +			/* divider is odd */
+> >
+> > You can drop this comment, as your "odd" variable is self-explanatory.
+> >
+> > > +			priv->mux_dsi_div_params.clksrc = 0;	/* FOUTPOSTDIV */
+> > > +			dsi_div_ab_calc = dsi_div_ab_desired;
+> > > +		} else {
+> > > +			/* divider is even */
+> >
+> > ditto.
+> 
+> Done.
+> 
+> 
+> > > +
+> > > +			/* FOUTPOSTDIV: DIV_DSI_A must always be 1/1 */
+> > > +			if (odd && a != 0)
+> > > +				continue;
+> >
+> > Use break instead of continue?
+> 
+> Done.
+> Changed to break;
+> 
+> > > +
+> > > +			for (b = 0; b < 16; b++) {
+> > > +				/* FOUTPOSTDIV: DIV_DSI_B must always be odd divider 1/(b+1) */
+> > > +				if (odd && b & 1)
+> > > +					continue;
+> > > +
+> > > +				if ((b + 1) << a == dsi_div_ab_calc) {
+> >
+> >
+> > It took me a while to decipher this :)
+> >
+> > Use an inline function to compute div_ab to improve readability, and you can reuse this function elsewhere instead of hardcoding the div_ab value (to for example):
+> >
+> > static inline u8 rzg2l_cpg_div_ab(u8 a, u8 b) {
+> >	return (b + 1) << a;
+> > }
+> >
+> > and then:
+> >
+> >     ...
+> >     if (rzg2l_cpg_div_ab(a, b) == dsi_div_ab_calc) {
+> >     ...
+> >
+> 
+> OK. I can live with that.
+> 
+> During the reviews, the code kept getting more and more optimized and trimmed down, which then became harder to follow.
+> 
+> 
+> > > +	if (dsi_div_target == PLL5_TARGET_DPI) {
+> > > +		/* Fixed settings for DPI */
+> > > +		priv->mux_dsi_div_params.clksrc = 0;
+> > > +		priv->mux_dsi_div_params.dsi_div_a = 3; /* Divided by 8 */
+> > > +		priv->mux_dsi_div_params.dsi_div_b = 0; /* Divided by 1 */
+> > > +		dsi_div_ab_desired = 8;			/* (1 << a) * (b + 1) */
+> > > +	}
+> >
+> > Here this block could be combined as an if/else-if:
+> >
+> >     if (dsi_div_target == PLL5_TARGET_DPI) {
+> >         ...
+> >     } else if (dsi_div_target == PLL5_TARGET_DSI) {
+> >         ...
+> 
+> Done.
+> 
+> 
+> > > +				if (params->pl5_intin < PLL5_INTIN_MIN ||
+> > > +				    params->pl5_intin > PLL5_INTIN_MAX)
+> > > +					continue;
+> >
+> > Insert line for readability
+> 
+> Done.
+> 
+> 
+> 
+> 
+> > > -	foutpostdiv_rate = DIV_ROUND_CLOSEST_ULL(foutvco_rate,
+> > > -						 params->pl5_postdiv1 * params->pl5_postdiv2);
+> > > +
+> > > +	foutpostdiv_rate = DIV_ROUND_CLOSEST(foutvco_rate,
+> > > +					     params->pl5_postdiv1 * params->pl5_postdiv2);
+> > >  
+> > >  	return foutpostdiv_rate;
+> >
+> > You can drop foutpostdiv_rate intermediate variable and return directly, all on one line:
+> >
+> >     return DIV_ROUND_CLOSEST(foutvco_rate, params->pl5_postdiv1 * params->pl5_postdiv2);
+> 
+> Done.
+> 
+> 
+> > >  	vclk_rate = rzg2l_cpg_get_vclk_rate(hw, rate);
+> > >  	sipll5->foutpostdiv_rate =
+> > > -		rzg2l_cpg_get_foutpostdiv_rate(&params, vclk_rate);
+> > > +		rzg2l_cpg_get_foutpostdiv_rate(priv, &params, vclk_rate);
+> >
+> > Before this patch, rzg2l_cpg_get_foutpostdiv_rate() seemed to always return a valid rate. Therefore, no validation was done of the computed rate.
+> >
+> > Now with your patch it may return "0" if the rate is invalid. Therefore you need to check for this here and return a corresponding error code.
+> 
+> I saw for some clock drivers, if they could not get the correct rate, they just return '0' as the rate.
+> 
+> But, I do see in some other drivers, they return -EINVAL, so I can do that as well.
+
+I think -EINVAL is good, as there is already, a few lines above, a
+check for:
+
+    if (!rate)
+        return -EINVAL;
+
+So it will be consistent.
+
+> 
+>  
+> > > -	priv->mux_dsi_div_params.clksrc = 1; /* Use clk src 1 for DSI */
+> > > -	priv->mux_dsi_div_params.dsi_div_a = 1; /* Divided by 2 */
+> > > -	priv->mux_dsi_div_params.dsi_div_b = 2; /* Divided by 3 */
+> > > +	/* Default settings for DPI */
+> > > +	priv->mux_dsi_div_params.clksrc = 0;
+> > > +	priv->mux_dsi_div_params.dsi_div_a = 3; /* Divided by 8 */
+> > > +	priv->mux_dsi_div_params.dsi_div_b = 0; /* Divided by 1 */
+> > > +	dsi_div_ab_desired = 8;			/* (1 << a) * (b + 1) */
+> >
+> > Use inline function rzg2l_cpg_div_ab() previously suggested.
+> 
+> I plan on getting rid of this code block anyway.
+> It's not needed.
+
+Ok.
+
+Hugo.
