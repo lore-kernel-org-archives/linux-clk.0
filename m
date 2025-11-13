@@ -1,261 +1,218 @@
-Received: from mail.hugovil.com (mail.hugovil.com [162.243.120.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C35B22C181;
-	Thu, 13 Nov 2025 01:21:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.120.170
+Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [13.75.44.102])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68B757080D;
+	Thu, 13 Nov 2025 01:37:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.75.44.102
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762996914; cv=none; b=fbQyRIeGtZNJMOd8IwtxUETlm1N2HfOAB16virDDfTEEDaZ6aP4Jc6FTEaCMnWKKychcltQUmHOa0zPvgNhPg16a6BuVikBP5LjXF1ln7u7je9z8EgyCOg3n0Lt4KsDEKBdaVuGoe8yB2g96WEmIjOvdA/ny7PKz7Bu7YLf3Ob0=
+	t=1762997881; cv=none; b=ZRTI1hiGs0uF0fWkA1ZGLazuCslM163mEHzqCoScPHnz8BUdZKXZkJgUYG9CQfQr3y2pLgSRTdL1j21P6FPSWUC1uZpBQFucs9SZlWOUOWy7sI/d7OscJfuv2smI1Oy5WauuYiyC9tzu5QfETQyDgrQDyyUInS/bHfc1zIRLmN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762996914; c=relaxed/simple;
-	bh=XLFNfueYNt+z/iZgpkK/QcLi+OgBgDN/yNLhzjt4vWU=;
-	h=Date:From:To:Cc:Message-Id:In-Reply-To:References:Mime-Version:
-	 Content-Type:Subject; b=MRj03Avl/AP1K4J67ToKxlHnTnYtDBesNjNAafo5wnFWodlWBQmrDmNTxadgWubHwFl8bMYfOzEnVFgCF5wNp+lm5wZR/O6Oz3aB+rUEOrWBP+J0eJ2/lj43z8IzxMBcHQLmbzXhZsVN9E7Ui0dgaphoi0gQ2R6q/TyVGBMHmMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com; spf=pass smtp.mailfrom=hugovil.com; dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b=W332q62A; arc=none smtp.client-ip=162.243.120.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hugovil.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b="W332q62A"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hugovil.com
-	; s=x; h=Subject:Content-Transfer-Encoding:Mime-Version:Message-Id:Cc:To:From
-	:Date:subject:date:message-id:reply-to;
-	bh=hUXyvrqhQtyLwClHbmlnUsvRRtqFNZ/pNPCH03T/U04=; b=W332q62AciNmpdwEmb+vSv3+2w
-	25fh2ZHZqI+/fJ5/f1MZhzkoVARLY0+ISUPFQIrBWxYZ8rUNN9F0GUoNAdudYmLnJe3kR2Fi8Rclm
-	Y90B4JpgjhBYwayebq4hVQ2hf+02QvPyeWuR721yO/kNDuBu5LXydrBpzDHx9sBf80Lc=;
-Received: from modemcable168.174-80-70.mc.videotron.ca ([70.80.174.168]:52266 helo=pettiford)
-	by mail.hugovil.com with esmtpa (Exim 4.92)
-	(envelope-from <hugo@hugovil.com>)
-	id 1vJM1r-00061g-3a; Wed, 12 Nov 2025 20:21:39 -0500
-Date: Wed, 12 Nov 2025 20:21:38 -0500
-From: Hugo Villeneuve <hugo@hugovil.com>
-To: Chris Brandt <Chris.Brandt@renesas.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Biju Das
- <biju.das.jz@bp.renesas.com>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Hien Huynh <hien.huynh.px@renesas.com>,
- Nghia Vo <nghia.vo.zn@renesas.com>, "linux-renesas-soc@vger.kernel.org"
- <linux-renesas-soc@vger.kernel.org>, "linux-clk@vger.kernel.org"
- <linux-clk@vger.kernel.org>, "dri-devel@lists.freedesktop.org"
- <dri-devel@lists.freedesktop.org>
-Message-Id: <20251112202138.1fa192b4ab6d15b404bf825d@hugovil.com>
-In-Reply-To: <OS3PR01MB83195D658E18C009B4FDF2BB8ACDA@OS3PR01MB8319.jpnprd01.prod.outlook.com>
-References: <20251105222530.979537-1-chris.brandt@renesas.com>
-	<20251105222530.979537-2-chris.brandt@renesas.com>
-	<20251111234122.5542a64223c6e286ca89dbd8@hugovil.com>
-	<OS3PR01MB83195D658E18C009B4FDF2BB8ACDA@OS3PR01MB8319.jpnprd01.prod.outlook.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1762997881; c=relaxed/simple;
+	bh=Uiu7GyzBjzUkcrK2zXQT7LSVNZ3Ei1g+wlG73SyEsJ0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=riiVJvMFH86S8ujtfe+JTlglSXOqqRaptAA5rP1ZaueDgrgoWWFgibSBhfppGAKe4rc7+I44O+Qn7ABHTRKdJx3yRu4iP22YyCSI6rUzkNgPZaNmD5mJZI/mGzKnRjYGukqnxKZ2NFOyFGLN65ZAGXdMVgTjFCLsaGoXw8+PwJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=13.75.44.102
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
+Received: from E0005152DT.eswin.cn (unknown [10.12.96.41])
+	by app1 (Coremail) with SMTP id TAJkCgDXz2daNhVp+DV7AA--.29102S2;
+	Thu, 13 Nov 2025 09:37:32 +0800 (CST)
+From: dongxuyang@eswincomputing.com
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	troy.mitchell@linux.dev,
+	bmasney@redhat.com
+Cc: ningyu@eswincomputing.com,
+	linmin@eswincomputing.com,
+	huangyifeng@eswincomputing.com,
+	pinkesh.vaghela@einfochips.com,
+	Xuyang Dong <dongxuyang@eswincomputing.com>
+Subject: [PATCH v8 0/3] Add driver support for ESWIN eic700 SoC clock controller
+Date: Thu, 13 Nov 2025 09:36:37 +0800
+Message-Id: <20251113013637.1109-1-dongxuyang@eswincomputing.com>
+X-Mailer: git-send-email 2.31.1.windows.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 70.80.174.168
-X-SA-Exim-Mail-From: hugo@hugovil.com
-X-Spam-Level: 
-X-Spam-Report: 
-	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-	* -0.7 NICE_REPLY_A Looks like a legit reply (A)
-Subject: Re: [PATCH v4 1/2] clk: renesas: rzg2l: Remove DSI clock rate
- restrictions
-X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
-X-SA-Exim-Scanned: Yes (on mail.hugovil.com)
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:TAJkCgDXz2daNhVp+DV7AA--.29102S2
+X-Coremail-Antispam: 1UD129KBjvJXoW3WF4DKFW8Cw1xWw45Aw48Crg_yoWxZr17pF
+	4kGr98CFn0gryxXan7tayIgF95XanrJFWjkryxXw1jva4Yk34vyr4FvFy5AFWDZr1xAw4D
+	tFnrWa1jkF4UZFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBm14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v26r
+	xl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
+	6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr
+	0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E
+	8cxan2IY04v7M4kE6xkIj40Ew7xC0wCY1x0262kKe7AKxVWUtVW8ZwCY02Avz4vE-syl42
+	xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWU
+	GwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI4
+	8JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4U
+	MIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I
+	8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUO73vUUUUU
+X-CM-SenderInfo: pgrqw5xx1d0w46hv4xpqfrz1xxwl0woofrz/
 
-Hi Chris,
+From: Xuyang Dong <dongxuyang@eswincomputing.com>
 
-On Thu, 13 Nov 2025 00:39:59 +0000
-Chris Brandt <Chris.Brandt@renesas.com> wrote:
+The link [1] provides the official documentation for the EIC7700. Section 3.2
+covers the clock subsystem.
 
-> Hi Hugo,
-> 
-> Thank you for your review.
-> 
-> On Tue, Nov 11, 2025 11:41 PM, Hugo Villeneuve wrote:
-> > > +/* Required division ratio for MIPI D-PHY clock depending on number of lanes and bpp. */
-> > >+static unsigned int dsi_div_ab_desired;
-> >
-> > giving a maximum of 24 * 2 / 1 = 48
-> >
-> > So change type to u8?
-> 
-> Done.
-> 
-> I also changed the API function:
+[1] https://www.sifive.com/document-file/eic7700x-datasheet
 
-Good idea.
+Updates:
+  Changes in v8:
+  - Added clock-tree link in cover-letter.
+  - Updated YAML file
+    - Added "Acked-by: Troy Mitchell <troy.mitchell@linux.dev>" for bindings.
+  - Updated driver file
+    - Changed Kconfig symbol type from bool to tristate to build this driver as
+      module.
+  - Updated MAINTAINERS file
+    - Added entry "ESWIN EIC7700 CLOCK DRIVER".
 
-> 
-> -void rzg2l_cpg_dsi_div_set_divider(unsigned int divider, int target);
-> +void rzg2l_cpg_dsi_div_set_divider(u8 divider, int target);
-> 
-> But, I kept "target" as int because it is an enum.
-> Any comment on changing that to "u8" as well???
+  - Link to v7: https://lore.kernel.org/all/20251023071658.455-1-dongxuyang@eswincomputing.com/
 
-No, int is good for that enum.
+  Changes in v7:
+  - Updated YAML file
+    - Added "Acked-by: Conor Dooley <conor.dooley@microchip.com>" for bindings.
+  - Updated driver file
+    - Added description for clk of eswin_calc_pll().
+    - Added macro EIC7700_MUX_TBL to manage mux clock-tree.
+    - Added eswin_clk_register_mux_tbl() to register mux clocks with
+      discontinuous parent indexes.
 
-> 
-> 
-> > > +rzg2l_cpg_get_foutpostdiv_rate(struct rzg2l_cpg_priv *priv,
-> > > +			       struct rzg2l_pll5_param *params,
-> > >  			       unsigned long rate)
-> > >  {
-> > >  	unsigned long foutpostdiv_rate, foutvco_rate;
-> > > +	unsigned long hsclk;
-> > > +	unsigned int a, b, odd;
-> > > +	unsigned int dsi_div_ab_calc;
-> > > +
-> >
-> > Based on my tests, it seems we can arrive at this point with a non-initialized dsi_div_ab_desired (0). Since valid
-> > values are from 1 to 128, add a check for this before using it.
-> 
-> I think at first, we need to understand how that is happening and fix that code path.
-> If this function is being called before the dsi_div_ab_desired is set to a valid value, then the code might make bad calculations and decisions.
+  - Link to v6: https://lore.kernel.org/all/20251009092029.140-1-dongxuyang@eswincomputing.com/
 
-Agreed.
+  Changes in v6:
+  - Removed config option patch dependency from cover letter, because the patch
+    was applied.
+  - Updated YAML file
+    - Added an oscillator as the clock input, named xtal24m.
+    - Added clocks property.
+  - Updated driver file
+    - Replaced fixed_rate_clk_xtal_24m with xtal24m.
+    - Dropped fixed_rate_clk_xtal_24m from driver. Because clock xtal24m was
+      registered by fixed-clock as oscillator.
 
-> 
-> 
-> > > +		/* Determine the correct clock source based on even/odd of the divider */
-> > > +		odd = dsi_div_ab_desired & 1;
-> > > +		if (odd) {
-> > > +			/* divider is odd */
-> >
-> > You can drop this comment, as your "odd" variable is self-explanatory.
-> >
-> > > +			priv->mux_dsi_div_params.clksrc = 0;	/* FOUTPOSTDIV */
-> > > +			dsi_div_ab_calc = dsi_div_ab_desired;
-> > > +		} else {
-> > > +			/* divider is even */
-> >
-> > ditto.
-> 
-> Done.
-> 
-> 
-> > > +
-> > > +			/* FOUTPOSTDIV: DIV_DSI_A must always be 1/1 */
-> > > +			if (odd && a != 0)
-> > > +				continue;
-> >
-> > Use break instead of continue?
-> 
-> Done.
-> Changed to break;
-> 
-> > > +
-> > > +			for (b = 0; b < 16; b++) {
-> > > +				/* FOUTPOSTDIV: DIV_DSI_B must always be odd divider 1/(b+1) */
-> > > +				if (odd && b & 1)
-> > > +					continue;
-> > > +
-> > > +				if ((b + 1) << a == dsi_div_ab_calc) {
-> >
-> >
-> > It took me a while to decipher this :)
-> >
-> > Use an inline function to compute div_ab to improve readability, and you can reuse this function elsewhere instead of hardcoding the div_ab value (to for example):
-> >
-> > static inline u8 rzg2l_cpg_div_ab(u8 a, u8 b) {
-> >	return (b + 1) << a;
-> > }
-> >
-> > and then:
-> >
-> >     ...
-> >     if (rzg2l_cpg_div_ab(a, b) == dsi_div_ab_calc) {
-> >     ...
-> >
-> 
-> OK. I can live with that.
-> 
-> During the reviews, the code kept getting more and more optimized and trimmed down, which then became harder to follow.
-> 
-> 
-> > > +	if (dsi_div_target == PLL5_TARGET_DPI) {
-> > > +		/* Fixed settings for DPI */
-> > > +		priv->mux_dsi_div_params.clksrc = 0;
-> > > +		priv->mux_dsi_div_params.dsi_div_a = 3; /* Divided by 8 */
-> > > +		priv->mux_dsi_div_params.dsi_div_b = 0; /* Divided by 1 */
-> > > +		dsi_div_ab_desired = 8;			/* (1 << a) * (b + 1) */
-> > > +	}
-> >
-> > Here this block could be combined as an if/else-if:
-> >
-> >     if (dsi_div_target == PLL5_TARGET_DPI) {
-> >         ...
-> >     } else if (dsi_div_target == PLL5_TARGET_DSI) {
-> >         ...
-> 
-> Done.
-> 
-> 
-> > > +				if (params->pl5_intin < PLL5_INTIN_MIN ||
-> > > +				    params->pl5_intin > PLL5_INTIN_MAX)
-> > > +					continue;
-> >
-> > Insert line for readability
-> 
-> Done.
-> 
-> 
-> 
-> 
-> > > -	foutpostdiv_rate = DIV_ROUND_CLOSEST_ULL(foutvco_rate,
-> > > -						 params->pl5_postdiv1 * params->pl5_postdiv2);
-> > > +
-> > > +	foutpostdiv_rate = DIV_ROUND_CLOSEST(foutvco_rate,
-> > > +					     params->pl5_postdiv1 * params->pl5_postdiv2);
-> > >  
-> > >  	return foutpostdiv_rate;
-> >
-> > You can drop foutpostdiv_rate intermediate variable and return directly, all on one line:
-> >
-> >     return DIV_ROUND_CLOSEST(foutvco_rate, params->pl5_postdiv1 * params->pl5_postdiv2);
-> 
-> Done.
-> 
-> 
-> > >  	vclk_rate = rzg2l_cpg_get_vclk_rate(hw, rate);
-> > >  	sipll5->foutpostdiv_rate =
-> > > -		rzg2l_cpg_get_foutpostdiv_rate(&params, vclk_rate);
-> > > +		rzg2l_cpg_get_foutpostdiv_rate(priv, &params, vclk_rate);
-> >
-> > Before this patch, rzg2l_cpg_get_foutpostdiv_rate() seemed to always return a valid rate. Therefore, no validation was done of the computed rate.
-> >
-> > Now with your patch it may return "0" if the rate is invalid. Therefore you need to check for this here and return a corresponding error code.
-> 
-> I saw for some clock drivers, if they could not get the correct rate, they just return '0' as the rate.
-> 
-> But, I do see in some other drivers, they return -EINVAL, so I can do that as well.
+  - Link to v5: https://lore.kernel.org/all/20250923084637.1223-1-dongxuyang@eswincomputing.com/
 
-I think -EINVAL is good, as there is already, a few lines above, a
-check for:
+  Changes in v5:
+  - Removed vendor prefix patch dependency from cover letter, because the patch
+    was applied.
+  - Updated YAML file
+    - Placed the required after all properties.
+    - Removed patternProperties. Also removed compatible of eswin,pll-clock,
+      eswin,mux-clock, eswin,divider-clock and eswin,gate-clock as we have moved
+      clock tree from DTS to Linux driver.
+    - Removed the clock tree from DTS. Used clock-controller to manage all
+      clock. Removed all child nodes in clock-controller.
+    - Removed '#address-cells' and '#size-cells' properties, because the clock
+      controller did not need to define these properties.
+    - Removed eic7700-clocks.dtsi.
+    - Added dt-bindings header for clock IDs. Because used the IDs to register
+      clocks.
+  - Updated driver file
+    - Modified the commit for clock driver. Dropped indentation in commit.
+    - Removed CLK_OF_DECLARE(). Used *clk_hw_register* to register clocks. Used
+      devm_of_clk_add_hw_provider.
+    - Dropped singletons.
+    - Checked the value right after obtaining it.
+    - Removed the definitions of macro frequency in clk.h like CLK_FREQ_24M.
+    - Modified description of help in Kconfig.
+    - Added COMPILE_TEST. Added COMMON_CLK_ESWIN for clk.o. And added
+      "select COMMON_CLK_ESWIN" for clk-eic7700.c. Without COMMON_CLK_EIC7700,
+      clk.c could not be compiled.
+    - Used .determined_rate.
+    - Added macro definitions of EIC7700_DIV, EIC7700_FIXED, EIC7700_FACTOR,
+      EIC7700_MUX and EIC7700_PLL to manage clock tree.
+    - Added clk-eic7700.h to place eic7700 SoC clock registers.
+    - Removed refdiv_val and postdiv1_val from clk_pll_recalc_rate(). Because
+      these values were unused.
 
-    if (!rate)
-        return -EINVAL;
+  - Link to v4: https://lore.kernel.org/all/20250815093539.975-1-dongxuyang@eswincomputing.com/
 
-So it will be consistent.
+  Changes in v4:
+  - Updated YAML file
+    - Changed name from cpu-default-frequency to cpu-default-freq-hz.
+    - Dropped $ref of cpu-default-frequency.
+    - Added cpu-default-frequency for required.
+    - Removed cpu-default-frequency in updated file, because there was no
+      need to add cpu-default-frequency.
+    - Moved DIVIDER to DIV.
+    - Arranged the IDs in order.
+    - Dropped EIC7700_NR_CLKS.
+    - Removed dt-bindings eswin,eic7700-clock.h. Because IDs was not used,
+      and used clock device nodes.
+    - According to the updated driver codes, the YAML has been updated.
+  - Updated driver file
+    - Remove undocumented parameters "cpu_no_boost_1_6ghz" and
+      "cpu-default-frequency".
+    - Modified the comment and used the correct Linux coding style.
+    - Removed codes of voltage, because it was not the clock driver.
+    - Updated the formula of clock frequency calculation. Removed the logic
+      that only used register selection.
+    - Used CLK_OF_DECLARE() to register clocks. Registered pll-clock,
+      mux-clock, divider-clock, and gate-clock in clk-eic7700.c.
+      The specific implementation of clock registration was in clk.c.
+    - Added eic7700-clocks.dtsi.
+    - Moved device information to DTS. Put all clocks' node in the
+      eic7700-clocks.dtsi.
 
-> 
->  
-> > > -	priv->mux_dsi_div_params.clksrc = 1; /* Use clk src 1 for DSI */
-> > > -	priv->mux_dsi_div_params.dsi_div_a = 1; /* Divided by 2 */
-> > > -	priv->mux_dsi_div_params.dsi_div_b = 2; /* Divided by 3 */
-> > > +	/* Default settings for DPI */
-> > > +	priv->mux_dsi_div_params.clksrc = 0;
-> > > +	priv->mux_dsi_div_params.dsi_div_a = 3; /* Divided by 8 */
-> > > +	priv->mux_dsi_div_params.dsi_div_b = 0; /* Divided by 1 */
-> > > +	dsi_div_ab_desired = 8;			/* (1 << a) * (b + 1) */
-> >
-> > Use inline function rzg2l_cpg_div_ab() previously suggested.
-> 
-> I plan on getting rid of this code block anyway.
-> It's not needed.
+  - Link to v3: https://lore.kernel.org/all/20250624103212.287-1-dongxuyang@eswincomputing.com/
 
-Ok.
+  Changes in v3:
+  - Update example, drop child node and add '#clock-cells' to the parent
+    node.
+  - Change parent node from sys-crg to clock-controller for this yaml.
+  - Drop "syscon", "simple-mfd" to clear warnings/errors by using "make
+    dt_binding_check". And these are not necessary.
+  - Add "cpu-default-frequency" definition in yaml for "undocumented ABI".
+  - Drop Reviewed-by, this is misunderstanding. We have not received such
+    an email.
+  - Link to v2: https://lore.kernel.org/all/20250523090747.1830-1-dongxuyang@eswincomputing.com/
 
-Hugo.
+  Changes in v2:
+  - Update example, drop child node.
+  - Clear warnings/errors for using "make dt_binding_check".
+  - Change to the correct format.
+  - Drop some non-stanard code.
+  - Use dev_err_probe() in probe functions.
+  - Link to v1: https://lore.kernel.org/all/20250514002233.187-1-dongxuyang@eswincomputing.com/
+
+Xuyang Dong (3):
+  dt-bindings: clock: eswin: Documentation for eic7700 SoC
+  clock: eswin: Add eic7700 clock driver
+  MAINTAINERS: Add entry for ESWIN EIC7700 clock driver
+
+ .../bindings/clock/eswin,eic7700-clock.yaml   |   46 +
+ MAINTAINERS                                   |    8 +
+ drivers/clk/Kconfig                           |    1 +
+ drivers/clk/Makefile                          |    1 +
+ drivers/clk/eswin/Kconfig                     |   15 +
+ drivers/clk/eswin/Makefile                    |    8 +
+ drivers/clk/eswin/clk-eic7700.c               | 1033 +++++++++++++++++
+ drivers/clk/eswin/clk-eic7700.h               |  122 ++
+ drivers/clk/eswin/clk.c                       |  481 ++++++++
+ drivers/clk/eswin/clk.h                       |  256 ++++
+ .../dt-bindings/clock/eswin,eic7700-clock.h   |  280 +++++
+ 11 files changed, 2251 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/eswin,eic7700-clock.yaml
+ create mode 100644 drivers/clk/eswin/Kconfig
+ create mode 100644 drivers/clk/eswin/Makefile
+ create mode 100644 drivers/clk/eswin/clk-eic7700.c
+ create mode 100644 drivers/clk/eswin/clk-eic7700.h
+ create mode 100644 drivers/clk/eswin/clk.c
+ create mode 100644 drivers/clk/eswin/clk.h
+ create mode 100644 include/dt-bindings/clock/eswin,eic7700-clock.h
+
+--
+2.43.0
+
