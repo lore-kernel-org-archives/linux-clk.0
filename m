@@ -1,131 +1,100 @@
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com [209.85.221.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9FDF2DA751
-	for <linux-clk@vger.kernel.org>; Thu, 13 Nov 2025 16:43:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 110BA34679C
+	for <linux-clk@vger.kernel.org>; Thu, 13 Nov 2025 16:53:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763052187; cv=none; b=lcZO0yUdDOXD4O+RQAd2e7UI68we4h3Fm1fkvvbBQSQzjbXfYSkZVCi07aHzGFUoJx9L/5PxoVRhForaY1Bkufj4AaFRsZY3hrWBicQ+QPgSZwDSHlmCaPF2f1eIikb25C975YGSpvKCprFmdzMuuYneCLmyWkod3l9TD320ErI=
+	t=1763052815; cv=none; b=m/X0F0HBl11iObFQx0JMTeQ47L8pC0D/5go6RgNV0dKVB1P/vcAWwTH2kwmyAPyP76XZad5S18iDT/PUEENZ3pUzzPRfQpXNvPqr3D6+kquwva3Clq+WYOpW80xPgH5OfYH2/lazs8B+HZyA0smqx6srIpheFLfNb9bz8piPlgE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763052187; c=relaxed/simple;
-	bh=e4wpLmy7vbQbRC0XLoLpa5gIrMdKSclGn19Wnlg9avQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ua70ta3ATuTrzDW0fkOFmgIs0p+maO4xlBMBogynyvRQqW/nCaZNhnMH78hCltM2OEfU6+/IrP2PW4suAtfO+os7Oo9yGyZoLTDsYtV3zoPWe4jzTGKo7K7XXJT11G5HLDS3mjXSsha+byHund0k/48B0T0ilt7bydXr8fW1Ve0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FZKdt2vU; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1763052815; c=relaxed/simple;
+	bh=Dbv+NvA54eQnU138bJCOz6IuOnEx2OSaA5K0SN9S/FU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gKIiUsgw4TeTM2QAuglAcMDOiNmPoiWX5qpD7NJkMB5umk0z8/noImJsl0R8w9HCQTB4iCGlwT5AeRqX69/v1AgAPlx/Dd4iVmA0PZesG3ZUbPGRfyD/fP4ObAFWieT6aE6VYcmxTtIKcE7Qmq/XKOgJhCRdq+2hCw7YRP0MIfE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FZKdt2vU"
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-42b38693c4dso554090f8f.3
-        for <linux-clk@vger.kernel.org>; Thu, 13 Nov 2025 08:43:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763052184; x=1763656984; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=8de/CFnWO3IGxpSS3xw4ysFyF7Uiqg4MfqIR5613CyQ=;
-        b=FZKdt2vU5l2zdvp23iy9lONsvqaXvfKpbetvBZaixTS1boAtNI7uBeHcBnoAmCqsJo
-         hSYqWiKYV62+tzfdeLceUjufrGVCjx0On0Uuh2JTuOYBX3UGcmYyRJDHJ1sdhociVuLz
-         a7jADwp6clDKNa6ZcHvl9mtUBumUlMKFVZ+aoDFvpkMcdRUGHIfXiPuSwfiSKPBOFO7u
-         bmatcHkAXjrxm7uQCG/XhscQq+bilo3Kmh95c4kBaHYyjyJAV3DA4kzxa/LZyKejjeMF
-         0IugupU25rlgZZAu2yhi2gqB+l3lan2M6R/RP71DiMcevBHj+/cMsCn46wWaux3Ug/Uo
-         33Ug==
+Received: by mail-vk1-f172.google.com with SMTP id 71dfb90a1353d-559748bcf99so789142e0c.3
+        for <linux-clk@vger.kernel.org>; Thu, 13 Nov 2025 08:53:33 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763052184; x=1763656984;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1763052813; x=1763657613;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=8de/CFnWO3IGxpSS3xw4ysFyF7Uiqg4MfqIR5613CyQ=;
-        b=PEKZEDU931pnu4vNc1mm1cotRIaW5l0PXCSpfgHr5FN4RqzhjNoVO9lgpN9ylgYIKO
-         vdwd77gYlT9PJuSEAPNTxxfk/12Wp1RSEFowkZG4h0DaMyGAMpNKHLSmZo8RecFwC4rt
-         U0aWjtDUblmShYc4ihQ0bLXD8UR53wMUPYPpufeKQx5mNfI5eMeZgDeSogXboBlpHsQl
-         ILswLVn47iH4ThKtwb2GsIqEf2umIoZ8NeomRDVhBecfkSH36wD/8BJtWypNl4Fr6XZu
-         vyw4GEKBG4YBA2wIzW9Xtl+Rt5jj2z9J20AMYkW9Q9r/r+pDY/FXwIkLz3oaC2Y8iVt8
-         YIOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWt4NDYPtfQr6iFn7E3RJ7dIUtxQaWoMnYalS6DTIyA4ipkCYaEghLiQWklRyA7gU6o7N21Reu2jjQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyAD1GloZDjtAy8FUS8IDfUzBZcZyrd7S89FSSTfMCODPQr53W2
-	W7J4mzIse61gd0V1cDL2QAnSuTA/ev2iEx0TIBxOulYJ8pjMOePbD+q/X7QJWA==
-X-Gm-Gg: ASbGnctBvtiQx6cAmEGPyi2tCQqur9z+15IOBPllgrMrfP53s2l6eNE+p5QWqC/Trco
-	rEDrLD45o1RikH86idvjoWH8GiotFcJ/gsZE9jCG0IGPQOMGcxq1xYufQbM9midOl6/Ga2HvGix
-	562mbIU77TJR2kT8WSAdgBGyzrwuBxUJugAaxNaUVIIsbZl7Op23ElYqu0FEKiWO4d3uu2mkOei
-	tuB6w+ndG7/FH0O1joc2Kcrxe6z/6isO2qE6xkHz0G4J4AOV3nMfPyoYrXifE5zODZh/IxedUMi
-	YuEeN8onjCeROGgRMTA4aoHTmjVABKjxTCdKqvVxwYIUUgVb3lz1/D1WJ99CYB2zwX3K/RFp+CL
-	DiVETj4B9c5fCeCnN/TaeuO9IDFYZRlfWPuAFd8fhVVyGKrf6Mn45O5v7wigbNEXj2MGgwEJWkF
-	+9D45zfB6vQ+lQNCZx5i8jBpYaF0ht6ZzymVFsRceujASiohUHkns=
-X-Google-Smtp-Source: AGHT+IE/hFbQQQKhQlmQzt/n0bY/OxlEju2Z4LaA3//8LQTjh5HN/tkbw2eY2czeTiAKeKUY5nE69A==
-X-Received: by 2002:a05:600c:a06:b0:470:fe3c:a3b7 with SMTP id 5b1f17b1804b1-4778fe5ece9mr1671475e9.5.1763052184093;
-        Thu, 13 Nov 2025 08:43:04 -0800 (PST)
-Received: from [192.168.0.253] (5D59A51C.catv.pool.telekom.hu. [93.89.165.28])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4778c8a992bsm45289725e9.16.2025.11.13.08.43.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Nov 2025 08:43:03 -0800 (PST)
-From: Gabor Juhos <j4g8y7@gmail.com>
-Date: Thu, 13 Nov 2025 17:42:52 +0100
-Subject: [PATCH] clk: qcom: use different Kconfig prompts for APSS
- IPQ5424/6018 drivers
+        bh=XbQvAYO3eNdTVb0fT9wjAGvduLlBPUoVXxd3qKsckAE=;
+        b=LIfeUEjkT1+agKcP6eY+rTptpCIotP6p2h7jcN6tOLBXP9DB29MlrFCWeEwOWI4gZ/
+         pkmycmyEh1/4mMJDXm8eY916bojvWJBIZlnY81lgsjkbGY2a3tvRrr/5W+0ZagPnf9V+
+         uU0XoUarpV/k1q/7jJnbL5sixC/oROTSlIQnm20tcAV9SOW8MbMDcbqE+ZHqXLSHDWmp
+         CIUuLWEs4vVBbJcu+ht6922BeM5j9XVr7LaC1NOQcs3a2/9yaFZF345WXS6Btv81YQkE
+         RwZCIJktcA//EQPvuWXdkN2SEu0JgT4gGyDC0IvI03qCtqiJ8xJEZq538hyHw+55hk1l
+         1RmA==
+X-Forwarded-Encrypted: i=1; AJvYcCVmX9F/B8X1NcOXuOFggUx1RfhBInW5gtSSLmTyYuDucx5JGpgv9mRfkxIXWUsg+uTfYEXSe0fJgTM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyK1v9ltakslkD0tdKKeSuy5LMI0DE5w+b2S8w1M9449VOUoUC7
+	ymlqMRT1rmyldFNChfbWOwbwdwWXbN+p7dm67M/NtPRcIhY2Tz32DJU462GzqntgO2w=
+X-Gm-Gg: ASbGncuyyjyWFzG7cI9SbcRSnBlcjdNXb3L5ohBOk6KYm7YetTG66KGxEkJBA8r3f9/
+	eBMi3h+Bgk19druaj2+COW4tjNJ9sZMN0smX83yVwHz2m/+uqPSKvZOmzrtYxqU7RKxYewoWuSe
+	A2GalbgBoMo5ojM7FgyL7CSBx9hG2fNWYiTgU7aouDZOQDfcvxRlPyCIfWR+V7taUy6hELXSgjy
+	/mD01AVLFnmlrc3juN+mariak/a1TSV8BH9vUvlpC099bFLP+OLg0BACZVyWjw4dkdVwyvFN3J9
+	fhNExsHPY7E5FvRSufAuBzgBNktUuwpSJ9YNYsPhmvBoI4Oqa6XY7ATrJLFIMcgaQ08VIhpTHGm
+	aK5MrA1n5UnxFHcupsjDjMH1WjuX0cas6jb9LES1Wj9q9883wKBG0e0k0EUeVuwoLovEo90JlT5
+	ChVHPnzS3Y94+9tcH3SP/zgNJQqcMJm7Z5cV91CA==
+X-Google-Smtp-Source: AGHT+IFkSSs0Xu9wmzYwnG6gWYGXoo1GtD3dA74TIwVr0MLqmFl4GvAJNe+8BOpoVw/oQGnkfy3vmg==
+X-Received: by 2002:a05:6122:4582:b0:549:f04a:6eb3 with SMTP id 71dfb90a1353d-55b1be64f5amr181937e0c.9.1763052812628;
+        Thu, 13 Nov 2025 08:53:32 -0800 (PST)
+Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com. [209.85.217.47])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-55b0f331034sm842395e0c.3.2025.11.13.08.53.31
+        for <linux-clk@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Nov 2025 08:53:31 -0800 (PST)
+Received: by mail-vs1-f47.google.com with SMTP id ada2fe7eead31-5d967b67003so707759137.2
+        for <linux-clk@vger.kernel.org>; Thu, 13 Nov 2025 08:53:31 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUNR4iX+1rM2jhhIvGIc9AXcbaF9CudivXy/FJY6lL+bckmPqYWFSfgoG9GucULlQkSWluxcHrciL0=@vger.kernel.org
+X-Received: by 2002:a05:6102:2908:b0:5db:f5d1:5790 with SMTP id
+ ada2fe7eead31-5dfc5587ea4mr226528137.13.1763052811529; Thu, 13 Nov 2025
+ 08:53:31 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251113-clk-qcom-apss-ipq-prompt-v1-1-b62cf2142609@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAIsKFmkC/x3MTQqEMAxA4atI1gZMRZG5yuDCqVGDP43NIIJ4d
- 4vLb/HeBcZR2OCTXRD5EJOwJVCegZ+6bWSUPhlc4SoiKtEvM+4+rNipGYruqDGs+seB6qr+FY1
- zvoGUa+RBznf9be/7ARUtBfNqAAAA
-X-Change-ID: 20251113-clk-qcom-apss-ipq-prompt-f1656b0822c8
-To: Bjorn Andersson <andersson@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Gabor Juhos <j4g8y7@gmail.com>
-X-Mailer: b4 0.14.2
+References: <20251101050034.738807-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20251101050034.738807-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20251101050034.738807-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 13 Nov 2025 17:53:20 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdVo2DGVm0KMx10Heytif4aQTRU1OcXb-xSzLs5SP7Me+w@mail.gmail.com>
+X-Gm-Features: AWmQ_bl5EDLinjz9IEQUBnCdqQ9y_TsmjBBKKZa6y0pw8az6LRSt_Iws6T3ZPNQ
+Message-ID: <CAMuHMdVo2DGVm0KMx10Heytif4aQTRU1OcXb-xSzLs5SP7Me+w@mail.gmail.com>
+Subject: Re: [PATCH 1/4] dt-bindings: clock: renesas,r9a09g057-cpg: Add USB3.0
+ core clocks
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Both the IPQ_APSS_5424 and IPQ_APSS_6018 symbols are using the same
-prompt which complicates to see that which option corresponds to which
-driver.
+On Sat, 1 Nov 2025 at 06:00, Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Add definitions for USB3.0 core clocks in the R9A09G057 CPG DT bindings
+> header file.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Add a prefix to both prompts to make it easier to differentiate the
-two options.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in a branch shared by clock driver and DTS source files.
 
-While at it, also fix a typo in the help text of the IPQ_APSS_5424
-symbol.
+Gr{oetje,eeting}s,
 
-Signed-off-by: Gabor Juhos <j4g8y7@gmail.com>
----
- drivers/clk/qcom/Kconfig | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+                        Geert
 
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index 78a3038426136e018e346bad0e10e1caa26ee6b7..2190979b6e7b66cb3901ff53dbb1af39571e4267 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -215,16 +215,16 @@ config IPQ_APSS_PLL
- 	  devices.
- 
- config IPQ_APSS_5424
--	tristate "IPQ APSS Clock Controller"
-+	tristate "IPQ5424 APSS Clock Controller"
- 	select IPQ_APSS_PLL
- 	default y if IPQ_GCC_5424
- 	help
--	  Support for APSS Clock controller on Qualcom IPQ5424 platform.
-+	  Support for APSS Clock controller on Qualcomm IPQ5424 platform.
- 	  Say Y if you want to support CPU frequency scaling on ipq based
- 	  devices.
- 
- config IPQ_APSS_6018
--	tristate "IPQ APSS Clock Controller"
-+	tristate "IPQ6018 APSS Clock Controller"
- 	select IPQ_APSS_PLL
- 	depends on QCOM_APCS_IPC || COMPILE_TEST
- 	depends on QCOM_SMEM
-
----
-base-commit: 682921ab33129ec46392b27e9dafcb206c2a08dd
-change-id: 20251113-clk-qcom-apss-ipq-prompt-f1656b0822c8
-
-Best regards,
 -- 
-Gabor Juhos <j4g8y7@gmail.com>
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
