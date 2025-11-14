@@ -1,216 +1,114 @@
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1728C304BBC
-	for <linux-clk@vger.kernel.org>; Fri, 14 Nov 2025 09:04:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC1EE2BF015;
+	Fri, 14 Nov 2025 10:30:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763111075; cv=none; b=Yh2eyeYSagtIZ6fiTVhwHJESMuxZ1hivMF4X1OI2NVJloFyybpkk0qXb781Gn6JuhIiY13KYMFPRXf10MaQk4d/BbWxvpeN/JqF8Y7aNhNth+6fyLSl/fKwBK5nKY66Y/ZlhK8ySZdBawTwLsLBDaKvVWL3Kp7h8vyePK8UYbf0=
+	t=1763116249; cv=none; b=D3PErzW/4kKM81K7ncwY7bJNK5tUv8xXd0lvtzMNNTk/QR1M9pz0UdwEX0pAicj/c7KYfIahdmp7P7hFAOpZPnDDd6omB6cNV7O4PBmjCG2PCDRnydzUMJb9Q0AOtMEmCSOLEOQ5Au/NrfyVXihbLZNJxwKNtyFaujtO4PoHbAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763111075; c=relaxed/simple;
-	bh=0TEm7iRCHjxnOslZB50ja14A360VHxBjrAw5MtbVg4E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MR61xAyiZRVXc02xChjZLsuqbOU7oXC8Qn34lcDvpOBvEoQVZJ0Go/0v9gR0GuQqHWPWLeiMkxAogxXT5ONSEJFlJX3eZ9ZyS/G+YDQ1bLT/xD+3/rDBDp1I6OX899BjYfDdjGodJMxTR6stkVhITqHheFQkU+rID3LUmPcnU1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VRyHedUR; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VRyHedUR"
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-37a3340391cso15010681fa.3
-        for <linux-clk@vger.kernel.org>; Fri, 14 Nov 2025 01:04:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763111070; x=1763715870; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=eyGXFrfPOvtO9Z4s8XQ0ch6UyF0uTEn2G/XOy3LSwzA=;
-        b=VRyHedUReEEON2xYd87WuLqJfD1noLS/ndv5UrVlMiwt4AvPh301/msGwg3YAfz0NK
-         YD13TyYHFEGdhF+5LIO+mQG9Tyu/olXSrJrogNVSienDMHGnhETw0TerCFiLjUNbtdSN
-         b2KuZnS/MEw5h1jDPYrtK3hTXlGXAvWxnhvxvZ/bZshcWh2279+HMLOGna+Y5GEV8lPm
-         MG8G1pzJsYP6py5eaIA1WVqC+WoYcku5GLY9qpVnCTnQpRRocLijXlcMvTJ/vqGmLHV/
-         lNrKrdCC2Wa58fVEXVPdN417hEOZFXG5JpD9cSwnpoUsZ9Jb3STOsMywbKG0ccu742fw
-         YCOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763111070; x=1763715870;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=eyGXFrfPOvtO9Z4s8XQ0ch6UyF0uTEn2G/XOy3LSwzA=;
-        b=Addm4kwZNfYFb+CfvyY3wxerUyOYLK0dnapp+OPlemrbsle8gB/61w8drkDwZ+CH8F
-         MUHw4Q5KNsPYS/CvSca958/dfeeHqdz8cT1NIHnWXyuGCCCBVIWSDMi8RLAr9n+NLSr+
-         ZMWfVsULS0I1EvxtxNPMh5+0/F/+0h3p80mIjuaoGNAgZKt+3SuSSLEHo7hQ92lXdi74
-         6VdHD+cVkByGAcio+v4BiXuQFdL0xCzkNcrO0Sss/Mh9u6qzOeWDrEQkxAaoxL1npmE/
-         BtkPWOdhwR3WclA33LQ53kdY9V18+lVkyq00L8qLuRo03eNaqnRHwVZ1TEHyjNjbar84
-         1Xlg==
-X-Forwarded-Encrypted: i=1; AJvYcCUcXZXKlMiqFp6cwgpvGtY0FV7gV78cRtuC06HZTRUi79rawf8Cz0VFDqYw9YKrMDV2XoTXrKJu7VA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFIt4wy0phpca3756KpgRE0PV+ze4pUQ9jZ4QTKrCO7vmm0sFK
-	ZkHVdJvh0r43xgt9lZHil8dd6YyKiGVkT8+J5DkwPUejTsLmu+M0CUrW
-X-Gm-Gg: ASbGnculFgyndn4j2xuvKA+NKfg2GVtdBxE9INJyCsDGBQJI++Ri7bHjc3vezJiGeZE
-	G0Z7rwYRLekr54qXqBriaik1RzPve+0OmtzDYSFkUT1E/l8/5eV41jlpiRbZkd7q65GdcyY1FDi
-	Eqy7L5GAVYQi2/mHsGr1NX8kmAO9VUqaQL4bBIlGVOxazMjrylBbWS6JdXdIJD8m8wPr7H5kZo5
-	0SgW9bJe4tnM8xLm5EP2gg9NZoSMNiqkhzUZjGOd5FZcMYyr5MqfRLMSnuK1HKYS+I8Xb2FjnOz
-	qCS7HiaKaUKHr8xcJhQx/Pt3zM9IFPBxmsnD+dOwarEpcGqSNs1ATbHib5QJfO6XMrejte6dfDn
-	Wy90UCVQEBHkv8Z/bhwc7h2p1fYNmTsQazhfIj4XyJQEQ56tPww/nJc93I/P4xoZp7b+Dz+fKD4
-	vBdXehGL0iEK/flHEdPGlyq/HZRBo9MsRTEdt14vh3GeuGlwqEKHAzWW85dg==
-X-Google-Smtp-Source: AGHT+IFr4MNcx4dsYyHl+PkDpXtMSjAYMNDIYKiKLMNKzXGQD8YnOzZnKnzRzUK+LYDxWhp7vqal/A==
-X-Received: by 2002:a2e:b4a6:0:b0:37b:a664:acde with SMTP id 38308e7fff4ca-37babd29d4emr4429431fa.32.1763111069883;
-        Fri, 14 Nov 2025 01:04:29 -0800 (PST)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-37b9ce080d9sm9121361fa.3.2025.11.14.01.04.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Nov 2025 01:04:29 -0800 (PST)
-Message-ID: <ee36d7d1-ef47-4a35-9aff-baa6ed32105a@gmail.com>
-Date: Fri, 14 Nov 2025 11:04:27 +0200
+	s=arc-20240116; t=1763116249; c=relaxed/simple;
+	bh=tTqtRXYto2sHeJQ2CTwzUyBfEa4VZEkNAH+Sob2qicY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kxFkgB9f8F18OmFH4T6qec+ghRiCB9dMN5pp/GTvL9/KMEdJV3u9jKb/uUGj2huE2ygc0EXnkyis1ex4SBeb+Avee/EBKQpmdrG3f9ws7SAf4WzLfSf5iNkLlhlBgASbenoXrw3CnvkWEcCvtbd3mXyjZ7ccJGFHSbH2t9zNSUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B0B9C4CEFB;
+	Fri, 14 Nov 2025 10:30:47 +0000 (UTC)
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [GIT PULL] clk: renesas: Updates for v6.19 (take two)
+Date: Fri, 14 Nov 2025 11:30:41 +0100
+Message-ID: <cover.1763115635.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 04/16] dt-bindings: power: supply: BD72720 managed
- battery
-To: "Rob Herring (Arm)" <robh@kernel.org>,
- Matti Vaittinen <matti.vaittinen@linux.dev>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, Mark Brown
- <broonie@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
- linux-kernel@vger.kernel.org, Sebastian Reichel <sre@kernel.org>,
- Bartosz Golaszewski <brgl@bgdev.pl>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
- Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
- linux-leds@vger.kernel.org, Pavel Machek <pavel@kernel.org>,
- Liam Girdwood <lgirdwood@gmail.com>, linux-gpio@vger.kernel.org,
- linux-pm@vger.kernel.org, Andreas Kemnade <andreas@kemnade.info>,
- Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
- linux-rtc@vger.kernel.org, Lee Jones <lee@kernel.org>,
- Stephen Boyd <sboyd@kernel.org>
-References: <cover.1763022807.git.mazziesaccount@gmail.com>
- <ac5a4e992e4fb9c7bffb1e641a7cd61f74af4cba.1763022807.git.mazziesaccount@gmail.com>
- <176303119683.3716572.16868393928566655866.robh@kernel.org>
-Content-Language: en-US, en-AU, en-GB, en-BW
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <176303119683.3716572.16868393928566655866.robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 13/11/2025 12:53, Rob Herring (Arm) wrote:
-> 
-> On Thu, 13 Nov 2025 10:52:19 +0200, Matti Vaittinen wrote:
->> From: Matti Vaittinen <mazziesaccount@gmail.com>
->>
->> The BD72720 PMIC has a battery charger + coulomb counter block. These
->> can be used to manage charging of a lithium-ion battery and to do fuel
->> gauging.
->>
->> ROHM has developed a so called "zero-correction" -algorithm to improve
->> the fuel-gauging accuracy close to the point where battery is depleted.
->> This relies on battery specific "VDR" tables, which are measured from
->> the battery, and which describe the voltage drop rate. More thorough
->> explanation about the "zero correction" and "VDR" parameters is here:
->> https://lore.kernel.org/all/676253b9-ff69-7891-1f26-a8b5bb5a421b@fi.rohmeurope.com/
->>
->> Document the VDR zero-correction specific battery properties used by the
->> BD72720 and some other ROHM chargers.
->>
->> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
->> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
->>
->> ---
->> NOTE:
->> Linus' rb-tag holds only if there's no further comments from Rob.
->>
->> Revision history:
->>   v3 =>:
->>   - No changes
->>
->>   v2 => v3:
->>   - Constrain VDR threshold voltage to 48V
->>   - Use standard '-bp' -suffix for the rohm,volt-drop-soc
->>
->>   RFCv1 => v2:
->>   - Add units to rohm,volt-drop-soc (tenths of %)
->>   - Give real temperatures matching the VDR tables, instead of vague
->>     'high', 'normal', 'low', 'very low'. (Add table of temperatures and
->>     use number matching the right temperature index in the VDR table name).
->>   - Fix typoed 'algorithm' in commit message.
->>
->> The parameters are describing the battery voltage drop rates - so they
->> are properties of the battery, not the charger. Thus they do not belong
->> in the charger node.
->>
+	Hi Mike, Stephen,
 
-// snip
+The following changes since commit 07525a693a5ff6592668a0fd647153e4b4933cae:
 
-> My bot found errors running 'make dt_binding_check' on your patch:
-> 
-> yamllint warnings/errors:
-> 
-> dtschema/dtc warnings/errors:
-> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/power/supply/rohm,vdr-battery.example.dtb: battery (simple-battery): 'degrade-cycle-microamp-hours', 'rohm,volt-drop-0-microvolt', 'rohm,volt-drop-1-microvolt', 'rohm,volt-drop-2-microvolt', 'rohm,volt-drop-3-temp-microvolt', 'rohm,volt-drop-soc-bp', 'rohm,volt-drop-temperatures-millicelsius', 'rohm,voltage-vdr-thresh-microvolt' do not match any of the regexes: '^ocv-capacity-table-[0-9]+$', '^pinctrl-[0-9]+$'
-> 	from schema $id: http://devicetree.org/schemas/power/supply/battery.yaml
-> 
+  clk: renesas: r9a09g056: Add clock and reset entries for ISP (2025-10-27 12:15:00 +0100)
 
-Odd. I am pretty sure I didn't see this when I ran the make 
-dt_binding_check. Not 100% sure what happened there. I get this error 
-now though when including all the bindings to the check.
+are available in the Git repository at:
 
-Do I get this right - these errors result from the properties used in 
-example not being included in the battery.yaml? So, this means that the 
-check is done based on the binding (battery.yaml) where the compatible 
-(simple-battery) is defined - not based on the properties which are 
-present in this file where the example resides, (and which references 
-the battery.yaml)?
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/renesas-clk-for-v6.19-tag2
 
-...
+for you to fetch changes up to 5fb2f67341bd4b7c482f2bbda6b78244a51c3923:
 
-Oh... Now that I wrote it I feel like an idiot.
+  clk: renesas: r9a09g077: Add SPI module clocks (2025-11-13 21:18:25 +0100)
 
-This approach couldn't work for the validation, right? Let's assume I 
-had a VDR battery, and I added a static-battery -node for it. Running 
-the validation would pick the battery.yaml based on the compatible (just 
-as it does here), and be completely unaware of this vdr-battery.yaml. I 
-have no idea why I thought this would work. Probably because I only 
-thought this from the documentation POV.
+----------------------------------------------------------------
+clk: renesas: Updates for v6.19 (take two)
 
-So, as far as I understand, the only viable options are expanding the 
-existing battery.yaml with these properties (which I hoped to avoid, see 
-below)
+  - Add GPU clocks on R-Car V3U,
+  - Add USB3.0 clocks and resets on RZ/V2H and RZ/V2N,
+  - Add more serial (RSCI) clocks and resets on RZ/G3E,
+  - Add SPI clocks on RZ/T2H and RZ/N2H,
+  - Miscellaneous fixes and improvements.
 
- >> The right place for them is the battery node, which is described by the
- >> generic "battery.yaml". I was not comfortable with adding these
- >> properties to the generic battery.yaml because they are:
- >>    - Meaningful only for those charger drivers which have the VDR
- >>      algorithm implemented. (And even though the algorithm is not 
-charger
- >>      specific, AFAICS, it is currently only used by some ROHM PMIC
- >>      drivers).
- >>    - Technique of measuring the VDR tables for a battery is not widely
- >>      known. AFAICS, only folks at ROHM are measuring those for some
- >>      customer products. We do have those tables available for some 
-of the
- >>      products though (Kobo?).
+Note that this includes DT binding definition updates for the R-Car V3U,
+RZ/V2H, and RZ/V2N SoCs, which are shared by clock driver and DT source
+files.
 
-or, to add new compatible for the "vdr-battery".
-AFAICS, adding new compatible would require us to wither duplicate the 
-used properties from battery.yaml here (as battery.yaml mandates the 
-"simple-battery" - compatible) - or to split the battery.yaml in two 
-files, one containing the generic properties, other containing the 
-"simple-battery" -compatible and referencing the generic one. Then the 
-"vdr-battery" could also reference the generic one.
+Thanks for pulling!
 
-Any suggestions for the next path to follow?
+----------------------------------------------------------------
+Biju Das (1):
+      clk: renesas: r9a09g047: Add RSCI clocks/resets
 
-Oh, and sorry for asking to review something which is obviously not 
-working approach. I should've understood this from the beginning.
+Cosmin Tanislav (1):
+      clk: renesas: r9a09g077: Add SPI module clocks
 
-Yours,
-	-- Matti
+Geert Uytterhoeven (2):
+      Merge tag 'renesas-r8a779a0-dt-binding-defs-tag2' into renesas-clk-for-v6.19
+      Merge tag 'renesas-r9a09g057-dt-binding-defs-tag5' into renesas-clk-for-v6.19
 
----
-Matti Vaittinen
-Linux kernel developer at ROHM Semiconductors
-Oulu Finland
+Haotian Zhang (1):
+      clk: renesas: r9a06g032: Fix memory leak in error path
 
-~~ When things go utterly wrong vim users can always type :help! ~~
+Lad Prabhakar (7):
+      clk: renesas: r9a09g077: Propagate rate changes to parent clocks
+      clk: renesas: r9a09g077: Remove stray blank line
+      clk: renesas: r9a09g077: Use devm_ helpers for divider clock registration
+      dt-bindings: clock: renesas,r9a09g057-cpg: Add USB3.0 core clocks
+      dt-bindings: clock: renesas,r9a09g056-cpg: Add USB3.0 core clocks
+      clk: renesas: r9a09g057: Add USB3.0 clocks/resets
+      clk: renesas: r9a09g056: Add USB3.0 clocks/resets
+
+Niklas Söderlund (4):
+      dt-bindings: clock: r8a779a0: Add ZG core clock
+      clk: renesas: rcar-gen4: Add support for clock dividers in FRQCRB
+      clk: renesas: r8a779a0: Add ZG Core clock
+      clk: renesas: r8a779a0: Add 3DGE module clock
+
+ drivers/clk/renesas/r8a779a0-cpg-mssr.c           |   7 +-
+ drivers/clk/renesas/r9a06g032-clocks.c            |   6 +-
+ drivers/clk/renesas/r9a09g047-cpg.c               | 126 ++++++++++++++++++++++
+ drivers/clk/renesas/r9a09g056-cpg.c               |   9 +-
+ drivers/clk/renesas/r9a09g057-cpg.c               |  16 ++-
+ drivers/clk/renesas/r9a09g077-cpg.c               |  53 ++++++---
+ drivers/clk/renesas/rcar-gen4-cpg.c               |   9 +-
+ include/dt-bindings/clock/r8a779a0-cpg-mssr.h     |   1 +
+ include/dt-bindings/clock/renesas,r9a09g056-cpg.h |   2 +
+ include/dt-bindings/clock/renesas,r9a09g057-cpg.h |   4 +
+ 10 files changed, 209 insertions(+), 24 deletions(-)
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
