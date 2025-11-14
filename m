@@ -1,130 +1,165 @@
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4FE0304BBC
-	for <linux-clk@vger.kernel.org>; Fri, 14 Nov 2025 13:22:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ED28319847
+	for <linux-clk@vger.kernel.org>; Fri, 14 Nov 2025 13:30:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763126525; cv=none; b=S/1zxliDAiOQjfjQrYJ3HGyRSefWncUxEciyeudfMq9Ch5RX/xFJMeDhcUVurBvpLp3gjd9dMqTGpd9tCQdSJ9gUl/agmIfpPMsfpH3/s0qjnqb853h03U22adEPsHM+4YWCDVAMd/IzhYy1W8Zm27zU2THuLwVYbrKb0xJn/i0=
+	t=1763127039; cv=none; b=GkqYvet1oyZVADx5Wq/5S7chRhv22NEpUAgmsPwLb+w/13h8InA8Zeqe1VNzP4ie/uRIuy6qa0P6qmJA1HKAl/JVygymh4cbv6iGnqeFN8dc/ip7vwIYhfdYZbiGPQGDkvjJNcueTgRCt6dAT3fqBkGotB2aMTvkY43Z5vYAfqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763126525; c=relaxed/simple;
-	bh=PIhVxornY+xeHydrfUvm8sKztzt4GgYtkzvZxgJ8W40=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mwW+FBZb0F5iEJOfq+uMlmS3+8gTaxylt3c+k3KI4t9Qux+q1vf+UbEDLWvMD7ESVc3n7ed+asp36yEz1K1xRoaBvbcehAWX0Bd4wtIkrk28Id0n42gjR0O72Izs/5coyijfD/7wG+YabLOqf4qPiGdwuxRzaGd8v8JPYjo1Tqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JLxJBecV; arc=none smtp.client-ip=209.85.208.179
+	s=arc-20240116; t=1763127039; c=relaxed/simple;
+	bh=XGyDo4LqxtpBLuczg+0iuG4Awh+JhQ1Wi8g5gNLY170=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ShhhWXFhWnLbQOKbtHLD028iYtt4weRzSQIRMVp2LZ/XjIZlQPbR0h5y+kQERILLhon7tNNBdh1eTm02m3h7OUzUK7PdeRrheozvxFkZmnn0L5yaFDV6siEd5XDeky1EosDdHdOorbdbu80BMirVP0XvqiSBqHZZQd9ECpvVum8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KzfInjbx; arc=none smtp.client-ip=209.85.221.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JLxJBecV"
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-37b9728a353so18753071fa.0
-        for <linux-clk@vger.kernel.org>; Fri, 14 Nov 2025 05:22:03 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KzfInjbx"
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-42b38693c4dso986326f8f.3
+        for <linux-clk@vger.kernel.org>; Fri, 14 Nov 2025 05:30:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763126522; x=1763731322; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=TrtX8x6xiGPlcF3REo6XTaulSDVNKE90sjqlhnGudPU=;
-        b=JLxJBecVTt7ci4MySHtaJCX2RuSWm+47+kgQXd3+q5iCTC6xRsKVeS4VMO2C6iKoUi
-         7wC7myl8516ZyD8NfP4qhC6InalfcMWDXVAnbtLDFNwJ6ARwpQfEZIrsLX12cgIT1uql
-         lrk6TGIK/1QEbP5uaOpQ8lOu/DJZfSzIb3aiGlYvsoBl6Z+b0tkjB3xpz6kbj1SreGpl
-         da9piGtvNIXkCcYmoDu2sNWR9609OQO1ta0KvjdQNYb4U1AiIS2D9tvNsn+Wv5udjE9n
-         tKW1+Vcx+V8JDmWgyb2Y2iuVQPq4hnOZ7a48Uw3v7Cx5fOHYIAEu4dBdezJxsOSPM0Es
-         tZGA==
+        d=gmail.com; s=20230601; t=1763127035; x=1763731835; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=RLiSyBxzCacFpRrMJeXNpJbRRbCeUrtYn7SsWh9poBw=;
+        b=KzfInjbxs7BWFbu/Qg8qboDzrsT1aovbqn7ICUX5cEDSJwT+Jg9KLCy4SZE1KOHzQX
+         yF+UvwoRKbJBAE9I/XheZLecx7iR0EL0iIswA92F3qLG9/447/laJb3gGvBP2UrUhRf7
+         mLWGoUsJI+D8y6SYClMRlfuT+SgugxGBdDAnzOcNUYX3fF+QRvQPbcKmcK+kAjB1D0y9
+         yZEUj9Fl53xs49zVEIB76yCWQej1b8QUXh9n1JMmjawMQRW2rVeSwYwryfab1jtIdDTW
+         cZTB5YdeSBcSqLSKSy2+ZTsY4AQ+2QLZpOb7EXmHBxchcNso1PgveQSq+uAwnF/X+4vc
+         2XbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763126522; x=1763731322;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TrtX8x6xiGPlcF3REo6XTaulSDVNKE90sjqlhnGudPU=;
-        b=m1OUReRnWzvQgy75pgrxagmvgL1r3A4T02LQ5siXRDqTHnCDQ0jMrYIrD+7D2VmXLx
-         9Edfd6Tyb9e6EB6GUP1iVPeXeW6L3Qk1RFlfFi23SxIikibQjOS2Y3brdHUkyBeUzHYA
-         MGWHEIxjVN4r3DxacuMnFNJs093An4CF/phXEMkRzdnSLNJfo3XoVIo2T3vI7AjEARuB
-         PEM0vEP43mqy756+wrIEUDjMV5GbNV+AtOyGn0tabneGYYJJvTDzA9eCkHCvwxJJWOof
-         oYPfGzAcOkGBlIGJKNPmxYtpauWzXXgT+v9/0ZvIZnbqUeTtQuR6azHPyHVRiUEFS1Pn
-         tT5w==
-X-Forwarded-Encrypted: i=1; AJvYcCV3GrvXkMVGlReKFiPUoPZwa2IPfDydP1MNo29nwhDGmF6QpR3aNoipZEUrLiENYRHSudrNlO6OY60=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDqTBO+97YzQI2ThwezbIB6e5SP5+96vvGgDz6VJd8RVfjb9xK
-	3nOuCW6SUqSfFL+oglNF73puZeoweayUylzvnV8caCJbZ1MvOX4F9JTP
-X-Gm-Gg: ASbGncuQsqaDMbjokw7F5GM1Y50ApMI2ngCvs+9NnYCpdmp9/KOvidoIgAWPGePZYKr
-	1sYEIiajzeWsJyyW55TclFfPDPWKXOmOrYWzTzfU+ohP6MRnM7nw5XNRPZ8NcEe6Xhv+GCFl+yI
-	aIYPBVtMQVYbo9DCdRipkQ3Zkejqu3yUxw+Gr0Bi/knHWPG8O3jT7c6oraZVQUTEoy4Waf3PAbZ
-	uLlq881Pi5wnOY3+5TckUrFTtEClZweUwKTMGkkW2eKfz9WG6AlfLV8/3v1z0xubj2TEW2cO/fg
-	VvIvgN3fEzzdYneWiGcEhI0UcDHoaB+a4v35N5g8M/StpQm4uie9Yf/vfrxIq7Kg542qf/F/B9U
-	EJe1d9TA3ugqoWkSyIUlaeqsKTvEzpBTDRQIB49+eRfvbnD1En101QNdLunHXD8EI4PG0rTm4fQ
-	Edz65klOu635ssP+j4dmNGdVmVzqOmre55uTjZfjZfj9A/vt8ApLgxkdOq9Q==
-X-Google-Smtp-Source: AGHT+IFJvPwRc3iSb2WexT7/Nxb76MqMei5zXQUBPxVbaOVwZ0mTUJAzGoCKPRFSwFTVf5iDU0WZyw==
-X-Received: by 2002:a05:651c:418f:b0:378:e3f9:2d26 with SMTP id 38308e7fff4ca-37babd80ac1mr5793261fa.39.1763126521767;
-        Fri, 14 Nov 2025 05:22:01 -0800 (PST)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-37b9ce080a6sm10220141fa.4.2025.11.14.05.22.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Nov 2025 05:22:01 -0800 (PST)
-Message-ID: <2334e57c-a384-4a1e-9708-19d14b8f082c@gmail.com>
-Date: Fri, 14 Nov 2025 15:22:00 +0200
+        d=1e100.net; s=20230601; t=1763127035; x=1763731835;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RLiSyBxzCacFpRrMJeXNpJbRRbCeUrtYn7SsWh9poBw=;
+        b=YdZuWnljWyW05kPWd1mGhKEg58UyNEZF9SoR3yjxyeUPWWqxMQ9FBjBKVfd0M5wRgL
+         es+JkxaWu96UWeMb40DIqvLB4h7LcVByocJFdvevyZhe57+Yfio0hEAPzbMs+YMQ1ryq
+         G/SVU7RmVObb6W6gES5qs436udkUOGzXK9NutcgUlG3SPbvCgADpE+rV+BaS9wlvfjw8
+         yBUkmsFn3dfHa0LdUlkKLxdCY+EHmvhpeyA8Fs9iNUw8oUZZG1UQ8R1P1H5hYXTCBv1v
+         5xdXn3xSeqmk/5VlspRUXn4uBeqWyLi9iKwX4dNQChHLdvID68bo/tp52je6B0ML+IMY
+         hkmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXZEKRwdWliGq6hltB0ZqiQynv2w/rUdNBq4aRBRIfZzLIaAjvPCEOXxbrMik6wpWTC2JgXvUH8Qmo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxrgdWUig9u3hJsdUX/W7bBRCs0lxd986rIXW8dQ34dTZ74tmNU
+	drkndyNGq0O8luYnPbhPj0jFghF62Qds0ZfNeVKaApVNLRPjLgZ+WCgW
+X-Gm-Gg: ASbGncu8a2h6uoA26zmTZGIu4UgF0BekpXVRyfWkveeLVHLAK7Sf+A2pNy/VxDXz1te
+	KP9Dosw6ky7D8nDHvnbPsqIcBb9gMJcDiBAQSH1Nr5In/eqsOceJB8ViQcq28/J4ptq0KpKm79Q
+	kho2tpatUv+ElPHX5sSm0gfg5zQkQMKaBVe3C3o5rknRmku3gpHPji6731icvyPs4LwWMYFBUG/
+	oUQl6xYAfOoCjTye7ZiQBGnmbjayGxpxEFxW90/8M+mTbsmfUpZNshCebspTkPS6ZAlqQKpOutx
+	OBaSwLGoE3YPlTU+TmxFhw1Wsa3aWhrFkWlqfilVq5ge0cIOd3HhPjYOW8cKnDL+rU9AP5Vv1rm
+	VT/dagJmJ0KLCiuLKlqCqcxZbAWIXWaj/fwZouD986X2qL02P1T+CN7p39N8Qk9HZIYQiCVczop
+	N4BRuPWztsFXUSMz0GSVDI5ELvNpEiEKplTuJ5FiaylBlBXkwIBgTPpMRVVRMVWv/F5Lqdi1AEl
+	A==
+X-Google-Smtp-Source: AGHT+IGtw9+vFMKGdBkzC2iMdhNezX/RVOgAmM2RA0unvN+nz4Kf7Kpd8QEDSTj9Nw8LMYTpqShWMA==
+X-Received: by 2002:a05:6000:2203:b0:429:bb21:94dd with SMTP id ffacd0b85a97d-42b59398e4cmr3336317f8f.46.1763127034720;
+        Fri, 14 Nov 2025 05:30:34 -0800 (PST)
+Received: from orome (p200300e41f274600f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f27:4600:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42b53f206aasm10033057f8f.40.2025.11.14.05.30.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Nov 2025 05:30:33 -0800 (PST)
+Date: Fri, 14 Nov 2025 14:30:31 +0100
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Wentao Liang <vulab@iscas.ac.cn>
+Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mturquette@baylibre.com, 
+	sboyd@kernel.org, jonathanh@nvidia.com, linux-clk@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] clk: tegra: tegra124-emc: Fix memory leak in
+ load_timings_from_dt() on krealloc() failure
+Message-ID: <3wvnt4gywyffvqnxagp6c6h6oxxusboc5bascgng34mjshdamj@a75sqvemckg5>
+References: <20251104074229.543546-1-vulab@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 14/16] power: supply: bd71828: Support wider register
- addresses
-To: Andreas Kemnade <andreas@kemnade.info>,
- Matti Vaittinen <matti.vaittinen@linux.dev>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
- Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Sebastian Reichel <sre@kernel.org>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
- Bartosz Golaszewski <brgl@bgdev.pl>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-rtc@vger.kernel.org
-References: <cover.1763022807.git.mazziesaccount@gmail.com>
- <6248200397d3582fe926938736da66d6bbf9535d.1763022807.git.mazziesaccount@gmail.com>
- <20251114121509.629d171b@kemnade.info>
-Content-Language: en-US, en-AU, en-GB, en-BW
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <20251114121509.629d171b@kemnade.info>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="7yp2qls5f36b7k7w"
+Content-Disposition: inline
+In-Reply-To: <20251104074229.543546-1-vulab@iscas.ac.cn>
 
-Thanks Andreas,
 
-On 14/11/2025 13:15, Andreas Kemnade wrote:
-> On Thu, 13 Nov 2025 10:55:39 +0200
-> Matti Vaittinen <matti.vaittinen@linux.dev> wrote:
-> 
->> As a side note, we can reduce the "wasted space / member / instance" from
->> 3 bytes to 1 byte, by using u16 instead of the unsigned int if needed. I
->> rather use unsigned int to be initially prepared for devices with 32 bit
->> registers if there is no need to count bytes.
-> 
-> Well, this is totally internal to the module, so no ABI/API changes, so
-> there is no advantage of using 32bit now I think. We can switch any time.
+--7yp2qls5f36b7k7w
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] clk: tegra: tegra124-emc: Fix memory leak in
+ load_timings_from_dt() on krealloc() failure
+MIME-Version: 1.0
 
-The only advantage is to avoid the churn if 32bit ICs are to be added.
+On Tue, Nov 04, 2025 at 07:42:29AM +0000, Wentao Liang wrote:
+> The function load_timings_from_dt() directly assigns the result of
+> krealloc() to tegra->timings, which causes a memory leak when
+> krealloc() fails. When krealloc() returns NULL, the original pointer
+> is lost, making it impossible to free the previously allocated memory.
+>=20
+> This fix uses a temporary variable to store the krealloc() result and
+> only updates tegra->timings after successful allocation, preserving
+> the original pointer in case of failure.
+>=20
+> Fixes: 888ca40e2843 ("clk: tegra: emc: Support multiple RAM codes")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
+> ---
+>  drivers/clk/tegra/clk-tegra124-emc.c | 10 ++++++++--
+>  1 file changed, 8 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/clk/tegra/clk-tegra124-emc.c b/drivers/clk/tegra/clk=
+-tegra124-emc.c
+> index 2a6db0434281..ed4972fa6dab 100644
+> --- a/drivers/clk/tegra/clk-tegra124-emc.c
+> +++ b/drivers/clk/tegra/clk-tegra124-emc.c
+> @@ -444,6 +444,7 @@ static int load_timings_from_dt(struct tegra_clk_emc =
+*tegra,
+>  				u32 ram_code)
+>  {
+>  	struct emc_timing *timings_ptr;
+> +	struct emc_timing *new_timings;
 
-> But we have 32bit stuff in the regmap cache anyways, so that is not above
-> the general level of wasting space.
+Can we not reuse timings_ptr to avoid this extra variable?
 
-Exactly. And, I am not sure if sparing ~hundred bytes is worth the 
-hassle - even if it is hassle internal to the driver. But yeah, we can 
-squeeze a few bytes if it is seen beneficial. That's why I mentioned it 
-here :)
+>  	struct device_node *child;
+>  	int child_count =3D of_get_child_count(node);
+>  	int i =3D 0, err;
+> @@ -451,10 +452,15 @@ static int load_timings_from_dt(struct tegra_clk_em=
+c *tegra,
+> =20
+>  	size =3D (tegra->num_timings + child_count) * sizeof(struct emc_timing);
+> =20
+> -	tegra->timings =3D krealloc(tegra->timings, size, GFP_KERNEL);
+> -	if (!tegra->timings)
+> +	new_timings  =3D krealloc(tegra->timings, size, GFP_KERNEL);
+> +	if (!new_timings) {
+> +		kfree(tegra->timings);
+> +		tegra->timings =3D NULL;
+> +		tegra->num_timings =3D 0;
 
-Yours,
-	-- Matti
+These two lines are somewhat pointless. The memory that tegra points to
+will be kfree()'ed after we return below and the function will fail, so
+nothing will ever access the memory anyway.
 
----
-Matti Vaittinen
-Linux kernel developer at ROHM Semiconductors
-Oulu Finland
+Thierry
 
-~~ When things go utterly wrong vim users can always type :help! ~~
+--7yp2qls5f36b7k7w
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmkXLvcACgkQ3SOs138+
+s6EHZg//ag3Ij35qO8R24R08YICA5PNy8S/hsOQPADvu2swgenuPr6Sc06YrYkBK
+0Lxa6ge3dY28BlwkUL3G0OrYZp2ny+342ImoWlJooNSQfqmVZuXKPoUzwhrcotuU
+42id12ubgDi1gd81F2ch0zK8ELMMeSKUtLHCsAj67f3fxouJ5Zit9CeVEMlETSz8
+DV0DRURkT3p1jDv5jWWg/FYJ64EUAomlIhQDA8O6MizmIa9TkinFelAOdR+mTOZS
+FFHRE4rZDnUabnGa/QUEqigtaKxAUBrb6uo97gYjBEYGtcLZBLJFr0Byip3a9ADT
+g7X9lCl/hVABgndi1WvK0zC1RW0FDOKa+VHxyLnW48S7xoQydUTMAOp/qoTYrDvD
+MFB+hH/9+OZsI77f4hnSlOu9MBPw2ljVOiUavNNrVnsCbvzWDrNcswiYfp4o+Rf/
+LruqBJ3rYzprXJTlRl7zc1x6BtaFSGydirm630PlY9SeymEdhST3l5gEoSV9kG9v
+wJ0e1xGywskfttyoLEgd6r2LOAmSpxQ88hgvrK/wr9Mw5LxQuHs11Hzij2/0rNRc
+nf54Z9yxGpVQHeZxbNM8TRf6QGYP3FENPqT+tedfQaGjQPA6F87TmejvVMxC3+A1
+wmLNfQcvUt2VkmaHfLsdTWBY62kRBKdCnCNvnf9veqGsmezeuyU=
+=JsgF
+-----END PGP SIGNATURE-----
+
+--7yp2qls5f36b7k7w--
