@@ -1,188 +1,117 @@
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mo-csw-fb.securemx.jp (mo-csw-fb1120.securemx.jp [210.130.202.128])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D46D2C15AA;
-	Fri, 14 Nov 2025 07:31:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 989D527A904;
+	Fri, 14 Nov 2025 08:18:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.130.202.128
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763105480; cv=none; b=f3KyiA1YXz/njNaPtD8G1FqUuu0QfMGFY5cVBrJvkE5HP6ycEDHI7t8mHS3IXBDS5GSQSKYQp/WLzHywN/J7bfOJOfSgDJg7olG0p6bPfoPKRsihfZGBCz9QmZILlkXEHc+dl23XWFkN6CZJAjXPHTVa+COF9hMs6mrGjQms/qM=
+	t=1763108319; cv=none; b=VVvv8FDjek3oW6gq7xKNE1F/CtnCIGIYT/idJ7BimqyQIaYtwiwzAI1kTglMBHmMzstFStDhJ+gHxnkw+4DoSjr8RASGY/1L3BRVQlM7MbER8CCl9lQFDP+trsyfwO876d9phjjBxYTvEBXmkM/m6AwR/FQlQyuwAQ/RLlR/PZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763105480; c=relaxed/simple;
-	bh=IxF8X1vfgVSVMfT8B2eub1WyPsdDbytWvtHeqhTmLhA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bHcQIEK6/4AM+zIqvhoF1bnKY240npXMQZDDvhWLUTwEi7327xIZL4e09xOsbeVs024VgXKlFQ8CrhjYirP4oaVbGcW2ORim9u7vvYtMyMPTGCXDUSt+IzZhuwuTEWVQPhjKZK2BLzXkzVacnN43/HHMDaFR1NKcRgYg3JKKFgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Ihh3mPg2; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1763108319; c=relaxed/simple;
+	bh=z5BT7iIb8HXMJQST0R7kR132Jpyv/xSzSV01+ipM/E8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=NTTs88cTinErBBsjEOVFTLXksRTCfgnF70960ZJ8pE1DIusexVnnVyKoBml083nT+ghW8amSkpR0UBXUxXBLVwmYMRa8d7NqmICzBvLivegM0LgrRDs5h42Y/xgO53YTA4GzyhJqf7XZk1EwRKM3y5OSLoG8GCFvcOZoTFdM+z4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=toshiba.co.jp; spf=pass smtp.mailfrom=toshiba.co.jp; dkim=pass (2048-bit key) header.d=toshiba.co.jp header.i=yuji2.ishikawa@toshiba.co.jp header.b=hMveXRFo; arc=none smtp.client-ip=210.130.202.128
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=toshiba.co.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=toshiba.co.jp
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Ihh3mPg2"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id C03E9C10F5B;
-	Fri, 14 Nov 2025 07:30:54 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 6DB946060E;
-	Fri, 14 Nov 2025 07:31:16 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 91780102F24BE;
-	Fri, 14 Nov 2025 08:30:58 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1763105473; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=I/md1yzfYHmg4zf6NhSCwlxOr7WiJ5xSExfYcNRcf0c=;
-	b=Ihh3mPg240Inv5tK6a0y2bc6iUFXi846hUKdidOylUDZuvveWMMENdHQaSkRED6RzFOXBq
-	s3tYQSOkev+hYVQeHR4xdj9gsjCBZE4xoVzfSAK/1g2MipCnnjRB9Bkk5GjuXG3Cx7DOFw
-	kYgFKBggTQm+b9pCxa+CSSQ/ZTWCwURcGhX3PYd9ux7EBGyx/9AHjyRmK+4KGnJIGUEThM
-	qzUZSLvpXFlxbq5qUbppYDVR3bLAksRf/LYtY1SMB9VNJh0223ScvrKjeOG9M97dF0T3LW
-	uvqxAXMSPLBRG2VoFl3r/PtCN/OynUaIXjcWuLff+sSzDc+2UloAc/8A3W9eSw==
-Date: Fri, 14 Nov 2025 08:30:56 +0100
-From: Herve Codina <herve.codina@bootlin.com>
-To: Rob Herring <robh@kernel.org>
-Cc: Andrew Lunn <andrew@lunn.ch>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
- Danilo Krummrich <dakr@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha
- Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team
- <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Michael
- Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Andi
- Shyti <andi.shyti@kernel.org>, Wolfram Sang
- <wsa+renesas@sang-engineering.com>, Peter Rosin <peda@axentia.se>, Arnd
- Bergmann <arnd@arndb.de>, Saravana Kannan <saravanak@google.com>, Bjorn
- Helgaas <bhelgaas@google.com>, Charles Keepax
- <ckeepax@opensource.cirrus.com>, Richard Fitzgerald
- <rf@opensource.cirrus.com>, David Rhodes <david.rhodes@cirrus.com>, Linus
- Walleij <linus.walleij@linaro.org>, Ulf Hansson <ulf.hansson@linaro.org>,
- Mark Brown <broonie@kernel.org>, Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>, Daniel Scally <djrscally@gmail.com>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>, Sakari Ailus
- <sakari.ailus@linux.intel.com>, Len Brown <lenb@kernel.org>, Davidlohr
- Bueso <dave@stgolabs.net>, Jonathan Cameron <jonathan.cameron@huawei.com>,
- Dave Jiang <dave.jiang@intel.com>, Alison Schofield
- <alison.schofield@intel.com>, Vishal Verma <vishal.l.verma@intel.com>, Ira
- Weiny <ira.weiny@intel.com>, Dan Williams <dan.j.williams@intel.com>, Geert
- Uytterhoeven <geert+renesas@glider.be>, Wolfram Sang <wsa@kernel.org>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org,
- linux-pci@vger.kernel.org, linux-sound@vger.kernel.org,
- patches@opensource.cirrus.com, linux-gpio@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-spi@vger.kernel.org,
- linux-acpi@vger.kernel.org, linux-cxl@vger.kernel.org, Allan Nielsen
- <allan.nielsen@microchip.com>, Horatiu Vultur
- <horatiu.vultur@microchip.com>, Steen Hegelund
- <steen.hegelund@microchip.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v4 05/29] dt-bindings: bus: Add simple-platform-bus
-Message-ID: <20251114083056.31553866@bootlin.com>
-In-Reply-To: <CAL_JsqJ89EcUvQnS0xYXOrw6wJ30TT5oFA85eCqHYdu43056cw@mail.gmail.com>
-References: <20251015071420.1173068-1-herve.codina@bootlin.com>
-	<20251015071420.1173068-6-herve.codina@bootlin.com>
-	<20251030141448.GA3853761-robh@kernel.org>
-	<20251031162004.180d5e3f@bootlin.com>
-	<20251112142632.GA1610836-robh@kernel.org>
-	<CAL_JsqJ89EcUvQnS0xYXOrw6wJ30TT5oFA85eCqHYdu43056cw@mail.gmail.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	dkim=pass (2048-bit key) header.d=toshiba.co.jp header.i=yuji2.ishikawa@toshiba.co.jp header.b="hMveXRFo"
+Received: by mo-csw-fb.securemx.jp (mx-mo-csw-fb1120) id 5AE6xkQS090837; Fri, 14 Nov 2025 15:59:47 +0900
+DKIM-Signature: v=1;a=rsa-sha256;c=relaxed/simple;d=toshiba.co.jp;h=From:To:Cc
+	:Subject:Date:Message-Id:In-Reply-To:References:MIME-Version:
+	Content-Transfer-Encoding;i=yuji2.ishikawa@toshiba.co.jp;s=key1.smx;t=
+	1763103549;x=1764313149;bh=z5BT7iIb8HXMJQST0R7kR132Jpyv/xSzSV01+ipM/E8=;b=hMv
+	eXRFord7LWrKJaWpflg51wHxSXWVf1AjvLAnwU8z8Y2rlNm74zSaTEND5r7rsngOZVYDn2qxPTLtt
+	Yuurldmu8pkMUFbyQdiuq65w4LCI2xrEownb+7XLf9NJzQV2RE2okMHEclhkxVf2GVvL753Ilb1uM
+	PNk4XHHSKQVrZKSIiu2lrTDKLukTK48+ho3zimRIPtG5II5fl4WWZU3hJq7KOPezmUtfNH3ZOzGk7
+	lTDuml6TSOz+yiJetliFe+As+qY1J5oYtuosekezSRISyNz8Y3AUCHdQ8CGh3/6bxmpRnHf76UoY8
+	zQXbNhj37NyEG7qQ882TYTQZl0lBawg==;
+Received: by mo-csw.securemx.jp (mx-mo-csw1121) id 5AE6x96r3826728; Fri, 14 Nov 2025 15:59:09 +0900
+X-Iguazu-Qid: 2rWgP4I4zWg0QagHnu
+X-Iguazu-QSIG: v=2; s=0; t=1763103548; q=2rWgP4I4zWg0QagHnu; m=prYwrmW4qxhPFlh8iTyihJo96G3t7nIZABj+fSIVS/M=
+Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	 id 4d77KR61f6z1xnZ; Fri, 14 Nov 2025 15:59:07 +0900 (JST)
+X-SA-MID: 54822487
+From: Yuji Ishikawa <yuji2.ishikawa@toshiba.co.jp>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Yuji Ishikawa <yuji2.ishikawa@toshiba.co.jp>
+Subject: [PATCH 2/2] dt-bindings: clock: tmpv770x: Remove definition of number of clocks
+Date: Fri, 14 Nov 2025 15:53:58 +0900
+X-TSB-HOP2: ON
+Message-Id: <20251114065358.854817-3-yuji2.ishikawa@toshiba.co.jp>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20251114065358.854817-1-yuji2.ishikawa@toshiba.co.jp>
+References: <20251114065358.854817-1-yuji2.ishikawa@toshiba.co.jp>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
 
-Hi Rob,
+Remove the definitions of number of clocks from bindings because they
+prevent adding new clocks. Since the previous patch removed all refereces
+within the driver, they can now be deleted.
 
-On Wed, 12 Nov 2025 13:29:09 -0600
-Rob Herring <robh@kernel.org> wrote:
+The same for resets and plls.
 
-> On Wed, Nov 12, 2025 at 8:26 AM Rob Herring <robh@kernel.org> wrote:
-> >
-> > On Fri, Oct 31, 2025 at 04:20:04PM +0100, Herve Codina wrote:  
-> > > Hi Rob,
-> > >
-> > > On Thu, 30 Oct 2025 09:14:48 -0500
-> > > Rob Herring <robh@kernel.org> wrote:
-> > >  
-> > > > On Wed, Oct 15, 2025 at 09:13:52AM +0200, Herve Codina wrote:  
-> > > > > A Simple Platform Bus is a transparent bus that doesn't need a specific
-> > > > > driver to perform operations at bus level.
-> > > > >
-> > > > > Similar to simple-bus, a Simple Platform Bus allows to automatically
-> > > > > instantiate devices connected to this bus.
-> > > > >
-> > > > > Those devices are instantiated only by the Simple Platform Bus probe
-> > > > > function itself.  
-> > > >
-> > > > Don't let Greg see this... :)
-> > > >
-> > > > I can't say I'm a fan either. "Platform bus" is a kernel thing, and the
-> > > > distinction here between the 2 compatibles is certainly a kernel thing.
-> > > >
-> > > > I think this needs to be solved within the kernel.  
-> > >
-> > > I fully agree with that.
-> > >  
-> > > >
-> > > > What I previously said is define a list of compatibles to not
-> > > > instantiate the child devices. This would essentially be any case having
-> > > > a specific compatible and having its own driver. So if someone has
-> > > > 'compatible = "vendor,not-so-simple-bus", "simple-bus"', when and if
-> > > > they add a driver for "vendor,not-so-simple-bus", then they have to add
-> > > > the compatible to the list in the simple-pm-bus driver. I wouldn't
-> > > > expect this to be a large list. There's only a handful of cases where
-> > > > "simple-bus" has a more specific compatible. And only a few of those
-> > > > have a driver. A more general and complicated solution would be making
-> > > > linux handle 2 (or more) drivers matching a node and picking the driver
-> > > > with most specific match. That gets complicated with built-in vs.
-> > > > modules. I'm not sure we really need to solve that problem.  
-> > >
-> > > Right. Let discard the "more general and complicated solution" and focus
-> > > on the list of compatible to avoid child devices instantiation.
-> > >
-> > > Do you mean that, for "simple-bus" compatible we should:
-> > >  - Remove the recursive device instantiation from of_platform_populate().  
-> >
-> > That may be a problem I hadn't considered. While we've solved most probe
-> > ordering issues, I think some may remain. Even when of_platform_populate()
-> > is called affects this. For example, I tried removing various arm32
-> > of_platform_.*populate() calls which run earlier than the default call,
-> > but that broke some platforms. (Looking at the list of remaining ones, I
-> > fixed the at91 pinctrl/gpio drivers, but never tried to remove the
-> > calls again.)
-> >
-> > Maybe this can be restricted to cases which are not recursively created
-> > from the root node. Not sure how we detect that. Perhaps no OF_POPULATED
-> > flag on the parent node? Or we could just enable this for OF_DYNAMIC
-> > nodes? That should be sufficient for your usecase.  
-> 
-> Thinking a bit more about this, I think you don't have to do anything.
-> If child nodes already got populated, calling of_platform_populate() a
-> second time is essentially a nop. And for cases you care about, that
-> wouldn't have happened. Of course, I'd still rather there only be 1
-> path that devices could have been instantiated.
-> 
+Signed-off-by: Yuji Ishikawa <yuji2.ishikawa@toshiba.co.jp>
+---
+ include/dt-bindings/clock/toshiba,tmpv770x.h | 3 ---
+ include/dt-bindings/reset/toshiba,tmpv770x.h | 1 -
+ 2 files changed, 4 deletions(-)
 
-Hum, if my understanding is correct, this looks like what I did in the v3
-iteration [1].
+diff --git a/include/dt-bindings/clock/toshiba,tmpv770x.h b/include/dt-bindings/clock/toshiba,tmpv770x.h
+index 5fce71300..89189c4f6 100644
+--- a/include/dt-bindings/clock/toshiba,tmpv770x.h
++++ b/include/dt-bindings/clock/toshiba,tmpv770x.h
+@@ -11,7 +11,6 @@
+ #define TMPV770X_PLL_PIDDRCPLL		4
+ #define TMPV770X_PLL_PIVOIFPLL		5
+ #define TMPV770X_PLL_PIIMGERPLL		6
+-#define TMPV770X_NR_PLL		7
+ 
+ /* Clocks */
+ #define TMPV770X_CLK_PIPLL1_DIV1	0
+@@ -141,7 +140,6 @@
+ #define TMPV770X_CLK_PIREFCLK		124
+ #define TMPV770X_CLK_SBUS		125
+ #define TMPV770X_CLK_BUSLCK		126
+-#define TMPV770X_NR_CLK			127
+ 
+ /* Reset */
+ #define TMPV770X_RESET_PIETHER_2P5M	0
+@@ -176,6 +174,5 @@
+ #define TMPV770X_RESET_PIPCMIF		29
+ #define TMPV770X_RESET_PICKMON		30
+ #define TMPV770X_RESET_SBUSCLK		31
+-#define TMPV770X_NR_RESET		32
+ 
+ #endif /*_DT_BINDINGS_CLOCK_TOSHIBA_TMPV770X_H_ */
+diff --git a/include/dt-bindings/reset/toshiba,tmpv770x.h b/include/dt-bindings/reset/toshiba,tmpv770x.h
+index c1007acb1..bedfe253f 100644
+--- a/include/dt-bindings/reset/toshiba,tmpv770x.h
++++ b/include/dt-bindings/reset/toshiba,tmpv770x.h
+@@ -36,6 +36,5 @@
+ #define TMPV770X_RESET_PIPCMIF		29
+ #define TMPV770X_RESET_PICKMON		30
+ #define TMPV770X_RESET_SBUSCLK		31
+-#define TMPV770X_NR_RESET		32
+ 
+ #endif /*_DT_BINDINGS_RESET_TOSHIBA_TMPV770X_H_ */
+-- 
+2.34.1
 
-The idea was:
-  1) Do not change anything in of_platform_.*populate()
-  2) Update the simple-bus driver to populate children if there is only one
-     compatible string and this string matches the compatible string handled
-     by the driver.
 
-We can be more restrictive for 2) and only populate children if the only one
-compatible string is "simple-bus". This will keep current behavior for
-"simple-mfd", "isa" and "arm,amba-bus".
-
-If you think this could be the right direction, I will bring those modification
-in the next iteration.
-
-Also, do you think we should be more restrictive and populate children in the
-simple-bus driver only for "simple-bus" compatible?
-
-[1] https://lore.kernel.org/lkml/20250613134817.681832-6-herve.codina@bootlin.com/
-
-Best regards,
-Hervé
