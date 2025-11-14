@@ -1,77 +1,216 @@
-Received: from mo-csw-fb.securemx.jp (mo-csw-fb1800.securemx.jp [210.130.202.159])
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FCE92FFF8B;
-	Fri, 14 Nov 2025 08:54:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.130.202.159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1728C304BBC
+	for <linux-clk@vger.kernel.org>; Fri, 14 Nov 2025 09:04:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763110475; cv=none; b=hIrvs+4HLhXQRiN9unEEmSJFrToc0gT7aGC/HcZMYWFhx4oaQCRMNyD/aAgk1on49KFCMLUS+tQvF8dc+Lw+6dD1LFy+BZ1suvD74IJyjYNBE1V78Dhr/87cd6+v6QOAcKC2N6zsCsjFHHOeyFOxrVzbjCtyGLDHyBOQJ/JA6Bg=
+	t=1763111075; cv=none; b=Yh2eyeYSagtIZ6fiTVhwHJESMuxZ1hivMF4X1OI2NVJloFyybpkk0qXb781Gn6JuhIiY13KYMFPRXf10MaQk4d/BbWxvpeN/JqF8Y7aNhNth+6fyLSl/fKwBK5nKY66Y/ZlhK8ySZdBawTwLsLBDaKvVWL3Kp7h8vyePK8UYbf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763110475; c=relaxed/simple;
-	bh=FBwrMGwxHt0KLvPopuPdLsUhZ8WTHzQEQbfykQ+O80I=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ocfOZI/cjMA2vBdfllZieTjGO5WnyymsswKxW0S5spFKYGka3gT+guZFmSUTzr67wuSZx2lQDSjqbAEkNCdmMWYoRV/4kik4ePtITBaTwP0gtcJ7blI3f/5zuWlC/16kS2NJDk5GrrhshEISeG0WI31T8hORFJVCnf8xGV+8vvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=toshiba.co.jp; spf=pass smtp.mailfrom=toshiba.co.jp; dkim=pass (2048-bit key) header.d=toshiba.co.jp header.i=yuji2.ishikawa@toshiba.co.jp header.b=LaVQ1hKj; arc=none smtp.client-ip=210.130.202.159
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=toshiba.co.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=toshiba.co.jp
+	s=arc-20240116; t=1763111075; c=relaxed/simple;
+	bh=0TEm7iRCHjxnOslZB50ja14A360VHxBjrAw5MtbVg4E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MR61xAyiZRVXc02xChjZLsuqbOU7oXC8Qn34lcDvpOBvEoQVZJ0Go/0v9gR0GuQqHWPWLeiMkxAogxXT5ONSEJFlJX3eZ9ZyS/G+YDQ1bLT/xD+3/rDBDp1I6OX899BjYfDdjGodJMxTR6stkVhITqHheFQkU+rID3LUmPcnU1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VRyHedUR; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toshiba.co.jp header.i=yuji2.ishikawa@toshiba.co.jp header.b="LaVQ1hKj"
-Received: by mo-csw-fb.securemx.jp (mx-mo-csw-fb1800) id 5AE6xkTg2553447; Fri, 14 Nov 2025 15:59:47 +0900
-DKIM-Signature: v=1;a=rsa-sha256;c=relaxed/simple;d=toshiba.co.jp;h=From:To:Cc
-	:Subject:Date:Message-Id:MIME-Version:Content-Transfer-Encoding;i=
-	yuji2.ishikawa@toshiba.co.jp;s=key1.smx;t=1763103550;x=1764313150;bh=FBwrMGwx
-	Ht0KLvPopuPdLsUhZ8WTHzQEQbfykQ+O80I=;b=LaVQ1hKjenagJyFXdN8pLN8BJj7cVTvr9riuWV
-	L3VfUHoNtBMMtUno3Fo9trqO35n5dlmJ9N83lK0YrdchqDIvaLepmTvz3S2uTvhrHrnEuJmUKlsa7
-	2/TBtJP4v6QSTgJbXKRw6iIA4CZhJ2KTrygurbfF0TIRw5+gznQPaZaaVhj2mPuEjL2WCgVb35Ifc
-	AVztaxdFeCvrmB4J++qSKO7b4T+XEm7IEAlsUhPpVae2z2mOAORAFq6AEjfwOGlFBTa8Rwddx5MFj
-	IisHmj8lJSpfcy0+D3zeYy1XFZBJD8iKJLwQfov3dZ8qM/7yLFuDrqWj9UwYe7qx8zwFcKWvw==;
-Received: by mo-csw.securemx.jp (mx-mo-csw1800) id 5AE6x9nB2557328; Fri, 14 Nov 2025 15:59:09 +0900
-X-Iguazu-Qid: 2yAafBYzAZJ31BNeos
-X-Iguazu-QSIG: v=2; s=0; t=1763103548; q=2yAafBYzAZJ31BNeos; m=/V0bFjDZ9x29Fry2XACe/Vf73K+aaDIbQJnbzCRuRtI=
-Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	 id 4d77KR4Rx1z1xnZ; Fri, 14 Nov 2025 15:59:07 +0900 (JST)
-X-SA-MID: 54822485
-From: Yuji Ishikawa <yuji2.ishikawa@toshiba.co.jp>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Yuji Ishikawa <yuji2.ishikawa@toshiba.co.jp>
-Subject: [PATCH 0/2] clk: visconti: Remove definition of number of clocks from bindings
-Date: Fri, 14 Nov 2025 15:53:56 +0900
-X-TSB-HOP2: ON
-Message-Id: <20251114065358.854817-1-yuji2.ishikawa@toshiba.co.jp>
-X-Mailer: git-send-email 2.34.1
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VRyHedUR"
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-37a3340391cso15010681fa.3
+        for <linux-clk@vger.kernel.org>; Fri, 14 Nov 2025 01:04:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1763111070; x=1763715870; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=eyGXFrfPOvtO9Z4s8XQ0ch6UyF0uTEn2G/XOy3LSwzA=;
+        b=VRyHedUReEEON2xYd87WuLqJfD1noLS/ndv5UrVlMiwt4AvPh301/msGwg3YAfz0NK
+         YD13TyYHFEGdhF+5LIO+mQG9Tyu/olXSrJrogNVSienDMHGnhETw0TerCFiLjUNbtdSN
+         b2KuZnS/MEw5h1jDPYrtK3hTXlGXAvWxnhvxvZ/bZshcWh2279+HMLOGna+Y5GEV8lPm
+         MG8G1pzJsYP6py5eaIA1WVqC+WoYcku5GLY9qpVnCTnQpRRocLijXlcMvTJ/vqGmLHV/
+         lNrKrdCC2Wa58fVEXVPdN417hEOZFXG5JpD9cSwnpoUsZ9Jb3STOsMywbKG0ccu742fw
+         YCOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763111070; x=1763715870;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=eyGXFrfPOvtO9Z4s8XQ0ch6UyF0uTEn2G/XOy3LSwzA=;
+        b=Addm4kwZNfYFb+CfvyY3wxerUyOYLK0dnapp+OPlemrbsle8gB/61w8drkDwZ+CH8F
+         MUHw4Q5KNsPYS/CvSca958/dfeeHqdz8cT1NIHnWXyuGCCCBVIWSDMi8RLAr9n+NLSr+
+         ZMWfVsULS0I1EvxtxNPMh5+0/F/+0h3p80mIjuaoGNAgZKt+3SuSSLEHo7hQ92lXdi74
+         6VdHD+cVkByGAcio+v4BiXuQFdL0xCzkNcrO0Sss/Mh9u6qzOeWDrEQkxAaoxL1npmE/
+         BtkPWOdhwR3WclA33LQ53kdY9V18+lVkyq00L8qLuRo03eNaqnRHwVZ1TEHyjNjbar84
+         1Xlg==
+X-Forwarded-Encrypted: i=1; AJvYcCUcXZXKlMiqFp6cwgpvGtY0FV7gV78cRtuC06HZTRUi79rawf8Cz0VFDqYw9YKrMDV2XoTXrKJu7VA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFIt4wy0phpca3756KpgRE0PV+ze4pUQ9jZ4QTKrCO7vmm0sFK
+	ZkHVdJvh0r43xgt9lZHil8dd6YyKiGVkT8+J5DkwPUejTsLmu+M0CUrW
+X-Gm-Gg: ASbGnculFgyndn4j2xuvKA+NKfg2GVtdBxE9INJyCsDGBQJI++Ri7bHjc3vezJiGeZE
+	G0Z7rwYRLekr54qXqBriaik1RzPve+0OmtzDYSFkUT1E/l8/5eV41jlpiRbZkd7q65GdcyY1FDi
+	Eqy7L5GAVYQi2/mHsGr1NX8kmAO9VUqaQL4bBIlGVOxazMjrylBbWS6JdXdIJD8m8wPr7H5kZo5
+	0SgW9bJe4tnM8xLm5EP2gg9NZoSMNiqkhzUZjGOd5FZcMYyr5MqfRLMSnuK1HKYS+I8Xb2FjnOz
+	qCS7HiaKaUKHr8xcJhQx/Pt3zM9IFPBxmsnD+dOwarEpcGqSNs1ATbHib5QJfO6XMrejte6dfDn
+	Wy90UCVQEBHkv8Z/bhwc7h2p1fYNmTsQazhfIj4XyJQEQ56tPww/nJc93I/P4xoZp7b+Dz+fKD4
+	vBdXehGL0iEK/flHEdPGlyq/HZRBo9MsRTEdt14vh3GeuGlwqEKHAzWW85dg==
+X-Google-Smtp-Source: AGHT+IFr4MNcx4dsYyHl+PkDpXtMSjAYMNDIYKiKLMNKzXGQD8YnOzZnKnzRzUK+LYDxWhp7vqal/A==
+X-Received: by 2002:a2e:b4a6:0:b0:37b:a664:acde with SMTP id 38308e7fff4ca-37babd29d4emr4429431fa.32.1763111069883;
+        Fri, 14 Nov 2025 01:04:29 -0800 (PST)
+Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-37b9ce080d9sm9121361fa.3.2025.11.14.01.04.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 14 Nov 2025 01:04:29 -0800 (PST)
+Message-ID: <ee36d7d1-ef47-4a35-9aff-baa6ed32105a@gmail.com>
+Date: Fri, 14 Nov 2025 11:04:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 04/16] dt-bindings: power: supply: BD72720 managed
+ battery
+To: "Rob Herring (Arm)" <robh@kernel.org>,
+ Matti Vaittinen <matti.vaittinen@linux.dev>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, Mark Brown
+ <broonie@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
+ linux-kernel@vger.kernel.org, Sebastian Reichel <sre@kernel.org>,
+ Bartosz Golaszewski <brgl@bgdev.pl>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
+ Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+ linux-leds@vger.kernel.org, Pavel Machek <pavel@kernel.org>,
+ Liam Girdwood <lgirdwood@gmail.com>, linux-gpio@vger.kernel.org,
+ linux-pm@vger.kernel.org, Andreas Kemnade <andreas@kemnade.info>,
+ Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+ linux-rtc@vger.kernel.org, Lee Jones <lee@kernel.org>,
+ Stephen Boyd <sboyd@kernel.org>
+References: <cover.1763022807.git.mazziesaccount@gmail.com>
+ <ac5a4e992e4fb9c7bffb1e641a7cd61f74af4cba.1763022807.git.mazziesaccount@gmail.com>
+ <176303119683.3716572.16868393928566655866.robh@kernel.org>
+Content-Language: en-US, en-AU, en-GB, en-BW
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <176303119683.3716572.16868393928566655866.robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Remove the definitions of number of clocks from bindings because they
-prevent adding new clocks. The first patch removes the use of the
-definitions in the driver, then the second patch removes the definitions.
+On 13/11/2025 12:53, Rob Herring (Arm) wrote:
+> 
+> On Thu, 13 Nov 2025 10:52:19 +0200, Matti Vaittinen wrote:
+>> From: Matti Vaittinen <mazziesaccount@gmail.com>
+>>
+>> The BD72720 PMIC has a battery charger + coulomb counter block. These
+>> can be used to manage charging of a lithium-ion battery and to do fuel
+>> gauging.
+>>
+>> ROHM has developed a so called "zero-correction" -algorithm to improve
+>> the fuel-gauging accuracy close to the point where battery is depleted.
+>> This relies on battery specific "VDR" tables, which are measured from
+>> the battery, and which describe the voltage drop rate. More thorough
+>> explanation about the "zero correction" and "VDR" parameters is here:
+>> https://lore.kernel.org/all/676253b9-ff69-7891-1f26-a8b5bb5a421b@fi.rohmeurope.com/
+>>
+>> Document the VDR zero-correction specific battery properties used by the
+>> BD72720 and some other ROHM chargers.
+>>
+>> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+>> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+>>
+>> ---
+>> NOTE:
+>> Linus' rb-tag holds only if there's no further comments from Rob.
+>>
+>> Revision history:
+>>   v3 =>:
+>>   - No changes
+>>
+>>   v2 => v3:
+>>   - Constrain VDR threshold voltage to 48V
+>>   - Use standard '-bp' -suffix for the rohm,volt-drop-soc
+>>
+>>   RFCv1 => v2:
+>>   - Add units to rohm,volt-drop-soc (tenths of %)
+>>   - Give real temperatures matching the VDR tables, instead of vague
+>>     'high', 'normal', 'low', 'very low'. (Add table of temperatures and
+>>     use number matching the right temperature index in the VDR table name).
+>>   - Fix typoed 'algorithm' in commit message.
+>>
+>> The parameters are describing the battery voltage drop rates - so they
+>> are properties of the battery, not the charger. Thus they do not belong
+>> in the charger node.
+>>
 
-Yuji Ishikawa (2):
-  clk: visconti: Do not define number of clocks in bindings
-  dt-bindings: clock: tmpv770x: Remove definition of number of clocks
+// snip
 
- drivers/clk/visconti/clkc-tmpv770x.c         | 8 ++++++--
- drivers/clk/visconti/pll-tmpv770x.c          | 5 ++++-
- include/dt-bindings/clock/toshiba,tmpv770x.h | 3 ---
- include/dt-bindings/reset/toshiba,tmpv770x.h | 1 -
- 4 files changed, 10 insertions(+), 7 deletions(-)
+> My bot found errors running 'make dt_binding_check' on your patch:
+> 
+> yamllint warnings/errors:
+> 
+> dtschema/dtc warnings/errors:
+> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/power/supply/rohm,vdr-battery.example.dtb: battery (simple-battery): 'degrade-cycle-microamp-hours', 'rohm,volt-drop-0-microvolt', 'rohm,volt-drop-1-microvolt', 'rohm,volt-drop-2-microvolt', 'rohm,volt-drop-3-temp-microvolt', 'rohm,volt-drop-soc-bp', 'rohm,volt-drop-temperatures-millicelsius', 'rohm,voltage-vdr-thresh-microvolt' do not match any of the regexes: '^ocv-capacity-table-[0-9]+$', '^pinctrl-[0-9]+$'
+> 	from schema $id: http://devicetree.org/schemas/power/supply/battery.yaml
+> 
 
--- 
-2.34.1
+Odd. I am pretty sure I didn't see this when I ran the make 
+dt_binding_check. Not 100% sure what happened there. I get this error 
+now though when including all the bindings to the check.
 
+Do I get this right - these errors result from the properties used in 
+example not being included in the battery.yaml? So, this means that the 
+check is done based on the binding (battery.yaml) where the compatible 
+(simple-battery) is defined - not based on the properties which are 
+present in this file where the example resides, (and which references 
+the battery.yaml)?
 
+...
+
+Oh... Now that I wrote it I feel like an idiot.
+
+This approach couldn't work for the validation, right? Let's assume I 
+had a VDR battery, and I added a static-battery -node for it. Running 
+the validation would pick the battery.yaml based on the compatible (just 
+as it does here), and be completely unaware of this vdr-battery.yaml. I 
+have no idea why I thought this would work. Probably because I only 
+thought this from the documentation POV.
+
+So, as far as I understand, the only viable options are expanding the 
+existing battery.yaml with these properties (which I hoped to avoid, see 
+below)
+
+ >> The right place for them is the battery node, which is described by the
+ >> generic "battery.yaml". I was not comfortable with adding these
+ >> properties to the generic battery.yaml because they are:
+ >>    - Meaningful only for those charger drivers which have the VDR
+ >>      algorithm implemented. (And even though the algorithm is not 
+charger
+ >>      specific, AFAICS, it is currently only used by some ROHM PMIC
+ >>      drivers).
+ >>    - Technique of measuring the VDR tables for a battery is not widely
+ >>      known. AFAICS, only folks at ROHM are measuring those for some
+ >>      customer products. We do have those tables available for some 
+of the
+ >>      products though (Kobo?).
+
+or, to add new compatible for the "vdr-battery".
+AFAICS, adding new compatible would require us to wither duplicate the 
+used properties from battery.yaml here (as battery.yaml mandates the 
+"simple-battery" - compatible) - or to split the battery.yaml in two 
+files, one containing the generic properties, other containing the 
+"simple-battery" -compatible and referencing the generic one. Then the 
+"vdr-battery" could also reference the generic one.
+
+Any suggestions for the next path to follow?
+
+Oh, and sorry for asking to review something which is obviously not 
+working approach. I should've understood this from the beginning.
+
+Yours,
+	-- Matti
+
+---
+Matti Vaittinen
+Linux kernel developer at ROHM Semiconductors
+Oulu Finland
+
+~~ When things go utterly wrong vim users can always type :help! ~~
