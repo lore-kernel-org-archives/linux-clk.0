@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 020CC24A06A;
-	Fri, 14 Nov 2025 03:36:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0BE372627;
+	Fri, 14 Nov 2025 03:49:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763091378; cv=none; b=Egd14qJqddkmHtMZl5aB5PiHT92VwWR4apFEIOVRdXJ0xKQhAIoBE+E+6ufO9ASepn1H7UxCQMrg/5UoSI8Dr80yzO3oSVNSyYLpeUgrxqtnXAwvvXyhtjYevPbtjjTvjdE029U0ic2AT9EEbFRF6Chr7Yj8IB5cdVhwcJ4IcWw=
+	t=1763092155; cv=none; b=ioS4wRarRc8r7iu9CdTWssgg/ZFm7hJk6+4G2i9ENchFRo5ekbzc5OsuJZ+TJfCYbpN/x1nP1egz1HNAD2CimP3mBFG9gpNLxAfQYAEh7FLFn7DqxIv6t07hbIgBQrtHKB0WES8Ki9Up3mc9scAG4mP3UCZZCVEvKUGt2V+g5OM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763091378; c=relaxed/simple;
-	bh=e8ElaGLVs0ZXIidppeit0GTFsXLIst72ZPvNyqlcBeo=;
+	s=arc-20240116; t=1763092155; c=relaxed/simple;
+	bh=ehOt0d3Y8WEVeEy/LYTyszW35k4ORWoBCUm7F1SdGXM=;
 	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=ZktPDBrtUs6u9MxTE1kbS+KKI9LGqxhNjtokGxCgA/2xMmmVg423vF9bvHNorT36moMmX2xQSYdNP0G1z0BGJW7akP0FF5j6j0a5vrQ/Nybp/Lm3+D9SiI5vkKdO+QOi6a5LN/3X7bOdVIzxEXgkq93lIh36ocndWg5nktfWUq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tbhDdqwF; arc=none smtp.client-ip=10.30.226.201
+	 To:Date:Message-ID; b=RrhLREkNCLlQ4eB+ndXyf41AgocD4xJ9SKHvQscAxUtkgaPS03p3itNnvt3dMV3qqUFsh+1xb5f+XaoOl7Bwjt6I2ol1VnWCN4kpym9jfmjko+EF9lHv6/T5KhilpFdBs5NqLD7H46+81pAyhmwwGA9dgnXks9lFojbHJPoZW6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F9PB6Af3; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tbhDdqwF"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B7F8C4CEFB;
-	Fri, 14 Nov 2025 03:36:17 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F9PB6Af3"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B6EFC4CEF5;
+	Fri, 14 Nov 2025 03:49:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763091377;
-	bh=e8ElaGLVs0ZXIidppeit0GTFsXLIst72ZPvNyqlcBeo=;
+	s=k20201202; t=1763092154;
+	bh=ehOt0d3Y8WEVeEy/LYTyszW35k4ORWoBCUm7F1SdGXM=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=tbhDdqwF9XpCDi3pVqiqNgIch0HShB/yYd1ka0AwVdC+bOXpqi8QpHOF36kKIQDVJ
-	 W9Fqb9uCdu3OzhrvB6nxrkDvC5y+mwFz5hdwHJ+WHBwQYQ77fW08pkg0ZJN+u7Laci
-	 4Gs0r7r7So3tmi+amca6/mtiiFqrqhzy18oCDsCnbcjWskVr1Eo25ospa9SvQpLxHh
-	 eT6coU/VMg6E5hyQXinw7d/wUAJzwIiDh4PWpNPSlhfSr8SIfgaXMNCRAoCfAwYt6j
-	 qWdzz0GBWHwq/kVFf5ibNFK1orM3M5OqEQCm+1rihFETO7eiKiH7GCz7yy3c5SrOCk
-	 V8hA+zCsxIMSQ==
+	b=F9PB6Af33v6Wx8/utgZdOFV8kA8AsnHCy/zh+AmKC5LXPhvR7zG5gJ8LyyxxCv9MO
+	 fHpSvtZXPDf2iqpR6NDiCNeD3DGtvYa7NAv3pGBPOt/rW/G+YcBibyGO0u+EPWLiu0
+	 buX05zJOI66stYizhsGqAUyNzueKIncnyevFxyUyZbeOh2er99QBPPLu2KhADql5jh
+	 /3Ov8/hjNVz3RzxAiWgkpJr7Zctk4i56igaPkUrrwAg9c3uUE1vKnMi3skbtrUMvKj
+	 xAcyI69+exms3nfKsgJ+Jo7Dh3gBdba8k/9JO6j5X2W66igYpbh1rLCWUhpl1i9Pa1
+	 93EaWipQdsQjQ==
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -34,25 +34,40 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <939d8c6da1f468026b1bb201413ba08b1d0751fd.1762435376.git.geert+renesas@glider.be>
-References: <cover.1762435376.git.geert+renesas@glider.be> <939d8c6da1f468026b1bb201413ba08b1d0751fd.1762435376.git.geert+renesas@glider.be>
-Subject: Re: [PATCH v6 01/26] clk: at91: pmc: #undef field_{get,prep}() before definition
+In-Reply-To: <20251110121344.120785-7-krzysztof.kozlowski@linaro.org>
+References: <20251110121344.120785-5-krzysztof.kozlowski@linaro.org> <20251110121344.120785-7-krzysztof.kozlowski@linaro.org>
+Subject: Re: [GIT PULL 3/4] samsung: drivers for v6.19
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org, linux-crypto@vger.kernel.org, linux-edac@vger.kernel.org, qat-linux@intel.com, linux-gpio@vger.kernel.org, linux-aspeed@lists.ozlabs.org, linux-iio@vger.kernel.org, linux-sound@vger.kernel.org, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
-To: Alex Elder <elder@ieee.org>, Alexandre Belloni <alexandre.belloni@bootlin.com>, Andrew Jeffery <andrew@codeconstruct.com.au>, Andy Shevchenko <andy@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>, Biju Das <biju.das.jz@bp.renesas.com>, Borislav Petkov <bp@alien8.de>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, Cosmin Tanislav <demonsingur@gmail.com>, Crt Mori <cmo@melexis.com>, David Laight <david.laight.linux@gmail.com>, David Lechner <dlechner@baylibre.com>, David Miller <davem@davemloft.net>, Geert Uytterhoeven <geert+renesas@glider.be>, Giovanni Cabiddu <giovanni.cabiddu@intel.com>, Herbert Xu <herbert@gondor.apana.org.au>, Jacky Huang <ychuang3@nuvoton.com>, Jakub Kicinski <kuba@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Jason Baron <jbaron@akamai.com>, Jianping Shen <Jianping.Shen@de.bosch.com>, Joel Stanley <joel@jms.id.au>, Johannes Berg <johannes@sipsolutions.net>, Jonathan Cameron <jic23@kernel.org>, Kim Seer Paller <kimseer.paller@analog.com>, Lars-Peter Clausen <lars@metafoo.de>, Linus Walleij <linus.walleij@linaro.org>, Michael Hennerich <Michael.Hennerich@analog.com>, Michael Turquette <mturquette@baylibre.com>, Miquel Raynal <miquel.raynal@bootlin.com>, Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Nicolas Ferre <nicolas.ferre@microchip.com>, Nuno =?utf-8?q?S=C3=A1?= <nuno.sa@analog.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, Richard Genoud <richard.genoud@bootlin.com>, Richard Weinberger <richard@nod.at>, Shan-Chun Hung <schung@nuvoton.com>, Takashi Iwai <tiwai@suse.com>, Tony Luck <tony.luck@intel.com>, Vignesh Raghavendra <vigneshr@ti.com>, Vincent Mailhol <mailhol.vincent@wanadoo.fr>, Yury Norov <yury.norov@gmail.com>
-Date: Thu, 13 Nov 2025 18:29:10 -0800
-Message-ID: <176308735088.11952.13929313934390378381@localhost.localdomain>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>, linux-clk@vger.kernel.org, Sylwester Nawrocki <snawrocki@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Peter Griffin <peter.griffin@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Michael Turquette <mturquette@baylibre.com>
+Date: Thu, 13 Nov 2025 19:49:11 -0800
+Message-ID: <176309215194.11952.10938476100582043995@lazor>
 User-Agent: alot/0.11
 
-Quoting Geert Uytterhoeven (2025-11-06 05:33:49)
-> Prepare for the advent of globally available common field_get() and
-> field_prep() macros by undefining the symbols before defining local
-> variants.  This prevents redefinition warnings from the C preprocessor
-> when introducing the common macros later.
+Quoting Krzysztof Kozlowski (2025-11-10 04:13:41)
+> Hi,
 >=20
-> Suggested-by: Yury Norov <yury.norov@gmail.com>
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-> ---
+> Topic branch for Samsung firmware and clock drivers.
+>=20
+> Best regards,
+> Krzysztof
+>=20
+>=20
+> The following changes since commit 3a8660878839faadb4f1a6dd72c3179c1df567=
+87:
+>=20
+>   Linux 6.18-rc1 (2025-10-12 13:42:36 -0700)
+>=20
+> are available in the Git repository at:
+>=20
+>   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/sam=
+sung-drivers-firmware-clk-6.19
+>=20
+> for you to fetch changes up to 6837c006d4e72d6add451411bcf407e0dea4ad25:
+>=20
+>   firmware: exynos-acpm: add empty method to allow compile test (2025-10-=
+22 07:49:38 +0200)
+>=20
+> ----------------------------------------------------------------
 
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+Thanks. Pulled into clk-next
