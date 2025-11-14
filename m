@@ -1,121 +1,168 @@
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+Received: from mail-oa1-f46.google.com (mail-oa1-f46.google.com [209.85.160.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A0A031CA54
-	for <linux-clk@vger.kernel.org>; Fri, 14 Nov 2025 14:03:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F15D81E5B7A
+	for <linux-clk@vger.kernel.org>; Fri, 14 Nov 2025 14:15:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763129034; cv=none; b=Z9YiqoWgrDb2Bp6ckUkjazkNGO1DNMz4rlk04iZ9IUxoXN17BBxdf8ddmo6gH3uYqO44Jb8nVUB/ZW4pcKnRYp/IFLzJygWqzqkNN+NV/oZtNUWms+2ffuG2QQ2wOy9mAJoFyF2dIwJ9r9f3DPaIVeX0Kb1/2S9Pe3tlOgcatsw=
+	t=1763129762; cv=none; b=dLH4FKi/ENB+oxVEd2SsUlO6S3KnM+G8j0do6majCCA5rv5HpVMVwZbPfeqifGAtF/QEyUEsyxax4UPpc8US5I/Q0SMegglsUOM0xEnujVdslZC+qI/0919K5EabT37FqnntshwjCejyf2kXEZIow3Jcj8R+K32lowe0txBUVLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763129034; c=relaxed/simple;
-	bh=7RBQ1rxq9cwOIH31iq0O2exHw9ltAWV8KJdyPMcuMpA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JLqbVeA5NCF/I4xW+XLGeCJpHK1IAAgSLbVhJvPK1o2wVQxsPrVXpy2P5xRYG7XXUHoRQGyvExFZXwc0zT8ZQ5ul7qvtjWAWJkwy45gtkK/Pqku/x7rfOzyHBhGVLlSp+vXEXd1yg6q/tmV9V0tZWMydD283zstYpmUFpFndsG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=H9aHSEzH; arc=none smtp.client-ip=209.85.221.49
+	s=arc-20240116; t=1763129762; c=relaxed/simple;
+	bh=84XtXMYyLrUslFVhsAI6sSkRE/oTRpyap+QZDKrDWFg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=I6+vsPDsH79EkbFftYMpLl/h5+QXE0HATqBA6v0gTNVyk6U0IWZ35Q+ZzGcLloFwEvyfkWiLuR4eKL4aQg6hakVlje8EYa/BIlSXzzMsv/D3QWqaxJDeC7R4YFBWit1k4XFUwGeXURBMYjb5XKo2bCwEEad+ANOoeMtVml1GcTw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=d+yGzJqi; arc=none smtp.client-ip=209.85.160.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="H9aHSEzH"
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-42b38693c4dso1002770f8f.3
-        for <linux-clk@vger.kernel.org>; Fri, 14 Nov 2025 06:03:51 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="d+yGzJqi"
+Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-3d18422565eso1400579fac.1
+        for <linux-clk@vger.kernel.org>; Fri, 14 Nov 2025 06:15:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1763129030; x=1763733830; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=zsEhbkw7/qEJclFbO4NyPPkv0/guRdzyvArRrjN0KIE=;
-        b=H9aHSEzH3eXI6TUwyG970V+oWJzTRwaWn36++HppMwyAifg1znGOXtvH26NETMoLqP
-         gSTN4Al9TK28ph1GcSukPq2Wbp9KCc6FwHiiYB7HxT0xj0V5VZlsqR4B36gw0UsnjcHb
-         vjbT0IKL3nZ4HQEj+D8ZEbbWgccQWzfianYsiaP0U/EbW6sDQqAqeEBY2gi8DJAptVr8
-         j+TEBy7EhptZI8c7FITwgsqc2QNoHUkuCpFsJFh1MBhzsw9MX5dyA1RoDmMgQgkYLZsj
-         sR1EhypYNlJ4kG/YorCYdpMbTF9e6Dd77ftzzcYQrGU5eXasZXKulD89J0jpcjnHwv3S
-         vNTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763129030; x=1763733830;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=linaro.org; s=google; t=1763129759; x=1763734559; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=zsEhbkw7/qEJclFbO4NyPPkv0/guRdzyvArRrjN0KIE=;
-        b=UrGgQf27rNoraP56m5o2rKZtbbOQmbJQR1xI/6ZFpDHOU9ifi0tbL5VUpTCGpK8HXw
-         1jF8qDlUhwpLAYwnpjbrSKG9JC+cUSUXryAUBINfW+nwl4w5tJVge2J5uWXhH6CT8j16
-         v7d3wMRhjqXg+w/9ljGk1kW4lU5nG6U143vFoOO5Sl/gI0lAE9VgZFtHJ5K49lHvL6f5
-         oAqwnEmwBY3d5qpYOKbRwDYBSy8WT5INM4o/d61EAFX8eURMrrEOFhdOwtHiQOf0PCMg
-         g1gJrX33RNnPLTMxndFIQgZmNl9eJfUyXex0YTjw0JlvzkaOKiOGAj3HdqwmKe9S2cTq
-         kJvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXOEPawVqEsZVP+SdK9GNF8f/1wx/HhTzpc6e6O1KLfBhdTGBd1n21lLDdU1j7Y+sl8MVKnS+Ukuj4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxweNXKRBrDqRl6BykC66GQDWPKP2z211sUjcXYdju4f3UKTxpy
-	jZyolSO9WbPxiisgsegMRkW2t8PQ8YybpnwdVx83iYAQcylo4drKKVoaehMked11mpk=
-X-Gm-Gg: ASbGncusewFgiKy4EwG5EOtkICB3+ZNdpRwLc4P78GZOSdy5NTtFMG8pkojxCRfRW8g
-	eLOkbIiLF4GZPsB3N/yZW6bZiLHnEI6npkqeIp65YsUusfrgjWppCbksojVN0ZO4OwGqbk5JnmN
-	oeIKJiIHO0YOpXvEft3GSmR+foKxd44UI1AUaA8/f/ylkSoWtDipRe2qfVr0N+NBV/MjeviYYOb
-	M1FRnSLcO/JKPRV1RTjelSiyqdy4b6euwS6qZ/QdC4cFhhia8dgyGkn/g/E1fwsGl+5hoN+vWaJ
-	FFsy1DGwFTqLHxfZlxtOiwqZaG4rS7ohGSmU/HXbJWaaevr7mLLvFi9jQAv3S/GD+mgb1XXx3kY
-	A/ua1lyo9UDLxzRAg8dmc8OAv+MIx9cIvGvj4dbupmnaT8mGC/vO3hKf/uoFnEtLyDZtVHO2HOw
-	==
-X-Google-Smtp-Source: AGHT+IGA/B1SzNJ6LDArjnRCHI7gdzJpdYz7fDscB0tGXVzq/cjWi9I4cngB9uUtqy66QBErU5TPQQ==
-X-Received: by 2002:a05:6000:144c:b0:42b:389a:b49 with SMTP id ffacd0b85a97d-42b5935a894mr2976159f8f.28.1763129029328;
-        Fri, 14 Nov 2025 06:03:49 -0800 (PST)
-Received: from hackbox.lan ([86.121.7.169])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42b53f1fd50sm9852161f8f.38.2025.11.14.06.03.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Nov 2025 06:03:48 -0800 (PST)
-From: Abel Vesa <abel.vesa@linaro.org>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: imx@lists.linux.dev,
-	NXP Linux Team <linux-imx@nxp.com>,
-	linux-clk@vger.kernel.org,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] clk: imx: Updates for v6.19
-Date: Fri, 14 Nov 2025 15:58:42 +0200
-Message-ID: <20251114135842.1473203-1-abel.vesa@linaro.org>
-X-Mailer: git-send-email 2.48.1
+        bh=605KA+j3WIIvcfzgxWg8ZYVUvIOsOaWV0PzJBY7zgrk=;
+        b=d+yGzJqiXKzogYgTY2d6Z5mnKMNUTWq4zQZeYtMm7LUfWgTJ7iw6nd7v2PkC9mmEFp
+         VdkK0uZK4leU25RzEiS4CZjUvKveQkZROcMeSlOXNtBsKr3nGN451gjDM0FW3ILi7OyY
+         KVnrWag8ej+ri3IRb55MTGhDqOQCXrVI4upRNZg3DQ51juV+nZJJ5uopWJE2boEcilxU
+         8hCBpbD0Lj2h//9tJI3ovkVtceSnR/uGFjRPQLBWTeU782E1x6SX7B3txpf+PHRnIy4L
+         C3nWCm8/LZVp2PK99gB89IHJBhkpQ3LAdgwrKSCd05RGWCoiGgAQ9gR2GFggoC/RXJpH
+         vsfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763129759; x=1763734559;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=605KA+j3WIIvcfzgxWg8ZYVUvIOsOaWV0PzJBY7zgrk=;
+        b=Ohszut0MyTJ8uC+h37JYLGLhgfiAHdC5W2yyDK0Cz8VOCGKhssEfWWyPAVcwxy89Us
+         2kiK2B2hrHI6OeZyWdVgeh15T8PotHTlKFgrAklvtg9iFliJQVkcry9CutBHmqbrX0tT
+         0r1cYeSGIusIzhnJuzmgv9033thQaY9r8YpH0tGf1LL1C2PjbzLniVIMjW9TEiIaqiWs
+         s5xgyo7Bo2SN6mkyp6BsKxsMMfZ0SqE/QWYHH+dRUQUDSY9rNQHdQnRpN4muYJTC5E+A
+         3um6jGZ8xVWbI/MZTMiaZkyMiwqWVnob8XFw4zAnpH8f+xt90KxMJoQus9a+m81Bz0EU
+         cFvg==
+X-Forwarded-Encrypted: i=1; AJvYcCUqlV4f8ZR5G2oT0apwFpQdJ+lMMoKP6rQ0U+crJNDBScyEYQRiQ5nCU2h4GhwjjbjN2Gnq5SiF+iI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCf0G6k0gWTtaW3Fm9Sha5o2xKgq+AzV2YoJLl/Bt1FnaFpNA8
+	9Fp6gDQBXgPQNcu/b7Zwy3a4GOyOkiV8SljzWc1dP7/c3TAKBYSjdyzomCefHfsLVQpD3+FLblC
+	FeoIouuIOP5bzOns2mDrfsKJ6jq8v3ULiR2lR9kIj4w==
+X-Gm-Gg: ASbGncsMpcKojbtuNvJTdv8H8VHXFpdD621ofjRiKDlL4oInwiaYvVJQaPLyb4JHf0F
+	zfwvThhxhnCFDuMXoRIWLzQim95eUN5cFn/aB/rnFpIHiMeS+8BUhHOaTJBiSLSB1TDHbpvkjn6
+	c61sH61erlmPqJnxgS+GDn7/HJkxYNEh3rT4BjNAG6IxAuCD+sdfCR7cW4YkG0WWatJxw0kcp6+
+	VOaI5xTdSA8YzjSHroZn7PTTdTRBRD8xno5Q65MZgkIdwIl7stPF1oEBQs5
+X-Google-Smtp-Source: AGHT+IHFAOcopcMRDmLLjpXIMGkDicnHz6DOQWd9hkogRhyGcqfzsm1tRjKsU007mKGUgCn3eB5pyfIzXQ5lLIUbgl0=
+X-Received: by 2002:a05:6870:7182:b0:3d4:cea7:62b5 with SMTP id
+ 586e51a60fabf-3e86920a732mr1731868fac.48.1763129759003; Fri, 14 Nov 2025
+ 06:15:59 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251110-automatic-clocks-v4-0-8f46929f50b7@linaro.org>
+ <20251110-automatic-clocks-v4-1-8f46929f50b7@linaro.org> <3bb47929b08370d9114ff1dd6b0d0f16d354d63b.camel@linaro.org>
+ <9c344c5f43e71f30ccbd07b201eb470ed8e5fe35.camel@linaro.org>
+In-Reply-To: <9c344c5f43e71f30ccbd07b201eb470ed8e5fe35.camel@linaro.org>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Fri, 14 Nov 2025 14:15:48 +0000
+X-Gm-Features: AWmQ_bnLz1hABBDAKCHnQD782gXnmLLLuHhSJOeNXuWZEnGWp9H0xn505uSki68
+Message-ID: <CADrjBPr1ny7u7jFHdB5dbAytx2C_MsR7gPL9m-=0BiZZzPEhiA@mail.gmail.com>
+Subject: Re: [PATCH v4 1/4] dt-bindings: clock: google,gs101-clock: add
+ samsung,sysreg property as required
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Tudor Ambarus <tudor.ambarus@linaro.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Sam Protsenko <semen.protsenko@linaro.org>, 
+	Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
+	Will McVicker <willmcvicker@google.com>, Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+	kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The following changes since commit 3a8660878839faadb4f1a6dd72c3179c1df56787:
+Hi Andr=C3=A9,
 
-  Linux 6.18-rc1 (2025-10-12 13:42:36 -0700)
+Thanks for the review feedback!
 
-are available in the Git repository at:
+On Tue, 11 Nov 2025 at 09:57, Andr=C3=A9 Draszik <andre.draszik@linaro.org>=
+ wrote:
+>
+> On Tue, 2025-11-11 at 09:54 +0000, Andr=C3=A9 Draszik wrote:
+> > Hi Peter,
+> >
+> > On Mon, 2025-11-10 at 14:21 +0000, Peter Griffin wrote:
+> > > [...]
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/clock/google,gs101-clo=
+ck.yaml
+> > > b/Documentation/devicetree/bindings/clock/google,gs101-
+> > > clock.yaml
+> > > index 31e106ef913dead9a038b3b6d8b43b950587f6aa..5ce5ba523110af3a2a774=
+0b8ba28e2271c76bddb 100644
+> > > --- a/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
+> > > +++ b/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
+> > > @@ -52,6 +52,11 @@ properties:
+> > >    reg:
+> > >      maxItems: 1
+> > >
+> > > +  samsung,sysreg:
+> > > +    $ref: /schemas/types.yaml#/definitions/phandle
+> > > +    description:
+> > > +      Phandle to system registers interface.
+> > > +
+> > >  required:
+> > >    - compatible
+> > >    - "#clock-cells"
+> > > @@ -166,6 +171,22 @@ allOf:
+> > >              - const: bus
+> > >              - const: ip
+> > >
+> > > +  - if:
+> > > +      properties:
+> > > +        compatible:
+> > > +          contains:
+> > > +            enum:
+> > > +              - google,gs101-cmu-apm
+> > > +              - google,gs101-cmu-misc
+> > > +              - google,gs101-hsi0
+> >
+> > Shouldn't this be google,gs101-cmu-hsi0?
+> >
+> > > +              - google,gs101-cmu-hsi2
+> > > +              - google,gs101-cmu-peric0
+> > > +              - google,gs101-cmu-peric1
+> > > +
+> > > +    then:
+> > > +      required:
+> > > +        - samsung,sysreg
+> >
+> > The above still allows (but doesn't enforce) samsung,sysreg on cmu-top.
+> >
+> > Maybe it'd be better to invert the test, as cmu-top is the only
+> > outlier, and then the binding doesn't need to be updated when more
+> > CMUs are added (untested):
+> >
+> >   - if:
+> >       properties:
+> >         compatible:
+> >           contains:
+> >             const: google,gs101-cmu-top
+> >
+> >     then:
+> >       required:
+> >         - samsung,sysreg
+> >
+> >     else:
+> >       properties:
+> >         samsung,sysreg: false
+>
+> obviously then: and else: cases should be swapped.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/abelvesa/linux.git/ tags/clk-imx-6.19
+I'll send an updated version with these suggestions integrated in a moment.
 
-for you to fetch changes up to fdc1dc7dd53b95805d3943ed36785c1ec812915e:
+Thanks,
 
-  clk: imx: add driver for imx8ulp's sim lpav (2025-11-11 18:01:25 +0200)
-
-----------------------------------------------------------------
-i.MX clocks changes for 6.19
-
-- Add delay to the PCC enable/disable in i.MX7ULP composite, needed by
-  some specific peripherals.
-- Simplify the i.MX8MP auxiomix by using devm_auxiliary_device_create()
-- Add the i.MX8ULP SIM LPAV platform specific clock provider.
-
-----------------------------------------------------------------
-Jacky Bai (1):
-      clk: imx: Add some delay before deassert the reset
-
-Laurentiu Mihalcea (2):
-      dt-bindings: clock: document 8ULP's SIM LPAV
-      clk: imx: add driver for imx8ulp's sim lpav
-
-Peng Fan (1):
-      clk: imx: imx8mp-audiomix: use devm_auxiliary_device_create() to simple code
-
- .../bindings/clock/fsl,imx8ulp-sim-lpav.yaml       |  72 ++++++++++
- drivers/clk/imx/Kconfig                            |   1 +
- drivers/clk/imx/Makefile                           |   1 +
- drivers/clk/imx/clk-composite-7ulp.c               |  13 ++
- drivers/clk/imx/clk-imx8mp-audiomix.c              |  39 +-----
- drivers/clk/imx/clk-imx8ulp-sim-lpav.c             | 156 +++++++++++++++++++++
- include/dt-bindings/clock/imx8ulp-clock.h          |   5 +
- include/dt-bindings/reset/fsl,imx8ulp-sim-lpav.h   |  16 +++
- 8 files changed, 268 insertions(+), 35 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/fsl,imx8ulp-sim-lpav.yaml
- create mode 100644 drivers/clk/imx/clk-imx8ulp-sim-lpav.c
- create mode 100644 include/dt-bindings/reset/fsl,imx8ulp-sim-lpav.h
+Peter
