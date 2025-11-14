@@ -1,138 +1,103 @@
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 515D1331221
-	for <linux-clk@vger.kernel.org>; Fri, 14 Nov 2025 14:57:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05E30283CB0;
+	Fri, 14 Nov 2025 16:22:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763132281; cv=none; b=FmK1kJcF8SM9C0+IqIVGeJc//yhISG8r/Z7h6gQL9yKB4VXuSWf5j4qP+sWc5vlQMH4gKY82VwfO+9Rme/9NSOEw3IffNMQW3dzdaqfoTQR8JTYMyRoESLuXO4Zega8CE/n0+9xEJS/PihCiEXEMYRNXK4n6rAEfnsNm/9YLAgk=
+	t=1763137346; cv=none; b=dfixyqe1qrwYsGD+EvuS2IQsTrxktwo+IiwDuQBE+F8fZ+YXgoMU4BN4x/3bmJFNbTetW8qz4myysSl+UYr+FULBE8pikvzZOXQDOYimT+bNz1wVOHrUFZWJLdsGafiys93rbiCDYCG7cfcDRChOfUSfee1fOb3r11gTbFvyt+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763132281; c=relaxed/simple;
-	bh=F1ZCzX89awJADOgTe+k1vSNI5Zu2MhOm6VSE4oz9v3Y=;
+	s=arc-20240116; t=1763137346; c=relaxed/simple;
+	bh=Dh7B81R0CZthI9c9EIIN3+DY5FYoCN3eZa7ifInLPXw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FvKKyadHC8vRwI6nt3PZzLf5wlr9mHQSzhx0Qaz50dy7FA3pYktFZsynK6znR+Us4VudCrdqOVbQ07cqu+mvFpu3qdosiON3BUpaBbzsavWfEEOEC6KO0mUMjZTthnaOcD/FGnWFk9r7XJLG30etAbZOgIUCHa1IGGRWDudsi00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P6sYjKLk; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=FrHWKL8C1nZsxAozkGkL15+UucpCLXtFNeiDH7e68Fy93Ht5qjGBErLPcOplv0FWwVfa1fJtLUaNN0e3v9M5ojKcZNDFdwlZldMIG+6+JbjsdL9wznO5DtrVLHNRM1g5CZz5OhucCVddBonp7hHQLfaYNCg4ZiZcj9SS01x9v5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dw5RjQZ4; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P6sYjKLk"
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-42b387483bbso1730553f8f.1
-        for <linux-clk@vger.kernel.org>; Fri, 14 Nov 2025 06:57:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763132278; x=1763737078; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=JGnRuedlsHd0fcZwXKJjRRdg6CbePYJalR5bL55auvo=;
-        b=P6sYjKLk8/0kTE8lO+CzOp9BGFg8Q8tPJr+bCGTdHDZKE+MuFpap3hCh9kxjhmRm8c
-         DuBjPD5NZJlrBauJgvudHJfDhTFYnUEwPUFkerun/pu41rb3ivvBU6YwcVtkOWPGw0hO
-         QOwsRsQz4UBTPeSKOpwFHcvd62DjRCcOMx8lQdKVdZI0x6Hq8tpyYerCRNhjXj90/aci
-         LYyfxvfggc2KATudGot4O98WBjZoeOFX0LZpu5SiV6WRECYdE/ihuKSdP18u3Tj6YpMU
-         82Z7BDy2Am7a0XuJHskjQoaq/Yphc/+B8ZYI0KcVAxVqUYevx5hGx334o+U7PvVrYoy8
-         9xUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763132278; x=1763737078;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JGnRuedlsHd0fcZwXKJjRRdg6CbePYJalR5bL55auvo=;
-        b=KJKv43280Rv9KhRJXHNLMgWkSqpOPjhj5IfoRtTaRc5tbPa6QVtJ0C3pDTamMEdQeV
-         FNrsyNT6Lzaa3MQnyZ24SI7wKmHpGgjeBb96oWL4UNa0D00XM4uE7EsIrRsl6LFodmja
-         xtskswP5qPcnZxxjE7JHDHDhwkXOk+H/L3EPC8PyLS/qbtOIDeHv1BPDJkzLdPDSfN3c
-         hoeulyQbHjjlGe/4hP5DeATtbpW74iN2R/wPYafx5c0iExQ4H4PU7erA12YfCpp8XCC8
-         2wwAlluFfVPGUfLljew27NNU113WGMQCO+1qPkR+Vz2vzR49E9Qc3FtWTJVDWPfBereh
-         /4Qw==
-X-Forwarded-Encrypted: i=1; AJvYcCUQrps7eCRAes82aaiVQviQ31j0gIm+qF2bP6/F1RJJ3Zbg2k6tNlhfaz7w2/p96QTAA2kCKChbtbA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywmz0FKKfqN8boOT0L37GNtXHkFSNl6xiAsTioEUzEgX+PYEHh0
-	ROIOu89jVWSCul24f2ceq0BA5mRHg1zv6J9PCvsuroc/i9P/kTdZuUHo
-X-Gm-Gg: ASbGnct0uiGc1v/G5RlAouKY729kVJ2oSGrefn89dBfbTc0RIeX7S0KqiHx9H5BNKB9
-	a77DBY1y5IwKwDgYTmYs7+GfxSjLZlpyZVfbybhRYFihiMPUtlBO6wfwPCrPcb6fQOojVHJOwl6
-	rniQbce1dBQN2SYxK/KtGqqmUCWv1ua1PZ7QYufHk6vHsuEefj0ylNblm4S5MjZkpn/4BZi5bHu
-	6z6py4a3gWFhnTkyoKsEzswIsYiQgXGy8C+t+v5ZTNYg1bc3d5xQa6QeNe5hKLbGo90Z7bVkdgX
-	lXFjf/M7v0LERogSxjNFcZZTyXU78jt5CPaTYO6BdxTnUCNRrnZXnbmGVv300+f9CubrqKgatHF
-	iXl0PnecYrq1wmeh+fALZjMS8j7aqmQqB+uNa7LvYF/GZUWe+42FhkoIM701+FHQh09QcwLl8n7
-	6NDGxxbVyeNrhRr/rkBZJNnSj8h/fTiMDjuJ3URwB/ZRBpJ7++ptmJXFd1v14WutG2guC/kKcst
-	w==
-X-Google-Smtp-Source: AGHT+IGR+CaGRepCgY9abJOUDZMtJSLpLAxIBXYfl3hSOsk7LXj9GzOPlhHY0Won/RR6QmkpGOV9IA==
-X-Received: by 2002:a05:6000:615:b0:42b:41a6:a670 with SMTP id ffacd0b85a97d-42b59394029mr3665245f8f.54.1763132277621;
-        Fri, 14 Nov 2025 06:57:57 -0800 (PST)
-Received: from orome (p200300e41f274600f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f27:4600:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42b53f174afsm10192785f8f.33.2025.11.14.06.57.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Nov 2025 06:57:56 -0800 (PST)
-Date: Fri, 14 Nov 2025 15:57:54 +0100
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, 
-	Luca Ceresoli <luca.ceresoli@bootlin.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Mikko Perttunen <mperttunen@nvidia.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jonas =?utf-8?B?U2Nod8O2YmVs?= <jonasschwoebel@yahoo.de>, 
-	Dmitry Osipenko <digetx@gmail.com>, Charan Pedumuru <charan.pedumuru@gmail.com>, 
-	Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>, Aaron Kling <webgeek1234@gmail.com>, 
-	Arnd Bergmann <arnd@arndb.de>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-staging@lists.linux.dev
-Subject: Re: [PATCH v5 22/23] ARM: tegra: add CSI nodes for Tegra20 and
- Tegra30
-Message-ID: <6ec4sw2c5rs2s4akd55vacveloiyc7ehbhouz2mqs2gy2w7v5d@rqxzhxcgm2ns>
-References: <20251022144930.73272-1-clamor95@gmail.com>
- <20251022144930.73272-2-clamor95@gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dw5RjQZ4"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18243C4CEF8;
+	Fri, 14 Nov 2025 16:22:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1763137345;
+	bh=Dh7B81R0CZthI9c9EIIN3+DY5FYoCN3eZa7ifInLPXw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dw5RjQZ441yQWfZo1zaW2y9Ff7Fbpc4MDmSCaR5XnvyHjtaVi9mEBa+/XNq3plSpm
+	 YctoaAEnlbxvUdqtU7s8kCDYhSxFeYF2ZX5wBC2jF+EmfC49v0vHh2oTCZQ5MNMzrQ
+	 hQM0e281PSZMWJwOsStkKVZoCNymSiPckpWGSfd3FC0Ft5l1hgPFpWDc44f7gcUcO9
+	 uc+AiGLcYXXiZzfZoCn9tPavc+RB41G0eQvkNj+1bI3CDuSkLuBozOVIdRsbbhXm4U
+	 BAUeDOOaC6nJUXJ1bXKQZVXPxZhPRS0Tj+H3+vPrTUUkFWMcswhCU7g1Bm9vUoyMMW
+	 koBIXdaOMy9bw==
+Date: Fri, 14 Nov 2025 10:22:23 -0600
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Matti Vaittinen <matti.vaittinen@linux.dev>
+Cc: linux-kernel@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	devicetree@vger.kernel.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Lee Jones <lee@kernel.org>, Sebastian Reichel <sre@kernel.org>,
+	Mark Brown <broonie@kernel.org>, linux-clk@vger.kernel.org,
+	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+	linux-rtc@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
+	Andreas Kemnade <andreas@kemnade.info>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Pavel Machek <pavel@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	linux-leds@vger.kernel.org, linux-gpio@vger.kernel.org,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Linus Walleij <linus.walleij@linaro.org>, linux-pm@vger.kernel.org
+Subject: Re: [PATCH v4 01/16] dt-bindings: regulator: ROHM BD72720
+Message-ID: <176313734261.3399634.14735602290463429362.robh@kernel.org>
+References: <cover.1763022807.git.mazziesaccount@gmail.com>
+ <21e83fccf2d2422f4bea1c482dcd3cb1aeda4085.1763022807.git.mazziesaccount@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="xekcx7ux3cabz2pl"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251022144930.73272-2-clamor95@gmail.com>
+In-Reply-To: <21e83fccf2d2422f4bea1c482dcd3cb1aeda4085.1763022807.git.mazziesaccount@gmail.com>
 
 
---xekcx7ux3cabz2pl
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v5 22/23] ARM: tegra: add CSI nodes for Tegra20 and
- Tegra30
-MIME-Version: 1.0
-
-On Wed, Oct 22, 2025 at 05:49:29PM +0300, Svyatoslav Ryhel wrote:
-> Add CSI node to Tegra20 and Tegra30 device trees.
->=20
-> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
+On Thu, 13 Nov 2025 10:51:32 +0200, Matti Vaittinen wrote:
+> From: Matti Vaittinen <mazziesaccount@gmail.com>
+> 
+> The ROHM BD72720 is a new PMIC with 10 BUCk and 11 LDO regulators.
+> 
+> The BD72720 is designed to support using the BUCK10 as a supply for
+> the LDOs 1 to 4. When the BUCK10 is used for this, it can be set to a
+> LDON_HEAD mode. In this mode, the BUCK10 voltage can't be controlled by
+> software, but the voltage is adjusted by PMIC to match the LDO1 .. LDO4
+> voltages with a given offset. Offset can be 50mV .. 300mV and is
+> changeable at 50mV steps.
+> 
+> Add 'ldon-head-microvolt' property to denote a board which is designed
+> to utilize the LDON_HEAD mode.
+> 
+> All other properties are already existing.
+> 
+> Add dt-binding doc for ROHM BD72720 regulators to make it usable.
+> 
+> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+> 
 > ---
->  arch/arm/boot/dts/nvidia/tegra20.dtsi | 19 ++++++++++++++++++-
->  arch/arm/boot/dts/nvidia/tegra30.dtsi | 24 ++++++++++++++++++++++--
->  2 files changed, 40 insertions(+), 3 deletions(-)
+> Revision history:
+>  v3 => v4:
+>  - Drop type from ldon-head
+>  - Fix the name patterns for regulator nodes and names
+> 
+>  v2 => v3:
+>  - drop unnecessary descriptions
+>  - use microvolts for the 'ldon-head' dt-property
+> 
+>  RFCv1 => v2:
+>  - No changes
+> ---
+>  .../regulator/rohm,bd72720-regulator.yaml     | 148 ++++++++++++++++++
+>  1 file changed, 148 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/regulator/rohm,bd72720-regulator.yaml
+> 
 
-Applied, thanks.
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
-Thierry
-
---xekcx7ux3cabz2pl
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmkXQ3EACgkQ3SOs138+
-s6H5FQ/7BNrS2X7EchthFaqJs0Itrm1KN9MujAl7hYVvTbvyozWCOEjKbFN4QX/R
-1+8mcxFJxc5TtgvW16xQ+mePTyN2N7jxL1TxRT7XCZL5Tp14zhdK9zDoQK/1408r
-0dw0xy7PAzn9uj8EYX/dfrKT9rsGy0Nc97UyGoBE0/oTU/XHYAoPev2JyFSCqaHn
-sD4JvD6tliCPcRZkdum6WkajMFarxmgx72sJ5jLhOzzsT7/vcJyb12gVN94OtK6b
-6kASWMvl+1YQPbxWk/iSSBYUwlvoG794KpTPyhEzezvigRJkLO3jSSCzCplJ+K9i
-IVfmJlnaaOONvQZVULWL4Bn4OplAnDBaqi8AUwGa5QjlgEEc81FczmuU4KAj+5Zx
-mIhy2Bd5hMjqvSyKFXiDd+4QlRzNHsC3dacBktMu4EH+KC3DVKMTQ3/+7yyXqcc3
-ne4wp7IJVQ9oEsPxr1e0GKPkDEd4iz10UaDCHZKFvDzEwrOkkN7vzUF4tndq1/Av
-+fz4pjf3DCJ7NMc1fs/kBabrbTmHbTqAkIot26EKaLfrogrGlGm/smu32t7CrzWq
-dY17/9eNoHdrPC7o/kncXM3oxYGrh2Bw1OFtF9RL5mLCxSTLOKAkqZZv5zHTLEAg
-MYnh3JVBfN/JUn8Y5x9LTYlIvap2zYy3Rss6uFmNUcMWhjBqhsw=
-=/CC6
------END PGP SIGNATURE-----
-
---xekcx7ux3cabz2pl--
