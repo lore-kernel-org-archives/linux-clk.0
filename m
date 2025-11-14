@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 936A5258CF0;
-	Fri, 14 Nov 2025 03:53:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43B1625A2BB;
+	Fri, 14 Nov 2025 04:09:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763092394; cv=none; b=pYc+Z9termWXZaJzKGyjmm1f2pMK3s1efbBKaXSb9uOnBHxWafq2lVHi8F3X0o5sro8kYLm8LDOKg8BMnhsxmvu3xVMT0j/p2M3CLARTWnfmqctFQrAJ8WmxNMrHH2asdXcvBwFJWKUZjrmUoCdbDAzyP3ynzygXoDmKt8XicBQ=
+	t=1763093356; cv=none; b=J8fDhmn/4XrBEPOlw0HRMw83k6pjitO/9LZpcV9IKHkbdDOVcTNrByxEaKvpQKF1l2fLpbvM5FEDLOVAJPZph7lag6maqdfRlgNqSBnUYw//QYAG9cg4ISoPK8AM9AaOHF+5uQppvdSHDpi2Vo8C7syzPA5FCx5YKPRtdl4wWk0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763092394; c=relaxed/simple;
-	bh=DuBjJuFRKUpFXwJ785dS3UGxZUQ5KPJP2I7pnElYD78=;
+	s=arc-20240116; t=1763093356; c=relaxed/simple;
+	bh=R9gnqhkC7tG7M3NmKKfkco2hQBQzGue8GrDxF+AAz+c=;
 	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=K550eVDCpu2kA5oi8VYmlPAdU6Ec5sQp+zXmci3mNnS2kWa2dv9P4mmw5grpWGOZrifNRazlIVWh68TALnsCsGyIn0ZonQV6ZMXPvJe7ESmuBrX59sxGVJrDH3q+oOAjCxGBE7jQ0DUXlLIXkK/C/EbS+5CT7uFhQZEbdUU1I68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G0l14hSd; arc=none smtp.client-ip=10.30.226.201
+	 To:Date:Message-ID; b=g9gqpTitsiGQs3kYg9oPHVcfX/vlBpuAdZ6F4MmPWP/HiDC+RkgQTkM3LzD1QEDYils8cCWNlpl6UjAenz/G4hLGvHx2qoQAgZ5n7CciLzPSYC9lluHB1z2rsc4nrPfy791hZ57TgBSslqd81OoURAjC4NYdAo73jxuTHZZLlBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nXuWm3zN; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G0l14hSd"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 128A5C4CEF1;
-	Fri, 14 Nov 2025 03:53:12 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nXuWm3zN"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFF69C4CEF1;
+	Fri, 14 Nov 2025 04:09:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763092392;
-	bh=DuBjJuFRKUpFXwJ785dS3UGxZUQ5KPJP2I7pnElYD78=;
+	s=k20201202; t=1763093355;
+	bh=R9gnqhkC7tG7M3NmKKfkco2hQBQzGue8GrDxF+AAz+c=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=G0l14hSdwNg85QdevSgBa7tqTSZRGuKgiigBDJF4YRYXZzT5E56mg9ld1pKWM4xwW
-	 Zjg5GQ0dFt1UKQPzsrl8tiw4AsBfgiKTlP6WeAH7z/eNNW3mJxJsn9wAhMWyl1158D
-	 vXWvBhudgMJ874wViCW6F4+7NM1lyxsE72nLF+IEjD/x/8rOqxi6DQlDdFaRXUOkh/
-	 M7Ix3k/SYAHdVS/hQDBlDlARpaneh4aZNesbN/cT7is0EXkXD6czwBITXjo4kyLE+J
-	 rQ/vufXOauZF/6ZE7UDgEGvtZ6/CzO1SMDR1cmkSZqKE0klVXQ8B3V9J/J+t/CJqdV
-	 8kF9iK72nVyrQ==
+	b=nXuWm3zN7t6C8XMQU25qeHAqyjzsWBObfm22x9p9K9wgNsFlFp72uaxb+g7bNh7Ah
+	 QkR/vm8rfu3ltWa8tke6WoyClc0JLmxFNw4Jn59uJK3SVf0TmCL2DT+nzsXJtW2E8o
+	 dl8A10Y/h8hZBMwYp/Xn/nEiWIiTh4e7Iqkoo6tH9TFsYjIVYuDt4kktfGEKmCPUSm
+	 ylM6R6i+l41Iu56wDbMYHnnEk59/+2RXwHk5hj7EmOAOcZyRfcDnogk3m+eZrPX5wb
+	 HSjLvDukuZB8cQ6gGVYl8BwTFsUo6TpWsHgDrGt3DSapNQ6PI2hwmltGaEbqlDDKwQ
+	 qKgBMfVqGJfsQ==
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -34,25 +34,22 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <16c92cc14da67ec6354ee0ac4e1faef4af4d0994.1763022807.git.mazziesaccount@gmail.com>
-References: <cover.1763022807.git.mazziesaccount@gmail.com> <16c92cc14da67ec6354ee0ac4e1faef4af4d0994.1763022807.git.mazziesaccount@gmail.com>
-Subject: Re: [PATCH v4 12/16] clk: clk-bd718x7: Support BD72720 clk gate
+In-Reply-To: <20251110035645.892431-2-mikhail.kshevetskiy@iopsys.eu>
+References: <20251110035645.892431-1-mikhail.kshevetskiy@iopsys.eu> <20251110035645.892431-2-mikhail.kshevetskiy@iopsys.eu>
+Subject: Re: [PATCH RESEND v3 1/3] dt-bindings: clock: airoha: Add reset support to EN7523 clock binding
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Matti Vaittinen <mazziesaccount@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, Alexandre Belloni <alexandre.belloni@bootlin.com>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org, Andreas Kemnade <andreas@kemnade.info>
-To: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, Matti Vaittinen <matti.vaittinen@linux.dev>, Matti Vaittinen <mazziesaccount@gmail.com>
-Date: Thu, 13 Nov 2025 19:53:09 -0800
-Message-ID: <176309238996.11952.1859040027915941428@lazor>
+Cc: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>, Andreas Gnau <andreas.gnau@iopsys.eu>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Conor Dooley <conor+dt@kernel.org>, Felix Fietkau <nbd@nbd.name>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>, Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org
+Date: Thu, 13 Nov 2025 20:09:13 -0800
+Message-ID: <176309335369.11952.3651392650337156154@lazor>
 User-Agent: alot/0.11
 
-Quoting Matti Vaittinen (2025-11-13 00:55:05)
-> From: Matti Vaittinen <mazziesaccount@gmail.com>
+Quoting Mikhail Kshevetskiy (2025-11-09 19:56:43)
+> Introduce reset capability to EN7523 device-tree clock binding
+> documentation.
 >=20
-> The BD72720 has similar simple clk gate as a few other ROHM PMICs.
->=20
-> Add support for BD72720 clk gate.
->=20
-> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
->=20
+> Signed-off-by: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
+> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 > ---
 
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+Applied to clk-next
