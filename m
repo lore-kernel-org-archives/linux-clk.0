@@ -1,113 +1,259 @@
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44C98216E24
-	for <linux-clk@vger.kernel.org>; Sat, 15 Nov 2025 14:47:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41A7426E179;
+	Sat, 15 Nov 2025 17:24:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763218067; cv=none; b=Vvw/AULujK4aj/Z4nmjCRjlrAnnXZ8adpIvcaHAu21TMC1ivIOQE9Dyyc8EVFGFFpXgnRNyLxZisWQHQvnGNckGKJ5WE28y6y+iivNlsCX+EfQfe7GlsA6EGg3G58LaEZRDToDpPx9ByCw3/DaIXHF2J6P5rLDLDMKiPkFpwXQY=
+	t=1763227454; cv=none; b=Hc2bcck+eykELrKSae/kY5pbs+jiHccIEKTyOlAU0DxUl2cOUer4qwLTxmPYkMlcN8ZmGSZdKBWVscdBHZmCtW9Vt8b9hGI0nMctRSfL0cx8d+Xx5tenntOLueAaVHvOoxCj6+T5YyMsui5+sh+rT5EdyKYIm06C67PFEbTYsv0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763218067; c=relaxed/simple;
-	bh=6zCF2VwvteQ2rlCgNAvg5npcthhroXaHgp98itk06Lc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oGHIpDOGGW0CCo2clYW0gotThfwFG26VZKT8fIhewFBaVHSsbtL6hj7G6IflGcqUfaKsELW9v/RbdwbaXvE6V0mUBM3HESxnvTYCRr0Bvg5Ms4FjrChfFpHVAspRc7xFqDmGtWgl/eCjqb3DZw2ofK6iyZ33C2XkvRCfFjfWnQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T5QP5GGa; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1763227454; c=relaxed/simple;
+	bh=RQQr8CGCDpTmfgYXtgNEaJcaQGcoe9L22DH1cj008fY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=i1TNJqfG+lchEHg5pVR/vKXds4IdZtT9ZU080rwkr+BG6gd0VWNnS02EH3GDI0y/KrNI5Tx5bI9kvkiNia1tkG8GgERCGf2tQhHRzCraiDYetdJAPHjnpV+3JOzHKHp+MkP41CncBKSWXh8TKvwR9VLfftZEnFrpoPQ92kOOOzo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=arbtmIjA; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T5QP5GGa"
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-64198771a9bso5497860a12.2
-        for <linux-clk@vger.kernel.org>; Sat, 15 Nov 2025 06:47:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763218063; x=1763822863; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6zCF2VwvteQ2rlCgNAvg5npcthhroXaHgp98itk06Lc=;
-        b=T5QP5GGaAXLFMo/qeWHn4rnEHUhz5DI46GAhlWaoe3aAw/k9krLs6gr1XFfc5LxILg
-         Vl27MXIziSmY0hzdBqn+dMfuSDAOqk7PEN1T4GxoiekSaFpfICPYrGn9UNUc+zAF2CS3
-         vspkyFxDBtDm4fFMRLEf6RjAa7youAbamvdpWhb5ubW1ZP/eGq7Zhsvb8gXnkiKhhtKC
-         Kp/3OhBNVtOaUHx5SvUVTdCkbrJU546RMuO01/M8QGlXLTtOr9c2C2FfF+w6A6w/e3F4
-         8H+v3R0QBmUPzeQgwa6HDR0TsyW1WTvYshRbA37kolkgdRLdmTgtGrgtnAL+D6GPlGqg
-         sAzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763218063; x=1763822863;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=6zCF2VwvteQ2rlCgNAvg5npcthhroXaHgp98itk06Lc=;
-        b=X8UOqVsA+IuH2crMI1yuYnOGFxFWucnMIPLG3ZkLboN/hplZhQocGL9tLRFP6MgUxc
-         OnOGfBwRLWy1JwfQhJlFfxpBYEZrEgMcXSGxAJPRnN9n4YwDIHsdIuZBDcp3F3pfCvL9
-         Pxac9owYBJNlvsoNx6yte9ZAwTkNfCp6gTDci8lbWKih+FMpsHBu3gWzJwZON4h54w6C
-         vqhPLvOSE/Z+w/4l5xcspCslVvZ+xRHALc6Nu2TQMfL63Ir+SIvFbKRts4hOZnm+XnyO
-         8oGI1XBM3g1C4Y4eHSbk+DsBYzfMojI/Iy3mxYoFbEH7lm5h3vPamMU5rSDNtDUqrdim
-         GgHg==
-X-Forwarded-Encrypted: i=1; AJvYcCWCIboiPV/k/FCMWYbxXJP6+J8uLLGq1q3TRU+XCsvlBV2cguTgjLaQrDWsnHe/lyaKuHpJ2T09rOE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVZRkCknDOEaYpY2vjQHO+nOmG9Tgt2M4g9ZvFCZlJN+6boUYk
-	+6TY53o1iVFBmjpG971N9Lu7TLiM2WO0dSbHEzMGbjShIhJVL4+vzf7S
-X-Gm-Gg: ASbGncuI0VqnJ2NOQMcoIc9E/8xaRUYDT8dUvYPCwNV8+SJNLt4gwf9DhFVVYEBchTs
-	6ChZnrI0l3JGNkq+ZvkNcnZobf6RIeIXAjalbw35e/EA4KCn4db/v4DEAPyZ/X/lPPPANxOI8N0
-	Ec1zY/WnRdSD+X8QhqASawSihnTXiOv/BX/J3v31/npDMc/nbu2kyErPCoj5LpeHEWoWwVr15xZ
-	IYix6fYt9aThexdhmRHVsYSzHE1wKC3pik+/3LpSPwQw92cojRakWSD8yJ4ZgdNFBNKAcZ3gN6h
-	H7YZfpZfOu8NfSAD8WU/0cxGVChle8jWK2bl5ykGmWDL8jnV1OWZHim9IEEZb7qsIu4V3zPu/8k
-	CM6tpI6rGZ9LyqhD1P7Q30rD6rNBZzaFI45WWCqv/G8QKnfJ//TR4dx/et6P1TPW2FI2nCtrp/r
-	GFXU0kQMfzNgA1G2KWxfEpLCCpPXg5Lc2AbA7/gnU0y3Fg43FbYraFMCRHczPaiM5dmzKpFktPo
-	ntPYQ==
-X-Google-Smtp-Source: AGHT+IGrjk6XSc2vCyw9UdPnvD0sBuH/IPACkYBi6rv/j+NdjGAC/UWtwwJ0hdXjpnf0qvoLJ3aa0A==
-X-Received: by 2002:a05:6402:42c8:b0:63b:ee26:546d with SMTP id 4fb4d7f45d1cf-64350e20abamr5640955a12.12.1763218063485;
-        Sat, 15 Nov 2025 06:47:43 -0800 (PST)
-Received: from jernej-laptop.localnet (178-79-73-218.dynamic.telemach.net. [178.79.73.218])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6433a3d7335sm5917548a12.4.2025.11.15.06.47.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 15 Nov 2025 06:47:43 -0800 (PST)
-From: Jernej =?UTF-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
-To: wens@kernel.org
-Cc: samuel@sholland.org, mripard@kernel.org,
- maarten.lankhorst@linux.intel.com, tzimmermann@suse.de, airlied@gmail.com,
- simona@ffwll.ch, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- mturquette@baylibre.com, sboyd@kernel.org, dri-devel@lists.freedesktop.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org
-Subject: Re: [PATCH 2/7] drm/sun4i: vi_layer: Limit formats for DE33
-Date: Sat, 15 Nov 2025 15:47:41 +0100
-Message-ID: <2804739.mvXUDI8C0e@jernej-laptop>
-In-Reply-To:
- <CAGb2v654AOqwOs26SjYji5K00oM_3U54sSFU-RMGqRPwRMnqCQ@mail.gmail.com>
-References:
- <20251115141347.13087-1-jernej.skrabec@gmail.com>
- <20251115141347.13087-3-jernej.skrabec@gmail.com>
- <CAGb2v654AOqwOs26SjYji5K00oM_3U54sSFU-RMGqRPwRMnqCQ@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="arbtmIjA"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BDD7C4CEF7;
+	Sat, 15 Nov 2025 17:24:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1763227453;
+	bh=RQQr8CGCDpTmfgYXtgNEaJcaQGcoe9L22DH1cj008fY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=arbtmIjANQByK++M85G+t9ms7sdvnfUf212CN6XR3j6JAKBXPZcLaZLURwVclItm7
+	 F963BlqepQUwGDtqlxAK7Qxxh4m7hyAf357W3NA4kjRJwUNht+ZADD5NKfR4WuyUaZ
+	 YqeE8xQO2aOczXReGgT5X32fhMn3M2HHp0K94Qo1UuNsNaEgidHR5tQLJv7vz1qQE5
+	 zssNyVQ1sYsdT+WdhHIMYaNM9EoZLWgnc5uq36eoYoQT2I3UUSwa5DyYjq0PgpbLfH
+	 6nqMpp4R6+9sqEm2/ph5Xr7rIdqClJ8k8Gb93iDeMyj1kp9tZb4Tnxq08Fh6cnV6gh
+	 ydi/Z0m3C8hQg==
+Date: Sat, 15 Nov 2025 17:24:07 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Antoniu Miclaus <antoniu.miclaus@analog.com>
+Cc: <robh@kernel.org>, <conor+dt@kernel.org>, <linux-iio@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH 2/2] iio: frequency: adf4377: add clk provider support
+Message-ID: <20251115172407.2c00d58c@jic23-huawei>
+In-Reply-To: <20251114120908.6502-3-antoniu.miclaus@analog.com>
+References: <20251114120908.6502-1-antoniu.miclaus@analog.com>
+	<20251114120908.6502-3-antoniu.miclaus@analog.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Dne sobota, 15. november 2025 ob 15:40:27 Srednjeevropski standardni =C4=8D=
-as je Chen-Yu Tsai napisal(a):
-> On Sat, Nov 15, 2025 at 10:14=E2=80=AFPM Jernej Skrabec
-> <jernej.skrabec@gmail.com> wrote:
-> >
-> > YUV formats need scaler support due to chroma upscaling, but that's not
-> > yet supported in the driver. Remove them from supported list until
-> > DE33 scaler is properly supported.
-> >
-> > Signed-off-by: Jernej Skrabec <jernej.skrabec@gmail.com>
->=20
-> Reviewed-by: Chen-Yu Tsai <wens@kernel.org>
->=20
-> I assume a fixes tag isn't needed because technically DE33 support isn't
-> there yet?
->=20
+On Fri, 14 Nov 2025 12:09:08 +0000
+Antoniu Miclaus <antoniu.miclaus@analog.com> wrote:
 
-There is no user of DE33 bindings yet, so yes.
+> Add clk provider feature for the adf4377.
+> 
+> Even though the driver was sent as an IIO driver in most cases the
+> device is actually seen as a clock provider.
+> 
+> This patch aims to cover actual usecases requested by users in order to
+> completely control the output frequencies from userspace.
+> 
+> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
 
-Best regards
-Jernej
+Given this new code is basically a clock driver, I'd expect to see some
+relevant folk +CC.
+
+Added Michael, Stephen and linux-clk.
+
+One question from me right at the end around whether it makes sense
+to register an IIO device with no channels.  I left the rest so it was
+easy for the people added to the thread to see all the code.
+
+Thanks,
+
+Jonathan
 
 
+> ---
+>  drivers/iio/frequency/adf4377.c | 131 +++++++++++++++++++++++++++++++-
+>  1 file changed, 129 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/iio/frequency/adf4377.c b/drivers/iio/frequency/adf4377.c
+> index 08833b7035e4..08dc2110cf8c 100644
+> --- a/drivers/iio/frequency/adf4377.c
+> +++ b/drivers/iio/frequency/adf4377.c
+> @@ -8,6 +8,7 @@
+>  #include <linux/bitfield.h>
+>  #include <linux/bits.h>
+>  #include <linux/clk.h>
+> +#include <linux/clk-provider.h>
+>  #include <linux/clkdev.h>
+>  #include <linux/delay.h>
+>  #include <linux/device.h>
+> @@ -435,9 +436,14 @@ struct adf4377_state {
+>  	struct gpio_desc	*gpio_ce;
+>  	struct gpio_desc	*gpio_enclk1;
+>  	struct gpio_desc	*gpio_enclk2;
+> +	struct clk		*clk;
+> +	struct clk		*clkout;
+> +	struct clk_hw		hw;
+>  	u8			buf[2] __aligned(IIO_DMA_MINALIGN);
+>  };
+>  
+> +#define to_adf4377_state(h)	container_of(h, struct adf4377_state, hw)
+> +
+>  static const char * const adf4377_muxout_modes[] = {
+>  	[ADF4377_MUXOUT_HIGH_Z] = "high_z",
+>  	[ADF4377_MUXOUT_LKDET] = "lock_detect",
+> @@ -929,6 +935,120 @@ static int adf4377_freq_change(struct notifier_block *nb, unsigned long action,
+>  	return NOTIFY_OK;
+>  }
+>  
+> +static void adf4377_clk_del_provider(void *data)
+> +{
+> +	struct adf4377_state *st = data;
+> +
+> +	of_clk_del_provider(st->spi->dev.of_node);
+> +}
+> +
+> +static unsigned long adf4377_clk_recalc_rate(struct clk_hw *hw,
+> +					      unsigned long parent_rate)
+> +{
+> +	struct adf4377_state *st = to_adf4377_state(hw);
+> +	u64 freq;
+> +	int ret;
+> +
+> +	ret = adf4377_get_freq(st, &freq);
+> +	if (ret)
+> +		return 0;
+> +
+> +	return freq;
+> +}
+> +
+> +static int adf4377_clk_set_rate(struct clk_hw *hw,
+> +				unsigned long rate,
+> +				unsigned long parent_rate)
+> +{
+> +	struct adf4377_state *st = to_adf4377_state(hw);
+> +
+> +	return adf4377_set_freq(st, rate);
+> +}
+> +
+> +static int adf4377_clk_prepare(struct clk_hw *hw)
+> +{
+> +	struct adf4377_state *st = to_adf4377_state(hw);
+> +
+> +	return regmap_update_bits(st->regmap, 0x1a, ADF4377_001A_PD_CLKOUT1_MSK |
+> +				  ADF4377_001A_PD_CLKOUT2_MSK,
+> +				  FIELD_PREP(ADF4377_001A_PD_CLKOUT1_MSK, 0) |
+> +				  FIELD_PREP(ADF4377_001A_PD_CLKOUT2_MSK, 0));
+> +}
+> +
+> +static void adf4377_clk_unprepare(struct clk_hw *hw)
+> +{
+> +	struct adf4377_state *st = to_adf4377_state(hw);
+> +
+> +	regmap_update_bits(st->regmap, 0x1a, ADF4377_001A_PD_CLKOUT1_MSK |
+> +			   ADF4377_001A_PD_CLKOUT2_MSK,
+> +			   FIELD_PREP(ADF4377_001A_PD_CLKOUT1_MSK, 1) |
+> +			   FIELD_PREP(ADF4377_001A_PD_CLKOUT2_MSK, 1));
+> +}
+> +
+> +static int adf4377_clk_is_enabled(struct clk_hw *hw)
+> +{
+> +	struct adf4377_state *st = to_adf4377_state(hw);
+> +	unsigned int readval;
+> +	int ret;
+> +
+> +	ret = regmap_read(st->regmap, 0x1a, &readval);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return !(readval & (ADF4377_001A_PD_CLKOUT1_MSK | ADF4377_001A_PD_CLKOUT2_MSK));
+> +}
+> +
+> +static const struct clk_ops adf4377_clk_ops = {
+> +	.recalc_rate = adf4377_clk_recalc_rate,
+> +	.set_rate = adf4377_clk_set_rate,
+> +	.prepare = adf4377_clk_prepare,
+> +	.unprepare = adf4377_clk_unprepare,
+> +	.is_enabled = adf4377_clk_is_enabled,
+> +};
+> +
+> +static int adf4377_clk_register(struct adf4377_state *st)
+> +{
+> +	struct spi_device *spi = st->spi;
+> +	struct clk_init_data init;
+> +	struct clk *clk;
+> +	const char *parent_name;
+> +	int ret;
+> +
+> +	if (!device_property_present(&spi->dev, "#clock-cells"))
+> +		return 0;
+> +
+> +	if (device_property_read_string(&spi->dev, "clock-output-names", &init.name)) {
+> +		init.name = devm_kasprintf(&spi->dev, GFP_KERNEL, "%s-clk",
+> +					   fwnode_get_name(dev_fwnode(&spi->dev)));
+> +		if (!init.name)
+> +			return -ENOMEM;
+> +	}
+> +
+> +	parent_name = of_clk_get_parent_name(spi->dev.of_node, 0);
+> +	if (!parent_name)
+> +		return -EINVAL;
+> +
+> +	init.ops = &adf4377_clk_ops;
+> +	init.parent_names = &parent_name;
+> +	init.num_parents = 1;
+> +	init.flags = CLK_SET_RATE_PARENT;
+> +
+> +	st->hw.init = &init;
+> +	clk = devm_clk_register(&spi->dev, &st->hw);
+> +	if (IS_ERR(clk))
+> +		return PTR_ERR(clk);
+> +
+> +	st->clk = clk;
+> +
+> +	ret = of_clk_add_provider(spi->dev.of_node, of_clk_src_simple_get, clk);
+> +	if (ret)
+> +		return ret;
+> +
+> +	st->clkout = clk;
+> +
+> +	return devm_add_action_or_reset(&spi->dev, adf4377_clk_del_provider, st);
+> +}
+> +
+>  static const struct adf4377_chip_info adf4377_chip_info = {
+>  	.name = "adf4377",
+>  	.has_gpio_enclk2 = true,
+> @@ -958,8 +1078,6 @@ static int adf4377_probe(struct spi_device *spi)
+>  
+>  	indio_dev->info = &adf4377_info;
+>  	indio_dev->name = "adf4377";
+> -	indio_dev->channels = adf4377_channels;
+> -	indio_dev->num_channels = ARRAY_SIZE(adf4377_channels);
+>  
+>  	st->regmap = regmap;
+>  	st->spi = spi;
+> @@ -979,6 +1097,15 @@ static int adf4377_probe(struct spi_device *spi)
+>  	if (ret)
+>  		return ret;
+>  
+> +	ret = adf4377_clk_register(st);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (!st->clkout) {
+> +		indio_dev->channels = adf4377_channels;
+> +		indio_dev->num_channels = ARRAY_SIZE(adf4377_channels);
+
+Why register a channel free iio device? Probably better to just not register
+it at all in this path.
+
+> +	}
+> +
+>  	return devm_iio_device_register(&spi->dev, indio_dev);
+>  }
+>  
 
