@@ -1,64 +1,64 @@
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65BF72FD7B8
-	for <linux-clk@vger.kernel.org>; Sat, 15 Nov 2025 14:14:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E35242FB968
+	for <linux-clk@vger.kernel.org>; Sat, 15 Nov 2025 14:14:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763216059; cv=none; b=E+NzzXdDM2pI1gIAAVNmSB2UP1Y50AT5CpjSe2ITj3b4K/v66r9TSJoS+Ro8sc+7TLuadLkegwR8c+qmWncQv8KWRRDMHBJ8Dh9jOTHN1e5fvN3VYN3YUlP3Bd+oeiWBvF9nwjEOMjylBY3rPLYWSsWkk1UPf2RiEzPxMIkIBls=
+	t=1763216060; cv=none; b=aZW0OyB6y8+kiuhtw/hEqIc6plBWWTqYc9isPB8wP6s1xKCGwUv+cFRLAtIfJJGV46eo1j4qQWjZEBH+80quznyLTdxKfhuHw56EYMwyXNGXVpREtkNVL+P97XZJUPF79jbgrqu5zQb1mAvAxq8tLTJLDydRZl3tmDC5aVA6z9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763216059; c=relaxed/simple;
-	bh=S0twu21aOxJ0VLQedxu7u559MvY/4tOCK9iLWkudnWI=;
+	s=arc-20240116; t=1763216060; c=relaxed/simple;
+	bh=GwnvL5vMWVsQ51UjbmyDs3QGAPhCZplv1N6Us1qfLHA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=t8imKS+Oar1u3q/ncbivC2DEt6bMRdg0BJo5KLl1A5/SLC+1ng29nZXxVgbVCY7sinrlUKH2A54M8zvm2QWZKEtmCFC2qVEUwrTDGC01wGsCkqCb1DijO5uV6kt61gHDGSNGVbbjco5uL2dD+nPPWFbhueCnfBr6pYYFRwwZq3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bGKTHkTS; arc=none smtp.client-ip=209.85.208.49
+	 MIME-Version; b=e6yrK9/5Yzrkr4lOp6Qov7i07nQ9y0HLJVbnWl6G+6OO/H8gRhZQcd29V1rvfCRML9k/VbKWHkbJkxD4PH4MPnYcDqFWdv6EA8A33ZqWadUJXlM/j/OxdmjxRL+pZyRXwZ0C1mRpRTaAXKce2bVpU7PzxFIwyMZEi/kGQb1GP0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aUW0NWkb; arc=none smtp.client-ip=209.85.218.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bGKTHkTS"
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-64175dfc338so5587829a12.0
-        for <linux-clk@vger.kernel.org>; Sat, 15 Nov 2025 06:14:17 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aUW0NWkb"
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-b6d402422c2so457592566b.2
+        for <linux-clk@vger.kernel.org>; Sat, 15 Nov 2025 06:14:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763216056; x=1763820856; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1763216057; x=1763820857; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=TdxCYAFUxE8TEo/HdclUzBmM8/cH8lgIgGUaiseaWSY=;
-        b=bGKTHkTSMmDreaLRKekZdXkPAu0VMx6SORhMdmq0/nSmU4i93rCk/bTMxpQV6P+gzu
-         q774IWj9qyOphosXqov3uMd8ZR/0qrToRzCPclfVfExUXHOA2xMqM+tYmvFmF18ufhSv
-         bIgvfK4smUSk6zr5xlbhb/wP3hhXjYY/XlxztYGS50cjQL8CyCs559PFr5TqD3+G2RNz
-         4o9C43drnPLHTrtuyTQCoCcAjUQXxFDgB6gUQ9532PsdsMghx0ZLWdW6tdih2vCe81He
-         a8YFC7kosvDnfDtoFBmOr61o5xgoQFruZXuZjVPyG8ZhVuw571lVi+aRuC3g6rKaqlqt
-         dDfA==
+        bh=UciMie+UNtQ6Be5Ygq/FZ+wB93JKP9NGMjXOu78hOHU=;
+        b=aUW0NWkbYhHNof6Y4L6JNctvdn+3Wv8vaFSaScuL4M3TpyUj6D5/vFgDHW5RxCjeZA
+         8MYIoClQ62EZK6rUg6iOXV6VdpWayBEYqgY7KVHVE6qTNz82Zx0CdMZpEFGiXXjPhULp
+         2PPdVZMDE0xFwxdqa8OVzbEzd6k1BNdAB6XXw1+HsXnk2YJaTFcPpMs5CTVRyl2SBiCj
+         A/hMKcPCTAMDtsbTckeui0ev41ppayE66NGfTRrDZ7E3txYNlctUCEpZ0QuhkCefY3zw
+         9246YuqKl505Hjz+TXZBuikXn/W0XJ0MD09UxCGbHqeEoLVWmyodBgcgRrlY2bwI4dKq
+         8Piw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763216056; x=1763820856;
+        d=1e100.net; s=20230601; t=1763216057; x=1763820857;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=TdxCYAFUxE8TEo/HdclUzBmM8/cH8lgIgGUaiseaWSY=;
-        b=nAHw+d6XpaymHtBp/SD5BHnEq/mbBf4CLfYOgjEql0yqOSrZWrr5k6NwwcessFvA5u
-         zPzBkq7CmxdjsjH5yr+3nj0AdW69bjO+ttQz1FU7PaAGof2SDzLVsbFt9RegqAQER8FP
-         eNslB2zgGdtXSv6pu60FRIvJMbtE5rJNlji/Fhmlb4edifcPRf/4wyS4yt/Rg45QqPaQ
-         EPOzq5Z6y+J3y0CC8Qq40rGBResTX8Dsn+KP9GaeCjrpzgBIwYBCwTvtEfJuUaRRi/M4
-         ccKqhSKnFCw0pkIcLCqNlNSyHEQfYqRTexDcRCHgYFlH8jPF7t732P7jT0OoHczx090/
-         A0JQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW8WocDsEay40sy9eFbm+N5fm8kTnrCt1SFW6vaUbzxh8pT34tMoytdu/nhjoB4bAPti5+q4jhygWI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwuSzE0HT4BtrWqAxrs73FdlDAZYzsxuMa6U6Fg4rxLkiKvoIwv
-	KNdUJ9ZvYHBoxlK1xCfBi6+v/+begJYwsvqPGdUqtuExdhoMVXgsUiZB
-X-Gm-Gg: ASbGncvefenZ2+VkAMbgnOtJJBWWOz9F4XSug9H6nYqAJ27jn1865cEaQ34BWui5BzN
-	FG9YJSHJSwupRP+4ouwRp/vLtpYsVr2fKeoIIy8qbvNMk6k2s2+532m8xzBBe2rmn9BKKXhjzn5
-	hc3GxYWU0apmINKP6WTBF8bi3Fcp74vuYuh8SCwdZikZXrnMLNoa1PLFun3Lgeo909pUYKipl3R
-	euvPPbRr8lNP0RgU9Qa07LXAJDlVnPlU+SPxUNa4Aa4HwmeVN8XLSxwmYGZxBkoKzQjV8x2siw4
-	2obrqYYvXa3Pbr3zSOai25sry+H9ko8Grxwk3fSz3wZ9CtACJ6RMd9VKFeJmxn9xtHxri651Fys
-	eWrgnBIfLeRtNUVWwq20NlLilPtyOKJTqRjKFYHOsjamnZjhJZaJLUSzhUbvN5mMcSbDyubud5N
-	GiGox7aJRJYzwISQQUpkPXxLG/u3m/K2gyt0U+MP9d1o+nqw==
-X-Google-Smtp-Source: AGHT+IFh8CjX1reglk+d9qFWiwVdzTnZZrgC6zCnkQGkRjSeca5TyFvpwvWCslriMZOQG7eYdwduUg==
-X-Received: by 2002:a17:907:7f05:b0:b73:880a:fdb7 with SMTP id a640c23a62f3a-b73880b0177mr94905066b.35.1763216055478;
-        Sat, 15 Nov 2025 06:14:15 -0800 (PST)
+        bh=UciMie+UNtQ6Be5Ygq/FZ+wB93JKP9NGMjXOu78hOHU=;
+        b=l2JirqXwDqQ8wibTZYRGV9RCy8K3NglQ1cU3TfSqJxIiWOi4LCRXxgNCZ31HJ3/YIo
+         9jmi4jIJ41w1N7yp6Q/lIddq+gfhVtLVR2nVWMc9k/HUqfDkxxuRBz4C1KfKDrvY9bfh
+         OUxzbG1nTPsFGA/6A6i2VFhe8CKG1TmrIvLUK9IODsj4W3e62lkHYCErEsrJ7FRaUZes
+         WIrasiGPcFY6qKveKs308tLaBJMw5nm14dolPNdLSxk1rzsP0Wt220wVRGCdyQM+sdMv
+         rZ/hroxsJ2v2Gpu0ebQB1NxgPpEJJ7EMyQdih01fFz6j4sleLKUxHcKRJ7FpeQBrMAzx
+         JdVA==
+X-Forwarded-Encrypted: i=1; AJvYcCUsxqdulyiMDfU9O5J2/BCIxiMZ9X7ruaCivueFPIknnWRXewWpff5daAg0W2uPBlwd85xYl3ouZAk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHKfsBnJdlicKy/rM5ex86SX8gg5y300MKOcYXNOJ1TIHzImA2
+	T8s4zmFADv041jN0fGd5k5ZXJsmDT0OMEBo7Q1OSp4knX6JKepfSsx/k
+X-Gm-Gg: ASbGncvqtIBUrdl5VVPjh9ny5s/O9Eh/yYSkrxbexrUkKx47HtktUK95zei15hiq0f2
+	o/G78jICXibmAncxi9kb4cwZeq0XKBZNubTc/g/QgbwmvIQd2ejdDenCWNvS+sl/5vE2kCx3Myj
+	ZmVo8uaPEaa4+x5tCb6pb/zdyWp0aE5ssMKYg/qDMgiamUmOVwQh0fwdj8b4Ddf0bEXEjXSHmtf
+	Yk9GaBSnLPFvXp/EhZR6zA6uWtZuv5PxHZwaxuqqZcGlHKMSi1+YFIMOf0IkixZxj9CkzK+Hyas
+	mdsliOZXvVyUMob2erhvUt80+1JpEZb6j+l2Rr3AKbPkp/cFOpxadi7sIioVJ4IfJS1QvIng5l3
+	xqxNXCVJEdE5RAFDaxQeXFOVTjw8kpXjn5ujYLn3xVlDJcxPwegqV61ZupIF8dJ5eoVpGvxpZ8m
+	mcluKEdp0k2LXRoG3yf6IJ09AJJd7lsESpQyCAAR07yr/Xbul7uTTpnPTT
+X-Google-Smtp-Source: AGHT+IHK6phfJOgzf+aqpzFKPTHMjqJZ4C/vVBwN+Y+khMKq+c5K63YPI1+yGx5o9/adAsErm3Oq3Q==
+X-Received: by 2002:a17:906:490c:b0:b73:6ca8:b81f with SMTP id a640c23a62f3a-b736ca8bbf7mr534553666b.51.1763216057167;
+        Sat, 15 Nov 2025 06:14:17 -0800 (PST)
 Received: from jernej-laptop (178-79-73-218.dynamic.telemach.net. [178.79.73.218])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b734fda933fsm606189866b.56.2025.11.15.06.14.14
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b734fda933fsm606189866b.56.2025.11.15.06.14.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 15 Nov 2025 06:14:15 -0800 (PST)
+        Sat, 15 Nov 2025 06:14:16 -0800 (PST)
 From: Jernej Skrabec <jernej.skrabec@gmail.com>
 To: wens@csie.org,
 	samuel@sholland.org
@@ -79,9 +79,9 @@ Cc: mripard@kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	Jernej Skrabec <jernej.skrabec@gmail.com>
-Subject: [PATCH 2/7] drm/sun4i: vi_layer: Limit formats for DE33
-Date: Sat, 15 Nov 2025 15:13:42 +0100
-Message-ID: <20251115141347.13087-3-jernej.skrabec@gmail.com>
+Subject: [PATCH 3/7] clk: sunxi-ng: de2: Export register regmap for DE33
+Date: Sat, 15 Nov 2025 15:13:43 +0100
+Message-ID: <20251115141347.13087-4-jernej.skrabec@gmail.com>
 X-Mailer: git-send-email 2.51.2
 In-Reply-To: <20251115141347.13087-1-jernej.skrabec@gmail.com>
 References: <20251115141347.13087-1-jernej.skrabec@gmail.com>
@@ -93,69 +93,100 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-YUV formats need scaler support due to chroma upscaling, but that's not
-yet supported in the driver. Remove them from supported list until
-DE33 scaler is properly supported.
+DE33 clock pre-set plane mapping, which is not something that we want
+from clock driver. Export registers instead, so DRM driver can set them
+properly.
 
 Signed-off-by: Jernej Skrabec <jernej.skrabec@gmail.com>
 ---
- drivers/gpu/drm/sun4i/sun8i_vi_layer.c | 36 +++++++++++++++++++++++++-
- 1 file changed, 35 insertions(+), 1 deletion(-)
+ drivers/clk/sunxi-ng/ccu-sun8i-de2.c | 53 ++++++++++++++++++++++++++--
+ 1 file changed, 50 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/sun4i/sun8i_vi_layer.c b/drivers/gpu/drm/sun4i/sun8i_vi_layer.c
-index 40008c38003d..baa240c4bb82 100644
---- a/drivers/gpu/drm/sun4i/sun8i_vi_layer.c
-+++ b/drivers/gpu/drm/sun4i/sun8i_vi_layer.c
-@@ -403,6 +403,37 @@ static const u32 sun8i_vi_layer_de3_formats[] = {
- 	DRM_FORMAT_YVU422,
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-de2.c b/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
+index a6cd0f988859..2841ec922025 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
+@@ -6,9 +6,11 @@
+ #include <linux/clk.h>
+ #include <linux/clk-provider.h>
+ #include <linux/io.h>
++#include <linux/mfd/syscon.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/platform_device.h>
++#include <linux/regmap.h>
+ #include <linux/reset.h>
+ 
+ #include "ccu_common.h"
+@@ -250,6 +252,41 @@ static const struct sunxi_ccu_desc sun50i_h616_de33_clk_desc = {
+ 	.num_resets	= ARRAY_SIZE(sun50i_h5_de2_resets),
  };
  
 +/*
-+ * TODO: DE33 VI planes naturally support YUV formats but
-+ * driver needs improvements in order to support them.
++ * Add a regmap for the DE33 plane driver to access plane
++ * mapping registers.
++ * Only these registers are allowed to be written, to prevent
++ * overriding clock and reset configuration.
 + */
-+static const u32 sun8i_vi_layer_de33_formats[] = {
-+	DRM_FORMAT_ABGR1555,
-+	DRM_FORMAT_ABGR2101010,
-+	DRM_FORMAT_ABGR4444,
-+	DRM_FORMAT_ABGR8888,
-+	DRM_FORMAT_ARGB1555,
-+	DRM_FORMAT_ARGB2101010,
-+	DRM_FORMAT_ARGB4444,
-+	DRM_FORMAT_ARGB8888,
-+	DRM_FORMAT_BGR565,
-+	DRM_FORMAT_BGR888,
-+	DRM_FORMAT_BGRA1010102,
-+	DRM_FORMAT_BGRA5551,
-+	DRM_FORMAT_BGRA4444,
-+	DRM_FORMAT_BGRA8888,
-+	DRM_FORMAT_BGRX8888,
-+	DRM_FORMAT_RGB565,
-+	DRM_FORMAT_RGB888,
-+	DRM_FORMAT_RGBA1010102,
-+	DRM_FORMAT_RGBA4444,
-+	DRM_FORMAT_RGBA5551,
-+	DRM_FORMAT_RGBA8888,
-+	DRM_FORMAT_RGBX8888,
-+	DRM_FORMAT_XBGR8888,
-+	DRM_FORMAT_XRGB8888,
++
++#define SUN50I_DE33_CHN2CORE_REG 0x24
++#define SUN50I_DE33_PORT02CHN_REG 0x28
++#define SUN50I_DE33_PORT12CHN_REG 0x2c
++
++static bool sun8i_de2_ccu_regmap_accessible_reg(struct device *dev,
++						unsigned int reg)
++{
++	switch (reg) {
++	case SUN50I_DE33_CHN2CORE_REG:
++	case SUN50I_DE33_PORT02CHN_REG:
++	case SUN50I_DE33_PORT12CHN_REG:
++		return true;
++	default:
++		return false;
++	}
++}
++
++static const struct regmap_config sun8i_de2_ccu_regmap_config = {
++	.reg_bits	= 32,
++	.val_bits	= 32,
++	.reg_stride	= 4,
++	.max_register	= 0xe0,
++
++	/* other devices have no business accessing other registers */
++	.readable_reg	= sun8i_de2_ccu_regmap_accessible_reg,
++	.writeable_reg	= sun8i_de2_ccu_regmap_accessible_reg,
 +};
 +
- static const uint64_t sun8i_layer_modifiers[] = {
- 	DRM_FORMAT_MOD_LINEAR,
- 	DRM_FORMAT_MOD_INVALID
-@@ -432,7 +463,10 @@ struct sun8i_layer *sun8i_vi_layer_init_one(struct drm_device *drm,
- 	layer->regs = regs;
- 	layer->cfg = cfg;
+ static int sunxi_de2_clk_probe(struct platform_device *pdev)
+ {
+ 	struct clk *bus_clk, *mod_clk;
+@@ -303,13 +340,23 @@ static int sunxi_de2_clk_probe(struct platform_device *pdev)
+ 	}
  
--	if (layer->cfg->de_type >= SUN8I_MIXER_DE3) {
-+	if (layer->cfg->de_type == SUN8I_MIXER_DE33) {
-+		formats = sun8i_vi_layer_de33_formats;
-+		format_count = ARRAY_SIZE(sun8i_vi_layer_de33_formats);
-+	} else if (layer->cfg->de_type == SUN8I_MIXER_DE3) {
- 		formats = sun8i_vi_layer_de3_formats;
- 		format_count = ARRAY_SIZE(sun8i_vi_layer_de3_formats);
- 	} else {
+ 	/*
+-	 * The DE33 requires these additional (unknown) registers set
++	 * The DE33 requires these additional plane mapping registers set
+ 	 * during initialisation.
+ 	 */
+ 	if (of_device_is_compatible(pdev->dev.of_node,
+ 				    "allwinner,sun50i-h616-de33-clk")) {
+-		writel(0, reg + 0x24);
+-		writel(0x0000a980, reg + 0x28);
++		struct regmap *regmap;
++
++		regmap = devm_regmap_init_mmio(&pdev->dev, reg,
++					       &sun8i_de2_ccu_regmap_config);
++		if (IS_ERR(regmap)) {
++			ret = PTR_ERR(regmap);
++			goto err_assert_reset;
++		}
++
++		ret = of_syscon_register_regmap(pdev->dev.of_node, regmap);
++		if (ret)
++			goto err_assert_reset;
+ 	}
+ 
+ 	ret = devm_sunxi_ccu_probe(&pdev->dev, reg, ccu_desc);
 -- 
 2.51.2
 
