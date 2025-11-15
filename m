@@ -1,259 +1,201 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41A7426E179;
-	Sat, 15 Nov 2025 17:24:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE95A224F3
+	for <linux-clk@vger.kernel.org>; Sat, 15 Nov 2025 17:44:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763227454; cv=none; b=Hc2bcck+eykELrKSae/kY5pbs+jiHccIEKTyOlAU0DxUl2cOUer4qwLTxmPYkMlcN8ZmGSZdKBWVscdBHZmCtW9Vt8b9hGI0nMctRSfL0cx8d+Xx5tenntOLueAaVHvOoxCj6+T5YyMsui5+sh+rT5EdyKYIm06C67PFEbTYsv0=
+	t=1763228699; cv=none; b=eSNodxdMjNfkgZ7Bya65KFzAFX8l2P4ij0SJ+Sssh+OjM1nb1A8iA36UiUcpJwIeBFBKQRLAa/wC6ln4cfr3hJfS3hoPrTjJlXTyTpvbyPzcZxfidJ1zFeYjLO9BJ43vXXakDmr3ZCRmDxGCm13YmM1CRk0AnY+y8Rx1LDBUAMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763227454; c=relaxed/simple;
-	bh=RQQr8CGCDpTmfgYXtgNEaJcaQGcoe9L22DH1cj008fY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=i1TNJqfG+lchEHg5pVR/vKXds4IdZtT9ZU080rwkr+BG6gd0VWNnS02EH3GDI0y/KrNI5Tx5bI9kvkiNia1tkG8GgERCGf2tQhHRzCraiDYetdJAPHjnpV+3JOzHKHp+MkP41CncBKSWXh8TKvwR9VLfftZEnFrpoPQ92kOOOzo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=arbtmIjA; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="arbtmIjA"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BDD7C4CEF7;
-	Sat, 15 Nov 2025 17:24:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763227453;
-	bh=RQQr8CGCDpTmfgYXtgNEaJcaQGcoe9L22DH1cj008fY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=arbtmIjANQByK++M85G+t9ms7sdvnfUf212CN6XR3j6JAKBXPZcLaZLURwVclItm7
-	 F963BlqepQUwGDtqlxAK7Qxxh4m7hyAf357W3NA4kjRJwUNht+ZADD5NKfR4WuyUaZ
-	 YqeE8xQO2aOczXReGgT5X32fhMn3M2HHp0K94Qo1UuNsNaEgidHR5tQLJv7vz1qQE5
-	 zssNyVQ1sYsdT+WdhHIMYaNM9EoZLWgnc5uq36eoYoQT2I3UUSwa5DyYjq0PgpbLfH
-	 6nqMpp4R6+9sqEm2/ph5Xr7rIdqClJ8k8Gb93iDeMyj1kp9tZb4Tnxq08Fh6cnV6gh
-	 ydi/Z0m3C8hQg==
-Date: Sat, 15 Nov 2025 17:24:07 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Antoniu Miclaus <antoniu.miclaus@analog.com>
-Cc: <robh@kernel.org>, <conor+dt@kernel.org>, <linux-iio@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
- linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH 2/2] iio: frequency: adf4377: add clk provider support
-Message-ID: <20251115172407.2c00d58c@jic23-huawei>
-In-Reply-To: <20251114120908.6502-3-antoniu.miclaus@analog.com>
-References: <20251114120908.6502-1-antoniu.miclaus@analog.com>
-	<20251114120908.6502-3-antoniu.miclaus@analog.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1763228699; c=relaxed/simple;
+	bh=s+S9pW5x//ou7X1wP3bi3A8Ps+6qeGc9acdcWBpHbU0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nvZu0pNK2eQywI0kisCOrJllE+yVvbwdl+212PTWifA+KndJOpDe4E0PbB4gICKLC6Oq056bk2DB5Eafgec8TKQ6HOt20fRUocvjvZNsRSuyiHitEZfsUdgrYHHxo6XkqrBh+3EkztShU05BqL85Z2sp+y0LhbiJ7MIldkDgFv4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=csie.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b737c6c13e1so126537666b.3
+        for <linux-clk@vger.kernel.org>; Sat, 15 Nov 2025 09:44:57 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763228696; x=1763833496;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :reply-to:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=iS8st6S4NEhfwQi2ADWQ0RHyYWa8wB83L+ih+AMC2co=;
+        b=UXMfvfsHYyhtlzfM/4bZBVGcY4ic8ogO+N+ZIJNBJJVcPL6OGOjUkc+e/jaY9V6hBu
+         H4RR8hpv/Vo4ExqJdBEuZbQV81kDpeYTbjww4ohYDchT69oVS1RyYFYcIbH/ZlmfP42X
+         M9hrkmEPP3jpHpqkbZ/7c7qtPC8e0i7L1UFNasTvMhiEEn8YlgdsBVw+3M8Cd7O1Meau
+         u7he+J+PnBZ5c5GqSFD2yTcH9jPqbnRq0LFoZspX0syFTuUpM1/LtKRsYGBm0tlUUmhA
+         EwSbYbzcc+aSZ6ZMvJziWHIngYmof6ENG6ZDN5F3wi9OESQBPci5UvDV72ZtYLpm/1lQ
+         vKgA==
+X-Forwarded-Encrypted: i=1; AJvYcCVScayPKA2a6+u1dAyK0AZv6wOr6IwN8lsnvyEkm5HYiWmOiwBhihAs8zQG5WsbSz1ndPurAJEgTEw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFKqpCYmHn35lQtt20DFCA/uExuMv4gxjkgAmjRhqYwVn94dyY
+	b94VCNJj7x2FvRF4TbPZDx0v/oEvO7sOE+5PsAGekAu+5OMgL7XRG2DcsN3uisSY
+X-Gm-Gg: ASbGncsnqwyxK3bzWTV1SYqHfzbv7Ewx3Wi/mfvVR4XzhhzNcUQONlGqNzm0iwttAxX
+	yzmMog71jc+PGqOQ2ssI5IeShpuTxc/2ese8c2Gvp0L9yrecmD/J28ZBGmFNUvZ2SYc3MAtHP1i
+	kRcN0dcKeKLGxx/XVYlfkDHGzAVDdHr0dzy8eyTd8L4egYuhz4GTf8OOz3hNJTQDQASHdKzYC4v
+	3DotgWD8ZiSlIpph6+iKw5IsTUp+pwlonvP8sYz94/iXahyZ1TcjCOIQgIFF3aTqVIzoRvNDkBP
+	BGbRUykumY7DpqozZC/7fLhoq6IY9aRCuPLCCFd2ov9i1ry93WgYwA4eatljoqzRezHWCdD1CaN
+	HcrDQZMKdERXVp/Mm3sQMP6Ply0kK0q505fdi6ipFqZ/OfoJlNJU2EhPVynFUd2TrXcQ8vc0heQ
+	6fd4R8ep21MGwN2yCloVHRfuj0vMtJ
+X-Google-Smtp-Source: AGHT+IGLlqhPeHYBjbS2b2I2C/QeXF768QviVRtQApjJFbwKRtMTWUEFP6krUSu+ZCMEvFR6iv11OQ==
+X-Received: by 2002:a17:907:7207:b0:b73:7325:112d with SMTP id a640c23a62f3a-b73732513dbmr571280066b.35.1763228695325;
+        Sat, 15 Nov 2025 09:44:55 -0800 (PST)
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com. [209.85.208.45])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b737c38c619sm221140866b.1.2025.11.15.09.44.55
+        for <linux-clk@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 15 Nov 2025 09:44:55 -0800 (PST)
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-640a0812658so4905039a12.0
+        for <linux-clk@vger.kernel.org>; Sat, 15 Nov 2025 09:44:55 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXvyynbAU00qkEUm+H2bFK8+Dhh+GbQrIW3IEweSVofG4S7ABiq11icWfGhYuLGJ5ZXb9gFiifmndc=@vger.kernel.org
+X-Received: by 2002:a05:651c:41d5:b0:37a:4c29:3a90 with SMTP id
+ 38308e7fff4ca-37babac1aa5mr18627811fa.0.1763228257141; Sat, 15 Nov 2025
+ 09:37:37 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20251115141347.13087-1-jernej.skrabec@gmail.com> <20251115141347.13087-4-jernej.skrabec@gmail.com>
+In-Reply-To: <20251115141347.13087-4-jernej.skrabec@gmail.com>
+Reply-To: wens@csie.org
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Sun, 16 Nov 2025 01:37:24 +0800
+X-Gmail-Original-Message-ID: <CAGb2v64xOrLzPYNOfFNFfPckR8EUF_U6xY0J_a3G7b0Ymb4OnA@mail.gmail.com>
+X-Gm-Features: AWmQ_bmhcY2-o8gJRo_3ltGzVFP1TpTD5csESojSsWw724bLMcf3HNL8i2V4XHQ
+Message-ID: <CAGb2v64xOrLzPYNOfFNFfPckR8EUF_U6xY0J_a3G7b0Ymb4OnA@mail.gmail.com>
+Subject: Re: [PATCH 3/7] clk: sunxi-ng: de2: Export register regmap for DE33
+To: Jernej Skrabec <jernej.skrabec@gmail.com>
+Cc: samuel@sholland.org, mripard@kernel.org, maarten.lankhorst@linux.intel.com, 
+	tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, mturquette@baylibre.com, 
+	sboyd@kernel.org, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 14 Nov 2025 12:09:08 +0000
-Antoniu Miclaus <antoniu.miclaus@analog.com> wrote:
-
-> Add clk provider feature for the adf4377.
-> 
-> Even though the driver was sent as an IIO driver in most cases the
-> device is actually seen as a clock provider.
-> 
-> This patch aims to cover actual usecases requested by users in order to
-> completely control the output frequencies from userspace.
-> 
-> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
-
-Given this new code is basically a clock driver, I'd expect to see some
-relevant folk +CC.
-
-Added Michael, Stephen and linux-clk.
-
-One question from me right at the end around whether it makes sense
-to register an IIO device with no channels.  I left the rest so it was
-easy for the people added to the thread to see all the code.
-
-Thanks,
-
-Jonathan
-
-
+On Sat, Nov 15, 2025 at 10:14=E2=80=AFPM Jernej Skrabec
+<jernej.skrabec@gmail.com> wrote:
+>
+> DE33 clock pre-set plane mapping, which is not something that we want
+> from clock driver. Export registers instead, so DRM driver can set them
+> properly.
+>
+> Signed-off-by: Jernej Skrabec <jernej.skrabec@gmail.com>
 > ---
->  drivers/iio/frequency/adf4377.c | 131 +++++++++++++++++++++++++++++++-
->  1 file changed, 129 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/iio/frequency/adf4377.c b/drivers/iio/frequency/adf4377.c
-> index 08833b7035e4..08dc2110cf8c 100644
-> --- a/drivers/iio/frequency/adf4377.c
-> +++ b/drivers/iio/frequency/adf4377.c
-> @@ -8,6 +8,7 @@
->  #include <linux/bitfield.h>
->  #include <linux/bits.h>
+>  drivers/clk/sunxi-ng/ccu-sun8i-de2.c | 53 ++++++++++++++++++++++++++--
+>  1 file changed, 50 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-de2.c b/drivers/clk/sunxi-ng/=
+ccu-sun8i-de2.c
+> index a6cd0f988859..2841ec922025 100644
+> --- a/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
+> +++ b/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
+> @@ -6,9 +6,11 @@
 >  #include <linux/clk.h>
-> +#include <linux/clk-provider.h>
->  #include <linux/clkdev.h>
->  #include <linux/delay.h>
->  #include <linux/device.h>
-> @@ -435,9 +436,14 @@ struct adf4377_state {
->  	struct gpio_desc	*gpio_ce;
->  	struct gpio_desc	*gpio_enclk1;
->  	struct gpio_desc	*gpio_enclk2;
-> +	struct clk		*clk;
-> +	struct clk		*clkout;
-> +	struct clk_hw		hw;
->  	u8			buf[2] __aligned(IIO_DMA_MINALIGN);
+>  #include <linux/clk-provider.h>
+>  #include <linux/io.h>
+> +#include <linux/mfd/syscon.h>
+>  #include <linux/module.h>
+>  #include <linux/of.h>
+>  #include <linux/platform_device.h>
+> +#include <linux/regmap.h>
+>  #include <linux/reset.h>
+>
+>  #include "ccu_common.h"
+> @@ -250,6 +252,41 @@ static const struct sunxi_ccu_desc sun50i_h616_de33_=
+clk_desc =3D {
+>         .num_resets     =3D ARRAY_SIZE(sun50i_h5_de2_resets),
 >  };
->  
-> +#define to_adf4377_state(h)	container_of(h, struct adf4377_state, hw)
+>
+> +/*
+> + * Add a regmap for the DE33 plane driver to access plane
+> + * mapping registers.
+> + * Only these registers are allowed to be written, to prevent
+> + * overriding clock and reset configuration.
+> + */
 > +
->  static const char * const adf4377_muxout_modes[] = {
->  	[ADF4377_MUXOUT_HIGH_Z] = "high_z",
->  	[ADF4377_MUXOUT_LKDET] = "lock_detect",
-> @@ -929,6 +935,120 @@ static int adf4377_freq_change(struct notifier_block *nb, unsigned long action,
->  	return NOTIFY_OK;
->  }
->  
-> +static void adf4377_clk_del_provider(void *data)
+> +#define SUN50I_DE33_CHN2CORE_REG 0x24
+> +#define SUN50I_DE33_PORT02CHN_REG 0x28
+> +#define SUN50I_DE33_PORT12CHN_REG 0x2c
+> +
+> +static bool sun8i_de2_ccu_regmap_accessible_reg(struct device *dev,
+> +                                               unsigned int reg)
 > +{
-> +	struct adf4377_state *st = data;
-> +
-> +	of_clk_del_provider(st->spi->dev.of_node);
+> +       switch (reg) {
+> +       case SUN50I_DE33_CHN2CORE_REG:
+> +       case SUN50I_DE33_PORT02CHN_REG:
+> +       case SUN50I_DE33_PORT12CHN_REG:
+> +               return true;
+> +       default:
+> +               return false;
+> +       }
 > +}
+
+Since the registers are contiguous, I think it makes a bit more sense
+to use the .rd_table and .wr_table. A bonus is that the check can be
+inlined in the core instead of calling a function pointer.
+
+> +static const struct regmap_config sun8i_de2_ccu_regmap_config =3D {
+> +       .reg_bits       =3D 32,
+> +       .val_bits       =3D 32,
+> +       .reg_stride     =3D 4,
+> +       .max_register   =3D 0xe0,
+
+None of the registers past SUN50I_DE33_PORT12CHN_REG are accessible,
+so we should probably just put that here.
+
 > +
-> +static unsigned long adf4377_clk_recalc_rate(struct clk_hw *hw,
-> +					      unsigned long parent_rate)
-> +{
-> +	struct adf4377_state *st = to_adf4377_state(hw);
-> +	u64 freq;
-> +	int ret;
-> +
-> +	ret = adf4377_get_freq(st, &freq);
-> +	if (ret)
-> +		return 0;
-> +
-> +	return freq;
-> +}
-> +
-> +static int adf4377_clk_set_rate(struct clk_hw *hw,
-> +				unsigned long rate,
-> +				unsigned long parent_rate)
-> +{
-> +	struct adf4377_state *st = to_adf4377_state(hw);
-> +
-> +	return adf4377_set_freq(st, rate);
-> +}
-> +
-> +static int adf4377_clk_prepare(struct clk_hw *hw)
-> +{
-> +	struct adf4377_state *st = to_adf4377_state(hw);
-> +
-> +	return regmap_update_bits(st->regmap, 0x1a, ADF4377_001A_PD_CLKOUT1_MSK |
-> +				  ADF4377_001A_PD_CLKOUT2_MSK,
-> +				  FIELD_PREP(ADF4377_001A_PD_CLKOUT1_MSK, 0) |
-> +				  FIELD_PREP(ADF4377_001A_PD_CLKOUT2_MSK, 0));
-> +}
-> +
-> +static void adf4377_clk_unprepare(struct clk_hw *hw)
-> +{
-> +	struct adf4377_state *st = to_adf4377_state(hw);
-> +
-> +	regmap_update_bits(st->regmap, 0x1a, ADF4377_001A_PD_CLKOUT1_MSK |
-> +			   ADF4377_001A_PD_CLKOUT2_MSK,
-> +			   FIELD_PREP(ADF4377_001A_PD_CLKOUT1_MSK, 1) |
-> +			   FIELD_PREP(ADF4377_001A_PD_CLKOUT2_MSK, 1));
-> +}
-> +
-> +static int adf4377_clk_is_enabled(struct clk_hw *hw)
-> +{
-> +	struct adf4377_state *st = to_adf4377_state(hw);
-> +	unsigned int readval;
-> +	int ret;
-> +
-> +	ret = regmap_read(st->regmap, 0x1a, &readval);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return !(readval & (ADF4377_001A_PD_CLKOUT1_MSK | ADF4377_001A_PD_CLKOUT2_MSK));
-> +}
-> +
-> +static const struct clk_ops adf4377_clk_ops = {
-> +	.recalc_rate = adf4377_clk_recalc_rate,
-> +	.set_rate = adf4377_clk_set_rate,
-> +	.prepare = adf4377_clk_prepare,
-> +	.unprepare = adf4377_clk_unprepare,
-> +	.is_enabled = adf4377_clk_is_enabled,
+> +       /* other devices have no business accessing other registers */
+> +       .readable_reg   =3D sun8i_de2_ccu_regmap_accessible_reg,
+> +       .writeable_reg  =3D sun8i_de2_ccu_regmap_accessible_reg,
 > +};
 > +
-> +static int adf4377_clk_register(struct adf4377_state *st)
-> +{
-> +	struct spi_device *spi = st->spi;
-> +	struct clk_init_data init;
-> +	struct clk *clk;
-> +	const char *parent_name;
-> +	int ret;
+>  static int sunxi_de2_clk_probe(struct platform_device *pdev)
+>  {
+>         struct clk *bus_clk, *mod_clk;
+> @@ -303,13 +340,23 @@ static int sunxi_de2_clk_probe(struct platform_devi=
+ce *pdev)
+>         }
+>
+>         /*
+> -        * The DE33 requires these additional (unknown) registers set
+> +        * The DE33 requires these additional plane mapping registers set
+>          * during initialisation.
+>          */
+>         if (of_device_is_compatible(pdev->dev.of_node,
+>                                     "allwinner,sun50i-h616-de33-clk")) {
+> -               writel(0, reg + 0x24);
+> -               writel(0x0000a980, reg + 0x28);
+> +               struct regmap *regmap;
 > +
-> +	if (!device_property_present(&spi->dev, "#clock-cells"))
-> +		return 0;
+> +               regmap =3D devm_regmap_init_mmio(&pdev->dev, reg,
+> +                                              &sun8i_de2_ccu_regmap_conf=
+ig);
+> +               if (IS_ERR(regmap)) {
+> +                       ret =3D PTR_ERR(regmap);
+> +                       goto err_assert_reset;
+> +               }
 > +
-> +	if (device_property_read_string(&spi->dev, "clock-output-names", &init.name)) {
-> +		init.name = devm_kasprintf(&spi->dev, GFP_KERNEL, "%s-clk",
-> +					   fwnode_get_name(dev_fwnode(&spi->dev)));
-> +		if (!init.name)
-> +			return -ENOMEM;
-> +	}
-> +
-> +	parent_name = of_clk_get_parent_name(spi->dev.of_node, 0);
-> +	if (!parent_name)
-> +		return -EINVAL;
-> +
-> +	init.ops = &adf4377_clk_ops;
-> +	init.parent_names = &parent_name;
-> +	init.num_parents = 1;
-> +	init.flags = CLK_SET_RATE_PARENT;
-> +
-> +	st->hw.init = &init;
-> +	clk = devm_clk_register(&spi->dev, &st->hw);
-> +	if (IS_ERR(clk))
-> +		return PTR_ERR(clk);
-> +
-> +	st->clk = clk;
-> +
-> +	ret = of_clk_add_provider(spi->dev.of_node, of_clk_src_simple_get, clk);
-> +	if (ret)
-> +		return ret;
-> +
-> +	st->clkout = clk;
-> +
-> +	return devm_add_action_or_reset(&spi->dev, adf4377_clk_del_provider, st);
-> +}
-> +
->  static const struct adf4377_chip_info adf4377_chip_info = {
->  	.name = "adf4377",
->  	.has_gpio_enclk2 = true,
-> @@ -958,8 +1078,6 @@ static int adf4377_probe(struct spi_device *spi)
->  
->  	indio_dev->info = &adf4377_info;
->  	indio_dev->name = "adf4377";
-> -	indio_dev->channels = adf4377_channels;
-> -	indio_dev->num_channels = ARRAY_SIZE(adf4377_channels);
->  
->  	st->regmap = regmap;
->  	st->spi = spi;
-> @@ -979,6 +1097,15 @@ static int adf4377_probe(struct spi_device *spi)
->  	if (ret)
->  		return ret;
->  
-> +	ret = adf4377_clk_register(st);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (!st->clkout) {
-> +		indio_dev->channels = adf4377_channels;
-> +		indio_dev->num_channels = ARRAY_SIZE(adf4377_channels);
+> +               ret =3D of_syscon_register_regmap(pdev->dev.of_node, regm=
+ap);
 
-Why register a channel free iio device? Probably better to just not register
-it at all in this path.
+dev_of_node(&pdev->dev) instead of directly accessing the member.
+IIRC this is the new preferred style.
 
-> +	}
-> +
->  	return devm_iio_device_register(&spi->dev, indio_dev);
->  }
->  
 
+Thanks
+ChenYu
+
+> +               if (ret)
+> +                       goto err_assert_reset;
+>         }
+>
+>         ret =3D devm_sunxi_ccu_probe(&pdev->dev, reg, ccu_desc);
+> --
+> 2.51.2
+>
+>
