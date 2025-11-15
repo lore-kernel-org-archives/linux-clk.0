@@ -1,73 +1,145 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A69ED1E9B22;
-	Sat, 15 Nov 2025 11:31:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 717112FC890
+	for <linux-clk@vger.kernel.org>; Sat, 15 Nov 2025 14:14:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763206312; cv=none; b=EP+MGAta9uu0v08l4s8iPK4ruE00NW32IwU8FQgiRhlJqkM/7VHMeof0ovLJ+AmSiLZlcGkDUuXhRptck2MyYD7auK2EdkGAlNILjvKruQHn+fMBwo434UTjtBq2shN/G6IpUZ+9+hA+/H/pl+GfhwK7XovdKrYMphQ46V8ppws=
+	t=1763216056; cv=none; b=JdbXKzDINfyPGv42nVdnC3mlanh8s+SnQkRVtaEQUvLXXRxUMjrHV7yFJ3fRYs1RUrZjDytYs52yNQNRzyAAh521m3utw9nK+5V641nT/Xai517VXnINHIsiIxdFSxyEtwX7L1ELDjrkF5Sg8rq+6jQUGgSaRJJBtszG+0LlxJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763206312; c=relaxed/simple;
-	bh=FPZ0kQZIwnebdbDeToX/YK8Bd3hA21dxcccPr3O5ccY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iFrXbFUKO7NfDGFxnZC2YFrpuQCQ7RTh9FG8Kl8EGW6bpwSPe4uJrhge0G7cR2YN0FIZ4h+yNUWAhJavuc13lFnn9ansQavZYwld5VHrZ7mHLi3wX0R/twVCAq0BvwnvJN+RRmNiTWOZ6iERBi0ED1d5N2VlO1UevdBYox5KSQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Uge+fHj4; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1763216056; c=relaxed/simple;
+	bh=vHkwErpfhnxxsv02IcLQLhIy7rGI2ZohNEYD9R+2700=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=URMUt7IG/zkyp+z1O7g6wqFlrgiQNfvLnWfloli4DR2R173CIrgBtLEDx6lYOtOJoNYlrvRAELSitc7nYLk5EuDQRH8T4vbPScrnVOgNf9OxUOX9vzDrc8lvugWrzJ+DT5FttHS4z+WC7kb4WmSfRcZHn1j1oxfCc0tlWb43pp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F1xyL9j3; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Uge+fHj4"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9200DC116B1;
-	Sat, 15 Nov 2025 11:31:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763206312;
-	bh=FPZ0kQZIwnebdbDeToX/YK8Bd3hA21dxcccPr3O5ccY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Uge+fHj4kRQhX5pc86U5iaOgiFqgdDil5CdrG2swUUk+N3TjlB62JemPjth32HKot
-	 l4WuxNKEZUq2a653BbiSjQ8UkzHm0pGUKXkKL5h8S8gyCwCdpGa+jZqUixOjYUZAcr
-	 YfnLBTOfBHgL7Lcl/B5L7qlvxYPwVoz4n5kEhNhXEi5xTpIFmAcKc341m2o91z9JqR
-	 pVj2PUJHMr8+SjXqBIHUHS2mnD+3M7fdYgJj3/kw/jLSCJcD5jNTeBb24ifdmFADB3
-	 hwB9tozgjFyOKqZ5x1eBXFBqRWVRv+rDiSn82Ep5Z8EA7Ns6+WUMF4OWIj8EHWn6L0
-	 NbFLU8nvdoNGQ==
-Date: Sat, 15 Nov 2025 12:31:49 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, 
-	Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
-	Mark Brown <broonie@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, Alexandre Belloni <alexandre.belloni@bootlin.com>, 
-	linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pm@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-rtc@vger.kernel.org, Andreas Kemnade <andreas@kemnade.info>
-Subject: Re: [PATCH v4 05/16] dt-bindings: mfd: ROHM BD72720
-Message-ID: <20251115-wolverine-of-interesting-authority-faecde@kuoka>
-References: <cover.1763022807.git.mazziesaccount@gmail.com>
- <ec2cb44d9d00f5edaed2fbe17fd9ddbed914ff37.1763022807.git.mazziesaccount@gmail.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F1xyL9j3"
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-640a503fbe8so4934126a12.1
+        for <linux-clk@vger.kernel.org>; Sat, 15 Nov 2025 06:14:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1763216053; x=1763820853; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tO9M0rK2lTwB71cTYp3Jpf3ChX0WRs4mW1Amu6CT/w0=;
+        b=F1xyL9j3bVAI4D50nk9qeQaIyMUGfIQv6tshhTOti+C8+uJau+WD3MUt2hupYhc71e
+         3AJlWmoQBcg050dOy6QQZLueyHrAfkd0csju6vq/iadsUooRN21Nl7OQdsUNxFfo+UFR
+         RSFeE/30Xfk8vpnl0K7fUoqejZdux2ozeUNNLLvaffWN3L8QV5b1bs2xMhSL2Qmvm2Ti
+         oB+BXG5BnpeIAHfmmRgihLa5YhtK6ti4EJeKGPt0i02inGe5h7YaawsogBRsJuEqDpk1
+         m4f2iRKJV3/zZsyb/IMucWLK7WTUlk1lM+cD5YUcOI3vaxio5V08zheIC3l926/Vm5f2
+         MraA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763216053; x=1763820853;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tO9M0rK2lTwB71cTYp3Jpf3ChX0WRs4mW1Amu6CT/w0=;
+        b=Joaoj1DuNUfrOw2eTosknn/cHC0jjUUunsXHCc+zjmvWsYPgd+9H355kv1js4AL67L
+         CtuV5Jn+P8qdtZtKsK3MSd1HZyz/m/Tw3bKfbePYZhJmvq9evaK7Fwih8kDlYXckjBOm
+         3DUE86aeDtDvHWP4jtFNkgGEfeuZD8416YHfBudi90cnv+R5zu1MtGo2rRe2uE/GlKDl
+         kdvC/UF8nvb9XlgSfgxq7isqYMoOhYy5YmdTSFMAFcm/99fT1N5nIXTsbyNkoPKK7PI5
+         zdq2igUulgkTPzavcdLlymBlFb7vqyBXS3DIOPlMzUU+UepEre/lXvZqvGtXji7Nz1+g
+         4U4A==
+X-Forwarded-Encrypted: i=1; AJvYcCWctysIJuEfDkCrfD+GoyKkaPJIZROFu7L1XbdiZGWzUn1uFh18cs3YWrU6DaiPLe1cNUpyWxqXIwQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzuhIGRwg0fbKLD3vdz+Ro4sLi4tXgKYND05iN+7f/r9HUseOg5
+	mwsZ6mS5ouhjkOrhd0qjrSXwBgC+0mZ5ciLW70Jb5Hfi64F/ZwsMOJRs
+X-Gm-Gg: ASbGncvww1pmN1xW1m7T3bq2rxqD2Bn0QF6IjaHN9vyKobixM9Rhhe84x83SJigeTNt
+	XU2DMgdtRGqfi0Uz44HKOgPCMWreeA6rjo1i98/WYRQx0k1Dty0eSNGLlPGDxEVmyPkY96+9V3B
+	xmfgtji/+oJEaSoNC3BRIibUezhiKwIl/VdUF++MWSe/rtgUtF9P96B2cPf3F01u+ejygbaawPl
+	PQ6P2wHBOyGGVqfS9YWeE40Iv18KBC1xvCx/qxba6KX/O+sASWd/cz/pO5hQjTS6f1rIuaBciVJ
+	eIH3AtLLO0j4EHuqHB4Dxh4c2ld4BnoHeV7ZnV8ANT6yqowhSdhuu6co0bAxy3/+peYvLVJGuqt
+	IAJGmBYYQPmCYMoM33Cg6k2n9h3T/0rOPMsVS51riDc41K7LSI1aw+8LmGkehssyho8C/eRqfzc
+	UQiFmqZ7exFy6sN959ZRtMhmfAFubeNlHbOp1y66b3AdPO61gG2LBs5rWq
+X-Google-Smtp-Source: AGHT+IFp+Taw68EnwDXLkJFHgktvsI4Q2Kx6E5s2D/JuSsEx96b8Hqrxaybkmry8X04xeOfOSy8LRw==
+X-Received: by 2002:a17:907:25cd:b0:b72:6383:4c57 with SMTP id a640c23a62f3a-b7367b79f4fmr713777466b.55.1763216052568;
+        Sat, 15 Nov 2025 06:14:12 -0800 (PST)
+Received: from jernej-laptop (178-79-73-218.dynamic.telemach.net. [178.79.73.218])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b734fda933fsm606189866b.56.2025.11.15.06.14.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 15 Nov 2025 06:14:12 -0800 (PST)
+From: Jernej Skrabec <jernej.skrabec@gmail.com>
+To: wens@csie.org,
+	samuel@sholland.org
+Cc: mripard@kernel.org,
+	maarten.lankhorst@linux.intel.com,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Jernej Skrabec <jernej.skrabec@gmail.com>
+Subject: [PATCH 0/7] drm/sun4i: update DE33 support
+Date: Sat, 15 Nov 2025 15:13:40 +0100
+Message-ID: <20251115141347.13087-1-jernej.skrabec@gmail.com>
+X-Mailer: git-send-email 2.51.2
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ec2cb44d9d00f5edaed2fbe17fd9ddbed914ff37.1763022807.git.mazziesaccount@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Nov 13, 2025 at 10:52:35AM +0200, Matti Vaittinen wrote:
-> From: Matti Vaittinen <mazziesaccount@gmail.com>
-> 
-> The ROHM BD72720 is a power management IC integrating regulators, GPIOs,
-> charger, LEDs, RTC and a clock gate.
-> 
-> Add dt-binding doc for ROHM BD72720.
-> 
-> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
-> 
-> ---
-> Revision history:
+This is second series out of tree which aims at properly introducing
+support for H616 Display Engine 3.3. Previous series [1] reorganized
+driver so proper DE33 support can be easily implemented.
 
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+H616 DE33 support was actually introduced a while back, but it was done
+without fully understanding hardware design. Fortunately, no user of
+H616 DE33 binding was introduced, so we have a chance to update bindings
+and introduce proper DE33 support. Issue with existing binding is that it
+considers planes as resource which is hardwired to each mixer as it was
+done on older Display Engine generations (DE3 and lower). That is not the
+case anymore. This series introduces new driver for planes management,
+which allows doing proper plane assignments.
+
+Remaining patches, which introduce all the missing bits to fully support
+display pipeline on H616 SoC, will be sent once this series is merged.
+WIP patches, which can be used for testing purposes, can be found at [2].
+
+Please take a look.
 
 Best regards,
-Krzysztof
+Jernej
+
+[1] https://lore.kernel.org/linux-sunxi/20251104180942.61538-1-jernej.skrabec@gmail.com/T/#t
+[2] https://github.com/jernejsk/linux-1/commits/sun4i-drm-refactor/
+
+Jernej Skrabec (7):
+  drm/sun4i: Add support for DE33 CSC
+  drm/sun4i: vi_layer: Limit formats for DE33
+  clk: sunxi-ng: de2: Export register regmap for DE33
+  dt-bindings: display: allwinner: Add DE33 planes
+  drm/sun4i: Add planes driver
+  dt-bindings: display: allwinner: Update H616 DE33 binding
+  drm/sun4i: switch DE33 to new bindings
+
+ .../allwinner,sun50i-h616-de33-planes.yaml    |  44 ++++
+ .../allwinner,sun8i-a83t-de2-mixer.yaml       |  16 +-
+ drivers/clk/sunxi-ng/ccu-sun8i-de2.c          |  53 ++++-
+ drivers/gpu/drm/sun4i/Kconfig                 |   8 +
+ drivers/gpu/drm/sun4i/Makefile                |   1 +
+ drivers/gpu/drm/sun4i/sun50i_planes.c         | 205 ++++++++++++++++++
+ drivers/gpu/drm/sun4i/sun50i_planes.h         |  43 ++++
+ drivers/gpu/drm/sun4i/sun8i_csc.c             |  71 ++++++
+ drivers/gpu/drm/sun4i/sun8i_csc.h             |   5 +
+ drivers/gpu/drm/sun4i/sun8i_mixer.c           | 130 ++++++-----
+ drivers/gpu/drm/sun4i/sun8i_mixer.h           |  10 +-
+ drivers/gpu/drm/sun4i/sun8i_vi_layer.c        |  36 ++-
+ 12 files changed, 543 insertions(+), 79 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/display/allwinner,sun50i-h616-de33-planes.yaml
+ create mode 100644 drivers/gpu/drm/sun4i/sun50i_planes.c
+ create mode 100644 drivers/gpu/drm/sun4i/sun50i_planes.h
+
+-- 
+2.51.2
 
