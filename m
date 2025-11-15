@@ -1,190 +1,472 @@
-Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11023087.outbound.protection.outlook.com [40.107.162.87])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 278A5303CA3;
-	Fri, 14 Nov 2025 23:40:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.87
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763163609; cv=fail; b=TPK/gx2Eodf/MWasoisDRaiu7JpzJ/BuXgNBgbdeK3gfOzr5wR71udff+uVQWSdXLZ9n7VLfFinzUFp+6W/LdUHiRWWEnb1VS9xQHszat79VtoYxWeRzeGzeVWWdYARHtN/t/mwftpwKd9JlP6+LlqS4lSGpTAGkUBz+TguJg2w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763163609; c=relaxed/simple;
-	bh=tAjMzBlSRikyK3K4CyDHY52v6peFAMh/eU+voRxTOKo=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=rpAXjsGrnsRNiUuRYPuP+kjOzplXK6T8EU0oX9BhOMu7/JiEey8SgCuaqBnVypxYzC9GTMOVqQia0zb54togN+vWwZ7hVmSpMsbXqjAJLJ14ulEutk0UjVbERXV3gojfKprYA0hz7mGNnEUneKHrZOnPp2XjrW3q6n8DvKlHtf0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iopsys.eu; spf=pass smtp.mailfrom=genexis.eu; dkim=pass (2048-bit key) header.d=iopsys.eu header.i=@iopsys.eu header.b=VfAdmbq6; arc=fail smtp.client-ip=40.107.162.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iopsys.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=genexis.eu
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D67440855
+	for <linux-clk@vger.kernel.org>; Sat, 15 Nov 2025 00:23:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1763166186; cv=none; b=J03EnJZYdEdxX7DLG+X8RQiR0koUmUdYQL/hHKzFny2CRNiJ4cm0YAAoRhj6q8If0ZPzrty4V5of2zuvnq/iv3b49QecpCXkQDkHYozhc5EoP5sifm+FL2hoMHF3YMTUharM4GLGU94fnpgU06sJWpNl3kOpwo3+1KS4JIeo5nk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1763166186; c=relaxed/simple;
+	bh=dfivsJK1JxftKQMeSC9M0/NiAuNgHgAkhlY8zaT2DVQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JrtsdFZArfuFc+qSDu2sgNLVAcPPpjYcV1MTgg1RtktxoVhAsSGQfwbsDL5e1HQv7y20W32+oiVOZqQsgqk9MHKRKESsUp7nox0vj0x7EntLMh4Fp+AFQHTNBXU7ukc8UVP0dhRkKIZwmBREy1v4caFBm/YWbEdvochv28amZ4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ey2jf8cm; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=BspZcQO2; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=iopsys.eu header.i=@iopsys.eu header.b="VfAdmbq6"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=yS7uJzL7uobUzdZ+8qr3dgI2OFawrFRiQTZuJqkUzsgNr2PqCBps+47A4Ltnh3qWmSg5KNLTTr37UyhC6MBXAF6JJOpQVPDQdXVkfmquUvq5grQ1oUHfHhS+usmCvSQbSroTo2cthNpXxsDWVtnvTjvfrnDiNQqqqkLXklOtlpgaR6Bmj3Ca+RdSZYeaj78xJY/rTapxMWXtd9fHUufvqLSsPsbwXvXu1G14SeIoNr9hXavkpIb/qmH9vEnJG/2IwnSreV7JmUSMvGL39LmY2E7/Yz5s95yBp843eIU0p5eM0lVRrmXUpxFTluUAYVbkItb4zuRibdtxQnfgUuj+Xg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=tAjMzBlSRikyK3K4CyDHY52v6peFAMh/eU+voRxTOKo=;
- b=BsA902Gxl+EK09E1/GvdzTq6jlKNyRgD7tphc6Rl3+WfnUrKlr8l6gCX3Fbgb/aUGVN7tZOgqNrCgptGUbPpv1t3s/xfZX2g7HTUU7bAzIzt48gG2YaufUkl7tdIunCkSohdUOok2wTMu7QqmPtof1XtEN906CwTipmewin1BWzxu09lL3TSs6GGNF9F0eGe6LZ0ApJKWqxTGYTrq5JUgiUJ1i7H4SOCEhm6NelG9wsX/TW0Nl8fY3YfUhL+QSI6JG9AkcZvEe/T6w+kh06cLUAh0K1yplPwEyfUNIDsooE3/uH+SyEheSGr0P/DltKCCBpTD62vjM8FXwqJs7CZJQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=genexis.eu; dmarc=pass action=none header.from=iopsys.eu;
- dkim=pass header.d=iopsys.eu; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iopsys.eu;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=tAjMzBlSRikyK3K4CyDHY52v6peFAMh/eU+voRxTOKo=;
- b=VfAdmbq6hqXmkXdzNRcD5ZRb2gE6uQtltwmkrHRfiQM/ESm+ukx9N86fWqmQPtfOgpb7eGM4tPPnG9c/IRnGPhRnTweONYOwVajGwHDoGTOiiUjf9nBrrqYMVWQKUreskEZp2aUJMgwHPOd9aveyrLmJcXF6Cp8OEkFNfN2iZfqv8BgJNWMv7JD4Uts2AJIe6HDPGqBFK4KAEiQL0Q2xj3ga0KfqEnGjaSO83IcKE4/7/ItrXf6uMeeIxSOXiNQK67r7tXbpiOGZCWulddNnbtEiBU1BJlK2/HmUkwb7r4gXiUMBztoTiaVdu4wt9CVYxmStILDc3LvojPiUq4Dalg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=iopsys.eu;
-Received: from GV2PR08MB8121.eurprd08.prod.outlook.com (2603:10a6:150:7d::22)
- by AS4PR08MB7854.eurprd08.prod.outlook.com (2603:10a6:20b:51d::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.17; Fri, 14 Nov
- 2025 23:40:04 +0000
-Received: from GV2PR08MB8121.eurprd08.prod.outlook.com
- ([fe80::4cd3:da80:2532:daa0]) by GV2PR08MB8121.eurprd08.prod.outlook.com
- ([fe80::4cd3:da80:2532:daa0%3]) with mapi id 15.20.9320.013; Fri, 14 Nov 2025
- 23:40:04 +0000
-Message-ID: <05e79250-dcae-48cc-a3ef-d56031bfa10d@iopsys.eu>
-Date: Sat, 15 Nov 2025 02:40:02 +0300
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND v3 2/3] clk: en7523: Add reset-controller support
- for EN7523 SoC
-To: Stephen Boyd <sboyd@kernel.org>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Conor Dooley <conor+dt@kernel.org>, Felix Fietkau <nbd@nbd.name>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mediatek@lists.infradead.org
-Cc: Andreas Gnau <andreas.gnau@iopsys.eu>
-References: <20251110035645.892431-1-mikhail.kshevetskiy@iopsys.eu>
- <20251110035645.892431-3-mikhail.kshevetskiy@iopsys.eu>
- <176309336273.11952.13793350271645615953@lazor>
-From: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
-Content-Language: en-US, ru-RU
-In-Reply-To: <176309336273.11952.13793350271645615953@lazor>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: HE1PR05CA0149.eurprd05.prod.outlook.com
- (2603:10a6:7:28::36) To GV2PR08MB8121.eurprd08.prod.outlook.com
- (2603:10a6:150:7d::22)
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ey2jf8cm";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="BspZcQO2"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1763166183;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9nfgz45M8HKc3HZ16FndRlHChjpCjyLQc5Rl+pawHCw=;
+	b=Ey2jf8cmPoOg6JiR9uptw6jJmNCbcrhAsVqZi6yycuEMfCHuLR8bP5Ck4tQpUyYl+a90A1
+	dsWrhctBtqT2tzv88Wc+5XZZH94OUHuayf/gZXySwpwLDV129GojPVdjfVQjymh7yviG1P
+	IFkbY2p3z/bbIb7PmYoWimkHg38ssGE=
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
+ [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-152-kTU6Iz4sNnWqUgYd4ob_mA-1; Fri, 14 Nov 2025 19:23:01 -0500
+X-MC-Unique: kTU6Iz4sNnWqUgYd4ob_mA-1
+X-Mimecast-MFC-AGG-ID: kTU6Iz4sNnWqUgYd4ob_mA_1763166179
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-8b2619f07aeso1118782485a.0
+        for <linux-clk@vger.kernel.org>; Fri, 14 Nov 2025 16:23:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1763166179; x=1763770979; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-transfer-encoding
+         :content-disposition:mime-version:references:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=9nfgz45M8HKc3HZ16FndRlHChjpCjyLQc5Rl+pawHCw=;
+        b=BspZcQO2CEprDlQ6lRGpPyi91yw1PW4F3uyejf/8pkfHAKJExm0XX/vfLvja26BO+d
+         6BuschW+4R6MmXKm6pu+Eirc7aIDZ9XW+MHr4t57502yhxw3wNE/PUJudE4pv5oN+N9B
+         5iXj6nx+c2Nbuu+xagCRfw4CwN3laHSQYIjUF0JEMHvi47DiET6ik24vJ0+XzIc47cI0
+         hxV2+N/zd0OCmEvsL3+vlMRSy74kB5qSOpOal0CPoJY4TmIrWp3lahzqVlvV1T2e83fj
+         I4rdrfJSwrMr/x6iLIVbS9VH6qLj288fHxSc9EfsjalV/5KKuq5n0OInvdtZcgcbnBnO
+         V2jQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763166179; x=1763770979;
+        h=user-agent:in-reply-to:content-transfer-encoding
+         :content-disposition:mime-version:references:message-id:subject:cc
+         :to:from:date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9nfgz45M8HKc3HZ16FndRlHChjpCjyLQc5Rl+pawHCw=;
+        b=iEf2kbBPXtXha6hKzyKzWaoIuJaZBNZhFlu+bHpl3mMvzxXJgDW59kl8Q+yVC7db/T
+         5JntzLkCCsXaLl2GeZoyyWl3Vrm3f+loH7ZSfzy3RH7s8oYRCCUX2aEj5vEolIg8N59S
+         QzIYULzWQCzWVX8+Y40TtslSzQ373IxcLTQjWaWD+RY0JBTJM9o3FUReprIdTHVBLpyO
+         RO1E8QijMDe+glDDjUVK/l5C20CIXPqoBr4l/ZE9UUakaVAXLsWnS9PQXE6MIXnr3PY3
+         qOCjHYSC7ktzqMTq2gYyAc7d9lcYlJBvtBjbnBR/IJASyjsKT8dRW9tPBBXC0KZMprqs
+         VKsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVdByn0gXmTMyLw3fII7evh1EM2Rp+MHRDJg6VtOY1CUv8DHdBwIrxMbz36YoFRMcj6Hq12eLAGmk0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YybH7kMV2VbknIPRat1xOFfDP2ztwmwoLo0SMx2rNvot+2fRkr9
+	48eWN0koUyEGCaqBg1MMlQrzJ+eGZdcAxy4IHgI9AY5povo/rqBrn0nJjcIkHEKev86Xly6r+lr
+	5p24LEX3PjCPhw3BXdF+Kz+k3gSt+huBMz/GsqcN7G50Dfbuv0sB5puENneaoMQ==
+X-Gm-Gg: ASbGncsYnF+1OZ/CdVfvlrxcHWmXe2akVKfJrEoWd+luPES9MyGSTCPdvmBxMLBjhRw
+	4uQHLcoAOHy+CLEYSI2yOi+lzk4KIRuov1itJSCyHSezXOof61x0x1DspAmZtB/jB4hT+wXvIEb
+	/rMP9HmwK9EpQjcaLR7KuFcjbCdyAtEJt93wxAC/DwFPhufYALqsvkdvjuc694j2i1hrekbsgMO
+	/oNGNVR/Tm5oj8RHL92ew1N5d+YSL+39OGU6dFcHzqyQ8uV+uTHhNSnvbYyNyrrmPM+vxg/Cd/n
+	bnTLf+Sp/Ak0Jfs0W1+CH78T4NOlC/vV6Cee+ICVilCw21zcx3e3zOHkf9uPvJgSWFXI6OeeBJG
+	3I77ZYhxjeoIWcMu2tTTL9qJrIMij4RCp8uFReW1ikWNp
+X-Received: by 2002:a05:620a:45a9:b0:89e:eeb7:40f5 with SMTP id af79cd13be357-8b2c31ca8abmr621203685a.71.1763166179402;
+        Fri, 14 Nov 2025 16:22:59 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFWqnB1QZVpUgj8IZTzTXtYCwN5HMTXu8fDZfWlDItKvg59/ftNW1oV+yvUtCQtHSJbVohIcQ==
+X-Received: by 2002:a05:620a:45a9:b0:89e:eeb7:40f5 with SMTP id af79cd13be357-8b2c31ca8abmr621202085a.71.1763166178919;
+        Fri, 14 Nov 2025 16:22:58 -0800 (PST)
+Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8b2aef2f936sm440475985a.29.2025.11.14.16.22.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Nov 2025 16:22:57 -0800 (PST)
+Date: Fri, 14 Nov 2025 19:22:55 -0500
+From: Brian Masney <bmasney@redhat.com>
+To: Maxime Ripard <mripard@kernel.org>, Stephen Boyd <sboyd@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Russell King <linux@armlinux.org.uk>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH RFC v4 00/12] clk: add support for v1 / v2 clock rate
+ negotiation and kunit tests
+Message-ID: <aRfH35-jhM-qOrbb@redhat.com>
+References: <20250923-clk-tests-docs-v4-0-9205cb3d3cba@redhat.com>
+ <20250925-eager-delectable-frog-fcbb5d@penduick>
+ <aNVPqHldkVzbyvix@redhat.com>
+ <20250930-brawny-pastel-wildcat-4ba8d8@houat>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: GV2PR08MB8121:EE_|AS4PR08MB7854:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3db8de2c-6c53-4f3f-723c-08de23d722f5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|366016|1800799024|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?dSt0Q05KTTFXYllnbWQ2TGpVSy83VEUxZzg3U1dQalpzYTdVOC9SdmQ4a1pI?=
- =?utf-8?B?U0NCdjVaZ3RDL1Y0QWxoSVQzT1FXWEJHczhSMmVhaldkSStJZFVOTlpZSzJ3?=
- =?utf-8?B?NnViMXE1WHZnYWF4ZityK0dodU9POElNRkFVVGx1RGRvZElydzBqMWdHMHY1?=
- =?utf-8?B?VDdNd1BXQUZVdWVrOUN5QUM1NS81c3B5RXh1enRMWEU0UC9SaktvazdOWmRX?=
- =?utf-8?B?U1M5a2hkblRtVjZzZ3NYYjB6cVlJR012M3V4UDc3SFpTZ0lKNlpaYXR0THRG?=
- =?utf-8?B?bFBpVk9VSk8rS0lDQnM4amhCZXh1L0x0Z01CTW1TU3BBbFFBVWw3NHlqWTRR?=
- =?utf-8?B?T1pzVVFFbUU3TzNaT3AzQUU1ZnpDSGh4cVhPYlZHVUJHelc4QUMwVWE3bFJ1?=
- =?utf-8?B?S2RwWGRRWjRtOHdoTGgrK3pwM1ZPYXdoeVVIaFp3blNqdmJLYUNIU2JJMG9m?=
- =?utf-8?B?WWdUS1dNVzI4UWxQWHRPcTlNT241bFA5dU5ObmlWLy9zTGpwZ1pGMW02VTR4?=
- =?utf-8?B?Tnp0aHJObWFyZEVSZnJGSVVWVm1uY25KSjJtbW9JZDB1cjQ3UDNXU2VPZjFi?=
- =?utf-8?B?WFA0VkEvWklOMmpLb3R5NVRtNG54VmtmUjJ5QTA1dmdyb3NxL1p5NFplQURY?=
- =?utf-8?B?NzBub1JCOVlaL3dzWlJ2Mjh6NDd5eTdiT0twNVhINXpzbWpHNy9BMjROdnY1?=
- =?utf-8?B?UFFLZ043d3lENHhyakVMMUZxcWxtbXVLRXJYL1p1ZHZoOFlZZFZGcVdHOFRs?=
- =?utf-8?B?bUhkOHJ6clNsdWtXcnp2UkFOdlZmRGJnUEpyTFBuZVprY1dxZDg4NmdydFd6?=
- =?utf-8?B?RzVNd0R4NzlQYnRRY0JHbUVJc1AwOW1RVmFMU29sMHVoWWpaK2lJaTFsamxF?=
- =?utf-8?B?QnNCSm94SVg4d2o4N3gvc1FTS0NDTzUvSGFQWXlnZGJQLzlqVmZ1S3lKL0cz?=
- =?utf-8?B?VS9pOHh4WEYvbHlKdW5DcVRFZVgzYlJZVnFqcERzTlVHL1NmeXZBSVVubmwz?=
- =?utf-8?B?Wm1MM0N5Y1hBTTNYa1kwMjgyZWhBYjI1cksxbHo2c3JqUjFlMjVJSzk3UHlC?=
- =?utf-8?B?d1FQTWYxM2ZtbEpRbS8yT0swQWhPWE5tWE1rZHZIOG9JNGlDcmpQWmFiclBz?=
- =?utf-8?B?UUlXbUFYTzdFWmNzK3NVT0ZrWlh1ZEw2c0x6cGxYeEdZZDB6RnhVSy9HbzFQ?=
- =?utf-8?B?YnR5dGFHdTlTZjN5NndDb2JMVGJCQVhJVEtTVEtqaEIwZzQ2b0x3Y2RiVE82?=
- =?utf-8?B?NlVtU1FndEttNnZFNE43Ull5cTBXRy8yQkJuWHVzdzlJV0luUUlUTUFQeGIr?=
- =?utf-8?B?bEluNW9JRFRXWGt1TEM2OE1sNkV0bU9xNEt3QW82UkhEYVJSdEhpQVlORjFz?=
- =?utf-8?B?Ynd5TXhscWVENFZaS2xTdW5OK0xhZ3VSVm4xM21UVTV0MUNTMkRrNXY2Ullx?=
- =?utf-8?B?OHFQOVZzUk1KRjJqMzJyWlF0d1RiL1VCVWZsQVJRTnNNbmQ2d0VXSUQvazIv?=
- =?utf-8?B?NHRBQld3L1hBcVM2aG5RMzJ1MnU4dlRkY2FiOUhZSG0rREZPODAybk9aT1hT?=
- =?utf-8?B?M2ZzTkFvZ0syOGFvREJkZU5pT0owS0R3WnRQUXhzVnhVZXdZVVpRUmQ3d1Z0?=
- =?utf-8?B?YWVyMllDcVpyajF2UFBJbzhyRnB4NE0xN1NndlJ2SGdrb21yUkVZTlJ1NUFL?=
- =?utf-8?B?ZnF2bVZOa3d2VkRma3RvaVJjQ1NDZENFalFIbERSV0hTVUxPcjU2c0w1dmJL?=
- =?utf-8?B?Mk5DaitTdXB3azA2elZpR1ozWFMxL01ZNUhCRGdGd3lUN3pDTm5qOW42SWtr?=
- =?utf-8?B?OEJhZ1I1MkRLTklNVlUvQzA4RlQ4Umo0bnZZQXJKNnM0eWhacHhwQjdBVW1S?=
- =?utf-8?B?bTV1Ym1ab0FjYlo2cEJXSFNvUlA0MGtuOFNPNy9QdlZRRlU3WjNBT2l6RFhL?=
- =?utf-8?B?UmdDM1JqQm50eDFFT0s3Ynh6RkFLS2E4M1ZSSjNqbm5EaVlMRG5ZUVBWUjNY?=
- =?utf-8?Q?kVFxlJ/6m16FClLLfVW2B9zlh1sdjI=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV2PR08MB8121.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(921020);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?OVlkMW82NXlPVTE1dUNXL0s5b3pnRnZFNTJHUTZPOTJrMnU5ZGc4WHhXMElk?=
- =?utf-8?B?TXN2cVZscFpycjFCZk5nZGhwbURQYTBlemhCQTB0VHBjb25GZzU4V25zeGxE?=
- =?utf-8?B?b3JOTk13MVM4SGEvN1JGRkRRNzMxRDdMeEhlVVRvcllBRUNvMHZBWSswY2V4?=
- =?utf-8?B?RVliRitqSmduTnhYRWgzenBWUjg3MHFxblNtaklBMG4xMGN1dTlpejRieTF3?=
- =?utf-8?B?dlVGbGlrOFltODhKSk9uYzFqaGtXdmsxbk90a1FQaEdVOEc4c1h2NGxxc3FU?=
- =?utf-8?B?OEIrOTZtMkQ5Q0lvd3V4WVNEbjdiUEFjbUpOYVQ1ZFR1SkRkU2hHa3pKYVM1?=
- =?utf-8?B?NGtDOGUvWC9DMld3MTg4aGFqNW9MVEN3cEJ2blkxamZXcmFXNHhOYkFId25w?=
- =?utf-8?B?VThSNmtjNFVpZ1ZadWVXZmVXcHhmQW56NEovQ3ZFMnMrbjdrZHFMU3Q0Ky9F?=
- =?utf-8?B?KzFTZ2w0aTZLRkFRMDJhVzlyd1FxVlBERm4wc3hOdnB6eHRxS0N2RzNkaytV?=
- =?utf-8?B?RzlPT3o0MFRwc3NacGp1cjYxMEppWnVNU0JzTGY2cDVETTUxWm5oeXdCVEpL?=
- =?utf-8?B?VVRBTVpFRWZlMW1YVllNNGg1OE9GSzVmbGVGN0oyNjNjL0dLNlhka2VwWkNl?=
- =?utf-8?B?b1JCVjY5QVg0cEpLdTM0YlBxeXQ2UlJkeEpjYzhFUDNjUUpmYllQNFgyQ09O?=
- =?utf-8?B?YVMyWDRuUGxUbUhoMEpUbkNEdW1ocHlqVE1jcUc4aFFqaW9LUktMbkdUY3Zr?=
- =?utf-8?B?L3ZVWHRhelJndEY3QVZPdWxsSjdsekE0c1RsUkoxTVc5a0NGM0Rldm5hRW0x?=
- =?utf-8?B?Skl2dmtiVjFaamloYmhFSitmMWxhQ2JFa0ZoazVCMTJyZ0N5YUVNeWhzalFU?=
- =?utf-8?B?MHRlb1REMmc2T0hMcTNQT0xSclpBQlBwekpIT3RCN1F2ekcvYWFGaGlTRnhw?=
- =?utf-8?B?NGV0RHFhSGp0RzJDeTFBQmlvajJ2UVBJYVNzaGpMYlZwY045cXBYVStlbjI1?=
- =?utf-8?B?VWE4MzZkWFhjYmNlWGRIL0VrWnlqVzF3MnRIMUJxOTJJSEF3YWlYTXZadmJp?=
- =?utf-8?B?WTZWRHJiRThqRUs1NnQyRkE0blpOVHZRZTArTDZubmlMWDF1TEdrUXl0eUxD?=
- =?utf-8?B?UkpIeTZhQWxYbERrRlV0SjlwWEt0N3I2R3RlcUlkd1NoKzlSZmwrTzVha1Jv?=
- =?utf-8?B?WEZ4SThOcHdicE5iZ0NONEU0NldFWVVnUUhzbHRTbnFWZ0ZiZlNrSllmZ3JB?=
- =?utf-8?B?Rm1DYUxYWm40M3BoN1diY29sTFF4ZDUzZFFRT0xhUk1TZk4zQ3UxYXF0TFNs?=
- =?utf-8?B?SDFhVHF4ZVJxMFFYQ3MwdytXM1RDRkhJOGYxYzlOS2t4enJKSFkxQ01VME5t?=
- =?utf-8?B?S09LV0xIMng0NFgxR1ViWXFUL1lkYWw0WS9WQmVMUzYvckZ3NGg0UjNyK1Nn?=
- =?utf-8?B?TnBITlA4Q0YvSVdFdkZlVjBtL3d6MmNTS3IwQVNBcTBSOHJxb2FhcGRkUXNy?=
- =?utf-8?B?V3BrOTFlR09QM0NneDlGSFJQV2dGS1B0WlYyL0JRZElpNzBWamNHQTdTdVdY?=
- =?utf-8?B?UnByMC9GODNLVG5Ic3NVWUhJQ29CMUc0Y2krRmZlOG16azdRZ3VVWmZmWEVW?=
- =?utf-8?B?ZkNWa1NXbHFKbHNFS25hTGZ4M3gyR1J6QTFseEVYVEJKb0Z5bkpoUk5kWGJP?=
- =?utf-8?B?VFRUbER4bit2ZFZXenByalpXQ0IyVURZTzk2VzIwaVBXNGhPcjdQdkVYUms2?=
- =?utf-8?B?clI0MHpGQTIxbkpGNjFGSFc5NnBxdjN6WFFSWlFFQkNPR3M3eFRtWEF0QzV1?=
- =?utf-8?B?WFQ0US9OQ1J6cGtyU3BGZTRIK0tVTzJhRWM0NXdORTFyNkVQVkd1SzhONXho?=
- =?utf-8?B?dCt2eU5tWUFDZmU1dEFacStVS0NwUlFETWNKVHBDQWs4MDBud3ZWMTFwRGF4?=
- =?utf-8?B?Tk94R1k2RDlQbjNtakxHUHJhMzJBSDlOa01XTTFjYWdnRUlOWFBsNlZ1WHlt?=
- =?utf-8?B?amVrRi8zQ3FjN3VxK081K21VUElDQlpPWUYvRTd2VDY2d2pWTzl6elZEazcz?=
- =?utf-8?B?b0RxV1preE93YUVMQktkMUtYTUl2L2ZPZmRVNzdTVWVxTGI3dWx2eEdaNVlp?=
- =?utf-8?B?b3VUczNwVDk3TnR6L1pOS082NHljdDUvOTZOVXNYN1B4dlkvUWNhaEpwUUFi?=
- =?utf-8?Q?FHSwUYFtOooPU3o4sUFvfU4=3D?=
-X-OriginatorOrg: iopsys.eu
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3db8de2c-6c53-4f3f-723c-08de23d722f5
-X-MS-Exchange-CrossTenant-AuthSource: GV2PR08MB8121.eurprd08.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Nov 2025 23:40:04.6284
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8d891be1-7bce-4216-9a99-bee9de02ba58
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: XcncrK9rIi5IHt9TEKJxbkWOMDwtJ+oRzsoKG8LbR14AsMCIgGkyY0rNRfp2PuH+rCeOiGR3cY302drFhdeyPFqluBuDdv7MkQ00Gv4SxlU=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS4PR08MB7854
+Content-Type: multipart/mixed; boundary="0oaKZJC2peXkS6zF"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250930-brawny-pastel-wildcat-4ba8d8@houat>
+User-Agent: Mutt/2.2.14 (2025-02-20)
 
-Hello Stephen,
 
-I can't find this and other my commit in the clk-next. Are changes was
-dropped?
-If it was dropped, could you tell me a reason?
+--0oaKZJC2peXkS6zF
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-Regards,
-Mikhail Kshevetskiy
+Hi Maxime (and Stephen),
 
-On 11/14/25 07:09, Stephen Boyd wrote:
-> Quoting Mikhail Kshevetskiy (2025-11-09 19:56:44)
->> Introduce reset API support to EN7523 clock driver. EN7523 uses the
->> same reset logic as EN7581, so just reuse existing code.
->>
->> Signed-off-by: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
->> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
->> ---
-> Applied to clk-next
+On Tue, Sep 30, 2025 at 01:28:52PM +0200, Maxime Ripard wrote:
+> On Thu, Sep 25, 2025 at 10:20:24AM -0400, Brian Masney wrote:
+> > On Thu, Sep 25, 2025 at 02:14:14PM +0200, Maxime Ripard wrote:
+> > > On Tue, Sep 23, 2025 at 10:39:19AM -0400, Brian Masney wrote:
+> > > > The Common Clock Framework is expected to keep a clock’s rate stable
+> > > > after setting a new rate with:
+> > > > 
+> > > >     clk_set_rate(clk, NEW_RATE);
+> > > > 
+> > > > Clock consumers do not know about the clock hierarchy, sibling clocks,
+> > > > or the type of clocks involved. However, several longstanding issues
+> > > > affect how rate changes propagate through the clock tree when
+> > > > CLK_SET_RATE_PARENT is involved, and the parent's clock rate is changed:
+> > > > 
+> > > > - A clock in some cases can unknowingly change a sibling clock's rate.
+> > > >   More details about this particular case are documented at:
+> > > >   https://lore.kernel.org/linux-clk/20250528-clk-wip-v2-v2-2-0d2c2f220442@redhat.com/
+> > > > 
+> > > > - No negotiation is done with the sibling clocks, so an inappropriate
+> > > >   or less than ideal parent rate can be selected.
+> > > > 
+> > > > A selection of some real world examples of where this shows up is at
+> > > > [1]. DRM needs to run at precise clock rates, and this issue shows up
+> > > > there, however will also show up in other subsystems that require
+> > > > precise clock rates, such as sound.
+> > > > 
+> > > > An unknown subset of existing boards are unknowingly dependent on the
+> > > > existing behavior, so it's risky to change the way the rate negotiation
+> > > > logic is done in the clk core.
+> > > > 
+> > > > This series adds support for v1 and v2 rate negotiation logic to the clk
+> > > > core. When a child determines that a parent rate change needs to occur
+> > > > when the v2 logic is used, the parent negotiates with all nodes in that
+> > > > part of the clk subtree and picks the first rate that's acceptable to
+> > > > all nodes.
+> > > > 
+> > > > Kunit tests are introduced to illustrate the problem, and are updated
+> > > > later in the series to illustrate that the v2 negotiation logic works
+> > > > as expected, while keeping compatibility with v1.
+> > > > 
+> > > > I marked this as a RFC since Stephen asked me in a video call to not
+> > > > add a new member to struct clk_core, however I don't see how to do this
+> > > > any other way.
+> > > > 
+> > > > - The clk core doesn’t, and shouldn’t, know about the internal state the
+> > > >   various clk providers.
+> > > > - Child clks shouldn’t have to know the internal state of the parent clks.
+> > > > - Currently this information is not exposed in any way to the clk core.
+> > > 
+> > > I recall from that video call that Stephen asked:
+> > > 
+> > > - to indeed not introduce a new op
+> > > - to evaluate the change from top to bottom, but to set it bottom to top
+> > > - to evaluate the rate by letting child clocks expose an array of the
+> > >   parent rates they would like, and to intersect all of them to figure
+> > >   out the best parent rate.
+> > > 
+> > > It looks like you followed none of these suggestions, so explaining why
+> > > you couldn't implement them would be a great first step.
+> > > 
+> > > Also, you sent an RFC, on what would you like a comment exactly?
+> > 
+> > Stephen asked me to not introduce a new clk op, however I don't see a
+> > clean way to do this any other way. Personally, I think that we need a
+> > new clk op for this use case for the reasons I outlined on the cover
+> > letter.
+> 
+> So his suggestion was to base the whole logic on clk_ops.determine_rate.
+> You're saying that it would violate parent/child abstraction. Can you
+> explain why you think that is the case, because it's really not obvious
+> to me.
+> 
+> Additionally, and assuming that we indeed need something similar to your
+> suggestion, determinate_rate takes a pointer to struct clk_rate_request.
+> Why did you choose to create a new op instead of adding the check_rate
+> pointer to clk_rate_request?
+
+Sorry about the delayed response. I've been busy with other projects at
+work.
+
+I attached a patch that puts the negotiate_rates member on struct
+clk_rate_request instead of struct clk_ops. In order to get this to
+work, it also required adding it to struct clk_core and
+struct clk_init_data as well. I made this so that this patch applies
+on top of this series.
+
+I think the clk_rate_request approach is very ugly, and adding it to
+struct clk_ops like I have it in this series is the way to go.
+
+I'm giving a talk at Linux Plumbers in Tokyo next month:
+
+    Fixing Clock Tree Propagation in the Common Clk Framework 
+    https://lpc.events/event/19/contributions/2152/
+
+Stephen will be there as well, and hopefully we can reach consensus
+about an acceptable approach to fix this.
+
+My round_rate to determine_rate conversion will drop one member from
+struct clk_ops, so maybe that'll help, and we can have a trade?
+There's currently only one outstanding patch series remaining in
+drivers/phy that's blocking me from posting what I have to remove
+round_rate from the clk core:
+
+https://lore.kernel.org/linux-clk/20251106-phy-clk-route-rate-v2-resend-v1-0-e2058963bfb1@redhat.com/T/
+
+I'll bug Vinod on email again so that we can hopefully get that in for
+v6.19. (No response on IRC yesterday.) If not, I see that he's giving a
+talk at Plumbers and I'll bug him in person after his talk.
+
+Brian
+
+--0oaKZJC2peXkS6zF
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment;
+	filename=0001-HACK-clk-move-negotiate_rates-member-from-struct-clk.patch
+
+From 469c29a4d14a83155a280df4679a43ad4af2e1b4 Mon Sep 17 00:00:00 2001
+From: Brian Masney <bmasney@redhat.com>
+Date: Fri, 14 Nov 2025 18:45:06 -0500
+Subject: [PATCH] HACK: clk: move negotiate_rates member from struct clk_ops to
+ struct clk_rate_request
+Content-type: text/plain
+
+Demonstrate one way to move the negotiate_rates member from struct
+clk_ops to struct clk_rate_request. Personally I think it's much cleaner
+to have this on struct clk_ops.
+
+Signed-off-by: Brian Masney <bmasney@redhat.com>
+---
+ Documentation/driver-api/clk.rst |  8 +++++---
+ drivers/clk/clk.c                | 11 ++++++++---
+ drivers/clk/clk_test.c           | 32 +++++++++++++++++++++++++-------
+ include/linux/clk-provider.h     | 19 ++++++++++++-------
+ 4 files changed, 50 insertions(+), 20 deletions(-)
+
+diff --git a/Documentation/driver-api/clk.rst b/Documentation/driver-api/clk.rst
+index c46ee62ba5bd..47ed511432db 100644
+--- a/Documentation/driver-api/clk.rst
++++ b/Documentation/driver-api/clk.rst
+@@ -75,9 +75,6 @@ the operations defined in clk-provider.h::
+ 		void		(*disable)(struct clk_hw *hw);
+ 		int		(*is_enabled)(struct clk_hw *hw);
+ 		void		(*disable_unused)(struct clk_hw *hw);
+-		bool            (*negotiate_rates)(struct clk_hw *hw,
+-					           struct clk_rate_request *req,
+-					           bool (*check_rate)(struct clk_core *, unsigned long));
+ 		unsigned long	(*recalc_rate)(struct clk_hw *hw,
+ 						unsigned long parent_rate);
+ 		long		(*round_rate)(struct clk_hw *hw,
+@@ -103,6 +100,11 @@ the operations defined in clk-provider.h::
+ 					      struct dentry *dentry);
+ 	};
+ 
++Note: The negotiate_rates callback is not part of struct clk_ops. Instead, it
++is specified in struct clk_init_data during clock registration and is copied
++to struct clk_rate_request for use during rate negotiations. It is invoked
++through the rate request structure rather than through ops.
++
+ Hardware clk implementations
+ ============================
+ 
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 926b7d4b9ab8..8014eb719266 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -130,6 +130,9 @@ struct clk_parent_map {
+ struct clk_core {
+ 	const char		*name;
+ 	const struct clk_ops	*ops;
++	bool			(*negotiate_rates)(struct clk_hw *hw,
++						   struct clk_rate_request *req,
++						   bool (*check_rate)(struct clk_core *, unsigned long));
+ 	struct clk_hw		*hw;
+ 	struct module		*owner;
+ 	struct device		*dev;
+@@ -427,8 +430,8 @@ static bool clk_core_is_enabled(struct clk_core *core)
+ 
+ static int clk_core_use_v2_rate_negotiation(struct clk_core *core)
+ {
+-	bool has_v2_ops = core->ops->negotiate_rates ||
+-	                  (core->parent && core->parent->ops->negotiate_rates);
++	bool has_v2_ops = core->negotiate_rates ||
++		(core->parent && core->parent->negotiate_rates);
+ 
+ 	return has_v2_ops && modparam_clk_v2_rate_negotiation;
+ }
+@@ -1713,6 +1716,7 @@ static void clk_core_init_rate_req(struct clk_core * const core,
+ 
+ 	req->core = core;
+ 	req->rate = rate;
++	req->negotiate_rates = core->negotiate_rates;
+ 	clk_core_get_boundaries(core, &req->min_rate, &req->max_rate);
+ 
+ 	parent = core->parent;
+@@ -2504,7 +2508,7 @@ static struct clk_core *clk_calc_new_rates(struct clk_core *core,
+ 		struct clk_rate_request req;
+ 
+ 		clk_core_init_rate_req(top, &req, top->new_rate);
+-		if (!top->ops->negotiate_rates(top->hw, &req, clk_check_rate))
++		if (!req.negotiate_rates || !req.negotiate_rates(top->hw, &req, clk_check_rate))
+ 			return NULL;
+ 
+ 		clk_accept_rate_negotiations(top);
+@@ -4511,6 +4515,7 @@ __clk_register(struct device *dev, struct device_node *np, struct clk_hw *hw)
+ 		goto fail_ops;
+ 	}
+ 	core->ops = init->ops;
++	core->negotiate_rates = init->negotiate_rates;
+ 
+ 	core->dev = dev;
+ 	clk_pm_runtime_init(core);
+diff --git a/drivers/clk/clk_test.c b/drivers/clk/clk_test.c
+index ff53b8bdf872..be2a49d2e446 100644
+--- a/drivers/clk/clk_test.c
++++ b/drivers/clk/clk_test.c
+@@ -122,7 +122,6 @@ static const struct clk_ops clk_dummy_rate_ops = {
+ 	.recalc_rate = clk_dummy_recalc_rate,
+ 	.determine_rate = clk_dummy_determine_rate,
+ 	.set_rate = clk_dummy_set_rate,
+-	.negotiate_rates = clk_dummy_negotiate_rates,
+ };
+ 
+ static const struct clk_ops clk_dummy_maximize_rate_ops = {
+@@ -218,7 +217,6 @@ static const struct clk_ops clk_dummy_div_ops = {
+ 	.recalc_rate = clk_dummy_div_recalc_rate,
+ 	.determine_rate = clk_dummy_div_determine_rate,
+ 	.set_rate = clk_dummy_div_set_rate,
+-	.negotiate_rates = clk_dummy_div_negotiate_rates,
+ };
+ 
+ struct clk_dummy_gate {
+@@ -755,6 +753,26 @@ struct clk_rate_change_sibling_div_div_context {
+ static int clk_rate_change_sibling_div_div_test_init(struct kunit *test)
+ {
+ 	struct clk_rate_change_sibling_div_div_context *ctx;
++	struct clk_init_data parent_init = {
++		.name = "parent",
++		.ops = &clk_dummy_rate_ops,
++		.negotiate_rates = clk_dummy_negotiate_rates,
++		.flags = 0,
++	};
++	struct clk_init_data child1_init = {
++		.name = "child1",
++		.ops = &clk_dummy_div_ops,
++		.negotiate_rates = clk_dummy_div_negotiate_rates,
++		.flags = CLK_SET_RATE_PARENT,
++		.num_parents = 1,
++	};
++	struct clk_init_data child2_init = {
++		.name = "child2",
++		.ops = &clk_dummy_div_ops,
++		.negotiate_rates = clk_dummy_div_negotiate_rates,
++		.flags = CLK_SET_RATE_PARENT,
++		.num_parents = 1,
++	};
+ 	int ret;
+ 
+ 	ctx = kunit_kzalloc(test, sizeof(*ctx), GFP_KERNEL);
+@@ -762,22 +780,22 @@ static int clk_rate_change_sibling_div_div_test_init(struct kunit *test)
+ 		return -ENOMEM;
+ 	test->priv = ctx;
+ 
+-	ctx->parent.hw.init = CLK_HW_INIT_NO_PARENT("parent", &clk_dummy_rate_ops, 0);
++	ctx->parent.hw.init = &parent_init;
+ 	ctx->parent.negotiate_step_size = 1 * HZ_PER_MHZ;
+ 	ctx->parent.rate = 24 * HZ_PER_MHZ;
+ 	ret = clk_hw_register_kunit(test, NULL, &ctx->parent.hw);
+ 	if (ret)
+ 		return ret;
+ 
+-	ctx->child1.hw.init = CLK_HW_INIT_HW("child1", &ctx->parent.hw, &clk_dummy_div_ops,
+-					     CLK_SET_RATE_PARENT);
++	child1_init.parent_hws = (const struct clk_hw*[]) { &ctx->parent.hw };
++	ctx->child1.hw.init = &child1_init;
+ 	ctx->child1.div = 1;
+ 	ret = clk_hw_register_kunit(test, NULL, &ctx->child1.hw);
+ 	if (ret)
+ 		return ret;
+ 
+-	ctx->child2.hw.init = CLK_HW_INIT_HW("child2", &ctx->parent.hw, &clk_dummy_div_ops,
+-					     CLK_SET_RATE_PARENT);
++	child2_init.parent_hws = (const struct clk_hw*[]) { &ctx->parent.hw };
++	ctx->child2.hw.init = &child2_init;
+ 	ctx->child2.div = 1;
+ 	ret = clk_hw_register_kunit(test, NULL, &ctx->child2.hw);
+ 	if (ret)
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 9041b17ba99e..bc162afc8cd8 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -53,6 +53,9 @@ struct dentry;
+  *			requested constraints.
+  * @best_parent_hw:	The most appropriate parent clock that fulfills the
+  *			requested constraints.
++ * @negotiate_rates:	When a child clk requests a new rate that requires a rate
++ *			change from the parent, this negotiates a new parent rate that's
++ *			acceptable to all of the children.
+  *
+  */
+ struct clk_rate_request {
+@@ -62,6 +65,9 @@ struct clk_rate_request {
+ 	unsigned long max_rate;
+ 	unsigned long best_parent_rate;
+ 	struct clk_hw *best_parent_hw;
++	bool (*negotiate_rates)(struct clk_hw *hw,
++				struct clk_rate_request *req,
++				bool (*check_rate)(struct clk_core *, unsigned long));
+ };
+ 
+ void clk_hw_init_rate_request(const struct clk_hw *hw,
+@@ -129,10 +135,6 @@ struct clk_duty {
+  * @restore_context: Restore the context of the clock after a restoration
+  *		of power.
+  *
+- * @negotiate_rates: When a child clk requests a new rate that requires a rate
+- *		change from the parent, this negotiates a new parent rate that's
+- *		acceptable to all of the children.
+- *
+  * @recalc_rate: Recalculate the rate of this clock, by querying hardware. The
+  *		parent rate is an input parameter.  It is up to the caller to
+  *		ensure that the prepare_mutex is held across this call. If the
+@@ -246,9 +248,6 @@ struct clk_ops {
+ 	void		(*disable_unused)(struct clk_hw *hw);
+ 	int		(*save_context)(struct clk_hw *hw);
+ 	void		(*restore_context)(struct clk_hw *hw);
+-	bool		(*negotiate_rates)(struct clk_hw *hw,
+-					   struct clk_rate_request *req,
+-					   bool (*check_rate)(struct clk_core *, unsigned long));
+ 	unsigned long	(*recalc_rate)(struct clk_hw *hw,
+ 					unsigned long parent_rate);
+ 	long		(*round_rate)(struct clk_hw *hw, unsigned long rate,
+@@ -295,6 +294,9 @@ struct clk_parent_data {
+  *
+  * @name: clock name
+  * @ops: operations this clock supports
++ * @negotiate_rates: When a child clk requests a new rate that requires a rate
++ *		change from the parent, this negotiates a new parent rate that's
++ *		acceptable to all of the children.
+  * @parent_names: array of string names for all possible parents
+  * @parent_data: array of parent data for all possible parents (when some
+  *               parents are external to the clk controller)
+@@ -306,6 +308,9 @@ struct clk_parent_data {
+ struct clk_init_data {
+ 	const char		*name;
+ 	const struct clk_ops	*ops;
++	bool			(*negotiate_rates)(struct clk_hw *hw,
++						   struct clk_rate_request *req,
++						   bool (*check_rate)(struct clk_core *, unsigned long));
+ 	/* Only one of the following three should be assigned */
+ 	const char		* const *parent_names;
+ 	const struct clk_parent_data	*parent_data;
+-- 
+2.51.1
+
+
+--0oaKZJC2peXkS6zF--
+
