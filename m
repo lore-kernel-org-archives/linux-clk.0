@@ -1,36 +1,37 @@
 Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B79F2271476;
-	Sun, 16 Nov 2025 21:36:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FC2A199D8;
+	Sun, 16 Nov 2025 22:10:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763328991; cv=none; b=UbyKv1QPYDYjz/zSw7Y0L9YGnFGZhFKZ0u5Ed8mm39BcUPOuArb7DAcmDUA/Ih/hnpfCfNImqB+4qteu39n8uhFW69Ifgt24TRn1la9stHD5fnYdmooc2zOrfejUGBjc3qxt3f2Nz9GAKQf6w8GAcvPGxkMp/O+bZhnD8GJb6fc=
+	t=1763331024; cv=none; b=X8kOnV4r6ORsjPq9Vp+vxIp87exhUovo2dfXNvN4YJqOl62/AzZDMXdnN3iVxy3JrKs4jBshkvBznNbraolIr/mG1pZFAvJ64vLm6ZQrtanuI5e+2PzMKuv0OxR/u4sQjs4mjJw/i5BMa4WUiw1jsBsdvwVyW75rkFntVhpubvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763328991; c=relaxed/simple;
-	bh=5PIxcua6nsz58aKI7AnuptIEDXao5NQgM/24BQf9S0U=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=eFjWgAOgrsOj2Bk+wdf9b7Uf5DuboyXWAhs0JF/xKkuZJtf605YNRqx3M076QYmj7Aq+zwfTr8GVTaEa3il1KwhA3A5sHEd4ZGXT805O3Q9jyN3In0xWJEIP81AtB9qIYCr5ShpAaYBWFK34/JA1c/wm3jpxgVUDIDxFrqStffM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=r8yXjBzv; dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=mu7C1iQi; arc=none smtp.client-ip=5.75.144.95
+	s=arc-20240116; t=1763331024; c=relaxed/simple;
+	bh=DwU8xmE8fnDnLJrwHBqWMO3H0UmHYjaJf5pOq/SZlm4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=MKvnr/L6STBoh9F6w2EZpXAH8PlDiLjRKmNnaEci5deoPh9/kn2TvkXFGwu20w2bs0BnTF5P/1toKdhXHLB/2QLLFdw7uNPff85G6vgYCGbWTPpg63GPizSdJLHIrMS7ioSkm8cZCULCTgD94xS/2iDbd/TxwaoyIABBrjAuVw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=MGhtwBD/; dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=UoAwPNX4; arc=none smtp.client-ip=5.75.144.95
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="r8yXjBzv";
-	dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="mu7C1iQi"
+	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="MGhtwBD/";
+	dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="UoAwPNX4"
 DKIM-Signature: v=1; a=rsa-sha256; s=202507r; d=mainlining.org; c=relaxed/relaxed;
-	h=To:Message-Id:Date:Subject:From; t=1763328958; bh=447xCEb0MWnl+oxdr0W5EbF
-	9+TtFVcxwx4KvSP/vras=; b=r8yXjBzv1UxXJzauWr2AQbbJUADoJXbJnz8tsTSKhafn1qlseT
-	rHPbkemMenn+APm09d+o2FoKMsWOptrtEaap51THL98MiaeiuKF0fD6dtsT0fon14HVZSn39qQJ
-	+sYGNgjMVFVFlpeeXBmQ07RbdH4et9HhrQa9l7SVzWehk6Glt4+kIb5FmVRo59sODF8HEjjS5qo
-	Q5mXPgonFdlt+5K+7D39hnEtoWphTONhMSjUo4aLOAiXqGg6KZFiXaO0WwkqmTwegStnRvyByZq
-	N+b1KwoukRyqgd/+I8n0FaFrRwNyxQCt+RvjD1tQjtKtOcsBsoqX7K4kVnUdfI4/isQ==;
+	h=To:Message-Id:Subject:Date:From; t=1763331019; bh=Ba+iBzT9nytvBVNltmmGAZh
+	GvCdcPk+aKxnOb12hNNo=; b=MGhtwBD/8wJPLi1IlQM1tbXjpie+PKpky4+WYkg5chj5ExW3hP
+	MJotWa2SyGx89DKcNd+86yL9gKJXMavnVhSik4RooCSIEWhe4fJkcNRDGWX4rb1S8b8KdGGAeoe
+	dydZGW29y3cX5wNUfdKD5zyprlCZ7vMJyEMWYc8JqoeBUqkx5MVkPe37qQZkkiaaOBvUDW63VkX
+	0SgCS+dSOfe+ytCUCbWkxRmcvrtLCJ2K8n1ZrtgSUW2+VVbTTD7dPJkyy0uOvWZYNrMIUhhgoO7
+	dVmfTO6pBemGcIxi/ED7EgfCA2iCtjBrHrxAFIbsssFq6JbR46Sc5gXFAqi498Zku4w==;
 DKIM-Signature: v=1; a=ed25519-sha256; s=202507e; d=mainlining.org; c=relaxed/relaxed;
-	h=To:Message-Id:Date:Subject:From; t=1763328958; bh=447xCEb0MWnl+oxdr0W5EbF
-	9+TtFVcxwx4KvSP/vras=; b=mu7C1iQi07HLmvNxZomFxJyAQw+8C0Sk6CDjS6yhIqVJR9DjjH
-	BaaWb1zovfnOT6hP+Max5spxKhRayZiwumDQ==;
+	h=To:Message-Id:Subject:Date:From; t=1763331019; bh=Ba+iBzT9nytvBVNltmmGAZh
+	GvCdcPk+aKxnOb12hNNo=; b=UoAwPNX4yyW9peHXSgdctqTf04DtM3DzEjPTlWILLXQLyf4Owl
+	nhXT06MEoh2hL8Rmno0i9Up2rF9XMgbJf1Dw==;
 From: =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
-Subject: [PATCH 0/4] Add Global Clock Controller for MSM8940 and SDM439
-Date: Sun, 16 Nov 2025 22:35:55 +0100
-Message-Id: <20251116-gcc-msm8940-sdm439-v1-0-7c0dc89c922c@mainlining.org>
+Date: Sun, 16 Nov 2025 23:10:17 +0100
+Subject: [PATCH 1/4] dt-bindings: clock: gcc-msm8917: Add missing MDSS
+ reset
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -39,52 +40,46 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-B4-Tracking: v=1; b=H4sIALtDGmkC/x3MQQqEMAxA0atI1gaMdor1KuLCSaNmUZUGRBDvP
- mWWb/H/AyZZxWCoHshyqemxF1BdAW/zvgpqLIa2aT9E5HFlxmSpD65Bi8l1AV3nQ4yev0weSnh
- mWfT+T8fpfX/5LsDDZAAAAA==
-X-Change-ID: 20251116-gcc-msm8940-sdm439-4369dd6cbc16
+Message-Id: <20251116-mdss-resets-msm8917-msm8937-v1-1-08051386779b@mainlining.org>
+References: <20251116-mdss-resets-msm8917-msm8937-v1-0-08051386779b@mainlining.org>
+In-Reply-To: <20251116-mdss-resets-msm8917-msm8937-v1-0-08051386779b@mainlining.org>
 To: Bjorn Andersson <andersson@kernel.org>, 
  Michael Turquette <mturquette@baylibre.com>, 
  Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Adam Skladowski <a_skl39@protonmail.com>, 
- Sireesh Kodali <sireeshkodali@protonmail.com>
+ Conor Dooley <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
 Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>, 
- Lanik <daniilt971@gmail.com>
+ =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1763328958; l=960;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1763331018; l=687;
  i=barnabas.czeman@mainlining.org; s=20240730; h=from:subject:message-id;
- bh=5PIxcua6nsz58aKI7AnuptIEDXao5NQgM/24BQf9S0U=;
- b=M7tLtFwSu02B9PFfIpqHz2KUBCOJT1PgrpO0YjxXgiLqS24+mtFOweHcCdYaV1gLHp3xXiXNd
- hBj3mf07K93A2+A9Wp6JRsH5Y0i8W47VS9RhDynlZlQghP1Hlw8flML
+ bh=DwU8xmE8fnDnLJrwHBqWMO3H0UmHYjaJf5pOq/SZlm4=;
+ b=NAVAvwW2zYFaHIzTv2F+OYCeTrueJE3Yx8gm1j5w9fRwo7Td1icngq7Jpa2msjB6XHMu6D7ws
+ g2trw+4JmntC3cTUOFPkQQgVLLT6Si/yw4ibhzRdOst0nxeFF0GDHSu
 X-Developer-Key: i=barnabas.czeman@mainlining.org; a=ed25519;
  pk=TWUSIGgwW/Sn4xnX25nw+lszj1AT/A3bzkahn7EhOFc=
 
-Add GCC support for MSM8940 and SDM439.
+Add definition for MDSS reset can be found on MSM8917 and MSM8937.
 
 Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
 ---
-Barnabás Czémán (2):
-      dt-bindings: clock: qcom: Add MSM8940 Global Clock Controller
-      dt-bindings: clock: qcom: Add SDM439 Global Clock Controller
+ include/dt-bindings/clock/qcom,gcc-msm8917.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-Lanik (2):
-      clk: qcom: gcc: Add support for Global Clock controller found on MSM8940
-      clk: qcom: gcc: Add support for Global Clock controller found on SDM439
+diff --git a/include/dt-bindings/clock/qcom,gcc-msm8917.h b/include/dt-bindings/clock/qcom,gcc-msm8917.h
+index 4e3897b3669d..4265460bfb30 100644
+--- a/include/dt-bindings/clock/qcom,gcc-msm8917.h
++++ b/include/dt-bindings/clock/qcom,gcc-msm8917.h
+@@ -194,6 +194,7 @@
+ #define GCC_QUSB2_PHY_BCR			2
+ #define GCC_USB_HS_BCR				3
+ #define GCC_USB2_HS_PHY_ONLY_BCR		4
++#define GCC_MDSS_BCR				5
+ 
+ /* GDSCs */
+ #define CPP_GDSC				0
 
- .../bindings/clock/qcom,gcc-msm8953.yaml           |   6 +-
- drivers/clk/qcom/Kconfig                           |   6 +-
- drivers/clk/qcom/gcc-msm8917.c                     | 286 +++++++++++++++++++++
- include/dt-bindings/clock/qcom,gcc-msm8917.h       |   1 +
- 4 files changed, 294 insertions(+), 5 deletions(-)
----
-base-commit: cad72a2aa582a0ca182ef1977dc45ff2a0bfb71e
-change-id: 20251116-gcc-msm8940-sdm439-4369dd6cbc16
-
-Best regards,
 -- 
-Barnabás Czémán <barnabas.czeman@mainlining.org>
+2.51.2
 
