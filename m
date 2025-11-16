@@ -1,45 +1,44 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7145E29E0E9;
-	Sun, 16 Nov 2025 11:25:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5476B20C023;
+	Sun, 16 Nov 2025 11:29:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763292337; cv=none; b=b1+9ivpveJEkBuMWz378XsFzaQCWkbwgdQuF5OGzwhWeQ73Tmd1QPrBmG6CZkG5AlRck9uRPDAJWVTI37s0lZVLASxZJm8pIK6u3cWiTr5TVClxUm1GrO3cwAfD4TTXIl0Ei8Sj3o25qVZVKmCWumlJ5bRx8In4XIBkxJlUHhm4=
+	t=1763292570; cv=none; b=tfh5KmZq1BOR+HJmUABaj4DMvuDA2qfIwX0r7j1NtakFPGAcXpdrn8g/wCA0uuUqwgD7f8Pm8Ex1R0SbASStstUbytVKrE0VGsoIOmLbz0n6VnBQo8L13Fv9B4MArhxQ/Gx+deoPBT/nrP/BtDz3jlT2WNsNOeVNw4qc5x4AcNM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763292337; c=relaxed/simple;
-	bh=oyNlEgEWKEr9utUc/8CdQXVjJlLilqYmewQphb3NJZ4=;
+	s=arc-20240116; t=1763292570; c=relaxed/simple;
+	bh=mnXvqYmImcinYneeN4zW9LnuvANHy8IWtl4d1UPxOE8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V7vfjdsHhoF/tG9brjmkLh7tByI7JfXwAnpo4qfODLLEytBY/5bniZYDRUXbjbDbvfN/JDmmfmuOaGg4qPr3O0+KUHTMQsfu52gFohofjHMNFKvWM8N+L2adlpw8U6oWIe2zf4/eni8sw6Z95mAIs7963gvK74074Qe8XVr1R8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FSPrTJ7C; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=ApON9HvlaLpBouKvTrkKcy8SE8Zb+dl8dJTdKSx5wDNfcP+DzPYcfQ8h3p81/dUP4QpaQ/KJpIHdRQ2Me8OLCr1KiCJUZgOytiZDiI+gVlgyblvsM8imOsVo7m0E8gU4U4vyE5OcsCn9+wXyPhKlM4sfGSqdDLrGQWfjB5l7ZHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wzunf4+D; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FSPrTJ7C"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0933C4CEF5;
-	Sun, 16 Nov 2025 11:25:36 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wzunf4+D"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A557C4CEF1;
+	Sun, 16 Nov 2025 11:29:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763292337;
-	bh=oyNlEgEWKEr9utUc/8CdQXVjJlLilqYmewQphb3NJZ4=;
+	s=k20201202; t=1763292569;
+	bh=mnXvqYmImcinYneeN4zW9LnuvANHy8IWtl4d1UPxOE8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FSPrTJ7CXRqauAGRZ+rELGN16drTw7HnMRpy0J7EvYk5KpumKku6laRJhPpv0Y0Dv
-	 vDIR6cw9rmYrIK3iNG52PTztqrtu8SIjhRNkWKhGNBm44Bbx2lBXife3yWLCgPpLYJ
-	 QIv9vjUxxH7e+frnLe7wQnAHpBCYjaShHaTOhyjVUxi0mGR+rFk5ZV3qdxV757iLxx
-	 3xcYaGY64crmuka+B7QJIVLaZk64jr3fULYVKmiQzpTxKd/r60y76mNsHBxqzo/sth
-	 0PgAkgqEnYn1qPFTHgu+hREmRHSPKxNJkOJIvSpKFrOQIKtcUHtd+eEU3pBIZc1G9T
-	 1SQml1382O/hA==
-Date: Sun, 16 Nov 2025 12:25:34 +0100
+	b=Wzunf4+Dqpm8I172TRzSWUXI6UzmdSlHBq8WRdCWcS94xCaQm+lKMWs54tSMmFeSu
+	 0GmB/twTiwhYFSrxFAG1f3TYhJ7Gd42+wN5/tmmAJRuT3km0Uq2dRgy6vQDE+FSKSG
+	 Ks6rda4N7Eam799dwq3KdZDNuxIqAwMe6/i4Iy++9UxUjxAMwD/tZB3XJCg9TygBmi
+	 yYG3g3vk3adHL/vlhpDzM0UjZjNeiTH2SelYpRF+zwBb06K7yET+XUXd8Ftwiw67CA
+	 p8+z0LYsDz/GVpjoHsbqJqVqSwlQXit2P5MxXdrnVIIAUvONjeYP4QsV9P4aJMlu3n
+	 VoSpxAaT3fE+w==
+Date: Sun, 16 Nov 2025 12:29:27 +0100
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Alexey Minnekhanov <alexeymin@postmarketos.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
-	~postmarketos/upstreaming@lists.sr.ht
-Subject: Re: [PATCH v2 1/3] dt-bindings: clock: mmcc-sdm660: Add missing MDSS
- reset
-Message-ID: <20251116-caped-light-skunk-82c1ea@kuoka>
-References: <20251116-sdm660-mdss-reset-v2-0-6219bec0a97f@postmarketos.org>
- <20251116-sdm660-mdss-reset-v2-1-6219bec0a97f@postmarketos.org>
+To: Jernej Skrabec <jernej.skrabec@gmail.com>
+Cc: wens@csie.org, samuel@sholland.org, mripard@kernel.org, 
+	maarten.lankhorst@linux.intel.com, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, mturquette@baylibre.com, 
+	sboyd@kernel.org, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH 4/7] dt-bindings: display: allwinner: Add DE33 planes
+Message-ID: <20251116-humongous-ant-from-betelgeuse-c0c416@kuoka>
+References: <20251115141347.13087-1-jernej.skrabec@gmail.com>
+ <20251115141347.13087-5-jernej.skrabec@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -48,22 +47,62 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251116-sdm660-mdss-reset-v2-1-6219bec0a97f@postmarketos.org>
+In-Reply-To: <20251115141347.13087-5-jernej.skrabec@gmail.com>
 
-On Sun, Nov 16, 2025 at 04:12:33AM +0300, Alexey Minnekhanov wrote:
-> Add definition for display subsystem reset control, so display
-> driver can reset display controller properly, clearing any
-> configuration left there by bootloader. Since 6.17 after
-> PM domains rework it became necessary for display to function.
+On Sat, Nov 15, 2025 at 03:13:44PM +0100, Jernej Skrabec wrote:
+> Allwinner Display Engine 3.3 contains planes, which are shared resources
+> between all mixers present in SoC. They can be assigned to specific
+> mixer by using registers which reside in display clocks MMIO.
 > 
-> Fixes: 0e789b491ba0 ("pmdomain: core: Leave powered-on genpds on until sync_state")
-> Cc: <stable@vger.kernel.org> # 6.17
-> Signed-off-by: Alexey Minnekhanov <alexeymin@postmarketos.org>
+> Add a binding for them.
+> 
+> Signed-off-by: Jernej Skrabec <jernej.skrabec@gmail.com>
 > ---
->  include/dt-bindings/clock/qcom,mmcc-sdm660.h | 1 +
->  1 file changed, 1 insertion(+)
+>  .../allwinner,sun50i-h616-de33-planes.yaml    | 44 +++++++++++++++++++
+>  1 file changed, 44 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/display/allwinner,sun50i-h616-de33-planes.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/display/allwinner,sun50i-h616-de33-planes.yaml b/Documentation/devicetree/bindings/display/allwinner,sun50i-h616-de33-planes.yaml
+> new file mode 100644
+> index 000000000000..801e5068a6b5
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/display/allwinner,sun50i-h616-de33-planes.yaml
+> @@ -0,0 +1,44 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/display/allwinner,sun50i-h616-de33-planes.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Allwinner H616 Display Engine 3.3 planes
+> +
+> +maintainers:
+> +  - Jernej Skrabec <jernej.skrabec@gmail.com>
+> +
+> +description: |
 
-Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+Do not need '|' unless you need to preserve formatting.
+
+> +  Display Engine 3.3 planes are independent of mixers, contrary to
+> +  previous generations of Display Engine. Planes can be assigned to
+> +  mixers independently and even dynamically during runtime.
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - allwinner,sun50i-h616-de33-planes
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  allwinner,plane-mapping:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description: Phandle of Display Engine clock node
+
+You description is almost duplicating property name. You need to explain
+here how this device uses them.
+
+Esxpecially that clocks do not go via custom properties.
 
 Best regards,
 Krzysztof
