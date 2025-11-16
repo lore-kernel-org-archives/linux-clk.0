@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5476B20C023;
-	Sun, 16 Nov 2025 11:29:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D380D156661;
+	Sun, 16 Nov 2025 11:33:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763292570; cv=none; b=tfh5KmZq1BOR+HJmUABaj4DMvuDA2qfIwX0r7j1NtakFPGAcXpdrn8g/wCA0uuUqwgD7f8Pm8Ex1R0SbASStstUbytVKrE0VGsoIOmLbz0n6VnBQo8L13Fv9B4MArhxQ/Gx+deoPBT/nrP/BtDz3jlT2WNsNOeVNw4qc5x4AcNM=
+	t=1763292802; cv=none; b=LAQikhnvbeNelj5LUkotxY63oI8QpSPmBDAEIhmtVZXyxkYp3hjfiGs1GQSuCtyH8Kwst58sIAO7KiLKqRjsU1QoDnboiNdDGuems+QfwgaIYn+p4COpmhp2MQCDThjKe97xMzWgI0l+PfAJsRw0PFWt55pTYeaFSBQyNhZTiIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763292570; c=relaxed/simple;
-	bh=mnXvqYmImcinYneeN4zW9LnuvANHy8IWtl4d1UPxOE8=;
+	s=arc-20240116; t=1763292802; c=relaxed/simple;
+	bh=aTVKcWg8+7e+j27IM4wyG63oyRGSBSps9hXBl5rry+4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ApON9HvlaLpBouKvTrkKcy8SE8Zb+dl8dJTdKSx5wDNfcP+DzPYcfQ8h3p81/dUP4QpaQ/KJpIHdRQ2Me8OLCr1KiCJUZgOytiZDiI+gVlgyblvsM8imOsVo7m0E8gU4U4vyE5OcsCn9+wXyPhKlM4sfGSqdDLrGQWfjB5l7ZHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wzunf4+D; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=lQ8RWr9fyTZiAgICFRLIdRwUGmoUVzOp/4XxbjHYB62le2bng1KY/lhOs2Qu0q0tkrPCJ3zKdbLJIefql94kiZO2K+8EElFYxceD/j4xKTGD1JERcoZSlbEVIKNflcyomcdR3tuf4JcaEtLDcVXilc2NmPE3epQZmzMsEl/AHWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O9lwb9Mt; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wzunf4+D"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A557C4CEF1;
-	Sun, 16 Nov 2025 11:29:29 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O9lwb9Mt"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A80B7C4CEF1;
+	Sun, 16 Nov 2025 11:33:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763292569;
-	bh=mnXvqYmImcinYneeN4zW9LnuvANHy8IWtl4d1UPxOE8=;
+	s=k20201202; t=1763292802;
+	bh=aTVKcWg8+7e+j27IM4wyG63oyRGSBSps9hXBl5rry+4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Wzunf4+Dqpm8I172TRzSWUXI6UzmdSlHBq8WRdCWcS94xCaQm+lKMWs54tSMmFeSu
-	 0GmB/twTiwhYFSrxFAG1f3TYhJ7Gd42+wN5/tmmAJRuT3km0Uq2dRgy6vQDE+FSKSG
-	 Ks6rda4N7Eam799dwq3KdZDNuxIqAwMe6/i4Iy++9UxUjxAMwD/tZB3XJCg9TygBmi
-	 yYG3g3vk3adHL/vlhpDzM0UjZjNeiTH2SelYpRF+zwBb06K7yET+XUXd8Ftwiw67CA
-	 p8+z0LYsDz/GVpjoHsbqJqVqSwlQXit2P5MxXdrnVIIAUvONjeYP4QsV9P4aJMlu3n
-	 VoSpxAaT3fE+w==
-Date: Sun, 16 Nov 2025 12:29:27 +0100
+	b=O9lwb9MtrAwaMgWxarcIBMhbs88fyByN1BXLpUCIMMB9VGpbHAI70G8h6pfD8VPMh
+	 elnjiiZFkkuJlAohkMpH3CJr9VOmJ3ZtZfrB+HAy0/p+kXeaQcXjHpa5JC0bqeyFJA
+	 2YGALecHiW3KJV4NejWLA4Oq6BSoTDsOp69+AuqEb3a+DASnPHhQH5vbFCoJsIcFSA
+	 mIY66abzLRKzkOeIs36AzO9AvLG9h1xpzpJcCGWkcK3xYlfgaiWpLfYksTYv9zOsOx
+	 JT+pdLB0NdaAwU+awik54ZLMs2lh3XHJi6wH/k/4bZGlQPOzmEs0e1jGY6QzfT6Fr0
+	 PwW+fxwZuD+HA==
+Date: Sun, 16 Nov 2025 12:33:19 +0100
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Jernej Skrabec <jernej.skrabec@gmail.com>
 Cc: wens@csie.org, samuel@sholland.org, mripard@kernel.org, 
@@ -35,10 +35,11 @@ Cc: wens@csie.org, samuel@sholland.org, mripard@kernel.org,
 	sboyd@kernel.org, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
 	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
 	linux-clk@vger.kernel.org
-Subject: Re: [PATCH 4/7] dt-bindings: display: allwinner: Add DE33 planes
-Message-ID: <20251116-humongous-ant-from-betelgeuse-c0c416@kuoka>
+Subject: Re: [PATCH 6/7] dt-bindings: display: allwinner: Update H616 DE33
+ binding
+Message-ID: <20251116-pigeon-of-optimal-blizzard-2cb3b3@kuoka>
 References: <20251115141347.13087-1-jernej.skrabec@gmail.com>
- <20251115141347.13087-5-jernej.skrabec@gmail.com>
+ <20251115141347.13087-7-jernej.skrabec@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -47,62 +48,29 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251115141347.13087-5-jernej.skrabec@gmail.com>
+In-Reply-To: <20251115141347.13087-7-jernej.skrabec@gmail.com>
 
-On Sat, Nov 15, 2025 at 03:13:44PM +0100, Jernej Skrabec wrote:
-> Allwinner Display Engine 3.3 contains planes, which are shared resources
-> between all mixers present in SoC. They can be assigned to specific
-> mixer by using registers which reside in display clocks MMIO.
+On Sat, Nov 15, 2025 at 03:13:46PM +0100, Jernej Skrabec wrote:
+> As it turns out, current H616 DE33 binding was written based on
+> incomplete understanding of DE33 design. Namely, planes are shared
+> resource and not tied to specific mixer, which was the case for previous
+> generations of Display Engine (DE3 and earlier).
 > 
-> Add a binding for them.
+> This means that current DE33 binding doesn't properly reflect HW and
+> using it would mean that second mixer (used for second display output)
+> can't be supported.
 > 
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@gmail.com>
-> ---
->  .../allwinner,sun50i-h616-de33-planes.yaml    | 44 +++++++++++++++++++
->  1 file changed, 44 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/display/allwinner,sun50i-h616-de33-planes.yaml
+> Update DE33 mixer binding so instead of referencing planes register
+> space, it contains phandle to newly introduced DE33 planes node.
 > 
-> diff --git a/Documentation/devicetree/bindings/display/allwinner,sun50i-h616-de33-planes.yaml b/Documentation/devicetree/bindings/display/allwinner,sun50i-h616-de33-planes.yaml
-> new file mode 100644
-> index 000000000000..801e5068a6b5
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/display/allwinner,sun50i-h616-de33-planes.yaml
-> @@ -0,0 +1,44 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/display/allwinner,sun50i-h616-de33-planes.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Allwinner H616 Display Engine 3.3 planes
-> +
-> +maintainers:
-> +  - Jernej Skrabec <jernej.skrabec@gmail.com>
-> +
-> +description: |
+> There is no user of this binding yet, so changes can be made safely,
+> without breaking any backward compatibility.
 
-Do not need '|' unless you need to preserve formatting.
+And why would you configure statically - per soc - always the same plane
+as per mixer? If you do that, it means it is really fixed and internal
+to display engine thus should not be exposed in DT.
 
-> +  Display Engine 3.3 planes are independent of mixers, contrary to
-> +  previous generations of Display Engine. Planes can be assigned to
-> +  mixers independently and even dynamically during runtime.
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - allwinner,sun50i-h616-de33-planes
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  allwinner,plane-mapping:
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +    description: Phandle of Display Engine clock node
-
-You description is almost duplicating property name. You need to explain
-here how this device uses them.
-
-Esxpecially that clocks do not go via custom properties.
+Describing each IP block resource in DT is way too granular.
 
 Best regards,
 Krzysztof
