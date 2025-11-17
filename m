@@ -1,189 +1,121 @@
-Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D1BB30217A;
-	Mon, 17 Nov 2025 16:57:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A3ED2C11DF
+	for <linux-clk@vger.kernel.org>; Mon, 17 Nov 2025 16:59:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763398669; cv=none; b=bwYK3snS8Tbyqd7T5PyQOgJBfrZMQAkIguu8E7faUxBNCkMt5FoXrcC6lKKXmbB+YBjhalkmPZ5rzP4GhBfKVNuCH45l6v2k1dNlXCk+RVXQQj2G/lKv6iLiLQEHPhaSqjZLSmihsEb6rCw9eVxwZgi6UItG5YRkTI3FFSsfZK4=
+	t=1763398784; cv=none; b=N0CGUCqGaTf+6To059z0PC7xq+qg0iOBDK+jZ3PW7zYMqW1fjWxW4QrT6vLeKWS3jTif1kNDUSvpBNG1eYmswz3Nft/9oYwMyzPOnymuXEm8E6bPYfW5PrLlmBkTMThI9cK8iUXD9wz7TwBZe8FI+FopoItz9DAvLGiULzMzdYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763398669; c=relaxed/simple;
-	bh=xO06RRgqBP2BsiQpsl/we/o5YWM8pv0YoQoTIL842yU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=BAObj2h91JEOLbcHOVl00xvxDqEaBOtvqwIyx6LtSvMO93za7IeYXzjLNrowbabKA5n82Y40ZEqjS2bnoqCP8xjC/FlqKKGD6fAMsE3V2r/11wOnHlGPrYQBIjqATsn8806XzATOET4nLn7XDHKDobHEta366wjBj895sePNALM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=fKKesoZA; dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=2lfrcH6I; arc=none smtp.client-ip=5.75.144.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
+	s=arc-20240116; t=1763398784; c=relaxed/simple;
+	bh=YOYx0U3DIgwMBV6M9iV1WVPoF8yWWsRTNsouR/9kN50=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fz2/0b+sSqidW4oLypIFpnZJwBntKNz+Pcf2LtLrPXOP+80AigU8uRVTuHN1q+iiCe/ggzdAoiXyVW7AfvwuVWFAMPItJ0MuHLr/npJJnvXn6k1w9rb4hNW3B2Opw9lkbWFhL0clODLkh5167S8KfohEVoEmPA1a7NOmEgSFru4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LQ2hG4jD; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="fKKesoZA";
-	dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="2lfrcH6I"
-DKIM-Signature: v=1; a=rsa-sha256; s=202507r; d=mainlining.org; c=relaxed/relaxed;
-	h=To:Message-Id:Subject:Date:From; t=1763398643; bh=bNWufHuKYDFnV1FNDz6Fh6g
-	PSlwGckLr1FqoPCfqVqE=; b=fKKesoZAMSUb3x7uvfwpSU/qLpDJAw8rUGOY+PkavBcPwjRsan
-	go2Fl1p47sDr2FcT02kcPDK2Wd7HwGJdZivviRZDFLCVmJB33Vndj9NRDBidvgnEqGx9BjjKog/
-	8ZxsQZfV6x6ZQ/XgLj0VSVyd6XTAnzaiK4zmuMfCiCzFnDGVguUKGWeW+k3Kp8TclBKyAEdYhop
-	HkadyJ/cuibVZAZK3LP9olskubH9wqkK+n3CbSvVp/aaK7ige6Ie24ngwmIDlL/e8hbBon569o2
-	owmBr0ZIhteETR5+FxqL071Uj/1xhQHvi4GShtXBIpkiGlbe5CZICIxkIlPQeB3hiAg==;
-DKIM-Signature: v=1; a=ed25519-sha256; s=202507e; d=mainlining.org; c=relaxed/relaxed;
-	h=To:Message-Id:Subject:Date:From; t=1763398643; bh=bNWufHuKYDFnV1FNDz6Fh6g
-	PSlwGckLr1FqoPCfqVqE=; b=2lfrcH6IYU4GN1BZVkQApECaaTgLnKecPGuDv3jVsg1avcFHF8
-	vM3BuqxdFg5gGq7AZ62pZizO8gGXzz2zLFAg==;
-From: =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
-Date: Mon, 17 Nov 2025 17:57:09 +0100
-Subject: [PATCH v2 4/4] clk: qcom: gcc: Add support for Global Clock
- controller found on SDM439
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LQ2hG4jD"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C36EC4CEF1;
+	Mon, 17 Nov 2025 16:59:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1763398783;
+	bh=YOYx0U3DIgwMBV6M9iV1WVPoF8yWWsRTNsouR/9kN50=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LQ2hG4jDzBqAssRbKCPMsBPyFKyegQktDIBOrZQsI7iZqpyDSmSD1SarGFSwGUExv
+	 q+XPeTU6amyk9sOBA8yUlxyyERRUk4Lz7lqicrbATYQUdleEivHGDA+Jo7Ur49HKML
+	 uD8oflQj8tvxXmxqzlalmiBxANsJJBRuYPrPhssMtjQjvyB8gCRXIu9yQ0/7Kklwxo
+	 gz8fGEWZmLeAla0tinNZn/Y6e0qi8ns+orP9esRMFCD3JCQcrPsrlbsMLBmTbLXMu8
+	 zj8WirCV4cu2Xg8Ve3MPucy+dSkfOtUcNuCMDdEERIM1HwJ3WO429jWsZCJqWUqkdR
+	 PXfjvuNfiCtqw==
+Date: Mon, 17 Nov 2025 16:59:40 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Cc: sboyd@kernel.org, mturquette@baylibre.com, linux-clk@vger.kernel.org,
+	nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
+	conor.dooley@microchip.com
+Subject: Re: [GIT PULL] Microchip clock updates for v6.19
+Message-ID: <20251117-dentist-maimed-67b01dd4af4a@spud>
+References: <20251117163747.211922-1-claudiu.beznea@tuxon.dev>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20251117-gcc-msm8940-sdm439-v2-4-4af57c8bc7eb@mainlining.org>
-References: <20251117-gcc-msm8940-sdm439-v2-0-4af57c8bc7eb@mainlining.org>
-In-Reply-To: <20251117-gcc-msm8940-sdm439-v2-0-4af57c8bc7eb@mainlining.org>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Adam Skladowski <a_skl39@protonmail.com>, 
- Sireesh Kodali <sireeshkodali@protonmail.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>, 
- Daniil Titov <daniilt971@gmail.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1763398640; l=4484;
- i=barnabas.czeman@mainlining.org; s=20240730; h=from:subject:message-id;
- bh=4iYya7m4c1VKYu/N38D8gwQZhGVnVsDrhXO5R//f1zk=;
- b=hbkBuv4pzjPvlVfr3S8EUHpBAHCmWTkU8NdLFp+1521dG2ukdKhv81zVqDM/lmmiUpNMN3d62
- uF4CDErlOUuBB4bw4UOGEpQHYGS1pgPyhkXJpLx3wB6oJkz085T/2Vr
-X-Developer-Key: i=barnabas.czeman@mainlining.org; a=ed25519;
- pk=TWUSIGgwW/Sn4xnX25nw+lszj1AT/A3bzkahn7EhOFc=
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="NcBsPd3wJsQfhg8H"
+Content-Disposition: inline
+In-Reply-To: <20251117163747.211922-1-claudiu.beznea@tuxon.dev>
 
-From: Daniil Titov <daniilt971@gmail.com>
 
-Modify existing MSM8917 driver to support SDM439 SoC. SDM439 SoC has the
-same changes as MSM8937 SoC, but with different gpll3 vco rate and
-different GFX3D clock frequency table.
+--NcBsPd3wJsQfhg8H
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Daniil Titov <daniilt971@gmail.com>
-Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
----
- drivers/clk/qcom/Kconfig       |  4 ++--
- drivers/clk/qcom/gcc-msm8917.c | 49 ++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 51 insertions(+), 2 deletions(-)
+On Mon, Nov 17, 2025 at 06:37:47PM +0200, Claudiu Beznea wrote:
+> The following changes since commit 3a8660878839faadb4f1a6dd72c3179c1df567=
+87:
+>=20
+>   Linux 6.18-rc1 (2025-10-12 13:42:36 -0700)
+>=20
+> are available in the Git repository at:
+>=20
+>   https://git.kernel.org/pub/scm/linux/kernel/git/at91/linux.git tags/clk=
+-microchip-6.19
+>=20
+> for you to fetch changes up to 781f60e45bdfe351aad692ac0fa89e36f8bf4a36:
+>=20
+>   reset: mpfs: add non-auxiliary bus probing (2025-11-11 16:47:24 +0000)
+>=20
+> ----------------------------------------------------------------
+> Microchip clock updates for v6.19
+>=20
+> This update includes:
+> - convert Microchip Polarfire clock controller driver into a MFD driver;
 
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index c2c62b3a5bdc..b74f4bfcbe5e 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -370,12 +370,12 @@ config MSM_GCC_8916
- 	  SD/eMMC, display, graphics, camera etc.
- 
- config MSM_GCC_8917
--	tristate "MSM89(17/37/40)/QM215 Global Clock Controller"
-+	tristate "MSM89(17/37/40)/QM215/SDM439 Global Clock Controller"
- 	depends on ARM64 || COMPILE_TEST
- 	select QCOM_GDSC
- 	help
- 	  Support for the global clock controller on msm8917, msm8937,
--	  msm8940 and qm215 devices.
-+	  msm8940, qm215 and sdm439 devices.
- 	  Say Y if you want to use devices such as UART, SPI i2c, USB,
- 	  SD/eMMC, display, graphics, camera etc.
- 
-diff --git a/drivers/clk/qcom/gcc-msm8917.c b/drivers/clk/qcom/gcc-msm8917.c
-index 6985888def5e..835bc33c05c1 100644
---- a/drivers/clk/qcom/gcc-msm8917.c
-+++ b/drivers/clk/qcom/gcc-msm8917.c
-@@ -978,6 +978,27 @@ static const struct freq_tbl ftbl_gfx3d_clk_src_msm8940[] = {
- 	{ }
- };
- 
-+static const struct freq_tbl ftbl_gfx3d_clk_src_sdm439[] = {
-+	F(19200000, P_XO, 1, 0, 0),
-+	F(50000000, P_GPLL0, 16, 0, 0),
-+	F(80000000, P_GPLL0, 10, 0, 0),
-+	F(100000000, P_GPLL0, 8, 0, 0),
-+	F(160000000, P_GPLL0, 5, 0, 0),
-+	F(200000000, P_GPLL0, 4, 0, 0),
-+	F(216000000, P_GPLL6, 5, 0, 0),
-+	F(228570000, P_GPLL0, 3.5, 0, 0),
-+	F(240000000, P_GPLL6, 4.5, 0, 0),
-+	F(266670000, P_GPLL0, 3, 0, 0),
-+	F(320000000, P_GPLL0, 2.5, 0, 0),
-+	F(355200000, P_GPLL3, 1, 0, 0),
-+	F(400000000, P_GPLL0, 2, 0, 0),
-+	F(450000000, P_GPLL3, 1, 0, 0),
-+	F(510000000, P_GPLL3, 1, 0, 0),
-+	F(560000000, P_GPLL3, 1, 0, 0),
-+	F(650000000, P_GPLL3, 1, 0, 0),
-+	{ }
-+};
-+
- static struct clk_rcg2 gfx3d_clk_src = {
- 	.cmd_rcgr = 0x59000,
- 	.hid_width = 5,
-@@ -4060,6 +4081,16 @@ static const struct qcom_cc_desc gcc_msm8940_desc = {
- 	.num_gdscs = ARRAY_SIZE(gcc_msm8937_gdscs),
- };
- 
-+static const struct qcom_cc_desc gcc_sdm439_desc = {
-+	.config = &gcc_msm8917_regmap_config,
-+	.clks = gcc_msm8937_clocks,
-+	.num_clks = ARRAY_SIZE(gcc_msm8937_clocks),
-+	.resets = gcc_msm8917_resets,
-+	.num_resets = ARRAY_SIZE(gcc_msm8917_resets),
-+	.gdscs = gcc_msm8937_gdscs,
-+	.num_gdscs = ARRAY_SIZE(gcc_msm8937_gdscs),
-+};
-+
- static void msm8937_clock_override(void)
- {
- 	/* GPLL3 750MHz configuration */
-@@ -4085,6 +4116,21 @@ static void msm8937_clock_override(void)
- 	usb_hs_system_clk_src.freq_tbl = ftbl_usb_hs_system_clk_src_msm8937;
- }
- 
-+static void sdm439_clock_override(void)
-+{
-+	vcodec0_clk_src.parent_map = gcc_cpp_map;
-+	vcodec0_clk_src.clkr.hw.init = &vcodec0_clk_src_init_msm8937;
-+
-+	vfe0_clk_src.freq_tbl = ftbl_vfe_clk_src_msm8937;
-+	vfe1_clk_src.freq_tbl = ftbl_vfe_clk_src_msm8937;
-+	cpp_clk_src.freq_tbl = ftbl_cpp_clk_src_msm8937;
-+	vcodec0_clk_src.freq_tbl = ftbl_vcodec0_clk_src_msm8937;
-+	gfx3d_clk_src.freq_tbl = ftbl_gfx3d_clk_src_sdm439;
-+	csi0phytimer_clk_src.freq_tbl = ftbl_csi_phytimer_clk_src_msm8937;
-+	csi1phytimer_clk_src.freq_tbl = ftbl_csi_phytimer_clk_src_msm8937;
-+	usb_hs_system_clk_src.freq_tbl = ftbl_usb_hs_system_clk_src_msm8937;
-+}
-+
- static int gcc_msm8917_probe(struct platform_device *pdev)
- {
- 	struct regmap *regmap;
-@@ -4100,6 +4146,8 @@ static int gcc_msm8917_probe(struct platform_device *pdev)
- 	} else if (gcc_desc == &gcc_msm8940_desc) {
- 		msm8937_clock_override();
- 		gfx3d_clk_src.freq_tbl = ftbl_gfx3d_clk_src_msm8940;
-+	} else if (gcc_desc == &gcc_sdm439_desc) {
-+		sdm439_clock_override();
- 	}
- 
- 	regmap = qcom_cc_map(pdev, gcc_desc);
-@@ -4116,6 +4164,7 @@ static const struct of_device_id gcc_msm8917_match_table[] = {
- 	{ .compatible = "qcom,gcc-qm215", .data = &gcc_qm215_desc },
- 	{ .compatible = "qcom,gcc-msm8937", .data = &gcc_msm8937_desc },
- 	{ .compatible = "qcom,gcc-msm8940", .data = &gcc_msm8940_desc },
-+	{ .compatible = "qcom,gcc-sdm439", .data = &gcc_sdm439_desc },
- 	{},
- };
- MODULE_DEVICE_TABLE(of, gcc_msm8917_match_table);
+If anything it is really the opposite I think, as it did the MFD-type stuff
+before my series, with an iomem pointer and readl()/writel() accessors. It
+just does it with a regmap now instead. The other half of the change actual=
+ly
+makes it lose the MFD-type stuff where the reset hardware is considered part
+of the clock node and so the reset driver needed the clock driver to
+register it using auxdev. For new devicetrees, the clock driver only will
+handle clocks, with no MFD role at all. Of course, the old MFD-type
+behaviour is retained in an alternative code path to handle the old
+existing devicetrees.
 
--- 
-2.51.2
+>   with it, the reset control driver was included as it now depends on the
+>   regmap registered by the clock controller driver
+> - a cleanup patch for the LAN966X driver
+>=20
+> ----------------------------------------------------------------
+> Conor Dooley (3):
+>       dt-bindings: clk: microchip: mpfs: remove first reg region
+>       clk: microchip: mpfs: use regmap for clocks
+>       reset: mpfs: add non-auxiliary bus probing
+>=20
+> Robert Marko (1):
+>       clk: lan966x: remove unused dt-bindings include
+>=20
+>  .../bindings/clock/microchip,mpfs-clkcfg.yaml      |  36 ++--
+>  drivers/clk/clk-lan966x.c                          |   2 -
+>  drivers/clk/microchip/Kconfig                      |   2 +
+>  drivers/clk/microchip/clk-mpfs.c                   | 227 +++++++++++++++=
+++----
+>  drivers/reset/Kconfig                              |   1 +
+>  drivers/reset/reset-mpfs.c                         |  91 +++++----
+>  include/soc/microchip/mpfs.h                       |   3 +-
+>  7 files changed, 266 insertions(+), 96 deletions(-)
 
+--NcBsPd3wJsQfhg8H
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaRtUfAAKCRB4tDGHoIJi
+0injAP46aHRGLRpWJHv/O3D+kzP35lquJHhy/DaXkuMImN0SggEAi1zotrUDX1rJ
+w4UVTQCmLjcwHQ7opGA7TcMjGjyhZgo=
+=ReM8
+-----END PGP SIGNATURE-----
+
+--NcBsPd3wJsQfhg8H--
