@@ -1,37 +1,37 @@
 Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 026E3324B24;
-	Mon, 17 Nov 2025 17:17:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84B9F32ABD0;
+	Mon, 17 Nov 2025 17:18:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763399883; cv=none; b=ahfmn7lHoVG65qRDxBkoRkYg0Ljrvoo2EWIHWCXJWr3hqLpXLtv5PBIA81u48xKJKmt7aDJ2Ivko0+jdR4WAxfns+PAcTa+AUDHe173eQP/0FiqA+kWIR9rKp15I/gArByT878S8CoTsFNZ6h5JOWL+HmTJ58Wja/4YO1c3ZZsI=
+	t=1763399886; cv=none; b=etUHwuNaOdJUmSV2sYdkdRlL5RvJ2NO1KuX8N+9BOZDrNS3ZP52jeWX+Z5wpeUYpX2Wu8p6/2z1Iy6LRjTOwCYMxn0avg/unradY6lw+8dYw9I83GNtJ4kep8Xi6hrieudSawpSG9E7W7xhJIB8kGxddTultxa8kihc6aKoClNM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763399883; c=relaxed/simple;
-	bh=rxfig/ONBTPdbAgfRc9CP91PYOjXuMnr/bUGii65pvM=;
+	s=arc-20240116; t=1763399886; c=relaxed/simple;
+	bh=DwU8xmE8fnDnLJrwHBqWMO3H0UmHYjaJf5pOq/SZlm4=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Iv+Kuc9yWCdE5vJEvsE1lIHorNhbVYmvlvysINt/hPEk6oOD2wAThQEpiPnoa2Pp+SHX6RoTw2I9TRQGjaIHd2dZE7j9T2J+R2IRRlKI6ynLQIK3X29YR7++p3DWWWvXvZWAxoAsnTY9bJPgEbemp54AU7ycAZf2/yj9nagX5ys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=o4ybw177; dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=awGYAf4q; arc=none smtp.client-ip=5.75.144.95
+	 In-Reply-To:To:Cc; b=SegQ1uJlUCBlfwxyLdvEsyTS/dOKWo7MGu/rzTsXR1bNHnr4RS9VCoEJ54az1klhhju0xTFAksgZCfjZBnWVXka7tJGFw9qGAEKcmi718RgI8CvFPHNkDjvHimjuXL6Gj8P3DaL5GALHJy/KFuHL+W4mk+f8nLbZaT8JYDNZFtI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=e3M9itpm; dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=d+9BBTLo; arc=none smtp.client-ip=5.75.144.95
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="o4ybw177";
-	dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="awGYAf4q"
+	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="e3M9itpm";
+	dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="d+9BBTLo"
 DKIM-Signature: v=1; a=rsa-sha256; s=202507r; d=mainlining.org; c=relaxed/relaxed;
-	h=To:Message-Id:Subject:Date:From; t=1763399877; bh=aCBI0jo035ZpoTolTkYT///
-	C1R8Q3uPGYK/zcmAOhoY=; b=o4ybw177iQrb5QlwAIgbCqbtQS5ZTFhDXikHKdJLSy9MdKyr6V
-	8WBHd1KZ6eYNiFVoFTbmZmOfivCdh8Hl7+Toqp/med59zE5iaOxJ7yzF6RQvT+cWXSgWQrWe86b
-	tjXj7PwTKnOyN/s9SO/bHZwRK+gaaCoCBsLnG2h1Qpclv369WShvDaVwwWPr/QAWgJ1Dk8PO9Sg
-	pjXUwtuPK8LwgczWV8ucUFNrjxrX/vpxymvnrv6FJUyw42bWF+Gi1yeqD/hsOU42N3tpn4coDk0
-	TtRvg/a7/RlmvDfsQT96gdgeF5AseMjmgk6rOpQLEcq/HHTaz7IpZ7kt9z9RtrhpoCA==;
+	h=To:Message-Id:Subject:Date:From; t=1763399876; bh=Ba+iBzT9nytvBVNltmmGAZh
+	GvCdcPk+aKxnOb12hNNo=; b=e3M9itpmRdtVobAifC2INbMKTzmjWuS973nZ8P0nrYONEe476H
+	obvvvBfyZ8iRRxHRbCaig2EKFPyxyuW9JYdCyRjHxok6w8pKprdUa0iSMlDQY1o2cJphGrX4MqP
+	JY/gTkXlqb09erOW/CYzQOlFX9OEsFg4qTnHC4HEmcK1BQmEmVUxgEcmu25ee0696zJIo3j7zs1
+	WV995ZgqA0P/J4CRxG3WiDlTiUqg85AhQQQbFstxkmtx8sq913DkLH572tLFitmuUltKdqxGO0s
+	JUouy3LSRlcrzetDpQltgDw/OuymgHFX8COKcSsAboXcFz15jB9Q826ESNniQunI2Vw==;
 DKIM-Signature: v=1; a=ed25519-sha256; s=202507e; d=mainlining.org; c=relaxed/relaxed;
-	h=To:Message-Id:Subject:Date:From; t=1763399877; bh=aCBI0jo035ZpoTolTkYT///
-	C1R8Q3uPGYK/zcmAOhoY=; b=awGYAf4qyEKCT4ig9Y9cqFfJL92WAwju0V3Kf/aUJqROk7GUzm
-	W9zGqyycra7tGCEvUSdHpYWKMxV4eIxIQ1AA==;
+	h=To:Message-Id:Subject:Date:From; t=1763399876; bh=Ba+iBzT9nytvBVNltmmGAZh
+	GvCdcPk+aKxnOb12hNNo=; b=d+9BBTLoTE1xjfFVO90j5AL1a7cdvCIlugVSbV5kGyJudh6HGC
+	OlQXko+lBOtAGrvGF5eFCFsatkL42MfhJdAg==;
 From: =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
-Date: Mon, 17 Nov 2025 18:17:54 +0100
-Subject: [PATCH v2 3/4] arm64: dts: qcom: msm8917: add reset for display
- subsystem
+Date: Mon, 17 Nov 2025 18:17:52 +0100
+Subject: [PATCH v2 1/4] dt-bindings: clock: gcc-msm8917: Add missing MDSS
+ reset
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -40,7 +40,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20251117-mdss-resets-msm8917-msm8937-v2-3-a7e9bbdaac96@mainlining.org>
+Message-Id: <20251117-mdss-resets-msm8917-msm8937-v2-1-a7e9bbdaac96@mainlining.org>
 References: <20251117-mdss-resets-msm8917-msm8937-v2-0-a7e9bbdaac96@mainlining.org>
 In-Reply-To: <20251117-mdss-resets-msm8917-msm8937-v2-0-a7e9bbdaac96@mainlining.org>
 To: Bjorn Andersson <andersson@kernel.org>, 
@@ -50,38 +50,35 @@ To: Bjorn Andersson <andersson@kernel.org>,
  Conor Dooley <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
 Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+ =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1763399874; l=748;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1763399874; l=687;
  i=barnabas.czeman@mainlining.org; s=20240730; h=from:subject:message-id;
- bh=rxfig/ONBTPdbAgfRc9CP91PYOjXuMnr/bUGii65pvM=;
- b=KVvEBSaxq9S5xYhvki/XJFItq0GSRK+tmnSMFroMIRDdkwkNbPUoE3NhpsLARGBKxE619qL1a
- GXu574MhMb+AB2Q9eeH+4A+R00amiLA2Y1IOfMzQTKOB9blE4gJEduY
+ bh=DwU8xmE8fnDnLJrwHBqWMO3H0UmHYjaJf5pOq/SZlm4=;
+ b=igZfHRIfDv6BkfegZ+RQAPXjo120D/dGD0mQx0fBxhhkaVwPDOVd5IqyxYuGpamR1dl+Ki6mD
+ 657HgvQjfa9A3T9AgK3jQGYtXQahVJz6hO9TL++04BXqEHe5TV+4xBE
 X-Developer-Key: i=barnabas.czeman@mainlining.org; a=ed25519;
  pk=TWUSIGgwW/Sn4xnX25nw+lszj1AT/A3bzkahn7EhOFc=
 
-Add reset for display subsystem.
+Add definition for MDSS reset can be found on MSM8917 and MSM8937.
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
 ---
- arch/arm64/boot/dts/qcom/msm8917.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/dt-bindings/clock/qcom,gcc-msm8917.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8917.dtsi b/arch/arm64/boot/dts/qcom/msm8917.dtsi
-index 8a642fce2e40..6251189b8e6d 100644
---- a/arch/arm64/boot/dts/qcom/msm8917.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8917.dtsi
-@@ -996,7 +996,7 @@ mdss: display-subsystem@1a00000 {
- 			clock-names = "iface",
- 				      "bus",
- 				      "vsync";
--
-+			resets = <&gcc GCC_MDSS_BCR>;
- 			interrupts = <GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>;
+diff --git a/include/dt-bindings/clock/qcom,gcc-msm8917.h b/include/dt-bindings/clock/qcom,gcc-msm8917.h
+index 4e3897b3669d..4265460bfb30 100644
+--- a/include/dt-bindings/clock/qcom,gcc-msm8917.h
++++ b/include/dt-bindings/clock/qcom,gcc-msm8917.h
+@@ -194,6 +194,7 @@
+ #define GCC_QUSB2_PHY_BCR			2
+ #define GCC_USB_HS_BCR				3
+ #define GCC_USB2_HS_PHY_ONLY_BCR		4
++#define GCC_MDSS_BCR				5
  
- 			interrupt-controller;
+ /* GDSCs */
+ #define CPP_GDSC				0
 
 -- 
 2.51.2
