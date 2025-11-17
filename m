@@ -1,106 +1,112 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D64527A477;
-	Mon, 17 Nov 2025 15:36:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B97728FA91;
+	Mon, 17 Nov 2025 15:47:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763393770; cv=none; b=Qksi6K/i2THwDi7MVZL0eoW9P8tPM6sZc5uoc9vfQoooG97oPmEMPNjbx/LTnHxR0ETpF+Sk/EWsercaTzRllLlcU6oxWHWwyZyhjScMIfYtfcPhcVf15SalGHPGkWxWwxpfqOAIea/ENd7VVjyrxBomG+TquUbC8d8rU9p07CI=
+	t=1763394473; cv=none; b=PdsbHLTkip67ZlqlA3wsjyIV0uOsS59kRCEiZT1nRli5n/LfifCjr03zeiat8FFAJHD4U/u89WmLU/UFGIP27NM5yDRs3Ml9oYGeB/kER5wDoNuKcdII3y7imliZRwaRmYjNOe53uG5EzAbo0oWo1Oe4qzBnBD7q4hH4Tm1POmM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763393770; c=relaxed/simple;
-	bh=pB0/QFXI5t2Hw+5qhGB5FGEiMP1+/MSOOtSe9mwKqU0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kN6ubTE/2sVPyNFXMC/LLLOBxrS18ASrRHwpxyOkZOPMrHFe674wumIqjY3XUhlLr/kUfYNZCKskKzSTOiOihslq3Q2jg2zjYX1Byq2h4kh8A6h00AgYscRV7ZLCOKvuj5wiMVQW3HzeKQcKWTEeR6Z8zD4nTEIyiwglmoiJTEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GmLKt3O9; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1763394473; c=relaxed/simple;
+	bh=srMzZ9zZ5j8aRKUeiPt6hC/KIPQNg1B7h2t1KNbGbcY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jCf8IHPnuW17vQlgvwiqWu9rOd5etidb8aa+ep2LKHBgq1zgsTYFLGV8XB8Ql1VaxNOOiGreN6P31ASD/WvdXKFyAE8A7lREbokAE5LLq/ya3sl4q3LFZV9bp/unvw0N6yBQdLh9b7inLDr/BhNCsQ1QVRX3riOzJr4ejJ2T00w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KStYFiRE; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GmLKt3O9"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 316CAC19424;
-	Mon, 17 Nov 2025 15:36:07 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KStYFiRE"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3170C116B1;
+	Mon, 17 Nov 2025 15:47:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763393769;
-	bh=pB0/QFXI5t2Hw+5qhGB5FGEiMP1+/MSOOtSe9mwKqU0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=GmLKt3O9GluH2JCDClqfyVVbozY56xU8N3PrQMMZP+p2nNCG7KXH4CT/5Qq6crEuN
-	 kBMKxSO3+EXbpCtDjOuay8xqcnK5qmdsfjsQSbTG4ffYiy4cKBUOmyRPJxTRIR+/vG
-	 6JWfrl9EwmYP34Kcsniswxm7ktPbzQiGDUjqDtnpSROAdwOyTjN5s/WDK4s81i6HEH
-	 /0OjETijdTwHs4kDPU4BGQdTpXbvgJpM1RY6mXqvbrF95TXRtQL0n5x6ZrpNSPdmLE
-	 Ytoku7Fg3td/BOyBDc54tdKsXf/r1GrOQllSbvJTPZ8voeqZTonZvVRCfZMCAjML9Y
-	 9bj6M2EJpgxiA==
-From: Conor Dooley <conor@kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: conor@kernel.org,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Daire McNamara <daire.mcnamara@microchip.com>,
-	Michael Turquette <mturquette@baylibre.com>,
+	s=k20201202; t=1763394473;
+	bh=srMzZ9zZ5j8aRKUeiPt6hC/KIPQNg1B7h2t1KNbGbcY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KStYFiRE5RWPG5qpQ+QbW8ibeSLHKNGV85p3VTlT9Pxhst1gsFHiQjHlZpu88ez16
+	 +v7uqlvYkcqujE8T24ekuHKytGacZK7Y4A9jSvc4cCfQrSEJrSH5BzmjZ+5iL6vtmy
+	 FKGE1hgb3fRjW5neZxVhvep7YJR0TLhgPBRgNoWtZeHOfexcyrMhBm6H4oE9/Itp1b
+	 8znLopYK9ZfsIaTVWlpx6zQClseP/KrzA1WT2KpdCb+UNJ+0CJfRuaelwtjmb0aMGO
+	 8uM3CH1Q2SXJWEsKid2NVXk9nyJmY48TSbYgcxEFcKuW+wwgLaIqt1eoycd+MTMUXe
+	 y9akAGGe1RAQQ==
+Date: Mon, 17 Nov 2025 09:47:51 -0600
+From: Rob Herring <robh@kernel.org>
+To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-riscv@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Pierre-Henry Moussay <pierre-henry.moussay@microchip.com>
-Subject: [PATCH v1 3/3] dt-bindings: clock: mpfs-clkcfg: Add pic64gx compatibility
-Date: Mon, 17 Nov 2025 15:35:20 +0000
-Message-ID: <20251117-depth-sage-ee0829c71c25@spud>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251117-shadow-police-56aba5d855a3@spud>
-References: <20251117-shadow-police-56aba5d855a3@spud>
+	Conor Dooley <conor+dt@kernel.org>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: clock: sprd,sc9860-clk: Allow "reg" for
+ gate clocks
+Message-ID: <20251117154751.GA2238642-robh@kernel.org>
+References: <20251029155615.1167903-1-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1355; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=awEf+2y/PPPNa2uwhs4VTzsAEfJWcc8DTYHHNv4fdl0=; b=owGbwMvMwCVWscWwfUFT0iXG02pJDJnSDlsuJ/xiPbid7V/MKQGOogOqL4+diLvR9ebqxqUrJ waXbetl6ihlYRDjYpAVU2RJvN3XIrX+j8sO5563MHNYmUCGMHBxCsBE8sQZGc6cOLY35m36o5P/ 4q5ckmJl83/HG9Ezb4Pmgcni0et3Odsx/NPYsTe6g+vh5nwx2Yvu8kcvRnovbIhKCuqV3H3OPUA yihcA
-X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251029155615.1167903-1-robh@kernel.org>
 
-From: Pierre-Henry Moussay <pierre-henry.moussay@microchip.com>
+On Wed, Oct 29, 2025 at 10:56:13AM -0500, Rob Herring (Arm) wrote:
+> The gate bindings have an artificial split between a "syscon" and clock
+> provider node. Allow "reg" properties so this split can be removed.
+> 
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
+>  .../bindings/clock/sprd,sc9860-clk.yaml       | 26 -------------------
+>  1 file changed, 26 deletions(-)
 
-pic64gx has a clock controller compatible with mpfs-clkcfg. Don't permit
-the deprecated configuration that was never supported for this SoC.
+Ping!
 
-Signed-off-by: Pierre-Henry Moussay <pierre-henry.moussay@microchip.com>
-Co-developed-by: Conor Dooley <conor.dooley@microchip.com>
-Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
----
- .../bindings/clock/microchip,mpfs-clkcfg.yaml     | 15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/devicetree/bindings/clock/microchip,mpfs-clkcfg.yaml b/Documentation/devicetree/bindings/clock/microchip,mpfs-clkcfg.yaml
-index ee4f31596d97..f111bed16f15 100644
---- a/Documentation/devicetree/bindings/clock/microchip,mpfs-clkcfg.yaml
-+++ b/Documentation/devicetree/bindings/clock/microchip,mpfs-clkcfg.yaml
-@@ -19,7 +19,11 @@ description: |
- 
- properties:
-   compatible:
--    const: microchip,mpfs-clkcfg
-+    oneOf:
-+      - items:
-+          - const: microchip,pic64gx-clkcfg
-+          - const: microchip,mpfs-clkcfg
-+      - const: microchip,mpfs-clkcfg
- 
-   reg:
-     oneOf:
-@@ -69,6 +73,15 @@ required:
-   - clocks
-   - '#clock-cells'
- 
-+if:
-+  properties:
-+    compatible:
-+      contains:
-+        const: microchip,pic64gx-clkcfg
-+then:
-+  reg:
-+    maxItems: 1
-+
- additionalProperties: false
- 
- examples:
--- 
-2.51.0
-
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/sprd,sc9860-clk.yaml b/Documentation/devicetree/bindings/clock/sprd,sc9860-clk.yaml
+> index 502cd723511f..b131390207d6 100644
+> --- a/Documentation/devicetree/bindings/clock/sprd,sc9860-clk.yaml
+> +++ b/Documentation/devicetree/bindings/clock/sprd,sc9860-clk.yaml
+> @@ -114,25 +114,6 @@ allOf:
+>          - reg
+>        properties:
+>          sprd,syscon: false
+> -  - if:
+> -      properties:
+> -        compatible:
+> -          contains:
+> -            enum:
+> -              - sprd,sc9860-agcp-gate
+> -              - sprd,sc9860-aon-gate
+> -              - sprd,sc9860-apahb-gate
+> -              - sprd,sc9860-apapb-gate
+> -              - sprd,sc9860-cam-gate
+> -              - sprd,sc9860-disp-gate
+> -              - sprd,sc9860-pll
+> -              - sprd,sc9860-pmu-gate
+> -              - sprd,sc9860-vsp-gate
+> -    then:
+> -      required:
+> -        - sprd,syscon
+> -      properties:
+> -        reg: false
+>  
+>  additionalProperties: false
+>  
+> @@ -142,13 +123,6 @@ examples:
+>        #address-cells = <2>;
+>        #size-cells = <2>;
+>  
+> -      pmu-gate {
+> -        compatible = "sprd,sc9860-pmu-gate";
+> -        clocks = <&ext_26m>;
+> -        #clock-cells = <1>;
+> -        sprd,syscon = <&pmu_regs>;
+> -      };
+> -
+>        clock-controller@20000000 {
+>          compatible = "sprd,sc9860-ap-clk";
+>          reg = <0 0x20000000 0 0x400>;
+> -- 
+> 2.51.0
+> 
