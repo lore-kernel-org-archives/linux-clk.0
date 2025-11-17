@@ -1,37 +1,36 @@
 Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CE3A270541;
-	Mon, 17 Nov 2025 16:57:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5925F29B79B;
+	Mon, 17 Nov 2025 16:57:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763398648; cv=none; b=OBELiTROhJpoxTlngOZE1PBr0ISCtA/ASMaIicY2EFMIiqU4OW3iQhzDwl3pCqbodr5cz9oWlkO7bouw1QN00Ml4FreWRdfg3TqmoC+kQNRxw9kikjAcu/C2xWaQezdqhSvWwOtz5oxfCumjMSJcqvyTWtQTgva2vfjHFlhHdKg=
+	t=1763398666; cv=none; b=YDGk0FLG4vGMf6wrjlSuS3Hh/Rn2pI/a3g6ToLuEWZjwBHeZwZI2CJmf4sPSjX5ADWW00ZmxTeZgpLVXAmK/7BZaOOxsDzZEcZX5B8IQgSuJkGTpbfCFxXYVRFDLUT26nfoTvgJwelbDW4F5ycnVvYa0OkYy1uQ3P9LX6U+ghBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763398648; c=relaxed/simple;
-	bh=0rdTFknzm31/v037Hm5ik64KrUP12/RIbfuJqGk6e/w=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=bFygHafMMG3wGHYmopMce2Sn0L/SeuucBTX2Cxf2asG41KgatEd4gOlpShXnirO0MAvsSBmuzBrt3CXpmHQt2A7qU+mWpWyLco/EfzJ9W2G96r/rdOxs/ySQB6EpfbeDGJjaqpkELiDVbyIEvXW2JRmNbklerjJxQAW/iTviV10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=VqsSBy+/; dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=yiHbPZLZ; arc=none smtp.client-ip=5.75.144.95
+	s=arc-20240116; t=1763398666; c=relaxed/simple;
+	bh=n6nEWW9pPjq0AqMeiO3sg2ecm+iuixF76Y7HSJX3Q/k=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=TWP8bQOlq+rz7n7iEQ3CAhGqwDgvhVz3ds9WtR2/m/ywke/GaW9jNJqA0KHjGRY4qeMtDg58sS8I/4bqd6dRCDWBN+nbQj5GeLzKhF4AmeXLKuQ/mdNgJPHIlQD+V7i3SXH8/bXSMSPvljYGKn+rsaouVoMeCoWYQEeSxIrZJuw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=eodfuszi; dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=Pj3NN/kj; arc=none smtp.client-ip=5.75.144.95
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="VqsSBy+/";
-	dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="yiHbPZLZ"
+	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="eodfuszi";
+	dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="Pj3NN/kj"
 DKIM-Signature: v=1; a=rsa-sha256; s=202507r; d=mainlining.org; c=relaxed/relaxed;
-	h=To:Message-Id:Subject:Date:From; t=1763398643; bh=YhyWcd6cneaTtw8q8LH8oKQ
-	jjDlCWa/0j4SoIH5ZJ4Q=; b=VqsSBy+/NgkGsPQ4MtCbXXmHAr71QhfmJz0dLLDzXc4WEr4lNM
-	oU4wOZVwOIbdt3lFfryQ8IJKm+0ke/WxwBzDaodUEuoznwSG2DPsif4O1x4Gm1Wk9IblTzz2T3C
-	hhTS+7AbrGQawBafgf3naaWI7ieVHvbbVJnfxCEG05IaYGPrKXUsSSfg1Ow8ihchDqOCUAuriiB
-	s6GwPPfQccBdB492kDjyo1JAoj0akbZwU3prN2BJb3aR7ZbpR12lf4yPCpkw4uoaIdrAXezkyxJ
-	uqKaxh1LhSZsrrRgew+E/VCU05AeqUvbwLpzADzd+0AdbSDFjsdwQIYqzL+DFn68/Yw==;
+	h=To:Message-Id:Date:Subject:From; t=1763398640; bh=GMUQV1/e5EFHr3C4saiGqYK
+	hD3EuyO2MN44wM92o0JI=; b=eodfusziAk+fHH61U5AddG9vYbS5wxYsy0uKBL2Dr7dHN7mfrl
+	eNgjrEQyhdBrp8r29DZlYjltpkafYDxHHSkzrN+WXxW+l4pBGMUjc+LJQXShs1UVcAIorDaMD+S
+	I4JfT+QDS1/nSheUlmsdBoIAznNPw3mVJFrhZGPy1fa/ncKOjgq+H6P7nzpXVE7mVQtIOgsQkpt
+	WieQgvLoXwIPeoiSemqE0LYd9oUnOvhirLt1YEfh620b5XMbrx6VqBIdlFHa4nzLIrgvfpBXeX5
+	wPZ3Gngu68j9sV+qSomF3OQOak8fdjZKzhI5cO91D+J1iIM9gjnAwMq65NvQmZp3Few==;
 DKIM-Signature: v=1; a=ed25519-sha256; s=202507e; d=mainlining.org; c=relaxed/relaxed;
-	h=To:Message-Id:Subject:Date:From; t=1763398643; bh=YhyWcd6cneaTtw8q8LH8oKQ
-	jjDlCWa/0j4SoIH5ZJ4Q=; b=yiHbPZLZtrlWIqoHsoWZY6VZxHEFke0r8Po8B4QwGT4zxw/ZwS
-	Hkmb7oyhv9hSfbxw1u1ki2wr2yJCn+oFidBg==;
+	h=To:Message-Id:Date:Subject:From; t=1763398640; bh=GMUQV1/e5EFHr3C4saiGqYK
+	hD3EuyO2MN44wM92o0JI=; b=Pj3NN/kjkRXbChd/CK21rouNXX59rx8pAXCmartI6PJuU7iJ6U
+	DFRm0kzEfeBeqS6GSTiOax3xoDbrOHDsbyBg==;
 From: =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
-Date: Mon, 17 Nov 2025 17:57:08 +0100
-Subject: [PATCH v2 3/4] dt-bindings: clock: qcom: Add SDM439 Global Clock
- Controller
+Subject: [PATCH v2 0/4] Add Global Clock Controller for MSM8940 and SDM439
+Date: Mon, 17 Nov 2025 17:57:05 +0100
+Message-Id: <20251117-gcc-msm8940-sdm439-v2-0-4af57c8bc7eb@mainlining.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -40,9 +39,11 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20251117-gcc-msm8940-sdm439-v2-3-4af57c8bc7eb@mainlining.org>
-References: <20251117-gcc-msm8940-sdm439-v2-0-4af57c8bc7eb@mainlining.org>
-In-Reply-To: <20251117-gcc-msm8940-sdm439-v2-0-4af57c8bc7eb@mainlining.org>
+X-B4-Tracking: v=1; b=H4sIAOJTG2kC/32NQQ7CIBBFr9LM2jFAKxZX3sN0UQekkwg0YBpN0
+ 7uLPYDL95L//grFZXYFLs0K2S1cOMUK6tAATWP0DtlWBiXUSUqp0RNhKKE3ncBiQ9ca7FptrNV
+ 0J6mhDufsHvzeo7eh8sTllfJn/1jkz/7NLRIFnklY6g0ZpegaRo5Pjhz9MWUPw7ZtX5d6XRa5A
+ AAA
+X-Change-ID: 20251116-gcc-msm8940-sdm439-4369dd6cbc16
 To: Bjorn Andersson <andersson@kernel.org>, 
  Michael Turquette <mturquette@baylibre.com>, 
  Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
@@ -53,56 +54,44 @@ To: Bjorn Andersson <andersson@kernel.org>,
 Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
  =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>, 
- Krzysztof Kozlowski <krzk@kernel.org>
+ Krzysztof Kozlowski <krzk@kernel.org>, Daniil Titov <daniilt971@gmail.com>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1763398640; l=1516;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1763398640; l=1193;
  i=barnabas.czeman@mainlining.org; s=20240730; h=from:subject:message-id;
- bh=0rdTFknzm31/v037Hm5ik64KrUP12/RIbfuJqGk6e/w=;
- b=uQJoGZZoDNiFtJ1esmZEnC1Kq0S0H6DUeVdGXsGRpSSBRJY35wD4C4bpqcdGc8iTJN9i21l8D
- KU56P+yHe41AosOOtFCzHvMm43dvhPjfmK8tltBLvJXw/jDmb15yXbS
+ bh=n6nEWW9pPjq0AqMeiO3sg2ecm+iuixF76Y7HSJX3Q/k=;
+ b=bW/rdDauTH6Xwfon1PVs4luqZ+rH6MhVCOJHIaPsutMxy95kMaYdFf+ViL7neONVgbDdeikTv
+ /nzY5T7DOkwAxVOPbLMnaZGLfhGFkOJ8WVTWnqrHht9DfFK5biaC4Hs
 X-Developer-Key: i=barnabas.czeman@mainlining.org; a=ed25519;
  pk=TWUSIGgwW/Sn4xnX25nw+lszj1AT/A3bzkahn7EhOFc=
 
-Add devicetree bindings for the global clock controller on Qualcomm
-SDM439 platform.
+Add GCC support for MSM8940 and SDM439.
 
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
 ---
- Documentation/devicetree/bindings/clock/qcom,gcc-msm8953.yaml | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Changes in v2:
+- gcc-sdm439: Remove unnecessary comments. 
+- Correct author names in commits and Signed-off-by-s.
+- Link to v1: https://lore.kernel.org/r/20251116-gcc-msm8940-sdm439-v1-0-7c0dc89c922c@mainlining.org
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-msm8953.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-msm8953.yaml
-index 68fcd0d6492f..ced3118c8580 100644
---- a/Documentation/devicetree/bindings/clock/qcom,gcc-msm8953.yaml
-+++ b/Documentation/devicetree/bindings/clock/qcom,gcc-msm8953.yaml
-@@ -4,7 +4,7 @@
- $id: http://devicetree.org/schemas/clock/qcom,gcc-msm8953.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
--title: Qualcomm Global Clock & Reset Controller on MSM8937, MSM8940 and MSM8953
-+title: Qualcomm Global Clock & Reset Controller on MSM8937, MSM8940, MSM8953 and SDM439
- 
- maintainers:
-   - Adam Skladowski <a_skl39@protonmail.com>
-@@ -13,7 +13,7 @@ maintainers:
- 
- description: |
-   Qualcomm global clock control module provides the clocks, resets and power
--  domains on MSM8937, MSM8940 or MSM8953.
-+  domains on MSM8937, MSM8940, MSM8953 or SDM439.
- 
-   See also::
-     include/dt-bindings/clock/qcom,gcc-msm8917.h
-@@ -25,6 +25,7 @@ properties:
-       - qcom,gcc-msm8937
-       - qcom,gcc-msm8940
-       - qcom,gcc-msm8953
-+      - qcom,gcc-sdm439
- 
-   clocks:
-     items:
+---
+Barnabás Czémán (2):
+      dt-bindings: clock: qcom: Add MSM8940 Global Clock Controller
+      dt-bindings: clock: qcom: Add SDM439 Global Clock Controller
 
+Daniil Titov (2):
+      clk: qcom: gcc: Add support for Global Clock controller found on MSM8940
+      clk: qcom: gcc: Add support for Global Clock controller found on SDM439
+
+ .../bindings/clock/qcom,gcc-msm8953.yaml           |   6 +-
+ drivers/clk/qcom/Kconfig                           |   6 +-
+ drivers/clk/qcom/gcc-msm8917.c                     | 280 +++++++++++++++++++++
+ include/dt-bindings/clock/qcom,gcc-msm8917.h       |   1 +
+ 4 files changed, 288 insertions(+), 5 deletions(-)
+---
+base-commit: cad72a2aa582a0ca182ef1977dc45ff2a0bfb71e
+change-id: 20251116-gcc-msm8940-sdm439-4369dd6cbc16
+
+Best regards,
 -- 
-2.51.2
+Barnabás Czémán <barnabas.czeman@mainlining.org>
 
