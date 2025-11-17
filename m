@@ -1,116 +1,121 @@
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23C2B2D3A93
-	for <linux-clk@vger.kernel.org>; Mon, 17 Nov 2025 16:37:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0D832F1FF5;
+	Mon, 17 Nov 2025 16:57:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763397472; cv=none; b=PBN3IujrG48YRMBM6JjfzsPKinELCQMrWVWkyJmqQFU1/vIeCyC2hx4NQnwX1mTyJAwS6GCLlbOhfIFNcw26qDGiqGi6j1oszlEHWD1n3vWZK+sEOgfNxwdBeo2xc7EnmeMpbcCzIvmiTIqsxuf+UGzIBBW/MWA/g/mSqWBi4XA=
+	t=1763398646; cv=none; b=rH3ueYTALqbd7BkEdLstJxAotLrpHfMc8ZMxDpB93MnRvh2nBA9HybE/66wiECr3tdKGKnfIGyG0MmhvTBKXfgQYER3yOVbC864JXEna/BiJWq1aEBQqNQUvzWTh/kHCYcEQAofp75zP0tOaYJTOecJjujF1cBaX77RZ/2f2Fos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763397472; c=relaxed/simple;
-	bh=HlIiShYxhkLdpsar3rOL/ISs2/CV01wtKw99jYyG6Ts=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=F+vtYl/g1gDLnID503XMqdkJVewE1wM4stApIg7dSsLAt58tf5B5Qoye1S336odfYSJAmUqJkCFkPXacYD4nfrQ9d6XZi4NQmc3fqALR8IcibWWCVJBm7Nx1i8isE7b2pX3Hz3/+bnkJP3sh47moFeJ8tHDpDAHLKftLw3mgo14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=h7vTUI+Z; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+	s=arc-20240116; t=1763398646; c=relaxed/simple;
+	bh=gSdwOQe/Xk9bFyCcZMI8WVd0yEC9v0Qmqh3rOcnBUlQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=aax+BItnV0uIOQvc9xtnygJgOE/Ug7kKBYW7fne5uYAKZczQq5ObPue9EyIrqu4Z3fNfQkirISzyOvTv+NPHTVVT5+8PBUb6Yc0wculwSGAel7TpwfulQEsJsKKVtDruRdt7TDgAYxgBBq5g0C4BQbpmoh3I69Kmg2b3cwnegs4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=gaQBei8U; dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=EZe+tcSD; arc=none smtp.client-ip=5.75.144.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="h7vTUI+Z"
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-42b32a3e78bso3682511f8f.0
-        for <linux-clk@vger.kernel.org>; Mon, 17 Nov 2025 08:37:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1763397469; x=1764002269; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=PPBIXyGju7mBGzRaiW27P8dbL8q5t+cpUgoonxWQamI=;
-        b=h7vTUI+Zd7yv2nT5HfZ67IUBERcx9fGxW/wo+EEcBpjcj1PVR90KOJTQy5fsRroGfV
-         nORt9WcZFwjWcLk+mfY9K4T5i6pgRVYbrj4G7zs3cUdurkFLiEgGbGhu1Fh6PZsQkVK2
-         PVmxpGdHKJm8nEppRvgd2mJFLpvhhV1Q9NIg/vup001O61d14631iI8+/0GeqiTIY3SK
-         hjQ/Lhyjm0d2EX+nEcQ00FtQauvMpCuIVBIGk3G0rlUBUoJmi/wpf1bST2Qj4DQZiF8m
-         +l1tCggbG/GMBZSKUqwps+IY50/2vJk+CP2rDiyyIiVVeJ9ZmMzemXpN7x5z99E0rABs
-         SDuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763397469; x=1764002269;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PPBIXyGju7mBGzRaiW27P8dbL8q5t+cpUgoonxWQamI=;
-        b=Y1scz6LJCLDAjff07x+p7ESuLz4ucgs0Qt/AzA+0QBmWeWWX4WazutrlBJjmr+ouku
-         PBATjaAlm9KqJfzKIRpJCRzHwNAE9BJXexXUkM9PJIUX3DgfZ6dmlwPBmRH9Vgt+bAGh
-         SNMiysDeso+OL0a+UfkpLLQ67ou2KJr8ukLFNp4qnhMxEk1l+0b64DzOEO4xJoUCyfF7
-         QnnydgBF1r8HCXEuX1JanRGlWfhXMh8dKLSg88C6sOAke+OQO5nxp2162cZPG1+v0+Ej
-         SpRVwIXLjx4dwsooZLx8e2DrWlCqYEx7oQLfl2I7VeFQYfNNgdFRBWwuc3t54bmRx/wj
-         t4YA==
-X-Forwarded-Encrypted: i=1; AJvYcCVxCOoX5SXXAgpZoqlWRPLcf/t52AVa5NoeX4hpjVom7D4cUjgBMn4TWAWGg1Cmg/DXAdvh5XKw230=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCyyjRlaudgBgs9LNEq74nLxqsygy9gRhbixwpjHTYoQv8oNUJ
-	zEfQ/ykbCUDs29wlDTYjxOwbYbrCJNADO8bY4hPTe8b4H7rirsCyOS4ttCOW7LtuW7U=
-X-Gm-Gg: ASbGncsAzWRciE2kswhGBx1Fu2nYJUVM2nR9TNKTs6C9fYzlxNHc4N92PHb1nfztETT
-	GhGN5SxkQfvabrJYhXLomkF6aJzlW6mXutKu92HGgPI5tL5tF9Xc6eTttTHiZFD7Y8tKD3FCzx4
-	Aj74/+sgroGsk7TgUBXvUebMLi+JiGr1asysXDxmW5mgHykCd6g/u02QBk9jWr1IJvikjzPf4sB
-	vfJXqVi2gi8Rtvko/BrFB2uJ/cdnnvt9y7rYvUTYi9VCUCFGyX9f84Ha8nzj8uFunGTowoCD2v1
-	RKx+Srg9wzDpeksJs8Tvmt2xOEqXLvRQbeuCW7MfPoJRP6eCrvmwHS5PsfYBkLMIt4V14oMjmXC
-	ZA5DIjN9bm8E5Z+qnySiE6z2LWEHdSFu1mRWgmh++TkaznLYYXgq59/xA05MU2nHOWURUE7wkfh
-	d1mLNhmGmENxSw6PSrmQg=
-X-Google-Smtp-Source: AGHT+IGjX8UeXo2kn+Rq/dpoeLzNhIaCwbw4kTdvV8tWs6WEA1Z8hJqnk/qL5zQx1UTgmBk1S06rOQ==
-X-Received: by 2002:a05:6000:2210:b0:42b:2e65:655f with SMTP id ffacd0b85a97d-42b593499c8mr12766106f8f.19.1763397469362;
-        Mon, 17 Nov 2025 08:37:49 -0800 (PST)
-Received: from claudiu-X670E-Pro-RS.. ([82.78.167.134])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42b53f0b894sm27655158f8f.26.2025.11.17.08.37.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Nov 2025 08:37:48 -0800 (PST)
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-To: sboyd@kernel.org,
-	mturquette@baylibre.com,
-	linux-clk@vger.kernel.org
-Cc: nicolas.ferre@microchip.com,
-	alexandre.belloni@bootlin.com,
-	conor.dooley@microchip.com
-Subject: [GIT PULL] Microchip clock updates for v6.19
-Date: Mon, 17 Nov 2025 18:37:47 +0200
-Message-ID: <20251117163747.211922-1-claudiu.beznea@tuxon.dev>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="gaQBei8U";
+	dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="EZe+tcSD"
+DKIM-Signature: v=1; a=rsa-sha256; s=202507r; d=mainlining.org; c=relaxed/relaxed;
+	h=To:Message-Id:Subject:Date:From; t=1763398641; bh=yXCT+4e+QbC0PpPJDzKn5OY
+	LIXlYjDUXsazMj0rHz4g=; b=gaQBei8U45VAMXQ+FXkpy0j7lwrq68QW2RGfZTAMzV6ki0U+5h
+	RQakj0WR76lTSpqP1HFJeyOf76/iPe+bJCfgXBX95pJFdnViIBaF0JHFl95O0j71R1kYhdPysyn
+	tugqnPz7bK/UzGZ28u6L8tTDnNbGYkRl/givjMQgseJK+GD5dKCQnmGpTQRPuwVFI8zRdlLcmnz
+	LmB4JxY4QB5SSdgEimeJPzIvyyvzKQdyIIOyR4qZgYcIJS5pn2qgAOW4N1M2KVf5kp70UuLCog2
+	RqIqViXdOUQWRXCIxPZxYvP9FtYRQy4drJ1xS1XfWtvIYzxU+PvB+yuee5Y+ryR2kRw==;
+DKIM-Signature: v=1; a=ed25519-sha256; s=202507e; d=mainlining.org; c=relaxed/relaxed;
+	h=To:Message-Id:Subject:Date:From; t=1763398641; bh=yXCT+4e+QbC0PpPJDzKn5OY
+	LIXlYjDUXsazMj0rHz4g=; b=EZe+tcSD+MqwZHiXQrjBIMdveNCYAnzm7ZIKPfZASF2L+AlQqs
+	htb6OUpdX2Uez3ZFRs3ptQLqFt8JKKNKEXDA==;
+From: =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
+Date: Mon, 17 Nov 2025 17:57:06 +0100
+Subject: [PATCH v2 1/4] dt-bindings: clock: qcom: Add MSM8940 Global Clock
+ Controller
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+Message-Id: <20251117-gcc-msm8940-sdm439-v2-1-4af57c8bc7eb@mainlining.org>
+References: <20251117-gcc-msm8940-sdm439-v2-0-4af57c8bc7eb@mainlining.org>
+In-Reply-To: <20251117-gcc-msm8940-sdm439-v2-0-4af57c8bc7eb@mainlining.org>
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Adam Skladowski <a_skl39@protonmail.com>, 
+ Sireesh Kodali <sireeshkodali@protonmail.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>, 
+ Krzysztof Kozlowski <krzk@kernel.org>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1763398640; l=2035;
+ i=barnabas.czeman@mainlining.org; s=20240730; h=from:subject:message-id;
+ bh=gSdwOQe/Xk9bFyCcZMI8WVd0yEC9v0Qmqh3rOcnBUlQ=;
+ b=L1TUSiAxYVAWiAl/zeCYDqM/AHzgYA0uGJZdOD+C98JN13coI4qxfBUrQTlYCxwVgrYdnWN++
+ Ai8TKLyW4lACgWkqgZnfnV60wAQOKj1O1ZY3A1NotQ1TlKkjCPJ0k5k
+X-Developer-Key: i=barnabas.czeman@mainlining.org; a=ed25519;
+ pk=TWUSIGgwW/Sn4xnX25nw+lszj1AT/A3bzkahn7EhOFc=
 
-The following changes since commit 3a8660878839faadb4f1a6dd72c3179c1df56787:
+Add devicetree bindings for the global clock controller on Qualcomm
+MSM8940 platform.
 
-  Linux 6.18-rc1 (2025-10-12 13:42:36 -0700)
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
+---
+ Documentation/devicetree/bindings/clock/qcom,gcc-msm8953.yaml | 5 +++--
+ include/dt-bindings/clock/qcom,gcc-msm8917.h                  | 1 +
+ 2 files changed, 4 insertions(+), 2 deletions(-)
 
-are available in the Git repository at:
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-msm8953.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-msm8953.yaml
+index f2e37f439d28..68fcd0d6492f 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,gcc-msm8953.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,gcc-msm8953.yaml
+@@ -4,7 +4,7 @@
+ $id: http://devicetree.org/schemas/clock/qcom,gcc-msm8953.yaml#
+ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ 
+-title: Qualcomm Global Clock & Reset Controller on MSM8953
++title: Qualcomm Global Clock & Reset Controller on MSM8937, MSM8940 and MSM8953
+ 
+ maintainers:
+   - Adam Skladowski <a_skl39@protonmail.com>
+@@ -13,7 +13,7 @@ maintainers:
+ 
+ description: |
+   Qualcomm global clock control module provides the clocks, resets and power
+-  domains on MSM8937 or MSM8953.
++  domains on MSM8937, MSM8940 or MSM8953.
+ 
+   See also::
+     include/dt-bindings/clock/qcom,gcc-msm8917.h
+@@ -23,6 +23,7 @@ properties:
+   compatible:
+     enum:
+       - qcom,gcc-msm8937
++      - qcom,gcc-msm8940
+       - qcom,gcc-msm8953
+ 
+   clocks:
+diff --git a/include/dt-bindings/clock/qcom,gcc-msm8917.h b/include/dt-bindings/clock/qcom,gcc-msm8917.h
+index 4e3897b3669d..066acb447f4f 100644
+--- a/include/dt-bindings/clock/qcom,gcc-msm8917.h
++++ b/include/dt-bindings/clock/qcom,gcc-msm8917.h
+@@ -187,6 +187,7 @@
+ #define MSM8937_GCC_MDSS_PCLK1_CLK			179
+ #define MSM8937_GCC_OXILI_AON_CLK			180
+ #define MSM8937_GCC_OXILI_TIMER_CLK			181
++#define MSM8940_GCC_IPA_TBU_CLK				182
+ 
+ /* GCC block resets */
+ #define GCC_CAMSS_MICRO_BCR			0
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/at91/linux.git tags/clk-microchip-6.19
+-- 
+2.51.2
 
-for you to fetch changes up to 781f60e45bdfe351aad692ac0fa89e36f8bf4a36:
-
-  reset: mpfs: add non-auxiliary bus probing (2025-11-11 16:47:24 +0000)
-
-----------------------------------------------------------------
-Microchip clock updates for v6.19
-
-This update includes:
-- convert Microchip Polarfire clock controller driver into a MFD driver;
-  with it, the reset control driver was included as it now depends on the
-  regmap registered by the clock controller driver
-- a cleanup patch for the LAN966X driver
-
-----------------------------------------------------------------
-Conor Dooley (3):
-      dt-bindings: clk: microchip: mpfs: remove first reg region
-      clk: microchip: mpfs: use regmap for clocks
-      reset: mpfs: add non-auxiliary bus probing
-
-Robert Marko (1):
-      clk: lan966x: remove unused dt-bindings include
-
- .../bindings/clock/microchip,mpfs-clkcfg.yaml      |  36 ++--
- drivers/clk/clk-lan966x.c                          |   2 -
- drivers/clk/microchip/Kconfig                      |   2 +
- drivers/clk/microchip/clk-mpfs.c                   | 227 +++++++++++++++++----
- drivers/reset/Kconfig                              |   1 +
- drivers/reset/reset-mpfs.c                         |  91 +++++----
- include/soc/microchip/mpfs.h                       |   3 +-
- 7 files changed, 266 insertions(+), 96 deletions(-)
