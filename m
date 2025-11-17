@@ -1,37 +1,36 @@
 Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8D1329B796;
-	Mon, 17 Nov 2025 17:59:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79B7229B796;
+	Mon, 17 Nov 2025 17:59:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763402350; cv=none; b=F7ja/ja4wLPXJM5SYU2+bZOAj/8daXwcpFHo9Q8f64HgIDJj7LRcZw6TGTcnFRRdBnkDxRCmGfUtGQ+RdjDys4hkFTnZAOUJyfVKnuP3cZG54xo0An1xUw+tcIitacpZ+MgizQcwIfnTIlKmBk/vCr/Pid6c+gvHZ6lQcjfH4vI=
+	t=1763402363; cv=none; b=fPbF2rjsknF1vupqcGvzBEgLG6x0RDr0GxRg8vc3FQIj1j9CL2xN4/zPSK3jEcDeOIgE9IZvUUme6F2fjPR/8kg0m7Y5gbyw4hlPCLWeO4f6FQIuE8Et5zb51wj3mIPtlarusaZvIt8qLt5rSSzq9AZ0R7SRFPtLPRwhd8WGwHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763402350; c=relaxed/simple;
-	bh=uW8km/vDo2EP4so3IaZLe/21KmEaqMgXEdKDzh2tOLo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=EZfPf4SwADJE4pZbtVaEvScMcs0VFMesZRVVU+GdzUld0B5aGsMCyyoyRHUiAgMm0i02PhbUc2BOQlB3vaVSpzmZgt6N4jI0T3Fs/AodKgJCPeLaMRmuNcpPno3N5UeIqzqfwrPUOdrjbvhBF5Zcc6DZwG9RrPcehfIl30gufuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=Swe7my8S; dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=sAep0Gy+; arc=none smtp.client-ip=5.75.144.95
+	s=arc-20240116; t=1763402363; c=relaxed/simple;
+	bh=cv9FgGkCd8N6arFCRZS3eOrBErQaZM+S/sP6pgOgkuk=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=PyUmyLcmaNEb0yZpU9FY3qnX7I/TQg7UDpNXBSIWuc/L2/iK5B+6fss737N5UNeIeOr75WFPy0Yc+8QgmJ8KFeVTkEW8IMkn/iT0cddbwgqxoIP84kQO0F7tkWOeGiSHvfLYWthiVl/e64OikbKcNsEPMLaGsPGEmPgH/ZUfZ5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=j0sRUQvE; dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=/uZjEUsg; arc=none smtp.client-ip=5.75.144.95
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="Swe7my8S";
-	dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="sAep0Gy+"
+	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="j0sRUQvE";
+	dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="/uZjEUsg"
 DKIM-Signature: v=1; a=rsa-sha256; s=202507r; d=mainlining.org; c=relaxed/relaxed;
-	h=To:Message-Id:Subject:Date:From; t=1763402332; bh=LVGLx1olVEMlisFeBeMHKlE
-	cU7WjcuNhMhDRU7G28Uo=; b=Swe7my8S0SJQPQc0vAI7nFYWcwGvWnsj610bRgqZLbkps9edZ0
-	CPR8NHL1L2BqJArCmYitPBf7A0eWoqMoOEFKzoasQ6YmGaQIjTKIS752fiM2CmlQ48QgPlNhzLJ
-	RjKpdy8N6ZaQKdCoDIDNH4AahRfp/K+Oz6rEV4vdXS2F8HrsqJ3gf4r23oAQ8c0m3PIbSI2dwNB
-	btTB0I5zN6c/j+CU7nLYi+bAFUideunbIF9G6ayqVOqSr28fIW6fX/kue3CIJzKex9EAH1C9lpF
-	vagJq72NJWHrOq8wAj/5BBFTfxvahkdl8TZHVPFSArmxuLX1JRSBbS25lf11MY2M/ng==;
+	h=To:Message-Id:Date:Subject:From; t=1763402330; bh=8j1TXYdemwIblpZ5w05T0pl
+	In1pq99v5SjoGvJ4OhfY=; b=j0sRUQvErKiqePpyNrg1VxiotVAXk1wHxwUrxmbBgmU6oA+SCS
+	JESZ2Pm4b4RhD/pqCSrpAY+G55rG97IvrtTPY0cowpKTRGwnFo5L4jBrISuUjs5AnkHz8mmSISW
+	Fq1CaqbbJn25E+nZjtQogso9lVowdYNZHhJ2FD7h6ru6rmphvAV88o8Lam3hror9PlA05MyYNDZ
+	pqslp/9p0g2o0pTqUWguom7cikyDKXteFhF2sqPyLzuMGjOpf/zyHQK6I11/nizYRytVVsSkTBN
+	xDwZYLqaVSEErPd7IUx8mXhtTzjiWb3VdJ8MTka1mhY7CssGdWJ65LjQClnAInzV9xQ==;
 DKIM-Signature: v=1; a=ed25519-sha256; s=202507e; d=mainlining.org; c=relaxed/relaxed;
-	h=To:Message-Id:Subject:Date:From; t=1763402332; bh=LVGLx1olVEMlisFeBeMHKlE
-	cU7WjcuNhMhDRU7G28Uo=; b=sAep0Gy+8rvvOpU/g7orX/aDKYNqXU31N3q+cWP8TAHixQKuCu
-	kwqkffiA74eZIaHuFShH/aCHNzIesrod78BA==;
+	h=To:Message-Id:Date:Subject:From; t=1763402330; bh=8j1TXYdemwIblpZ5w05T0pl
+	In1pq99v5SjoGvJ4OhfY=; b=/uZjEUsg3kUOS8Uhf3P4TWIO2usjIm1fznxcf9JYOfBFAnis31
+	yvTI1H3MbkPVRrCwzyFl5B09QbAsp+V9ovDw==;
 From: =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
-Date: Mon, 17 Nov 2025 18:58:48 +0100
-Subject: [PATCH 2/2] clk: qcom: gcc-msm8917: Remove ALWAYS_ON flag from
- cpp_gdsc
+Subject: [PATCH 0/2] MSM8917/MSM8953 Remove ALWAYS_ON flag from cpp_gdsc
+Date: Mon, 17 Nov 2025 18:58:46 +0100
+Message-Id: <20251117-fix-gdsc-cpp-msm8917-msm8953-v1-0-db33adcff28a@mainlining.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -40,9 +39,10 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20251117-fix-gdsc-cpp-msm8917-msm8953-v1-2-db33adcff28a@mainlining.org>
-References: <20251117-fix-gdsc-cpp-msm8917-msm8953-v1-0-db33adcff28a@mainlining.org>
-In-Reply-To: <20251117-fix-gdsc-cpp-msm8917-msm8953-v1-0-db33adcff28a@mainlining.org>
+X-B4-Tracking: v=1; b=H4sIAFZiG2kC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1NDQ0Nz3bTMCt30lOJk3eSCAt3c4lwLS6AgmDY11jVOtkxKTDY3TUwxNVM
+ CGlFQlApUDzY+Ora2FgD1cwGabgAAAA==
+X-Change-ID: 20251117-fix-gdsc-cpp-msm8917-msm8953-3c9bac75ad56
 To: Bjorn Andersson <andersson@kernel.org>, 
  Michael Turquette <mturquette@baylibre.com>, 
  Stephen Boyd <sboyd@kernel.org>, 
@@ -55,35 +55,32 @@ Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
  linux-kernel@vger.kernel.org, 
  =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1763402330; l=668;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1763402330; l=726;
  i=barnabas.czeman@mainlining.org; s=20240730; h=from:subject:message-id;
- bh=uW8km/vDo2EP4so3IaZLe/21KmEaqMgXEdKDzh2tOLo=;
- b=t6VdLFH94E0l9CrU1H7730nsbqnoAsjHb+dNymvK55YsdcT1I0XXuztWb5nG9o3lRMmR25nbu
- l3P9x7LXqwQBd3bcw/MZ9B+JTbLYSE1v5utxY0RCLhDpbiTTDfP4eeH
+ bh=cv9FgGkCd8N6arFCRZS3eOrBErQaZM+S/sP6pgOgkuk=;
+ b=l8SfFheaybdMmYrqLU6NXQtXn8BBSKVbw5Jg/5rvyzr6z8IZzG6EMqFjQf69pBgnInOpgNr/M
+ nfrOCPo/2VdDmVL8V1h5ukxqYLh6Zft6gBQphj8Xr70upIwZojO8JGt
 X-Developer-Key: i=barnabas.czeman@mainlining.org; a=ed25519;
  pk=TWUSIGgwW/Sn4xnX25nw+lszj1AT/A3bzkahn7EhOFc=
 
 cpp_gdsc should not be always on, ALWAYS_ON flag was set accidentally.
+The flags were used for debugging purpose and they were left as always on
+at the gcc drivers submissions.
 
-Fixes: 33cc27a47d3a ("clk: qcom: Add global clock controller driver for MSM8917")
 Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
 ---
+Barnabás Czémán (2):
+      clk: qcom: gcc-msm8953: Remove ALWAYS_ON flag from cpp_gdsc
+      clk: qcom: gcc-msm8917: Remove ALWAYS_ON flag from cpp_gdsc
+
  drivers/clk/qcom/gcc-msm8917.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/clk/qcom/gcc-msm8953.c | 1 -
+ 2 files changed, 2 deletions(-)
+---
+base-commit: 0f2995693867bfb26197b117cd55624ddc57582f
+change-id: 20251117-fix-gdsc-cpp-msm8917-msm8953-3c9bac75ad56
 
-diff --git a/drivers/clk/qcom/gcc-msm8917.c b/drivers/clk/qcom/gcc-msm8917.c
-index 0a1aa623cd49..9d1c5a9953e2 100644
---- a/drivers/clk/qcom/gcc-msm8917.c
-+++ b/drivers/clk/qcom/gcc-msm8917.c
-@@ -3409,7 +3409,6 @@ static struct gdsc cpp_gdsc = {
- 	.pd = {
- 		.name = "cpp_gdsc",
- 	},
--	.flags = ALWAYS_ON,
- 	.pwrsts = PWRSTS_OFF_ON,
- };
- 
-
+Best regards,
 -- 
-2.51.2
+Barnabás Czémán <barnabas.czeman@mainlining.org>
 
