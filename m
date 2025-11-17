@@ -1,235 +1,322 @@
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A519731B113
-	for <linux-clk@vger.kernel.org>; Mon, 17 Nov 2025 08:12:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 997D731A7F6
+	for <linux-clk@vger.kernel.org>; Mon, 17 Nov 2025 08:34:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763367128; cv=none; b=sHXuQ/nLknmy/p/4ChNIhvqkOQ5rpkKG0KI2efN20TheZC5MXUcWoiJVigOTsW08ZTUt5tUNUxmJ3cavv3Gn4r7mJ513VadU3gylLBwR3rnd+RH2iJMhayL/BoA9pzkNMqpxV7hWRUkRzmLSxCkyi1FxqY/3GJOajnZ3qIo6x7Y=
+	t=1763368466; cv=none; b=NJJiUmc3y4oovWc+nFaR6QoY05sQORQkVWCSHmJ2BugTQBMRPY+qYxe/TDCIgHrWP+1bymjK9kVLEN0TxNfgr7B30rvug4CNa3OOwt/kF7OP5dIkKxfwgIdW52ITkgs8bV39KzcBtx5LKwkamZMNcJUPq6LbX64iXAmCrBxA/r4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763367128; c=relaxed/simple;
-	bh=XHwbf6AOIUXsOmRYZriTih9VqIVu3akhJh3HAnKtjAI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BvK7n/55HcoMgpTt0QS6Pk3mlVzMnp4lqJQdxdqWlMpNHfUajgQ49f0URZlMcssacK19dncCWlJ3q8tuKiBvdjcDu1T8w8V8i6yk5T113gTBpCdVS1JCGqkHdQnCLJPVSnV0a3IMFhJqrUzkdZkAOXfIOa22BmC9zD+mlV5en4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mIM3ltO1; arc=none smtp.client-ip=209.85.167.52
+	s=arc-20240116; t=1763368466; c=relaxed/simple;
+	bh=/w8+cOPPoQCGSAG/Bsdo816ahLwOpNRu9TtyqYsIsBw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=iiS07+64pZnZ5uK/s7Dq50AsjLvpYfzsJs7PE7BlQx94w3E1Rzlm7anz7OqbFWw7+NwmCsWOW8XOuOMCcPgtX5mTr1sUv+3BuVaz7QxVJCPBY8twuD10Re4ZUlkrt7g7soiJs0d+NYYzfIJVdjkh6pzWLn3yMffaiVkFgvwdHi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Untafpcb; arc=none smtp.client-ip=209.85.221.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mIM3ltO1"
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5957db5bdedso3641740e87.2
-        for <linux-clk@vger.kernel.org>; Mon, 17 Nov 2025 00:12:06 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Untafpcb"
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-429c48e05aeso2358932f8f.1
+        for <linux-clk@vger.kernel.org>; Mon, 17 Nov 2025 00:34:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763367125; x=1763971925; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=yNezKY4OK1RUkmmO61fiaJ8SOz15t0AD4hDvMzPpJVU=;
-        b=mIM3ltO1JCXOTXPJfKEXWf2BSZG2mBHB68G8pBekQdqxWaXxcaf7dto27e8WEippb2
-         3wAfyQ8nOvqjsUPIbEglFnCA6DWI9UoQRbsKMqnHNR4QvG7Mp+UzZ0ZADADwx1XrS/t9
-         QD+h+UN7jm+heHmecqTGEKdoO1OnubPj7o6cBg7s7ghR1djfIJeZQrDVKxOkVeovEhyQ
-         HDVI/XC7kMQw2Ic00mu1TrAzhcCF2vsMVVET4usBPfv9gRuMyBQPdtbi40ScNtC9DTpq
-         J6Wjr16nWOf1E/Vm7JRy1m4TW78h5kTzA2HNsMo0Jv8hZwqUiDNuIjyhWQio0BA1o1Rq
-         69Pw==
+        d=gmail.com; s=20230601; t=1763368463; x=1763973263; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=bPqgK8cy9cCPRdd19hJcNNNEYGuuQbqc8vWqHqOTZkk=;
+        b=UntafpcbeRfDn6U/xt6rO/r+TgrcWw13BZoGD4ixhRtK09N/MOX9tlR/Eg1xmT0Jdq
+         vdCG3qHV+Zbi8qGR118XLVnNRJsgCtU2thpapis/4QQM3Nq3E4p1hjX6dkxnuKd2lEEa
+         jMQ+zyC0Z3PjaMf2L7TLj0HChI/aAPV5JGswYchoYZ16PVuVZQBO0hB1R8Pk2f53JLj0
+         +Jp67Mj8ICmj3OtIJx+aLULwqqLQXoJ/CbYGUHxg8TcGs+/A8COIsyvXWM2DYMb3TMGq
+         edxRB1UQ/1mRzLdHdZscaUShUhlC7pOuraH79bLE5kL82ex7u1p7LTmf/TuVuI5Ii5FW
+         FHJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763367125; x=1763971925;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yNezKY4OK1RUkmmO61fiaJ8SOz15t0AD4hDvMzPpJVU=;
-        b=oBXG97vsrj3McW4BJCdDNVs0Fq5+PSePWJPaYTjNtycRl4rtD2cd4naqWci/YtfbrJ
-         hBjXCMd6MDyYXMDwXWZ+ueWxdJCAMP0HVooRgiPVi9ssd01iREvaaZ/bOKR2hW4DyfPq
-         QYZJ1x7heGQa78N+TlveMvnbT66/Mjv5gg6vh8tW+fPn6+pMMp875FzeaRSCb6SN6spv
-         W50EweHAqEs21ChDFJMuSNckZinf43WYSDaF6F6NwOFLFI8JgPYFiUBc5zXyjkGyDZEV
-         13Oe10w6zgOoxquW8sige6kzbD+6VrgbXKFom256XpFhO5kzHBBttReUXS1nHzPsXdez
-         MZgw==
-X-Forwarded-Encrypted: i=1; AJvYcCUyMWaXSTJiRIkybnyjeshDznGagOGUu8ks+38qaAbzEnguIXd/2qozVIB1zCxITOcq+qLMY2Fo9/o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdQG38+PxEwOswG/5/45+wntAtqD9R7eB8ZEJKOtfYgsQOJsib
-	l5PQ7vFnBfVeS9ewq9WxzVwf6Zsr4gBrpMr6rWTvCVLZRWYtLEOK6Usb
-X-Gm-Gg: ASbGnctf+c66H6FRTLTOkuuAvm19+RyxiGtamW1pZfGpFVFPEz6x29Y6DApocOCQYNU
-	1g5UORyM5FnpWnU7Er+0OwQsu5TRRvZoRdyFCexaeMnZclrGwnObzJqAwQurkoOSbGGdpPBg9WT
-	CKOdXq1Pc7yrXFbYrorBcPkynAgVGH8FKiaO8Qxa6c/SJIxRd87TXznnj54jnrBHcByH/zD6IMi
-	/oncHYwLzhF9swTHC7b9T1bXZLK3XEap6rkk/VbuOE2/MqL5lnxyZ2pgWquxKMj6Q91qtg5DOaD
-	+HeBbU+3JDbM9Qlk5VJ6Nj8nAeaX6SZfnwyFSL1i72m50hqFK4iWBvbNKTPlmsnLVEz5UXcPnpd
-	vMGHwyWWxKwBC7v+yve3GEG6MABY6hSJnmwwLgRyMJBoowxu79VTPayPnhW7bxKbjszWW6AS88/
-	iZSwSjZV2rRVPwPSFN8JT4
-X-Google-Smtp-Source: AGHT+IEluVZi6T3T+marIDimIkV/AzoU/n4XMrn+z0vTNbD0dmB4jEXr6UBisTSPipCj2YPh+iwoQw==
-X-Received: by 2002:a05:6512:2342:b0:595:8200:9f8f with SMTP id 2adb3069b0e04-595841b7044mr3304921e87.18.1763367124335;
-        Mon, 17 Nov 2025 00:12:04 -0800 (PST)
-Received: from [10.38.18.54] ([213.255.186.37])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-595803ac88bsm3067407e87.12.2025.11.17.00.12.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Nov 2025 00:12:03 -0800 (PST)
-Message-ID: <32303b95-3fd5-44c4-bb7d-e2957a6064fc@gmail.com>
-Date: Mon, 17 Nov 2025 10:12:01 +0200
+        d=1e100.net; s=20230601; t=1763368463; x=1763973263;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bPqgK8cy9cCPRdd19hJcNNNEYGuuQbqc8vWqHqOTZkk=;
+        b=BiTuE4EMnRYPVB3WvIuXQlYzr9AmhvcgPCukOibMu9I5bGqKK9tHiwAry3wl36W8G3
+         58O8IuqCQ1XPIuHmOvZ2+DdWRwmIv8OgzpuSAnHgn2pt1AAYU3KwEzP8MKZBb5GKOBiK
+         QCW6capJwwmb0rVa34Lmo55fJJ0dclK6LJ6dFzPPBWPzPefsNuMOP+K9fsouJtHesuiE
+         EpQlZROAvr/YVdb4N2/b92cZiyHZiup8Ykmarlj9FCTjQLzzz7upXAaFYK202QTA9uqL
+         ttVEA5uNBoMpip09ydQN0Lxy032QnjUmCBlgM9Uvk80yzbmav/QKSmc975ggy6x+1vd7
+         sW1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCW8yfqWPmwmhFrMnTD722RTnXpqk3atfnHPvL3okvfwR9ZS9Hrzauttjjro7crswBPRCgM5XwOYq1E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/eQLIWoN8XExLZf9tFaKauEesD659Ec8gXSh9P/QWSkjsffIy
+	k0IbOPn/zPJsMr1mJ+sxuhEfJIzlS6l/7VdhVCWn0v4HklARE1y6+v3s
+X-Gm-Gg: ASbGnctYTUQA/lV/F7aRihkqrD9kc+r1OSNb4rDzdUuAIBJkhMAbg7/3e4BJLiDvTOO
+	2qe7sQTXtu1nmtNlBcgSmHEZw1ATfxr+gJJTdrgrUWv0oqeRqNnLkjXa0ptAbwDvuugenn864nB
+	GM/hgWEfnBnmC9vCfJxZH/JZWX19KwOQwKKodbv3xKNwyPgXB2Zep3EMfqywEvZXS7nHTSctbTJ
+	8HLcZnp0+vPTe4Ayp5FhU4P2uuz5zTPAcTwnrTAQUMtV8qEu27b15CCD6BMBnLpuQKHU3CB3r92
+	6v88A5n7hZ7PMIUs12wYb4stJInk8T0ScSZwRSLxP3cg5czXYYLFOVsnC7QW7YUz4egAeLEjQ4S
+	vBWFQf9l+b1Co6XzoHbtuKkzoCv33rX+63nPR41ph0DhuYGe2AOiJQgddN5Tn55SXfyKyF5sTwr
+	sYe/C3TQSqEc8dYeQHkqt/qowNktnVmwKj2uCblO6qj6nYtnzvbjM35AQCrik=
+X-Google-Smtp-Source: AGHT+IHntRTwsme03+6WMxIwVdcfrJhadXkeJJU2b3wpprfCD5Jds7oFoJy6WDNSAMQdfKqDWAF/RQ==
+X-Received: by 2002:a05:6000:200c:b0:426:fb27:974a with SMTP id ffacd0b85a97d-42b52844e62mr14456258f8f.27.1763368462599;
+        Mon, 17 Nov 2025 00:34:22 -0800 (PST)
+Received: from ?IPv6:2001:818:ea56:d000:94c4:fb0e:28f:2a8d? ([2001:818:ea56:d000:94c4:fb0e:28f:2a8d])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42b53f19aa0sm24961371f8f.37.2025.11.17.00.34.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Nov 2025 00:34:22 -0800 (PST)
+Message-ID: <691267ecaa66a0f6a07ec79000b80de502d9b367.camel@gmail.com>
+Subject: Re: [PATCH 2/2] iio: frequency: adf4377: add clk provider support
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Jonathan Cameron <jic23@kernel.org>, Antoniu Miclaus
+	 <antoniu.miclaus@analog.com>
+Cc: robh@kernel.org, conor+dt@kernel.org, linux-iio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>
+Date: Mon, 17 Nov 2025 08:35:23 +0000
+In-Reply-To: <20251115172407.2c00d58c@jic23-huawei>
+References: <20251114120908.6502-1-antoniu.miclaus@analog.com>
+		<20251114120908.6502-3-antoniu.miclaus@analog.com>
+	 <20251115172407.2c00d58c@jic23-huawei>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 04/16] dt-bindings: power: supply: BD72720 managed
- battery
-To: Rob Herring <robh@kernel.org>
-Cc: Matti Vaittinen <matti.vaittinen@linux.dev>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Mark Brown <broonie@kernel.org>,
- Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org,
- Sebastian Reichel <sre@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
- Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
- linux-leds@vger.kernel.org, Pavel Machek <pavel@kernel.org>,
- Liam Girdwood <lgirdwood@gmail.com>, linux-gpio@vger.kernel.org,
- linux-pm@vger.kernel.org, Andreas Kemnade <andreas@kemnade.info>,
- Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
- linux-rtc@vger.kernel.org, Lee Jones <lee@kernel.org>,
- Stephen Boyd <sboyd@kernel.org>
-References: <cover.1763022807.git.mazziesaccount@gmail.com>
- <ac5a4e992e4fb9c7bffb1e641a7cd61f74af4cba.1763022807.git.mazziesaccount@gmail.com>
- <176303119683.3716572.16868393928566655866.robh@kernel.org>
- <ee36d7d1-ef47-4a35-9aff-baa6ed32105a@gmail.com>
- <20251114163954.GA3399895-robh@kernel.org>
-Content-Language: en-US, en-AU, en-GB, en-BW
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <20251114163954.GA3399895-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-On 14/11/2025 18:39, Rob Herring wrote:
-> On Fri, Nov 14, 2025 at 11:04:27AM +0200, Matti Vaittinen wrote:
->> On 13/11/2025 12:53, Rob Herring (Arm) wrote:
->>>
->>> On Thu, 13 Nov 2025 10:52:19 +0200, Matti Vaittinen wrote:
->>>> From: Matti Vaittinen <mazziesaccount@gmail.com>
+On Sat, 2025-11-15 at 17:24 +0000, Jonathan Cameron wrote:
+> On Fri, 14 Nov 2025 12:09:08 +0000
+> Antoniu Miclaus <antoniu.miclaus@analog.com> wrote:
+>=20
+> > Add clk provider feature for the adf4377.
+> >=20
+> > Even though the driver was sent as an IIO driver in most cases the
+> > device is actually seen as a clock provider.
+> >=20
+> > This patch aims to cover actual usecases requested by users in order to
+> > completely control the output frequencies from userspace.
+> >=20
+> > Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
+>=20
+> Given this new code is basically a clock driver, I'd expect to see some
+> relevant folk +CC.
+>=20
+> Added Michael, Stephen and linux-clk.
+>=20
+> One question from me right at the end around whether it makes sense
+> to register an IIO device with no channels.=C2=A0 I left the rest so it w=
+as
+> easy for the people added to the thread to see all the code.
+>=20
+> Thanks,
+>=20
+> Jonathan
+>=20
+>=20
+> > ---
+> > =C2=A0drivers/iio/frequency/adf4377.c | 131 +++++++++++++++++++++++++++=
+++++-
+> > =C2=A01 file changed, 129 insertions(+), 2 deletions(-)
+> >=20
+> > diff --git a/drivers/iio/frequency/adf4377.c b/drivers/iio/frequency/ad=
+f4377.c
+> > index 08833b7035e4..08dc2110cf8c 100644
+> > --- a/drivers/iio/frequency/adf4377.c
+> > +++ b/drivers/iio/frequency/adf4377.c
+> > @@ -8,6 +8,7 @@
+> > =C2=A0#include <linux/bitfield.h>
+> > =C2=A0#include <linux/bits.h>
+> > =C2=A0#include <linux/clk.h>
+> > +#include <linux/clk-provider.h>
+> > =C2=A0#include <linux/clkdev.h>
+> > =C2=A0#include <linux/delay.h>
+> > =C2=A0#include <linux/device.h>
+> > @@ -435,9 +436,14 @@ struct adf4377_state {
+> > =C2=A0	struct gpio_desc	*gpio_ce;
+> > =C2=A0	struct gpio_desc	*gpio_enclk1;
+> > =C2=A0	struct gpio_desc	*gpio_enclk2;
+> > +	struct clk		*clk;
+> > +	struct clk		*clkout;
+> > +	struct clk_hw		hw;
+> > =C2=A0	u8			buf[2] __aligned(IIO_DMA_MINALIGN);
+> > =C2=A0};
+> > =C2=A0
+> > +#define to_adf4377_state(h)	container_of(h, struct adf4377_state, hw)
+> > +
+> > =C2=A0static const char * const adf4377_muxout_modes[] =3D {
+> > =C2=A0	[ADF4377_MUXOUT_HIGH_Z] =3D "high_z",
+> > =C2=A0	[ADF4377_MUXOUT_LKDET] =3D "lock_detect",
+> > @@ -929,6 +935,120 @@ static int adf4377_freq_change(struct notifier_bl=
+ock *nb,
+> > unsigned long action,
+> > =C2=A0	return NOTIFY_OK;
+> > =C2=A0}
+> > =C2=A0
+> > +static void adf4377_clk_del_provider(void *data)
+> > +{
+> > +	struct adf4377_state *st =3D data;
+> > +
+> > +	of_clk_del_provider(st->spi->dev.of_node);
+> > +}
+> > +
+> > +static unsigned long adf4377_clk_recalc_rate(struct clk_hw *hw,
+> > +					=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 unsigned long parent_rate)
+> > +{
+> > +	struct adf4377_state *st =3D to_adf4377_state(hw);
+> > +	u64 freq;
+> > +	int ret;
+> > +
+> > +	ret =3D adf4377_get_freq(st, &freq);
+> > +	if (ret)
+> > +		return 0;
+> > +
+> > +	return freq;
+> > +}
+> > +
+> > +static int adf4377_clk_set_rate(struct clk_hw *hw,
+> > +				unsigned long rate,
+> > +				unsigned long parent_rate)
+> > +{
+> > +	struct adf4377_state *st =3D to_adf4377_state(hw);
+> > +
+> > +	return adf4377_set_freq(st, rate);
+> > +}
+> > +
+> > +static int adf4377_clk_prepare(struct clk_hw *hw)
+> > +{
+> > +	struct adf4377_state *st =3D to_adf4377_state(hw);
+> > +
+> > +	return regmap_update_bits(st->regmap, 0x1a, ADF4377_001A_PD_CLKOUT1_M=
+SK
+> > |
+> > +				=C2=A0 ADF4377_001A_PD_CLKOUT2_MSK,
+> > +				=C2=A0 FIELD_PREP(ADF4377_001A_PD_CLKOUT1_MSK, 0) |
+> > +				=C2=A0 FIELD_PREP(ADF4377_001A_PD_CLKOUT2_MSK, 0));
+> > +}
+> > +
+> > +static void adf4377_clk_unprepare(struct clk_hw *hw)
+> > +{
+> > +	struct adf4377_state *st =3D to_adf4377_state(hw);
+> > +
+> > +	regmap_update_bits(st->regmap, 0x1a, ADF4377_001A_PD_CLKOUT1_MSK |
+> > +			=C2=A0=C2=A0 ADF4377_001A_PD_CLKOUT2_MSK,
+> > +			=C2=A0=C2=A0 FIELD_PREP(ADF4377_001A_PD_CLKOUT1_MSK, 1) |
+> > +			=C2=A0=C2=A0 FIELD_PREP(ADF4377_001A_PD_CLKOUT2_MSK, 1));
+> > +}
+> > +
+> > +static int adf4377_clk_is_enabled(struct clk_hw *hw)
+> > +{
+> > +	struct adf4377_state *st =3D to_adf4377_state(hw);
+> > +	unsigned int readval;
+> > +	int ret;
+> > +
+> > +	ret =3D regmap_read(st->regmap, 0x1a, &readval);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	return !(readval & (ADF4377_001A_PD_CLKOUT1_MSK |
+> > ADF4377_001A_PD_CLKOUT2_MSK));
+> > +}
+> > +
+> > +static const struct clk_ops adf4377_clk_ops =3D {
+> > +	.recalc_rate =3D adf4377_clk_recalc_rate,
+> > +	.set_rate =3D adf4377_clk_set_rate,
+> > +	.prepare =3D adf4377_clk_prepare,
+> > +	.unprepare =3D adf4377_clk_unprepare,
+> > +	.is_enabled =3D adf4377_clk_is_enabled,
+> > +};
+> > +
+> > +static int adf4377_clk_register(struct adf4377_state *st)
+> > +{
+> > +	struct spi_device *spi =3D st->spi;
+> > +	struct clk_init_data init;
+> > +	struct clk *clk;
+> > +	const char *parent_name;
+> > +	int ret;
+> > +
+> > +	if (!device_property_present(&spi->dev, "#clock-cells"))
+> > +		return 0;
+> > +
+> > +	if (device_property_read_string(&spi->dev, "clock-output-names",
+> > &init.name)) {
+> > +		init.name =3D devm_kasprintf(&spi->dev, GFP_KERNEL, "%s-clk",
+> > +					=C2=A0=C2=A0 fwnode_get_name(dev_fwnode(&spi-
+> > >dev)));
+> > +		if (!init.name)
+> > +			return -ENOMEM;
+> > +	}
+> > +
+> > +	parent_name =3D of_clk_get_parent_name(spi->dev.of_node, 0);
+> > +	if (!parent_name)
+> > +		return -EINVAL;
+> > +
+> > +	init.ops =3D &adf4377_clk_ops;
+> > +	init.parent_names =3D &parent_name;
+> > +	init.num_parents =3D 1;
+> > +	init.flags =3D CLK_SET_RATE_PARENT;
+> > +
+> > +	st->hw.init =3D &init;
+> > +	clk =3D devm_clk_register(&spi->dev, &st->hw);
+> > +	if (IS_ERR(clk))
+> > +		return PTR_ERR(clk);
+> > +
+> > +	st->clk =3D clk;
+> > +
+> > +	ret =3D of_clk_add_provider(spi->dev.of_node, of_clk_src_simple_get, =
+clk);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	st->clkout =3D clk;
+> > +
+> > +	return devm_add_action_or_reset(&spi->dev, adf4377_clk_del_provider,
+> > st);
+> > +}
+> > +
+> > =C2=A0static const struct adf4377_chip_info adf4377_chip_info =3D {
+> > =C2=A0	.name =3D "adf4377",
+> > =C2=A0	.has_gpio_enclk2 =3D true,
+> > @@ -958,8 +1078,6 @@ static int adf4377_probe(struct spi_device *spi)
+> > =C2=A0
+> > =C2=A0	indio_dev->info =3D &adf4377_info;
+> > =C2=A0	indio_dev->name =3D "adf4377";
+> > -	indio_dev->channels =3D adf4377_channels;
+> > -	indio_dev->num_channels =3D ARRAY_SIZE(adf4377_channels);
+> > =C2=A0
+> > =C2=A0	st->regmap =3D regmap;
+> > =C2=A0	st->spi =3D spi;
+> > @@ -979,6 +1097,15 @@ static int adf4377_probe(struct spi_device *spi)
+> > =C2=A0	if (ret)
+> > =C2=A0		return ret;
+> > =C2=A0
+> > +	ret =3D adf4377_clk_register(st);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	if (!st->clkout) {
+> > +		indio_dev->channels =3D adf4377_channels;
+> > +		indio_dev->num_channels =3D ARRAY_SIZE(adf4377_channels);
+>=20
+> Why register a channel free iio device? Probably better to just not regis=
+ter
+> it at all in this path.
 
-//snip
+Maybe a sneaky way of making use of the IIO debug direct access :). But I a=
+lready
+asked myself the somehow related question if we should still allow IIO acce=
+ss even if
+the clock provider is registered. I mean, for sure we would need a more "fi=
+ne"
+grained access but we could only forbid IIO/userspace control in case an ac=
+tual
+consumer of the clock asks for it.
 
->>
->> So, as far as I understand, the only viable options are expanding the
->> existing battery.yaml with these properties (which I hoped to avoid, see
->> below)
->>
->>>> The right place for them is the battery node, which is described by the
->>>> generic "battery.yaml". I was not comfortable with adding these
->>>> properties to the generic battery.yaml because they are:
->>>>     - Meaningful only for those charger drivers which have the VDR
->>>>       algorithm implemented. (And even though the algorithm is not charger
->>>>       specific, AFAICS, it is currently only used by some ROHM PMIC
->>>>       drivers).
->>>>     - Technique of measuring the VDR tables for a battery is not widely
->>>>       known. AFAICS, only folks at ROHM are measuring those for some
->>>>       customer products. We do have those tables available for some of the
->>>>       products though (Kobo?).
->>
->> or, to add new compatible for the "vdr-battery".
->> AFAICS, adding new compatible would require us to wither duplicate the used
->> properties from battery.yaml here (as battery.yaml mandates the
->> "simple-battery" - compatible) - or to split the battery.yaml in two files,
->> one containing the generic properties, other containing the "simple-battery"
->> -compatible and referencing the generic one. Then the "vdr-battery" could
->> also reference the generic one.
->>
->> Any suggestions for the next path to follow?
-> 
-> Probably the latter option. You could do the former and make the new
-> properties conditional on the "vdr-battery" compatible. That's fine with
-> small differences, but gets messy as there are more properties and
-> variations.
-> 
-> But is "VDR" a type of battery though? Is there a certain type/chemistry
-> of battery we should be describing where VDR is applicable?
+Or maybe not worth the trouble :)
 
-No. Not that I know. My understanding is that the "VDR (voltage drop 
-rate)" refers to measured voltage drop-rates under certain conditions - 
-which can be used to (more accurately) estimate the remaining capacity 
-when battery is nearly depleted. As far as I know, this is only used 
-with Lithium-ion batteries (I am not at all sure of this) - but I 
-_assume_ the technique could be applied to other type of batteries as well.
+- Nuno S=C3=A1
 
-> I don't
-> think it scales well if we define battery compatibles for every
-> variation of charger algorithm. Honestly I don't mind just adding 1
-> property. I care more if we allow undocumented properties than
-> allowing documented but invalid for the platform properties.
-
-I see. The "VDR" stuff is really tightly bound to the fuel-gauging 
-algorithm. It is measured characteristics of the battery - but those 
-values are only usable by the "VDR" algorithm. I don't really have a 
-good insight in the amount of fuel-gauging algorithm related properties 
-suggested to be added during the years - but don't think there have been 
-that many of them. So, I am not that worried about adding the 
-compatible. On the other hand, there is no technical reason (other than 
-adding properties which are unused on many platforms) why not to add the 
-vdr tables in the static-battey node without adding own compatible. And, 
-reading reply from Andreas (I'll copy it here to answer it in same mail)
-
-/// Below text is form Andreas:
- > just keep in mind, that several kobo devices have one pmic in one board
- > revision and another one in the other (e.g. Kobo Nia rev A vs rev C).
- > But probably the same battery. So if the "vdr-battery" is a compatible
- > just to allow a more properties,
- > then "simple-battery" should be allowed as fallback.
-
-I didn't know Kobos use multiple chargers. Thanks Andreas! So, in that 
-sense, adding the "vdr" tables in static-battery node, without new 
-compatible, would maybe be simplest solution. Then the charger(s) 
-(fuel-gauge(s)) which implement VDR algorithm, can pick the tables while 
-those chargers which don't implement the VDR will just ignore these tables.
-
-> When it
-> becomes 10, 20, 30 properties, then I might start to care. 
-
-For VDR there are only:
-
-rohm,voltage-vdr-thresh-microvolt,
-rohm,volt-drop-soc-bp,
-rohm,volt-drop-temperatures-millicelsius
-
-and
-
-patternProperties:
-   '^rohm,volt-drop-[0-9]-microvolt':
-
-So, from the binding point of view (.yaml), it's not _that_ lot. In the 
-.dts there will be quite some noise as the tables have several values.
-
-
-> If that
-> happens, either we are doing a poor job of generically describing
-> battery parameters or chargers and batteries are tightly coupled and
-> can't be described independently.
-
-I am under impression that chargers tend to be pretty flexible, and they 
-can be configured to work with many different batteries by altering the 
-charging profiles. Most of the battery properties (like and charging 
-phases [like pre, CC, CV], their limits, currents and voltages etc) are 
-very generally usable. So, large subset of charging functionality can be 
-handled with standard properties. I believe it is only the fuel-gauging 
-where things get more hairy.
-
-I did prepare a series which does the split and adds new compatible for 
-the 'rohm,vdr-battery'. (The power-supply class is not yet modified in 
-the series, but we would probably want to modify the battery-info 
-getters to also accept the 'rohm,vdr-battery' -compatible.)
-
-I wonder if I should actually prepare also a series where these 
-properties are just placed in the existing static battery node without 
-adding new compatible. That way it would be easier to see which way is 
-better.
-
-If I do that, should I only spin these bindings as RFC to avoid the 
-unnecessary noise?
-
-Oh, and a big thanks to both of you Rob and Andreas!  I feel this gained 
-more clarity after your feedback :)
-
-Yours,
-	-- Matti
-
----
-Matti Vaittinen
-Linux kernel developer at ROHM Semiconductors
-Oulu Finland
-
-~~ When things go utterly wrong vim users can always type :help! ~~
+>=20
+> > +	}
+> > +
+> > =C2=A0	return devm_iio_device_register(&spi->dev, indio_dev);
+> > =C2=A0}
+> > =C2=A0
