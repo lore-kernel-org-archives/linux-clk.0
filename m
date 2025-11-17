@@ -1,87 +1,67 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0BC524A04A
-	for <linux-clk@vger.kernel.org>; Mon, 17 Nov 2025 08:04:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A519731B113
+	for <linux-clk@vger.kernel.org>; Mon, 17 Nov 2025 08:12:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763366644; cv=none; b=CB9LUTZA7CE7peJ2vkxao9XlGd6bjl+Q+3tD2NPLo8t8Ux6Mj+U5Bm+8S99t7z7MUpLBtvb2sTIszGorgNVNjl0HfysUn81g7+FaewW3lU8qiloArO3E9kXn+HNXti/Ujh+fgGpg/bBdOZZb/UgFOzVuOgLm++oITzXWhUhJiHE=
+	t=1763367128; cv=none; b=sHXuQ/nLknmy/p/4ChNIhvqkOQ5rpkKG0KI2efN20TheZC5MXUcWoiJVigOTsW08ZTUt5tUNUxmJ3cavv3Gn4r7mJ513VadU3gylLBwR3rnd+RH2iJMhayL/BoA9pzkNMqpxV7hWRUkRzmLSxCkyi1FxqY/3GJOajnZ3qIo6x7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763366644; c=relaxed/simple;
-	bh=NiQ6dPXUR3qBUFxjUddLD3A/Av0l/KfYX7OGQVhntio=;
+	s=arc-20240116; t=1763367128; c=relaxed/simple;
+	bh=XHwbf6AOIUXsOmRYZriTih9VqIVu3akhJh3HAnKtjAI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BDeRPZR3697b5IDlZIh/RZJdV/S39YeZuYgMhzcazIXs3O9v5bjyo+dgj+wHczN/Px8dqhKCQuRc/YBGOQCSCZiHG0WRGYcpiGSbHdGmmYtPtcL8I2cbq0I5hzplgwTgxsLVff/hKCuMGfbEA+YOuNvA86lBpFliCiHd0xDWGEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=GQKAAHSR; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=cX5xPCPt; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	 In-Reply-To:Content-Type; b=BvK7n/55HcoMgpTt0QS6Pk3mlVzMnp4lqJQdxdqWlMpNHfUajgQ49f0URZlMcssacK19dncCWlJ3q8tuKiBvdjcDu1T8w8V8i6yk5T113gTBpCdVS1JCGqkHdQnCLJPVSnV0a3IMFhJqrUzkdZkAOXfIOa22BmC9zD+mlV5en4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mIM3ltO1; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="GQKAAHSR";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="cX5xPCPt"
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5AH4p6we3192127
-	for <linux-clk@vger.kernel.org>; Mon, 17 Nov 2025 08:04:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	R4Xx1nzkjZROYXLFjuIT5emSJnRfpay3eo4Xkn+Cu2g=; b=GQKAAHSRbq0vJdJw
-	JDrmGZ472bqGv44U321hpBqE/Rmh0Zb9kjAZbuaaTbWQ8E59GhUwfDQmvAbNSIp/
-	SDiUcS/gwXU5T1aDlEfZlz3h+uLlUbBt/NnVxbaBNR3kEX/7W4CSkqmP2JlLfu7v
-	9BNJFQVkg+7IVmVzoHshmQ7Sr6nFSEl7BW+90GkJ3tq3TcE4PJ5yh2k0cT7DmlqF
-	KjJI8bTPd+v4dn4Yk5M3O4QY+tsq5bF8zG8T66y+Q5h2AHStEtuICFTD7SqSnEBu
-	c0sGGmJjHGDlcgjeDyQm4cDs6INavfgtEsAYd/jYdDskBtvKzOEfKOyw8xrBMXKs
-	xcRjPQ==
-Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4aejkmbux0-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Mon, 17 Nov 2025 08:04:00 +0000 (GMT)
-Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-7b82c2c2ca2so5713116b3a.1
-        for <linux-clk@vger.kernel.org>; Mon, 17 Nov 2025 00:04:00 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mIM3ltO1"
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5957db5bdedso3641740e87.2
+        for <linux-clk@vger.kernel.org>; Mon, 17 Nov 2025 00:12:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1763366639; x=1763971439; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1763367125; x=1763971925; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=R4Xx1nzkjZROYXLFjuIT5emSJnRfpay3eo4Xkn+Cu2g=;
-        b=cX5xPCPtlxKYKWYFkO8/kvw1fNafvkZSQEv6w/6NinBLvM6XLUya8jSX2CpBM/6te/
-         KhM59JSP5Fwqu1DwufxvfztrxxHxztac7H1RrqpfQXihGrm6rOE+RIzJjwtqrCFyznDX
-         oNkPgZ/rsQ3QQ8QKD+1NlgiZPldiQzsUeg8hc4c/t93rUAYp2PhjNXB8/cb3HL5EZ+r5
-         wk7UQncL/k9/B0ItvQAesBKB8pM2+4nmPZVPp4aXJ4bwi6yH8GbF4GE2SD+ZIxng1Msh
-         9swdg7sHiOQT61toppnppGC4aVRDRddFjUeBguAQm4ap9SnYrzU3zseT7YxAUuoaW/c8
-         ncdw==
+        bh=yNezKY4OK1RUkmmO61fiaJ8SOz15t0AD4hDvMzPpJVU=;
+        b=mIM3ltO1JCXOTXPJfKEXWf2BSZG2mBHB68G8pBekQdqxWaXxcaf7dto27e8WEippb2
+         3wAfyQ8nOvqjsUPIbEglFnCA6DWI9UoQRbsKMqnHNR4QvG7Mp+UzZ0ZADADwx1XrS/t9
+         QD+h+UN7jm+heHmecqTGEKdoO1OnubPj7o6cBg7s7ghR1djfIJeZQrDVKxOkVeovEhyQ
+         HDVI/XC7kMQw2Ic00mu1TrAzhcCF2vsMVVET4usBPfv9gRuMyBQPdtbi40ScNtC9DTpq
+         J6Wjr16nWOf1E/Vm7JRy1m4TW78h5kTzA2HNsMo0Jv8hZwqUiDNuIjyhWQio0BA1o1Rq
+         69Pw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763366639; x=1763971439;
+        d=1e100.net; s=20230601; t=1763367125; x=1763971925;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=R4Xx1nzkjZROYXLFjuIT5emSJnRfpay3eo4Xkn+Cu2g=;
-        b=B32Oe/t/i89pq2wjd+4G/xgTSyVibHmVOejleVYFAKEg/MQVtAL3kQBmiUKgyqmBUs
-         RF6qvjwbY2fkjqxgQWz7sGUH7FNN/bw/uYJMaab232f76JmPENHZCKwDnN70hUb6j51d
-         Wu3p/VNsgkHgoi/FZRPynTirf4xKmcURwmLrSB1Vu+QJ+OU58AACsfLqP3eVyvI56Jn0
-         8WQccrV/vSewuTreeoMmHaHLXWk/Lt9gdkt2g9II9E6RBhxdwFRZBQeH2AWLRigEZKAZ
-         WB1a6YLIxQSPw9Rw9+6kZefdIRyaMNyMCFINBC/gwRlz2bP3LVbeAVf/xdgbPtBH7ggj
-         Lr0w==
-X-Forwarded-Encrypted: i=1; AJvYcCWeqaNxUp5xqMTnAlHl3KKITXmjVselBuUegdcsiEylqIc6scJFajVusI3XUcwqYMQ8jNwgnkw/zoE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHop/3qHfsqAGtDGl1dwERA4ecpNQkseMlH27pKePckEUE7d3A
-	DwznpVtMRgkP8KVXGje4J1JNena1aDvuIFnAEjwoHJWFTLiknOW8gzBqhQ9kd8WH2bYYhy0jJLt
-	aFPt261+4XQilCPWIBQEEs/gEMUH313Q2+/O+jBEoskSis0LnZvv+qPV6SA/WK98GRj3xoWQ=
-X-Gm-Gg: ASbGncsurE7ncqcm7Io6Ia8RePxQ3SItdwpjbPS5SPzUicdAWAbW9tu74UUB9rOmveq
-	ablGAS2rgs3rBmm/ToZ9zfG7VDD2iIsBdFPvv5l7v6VGnan3ZbRSeS6iXQzSvjR8tyPAJLWbl0p
-	/RbfjGVJ+o8PAWZ8ndOKn58qh9g4spyFErWbr0pRgmWFJu94YxB/LsThhG/QFPLntd3MQmio49v
-	32mU6JCY2o4+YQJQXWoeNrq+4pRvi3xf3eaXYDLH17GABV/IKLb2IDE5xXrUYNrJKOlbU6TA5Sg
-	W88nfteizHd/i7IyYBUFjHyb+S0cBwl/3QiaGecVLQuNhZivMH0/Hb0IX/+wUKs9WBPrdipvsIq
-	U3vU8Ndid8e922dSkeoamfMy8lEg=
-X-Received: by 2002:a05:6a00:240b:b0:7aa:2cc6:8c38 with SMTP id d2e1a72fcca58-7ba39bb9fa9mr12484336b3a.2.1763366639401;
-        Mon, 17 Nov 2025 00:03:59 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEHfEYVM6V2fJECHHCpONILizZ2XAv+5Uz3vTC8/xLSB/OAdtttpHrKxTvm7nwtJjUXecWrJA==
-X-Received: by 2002:a05:6a00:240b:b0:7aa:2cc6:8c38 with SMTP id d2e1a72fcca58-7ba39bb9fa9mr12484298b3a.2.1763366638940;
-        Mon, 17 Nov 2025 00:03:58 -0800 (PST)
-Received: from [10.217.217.147] ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7b9250d332asm12374136b3a.25.2025.11.17.00.03.54
+        bh=yNezKY4OK1RUkmmO61fiaJ8SOz15t0AD4hDvMzPpJVU=;
+        b=oBXG97vsrj3McW4BJCdDNVs0Fq5+PSePWJPaYTjNtycRl4rtD2cd4naqWci/YtfbrJ
+         hBjXCMd6MDyYXMDwXWZ+ueWxdJCAMP0HVooRgiPVi9ssd01iREvaaZ/bOKR2hW4DyfPq
+         QYZJ1x7heGQa78N+TlveMvnbT66/Mjv5gg6vh8tW+fPn6+pMMp875FzeaRSCb6SN6spv
+         W50EweHAqEs21ChDFJMuSNckZinf43WYSDaF6F6NwOFLFI8JgPYFiUBc5zXyjkGyDZEV
+         13Oe10w6zgOoxquW8sige6kzbD+6VrgbXKFom256XpFhO5kzHBBttReUXS1nHzPsXdez
+         MZgw==
+X-Forwarded-Encrypted: i=1; AJvYcCUyMWaXSTJiRIkybnyjeshDznGagOGUu8ks+38qaAbzEnguIXd/2qozVIB1zCxITOcq+qLMY2Fo9/o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdQG38+PxEwOswG/5/45+wntAtqD9R7eB8ZEJKOtfYgsQOJsib
+	l5PQ7vFnBfVeS9ewq9WxzVwf6Zsr4gBrpMr6rWTvCVLZRWYtLEOK6Usb
+X-Gm-Gg: ASbGnctf+c66H6FRTLTOkuuAvm19+RyxiGtamW1pZfGpFVFPEz6x29Y6DApocOCQYNU
+	1g5UORyM5FnpWnU7Er+0OwQsu5TRRvZoRdyFCexaeMnZclrGwnObzJqAwQurkoOSbGGdpPBg9WT
+	CKOdXq1Pc7yrXFbYrorBcPkynAgVGH8FKiaO8Qxa6c/SJIxRd87TXznnj54jnrBHcByH/zD6IMi
+	/oncHYwLzhF9swTHC7b9T1bXZLK3XEap6rkk/VbuOE2/MqL5lnxyZ2pgWquxKMj6Q91qtg5DOaD
+	+HeBbU+3JDbM9Qlk5VJ6Nj8nAeaX6SZfnwyFSL1i72m50hqFK4iWBvbNKTPlmsnLVEz5UXcPnpd
+	vMGHwyWWxKwBC7v+yve3GEG6MABY6hSJnmwwLgRyMJBoowxu79VTPayPnhW7bxKbjszWW6AS88/
+	iZSwSjZV2rRVPwPSFN8JT4
+X-Google-Smtp-Source: AGHT+IEluVZi6T3T+marIDimIkV/AzoU/n4XMrn+z0vTNbD0dmB4jEXr6UBisTSPipCj2YPh+iwoQw==
+X-Received: by 2002:a05:6512:2342:b0:595:8200:9f8f with SMTP id 2adb3069b0e04-595841b7044mr3304921e87.18.1763367124335;
+        Mon, 17 Nov 2025 00:12:04 -0800 (PST)
+Received: from [10.38.18.54] ([213.255.186.37])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-595803ac88bsm3067407e87.12.2025.11.17.00.12.02
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Nov 2025 00:03:58 -0800 (PST)
-Message-ID: <793d5039-0506-4104-b4ce-64bfa3cc00eb@oss.qualcomm.com>
-Date: Mon, 17 Nov 2025 13:33:53 +0530
+        Mon, 17 Nov 2025 00:12:03 -0800 (PST)
+Message-ID: <32303b95-3fd5-44c4-bb7d-e2957a6064fc@gmail.com>
+Date: Mon, 17 Nov 2025 10:12:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -89,79 +69,167 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/4] clk: qcom: gcc: Add support for Global Clock
- controller found on MSM8940
-To: =?UTF-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <barnabas.czeman@mainlining.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Adam Skladowski <a_skl39@protonmail.com>,
-        Sireesh Kodali <sireeshkodali@protonmail.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lanik <daniilt971@gmail.com>
-References: <20251116-gcc-msm8940-sdm439-v1-0-7c0dc89c922c@mainlining.org>
- <20251116-gcc-msm8940-sdm439-v1-2-7c0dc89c922c@mainlining.org>
-Content-Language: en-US
-From: Taniya Das <taniya.das@oss.qualcomm.com>
-In-Reply-To: <20251116-gcc-msm8940-sdm439-v1-2-7c0dc89c922c@mainlining.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-ORIG-GUID: QpblcuDY-Yq1ifr9pg3dGqczw4Iu_OcW
-X-Authority-Analysis: v=2.4 cv=N6ok1m9B c=1 sm=1 tr=0 ts=691ad6f0 cx=c_pps
- a=WW5sKcV1LcKqjgzy2JUPuA==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=djyRjNaPrsuUQGfLFkwA:9 a=3ZKOabzyN94A:10
- a=QEXdDO2ut3YA:10 a=OpyuDcXvxspvyRM73sMx:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTE3MDA2NyBTYWx0ZWRfX7eSslG8OQC51
- C6wMgwl23egeDcdObuFqmd/T8gSnuIc/EgizaAJCaLZ3TeJdQYv2mwECADNlvEnqwuxqXkZOcZk
- EOBWfwrIy84Hmjah9thFeCDcBSYlSRg75UP6zR4aKodtOhv+UY7NIXtvEPf82y7o2euAQZOcmaj
- HZq9SVYTOSOB9y6ZflKGpF+MNGAMAcn7Q3u3JNI1OsWJ0xEiphRS60KeBxGQtC+/EnAZQafh1AJ
- YzxLB+QiAsjIEQ7cti5LWc4B/DprN3pT/vs1RojEABeSsf+i1zkXQtXISPlNmTKv73Y0duT7Vxo
- 0T7GROW4N+2sGYHVSekty1XToiB6kIDJ4OnvZShZAmK9cTntgg/AxUzs+XKn4YVXeBPDdcGP6lj
- UR+jIyLhAzcivNvN2pqBcbTdV4v7nw==
-X-Proofpoint-GUID: QpblcuDY-Yq1ifr9pg3dGqczw4Iu_OcW
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-17_02,2025-11-13_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 suspectscore=0 lowpriorityscore=0 bulkscore=0 clxscore=1015
- priorityscore=1501 adultscore=0 phishscore=0 spamscore=0 impostorscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511170067
+Subject: Re: [PATCH v4 04/16] dt-bindings: power: supply: BD72720 managed
+ battery
+To: Rob Herring <robh@kernel.org>
+Cc: Matti Vaittinen <matti.vaittinen@linux.dev>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Mark Brown <broonie@kernel.org>,
+ Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org,
+ Sebastian Reichel <sre@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
+ Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+ linux-leds@vger.kernel.org, Pavel Machek <pavel@kernel.org>,
+ Liam Girdwood <lgirdwood@gmail.com>, linux-gpio@vger.kernel.org,
+ linux-pm@vger.kernel.org, Andreas Kemnade <andreas@kemnade.info>,
+ Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+ linux-rtc@vger.kernel.org, Lee Jones <lee@kernel.org>,
+ Stephen Boyd <sboyd@kernel.org>
+References: <cover.1763022807.git.mazziesaccount@gmail.com>
+ <ac5a4e992e4fb9c7bffb1e641a7cd61f74af4cba.1763022807.git.mazziesaccount@gmail.com>
+ <176303119683.3716572.16868393928566655866.robh@kernel.org>
+ <ee36d7d1-ef47-4a35-9aff-baa6ed32105a@gmail.com>
+ <20251114163954.GA3399895-robh@kernel.org>
+Content-Language: en-US, en-AU, en-GB, en-BW
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <20251114163954.GA3399895-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+
+On 14/11/2025 18:39, Rob Herring wrote:
+> On Fri, Nov 14, 2025 at 11:04:27AM +0200, Matti Vaittinen wrote:
+>> On 13/11/2025 12:53, Rob Herring (Arm) wrote:
+>>>
+>>> On Thu, 13 Nov 2025 10:52:19 +0200, Matti Vaittinen wrote:
+>>>> From: Matti Vaittinen <mazziesaccount@gmail.com>
+
+//snip
+
+>>
+>> So, as far as I understand, the only viable options are expanding the
+>> existing battery.yaml with these properties (which I hoped to avoid, see
+>> below)
+>>
+>>>> The right place for them is the battery node, which is described by the
+>>>> generic "battery.yaml". I was not comfortable with adding these
+>>>> properties to the generic battery.yaml because they are:
+>>>>     - Meaningful only for those charger drivers which have the VDR
+>>>>       algorithm implemented. (And even though the algorithm is not charger
+>>>>       specific, AFAICS, it is currently only used by some ROHM PMIC
+>>>>       drivers).
+>>>>     - Technique of measuring the VDR tables for a battery is not widely
+>>>>       known. AFAICS, only folks at ROHM are measuring those for some
+>>>>       customer products. We do have those tables available for some of the
+>>>>       products though (Kobo?).
+>>
+>> or, to add new compatible for the "vdr-battery".
+>> AFAICS, adding new compatible would require us to wither duplicate the used
+>> properties from battery.yaml here (as battery.yaml mandates the
+>> "simple-battery" - compatible) - or to split the battery.yaml in two files,
+>> one containing the generic properties, other containing the "simple-battery"
+>> -compatible and referencing the generic one. Then the "vdr-battery" could
+>> also reference the generic one.
+>>
+>> Any suggestions for the next path to follow?
+> 
+> Probably the latter option. You could do the former and make the new
+> properties conditional on the "vdr-battery" compatible. That's fine with
+> small differences, but gets messy as there are more properties and
+> variations.
+> 
+> But is "VDR" a type of battery though? Is there a certain type/chemistry
+> of battery we should be describing where VDR is applicable?
+
+No. Not that I know. My understanding is that the "VDR (voltage drop 
+rate)" refers to measured voltage drop-rates under certain conditions - 
+which can be used to (more accurately) estimate the remaining capacity 
+when battery is nearly depleted. As far as I know, this is only used 
+with Lithium-ion batteries (I am not at all sure of this) - but I 
+_assume_ the technique could be applied to other type of batteries as well.
+
+> I don't
+> think it scales well if we define battery compatibles for every
+> variation of charger algorithm. Honestly I don't mind just adding 1
+> property. I care more if we allow undocumented properties than
+> allowing documented but invalid for the platform properties.
+
+I see. The "VDR" stuff is really tightly bound to the fuel-gauging 
+algorithm. It is measured characteristics of the battery - but those 
+values are only usable by the "VDR" algorithm. I don't really have a 
+good insight in the amount of fuel-gauging algorithm related properties 
+suggested to be added during the years - but don't think there have been 
+that many of them. So, I am not that worried about adding the 
+compatible. On the other hand, there is no technical reason (other than 
+adding properties which are unused on many platforms) why not to add the 
+vdr tables in the static-battey node without adding own compatible. And, 
+reading reply from Andreas (I'll copy it here to answer it in same mail)
+
+/// Below text is form Andreas:
+ > just keep in mind, that several kobo devices have one pmic in one board
+ > revision and another one in the other (e.g. Kobo Nia rev A vs rev C).
+ > But probably the same battery. So if the "vdr-battery" is a compatible
+ > just to allow a more properties,
+ > then "simple-battery" should be allowed as fallback.
+
+I didn't know Kobos use multiple chargers. Thanks Andreas! So, in that 
+sense, adding the "vdr" tables in static-battery node, without new 
+compatible, would maybe be simplest solution. Then the charger(s) 
+(fuel-gauge(s)) which implement VDR algorithm, can pick the tables while 
+those chargers which don't implement the VDR will just ignore these tables.
+
+> When it
+> becomes 10, 20, 30 properties, then I might start to care. 
+
+For VDR there are only:
+
+rohm,voltage-vdr-thresh-microvolt,
+rohm,volt-drop-soc-bp,
+rohm,volt-drop-temperatures-millicelsius
+
+and
+
+patternProperties:
+   '^rohm,volt-drop-[0-9]-microvolt':
+
+So, from the binding point of view (.yaml), it's not _that_ lot. In the 
+.dts there will be quite some noise as the tables have several values.
 
 
+> If that
+> happens, either we are doing a poor job of generically describing
+> battery parameters or chargers and batteries are tightly coupled and
+> can't be described independently.
 
-On 11/17/2025 3:05 AM, Barnabás Czémán wrote:
->  
-> +static struct clk_branch gcc_ipa_tbu_clk = {
-> +	.halt_reg = 0x120a0,
-> +	.halt_check = BRANCH_VOTED,
-> +	.clkr = {
-> +		.enable_reg = 0x4500c,
-> +		.enable_mask = BIT(16),
-> +		.hw.init = &(struct clk_init_data){
-> +			.name = "gcc_ipa_tbu_clk",
-> +			.ops = &clk_branch2_ops,
-> +		},
-> +	},
-> +};
-> +
+I am under impression that chargers tend to be pretty flexible, and they 
+can be configured to work with many different batteries by altering the 
+charging profiles. Most of the battery properties (like and charging 
+phases [like pre, CC, CV], their limits, currents and voltages etc) are 
+very generally usable. So, large subset of charging functionality can be 
+handled with standard properties. I believe it is only the fuel-gauging 
+where things get more hairy.
 
-Is the TBU clock used on 8940 by a SMMU driver?
+I did prepare a series which does the split and adds new compatible for 
+the 'rohm,vdr-battery'. (The power-supply class is not yet modified in 
+the series, but we would probably want to modify the battery-info 
+getters to also accept the 'rohm,vdr-battery' -compatible.)
 
->  static struct gdsc venus_gdsc = {
->  	.gdscr = 0x4c018,
->  	.cxcs = (unsigned int []){ 0x4c024, 0x4c01c },
-> @@ -3764,6 +3798,189 @@ static struct clk_regmap *gcc_msm8937_clocks[] = {
->  	[GCC_VFE_TBU_CLK] = &gcc_vfe_tbu_clk.clkr,
->  };
+I wonder if I should actually prepare also a series where these 
+properties are just placed in the existing static battery node without 
+adding new compatible. That way it would be easier to see which way is 
+better.
 
--- 
-Thanks,
-Taniya Das
+If I do that, should I only spin these bindings as RFC to avoid the 
+unnecessary noise?
 
+Oh, and a big thanks to both of you Rob and Andreas!  I feel this gained 
+more clarity after your feedback :)
+
+Yours,
+	-- Matti
+
+---
+Matti Vaittinen
+Linux kernel developer at ROHM Semiconductors
+Oulu Finland
+
+~~ When things go utterly wrong vim users can always type :help! ~~
