@@ -1,129 +1,89 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4206523C8C7;
-	Mon, 17 Nov 2025 17:48:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E7A92848AA;
+	Mon, 17 Nov 2025 17:59:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763401712; cv=none; b=iKTNDuNnozD6+21Qdb3CliLBIv35BL9Zp7pANEGqTzjTRtbBKtHd+CScu5FNrdC1kB3zOAi2YAddiVO5MAny2Nsx36AEYO2wg/2HGxQ4NAFDUT41/BTRKCGFAYa/xNoXX+u8S+9goF5WXRfj883KInhaVmgsZw7eOQtF8n1HOfI=
+	t=1763402348; cv=none; b=urun8iyMOc4/is8oc8MuBFdLHaQFnftWD5jsCx0Q4FgdBPKmo/Lc873zBmVM3qMqIbI0oeiTgzn5PJlSNdXLpY9en7mVkh5bkfAoHqqrnrAREkfJ/w/ZBaztwGqFwi+oYIIIY6t7+Ovl4xOsKlgcYsSgeM3jhtS7MjnGS9BpqRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763401712; c=relaxed/simple;
-	bh=qOLIQvSf0KW1L5d/BIjS9SrU30FqUG7gOG9CG6UKSJo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Fg5W2iNuMwYG44eSRwvJ1dTzfo/VC172SCT+jjRgPQld6x10ZzYvlK6+Z+vwbQ7+zPCBz/lIxiBidLLWQu0km+j+UnpRtUGDGSKIVKsTj4n7c7OEvBQp5ihzFG1q2zsrsksU0TPp05KOXQfz1jawmKr7le9c64UxBylOso0bCMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iJ0RXhN3; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1763402348; c=relaxed/simple;
+	bh=H1xvOerofGxhB5VnNz27e5hnd6+II2A3o7alZw2pUHo=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=WXqxZRI6LRXzuPaZnaaxCW7+5gC+OAZq/Gf8/xd3XIQ6scWeb4qXe3IwJCUahCouZE4WGb8qMmM7y04+oUgHjyxTrN369Nzz4LJjxeRUr5CovP53j+hweZfZpsSNM4kNxnPy8XSp8js63lfQAcE8HJLgRqNTz/IpEYDlYkcpIJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=hLSSHfd5; dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=s+NsFrvx; arc=none smtp.client-ip=5.75.144.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iJ0RXhN3"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 011EBC2BCAF;
-	Mon, 17 Nov 2025 17:48:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763401711;
-	bh=qOLIQvSf0KW1L5d/BIjS9SrU30FqUG7gOG9CG6UKSJo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iJ0RXhN3PP8KuFQ/dvOP+mWwywxNTIQwSQ5XsQqJiQB4ANmQ/xrDIR2dD5uU2aFNx
-	 KyDSYqRtfg3OlTuJQwVie3zQ2ccxHLYNFuH0LLpP+0q62zK8fniI+vIaiOULCJmxIk
-	 GiIHED6eZJlbekYvPQLXPn52J9YXfs+DsKApnvZ5QzIL0iqSjHA4yIb5FMkvKm6Yil
-	 dYyp+LtUKVYWbvb3pKdAP/STf0RzIHlJQp2SGjHeNIADm74w27tWGvYR0EAVKSwWA8
-	 vhQiH8UMWE0KU+75au+ajYkhHonQN8t6yRPmMLKdDiO+RIgiHRYyhknU6iOwfwzlhl
-	 Wl7O8Pjgnn6VA==
-Date: Mon, 17 Nov 2025 17:48:26 +0000
-From: Conor Dooley <conor@kernel.org>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Daire McNamara <daire.mcnamara@microchip.com>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	devicetree@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Pierre-Henry Moussay <pierre-henry.moussay@microchip.com>,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 3/3] dt-bindings: clock: mpfs-clkcfg: Add pic64gx
- compatibility
-Message-ID: <20251117-scrabble-making-17ae91d03a27@spud>
-References: <20251117-shadow-police-56aba5d855a3@spud>
- <20251117-depth-sage-ee0829c71c25@spud>
- <176340135320.214025.1792944827677577860.robh@kernel.org>
+	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="hLSSHfd5";
+	dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="s+NsFrvx"
+DKIM-Signature: v=1; a=rsa-sha256; s=202507r; d=mainlining.org; c=relaxed/relaxed;
+	h=To:Message-Id:Subject:Date:From; t=1763402331; bh=BeW9ZmLFEG2U8UpoXY10QJj
+	WSA/TolXfKLH4rcbwXKY=; b=hLSSHfd5CUPb/kYOyMYSd2w46Fj+8MlXXhMe4sDKrOfE5nqZ4Y
+	PKc1FXoYba3E7q8b4CvuUKk80ib/9emn+ZosLkTbPbPkKloz8Uz6ndFl41llazinjbSt9u6Luq9
+	nhKEZsKpZ/ApN6wLg2jJKAXtjC48Xmgt5pfF/VCD/sguwFknZnLKUANSrhkU/J4OVYgeIVi3xdN
+	xWt0SjY+HnFV9TnS9ni63JkEE7DPLavv+c2Y3HgahLTXx4ReKsia+3e1nEc+kYnH0LzXxXGDRo/
+	uixNcgwkwrll7UODpV5ICIXZ4+fHgRA/MRBUsCuuDS0nZeQbhrRyh/YQCNo/mqJExeg==;
+DKIM-Signature: v=1; a=ed25519-sha256; s=202507e; d=mainlining.org; c=relaxed/relaxed;
+	h=To:Message-Id:Subject:Date:From; t=1763402331; bh=BeW9ZmLFEG2U8UpoXY10QJj
+	WSA/TolXfKLH4rcbwXKY=; b=s+NsFrvxG/uqWvv06vqyITos3NBCZCWS9R8rIk11k6dXS9uuxd
+	B2XMVm9rlFRRq2+u8RYhtsRp/MBdREWQgGCw==;
+From: =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
+Date: Mon, 17 Nov 2025 18:58:47 +0100
+Subject: [PATCH 1/2] clk: qcom: gcc-msm8953: Remove ALWAYS_ON flag from
+ cpp_gdsc
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="VHxIiW/r9SCVpufo"
-Content-Disposition: inline
-In-Reply-To: <176340135320.214025.1792944827677577860.robh@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20251117-fix-gdsc-cpp-msm8917-msm8953-v1-1-db33adcff28a@mainlining.org>
+References: <20251117-fix-gdsc-cpp-msm8917-msm8953-v1-0-db33adcff28a@mainlining.org>
+In-Reply-To: <20251117-fix-gdsc-cpp-msm8917-msm8953-v1-0-db33adcff28a@mainlining.org>
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, 
+ Sireesh Kodali <sireeshkodali@protonmail.com>, 
+ Adam Skladowski <a_skl39@protonmail.com>, 
+ Konrad Dybcio <konradybcio@kernel.org>, 
+ Vladimir Lypak <junak.pub@gmail.com>, 
+ =?utf-8?q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1763402330; l=668;
+ i=barnabas.czeman@mainlining.org; s=20240730; h=from:subject:message-id;
+ bh=H1xvOerofGxhB5VnNz27e5hnd6+II2A3o7alZw2pUHo=;
+ b=KaBCUQxdaAyqWTBGcQgRh//3sqpNIKxlz+RHlP7sYGhqmoTSDnhWKnyUoEYxY5psQdldswm2z
+ HNp1tNYSXLqCLo8e8WaNhJlmhluUKNqwVMbGYi07LM+5x2w2wRu+s8P
+X-Developer-Key: i=barnabas.czeman@mainlining.org; a=ed25519;
+ pk=TWUSIGgwW/Sn4xnX25nw+lszj1AT/A3bzkahn7EhOFc=
 
+cpp_gdsc should not be always on, ALWAYS_ON flag was set accidentally.
 
---VHxIiW/r9SCVpufo
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Fixes: 9bb6cfc3c77e ("clk: qcom: Add Global Clock Controller driver for MSM8953")
+Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
+---
+ drivers/clk/qcom/gcc-msm8953.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-On Mon, Nov 17, 2025 at 11:42:33AM -0600, Rob Herring (Arm) wrote:
->=20
-> On Mon, 17 Nov 2025 15:35:20 +0000, Conor Dooley wrote:
-> > From: Pierre-Henry Moussay <pierre-henry.moussay@microchip.com>
-> >=20
-> > pic64gx has a clock controller compatible with mpfs-clkcfg. Don't permit
-> > the deprecated configuration that was never supported for this SoC.
-> >=20
-> > Signed-off-by: Pierre-Henry Moussay <pierre-henry.moussay@microchip.com>
-> > Co-developed-by: Conor Dooley <conor.dooley@microchip.com>
-> > Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
-> > ---
-> >  .../bindings/clock/microchip,mpfs-clkcfg.yaml     | 15 ++++++++++++++-
-> >  1 file changed, 14 insertions(+), 1 deletion(-)
-> >=20
->=20
-> My bot found errors running 'make dt_binding_check' on your patch:
->=20
-> yamllint warnings/errors:
->=20
-> dtschema/dtc warnings/errors:
-> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/c=
-lock/microchip,mpfs-clkcfg.yaml: then: 'anyOf' conditional failed, one must=
- be fixed:
-> 	'reg' is not one of ['$ref', 'additionalItems', 'additionalProperties', =
-'allOf', 'anyOf', 'const', 'contains', 'default', 'dependencies', 'dependen=
-tRequired', 'dependentSchemas', 'deprecated', 'description', 'else', 'enum'=
-, 'exclusiveMaximum', 'exclusiveMinimum', 'items', 'if', 'minItems', 'minim=
-um', 'maxItems', 'maximum', 'multipleOf', 'not', 'oneOf', 'pattern', 'patte=
-rnProperties', 'properties', 'required', 'then', 'typeSize', 'unevaluatedPr=
-operties', 'uniqueItems']
-> 	'type' was expected
-> 	from schema $id: http://devicetree.org/meta-schemas/keywords.yaml
+diff --git a/drivers/clk/qcom/gcc-msm8953.c b/drivers/clk/qcom/gcc-msm8953.c
+index 8f29ecc74c50..8fe1d3e42144 100644
+--- a/drivers/clk/qcom/gcc-msm8953.c
++++ b/drivers/clk/qcom/gcc-msm8953.c
+@@ -3946,7 +3946,6 @@ static struct gdsc cpp_gdsc = {
+ 	.pd = {
+ 		.name = "cpp_gdsc",
+ 	},
+-	.flags = ALWAYS_ON,
+ 	.pwrsts = PWRSTS_OFF_ON,
+ };
+ 
 
-Huh. I think the bot is right here, it's this hunk:
-@@ -69,6 +73,15 @@ required:
-   - clocks
-   - '#clock-cells'
+-- 
+2.51.2
 
-+if:
-+  properties:
-+    compatible:
-+      contains:
-+        const: microchip,pic64gx-clkcfg
-+then:
-+  reg:
-+    maxItems: 1
-+
- additionalProperties: false
-
- examples:
-
-But I need to go figure out why I did not see this.
-
---VHxIiW/r9SCVpufo
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaRtf6gAKCRB4tDGHoIJi
-0pTEAQC3oXitlB1I7swxgbQi91gcja4Mrydyc5KJc11uQ0OdHwEA68dT8h3Ts6/i
-nHJhuhcEAbukG/MZDlIU27YwEW9BlQY=
-=TBXI
------END PGP SIGNATURE-----
-
---VHxIiW/r9SCVpufo--
