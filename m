@@ -1,36 +1,36 @@
 Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08865330B35;
-	Mon, 17 Nov 2025 17:18:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDCFC301468;
+	Mon, 17 Nov 2025 17:18:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763399900; cv=none; b=HtpLDcXrxf78ZAWHWKj+gdaAiLsxNBuS5t8/dwdAQYcwj1ZyIVwCXK8ozBc8jNBOImR7yn8wd9t+Us893c0G2eAVnGmmhhhdVO9HlTcVghhaBUt8hI7LspwAmhYu0WsXQxwP1rIHZmHWAJLmzvR+Eq8prvAcFh1RbuBd6xPfTpk=
+	t=1763399911; cv=none; b=DBcIN1PTOTYrr1WE8cClmDctbJEDDn3hhTRdm1eM9R9LU4y8hCY+paB4rqA8h6fPwUvBRx4zpO2eLCHDOiNjEFZplLI4BTXCwYL0pGx4Kf1kas9+sX6AWPtsoXBF1Bi0Eo9fai2c+LrJIN75mm1B86ucncxsjuxbYiKSdxupYiM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763399900; c=relaxed/simple;
-	bh=nNBrrYmctHskZOLRwlBwYGrHjUCDPM9U0EIRpLoj3Rc=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=pGK603U6Lfl15iJ1sAdL9nM9PYbbXC5Nv87B/DDpZFHu5bUK94uhpI76PfgbE29CgwaaNXKuOUMylw03orgYa9Puk4epHqT2gjScf/q+gRATbPQ0eMQFaXi1GaKaIlrodkrLBvy/QYK+Z8Bwl+gHrpaTcptvM0K0KMfWNwraQbQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=a42LTJ0U; dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=m4R/RIDc; arc=none smtp.client-ip=5.75.144.95
+	s=arc-20240116; t=1763399911; c=relaxed/simple;
+	bh=J72O0W4OoBDTduTpAcYN+ssV4ETS0bPe46i6M1O3RIo=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=d2NPwueAKng6pJSk1JadzkFBrTHecy6Tvy2u9HePoeRBp7UC389Jfs/ep0DCy1m+XSRCy41zNm23jplMqT0dvz4b1mkgax+wH1NKwP7+VoAtqNyr9QTlx4/5qNAFVrcu6RwInoBAKQig2UnWnphRRakB7VjfN09DFd5ZK4mXHHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=sq+BcuLs; dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=Xleu2dRx; arc=none smtp.client-ip=5.75.144.95
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="a42LTJ0U";
-	dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="m4R/RIDc"
+	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="sq+BcuLs";
+	dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="Xleu2dRx"
 DKIM-Signature: v=1; a=rsa-sha256; s=202507r; d=mainlining.org; c=relaxed/relaxed;
-	h=To:Message-Id:Date:Subject:From; t=1763399875; bh=6snJ3KAWKEtGwUFI68wsXES
-	OH28NRYQqBiEgOf9xSU8=; b=a42LTJ0UOYmKKJsCQ9WD8XrqKZhiIZttiyXImobxveHkzJlfgD
-	TC+YuTbWCVnyEPQUx7YBxaWWFgfOMBeYhBUEJOEnz1IHPHowCCxI5vRzGVPMvEtlMleDfCkNIhA
-	Bl/HFl78tm6xfFmbysnyTaxpUrpy4U+pZ5qaEYO/D8HYk8x6DgJLTnyKU7CHDnZrz1Qp6GqQH05
-	6BYGqhOlnder8c0t8cCn3eyEtFFPeniOuGDFEtr8501v81yv6lx4ml+WpIVPnjWsQI9efd+0zcg
-	zpTXK8BNvFRV4X3Czaal4194Dly1G/qmvjgpmn76dagV6mGspRBc84U6ckbHi4xfq/g==;
+	h=To:Message-Id:Subject:Date:From; t=1763399876; bh=WhUzabx2XCE82BELNFa8lGY
+	LmZ/E2/CKw1AHgV+jL7Q=; b=sq+BcuLse244rsHHfcFbOWauQgfB3ycC5cX2PVMZwxTpvpDiwF
+	giKDxHNcTUjHL9b8MB43PaV3i5Kith5mtor3+CkXDt6C5wBVRa1U1N4zXQUE7XPlTUh9rOaiM0P
+	UTa+6rXvl650vuSue0OBLsN2JcSkQCT+hIddIf/0Lt3xz2G5h7HH9Cas0nXIBcN0uuxEf/uiAU6
+	w/uWkHgJSCF+SrXd5jPh4kKDTqGBvUpFOujRHXXxXEKh5Q04cGZ5sEdVxCerhUYuUyh4kKWuU8U
+	QTDQFePcHLtZTnaZLzzf+9zszQclmh5wEGMwh11qv7rFbdeJXdDi8JaYZ04NLv7SNNA==;
 DKIM-Signature: v=1; a=ed25519-sha256; s=202507e; d=mainlining.org; c=relaxed/relaxed;
-	h=To:Message-Id:Date:Subject:From; t=1763399875; bh=6snJ3KAWKEtGwUFI68wsXES
-	OH28NRYQqBiEgOf9xSU8=; b=m4R/RIDcO1T+wzDUXBHpQtYVV6wDS/dG/D8QoiZf+qmHKyLmsf
-	ikWs2/B9JgqOvDKeXApwaFz5ox+bSaRf69Bg==;
+	h=To:Message-Id:Subject:Date:From; t=1763399876; bh=WhUzabx2XCE82BELNFa8lGY
+	LmZ/E2/CKw1AHgV+jL7Q=; b=Xleu2dRxk///XdHAWf2FJWeitC2Kx5esZVkaocoEh4T7eYlFd8
+	Q0AeR6BnOvjOqVXF6y3wcUrs026Qi9+M1bCA==;
 From: =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
-Subject: [PATCH v2 0/4] MSM8917/MSM837: Add missing MDSS reset
-Date: Mon, 17 Nov 2025 18:17:51 +0100
-Message-Id: <20251117-mdss-resets-msm8917-msm8937-v2-0-a7e9bbdaac96@mainlining.org>
+Date: Mon, 17 Nov 2025 18:17:53 +0100
+Subject: [PATCH v2 2/4] clk: qcom: gcc-msm8917: Add missing MDSS reset
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -39,11 +39,9 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-B4-Tracking: v=1; b=H4sIAL9YG2kC/42NQQ6CMBBFr2JmbU2nWFpceQ/DAmSASWwxHUI0h
- Ltb8QKuft5fvLeCUGISuBxWSLSw8BQzmOMB7mMTB1LcZQajjUXEUoVORCUSmkUFCb5C99vCKWx
- 91RvbmHNnIRueiXp+7fZbnXlkmaf03mMLft//vAsqrbTXFgtfOle119BwfHDkOJymNEC9bdsHp
- nDCM8sAAAA=
-X-Change-ID: 20251116-mdss-resets-msm8917-msm8937-1b89f25a24d5
+Message-Id: <20251117-mdss-resets-msm8917-msm8937-v2-2-a7e9bbdaac96@mainlining.org>
+References: <20251117-mdss-resets-msm8917-msm8937-v2-0-a7e9bbdaac96@mainlining.org>
+In-Reply-To: <20251117-mdss-resets-msm8917-msm8937-v2-0-a7e9bbdaac96@mainlining.org>
 To: Bjorn Andersson <andersson@kernel.org>, 
  Michael Turquette <mturquette@baylibre.com>, 
  Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
@@ -52,43 +50,37 @@ To: Bjorn Andersson <andersson@kernel.org>,
 Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
  =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>, 
- Taniya Das <taniya.das@oss.qualcomm.com>, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+ Taniya Das <taniya.das@oss.qualcomm.com>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1763399874; l=1070;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1763399874; l=787;
  i=barnabas.czeman@mainlining.org; s=20240730; h=from:subject:message-id;
- bh=nNBrrYmctHskZOLRwlBwYGrHjUCDPM9U0EIRpLoj3Rc=;
- b=ZwsY3gsJynFWhDD/esMemjm0aUAfIhGHAHrgils1Fe0M0VEVQS+s7Tvns/fi4QTp7drJt92xA
- 5CYP9fJp0SzBVekQjzg84S9HkSADDmtaDz6q5XD4y3ruahK+a2DkEwr
+ bh=J72O0W4OoBDTduTpAcYN+ssV4ETS0bPe46i6M1O3RIo=;
+ b=xSiWqrGhq4jvLOrNAxO54UDjdYt/E0Gkd2rJWHxS02tuD2P3anQRNO9oegDQbQfGePht4lPGN
+ YtvNvz+bKDQDR8wqaMWC432zhogW3ErYktOiNFkOYc5fZcFJrSkhoZk
 X-Developer-Key: i=barnabas.czeman@mainlining.org; a=ed25519;
  pk=TWUSIGgwW/Sn4xnX25nw+lszj1AT/A3bzkahn7EhOFc=
 
 Add missing MDSS reset can be found on MSM8917 and MSM8937.
 
+Reviewed-by: Taniya Das <taniya.das@oss.qualcomm.com>
 Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
 ---
-Changes in v2:
-- Reword the commits.
-- gcc-msm8917: correct the author mail.
-- Link to v1: https://lore.kernel.org/r/20251116-mdss-resets-msm8917-msm8937-v1-0-08051386779b@mainlining.org
+ drivers/clk/qcom/gcc-msm8917.c | 1 +
+ 1 file changed, 1 insertion(+)
 
----
-Barnabás Czémán (4):
-      dt-bindings: clock: gcc-msm8917: Add missing MDSS reset
-      clk: qcom: gcc-msm8917: Add missing MDSS reset
-      arm64: dts: qcom: msm8917: add reset for display subsystem
-      arm64: dts: qcom: msm8937: add reset for display subsystem
+diff --git a/drivers/clk/qcom/gcc-msm8917.c b/drivers/clk/qcom/gcc-msm8917.c
+index 0a1aa623cd49..248fa0fd86f5 100644
+--- a/drivers/clk/qcom/gcc-msm8917.c
++++ b/drivers/clk/qcom/gcc-msm8917.c
+@@ -3770,6 +3770,7 @@ static const struct qcom_reset_map gcc_msm8917_resets[] = {
+ 	[GCC_QUSB2_PHY_BCR]		= { 0x4103c },
+ 	[GCC_USB_HS_BCR]		= { 0x41000 },
+ 	[GCC_USB2_HS_PHY_ONLY_BCR]	= { 0x41034 },
++	[GCC_MDSS_BCR]			= { 0x4d074 },
+ };
+ 
+ static const struct regmap_config gcc_msm8917_regmap_config = {
 
- arch/arm64/boot/dts/qcom/msm8917.dtsi        | 2 +-
- arch/arm64/boot/dts/qcom/msm8937.dtsi        | 1 +
- drivers/clk/qcom/gcc-msm8917.c               | 1 +
- include/dt-bindings/clock/qcom,gcc-msm8917.h | 1 +
- 4 files changed, 4 insertions(+), 1 deletion(-)
----
-base-commit: 0f2995693867bfb26197b117cd55624ddc57582f
-change-id: 20251116-mdss-resets-msm8917-msm8937-1b89f25a24d5
-
-Best regards,
 -- 
-Barnabás Czémán <barnabas.czeman@mainlining.org>
+2.51.2
 
