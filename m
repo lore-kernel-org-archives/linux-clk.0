@@ -1,116 +1,87 @@
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CF7830748C
-	for <linux-clk@vger.kernel.org>; Mon, 17 Nov 2025 17:06:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A18B32548D;
+	Mon, 17 Nov 2025 17:17:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763399167; cv=none; b=DBr+yjtFC+kADedf+x49aCjcQYmwbGSFR5lsCqKRAk8I3+snCGXX/LUmF5BjnCCv0ULfubEfMrErq9kr7YWOSZqtiCz/w9Vi9Prrubsngz0TJa+z2lEpBfpJJ5svjmEtQlA3Sh75pQLshptNGXa1SZtEZjNKQtuH89tZLTLPUjI=
+	t=1763399882; cv=none; b=M8kYYEsqDNsFK+3meRS/DWd4zVrmsY5pttS2mVMkV7wgwL5x3ctXTpZWjI/LAvrKndwBROZJe2DmzxWuyS4U7mN/sR0f3ePJ7IEQ+XH/mE3xBj0KLxpsGTptVpQPxSvdy/JT2vfzWEWDBmxLcyfzWEJ4wgzodep5ALSwG93FXXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763399167; c=relaxed/simple;
-	bh=6cN01OQbv4ReHoQ5ctuHe34KJ5lQPCYqhlzKPrZH4i0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VQkA+piMX2xnGuXjtdCt2Zh6wI0ODtCHDUkhm4xvg7d6BigI93Q5s2AnDCI2N+W1s8HWCo4KriBCuJFMgMUcXyFvtetBrAU8xivje9wRCpPxb+AHrlCHp4l3xfYay8CvJDpDckEoG3YeKFVBTTqZsOZBaVvK5jbYPN9LC2lIILQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=FZqDcrf8; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+	s=arc-20240116; t=1763399882; c=relaxed/simple;
+	bh=luxMh6nSPe4a4WQfUhnTlp8BlrYVOLeHoOixQvBd5wo=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=infqv2BWSEubsLX16AfbuOc2Us66hn69OM9JRhVxOOpnfl9AcVxG4DiS5fVCmItOeTOUBXbRhvpRhx4gSW/+xhCe5K7tZAACsJbufjHlY3lO/8lb2LX9M0L2168fBt9PW6oqXTxHhTyfGss2qKkB8fPg0V+TxVg6i9BaNVieRGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=GqUz6BT/; dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=IdqUIJ9J; arc=none smtp.client-ip=5.75.144.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="FZqDcrf8"
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-477770019e4so50381715e9.3
-        for <linux-clk@vger.kernel.org>; Mon, 17 Nov 2025 09:06:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1763399163; x=1764003963; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=RF6K0T9D3Kbq+RI4UYbxy7YQ25UPBxthtQ/VKgU4XC8=;
-        b=FZqDcrf86sN8umfCK2t1OKfi04QN6U+xf5+zTzHz4voP6pp8wo7MoTi4eGijTGrHif
-         YFjf7n6ZrxrFgKDkCAB+jqlxujXQ2rp2Le+gOE7Na4L9EP3yiWVV9WSCVx47q6xB3KSh
-         3qAD0cEH1w39Ds8cJ4RyWymXybbRNKBoHVz0qrTZVp5wnijep43wIXW5+0aO3sRa882F
-         dOyzB6nmsiFHwZOiLRO45vf3tXgnWQIlV2h7Ubg1hVsVON3q/k7DSGCqWfgxW2gqAQhq
-         IhKku7XOHvJ017Utfv6J5NWL+vXD9rmhwduldDC9oFJIy8TdUcvvw4GvPqDzpeXveNKY
-         yORA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763399163; x=1764003963;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=RF6K0T9D3Kbq+RI4UYbxy7YQ25UPBxthtQ/VKgU4XC8=;
-        b=HEIVnU4etrJqZpNyTl4KzHuaPmdxY53Fw33Ie/AvfrGJy2y2hoaQAjAn7HGaf8dXr9
-         wIXHMlAUU7cHwEB+tBUYd7mlfJpmjYx1aHfhUDZaBv4h4ysUk+PhkSd1+nYW2e9L0r1b
-         e5626PXI5Wud27L3n6Ah3xa5PIaCMrUsp2KEMYs5dJph+dXj5xi7muDNral2JaGSgofR
-         UavLH+8EMsWyBjXfsk71aEA5UtYsTlivASqwY8zzHjPuADVNQHCHm9IZITe6Z3+0qVXD
-         cYWFJRTs/rlpr2/in+qA5uNf4XYJO/eA2wE021NOrRMPhQKD1is7juedEpe6cuM1fIZm
-         ckMA==
-X-Forwarded-Encrypted: i=1; AJvYcCVmPn5+98wvT+VCNIlYw33bVL95/nv1uTuDo7WQFtXAXMIwgwoMt7orkIfar1DjWRmqp76Ggljfa6Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxP4NbVBEr+93FaNnC9+yto2DxLfDn9Qqdtyo+s29WJZLSCTico
-	6U2oFqiuHcTah7Bvrxx1QiJtWSAIAgyrOfrVITX4Ld2Oy+YrK42QjNYhLux2dzGPcJI=
-X-Gm-Gg: ASbGncsaetfDsaLVrzA+Qq0q44CBaVzXdsq70GmtyMrGTmqblCrXa7uYJMeEZC7m2/D
-	c/UmwZ+eZdmqjj+EXdIWER9ZcsycBflsc4awLD7Z7DWvYih7xsq9yeOYLfiTAayN5cVm8ubmyWT
-	scg3UPhcQtu50J89R21brYPtviooOK6T+Mzd2TpL3xJvgZdWOlYZ2L37++hRO+k8U7eRSCbn2ru
-	gYQqWGum59Xr3Y5cIfZF8fm253VtFV81/zVQR6mBf17E9JyqaSGHZyG8EraC19S35Dnp/nDynK6
-	wJqnHqlareZJBwBogJ9lXc+dw7UztruqgyQVVvnXTEcIpOtlDz3t4vBjjNp+GA6DE5/r7qs0mGJ
-	KaHvLHEhoTicgt4vpOMhhgs12VlOx30sZdY1QG19mCHg8ma+kMF0/C2UNtQbdBWk7fXFQ9nJpcS
-	Rexd6fLdn/vSEtDFbJ7+oEQK8Dlh7c7g==
-X-Google-Smtp-Source: AGHT+IFdt95UyqOpmnSONJqWxf60zoJvU5z2lzK7E2ZAz/tr9X02IhME5IKU/0JxlOwWOvooFeQ9MQ==
-X-Received: by 2002:a05:600c:190b:b0:471:131f:85aa with SMTP id 5b1f17b1804b1-4778fe4a039mr107012805e9.13.1763399163261;
-        Mon, 17 Nov 2025 09:06:03 -0800 (PST)
-Received: from [192.168.50.4] ([82.78.167.134])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-477a678a688sm15279465e9.4.2025.11.17.09.06.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Nov 2025 09:06:02 -0800 (PST)
-Message-ID: <f5222712-6585-42fe-8b4d-f1d45872c8c9@tuxon.dev>
-Date: Mon, 17 Nov 2025 19:06:01 +0200
+	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="GqUz6BT/";
+	dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="IdqUIJ9J"
+DKIM-Signature: v=1; a=rsa-sha256; s=202507r; d=mainlining.org; c=relaxed/relaxed;
+	h=To:Message-Id:Subject:Date:From; t=1763399878; bh=wscdxgqJFP079dwx6QgJV44
+	ViczuO6mV5R4gurjE0ng=; b=GqUz6BT/00NFKRYO8d5CKoLnPuEtBiVpFIqbZtXomSbydm0dpf
+	pPkZQ4vhofj0HKzTGHAARXl/nhA7+Fsnyb+HYVZayDFEauLsaXkWUmeCjuEoNzcX6b2r1CssrTy
+	0kYZbw5g7niqIJXqItpqP1nEcoYeF74gZqn8pESu/VizMP+ZGD4Sci4ANS824W8/w4OoIWmId2f
+	i7NkzyXN58MyDbGWQvxuwFmGrYd7LNYPdkKtZlPOyUWEMGiDBgEvNwMCPvXr4cKfoP9woAVTD85
+	f1ZWDz6HR3XW1hu9N+u3AijqCT9S980x9jo/NP2asXYL07J+x1FYb8Uk5w6tYCFzS+A==;
+DKIM-Signature: v=1; a=ed25519-sha256; s=202507e; d=mainlining.org; c=relaxed/relaxed;
+	h=To:Message-Id:Subject:Date:From; t=1763399878; bh=wscdxgqJFP079dwx6QgJV44
+	ViczuO6mV5R4gurjE0ng=; b=IdqUIJ9Jq9DnsRlVlCI+Ar5ytxw45K64h+soOZ8K6+AcDaLt9S
+	gPX6g60GD4LrhUDOFVarJ2a4EIXTxbthQACA==;
+From: =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
+Date: Mon, 17 Nov 2025 18:17:55 +0100
+Subject: [PATCH v2 4/4] arm64: dts: qcom: msm8937: add reset for display
+ subsystem
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [GIT PULL] Microchip clock updates for v6.19
-To: Conor Dooley <conor@kernel.org>
-Cc: sboyd@kernel.org, mturquette@baylibre.com, linux-clk@vger.kernel.org,
- nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
- conor.dooley@microchip.com
-References: <20251117163747.211922-1-claudiu.beznea@tuxon.dev>
- <20251117-dentist-maimed-67b01dd4af4a@spud>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Content-Language: en-US
-In-Reply-To: <20251117-dentist-maimed-67b01dd4af4a@spud>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20251117-mdss-resets-msm8917-msm8937-v2-4-a7e9bbdaac96@mainlining.org>
+References: <20251117-mdss-resets-msm8917-msm8937-v2-0-a7e9bbdaac96@mainlining.org>
+In-Reply-To: <20251117-mdss-resets-msm8917-msm8937-v2-0-a7e9bbdaac96@mainlining.org>
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1763399874; l=731;
+ i=barnabas.czeman@mainlining.org; s=20240730; h=from:subject:message-id;
+ bh=luxMh6nSPe4a4WQfUhnTlp8BlrYVOLeHoOixQvBd5wo=;
+ b=ufw4U8QdV82PJejJ/TKL/XeTGnA2lIAtLtccGnwgMO/Jhv038BbX6SAWvKAj5V2A5gSKsHEVh
+ kI/mDA2N8sqCZpyG+t8194347ExDRG3NbyiL+Umi5cCryb+KvizjWqU
+X-Developer-Key: i=barnabas.czeman@mainlining.org; a=ed25519;
+ pk=TWUSIGgwW/Sn4xnX25nw+lszj1AT/A3bzkahn7EhOFc=
 
+Add reset for display subsystem.
 
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
+---
+ arch/arm64/boot/dts/qcom/msm8937.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-On 11/17/25 18:59, Conor Dooley wrote:
-> On Mon, Nov 17, 2025 at 06:37:47PM +0200, Claudiu Beznea wrote:
->> The following changes since commit 3a8660878839faadb4f1a6dd72c3179c1df56787:
->>
->>   Linux 6.18-rc1 (2025-10-12 13:42:36 -0700)
->>
->> are available in the Git repository at:
->>
->>   https://git.kernel.org/pub/scm/linux/kernel/git/at91/linux.git tags/clk-microchip-6.19
->>
->> for you to fetch changes up to 781f60e45bdfe351aad692ac0fa89e36f8bf4a36:
->>
->>   reset: mpfs: add non-auxiliary bus probing (2025-11-11 16:47:24 +0000)
->>
->> ----------------------------------------------------------------
->> Microchip clock updates for v6.19
->>
->> This update includes:
->> - convert Microchip Polarfire clock controller driver into a MFD driver;
-> If anything it is really the opposite I think, as it did the MFD-type stuff
-> before my series, with an iomem pointer and readl()/writel() accessors. It
-> just does it with a regmap now instead. The other half of the change actually
-> makes it lose the MFD-type stuff where the reset hardware is considered part
-> of the clock node and so the reset driver needed the clock driver to
-> register it using auxdev. For new devicetrees, the clock driver only will
-> handle clocks, with no MFD role at all. Of course, the old MFD-type
-> behaviour is retained in an alternative code path to handle the old
-> existing devicetrees.
+diff --git a/arch/arm64/boot/dts/qcom/msm8937.dtsi b/arch/arm64/boot/dts/qcom/msm8937.dtsi
+index b93621080989..c94eb14e31bd 100644
+--- a/arch/arm64/boot/dts/qcom/msm8937.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8937.dtsi
+@@ -1044,6 +1044,7 @@ mdss: display-subsystem@1a00000 {
+ 			clock-names = "iface",
+ 				      "bus",
+ 				      "vsync";
++			resets = <&gcc GCC_MDSS_BCR>;
+ 			interrupts = <GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>;
+ 
+ 			interrupt-controller;
 
-Will be updated, thanks!
+-- 
+2.51.2
+
