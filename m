@@ -1,98 +1,117 @@
-Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC31C334698;
-	Mon, 17 Nov 2025 14:03:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D04AB1DA55
+	for <linux-clk@vger.kernel.org>; Mon, 17 Nov 2025 14:12:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763388218; cv=none; b=hdntdQQAljcs70a/vj09erTQ4Gx4UmK72gXTttsDHNP2jnKg8L8TOMBVc6NAnqZzGXE2m7oa39XkMTCuGVRDSowbLOHCywAo4kVentuHS1Xi0Ish5LoOeRWXs2MpY44BCcVbIKzjZuhPnNaZXY6BGMMJmv0dPkjFYFbt+UTIoI4=
+	t=1763388756; cv=none; b=tpi407pjGUZTllBssAp/gVHD85BntWNytmZqZG1U8mfASvj8TPi9UWDFGPaiyUUWTTnCLNso6rjtvnTVXrChOaWiEJAel0t8ZgC5vyJyiIbnL5N5WW+EedmFqYdAGpKqwxMOCwqOQOLEpJLacqRpBJBBlnFjOBgCbsOIlzOJbu0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763388218; c=relaxed/simple;
-	bh=/GtzGB0r3fFuQ5wzKnrj65IypZRGR14CC9UEvm88kfk=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=ExMjdTRdwlVlSxWbB7Ob9IVWsYEEyQdUc/vBXWm5wDr7y2wHF4fkcv/HjDEabVNc68ivfj11NGxXL30OsgiTGOiHb0BIydYnnSd6mMSMG4Myvwc5Uu9kQuXoi+D0E12RwzWQmEqRHLoGDBkeP7Ku8CtruqZtNDFbdgHEm1CpfJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=oknZHplC; dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=O7Oajh90; arc=none smtp.client-ip=5.75.144.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="oknZHplC";
-	dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="O7Oajh90"
-DKIM-Signature: v=1; a=rsa-sha256; s=202507r; d=mainlining.org; c=relaxed/relaxed;
-	h=Message-ID:Subject:To:From:Date; t=1763388166; bh=LHm3cg2C0US7f0V9jl72z6L
-	PinGW+PGoSnAYxJsOnrA=; b=oknZHplCKd7YOvzPIpvp+dssELX9e2vQ/r7D0tmUCPvjxPgSz2
-	/H3otkytSjLrItP7eOvfMQ6OJH25r+p1vb/tITIQTp1MnpdAk5Flk/3Fe8oqOp6ONMBx2dpDoED
-	vSLvPGqpX4zvdnyz9wCL7KTYhDkQ7M0Nq5Dyhgg10CoWhDIlGsHqv7sqI3l9lrg4kSJ+5KXhTno
-	hKGi6POAgvQJSF/yy49d0KoBeyvjs0ELlN3F7F2U+88LdYM3bRiB9zKzGJIe/+DByxWbe67+G6G
-	DonHOwqyoPVaGZQL5qBtrqc71i3qvHEiesYFq/Mp6Sc1WIsZU0YzA6OwYIXXtWSQSrA==;
-DKIM-Signature: v=1; a=ed25519-sha256; s=202507e; d=mainlining.org; c=relaxed/relaxed;
-	h=Message-ID:Subject:To:From:Date; t=1763388166; bh=LHm3cg2C0US7f0V9jl72z6L
-	PinGW+PGoSnAYxJsOnrA=; b=O7Oajh90hKXJ1cqrJxCPZ+ysRS1i+pLw+Dl/EfWigmMNKLwuJc
-	GQiYaFC5o0/aPbuyqaPWDSJ0JKghcNnUGZDg==;
+	s=arc-20240116; t=1763388756; c=relaxed/simple;
+	bh=E9wGSAl01MkYX7OuYqjw49nofROLsJTy7Q1ZZnDa6JQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=azn12aEN9IkEYr+j6lCRoDskLCv+Or7/HeJ5fhBOVK1HVDk8YA3MGxnHfj4ysST8WnOEaw+uxwSmsj9FRJ6SgVbYIeBkFLgwijQmqzuthGQWb5JUycdzBYkWGKh/kcSwsHx4qaI6ODklQlHeJGQKsmZmI1TEazxmFET3PTFkesA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1vKzxs-0003Tl-KF; Mon, 17 Nov 2025 15:12:20 +0100
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1vKzxs-000vTz-0Z;
+	Mon, 17 Nov 2025 15:12:20 +0100
+Received: from pengutronix.de (p54b152ce.dip0.t-ipconnect.de [84.177.82.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id C21C04A15CA;
+	Mon, 17 Nov 2025 14:12:19 +0000 (UTC)
+Date: Mon, 17 Nov 2025 15:12:14 +0100
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Sascha Hauer <s.hauer@pengutronix.de>, Stephen Boyd <sboyd@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, kernel@pengutronix.de, Linus Walleij <linus.walleij@linaro.org>, 
+	linux-gpio@vger.kernel.org, Alvin =?utf-8?Q?=C5=A0ipraga?= <alsi@bang-olufsen.dk>
+Subject: Re: [PATCH v7 0/2] clk: add support for TI CDCE6214
+Message-ID: <20251117-agouti-of-striking-fruition-189cbe-mkl@pengutronix.de>
+References: <20251001-clk-cdce6214-v7-0-5f8b44da95a5@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Mon, 17 Nov 2025 15:02:46 +0100
-From: barnabas.czeman@mainlining.org
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Taniya Das <taniya.das@oss.qualcomm.com>, Bjorn Andersson
- <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Stephen
- Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Adam Skladowski
- <a_skl39@protonmail.com>, Sireesh Kodali <sireeshkodali@protonmail.com>,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Lanik
- <daniilt971@gmail.com>
-Subject: Re: [PATCH 2/4] clk: qcom: gcc: Add support for Global Clock
- controller found on MSM8940
-In-Reply-To: <8faa0c8e-6f21-4025-bbdf-d4ec18eb7628@oss.qualcomm.com>
-References: <20251116-gcc-msm8940-sdm439-v1-0-7c0dc89c922c@mainlining.org>
- <20251116-gcc-msm8940-sdm439-v1-2-7c0dc89c922c@mainlining.org>
- <793d5039-0506-4104-b4ce-64bfa3cc00eb@oss.qualcomm.com>
- <5C7A10CF-910E-448A-8BFD-F2A46782D3B9@mainlining.org>
- <8faa0c8e-6f21-4025-bbdf-d4ec18eb7628@oss.qualcomm.com>
-Message-ID: <869028d628bad9e1c37c3d9ea8346ba0@mainlining.org>
-X-Sender: barnabas.czeman@mainlining.org
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ej22dhfzg73hwiko"
+Content-Disposition: inline
+In-Reply-To: <20251001-clk-cdce6214-v7-0-5f8b44da95a5@pengutronix.de>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 
-On 2025-11-17 13:17, Konrad Dybcio wrote:
-> On 11/17/25 9:51 AM, Barnabás Czémán wrote:
->> 
->> 
->> On 17 November 2025 09:03:53 CET, Taniya Das 
->> <taniya.das@oss.qualcomm.com> wrote:
->>> 
->>> 
->>> On 11/17/2025 3:05 AM, Barnabás Czémán wrote:
->>>> 
->>>> +static struct clk_branch gcc_ipa_tbu_clk = {
->>>> +	.halt_reg = 0x120a0,
->>>> +	.halt_check = BRANCH_VOTED,
->>>> +	.clkr = {
->>>> +		.enable_reg = 0x4500c,
->>>> +		.enable_mask = BIT(16),
->>>> +		.hw.init = &(struct clk_init_data){
->>>> +			.name = "gcc_ipa_tbu_clk",
->>>> +			.ops = &clk_branch2_ops,
->>>> +		},
->>>> +	},
->>>> +};
->>>> +
->>> 
->>> Is the TBU clock used on 8940 by a SMMU driver?
->> As far as I know no MSM8940 is using same smmu driver and bindings 
->> like MSM8937.
-> 
-> On msm8939, the clock needed to be turned on for the GPU SMMU
-I have not got any qcom-iommu issues on 8940 but i think it could come 
-when i try to add ipa2 driver
-for the SoC until i do not know where to check it.
-> 
-> See 5bc1cf1466f6 ("iommu/qcom: add optional 'tbu' clock for TLB 
-> invalidate")
-> 
-> Konrad
+
+--ej22dhfzg73hwiko
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v7 0/2] clk: add support for TI CDCE6214
+MIME-Version: 1.0
+
+Hello Stephen,
+
+can you please take a look at this patch?
+
+On 01.10.2025 10:12:52, Sascha Hauer wrote:
+> The CDCE6214 is a Ultra-Low Power Clock Generator With One PLL, Four
+> Differential Outputs, Two Inputs, and Internal EEPROM.
+>
+> This series adds a common clk framework driver for this chip along with
+> the dt-bindings document. The cdce6214 needs several pins to be
+> configured for different input/output modes which are abstracted with a
+> pinctrl driver.
+>
+> In v5 I tried to split up the patch into a non controversial part (to be
+> applied) and a part which needs more discussion (to be applied later).
+> That was not very well received, so I merged it back in v6. I didn't
+> mention that explicitly in v6, so doing it now.
+>
+> v7 contains only small changes, mostly binding updates requested by Rob.
+>
+> Sascha
+>
+> Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+
+regards,
+Marc
+
+--
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--ej22dhfzg73hwiko
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmkbLTsACgkQDHRl3/mQ
+kZxSaAf/c0heYgMPx050XyGZozc+EXXEMqdVYrYV9ZDtrPRzSjFU4o5tDGpMJgUV
+32mASGSYDD3tvIeNWfu1tg/6uxpj8ANF3XjKEU/+ra7Env8Eswq5iQNPUh+l7Nkc
+AMYV/vksGjQtRi97WP0KaKwM1cGPkW2wUjkBlrVGevpXgsCX+xLgET0NBzdj35NO
+jN/tGJk29EjNjBxVzDu1Fhq6rH8zeYzrMmMghiuXVInTMCRkrFRRU547hXHCYisr
+qTAQPl78+E6JolRO4ZPlt1IMErFLYz4GKPUqW/4rYzzWhDqrLZ8znsIq8vmO9jbU
+47dFWDW3VmyCpG46jEFsnC+vpihJig==
+=EDCk
+-----END PGP SIGNATURE-----
+
+--ej22dhfzg73hwiko--
