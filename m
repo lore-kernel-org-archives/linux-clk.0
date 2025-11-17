@@ -1,201 +1,116 @@
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7856328D8F4
-	for <linux-clk@vger.kernel.org>; Mon, 17 Nov 2025 15:48:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23C2B2D3A93
+	for <linux-clk@vger.kernel.org>; Mon, 17 Nov 2025 16:37:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763394496; cv=none; b=oW6QGfX1NhiZ4W8gvJVW7NOiVKenuzE/OrZXCMjr6zaamRF/8NLpRiL1OVUsGypfsk3MPEDFNIw1L5gyllWJDLeeYfP3uxQsWe8sNBIQ+E+IZuG+T0v95JjGUSmmKIEozPc16ZALPHCmhDRD4etf2d+yjS/bfx1Hua2UO93bsEE=
+	t=1763397472; cv=none; b=PBN3IujrG48YRMBM6JjfzsPKinELCQMrWVWkyJmqQFU1/vIeCyC2hx4NQnwX1mTyJAwS6GCLlbOhfIFNcw26qDGiqGi6j1oszlEHWD1n3vWZK+sEOgfNxwdBeo2xc7EnmeMpbcCzIvmiTIqsxuf+UGzIBBW/MWA/g/mSqWBi4XA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763394496; c=relaxed/simple;
-	bh=ROYTcX0lToNnERFrzzVSCpniaTAJj6i4Bcg2Nx6hBo0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=blqQYQkctJffhzDt/peiHr5EkwzgddbuFmM+/psR9MP7t7gJyC0eF+EtLdxJ5yPDUu3F2YsIPIHXNLivNMT1Di2g/oK8SazIbLkZVsQ6jwn03Lgez5P46dFBaQE8gcal3hPxcpzuMjiu8329hJsWVr3fythbEdUcg0gTpZOP/xA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=COEwFccW; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1763397472; c=relaxed/simple;
+	bh=HlIiShYxhkLdpsar3rOL/ISs2/CV01wtKw99jYyG6Ts=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=F+vtYl/g1gDLnID503XMqdkJVewE1wM4stApIg7dSsLAt58tf5B5Qoye1S336odfYSJAmUqJkCFkPXacYD4nfrQ9d6XZi4NQmc3fqALR8IcibWWCVJBm7Nx1i8isE7b2pX3Hz3/+bnkJP3sh47moFeJ8tHDpDAHLKftLw3mgo14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=h7vTUI+Z; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="COEwFccW"
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-378e8d10494so57892761fa.2
-        for <linux-clk@vger.kernel.org>; Mon, 17 Nov 2025 07:48:13 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="h7vTUI+Z"
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-42b32a3e78bso3682511f8f.0
+        for <linux-clk@vger.kernel.org>; Mon, 17 Nov 2025 08:37:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763394491; x=1763999291; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=c/DUma0uZd8iCNzJFNlwxYelZvsQPcM9gT0Fu/UGP5Y=;
-        b=COEwFccWnTSZZhfIMmxf9dxlSNeit2WGTrtffdB+zcsa5PeFEl+Ewx6wVLeYeTJf7I
-         R8HNcH3LTQuaCYbIPHINb4jbHhK2d0Lcb/JGCjDkDm1BmoizG3cJf3PeJ5p0sVX8o3c/
-         SdmOXYZIs6WAWS8jFVnPko0njBkg5sMY96DOL8ZuMirBrs+iBCYzkPva2BvkAfDsbBa5
-         F6Dk2ClIzu1W0nE52d2rVOi6odN60iWsoii10RtMvpyJ00k3LKJMRQ7Sgrsh2XnV2EDV
-         iSoqf0pODs+pklwWmxVhw1oaLenrRALUGhvA8jwUxZb5v3L87wZ+ZsH3DvSv01DFZW80
-         koiQ==
+        d=tuxon.dev; s=google; t=1763397469; x=1764002269; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=PPBIXyGju7mBGzRaiW27P8dbL8q5t+cpUgoonxWQamI=;
+        b=h7vTUI+Zd7yv2nT5HfZ67IUBERcx9fGxW/wo+EEcBpjcj1PVR90KOJTQy5fsRroGfV
+         nORt9WcZFwjWcLk+mfY9K4T5i6pgRVYbrj4G7zs3cUdurkFLiEgGbGhu1Fh6PZsQkVK2
+         PVmxpGdHKJm8nEppRvgd2mJFLpvhhV1Q9NIg/vup001O61d14631iI8+/0GeqiTIY3SK
+         hjQ/Lhyjm0d2EX+nEcQ00FtQauvMpCuIVBIGk3G0rlUBUoJmi/wpf1bST2Qj4DQZiF8m
+         +l1tCggbG/GMBZSKUqwps+IY50/2vJk+CP2rDiyyIiVVeJ9ZmMzemXpN7x5z99E0rABs
+         SDuw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763394491; x=1763999291;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=c/DUma0uZd8iCNzJFNlwxYelZvsQPcM9gT0Fu/UGP5Y=;
-        b=A1XcGNYD6rCOgXT25ELUhe/SG2SONY6F1JKC89CxGiBIGPHZdjXLIHfANIoh2q3O/C
-         a5+dQcbBwRp0+LWz0ll7KJmVjDLqNpDSRHuNFpcsurK423ZJb0iaB1OU6hqZiwjQiKp9
-         5P0CPGIi7LC6ZIf1TTDsBdC1ar03J6AGkWbceyumzVzurJo18clrwRnKtaW/RjlPdH6a
-         NXS+UEcnIVIOzBuEbqx4B6fr8hV2yTY/f2hmH6YbUb82qwJwOa3GfvoXxC4q3+CxtDWf
-         ZRc7+8NiKZUsk0zSAvayFwhB0f1rmJOVI89X7xPiav4koNXB5vNPp1LXY95WDs1goAg9
-         Mv4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU8NegTNOgtdOgcQLWfZ2StPYvN3KGidZ53Uz82gZNl6bF/uRaM4AyEgfmXm3Y/LQpF7q1eXxjgA6w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYzfsV2Xxmuwl5K3c+DOivxEki8aB75te8EcHI+4kmsiXuQvts
-	+SCKAHzDznAAZXMX8gAGaxAuLU2Zvnax9dyT/1NmlLyun4kuMwyCt9L7Ov1p1mKpd/k=
-X-Gm-Gg: ASbGnctm1QexvUdi1m8B2vrsmRsRhIBg8wtPgDaoUtBHOW9mm+WFx/A/49WrqRwRpNH
-	Jv0J0Huie4CnxOgEhOF7zRFTOqN+Unf4/cI1aYzmwTWyzRiRGDUNrAsu4QltIjd4A1KIkhavxos
-	AhzHF1yA1jnR88XoSOY9s2jeY7Nnlhaa9qUeom3dvnq0cW9wVeoXtrhCQj3rlE2ZXKTdC+PAlGc
-	6s8FNcYekkYZzbZP/U6LjW3Wb01nq2p+It7jDh24uezkA5/eRxrzr6ZCDpkQ1ubsq5TNlBVF1l6
-	dwyPe8t20yxjjgJjXxK1qq4dqsB7VynSz6/g4dzEDrIWJGZKk7lwZqcvEjLhECCLkNf9wsbQAgL
-	MGrybOGvs1Uvb+c3a4JJuy1HzultuTZm0w5rYXSUhUFyCz51EN/Bfw/AMgJCh6UZqhhJAgu35t6
-	aoWRvIRMoArXzivgUtNJvUxysIYuLDFVwW+SQ4HY3EJ8SE6yI6LxQ1HDeuuQ==
-X-Google-Smtp-Source: AGHT+IEz1qxf+9MTduFUs5dbOjZ/dHS2S6pFFr0IgbhUuNlZhrUTtDy15iSqTT9lE0arzv+pzqRA9A==
-X-Received: by 2002:a2e:b052:0:b0:37a:75c6:b44 with SMTP id 38308e7fff4ca-37babb47988mr26872821fa.3.1763394490823;
-        Mon, 17 Nov 2025 07:48:10 -0800 (PST)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-37b9ce25408sm28328821fa.20.2025.11.17.07.48.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Nov 2025 07:48:10 -0800 (PST)
-Message-ID: <52b99bf7-bfea-4cee-aa57-4c13e87eaa0d@gmail.com>
-Date: Mon, 17 Nov 2025 17:48:08 +0200
+        d=1e100.net; s=20230601; t=1763397469; x=1764002269;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PPBIXyGju7mBGzRaiW27P8dbL8q5t+cpUgoonxWQamI=;
+        b=Y1scz6LJCLDAjff07x+p7ESuLz4ucgs0Qt/AzA+0QBmWeWWX4WazutrlBJjmr+ouku
+         PBATjaAlm9KqJfzKIRpJCRzHwNAE9BJXexXUkM9PJIUX3DgfZ6dmlwPBmRH9Vgt+bAGh
+         SNMiysDeso+OL0a+UfkpLLQ67ou2KJr8ukLFNp4qnhMxEk1l+0b64DzOEO4xJoUCyfF7
+         QnnydgBF1r8HCXEuX1JanRGlWfhXMh8dKLSg88C6sOAke+OQO5nxp2162cZPG1+v0+Ej
+         SpRVwIXLjx4dwsooZLx8e2DrWlCqYEx7oQLfl2I7VeFQYfNNgdFRBWwuc3t54bmRx/wj
+         t4YA==
+X-Forwarded-Encrypted: i=1; AJvYcCVxCOoX5SXXAgpZoqlWRPLcf/t52AVa5NoeX4hpjVom7D4cUjgBMn4TWAWGg1Cmg/DXAdvh5XKw230=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCyyjRlaudgBgs9LNEq74nLxqsygy9gRhbixwpjHTYoQv8oNUJ
+	zEfQ/ykbCUDs29wlDTYjxOwbYbrCJNADO8bY4hPTe8b4H7rirsCyOS4ttCOW7LtuW7U=
+X-Gm-Gg: ASbGncsAzWRciE2kswhGBx1Fu2nYJUVM2nR9TNKTs6C9fYzlxNHc4N92PHb1nfztETT
+	GhGN5SxkQfvabrJYhXLomkF6aJzlW6mXutKu92HGgPI5tL5tF9Xc6eTttTHiZFD7Y8tKD3FCzx4
+	Aj74/+sgroGsk7TgUBXvUebMLi+JiGr1asysXDxmW5mgHykCd6g/u02QBk9jWr1IJvikjzPf4sB
+	vfJXqVi2gi8Rtvko/BrFB2uJ/cdnnvt9y7rYvUTYi9VCUCFGyX9f84Ha8nzj8uFunGTowoCD2v1
+	RKx+Srg9wzDpeksJs8Tvmt2xOEqXLvRQbeuCW7MfPoJRP6eCrvmwHS5PsfYBkLMIt4V14oMjmXC
+	ZA5DIjN9bm8E5Z+qnySiE6z2LWEHdSFu1mRWgmh++TkaznLYYXgq59/xA05MU2nHOWURUE7wkfh
+	d1mLNhmGmENxSw6PSrmQg=
+X-Google-Smtp-Source: AGHT+IGjX8UeXo2kn+Rq/dpoeLzNhIaCwbw4kTdvV8tWs6WEA1Z8hJqnk/qL5zQx1UTgmBk1S06rOQ==
+X-Received: by 2002:a05:6000:2210:b0:42b:2e65:655f with SMTP id ffacd0b85a97d-42b593499c8mr12766106f8f.19.1763397469362;
+        Mon, 17 Nov 2025 08:37:49 -0800 (PST)
+Received: from claudiu-X670E-Pro-RS.. ([82.78.167.134])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42b53f0b894sm27655158f8f.26.2025.11.17.08.37.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Nov 2025 08:37:48 -0800 (PST)
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+To: sboyd@kernel.org,
+	mturquette@baylibre.com,
+	linux-clk@vger.kernel.org
+Cc: nicolas.ferre@microchip.com,
+	alexandre.belloni@bootlin.com,
+	conor.dooley@microchip.com
+Subject: [GIT PULL] Microchip clock updates for v6.19
+Date: Mon, 17 Nov 2025 18:37:47 +0200
+Message-ID: <20251117163747.211922-1-claudiu.beznea@tuxon.dev>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 04/16] dt-bindings: power: supply: BD72720 managed
- battery
-To: Rob Herring <robh@kernel.org>
-Cc: Matti Vaittinen <matti.vaittinen@linux.dev>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Mark Brown <broonie@kernel.org>,
- Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org,
- Sebastian Reichel <sre@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
- Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
- linux-leds@vger.kernel.org, Pavel Machek <pavel@kernel.org>,
- Liam Girdwood <lgirdwood@gmail.com>, linux-gpio@vger.kernel.org,
- linux-pm@vger.kernel.org, Andreas Kemnade <andreas@kemnade.info>,
- Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
- linux-rtc@vger.kernel.org, Lee Jones <lee@kernel.org>,
- Stephen Boyd <sboyd@kernel.org>
-References: <cover.1763022807.git.mazziesaccount@gmail.com>
- <ac5a4e992e4fb9c7bffb1e641a7cd61f74af4cba.1763022807.git.mazziesaccount@gmail.com>
- <176303119683.3716572.16868393928566655866.robh@kernel.org>
- <ee36d7d1-ef47-4a35-9aff-baa6ed32105a@gmail.com>
- <20251114163954.GA3399895-robh@kernel.org>
- <32303b95-3fd5-44c4-bb7d-e2957a6064fc@gmail.com>
- <20251117152341.GA1944698-robh@kernel.org>
-Content-Language: en-US, en-AU, en-GB, en-BW
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <20251117152341.GA1944698-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 17/11/2025 17:23, Rob Herring wrote:
-> On Mon, Nov 17, 2025 at 10:12:01AM +0200, Matti Vaittinen wrote:
->> On 14/11/2025 18:39, Rob Herring wrote:
->>> On Fri, Nov 14, 2025 at 11:04:27AM +0200, Matti Vaittinen wrote:
->>>> On 13/11/2025 12:53, Rob Herring (Arm) wrote:
->>>>>
->>>>> On Thu, 13 Nov 2025 10:52:19 +0200, Matti Vaittinen wrote:
->>>>>> From: Matti Vaittinen <mazziesaccount@gmail.com>
->>
->> //snip
->>
->>>>
+The following changes since commit 3a8660878839faadb4f1a6dd72c3179c1df56787:
 
->> For VDR there are only:
->>
->> rohm,voltage-vdr-thresh-microvolt,
-> 
-> So "voltage voltage drop rate"? And '-microvolt' says this is voltage
-> too. :)
+  Linux 6.18-rc1 (2025-10-12 13:42:36 -0700)
 
-Hm. Yes. This is a threshold voltage for applying the "zero-correction" 
-algorithm, which uses these "VDR" (a.k.a voltage drop rate) tables. Eg, 
-the algorithm should only used for the correction when battery voltage 
-drops below this threshold. AFAICS, this is usually designed to be 
-slightly higher than the voltage where the system stays still operable. 
-I suppose this could also be "zero-correction-threshold", but this would 
-introduce another "buzzword".
+are available in the Git repository at:
 
->> rohm,volt-drop-soc-bp,
->> rohm,volt-drop-temperatures-millicelsius
->>
->> and
->>
->> patternProperties:
->>    '^rohm,volt-drop-[0-9]-microvolt':
->>
->> So, from the binding point of view (.yaml), it's not _that_ lot. In the .dts
->> there will be quite some noise as the tables have several values.
->>
->>
->>> If that
->>> happens, either we are doing a poor job of generically describing
->>> battery parameters or chargers and batteries are tightly coupled and
->>> can't be described independently.
->>
->> I am under impression that chargers tend to be pretty flexible, and they can
->> be configured to work with many different batteries by altering the charging
->> profiles. Most of the battery properties (like and charging phases [like
->> pre, CC, CV], their limits, currents and voltages etc) are very generally
->> usable. So, large subset of charging functionality can be handled with
->> standard properties. I believe it is only the fuel-gauging where things get
->> more hairy.
->>
->> I did prepare a series which does the split and adds new compatible for the
->> 'rohm,vdr-battery'. (The power-supply class is not yet modified in the
->> series, but we would probably want to modify the battery-info getters to
->> also accept the 'rohm,vdr-battery' -compatible.)
-> 
-> I don't think that's the right direction. It's not a Rohm battery.
-> 
->> I wonder if I should actually prepare also a series where these properties
->> are just placed in the existing static battery node without adding new
->> compatible. That way it would be easier to see which way is better.
-> 
-> That seems like the right thing to do here.
-> 
-> The main question for me is whether these should even be Rohm specific?
-> That would probably require a 2nd user to answer for sure.
-> 
+  https://git.kernel.org/pub/scm/linux/kernel/git/at91/linux.git tags/clk-microchip-6.19
 
-This is a question Linus W asked as well :)
-I believe this technique could be applied to other batteries. I, 
-however, am not aware of any other than ROHM charger drivers which 
-implement the algorithm. Furthermore, I was told that the mechanism to 
-measure these "VDR-tables" for batteries is one of those things which 
-should be "kept under your hat". I think ROHM has also patented some 
-stuff related to that. Hence I prefixed these tables by "rohm,".
+for you to fetch changes up to 781f60e45bdfe351aad692ac0fa89e36f8bf4a36:
 
-I have no strong objections to dropping the "rohm," though - but I doubt 
-these tables will be heavily used by any other but ROHM chargers.
+  reset: mpfs: add non-auxiliary bus probing (2025-11-11 16:47:24 +0000)
 
->> If I do that, should I only spin these bindings as RFC to avoid the
->> unnecessary noise?
-> 
-> Only if you think something is not complete and/or the patches should
-> not be applied.
+----------------------------------------------------------------
+Microchip clock updates for v6.19
 
-Oh, Ok. Then I will send only one of the approaches - probably the one 
-where properties are added to the simple-battery.
+This update includes:
+- convert Microchip Polarfire clock controller driver into a MFD driver;
+  with it, the reset control driver was included as it now depends on the
+  regmap registered by the clock controller driver
+- a cleanup patch for the LAN966X driver
 
-Thanks for all the support!
+----------------------------------------------------------------
+Conor Dooley (3):
+      dt-bindings: clk: microchip: mpfs: remove first reg region
+      clk: microchip: mpfs: use regmap for clocks
+      reset: mpfs: add non-auxiliary bus probing
 
-Yours,
-	-- Matti
+Robert Marko (1):
+      clk: lan966x: remove unused dt-bindings include
 
----
-Matti Vaittinen
-Linux kernel developer at ROHM Semiconductors
-Oulu Finland
-
-~~ When things go utterly wrong vim users can always type :help! ~~
+ .../bindings/clock/microchip,mpfs-clkcfg.yaml      |  36 ++--
+ drivers/clk/clk-lan966x.c                          |   2 -
+ drivers/clk/microchip/Kconfig                      |   2 +
+ drivers/clk/microchip/clk-mpfs.c                   | 227 +++++++++++++++++----
+ drivers/reset/Kconfig                              |   1 +
+ drivers/reset/reset-mpfs.c                         |  91 +++++----
+ include/soc/microchip/mpfs.h                       |   3 +-
+ 7 files changed, 266 insertions(+), 96 deletions(-)
