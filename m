@@ -1,167 +1,237 @@
-Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BA9032ED4A
-	for <linux-clk@vger.kernel.org>; Mon, 17 Nov 2025 19:13:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C44E344050
+	for <linux-clk@vger.kernel.org>; Mon, 17 Nov 2025 20:25:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763406829; cv=none; b=D9KTP2bIyR+QPEmdY0+4UYqYQDrRtFMPmSAUjsNLEFNMOEKfdlscqOprDy4yKKteb0WfNxOR0w1Rbwbv9HjmRUOeZfhDFaJEHoYERXEpoJvcczSQxs4pAqFJATj9lD4N0EpZeOinmBANNXiZeFtuMOVQiV6fAFp/fYW2A293phY=
+	t=1763411147; cv=none; b=jWTLqgMukQWGbH1d/iHJwsy6tS6w2wYJJiUueF1QKJS5foGc7Pn09VE83EnYdeVjqgmHZTqZF8l9TDoLy/6RNxv6ZEKyIiH0xFaNGy6XmvZQVgM/n/Yl2d2B2vLosaTm5FA5TuFkq+uuEe+RVp98TVAuvVpsx7OFMfYE4MmJuaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763406829; c=relaxed/simple;
-	bh=D0J62PG3/1U8EWcYQtqql/7bNjseH17cdrR/Xun3mfM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sjX/2ATEDKlNrFlEo4gxEQ5Aj+fg4GPwrezktM+1aeg5BKnHLn1HIZQk54LSCKLeRG0QF6fqpp87tBBWYpYnGYSjVWNgaHIuaXyeqTxEWp0ZfZEF3OzbvGIT09sCl0DD+vP8hWLXjZuArtU103XVdMcO3vpcRH58i8+tB67hgeU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=unHwEy6n; arc=none smtp.client-ip=209.85.166.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+	s=arc-20240116; t=1763411147; c=relaxed/simple;
+	bh=cpgqiL5/LaCZUbfB8G72tgBIiB5bJI06pJUi96zR1cU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uTHyetOcchbpTPacx5IkD3cE3VsOCX8ksJq7jxvHivfIPFRQRTJxKwc3SO+r1uNW7sNFXd0NGCdHvr9zb+/rC0cQsuIJuxzLWGZvJVJvtOX14TAEKwAGslbtocW2PAo8EemmZMf9BOWTLF7dV06tDDHpE9uOXge+zCWHNy8LNK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lZSnbNVk; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="unHwEy6n"
-Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-948f8fa9451so57449839f.3
-        for <linux-clk@vger.kernel.org>; Mon, 17 Nov 2025 11:13:46 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lZSnbNVk"
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-42b2dc17965so3842154f8f.3
+        for <linux-clk@vger.kernel.org>; Mon, 17 Nov 2025 12:25:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1763406826; x=1764011626; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=WbpLosukaGmb6Q4C8J4C0DP31/eNIGANA8ASBPiU4u4=;
-        b=unHwEy6nyNkTcrAew4H8E37g/aY9EwLeZvz5D5BsZljKZa1z3cA7FwlwmMcM+tgrL7
-         KDcYw/Wft69Ii4GfLfM2CLWn6/c+Z3D6Zt/rMqpIm53+tuoBdk+tGQMEyK3yiarW6ZJp
-         g4D+9jcHlTZcXXaq+bo09R0Aty1Ujb1FNYikQVE+m9IvFu+TqTrP1ijSRSq0a388fDOa
-         apzD3gYdXzKPxgJ1IfsRhPNaqPPr0B57MQOFWXlmZEj2XnTBsD7LNubn+sqEL/rxohcx
-         OlzwBwp3/j+WdpUg57rjLJp/tikJknSx3QkPUfuPK5o4kNGyslVApUNEVR+w9xW7Is7z
-         PcVg==
+        d=gmail.com; s=20230601; t=1763411129; x=1764015929; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KgjjK2XbJQUpqGGoaCrQdhUPKZGbik3QiZYNr8oO2RM=;
+        b=lZSnbNVkoTUUfM/d1JAjIfjWTRFJgeRHp+L421tjgsFBm/xdvceW6KlOdF28Pps00I
+         ZXZ2ITrfdpJ0dSsUGr1BTjdfkHm4f/UY5WT+yIaNfUtcGTvrMZEAjoPZjciUpDrf2wP9
+         wo4N/K/11TbaKU5J/4WuNeJvqlNqLWwJRUAzLJeIL0AepBj5Wu3zRhihHF14Q/D6I0CY
+         bVELwCXmL8SvO7+wNOsRc28XHvOsJdG8N5LplvyOw02iBqr3FAVIzlpMlihshTBgmxJP
+         2GxWFVJ0lKKp83S0Xodf06YioZaf3rH1Dth0jyn3/F0Fo2ZeM/Ys3biLkVvEg2jAbTMX
+         vmtg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763406826; x=1764011626;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WbpLosukaGmb6Q4C8J4C0DP31/eNIGANA8ASBPiU4u4=;
-        b=eI5ApxZxb/Hx0HMJubEYuQ1Z6awZ/5hyI3bgxoOSghx/9weDLn7d5ZPk4I5RfI3kb5
-         N38d114iAKwhWv/oDGfW/gfIxFUR6SfCJjKxHk3u1W08eZSVOfe54blISDj+qMTX2Spr
-         8HbnDAcCPqELxqS2K0YGAkfO+gSeBTVrNUu14DRIxEdgA/KSEmrGQNUfRfrlnb8gCGLs
-         OaOrqHOnRRzIvUIXeV1O2bRPTmnc+IqG+Z8yUAGK2AU6HV+b94cYW8K1/52Ly7XD5aXw
-         irKBrAMWjMjeC2mk6ohD9k/ybx7rn6oxSjH3qgZWwWxmmtwKNymtpEXqfteyg8YozPss
-         invw==
-X-Forwarded-Encrypted: i=1; AJvYcCVgcFRNm0VtWC3NLKo/BmzFdk2sr2J1aZqzg3JE6becbced6IRGZ90nlzHBE5nZCImYNdgYlOuoOpg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YySVse7/ojiSrWwmPJC+YwEKJUPT9Z2HHrBpUTvHp93/jJC1az3
-	44rgArW8qLvgWC1QdMUl8UB4e0+QIJn15ePEH5Jy9Du0vCCXPgbGigk7J//N8cpcZws=
-X-Gm-Gg: ASbGncvx3eGwy74iRdv2ryMoz0h1ycXFGwDzX/PGMZ0UIrHIJ1RIriTkxkh65jtlzrA
-	kcMYHyyazpWq4UKVEvFX2VQOLH7A4kZhRfcJjuMYcJZls3BdJtcs4JIo+jGj7CBE7aExDRl3DLn
-	4bY2r1lwi0L/rgzxo676Dt+L+qgVtBgtxHCj27M95AxlSWFufna2I5ObcuDhr4oAy0pV6hRY8lZ
-	307maRM3ocUcLzfRVDydli3i0LMs4CApIumUvVEPLj/u4XaSgmrvBfvhYkr3Vd25t5QcZgth7mk
-	RuumFPfkZEfS6924IIlz4We75xszqLZAIIpbkcT5osrhh+djPVuqdV4fRKEvbmp49hMYNOt/Jst
-	ogsHnbItpJyOkOH/oNHYwMGUUr0kjpZAKttpOZxdNN37ecefSH4W/jcViqoIQMp2FIPleOW+7SO
-	mQJ7Oxvv8xVznF6gir0v6gsEEnxln9IOChalIQCpXRdvTVFVOtPizQMjbflpzh
-X-Google-Smtp-Source: AGHT+IH8eFCp4A760FkF3tQiu/jqIcK+hIc5E/QznWtjRo4yEGgDGtrgNoK16294y1YPQeLGg93T3g==
-X-Received: by 2002:a05:6638:6401:b0:5b7:d710:6626 with SMTP id 8926c6da1cb9f-5b7d7106756mr8951851173.21.1763406826144;
-        Mon, 17 Nov 2025 11:13:46 -0800 (PST)
-Received: from [172.22.22.28] (c-75-72-117-212.hsd1.mn.comcast.net. [75.72.117.212])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-5b7bd26fdfdsm5209811173.18.2025.11.17.11.13.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Nov 2025 11:13:45 -0800 (PST)
-Message-ID: <d74628b6-9441-4853-9c47-6fffe8d654e6@riscstar.com>
-Date: Mon, 17 Nov 2025 13:13:44 -0600
+        d=1e100.net; s=20230601; t=1763411129; x=1764015929;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=KgjjK2XbJQUpqGGoaCrQdhUPKZGbik3QiZYNr8oO2RM=;
+        b=CXrFuNDGNnZ2qmZKy1USbDhSpaHPYHGj90ZairtP3GR9Jm09stkh3UL3RUEBV+Kub0
+         RKMukmUItdEyZFo3GFB6Xz1H4zisFOqiV3o2gukRRT7HpAwGvTqLZg3nLUECWxaY7BL4
+         pMkeN2xlmGsEM8z6rupmQIpALsi4ZOK2Pk5P5m98jsw7bG0oNFjq0LFoCyEArgS2zNEj
+         eEO+1oQmm45O+ku3dw3Yw+Zh1dLx7Ou+fwywOI1Svq5jfHyYbqwjfhmUMC6z9gXAG7Jz
+         XaPJTKJjjcrhyDq7VD2taYLH7uK1I0pqOqAym6IyjuTZ5OXyJEnKPP1k5gYA8NaW8BIX
+         jKLA==
+X-Forwarded-Encrypted: i=1; AJvYcCXCNwGm327pGhN/D1rmrOB0GwKldHOYuhoXY3L9DW8GeBT1wsWsl9OLnq17b1TRaaeUutuPehPJzrA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxV6OZ3KTzzNodLLUT4b8qctvu/c2IJBxbbiPsJRUVQ+Iq4JEnk
+	tFs+VW20iqpFSPWrmSJ4x8lirJLWHbNZikAmFdSvIUekYp5TUyKK8nPwTl68i8fx/VI8s/LX/1j
+	3ajoCJzknpTcZ9yeuoiF1JCBW8Ce4T6A=
+X-Gm-Gg: ASbGncuXnog0lgy+12yjF2uO1GTaQotcByyRvUmoLHWBW9OXwVpB5f5xtAcHHUzvSsI
+	Ee1wYYtaN/MkRso7gWZIDlEMD33IYwZ68I/gPoxsebikY7G3Biw0M0LoRN6WWRYEVQ655AWPRiP
+	uaoZtvBe5bcBDOuI74TKzAL7CLsRsjZ8NsO6Xpkv189o2fdHrkZ2XsGmt4jLFvPAwhPTmamDwDs
+	E6qBM/GTyYW4Ur5qm3IV0zCQZz+Lx6buS1ITStd+6fBBkW4W+pRCLd2ZBU09bzLIUsH7DFMiE70
+	mI6Lby85dhTFJ3kF7QHYlj9HOw46bBnDy72fT3NABo7uMylT5NuERF0LD8CS
+X-Google-Smtp-Source: AGHT+IEG+aF2dwCSgK6oB5qEOwvTBM24ZBhpeHRDai5TxbtUYEK0l2B7md0rwDsEmyVRM67U8IFhNeR262uFVjgaGM0=
+X-Received: by 2002:a05:6000:1ace:b0:42b:41d3:daf1 with SMTP id
+ ffacd0b85a97d-42b59377e6amr12836453f8f.38.1763411128508; Mon, 17 Nov 2025
+ 12:25:28 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: spacemit: fix UBSAN warning during probe
-To: Charles Mirabile <cmirabil@redhat.com>, linux-kernel@vger.kernel.org
-Cc: spacemit@lists.linux.dev, linux-riscv@lists.infradead.org,
- linux-clk@vger.kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
- dlan@gentoo.org, heylenay@4d2.org, troy.mitchell@linux.spacemit.com,
- inochiama@outlook.com, Yanko Kaneti <yaneti@declera.com>
-References: <20251117190329.1337250-1-cmirabil@redhat.com>
-Content-Language: en-US
-From: Alex Elder <elder@riscstar.com>
-In-Reply-To: <20251117190329.1337250-1-cmirabil@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20251028165127.991351-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20251028165127.991351-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <CAMuHMdWSB4OvS5AeWqOBQPNG2J9VMYe9YUeXAp9kPjcJEQm3+g@mail.gmail.com>
+ <CA+V-a8sC44HeShCFdk2xwTHMdcOo+8btNh9i0hthTEUMdnhqAQ@mail.gmail.com> <CAMuHMdV+7cvwxGVYGUd_nV3sUZ60YWzsWr_Ec6RJToPttUfKRA@mail.gmail.com>
+In-Reply-To: <CAMuHMdV+7cvwxGVYGUd_nV3sUZ60YWzsWr_Ec6RJToPttUfKRA@mail.gmail.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Mon, 17 Nov 2025 20:25:02 +0000
+X-Gm-Features: AWmQ_bnT3iDZtN9BTK7GhNdRI2SP9L9Joge1rJBp7r_hZwF1SU7_dr9fgFWwKMc
+Message-ID: <CA+V-a8vWCV8UuKwTaYU7dY7nPwHiMr-6chz498BqvAfaFWisJw@mail.gmail.com>
+Subject: Re: [PATCH v2 5/5] clk: renesas: r9a09g077: Add xSPI core and module clocks
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11/17/25 1:03 PM, Charles Mirabile wrote:
-> When booting with KASAN enabled the following splat is encountered during
-> probe of the k1 clock driver:
-> 
-> UBSAN: array-index-out-of-bounds in drivers/clk/spacemit/ccu-k1.c:1044:16
-> index 0 is out of range for type 'clk_hw *[*]'
-> CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.18.0-rc5+ #1 PREEMPT(lazy)
-> Hardware name: Unknown Unknown Product/Unknown Product, BIOS 2022.10spacemit 10/01/2022
-> Call Trace:
-> [<ffffffff8002b628>] dump_backtrace+0x28/0x38
-> [<ffffffff800027d2>] show_stack+0x3a/0x50
-> [<ffffffff800220c2>] dump_stack_lvl+0x5a/0x80
-> [<ffffffff80022100>] dump_stack+0x18/0x20
-> [<ffffffff800164b8>] ubsan_epilogue+0x10/0x48
-> [<ffffffff8099034e>] __ubsan_handle_out_of_bounds+0xa6/0xa8
-> [<ffffffff80acbfa6>] k1_ccu_probe+0x37e/0x420
-> [<ffffffff80b79e6e>] platform_probe+0x56/0x98
-> [<ffffffff80b76a7e>] really_probe+0x9e/0x350
-> [<ffffffff80b76db0>] __driver_probe_device+0x80/0x138
-> [<ffffffff80b76f52>] driver_probe_device+0x3a/0xd0
-> [<ffffffff80b771c4>] __driver_attach+0xac/0x1b8
-> [<ffffffff80b742fc>] bus_for_each_dev+0x6c/0xc8
-> [<ffffffff80b76296>] driver_attach+0x26/0x38
-> [<ffffffff80b759ae>] bus_add_driver+0x13e/0x268
-> [<ffffffff80b7836a>] driver_register+0x52/0x100
-> [<ffffffff80b79a78>] __platform_driver_register+0x28/0x38
-> [<ffffffff814585da>] k1_ccu_driver_init+0x22/0x38
-> [<ffffffff80023a8a>] do_one_initcall+0x62/0x2a0
-> [<ffffffff81401c60>] do_initcalls+0x170/0x1a8
-> [<ffffffff81401e7a>] kernel_init_freeable+0x16a/0x1e0
-> [<ffffffff811f7534>] kernel_init+0x2c/0x180
-> [<ffffffff80025f56>] ret_from_fork_kernel+0x16/0x1d8
-> [<ffffffff81205336>] ret_from_fork_kernel_asm+0x16/0x18
-> ---[ end trace ]---
-> 
-> This is bogus and is simply a result of KASAN consulting the `.num` member
-> of the struct for bounds information (as it should due to `__counted_by`)
-> and finding 0 set by kzalloc because it has not been initialized before
-> the loop that fills in the array. The easy fix is to just move the line
-> that sets `num` to before the loop that fills the array so that KASAN has
-> the information it needs to accurately conclude that the access is valid.
-> 
-> 
-> Fixes: 1b72c59db0add ("clk: spacemit: Add clock support for SpacemiT K1 SoC")
-> Tested-by: Yanko Kaneti <yaneti@declera.com>
-> 
-> Signed-off-by: Charles Mirabile <cmirabil@redhat.com>
+Hi Geert,
 
-Looks good to me.  I haven't used UBSAN but the report is clearly
-complaining about exactly what you describe.  Your fix seems like
-exactly the right thing to do.
+On Mon, Nov 17, 2025 at 1:32=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
+k.org> wrote:
+>
+> Hi Prabhakar,
+>
+> On Mon, 10 Nov 2025 at 22:38, Lad, Prabhakar <prabhakar.csengg@gmail.com>=
+ wrote:
+> > On Mon, Nov 10, 2025 at 1:48=E2=80=AFPM Geert Uytterhoeven <geert@linux=
+-m68k.org> wrote:
+> > > On Tue, 28 Oct 2025 at 17:52, Prabhakar <prabhakar.csengg@gmail.com> =
+wrote:
+> > > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > > >
+> > > > Add core clocks and module clock definitions required by the xSPI
+> > > > (Expanded SPI) IP on the R9A09G077 SoC.
+> > > >
+> > > > Define the new SCKCR fields FSELXSPI0/FSELXSPI1 and DIVSEL_XSPI0/1 =
+and
+> > > > add two new core clocks XSPI_CLK0 and XSPI_CLK1. The xSPI block use=
+s
+> > > > PCLKH as its bus clock (use as module clock parent) while the opera=
+tion
+> > > > clock (XSPI_CLKn) is derived from PLL4. To support this arrangement
+> > > > provide mux/div selectors and divider tables for the supported
+> > > > XSPI operating rates.
+> > > >
+> > > > Add CLK_TYPE_RZT2H_FSELXSPI to implement a custom divider/mux clock
+> > > > where the determine_rate() callback enforces the hardware constrain=
+t:
+> > > > when the parent output is 600MHz only dividers 8 and 16 are valid,
+> > > > whereas for 800MHz operation the full divider set (6,8,16,32,64) ma=
+y
+> > > > be used. The custom determine_rate() picks the best parent/divider =
+pair
+> > > > to match the requested rate and programs the appropriate SCKCR fiel=
+ds.
+> > > >
+> > > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.c=
+om>
+> > > > ---
+> > > > v1->v2:
+> > > > - Added custom divider clock type for XSPI clocks to enforce hardwa=
+re
+> > > >   constraints on supported operating rates.
+>
+> > > > --- a/drivers/clk/renesas/r9a09g077-cpg.c
+> > > > +++ b/drivers/clk/renesas/r9a09g077-cpg.c
+>
+> > > > @@ -264,6 +305,116 @@ r9a09g077_cpg_mux_clk_register(struct device =
+*dev,
+> > > >         return clk_hw->clk;
+> > > >  }
+> > > >
+> > > > +static int r9a09g077_cpg_fselxspi_determine_rate(struct clk_hw *hw=
+,
+> > > > +                                                struct clk_rate_re=
+quest *req)
+> > > > +{
+> > > > +       struct clk_divider *divider =3D to_clk_divider(hw);
+> > > > +       unsigned long parent_rate, best =3D 0, now;
+> > > > +       const struct clk_div_table *clkt;
+> > > > +       unsigned long rate =3D req->rate;
+> > > > +       int div =3D 0;
+> > > > +
+> > > > +       if (!rate)
+> > > > +               rate =3D 1;
+> > > > +
+> > > > +       for (clkt =3D divider->table; clkt->div; clkt++) {
+> > > > +               parent_rate =3D clk_hw_round_rate(req->best_parent_=
+hw, rate * clkt->div);
+> > >
+> > > I had expected the use of some *_determinate_rate_*() helper, as the
+> > > parent can be changed to find a better clock rate?
+> > > Perhaps you should use a composite clock for that?
+>
+> OK, so per your test results, the core clock code does try
+> various parents.
+>
+> > >
+> > > > +               /*
+> > > > +                * DIVSELXSPIx supports 800MHz and 600MHz operation=
+.
+> > > > +                * When the parent_rate is 600MHz, only dividers of=
+ 8 and 16
+> > > > +                * are supported otherwise dividers of 6, 8, 16, 32=
+, 64 are supported.
+> > > > +                * This check ensures that FSELXSPIx is set correct=
+ly.
+> > > > +                */
+> > > > +               if (parent_rate =3D=3D DIVSELXSPI_RATE_600MHZ &&
+> > >
+> > > Does this actually work as expected? I doubt parent_rate is guarantee=
+d
+> > > to be exactly 600 or 800 MHz, and expect it can differ slightly due
+> > > to rounding.  Hence I would look at clk_fixed_factor.div instead.
+> > >
+> > With below diff, Ive got the below results for the various freqs
+> > requested where appropriate parent and divider clocks are picked.
+> >
+> > @@ -317,6 +317,7 @@ static int
+> > r9a09g077_cpg_fselxspi_determine_rate(struct clk_hw *hw,
+> >
+> >         for (clkt =3D divider->table; clkt->div; clkt++) {
+> >                 parent_rate =3D clk_hw_round_rate(req->best_parent_hw,
+> > rate * clkt->div);
+> > +               pr_err("parent_rate=3D%lu, req-rate=3D%lu div=3D%u\n",
+> > parent_rate, rate, clkt->div);
+> >                 /*
+> >                  * DIVSELXSPIx supports 800MHz and 600MHz operation.
+> >                  * When the parent_rate is 600MHz, only dividers of 8 a=
+nd 16
+>
+> > Case 2# assigned-clock-rates =3D <75000000>;
+> > [   12.288507] parent_rate=3D800000000, req-rate=3D75000000 div=3D64
+> > [   12.310528] parent_rate=3D800000000, req-rate=3D75000000 div=3D32
+> > [   12.318426] parent_rate=3D800000000, req-rate=3D75000000 div=3D16
+> > [   12.326361] parent_rate=3D600000000, req-rate=3D75000000 div=3D8
+> > [   12.341540] parent_rate=3D0, req-rate=3D75000000 div=3D6
+> > [   12.347546] parent_rate=3D800000000, req-rate=3D75000000 div=3D64
+> > [   12.357593] parent_rate=3D800000000, req-rate=3D75000000 div=3D32
+> > [   12.367148] parent_rate=3D800000000, req-rate=3D75000000 div=3D16
+> > [   12.418871] parent_rate=3D600000000, req-rate=3D75000000 div=3D8
+> > [   12.433560] parent_rate=3D0, req-rate=3D75000000 div=3D6
+> [...]
+>
+> Thanks for checking!
+>
+> > Looking at the logs I think I could optimize the code to continue when
+> >  parent_rate =3D=3D 0
+>
+> Do you know why it gets called with parent_rate =3D=3D 0?
+>
+When it doesnt find the best parent, parent_rate =3D=3D 0.
 
-Reviewed-by: Alex Elder <elder@riscstar.com>
+> > Based on the above logs, would you prefer me to represent it as a
+> > composite clock?
+>
+> Given the core code does try the various parent clocks, there is
+> no need to model it as a composite clock.
+>
+Ok.
 
-> ---
->   drivers/clk/spacemit/ccu-k1.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/spacemit/ccu-k1.c b/drivers/clk/spacemit/ccu-k1.c
-> index f5a9fe6ba1859..4761bc1e3b6e6 100644
-> --- a/drivers/clk/spacemit/ccu-k1.c
-> +++ b/drivers/clk/spacemit/ccu-k1.c
-> @@ -1018,6 +1018,8 @@ static int spacemit_ccu_register(struct device *dev,
->   	if (!clk_data)
->   		return -ENOMEM;
->   
-> +	clk_data->num = data->num;
-> +
->   	for (i = 0; i < data->num; i++) {
->   		struct clk_hw *hw = data->hws[i];
->   		struct ccu_common *common;
-> @@ -1044,8 +1046,6 @@ static int spacemit_ccu_register(struct device *dev,
->   		clk_data->hws[i] = hw;
->   	}
->   
-> -	clk_data->num = data->num;
-> -
->   	ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get, clk_data);
->   	if (ret)
->   		dev_err(dev, "failed to add clock hardware provider (%d)\n", ret);
-> 
-> base-commit: 6a23ae0a96a600d1d12557add110e0bb6e32730c
+> However, I still think you should look at the parent's divider value
+> (clk_fixed_factor.div) instead of at the actual clock rate, as that
+> may not be 600 or 800 MHz exactly (e.g. when underclocking the SoC
+> on a custom board using a 24 instead of a 25 MHz crystal).
+>
+Ok, I will have to iterate over the parents to determine the divider value.
 
+Cheers,
+Prabhakar
