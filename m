@@ -1,50 +1,52 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80A90189906;
-	Tue, 18 Nov 2025 22:07:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D384F30F947;
+	Tue, 18 Nov 2025 22:07:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763503670; cv=none; b=qVIRL1RmQIhjvXR0iga1YUEBKgGNmE8iLa4+WuIQZfeWnUO5Ntans52HjKZmx1LC74gemIGbsESyj1WxGO9OPzQyR9CFnlDnioEPTVrCCLIKIFSwzRwhB4JbRqTKimZPHYvQEt5WBkmoj3Ekcdkz9OELbWIlGqSHkkPUWcqRF04=
+	t=1763503672; cv=none; b=KqFgSKepEY2rgyJAAa5PODnztwkIIqrHubGOmmAQOoNx/em0U8C2e9pUYoY8YMrFJDN3q2INDAZYxzf/B9lxYjZCMgiMuOXYhqhUL6UR3IXk+ufw8uTAPGxf1qyApM80kcdG70GE/B7RSueK5v9HdexiYiaJSj/rARmfwh/ScNk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763503670; c=relaxed/simple;
-	bh=Wfxb7j9J7f0Bmrk6k3DPKg4eyoRDEdLqadSfKk06jhI=;
+	s=arc-20240116; t=1763503672; c=relaxed/simple;
+	bh=JU2qtH5yscXiGSRhOuUtyaAl/sjxudVrA6J6/diZpe0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ODpVF3LH9ihSrUjG7jyRawadQXKF5WCQ4AMoO+oz7CBsKtE3qG8393YpiXvX9+HaIntWcUMa/naysULpdEuMD725Qc0A9kNzz5UbasilUWYeHyqvk5J0z2mNBYIV/XKIqV0Rl/X+wtV+idC4NnQl8haFVgHa5SukG6aDORD0viM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WG1okD3Z; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=VtbIeaka38QuJA+/vCHMTrfUO69NNK8du9QaDFgalk1BzUnL6Wf9k/PYwgLYOhCa9u0AE+16KIZcPX/WMUY9J0lgiDPLGj+JlGrJap2pGVIrcrjKTJdk/N/zPf0slZnwlJThWtReMfS4+uyxQbMe56Ol2ztCGOuAcP4RmGS7kFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g4JMu2TF; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WG1okD3Z"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31BCEC2BCB2;
-	Tue, 18 Nov 2025 22:07:46 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g4JMu2TF"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CE05C4AF0D;
+	Tue, 18 Nov 2025 22:07:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763503667;
-	bh=Wfxb7j9J7f0Bmrk6k3DPKg4eyoRDEdLqadSfKk06jhI=;
+	s=k20201202; t=1763503671;
+	bh=JU2qtH5yscXiGSRhOuUtyaAl/sjxudVrA6J6/diZpe0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=WG1okD3Z7l7HQwbIg95oLC0PE/tThWgj4KrtYYw+A4oAJjadKlWcUpPqW2GPyEstK
-	 X0+2p/T6T8+WnP5QzQ9s1HTU4QBMW+a58sXwM+KJQIERpTkdLd+SggcZBdeBAp8KIb
-	 7QFwPO/PfY4ZEHmX86FirJm168wbufFgC5AmGXLwAmoYcFRqnY+mdmhHZWD+xYlek9
-	 OIUT9b0f7fmXCvdotWbGcR+L0k9QDDoOSYUqRfsXISC9CGBFKH+LXnz6rX/biqKJak
-	 rMgL7J/GSQ2tZwDIJ9nN8u6B3XiREDHy9lRj5AzImNOXNeqHuzMfP0ztwiWI4Evn0X
-	 lq5Mwyv8RKYcA==
+	b=g4JMu2TFcioY1MeDafoDofp4JnPAE97yVHqi154Qp+vPqeo8AEzxFZ1m6AZ/OjHz/
+	 /hKoqv+qrkq0JSR+p9FHB5I/oq9kvCVlxvNG55xEXaduUskL+rym+cCWmmDAMBVC0o
+	 765PDMySKoDNizyxjNvGJ6CVI+xX4U9WIdPMC/GIRlPt2RXBYp+FbuFiXC17ZVln+1
+	 rJoxAIzd1CD5gFwCGAOfzpneso2TD1sjlsM6zaa0D37mc056bsZG7Zxp4vOqxvC3tl
+	 NcvA74yjWEXdsi81a/ANYfBXywI2xg4Jr+fja8VAAdDYSFRkOIGldhSuPOBRSIli7W
+	 gRExJ+oYersbw==
 From: Bjorn Andersson <andersson@kernel.org>
-To: Stephen Boyd <sboyd@kernel.org>,
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Alexey Minnekhanov <alexeymin@postmarketos.org>
+	Taniya Das <taniya.das@oss.qualcomm.com>
 Cc: linux-arm-msm@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	~postmarketos/upstreaming@lists.sr.ht
-Subject: Re: (subset) [PATCH v2 0/3] SDM630/660: Add missing MDSS reset
-Date: Tue, 18 Nov 2025 16:12:32 -0600
-Message-ID: <176350395161.3382332.13806197493961299097.b4-ty@kernel.org>
+	devicetree@vger.kernel.org,
+	Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
+	Imran Shaik <imran.shaik@oss.qualcomm.com>,
+	Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH v4 0/5] Add the support for SM8750 Video clock controller
+Date: Tue, 18 Nov 2025 16:12:34 -0600
+Message-ID: <176350395164.3382332.554948367903205082.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251116-sdm660-mdss-reset-v2-0-6219bec0a97f@postmarketos.org>
-References: <20251116-sdm660-mdss-reset-v2-0-6219bec0a97f@postmarketos.org>
+In-Reply-To: <20251118-sm8750-videocc-v2-v4-0-049882a70c9f@oss.qualcomm.com>
+References: <20251118-sm8750-videocc-v2-v4-0-049882a70c9f@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -55,20 +57,35 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Sun, 16 Nov 2025 04:12:32 +0300, Alexey Minnekhanov wrote:
-> Since kernel 6.17 display stack needs to reset the hardware properly to
-> ensure that we don't run into issues with the hardware configured by the
-> bootloader. MDSS reset is necessary to have working display when the
-> bootloader has already initialized it for the boot splash screen.
+On Tue, 18 Nov 2025 12:47:04 +0530, Taniya Das wrote:
+> Support the Video clock controller for SM8750 Qualcomm SoC. It includes
+> the extended logic for branch clocks with mem_ops which requires the
+> inverted logic.
 > 
+> Changes in v4:
+> - Split the changes to remain functional as per suggestion [Konrad]
+> 	- add the new struct fields
+> 	- add the ECPRI driver
+> 	- add the clk-branch.c changes for mem_ops invert
+> - update the commit text for ecpricc code changes.
+> - update the logic for mem_enable_invert [Konrad].
+> - use GENMASK for 'mem_enable_ack_mask' in videocc driver [Konrad]
+> - Link to v3: https://lore.kernel.org/r/20251024-sm8750-videocc-v2-v3-0-6286bbda3c8e@oss.qualcomm.com
 > 
+> [...]
 
 Applied, thanks!
 
-[1/3] dt-bindings: clock: mmcc-sdm660: Add missing MDSS reset
-      commit: c57210bc15371caa06a5d4040e7d8aaeed4cb661
-[2/3] clk: qcom: mmcc-sdm660: Add missing MDSS reset
-      commit: 0a0ea5541d30c0fbb3dac975bd1983f299cd6948
+[1/5] clk: qcom: clk_mem_branch: add enable mask and invert flags
+      commit: 165d0b6dd248b939fb0d31a00687e6ef672b3b3c
+[2/5] clk: qcom: ecpricc-qdu100: Add mem_enable_mask to the clock memory branch
+      commit: 53a18958349a627ae5d6b1ea708289b6cf3d8b9d
+[3/5] clk: qcom: branch: Extend invert logic for branch2 mem clocks
+      commit: aa788d3b475652a3ebaca32ca714f02f8ece3393
+[4/5] dt-bindings: clock: qcom: Add SM8750 video clock controller
+      commit: b190eaea57803da00a4318ba12359625337be9e8
+[5/5] clk: qcom: videocc-sm8750: Add video clock controller driver for SM8750
+      commit: a160860529b55c54dbd54137f86c818a53d07655
 
 Best regards,
 -- 
