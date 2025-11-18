@@ -1,184 +1,187 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD39829B796
-	for <linux-clk@vger.kernel.org>; Tue, 18 Nov 2025 07:16:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A90A2DF152
+	for <linux-clk@vger.kernel.org>; Tue, 18 Nov 2025 07:17:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763450210; cv=none; b=Y69koT0n3pzp79pivDoXmyqMvcUIn3VqjMqwbwSPLPDTHwEAkx75KcxBtK9EMkAsaa2o3saZrRd1iHg2ey5WtdUnnBtLDw4n0oDtfEQA/IE6a/B/G6G4r0u37o29l0JsKpFEtq1uv5HSWLtKrD2WCIsEFst+l16FqW/MLZpI6LM=
+	t=1763450238; cv=none; b=CD4iVeEDiz9Zw6bQiZV0LOcVLaeDKwFaHAWulsAK5FXd5fDWhsmX2GAcCjILH+0XbNIaXGN097uoe0lal0OZIaf8cZt5+bIcCJdcq2kGcveuzW+bRsdq8otscvpXZoTC7oOolTX2MmmEi4dtMr4Zas5grvD8EQVuJqndWAmK/DY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763450210; c=relaxed/simple;
-	bh=q0yJJiKn+zBrJd/u9eWfOIOO7+WxsjyO1+iLD/6tDPM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Zud2NiILaiXreRx1HXdnT5e1aobErgINEFW6UoWFizS97Ic0nf/MdgYMySZ/gs96+/TrZ1807HDjNg+M2rYvEjaKcpMWjBSN2Mck0E9rWrnZ8hF+4xfen4cGuxuOYV/dbTy7WxhV7SKOe7jjWi9XrzkLQaMdxPbNUeUh87bf7LM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R4t/2FgM; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1763450238; c=relaxed/simple;
+	bh=8guDZLbBhhMWkkwxWNw5NjhzXnp2RD5IOPb9WvFOZt4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=tdYoWS6XGdoPb+nI2psXyL2rc2fC/NP8IlQAMIjNd20JhWdaNcllIYD85qs6z2CZ6f4cWOrV98Jf95LxrxAVxM0TmqcUYboNWbYyWVpiNaatO4gqOfkEtfoQ25mmpBU2HXnTwzowNir+WExo9T2fwoA4ZYnOWJeH6XKlx/xLozU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=AW4T7fF4; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=kvJQfuFp; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R4t/2FgM"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-47796a837c7so17924255e9.0
-        for <linux-clk@vger.kernel.org>; Mon, 17 Nov 2025 23:16:48 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="AW4T7fF4";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="kvJQfuFp"
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5AI2x8J0375824
+	for <linux-clk@vger.kernel.org>; Tue, 18 Nov 2025 07:17:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=5b9hSP5K2qoRH6CixZo5JO
+	ZmFO/k8bsuyStGVBp9I9M=; b=AW4T7fF4bzc0cqxyk1MBxTqDmaBn9tJ9CTzEKW
+	bDJolUuN8UgY1RDEu+rv8EEtaR/0BpQyZLbtLb2nDzBI1ztf2pXfZz/wNMd/G8bQ
+	trD3M/XGPTEpXT1oOjYrzwKgCwUwoy+a9nKgAiSIqQU0eSs0p4qtjZCvKUWL5ITU
+	ikklRg4aOY9lxawp2JGutniMBTq2tsS4AqbJ00BhIsjMSxqYmUo+ppb+ija+D36o
+	ZIKA/C+3MON6qSRPdqRhPY/XZEsq2u5N74d2J3y41EUiV9wKwrsaep6em04Vl+/A
+	afudTZHWrgEE7SbzQnLkcF4Y1ByKbRGNpzxoKn0VBZqfPcyw==
+Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4ag76nj6vy-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Tue, 18 Nov 2025 07:17:15 +0000 (GMT)
+Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-2958a134514so68565195ad.2
+        for <linux-clk@vger.kernel.org>; Mon, 17 Nov 2025 23:17:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763450207; x=1764055007; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/KTXy4LYc+3eURkyFEtAu5JtRy+tCU0zvqdQk5bTLU0=;
-        b=R4t/2FgMTUTR90N9SzH5jIksYlYDJAlh7aH7COqLT8bhG5Goq+TNvCiYHooM/YEXiD
-         oUcyIk9e6R7Ux0sIw/xifhYgY5NpDu7Sx+HAz6l+zOqflD+gPhWDJrLvgcLDx8G3e/og
-         mcNPzQ6mk0C22bmSFUiPdYXykvhsejic75MeIHWTYc/0A+CN1JeWysaqEDX3JCoLKAV1
-         EM/JZAQxaLzbj9w5p9cpCgYmBKwYfF2eVR5B5jF3fZlg/Af+yyZgB/x9abbRt5Xseywy
-         9LWnH8FS1vGuTFyUPUrOvBlzMAIX0Zxxhl0eu2zOWHalKOTDAEZkx1gEvLhqJmcXk3OW
-         za4g==
+        d=oss.qualcomm.com; s=google; t=1763450235; x=1764055035; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=5b9hSP5K2qoRH6CixZo5JOZmFO/k8bsuyStGVBp9I9M=;
+        b=kvJQfuFpn84hLdNLUVFZFbSDZxPQjGo4crNpEfBIhrixQpeZZ9IVzdf1yHrTSjTTZt
+         7kwZNfKgXg4KdVk+aoOf6O+x8K11OFXwPDaG02wqjVDBlf9UNaT9pbdF/7kWmpON2pRh
+         Zg4sapajs9TOSxR46KcwSgm1ji4vuduP2m/Xy+wyD6kYp3wZUOhOJxV9GEh2sH3sp9oH
+         xodfvrpcY3nIagu0U9YcjpQQtwUwYqv7PgLN5iv1mrb8Lel5Cmsg3ziHbAN8ssi0sNfI
+         0wGuF4cnevQVJDBIV2jgJWG33NFpPSH4abAsTpXVF2Axm3qk//kgRn3sVxi75+i+U2Df
+         Pmyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763450207; x=1764055007;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=/KTXy4LYc+3eURkyFEtAu5JtRy+tCU0zvqdQk5bTLU0=;
-        b=JerhGCMnSNoAOedLtVcncuAK3jEeGVDJo6FcSFEQx+ztHeqI4gEldEfCqTr/KQyU76
-         Jq62A4P34OMTwP2j+KmjeTF//9Qce/BpITnq7lECgJrbJ/ybus/Q1Gng6sdWB9vq9CVj
-         8HXr0VNIDbO9IK0TgbKKJUXHlskTrlWmge4PHliDoZB+2AMOWoHoqiUZ00TXnTneWxlh
-         orGqvq+RNlK6/sjhvMCjGEbkBKt1YNZwTvS8hQ/UlFbtjJC73CrcgKoY0e6pmrPjbJqU
-         zIzDNzGE6en/33OytZ3pEALb4OA7bm2j3VX/Q3MmcAh9l/Wz94O4O0T3UBTtfPBtbSF3
-         5VTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW+WcdYjPdspWvP6fB0eVyWVZM0YImv6Cql/98gb9pyPo3uRgI7OG9wq7Rc3zR6Gam89yA0yPYZv9E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxy4zFgMbhfcpjauB7YoD9FubVNQrl/Ls8Ou0EPbRTf3P5Hii3S
-	5YxJAKofjHbpEaGA3OrVjM8QSa1CVwThZsweOhEGGIhtzhYfxeWCaRZOW/2oKhFNfOsG/wHekXX
-	YXTJH+6NsM/iVu+bAVJ2bAe1eo2Ybkr0=
-X-Gm-Gg: ASbGncvZw+iiZSyrGI6WpjnfUIxi5hOf5btJdr8NO0lZFlQV6tMEEH8r//j+FpHZ6qR
-	5r6mLaUu3Ee0DhqAMtFb0spRygG+pbzS8nFs9uHQMqaSaYASQeufHu3LtXTbc1dR6xC9ii/6rR5
-	rSPdCnH1e+lRKzsriji/aiA7XuUNFZWTTw8e6Rzu0hyB5MnjCIyAdzjZT32rTt4nPDJjZidP6UX
-	4AT8IHIP7SNjA6uPFFFr3ri3M/0VlKeWR9Fv0pLnbHxXz6rQTwMmVeYyz3vwDOViAysMU96Wi3i
-	NbZ69ks=
-X-Google-Smtp-Source: AGHT+IE8eWHTzx3ciz5rS3jZUxmLAR3nOWJrIZLlZT32SvvuGpdP8yMosOXzwXWHhwq5spIUyYIVyvJj9viWhF5Bm9Y=
-X-Received: by 2002:a05:600c:3587:b0:477:79f8:daa8 with SMTP id
- 5b1f17b1804b1-4778fe7e760mr152755075e9.17.1763450206831; Mon, 17 Nov 2025
- 23:16:46 -0800 (PST)
+        d=1e100.net; s=20230601; t=1763450235; x=1764055035;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5b9hSP5K2qoRH6CixZo5JOZmFO/k8bsuyStGVBp9I9M=;
+        b=NlllVX1mxFDmvikwCffsr219tcwHaELu4MmkMAOIeNTnCGfGuCBOt1lI8/mgfs2gNx
+         EN6DahIQoFKXx1s8nVWI4Ck2fcyexsczZtt2CmMaeGq9FCHq86IlcNy147D7H9m+gCGK
+         NzkVjmtSOjLy1tlVYQwm+72+7m3rOb3K2dzf5a9Dy1VFfypWJU1+Pr8AWbNIFkasklYC
+         0UoYqjjO8A8iUaWmjFQR8mP3Y456+tRX3c0gqoyKLlCM0htcRvj/DjPanOtUJOt1smE6
+         Sri0RR/dUETtTDOPCpGwOnNW4hG2nAxkJhoUbwxfkKjgoewBJ71FRNQRBRZ4L9o8ghJw
+         9qlg==
+X-Forwarded-Encrypted: i=1; AJvYcCVYBXNb6C+9CCEsB35Si4TSfwItx2giLLBxEvzLGeBV3aw2VgDQ2S1zhEzQVI6NhmcEaE0LnfSa9jA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYaP3uhOFSbejl3uM7Il4tSUKT7Xg/Y4Fr7/6EjShQ7LJv4qkS
+	qggmjReY7t462NyMrbsXTJtHK9pfu3mHjixzdkRCgDpyMfMYKtbgLPdRn6LeVo9LIZZEwgl4eES
+	dwgDMUDe4r4vVkYeMpYzWXQMBWI74rHkxfmF93fYIO+3w/e7XTFO2DLQTIVq2vpIalKLBehA=
+X-Gm-Gg: ASbGncsqmmjLN8gBDh7Ln+0UUdg7FJdowVYRVThuh86ulUU0p7Ug1QVuc7idriaxy82
+	P4ZdeMYok2nYS1LlIEHEm7GpbhR1aQdHzzSK6/JJ34CdmDY/zJQUnHIVMffKrELRQAVmTkuwGHl
+	HjoOKDFG+aPZEQeauK1GZIAFjWADZXDFTYUqNn5hsO0AgrCVwnUbXBPRqLOX0sxCpd9ro3ZCD7y
+	c5rpSr/YGyrdcvVl9zFy0J8fgZYfoJML9cI39guHsE6b0ficEIiCtR5lzMjPCW3GyFTrcROsGyV
+	s1UFUCB4Z2athc1hBb6xSqc3FldYVnPOmrXbaEOsrGpZJPBiXhXyLD9i6g6AeeYIWdsPh1a6/dW
+	6nHESumDZtiuRnZUs+T6XIYcDBot8MZQxuQ==
+X-Received: by 2002:a17:902:ec84:b0:295:9c48:96c0 with SMTP id d9443c01a7336-2986a6b83ddmr191562075ad.5.1763450234603;
+        Mon, 17 Nov 2025 23:17:14 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGzqfAgkXwoWltxa+7xUI5EcPwG3s6r7hu02EuUh4LAcR/eOobvk5axya8hdPC06rE8RHxG3w==
+X-Received: by 2002:a17:902:ec84:b0:295:9c48:96c0 with SMTP id d9443c01a7336-2986a6b83ddmr191561685ad.5.1763450233977;
+        Mon, 17 Nov 2025 23:17:13 -0800 (PST)
+Received: from hu-tdas-hyd.qualcomm.com ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2986a60b116sm129955285ad.79.2025.11.17.23.17.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Nov 2025 23:17:13 -0800 (PST)
+From: Taniya Das <taniya.das@oss.qualcomm.com>
+Subject: [PATCH v4 0/5] Add the support for SM8750 Video clock controller
+Date: Tue, 18 Nov 2025 12:47:04 +0530
+Message-Id: <20251118-sm8750-videocc-v2-v4-0-049882a70c9f@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251022144930.73272-1-clamor95@gmail.com> <20251022144930.73272-3-clamor95@gmail.com>
- <mzapp3ekwj3xdzqjjwkwn2hdfunf75fnd3wwxfsr5nce5guhoa@k2dgiw4sngrd>
-In-Reply-To: <mzapp3ekwj3xdzqjjwkwn2hdfunf75fnd3wwxfsr5nce5guhoa@k2dgiw4sngrd>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Tue, 18 Nov 2025 09:16:35 +0200
-X-Gm-Features: AWmQ_bkV8027WSudecPgIokkxJAlJtxrZFbDhKQAoi57jFryZZw6HtTknmXqldw
-Message-ID: <CAPVz0n0fkMYV-O4xWTBELd6HtKR83wrs+DS1wTVDOXdWuAK2OA@mail.gmail.com>
-Subject: Re: [PATCH v5 23/23] staging: media: tegra-video: add CSI support for
- Tegra20 and Tegra30
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, 
-	Luca Ceresoli <luca.ceresoli@bootlin.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Mikko Perttunen <mperttunen@nvidia.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?UTF-8?Q?Jonas_Schw=C3=B6bel?= <jonasschwoebel@yahoo.de>, 
-	Dmitry Osipenko <digetx@gmail.com>, Charan Pedumuru <charan.pedumuru@gmail.com>, 
-	Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>, Aaron Kling <webgeek1234@gmail.com>, 
-	Arnd Bergmann <arnd@arndb.de>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-media@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-staging@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAHAdHGkC/33NTQ6CMBAF4KuQri2Z/kFx5T2Mi1IGaSJUW200h
+ LtbWLgiJpNJ3kvmm5lEDA4jORYzCZhcdH7KQR4KYgczXZG6LmfCgSvQvKFx1LUCmlyH3lqaOK0
+ EY60Qsq9NQ/LdPWDv3pt5vuQ8uPj04bO9SHxt/2l5gErFaqMEAEp28jGWj5e5WT+OZV5kRZP4Q
+ Qy43INEhiquq7btjLAad6BlWb46xCyzAgEAAA==
+X-Change-ID: 20250829-sm8750-videocc-v2-6311b334f7a9
+To: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
+        Imran Shaik <imran.shaik@oss.qualcomm.com>,
+        Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
+        Taniya Das <taniya.das@oss.qualcomm.com>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+X-Mailer: b4 0.15-dev-aa3f6
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTE4MDA1NiBTYWx0ZWRfX+CIw/cQ7nuaw
+ HoyzU+/OTVL+OENqDeUo+bMjUN8RZ4AT/h+x5gvNqencpVwpF303SBNzv9VAX5XSUdYbKefCi0m
+ jdYsagQVlftnx0euE2B4yRMIc0lhJxEOuNT6nVeCNWGOqVXDNe+ZFxdR8S9GZs5SzMSDitK9Tc9
+ KTcEptyKeg7qCYfupAn/IygpuBSDkpnrVnwlHXJLwpCX+TJ2O1Lq/ANbrikcOk9D8pNL8bnqxzt
+ d2kl+hfmH+xarc3rf+R6MjAGpL+fhfjujQ5DSkcnCepjT+z2sD/9ePHQd3tzJqeIKgLNafb/7ZU
+ A2qTRhfo/okJNqvEi/4DFSNyqQhg93dV5ij8xfbhHzyyQ2GU1UatXGIHwnIjE2aXPEEe7tZ+RUA
+ 2JibmUdRjfW8okpQzJjqee774cbJWQ==
+X-Proofpoint-GUID: vRlscgqJ8fQNWF581Bb5Cfg4ZSXSE5rg
+X-Proofpoint-ORIG-GUID: vRlscgqJ8fQNWF581Bb5Cfg4ZSXSE5rg
+X-Authority-Analysis: v=2.4 cv=a4I9NESF c=1 sm=1 tr=0 ts=691c1d7b cx=c_pps
+ a=MTSHoo12Qbhz2p7MsH1ifg==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=COk6AnOGAAAA:8
+ a=4o6feAWbJNN8CsvTjcQA:9 a=QEXdDO2ut3YA:10 a=GvdueXVYPmCkWapjIL-Q:22
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-17_04,2025-11-13_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 suspectscore=0 spamscore=0 clxscore=1015 bulkscore=0
+ adultscore=0 malwarescore=0 priorityscore=1501 impostorscore=0 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511180056
 
-=D0=BF=D0=BD, 17 =D0=BB=D0=B8=D1=81=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 13:5=
-6 Thierry Reding <thierry.reding@gmail.com> =D0=BF=D0=B8=D1=88=D0=B5:
->
-> On Wed, Oct 22, 2025 at 05:49:30PM +0300, Svyatoslav Ryhel wrote:
-> > Add support for MIPI CSI device and calibration logic found in Tegra20 =
-and
-> > Tegra30 SoC.
-> >
-> > To get CSI operational, an additional syncpoint was allocated to serve =
-as
-> > the CSI frame counter. Both VIP and CSI use an existing syncpoint for V=
-I
-> > frame start events. That said, the frame capture function was refactore=
-d
-> > to reflect the addition of the CSI syncpoint, and the CSI-specific
-> > configuration is guarded by the presence of a passed CSI channel struct=
-ure
-> > pointer.
-> >
-> > The camera capture setup's configuration was reconsidered: the first tw=
-o
-> > writes must be done before tegra_channel_set_stream for MIPI calibratio=
-n
-> > to work properly; the third write was moved to VIP/CSI-specific functio=
-ns
-> > since it must be source-specific; the function was placed after
-> > tegra_channel_set_stream so the initial sequence is preserved and expan=
-ded.
-> >
-> > CSI configuration sequences were added based on downstream 3.1 kernel
-> > sources and adjusted to the existing video-tegra framework. Although
-> > Tegra20 and Tegra30 have the same set of configurations, they differ by
-> > the number of clocks used by CSI.
-> >
-> > Dropped the software syncpoint counters in favor of reading syncpoints
-> > directly and passing the incremented value to the polling function. If =
-the
-> > syncpoint increase fails, the PP is reset. This change should prevent
-> > possible race conditions.
-> >
-> > MIPI calibration logic was registered in CSI since Tegra20 and Tegra30
-> > have no dedicated hardware block for these operations and use CSI. Thes=
-e
-> > calls are used for both CSI and DSI to work properly, which is why MIPI
-> > calibration cannot be contained within CSI. The pads passed to the
-> > calibration calls resemble CSI PORT_A (0), CSI PORT_B (1), DSI-A (3) an=
-d
-> > DSI-B (4).
-> >
-> > Co-developed-by: Jonas Schw=C3=B6bel <jonasschwoebel@yahoo.de>
-> > Signed-off-by: Jonas Schw=C3=B6bel <jonasschwoebel@yahoo.de>
-> > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > ---
-> >  drivers/staging/media/tegra-video/csi.c     |  23 +
-> >  drivers/staging/media/tegra-video/csi.h     |   4 +
-> >  drivers/staging/media/tegra-video/tegra20.c | 620 ++++++++++++++++++--
-> >  drivers/staging/media/tegra-video/vi.h      |   2 -
-> >  drivers/staging/media/tegra-video/video.c   |   6 +
-> >  5 files changed, 608 insertions(+), 47 deletions(-)
->
-> Sorry, didn't realize that this was supposed to be part of the earlier
-> series that contains the opsification since it shows up as separate
-> patch series. Admittedly the numbering should've given it away... Thanks
-> Mikko for pointing that out.
->
-> Anyway, most of my objections remain. You can implement this here just
-> the same even without most of the extra churn in the prior patch. No
-> need for moving things to a different header, just keep adding the new
-> ops stuff to the existing one, which all drivers that need the
-> calibration functionality already include anyway (including this). Also
+Support the Video clock controller for SM8750 Qualcomm SoC. It includes
+the extended logic for branch clocks with mem_ops which requires the
+inverted logic.
 
-So you propose to bloat host1x header with more mipi calibration stuff
-just because someone placed those functions in there, instead of
-creating a dedicated mipi calibration header. Even though mipi
-calibration has NOTING to do with host1x, in case of Tegra114+ it is a
-dedicated hw block not connected with host1x at all, and in
-Tegra20/Tegra30 it is integrated part of CSI and not a direct hw block
-on host1x. Having a dedicated header for mipi calibration seems more
-logical then continue bloating host1x with unrelated stuff decreasing
-its maintainability.
+Changes in v4:
+- Split the changes to remain functional as per suggestion [Konrad]
+	- add the new struct fields
+	- add the ECPRI driver
+	- add the clk-branch.c changes for mem_ops invert
+- update the commit text for ecpricc code changes.
+- update the logic for mem_enable_invert [Konrad].
+- use GENMASK for 'mem_enable_ack_mask' in videocc driver [Konrad]
+- Link to v3: https://lore.kernel.org/r/20251024-sm8750-videocc-v2-v3-0-6286bbda3c8e@oss.qualcomm.com
 
-> no need to split out the SoC specific bits from the mipi.c file since,
-> like I said, it's not going to grow anymore and can just remain as it
-> is.
->
+Changes in v3:
+  - simplify the logic for handling branch mem ops for non-invert
+    and invert logic [Dmitry]
+  - Due to the changes in the branch mem ops the ECPRICC which also
+    requires branch mem ops are updated to align to the new code.
+  - Update to use new _desc infra and use 'regmap_update_bits' to align for
+    better readability [Konrad]
+  - Link to v2: https://lore.kernel.org/r/20250829-sm8750-videocc-v2-v2-0-4517a5300e41@oss.qualcomm.com
 
-I proposed in that patch to separate mipi calibration framework which
-is used by all Tegra SoC generations from SoC specific parts used by
-Tegra114+ if form of dedicated hw block and Tegra20/Tegra30 as a part
-of CSI. This enhances maintainability and improves transparency, while
-you propose to squash everything into a single file making it a
-maintainers hell.
+Changes in v2:
+ - Update the commit message for the invert branch mem ops [Dmitry]
+ - Update the email to 'oss' and also update copyright.
+ - update the RB-by tag from Rob.
+ - Link to v1: https://lore.kernel.org/all/20241206-sm8750_videocc-v1-0-5da6e7eea2bd@quicinc.com/
 
-> Thierry
+Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
+---
+Taniya Das (5):
+      clk: qcom: clk_mem_branch: add enable mask and invert flags
+      clk: qcom: ecpricc-qdu100: Add mem_enable_mask to the clock memory branch
+      clk: qcom: branch: Extend invert logic for branch2 mem clocks
+      dt-bindings: clock: qcom: Add SM8750 video clock controller
+      clk: qcom: videocc-sm8750: Add video clock controller driver for SM8750
+
+ .../bindings/clock/qcom,sm8450-videocc.yaml        |   5 +-
+ drivers/clk/qcom/Kconfig                           |  11 +
+ drivers/clk/qcom/Makefile                          |   1 +
+ drivers/clk/qcom/clk-branch.c                      |   8 +-
+ drivers/clk/qcom/clk-branch.h                      |   4 +
+ drivers/clk/qcom/ecpricc-qdu1000.c                 |  30 ++
+ drivers/clk/qcom/videocc-sm8750.c                  | 463 +++++++++++++++++++++
+ include/dt-bindings/clock/qcom,sm8750-videocc.h    |  40 ++
+ 8 files changed, 557 insertions(+), 5 deletions(-)
+---
+base-commit: 3cace99d63192a7250461b058279a42d91075d0c
+change-id: 20250829-sm8750-videocc-v2-6311b334f7a9
+
+Best regards,
+-- 
+Taniya Das <taniya.das@oss.qualcomm.com>
+
