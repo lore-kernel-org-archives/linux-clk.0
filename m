@@ -1,126 +1,156 @@
-Received: from sender3-pp-f112.zoho.com (sender3-pp-f112.zoho.com [136.143.184.112])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6681334CFC5;
-	Tue, 18 Nov 2025 10:25:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.184.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763461520; cv=pass; b=Ns4eEg/ix3gx1j5mMUaZQv4ze50WiqwDXxNEBR5nCi0BYVhEr7AJ4ZWPMFasyI5v49S06jSMy+A+2KoZk7L863I4WtFNm1TICC0OZjximbXYU9xKmfw8KkTYsFtiAp26r/+fXMUG/fW9SGdNbTIKTp9Bbo4mggC92vdx2CE3EzA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763461520; c=relaxed/simple;
-	bh=dVLf2Iuk+Mn2T+UvCYsIjcez0ZXZlijTgKOhukdXCpw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=l69kWzh8xjFyl1JmwtcyV2g8g99z3dBFHWRNBQD8VGMayqvvZDF77SRmjHefnqk6bDVqfCDchXLxFZzrYbI+0lZjvGZiqhqh73I4HsK7VBxOrrOpogXftdzcCbW28yYx1ohniUf6xSiqqKOZwdPUulQJviCG0UXbA7s9oehtMXk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=louisalexis.eyraud@collabora.com header.b=NcANy9/F; arc=pass smtp.client-ip=136.143.184.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 650DC347FFE
+	for <linux-clk@vger.kernel.org>; Tue, 18 Nov 2025 10:32:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1763461921; cv=none; b=hPrvg9OgGBrsCfKEKYsX65j9BBLo1K6yWiBUfwswEzpdx6fYtM1tXaN7EpG8DHVN5/zTK7hT7vkdDOsuC9tPwy/nspKehiA+fMyNeL7zpD4CKLilRFUSSji99SudDbHSrEaZ3z3S/FgXlVtYr8KxFAAPrutgojqwHBRYqiHNmHY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1763461921; c=relaxed/simple;
+	bh=RfZm9aKl1NjMxKyOCQg+4SEjvwVpRMYv2mrcH4ZNFDM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=e8j2cBQBO9WpaPY/+Vo4003OlZsOQvUPkFCTExSRpxhMBGha/MZXanvyVkIcXBsAiWkT4KHVcmAD+k2gGdxbGDSA7r9ty+SZSN6+dJuWQq/ZaJBe5w4a923FFQcJ97nI6Fp1BdXjusWHxUkQphryRIuFEUS5FmLebqGKeRPCmSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=NyTfH/mX; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=XmMbQ+Tk; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=louisalexis.eyraud@collabora.com header.b="NcANy9/F"
-ARC-Seal: i=1; a=rsa-sha256; t=1763461471; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=LdMLm3RLXrPOWV71tCfHSwoPdsQ11sEkhGvdVs3OMDVUyCDvCt678axHNax319WCianL0bTs5vIPZIYcgIZ2WEMP9t/cfZGA5Ro7SGrbBcPi7Y0ZldpiiMzfoSkF6OANRKIhU6agyVpFvvJMixlBvh+9V7UJ81NGTLPz4saoW1w=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1763461471; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=NAUSaA3KPKG9he/p30k6wBazwxquuoNqgQBZ6NGhy3w=; 
-	b=Vvw3sr+sXOQGqA6b4hlh4rjQSJDT1LsDwCYm2obiu7c7oGDv22ky/BfGagYrsWeZHWCY7RXguivZWIM9gk4cw0Sv1Ap6UbW5op/+VmC4HXmrpgbMHE65uPqic+vtmPVbi9KzX3UAzUZ8W+2cXD0selsnE2rwBRmDqaCwSY8WUd4=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=louisalexis.eyraud@collabora.com;
-	dmarc=pass header.from=<louisalexis.eyraud@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1763461471;
-	s=zohomail; d=collabora.com; i=louisalexis.eyraud@collabora.com;
-	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
-	bh=NAUSaA3KPKG9he/p30k6wBazwxquuoNqgQBZ6NGhy3w=;
-	b=NcANy9/F4oSqxya+A0wXe59480FqEHR2ERhY5Xe3Xy/Pv0IRnf2hWGuUZ/oGiemg
-	m/OfC+HWvFia3oV/Tx9vPNzVpIe2T/qx1Yry2/muFx5KqfF+vDBuV9yl1cJ3dDgGJ8P
-	ep1hVRTwDVMKNA3m+CLM06C9AQf8Wn/jVYA/KRbE=
-Received: by mx.zohomail.com with SMTPS id 1763461469257293.33494424404137;
-	Tue, 18 Nov 2025 02:24:29 -0800 (PST)
-Message-ID: <815d7300e19db00f84091f0925b2e509c4453fa0.camel@collabora.com>
-Subject: Re: [PATCH v2 RESEND 4/9] phy: mediatek: phy-mtk-hdmi-mt8195:
- convert from round_rate() to determine_rate()
-From: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
-To: Brian Masney <bmasney@redhat.com>, Vinod Koul <vkoul@kernel.org>, Kishon
- Vijay Abraham I <kishon@kernel.org>, Chun-Kuang Hu
- <chunkuang.hu@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
- Chunfeng Yun <chunfeng.yun@mediatek.com>, Matthias Brugger
- <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
- <angelogioacchino.delregno@collabora.com>, Heiko Stuebner
- <heiko@sntech.de>, Stephen Boyd	 <sboyd@kernel.org>, Maxime Ripard
- <mripard@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-phy@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org
-Date: Tue, 18 Nov 2025 11:24:22 +0100
-In-Reply-To: <20251106-phy-clk-route-rate-v2-resend-v1-4-e2058963bfb1@redhat.com>
-References: 
-	<20251106-phy-clk-route-rate-v2-resend-v1-0-e2058963bfb1@redhat.com>
-	 <20251106-phy-clk-route-rate-v2-resend-v1-4-e2058963bfb1@redhat.com>
-Organization: Collabora Ltd
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="NyTfH/mX";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="XmMbQ+Tk"
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5AI6fQHD2272050
+	for <linux-clk@vger.kernel.org>; Tue, 18 Nov 2025 10:31:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	fR7x0kFz0S+JBP4vbyeBal4hny3WSPiyeEcYELp4NhM=; b=NyTfH/mXnnzRlUpW
+	/8EaVfq2RmAGxcf9s0qkoKmjM6ILtC60bPNjradasrc4K2wfRHi5qi2GKC8FUUv7
+	nxpXN8WyX2NY0u8SVyIGebNFg2QFtEFdpdittsjjDl0KH85hn76n49TRtHCeThis
+	ZO6a56ekneI+J28CyLnqX80coK98h4s2I+gNuDOlquGI5W5QtCJOqr4/ri/5w1ng
+	YHmBobxjgx0FtJDPz4tp8TYHbf1uJq009wk32chcO89l4OYzgY7awOunVORoYh5H
+	h8sClrJCNqb758q3VmtDc+HNw0ZuhQjp+L0feY83ualA16aDYZQkIaog8DqoMV8k
+	LxnTcQ==
+Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4agkrmgpeg-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Tue, 18 Nov 2025 10:31:59 +0000 (GMT)
+Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-2982b47ce35so61904475ad.2
+        for <linux-clk@vger.kernel.org>; Tue, 18 Nov 2025 02:31:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1763461918; x=1764066718; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fR7x0kFz0S+JBP4vbyeBal4hny3WSPiyeEcYELp4NhM=;
+        b=XmMbQ+TkdjSg7ftZ3xxejMO+y46e4/wLokz2PQnRONy+DJeMP3RpTgYj2fNanZNK3u
+         T7UJeRZaQD6C9WLwiRSyTQZNEsfMpFZ7f7O05TUnDqB4r8aD9I4kf79I6flLk6HKi6Sm
+         lfVjXqTWVtkrMDrWCv78FSOHW/7OGGQAKE1xfmX3Mbo2iEPuYCpbTibiSGI2QVRfGt7s
+         zm0HWbiyJI5zsZOANtb0MEWMmxLMOpQYxF5i2+xDpH2nWsxY3qpR+q134PF5SpGCRhdv
+         Apcv44flWniIYsv56okaM6PYuxyPuWVpGsq/mP9dpT00YrzrX2Gt/0LsBUYBxMFSQbtI
+         Wm5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763461918; x=1764066718;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fR7x0kFz0S+JBP4vbyeBal4hny3WSPiyeEcYELp4NhM=;
+        b=oOL2af8V3juJ1l0D0DAS2BH1++FmOCvBoOSAKKfaB/bStagG2rnirWzGIIFZ4U8Pis
+         cwnOC3detz/oOorW+AEYmQVF3z5jaokFzT/H7qiqL/XmrqTHWIBl0ww9DBdfvnomKHKq
+         0dJH5JSHw/+k0o0ahQg+DW9XBw6ZuFEIUQDbDEm/eb8S7tpPcQW9g48/qEmCVY//piq8
+         IfZJggsmp+ojBtCq+wI9e2yXzl8vH++7239KadaMP9nSDlFudV4Sw8/9hQt2lsSRWBNq
+         RowmIP9HwjN41+emUK6hiB+f09EW2i43bEXDuDXgOY+0JQyj9S4XNZj912gYY415Oa4y
+         5Vpg==
+X-Forwarded-Encrypted: i=1; AJvYcCXpg39Xh/3LX0m9p02UoRyLlchCvnWpZ7cRwo59gxBknlPm8j2jn6aMkCT3ZkNMqj+dAMY0LcRVvoA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRclDuS7tloJvF0YsFA+UXOUfjg4g+SFYolRB+24/On6uyXFMu
+	owrmsqFTXRgwARAGbHZ3Sy0RPYaVx9eLFbKcYPMuUoDhmB7DqjOfi3HO4i1iFfpftUCSMWV222p
+	MNwYRNszXRr1VTD/dtaUcV4H+x8RZJ08f6aO5Yfwl2JbBAVDanVXj/iB1IVfqzfI=
+X-Gm-Gg: ASbGncsH2AqkfoY/gy/holiaJ+jK3B1x4tARq2j4E3qRz4IgaXoICr17KMrp07MXzbZ
+	J//g7A+5BaAfqMMSttKB2UNIF7K97GLjhTuT0+F/dTiM6XYvdqrnaWm9t7zPT5cg4WE6MNvDGs5
+	NpsTzQK2UI3GYK8wVDlDUgR6dCIeW7d0hWyp0s1vFEYGajsErNy82igXR8Ds4BvE8dEGYyWOQ+3
+	mP6u/59x0kl1M98RJn1kapeN8xtMTLy5+F+kbUr56w+/WdTIadnEaxjoLzyIrOFs3GDT+XdP5Bb
+	s1cYFRk0K42ou90cz6HcvWFGcvbCHMmcZDRWYVWD0s0uOlsQ6mtFh9NRThKh/EIPYvNv6fila1I
+	txZtcRWA5GaCChhqU+RcNE2+Zlg==
+X-Received: by 2002:a17:902:d4cd:b0:299:dd98:fac2 with SMTP id d9443c01a7336-299dd98fe08mr99139225ad.54.1763461918311;
+        Tue, 18 Nov 2025 02:31:58 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEzq8B2MXbl1pPxPLemh3fklf2/A5DSGVm1kKDAvo8dNVVqRFeNS/BF0AI+yuhX93bBja4Saw==
+X-Received: by 2002:a17:902:d4cd:b0:299:dd98:fac2 with SMTP id d9443c01a7336-299dd98fe08mr99138905ad.54.1763461917819;
+        Tue, 18 Nov 2025 02:31:57 -0800 (PST)
+Received: from [10.218.33.29] ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2985c2b0d91sm170294015ad.63.2025.11.18.02.31.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Nov 2025 02:31:57 -0800 (PST)
+Message-ID: <6fe09872-368a-4bab-96c3-c34492255599@oss.qualcomm.com>
+Date: Tue, 18 Nov 2025 16:01:52 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ZohoMailClient: External
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 3/5] clk: qcom: branch: Extend invert logic for branch2
+ mem clocks
+To: Taniya Das <taniya.das@oss.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
+        Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>
+References: <20251118-sm8750-videocc-v2-v4-0-049882a70c9f@oss.qualcomm.com>
+ <20251118-sm8750-videocc-v2-v4-3-049882a70c9f@oss.qualcomm.com>
+Content-Language: en-US
+From: Imran Shaik <imran.shaik@oss.qualcomm.com>
+In-Reply-To: <20251118-sm8750-videocc-v2-v4-3-049882a70c9f@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTE4MDA4MyBTYWx0ZWRfX26gm2N2SuZ2E
+ lmygvmjKf3Au2aqpYH2mgwntS4OvQGiThQ9BsB1cSS/Z3ifuvhCtYz1kzHfp4HlSb8jeYOIcpGw
+ bJgPsJzOh5ilKmq+XXyDteks+VKI4mZRa3y/tDtYnNAe7rToeKDEx4WEtf/N9g/zof323E1uh4P
+ 90Z1pbyrl1sYUynp0iVsreoNHu2FpwgWVGaU0Ua7KvTYQ9CrHZ+OQOxu28zuwZKH0bz0GdXt3ef
+ qYR6kJtZi7Zd8k6jRJ6ChBWuqmMzLs7ix6CNN7HfwV3+DZNF6bbIgM0TJzz+EcNyS7i9fxu6/rv
+ K78C2hHgtkR/sWpGCVLNRXMfOfqoxh368W8cm+2bnW322UcA6l3rf/MD0JJQR9arhWOqj7PKo8l
+ 0GlrSYT0dd9qNqgRNs0bqBkm8keUUQ==
+X-Proofpoint-ORIG-GUID: 9jApQigd1bsqAtWaae9LFQyeOopgF1I4
+X-Proofpoint-GUID: 9jApQigd1bsqAtWaae9LFQyeOopgF1I4
+X-Authority-Analysis: v=2.4 cv=JfWxbEKV c=1 sm=1 tr=0 ts=691c4b1f cx=c_pps
+ a=cmESyDAEBpBGqyK7t0alAg==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=8EbF_sMYILjvT3iq7EYA:9
+ a=QEXdDO2ut3YA:10 a=1OuFwYUASf3TG4hYMiVC:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-17_04,2025-11-13_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 lowpriorityscore=0 suspectscore=0 adultscore=0 spamscore=0
+ impostorscore=0 clxscore=1015 bulkscore=0 malwarescore=0 priorityscore=1501
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511180083
 
-Hi,
 
-On Thu, 2025-11-06 at 18:25 -0500, Brian Masney wrote:
-> The round_rate() clk ops is deprecated, so migrate this driver from
-> round_rate() to determine_rate() using the Coccinelle semantic patch
-> on the cover letter of this series.
->=20
-> Signed-off-by: Brian Masney <bmasney@redhat.com>
+
+On 11/18/2025 12:47 PM, Taniya Das wrote:
+> Some clock branches require inverted logic for memory gating, where
+> disabling the memory involves setting a bit and enabling it involves
+> clearing the same bit. This behavior differs from the standard approach
+> memory branch clocks ops where enabling typically sets the bit.
+> 
+> The mem_enable_invert to allow conditional handling of these sequences
+> of the inverted control logic for memory operations required on those
+> memory clock branches.
+> 
+> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
 > ---
-> =C2=A0drivers/phy/mediatek/phy-mtk-hdmi-mt8195.c | 10 +++++-----
-> =C2=A01 file changed, 5 insertions(+), 5 deletions(-)
->=20
-> diff --git a/drivers/phy/mediatek/phy-mtk-hdmi-mt8195.c
-> b/drivers/phy/mediatek/phy-mtk-hdmi-mt8195.c
-> index
-> b38f3ae26b3f3d8c9e73b43d86510acf6cedb471..1426a2db984d53b91125b18f772
-> 5738c44f19555 100644
-> --- a/drivers/phy/mediatek/phy-mtk-hdmi-mt8195.c
-> +++ b/drivers/phy/mediatek/phy-mtk-hdmi-mt8195.c
-> @@ -418,13 +418,13 @@ static int mtk_hdmi_pll_set_rate(struct clk_hw
-> *hw, unsigned long rate,
-> =C2=A0	return mtk_hdmi_pll_calc(hdmi_phy, hw, rate, parent_rate);
-> =C2=A0}
-> =C2=A0
-> -static long mtk_hdmi_pll_round_rate(struct clk_hw *hw, unsigned long
-> rate,
-> -				=C2=A0=C2=A0=C2=A0 unsigned long *parent_rate)
-> +static int mtk_hdmi_pll_determine_rate(struct clk_hw *hw,
-> +				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct clk_rate_request *req)
-> =C2=A0{
-> =C2=A0	struct mtk_hdmi_phy *hdmi_phy =3D to_mtk_hdmi_phy(hw);
-> =C2=A0
-> -	hdmi_phy->pll_rate =3D rate;
-> -	return rate;
-> +	hdmi_phy->pll_rate =3D req->rate;
-> +	return 0;
-> =C2=A0}
-> =C2=A0
-> =C2=A0static unsigned long mtk_hdmi_pll_recalc_rate(struct clk_hw *hw,
-> @@ -439,7 +439,7 @@ static const struct clk_ops mtk_hdmi_pll_ops =3D {
-> =C2=A0	.prepare =3D mtk_hdmi_pll_prepare,
-> =C2=A0	.unprepare =3D mtk_hdmi_pll_unprepare,
-> =C2=A0	.set_rate =3D mtk_hdmi_pll_set_rate,
-> -	.round_rate =3D mtk_hdmi_pll_round_rate,
-> +	.determine_rate =3D mtk_hdmi_pll_determine_rate,
-> =C2=A0	.recalc_rate =3D mtk_hdmi_pll_recalc_rate,
-> =C2=A0};
-> =C2=A0
-Tested OK on Mediatek Genio 510-EVK (MT8370) and Genio 1200-EVK
-(MT8395) boards.
+>  drivers/clk/qcom/clk-branch.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
 
-Tested-by: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
+Reviewed-by: Imran Shaik <imran.shaik@oss.qualcomm.com>
 
-Regards,
-Louis-Alexis
+Thanks,
+Imran
