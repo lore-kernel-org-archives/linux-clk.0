@@ -1,158 +1,172 @@
-Received: from smtpbgbr2.qq.com (smtpbgbr2.qq.com [54.207.22.56])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 150582DCC06;
-	Tue, 18 Nov 2025 06:12:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.22.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F2D02E5D17
+	for <linux-clk@vger.kernel.org>; Tue, 18 Nov 2025 06:26:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763446334; cv=none; b=PAhp0nj+uKM/LNCLbI73iOmFdrtCPh3pFLBZGC4iDc3iDQMseyNAOv8iGpBTtUFfbgB2g5s2RLqrdaYu7vulkXeLgOXtPh4HNH/hks82EoUA2SU9nbIqy9jTzWRDAH73h8H1IXdk6TT5SBDQQEjMUyvXm5IvUZsXv7Zyzn+qVC8=
+	t=1763447179; cv=none; b=BhOo9vqMOU7qctuICAfSXyw8Vc0dfSGUb3euDDMsjxr5oneSJS5ENDrEejcn6k07t4EiRpOfQKQTJsdUVGO0dUzVfuQR0iMpaSHG/SNURie35YpDa9rGfkPjM/bBhD4JDmF4WaANKzewO7O7B1uRro3wMOlVo/I2rcbt1ov6SUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763446334; c=relaxed/simple;
-	bh=O5o7AICh3o7Ww3407LSqZ3eeo6vXkoE83XVtMZ24sj0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tdApoFU4/Z3Jyhx9juD51kZ9Wxv1ma5tvZcf+6YqEgNtF2Pza2oqifblmthlS33RXc04Eqt9d53NORL9FxArnBZ0pabzHI/PAAhKdQmp/FsiqeMW9AlBDlOVdoXYlDZWe2Q7K2gUKu4lWlNFNH29VP3qMSXsVEGSV8+u4e90UGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=CH8kzZ+O; arc=none smtp.client-ip=54.207.22.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
+	s=arc-20240116; t=1763447179; c=relaxed/simple;
+	bh=xhv9sPWGz4HE4NPCXyeGNL8Yk6KTaJ/N5Bu2WnaIqQs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TrC+qRvcBbnyoIDkK4mkEd6vlgzpXy8KuvCfydYzaS8RJpaD0VruFKaoP+vA8cSrNuPyLcTyPdGzqbm3+E4bOSKJ5rB4Vg7JdnvyMP98U8JkpTlqPYoOEah4gCarlHn8FGVOeoxPC8YZyaqKeuLvdS+DKDhhxNcW+R9oLZvfVK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=llZKZR04; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=ZkjCP+pN; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="CH8kzZ+O"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
-	s=mxsw2412; t=1763446324;
-	bh=PefOPp4VRN+tiPLuOqhHsJ3+bwsd1zdz/20vvYEKS0Y=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version;
-	b=CH8kzZ+OXTHPP0+rxn+tX7o0j0lWxSzPzcPf1YgXFRb10OgkoJlUTef3BMaxzxsHz
-	 Pjla6o5729p7WCCOAfVPaU0jDg0QpEYt+7ou/WhigIadoqPizP/dGooCSlnHVHZQGl
-	 a4PqtzAmToBe4I1bSLJeiyyRg+xSeVw2kDpiMVsI=
-X-QQ-mid: zesmtpsz1t1763446322t85fbca92
-X-QQ-Originating-IP: sxHPH0siHuAz7N4YRiuNuWYFwBSXTUAYWAJuNFM67cE=
-Received: from = ( [120.237.158.181])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Tue, 18 Nov 2025 14:12:00 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 3589277169008549396
-EX-QQ-RecipientCnt: 13
-Date: Tue, 18 Nov 2025 14:12:00 +0800
-From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-To: Charles Mirabile <cmirabil@redhat.com>, linux-kernel@vger.kernel.org
-Cc: spacemit@lists.linux.dev, linux-riscv@lists.infradead.org,
-	linux-clk@vger.kernel.org, mturquette@baylibre.com,
-	sboyd@kernel.org, dlan@gentoo.org, heylenay@4d2.org,
-	elder@riscstar.com, troy.mitchell@linux.spacemit.com,
-	inochiama@outlook.com, Yanko Kaneti <yaneti@declera.com>
-Subject: Re: [PATCH] clk: spacemit: fix UBSAN warning during probe
-Message-ID: <6C924033633588A2+aRwOMF9uafe2dl5H@kernel.org>
-References: <20251117190329.1337250-1-cmirabil@redhat.com>
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="llZKZR04";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="ZkjCP+pN"
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5AI5wff43916364
+	for <linux-clk@vger.kernel.org>; Tue, 18 Nov 2025 06:26:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	lEaIIGkepzw4etmLuWJDtUUXt829lIeGN1TrIUN6PXE=; b=llZKZR04NbRrCPZp
+	NvgccbpCTSTmZ3xzlImjC8jfHE+a+HBWtZtbKQR5UfsjWQr2z989m1ksTEukguwv
+	HQS118uxY969rOWROOy0Mg+ubrlj9dQnp7l9758Xw8/5qKTm1a2qs5QQVNV6DO6S
+	W416qFSfqFBK5jm2n+r9BaJpJQHhCEqR1Lm5fS73z2OHu7xtH5AyyPM5B+CKVXfE
+	dQC0FXn/OMRchFI26Kbr1SOOE3YfjQs9Pt/O0I3N78Hxfo8B/j/m88yzvqKfOmmH
+	TC8ZAI3OA36KQZl9jbgl7SZPYtAI2weXJCkw/6o4Yk2zkY5AQ2plDD91NG3gr/Du
+	+LNqRg==
+Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4ag2fxaybc-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Tue, 18 Nov 2025 06:26:15 +0000 (GMT)
+Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-7a998ab7f87so9317625b3a.3
+        for <linux-clk@vger.kernel.org>; Mon, 17 Nov 2025 22:26:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1763447175; x=1764051975; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=lEaIIGkepzw4etmLuWJDtUUXt829lIeGN1TrIUN6PXE=;
+        b=ZkjCP+pNgelY4Sm3XZi1Ez3aPBSX6EiJb0k3GZ0GXifA5bzyTSk7mv9eZlnjjLHwHP
+         05gI+NeGzppImT8qa+Op6LLpkisTedprWRT3s0CPxD3Llfm0k8Obek04LWvBDK3wF26P
+         h/lw2Yp8FnKYczB6lHiwCQka9krydinD/VpFbMvkhHb7XllfPh6oIe3v0QSw9XIjtJmn
+         cG9i7NGWdnEJreHmW4i/bcZkqwSLJvvEswmJhZALIaOwIQ79BKv/mtRBfLPVjmOgX1WT
+         rMwWzRcBnUZ7p/ar+AOyk56S2DV0qI+Ahi59GLTVqkppW2snje9CMcEuc7NXeva/kxOm
+         KJIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763447175; x=1764051975;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lEaIIGkepzw4etmLuWJDtUUXt829lIeGN1TrIUN6PXE=;
+        b=gPQOmGFnLRPRbNrLAetk1hmOX9LsvGt9HN7hfvFn+wOYkd9YeUJPhGn29+0mpudodb
+         IeCode+zx4eJt1kFqD88I+KfuB1bVKlsZfQqThqt6EFniMwKhuxRpu7jYDGZiruvcFoP
+         zywr4fEoiLYYtLrku1M6Z7CA6Fiwxvrt8bOOy1Fk3G9OrQgeMvymy0+zSro7n5cT2a5u
+         6+KnyJOiAToSDEPcYSqfRy/+7yGnR7W/HS+oKhkwWfAtxaYYsAc/9URIckrluPRkdfOV
+         X2f0XFxvgRkSbEQGkFb9pAyLaztTBC7nOuSoKYW8XGLi4s+habMIKx6Q6PT40xmhAhkX
+         7eQg==
+X-Forwarded-Encrypted: i=1; AJvYcCUd6Ve8K3HwzskdaQwfJUQWa61ZW40wy2MV4CmWw6/jM3n9+LY8Jpav2DfVRbcOuob9VoIJ1q6jC/k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzA3+6M8wmwHLG4J8WZ5aA2KMyxajxNPMem0r/uBExBbLfUG6Az
+	/gO9W9Kjlu6cT5D1sQvJxx/HP8UR8jvqANJroMXTcsc4u3bZTwyDyaZv7bz/kHs2esvLrMHrIfz
+	GLFF9cqpJDAa6A+cx0TMx6CB4EdZPFX7Lo7gc9B/ocUS6lgVtlE1kb3sMrdUoHio=
+X-Gm-Gg: ASbGncs2UwtGrNCK6EnDktxtPSeXK08ndR80N3d6wBmTHAGVMoYEoPhPRIj4LhDWtFW
+	qCJUXavnEbbX8YlgcN6A0RhG/3pDYwwikWFKmH8gpt2KNDxXfeXF8hhjBX/IxOMbB3r0uZ9J1FG
+	uRL0FbNHx5k5AqzY1xrhrVzj3At1/Dk9sFn/GD6WV225osFcQ2YGvIMXRKzSiVdWMQGdP8WIVzE
+	g2ZRPWYY6SyvPODUKxVvMuDlDHK7OV+uCH3iFzrShLkkRQhgUXLvWxEjdHYp+1R3korkIUD+k8p
+	DsWxgMiSW053HJvreZAxQSzDeu9gYe7ZpE5AhkBB5X4HCc0VvPnyb/quBmgtn5QUt/H6LP7nQCf
+	IaAv87p/TN4cPq505ZBEajCpJ4qr+IR0diX8fjA==
+X-Received: by 2002:a05:6a00:1383:b0:7b8:d607:41a3 with SMTP id d2e1a72fcca58-7ba3a4cf14fmr15652297b3a.13.1763447174596;
+        Mon, 17 Nov 2025 22:26:14 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGssmnkhvBdIUS9ByeV/gK1d1xxT8a+P/xJYitbkNdH2SbZQVn1k7cF/ewEXs97j7J3iGuDgg==
+X-Received: by 2002:a05:6a00:1383:b0:7b8:d607:41a3 with SMTP id d2e1a72fcca58-7ba3a4cf14fmr15652267b3a.13.1763447174110;
+        Mon, 17 Nov 2025 22:26:14 -0800 (PST)
+Received: from [10.217.217.147] ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7b9271505acsm15223351b3a.35.2025.11.17.22.26.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 Nov 2025 22:26:13 -0800 (PST)
+Message-ID: <5ea67575-b279-4d36-a278-6967dc97a5cb@oss.qualcomm.com>
+Date: Tue, 18 Nov 2025 11:56:07 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251117190329.1337250-1-cmirabil@redhat.com>
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpsz:linux.spacemit.com:qybglogicsvrgz:qybglogicsvrgz3a-0
-X-QQ-XMAILINFO: OE2SNMSfMbmO6p2EiMMnV1R8w3oZZE7ZxkB3Ht5O8vWwaXZ4r3bMuSQR
-	Nnj8CftpY4QPsCCGsM9L7DJuKDyyNBDs0aYgPa/YnG+ya658xws3WBf2JvFQUaEB1hR0Say
-	ax7MNjYdDMILorFflKXYQNHqbKWY4vHlll42UV6+xcp4gTZ0xd9jKJqlq+UfI6qwTEhAjYa
-	7cLG+K3dhULA4RuswG5dz8lIJroq4YocWDu9/lSmLxNNQs5RFxYpvnE8PDgxo8gCnxYbAit
-	NPkYhQECi65Ic6rA2Y9cjHuKUWWi8fRTYbIVLlB6BMyG8n0fhfx/B4drVE3PkPpthQasYtG
-	rzYm4RdoFbXhRJ15kbtTEerXmcnXL9p3QefG4JZrXBZcGqJuWD/L65VYjD0OByB82+3ABAk
-	4f0wFHuLjGm9uJLoGfxdX38TCHlQdL6xB9iRgd9+PYi1EqIlxj7p7pBqXcSee1tnwIQSXGC
-	yAtj43t1bzjqOOc8rCPMLZLhq6iDo15i7f1LUkQBeXuH/WqedMWdMjc0IeeekH1l8zKkr3C
-	1n4LDzq/Yf2NwJi8fpALBspMg7UpXyRUpcyBmbsG/pNo5o/WHK7HHEX6JoI4MxeTjDClFXs
-	4l0n0OyQghre8WK65yI99gDWqIUaDwSgSqNr+7f0loWei3HmruDJM0hybOn68Y5vvQ6Tncm
-	K1QdqF0VkXySu+vWf6YHnh7GXWVpiiHeZYMXcZK1NoxfyOPPWwuLTDsKoRg/2iU3tvMVw/f
-	pCSmc/xtAQNfvVpS7N+enGbIGY8bRqM2PSqPkmkuU32nbWOeKL3WLn41PeDQ40x7sYm5Xwx
-	qUMRJ6AYgGYja79sQprMZehoaU1KhF6WlfXFE0Mxb/uZ/V9wyauOjWiyv21lAIvxuLNPS71
-	9HRfT/cXX33eqywat7YqXGRkedQ8xDzgqpcbzPJ5kq9PI1aXraD4ois9p8s36gxBDIK9HoJ
-	GgAcmVF5SLjs/+DogCbI1vDF3Qk5Yz3rb/Eefk1IB70F+GB80FtkAIj9Frs+u3WILmqlu50
-	OKw4gXMe37RJQAgdE5nKLXFPT9ps4pYYvKag243A==
-X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
-X-QQ-RECHKSPAM: 0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] clk: qcom: mmcc-sdm660: Add missing MDSS reset
+To: Alexey Minnekhanov <alexeymin@postmarketos.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
+References: <20251116-sdm660-mdss-reset-v2-0-6219bec0a97f@postmarketos.org>
+ <20251116-sdm660-mdss-reset-v2-2-6219bec0a97f@postmarketos.org>
+Content-Language: en-US
+From: Taniya Das <taniya.das@oss.qualcomm.com>
+In-Reply-To: <20251116-sdm660-mdss-reset-v2-2-6219bec0a97f@postmarketos.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: fbW04wGe3RXl85_6zLPFY1PSg0aeXWqx
+X-Authority-Analysis: v=2.4 cv=EIELElZC c=1 sm=1 tr=0 ts=691c1188 cx=c_pps
+ a=WW5sKcV1LcKqjgzy2JUPuA==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=Gbw9aFdXAAAA:8 a=EUspDBNiAAAA:8
+ a=4KfWIHW6W8MtA3npaf4A:9 a=QEXdDO2ut3YA:10 a=OpyuDcXvxspvyRM73sMx:22
+ a=9vIz8raoGPyDa4jBFAYH:22
+X-Proofpoint-GUID: fbW04wGe3RXl85_6zLPFY1PSg0aeXWqx
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTE4MDA0OSBTYWx0ZWRfX9SNyjqtDrSn4
+ WtAi9dhVUkCK17qfvmDQO+gG0N4CXyHHhNi6h4h3M2qMEeVaXoQAki29ycqazDEHe2lGQ67L+aP
+ eB5QjHxX881fNqz1pzzdQiF+LUrsVOOI+WcekvNTqL1C6W9Pq73vyClIMV0noLX0xlEuHeWVRjh
+ QLOT0Y3H76l/hvTIOwAOJDXkCNKTRwyNXhWMzYHlZGxdpTjGQf2IyGy8usOzbtMJq6s11/3Uqd9
+ 7YrUEkjZOXWKNUyGnuf75H9QeGBzdiIIzfosQAyCLj/RfEW9S1c+YMoXbNczkYqGUlqI3G3qgMF
+ 1OGzKjWVx2WIWY1cnIS6+nTmDnk4qEOqqb8fLqFOT8cOPG4MGpDZH9QJskAV5iZecAh/tiIihRx
+ Hd99C8JKlu3tH/Zo5yrgxeaaYk0a5A==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-17_04,2025-11-13_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 malwarescore=0 spamscore=0 bulkscore=0 clxscore=1015
+ lowpriorityscore=0 phishscore=0 impostorscore=0 adultscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511180049
 
-On Mon, Nov 17, 2025 at 02:03:29PM -0500, Charles Mirabile wrote:
-> When booting with KASAN enabled the following splat is encountered during
-> probe of the k1 clock driver:
-> 
-> UBSAN: array-index-out-of-bounds in drivers/clk/spacemit/ccu-k1.c:1044:16
-> index 0 is out of range for type 'clk_hw *[*]'
-> CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.18.0-rc5+ #1 PREEMPT(lazy)
-> Hardware name: Unknown Unknown Product/Unknown Product, BIOS 2022.10spacemit 10/01/2022
-> Call Trace:
-> [<ffffffff8002b628>] dump_backtrace+0x28/0x38
-> [<ffffffff800027d2>] show_stack+0x3a/0x50
-> [<ffffffff800220c2>] dump_stack_lvl+0x5a/0x80
-> [<ffffffff80022100>] dump_stack+0x18/0x20
-> [<ffffffff800164b8>] ubsan_epilogue+0x10/0x48
-> [<ffffffff8099034e>] __ubsan_handle_out_of_bounds+0xa6/0xa8
-> [<ffffffff80acbfa6>] k1_ccu_probe+0x37e/0x420
-> [<ffffffff80b79e6e>] platform_probe+0x56/0x98
-> [<ffffffff80b76a7e>] really_probe+0x9e/0x350
-> [<ffffffff80b76db0>] __driver_probe_device+0x80/0x138
-> [<ffffffff80b76f52>] driver_probe_device+0x3a/0xd0
-> [<ffffffff80b771c4>] __driver_attach+0xac/0x1b8
-> [<ffffffff80b742fc>] bus_for_each_dev+0x6c/0xc8
-> [<ffffffff80b76296>] driver_attach+0x26/0x38
-> [<ffffffff80b759ae>] bus_add_driver+0x13e/0x268
-> [<ffffffff80b7836a>] driver_register+0x52/0x100
-> [<ffffffff80b79a78>] __platform_driver_register+0x28/0x38
-> [<ffffffff814585da>] k1_ccu_driver_init+0x22/0x38
-> [<ffffffff80023a8a>] do_one_initcall+0x62/0x2a0
-> [<ffffffff81401c60>] do_initcalls+0x170/0x1a8
-> [<ffffffff81401e7a>] kernel_init_freeable+0x16a/0x1e0
-> [<ffffffff811f7534>] kernel_init+0x2c/0x180
-> [<ffffffff80025f56>] ret_from_fork_kernel+0x16/0x1d8
-> [<ffffffff81205336>] ret_from_fork_kernel_asm+0x16/0x18
-> ---[ end trace ]---
-> 
-> This is bogus and is simply a result of KASAN consulting the `.num` member
-> of the struct for bounds information (as it should due to `__counted_by`)
-> and finding 0 set by kzalloc because it has not been initialized before
-> the loop that fills in the array. The easy fix is to just move the line
-> that sets `num` to before the loop that fills the array so that KASAN has
-> the information it needs to accurately conclude that the access is valid.
-> 
-It sounds very reasonable. Thanks!
 
-Reviewed-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
 
+On 11/16/2025 6:42 AM, Alexey Minnekhanov wrote:
+> Add offset for display subsystem reset in multimedia clock controller
+> block, which is necessary to reset display when there is some
+> configuration in display controller left by previous stock (Android)
+> bootloader to provide continuous splash functionaluty.
 > 
-> Fixes: 1b72c59db0add ("clk: spacemit: Add clock support for SpacemiT K1 SoC")
-> Tested-by: Yanko Kaneti <yaneti@declera.com>
+> Before 6.17 power domains were turned off for long enough to clear
+> registers, now this is not the case and a proper reset is needed to
+> have functioning display.
 > 
-> Signed-off-by: Charles Mirabile <cmirabil@redhat.com>
+> Fixes: 0e789b491ba0 ("pmdomain: core: Leave powered-on genpds on until sync_state")
+> Cc: <stable@vger.kernel.org> # 6.17
+> Signed-off-by: Alexey Minnekhanov <alexeymin@postmarketos.org>
 > ---
->  drivers/clk/spacemit/ccu-k1.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  drivers/clk/qcom/mmcc-sdm660.c | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> diff --git a/drivers/clk/spacemit/ccu-k1.c b/drivers/clk/spacemit/ccu-k1.c
-> index f5a9fe6ba1859..4761bc1e3b6e6 100644
-> --- a/drivers/clk/spacemit/ccu-k1.c
-> +++ b/drivers/clk/spacemit/ccu-k1.c
-> @@ -1018,6 +1018,8 @@ static int spacemit_ccu_register(struct device *dev,
->  	if (!clk_data)
->  		return -ENOMEM;
+> diff --git a/drivers/clk/qcom/mmcc-sdm660.c b/drivers/clk/qcom/mmcc-sdm660.c
+> index b723c536dfb6..dbd3f561dc6d 100644
+> --- a/drivers/clk/qcom/mmcc-sdm660.c
+> +++ b/drivers/clk/qcom/mmcc-sdm660.c
+> @@ -2781,6 +2781,7 @@ static struct gdsc *mmcc_sdm660_gdscs[] = {
+>  };
 >  
-> +	clk_data->num = data->num;
-> +
->  	for (i = 0; i < data->num; i++) {
->  		struct clk_hw *hw = data->hws[i];
->  		struct ccu_common *common;
-> @@ -1044,8 +1046,6 @@ static int spacemit_ccu_register(struct device *dev,
->  		clk_data->hws[i] = hw;
->  	}
+>  static const struct qcom_reset_map mmcc_660_resets[] = {
+> +	[MDSS_BCR] = { 0x2300 },
+
+Reviewed-by: Taniya Das <taniya.das@oss.qualcomm.com>
+
+>  	[CAMSS_MICRO_BCR] = { 0x3490 },
+>  };
 >  
-> -	clk_data->num = data->num;
-> -
->  	ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get, clk_data);
->  	if (ret)
->  		dev_err(dev, "failed to add clock hardware provider (%d)\n", ret);
 > 
-> base-commit: 6a23ae0a96a600d1d12557add110e0bb6e32730c
-> -- 
-> 2.51.1
-> 
-> 
+
+-- 
+Thanks,
+Taniya Das
+
