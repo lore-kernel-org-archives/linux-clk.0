@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA23830ACEE;
-	Wed, 19 Nov 2025 18:07:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F300C2FCC13;
+	Wed, 19 Nov 2025 18:11:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763575629; cv=none; b=s06fjS5IGAahMbSjbPdNo+cvlBNZbTyQT0BaUcTV8TwAJ4E8NSv4+MXipVFT/pVpLCjl4584a0Ai4Ml0aFz+aRjl8XbMDahYrCHfUtnvzlDMHULuq3HScisKSFU/DwY3pOv8FaycJhHr2ZK77BI4RZVWMcTrkYrxFpLuD3vuJ2E=
+	t=1763575911; cv=none; b=t5qBr19Ca9rbDx/Eva6CPZxraPLcD11lQsWdxhmon7G2OCA2EOzb5PKq6lL6Fg2ISdEZQBQ5LEiDTceoq4NWY1cZ1djlvYKzCtMTboLBIJ5+ChAm8Za4A5zVn8CKxaqy/y7eK42FN6MbKfPIqJ+tAeRWFnbgnK/bqPicjRTBnao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763575629; c=relaxed/simple;
-	bh=4d5rcTTQrqxAwHFaEaXz/InkRKSrlbPARDoNksmiCEg=;
+	s=arc-20240116; t=1763575911; c=relaxed/simple;
+	bh=+RdYG33iCZuDeD0/VFk7kVc03XXG12WMufrZ2hK5EvE=;
 	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=KvXEJA4gUR8FWhRH3hiNN2/8vNj3Zpt000Ndod34wtZCdTEtWPR4n0VIZNV/2YL5h+N2Mi5OVP8B62ZmOOL4QrCel85NiNUQ3zyVWwYQNUDW4o7gKOLQItX8ns7yL4+1rAI1AE23doXY061U0bknYfNcNWbrMirNBPEEX3+nRek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pKbOQFww; arc=none smtp.client-ip=10.30.226.201
+	 To:Date:Message-ID; b=p8oj5Fiu9zFug80qHh+2Jd4d2woUcSPdTse5EwGS48ZFoziORWpWG4TJ8+kM4qn8sR61DUlwEAIKkL/qGGNLD11N9Y0/fnSjleSmcGJgt8k4/bA74tFJijaSAyNKFRKBxSwivDsDgVk1i9WbeQI9I0O7DY0f8sOsPfKjW8ffNoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IjzGAgNk; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pKbOQFww"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A69EC4CEF5;
-	Wed, 19 Nov 2025 18:07:06 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IjzGAgNk"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B58CBC4CEF5;
+	Wed, 19 Nov 2025 18:11:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763575626;
-	bh=4d5rcTTQrqxAwHFaEaXz/InkRKSrlbPARDoNksmiCEg=;
+	s=k20201202; t=1763575909;
+	bh=+RdYG33iCZuDeD0/VFk7kVc03XXG12WMufrZ2hK5EvE=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=pKbOQFwwmhYoWDKR/2FuVI6VMRMd2zKEVIsN/acQhKxl93XDSD8FvrTjPG6ihhTIy
-	 guT6Ut5ihv5Fhtcy9iUQK4WG2TSkhRNhyV1NjhouV8/GS0LJ11Zr9rOueb2PWiwm28
-	 pncSlYGs7R4Jr/X5Vy6cBOxI4ApYpSPkiY0ypF529Pevez9JJtjHhFXUg1+XG/ny9T
-	 bzU6ZwsCslyUwjbQ5QE3y4rNMifQH0uySdwkIZYSkY5Pesl4tagnEkDk7YzAMIOsS5
-	 OTDalcGxrUW/2FL4Zy/dKaCJomPx/UdfRuQDDpXoYv55z7uhQwIrHRWzT2BCbjn4aL
-	 2z+Si8wQvktwA==
+	b=IjzGAgNk/ikrJeyppei/IyDnZV/0Fi+ECywG0vlW+2TdT+pjtGcnWFbGAcTKokjwl
+	 bqr3YTOta4hG6Fxvk/u8sgmb3ZrGkdQOn3bTUt98Ja2ZTMG0EGfpSmfqK/9Q95VA9H
+	 9GaSZJfgYLPl7JfYD4YdF+nVLLcRwm7oIm+LlQP9tvmWlHdjJifUxq55PEPg//v1GB
+	 3hk5ky7h/kUqzsLI1AVZIHD3ajsUCq8AA6aq6YWB0TJpn/Tn837RLKZXDbuNqsE5zq
+	 VJLzF0j/eebMgj8+RZZNjmSXXrDpdGFe41EpBaYYVGK93KUpsmAkX1+awDCRRiuGRO
+	 W0o17HSpfwo5Q==
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -34,25 +34,21 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20251119-macb-phy-v3-3-e9a7be186a33@bootlin.com>
-References: <20251119-macb-phy-v3-0-e9a7be186a33@bootlin.com> <20251119-macb-phy-v3-3-e9a7be186a33@bootlin.com>
-Subject: Re: [PATCH v3 3/7] clk: eyeq: use the auxiliary device creation helper
+In-Reply-To: <20251118074055.2523766-1-xu.yang_2@nxp.com>
+References: <20251118074055.2523766-1-xu.yang_2@nxp.com>
+Subject: Re: [PATCH 1/4] dt-bindings: clock: imx95: add PCIE and USB PHY clk
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-mips@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, linux-clk@vger.kernel.org, =?utf-8?q?Beno=C3=AEt?= Monin <benoit.monin@bootlin.com>, Maxime Chevallier <maxime.chevallier@bootlin.com>, Tawfik Bayouk <tawfik.bayouk@mobileye.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, =?utf-8?q?Th=C3=A9o?= Lebrun <theo.lebrun@bootlin.com>, Jerome Brunet <jbrunet@baylibre.com>
-To: Conor Dooley <conor+dt@kernel.org>, =?utf-8?q?Gr=C3=A9gory?= Clement <gregory.clement@bootlin.com>, Kishon Vijay Abraham I <kishon@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, =?utf-8?q?Th=C3=A9o?= Lebrun <theo.lebrun@bootlin.com>, Vinod Koul <vkoul@kernel.org>, Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>
-Date: Wed, 19 Nov 2025 10:07:04 -0800
-Message-ID: <176357562473.11952.15433192921239262065@lazor>
+Cc: devicetree@vger.kernel.org, imx@lists.linux.dev, jun.li@nxp.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+To: Frank.Li@nxp.com, Xu Yang <xu.yang_2@nxp.com>, abelvesa@kernel.org, conor+dt@kernel.org, festevam@gmail.com, hongxing.zhu@nxp.com, kernel@pengutronix.de, krzk+dt@kernel.org, mturquette@baylibre.com, peng.fan@nxp.com, robh@kernel.org, s.hauer@pengutronix.de, shawnguo@kernel.org
+Date: Wed, 19 Nov 2025 10:11:47 -0800
+Message-ID: <176357590754.11952.7874373646773229823@lazor>
 User-Agent: alot/0.11
 
-Quoting Th=C3=A9o Lebrun (2025-11-19 07:51:11)
-> From: Jerome Brunet <jbrunet@baylibre.com>
+Quoting Xu Yang (2025-11-17 23:40:52)
+> Add two clock definition in HSIOMIX.
 >=20
-> The auxiliary device creation of this driver is simple enough to
-> use the available auxiliary device creation helper.
->=20
-> Use it and remove some boilerplate code.
->=20
-> Tested-by: Th=C3=A9o Lebrun <theo.lebrun@bootlin.com>  # On Mobileye EyeQ5
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> Signed-off-by: Xu Yang <xu.yang_2@nxp.com>
+> ---
 
-You need to add your SoB here.
+Please send a cover letter next time that all the other patches are a
+reply to.
