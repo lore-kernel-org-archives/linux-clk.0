@@ -1,170 +1,201 @@
-Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5C5E26C39B
-	for <linux-clk@vger.kernel.org>; Wed, 19 Nov 2025 14:50:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FA692ECE92
+	for <linux-clk@vger.kernel.org>; Wed, 19 Nov 2025 15:51:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763563835; cv=none; b=sm14PsUAj7QAIDMWu27pUQjgryFORpU/MGkW+sMU1vIG4+nq/FxxV0FPf17Ny1W9lzEAncAITlwIH+Vi5AP6euKBawMASDOjurhbFaY+A5gY+gyREnxnLv7HCHzPKyfC/4Y+/9Eq6q3cYKJjhMbrZFWiD4n60E+CG+BSlKrxD+w=
+	t=1763567483; cv=none; b=tasCms2uX3je/X1a4SKo/derkq1xkl2WfHP5DjyGlV7PoZK76wlAFyb6Qc6csXeXcRXZo5ClWKpKXUBGeYejkC4yIxItpuLfb7KoRt3jFjrK37ASBr0ofUKfBCRcIQ+bI1l9+K8ggTPSrC2H2hviftrF89Wqn6in6vtgDvxt6Zk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763563835; c=relaxed/simple;
-	bh=1Wruu9gggvjosYoKum2V+cZ9fCd6dFFd/5SKcpbFf7A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R3KHJqCLqdgXKVav/Ysuve1i5fAOq0SZyfDGwy6BBUvbdXe26XXPwJ5iWPo33aFQQoCKa5EOiPzDJrSzGB6rbN1Q0T29HuU/g4H2MiNIGDHBAR/PGDvyRp3COvM7eZJeSZfFF1+pFHWMczF/BBh2GREz0kgQFJel2wYkAUGMUEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SsmAN0H0; arc=none smtp.client-ip=209.85.219.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1763567483; c=relaxed/simple;
+	bh=GbMjQfXbVDBRYa99+t6zovRCd+kwGqxoJZCf8LF1Il0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=nm/GWZ81KEqDiFl6MPBGlvz9PPaIOaGW8+faaXMUp+E3/5xRqXbxKq1zKCvyf/VExyIAru8OZWeePNiPW6iZNj7vrYEmi1rGEt+hTzeXBKjjRw08L1zLsEkCUWRsqc+WI8u5PK7ysygIQuyv7Ko7qedLO0l1OFr/m9XTgv5EwNE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=fE6c+Dys; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SsmAN0H0"
-Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-88249766055so85045676d6.1
-        for <linux-clk@vger.kernel.org>; Wed, 19 Nov 2025 06:50:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763563832; x=1764168632; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=UEa5dU5h8VTkStggLA2EFBcu8SFqsu0VyRflw3qSQbY=;
-        b=SsmAN0H0dW4pniwEPfi7ntnomTvrnK0bOh98GRqlM66jfMIRrCCmEP2AvXC3HRRCmV
-         7g/qWz/7yxs1plOWoLSgEZFqXqMOfVAES46UCC3gAbXavKi2qNkqks9VPXfNYmkzGuFd
-         Q5I9V127jwdVG17TFwwx5snj3oIsqDAQ4U3ZDMIjFeJBPC1kDbDek9H08MwcYqowfH2y
-         OG+QJJFzNqeD0YdjzmGTC9LhWa1frGuIlT1/8whm+I2RPHXYOfLqG7/tExznEqIkOaLF
-         MVab0MlufwIXjF/3XH8b7kl/bcvgJoS2Kb6Zaia++StlKQIiiuC3nKR94iY+PKgXA6a8
-         5wbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763563832; x=1764168632;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UEa5dU5h8VTkStggLA2EFBcu8SFqsu0VyRflw3qSQbY=;
-        b=Uc6ZetuazyMf9lEvcrG0kVGKZJB2jufjurI7O6mFeWhQot30ZOf9JQ9CUdp7a/h0IF
-         n/rEYL68lru88efsx+UhvpU5xqCp5BKhHlwZm+V/bsudA5qXaoCru+NpVQvEUtsxWMO/
-         ZgitFmbJaqlxv8ioJu5koQsvHYtAVQGZdPwkVgxj0m7ZkEkhNg5rqICqEMfbioR8d3PK
-         oV4S5TShWcxlwZZDWwFan8+ttoaoIIpGm5NnViOBS6srTpRv2woIpH0Vcb7/hnMDXHG/
-         gdIbgupzDL8Ifh0JObuQ5xtk4sps0D9ORviswf7VnxiL/lz+/1llk5qktt0Pw69HhIMg
-         NWpw==
-X-Forwarded-Encrypted: i=1; AJvYcCV1pTT4rzGm/7yYSD+O3gyvWlO+kwmGb5dOmxyp35kVF6XXS+N762GGSn7kLKeEHe8IQ9eeoaugrAk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3+acY8P3HLvxd3cU4jxZuzdv0LTK4c6EQFhyNTIhsMk1UwTRl
-	fGmfPekxak3WjrZqO+LsoLLSLw+6Xc5iiV4Sa7O6YZRKv2BJxJW+2p0J
-X-Gm-Gg: ASbGncsU/y1eKFYrsbUss0q8NOYbB0F4mQi+YhqqdCRFvaVXONhgpXYrwbPaxrE4Tw6
-	N5jyULmXdYBmxUoAr98pssjBbYwNrgZOzZoL834l9aX+VG7wcmKxi7bAfri/Aw5O4pwTJlLE6tS
-	XdYKjgiC4s0nI60RqRfeBkWXGQF+wqmoY8KO/BhBMK28yKxGFJfYdPTnWP+gqlkPli3m6r6jgUr
-	XSuO3AiBWqzhaPPcV0p+NwVDIocVAxD3ArdZxqIFZ3VtcbdhmE5G+U6t2omJeOM+60AGapcJ9fA
-	NKzIosP95wSr7Q+PfyJnk189JXHDh5LUAAL84uk+RPRg/c6npCd+YdHEpPTxfNPo2u1Iltic8vA
-	pIDav+Zqon47B0thuLSJC+7jHaxos0cnf0ArRQRVKbsNKLVGKvgk/VikqwNHAyskKNKX3zjXDP2
-	Pmi+gY8Nl8wNbWBl0z7w==
-X-Google-Smtp-Source: AGHT+IEl27VY0Fzg06WvTYKsPnTaG3CI8XR1O4Jx2OOSNMzexShqbizbMp95FvmlDbVG54xJ6MBR9A==
-X-Received: by 2002:a05:6214:529d:b0:882:49f4:da25 with SMTP id 6a1803df08f44-8829269e07bmr301776726d6.39.1763563831679;
-        Wed, 19 Nov 2025 06:50:31 -0800 (PST)
-Received: from localhost ([12.22.141.131])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-882862d04e1sm135929226d6.7.2025.11.19.06.50.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Nov 2025 06:50:31 -0800 (PST)
-Date: Wed, 19 Nov 2025 09:50:30 -0500
-From: Yury Norov <yury.norov@gmail.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	David Miller <davem@davemloft.net>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	Crt Mori <cmo@melexis.com>, Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Jacky Huang <ychuang3@nuvoton.com>,
-	Shan-Chun Hung <schung@nuvoton.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	Jakub Kicinski <kuba@kernel.org>, Alex Elder <elder@ieee.org>,
-	David Laight <david.laight.linux@gmail.com>,
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
-	Jason Baron <jbaron@akamai.com>, Borislav Petkov <bp@alien8.de>,
-	Tony Luck <tony.luck@intel.com>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Kim Seer Paller <kimseer.paller@analog.com>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Richard Genoud <richard.genoud@bootlin.com>,
-	Cosmin Tanislav <demonsingur@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Jianping Shen <Jianping.Shen@de.bosch.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-renesas-soc@vger.kernel.org, linux-crypto@vger.kernel.org,
-	linux-edac@vger.kernel.org, qat-linux@intel.com,
-	linux-gpio@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
-	linux-iio@vger.kernel.org, linux-sound@vger.kernel.org,
-	linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 00/26] Non-const bitfield helpers
-Message-ID: <aR3ZNmSMmtSsUR23@yury>
-References: <cover.1762435376.git.geert+renesas@glider.be>
- <aQzQjSMOSrUIgMCL@yury>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="fE6c+Dys"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id BB5D94E417AC;
+	Wed, 19 Nov 2025 15:51:17 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 869AA60699;
+	Wed, 19 Nov 2025 15:51:17 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id C220C10371A8D;
+	Wed, 19 Nov 2025 16:51:11 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1763567475; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=YgkbkBFr0ckOJQWKBFTLiaCszDsoKrpS3iQ1CceK2n8=;
+	b=fE6c+DysR+/xMRp1rzBHfJ2srBe2rV3Jcto4oFkWjbu07IPjIN5QUSOZR8lfCVi0A0JNCO
+	VXmku5imKGgGGvj+fbKllpMFLhk8J5n0hWSY/iUtB2Gm7Y4tAVLQZaN87zb8U9DWdCA5Cx
+	X/OLLPG2KgEttcpweulIUmDpGoaZmHG/r6Wp4zLkwyhPGnr41HDcowOEb10f8LU6ZU2ssR
+	U/CM4BLpwIDc1RDLag+2A+3poejHH+MSIRNtE1Yq6h9CdUR7+HtoeQYErzb45WmLU018Z4
+	iHE063QrDoBKSH595OTNEPxjSZxyPVRRs/WrixCQTlt8D4KFdy1ua/3TcFaEcQ==
+From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+Subject: [PATCH v3 0/7] Add generic PHY driver used by MACB/GEM on EyeQ5
+Date: Wed, 19 Nov 2025 16:51:08 +0100
+Message-Id: <20251119-macb-phy-v3-0-e9a7be186a33@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aQzQjSMOSrUIgMCL@yury>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAGznHWkC/22MQQ6CMBBFr0JmbU1nEBFW3sO4oGUqTYSSljQSw
+ t0tbNTE5fv57y0Q2FsOUGcLeI42WDckyA8Z6K4ZHixsmxhIUoGSSPSNVmLsZkGo9ImxNUqVkO6
+ jZ2Nfe+p2T9zZMDk/7+WI2/onElFIYagydDENl4RX5dz0tMNRux62TKSPihK/VEqqxgIrZoPnN
+ v9V13V9A81gWH3dAAAA
+X-Change-ID: 20251022-macb-phy-21bc4e1dfbb7
+To: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
+ =?utf-8?q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Cc: linux-mips@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, 
+ linux-clk@vger.kernel.org, 
+ =?utf-8?q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>, 
+ Maxime Chevallier <maxime.chevallier@bootlin.com>, 
+ Tawfik Bayouk <tawfik.bayouk@mobileye.com>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>, 
+ Conor Dooley <conor.dooley@microchip.com>, 
+ Jerome Brunet <jbrunet@baylibre.com>, Andrew Lunn <andrew@lunn.ch>
+X-Mailer: b4 0.14.3
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Thu, Nov 06, 2025 at 11:45:02AM -0500, Yury Norov wrote:
-> On Thu, Nov 06, 2025 at 02:33:48PM +0100, Geert Uytterhoeven wrote:
-> > 	Hi all,
-> > 
-> > <linux/bitfield.h> contains various helpers for accessing bitfields, as
-> > typically used in hardware registers for memory-mapped I/O blocks.
-> > These helpers ensure type safety, and deduce automatically shift values
-> > from mask values, avoiding mistakes due to inconsistent shifts and
-> > masks, and leading to a reduction in source code size.
-> > 
-> > The existing FIELD_{GET,PREP}() macros are limited to compile-time
-> > constants.  However, it is very common to prepare or extract bitfield
-> > elements where the bitfield mask is not a compile-time constant (e.g. it
-> > comes from a table, or is created by shifting a compile-time constant).
-> > To avoid this limitation, the AT91 clock driver introduced its own
-> > field_{prep,get}() macros.  During the past four years, these have been
-> > copied to multiple drivers, and more copies are on their way[1], leading
-> > to the obvious review comment "please move this to <linux/bitfield.h>".
-> > 
-> > Hence this series
-> >   1. Takes preparatory steps in drivers definining local
-> >      field_{get,prep}() macros (patches 1-11),
-> >   2. Introduces __FIELD_{PREP,GET}() helpers to avoid clang W=1 warnings
-> >      (patch 12),
-> >   3. Makes field_{prep,get}() available for general use (patch 13),
-> >   4. Converts drivers with local variants to the common helpers (patches
-> >      14-24),
-> >   5. Converts a few Renesas drivers to the existing FIELD_{GET,PREP}()
-> >      and the new field_{get,prep}() helpers (patches 25-26).
-> > 
-> > Alternatives would be to use the typed {u*,be*,le*,...}_{get,encode}_bits()
-> > macros instead (which currently do not work with non-constant masks
-> > either, and the first attempt to change that generates much worse code),
-> > or to store the low bit and width of the mask instead (which would
-> > require changing all code that passes masks directly, and also generates
-> > worse code).
-> 
-> Everyone please send your tags. I'm going to merge it in
-> bitmap-for-next before Monday.
+EyeQ5 SoCs integrate two GEM instances. A system-controller register
+region named "OLB" has some control over the Ethernet PHY integration.
 
-Fortunately I didn't specify the exact Monday. :)
+Past iterations [0] touched those syscon registers directly from MACB.
+It was a bad idea. Extend the current OLB ecosystem with a new generic
+PHY driver.
+ - OLB is carried by one main platform driver: clk-eyeq.
+ - It instantiates auxiliary devices: reset-eyeq & pinctrl-eyeq5.
+ - We add a new one: phy-eyeq5-eth.
 
-Now it's in my tree for local testing:
+I always find devicetree the simplest way to understand device
+interactions, so here is a DT overview:
 
-https://github.com/norov/linux/tree/field-prep-for-6.19
+    olb: system-controller@e00000 {
+            compatible = "mobileye,eyeq5-olb", "syscon";
+            reg = <0 0xe00000 0x0 0x400>;
+            // ...
+            #reset-cells = <2>;
+            #clock-cells = <1>;
+            #phy-cells = <1>; // <= this is new
+    };
 
-Will move in bitmap-for-next shortly.
+    macb0: ethernet@2a00000 {
+            compatible = "mobileye,eyeq5-gem";
+            phys = <&olb 0>; // <= GEM device consumes the PHY
+            // ...
+    };
 
-Thanks,
-Yury
+    macb1: ethernet@2b00000 {
+            compatible = "mobileye,eyeq5-gem";
+            phys = <&olb 1>; // <= same thing for the second instance
+            // ...
+    };
+
+The Linux MACB driver already consumes a generic PHY for some other
+compatibles, this is nothing new. The MACB series [1] has been merged
+into net-next/main.
+
+--
+
+About merging, Philipp Zabel gave his ACK for [5/7] to go into
+linux-clk. The split becomes simpler:
+
+ - [PATCH 1/7] dt-bindings: soc: mobileye: OLB is an Ethernet PHY provider on EyeQ5
+   [PATCH 6/7] MIPS: mobileye: eyeq5: add two Cadence GEM Ethernet controllers
+   [PATCH 7/7] MIPS: mobileye: eyeq5-epm: add two Cadence GEM Ethernet PHYs
+   => linux-mips
+
+ - [PATCH 2/7] phy: Add driver for EyeQ5 Ethernet PHY wrapper
+   => linux-phy
+
+ - [PATCH 3/7] clk: eyeq: use the auxiliary device creation helper
+   [PATCH 4/7] clk: eyeq: add EyeQ5 children auxiliary device for generic PHYs
+   [PATCH 5/7] reset: eyeq: drop device_set_of_node_from_dev() done by parent
+   => linux-clk
+
+MACB patches are in and V1 and V2 were super calm, can we sync to get
+this V3 in before the v6.19 merge window? Patches apply cleanly on the
+three linux-{clk,mips,phy} trees.
+
+Have a nice day,
+Thanks!
+Théo
+
+[0]: https://lore.kernel.org/lkml/20250627-macb-v2-15-ff8207d0bb77@bootlin.com/
+[1]: https://lore.kernel.org/lkml/20251022-macb-eyeq5-v2-0-7c140abb0581@bootlin.com/
+
+Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
+---
+Changes in v3:
+- Take Philipp Zabel's Reviewed-by & Acked-by trailers on reset patch.
+- Take Thomas Bogendoerfer's two Acked-by trailers on DT patches.
+- Rebase on net-next & test on target. Nothing to report.
+- Link to v2: https://lore.kernel.org/r/20251101-macb-phy-v2-0-c1519eef16d3@bootlin.com
+
+Changes in v2:
+- Take Acked-by: Conor Dooley on dt-bindings-patch.
+- s/%ld/%tu/ for printing ptrdiff_t; warnings on 32-bit archs.
+  Reported by NIPA's netdev/build_32bit test.
+  https://patchwork.kernel.org/project/netdevbpf/patch/20251021-macb-eyeq5-v1-7-3b0b5a9d2f85@bootlin.com/
+  https://netdev.bots.linux.dev/static/nipa/1014126/14277857/build_32bit/stderr
+- Link to v1: https://lore.kernel.org/r/20251022-macb-phy-v1-0-f29f28fae721@bootlin.com
+
+Changes since MACB V1:
+- Drop the old "mobileye,olb" properties from DT patches; found while
+  running dtbs_check and dt_binding_check.
+- Drop all patches targeting net-next. That is MACB dt-bindings patch
+  and MACB driver code. See there here [1].
+- Link to v1: https://lore.kernel.org/lkml/20251021-macb-eyeq5-v1-0-3b0b5a9d2f85@bootlin.com/
+
+Past versions of MACB patches:
+ - March 2025: [PATCH net-next 00/13] Support the Cadence MACB/GEM
+   instances on Mobileye EyeQ5 SoCs
+   https://lore.kernel.org/lkml/20250321-macb-v1-0-537b7e37971d@bootlin.com/
+ - June 2025: [PATCH net-next v2 00/18] Support the Cadence MACB/GEM
+   instances on Mobileye EyeQ5 SoCs
+   https://lore.kernel.org/lkml/20250627-macb-v2-0-ff8207d0bb77@bootlin.com/
+ - August 2025: [PATCH net v3 00/16] net: macb: various fixes & cleanup
+   https://lore.kernel.org/lkml/20250808-macb-fixes-v3-0-08f1fcb5179f@bootlin.com/
+
+---
+Jerome Brunet (1):
+      clk: eyeq: use the auxiliary device creation helper
+
+Théo Lebrun (6):
+      dt-bindings: soc: mobileye: OLB is an Ethernet PHY provider on EyeQ5
+      phy: Add driver for EyeQ5 Ethernet PHY wrapper
+      clk: eyeq: add EyeQ5 children auxiliary device for generic PHYs
+      reset: eyeq: drop device_set_of_node_from_dev() done by parent
+      MIPS: mobileye: eyeq5: add two Cadence GEM Ethernet controllers
+      MIPS: mobileye: eyeq5-epm: add two Cadence GEM Ethernet PHYs
+
+ .../bindings/soc/mobileye/mobileye,eyeq5-olb.yaml  |   7 +-
+ MAINTAINERS                                        |   1 +
+ arch/mips/boot/dts/mobileye/eyeq5-epm5.dts         |  26 +++
+ arch/mips/boot/dts/mobileye/eyeq5.dtsi             |  45 ++++
+ drivers/clk/clk-eyeq.c                             |  60 ++---
+ drivers/phy/Kconfig                                |  13 ++
+ drivers/phy/Makefile                               |   1 +
+ drivers/phy/phy-eyeq5-eth.c                        | 254 +++++++++++++++++++++
+ drivers/reset/reset-eyeq.c                         |  24 +-
+ 9 files changed, 363 insertions(+), 68 deletions(-)
+---
+base-commit: 4bd327737e4e408bed2daa1a3fc2ce45afab1790
+change-id: 20251022-macb-phy-21bc4e1dfbb7
+
+Best regards,
+-- 
+Théo Lebrun <theo.lebrun@bootlin.com>
+
