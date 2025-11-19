@@ -1,42 +1,85 @@
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43FDA366DA0;
-	Wed, 19 Nov 2025 15:51:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E4C830F947
+	for <linux-clk@vger.kernel.org>; Wed, 19 Nov 2025 17:53:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763567497; cv=none; b=PCgap+A8RhI/1QtwPa08bFa23VXKvRbpdt6U7TtqbiJIDLppwW3YNQcIOb1rYjALgHelMP0WQykTWxd45Ae8OyBTFvdFnrKT5y4rNJ4RLRgxvTQHXT5/bUnJhNAJUcOs7XzWG4ZBOJV27UR5ShhFYJneYnK4gzk5W92N8yY5EpA=
+	t=1763574808; cv=none; b=ihZYURnEreBdPr1ppsSyh5qcL4e3Xy0ozqCC4uKJN7hsk3KxOnSQr6SZ6jL/GY/PIMy40VHi/eSIwFulSfGlBCfP6R3IdnofMcgmbHASm6nY3hpR0/rQ4hH/n6ZBmB02KvLOmhWlNqCviHN3mhR12pNHo4IueSctXE3ORXUlHI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763567497; c=relaxed/simple;
-	bh=IkKxjN3rMBFp73RgD9vwag8MPYIM7lEwj0F6o6x6bvo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=DRztivpFxq0dcoDA1Hva0fzx25pNhDiKvvEfU/PIMw52WFy6TqdRg+5HkDhg0eBQJ9fDGFS2W21fH2NYwhhFaVJte9l60xCXgIBkMQFczSj52HwVeVqE6Fk3+0Q9FK2zM8WBOiNnvm9St+6UAbQ0gxRqVkLXCFII0A81zRiCoOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=KZYHWNMK; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1763574808; c=relaxed/simple;
+	bh=5DJxAMB/+wN7M4MmKg2hQpq0zf7NTLUJwJfPlRyXAqk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=i2zCM6v37omUg/Umn+V9I2cnCL5LBYmUrMtQsb5BLzgFzBcieO+BuJpRdheu9K9NQ/OV3Y02oWoyMOHKwRRhQXMoljuL7Q/xz4IuYmZGTyTD0XEVOhV1WvLCjgF8lI7pjJItP4qpkHElyCIyUOv/9bRXQ/tpwi/j9K+lw+bUKqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=JL2EvWSD; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=WxsZiUWK; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="KZYHWNMK"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 722601A1BE8;
-	Wed, 19 Nov 2025 15:51:31 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 4974160699;
-	Wed, 19 Nov 2025 15:51:31 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id CFDBA10371A95;
-	Wed, 19 Nov 2025 16:51:28 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1763567490; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=ve9CapSEWEKtu43skVGcR+S7+2vr8yoZ+6wP4hyPLao=;
-	b=KZYHWNMKZs02aAYbdDy6PSrVBslaXNnb2wSlHo3Q2hOj7zt0GYNnZacXN9ukKQbvvvFTtc
-	sGHHvoOsBpmpc1naSg2wGD4KnZ+S4kCMuuGc2gA0UDbJ6ShzzEa2nB4/0sap8MoFO/AKa/
-	F7I/h61BUCQfMkfrGtZyEzgrmC9H+bw262rgqPP0MGUwVL+ZZwiNCNUCHy2mmOqplke8HR
-	u6Y5FJqbAzWLhx0WxHhayTKsDDmXF2fhNbw6/hEKnmEfXa7YqT2wDMxg5zQ512SHSsQmUD
-	Hqm8RXVgKkH80MBePs1RjUYyrNXcxtZQFgrcFz1FubAXu3qUmOLSd/b44x8A8A==
-From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-Date: Wed, 19 Nov 2025 16:51:15 +0100
-Subject: [PATCH v3 7/7] MIPS: mobileye: eyeq5-epm: add two Cadence GEM
- Ethernet PHYs
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="JL2EvWSD";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="WxsZiUWK"
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5AJFkD9b2188558
+	for <linux-clk@vger.kernel.org>; Wed, 19 Nov 2025 17:53:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=tEOQuI67oSvhJ6KyOa3Zdc
+	BHGXMCzxtvgCXju+xHfCE=; b=JL2EvWSDCdLVL+6klueizo8lQ8cA7v/6YMEyS1
+	PdEJR2XwKY+aK/vQN2cb2fprHjqrKZqdtTt9ts8sS8IqVcOOnVD/rlXUj87c3f2h
+	wcXIaVGEmJezJxzM8ERISlmbFG67nueOmpLi1QTc3CUV4+hVBXuUS/07HBUPal5o
+	oRR/bC7rZnG0HdszuzKlUnxuCOREfWV81ff57IFT33Cv/1r+l9hgQztFD2jI2YuC
+	H3uS+IXqQItNWgVUqf56qiBlDPBQRbX2s8edwydEuuLUlNJIKC3SYRILFWR4gRXf
+	KIg+1n2H9kWjj/+8zBSxrRx21+oQeip+12e9PtFmY3Gx68zg==
+Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com [209.85.210.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4ahdpr1210-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Wed, 19 Nov 2025 17:53:19 +0000 (GMT)
+Received: by mail-pf1-f198.google.com with SMTP id d2e1a72fcca58-7b6b194cf71so10771302b3a.3
+        for <linux-clk@vger.kernel.org>; Wed, 19 Nov 2025 09:53:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1763574798; x=1764179598; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tEOQuI67oSvhJ6KyOa3ZdcBHGXMCzxtvgCXju+xHfCE=;
+        b=WxsZiUWKaGHgxbokNSQ7/mbQ68N4gd/by5/oCSQP6+LDNcl7xlNGvzFQHse3bq4/in
+         cakdY42j+oW2pe+NGreacksY5jPcUufW6kS5s1y6+kwMtTb6TgIq5sJSAQgj2Sag2HBn
+         1UkFHYkvWCJq3le06Haw+GNOnuXmdUmuyxaQ9gr3lBNDRDiuaqlZR4ZRmcbgUUmFcgJK
+         jj/B022Uv46e09FHJVGwmimdZB0x7rkeYrJ1vn9BLVKzm3HJYocFALWBB3s5wqj0tJTU
+         YRF/mLKz4u1aDgdxjTlWmEc1jFwR0d7U1Is4kr+8jx/TSAeTmR/f6mLQEklOgfBO9eGG
+         FFIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763574798; x=1764179598;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tEOQuI67oSvhJ6KyOa3ZdcBHGXMCzxtvgCXju+xHfCE=;
+        b=ccAtbNslcqIK7oWOL0tNsUZxdvXpGXj1z+ckwtH4r+p3KfARz33xigi5ROfwc0Fiui
+         ZI3xUTyOaqrHAKr/sQS3Z3eoznH2haXVjEUbaP/b2CHmEj2jmAHdDuAAShp8U+igSQb5
+         bIEM3Mc5YAEkKIEDPKbMEiikaYKrxNBg/rd11BTS/JNflO9qzOszB/lLpInE2b6XbmuW
+         skKGE6V2inAk74aEOG6xGy6oHmE3ME98dAWPJQKqicCUYop7coZE1Se9Glue83tYyIqB
+         wBN7Fzv8Np9vgVYzVzGtTnXFRIyherEAer8txinXVJ75Q544OOKn9PQeDDYN6bbSXA/T
+         baaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWZuLbg2Ldf/9QrhNsIolSt8nDJTAj7qafHdCABPxj8xicOD1hom6PZjwz+LHeIi43hSZhLGIsq2Uw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YymZkncUdIWFHVgBWiwa/KZWqIhUpuDwIPYp1tGenano56MLxOT
+	68uJZUHZhH7uaLsOdyw45dME8T/mTSvwHnq+xb1xuh7dqkmsI4WHPpMHbi1Pj1cLNppculMy6bH
+	lHh3oUvZdgA9CQ54yWScWdSaB/J8Sn1n70lmxYJEZ7jYgg4NBpY9dhAS7J1Cu3M4=
+X-Gm-Gg: ASbGncu8PE4y+Yid2l9YHYU6pN0ebKP4nVnGHKg8Th/oANyeW6c+eEQ9jpmWFUTC/PT
+	1eOU3UKSV5ZQ8fQvgXd5UCpyl4GsnBNIBNM4AHTfQWxH2e9GVBUZNg8thb7x10lENn8MDnvKycG
+	xFojD1ONOJstrimqmbXb2sFY9jhPi5cSjOwxX4ABo6wAZmHN+6lTTJLetMKUjdwPzN1a7+4HwSP
+	lrR2xJZqd9ddsi9S2P98aHABaBorCVkPkZ0id+zeet/OZNN7zRBSQq3f3A2cSuVEShhVc7KuNK8
+	OvsvegBJ2O51Re5HfeuAKe2CLTFvdBAvBFDBGg3SjjdB6cOwJhtAScUtHMRp3NxGsRNjcDS79IJ
+	erEBJz5dQmx/w60Kp4dgGz3yBhVASjbazQg==
+X-Received: by 2002:a05:6a00:9290:b0:7a4:460e:f86a with SMTP id d2e1a72fcca58-7ba3c476109mr25375985b3a.25.1763574798430;
+        Wed, 19 Nov 2025 09:53:18 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGiTG1EdAQXBxI0WBmHh7qkH4QpIOGDW+DSqXgDFNCT54Ka8RNp62wMrBj3efk9ibQxp7e4ZQ==
+X-Received: by 2002:a05:6a00:9290:b0:7a4:460e:f86a with SMTP id d2e1a72fcca58-7ba3c476109mr25375952b3a.25.1763574797980;
+        Wed, 19 Nov 2025 09:53:17 -0800 (PST)
+Received: from hu-tdas-hyd.qualcomm.com ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7b9271521a9sm20175483b3a.47.2025.11.19.09.53.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Nov 2025 09:53:17 -0800 (PST)
+From: Taniya Das <taniya.das@oss.qualcomm.com>
+Date: Wed, 19 Nov 2025 23:23:03 +0530
+Subject: [PATCH] clk: qcom: gcc-x1e80100: Use BRANCH_HALT_DELAY for UFS PHY
+ symbol
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -44,74 +87,97 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20251119-macb-phy-v3-7-e9a7be186a33@bootlin.com>
-References: <20251119-macb-phy-v3-0-e9a7be186a33@bootlin.com>
-In-Reply-To: <20251119-macb-phy-v3-0-e9a7be186a33@bootlin.com>
-To: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
- =?utf-8?q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>, 
- Kishon Vijay Abraham I <kishon@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Cc: linux-mips@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, 
- linux-clk@vger.kernel.org, 
- =?utf-8?q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>, 
- Maxime Chevallier <maxime.chevallier@bootlin.com>, 
- Tawfik Bayouk <tawfik.bayouk@mobileye.com>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>, 
- Andrew Lunn <andrew@lunn.ch>
-X-Mailer: b4 0.14.3
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251119-gcc_ufs_phy_clk_branch_delay-v1-1-292c3e40b8c7@oss.qualcomm.com>
+X-B4-Tracking: v=1; b=H4sIAP4DHmkC/x3MSwqDMBAA0KvIrBsw8UPsVYoMcZyYQUklwVIR7
+ 97Q5du8CzIn4QzP6oLEH8nyjgX6UQEFFxdWMheDqU2ntR7UQoSHz7iHE2lbcUouUsCZN3cq0/f
+ W+tY2TT1AKfbEXr7//jXe9w99ZFWSbgAAAA==
+X-Change-ID: 20251119-gcc_ufs_phy_clk_branch_delay-26688f483309
+To: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rajendra Nayak <quic_rjendra@quicinc.com>,
+        Abel Vesa <abel.vesa@linaro.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Sibi Sankar <sibi.sankar@oss.qualcomm.com>
+Cc: Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
+        Imran Shaik <imran.shaik@oss.qualcomm.com>,
+        Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Taniya Das <taniya.das@oss.qualcomm.com>
+X-Mailer: b4 0.15-dev-aa3f6
+X-Authority-Analysis: v=2.4 cv=Uq5u9uwB c=1 sm=1 tr=0 ts=691e040f cx=c_pps
+ a=m5Vt/hrsBiPMCU0y4gIsQw==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=DQCSaF5PRGMLdvYeXSEA:9
+ a=QEXdDO2ut3YA:10 a=IoOABgeZipijB_acs4fv:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTE5MDE0MCBTYWx0ZWRfXyBYcskmlL5Kc
+ h6tgZOhlvJWWD2yKZRexJSlCASeeRxm9fUm7695TkInRnc+CysylIO+8AB8UdXnagW00Gje+F5T
+ PiYrZhJYd581xT3+Sy/zIjDOtz3lrIIPsx7UPOX3VIoga8IBNyHZEpJRrVSZuhVY4nJyF4qBcRE
+ 2L3yKCSslJigy1+M9ufCo6tqXOmufviSrSNdvEeYvX0P6cdh0tmBCrYrBGTO/TUkfuIPem5G45O
+ 7lwae1AwwxfiUK4DUv4gyVyrgimM9rQAcLI2cNCS6j/sklyWeTsXQq6u2tHp5p7YmV+uRgHyWt8
+ E+RNdTa4AQJe1J0nvbWqzgpO8+Zx7yx7RWsAAYNr5/CBxiP87fXqjbjc9YXgVUG8BD6SLLOUE7Y
+ EqEiszTtf8eF0PYXzHSXNh/7fDKOYw==
+X-Proofpoint-ORIG-GUID: pC2kvEdMyUTg3phK43QZfCkW2GYCEkSd
+X-Proofpoint-GUID: pC2kvEdMyUTg3phK43QZfCkW2GYCEkSd
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-19_05,2025-11-18_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 suspectscore=0 phishscore=0 priorityscore=1501 spamscore=0
+ malwarescore=0 lowpriorityscore=0 bulkscore=0 adultscore=0 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511190140
 
-The Mobileye EyeQ5 eval board (EPM) embeds two MDIO PHYs.
+Switch the halt_check method from BRANCH_HALT to BRANCH_HALT_DELAY for
+gcc_ufs_phy_rx_symbol_0_clk, gcc_ufs_phy_rx_symbol_1_clk, and
+gcc_ufs_phy_tx_symbol_0_clk. These clocks are externally sourced and do
+not require polling for halt status.
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Acked-by: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
+Fixes: 161b7c401f4b ("clk: qcom: Add Global Clock controller (GCC) driver for X1E80100")
+Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
 ---
- arch/mips/boot/dts/mobileye/eyeq5-epm5.dts | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+ drivers/clk/qcom/gcc-x1e80100.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/mips/boot/dts/mobileye/eyeq5-epm5.dts b/arch/mips/boot/dts/mobileye/eyeq5-epm5.dts
-index 9fc1a1b0a81b..babf52731ea6 100644
---- a/arch/mips/boot/dts/mobileye/eyeq5-epm5.dts
-+++ b/arch/mips/boot/dts/mobileye/eyeq5-epm5.dts
-@@ -29,3 +29,29 @@ temperature-sensor@48 {
- 		label = "U60";
- 	};
- };
-+
-+&macb0 {
-+	phy-mode = "sgmii";
-+	phy-handle = <&macb0_phy>;
-+
-+	mdio {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		macb0_phy: ethernet-phy@e {
-+			reg = <0xe>;
-+		};
-+	};
-+};
-+
-+&macb1 {
-+	phy-mode = "rgmii-id";
-+	phy-handle = <&macb1_phy>;
-+
-+	mdio {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		macb1_phy: ethernet-phy@e {
-+			reg = <0xe>;
-+		};
-+	};
-+};
+diff --git a/drivers/clk/qcom/gcc-x1e80100.c b/drivers/clk/qcom/gcc-x1e80100.c
+index b63c8abdd2fc24fc963f038f8cdcafd7598ba989..0ebcecd2b7e0898cd8803676cdd1d7d640f770a3 100644
+--- a/drivers/clk/qcom/gcc-x1e80100.c
++++ b/drivers/clk/qcom/gcc-x1e80100.c
+@@ -5148,7 +5148,7 @@ static struct clk_branch gcc_ufs_phy_phy_aux_clk = {
+ 
+ static struct clk_branch gcc_ufs_phy_rx_symbol_0_clk = {
+ 	.halt_reg = 0x7702c,
+-	.halt_check = BRANCH_HALT,
++	.halt_check = BRANCH_HALT_DELAY,
+ 	.clkr = {
+ 		.enable_reg = 0x7702c,
+ 		.enable_mask = BIT(0),
+@@ -5161,7 +5161,7 @@ static struct clk_branch gcc_ufs_phy_rx_symbol_0_clk = {
+ 
+ static struct clk_branch gcc_ufs_phy_rx_symbol_1_clk = {
+ 	.halt_reg = 0x770cc,
+-	.halt_check = BRANCH_HALT,
++	.halt_check = BRANCH_HALT_DELAY,
+ 	.clkr = {
+ 		.enable_reg = 0x770cc,
+ 		.enable_mask = BIT(0),
+@@ -5174,7 +5174,7 @@ static struct clk_branch gcc_ufs_phy_rx_symbol_1_clk = {
+ 
+ static struct clk_branch gcc_ufs_phy_tx_symbol_0_clk = {
+ 	.halt_reg = 0x77028,
+-	.halt_check = BRANCH_HALT,
++	.halt_check = BRANCH_HALT_DELAY,
+ 	.clkr = {
+ 		.enable_reg = 0x77028,
+ 		.enable_mask = BIT(0),
 
+---
+base-commit: 187dac290bfd0741b9d7d5490af825c33fd9baa4
+change-id: 20251119-gcc_ufs_phy_clk_branch_delay-26688f483309
+
+Best regards,
 -- 
-2.51.2
+Taniya Das <taniya.das@oss.qualcomm.com>
 
