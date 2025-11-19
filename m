@@ -1,122 +1,418 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+Received: from mail.hugovil.com (mail.hugovil.com [162.243.120.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4A95301492;
-	Wed, 19 Nov 2025 20:34:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8CE6381AF;
+	Wed, 19 Nov 2025 23:31:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.120.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763584482; cv=none; b=FtVck68Di/B0U20d7CjwgIgrPFasOkV9m0k9wagshtZxMeFjc5KR5eNbS8RGhP594yPjwsi3ahXpdIkA9QYKdwkqGA1FF4P4k0GqLwmUgweVAoUwrqNv4qcKd91ZLZCQUaLq4JXvylvUVdCVBX15033AQpVlnPuZSyICFPxIdGY=
+	t=1763595112; cv=none; b=u5JQKC36UbzN2RS09tA1+eRoX+9SuHu+KeTMklgGDFfXce2Y7fjKiGyLfuF43fGbnfVrqDuNK3smi9IsRyqWSxo44hLCvMuhpBa6ulePWZZI5AcdUc9sQmKJeuaFSjiFg02+vbJzeTwN8wUc2lC40JIh2eeQ64d9CJvq1PE8McI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763584482; c=relaxed/simple;
-	bh=qewXocdKo9cLRXB0u7E4iV5rncB/pe/qAOBWdTkGlpM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rwhF1ORVG7X2XdivT0HRj3ZOaRcs0TY409pS0ZrKTsacEJrcFwT0EDVj+7MqZv245QR7CWMapK/rk2zRI56jJ+lqq4fa+R6urgPTH1qL17YsY5r0in9LPaydX3cCPzl7V3C4Iu04L2+j3dZaeZ7ny5XD5isepl2ZRObz8XUQYEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=V8IhV5Yz; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1763595112; c=relaxed/simple;
+	bh=YQ5vuhBGqHmqAbAp/tmjSPQZIPQZ8gK3n0Pt0AtM9eo=;
+	h=Date:From:To:Cc:Message-Id:In-Reply-To:References:Mime-Version:
+	 Content-Type:Subject; b=j5DcQqvO8+WH71Ebvz1JKrzDKyWE4NpQACLDY2tM3QSO1Y52HlxiVRe9y73rnRTYGYb0EsFAOUu+zXuAMzQlY7bxt/UzVhS9pozWCmK8nWN8WepZErPgqP4mvZhH415Mr3SAeHzq99UR/lFem93Y+ePYcUJUzLoC6mVdsie1Pzo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com; spf=pass smtp.mailfrom=hugovil.com; dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b=C2EowBCX; arc=none smtp.client-ip=162.243.120.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hugovil.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="V8IhV5Yz"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1763584481; x=1795120481;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=qewXocdKo9cLRXB0u7E4iV5rncB/pe/qAOBWdTkGlpM=;
-  b=V8IhV5Yz3TAgQjv/8wB8ep17gegepkRiASEsXc82AhQIKZybcJKLg+Zz
-   HaEbZBcyR9m9RL0pfxlwCOke569Bour6Gywoi/lMPZexBfMBzuMrVjhhW
-   0LhDJ/xepUnJR/eS/RzhIFXqWgLDf/MHRlu5z5xZ2Fb7DLKacEEBnUrJZ
-   XZ/mWcFeSC38MItDApLX4fAO1V9GLnpk6+GbGED+vlwacQQtkIRptb3B5
-   62dDl/4PT7nXy+Jz1snYnzvxfPBCWuUcYzuYpOVm44sKwVZg0JMVe2Fxu
-   FO42kHw9AV5D/ifYnAKkmuicXqhZCzj/4xbWVoeBWmy8WdktAv8VPzNz7
-   Q==;
-X-CSE-ConnectionGUID: pWJz0z4BSZyB/hMaVsALxw==
-X-CSE-MsgGUID: t0LCxDDlSCeYpKzuVm/uAA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11618"; a="65798444"
-X-IronPort-AV: E=Sophos;i="6.19,316,1754982000"; 
-   d="scan'208";a="65798444"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Nov 2025 12:34:41 -0800
-X-CSE-ConnectionGUID: CN8Juv0BSfO7B4DVJs2Nww==
-X-CSE-MsgGUID: 243fnx0sSK+yPpa3iYBPZA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,316,1754982000"; 
-   d="scan'208";a="195273752"
-Received: from lkp-server01.sh.intel.com (HELO adf6d29aa8d9) ([10.239.97.150])
-  by orviesa003.jf.intel.com with ESMTP; 19 Nov 2025 12:34:37 -0800
-Received: from kbuild by adf6d29aa8d9 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vLosr-0003IB-36;
-	Wed, 19 Nov 2025 20:34:33 +0000
-Date: Thu, 20 Nov 2025 04:34:33 +0800
-From: kernel test robot <lkp@intel.com>
-To: Chris Brandt <chris.brandt@renesas.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Hien Huynh <hien.huynh.px@renesas.com>,
-	Nghia Vo <nghia.vo.zn@renesas.com>,
-	Hugo Villeneuve <hugo@hugovil.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	Chris Brandt <chris.brandt@renesas.com>
-Subject: Re: [PATCH v5 1/2] clk: renesas: rzg2l: Remove DSI clock rate
- restrictions
-Message-ID: <202511200435.SrjxVc9k-lkp@intel.com>
-References: <20251119022744.1599235-2-chris.brandt@renesas.com>
+	dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b="C2EowBCX"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hugovil.com
+	; s=x; h=Subject:Content-Transfer-Encoding:Mime-Version:Message-Id:Cc:To:From
+	:Date:subject:date:message-id:reply-to;
+	bh=m2Wt2FxrpFGw+jXNcISuMi9evacIUQw+6s00ZTprzFY=; b=C2EowBCXrCGCeay3nX7f9c6sod
+	t/LdJBJ/aYqKtc/38BNcGjjq9NmCuV4gvRkzigV8LSAmxJvI76V4nqNiboxcwPb82KqL1J5ZnhYgx
+	+j+B7vZfceMoWFKaggLB5jkp2RqkZQjmYRUuR237UlrhuEzbTBMya7qaKHzPQJH6alls=;
+Received: from modemcable168.174-80-70.mc.videotron.ca ([70.80.174.168]:44664 helo=pettiford)
+	by mail.hugovil.com with esmtpa (Exim 4.92)
+	(envelope-from <hugo@hugovil.com>)
+	id 1vLreC-0004oJ-5J; Wed, 19 Nov 2025 18:31:37 -0500
+Date: Wed, 19 Nov 2025 18:31:35 -0500
+From: Hugo Villeneuve <hugo@hugovil.com>
+To: Chris Brandt <chris.brandt@renesas.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Biju Das
+ <biju.das.jz@bp.renesas.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Hien Huynh <hien.huynh.px@renesas.com>,
+ Nghia Vo <nghia.vo.zn@renesas.com>, linux-renesas-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org
+Message-Id: <20251119183135.85ac542b68c732b6ea9b7a4d@hugovil.com>
+In-Reply-To: <20251119022744.1599235-2-chris.brandt@renesas.com>
+References: <20251119022744.1599235-1-chris.brandt@renesas.com>
+	<20251119022744.1599235-2-chris.brandt@renesas.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251119022744.1599235-2-chris.brandt@renesas.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 70.80.174.168
+X-SA-Exim-Mail-From: hugo@hugovil.com
+X-Spam-Level: 
+X-Spam-Report: 
+	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+	* -1.4 NICE_REPLY_A Looks like a legit reply (A)
+Subject: Re: [PATCH v5 1/2] clk: renesas: rzg2l: Remove DSI clock rate
+ restrictions
+X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
+X-SA-Exim-Scanned: Yes (on mail.hugovil.com)
 
 Hi Chris,
 
-kernel test robot noticed the following build warnings:
+On Tue, 18 Nov 2025 21:27:43 -0500
+Chris Brandt <chris.brandt@renesas.com> wrote:
 
-[auto build test WARNING on dd30a345f284e0d9b1755e3538f8257cf4deb79f]
+> Convert the limited MIPI clock calculations to a full range of settings
+> based on math including H/W limitation validation.
+> Since the required DSI division setting must be specified from external
+> sources before calculations, expose a new API to set it.
+> 
+> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+> Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
+> Tested-by: Biju Das <biju.das.jz@bp.renesas.com>
+> 
+> ---
+> v1->v2:
+> - Remove unnecessary parentheses
+> - Add target argument to new API
+> - DPI mode has more restrictions on DIV_A and DIV_B
+> 
+> v2->v3:
+> - Removed Empty lines (Hugo)
+> - Add dummy for compile-testing CONFIG_CLK_RZG2L=n case (Geert)
+> - Renamed label found_dsi_div to calc_pll_clk (Hugo)
+> - Renamed label found_clk to clk_valid (Hugo)
+> - Removed 'found' var because not needed
+> - Move 'foutpostdiv_rate =' after if(foutvco_rate > 1500000000) (Hugo)
+> - Move PLL5_TARGET_* for new API to renesas.h (Hugo,Geert)
+> - Convert #define macros PLL5_TARGET_* to enum (Geert)
+> - static {unsigned} int dsi_div_ab; (Geert)
+> - {unsigned} int a, b;  (Geert)
+> - Change "((1 << a) * (b + 1))" to "(b + 1) << a"  (Geert)
+> - Change "foutvco_rate = rate * (1 << xxx ) * ..." to " = rate * ... * << xxx (Geert)
+> - Move (u64) outside of modulo operation to avoid helper on 32-bit compiles (Geert)
+> - Change DIV_ROUND_CLOSEST_ULL() to DIV_ROUND_CLOSEST() (Geert)
+> - void rzg2l_cpg_dsi_div_set_divider({unsinged} int divider, int target)
+> - Change "dsi_div_ab = (1 << AAA) * (BBB + 1)" to " = (BBB + 1) << AAA (Geert)
+> - Added Reviewed-by and Tested-by (Biju)
+> 
+> v3->v4:
+> - Changed <,> to <=,>=  (Hugo)
+> - Removed duplicate code bock (copy/paste mistake) (Hugo)
+> - Fix dummy for rzg2l_cpg_dsi_div_set_divider when CONFIG_CLK_RZG2L=n (Geert)
+> - Removed comment "Below conditions must be set.." (Hugo)
+> - Removed +1,-1 from pl5_intin comparison math because it was not correct
+> - Removed default register settings (PLL5_xxx_DEF) because makes no sense
+> - If any calcualtion error, print a message and return a rate of 0
+> - Rename global var "dsi_div_ab" to "dsi_div_ab_desired"
+> - Check the range of hsclk
+> - The correct clock parent is determined by if the divider is even/odd
+> - Add in all the restrictions from DIV A,B from the hardware manual
+> - No more need to be a recursive function
+> - DPI settings must have DSI_DIV_B be '0' (divide 1/1)
+> 
+> v4->v5:
+> - Change dsi_div_ab_desired to u8 (Hugo)
+> - Create the helper function rzg2l_cpg_div_ab (Hugo)
+> - Remove odd/even comments because implied (Hugo)
+> - Change continue to break for the for loop (Hugo)
+> - Change if{} if{} to if{} else if{} (Hugo)
+> - Remove function rzg2l_cpg_get_vclk_rate (Chris)
+> - Set default clksrc,div_a,b using set_divider function (Biju)
+> - Return -EINVAL if rzg2l_cpg_dsi_div_determine_rate fails (Hugo)
+> ---
+>  drivers/clk/renesas/rzg2l-cpg.c | 162 ++++++++++++++++++++++++++------
+>  include/linux/clk/renesas.h     |  12 +++
+>  2 files changed, 146 insertions(+), 28 deletions(-)
+> 
+> diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
+> index 6743e50d44d0..69a96fa5a272 100644
+> --- a/drivers/clk/renesas/rzg2l-cpg.c
+> +++ b/drivers/clk/renesas/rzg2l-cpg.c
+> @@ -74,6 +74,17 @@
+>  #define MSTOP_OFF(conf)		FIELD_GET(GENMASK(31, 16), (conf))
+>  #define MSTOP_MASK(conf)	FIELD_GET(GENMASK(15, 0), (conf))
+>  
+> +#define PLL5_FOUTVCO_MIN	800000000
+> +#define PLL5_FOUTVCO_MAX	3000000000
+> +#define PLL5_POSTDIV_MIN	1
+> +#define PLL5_POSTDIV_MAX	7
+> +#define PLL5_REFDIV_MIN		1
+> +#define PLL5_REFDIV_MAX		2
+> +#define PLL5_INTIN_MIN		20
+> +#define PLL5_INTIN_MAX		320
+> +#define PLL5_HSCLK_MIN		10000000
+> +#define PLL5_HSCLK_MAX		187500000
+> +
+>  /**
+>   * struct clk_hw_data - clock hardware data
+>   * @hw: clock hw
+> @@ -129,6 +140,12 @@ struct rzg2l_pll5_param {
+>  	u8 pl5_spread;
+>  };
+>  
+> +/* PLL5 output will be used for DPI or MIPI-DSI */
+> +static int dsi_div_target = PLL5_TARGET_DPI;
+> +
+> +/* Required division ratio for MIPI D-PHY clock depending on number of lanes and bpp. */
+> +static u8 dsi_div_ab_desired;
+> +
+>  struct rzg2l_pll5_mux_dsi_div_param {
+>  	u8 clksrc;
+>  	u8 dsi_div_a;
+> @@ -170,6 +187,11 @@ struct rzg2l_cpg_priv {
+>  	struct rzg2l_pll5_mux_dsi_div_param mux_dsi_div_params;
+>  };
+>  
+> +static inline u8 rzg2l_cpg_div_ab(u8 a, u8 b)
+> +{
+> +	return (b + 1) << a;
+> +}
+> +
+>  static void rzg2l_cpg_del_clk_provider(void *data)
+>  {
+>  	of_clk_del_provider(data);
+> @@ -557,16 +579,108 @@ rzg2l_cpg_sd_mux_clk_register(const struct cpg_core_clk *core,
+>  }
+>  
+>  static unsigned long
+> -rzg2l_cpg_get_foutpostdiv_rate(struct rzg2l_pll5_param *params,
+> +rzg2l_cpg_get_foutpostdiv_rate(struct rzg2l_cpg_priv *priv,
+> +			       struct rzg2l_pll5_param *params,
+>  			       unsigned long rate)
+>  {
+>  	unsigned long foutpostdiv_rate, foutvco_rate;
+> +	unsigned long hsclk;
+> +	unsigned int a, b, odd;
+> +	unsigned int dsi_div_ab_calc;
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Chris-Brandt/clk-renesas-rzg2l-Remove-DSI-clock-rate-restrictions/20251119-103032
-base:   dd30a345f284e0d9b1755e3538f8257cf4deb79f
-patch link:    https://lore.kernel.org/r/20251119022744.1599235-2-chris.brandt%40renesas.com
-patch subject: [PATCH v5 1/2] clk: renesas: rzg2l: Remove DSI clock rate restrictions
-config: loongarch-randconfig-001-20251119 (https://download.01.org/0day-ci/archive/20251120/202511200435.SrjxVc9k-lkp@intel.com/config)
-compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 0bba1e76581bad04e7d7f09f5115ae5e2989e0d9)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251120/202511200435.SrjxVc9k-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202511200435.SrjxVc9k-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   In file included from drivers/pmdomain/renesas/rcar-gen4-sysc.c:9:
->> include/linux/clk/renesas.h:44:52: warning: omitting the parameter name in a function definition is a C23 extension [-Wc23-extensions]
-      44 | static inline void rzg2l_cpg_dsi_div_set_divider(u8, int target) { }
-         |                                                    ^
-   1 warning generated.
+Change type to u8 like dsi_div_ab_desired.
 
 
-vim +44 include/linux/clk/renesas.h
+> +
+> +	if (dsi_div_target == PLL5_TARGET_DSI) {
+> +		/*
+> +		 * VCO-->[POSTDIV1,2]--FOUTPOSTDIV-->|   |-->[1/(DSI DIV A * B)]--> MIPI_DSI_VCLK
+> +		 *            |                      |-->|
+> +		 *            |-->[1/2]---FOUT1PH0-->|   |-->[1/16]---------------> hsclk (MIPI-PHY)
+> +		 */
+> +
+> +		/* Check hsclk */
+> +		hsclk = rate * dsi_div_ab_desired / 16;
+> +		if (hsclk < PLL5_HSCLK_MIN || hsclk > PLL5_HSCLK_MAX) {
+> +			dev_err(priv->dev, "hsclk out of range\n");
+> +			return 0;
+> +		}
+> +
+> +		/* Determine the correct clock source based on even/odd of the divider */
+> +		odd = dsi_div_ab_desired & 1;
+> +		if (odd) {
+> +			priv->mux_dsi_div_params.clksrc = 0;	/* FOUTPOSTDIV */
+> +			dsi_div_ab_calc = dsi_div_ab_desired;
+> +		} else {
+> +			priv->mux_dsi_div_params.clksrc = 1;	/*  FOUT1PH0 */
+> +			dsi_div_ab_calc = dsi_div_ab_desired / 2;
+> +		}
+> +
+> +		/* Calculate the DIV_DSI_A and DIV_DSI_B based on the desired divider */
+> +		for (a = 0; a < 4; a++) {
+> +			/* FOUT1PH0: Max output of DIV_DSI_A is 750MHz so at least 1/2 to be safe */
+> +			if (!odd && a == 0)
+> +				continue;
+> +
+> +			/* FOUTPOSTDIV: DIV_DSI_A must always be 1/1 */
+> +			if (odd && a != 0)
+> +				break;
+> +
+> +			for (b = 0; b < 16; b++) {
+> +				/* FOUTPOSTDIV: DIV_DSI_B must always be odd divider 1/(b+1) */
+> +				if (odd && b & 1)
+> +					continue;
+> +
+> +				if (rzg2l_cpg_div_ab(a, b) == dsi_div_ab_calc) {
+> +					priv->mux_dsi_div_params.dsi_div_a = a;
+> +					priv->mux_dsi_div_params.dsi_div_b = b;
+> +					goto calc_pll_clk;
 
-    40	
-    41	#ifdef CONFIG_CLK_RZG2L
-    42	void rzg2l_cpg_dsi_div_set_divider(u8 divider, int target);
-    43	#else
-  > 44	static inline void rzg2l_cpg_dsi_div_set_divider(u8, int target) { }
-    45	#endif
-    46	
+At this point, you matched your a and b with dsi_div_ab_calc, which can
+be different than dsi_div_ab_desired (even -> divided by 2). And when
+you calculate PLL5 clock (after calc_pll_clk), you use
+dsi_div_ab_desired, not dsi_div_ab_calc. Is this ok?
+
+If not, I suggest you simply get rid of variable dsi_div_ab_calc,
+and simply divide dsi_div_ab_desired by 2 for the even case.
+
+
+> +				}
+> +			}
+> +		}
+> +
+> +		dev_err(priv->dev, "Failed to calculate DIV_DSI_A,B\n");
+> +
+> +		return 0;
+> +	} else if (dsi_div_target == PLL5_TARGET_DPI) {
+> +		/* Fixed settings for DPI */
+> +		priv->mux_dsi_div_params.clksrc = 0;
+> +		priv->mux_dsi_div_params.dsi_div_a = 3; /* Divided by 8 */
+> +		priv->mux_dsi_div_params.dsi_div_b = 0; /* Divided by 1 */
+> +		dsi_div_ab_desired = 8;			/* (1 << a) * (b + 1) */
+> +	}
+> +
+> +calc_pll_clk:
+> +	/* PLL5 (MIPI_DSI_PLLCLK) = VCO / POSTDIV1 / POSTDIV2 */
+> +	for (params->pl5_postdiv1 = PLL5_POSTDIV_MIN;
+> +	     params->pl5_postdiv1 <= PLL5_POSTDIV_MAX;
+> +	     params->pl5_postdiv1++) {
+> +		for (params->pl5_postdiv2 = PLL5_POSTDIV_MIN;
+> +		     params->pl5_postdiv2 <= PLL5_POSTDIV_MAX;
+> +		     params->pl5_postdiv2++) {
+> +			foutvco_rate = rate * params->pl5_postdiv1 * params->pl5_postdiv2 *
+> +				       dsi_div_ab_desired;
+> +			if (foutvco_rate <= PLL5_FOUTVCO_MIN || foutvco_rate >= PLL5_FOUTVCO_MAX)
+> +				continue;
+> +
+> +			for (params->pl5_refdiv = PLL5_REFDIV_MIN;
+> +			     params->pl5_refdiv <= PLL5_REFDIV_MAX;
+> +			     params->pl5_refdiv++) {
+> +				params->pl5_intin = (foutvco_rate * params->pl5_refdiv) /
+> +						    (EXTAL_FREQ_IN_MEGA_HZ * MEGA);
+> +				if (params->pl5_intin < PLL5_INTIN_MIN ||
+> +				    params->pl5_intin > PLL5_INTIN_MAX)
+> +					continue;
+> +
+> +				params->pl5_fracin = div_u64(((u64)
+> +						     (foutvco_rate * params->pl5_refdiv) %
+> +						     (EXTAL_FREQ_IN_MEGA_HZ * MEGA)) << 24,
+> +						     EXTAL_FREQ_IN_MEGA_HZ * MEGA);
+> +				goto clk_valid;
+> +			}
+> +		}
+> +	}
+>  
+> -	params->pl5_intin = rate / MEGA;
+> -	params->pl5_fracin = div_u64(((u64)rate % MEGA) << 24, MEGA);
+> -	params->pl5_refdiv = 2;
+> -	params->pl5_postdiv1 = 1;
+> -	params->pl5_postdiv2 = 1;
+> +	dev_err(priv->dev, "Failed to calculate PLL5 settings\n");
+> +	return 0;
+> +
+> +clk_valid:
+>  	params->pl5_spread = 0x16;
+>  
+>  	foutvco_rate = div_u64(mul_u32_u32(EXTAL_FREQ_IN_MEGA_HZ * MEGA,
+> @@ -607,7 +721,7 @@ static unsigned long rzg2l_cpg_get_vclk_parent_rate(struct clk_hw *hw,
+>  	struct rzg2l_pll5_param params;
+>  	unsigned long parent_rate;
+>  
+> -	parent_rate = rzg2l_cpg_get_foutpostdiv_rate(&params, rate);
+> +	parent_rate = rzg2l_cpg_get_foutpostdiv_rate(priv, &params, rate);
+>  
+>  	if (priv->mux_dsi_div_params.clksrc)
+>  		parent_rate /= 2;
+> @@ -623,9 +737,19 @@ static int rzg2l_cpg_dsi_div_determine_rate(struct clk_hw *hw,
+>  
+>  	req->best_parent_rate = rzg2l_cpg_get_vclk_parent_rate(hw, req->rate);
+>  
+> +	if (!req->best_parent_rate)
+> +		return -EINVAL;
+> +
+>  	return 0;
+>  }
+>  
+> +void rzg2l_cpg_dsi_div_set_divider(u8 divider, int target)
+> +{
+> +	dsi_div_ab_desired = divider;
+> +	dsi_div_target = target;
+> +}
+> +EXPORT_SYMBOL_GPL(rzg2l_cpg_dsi_div_set_divider);
+> +
+>  static int rzg2l_cpg_dsi_div_set_rate(struct clk_hw *hw,
+>  				      unsigned long rate,
+>  				      unsigned long parent_rate)
+> @@ -796,22 +920,6 @@ struct sipll5 {
+>  
+>  #define to_sipll5(_hw)	container_of(_hw, struct sipll5, hw)
+>  
+> -static unsigned long rzg2l_cpg_get_vclk_rate(struct clk_hw *hw,
+> -					     unsigned long rate)
+> -{
+> -	struct sipll5 *sipll5 = to_sipll5(hw);
+> -	struct rzg2l_cpg_priv *priv = sipll5->priv;
+> -	unsigned long vclk;
+> -
+> -	vclk = rate / ((1 << priv->mux_dsi_div_params.dsi_div_a) *
+> -		       (priv->mux_dsi_div_params.dsi_div_b + 1));
+> -
+> -	if (priv->mux_dsi_div_params.clksrc)
+> -		vclk /= 2;
+> -
+> -	return vclk;
+> -}
+> -
+>  static unsigned long rzg2l_cpg_sipll5_recalc_rate(struct clk_hw *hw,
+>  						  unsigned long parent_rate)
+>  {
+> @@ -856,9 +964,9 @@ static int rzg2l_cpg_sipll5_set_rate(struct clk_hw *hw,
+>  	if (!rate)
+>  		return -EINVAL;
+>  
+> -	vclk_rate = rzg2l_cpg_get_vclk_rate(hw, rate);
+> +	vclk_rate = rate / dsi_div_ab_desired;
+>  	sipll5->foutpostdiv_rate =
+> -		rzg2l_cpg_get_foutpostdiv_rate(&params, vclk_rate);
+> +		rzg2l_cpg_get_foutpostdiv_rate(priv, &params, vclk_rate);
+>  
+>  	/* Put PLL5 into standby mode */
+>  	writel(CPG_SIPLL5_STBY_RESETB_WEN, priv->base + CPG_SIPLL5_STBY);
+> @@ -945,9 +1053,7 @@ rzg2l_cpg_sipll5_register(const struct cpg_core_clk *core,
+>  	if (ret)
+>  		return ERR_PTR(ret);
+>  
+> -	priv->mux_dsi_div_params.clksrc = 1; /* Use clk src 1 for DSI */
+> -	priv->mux_dsi_div_params.dsi_div_a = 1; /* Divided by 2 */
+> -	priv->mux_dsi_div_params.dsi_div_b = 2; /* Divided by 3 */
+> +	rzg2l_cpg_dsi_div_set_divider(8, PLL5_TARGET_DPI);
+>  
+>  	return clk_hw->clk;
+>  }
+> diff --git a/include/linux/clk/renesas.h b/include/linux/clk/renesas.h
+> index 0ebbe2f0b45e..96c5e8f3b5d7 100644
+> --- a/include/linux/clk/renesas.h
+> +++ b/include/linux/clk/renesas.h
+> @@ -16,6 +16,11 @@ struct device;
+>  struct device_node;
+>  struct generic_pm_domain;
+>  
+> +enum {
+> +	PLL5_TARGET_DPI,
+> +	PLL5_TARGET_DSI
+> +};
+> +
+>  void cpg_mstp_add_clk_domain(struct device_node *np);
+>  #ifdef CONFIG_CLK_RENESAS_CPG_MSTP
+>  int cpg_mstp_attach_dev(struct generic_pm_domain *unused, struct device *dev);
+> @@ -32,4 +37,11 @@ void cpg_mssr_detach_dev(struct generic_pm_domain *unused, struct device *dev);
+>  #define cpg_mssr_attach_dev	NULL
+>  #define cpg_mssr_detach_dev	NULL
+>  #endif
+> +
+> +#ifdef CONFIG_CLK_RZG2L
+> +void rzg2l_cpg_dsi_div_set_divider(u8 divider, int target);
+> +#else
+> +static inline void rzg2l_cpg_dsi_div_set_divider(u8, int target) { }
+> +#endif
+> +
+>  #endif
+> -- 
+> 2.50.1
+> 
+> 
+
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Hugo Villeneuve
