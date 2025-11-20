@@ -1,36 +1,37 @@
 Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA21533EB16;
-	Thu, 20 Nov 2025 13:14:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F305934104C;
+	Thu, 20 Nov 2025 13:14:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763644481; cv=none; b=ArvS59LEfmqK2kbrEwPLYRWsGcpAkuPNHLwyUo03ozzhKOFiMdLHdCdlwP949VIADfXrgXMpT2WFVU38NxKoFDO01OCpRqcNAN8cJshusSI6PzlRXrati/kgkSn2y5trCe2zMLyO2nsdP/C+v4zFUvDPmcg/cgbFA76B57s8uik=
+	t=1763644488; cv=none; b=o6NzmtELPpR6o6CjBy3We9T05miDACV6O3HgrsFYPPUvwRPpNL5h/ca0P7uh7NN7a83IgFakljfXLti0FFEeweMOxUBXLlInV9nIY84nODinJ7blvaNsxHLScS7YFxSrsfiv9bkEp6OpUz/Q3hlnB3JcGV4JNJ3kOqhQC01iIXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763644481; c=relaxed/simple;
-	bh=XIGihbXCm7fgxLcQi4CgQ1rGtLza+JqTLoULwYaBhnY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hhtOeibhTfF/bQpA2QgAhjP6r8lrTOb9jXwC1iNZUwokxrjY/BSeKsIKRcLbFI6dniIc1xQeU3Gc4M81yyKmCszs/3ofscp92qq+HVIlxfrmClF29zXG5MqZCrKqEjcixjZVWgwntmlRr1x4GUqQs/FjQURj2ryuw2PrPwxYswM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=RnfS0G5y; arc=none smtp.client-ip=178.21.23.139
+	s=arc-20240116; t=1763644488; c=relaxed/simple;
+	bh=lPgY6dsHs0ftyRYcHno/kV3MSLoEVVnLwK0wJnu14+I=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=f2km3pQuwjeO7DyRW2HDHdMcdjBX7SJ+WjWZyZVUZq53HguYpyzOxvIpAViCq6XcPvxNPSNJGqDKYASZ06REy4uqqYP70v7ozUcMQlP6tA/qKqwcdtqHoooI6J1SbDeVf8XoMqTyqzJYjRSZoJbcudu8VWqSFpZ2LWH/QDZMlMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=Joj8OKyW; arc=none smtp.client-ip=178.21.23.139
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="RnfS0G5y"
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="Joj8OKyW"
 Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id AA1C925F58;
-	Thu, 20 Nov 2025 14:14:36 +0100 (CET)
+	by disroot.org (Postfix) with ESMTP id 92595261B4;
+	Thu, 20 Nov 2025 14:14:44 +0100 (CET)
 X-Virus-Scanned: SPAM Filter at disroot.org
 Received: from layka.disroot.org ([127.0.0.1])
  by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id sM3jaTWwSMZl; Thu, 20 Nov 2025 14:14:36 +0100 (CET)
+ id M6_Ke8QVFuIi; Thu, 20 Nov 2025 14:14:44 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1763644476; bh=XIGihbXCm7fgxLcQi4CgQ1rGtLza+JqTLoULwYaBhnY=;
-	h=From:To:Cc:Subject:Date;
-	b=RnfS0G5yIGuXX4+gFa6hRSwbg14a2xcWyF2YHY8T6ZReiMc0H2sYDWcSxGW2CewXx
-	 a9fOf/IeCoe7KWmzvXVfmEE9LaM6izTXxv+l4/JiIbkOdE9Ud8DbdY5dBONRwv4oIa
-	 f0l/eGyp/DrT0+QznUCSxHkNCisXCUAyaMxO9006sCgF0BVl765jUDv6T4tbkp1HeV
-	 YJpKK1t3VJ96DI0IZaK2qzVVF+Y/wGXwEM+8U+22AYl2HoeG3ERLoDEz0+fF5AR+vq
-	 Nxt2lL5TQJFt57Lqg7yMZhiyOwyPWeQbKq0ATi2KxpDotrDeTug6v26Gw23ZP393AW
-	 SV3m5iEIimxPg==
+	t=1763644483; bh=lPgY6dsHs0ftyRYcHno/kV3MSLoEVVnLwK0wJnu14+I=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=Joj8OKyWxN0/1QgaBGPpAu0q2QfuCtgo4VPqdvmTYVffn3wsn6Lk4kMfX3LjSOUkN
+	 RxR+WZqZSrA8tYK6qXsVLQSLVY7dy8VYOVIwHsNmo/ES7vv/qi6hXgLl+IBXDz5Lot
+	 MGz5qUBHsaDOdILbGd5gmd7cde0xjbJ5CFseSzRxLnwb23iw7T+yrdmK2J0TwWwbU3
+	 HQp5PrM65mKQj2wO5HvGG+mULsDFDbnV0dpy6ViNedywMSjU4IrVWMTt8NHwUrrpRh
+	 HfaUChRuhaHQfzePF2QQ7pIDtys0jTZVemjkrs8ezyl3tQB2wiH3XVi2k8908YuzHO
+	 8HbUKJVrBSKdw==
 From: Yao Zi <ziyao@disroot.org>
 To: Drew Fustini <fustini@kernel.org>,
 	Guo Ren <guoren@kernel.org>,
@@ -52,9 +53,11 @@ Cc: linux-riscv@lists.infradead.org,
 	Han Gao <rabenda.cn@gmail.com>,
 	Han Gao <gaohan@iscas.ac.cn>,
 	Yao Zi <ziyao@disroot.org>
-Subject: [PATCH 0/7] Implement CPU frequency scaling for TH1520
-Date: Thu, 20 Nov 2025 13:14:09 +0000
-Message-ID: <20251120131416.26236-1-ziyao@disroot.org>
+Subject: [PATCH 1/7] dt-bindings: clock: thead,th1520-clk-ap: Add ID for C910 bus clock
+Date: Thu, 20 Nov 2025 13:14:10 +0000
+Message-ID: <20251120131416.26236-2-ziyao@disroot.org>
+In-Reply-To: <20251120131416.26236-1-ziyao@disroot.org>
+References: <20251120131416.26236-1-ziyao@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -63,40 +66,26 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-On TH1520 SoC, c910_clk feeds the CPU cluster. It could be glitchlessly
-reparented to one of the two PLLs: either to cpu_pll0 indirectly through
-c910_i0_clk, or to cpu_pll1 directly. This series fixes a bug in PLL
-enabling code, supports rate change for PLL, and finally implements
-frequency scaling support for c910_clk.
+Add binding ID for C910 bus clock, which takes CLK_C910 as parent and is
+essential for C910 cluster's operation.
 
-However, to achieve reliable frequency scaling, CPU voltage must be
-adjusted together with frequency, and AON-firmware-based PMIC support
-for TH1520 SoC is still missing in mainline. Thus PATCH 7 that fills OPP
-table for TH1520 CPU and enables CPUfreq is only for testing purpose,
-not intended for upstream (yet).
+Signed-off-by: Yao Zi <ziyao@disroot.org>
+---
+ include/dt-bindings/clock/thead,th1520-clk-ap.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-Testing is done on Lichee Pi 4A board, only operating points safe
-to be used with the the default PMIC configuration are enabled in
-devicetree. I've confirmed there's a performance gain when running
-coremark and some building work compared to the case without cpufreq.
-
-This series is based on next-20251120, thanks for your time and review.
-
-Yao Zi (7):
-  dt-bindings: clock: thead,th1520-clk-ap: Add ID for C910 bus clock
-  clk: thead: th1520-ap: Poll for PLL lock and wait for stability
-  clk: thead: th1520-ap: Add C910 bus clock
-  clk: thead: th1520-ap: Support setting PLL rates
-  clk: thead: th1520-ap: Add macro to define multiplexers with flags
-  clk: thead: th1520-ap: Support CPU frequency scaling
-  [Not For Upstream] riscv: dts: thead: Add CPU clock and OPP table for
-    TH1520
-
- arch/riscv/boot/dts/thead/th1520.dtsi         |  35 ++
- drivers/clk/thead/clk-th1520-ap.c             | 350 +++++++++++++++++-
- .../dt-bindings/clock/thead,th1520-clk-ap.h   |   1 +
- 3 files changed, 379 insertions(+), 7 deletions(-)
-
+diff --git a/include/dt-bindings/clock/thead,th1520-clk-ap.h b/include/dt-bindings/clock/thead,th1520-clk-ap.h
+index 09a9aa7b3ab1..68b35cc61204 100644
+--- a/include/dt-bindings/clock/thead,th1520-clk-ap.h
++++ b/include/dt-bindings/clock/thead,th1520-clk-ap.h
+@@ -93,6 +93,7 @@
+ #define CLK_SRAM3		83
+ #define CLK_PLL_GMAC_100M	84
+ #define CLK_UART_SCLK		85
++#define CLK_C910_BUS		86
+ 
+ /* VO clocks */
+ #define CLK_AXI4_VO_ACLK		0
 -- 
 2.51.2
 
