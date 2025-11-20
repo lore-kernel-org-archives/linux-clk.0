@@ -1,129 +1,133 @@
-Received: from mail.hugovil.com (mail.hugovil.com [162.243.120.170])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 636AB376BC7;
-	Thu, 20 Nov 2025 15:46:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.120.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 364B334DB48;
+	Thu, 20 Nov 2025 16:11:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763653605; cv=none; b=NdwIFDnX2FejfDeOxs71vM9ZEYeAS8qPtOKPcGaQihBa21t5NmDwQATH244ixmKXD6VIWncZDEIolVhKQ+SMhPxWPfoFDJH0gZCpYJ0RHb/od8aQKYzDmzzSNq8erqME6ooSwaAHetmWeG8bo8bWsaPzi6sErzIUA7OCrmXn5cM=
+	t=1763655082; cv=none; b=G69n3XuZnPnLCOJ3HGO2JVaCUvScpqfAEoUr+2a5WIzwMlDC7tNhqXTkscb1K/pRCZiMhfnggOTJtGUBQFYbDUt0mg9tKRcX1jOr7GE9vIzXVSNXC8pok6d9jsf1z9gJOCBjHBf/Rt/9LiN9HQwzGFxZz48woeya3GKF58XAn00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763653605; c=relaxed/simple;
-	bh=w7egqwPdkyRdAP9QQTS3eajdxLTnnPbZmLlB1b+bgCE=;
-	h=Date:From:To:Cc:Message-Id:In-Reply-To:References:Mime-Version:
-	 Content-Type:Subject; b=jG94DUEtGVg8bnJzDANZr6EQr+BB9Vpv/PgiMopLJ2AN9Ipw9u/PfS3VIPa2mmP3vM0R+XfageCnAWY3d2UsK6V+FXCHW9Fkh418AMZ35arY897ZbjSsE7rKIOgjoMlP7PJmdGfNNWBhVXDmoov+uWlY1mVEMaETekQP80jFIiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com; spf=pass smtp.mailfrom=hugovil.com; dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b=bYupM6gz; arc=none smtp.client-ip=162.243.120.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hugovil.com
+	s=arc-20240116; t=1763655082; c=relaxed/simple;
+	bh=BbjFmvnZpIAYJemMHM1v/+EA292tt6R+P8dHMuj7Xbo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QDIUMhTfUbVvhr0XM1i/7RYf07JjFCUhsmnP1BYcX5uav6viwyi+Of0vhJva7IgBAATwQ5wEG+D7Q03ZyXy7DZRCfwxZ5VxflJS2H9Pb7ZmX7w/H3+xf0/RxeXNDFUoVXkGqB1KUsT+bvMPEnbe0XGjS3wPcfiCAmdI0iNBjZe8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j6sZSIw/; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b="bYupM6gz"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hugovil.com
-	; s=x; h=Subject:Content-Transfer-Encoding:Mime-Version:Message-Id:Cc:To:From
-	:Date:subject:date:message-id:reply-to;
-	bh=F5kUcCCA3MnU06v/xhs6ElwS8RfrplKyFjcTm1nO0v4=; b=bYupM6gzzW9+NphKdhGS+z+ZJw
-	fK+dOqOh0/PKpHF0ridnKt3jZ0Tm8l6jEgiHLzstvWlyI9o/65BB5FAVm2ubMbR/j0gAPCnw02kwq
-	rK84VhNVaWAhksu3+kZOyzWJO/fdZL5olY4xc2ob+Uy24+ZMeEAgSuXxKmyoDWr3sH8I=;
-Received: from modemcable168.174-80-70.mc.videotron.ca ([70.80.174.168]:48600 helo=pettiford)
-	by mail.hugovil.com with esmtpa (Exim 4.92)
-	(envelope-from <hugo@hugovil.com>)
-	id 1vM6rf-0005hZ-MY; Thu, 20 Nov 2025 10:46:34 -0500
-Date: Thu, 20 Nov 2025 10:46:31 -0500
-From: Hugo Villeneuve <hugo@hugovil.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Chris Brandt <chris.brandt@renesas.com>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Biju Das
- <biju.das.jz@bp.renesas.com>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Hien Huynh <hien.huynh.px@renesas.com>,
- Nghia Vo <nghia.vo.zn@renesas.com>, linux-renesas-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org
-Message-Id: <20251120104631.b60230d06055a2611ed67760@hugovil.com>
-In-Reply-To: <CAMuHMdWeZsrE=pVroosOg6y-pjsE9CqyoBi5P_Ja5kZ0fgbY4w@mail.gmail.com>
-References: <20251119022744.1599235-1-chris.brandt@renesas.com>
-	<20251119022744.1599235-2-chris.brandt@renesas.com>
-	<20251120094743.48a0db4ead55c3968cb0cb3d@hugovil.com>
-	<CAMuHMdWeZsrE=pVroosOg6y-pjsE9CqyoBi5P_Ja5kZ0fgbY4w@mail.gmail.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j6sZSIw/"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7944BC16AAE;
+	Thu, 20 Nov 2025 16:11:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1763655081;
+	bh=BbjFmvnZpIAYJemMHM1v/+EA292tt6R+P8dHMuj7Xbo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=j6sZSIw/JPOJ5KPAnyvMTDJJwbyriGW5UTQEbsjE6QELz2EfAY2mJp36zyAAt0b+y
+	 +vswlXRwsb0Sxxg8huowpVFhvSMiHekutXcQKmGpubePU5D60wuTCeWev9J/6Fu+op
+	 cCSRGK1ecV/0eAkS9q+wD2uL2rM/iY1F7eOaa/u0kGHEoe9bkUCWrAbKWPBad3dSJT
+	 N2euymlkYqScUvei7EX4PwXMWXXmS+KZjw9lh/5DnWGrDlxud6l/CIoB+5tVAJ2r48
+	 Fnk6TPbYFHVm8R935wu3uLwRsCucySQuCtStJiF1UoblbTDE8eVGumiMuEoLObpe/g
+	 VTBQZGKbhUaKw==
+Date: Thu, 20 Nov 2025 10:11:19 -0600
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Matti Vaittinen <matti.vaittinen@linux.dev>
+Cc: Pavel Machek <pavel@kernel.org>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	devicetree@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
+	Sebastian Reichel <sre@kernel.org>, Mark Brown <broonie@kernel.org>,
+	linux-gpio@vger.kernel.org, Andreas Kemnade <andreas@kemnade.info>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-pm@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	linux-clk@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
+	Lee Jones <lee@kernel.org>, linux-rtc@vger.kernel.org,
+	linux-leds@vger.kernel.org,
+	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: Re: [PATCH v5 04/16] dt-bindings: battery: Voltage drop properties
+Message-ID: <176365507949.1467967.14779548559679744817.robh@kernel.org>
+References: <cover.1763625920.git.mazziesaccount@gmail.com>
+ <93768cba6688714756fca49cc57d46a111885863.1763625920.git.mazziesaccount@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 70.80.174.168
-X-SA-Exim-Mail-From: hugo@hugovil.com
-X-Spam-Level: 
-X-Spam-Report: 
-	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-	* -0.7 NICE_REPLY_A Looks like a legit reply (A)
-Subject: Re: [PATCH v5 1/2] clk: renesas: rzg2l: Remove DSI clock rate
- restrictions
-X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
-X-SA-Exim-Scanned: Yes (on mail.hugovil.com)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <93768cba6688714756fca49cc57d46a111885863.1763625920.git.mazziesaccount@gmail.com>
 
-Hi Geert,
 
-On Thu, 20 Nov 2025 16:18:49 +0100
-Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-
-> Hi Hugo,
+On Thu, 20 Nov 2025 10:20:24 +0200, Matti Vaittinen wrote:
+> From: Matti Vaittinen <mazziesaccount@gmail.com>
 > 
-> On Thu, 20 Nov 2025 at 15:47, Hugo Villeneuve <hugo@hugovil.com> wrote:
-> > On Tue, 18 Nov 2025 21:27:43 -0500
-> > Chris Brandt <chris.brandt@renesas.com> wrote:
-> > > Convert the limited MIPI clock calculations to a full range of settings
-> > > based on math including H/W limitation validation.
-> > > Since the required DSI division setting must be specified from external
-> > > sources before calculations, expose a new API to set it.
-> > >
-> > > Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-> > > Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
-> > > Tested-by: Biju Das <biju.das.jz@bp.renesas.com>
+> ROHM has developed a so called "zero-correction" -algorithm to improve
+> the fuel-gauging accuracy close to the point where battery is depleted.
+> This relies on battery specific "VDR" (voltage drop rate) tables, which
+> are measured from the battery, and which describe the voltage drop rate.
+> More thorough explanation about the "zero correction" and "VDR"
+> parameters is here:
+> https://lore.kernel.org/all/676253b9-ff69-7891-1f26-a8b5bb5a421b@fi.rohmeurope.com/
 > 
-> > > --- a/include/linux/clk/renesas.h
-> > > +++ b/include/linux/clk/renesas.h
-> > > @@ -16,6 +16,11 @@ struct device;
-> > >  struct device_node;
-> > >  struct generic_pm_domain;
-> > >
-> > > +enum {
-> > > +     PLL5_TARGET_DPI,
-> > > +     PLL5_TARGET_DSI
-> > > +};
-> > > +
-> > >  void cpg_mstp_add_clk_domain(struct device_node *np);
-> > >  #ifdef CONFIG_CLK_RENESAS_CPG_MSTP
-> > >  int cpg_mstp_attach_dev(struct generic_pm_domain *unused, struct device *dev);
-> > > @@ -32,4 +37,11 @@ void cpg_mssr_detach_dev(struct generic_pm_domain *unused, struct device *dev);
-> > >  #define cpg_mssr_attach_dev  NULL
-> > >  #define cpg_mssr_detach_dev  NULL
-> > >  #endif
-> > > +
-> > > +#ifdef CONFIG_CLK_RZG2L
-> > > +void rzg2l_cpg_dsi_div_set_divider(u8 divider, int target);
-> > > +#else
-> > > +static inline void rzg2l_cpg_dsi_div_set_divider(u8, int target) { }
-> >
-> > Maybe use:
-> >
-> > #define rzg2l_cpg_dsi_div_set_divider(...) do { } while (0)
+> Document the VDR zero-correction specific battery properties used by the
+> BD71815, BD71828, BD72720 and some other ROHM chargers. (Note, charger
+> drivers aren't upstream yet).
 > 
-> I assume you are saying this in the context of the kernel test robot's
-> report?
+> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+> 
+> ---
+> 
+> Revision history:
+>  v4 => v5:
+>  - Move volt-drop parameters from rohm,vdr-battry,yaml to the
+>    battery.yaml
+>  - drop rohm, -prefix from volt-drop-* properties
+>  - Drop the rohm,vdr-battry,yaml
+>  - Add comment clarifying what the rohm,volt-drop-* properties are for
+>    because this may no longer be obvious as they were moved to common
+>    battery.yaml
+>  - Drop Linus Walleij's rb-tag because the concept was changed
+> 
+>  v3 => v4:
+>  - No changes
+> 
+>  v2 => v3:
+>  - Constrain VDR threshold voltage to 48V
+>  - Use standard '-bp' -suffix for the rohm,volt-drop-soc
+> 
+>  RFCv1 => v2:
+>  - Add units to rohm,volt-drop-soc (tenths of %)
+>  - Give real temperatures matching the VDR tables, instead of vague
+>    'high', 'normal', 'low', 'very low'. (Add table of temperatures and
+>    use number matching the right temperature index in the VDR table name).
+>  - Fix typoed 'algorithm' in commit message.
+> 
+> The parameters are describing the battery voltage drop rates - so they
+> are properties of the battery, not the charger. Thus they do not belong
+> in the charger node.
+> 
+> The right place for them is the battery node, which is described by the
+> generic "battery.yaml". There were some discussion whether these
+> properties should be in their own file, or if they should be added to
+> battery.yaml. Discussion can be found from:
+> https://lore.kernel.org/all/52b99bf7-bfea-4cee-aa57-4c13e87eaa0d@gmail.com/
+> This patch implements the volt-drop properties as generic (not vemdor
+> specific) properties in the battery.yaml. It's worth noting that these
+> properties are:
+> 
+>   - Meaningful only for those charger drivers which have the VDR
+>     algorithm implemented. (And even though the algorithm is not charger
+>     specific, AFAICS, it is currently only used by some ROHM PMIC
+>     drivers).
+>   - Technique of measuring the VDR tables for a battery is not widely
+>     known. AFAICS, only folks at ROHM are measuring those for some
+>     customer products. We do have those tables available for some of the
+>     products, like Kobo e-readers though.
+> ---
+>  .../bindings/power/supply/battery.yaml        | 22 +++++++++++++++++++
+>  1 file changed, 22 insertions(+)
+> 
 
-Yes, but it was not to fix the warning.
-The report simply made me realize it was an inline function, and I was
-not sure if it was the right way to define an empty function/macro,
-especially in a header file.
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
-> Static inline functions offer more safety. Just s/u8/u8 divider/ should
-> fix the W=1 issue.
-
-Agreed.
-
-Thank you for the infos.
-
--- 
-Hugo Villeneuve
