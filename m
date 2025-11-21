@@ -1,136 +1,137 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail-m15593.qiye.163.com (mail-m15593.qiye.163.com [101.71.155.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8071E22D7B6;
-	Fri, 21 Nov 2025 07:26:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2255A1F2380;
+	Fri, 21 Nov 2025 07:54:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763709970; cv=none; b=AVyAjq/FrQYbdfEfFrNeD5NrspuYtztsJkak22dT7QjVUIF3vAASVbCKwQGQTwi/BR27EM5y19ha/xZAcuiZyJ0hn98tD8luJdCKIGTxbb96wxcVcx4wKWC2kIbf1D0yPQYFCAaxZFOivLJrmd3us4Txq7QfsyNlGXrQJsnU8PI=
+	t=1763711645; cv=none; b=u5MBi7fmYq/dQ6sEiUkhLklU19xV/k1uvtdRvsa6/JnVcTkAY2nQc6uDmW3SvkolIAkc83J364x6a6olXkIXzhxbOhG1j8lN5SbAI4UjH/5Mcba0D6HjVuJ7E/fvgTEcnA/kPWtwgtW5+7hf0NdXaHoQ/vxP8N+VExeGdw3df2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763709970; c=relaxed/simple;
-	bh=zoTP0H6LCrDf44J80jKYYIbxqWfXSddsSjSQgVFRNfU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eO0C7eGOFnpHD7mJgJLso01zWgch3Gg8GxTJs+B/WsJaARqPSXiRs1n6exT0yTuzKtrjImBRSf2oJCkA3udVUqyU1nO8MKLOSE1ZyMa8E1ABsKh6ECPedfcjTbYNWXArltBxbLYFY3hRoyIhVDMfrynQbW+XZ6W76D76wt4p8iU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L8CQ9wsF; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1763711645; c=relaxed/simple;
+	bh=DN1Mh50KHAUHfb0GPyfL8mu2kFKNmIol6jUYEDbadbY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=oKak9Ec5BEJuQ/piwRlqhEz//ZqApDJPEquFzDHLIlcFHJvaKz7MKpb8wsoXqTmeZB82sBptdkGClZwX7kV4EtFjI+nzguPLhksrH+mfIVBs6lZUeyM7IYZoWofF1RQEPzoZ8OFoXWXoqASH8Pg+Z3Rh9zGp8mKgBhkkjXWW5rw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=M9t3FFIC; arc=none smtp.client-ip=101.71.155.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L8CQ9wsF"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 826C4C4CEF1;
-	Fri, 21 Nov 2025 07:26:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763709970;
-	bh=zoTP0H6LCrDf44J80jKYYIbxqWfXSddsSjSQgVFRNfU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=L8CQ9wsFqMOEctmbhfeXOzYXupALekL3vnuD1Y7rFavM7Ye6aM9XIu49fnSyMVvD5
-	 oZt/mKvzeMd7qpubTvXUhCKx1ZrmbtClmMg3lyMa/A8fFTl7xvjv0COubOw9SQ4pam
-	 /hbucJ5shkJ/Eye/XId6Y/myqwJSjCHRiASna+zbiTyJTm0/V1O2BZiDzaR1hPvzhP
-	 OLIpYfSGr14tRiYUzjNASGbSPGdpqPYafDTMAq9hzSE1EZRk9JLH6MwlXpha3izQW0
-	 QKBEbvqHVif4zyYp9alSuBPJVkMrsuOq++wlIw8JTaSNBDRL/CfeHhMJHtKnQaZbO/
-	 L6y3XBJucNLwQ==
-Date: Fri, 21 Nov 2025 08:26:07 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Elaine Zhang <zhangqing@rock-chips.com>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, heiko@sntech.de, 
-	robh@kernel.org, p.zabel@pengutronix.de, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, finley.xiao@rock-chips.com
-Subject: Re: [PATCH v8 1/2] dt-bindings: clock: rockchip: Add RK3506 clock
- and reset unit
-Message-ID: <20251121-tunneling-quaint-copperhead-18328e@kuoka>
-References: <20251121024645.360615-1-zhangqing@rock-chips.com>
- <20251121024645.360615-2-zhangqing@rock-chips.com>
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="M9t3FFIC"
+Received: from rockchip.. (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 2a6802ba9;
+	Fri, 21 Nov 2025 15:53:51 +0800 (GMT+08:00)
+From: Elaine Zhang <zhangqing@rock-chips.com>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	zhangqing@rock-chips.com,
+	heiko@sntech.de,
+	robh@kernel.org,
+	p.zabel@pengutronix.de,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org
+Cc: devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	finley.xiao@rock-chips.com
+Subject: [PATCH v9 0/2] clk: rockchip: Add clock controller for the RK3506
+Date: Fri, 21 Nov 2025 15:53:48 +0800
+Message-Id: <20251121075350.2564860-1-zhangqing@rock-chips.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251121024645.360615-2-zhangqing@rock-chips.com>
+Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a9aa567c1dd03a3kunm3bab98bb1f49d3
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGh5PH1YZS0sdTR1LGU0dHkpWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+DKIM-Signature: a=rsa-sha256;
+	b=M9t3FFICO7Uutdk3TGTwV5h4R4PCM9h7xNEL7r6fo9We6p+z6rcI/oYkcniv9uznOqGD6YROYuT2MQqzbnNXwzFlly4lTxetpG/+Sg0Wf5Zym5zBkl6FfzIqt5K/LDBg+8uEoWoEqmDgQxpG1oVclhnMXTLR/RMipc6xvCx6eRY=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=yy/B/rDlJs+dDRIGLKFVzWY/xMsnaoY/lCqNeU8R/Iw=;
+	h=date:mime-version:subject:message-id:from;
 
-On Fri, Nov 21, 2025 at 10:46:44AM +0800, Elaine Zhang wrote:
-> From: Finley Xiao <finley.xiao@rock-chips.com>
-> 
-> Add device tree bindings for clock and reset unit on RK3506 SoC.
-> Add clock and reset IDs for RK3506 SoC.
-> 
-> Signed-off-by: Finley Xiao <finley.xiao@rock-chips.com>
-> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
-> ---
->  .../bindings/clock/rockchip,rk3506-cru.yaml   |  54 ++++
->  .../dt-bindings/clock/rockchip,rk3506-cru.h   | 285 ++++++++++++++++++
->  .../dt-bindings/reset/rockchip,rk3506-cru.h   | 211 +++++++++++++
->  3 files changed, 550 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3506-cru.yaml
->  create mode 100644 include/dt-bindings/clock/rockchip,rk3506-cru.h
->  create mode 100644 include/dt-bindings/reset/rockchip,rk3506-cru.h
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/rockchip,rk3506-cru.yaml b/Documentation/devicetree/bindings/clock/rockchip,rk3506-cru.yaml
-> new file mode 100644
-> index 000000000000..fee49700113e
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/rockchip,rk3506-cru.yaml
-> @@ -0,0 +1,54 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/rockchip,rk3506-cru.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Rockchip RK3506 Clock and Reset Unit (CRU)
-> +
-> +maintainers:
-> +  - Finley Xiao <finley.xiao@rock-chips.com>
-> +  - Heiko Stuebner <heiko@sntech.de>
-> +
-> +description:
-> +  The RK3506 CRU generates the clock and also implements reset for SoC
-> +  peripherals.
-> +
-> +properties:
-> +  compatible:
-> +    const: rockchip,rk3506-cru
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  "#clock-cells":
-> +    const: 1
-> +
-> +  "#reset-cells":
-> +    const: 1
-> +
-> +  clocks:
-> +    maxItems: 1
-> +    description:
-> +      Reference clock input. This is optional when the clock source
-> +      has already been configured and enabled by the bootloader/firmware.
+[PATCH 1/5] ~ [PATCH 3/5] has applied.
 
-So your description confirms - this is not an optional clock. It must be
-enabled/configure and it is always in the hardware. You could have
-avoided one more version of patchset if you only bothered to respond to
-review.
+Change in V9:
+[PATCH v9 1/2]: Fix "clocks"
+[PATCH v9 2/2]: No change
 
-Drop description and make it required.
+Change in V8:
+[PATCH v8 1/2]: Add explanations for "clocks"
+[PATCH v8 2/2]: No change
 
-> +
-> +  clock-names:
-> +    const: xin24m
+Change in V7:
+[PATCH v7 1/5]: No change
+[PATCH v7 2/5]: Redefine clk id(start at 0), drop RESETN for reset id.
+[PATCH v7 3/5]: Drop RESETN for reset id.
+[PATCH v7 4/5]: Fix "description: |", drop RESETN for reset id.
+[PATCH v7 5/5]: Drop RESETN for reset id.
 
-Nothing improved. Conor made comments some revisions ago and reminded
-you about them. And you just ignored them?
+Change in V6:
+Drop pvtpll, others no change.
+There are many questions about pvtpll and have some dependency issues.
+They will be submitted separately later.
 
-That's just xin pin, isn't it?
+Change in V5:
+[PATCH v5 1/7]: No change
+[PATCH v5 2/7]: No change
+[PATCH v5 3/7]: Drop RV1126B_GRF_SOC_STATUS0
+[PATCH v5 4/7]: Drop syscon
+[PATCH v5 5/7]: No change
+[PATCH v5 6/7]: Add clocks and clock-names, fix id define
+[PATCH v5 7/7]: Drop RK3506_GRF_SOC_STATUS
 
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - "#clock-cells"
-> +  - "#reset-cells"
+Change in V4:
+[PATCH v4 1/7]: No change
+[PATCH v4 2/7]: remove label
+[PATCH v4 3/7]: No change
+[PATCH v4 4/7]: remove label,fix order
+[PATCH v4 5/7]: No change
+[PATCH v4 6/7]: Add yaml and dt-bindings for the RK3506
+[PATCH v4 7/7]: Add clock controller for the RK3506
 
-clocks and clock-names.
+Change in V3:
+[PATCH v3 1/5]: No change
+[PATCH v3 2/5]: Fix define error
+[PATCH v3 3/5]: update driver,fix errir
+[PATCH v3 4/5]: fix error
+[PATCH v3 5/5]: No change
 
-Best regards,
-Krzysztof
+Change in V2:
+[PATCH v2 1/5]: update commit message, rename v2 to multi_pll
+[PATCH v2 2/5]: Modify DT binding headers license
+[PATCH v2 3/5]: update driver
+[PATCH v2 4/5]: fix error
+[PATCH v2 5/5]: update commit message
+
+Elaine Zhang (1):
+  clk: rockchip: Add clock and reset driver for RK3506
+
+Finley Xiao (1):
+  dt-bindings: clock: rockchip: Add RK3506 clock and reset unit
+
+ .../bindings/clock/rockchip,rk3506-cru.yaml   |  55 ++
+ drivers/clk/rockchip/Kconfig                  |   7 +
+ drivers/clk/rockchip/Makefile                 |   1 +
+ drivers/clk/rockchip/clk-rk3506.c             | 869 ++++++++++++++++++
+ drivers/clk/rockchip/clk.h                    |  13 +
+ drivers/clk/rockchip/rst-rk3506.c             | 226 +++++
+ .../dt-bindings/clock/rockchip,rk3506-cru.h   | 285 ++++++
+ .../dt-bindings/reset/rockchip,rk3506-cru.h   | 211 +++++
+ 8 files changed, 1667 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3506-cru.yaml
+ create mode 100644 drivers/clk/rockchip/clk-rk3506.c
+ create mode 100644 drivers/clk/rockchip/rst-rk3506.c
+ create mode 100644 include/dt-bindings/clock/rockchip,rk3506-cru.h
+ create mode 100644 include/dt-bindings/reset/rockchip,rk3506-cru.h
+
+
+base-commit: 4f0744c46de2c40e7a8f35d730e322bf33f2bb63
+-- 
+2.34.1
 
