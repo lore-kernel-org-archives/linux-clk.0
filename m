@@ -1,1246 +1,1896 @@
-Received: from mail-m3291.qiye.163.com (mail-m3291.qiye.163.com [220.197.32.91])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B653B14A8E;
-	Fri, 21 Nov 2025 08:29:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E207B25BF13
+	for <linux-clk@vger.kernel.org>; Fri, 21 Nov 2025 08:55:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763713776; cv=none; b=IlvEPzRmGDw2K2U2xkMJj80TlSdxBaz4IutXLxbTIjCoOMxkkFcHYGuoiPo9MwxrPZ3jZUawmX0XZ/Ex/bmlFGh4adi9bLlgJrjCzVGkBfECmuIfkZfjZROro2RM5PcYFBYvHsCDLGck4rn4uWxyu4c0UeNUCjQsVjOOKADpCGY=
+	t=1763715309; cv=none; b=DAgM2bQZQaMNgiyO2QGlFc75ihSHUHLeltAU67kUIe8tKVdpsKCSj1PXf7zmwCwDe18f6yfPBO6V2e6QS0UM1a8VNx9zf4WL4U2TLMK1Nn02zc5WYd9vA/MmrAm3hiec8zB9HmJXLEZ9uc+oSGlWzcbDhyxatSBBTj8/p678Wsc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763713776; c=relaxed/simple;
-	bh=x5/AY0Awidb1qHGYg/tUYmapEJjbPpmngHqrmM0npPE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=n+T+gyypH2wscK90rIAbXaamiAAO1obOuRm5bFfcPSbC0jX8YfrICkjeLQpw1byJRDyQvXeHA2GmbZGifgXE16d8Fi0mvra4mkTb8FZh77oraHE+f7PtcD+yKR6gy3ov07NM80rYiyeqkGL+0/QTuXGfnDLFvZlxrjdzElcgngU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=hy74oOah; arc=none smtp.client-ip=220.197.32.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+	s=arc-20240116; t=1763715309; c=relaxed/simple;
+	bh=EZFtndmFWnuf++JeortV0BbNdahpzuMYlp8NaZ0OTmg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=p2RheddPzUAemXJlZVxjXvL1bmWODAnAUeUS19lN75o5Jg5nzlpvJa971ZflZTYF4wrX2yileYkOpZaK6fzF77F0NdUDX6DUvB2wBdf2pkzkeh1xUpd9SjHEHRzU2ona0swgPd1oRkHTutGQouv04F026Wl6fQyvbJeatvPMoTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BSi6UVLV; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="hy74oOah"
-Received: from rockchip.. (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 2a6802bc1;
-	Fri, 21 Nov 2025 15:53:54 +0800 (GMT+08:00)
-From: Elaine Zhang <zhangqing@rock-chips.com>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	zhangqing@rock-chips.com,
-	heiko@sntech.de,
-	robh@kernel.org,
-	p.zabel@pengutronix.de,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org
-Cc: devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	finley.xiao@rock-chips.com
-Subject: [PATCH v9 2/2] clk: rockchip: Add clock and reset driver for RK3506
-Date: Fri, 21 Nov 2025 15:53:50 +0800
-Message-Id: <20251121075350.2564860-3-zhangqing@rock-chips.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251121075350.2564860-1-zhangqing@rock-chips.com>
-References: <20251121075350.2564860-1-zhangqing@rock-chips.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BSi6UVLV"
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-42b3ac40ae4so1001889f8f.0
+        for <linux-clk@vger.kernel.org>; Fri, 21 Nov 2025 00:55:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1763715303; x=1764320103; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZYvsA+fpMoRLEWITN90yXEY2n383HSQ2uYzgOJefmi4=;
+        b=BSi6UVLVyzloKhqkP8dth6+WxIlQ2WN6j2n4z5npxxzRvWZHO1P23FSJ+YnUnSS+bJ
+         +ZYyMTx3qLSQ9PFoON8yETrSwX0q2guO7y6JDak4byP9VrEL6jmSE30PqiWCqSeYHgvD
+         HJiRJqnbq2Jhyb19Wqh2V/boxF8ySN9uCX/TgvxbYaJ5rECLpRp6cUjXMjerZSmojijw
+         uETare8O/GSNhSv6hNEvyfQOqLdL1IPfPZ5Oh/EqGuLh+HtNjxyzxiuaa0vIO5HvkHkD
+         U7Iu3VIcjBfygmj2stn8E23lFvI7EmgBeuoESULrRvm6QXhl9HhvCIhWT+RcHEOpFeIX
+         +4Vw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763715303; x=1764320103;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=ZYvsA+fpMoRLEWITN90yXEY2n383HSQ2uYzgOJefmi4=;
+        b=ZYoHZdj8l6MVvYvjaCbXq/8DKitL5Xuz6nDdwZku12IXzIGSVdhcVlzM+hx4GDibcL
+         DCK2DZ0i2XIgeZkS3SDHpUSOAVpwiK31UdmTvxGn+gayLwaMYWCzUr5iY7oO/vJ5PQNP
+         P3A8cjrTBBnYMspr9cb01S2yWiZ4bnu0iZQ8wpAYwIpTgj+kq18g910CtoALj8EX54yt
+         JtW3A+EaA73jlxu7ht5vhvzOA/Ng4v93FNy6Xb0hCAiEPrFlvi9qpK6X/179SL3tCaTB
+         vRcwm0eFDw3TOhqf61A6ENjZuCplVnnIK+nl3ZBa02QrBTlhXXF29dcqYGDPrreC1xBQ
+         sbEw==
+X-Forwarded-Encrypted: i=1; AJvYcCUvu1o6GLPqMArVJPkf3Z7U9jI+xaguTmJ+YbRF/tQHzdPv3pQSoLqaH/tzIZtOexifbaCqpYCZ0aI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFQMEhRUTCs2nDSHHiLGBRNJILN1bs+7LwAzmHg215N+x6fo1p
+	Jol8r2ss7iK83GGpYtC67GjDq/9YJZYbFgZutBzXR5a4x3KxjJMOXNRaKepj8hgiDBjH9o8a6Uz
+	rzNxJnelR9pAdccFZQQS3ZkmnVRX0d5c=
+X-Gm-Gg: ASbGncss2EnrzeqxCMiiFQqPh3OXUH+G+F5lAUpUkCAzUqw7zSMdDvkRVuDVitVWCfl
+	rmtfh+Ufu8CXQDmeOfWo4HaYOJGYx0rI8ymvMo8SOOADke1JhqnvCGEz5OiUzi/yh3NTAcUZUN+
+	HHGuLJJykPuC8DbElijTbCTNqvelfE75UjmY9Ld5kcvki3tGvDzuw/+V1e40Xn+JjfLz9hZ7ZdI
+	6LwmOHIqlpbuJwj4fkZYU6SlofnR/RAYiaKEtGh8yLyal9sk6leaNwRC21ft+pHJqIw3XZH5if+
+	bFwGd2g=
+X-Google-Smtp-Source: AGHT+IHNO4e1iNj5+c7hlkcZ8Azi3RpxhV3qWEPsz8Q96195kXCFRwPE9nmEk2h3zyxv2r6CQU9I2Xh123BVaT26xgs=
+X-Received: by 2002:a05:6000:4012:b0:40e:31a2:7efe with SMTP id
+ ffacd0b85a97d-42cc1accff0mr1396274f8f.14.1763715302194; Fri, 21 Nov 2025
+ 00:55:02 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a9aa567cdf203a3kunm3bab98bb1f4a20
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQ00eHlZNS0gYTk9OGUpKH0hWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
-	hVSktLVUpCS0tZBg++
-DKIM-Signature: a=rsa-sha256;
-	b=hy74oOahwEgbiP5JqzYf9gjkalZD3JKJhkSs7+BnVmpzba71Pl5j/gCtWtS/uJH6H/QgCadEBUGFsCaaTkfy+VWwBjY4heDQ1dd1ytxjIaX6T2VEi1kfItYwt0TeSpOdZcs5hcckoFN6lFU201MG4ZQ739LnvYoKWQpbesBEODE=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=f6gh+DNPiUZ7VqhaLdDsumHJPA2efqxXxkNpQ5Ioh4A=;
-	h=date:mime-version:subject:message-id:from;
+References: <20250915080157.28195-1-clamor95@gmail.com> <5623508.NgBsaNRSFp@senjougahara>
+ <CAPVz0n0=pkKdK44JjkeU1E9RO-gV-wNAsSuim9=k1hbCFC3zNg@mail.gmail.com> <6076984.k3LOHGUjKi@senjougahara>
+In-Reply-To: <6076984.k3LOHGUjKi@senjougahara>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Fri, 21 Nov 2025 10:54:50 +0200
+X-Gm-Features: AWmQ_bmUzqrDZlZkI2heaFtHS6_prGuz3ffsoBnKHNaNYu-TInOy2R7pGVTUZpY
+Message-ID: <CAPVz0n02T6L70gaKiyUqDWNKAfs9nyQBTEMXPbf4S5DSWBMDEw@mail.gmail.com>
+Subject: Re: [PATCH v3 08/11] memory: tegra: Add Tegra114 EMC driver
+To: Mikko Perttunen <mperttunen@nvidia.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Thierry Reding <treding@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Dmitry Osipenko <digetx@gmail.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, 
+	Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add the clock and reset tree definitions for the new
-RK3506 SoC.
+=D0=BF=D1=82, 21 =D0=BB=D0=B8=D1=81=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 06:0=
+4 Mikko Perttunen <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
+>
+> On Tuesday, November 18, 2025 5:05=E2=80=AFPM Svyatoslav Ryhel wrote:
+> > =D0=B2=D1=82, 18 =D0=BB=D0=B8=D1=81=D1=82. 2025=E2=80=AF=D1=80. =D0=BE =
+09:08 Mikko Perttunen <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
+> > >
+> > > On Monday, September 15, 2025 5:01=E2=80=AFPM Svyatoslav Ryhel wrote:
+> > > > Introduce driver for the External Memory Controller (EMC) found in =
+Tegra114
+> > > > SoC. It controls the external DRAM on the board. The purpose of thi=
+s
+> > > > driver is to program memory timing for external memory on the EMC c=
+lock
+> > > > rate change.
+> > > >
+> > > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> > > > ---
+> > > >  drivers/memory/tegra/Kconfig        |   12 +
+> > > >  drivers/memory/tegra/Makefile       |    1 +
+> > > >  drivers/memory/tegra/tegra114-emc.c | 1487 +++++++++++++++++++++++=
+++++
+> > > >  3 files changed, 1500 insertions(+)
+> > > >  create mode 100644 drivers/memory/tegra/tegra114-emc.c
+> > > >
+> > > > diff --git a/drivers/memory/tegra/Kconfig b/drivers/memory/tegra/Kc=
+onfig
+> > > > index fc5a27791826..11e7cc357d39 100644
+> > > > --- a/drivers/memory/tegra/Kconfig
+> > > > +++ b/drivers/memory/tegra/Kconfig
+> > > > @@ -35,6 +35,18 @@ config TEGRA30_EMC
+> > > >         This driver is required to change memory timings / clock ra=
+te for
+> > > >         external memory.
+> > > >
+> > > > +config TEGRA114_EMC
+> > > > +     tristate "NVIDIA Tegra114 External Memory Controller driver"
+> > > > +     default y
+> > > > +     depends on ARCH_TEGRA_114_SOC || COMPILE_TEST
+> > > > +     select TEGRA124_CLK_EMC if ARCH_TEGRA
+> > > > +     select PM_OPP
+> > > > +     help
+> > > > +       This driver is for the External Memory Controller (EMC) fou=
+nd on
+> > > > +       Tegra114 chips. The EMC controls the external DRAM on the b=
+oard.
+> > > > +       This driver is required to change memory timings / clock ra=
+te for
+> > > > +       external memory.
+> > > > +
+> > > >  config TEGRA124_EMC
+> > > >       tristate "NVIDIA Tegra124 External Memory Controller driver"
+> > > >       default ARCH_TEGRA_124_SOC
+> > > > diff --git a/drivers/memory/tegra/Makefile b/drivers/memory/tegra/M=
+akefile
+> > > > index 0750847dac3c..d36be28efc4a 100644
+> > > > --- a/drivers/memory/tegra/Makefile
+> > > > +++ b/drivers/memory/tegra/Makefile
+> > > > @@ -15,6 +15,7 @@ obj-$(CONFIG_TEGRA_MC) +=3D tegra-mc.o
+> > > >
+> > > >  obj-$(CONFIG_TEGRA20_EMC)  +=3D tegra20-emc.o
+> > > >  obj-$(CONFIG_TEGRA30_EMC)  +=3D tegra30-emc.o
+> > > > +obj-$(CONFIG_TEGRA114_EMC) +=3D tegra114-emc.o
+> > > >  obj-$(CONFIG_TEGRA124_EMC) +=3D tegra124-emc.o
+> > > >  obj-$(CONFIG_TEGRA210_EMC_TABLE) +=3D tegra210-emc-table.o
+> > > >  obj-$(CONFIG_TEGRA210_EMC) +=3D tegra210-emc.o
+> > > > diff --git a/drivers/memory/tegra/tegra114-emc.c b/drivers/memory/t=
+egra/tegra114-emc.c
+> > > > new file mode 100644
+> > > > index 000000000000..b986b5509f41
+> > > > --- /dev/null
+> > > > +++ b/drivers/memory/tegra/tegra114-emc.c
+> > > > @@ -0,0 +1,1487 @@
+> > > > +// SPDX-License-Identifier: GPL-2.0-only
+> > > > +/*
+> > > > + * Tegra114 External Memory Controller driver
+> > > > + *
+> > > > + * Based on downstream driver from NVIDIA and tegra124-emc.c
+> > > > + * Copyright (C) 2011-2014 NVIDIA Corporation
+> > > > + *
+> > > > + * Copyright (C) 2024 Svyatoslav Ryhel <clamor95@gmail.com>
+> > > > + */
+> > > > +
+> > > > +#include <linux/clk-provider.h>
+> > > > +#include <linux/clk.h>
+> > > > +#include <linux/clkdev.h>
+> > > > +#include <linux/clk/tegra.h>
+> > > > +#include <linux/debugfs.h>
+> > > > +#include <linux/delay.h>
+> > > > +#include <linux/interconnect-provider.h>
+> > > > +#include <linux/interrupt.h>
+> > > > +#include <linux/io.h>
+> > > > +#include <linux/module.h>
+> > > > +#include <linux/mutex.h>
+> > > > +#include <linux/of_address.h>
+> > > > +#include <linux/of_platform.h>
+> > > > +#include <linux/platform_device.h>
+> > > > +#include <linux/pm_opp.h>
+> > > > +#include <linux/sort.h>
+> > > > +#include <linux/string.h>
+> > > > +
+> > > > +#include <soc/tegra/fuse.h>
+> > > > +#include <soc/tegra/mc.h>
+> > > > +
+> > > > +#include "mc.h"
+> > > > +
+> > > > +#define EMC_INTSTATUS                                0x0
+> > > > +#define EMC_REFRESH_OVERFLOW_INT             BIT(3)
+> > > > +#define EMC_INTSTATUS_CLKCHANGE_COMPLETE     BIT(4)
+> > >
+> > > This naming is inconsistent. I'd prefer using EMC_INTSTATUS_REFRESH_O=
+VERFLOW and EMC_INTSTATUS_CLKCHANGE_COMPLETE.
+> > >
+> > > > +
+> > > > +#define EMC_INTMASK                          0x4
+> > > > +
+> > > > +#define EMC_DBG                                      0x8
+> > > > +#define EMC_DBG_READ_MUX_ASSEMBLY            BIT(0)
+> > > > +#define EMC_DBG_WRITE_MUX_ACTIVE             BIT(1)
+> > > > +#define EMC_DBG_FORCE_UPDATE                 BIT(2)
+> > > > +#define EMC_DBG_CFG_PRIORITY                 BIT(24)
+> > > > +
+> > > > +#define EMC_CFG                                      0xc
+> > > > +#define EMC_CFG_DRAM_CLKSTOP_PD                      BIT(31)
+> > > > +#define EMC_CFG_DRAM_CLKSTOP_SR                      BIT(30)
+> > > > +#define EMC_CFG_DRAM_ACPD                    BIT(29)
+> > > > +#define EMC_CFG_DYN_SREF                     BIT(28)
+> > > > +#define EMC_CFG_PWR_MASK                     ((0xF << 28) | BIT(18=
+))
+> > > > +#define EMC_CFG_DSR_VTTGEN_DRV_EN            BIT(18)
+> > >
+> > > Ordering from first to last register would be more consistent.
+> > >
+> > > > +
+> > > > +#define EMC_ADR_CFG                          0x10
+> > > > +#define EMC_ADR_CFG_EMEM_NUMDEV                      BIT(0)
+> > > > +
+> > > > +#define EMC_REFCTRL                          0x20
+> > > > +#define EMC_REFCTRL_DEV_SEL_SHIFT            0
+> > > > +#define EMC_REFCTRL_ENABLE                   BIT(31)
+> > > > +
+> > > > +#define EMC_TIMING_CONTROL                   0x28
+> > > > +#define EMC_RC                                       0x2c
+> > > > +#define EMC_RFC                                      0x30
+> > > > +#define EMC_RAS                                      0x34
+> > > > +#define EMC_RP                                       0x38
+> > > > +#define EMC_R2W                                      0x3c
+> > > > +#define EMC_W2R                                      0x40
+> > > > +#define EMC_R2P                                      0x44
+> > > > +#define EMC_W2P                                      0x48
+> > > > +#define EMC_RD_RCD                           0x4c
+> > > > +#define EMC_WR_RCD                           0x50
+> > > > +#define EMC_RRD                                      0x54
+> > > > +#define EMC_REXT                             0x58
+> > > > +#define EMC_WDV                                      0x5c
+> > > > +#define EMC_QUSE                             0x60
+> > > > +#define EMC_QRST                             0x64
+> > > > +#define EMC_QSAFE                            0x68
+> > > > +#define EMC_RDV                                      0x6c
+> > > > +#define EMC_REFRESH                          0x70
+> > > > +#define EMC_BURST_REFRESH_NUM                        0x74
+> > > > +#define EMC_PDEX2WR                          0x78
+> > > > +#define EMC_PDEX2RD                          0x7c
+> > > > +#define EMC_PCHG2PDEN                                0x80
+> > > > +#define EMC_ACT2PDEN                         0x84
+> > > > +#define EMC_AR2PDEN                          0x88
+> > > > +#define EMC_RW2PDEN                          0x8c
+> > > > +#define EMC_TXSR                             0x90
+> > > > +#define EMC_TCKE                             0x94
+> > > > +#define EMC_TFAW                             0x98
+> > > > +#define EMC_TRPAB                            0x9c
+> > > > +#define EMC_TCLKSTABLE                               0xa0
+> > > > +#define EMC_TCLKSTOP                         0xa4
+> > > > +#define EMC_TREFBW                           0xa8
+> > > > +#define EMC_QUSE_EXTRA                               0xac
+> > > > +#define EMC_ODT_WRITE                                0xb0
+> > > > +#define EMC_ODT_READ                         0xb4
+> > > > +#define EMC_WEXT                             0xb8
+> > > > +#define EMC_CTT                                      0xbc
+> > > > +#define EMC_RFC_SLR                          0xc0
+> > > > +#define EMC_MRS_WAIT_CNT2                    0xc4
+> > > > +
+> > > > +#define EMC_MRS_WAIT_CNT                     0xc8
+> > > > +#define EMC_MRS_WAIT_CNT_SHORT_WAIT_SHIFT    0
+> > > > +#define EMC_MRS_WAIT_CNT_SHORT_WAIT_MASK     \
+> > > > +     (0x3FF << EMC_MRS_WAIT_CNT_SHORT_WAIT_SHIFT)
+> > > > +#define EMC_MRS_WAIT_CNT_LONG_WAIT_SHIFT     16
+> > > > +#define EMC_MRS_WAIT_CNT_LONG_WAIT_MASK              \
+> > > > +     (0x3FF << EMC_MRS_WAIT_CNT_LONG_WAIT_SHIFT)
+> > > > +
+> > > > +#define EMC_MRS                                      0xcc
+> > > > +#define EMC_MODE_SET_DLL_RESET                       BIT(8)
+> > > > +#define EMC_MODE_SET_LONG_CNT                        BIT(26)
+> > > > +#define EMC_EMRS                             0xd0
+> > > > +#define EMC_REF                                      0xd4
+> > > > +#define EMC_PRE                                      0xd8
+> > > > +
+> > > > +#define EMC_SELF_REF                         0xe0
+> > > > +#define EMC_SELF_REF_CMD_ENABLED             BIT(0)
+> > > > +#define EMC_SELF_REF_DEV_SEL_SHIFT           30
+> > > > +
+> > > > +#define EMC_MRW                                      0xe8
+> > > > +
+> > > > +#define EMC_MRR                                      0xec
+> > > > +#define EMC_MRR_MA_SHIFT                     16
+> > > > +#define LPDDR2_MR4_TEMP_SHIFT                        0
+> > > > +
+> > > > +#define EMC_XM2DQSPADCTRL3                   0xf8
+> > > > +#define EMC_FBIO_SPARE                               0x100
+> > > > +
+> > > > +#define EMC_FBIO_CFG5                                0x104
+> > > > +#define      EMC_FBIO_CFG5_DRAM_TYPE_MASK            0x3
+> > > > +#define      EMC_FBIO_CFG5_DRAM_TYPE_SHIFT           0
+> > >
+> > > Inconsistent to indent here and not elsewhere. My preference is not t=
+o indent.
+> > >
+> > > > +
+> > > > +#define EMC_FBIO_CFG6                                0x114
+> > > > +#define EMC_EMRS2                            0x12c
+> > > > +#define EMC_MRW2                             0x134
+> > > > +#define EMC_MRW4                             0x13c
+> > > > +#define EMC_EINPUT                           0x14c
+> > > > +#define EMC_EINPUT_DURATION                  0x150
+> > > > +#define EMC_PUTERM_EXTRA                     0x154
+> > > > +#define EMC_TCKESR                           0x158
+> > > > +#define EMC_TPD                                      0x15c
+> > > > +
+> > > > +#define EMC_AUTO_CAL_CONFIG                  0x2a4
+> > > > +#define EMC_AUTO_CAL_CONFIG_AUTO_CAL_START   BIT(31)
+> > > > +#define EMC_AUTO_CAL_INTERVAL                        0x2a8
+> > > > +#define EMC_AUTO_CAL_STATUS                  0x2ac
+> > > > +#define EMC_AUTO_CAL_STATUS_ACTIVE           BIT(31)
+> > > > +#define EMC_STATUS                           0x2b4
+> > > > +#define EMC_STATUS_TIMING_UPDATE_STALLED     BIT(23)
+> > > > +
+> > > > +#define EMC_CFG_2                            0x2b8
+> > > > +#define EMC_CLKCHANGE_REQ_ENABLE             BIT(0)
+> > > > +#define EMC_CLKCHANGE_PD_ENABLE                      BIT(1)
+> > > > +#define EMC_CLKCHANGE_SR_ENABLE                      BIT(2)
+> > >
+> > > Better to prefix with EMC_CFG_2
+> > >
+> > > > +
+> > > > +#define EMC_CFG_DIG_DLL                              0x2bc
+> > > > +#define EMC_CFG_DIG_DLL_PERIOD                       0x2c0
+> > > > +#define EMC_RDV_MASK                         0x2cc
+> > > > +#define EMC_WDV_MASK                         0x2d0
+> > > > +#define EMC_CTT_DURATION                     0x2d8
+> > > > +#define EMC_CTT_TERM_CTRL                    0x2dc
+> > > > +#define EMC_ZCAL_INTERVAL                    0x2e0
+> > > > +#define EMC_ZCAL_WAIT_CNT                    0x2e4
+> > > > +
+> > > > +#define EMC_ZQ_CAL                           0x2ec
+> > > > +#define EMC_ZQ_CAL_CMD                               BIT(0)
+> > > > +#define EMC_ZQ_CAL_LONG                              BIT(4)
+> > > > +#define EMC_ZQ_CAL_LONG_CMD_DEV0             \
+> > > > +     (DRAM_DEV_SEL_0 | EMC_ZQ_CAL_LONG | EMC_ZQ_CAL_CMD)
+> > > > +#define EMC_ZQ_CAL_LONG_CMD_DEV1             \
+> > > > +     (DRAM_DEV_SEL_1 | EMC_ZQ_CAL_LONG | EMC_ZQ_CAL_CMD)
+> > > > +
+> > > > +#define EMC_XM2CMDPADCTRL                    0x2f0
+> > > > +#define EMC_XM2DQSPADCTRL                    0x2f8
+> > > > +#define EMC_XM2DQSPADCTRL2                   0x2fc
+> > > > +#define EMC_XM2DQSPADCTRL2_RX_FT_REC_ENABLE  BIT(0)
+> > > > +#define EMC_XM2DQSPADCTRL2_VREF_ENABLE               BIT(5)
+> > > > +#define EMC_XM2DQPADCTRL                     0x300
+> > > > +#define EMC_XM2DQPADCTRL2                    0x304
+> > > > +#define EMC_XM2CLKPADCTRL                    0x308
+> > > > +#define EMC_XM2COMPPADCTRL                   0x30c
+> > > > +#define EMC_XM2VTTGENPADCTRL                 0x310
+> > > > +#define EMC_XM2VTTGENPADCTRL2                        0x314
+> > > > +#define EMC_XM2QUSEPADCTRL                   0x318
+> > > > +#define EMC_XM2DQSPADCTRL4                   0x320
+> > > > +#define EMC_DLL_XFORM_DQS0                   0x328
+> > > > +#define EMC_DLL_XFORM_DQS1                   0x32c
+> > > > +#define EMC_DLL_XFORM_DQS2                   0x330
+> > > > +#define EMC_DLL_XFORM_DQS3                   0x334
+> > > > +#define EMC_DLL_XFORM_DQS4                   0x338
+> > > > +#define EMC_DLL_XFORM_DQS5                   0x33c
+> > > > +#define EMC_DLL_XFORM_DQS6                   0x340
+> > > > +#define EMC_DLL_XFORM_DQS7                   0x344
+> > > > +#define EMC_DLL_XFORM_QUSE0                  0x348
+> > > > +#define EMC_DLL_XFORM_QUSE1                  0x34c
+> > > > +#define EMC_DLL_XFORM_QUSE2                  0x350
+> > > > +#define EMC_DLL_XFORM_QUSE3                  0x354
+> > > > +#define EMC_DLL_XFORM_QUSE4                  0x358
+> > > > +#define EMC_DLL_XFORM_QUSE5                  0x35c
+> > > > +#define EMC_DLL_XFORM_QUSE6                  0x360
+> > > > +#define EMC_DLL_XFORM_QUSE7                  0x364
+> > > > +#define EMC_DLL_XFORM_DQ0                    0x368
+> > > > +#define EMC_DLL_XFORM_DQ1                    0x36c
+> > > > +#define EMC_DLL_XFORM_DQ2                    0x370
+> > > > +#define EMC_DLL_XFORM_DQ3                    0x374
+> > > > +#define EMC_DLI_TRIM_TXDQS0                  0x3a8
+> > > > +#define EMC_DLI_TRIM_TXDQS1                  0x3ac
+> > > > +#define EMC_DLI_TRIM_TXDQS2                  0x3b0
+> > > > +#define EMC_DLI_TRIM_TXDQS3                  0x3b4
+> > > > +#define EMC_DLI_TRIM_TXDQS4                  0x3b8
+> > > > +#define EMC_DLI_TRIM_TXDQS5                  0x3bc
+> > > > +#define EMC_DLI_TRIM_TXDQS6                  0x3c0
+> > > > +#define EMC_DLI_TRIM_TXDQS7                  0x3c4
+> > > > +#define EMC_STALL_THEN_EXE_AFTER_CLKCHANGE   0x3cc
+> > > > +#define EMC_SEL_DPD_CTRL                     0x3d8
+> > > > +#define EMC_SEL_DPD_CTRL_DATA_SEL_DPD                BIT(8)
+> > > > +#define EMC_SEL_DPD_CTRL_ODT_SEL_DPD         BIT(5)
+> > > > +#define EMC_SEL_DPD_CTRL_RESET_SEL_DPD               BIT(4)
+> > > > +#define EMC_SEL_DPD_CTRL_CA_SEL_DPD          BIT(3)
+> > > > +#define EMC_SEL_DPD_CTRL_CLK_SEL_DPD         BIT(2)
+> > > > +#define EMC_SEL_DPD_CTRL_DDR3_MASK   \
+> > > > +     ((0xf << 2) | BIT(8))
+> > > > +#define EMC_SEL_DPD_CTRL_MASK \
+> > > > +     ((0x3 << 2) | BIT(5) | BIT(8))
+> > > > +#define EMC_PRE_REFRESH_REQ_CNT                      0x3dc
+> > > > +#define EMC_DYN_SELF_REF_CONTROL             0x3e0
+> > > > +#define EMC_TXSRDLL                          0x3e4
+> > > > +#define EMC_CCFIFO_ADDR                              0x3e8
+> > > > +#define EMC_CCFIFO_DATA                              0x3ec
+> > > > +#define EMC_CCFIFO_STATUS                    0x3f0
+> > > > +#define EMC_CDB_CNTL_1                               0x3f4
+> > > > +#define EMC_CDB_CNTL_2                               0x3f8
+> > > > +#define EMC_XM2CLKPADCTRL2                   0x3fc
+> > > > +#define EMC_AUTO_CAL_CONFIG2                 0x458
+> > > > +#define EMC_AUTO_CAL_CONFIG3                 0x45c
+> > > > +#define EMC_IBDLY                            0x468
+> > > > +#define EMC_DLL_XFORM_ADDR0                  0x46c
+> > > > +#define EMC_DLL_XFORM_ADDR1                  0x470
+> > > > +#define EMC_DLL_XFORM_ADDR2                  0x474
+> > > > +#define EMC_DSR_VTTGEN_DRV                   0x47c
+> > > > +#define EMC_TXDSRVTTGEN                              0x480
+> > > > +#define EMC_XM2CMDPADCTRL4                   0x484
+> > > > +
+> > > > +#define DRAM_DEV_SEL_ALL                     0
+> > > > +#define DRAM_DEV_SEL_0                               BIT(31)
+> > > > +#define DRAM_DEV_SEL_1                               BIT(30)
+> > > > +
+> > > > +#define EMC_CFG_POWER_FEATURES_MASK          \
+> > > > +     (EMC_CFG_DYN_SREF | EMC_CFG_DRAM_ACPD | EMC_CFG_DRAM_CLKSTOP_=
+SR | \
+> > > > +     EMC_CFG_DRAM_CLKSTOP_PD | EMC_CFG_DSR_VTTGEN_DRV_EN)
+> > > > +#define EMC_REFCTRL_DEV_SEL(n) ((((n) > 1) ? 0 : 2) << EMC_REFCTRL=
+_DEV_SEL_SHIFT)
+> > > > +#define EMC_DRAM_DEV_SEL(n) (((n) > 1) ? DRAM_DEV_SEL_ALL : DRAM_D=
+EV_SEL_0)
+> > > > +
+> > > > +/* Maximum amount of time in us. to wait for changes to become eff=
+ective */
+> > > > +#define EMC_STATUS_UPDATE_TIMEOUT            1000
+> > > > +
+> > > > +enum emc_dram_type {
+> > > > +     DRAM_TYPE_DDR3,
+> > > > +     DRAM_TYPE_DDR1,
+> > > > +     DRAM_TYPE_LPDDR2,
+> > > > +     DRAM_TYPE_DDR2
+> > > > +};
+> > > > +
+> > > > +enum emc_dll_change {
+> > > > +     DLL_CHANGE_NONE,
+> > > > +     DLL_CHANGE_ON,
+> > > > +     DLL_CHANGE_OFF
+> > > > +};
+> > > > +
+> > > > +static const unsigned long emc_burst_regs[] =3D {
+> > > > +     EMC_RC,
+> > > > +     EMC_RFC,
+> > > > +     EMC_RAS,
+> > > > +     EMC_RP,
+> > > > +     EMC_R2W,
+> > > > +     EMC_W2R,
+> > > > +     EMC_R2P,
+> > > > +     EMC_W2P,
+> > > > +     EMC_RD_RCD,
+> > > > +     EMC_WR_RCD,
+> > > > +     EMC_RRD,
+> > > > +     EMC_REXT,
+> > > > +     EMC_WEXT,
+> > > > +     EMC_WDV,
+> > > > +     EMC_WDV_MASK,
+> > > > +     EMC_QUSE,
+> > > > +     EMC_IBDLY,
+> > > > +     EMC_EINPUT,
+> > > > +     EMC_EINPUT_DURATION,
+> > > > +     EMC_PUTERM_EXTRA,
+> > > > +     EMC_CDB_CNTL_1,
+> > > > +     EMC_CDB_CNTL_2,
+> > > > +     EMC_QRST,
+> > > > +     EMC_QSAFE,
+> > > > +     EMC_RDV,
+> > > > +     EMC_RDV_MASK,
+> > > > +     EMC_REFRESH,
+> > > > +     EMC_BURST_REFRESH_NUM,
+> > > > +     EMC_PRE_REFRESH_REQ_CNT,
+> > > > +     EMC_PDEX2WR,
+> > > > +     EMC_PDEX2RD,
+> > > > +     EMC_PCHG2PDEN,
+> > > > +     EMC_ACT2PDEN,
+> > > > +     EMC_AR2PDEN,
+> > > > +     EMC_RW2PDEN,
+> > > > +     EMC_TXSR,
+> > > > +     EMC_TXSRDLL,
+> > > > +     EMC_TCKE,
+> > > > +     EMC_TCKESR,
+> > > > +     EMC_TPD,
+> > > > +     EMC_TFAW,
+> > > > +     EMC_TRPAB,
+> > > > +     EMC_TCLKSTABLE,
+> > > > +     EMC_TCLKSTOP,
+> > > > +     EMC_TREFBW,
+> > > > +     EMC_QUSE_EXTRA,
+> > > > +     EMC_FBIO_CFG6,
+> > > > +     EMC_ODT_WRITE,
+> > > > +     EMC_ODT_READ,
+> > > > +     EMC_FBIO_CFG5,
+> > > > +     EMC_CFG_DIG_DLL,
+> > > > +     EMC_CFG_DIG_DLL_PERIOD,
+> > > > +     EMC_DLL_XFORM_DQS0,
+> > > > +     EMC_DLL_XFORM_DQS1,
+> > > > +     EMC_DLL_XFORM_DQS2,
+> > > > +     EMC_DLL_XFORM_DQS3,
+> > > > +     EMC_DLL_XFORM_DQS4,
+> > > > +     EMC_DLL_XFORM_DQS5,
+> > > > +     EMC_DLL_XFORM_DQS6,
+> > > > +     EMC_DLL_XFORM_DQS7,
+> > > > +     EMC_DLL_XFORM_QUSE0,
+> > > > +     EMC_DLL_XFORM_QUSE1,
+> > > > +     EMC_DLL_XFORM_QUSE2,
+> > > > +     EMC_DLL_XFORM_QUSE3,
+> > > > +     EMC_DLL_XFORM_QUSE4,
+> > > > +     EMC_DLL_XFORM_QUSE5,
+> > > > +     EMC_DLL_XFORM_QUSE6,
+> > > > +     EMC_DLL_XFORM_QUSE7,
+> > > > +     EMC_DLI_TRIM_TXDQS0,
+> > > > +     EMC_DLI_TRIM_TXDQS1,
+> > > > +     EMC_DLI_TRIM_TXDQS2,
+> > > > +     EMC_DLI_TRIM_TXDQS3,
+> > > > +     EMC_DLI_TRIM_TXDQS4,
+> > > > +     EMC_DLI_TRIM_TXDQS5,
+> > > > +     EMC_DLI_TRIM_TXDQS6,
+> > > > +     EMC_DLI_TRIM_TXDQS7,
+> > > > +     EMC_DLL_XFORM_DQ0,
+> > > > +     EMC_DLL_XFORM_DQ1,
+> > > > +     EMC_DLL_XFORM_DQ2,
+> > > > +     EMC_DLL_XFORM_DQ3,
+> > > > +     EMC_XM2CMDPADCTRL,
+> > > > +     EMC_XM2CMDPADCTRL4,
+> > > > +     EMC_XM2DQPADCTRL2,
+> > > > +     EMC_XM2CLKPADCTRL,
+> > > > +     EMC_XM2COMPPADCTRL,
+> > > > +     EMC_XM2VTTGENPADCTRL,
+> > > > +     EMC_XM2VTTGENPADCTRL2,
+> > > > +     EMC_XM2DQSPADCTRL3,
+> > > > +     EMC_XM2DQSPADCTRL4,
+> > > > +     EMC_DSR_VTTGEN_DRV,
+> > > > +     EMC_TXDSRVTTGEN,
+> > > > +     EMC_FBIO_SPARE,
+> > > > +     EMC_ZCAL_WAIT_CNT,
+> > > > +     EMC_MRS_WAIT_CNT2,
+> > > > +     EMC_CTT,
+> > > > +     EMC_CTT_DURATION,
+> > > > +     EMC_DYN_SELF_REF_CONTROL,
+> > > > +};
+> > >
+> > > How was this list determined? It doesn't seem to match the trees I ca=
+n find, or the list in the TRM (which is also different from the downstream=
+ source code).
+> > >
+> >
+> > Hm, IIRC, I used Tegra114 3.4 kernel sources, specifically
+> > tegratab/macallan memory board files as my base and then tried to
+> > align them closer to list used by Tegra124 (not identical obviously
+> > since lists have different lengths). This list contains burst and
+> > trimmer registers with some of them excluded as a dedicated entries in
+> > emc_timing structure below (yet again - similar to Tegra124). If you
+> > have any ideas how to group registers better I would be happy to hear.
+>
+> That sounds fine by me if we're programming all registers the downstream =
+sequence is programming (except for ones not related to the DRAM configurat=
+ion like the latency allowance stuff that's better done otherwise). I was j=
+ust wondering.
+>
+> >
+> > > > +
+> > > > +struct emc_timing {
+> > > > +     unsigned long rate;
+> > > > +
+> > > > +     u32 emc_burst_data[ARRAY_SIZE(emc_burst_regs)];
+> > > > +
+> > > > +     u32 emc_auto_cal_config;
+> > > > +     u32 emc_auto_cal_config2;
+> > > > +     u32 emc_auto_cal_config3;
+> > > > +     u32 emc_auto_cal_interval;
+> > > > +     u32 emc_cfg;
+> > > > +     u32 emc_ctt_term_ctrl;
+> > > > +     u32 emc_mode_1;
+> > > > +     u32 emc_mode_2;
+> > > > +     u32 emc_mode_4;
+> > > > +     u32 emc_mode_reset;
+> > > > +     u32 emc_mrs_wait_cnt;
+> > > > +     u32 emc_sel_dpd_ctrl;
+> > > > +     u32 emc_xm2dqspadctrl2;
+> > > > +     u32 emc_zcal_cnt_long;
+> > > > +     u32 emc_zcal_interval;
+> > > > +};
+> > > > +
+> > > > +enum emc_rate_request_type {
+> > > > +     EMC_RATE_DEBUG,
+> > > > +     EMC_RATE_ICC,
+> > > > +     EMC_RATE_TYPE_MAX,
+> > > > +};
+> > > > +
+> > > > +struct emc_rate_request {
+> > > > +     unsigned long min_rate;
+> > > > +     unsigned long max_rate;
+> > > > +};
+> > > > +
+> > > > +struct tegra_emc {
+> > > > +     struct device *dev;
+> > > > +
+> > > > +     struct tegra_mc *mc;
+> > > > +
+> > > > +     void __iomem *regs;
+> > > > +
+> > > > +     unsigned int irq;
+> > > > +
+> > > > +     struct clk *clk;
+> > >
+> > > Nit: I don't think all the empty lines are needed.
+> > >
+> > > > +
+> > > > +     enum emc_dram_type dram_type;
+> > > > +     unsigned int dram_num;
+> > > > +
+> > > > +     struct emc_timing last_timing;
+> > > > +     struct emc_timing *timings;
+> > > > +     unsigned int num_timings;
+> > > > +
+> > > > +     struct {
+> > > > +             struct dentry *root;
+> > > > +             unsigned long min_rate;
+> > > > +             unsigned long max_rate;
+> > > > +     } debugfs;
+> > > > +
+> > > > +     struct icc_provider provider;
+> > > > +
+> > > > +     /*
+> > > > +      * There are multiple sources in the EMC driver which could r=
+equest
+> > > > +      * a min/max clock rate, these rates are contained in this ar=
+ray.
+> > > > +      */
+> > > > +     struct emc_rate_request requested_rate[EMC_RATE_TYPE_MAX];
+> > > > +
+> > > > +     /* protect shared rate-change code path */
+> > > > +     struct mutex rate_lock;
+> > > > +};
+> > > > +
+> > > > +static irqreturn_t tegra_emc_isr(int irq, void *data)
+> > > > +{
+> > > > +     struct tegra_emc *emc =3D data;
+> > > > +     u32 intmask =3D EMC_REFRESH_OVERFLOW_INT;
+> > > > +     u32 status;
+> > > > +
+> > > > +     status =3D readl_relaxed(emc->regs + EMC_INTSTATUS) & intmask=
+;
+> > > > +     if (!status)
+> > > > +             return IRQ_NONE;
+> > > > +
+> > > > +     /* notify about HW problem */
+> > > > +     if (status & EMC_REFRESH_OVERFLOW_INT)
+> > > > +             dev_err_ratelimited(emc->dev,
+> > > > +                                 "refresh request overflow timeout=
+\n");
+> > > > +
+> > > > +     /* clear interrupts */
+> > > > +     writel_relaxed(status, emc->regs + EMC_INTSTATUS);
+> > > > +
+> > > > +     return IRQ_HANDLED;
+> > > > +}
+> > > > +
+> > > > +/* Timing change sequence functions */
+> > > > +
+> > > > +static void emc_ccfifo_writel(struct tegra_emc *emc, u32 value,
+> > > > +                           unsigned long offset)
+> > > > +{
+> > > > +     writel(value, emc->regs + EMC_CCFIFO_DATA);
+> > > > +     writel(offset, emc->regs + EMC_CCFIFO_ADDR);
+> > > > +}
+> > > > +
+> > > > +static void emc_seq_update_timing(struct tegra_emc *emc)
+> > > > +{
+> > > > +     unsigned int i;
+> > > > +     u32 value;
+> > > > +
+> > > > +     writel(1, emc->regs + EMC_TIMING_CONTROL);
+> > > > +
+> > > > +     for (i =3D 0; i < EMC_STATUS_UPDATE_TIMEOUT; ++i) {
+> > > > +             value =3D readl(emc->regs + EMC_STATUS);
+> > > > +             if ((value & EMC_STATUS_TIMING_UPDATE_STALLED) =3D=3D=
+ 0)
+> > > > +                     return;
+> > > > +             udelay(1);
+> > > > +     }
+> > >
+> > > This can be replaced with readl_poll_timeout_atomic
+> > >
+> > > > +
+> > > > +     dev_err(emc->dev, "timing update timed out\n");
+> > > > +}
+> > > > +
+> > > > +static void emc_seq_disable_auto_cal(struct tegra_emc *emc)
+> > > > +{
+> > > > +     unsigned int i;
+> > > > +     u32 value;
+> > > > +
+> > > > +     writel(0, emc->regs + EMC_AUTO_CAL_INTERVAL);
+> > > > +
+> > > > +     for (i =3D 0; i < EMC_STATUS_UPDATE_TIMEOUT; ++i) {
+> > > > +             value =3D readl(emc->regs + EMC_AUTO_CAL_STATUS);
+> > > > +             if ((value & EMC_AUTO_CAL_STATUS_ACTIVE) =3D=3D 0)
+> > > > +                     return;
+> > > > +             udelay(1);
+> > > > +     }
+> > >
+> > > Likewise
+> > >
+> > > > +
+> > > > +     dev_err(emc->dev, "auto cal disable timed out\n");
+> > > > +}
+> > > > +
+> > > > +static void emc_seq_wait_clkchange(struct tegra_emc *emc)
+> > > > +{
+> > > > +     unsigned int i;
+> > > > +     u32 value;
+> > > > +
+> > > > +     for (i =3D 0; i < EMC_STATUS_UPDATE_TIMEOUT; ++i) {
+> > > > +             value =3D readl(emc->regs + EMC_INTSTATUS);
+> > > > +             if (value & EMC_INTSTATUS_CLKCHANGE_COMPLETE)
+> > > > +                     return;
+> > > > +             udelay(1);
+> > > > +     }
+> > >
+> > > Likewise
+> > >
+> > > > +
+> > > > +     dev_err(emc->dev, "clock change timed out\n");
+> > > > +}
+> > > > +
+> > > > +static struct emc_timing *tegra_emc_find_timing(struct tegra_emc *=
+emc,
+> > > > +                                             unsigned long rate)
+> > > > +{
+> > > > +     struct emc_timing *timing =3D NULL;
+> > > > +     unsigned int i;
+> > > > +
+> > > > +     for (i =3D 0; i < emc->num_timings; i++) {
+> > > > +             if (emc->timings[i].rate =3D=3D rate) {
+> > > > +                     timing =3D &emc->timings[i];
+> > > > +                     break;
+> > > > +             }
+> > > > +     }
+> > > > +
+> > > > +     if (!timing) {
+> > > > +             dev_err(emc->dev, "no timing for rate %lu\n", rate);
+> > > > +             return NULL;
+> > > > +     }
+> > > > +
+> > > > +     return timing;
+> > > > +}
+> > > > +
+> > > > +static int tegra_emc_prepare_timing_change(struct tegra_emc *emc,
+> > > > +                                        unsigned long rate)
+> > > > +{
+> > > > +     struct emc_timing *timing =3D tegra_emc_find_timing(emc, rate=
+);
+> > > > +     struct emc_timing *last =3D &emc->last_timing;
+> > > > +     enum emc_dll_change dll_change;
+> > > > +     unsigned int pre_wait =3D 0;
+> > > > +     u32 val, mask;
+> > > > +     bool update =3D false;
+> > > > +     unsigned int i;
+> > > > +
+> > > > +     if (!timing)
+> > > > +             return -ENOENT;
+> > > > +
+> > > > +     if ((last->emc_mode_1 & 0x1) =3D=3D (timing->emc_mode_1 & 0x1=
+))
+> > > > +             dll_change =3D DLL_CHANGE_NONE;
+> > > > +     else if (timing->emc_mode_1 & 0x1)
+> > >
+> > > This looks incorrect. DLL is enabled if bit 0 is off. Now, I'm guessi=
+ng that comes from the other drivers, originally from tegra124-emc.c, which=
+ was written by.. me :) I can send a patch for the other chips.
+> > >
+> >
+> > Noted
+> >
+> > > > +             dll_change =3D DLL_CHANGE_ON;
+> > > > +     else
+> > > > +             dll_change =3D DLL_CHANGE_OFF;
+> > > > +
+> > > > +     /* Clear CLKCHANGE_COMPLETE interrupts */
+> > > > +     writel(EMC_INTSTATUS_CLKCHANGE_COMPLETE, emc->regs + EMC_INTS=
+TATUS);
+> > > > +
+> > > > +     /* Disable dynamic self-refresh */
+> > > > +     val =3D readl(emc->regs + EMC_CFG);
+> > > > +     if (val & EMC_CFG_PWR_MASK) {
+> > >
+> > > This doesn't strictly match downstream Tegra114 EMC code or the TRM -=
+- it is the later sequence version for Tegra124. However, my hunch is that =
+the Tegra124 sequence would be compatible and probably more reliable as it =
+would have received more testing. So it's probably not a bad idea to use it=
+.
+> > >
+> > > There are other places in the sequence that have changed between vers=
+ions, but I don't think we need to change them. If issues are seen in the f=
+uture, we can check again.
+> > >
+> >
+> > It does not strictly match, yes, but overall logic is preserved. I
+> > have tested these on my Tegra114 devices and I did not observe any
+> > notable issues.
+> >
+>
+> Sounds good.
+>
+> > > > +             val &=3D ~EMC_CFG_POWER_FEATURES_MASK;
+> > > > +             writel(val, emc->regs + EMC_CFG);
+> > > > +
+> > > > +             pre_wait =3D 5;
+> > > > +     }
+> > > > +
+> > > > +     /* Disable SEL_DPD_CTRL for clock change */
+> > > > +     if (emc->dram_type =3D=3D DRAM_TYPE_DDR3)
+> > > > +             mask =3D EMC_SEL_DPD_CTRL_DDR3_MASK;
+> > > > +     else
+> > > > +             mask =3D EMC_SEL_DPD_CTRL_MASK;
+> > > > +
+> > > > +     val =3D readl(emc->regs + EMC_SEL_DPD_CTRL);
+> > > > +     if (val & mask) {
+> > > > +             val &=3D ~mask;
+> > > > +             writel(val, emc->regs + EMC_SEL_DPD_CTRL);
+> > > > +     }
+> > > > +
+> > > > +     /* Prepare DQ/DQS for clock change */
+> > > > +     val =3D readl(emc->regs + EMC_XM2DQSPADCTRL2);
+> > > > +     if (timing->emc_xm2dqspadctrl2 & EMC_XM2DQSPADCTRL2_VREF_ENAB=
+LE &&
+> > > > +         !(val & EMC_XM2DQSPADCTRL2_VREF_ENABLE)) {
+> > > > +             val |=3D EMC_XM2DQSPADCTRL2_VREF_ENABLE;
+> > > > +             update =3D true;
+> > > > +     }
+> > > > +
+> > > > +     if (timing->emc_xm2dqspadctrl2 & EMC_XM2DQSPADCTRL2_RX_FT_REC=
+_ENABLE &&
+> > > > +         !(val & EMC_XM2DQSPADCTRL2_RX_FT_REC_ENABLE)) {
+> > > > +             val |=3D EMC_XM2DQSPADCTRL2_RX_FT_REC_ENABLE;
+> > > > +             update =3D true;
+> > > > +     }
+> > > > +
+> > > > +     if (update) {
+> > > > +             writel(val, emc->regs + EMC_XM2DQSPADCTRL2);
+> > > > +             if (pre_wait < 30)
+> > > > +                     pre_wait =3D 30;
+> > > > +     }
+> > > > +
+> > > > +     /* Wait to settle */
+> > > > +     if (pre_wait) {
+> > > > +             emc_seq_update_timing(emc);
+> > > > +             udelay(pre_wait);
+> > > > +     }
+> > > > +
+> > > > +     /* Program CTT_TERM control */
+> > > > +     if (last->emc_ctt_term_ctrl !=3D timing->emc_ctt_term_ctrl) {
+> > > > +             emc_seq_disable_auto_cal(emc);
+> > > > +             writel(timing->emc_ctt_term_ctrl,
+> > > > +                    emc->regs + EMC_CTT_TERM_CTRL);
+> > > > +             emc_seq_update_timing(emc);
+> > > > +     }
+> > > > +
+> > > > +     /* Program burst shadow registers */
+> > > > +     for (i =3D 0; i < ARRAY_SIZE(timing->emc_burst_data); ++i)
+> > > > +             writel(timing->emc_burst_data[i],
+> > > > +                    emc->regs + emc_burst_regs[i]);
+> > > > +
+> > > > +     writel(timing->emc_xm2dqspadctrl2, emc->regs + EMC_XM2DQSPADC=
+TRL2);
+> > > > +     writel(timing->emc_zcal_interval, emc->regs + EMC_ZCAL_INTERV=
+AL);
+> > > > +
+> > > > +     tegra_mc_write_emem_configuration(emc->mc, timing->rate);
+> > > > +
+> > > > +     val =3D timing->emc_cfg & ~EMC_CFG_POWER_FEATURES_MASK;
+> > > > +     emc_ccfifo_writel(emc, val, EMC_CFG);
+> > > > +
+> > > > +     /* Program AUTO_CAL_CONFIG */
+> > > > +     if (timing->emc_auto_cal_config2 !=3D last->emc_auto_cal_conf=
+ig2)
+> > > > +             emc_ccfifo_writel(emc, timing->emc_auto_cal_config2,
+> > > > +                               EMC_AUTO_CAL_CONFIG2);
+> > > > +
+> > > > +     if (timing->emc_auto_cal_config3 !=3D last->emc_auto_cal_conf=
+ig3)
+> > > > +             emc_ccfifo_writel(emc, timing->emc_auto_cal_config3,
+> > > > +                               EMC_AUTO_CAL_CONFIG3);
+> > > > +
+> > > > +     if (timing->emc_auto_cal_config !=3D last->emc_auto_cal_confi=
+g) {
+> > > > +             val =3D timing->emc_auto_cal_config;
+> > > > +             val &=3D EMC_AUTO_CAL_CONFIG_AUTO_CAL_START;
+> > > > +             emc_ccfifo_writel(emc, val, EMC_AUTO_CAL_CONFIG);
+> > > > +     }
+> > > > +
+> > > > +     /* DDR3: predict MRS long wait count */
+> > > > +     if (emc->dram_type =3D=3D DRAM_TYPE_DDR3 &&
+> > > > +         dll_change =3D=3D DLL_CHANGE_ON) {
+> > > > +             u32 cnt =3D 512;
+> > > > +
+> > > > +             if (timing->emc_zcal_interval !=3D 0 &&
+> > > > +                 last->emc_zcal_interval =3D=3D 0)
+> > > > +                     cnt -=3D emc->dram_num * 256;
+> > > > +
+> > > > +             val =3D (timing->emc_mrs_wait_cnt
+> > > > +                     & EMC_MRS_WAIT_CNT_SHORT_WAIT_MASK)
+> > > > +                     >> EMC_MRS_WAIT_CNT_SHORT_WAIT_SHIFT;
+> > > > +             if (cnt < val)
+> > > > +                     cnt =3D val;
+> > > > +
+> > > > +             val =3D timing->emc_mrs_wait_cnt
+> > > > +                     & ~EMC_MRS_WAIT_CNT_LONG_WAIT_MASK;
+> > > > +             val |=3D (cnt << EMC_MRS_WAIT_CNT_LONG_WAIT_SHIFT)
+> > > > +                     & EMC_MRS_WAIT_CNT_LONG_WAIT_MASK;
+> > > > +
+> > > > +             writel(val, emc->regs + EMC_MRS_WAIT_CNT);
+> > > > +     }
+> > > > +
+> > > > +     /* DDR3: Turn off DLL and enter self-refresh */
+> > > > +     if (emc->dram_type =3D=3D DRAM_TYPE_DDR3 && dll_change =3D=3D=
+ DLL_CHANGE_OFF)
+> > > > +             emc_ccfifo_writel(emc, timing->emc_mode_1, EMC_EMRS);
+> > > > +
+> > > > +     /* Disable refresh controller */
+> > > > +     emc_ccfifo_writel(emc, EMC_REFCTRL_DEV_SEL(emc->dram_num),
+> > > > +                       EMC_REFCTRL);
+> > > > +     if (emc->dram_type =3D=3D DRAM_TYPE_DDR3)
+> > > > +             emc_ccfifo_writel(emc, EMC_DRAM_DEV_SEL(emc->dram_num=
+) |
+> > > > +                                    EMC_SELF_REF_CMD_ENABLED,
+> > > > +                               EMC_SELF_REF);
+> > > > +
+> > > > +     /* Flow control marker */
+> > > > +     emc_ccfifo_writel(emc, 1, EMC_STALL_THEN_EXE_AFTER_CLKCHANGE)=
+;
+> > > > +
+> > > > +     /* DDR3: Exit self-refresh */
+> > > > +     if (emc->dram_type =3D=3D DRAM_TYPE_DDR3)
+> > > > +             emc_ccfifo_writel(emc, EMC_DRAM_DEV_SEL(emc->dram_num=
+),
+> > > > +                               EMC_SELF_REF);
+> > > > +     emc_ccfifo_writel(emc, EMC_REFCTRL_DEV_SEL(emc->dram_num) |
+> > > > +                            EMC_REFCTRL_ENABLE,
+> > > > +                       EMC_REFCTRL);
+> > > > +
+> > > > +     /* Set DRAM mode registers */
+> > > > +     if (emc->dram_type =3D=3D DRAM_TYPE_DDR3) {
+> > > > +             if (timing->emc_mode_1 !=3D last->emc_mode_1)
+> > > > +                     emc_ccfifo_writel(emc, timing->emc_mode_1, EM=
+C_EMRS);
+> > > > +             if (timing->emc_mode_2 !=3D last->emc_mode_2)
+> > > > +                     emc_ccfifo_writel(emc, timing->emc_mode_2, EM=
+C_EMRS2);
+> > > > +
+> > > > +             if (timing->emc_mode_reset !=3D last->emc_mode_reset =
+||
+> > > > +                 dll_change =3D=3D DLL_CHANGE_ON) {
+> > > > +                     val =3D timing->emc_mode_reset;
+> > > > +                     if (dll_change =3D=3D DLL_CHANGE_ON) {
+> > > > +                             val |=3D EMC_MODE_SET_DLL_RESET;
+> > > > +                             val |=3D EMC_MODE_SET_LONG_CNT;
+> > > > +                     } else {
+> > > > +                             val &=3D ~EMC_MODE_SET_DLL_RESET;
+> > > > +                     }
+> > > > +                     emc_ccfifo_writel(emc, val, EMC_MRS);
+> > > > +             }
+> > > > +     } else {
+> > > > +             if (timing->emc_mode_2 !=3D last->emc_mode_2)
+> > > > +                     emc_ccfifo_writel(emc, timing->emc_mode_2, EM=
+C_MRW2);
+> > > > +             if (timing->emc_mode_1 !=3D last->emc_mode_1)
+> > > > +                     emc_ccfifo_writel(emc, timing->emc_mode_1, EM=
+C_MRW);
+> > > > +             if (timing->emc_mode_4 !=3D last->emc_mode_4)
+> > > > +                     emc_ccfifo_writel(emc, timing->emc_mode_4, EM=
+C_MRW4);
+> > > > +     }
+> > > > +
+> > > > +     /*  Issue ZCAL command if turning ZCAL on */
+> > > > +     if (timing->emc_zcal_interval !=3D 0 && last->emc_zcal_interv=
+al =3D=3D 0) {
+> > > > +             emc_ccfifo_writel(emc, EMC_ZQ_CAL_LONG_CMD_DEV0, EMC_=
+ZQ_CAL);
+> > > > +             if (emc->dram_num > 1)
+> > > > +                     emc_ccfifo_writel(emc, EMC_ZQ_CAL_LONG_CMD_DE=
+V1,
+> > > > +                                       EMC_ZQ_CAL);
+> > > > +     }
+> > > > +
+> > > > +     /*  Write to RO register to remove stall after change */
+> > > > +     emc_ccfifo_writel(emc, 0, EMC_CCFIFO_STATUS);
+> > > > +
+> > > > +     /* Disable AUTO_CAL for clock change */
+> > > > +     emc_seq_disable_auto_cal(emc);
+> > > > +
+> > > > +     /* Read register to wait until programming has settled */
+> > > > +     mc_readl(emc->mc, MC_EMEM_ADR_CFG);
+> > > > +
+> > > > +     return 0;
+> > > > +}
+> > > > +
+> > > > +static void tegra_emc_complete_timing_change(struct tegra_emc *emc=
+,
+> > > > +                                          unsigned long rate)
+> > > > +{
+> > > > +     struct emc_timing *timing =3D tegra_emc_find_timing(emc, rate=
+);
+> > > > +     struct emc_timing *last =3D &emc->last_timing;
+> > > > +
+> > > > +     if (!timing)
+> > > > +             return;
+> > > > +
+> > > > +     /* Wait until the state machine has settled */
+> > > > +     emc_seq_wait_clkchange(emc);
+> > > > +
+> > > > +     /* Restore AUTO_CAL */
+> > > > +     if (timing->emc_ctt_term_ctrl !=3D last->emc_ctt_term_ctrl)
+> > > > +             writel(timing->emc_auto_cal_interval,
+> > > > +                    emc->regs + EMC_AUTO_CAL_INTERVAL);
+> > > > +
+> > > > +     /* Restore dynamic self-refresh */
+> > > > +     if (timing->emc_cfg & EMC_CFG_PWR_MASK)
+> > > > +             writel(timing->emc_cfg, emc->regs + EMC_CFG);
+> > > > +
+> > > > +     /* Set ZCAL wait count */
+> > > > +     writel(timing->emc_zcal_cnt_long, emc->regs + EMC_ZCAL_WAIT_C=
+NT);
+> > > > +
+> > > > +     /* Wait for timing to settle */
+> > > > +     udelay(2);
+> > > > +
+> > > > +     /* Reprogram SEL_DPD_CTRL */
+> > > > +     writel(timing->emc_sel_dpd_ctrl, emc->regs + EMC_SEL_DPD_CTRL=
+);
+> > > > +     emc_seq_update_timing(emc);
+> > > > +
+> > > > +     emc->last_timing =3D *timing;
+> > > > +}
+> > > > +
+> > > > +/* Initialization and deinitialization */
+> > > > +
+> > > > +static void emc_read_current_timing(struct tegra_emc *emc,
+> > > > +                                 struct emc_timing *timing)
+> > > > +{
+> > > > +     unsigned int i;
+> > > > +
+> > > > +     for (i =3D 0; i < ARRAY_SIZE(emc_burst_regs); ++i)
+> > > > +             timing->emc_burst_data[i] =3D
+> > > > +                     readl(emc->regs + emc_burst_regs[i]);
+> > > > +
+> > > > +     timing->emc_cfg =3D readl(emc->regs + EMC_CFG);
+> > > > +
+> > > > +     timing->emc_auto_cal_interval =3D 0;
+> > > > +     timing->emc_zcal_cnt_long =3D 0;
+> > > > +     timing->emc_mode_1 =3D 0;
+> > > > +     timing->emc_mode_2 =3D 0;
+> > > > +     timing->emc_mode_4 =3D 0;
+> > > > +     timing->emc_mode_reset =3D 0;
+> > >
+> > > Hmm. I wonder why these aren't being read. It seems like it would be =
+a good idea, since the some of these are checked for last_timing in the seq=
+uence.
+> > >
+> >
+> > This stems from Tegra124 emc driver, so maybe it has some sense. In
+> > any case, adding readl is not an issue whatsoever.
+> >
+>
+> Looks like they are set to zero in the downstream code as well, which sti=
+ll doesn't make much sense, but it does seem to work. So leaving at zero sh=
+ould be fine.
+>
+> > > > +}
+> > > > +
+> > > > +static int emc_init(struct tegra_emc *emc)
+> > > > +{
+> > > > +     u32 emc_cfg, emc_dbg;
+> > > > +     u32 intmask =3D EMC_REFRESH_OVERFLOW_INT;
+> > > > +     const char *dram_type_str;
+> > > > +
+> > > > +     emc->dram_type =3D readl(emc->regs + EMC_FBIO_CFG5);
+> > > > +
+> > > > +     emc->dram_type &=3D EMC_FBIO_CFG5_DRAM_TYPE_MASK;
+> > > > +     emc->dram_type >>=3D EMC_FBIO_CFG5_DRAM_TYPE_SHIFT;
+> > > > +
+> > > > +     emc->dram_num =3D tegra_mc_get_emem_device_count(emc->mc);
+> > > > +
+> > > > +     emc_cfg =3D readl_relaxed(emc->regs + EMC_CFG_2);
+> > > > +
+> > > > +     /* enable EMC and CAR to handshake on PLL divider/source chan=
+ges */
+> > > > +     emc_cfg |=3D EMC_CLKCHANGE_REQ_ENABLE;
+> > > > +
+> > > > +     /* configure clock change mode accordingly to DRAM type */
+> > > > +     switch (emc->dram_type) {
+> > > > +     case DRAM_TYPE_LPDDR2:
+> > > > +             emc_cfg |=3D EMC_CLKCHANGE_PD_ENABLE;
+> > > > +             emc_cfg &=3D ~EMC_CLKCHANGE_SR_ENABLE;
+> > > > +             break;
+> > > > +
+> > > > +     default:
+> > > > +             emc_cfg &=3D ~EMC_CLKCHANGE_SR_ENABLE;
+> > > > +             emc_cfg &=3D ~EMC_CLKCHANGE_PD_ENABLE;
+> > > > +             break;
+> > > > +     }
+> > >
+> > > This doesn't match the source trees I have (either Tegra114 or Tegra1=
+24). Those don't touch EMC_CLKCHANGE_SR_ENABLE. TRM seems to be contradicto=
+ry about this. It says to leave it at reset value of DISABLED, but then lat=
+er says that the reset value is ENABLED. I would err on the side of the cod=
+e. In any case, I think this would be cleaner to write as an if statement
+> > >
+> > > emc_cfg |=3D EMC_CLKCHANGE_REQ_ENABLE;
+> > >
+> > > if (emc->dram_type =3D=3D DRAM_TYPE_LPDDR2)
+> > >         emc_cfg |=3D EMC_CLKCHANGE_PD_ENABLE;
+> > > else
+> > >         emc_cfg &=3D ~EMC_CLKCHANGE_PD_ENABLE;
+> > >
+> >
+> > Noted. Yes, TRM in Software programming sequence on the Tegra 4 clock
+> > change sequence states Keep these register fields in reset values:
+> > CLKCHANGE_REQ_ENABLE =3D ENABLED
+> > CLKCHANGE_SR_ENABLE =3D DISABLED
+> >
+> > Hence I have added emc_cfg &=3D ~EMC_CLKCHANGE_SR_ENABLE
+>
+> I think it might be worth checking what the reset value actually is (by r=
+eading the register after boot). The register's section in the TRM has a di=
+fferent name for the field (REF_AFTER_SREF) and it says the reset value sho=
+uld be ENABLED, not DISABLED. The EMC_CFG_2 register is part of burst regs =
+for Tegra124, so I checked some EMC tables and it seems the bit is always s=
+et for those tables; and for Tegra114 the code never changes the bit from r=
+eset values. So I think the programming sequence section could be wrong (pe=
+rhaps the register was changed after it was written but it was never update=
+d).
+>
 
-Signed-off-by: Finley Xiao <finley.xiao@rock-chips.com>
-Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
----
- drivers/clk/rockchip/Kconfig      |   7 +
- drivers/clk/rockchip/Makefile     |   1 +
- drivers/clk/rockchip/clk-rk3506.c | 869 ++++++++++++++++++++++++++++++
- drivers/clk/rockchip/clk.h        |  13 +
- drivers/clk/rockchip/rst-rk3506.c | 226 ++++++++
- 5 files changed, 1116 insertions(+)
- create mode 100644 drivers/clk/rockchip/clk-rk3506.c
- create mode 100644 drivers/clk/rockchip/rst-rk3506.c
+I have read 0x7001b000 + 0x2b8 which is EMCB + EMC_CFG_2
 
-diff --git a/drivers/clk/rockchip/Kconfig b/drivers/clk/rockchip/Kconfig
-index e1ea0a098ca9..5cf1e0fd6fb3 100644
---- a/drivers/clk/rockchip/Kconfig
-+++ b/drivers/clk/rockchip/Kconfig
-@@ -100,6 +100,13 @@ config CLK_RK3399
- 	help
- 	  Build the driver for RK3399 Clock Driver.
- 
-+config CLK_RK3506
-+	bool "Rockchip RK3506 clock controller support"
-+	depends on ARM || COMPILE_TEST
-+	default y
-+	help
-+	  Build the driver for RK3506 Clock Driver.
-+
- config CLK_RK3528
- 	bool "Rockchip RK3528 clock controller support"
- 	depends on ARM64 || COMPILE_TEST
-diff --git a/drivers/clk/rockchip/Makefile b/drivers/clk/rockchip/Makefile
-index 82b4b29ad036..4d8cbb2044c7 100644
---- a/drivers/clk/rockchip/Makefile
-+++ b/drivers/clk/rockchip/Makefile
-@@ -30,6 +30,7 @@ obj-$(CONFIG_CLK_RK3308)        += clk-rk3308.o
- obj-$(CONFIG_CLK_RK3328)        += clk-rk3328.o
- obj-$(CONFIG_CLK_RK3368)        += clk-rk3368.o
- obj-$(CONFIG_CLK_RK3399)        += clk-rk3399.o
-+obj-$(CONFIG_CLK_RK3506)	+= clk-rk3506.o rst-rk3506.o
- obj-$(CONFIG_CLK_RK3528)	+= clk-rk3528.o rst-rk3528.o
- obj-$(CONFIG_CLK_RK3562)	+= clk-rk3562.o rst-rk3562.o
- obj-$(CONFIG_CLK_RK3568)	+= clk-rk3568.o
-diff --git a/drivers/clk/rockchip/clk-rk3506.c b/drivers/clk/rockchip/clk-rk3506.c
-new file mode 100644
-index 000000000000..dd59bd60382e
---- /dev/null
-+++ b/drivers/clk/rockchip/clk-rk3506.c
-@@ -0,0 +1,869 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2023-2025 Rockchip Electronics Co., Ltd.
-+ * Author: Finley Xiao <finley.xiao@rock-chips.com>
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/of_device.h>
-+#include <linux/of_address.h>
-+#include <linux/platform_device.h>
-+#include <linux/syscore_ops.h>
-+#include <dt-bindings/clock/rockchip,rk3506-cru.h>
-+#include "clk.h"
-+
-+#define PVTPLL_SRC_SEL_PVTPLL		(BIT(7) | BIT(23))
-+
-+enum rk3506_plls {
-+	gpll, v0pll, v1pll,
-+};
-+
-+/*
-+ * [FRAC PLL]: GPLL, V0PLL, V1PLL
-+ *   - VCO Frequency: 950MHz to 3800MHZ
-+ *   - Output Frequency: 19MHz to 3800MHZ
-+ *   - refdiv: 1 to 63 (Int Mode), 1 to 2 (Frac Mode)
-+ *   - fbdiv: 16 to 3800 (Int Mode), 20 to 380 (Frac Mode)
-+ *   - post1div: 1 to 7
-+ *   - post2div: 1 to 7
-+ */
-+static struct rockchip_pll_rate_table rk3506_pll_rates[] = {
-+	/* _mhz, _refdiv, _fbdiv, _postdiv1, _postdiv2, _dsmpd, _frac */
-+	RK3036_PLL_RATE(1896000000, 1, 79, 1, 1, 1, 0),
-+	RK3036_PLL_RATE(1800000000, 1, 75, 1, 1, 1, 0),
-+	RK3036_PLL_RATE(1704000000, 1, 71, 1, 1, 1, 0),
-+	RK3036_PLL_RATE(1608000000, 1, 67, 1, 1, 1, 0),
-+	RK3036_PLL_RATE(1512000000, 1, 63, 1, 1, 1, 0),
-+	RK3036_PLL_RATE(1416000000, 1, 59, 1, 1, 1, 0),
-+	RK3036_PLL_RATE(1350000000, 4, 225, 1, 1, 1, 0),
-+	RK3036_PLL_RATE(1296000000, 1, 54, 1, 1, 1, 0),
-+	RK3036_PLL_RATE(1200000000, 1, 50, 1, 1, 1, 0),
-+	RK3036_PLL_RATE(1188000000, 1, 99, 2, 1, 1, 0),
-+	RK3036_PLL_RATE(1179648000, 1, 49, 1, 1, 0, 2550137),
-+	RK3036_PLL_RATE(1008000000, 1, 84, 2, 1, 1, 0),
-+	RK3036_PLL_RATE(1000000000, 3, 125, 1, 1, 1, 0),
-+	RK3036_PLL_RATE(993484800, 1, 41, 1, 1, 0, 6630355),
-+	RK3036_PLL_RATE(983040000, 1, 40, 1, 1, 0, 16106127),
-+	RK3036_PLL_RATE(960000000, 1, 80, 2, 1, 1, 0),
-+	RK3036_PLL_RATE(912000000, 1, 76, 2, 1, 1, 0),
-+	RK3036_PLL_RATE(903168000, 1, 75, 2, 1, 0, 4429185),
-+	RK3036_PLL_RATE(816000000, 1, 68, 2, 1, 1, 0),
-+	RK3036_PLL_RATE(800000000, 3, 200, 2, 1, 1, 0),
-+	RK3036_PLL_RATE(600000000, 1, 50, 2, 1, 1, 0),
-+	RK3036_PLL_RATE(594000000, 2, 99, 2, 1, 1, 0),
-+	RK3036_PLL_RATE(408000000, 1, 68, 2, 2, 1, 0),
-+	RK3036_PLL_RATE(312000000, 1, 78, 6, 1, 1, 0),
-+	RK3036_PLL_RATE(216000000, 1, 72, 4, 2, 1, 0),
-+	RK3036_PLL_RATE(96000000, 1, 48, 6, 2, 1, 0),
-+	{ /* sentinel */ },
-+};
-+
-+#define RK3506_DIV_ACLK_CORE_MASK	0xf
-+#define RK3506_DIV_ACLK_CORE_SHIFT	9
-+#define RK3506_DIV_PCLK_CORE_MASK	0xf
-+#define RK3506_DIV_PCLK_CORE_SHIFT	0
-+
-+#define RK3506_CLKSEL15(_aclk_core_div)					\
-+{									\
-+	.reg = RK3506_CLKSEL_CON(15),					\
-+	.val = HIWORD_UPDATE(_aclk_core_div, RK3506_DIV_ACLK_CORE_MASK,	\
-+			     RK3506_DIV_ACLK_CORE_SHIFT),		\
-+}
-+
-+#define RK3506_CLKSEL16(_pclk_core_div)					\
-+{									\
-+	.reg = RK3506_CLKSEL_CON(16),					\
-+	.val = HIWORD_UPDATE(_pclk_core_div, RK3506_DIV_PCLK_CORE_MASK,	\
-+			     RK3506_DIV_PCLK_CORE_SHIFT),		\
-+}
-+
-+/* SIGN-OFF: aclk_core: 500M, pclk_core: 125M, */
-+#define RK3506_CPUCLK_RATE(_prate, _aclk_core_div, _pclk_core_div)	\
-+{									\
-+	.prate = _prate,						\
-+	.divs = {							\
-+		RK3506_CLKSEL15(_aclk_core_div),			\
-+		RK3506_CLKSEL16(_pclk_core_div),			\
-+	},								\
-+}
-+
-+static struct rockchip_cpuclk_rate_table rk3506_cpuclk_rates[] __initdata = {
-+	RK3506_CPUCLK_RATE(1608000000, 3, 12),
-+	RK3506_CPUCLK_RATE(1512000000, 3, 12),
-+	RK3506_CPUCLK_RATE(1416000000, 2, 11),
-+	RK3506_CPUCLK_RATE(1296000000, 2, 10),
-+	RK3506_CPUCLK_RATE(1200000000, 2, 9),
-+	RK3506_CPUCLK_RATE(1179648000, 2, 9),
-+	RK3506_CPUCLK_RATE(1008000000, 1, 7),
-+	RK3506_CPUCLK_RATE(903168000, 1, 7),
-+	RK3506_CPUCLK_RATE(800000000, 1, 6),
-+	RK3506_CPUCLK_RATE(750000000, 1, 5),
-+	RK3506_CPUCLK_RATE(589824000, 1, 4),
-+	RK3506_CPUCLK_RATE(400000000, 1, 3),
-+	RK3506_CPUCLK_RATE(200000000, 1, 1),
-+};
-+
-+PNAME(mux_pll_p)				= { "xin24m" };
-+PNAME(gpll_v0pll_v1pll_parents_p)		= { "gpll", "v0pll", "v1pll" };
-+PNAME(gpll_v0pll_v1pll_g_parents_p)		= { "clk_gpll_gate", "clk_v0pll_gate", "clk_v1pll_gate" };
-+PNAME(gpll_v0pll_v1pll_div_parents_p)		= { "clk_gpll_div", "clk_v0pll_div", "clk_v1pll_div" };
-+PNAME(xin24m_gpll_v0pll_v1pll_g_parents_p)	= { "xin24m", "clk_gpll_gate", "clk_v0pll_gate", "clk_v1pll_gate" };
-+PNAME(xin24m_g_gpll_v0pll_v1pll_g_parents_p)	= { "xin24m_gate", "clk_gpll_gate", "clk_v0pll_gate", "clk_v1pll_gate" };
-+PNAME(xin24m_g_gpll_v0pll_v1pll_div_parents_p)	= { "xin24m_gate", "clk_gpll_div", "clk_v0pll_div", "clk_v1pll_div" };
-+PNAME(xin24m_400k_32k_parents_p)		= { "xin24m", "clk_rc", "clk_32k" };
-+PNAME(clk_frac_uart_matrix0_mux_parents_p)	= { "xin24m", "gpll", "clk_v0pll_gate", "clk_v1pll_gate" };
-+PNAME(clk_timer0_parents_p)			= { "xin24m", "clk_gpll_div_100m", "clk_32k", "clk_core_pvtpll", "sai0_mclk_in", "sai0_sclk_in" };
-+PNAME(clk_timer1_parents_p)			= { "xin24m", "clk_gpll_div_100m", "clk_32k", "clk_core_pvtpll", "sai1_mclk_in", "sai1_sclk_in" };
-+PNAME(clk_timer2_parents_p)			= { "xin24m", "clk_gpll_div_100m", "clk_32k", "clk_core_pvtpll", "sai2_mclk_in", "sai2_sclk_in" };
-+PNAME(clk_timer3_parents_p)			= { "xin24m", "clk_gpll_div_100m", "clk_32k", "clk_core_pvtpll", "sai3_mclk_in", "sai3_sclk_in" };
-+PNAME(clk_timer4_parents_p)			= { "xin24m", "clk_gpll_div_100m", "clk_32k", "clk_core_pvtpll", "mclk_asrc0" };
-+PNAME(clk_timer5_parents_p)			= { "xin24m", "clk_gpll_div_100m", "clk_32k", "clk_core_pvtpll", "mclk_asrc1" };
-+PNAME(sclk_uart_parents_p)			= { "xin24m", "clk_gpll_gate", "clk_v0pll_gate", "clk_frac_uart_matrix0", "clk_frac_uart_matrix1",
-+						    "clk_frac_common_matrix0", "clk_frac_common_matrix1", "clk_frac_common_matrix2" };
-+PNAME(clk_mac_ptp_root_parents_p)		= { "gpll", "v0pll", "v1pll" };
-+PNAME(clk_pwm_parents_p)			= { "clk_rc", "sai0_mclk_in", "sai1_mclk_in", "sai2_mclk_in", "sai3_mclk_in", "sai0_sclk_in", "sai1_sclk_in",
-+						    "sai2_sclk_in", "sai3_sclk_in", "mclk_asrc0", "mclk_asrc1" };
-+PNAME(clk_can_parents_p)			= { "xin24m", "gpll", "clk_v0pll_gate", "clk_v1pll_gate", "clk_frac_voice_matrix1",
-+						    "clk_frac_common_matrix0", "clk_frac_common_matrix1", "clk_frac_common_matrix2" };
-+PNAME(clk_pdm_parents_p)			= { "xin24m_gate", "clk_int_voice_matrix0", "clk_int_voice_matrix1", "clk_int_voice_matrix2",
-+						    "clk_frac_voice_matrix0", "clk_frac_voice_matrix1", "clk_frac_common_matrix0", "clk_frac_common_matrix1",
-+						    "clk_frac_common_matrix2", "sai0_mclk_in", "sai1_mclk_in", "sai2_mclk_in", "sai3_mclk_in", "clk_gpll_div" };
-+PNAME(mclk_sai_asrc_parents_p)			= { "xin24m_gate", "clk_int_voice_matrix0", "clk_int_voice_matrix1", "clk_int_voice_matrix2",
-+						    "clk_frac_voice_matrix0", "clk_frac_voice_matrix1", "clk_frac_common_matrix0", "clk_frac_common_matrix1",
-+						    "clk_frac_common_matrix2", "sai0_mclk_in", "sai1_mclk_in", "sai2_mclk_in", "sai3_mclk_in" };
-+PNAME(lrck_asrc_parents_p)			= { "mclk_asrc0", "mclk_asrc1", "mclk_asrc2", "mclk_asrc3", "mclk_spdiftx", "clk_spdifrx_to_asrc", "clkout_pdm",
-+						    "sai0_fs", "sai1_fs", "sai2_fs", "sai3_fs", "sai4_fs" };
-+PNAME(cclk_src_sdmmc_parents_p)			= { "xin24m_gate", "gpll", "clk_v0pll_gate", "clk_v1pll_gate" };
-+PNAME(dclk_vop_parents_p)			= { "xin24m_gate", "clk_gpll_gate", "clk_v0pll_gate", "clk_v1pll_gate", "dummy_vop_dclk",
-+						    "dummy_vop_dclk", "dummy_vop_dclk", "dummy_vop_dclk" };
-+PNAME(dbclk_gpio0_parents_p)			= { "xin24m", "clk_rc", "clk_32k_pmu" };
-+PNAME(clk_pmu_hp_timer_parents_p)		= { "xin24m", "gpll_div_100m", "clk_core_pvtpll" };
-+PNAME(clk_ref_out_parents_p)			= { "xin24m", "gpll", "v0pll", "v1pll" };
-+PNAME(clk_32k_frac_parents_p)			= { "xin24m", "v0pll", "v1pll", "clk_rc" };
-+PNAME(clk_32k_parents_p)			= { "xin32k", "clk_32k_rc", "clk_32k_frac" };
-+PNAME(clk_ref_phy_pmu_mux_parents_p)		= { "xin24m", "clk_ref_phy_pll" };
-+PNAME(clk_vpll_ref_parents_p)			= { "xin24m", "clk_pll_ref_io" };
-+PNAME(mux_armclk_p)				= { "armclk_pll", "clk_core_pvtpll" };
-+
-+#define MFLAGS CLK_MUX_HIWORD_MASK
-+#define DFLAGS CLK_DIVIDER_HIWORD_MASK
-+#define GFLAGS (CLK_GATE_HIWORD_MASK | CLK_GATE_SET_TO_DISABLE)
-+
-+static struct rockchip_pll_clock rk3506_pll_clks[] __initdata = {
-+	[gpll] = PLL(pll_rk3328, PLL_GPLL, "gpll", mux_pll_p,
-+		     CLK_IS_CRITICAL, RK3506_PLL_CON(0),
-+		     RK3506_MODE_CON, 0, 2, 0, rk3506_pll_rates),
-+	[v0pll] = PLL(pll_rk3328, PLL_V0PLL, "v0pll", mux_pll_p,
-+		     CLK_IS_CRITICAL, RK3506_PLL_CON(8),
-+		     RK3506_MODE_CON, 2, 0, 0, rk3506_pll_rates),
-+	[v1pll] = PLL(pll_rk3328, PLL_V1PLL, "v1pll", mux_pll_p,
-+		     CLK_IS_CRITICAL, RK3506_PLL_CON(16),
-+		     RK3506_MODE_CON, 4, 1, 0, rk3506_pll_rates),
-+};
-+
-+static struct rockchip_clk_branch rk3506_armclk __initdata =
-+	MUX(ARMCLK, "armclk", mux_armclk_p, CLK_IS_CRITICAL | CLK_SET_RATE_PARENT,
-+			RK3506_CLKSEL_CON(15), 8, 1, MFLAGS);
-+
-+static struct rockchip_clk_branch rk3506_clk_branches[] __initdata = {
-+	/*
-+	 * CRU Clock-Architecture
-+	 */
-+	/* top */
-+	GATE(XIN24M_GATE, "xin24m_gate", "xin24m", CLK_IS_CRITICAL,
-+			RK3506_CLKGATE_CON(0), 1, GFLAGS),
-+	GATE(CLK_GPLL_GATE, "clk_gpll_gate", "gpll", CLK_IS_CRITICAL,
-+			RK3506_CLKGATE_CON(0), 2, GFLAGS),
-+	GATE(CLK_V0PLL_GATE, "clk_v0pll_gate", "v0pll", CLK_IS_CRITICAL,
-+			RK3506_CLKGATE_CON(0), 3, GFLAGS),
-+	GATE(CLK_V1PLL_GATE, "clk_v1pll_gate", "v1pll", 0,
-+			RK3506_CLKGATE_CON(0), 4, GFLAGS),
-+	COMPOSITE_NOMUX(CLK_GPLL_DIV, "clk_gpll_div", "clk_gpll_gate", CLK_IS_CRITICAL,
-+			RK3506_CLKSEL_CON(0), 6, 4, DFLAGS,
-+			RK3506_CLKGATE_CON(0), 5, GFLAGS),
-+	COMPOSITE_NOMUX(CLK_GPLL_DIV_100M, "clk_gpll_div_100m", "clk_gpll_div", 0,
-+			RK3506_CLKSEL_CON(0), 10, 4, DFLAGS,
-+			RK3506_CLKGATE_CON(0), 6, GFLAGS),
-+	COMPOSITE_NOMUX(CLK_V0PLL_DIV, "clk_v0pll_div", "clk_v0pll_gate", CLK_IS_CRITICAL,
-+			RK3506_CLKSEL_CON(1), 0, 4, DFLAGS,
-+			RK3506_CLKGATE_CON(0), 7, GFLAGS),
-+	COMPOSITE_NOMUX(CLK_V1PLL_DIV, "clk_v1pll_div", "clk_v1pll_gate", 0,
-+			RK3506_CLKSEL_CON(1), 4, 4, DFLAGS,
-+			RK3506_CLKGATE_CON(0), 8, GFLAGS),
-+	COMPOSITE_NOMUX(CLK_INT_VOICE_MATRIX0, "clk_int_voice_matrix0", "clk_v0pll_gate", 0,
-+			RK3506_CLKSEL_CON(1), 8, 5, DFLAGS,
-+			RK3506_CLKGATE_CON(0), 9, GFLAGS),
-+	COMPOSITE_NOMUX(CLK_INT_VOICE_MATRIX1, "clk_int_voice_matrix1", "clk_v1pll_gate", 0,
-+			RK3506_CLKSEL_CON(2), 0, 5, DFLAGS,
-+			RK3506_CLKGATE_CON(0), 10, GFLAGS),
-+	COMPOSITE_NOMUX(CLK_INT_VOICE_MATRIX2, "clk_int_voice_matrix2", "clk_v0pll_gate", 0,
-+			RK3506_CLKSEL_CON(2), 5, 5, DFLAGS,
-+			RK3506_CLKGATE_CON(0), 11, GFLAGS),
-+	MUX(CLK_FRAC_UART_MATRIX0_MUX, "clk_frac_uart_matrix0_mux", clk_frac_uart_matrix0_mux_parents_p, 0,
-+			RK3506_CLKSEL_CON(3), 9, 2, MFLAGS),
-+	MUX(CLK_FRAC_UART_MATRIX1_MUX, "clk_frac_uart_matrix1_mux", xin24m_gpll_v0pll_v1pll_g_parents_p, 0,
-+			RK3506_CLKSEL_CON(3), 11, 2, MFLAGS),
-+	MUX(CLK_FRAC_VOICE_MATRIX0_MUX, "clk_frac_voice_matrix0_mux", xin24m_g_gpll_v0pll_v1pll_g_parents_p, 0,
-+			RK3506_CLKSEL_CON(3), 13, 2, MFLAGS),
-+	MUX(CLK_FRAC_VOICE_MATRIX1_MUX, "clk_frac_voice_matrix1_mux", xin24m_g_gpll_v0pll_v1pll_g_parents_p, 0,
-+			RK3506_CLKSEL_CON(4), 0, 2, MFLAGS),
-+	MUX(CLK_FRAC_COMMON_MATRIX0_MUX, "clk_frac_common_matrix0_mux", xin24m_gpll_v0pll_v1pll_g_parents_p, 0,
-+			RK3506_CLKSEL_CON(4), 2, 2, MFLAGS),
-+	MUX(CLK_FRAC_COMMON_MATRIX1_MUX, "clk_frac_common_matrix1_mux", xin24m_g_gpll_v0pll_v1pll_g_parents_p, 0,
-+			RK3506_CLKSEL_CON(4), 4, 2, MFLAGS),
-+	MUX(CLK_FRAC_COMMON_MATRIX2_MUX, "clk_frac_common_matrix2_mux", xin24m_g_gpll_v0pll_v1pll_g_parents_p, 0,
-+			RK3506_CLKSEL_CON(4), 6, 2, MFLAGS),
-+	COMPOSITE_FRAC(CLK_FRAC_UART_MATRIX0, "clk_frac_uart_matrix0", "clk_frac_uart_matrix0_mux", 0,
-+			RK3506_CLKSEL_CON(5), 0,
-+			RK3506_CLKGATE_CON(0), 13, GFLAGS),
-+	COMPOSITE_FRAC(CLK_FRAC_UART_MATRIX1, "clk_frac_uart_matrix1", "clk_frac_uart_matrix1_mux", 0,
-+			RK3506_CLKSEL_CON(6), 0,
-+			RK3506_CLKGATE_CON(0), 14, GFLAGS),
-+	COMPOSITE_FRAC(CLK_FRAC_VOICE_MATRIX0, "clk_frac_voice_matrix0", "clk_frac_voice_matrix0_mux", 0,
-+			RK3506_CLKSEL_CON(7), 0,
-+			RK3506_CLKGATE_CON(0), 15, GFLAGS),
-+	COMPOSITE_FRAC(CLK_FRAC_VOICE_MATRIX1, "clk_frac_voice_matrix1", "clk_frac_voice_matrix1_mux", 0,
-+			RK3506_CLKSEL_CON(9), 0,
-+			RK3506_CLKGATE_CON(1), 0, GFLAGS),
-+	COMPOSITE_FRAC(CLK_FRAC_COMMON_MATRIX0, "clk_frac_common_matrix0", "clk_frac_common_matrix0_mux", 0,
-+			RK3506_CLKSEL_CON(11), 0,
-+			RK3506_CLKGATE_CON(1), 1, GFLAGS),
-+	COMPOSITE_FRAC(CLK_FRAC_COMMON_MATRIX1, "clk_frac_common_matrix1", "clk_frac_common_matrix1_mux", 0,
-+			RK3506_CLKSEL_CON(12), 0,
-+			RK3506_CLKGATE_CON(1), 2, GFLAGS),
-+	COMPOSITE_FRAC(CLK_FRAC_COMMON_MATRIX2, "clk_frac_common_matrix2", "clk_frac_common_matrix2_mux", 0,
-+			RK3506_CLKSEL_CON(13), 0,
-+			RK3506_CLKGATE_CON(1), 3, GFLAGS),
-+	GATE(CLK_REF_USBPHY_TOP, "clk_ref_usbphy_top", "xin24m", 0,
-+			RK3506_CLKGATE_CON(1), 4, GFLAGS),
-+	GATE(CLK_REF_DPHY_TOP, "clk_ref_dphy_top", "xin24m", 0,
-+			RK3506_CLKGATE_CON(1), 5, GFLAGS),
-+
-+	/* core */
-+	COMPOSITE_NOGATE(0, "armclk_pll", gpll_v0pll_v1pll_parents_p, CLK_IS_CRITICAL,
-+			RK3506_CLKSEL_CON(15), 5, 2, MFLAGS, 0, 5, DFLAGS),
-+	COMPOSITE_NOMUX(ACLK_CORE_ROOT, "aclk_core_root", "armclk", CLK_IGNORE_UNUSED,
-+			RK3506_CLKSEL_CON(15), 9, 4, DFLAGS | CLK_DIVIDER_READ_ONLY,
-+			RK3506_CLKGATE_CON(2), 11, GFLAGS),
-+	COMPOSITE_NOMUX(PCLK_CORE_ROOT, "pclk_core_root", "armclk", CLK_IGNORE_UNUSED,
-+			RK3506_CLKSEL_CON(16), 0, 4, DFLAGS | CLK_DIVIDER_READ_ONLY,
-+			RK3506_CLKGATE_CON(2), 12, GFLAGS),
-+	GATE(PCLK_DBG, "pclk_dbg", "pclk_core_root", CLK_IGNORE_UNUSED,
-+			RK3506_CLKGATE_CON(3), 1, GFLAGS),
-+	GATE(PCLK_CORE_GRF, "pclk_core_grf", "pclk_core_root", CLK_IGNORE_UNUSED,
-+			RK3506_CLKGATE_CON(3), 4, GFLAGS),
-+	GATE(PCLK_CORE_CRU, "pclk_core_cru", "pclk_core_root", CLK_IGNORE_UNUSED,
-+			RK3506_CLKGATE_CON(3), 5, GFLAGS),
-+	GATE(CLK_CORE_EMA_DETECT, "clk_core_ema_detect", "xin24m_gate", CLK_IGNORE_UNUSED,
-+			RK3506_CLKGATE_CON(3), 6, GFLAGS),
-+	GATE(PCLK_GPIO1, "pclk_gpio1", "aclk_core_root", 0,
-+			RK3506_CLKGATE_CON(3), 8, GFLAGS),
-+	GATE(DBCLK_GPIO1, "dbclk_gpio1", "xin24m_gate", 0,
-+			RK3506_CLKGATE_CON(3), 9, GFLAGS),
-+
-+	/* core peri */
-+	COMPOSITE(ACLK_CORE_PERI_ROOT, "aclk_core_peri_root", gpll_v0pll_v1pll_g_parents_p, 0,
-+			RK3506_CLKSEL_CON(18), 5, 2, MFLAGS, 0, 5, DFLAGS,
-+			RK3506_CLKGATE_CON(4), 0, GFLAGS),
-+	GATE(HCLK_CORE_PERI_ROOT, "hclk_core_peri_root", "aclk_core_peri_root", 0,
-+			RK3506_CLKGATE_CON(4), 1, GFLAGS),
-+	GATE(PCLK_CORE_PERI_ROOT, "pclk_core_peri_root", "aclk_core_peri_root", 0,
-+			RK3506_CLKGATE_CON(4), 2, GFLAGS),
-+	COMPOSITE(CLK_DSMC, "clk_dsmc", xin24m_gpll_v0pll_v1pll_g_parents_p, 0,
-+			RK3506_CLKSEL_CON(18), 12, 2, MFLAGS, 7, 5, DFLAGS,
-+			RK3506_CLKGATE_CON(4), 4, GFLAGS),
-+	GATE(ACLK_DSMC, "aclk_dsmc", "aclk_core_peri_root", 0,
-+			RK3506_CLKGATE_CON(4), 5, GFLAGS),
-+	GATE(PCLK_DSMC, "pclk_dsmc", "pclk_core_peri_root", 0,
-+			RK3506_CLKGATE_CON(4), 6, GFLAGS),
-+	COMPOSITE(CLK_FLEXBUS_TX, "clk_flexbus_tx", xin24m_gpll_v0pll_v1pll_g_parents_p, 0,
-+			RK3506_CLKSEL_CON(19), 5, 2, MFLAGS, 0, 5, DFLAGS,
-+			RK3506_CLKGATE_CON(4), 7, GFLAGS),
-+	COMPOSITE(CLK_FLEXBUS_RX, "clk_flexbus_rx", xin24m_gpll_v0pll_v1pll_g_parents_p, 0,
-+			RK3506_CLKSEL_CON(19), 12, 2, MFLAGS, 7, 5, DFLAGS,
-+			RK3506_CLKGATE_CON(4), 8, GFLAGS),
-+	GATE(ACLK_FLEXBUS, "aclk_flexbus", "aclk_core_peri_root", 0,
-+			RK3506_CLKGATE_CON(4), 9, GFLAGS),
-+	GATE(HCLK_FLEXBUS, "hclk_flexbus", "hclk_core_peri_root", 0,
-+			RK3506_CLKGATE_CON(4), 10, GFLAGS),
-+	GATE(ACLK_DSMC_SLV, "aclk_dsmc_slv", "aclk_core_peri_root", 0,
-+			RK3506_CLKGATE_CON(4), 11, GFLAGS),
-+	GATE(HCLK_DSMC_SLV, "hclk_dsmc_slv", "hclk_core_peri_root", 0,
-+			RK3506_CLKGATE_CON(4), 12, GFLAGS),
-+
-+	/* bus */
-+	COMPOSITE(ACLK_BUS_ROOT, "aclk_bus_root", gpll_v0pll_v1pll_div_parents_p, CLK_IS_CRITICAL,
-+			RK3506_CLKSEL_CON(21), 5, 2, MFLAGS, 0, 5, DFLAGS,
-+			RK3506_CLKGATE_CON(5), 0, GFLAGS),
-+	COMPOSITE(HCLK_BUS_ROOT, "hclk_bus_root", gpll_v0pll_v1pll_div_parents_p, CLK_IS_CRITICAL,
-+			RK3506_CLKSEL_CON(21), 12, 2, MFLAGS, 7, 5, DFLAGS,
-+			RK3506_CLKGATE_CON(5), 1, GFLAGS),
-+	COMPOSITE(PCLK_BUS_ROOT, "pclk_bus_root", gpll_v0pll_v1pll_div_parents_p, CLK_IS_CRITICAL,
-+			RK3506_CLKSEL_CON(22), 5, 2, MFLAGS, 0, 5, DFLAGS,
-+			RK3506_CLKGATE_CON(5), 2, GFLAGS),
-+	GATE(ACLK_SYSRAM, "aclk_sysram", "aclk_bus_root", CLK_IGNORE_UNUSED,
-+			RK3506_CLKGATE_CON(5), 6, GFLAGS),
-+	GATE(HCLK_SYSRAM, "hclk_sysram", "aclk_bus_root", CLK_IGNORE_UNUSED,
-+			RK3506_CLKGATE_CON(5), 7, GFLAGS),
-+	GATE(ACLK_DMAC0, "aclk_dmac0", "aclk_bus_root", 0,
-+			RK3506_CLKGATE_CON(5), 8, GFLAGS),
-+	GATE(ACLK_DMAC1, "aclk_dmac1", "aclk_bus_root", 0,
-+			RK3506_CLKGATE_CON(5), 9, GFLAGS),
-+	GATE(HCLK_M0, "hclk_m0", "aclk_bus_root", 0,
-+			RK3506_CLKGATE_CON(5), 10, GFLAGS),
-+	GATE(ACLK_CRYPTO_NS, "aclk_crypto_ns", "aclk_bus_root", 0,
-+			RK3506_CLKGATE_CON(5), 14, GFLAGS),
-+	GATE(HCLK_CRYPTO_NS, "hclk_crypto_ns", "hclk_bus_root", 0,
-+			RK3506_CLKGATE_CON(5), 15, GFLAGS),
-+	GATE(HCLK_RNG, "hclk_rng", "hclk_bus_root", 0,
-+			RK3506_CLKGATE_CON(6), 0, GFLAGS),
-+	GATE(PCLK_BUS_GRF, "pclk_bus_grf", "pclk_bus_root", CLK_IGNORE_UNUSED,
-+			RK3506_CLKGATE_CON(6), 1, GFLAGS),
-+	GATE(PCLK_TIMER, "pclk_timer", "pclk_bus_root", 0,
-+			RK3506_CLKGATE_CON(6), 2, GFLAGS),
-+	COMPOSITE_NODIV(CLK_TIMER0_CH0, "clk_timer0_ch0", clk_timer0_parents_p, 0,
-+			RK3506_CLKSEL_CON(22), 7, 3, MFLAGS,
-+			RK3506_CLKGATE_CON(6), 3, GFLAGS),
-+	COMPOSITE_NODIV(CLK_TIMER0_CH1, "clk_timer0_ch1", clk_timer1_parents_p, 0,
-+			RK3506_CLKSEL_CON(22), 10, 3, MFLAGS,
-+			RK3506_CLKGATE_CON(6), 4, GFLAGS),
-+	COMPOSITE_NODIV(CLK_TIMER0_CH2, "clk_timer0_ch2", clk_timer2_parents_p, 0,
-+			RK3506_CLKSEL_CON(22), 13, 3, MFLAGS,
-+			RK3506_CLKGATE_CON(6), 5, GFLAGS),
-+	COMPOSITE_NODIV(CLK_TIMER0_CH3, "clk_timer0_ch3", clk_timer3_parents_p, 0,
-+			RK3506_CLKSEL_CON(23), 0, 3, MFLAGS,
-+			RK3506_CLKGATE_CON(6), 6, GFLAGS),
-+	COMPOSITE_NODIV(CLK_TIMER0_CH4, "clk_timer0_ch4", clk_timer4_parents_p, 0,
-+			RK3506_CLKSEL_CON(23), 3, 3, MFLAGS,
-+			RK3506_CLKGATE_CON(6), 7, GFLAGS),
-+	COMPOSITE_NODIV(CLK_TIMER0_CH5, "clk_timer0_ch5", clk_timer5_parents_p, 0,
-+			RK3506_CLKSEL_CON(23), 6, 3, MFLAGS,
-+			RK3506_CLKGATE_CON(6), 8, GFLAGS),
-+	GATE(PCLK_WDT0, "pclk_wdt0", "pclk_bus_root", 0,
-+			RK3506_CLKGATE_CON(6), 9, GFLAGS),
-+	GATE(TCLK_WDT0, "tclk_wdt0", "xin24m_gate", 0,
-+			RK3506_CLKGATE_CON(6), 10, GFLAGS),
-+	GATE(PCLK_WDT1, "pclk_wdt1", "pclk_bus_root", 0,
-+			RK3506_CLKGATE_CON(6), 11, GFLAGS),
-+	GATE(TCLK_WDT1, "tclk_wdt1", "xin24m_gate", 0,
-+			RK3506_CLKGATE_CON(6), 12, GFLAGS),
-+	GATE(PCLK_MAILBOX, "pclk_mailbox", "pclk_bus_root", 0,
-+			RK3506_CLKGATE_CON(6), 13, GFLAGS),
-+	GATE(PCLK_INTMUX, "pclk_intmux", "pclk_bus_root", 0,
-+			RK3506_CLKGATE_CON(6), 14, GFLAGS),
-+	GATE(PCLK_SPINLOCK, "pclk_spinlock", "pclk_bus_root", 0,
-+			RK3506_CLKGATE_CON(6), 15, GFLAGS),
-+	GATE(PCLK_DDRC, "pclk_ddrc", "pclk_bus_root", CLK_IGNORE_UNUSED,
-+			RK3506_CLKGATE_CON(7), 0, GFLAGS),
-+	GATE(HCLK_DDRPHY, "hclk_ddrphy", "hclk_bus_root", CLK_IGNORE_UNUSED,
-+			RK3506_CLKGATE_CON(7), 1, GFLAGS),
-+	GATE(PCLK_DDRMON, "pclk_ddrmon", "pclk_bus_root", CLK_IGNORE_UNUSED,
-+			RK3506_CLKGATE_CON(7), 2, GFLAGS),
-+	GATE(CLK_DDRMON_OSC, "clk_ddrmon_osc", "xin24m_gate", CLK_IGNORE_UNUSED,
-+			RK3506_CLKGATE_CON(7), 3, GFLAGS),
-+	GATE(PCLK_STDBY, "pclk_stdby", "pclk_bus_root", CLK_IGNORE_UNUSED,
-+			RK3506_CLKGATE_CON(7), 4, GFLAGS),
-+	GATE(HCLK_USBOTG0, "hclk_usbotg0", "hclk_bus_root", 0,
-+			RK3506_CLKGATE_CON(7), 5, GFLAGS),
-+	GATE(HCLK_USBOTG0_PMU, "hclk_usbotg0_pmu", "hclk_bus_root", 0,
-+			RK3506_CLKGATE_CON(7), 6, GFLAGS),
-+	GATE(CLK_USBOTG0_ADP, "clk_usbotg0_adp", "clk_32k", 0,
-+			RK3506_CLKGATE_CON(7), 7, GFLAGS),
-+	GATE(HCLK_USBOTG1, "hclk_usbotg1", "hclk_bus_root", 0,
-+			RK3506_CLKGATE_CON(7), 8, GFLAGS),
-+	GATE(HCLK_USBOTG1_PMU, "hclk_usbotg1_pmu", "hclk_bus_root", 0,
-+			RK3506_CLKGATE_CON(7), 9, GFLAGS),
-+	GATE(CLK_USBOTG1_ADP, "clk_usbotg1_adp", "clk_32k", 0,
-+			RK3506_CLKGATE_CON(7), 10, GFLAGS),
-+	GATE(PCLK_USBPHY, "pclk_usbphy", "pclk_bus_root", 0,
-+			RK3506_CLKGATE_CON(7), 11, GFLAGS),
-+	GATE(ACLK_DMA2DDR, "aclk_dma2ddr", "aclk_bus_root", CLK_IGNORE_UNUSED,
-+			RK3506_CLKGATE_CON(8), 0, GFLAGS),
-+	GATE(PCLK_DMA2DDR, "pclk_dma2ddr", "pclk_bus_root", CLK_IGNORE_UNUSED,
-+			RK3506_CLKGATE_CON(8), 1, GFLAGS),
-+	COMPOSITE_NOMUX(STCLK_M0, "stclk_m0", "xin24m_gate", 0,
-+			RK3506_CLKSEL_CON(23), 9, 6, DFLAGS,
-+			RK3506_CLKGATE_CON(8), 2, GFLAGS),
-+	COMPOSITE(CLK_DDRPHY, "clk_ddrphy", gpll_v0pll_v1pll_parents_p, CLK_IGNORE_UNUSED,
-+			RK3506_PMU_CLKSEL_CON(4), 4, 2, MFLAGS, 0, 4, DFLAGS,
-+			RK3506_PMU_CLKGATE_CON(1), 10, GFLAGS),
-+	FACTOR(CLK_DDRC_SRC, "clk_ddrc_src", "clk_ddrphy", 0, 1, 4),
-+	GATE(ACLK_DDRC_0, "aclk_ddrc_0", "clk_ddrc_src", CLK_IGNORE_UNUSED,
-+			RK3506_CLKGATE_CON(10), 0, GFLAGS),
-+	GATE(ACLK_DDRC_1, "aclk_ddrc_1", "clk_ddrc_src", CLK_IGNORE_UNUSED,
-+			RK3506_CLKGATE_CON(10), 1, GFLAGS),
-+	GATE(CLK_DDRC, "clk_ddrc", "clk_ddrc_src", CLK_IS_CRITICAL,
-+			RK3506_CLKGATE_CON(10), 3, GFLAGS),
-+	GATE(CLK_DDRMON, "clk_ddrmon", "clk_ddrc_src", CLK_IGNORE_UNUSED,
-+			RK3506_CLKGATE_CON(10), 4, GFLAGS),
-+
-+	/* ls peri */
-+	COMPOSITE(HCLK_LSPERI_ROOT, "hclk_lsperi_root", gpll_v0pll_v1pll_div_parents_p, 0,
-+			RK3506_CLKSEL_CON(29), 5, 2, MFLAGS, 0, 5, DFLAGS,
-+			RK3506_CLKGATE_CON(11), 0, GFLAGS),
-+	GATE(PCLK_LSPERI_ROOT, "pclk_lsperi_root", "hclk_lsperi_root", 0,
-+			RK3506_CLKGATE_CON(11), 1, GFLAGS),
-+	GATE(PCLK_UART0, "pclk_uart0", "pclk_lsperi_root", 0,
-+			RK3506_CLKGATE_CON(11), 4, GFLAGS),
-+	GATE(PCLK_UART1, "pclk_uart1", "pclk_lsperi_root", 0,
-+			RK3506_CLKGATE_CON(11), 5, GFLAGS),
-+	GATE(PCLK_UART2, "pclk_uart2", "pclk_lsperi_root", 0,
-+			RK3506_CLKGATE_CON(11), 6, GFLAGS),
-+	GATE(PCLK_UART3, "pclk_uart3", "pclk_lsperi_root", 0,
-+			RK3506_CLKGATE_CON(11), 7, GFLAGS),
-+	GATE(PCLK_UART4, "pclk_uart4", "pclk_lsperi_root", 0,
-+			RK3506_CLKGATE_CON(11), 8, GFLAGS),
-+	COMPOSITE(SCLK_UART0, "sclk_uart0", sclk_uart_parents_p, 0,
-+			RK3506_CLKSEL_CON(29), 12, 3, MFLAGS, 7, 5, DFLAGS,
-+			RK3506_CLKGATE_CON(11), 9, GFLAGS),
-+	COMPOSITE(SCLK_UART1, "sclk_uart1", sclk_uart_parents_p, 0,
-+			RK3506_CLKSEL_CON(30), 5, 3, MFLAGS, 0, 5, DFLAGS,
-+			RK3506_CLKGATE_CON(11), 10, GFLAGS),
-+	COMPOSITE(SCLK_UART2, "sclk_uart2", sclk_uart_parents_p, 0,
-+			RK3506_CLKSEL_CON(30), 13, 3, MFLAGS, 8, 5, DFLAGS,
-+			RK3506_CLKGATE_CON(11), 11, GFLAGS),
-+	COMPOSITE(SCLK_UART3, "sclk_uart3", sclk_uart_parents_p, 0,
-+			RK3506_CLKSEL_CON(31), 5, 3, MFLAGS, 0, 5, DFLAGS,
-+			RK3506_CLKGATE_CON(11), 12, GFLAGS),
-+	COMPOSITE(SCLK_UART4, "sclk_uart4", sclk_uart_parents_p, 0,
-+			RK3506_CLKSEL_CON(31), 13, 3, MFLAGS, 8, 5, DFLAGS,
-+			RK3506_CLKGATE_CON(11), 13, GFLAGS),
-+	GATE(PCLK_I2C0, "pclk_i2c0", "pclk_lsperi_root", 0,
-+			RK3506_CLKGATE_CON(11), 14, GFLAGS),
-+	COMPOSITE(CLK_I2C0, "clk_i2c0", xin24m_g_gpll_v0pll_v1pll_div_parents_p, 0,
-+			RK3506_CLKSEL_CON(32), 4, 2, MFLAGS, 0, 4, DFLAGS,
-+			RK3506_CLKGATE_CON(11), 15, GFLAGS),
-+	GATE(PCLK_I2C1, "pclk_i2c1", "pclk_lsperi_root", 0,
-+			RK3506_CLKGATE_CON(12), 0, GFLAGS),
-+	COMPOSITE(CLK_I2C1, "clk_i2c1", xin24m_g_gpll_v0pll_v1pll_div_parents_p, 0,
-+			RK3506_CLKSEL_CON(32), 10, 2, MFLAGS, 6, 4, DFLAGS,
-+			RK3506_CLKGATE_CON(12), 1, GFLAGS),
-+	GATE(PCLK_I2C2, "pclk_i2c2", "pclk_lsperi_root", 0,
-+			RK3506_CLKGATE_CON(12), 2, GFLAGS),
-+	COMPOSITE(CLK_I2C2, "clk_i2c2", xin24m_g_gpll_v0pll_v1pll_div_parents_p, 0,
-+			RK3506_CLKSEL_CON(33), 4, 2, MFLAGS, 0, 4, DFLAGS,
-+			RK3506_CLKGATE_CON(12), 3, GFLAGS),
-+	GATE(PCLK_PWM1, "pclk_pwm1", "pclk_lsperi_root", 0,
-+			RK3506_CLKGATE_CON(12), 4, GFLAGS),
-+	COMPOSITE(CLK_PWM1, "clk_pwm1", gpll_v0pll_v1pll_div_parents_p, 0,
-+			RK3506_CLKSEL_CON(33), 10, 2, MFLAGS, 6, 4, DFLAGS,
-+			RK3506_CLKGATE_CON(12), 5, GFLAGS),
-+	GATE(CLK_OSC_PWM1, "clk_osc_pwm1", "xin24m", 0,
-+			RK3506_CLKGATE_CON(12), 6, GFLAGS),
-+	GATE(CLK_RC_PWM1, "clk_rc_pwm1", "clk_rc", 0,
-+			RK3506_CLKGATE_CON(12), 7, GFLAGS),
-+	COMPOSITE_NODIV(CLK_FREQ_PWM1, "clk_freq_pwm1", clk_pwm_parents_p, 0,
-+			RK3506_CLKSEL_CON(33), 12, 4, MFLAGS,
-+			RK3506_CLKGATE_CON(12), 8, GFLAGS),
-+	COMPOSITE_NODIV(CLK_COUNTER_PWM1, "clk_counter_pwm1", clk_pwm_parents_p, 0,
-+			RK3506_CLKSEL_CON(34), 0, 4, MFLAGS,
-+			RK3506_CLKGATE_CON(12), 9, GFLAGS),
-+	GATE(PCLK_SPI0, "pclk_spi0", "pclk_lsperi_root", 0,
-+			RK3506_CLKGATE_CON(12), 10, GFLAGS),
-+	COMPOSITE(CLK_SPI0, "clk_spi0", xin24m_g_gpll_v0pll_v1pll_div_parents_p, 0,
-+			RK3506_CLKSEL_CON(34), 8, 2, MFLAGS, 4, 4, DFLAGS,
-+			RK3506_CLKGATE_CON(12), 11, GFLAGS),
-+	GATE(PCLK_SPI1, "pclk_spi1", "pclk_lsperi_root", 0,
-+			RK3506_CLKGATE_CON(12), 12, GFLAGS),
-+	COMPOSITE(CLK_SPI1, "clk_spi1", xin24m_g_gpll_v0pll_v1pll_div_parents_p, 0,
-+			RK3506_CLKSEL_CON(34), 14, 2, MFLAGS, 10, 4, DFLAGS,
-+			RK3506_CLKGATE_CON(12), 13, GFLAGS),
-+	GATE(PCLK_GPIO2, "pclk_gpio2", "pclk_lsperi_root", 0,
-+			RK3506_CLKGATE_CON(12), 14, GFLAGS),
-+	COMPOSITE_NODIV(DBCLK_GPIO2, "dbclk_gpio2", xin24m_400k_32k_parents_p, 0,
-+			RK3506_CLKSEL_CON(35), 0, 2, MFLAGS,
-+			RK3506_CLKGATE_CON(12), 15, GFLAGS),
-+	GATE(PCLK_GPIO3, "pclk_gpio3", "pclk_lsperi_root", 0,
-+			RK3506_CLKGATE_CON(13), 0, GFLAGS),
-+	COMPOSITE_NODIV(DBCLK_GPIO3, "dbclk_gpio3", xin24m_400k_32k_parents_p, 0,
-+			RK3506_CLKSEL_CON(35), 2, 2, MFLAGS,
-+			RK3506_CLKGATE_CON(13), 1, GFLAGS),
-+	GATE(PCLK_GPIO4, "pclk_gpio4", "pclk_lsperi_root", 0,
-+			RK3506_CLKGATE_CON(13), 2, GFLAGS),
-+	COMPOSITE_NODIV(DBCLK_GPIO4, "dbclk_gpio4", xin24m_400k_32k_parents_p, 0,
-+			RK3506_CLKSEL_CON(35), 4, 2, MFLAGS,
-+			RK3506_CLKGATE_CON(13), 3, GFLAGS),
-+	GATE(HCLK_CAN0, "hclk_can0", "hclk_lsperi_root", 0,
-+			RK3506_CLKGATE_CON(13), 4, GFLAGS),
-+	COMPOSITE(CLK_CAN0, "clk_can0", clk_can_parents_p, 0,
-+			RK3506_CLKSEL_CON(35), 11, 3, MFLAGS, 6, 5, DFLAGS,
-+			RK3506_CLKGATE_CON(13), 5, GFLAGS),
-+	GATE(HCLK_CAN1, "hclk_can1", "hclk_lsperi_root", 0,
-+			RK3506_CLKGATE_CON(13), 6, GFLAGS),
-+	COMPOSITE(CLK_CAN1, "clk_can1", clk_can_parents_p, 0,
-+			RK3506_CLKSEL_CON(36), 5, 3, MFLAGS, 0, 5, DFLAGS,
-+			RK3506_CLKGATE_CON(13), 7, GFLAGS),
-+	GATE(HCLK_PDM, "hclk_pdm", "hclk_lsperi_root", 0,
-+			RK3506_CLKGATE_CON(13), 8, GFLAGS),
-+	COMPOSITE(MCLK_PDM, "mclk_pdm", clk_pdm_parents_p, 0,
-+			RK3506_CLKSEL_CON(37), 5, 4, MFLAGS, 0, 5, DFLAGS,
-+			RK3506_CLKGATE_CON(13), 9, GFLAGS),
-+	COMPOSITE(CLKOUT_PDM, "clkout_pdm", clk_pdm_parents_p, 0,
-+			RK3506_CLKSEL_CON(38), 10, 4, MFLAGS, 0, 10, DFLAGS,
-+			RK3506_CLKGATE_CON(13), 10, GFLAGS),
-+	COMPOSITE(MCLK_SPDIFTX, "mclk_spdiftx", mclk_sai_asrc_parents_p, 0,
-+			RK3506_CLKSEL_CON(39), 5, 4, MFLAGS, 0, 5, DFLAGS,
-+			RK3506_CLKGATE_CON(13), 11, GFLAGS),
-+	GATE(HCLK_SPDIFTX, "hclk_spdiftx", "hclk_lsperi_root", 0,
-+			RK3506_CLKGATE_CON(13), 12, GFLAGS),
-+	GATE(HCLK_SPDIFRX, "hclk_spdifrx", "hclk_lsperi_root", 0,
-+			RK3506_CLKGATE_CON(13), 13, GFLAGS),
-+	COMPOSITE(MCLK_SPDIFRX, "mclk_spdifrx", gpll_v0pll_v1pll_g_parents_p, 0,
-+			RK3506_CLKSEL_CON(39), 14, 2, MFLAGS, 9, 5, DFLAGS,
-+			RK3506_CLKGATE_CON(13), 14, GFLAGS),
-+	COMPOSITE(MCLK_SAI0, "mclk_sai0", mclk_sai_asrc_parents_p, 0,
-+			RK3506_CLKSEL_CON(40), 8, 4, MFLAGS, 0, 8, DFLAGS,
-+			RK3506_CLKGATE_CON(13), 15, GFLAGS),
-+	GATE(HCLK_SAI0, "hclk_sai0", "hclk_lsperi_root", 0,
-+			RK3506_CLKGATE_CON(14), 0, GFLAGS),
-+	GATE(MCLK_OUT_SAI0, "mclk_out_sai0", "mclk_sai0", 0,
-+			RK3506_CLKGATE_CON(14), 1, GFLAGS),
-+	COMPOSITE(MCLK_SAI1, "mclk_sai1", mclk_sai_asrc_parents_p, 0,
-+			RK3506_CLKSEL_CON(41), 8, 4, MFLAGS, 0, 8, DFLAGS,
-+			RK3506_CLKGATE_CON(14), 2, GFLAGS),
-+	GATE(HCLK_SAI1, "hclk_sai1", "hclk_lsperi_root", 0,
-+			RK3506_CLKGATE_CON(14), 3, GFLAGS),
-+	GATE(MCLK_OUT_SAI1, "mclk_out_sai1", "mclk_sai1", 0,
-+			RK3506_CLKGATE_CON(14), 4, GFLAGS),
-+	GATE(HCLK_ASRC0, "hclk_asrc0", "hclk_lsperi_root", 0,
-+			RK3506_CLKGATE_CON(14), 5, GFLAGS),
-+	COMPOSITE(CLK_ASRC0, "clk_asrc0", gpll_v0pll_v1pll_g_parents_p, 0,
-+			RK3506_CLKSEL_CON(42), 5, 2, MFLAGS, 0, 5, DFLAGS,
-+			RK3506_CLKGATE_CON(14), 6, GFLAGS),
-+	GATE(HCLK_ASRC1, "hclk_asrc1", "hclk_lsperi_root", 0,
-+			RK3506_CLKGATE_CON(14), 7, GFLAGS),
-+	COMPOSITE(CLK_ASRC1, "clk_asrc1", gpll_v0pll_v1pll_g_parents_p, 0,
-+			RK3506_CLKSEL_CON(42), 12, 2, MFLAGS, 7, 5, DFLAGS,
-+			RK3506_CLKGATE_CON(14), 8, GFLAGS),
-+	GATE(PCLK_CRU, "pclk_cru", "pclk_lsperi_root", CLK_IS_CRITICAL,
-+			RK3506_CLKGATE_CON(14), 9, GFLAGS),
-+	GATE(PCLK_PMU_ROOT, "pclk_pmu_root", "pclk_lsperi_root", CLK_IS_CRITICAL,
-+			RK3506_CLKGATE_CON(14), 10, GFLAGS),
-+	COMPOSITE_NODIV(MCLK_ASRC0, "mclk_asrc0", mclk_sai_asrc_parents_p, 0,
-+			RK3506_CLKSEL_CON(46), 0, 4, MFLAGS,
-+			RK3506_CLKGATE_CON(16), 0, GFLAGS),
-+	COMPOSITE_NODIV(MCLK_ASRC1, "mclk_asrc1", mclk_sai_asrc_parents_p, 0,
-+			RK3506_CLKSEL_CON(46), 4, 4, MFLAGS,
-+			RK3506_CLKGATE_CON(16), 1, GFLAGS),
-+	COMPOSITE_NODIV(MCLK_ASRC2, "mclk_asrc2", mclk_sai_asrc_parents_p, 0,
-+			RK3506_CLKSEL_CON(46), 8, 4, MFLAGS,
-+			RK3506_CLKGATE_CON(16), 2, GFLAGS),
-+	COMPOSITE_NODIV(MCLK_ASRC3, "mclk_asrc3", mclk_sai_asrc_parents_p, 0,
-+			RK3506_CLKSEL_CON(46), 12, 4, MFLAGS,
-+			RK3506_CLKGATE_CON(16), 3, GFLAGS),
-+	COMPOSITE_NODIV(LRCK_ASRC0_SRC, "lrck_asrc0_src", lrck_asrc_parents_p, 0,
-+			RK3506_CLKSEL_CON(47), 0, 4, MFLAGS,
-+			RK3506_CLKGATE_CON(16), 4, GFLAGS),
-+	COMPOSITE_NODIV(LRCK_ASRC0_DST, "lrck_asrc0_dst", lrck_asrc_parents_p, 0,
-+			RK3506_CLKSEL_CON(47), 4, 4, MFLAGS,
-+			RK3506_CLKGATE_CON(16), 5, GFLAGS),
-+	COMPOSITE_NODIV(LRCK_ASRC1_SRC, "lrck_asrc1_src", lrck_asrc_parents_p, 0,
-+			RK3506_CLKSEL_CON(47), 8, 4, MFLAGS,
-+			RK3506_CLKGATE_CON(16), 6, GFLAGS),
-+	COMPOSITE_NODIV(LRCK_ASRC1_DST, "lrck_asrc1_dst", lrck_asrc_parents_p, 0,
-+			RK3506_CLKSEL_CON(47), 12, 4, MFLAGS,
-+			RK3506_CLKGATE_CON(16), 7, GFLAGS),
-+
-+	/* hs peri */
-+	COMPOSITE(ACLK_HSPERI_ROOT, "aclk_hsperi_root", gpll_v0pll_v1pll_div_parents_p, CLK_IS_CRITICAL,
-+			RK3506_CLKSEL_CON(49), 5, 2, MFLAGS, 0, 5, DFLAGS,
-+			RK3506_CLKGATE_CON(17), 0, GFLAGS),
-+	GATE(HCLK_HSPERI_ROOT, "hclk_hsperi_root", "aclk_hsperi_root", CLK_IS_CRITICAL,
-+			RK3506_CLKGATE_CON(17), 1, GFLAGS),
-+	GATE(PCLK_HSPERI_ROOT, "pclk_hsperi_root", "hclk_hsperi_root", CLK_IS_CRITICAL,
-+			RK3506_CLKGATE_CON(17), 2, GFLAGS),
-+	COMPOSITE(CCLK_SRC_SDMMC, "cclk_src_sdmmc", cclk_src_sdmmc_parents_p, 0,
-+			RK3506_CLKSEL_CON(49), 13, 2, MFLAGS, 7, 6, DFLAGS,
-+			RK3506_CLKGATE_CON(17), 6, GFLAGS),
-+	GATE(HCLK_SDMMC, "hclk_sdmmc", "hclk_hsperi_root", 0,
-+			RK3506_CLKGATE_CON(17), 7, GFLAGS),
-+	GATE(HCLK_FSPI, "hclk_fspi", "hclk_hsperi_root", 0,
-+			RK3506_CLKGATE_CON(17), 8, GFLAGS),
-+	COMPOSITE(SCLK_FSPI, "sclk_fspi", xin24m_g_gpll_v0pll_v1pll_g_parents_p, 0,
-+			RK3506_CLKSEL_CON(50), 5, 2, MFLAGS, 0, 5, DFLAGS,
-+			RK3506_CLKGATE_CON(17), 9, GFLAGS),
-+	GATE(PCLK_SPI2, "pclk_spi2", "pclk_hsperi_root", 0,
-+			RK3506_CLKGATE_CON(17), 10, GFLAGS),
-+	GATE(ACLK_MAC0, "aclk_mac0", "aclk_hsperi_root", 0,
-+			RK3506_CLKGATE_CON(17), 11, GFLAGS),
-+	GATE(ACLK_MAC1, "aclk_mac1", "aclk_hsperi_root", 0,
-+			RK3506_CLKGATE_CON(17), 12, GFLAGS),
-+	GATE(PCLK_MAC0, "pclk_mac0", "pclk_hsperi_root", 0,
-+			RK3506_CLKGATE_CON(17), 13, GFLAGS),
-+	GATE(PCLK_MAC1, "pclk_mac1", "pclk_hsperi_root", 0,
-+			RK3506_CLKGATE_CON(17), 14, GFLAGS),
-+	COMPOSITE_NOMUX(CLK_MAC_ROOT, "clk_mac_root", "gpll", 0,
-+			RK3506_CLKSEL_CON(50), 7, 5, DFLAGS,
-+			RK3506_CLKGATE_CON(17), 15, GFLAGS),
-+	GATE(CLK_MAC0, "clk_mac0", "clk_mac_root", 0,
-+			RK3506_CLKGATE_CON(18), 0, GFLAGS),
-+	GATE(CLK_MAC1, "clk_mac1", "clk_mac_root", 0,
-+			RK3506_CLKGATE_CON(18), 1, GFLAGS),
-+	COMPOSITE(MCLK_SAI2, "mclk_sai2", mclk_sai_asrc_parents_p, 0,
-+			RK3506_CLKSEL_CON(51), 8, 4, MFLAGS, 0, 8, DFLAGS,
-+			RK3506_CLKGATE_CON(18), 2, GFLAGS),
-+	GATE(HCLK_SAI2, "hclk_sai2", "hclk_hsperi_root", 0,
-+			RK3506_CLKGATE_CON(18), 3, GFLAGS),
-+	GATE(MCLK_OUT_SAI2, "mclk_out_sai2", "mclk_sai2", 0,
-+			RK3506_CLKGATE_CON(18), 4, GFLAGS),
-+	COMPOSITE(MCLK_SAI3_SRC, "mclk_sai3_src", mclk_sai_asrc_parents_p, 0,
-+			RK3506_CLKSEL_CON(52), 8, 4, MFLAGS, 0, 8, DFLAGS,
-+			RK3506_CLKGATE_CON(18), 5, GFLAGS),
-+	GATE(HCLK_SAI3, "hclk_sai3", "hclk_hsperi_root", 0,
-+			RK3506_CLKGATE_CON(18), 6, GFLAGS),
-+	GATE(MCLK_SAI3, "mclk_sai3", "mclk_sai3_src", 0,
-+			RK3506_CLKGATE_CON(18), 7, GFLAGS),
-+	GATE(MCLK_OUT_SAI3, "mclk_out_sai3", "mclk_sai3_src", 0,
-+			RK3506_CLKGATE_CON(18), 8, GFLAGS),
-+	COMPOSITE(MCLK_SAI4_SRC, "mclk_sai4_src", mclk_sai_asrc_parents_p, 0,
-+			RK3506_CLKSEL_CON(53), 8, 4, MFLAGS, 0, 8, DFLAGS,
-+			RK3506_CLKGATE_CON(18), 9, GFLAGS),
-+	GATE(HCLK_SAI4, "hclk_sai4", "hclk_hsperi_root", 0,
-+			RK3506_CLKGATE_CON(18), 10, GFLAGS),
-+	GATE(MCLK_SAI4, "mclk_sai4", "mclk_sai4_src", 0,
-+			RK3506_CLKGATE_CON(18), 11, GFLAGS),
-+	GATE(HCLK_DSM, "hclk_dsm", "hclk_hsperi_root", 0,
-+			RK3506_CLKGATE_CON(18), 12, GFLAGS),
-+	GATE(MCLK_DSM, "mclk_dsm", "mclk_sai3_src", 0,
-+			RK3506_CLKGATE_CON(18), 13, GFLAGS),
-+	GATE(PCLK_AUDIO_ADC, "pclk_audio_adc", "pclk_hsperi_root", 0,
-+			RK3506_CLKGATE_CON(18), 14, GFLAGS),
-+	GATE(MCLK_AUDIO_ADC, "mclk_audio_adc", "mclk_sai4_src", 0,
-+			RK3506_CLKGATE_CON(18), 15, GFLAGS),
-+	FACTOR(MCLK_AUDIO_ADC_DIV4, "mclk_audio_adc_div4", "mclk_audio_adc", 0, 1, 4),
-+	GATE(PCLK_SARADC, "pclk_saradc", "pclk_hsperi_root", 0,
-+			RK3506_CLKGATE_CON(19), 0, GFLAGS),
-+	COMPOSITE(CLK_SARADC, "clk_saradc", xin24m_400k_32k_parents_p, 0,
-+			RK3506_CLKSEL_CON(54), 4, 2, MFLAGS, 0, 4, DFLAGS,
-+			RK3506_CLKGATE_CON(19), 1, GFLAGS),
-+	GATE(PCLK_OTPC_NS, "pclk_otpc_ns", "pclk_hsperi_root", 0,
-+			RK3506_CLKGATE_CON(19), 3, GFLAGS),
-+	GATE(CLK_SBPI_OTPC_NS, "clk_sbpi_otpc_ns", "xin24m_gate", 0,
-+			RK3506_CLKGATE_CON(19), 4, GFLAGS),
-+	FACTOR(CLK_USER_OTPC_NS, "clk_user_otpc_ns", "clk_sbpi_otpc_ns", 0, 1, 2),
-+	GATE(PCLK_UART5, "pclk_uart5", "pclk_hsperi_root", 0,
-+			RK3506_CLKGATE_CON(19), 6, GFLAGS),
-+	COMPOSITE(SCLK_UART5, "sclk_uart5", sclk_uart_parents_p, 0,
-+			RK3506_CLKSEL_CON(54), 11, 3, MFLAGS, 6, 5, DFLAGS,
-+			RK3506_CLKGATE_CON(19), 7, GFLAGS),
-+	GATE(PCLK_GPIO234_IOC, "pclk_gpio234_ioc", "pclk_hsperi_root", CLK_IS_CRITICAL,
-+			RK3506_CLKGATE_CON(19), 8, GFLAGS),
-+	COMPOSITE(CLK_MAC_PTP_ROOT, "clk_mac_ptp_root", clk_mac_ptp_root_parents_p, 0,
-+			RK3506_CLKSEL_CON(55), 5, 2, MFLAGS, 0, 5, DFLAGS,
-+			RK3506_CLKGATE_CON(19), 9, GFLAGS),
-+	GATE(CLK_MAC0_PTP, "clk_mac0_ptp", "clk_mac_ptp_root", 0,
-+			RK3506_CLKGATE_CON(19), 10, GFLAGS),
-+	GATE(CLK_MAC1_PTP, "clk_mac1_ptp", "clk_mac_ptp_root", 0,
-+			RK3506_CLKGATE_CON(19), 11, GFLAGS),
-+	COMPOSITE(ACLK_VIO_ROOT, "aclk_vio_root", gpll_v0pll_v1pll_g_parents_p, 0,
-+			RK3506_CLKSEL_CON(58), 5, 2, MFLAGS, 0, 5, DFLAGS,
-+			RK3506_CLKGATE_CON(21), 0, GFLAGS),
-+	COMPOSITE(HCLK_VIO_ROOT, "hclk_vio_root", gpll_v0pll_v1pll_div_parents_p, 0,
-+			RK3506_CLKSEL_CON(58), 12, 2, MFLAGS, 7, 5, DFLAGS,
-+			RK3506_CLKGATE_CON(21), 1, GFLAGS),
-+	GATE(PCLK_VIO_ROOT, "pclk_vio_root", "hclk_vio_root", 0,
-+			RK3506_CLKGATE_CON(21), 2, GFLAGS),
-+	GATE(HCLK_RGA, "hclk_rga", "hclk_vio_root", 0,
-+			RK3506_CLKGATE_CON(21), 6, GFLAGS),
-+	GATE(ACLK_RGA, "aclk_rga", "aclk_vio_root", 0,
-+			RK3506_CLKGATE_CON(21), 7, GFLAGS),
-+	COMPOSITE(CLK_CORE_RGA, "clk_core_rga", gpll_v0pll_v1pll_g_parents_p, 0,
-+			RK3506_CLKSEL_CON(59), 5, 2, MFLAGS, 0, 5, DFLAGS,
-+			RK3506_CLKGATE_CON(21), 8, GFLAGS),
-+	GATE(ACLK_VOP, "aclk_vop", "aclk_vio_root", 0,
-+			RK3506_CLKGATE_CON(21), 9, GFLAGS),
-+	GATE(HCLK_VOP, "hclk_vop", "hclk_vio_root", 0,
-+			RK3506_CLKGATE_CON(21), 10, GFLAGS),
-+	COMPOSITE(DCLK_VOP, "dclk_vop", dclk_vop_parents_p, 0,
-+			RK3506_CLKSEL_CON(60), 8, 3, MFLAGS, 0, 8, DFLAGS,
-+			RK3506_CLKGATE_CON(21), 11, GFLAGS),
-+	GATE(PCLK_DPHY, "pclk_dphy", "pclk_vio_root", 0,
-+			RK3506_CLKGATE_CON(21), 12, GFLAGS),
-+	GATE(PCLK_DSI_HOST, "pclk_dsi_host", "pclk_vio_root", 0,
-+			RK3506_CLKGATE_CON(21), 13, GFLAGS),
-+	GATE(PCLK_TSADC, "pclk_tsadc", "pclk_vio_root", 0,
-+			RK3506_CLKGATE_CON(21), 14, GFLAGS),
-+	COMPOSITE_NOMUX(CLK_TSADC, "clk_tsadc", "xin24m_gate", 0,
-+			RK3506_CLKSEL_CON(61), 0, 8, DFLAGS,
-+			RK3506_CLKGATE_CON(21), 15, GFLAGS),
-+	COMPOSITE_NOMUX(CLK_TSADC_TSEN, "clk_tsadc_tsen", "xin24m_gate", 0,
-+			RK3506_CLKSEL_CON(61), 8, 3, DFLAGS,
-+			RK3506_CLKGATE_CON(22), 0, GFLAGS),
-+	GATE(PCLK_GPIO1_IOC, "pclk_gpio1_ioc", "pclk_vio_root", CLK_IS_CRITICAL,
-+			RK3506_CLKGATE_CON(22), 1, GFLAGS),
-+
-+	/* pmu */
-+	GATE(CLK_PMU, "clk_pmu", "xin24m", CLK_IGNORE_UNUSED,
-+			RK3506_PMU_CLKGATE_CON(0), 1, GFLAGS),
-+	GATE(PCLK_PMU, "pclk_pmu", "pclk_pmu_root", CLK_IGNORE_UNUSED,
-+			RK3506_PMU_CLKGATE_CON(0), 2, GFLAGS),
-+	GATE(PCLK_PMU_CRU, "pclk_pmu_cru", "pclk_pmu_root", CLK_IGNORE_UNUSED,
-+			RK3506_PMU_CLKGATE_CON(0), 4, GFLAGS),
-+	GATE(PCLK_PMU_GRF, "pclk_pmu_grf", "pclk_pmu_root", CLK_IGNORE_UNUSED,
-+			RK3506_PMU_CLKGATE_CON(0), 5, GFLAGS),
-+	GATE(PCLK_GPIO0_IOC, "pclk_gpio0_ioc", "pclk_pmu_root", CLK_IS_CRITICAL,
-+			RK3506_PMU_CLKGATE_CON(0), 7, GFLAGS),
-+	GATE(PCLK_GPIO0, "pclk_gpio0", "pclk_pmu_root", 0,
-+			RK3506_PMU_CLKGATE_CON(0), 8, GFLAGS),
-+	COMPOSITE_NODIV(DBCLK_GPIO0, "dbclk_gpio0", dbclk_gpio0_parents_p, 0,
-+			RK3506_PMU_CLKSEL_CON(0), 0, 2, MFLAGS,
-+			RK3506_PMU_CLKGATE_CON(0), 9, GFLAGS),
-+	GATE(PCLK_GPIO1_SHADOW, "pclk_gpio1_shadow", "pclk_pmu_root", 0,
-+			RK3506_PMU_CLKGATE_CON(0), 10, GFLAGS),
-+	COMPOSITE_NODIV(DBCLK_GPIO1_SHADOW, "dbclk_gpio1_shadow", dbclk_gpio0_parents_p, 0,
-+			RK3506_PMU_CLKSEL_CON(0), 2, 2, MFLAGS,
-+			RK3506_PMU_CLKGATE_CON(0), 11, GFLAGS),
-+	GATE(PCLK_PMU_HP_TIMER, "pclk_pmu_hp_timer", "pclk_pmu_root", CLK_IGNORE_UNUSED,
-+			RK3506_PMU_CLKGATE_CON(0), 12, GFLAGS),
-+	MUX(CLK_PMU_HP_TIMER, "clk_pmu_hp_timer", clk_pmu_hp_timer_parents_p, CLK_IGNORE_UNUSED,
-+			RK3506_PMU_CLKSEL_CON(0), 4, 2, MFLAGS),
-+	GATE(PCLK_PWM0, "pclk_pwm0", "pclk_pmu_root", 0,
-+			RK3506_PMU_CLKGATE_CON(0), 15, GFLAGS),
-+	COMPOSITE_NOMUX(CLK_PWM0, "clk_pwm0", "clk_gpll_div_100m", 0,
-+			RK3506_PMU_CLKSEL_CON(0), 6, 4, DFLAGS,
-+			RK3506_PMU_CLKGATE_CON(1), 0, GFLAGS),
-+	GATE(CLK_OSC_PWM0, "clk_osc_pwm0", "xin24m", 0,
-+			RK3506_PMU_CLKGATE_CON(1), 1, GFLAGS),
-+	GATE(CLK_RC_PWM0, "clk_rc_pwm0", "clk_rc", 0,
-+			RK3506_PMU_CLKGATE_CON(1), 2, GFLAGS),
-+	COMPOSITE_NOMUX(CLK_MAC_OUT, "clk_mac_out", "gpll", 0,
-+			RK3506_PMU_CLKSEL_CON(0), 10, 6, DFLAGS,
-+			RK3506_PMU_CLKGATE_CON(1), 3, GFLAGS),
-+	COMPOSITE(CLK_REF_OUT0, "clk_ref_out0", clk_ref_out_parents_p, 0,
-+			RK3506_PMU_CLKSEL_CON(1), 6, 2, MFLAGS, 0, 6, DFLAGS,
-+			RK3506_PMU_CLKGATE_CON(1), 4, GFLAGS),
-+	COMPOSITE(CLK_REF_OUT1, "clk_ref_out1", clk_ref_out_parents_p, 0,
-+			RK3506_PMU_CLKSEL_CON(1), 14, 2, MFLAGS, 8, 6, DFLAGS,
-+			RK3506_PMU_CLKGATE_CON(1), 5, GFLAGS),
-+	MUX(CLK_32K_FRAC_MUX, "clk_32k_frac_mux", clk_32k_frac_parents_p, 0,
-+			RK3506_PMU_CLKSEL_CON(3), 0, 2, MFLAGS),
-+	COMPOSITE_FRAC(CLK_32K_FRAC, "clk_32k_frac", "clk_32k_frac_mux", 0,
-+			RK3506_PMU_CLKSEL_CON(2), 0,
-+			RK3506_PMU_CLKGATE_CON(1), 6, GFLAGS),
-+	COMPOSITE_NOMUX(CLK_32K_RC, "clk_32k_rc", "clk_rc", CLK_IS_CRITICAL,
-+			RK3506_PMU_CLKSEL_CON(3), 2, 5, DFLAGS,
-+			RK3506_PMU_CLKGATE_CON(1), 7, GFLAGS),
-+	COMPOSITE_NODIV(CLK_32K, "clk_32k", clk_32k_parents_p, CLK_IS_CRITICAL,
-+			RK3506_PMU_CLKSEL_CON(3), 7, 2, MFLAGS,
-+			RK3506_PMU_CLKGATE_CON(1), 8, GFLAGS),
-+	COMPOSITE_NODIV(CLK_32K_PMU, "clk_32k_pmu", clk_32k_parents_p, CLK_IS_CRITICAL,
-+			RK3506_PMU_CLKSEL_CON(3), 9, 2, MFLAGS,
-+			RK3506_PMU_CLKGATE_CON(1), 9, GFLAGS),
-+	GATE(CLK_PMU_32K, "clk_pmu_32k", "clk_32k_pmu", CLK_IGNORE_UNUSED,
-+			RK3506_PMU_CLKGATE_CON(0), 3, GFLAGS),
-+	GATE(CLK_PMU_HP_TIMER_32K, "clk_pmu_hp_timer_32k", "clk_32k_pmu", CLK_IGNORE_UNUSED,
-+			RK3506_PMU_CLKGATE_CON(0), 14, GFLAGS),
-+	GATE(PCLK_TOUCH_KEY, "pclk_touch_key", "pclk_pmu_root", CLK_IGNORE_UNUSED,
-+			RK3506_PMU_CLKGATE_CON(1), 12, GFLAGS),
-+	GATE(CLK_TOUCH_KEY, "clk_touch_key", "xin24m", CLK_IGNORE_UNUSED,
-+			RK3506_PMU_CLKGATE_CON(1), 13, GFLAGS),
-+	COMPOSITE(CLK_REF_PHY_PLL, "clk_ref_phy_pll", gpll_v0pll_v1pll_parents_p, 0,
-+			RK3506_PMU_CLKSEL_CON(4), 13, 2, MFLAGS, 6, 7, DFLAGS,
-+			RK3506_PMU_CLKGATE_CON(1), 14, GFLAGS),
-+	MUX(CLK_REF_PHY_PMU_MUX, "clk_ref_phy_pmu_mux", clk_ref_phy_pmu_mux_parents_p, 0,
-+			RK3506_PMU_CLKSEL_CON(4), 15, 1, MFLAGS),
-+	GATE(CLK_WIFI_OUT, "clk_wifi_out", "xin24m", 0,
-+			RK3506_PMU_CLKGATE_CON(2), 0, GFLAGS),
-+	MUX(CLK_V0PLL_REF, "clk_v0pll_ref", clk_vpll_ref_parents_p, CLK_IGNORE_UNUSED,
-+			RK3506_PMU_CLKSEL_CON(6), 0, 1, MFLAGS),
-+	MUX(CLK_V1PLL_REF, "clk_v1pll_ref", clk_vpll_ref_parents_p, CLK_IGNORE_UNUSED,
-+			RK3506_PMU_CLKSEL_CON(6), 1, 1, MFLAGS),
-+
-+	/* secure ns */
-+	GATE(CLK_CORE_CRYPTO_NS, "clk_core_crypto_ns", "clk_core_crypto", 0,
-+			RK3506_CLKGATE_CON(5), 12, GFLAGS),
-+	GATE(CLK_PKA_CRYPTO_NS, "clk_pka_crypto_ns", "clk_pka_crypto", 0,
-+			RK3506_CLKGATE_CON(5), 13, GFLAGS),
-+
-+	/* io */
-+	GATE(CLK_SPI2, "clk_spi2", "clk_spi2_io", 0,
-+			RK3506_CLKGATE_CON(20), 0, GFLAGS),
-+};
-+
-+static void __init rk3506_clk_init(struct device_node *np)
-+{
-+	struct rockchip_clk_provider *ctx;
-+	unsigned long clk_nr_clks;
-+	void __iomem *reg_base;
-+
-+	clk_nr_clks = rockchip_clk_find_max_clk_id(rk3506_clk_branches,
-+						   ARRAY_SIZE(rk3506_clk_branches)) + 1;
-+
-+	reg_base = of_iomap(np, 0);
-+	if (!reg_base) {
-+		pr_err("%s: could not map cru region\n", __func__);
-+		return;
-+	}
-+
-+	ctx = rockchip_clk_init(np, reg_base, clk_nr_clks);
-+	if (IS_ERR(ctx)) {
-+		pr_err("%s: rockchip clk init failed\n", __func__);
-+		iounmap(reg_base);
-+		return;
-+	}
-+
-+	rockchip_clk_register_plls(ctx, rk3506_pll_clks,
-+				   ARRAY_SIZE(rk3506_pll_clks),
-+				   0);
-+
-+	rockchip_clk_register_armclk_multi_pll(ctx, &rk3506_armclk,
-+					       rk3506_cpuclk_rates,
-+					       ARRAY_SIZE(rk3506_cpuclk_rates));
-+
-+	rockchip_clk_register_branches(ctx, rk3506_clk_branches,
-+				       ARRAY_SIZE(rk3506_clk_branches));
-+
-+	rk3506_rst_init(np, reg_base);
-+
-+	rockchip_register_restart_notifier(ctx, RK3506_GLB_SRST_FST, NULL);
-+
-+	rockchip_clk_of_add_provider(np, ctx);
-+
-+	/* pvtpll src init */
-+	writel_relaxed(PVTPLL_SRC_SEL_PVTPLL, reg_base + RK3506_CLKSEL_CON(15));
-+}
-+
-+CLK_OF_DECLARE(rk3506_cru, "rockchip,rk3506-cru", rk3506_clk_init);
-+
-+struct clk_rk3506_inits {
-+	void (*inits)(struct device_node *np);
-+};
-+
-+static const struct clk_rk3506_inits clk_rk3506_cru_init = {
-+	.inits = rk3506_clk_init,
-+};
-+
-+static const struct of_device_id clk_rk3506_match_table[] = {
-+	{
-+		.compatible = "rockchip,rk3506-cru",
-+		.data = &clk_rk3506_cru_init,
-+	},
-+	{ }
-+};
-+
-+static int clk_rk3506_probe(struct platform_device *pdev)
-+{
-+	const struct clk_rk3506_inits *init_data;
-+	struct device *dev = &pdev->dev;
-+
-+	init_data = device_get_match_data(dev);
-+	if (!init_data)
-+		return -EINVAL;
-+
-+	if (init_data->inits)
-+		init_data->inits(dev->of_node);
-+
-+	return 0;
-+}
-+
-+static struct platform_driver clk_rk3506_driver = {
-+	.probe		= clk_rk3506_probe,
-+	.driver		= {
-+		.name	= "clk-rk3506",
-+		.of_match_table = clk_rk3506_match_table,
-+		.suppress_bind_attrs = true,
-+	},
-+};
-+builtin_platform_driver_probe(clk_rk3506_driver, clk_rk3506_probe);
-diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
-index 87f09320b942..b2fff1d13a4a 100644
---- a/drivers/clk/rockchip/clk.h
-+++ b/drivers/clk/rockchip/clk.h
-@@ -275,6 +275,18 @@ struct clk;
- #define RK3399_PMU_CLKGATE_CON(x)	((x) * 0x4 + 0x100)
- #define RK3399_PMU_SOFTRST_CON(x)	((x) * 0x4 + 0x110)
- 
-+#define RK3506_PMU_CRU_BASE		0x10000
-+#define RK3506_PLL_CON(x)		((x) * 0x4 + RK3506_PMU_CRU_BASE)
-+#define RK3506_CLKSEL_CON(x)		((x) * 0x4 + 0x300)
-+#define RK3506_CLKGATE_CON(x)		((x) * 0x4 + 0x800)
-+#define RK3506_SOFTRST_CON(x)		((x) * 0x4 + 0xa00)
-+#define RK3506_PMU_CLKSEL_CON(x)	((x) * 0x4 + 0x300 + RK3506_PMU_CRU_BASE)
-+#define RK3506_PMU_CLKGATE_CON(x)	((x) * 0x4 + 0x800 + RK3506_PMU_CRU_BASE)
-+#define RK3506_MODE_CON			0x280
-+#define RK3506_GLB_CNT_TH		0xc00
-+#define RK3506_GLB_SRST_FST		0xc08
-+#define RK3506_GLB_SRST_SND		0xc0c
-+
- #define RK3528_PMU_CRU_BASE		0x10000
- #define RK3528_PCIE_CRU_BASE		0x20000
- #define RK3528_DDRPHY_CRU_BASE		0x28000
-@@ -1329,6 +1341,7 @@ static inline void rockchip_register_softrst(struct device_node *np,
- }
- 
- void rv1126b_rst_init(struct device_node *np, void __iomem *reg_base);
-+void rk3506_rst_init(struct device_node *np, void __iomem *reg_base);
- void rk3528_rst_init(struct device_node *np, void __iomem *reg_base);
- void rk3562_rst_init(struct device_node *np, void __iomem *reg_base);
- void rk3576_rst_init(struct device_node *np, void __iomem *reg_base);
-diff --git a/drivers/clk/rockchip/rst-rk3506.c b/drivers/clk/rockchip/rst-rk3506.c
-new file mode 100644
-index 000000000000..c3abde60f3c6
---- /dev/null
-+++ b/drivers/clk/rockchip/rst-rk3506.c
-@@ -0,0 +1,226 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * Copyright (c) 2025 Rockchip Electronics Co., Ltd.
-+ * Author: Finley Xiao <finley.xiao@rock-chips.com>
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <dt-bindings/reset/rockchip,rk3506-cru.h>
-+#include "clk.h"
-+
-+/* 0xFF9A0000 + 0x0A00 */
-+#define RK3506_CRU_RESET_OFFSET(id, reg, bit) [id] = (0 + reg * 16 + bit)
-+
-+/* mapping table for reset ID to register offset */
-+static const int rk3506_register_offset[] = {
-+	/* CRU-->SOFTRST_CON00 */
-+	RK3506_CRU_RESET_OFFSET(SRST_NCOREPORESET0_AC, 0, 0),
-+	RK3506_CRU_RESET_OFFSET(SRST_NCOREPORESET1_AC, 0, 1),
-+	RK3506_CRU_RESET_OFFSET(SRST_NCOREPORESET2_AC, 0, 2),
-+	RK3506_CRU_RESET_OFFSET(SRST_NCORESET0_AC, 0, 4),
-+	RK3506_CRU_RESET_OFFSET(SRST_NCORESET1_AC, 0, 5),
-+	RK3506_CRU_RESET_OFFSET(SRST_NCORESET2_AC, 0, 6),
-+	RK3506_CRU_RESET_OFFSET(SRST_NL2RESET_AC, 0, 8),
-+	RK3506_CRU_RESET_OFFSET(SRST_A_CORE_BIU_AC, 0, 9),
-+	RK3506_CRU_RESET_OFFSET(SRST_H_M0_AC, 0, 10),
-+
-+	/* CRU-->SOFTRST_CON02 */
-+	RK3506_CRU_RESET_OFFSET(SRST_NDBGRESET, 2, 10),
-+	RK3506_CRU_RESET_OFFSET(SRST_P_CORE_BIU, 2, 14),
-+	RK3506_CRU_RESET_OFFSET(SRST_PMU, 2, 15),
-+
-+	/* CRU-->SOFTRST_CON03 */
-+	RK3506_CRU_RESET_OFFSET(SRST_P_DBG, 3, 1),
-+	RK3506_CRU_RESET_OFFSET(SRST_POT_DBG, 3, 2),
-+	RK3506_CRU_RESET_OFFSET(SRST_P_CORE_GRF, 3, 4),
-+	RK3506_CRU_RESET_OFFSET(SRST_CORE_EMA_DETECT, 3, 6),
-+	RK3506_CRU_RESET_OFFSET(SRST_REF_PVTPLL_CORE, 3, 7),
-+	RK3506_CRU_RESET_OFFSET(SRST_P_GPIO1, 3, 8),
-+	RK3506_CRU_RESET_OFFSET(SRST_DB_GPIO1, 3, 9),
-+
-+	/* CRU-->SOFTRST_CON04 */
-+	RK3506_CRU_RESET_OFFSET(SRST_A_CORE_PERI_BIU, 4, 3),
-+	RK3506_CRU_RESET_OFFSET(SRST_A_DSMC, 4, 5),
-+	RK3506_CRU_RESET_OFFSET(SRST_P_DSMC, 4, 6),
-+	RK3506_CRU_RESET_OFFSET(SRST_FLEXBUS, 4, 7),
-+	RK3506_CRU_RESET_OFFSET(SRST_A_FLEXBUS, 4, 9),
-+	RK3506_CRU_RESET_OFFSET(SRST_H_FLEXBUS, 4, 10),
-+	RK3506_CRU_RESET_OFFSET(SRST_A_DSMC_SLV, 4, 11),
-+	RK3506_CRU_RESET_OFFSET(SRST_H_DSMC_SLV, 4, 12),
-+	RK3506_CRU_RESET_OFFSET(SRST_DSMC_SLV, 4, 13),
-+
-+	/* CRU-->SOFTRST_CON05 */
-+	RK3506_CRU_RESET_OFFSET(SRST_A_BUS_BIU, 5, 3),
-+	RK3506_CRU_RESET_OFFSET(SRST_H_BUS_BIU, 5, 4),
-+	RK3506_CRU_RESET_OFFSET(SRST_P_BUS_BIU, 5, 5),
-+	RK3506_CRU_RESET_OFFSET(SRST_A_SYSRAM, 5, 6),
-+	RK3506_CRU_RESET_OFFSET(SRST_H_SYSRAM, 5, 7),
-+	RK3506_CRU_RESET_OFFSET(SRST_A_DMAC0, 5, 8),
-+	RK3506_CRU_RESET_OFFSET(SRST_A_DMAC1, 5, 9),
-+	RK3506_CRU_RESET_OFFSET(SRST_H_M0, 5, 10),
-+	RK3506_CRU_RESET_OFFSET(SRST_M0_JTAG, 5, 11),
-+	RK3506_CRU_RESET_OFFSET(SRST_H_CRYPTO, 5, 15),
-+
-+	/* CRU-->SOFTRST_CON06 */
-+	RK3506_CRU_RESET_OFFSET(SRST_H_RNG, 6, 0),
-+	RK3506_CRU_RESET_OFFSET(SRST_P_BUS_GRF, 6, 1),
-+	RK3506_CRU_RESET_OFFSET(SRST_P_TIMER0, 6, 2),
-+	RK3506_CRU_RESET_OFFSET(SRST_TIMER0_CH0, 6, 3),
-+	RK3506_CRU_RESET_OFFSET(SRST_TIMER0_CH1, 6, 4),
-+	RK3506_CRU_RESET_OFFSET(SRST_TIMER0_CH2, 6, 5),
-+	RK3506_CRU_RESET_OFFSET(SRST_TIMER0_CH3, 6, 6),
-+	RK3506_CRU_RESET_OFFSET(SRST_TIMER0_CH4, 6, 7),
-+	RK3506_CRU_RESET_OFFSET(SRST_TIMER0_CH5, 6, 8),
-+	RK3506_CRU_RESET_OFFSET(SRST_P_WDT0, 6, 9),
-+	RK3506_CRU_RESET_OFFSET(SRST_T_WDT0, 6, 10),
-+	RK3506_CRU_RESET_OFFSET(SRST_P_WDT1, 6, 11),
-+	RK3506_CRU_RESET_OFFSET(SRST_T_WDT1, 6, 12),
-+	RK3506_CRU_RESET_OFFSET(SRST_P_MAILBOX, 6, 13),
-+	RK3506_CRU_RESET_OFFSET(SRST_P_INTMUX, 6, 14),
-+	RK3506_CRU_RESET_OFFSET(SRST_P_SPINLOCK, 6, 15),
-+
-+	/* CRU-->SOFTRST_CON07 */
-+	RK3506_CRU_RESET_OFFSET(SRST_P_DDRC, 7, 0),
-+	RK3506_CRU_RESET_OFFSET(SRST_H_DDRPHY, 7, 1),
-+	RK3506_CRU_RESET_OFFSET(SRST_P_DDRMON, 7, 2),
-+	RK3506_CRU_RESET_OFFSET(SRST_DDRMON_OSC, 7, 3),
-+	RK3506_CRU_RESET_OFFSET(SRST_P_DDR_LPC, 7, 4),
-+	RK3506_CRU_RESET_OFFSET(SRST_H_USBOTG0, 7, 5),
-+	RK3506_CRU_RESET_OFFSET(SRST_USBOTG0_ADP, 7, 7),
-+	RK3506_CRU_RESET_OFFSET(SRST_H_USBOTG1, 7, 8),
-+	RK3506_CRU_RESET_OFFSET(SRST_USBOTG1_ADP, 7, 10),
-+	RK3506_CRU_RESET_OFFSET(SRST_P_USBPHY, 7, 11),
-+	RK3506_CRU_RESET_OFFSET(SRST_USBPHY_POR, 7, 12),
-+	RK3506_CRU_RESET_OFFSET(SRST_USBPHY_OTG0, 7, 13),
-+	RK3506_CRU_RESET_OFFSET(SRST_USBPHY_OTG1, 7, 14),
-+
-+	/* CRU-->SOFTRST_CON08 */
-+	RK3506_CRU_RESET_OFFSET(SRST_A_DMA2DDR, 8, 0),
-+	RK3506_CRU_RESET_OFFSET(SRST_P_DMA2DDR, 8, 1),
-+
-+	/* CRU-->SOFTRST_CON09 */
-+	RK3506_CRU_RESET_OFFSET(SRST_USBOTG0_UTMI, 9, 0),
-+	RK3506_CRU_RESET_OFFSET(SRST_USBOTG1_UTMI, 9, 1),
-+
-+	/* CRU-->SOFTRST_CON10 */
-+	RK3506_CRU_RESET_OFFSET(SRST_A_DDRC_0, 10, 0),
-+	RK3506_CRU_RESET_OFFSET(SRST_A_DDRC_1, 10, 1),
-+	RK3506_CRU_RESET_OFFSET(SRST_A_DDR_BIU, 10, 2),
-+	RK3506_CRU_RESET_OFFSET(SRST_DDRC, 10, 3),
-+	RK3506_CRU_RESET_OFFSET(SRST_DDRMON, 10, 4),
-+
-+	/* CRU-->SOFTRST_CON11 */
-+	RK3506_CRU_RESET_OFFSET(SRST_H_LSPERI_BIU, 11, 2),
-+	RK3506_CRU_RESET_OFFSET(SRST_P_UART0, 11, 4),
-+	RK3506_CRU_RESET_OFFSET(SRST_P_UART1, 11, 5),
-+	RK3506_CRU_RESET_OFFSET(SRST_P_UART2, 11, 6),
-+	RK3506_CRU_RESET_OFFSET(SRST_P_UART3, 11, 7),
-+	RK3506_CRU_RESET_OFFSET(SRST_P_UART4, 11, 8),
-+	RK3506_CRU_RESET_OFFSET(SRST_UART0, 11, 9),
-+	RK3506_CRU_RESET_OFFSET(SRST_UART1, 11, 10),
-+	RK3506_CRU_RESET_OFFSET(SRST_UART2, 11, 11),
-+	RK3506_CRU_RESET_OFFSET(SRST_UART3, 11, 12),
-+	RK3506_CRU_RESET_OFFSET(SRST_UART4, 11, 13),
-+	RK3506_CRU_RESET_OFFSET(SRST_P_I2C0, 11, 14),
-+	RK3506_CRU_RESET_OFFSET(SRST_I2C0, 11, 15),
-+
-+	/* CRU-->SOFTRST_CON12 */
-+	RK3506_CRU_RESET_OFFSET(SRST_P_I2C1, 12, 0),
-+	RK3506_CRU_RESET_OFFSET(SRST_I2C1, 12, 1),
-+	RK3506_CRU_RESET_OFFSET(SRST_P_I2C2, 12, 2),
-+	RK3506_CRU_RESET_OFFSET(SRST_I2C2, 12, 3),
-+	RK3506_CRU_RESET_OFFSET(SRST_P_PWM1, 12, 4),
-+	RK3506_CRU_RESET_OFFSET(SRST_PWM1, 12, 5),
-+	RK3506_CRU_RESET_OFFSET(SRST_P_SPI0, 12, 10),
-+	RK3506_CRU_RESET_OFFSET(SRST_SPI0, 12, 11),
-+	RK3506_CRU_RESET_OFFSET(SRST_P_SPI1, 12, 12),
-+	RK3506_CRU_RESET_OFFSET(SRST_SPI1, 12, 13),
-+	RK3506_CRU_RESET_OFFSET(SRST_P_GPIO2, 12, 14),
-+	RK3506_CRU_RESET_OFFSET(SRST_DB_GPIO2, 12, 15),
-+
-+	/* CRU-->SOFTRST_CON13 */
-+	RK3506_CRU_RESET_OFFSET(SRST_P_GPIO3, 13, 0),
-+	RK3506_CRU_RESET_OFFSET(SRST_DB_GPIO3, 13, 1),
-+	RK3506_CRU_RESET_OFFSET(SRST_P_GPIO4, 13, 2),
-+	RK3506_CRU_RESET_OFFSET(SRST_DB_GPIO4, 13, 3),
-+	RK3506_CRU_RESET_OFFSET(SRST_H_CAN0, 13, 4),
-+	RK3506_CRU_RESET_OFFSET(SRST_CAN0, 13, 5),
-+	RK3506_CRU_RESET_OFFSET(SRST_H_CAN1, 13, 6),
-+	RK3506_CRU_RESET_OFFSET(SRST_CAN1, 13, 7),
-+	RK3506_CRU_RESET_OFFSET(SRST_H_PDM, 13, 8),
-+	RK3506_CRU_RESET_OFFSET(SRST_M_PDM, 13, 9),
-+	RK3506_CRU_RESET_OFFSET(SRST_PDM, 13, 10),
-+	RK3506_CRU_RESET_OFFSET(SRST_SPDIFTX, 13, 11),
-+	RK3506_CRU_RESET_OFFSET(SRST_H_SPDIFTX, 13, 12),
-+	RK3506_CRU_RESET_OFFSET(SRST_H_SPDIFRX, 13, 13),
-+	RK3506_CRU_RESET_OFFSET(SRST_SPDIFRX, 13, 14),
-+	RK3506_CRU_RESET_OFFSET(SRST_M_SAI0, 13, 15),
-+
-+	/* CRU-->SOFTRST_CON14 */
-+	RK3506_CRU_RESET_OFFSET(SRST_H_SAI0, 14, 0),
-+	RK3506_CRU_RESET_OFFSET(SRST_M_SAI1, 14, 2),
-+	RK3506_CRU_RESET_OFFSET(SRST_H_SAI1, 14, 3),
-+	RK3506_CRU_RESET_OFFSET(SRST_H_ASRC0, 14, 5),
-+	RK3506_CRU_RESET_OFFSET(SRST_ASRC0, 14, 6),
-+	RK3506_CRU_RESET_OFFSET(SRST_H_ASRC1, 14, 7),
-+	RK3506_CRU_RESET_OFFSET(SRST_ASRC1, 14, 8),
-+
-+	/* CRU-->SOFTRST_CON17 */
-+	RK3506_CRU_RESET_OFFSET(SRST_H_HSPERI_BIU, 17, 4),
-+	RK3506_CRU_RESET_OFFSET(SRST_H_SDMMC, 17, 7),
-+	RK3506_CRU_RESET_OFFSET(SRST_H_FSPI, 17, 8),
-+	RK3506_CRU_RESET_OFFSET(SRST_S_FSPI, 17, 9),
-+	RK3506_CRU_RESET_OFFSET(SRST_P_SPI2, 17, 10),
-+	RK3506_CRU_RESET_OFFSET(SRST_A_MAC0, 17, 11),
-+	RK3506_CRU_RESET_OFFSET(SRST_A_MAC1, 17, 12),
-+
-+	/* CRU-->SOFTRST_CON18 */
-+	RK3506_CRU_RESET_OFFSET(SRST_M_SAI2, 18, 2),
-+	RK3506_CRU_RESET_OFFSET(SRST_H_SAI2, 18, 3),
-+	RK3506_CRU_RESET_OFFSET(SRST_H_SAI3, 18, 6),
-+	RK3506_CRU_RESET_OFFSET(SRST_M_SAI3, 18, 7),
-+	RK3506_CRU_RESET_OFFSET(SRST_H_SAI4, 18, 10),
-+	RK3506_CRU_RESET_OFFSET(SRST_M_SAI4, 18, 11),
-+	RK3506_CRU_RESET_OFFSET(SRST_H_DSM, 18, 12),
-+	RK3506_CRU_RESET_OFFSET(SRST_M_DSM, 18, 13),
-+	RK3506_CRU_RESET_OFFSET(SRST_P_AUDIO_ADC, 18, 14),
-+	RK3506_CRU_RESET_OFFSET(SRST_M_AUDIO_ADC, 18, 15),
-+
-+	/* CRU-->SOFTRST_CON19 */
-+	RK3506_CRU_RESET_OFFSET(SRST_P_SARADC, 19, 0),
-+	RK3506_CRU_RESET_OFFSET(SRST_SARADC, 19, 1),
-+	RK3506_CRU_RESET_OFFSET(SRST_SARADC_PHY, 19, 2),
-+	RK3506_CRU_RESET_OFFSET(SRST_P_OTPC_NS, 19, 3),
-+	RK3506_CRU_RESET_OFFSET(SRST_SBPI_OTPC_NS, 19, 4),
-+	RK3506_CRU_RESET_OFFSET(SRST_USER_OTPC_NS, 19, 5),
-+	RK3506_CRU_RESET_OFFSET(SRST_P_UART5, 19, 6),
-+	RK3506_CRU_RESET_OFFSET(SRST_UART5, 19, 7),
-+	RK3506_CRU_RESET_OFFSET(SRST_P_GPIO234_IOC, 19, 8),
-+
-+	/* CRU-->SOFTRST_CON21 */
-+	RK3506_CRU_RESET_OFFSET(SRST_A_VIO_BIU, 21, 3),
-+	RK3506_CRU_RESET_OFFSET(SRST_H_VIO_BIU, 21, 4),
-+	RK3506_CRU_RESET_OFFSET(SRST_H_RGA, 21, 6),
-+	RK3506_CRU_RESET_OFFSET(SRST_A_RGA, 21, 7),
-+	RK3506_CRU_RESET_OFFSET(SRST_CORE_RGA, 21, 8),
-+	RK3506_CRU_RESET_OFFSET(SRST_A_VOP, 21, 9),
-+	RK3506_CRU_RESET_OFFSET(SRST_H_VOP, 21, 10),
-+	RK3506_CRU_RESET_OFFSET(SRST_VOP, 21, 11),
-+	RK3506_CRU_RESET_OFFSET(SRST_P_DPHY, 21, 12),
-+	RK3506_CRU_RESET_OFFSET(SRST_P_DSI_HOST, 21, 13),
-+	RK3506_CRU_RESET_OFFSET(SRST_P_TSADC, 21, 14),
-+	RK3506_CRU_RESET_OFFSET(SRST_TSADC, 21, 15),
-+
-+	/* CRU-->SOFTRST_CON22 */
-+	RK3506_CRU_RESET_OFFSET(SRST_P_GPIO1_IOC, 22, 1),
-+};
-+
-+void rk3506_rst_init(struct device_node *np, void __iomem *reg_base)
-+{
-+	rockchip_register_softrst_lut(np,
-+				      rk3506_register_offset,
-+				      ARRAY_SIZE(rk3506_register_offset),
-+				      reg_base + RK3506_SOFTRST_CON(0),
-+				      ROCKCHIP_SOFTRST_HIWORD_MASK);
-+}
--- 
-2.34.1
+Both U-Boot coldboot and chainload result in this:
+(bootloader) 7001b2b8: 000008c5
 
+CLKCHANGE_REQ_ENABLE - ENABLED (Bit 0)
+CLKCHANGE_PD_ENABLE - DISABLED (Bit 1)
+REF_AFTER_SREF or CLKCHANGE_SR_ENABLE - ENABLED (Bit 2)
+
+TRM description of EMC_CFG_2_0 register seems to match behavior after boot.
+
+So what should I do with CLKCHANGE_SR_ENABLE?
+
+> >
+> > > > +
+> > > > +     writel_relaxed(emc_cfg, emc->regs + EMC_CFG_2);
+> > > > +
+> > > > +     /* initialize interrupt */
+> > > > +     writel_relaxed(intmask, emc->regs + EMC_INTMASK);
+> > > > +     writel_relaxed(0xffffffff, emc->regs + EMC_INTSTATUS);
+> > > > +
+> > > > +     /* ensure that unwanted debug features are disabled */
+> > > > +     emc_dbg =3D readl_relaxed(emc->regs + EMC_DBG);
+> > > > +     emc_dbg |=3D EMC_DBG_CFG_PRIORITY;
+> > > > +     emc_dbg &=3D ~EMC_DBG_READ_MUX_ASSEMBLY;
+> > > > +     emc_dbg &=3D ~EMC_DBG_WRITE_MUX_ACTIVE;
+> > > > +     emc_dbg &=3D ~EMC_DBG_FORCE_UPDATE;
+> > > > +     writel_relaxed(emc_dbg, emc->regs + EMC_DBG);
+> > > > +
+> > > > +     switch (emc->dram_type) {
+> > > > +     case DRAM_TYPE_DDR1:
+> > > > +             dram_type_str =3D "DDR1";
+> > > > +             break;
+> > > > +     case DRAM_TYPE_LPDDR2:
+> > > > +             dram_type_str =3D "LPDDR2";
+> > > > +             break;
+> > > > +     case DRAM_TYPE_DDR2:
+> > > > +             dram_type_str =3D "DDR2";
+> > > > +             break;
+> > > > +     case DRAM_TYPE_DDR3:
+> > > > +             dram_type_str =3D "DDR3";
+> > > > +             break;
+> > > > +     }
+> > > > +
+> > > > +     dev_info_once(emc->dev, "%u %s %s attached\n", emc->dram_num,
+> > > > +                   dram_type_str, emc->dram_num =3D=3D 2 ? "device=
+s" : "device");
+> > > > +
+> > > > +     emc_read_current_timing(emc, &emc->last_timing);
+> > > > +
+> > > > +     return 0;
+> > > > +}
+> > > > +
+> > > > +static int load_one_timing_from_dt(struct tegra_emc *emc,
+> > > > +                                struct emc_timing *timing,
+> > > > +                                struct device_node *node)
+> > > > +{
+> > > > +     u32 value;
+> > > > +     int err;
+> > > > +
+> > > > +     err =3D of_property_read_u32(node, "clock-frequency", &value)=
+;
+> > > > +     if (err) {
+> > > > +             dev_err(emc->dev, "timing %pOFn: failed to read rate:=
+ %d\n",
+> > > > +                     node, err);
+> > > > +             return err;
+> > > > +     }
+> > > > +
+> > > > +     timing->rate =3D value;
+> > > > +
+> > > > +     err =3D of_property_read_u32_array(node, "nvidia,emc-configur=
+ation",
+> > > > +                                      timing->emc_burst_data,
+> > > > +                                      ARRAY_SIZE(timing->emc_burst=
+_data));
+> > > > +     if (err) {
+> > > > +             dev_err(emc->dev,
+> > > > +                     "timing %pOFn: failed to read emc burst data:=
+ %d\n",
+> > > > +                     node, err);
+> > > > +             return err;
+> > > > +     }
+> > > > +
+> > > > +#define EMC_READ_PROP(prop, dtprop) { \
+> > > > +     err =3D of_property_read_u32(node, dtprop, &timing->prop); \
+> > > > +     if (err) { \
+> > > > +             dev_err(emc->dev, "timing %pOFn: failed to read " #pr=
+op ": %d\n", \
+> > > > +                     node, err); \
+> > > > +             return err; \
+> > > > +     } \
+> > > > +}
+> > > > +
+> > > > +     EMC_READ_PROP(emc_auto_cal_config, "nvidia,emc-auto-cal-confi=
+g")
+> > > > +     EMC_READ_PROP(emc_auto_cal_config2, "nvidia,emc-auto-cal-conf=
+ig2")
+> > > > +     EMC_READ_PROP(emc_auto_cal_config3, "nvidia,emc-auto-cal-conf=
+ig3")
+> > > > +     EMC_READ_PROP(emc_auto_cal_interval, "nvidia,emc-auto-cal-int=
+erval")
+> > > > +     EMC_READ_PROP(emc_cfg, "nvidia,emc-cfg")
+> > > > +     EMC_READ_PROP(emc_ctt_term_ctrl, "nvidia,emc-ctt-term-ctrl")
+> > > > +     EMC_READ_PROP(emc_mode_1, "nvidia,emc-mode-1")
+> > > > +     EMC_READ_PROP(emc_mode_2, "nvidia,emc-mode-2")
+> > > > +     EMC_READ_PROP(emc_mode_4, "nvidia,emc-mode-4")
+> > > > +     EMC_READ_PROP(emc_mode_reset, "nvidia,emc-mode-reset")
+> > > > +     EMC_READ_PROP(emc_mrs_wait_cnt, "nvidia,emc-mrs-wait-cnt")
+> > > > +     EMC_READ_PROP(emc_sel_dpd_ctrl, "nvidia,emc-sel-dpd-ctrl")
+> > > > +     EMC_READ_PROP(emc_xm2dqspadctrl2, "nvidia,emc-xm2dqspadctrl2"=
+)
+> > > > +     EMC_READ_PROP(emc_zcal_cnt_long, "nvidia,emc-zcal-cnt-long")
+> > > > +     EMC_READ_PROP(emc_zcal_interval, "nvidia,emc-zcal-interval")
+> > > > +
+> > > > +#undef EMC_READ_PROP
+> > > > +
+> > > > +     return 0;
+> > > > +}
+> > > > +
+> > > > +static int cmp_timings(const void *_a, const void *_b)
+> > > > +{
+> > > > +     const struct emc_timing *a =3D _a;
+> > > > +     const struct emc_timing *b =3D _b;
+> > > > +
+> > > > +     if (a->rate < b->rate)
+> > > > +             return -1;
+> > > > +     else if (a->rate =3D=3D b->rate)
+> > > > +             return 0;
+> > > > +     else
+> > > > +             return 1;
+> > > > +}
+> > > > +
+> > > > +static int tegra_emc_load_timings_from_dt(struct tegra_emc *emc,
+> > > > +                                       struct device_node *node)
+> > > > +{
+> > > > +     int child_count =3D of_get_child_count(node);
+> > > > +     struct device_node *child;
+> > > > +     struct emc_timing *timing;
+> > > > +     unsigned int i =3D 0;
+> > > > +     int err;
+> > > > +
+> > > > +     emc->timings =3D devm_kcalloc(emc->dev, child_count, sizeof(*=
+timing),
+> > > > +                                 GFP_KERNEL);
+> > > > +     if (!emc->timings)
+> > > > +             return -ENOMEM;
+> > > > +
+> > > > +     emc->num_timings =3D child_count;
+> > > > +
+> > > > +     for_each_child_of_node(node, child) {
+> > > > +             timing =3D &emc->timings[i++];
+> > > > +
+> > > > +             err =3D load_one_timing_from_dt(emc, timing, child);
+> > > > +             if (err) {
+> > > > +                     of_node_put(child);
+> > > > +                     return err;
+> > > > +             }
+> > > > +     }
+> > > > +
+> > > > +     sort(emc->timings, emc->num_timings, sizeof(*timing), cmp_tim=
+ings,
+> > > > +          NULL);
+> > > > +
+> > > > +     return 0;
+> > > > +}
+> > > > +
+> > > > +static struct device_node *
+> > > > +tegra_emc_find_node_by_ram_code(struct device_node *node, u32 ram_=
+code)
+> > > > +{
+> > > > +     struct device_node *np;
+> > > > +     int err;
+> > > > +
+> > > > +     for_each_child_of_node(node, np) {
+> > > > +             u32 value;
+> > > > +
+> > > > +             err =3D of_property_read_u32(np, "nvidia,ram-code", &=
+value);
+> > > > +             if (err || value !=3D ram_code)
+> > > > +                     continue;
+> > > > +
+> > > > +             return np;
+> > > > +     }
+> > > > +
+> > > > +     return NULL;
+> > > > +}
+> > > > +
+> > > > +static void tegra_emc_rate_requests_init(struct tegra_emc *emc)
+> > > > +{
+> > > > +     unsigned int i;
+> > > > +
+> > > > +     for (i =3D 0; i < EMC_RATE_TYPE_MAX; i++) {
+> > > > +             emc->requested_rate[i].min_rate =3D 0;
+> > > > +             emc->requested_rate[i].max_rate =3D ULONG_MAX;
+> > > > +     }
+> > > > +}
+> > > > +
+> > > > +static int emc_request_rate(struct tegra_emc *emc,
+> > > > +                         unsigned long new_min_rate,
+> > > > +                         unsigned long new_max_rate,
+> > > > +                         enum emc_rate_request_type type)
+> > > > +{
+> > > > +     struct emc_rate_request *req =3D emc->requested_rate;
+> > > > +     unsigned long min_rate =3D 0, max_rate =3D ULONG_MAX;
+> > > > +     unsigned int i;
+> > > > +     int err;
+> > > > +
+> > > > +     /* select minimum and maximum rates among the requested rates=
+ */
+> > > > +     for (i =3D 0; i < EMC_RATE_TYPE_MAX; i++, req++) {
+> > > > +             if (i =3D=3D type) {
+> > > > +                     min_rate =3D max(new_min_rate, min_rate);
+> > > > +                     max_rate =3D min(new_max_rate, max_rate);
+> > > > +             } else {
+> > > > +                     min_rate =3D max(req->min_rate, min_rate);
+> > > > +                     max_rate =3D min(req->max_rate, max_rate);
+> > > > +             }
+> > > > +     }
+> > > > +
+> > > > +     if (min_rate > max_rate) {
+> > > > +             dev_err_ratelimited(emc->dev, "%s: type %u: out of ra=
+nge: %lu %lu\n",
+> > > > +                                 __func__, type, min_rate, max_rat=
+e);
+> > > > +             return -ERANGE;
+> > > > +     }
+> > > > +
+> > > > +     /*
+> > > > +      * EMC rate-changes should go via OPP API because it manages =
+voltage
+> > > > +      * changes.
+> > > > +      */
+> > > > +     err =3D dev_pm_opp_set_rate(emc->dev, min_rate);
+> > > > +     if (err)
+> > > > +             return err;
+> > > > +
+> > > > +     emc->requested_rate[type].min_rate =3D new_min_rate;
+> > > > +     emc->requested_rate[type].max_rate =3D new_max_rate;
+> > > > +
+> > > > +     return 0;
+> > > > +}
+> > > > +
+> > > > +static int emc_set_min_rate(struct tegra_emc *emc, unsigned long r=
+ate,
+> > > > +                         enum emc_rate_request_type type)
+> > > > +{
+> > > > +     struct emc_rate_request *req =3D &emc->requested_rate[type];
+> > > > +     int ret;
+> > > > +
+> > > > +     mutex_lock(&emc->rate_lock);
+> > > > +     ret =3D emc_request_rate(emc, rate, req->max_rate, type);
+> > > > +     mutex_unlock(&emc->rate_lock);
+> > > > +
+> > > > +     return ret;
+> > > > +}
+> > > > +
+> > > > +static int emc_set_max_rate(struct tegra_emc *emc, unsigned long r=
+ate,
+> > > > +                         enum emc_rate_request_type type)
+> > > > +{
+> > > > +     struct emc_rate_request *req =3D &emc->requested_rate[type];
+> > > > +     int ret;
+> > > > +
+> > > > +     mutex_lock(&emc->rate_lock);
+> > > > +     ret =3D emc_request_rate(emc, req->min_rate, rate, type);
+> > > > +     mutex_unlock(&emc->rate_lock);
+> > > > +
+> > > > +     return ret;
+> > > > +}
+> > > > +
+> > > > +/*
+> > > > + * debugfs interface
+> > > > + *
+> > > > + * The memory controller driver exposes some files in debugfs that=
+ can be used
+> > > > + * to control the EMC frequency. The top-level directory can be fo=
+und here:
+> > > > + *
+> > > > + *   /sys/kernel/debug/emc
+> > > > + *
+> > > > + * It contains the following files:
+> > > > + *
+> > > > + *   - available_rates: This file contains a list of valid, space-=
+separated
+> > > > + *     EMC frequencies.
+> > > > + *
+> > > > + *   - min_rate: Writing a value to this file sets the given frequ=
+ency as the
+> > > > + *       floor of the permitted range. If this is higher than the =
+currently
+> > > > + *       configured EMC frequency, this will cause the frequency t=
+o be
+> > > > + *       increased so that it stays within the valid range.
+> > > > + *
+> > > > + *   - max_rate: Similarly to the min_rate file, writing a value t=
+o this file
+> > > > + *       sets the given frequency as the ceiling of the permitted =
+range. If
+> > > > + *       the value is lower than the currently configured EMC freq=
+uency, this
+> > > > + *       will cause the frequency to be decreased so that it stays=
+ within the
+> > > > + *       valid range.
+> > > > + */
+> > > > +
+> > > > +static bool tegra_emc_validate_rate(struct tegra_emc *emc, unsigne=
+d long rate)
+> > > > +{
+> > > > +     unsigned int i;
+> > > > +
+> > > > +     for (i =3D 0; i < emc->num_timings; i++)
+> > > > +             if (rate =3D=3D emc->timings[i].rate)
+> > > > +                     return true;
+> > > > +
+> > > > +     return false;
+> > > > +}
+> > > > +
+> > > > +static int tegra_emc_debug_available_rates_show(struct seq_file *s=
+,
+> > > > +                                             void *data)
+> > > > +{
+> > > > +     struct tegra_emc *emc =3D s->private;
+> > > > +     const char *prefix =3D "";
+> > > > +     unsigned int i;
+> > > > +
+> > > > +     for (i =3D 0; i < emc->num_timings; i++) {
+> > > > +             seq_printf(s, "%s%lu", prefix, emc->timings[i].rate);
+> > > > +             prefix =3D " ";
+> > > > +     }
+> > > > +
+> > > > +     seq_puts(s, "\n");
+> > > > +
+> > > > +     return 0;
+> > > > +}
+> > > > +
+> > > > +DEFINE_SHOW_ATTRIBUTE(tegra_emc_debug_available_rates);
+> > > > +
+> > > > +static int tegra_emc_debug_min_rate_get(void *data, u64 *rate)
+> > > > +{
+> > > > +     struct tegra_emc *emc =3D data;
+> > > > +
+> > > > +     *rate =3D emc->debugfs.min_rate;
+> > > > +
+> > > > +     return 0;
+> > > > +}
+> > > > +
+> > > > +static int tegra_emc_debug_min_rate_set(void *data, u64 rate)
+> > > > +{
+> > > > +     struct tegra_emc *emc =3D data;
+> > > > +     int err;
+> > > > +
+> > > > +     if (!tegra_emc_validate_rate(emc, rate))
+> > > > +             return -EINVAL;
+> > > > +
+> > > > +     err =3D emc_set_min_rate(emc, rate, EMC_RATE_DEBUG);
+> > > > +     if (err < 0)
+> > > > +             return err;
+> > > > +
+> > > > +     emc->debugfs.min_rate =3D rate;
+> > > > +
+> > > > +     return 0;
+> > > > +}
+> > > > +
+> > > > +DEFINE_DEBUGFS_ATTRIBUTE(tegra_emc_debug_min_rate_fops,
+> > > > +                      tegra_emc_debug_min_rate_get,
+> > > > +                      tegra_emc_debug_min_rate_set, "%llu\n");
+> > > > +
+> > > > +static int tegra_emc_debug_max_rate_get(void *data, u64 *rate)
+> > > > +{
+> > > > +     struct tegra_emc *emc =3D data;
+> > > > +
+> > > > +     *rate =3D emc->debugfs.max_rate;
+> > > > +
+> > > > +     return 0;
+> > > > +}
+> > > > +
+> > > > +static int tegra_emc_debug_max_rate_set(void *data, u64 rate)
+> > > > +{
+> > > > +     struct tegra_emc *emc =3D data;
+> > > > +     int err;
+> > > > +
+> > > > +     if (!tegra_emc_validate_rate(emc, rate))
+> > > > +             return -EINVAL;
+> > > > +
+> > > > +     err =3D emc_set_max_rate(emc, rate, EMC_RATE_DEBUG);
+> > > > +     if (err < 0)
+> > > > +             return err;
+> > > > +
+> > > > +     emc->debugfs.max_rate =3D rate;
+> > > > +
+> > > > +     return 0;
+> > > > +}
+> > > > +
+> > > > +DEFINE_DEBUGFS_ATTRIBUTE(tegra_emc_debug_max_rate_fops,
+> > > > +                      tegra_emc_debug_max_rate_get,
+> > > > +                      tegra_emc_debug_max_rate_set, "%llu\n");
+> > > > +
+> > > > +static void emc_debugfs_init(struct device *dev, struct tegra_emc =
+*emc)
+> > > > +{
+> > > > +     unsigned int i;
+> > > > +     int err;
+> > > > +
+> > > > +     emc->debugfs.min_rate =3D ULONG_MAX;
+> > > > +     emc->debugfs.max_rate =3D 0;
+> > > > +
+> > > > +     for (i =3D 0; i < emc->num_timings; i++) {
+> > > > +             if (emc->timings[i].rate < emc->debugfs.min_rate)
+> > > > +                     emc->debugfs.min_rate =3D emc->timings[i].rat=
+e;
+> > > > +
+> > > > +             if (emc->timings[i].rate > emc->debugfs.max_rate)
+> > > > +                     emc->debugfs.max_rate =3D emc->timings[i].rat=
+e;
+> > > > +     }
+> > > > +
+> > > > +     if (!emc->num_timings) {
+> > > > +             emc->debugfs.min_rate =3D clk_get_rate(emc->clk);
+> > > > +             emc->debugfs.max_rate =3D emc->debugfs.min_rate;
+> > > > +     }
+> > > > +
+> > > > +     err =3D clk_set_rate_range(emc->clk, emc->debugfs.min_rate,
+> > > > +                              emc->debugfs.max_rate);
+> > > > +     if (err < 0) {
+> > > > +             dev_err(dev, "failed to set rate range [%lu-%lu] for =
+%pC\n",
+> > > > +                     emc->debugfs.min_rate, emc->debugfs.max_rate,
+> > > > +                     emc->clk);
+> > > > +             return;
+> > > > +     }
+> > > > +
+> > > > +     emc->debugfs.root =3D debugfs_create_dir("emc", NULL);
+> > > > +
+> > > > +     debugfs_create_file("available_rates", 0444, emc->debugfs.roo=
+t, emc,
+> > > > +                         &tegra_emc_debug_available_rates_fops);
+> > > > +     debugfs_create_file("min_rate", 0644, emc->debugfs.root,
+> > > > +                         emc, &tegra_emc_debug_min_rate_fops);
+> > > > +     debugfs_create_file("max_rate", 0644, emc->debugfs.root,
+> > > > +                         emc, &tegra_emc_debug_max_rate_fops);
+> > > > +}
+> > > > +
+> > > > +static inline struct tegra_emc *
+> > > > +to_tegra_emc_provider(struct icc_provider *provider)
+> > > > +{
+> > > > +     return container_of(provider, struct tegra_emc, provider);
+> > > > +}
+> > > > +
+> > > > +static struct icc_node_data *
+> > > > +emc_of_icc_xlate_extended(const struct of_phandle_args *spec, void=
+ *data)
+> > > > +{
+> > > > +     struct icc_provider *provider =3D data;
+> > > > +     struct icc_node_data *ndata;
+> > > > +     struct icc_node *node;
+> > > > +
+> > > > +     /* External Memory is the only possible ICC route */
+> > > > +     list_for_each_entry(node, &provider->nodes, node_list) {
+> > > > +             if (node->id !=3D TEGRA_ICC_EMEM)
+> > > > +                     continue;
+> > > > +
+> > > > +             ndata =3D kzalloc(sizeof(*ndata), GFP_KERNEL);
+> > > > +             if (!ndata)
+> > > > +                     return ERR_PTR(-ENOMEM);
+> > > > +
+> > > > +             /*
+> > > > +              * SRC and DST nodes should have matching TAG in orde=
+r to have
+> > > > +              * it set by default for a requested path.
+> > > > +              */
+> > > > +             ndata->tag =3D TEGRA_MC_ICC_TAG_ISO;
+> > > > +             ndata->node =3D node;
+> > > > +
+> > > > +             return ndata;
+> > > > +     }
+> > > > +
+> > > > +     return ERR_PTR(-EPROBE_DEFER);
+> > > > +}
+> > > > +
+> > > > +static int emc_icc_set(struct icc_node *src, struct icc_node *dst)
+> > > > +{
+> > > > +     struct tegra_emc *emc =3D to_tegra_emc_provider(dst->provider=
+);
+> > > > +     unsigned long long peak_bw =3D icc_units_to_bps(dst->peak_bw)=
+;
+> > > > +     unsigned long long avg_bw =3D icc_units_to_bps(dst->avg_bw);
+> > > > +     unsigned long long rate =3D max(avg_bw, peak_bw);
+> > > > +     unsigned int dram_data_bus_width_bytes =3D 4;
+> > > > +     const unsigned int ddr =3D 2;
+> > > > +     int err;
+> > > > +
+> > > > +     /*
+> > > > +      * Tegra114 EMC runs on a clock rate of SDRAM bus. This means=
+ that
+> > > > +      * EMC clock rate is twice smaller than the peak data rate be=
+cause
+> > > > +      * data is sampled on both EMC clock edges.
+> > > > +      */
+> > > > +     do_div(rate, ddr * dram_data_bus_width_bytes);
+> > > > +     rate =3D min_t(u64, rate, U32_MAX);
+> > > > +
+> > > > +     err =3D emc_set_min_rate(emc, rate, EMC_RATE_ICC);
+> > > > +     if (err)
+> > > > +             return err;
+> > > > +
+> > > > +     return 0;
+> > > > +}
+> > > > +
+> > > > +static int tegra_emc_interconnect_init(struct tegra_emc *emc)
+> > > > +{
+> > > > +     const struct tegra_mc_soc *soc =3D emc->mc->soc;
+> > > > +     struct icc_node *node;
+> > > > +     int err;
+> > > > +
+> > > > +     emc->provider.dev =3D emc->dev;
+> > > > +     emc->provider.set =3D emc_icc_set;
+> > > > +     emc->provider.data =3D &emc->provider;
+> > > > +     emc->provider.aggregate =3D soc->icc_ops->aggregate;
+> > > > +     emc->provider.xlate_extended =3D emc_of_icc_xlate_extended;
+> > > > +
+> > > > +     icc_provider_init(&emc->provider);
+> > > > +
+> > > > +     /* create External Memory Controller node */
+> > > > +     node =3D icc_node_create(TEGRA_ICC_EMC);
+> > > > +     if (IS_ERR(node)) {
+> > > > +             err =3D PTR_ERR(node);
+> > > > +             goto err_msg;
+> > > > +     }
+> > > > +
+> > > > +     node->name =3D "External Memory Controller";
+> > > > +     icc_node_add(node, &emc->provider);
+> > > > +
+> > > > +     /* link External Memory Controller to External Memory (DRAM) =
+*/
+> > > > +     err =3D icc_link_create(node, TEGRA_ICC_EMEM);
+> > > > +     if (err)
+> > > > +             goto remove_nodes;
+> > > > +
+> > > > +     /* create External Memory node */
+> > > > +     node =3D icc_node_create(TEGRA_ICC_EMEM);
+> > > > +     if (IS_ERR(node)) {
+> > > > +             err =3D PTR_ERR(node);
+> > > > +             goto remove_nodes;
+> > > > +     }
+> > > > +
+> > > > +     node->name =3D "External Memory (DRAM)";
+> > > > +     icc_node_add(node, &emc->provider);
+> > > > +
+> > > > +     err =3D icc_provider_register(&emc->provider);
+> > > > +     if (err)
+> > > > +             goto remove_nodes;
+> > > > +
+> > > > +     return 0;
+> > > > +
+> > > > +remove_nodes:
+> > > > +     icc_nodes_remove(&emc->provider);
+> > > > +err_msg:
+> > > > +     dev_err(emc->dev, "failed to initialize ICC: %d\n", err);
+> > > > +
+> > > > +     return err;
+> > > > +}
+> > > > +
+> > > > +static int tegra_emc_opp_table_init(struct tegra_emc *emc)
+> >
+> > In v4 I will switch to devm_tegra_core_dev_init_opp_table used in
+> > tegra30 emc with required adjustments to it if you don't mind.
+>
+> Sounds good.
+>
+> >
+> > > > +{
+> > > > +     u32 hw_version =3D BIT(tegra_sku_info.soc_speedo_id);
+> > > > +     int opp_token, err;
+> > > > +
+> > > > +     err =3D dev_pm_opp_set_supported_hw(emc->dev, &hw_version, 1)=
+;
+> > > > +     if (err < 0) {
+> > > > +             dev_err(emc->dev, "failed to set OPP supported HW: %d=
+\n", err);
+> > > > +             return err;
+> > > > +     }
+> > > > +     opp_token =3D err;
+> > > > +
+> > > > +     err =3D dev_pm_opp_of_add_table(emc->dev);
+> > > > +     if (err) {
+> > > > +             if (err =3D=3D -ENODEV)
+> > > > +                     dev_err(emc->dev, "OPP table not found, pleas=
+e update your device tree\n");
+> > > > +             else
+> > > > +                     dev_err(emc->dev, "failed to add OPP table: %=
+d\n", err);
+> > > > +
+> > > > +             goto put_hw_table;
+> > > > +     }
+> > > > +
+> > > > +     dev_info_once(emc->dev, "OPP HW ver. 0x%x, current clock rate=
+ %lu MHz\n",
+> > > > +                   hw_version, clk_get_rate(emc->clk) / 1000000);
+> > > > +
+> > > > +     /* first dummy rate-set initializes voltage state */
+> > > > +     err =3D dev_pm_opp_set_rate(emc->dev, clk_get_rate(emc->clk))=
+;
+> > > > +     if (err) {
+> > > > +             dev_err(emc->dev, "failed to initialize OPP clock: %d=
+\n", err);
+> > > > +             goto remove_table;
+> > > > +     }
+> > > > +
+> > > > +     return 0;
+> > > > +
+> > > > +remove_table:
+> > > > +     dev_pm_opp_of_remove_table(emc->dev);
+> > > > +put_hw_table:
+> > > > +     dev_pm_opp_put_supported_hw(opp_token);
+> > > > +
+> > > > +     return err;
+> > > > +}
+> > > > +
+> > > > +static void devm_tegra_emc_unset_callback(void *data)
+> > > > +{
+> > > > +     tegra124_clk_set_emc_callbacks(NULL, NULL);
+> > > > +}
+> > > > +
+> > > > +static int tegra_emc_probe(struct platform_device *pdev)
+> > > > +{
+> > > > +     struct device_node *np;
+> > > > +     struct tegra_emc *emc;
+> > > > +     u32 ram_code;
+> > > > +     int err;
+> > > > +
+> > > > +     emc =3D devm_kzalloc(&pdev->dev, sizeof(*emc), GFP_KERNEL);
+> > > > +     if (!emc)
+> > > > +             return -ENOMEM;
+> > > > +
+> > > > +     mutex_init(&emc->rate_lock);
+> > > > +     emc->dev =3D &pdev->dev;
+> > > > +
+> > > > +     emc->regs =3D devm_platform_ioremap_resource(pdev, 0);
+> > > > +     if (IS_ERR(emc->regs))
+> > > > +             return PTR_ERR(emc->regs);
+> > > > +
+> > > > +     emc->mc =3D devm_tegra_memory_controller_get(&pdev->dev);
+> > > > +     if (IS_ERR(emc->mc))
+> > > > +             return PTR_ERR(emc->mc);
+> > > > +
+> > > > +     ram_code =3D tegra_read_ram_code();
+> > > > +
+> > > > +     np =3D tegra_emc_find_node_by_ram_code(pdev->dev.of_node, ram=
+_code);
+> > > > +     if (np) {
+> > > > +             err =3D tegra_emc_load_timings_from_dt(emc, np);
+> > > > +             of_node_put(np);
+> > > > +             if (err)
+> > > > +                     return err;
+> > > > +     } else {
+> > > > +             dev_info_once(&pdev->dev,
+> > > > +                           "no memory timings for RAM code %u foun=
+d in DT\n",
+> > > > +                           ram_code);
+> > > > +     }
+> > > > +
+> > > > +     err =3D emc_init(emc);
+> > > > +     if (err) {
+> > > > +             dev_err(&pdev->dev, "EMC initialization failed: %d\n"=
+, err);
+> > > > +             return err;
+> > > > +     }
+> > > > +
+> > > > +     platform_set_drvdata(pdev, emc);
+> > > > +
+> > > > +     tegra124_clk_set_emc_callbacks(tegra_emc_prepare_timing_chang=
+e,
+> > > > +                                    tegra_emc_complete_timing_chan=
+ge);
+> > > > +
+> > > > +     err =3D devm_add_action_or_reset(&pdev->dev, devm_tegra_emc_u=
+nset_callback,
+> > > > +                                    NULL);
+> > > > +     if (err)
+> > > > +             return err;
+> > > > +
+> > > > +     err =3D platform_get_irq(pdev, 0);
+> > > > +     if (err < 0)
+> > > > +             return err;
+> > > > +
+> > > > +     emc->irq =3D err;
+> > > > +
+> > > > +     err =3D devm_request_irq(&pdev->dev, emc->irq, tegra_emc_isr,=
+ 0,
+> > > > +                            dev_name(&pdev->dev), emc);
+> > > > +     if (err) {
+> > > > +             dev_err(&pdev->dev, "failed to request irq: %d\n", er=
+r);
+> > > > +             return err;
+> > > > +     }
+> > > > +
+> > > > +     emc->clk =3D devm_clk_get(&pdev->dev, "emc");
+> > > > +     if (IS_ERR(emc->clk)) {
+> > > > +             err =3D PTR_ERR(emc->clk);
+> > > > +             dev_err(&pdev->dev, "failed to get EMC clock: %d\n", =
+err);
+> > > > +             return err;
+> > > > +     }
+> > > > +
+> > > > +     err =3D tegra_emc_opp_table_init(emc);
+> > > > +     if (err)
+> > > > +             return err;
+> > > > +
+> > > > +     tegra_emc_rate_requests_init(emc);
+> > > > +
+> > > > +     if (IS_ENABLED(CONFIG_DEBUG_FS))
+> > > > +             emc_debugfs_init(&pdev->dev, emc);
+> > > > +
+> > > > +     tegra_emc_interconnect_init(emc);
+> > > > +
+> > > > +     /*
+> > > > +      * Don't allow the kernel module to be unloaded. Unloading ad=
+ds some
+> > > > +      * extra complexity which doesn't really worth the effort in =
+a case of
+> > > > +      * this driver.
+> > > > +      */
+> > > > +     try_module_get(THIS_MODULE);
+> > > > +
+> > > > +     return 0;
+> > > > +};
+> > > > +
+> > > > +static const struct of_device_id tegra_emc_of_match[] =3D {
+> > > > +     { .compatible =3D "nvidia,tegra114-emc" },
+> > > > +     {}
+> > > > +};
+> > > > +MODULE_DEVICE_TABLE(of, tegra_emc_of_match);
+> > > > +
+> > > > +static struct platform_driver tegra_emc_driver =3D {
+> > > > +     .probe =3D tegra_emc_probe,
+> > > > +     .driver =3D {
+> > > > +             .name =3D "tegra114-emc",
+> > > > +             .of_match_table =3D tegra_emc_of_match,
+> > > > +             .suppress_bind_attrs =3D true,
+> > > > +             .sync_state =3D icc_sync_state,
+> > > > +     },
+> > > > +};
+> > > > +module_platform_driver(tegra_emc_driver);
+> > > > +
+> > > > +MODULE_AUTHOR("Svyatoslav Ryhel <clamor95@gmail.com>");
+> > > > +MODULE_DESCRIPTION("NVIDIA Tegra114 EMC driver");
+> > > > +MODULE_LICENSE("GPL");
+> > > >
+> > >
+> > >
+> > >
+>
+>
+>
+>
