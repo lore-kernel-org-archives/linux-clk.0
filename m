@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94A2D34D38E;
-	Fri, 21 Nov 2025 13:44:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65BAB34E75E;
+	Fri, 21 Nov 2025 13:44:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763732653; cv=none; b=K3kL4sbOOgLEHpwl/k+9qOPKZaXAWY3JzeGPDcXXBE5LqMXAtMiZ1BIEH9bGnQJ8/5uwi4aEX5VzHc3OzdjSi6liFipZs9ku/KKVM8RFnpaFRCOJs01k9HlCPLoZZZyV1OGj9r2PalLeWuRTJQhLsAIKhRfD+kwBEaLBe2Og2QQ=
+	t=1763732656; cv=none; b=quNC8FMyP9FQWw+oVwNwRs/SeQBGX7zvFja/4YBTWxRPjYk9lzkRdHfDo5brceFWIt9PSYBrD+eliBfBelx5eJ/2jcxf42A7iWuYolEVAsPj8nl8zDOJdIOVBolGLhxhBtSVBIt8yCeSx1uUnBN28Oic3HWHhbVJchA+AThH1yM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763732653; c=relaxed/simple;
-	bh=/v1QAlCCWNbMx8wdrlD6B9enfAEnlVlEnoMDUomq2iQ=;
+	s=arc-20240116; t=1763732656; c=relaxed/simple;
+	bh=0+J1Q5CKVMTP2xhn6YpjpspBi2tj6Gjjxk8nh8alXSY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TUKjQ4sCkrdHbHMRCTLQtqKbuU9hwmdROjck7JNaPMYO+/OOTFY8lB5nj0TuwJQ66/c0hBR4dQtMJUMFEugQwGDmskfvAYnnDQmBbNHA7jGvG/9WwlcunCrSOywH2o901aGM+hUrdepWHhwJb5YISNOvixKTdZjuFQHIvNlhkyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ol/gUFQM; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version; b=SpKM/hL7SIsjQm6V8ygo9V1c8GVb34Dxi6PnbsXbQ0Lt9bxUQXmWN8TP3Ubw7W/n0OSDQA3v+/UoSGqCGfqGXKhVeQnazQigA2at/vE4IASBw4SR4ExpOGjGTIoRhV8py+55VvgfaSdyTgHTyg7BLGIghBJvBnhK5o3VbU7zu8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MrcXdDJf; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ol/gUFQM"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4313C4CEF1;
-	Fri, 21 Nov 2025 13:44:10 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MrcXdDJf"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4B69C4CEFB;
+	Fri, 21 Nov 2025 13:44:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763732653;
-	bh=/v1QAlCCWNbMx8wdrlD6B9enfAEnlVlEnoMDUomq2iQ=;
+	s=k20201202; t=1763732656;
+	bh=0+J1Q5CKVMTP2xhn6YpjpspBi2tj6Gjjxk8nh8alXSY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ol/gUFQMczSrgF4dRYg+nQikDPq38qhKah68ijPzBb9d3Y2CCyFjY5jc+AYaYj+H5
-	 8m+xYq7jgfeA3ukeVAH04lzhon4UHa8zmUDaEMPvqNhE36DOSGXSH1skt5cxPYydSN
-	 3d4bwn+kA1N3/NeQsH/cLqXq90D/PAk8pv+qTCBTX/VjHJIZjJshfyaLJYofvS3cQA
-	 LJiOHt9lzGBypP54svXdLPiOW8+MBjbwhbJPAUrwPbDtgBSOfbzcCMrOfSgUkjkp7/
-	 L9VguOhd8Grjkf82EmhnmFFeIgt6LAoZlLUp02saR4N0ybn+YgIa0ZyI6hhbjjPQX/
-	 5MyCG3gbgaXTg==
+	b=MrcXdDJfyvU/I3meVg/ArtkEdEJx5REMlOb+eK7jKHWiSdBCUuRvZm5Eda3nnwROr
+	 tM58qKQjtrApyMD6gWUjO4pcmzRjUXsDdDaLGyyuHGlDi0pv+x3VmG623BS0d5zvpJ
+	 FKYpJblG+oBsMVYEETH3cbQ79tLlnCXx/rQ7fpmAlhYRoMXZteLfdTgd5bFwXaWUg5
+	 x4/F6y2j2UgxFMTXfRQGhcQNC309vIDGWSJ+JsVchrLEAi76LXGcoXKsuJxuPjKkUV
+	 q9PoYR7va2W052QLZpCrXc47d3E9i0qZyPZYUPVJ/Rw1kE5gqmYrVsPh2UUDkSJMv8
+	 fUotfhTBuhOog==
 From: Conor Dooley <conor@kernel.org>
 To: linux-kernel@vger.kernel.org
 Cc: conor@kernel.org,
@@ -40,9 +40,9 @@ Cc: conor@kernel.org,
 	linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	Pierre-Henry Moussay <pierre-henry.moussay@microchip.com>
-Subject: [PATCH v2 2/3] dt-bindings: clock: mpfs-ccc: Add pic64gx compatibility
-Date: Fri, 21 Nov 2025 13:44:01 +0000
-Message-ID: <20251121-trade-slacked-5fc7c1139cb2@spud>
+Subject: [PATCH v2 3/3] dt-bindings: clock: mpfs-clkcfg: Add pic64gx compatibility
+Date: Fri, 21 Nov 2025 13:44:02 +0000
+Message-ID: <20251121-unclip-shabby-a7a16e865146@spud>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251121-tartar-drew-ba31c5ec9192@spud>
 References: <20251121-tartar-drew-ba31c5ec9192@spud>
@@ -52,39 +52,56 @@ List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1011; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=6u/MVsorAWOBiuYW/sM6Lc9tNpUToYIrlt3K2vcU0zQ=; b=owGbwMvMwCVWscWwfUFT0iXG02pJDJkKOfMz906riTc7xdT856JynvxRZbZp8tvWTz5RKr9o8 ZxdSz2XdZSyMIhxMciKKbIk3u5rkVr/x2WHc89bmDmsTCBDGLg4BWAivsUM/xRktZm5fr7iXed4 ZJbyffkL5z5emWB6f/8qlW1tbYXVu30ZGV4Er1sTmKh0IJJnv2Cc5Edt7qdXubY07GqPZW3L6Z6 7hAcA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1375; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=BAqYmh3+kZOKEzACbZi5m6qzBFcZG08zjLdoiX1jvnQ=; b=owGbwMvMwCVWscWwfUFT0iXG02pJDJkKOfMTLvxZIKvxR3R3ZPbj37b/pu479/R0njDjUV29i ObZk5LvdJSyMIhxMciKKbIk3u5rkVr/x2WHc89bmDmsTCBDGLg4BWAiaiYM/yxqF7nGc1v1pHDq ZZ763J5xM7IyYm3eebWswNroeTZ6zxl+s3Z7KBlM0oj+8Kf41vkdukI1vaGnXjoV7BM62F574BI vKwA=
 X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
 Content-Transfer-Encoding: 8bit
 
 From: Pierre-Henry Moussay <pierre-henry.moussay@microchip.com>
 
-pic64gx SoC Clock Conditioning Circuitry is compatibles
-with the Polarfire SoC
+pic64gx has a clock controller compatible with mpfs-clkcfg. Don't permit
+the deprecated configuration that was never supported for this SoC.
 
 Signed-off-by: Pierre-Henry Moussay <pierre-henry.moussay@microchip.com>
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Co-developed-by: Conor Dooley <conor.dooley@microchip.com>
 Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
 ---
- .../devicetree/bindings/clock/microchip,mpfs-ccc.yaml       | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ .../bindings/clock/microchip,mpfs-clkcfg.yaml    | 16 +++++++++++++++-
+ 1 file changed, 15 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/microchip,mpfs-ccc.yaml b/Documentation/devicetree/bindings/clock/microchip,mpfs-ccc.yaml
-index f1770360798f..9a6b50527c42 100644
---- a/Documentation/devicetree/bindings/clock/microchip,mpfs-ccc.yaml
-+++ b/Documentation/devicetree/bindings/clock/microchip,mpfs-ccc.yaml
-@@ -17,7 +17,11 @@ description: |
+diff --git a/Documentation/devicetree/bindings/clock/microchip,mpfs-clkcfg.yaml b/Documentation/devicetree/bindings/clock/microchip,mpfs-clkcfg.yaml
+index ee4f31596d97..a23703c281d1 100644
+--- a/Documentation/devicetree/bindings/clock/microchip,mpfs-clkcfg.yaml
++++ b/Documentation/devicetree/bindings/clock/microchip,mpfs-clkcfg.yaml
+@@ -19,7 +19,11 @@ description: |
  
  properties:
    compatible:
--    const: microchip,mpfs-ccc
+-    const: microchip,mpfs-clkcfg
 +    oneOf:
 +      - items:
-+          - const: microchip,pic64gx-ccc
-+          - const: microchip,mpfs-ccc
-+      - const: microchip,mpfs-ccc
++          - const: microchip,pic64gx-clkcfg
++          - const: microchip,mpfs-clkcfg
++      - const: microchip,mpfs-clkcfg
  
    reg:
-     items:
+     oneOf:
+@@ -69,6 +73,16 @@ required:
+   - clocks
+   - '#clock-cells'
+ 
++if:
++  properties:
++    compatible:
++      contains:
++        const: microchip,pic64gx-clkcfg
++then:
++  properties:
++    reg:
++      maxItems: 1
++
+ additionalProperties: false
+ 
+ examples:
 -- 
 2.51.0
 
