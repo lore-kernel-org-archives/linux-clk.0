@@ -1,75 +1,54 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from stravinsky.debian.org (stravinsky.debian.org [82.195.75.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 012E336D512
-	for <linux-clk@vger.kernel.org>; Sat, 22 Nov 2025 20:07:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A728D36D512;
+	Sat, 22 Nov 2025 20:08:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=82.195.75.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763842023; cv=none; b=INE65wv0CQ4BurCfVJLFuYUljJnq65vZziSm0FeLIbTOb8lB+d/j4I1gM4xbzVjxN0VWQGsF31z/PerklhI8aGhsP1JHXJWfUMa9AfkaZ1yB4a4t4k5+swM/A1U0323WYnLYskD2/QmcUtvy4sfzFoglWpJz5WQ1lPeGcMsQs3k=
+	t=1763842090; cv=none; b=qzIlG1pMGHmQSeQKVM0vddz08erA9O2jIf7I9G059rrUHDNhDcdE9FllKxkwXtyqvXW6jSmWyrixZ+9NQAQlwXyXWg8YtyR1dQ/C7au0s9EBdNNSYdz6nfUQaZKv5r/pwcy+5l9WGzCVoFIGselLIYnbhDhs3NvQT+Clt3M9ohg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763842023; c=relaxed/simple;
-	bh=BfOGTFe2RDdikzJaB8b7S+Xxbnvnlg0I6+3xBKNkkJo=;
+	s=arc-20240116; t=1763842090; c=relaxed/simple;
+	bh=UzzLxlEBN9xjoUc8UPWEUF+pB5p/0COgP5NBHxVgQno=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qrey3I5DJ0mgBzrhJE1HqDaVCjiuc0mRsqqyajqWMQHvqTmA1rjFCCfQGeoGaq05Z1AU0MytStAN8wemx9b3qHKGvat4rCPPc0iYEejz1v4jxbp2vTXH/e/hboaMxql+dMmXOjFp4obCvbJ8xZwXF0Eh83jrp2GW8S/4kMldMV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HAcox4cV; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	 Content-Type:Content-Disposition:In-Reply-To; b=LUG2AYiRD8nz2YAMaAxOAejjmFKaoWkq1W40DRFPxBC3Okbbp7EIkd4kmFuLU1UeXmuS3Bzpfqbi6eENr+50xL+vy0zgYZeIODY8ijSyA7G8m69ExeJ0gR4hN2BgIjkaUBKSj9VcP6etzgKYNkVKxgkNM4h/Z8uKWpiPLlIMwfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=none smtp.mailfrom=debian.org; dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b=HAW4lhuN; arc=none smtp.client-ip=82.195.75.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=debian.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HAcox4cV"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-477770019e4so28117185e9.3
-        for <linux-clk@vger.kernel.org>; Sat, 22 Nov 2025 12:07:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1763842020; x=1764446820; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=scbiovI1ofyVHzq2gs5GMumOlOFIE2l40+/m1mFDagg=;
-        b=HAcox4cVzUyMEVfRm2JF8HPXyufZRNhwaGoZXGRk6CPfUX8hVT3uYeipPRrUiyjM+Q
-         VFREQLw0b0d7XCt2CThqNG3/TqqNRhstGeXjc85jo8Opy/el66Ljy0G9NmG72VBbtXas
-         +NAM09MLZoT9NhXhPPIUnWm+02WNJxvExd6yQIEx6+g9RMVsHOZYdA4afLBTjEfxaUTK
-         JjCfuUt+G/Z7yIL9sDJidnu0pYiBPl5eGt/Dl4Db5nVL06IaE2ny1tEPa5Q390WQF63n
-         X8+aK/NZbA6CJUMaCVj5C6U05UePteD4i09XXO/pzYaFU1icNagBxG0HtfUuUWLbBTVK
-         ntFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763842020; x=1764446820;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=scbiovI1ofyVHzq2gs5GMumOlOFIE2l40+/m1mFDagg=;
-        b=vDdJbbn0+GSSpl3PP7PZcg+rbe7VO71KvUtFtEqWaI3muB5NWVjSepVFifOnhc+Afi
-         CXFfulmqyJA2DeXZ6p2IBSXwkdwCg23uJYXY9SdU9cJgQZCx2fiYwztbqIdOSgIMuZre
-         Hh2pTfjiKlz/RGZpk7zT6nIJLrOb8V2eFYNh4vgR1TWx4FWFSednNTtvptYgj0p06ldu
-         XeSyfvp9MHTtrnoVE+LSdb0ULSw0ynE5kOvEx5gl4jdYS3/JNV31JewkyQorDiuwZ9Vf
-         akJQYAAATzWyegXxDNBJ56QDCiBZ8SywX4WFcGgKJIFLfHvz9SppIYh2a8rwD0cU9ATp
-         jnAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVEl7WJUUtTsdCtWce1EV6NNPWNIV7XwWQJjQ4/PqhZKJ0BXd4AzxOzxv+s5rfuINBqVRSg69Dg1PY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6x0z3U5HQnyc7p85kDqK+/i9Ag9P1g7O/f1JdBvBEqBZQKnRM
-	UFdUZYnNvcIpaX7z82qg97XAiM5w538XHtPufD2zQCljbFwv7KZgOScFRLqIhk4TmiU=
-X-Gm-Gg: ASbGnctUjFu+n3cGmpdXSlFqIJa/unb9tvmdhVEwPzGoXO5l7sem2LMIJ28nIwfVxXy
-	P/YBKhjLPJgNdgxHxIfq39fvF2XsAXc6aD858JDK9CFwsnZ+BVpkphcawSj67CBu4rVJi8pG3gT
-	Q/sBmPjr1wc7GSD3afoZwvTV7slYeRZE5zRTWrG27dkhVoAmq6cVDfMYzhCQn1JfgpbRgosudj6
-	rk1cwvOpuBp3MCIneePpvmoY8SxBBxkLIdfTrj5M9wXYhd0Fl5wT6o18puChwFa2+sBa6XWg77J
-	l6OzVH+ihoxWnlEwVax4/72VO2fPeQCuPVmOsHV5dzYJzgF1klygPnLr//eXmsUC2ucaEAQ34ve
-	7kG2OA3vqo8c1W3qAfweBZMTYsZIV/Y+QnflbLM/pH11ahatjdFKfUePC+Zd3HMq7KzqfDYYI6L
-	hvolRndwY=
-X-Google-Smtp-Source: AGHT+IEkdNyBisXIocC7/wQzw62k7sUipLUjv7aKHG865BoRXs3aebU7fEY/rhvatBXJb770s/EvTw==
-X-Received: by 2002:a05:600c:a01:b0:477:7f4a:44b0 with SMTP id 5b1f17b1804b1-477c01f5980mr57357315e9.33.1763842020168;
-        Sat, 22 Nov 2025 12:07:00 -0800 (PST)
-Received: from linaro.org ([86.121.7.169])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42cb7fba201sm18445335f8f.32.2025.11.22.12.06.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 22 Nov 2025 12:06:59 -0800 (PST)
-Date: Sat, 22 Nov 2025 22:06:57 +0200
-From: Abel Vesa <abel.vesa@linaro.org>
-To: Taniya Das <taniya.das@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Ajit Pandey <ajit.pandey@oss.qualcomm.com>, Imran Shaik <imran.shaik@oss.qualcomm.com>, 
-	Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b="HAW4lhuN"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=debian.org;
+	s=smtpauto.stravinsky; h=X-Debian-User:In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=DdnZSzKrbHE8gHveL8ilDrJSPZu8nD7ismwCAdQIHLg=; b=HAW4lhuNcsIgptOfIKxa/wlQN4
+	2oGmOZQNIrHL+sJIndr8afcbFny4Z9KH2eO4qAbJuwBH7A8jL5YKpUqF1G68OEDtxSmdFnlMaV4rK
+	cXHt9U93/3Bu37Iu/UvKxKBSpA1eU9OaEvM/aYR2Km5lTYnTHmTTuBLrpZv2AXWkhBrcRAQ9FR2DF
+	C+daiLrj06v10VVFDuOShaHao1HyFe6G7xDG2DKE4RKVPdVHL52Cd5T8qLQ2+mZLUDAnRNMqo8bNO
+	YE4oPaqGqdO2AW6EEb+zpbpxubitfCTNOLhfyyo69WsaikQO5hVTdyDLldylAlrTyBfur5BE23yCv
+	9MdnvgLA==;
+Received: from authenticated user
+	by stravinsky.debian.org with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.94.2)
+	(envelope-from <carnil@debian.org>)
+	id 1vMttV-001D1z-55; Sat, 22 Nov 2025 20:07:41 +0000
+Received: by eldamar.lan (Postfix, from userid 1000)
+	id 0DC00BE2EE7; Sat, 22 Nov 2025 21:07:40 +0100 (CET)
+Date: Sat, 22 Nov 2025 21:07:40 +0100
+From: Salvatore Bonaccorso <carnil@debian.org>
+To: Jochen Sprickerhof <jspricke@debian.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: 1121211@bugs.debian.org, linux-samsung-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/3] clk: qcom: Add TCSR clock driver for Kaanapali
-Message-ID: <sskqfkm2ui4a44w2y7nra5vpdml6tqsxsyrahwvbi3f3tovfad@kql6fm3mwyqq>
-References: <20251121-gcc_kaanapali-v3-v3-0-89a594985a46@oss.qualcomm.com>
- <20251121-gcc_kaanapali-v3-v3-2-89a594985a46@oss.qualcomm.com>
+Subject: Re: Bug#1121211: UBSAN: array-index-out-of-bounds in
+ /build/reproducible-path/linux-6.17.8/drivers/clk/samsung/clk-exynos-clkout.c:178:18
+Message-ID: <aSIYDN5eyKFKoXKL@eldamar.lan>
+References: <176383554642.17713.6408785381758213911.reportbug@vis>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -78,12 +57,81 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251121-gcc_kaanapali-v3-v3-2-89a594985a46@oss.qualcomm.com>
+In-Reply-To: <176383554642.17713.6408785381758213911.reportbug@vis>
+X-Debian-User: carnil
 
-On 25-11-21 23:26:28, Taniya Das wrote:
-> Add the TCSR clock controller that provides the refclks on Kaanapali
-> platform for PCIe, USB and UFS subsystems.
+Hi,
+
+Jochen reported the folowing while booting 6.17.8 based kernel in
+Debian:
+
+On Sat, Nov 22, 2025 at 07:19:06PM +0100, Jochen Sprickerhof wrote:
+> Package: src:linux
+> Version: 6.17.8-1
+> Severity: normal
 > 
-> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
+> First time booting into 6.17.8-1 and first time I see UBSAN in my logs:
+> 
+> [Nov21 08:31] Booting Linux on physical CPU 0x100
+> [  +0,012977] ------------[ cut here ]------------
+> [  +0,000017] UBSAN: array-index-out-of-bounds in /build/reproducible-path/linux-6.17.8/drivers/clk/samsung/clk-exynos-clkout.c:178:18
+> [  +0,000038] index 0 is out of range for type 'clk_hw *[*]'
+> [  +0,000025] CPU: 4 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.17.8+deb14-armmp #1 NONE  Debian 6.17.8-1
+> [  +0,000018] Hardware name: Samsung Exynos (Flattened Device Tree)
+> [  +0,000007] Call trace:
+> [  +0,000009]  unwind_backtrace from show_stack+0x18/0x1c
+> [  +0,000042]  show_stack from dump_stack_lvl+0x54/0x68
+> [  +0,000036]  dump_stack_lvl from ubsan_epilogue+0x8/0x34
+> [  +0,000025]  ubsan_epilogue from __ubsan_handle_out_of_bounds+0x88/0x8c
+> [  +0,000024]  __ubsan_handle_out_of_bounds from exynos_clkout_probe+0x38c/0x428
+> [  +0,000029]  exynos_clkout_probe from platform_probe+0x64/0x98
+> [  +0,000034]  platform_probe from really_probe+0xd8/0x3ac
+> [  +0,000031]  really_probe from __driver_probe_device+0x94/0x1dc
+> [  +0,000027]  __driver_probe_device from driver_probe_device+0x3c/0xd8
+> [  +0,000027]  driver_probe_device from __driver_attach+0xd8/0x1d8
+> [  +0,000028]  __driver_attach from bus_for_each_dev+0x84/0xd4
+> [  +0,000026]  bus_for_each_dev from bus_add_driver+0xf4/0x218
+> [  +0,000023]  bus_add_driver from driver_register+0x8c/0x140
+> [  +0,000027]  driver_register from do_one_initcall+0x50/0x24c
+> [  +0,000023]  do_one_initcall from kernel_init_freeable+0x288/0x2fc
+> [  +0,000022]  kernel_init_freeable from kernel_init+0x24/0x140
+> [  +0,000022]  kernel_init from ret_from_fork+0x14/0x28
+> [  +0,000015] Exception stack(0xf0835fb0 to 0xf0835ff8)
+> [  +0,000012] 5fa0:                                     00000000 00000000 00000000 00000000
+> [  +0,000011] 5fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+> [  +0,000009] 5fe0: 00000000 00000000 00000000 00000000 00000013 00000000
+> [  +0,000007] ---[ end trace ]---
+> [  +0,000226] ------------[ cut here ]------------
+> [  +0,000012] UBSAN: array-index-out-of-bounds in /build/reproducible-path/linux-6.17.8/drivers/clk/samsung/clk-exynos-clkout.c:183:29
+> [  +0,000032] index 0 is out of range for type 'clk_hw *[*]'
+> [  +0,000021] CPU: 4 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.17.8+deb14-armmp #1 NONE  Debian 6.17.8-1
+> [  +0,000014] Hardware name: Samsung Exynos (Flattened Device Tree)
+> [  +0,000006] Call trace:
+> [  +0,000006]  unwind_backtrace from show_stack+0x18/0x1c
+> [  +0,000032]  show_stack from dump_stack_lvl+0x54/0x68
+> [  +0,000033]  dump_stack_lvl from ubsan_epilogue+0x8/0x34
+> [  +0,000023]  ubsan_epilogue from __ubsan_handle_out_of_bounds+0x88/0x8c
+> [  +0,000020]  __ubsan_handle_out_of_bounds from exynos_clkout_probe+0x354/0x428
+> [  +0,000024]  exynos_clkout_probe from platform_probe+0x64/0x98
+> [  +0,000031]  platform_probe from really_probe+0xd8/0x3ac
+> [  +0,000031]  really_probe from __driver_probe_device+0x94/0x1dc
+> [  +0,000031]  __driver_probe_device from driver_probe_device+0x3c/0xd8
+> [  +0,000028]  driver_probe_device from __driver_attach+0xd8/0x1d8
+> [  +0,000027]  __driver_attach from bus_for_each_dev+0x84/0xd4
+> [  +0,000025]  bus_for_each_dev from bus_add_driver+0xf4/0x218
+> [  +0,000023]  bus_add_driver from driver_register+0x8c/0x140
+> [  +0,000027]  driver_register from do_one_initcall+0x50/0x24c
+> [  +0,000022]  do_one_initcall from kernel_init_freeable+0x288/0x2fc
+> [  +0,000019]  kernel_init_freeable from kernel_init+0x24/0x140
+> [  +0,000020]  kernel_init from ret_from_fork+0x14/0x28
+> [  +0,000016] Exception stack(0xf0835fb0 to 0xf0835ff8)
+> [  +0,000010] 5fa0:                                     00000000 00000000 00000000 00000000
+> [  +0,000009] 5fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+> [  +0,000009] 5fe0: 00000000 00000000 00000000 00000000 00000013 00000000
+> [  +0,000098] ---[ end trace ]---
 
-Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
+Can you have a look into it? The downstream report is at
+https://bugs.debian.org/1121211
+
+Regards,
+Salvatore
