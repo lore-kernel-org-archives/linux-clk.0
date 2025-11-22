@@ -1,42 +1,87 @@
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AEF724A05D;
-	Sat, 22 Nov 2025 11:50:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0F421D6DB5
+	for <linux-clk@vger.kernel.org>; Sat, 22 Nov 2025 13:56:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763812239; cv=none; b=OpNfYOF0naOutQ7mS6A7G0CgBWq9Ggu2ZRtl8ltMD9LMwGIwwhoE5l2UPPkhuezeH/VwhjBkHIful6P5ZIo5loRLpSgSvZYtmrFAKOw9ZdIOnhS4zOwEAp538de23f1bEHTnqhoRP4PfGgktMN5yCnMpx4ZJjAv+unf7U1JnPXE=
+	t=1763819763; cv=none; b=IwKwO89CzcbMzrnfk6R/CFaiRb6M8lQfFZlxG4guWuFQjzzTb4bE1r7QRxVTdhlokab5rthXPSfJaW9AR+xR8mzBAewzb25VDwZWnpHrdiO+sFwA1aNNJ656rpvWlpw33oKzpm5X7PP2NuEr0HkZYS9hg8IWEVtRhjBPODZtbPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763812239; c=relaxed/simple;
-	bh=OFSEwnamRuB2MNtMzqeCzJDKd4lbApIQ3cHPmcydhUM=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:In-Reply-To:
-	 Content-Type:References; b=mFeOxGSXK/ojUdfJfeNDqSvgSf/jbcU4UXTvP4nf6ud36APt8s0u8owwRoPVZdNA1wD6G2ZDVXSYdghExZXWoxM+xteKLwwU01K7RxaZs8xhifpdcmHU/dK8tN7zbo9pxN9qyUWoxkKzevSIL3cGFfq6vMuwF4wmG6I0eEG1fq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=BsZjmNqA; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1763819763; c=relaxed/simple;
+	bh=OMkrdbTwEAyXzEnIeLNxg6LxvDzp8j3ZTyYVqmcggb8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=H1jOiIwoPtTtkcKjxZ3yCWglBxDdDjI5dlmF74ah5kG5lI7DM0dLFg9qz7F4KevvNP5ao9XdsFM4KsX9j2GbyhDwmVpkD+HjDGYF4GGCmCbOuweZ7WMWXrJvecdiFsmHNCQlIPFbJCJeUAZoqfyTJVzYORY54MEpXAfe49enxp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=oikzx43I; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=YpXLUfaY; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="BsZjmNqA"
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20251122114223euoutp02a865adc7452e5f90cd2c14db70458d11~6UW_ahNXk1064910649euoutp02D;
-	Sat, 22 Nov 2025 11:42:23 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20251122114223euoutp02a865adc7452e5f90cd2c14db70458d11~6UW_ahNXk1064910649euoutp02D
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1763811743;
-	bh=SGLaM+urYg0Vv3ieWczJVk93J9IdI6KYj5H+J8X+y3M=;
-	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=BsZjmNqATOZm6x8qZF7sfQToegD8qekT6vuwMvfrYo3v4HczMnvB8w9pDT7SME9wE
-	 hgQq/EnnoHIVB38YQk0un47ypNrJ1VVX77dAO/f55vwnCbsuW8x/Lg74pRelj2WuYH
-	 EwpiR3kDAgc7iXZjsBNnOkFf7XAclI8K/xkJ0OFo=
-Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20251122114222eucas1p24f8f3e7694749a27fb423cef4feeea98~6UW9WpQF-3156331563eucas1p2M;
-	Sat, 22 Nov 2025 11:42:22 +0000 (GMT)
-Received: from [192.168.1.44] (unknown [106.210.136.40]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20251122114221eusmtip29f79269c395c0c2dff1d9551b3d2b603~6UW76k8t21359313593eusmtip2a;
-	Sat, 22 Nov 2025 11:42:21 +0000 (GMT)
-Message-ID: <1b2c290b-5716-4a07-82b3-e53c35af2150@samsung.com>
-Date: Sat, 22 Nov 2025 12:42:20 +0100
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="oikzx43I";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="YpXLUfaY"
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5AMCcn7P2606730
+	for <linux-clk@vger.kernel.org>; Sat, 22 Nov 2025 13:56:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	S1OOe1X9AcAjdPSLizU3SANSr5j5zr0pJz6UYNGyGyI=; b=oikzx43IbM7CKAmU
+	85AwYWFP08aLOVstfFY1+YxQ6vt2qNNtkt4fbXEcuu51vfqg6zCMO+pgcs2SD3r4
+	oL59Dp7hJ1XQsAqUtZsjF2herzi27Mycws9gHM4l+ZyKVtrjmExrFv3vaG4zDK96
+	Ejmha49cGt1jCARCon8pCJgR5ClySrpzzIn8BDo2BFRcYwI2DqlN/Ts/DmlHGvMT
+	FCn2KXLhnERjGfV8voYU0Jp2C/2XWshEN/sarlTfE8qC2/dLfyH01VDTCZ/DvEDe
+	R7BAP7JWIT6C6jCxf+aqCxS8Pq4l43Lo3axnHSMbW/+1qnRR/yg/A1+ILfERCAD/
+	JplPng==
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4ak685rrta-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Sat, 22 Nov 2025 13:55:59 +0000 (GMT)
+Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-87ff7511178so8024966d6.2
+        for <linux-clk@vger.kernel.org>; Sat, 22 Nov 2025 05:55:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1763819759; x=1764424559; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=S1OOe1X9AcAjdPSLizU3SANSr5j5zr0pJz6UYNGyGyI=;
+        b=YpXLUfaYtDIdCLBvEMryx6GwtSguNYDLRAsSVAK5foOFC5GjD1/PRPF0Rvb1Nxx88b
+         8S+84qzxAi+rqtZ6MAtuRvfozPx33/xwHqnRqfy/5WiCdoS9KJUqK7vHN6zWjaAn8tMf
+         gGx6AIjPc8PPQMpQ3O88adXkpVH0kBFPRwmeFyQjRnps9Ab3J45mSBTxSwGON0NuLaGw
+         JeGiP+L4WOxEazvis9YRsrErO0uPGQD3tUd4IpfSGCNymsxEgopUDvvZJrEplHApzVOb
+         h11Kg3Mgj7yvIPM/7KFv56pECtJseylwinNOpwRDHvDStDaeHnbufrsWowsiC6h8Q2wH
+         B7Uw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763819759; x=1764424559;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=S1OOe1X9AcAjdPSLizU3SANSr5j5zr0pJz6UYNGyGyI=;
+        b=oAp0QOVRDST/5xFiXKQg6xYFZhO9NHsDxRItMT8+hPxHQjEXeshrj7GY49Moq01x9o
+         7Ymvyhy+gMvpwIt8jpC85R1FkfyjVGnmU1nlEXPq1qLybm6lix/yqGdaTvj7QljrH3oL
+         LaI24xkpm58Y40OHLiFSQRmDC0OuL/78PeoTZf9VAoSKD15j9GBzmRNLpX107JeS6Eoz
+         JnxL6PN+NQznrXenUxiFrljiz7hwRrG7Pbk4ndJOJHgd77SR2S6WBmWkIHFze3TvSZXo
+         TcwLiY0bUmb0ttmslSnII1drEt//0T94Yk+XcsYX41nrdrJThjnJm4DL8jlrwjJir8CB
+         W9lA==
+X-Forwarded-Encrypted: i=1; AJvYcCUoWrstkXHjUg59Pr/m9zgY3oaQxAjbYSPf6JY2p6mymBGJkMp0Jav+VQ9cTlmIaJCeUepEHZtNNJA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHs6Bh1GbnalwVMhinhKYbV9U2nIBsrFdhqXa+skjrD9PdWuMl
+	w/bm9sH1Ss79v/kaaMXygaf7UF79CF9QeQRijwL/5WOFJvSOkw6/CdzQeznXpN+hIf7dN5MTDYl
+	+CJH7r+jvCeKBeZHygfm4xIydfQHD3VbkTBNCn3bNuRNt4ryAcYQEVx8EpBOs8Kk=
+X-Gm-Gg: ASbGncuEO2O9l2h/kbdfgovFAZHnObPQRBx1YWQVcK3kdppqSt0UYotLTGUSWRyL7TH
+	4uAljgxkwuBnj5wr7DTKipSxfKLHEuxIDighNO008rtP7SjYRHUem7ZTvefPNrg42juWbBrILnd
+	BASQVjnAh3ddd0qkflPB4II8V/kespRy9rw2qx0RyvmDi4zKQat1F3zNHZ0Xh0I2UYVKBb/3sKi
+	cGEGTHvzolW2bjCwvJ3SNPd/pCNoCruRhiuy3FPjXkHGxvLDsjKPxEl0O4VeO1MsQShtIgqclA/
+	OYEbCWqGfM35L6ieMRt5OYVMk5f7vCYLS1Oz4XRhx+PWQJFr7UZ/nuWvJnXNhPAArqWxIS6peLk
+	7/tffPVN/9EDmOfifkZnWWqX96lVB0+VBnjuT70vW8njw0rIpuD89TJyFBdV7vgZacKI=
+X-Received: by 2002:a05:622a:252:b0:4ee:1eb0:fbd9 with SMTP id d75a77b69052e-4ee5b70f141mr49143041cf.1.1763819759178;
+        Sat, 22 Nov 2025 05:55:59 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFQnoiO79VD3idFejfcP7dPdiRk2fgiH3fSmEboyc4erh9pW4HupMZNmFBJq9UtWU7JOVfCzg==
+X-Received: by 2002:a05:622a:252:b0:4ee:1eb0:fbd9 with SMTP id d75a77b69052e-4ee5b70f141mr49142731cf.1.1763819758736;
+        Sat, 22 Nov 2025 05:55:58 -0800 (PST)
+Received: from [192.168.119.202] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b7654fd43e2sm724651066b.39.2025.11.22.05.55.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 22 Nov 2025 05:55:58 -0800 (PST)
+Message-ID: <e177d393-de17-4bdf-a0dc-002ae5b7f58e@oss.qualcomm.com>
+Date: Sat, 22 Nov 2025 14:55:56 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -44,143 +89,63 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 00/13] drm: starfive: jh7110: Enable display
- subsystem
-From: Michal Wilczynski <m.wilczynski@samsung.com>
-To: Conor Dooley <conor@kernel.org>, Maxime Ripard <mripard@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>, Dmitry Baryshkov
-	<dmitry.baryshkov@oss.qualcomm.com>, Robert Foss <rfoss@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Emil Renner Berthing <kernel@esmil.dk>, Hal Feng
-	<hal.feng@starfivetech.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Xingyu
-	Wu <xingyu.wu@starfivetech.com>, Vinod Koul <vkoul@kernel.org>, Kishon Vijay
-	Abraham I <kishon@kernel.org>, Andrzej Hajda <andrzej.hajda@intel.com>, Neil
-	Armstrong <neil.armstrong@linaro.org>, Laurent Pinchart
-	<Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, Jernej
-	Skrabec <jernej.skrabec@gmail.com>, David Airlie <airlied@gmail.com>, Simona
-	Vetter <simona@ffwll.ch>, Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>, Thomas Zimmermann
-	<tzimmermann@suse.de>, Lee Jones <lee@kernel.org>, Philipp Zabel
-	<p.zabel@pengutronix.de>, Paul Walmsley <paul.walmsley@sifive.com>, Palmer
-	Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Alexandre
-	Ghiti <alex@ghiti.fr>, Marek Szyprowski <m.szyprowski@samsung.com>, Icenowy
-	Zheng <uwu@icenowy.me>, Maud Spierings <maudspierings@gocontroll.com>, Andy
-	Yan <andyshrk@163.com>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-phy@lists.infradead.org, dri-devel@lists.freedesktop.org,
-	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v3 2/3] clk: qcom: Add TCSR clock driver for Kaanapali
+To: Taniya Das <taniya.das@oss.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc: Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
+        Imran Shaik <imran.shaik@oss.qualcomm.com>,
+        Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20251121-gcc_kaanapali-v3-v3-0-89a594985a46@oss.qualcomm.com>
+ <20251121-gcc_kaanapali-v3-v3-2-89a594985a46@oss.qualcomm.com>
 Content-Language: en-US
-In-Reply-To: <e1696331-1271-46a8-adb6-9fed4521f22b@samsung.com>
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20251121-gcc_kaanapali-v3-v3-2-89a594985a46@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-CMS-MailID: 20251122114222eucas1p24f8f3e7694749a27fb423cef4feeea98
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20251108010451eucas1p1c7bf340dbd2b1b7cbfb53d6debce7a2e
-X-EPHeader: CA
-X-CMS-RootMailID: 20251108010451eucas1p1c7bf340dbd2b1b7cbfb53d6debce7a2e
-References: <CGME20251108010451eucas1p1c7bf340dbd2b1b7cbfb53d6debce7a2e@eucas1p1.samsung.com>
-	<20251108-jh7110-clean-send-v1-0-06bf43bb76b1@samsung.com>
-	<20251110-clang-baking-b8b27730356e@spud>
-	<00e897dc-9966-439b-a74a-7604a1870027@samsung.com>
-	<20251111-footing-eclair-332f5f0769f2@spud>
-	<20251111-matriarch-diocese-b314e7bdaf81@spud>
-	<e1696331-1271-46a8-adb6-9fed4521f22b@samsung.com>
+X-Authority-Analysis: v=2.4 cv=Woom8Nfv c=1 sm=1 tr=0 ts=6921c0f0 cx=c_pps
+ a=UgVkIMxJMSkC9lv97toC5g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=UG0UE7FhrI7_8MC4d9kA:9
+ a=QEXdDO2ut3YA:10 a=1HOtulTD9v-eNWfpl4qZ:22
+X-Proofpoint-GUID: BZDO11jZFx5tIML_ZEur2r4IeFzv1_Mg
+X-Proofpoint-ORIG-GUID: BZDO11jZFx5tIML_ZEur2r4IeFzv1_Mg
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTIyMDExNCBTYWx0ZWRfX4uWyzDwa0nhO
+ GiCc3xeysi1AMFfZSXJA0u0P3SO/Ctq6ZbwsL23CMZYY/CcgiZ0tHXxRbBt1sv7EXMiENUlQp9u
+ fnFopfhx1nGpbrS0tsoGCVcCSG4gX6sAKdU74avFM6Cm9pYNck+vc8gRdok6A1zfd3NbOo/xVhI
+ 4nzDnojYoal5pAN7cAenzk4CFa0T1eieTrYhkLL8YMXFWQ5mKuo+WACbOpjyVDjrV5I5iixt9nh
+ jJn7xKdVvzTTOlhu/InyGb4opc8GelqxtSAUNDjLFPB+KlaNE1kqx1JDEwfaQhvMtm0jMaeu7xw
+ jbB/447dKt3AExNE0tUZpxvhY+PWqpuEFOX/um2dlcLr2F57G819so97LCBOkq6C1qy3+GjbATx
+ s7plW8XpM9DBsNvQLUO+gPI+mMlcuw==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-22_05,2025-11-21_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 phishscore=0 adultscore=0 malwarescore=0 suspectscore=0
+ impostorscore=0 spamscore=0 bulkscore=0 lowpriorityscore=0 priorityscore=1501
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511220114
 
+On 11/21/25 6:56 PM, Taniya Das wrote:
+> Add the TCSR clock controller that provides the refclks on Kaanapali
+> platform for PCIe, USB and UFS subsystems.
+> 
+> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
+> ---
 
+[...]
 
-On 11/13/25 15:57, Michal Wilczynski wrote:
-> 
-> 
-> On 11/11/25 19:37, Conor Dooley wrote:
->> On Tue, Nov 11, 2025 at 06:14:48PM +0000, Conor Dooley wrote:
->>> On Tue, Nov 11, 2025 at 04:33:28PM +0100, Michal Wilczynski wrote:
->>>>
->>>>
->>>> On 11/10/25 20:35, Conor Dooley wrote:
->>>>> On Sat, Nov 08, 2025 at 02:04:34AM +0100, Michal Wilczynski wrote:
->>>>>> This series enables the display subsystem on the StarFive JH7110 SoC.
->>>>>> This hardware has a complex set of dependencies that this series aims to
->>>>>> solve.
->>>>>>
->>>>>> I believe this is a PHY tuning issue that can be fixed in the new
->>>>>> phy-jh7110-inno-hdmi.c driver without changing the overall architecture.
->>>>>> I plan to continue debugging these modes and will submit follow up fixes
->>>>>> as needed.
->>>>>>
->>>>>> The core architectural plumbing is sound and ready for review.
->>>>>>
->>>>>> Notes:
->>>>>> - The JH7110 does not have a centralized MAINTAINERS entry like the
->>>>>>   TH1520, and driver maintainership seems fragmented. I have therefore
->>>>>>   added a MAINTAINERS entry for the display subsystem and am willing to
->>>>>>   help with its maintenance.
->>>>>
->>>>> Yeah, bunch of different folks wrote the drivers, so lots of entries.
->>>>> Pretty much all as you've done here, authors are responsible for the
->>>>> individual components and Emil is the platform maintainer but
->>>>> responsible for most drivers.
->>>>>
->>>>> Do you need any feedback dt wise on the RFC, or is it too likely that
->>>>> we'll both waste our breath if the DRM folks don't approve of your
->>>>> approach for the rest of this series?
->>>>
->>>> Hi Conor,
->>>>
->>>> Thank you for your response.
->>>>
->>>> That's a fair point about the risk of the DRM approach being rejected.
->>>> While I can't be certain, I'm hopeful that part is relatively
->>>> straightforward, as it primarily integrates other recently reviewed
->>>> (though not yet merged) components like the inno-hdmi bridge and dc8200
->>>> drivers.
->>>>
->>>> To be honest, I was more concerned that the DT part of the series would
->>>> be more problematic. Given that, I would find it very helpful to get
->>>> your feedback on the DT aspects now, if you have the time.
->>>
->>> Right. You'll definitely want some actual DRM people to weigh in though
->>> before making changes, I am really not familiar enough with this type of
->>> hardware to know if the breakdown is correct.
->>
->> It looks generally sane to me chief, but as I said I am not really
->> familiar enough with this sort of hardware to have a real take on it.
->> Sorry, you'll need to get your affirmation about how you've laid stuff
->> out elsewhere :/
-> 
-> Thanks for the look, Conor.
-> 
-> I appreciate the sanity check on the DT side. I'll focus on getting the
-> necessary feedback from the DRM maintainers regarding the architectural
-> breakdown before spinning a v2.
-> 
-> [Adding Dmitry Baryshkov and highlighting Maxime, Heiko, and Robert]
-> 
-> Could you folks take a brief look at the driver split in this series?
-> 
-> Conor has reviewed the DT bindings and they look sane to him, but we
-> need to verify that the architectural split between the
-> phy-jh7110-inno-hdmi and the DRM bridge driver is acceptable for this
-> Innosilicon IP.
-> 
-> I am particularly interested if the current handling of the PHY tuning
-> parameters (as described in the cover letter) fits the modern DRM
-> bridge/PHY paradigm, or if this should be modeled differently given the
-> similarities to Rockchip implementations.
-> 
-> Best regards,
+> +static const struct regmap_config tcsr_cc_kaanapali_regmap_config = {
+> +	.reg_bits = 32,
+> +	.reg_stride = 4,
+> +	.val_bits = 32,
+> +	.max_register = 0x2f000,
 
-Hi folks,
+0x3d000
 
-Just a gentle ping on this series.
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-I am primarily waiting on architectural feedback regarding the split
-between the DRM bridge and the PHY driver.
-
-If I don't receive any objections soon, I'll assume the current
-structure is acceptable and proceed with addressing the known PHY tuning
-issues for v2.
-
-Best regards,
--- 
-Michal Wilczynski <m.wilczynski@samsung.com>
+Konrad
