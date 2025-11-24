@@ -1,137 +1,102 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D6F525B311;
-	Mon, 24 Nov 2025 20:55:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A71C32E722
+	for <linux-clk@vger.kernel.org>; Mon, 24 Nov 2025 21:20:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764017708; cv=none; b=J6zL9NwRnq0/7vobqZfRFOcHnhnXnGZt2d5zCcuxPRw79Yvl3tomARjC8zavBpludMvhQ+Dqgvp7fyCQ7uQ9i7YQuhG+i7q8b9E8JkQqp14SsZA3lx2euqoP+8Dl5fZLsDAGEjIs2BbnM7+0w17I1GKr5Zay0b7Gfpt02fe83w4=
+	t=1764019226; cv=none; b=sPpK8x6L2MAaxZm967ZDXfZZEabv1bbEp8v/4iUJBoCm2mA/8xkGM+dlYRndlTHRIAXWMaVLNArJasZrHZgUZMpk/yEjXUzzUpHbbBA8JefEsE6Np2CzwXGnu/jo5A4/l7PZSujHJxSt2GqYL5CzgVIte3ODm8OCxWpGe1/e4aA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764017708; c=relaxed/simple;
-	bh=PRNa9x1odFaBXlcSUnHQYYPhLcAMF+az4jN4dBzNRmw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=R9i+avNJeUWDT9SgL6RXNkSaGwau9Q2L5NwZh109TmyC9Cq8upHmykHPg9dJw2EwKz0en4LpoU9h77/9YiUJ0GNLqUvHtff/Y1iKPisxP3MvEUNPLRRVczrsKgVtmn3vJXwzMj28g1FTztRrUNqCGVlH0nduEzS5RpubNZ1OoC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FWhQ9t07; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1764019226; c=relaxed/simple;
+	bh=2YFBmosG1IbwlVcJv8IGGNgceYoLIEglKEl4QUeiYy4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mQuf5Wy7gQVxjhbAUWovGbioo7PCVejEj9ifUzyxDzSGk0YEZqjVnUwqsuCJu1Q5DpuynhYOoZNU9TK7OGPBM1y+sFi+YcNvTV3pvYj4sYdM9EzC/nurYQcMGQUgxYSKKrY7kMUSsRkTgy1QEgyihbJKASPNYIutaJjQm1MYVec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=S8l7G5d4; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FWhQ9t07"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F630C4CEF1;
-	Mon, 24 Nov 2025 20:55:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1764017705;
-	bh=PRNa9x1odFaBXlcSUnHQYYPhLcAMF+az4jN4dBzNRmw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=FWhQ9t07bpaMhIM4WWPDOvIe6sIkF0p1P4g9vtYg/lxrVOrdUEL9gO1uablH4W61o
-	 1vG2y+8XrZjUwI6uaw5z745ch7U44JSvW3Um+0PvNKXGtlpLBn1GMjcoDOBYbh+S/M
-	 11iYuPNnxqUGw/XHfsl+WnqjhOBy2kJcGzgzILFMGFzmg3WfOfQyqvpOed8cUl3Jt1
-	 atFknCpM0r3GhQ0UxJTLGIXkjUEGX9C5UsXNNBvoOqeVSdMnnxIyesBd+q1D4gFL+f
-	 1KTsJaC6ln2rIccGQtSvFh8zMYRssS5HIOm/Lp6haPyN6KQeaWKTroCtl622rx+eFo
-	 9KO6kgoq+Xe6A==
-Message-ID: <bbe07dc1-f77d-4dbd-9cd2-5efe8464f43b@kernel.org>
-Date: Mon, 24 Nov 2025 21:55:00 +0100
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="S8l7G5d4"
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-595867f09fcso615967e87.2
+        for <linux-clk@vger.kernel.org>; Mon, 24 Nov 2025 13:20:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1764019223; x=1764624023; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=c4FyPq/kYWDGmVTcOSat1gTBwxi7ftUH1FFrkSMn8JA=;
+        b=S8l7G5d4VL7CItsCNzq9v8MM+V6+ybPu3sCPOazETO8ogZdIRGmcJecjXu+BE5/qPS
+         Hstn65z+inyYA4QIAm3qsSo6+tSCKMh0ke1sbw3Ti7kYNWA4QOPFhK6rZWgur8H6V4ZD
+         IGa6zeXp6/AcoLO+R1urFuEfIG1v7Ho+LdyLikejNMW5v6JK9rGQNEoiTUtJPIXHxiyF
+         BRRdI/kqWrvIcUb5152dKYbQ5WdCiJMb/ZuvfPgT3DPCwuJ3d9Ok2of7fQSKb7nAuR/X
+         7nYHo0W8e0XKyMeFFU23hMkEqvDTFu9Y0ydEO6bpPgYLlQdJ4yiNBJINpaCvPWFv0NQG
+         olXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1764019223; x=1764624023;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=c4FyPq/kYWDGmVTcOSat1gTBwxi7ftUH1FFrkSMn8JA=;
+        b=LDvQyY1pKgytvYvXcY7o4WRdUoxIFS6ewt1LUskQTLcfF9iO/vU2KVhvY0QC9+bwRM
+         aixLeIhPAr8rRMK0HLdZ43u2wexf1sKrmDw44QhdH5/+HH80d9LvasA7RYVRpB6AntTA
+         8gPB5uqZO0mQAGwRgYnbgebkDC66sCFrPx9UOzhvdiH8OyEUeOlneByBe/VQxJzozWKe
+         jY4qof5fJ0Qm79zmRWhX+vmX7UkQ+5QZbAdF38Rluk0I3DtFCW9g6YyKpiqGkvXva7jl
+         GkLeZWHX2xNm94rqpt2KAjFatnYKo8bVLPB+JF/RRkbPNZFSzn9cQ1/NKbceJo5UDoVa
+         O86g==
+X-Forwarded-Encrypted: i=1; AJvYcCWBqWaVBLe434sjq4rfahrjNAznwCzhnued3emnYzWVXx7M49Z20eMIhnC5uKsmz7zukwXez6XAWV4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzodHuIX0cykKCnJTcRk+WG/W9W6rDWz17IwcMb7ZaKNwBoiFIu
+	v7rkeGZgHTnsTlD9cL2goXH7HQk+03icQnu8zFTHpJPIQNaJuVU0hFqMhYKvnsrJnXU=
+X-Gm-Gg: ASbGncuoT3cUsPLBIPZK1eBGxHFnQNffLRiLHP7o7KBkvFnIQYQRWcwMQtrTIUyXYnE
+	9Mkww6Z1FkO/vRS/Hqc+i/Y6IAITvfueURmoAQO8p3x7AUs1G0fFY3jRnDL1vHHnBSUBfbzDiTG
+	ZBnXW1hZEowUpFhu34JlV+FeDGfceSnFOLuqFUEHtBSdpV3Ax7lYicaDDoRJiDDg3qjLA5gLyLy
+	dTAbgjpsaLLYTILpcydyoC5b4S8Aueta7psbs/FzRShEWVZujmpkQjFTpbxIE1B4u2nppS4fzo+
+	VmIqtCHuIK48koK0cauRpXHRNe1XnkSIDvqC/lVs99FY0JEqxKffXT0P3jqOVPB7+Ex9Izrap2z
+	UmWvL29wa0pnCHF9deEt5G9s7av8ksxWoqXNzn1eq5PF/H4gQ9c7ZSkw8vHSrfeCoC+kJSa/U1q
+	I16TT99FvpR78gNBTv1B56zvBykvi+VgULaWHWxJiG03KDpm6b1giD8fr4sNI7RFda
+X-Google-Smtp-Source: AGHT+IHWeAbuBKw6C/nTuJW6nxAA8zubnC7DGnvX3LzKyVbi9xGZ9FuPTPMPAeQp7212bBUVXrqXwg==
+X-Received: by 2002:a2e:8a88:0:b0:37b:991a:543e with SMTP id 38308e7fff4ca-37cd9218abcmr17247201fa.3.1764019223289;
+        Mon, 24 Nov 2025 13:20:23 -0800 (PST)
+Received: from thyme.. (91-159-24-186.elisa-laajakaista.fi. [91.159.24.186])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-37cc6b59744sm32905771fa.11.2025.11.24.13.20.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Nov 2025 13:20:22 -0800 (PST)
+From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Konrad Dybcio <konradybcio@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Abel Vesa <abel.vesa@linaro.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH 0/2] clk: qcom: gcc-sm8x50: Use floor ops for SDCC RCGs
+Date: Mon, 24 Nov 2025 23:20:10 +0200
+Message-ID: <20251124212012.3660189-1-vladimir.zapolskiy@linaro.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: samsung: exynos-clkout: Assign .num before accessing
- .hws
-To: Nathan Chancellor <nathan@kernel.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Kees Cook <kees@kernel.org>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: Salvatore Bonaccorso <carnil@debian.org>,
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-hardening@vger.kernel.org, stable@vger.kernel.org,
- Jochen Sprickerhof <jochen@sprickerhof.de>
-References: <20251124-exynos-clkout-fix-ubsan-bounds-error-v1-1-224a5282514b@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
- QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
- +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
- ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
- 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
- hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
- tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
- 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
- naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
- hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
- whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
- qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
- RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
- Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
- H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
- dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
- AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
- jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
- zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
- XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20251124-exynos-clkout-fix-ubsan-bounds-error-v1-1-224a5282514b@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 24/11/2025 20:11, Nathan Chancellor wrote:
-> Commit f316cdff8d67 ("clk: Annotate struct clk_hw_onecell_data with
-> __counted_by") annotated the hws member of 'struct clk_hw_onecell_data'
-> with __counted_by, which informs the bounds sanitizer (UBSAN_BOUNDS)
-> about the number of elements in .hws[], so that it can warn when .hws[]
-> is accessed out of bounds. As noted in that change, the __counted_by
-> member must be initialized with the number of elements before the first
-> array access happens, otherwise there will be a warning from each access
-> prior to the initialization because the number of elements is zero. This
-> occurs in exynos_clkout_probe() due to .num being assigned after .hws[]
-> has been accessed:
-> 
->   UBSAN: array-index-out-of-bounds in drivers/clk/samsung/clk-exynos-clkout.c:178:18
->   index 0 is out of range for type 'clk_hw *[*]'
-> 
-> Move the .num initialization to before the first access of .hws[],
-> clearing up the warning.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: f316cdff8d67 ("clk: Annotate struct clk_hw_onecell_data with __counted_by")
-> Reported-by: Jochen Sprickerhof <jochen@sprickerhof.de>
-> Closes: https://lore.kernel.org/aSIYDN5eyKFKoXKL@eldamar.lan/
-> Tested-by: Jochen Sprickerhof <jochen@sprickerhof.de>
-> Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+In line with commit a27ac3806b0a ("clk: qcom: gcc-sm8450: Use floor ops
+for SDCC RCGs") done to fix issues with overclocked SD cards on SM8450
+powered boards set floor clock operations for SDCC RCGs on SM8550 and
+SM8650 powered boards, tested on SM8550-HDK and SM8650-HDK respectively.
 
-@Stephen,
+This change fixes initialization of some SD cards, where the problem
+is manifested by the SDHC driver:
 
-Can you take this directly? You already pulled from me for next cycle,
-so that way might be easier.
+    mmc0: Card appears overclocked; req 50000000 Hz, actual 100000000 Hz
+    mmc0: error -110 whilst initialising SD card
 
-The fixed commit is from 2023, so does not really fit criteria for late
-RC fixes, thus I propose for next release.
+Vladimir Zapolskiy (2):
+  clk: qcom: gcc-sm8550: Use floor ops for SDCC RCGs
+  clk: qcom: gcc-sm8650: Use floor ops for SDCC RCGs
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+ drivers/clk/qcom/gcc-sm8550.c | 4 ++--
+ drivers/clk/qcom/gcc-sm8650.c | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-Best regards,
-Krzysztof
+-- 
+2.49.0
+
