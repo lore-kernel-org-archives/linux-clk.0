@@ -1,86 +1,71 @@
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C38FCA4E;
-	Sun, 23 Nov 2025 22:04:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E65921D3F6;
+	Mon, 24 Nov 2025 08:47:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763935475; cv=none; b=SvrkWZfqvWYulPU4vFzWtDGV4e37EmfoQ9k5l/TecbD47JWLwTglb2dKhsqrlFkO95oqzKetpAVS1n5lYFuBhLgBuRZS0e8xo7iRGmhGZHj2xbc6ZUDqWgmGULu612S6a8dQ9jHx9+YedQzPWI0GS2ftg67Q3v4mGpq4mbrXf4g=
+	t=1763974032; cv=none; b=R6XjH5VFHzlbC2fRiJDTyVdsnSmXFgEEsIu/YQNup38QSG6NrHR5t6ekaRK/uac2a1AFoMSldE+kfb1l/MoM2DjHgZEsI2muRGzHmqUGCjassgRoxxuqA0Bz6BzoGs+suMjqhSSb520Vi0Uuu76W/lngFY2jBPS8ALbeqSSI3LY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763935475; c=relaxed/simple;
-	bh=z1O+vaWNSIlSxK/1jCe5R7LPNYsWAP5hp9gisL56ucU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hLfsGd0/7zX0382R9aDmqTdmBJNYqKq1xKbs3TmjilUu+8oqqTY0eGEclEWFoNelbfQ6978p96mahvFm8ahz6+teGpU7fwHL9BCcEgSNeZyYgiwWu0ykeiBQsRHSs5QRe70lzie/GUlFjJJ0pg+BAfIUynsDEIZSMge+sd+K98A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=RXXJTQXi; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+	s=arc-20240116; t=1763974032; c=relaxed/simple;
+	bh=Lh/Fvv6yUxE9thBp9vYaxzBuy27oKjRvkalfxWUJRGM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aa+Ju8UvpFT4Pc3OlvMK3wiZoUf8Ci1a+flyaYwaFjU/tQqGdNf1HaoFJ0uFy31qrqXjHdtfH4grUwHyywRp9Ok/wsZQVFUuqGHWxU0y3YzBOQBVkPPf1h90X6CrxV500gfWVNieGCxn/STe0Clm1qkzGOqILS2jXVnO18YyZ9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Yju8eTl0; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="RXXJTQXi"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
-	bh=87aVKtphPmWH51C+RJV57IlAYwC+mC5UV6mscsFpSJ0=; b=RXXJTQXismvJyTDBN7rfBczTLa
-	F+XWpvrLeB3NEJsyf8s1Qg21HXFvIPhH+3iVpIwfDvSqKBuJ+AsT0uLEhdl54R0vt0Avm6aXzU8JS
-	vV3mfFidjuhfgXAmTSWVuECOY2Vg4Xcv9Mxm2zOgQncJxIBDtV+pe3QCbmnfBu6J1XOEY1Eocg3Py
-	FQ2DPIaTQDoeMLxoqGsOEtsDM7yz3KGcU0S6Y8Qy+Ph6uM6eRM42a3IjvIphoEpQkz4271+Cqtmyc
-	cCGUwqjZ5AT1FoewevopSrMfHFaPugrKKBB4nkK1ah1qWzznAFVel+4YmfSaMKkzxMXnhF8pgPaac
-	LHiHjRyw==;
-Received: from i53875bd2.versanet.de ([83.135.91.210] helo=phil..)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1vNIC0-00008P-9S; Sun, 23 Nov 2025 23:04:24 +0100
-From: Heiko Stuebner <heiko@sntech.de>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	robh@kernel.org,
-	p.zabel@pengutronix.de,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	Elaine Zhang <zhangqing@rock-chips.com>
-Cc: Heiko Stuebner <heiko@sntech.de>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	finley.xiao@rock-chips.com
-Subject: Re: [PATCH v9 0/2] clk: rockchip: Add clock controller for the RK3506
-Date: Sun, 23 Nov 2025 23:04:21 +0100
-Message-ID: <176393545901.212596.10640796816193748171.b4-ty@sntech.de>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20251121075350.2564860-1-zhangqing@rock-chips.com>
-References: <20251121075350.2564860-1-zhangqing@rock-chips.com>
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Yju8eTl0"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1763974021;
+	bh=Lh/Fvv6yUxE9thBp9vYaxzBuy27oKjRvkalfxWUJRGM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Yju8eTl02ktUwBS3epbE6CWaJ2t86j+NXq+KOFwYDhYNBPGqG9yQuus5P4S0g7OXG
+	 QZncMgYs1Eb2yVbwxIg7RjdRzzYIpTH7r8cBqc+OhyyWNDd0zAx1funsaNgvOah4uh
+	 3PBWBiMEOsaggJHjnp5jocu90zp7TVCfyL+Q8SF1s+cNMRnDdrUa7SyiXXAhimgn3d
+	 xDFy3njJPRyuR+jU5I47vg6dr0Kj9hE0URDMw8oUQ9LlUWzwb9/TG7g6dXumsMtkAr
+	 Sdy34LoNt8JxYmPrA9sbwYWHctNvjtWOAK7P3NEmozgbpwUCxwFeErcsb0iLdcEvhT
+	 vQicr/3uc7LFg==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 5AC9617E1123;
+	Mon, 24 Nov 2025 09:47:01 +0100 (CET)
+Message-ID: <402f3df4-15e7-4903-ab27-fe80be609073@collabora.com>
+Date: Mon, 24 Nov 2025 09:47:00 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: mediatek: Fix error handling in runtime PM setup
+To: Haotian Zhang <vulab@iscas.ac.cn>, mturquette@baylibre.com,
+ sboyd@kernel.org, matthias.bgg@gmail.com
+Cc: nfraprado@collabora.com, laura.nao@collabora.com, wenst@chromium.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+References: <20251123154315.1564-1-vulab@iscas.ac.cn>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20251123154315.1564-1-vulab@iscas.ac.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-
-On Fri, 21 Nov 2025 15:53:48 +0800, Elaine Zhang wrote:
-> [PATCH 1/5] ~ [PATCH 3/5] has applied.
+Il 23/11/25 16:43, Haotian Zhang ha scritto:
+> devm_pm_runtime_enable() can fail due to memory allocation. The current
+> code ignores its return value, and when pm_runtime_resume_and_get() fails,
+> it returns directly without unmapping the shared_io region.
 > 
-> Change in V9:
-> [PATCH v9 1/2]: Fix "clocks"
-> [PATCH v9 2/2]: No change
+> Add error handling for devm_pm_runtime_enable(). Reorder cleanup labels
+> to properly unmap shared_io on pm_runtime_resume_and_get() failure.
 > 
-> Change in V8:
-> [PATCH v8 1/2]: Add explanations for "clocks"
-> [PATCH v8 2/2]: No change
-> 
-> [...]
+> Fixes: 2f7b1d8b5505 ("clk: mediatek: Do a runtime PM get on controllers during probe")
+> Signed-off-by: Haotian Zhang <vulab@iscas.ac.cn>
 
-Applied, thanks!
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-[1/2] dt-bindings: clock: rockchip: Add RK3506 clock and reset unit
-      commit: 84898f8e9cea06f8178fc5ca53f068180f7bfba0
-[2/2] clk: rockchip: Add clock and reset driver for RK3506
-      commit: 18191dd750e6c9e17fabefd09ff418dd587bcdb9
 
-Best regards,
--- 
-Heiko Stuebner <heiko@sntech.de>
