@@ -1,91 +1,78 @@
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42D33322DCB
-	for <linux-clk@vger.kernel.org>; Tue, 25 Nov 2025 12:06:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDB9819EEC2;
+	Tue, 25 Nov 2025 15:48:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764072398; cv=none; b=kpH6Bj1pXkywXhy4Q+aWMuN0LfhJMFVAuyQd2qb5U84xaFKImHnteAdOA8DEvftPEgU9cu4FkCH+EToHRoQGr5CZsRmCMFVDhgrHpBLwHj0aQw+3IYw+JYYTrgfudCqeW54umHTlCSYrCVBJ09V/AZ+D/sFIA+TE9GoalWGmqO4=
+	t=1764085732; cv=none; b=sfdUXsoYDuIFQGdtOmdtNVy2Q/1yLJWoZEH2+WwRenWxUh5BbZ7v6TppwSwvQ4oe2NLTBqYAdbrQMBy2Y2P3kHpIi9IB0jhQqEKirgA/FMbeaLUkt4CfpBK5xYigiGwZI3gLoGxC5z7uPnB20/nUKu9+gsK0dogLKXJ/Rjg0OUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764072398; c=relaxed/simple;
-	bh=o77K7lBiiNU3Nw2nvrTyKSx17KCtNvOCyjO6rUUasoQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mWpzgJz5UEL8hQ7/sdjoMRTEsNrT8wymRft8RUQOQ47d8DRfxw73hoqiigQ4gPpfDDYgENosAL6Wv8ARJVl+/X04dLOahMv9vPe9/1Smk88cgnyV/dXwDQp/Z0UomeYzqswBLK31waMXVPJN2224zD4xgltcPzxCukRc8xYpqTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k/ky/l4V; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1764085732; c=relaxed/simple;
+	bh=2teMj3cExIXsm9hsdukC9nhaUQVP2+3nDr8+6xIGeaY=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=QMAC30B5nFhNdNXjnQOqVa2n2bdTCj199zSiqqbVXtlADiXCi5g9Jwv6IwDF6QF3DZTIffXZofIrU4gpO031V1XJeQ0lx4+vOeuUawwZu1Ktnb6kFj7re0uIP1coqKdl9GPoAzDY2hbZf9YW/QtlH5XCER2hJmysQsCf6Q3wy38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=D1ftxBU7; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k/ky/l4V"
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5959b2f3fc9so5165168e87.2
-        for <linux-clk@vger.kernel.org>; Tue, 25 Nov 2025 04:06:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1764072393; x=1764677193; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RsY5WeZZQ7LiYwadFo2jc0S+Rqo5NcKeGdtKvFEJRWQ=;
-        b=k/ky/l4VC+e/cR4toTh7IYh1zLV1ZUr6kM7YJSuSQw9LEDgWjpnMwcpzv/E8RSAn31
-         gEoXnFUFHbGzQRMvjysZq5QsAtaMj6yoi4i6a2yBwJ6y4Jxys7SAwDTYJcuDj7Km8q4M
-         xUwS1W3HVg1DfIUP6lTcWd+A5RdIhn867l/bj17qitb6XDzKckuwCD+5vJMT7sjoweLc
-         LxTNmGNXrJPapNGwaz+LgAlvRgunN5GNVZfZfOC4ADss6MqZBZdFe20gLqOGdVsFssYV
-         4s3MwmJ0+IbIFdwNB/ZBVFZhxeBJ7BEv2wGRd3owIPfI+bTY0VMK5mzX5FBpmkMsICYj
-         N0jA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764072393; x=1764677193;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=RsY5WeZZQ7LiYwadFo2jc0S+Rqo5NcKeGdtKvFEJRWQ=;
-        b=TF9PU3PuW5jfdQHWZm4HjYjt9UUz50h6DrDFMZguSweeNiu6bSshT5V7IHs6cm0LH7
-         8ePhESc2AKMtC80RcJcvs3v6v1cI/MITG8+uYcpjCrRDEV0XEpK+AkOSSWACSZHGhKMo
-         lbHqk7Qs+vft9rvZoRPhlbXMr68o+wDKQPKVS6iylpFuVbogJT9pnVd122/QOKd2qx7D
-         ZRsBM1MtS1lOEYnxcgRcjyKeYYT5JSIgfufePOkqgzi6Hs86A2hSEFjae6njIWTpksPi
-         AT/uJOkDxStie/LNjWRacVV5lhiD56dR10PbO5k4+Vj22ZLEURPU3F05IVG1GV9r9dwo
-         Ltfw==
-X-Forwarded-Encrypted: i=1; AJvYcCUl3jHRGDzTOChPhTtDeQ86A2Yss0+u+F+kudTpWRMcxkVWk/yL7iFXO5M1z9bjA/tCooPX7xf4Mwc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1mIZAMr8CtPAbLR42hyu1Prbv2OTAg5UzfuqBA6pDV6KqkaPZ
-	GgZUTfu7KdjGOdOlwvZUnxMERhUeHRvnq/xUirq3mCXJD39P/9FAApdG
-X-Gm-Gg: ASbGncvs9QGxPag7XYZ2pup6SqHU+MCQCM2voDnWP/ArTVg+MpGtBbD+u1TL9WH3+ui
-	nn48+PIYYKXo1de54qm54UekcN0f4hJ97o5YArzzyclc/eNCxZ35WuD9JtbfnKirFRV18k8WE5k
-	khDn6A6z4JGyRzG4KfIefTp+wxr8BMLOLgWQqrpiV6xVorfK8oe3PItnl+CzfF9PtwCtLs6b3cQ
-	kcnueisi+oYCPNuqAwqHo/nrQ1jUYEwfUZtuWrscCiqP5xDtTMm2D0IdCJDucrSaqKtKYAxfFyj
-	BYfn3L9fkaaSV/zWVmlVQAopcxrpwrNHdftpDHIMo3/XzBAl//GsSjAlL7ST/ZOtQF+vVhW5dLi
-	OG+6YQclddGEPw2dUwXfl+xfPEkeGCtYx0mimUO1lUKEvFaiPcpPmhg5Jy2IfCHJEiMViVMqaBT
-	Nw2L0ezXqQTA==
-X-Google-Smtp-Source: AGHT+IEdP/dQenZ4+0SzEk4HFyKw5rqkBn8Ymno3xnu3Q7iDvc8YpbqmlkGj2FVO2AanGSctKzK0xA==
-X-Received: by 2002:a05:6512:2313:b0:58b:8f:2cf3 with SMTP id 2adb3069b0e04-596a3eb8474mr5564452e87.21.1764072392861;
-        Tue, 25 Nov 2025 04:06:32 -0800 (PST)
-Received: from xeon ([188.163.112.74])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5969dbbecb9sm5150993e87.58.2025.11.25.04.06.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Nov 2025 04:06:32 -0800 (PST)
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thierry Reding <treding@nvidia.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Dmitry Osipenko <digetx@gmail.com>,
-	MyungJoo Ham <myungjoo.ham@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org
-Subject: [PATCH v4 11/12] ARM: tegra: Add EMC OPP and ICC properties to Tegra114 EMC and ACTMON device-tree nodes
-Date: Tue, 25 Nov 2025 14:05:58 +0200
-Message-ID: <20251125120559.158860-12-clamor95@gmail.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251125120559.158860-1-clamor95@gmail.com>
-References: <20251125120559.158860-1-clamor95@gmail.com>
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="D1ftxBU7"
+Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
+	by mx0a-00128a01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5APCRTPO044275;
+	Tue, 25 Nov 2025 10:48:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=
+	content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=DKIM; bh=+5scGOfH4VdfvjtRMp+VExSIh9M
+	yBhIa21tCApXEYD0=; b=D1ftxBU7bTI6fvy1EeRR5ZxfK2/aFrWxrDC+FSOPIP4
+	fR/mYGz2bAhuR2fEn8AL2IKQbkvTg0UrDOIhs4d+eOM/70OAkBW9jpsFtn7Bbb14
+	MVPQMN0bW4OPO1DJNClTITzIgZudpT+yGIA6BNnAPc8qDYkfJsnuH0L4qbR5z9+w
+	UaGUNt/08i8h7qQRYB4YaKZlGiRhSUt2h7spCOQwue5sQndsaIM8eA5CM5h0np5I
+	7g1Vt2YY1gc/smv1Hrm5nt7TTcJRK6ax2pSZOAvk99/0VHKj+hrIerIuVphpCRLo
+	FMjTvAmUYWK0l51GAguABj4I1WyiP7rarV4AVQiD8nQ==
+Received: from nwd2mta3.analog.com ([137.71.173.56])
+	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 4amv1gnj1u-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Nov 2025 10:48:22 -0500 (EST)
+Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
+	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 5APFmLau016014
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 25 Nov 2025 10:48:21 -0500
+Received: from ASHBCASHYB4.ad.analog.com (10.64.17.132) by
+ ASHBMBX9.ad.analog.com (10.64.17.10) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.37; Tue, 25 Nov 2025 10:48:21 -0500
+Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by
+ ASHBCASHYB4.ad.analog.com (10.64.17.132) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.37; Tue, 25 Nov 2025 10:48:21 -0500
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx9.ad.analog.com
+ (10.64.17.10) with Microsoft SMTP Server id 15.2.1748.37 via Frontend
+ Transport; Tue, 25 Nov 2025 10:48:21 -0500
+Received: from HYB-b1tGeUj4GP1.ad.analog.com (HYB-b1tGeUj4GP1.ad.analog.com [10.48.65.177])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 5APFmAEF021473;
+	Tue, 25 Nov 2025 10:48:12 -0500
+From: Antoniu Miclaus <antoniu.miclaus@analog.com>
+To: Antoniu Miclaus <antoniu.miclaus@analog.com>,
+        Lars-Peter Clausen
+	<lars@metafoo.de>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        "Jonathan Cameron" <jic23@kernel.org>,
+        David Lechner <dlechner@baylibre.com>,
+        =?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
+        Andy Shevchenko
+	<andy@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Dragos Bogdan
+	<dragos.bogdan@analog.com>, <linux-iio@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>
+Subject: [PATCH v3 0/2] This series adds clock provider functionality to the ADF4377 frequency
+Date: Tue, 25 Nov 2025 17:47:34 +0200
+Message-ID: <20251125154738.55869-1-antoniu.miclaus@analog.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -93,215 +80,52 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTI1MDEzMSBTYWx0ZWRfX5rDsDe/VRGJZ
+ qNiY379MULWD9iQh39Y6feAc2meeI8DFUkx2M7Bb/FqNKAQU/5FXh990HkA4dWr230Y0wkq0xJZ
+ ilN4Jz/01N/JTDx8odZk3LQ32vOPFMqPCXzLJtcV29fWu14Br8wQXaGXwOxyDXsQF00NKZH2rOX
+ WAzAMfC2S9ZEnMFhqirnb/ldKsV55sNrobJezmDSronPhoTbMFh6HPrISfvKmj2p1eSudCwDxJW
+ oP8SovKmqDIjB7qAM0YzRii0wMCcxFase3PXTCfmbkYYZ+P263OwZsJSb2tbTcmURGFehac5m1w
+ 7IR/9tdyO1chDCmjJc2lnVmmB5NnmHcOt17jV+7uKtn/QU41IEJt0FiiMe9GCwhZ/aNCqoMUjab
+ v2kV/H5yoOOjMAA6rn7eDXoQS86epA==
+X-Authority-Analysis: v=2.4 cv=D9hK6/Rj c=1 sm=1 tr=0 ts=6925cfc6 cx=c_pps
+ a=PpDZqlmH/M8setHirZLBMw==:117 a=PpDZqlmH/M8setHirZLBMw==:17
+ a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22 a=NEAV23lmAAAA:8
+ a=TbiDcMNEsNnl46sf-WwA:9
+X-Proofpoint-ORIG-GUID: 9UZe-ybXCoaxH7Xulbt7-PSujpSUBrM7
+X-Proofpoint-GUID: 9UZe-ybXCoaxH7Xulbt7-PSujpSUBrM7
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-25_02,2025-11-25_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 adultscore=0 malwarescore=0 priorityscore=1501
+ lowpriorityscore=0 clxscore=1011 bulkscore=0 spamscore=0 suspectscore=0
+ phishscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
+ definitions=main-2511250131
 
-Add EMC OPP tables and interconnect paths that will be used for
-dynamic memory bandwidth scaling based on memory utilization statistics.
+While implemented as an IIO driver, the ADF4377 is commonly used as a
+clock source. This patch series enables it to function as either:
+- A traditional IIO device (when #clock-cells is not specified)
+- A clock provider (when #clock-cells is present in device tree)
 
-Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
----
- .../dts/nvidia/tegra114-peripherals-opp.dtsi  | 151 ++++++++++++++++++
- arch/arm/boot/dts/nvidia/tegra114.dtsi        |   9 ++
- 2 files changed, 160 insertions(+)
- create mode 100644 arch/arm/boot/dts/nvidia/tegra114-peripherals-opp.dtsi
+The implementation provides standard clock framework integration with
+rate control, enable/disable support, and maintains backward
+compatibility with existing IIO configurations.
 
-diff --git a/arch/arm/boot/dts/nvidia/tegra114-peripherals-opp.dtsi b/arch/arm/boot/dts/nvidia/tegra114-peripherals-opp.dtsi
-new file mode 100644
-index 000000000000..1a0e68f22039
---- /dev/null
-+++ b/arch/arm/boot/dts/nvidia/tegra114-peripherals-opp.dtsi
-@@ -0,0 +1,151 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+/ {
-+	emc_icc_dvfs_opp_table: opp-table-emc {
-+		compatible = "operating-points-v2";
-+
-+		opp-12750000-900 {
-+			opp-microvolt = <900000 900000 1390000>;
-+			opp-hz = /bits/ 64 <12750000>;
-+			opp-supported-hw = <0x000F>;
-+		};
-+
-+		opp-20400000-900 {
-+			opp-microvolt = <900000 900000 1390000>;
-+			opp-hz = /bits/ 64 <20400000>;
-+			opp-supported-hw = <0x000F>;
-+		};
-+
-+		opp-40800000-900 {
-+			opp-microvolt = <900000 900000 1390000>;
-+			opp-hz = /bits/ 64 <40800000>;
-+			opp-supported-hw = <0x000F>;
-+		};
-+
-+		opp-68000000-900 {
-+			opp-microvolt = <900000 900000 1390000>;
-+			opp-hz = /bits/ 64 <68000000>;
-+			opp-supported-hw = <0x000F>;
-+		};
-+
-+		opp-102000000-900 {
-+			opp-microvolt = <900000 900000 1390000>;
-+			opp-hz = /bits/ 64 <102000000>;
-+			opp-supported-hw = <0x000F>;
-+		};
-+
-+		opp-204000000-900 {
-+			opp-microvolt = <900000 900000 1390000>;
-+			opp-hz = /bits/ 64 <204000000>;
-+			opp-supported-hw = <0x000F>;
-+			opp-suspend;
-+		};
-+
-+		opp-312000000-1000 {
-+			opp-microvolt = <1000000 1000000 1390000>;
-+			opp-hz = /bits/ 64 <312000000>;
-+			opp-supported-hw = <0x000F>;
-+		};
-+
-+		opp-408000000-1000 {
-+			opp-microvolt = <1000000 1000000 1390000>;
-+			opp-hz = /bits/ 64 <408000000>;
-+			opp-supported-hw = <0x000F>;
-+		};
-+
-+		opp-528000000-1050 {
-+			opp-microvolt = <1050000 1050000 1390000>;
-+			opp-hz = /bits/ 64 <528000000>;
-+			opp-supported-hw = <0x000E>;
-+		};
-+
-+		opp-528000000-1100 {
-+			opp-microvolt = <1100000 1100000 1390000>;
-+			opp-hz = /bits/ 64 <528000000>;
-+			opp-supported-hw = <0x0001>;
-+		};
-+
-+		opp-624000000-1100 {
-+			opp-microvolt = <1100000 1100000 1390000>;
-+			opp-hz = /bits/ 64 <624000000>;
-+			opp-supported-hw = <0x000F>;
-+		};
-+
-+		opp-792000000-1100 {
-+			opp-microvolt = <1100000 1100000 1390000>;
-+			opp-hz = /bits/ 64 <792000000>;
-+			opp-supported-hw = <0x000F>;
-+		};
-+	};
-+
-+	emc_bw_dfs_opp_table: opp-table-actmon {
-+		compatible = "operating-points-v2";
-+
-+		opp-12750000 {
-+			opp-hz = /bits/ 64 <12750000>;
-+			opp-supported-hw = <0x000F>;
-+			opp-peak-kBps = <204000>;
-+		};
-+
-+		opp-20400000 {
-+			opp-hz = /bits/ 64 <20400000>;
-+			opp-supported-hw = <0x000F>;
-+			opp-peak-kBps = <326400>;
-+		};
-+
-+		opp-40800000 {
-+			opp-hz = /bits/ 64 <40800000>;
-+			opp-supported-hw = <0x000F>;
-+			opp-peak-kBps = <652800>;
-+		};
-+
-+		opp-68000000 {
-+			opp-hz = /bits/ 64 <68000000>;
-+			opp-supported-hw = <0x000F>;
-+			opp-peak-kBps = <1088000>;
-+		};
-+
-+		opp-102000000 {
-+			opp-hz = /bits/ 64 <102000000>;
-+			opp-supported-hw = <0x000F>;
-+			opp-peak-kBps = <1632000>;
-+		};
-+
-+		opp-204000000 {
-+			opp-hz = /bits/ 64 <204000000>;
-+			opp-supported-hw = <0x000F>;
-+			opp-peak-kBps = <3264000>;
-+			opp-suspend;
-+		};
-+
-+		opp-312000000 {
-+			opp-hz = /bits/ 64 <312000000>;
-+			opp-supported-hw = <0x000F>;
-+			opp-peak-kBps = <4992000>;
-+		};
-+
-+		opp-408000000 {
-+			opp-hz = /bits/ 64 <408000000>;
-+			opp-supported-hw = <0x000F>;
-+			opp-peak-kBps = <6528000>;
-+		};
-+
-+		opp-528000000 {
-+			opp-hz = /bits/ 64 <528000000>;
-+			opp-supported-hw = <0x000F>;
-+			opp-peak-kBps = <8448000>;
-+		};
-+
-+		opp-624000000 {
-+			opp-hz = /bits/ 64 <624000000>;
-+			opp-supported-hw = <0x000F>;
-+			opp-peak-kBps = <9984000>;
-+		};
-+
-+		opp-792000000 {
-+			opp-hz = /bits/ 64 <792000000>;
-+			opp-supported-hw = <0x000F>;
-+			opp-peak-kBps = <12672000>;
-+		};
-+	};
-+};
-diff --git a/arch/arm/boot/dts/nvidia/tegra114.dtsi b/arch/arm/boot/dts/nvidia/tegra114.dtsi
-index a920ad041c14..6221423b81d1 100644
---- a/arch/arm/boot/dts/nvidia/tegra114.dtsi
-+++ b/arch/arm/boot/dts/nvidia/tegra114.dtsi
-@@ -8,6 +8,8 @@
- #include <dt-bindings/soc/tegra-pmc.h>
- #include <dt-bindings/thermal/tegra114-soctherm.h>
- 
-+#include "tegra114-peripherals-opp.dtsi"
-+
- / {
- 	compatible = "nvidia,tegra114";
- 	interrupt-parent = <&lic>;
-@@ -323,6 +325,9 @@ actmon: actmon@6000c800 {
- 		clock-names = "actmon", "emc";
- 		resets = <&tegra_car TEGRA114_CLK_ACTMON>;
- 		reset-names = "actmon";
-+		operating-points-v2 = <&emc_bw_dfs_opp_table>;
-+		interconnects = <&mc TEGRA114_MC_MPCORER &emc>;
-+		interconnect-names = "cpu-read";
- 		#cooling-cells = <2>;
- 	};
- 
-@@ -655,6 +660,7 @@ mc: memory-controller@70019000 {
- 
- 		#reset-cells = <1>;
- 		#iommu-cells = <1>;
-+		#interconnect-cells = <1>;
- 	};
- 
- 	emc: external-memory-controller@7001b000 {
-@@ -665,6 +671,9 @@ emc: external-memory-controller@7001b000 {
- 		clock-names = "emc";
- 
- 		nvidia,memory-controller = <&mc>;
-+		operating-points-v2 = <&emc_icc_dvfs_opp_table>;
-+
-+		#interconnect-cells = <0>;
- 	};
- 
- 	hda@70030000 {
+The current approach follows the recently accepted version of adding
+clock provider for adf4350 device:
+https://github.com/torvalds/linux/commit/a1a09713b40dfc1c0b7d1f9233a7698c93a9af05
+
+Antoniu Miclaus (2):
+  dt-bindings: iio: frequency: adf4377: add clk provider
+  iio: frequency: adf4377: add clk provider support
+
+ .../bindings/iio/frequency/adi,adf4377.yaml   |   8 ++
+ drivers/iio/frequency/adf4377.c               | 119 +++++++++++++++++-
+ 2 files changed, 125 insertions(+), 2 deletions(-)
+
 -- 
-2.51.0
+2.43.0
 
