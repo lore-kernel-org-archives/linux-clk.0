@@ -1,67 +1,68 @@
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDC1B29A33E
-	for <linux-clk@vger.kernel.org>; Tue, 25 Nov 2025 06:42:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66DF9523A
+	for <linux-clk@vger.kernel.org>; Tue, 25 Nov 2025 07:06:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764052979; cv=none; b=drxBa3/U896V7R/B2AOB2QZU7oFrqlsPOBMQyjQ1xk1gqMeOnNCC316QAq0XBv8tVtFBiIh1UVJmfMKK9czYXkbheRil5j5VQgKo7uLuXtFueiAKaGFyeEtw/X1p24F72m37M8IfY5XLpzscIys0vD2AjeffKp99+seMfudiVIw=
+	t=1764054374; cv=none; b=V7+4wislEsSk2HE7ia/aWDeaXkglK2DxR3Mbr9NlFE2vGzf94hJh3yeOo4m4jrmn9Ied6R+qP+ivp8nts+C2X79M+WgYaWK+A15/AjN0TMSA3cTfZL5rGG6mMX0m+xC8dl9JKlVxoD2cOrFyHYDs+E9vXkfwPzVOJ0U/wFvVsXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764052979; c=relaxed/simple;
-	bh=bMVM6nwiRnBB3ygequtCXeKaSYZ8JKMr74Alu8bdTfM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=t/2zg+mKFIKszBo3EOBmZnU0T9573NQKBfXeHInT/AIXOygtyMGJf6GHpKtgT4K3YeA58exDAl6tR+zj1o6MmNbqfcMIjNGYKsE+cUfANk+R4buXjtq4+SlF/hoJ55EEhIhqHCsFIscfYzmySX/BGvpcrmrTfFQVi2wyZQGZIns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PXM4Oi51; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1764054374; c=relaxed/simple;
+	bh=Pmh3tnqQxKeS/SEMGYgGDVSJN8Tg/FabFKdMF6JrEEQ=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=pVRZTLuY4UTAAjnG877pDGlxQjRjBlJKilWmqXuc1Q0dCZJkB+gNdzpr81UYwD4/T8eoBCf4/sOERZI5Yh2AsMhyIDkyPf2j8J2swz2Qwg4A7NFPmb4mf/0Wua6BKo1Low6IN7U6YuPCEXsgWBEGxvETo+3M5AS8cOiAzog+ldU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=O6h9KpG5; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PXM4Oi51"
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-37a415a22ecso42865731fa.0
-        for <linux-clk@vger.kernel.org>; Mon, 24 Nov 2025 22:42:56 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="O6h9KpG5"
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-429c8632fcbso3186366f8f.1
+        for <linux-clk@vger.kernel.org>; Mon, 24 Nov 2025 23:06:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1764052975; x=1764657775; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=oDwgPrbqR3WPQpKO2RN5Ep6D/2LO+UnqChlfZRK6eKg=;
-        b=PXM4Oi51/FPSyFM+6n3W1MkZ8lRcQmQDf5xTo4W0x/8klPd2i17BG+PpU/k99qVrEd
-         8FhrIhgvL/oMBEixwIderB1Ww0ZYJApyL96SU76Usb+75ViTYcgBbNIJmkdB2sqglt39
-         EHyCtOP7rzTY2LMk/dKOF1maizgzB3exwy6gBuLAE/kfnFoF1jwJzDmiGDfDXLV4J1hr
-         fHJIyFU4x2tpUq0fiJRIhox+RXrqjVWTwCFxxGlJtK13wa3x8sCRrXjhS17HwHoQn1a3
-         abGsydVqkqA5KRHnBiiW/E6itTeHdADHv/d7USbpF/FQoDWy/pxy9oSZYL14nXXU1RoR
-         xnBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764052975; x=1764657775;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=linaro.org; s=google; t=1764054371; x=1764659171; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=oDwgPrbqR3WPQpKO2RN5Ep6D/2LO+UnqChlfZRK6eKg=;
-        b=xOaqFamHK+xJI2tQY6VkhTdfsIP66bX15zMrOXx6lvPOWSJp2xqRVotgi0Rro0DI6Q
-         KkT2GN43LZ2dJNiPA6Fc5NGc3TkN8GWEmb7khyNeyiDHcfPqUDpvPr58yc+eCYkud/Ih
-         P6iYWXs6T91MBkSPW7M0pVa0wjScfq156kRKwMT7Pw2UO0lyeh43w5z7VhD4vNjiVJOy
-         X596IpGHXO3Ewm/ElpbrmIV2+i6DDPec33VHTdv28ruScTiDisFso2CqQtKIVpxEQ4Xz
-         7DuWPUnFhagP4fvdDLzxox8J8xGHlJeSFDM7wBanp4TAnR7dE5hblo4KvFRd8Z0zdvUL
-         SdXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVsGNy9nv6MZ+nFOlDWWe0zHANN7WTB6QgJyMlO2v9OeowI8JXCyj6B4fWLh2B3oyRT+EMmgdkOugs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzpkTNKVRKtwNSHBKZlicZZZt5higYGbDQF0lP0W1Ux60E5YFuK
-	2AjmMeEQ450RIEFoM8Nj5dW4PRqeTrpInh1tdcs/HLFBWaEDH44YMIbV
-X-Gm-Gg: ASbGncu4Ye1BxEMD63tYi7f1Hw/BKTF2jNJ/AIXSxX8BLisFASV4AL6j2J7Ty93ExDH
-	rJwSGE4sUBRYwfiQu7hATKcsNb9Gc1XY+1mf9n1TbPE/xB7Jq0Pk+shESwOdBxNrxyWQLR+GRP4
-	xasL3tQz+9bTHQEZacStJZqoPqQAG/p3h4kUeEJxoqA/yVtdF19v5q9Y51/oyQQAjgJb73NxAWt
-	RVd1AdfwLsqzriQ4JCOswQVlVSbRyilUUQPDKkyl1FwridtjMH9OE+AOFooHzChCpZd6yCFIL+4
-	SrtO2K+IpTYZncJel4DnsADAUPwJ9PmxcYHGGY8ciKH1H1NBdxS8uFMkJmkPTlveu3g8IvSlE6I
-	C7/2gDSIeJuN7v7jrU7A+FhLsfUvK9W3LSLWgQHNA0EGEYqBJRQhl7O7KpbMobNwQDo5ArH4giF
-	ITR46zOnpkZXeaSjfMz0ivWF3FoSCrYMsLSEl8X8Bn/IlPc/tRoQrh+mUIuGyRo327ARoa
-X-Google-Smtp-Source: AGHT+IGn4O/LdPwrRfIUFu/wkzsPRHVD6YOLdNx92wJy+rnsWi85zUpEuMS1eU2wO8cl4kItz2sVag==
-X-Received: by 2002:a2e:a805:0:b0:37a:3910:6c77 with SMTP id 38308e7fff4ca-37cc82af4a6mr55071391fa.5.1764052974535;
-        Mon, 24 Nov 2025 22:42:54 -0800 (PST)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-37cc6b59ff5sm31356131fa.15.2025.11.24.22.42.51
+        bh=xEm0xkER5A9fvC8M611AVTHN4OE0WgnQgh+pWroZoTU=;
+        b=O6h9KpG5dCXZfxaEg43qw/WNrbqJ2javhXtYa9/xnORRiyNFRd/10VIbMfRLrws/uq
+         i8Rj7qN+a3VFv7hMJp9T/eL2/P+8l8n2zEEjUNP0HWbSKhnl/oBfTZ35pulTcsBjXLR+
+         TzuccdBoPFnKwuPNg3AgTSzK+JM3AK36tQU81UnrukUDz1+4PZ36t17/jPElFjglSF8Q
+         f0sSg/3L0Zv/+lmVpg8sMajdVFdlXDmn6QVe1y1apvOeXwrMBnkWJtzTY+fJUK7WFDfL
+         2A/+mptd/W0CSXwSJhyKef6zRjGMQoMb0XDatQjWZLxvDvYlV9oks+0PYjwKYrlm3M7m
+         0UDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1764054371; x=1764659171;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xEm0xkER5A9fvC8M611AVTHN4OE0WgnQgh+pWroZoTU=;
+        b=Hgr3slEQ0nCt2mLuLHjH+j/1dJTzQtJEoc9Wqd35L/bSCImzgl+nolWRa8lHUw43PT
+         CixMJh08I4DMHsB79JYRvYfovaDb4zLh6MjkDaWRIZd2Lx5pvKF0yANrjcXoNsSqUgBy
+         gsdSD9SXip+DdhIsWn5qjkd8JcrGWwVl8EY3rnvrfhDvy8m9oc9kctDHiqzfCchEtY7m
+         Vbl8AwjhICkSF5t4Lii7SEz9+aQBbH9Z0QzC8MN+k3D20ajXQvr09v8h/rD0pv/7zCev
+         ehk1axQxlF+Mp46lbHm/Ov6NIbNXz0wcz6PcNulS6fKTXiiyyvjRgWPWLIQ8RlN9vnw2
+         /upA==
+X-Forwarded-Encrypted: i=1; AJvYcCXRzTQwskCROjEwJy5KJkl4aU85+mSARBl40yKlaG2TKtMHAMrM6RcpGATrPUXJneb0caI4/O4fUyA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1HxqgMJVMkXyhLL1rNETZipnGIc4FJWg63DfBuUjdkHwGi1jD
+	gPBkYsixa59ZuvhzdcHV5pr2ukePyeBs+rVxpDVt4w4QZGff0k65XUUyPFDNZwVbhhA=
+X-Gm-Gg: ASbGncuxO4hocYSrxP3nqxhSnrVf9Zew7SGlXggnvthf4ESlX6EjgvW0vobh6Cy/dyM
+	QcoF7jKxAv+NEfEiAd5ZbORRKA7o0b6Z2VmH/K/EW4wc6ojby5Bl6RCFib+IvdhqZdYDpM/+c1y
+	rrtqg/I54wvX5rdnCVZJGXG7cnS1EN/QUgZKXZ+KWSscyEvq8WfhXsAIIV//RM36z8oA8thL+NK
+	24/RQo4RSrEtjrFVTiIWOPBMg5OdPF95hVtkLle7S5ul7fV40PSzQkZ32rEE3vpDszpCgRO5Smu
+	/QjEPOPtXJVfGi51F5suHo2t1aRhsPYqIrg06fSKkPQl+euhVnx2hPFIlIaBAxq8BDtRvHNKT//
+	sUxQ0myOQaUkiPTNTDJPN5nrRbYrZGzxTg0rXhUNx8H2q2JTBi126ZGtbVH7DnJsp/i0rR+Es/J
+	Ohpp1kL5RQNBpYq5VVsySx4BT/bTqRqelZhNbgBBPZLeAoEIbiB6DfeEvAbO3ZFmg=
+X-Google-Smtp-Source: AGHT+IHSHFMY4Ju7/Ym0lfE9c56GU1AZP59rAXfNrVOGGYtc1Si8CFAqa69njaVqAPt9294ITeFN6w==
+X-Received: by 2002:a05:6000:4012:b0:42b:4081:ccea with SMTP id ffacd0b85a97d-42cc1cf3c2cmr15083426f8f.35.1764054370539;
+        Mon, 24 Nov 2025 23:06:10 -0800 (PST)
+Received: from ?IPV6:2a01:e0a:3d9:2080:dea1:baf7:4d0c:118e? ([2a01:e0a:3d9:2080:dea1:baf7:4d0c:118e])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42cb7fa41d2sm32500921f8f.22.2025.11.24.23.06.09
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Nov 2025 22:42:53 -0800 (PST)
-Message-ID: <072dde7c-a53c-4525-83ac-57ea38edc0b5@gmail.com>
-Date: Tue, 25 Nov 2025 08:42:50 +0200
+        Mon, 24 Nov 2025 23:06:10 -0800 (PST)
+Message-ID: <c150b3e8-23ef-4c33-aa10-1047717d67a4@linaro.org>
+Date: Tue, 25 Nov 2025 08:06:09 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -69,214 +70,84 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 01/29] Revert "treewide: Fix probing of devices in DT
- overlays"
-To: Rob Herring <robh@kernel.org>, Kalle Niemi <kaleposti@gmail.com>
-Cc: Herve Codina <herve.codina@bootlin.com>, Andrew Lunn <andrew@lunn.ch>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>,
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>,
- Peter Rosin <peda@axentia.se>, Arnd Bergmann <arnd@arndb.de>,
- Saravana Kannan <saravanak@google.com>, Bjorn Helgaas <bhelgaas@google.com>,
- Charles Keepax <ckeepax@opensource.cirrus.com>,
- Richard Fitzgerald <rf@opensource.cirrus.com>,
- David Rhodes <david.rhodes@cirrus.com>,
- Linus Walleij <linus.walleij@linaro.org>,
- Ulf Hansson <ulf.hansson@linaro.org>, Mark Brown <broonie@kernel.org>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Daniel Scally <djrscally@gmail.com>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>,
- Sakari Ailus <sakari.ailus@linux.intel.com>, Len Brown <lenb@kernel.org>,
- Davidlohr Bueso <dave@stgolabs.net>,
- Jonathan Cameron <jonathan.cameron@huawei.com>,
- Dave Jiang <dave.jiang@intel.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- Dan Williams <dan.j.williams@intel.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>, Wolfram Sang <wsa@kernel.org>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org,
- linux-pci@vger.kernel.org, linux-sound@vger.kernel.org,
- patches@opensource.cirrus.com, linux-gpio@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-spi@vger.kernel.org,
- linux-acpi@vger.kernel.org, linux-cxl@vger.kernel.org,
- Allan Nielsen <allan.nielsen@microchip.com>,
- Horatiu Vultur <horatiu.vultur@microchip.com>,
- Steen Hegelund <steen.hegelund@microchip.com>,
- Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-References: <20251015071420.1173068-1-herve.codina@bootlin.com>
- <20251015071420.1173068-2-herve.codina@bootlin.com>
- <f74ab0a2-b74b-4b96-8469-a716c850e230@gmail.com>
- <CAL_JsqJDOYuzutMHMeFAogd5a_OX6Hwi8Gwz1Vy7HpXgNeYKsg@mail.gmail.com>
- <5cf2a12a-7c66-4622-b4a9-14896c6df005@gmail.com>
- <CAL_JsqJjm12LxpDg6LmpY=Ro_keHwnrWiYMLVnG=s_pSP4X2WQ@mail.gmail.com>
-Content-Language: en-US, en-AU, en-GB, en-BW
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <CAL_JsqJjm12LxpDg6LmpY=Ro_keHwnrWiYMLVnG=s_pSP4X2WQ@mail.gmail.com>
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
+Subject: Re: [PATCH 1/2] clk: qcom: gcc-sm8550: Use floor ops for SDCC RCGs
+To: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: Konrad Dybcio <konradybcio@kernel.org>, Abel Vesa <abel.vesa@linaro.org>,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20251124212012.3660189-1-vladimir.zapolskiy@linaro.org>
+ <20251124212012.3660189-2-vladimir.zapolskiy@linaro.org>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20251124212012.3660189-2-vladimir.zapolskiy@linaro.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 24/11/2025 19:01, Rob Herring wrote:
-> On Mon, Nov 24, 2025 at 10:44 AM Kalle Niemi <kaleposti@gmail.com> wrote:
->>
->>
->> On 11/24/25 16:53, Rob Herring wrote:
->>> On Mon, Nov 24, 2025 at 8:48 AM Kalle Niemi <kaleposti@gmail.com> wrote:
->>>> On 10/15/25 10:13, Herve Codina wrote:
->>>>> From: Saravana Kannan <saravanak@google.com>
->>>>>
->>>>> This reverts commit 1a50d9403fb90cbe4dea0ec9fd0351d2ecbd8924.
->>>>>
->>>>> While the commit fixed fw_devlink overlay handling for one case, it
->>>>> broke it for another case. So revert it and redo the fix in a separate
->>>>> patch.
->>>>>
->>>>> Fixes: 1a50d9403fb9 ("treewide: Fix probing of devices in DT overlays")
->>>>> Reported-by: Herve Codina <herve.codina@bootlin.com>
->>>>> Closes: https://lore.kernel.org/lkml/CAMuHMdXEnSD4rRJ-o90x4OprUacN_rJgyo8x6=9F9rZ+-KzjOg@mail.gmail.com/
->>>>> Closes: https://lore.kernel.org/all/20240221095137.616d2aaa@bootlin.com/
->>>>> Closes: https://lore.kernel.org/lkml/20240312151835.29ef62a0@bootlin.com/
->>>>> Signed-off-by: Saravana Kannan <saravanak@google.com>
->>>>> Link: https://lore.kernel.org/lkml/20240411235623.1260061-2-saravanak@google.com/
->>>>> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
->>>>> Acked-by: Mark Brown <broonie@kernel.org>
->>>>> ---
->>>>>     drivers/bus/imx-weim.c    | 6 ------
->>>>>     drivers/i2c/i2c-core-of.c | 5 -----
->>>>>     drivers/of/dynamic.c      | 1 -
->>>>>     drivers/of/platform.c     | 5 -----
->>>>>     drivers/spi/spi.c         | 5 -----
->>>>>     5 files changed, 22 deletions(-)
->>>>>
->>>>> diff --git a/drivers/bus/imx-weim.c b/drivers/bus/imx-weim.c
->>>>> index 83d623d97f5f..87070155b057 100644
->>>>> --- a/drivers/bus/imx-weim.c
->>>>> +++ b/drivers/bus/imx-weim.c
->>>>> @@ -327,12 +327,6 @@ static int of_weim_notify(struct notifier_block *nb, unsigned long action,
->>>>>                                  "Failed to setup timing for '%pOF'\n", rd->dn);
->>>>>
->>>>>                 if (!of_node_check_flag(rd->dn, OF_POPULATED)) {
->>>>> -                     /*
->>>>> -                      * Clear the flag before adding the device so that
->>>>> -                      * fw_devlink doesn't skip adding consumers to this
->>>>> -                      * device.
->>>>> -                      */
->>>>> -                     rd->dn->fwnode.flags &= ~FWNODE_FLAG_NOT_DEVICE;
->>>>>                         if (!of_platform_device_create(rd->dn, NULL, &pdev->dev)) {
->>>>>                                 dev_err(&pdev->dev,
->>>>>                                         "Failed to create child device '%pOF'\n",
->>>>> diff --git a/drivers/i2c/i2c-core-of.c b/drivers/i2c/i2c-core-of.c
->>>>> index eb7fb202355f..30b48a428c0b 100644
->>>>> --- a/drivers/i2c/i2c-core-of.c
->>>>> +++ b/drivers/i2c/i2c-core-of.c
->>>>> @@ -176,11 +176,6 @@ static int of_i2c_notify(struct notifier_block *nb, unsigned long action,
->>>>>                         return NOTIFY_OK;
->>>>>                 }
->>>>>
->>>>> -             /*
->>>>> -              * Clear the flag before adding the device so that fw_devlink
->>>>> -              * doesn't skip adding consumers to this device.
->>>>> -              */
->>>>> -             rd->dn->fwnode.flags &= ~FWNODE_FLAG_NOT_DEVICE;
->>>>>                 client = of_i2c_register_device(adap, rd->dn);
->>>>>                 if (IS_ERR(client)) {
->>>>>                         dev_err(&adap->dev, "failed to create client for '%pOF'\n",
->>>>> diff --git a/drivers/of/dynamic.c b/drivers/of/dynamic.c
->>>>> index 2eaaddcb0ec4..b5be7484fb36 100644
->>>>> --- a/drivers/of/dynamic.c
->>>>> +++ b/drivers/of/dynamic.c
->>>>> @@ -225,7 +225,6 @@ static void __of_attach_node(struct device_node *np)
->>>>>         np->sibling = np->parent->child;
->>>>>         np->parent->child = np;
->>>>>         of_node_clear_flag(np, OF_DETACHED);
->>>>> -     np->fwnode.flags |= FWNODE_FLAG_NOT_DEVICE;
->>>>>
->>>>>         raw_spin_unlock_irqrestore(&devtree_lock, flags);
->>>>>
->>>>> diff --git a/drivers/of/platform.c b/drivers/of/platform.c
->>>>> index f77cb19973a5..ef9445ba168b 100644
->>>>> --- a/drivers/of/platform.c
->>>>> +++ b/drivers/of/platform.c
->>>>> @@ -739,11 +739,6 @@ static int of_platform_notify(struct notifier_block *nb,
->>>>>                 if (of_node_check_flag(rd->dn, OF_POPULATED))
->>>>>                         return NOTIFY_OK;
->>>>>
->>>>> -             /*
->>>>> -              * Clear the flag before adding the device so that fw_devlink
->>>>> -              * doesn't skip adding consumers to this device.
->>>>> -              */
->>>>> -             rd->dn->fwnode.flags &= ~FWNODE_FLAG_NOT_DEVICE;
->>>>>                 /* pdev_parent may be NULL when no bus platform device */
->>>>>                 pdev_parent = of_find_device_by_node(parent);
->>>>>                 pdev = of_platform_device_create(rd->dn, NULL,
->>>>> diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
->>>>> index 2e0647a06890..b22944a207c9 100644
->>>>> --- a/drivers/spi/spi.c
->>>>> +++ b/drivers/spi/spi.c
->>>>> @@ -4791,11 +4791,6 @@ static int of_spi_notify(struct notifier_block *nb, unsigned long action,
->>>>>                         return NOTIFY_OK;
->>>>>                 }
->>>>>
->>>>> -             /*
->>>>> -              * Clear the flag before adding the device so that fw_devlink
->>>>> -              * doesn't skip adding consumers to this device.
->>>>> -              */
->>>>> -             rd->dn->fwnode.flags &= ~FWNODE_FLAG_NOT_DEVICE;
->>>>>                 spi = of_register_spi_device(ctlr, rd->dn);
->>>>>                 put_device(&ctlr->dev);
->>>>>
->>>> Sorry, some of you will receive this message now for second time. First
->>>> message was sent to older series of patches.
->>>> -
->>>>
->>>> Hello,
->>>>
->>>> Test system testing drivers for ROHM ICs bisected this commit to cause
->>>> BD71847 drivers probe to not be called.
->>> This driver (and overlay support) is in linux-next or something out of
->>> tree on top of linux-next?
->>>
->>> Rob
->>
->> Yes the driver is in mainline linux: /drivers/mfd/rohm-bd718x7.c
+On 11/24/25 22:20, Vladimir Zapolskiy wrote:
+> In line with commit a27ac3806b0a ("clk: qcom: gcc-sm8450: Use floor ops
+> for SDCC RCGs") done to fix issues with overclocked SD cards on SM8450
+> powered boards set floor clock operations for SDCC RCGs on SM8550.
 > 
-> I don't see any support to apply overlays in that driver.
+> This change fixes initialization of some SD cards, where the problem
+> is manifested by the SDHC driver:
+> 
+>      mmc0: Card appears overclocked; req 50000000 Hz, actual 100000000 Hz
+>      mmc0: error -110 whilst initialising SD card
+> 
+> Fixes: 955f2ea3b9e9 ("clk: qcom: Add GCC driver for SM8550")
+> Signed-off-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+> ---
+>   drivers/clk/qcom/gcc-sm8550.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/qcom/gcc-sm8550.c b/drivers/clk/qcom/gcc-sm8550.c
+> index 862a9bf73bcb..36a5b7de5b55 100644
+> --- a/drivers/clk/qcom/gcc-sm8550.c
+> +++ b/drivers/clk/qcom/gcc-sm8550.c
+> @@ -1025,7 +1025,7 @@ static struct clk_rcg2 gcc_sdcc2_apps_clk_src = {
+>   		.parent_data = gcc_parent_data_9,
+>   		.num_parents = ARRAY_SIZE(gcc_parent_data_9),
+>   		.flags = CLK_SET_RATE_PARENT,
+> -		.ops = &clk_rcg2_shared_ops,
+> +		.ops = &clk_rcg2_shared_floor_ops,
+>   	},
+>   };
+>   
+> @@ -1048,7 +1048,7 @@ static struct clk_rcg2 gcc_sdcc4_apps_clk_src = {
+>   		.parent_data = gcc_parent_data_0,
+>   		.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+>   		.flags = CLK_SET_RATE_PARENT,
+> -		.ops = &clk_rcg2_shared_ops,
+> +		.ops = &clk_rcg2_shared_floor_ops,
+>   	},
+>   };
+>   
 
-Ah. Sorry for the confusion peeps. I asked Kalle to report this without 
-proper consideration. 100% my bad.
-
-While the bd718x7 drive indeed is mainline (and tested), the actual 
-'glue-code' doing the overlay is part of the downstream test 
-infrastructure. So yes, this is not a bug in upstream kernel - this 
-falls in the category of an upstream change causing downstream things to 
-break. So, feel free to say: "Go fix your code" :)
-
-Now that this is sorted, if someone is still interested in helping us to 
-get our upstream drivers tested - the downstream piece is just taking 
-the compiled device-tree overlay at runtime (via bin-attribute file), 
-and applying it using the of_overlay_fdt_apply(). The approach is 
-working for our testing purposes when the device is added to I2C/SPI 
-node which is already enabled. However, in case where we have the I2C 
-disabled, and enable it in the same overlay where we add the new device 
-- then the new device does not get probed.
-
-I would be really grateful if someone had a pointer for us.
-
-Yours,
-	-- Matti
-
--- 
----
-Matti Vaittinen
-Linux kernel developer at ROHM Semiconductors
-Oulu Finland
-
-~~ When things go utterly wrong vim users can always type :help! ~~
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
