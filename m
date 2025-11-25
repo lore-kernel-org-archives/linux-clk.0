@@ -1,64 +1,64 @@
 Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87E50320A10
-	for <linux-clk@vger.kernel.org>; Tue, 25 Nov 2025 12:06:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBA84320A33
+	for <linux-clk@vger.kernel.org>; Tue, 25 Nov 2025 12:06:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764072392; cv=none; b=p1INuThQ5UWOUgIPOTY0vufD7q+De1nUM8Z9cGKj/YznptcqTD7/1VV71/+Ewt+TvFIUjDRPLAQs93wcjZnlf2+9foZdOVFGIhckrxmR3ZkRPOEkB+F5/ajGrxJMINrCwYcOldpWZw8NfBy3zPbfO8I8lG21VJ1jF4n2tSDT5h0=
+	t=1764072392; cv=none; b=pk3c31mZFCEUCwYwhBEqi2LXv0WEx9L+VGalV6KK2PrST27BbLpx11m50s6Af3xvPRFna2ABla/pe1CqfGWct95kwml1qA6Fr3vjbBHZLnQkcpCm/wOdgvvI9KI/+almmjFkSqRth6oyM63Cc05NNaT6bGz8wl/CHJQDttSzc80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1764072392; c=relaxed/simple;
-	bh=oofrnjhZanrLkWatPeyuYrbv1Q6MvPZXu89wFAQHc/8=;
+	bh=0XVqOHYcT7n720wnH1cgjwBE24hrHgCE0m9zaQ1pJGg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IL+LKEBN4WGB0rNF3ljoCK4tn07KXUyoCcDNtQh5ojRl5bc0OTwQByRjnTs1ZB7cwMZz7vFnL1bvDEm0Zw0dUOs3EJowwTvPWHg3Armct6cihvH09ygf+K3kf/+R15iSV99g82TU5x/oLFFnXFr2hwCbacR2AvNzxo0zJE2dFlk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fEGOcggA; arc=none smtp.client-ip=209.85.167.47
+	 MIME-Version; b=O15ZmKe3SAwlRgCBb3a0Gr/gv6dqydaPIk4RLFoCFGKGr4cjpq4FOi4aFP+VJLBkSGrKf0plSYOzZr15JiaTZjvz7JxXsIiQV7E/5Tifb9J2AmyDTO9dZNs6oWSzLq1CzMlesLqMaD5iXcR+LiwQcsJjDUp7w7zJVkqd1DsqgQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=InJSXmoC; arc=none smtp.client-ip=209.85.167.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fEGOcggA"
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-59583505988so7320650e87.1
-        for <linux-clk@vger.kernel.org>; Tue, 25 Nov 2025 04:06:29 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="InJSXmoC"
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5942b58ac81so3742896e87.2
+        for <linux-clk@vger.kernel.org>; Tue, 25 Nov 2025 04:06:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1764072388; x=1764677188; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1764072389; x=1764677189; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=3mvXM/OjnCbNqb+efTyw9EZlzwSyRJRkUMKBRDIIvhA=;
-        b=fEGOcggA9hHFsvswUFl2cnXquHKWMwMuFNguQAhR02WJzVh1NeWXChUvamk+4GLL2M
-         kq9+Z6WczAwwPLEt6rVe/KmjT7LouK5gtKb7v0ba9fcH5Y6LXVjIzDGORrb5WQMvkMxa
-         1I0KTRy5Hi/CbJomxUbv5zYswF0vhs5N9vgNHb1he74uIVteiNHd6NHGK6OM7nEB6CXe
-         bolLffo7lcnrOtf7DujcxQGz4tstlqChrgf9aaWHa4xK85PizpoZPX4Oq4PRNQjI8Mzl
-         c8oJCSwZXLEL4QOoStplwr5gMRXfCiZC8c6qtLK4o17ixYqs6scRXHuh6tLzsn+s52Hr
-         5sVA==
+        bh=Q5WNlBYT2Uj6LLmyZJ3IXERmQU06xOhrcyW5MYrfiFA=;
+        b=InJSXmoCeiiQx4ai9bvt8iF885jElanQAoPbfwo+ftnh2+zsww+e9BgzuP2URAzBHx
+         d1Fw1gMjmbBhYQhwy+yi8zOa5LtFkE4top+9tI1f+fVv3QFD3iHlUsG/6MCU534fdOgb
+         d03nW38y7WmuX+CM6ximquQ/u9e4Fsg6YglH8jaxOna1Dxhm8YTrJuxY25yedKcWuwSL
+         5YAL/ZdCGEeU+YO3ED058LHe1DMT2hbDYma4lJBxwY7XslVwkOrfnWseNTn28yoc+DV+
+         ajQ65m5bi9ZCxlc6/GmKY1Sw4CWoYUV0V9ZOdUl3If0s60ZwMEPON09OuWThRmXUF5Zx
+         9epg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764072388; x=1764677188;
+        d=1e100.net; s=20230601; t=1764072389; x=1764677189;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=3mvXM/OjnCbNqb+efTyw9EZlzwSyRJRkUMKBRDIIvhA=;
-        b=WFfcNxL81SBj34S1mImI58Lm1KVVGVOCQzknR5lx3gQJeiwVTS0OoYXSr26aZnsMyj
-         hhs7nfOYr0Uk+5kpOi63Cl6HVvQcfoBY+can9/UL2vp0+xJEs5LLgVAjWlVg6dl/YsvL
-         9CLEBazl2vGAv4k0lSub3oSTxxMFWXQOdNCBMhNU+dlWA3g4cOUkxKSnmW8OKEDGpA4p
-         oAHhm8DUJsSY/VNWadiHQRTTneP25Gy2ETiLkE1Azw4CBZyld1Lxdt64ym0goz4ZUF6j
-         kRxHmJdLOP/fdhvjmfYxC5yCEFHWNcNea+MoVX0DNw7mSGemXCT7RgSmEI3Mcj3VhaBo
-         bTbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXW/D6nnpniihU+TKDD9O8ae4aMDCnMs0n71CxnZxfsLZN0CPqbOAm0eMAunpD9EA7fh+6WpaBJxR4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9WpJvKQBkVOOu70ii+eqOYW/Syz4NkBzpETKfbi6dmOODEuLL
-	90BlvYCNAb2kDNpGm5HSkDv5tZusFsWNBkrKjhwfbJk7rXRQihOYfupK
-X-Gm-Gg: ASbGncu4x1lev29vlrzMcBSUf23exXqEX45EOOUQhy5NC9/nc619C64WjSoxBTY4/+A
-	Qw4oCJO9sbnghiKGgHuE0E2c5ofhAmHbORrbSYvSHsDBSGKDcq54cr/FPnquy5qAwHKQU+NoyGy
-	wciFiWPVSTDhsC5seReGRqPU/s7moxaoWugchWWqSPCWnEr/vuCbxSVnxHjuC/gEtJ3f8oYbJHN
-	PfoIjc+htxjfpsgRG4Na8XQfXMR/w8XJ/C4t4jpaK6hj+7AlTfOKjuce2xKmm6614opvm4HKlF/
-	ifer194GdMX+1+4abJbU/hneeJLzQ4cjHEVL3W3Bhy0ByB+XtkIa6kePYM0d/g/fboevrwQ12QK
-	21zS0szAIPQ9VO6OSJZm61ax+A43/Jl19KsU497YMtcpC4C8g91hHtEyLZcVvf6VDYS8U3Sic2J
-	c=
-X-Google-Smtp-Source: AGHT+IGHYbw79llgjzVhdJNpY+OeL/blXkBr7o7aN3N9BTj1dRXSku3hTW54mmH916DBOqG/DxkWuQ==
-X-Received: by 2002:a05:6512:1390:b0:595:83e7:c74e with SMTP id 2adb3069b0e04-5969ea192d6mr6467252e87.13.1764072387266;
-        Tue, 25 Nov 2025 04:06:27 -0800 (PST)
+        bh=Q5WNlBYT2Uj6LLmyZJ3IXERmQU06xOhrcyW5MYrfiFA=;
+        b=vYrR1JxRLDn5dnbhxlhHbDXptCoY/UtqIua0sx4UCjg7VQ3dxpc0HYcLiuffT6UfNY
+         npGrZvM31f1DS05cvYsx69x9vAmolaFvj63KaFzKJBz0zyMt8PWroELdgqxLzLSm6kD0
+         TEBmvHswDvYk/ZMNa3OhRYtwDoBnfC3DSN+uO9PTyWmRf9bXTglDoCHVAwxc0RDcXohC
+         ursh+wYI6kYxppKrs211j7VcV5bXAZDuuGtb3fFIWQ3iLnfZVsyJu/XHA+WEnzNOFN+6
+         YU7P8Fm6IFMkJzJ0HLyT1PmEP36cyQfSnSNa6mrqcWhuLq96y4gPsUca51ewJJQKscCz
+         pi7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV9RxPpOL1kdUAA/Ce39j58WfFK3iu70Y5dNeWqiPoIvR7d9vVL+u50s3tNmKSui5l6y05UYNb+knk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwO091CQ78E8kxweL3DWGBY4S5D80M4QiJFNQdWtCOlEXkkBJT8
+	P0nyDCU3+mW/KR664eERjm5hBRxUtgmKhingDmd8EWKE4bPMf67Y1Vtd
+X-Gm-Gg: ASbGnct33aPiKleELXfzGK4IRt6Frgb56eyRbXuy6ho2NtZVSyqfMw581RtV1A8YlU9
+	9d3bsENkWFuPmil5MuGQlXxO42UGc19gPsL15GnBtF8MuVd/UaoleAfhyJGVKw5bgZPN1RCA3zp
+	nDHC0ccbWGTntq32Jwd2Dt600aLF1dm4tqASK1SQY5DPFKwB/NLONre5T2d7EGW6tqCbha7zcq6
+	5MVTrZSrY4UaRdfHzxATJKD3W0It1htSg/Cvnz1b3m4uhg8K0XBtEm1/JW7C/ZA8/sM1jotPcIw
+	Xx+V/3voEf5pXkoIhgDg6N+9QB7+ryVJXMwYpkZsKCH0xujao37ApxjBlNKZLJXPN4axgioI+RM
+	TpZ3fde49IVxmQBf8+rTvcka4alSzPrgMRQSeylmMmDul6EE6dYYbrLz6FX2HcyL9xxXN4eOBiC
+	WPQ942vL57cA==
+X-Google-Smtp-Source: AGHT+IHsvV73iCsg1Nwxo/fBsVh2b9bPW7NvyGDXndOdwYhh1h8BJuTE0RXG2eDeb0/M5MiGhzgcdQ==
+X-Received: by 2002:a05:6512:3c98:b0:595:7c47:cd47 with SMTP id 2adb3069b0e04-596a3e983camr5380015e87.2.1764072388565;
+        Tue, 25 Nov 2025 04:06:28 -0800 (PST)
 Received: from xeon ([188.163.112.74])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5969dbbecb9sm5150993e87.58.2025.11.25.04.06.26
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5969dbbecb9sm5150993e87.58.2025.11.25.04.06.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Nov 2025 04:06:26 -0800 (PST)
+        Tue, 25 Nov 2025 04:06:28 -0800 (PST)
 From: Svyatoslav Ryhel <clamor95@gmail.com>
 To: Krzysztof Kozlowski <krzk@kernel.org>,
 	Rob Herring <robh@kernel.org>,
@@ -80,9 +80,9 @@ Cc: linux-kernel@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	linux-pm@vger.kernel.org
-Subject: [PATCH v4 07/12] dt-bindings: memory: Document Tegra114 External Memory Controller
-Date: Tue, 25 Nov 2025 14:05:54 +0200
-Message-ID: <20251125120559.158860-8-clamor95@gmail.com>
+Subject: [PATCH v4 08/12] soc: tegra: common: add Tegra114 support to devm_tegra_core_dev_init_opp_table
+Date: Tue, 25 Nov 2025 14:05:55 +0200
+Message-ID: <20251125120559.158860-9-clamor95@gmail.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251125120559.158860-1-clamor95@gmail.com>
 References: <20251125120559.158860-1-clamor95@gmail.com>
@@ -94,231 +94,37 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Include Tegra114 support into existing Tegra124 EMC schema with the most
-notable difference being the amount of EMC timings and a few SoC unique
-entries.
+Determine the Tegra114 hardware version using the SoC Speedo ID bit macro,
+mirroring the approach already used for Tegra30 and Tegra124.
 
 Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 ---
- .../nvidia,tegra124-emc.yaml                  | 174 +++---------------
- 1 file changed, 26 insertions(+), 148 deletions(-)
+ drivers/soc/tegra/common.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-emc.yaml b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-emc.yaml
-index f5f03bf36413..9398aae49093 100644
---- a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-emc.yaml
-+++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-emc.yaml
-@@ -16,7 +16,9 @@ description: |
+diff --git a/drivers/soc/tegra/common.c b/drivers/soc/tegra/common.c
+index 6292a1c72071..2264dd38893a 100644
+--- a/drivers/soc/tegra/common.c
++++ b/drivers/soc/tegra/common.c
+@@ -143,7 +143,8 @@ int devm_tegra_core_dev_init_opp_table(struct device *dev,
+ 		hw_version = BIT(tegra_sku_info.soc_process_id);
+ 		config.supported_hw = &hw_version;
+ 		config.supported_hw_count = 1;
+-	} else if (of_machine_is_compatible("nvidia,tegra30")) {
++	} else if (of_machine_is_compatible("nvidia,tegra30") ||
++		   of_machine_is_compatible("nvidia,tegra114")) {
+ 		hw_version = BIT(tegra_sku_info.soc_speedo_id);
+ 		config.supported_hw = &hw_version;
+ 		config.supported_hw_count = 1;
+@@ -156,7 +157,7 @@ int devm_tegra_core_dev_init_opp_table(struct device *dev,
+ 	}
  
- properties:
-   compatible:
--    const: nvidia,tegra124-emc
-+    enum:
-+      - nvidia,tegra114-emc
-+      - nvidia,tegra124-emc
- 
-   reg:
-     maxItems: 1
-@@ -29,6 +31,9 @@ properties:
-     items:
-       - const: emc
- 
-+  interrupts:
-+    maxItems: 1
-+
-   "#interconnect-cells":
-     const: 0
- 
-@@ -164,153 +169,12 @@ patternProperties:
-           nvidia,emc-configuration:
-             description:
-               EMC timing characterization data. These are the registers (see
--              section "15.6.2 EMC Registers" in the TRM) whose values need to
-+              section "20.11.2 EMC Registers" in the Tegra114 TRM or section
-+              "15.6.2 EMC Registers" in the Tegra124 TRM) whose values need to
-               be specified, according to the board documentation.
-             $ref: /schemas/types.yaml#/definitions/uint32-array
--            items:
--              - description: EMC_RC
--              - description: EMC_RFC
--              - description: EMC_RFC_SLR
--              - description: EMC_RAS
--              - description: EMC_RP
--              - description: EMC_R2W
--              - description: EMC_W2R
--              - description: EMC_R2P
--              - description: EMC_W2P
--              - description: EMC_RD_RCD
--              - description: EMC_WR_RCD
--              - description: EMC_RRD
--              - description: EMC_REXT
--              - description: EMC_WEXT
--              - description: EMC_WDV
--              - description: EMC_WDV_MASK
--              - description: EMC_QUSE
--              - description: EMC_QUSE_WIDTH
--              - description: EMC_IBDLY
--              - description: EMC_EINPUT
--              - description: EMC_EINPUT_DURATION
--              - description: EMC_PUTERM_EXTRA
--              - description: EMC_PUTERM_WIDTH
--              - description: EMC_PUTERM_ADJ
--              - description: EMC_CDB_CNTL_1
--              - description: EMC_CDB_CNTL_2
--              - description: EMC_CDB_CNTL_3
--              - description: EMC_QRST
--              - description: EMC_QSAFE
--              - description: EMC_RDV
--              - description: EMC_RDV_MASK
--              - description: EMC_REFRESH
--              - description: EMC_BURST_REFRESH_NUM
--              - description: EMC_PRE_REFRESH_REQ_CNT
--              - description: EMC_PDEX2WR
--              - description: EMC_PDEX2RD
--              - description: EMC_PCHG2PDEN
--              - description: EMC_ACT2PDEN
--              - description: EMC_AR2PDEN
--              - description: EMC_RW2PDEN
--              - description: EMC_TXSR
--              - description: EMC_TXSRDLL
--              - description: EMC_TCKE
--              - description: EMC_TCKESR
--              - description: EMC_TPD
--              - description: EMC_TFAW
--              - description: EMC_TRPAB
--              - description: EMC_TCLKSTABLE
--              - description: EMC_TCLKSTOP
--              - description: EMC_TREFBW
--              - description: EMC_FBIO_CFG6
--              - description: EMC_ODT_WRITE
--              - description: EMC_ODT_READ
--              - description: EMC_FBIO_CFG5
--              - description: EMC_CFG_DIG_DLL
--              - description: EMC_CFG_DIG_DLL_PERIOD
--              - description: EMC_DLL_XFORM_DQS0
--              - description: EMC_DLL_XFORM_DQS1
--              - description: EMC_DLL_XFORM_DQS2
--              - description: EMC_DLL_XFORM_DQS3
--              - description: EMC_DLL_XFORM_DQS4
--              - description: EMC_DLL_XFORM_DQS5
--              - description: EMC_DLL_XFORM_DQS6
--              - description: EMC_DLL_XFORM_DQS7
--              - description: EMC_DLL_XFORM_DQS8
--              - description: EMC_DLL_XFORM_DQS9
--              - description: EMC_DLL_XFORM_DQS10
--              - description: EMC_DLL_XFORM_DQS11
--              - description: EMC_DLL_XFORM_DQS12
--              - description: EMC_DLL_XFORM_DQS13
--              - description: EMC_DLL_XFORM_DQS14
--              - description: EMC_DLL_XFORM_DQS15
--              - description: EMC_DLL_XFORM_QUSE0
--              - description: EMC_DLL_XFORM_QUSE1
--              - description: EMC_DLL_XFORM_QUSE2
--              - description: EMC_DLL_XFORM_QUSE3
--              - description: EMC_DLL_XFORM_QUSE4
--              - description: EMC_DLL_XFORM_QUSE5
--              - description: EMC_DLL_XFORM_QUSE6
--              - description: EMC_DLL_XFORM_QUSE7
--              - description: EMC_DLL_XFORM_ADDR0
--              - description: EMC_DLL_XFORM_ADDR1
--              - description: EMC_DLL_XFORM_ADDR2
--              - description: EMC_DLL_XFORM_ADDR3
--              - description: EMC_DLL_XFORM_ADDR4
--              - description: EMC_DLL_XFORM_ADDR5
--              - description: EMC_DLL_XFORM_QUSE8
--              - description: EMC_DLL_XFORM_QUSE9
--              - description: EMC_DLL_XFORM_QUSE10
--              - description: EMC_DLL_XFORM_QUSE11
--              - description: EMC_DLL_XFORM_QUSE12
--              - description: EMC_DLL_XFORM_QUSE13
--              - description: EMC_DLL_XFORM_QUSE14
--              - description: EMC_DLL_XFORM_QUSE15
--              - description: EMC_DLI_TRIM_TXDQS0
--              - description: EMC_DLI_TRIM_TXDQS1
--              - description: EMC_DLI_TRIM_TXDQS2
--              - description: EMC_DLI_TRIM_TXDQS3
--              - description: EMC_DLI_TRIM_TXDQS4
--              - description: EMC_DLI_TRIM_TXDQS5
--              - description: EMC_DLI_TRIM_TXDQS6
--              - description: EMC_DLI_TRIM_TXDQS7
--              - description: EMC_DLI_TRIM_TXDQS8
--              - description: EMC_DLI_TRIM_TXDQS9
--              - description: EMC_DLI_TRIM_TXDQS10
--              - description: EMC_DLI_TRIM_TXDQS11
--              - description: EMC_DLI_TRIM_TXDQS12
--              - description: EMC_DLI_TRIM_TXDQS13
--              - description: EMC_DLI_TRIM_TXDQS14
--              - description: EMC_DLI_TRIM_TXDQS15
--              - description: EMC_DLL_XFORM_DQ0
--              - description: EMC_DLL_XFORM_DQ1
--              - description: EMC_DLL_XFORM_DQ2
--              - description: EMC_DLL_XFORM_DQ3
--              - description: EMC_DLL_XFORM_DQ4
--              - description: EMC_DLL_XFORM_DQ5
--              - description: EMC_DLL_XFORM_DQ6
--              - description: EMC_DLL_XFORM_DQ7
--              - description: EMC_XM2CMDPADCTRL
--              - description: EMC_XM2CMDPADCTRL4
--              - description: EMC_XM2CMDPADCTRL5
--              - description: EMC_XM2DQPADCTRL2
--              - description: EMC_XM2DQPADCTRL3
--              - description: EMC_XM2CLKPADCTRL
--              - description: EMC_XM2CLKPADCTRL2
--              - description: EMC_XM2COMPPADCTRL
--              - description: EMC_XM2VTTGENPADCTRL
--              - description: EMC_XM2VTTGENPADCTRL2
--              - description: EMC_XM2VTTGENPADCTRL3
--              - description: EMC_XM2DQSPADCTRL3
--              - description: EMC_XM2DQSPADCTRL4
--              - description: EMC_XM2DQSPADCTRL5
--              - description: EMC_XM2DQSPADCTRL6
--              - description: EMC_DSR_VTTGEN_DRV
--              - description: EMC_TXDSRVTTGEN
--              - description: EMC_FBIO_SPARE
--              - description: EMC_ZCAL_WAIT_CNT
--              - description: EMC_MRS_WAIT_CNT2
--              - description: EMC_CTT
--              - description: EMC_CTT_DURATION
--              - description: EMC_CFG_PIPE
--              - description: EMC_DYN_SELF_REF_CONTROL
--              - description: EMC_QPOP
-+            minItems: 97
-+            maxItems: 143
- 
-         required:
-           - clock-frequency
-@@ -318,9 +182,7 @@ patternProperties:
-           - nvidia,emc-auto-cal-config2
-           - nvidia,emc-auto-cal-config3
-           - nvidia,emc-auto-cal-interval
--          - nvidia,emc-bgbias-ctl0
-           - nvidia,emc-cfg
--          - nvidia,emc-cfg-2
-           - nvidia,emc-ctt-term-ctrl
-           - nvidia,emc-mode-1
-           - nvidia,emc-mode-2
-@@ -344,6 +206,22 @@ required:
-   - "#interconnect-cells"
-   - operating-points-v2
- 
-+allOf:
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - nvidia,tegra124-emc
-+    then:
-+      patternProperties:
-+        "^emc-timings-[0-9]+$":
-+          patternProperties:
-+            "^timing-[0-9]+$":
-+              required:
-+                - nvidia,emc-bgbias-ctl0
-+                - nvidia,emc-cfg-2
-+
- additionalProperties: false
- 
- examples:
+ 	/*
+-	 * Tegra114+ doesn't support OPP yet, return early for non tegra20/30
++	 * Tegra124+ doesn't support OPP yet, return early for pre-Tegra124
+ 	 * case.
+ 	 */
+ 	if (!config.supported_hw)
 -- 
 2.51.0
 
