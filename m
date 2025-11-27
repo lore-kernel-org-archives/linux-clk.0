@@ -1,70 +1,319 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47EA231A07C;
-	Thu, 27 Nov 2025 07:36:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E721D321440
+	for <linux-clk@vger.kernel.org>; Thu, 27 Nov 2025 07:46:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764228982; cv=none; b=kOXFMUVWDAcc9KeeWXBAsWQUb/yyXvLSVtorGtm98QvdE40FeJ7BC3ZvzQnbYHgo5ds1sJJply/cJuQyaJ1wliMFtJd3CVs16NPMuPE0QhtlpIF5Eq9iimehhI05WJU6xTbG04cWaAyb1jm7E08sTXeAcrSnSSDJ1wGyzMhc2hs=
+	t=1764229576; cv=none; b=IXqdJIVMZHwLApzouHIboHCfsjlzcevU3f16znjTQcbDN0mWmcEeAv1/Ie05VvoD2NoC861v4E9AfCze8WaB61J2kGT7Vq2pBZeajBILWgQJQRDoepH/RJb1NT8kUGpAx+QrYVcXbOfxdKDRzgaehsKXEaMAtCZ/+rkS5143ZkQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764228982; c=relaxed/simple;
-	bh=Vf3bgVUZ6jVpjj6thPrEznvts6kLXfHQzIMa1KX6+xY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ixOdIinyQSMYApXbFCsZd2XfFkngyyIiNz1TZY+VuW16h4FZBZYAgQwY4Wz9ectnb7HceD9hvWkSRg3exeAO5t+xA/ZfMQRnnvKpxCLSIvpDEDltRYKLxM31g+77EucpiqcYwGW2FLxDHp0NTf/4cVWOeM31DDWoYqbNioGBHGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DLtymqOy; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1764229576; c=relaxed/simple;
+	bh=eixrv2CdiGHk1MmiwyukM55rvIC4y05XI7ZWqeHAQvk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dGdmlNWzDMjMBeU4mOHBFyYervxSMeOW30mV+MewXKGK7bD8EV5kZRvMwOkfBTJCOauudU/BbqJMdZ7MXr6ddXeVQXILC3KN18zH+iBsNH/bFJFPOWpzM5GeTQ7RaU9PP6AcQv9n+sWMmULbl7w9/OrTzpwksMEalqtgzfsHAkI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nSmq4RHR; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DLtymqOy"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C8A0C4CEF8;
-	Thu, 27 Nov 2025 07:36:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1764228982;
-	bh=Vf3bgVUZ6jVpjj6thPrEznvts6kLXfHQzIMa1KX6+xY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DLtymqOy+a5GDlbVK/f8cPDWYtf6HR2lm2TtOCXg7RwMzYaMigdHpQzi/zFFh4pj0
-	 KbieLH9YsdKBNzvw3WVb+N6/MdMNZpkHJLSPMDhs6F10kEFTluMrs0SBP7yIoE3ZaD
-	 cGn3nTDaEHy+0D651eajtq/tqSNlV8ZPi6JGdY9ccGYLizHjejU4hJDkzlc2+gcI74
-	 lV51wk0P6FOY8lQCLdiQAsJW5/Xy8u8mK4L/3HyKxkYbDLL/MUEBugZiRQMi3B0FSm
-	 thh0SyLgSlIY7hCnan5wSQq9nQYoB2mzWfLnkUKJNAYR173vVY3Lh7BXaSZrTB3pKA
-	 /QggbLYy5A14g==
-Date: Thu, 27 Nov 2025 08:36:19 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Conor Dooley <conor@kernel.org>
-Cc: linux-kernel@vger.kernel.org, 
-	Conor Dooley <conor.dooley@microchip.com>, Daire McNamara <daire.mcnamara@microchip.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
-	linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	Pierre-Henry Moussay <pierre-henry.moussay@microchip.com>
-Subject: Re: [PATCH v2 3/3] dt-bindings: clock: mpfs-clkcfg: Add pic64gx
- compatibility
-Message-ID: <20251127-accomplished-garnet-earwig-baeeff@kuoka>
-References: <20251121-tartar-drew-ba31c5ec9192@spud>
- <20251121-unclip-shabby-a7a16e865146@spud>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nSmq4RHR"
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5957c929a5eso856941e87.1
+        for <linux-clk@vger.kernel.org>; Wed, 26 Nov 2025 23:46:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1764229572; x=1764834372; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Hnj14zijJRhbSEOBE/unb9XqHQn52yQ1cvvxZ0DFyqE=;
+        b=nSmq4RHRUsjIsmho2ujm1TeyNB0Mfs92BmkhKmaKjrxY5Hxp3Pg34YrahjAlDnNN1/
+         dG7ktJFimwoUG8rq7oWKmVvhI396ad68pO1UziJ/QDZ5I+lhAk97mnZUmgPiGd2K/1Uf
+         oL02pjbheZoUh5e94mnbVCNR9yIavH0WGqyfk70pxPYI0H+xt0GCB7URFrtVWqRke/0P
+         5NlO6t4H97b4q+8GDUZxBg+QMol4YtasALG9EP8IURnDt2rw8/CoEe0NaDCpLQP/vTMb
+         SbKWw+ebzNOCObefJMkJIqWC097X0J+M3tXPuyEcfocyAjsp/85bzMRwSMI/GD7YglER
+         30Hg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1764229572; x=1764834372;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Hnj14zijJRhbSEOBE/unb9XqHQn52yQ1cvvxZ0DFyqE=;
+        b=YLu9bPIw8+OOna9P/DBjMghIbREAWTRMEmo3uvXxnszm0iFPBgDl86akHlVf+E10qB
+         VarAdEfI+9xZqnXO9H0ItNeKUYsWXI1fc4K6Oy5N1nu7KndyWEkcHsDoj6RRpVFwmrHC
+         fWvBhyAFE6Ip6zfVH0wGDfhMP7QEQueGvIZitmdhloADP1Xclkr0ZPUKryuo4c0Bkelq
+         06gIFfY6oeeUEGMm64bTvus2QMSrUKh11S7HWIVuHIHDETsiYiKJCYwIytSCgiokQlU5
+         i7hHwcz9XL49owjwab1WHwEQQoN1kU2BeWfkOeyZcCQXcLfk8q5IYYTPDkrHKqeQPnb+
+         dgEA==
+X-Forwarded-Encrypted: i=1; AJvYcCV1z3ISjM6shToBWfuwHIqecG6HeSb/aIWHRzLASEEt/NOF3mxxrV128cUYDpnc3Ni+bvoFIvAZbSU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx03qQIQ6zFOmKMAkb1jwDL2WZNQTCXVLh2gTJFbdT/FhSMGlc4
+	XeUUkjV71EjIQEePLe+yHvxE5rLunsAdQM/fwuQFnpsKkBY8av7x9Gx7
+X-Gm-Gg: ASbGncuwjC4em7ZGkmKNdzmWL+rvFII24CGyMpcJs1s9tTM30lH4ukixp30jV+j4g3p
+	51/KAV+DxY+y5pb9zuegKEuUiDLcneMPoLu0S4lJIsCK2/Vedt/TauNYemJuL1pjj2FCag3d1Wp
+	mcKG1pg2HIeaXq+448TiFk5ji1UhM+Pec+CskU8ZY/0XRaK6t4WBl4x5ciO4hjjEdMllfuITvXo
+	hWBpewzcgNY8cJm0J5idz5lEj7/EuR1mUi4BkJk3y0ltXzbKbysUjuGFe3+P+lyne+NCVHKgaN/
+	W5RZ7adjWzhtwpHC9UwaxBYXqiep4thwVC4OEeWmMxvJ6dwaqX3ynmpg3BXg9SFIdzt/mnI4opt
+	eANXkJpis580szKiHAbVmnwwN+jhI7aOT54r2113MPc2o/RdPiWOJWUTn557vDtkZ4F5ZZADgkN
+	ve1fXJ694VaL8roXnLRxMUbH5erLqXd0jNZP/jsdz1ODoGRB4ksQx/cwDNznJUVJW4v47t
+X-Google-Smtp-Source: AGHT+IE0AX+RugWE0+4LM7mYSSpRxls5r75Ssa4ZNDWg6K4RRVvhPkZhmvV5UTirnjSMOo+4ntezOw==
+X-Received: by 2002:a05:6512:b17:b0:595:7854:af7c with SMTP id 2adb3069b0e04-596b5277bfemr3434647e87.24.1764229571533;
+        Wed, 26 Nov 2025 23:46:11 -0800 (PST)
+Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-596bf8a7cffsm202938e87.18.2025.11.26.23.46.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Nov 2025 23:46:10 -0800 (PST)
+Message-ID: <01285891-a73f-4916-8c5a-ef187c676edd@gmail.com>
+Date: Thu, 27 Nov 2025 09:46:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251121-unclip-shabby-a7a16e865146@spud>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 08/16] mfd: bd71828: Support ROHM BD72720
+To: Lee Jones <lee@kernel.org>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+ Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Sebastian Reichel <sre@kernel.org>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
+ Bartosz Golaszewski <brgl@bgdev.pl>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-rtc@vger.kernel.org, Andreas Kemnade <andreas@kemnade.info>
+References: <cover.1763625920.git.mazziesaccount@gmail.com>
+ <ffdc1c2f380959c792ad39817ba5e9cf4bbc1131.1763625920.git.mazziesaccount@gmail.com>
+ <20251126142809.GD3070764@google.com>
+Content-Language: en-US, en-AU, en-GB, en-BW
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <20251126142809.GD3070764@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Nov 21, 2025 at 01:44:02PM +0000, Conor Dooley wrote:
-> From: Pierre-Henry Moussay <pierre-henry.moussay@microchip.com>
+On 26/11/2025 16:28, Lee Jones wrote:
+> On Thu, 20 Nov 2025, Matti Vaittinen wrote:
 > 
-> pic64gx has a clock controller compatible with mpfs-clkcfg. Don't permit
-> the deprecated configuration that was never supported for this SoC.
+>> From: Matti Vaittinen <mazziesaccount@gmail.com>
+>>
+>> The ROHM BD72720 is a power management IC which continues the BD71828
+>> family of PMICs. Similarly to the BD71815 and BD71828, the BD72720
+>> integrates regulators, charger, RTC, clock gate and GPIOs.
+>>
+>> The main difference to the earlier PMICs is that the BD72720 has two
+>> different I2C slave addresses. In addition to the registers behind the
+>> 'main I2C address', most of the charger (and to some extent LED) control
+>> is done via registers behind a 'secondary I2C slave address', 0x4c.
+>>
+>> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+>>
+>> ---
+>> Revision history:
+>>   v2 =>:
+>>   - no changes
+>>
+>>   RFCv1 => v2: (Mostly addressed comments from Lee and Andreas)
+>>   - Use stacked regmaps to avoid platform data and the tango with
+>>     multiple regmaps in the power-supply driver
+>>   - Use regmap_reg_range()
+>>   - make it clear bd72720_irq_type_base is an array
+>>   - tab-out definitions in the bd72720 header
+>>   - minor styling
+>>
+>> Note: This patch depends on the series: "power: supply: add charger for
+>> BD71828" by Andreas:
+>> https://lore.kernel.org/all/20250918-bd71828-charger-v5-0-851164839c28@kemnade.info/
+>>
+>> There are some new variants being planned. Most notably, the BD73900
+>> should be almost identical to the BD72720 - for everything else except
+>> the charger block.
+>> ---
+>>   drivers/mfd/Kconfig              |  18 +-
+>>   drivers/mfd/rohm-bd71828.c       | 488 +++++++++++++++++++++++-
+>>   include/linux/mfd/rohm-bd72720.h | 634 +++++++++++++++++++++++++++++++
+>>   include/linux/mfd/rohm-generic.h |   1 +
+>>   4 files changed, 1126 insertions(+), 15 deletions(-)
+>>   create mode 100644 include/linux/mfd/rohm-bd72720.h
+
+// snip
+
+>> diff --git a/drivers/mfd/rohm-bd71828.c b/drivers/mfd/rohm-bd71828.c
+>> index 2a43005b67ee..2e546aa60ffd 100644
+>> --- a/drivers/mfd/rohm-bd71828.c
+>> +++ b/drivers/mfd/rohm-bd71828.c
+>> @@ -2,7 +2,7 @@
+>>   //
+>>   // Copyright (C) 2019 ROHM Semiconductors
+>>   //
+>> -// ROHM BD71828/BD71815 PMIC driver
+>> +// ROHM BD718[15/28/79] and BD72720 PMIC driver
 > 
-> Signed-off-by: Pierre-Henry Moussay <pierre-henry.moussay@microchip.com>
-> Co-developed-by: Conor Dooley <conor.dooley@microchip.com>
-> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
-> ---
->  .../bindings/clock/microchip,mpfs-clkcfg.yaml    | 16 +++++++++++++++-
->  1 file changed, 15 insertions(+), 1 deletion(-)
+> Looks like this header format slipped in.
+> 
+> I would appreciate a follow-up patch to change it to standard C
+> multi-line format (except the SPDX line).
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Sure.
 
-Best regards,
-Krzysztof
+// snip
 
+>>   
+>> +static int regmap_write_wrapper(void *context, unsigned int reg, unsigned int val)
+>> +{
+>> +	struct bd72720_regmaps *maps = context;
+>> +
+>> +	if (reg < 0x100)
+> 
+> Define this to something human readable please.
+> 
+> Some kind of PAGE or BOUNDARY.  Perhaps something better.
+
+I will use 'BD72720_SECONDARY_I2C_REG_OFFSET'. A tad long, but it's not 
+used on a long lines.
+
+> 
+>> +		return regmap_write(maps->map1_4b, reg, val);
+>> +
+>> +	reg = BD72720_REG_UNWRAP(reg);
+>> +
+>> +	return regmap_write(maps->map2_4c, reg, val);
+>> +}
+
+// snip
+
+> 
+>> +		return (struct regmap *)secondary_i2c;
+> 
+> *shudders* -- that's a hack, right!
+> 
+> /me does some grepping around ...
+> 
+> Shouldn't this be:
+> 
+> 		return ERR_CAST(secondary_i2c);
+
+I didn't know about the ERR_CAST(). Thanks for going the extra mile and 
+looking
+
+> 
+>> +	}
+
+//snip
+
+>> diff --git a/include/linux/mfd/rohm-bd72720.h b/include/linux/mfd/rohm-bd72720.h
+>> new file mode 100644
+>> index 000000000000..42fcf8f81b2f
+>> --- /dev/null
+>> +++ b/include/linux/mfd/rohm-bd72720.h
+>> @@ -0,0 +1,634 @@
+>> +/* SPDX-License-Identifier: GPL-2.0-or-later */
+>> +/*
+>> + * Copyright 2024 ROHM Semiconductors.
+> 
+> Still out of date.
+
+Ah. Indeed. Thanks.
+
+>> + * Author: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+>> + */
+>> +
+// snip
+
+>> +
+>> +/* BD72720 interrupts */
+>> +#define BD72720_INT_LONGPUSH_MASK	BIT(0)
+>> +#define BD72720_INT_MIDPUSH_MASK	BIT(1)
+>> +#define BD72720_INT_SHORTPUSH_MASK	BIT(2)
+>> +#define BD72720_INT_PUSH_MASK		BIT(3)
+>> +#define BD72720_INT_HALL_DET_MASK	BIT(4)
+>> +#define BD72720_INT_HALL_TGL_MASK	BIT(5)
+>> +#define BD72720_INT_WDOG_MASK		BIT(6)
+>> +#define BD72720_INT_SWRESET_MASK	BIT(7)
+>> +#define BD72720_INT_SEQ_DONE_MASK	BIT(0)
+>> +#define BD72720_INT_PGFAULT_MASK	BIT(4)
+>> +#define BD72720_INT_BUCK1_DVS_MASK	BIT(0)
+>> +#define BD72720_INT_BUCK2_DVS_MASK	BIT(1)
+>> +#define BD72720_INT_BUCK3_DVS_MASK	BIT(2)
+>> +#define BD72720_INT_BUCK4_DVS_MASK	BIT(3)
+>> +#define BD72720_INT_BUCK5_DVS_MASK	BIT(4)
+>> +#define BD72720_INT_BUCK6_DVS_MASK	BIT(5)
+>> +#define BD72720_INT_BUCK7_DVS_MASK	BIT(6)
+>> +#define BD72720_INT_BUCK8_DVS_MASK	BIT(7)
+>> +#define BD72720_INT_BUCK9_DVS_MASK	BIT(0)
+>> +#define BD72720_INT_BUCK10_DVS_MASK	BIT(1)
+>> +#define BD72720_INT_LDO1_DVS_MASK	BIT(4)
+>> +#define BD72720_INT_LDO2_DVS_MASK	BIT(5)
+>> +#define BD72720_INT_LDO3_DVS_MASK	BIT(6)
+>> +#define BD72720_INT_LDO4_DVS_MASK	BIT(7)
+>> +#define BD72720_INT_VBUS_RMV_MASK	BIT(0)
+>> +#define BD72720_INT_VBUS_DET_MASK	BIT(1)
+>> +#define BD72720_INT_VBUS_MON_RES_MASK	BIT(2)
+>> +#define BD72720_INT_VBUS_MON_DET_MASK	BIT(3)
+>> +#define BD72720_INT_VSYS_MON_RES_MASK	BIT(0)
+>> +#define BD72720_INT_VSYS_MON_DET_MASK	BIT(1)
+>> +#define BD72720_INT_VSYS_UV_RES_MASK	BIT(2)
+>> +#define BD72720_INT_VSYS_UV_DET_MASK	BIT(3)
+>> +#define BD72720_INT_VSYS_LO_RES_MASK	BIT(4)
+>> +#define BD72720_INT_VSYS_LO_DET_MASK	BIT(5)
+>> +#define BD72720_INT_VSYS_OV_RES_MASK	BIT(6)
+>> +#define BD72720_INT_VSYS_OV_DET_MASK	BIT(7)
+>> +#define BD72720_INT_BAT_ILIM_MASK	BIT(0)
+>> +#define BD72720_INT_CHG_DONE_MASK	BIT(1)
+>> +#define BD72720_INT_EXTEMP_TOUT_MASK	BIT(2)
+>> +#define BD72720_INT_CHG_WDT_EXP_MASK	BIT(3)
+>> +#define BD72720_INT_BAT_MNT_OUT_MASK	BIT(4)
+>> +#define BD72720_INT_BAT_MNT_IN_MASK	BIT(5)
+>> +#define BD72720_INT_CHG_TRNS_MASK	BIT(7)
+>> +#define BD72720_INT_VBAT_MON_RES_MASK	BIT(0)
+>> +#define BD72720_INT_VBAT_MON_DET_MASK	BIT(1)
+>> +#define BD72720_INT_VBAT_SHT_RES_MASK	BIT(2)
+>> +#define BD72720_INT_VBAT_SHT_DET_MASK	BIT(3)
+>> +#define BD72720_INT_VBAT_LO_RES_MASK	BIT(4)
+>> +#define BD72720_INT_VBAT_LO_DET_MASK	BIT(5)
+>> +#define BD72720_INT_VBAT_OV_RES_MASK	BIT(6)
+>> +#define BD72720_INT_VBAT_OV_DET_MASK	BIT(7)
+>> +#define BD72720_INT_BAT_RMV_MASK	BIT(0)
+>> +#define BD72720_INT_BAT_DET_MASK	BIT(1)
+>> +#define BD72720_INT_DBAT_DET_MASK	BIT(2)
+>> +#define BD72720_INT_BAT_TEMP_TRNS_MASK	BIT(3)
+>> +#define BD72720_INT_LOBTMP_RES_MASK	BIT(4)
+>> +#define BD72720_INT_LOBTMP_DET_MASK	BIT(5)
+>> +#define BD72720_INT_OVBTMP_RES_MASK	BIT(6)
+>> +#define BD72720_INT_OVBTMP_DET_MASK	BIT(7)
+>> +#define BD72720_INT_OCUR1_RES_MASK	BIT(0)
+>> +#define BD72720_INT_OCUR1_DET_MASK	BIT(1)
+>> +#define BD72720_INT_OCUR2_RES_MASK	BIT(2)
+>> +#define BD72720_INT_OCUR2_DET_MASK	BIT(3)
+>> +#define BD72720_INT_OCUR3_RES_MASK	BIT(4)
+>> +#define BD72720_INT_OCUR3_DET_MASK	BIT(5)
+>> +#define BD72720_INT_CC_MON1_DET_MASK	BIT(0)
+>> +#define BD72720_INT_CC_MON2_DET_MASK	BIT(1)
+>> +#define BD72720_INT_CC_MON3_DET_MASK	BIT(2)
+>> +#define BD72720_INT_GPIO1_IN_MASK	BIT(4)
+>> +#define BD72720_INT_GPIO2_IN_MASK	BIT(5)
+>> +#define BD72720_INT_VF125_RES_MASK	BIT(0)
+>> +#define BD72720_INT_VF125_DET_MASK	BIT(1)
+>> +#define BD72720_INT_VF_RES_MASK		BIT(2)
+>> +#define BD72720_INT_VF_DET_MASK		BIT(3)
+>> +#define BD72720_INT_RTC0_MASK		BIT(4)
+>> +#define BD72720_INT_RTC1_MASK		BIT(5)
+>> +#define BD72720_INT_RTC2_MASK		BIT(6)
+> 
+> I'd be able to sleep better if these all lined up.
+
+Hm. I think they are when this is applied?
+
+Thanks for the review! I agree with all the comments I didn't comment 
+on. I'll prepare v6 fixing these :)
+
+Yours,
+	-- Matti
+
+---
+Matti Vaittinen
+Linux kernel developer at ROHM Semiconductors
+Oulu Finland
+
+~~ When things go utterly wrong vim users can always type :help! ~~
