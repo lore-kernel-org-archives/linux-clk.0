@@ -1,67 +1,66 @@
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F0A0304BDC
-	for <linux-clk@vger.kernel.org>; Thu, 27 Nov 2025 19:28:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2305730499A
+	for <linux-clk@vger.kernel.org>; Thu, 27 Nov 2025 19:28:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764271707; cv=none; b=kzMLW4xb/JMC8LUP1ysNHoyei5nuMTvl+uJxDpgncwtl9+QmW+48TnZCI3N+VWynFYerm8ndzk4ydhZ0Nfj4ZwRkd5rH2LBl9x2ItVXcZVDJeQvt+I+MaM4fhfmjSP59mOcoRiCj67lq2xMeaFNletShZagX9jJmWGmiP7UN1NA=
+	t=1764271731; cv=none; b=axl1DVXMQR0Jsmhpfvx1pjJjQsrhNGWdw7bu6SY384H1NbDwL0SvGUmtf9OdZPIYa2pL+/L9RnT9pjNa3pb5hnGixfncjIRPuqVCQfeB0PXHKbRXN7PjJwBX65rtSAKg/dJo3Fx8dBKRD3H6fwSrMZoXFRQ/BZraHxdXudV4hDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764271707; c=relaxed/simple;
-	bh=wMhT9VCA+Fg1kyNESQJIEXfJcuvbCg86hEoAgTufXCA=;
+	s=arc-20240116; t=1764271731; c=relaxed/simple;
+	bh=HgNIphkgRWgB8H0fofmVUpH+pm7TGTwMqkA9pghB24A=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qQWgeKn/tK1eK8oM6l0YJMHwhTehZnHYSQd56eysWAN16d/DIKhWOCxT3h/0nc17zG8eH848nH76ImLfXg/HO7pNB4T3a3h/UOQzbbylBgepoLPdQA+FFZb858mD5OEvzcKyHFbsBHxMJ1WSlC91bPCKHiiipkOwhD0fAlokgho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=E6/jcA2x; arc=none smtp.client-ip=209.85.208.169
+	 In-Reply-To:Content-Type; b=XMQ9Ut85C3aEvid9OckSWap/0+T/XMWP6qLuYMQXixA5cFxY2BKKcsvTU/gSrGPaKYzgcx6UalGXmkafR+V4B8KM1Tanydu22Qq8aEukLBsDw/VFsKGDNVDNRViLIuO/nnvHcwu8iF3L7CBHglcMg72LxU2tCEgbWBj4rNKW04c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QFsktIJS; arc=none smtp.client-ip=209.85.208.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="E6/jcA2x"
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-37a2d728536so1059871fa.2
-        for <linux-clk@vger.kernel.org>; Thu, 27 Nov 2025 11:28:24 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QFsktIJS"
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-37b9552618aso813921fa.0
+        for <linux-clk@vger.kernel.org>; Thu, 27 Nov 2025 11:28:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1764271703; x=1764876503; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1764271726; x=1764876526; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
          :user-agent:mime-version:date:message-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=aK+ZnzMyo2Qglturi3DKY8unAQuLco/jmAh3/EyH0pU=;
-        b=E6/jcA2x9xdQ7QtubDUwyFXRoBY6/UOeFr9zrBZAJoxSxlgwwBTBou2nzHFahG24iI
-         vGwHz1LQlCXLODZLKsqzYVHSKQHXXFpYRSkXQAKeMt3M0f3Ew4fYxC7Z8bwrqKvhW4ym
-         DqvxnokZj52XQyzXC2ZL4WGJZdgd4zMQ4KY3i6NCn39eid/2BeDF+2dEMJjF4GUAoygB
-         72NRupPdJjrvyLlfEmER7IvpRXdxVeGqZ55T2SBk0bpeoiYz6Zgl8W4bMfKy019qsZbx
-         l2F9LSQV1NvMQ1kaE8Pf6R2io3P2lzHzXp/fF8epGZLLz4lL8bRHIDkJ28GLCLv635/9
-         FH1w==
+        bh=wUEPJnkiBuZQK3LUealV73M/xL8bSVg1Its+Oao/Qno=;
+        b=QFsktIJSRX3pmGsJf/NFZrSnJyLDWDIZhqSuqY9k4zIp4egR7Y2bB8jAKiglC1K0U+
+         qpgpJKfPMvEOK967H1qB3KU3pe+Hf+ovgRCjhY4zYmBgVnkupA5X07+XKYsFN2m4gSv1
+         SNOXsrfHl+ZJICpeqkUxHrAXn0NLJXYhzK/imi/+XuEmHNqvUDZQbpXDiICQxeryy6H6
+         C5y+GJ9KoYE2BlSxYvRMCipG51GDgn3ZXipdX1ogMBLZidPs+y0eyGKDem/aakFU3ROz
+         iPZBuDyfQdpmm5d/IqBN+jWNMaB3rjqskgAQ7+1t8vMf5tEBFDEk5bn/eQa5sF3sl5vy
+         UMog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764271703; x=1764876503;
+        d=1e100.net; s=20230601; t=1764271726; x=1764876526;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
          :user-agent:mime-version:date:message-id:x-gm-gg:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=aK+ZnzMyo2Qglturi3DKY8unAQuLco/jmAh3/EyH0pU=;
-        b=P+NynN+rsKVeQRchs+Q0lxpgxKDd2x2J1apuq6ORjhmHWx1xf/LCK/IMJIl9hRMXsC
-         nf2+makGHc6C6I6oeLOGMWdPZ+BXkmNqUNsyaiBN5Dq6LiSNrsuIw0+s7bQxttSE5heK
-         /WERLuyO8eIOm8YxJ3TNZ45Yzkj6z7ywh3BIg5IV4c2CxKd0tu+vcdjj8nr/F8H7s0qH
-         SYQKBxqRimc/nRKd+0gMFkBewOypJSymrl1wke7Tcaq2X6FGqC/JEI0p/Tg9UviphRfy
-         ew4JKZGEpFlOm1GyQTku7eI5QwJJgUlrNd7/m7FIAFKRwEh1u+pWAaZMXcxm3hmRRkA9
-         VGcA==
-X-Forwarded-Encrypted: i=1; AJvYcCWnFRL7HlijDBJ57+QXawKktPws7WJ2oL0vLquBjgNhL2CmY1C4FSDSuCrf/qlgL9OP2IAfcSqBEx8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyA2DByw6Swm2kYuTIlJrRyOvjDqBCyeZY5DgxAO+7mqulCpe60
-	x+lKe1RxmbC/4HABpWOSIX/6168ZpYXuRlVTMCI0IdTO8NXQs1d2b3D50pzKMB/6EuY=
-X-Gm-Gg: ASbGncsD3THjCayEI0dvAC4zC6NrvkOLKzLzie0kXW98X+2+PjVE+82CfVrevJAw3j4
-	vY7rOThMRWVtQ/Dhixuq9cgkfS2W4MRMvGfOeNAr+GgmPE4YS75DvisHYxmlzQG2TWskEpTDc6X
-	AA6ypP6ijA+2xihmGfmTR05pA1hu3uOz1/zEAj7DfYsjYceSgmal4RytHvJKaREsdWdrwRq9GEp
-	JH+oarRNuuCBkc/68dGiFmZkB7Z4djPqFZ7xYjrnto6G9fYUrRIZJsHUvQ/zTMBs4TdhUc8M+Jc
-	6D775GZWeItYNXqDKtpBZ3W+KhZG94Au/JngPZRdYMoYFVHU5enNBUENRmGO0b6J4s4acnfYJRE
-	eTTyOhVF+zGtqiFJDUWQwKAsxkNPn349jgkKQhEpoWAH+mnF1RZKheNGqBCbo3Yx7i900hIYJBB
-	5d+1Qb8ulGc7c+U1sYsI7x8o0IpkrlxKfqSEJ/jbpxfE60k5pdMJHNgWVFJMC7iI82GZi2/VkTc
-	eQT
-X-Google-Smtp-Source: AGHT+IHpVprhxqb/fHYDOy9jXjkZxaKctTCYR+JZNVbUZzVArM07katvWL6BbKyJBlyUk/6pUXi38g==
-X-Received: by 2002:a2e:be1e:0:b0:37b:be38:76ab with SMTP id 38308e7fff4ca-37cd92b9ae6mr36695051fa.8.1764271703115;
-        Thu, 27 Nov 2025 11:28:23 -0800 (PST)
+        bh=wUEPJnkiBuZQK3LUealV73M/xL8bSVg1Its+Oao/Qno=;
+        b=vlQ8nu0VFoiYg1RfNXjs85bnGhaSvVPPgBBRSbCWiVx6wavNFrwMI3qpD4mjStWhlK
+         EY0SAgtVBesn6tcCi0EflQ2COaYrSbJfS9H7Y0mJvr6PUKFKAblpTdoRpHvekqAiVXjJ
+         emfpcXJ6QUic0RnXlmP1Eg3fAWB9PwQm9sLDTOTzhghgOU1bbZ9EAT3SI38k8zRaheqP
+         n95CBbbTkbAQl18OjKeYtML+wEZzTn+roFID+ObeVGApOrLYTZhMwtCof0RLdtXD6fCO
+         tK7XJcgWZ+I5AfNekNiSrccdwYX0PgBoR2kf2biYEW3JnpfqkDrKhjhssUtMMCFJGO5S
+         SKTw==
+X-Forwarded-Encrypted: i=1; AJvYcCVdTh2YtsMdWfnR/e8D9NUDQJcxRgPM77y2+tFHRolQ/zIzzzf1+ihIAelzuvVS6KvphOq0Aj0h6bQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfXGqw0GzClDTRn1IseZZHMeqnglBtSNu7lvgrVq5TWhnh8Q7h
+	+vjxRnhusQHbMCROA5gnK+Qg/snxWze9JoGwHzEh/ppjBmFWzypub7HfILzAPXFXasc=
+X-Gm-Gg: ASbGncvJeOPRytovN1ZotdXWs66bpEPBDkJEw/9NWUgVF61qL7Maqm0uJOQgAXd+4rF
+	+juUieP1GkJU0SG4l4hs751ZuMeNkWY0kZTs+09OWzk5pXo58WFiY7EN+Du7wJcN9DUjl+bK4g8
+	12zqw0VaYLvXt+PVprXr+i3uI70OPiAOzkTKlM5m7vV+u8oByqNS4kqdYfiqMMAGoxuFHNLVjzL
+	0aeCv9vGNd8pGWmYj2ha+F8SMb7EN74Vac6Fn4Y1kubeM7wn7upG5Js9UbfaXcP9tfLNqsV6Tbg
+	e1ETmelSuTaSOwMTv21KoNhl8ESlRA+BXe8DhZEsY3c+on0FqAWJFAYpRhv17JLBeTkj/BkQADC
+	rOQ19mOSwxszp0C/+3IStitriwgHGgvKbx49ASfuApxkQ5wcveAZs8qnLr6d8h93b4H++4krKgZ
+	NPGbxn9SuWa6+hdW2e2IPFmdjKZb0dW7Nmdv3ofuHze0dBtTDsgNH1T9gUBSXG7CXQ9A==
+X-Google-Smtp-Source: AGHT+IE5LGOdLf0Y/iYWvojWMY550Bwmp3eJqTkKNZMLAkujkeD1aIWJHItk+jaTtGViyh0dgvqt7g==
+X-Received: by 2002:a05:651c:2583:b0:37a:407d:6359 with SMTP id 38308e7fff4ca-37cdc33f096mr34504321fa.1.1764271726185;
+        Thu, 27 Nov 2025 11:28:46 -0800 (PST)
 Received: from [192.168.1.100] (91-159-24-186.elisa-laajakaista.fi. [91.159.24.186])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-596bfa4406esm620078e87.66.2025.11.27.11.28.22
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-37d236b7e97sm5545551fa.13.2025.11.27.11.28.45
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Nov 2025 11:28:22 -0800 (PST)
-Message-ID: <b3743f6c-6fe2-48c7-b380-76b26e6b93cf@linaro.org>
-Date: Thu, 27 Nov 2025 21:28:21 +0200
+        Thu, 27 Nov 2025 11:28:45 -0800 (PST)
+Message-ID: <132e5d5b-fc90-441a-beef-2774fb7d56ab@linaro.org>
+Date: Thu, 27 Nov 2025 21:28:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -69,8 +68,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 7/8] clk: qcom: gcc-qdu1000: Update the SDCC RCGs to
- use shared_floor_ops
+Subject: Re: [PATCH v2 8/8] clk: qcom: gcc-glymur: Update the SDCC RCGs to use
+ shared_floor_ops
 To: Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
  Bjorn Andersson <andersson@kernel.org>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
@@ -89,9 +88,9 @@ Cc: Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
  Taniya Das <taniya.das@oss.qualcomm.com>, linux-arm-msm@vger.kernel.org,
  linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20251127-sdcc_shared_floor_ops-v2-0-473afc86589c@oss.qualcomm.com>
- <20251127-sdcc_shared_floor_ops-v2-7-473afc86589c@oss.qualcomm.com>
+ <20251127-sdcc_shared_floor_ops-v2-8-473afc86589c@oss.qualcomm.com>
 From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-In-Reply-To: <20251127-sdcc_shared_floor_ops-v2-7-473afc86589c@oss.qualcomm.com>
+In-Reply-To: <20251127-sdcc_shared_floor_ops-v2-8-473afc86589c@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
@@ -101,7 +100,7 @@ On 11/27/25 19:57, Jagadeesh Kona wrote:
 > hardware only when the new parent is enabled, avoiding cases where
 > the RCG configuration fails to update.
 > 
-> Fixes: baa316580013 ("clk: qcom: gcc-qdu1000: Update the SDCC clock RCG ops")
+> Fixes: efe504300a17 ("clk: qcom: gcc: Add support for Global Clock Controller")
 > Signed-off-by: Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>
 
 Reviewed-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
