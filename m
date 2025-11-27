@@ -1,125 +1,70 @@
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C91253148A0
-	for <linux-clk@vger.kernel.org>; Thu, 27 Nov 2025 07:25:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47EA231A07C;
+	Thu, 27 Nov 2025 07:36:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764228321; cv=none; b=TGUdgEO4Gu/ZIfyCC/4aOjY0w1cbDGp0DW1vc9u1TqUiszeKEv0FJYNfH47WiA81vMpoHmmDapi6U2pF7OLVt7WDOqI5kn4ldq4H8yzTfH+/vfGah9H/zJO1F9L6YnqvyLM8oXcZd01gmcCXYI/GE441G+ENrqqE6Mxkh4AGRnM=
+	t=1764228982; cv=none; b=kOXFMUVWDAcc9KeeWXBAsWQUb/yyXvLSVtorGtm98QvdE40FeJ7BC3ZvzQnbYHgo5ds1sJJply/cJuQyaJ1wliMFtJd3CVs16NPMuPE0QhtlpIF5Eq9iimehhI05WJU6xTbG04cWaAyb1jm7E08sTXeAcrSnSSDJ1wGyzMhc2hs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764228321; c=relaxed/simple;
-	bh=n+/fQ/alpef2q01Tg3dUfg5Vy/IgYpSrTAPVea67aQU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RJqkuVbNYTxV5x4Tofzdxc1zXo4VE/4c3qUc3l4IoLf0rrsLRRVJCBlwenf+mmqk5+dVOkO8R8nYKYcIX5a74xWq8+qcyiiSzN9h/Mx5A4PIRqRmT6D/lLZ3mfcOcCtdyNBqpMHZSGukNi7VHXEMuYt11kugnwMdbFRPQZnpafI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=T6sK2G2P; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1764228982; c=relaxed/simple;
+	bh=Vf3bgVUZ6jVpjj6thPrEznvts6kLXfHQzIMa1KX6+xY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ixOdIinyQSMYApXbFCsZd2XfFkngyyIiNz1TZY+VuW16h4FZBZYAgQwY4Wz9ectnb7HceD9hvWkSRg3exeAO5t+xA/ZfMQRnnvKpxCLSIvpDEDltRYKLxM31g+77EucpiqcYwGW2FLxDHp0NTf/4cVWOeM31DDWoYqbNioGBHGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DLtymqOy; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="T6sK2G2P"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id CDBA91A1DB4;
-	Thu, 27 Nov 2025 07:25:16 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 971436068C;
-	Thu, 27 Nov 2025 07:25:16 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 3130D102F2350;
-	Thu, 27 Nov 2025 08:24:57 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1764228314; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=cGqB1dei6ROTkKi8qgP3hn8JoeylozOmIRsBNS04jmU=;
-	b=T6sK2G2PDUeR+pjSQn/B7iQbPsQ8Wcz+0KiAVYYMspcQnDAs6d3DC6Hizs9V61K96ZYwPT
-	MWPQm0b1UsKDIypmCvUtC60JluxrkH+WKfFHqqbOoynx7SceksEsqTI49+W0M3NodmM4Gk
-	u8QmjuPghMy7oJHohjRpIxX1eawQpRih9ZuMPEQ0h0pbd/nsQLpOja/6nFwVznMd0LaPBv
-	3yN/UTBE/8mIG4ZcZxCMsYz+0i+YTYqv3ut760qDTDvCZcBlLg4Ac5kqxAB6N6H2QvWbI+
-	NsIGmEU3Ztxx27d5aIFFgytJFUJqMRidqHtr/wVwJFwxkyeW3sUCTEw15Hzcmg==
-Date: Thu, 27 Nov 2025 08:24:56 +0100
-From: Herve Codina <herve.codina@bootlin.com>
-To: Rob Herring <robh@kernel.org>
-Cc: Matti Vaittinen <mazziesaccount@gmail.com>, Kalle Niemi
- <kaleposti@gmail.com>, Andrew Lunn <andrew@lunn.ch>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, Shawn Guo
- <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix
- Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>, Wolfram Sang
- <wsa+renesas@sang-engineering.com>, Peter Rosin <peda@axentia.se>, Arnd
- Bergmann <arnd@arndb.de>, Saravana Kannan <saravanak@google.com>, Bjorn
- Helgaas <bhelgaas@google.com>, Charles Keepax
- <ckeepax@opensource.cirrus.com>, Richard Fitzgerald
- <rf@opensource.cirrus.com>, David Rhodes <david.rhodes@cirrus.com>, Linus
- Walleij <linus.walleij@linaro.org>, Ulf Hansson <ulf.hansson@linaro.org>,
- Mark Brown <broonie@kernel.org>, Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>, Daniel Scally <djrscally@gmail.com>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>, Sakari Ailus
- <sakari.ailus@linux.intel.com>, Len Brown <lenb@kernel.org>, Davidlohr
- Bueso <dave@stgolabs.net>, Jonathan Cameron <jonathan.cameron@huawei.com>,
- Dave Jiang <dave.jiang@intel.com>, Alison Schofield
- <alison.schofield@intel.com>, Vishal Verma <vishal.l.verma@intel.com>, Ira
- Weiny <ira.weiny@intel.com>, Dan Williams <dan.j.williams@intel.com>, Geert
- Uytterhoeven <geert+renesas@glider.be>, Wolfram Sang <wsa@kernel.org>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org,
- linux-pci@vger.kernel.org, linux-sound@vger.kernel.org,
- patches@opensource.cirrus.com, linux-gpio@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-spi@vger.kernel.org,
- linux-acpi@vger.kernel.org, linux-cxl@vger.kernel.org, Allan Nielsen
- <allan.nielsen@microchip.com>, Horatiu Vultur
- <horatiu.vultur@microchip.com>, Steen Hegelund
- <steen.hegelund@microchip.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v4 01/29] Revert "treewide: Fix probing of devices in DT
- overlays"
-Message-ID: <20251127082456.08542b8c@bootlin.com>
-In-Reply-To: <CAL_JsqKyG98pXGKpL=gxSc92izpzN7YCdq62ZJByhE6aFYs1fw@mail.gmail.com>
-References: <20251015071420.1173068-1-herve.codina@bootlin.com>
-	<20251015071420.1173068-2-herve.codina@bootlin.com>
-	<f74ab0a2-b74b-4b96-8469-a716c850e230@gmail.com>
-	<CAL_JsqJDOYuzutMHMeFAogd5a_OX6Hwi8Gwz1Vy7HpXgNeYKsg@mail.gmail.com>
-	<5cf2a12a-7c66-4622-b4a9-14896c6df005@gmail.com>
-	<CAL_JsqJjm12LxpDg6LmpY=Ro_keHwnrWiYMLVnG=s_pSP4X2WQ@mail.gmail.com>
-	<072dde7c-a53c-4525-83ac-57ea38edc0b5@gmail.com>
-	<CAL_JsqKyG98pXGKpL=gxSc92izpzN7YCdq62ZJByhE6aFYs1fw@mail.gmail.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DLtymqOy"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C8A0C4CEF8;
+	Thu, 27 Nov 2025 07:36:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1764228982;
+	bh=Vf3bgVUZ6jVpjj6thPrEznvts6kLXfHQzIMa1KX6+xY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DLtymqOy+a5GDlbVK/f8cPDWYtf6HR2lm2TtOCXg7RwMzYaMigdHpQzi/zFFh4pj0
+	 KbieLH9YsdKBNzvw3WVb+N6/MdMNZpkHJLSPMDhs6F10kEFTluMrs0SBP7yIoE3ZaD
+	 cGn3nTDaEHy+0D651eajtq/tqSNlV8ZPi6JGdY9ccGYLizHjejU4hJDkzlc2+gcI74
+	 lV51wk0P6FOY8lQCLdiQAsJW5/Xy8u8mK4L/3HyKxkYbDLL/MUEBugZiRQMi3B0FSm
+	 thh0SyLgSlIY7hCnan5wSQq9nQYoB2mzWfLnkUKJNAYR173vVY3Lh7BXaSZrTB3pKA
+	 /QggbLYy5A14g==
+Date: Thu, 27 Nov 2025 08:36:19 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Conor Dooley <conor@kernel.org>
+Cc: linux-kernel@vger.kernel.org, 
+	Conor Dooley <conor.dooley@microchip.com>, Daire McNamara <daire.mcnamara@microchip.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+	linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	Pierre-Henry Moussay <pierre-henry.moussay@microchip.com>
+Subject: Re: [PATCH v2 3/3] dt-bindings: clock: mpfs-clkcfg: Add pic64gx
+ compatibility
+Message-ID: <20251127-accomplished-garnet-earwig-baeeff@kuoka>
+References: <20251121-tartar-drew-ba31c5ec9192@spud>
+ <20251121-unclip-shabby-a7a16e865146@spud>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251121-unclip-shabby-a7a16e865146@spud>
 
-Hi Matti, Rob,
-
-...
-
+On Fri, Nov 21, 2025 at 01:44:02PM +0000, Conor Dooley wrote:
+> From: Pierre-Henry Moussay <pierre-henry.moussay@microchip.com>
 > 
-> Seems to be fw_devlink related. I suppose if you turn it off it works?
-> There's info about the dependencies in sysfs or maybe debugfs. I don't
-> remember the details, but that should help to tell you why things
-> aren't probing.
-
-All available links are available the /sys/class/devlink/ directory [1].
-You can check them to see if each each provider/consumer are correct.
-
-
-Also, for each device you can find suppliers [2] the device depends on and
-consumers of the device in its device directory [3].
-for instance in /sys/bus/platform/devices/foo/ for the foo device.
-
-[1] https://elixir.bootlin.com/linux/v6.18-rc7/source/Documentation/ABI/testing/sysfs-class-devlink
-[2] https://elixir.bootlin.com/linux/v6.18-rc7/source/Documentation/ABI/testing/sysfs-devices-supplier
-[3] https://elixir.bootlin.com/linux/v6.18-rc7/source/Documentation/ABI/testing/sysfs-devices-consumer
-
+> pic64gx has a clock controller compatible with mpfs-clkcfg. Don't permit
+> the deprecated configuration that was never supported for this SoC.
 > 
-> I've dropped the changes for 6.18 for now. No one really seems to be
-> in need of them yet AFAICT.
+> Signed-off-by: Pierre-Henry Moussay <pierre-henry.moussay@microchip.com>
+> Co-developed-by: Conor Dooley <conor.dooley@microchip.com>
+> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+> ---
+>  .../bindings/clock/microchip,mpfs-clkcfg.yaml    | 16 +++++++++++++++-
+>  1 file changed, 15 insertions(+), 1 deletion(-)
+
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
 Best regards,
-Hervé
+Krzysztof
+
