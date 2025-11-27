@@ -1,88 +1,274 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BE5E23AB9D;
-	Wed, 26 Nov 2025 20:05:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8125423B63F
+	for <linux-clk@vger.kernel.org>; Thu, 27 Nov 2025 01:54:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764187520; cv=none; b=Lb1+3quCJL50lhkgBwzYIeuC8Oo2phIHgCTfB/59mHYxlRfxYGK3oLsTKTysD/VxENWrIHm/91C+2ysT1e05bJr+3put5Oz/jHOqzaOfvA3lBKMonVCcUzI0m+0zmOVbNRhMqk01q6WxElJ/IRxjrbb/+c4/bkFCJYBIBoBepEc=
+	t=1764208487; cv=none; b=k4YYWTYCSiv6vs3s9Ai6ZH1tA4pC4J1l1GbvWoTrxdhG36wn2RXtGx+x0DrOz9fVsuMIM/v/1H8F4HYveSu059yJBrbcspb2S1toKq7a3p0WzC1P+hFzGarSPaR4xsb29mJKhOZyHQoffetKpCW8czX0al9JKh38glcoGUlle7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764187520; c=relaxed/simple;
-	bh=lTxE64UghqbjCwYBFbTZVg1XETR3oqEJqhAJgQ3oMN8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PUzSSpMSHfZX9StrOk5BbQU13qtTzaPZeu94KKdk5+RfVHCkrRgZm3jkjbW3inl0IKp6i86an9IJsHGC+TYQW1YVHoin2dnxGc34cjwGbvfVCW0WULTKOQ+kdYSSMZqMISKtWqv1l5OU2YAGUV8gg5u1OkVO7+lLIRdIU/C80bU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FdpMkULu; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1764208487; c=relaxed/simple;
+	bh=f0EdgUznNZO54LZecInfA4y5+ELOv8o96l9SDsv2F0k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uocZ5L3VRbbeiYTgxpgL4nP3FfArnDnMT7+EvYGbCh6sJROul3ns2OEmAoSjw+TSyVXAkq1gzQEiosfn/Ruhdp0d8DadGWD0Lq/aGwsEej57Wh0LUuHxJeVf2SYRcy3jqjzkotPvVK+5aWKeHTR2AaSuwBJH2qSosP6GiIvr18g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nj3THp1r; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FdpMkULu"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E77D0C4CEF7;
-	Wed, 26 Nov 2025 20:05:17 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nj3THp1r"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36721C2BC87
+	for <linux-clk@vger.kernel.org>; Thu, 27 Nov 2025 01:54:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1764187519;
-	bh=lTxE64UghqbjCwYBFbTZVg1XETR3oqEJqhAJgQ3oMN8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=FdpMkULuaV+5iHWUmteQ/gSJGPOTqqnOzPFz7tLrIe2+zjKJ5MOpkOwEf6hZO/zMK
-	 Qa5AbjjUpRUcA2IjYh7nYs7fWi9Y2FTAT61jTJ7VSyg72pesa97vEkr0vWzFeOB/yh
-	 8qczpawhm09RG58dOf0F3FmxQ9H2LG3kCrWS4ghieOLABj7VQBiYG5U7+Fz7FpzNq7
-	 vxqmak2p/2QNCueaaFxlh8Ap+zZqK2CRePMrJOn6oeTzUpaotSn/a5xLGhN6b/fFJ/
-	 60g16DAVvEk5CHy5vD+rmPVUgr3jAkB3D1pDmWoB21llElEsWOLrwonnitN5fmPPWQ
-	 oeoXbb545MAwg==
-From: Bjorn Andersson <andersson@kernel.org>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Johan Hovold <johan+linaro@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Vinod Koul <vkoul@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Taniya Das <quic_tdas@quicinc.com>,
-	Imran Shaik <quic_imrashai@quicinc.com>,
-	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-	Jagadeesh Kona <quic_jkona@quicinc.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Konrad Dybcio <konradybcio@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Subject: Re: (subset) [PATCH 0/5] Define VDD_MXC for SC8280XP
-Date: Wed, 26 Nov 2025 14:10:41 -0600
-Message-ID: <176418784438.1591314.8587929353938909456.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251104-topic-8280_mxc-v1-0-df545af0ef94@oss.qualcomm.com>
-References: <20251104-topic-8280_mxc-v1-0-df545af0ef94@oss.qualcomm.com>
+	s=k20201202; t=1764208487;
+	bh=f0EdgUznNZO54LZecInfA4y5+ELOv8o96l9SDsv2F0k=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=nj3THp1rcpdtkT3yeXdFSYqGpgv4f9R30RUyhSfbiRBL5j4fSFBJGV9VaWkwF3qsG
+	 zjwZicy5NFkSmZ+nh5sUNhme+2Du/zWh08fMSK9ccFupeg1GTOvgOKD8KZFDah6CUJ
+	 6HALQe+7g7tX2MuM8bLQMVGhbivIOnMTmyMqFWkDrQ0K9xX85qs+Bk0VT0YJLuIl0n
+	 B1HnKUGG/X1C0TBEVeSMLOB5qS2VjlhqolPOeEU3DGPUvW5cxrrsVID7XRsdVMMHfv
+	 h7dSQtqgellJgUSuYj5mjpBSeqjWtGSXBa6sTkOGztkNJu25mxLtzN7zIXmdh+tHvw
+	 N2CFz124qpgKg==
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-644fcafdce9so705164a12.1
+        for <linux-clk@vger.kernel.org>; Wed, 26 Nov 2025 17:54:47 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWyNlPqtlw2R22/020tumF+MpLd7LESbO9HyaNn9I3/lb5DwqtAYB4PJMzmZWdgFT+/+nTN1evT57w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzrVfuG7suZbX84LST4qBGo4Qzu9WlPTYorh0rbu6carDDiHuxf
+	Hgtl5oDQNskhQgFU5tKUEGn+9aUXKrYmsMb9fPIlxgpq9qxZGnD3SUtgnYHS36wAUeluilftwpI
+	2hL+tyD3ndOKNtDABrQ08HYSeigEuCQ==
+X-Google-Smtp-Source: AGHT+IEKWFjQTeH/gw4l8j+96xvyDrFErJSXFFFwjwYJm2zw06q8mwVDlJH1+0djMgauaqAXyS9qMnoqGjEF33qExow=
+X-Received: by 2002:a05:6402:2803:b0:634:ce70:7c5 with SMTP id
+ 4fb4d7f45d1cf-645eb2b8003mr8895933a12.17.1764208485058; Wed, 26 Nov 2025
+ 17:54:45 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20251015071420.1173068-1-herve.codina@bootlin.com>
+ <20251015071420.1173068-2-herve.codina@bootlin.com> <f74ab0a2-b74b-4b96-8469-a716c850e230@gmail.com>
+ <CAL_JsqJDOYuzutMHMeFAogd5a_OX6Hwi8Gwz1Vy7HpXgNeYKsg@mail.gmail.com>
+ <5cf2a12a-7c66-4622-b4a9-14896c6df005@gmail.com> <CAL_JsqJjm12LxpDg6LmpY=Ro_keHwnrWiYMLVnG=s_pSP4X2WQ@mail.gmail.com>
+ <072dde7c-a53c-4525-83ac-57ea38edc0b5@gmail.com>
+In-Reply-To: <072dde7c-a53c-4525-83ac-57ea38edc0b5@gmail.com>
+From: Rob Herring <robh@kernel.org>
+Date: Wed, 26 Nov 2025 19:54:33 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqKyG98pXGKpL=gxSc92izpzN7YCdq62ZJByhE6aFYs1fw@mail.gmail.com>
+X-Gm-Features: AWmQ_bmOuLhKUl5W5zrcj5AQOjs5kC_X5Om5_otgYtq0JTdMygrEymDVT57WU48
+Message-ID: <CAL_JsqKyG98pXGKpL=gxSc92izpzN7YCdq62ZJByhE6aFYs1fw@mail.gmail.com>
+Subject: Re: [PATCH v4 01/29] Revert "treewide: Fix probing of devices in DT overlays"
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Kalle Niemi <kaleposti@gmail.com>, Herve Codina <herve.codina@bootlin.com>, 
+	Andrew Lunn <andrew@lunn.ch>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>, 
+	Wolfram Sang <wsa+renesas@sang-engineering.com>, Peter Rosin <peda@axentia.se>, 
+	Arnd Bergmann <arnd@arndb.de>, Saravana Kannan <saravanak@google.com>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Charles Keepax <ckeepax@opensource.cirrus.com>, 
+	Richard Fitzgerald <rf@opensource.cirrus.com>, David Rhodes <david.rhodes@cirrus.com>, 
+	Linus Walleij <linus.walleij@linaro.org>, Ulf Hansson <ulf.hansson@linaro.org>, 
+	Mark Brown <broonie@kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Daniel Scally <djrscally@gmail.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, Len Brown <lenb@kernel.org>, 
+	Davidlohr Bueso <dave@stgolabs.net>, Jonathan Cameron <jonathan.cameron@huawei.com>, 
+	Dave Jiang <dave.jiang@intel.com>, Alison Schofield <alison.schofield@intel.com>, 
+	Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
+	Dan Williams <dan.j.williams@intel.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Wolfram Sang <wsa@kernel.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org, 
+	linux-pci@vger.kernel.org, linux-sound@vger.kernel.org, 
+	patches@opensource.cirrus.com, linux-gpio@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linux-spi@vger.kernel.org, 
+	linux-acpi@vger.kernel.org, linux-cxl@vger.kernel.org, 
+	Allan Nielsen <allan.nielsen@microchip.com>, Horatiu Vultur <horatiu.vultur@microchip.com>, 
+	Steen Hegelund <steen.hegelund@microchip.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Nov 25, 2025 at 12:43=E2=80=AFAM Matti Vaittinen
+<mazziesaccount@gmail.com> wrote:
+>
+> On 24/11/2025 19:01, Rob Herring wrote:
+> > On Mon, Nov 24, 2025 at 10:44=E2=80=AFAM Kalle Niemi <kaleposti@gmail.c=
+om> wrote:
+> >>
+> >>
+> >> On 11/24/25 16:53, Rob Herring wrote:
+> >>> On Mon, Nov 24, 2025 at 8:48=E2=80=AFAM Kalle Niemi <kaleposti@gmail.=
+com> wrote:
+> >>>> On 10/15/25 10:13, Herve Codina wrote:
+> >>>>> From: Saravana Kannan <saravanak@google.com>
+> >>>>>
+> >>>>> This reverts commit 1a50d9403fb90cbe4dea0ec9fd0351d2ecbd8924.
+> >>>>>
+> >>>>> While the commit fixed fw_devlink overlay handling for one case, it
+> >>>>> broke it for another case. So revert it and redo the fix in a separ=
+ate
+> >>>>> patch.
+> >>>>>
+> >>>>> Fixes: 1a50d9403fb9 ("treewide: Fix probing of devices in DT overla=
+ys")
+> >>>>> Reported-by: Herve Codina <herve.codina@bootlin.com>
+> >>>>> Closes: https://lore.kernel.org/lkml/CAMuHMdXEnSD4rRJ-o90x4OprUacN_=
+rJgyo8x6=3D9F9rZ+-KzjOg@mail.gmail.com/
+> >>>>> Closes: https://lore.kernel.org/all/20240221095137.616d2aaa@bootlin=
+.com/
+> >>>>> Closes: https://lore.kernel.org/lkml/20240312151835.29ef62a0@bootli=
+n.com/
+> >>>>> Signed-off-by: Saravana Kannan <saravanak@google.com>
+> >>>>> Link: https://lore.kernel.org/lkml/20240411235623.1260061-2-saravan=
+ak@google.com/
+> >>>>> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+> >>>>> Acked-by: Mark Brown <broonie@kernel.org>
+> >>>>> ---
+> >>>>>     drivers/bus/imx-weim.c    | 6 ------
+> >>>>>     drivers/i2c/i2c-core-of.c | 5 -----
+> >>>>>     drivers/of/dynamic.c      | 1 -
+> >>>>>     drivers/of/platform.c     | 5 -----
+> >>>>>     drivers/spi/spi.c         | 5 -----
+> >>>>>     5 files changed, 22 deletions(-)
+> >>>>>
+> >>>>> diff --git a/drivers/bus/imx-weim.c b/drivers/bus/imx-weim.c
+> >>>>> index 83d623d97f5f..87070155b057 100644
+> >>>>> --- a/drivers/bus/imx-weim.c
+> >>>>> +++ b/drivers/bus/imx-weim.c
+> >>>>> @@ -327,12 +327,6 @@ static int of_weim_notify(struct notifier_bloc=
+k *nb, unsigned long action,
+> >>>>>                                  "Failed to setup timing for '%pOF'=
+\n", rd->dn);
+> >>>>>
+> >>>>>                 if (!of_node_check_flag(rd->dn, OF_POPULATED)) {
+> >>>>> -                     /*
+> >>>>> -                      * Clear the flag before adding the device so=
+ that
+> >>>>> -                      * fw_devlink doesn't skip adding consumers t=
+o this
+> >>>>> -                      * device.
+> >>>>> -                      */
+> >>>>> -                     rd->dn->fwnode.flags &=3D ~FWNODE_FLAG_NOT_DE=
+VICE;
+> >>>>>                         if (!of_platform_device_create(rd->dn, NULL=
+, &pdev->dev)) {
+> >>>>>                                 dev_err(&pdev->dev,
+> >>>>>                                         "Failed to create child dev=
+ice '%pOF'\n",
+> >>>>> diff --git a/drivers/i2c/i2c-core-of.c b/drivers/i2c/i2c-core-of.c
+> >>>>> index eb7fb202355f..30b48a428c0b 100644
+> >>>>> --- a/drivers/i2c/i2c-core-of.c
+> >>>>> +++ b/drivers/i2c/i2c-core-of.c
+> >>>>> @@ -176,11 +176,6 @@ static int of_i2c_notify(struct notifier_block=
+ *nb, unsigned long action,
+> >>>>>                         return NOTIFY_OK;
+> >>>>>                 }
+> >>>>>
+> >>>>> -             /*
+> >>>>> -              * Clear the flag before adding the device so that fw=
+_devlink
+> >>>>> -              * doesn't skip adding consumers to this device.
+> >>>>> -              */
+> >>>>> -             rd->dn->fwnode.flags &=3D ~FWNODE_FLAG_NOT_DEVICE;
+> >>>>>                 client =3D of_i2c_register_device(adap, rd->dn);
+> >>>>>                 if (IS_ERR(client)) {
+> >>>>>                         dev_err(&adap->dev, "failed to create clien=
+t for '%pOF'\n",
+> >>>>> diff --git a/drivers/of/dynamic.c b/drivers/of/dynamic.c
+> >>>>> index 2eaaddcb0ec4..b5be7484fb36 100644
+> >>>>> --- a/drivers/of/dynamic.c
+> >>>>> +++ b/drivers/of/dynamic.c
+> >>>>> @@ -225,7 +225,6 @@ static void __of_attach_node(struct device_node=
+ *np)
+> >>>>>         np->sibling =3D np->parent->child;
+> >>>>>         np->parent->child =3D np;
+> >>>>>         of_node_clear_flag(np, OF_DETACHED);
+> >>>>> -     np->fwnode.flags |=3D FWNODE_FLAG_NOT_DEVICE;
+> >>>>>
+> >>>>>         raw_spin_unlock_irqrestore(&devtree_lock, flags);
+> >>>>>
+> >>>>> diff --git a/drivers/of/platform.c b/drivers/of/platform.c
+> >>>>> index f77cb19973a5..ef9445ba168b 100644
+> >>>>> --- a/drivers/of/platform.c
+> >>>>> +++ b/drivers/of/platform.c
+> >>>>> @@ -739,11 +739,6 @@ static int of_platform_notify(struct notifier_=
+block *nb,
+> >>>>>                 if (of_node_check_flag(rd->dn, OF_POPULATED))
+> >>>>>                         return NOTIFY_OK;
+> >>>>>
+> >>>>> -             /*
+> >>>>> -              * Clear the flag before adding the device so that fw=
+_devlink
+> >>>>> -              * doesn't skip adding consumers to this device.
+> >>>>> -              */
+> >>>>> -             rd->dn->fwnode.flags &=3D ~FWNODE_FLAG_NOT_DEVICE;
+> >>>>>                 /* pdev_parent may be NULL when no bus platform dev=
+ice */
+> >>>>>                 pdev_parent =3D of_find_device_by_node(parent);
+> >>>>>                 pdev =3D of_platform_device_create(rd->dn, NULL,
+> >>>>> diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
+> >>>>> index 2e0647a06890..b22944a207c9 100644
+> >>>>> --- a/drivers/spi/spi.c
+> >>>>> +++ b/drivers/spi/spi.c
+> >>>>> @@ -4791,11 +4791,6 @@ static int of_spi_notify(struct notifier_blo=
+ck *nb, unsigned long action,
+> >>>>>                         return NOTIFY_OK;
+> >>>>>                 }
+> >>>>>
+> >>>>> -             /*
+> >>>>> -              * Clear the flag before adding the device so that fw=
+_devlink
+> >>>>> -              * doesn't skip adding consumers to this device.
+> >>>>> -              */
+> >>>>> -             rd->dn->fwnode.flags &=3D ~FWNODE_FLAG_NOT_DEVICE;
+> >>>>>                 spi =3D of_register_spi_device(ctlr, rd->dn);
+> >>>>>                 put_device(&ctlr->dev);
+> >>>>>
+> >>>> Sorry, some of you will receive this message now for second time. Fi=
+rst
+> >>>> message was sent to older series of patches.
+> >>>> -
+> >>>>
+> >>>> Hello,
+> >>>>
+> >>>> Test system testing drivers for ROHM ICs bisected this commit to cau=
+se
+> >>>> BD71847 drivers probe to not be called.
+> >>> This driver (and overlay support) is in linux-next or something out o=
+f
+> >>> tree on top of linux-next?
+> >>>
+> >>> Rob
+> >>
+> >> Yes the driver is in mainline linux: /drivers/mfd/rohm-bd718x7.c
+> >
+> > I don't see any support to apply overlays in that driver.
+>
+> Ah. Sorry for the confusion peeps. I asked Kalle to report this without
+> proper consideration. 100% my bad.
+>
+> While the bd718x7 drive indeed is mainline (and tested), the actual
+> 'glue-code' doing the overlay is part of the downstream test
+> infrastructure. So yes, this is not a bug in upstream kernel - this
+> falls in the category of an upstream change causing downstream things to
+> break. So, feel free to say: "Go fix your code" :)
+>
+> Now that this is sorted, if someone is still interested in helping us to
+> get our upstream drivers tested - the downstream piece is just taking
+> the compiled device-tree overlay at runtime (via bin-attribute file),
+> and applying it using the of_overlay_fdt_apply(). The approach is
+> working for our testing purposes when the device is added to I2C/SPI
+> node which is already enabled. However, in case where we have the I2C
+> disabled, and enable it in the same overlay where we add the new device
+> - then the new device does not get probed.
+>
+> I would be really grateful if someone had a pointer for us.
 
-On Tue, 04 Nov 2025 20:31:05 +0100, Konrad Dybcio wrote:
-> This has somehow been omitted, leading to potentially stale votes.
-> On the flip side, the domain will now be powered off, which will
-> uncover any omissions we've made in the DTs so far.
-> 
-> Reasonably tested on an x13s without pd_ignore_unused (camera still
-> works).
-> 
-> [...]
+Seems to be fw_devlink related. I suppose if you turn it off it works?
+There's info about the dependencies in sysfs or maybe debugfs. I don't
+remember the details, but that should help to tell you why things
+aren't probing.
 
-Applied, thanks!
+I've dropped the changes for 6.18 for now. No one really seems to be
+in need of them yet AFAICT.
 
-[2/5] dt-bindings: remoteproc: qcom,sc8280xp-pas: Fix CDSP power desc
-      commit: ca079ec3ebed19a12c1bf080496dacbc6fdfbb39
-
-Best regards,
--- 
-Bjorn Andersson <andersson@kernel.org>
+Rob
