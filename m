@@ -1,44 +1,45 @@
-Received: from sender4-pp-o94.zoho.com (sender4-pp-o94.zoho.com [136.143.188.94])
+Received: from sender4-pp-o92.zoho.com (sender4-pp-o92.zoho.com [136.143.188.92])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FB8E322740;
-	Thu, 27 Nov 2025 12:46:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.94
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BB5B21A425;
+	Thu, 27 Nov 2025 12:46:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.92
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764247586; cv=pass; b=O4FmXb1VQ+9NVQIV9Cde3vyroF7ODShyOKyWHd2c0Iex1Yb4EJF4TPQ6z0OF0JfvPJyEKB8Zkp50J7e9YR7pJCRT7JlYByLFTTYLRzRHSpx5UiS+1UuJPJvaWlo0PDPWyv7uQSECChOvw4vBMlsFKCoOUY1t07/t2asHifuRZ/U=
+	t=1764247598; cv=pass; b=ozRWwupQ3gf0z5MfgSGFDROjcVx6WUlKJmu9boPueKlIvKXNAYmunB2YNuVdZjCTyiXOMTLQLuHJqS/y4QI4V483eMrjm8HzrmTNaXrKniTMRN5T4e52cWOehpdMKuhgjVsUKZM8oRr620tfihjNI9NAePEOwBFnTxHElnl9RfI=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764247586; c=relaxed/simple;
-	bh=18Dhal977Xmwknb3xBdip/dbrRrTGk098g/AdOl5gls=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=rO5rWK7E7Z6slbYs+6QjuTt8OsPqRqXKf73NIrcEUHYFHdne9UMIO/Q/DIzlstshpsrbVW+ZvheBr9QYnwJx1V1DHWKGPWmG3sa+bN2lF3wvqaNb1iktI7nPNVrzK2+3YBL4LNUvPXqaSzGncTqCCn275ggw7iBtoa3JHKUr6R8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b=e66g7TbH; arc=pass smtp.client-ip=136.143.188.94
+	s=arc-20240116; t=1764247598; c=relaxed/simple;
+	bh=lbKRziVfsjtA8WC7Y6rn/rEpi5lGnT8SCQy5U9RWaeY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=TQr2GsmYa7pvOuS02DLZiv5zjFYizRqZ/iNxs1Moaz2WnS19vXj5LMV68oJwvgcJ2PqyN+2dmT8HR0lBTbXAhJZSRUR8sRsi3lt1dgytsuPspdg5rHiOrWopJMQbDXU53pDuclYtIIelhTZgxJRRCcvjjXoRvDZcupcBJlkTPkE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b=db6jQ4CT; arc=pass smtp.client-ip=136.143.188.92
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b="e66g7TbH"
-ARC-Seal: i=1; a=rsa-sha256; t=1764247565; cv=none; 
+	dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b="db6jQ4CT"
+ARC-Seal: i=1; a=rsa-sha256; t=1764247573; cv=none; 
 	d=zohomail.com; s=zohoarc; 
-	b=JESzzDfGOZy6aZqd4bURzpua+9ymDdAqzzfWWlTh+TQcfD87SOrve9cVdzQk6HI/90m0yJ9RQdo5+80bFa9PbnZC0M8SFDsgdQjvMQHNOmVatSkuAg54slABxDMyQa/tHx5wmgs6PzBOza5uZjidg6TROY3sOZK2QQ8rB0KuS6s=
+	b=F5ZL624ezfAxKP21esQ4iTeXQWjH1unRazOrlIlkEv9MhgDtB7AgcInENOaYujL0YZYGUIMgaizYVyuL4JrKx2Yuzq+/cn8JfYzSQgDxgduMUFom2b7nGdNGg8LnseXY513Pqy1sasud5vNrClsIKZCO4FHfTVgPftAdiwFHOTQ=
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1764247565; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=nxDBEEqL4g4VirocVWRXAnnxRsvrtk7ndIXWLF93kSQ=; 
-	b=R70nNi3b86pw3P84txLh3ZjR/iZyao3at4n97OfURlC8ov7ezh+PCEqR46lPiiCNbnX5AKWFcIJCz4M0DP0AtZ2PzsU++79TfYwOXQxO+3gJ0Qt/O/jBCkVwaL/8ClVwo8TmAWg5wTdXamU+r0zGYoVh2bgXP17PVmfFyO36mqU=
+	t=1764247573; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=o1ALM6XM486w04Z1UxxQk0r189yjWApiMJbyzXOALFM=; 
+	b=BfS7C16zY80Af+eSHtlBLdL01RAtN3Z+6NKMRfetPZlK+ztpAnbWTMwGNJph3JuqoCd1kRrhr9ScWJd8+cpIaWQNuyqXuoYC+22kRlCHgxHSEJOpWTga5HKSmzCVmkTKXCt9rxhFqiOSCoXVsnfFSwSqj1NPMXKbE+nwwHvgXQ4=
 ARC-Authentication-Results: i=1; mx.zohomail.com;
 	dkim=pass  header.i=zohomail.com;
 	spf=pass  smtp.mailfrom=kingxukai@zohomail.com;
 	dmarc=pass header.from=<kingxukai@zohomail.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1764247565;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1764247573;
 	s=zm2022; d=zohomail.com; i=kingxukai@zohomail.com;
-	h=From:From:Subject:Subject:Date:Date:Message-Id:Message-Id:MIME-Version:Content-Type:Content-Transfer-Encoding:To:To:Cc:Cc:Feedback-ID:Reply-To;
-	bh=nxDBEEqL4g4VirocVWRXAnnxRsvrtk7ndIXWLF93kSQ=;
-	b=e66g7TbHqg9LD/NNhzeDYC57Y3QSbozYWy7pOKzls09mgk2G5/iislKEeJqlkw1Z
-	DIbUSSj8r9Z4azPk6NZeeVDRKJZF3KR90tCocES/YQFY2V6GZxfxkuARyl8WfUNJxHS
-	7UVLkNNTunlMv2LbGJg4pRi5LZp8f8d1jWyP5Y1w=
-Received: by mx.zohomail.com with SMTPS id 1764247558426698.0114947283038;
-	Thu, 27 Nov 2025 04:45:58 -0800 (PST)
+	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:References:In-Reply-To:To:To:Cc:Cc:Feedback-ID:Reply-To;
+	bh=o1ALM6XM486w04Z1UxxQk0r189yjWApiMJbyzXOALFM=;
+	b=db6jQ4CTB83Pk8XiCEKbzRXn5HBtjK9o82p/r98ttyf5qHjQA6XIRCutFeIqOcPn
+	4DKl1ZReFLayCT9G8V9qQHwMfBwtksHsR1PgwKjR/1voV0QDHmf+4+KddlhrWSThNTg
+	xu+ctw3gH4chDs4ZCVvetvdKnpdgyZXT24oFrSWU=
+Received: by mx.zohomail.com with SMTPS id 1764247572458276.9348674643637;
+	Thu, 27 Nov 2025 04:46:12 -0800 (PST)
 From: Xukai Wang <kingxukai@zohomail.com>
-Subject: [PATCH v9 0/3] riscv: canaan: Add support for K230 clock
-Date: Thu, 27 Nov 2025 20:45:11 +0800
-Message-Id: <20251127-b4-k230-clk-v9-0-3aa09e17faf5@zohomail.com>
+Date: Thu, 27 Nov 2025 20:45:12 +0800
+Subject: [PATCH v9 1/3] dt-bindings: clock: Add bindings for Canaan K230
+ clock controller
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -47,15 +48,9 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIANdHKGkC/3XSwY7TMBAG4FepcibInrE9dk+8B+IwnrFptNsNJ
- KUCVn13nC6omzbkFEf5/P9j+bWbyzSUudvvXrupnId5GF/aIn3YdXLgl6+lH7StOzDgLJjQZ9c
- /AZpenp/6BL4i1qJBoGvi21Tq8PO62+cvb+upfP/RNj29fewyz6WX8XgcTvsdcgzBRIoRU2XW7
- KrloEogaCmJ1eoDRbpuzSc5tC77nRZlFEdQTXtqVWdEG5IaFLMvoKRMKt3S4DDMp3H6dR3vjNc
- Kfyeh1SRn7NtLbqnexliIPv0eD+ORh+ePre1SoDFvLMAjy7WS9yxJqmwzMPjIMIBQsuA8wZotx
- c/uXVnr1tw1bsUk4ZDRRf5PqqVH5jl5RudjSHYj1b5LhbTmtnEAy8lSiaboBod/vB2ViWsOC6e
- MhkHYwxb3N473R+YbJxe1nQZELLg9M4J5ZKYkNTGJdzFupIZbqrN+zcOSWjWm6oDaDxucbpzwL
- p2WW+Wp3cvsEypu8Hjjydylx8ZTEGYD6h3cl79cLn8A+YabncADAAA=
-X-Change-ID: 20241206-b4-k230-clk-925f33fed6c2
+Message-Id: <20251127-b4-k230-clk-v9-1-3aa09e17faf5@zohomail.com>
+References: <20251127-b4-k230-clk-v9-0-3aa09e17faf5@zohomail.com>
+In-Reply-To: <20251127-b4-k230-clk-v9-0-3aa09e17faf5@zohomail.com>
 To: Michael Turquette <mturquette@baylibre.com>, 
  Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -69,110 +64,314 @@ Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
  Troy Mitchell <TroyMitchell988@gmail.com>, 
  Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.14.2
-Feedback-ID: rr080112275137b47f9fe87b720e69e43d0000ac17810c5ca7f3589f5df4d255e6a5b63649fd3806ee8255e4:zu080112275cfac5b82118babda42883340000feb6cbaeeb6aefb5b33c46c4787000cdae37d2a68a728da2fc:rf0801122df1bde403032e47e4f376316c0000858aceec9cc1984ed006ed57e37d2162c22e2639bde8a850db6dc396023f2e:ZohoMail
+Feedback-ID: rr08011227ba30e43282d2ffcc79b9ba8700005ec235866b31a29b74fa50b30b381517e079a89d03ae5ffadd:zu08011227b46cbb5f6d03b4d58ae057160000f7cfafbc88adf9a580eddc8cbab82b2c6ae866aa47dd5b9434:rf0801122c8510b546a328821c502b2b030000db076ef64d19816a0dc1d95cc15eff0f3206ae43e8f2ce3dc6ef376f7659:ZohoMail
 X-ZohoMailClient: External
 
-This patch series adds clock controller support for the Canaan Kendryte
-K230 SoC. The K230 SoC includes an external 24MHz OSC, 4 internal
-PLLs and an external pulse input, with the controller managing these
-sources and their derived clocks.
+This patch adds the Device Tree binding for the clock controller
+on Canaan k230. The binding defines the clocks and the required
+properties to configure them correctly.
 
-The clock tree and hardware-specific definition can be found in the
-vendor's DTS [1],
-and this series is based on the K230 initial series [2].
-
-Link: https://github.com/ruyisdk/linux-xuantie-kernel/blob/linux-6.6.36/arch/riscv/boot/dts/canaan/k230_clock_provider.dtsi [1]
-Link: https://lore.kernel.org/linux-clk/tencent_F76EB8D731C521C18D5D7C4F8229DAA58E08@qq.com/ [2]
-
-Co-developed-by: Troy Mitchell <TroyMitchell988@gmail.com>
-Signed-off-by: Troy Mitchell <TroyMitchell988@gmail.com>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Signed-off-by: Xukai Wang <kingxukai@zohomail.com>
-
 ---
-Changes in v9:
-- Rebase base-commit to v6.18-rc1
-- Simplified PLL field extraction with FIELD_GET() macro
-- Drop MODULE_DEVICE_TABLE for k230_clk_ids
-- Replace k230_clk_find_approximate_mul_div's step with
-  Rational_best_approximation
-- Reorder declaration and defination for clk_ops
-- Link to v8: https://lore.kernel.org/r/20250905-b4-k230-clk-v8-0-96caa02d5428@zohomail.com
+ .../devicetree/bindings/clock/canaan,k230-clk.yaml |  59 ++++++
+ include/dt-bindings/clock/canaan,k230-clk.h        | 222 +++++++++++++++++++++
+ 2 files changed, 281 insertions(+)
 
-Changes in v8:
-- Rename dts node name "timer_pulse_in" to "clock-50m"
-- Drop redundant comment and 'minItems' of hardware in dt-binding.
-- Link to v7: https://lore.kernel.org/r/20250730-b4-k230-clk-v7-0-c57d3bb593d3@zohomail.com
+diff --git a/Documentation/devicetree/bindings/clock/canaan,k230-clk.yaml b/Documentation/devicetree/bindings/clock/canaan,k230-clk.yaml
+new file mode 100644
+index 0000000000000000000000000000000000000000..34c93cb5db400c7db0a7ede2ef79d340354f150c
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/canaan,k230-clk.yaml
+@@ -0,0 +1,59 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/canaan,k230-clk.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Canaan Kendryte K230 Clock
++
++maintainers:
++  - Xukai Wang <kingxukai@zohomail.com>
++
++description:
++  The Canaan K230 clock controller generates various clocks for SoC
++  peripherals. See include/dt-bindings/clock/canaan,k230-clk.h for
++  valid clock IDs.
++
++properties:
++  compatible:
++    const: canaan,k230-clk
++
++  reg:
++    items:
++      - description: PLL control registers
++      - description: Sysclk control registers
++
++  clocks:
++    items:
++      - description: Main external reference clock
++      - description:
++          External clock which used as the pulse input
++          for the timer to provide timing signals.
++
++  clock-names:
++    items:
++      - const: osc24m
++      - const: timer-pulse-in
++
++  '#clock-cells':
++    const: 1
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - clock-names
++  - '#clock-cells'
++
++additionalProperties: false
++
++examples:
++  - |
++    clock-controller@91102000 {
++        compatible = "canaan,k230-clk";
++        reg = <0x91102000 0x40>,
++              <0x91100000 0x108>;
++        clocks = <&osc24m>, <&timerx_pulse_in>;
++        clock-names = "osc24m", "timer-pulse-in";
++        #clock-cells = <1>;
++    };
+diff --git a/include/dt-bindings/clock/canaan,k230-clk.h b/include/dt-bindings/clock/canaan,k230-clk.h
+new file mode 100644
+index 0000000000000000000000000000000000000000..799f8af855da8554eed30ae7ca450d75362646e4
+--- /dev/null
++++ b/include/dt-bindings/clock/canaan,k230-clk.h
+@@ -0,0 +1,222 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
++/*
++ * Kendryte Canaan K230 Clock Drivers
++ *
++ * Author: Xukai Wang <kingxukai@zohomail.com>
++ */
++
++#ifndef __DT_BINDINGS_CANAAN_K230_CLOCK_H__
++#define __DT_BINDINGS_CANAAN_K230_CLOCK_H__
++
++#define K230_CPU0_SRC_GATE			0
++#define K230_CPU0_PLIC_GATE			1
++#define K230_CPU0_NOC_DDRCP4_GATE		2
++#define K230_CPU0_APB_GATE			3
++#define K230_CPU0_SRC_RATE			4
++#define K230_CPU0_AXI_RATE			5
++#define K230_CPU0_PLIC_RATE			6
++#define K230_CPU0_APB_RATE			7
++#define K230_HS_OSPI_SRC_MUX			8
++#define K230_HS_USB_REF_MUX			9
++#define K230_HS_HCLK_HIGH_GATE			10
++#define K230_HS_HCLK_SRC_GATE			11
++#define K230_HS_SD0_AHB_GATE			12
++#define K230_HS_SD1_AHB_GATE			13
++#define K230_HS_SSI1_AHB_GATE			14
++#define K230_HS_SSI2_AHB_GATE			15
++#define K230_HS_USB0_AHB_GATE			16
++#define K230_HS_USB1_AHB_GATE			17
++#define K230_HS_SSI0_AXI_GATE			18
++#define K230_HS_SSI1_GATE			19
++#define K230_HS_SSI2_GATE			20
++#define K230_HS_QSPI_AXI_SRC_GATE		21
++#define K230_HS_SSI1_AXI_GATE			22
++#define K230_HS_SSI2_AXI_GATE			23
++#define K230_HS_SD_CARD_SRC_GATE		24
++#define K230_HS_SD0_CARD_GATE			25
++#define K230_HS_SD1_CARD_GATE			26
++#define K230_HS_SD_AXI_SRC_GATE			27
++#define K230_HS_SD0_AXI_GATE			28
++#define K230_HS_SD1_AXI_GATE			29
++#define K230_HS_SD0_BASE_GATE			30
++#define K230_HS_SD1_BASE_GATE			31
++#define K230_HS_OSPI_SRC_GATE			32
++#define K230_HS_SD_TIMER_SRC_GATE		33
++#define K230_HS_SD0_TIMER_GATE			34
++#define K230_HS_SD1_TIMER_GATE			35
++#define K230_HS_USB0_REF_GATE			36
++#define K230_HS_USB1_REF_GATE			37
++#define K230_HS_HCLK_HIGH_SRC_RATE		38
++#define K230_HS_HCLK_SRC_RATE			39
++#define K230_HS_SSI0_AXI_RATE			40
++#define K230_HS_SSI1_RATE			41
++#define K230_HS_SSI2_RATE			42
++#define K230_HS_QSPI_AXI_SRC_RATE		43
++#define K230_HS_SD_CARD_SRC_RATE		44
++#define K230_HS_SD_AXI_SRC_RATE			45
++#define K230_HS_USB_REF_50M_RATE		46
++#define K230_HS_SD_TIMER_SRC_RATE		47
++#define K230_TIMER0_MUX				48
++#define K230_TIMER1_MUX				49
++#define K230_TIMER2_MUX				50
++#define K230_TIMER3_MUX				51
++#define K230_TIMER4_MUX				52
++#define K230_TIMER5_MUX				53
++#define K230_SHRM_SRAM_MUX			54
++#define K230_DDRC_SRC_MUX			55
++#define K230_AI_SRC_MUX				56
++#define K230_CAMERA0_MUX			57
++#define K230_CAMERA1_MUX			58
++#define K230_CAMERA2_MUX			59
++#define K230_CPU1_SRC_MUX			60
++#define K230_CPU1_SRC_GATE			61
++#define K230_CPU1_PLIC_GATE			62
++#define K230_CPU1_APB_GATE			63
++#define K230_CPU1_SRC_RATE			64
++#define K230_CPU1_AXI_RATE			65
++#define K230_CPU1_PLIC_RATE			66
++#define K230_CPU1_APB_RATE			67
++#define K230_PMU_APB_GATE			68
++#define K230_LS_APB_SRC_GATE			69
++#define K230_LS_UART0_APB_GATE			70
++#define K230_LS_UART1_APB_GATE			71
++#define K230_LS_UART2_APB_GATE			72
++#define K230_LS_UART3_APB_GATE			73
++#define K230_LS_UART4_APB_GATE			74
++#define K230_LS_I2C0_APB_GATE			75
++#define K230_LS_I2C1_APB_GATE			76
++#define K230_LS_I2C2_APB_GATE			77
++#define K230_LS_I2C3_APB_GATE			78
++#define K230_LS_I2C4_APB_GATE			79
++#define K230_LS_GPIO_APB_GATE			80
++#define K230_LS_PWM_APB_GATE			81
++#define K230_LS_JAMLINK0_APB_GATE		82
++#define K230_LS_JAMLINK1_APB_GATE		83
++#define K230_LS_JAMLINK2_APB_GATE		84
++#define K230_LS_JAMLINK3_APB_GATE		85
++#define K230_LS_AUDIO_APB_GATE			86
++#define K230_LS_ADC_APB_GATE			87
++#define K230_LS_CODEC_APB_GATE			88
++#define K230_LS_I2C0_GATE			89
++#define K230_LS_I2C1_GATE			90
++#define K230_LS_I2C2_GATE			91
++#define K230_LS_I2C3_GATE			92
++#define K230_LS_I2C4_GATE			93
++#define K230_LS_CODEC_ADC_GATE			94
++#define K230_LS_CODEC_DAC_GATE			95
++#define K230_LS_AUDIO_DEV_GATE			96
++#define K230_LS_PDM_GATE			97
++#define K230_LS_ADC_GATE			98
++#define K230_LS_UART0_GATE			99
++#define K230_LS_UART1_GATE			100
++#define K230_LS_UART2_GATE			101
++#define K230_LS_UART3_GATE			102
++#define K230_LS_UART4_GATE			103
++#define K230_LS_JAMLINK0CO_GATE			104
++#define K230_LS_JAMLINK1CO_GATE			105
++#define K230_LS_JAMLINK2CO_GATE			106
++#define K230_LS_JAMLINK3CO_GATE			107
++#define K230_LS_GPIO_DEBOUNCE_GATE		108
++#define K230_SYSCTL_WDT0_APB_GATE		109
++#define K230_SYSCTL_WDT1_APB_GATE		110
++#define K230_SYSCTL_TIMER_APB_GATE		111
++#define K230_SYSCTL_IOMUX_APB_GATE		112
++#define K230_SYSCTL_MAILBOX_APB_GATE		113
++#define K230_SYSCTL_HDI_GATE			114
++#define K230_SYSCTL_TIME_STAMP_GATE		115
++#define K230_SYSCTL_WDT0_GATE			116
++#define K230_SYSCTL_WDT1_GATE			117
++#define K230_TIMER0_GATE			118
++#define K230_TIMER1_GATE			119
++#define K230_TIMER2_GATE			120
++#define K230_TIMER3_GATE			121
++#define K230_TIMER4_GATE			122
++#define K230_TIMER5_GATE			123
++#define K230_SHRM_APB_GATE			124
++#define K230_SHRM_AXI_GATE			125
++#define K230_SHRM_AXI_SLAVE_GATE		126
++#define K230_SHRM_NONAI2D_AXI_GATE		127
++#define K230_SHRM_SRAM_GATE			128
++#define K230_SHRM_DECOMPRESS_AXI_GATE		129
++#define K230_SHRM_SDMA_AXI_GATE			130
++#define K230_SHRM_PDMA_AXI_GATE			131
++#define K230_DDRC_SRC_GATE			132
++#define K230_DDRC_BYPASS_GATE			133
++#define K230_DDRC_APB_GATE			134
++#define K230_DISPLAY_AHB_GATE			135
++#define K230_DISPLAY_AXI_GATE			136
++#define K230_DISPLAY_GPU_GATE			137
++#define K230_DISPLAY_DPIP_GATE			138
++#define K230_DISPLAY_CFG_GATE			139
++#define K230_DISPLAY_REF_GATE			140
++#define K230_USB_480M_GATE			141
++#define K230_USB_100M_GATE			142
++#define K230_DPHY_DFT_GATE			143
++#define K230_SPI2AXI_GATE			144
++#define K230_AI_SRC_GATE			145
++#define K230_AI_AXI_GATE			146
++#define K230_AI_SRC_RATE			147
++#define K230_CAMERA0_GATE			148
++#define K230_CAMERA1_GATE			149
++#define K230_CAMERA2_GATE			150
++#define K230_LS_APB_SRC_RATE			151
++#define K230_LS_I2C0_RATE			152
++#define K230_LS_I2C1_RATE			153
++#define K230_LS_I2C2_RATE			154
++#define K230_LS_I2C3_RATE			155
++#define K230_LS_I2C4_RATE			156
++#define K230_LS_CODEC_ADC_RATE			157
++#define K230_LS_CODEC_DAC_RATE			158
++#define K230_LS_AUDIO_DEV_RATE			159
++#define K230_LS_PDM_RATE			160
++#define K230_LS_ADC_RATE			161
++#define K230_LS_UART0_RATE			162
++#define K230_LS_UART1_RATE			163
++#define K230_LS_UART2_RATE			164
++#define K230_LS_UART3_RATE			165
++#define K230_LS_UART4_RATE			166
++#define K230_LS_JAMLINKCO_SRC_RATE		167
++#define K230_LS_GPIO_DEBOUNCE_RATE		168
++#define K230_SYSCTL_HDI_RATE			169
++#define K230_SYSCTL_TIME_STAMP_RATE		170
++#define K230_SYSCTL_TEMP_SENSOR_RATE		171
++#define K230_SYSCTL_WDT0_RATE			172
++#define K230_SYSCTL_WDT1_RATE			173
++#define K230_TIMER0_SRC_RATE			174
++#define K230_TIMER1_SRC_RATE			175
++#define K230_TIMER2_SRC_RATE			176
++#define K230_TIMER3_SRC_RATE			177
++#define K230_TIMER4_SRC_RATE			178
++#define K230_TIMER5_SRC_RATE			179
++#define K230_SHRM_APB_RATE			180
++#define K230_DDRC_SRC_RATE			181
++#define K230_DDRC_APB_RATE			182
++#define K230_DISPLAY_AHB_RATE			183
++#define K230_DISPLAY_CLKEXT_RATE		184
++#define K230_DISPLAY_GPU_RATE			185
++#define K230_DISPLAY_DPIP_RATE			186
++#define K230_DISPLAY_CFG_RATE			187
++#define K230_VPU_SRC_GATE			188
++#define K230_VPU_AXI_GATE			189
++#define K230_VPU_DDRCP2_GATE			190
++#define K230_VPU_CFG_GATE			191
++#define K230_VPU_SRC_RATE			192
++#define K230_VPU_AXI_SRC_RATE			193
++#define K230_VPU_CFG_RATE			194
++#define K230_SEC_APB_GATE			195
++#define K230_SEC_FIX_GATE			196
++#define K230_SEC_AXI_GATE			197
++#define K230_SEC_APB_RATE			198
++#define K230_SEC_FIX_RATE			199
++#define K230_SEC_AXI_RATE			200
++#define K230_USB_480M_RATE			201
++#define K230_USB_100M_RATE			202
++#define K230_DPHY_DFT_RATE			203
++#define K230_SPI2AXI_RATE			204
++#define K230_CAMERA0_RATE			205
++#define K230_CAMERA1_RATE			206
++#define K230_CAMERA2_RATE			207
++#define K230_SHRM_SRAM_DIV2			208
++
++#endif /* __DT_BINDINGS_CANAAN_K230_CLOCK_H__ */
++
 
-Changes in v7:
-- Rename K230_PLL_STATUS_MASK to K230_PLL_LOCK_STATUS_MASK
-- Add clkdev for PLLs to register lookup
-- Add macros to generate repeat variables definition
-- Refine the definitions of k230 clocks
-- Split composite clks into rate, gate, mux, fixed_factor clk
-- Replace k230_clk_hw_onecell_get with of_clk_hw_onecell_get for
-  clock provider
-- Drop k230_sysclk and use clk_mux, clk_gate and clk_fixed_factor
-  as the data structures.
-- Replace one loop registration with individual registration for
-  each type.
-- Link to v6: https://lore.kernel.org/r/20250415-b4-k230-clk-v6-0-7fd89f427250@zohomail.com
-
-Changes in v6:
-- Remove some redundant comments in struct declaration.
-- Replace the Vendor's code source link with a new one.
-- Link to v5: https://lore.kernel.org/r/20250320-b4-k230-clk-v5-0-0e9d089c5488@zohomail.com
-
-Changes in v5:
-- Fix incorrect base-commit and add prerequisite-patch-id.
-- Replace dummy apb_clk with real ones for UARTs.
-- Add IDs of UARTs clock and DMA clocks in the binding header.
-- Replace k230_clk_cfgs[] array with corresponding named variables.
-- Remove some redundant checks in clk_ops.
-- Drop the unnecessary parenthesis and type casts.
-- Modify return value handling in probe path to avoid redundant print.
-- Link to v4: https://lore.kernel.org/r/20250217-b4-k230-clk-v4-0-5a95a3458691@zohomail.com
-
-Changes in v4:
-- Remove redundant onecell_get callback and add_provider function
-for pll_divs.
-- Modify the base-commit in cover letter.
-- Link to v3: https://lore.kernel.org/r/20250203-b4-k230-clk-v3-0-362c79124572@zohomail.com
-
-Changes in v3:
-- Reorder the defination and declaration in drivers code.
-- Reorder the properties in dts node.
-- Replace global variable `k230_sysclk` with dynamic memory allocation.
-- Rename the macro K230_NUM_CLKS to K230_CLK_NUM.
-- Use dev_err_probe for error handling.
-- Remove unused includes.
-- Link to v2: https://lore.kernel.org/r/20250108-b4-k230-clk-v2-0-27b30a2ca52d@zohomail.com
-
-Changes in v2:
-- Add items and description.
-- Rename k230-clk.h to canaan,k230-clk.h
-- Link to v1: https://lore.kernel.org/r/20241229-b4-k230-clk-v1-0-221a917e80ed@zohomail.com
-
----
-Xukai Wang (3):
-      dt-bindings: clock: Add bindings for Canaan K230 clock controller
-      clk: canaan: Add clock driver for Canaan K230
-      riscv: dts: canaan: Add clock definition for K230
-
- .../devicetree/bindings/clock/canaan,k230-clk.yaml |   59 +
- arch/riscv/boot/dts/canaan/k230-canmv.dts          |   11 +
- arch/riscv/boot/dts/canaan/k230-evb.dts            |   11 +
- arch/riscv/boot/dts/canaan/k230.dtsi               |   26 +-
- drivers/clk/Kconfig                                |    6 +
- drivers/clk/Makefile                               |    1 +
- drivers/clk/clk-k230.c                             | 2443 ++++++++++++++++++++
- include/dt-bindings/clock/canaan,k230-clk.h        |  222 ++
- 8 files changed, 2771 insertions(+), 8 deletions(-)
----
-base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
-change-id: 20241206-b4-k230-clk-925f33fed6c2
-prerequisite-patch-id: deda3c472f0000ffd40cddd7cf6d3b5e2d7da7dc
-
-Best regards,
 -- 
-Xukai Wang <kingxukai@zohomail.com>
+2.34.1
 
