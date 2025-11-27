@@ -1,319 +1,147 @@
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E721D321440
-	for <linux-clk@vger.kernel.org>; Thu, 27 Nov 2025 07:46:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 864DD30F815;
+	Thu, 27 Nov 2025 07:57:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764229576; cv=none; b=IXqdJIVMZHwLApzouHIboHCfsjlzcevU3f16znjTQcbDN0mWmcEeAv1/Ie05VvoD2NoC861v4E9AfCze8WaB61J2kGT7Vq2pBZeajBILWgQJQRDoepH/RJb1NT8kUGpAx+QrYVcXbOfxdKDRzgaehsKXEaMAtCZ/+rkS5143ZkQ=
+	t=1764230278; cv=none; b=H6nnHKvirN5xtYANfHnnDT9cNY9bctoyWV1AnL7VDKsRL4ik0z5prcnpaD7uCVjtAZtDC8RQaAMV0dvJWeURyCqJNlhp2tdOoAgk0kzsZwzoAZt6Bqi4nk0M1aJ8T9IVfRuP70YD09ZjToXCnAFWpy21xc2K1oaoHeIfdzUJDXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764229576; c=relaxed/simple;
-	bh=eixrv2CdiGHk1MmiwyukM55rvIC4y05XI7ZWqeHAQvk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dGdmlNWzDMjMBeU4mOHBFyYervxSMeOW30mV+MewXKGK7bD8EV5kZRvMwOkfBTJCOauudU/BbqJMdZ7MXr6ddXeVQXILC3KN18zH+iBsNH/bFJFPOWpzM5GeTQ7RaU9PP6AcQv9n+sWMmULbl7w9/OrTzpwksMEalqtgzfsHAkI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nSmq4RHR; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1764230278; c=relaxed/simple;
+	bh=yNRU1AlUlXfSPS6MKSgASecC+Ojm2qdh81xWUAj2EIA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ug9WjWyia4+RGjVtEohPBnegpInYWBYcObZM6lmdIz0WI05hU67+io7HmK0XI92Sx8dZqtnEvIDT+wle6MWUHnv6GmjeOGwtDvyHq2iK37tlHeZrglo30HZdTnhAPEiDQuzC+m3wQRxF/5tPOfNsXe0jrusICYvOBK5lUHjHRiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LZCzLA30; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nSmq4RHR"
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5957c929a5eso856941e87.1
-        for <linux-clk@vger.kernel.org>; Wed, 26 Nov 2025 23:46:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1764229572; x=1764834372; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Hnj14zijJRhbSEOBE/unb9XqHQn52yQ1cvvxZ0DFyqE=;
-        b=nSmq4RHRUsjIsmho2ujm1TeyNB0Mfs92BmkhKmaKjrxY5Hxp3Pg34YrahjAlDnNN1/
-         dG7ktJFimwoUG8rq7oWKmVvhI396ad68pO1UziJ/QDZ5I+lhAk97mnZUmgPiGd2K/1Uf
-         oL02pjbheZoUh5e94mnbVCNR9yIavH0WGqyfk70pxPYI0H+xt0GCB7URFrtVWqRke/0P
-         5NlO6t4H97b4q+8GDUZxBg+QMol4YtasALG9EP8IURnDt2rw8/CoEe0NaDCpLQP/vTMb
-         SbKWw+ebzNOCObefJMkJIqWC097X0J+M3tXPuyEcfocyAjsp/85bzMRwSMI/GD7YglER
-         30Hg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764229572; x=1764834372;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Hnj14zijJRhbSEOBE/unb9XqHQn52yQ1cvvxZ0DFyqE=;
-        b=YLu9bPIw8+OOna9P/DBjMghIbREAWTRMEmo3uvXxnszm0iFPBgDl86akHlVf+E10qB
-         VarAdEfI+9xZqnXO9H0ItNeKUYsWXI1fc4K6Oy5N1nu7KndyWEkcHsDoj6RRpVFwmrHC
-         fWvBhyAFE6Ip6zfVH0wGDfhMP7QEQueGvIZitmdhloADP1Xclkr0ZPUKryuo4c0Bkelq
-         06gIFfY6oeeUEGMm64bTvus2QMSrUKh11S7HWIVuHIHDETsiYiKJCYwIytSCgiokQlU5
-         i7hHwcz9XL49owjwab1WHwEQQoN1kU2BeWfkOeyZcCQXcLfk8q5IYYTPDkrHKqeQPnb+
-         dgEA==
-X-Forwarded-Encrypted: i=1; AJvYcCV1z3ISjM6shToBWfuwHIqecG6HeSb/aIWHRzLASEEt/NOF3mxxrV128cUYDpnc3Ni+bvoFIvAZbSU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx03qQIQ6zFOmKMAkb1jwDL2WZNQTCXVLh2gTJFbdT/FhSMGlc4
-	XeUUkjV71EjIQEePLe+yHvxE5rLunsAdQM/fwuQFnpsKkBY8av7x9Gx7
-X-Gm-Gg: ASbGncuwjC4em7ZGkmKNdzmWL+rvFII24CGyMpcJs1s9tTM30lH4ukixp30jV+j4g3p
-	51/KAV+DxY+y5pb9zuegKEuUiDLcneMPoLu0S4lJIsCK2/Vedt/TauNYemJuL1pjj2FCag3d1Wp
-	mcKG1pg2HIeaXq+448TiFk5ji1UhM+Pec+CskU8ZY/0XRaK6t4WBl4x5ciO4hjjEdMllfuITvXo
-	hWBpewzcgNY8cJm0J5idz5lEj7/EuR1mUi4BkJk3y0ltXzbKbysUjuGFe3+P+lyne+NCVHKgaN/
-	W5RZ7adjWzhtwpHC9UwaxBYXqiep4thwVC4OEeWmMxvJ6dwaqX3ynmpg3BXg9SFIdzt/mnI4opt
-	eANXkJpis580szKiHAbVmnwwN+jhI7aOT54r2113MPc2o/RdPiWOJWUTn557vDtkZ4F5ZZADgkN
-	ve1fXJ694VaL8roXnLRxMUbH5erLqXd0jNZP/jsdz1ODoGRB4ksQx/cwDNznJUVJW4v47t
-X-Google-Smtp-Source: AGHT+IE0AX+RugWE0+4LM7mYSSpRxls5r75Ssa4ZNDWg6K4RRVvhPkZhmvV5UTirnjSMOo+4ntezOw==
-X-Received: by 2002:a05:6512:b17:b0:595:7854:af7c with SMTP id 2adb3069b0e04-596b5277bfemr3434647e87.24.1764229571533;
-        Wed, 26 Nov 2025 23:46:11 -0800 (PST)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-596bf8a7cffsm202938e87.18.2025.11.26.23.46.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Nov 2025 23:46:10 -0800 (PST)
-Message-ID: <01285891-a73f-4916-8c5a-ef187c676edd@gmail.com>
-Date: Thu, 27 Nov 2025 09:46:09 +0200
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LZCzLA30"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1764230277; x=1795766277;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=yNRU1AlUlXfSPS6MKSgASecC+Ojm2qdh81xWUAj2EIA=;
+  b=LZCzLA30n4/Ms+aYT1PGFfN6H/hLJ3KKethHYVUd/HKSHVqExUerwdzF
+   /ZVXO+cyKiNhyb+IvntOdM0p5qpga0sufTSgnFgqJf0juUhQ3IsILM5BN
+   P0W+7TJqsip1admTT1MkQq2Gm6VVpq4uJmEespbW9jXGkWWvOMr2+CUOn
+   KUQTFJzs4k6fzr0KQfE3zhrm6zb+cBe7ay1g6vdDnXYEQ8nSaQi4zajMS
+   NqO7utGa1UzKvjuMT2Me5yLgFJ2L9YSWg1VyTuMenwI6ayfK0y9iMEP29
+   79SMiwIgs7RZ6u5ncBVYJsszie94VdHbqhNywPzqC69G7+N4ITv1AbsvG
+   A==;
+X-CSE-ConnectionGUID: BOBMwbAKRpKdbNnpnVKW/w==
+X-CSE-MsgGUID: m44r5Op4RGGg3dFwGbI2dQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11625"; a="53842732"
+X-IronPort-AV: E=Sophos;i="6.20,230,1758610800"; 
+   d="scan'208";a="53842732"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Nov 2025 23:57:56 -0800
+X-CSE-ConnectionGUID: 9F0dBLyrSoGdR7H7H+nkxQ==
+X-CSE-MsgGUID: g28467r4TgOyZ+MHXAxhhw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.20,230,1758610800"; 
+   d="scan'208";a="224118859"
+Received: from lkp-server01.sh.intel.com (HELO 4664bbef4914) ([10.239.97.150])
+  by fmviesa001.fm.intel.com with ESMTP; 26 Nov 2025 23:57:53 -0800
+Received: from kbuild by 4664bbef4914 with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1vOWsx-000000003sL-05Ds;
+	Thu, 27 Nov 2025 07:57:51 +0000
+Date: Thu, 27 Nov 2025 15:57:30 +0800
+From: kernel test robot <lkp@intel.com>
+To: Taniya Das <taniya.das@oss.qualcomm.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Dmitry Baryshkov <lumag@kernel.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
+	Imran Shaik <imran.shaik@oss.qualcomm.com>,
+	Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Taniya Das <taniya.das@oss.qualcomm.com>
+Subject: Re: [PATCH] clk: qcom: clk-rpmh: Update the clock suffix for Glymur
+Message-ID: <202511271512.D8UQpGul-lkp@intel.com>
+References: <20251125-glymur_rpmhcc_fix-v1-1-60081b3cce7f@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 08/16] mfd: bd71828: Support ROHM BD72720
-To: Lee Jones <lee@kernel.org>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
- Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Sebastian Reichel <sre@kernel.org>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
- Bartosz Golaszewski <brgl@bgdev.pl>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-rtc@vger.kernel.org, Andreas Kemnade <andreas@kemnade.info>
-References: <cover.1763625920.git.mazziesaccount@gmail.com>
- <ffdc1c2f380959c792ad39817ba5e9cf4bbc1131.1763625920.git.mazziesaccount@gmail.com>
- <20251126142809.GD3070764@google.com>
-Content-Language: en-US, en-AU, en-GB, en-BW
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <20251126142809.GD3070764@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251125-glymur_rpmhcc_fix-v1-1-60081b3cce7f@oss.qualcomm.com>
 
-On 26/11/2025 16:28, Lee Jones wrote:
-> On Thu, 20 Nov 2025, Matti Vaittinen wrote:
-> 
->> From: Matti Vaittinen <mazziesaccount@gmail.com>
->>
->> The ROHM BD72720 is a power management IC which continues the BD71828
->> family of PMICs. Similarly to the BD71815 and BD71828, the BD72720
->> integrates regulators, charger, RTC, clock gate and GPIOs.
->>
->> The main difference to the earlier PMICs is that the BD72720 has two
->> different I2C slave addresses. In addition to the registers behind the
->> 'main I2C address', most of the charger (and to some extent LED) control
->> is done via registers behind a 'secondary I2C slave address', 0x4c.
->>
->> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
->>
->> ---
->> Revision history:
->>   v2 =>:
->>   - no changes
->>
->>   RFCv1 => v2: (Mostly addressed comments from Lee and Andreas)
->>   - Use stacked regmaps to avoid platform data and the tango with
->>     multiple regmaps in the power-supply driver
->>   - Use regmap_reg_range()
->>   - make it clear bd72720_irq_type_base is an array
->>   - tab-out definitions in the bd72720 header
->>   - minor styling
->>
->> Note: This patch depends on the series: "power: supply: add charger for
->> BD71828" by Andreas:
->> https://lore.kernel.org/all/20250918-bd71828-charger-v5-0-851164839c28@kemnade.info/
->>
->> There are some new variants being planned. Most notably, the BD73900
->> should be almost identical to the BD72720 - for everything else except
->> the charger block.
->> ---
->>   drivers/mfd/Kconfig              |  18 +-
->>   drivers/mfd/rohm-bd71828.c       | 488 +++++++++++++++++++++++-
->>   include/linux/mfd/rohm-bd72720.h | 634 +++++++++++++++++++++++++++++++
->>   include/linux/mfd/rohm-generic.h |   1 +
->>   4 files changed, 1126 insertions(+), 15 deletions(-)
->>   create mode 100644 include/linux/mfd/rohm-bd72720.h
+Hi Taniya,
 
-// snip
+kernel test robot noticed the following build errors:
 
->> diff --git a/drivers/mfd/rohm-bd71828.c b/drivers/mfd/rohm-bd71828.c
->> index 2a43005b67ee..2e546aa60ffd 100644
->> --- a/drivers/mfd/rohm-bd71828.c
->> +++ b/drivers/mfd/rohm-bd71828.c
->> @@ -2,7 +2,7 @@
->>   //
->>   // Copyright (C) 2019 ROHM Semiconductors
->>   //
->> -// ROHM BD71828/BD71815 PMIC driver
->> +// ROHM BD718[15/28/79] and BD72720 PMIC driver
-> 
-> Looks like this header format slipped in.
-> 
-> I would appreciate a follow-up patch to change it to standard C
-> multi-line format (except the SPDX line).
+[auto build test ERROR on 92fd6e84175befa1775e5c0ab682938eca27c0b2]
 
-Sure.
+url:    https://github.com/intel-lab-lkp/linux/commits/Taniya-Das/clk-qcom-clk-rpmh-Update-the-clock-suffix-for-Glymur/20251126-021404
+base:   92fd6e84175befa1775e5c0ab682938eca27c0b2
+patch link:    https://lore.kernel.org/r/20251125-glymur_rpmhcc_fix-v1-1-60081b3cce7f%40oss.qualcomm.com
+patch subject: [PATCH] clk: qcom: clk-rpmh: Update the clock suffix for Glymur
+config: arm-randconfig-002-20251127 (https://download.01.org/0day-ci/archive/20251127/202511271512.D8UQpGul-lkp@intel.com/config)
+compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 9e9fe08b16ea2c4d9867fb4974edf2a3776d6ece)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251127/202511271512.D8UQpGul-lkp@intel.com/reproduce)
 
-// snip
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202511271512.D8UQpGul-lkp@intel.com/
 
->>   
->> +static int regmap_write_wrapper(void *context, unsigned int reg, unsigned int val)
->> +{
->> +	struct bd72720_regmaps *maps = context;
->> +
->> +	if (reg < 0x100)
-> 
-> Define this to something human readable please.
-> 
-> Some kind of PAGE or BOUNDARY.  Perhaps something better.
+All errors (new ones prefixed by >>):
 
-I will use 'BD72720_SECONDARY_I2C_REG_OFFSET'. A tad long, but it's not 
-used on a long lines.
+>> drivers/clk/qcom/clk-rpmh.c:891:21: error: use of undeclared identifier 'clk_rpmh_clk3_a'
+     891 |         [RPMH_RF_CLK3]          = &clk_rpmh_clk3_a.hw,
+         |                                    ^~~~~~~~~~~~~~~
+>> drivers/clk/qcom/clk-rpmh.c:892:22: error: use of undeclared identifier 'clk_rpmh_clk3_a_ao'
+     892 |         [RPMH_RF_CLK3_A]        = &clk_rpmh_clk3_a_ao.hw,
+         |                                    ^~~~~~~~~~~~~~~~~~
+>> drivers/clk/qcom/clk-rpmh.c:893:21: error: use of undeclared identifier 'clk_rpmh_clk4_a'
+     893 |         [RPMH_RF_CLK4]          = &clk_rpmh_clk4_a.hw,
+         |                                    ^~~~~~~~~~~~~~~
+>> drivers/clk/qcom/clk-rpmh.c:894:22: error: use of undeclared identifier 'clk_rpmh_clk4_a_ao'
+     894 |         [RPMH_RF_CLK4_A]        = &clk_rpmh_clk4_a_ao.hw,
+         |                                    ^~~~~~~~~~~~~~~~~~
+>> drivers/clk/qcom/clk-rpmh.c:895:21: error: use of undeclared identifier 'clk_rpmh_clk5_a'
+     895 |         [RPMH_RF_CLK5]          = &clk_rpmh_clk5_a.hw,
+         |                                    ^~~~~~~~~~~~~~~
+>> drivers/clk/qcom/clk-rpmh.c:896:22: error: use of undeclared identifier 'clk_rpmh_clk5_a_ao'
+     896 |         [RPMH_RF_CLK5_A]        = &clk_rpmh_clk5_a_ao.hw,
+         |                                    ^~~~~~~~~~~~~~~~~~
+>> drivers/clk/qcom/clk-rpmh.c:901:14: error: invalid application of 'sizeof' to an incomplete type 'struct clk_hw *[]'
+     901 |         .num_clks = ARRAY_SIZE(glymur_rpmh_clocks),
+         |                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/array_size.h:11:32: note: expanded from macro 'ARRAY_SIZE'
+      11 | #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]) + __must_be_array(arr))
+         |                                ^~~~~
+   7 errors generated.
 
-> 
->> +		return regmap_write(maps->map1_4b, reg, val);
->> +
->> +	reg = BD72720_REG_UNWRAP(reg);
->> +
->> +	return regmap_write(maps->map2_4c, reg, val);
->> +}
 
-// snip
+vim +/clk_rpmh_clk3_a +891 drivers/clk/qcom/clk-rpmh.c
 
-> 
->> +		return (struct regmap *)secondary_i2c;
-> 
-> *shudders* -- that's a hack, right!
-> 
-> /me does some grepping around ...
-> 
-> Shouldn't this be:
-> 
-> 		return ERR_CAST(secondary_i2c);
+c035a9e265dd80 Taniya Das 2024-12-04  887  
+ebcb9db98bdab8 Taniya Das 2025-08-25  888  static struct clk_hw *glymur_rpmh_clocks[] = {
+ebcb9db98bdab8 Taniya Das 2025-08-25  889  	[RPMH_CXO_CLK]		= &clk_rpmh_bi_tcxo_div2.hw,
+ebcb9db98bdab8 Taniya Das 2025-08-25  890  	[RPMH_CXO_CLK_A]	= &clk_rpmh_bi_tcxo_div2_ao.hw,
+ebcb9db98bdab8 Taniya Das 2025-08-25 @891  	[RPMH_RF_CLK3]		= &clk_rpmh_clk3_a.hw,
+ebcb9db98bdab8 Taniya Das 2025-08-25 @892  	[RPMH_RF_CLK3_A]	= &clk_rpmh_clk3_a_ao.hw,
+ebcb9db98bdab8 Taniya Das 2025-08-25 @893  	[RPMH_RF_CLK4]		= &clk_rpmh_clk4_a.hw,
+ebcb9db98bdab8 Taniya Das 2025-08-25 @894  	[RPMH_RF_CLK4_A]	= &clk_rpmh_clk4_a_ao.hw,
+ebcb9db98bdab8 Taniya Das 2025-08-25 @895  	[RPMH_RF_CLK5]		= &clk_rpmh_clk5_a.hw,
+ebcb9db98bdab8 Taniya Das 2025-08-25 @896  	[RPMH_RF_CLK5_A]	= &clk_rpmh_clk5_a_ao.hw,
+ebcb9db98bdab8 Taniya Das 2025-08-25  897  };
+ebcb9db98bdab8 Taniya Das 2025-08-25  898  
+ebcb9db98bdab8 Taniya Das 2025-08-25  899  static const struct clk_rpmh_desc clk_rpmh_glymur = {
+ebcb9db98bdab8 Taniya Das 2025-08-25  900  	.clks = glymur_rpmh_clocks,
+ebcb9db98bdab8 Taniya Das 2025-08-25 @901  	.num_clks = ARRAY_SIZE(glymur_rpmh_clocks),
+ebcb9db98bdab8 Taniya Das 2025-08-25  902  };
+ebcb9db98bdab8 Taniya Das 2025-08-25  903  
 
-I didn't know about the ERR_CAST(). Thanks for going the extra mile and 
-looking
-
-> 
->> +	}
-
-//snip
-
->> diff --git a/include/linux/mfd/rohm-bd72720.h b/include/linux/mfd/rohm-bd72720.h
->> new file mode 100644
->> index 000000000000..42fcf8f81b2f
->> --- /dev/null
->> +++ b/include/linux/mfd/rohm-bd72720.h
->> @@ -0,0 +1,634 @@
->> +/* SPDX-License-Identifier: GPL-2.0-or-later */
->> +/*
->> + * Copyright 2024 ROHM Semiconductors.
-> 
-> Still out of date.
-
-Ah. Indeed. Thanks.
-
->> + * Author: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
->> + */
->> +
-// snip
-
->> +
->> +/* BD72720 interrupts */
->> +#define BD72720_INT_LONGPUSH_MASK	BIT(0)
->> +#define BD72720_INT_MIDPUSH_MASK	BIT(1)
->> +#define BD72720_INT_SHORTPUSH_MASK	BIT(2)
->> +#define BD72720_INT_PUSH_MASK		BIT(3)
->> +#define BD72720_INT_HALL_DET_MASK	BIT(4)
->> +#define BD72720_INT_HALL_TGL_MASK	BIT(5)
->> +#define BD72720_INT_WDOG_MASK		BIT(6)
->> +#define BD72720_INT_SWRESET_MASK	BIT(7)
->> +#define BD72720_INT_SEQ_DONE_MASK	BIT(0)
->> +#define BD72720_INT_PGFAULT_MASK	BIT(4)
->> +#define BD72720_INT_BUCK1_DVS_MASK	BIT(0)
->> +#define BD72720_INT_BUCK2_DVS_MASK	BIT(1)
->> +#define BD72720_INT_BUCK3_DVS_MASK	BIT(2)
->> +#define BD72720_INT_BUCK4_DVS_MASK	BIT(3)
->> +#define BD72720_INT_BUCK5_DVS_MASK	BIT(4)
->> +#define BD72720_INT_BUCK6_DVS_MASK	BIT(5)
->> +#define BD72720_INT_BUCK7_DVS_MASK	BIT(6)
->> +#define BD72720_INT_BUCK8_DVS_MASK	BIT(7)
->> +#define BD72720_INT_BUCK9_DVS_MASK	BIT(0)
->> +#define BD72720_INT_BUCK10_DVS_MASK	BIT(1)
->> +#define BD72720_INT_LDO1_DVS_MASK	BIT(4)
->> +#define BD72720_INT_LDO2_DVS_MASK	BIT(5)
->> +#define BD72720_INT_LDO3_DVS_MASK	BIT(6)
->> +#define BD72720_INT_LDO4_DVS_MASK	BIT(7)
->> +#define BD72720_INT_VBUS_RMV_MASK	BIT(0)
->> +#define BD72720_INT_VBUS_DET_MASK	BIT(1)
->> +#define BD72720_INT_VBUS_MON_RES_MASK	BIT(2)
->> +#define BD72720_INT_VBUS_MON_DET_MASK	BIT(3)
->> +#define BD72720_INT_VSYS_MON_RES_MASK	BIT(0)
->> +#define BD72720_INT_VSYS_MON_DET_MASK	BIT(1)
->> +#define BD72720_INT_VSYS_UV_RES_MASK	BIT(2)
->> +#define BD72720_INT_VSYS_UV_DET_MASK	BIT(3)
->> +#define BD72720_INT_VSYS_LO_RES_MASK	BIT(4)
->> +#define BD72720_INT_VSYS_LO_DET_MASK	BIT(5)
->> +#define BD72720_INT_VSYS_OV_RES_MASK	BIT(6)
->> +#define BD72720_INT_VSYS_OV_DET_MASK	BIT(7)
->> +#define BD72720_INT_BAT_ILIM_MASK	BIT(0)
->> +#define BD72720_INT_CHG_DONE_MASK	BIT(1)
->> +#define BD72720_INT_EXTEMP_TOUT_MASK	BIT(2)
->> +#define BD72720_INT_CHG_WDT_EXP_MASK	BIT(3)
->> +#define BD72720_INT_BAT_MNT_OUT_MASK	BIT(4)
->> +#define BD72720_INT_BAT_MNT_IN_MASK	BIT(5)
->> +#define BD72720_INT_CHG_TRNS_MASK	BIT(7)
->> +#define BD72720_INT_VBAT_MON_RES_MASK	BIT(0)
->> +#define BD72720_INT_VBAT_MON_DET_MASK	BIT(1)
->> +#define BD72720_INT_VBAT_SHT_RES_MASK	BIT(2)
->> +#define BD72720_INT_VBAT_SHT_DET_MASK	BIT(3)
->> +#define BD72720_INT_VBAT_LO_RES_MASK	BIT(4)
->> +#define BD72720_INT_VBAT_LO_DET_MASK	BIT(5)
->> +#define BD72720_INT_VBAT_OV_RES_MASK	BIT(6)
->> +#define BD72720_INT_VBAT_OV_DET_MASK	BIT(7)
->> +#define BD72720_INT_BAT_RMV_MASK	BIT(0)
->> +#define BD72720_INT_BAT_DET_MASK	BIT(1)
->> +#define BD72720_INT_DBAT_DET_MASK	BIT(2)
->> +#define BD72720_INT_BAT_TEMP_TRNS_MASK	BIT(3)
->> +#define BD72720_INT_LOBTMP_RES_MASK	BIT(4)
->> +#define BD72720_INT_LOBTMP_DET_MASK	BIT(5)
->> +#define BD72720_INT_OVBTMP_RES_MASK	BIT(6)
->> +#define BD72720_INT_OVBTMP_DET_MASK	BIT(7)
->> +#define BD72720_INT_OCUR1_RES_MASK	BIT(0)
->> +#define BD72720_INT_OCUR1_DET_MASK	BIT(1)
->> +#define BD72720_INT_OCUR2_RES_MASK	BIT(2)
->> +#define BD72720_INT_OCUR2_DET_MASK	BIT(3)
->> +#define BD72720_INT_OCUR3_RES_MASK	BIT(4)
->> +#define BD72720_INT_OCUR3_DET_MASK	BIT(5)
->> +#define BD72720_INT_CC_MON1_DET_MASK	BIT(0)
->> +#define BD72720_INT_CC_MON2_DET_MASK	BIT(1)
->> +#define BD72720_INT_CC_MON3_DET_MASK	BIT(2)
->> +#define BD72720_INT_GPIO1_IN_MASK	BIT(4)
->> +#define BD72720_INT_GPIO2_IN_MASK	BIT(5)
->> +#define BD72720_INT_VF125_RES_MASK	BIT(0)
->> +#define BD72720_INT_VF125_DET_MASK	BIT(1)
->> +#define BD72720_INT_VF_RES_MASK		BIT(2)
->> +#define BD72720_INT_VF_DET_MASK		BIT(3)
->> +#define BD72720_INT_RTC0_MASK		BIT(4)
->> +#define BD72720_INT_RTC1_MASK		BIT(5)
->> +#define BD72720_INT_RTC2_MASK		BIT(6)
-> 
-> I'd be able to sleep better if these all lined up.
-
-Hm. I think they are when this is applied?
-
-Thanks for the review! I agree with all the comments I didn't comment 
-on. I'll prepare v6 fixing these :)
-
-Yours,
-	-- Matti
-
----
-Matti Vaittinen
-Linux kernel developer at ROHM Semiconductors
-Oulu Finland
-
-~~ When things go utterly wrong vim users can always type :help! ~~
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
