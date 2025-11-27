@@ -1,159 +1,93 @@
-Received: from mail.hugovil.com (mail.hugovil.com [162.243.120.170])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 245A92DF141;
-	Thu, 27 Nov 2025 17:10:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.120.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8109B2E8897;
+	Thu, 27 Nov 2025 17:28:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764263451; cv=none; b=GjS7TlJENOu9+u9Hf07beOCBFQgFqKBX/wtJWUyvopao3Uw+iD3ro7zpnfiVesL885NUeK66ElNu26aHvTLKRdQP3JD4TMepYSOLmPD4obnHz2BOx13lhaKAf5zNys/F99gannT1pjSQzzyIjxj+Kmp9KqohLjbiGeFVYgKXojc=
+	t=1764264518; cv=none; b=fRU8pW4iWCaw0VinXvZp2ctnqd1/EnNNTOXNN9c7Sa1vBOLI7FpeWoLZD5kP9z6ZGGRZdG/q2JI3U+PSFU6OijkjzEVrLJUEhAw8BsRvU9RtNNhf4nJChfk+i2+ySqduk5K0HICenNQD2aPhhqGEqt/JPHSvb0MTpXxzfUrB8wI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764263451; c=relaxed/simple;
-	bh=elLAGUKFTL2jPRU5I7Gg1FLk4dR1W2H1wBHDQxkcnkk=;
-	h=Date:From:To:Cc:Message-Id:In-Reply-To:References:Mime-Version:
-	 Content-Type:Subject; b=ok6JdsK1/QTb/H7DPuilxB5WIKD4cBcrnJ9rvcJdF2zcGSTdnXuc/Zg+p1nPZaGn/aL55QmAxfCLPdkzLkoRaNBI3kp3UG/zZUzjZwbY+3vjm166pYGI84OIPc4A2TN7RrkIHMnB7UL8Peq9CqEwI9FYqlY267rcTKXydZQ/LUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com; spf=pass smtp.mailfrom=hugovil.com; dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b=iwzzQqzO; arc=none smtp.client-ip=162.243.120.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hugovil.com
+	s=arc-20240116; t=1764264518; c=relaxed/simple;
+	bh=l3P5ZCfOP+eyjvDmOMYppYEmDowRq4xuEB/nR6g0sII=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jigOm2F7K0Z2GmZLrft3Ek1MVIpxYGZHen2tc6Kg4W+8MlBNuxJMvheKBXCq3A/W9JtpFutXmJJUtxMKpLPQYqddCTEWL8URH7+B8xRyZo4BqTsTN/AVavsr2yfp2BHIDocguoZTA0ouwq4do45G8HxoT7ErqF94wCoovnxKwig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C1NZKKY0; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b="iwzzQqzO"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hugovil.com
-	; s=x; h=Subject:Content-Transfer-Encoding:Mime-Version:Message-Id:Cc:To:From
-	:Date:subject:date:message-id:reply-to;
-	bh=n87dfCOB/sV/NxbQvE2VCIrqwhRsH/0aVGUnSpGKyME=; b=iwzzQqzO/nCXw2HZbCqPIHWqXK
-	VlRldf7lDrc7vClkjyYglUY6+4p5BmEk0x/EsTMU8FgpxxnnRV8BWRDashEoqDtQMX/HtMB3htgxw
-	Jv/5zWBVrvGAPhKR99sn81kRhbumdow6PCSXqpQJ9Ap8gUmAxMNL/RNMcPDYW+wjWS5E=;
-Received: from modemcable168.174-80-70.mc.videotron.ca ([70.80.174.168]:37198 helo=pettiford)
-	by mail.hugovil.com with esmtpa (Exim 4.92)
-	(envelope-from <hugo@hugovil.com>)
-	id 1vOfVx-00034g-Cz; Thu, 27 Nov 2025 12:10:41 -0500
-Date: Thu, 27 Nov 2025 12:10:40 -0500
-From: Hugo Villeneuve <hugo@hugovil.com>
-To: Chris Brandt <chris.brandt@renesas.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Biju Das
- <biju.das.jz@bp.renesas.com>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Hien Huynh <hien.huynh.px@renesas.com>,
- Nghia Vo <nghia.vo.zn@renesas.com>, linux-renesas-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org
-Message-Id: <20251127121040.910aadd3bd8bac9578a40431@hugovil.com>
-In-Reply-To: <20251124131003.992554-3-chris.brandt@renesas.com>
-References: <20251124131003.992554-1-chris.brandt@renesas.com>
-	<20251124131003.992554-3-chris.brandt@renesas.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C1NZKKY0"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 248B0C113D0;
+	Thu, 27 Nov 2025 17:28:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1764264518;
+	bh=l3P5ZCfOP+eyjvDmOMYppYEmDowRq4xuEB/nR6g0sII=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=C1NZKKY0Hk9XXuWqQ5waVtrtcKyk0CmWj7f/IDMm4vhUszh8UpQZRs3BUa2T74ajN
+	 783XpZsSlnx3Ax+i0u24gUIj1BgdvNA/Hr0CGZTdO024s1bJ3DLKwv73HqKF1s+QX4
+	 WcLx2GjkZMpmfBlkWhdwWZVa+1mpL2u3Upsz4xfEhQRjRBrr/gk6YgE7A8JDvYsEAU
+	 KV5ICvvCQPbTVotYb1CM5BL11jr1gYCG/y5VE2w0L9FRafl8N7a8zmxmY/Xwl79Xxz
+	 rESnn4IIiwUMk8iYTaPYBMF569tgsc+a6E8irdTBKlgBIAFEDYu3L83qkTPVCYangN
+	 bhClzLltHrC7g==
+Date: Thu, 27 Nov 2025 17:28:32 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Xukai Wang <kingxukai@zohomail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Troy Mitchell <TroyMitchell988@gmail.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v9 0/3] riscv: canaan: Add support for K230 clock
+Message-ID: <20251127-tapestry-wispy-f790520ae754@spud>
+References: <20251127-b4-k230-clk-v9-0-3aa09e17faf5@zohomail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 70.80.174.168
-X-SA-Exim-Mail-From: hugo@hugovil.com
-X-Spam-Level: 
-X-Spam-Report: 
-	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-	* -0.5 NICE_REPLY_A Looks like a legit reply (A)
-Subject: Re: [PATCH v6 2/2] drm: renesas: rz-du: mipi_dsi: Set DSI divider
-X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
-X-SA-Exim-Scanned: Yes (on mail.hugovil.com)
-
-Hi Chris,
-
-On Mon, 24 Nov 2025 08:10:03 -0500
-Chris Brandt <chris.brandt@renesas.com> wrote:
-
-> Before the MIPI DSI clock source can be configured, the target divide
-> ratio needs to be known.
-> 
-> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-> Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
-> Tested-by: Biju Das <biju.das.jz@bp.renesas.com>
-
-Reviewed-by: Hugo Villeneuve <hvilleneuve@dimonoff.com>
-Tested-by: Hugo Villeneuve <hvilleneuve@dimonoff.com>
-
-> 
-> ---
-> v1->v2:
-> - Add spaces around '/' in comments
-> - Add target argument in new API
-> 
-> v2->v3:
-> - Add missing period in comment (Hugo)
-> - Changed '1' to 'PLL5_TARGET_DSI' (Hugo)
-> - Added Reviewed-by and Tested-by (Biju)
-> 
-> v3->v4:
-> - Fixed up the comments
-> - Fixed the match for the divider to set (was missing a * 2)
-> 
-> v4->v5:
-> - Rename patch title (Hugo)
-> - Add bpp varable for easy reuse (Hugo)
-> 
-> v5->v6:
-> - Remove clock diagram that was wrong (Chris)
-> ---
->  drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c | 17 ++++++++++++++++-
->  1 file changed, 16 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-> index 3b52dfc0ea1e..bee2cc711afd 100644
-> --- a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-> +++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-> @@ -7,6 +7,7 @@
->  
->  #include <linux/bitfield.h>
->  #include <linux/clk.h>
-> +#include <linux/clk/renesas.h>
->  #include <linux/delay.h>
->  #include <linux/dma-mapping.h>
->  #include <linux/io.h>
-> @@ -692,6 +693,7 @@ static int rzg2l_mipi_dsi_host_attach(struct mipi_dsi_host *host,
->  				      struct mipi_dsi_device *device)
->  {
->  	struct rzg2l_mipi_dsi *dsi = host_to_rzg2l_mipi_dsi(host);
-> +	int bpp;
->  	int ret;
->  
->  	if (device->lanes > dsi->num_data_lanes) {
-> @@ -701,7 +703,8 @@ static int rzg2l_mipi_dsi_host_attach(struct mipi_dsi_host *host,
->  		return -EINVAL;
->  	}
->  
-> -	switch (mipi_dsi_pixel_format_to_bpp(device->format)) {
-> +	bpp = mipi_dsi_pixel_format_to_bpp(device->format);
-> +	switch (bpp) {
->  	case 24:
->  		break;
->  	case 18:
-> @@ -732,6 +735,18 @@ static int rzg2l_mipi_dsi_host_attach(struct mipi_dsi_host *host,
->  
->  	drm_bridge_add(&dsi->bridge);
->  
-> +	/*
-> +	 * Report the required division ratio setting for the MIPI clock dividers.
-> +	 *
-> +	 * vclk * bpp = hsclk * 8 * num_lanes
-> +	 *
-> +	 * vclk * DSI_AB_divider = hsclk * 16
-> +	 *
-> +	 *   which simplifies to...
-> +	 * DSI_AB_divider = bpp * 2 / num_lanes
-> +	 */
-> +	rzg2l_cpg_dsi_div_set_divider(bpp * 2 / dsi->lanes, PLL5_TARGET_DSI);
-> +
->  	return 0;
->  }
->  
-> -- 
-> 2.50.1
-> 
-> 
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="Q2nfZtZoNiMOXgju"
+Content-Disposition: inline
+In-Reply-To: <20251127-b4-k230-clk-v9-0-3aa09e17faf5@zohomail.com>
 
 
--- 
-Hugo Villeneuve
+--Q2nfZtZoNiMOXgju
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, Nov 27, 2025 at 08:45:11PM +0800, Xukai Wang wrote:
+> This patch series adds clock controller support for the Canaan Kendryte
+> K230 SoC. The K230 SoC includes an external 24MHz OSC, 4 internal
+> PLLs and an external pulse input, with the controller managing these
+> sources and their derived clocks.
+>=20
+> The clock tree and hardware-specific definition can be found in the
+> vendor's DTS [1],
+> and this series is based on the K230 initial series [2].
+
+FWIW, I've had this on a branch since 6.9, waiting for the clock driver
+to replace the fake apb-clk-clock:
+https://git.kernel.org/pub/scm/linux/kernel/git/conor/linux.git/log/?h=3Dk2=
+30-basic
+
+I'm assuming Stephen will grab patches 1 & 2 if he is happy with what's
+here, and then I'll pick up the dts patch after that.
+
+--Q2nfZtZoNiMOXgju
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaSiKQAAKCRB4tDGHoIJi
+0ggYAP9cwEIbbYEhMwhtCpNVRYaBj4jB3LGed5ICY187QRtTrAD/SVmchC+vps1S
+oRSDqD76SHQoz+NAImzg2pRnuMHP0ws=
+=8dOF
+-----END PGP SIGNATURE-----
+
+--Q2nfZtZoNiMOXgju--
