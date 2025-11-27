@@ -1,124 +1,304 @@
-Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
+Received: from sender3-pp-f112.zoho.com (sender3-pp-f112.zoho.com [136.143.184.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5E3932C948
-	for <linux-clk@vger.kernel.org>; Thu, 27 Nov 2025 11:21:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764242470; cv=none; b=RZVtZtLnmYTfmK8BskE9ZaVqV756JtMP7AxJTSqI4d616mL1JkZQw08YZtAViQ/RRYr6nx43ROHxLbIgmIh/BLorkbHFWYjYoCfuiZUM9b7ENXrGXqq8uOsMWNLAsrGbHuqI2NHNt+78Pw+rob1NdXnr/18/sGa5QtA2nNEtKHA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764242470; c=relaxed/simple;
-	bh=Ap6/9SbkbbPmwKUm+ihzBVNWRWeUs4zdF9KjvdKRdpo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LuOwxzVyduNHIjz5rnHOxMseKybal5pYOMz/FiVSkYhHOo/nfsWSuKabZmXvt5VNRw4t8LrjyZnqeleTarH6PQ866XSbFUGzOEyB6c0RQL1dzzYkC/li0qGPrnB6wL95YZuZtYJjRiorxv+5yi1LbA4ZLUDUH75212KZvs7XXtc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=bNZKoPli; arc=none smtp.client-ip=95.215.58.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26646264FB5;
+	Thu, 27 Nov 2025 12:05:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.184.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1764245110; cv=pass; b=LTI/11ITFaDzrEhoZMNJY00BYq2r7wqBZSQ58PALmiWMEqYy69WvddiqNsRIHBxjvDfBEIjCrhfzFfGG2WvS0JtSmMtsz2PvruamDAb5+DyqhNLfStGoD7DTRCF5Mg7mTHzV5nc94ARzI/pWton9IaHb+0XL9GE1ljKHCsqtYtY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1764245110; c=relaxed/simple;
+	bh=Gk4RL3QXwW8PedMbLQTOtF+hMHkQcU+L5iXXuvtnA/I=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=abOI9uZecIbepYUIOfUK0o5/ujvGlvtUMeDJOXxJ+MS3nARpTihRLwjvpT7MroSuCmjWIKqi3f38WrDtnP9MT06TDPzOg79fJ+bhMUPOow9Y7uCjnP3+HeSQ1xuX+slmi68hRWfKI2GXY67FH+LFG9OeGpU5/JhSMLR2Q9aUT8Q=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=louisalexis.eyraud@collabora.com header.b=Z2RVFK4g; arc=pass smtp.client-ip=136.143.184.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="bNZKoPli"
-Date: Thu, 27 Nov 2025 13:20:59 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1764242467; h=from:from:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:in-reply-to:in-reply-to:  references:references;
-	bh=9hlvCyZam0KEugkCTICJnPQK3CmfT/W9AcEwJZGBgVM=;
-	b=bNZKoPlijfeIKaessbhVKny47LUKJ96A8IP++cezctLMuEAswDl7dm94n5cgZ1rJgbu0kH
-	ac7WG827thIkBZkzxrRokIrtVGsgZufp/lcbh5c/GQOo+haInO57NBPwGB5cJ8jPreLuBa
-	EP7ij3w6c52Q2cch1r5DqRWtXjxMjps=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Matti Vaittinen <matti.vaittinen@linux.dev>
-To: Matti Vaittinen <mazziesaccount@gmail.com>,
-	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Sebastian Reichel <sre@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-rtc@vger.kernel.org, Andreas Kemnade <andreas@kemnade.info>
-Subject: [PATCH v6 17/17] MAINTAINERS: Add ROHM BD72720 PMIC
-Message-ID: <e9bf9a504fdd5011adc4a012d59f71a9385d57ea.1764241265.git.mazziesaccount@gmail.com>
-Reply-To: Matti Vaittinen <mazziesaccount@gmail.com>
-References: <cover.1764241265.git.mazziesaccount@gmail.com>
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=louisalexis.eyraud@collabora.com header.b="Z2RVFK4g"
+ARC-Seal: i=1; a=rsa-sha256; t=1764245091; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=X4YWcMiHbCLL/4diT4rVYUhW/Bxl/H3tbk7dn+Li8x5MOJde9xS7KHrcZzFh6IwQh8SU15H0GleWAdf9RatURmv5ktIf1ifZuNE1T0dm5ijch7TFeiFfefujsqhXbv6nMaC3VLEUpY1PtC+hcf49uAGXOo7LzXAxEaj381Cn2kE=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1764245091; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=CFLfGKSVFGD1/pcFLg7BhC+bfbUp1bOktlRYor4O/2g=; 
+	b=eMBU7/96dViNDewnN9xuszKhKoTMlZeYl1vhn6WYhn74K9QDPWVSL2BMrCWl2sYEAuZclfK5wz8iVXsJS7NDVZQLMLRqWtyNyKivqUGzxPd/5TBeVQRDH77xA2LdgNeJjWQdUSbHUK94leEj2hkUAFPrHgUgF2k4SchV0FptjCQ=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=louisalexis.eyraud@collabora.com;
+	dmarc=pass header.from=<louisalexis.eyraud@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1764245091;
+	s=zohomail; d=collabora.com; i=louisalexis.eyraud@collabora.com;
+	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
+	bh=CFLfGKSVFGD1/pcFLg7BhC+bfbUp1bOktlRYor4O/2g=;
+	b=Z2RVFK4gTybvgI/Afj/eZTauAFVtk1cloP+iL0lnBrYKl2HllFL1GSBmOTl/A9Tv
+	li8P70z1yljNfw5m4BjSB5jY4OPRxhQ/O63KYPD5ABlwJBiqxI9ROA5KN1xouIHRAO7
+	81MdQzJJYePTDLJTnIZjYpA/o7ZkClgLj0IBcyiU=
+Received: by mx.zohomail.com with SMTPS id 1764245089596783.6943561930424;
+	Thu, 27 Nov 2025 04:04:49 -0800 (PST)
+Message-ID: <54125e573504ad78649512f71cf7bd30c8cfd8a9.camel@collabora.com>
+Subject: Re: [PATCH v3 04/21] clk: mediatek: Add MT8189 apmixedsys clock
+ support
+From: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
+To: "irving.ch.lin" <irving-ch.lin@mediatek.com>, Michael Turquette	
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring	
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley	
+ <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Ulf
+ Hansson <ulf.hansson@linaro.org>, Richard Cochran	
+ <richardcochran@gmail.com>
+Cc: Qiqi Wang <qiqi.wang@mediatek.com>, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+	linux-pm@vger.kernel.org, netdev@vger.kernel.org, 
+	Project_Global_Chrome_Upstream_Group@mediatek.com,
+ sirius.wang@mediatek.com, 	vince-wl.liu@mediatek.com, jh.hsu@mediatek.com
+Date: Thu, 27 Nov 2025 13:04:44 +0100
+In-Reply-To: <20251106124330.1145600-5-irving-ch.lin@mediatek.com>
+References: <20251106124330.1145600-1-irving-ch.lin@mediatek.com>
+	 <20251106124330.1145600-5-irving-ch.lin@mediatek.com>
+Organization: Collabora Ltd
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.1 (3.58.1-1.fc43) 
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="TAKA8cOt62rM1h2P"
-Content-Disposition: inline
-In-Reply-To: <cover.1764241265.git.mazziesaccount@gmail.com>
-X-Migadu-Flow: FLOW_OUT
+X-ZohoMailClient: External
 
+Hi Irving-CH,
 
---TAKA8cOt62rM1h2P
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, 2025-11-06 at 20:41 +0800, irving.ch.lin wrote:
+> From: Irving-CH Lin <irving-ch.lin@mediatek.com>
+>=20
+> Add support for the MT8189 apmixedsys clock controller, which
+> provides
+> PLLs generated from SoC 26m.
+>=20
+> Signed-off-by: Irving-CH Lin <irving-ch.lin@mediatek.com>
+> ---
+> =C2=A0drivers/clk/mediatek/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 13 ++
+> =C2=A0drivers/clk/mediatek/Makefile=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 1 +
+> =C2=A0drivers/clk/mediatek/clk-mt8189-apmixedsys.c | 135
+> +++++++++++++++++++
+> =C2=A03 files changed, 149 insertions(+)
+> =C2=A0create mode 100644 drivers/clk/mediatek/clk-mt8189-apmixedsys.c
+>=20
+> diff --git a/drivers/clk/mediatek/Kconfig
+> b/drivers/clk/mediatek/Kconfig
+> index 0e8dd82aa84e..2c898fd8a34c 100644
+> --- a/drivers/clk/mediatek/Kconfig
+> +++ b/drivers/clk/mediatek/Kconfig
+> @@ -815,6 +815,19 @@ config COMMON_CLK_MT8188_WPESYS
+> =C2=A0	help
+> =C2=A0	=C2=A0 This driver supports MediaTek MT8188 Warp Engine clocks.
+> =C2=A0
+> +config COMMON_CLK_MT8189
+> +	bool "Clock driver for MediaTek MT8189"
+It should be a tristate so the whole MT8189 clock drivers could be
+compiled as module like many other MTK SoC (MT8188, MT8192, MT8196...).
 
-=46rom: Matti Vaittinen <mazziesaccount@gmail.com>
+> +	depends on ARM64 || COMPILE_TEST
+> +	select COMMON_CLK_MEDIATEK
+> +	select COMMON_CLK_MEDIATEK_FHCTL
+> +	default ARCH_MEDIATEK
+> +	help
+> +	=C2=A0 Enable this option to support the clock management for
+> MediaTek MT8189 SoC. This
+> +	=C2=A0 includes handling of all primary clock functions and
+> features specific to the MT8189
+> +	=C2=A0 platform. Enabling this driver ensures that the system's
+> clock functionality aligns
+> +	=C2=A0 with the MediaTek MT8189 hardware capabilities, providing
+> efficient management of
+> +	=C2=A0 clock speeds and power consumption.
+> +
+> =C2=A0config COMMON_CLK_MT8192
+> =C2=A0	tristate "Clock driver for MediaTek MT8192"
+> =C2=A0	depends on ARM64 || COMPILE_TEST
+> diff --git a/drivers/clk/mediatek/Makefile
+> b/drivers/clk/mediatek/Makefile
+> index d8736a060dbd..66577ccb9b93 100644
+> --- a/drivers/clk/mediatek/Makefile
+> +++ b/drivers/clk/mediatek/Makefile
+> @@ -123,6 +123,7 @@ obj-$(CONFIG_COMMON_CLK_MT8188_VDOSYS) +=3D clk-
+> mt8188-vdo0.o clk-mt8188-vdo1.o
+> =C2=A0obj-$(CONFIG_COMMON_CLK_MT8188_VENCSYS) +=3D clk-mt8188-venc.o
+> =C2=A0obj-$(CONFIG_COMMON_CLK_MT8188_VPPSYS) +=3D clk-mt8188-vpp0.o clk-
+> mt8188-vpp1.o
+> =C2=A0obj-$(CONFIG_COMMON_CLK_MT8188_WPESYS) +=3D clk-mt8188-wpe.o
+> +obj-$(CONFIG_COMMON_CLK_MT8189) +=3D clk-mt8189-apmixedsys.o
+> =C2=A0obj-$(CONFIG_COMMON_CLK_MT8192) +=3D clk-mt8192-apmixedsys.o clk-
+> mt8192.o
+> =C2=A0obj-$(CONFIG_COMMON_CLK_MT8192_AUDSYS) +=3D clk-mt8192-aud.o
+> =C2=A0obj-$(CONFIG_COMMON_CLK_MT8192_CAMSYS) +=3D clk-mt8192-cam.o
+> diff --git a/drivers/clk/mediatek/clk-mt8189-apmixedsys.c
+> b/drivers/clk/mediatek/clk-mt8189-apmixedsys.c
+> new file mode 100644
+> index 000000000000..8d67888737a2
+> --- /dev/null
+> +++ b/drivers/clk/mediatek/clk-mt8189-apmixedsys.c
+> @@ -0,0 +1,135 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2025 MediaTek Inc.
+> + * Author: Qiqi Wang <qiqi.wang@mediatek.com>
+> + */
+> +
+> +#include <linux/clk.h>
+> +#include <linux/delay.h>
+> +#include <linux/mfd/syscon.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/of_address.h>
+> +#include <linux/of_device.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/slab.h>
+> +
+> +#include "clk-mtk.h"
+> +#include "clk-pll.h"
+> +
+> +#include <dt-bindings/clock/mediatek,mt8189-clk.h>
+> +
+> +#define MT8189_PLL_FMAX		(3800UL * MHZ)
+> +#define MT8189_PLL_FMIN		(1500UL * MHZ)
+> +#define MT8189_PLLEN_OFS	0x70
+> +#define MT8189_INTEGER_BITS	8
+> +
+> +#define PLL_SETCLR(_id, _name, _reg, _en_setclr_bit,		\
+> +			_rstb_setclr_bit, _flags, _pd_reg,	\
+> +			_pd_shift, _tuner_reg, _tuner_en_reg,	\
+> +			_tuner_en_bit, _pcw_reg, _pcw_shift,	\
+> +			_pcwbits) {				\
+> +		.id =3D _id,					\
+> +		.name =3D _name,					\
+> +		.en_reg =3D MT8189_PLLEN_OFS,			\
+> +		.reg =3D _reg,					\
+> +		.pll_en_bit =3D _en_setclr_bit,			\
+> +		.rst_bar_mask =3D BIT(_rstb_setclr_bit),		\
+> +		.flags =3D _flags,				\
+> +		.fmax =3D MT8189_PLL_FMAX,			\
+> +		.fmin =3D MT8189_PLL_FMIN,			\
+> +		.pd_reg =3D _pd_reg,				\
+> +		.pd_shift =3D _pd_shift,				\
+> +		.tuner_reg =3D _tuner_reg,			\
+> +		.tuner_en_reg =3D _tuner_en_reg,			\
+> +		.tuner_en_bit =3D _tuner_en_bit,			\
+> +		.pcw_reg =3D _pcw_reg,				\
+> +		.pcw_shift =3D _pcw_shift,			\
+> +		.pcwbits =3D _pcwbits,				\
+> +		.pcwibits =3D MT8189_INTEGER_BITS,		\
+> +	}
+> +
+> +static const struct mtk_pll_data apmixed_plls[] =3D {
+> +	PLL_SETCLR(CLK_APMIXED_ARMPLL_LL, "armpll-ll", 0x204, 18,
+> +		=C2=A0=C2=A0 0, PLL_AO, 0x208, 24, 0, 0, 0, 0x208, 0, 22),
+> +	PLL_SETCLR(CLK_APMIXED_ARMPLL_BL, "armpll-bl", 0x214, 17,
+> +		=C2=A0=C2=A0 0, PLL_AO, 0x218, 24, 0, 0, 0, 0x218, 0, 22),
+> +	PLL_SETCLR(CLK_APMIXED_CCIPLL, "ccipll", 0x224, 16,
+> +		=C2=A0=C2=A0 0, PLL_AO, 0x228, 24, 0, 0, 0, 0x228, 0, 22),
+> +	PLL_SETCLR(CLK_APMIXED_MAINPLL, "mainpll", 0x304, 15,
+> +		=C2=A0=C2=A0 23, HAVE_RST_BAR | PLL_AO,
+> +		=C2=A0=C2=A0 0x308, 24, 0, 0, 0, 0x308, 0, 22),
+> +	PLL_SETCLR(CLK_APMIXED_UNIVPLL, "univpll", 0x314, 14,
+> +		=C2=A0=C2=A0 23, HAVE_RST_BAR, 0x318, 24, 0, 0, 0, 0x318, 0,
+> 22),
+> +	PLL_SETCLR(CLK_APMIXED_MMPLL, "mmpll", 0x324, 13,
+> +		=C2=A0=C2=A0 23, HAVE_RST_BAR, 0x328, 24, 0, 0, 0, 0x328, 0,
+> 22),
+> +	PLL_SETCLR(CLK_APMIXED_MFGPLL, "mfgpll", 0x504, 7,
+> +		=C2=A0=C2=A0 0, 0, 0x508, 24, 0, 0, 0, 0x508, 0, 22),
+> +	PLL_SETCLR(CLK_APMIXED_APLL1, "apll1", 0x404, 11,
+> +		=C2=A0=C2=A0 0, 0, 0x408, 24, 0x040, 0x00c, 0, 0x40c, 0, 32),
+> +	PLL_SETCLR(CLK_APMIXED_APLL2, "apll2", 0x418, 10,
+> +		=C2=A0=C2=A0 0, 0, 0x41c, 24, 0x044, 0x00c, 1, 0x420, 0, 32),
+> +	PLL_SETCLR(CLK_APMIXED_EMIPLL, "emipll", 0x334, 12,
+> +		=C2=A0=C2=A0 0, PLL_AO, 0x338, 24, 0, 0, 0, 0x338, 0, 22),
+> +	PLL_SETCLR(CLK_APMIXED_APUPLL2, "apupll2", 0x614, 2,
+> +		=C2=A0=C2=A0 0, 0, 0x618, 24, 0, 0, 0, 0x618, 0, 22),
+> +	PLL_SETCLR(CLK_APMIXED_APUPLL, "apupll", 0x604, 3,
+> +		=C2=A0=C2=A0 0, 0, 0x608, 24, 0, 0, 0, 0x608, 0, 22),
+> +	PLL_SETCLR(CLK_APMIXED_TVDPLL1, "tvdpll1", 0x42c, 9,
+> +		=C2=A0=C2=A0 0, 0, 0x430, 24, 0, 0, 0, 0x430, 0, 22),
+> +	PLL_SETCLR(CLK_APMIXED_TVDPLL2, "tvdpll2", 0x43c, 8,
+> +		=C2=A0=C2=A0 0, 0, 0x440, 24, 0, 0, 0, 0x440, 0, 22),
+> +	PLL_SETCLR(CLK_APMIXED_ETHPLL, "ethpll", 0x514, 6,
+> +		=C2=A0=C2=A0 0, 0, 0x518, 24, 0, 0, 0, 0x518, 0, 22),
+> +	PLL_SETCLR(CLK_APMIXED_MSDCPLL, "msdcpll", 0x524, 5,
+> +		=C2=A0=C2=A0 0, 0, 0x528, 24, 0, 0, 0, 0x528, 0, 22),
+> +	PLL_SETCLR(CLK_APMIXED_UFSPLL, "ufspll", 0x534, 4,
+> +		=C2=A0=C2=A0 0, 0, 0x538, 24, 0, 0, 0, 0x538, 0, 22),
+> +};
+> +
+> +static const struct of_device_id of_match_clk_mt8189_apmixed[] =3D {
+> +	{ .compatible =3D "mediatek,mt8189-apmixedsys" },
+> +	{ /* sentinel */ }
+> +};
+This driver does not use the MODULE_DEVICE_TABLE() macro, needed for a
+proper module support. It looks that it is also missing in all other
+clock drivers of this patch series, so please add it in this driver and
+others as well.
 
-Add the ROHM BD72720 PMIC driver files to be maintained by undersigned.
+> +
+> +static int clk_mt8189_apmixed_probe(struct platform_device *pdev)
+> +{
+> +	int r;
+> +	struct clk_hw_onecell_data *clk_data;
+> +	struct device_node *node =3D pdev->dev.of_node;
+> +
+> +	clk_data =3D mtk_alloc_clk_data(ARRAY_SIZE(apmixed_plls));
+> +	if (!clk_data)
+> +		return -ENOMEM;
+> +
+In the v1 patch review, Angelo raised a question about missing FHCTL
+support in this driver. There was no reply about it and the driver
+implementation did not change in the following patch revisions to add
+its support.
+Is there a reason that the FHCTL support is still not implemented?
 
-Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+> +	r =3D mtk_clk_register_plls(node, apmixed_plls,
+> +				=C2=A0 ARRAY_SIZE(apmixed_plls),
+> clk_data);
+> +	if (r)
+> +		goto free_apmixed_data;
+> +
+> +	r =3D of_clk_add_hw_provider(node, of_clk_hw_onecell_get,
+> clk_data);
+> +	if (r)
+> +		goto unregister_plls;
+> +
+> +	platform_set_drvdata(pdev, clk_data);
+> +
+> +	return 0;
+> +
+> +unregister_plls:
+> +	mtk_clk_unregister_plls(apmixed_plls,
+> ARRAY_SIZE(apmixed_plls),
+> +				clk_data);
+> +free_apmixed_data:
+> +	mtk_free_clk_data(clk_data);
+> +	return r;
+> +}
+> +
+> +static struct platform_driver clk_mt8189_apmixed_drv =3D {
+> +	.probe =3D clk_mt8189_apmixed_probe,
+It misses a remove callback implementation, so please add one.
 
----
-Revision history:
- RFCv1 =3D>:
- - No changes
----
- MAINTAINERS | 2 ++
- 1 file changed, 2 insertions(+)
+> +	.driver =3D {
+> +		.name =3D "clk-mt8189-apmixed",
+> +		.of_match_table =3D of_match_clk_mt8189_apmixed,
+> +	},
+> +};
+> +
+> +module_platform_driver(clk_mt8189_apmixed_drv);
+> +MODULE_LICENSE("GPL");
+It would be better you also add a description with MODULE_DESCRIPTION()
+macro and in the other new drivers of your patch series.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index fe01aa31c58b..7e3c1eac7cda 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -22353,6 +22353,7 @@ S:	Supported
- F:	drivers/clk/clk-bd718x7.c
- F:	drivers/gpio/gpio-bd71815.c
- F:	drivers/gpio/gpio-bd71828.c
-+F:	drivers/gpio/gpio-bd72720.c
- F:	drivers/mfd/rohm-bd71828.c
- F:	drivers/mfd/rohm-bd718x7.c
- F:	drivers/mfd/rohm-bd9576.c
-@@ -22369,6 +22370,7 @@ F:	drivers/watchdog/bd96801_wdt.c
- F:	include/linux/mfd/rohm-bd71815.h
- F:	include/linux/mfd/rohm-bd71828.h
- F:	include/linux/mfd/rohm-bd718x7.h
-+F:	include/linux/mfd/rohm-bd72720.h
- F:	include/linux/mfd/rohm-bd957x.h
- F:	include/linux/mfd/rohm-bd96801.h
- F:	include/linux/mfd/rohm-bd96802.h
---=20
-2.52.0
-
-
---TAKA8cOt62rM1h2P
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCgAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmkoNBsACgkQeFA3/03a
-ocX3XwgA0e7s/RbGuUWSAffxeMa2iMDujJPBu2E1K8RfwmVs+g7zs1N1LXPRjig0
-RsN2Q6KdvgbMyTWjhich47XuU1THSsNf5zWKCWw9lgsopVO5UMxnRfJWaNlDNCDG
-5WetCUfKGSjh0uJHmg6y48ggWigquj/D+8z/cqELCWTiXlEVxvzSW1gbYUn2a6/e
-oKHSGSHMg1gXoho7utxadtFxdfI0kBiuEs724deIcx9L4TLMsktEmV0+t5j5E1Jj
-naA+FsVE0tfSlMwpSEOV7L4WVUaDrd/JjeO+poH74sjwgQx7CXke9nCYIbdywWCs
-5hjJhl0RnIlLdrd4k9xiu0lCEs/KLQ==
-=l3La
------END PGP SIGNATURE-----
-
---TAKA8cOt62rM1h2P--
+Regards,
+Louis-Alexis
