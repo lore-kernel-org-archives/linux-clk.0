@@ -1,69 +1,49 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEE613054C3;
-	Thu, 27 Nov 2025 19:29:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A258262FF8;
+	Thu, 27 Nov 2025 20:34:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764271771; cv=none; b=aUa3pcIxgK8Nt8xitnNk0aNgwl8MtPjJXGb+YwIa7goANxBrHwEyT6Gs/gAKQDz8CW+qbM8ag12PWk4SC0X/guhE+XrSXxLb1obeN8MyMIdaAUPygSWELFUMCT9nPVrgK30wgguH3KL4QovKJr57YDnPvM1nGW4k5lePCoJGicg=
+	t=1764275643; cv=none; b=g5A7loH0S/P44Mb6UWmexXyiffM/hT9Z3momor42bpwcpquiN4FAgUHT16rMwh1EGY4sc/6fOyk/z2cu6f4VlGvaZM9xe385I/1+n59pyrrPC0/44Eue20sU8l0huRwQM161CctqA5tR3IKTIm5v9RZo0WLuLADceVVpuBSNoiQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764271771; c=relaxed/simple;
-	bh=3dA7eKTdIK6Z2EWuL1CUxNnWxGO002dwKrQWaVzfMQ4=;
+	s=arc-20240116; t=1764275643; c=relaxed/simple;
+	bh=iaUkQzHWoFtelBiaVO6hPpyfUhchc6MEcbKNHDj+YO8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GAuinSJDWzTtgj6p41/WIbbW0Nzyv6BE5cRAv37x+0PFsf1G4NrFdrNTYPF4PTbvSvOlffa69ZsazWSp5ckTCm7FmJsgIvGqwTp8PQcpQAF0gaUdmNcoRK8ktWQdTpbya0k7U+if8I5BqGVpsxjCtk5EhvkHbeKj4Rcwm+O1AjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=A5pbYQ+/; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=CNFFu3RV3rvY1YrbKKwIa4GlHQLtwBbchEkzbcJCbgI2QIrIZwV4hsctH2wbhoyNlPpR3kWw94hUP32KOLQk+ykTZLwdosHUIf+END00BbpxlmjxNT0NqJ9Z2gK7PZjydk+t837ZZkzs5D2lQ0VMawztMpqHnwXIauocaF2R0nQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WfAQPPNr; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="A5pbYQ+/"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1764271770; x=1795807770;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=3dA7eKTdIK6Z2EWuL1CUxNnWxGO002dwKrQWaVzfMQ4=;
-  b=A5pbYQ+/5bEabKU6Pwa29JdSZFStsp1+JG1QBnvmwA+XwswCELux9N7m
-   wo0GzrVqzrb/7kzItf/jQlFleM6LSFLqmEGzMvljpVNlrtgvZEj67zrdW
-   UXQPzm0El/7gSzAmeTiWbo7mH4cbfZ/TbuIpBiEbOtOiLLjJwnBWeBsZf
-   U8hGgO7IBSn6prZCtg8vKXkfhgK4UjoSN9NXhUit1DFSZlj+FWkn7ugcl
-   A2xfPI0xYc/5h8/8/gPDi5XasKj4PBRo3E6657UcxS5Toirlnjje1w7u7
-   U2lP+08yxGTjmszfwrGP0IdNsScwT5TnATlzCu7j24lQHScnuzeUEu0nR
-   g==;
-X-CSE-ConnectionGUID: 2RNXEew2RcihRxaa1JbINA==
-X-CSE-MsgGUID: dXqp8H0+SHG3At9lusjGOg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11626"; a="66393948"
-X-IronPort-AV: E=Sophos;i="6.20,231,1758610800"; 
-   d="scan'208";a="66393948"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Nov 2025 11:29:29 -0800
-X-CSE-ConnectionGUID: 19qKVL8VTRiNqYXMIIEb/Q==
-X-CSE-MsgGUID: wQwkhhWVRfmX8dHiJ7yaxw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.20,231,1758610800"; 
-   d="scan'208";a="197607869"
-Received: from lkp-server01.sh.intel.com (HELO 4664bbef4914) ([10.239.97.150])
-  by fmviesa005.fm.intel.com with ESMTP; 27 Nov 2025 11:29:26 -0800
-Received: from kbuild by 4664bbef4914 with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1vOhgC-000000005Zv-1iSb;
-	Thu, 27 Nov 2025 19:29:24 +0000
-Date: Fri, 28 Nov 2025 03:29:06 +0800
-From: kernel test robot <lkp@intel.com>
-To: Taniya Das <taniya.das@oss.qualcomm.com>,
-	Bjorn Andersson <andersson@kernel.org>,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WfAQPPNr"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99949C4CEF8;
+	Thu, 27 Nov 2025 20:34:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1764275643;
+	bh=iaUkQzHWoFtelBiaVO6hPpyfUhchc6MEcbKNHDj+YO8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WfAQPPNrkwDVGw1LMaEzzsxYcumtf2XjM0DixGYbmPfpXORU9ijySXiOMMY5bM3x5
+	 cKGV3KOAC1wchviAmtEagCtsi1DFDsbi1xtvLxzVZ/lCo8wyaPwSMBOLxAO4vH5/vw
+	 cO/hxQYAtt62LYFyXXXDpinq6jreqVvkRuVa/HV93Nu83g9LI+8JnxJ7XgF2Dxa+Qc
+	 Ucn6o148G+8yHwZhgVsVqlAvKJpLJay2xm41q9DO1TGff5Z+PBCeJYLEPFJSIhvVXH
+	 ARAAMl/Sq6a3H85AjcpxC3JC5MPS7QFFD/+qi5T6FSuuCltobAZqCqjRycKQGclY5K
+	 fDnL/MsLvN9FQ==
+Date: Thu, 27 Nov 2025 14:33:58 -0600
+From: Drew Fustini <fustini@kernel.org>
+To: Yao Zi <ziyao@disroot.org>
+Cc: Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Paul Walmsley <pjw@kernel.org>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Dmitry Baryshkov <lumag@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev,
-	Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
-	Imran Shaik <imran.shaik@oss.qualcomm.com>,
-	Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Taniya Das <taniya.das@oss.qualcomm.com>
-Subject: Re: [PATCH] clk: qcom: clk-rpmh: Update the clock suffix for Glymur
-Message-ID: <202511280306.L2l4tAmD-lkp@intel.com>
-References: <20251125-glymur_rpmhcc_fix-v1-1-60081b3cce7f@oss.qualcomm.com>
+	Stephen Boyd <sboyd@kernel.org>, Icenowy Zheng <uwu@icenowy.me>,
+	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	Han Gao <rabenda.cn@gmail.com>, Han Gao <gaohan@iscas.ac.cn>
+Subject: Re: [PATCH 6/7] clk: thead: th1520-ap: Support CPU frequency scaling
+Message-ID: <aSi1tlmBdZ5fZHqR@gen8>
+References: <20251120131416.26236-1-ziyao@disroot.org>
+ <20251120131416.26236-7-ziyao@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -72,70 +52,36 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251125-glymur_rpmhcc_fix-v1-1-60081b3cce7f@oss.qualcomm.com>
+In-Reply-To: <20251120131416.26236-7-ziyao@disroot.org>
 
-Hi Taniya,
+On Thu, Nov 20, 2025 at 01:14:15PM +0000, Yao Zi wrote:
+> On TH1520 SoC, c910_clk feeds the CPU cluster. It could be glitchlessly
+> reparented to one of the two PLLs: either to cpu_pll0 indirectly through
+> c910_i0_clk, or to cpu_pll1 directly.
+> 
+> To achieve glitchless rate change, customized clock operations are
+> implemented for c910_clk: on rate change, the PLL not currently in use
+> is configured to the requested rate first, then c910_clk reparents to
+> it.
+> 
+> Additionally, c910_bus_clk, which in turn takes c910_clk as parent,
+> has a frequency limit of 750MHz. A clock notifier is registered on
+> c910_clk to adjust c910_bus_clk on c910_clk rate change.
+> 
+> Signed-off-by: Yao Zi <ziyao@disroot.org>
+> ---
+>  drivers/clk/thead/clk-th1520-ap.c | 148 +++++++++++++++++++++++++++++-
+>  1 file changed, 146 insertions(+), 2 deletions(-)
+[...] 
+> +/*
+> + * c910_clk could be reparented glitchlessly for DVFS. There are two parents,
+> + *  - c910_i0_clk, dervided from cpu_pll0_clk or osc_24m.
 
-kernel test robot noticed the following build errors:
+Typo: 'derived' instead of 'dervided'.
 
-[auto build test ERROR on 92fd6e84175befa1775e5c0ab682938eca27c0b2]
+[...]
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Taniya-Das/clk-qcom-clk-rpmh-Update-the-clock-suffix-for-Glymur/20251126-021404
-base:   92fd6e84175befa1775e5c0ab682938eca27c0b2
-patch link:    https://lore.kernel.org/r/20251125-glymur_rpmhcc_fix-v1-1-60081b3cce7f%40oss.qualcomm.com
-patch subject: [PATCH] clk: qcom: clk-rpmh: Update the clock suffix for Glymur
-config: arm64-randconfig-003-20251127 (https://download.01.org/0day-ci/archive/20251128/202511280306.L2l4tAmD-lkp@intel.com/config)
-compiler: aarch64-linux-gcc (GCC) 9.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251128/202511280306.L2l4tAmD-lkp@intel.com/reproduce)
+Unless there are other comments that require changes, I can fix up the
+typo when applied.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202511280306.L2l4tAmD-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> drivers/clk/qcom/clk-rpmh.c:891:21: error: 'clk_rpmh_clk3_a' undeclared here (not in a function); did you mean 'clk_rpmh_clk3_a2'?
-     891 |  [RPMH_RF_CLK3]  = &clk_rpmh_clk3_a.hw,
-         |                     ^~~~~~~~~~~~~~~
-         |                     clk_rpmh_clk3_a2
->> drivers/clk/qcom/clk-rpmh.c:892:22: error: 'clk_rpmh_clk3_a_ao' undeclared here (not in a function); did you mean 'clk_rpmh_clk3_a2_ao'?
-     892 |  [RPMH_RF_CLK3_A] = &clk_rpmh_clk3_a_ao.hw,
-         |                      ^~~~~~~~~~~~~~~~~~
-         |                      clk_rpmh_clk3_a2_ao
->> drivers/clk/qcom/clk-rpmh.c:893:21: error: 'clk_rpmh_clk4_a' undeclared here (not in a function); did you mean 'clk_rpmh_clk4_a2'?
-     893 |  [RPMH_RF_CLK4]  = &clk_rpmh_clk4_a.hw,
-         |                     ^~~~~~~~~~~~~~~
-         |                     clk_rpmh_clk4_a2
->> drivers/clk/qcom/clk-rpmh.c:894:22: error: 'clk_rpmh_clk4_a_ao' undeclared here (not in a function); did you mean 'clk_rpmh_clk4_a2_ao'?
-     894 |  [RPMH_RF_CLK4_A] = &clk_rpmh_clk4_a_ao.hw,
-         |                      ^~~~~~~~~~~~~~~~~~
-         |                      clk_rpmh_clk4_a2_ao
->> drivers/clk/qcom/clk-rpmh.c:895:21: error: 'clk_rpmh_clk5_a' undeclared here (not in a function); did you mean 'clk_rpmh_clk5_a2'?
-     895 |  [RPMH_RF_CLK5]  = &clk_rpmh_clk5_a.hw,
-         |                     ^~~~~~~~~~~~~~~
-         |                     clk_rpmh_clk5_a2
->> drivers/clk/qcom/clk-rpmh.c:896:22: error: 'clk_rpmh_clk5_a_ao' undeclared here (not in a function); did you mean 'clk_rpmh_clk5_a2_ao'?
-     896 |  [RPMH_RF_CLK5_A] = &clk_rpmh_clk5_a_ao.hw,
-         |                      ^~~~~~~~~~~~~~~~~~
-         |                      clk_rpmh_clk5_a2_ao
-
-
-vim +891 drivers/clk/qcom/clk-rpmh.c
-
-c035a9e265dd80 Taniya Das 2024-12-04  887  
-ebcb9db98bdab8 Taniya Das 2025-08-25  888  static struct clk_hw *glymur_rpmh_clocks[] = {
-ebcb9db98bdab8 Taniya Das 2025-08-25  889  	[RPMH_CXO_CLK]		= &clk_rpmh_bi_tcxo_div2.hw,
-ebcb9db98bdab8 Taniya Das 2025-08-25  890  	[RPMH_CXO_CLK_A]	= &clk_rpmh_bi_tcxo_div2_ao.hw,
-ebcb9db98bdab8 Taniya Das 2025-08-25 @891  	[RPMH_RF_CLK3]		= &clk_rpmh_clk3_a.hw,
-ebcb9db98bdab8 Taniya Das 2025-08-25 @892  	[RPMH_RF_CLK3_A]	= &clk_rpmh_clk3_a_ao.hw,
-ebcb9db98bdab8 Taniya Das 2025-08-25 @893  	[RPMH_RF_CLK4]		= &clk_rpmh_clk4_a.hw,
-ebcb9db98bdab8 Taniya Das 2025-08-25 @894  	[RPMH_RF_CLK4_A]	= &clk_rpmh_clk4_a_ao.hw,
-ebcb9db98bdab8 Taniya Das 2025-08-25 @895  	[RPMH_RF_CLK5]		= &clk_rpmh_clk5_a.hw,
-ebcb9db98bdab8 Taniya Das 2025-08-25 @896  	[RPMH_RF_CLK5_A]	= &clk_rpmh_clk5_a_ao.hw,
-ebcb9db98bdab8 Taniya Das 2025-08-25  897  };
-ebcb9db98bdab8 Taniya Das 2025-08-25  898  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Reviewed-by: Drew Fustini <fustini@kernel.org>
