@@ -1,53 +1,53 @@
-Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11011012.outbound.protection.outlook.com [52.101.65.12])
+Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010038.outbound.protection.outlook.com [52.101.84.38])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E4EC2D4B61;
-	Fri, 28 Nov 2025 03:14:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F1212D876C;
+	Fri, 28 Nov 2025 03:14:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.38
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764299680; cv=fail; b=NYLPTVc9fY3TA1W28cW6FaOUE7T2hsuyOoHo/59nT6+qUdHhuUvviZroEFzFtUkBzcNnbDQFEBk1/4MP+P1sgDqixXp6n7XKPH+POQsIYL94uyn9shsc+vZBtmKHMLUne/KX+p8IHIZAf8f+Sn3SZpYn9QahZQDD/mmLE0LRPio=
+	t=1764299684; cv=fail; b=j8D8MhGmbpi6VOivpulTi5UB8ijgj4hUE07TOFIlod8jDUtDyHGqNShmDnDJ/CsAaIDx2P8dHwb/bNkS3+ElgvVjJ6ti7tBCsxfaT6pGu5FhDddWtCKw6WHpEPgXhxPApP7jBOk5NZH9xe0UQk/RtistLlJbdDtmQZkntzDLid4=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764299680; c=relaxed/simple;
-	bh=Mt/jrUUpbkLcQAhwBVHsez1FgJYBsRXp4+e3ep1kXuk=;
+	s=arc-20240116; t=1764299684; c=relaxed/simple;
+	bh=8XJX8n/ShWYtbZxTSR/mmLpl5ImygHkucIcV2JXwwe0=;
 	h=From:Date:Subject:Content-Type:Message-Id:References:In-Reply-To:
-	 To:Cc:MIME-Version; b=gea5T3RtfDnInjZeJoEQWD99FkpQqKvvvBhN7oapB+QyYhL4IuudomNFk1JZ/FUqhGpXefL1FutMGA+oL4gBYmXfN3SqHpsG4gXR/ck9NfPyytMm/y3vVNOac5CBDQX+BIzIH84WOFtli1wxKsim4OAhC+U3u7MvqEQqE676+lk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=UnyAlz7j; arc=fail smtp.client-ip=52.101.65.12
+	 To:Cc:MIME-Version; b=XGZEzX6W52xDAk5jGur0YFIx9KraZVk0iR7c3PFW5QBajbDcGzVQ0sg4dNqMEDUglZyvN3uqM0bqRHdlQAvnyzX7GutwAoRE/UXAWVzeUIYBm2E3uvioK6e3wG/OWkspvPWyZxQU3J4dyW09nqyKoqE3P48TUFwD0XndTO8uj4E=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=s3aAib6x; arc=fail smtp.client-ip=52.101.84.38
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="UnyAlz7j"
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="s3aAib6x"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=CNOGnd6y9/No8pCm+Z/IX0jWQdQ1OuGCu5eqanI85t0JofwkwAofNajkFC7JPz6SXlWej09INMwwSANAlWwU0WYGymD1Pj24E/hzYf4ea5qDY549+cv0BhAqlq4dDAoYdjpXO3XTp6vJaY309mV7hQKQIdD2x+XSOgsFwOU67phsWRpbOL9A/O6azlkhaYz00fVm4/74MLjT4Lrr73v2RAfiyU5/o/c+zpMgKKRX8hSy1XwN0iCFPx6e0NuqX8FVkoOI31Ig7JSqdVq+6K9e7xeQCaYot+UNmfggUrrBPnZ3c4V+LZHSX3nPS/9gW4ft2ciM3U0A3NoppZ8sBGQzGg==
+ b=olqSUVuVU/CSjpx0eGIN+rsn/BIW3xY9kSwPnKBMOcVjxF7Dqfgngrj8MXcXiK/LTM6rpf++km3SkLc1kmBL8gjsl8ltDPXvGv4wu+G/9xA5bmL0wdibSYQKGFk11aHxfHqKsgq4OfCG7/gmB5So+hJtTHh+hh8PqYw6nx24GYaEnVoUby4Daz7vTBof/LKPEKdhZiRz6sYD/zftz5sQ35E0gJuTag6ALyg6nM4FCxgo8EOIKOPdIvr9VEWjYldZOVFLIvCacqXj+LRP4h2dJ5mdi/sClvvLWe/ABZ4wYiZYCXL+ba6cza4W57t27tWBD9L4Bp6d3U9LCtowtjImKw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2c5XWz8oWufzexQwuegXMhMlKH2LJSiXckPA8k6DY6Q=;
- b=OBidGPHrIxBswTJHGgPixCpjzL4yjiP5tWbcPXqrRii2dXz/7/B9a+KIy9W2llg4AUomypclF2zneAED81zSZLA0Fopde838xhK1oISMgSLaRCz8B1Ftm/e7oMfNmf6dpdv7kDATQbwmdrjGcwhU+bipTSfoN6WW71+3wz36Qfu0lUy8BIPkcmua9Z+YD2DR9WOdk4E3/YuhKwxbUEwfvnqjsLxducu6J1O5rpBH8Cp7NQfZLvr6fzOw8r/2KgV9iRk19FHTKAC/abdFDc031XFUa9O86CwevLrUAD3I2IIDRVFr8ZIB4i7irQPYoUxWlgcOIFUKuA0S+39CEGcG2w==
+ bh=AepLDexqaPlW0iL07yAh5yjTzdO/q203e43HencWD4U=;
+ b=gOnCY5HI8pSTT2SOZtHsodBG/C09WbcK3eFzCcB8OmmI9V1lGYj0K96yTg6lsvMgEBWP2bWTJU/J5VQ/bLg075lTKZGkcK4Ddnf4H3DFsynUw8zeytnqYzJG/l1wbilzaGcQNoIkE32x9vyDE8obYmZZR2mzRXSym0hmsvtnBdiC/DgqhnSsmEN5jnhJYr5/1UQzMyKyt5XHf5SFiKQwgdKDR5bqRrqtyZDO8pqKEuBLe0bVgt/pJsE5KQVZb06aGPoHyEq5bskXiwVqmK8if84ozmQ/GEy5s3XUfDf0+/2/pswsyDA9YxoSUQfR1PecQ36YGhsSm1rpNTiWxFay1A==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
  dkim=pass header.d=oss.nxp.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
  s=selector1-NXP1-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2c5XWz8oWufzexQwuegXMhMlKH2LJSiXckPA8k6DY6Q=;
- b=UnyAlz7jU1DnaYWOaExJ8D+cTskvzJIvN/5fv5XY6EgEm7oi2jTHW1VwW6pNAp5Oz6Y45LYUEw7GGIhJbvb7NsKmiYH2v76PjwmVjqXD/0D9EI6qc1UQJ/ZZYIO2VK8eIhhfvKxG3hjiZKE29oVXEGv0PHHnvUFejpUbm62TadS1NjASCoS9uD7n6Try3nR9C9uCmryWi51PeGX2gG8pKv5gEvA2vto57APf8Sr1jkLQG28ugutklMknNLUtYVJx/QQWQ3Kksu56Us3s+70AHwEEA/Vqqtd9DNacF/rC8Fbk95Jk55dIMLWfd4HPiayCopnmOwrPzVPAs4Upa9KgMg==
+ bh=AepLDexqaPlW0iL07yAh5yjTzdO/q203e43HencWD4U=;
+ b=s3aAib6xwCu7aNpMjJffky4RhVBpSFaPqf1mSIHAiBOqW6nV93twkkaxhdRzSstwL9OSLaJbRBsszajtfGgDp1+Ffzm0d/FjyYiPW/aSGw6FNXcoa3iyVLOncGFyHRK9juFOOZ2B46+DgXQ5fBG3mI85gvkXZrjOTHaOKc8pejf4/Hlwnhz3B+G8hFc2iKHJ17kYPCgxhtJhOLoC6GbEFT2A0elc0DWiK54xyLnCYihWFMQJwTNdRIq3iCbl0pTGfe+g6kAJWSGDUf0k1A8pA7l/fPGiCbG7Ial7HnIXbG+V3rPrZ1zSLkgagb1YICcg8YHbgkv4gxOMXS+/Pyu7ow==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=oss.nxp.com;
 Received: from DB9PR04MB8461.eurprd04.prod.outlook.com (2603:10a6:10:2cf::20)
  by DB9PR04MB8429.eurprd04.prod.outlook.com (2603:10a6:10:242::19) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9366.15; Fri, 28 Nov
- 2025 03:14:35 +0000
+ 2025 03:14:39 +0000
 Received: from DB9PR04MB8461.eurprd04.prod.outlook.com
  ([fe80::b1b9:faa9:901b:c197]) by DB9PR04MB8461.eurprd04.prod.outlook.com
  ([fe80::b1b9:faa9:901b:c197%4]) with mapi id 15.20.9366.012; Fri, 28 Nov 2025
- 03:14:35 +0000
+ 03:14:39 +0000
 From: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Date: Fri, 28 Nov 2025 11:14:11 +0800
-Subject: [PATCH v6 2/6] clk: Introduce clk_hw_set_spread_spectrum
+Date: Fri, 28 Nov 2025 11:14:12 +0800
+Subject: [PATCH v6 3/6] clk: conf: Support assigned-clock-sscs
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251128-clk-ssc-v6-2-v6-2-cfafdb5d6811@nxp.com>
+Message-Id: <20251128-clk-ssc-v6-2-v6-3-cfafdb5d6811@nxp.com>
 References: <20251128-clk-ssc-v6-2-v6-0-cfafdb5d6811@nxp.com>
 In-Reply-To: <20251128-clk-ssc-v6-2-v6-0-cfafdb5d6811@nxp.com>
 To: Michael Turquette <mturquette@baylibre.com>, 
@@ -72,221 +72,202 @@ MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: DB9PR04MB8461:EE_|DB9PR04MB8429:EE_
-X-MS-Office365-Filtering-Correlation-Id: c86afbef-6ca5-41ee-9d9d-08de2e2c41da
+X-MS-Office365-Filtering-Correlation-Id: 207a5811-c4bd-4945-3907-08de2e2c448a
 X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
 	BCL:0;ARA:13230040|376014|52116014|7416014|1800799024|19092799006|366016|38350700014;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?U2o0ckNyeGNucTVHWkZmY3VTNThZT2hOMElXaUwyM1dPK1FNQng1aENZNCtr?=
- =?utf-8?B?SzFjQnVTcHNSNlBlalBFYTEvdVFlZjNoZEJhbGlYb2NIcjlIcTBIcHJvbFBY?=
- =?utf-8?B?SmtrMlZEckRZb0w5THVQcW1obUkyRzJxU2lkQk43VTZzNnR1V1d0TVFTZjR5?=
- =?utf-8?B?KzJ5T3ppeE4wYnVQR09pam1uQ2xXbXJ6OUhiM0Vwc2NJWEhHTHdBR0M3c1F4?=
- =?utf-8?B?Y09zbW90UnYxb0R3SWJpNXZRbHNibUMxS1FaT05vNHcyNzkwcGpMT3dId0xH?=
- =?utf-8?B?NzlaYTVhQjc1eUoxQVVXOVVwaWhhdFphZ2w4ZUgxcXZJTGF2ZEZ1TjFFOTZl?=
- =?utf-8?B?bVh0SXlFRHduSXY3MzJCd0VBZUs5dnNjR3lKN2NEdDlZK1A3NHJkNi9FazZj?=
- =?utf-8?B?eTJHYTFTdktFR0NuUDVNd2tYcUtCTUU1UTVraXJNNG9VMjNjSFVieDRqVml0?=
- =?utf-8?B?d1h0TlhrMGNDWWJyWSsreU1Lb0tnN0ZVWXkzTjFxQjNYU1dIcnFIcTFxYURn?=
- =?utf-8?B?UUlwM3V5SnBVMzlUQmhTQzBUYytnT1k0VUN0eEZzQW82SW5ZT3pSeW9QaFE5?=
- =?utf-8?B?R3dBR2dSZTkvOER6aUpteFVySlNwSHgwbk54RVFrWEJsVHdZS0NtSllQd0Zv?=
- =?utf-8?B?WlZaT3ZESm9TTWQ1VFpyWEVpajNXN3haYklBVTc3SE90NVRYK01PSWhkaFpV?=
- =?utf-8?B?eTROcFo1VithdjRVd2hleUFDMVZpQ29VdWN0aDN3MEV5UjBiYmdudmZYQ29p?=
- =?utf-8?B?WXpsTmhOMXRQdGI5MnhmbHdSUVJRbERpNXMwZzFIQW00Y0l3eVNaYnJxM2xF?=
- =?utf-8?B?MGhUdGdUZktScnl1TlFjUGJkajZpZ2UvTUV4TDFKNis4eUppeW1TSDhSa1hW?=
- =?utf-8?B?VW5zNE1GWU8xbXRhblVCSExOK2MrMTl0K0tKMk5yWDgxSWRqN3FyQjNUOW9M?=
- =?utf-8?B?bDRrVnNVb29lL1FGR0VDVmRxS0VsVVVwa3c2QUZSdDBraWh5b1pnVXMyNVRl?=
- =?utf-8?B?VDRUMCtWOVlCa0c5c1dwenVoRjJZMmQ2bWlnVEpsS3lSdHJVRE02OEF4ZHls?=
- =?utf-8?B?Mi9HbmpMRyswMkZCRmhCaXN4ZFhCdGhVSUVzeDNGbFRWdW54RUJKQ0FOS0w3?=
- =?utf-8?B?cnZNZitZMUQ4ekZCMVRiMFJlZ0toSGIrYzlCaG8zdlF3bmdMdklJSCtwRXJY?=
- =?utf-8?B?MGRrZVVwWVQvdks1Umdja2Z4UG0vR3RMVmhvVzZjVTBMZUZxRC9wYUVFV1l5?=
- =?utf-8?B?Q0VuakRDZC83SkZScnBhNDAzU0d3SXVjaThUVFBXK3lnNFlrWXBab2MvbXJq?=
- =?utf-8?B?MEphYzR2emNLZzNlZmxnT29RK0VqZW9OL1gzUVJ4d1FIQ1FIVTR6cTh3eXJI?=
- =?utf-8?B?emw1dTlFcGI5MDZ4WjgyN2Ywd0M1ZTlMS3dwd2ZRRzF3elMvTzNCcndUZnc1?=
- =?utf-8?B?TndZSFhlQWxpRlNLaFNKd3VuQWtsTndhRERyNHFLY2RNTGc3cFV3ZXNHT1hE?=
- =?utf-8?B?cDlYQnJRUGlLaHRpTnBPWW9icEhkT05wdlUyRVdmYVBROE5pZ25oZ0xkem9Z?=
- =?utf-8?B?OURnL0JwaG0wSHkxMU5CYTkvTjRTbkhiUklkNmFLNnlCaXZGMExzZDNCbFQ0?=
- =?utf-8?B?QVRzU3JmSjQrQldLV2lyQ3piZE96cWNWM3dDMVVpZjVoYjFoako4SFk5bVRE?=
- =?utf-8?B?MUprY3dJa0dPdlZPNzd1cmEwYmZQbDVwbW54alZTWjBEVUVLcnFFa3VzZThK?=
- =?utf-8?B?QnV4Z1lHRVFHT3lqYTNsTVlMTWRsdkt5bDg2VWszelhzYWYvdWcrOTBUYldO?=
- =?utf-8?B?eE5rU1Qwck9qUmkwbTE5SkVkV0grUjdPYS9hSFZ1S255d1ZreFI2VGUzZi93?=
- =?utf-8?B?OEZiamZybHh5a1RRSkVDcldmdGVNODNMSHhlVmJOVFN0S2hDNy9EWkwwZnNN?=
- =?utf-8?B?QUk2ZllIZzkvOU1hL29XbXdRYXZKQW42TmYrUndjTWg5dWwxam1JWFlMdTk4?=
- =?utf-8?B?RVZEQ2RBRGduL29YK3dXenpTRGpQa2dGTzJ3OTlvR0x5Zyt1RTF4UGFrUk9Q?=
- =?utf-8?Q?uWWDLe?=
+	=?utf-8?B?NU5vamVmalY5Zk43WW5UaHdLaVdxeHZVYU5zVHhaVWFlOWUzSDlQWUZMYTlP?=
+ =?utf-8?B?eUxqQlczYnhHR2VqQjdSQ2J0enk1eHJuaVFIeDdtZFZETWJVSlZwMWNlWWRY?=
+ =?utf-8?B?ZHYxS3pLQngzcTJjcE9GeURqMEpiOUNCSlF2c09PWlFSUHAvM01HMnRleGJz?=
+ =?utf-8?B?bUtjRm1PaEtrdThqSVllMnVXaWlXL0Y3WXNzd0ZZOVgwbnNSeTdMVjlwbDBa?=
+ =?utf-8?B?MXc1VWpmT2djTEVZU0hPRlhqL24zVno4SUU5b2NXd21hbXprL3l3N1FRUCtB?=
+ =?utf-8?B?eUNEOTYwSjdWVnVrMGN2Sng0R2xyNGVDdjlOWVZmdDQzdUhCL012b0hVeHpa?=
+ =?utf-8?B?L2pISlluWXR6Ryt1aFVSbkkyeFBnWXhHdnJrcmJlNGxFbFZ4emVWYUdsS3VN?=
+ =?utf-8?B?QmhNVjlNNHJBMlZzNUs0RW9BS0c0eFhWazJ1QUhacWtoZFJzcTlTbEhWRDcx?=
+ =?utf-8?B?ZXdDa3N6RlVGOTJjcUh6WHRieG1TVVI3MU5vb0QreENCbWZubTVzd2JTWDR4?=
+ =?utf-8?B?MTBWRVI2ZHZuYWoxR2R4UjcvQmgwY0dwZE4wK3hTRDhzZURGakhCemR1ckJn?=
+ =?utf-8?B?bjBUdXNUdEVndEFZcGJ3ZkRKZ3dhek1LWGV5WXdDZDU5ZzZ1MmdIbHVuQ2U3?=
+ =?utf-8?B?T3BOR3FEalEyRTFWMHVsMEh2SlF1cGxuYjR1SkVsdld5WmdHcEVyNzN2OXRh?=
+ =?utf-8?B?VXE5UmdpZGNma0g5YUJLSU40UkkrbkFVQ1dIOW1abEdCRG53b2Q3ZWoxMHdv?=
+ =?utf-8?B?cXRnakJHODhnVFRiRC92Y2FJWVgyQ2xqbUlJM3lwdUMxcHI2ZXAxUVZ2YlNW?=
+ =?utf-8?B?djByK1dObi9idFFGYWVaR1Z5ZTFmUmZacmVldkdTRU1UNmM5L2l5b2dIbFZt?=
+ =?utf-8?B?ZWovWHJsaWhEM0pja1hpaCtXeUJVTnBodHcwdXRYWFVoL2dzZVhIWVJ5SEpt?=
+ =?utf-8?B?TWQxTlp3YzJVYmZ3OXRwZkJHSHdEdk42Ym13M1BnUElFVkdJQjNHeXlSeE1G?=
+ =?utf-8?B?S2J3WWVLNVVPdTc4azlYaXZJR3VzUTNETjdwMERMUEErZjQ3ZFhJMGYxYVJH?=
+ =?utf-8?B?aWpXK21FUTRWSmNJQTQxNEV4amgvZWlCUExFV3V2NnlDVzlhUlR2dmFzTkQ0?=
+ =?utf-8?B?R0RKdFUwNXZ0VGJvNHhHRUo4SmppM1VkZDkzc3JYY3A1cWRQdm5DcmovZVlS?=
+ =?utf-8?B?Q3l3TzFKanMxQzNybS9TWDZwcXlSSzl0SFJtOFk2TEVnS0MvV2ZIUkJZeWJH?=
+ =?utf-8?B?RjFNdWEyYTJLL3Q3d0VuT0JDWW45NEIvSE5rWWJ3S3Nib08rVmdmK0VUZ1pu?=
+ =?utf-8?B?MktzbUZBNlF3NVlxWG9sZ3dlRm5WR0ZQbS9hM0twbDFBQW0raitGa1dTQU9O?=
+ =?utf-8?B?YWlpQml1eHFSbzJKZlNzU3FNYzZmdER0MEtlWGdJeFhraDJzY2MwTlorQ0No?=
+ =?utf-8?B?UWxmVzZoSGIrOUJVMWtxU1pzZWdITTlwSlRZTUlUdzlWbll4TXJmdG9uL0lE?=
+ =?utf-8?B?WHdLaWFmU3RaRm82ZHk2akFMcVhLMnRLZ0xvb3JGa3NYRjdiRWRUbVkyRUFY?=
+ =?utf-8?B?WVJ3NXY5eU9Ha3dGdElOTmJhc01WMkx2ZXpta2Vkam9NeUEzNS9lSnllWVV1?=
+ =?utf-8?B?UGRNZDc3U1BHSmVTRnlkK0lFZzVRdTUyQW05aU5mUjc4T2tzSUN6VGFXcEpU?=
+ =?utf-8?B?S25iWFJiUG5rbXEvc3E5emtYVUlKaktJK2FUU2JLYXptQk1Lb3M0NTNVSmto?=
+ =?utf-8?B?VDluM0E3N3FiL3hWdVNZMEZ1Qy9MQmhpeWFWSnArNjVCcEZ4MHVET0hhbXVj?=
+ =?utf-8?B?TDh5TE44QmxyVnNlTGpabWY3UWJhNy8zOVo5MUJXa0pwdXhlSy95U2VuSGZm?=
+ =?utf-8?B?SGVJdzZ6QkpIQkVVMkUzNkwvYldKRGRRYkFod1MxZjY2a25GczA0ZnAxaFdO?=
+ =?utf-8?B?VEcvOU5JTHlTV0dwTStVb3JSZmVObEc4UnB6WDQ0N25HeVd4bG1POHpiODhQ?=
+ =?utf-8?B?dVBpeXpGcEVsK3JHNDZmQmVoWVUxRjVXcWQwL1hkMk5nTmF4QksxSkFkRU9U?=
+ =?utf-8?Q?fPqs/S?=
 X-Forefront-Antispam-Report:
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR04MB8461.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(7416014)(1800799024)(19092799006)(366016)(38350700014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?NnU5NjRJSGRHUHB6YmNlT2hOSGs2NHFzK01CRlpuWDFkbE84TWh0THI2RnhD?=
- =?utf-8?B?Z0hNaXVhbUx4b0UrSW1vRlJ4TW9YaExUM1F6TTQ3UGVsdnJtSTBQTFp2bThi?=
- =?utf-8?B?UUQ3cktWdWc2bzRBTURZK3Q5cnBueWlQVmNBK3JYZHJhcXdJd2VBSkQrODc4?=
- =?utf-8?B?Vm5ITmNQK0NqNzdkMGhDbjVWM0tvUDhiNW9OeENuQ2daOHpMaEM5WmhBeTB1?=
- =?utf-8?B?RXJVL0tLTnBVZkg1R0pEOHQxT2RrRWdjYzBFdTdWdGFBTmFqRzUyRWFHWU5L?=
- =?utf-8?B?N2FnV2ZOa0Zabjd4WG9sQWdyNjBucFFveGFLYTArSVNPNk91YUhrM25hR0do?=
- =?utf-8?B?a0FCT1ZBbU5XYk5aUU5pSHFqbE5JWEd2Y2pKbExUSWxUaDlqZ3o2NkpwWk0x?=
- =?utf-8?B?RWRKeEI5OG9YQ05ha3VGSnVYa1RzakdocDdKeDJXVTZNaFlpM1NRbGpwM0lE?=
- =?utf-8?B?OGFQRHlSQTR4SmxpcW0rTzRuVXNNTys3RDZTaUxqSU54K05yZzYrOU5wS3h1?=
- =?utf-8?B?cUtHeHRlbVFjcUEwWUEwbXBLM09qeXV0eWdxK1RrVVZUMlYzWVJTclJ0YWlj?=
- =?utf-8?B?ekpNZDk2UkxHSnpwSERaMEx6M21qd3NsK1dSY1JPc1VjTUFHRHFZb2NTTmIr?=
- =?utf-8?B?Uk92ZW1WVHQ5cnpUNTBFalpFMkFQZzBxTnFFTXlVUXo5bEFRcENUR0hZeEU3?=
- =?utf-8?B?ZlpqUVpyYnl0Zm9acFd6Ti9Oa3o0NlNSYkxydC8wM3ovODlUZkVSaXFJaHpG?=
- =?utf-8?B?N1kzTnN3dlNGK0doL1lZc3pmc3RKM25ocEU2SVFWTitJK1Y4U0VLOXphdzhZ?=
- =?utf-8?B?K0JFTEc4SW9mVlU5VFl3Tk9pclhGZVhsTDVVTFBGOEhnR3FpNFUrVHA2ajZj?=
- =?utf-8?B?SWp6SzljT3dGL0xtSjczbjZQVTlvOWZjbzUzcnA5MVNXdngyVlZmb1c4TXd2?=
- =?utf-8?B?TTM3RWtmTlhDSWswdjl5ekdZZmNES2JpcXkwc2toVmxQVUhzTFhDU0JWM2lE?=
- =?utf-8?B?Z3EzNVZHdmU1R2dDVERiZ2JtVDk5RkI2eE1DWTBzMkdsT0Uyb25YR3J3N25y?=
- =?utf-8?B?Uy9QaHNVQmlCNkkrK2RSVlpmWXJsWjd6TVlIS05TalFjUjhoRnBML3ExSGxE?=
- =?utf-8?B?MEEzVnZNVjVQb3JXRlR3NCtTeHVUUGNnWm1NUHpTUkdYdjByejlnbld0Ylhu?=
- =?utf-8?B?YmQ0eExyL25wREdtRXdaV2hyVXY2V2VISWpRa01RbkFNWUNPT3V0R2VVREh2?=
- =?utf-8?B?OHY2OTFteHJJSTJveERzUzc3MGVJVDRjRnl3U3JZdmRJSnRlTDQ1a1JaNTJR?=
- =?utf-8?B?bXNYUmhCbEVUR2lkN1lueEgzN3JnK20vT2JwQi9waC9QYTZYUWJrV1YwWC9U?=
- =?utf-8?B?ZVd4UElueUl0RFpkTVJPeWkweHFURFhNZUF4RkxxWEU0N2wyYWZVbEZzZXlw?=
- =?utf-8?B?THBXaW43aDV6RjU3aExuaER4eDdSMGdaWVo5T01ySTF4eVcwb01nT09lYWtt?=
- =?utf-8?B?a2sxSDZpTHAxSzZhb2VrenVlaStSM2ZVbEFEbThFSW9NVFA0Mks3V3c3NVJw?=
- =?utf-8?B?QmdVM2s4NWxPcFM0OTNmT0pTandDWmtCc2EySy9qQ2ROMENPbjJqc3NXeFZQ?=
- =?utf-8?B?TWVlekJ6K1M2cFdJbDBsejR3Ui9RWFRBM1VBdjZ2LzR0R3ZuT1RKTE44RWF6?=
- =?utf-8?B?WWhteDhUanN2QlBZcnMwb3dicEJaaGpjMHRKSS9nSGpuVUtyZlJ3ZE9DSUhl?=
- =?utf-8?B?R2MrdVFBcG84OHlweFVqNWRpamUxaGJ3cy80UitNTUpYdkcvQUdQK0phd2dj?=
- =?utf-8?B?cGpjaVNUN2lvbWd5d1hVU3ptZTNERXNuZ0ZqSnJDVzRYTFhFL3FIYXNiOFJy?=
- =?utf-8?B?MHBRVC9wdkRBYUU4VVNjakVOOXE4cEdLUEhMOXZVRXUvaWRkM1VPVncxZFMv?=
- =?utf-8?B?ZG5MbGs0MVFqeTB1cDFYOHlKL05Yc3VERFEvUEdrUlB3TmZYL1ppT2tQRUJ6?=
- =?utf-8?B?UGMwa2pCQTBhcjgyeFlMWDM5SUU1T1ozbVR1OE0rYXdCbG56OFlpYmhFeDNu?=
- =?utf-8?B?OWxVa1VoOGY0b1lSQTlSV05tVGFmT2twRCtLbno4enk1MkozM0xEdlRSRTQ3?=
- =?utf-8?Q?J1u6neeT0JHxo+lMAi+kNypz3?=
+	=?utf-8?B?emVMTWM3WlhOVmxTcFRBUlNKT0hzTjU1SWhVT3NmbXNxS0RZVzQwcW92cGE5?=
+ =?utf-8?B?THBEUW14ZWxsN0Z4MHlneUxiU0Z4SnZXOFBuUlV1dDhUYzhtQkFzMnVOckZu?=
+ =?utf-8?B?TldXWlRpYkVObzY1UGpWSHh2bHpyRHppcjNEY05lN2hBZmZCZUJMeWkyWG5m?=
+ =?utf-8?B?TEVxUDl1emJWS2NwQjdmZW5iQUpSWVlKdnlmd3ZYdXdCUHhjSUwyd3FDT1cr?=
+ =?utf-8?B?NmRnUEV0Yjl2M0RlTGx2bUJma0NxWHBrdjVNT3pWSmcxTisvdjVWbGpUVHB2?=
+ =?utf-8?B?MjZ0cXVUdmh2TG1QQ1FyUUZhOW0vSnhNWStqU0xXRWpBbU1hUWw4S094aXRW?=
+ =?utf-8?B?RmRVUG56SDlSSWxtK01qaXpJS1IrNzA3dkg4ZE8xUWk3ZVBRc3RyZWxTejVJ?=
+ =?utf-8?B?bmFNdmw1K05JYmMrWFJxT0MvZTNwaTF0Z0c4TFhuNDBEcGt2UWgzUHlQeWlB?=
+ =?utf-8?B?UU50K2NmTURMMWhPNUNLZnhJZk8rR3lIREF4K3NYdGhJQllUMW5JSjViLyt6?=
+ =?utf-8?B?c3ZZT1daRzh4WkJSSlM2ZkJlZDhMckQwYWI1WVhtTS9Md0hxUHBPRk1RdWk3?=
+ =?utf-8?B?RDJta2p4S25aakpUbFNPZEs3UURYYi94Smg5V2VhTTFlOEMyNytCNkw1V09F?=
+ =?utf-8?B?cG9YclJHZmh4RXRyVFhQR3NYYWg3MExuZnJGLzFOSWlibEpSS2pLZGtGQnVh?=
+ =?utf-8?B?NnJoSkFGUWlxQzJRMU1sTmNuU1I1WWwwN08wRmM5SWVtWFd2U1BrVEpHRjlZ?=
+ =?utf-8?B?VHY0OGg5MWtmVDR5aWRaM1VzbkR3c0VwY2Qwci9Xc0RrVE1TYmZKVU50KzFR?=
+ =?utf-8?B?MTJGVXllajU0MURGUGIwRVptVDFWZkphcWppSXRZYUpkeVFIdFBNeTloOGJv?=
+ =?utf-8?B?YkFPWUpGZEJadXpGcHp3eDdxYzQ4MTlqUU4yNk5JcUp4empxWDYxVld0ZEdU?=
+ =?utf-8?B?d25ERkFYaTA1UHBCZ1hoUjZNVnZ6bWFvQ2hSeVZjYjM1elVDaGpZWHlYYWdo?=
+ =?utf-8?B?MXJTanVJcEcxT0dTOHhxNUZDdDdVY1R2Q2tlNGs2eW0xZ3FCMUYxdnkzRFZP?=
+ =?utf-8?B?cXZGaytic3FQZy9Pa2cyeGtCZUZlY3A4THc0V0xaK2g5Q2ZDNkpPTWVTRS82?=
+ =?utf-8?B?WlM0Q1V2bnp4cDRGOU1WWG9FY2NZTjFGalBLaG1qYXkxcHRoYW9vOTVQMnJJ?=
+ =?utf-8?B?aU1mSEZIUHAzVnd1eElZdzFEc21HWFNQUXcySjNodlJlMVBCaE1aRHF5Z0cv?=
+ =?utf-8?B?RmFtMVFhSDRPUFdrVkc1VHp1T3VzR3ZUMzVvbzBvNHlLMlhoVDhlaXVTV3NJ?=
+ =?utf-8?B?Z2ptN0xHMkdlVHpJZXlTL1BOa1VaL215SHlkRURNeDdxRFA1SnFwLzBQcDVz?=
+ =?utf-8?B?alVwVnY3bHFuaUtPL2FNVjBRYTZGWWNSV3FRZ0wrRVBiUTNxVnA5YmlRSks2?=
+ =?utf-8?B?VlgwS0F1eHNnWnR1blFGaEFoZndQSjUvdUsrc0NPdi9ReHdxeU9VcGRScWRl?=
+ =?utf-8?B?bDNBUnJ3Zks3VGNHUjhkSDE2cFFXTVVkMU5SQkJRdEJGaEh1ci9EaHFVVjdq?=
+ =?utf-8?B?cEhRdFJCK3ZrcW0zdkJ1TWk2UDZlM1dhcFV6RUNVdGtoSTVJZ0pIWSs5QkpP?=
+ =?utf-8?B?Z1laVjh6TDJnbTJCd3RHWmluM1BUU0xyUlAwelZOaHJUb3grMTZQaE5LYWg3?=
+ =?utf-8?B?TmtOZ2ZWUWIrZjg3OFcrRlppNDlJTmhYbFZFTW5yNUViME5xMG44MDVsUExO?=
+ =?utf-8?B?eUxscldGcTYxSkJFMytXcm1BdkF6aGl1ZVFOZmJNYW9QNlRRSDFGMDR3TzM3?=
+ =?utf-8?B?WU1xL200V0plckI4SFd6OTBpb3RiTCs0UUwrZllwaDVYMzB3Rm1SUVZzT3JH?=
+ =?utf-8?B?TGNiMEg3bjU3LzFnY3hGY2o3Yjc5MlFIdFZ5ZUpjRnNlcmRoMUVEU1liZkhD?=
+ =?utf-8?B?ZGswNUZhTVZ5OGZrT1VwSHY0MmYvZmJpMFVLbW5xejcya1dtdFVTSno3Vzhq?=
+ =?utf-8?B?QU96c1B5SzRGY1hZNEQ1YSt6VmFXdUlFY2JPdnJmejNBZmc0czNCL253VUgy?=
+ =?utf-8?B?emdDWnZ6RDBQQlFmbVVML09nL3l6Vm9STE1hM2xIUW1Mcm1SSlZlZ3Y4ZWQ5?=
+ =?utf-8?Q?nl+8GEVM//VCR5ufdsFaCrJ3U?=
 X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c86afbef-6ca5-41ee-9d9d-08de2e2c41da
+X-MS-Exchange-CrossTenant-Network-Message-Id: 207a5811-c4bd-4945-3907-08de2e2c448a
 X-MS-Exchange-CrossTenant-AuthSource: DB9PR04MB8461.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Nov 2025 03:14:35.2642
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Nov 2025 03:14:39.7686
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: blJV1nHNCz/+CHMMgOb8SicAkze1xj8i+foo1r5SCRsc3P8Al82jTNmpDdp775aG/5weAu3/38f3jvLUrBUkPQ==
+X-MS-Exchange-CrossTenant-UserPrincipalName: iZXymHkuU4zSxF2kFl0lvxAKK3Ug3Q0C+7+s6FekZR+wrFw8kEC96QZFJvDEgXgfrG7876P6BWtWpumEEKV1eA==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB8429
 
 From: Peng Fan <peng.fan@nxp.com>
 
-Add clk_hw_set_spread_spectrum to configure a clock to enable spread
-spectrum feature. set_spread_spectrum ops is added for clk drivers to
-have their own hardware specific implementation.
+Parse the Spread Spectrum Configuration(SSC) from device tree and configure
+them before using the clock.
+
+Each SSC is three u32 elements which means '<modfreq spreaddepth
+modmethod>', so assigned-clock-sscs is an array of multiple three u32
+elements.
 
 Reviewed-by: Brian Masney <bmasney@redhat.com>
 Signed-off-by: Peng Fan <peng.fan@nxp.com>
 ---
- drivers/clk/clk.c            | 27 +++++++++++++++++++++++++++
- include/linux/clk-provider.h | 31 +++++++++++++++++++++++++++++++
- 2 files changed, 58 insertions(+)
+ drivers/clk/clk-conf.c | 69 ++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 69 insertions(+)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 85d2f2481acf360f0618a4a382fb51250e9c2fc4..6cd941a729590b501d66101e352b99e51ca18464 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -2784,6 +2784,33 @@ int clk_set_max_rate(struct clk *clk, unsigned long rate)
+diff --git a/drivers/clk/clk-conf.c b/drivers/clk/clk-conf.c
+index 303a0bb26e54a95655ce094a35b989c97ebc6fd8..dd6083597db3f8f27d86abf5640dfc3fb39a9b88 100644
+--- a/drivers/clk/clk-conf.c
++++ b/drivers/clk/clk-conf.c
+@@ -155,6 +155,71 @@ static int __set_clk_rates(struct device_node *node, bool clk_supplier)
+ 	return 0;
  }
- EXPORT_SYMBOL_GPL(clk_set_max_rate);
  
-+int clk_hw_set_spread_spectrum(struct clk_hw *hw, const struct clk_spread_spectrum *ss_conf)
++static int __set_clk_spread_spectrum(struct device_node *node, bool clk_supplier)
 +{
-+	struct clk_core *core;
-+	int ret;
++	struct clk_spread_spectrum *sscs __free(kfree) = NULL;
++	u32 elem_size = sizeof(struct clk_spread_spectrum);
++	struct of_phandle_args clkspec;
++	int rc, count, index;
++	struct clk *clk;
 +
-+	if (!hw)
++	/* modfreq, spreadPercent, modmethod */
++	count = of_property_count_elems_of_size(node, "assigned-clock-sscs", elem_size);
++	if (count <= 0)
 +		return 0;
 +
-+	core = hw->core;
++	sscs = kcalloc(count, elem_size, GFP_KERNEL);
++	if (!sscs)
++		return -ENOMEM;
 +
-+	clk_prepare_lock();
++	rc = of_property_read_u32_array(node, "assigned-clock-sscs", (u32 *)sscs,
++					count * 3);
++	if (rc)
++		return rc;
 +
-+	ret = clk_pm_runtime_get(core);
-+	if (ret)
-+		goto fail;
++	for (index = 0; index < count; index++) {
++		struct clk_spread_spectrum *conf = &sscs[index];
++		struct clk_hw *hw;
 +
-+	if (core->ops->set_spread_spectrum)
-+		ret = core->ops->set_spread_spectrum(hw, ss_conf);
++		if (!conf->modfreq_hz && !conf->spread_bp && !conf->method)
++			continue;
 +
-+	clk_pm_runtime_put(core);
++		rc = of_parse_phandle_with_args(node, "assigned-clocks", "#clock-cells",
++						index, &clkspec);
++		if (rc < 0) {
++			/* skip empty (null) phandles */
++			if (rc == -ENOENT)
++				continue;
++			else
++				return rc;
++		}
 +
-+fail:
-+	clk_prepare_unlock();
-+	return ret;
++		if (clkspec.np == node && !clk_supplier) {
++			of_node_put(clkspec.np);
++			return 0;
++		}
++
++		clk = of_clk_get_from_provider(&clkspec);
++		of_node_put(clkspec.np);
++		if (IS_ERR(clk)) {
++			if (PTR_ERR(clk) != -EPROBE_DEFER)
++				pr_warn("clk: couldn't get clock %d for %pOF\n",
++					index, node);
++			return PTR_ERR(clk);
++		}
++
++		hw = __clk_get_hw(clk);
++		rc = clk_hw_set_spread_spectrum(hw, conf);
++		if (rc < 0)
++			pr_err("clk: couldn't set %s clk spread spectrum %u %u %u: %d\n",
++			       __clk_get_name(clk), conf->modfreq_hz, conf->spread_bp,
++			       conf->method, rc);
++		clk_put(clk);
++	}
++
++	return 0;
 +}
-+EXPORT_SYMBOL_GPL(clk_hw_set_spread_spectrum);
 +
  /**
-  * clk_get_parent - return the parent of a clk
-  * @clk: the clk whose parent gets returned
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 630705a47129453c241f1b1755f2c2f2a7ed8f77..9ec25bbccd613eafd77aca080dd7f51b1bfdadc1 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -6,6 +6,7 @@
- #ifndef __LINUX_CLK_PROVIDER_H
- #define __LINUX_CLK_PROVIDER_H
+  * of_clk_set_defaults() - parse and set assigned clocks configuration
+  * @node: device node to apply clock settings for
+@@ -174,6 +239,10 @@ int of_clk_set_defaults(struct device_node *node, bool clk_supplier)
+ 	if (!node)
+ 		return 0;
  
-+#include <dt-bindings/clock/clock.h>
- #include <linux/of.h>
- #include <linux/of_clk.h>
- 
-@@ -84,6 +85,26 @@ struct clk_duty {
- 	unsigned int den;
- };
- 
-+enum clk_ssc_method {
-+	CLK_SPREAD_NO		= CLK_SSC_NO_SPREAD,
-+	CLK_SPREAD_CENTER	= CLK_SSC_CENTER_SPREAD,
-+	CLK_SPREAD_UP		= CLK_SSC_UP_SPREAD,
-+	CLK_SPREAD_DOWN		= CLK_SSC_DOWN_SPREAD,
-+};
++	rc = __set_clk_spread_spectrum(node, clk_supplier);
++	if (rc < 0)
++		return rc;
 +
-+/**
-+ * struct clk_spread_spectrum - Structure encoding spread spectrum of a clock
-+ *
-+ * @modfreq_hz:		Modulation frequency
-+ * @spread_bp:		Modulation percent in permyriad
-+ * @method:		Modulation method
-+ */
-+struct clk_spread_spectrum {
-+	u32 modfreq_hz;
-+	u32 spread_bp;
-+	enum clk_ssc_method method;
-+};
-+
- /**
-  * struct clk_ops -  Callback operations for hardware clocks; these are to
-  * be provided by the clock implementation, and will be called by drivers
-@@ -178,6 +199,12 @@ struct clk_duty {
-  *		separately via calls to .set_parent and .set_rate.
-  *		Returns 0 on success, -EERROR otherwise.
-  *
-+ * @set_spread_spectrum: Optional callback used to configure the spread
-+ *		spectrum modulation frequency, percentage, and method
-+ *		to reduce EMI by spreading the clock frequency over a
-+ *		wider range.
-+ *		Returns 0 on success, -EERROR otherwise.
-+ *
-  * @recalc_accuracy: Recalculate the accuracy of this clock. The clock accuracy
-  *		is expressed in ppb (parts per billion). The parent accuracy is
-  *		an input parameter.
-@@ -255,6 +282,8 @@ struct clk_ops {
- 	int		(*set_rate_and_parent)(struct clk_hw *hw,
- 				    unsigned long rate,
- 				    unsigned long parent_rate, u8 index);
-+	int		(*set_spread_spectrum)(struct clk_hw *hw,
-+					       const struct clk_spread_spectrum *ss_conf);
- 	unsigned long	(*recalc_accuracy)(struct clk_hw *hw,
- 					   unsigned long parent_accuracy);
- 	int		(*get_phase)(struct clk_hw *hw);
-@@ -1430,6 +1459,8 @@ void clk_hw_get_rate_range(struct clk_hw *hw, unsigned long *min_rate,
- 			   unsigned long *max_rate);
- void clk_hw_set_rate_range(struct clk_hw *hw, unsigned long min_rate,
- 			   unsigned long max_rate);
-+int clk_hw_set_spread_spectrum(struct clk_hw *hw,
-+			       const struct clk_spread_spectrum *ss_conf);
- 
- static inline void __clk_hw_set_clk(struct clk_hw *dst, struct clk_hw *src)
- {
+ 	rc = __set_clk_parents(node, clk_supplier);
+ 	if (rc < 0)
+ 		return rc;
 
 -- 
 2.37.1
