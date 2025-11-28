@@ -1,54 +1,54 @@
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010036.outbound.protection.outlook.com [52.101.84.36])
+Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11011003.outbound.protection.outlook.com [52.101.65.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B9F72D2383;
-	Fri, 28 Nov 2025 03:14:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.36
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67BF22DE6E5;
+	Fri, 28 Nov 2025 03:14:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.3
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764299695; cv=fail; b=qa5nK7dLpyi8YJqoH5Xkiz8F6gEmLO51FOPzwrYXPG0t/JyHm6lqvbQuS7u3KLxhM4MKvWqbEKmYdKSHtWgM78zoosTf/5bFu+fOgBV2gSYEkP+lKD0OpBfzRTaHuCPvQ/eqgOjDjm2vCaceQgheXw2Mb9yXqZNCXcX1rAW2Els=
+	t=1764299700; cv=fail; b=VbBWRurxK8N1Gc5a59AbIbS9UwSnRaICbGMnIBlGixdIE/LRI2CTELVJJD8i9t11C+zZcTdk9nZ6fxlkyXgpt0QSo/AwFc8WoVCeCVub4yIuDDJZiBAqBLZqrT8+DstirU/QFk8/EmmXx35m8PUdSiM/imrq4XBULaxNdQj+SfM=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764299695; c=relaxed/simple;
-	bh=/K2kmrZYy1LANNEXF5bEI+9e0tLfh7x26PC1e0K/k8o=;
+	s=arc-20240116; t=1764299700; c=relaxed/simple;
+	bh=0k0JmNMzEuxw68RYlDUpJR99jff2TkJc8iC3A6fnV3E=;
 	h=From:Date:Subject:Content-Type:Message-Id:References:In-Reply-To:
-	 To:Cc:MIME-Version; b=pSsMOv7UzDbgFcUo4gIE79/QkbYZPLam1EC5kPizgVfzKv6ekI+x3qxhg/5LyFicJb0rvfi5AUTtwfBR2wN8pw9s6LACOybEoJD1g8sRtRMlPiTd6ZPtpq7vWeWeHi5Oglf9JDuJGwnCMif1n6sJVINl2L6dijmO/qzBY2xiTzE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=uvY2NkJV; arc=fail smtp.client-ip=52.101.84.36
+	 To:Cc:MIME-Version; b=RfFBuOSRgU/95XtvfKdgYaiw2CGiE/rFADJMoyy3pHPNJ2eMsrHCg4Y8b0N11cC42rLSdkx7PCWNQgYsGQogJzcdWKt7mSvUkQxqBW64DdEKj97TUPXB8q2VeR/PQe/wzo+kWX0hSRPIt+Si00Eta+jjNTHQ0srLUrGFeEhslCo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=M68ztqCY; arc=fail smtp.client-ip=52.101.65.3
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="uvY2NkJV"
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="M68ztqCY"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=T0iaWNums58WsC6KYzHvgS1r+3sakmLBtz4lh5XN63gnl4FJeWkQFIHZEDCk8jxx0nRQyUWMgyQtu9gO2n4t+PynEt90d8GErVvKdtSqtMPSu4HEDKb3u8qQZo8OicTscQq4N/0gy2z22FPVz56XjKkS/CbyfrYXQ61oFKUUiVeQq62IkSuEccVnpldyWbvv9rf4VjVrc1Pl4ZLIYdtHM8qVfIz7zX8V5smz8tUwovvTFBXdmsiNisqT+XomkDouX2yPDzDhssJ3tX3UNuoZo7QcF/jkQ1Rdn2ShboD0x7y8UIJ+mruDhHWoyTU3C23ywOyKDS5a0Nr5vc7xJBENYw==
+ b=eEWC/xBur92syPKHRBLVObG9pfFseJQuYFk3hr0pitKqL5jv770i2Wjy2vZAr2O0cwMT14gEAciITrUSSCOCRjI3rM+1kvEospGkYmgoKwsFTkJeiyViCLJcY7ZL4ka2y6embwd8TozkBzjpI2OU5PmklgxROseeNd/JuhUxsLjwlJoO6wBxeUj1ZNjfF5vwOpiVwliRXF2qs8lvkxipyRtFS4yqTZgm4+J9X2rgmdSaiJHzU455GUoKdS81RDpEGnrVavaW5q9u436iN02LC0WSlH8Ss2W6mBjSm6qR/5+jr0hZjLvPvNRHPB3sxWgpWCBnVObMSz+9IyG1oKlRjQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=mQZyyhQQelKMj9EWYnTr80NraBxCPj3LhCYVoeJVvuc=;
- b=NIfyd8Lmpx47tXSpBV74p7ZvakA96kHsmvSDNWNE9Roj08nILtfMZl3Z19v3bXLcFhKAQfTLhw1+Xp2NBgCioN23QL5+IEsuZq8PBlONxQDP5yCb7TlGfQ1oXfCOD9A8u8in2VMZqEtysQ8hsg/WNgv7+cis5uYFI51RmzdOdQ56rkG4iXUcFC3mwYb45iN4WwfpS7Zwdt18kFVui9FYcdvx2VRbfV4y9y27HyhrEAFD3TyyODYigLovkcgl9uRKfwpGvzZ5YTVWFfqaeApxXlcYz9T1Y2AwbaOuiKi0r54Ub0E2tGWhsVdWh5ECodOlx77EkJIcCEc1ynj2rYC7ow==
+ bh=5cxuJG21DsOwlcD3WvZG/izZpVQlox7FcT7lthS0/wE=;
+ b=NV2WOAihmMLvJa+D9k1U7JrodjGKKVfrpS9j04ftfoV9lG7MhLCupefOPxD0rrDVY+QWReu/+5wem/9fbtFuLYAXR0J7pZcNmvNN1Eoz4hv/arC1oeFKrwJqkf7jWHancqnaFunDI+CuTiomH5/PPF9RzmVhO/qCTO5sjlm9GQhXWqh3n2AYB8Y2qBEcKChuBZAXUDgxUyjc8cvUg7FzWTaoOCfcEQqjCCeTQ488Q3DJkR2MiSTM1LiccGBnUgQqA2TE6Ccb8tREslAy5Iw/kcPB8rubRzdSsLVE8ZwAMSurI7Fv0C8LGQt5RJvh1ndBV124P/OWeCUeyLfLas9akw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
  dkim=pass header.d=oss.nxp.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
  s=selector1-NXP1-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mQZyyhQQelKMj9EWYnTr80NraBxCPj3LhCYVoeJVvuc=;
- b=uvY2NkJV2RvjAPNU4pmZ50rPdY796MRto3Bl7IQQjXonYC9AtoIo4+vqoCwz27tMBDQ4G/NNFIdvZuug8bRZPp+xfrfXj2nA/Qa3MaQk/j/ja87aHc5kLidv94CJ/W9SKjs/jBa6CclmBcU2sN3Yr2jxynZzzISQ80/zvAAkhgwpNiJn6WxjW6uNWbUL/LkJDOfM9IAPnqPiJzAf2+0CnpengeXyBHNtiqkglGmncRjyMblvax0mSr5NlEnfLPbnG5MMSo8CzgvwpE93S9MRVnywDyLro0SK+6+RsHHDEtxUvT+cmzW5dp5hTwY2dY/qXJ284AiY4jSN9bO7SmNuXw==
+ bh=5cxuJG21DsOwlcD3WvZG/izZpVQlox7FcT7lthS0/wE=;
+ b=M68ztqCYemktKvsRoHzLdUekWYK97AEEaAgXC+V8xE58kd1QI+hqMLcqt6FWZiBOtGD91Q9IKAnAhsxvVH3je+X4wB2IxcW+sOj0qLOYh16enrkUMcgzyaruAxSYCg4JJD70kMNgh1Hb7p0nACvinOlFIeGpxgdWZLuoap+bUPFAKfyS6Aw+WFBvhdSMKW9BTkJZCo9dMJ/TcREAUuSGa67p2urrDn/jvqCduW9sVok3TjC6FU5gXo/EqfXYvbsCaX4SvagLmW8fsT9vJvMJuzNUYNCBft1kToehCp2h18WpYds3no28lGF9s3W6ph76AmAE7AgVik18Z2JhQb0YwA==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=oss.nxp.com;
 Received: from DB9PR04MB8461.eurprd04.prod.outlook.com (2603:10a6:10:2cf::20)
  by DB9PR04MB8429.eurprd04.prod.outlook.com (2603:10a6:10:242::19) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9366.15; Fri, 28 Nov
- 2025 03:14:48 +0000
+ 2025 03:14:55 +0000
 Received: from DB9PR04MB8461.eurprd04.prod.outlook.com
  ([fe80::b1b9:faa9:901b:c197]) by DB9PR04MB8461.eurprd04.prod.outlook.com
  ([fe80::b1b9:faa9:901b:c197%4]) with mapi id 15.20.9366.012; Fri, 28 Nov 2025
- 03:14:48 +0000
+ 03:14:55 +0000
 From: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Date: Fri, 28 Nov 2025 11:14:14 +0800
-Subject: [PATCH v6 5/6] clk: scmi: Introduce common header for SCMI clock
- interface
+Date: Fri, 28 Nov 2025 11:14:15 +0800
+Subject: [PATCH v6 6/6] clk: scmi: Add i.MX95 OEM extension support for
+ SCMI clock driver
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251128-clk-ssc-v6-2-v6-5-cfafdb5d6811@nxp.com>
+Message-Id: <20251128-clk-ssc-v6-2-v6-6-cfafdb5d6811@nxp.com>
 References: <20251128-clk-ssc-v6-2-v6-0-cfafdb5d6811@nxp.com>
 In-Reply-To: <20251128-clk-ssc-v6-2-v6-0-cfafdb5d6811@nxp.com>
 To: Michael Turquette <mturquette@baylibre.com>, 
@@ -73,199 +73,359 @@ MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: DB9PR04MB8461:EE_|DB9PR04MB8429:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0ee4250a-4b2f-46a0-d8e5-08de2e2c49f3
+X-MS-Office365-Filtering-Correlation-Id: 91424640-facf-44d7-5c7c-08de2e2c4c98
 X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
 	BCL:0;ARA:13230040|376014|52116014|7416014|1800799024|19092799006|366016|38350700014;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?RW5RZ2JhUW4vTWJBaEtic2YydWgyYVV1TVV1QjBWeE5IS3pPN0tIWHB1VHBU?=
- =?utf-8?B?bHFRZWhkZjIyM2lpNzlxWGY0bTJpZ2F1cVZwZkYvNi9PUmp2TSsxcEgzRytv?=
- =?utf-8?B?NkM3dDNydUVNaUZKRHRtWUlvbFVwbFVweVNzeVBIcFVFN0tKZG8wMGVmY2tn?=
- =?utf-8?B?cVQ3TVQza1NFTDRCdEtVLzA4OVFydVpxZlREaDRVVmxSRzY4aGU1TGhLbTk0?=
- =?utf-8?B?WHM4T1dPNDdZRGxMRXNzazdUSmV5VUdCaFhUUjl0K0QzSGhYaWNJeVdQQXdS?=
- =?utf-8?B?UW9NSjlEbEd5d0REUHQra1M2dWFuWUtsMkQyY05adUh2cXlzWm9zLzdkcWF3?=
- =?utf-8?B?V21KcTVtY1ZHWk1XSzQxc25ibFc3WGt1d3pIMWRkRklRQ2I0VER6UDN6YWNU?=
- =?utf-8?B?OGo3U1NrRENmN2ZPd0haMjRGdWJCZDY0R1VJK2RIa1M4UlZxTEM4T09TbDA2?=
- =?utf-8?B?ZEpnc3JRTis0aWhkVi9ZSUxGTWdnVEExYU9kQ2ZhK0RTNzNmNUxhaHVYdFlS?=
- =?utf-8?B?MGFyc1Y2MkhiWXZuUFMxTGtLSURuSG9FTGlXMlVDM29aSDY5eThnNTRnT3hX?=
- =?utf-8?B?cVpTMHJyTUxYeWZPQ3BmNWFzclB1WE4xZUZiS1Fvc08xeFV5aFpjMXlCWXJR?=
- =?utf-8?B?Qmc2Zk00cFUvZVoxSVBKdHhFOE1hMmlkeDZoR0ppMHp1aDE3cXBEeCs3KzAr?=
- =?utf-8?B?QjgwYnY2S21GY0dvVFgxOUpycWxRNXR1blZMb08vQnVWYkVRdjVSeWRmSS96?=
- =?utf-8?B?cExUWE0yb09iKzQ0aER5MXlvQkpZMUQxZm5PM3RsZ3F3TXZvV3ZPTzhRVVZK?=
- =?utf-8?B?N241NXFHWS9lcEFRcFBnREFFS1hEZXhnYXY5Vnh5blZYeVMydVh4eHN6WUVD?=
- =?utf-8?B?aTdOdjV0eVBrSzEzeVo3aGlUQVIzWUFZRmJRb0p4a3dET0Q4d1dKSmF6Z0li?=
- =?utf-8?B?K2JxZEVyczRodjBxNGsrOHJ0cGtuTjBQemsrM3pyQXZtS1R1Ky9oZDBEbGxM?=
- =?utf-8?B?UTVJN1Nsa2NtNGFHK0tJYmpsZ0FlOXJiN2VDSEpoUy9uTEd6TDVuTEt2aHlF?=
- =?utf-8?B?N21WRGliMWRUb2Y1dXptelVRZnRpT0VpS2xEVlh0SXIxNHJqS2FGQVZ5d09s?=
- =?utf-8?B?QTdqZ1VSU2pOMWozbjl2aWxlWTBXQThmTThuMFphM0hFN2FUK2dGeThGNzM5?=
- =?utf-8?B?SmxVcVVXaW9YUi9YRzk0VGN1UWFVSGVEeEZkN0x2OEw3OWsrKzdwUVpRNDdn?=
- =?utf-8?B?ZUNyQ3dKTEhxemVHZHJ0NTJmQk5Wb3ZwdkFXdktsYUVWd20za2k0WHNSRE1E?=
- =?utf-8?B?TWg5cGhrVldraGNCMWM3UkJhQUNMUStUWVRRcWNvbVNtR25tL3MyOU43aG9p?=
- =?utf-8?B?VkswSHY4dWFWMzFZUVN1QVBLQ3l1ZDZRdmdGOTBOSEJGanhHSUI2YXdwZGJy?=
- =?utf-8?B?UzMvWFY2NmdTYTFoVUt6TGg3d3VHY0k2ZVRNWU84czZ6Umo5Q1pHTFdhK2FC?=
- =?utf-8?B?VGROR2hvRTZLS3Ura3UxVmIvSXJWL1JjOGVOR1d3Y1pPNXN1Z1VnMTdsT21Z?=
- =?utf-8?B?UW80VytoZXJ3dzV3Mzd5YU5sWG5ydmh0UTV1Z2hXcC9YNjlMQVM0TUtvOE1O?=
- =?utf-8?B?SlVRa21KaWtEaHFvRWVUdmg4aUNmOXZEQko2dldGYzJCNjJTQU0yOHhjNmZk?=
- =?utf-8?B?aGtEMWk4akZxc3RMd0phcmFRMVRnc1BpOXc4VHFna3hrd3hGNG1WbDc1MXpM?=
- =?utf-8?B?eXpOWENJVFZYV3llUFUyQ2haOTlkcitSWk1UQmhUSUVGeVRXVkk0ZTBncHFn?=
- =?utf-8?B?c3paYjRnTWJPejRKTHdMN2dMNFhMd2hRSm5DSi9JQTdTcGo0eU5hWDM4Qkd6?=
- =?utf-8?B?UC91ZitnK0JYT0FlZHZEa3kzakJyYlBrRlFzc3Y3M0huZW94Y1hrMlIxVnN4?=
- =?utf-8?B?Rk9PdWQyM1ZuTTJuL2FlWG1vd0hFamF0WnZuY21OQ1EyTlpOWk1nQVlaajg1?=
- =?utf-8?B?TWFUYnBib2p0VzVYUWo0bVhHVVAvSHZNUmJSUHkrcHAvWjlHSG1naFc3NkpE?=
- =?utf-8?Q?VAu0P4?=
+	=?utf-8?B?R1p4cEhrVjZ3VWVNeHltdFU1QlFGVGpNSmFmdWlWalFjU1FEeHNRdlZWNmhS?=
+ =?utf-8?B?c0VScDZEZjFOS3RIVU5zc1hwMU0xSy9WOG96ME5VUStHR3RmNm92TUorT2k2?=
+ =?utf-8?B?TDdhNHdMaVNDTW1ZaUN2dEhKZGhPMDA1SloyekVNSzc4ZW5aYjZRRUYxQ05L?=
+ =?utf-8?B?Umd0TDY5ejY3clFnQ1M2VitaaE5IRnErSzROUkpGQmhETUtNOEFXUTVobzlC?=
+ =?utf-8?B?RFFoTjA3TjVnbTAxM2w4eVZzK0xnWXZ0ZEFiZFpuOWs0RkxKM2R6RVlQZG9O?=
+ =?utf-8?B?YWZ6OCtmYk5JZ0dRRHBBUU8waFBrWE5UWEI5blFDTXB3YTI4ZWtHMENsU2NQ?=
+ =?utf-8?B?QTJCdWx3YTk4UzYrcjFCZGZValZPN1pOV3JSRzZleHdNeU5JYm5PWWlueGo1?=
+ =?utf-8?B?czJvL2tqS0YxTXdrbStVRGZsL3dreFJ3OWxHVFk2TWl3SFIyYUJlQzNxejFM?=
+ =?utf-8?B?RmFVa052RkUyclk1dXFlcC9ZcGVxdFgvL0hISTdZejNiRmRDWCt5NW42Tm0w?=
+ =?utf-8?B?SkpNQ1o2bDJ4V2dlQ2hjaWZsc3B3bDd1ZXpTTWNlUVZtUEp5OFVzVzFlTXZH?=
+ =?utf-8?B?ekJmamxHMCsvRFdjREkreURYY2dVUVVmN3plRFFFSWFENGRXWE9pU25qNWFF?=
+ =?utf-8?B?dlJLMGtPZ2hhVlJBQVNSUHRnMXpWSXlSb0gyZHJZTTExd3FVMlduUUUraXd4?=
+ =?utf-8?B?aURIMlc1cExic2Q4VENFb2JMbEdEaSt3VlNNQ3hoMVVpRjNZSyt4SmhyMFpp?=
+ =?utf-8?B?N0MyZkx6OEtibk5lSEk3bHNQMFpKUFIvampsWWlJN092WUtIV0haZm5CZTFq?=
+ =?utf-8?B?ellyR0w0dkNsSE1Bb3dWV050b1JpdGNtWlNKQXRqOElkUnlzQUZYdmkxbldH?=
+ =?utf-8?B?RTJlc2o4ZWdJZVhwY3JLTyt0dmJVREd0MTlxcU1QREhKSVBZQXdFZTVDMnV4?=
+ =?utf-8?B?SVpyaUZyMmhGUTczd2lpRHIxc05ydFA4QTlhR29KZktoNGhLQ045czI2SnAw?=
+ =?utf-8?B?UHBpeVlBRGE2TWxabDI3aFBRSjlhQy84b3llVWYxVDlRdWxVNlRSaEZ5ckFp?=
+ =?utf-8?B?aVRTUWdFWURRQ3dPOWh5bkpOVWJkUXhpbzUrM04xVUFvQkdmNmZkY0NrdUhX?=
+ =?utf-8?B?ZkM4cEY0RDFvRHVqTDZXQkJTcnVMaEh2UC9FSXFUNkpXcGRGSzk5MHhKZStz?=
+ =?utf-8?B?TWV4VmYvc1pnWWowQUl5ZWphZVJqZWUwcGtxSlZxN3VVZUZNYTNiTzZOeHo2?=
+ =?utf-8?B?bGMrekpxRDluQ2llamJSaXhIUlY4aFoxenRabUJIN0M5R2JOSFdrSVJBeFFP?=
+ =?utf-8?B?U3dpN0h6VW9Xb2VNSmxpbGROZ1RERkZNL2JmV3lzYkRKMENuaDRYTWhOOFBT?=
+ =?utf-8?B?eThRVCtaZVE1K3UzSnpER1lQZm10eWFLMitVTGRQaFBkOXpnaVZ1SWZqMDI0?=
+ =?utf-8?B?VndWL01QaXlHVjIydE5SSUYrOCtSU0p5QWRJTVRVMWtmUmYxSkkzQWJUVzZ6?=
+ =?utf-8?B?VHRFUC90YVVBbkF4M1k0Rm1ySVNaZ0JVTU1sb1FGV3hkT2ZIVytZMTRPSlFu?=
+ =?utf-8?B?VC8yTDhMUnF0clpxbWZJNjgrTFB6WTJ2VXVMc0tmb1RLU2tmakFnc3FzVXNs?=
+ =?utf-8?B?UlBzNjNWZ04wd2lENkVDZExJOFZrN1dVWW4ydlpGYk5VL2I4WGJnTmJGaUFW?=
+ =?utf-8?B?dGo2Zml5ZnZVdUpNd3lnaUVxVC9nWjFrTlpOU0NOeDh3VzkrWWdiQnZhR1JN?=
+ =?utf-8?B?QzJsTU5weFY3Nmxtc21RN2Rzd2NHcHA3SHVtWVpOZDdBY2FDemd5Q000VnVq?=
+ =?utf-8?B?ZEhPYUkxemdaT0F5TUpUN1lEalhrRjVuZlRkY0FRVkFpOWZwSk5NdWhSSEtY?=
+ =?utf-8?B?dHBHUTdKT2NjVFcxMUlPZi9HN3RhOTFTejg2bXU4N3Fid1RtUmF2RUU1QlNq?=
+ =?utf-8?B?RThXVis1UWlROUp1MTVQQUE5aTk3b1VMUzFBRWxCbFZVZ0tndjY0bG1HOWl0?=
+ =?utf-8?B?Qys4Y3dybFI4NE01U1VTdHdCVWlHVHV4ZHNJT1ZlUi85VVMxbGx6Y0hzeWYv?=
+ =?utf-8?Q?2US0yS?=
 X-Forefront-Antispam-Report:
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR04MB8461.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(7416014)(1800799024)(19092799006)(366016)(38350700014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?NGdmK21XeXpvV2NxNEZPRG5STS9XT0VibHFwVkxpSDdSOUlITTFhdFdpNzNz?=
- =?utf-8?B?TExRakQ3d1BEK0xTRnJtTWtCcmxDaENnMmRuYVVlWUZxU0pzNTduREtRcjNW?=
- =?utf-8?B?ZmtETGtsanpjaEV3bCs3d3BEV096b0MzODUvQkJENGd1MzNVQUMwM3ZhbmFn?=
- =?utf-8?B?S1pMRTdBR3ltY0NJTGVBc0xPNXJabVc0dXZmeCtiRDdEOXNIZHVoYVYwaFN6?=
- =?utf-8?B?ZmNXOE96d1dxckJHY3l6M0F4elNBR1ZVQTBJRTVUMFNwT1hhbWpPdXphaUpI?=
- =?utf-8?B?OER0ckJpNmVhQjdhMS81YU85WFpoWVkxc0FOQStRSU0yMEp3aWNNTEtvQ3VZ?=
- =?utf-8?B?VkdrWFNNdWFhbnJkS21jbFZ0ZjI1cEk3RmpuQXI4c2dwTk54UmxaUExIbjZh?=
- =?utf-8?B?Qm9IY3Fzbi9DWklMWDhOTzlwSGs1ay9VRXQzcUpsL0QwQVhpZWY2anRnWksx?=
- =?utf-8?B?ZlhzbHYwNkN2WTA4bGsyY3c4NFVBcktmdEswamNGajFBeGFTeTBQSklTVngr?=
- =?utf-8?B?YzhIYWlMcHRsYzhFRE4wV1BySnQwU3Y3K1haSDNpV3dZQXpIeFBpRVB6a242?=
- =?utf-8?B?R1NGMlV3TEU1ZWtwUUpoclZYamIxSTlmcjJ4R0dXbVVtRlhEdy9yaGxMTWxC?=
- =?utf-8?B?RGNYd0wxSW85WnplcWpaaVlQL0hDVFU1V0p4UCtpTWxqUDNyd09RZFFwTnpt?=
- =?utf-8?B?UjVuVGM4QWoycVNSVTVmVlNlVXFWem9KVDBBOGYxMnJLOWFVMEI5M2tFeVl6?=
- =?utf-8?B?TDZkK0Q3MitNdmZ0bXhJMW0xWm5qQ0lrQlZhK2d6bHY1YW1tdjl1cktsb2I2?=
- =?utf-8?B?a2huMFZZa1FYbXdmTk1TemNnZG80T3BFN0cybG16czJseDlxOUN4dXlpTzd6?=
- =?utf-8?B?eW9zS2hadG14bCtadUpIbzZsbW9FNVF6SFpvNVZDbXZWeUQwV2x3bXhjM0g1?=
- =?utf-8?B?Y3hQVStWSmxUMUNSR2VuQ2ZtcS9KZWsycHJoYVlSaXFxT29nMUZXS2ZYZFhJ?=
- =?utf-8?B?eDdOdjJrVXp4djB2ZVBUcllRVTZXRXoxYUwwTGpiMmtZekcxd1Qxb1NaalZI?=
- =?utf-8?B?ckVUdmI1S0lqMkVlODZkbjAzanJpL2FSenZkc01zWUVtV0dubHpDWEkyWWJG?=
- =?utf-8?B?c2FHR0NZU3J5aTJ5NjV1TEc1VHVSL3dHZmVQaWpEcTM1Y1NxSDl6ZVM2OGlU?=
- =?utf-8?B?bERPR3VxNVZKWjNVeDdHbytMVTh1SWNnaHN3Wkc0Y1dZM1FjKzRQNlhCQlJ3?=
- =?utf-8?B?SDNvOEFrLy8zOTNQVmRvYSt4QUdBVTcrenFOcjA3OVkwVDFvMVFadjFHUzEx?=
- =?utf-8?B?UHJVU1JGa2p0OXNzb2NpOWc2ZDBFRmZzZnJlQlJSempQaThsaVE4QXNvVGo4?=
- =?utf-8?B?R3lzQW8vZkZDc3BRcXhCRVJFRzhwazNxUCt0S0FQZWtndi9qdmR6VmhuUVRT?=
- =?utf-8?B?VU1taVhZYXZMY1hFdFhxcXRlTFRoR280WURBZmlETmtpRlRTRHlHM1A2RFZS?=
- =?utf-8?B?Q3JGSmpUUlRyZE5KTEJCNkZGREtVNmdDejNKMlFnTVF3ZDlPYzdBcU8rdFFO?=
- =?utf-8?B?aHNaL0xFSCttNUZySlkxOTJ1ajAwMXRmVWJGR0wxWmI4RElHOTR1bDZvOGQ4?=
- =?utf-8?B?SEcrZmFnWVRWOVloc3pJekJmYlMrWW56dVloMFBoVDFtaWJYZEF4Q0trcWY5?=
- =?utf-8?B?amZ0MlhmQjlsWW83MlROSkRuRHNHR09lUmpkay9YRVQyeU1zTldYRGMwZlJQ?=
- =?utf-8?B?dU0ySllPTjRRTVFob1c5bVNkdGxzNk1GUWJKQTZNR2kreE10Vy9WWkpRWDVa?=
- =?utf-8?B?MERpcHQ5Z0psZkZXZTNVYWxsalhVK1g4Tjl0QmxzTWtEOE9ibTB5MlBFeGs1?=
- =?utf-8?B?ZFQyWUwzMXZuUy9sUXlJSG1sT2hyYmx4ZS9Bd2JmcGF0ZGExY3B2bWc0dXFs?=
- =?utf-8?B?NVo4RW00SGhhM21JanlHclpTaGY2a0VBZWFWMnlRMTdsL1dwd0ZJSDZJRW5Q?=
- =?utf-8?B?Q2prRUpsTVRobmEvRnhIODJTMnV6Z2Q0VXF3R1RVLzFqTUpGT0lEL0NFSSs3?=
- =?utf-8?B?VWwxbEUxOWxDekhUMWI5dWNHdkxab1EvL0RnTDcydVhYblpEdHExVExLSHY5?=
- =?utf-8?Q?5Y3m5LPbTrYBOYMUtfT4rIgDR?=
+	=?utf-8?B?YWczWlQ5MUdUMEVZdzFPWDZDaUloVGhUcWpNUG9xNTJvK3l6ZTBVc1ZuLzFy?=
+ =?utf-8?B?RmVucWc2NU5CdzAybDZrV055cW0xY1E3djJqNUN5c3k3U2xqUGtLd0JFRzlz?=
+ =?utf-8?B?ZGllMWd4QmdUNGs5ZG5pTC9Qb28zcTFZOWFZaEp3d3IzT2paamJhYmg1dk5U?=
+ =?utf-8?B?RDFaLzZWRjVaSDdOUXprZkFPOE4vQnVKVkxMUWQ2K0h3UmdJQitTMWFmQnNt?=
+ =?utf-8?B?ZkNPSjZQYXR2SHgzVXNPMSs4QjFmYy90N0dUZXltalRYc2lpWXZLcFlsdSt0?=
+ =?utf-8?B?bk91OEh6K3RzVzZ3Wmg2bHczdDgzZENuMHVKKzIvdFlac0MvWDZDanlHTGFD?=
+ =?utf-8?B?V2dFalhsZzJKZGlpY0VZVm9NajVaMWMwQUNDcWlTUWk1a3RDTDA3K3hKTDdK?=
+ =?utf-8?B?NHBUUXpWYXVYMjZDZnhXc2l5K1U3UkhaVjhIZkE4SHJoaUg1SW9FMGRDbi92?=
+ =?utf-8?B?LzNaaXFvU3dLU2x3SWgrLzd6TERxU1U4eCtXME9CdXAzeElXdjl2L0NINzdi?=
+ =?utf-8?B?ZWt6OGM1L1hIODZkWTkySW5wQkw2VnUxaG9aalBKNGVlTFF2RXhDZGN1R01o?=
+ =?utf-8?B?byt6VW9HbVpkeXJ6RnpaM0loanNZSittVWVuZm5OSVhMLzVHbndDUGd2MDdW?=
+ =?utf-8?B?eUJJZytmM1dUMjlMZ3lOUEVGQi9XeDlJKzZiNk4vQklmWnFUbythMXRqNFpF?=
+ =?utf-8?B?RHE3Y0pYZUpoeTVYVEVnTk8yQ3VORlNQK0cyNUMwSDNKWWVhOEF2bXNEWnRm?=
+ =?utf-8?B?UjV3UkkzcldJWmhvdWxFcVYzcitOQ0l6bXVoVEZkT3lOSDlJNDVBOTdobnNG?=
+ =?utf-8?B?VE14K2xWdGt2UkR5bGR1SmRxRXhKcjlITWI3UGZuZS95UjNqL2l0dFIrME1x?=
+ =?utf-8?B?bHpXZlY5K3FxOFBnaDB4c1h1VzhxVkdMVEwvTUZpanBidk9mTmpEQ2twcGVE?=
+ =?utf-8?B?MzZxL3ZUVUpDYWUwL1RqTHdwTEdiRXZndlJKVjFGQlBFR1lqazFaU0FXUFlp?=
+ =?utf-8?B?cHVJUm9pWjBYM3NPdGFFK0FoR0Ryditia1Zubk0zVHc1bHpYNlUvUUErSUJT?=
+ =?utf-8?B?aENmdVZZL1JvNWlHMkR6YjFGSUtNbmNJK21hTUg1VjhhV2tPZXYwQTNjNWxv?=
+ =?utf-8?B?Zk90d2NqNzZGajFPSDlMSm42RjUvYi9yQmpSNm5uVmpOcC9qRStUbE4vSUNt?=
+ =?utf-8?B?NWF6NjRzd1c1c3JEUnJJeVZuSmNab2dHb0F2ekV5WURnbklQMlc5NkFPTkdj?=
+ =?utf-8?B?WmdHUUtBaENtV3AxRXFPeGFmT2lGSmVhaWp0ZE5rZXUzdm1BcVZaOEIyb2VX?=
+ =?utf-8?B?UjIzRGJUbzFZc1IzbHFjeHRvUFcvVmplMEhTL3J4NWN5YmZlVWVuQzJkbWcr?=
+ =?utf-8?B?UUplY0VSYkpWbmVWZHo4Z1U5VUxnUmRiTXBwNnJET0V6cjArUVJkc1lZZTN2?=
+ =?utf-8?B?ZzBiMXQxWXB0RG9PYzRwTGhrQlBBaVVoYk5uK1YzSlZvc1FEMVZRWHRzblFn?=
+ =?utf-8?B?bHl0dUJJSHVxMlBZQm8rRmtJK0ZVTll6RWRhUWlUWlkxWFdmL29JRFJVQkxN?=
+ =?utf-8?B?dDYzZzZTbEJYT0hhOS8rSmlaem50aUJuVnRYN0ZDNHlJV0RSK2dTTEIzRWpw?=
+ =?utf-8?B?c1lpM1J6WWZpWjJMRlBub3BJd0lRRkJ2RHkrbkF3bkUxRThQY01CckxiaHdE?=
+ =?utf-8?B?RUhkNDVsOXRubHJ2RVJLeDc0M2MxL1JkYjVmS2orNmM1R2E5OW1GRTZLZEVC?=
+ =?utf-8?B?cmRFbzlZQUs1UDlXYWRma3dyMXUvdERrZ1NRajRLU0VSMzZkNXZ5S2IwVGpH?=
+ =?utf-8?B?QXUrdlpUOXlYU1BzU3p0VTlWaWtzN0F2RXYxRFYzVXFBenV4d0pYTmVwZDBh?=
+ =?utf-8?B?czdLdFRINzUxMURXYk0rL3JlT2NTNmM5TnpwSVMyd0daQlRLQmlMZDJCMlVa?=
+ =?utf-8?B?ZStwSjczbmFKelJzaU5DSC8vUDRFQXQyUlhENmV1c3hLOUlwZ1VuWWNOVVVV?=
+ =?utf-8?B?Rmp6a3J1NkFtS3d6bVFRVkJUdkJqZzd4V29kZzUyM3FxT28yZ0NlQktxeEhI?=
+ =?utf-8?B?MHRwcnV5czlEZEdRamRQVUxPL2ZURWRwMFMwUWFtUkdRRWVqOFZpWGhrVVBt?=
+ =?utf-8?Q?MTYWis3OfiM5U+NwO3X63Sxjt?=
 X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0ee4250a-4b2f-46a0-d8e5-08de2e2c49f3
+X-MS-Exchange-CrossTenant-Network-Message-Id: 91424640-facf-44d7-5c7c-08de2e2c4c98
 X-MS-Exchange-CrossTenant-AuthSource: DB9PR04MB8461.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Nov 2025 03:14:48.8318
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Nov 2025 03:14:53.9876
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: p8bUlzfPBUEc3Fk/qZVf5mNnwcmtlyK7WDgW4WO+CPr5+wHmvFXGr6FeuubWA7ep/99wyhnozbjOL0MO/FXzUg==
+X-MS-Exchange-CrossTenant-UserPrincipalName: FpqC5ImjD6qUn/piSvxTyjS0R4XH+imPxaCkwGJmC8NJXf/Mx1eFLa8qCnlSPxJ+KHV1ARTaNaNi/su6ElN4dw==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB8429
 
 From: Peng Fan <peng.fan@nxp.com>
 
-Added a new header file 'clk-scmi.h' to define common structures and
-interfaces for the SCMI clock driver. This header will also be used by
-OEM-specific extensions to ensure consistency and reusability.
-
-Moved relevant structure definitions from the driver implementation to
-'clk-scmi.h' to facilitate shared usage.
+ - Introduce 'clk-scmi-oem.c' to support vendor-specific OEM extensions
+   for the SCMI clock driver, allows clean integration of vendor-specific
+   features without impacting the core SCMI clock driver logic.
+ - Extend 'clk-scmi.h' with 'scmi_clk_oem' structure and related
+   declarations.
+ - Initialize OEM extensions via 'scmi_clk_oem_init()'.
+ - Support querying OEM-specific features and setting spread spectrum.
+ - Pass 'scmi_device' to 'scmi_clk_ops_select()' for OEM data access.
 
 Signed-off-by: Peng Fan <peng.fan@nxp.com>
 ---
- drivers/clk/clk-scmi.c | 27 +--------------------------
- drivers/clk/clk-scmi.h | 40 ++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 41 insertions(+), 26 deletions(-)
+ drivers/clk/Makefile       |   2 +-
+ drivers/clk/clk-scmi-oem.c | 103 +++++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/clk-scmi.c     |  19 +++++++--
+ drivers/clk/clk-scmi.h     |  11 +++++
+ 4 files changed, 131 insertions(+), 4 deletions(-)
 
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index 9e8c989b24be0f7cfdf2325c9b19d05e9d2a8eb9..fd54e2fe3c429362b93457d0e349e1deab2320f3 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -95,7 +95,7 @@ obj-$(CONFIG_COMMON_CLK_RP1)            += clk-rp1.o
+ obj-$(CONFIG_COMMON_CLK_RPMI)		+= clk-rpmi.o
+ obj-$(CONFIG_COMMON_CLK_HI655X)		+= clk-hi655x.o
+ obj-$(CONFIG_COMMON_CLK_S2MPS11)	+= clk-s2mps11.o
+-obj-$(CONFIG_COMMON_CLK_SCMI)           += clk-scmi.o
++obj-$(CONFIG_COMMON_CLK_SCMI)           += clk-scmi.o clk-scmi-oem.o
+ obj-$(CONFIG_COMMON_CLK_SCPI)           += clk-scpi.o
+ obj-$(CONFIG_COMMON_CLK_SI5341)		+= clk-si5341.o
+ obj-$(CONFIG_COMMON_CLK_SI5351)		+= clk-si5351.o
+diff --git a/drivers/clk/clk-scmi-oem.c b/drivers/clk/clk-scmi-oem.c
+new file mode 100644
+index 0000000000000000000000000000000000000000..fd81aca7bfca254669ee117ebd51e481a74cdcb4
+--- /dev/null
++++ b/drivers/clk/clk-scmi-oem.c
+@@ -0,0 +1,103 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * The Vendor OEM extension for System Control and Power Interface (SCMI)
++ * Protocol based clock driver
++ *
++ * Copyright 2025 NXP
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/of.h>
++#include <linux/scmi_imx_protocol.h>
++#include <linux/scmi_protocol.h>
++
++#include "clk-scmi.h"
++
++#define SCMI_CLOCK_CFG_IMX_SSC			0x80
++#define SCMI_CLOCK_IMX_SS_PERCENTAGE_MASK	GENMASK(7, 0)
++#define SCMI_CLOCK_IMX_SS_MOD_FREQ_MASK		GENMASK(23, 8)
++#define SCMI_CLOCK_IMX_SS_ENABLE_MASK		BIT(24)
++
++struct scmi_clk_oem_info {
++	char *vendor_id;
++	char *sub_vendor_id;
++	char *compatible;
++	const void *data;
++};
++
++static int
++scmi_clk_imx_set_spread_spectrum(struct clk_hw *hw,
++				 const struct clk_spread_spectrum *ss_conf)
++{
++	struct scmi_clk *clk = to_scmi_clk(hw);
++	int ret;
++	u32 val;
++
++	/*
++	 * extConfigValue[7:0]   - spread percentage (%)
++	 * extConfigValue[23:8]  - Modulation Frequency
++	 * extConfigValue[24]    - Enable/Disable
++	 * extConfigValue[31:25] - Reserved
++	 */
++	val = FIELD_PREP(SCMI_CLOCK_IMX_SS_PERCENTAGE_MASK, ss_conf->spread_bp / 10000);
++	val |= FIELD_PREP(SCMI_CLOCK_IMX_SS_MOD_FREQ_MASK, ss_conf->modfreq_hz);
++	if (ss_conf->method != CLK_SPREAD_NO)
++		val |= SCMI_CLOCK_IMX_SS_ENABLE_MASK;
++	ret = scmi_proto_clk_ops->config_oem_set(clk->ph, clk->id,
++						 SCMI_CLOCK_CFG_IMX_SSC,
++						 val, false);
++	if (ret)
++		dev_warn(clk->dev,
++			 "Failed to set spread spectrum(%u,%u,%u) for clock ID %d\n",
++			 ss_conf->modfreq_hz, ss_conf->spread_bp, ss_conf->method,
++			 clk->id);
++
++	return ret;
++}
++
++static int
++scmi_clk_imx_query_oem_feats(const struct scmi_protocol_handle *ph, u32 id,
++			     unsigned int *feats_key)
++{
++	int ret;
++	u32 val;
++
++	ret = scmi_proto_clk_ops->config_oem_get(ph, id,
++						 SCMI_CLOCK_CFG_IMX_SSC,
++						 &val, NULL, false);
++	if (!ret)
++		*feats_key |= BIT(SCMI_CLK_EXT_OEM_SSC_SUPPORTED);
++
++	return 0;
++}
++
++static const struct scmi_clk_oem scmi_clk_oem_imx = {
++	.query_ext_oem_feats = scmi_clk_imx_query_oem_feats,
++	.set_spread_spectrum = scmi_clk_imx_set_spread_spectrum,
++};
++
++const struct scmi_clk_oem_info info[] = {
++	{ SCMI_IMX_VENDOR, SCMI_IMX_SUBVENDOR, NULL, &scmi_clk_oem_imx },
++};
++
++int scmi_clk_oem_init(struct scmi_device *sdev)
++{
++	const struct scmi_handle *handle = sdev->handle;
++	int i, size = ARRAY_SIZE(info);
++
++	for (i = 0; i < size; i++) {
++		if (strcmp(handle->version->vendor_id, info[i].vendor_id) ||
++		    strcmp(handle->version->sub_vendor_id, info[i].sub_vendor_id))
++			continue;
++		if (info[i].compatible &&
++		    !of_machine_is_compatible(info[i].compatible))
++			continue;
++
++		break;
++	}
++
++	if (i < size)
++		dev_set_drvdata(&sdev->dev, (void *)info[i].data);
++
++	return 0;
++}
 diff --git a/drivers/clk/clk-scmi.c b/drivers/clk/clk-scmi.c
-index 6b286ea6f1218c802d0ebb782c75a19057581c20..bf85924d61985eb9e596419349eb883e3817de73 100644
+index bf85924d61985eb9e596419349eb883e3817de73..1ed2091e3d4a951c8662db4c94dee4b9c98b8326 100644
 --- a/drivers/clk/clk-scmi.c
 +++ b/drivers/clk/clk-scmi.c
-@@ -14,32 +14,7 @@
+@@ -14,6 +14,8 @@
  #include <linux/scmi_protocol.h>
  #include <asm/div64.h>
  
--#define NOT_ATOMIC	false
--#define ATOMIC		true
--
--enum scmi_clk_feats {
--	SCMI_CLK_ATOMIC_SUPPORTED,
--	SCMI_CLK_STATE_CTRL_SUPPORTED,
--	SCMI_CLK_RATE_CTRL_SUPPORTED,
--	SCMI_CLK_PARENT_CTRL_SUPPORTED,
--	SCMI_CLK_DUTY_CYCLE_SUPPORTED,
--	SCMI_CLK_FEATS_COUNT
--};
--
--#define SCMI_MAX_CLK_OPS	BIT(SCMI_CLK_FEATS_COUNT)
--
--static const struct scmi_clk_proto_ops *scmi_proto_clk_ops;
--
--struct scmi_clk {
--	u32 id;
--	struct device *dev;
--	struct clk_hw hw;
--	const struct scmi_clock_info *info;
--	const struct scmi_protocol_handle *ph;
--	struct clk_parent_data *parent_data;
--};
--
--#define to_scmi_clk(clk) container_of(clk, struct scmi_clk, hw)
-+const struct scmi_clk_proto_ops *scmi_proto_clk_ops;
++#include "clk-scmi.h"
++
+ const struct scmi_clk_proto_ops *scmi_proto_clk_ops;
  
  static unsigned long scmi_clk_recalc_rate(struct clk_hw *hw,
- 					  unsigned long parent_rate)
+@@ -242,6 +244,7 @@ static int scmi_clk_ops_init(struct device *dev, struct scmi_clk *sclk,
+ static const struct clk_ops *
+ scmi_clk_ops_alloc(struct device *dev, unsigned long feats_key)
+ {
++	struct scmi_clk_oem *oem_data = dev_get_drvdata(dev);
+ 	struct clk_ops *ops;
+ 
+ 	ops = devm_kzalloc(dev, sizeof(*ops), GFP_KERNEL);
+@@ -288,11 +291,15 @@ scmi_clk_ops_alloc(struct device *dev, unsigned long feats_key)
+ 		ops->set_duty_cycle = scmi_clk_set_duty_cycle;
+ 	}
+ 
++	if (oem_data && (feats_key & BIT(SCMI_CLK_EXT_OEM_SSC_SUPPORTED)))
++		ops->set_spread_spectrum = oem_data->set_spread_spectrum;
++
+ 	return ops;
+ }
+ 
+ /**
+  * scmi_clk_ops_select() - Select a proper set of clock operations
++ * @sdev: pointer to the SCMI device
+  * @sclk: A reference to an SCMI clock descriptor
+  * @atomic_capable: A flag to indicate if atomic mode is supported by the
+  *		    transport
+@@ -317,8 +324,8 @@ scmi_clk_ops_alloc(struct device *dev, unsigned long feats_key)
+  *	   NULL otherwise.
+  */
+ static const struct clk_ops *
+-scmi_clk_ops_select(struct scmi_clk *sclk, bool atomic_capable,
+-		    unsigned int atomic_threshold_us,
++scmi_clk_ops_select(struct scmi_device *sdev, struct scmi_clk *sclk,
++		    bool atomic_capable, unsigned int atomic_threshold_us,
+ 		    const struct clk_ops **clk_ops_db, size_t db_size)
+ {
+ 	int ret;
+@@ -326,6 +333,7 @@ scmi_clk_ops_select(struct scmi_clk *sclk, bool atomic_capable,
+ 	const struct scmi_clock_info *ci = sclk->info;
+ 	unsigned int feats_key = 0;
+ 	const struct clk_ops *ops;
++	struct scmi_clk_oem *oem_data = dev_get_drvdata(&sdev->dev);
+ 
+ 	/*
+ 	 * Note that when transport is atomic but SCMI protocol did not
+@@ -350,6 +358,9 @@ scmi_clk_ops_select(struct scmi_clk *sclk, bool atomic_capable,
+ 						 &val, NULL, false);
+ 		if (!ret)
+ 			feats_key |= BIT(SCMI_CLK_DUTY_CYCLE_SUPPORTED);
++
++		if (oem_data && oem_data->query_ext_oem_feats)
++			oem_data->query_ext_oem_feats(sclk->ph, sclk->id, &feats_key);
+ 	}
+ 
+ 	if (WARN_ON(feats_key >= db_size))
+@@ -407,6 +418,8 @@ static int scmi_clocks_probe(struct scmi_device *sdev)
+ 	clk_data->num = count;
+ 	hws = clk_data->hws;
+ 
++	scmi_clk_oem_init(sdev);
++
+ 	transport_is_atomic = handle->is_transport_atomic(handle,
+ 							  &atomic_threshold_us);
+ 
+@@ -438,7 +451,7 @@ static int scmi_clocks_probe(struct scmi_device *sdev)
+ 		 * to avoid sharing the devm_ allocated clk_ops between multiple
+ 		 * SCMI clk driver instances.
+ 		 */
+-		scmi_ops = scmi_clk_ops_select(sclk, transport_is_atomic,
++		scmi_ops = scmi_clk_ops_select(sdev, sclk, transport_is_atomic,
+ 					       atomic_threshold_us,
+ 					       scmi_clk_ops_db,
+ 					       ARRAY_SIZE(scmi_clk_ops_db));
 diff --git a/drivers/clk/clk-scmi.h b/drivers/clk/clk-scmi.h
-new file mode 100644
-index 0000000000000000000000000000000000000000..6ef6adc77c836dc2d599ff852cdc941f217ee388
---- /dev/null
+index 6ef6adc77c836dc2d599ff852cdc941f217ee388..d7f63f36c56d155f728325efd6bcf7fe2585b170 100644
+--- a/drivers/clk/clk-scmi.h
 +++ b/drivers/clk/clk-scmi.h
-@@ -0,0 +1,40 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ *  Copyright 2025 NXP
-+ */
-+
-+#ifndef __SCMI_CLK_H
-+#define __SCMI_CLK_H
-+
-+#include <linux/bits.h>
-+#include <linux/scmi_protocol.h>
-+#include <linux/types.h>
-+
-+#define NOT_ATOMIC	false
-+#define ATOMIC		true
-+
-+enum scmi_clk_feats {
-+	SCMI_CLK_ATOMIC_SUPPORTED,
-+	SCMI_CLK_STATE_CTRL_SUPPORTED,
-+	SCMI_CLK_RATE_CTRL_SUPPORTED,
-+	SCMI_CLK_PARENT_CTRL_SUPPORTED,
-+	SCMI_CLK_DUTY_CYCLE_SUPPORTED,
-+	SCMI_CLK_FEATS_COUNT
+@@ -7,6 +7,7 @@
+ #define __SCMI_CLK_H
+ 
+ #include <linux/bits.h>
++#include <linux/clk-provider.h>
+ #include <linux/scmi_protocol.h>
+ #include <linux/types.h>
+ 
+@@ -19,6 +20,7 @@ enum scmi_clk_feats {
+ 	SCMI_CLK_RATE_CTRL_SUPPORTED,
+ 	SCMI_CLK_PARENT_CTRL_SUPPORTED,
+ 	SCMI_CLK_DUTY_CYCLE_SUPPORTED,
++	SCMI_CLK_EXT_OEM_SSC_SUPPORTED,
+ 	SCMI_CLK_FEATS_COUNT
+ };
+ 
+@@ -37,4 +39,13 @@ struct scmi_clk {
+ 
+ extern const struct scmi_clk_proto_ops *scmi_proto_clk_ops;
+ 
++struct scmi_clk_oem {
++	int (*query_ext_oem_feats)(const struct scmi_protocol_handle *ph,
++				   u32 id, unsigned int *feats_key);
++	int (*set_spread_spectrum)(struct clk_hw *hw,
++				   const struct clk_spread_spectrum *ss_conf);
 +};
 +
-+#define SCMI_MAX_CLK_OPS	BIT(SCMI_CLK_FEATS_COUNT)
++int scmi_clk_oem_init(struct scmi_device *dev);
 +
-+struct scmi_clk {
-+	u32 id;
-+	struct device *dev;
-+	struct clk_hw hw;
-+	const struct scmi_clock_info *info;
-+	const struct scmi_protocol_handle *ph;
-+	struct clk_parent_data *parent_data;
-+};
-+
-+#define to_scmi_clk(clk) container_of(clk, struct scmi_clk, hw)
-+
-+extern const struct scmi_clk_proto_ops *scmi_proto_clk_ops;
-+
-+#endif
+ #endif
 
 -- 
 2.37.1
