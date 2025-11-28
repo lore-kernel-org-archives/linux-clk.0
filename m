@@ -1,87 +1,33 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55DB9302174
-	for <linux-clk@vger.kernel.org>; Fri, 28 Nov 2025 09:35:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A49E3043AF;
+	Fri, 28 Nov 2025 09:39:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764322505; cv=none; b=NwPbNt56HzqIttgR/z3gNw+/CCmJOG8L2thNK+ZqFf3e6mPM5HqhSx0vtbKhm+bA3iP/Wa9IKHj/7ZZhV1OPBuwFeCBqluryzukjbvTqyRluwESxX8tqYzOyUnjNmXqs2vB0AeyioRCH/dbGmgb+0oWOfNk54OnwKcjfCDJKRXs=
+	t=1764322761; cv=none; b=kohvbCT51POWYR5+Kralunht+D3i7jMHeMro4lg3iETcT+f1QJ6SAn63spXPR6oGi5DW1YramYS6Wfw8wcQgKC2EOWUjPYoffFXmLNMnfcoIkVafwyqykJEWqZyVxXF/LodZHfhbrAEfhocVkS5+7SEL9gz1iWePrdllv/0cqo4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764322505; c=relaxed/simple;
-	bh=h3ZNBDf0epiuOlk/2CQIviFQoMVthoNjNOFLW4wWEXw=;
+	s=arc-20240116; t=1764322761; c=relaxed/simple;
+	bh=UWCsCVnEka/fGWe8b5mg7KXhcI3Wk0hcT890gx9xAdw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eKS1dz/8ZTU3SnV9PjUhOsgiw80s/hGxOJlUxTAndJH1OKjnLFAaY5kT66zR9VrZFSkdIFcODX/KkqBAeRqaJG1fNJdqq8hmYekq2HBTqx+RoSKFtj/IdfzRCWRCNBJ4Kr1eCftWAIPqHj9/uWfRX85ovUXe7ZLkxfB2/C/Gjto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=gDt9q0hK; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=CFMXBQxI; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	 In-Reply-To:Content-Type; b=hXhGzOY2pGQMb/h1wpFCsk7UyhaD/gTsBL6LzoRm2FrJcXARkw/ZJSTnPRvMotmW4xnAE0FPhZM1tyQIZFW82e7n5NXHpsyAZeVZj048Ya0VOGfI06RLZqKQHPawNbfr8JeN1hs9NGeDmGbPHJElIp50RVRpQ2gGJPp319wWpA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gW/5egwS; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="gDt9q0hK";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="CFMXBQxI"
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5AS8ONg33967486
-	for <linux-clk@vger.kernel.org>; Fri, 28 Nov 2025 09:34:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	sKL+m3WOutgYF13OONGJXl0HxSvrXVv5l4hpsD9KEx0=; b=gDt9q0hK1gN6/swW
-	eetI/8Fk15z9ktxRhKMA/ETH9nnfIaHmBoR46zLo/LloStTBs7jwkvGS1TY+Vphd
-	WkFS/2qEEJtK2dczmtGxS58r4YShru+XkPEggwg2hmAz/Bgkzut7OTFO4ufuiAwg
-	gEowtz9SvSLZwEnXUprkpRIXB75sMqC9jqJFHnDUr9GGlX5fWPeojo522UZfVw9N
-	UFe1JN0h05WxadZD+b25fYffV8iHJIx7m/ZoF67sXc3Gi9oKZp7jcjVHGVa2MAzb
-	1XgWBrstHeIhaeHj17CohCEk9gWdnWk/TvxJRIu2RU7ixbMfZSvL/ve0wGeKtEpp
-	SoWvbw==
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4apkv5k24w-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Fri, 28 Nov 2025 09:34:59 +0000 (GMT)
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-2954d676f9dso13092915ad.0
-        for <linux-clk@vger.kernel.org>; Fri, 28 Nov 2025 01:34:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1764322498; x=1764927298; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=sKL+m3WOutgYF13OONGJXl0HxSvrXVv5l4hpsD9KEx0=;
-        b=CFMXBQxIX5RYiggtQJV7thQ6CzGlsS+fteRyuOTqNCWVdSKrDIcKBwTWCimtayagw6
-         hs4j4pXaSXCe9mlKQE9a6y9n56NzGeCSrNEqJTrE4D1wdz13mp/Ehv1/PHaKkdUvZVys
-         B4aYP5k5jumQUSxgrV5vWrK4zgYMzxNABVs+Y/BRxBHtUSHptNvdM03yy3ldQx2tCsHb
-         lkPCJmm4a6w+GfTKxb1u/8PNqwNtT9/OxuxIVFmFJajxL/sbWssIEJ/6FGQ5BOEQ/5v7
-         Y3VUx9AGHqjkpr9uxqjuL3lSrYeNGpQ965QmaodFTc10MDNP/sxCnrbvD5avyJdCYhNc
-         Q9Iw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764322498; x=1764927298;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=sKL+m3WOutgYF13OONGJXl0HxSvrXVv5l4hpsD9KEx0=;
-        b=djEimgd2UAx0KlFgpNzzzZgytKD0InUafQZqYKz7B4ZyZA61MukLXufoOHqvzDCvVv
-         pEbJB/x3Bvcl8DNXLKBkUVFZrdxzZFcet58k2+snyHLBDaM+zN+UGFGVEL3kkUCTGfBU
-         m+YGieBdFMsqrG2oRtSRRaiC8QmN/UVXTYL24kL2nLd8phKP4V1FVL9U0xyq7PZW496V
-         FBgzg4HBL4O9KrrxrCcqnVzb0qwTSaONIpfoAPEnq0uyGNrzUGmpOYEYMPyhr3r4dyOQ
-         UjcvnRS/Pbecvqlj0mFygHQL+CcGFK4Y5hkkTXmsZYnfCkCT4ML3JNMl+Lq8fxJTfDmL
-         N11Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVyABQFFRGCKj0XXDmt0G+b5VKF/XXeC8UQ5oO+H3X4pPwUaGQw3qCm9Cr3xH6UQalB/Zwi1bYvrPE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZhtelb9Em79pG2hnjkANWG5n/FYHDSgcSXiiEZre0E/96DeRn
-	a7IB4e+CNw95IHSDAL+XGvv4iao9K/R1zjSVDTqSuMXTQhwSnjqFcRp8MVVmAUAKz+5juCpdQhG
-	1+pk0VwKsF5Jzx8SfWSjUgTw9Cmo0R23M2LeP5azRvYkLAI1TqpxnAmL3rf5hC/U=
-X-Gm-Gg: ASbGncsB9+2GRw64eBG+OcBxWJE6j1j0EbqXfqhHbYP91+/M7ycnrqfYgEZO3snc2uZ
-	un8OkgiEuldffxEHDWtuP7eL4RQgf7jCOuNoDqp0+7g5+ithYgSAQX1AqqSAL6foQoz//F441c9
-	hUJsGSxdfqBLrhKOewJ3Kn3Wy7mP+9R5BRzO7++laPgK7odf7BdKfmddVnM5N2PnxJcQotYqQTK
-	4G8yLOswuy4CsEF5R2L2ZAtXf6j/DbAYr3w2O+m77YZPS+HXO7j4OIBs6sHxJKP+YHWgneZ2s/h
-	HiOwtxsalHFP+WS96Zf/7B5ugu7lJU22d7mG9/AC6T47t7oneHJUBz1MECPOdom8mkoi2Ca6tMx
-	t/G2BEkAstTfwA8jy1bLhvgHb+h/yFk9P19mbvQ==
-X-Received: by 2002:a17:902:d548:b0:298:1013:9d11 with SMTP id d9443c01a7336-29bab1b50b2mr123968165ad.43.1764322498125;
-        Fri, 28 Nov 2025 01:34:58 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IExaWYSm30clO8JFqmCnuOkXZeeuYL49hJYAy90FwY7+VOOyFl1pNAhMDGXVuh1Rp1ko+AYEQ==
-X-Received: by 2002:a17:902:d548:b0:298:1013:9d11 with SMTP id d9443c01a7336-29bab1b50b2mr123967805ad.43.1764322497516;
-        Fri, 28 Nov 2025 01:34:57 -0800 (PST)
-Received: from [10.217.217.147] ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29bce4142f4sm41220365ad.10.2025.11.28.01.34.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 28 Nov 2025 01:34:57 -0800 (PST)
-Message-ID: <215aef75-682d-4cdb-a6b6-c2de805c4a69@oss.qualcomm.com>
-Date: Fri, 28 Nov 2025 15:04:52 +0530
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gW/5egwS"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D89CC4CEF1;
+	Fri, 28 Nov 2025 09:39:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1764322760;
+	bh=UWCsCVnEka/fGWe8b5mg7KXhcI3Wk0hcT890gx9xAdw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=gW/5egwS56iXdLSc+gq0R1s6SkNPavUoo6wFBqFYol5r0b4pd0zgMSwEKIZb1cWxZ
+	 hQkVVL5m0Iw+WWYwLColjm00CdrkQKt4GfFYcgroscy6PN9PXjKCz7Q6LD5HnFA6xe
+	 N/0Hcnn68S5cYonKmhSlnlzat0bbCMqxvg8yTMZ6Z4nTP2f/CpthrQDtoUR1k8NO1q
+	 LAJnIQupFM64SFPUUajm4IijqaR2RsbVaDxfilgnYk0xe+aGgoj1bwWynFKYiL9SiX
+	 yCM0jL3KC2BhnpGGNRvIdiSjT5eGA/CeLtnYAIVdY0d6d7ywSpBSyk1r8mp5BrugM0
+	 btqVatX0X/DGA==
+Message-ID: <34833e89-64ee-4117-ae2c-1ba4c1e4c071@kernel.org>
+Date: Fri, 28 Nov 2025 10:39:14 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -89,123 +35,82 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: qcom: clk-rpmh: Update the clock suffix for Glymur
-To: kernel test robot <lkp@intel.com>, Bjorn Andersson
- <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Dmitry Baryshkov <lumag@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, Ajit Pandey
- <ajit.pandey@oss.qualcomm.com>,
-        Imran Shaik <imran.shaik@oss.qualcomm.com>,
-        Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20251125-glymur_rpmhcc_fix-v1-1-60081b3cce7f@oss.qualcomm.com>
- <202511280306.L2l4tAmD-lkp@intel.com>
+Subject: Re: [PATCH 2/5] dt-bindings: clock: qcom: Add CMN PLL support for
+ IPQ5332 SoC
+To: Luo Jie <jie.luo@oss.qualcomm.com>, Bjorn Andersson
+ <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>,
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ Luo Jie <quic_luoj@quicinc.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ quic_kkumarcs@quicinc.com, quic_linchen@quicinc.com,
+ quic_leiwei@quicinc.com, quic_pavir@quicinc.com, quic_suruchia@quicinc.com
+References: <20251128-qcom_ipq5332_cmnpll-v1-0-55127ba85613@oss.qualcomm.com>
+ <20251128-qcom_ipq5332_cmnpll-v1-2-55127ba85613@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Taniya Das <taniya.das@oss.qualcomm.com>
-In-Reply-To: <202511280306.L2l4tAmD-lkp@intel.com>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20251128-qcom_ipq5332_cmnpll-v1-2-55127ba85613@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: q_Hvj60_Z9Ghm4pr0s2wrfAzn8ZOoegn
-X-Authority-Analysis: v=2.4 cv=O8k0fR9W c=1 sm=1 tr=0 ts=69296cc3 cx=c_pps
- a=JL+w9abYAAE89/QcEU+0QA==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=NEAV23lmAAAA:8 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
- a=i3X5FwGiAAAA:8 a=QyXUC8HyAAAA:8 a=YF6W2t5QWlGAmZuWSUoA:9 a=QEXdDO2ut3YA:10
- a=324X-CrmTo6CU4MGRt3R:22 a=mmqRlSCDY2ywfjPLJ4af:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTI4MDA2OSBTYWx0ZWRfX/dHZVtpAt3hh
- Mjx1ZT8d/SHOrJPJD78REOrOQfRTA+ubhtcYv4t8xKTr0KToWGQeyBKXabMhjn7/Mx5cAncA4a1
- tjH/sSv6ef128KISJe7zdpOKkXvQs6Qn+Lg++edxa8Zf0ztg28CZVJkRUqvx0jGLA3orRaRwMDK
- HlPZj080LOD9o6TVrUYgPV/m4/hQYzu+9q6q5KXzuifPfQaadiT5w+k+wH2R3K8uXtepkLKErl2
- UEqCKDrXgj3q4Vt5K61TeiTXRbVT4kQnsyrRIL2pjkonV/aVPF4RGC5RIy2oHZyYcEvKdNdJMwJ
- qio17RRmXmo8knYfPmywP/p5xMBSDzkEOWVKFnpRhluo+RJY5eSm2UZDKGC5wwraeEyKg6jtsM3
- FFy3Me2AaeJ+tHsmhtIKaJFgEltmXg==
-X-Proofpoint-GUID: q_Hvj60_Z9Ghm4pr0s2wrfAzn8ZOoegn
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-28_03,2025-11-27_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 suspectscore=0 adultscore=0 clxscore=1015 impostorscore=0
- spamscore=0 bulkscore=0 priorityscore=1501 lowpriorityscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511280069
+
+On 28/11/2025 09:40, Luo Jie wrote:
+> Add device tree bindings for the CMN PLL block in IPQ5332 SoC, which shares
+> similarities with IPQ9574 but has different output clock frequencies.
+> 
+> Add a new header file to export CMN PLL output clock specifiers for IPQ5332
+> SoC.
+> 
+> Signed-off-by: Luo Jie <jie.luo@oss.qualcomm.com>
+> ---
 
 
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
-On 11/28/2025 12:59 AM, kernel test robot wrote:
-> Hi Taniya,
-> 
-> kernel test robot noticed the following build errors:
-> 
-> [auto build test ERROR on 92fd6e84175befa1775e5c0ab682938eca27c0b2]
-> 
-> url:    https://github.com/intel-lab-lkp/linux/commits/Taniya-Das/clk-qcom-clk-rpmh-Update-the-clock-suffix-for-Glymur/20251126-021404
-> base:   92fd6e84175befa1775e5c0ab682938eca27c0b2
-> patch link:    https://lore.kernel.org/r/20251125-glymur_rpmhcc_fix-v1-1-60081b3cce7f%40oss.qualcomm.com
-> patch subject: [PATCH] clk: qcom: clk-rpmh: Update the clock suffix for Glymur
-> config: arm64-randconfig-003-20251127 (https://download.01.org/0day-ci/archive/20251128/202511280306.L2l4tAmD-lkp@intel.com/config)
-> compiler: aarch64-linux-gcc (GCC) 9.5.0
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251128/202511280306.L2l4tAmD-lkp@intel.com/reproduce)
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202511280306.L2l4tAmD-lkp@intel.com/
-> 
-> All errors (new ones prefixed by >>):
-> 
->>> drivers/clk/qcom/clk-rpmh.c:891:21: error: 'clk_rpmh_clk3_a' undeclared here (not in a function); did you mean 'clk_rpmh_clk3_a2'?
->      891 |  [RPMH_RF_CLK3]  = &clk_rpmh_clk3_a.hw,
->          |                     ^~~~~~~~~~~~~~~
->          |                     clk_rpmh_clk3_a2
->>> drivers/clk/qcom/clk-rpmh.c:892:22: error: 'clk_rpmh_clk3_a_ao' undeclared here (not in a function); did you mean 'clk_rpmh_clk3_a2_ao'?
->      892 |  [RPMH_RF_CLK3_A] = &clk_rpmh_clk3_a_ao.hw,
->          |                      ^~~~~~~~~~~~~~~~~~
->          |                      clk_rpmh_clk3_a2_ao
->>> drivers/clk/qcom/clk-rpmh.c:893:21: error: 'clk_rpmh_clk4_a' undeclared here (not in a function); did you mean 'clk_rpmh_clk4_a2'?
->      893 |  [RPMH_RF_CLK4]  = &clk_rpmh_clk4_a.hw,
->          |                     ^~~~~~~~~~~~~~~
->          |                     clk_rpmh_clk4_a2
->>> drivers/clk/qcom/clk-rpmh.c:894:22: error: 'clk_rpmh_clk4_a_ao' undeclared here (not in a function); did you mean 'clk_rpmh_clk4_a2_ao'?
->      894 |  [RPMH_RF_CLK4_A] = &clk_rpmh_clk4_a_ao.hw,
->          |                      ^~~~~~~~~~~~~~~~~~
->          |                      clk_rpmh_clk4_a2_ao
->>> drivers/clk/qcom/clk-rpmh.c:895:21: error: 'clk_rpmh_clk5_a' undeclared here (not in a function); did you mean 'clk_rpmh_clk5_a2'?
->      895 |  [RPMH_RF_CLK5]  = &clk_rpmh_clk5_a.hw,
->          |                     ^~~~~~~~~~~~~~~
->          |                     clk_rpmh_clk5_a2
->>> drivers/clk/qcom/clk-rpmh.c:896:22: error: 'clk_rpmh_clk5_a_ao' undeclared here (not in a function); did you mean 'clk_rpmh_clk5_a2_ao'?
->      896 |  [RPMH_RF_CLK5_A] = &clk_rpmh_clk5_a_ao.hw,
->          |                      ^~~~~~~~~~~~~~~~~~
->          |                      clk_rpmh_clk5_a2_ao
-> 
-> 
-> vim +891 drivers/clk/qcom/clk-rpmh.c
-> 
-> c035a9e265dd80 Taniya Das 2024-12-04  887  
-> ebcb9db98bdab8 Taniya Das 2025-08-25  888  static struct clk_hw *glymur_rpmh_clocks[] = {
-> ebcb9db98bdab8 Taniya Das 2025-08-25  889  	[RPMH_CXO_CLK]		= &clk_rpmh_bi_tcxo_div2.hw,
-> ebcb9db98bdab8 Taniya Das 2025-08-25  890  	[RPMH_CXO_CLK_A]	= &clk_rpmh_bi_tcxo_div2_ao.hw,
-> ebcb9db98bdab8 Taniya Das 2025-08-25 @891  	[RPMH_RF_CLK3]		= &clk_rpmh_clk3_a.hw,
-> ebcb9db98bdab8 Taniya Das 2025-08-25 @892  	[RPMH_RF_CLK3_A]	= &clk_rpmh_clk3_a_ao.hw,
-> ebcb9db98bdab8 Taniya Das 2025-08-25 @893  	[RPMH_RF_CLK4]		= &clk_rpmh_clk4_a.hw,
-> ebcb9db98bdab8 Taniya Das 2025-08-25 @894  	[RPMH_RF_CLK4_A]	= &clk_rpmh_clk4_a_ao.hw,
-> ebcb9db98bdab8 Taniya Das 2025-08-25 @895  	[RPMH_RF_CLK5]		= &clk_rpmh_clk5_a.hw,
-> ebcb9db98bdab8 Taniya Das 2025-08-25 @896  	[RPMH_RF_CLK5_A]	= &clk_rpmh_clk5_a_ao.hw,
-> ebcb9db98bdab8 Taniya Das 2025-08-25  897  };
-> ebcb9db98bdab8 Taniya Das 2025-08-25  898  
-> 
-
-
-
-
-It is fixed in
-https://lore.kernel.org/lkml/20251126-gcc_kaanapali-v3-v4-1-0fe73d6898e9@oss.qualcomm.com/
-and it is pulled in the series:
-https://lore.kernel.org/lkml/20251126-gcc_kaanapali-v3-v4-1-0fe73d6898e9@oss.qualcomm.com/
-
--- 
-Thanks,
-Taniya Das
-
+Best regards,
+Krzysztof
