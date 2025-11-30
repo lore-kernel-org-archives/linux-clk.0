@@ -1,151 +1,125 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E11571F872D;
-	Sun, 30 Nov 2025 08:25:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C94F1273F9;
+	Sun, 30 Nov 2025 14:50:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764491110; cv=none; b=vBgxiaIlWaqC/tIDIQYylNJb1GoGAVS6cmuAgTfh87RXKL9lYnehb0MgSsrxOiFx4JvEt18ZhV3V+uZVaDHf3M+3sICyv1XBoqWpW8Kh+bh7hleOzbTIis9AuJ0eN4B/346YuWHgjKGG09fo+Aiz674wkus14zNRpZ9Ul4rKK3c=
+	t=1764514214; cv=none; b=ZQDvdS4dLhHC2L8FISX6oj2gPdjFfoqY7iKcSxPsZncfZJPmgjRCTU5zzG2PItlAQwkDrHq1XiFFDN8zo1ntNu6ueFnpVuvHQUlzAJm9FcypV8YH9NBHR/bxb8Ldwwvu/5A3kLWWZK15qbZ+FxeEw51jcKTxSZwOLNEnzdNmTaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764491110; c=relaxed/simple;
-	bh=5f3DIe0As7PR/58uEnwK3X5mlA6zl240aZ/9BZDoJ44=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fn+BrsQd1vRLXpNYACWtHUn1fiz/YSM03WABMVI1yKF/3FZhjdsut15/Vwz7YBmM4lmo/v1iUXQGgCg5zMmvX7Pio0RrE33gjXd8BQrlnmJWldODXQl58Obf+b7A+cq1df17qiRpC/m8hgDpVgTJBsWQSXl0IUJ5ts+cRiW26lk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cdEpSpq1; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1764514214; c=relaxed/simple;
+	bh=Q9tYmc1ih8bX4BtCyC5RIeh8rysX18BmNYqx/GU4Ajo=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=ihX4Q1qAYiY2F99yKQLe4yOznUE5JLbp4pvu5c1VOdHT0H+7tIWtpsIA5Dj4um7o4W8IozWv/omDPFFcUiMS/OaogORVzns++hz7qT9Gies2/xN1FeXsH1Pd3qan3qgmvseDExrK3veqUYXC4JvlKPj852j6WMWavK85cIeZ5+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=mWfZ8ww0; dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=FD+eeK5h; arc=none smtp.client-ip=5.75.144.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cdEpSpq1"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5B8CC4CEF8;
-	Sun, 30 Nov 2025 08:24:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1764491105;
-	bh=5f3DIe0As7PR/58uEnwK3X5mlA6zl240aZ/9BZDoJ44=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=cdEpSpq1ZZzVOw1rvYd9030ngSkou03qThTg8lF8AnhGuxBjIFgBqfLDDbaDIlnQE
-	 P2IdvWzvYT2uXtvZMIVFxw6oCPIUgycjKQiXo+SM+SCYcpeNGtvRJBdrsdZQOH0Djz
-	 1Y8LXcZuhOAPFtcbjoKox/KXzQTRlUZu/ZBnezNZABMoIgGV3aS6MI/VkQEA6309zL
-	 8X4hPMtyqc51Dd8Ybw8t+ciu+Fsd+6HjM9Z3IIN4eLQWrd3tJX9nIpE6VYJU2fBP2o
-	 I4VCs3SWS4sOY4Efc/k73O1aERiNjfrkPGhhW5FO8XdbsoJxOSo7/yDxkas/oRd/qZ
-	 AHgoHbsDkKTTA==
-Message-ID: <42bbdec7-ce6d-417c-a13d-ce0a6782bc9a@kernel.org>
-Date: Sun, 30 Nov 2025 09:24:57 +0100
+	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="mWfZ8ww0";
+	dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="FD+eeK5h"
+DKIM-Signature: v=1; a=rsa-sha256; s=202507r; d=mainlining.org; c=relaxed/relaxed;
+	h=Message-ID:Subject:To:From:Date; t=1764514203; bh=pIe52U2aUz+9Gaqoklh6Z4G
+	hMG+Ls3nIoLijABZCU7s=; b=mWfZ8ww0d+eKt8G/e8EMg6y8N+oDBL/mvegoQ8lGaqUHtHcrQK
+	yhzCeQ5L0YnOuhRKUoFcJuKHYHIidFRk775o4YYP42lH3Zpm2nPmHe8ZA6LIvhcFRB1dPmSsB18
+	MdR/JloXlC7yGCbsj3oEI/a6mPCnzVq0RawTATBqpHOUyBMUNbHm42ujRKiv3KtS8dbEeaAPEBh
+	AmtlqSw5nr4zQcOF5ttpeUh8ehweDchZcucgJq0aHyE+nU+0Km5k8N9J/bix8dHdjsMmlwZncgC
+	N1C1Bqw43umAeCvAxC04DKzNz/0wVKR9uU6AWHRVzl3ITBqPkX8yBMZdwaaBfo5hyKA==;
+DKIM-Signature: v=1; a=ed25519-sha256; s=202507e; d=mainlining.org; c=relaxed/relaxed;
+	h=Message-ID:Subject:To:From:Date; t=1764514203; bh=pIe52U2aUz+9Gaqoklh6Z4G
+	hMG+Ls3nIoLijABZCU7s=; b=FD+eeK5hu6GfuKZqaoAdwDo/s8KK6sT9C5IRdadrBrgRfcDs/Q
+	umR3OzEwWofIxY2RIKLJL88qy0v2z8lCSxDA==;
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 09/22] dt-bindings: display: bridge: renesas,dsi: Add
- support for RZ/G3E SoC
-To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>,
- tomm.merciai@gmail.com
-Cc: linux-renesas-soc@vger.kernel.org, biju.das.jz@bp.renesas.com,
- Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Magnus Damm <magnus.damm@gmail.com>,
- dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-References: <cover.1764165783.git.tommaso.merciai.xr@bp.renesas.com>
- <1c7657d6c06d99bc2f90251995ad272b5704717d.1764165783.git.tommaso.merciai.xr@bp.renesas.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <1c7657d6c06d99bc2f90251995ad272b5704717d.1764165783.git.tommaso.merciai.xr@bp.renesas.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Date: Sun, 30 Nov 2025 15:50:03 +0100
+From: barnabas.czeman@mainlining.org
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Taniya Das <taniya.das@oss.qualcomm.com>, Bjorn Andersson
+ <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Stephen
+ Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Adam Skladowski
+ <a_skl39@protonmail.com>, Sireesh Kodali <sireeshkodali@protonmail.com>,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Lanik
+ <daniilt971@gmail.com>
+Subject: Re: [PATCH 2/4] clk: qcom: gcc: Add support for Global Clock
+ controller found on MSM8940
+In-Reply-To: <2220aea0-6139-4534-8c42-1331a642ab62@oss.qualcomm.com>
+References: <20251116-gcc-msm8940-sdm439-v1-0-7c0dc89c922c@mainlining.org>
+ <20251116-gcc-msm8940-sdm439-v1-2-7c0dc89c922c@mainlining.org>
+ <793d5039-0506-4104-b4ce-64bfa3cc00eb@oss.qualcomm.com>
+ <5C7A10CF-910E-448A-8BFD-F2A46782D3B9@mainlining.org>
+ <8faa0c8e-6f21-4025-bbdf-d4ec18eb7628@oss.qualcomm.com>
+ <869028d628bad9e1c37c3d9ea8346ba0@mainlining.org>
+ <2220aea0-6139-4534-8c42-1331a642ab62@oss.qualcomm.com>
+Message-ID: <f0be91fdde1b542b2c18702b0c91f26f@mainlining.org>
+X-Sender: barnabas.czeman@mainlining.org
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 26/11/2025 15:07, Tommaso Merciai wrote:
-> The MIPI DSI interface on the RZ/G3E SoC is nearly identical to that of
-> the RZ/V2H(P) SoC, except that this have 2 input port and can use vclk1
-> or vclk2 as DSI Video clock, depending on the selected port.
+On 2025-11-17 15:17, Konrad Dybcio wrote:
+> On 11/17/25 3:02 PM, barnabas.czeman@mainlining.org wrote:
+>> On 2025-11-17 13:17, Konrad Dybcio wrote:
+>>> On 11/17/25 9:51 AM, Barnabás Czémán wrote:
+>>>> 
+>>>> 
+>>>> On 17 November 2025 09:03:53 CET, Taniya Das 
+>>>> <taniya.das@oss.qualcomm.com> wrote:
+>>>>> 
+>>>>> 
+>>>>> On 11/17/2025 3:05 AM, Barnabás Czémán wrote:
+>>>>>> 
+>>>>>> +static struct clk_branch gcc_ipa_tbu_clk = {
+>>>>>> +    .halt_reg = 0x120a0,
+>>>>>> +    .halt_check = BRANCH_VOTED,
+>>>>>> +    .clkr = {
+>>>>>> +        .enable_reg = 0x4500c,
+>>>>>> +        .enable_mask = BIT(16),
+>>>>>> +        .hw.init = &(struct clk_init_data){
+>>>>>> +            .name = "gcc_ipa_tbu_clk",
+>>>>>> +            .ops = &clk_branch2_ops,
+>>>>>> +        },
+>>>>>> +    },
+>>>>>> +};
+>>>>>> +
+>>>>> 
+>>>>> Is the TBU clock used on 8940 by a SMMU driver?
+>>>> As far as I know no MSM8940 is using same smmu driver and bindings 
+>>>> like MSM8937.
+>>> 
+>>> On msm8939, the clock needed to be turned on for the GPU SMMU
+>> I have not got any qcom-iommu issues on 8940 but i think it could come 
+>> when i try to add ipa2 driver
+>> for the SoC until i do not know where to check it.
 > 
-> To accommodate these differences, a SoC-specific
-> `renesas,r9a09g047-mipi-dsi` compatible string has been added for the
-> RZ/G3E SoC.
+> I can't find a definitive answer, but it's most certainly going to be
+> necessary to turn it on
 > 
-> Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-> ---
->  .../bindings/display/bridge/renesas,dsi.yaml  | 120 +++++++++++++++---
->  1 file changed, 101 insertions(+), 19 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/display/bridge/renesas,dsi.yaml b/Documentation/devicetree/bindings/display/bridge/renesas,dsi.yaml
-> index c20625b8425e..9917b494a9c9 100644
-> --- a/Documentation/devicetree/bindings/display/bridge/renesas,dsi.yaml
-> +++ b/Documentation/devicetree/bindings/display/bridge/renesas,dsi.yaml
-> @@ -28,6 +28,7 @@ properties:
->            - const: renesas,r9a09g057-mipi-dsi
->  
->        - enum:
-> +          - renesas,r9a09g047-mipi-dsi # RZ/G3E
->            - renesas,r9a09g057-mipi-dsi # RZ/V2H(P)
->  
->    reg:
-> @@ -84,6 +85,13 @@ properties:
->            - const: pclk
->            - const: vclk
->            - const: lpclk
-> +      - items:
-> +          - const: pllrefclk
-> +          - const: aclk
-> +          - const: pclk
-> +          - const: vclk1
-> +          - const: vclk2
-> +          - const: lpclk
+> Konrad
 
-Why are you creating completely new lists every time?
+I have enabled ipa2-lite for 8940 at downstream and it can cause gpu to 
+crash.
+I have tried to add TBU clock for apps_iommu but it not fixing the 
+issue.
 
-No, come with unified approach.
-
-Best regards,
-Krzysztof
+Here are the iommu changes based on 8937 apps_iommu node:
++&apps_iommu {
++       clocks = <&gcc GCC_SMMU_CFG_CLK>,
++                <&gcc GCC_APSS_TCU_CLK>,
++                <&gcc MSM8940_GCC_IPA_TBU_CLK>;
++       clock-names = "iface",
++                     "bus",
++                     "tbu";
++
++       /* IPA */
++       iommu-ctx@18000 {
++               compatible = "qcom,msm-iommu-v1-ns";
++               reg = <0x18000 0x1000>;
++               interrupts = <GIC_SPI 115 IRQ_TYPE_LEVEL_HIGH>;
++       };
++};
++
