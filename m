@@ -1,84 +1,86 @@
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E36B2749C9
-	for <linux-clk@vger.kernel.org>; Mon,  1 Dec 2025 22:07:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 896D5283C8E
+	for <linux-clk@vger.kernel.org>; Mon,  1 Dec 2025 22:07:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764626822; cv=none; b=qKDz8Ve+9sbXykQC9TMQLkeXjFNsr6YnYdhBtm3qzo/5/+cg9SQwxIr7R3Q117xyfLOWqaldXAAsSxshu6BKCra2m7sCcLWzmsbCQk3UGb6rgycOp6RaRARt7ovL1Jp4BQDMUbxBiJk6Q2qsahQTrpYyDRQE3Fl0iB5L+lD0iwc=
+	t=1764626824; cv=none; b=ZkykuDlLXpAEtrYRxvQ8tNFlZzr4KXlMDB1x0jSHsi6xoZjAYr1+QaY7hnO0pqOToGgM142dw4+8i2bGxuEXy/QmJexrMfiT3XuK/3FrGx7ZACWOXfUTuhm1+/myq7UrL0HElW9yOdwkv/4YEr6sVMZJZj2202uoQRfaRRphozQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764626822; c=relaxed/simple;
-	bh=eJ4HeJ6rO8c2MgIZbO5Cv7q82YLDJcVxSQvdmLLumcY=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=K3QZ8oar8rXOg9IL5Rf4ZdOxbAgFfuem0ShjldMcWhnm5lqdMmprVad5NxN8Nas5qIe+Zhv4AoZITcEagcl51AE7iGtKn7LAgJvIu8639Uy1mp63HFKLxOmofERDhOaU7sM+hV7bViQ00e8oSZrkn1ZGBW0uZODrJtXb61Tds7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=V103F8Yb; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=IMVTda3g; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1764626824; c=relaxed/simple;
+	bh=77IR71vazhMBo/1VoNxEizLBWQX33SJ3o+8OJafVX9U=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=Lu6AslNvVB4x+nN8l+rC27htNnSAkpQXS/KWARI4XHo5bNhMdwxGHhhf8dMy0FcXPSYbY3qsJ8U/YBQRdphq4rLPNwznwuWElzuNUNKzwqGJgpX6c9l+Ies1PPPxNUc/QJMc9iJSHiilFSG4fXGdRfg4WZw0k7spFXREWuzY/fI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UJCseyTM; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=JvEb4Xvz; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="V103F8Yb";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="IMVTda3g"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UJCseyTM";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="JvEb4Xvz"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1764626819;
+	s=mimecast20190719; t=1764626821;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=5h+ZaIqdkOT0JUgcYkBXdrYmLZZ5ackczkFtgA0u5ig=;
-	b=V103F8YbKFp2xqOKSLhQbf6E6Ne5K9ynJUWJYUwjlVRraj0+GBXgFKYdOzCrqp711HXuss
-	yRj23WywNPZQDglU52eXNyUYvQfaaKdyUD3dTfE46Yoq2H88KVtH1pA3ztAFe5FeN1fRsK
-	qdspyKDE1GY4BpT1XkKvNiH1TDImhaI=
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
- [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=scXExgic2EXaygicpqyZLz/imYsLOFX9PqneQqDmIy4=;
+	b=UJCseyTM9y9vCb+Afglc+sYs2deFUmTlLt35J9Zm5HUuF+1/crSduHUNRHdbtkEC7kXE4+
+	4fXBk02uOI3Jqiwb0OwxnEarEp0Ln/gfU4Jl1h2DuvXxNoL4ZZ6TYdDUqiCjLtbGA1ikaX
+	lv7FkQqygtifRsEvZNSWfGEMIutEyeM=
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
+ [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-683-SCu0VjpnNRif0P8PknXCiw-1; Mon, 01 Dec 2025 17:06:58 -0500
-X-MC-Unique: SCu0VjpnNRif0P8PknXCiw-1
-X-Mimecast-MFC-AGG-ID: SCu0VjpnNRif0P8PknXCiw_1764626818
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-8b22d590227so512785085a.1
-        for <linux-clk@vger.kernel.org>; Mon, 01 Dec 2025 14:06:58 -0800 (PST)
+ us-mta-9-9bSMJMFjPsSSejGe4mxgpw-1; Mon, 01 Dec 2025 17:07:00 -0500
+X-MC-Unique: 9bSMJMFjPsSSejGe4mxgpw-1
+X-Mimecast-MFC-AGG-ID: 9bSMJMFjPsSSejGe4mxgpw_1764626820
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-8b2f0be2cf0so1386620685a.0
+        for <linux-clk@vger.kernel.org>; Mon, 01 Dec 2025 14:07:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1764626818; x=1765231618; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=5h+ZaIqdkOT0JUgcYkBXdrYmLZZ5ackczkFtgA0u5ig=;
-        b=IMVTda3gHcXTo77f6qJJ4XXSj39TCDs1IHNYwYLsl9mIjcSo04VxW0/FqnZ4ETP4Kd
-         ElU3nkehSQDzWdHWq/xE986akRBObeFeVyUPCXRXiHYOwljDtpRaFrae8F3Kihryqv0g
-         LwoAehs/WLuCfQegE02wg3npscWC7zQcbCP717hEzrZ6ws7FI86yeZdbNwidxkeFMOky
-         VkBBCOmT2ESLNYkb14v4ojt2hY3NzuYxoqOE7CN8yMA958HDHXMKv4DAbThcdJrcC8OO
-         Ad2MTe86xQ4vb3XEdeV6aUcLalalNOOAk3xlrVtIzpm2zl3xN+jY0rhqcOOzPF+cKMvY
-         cpBA==
+        d=redhat.com; s=google; t=1764626819; x=1765231619; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=scXExgic2EXaygicpqyZLz/imYsLOFX9PqneQqDmIy4=;
+        b=JvEb4Xvz+k7bqq1CmlzAUYWtW8XpaS8FfMCqDU8bqgot5jizD0Nv7Y+aZvflHskH7g
+         l//SQQtFvKMhLHFt06GkcwMemEPfWaT/BTvTOXSvddxukb/aNyzk/kW8N5aJSprsaAqr
+         U9HAbsw+m8vBa8RO91Ix4B/Ib1WnnakjWB/CKnjwR+vaygn0yAHmELZ5Y1y/tT0njVvR
+         h44dBQY+OuxLZx+8gFzqNrl/y8CIy0NVmzaiL56mstvvPJzXSGOOkEZ4s/xk5wURIKvO
+         Gnagz28kTroNlZWIF/tJU9Iw5HG+QV5vT23vfdLxKdieq7uT/z4EUeejGS3Hpb43eMNm
+         6kJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764626818; x=1765231618;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5h+ZaIqdkOT0JUgcYkBXdrYmLZZ5ackczkFtgA0u5ig=;
-        b=iw+NVfbLBQJDwFK5TPABPha+uU73YULFfbSf2mklkssL1elYCyZoO40b9eIydGOSWM
-         nqY+mHt4T+VdFxLutFG7JpOO1/8YkWYgUJxzTMeUNk9Yf7gBTJZ218RNfJPTRVZoJUkE
-         OLIbZKCEIbHnlk8y8Dp/b/XzvBChuM7m7E974WrwiDVzI19CaLkjAhbYMPFrtOyzfxLH
-         j/avhc/3KgkMccE+yKQvz2jwzAJtxmxQpvPOmHSgPg9WFoE9VIBmwbD5AfPE+K597Etw
-         j620l4lALmGNVLLjbHXl48lnExfOVZHg3xANyNrjsCUpUvDw6dToVupdHYZ7wt5k0Px7
-         q8gQ==
-X-Gm-Message-State: AOJu0YyeJM4MsCGpALLIGDgXXyCgacVfPjfTXJJnffESomKUrdST9AMg
-	daoDRcD0IoPcMWdXv7c6cWwWL4ZgiHOjr9g9YrZHqxl0V5rVQbee1LdUIA3dnMZELtAv5LlQZMU
-	PO0zMDSgF9dV1ijXxZPGHPvVJXtij2sFFVGcerIcfgWCBYr6ILwavVnu6avvJ7w==
-X-Gm-Gg: ASbGncvY+sor7WyuaKjGWW1BRS1LeqLy8/siMWESIZOja+LYdAx058/TP/EmUtjlBJZ
-	OB+gYuDUDtA73dVj4slZ+sAMGBaE0K36xfpcRIvtrjy7QTM318FAgcjugskIynkvAdBHlwkIo4E
-	2Yl/xpT0wYIJu3k1uYeSadlXx/lkrszdFDE1XVxCjq7wQf7vvdN2AEh4Rzcwhkc1DQLvs2qQPyj
-	kQq0q4Zs/V1G+z7xlvVOSGmZWdSUKQ9WVCI1LwpWsm061F8LRLFBci/CX6RyxGV3KEQOHi4aSOc
-	2IJ3tsmSGYDRVxYMVrrJE/bhOPTMRJyv8Fe5Uqfum/h9xu5teRZ7wmQIJaR+YtpCJ0SgwqUgCDR
-	096Kk2RoI8OB4/2Ql
-X-Received: by 2002:a05:620a:390b:b0:89e:a9ea:a374 with SMTP id af79cd13be357-8b4ebdad207mr3503922385a.67.1764626817688;
-        Mon, 01 Dec 2025 14:06:57 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEp+QWQX39+3wMYbQPQ+l88E0IO9Nm4qZs8ChFd+cINGgE00Fay77cs4HZTZ5MBObslmKWX+Q==
-X-Received: by 2002:a05:620a:390b:b0:89e:a9ea:a374 with SMTP id af79cd13be357-8b4ebdad207mr3503917185a.67.1764626817236;
-        Mon, 01 Dec 2025 14:06:57 -0800 (PST)
+        d=1e100.net; s=20230601; t=1764626819; x=1765231619;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=scXExgic2EXaygicpqyZLz/imYsLOFX9PqneQqDmIy4=;
+        b=DvJwNqJ/Z1p77BVqdMPx46L8lohzKLO/R0mHrGHs9aW8NbQPBT8jnpsHaUir5q+n7L
+         PnPvvMBhzCciD7yqnUch0nV/wdThY0ws+tz1fRzCaEWZ8naq8eYCk/gcX5gWHyNbIC9U
+         CVFAP/ai0hJAkeoBaSCqSGTFMODCwkRkA2VQ4ykxI6xCyd/y1EM/sWQA72xBSaPl29R0
+         IJ6KHz9OCTo7Qa+FZ/p0B3RCz6iIlgxRkZsnDth/spRZTJ0qYqxmlcAT9gGk94hXSQ93
+         URZ9pMzpjv/YeUnsWJdd1wrhPPCxAAHh3lhnLwuDDOyDruu7HNXENgKIjN+FGD6Co5yh
+         5spQ==
+X-Gm-Message-State: AOJu0Ywd5W372TYLFkXhOXK5ykxKa9R+YcneqW5aLgsmtshqM/33WKzY
+	6BeZdtLHnluK3jlM7JRRFXU6d1lF5vClSxkNjaSsoOBc30mwonK6x5Kyai/bbXeJsEC40kXZMvo
+	gAWJBdvumOlpBpwmTHcNrLJ9OFWoUu6cb2fUsg0lbPUkD6/f6ewrt5Smm9mgefg==
+X-Gm-Gg: ASbGncsMf8j899PysCGb+UyhFikrjZHEKt4A0UNX2Od3trB3djopeaRgw9BdI630zY7
+	v2YavOngvqM7Wca0GT/CThEsxp/+jtglQXoDm/7JFpfRxzcWfDCaXsGwSUGl7FO1IsK5J5MaTR4
+	JvvJ6oJfFpwIa2f5PkkZeWGrPA46//F72LPFhaR4zIWSNS5YlJOw5r0cxdwEIU9vb6uv1TP32T0
+	80S2a38ox/mIYOYn1pZNR5IB46SYDwopeusJrgXvlFd5je3NREQIqRH3plytjvQ0xR5YncXLrlU
+	mQZQStDsb2SGNg1vydnuRdxEFpCy7Mm85RE0NXtEaUXYNZR4DTdjQQNxwY2f8CtNibK77V8DEbZ
+	0G0yls6CaFVEDb+J3
+X-Received: by 2002:a05:620a:1727:b0:89e:baa5:c822 with SMTP id af79cd13be357-8b33d225854mr5087935685a.40.1764626819690;
+        Mon, 01 Dec 2025 14:06:59 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGkFqvc+nOoqniDujUfdBx+68TawJbQWz+yb3He2552JGKpdSit/958LX13hETXS04YY8IrVA==
+X-Received: by 2002:a05:620a:1727:b0:89e:baa5:c822 with SMTP id af79cd13be357-8b33d225854mr5087933185a.40.1764626819387;
+        Mon, 01 Dec 2025 14:06:59 -0800 (PST)
 Received: from [10.235.125.224] ([2600:382:850e:4ee7:c142:114b:2df7:89ef])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8b529993978sm944541085a.5.2025.12.01.14.06.55
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8b529993978sm944541085a.5.2025.12.01.14.06.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Dec 2025 14:06:56 -0800 (PST)
+        Mon, 01 Dec 2025 14:06:58 -0800 (PST)
 From: Brian Masney <bmasney@redhat.com>
-Subject: [PATCH v2 0/3] clk: microchip: core: fix issue with round_rate
- conversion and allow compile test
-Date: Mon, 01 Dec 2025 17:06:36 -0500
-Message-Id: <20251201-clk-microchip-fixes-v2-0-9d5a0daadd98@redhat.com>
+Date: Mon, 01 Dec 2025 17:06:37 -0500
+Subject: [PATCH v2 1/3] clk: microchip: core: remove duplicate
+ determine_rate on pic32_sclk_ops
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -87,51 +89,74 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/32NQQ6CMBBFr0Jm7ZhOtaisvIdhge1gJwolLSEa0
- rtbOYDL93/e/yskjsIJmmqFyIskCWMBvavA+m58MIorDFppQ6QN2tcTB7ExWC8T9vLmhE6d6yN
- r4l45KOYUeSuKeGsLe0lziJ/tZKFf+n9vIVRYW+qNOR0c3S/XyM53896GAdqc8xfOMkmmtwAAA
- A==
-X-Change-ID: 20251125-clk-microchip-fixes-d0864e21ef0d
+Message-Id: <20251201-clk-microchip-fixes-v2-1-9d5a0daadd98@redhat.com>
+References: <20251201-clk-microchip-fixes-v2-0-9d5a0daadd98@redhat.com>
+In-Reply-To: <20251201-clk-microchip-fixes-v2-0-9d5a0daadd98@redhat.com>
 To: Michael Turquette <mturquette@baylibre.com>, 
  Stephen Boyd <sboyd@kernel.org>, Maxime Ripard <mripard@kernel.org>, 
  Claudiu Beznea <claudiu.beznea@tuxon.dev>, Conor Dooley <conor@kernel.org>
 Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
  Brian Masney <bmasney@redhat.com>, kernel test robot <lkp@intel.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1020; i=bmasney@redhat.com;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2011; i=bmasney@redhat.com;
  s=20250903; h=from:subject:message-id;
- bh=eJ4HeJ6rO8c2MgIZbO5Cv7q82YLDJcVxSQvdmLLumcY=;
- b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGDL1BOsOTZbV8rj2nc+tPmrt61NRvgq87luezU6bK2V3N
- 7VJxMixo5SFQYyLQVZMkWVJrlFBROoq23t3NFlg5rAygQxh4OIUgIncYGL4HyDxLEBSxzNY2PKa
- 8tarV7VueNW3OLWcWvOrK7hb4eoDFYb/RX0CXx2fvnIp2PtgzYeoHRLzdtg1+RztX3dUZG7x6vN
- szAA=
+ bh=77IR71vazhMBo/1VoNxEizLBWQX33SJ3o+8OJafVX9U=;
+ b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGDL1BOtrlD/v/Nq93fxRUaHUDpf+o4kKf7eJn9ZPyy38m
+ 771zazjHaUsDGJcDLJiiixLco0KIlJX2d67o8kCM4eVCWQIAxenAEzERYCRoclW6RMDg/o5lw+s
+ X0TeLVs+/STfigerDq5dwx3wpu9DnwfD/ySr82+zQzPkovR+ZJwQDxFb+KZ9qYqcfsqdWwcyZzF
+ +ZAAA
 X-Developer-Key: i=bmasney@redhat.com; a=openpgp;
  fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
 
-Here's a series that fixes an issue that fixes an issue with my
-round_rate conversion on this PIC32 driver, drops an unused include
-file, and a change that allows building this driver on other
-architectures with COMPILE_TEST enabled.
+pic32_sclk_ops previously had a sclk_round_rate() member, and this was
+recently converted over to sclk_determine_rate() with the help of a
+Coccinelle semantic patch. pic32_sclk_ops now has two conflicting
+determine_rate ops members.
 
-Changes in v2:
-- Add new patch to drop unused asm/traps.h
-- Link to v1: https://lore.kernel.org/r/20251125-clk-microchip-fixes-v1-0-6c1f5573d1b9@redhat.com
+Prior to the conversion, pic32_sclk_ops already had a determine_rate
+member that points to __clk_mux_determine_rate(). When both the
+round_rate() and determine_rate() ops are defined, the clk core only
+uses the determine_rate() op. Let's go ahead and drop the recently
+converted sclk_determine_rate() to match the previous functionality
+prior to the conversion.
 
+Fixes: e9f039c08cdc ("clk: microchip: core: convert from round_rate() to determine_rate()")
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202511222115.uvHrP95A-lkp@intel.com/
 Signed-off-by: Brian Masney <bmasney@redhat.com>
 ---
-Brian Masney (3):
-      clk: microchip: core: remove duplicate determine_rate on pic32_sclk_ops
-      clk: microchip: core: remove unused include asm/traps.h
-      clk: microchip: core: allow driver to be compiled with COMPILE_TEST
+ drivers/clk/microchip/clk-core.c | 10 ----------
+ 1 file changed, 10 deletions(-)
 
- drivers/clk/microchip/Kconfig    |  2 +-
- drivers/clk/microchip/clk-core.c | 19 ++++++++-----------
- 2 files changed, 9 insertions(+), 12 deletions(-)
----
-base-commit: 92fd6e84175befa1775e5c0ab682938eca27c0b2
-change-id: 20251125-clk-microchip-fixes-d0864e21ef0d
+diff --git a/drivers/clk/microchip/clk-core.c b/drivers/clk/microchip/clk-core.c
+index b34348d491f3e1b576b2b9a8a66bfddd8c2296ea..a0163441dfe5c1dfc27dae48e64cf3cb3d6b764f 100644
+--- a/drivers/clk/microchip/clk-core.c
++++ b/drivers/clk/microchip/clk-core.c
+@@ -780,15 +780,6 @@ static unsigned long sclk_get_rate(struct clk_hw *hw, unsigned long parent_rate)
+ 	return parent_rate / div;
+ }
+ 
+-static int sclk_determine_rate(struct clk_hw *hw,
+-			       struct clk_rate_request *req)
+-{
+-	req->rate = calc_best_divided_rate(req->rate, req->best_parent_rate,
+-					   SLEW_SYSDIV, 1);
+-
+-	return 0;
+-}
+-
+ static int sclk_set_rate(struct clk_hw *hw,
+ 			 unsigned long rate, unsigned long parent_rate)
+ {
+@@ -912,7 +903,6 @@ static int sclk_init(struct clk_hw *hw)
+ const struct clk_ops pic32_sclk_ops = {
+ 	.get_parent	= sclk_get_parent,
+ 	.set_parent	= sclk_set_parent,
+-	.determine_rate = sclk_determine_rate,
+ 	.set_rate	= sclk_set_rate,
+ 	.recalc_rate	= sclk_get_rate,
+ 	.init		= sclk_init,
 
-Best regards,
 -- 
-Brian Masney <bmasney@redhat.com>
+2.51.1
 
