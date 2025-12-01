@@ -1,147 +1,137 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC4021E3DED;
-	Mon,  1 Dec 2025 21:37:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E36B2749C9
+	for <linux-clk@vger.kernel.org>; Mon,  1 Dec 2025 22:07:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764625073; cv=none; b=UTGzRJ4mOsSX7VRvaJafD49iL1mEsrTuyF1MYLYFW+1zSKcB4Qffzl3VYOxa05jDY7VHDyQ32xX+uVVwUOy4Yg5G44siVrysvUXu6gyZm8c6jmR7/EOVUZlYNpXMnD2pk6igtOA1W+Jzw69OuskV/gMTpRKonQb/BwOkOtTA1Z0=
+	t=1764626822; cv=none; b=qKDz8Ve+9sbXykQC9TMQLkeXjFNsr6YnYdhBtm3qzo/5/+cg9SQwxIr7R3Q117xyfLOWqaldXAAsSxshu6BKCra2m7sCcLWzmsbCQk3UGb6rgycOp6RaRARt7ovL1Jp4BQDMUbxBiJk6Q2qsahQTrpYyDRQE3Fl0iB5L+lD0iwc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764625073; c=relaxed/simple;
-	bh=BNtF9/uKumcWQNeEHcReguYIoYLdcFtvytO06WfPaPc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hXvULFT1utoj7FsU6LRaTIETczjq5dXc/BR9N1ppzZxkzL4uT2SQpCq/5kDlGmmCHJeWU/BiMnSD3Yw9exmgI8Sfins62nRanJ8zi7J4Mpe6iyr62uipIw25n7DGODOss5sTaCKhKc+E9Lr2s1MqvqNlxZtKC17xS7euXT4BhYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y//f6b0F; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1764626822; c=relaxed/simple;
+	bh=eJ4HeJ6rO8c2MgIZbO5Cv7q82YLDJcVxSQvdmLLumcY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=K3QZ8oar8rXOg9IL5Rf4ZdOxbAgFfuem0ShjldMcWhnm5lqdMmprVad5NxN8Nas5qIe+Zhv4AoZITcEagcl51AE7iGtKn7LAgJvIu8639Uy1mp63HFKLxOmofERDhOaU7sM+hV7bViQ00e8oSZrkn1ZGBW0uZODrJtXb61Tds7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=V103F8Yb; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=IMVTda3g; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y//f6b0F"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61A7EC4CEF1;
-	Mon,  1 Dec 2025 21:37:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1764625072;
-	bh=BNtF9/uKumcWQNeEHcReguYIoYLdcFtvytO06WfPaPc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Y//f6b0FIIlrb5XSeeNL6qKynT/qlAMkUGHnOxM+lX8PsO2MwuVQYpO6a/Q5TJBBg
-	 uwdaBsMRsFGuZ7Qm9hSQWRe5/htW0ZjZZh7lGBz/+GdFtOpFVW+1OlMlmEdMMwNntu
-	 QYDJm6YmiR6R5I9ZhQ/jPHFzj/v+md9gDvf5A3inG0IIOPyL55OO/PjFIpirewwSgH
-	 iD0xUcN+5R9hfolugkJPnltDn+xxfOeIIT//nSjSBLnTkz2cU3cx5yfcFT1bferEla
-	 Rns1Kipy/q4PShSeIEoKtY0HUCZqOUPZkVaEInX5oeqa2gT8Kpwk4GqaUeVS2XUKud
-	 xHDrDAFhCvcaQ==
-Date: Mon, 1 Dec 2025 21:37:48 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Brian Masney <bmasney@redhat.com>
-Cc: kernel test robot <lkp@intel.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Maxime Ripard <mripard@kernel.org>,
-	llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	claudiu.beznea@tuxon.dev
-Subject: Re: [PATCH 2/2] clk: microchip: core: allow driver to be compiled
- with COMPILE_TEST
-Message-ID: <20251201-unrefined-diligent-cdb02d2ea686@spud>
-References: <20251125-clk-microchip-fixes-v1-2-6c1f5573d1b9@redhat.com>
- <202511270924.0uDTpEE9-lkp@intel.com>
- <aS3X9VXVlKNQyDoz@redhat.com>
- <20251201-outpour-defame-49a3c68a362b@spud>
- <aS4D_RsvasDQQael@redhat.com>
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="V103F8Yb";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="IMVTda3g"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1764626819;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=5h+ZaIqdkOT0JUgcYkBXdrYmLZZ5ackczkFtgA0u5ig=;
+	b=V103F8YbKFp2xqOKSLhQbf6E6Ne5K9ynJUWJYUwjlVRraj0+GBXgFKYdOzCrqp711HXuss
+	yRj23WywNPZQDglU52eXNyUYvQfaaKdyUD3dTfE46Yoq2H88KVtH1pA3ztAFe5FeN1fRsK
+	qdspyKDE1GY4BpT1XkKvNiH1TDImhaI=
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
+ [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-683-SCu0VjpnNRif0P8PknXCiw-1; Mon, 01 Dec 2025 17:06:58 -0500
+X-MC-Unique: SCu0VjpnNRif0P8PknXCiw-1
+X-Mimecast-MFC-AGG-ID: SCu0VjpnNRif0P8PknXCiw_1764626818
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-8b22d590227so512785085a.1
+        for <linux-clk@vger.kernel.org>; Mon, 01 Dec 2025 14:06:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1764626818; x=1765231618; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=5h+ZaIqdkOT0JUgcYkBXdrYmLZZ5ackczkFtgA0u5ig=;
+        b=IMVTda3gHcXTo77f6qJJ4XXSj39TCDs1IHNYwYLsl9mIjcSo04VxW0/FqnZ4ETP4Kd
+         ElU3nkehSQDzWdHWq/xE986akRBObeFeVyUPCXRXiHYOwljDtpRaFrae8F3Kihryqv0g
+         LwoAehs/WLuCfQegE02wg3npscWC7zQcbCP717hEzrZ6ws7FI86yeZdbNwidxkeFMOky
+         VkBBCOmT2ESLNYkb14v4ojt2hY3NzuYxoqOE7CN8yMA958HDHXMKv4DAbThcdJrcC8OO
+         Ad2MTe86xQ4vb3XEdeV6aUcLalalNOOAk3xlrVtIzpm2zl3xN+jY0rhqcOOzPF+cKMvY
+         cpBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1764626818; x=1765231618;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5h+ZaIqdkOT0JUgcYkBXdrYmLZZ5ackczkFtgA0u5ig=;
+        b=iw+NVfbLBQJDwFK5TPABPha+uU73YULFfbSf2mklkssL1elYCyZoO40b9eIydGOSWM
+         nqY+mHt4T+VdFxLutFG7JpOO1/8YkWYgUJxzTMeUNk9Yf7gBTJZ218RNfJPTRVZoJUkE
+         OLIbZKCEIbHnlk8y8Dp/b/XzvBChuM7m7E974WrwiDVzI19CaLkjAhbYMPFrtOyzfxLH
+         j/avhc/3KgkMccE+yKQvz2jwzAJtxmxQpvPOmHSgPg9WFoE9VIBmwbD5AfPE+K597Etw
+         j620l4lALmGNVLLjbHXl48lnExfOVZHg3xANyNrjsCUpUvDw6dToVupdHYZ7wt5k0Px7
+         q8gQ==
+X-Gm-Message-State: AOJu0YyeJM4MsCGpALLIGDgXXyCgacVfPjfTXJJnffESomKUrdST9AMg
+	daoDRcD0IoPcMWdXv7c6cWwWL4ZgiHOjr9g9YrZHqxl0V5rVQbee1LdUIA3dnMZELtAv5LlQZMU
+	PO0zMDSgF9dV1ijXxZPGHPvVJXtij2sFFVGcerIcfgWCBYr6ILwavVnu6avvJ7w==
+X-Gm-Gg: ASbGncvY+sor7WyuaKjGWW1BRS1LeqLy8/siMWESIZOja+LYdAx058/TP/EmUtjlBJZ
+	OB+gYuDUDtA73dVj4slZ+sAMGBaE0K36xfpcRIvtrjy7QTM318FAgcjugskIynkvAdBHlwkIo4E
+	2Yl/xpT0wYIJu3k1uYeSadlXx/lkrszdFDE1XVxCjq7wQf7vvdN2AEh4Rzcwhkc1DQLvs2qQPyj
+	kQq0q4Zs/V1G+z7xlvVOSGmZWdSUKQ9WVCI1LwpWsm061F8LRLFBci/CX6RyxGV3KEQOHi4aSOc
+	2IJ3tsmSGYDRVxYMVrrJE/bhOPTMRJyv8Fe5Uqfum/h9xu5teRZ7wmQIJaR+YtpCJ0SgwqUgCDR
+	096Kk2RoI8OB4/2Ql
+X-Received: by 2002:a05:620a:390b:b0:89e:a9ea:a374 with SMTP id af79cd13be357-8b4ebdad207mr3503922385a.67.1764626817688;
+        Mon, 01 Dec 2025 14:06:57 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEp+QWQX39+3wMYbQPQ+l88E0IO9Nm4qZs8ChFd+cINGgE00Fay77cs4HZTZ5MBObslmKWX+Q==
+X-Received: by 2002:a05:620a:390b:b0:89e:a9ea:a374 with SMTP id af79cd13be357-8b4ebdad207mr3503917185a.67.1764626817236;
+        Mon, 01 Dec 2025 14:06:57 -0800 (PST)
+Received: from [10.235.125.224] ([2600:382:850e:4ee7:c142:114b:2df7:89ef])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8b529993978sm944541085a.5.2025.12.01.14.06.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Dec 2025 14:06:56 -0800 (PST)
+From: Brian Masney <bmasney@redhat.com>
+Subject: [PATCH v2 0/3] clk: microchip: core: fix issue with round_rate
+ conversion and allow compile test
+Date: Mon, 01 Dec 2025 17:06:36 -0500
+Message-Id: <20251201-clk-microchip-fixes-v2-0-9d5a0daadd98@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="wTzfKcwWP9RLdsIj"
-Content-Disposition: inline
-In-Reply-To: <aS4D_RsvasDQQael@redhat.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/32NQQ6CMBBFr0Jm7ZhOtaisvIdhge1gJwolLSEa0
+ rtbOYDL93/e/yskjsIJmmqFyIskCWMBvavA+m58MIorDFppQ6QN2tcTB7ExWC8T9vLmhE6d6yN
+ r4l45KOYUeSuKeGsLe0lziJ/tZKFf+n9vIVRYW+qNOR0c3S/XyM53896GAdqc8xfOMkmmtwAAA
+ A==
+X-Change-ID: 20251125-clk-microchip-fixes-d0864e21ef0d
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Maxime Ripard <mripard@kernel.org>, 
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>, Conor Dooley <conor@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Brian Masney <bmasney@redhat.com>, kernel test robot <lkp@intel.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1020; i=bmasney@redhat.com;
+ s=20250903; h=from:subject:message-id;
+ bh=eJ4HeJ6rO8c2MgIZbO5Cv7q82YLDJcVxSQvdmLLumcY=;
+ b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGDL1BOsOTZbV8rj2nc+tPmrt61NRvgq87luezU6bK2V3N
+ 7VJxMixo5SFQYyLQVZMkWVJrlFBROoq23t3NFlg5rAygQxh4OIUgIncYGL4HyDxLEBSxzNY2PKa
+ 8tarV7VueNW3OLWcWvOrK7hb4eoDFYb/RX0CXx2fvnIp2PtgzYeoHRLzdtg1+RztX3dUZG7x6vN
+ szAA=
+X-Developer-Key: i=bmasney@redhat.com; a=openpgp;
+ fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
 
+Here's a series that fixes an issue that fixes an issue with my
+round_rate conversion on this PIC32 driver, drops an unused include
+file, and a change that allows building this driver on other
+architectures with COMPILE_TEST enabled.
 
---wTzfKcwWP9RLdsIj
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Changes in v2:
+- Add new patch to drop unused asm/traps.h
+- Link to v1: https://lore.kernel.org/r/20251125-clk-microchip-fixes-v1-0-6c1f5573d1b9@redhat.com
 
-On Mon, Dec 01, 2025 at 04:09:17PM -0500, Brian Masney wrote:
-> Hi Conor and Claudiu,
->=20
-> On Mon, Dec 01, 2025 at 06:09:25PM +0000, Conor Dooley wrote:
-> > On Mon, Dec 01, 2025 at 01:01:25PM -0500, Brian Masney wrote:
-> > > On Thu, Nov 27, 2025 at 10:11:12AM +0800, kernel test robot wrote:
-> > > > Hi Brian,
-> > > >=20
-> > > > kernel test robot noticed the following build errors:
-> > > >=20
-> > > > [auto build test ERROR on 92fd6e84175befa1775e5c0ab682938eca27c0b2]
-> > > >=20
-> > > > url:    https://github.com/intel-lab-lkp/linux/commits/Brian-Masney=
-/clk-microchip-core-remove-duplicate-determine_rate-on-pic32_sclk_ops/20251=
-126-035403
-> > > > base:   92fd6e84175befa1775e5c0ab682938eca27c0b2
-> > > > patch link:    https://lore.kernel.org/r/20251125-clk-microchip-fix=
-es-v1-2-6c1f5573d1b9%40redhat.com
-> > > > patch subject: [PATCH 2/2] clk: microchip: core: allow driver to be=
- compiled with COMPILE_TEST
-> > > > config: loongarch-randconfig-001-20251127 (https://download.01.org/=
-0day-ci/archive/20251127/202511270924.0uDTpEE9-lkp@intel.com/config)
-> > > > compiler: clang version 22.0.0git (https://github.com/llvm/llvm-pro=
-ject 9e9fe08b16ea2c4d9867fb4974edf2a3776d6ece)
-> > > > reproduce (this is a W=3D1 build): (https://download.01.org/0day-ci=
-/archive/20251127/202511270924.0uDTpEE9-lkp@intel.com/reproduce)
-> > > >=20
-> > > > If you fix the issue in a separate patch/commit (i.e. not just a ne=
-w version of
-> > > > the same patch/commit), kindly add following tags
-> > > > | Reported-by: kernel test robot <lkp@intel.com>
-> > > > | Closes: https://lore.kernel.org/oe-kbuild-all/202511270924.0uDTpE=
-E9-lkp@intel.com/
-> > > >=20
-> > > > All errors (new ones prefixed by >>):
-> > > >=20
-> > > > >> drivers/clk/microchip/clk-core.c:12:10: fatal error: 'asm/traps.=
-h' file not found
-> > > >       12 | #include <asm/traps.h>
-> > > >          |          ^~~~~~~~~~~~~
-> > > >    1 error generated.
-> > > >=20
-> > > > Kconfig warnings: (for reference only)
-> > > >    WARNING: unmet direct dependencies detected for TSM
-> > > >    Depends on [n]: VIRT_DRIVERS [=3Dn]
-> > > >    Selected by [y]:
-> > > >    - PCI_TSM [=3Dy] && PCI [=3Dy]
-> > > >=20
-> > > >=20
-> > > > vim +12 drivers/clk/microchip/clk-core.c
-> > > >=20
-> > > > ce6e1188465998 Purna Chandra Mandal 2016-05-13 @12  #include <asm/t=
-raps.h>
-> > > > ce6e1188465998 Purna Chandra Mandal 2016-05-13  13 =20
-> > >=20
-> > > I only build tested this on arm64. I'll post a v2.
-> >=20
-> > MIPS I believe is where this is used.
->=20
-> So looking into this further, it looks like asm/traps.h is actually not
-> used by this driver, so I'll go ahead and drop that include in v2.
->=20
-> > Hmm, I think this is in a MAINTAINERS blind spot, Claudiu not CCed on
-> > it. We should probably do something about that. Can you CC him on v2?
->=20
-> Yes, I'll CC Claudiu. I don't see any existing entries in MAINTAINERS
-> where it looks like this driver would fit neatly.
+Signed-off-by: Brian Masney <bmasney@redhat.com>
+---
+Brian Masney (3):
+      clk: microchip: core: remove duplicate determine_rate on pic32_sclk_ops
+      clk: microchip: core: remove unused include asm/traps.h
+      clk: microchip: core: allow driver to be compiled with COMPILE_TEST
 
-This whole folder is kinda missing, probably there should be a
-MAINTAINERS entry covering this and the at91 dir, since Claudiu usually
-applies the patches for the !mips microchip stuff. That's probably
-something for us to sort out though, not your responsibility!
+ drivers/clk/microchip/Kconfig    |  2 +-
+ drivers/clk/microchip/clk-core.c | 19 ++++++++-----------
+ 2 files changed, 9 insertions(+), 12 deletions(-)
+---
+base-commit: 92fd6e84175befa1775e5c0ab682938eca27c0b2
+change-id: 20251125-clk-microchip-fixes-d0864e21ef0d
 
---wTzfKcwWP9RLdsIj
-Content-Type: application/pgp-signature; name="signature.asc"
+Best regards,
+-- 
+Brian Masney <bmasney@redhat.com>
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaS4KqwAKCRB4tDGHoIJi
-0qAUAQDYlMW4aBTgLRARKCPI7sJVlUBUEJxQdLUw9siq9tjcHwD9HL1NQziDp2cI
-MqCEEr2ecfs1GQvuBRSZiS12O4KFfw8=
-=89fO
------END PGP SIGNATURE-----
-
---wTzfKcwWP9RLdsIj--
