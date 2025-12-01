@@ -1,104 +1,112 @@
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECAC236D513
-	for <linux-clk@vger.kernel.org>; Sun, 30 Nov 2025 21:47:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2882D1DE8B5
+	for <linux-clk@vger.kernel.org>; Mon,  1 Dec 2025 06:12:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764539244; cv=none; b=No1BrJ2Pp5OH2Put+kR9G/xuNFXF8NGd7E6dp2v16AtQUtX9jIlC+2sm699UkVFoiTuN10FfRrL3Q7o65tkRDsFg0AhZcvoic0/0q49jOg3lX9ZA5vBUdLewrTN/OlcMSw8eLIboKhWq3ZBV2QMxZg346b+9/wNgjeXazsh6qw0=
+	t=1764569573; cv=none; b=Hgv6WMLgV+LcHCNihQSgT4/TUSEmpWjLxk0TZxZcCZ5v53bFs2NBAQZVOigmbaNFl1FWcFjQI+6SoEmuUE75J4EM2T/5GIk/qEgyDAHM6PMmbBXqTnVrbT4OFeFBIsR9hq0TIRkWsK2+p/fzfw78jLW1wVhiLsJudyn8cnGBp4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764539244; c=relaxed/simple;
-	bh=6S7nBbuPTB+FAl/66fneTfXioiQUgO5UGKrFsl5wsCE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WY+QrsAx6Wfr5WCzXcPDl9ZgdXTL6miRoyCdkcTj0WxLH9WEFVaSwTxSo51NyJSujFwU7Oz9Pm8XnuxRBIDeIGC/4P6koyA9Y/LqgjYqP5eL0Me11/ObmhFH9qfqtb8mOUV4PcsF15WEK8M9Ph+wWil1LtSVuL4YW6K047UoJz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bSLPyxWK; arc=none smtp.client-ip=209.85.128.42
+	s=arc-20240116; t=1764569573; c=relaxed/simple;
+	bh=0gqWOlt6q0VnzXoDw9gLNI555RhmJF/DyPsr1omshpk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ib957cPH7VomHVoCpxiHVYE1ZcbxtnXhrJ5Pnzbehw8X3sVTgfa7XkRBRDnvy8Vk1ksosVOvyY5Za2oII2TefogL9JuVjPHZZTo2J8DWu3nLp0+tq6S1T8mROkLCn+T6bsaxQB4zZ4ietIGzk3LMaCfmZl/xJwA6VTo4eHBFxp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Cxc7gSbl; arc=none smtp.client-ip=209.85.128.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bSLPyxWK"
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4775895d69cso14694925e9.0
-        for <linux-clk@vger.kernel.org>; Sun, 30 Nov 2025 13:47:22 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cxc7gSbl"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4779cc419b2so37042285e9.3
+        for <linux-clk@vger.kernel.org>; Sun, 30 Nov 2025 22:12:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1764539241; x=1765144041; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=cBugWXr0W4W+Hzgn8IDtB0dsNgmHRSn7AnpA6WlL/No=;
-        b=bSLPyxWKjieWsjA2NgEQ0AZMr6+Sx7wExZW7R6MrW4Rtnsqtbap9wVK+zXE2mwhxQF
-         TLQXvhebiEfa/nIiH7VRmHQF1QiUO/l8f43qYRqaDCpKBH2bicxfHfzhq+kpkOCu3mIk
-         BCscR7sQhGnvr6E2IJpzQnbkPFolxIGqHE/o+/w4kheYFp6mUJHS8YOhfWwbGTGVARFZ
-         y44EEoDjoNqM/yHwZ7FApJCA9Arj7xSKOcqGwFQoMzjiRgHjobONjFRBt3651o9FXF9N
-         pfFkA15s907kfXbD61DA/gSYwUPOn/Pi/p/4wpWb9recw7TLZX0vFJM7Cbznoz0oy6Tm
-         t2VA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764539241; x=1765144041;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1764569570; x=1765174370; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=cBugWXr0W4W+Hzgn8IDtB0dsNgmHRSn7AnpA6WlL/No=;
-        b=IQZc+PxZYL4f0NxANI5B5fNVHx/nWzTlKaaCU4oI4jeV1PXBKBR7Rj+KGpL8ouabmt
-         E0odO/tH8XPRB4XiZfScbFI9Qtb+Fbuye69G6GeHcj06gKynMAkf7+t/Cv0r1clDXpkl
-         g+WnNUG43HDIMXUhj9/C7FQRZHLjOU7XBjjOwF7dTg4FfNc02sje0bpi+yODpwHhGXHC
-         VJe4pn9YgPymL4HwoGAnpPDoeqGaIIZO0ebVEzV7TcKZoAmrg7QlpaCzQx8R6c8jH2Do
-         yb60ZJN8081+VqxOhQVr4N/tkI6EiBA1++C2y7sWgQu2hShOq5+Od7L7UjhK3WR3M6EJ
-         VIkg==
-X-Gm-Message-State: AOJu0Yz6FopYkU/NrWUbYsZzDktWVQpMaO5jG4aXdfJWIglxldkdY27S
-	BSkuxLUU5lgVzRZgfhHse+JBmzRU9SBEbcrigjt4xHoUXFTOy/hUggGU
-X-Gm-Gg: ASbGncvtWYRffZVmS9zuWy/zAD6Ds1404uUTWVBc7+UUkmAyLHUVVTE+mZ+/+fZDUlF
-	z1AjOrUVi2jt9Cx6EkgZYAAD9FvBzwz0R//fvU7x/VLNUv97lxE+RA5BatRIi7s3cAXPDbDXMBR
-	7UlTZAUASGzkQkyozdMQSntp6KaMcXSaEhF7Ko8ajQHwNz5jcdemLz06/r4O1bGpMXenHsv/rBR
-	ePKy28Bp590Sh8qPd5ETCCGaRTbqb2bMWteHjx0S7kD3FzlMce9JZGNTHnZ+AjnTxDnFyZW77cw
-	2sTuosMH+7RA0AudqsKG515C0iaN75nK+PUwjUGdj20hECtGuIkn008HiVtg57grCz2Yrk4JLLC
-	y/BPYBsznHs50KHpFaGfym2wnb1ekRhZuKrgazYGOlli1XTgwtt1lWAjhrQ6F/nwcHcL5SmpH1i
-	6cj+6CG4b5tWN+q0E0q9RpDGy7uoDyLs9XatfRNlWwGj22xkz4xnF3nIAodus6u+ICyxRcy8GIU
-	Uzcto6r4xHOY50yGTs/Jwpt
-X-Google-Smtp-Source: AGHT+IF4QxMp0aTvDRY355JuwUgyvZ3yhSlRdkouUY8BgzWQpkQqXAUhd1xmSSESH/71OEIIa7MZEw==
-X-Received: by 2002:a05:600c:1c0d:b0:477:9a28:b0a4 with SMTP id 5b1f17b1804b1-47904a6867fmr263421295e9.0.1764539241265;
-        Sun, 30 Nov 2025 13:47:21 -0800 (PST)
-Received: from archlinux (ip4-46-39-168-190.cust.nbox.cz. [46.39.168.190])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4791164d365sm201659225e9.12.2025.11.30.13.47.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 30 Nov 2025 13:47:20 -0800 (PST)
-From: Peter Novak <seimun018r@gmail.com>
-To: sboyd@kernel.org,
-	mturquette@baylibre.com
-Cc: linux-clk@vger.kernel.org,
-	Peter Novak <seimun018r@gmail.com>
-Subject: [PATCH] clk: hisilicon: fix compile testing
-Date: Sun, 30 Nov 2025 22:47:20 +0100
-Message-ID: <20251130214720.394745-1-seimun018r@gmail.com>
-X-Mailer: git-send-email 2.51.0
+        bh=0gqWOlt6q0VnzXoDw9gLNI555RhmJF/DyPsr1omshpk=;
+        b=Cxc7gSblD1kga+ixxfkqqpPpnCHI0Jz0AG+H+hgkm9NfsyZMfQ5xqTge0YWVxuZAFJ
+         axrtJVbwUJyDcqjZ8j6Y1xeiPfWnBdKDMwlWMHn7aKeTh8SHWHt8Z0KuzYyH7Tk7rQcG
+         cTQugrgVVnbkKcrPUqw2Tq3vb6uzPYSToLQFdA44DzNFFmuCVXZazqWnLmEfMeg7tbKD
+         /Juc+JgL5qVhgPmwB5qbPxAR6nFFVNmdWQcjl8KWz5Si8y+BYfOqX7h9h5xuwCPq3yyQ
+         aKpR+VlNt688rjvG7vqfKAmqnW41/gGJONRM3RppPA/3jU1zAsCxB2e/lYwdWhWnCvfr
+         2RvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1764569570; x=1765174370;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=0gqWOlt6q0VnzXoDw9gLNI555RhmJF/DyPsr1omshpk=;
+        b=XHsRU242D9uw4oQfznQD8XHtC9lyy0Ui7gge50YtgVCxy1HxxQZy0uuR7ywMMsEJ9l
+         II5FR7BzvrVRzk2Ug9QlWKrkc/j6lAqp1b9JiGa+EPF7rMKWuTl2NkPPLhZAD06/R/tS
+         TOYf1PPM7YW9C/sXtzDYXG+m+LRlEXyb2lM8iaeoLvZx5isLq7vX173KWgTB3cwAtHWt
+         hjNGoLVAL4jM08ckZWxy7+R61DrBDz6FoxT6elaDdnTH2MFvZsOMf4UDbp6sR6MeNOQ5
+         I9NFg5/pki4mHmBWPO9Jvaj/K++REw5CNNURyIxMV8QlUMcwbAklscjzK4YGtMGNafTc
+         4Wgg==
+X-Forwarded-Encrypted: i=1; AJvYcCUi0skebx4EEN1eD0YM/JHVXd+20+OxkEFSOPRZP0HPf39OFProqHRFZkxCSGYsCnUFbUY6/1BNwl8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAyeykPRnlzlhNAFjOE8g85wPnRP5YZWfGhVwaTETMqDet2p5s
+	VXNcLyc9I40D/jT31bfbq3huAbLytOPcnLDqmuh+Lc28GM1eDCv/mQI3e+Nda9UIDBc0ex3IanZ
+	nQgU6rOEhqV2Bm3zKKIN1wSUss+8sOM4=
+X-Gm-Gg: ASbGnctWK0T0fmbk8VXvVw9UGeWnolsERMX13JByZKoUj5RgwHTc2gWxk7Ytw+j2SRo
+	YXbTaten+QY9JuX6RdzSuZb79q39W37jKS6Tp/9QZTF/oDe6um5eJHTT0mf/3nERAgifBzt/xEO
+	ZtGc5sPTRBrQE2yy5wRt5sxrmiSybnG3Fl1UQL8HpQXeOycPXIUsadU4JLD9QsRoBmvIC1wVh8f
+	sD94pobmp7MtTyr2Ui88tSIvcFcjn9EZ4Qps+YUMi/2f6TjzJPNfKO4P0TfDBSjnzRs6uqX
+X-Google-Smtp-Source: AGHT+IG3M3ax/JFTY6r/6kCAKUsAn9FNfG4fATSRqdxto/IaG1LWGYFhzL7upnvl0p2HSyGlz3IJEPgGEFfXgAl5Wik=
+X-Received: by 2002:a05:600c:a01:b0:477:55ce:f3c2 with SMTP id
+ 5b1f17b1804b1-477c111d3camr385466695e9.14.1764569570297; Sun, 30 Nov 2025
+ 22:12:50 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251125120559.158860-1-clamor95@gmail.com> <fb3a497a-1e48-444d-ae98-f764d9b5ebf4@kernel.org>
+In-Reply-To: <fb3a497a-1e48-444d-ae98-f764d9b5ebf4@kernel.org>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Mon, 1 Dec 2025 08:12:39 +0200
+X-Gm-Features: AWmQ_blKNbLhm1nZrpgeDj-g7J0p0JVXe7hTB25EN5hsiX2ADUE2rw8DoOGBpiY
+Message-ID: <CAPVz0n1nk30=UwR5344c+rk=n6LCn-nnzLCf=CRfWOUPDw-rqA@mail.gmail.com>
+Subject: Re: [PATCH v4 00/12] Tegra114: implement EMC support
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Thierry Reding <treding@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, 
+	Mikko Perttunen <mperttunen@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Dmitry Osipenko <digetx@gmail.com>, 
+	MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, 
+	Chanwoo Choi <cw00.choi@samsung.com>, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The hisilicon clock drivers can be selected when COMPILE_TEST is
-enabled but they are never actually built because the Makefile
-guards the subdirectory with CONFIG_ARCH_HISI.
+=D1=81=D1=80, 26 =D0=BB=D0=B8=D1=81=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 10:4=
+7 Krzysztof Kozlowski <krzk@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
+>
+> On 25/11/2025 13:05, Svyatoslav Ryhel wrote:
+> > Add support for External Memory Controller found in Tegra 4 SoC along
+> > with adjustments required for it to work properly.
+> >
+> > Tested on ASUS TF701T (T40X) and Nvidia Tegratab (T40S). Both work fine=
+.
+>
+> You mixed here FOUR independent subsystems and without any explanation
+> of the dependencies it means things are just harder for us to handle for
+> no reason.
+>
+> Please split independent subsystems or clearly document the merging
+> issues/dependencies.
+>
 
-Enable compile testing by allowing the build system to process the
-hisilicon drivers unconditionally.
+All commits are independent and subsystem maintainers can pick commits
+which are relevant for their domain. No regressions at the build time
+nor on the device itself were detected with individual commits picked.
+Only device tree changes are preferred to be picked last.
 
-Signed-off-by: Peter Novak <seimun018r@gmail.com>
----
- drivers/clk/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Patchset is made this way to show logic of implementation of EMC
+support for Tegra114 since a list of links between fragmented
+patchsets will not bring clarity nor it will improve merging
+experience.
 
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index b74a1767c..b1452489d 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -121,7 +121,7 @@ obj-$(CONFIG_CLK_BAIKAL_T1)		+= baikal-t1/
- obj-y					+= bcm/
- obj-$(CONFIG_ARCH_BERLIN)		+= berlin/
- obj-$(CONFIG_ARCH_DAVINCI)		+= davinci/
--obj-$(CONFIG_ARCH_HISI)			+= hisilicon/
-+obj-y					+= hisilicon/
- obj-y					+= imgtec/
- obj-y					+= imx/
- obj-y					+= ingenic/
--- 
-2.51.0
-
+> Best regards,
+> Krzysztof
