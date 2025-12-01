@@ -1,19 +1,19 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA838301485;
-	Mon,  1 Dec 2025 09:42:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11D0A3016E3;
+	Mon,  1 Dec 2025 09:42:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764582161; cv=none; b=DqAQqYgwWm6oIqWcAMAyetqm/4qgBNbPEMap4QYYQxoR++y0CuQXwjiY0HFs7GHEJUzUMJ0nFoCGSRg5DhXI51YXOw58sHak6zaDC6QXaM5x/M2adY2O5Udps3BMYI9/f7h+sOw87goGtoKuEkcl8WmVyEWzVrUX6r8t+fvOinQ=
+	t=1764582164; cv=none; b=W4o6U6VeAZl9NAZELLClBi8cGasJQH8pZJF9WzzmtkWOxNkmGVIcoZWpONElQLrPshGyz0hAmi1BOp6ganjdRaFM+u5jCHzt1C71V9hdW0uFjm4ZqfoJJrWG9v2dDqSscqlhv8I60ZX45Y7zVb0ZyD10pI9bLiRpu73FCxPwFDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764582161; c=relaxed/simple;
-	bh=d1Owh/nhAJbky/+UEp3AAscgvEUBX35bI0tYlPAxnx4=;
+	s=arc-20240116; t=1764582164; c=relaxed/simple;
+	bh=Rop73a0pQUcijlSb51lsm9IBZ0VCRG+QQKZ7fB5bcYk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=uUkPUHX4lypO+SmAMxD9BEEvTtV8TQCT1cpkmLAtcpII7QuUHc4oWsBzbH8cePlkbzcTmG6Wyg4/mF0bf+fb9ooOtz3QwqybW8Vh9zuwccHUKfO+Ycf6gWp7N/RiFUHHOcvuMJ9DvY7VWPtmvDIkCaR8B8Da5Kyn0Q7eWAaoS3M=
+	 MIME-Version; b=UuZtLUkMMtOk7TMqjn6fsDAv8R3/ypZJ/hM18GiJiqNOHPfPSr/KXPRwPNGfBa1B96KHvvkup1SQuqfxr9/bRbt68QKVRiPICqYfNjzoLySStwvjVdLgaGwgmrxruO8AMzuBS23zuSFY1nAwd5VlkyPhfNt8j3E5G8aRfdJbNp8=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09E59C116D0;
-	Mon,  1 Dec 2025 09:42:38 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9427DC113D0;
+	Mon,  1 Dec 2025 09:42:41 +0000 (UTC)
 From: Geert Uytterhoeven <geert@linux-m68k.org>
 To: Russell King <linux@armlinux.org.uk>,
 	Michael Turquette <mturquette@baylibre.com>,
@@ -24,14 +24,13 @@ To: Russell King <linux@armlinux.org.uk>,
 	Russ Dill <Russ.Dill@ti.com>
 Cc: linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	kernel test robot <lkp@intel.com>
-Subject: [PATCH 1/3] clk: Move clk_{save,restore}_context() to COMMON_CLK section
-Date: Mon,  1 Dec 2025 10:42:26 +0100
-Message-ID: <8066e45dbdd9acca29c0f9b578922a091a5c31fd.1764582057.git.geert@linux-m68k.org>
+	Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH 2/3] clk: Merge prepare and unprepare sections
+Date: Mon,  1 Dec 2025 10:42:27 +0100
+Message-ID: <c6bf644391dc28803a0ac1e331f196fc2c3c36de.1764582057.git.geert@linux-m68k.org>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <cover.1764581744.git.geert@linux-m68k.org>
-References: <cover.1764581744.git.geert@linux-m68k.org>
+In-Reply-To: <8066e45dbdd9acca29c0f9b578922a091a5c31fd.1764582057.git.geert@linux-m68k.org>
+References: <8066e45dbdd9acca29c0f9b578922a091a5c31fd.1764582057.git.geert@linux-m68k.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -40,109 +39,94 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The clk_save_context() and clk_restore_context() helpers are only
-implemented by the Common Clock Framework.  They are not available when
-using legacy clock frameworks.  Dummy implementations are provided, but
-only if no clock support is available at all.
+<linux/clk.h> contains two consecutive #ifdef/#else/#endif sections
+that check for CONFIG_HAVE_CLK_PREPARE: one for prepare-related
+functionality, and a second for unprepare-related functionality.
+Reduce #ifdef clutter by merging them.
 
-Hence when CONFIG_HAVE_CLK=y, but CONFIG_COMMON_CLK is not enabled:
-
-    m68k-linux-gnu-ld: drivers/net/phy/air_en8811h.o: in function `en8811h_resume':
-    air_en8811h.c:(.text+0x83e): undefined reference to `clk_restore_context'
-    m68k-linux-gnu-ld: drivers/net/phy/air_en8811h.o: in function `en8811h_suspend':
-    air_en8811h.c:(.text+0x856): undefined reference to `clk_save_context'
-
-Fix this by moving forward declarations and dummy implementions from the
-HAVE_CLK to the COMMON_CLK section.
-
-Fixes: 8b95d1ce3300c411 ("clk: Add functions to save/restore clock context en-masse")
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202511301553.eaEz1nEW-lkp@intel.com/
 Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
 ---
- include/linux/clk.h | 48 ++++++++++++++++++++++-----------------------
- 1 file changed, 24 insertions(+), 24 deletions(-)
+ include/linux/clk.h | 46 ++++++++++++++++++++++-----------------------
+ 1 file changed, 23 insertions(+), 23 deletions(-)
 
 diff --git a/include/linux/clk.h b/include/linux/clk.h
-index b607482ca77e987b..64ff118ffb1a1d7d 100644
+index 64ff118ffb1a1d7d..9e5291f37c50c78a 100644
 --- a/include/linux/clk.h
 +++ b/include/linux/clk.h
-@@ -228,6 +228,23 @@ int devm_clk_rate_exclusive_get(struct device *dev, struct clk *clk);
+@@ -329,8 +329,21 @@ static inline void clk_restore_context(void) {}
+  * Must not be called from within atomic context.
   */
- void clk_rate_exclusive_put(struct clk *clk);
- 
-+/**
-+ * clk_save_context - save clock context for poweroff
-+ *
-+ * Saves the context of the clock register for powerstates in which the
-+ * contents of the registers will be lost. Occurs deep within the suspend
-+ * code so locking is not necessary.
-+ */
-+int clk_save_context(void);
+ int clk_prepare(struct clk *clk);
 +
 +/**
-+ * clk_restore_context - restore clock context after poweroff
++ * clk_unprepare - undo preparation of a clock source
++ * @clk: clock source
 + *
-+ * This occurs with all clocks enabled. Occurs deep within the resume code
-+ * so locking is not necessary.
++ * This undoes a previously prepared clock.  The caller must balance
++ * the number of prepare and unprepare calls.
++ *
++ * Must not be called from within atomic context.
 + */
-+void clk_restore_context(void);
++void clk_unprepare(struct clk *clk);
 +
- #else
+ int __must_check clk_bulk_prepare(int num_clks,
+ 				  const struct clk_bulk_data *clks);
++void clk_bulk_unprepare(int num_clks, const struct clk_bulk_data *clks);
  
- static inline int clk_notifier_register(struct clk *clk,
-@@ -293,6 +310,13 @@ static inline int devm_clk_rate_exclusive_get(struct device *dev, struct clk *cl
- 
- static inline void clk_rate_exclusive_put(struct clk *clk) {}
- 
-+static inline int clk_save_context(void)
-+{
-+	return 0;
-+}
-+
-+static inline void clk_restore_context(void) {}
-+
- #endif
- 
- #ifdef CONFIG_HAVE_CLK_PREPARE
-@@ -933,23 +957,6 @@ struct clk *clk_get_parent(struct clk *clk);
-  */
- struct clk *clk_get_sys(const char *dev_id, const char *con_id);
- 
--/**
-- * clk_save_context - save clock context for poweroff
-- *
-- * Saves the context of the clock register for powerstates in which the
-- * contents of the registers will be lost. Occurs deep within the suspend
-- * code so locking is not necessary.
-- */
--int clk_save_context(void);
--
--/**
-- * clk_restore_context - restore clock context after poweroff
-- *
-- * This occurs with all clocks enabled. Occurs deep within the resume code
-- * so locking is not necessary.
-- */
--void clk_restore_context(void);
--
- #else /* !CONFIG_HAVE_CLK */
- 
- static inline struct clk *clk_get(struct device *dev, const char *id)
-@@ -1129,13 +1136,6 @@ static inline struct clk *clk_get_sys(const char *dev_id, const char *con_id)
- 	return NULL;
+ /**
+  * clk_is_enabled_when_prepared - indicate if preparing a clock also enables it.
+@@ -355,41 +368,28 @@ static inline int clk_prepare(struct clk *clk)
+ 	return 0;
  }
  
--static inline int clk_save_context(void)
--{
+-static inline int __must_check
+-clk_bulk_prepare(int num_clks, const struct clk_bulk_data *clks)
++static inline void clk_unprepare(struct clk *clk)
+ {
+ 	might_sleep();
 -	return 0;
+ }
+ 
+-static inline bool clk_is_enabled_when_prepared(struct clk *clk)
+-{
+-	return false;
 -}
+-#endif
 -
--static inline void clk_restore_context(void) {}
--
+-/**
+- * clk_unprepare - undo preparation of a clock source
+- * @clk: clock source
+- *
+- * This undoes a previously prepared clock.  The caller must balance
+- * the number of prepare and unprepare calls.
+- *
+- * Must not be called from within atomic context.
+- */
+-#ifdef CONFIG_HAVE_CLK_PREPARE
+-void clk_unprepare(struct clk *clk);
+-void clk_bulk_unprepare(int num_clks, const struct clk_bulk_data *clks);
+-#else
+-static inline void clk_unprepare(struct clk *clk)
++static inline int __must_check
++clk_bulk_prepare(int num_clks, const struct clk_bulk_data *clks)
+ {
+ 	might_sleep();
++	return 0;
+ }
++
+ static inline void clk_bulk_unprepare(int num_clks,
+ 				      const struct clk_bulk_data *clks)
+ {
+ 	might_sleep();
+ }
++
++static inline bool clk_is_enabled_when_prepared(struct clk *clk)
++{
++	return false;
++}
  #endif
  
- /* clk_prepare_enable helps cases using clk_enable in non-atomic context. */
+ #ifdef CONFIG_HAVE_CLK
 -- 
 2.43.0
 
