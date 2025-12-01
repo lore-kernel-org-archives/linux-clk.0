@@ -1,258 +1,147 @@
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F9263074A9
-	for <linux-clk@vger.kernel.org>; Mon,  1 Dec 2025 14:18:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16A0D309EE2
+	for <linux-clk@vger.kernel.org>; Mon,  1 Dec 2025 18:01:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764598736; cv=none; b=O+L4eSwzubB16+4a26aLSyh6W/YSeGQs3n6sdAtB6YXup1S0bSwwjhHGZEulbpGr1NtDebjV3GMFWk8rk7aYeQtGUICYwLM8wiHtjNMaRfv5+bgfTpdTFaRIJNg4DL12sQ5yo884ywPLh1aoEETeJsskNV2oyrI4PoHza1gLco0=
+	t=1764612101; cv=none; b=XvhhuGAEdckNwMH2VM5KfJql4LCbZixFBnlVAAjzK+X2z/Mlpnts+rDbCdDQhJkIOix7Ecq4LEMie7u/dntWuwzjVMjzrilZg3DKZhqAQIQPfifdoQSLoq6oY7DC5uBV9OblopAMCnWrrw1lUoBplzlpLciHDS0W3ywVoYRevkk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764598736; c=relaxed/simple;
-	bh=53LkXaYFrn3GVJ1cIaB3BFaBBqn6BqjYqqHvmEyC6b0=;
+	s=arc-20240116; t=1764612101; c=relaxed/simple;
+	bh=Cl5MfZTmygfRTiyyEyEUElbsEfjllDUBjhPeeZiTfkU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jpiJeKSMgW8gAaTCquaKxqp7UJth5qGfImO7Ndby1UDJ1TjR1p7SFnEYXUT1T+9IHKhGwNzbd9cAiH5oQXEL5cVU6qc4BVAPO93ttViK/bYGPEkVdD2lGgcr0Dt0XSLgJOQPnG2ZN5jWY/pXZDXWjjiIkdrootoU/q6Ij4qTYt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Lfhlw4OD; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=mOWVStYtqffGmEoi04TUNv3W3CLC+8kISiVq34n4/V4DsBew5KK302q6Q3VR6scqQ1RTgf0jG9RN/EbNr8/kzuqUkDmrhDopQvnEm0V2/t7v3VGapdtv23lmcjmrEDCzujW3KF+NOlUFyzlIY4JbxFhbOe6R2QsSfn23qL+Szj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LMJgiBO+; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=TnnXz8dD; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Lfhlw4OD"
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4779cb0a33fso43990705e9.0
-        for <linux-clk@vger.kernel.org>; Mon, 01 Dec 2025 06:18:53 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LMJgiBO+";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="TnnXz8dD"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1764612099;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cNpwF+vE1biwEuxq5v/m4qt1meHle77L6rU4xp3q9yw=;
+	b=LMJgiBO+r8BmYuLMWpz9z/u706x5Wn7EkLaVsVdxgWhjLkjVw/aqXFkP3o01kEvnH8AYS3
+	/MaGfgesIymlOBhrc2fdG8d8Fixwm/dCWYEqMZOzRE3F/BxSOG1jOF7+1wbj3pVWMTsGm2
+	kIxZcpDAG0ieVNeyRYlkx4COyslslNU=
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
+ [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-363-tYPOtIyhPOWK1PLtORppMQ-1; Mon, 01 Dec 2025 13:01:35 -0500
+X-MC-Unique: tYPOtIyhPOWK1PLtORppMQ-1
+X-Mimecast-MFC-AGG-ID: tYPOtIyhPOWK1PLtORppMQ_1764612094
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-8b2de6600c0so1036755485a.1
+        for <linux-clk@vger.kernel.org>; Mon, 01 Dec 2025 10:01:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1764598732; x=1765203532; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=zrU/m1NsQKsXrrOPLuPzfw00NgfNm1183Aja3qoirBc=;
-        b=Lfhlw4ODPByC4VhVMdASHQgH5s6JHY0SqbFAues7tvOzCm/T2iq8JVOeiHUbrgtA1D
-         flVHHpZ8ENDR1gxKYRXdSh/rUpgEfbsC1rRtegOy+6amgR9WhMojA/uKMb/r7Lpun1RD
-         rJL1ZfGxGcnDCPdqVNc4kTxjcagVnPGWfTbRQOVwnwUaCQKLaZ2jlvxxNpTJfhndxx89
-         UU1dQefxusE/lo1KCFheOT8b9ElBJCV7hUCMlGJNQ7jySA7bUYB4+gX6HS+0audNe8/f
-         lHvrL8gpbOK3piY4EWsVmga/RoSS3CrrEvQZLmxC06B5hFrOALvT9T4FSvItWbBE3D1h
-         9gdQ==
+        d=redhat.com; s=google; t=1764612094; x=1765216894; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cNpwF+vE1biwEuxq5v/m4qt1meHle77L6rU4xp3q9yw=;
+        b=TnnXz8dDYvWtzB+FWgw8KksFxU2p6kdY3d0G1m3WmDRL1L1439QnIP6ZT5503zRAYh
+         jhZ05jjkJeDxDaRZnqX/FUpP/BUS6bnAFbAmwLbLS6Y32P8JqdpO9prEFQ3cCX00lciX
+         wHMlzU3enpItYUSP6RJecNhqwQxYaXYVvQz6ixKzo3NMqbTEwVLQV4TuMlSxPiLkk3p8
+         Ev9Nt6BkAKCi/nSFJWCz0fKvTHdG5M6ZdrcLCmueLxA3JiZkO6OtZGkU49ljsnDtn+uO
+         20vZNQiQEHZbDT1FlQOdP71TLnMLwjPP291HCfvwEW5nbxX5XBY992kaELPhhU8HRgxO
+         xz5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764598732; x=1765203532;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zrU/m1NsQKsXrrOPLuPzfw00NgfNm1183Aja3qoirBc=;
-        b=est+9HxLRC4JHKvGQe4da7GZ3x/KZMkgfeK+XNUD5QFKY48QsxL1J15kgRfjTQSBmd
-         KYdL0r/Xz6DqASDeDbBmfubP5I6MDPuuDwM+BOoxKArX+d3yueHRtne8c8fNASL81Akm
-         6SLOHbtn3OHougksRlSorjAraG36rLC3IkQFc8RdC3p3I+R+WsfGy7LVS1XOzRYGyqZj
-         MtoRWGwqCD8yZ6ATlAn2T0ZKFSPlEUczQPMYr4xoxgZqNC1VgMfFBPE8n4yzF+WFrDM7
-         cmUEHlpqqH9BmMWN/2DD6y01LzZJUkDW+CYq62oI1JqMfj2AD/Xl9fxmx5RYWn0emDJO
-         SpPw==
-X-Forwarded-Encrypted: i=1; AJvYcCXhpn9RNs8szdQKWP8M4LEmYGo4lsGqqLVGGqwhq4mhMtZl+cpZtYG8w9Vt5+jTOM/dN05Euy3fl5k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzpXRn+HjWxD7cspk1iGv0X8WTGytiWZuKNcFvZj26zcopErXi
-	xp1Hq3ioKeOxBqhFBiV5d4eDrP4JXfJqF3lGKGRhYnT8tNDOxWJIHeIb
-X-Gm-Gg: ASbGnct5OWmYS+JEZAPg+e9ZAauHfiTuIwwsqyzMC8YfAmrfiCkgXWG9JypsgU9iHCd
-	DURS96tpjQgvvxRMvcDAiZ5YKsv7N5OETulyfJgvMrAHnlzFugxxTyDxJ4wvaeQ0hO8LDcbtjZC
-	WEW2YyM1ZZfsSMsRSIcQa9oU8T6X05A2kgjpBi1Dfnz39aL5oHC9TZpe3eIInWom9rStxVmpF/v
-	rUisZ1DO1MQxcwHOG50YPUlcdByAEhvWf6I7cF5eLnWD5Lte+nT1F0phDqsrj/HmJwI7g9sL4l0
-	6XsFxlNxn4S3O+e5PWmTtsTkTory9yL05SjLtNcdEYXjrdEXJVQsKf0nJfElXDYJ4MJXd77YBJE
-	xo1cT9bF6XFhsstmtQfJthuEp00U9wVAdIp+pmuc6VkJaq/39WXl6bM/hhoLLjRMD8L1F2/y3jZ
-	b8glemK6MWFF8NYnHQnVGIwjlddSlWonF6W+FFhRP7ADmWWWix8nJ2JQZfyF/D5tCA5P3ZQvhyd
-	w==
-X-Google-Smtp-Source: AGHT+IEWJAy9TFAQ+VOIZ162KEF2lzriCvlTOGHOqCcNNfqx4TM96iV2z0z1mnsWDrSD2qljqTJPoQ==
-X-Received: by 2002:a05:600c:46c3:b0:477:6d96:b3ca with SMTP id 5b1f17b1804b1-477c01743e2mr375540815e9.5.1764598732075;
-        Mon, 01 Dec 2025 06:18:52 -0800 (PST)
-Received: from orome (p200300e41f07e000f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f07:e000:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4790ade13ddsm303266005e9.8.2025.12.01.06.18.50
+        d=1e100.net; s=20230601; t=1764612094; x=1765216894;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=cNpwF+vE1biwEuxq5v/m4qt1meHle77L6rU4xp3q9yw=;
+        b=CABXcEgY2xOb3zuSWSvdm2+v1tDB8UXXjrNb/Dyqhu9qO8a91Xk+etCBpCAvXi1oxS
+         zK9NGDyvRfl3RTM8ss2J7c+fgREMVUSHI0qC3kzMUoz+ZjuHd0PHDEW2BKbdyc9K7nid
+         kIG6G3Z6v2EVrNm4YudHUtkBDBZ0S2IF3OorkjuX6LV9ck0uAI3n9rJy5R4ZI6eZ1iyT
+         OQ4fvztzOblHgYx1xonMxoEIhAXV1IjblVEo5IMhAfbsiYVefSag/YKSUcemaCEN+S0R
+         t9sdF7eWzABcuJ6zwuBufI0UjJs9Sg/ydfmUKSFdOUip1U2J1o1bjCj/ejoynMVvNxAb
+         Drpw==
+X-Forwarded-Encrypted: i=1; AJvYcCWItLyjRRWy1kA/+1aBLAh5lcSp5NiRZ13z4auHIi5WR1eZsaq9nHFNxUgVXWyXrK4QVRFOb1QrDZw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjuyqRpM9Ex/Amt+ovcMZ+2wqgHhBNeqxcNQkcPLHxxHEanyRb
+	PjjQMlyxKSR803KDqcTliyJyV3D6CJF847Glh8PDyDBsU4IySQ8ExS3MJE6V+hD9x5AS5pCMdhY
+	R97qQX+xUeGcJf7y0i2KP9V4NxgJ2RJob3XgN0r1ZyWVfh8KcC/NUhokJ7RE4uw==
+X-Gm-Gg: ASbGncs4mY4I5x81kaH49O0xchOU9jvmjvW2uXJTDwL6k/3irLP98kuFhQkoyUtQCwM
+	NYsq7KgG4D2S95VT62t8ehJAg9i0cA7A1sNp/xKKWd28diQNc5Ss3Q/gUa1hcaX1zgz/0T5cMIE
+	KRq6midhfu57PgWgVBKny+91ng4g5PiTmm1/gXgpSAV52OhDh7kpqhPZP+pgP9M2LGcrVPBwpCd
+	TYa+BJhNdDt4ln1/GqsdPDF2N99RVGkL/ZMqPIXZ8TCMeNQ9pYxK5ujMoBxkrMAhrrKrNlVh9u+
+	ZEF7fHFWEw81Jvc6Kb6ff8XHHCzZvudPwwq7a8dpJVCMcgT9nK0/6NomFNCj0ojjJ2nLyY/8Q4u
+	yRfInTUR7162kFP7p5OR7fqcmEYkWmMUs/36SOPt23WE/
+X-Received: by 2002:a05:622a:1394:b0:4ee:1b36:b5b4 with SMTP id d75a77b69052e-4ee5883fc8cmr441494861cf.15.1764612093607;
+        Mon, 01 Dec 2025 10:01:33 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFka/sclAcykb4EafMCqkmrz+Srgtgtrntu+M3uKtzXPbszU0pI6Loxjqn7JQekjtJjw+Qepw==
+X-Received: by 2002:a05:622a:1394:b0:4ee:1b36:b5b4 with SMTP id d75a77b69052e-4ee5883fc8cmr441492521cf.15.1764612089955;
+        Mon, 01 Dec 2025 10:01:29 -0800 (PST)
+Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4efd2fbb8d1sm79292921cf.9.2025.12.01.10.01.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Dec 2025 06:18:50 -0800 (PST)
-Date: Mon, 1 Dec 2025 15:18:48 +0100
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Rob Herring <robh@kernel.org>
-Cc: Svyatoslav Ryhel <clamor95@gmail.com>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Prashant Gaikwad <pgaikwad@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Dmitry Osipenko <digetx@gmail.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, 
-	Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH v3 03/11] dt-bindings: memory: Document Tegra114 Memory
- Controller
-Message-ID: <v6adntm5a3wxxxsmufd54t6pgmoj4njp63q362orkbeew6t3ef@7pfiz6ou7w77>
-References: <20250915080157.28195-1-clamor95@gmail.com>
- <20250915080157.28195-4-clamor95@gmail.com>
- <20250922160040.GA92842-robh@kernel.org>
- <CAPVz0n3cmFC1PdFnLJ0Vf60i3c6pDO9Lvi8dmAHzBgwgsrPXnA@mail.gmail.com>
- <20250924152430.GA1735105-robh@kernel.org>
+        Mon, 01 Dec 2025 10:01:28 -0800 (PST)
+Date: Mon, 1 Dec 2025 13:01:25 -0500
+From: Brian Masney <bmasney@redhat.com>
+To: kernel test robot <lkp@intel.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Maxime Ripard <mripard@kernel.org>,
+	llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] clk: microchip: core: allow driver to be compiled
+ with COMPILE_TEST
+Message-ID: <aS3X9VXVlKNQyDoz@redhat.com>
+References: <20251125-clk-microchip-fixes-v1-2-6c1f5573d1b9@redhat.com>
+ <202511270924.0uDTpEE9-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="cmjgfgew7ig24nkq"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250924152430.GA1735105-robh@kernel.org>
+In-Reply-To: <202511270924.0uDTpEE9-lkp@intel.com>
+User-Agent: Mutt/2.2.14 (2025-02-20)
 
+On Thu, Nov 27, 2025 at 10:11:12AM +0800, kernel test robot wrote:
+> Hi Brian,
+> 
+> kernel test robot noticed the following build errors:
+> 
+> [auto build test ERROR on 92fd6e84175befa1775e5c0ab682938eca27c0b2]
+> 
+> url:    https://github.com/intel-lab-lkp/linux/commits/Brian-Masney/clk-microchip-core-remove-duplicate-determine_rate-on-pic32_sclk_ops/20251126-035403
+> base:   92fd6e84175befa1775e5c0ab682938eca27c0b2
+> patch link:    https://lore.kernel.org/r/20251125-clk-microchip-fixes-v1-2-6c1f5573d1b9%40redhat.com
+> patch subject: [PATCH 2/2] clk: microchip: core: allow driver to be compiled with COMPILE_TEST
+> config: loongarch-randconfig-001-20251127 (https://download.01.org/0day-ci/archive/20251127/202511270924.0uDTpEE9-lkp@intel.com/config)
+> compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 9e9fe08b16ea2c4d9867fb4974edf2a3776d6ece)
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251127/202511270924.0uDTpEE9-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202511270924.0uDTpEE9-lkp@intel.com/
+> 
+> All errors (new ones prefixed by >>):
+> 
+> >> drivers/clk/microchip/clk-core.c:12:10: fatal error: 'asm/traps.h' file not found
+>       12 | #include <asm/traps.h>
+>          |          ^~~~~~~~~~~~~
+>    1 error generated.
+> 
+> Kconfig warnings: (for reference only)
+>    WARNING: unmet direct dependencies detected for TSM
+>    Depends on [n]: VIRT_DRIVERS [=n]
+>    Selected by [y]:
+>    - PCI_TSM [=y] && PCI [=y]
+> 
+> 
+> vim +12 drivers/clk/microchip/clk-core.c
+> 
+> ce6e1188465998 Purna Chandra Mandal 2016-05-13 @12  #include <asm/traps.h>
+> ce6e1188465998 Purna Chandra Mandal 2016-05-13  13  
 
---cmjgfgew7ig24nkq
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v3 03/11] dt-bindings: memory: Document Tegra114 Memory
- Controller
-MIME-Version: 1.0
+I only build tested this on arm64. I'll post a v2.
 
-On Wed, Sep 24, 2025 at 10:24:30AM -0500, Rob Herring wrote:
-> On Mon, Sep 22, 2025 at 07:18:00PM +0300, Svyatoslav Ryhel wrote:
-> > =D0=BF=D0=BD, 22 =D0=B2=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 19:00 =
-Rob Herring <robh@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
-> > >
-> > > On Mon, Sep 15, 2025 at 11:01:49AM +0300, Svyatoslav Ryhel wrote:
-> > > > Add Tegra114 support into existing Tegra124 MC schema with the most
-> > > > notable difference in the amount of EMEM timings.
-> > > >
-> > > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > > > ---
-> > > >  .../nvidia,tegra124-mc.yaml                   | 97 ++++++++++++++-=
-----
-> > > >  1 file changed, 74 insertions(+), 23 deletions(-)
-> > > >
-> > > > diff --git a/Documentation/devicetree/bindings/memory-controllers/n=
-vidia,tegra124-mc.yaml b/Documentation/devicetree/bindings/memory-controlle=
-rs/nvidia,tegra124-mc.yaml
-> > > > index 7b18b4d11e0a..9cc9360d3bd0 100644
-> > > > --- a/Documentation/devicetree/bindings/memory-controllers/nvidia,t=
-egra124-mc.yaml
-> > > > +++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,t=
-egra124-mc.yaml
-> > > > @@ -19,7 +19,9 @@ description: |
-> > > >
-> > > >  properties:
-> > > >    compatible:
-> > > > -    const: nvidia,tegra124-mc
-> > > > +    enum:
-> > > > +      - nvidia,tegra114-mc
-> > > > +      - nvidia,tegra124-mc
-> > > >
-> > > >    reg:
-> > > >      maxItems: 1
-> > > > @@ -64,29 +66,10 @@ patternProperties:
-> > > >
-> > > >            nvidia,emem-configuration:
-> > > >              $ref: /schemas/types.yaml#/definitions/uint32-array
-> > > > -            description: |
-> > > > +            description:
-> > > >                Values to be written to the EMEM register block. See=
- section
-> > > > -              "15.6.1 MC Registers" in the TRM.
-> > > > -            items:
-> > > > -              - description: MC_EMEM_ARB_CFG
-> > > > -              - description: MC_EMEM_ARB_OUTSTANDING_REQ
-> > > > -              - description: MC_EMEM_ARB_TIMING_RCD
-> > > > -              - description: MC_EMEM_ARB_TIMING_RP
-> > > > -              - description: MC_EMEM_ARB_TIMING_RC
-> > > > -              - description: MC_EMEM_ARB_TIMING_RAS
-> > > > -              - description: MC_EMEM_ARB_TIMING_FAW
-> > > > -              - description: MC_EMEM_ARB_TIMING_RRD
-> > > > -              - description: MC_EMEM_ARB_TIMING_RAP2PRE
-> > > > -              - description: MC_EMEM_ARB_TIMING_WAP2PRE
-> > > > -              - description: MC_EMEM_ARB_TIMING_R2R
-> > > > -              - description: MC_EMEM_ARB_TIMING_W2W
-> > > > -              - description: MC_EMEM_ARB_TIMING_R2W
-> > > > -              - description: MC_EMEM_ARB_TIMING_W2R
-> > > > -              - description: MC_EMEM_ARB_DA_TURNS
-> > > > -              - description: MC_EMEM_ARB_DA_COVERS
-> > > > -              - description: MC_EMEM_ARB_MISC0
-> > > > -              - description: MC_EMEM_ARB_MISC1
-> > > > -              - description: MC_EMEM_ARB_RING1_THROTTLE
-> > > > +              "20.11.1 MC Registers" in the Tegea114 TRM or
-> > > > +              "15.6.1 MC Registers" in the Tegra124 TRM.
-> > > >
-> > > >          required:
-> > > >            - clock-frequency
-> > > > @@ -109,6 +92,74 @@ required:
-> > > >    - "#iommu-cells"
-> > > >    - "#interconnect-cells"
-> > > >
-> > > > +allOf:
-> > > > +  - if:
-> > > > +      properties:
-> > > > +        compatible:
-> > > > +          contains:
-> > > > +            enum:
-> > > > +              - nvidia,tegra114-mc
-> > > > +    then:
-> > > > +      patternProperties:
-> > > > +        "^emc-timings-[0-9]+$":
-> > > > +          patternProperties:
-> > > > +            "^timing-[0-9]+$":
-> > > > +              properties:
-> > > > +                nvidia,emem-configuration:
-> > > > +                  items:
-> > > > +                    - description: MC_EMEM_ARB_CFG
-> > > > +                    - description: MC_EMEM_ARB_OUTSTANDING_REQ
-> > > > +                    - description: MC_EMEM_ARB_TIMING_RCD
-> > > > +                    - description: MC_EMEM_ARB_TIMING_RP
-> > > > +                    - description: MC_EMEM_ARB_TIMING_RC
-> > > > +                    - description: MC_EMEM_ARB_TIMING_RAS
-> > > > +                    - description: MC_EMEM_ARB_TIMING_FAW
-> > > > +                    - description: MC_EMEM_ARB_TIMING_RRD
-> > > > +                    - description: MC_EMEM_ARB_TIMING_RAP2PRE
-> > > > +                    - description: MC_EMEM_ARB_TIMING_WAP2PRE
-> > > > +                    - description: MC_EMEM_ARB_TIMING_R2R
-> > > > +                    - description: MC_EMEM_ARB_TIMING_W2W
-> > > > +                    - description: MC_EMEM_ARB_TIMING_R2W
-> > > > +                    - description: MC_EMEM_ARB_TIMING_W2R
-> > > > +                    - description: MC_EMEM_ARB_DA_TURNS
-> > > > +                    - description: MC_EMEM_ARB_DA_COVERS
-> > > > +                    - description: MC_EMEM_ARB_MISC0
-> > > > +                    - description: MC_EMEM_ARB_RING1_THROTTLE
-> > >
-> > > Like I said before, I don't think it is worth enumerating the list of
-> > > registers for every variant. If you want to define the length
-> > > (minItems/maxItems), then that is fine.
-> > >
-> >=20
-> > It worth because position of value matters when reading and list above
-> > provides a reference to the order in which register values should be
-> > grouped.
->=20
-> The schema does nothing to validate that. The only thing that gets=20
-> validated is the length. It is just an opaque blob of data. I'm sure you=
-=20
-> have to define the order in the driver as well. One place is enough.
+Thanks,
 
-Hi Rob,
+Brian
 
-Sorry for being so late on this, but I just noticed that v4 had dropped
-these items descriptions and then saw that you had suggested this. I
-have always found the explicit mention useful because it allows DT
-writers to know what to put into the properties without having to look
-up a specific implementation.
-
-If the DT bindings don't specify the order, then how do we guarantee
-that all implementations agree on the order? While it's true that no
-validation is done via the schema, the schema is the only specification
-that we have for this. Without it there is no reason for an
-implementation to pick one order over another.
-
-Thierry
-
---cmjgfgew7ig24nkq
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmkto8gACgkQ3SOs138+
-s6HFVA//bOnUI5x0pMH+aZ0FS0k/qH/djSWzAvFTrK5cY0onr6xpH6+WvrUb8B4f
-6uuehVHmVOVcMfPWrhJ24ydQsI3RJouP2ZgfRdW80gN6tRr3Sg7aLaM400HPTfiy
-ueUNUSjMUQqRFKbR7YbuMk/F/t/yvgoNBDebzvHwzJV2mfpTXYWJpyUS4SY0hZOj
-7Hav1nmXGi6hX6mU4OCwf6sChzMgATCGy6W6WQ1ka0R8tjyb6XG7zMkpWKFJxPvK
-xAT+Sdzui7OCknvXtXknsGdhug4lpKN0A5eLqKtnzI5BQG7FFYsAuKubzVMLaprX
-1iu3jNH59ZarofA8Rypgm2sUyFbl/yEJAmQlAt1EkZBXnXba/eV8SdmMZrwy6MzR
-9TkEEmQMrYqZ/SFbR34KYmtQfGjx+POAbRVOzvLZxpNUKG4MTFkPTtoiX59gH4ta
-p69j0xbLjYigBzDy4sJGtHVEjDyeB9x+3iJ0o9HeCwQqJ/BzaVTj/GD8BTsyzenu
-A1d8osMl3Clhqa9MsFHe8nAHycCJDZ5XOvwIixcxkd1/jNOkzl5ZSP7a9rtGQjAg
-0/UzrthuSEdMCWWpJImOw8LBrvBnEz0Fte+Gqz6cSblYEx8INoZlUwVoBPwt8ZWc
-qfloinXffZgtWSXTOkd1OCRTBByFtK0K58IqeI4EI67oJ6BMzDU=
-=0r9F
------END PGP SIGNATURE-----
-
---cmjgfgew7ig24nkq--
