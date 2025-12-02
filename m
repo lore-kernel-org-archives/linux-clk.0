@@ -1,143 +1,78 @@
-Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8CC92BE020;
-	Tue,  2 Dec 2025 13:40:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 158DA31A056
+	for <linux-clk@vger.kernel.org>; Tue,  2 Dec 2025 13:45:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764682857; cv=none; b=j6NQgt+Et82Av6/rFPg/m5dttf4Kyp+tjANVv/FZeEtpAc/Suq5jnBHz9FUrn2j2IBI3LFPSqOlzIFYztYbS6DeeAUPWm05EziYXJACc52hYiiu0yMpr45/fb3REGZuNuf5+DCz0OupjcVUQ2EpQrFAfC/dlLEgJN8ca2xaOQAs=
+	t=1764683154; cv=none; b=a7Qo1JRx6UO7zwlbF64lv28KOl1lVvKBqrGCr0+ss87IaQ3nfI0BtR4Sp8cD1yJMYC3lksLaXw4mbvxJMlKxwgemh7RpZeVu34F0DCOyFia7B5V68IkRCDs0UJPP/C4HQL24875I51Qui9ymyqY74YjESlu9MJJO6EeSkBM0jmI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764682857; c=relaxed/simple;
-	bh=hmfl8Sjsg+hFjutE8F2JTdr5DTHIUHxBLQn9sci01Kw=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=uF2Hw0lh9cXpzMASlsm8IfYH2gN1Jdh1Yy56JVQE8vq0J8WhmnGvR3YtvXhxy0rjYxAshGmydLVQpwMxPeyZXKLktwC2EZgM6uGN7VQwL3sbNE6ztYDCcELsvXzSd3Cp9lNrvydD0KifIatGdBYzWZSLHRq/c738oXWdD1wmy5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=ZwqqWzxy; dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=5xSxb8nk; arc=none smtp.client-ip=5.75.144.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="ZwqqWzxy";
-	dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="5xSxb8nk"
-DKIM-Signature: v=1; a=rsa-sha256; s=202507r; d=mainlining.org; c=relaxed/relaxed;
-	h=Message-ID:Subject:To:From:Date; t=1764682846; bh=F13BqT16VWqKico9Z7yQuR4
-	8uJ9Wd8/l/hScm3Hrpq0=; b=ZwqqWzxyjrZfbpA+TOTt/A+lrbNNxuLu2b5eoYBePkTs/fpiux
-	oHJqYjjRhsFpuix13XwnIxv/BdFuDLfuQGkRTf/pYJmSKbpGJkJiBTaeMVvsIiiLRupE8whZ/rk
-	qooroWwTm9ZOVvdlw+40jtdZAWXcdGc+jiMcrpfnYiREY2usMEK8IKO649AMCw3ABynSmypJ0U0
-	HqsmiPHFac1B6kkXr+LNnC+TV6tmf4zf3G1iap+0OK29tdYLvWvHihEe6+3NSCxnTWSGgt3Src0
-	RoaYTUkF/qBDzCcBcCSvLjxMCeNqZIHQGtFIbJMsUn4WbUuZLBt0PcMmU3SBDllH9Dw==;
-DKIM-Signature: v=1; a=ed25519-sha256; s=202507e; d=mainlining.org; c=relaxed/relaxed;
-	h=Message-ID:Subject:To:From:Date; t=1764682846; bh=F13BqT16VWqKico9Z7yQuR4
-	8uJ9Wd8/l/hScm3Hrpq0=; b=5xSxb8nkitVHzOHzNuYp1tr6TOiJPp78okHVPKEEBrzKZFNU4h
-	rKEnMA3ekNoozbiPOgbd4uTOnScTqqJtWpAQ==;
+	s=arc-20240116; t=1764683154; c=relaxed/simple;
+	bh=oUZExTv7ysjsJn5nlTFByWlJf9IP6c/MsHLmv5tO6SQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=LDW+wMinFCya5JZ5ytww5i6yKwD0OQDnVMNrxd9cQjvkHe/mch92+VrZUEKtZsMUgiC+bkl+GnDytn9wHrO01O/zKKH7rBO6DeC/jUxqI3bgD0VTYYmTxMcqnLEOopoDti83TeOi2Q5F0ICMq8zhmhr04Pcav9w1VNtE4CM3E0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from dude02.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::28])
+	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
+	(envelope-from <m.felsch@pengutronix.de>)
+	id 1vQQgZ-0006jO-Iw; Tue, 02 Dec 2025 14:44:55 +0100
+From: Marco Felsch <m.felsch@pengutronix.de>
+Date: Tue, 02 Dec 2025 14:44:53 +0100
+Subject: [PATCH 1/2] clk: imx: fracn-gppll: Add 332.60 MHz Support
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Tue, 02 Dec 2025 14:40:46 +0100
-From: barnabas.czeman@mainlining.org
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Taniya Das <taniya.das@oss.qualcomm.com>, Bjorn Andersson
- <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Stephen
- Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Adam Skladowski
- <a_skl39@protonmail.com>, Sireesh Kodali <sireeshkodali@protonmail.com>,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Lanik
- <daniilt971@gmail.com>
-Subject: Re: [PATCH 2/4] clk: qcom: gcc: Add support for Global Clock
- controller found on MSM8940
-In-Reply-To: <13b44a8c-357d-4f98-8762-640179fe3ff3@oss.qualcomm.com>
-References: <20251116-gcc-msm8940-sdm439-v1-0-7c0dc89c922c@mainlining.org>
- <20251116-gcc-msm8940-sdm439-v1-2-7c0dc89c922c@mainlining.org>
- <793d5039-0506-4104-b4ce-64bfa3cc00eb@oss.qualcomm.com>
- <5C7A10CF-910E-448A-8BFD-F2A46782D3B9@mainlining.org>
- <8faa0c8e-6f21-4025-bbdf-d4ec18eb7628@oss.qualcomm.com>
- <869028d628bad9e1c37c3d9ea8346ba0@mainlining.org>
- <2220aea0-6139-4534-8c42-1331a642ab62@oss.qualcomm.com>
- <f0be91fdde1b542b2c18702b0c91f26f@mainlining.org>
- <13b44a8c-357d-4f98-8762-640179fe3ff3@oss.qualcomm.com>
-Message-ID: <14c40512a19b20199acd902bbe5f4598@mainlining.org>
-X-Sender: barnabas.czeman@mainlining.org
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251202-v6-18-topic-imx93-phyboard-segin-av-02-display-v1-1-9c14be6c7478@pengutronix.de>
+References: <20251202-v6-18-topic-imx93-phyboard-segin-av-02-display-v1-0-9c14be6c7478@pengutronix.de>
+In-Reply-To: <20251202-v6-18-topic-imx93-phyboard-segin-av-02-display-v1-0-9c14be6c7478@pengutronix.de>
+To: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, andrej.picej@norik.com, 
+ primoz.fiser@norik.com, c.hemp@phytec.de, s.mueller-klieser@phytec.de, 
+ n.wesp@phytec.de, c.stoidner@phytec.de
+Cc: linux-clk@vger.kernel.org, imx@lists.linux.dev, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, kernel@pengutronix.de, 
+ Marco Felsch <m.felsch@pengutronix.de>
+X-Mailer: b4 0.14.2
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:1101:1d::28
+X-SA-Exim-Mail-From: m.felsch@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 
-On 2025-12-01 13:26, Konrad Dybcio wrote:
-> On 11/30/25 3:50 PM, barnabas.czeman@mainlining.org wrote:
->> On 2025-11-17 15:17, Konrad Dybcio wrote:
->>> On 11/17/25 3:02 PM, barnabas.czeman@mainlining.org wrote:
->>>> On 2025-11-17 13:17, Konrad Dybcio wrote:
->>>>> On 11/17/25 9:51 AM, Barnabás Czémán wrote:
->>>>>> 
->>>>>> 
->>>>>> On 17 November 2025 09:03:53 CET, Taniya Das 
->>>>>> <taniya.das@oss.qualcomm.com> wrote:
->>>>>>> 
->>>>>>> 
->>>>>>> On 11/17/2025 3:05 AM, Barnabás Czémán wrote:
->>>>>>>> 
->>>>>>>> +static struct clk_branch gcc_ipa_tbu_clk = {
->>>>>>>> +    .halt_reg = 0x120a0,
->>>>>>>> +    .halt_check = BRANCH_VOTED,
->>>>>>>> +    .clkr = {
->>>>>>>> +        .enable_reg = 0x4500c,
->>>>>>>> +        .enable_mask = BIT(16),
->>>>>>>> +        .hw.init = &(struct clk_init_data){
->>>>>>>> +            .name = "gcc_ipa_tbu_clk",
->>>>>>>> +            .ops = &clk_branch2_ops,
->>>>>>>> +        },
->>>>>>>> +    },
->>>>>>>> +};
->>>>>>>> +
->>>>>>> 
->>>>>>> Is the TBU clock used on 8940 by a SMMU driver?
->>>>>> As far as I know no MSM8940 is using same smmu driver and bindings 
->>>>>> like MSM8937.
->>>>> 
->>>>> On msm8939, the clock needed to be turned on for the GPU SMMU
->>>> I have not got any qcom-iommu issues on 8940 but i think it could 
->>>> come when i try to add ipa2 driver
->>>> for the SoC until i do not know where to check it.
->>> 
->>> I can't find a definitive answer, but it's most certainly going to be
->>> necessary to turn it on
->>> 
->>> Konrad
->> 
->> I have enabled ipa2-lite for 8940 at downstream and it can cause gpu 
->> to crash.
-> 
-> Really!?
-> 
-> FWIW the clock on 8939 is called GCC_*GFX*_TBU_CLK so it being related
-> made more sense. Here, I see no connection :/
-> 
-> Konrad
+Some parallel panels have a pixelclk of 33.260 MHz. Add support for
+332.60 MHz so a by 10 divider can be used to derive the exact pixelclk.
 
-I have find out the issue was caused by the interconnect, removing 
-sync_state callback
-makes the ipa driver working, the ipa tbu clock do not needed to be 
-enabled by smmu.
-> 
->> I have tried to add TBU clock for apps_iommu but it not fixing the 
->> issue.
->> 
->> Here are the iommu changes based on 8937 apps_iommu node:
->> +&apps_iommu {
->> +       clocks = <&gcc GCC_SMMU_CFG_CLK>,
->> +                <&gcc GCC_APSS_TCU_CLK>,
->> +                <&gcc MSM8940_GCC_IPA_TBU_CLK>;
->> +       clock-names = "iface",
->> +                     "bus",
->> +                     "tbu";
->> +
->> +       /* IPA */
->> +       iommu-ctx@18000 {
->> +               compatible = "qcom,msm-iommu-v1-ns";
->> +               reg = <0x18000 0x1000>;
->> +               interrupts = <GIC_SPI 115 IRQ_TYPE_LEVEL_HIGH>;
->> +       };
->> +};
->> +
->> 
+Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
+---
+ drivers/clk/imx/clk-fracn-gppll.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/clk/imx/clk-fracn-gppll.c b/drivers/clk/imx/clk-fracn-gppll.c
+index 090d608672508a8819dc68eedec5b8d4a2c140c8..579f76494eb041dfba58b8cd10eb2453a0ec4178 100644
+--- a/drivers/clk/imx/clk-fracn-gppll.c
++++ b/drivers/clk/imx/clk-fracn-gppll.c
+@@ -88,6 +88,7 @@ static const struct imx_fracn_gppll_rate_table fracn_tbl[] = {
+ 	PLL_FRACN_GP(445333333U, 167, 0, 1, 0, 9),
+ 	PLL_FRACN_GP(400000000U, 200, 0, 1, 0, 12),
+ 	PLL_FRACN_GP(393216000U, 163, 84, 100, 0, 10),
++	PLL_FRACN_GP(332600000U, 138, 584, 1000, 0, 10),
+ 	PLL_FRACN_GP(300000000U, 150, 0, 1, 0, 12)
+ };
+ 
+
+-- 
+2.47.3
+
