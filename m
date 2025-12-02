@@ -1,185 +1,143 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE460313285
-	for <linux-clk@vger.kernel.org>; Tue,  2 Dec 2025 13:28:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8CC92BE020;
+	Tue,  2 Dec 2025 13:40:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764682087; cv=none; b=owXRmv/dMs4VrWx9lUTkawE9tfRwN90MQhpr9Q+sVXRmZWUEu9+Hc8aHeS3BAwizz+AHNUWpEUrEsDS5Z810/OCma/Ly5puu0tMEijTjYcbaJNgTBZEW6FrI68NYtJVIOLUSrhmqJMbhJ/AwyOE5DoPRWRp8LDVbnoDZw1L/MZc=
+	t=1764682857; cv=none; b=j6NQgt+Et82Av6/rFPg/m5dttf4Kyp+tjANVv/FZeEtpAc/Suq5jnBHz9FUrn2j2IBI3LFPSqOlzIFYztYbS6DeeAUPWm05EziYXJACc52hYiiu0yMpr45/fb3REGZuNuf5+DCz0OupjcVUQ2EpQrFAfC/dlLEgJN8ca2xaOQAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764682087; c=relaxed/simple;
-	bh=omEADPEFpCtodFUgCY7F/Xae9OmSA4gE2tWXlmUU05E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PuXXbCS8JdjLZXTn8BpK0B/AtDSUhU9rwfhFbr0rIA9wbVNM+4fiQRYg0BhtE8QUjNInAhyWkcMk2LobSNM0HYC9K2iRpN5bfqn9WaBkrxCaY1BlB0WHv4mPv6d6CenILtoexHqcIp+Ea//FTaXW1acnOE6nxTsDklxhGM7YQ5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Uh2B1dnl; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=edaX3CSg; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1764682857; c=relaxed/simple;
+	bh=hmfl8Sjsg+hFjutE8F2JTdr5DTHIUHxBLQn9sci01Kw=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=uF2Hw0lh9cXpzMASlsm8IfYH2gN1Jdh1Yy56JVQE8vq0J8WhmnGvR3YtvXhxy0rjYxAshGmydLVQpwMxPeyZXKLktwC2EZgM6uGN7VQwL3sbNE6ztYDCcELsvXzSd3Cp9lNrvydD0KifIatGdBYzWZSLHRq/c738oXWdD1wmy5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=ZwqqWzxy; dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=5xSxb8nk; arc=none smtp.client-ip=5.75.144.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Uh2B1dnl";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="edaX3CSg"
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5B27NDwx2584254
-	for <linux-clk@vger.kernel.org>; Tue, 2 Dec 2025 13:28:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	cGSZe87CZjxr7Wk/kqndn3Caz/wNBKP+z4zDP6I+8Jg=; b=Uh2B1dnlxaBY9yux
-	5+X68KQrLjS/X35pJJMt19asVdm4bvm1I7xG91QmYyTzuqe9KaFZpcMcA9r8fLfm
-	hSKZWHLwVjx+7bVsUYuIm4by0PXSClfqXM9wr1rsMP8c8jmV87AfEWTOsiFlPWg8
-	tqF5EcotpU4Kkyr5CCDfbt00krB2542m+ccxd65r0jstIlp4kNLIPj9dgIJ08NSo
-	30+Bfa2THF5jsS92wLUmYe+v38GeVd6L7fsHTFr+m64vEHYA+j2BNM/Uj8pV5K+Y
-	ql/F8/1rOMlrvfY2nbN3OXZzQlT2N6roPxeM/VK16xm32k8tmYSNq2CreeUSkWbs
-	FuRYsw==
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4asup3h2t9-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Tue, 02 Dec 2025 13:28:04 +0000 (GMT)
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-8b2de66a28eso143717085a.2
-        for <linux-clk@vger.kernel.org>; Tue, 02 Dec 2025 05:28:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1764682084; x=1765286884; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=cGSZe87CZjxr7Wk/kqndn3Caz/wNBKP+z4zDP6I+8Jg=;
-        b=edaX3CSgRvvL7x1QiUnh7I58GH0Zi91PqOdiuvQSCZuQopkxjbpwphKOfvqxfBwUP7
-         J6/+NpANZDbAyDf4qMwDbt1teg+AlVZ9yW0FihC7wpwHIz7Ejnkev87SAJjRZDSLwtGp
-         PGW63GWQgNLw1wxZt6GQass31VwmaOVZETS7tkMWtxFpzC1Deae9wDlUWYW13W1FmIk4
-         Rwk7l1GeMReKGVgV5Mu1hDaCY/qtDPla95DUwUD86U7RccmoHkjtSh2O86ay/C0AxnxD
-         OpHaMoMuNo1i3ICAYsjhGSYBseo9TEuU3/YsEanb1QijciG4/26YDVn3Wj1Y0AivMWsE
-         NFUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764682084; x=1765286884;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cGSZe87CZjxr7Wk/kqndn3Caz/wNBKP+z4zDP6I+8Jg=;
-        b=PI1RFVX0QpMyearvGOTfUsDMVrHxAS0AW7UFggZEr50W6eHC34mL16Aq82dwDteeVc
-         0dsbhGEgKw9aMYtoO3DUHhUBRn8vBaDZ2YTZmJgbJ6yyVdKYs92EvArGNEyGN5HZp1Uv
-         /OsRGASZpJkRK9V4dvcEjvZGElFRuB7tebsCT+FTtVyMW/NOffmrk2AZfBHsP5JeF/JL
-         sDjKvWGLKx2iY9HzBqR+GdT5k8QiLZvkgbe5+d1JljKa5OKxrEL41JBClJwFuVJdW2Np
-         pSJDAkGyyK6BE9tw7r37ygaFzW56IFBFRe5FMjdzudBo3MeVUwuaWdWDmHJOzbwreUQJ
-         Xxkg==
-X-Forwarded-Encrypted: i=1; AJvYcCX+FuoskROsoo7+6Xp9S5dPMdLLo+Vp9gq1jGLbX+Opa2s4LhcYvrSoOvlSDfczcaDv10/UU8azNdU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxT1i4SNnNo2yy1bdec1yocFUQLlc7I/pMXYA33jIdnsbCearwe
-	LO9v+YDz0taYeDyE9TvJfpAh4c7KiR60uHgHiyqT5YYTpnsL4Y1cSMpk3yuf44N/Bh5s+LOzg8T
-	AqbfET7TXSKw2h+bwlGQer68RahdrKHcVtTuayqGO7Nrq1ajvNX07rWyZK3Bbbq4=
-X-Gm-Gg: ASbGnctspCPo7unAioDK6zjQyTvcUc5qcFW+gPbGAfrejI6qyBVLBtuj9R1i122HJIq
-	lYnEDKIxmHgn7XfmLIRdaT51OZf6clEbyeAVdnV+1l3By4HneoZYKLwfnWYB8pVqFQfG9kzS+Rn
-	hDFezDk++WHeLYlDUqo+Ty3SCsFfWgo79C34Ki6bdZlFLy6IRBFKmAcXv/IIIN7EcDw8DLa53FM
-	t9lpLBWjViS9By6rTNEoRcsbyvHH7BPE8LJbMyyX3X+lZQ6u5dWscvnwrysWPMGFwoee6NkSVI5
-	ZCfkTnc6ZIuITsq2OxMUORHFK/ccwgi+X4wxe4m+vkFG9LAyphR6NLYs1Hr5zRt7Vt9UHFiErUl
-	UEn8nXHbNcKBPHbvPutq3mrb5ZGf/8j3P4OmPmGiqbON5CEQ4t5FtsT4a84daeUrjwA==
-X-Received: by 2002:a05:620a:4490:b0:8b2:1f8d:f11d with SMTP id af79cd13be357-8b341bafcb7mr4289438385a.2.1764682083998;
-        Tue, 02 Dec 2025 05:28:03 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHDne9RM5gYuYyIL53Is5J79nlq/wsUZ8mDjrDMvIP+gfH9ZVz1YXpUMUnVdDE7teba51LEBw==
-X-Received: by 2002:a05:620a:4490:b0:8b2:1f8d:f11d with SMTP id af79cd13be357-8b341bafcb7mr4289433685a.2.1764682083415;
-        Tue, 02 Dec 2025 05:28:03 -0800 (PST)
-Received: from [192.168.119.72] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b76f5a7afb4sm1500312866b.70.2025.12.02.05.28.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Dec 2025 05:28:02 -0800 (PST)
-Message-ID: <bb6f83cc-4f6a-44f8-9997-fb91e7c2b4cb@oss.qualcomm.com>
-Date: Tue, 2 Dec 2025 14:27:59 +0100
+	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="ZwqqWzxy";
+	dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="5xSxb8nk"
+DKIM-Signature: v=1; a=rsa-sha256; s=202507r; d=mainlining.org; c=relaxed/relaxed;
+	h=Message-ID:Subject:To:From:Date; t=1764682846; bh=F13BqT16VWqKico9Z7yQuR4
+	8uJ9Wd8/l/hScm3Hrpq0=; b=ZwqqWzxyjrZfbpA+TOTt/A+lrbNNxuLu2b5eoYBePkTs/fpiux
+	oHJqYjjRhsFpuix13XwnIxv/BdFuDLfuQGkRTf/pYJmSKbpGJkJiBTaeMVvsIiiLRupE8whZ/rk
+	qooroWwTm9ZOVvdlw+40jtdZAWXcdGc+jiMcrpfnYiREY2usMEK8IKO649AMCw3ABynSmypJ0U0
+	HqsmiPHFac1B6kkXr+LNnC+TV6tmf4zf3G1iap+0OK29tdYLvWvHihEe6+3NSCxnTWSGgt3Src0
+	RoaYTUkF/qBDzCcBcCSvLjxMCeNqZIHQGtFIbJMsUn4WbUuZLBt0PcMmU3SBDllH9Dw==;
+DKIM-Signature: v=1; a=ed25519-sha256; s=202507e; d=mainlining.org; c=relaxed/relaxed;
+	h=Message-ID:Subject:To:From:Date; t=1764682846; bh=F13BqT16VWqKico9Z7yQuR4
+	8uJ9Wd8/l/hScm3Hrpq0=; b=5xSxb8nkitVHzOHzNuYp1tr6TOiJPp78okHVPKEEBrzKZFNU4h
+	rKEnMA3ekNoozbiPOgbd4uTOnScTqqJtWpAQ==;
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: (subset) [PATCH 0/5] Define VDD_MXC for SC8280XP
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Johan Hovold <johan+linaro@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Manivannan Sadhasivam <mani@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>, Taniya Das <quic_tdas@quicinc.com>,
-        Imran Shaik <quic_imrashai@quicinc.com>,
-        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Krzysztof Kozlowski
- <krzk@kernel.org>, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-pm@vger.kernel.org,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-References: <20251104-topic-8280_mxc-v1-0-df545af0ef94@oss.qualcomm.com>
- <176418784438.1591314.8587929353938909456.b4-ty@kernel.org>
- <20251201201440.GA4041208-robh@kernel.org>
- <CAPDyKFoGQJA5UY-96HvfoA7WMb5wYFXFFfFREpMmK29GE7-Nag@mail.gmail.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <CAPDyKFoGQJA5UY-96HvfoA7WMb5wYFXFFfFREpMmK29GE7-Nag@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Date: Tue, 02 Dec 2025 14:40:46 +0100
+From: barnabas.czeman@mainlining.org
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Taniya Das <taniya.das@oss.qualcomm.com>, Bjorn Andersson
+ <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Stephen
+ Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Adam Skladowski
+ <a_skl39@protonmail.com>, Sireesh Kodali <sireeshkodali@protonmail.com>,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Lanik
+ <daniilt971@gmail.com>
+Subject: Re: [PATCH 2/4] clk: qcom: gcc: Add support for Global Clock
+ controller found on MSM8940
+In-Reply-To: <13b44a8c-357d-4f98-8762-640179fe3ff3@oss.qualcomm.com>
+References: <20251116-gcc-msm8940-sdm439-v1-0-7c0dc89c922c@mainlining.org>
+ <20251116-gcc-msm8940-sdm439-v1-2-7c0dc89c922c@mainlining.org>
+ <793d5039-0506-4104-b4ce-64bfa3cc00eb@oss.qualcomm.com>
+ <5C7A10CF-910E-448A-8BFD-F2A46782D3B9@mainlining.org>
+ <8faa0c8e-6f21-4025-bbdf-d4ec18eb7628@oss.qualcomm.com>
+ <869028d628bad9e1c37c3d9ea8346ba0@mainlining.org>
+ <2220aea0-6139-4534-8c42-1331a642ab62@oss.qualcomm.com>
+ <f0be91fdde1b542b2c18702b0c91f26f@mainlining.org>
+ <13b44a8c-357d-4f98-8762-640179fe3ff3@oss.qualcomm.com>
+Message-ID: <14c40512a19b20199acd902bbe5f4598@mainlining.org>
+X-Sender: barnabas.czeman@mainlining.org
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
 Content-Transfer-Encoding: 8bit
-X-Authority-Analysis: v=2.4 cv=MaZhep/f c=1 sm=1 tr=0 ts=692ee965 cx=c_pps
- a=HLyN3IcIa5EE8TELMZ618Q==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=wP3pNCr1ah4A:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=Dp_8vvBim0L4lL-PpiYA:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=bTQJ7kPSJx9SKPbeHEYW:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMjAyMDEwOCBTYWx0ZWRfXwdkRirORdTXo
- 8K+vvLs14UbW6m0GCOhhZ0TVtelgfEa+NZNsq6xEw13FO1mSA8sCJwc5QR4ESuZ3aRBocHv2hrv
- cPjzOLZrNDW7wAZw7eTKTjXuxlpx/pLyz5IRleuLezurojtYirPzBg3UaCOYGeFZspIeCgBfNNU
- Zvi9aDiFa1O3+57s7US4cwv9oK+5yfHe9HUWZFFOd7/s/ZyAGOzKm+gwez3Aa1WCNo4iDmqewQH
- HbVCFhzgBR0XvH8dp3xiXgaYI2Qxkt7DIJYYfRsYuoIonfx9c45ABMBfRm6SlGPpkDXM3N/DKxb
- im/xM5cc4J4rhUGBp3XyvF+fRU9XIrhrAlTSapoZUliEBhulKrd/YUrebO6/SOHlpDZJ2S2hZY8
- 2fpSTXLr+8DgaP4ukbd+PdbsLu1sjA==
-X-Proofpoint-GUID: Qpa_yJJpX4jyKE1vnov6s9-IVn8I6bbD
-X-Proofpoint-ORIG-GUID: Qpa_yJJpX4jyKE1vnov6s9-IVn8I6bbD
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-12-01_01,2025-11-27_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 spamscore=0 bulkscore=0 adultscore=0 impostorscore=0
- clxscore=1015 lowpriorityscore=0 suspectscore=0 phishscore=0
- priorityscore=1501 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
- definitions=main-2512020108
 
-On 12/2/25 10:19 AM, Ulf Hansson wrote:
-> On Mon, 1 Dec 2025 at 21:14, Rob Herring <robh@kernel.org> wrote:
->>
->> On Wed, Nov 26, 2025 at 02:10:41PM -0600, Bjorn Andersson wrote:
->>>
->>> On Tue, 04 Nov 2025 20:31:05 +0100, Konrad Dybcio wrote:
->>>> This has somehow been omitted, leading to potentially stale votes.
->>>> On the flip side, the domain will now be powered off, which will
->>>> uncover any omissions we've made in the DTs so far.
->>>>
->>>> Reasonably tested on an x13s without pd_ignore_unused (camera still
->>>> works).
->>>>
->>>> [...]
->>>
->>> Applied, thanks!
->>>
->>> [2/5] dt-bindings: remoteproc: qcom,sc8280xp-pas: Fix CDSP power desc
->>>       commit: ca079ec3ebed19a12c1bf080496dacbc6fdfbb39
->>
->> This has was picked up, but the .dts change was not, so there's a bunch
->> of new warnings. What's the plan? I know it's separate trees. Can you
->> please take binding and .dts changes like these together if there aren't
->> driver changes?
+On 2025-12-01 13:26, Konrad Dybcio wrote:
+> On 11/30/25 3:50 PM, barnabas.czeman@mainlining.org wrote:
+>> On 2025-11-17 15:17, Konrad Dybcio wrote:
+>>> On 11/17/25 3:02 PM, barnabas.czeman@mainlining.org wrote:
+>>>> On 2025-11-17 13:17, Konrad Dybcio wrote:
+>>>>> On 11/17/25 9:51 AM, Barnabás Czémán wrote:
+>>>>>> 
+>>>>>> 
+>>>>>> On 17 November 2025 09:03:53 CET, Taniya Das 
+>>>>>> <taniya.das@oss.qualcomm.com> wrote:
+>>>>>>> 
+>>>>>>> 
+>>>>>>> On 11/17/2025 3:05 AM, Barnabás Czémán wrote:
+>>>>>>>> 
+>>>>>>>> +static struct clk_branch gcc_ipa_tbu_clk = {
+>>>>>>>> +    .halt_reg = 0x120a0,
+>>>>>>>> +    .halt_check = BRANCH_VOTED,
+>>>>>>>> +    .clkr = {
+>>>>>>>> +        .enable_reg = 0x4500c,
+>>>>>>>> +        .enable_mask = BIT(16),
+>>>>>>>> +        .hw.init = &(struct clk_init_data){
+>>>>>>>> +            .name = "gcc_ipa_tbu_clk",
+>>>>>>>> +            .ops = &clk_branch2_ops,
+>>>>>>>> +        },
+>>>>>>>> +    },
+>>>>>>>> +};
+>>>>>>>> +
+>>>>>>> 
+>>>>>>> Is the TBU clock used on 8940 by a SMMU driver?
+>>>>>> As far as I know no MSM8940 is using same smmu driver and bindings 
+>>>>>> like MSM8937.
+>>>>> 
+>>>>> On msm8939, the clock needed to be turned on for the GPU SMMU
+>>>> I have not got any qcom-iommu issues on 8940 but i think it could 
+>>>> come when i try to add ipa2 driver
+>>>> for the SoC until i do not know where to check it.
+>>> 
+>>> I can't find a definitive answer, but it's most certainly going to be
+>>> necessary to turn it on
+>>> 
+>>> Konrad
+>> 
+>> I have enabled ipa2-lite for 8940 at downstream and it can cause gpu 
+>> to crash.
 > 
-> I was planning to pick up the driver (pmdomain) and dt doc changes, as
-> usual. Although, I was waiting for the discussion to reach consensus
-> around dts patch (patch5), maybe it did?
+> Really!?
 > 
-> Björn, perhaps easier if you pick the series via your qc-soc tree and
-> send them as fixes? If so, feel free to add my ack on patch4 (the
-> pmdomain patch).
+> FWIW the clock on 8939 is called GCC_*GFX*_TBU_CLK so it being related
+> made more sense. Here, I see no connection :/
+> 
+> Konrad
 
-FWIW the part where the CDSP power-domain list changes still applies,
-even though I was wrong about the CAMCC requiring that too..
-
-I can resend if needed
-
-Konrad
+I have find out the issue was caused by the interconnect, removing 
+sync_state callback
+makes the ipa driver working, the ipa tbu clock do not needed to be 
+enabled by smmu.
+> 
+>> I have tried to add TBU clock for apps_iommu but it not fixing the 
+>> issue.
+>> 
+>> Here are the iommu changes based on 8937 apps_iommu node:
+>> +&apps_iommu {
+>> +       clocks = <&gcc GCC_SMMU_CFG_CLK>,
+>> +                <&gcc GCC_APSS_TCU_CLK>,
+>> +                <&gcc MSM8940_GCC_IPA_TBU_CLK>;
+>> +       clock-names = "iface",
+>> +                     "bus",
+>> +                     "tbu";
+>> +
+>> +       /* IPA */
+>> +       iommu-ctx@18000 {
+>> +               compatible = "qcom,msm-iommu-v1-ns";
+>> +               reg = <0x18000 0x1000>;
+>> +               interrupts = <GIC_SPI 115 IRQ_TYPE_LEVEL_HIGH>;
+>> +       };
+>> +};
+>> +
+>> 
