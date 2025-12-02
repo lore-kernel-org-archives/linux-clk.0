@@ -1,120 +1,148 @@
-Received: from mail-yx1-f47.google.com (mail-yx1-f47.google.com [74.125.224.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6065918BC3D
-	for <linux-clk@vger.kernel.org>; Tue,  2 Dec 2025 09:20:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0951230BB8F
+	for <linux-clk@vger.kernel.org>; Tue,  2 Dec 2025 09:26:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764667210; cv=none; b=lUhBFiQU3Efc4IMuLfqwBBrHsgnxHfCNnIkua1OycD2POSKNXlX4TX5TPSZM7LpxX/QwVLpSFd+jXQLiKvR7PC9hBbT86RQMYK9lJSu7/DQsTtGyo95myxhrkJAgG9RtfcO71YcTg1EYQCz19fSceUQL0vtGcHSMrdl/c9iryzg=
+	t=1764667606; cv=none; b=k7h2PemchUSjP2VPl1mcX8DmPW7jpPDJW6/8Ci6tNPCjQZqgC9Mg1Jhubamw5OqUAN7DrHgtHjR0iuNVWJ/Suc+sK3ceyQM7xGGd5cVsdPpLQeJTxm8VrrpDVMmmfzWwYb1PCwzYC89rs/Uv7KBJuNOZeaiImGVra5BqXDTGfDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764667210; c=relaxed/simple;
-	bh=p810/wFxt30+XMJuBKhOwELVApLhqTRZG35v7mtyi/I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=S6jZcoxZjIPOIFDdbQ0W7pZncvq2BfyL8HdYVBcDc3no10BJIGRV95mfgkiXbjO1b83q/aYFgjVOtsC20hX41jNrxg6x1zazAFRxDpE6F6IF8otid4gHEL8uJ/eNta9YQIQBUFVbYLUJcxoLDsehV2yDjtqJpk1ZIbgmTY1Ak/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ri1ADWAY; arc=none smtp.client-ip=74.125.224.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1764667606; c=relaxed/simple;
+	bh=e4ADKf5KnBtmyNx7K3nhN5sMxYdX8FSZtoZA9jdJSmQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UzFHiQ/CwZkXF2p48PaaBjrA2LV/tsAigklVlFpoNkuEk3tBCxZPTyyK9J0bXiE2sZAaSRFTkcJKk0QuJ3l/XvbWaDGnIR0pATFylKDqr2q1A9pqOcGQI9YrRMRjMPkzmSQJG2nIYpEt+lIbSf3ebW1wgT58JPV/cnbAE8Vc+AE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=MfTUlGhn; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ri1ADWAY"
-Received: by mail-yx1-f47.google.com with SMTP id 956f58d0204a3-63fc6d9fde5so4347163d50.3
-        for <linux-clk@vger.kernel.org>; Tue, 02 Dec 2025 01:20:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1764667207; x=1765272007; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6/G1G7V8+zBE1pKIYtM+52VzsDzHzaIGvsTpLD+gMEI=;
-        b=ri1ADWAYi2d17eMI8j/nh3hD1RWlbvfTM6l+fbC8huelJ3bWloMWT8G3nqz21W1wft
-         fjwKHp0lC5fHx503Yi4wwCw/EdRCGbC+LkbNdsHbd4H+oiBZyr3EzVpIq2m0QDIpIgwK
-         IhkRJV7AfHvq9y3pHaII0+zV5uCQY8zcM5N0cdDcW4YnhoDJs+HpboMzYG9nFtps4M4K
-         llOq6t61nxMpNY6XVNuFPIdCGjG3Qf780yBeeTCnCLxDCS/T0snfS2RnQRhLmEkKculO
-         VJzL4sAMsiLVBah7DC2ikpQAfG/lfoNencTiwiS6kLzwqZjQV+56W3HVCvqJBMDbWJY5
-         46rg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764667207; x=1765272007;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=6/G1G7V8+zBE1pKIYtM+52VzsDzHzaIGvsTpLD+gMEI=;
-        b=AOhAFsC4s2XYdiv5D1LJWVRhftfUipyn3auHq+5AAmje0AAGNPJQ9qHdF44NROlaHQ
-         J4Wt7BJThfhFPycE7MazmWH3aNiwkCIqzM1AybJzxL/Ew6iFCP4h8k2n3UC23fDG0wDk
-         Aey9XT3BE+AxahcGAkaQxvz10tkrthFZGfd2zmcZMjCjKIp2QQ5DVLmejb8HOxE6Bcoe
-         clQXplKxQQ/HPVCuf/BzxjbwYNTYfb3vuwDCnyMscbjHtDaH5Oq1pdNCs5hvNoxMeaN/
-         2G7WhnVdIFkay/6oXa6AMo/i3owZkrT9p1usctkfMLep9ikhxL0QrTyVYwmxw6h4Z0Af
-         bdfg==
-X-Forwarded-Encrypted: i=1; AJvYcCUOPDLzP2DM0PRGKmaT9+gNEeAwr73iRUAr4bD+w0x5SpPSC4oIggQMcVmIjEK4K5XoOCszNXxMl6g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwgdYKqb2308k8glsSKJ+AcnEkvN0qdX/QIOt1GXFCCmKOW3l9N
-	QxNcciwsfk7BhYvTA8o7mcCGa2Swe508od2wz6y+UEpzGA57TKqJL5Fn2pJ3f3+HPbHphPfiSX5
-	M5Dtih4syJLAIW6kKPID391xmDo6ijLlCS5UlYmFrvQ==
-X-Gm-Gg: ASbGncsprV4A61royozZ+0m98t7TOSrrMYGkNlaN7NOHKh1FhIwfd76X9vTGuTtWY+l
-	fA2QVYibS0O+A3CI86IT2oAnlr1049fym//tvon+jWTYpAWcEtAlcULTBGOnMbKeMxHGzgymhxT
-	55En95iS9SymNThDhWkrotjFadBJ8u/AzFzwFZ5dqadIpm3zcsAhazJ0NcM3A3CjXJeujNM7w/5
-	01Zfz9OY+ClybumE2cXizOnAFk2ulmQQ4DdlMIVC7FAZv0FrNR+tOWlK+qxnmd7mfKXNQqk
-X-Google-Smtp-Source: AGHT+IGkuXbyoaToK4qQVOIq1jOXA5nA48QYY8kbFfQjrvu13g6Gdd42PllY5qa8o5Gb82O7qdj6GQJgrMUUbzFAi9U=
-X-Received: by 2002:a05:690e:1c5:b0:641:f5bc:699c with SMTP id
- 956f58d0204a3-6432938698amr16869251d50.74.1764667207316; Tue, 02 Dec 2025
- 01:20:07 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="MfTUlGhn"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 02DB81A1EC0;
+	Tue,  2 Dec 2025 09:26:41 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id BFCAD606D3;
+	Tue,  2 Dec 2025 09:26:40 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 3DD6211918D13;
+	Tue,  2 Dec 2025 10:26:21 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1764667597; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=0QhNzQsm8Oj1GGB/bH80Qc9yOMbCIo84NGjawpRGa0U=;
+	b=MfTUlGhnnw/aVreeaATbhw0gwkpem3K9EKovmRrLAuPocP4mtIEFaUBJAllgvpXiOFVYVs
+	/+wYe6BWiOjXN0TQXfqEbI4kTBiForiN43QgIRFG1Tif71C+pWFPguQb30OO5GR384TVLH
+	FZYaHMZgblFJnDTIPRv3nxFL2X7+IteBlMRlRxUIW82bL9nD/zWvqmrNnYX95WKYHUolBR
+	aWzmo2dED90Ls+6evrTylVevWGCfFb+t5/b4hRTOr5NOspn3gp8X2yP/8vpWUgnmn8SNQp
+	t2T7sfHrwl492i35smJdL2e7LttoyWu75OyA4aNg7/ydqIjfu3dWfVR//psj2w==
+Date: Tue, 2 Dec 2025 10:26:19 +0100
+From: Herve Codina <herve.codina@bootlin.com>
+To: Kalle Niemi <kaleposti@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Matti Vaittinen
+ <mazziesaccount@gmail.com>, Andrew Lunn <andrew@lunn.ch>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, Shawn Guo
+ <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix
+ Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>, Wolfram Sang
+ <wsa+renesas@sang-engineering.com>, Peter Rosin <peda@axentia.se>, Arnd
+ Bergmann <arnd@arndb.de>, Saravana Kannan <saravanak@google.com>, Bjorn
+ Helgaas <bhelgaas@google.com>, Charles Keepax
+ <ckeepax@opensource.cirrus.com>, Richard Fitzgerald
+ <rf@opensource.cirrus.com>, David Rhodes <david.rhodes@cirrus.com>, Linus
+ Walleij <linus.walleij@linaro.org>, Ulf Hansson <ulf.hansson@linaro.org>,
+ Mark Brown <broonie@kernel.org>, Andy Shevchenko
+ <andriy.shevchenko@linux.intel.com>, Daniel Scally <djrscally@gmail.com>,
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>, Sakari Ailus
+ <sakari.ailus@linux.intel.com>, Len Brown <lenb@kernel.org>, Davidlohr
+ Bueso <dave@stgolabs.net>, Jonathan Cameron <jonathan.cameron@huawei.com>,
+ Dave Jiang <dave.jiang@intel.com>, Alison Schofield
+ <alison.schofield@intel.com>, Vishal Verma <vishal.l.verma@intel.com>, Ira
+ Weiny <ira.weiny@intel.com>, Dan Williams <dan.j.williams@intel.com>, Geert
+ Uytterhoeven <geert+renesas@glider.be>, Wolfram Sang <wsa@kernel.org>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org,
+ linux-pci@vger.kernel.org, linux-sound@vger.kernel.org,
+ patches@opensource.cirrus.com, linux-gpio@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-spi@vger.kernel.org,
+ linux-acpi@vger.kernel.org, linux-cxl@vger.kernel.org, Allan Nielsen
+ <allan.nielsen@microchip.com>, Horatiu Vultur
+ <horatiu.vultur@microchip.com>, Steen Hegelund
+ <steen.hegelund@microchip.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v4 01/29] Revert "treewide: Fix probing of devices in DT
+ overlays"
+Message-ID: <20251202102619.5cd971cc@bootlin.com>
+In-Reply-To: <55076f4b-d523-4f8c-8bd4-0645b790737e@gmail.com>
+References: <20251015071420.1173068-1-herve.codina@bootlin.com>
+	<20251015071420.1173068-2-herve.codina@bootlin.com>
+	<f74ab0a2-b74b-4b96-8469-a716c850e230@gmail.com>
+	<CAL_JsqJDOYuzutMHMeFAogd5a_OX6Hwi8Gwz1Vy7HpXgNeYKsg@mail.gmail.com>
+	<5cf2a12a-7c66-4622-b4a9-14896c6df005@gmail.com>
+	<CAL_JsqJjm12LxpDg6LmpY=Ro_keHwnrWiYMLVnG=s_pSP4X2WQ@mail.gmail.com>
+	<072dde7c-a53c-4525-83ac-57ea38edc0b5@gmail.com>
+	<CAL_JsqKyG98pXGKpL=gxSc92izpzN7YCdq62ZJByhE6aFYs1fw@mail.gmail.com>
+	<55076f4b-d523-4f8c-8bd4-0645b790737e@gmail.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251104-topic-8280_mxc-v1-0-df545af0ef94@oss.qualcomm.com>
- <176418784438.1591314.8587929353938909456.b4-ty@kernel.org> <20251201201440.GA4041208-robh@kernel.org>
-In-Reply-To: <20251201201440.GA4041208-robh@kernel.org>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 2 Dec 2025 10:19:30 +0100
-X-Gm-Features: AWmQ_blwJAvHgHxPWpmsgj8k232zQrocoHHqDGTT9KF0aRc5ngfB3LfIo4gucIo
-Message-ID: <CAPDyKFoGQJA5UY-96HvfoA7WMb5wYFXFFfFREpMmK29GE7-Nag@mail.gmail.com>
-Subject: Re: (subset) [PATCH 0/5] Define VDD_MXC for SC8280XP
-To: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Johan Hovold <johan+linaro@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
-	Manivannan Sadhasivam <mani@kernel.org>, Vinod Koul <vkoul@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Taniya Das <quic_tdas@quicinc.com>, Imran Shaik <quic_imrashai@quicinc.com>, 
-	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, Jagadeesh Kona <quic_jkona@quicinc.com>, 
-	"Bryan O'Donoghue" <bryan.odonoghue@linaro.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, 
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Mon, 1 Dec 2025 at 21:14, Rob Herring <robh@kernel.org> wrote:
->
-> On Wed, Nov 26, 2025 at 02:10:41PM -0600, Bjorn Andersson wrote:
-> >
-> > On Tue, 04 Nov 2025 20:31:05 +0100, Konrad Dybcio wrote:
-> > > This has somehow been omitted, leading to potentially stale votes.
-> > > On the flip side, the domain will now be powered off, which will
-> > > uncover any omissions we've made in the DTs so far.
-> > >
-> > > Reasonably tested on an x13s without pd_ignore_unused (camera still
-> > > works).
-> > >
-> > > [...]
-> >
-> > Applied, thanks!
-> >
-> > [2/5] dt-bindings: remoteproc: qcom,sc8280xp-pas: Fix CDSP power desc
-> >       commit: ca079ec3ebed19a12c1bf080496dacbc6fdfbb39
->
-> This has was picked up, but the .dts change was not, so there's a bunch
-> of new warnings. What's the plan? I know it's separate trees. Can you
-> please take binding and .dts changes like these together if there aren't
-> driver changes?
+Hi Kalle,
 
-I was planning to pick up the driver (pmdomain) and dt doc changes, as
-usual. Although, I was waiting for the discussion to reach consensus
-around dts patch (patch5), maybe it did?
+On Fri, 28 Nov 2025 10:34:57 +0200
+Kalle Niemi <kaleposti@gmail.com> wrote:
 
-Bj=C3=B6rn, perhaps easier if you pick the series via your qc-soc tree and
-send them as fixes? If so, feel free to add my ack on patch4 (the
-pmdomain patch).
+...
+> >>>>>>
+> >>>>>> Hello,
+> >>>>>>
+> >>>>>> Test system testing drivers for ROHM ICs bisected this commit to cause
+> >>>>>> BD71847 drivers probe to not be called.  
+> >>>>> This driver (and overlay support) is in linux-next or something out of
+> >>>>> tree on top of linux-next?
+> >>>>>
+> >>>>> Rob  
+> >>>> Yes the driver is in mainline linux: /drivers/mfd/rohm-bd718x7.c  
+> >>> I don't see any support to apply overlays in that driver.  
+> >> Ah. Sorry for the confusion peeps. I asked Kalle to report this without
+> >> proper consideration. 100% my bad.
+> >>
+> >> While the bd718x7 drive indeed is mainline (and tested), the actual
+> >> 'glue-code' doing the overlay is part of the downstream test
+> >> infrastructure. So yes, this is not a bug in upstream kernel - this
+> >> falls in the category of an upstream change causing downstream things to
+> >> break. So, feel free to say: "Go fix your code" :)
+> >>
+> >> Now that this is sorted, if someone is still interested in helping us to
+> >> get our upstream drivers tested - the downstream piece is just taking
+> >> the compiled device-tree overlay at runtime (via bin-attribute file),
+> >> and applying it using the of_overlay_fdt_apply(). The approach is
+> >> working for our testing purposes when the device is added to I2C/SPI
+> >> node which is already enabled. However, in case where we have the I2C
+> >> disabled, and enable it in the same overlay where we add the new device
+> >> - then the new device does not get probed.
+> >>
+> >> I would be really grateful if someone had a pointer for us.  
+> > Seems to be fw_devlink related. I suppose if you turn it off it works?
+> > There's info about the dependencies in sysfs or maybe debugfs. I don't
+> > remember the details, but that should help to tell you why things
+> > aren't probing.
 
-Kind regards
-Uffe
+Rob reverted patches but I plan to continue my work on it.
+On my side, I need the reverted patches but I fully understand that, on
+your side, you need a working system.
+
+In order to move forward and find a solution for my next iteration, can you
+send your overlay (dtso) used in your working and non working cases?
+
+Best regards,
+Hervé
