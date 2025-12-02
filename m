@@ -1,148 +1,168 @@
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0951230BB8F
-	for <linux-clk@vger.kernel.org>; Tue,  2 Dec 2025 09:26:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B259F25785E
+	for <linux-clk@vger.kernel.org>; Tue,  2 Dec 2025 10:26:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764667606; cv=none; b=k7h2PemchUSjP2VPl1mcX8DmPW7jpPDJW6/8Ci6tNPCjQZqgC9Mg1Jhubamw5OqUAN7DrHgtHjR0iuNVWJ/Suc+sK3ceyQM7xGGd5cVsdPpLQeJTxm8VrrpDVMmmfzWwYb1PCwzYC89rs/Uv7KBJuNOZeaiImGVra5BqXDTGfDo=
+	t=1764671207; cv=none; b=YLf7CCeXZlWeHJIUSm6F/X99rh+qEyMH1Cl4EI3J76xuc8xIx6ajwMh7+dglU4uH9SPEtN66/rzXFPHXV5iVogRiyj9TnAq9BSKvjBnVegc4uTCNU9ojPJI4/IpoJeBBM13MBeBRIxjQ4e66yDK5Yi7uiIoO0tyoSXQLHHEJC2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764667606; c=relaxed/simple;
-	bh=e4ADKf5KnBtmyNx7K3nhN5sMxYdX8FSZtoZA9jdJSmQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UzFHiQ/CwZkXF2p48PaaBjrA2LV/tsAigklVlFpoNkuEk3tBCxZPTyyK9J0bXiE2sZAaSRFTkcJKk0QuJ3l/XvbWaDGnIR0pATFylKDqr2q1A9pqOcGQI9YrRMRjMPkzmSQJG2nIYpEt+lIbSf3ebW1wgT58JPV/cnbAE8Vc+AE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=MfTUlGhn; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1764671207; c=relaxed/simple;
+	bh=XVnP1fisO3gYA+mP9TQejhTGNM4CXK+qwk0ltQTW1M4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=kjQiD273fN3fin2mjH3nQ7IbOBbaWxYfqpeO83P65OE+LN0CMp2wzHTcdWPDfTfEAasPX0+UuOQ8J8QY0kp0v+3ViShVgv1XHVDh8MkyIZbwg+qTPzvaoa+O6BFsUktmNHqrLFdkUWrKtbpCwEIgiGVPlNB8devKVTzyYpI6xt4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Dd5RfVCo; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=UxFCZG/W; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="MfTUlGhn"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 02DB81A1EC0;
-	Tue,  2 Dec 2025 09:26:41 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id BFCAD606D3;
-	Tue,  2 Dec 2025 09:26:40 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 3DD6211918D13;
-	Tue,  2 Dec 2025 10:26:21 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1764667597; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=0QhNzQsm8Oj1GGB/bH80Qc9yOMbCIo84NGjawpRGa0U=;
-	b=MfTUlGhnnw/aVreeaATbhw0gwkpem3K9EKovmRrLAuPocP4mtIEFaUBJAllgvpXiOFVYVs
-	/+wYe6BWiOjXN0TQXfqEbI4kTBiForiN43QgIRFG1Tif71C+pWFPguQb30OO5GR384TVLH
-	FZYaHMZgblFJnDTIPRv3nxFL2X7+IteBlMRlRxUIW82bL9nD/zWvqmrNnYX95WKYHUolBR
-	aWzmo2dED90Ls+6evrTylVevWGCfFb+t5/b4hRTOr5NOspn3gp8X2yP/8vpWUgnmn8SNQp
-	t2T7sfHrwl492i35smJdL2e7LttoyWu75OyA4aNg7/ydqIjfu3dWfVR//psj2w==
-Date: Tue, 2 Dec 2025 10:26:19 +0100
-From: Herve Codina <herve.codina@bootlin.com>
-To: Kalle Niemi <kaleposti@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Matti Vaittinen
- <mazziesaccount@gmail.com>, Andrew Lunn <andrew@lunn.ch>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, Shawn Guo
- <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix
- Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>, Wolfram Sang
- <wsa+renesas@sang-engineering.com>, Peter Rosin <peda@axentia.se>, Arnd
- Bergmann <arnd@arndb.de>, Saravana Kannan <saravanak@google.com>, Bjorn
- Helgaas <bhelgaas@google.com>, Charles Keepax
- <ckeepax@opensource.cirrus.com>, Richard Fitzgerald
- <rf@opensource.cirrus.com>, David Rhodes <david.rhodes@cirrus.com>, Linus
- Walleij <linus.walleij@linaro.org>, Ulf Hansson <ulf.hansson@linaro.org>,
- Mark Brown <broonie@kernel.org>, Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>, Daniel Scally <djrscally@gmail.com>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>, Sakari Ailus
- <sakari.ailus@linux.intel.com>, Len Brown <lenb@kernel.org>, Davidlohr
- Bueso <dave@stgolabs.net>, Jonathan Cameron <jonathan.cameron@huawei.com>,
- Dave Jiang <dave.jiang@intel.com>, Alison Schofield
- <alison.schofield@intel.com>, Vishal Verma <vishal.l.verma@intel.com>, Ira
- Weiny <ira.weiny@intel.com>, Dan Williams <dan.j.williams@intel.com>, Geert
- Uytterhoeven <geert+renesas@glider.be>, Wolfram Sang <wsa@kernel.org>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org,
- linux-pci@vger.kernel.org, linux-sound@vger.kernel.org,
- patches@opensource.cirrus.com, linux-gpio@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-spi@vger.kernel.org,
- linux-acpi@vger.kernel.org, linux-cxl@vger.kernel.org, Allan Nielsen
- <allan.nielsen@microchip.com>, Horatiu Vultur
- <horatiu.vultur@microchip.com>, Steen Hegelund
- <steen.hegelund@microchip.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v4 01/29] Revert "treewide: Fix probing of devices in DT
- overlays"
-Message-ID: <20251202102619.5cd971cc@bootlin.com>
-In-Reply-To: <55076f4b-d523-4f8c-8bd4-0645b790737e@gmail.com>
-References: <20251015071420.1173068-1-herve.codina@bootlin.com>
-	<20251015071420.1173068-2-herve.codina@bootlin.com>
-	<f74ab0a2-b74b-4b96-8469-a716c850e230@gmail.com>
-	<CAL_JsqJDOYuzutMHMeFAogd5a_OX6Hwi8Gwz1Vy7HpXgNeYKsg@mail.gmail.com>
-	<5cf2a12a-7c66-4622-b4a9-14896c6df005@gmail.com>
-	<CAL_JsqJjm12LxpDg6LmpY=Ro_keHwnrWiYMLVnG=s_pSP4X2WQ@mail.gmail.com>
-	<072dde7c-a53c-4525-83ac-57ea38edc0b5@gmail.com>
-	<CAL_JsqKyG98pXGKpL=gxSc92izpzN7YCdq62ZJByhE6aFYs1fw@mail.gmail.com>
-	<55076f4b-d523-4f8c-8bd4-0645b790737e@gmail.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Dd5RfVCo";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="UxFCZG/W"
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5B29kKGH1090571
+	for <linux-clk@vger.kernel.org>; Tue, 2 Dec 2025 10:26:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=VrUz8PGW2KF5hQpyTzA1xT
+	f3mo1AjxCZZSaanbzdKYI=; b=Dd5RfVCognEcboKe8lyMiN/Xwm+gtb21hXd2S3
+	CettWgI1R8CpOnDC8q5dSOv0JdvF0hRBOUooCagXTcF1L7iGaOQjw5IHsjAV4qlk
+	AIcZfMllxeGUMJSwYPkx35b48gkMB+L+cgqgi3QKJp5AB52+zNBNYOSDtwsbRSoK
+	4BHhVVY5pu8/C7qjhnzF6ga1ZDLMrowENFNUucyvUrPqR994t597ALSEnjvq/ImY
+	aZe2CHtJ3k/b6g9e5rwjs0K0ashcXUtds8zXvViT5dvQuFLlxmwuvkPiXgpypIHC
+	SjYxLdbcKvNr2WapMwwNofu8JKKyFS0IYJHYHZR1fFskPORQ==
+Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4asfu12wrx-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Tue, 02 Dec 2025 10:26:44 +0000 (GMT)
+Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-7b82c2c2ca2so8143526b3a.1
+        for <linux-clk@vger.kernel.org>; Tue, 02 Dec 2025 02:26:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1764671203; x=1765276003; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=VrUz8PGW2KF5hQpyTzA1xTf3mo1AjxCZZSaanbzdKYI=;
+        b=UxFCZG/Wy0vBOuWkrNnmVumyRfRLN63lZpgZWAN2MVNXqc4M3WOjK16G5baETkx8k1
+         NLQv4mRR1lHSZyXE8C77K4fFTxKdzgOanMwCTHEKMvmEzAHfbHdzCZhnh2rS4/6k8YDX
+         5N5aYvUIFMk8DABNHKJTkzJhz38nZlY1Fe1kcFupFyySk4FeH0g5dQjRQl80xt+cl3+R
+         Z0bZIPHPoP3AGtij8gw4mw78LppAsJVQFVdcq2yuYLTrAUMgIiJhlyCnohgBrdEpni7w
+         oqU00lococYTfQ3qNngfqcgmC7RZYGov9OPqF+8nSOH/tbQrwILpZ0bROePzcQCowYow
+         hzBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1764671203; x=1765276003;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VrUz8PGW2KF5hQpyTzA1xTf3mo1AjxCZZSaanbzdKYI=;
+        b=hrEzwkAJUmNxvrQgkZPP6W79HrCKUqHeB66E1QN++OBv1i0fL2gsv2lub3iCo7npOw
+         PFgqYM3eZcXs+U4Hdj+a0QhoMWmwwEtbDml9Fn5c2xpYMqyXlaphMstzgFlO72C0D/Sc
+         htwtwrQUJadmTZTheN3eUJXxsT4tR1yDfTooW/fc42NjLcs6cEi9Yw355YtGOBUpiCpM
+         FCbdTnLYdLZ+Oyy+uz9ORg/q5Wu6+LwTEBdUoRuF/Bl0dKWimGRj6Vss5JrQeNgCn2+W
+         OWSjvT21UCwQRB5hv+1YIipwLL24YrYfWEK7/+pUEnLHgDK0JdMphboN/8hE+BqqUgGK
+         HzRw==
+X-Forwarded-Encrypted: i=1; AJvYcCVnAZPvC3RpWQvhzoYTiRL5A6u4xFnoBQHwiRPMqPaBVVxZZeIfPXnunQ8CjPbiL9mXU63SeMCsEC4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxYGQMSb71Yj9HoJ9eegaPXLvOwipYXJD5gTMEmkDHle6nuLYuk
+	kvxNAf42RvBIyNVr6hz4eSSkdHPEjKDaOnOhvHFoOcZZ1U5PKOvZD7MgTBk7JwYVfPArWsTb66u
+	yVkykak8xQAwssv31marQLxtYVP7Xy6MQYG0cr+Z2+MwtR/YS5dosdMQ90S8iaDs=
+X-Gm-Gg: ASbGncuVza2+1IXcQjx5C8y5xdbEIjQBt+YH8I7lMq77jh6rqLqX37NWwGHtsePOoFQ
+	DDLzjXHH+UvyuBGO3Dr+Ea57XUeKgqmgxYAPsbTydZONY/ChYU4zxwaoNNNGTkUhLdPvkjLmDlL
+	tj5qqQEFFteFf0rKQDvN8oYmSRgrLs561hWONPqxpiBJc+yIqdU2K7BWrayEVAj7jsnCk4ZNc7K
+	aeR+MFQJliuA4iRvfCU4+rq0Hw4Ls/xRH/06/9iq0DB7CxHxT9J0dsbDWN7wyhTB81qQE1Sxchy
+	svI9rt3h0TNVukhoiUGVklZ4Lzx0udFkJTcL3GWy5FSFFy7bNi2d6bZJcXxmdR5Y2llK/5zVvty
+	i8dQZyNXQa7VPiK4PM/71r8w8Kzu6wyutWQ==
+X-Received: by 2002:a05:6a20:7285:b0:340:6b9c:8a6d with SMTP id adf61e73a8af0-36150e2b4edmr46198291637.3.1764671203418;
+        Tue, 02 Dec 2025 02:26:43 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFqbxAi6x2C16q6RSb0ek1+DoOM9LaefMRtdRnCp29pa73Jqf77f/0+GtRe+Jn5R0eGnnhL3w==
+X-Received: by 2002:a05:6a20:7285:b0:340:6b9c:8a6d with SMTP id adf61e73a8af0-36150e2b4edmr46198272637.3.1764671202970;
+        Tue, 02 Dec 2025 02:26:42 -0800 (PST)
+Received: from hu-tdas-hyd.qualcomm.com ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7d151ad4d6esm16379511b3a.26.2025.12.02.02.26.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Dec 2025 02:26:42 -0800 (PST)
+From: Taniya Das <taniya.das@oss.qualcomm.com>
+Subject: [PATCH 0/3] Add the support for SM8750 Camera clock controller
+Date: Tue, 02 Dec 2025 15:56:24 +0530
+Message-Id: <20251202-sm8750_camcc-v1-0-b3f7ef6723f1@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANC+LmkC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1NDIKFbnGthbmoQn5yYm5ysa2RqmWRkbJRiYWpmoATUUlCUmpZZATYuOra
+ 2FgCGaOyxXgAAAA==
+X-Change-ID: 20251202-sm8750_camcc-259b232d8560
+To: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>
+Cc: Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
+        Imran Shaik <imran.shaik@oss.qualcomm.com>,
+        Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org,
+        Taniya Das <taniya.das@oss.qualcomm.com>
+X-Mailer: b4 0.15-dev-aa3f6
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMjAyMDA4MyBTYWx0ZWRfXxuUFj8shaSm3
+ bfC7ftN/FB9o6ZPvlq//vxIFf7l/a98mcWSfjXH8hPInNp6a6pmOyzgeeqtrldPJ9k/sQMIzSgd
+ V5QCsAG3n0TOtJX9/Dsa6nI/fLLPS3rImFh2ka2kjTozsjfU+0rlI6tffqsaRoMYyuCzynJG2fy
+ kyO1xxmLsUYoovKrlUAfY0wX6BgZZzytIdMxyRwmsWcdMlXOhd6CYEEQp6+kJ3gH/2+DO1Y8x3Q
+ 62AJ/MeSzvLeWqlKrd+tidwfWL7dV8VhWqcge/HOomfQGQsclyA3OydJV2BvEESoiMWD74Xhalx
+ SHFgtOR36d8WTQiIr5LtGO0rvWuw+Qi3O3LPLj8eB87LaquSGpZoALUrIY7k8ife80kbzn27TEC
+ ULj0QR7ZdjjFllUlD5h3FyWY4Mi9UA==
+X-Authority-Analysis: v=2.4 cv=BJW+bVQG c=1 sm=1 tr=0 ts=692ebee4 cx=c_pps
+ a=WW5sKcV1LcKqjgzy2JUPuA==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=wP3pNCr1ah4A:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=V3dEWrsxhXhpuwuaMIQA:9
+ a=QEXdDO2ut3YA:10 a=OpyuDcXvxspvyRM73sMx:22
+X-Proofpoint-GUID: 0Qq3NTQP61XFfASYNXrsoYk1OV-DRHN9
+X-Proofpoint-ORIG-GUID: 0Qq3NTQP61XFfASYNXrsoYk1OV-DRHN9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-12-01_01,2025-11-27_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 clxscore=1015 malwarescore=0 suspectscore=0 adultscore=0
+ spamscore=0 impostorscore=0 bulkscore=0 lowpriorityscore=0 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2512020083
 
-Hi Kalle,
+Support the Camera clock controller for SM8750 Qualcomm SoC.
+ - The camera MCLK BIST clock controller, which is required
+   for functional MCLKs.
+ - The camera CC (clock controller) for managing camera-related
+    clocks.
+  - Additionally, the Rivian ELU PLL is utilized within the
+    SM8750 clock controller, so support for this PLL is also added.
 
-On Fri, 28 Nov 2025 10:34:57 +0200
-Kalle Niemi <kaleposti@gmail.com> wrote:
+Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
+---
+Taniya Das (3):
+      clk: qcom: clk-alpha-pll: Add support for Rivian ELU PLL
+      dt-bindings: clock: qcom: Add camera clock controller for SM8750 SoC
+      clk: qcom: camcc: Add camera clock controller driver for SM8750 SoC
 
-...
-> >>>>>>
-> >>>>>> Hello,
-> >>>>>>
-> >>>>>> Test system testing drivers for ROHM ICs bisected this commit to cause
-> >>>>>> BD71847 drivers probe to not be called.  
-> >>>>> This driver (and overlay support) is in linux-next or something out of
-> >>>>> tree on top of linux-next?
-> >>>>>
-> >>>>> Rob  
-> >>>> Yes the driver is in mainline linux: /drivers/mfd/rohm-bd718x7.c  
-> >>> I don't see any support to apply overlays in that driver.  
-> >> Ah. Sorry for the confusion peeps. I asked Kalle to report this without
-> >> proper consideration. 100% my bad.
-> >>
-> >> While the bd718x7 drive indeed is mainline (and tested), the actual
-> >> 'glue-code' doing the overlay is part of the downstream test
-> >> infrastructure. So yes, this is not a bug in upstream kernel - this
-> >> falls in the category of an upstream change causing downstream things to
-> >> break. So, feel free to say: "Go fix your code" :)
-> >>
-> >> Now that this is sorted, if someone is still interested in helping us to
-> >> get our upstream drivers tested - the downstream piece is just taking
-> >> the compiled device-tree overlay at runtime (via bin-attribute file),
-> >> and applying it using the of_overlay_fdt_apply(). The approach is
-> >> working for our testing purposes when the device is added to I2C/SPI
-> >> node which is already enabled. However, in case where we have the I2C
-> >> disabled, and enable it in the same overlay where we add the new device
-> >> - then the new device does not get probed.
-> >>
-> >> I would be really grateful if someone had a pointer for us.  
-> > Seems to be fw_devlink related. I suppose if you turn it off it works?
-> > There's info about the dependencies in sysfs or maybe debugfs. I don't
-> > remember the details, but that should help to tell you why things
-> > aren't probing.
-
-Rob reverted patches but I plan to continue my work on it.
-On my side, I need the reverted patches but I fully understand that, on
-your side, you need a working system.
-
-In order to move forward and find a solution for my next iteration, can you
-send your overlay (dtso) used in your working and non working cases?
+ .../bindings/clock/qcom,sm8450-camcc.yaml          |    5 +
+ drivers/clk/qcom/Kconfig                           |   10 +
+ drivers/clk/qcom/Makefile                          |    1 +
+ drivers/clk/qcom/cambistmclkcc-sm8750.c            |  454 ++++
+ drivers/clk/qcom/camcc-sm8750.c                    | 2710 ++++++++++++++++++++
+ drivers/clk/qcom/clk-alpha-pll.c                   |   14 +
+ drivers/clk/qcom/clk-alpha-pll.h                   |    2 +
+ .../dt-bindings/clock/qcom,sm8750-cambistmclkcc.h  |   30 +
+ include/dt-bindings/clock/qcom,sm8750-camcc.h      |  151 ++
+ 9 files changed, 3377 insertions(+)
+---
+base-commit: 92fd6e84175befa1775e5c0ab682938eca27c0b2
+change-id: 20251202-sm8750_camcc-259b232d8560
 
 Best regards,
-Hervé
+-- 
+Taniya Das <taniya.das@oss.qualcomm.com>
+
