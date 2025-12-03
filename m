@@ -1,226 +1,246 @@
-Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from SN4PR2101CU001.outbound.protection.outlook.com (mail-southcentralusazon11012002.outbound.protection.outlook.com [40.93.195.2])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C21222ACEF
-	for <linux-clk@vger.kernel.org>; Wed,  3 Dec 2025 01:47:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764726430; cv=none; b=gRCQ1y3FE/zZmh9Bt6+2Yc+G6lDSNyHaOfZu8NbdUoLh7x7Df166aQPyjMEjRn9tTEHPWzKPnndbGL8n0Ugc/XwD0Dr153fYido1vB2dfQhxlw3kvn6KmnJHUECeopUImHRgSd/dD8xDF6L9MQ1sxmjMjItBOpkDgo7ER6FjGHw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764726430; c=relaxed/simple;
-	bh=3nO+YcV9+oE4XpniiLIyxdEaMIE8lYstD85AACwuLDo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rC926p+GupvtH1+3fgF0ty+3qAcRUxfWxVLOEBzlU2wvbCjYuiqgV4zqNee2dXXtp1vvoRVoMvVQt4UxTKNP6kaffT6S9oaN36tBIO7yHl6gNcab7PORWWXzjVlKxpgB3isBuitUWNm3l6S0BoNzgFI5QWDT8mQUV4nbkCOPQ4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZLpulbdH; arc=none smtp.client-ip=209.85.222.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 050E823ABA0;
+	Wed,  3 Dec 2025 07:50:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.195.2
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1764748240; cv=fail; b=m7aldMSNIaK4f/Si/U/qDwe7qvfLE6Ob03vDOcXEgG2ksqSNSO8Tvvucj5sP16iNaR9MvVgkX6WfpOtlgnasl8CpAqJ+qsT6DVfOX7+JS00v5a1sw3Lk9gFRn4v8XFz8d5s9I9IAy6KA/0DrddEvROIzqjnIq/v2FuYZI2Hbsks=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1764748240; c=relaxed/simple;
+	bh=PCNPVr15uShr9FO9K5ll+8qfFeBZekBnBSRnZ/R4YE8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Kv3wk2jyU7AfbVL7qirVjBb6RHYTF9nCI0DR7lz5uC/ljONwE2J0XFtP3tN52wd2B/JZNgMrtgG7em4R9IF5V9clDcU45/tY8kJbJ+lE63mlroJVzUSteMzU105hzfk3+Q4jWnqlEpVmpaK/LlckYciD+VNRlJkkCyJ4iGLSwDE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=VY5AXu3z; arc=fail smtp.client-ip=40.93.195.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZLpulbdH"
-Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-8b1e54aefc5so451396285a.1
-        for <linux-clk@vger.kernel.org>; Tue, 02 Dec 2025 17:47:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1764726426; x=1765331226; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OtH1a85NzPXIElQyhEPKVrfDvnNRb+rvBUgIUrut7Kw=;
-        b=ZLpulbdHFBuz7J52MuyOIQ1Y3U8SB9lTC6264JsyNnqSRuJj7m0PZ8y7eKvMPM3Sol
-         rLVKMu1G7YfuxL5shNUWpOdxFn47imeoQ6KUY0AX9rlMudYEQsYNJo0X760eiWPXsFmp
-         jXbJuWOc+QKgkXBDBPJKuAHezVJEyIL0mC/AgQ/1SXp5PTfThL8Dvh8S/GiBYGibeUZy
-         KQJczWyAAovaz4St/568241YXbC56ygndDWzni8BqfwZZkY1JRsUwgNXrj9AtGdF1m1v
-         JAbaR73Joqe1miRLsL0NbyzJl/zgU1deueDJNhf4b5XJ2+AziBjqymuQhQuZcXHN/GE0
-         aoZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764726426; x=1765331226;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=OtH1a85NzPXIElQyhEPKVrfDvnNRb+rvBUgIUrut7Kw=;
-        b=S9hRppGHpz0id7Kpr+aI/6sLIpAdiXNv92I12vVTtzyO351INOwieFe6vGKPlNt2GT
-         d+mO7IMLBi8jgEviMy78da7QYuQ+p7/mbKnrKN7s9h2OejPC31VBHpDAEIIpKnnVcpiH
-         yZ1ftnKB1WBLBeVr7hTHOrC2zTYAhlnFc986Qbh3MFHuTMkBH/K+iFFtoGpvSa0wjYM7
-         gjFrS7Ygy53Nx7Rl37h8uTxBFaQ/yWGjFwzMaGorIMn6D6Ny0AxS5vW1LjvTgwguhhLb
-         3hx4uzu8qqXSiTS02NqBqy3OiumPQlX59G9HVCVDst/g0YOfhZoTHzHcAROGaNRh/cO6
-         yITA==
-X-Forwarded-Encrypted: i=1; AJvYcCWmmJFceSXH8xaC7WrY6nGvFQdNZkL9WZH71xl6ORs6KrF7MwivTZIo/lqaH7CJZy5XXesmdDAUh4M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkA+Xyz/C68STZYOWXK5RRRljkikqQ+1ku5z85WyMImwMYWtjY
-	DiSGLiFFnnudtxrdj5UsQe8WlPPiWF/1T8i2blM6uiuHOYqzN6AkR+sm
-X-Gm-Gg: ASbGnct0RxphC+jQXIqpR8jmExr+3e06lak9kKHC60TB2SIOOnpiNYxg4rpLZTIo1Ao
-	nDvHP/hiXoj00KsAeMvEliv8SN5iAiwSMleb46JQq72QVGU1rnELAm/6aGnWkRI14hHwe387g9Q
-	OeOmAnJ38MUUtkFGQK9/L18jSom+t8oZMlM/6EhniBWW5qwk7tx4/e9mFOwe3G0NK3oFIBPuL1X
-	2Lg5XVfBINmSl8I4y7PY6D9/dpTDrjuFHRqBzIVrB0YhKYZYoiycNrgEx3wDpGtK+bR6/lRWLNq
-	2S4H1SaRFB2z0eRwyyolh8vI/+4wFT+6hQ+4cebT6cRmhC2ETbnu4Ahouty18wKLG8a6Ar1t197
-	Q+flcXtIp7tasmjBQNsPMSLzot7rInboe2Ga+322xXLlvZC1in2ws+1w7LWrBCKhkRPMZbnLEvz
-	ZNVlpgCr9J75pKhlAyQb31RYI219EFeBHJyuBEafMfXOOmRUhpSOjsFEUo0qDN1ss68hBfGWepi
-	A0Rftu0M7qdZKe7Q30OXI8yMw==
-X-Google-Smtp-Source: AGHT+IFeMR+oSVn09EJ3IDZOwhh2uiS4UVZ0hp1HU+YMpxzfU9ogbzDHH3W62a3tJUAdySWBH37uAw==
-X-Received: by 2002:a05:620a:2805:b0:8b2:d56a:f2f1 with SMTP id af79cd13be357-8b5e47cfdaamr99382185a.12.1764726426099;
-        Tue, 02 Dec 2025 17:47:06 -0800 (PST)
-Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-886524b1aa6sm119441246d6.8.2025.12.02.17.47.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Dec 2025 17:47:05 -0800 (PST)
-Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
-	by mailfauth.phl.internal (Postfix) with ESMTP id ACD9EF40079;
-	Tue,  2 Dec 2025 20:47:04 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-02.internal (MEProxy); Tue, 02 Dec 2025 20:47:04 -0500
-X-ME-Sender: <xms:mJYvaaDmnK-eQoA_EF5dIKBTmJFKJG6JnnoegiOnZKVT8CNUG_YZFg>
-    <xme:mJYvadSJ45vWYeQ9F5mL5h1nMVY-8bU-OaEP6MA5NELkAMhxMnC3oTCpPE77lCBHK
-    7T7DCcgyxDTJotNCxAXaXhpptJ3QWP-MaGb6ZrIeVNqxosuK0JF82c>
-X-ME-Received: <xmr:mJYvafxcm6YlRM-vftTxYa0HsgC9YSewKe3-7hU6gkHJFIR9j-dqDET8mDz9W_yI4jfLTFLmfy4EJaHEsee2Ieq8FtBpB-e8>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdduheelucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceurghi
-    lhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurh
-    epfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepuehoqhhunhcuhfgv
-    nhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrghtthgvrh
-    hnpeehudfgudffffetuedtvdehueevledvhfelleeivedtgeeuhfegueevieduffeivden
-    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsohhquh
-    hnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtdeigedqudej
-    jeekheehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehfihigmhgvrd
-    hnrghmvgdpnhgspghrtghpthhtohepkedupdhmohguvgepshhmthhpohhuthdprhgtphht
-    thhopegrlhhitggvrhihhhhlsehgohhoghhlvgdrtghomhdprhgtphhtthhopehruhhsth
-    dqfhhorhdqlhhinhhugiesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehl
-    ihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhope
-    hgrhgvghhkhheslhhinhhugihfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopegu
-    rghvihgurdhmrdgvrhhtmhgrnhesihhnthgvlhdrtghomhdprhgtphhtthhopehirhgrrd
-    ifvghinhihsehinhhtvghlrdgtohhmpdhrtghpthhtoheplhgvohhnsehkvghrnhgvlhdr
-    ohhrghdprhgtphhtthhopehpvghtvghriiesihhnfhhrrgguvggrugdrohhrghdprhgtph
-    htthhopegvlhhlvgesfigvrghthhgvrhgvugdqshhtvggvlhdruggvvh
-X-ME-Proxy: <xmx:mJYvafm1w4VDhZtfL-vbtABRjhTNIcFLz8_RoOmFJXiaSOHOJFRUsA>
-    <xmx:mJYvaTW4xPwqaL8AsLZ0eWuclQx3vE9Zqhyto1-mcNhBpI554zsuvg>
-    <xmx:mJYvaXX2hT3SDveYJ-poTdQsJ8M2nsxtzyvAAaEGn-Ah6ycumKDy0w>
-    <xmx:mJYvaS9D9MkMxArS_FuKXUpeU0lMFKOAD8JwuBHAD4qUAR-XYoc_nw>
-    <xmx:mJYvaaBq2FcntQ00GFur5OcCdB2TqHkbOovvZlruCm-nWJGwWixyD_zx>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 2 Dec 2025 20:47:03 -0500 (EST)
-Date: Tue, 2 Dec 2025 17:47:03 -0800
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Dave Ertman <david.m.ertman@intel.com>,	Ira Weiny <ira.weiny@intel.com>,
- Leon Romanovsky <leon@kernel.org>,	Peter Zijlstra <peterz@infradead.org>,
-	Elle Rhumsaa <elle@weathered-steel.dev>,
-	Carlos Llamas <cmllamas@google.com>,	Yury Norov <yury.norov@gmail.com>,
-	Andreas Hindborg <a.hindborg@kernel.org>,	linux-block@vger.kernel.org,
-	FUJITA Tomonori <fujita.tomonori@gmail.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-	Benno Lossin <lossin@kernel.org>,	Danilo Krummrich <dakr@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org,
-	Paul Moore <paul@paul-moore.com>, Serge Hallyn <sergeh@kernel.org>,
-	linux-security-module@vger.kernel.org,
-	Daniel Almeida <daniel.almeida@collabora.com>,
-	Abdiel Janulgue <abdiel.janulgue@gmail.com>,
-	Robin Murphy <robin.murphy@arm.com>, Lyude Paul <lyude@redhat.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org, Josh Poimboeuf <jpoimboe@kernel.org>,
-	Jason Baron <jbaron@akamai.com>,	Steven Rostedt <rostedt@goodmis.org>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Brendan Higgins <brendan.higgins@linux.dev>,
-	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>,
-	linux-kselftest@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Andrew Ballance <andrewjballance@gmail.com>,
-	maple-tree@lists.infradead.org, linux-mm@kvack.org,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Vitaly Wool <vitaly.wool@konsulko.se>,	Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>, devicetree@vger.kernel.org,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Krzysztof =?iso-8859-1?Q?Wilczy=B4nski?= <kwilczynski@kernel.org>,
-	linux-pci@vger.kernel.org, Remo Senekowitsch <remo@buenzli.dev>,
-	"Paul E. McKenney" <paulmck@kernel.org>, rcu@vger.kernel.org,
-	Will Deacon <will@kernel.org>, Fiona Behrens <me@kloenk.dev>,
-	Gary Guo <gary@garyguo.net>, Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,	Alexandre Courbot <acourbot@nvidia.com>,
-	Vlastimil Babka <vbabka@suse.cz>, Christoph Lameter <cl@gentwo.org>,
-	David Rientjes <rientjes@google.com>,	Ingo Molnar <mingo@redhat.com>,
- Waiman Long <longman@redhat.com>,
-	Mitchell Levy <levymitchell0@gmail.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	John Stultz <jstultz@google.com>, linux-usb@vger.kernel.org,
-	Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Tamir Duberstein <tamird@gmail.com>
-Subject: Re: [PATCH 00/46] Allow inlining C helpers into Rust when using LTO
-Message-ID: <aS-WlwsvGrbGYIYs@tardis.local>
-References: <20251202-define-rust-helper-v1-0-a2e13cbc17a6@google.com>
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="VY5AXu3z"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=RkklMJu9FFqAiZhztikGzdZ9ELoI3KClpc7D82q7U/EtT1YeH5elznwP+6sB3hySdO/sHy9udlc7siuCSqzPWkps0pwkjjC/dATP/PCQ8dghS7JoyK9Ocnr0psCC5LgKqdz2IykNju/GMhtyHT1QHRvhNDDhMbcRm6DQq/QmCTf5hzaLzW0FHwwIBrTYq9kEDq2IjxEO+u54+L58jHPzW+uVp4v+dWJJzF3A0dI1xhoo1lfJskLbfVDtfVbd9RUHIeXciJfTK9Od53nXEqoOUei6M7Q3tXyDcAVbpApLKYa0csGGyiMOhYTTeNuam2Xjte4/ITzIi1bqZLHICkgG7g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=rTFdKw13W0Kkr7Ei/JRAhchQa+Qc4tuxw7O3rUA2v6Y=;
+ b=Ls796wm/Wac+3U829hLHTMaN/1JakXT3DZ8iI6NqsTuNlUUfaEDcG3J3bUA/DvQrDrVaqDnpmar7rn1JsRlwxa6biCrs7R0BPo65sNTBhEwXmFQ09Ayxeo56JMwnHpDSx2WtPCnKFLX883vBWCDB5+KZpiLcjvGgN5jIrKqMtg00Y3Xm+0pZTKpbMlffUC0VC+PloAM7cVsXKkTWsNLmu6jmJnjghSrcrt8seBRptUQS4vnDTrWp3AbMLvA/9nOIHcAejgncViEfNATcUFdo0rGV3D1KMulVhvLRWUpyVTDTdj6gBfi8q8lrQZZP+qDUV0opqiBbf1KT/pruIpVM4w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 198.47.21.194) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=ti.com;
+ dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=ti.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=rTFdKw13W0Kkr7Ei/JRAhchQa+Qc4tuxw7O3rUA2v6Y=;
+ b=VY5AXu3ziTE/ly9DQKEnfTZQClZtecUF2YNjUeImeqSMu2aNcccjyobRM0o4A4KNq9uOrnREog5Q+XzhVfIYZ/wlRl19YjwECRjm/pdgnqSw2FoT1/AqnjuRSRJthskaXts3yctemEl/qONgaHGWifLsY3YCR58PXFwf5xwW68Q=
+Received: from CH2PR15CA0005.namprd15.prod.outlook.com (2603:10b6:610:51::15)
+ by BN0PR10MB4949.namprd10.prod.outlook.com (2603:10b6:408:12b::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9388.9; Wed, 3 Dec
+ 2025 07:50:35 +0000
+Received: from CH2PEPF0000014A.namprd02.prod.outlook.com
+ (2603:10b6:610:51:cafe::c6) by CH2PR15CA0005.outlook.office365.com
+ (2603:10b6:610:51::15) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9366.17 via Frontend Transport; Wed,
+ 3 Dec 2025 07:50:12 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.21.194)
+ smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
+ action=none header.from=ti.com;
+Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
+ 198.47.21.194 as permitted sender) receiver=protection.outlook.com;
+ client-ip=198.47.21.194; helo=flwvzet200.ext.ti.com; pr=C
+Received: from flwvzet200.ext.ti.com (198.47.21.194) by
+ CH2PEPF0000014A.mail.protection.outlook.com (10.167.244.107) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9388.8 via Frontend Transport; Wed, 3 Dec 2025 07:50:33 +0000
+Received: from DFLE200.ent.ti.com (10.64.6.58) by flwvzet200.ext.ti.com
+ (10.248.192.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 3 Dec
+ 2025 01:50:29 -0600
+Received: from DFLE207.ent.ti.com (10.64.6.65) by DFLE200.ent.ti.com
+ (10.64.6.58) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 3 Dec
+ 2025 01:50:29 -0600
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE207.ent.ti.com
+ (10.64.6.65) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Wed, 3 Dec 2025 01:50:28 -0600
+Received: from [172.24.235.38] (lt5cd2489kgj.dhcp.ti.com [172.24.235.38] (may be forged))
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5B37oOE63667076;
+	Wed, 3 Dec 2025 01:50:25 -0600
+Message-ID: <1283df52-ee41-477f-8d91-5c4a02385cef@ti.com>
+Date: Wed, 3 Dec 2025 13:20:24 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251202-define-rust-helper-v1-0-a2e13cbc17a6@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v2 3/4] clk: keystone: sci-clk: add restore_context()
+ operation
+To: "Thomas Richard (TI.com)" <thomas.richard@bootlin.com>, Nishanth Menon
+	<nm@ti.com>, Tero Kristo <kristo@kernel.org>, Santosh Shilimkar
+	<ssantosh@kernel.org>, Michael Turquette <mturquette@baylibre.com>, "Stephen
+ Boyd" <sboyd@kernel.org>
+CC: Gregory CLEMENT <gregory.clement@bootlin.com>,
+	<richard.genoud@bootlin.com>, Prasanth Mantena <p-mantena@ti.com>, "Abhash
+ Kumar" <a-kumar2@ti.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>, <u-kumar1@ti.com>
+References: <20251127-ti-sci-jacinto-s2r-restore-irq-v2-0-a487fa3ff221@bootlin.com>
+ <20251127-ti-sci-jacinto-s2r-restore-irq-v2-3-a487fa3ff221@bootlin.com>
+Content-Language: en-US
+From: "Kumar, Udit" <u-kumar1@ti.com>
+In-Reply-To: <20251127-ti-sci-jacinto-s2r-restore-irq-v2-3-a487fa3ff221@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PEPF0000014A:EE_|BN0PR10MB4949:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8e73eee1-e214-44a2-bac0-08de3240a3a6
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|376014|7416014|82310400026|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?dXZ5RFNpNDRicVhVL0Y1ZVlJTjdETVNjMThNSVorUmg1NkI5UGxRK2tpN0dw?=
+ =?utf-8?B?RGJaV211bEJ3RjZPZFRjdEl0S01MRWNQMzVvQzhYby9UR1c0Wm4rTVBlMU4z?=
+ =?utf-8?B?RU9NdE1ZdHVIS0E2b3N6YmNQNWZHSWl4bUpic2t1aUVlbjlPTk5XWFJmUTJL?=
+ =?utf-8?B?ZVRxMnl6YmI3V2dQSGV2VEJLVU10WEJLazRMeDZvMkFLbjJpZHRGYkZQbVhK?=
+ =?utf-8?B?VjlvYWNjSTNOQ1poa3hpYWloL0JFRk51Q1c4S0wrWElaM1JLamRleTJNOW9o?=
+ =?utf-8?B?NDZUb2UwOXhTRno1U0dyZkpCc2pJNm9qY0MyVWJNOFFNOUhUV28yNmpuY0h6?=
+ =?utf-8?B?MHd0RHA2MzRZYUdBdElSaE1qT0xMVHZwQUNJYy9nUFQrWlRVa3Q2bVg1RmtR?=
+ =?utf-8?B?WGlzckNWNktGTEllWTU4M0tmQnhsY1VtRXZhQVhZWTFoN2FHU010QVZlUHVY?=
+ =?utf-8?B?Umd5ZnlZQU1YUS8rT0cwdlA5UDlVT01XWmg5TVh5WW04MGtVUW9LVjFYT2tZ?=
+ =?utf-8?B?TmdIWUxiQksxOHUya3RnakUrQU9zTVl1L0hDVTBOTkxydXRQTXZyWEZrKzJJ?=
+ =?utf-8?B?UmJhZmJUQi9IS20rOWZDTHY1ZGpRNnhYVUZyQnRyekpWZlp5VFlaL1MzU3lu?=
+ =?utf-8?B?Zkp2dVlLdWx4ZU5hY3paeW83NFRZRmVZb3IwTFU0RUM0NTdWM3RPcnpqWXJW?=
+ =?utf-8?B?Z290N3duYXJpQmovd29QR0daTURybHZVTGwrdDRROFdWY3BocXVjbXVTRURD?=
+ =?utf-8?B?VzlBU3JBamRlUTl5YVVoMDVtMEkrRCs0RWthQ29RcW9idG1GSWJ5c1hRbi85?=
+ =?utf-8?B?SzZqNlFXUTZvVzFmZlJzWDNiRFVCZ2JyK0o0YnhadDU5RVRqWnZTa1B4ZFYy?=
+ =?utf-8?B?bEY1bEJ5RFp0U3U1aWw5QnYyQ29LaHh6S2hjbUNFNjNiamFsWXprcTlLZXdx?=
+ =?utf-8?B?d1pvOVByR2QxWmRlVHNFeWhtbitQN2tvcDl6K3NDa2R5Q2dCblphTUdaQjky?=
+ =?utf-8?B?QzRpNmVPMEpwNk1JRTBVMjA0OHBwVUZ4dEFoZXMvY2V1UHNleEJVbm1VTVpP?=
+ =?utf-8?B?QnJGYlJ5Tzh5N2o4M0c5SDFHOHFDdkN5azNWSEZVeHpqV2NFVTVOckl6Z0tt?=
+ =?utf-8?B?RmpKT0o0Y0ZGQWEyWmp1OCtkaW5yOWhIY2o2ZVlmWWdVRWVoTGhHM3pvVlM3?=
+ =?utf-8?B?dFRKRkFPdkhrSStPdE1XTHR3TlNPWkZCWjQ0VkdVMUlOVW5xYlJHcUxmVWdo?=
+ =?utf-8?B?VFpERklkS1F4TTFMMGFQeGkxVjRieVY4S1Vodm5lcG1YWjkyK3ozenEycXlE?=
+ =?utf-8?B?ME9BRUc2QkZmUnNTQ3I1L2F1MGF0eDU1RGkreWd6YmxBUjk3V01SWkJsUmc4?=
+ =?utf-8?B?VHY3RjFhL1RNd0hSZGtXQ2JDa29jam5VUkFPeVppbmV1OWhNbDducXhjaG52?=
+ =?utf-8?B?STh1Wk9ySjdoby9OTGViTG5nQlBqVnp1bzQyOGdmZUhpYnY1SFJDeVNSd2hr?=
+ =?utf-8?B?NFpJNnNpNVl2UllXVDVBVjJWN2dkdi9OK3k1SUoyZkd0R3dVK0pmSDdyZEdR?=
+ =?utf-8?B?c29LOWpmTE5neHEyOFppRitGMXh6S1NDSjdPTE5MVlRsaXhtKytCUWYyalZH?=
+ =?utf-8?B?V2NWdjRXSlZBbmV0MytvZjNaNEEwalZTYXNoOGhWQWJEOW1KVm1yZS95OEJN?=
+ =?utf-8?B?SGVrSysxY0Q4Mk5xVzZwQzMwcUtVLzZMRis3S3ZOMXZtU2J6NVpBOFhxRUl4?=
+ =?utf-8?B?TnU4WGlpSDdoS0kwQjBLaWladFNzTW5KeU1MZ1Y0VkxPT0Rma21uL0VHUzBz?=
+ =?utf-8?B?ci9BdTJweE5hTFRORVpZUnlCUmpzY3lwZTBtSE5vNVZ5Ri9BRXg1YWZXZGNQ?=
+ =?utf-8?B?NkJTMGFXTlk2SURQOHdVMlVITWs5TVBKUnlUMUF2R0tIb2twOVFVWW10VDJ0?=
+ =?utf-8?B?eG9MdFFjUEJrSjhSUjQ1Rm1KejB2MGxPU0N0RW1OWHdBcUtnSmVublB3NU9k?=
+ =?utf-8?B?SEFPRnhKLzMxTFZoL2FjdzZRK3dwcGcyZVJjcWJOK3ZBUnk3elRkUlR5aXI5?=
+ =?utf-8?B?UVJCZTFuSlV2NHMyenlwS1lpK3oxclJKZkpHSmlMcjhiRk1FL0hPTTIzSWhm?=
+ =?utf-8?Q?UZT8=3D?=
+X-Forefront-Antispam-Report:
+	CIP:198.47.21.194;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:flwvzet200.ext.ti.com;PTR:ErrorRetry;CAT:NONE;SFS:(13230040)(36860700013)(376014)(7416014)(82310400026)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: ti.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Dec 2025 07:50:33.7402
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8e73eee1-e214-44a2-bac0-08de3240a3a6
+X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.21.194];Helo=[flwvzet200.ext.ti.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH2PEPF0000014A.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN0PR10MB4949
 
-On Tue, Dec 02, 2025 at 07:37:24PM +0000, Alice Ryhl wrote:
-> This patch series adds __rust_helper to every single rust helper. The
-> patches do not depend on each other, so maintainers please go ahead and
-> pick up any patches relevant to your subsystem! Or provide your Acked-by
-> so that Miguel can pick them up.
-> 
-> These changes were generated by adding __rust_helper and running
-> ClangFormat. Unrelated formatting changes were removed manually.
-> 
-> Why is __rust_helper needed?
-> ============================
-> 
-> Currently, C helpers cannot be inlined into Rust even when using LTO
-> because LLVM detects slightly different options on the codegen units.
-> 
-> * LLVM doesn't want to inline functions compiled with
->   `-fno-delete-null-pointer-checks` with code compiled without. The C
->   CGUs all have this enabled and Rust CGUs don't. Inlining is okay since
->   this is one of the hardening features that does not change the ABI,
->   and we shouldn't have null pointer dereferences in these helpers.
-> 
-> * LLVM doesn't want to inline functions with different list of builtins. C
->   side has `-fno-builtin-wcslen`; `wcslen` is not a Rust builtin, so
->   they should be compatible, but LLVM does not perform inlining due to
->   attributes mismatch.
-> 
-> * clang and Rust doesn't have the exact target string. Clang generates
->   `+cmov,+cx8,+fxsr` but Rust doesn't enable them (in fact, Rust will
->   complain if `-Ctarget-feature=+cmov,+cx8,+fxsr` is used). x86-64
->   always enable these features, so they are in fact the same target
->   string, but LLVM doesn't understand this and so inlining is inhibited.
->   This can be bypassed with `--ignore-tti-inline-compatible`, but this
->   is a hidden option.
-> 
-> (This analysis was written by Gary Guo.)
-> 
-> How is this fixed?
-> ==================
-> 
-> To fix this we need to add __always_inline to all helpers when compiling
-> with LTO. However, it should not be added when running bindgen as
-> bindgen will ignore functions marked inline. To achieve this, we are
-> using a #define called __rust_helper that is defined differently
-> depending on whether bindgen is running or not.
-> 
-> Note that __rust_helper is currently always #defined to nothing.
-> Changing it to __always_inline will happen separately in another patch
-> series.
-> 
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 
-For the whole series:
-
-Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
-
-Regards,
-Boqun
-
+On 11/27/2025 2:08 PM, Thomas Richard (TI.com) wrote:
+> Implement the restore_context() operation to restore the clock parent
+> state. The parent index is saved in sci_clk struct during set_parent().
+> During clock registration, the core retrieves each clock’s parent using
+> get_parent() operation to ensure the internal clock tree reflects the
+> actual hardware state, including any configurations made by the
+> bootloader. So we also save the parent index in get_parent().
+>
+> Signed-off-by: Thomas Richard (TI.com) <thomas.richard@bootlin.com>
 > ---
-[...]
+>   drivers/clk/keystone/sci-clk.c | 25 ++++++++++++++++++++-----
+>   1 file changed, 20 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/clk/keystone/sci-clk.c b/drivers/clk/keystone/sci-clk.c
+> index a4b42811de55d..1e5dd01484d1c 100644
+> --- a/drivers/clk/keystone/sci-clk.c
+> +++ b/drivers/clk/keystone/sci-clk.c
+> @@ -47,6 +47,7 @@ struct sci_clk_provider {
+>    * @node:	 Link for handling clocks probed via DT
+>    * @cached_req:	 Cached requested freq for determine rate calls
+>    * @cached_res:	 Cached result freq for determine rate calls
+> + * @parent_id:	 Parent index for this clock
+>    */
+>   struct sci_clk {
+>   	struct clk_hw hw;
+> @@ -58,6 +59,7 @@ struct sci_clk {
+>   	struct list_head node;
+>   	unsigned long cached_req;
+>   	unsigned long cached_res;
+> +	u8 parent_id;
+
+you may need to restore rate as well
+
+
+>   };
+>   
+>   #define to_sci_clk(_hw) container_of(_hw, struct sci_clk, hw)
+> @@ -237,9 +239,9 @@ static u8 sci_clk_get_parent(struct clk_hw *hw)
+>   		return 0;
+>   	}
+>   
+> -	parent_id = parent_id - clk->clk_id - 1;
+> +	clk->parent_id = (u8)(parent_id - clk->clk_id - 1);
+>   
+> -	return (u8)parent_id;
+> +	return clk->parent_id;
+>   }
+>   
+>   /**
+> @@ -252,12 +254,24 @@ static u8 sci_clk_get_parent(struct clk_hw *hw)
+>   static int sci_clk_set_parent(struct clk_hw *hw, u8 index)
+>   {
+>   	struct sci_clk *clk = to_sci_clk(hw);
+> +	int ret;
+>   
+>   	clk->cached_req = 0;
+>   
+> -	return clk->provider->ops->set_parent(clk->provider->sci, clk->dev_id,
+> -					      clk->clk_id,
+> -					      index + 1 + clk->clk_id);
+> +	ret = clk->provider->ops->set_parent(clk->provider->sci, clk->dev_id,
+> +					     clk->clk_id,
+> +					     index + 1 + clk->clk_id);
+> +	if (!ret)
+> +		clk->parent_id = index;
+> +
+> +	return ret;
+> +}
+> +
+> +static void sci_clk_restore_context(struct clk_hw *hw)
+> +{
+> +	struct sci_clk *clk = to_sci_clk(hw);
+> +
+> +	sci_clk_set_parent(hw, clk->parent_id);
+
+You should restore,  if this is BOARD_CFG managed
+
+
+>   }
+>   
+>   static const struct clk_ops sci_clk_ops = {
+> @@ -269,6 +283,7 @@ static const struct clk_ops sci_clk_ops = {
+>   	.set_rate = sci_clk_set_rate,
+>   	.get_parent = sci_clk_get_parent,
+>   	.set_parent = sci_clk_set_parent,
+> +	.restore_context = sci_clk_restore_context,
+>   };
+>   
+>   /**
+>
