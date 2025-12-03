@@ -1,1375 +1,208 @@
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from TYVP286CU001.outbound.protection.outlook.com (mail-japaneastazon11011008.outbound.protection.outlook.com [52.101.125.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97C712F691D
-	for <linux-clk@vger.kernel.org>; Wed,  3 Dec 2025 12:23:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764764622; cv=none; b=iT8vXzTkYxapmO/EXeQwhwP2TvsqZWIKer3ztkH2z7qxkTkFXDDt+5Q9CfiDHzWVtftWpV8mS0zoiqp7vEnrpN2gtoAwQU+N0SzPY69r/16Qp0XImB61hvEQOT1FQcquZbUsAX8yQuC9Gqqa1xCRcTSo8e+mVgWCNDWcx6dd8SQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764764622; c=relaxed/simple;
-	bh=KfPwS+0Lzj+mUjkny9okK5O6acOtQa/dTGJv7W6ijSc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QOmmcex9rN3Rw52UZC7H5noz32a44HhbBr7a3GbvoLHD/36D2z0RWcVVzKP4A8tf7bh5GjPJbromITX2lvI0efiKLkRWgtTvsaMxy2AjuDiV3datqeaw775NjyWLncPSs8xkK6350mTtcmYvDB0QVJGSMBM8zPPs0eT5iGftvz4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sartura.hr; spf=pass smtp.mailfrom=sartura.hr; dkim=pass (2048-bit key) header.d=sartura.hr header.i=@sartura.hr header.b=Mx50FFYF; arc=none smtp.client-ip=209.85.222.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sartura.hr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sartura.hr
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 205D52FB624;
+	Wed,  3 Dec 2025 13:42:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.125.8
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1764769337; cv=fail; b=rB+O2O3kvtbmnjnOKcrt3DNnHqc1CitEE4To9TZIuHZ0jnEZbfhbZ916MgINBZW+csHlPreQ6ULmzFaWGOJB6v8Wv9Y5KarCYpl1l5IIukwamK/J8VMhbmMkAvFqTRI427DGHLdgdUoUtAStT0FTvcKY1RAMnBV7cidUrILmhFo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1764769337; c=relaxed/simple;
+	bh=83ZHgYELLtYvSZRnMzRvb6gDs+3F9tPLboN+YPlTda0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=ciQ44S2+ElSHU7DOvlUt4pa/kgTbWoZJVmz0CRc5wasEU5rzYiHdfiftF71xWJSjzI/tUlsOC7mSmc62llg+u4HZEoGg2zsWnFO5LCmkABYLgMHB8ACq3XGdU6sQa44SbmccZ++deJh+57WnToZ8egv3A25Lny3Q/Vnnw7hU5Ag=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=n+emns6N; arc=fail smtp.client-ip=52.101.125.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sartura.hr header.i=@sartura.hr header.b="Mx50FFYF"
-Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-8a3eac7ca30so422239885a.2
-        for <linux-clk@vger.kernel.org>; Wed, 03 Dec 2025 04:23:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sartura.hr; s=sartura; t=1764764618; x=1765369418; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tb7UFzmIkU/Nrr5ircYlbDOMo0utP9ezOeURil9uzgw=;
-        b=Mx50FFYFyZ9CS/aeop78+Q44gojdqSSsnSpCPfUzZmp1qgDZRyPFt9+cZwC250aMaA
-         IiNrnX8glW7T4TaSFrixhBZpZ4HOVrFauPaoe4947yq0N3cioRi3fAWBtsWAtnQiOFB7
-         VKUgWXm/crnFVIuIBXRt4Ci6M2gngSr6EOct+2GnDatFVPG2UVk2cmSUz3bMipR4NtN3
-         kgSAEqwLc/Ifjv+j0wH7zZ+CzAlemdrDcUqn6Xc989dvYVIYvXS/czCNyr6jReaEh3Km
-         BxZvdhrlQWZB+Y7nhvtfQnxNCCUWt6GMDyXAwetGCP0kxiEkrDfPTH6bCxWx6tFJDyYc
-         VMWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764764618; x=1765369418;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=tb7UFzmIkU/Nrr5ircYlbDOMo0utP9ezOeURil9uzgw=;
-        b=I7cU/Z3c+drVrDeWdKz9ABgwihDhgkRD3Zls2k0bvs29S0shsaRwb86uZy3pS/aWmx
-         r5TK80qcA3YZg0265qvSQr+uMW1D5DdBRuV4OZPGaYIgTEBLa0juPqtKxDvvOCaCIgYs
-         dDkK5ZqN63IVSJoL5r/WWv01T8mX0MaBPNqvHYFoxdPKUyrz2H9SCOsa/3osxqh/OYCP
-         p7lgJrViKELrSZJ5k/oRAClvAVDiRqp23jEUW7r0aoZf4AyWjQhzIwq6mMm80dNgSUbj
-         cp5KKIYuu5P3cIr/fk8RQSuiO803TQ+G6PKeJOS5fn3N71dHSWG7kmaG0usCnX0ONuqr
-         dtKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUvQWP9ZSa0yJGgYG4166RgtSuAkJJeybEHRe8wUjfdjubp8kjZ45jeOX/ghmOL8rCbvjZ0sLEVqS0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7onVLWix+sDR7tXxjCKHCeOitjSSXKnmn7eAlMfeGXMQxCyVM
-	DSSRUEPLl723jmYfIRZxaq9BU/1LgChzfhnzIqAT2baFdCr93wi+UWDkmMcSGmaVAWU=
-X-Gm-Gg: ASbGncucwNWVKXoSgmjnZN+xW6tz3wcd3oiUHxMCxJARkKrykbQXzSdXbemD7r690pm
-	vaIoDTIaqj9etZMeeH+1jhow4HDD55GEeU0fCJVqu4eJ/CCAuJpeNh/Nyens1YOnKvjcXsy4dVU
-	Fksca1/Ovv7KiVByiMGaPbNVs04pMgXaVsFJS1nSdZ/Uw+nrSP5qLt+m499r0q8z7dyjxxOBl33
-	VgYn8YLQtUhLsxlSu7ensZqshQ3A9XLdVZBwJbOxkDBNcfQCDiUaD/KC3cN1o5NhdGdhwhcQszM
-	zwni6Qb+oBAGbLq2ZEVWvo1ORZjZZIwSewmdLUrraHFPBnkp2deUIiFpEDfKwyQc6gC/5F8pD5h
-	ogd2POOAD9/y6Ceg59KgEYucdqEMrux119KOF+U7tmt+fW53aaVQfSnkWWzMtrl3P9kIDKHZC77
-	r+FthDNaxSt6kMz7Y4PTly5WS7Dejb5622y7e1M0oOtuci
-X-Google-Smtp-Source: AGHT+IEgyY2OaqM53jtNdv4PAXMAKZiowGQCxPIBp9Qz4US9vRxf92zjxmvMcEz1beU9ZhcOM12Ffg==
-X-Received: by 2002:ac8:594a:0:b0:4ee:2e6e:a0f9 with SMTP id d75a77b69052e-4f0175c3855mr26855381cf.35.1764764618240;
-        Wed, 03 Dec 2025 04:23:38 -0800 (PST)
-Received: from fedora (cpezg-94-253-146-247-cbl.xnet.hr. [94.253.146.247])
-        by smtp.googlemail.com with ESMTPSA id d75a77b69052e-4efd2f9a755sm115214351cf.3.2025.12.03.04.23.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Dec 2025 04:23:36 -0800 (PST)
-From: Robert Marko <robert.marko@sartura.hr>
-To: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	gregkh@linuxfoundation.org,
-	nicolas.ferre@microchip.com,
-	claudiu.beznea@tuxon.dev,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	richardcochran@gmail.com,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	daniel.machon@microchip.com,
-	UNGLinuxDriver@microchip.com
-Cc: luka.perkov@sartura.hr,
-	Robert Marko <robert.marko@sartura.hr>
-Subject: [PATCH 4/4] arm64: dts: microchip: add LAN969x support
-Date: Wed,  3 Dec 2025 13:21:32 +0100
-Message-ID: <20251203122313.1287950-4-robert.marko@sartura.hr>
-X-Mailer: git-send-email 2.52.0
-In-Reply-To: <20251203122313.1287950-1-robert.marko@sartura.hr>
-References: <20251203122313.1287950-1-robert.marko@sartura.hr>
+	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="n+emns6N"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=GCJlE2oeNe4HwytQYU5aK8s5UWLER6W2x1/IUHSiylsHdBnqW5pJC5IB1z5jwvgQGz6vA1Pvs/katAcq0kbcjVEE3bkiTK2LHKlgABXGuvK51Xu3zWPhaPJ1hV6M+q+c5Rl17nUoS48b+SeZ+mm/DyK7wdB6LBo6cBrwtfD9PKr+skj9CjnZrjFpOHqPf41FWxF2Zo4dFgkE4J7/X3l1/iepeEJkJd2OQdIIRpN5qDIM5J9nTj/DCn9+++oJvPdHkD3+XXeZux8xIBrRGQM7ySTanYRb/D/cvXGOzkeIOcDyJ+5mG2njCh12nSrqK0kkm7GRIR7YMAxG48uNA0Nliw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7Ui3lQKzuLlpHhfiAlL5ktc1NKeldRbgRiipbzercXA=;
+ b=w8pLC7rDZg//mc6CpwAz3Fvnw6l5ngqEq0X83i7g1mNbzRGithN2kh4L3nxf3UgmD7AW/LVlwDlH2KTQpstleri619fvULpjw9v0R+jbdVGUP8xMGmp2xZDmI6STpdtD8wLqo8qvZgK/fYyhVJaaD5+SXrbLPemCTtH80zueKy0qgRMy5wLgHN1nLGrRaMmgnffT4UVrH/53nSRSnq0c+YWx3leV3cQ7Hm/9sTpHhmHMIaRCjeEqvcm8LXIvy9RCiQX2xR4QoPEtidjYEv604exdfVl/QxaT79J5WclDa/1UbPihZfo9RbG61hXxogT5dW1b+f7mkwMFyFooEU37cA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7Ui3lQKzuLlpHhfiAlL5ktc1NKeldRbgRiipbzercXA=;
+ b=n+emns6N3vleeUJNnPZVWQZVr8ghPLe09V6a4dLsyuwYuRnfTbnRB3+yZNdFK/B7uO8UrhpvJctTVfErov6T/o9p1jmRWNv1GV2K1OTEf3SnadCis9KIbx/2WkWLXvdVPbIKH5mQjPxjn62JRj0j6kY3mCMsCEUP3IgMufCl4aQ=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=bp.renesas.com;
+Received: from TYCPR01MB11947.jpnprd01.prod.outlook.com (2603:1096:400:3e1::6)
+ by TY4PR01MB13905.jpnprd01.prod.outlook.com (2603:1096:405:1f8::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9388.10; Wed, 3 Dec
+ 2025 13:42:11 +0000
+Received: from TYCPR01MB11947.jpnprd01.prod.outlook.com
+ ([fe80::33f1:f7cd:46be:e4d8]) by TYCPR01MB11947.jpnprd01.prod.outlook.com
+ ([fe80::33f1:f7cd:46be:e4d8%5]) with mapi id 15.20.9388.003; Wed, 3 Dec 2025
+ 13:42:11 +0000
+Date: Wed, 3 Dec 2025 14:41:50 +0100
+From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: tomm.merciai@gmail.com, linux-renesas-soc@vger.kernel.org,
+	biju.das.jz@bp.renesas.com, Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 10/22] dt-bindings: display: renesas,rzg2l-du: Add
+ support for RZ/G3E SoC
+Message-ID: <aTA-Hj6DvjN4zeK6@tom-desktop>
+References: <cover.1764165783.git.tommaso.merciai.xr@bp.renesas.com>
+ <fcfc4fc5123c2351d96ac102aa5081bd99c8a40e.1764165783.git.tommaso.merciai.xr@bp.renesas.com>
+ <20251203-shrew-of-original-tempering-8a8cfc@quoll>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251203-shrew-of-original-tempering-8a8cfc@quoll>
+X-ClientProxiedBy: FR0P281CA0120.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:a8::10) To TYCPR01MB11947.jpnprd01.prod.outlook.com
+ (2603:1096:400:3e1::6)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TYCPR01MB11947:EE_|TY4PR01MB13905:EE_
+X-MS-Office365-Filtering-Correlation-Id: 58f1e377-e70f-4a8c-cac3-08de3271c248
+X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+ BCL:0;ARA:13230040|7416014|52116014|376014|366016|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+ =?us-ascii?Q?y2SsKp3YEO9TdtkRl6BZ6lolEvgo3YMUndJ2+9x5fcjvTI11kI71ibkz6A9Q?=
+ =?us-ascii?Q?2En/sDYgiD892rGrZF3v0QgX4xUhgxEoYMmf4Vz4woI/4P3BRlTWFDBejtv3?=
+ =?us-ascii?Q?voSxzMvM/kZSNI1/46Shy4EfualDDlREUrBX7LrNpTY09rqmAGSRKdPxbeRH?=
+ =?us-ascii?Q?Et4FXjQbvE0+iDHvjJUG9V6dGy7Gqwrw3+Ej5WCd+gFezsbBSZUz2qR/S+el?=
+ =?us-ascii?Q?XoWdF3YiKe24AInX2VMqWAFxLFV7tGLDqiIfgsiE6nkdq0r44B0ASc7ZiB8B?=
+ =?us-ascii?Q?NkUNshDvrzBaZiJEp8ddEb7Mk9yZW44gW+S8wAjLHpNUGdqSCobtfuWsDuBn?=
+ =?us-ascii?Q?IZvSJLy+mV++Vn+fCezc2aTTrCPcq5Ed2ektDKYftC/x1ftKiJ/Gn8u3YFkp?=
+ =?us-ascii?Q?DrgLNwN1kHmi3Af8hgzvR7K5RHuDcc8WrP9FTekvvIngGdjiJKd4XOJ2VcqG?=
+ =?us-ascii?Q?MkclCKQIkuxB7vbR2MoA1S4xe7+9kCdQt5qh658nlRFZzv+jOgG7b+h0k3x5?=
+ =?us-ascii?Q?MftTYnVNaorMAcTzswwY4y7bFa+BmyFTDu32h0KZRrKaycp/B/RKtGLV/nro?=
+ =?us-ascii?Q?pCIOKq3Oqhw/JAUpvTJIokDmkMaCJD66GJc4OVBZDF8L16ZZld19Mae1DzRQ?=
+ =?us-ascii?Q?MKaCN/QeUE7H55oplCPXulOK2ebCr/fkfIwIVUTxVhxTL79oa9etwZ9U8UfJ?=
+ =?us-ascii?Q?otexrmzMo9mDfj67JzrzFySoLrgvrFtYNdErY2Hb8B+WSoNO0dbJTfAfGYI/?=
+ =?us-ascii?Q?uiisynCXtb+27T8weTv8PkYKiLvyrKs3ir4Oc16re0wBOgXwyAwkqiJLoe2w?=
+ =?us-ascii?Q?XTwRrwGjxVDIr1BtzqdPc+gRLgjONI1OnE6QDVgQqx7QR2gPcvvU59aEwXRT?=
+ =?us-ascii?Q?pbDWv7c4pX2ZPmDIDgRafERpFr/ghCHc+utmzjH7EZr0QbjxaicYcGf8A1DJ?=
+ =?us-ascii?Q?ANF9VcgeOMWkw/HIbteVJ8dL335qHBiA3vnXEN/1IRqO7Pcz7EC1wDehnpFR?=
+ =?us-ascii?Q?LMtm9dFAYdl3maTmsI9JY3idl4VWoyzPAo19wA0zFmwd73j3APKJG3EOOobc?=
+ =?us-ascii?Q?S+4hrFw3nnEgL8wggO1c93UOTRai40kAUtCMFp093ol0zFVsaQDoMQ3bEE1R?=
+ =?us-ascii?Q?kN93APCxehmwg4onM5Lw3FL8ckPFdEeIy9svQmMIQKvewlIZOaSFWQXfglub?=
+ =?us-ascii?Q?alzN/+94klu6yHYEJtdkf1SLUPp4iqMbqqAoa07Kg9Npr3w6/JLOF58hZfXy?=
+ =?us-ascii?Q?aOhUkw84A6xxhllQkGWWbvZrWpNToRn7xECI9v9EIY12kOEem0bNEyybujmT?=
+ =?us-ascii?Q?RQMawlDq1f/0flKlm2xzaKxViv/xKJ8pjKCUkurC+324sQSMHGC6Rz8GvTZt?=
+ =?us-ascii?Q?9XQSQjGKCkuIJvrSY2vcbfbA4XOl97xjvZd5yg8ie3iJnd4BpkG/zme5OTOX?=
+ =?us-ascii?Q?iSk8qZHPXosdh3HHG/UGPENP3xm8/YmrPpgQGDjIloIXKQrMx653KiX9GqkW?=
+ =?us-ascii?Q?nJAQA6R2HgDyCuh6Jq+bRM0ol9lM6+TiInBw?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB11947.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(52116014)(376014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?us-ascii?Q?mY1az3aPNNyg/1wC2Cs8FR1zsEzO3RP/OCf8yqjb6cV0dUNMMI9ofrE0oaPK?=
+ =?us-ascii?Q?V11Llb6ROrWiDzUPk4j0eatcqcjZ2YJHPk9W3waWz0uvPcAG9oWWc2LcQHYv?=
+ =?us-ascii?Q?C7ndvRHGlZtgo0MEYd97zUSvd8Z/u183Ens2O0DPGeprhULi/+riAZkfZDE6?=
+ =?us-ascii?Q?JTa4ru6+GWQiIIx1EcOyZ5XxxBn4+zhDsmhEut96i/DqqhgLP4WRMkZ+HLF0?=
+ =?us-ascii?Q?VCGmgUByvGrUjg64X64E3pqj4WJWZA4ioFIpzbWo6xw48+/M5HX/DQzf7+8M?=
+ =?us-ascii?Q?244mLrhDIblGVru1hZ+oLWd4WLEoyJVDcaqsjumVwCdMBZd/qC4n33nVtIJv?=
+ =?us-ascii?Q?TZnvaw3YUyF8l0sjVHYa6P3KEe/KlgdQN2cBCuX2eD4y8XRHdNbCyyC7prnX?=
+ =?us-ascii?Q?eMSWmJ9C1bQcQm1XtqVJ91kJrwAYr69Nmkg8+rKj4oOqIDDJXjBjNpPUjanE?=
+ =?us-ascii?Q?B74Ap9dwhgas7eKshDNyxEuCkdItEBQ/mdA8i0BWWZjPN/DmrfNpNtlh4CZf?=
+ =?us-ascii?Q?0A8ippXEvaSw35OlVsM+pR9KFdzkk72BWm6bG+P+xDJhxwbqay0IXKdCPo27?=
+ =?us-ascii?Q?rXNEcWpfANV0Ggij3Za1cWnWdK6LjfL6s/YP+YYQ25eaPxYG40+QwWz6Ejq/?=
+ =?us-ascii?Q?tbXGmKoB8tyUe0l5DKzuHe4ml9baU77HJIJFa3dGfre4vVz2cMFpWRUjJx25?=
+ =?us-ascii?Q?3UJ3ZCHTtnvbhQy4EcPDx1HMa0rTkJyiK/yo6XsPuxqe5Em/IHsimOo4XMlw?=
+ =?us-ascii?Q?+JEvksv6C50LBXp6iyDPDPeXOnsReBwXD0lxCcLxNSahfkyiI7hjj8j4gECD?=
+ =?us-ascii?Q?hYoMUvjUHByENVaZtl/yjjdoQxnaF68gp/UBtnPBLMYydCr6nNkucoX6KRDp?=
+ =?us-ascii?Q?b7OU2PTITgeNJSLS0RtzLBsNkQr7U8evrFUYKbhLqrVof6SCdBJhX6SLvXNR?=
+ =?us-ascii?Q?80zu5kvQpThlvCfCx0e4cG+EnqNZg5CY/a64n1KKXhM01LEZCl9Nf74gOOGn?=
+ =?us-ascii?Q?+0tpVQ0hX/IxC3DHsUuSDF9lmi3hwYg2O9Lza72IVNxZSMj9cYQRYpV2y14E?=
+ =?us-ascii?Q?YQq3AaM7M7iWd7BFjSg/dHDM4n5nAJW0AB8OjuBpElYmvozNfCg42a8Ll1b1?=
+ =?us-ascii?Q?fYBNQ2CwnrogS9ceGMKlw1mXTak/DerF2zAnoNV10+F5ku65JCdm6h0+lla6?=
+ =?us-ascii?Q?5AadozQBQg5rn7EMAq6E+qO3MLrXmuyHL/TECEUw9duF/1tLL0e1M+keE6zs?=
+ =?us-ascii?Q?031w6Z5fUZseBZAbAwoxElI5W+nLf27QYaskZ8tPWhdTsvz5YsyPUkT4xjp0?=
+ =?us-ascii?Q?sSMPr5TynIQv8CKymtI8bIRSlg1NjzaPYMuDM0qol/m7GXhnk83q3TPsAofO?=
+ =?us-ascii?Q?AqVaKv0JLDiDFm7mxexIJizfkQZIcqYHz9hBakmSv3uglxYwK4WNjpx6u1tm?=
+ =?us-ascii?Q?g0E61A9rwwMFjKdKE852fX+Nudt7BUI8h2aiGz3x0YwEGfVYV/49t1Cgdb7+?=
+ =?us-ascii?Q?uzbphZ5+/+N7swFWUvawAd+eQG/Ii+UvezHLaIZz2Op4Tc8GujUH+/7YIpJI?=
+ =?us-ascii?Q?dpS8TokmETi5iAeRnoYnKupjN5uvQWpqehzm0UZqAAhyVXnw5ETX12Ai8dvX?=
+ =?us-ascii?Q?AqC+Zb1G0+bpBxHGF7Aca6M=3D?=
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 58f1e377-e70f-4a8c-cac3-08de3271c248
+X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB11947.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Dec 2025 13:42:10.9478
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: wPKGGpaVlsymJ7PPIgUOET8secNxW5eT6Otgk9bhPN7NZZbLUWXYGTsQbLTjq6JB1HpaPtLKdJ7wz4/BbkUyWUrrMe9RC3jRTaX5iOal77D+lxS8SBwuyxVL4gzhToBk
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY4PR01MB13905
 
-Add support for Microchip LAN969x switch SoC, including the EV23X71A
-EVB board.
+Hi Krzysztof,
+Thanks for your review!
 
-Signed-off-by: Robert Marko <robert.marko@sartura.hr>
----
- arch/arm64/boot/dts/microchip/Makefile        |   2 +
- .../boot/dts/microchip/lan9696-ev23x71a.dts   | 761 ++++++++++++++++++
- arch/arm64/boot/dts/microchip/lan969x.dtsi    | 482 +++++++++++
- 3 files changed, 1245 insertions(+)
- create mode 100644 arch/arm64/boot/dts/microchip/lan9696-ev23x71a.dts
- create mode 100644 arch/arm64/boot/dts/microchip/lan969x.dtsi
+On Wed, Dec 03, 2025 at 09:23:53AM +0100, Krzysztof Kozlowski wrote:
+> On Wed, Nov 26, 2025 at 03:07:22PM +0100, Tommaso Merciai wrote:
+> > The RZ/G3E Soc has 2 LCD controller (LCDC), contain a Frame Compression
+> > Processor (FCPVD), a Video Signal Processor (VSPD), Video Signal
+> > Processor (VSPD), and Display Unit (DU).
+> > 
+> >  - LCDC0 supports DSI and LVDS (single or dual-channel) outputs.
+> >  - LCDC1 supports DSI, LVDS (single-channel), and RGB outputs.
+> > 
+> > Add then two new SoC-specific compatible strings 'renesas,r9a09g047-du0'
+> > and 'renesas,r9a09g047-du1'.
+> 
+> LCDC0/1 but compatibles du0/du1...
+> 
+> What are the differences between DU0 and DU1? Just different outputs? Is
+> the programming model the same?
 
-diff --git a/arch/arm64/boot/dts/microchip/Makefile b/arch/arm64/boot/dts/microchip/Makefile
-index c6e0313eea0f..d02ac50aae79 100644
---- a/arch/arm64/boot/dts/microchip/Makefile
-+++ b/arch/arm64/boot/dts/microchip/Makefile
-@@ -2,3 +2,5 @@
- dtb-$(CONFIG_ARCH_SPARX5) += sparx5_pcb125.dtb
- dtb-$(CONFIG_ARCH_SPARX5) += sparx5_pcb134.dtb sparx5_pcb134_emmc.dtb
- dtb-$(CONFIG_ARCH_SPARX5) += sparx5_pcb135.dtb sparx5_pcb135_emmc.dtb
-+
-+dtb-$(CONFIG_ARCH_LAN969X) += lan9696-ev23x71a.dtb
-\ No newline at end of file
-diff --git a/arch/arm64/boot/dts/microchip/lan9696-ev23x71a.dts b/arch/arm64/boot/dts/microchip/lan9696-ev23x71a.dts
-new file mode 100644
-index 000000000000..6bbddad2a0b9
---- /dev/null
-+++ b/arch/arm64/boot/dts/microchip/lan9696-ev23x71a.dts
-@@ -0,0 +1,761 @@
-+// SPDX-License-Identifier: (GPL-2.0-or-later OR MIT)
-+/*
-+ * Copyright (c) 2025 Microchip Technology Inc. and its subsidiaries.
-+ */
-+
-+/dts-v1/;
-+
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/leds/common.h>
-+#include "lan969x.dtsi"
-+
-+/ {
-+	model = "Microchip EV23X71A";
-+	compatible = "microchip,ev23x71a", "microchip,lan969x";
-+
-+	aliases {
-+		serial0 = &usart0;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	gpio-restart {
-+		compatible = "gpio-restart";
-+		gpios = <&gpio 60 GPIO_ACTIVE_LOW>;
-+		open-source;
-+		priority = <200>;
-+	};
-+
-+	i2c-mux {
-+		compatible = "i2c-mux-gpio";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		i2c-parent = <&i2c3>;
-+
-+		mux-gpios = <&sgpio_out 0 1 GPIO_ACTIVE_HIGH
-+			     &sgpio_out 0 2 GPIO_ACTIVE_HIGH
-+			     &sgpio_out 0 3 GPIO_ACTIVE_HIGH>;
-+		idle-state = <0x8>;
-+
-+		i2c_sfp0: i2c@0 {
-+			reg = <0x0>;
-+		};
-+
-+		i2c_sfp1: i2c@1 {
-+			reg = <0x1>;
-+		};
-+
-+		i2c_sfp2: i2c@2 {
-+			reg = <0x2>;
-+		};
-+
-+		i2c_sfp3: i2c@3 {
-+			reg = <0x3>;
-+		};
-+
-+		i2c_poe: i2c@7 {
-+			reg = <0x7>;
-+		};
-+	};
-+
-+	leds {
-+		compatible = "gpio-leds";
-+
-+		led-status {
-+			color = <LED_COLOR_ID_GREEN>;
-+			function = LED_FUNCTION_STATUS;
-+			gpios = <&gpio 61 GPIO_ACTIVE_LOW>;
-+		};
-+
-+		led-sfp1-green {
-+			color = <LED_COLOR_ID_GREEN>;
-+			function = LED_FUNCTION_LAN;
-+			function-enumerator = <0>;
-+			gpios = <&sgpio_out 6 0 GPIO_ACTIVE_LOW>;
-+			default-state = "off";
-+		};
-+
-+		led-sfp1-yellow {
-+			color = <LED_COLOR_ID_YELLOW>;
-+			function = LED_FUNCTION_LAN;
-+			function-enumerator = <0>;
-+			gpios = <&sgpio_out 6 1 GPIO_ACTIVE_LOW>;
-+			default-state = "off";
-+		};
-+
-+		led-sfp2-green {
-+			color = <LED_COLOR_ID_GREEN>;
-+			function = LED_FUNCTION_LAN;
-+			function-enumerator = <1>;
-+			gpios = <&sgpio_out 7 0 GPIO_ACTIVE_LOW>;
-+			default-state = "off";
-+		};
-+
-+		led-sfp2-yellow {
-+			color = <LED_COLOR_ID_YELLOW>;
-+			function = LED_FUNCTION_LAN;
-+			function-enumerator = <1>;
-+			gpios = <&sgpio_out 7 1 GPIO_ACTIVE_LOW>;
-+			default-state = "off";
-+		};
-+
-+		led-sfp3-green {
-+			color = <LED_COLOR_ID_GREEN>;
-+			function = LED_FUNCTION_LAN;
-+			function-enumerator = <2>;
-+			gpios = <&sgpio_out 8 0 GPIO_ACTIVE_LOW>;
-+			default-state = "off";
-+		};
-+
-+		led-sfp3-yellow {
-+			color = <LED_COLOR_ID_YELLOW>;
-+			function = LED_FUNCTION_LAN;
-+			function-enumerator = <2>;
-+			gpios = <&sgpio_out 8 1 GPIO_ACTIVE_LOW>;
-+			default-state = "off";
-+		};
-+
-+		led-sfp4-green {
-+			color = <LED_COLOR_ID_GREEN>;
-+			function = LED_FUNCTION_LAN;
-+			function-enumerator = <3>;
-+			gpios = <&sgpio_out 9 0 GPIO_ACTIVE_LOW>;
-+			default-state = "off";
-+		};
-+
-+		led-sfp4-yellow {
-+			color = <LED_COLOR_ID_YELLOW>;
-+			function = LED_FUNCTION_LAN;
-+			function-enumerator = <3>;
-+			gpios = <&sgpio_out 9 1 GPIO_ACTIVE_LOW>;
-+			default-state = "off";
-+		};
-+	};
-+
-+	mux-controller {
-+		compatible = "gpio-mux";
-+		#mux-control-cells = <0>;
-+
-+		mux-gpios = <&sgpio_out 1 2 GPIO_ACTIVE_LOW>,
-+			    <&sgpio_out 1 3 GPIO_ACTIVE_LOW>;
-+	};
-+
-+	sfp0: sfp0 {
-+		compatible = "sff,sfp";
-+		i2c-bus = <&i2c_sfp0>;
-+		tx-disable-gpios = <&sgpio_out 6 2 GPIO_ACTIVE_HIGH>;
-+		los-gpios = <&sgpio_in 6 0 GPIO_ACTIVE_HIGH>;
-+		mod-def0-gpios = <&sgpio_in 6 1 GPIO_ACTIVE_LOW>;
-+		tx-fault-gpios = <&sgpio_in 6 2 GPIO_ACTIVE_HIGH>;
-+	};
-+
-+	sfp1: sfp1 {
-+		compatible = "sff,sfp";
-+		i2c-bus = <&i2c_sfp1>;
-+		tx-disable-gpios = <&sgpio_out 7 2 GPIO_ACTIVE_HIGH>;
-+		los-gpios = <&sgpio_in 7 0 GPIO_ACTIVE_HIGH>;
-+		mod-def0-gpios = <&sgpio_in 7 1 GPIO_ACTIVE_LOW>;
-+		tx-fault-gpios = <&sgpio_in 7 2 GPIO_ACTIVE_HIGH>;
-+	};
-+
-+	sfp2: sfp2 {
-+		compatible = "sff,sfp";
-+		i2c-bus = <&i2c_sfp2>;
-+		tx-disable-gpios = <&sgpio_out 8 2 GPIO_ACTIVE_HIGH>;
-+		los-gpios = <&sgpio_in 8 0 GPIO_ACTIVE_HIGH>;
-+		mod-def0-gpios = <&sgpio_in 8 1 GPIO_ACTIVE_LOW>;
-+		tx-fault-gpios = <&sgpio_in 8 2 GPIO_ACTIVE_HIGH>;
-+	};
-+
-+	sfp3: sfp3 {
-+		compatible = "sff,sfp";
-+		i2c-bus = <&i2c_sfp3>;
-+		tx-disable-gpios = <&sgpio_out 9 2 GPIO_ACTIVE_HIGH>;
-+		los-gpios = <&sgpio_in 9 0 GPIO_ACTIVE_HIGH>;
-+		mod-def0-gpios = <&sgpio_in 9 1 GPIO_ACTIVE_LOW>;
-+		tx-fault-gpios = <&sgpio_in 9 2 GPIO_ACTIVE_HIGH>;
-+	};
-+};
-+
-+&flx0 {
-+	atmel,flexcom-mode = <ATMEL_FLEXCOM_MODE_USART>;
-+	status = "okay";
-+};
-+
-+&usart0 {
-+	pinctrl-0 = <&fc0_pins>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+};
-+
-+&flx2 {
-+	atmel,flexcom-mode = <ATMEL_FLEXCOM_MODE_SPI>;
-+	status = "okay";
-+};
-+
-+&spi2 {
-+	pinctrl-0 = <&fc2_pins>;
-+	pinctrl-names = "default";
-+	cs-gpios = <&gpio 63 GPIO_ACTIVE_LOW>;
-+	status = "okay";
-+};
-+
-+&flx3 {
-+	atmel,flexcom-mode = <ATMEL_FLEXCOM_MODE_TWI>;
-+	status = "okay";
-+};
-+
-+&i2c3 {
-+	pinctrl-0 = <&fc3_pins>;
-+	pinctrl-names = "default";
-+	i2c-analog-filter;
-+	i2c-digital-filter;
-+	i2c-digital-filter-width-ns = <35>;
-+	i2c-sda-hold-time-ns = <1500>;
-+	status = "okay";
-+};
-+
-+&gpio {
-+	emmc_sd_pins: emmc-sd-pins {
-+		/* eMMC_SD - CMD, CLK, D0, D1, D2, D3, D4, D5, D6, D7, RSTN */
-+		pins = "GPIO_14", "GPIO_15", "GPIO_16", "GPIO_17",
-+		       "GPIO_18", "GPIO_19", "GPIO_20", "GPIO_21",
-+		       "GPIO_22", "GPIO_23", "GPIO_24";
-+		function = "emmc_sd";
-+	};
-+
-+	fan_pins: fan-pins {
-+		pins = "GPIO_25", "GPIO_26";
-+		function = "fan";
-+	};
-+
-+	fc0_pins: fc0-pins {
-+		pins = "GPIO_3", "GPIO_4";
-+		function = "fc";
-+	};
-+
-+	fc2_pins: fc2-pins {
-+		pins = "GPIO_64", "GPIO_65", "GPIO_66";
-+		function = "fc";
-+	};
-+
-+	fc3_pins: fc3-pins {
-+		pins = "GPIO_55", "GPIO_56";
-+		function = "fc";
-+	};
-+
-+	mdio_pins: mdio-pins {
-+		pins = "GPIO_9", "GPIO_10";
-+		function = "miim";
-+	};
-+
-+	mdio_irq_pins: mdio-irq-pins {
-+		pins = "GPIO_11";
-+		function = "miim_irq";
-+	};
-+
-+	sgpio_pins: sgpio-pins {
-+		/* SCK, D0, D1, LD */
-+		pins = "GPIO_5", "GPIO_6", "GPIO_7", "GPIO_8";
-+		function = "sgpio_a";
-+	};
-+
-+	usb_ulpi_pins: usb-ulpi-pins {
-+		pins = "GPIO_30", "GPIO_31", "GPIO_32", "GPIO_33",
-+		"GPIO_34", "GPIO_35", "GPIO_36", "GPIO_37",
-+		"GPIO_38", "GPIO_39", "GPIO_40", "GPIO_41";
-+		function = "usb_ulpi";
-+	};
-+
-+	usb_rst_pins: usb-rst-pins {
-+		pins = "GPIO_12";
-+		function = "usb2phy_rst";
-+	};
-+
-+	usb_over_pins: usb-over-pins {
-+		pins = "GPIO_13";
-+		function = "usb_over_detect";
-+	};
-+
-+	usb_power_pins: usb-power-pins {
-+		pins = "GPIO_1";
-+		function = "usb_power";
-+	};
-+
-+	ptp_out_pins: ptp-out-pins {
-+		pins = "GPIO_58";
-+		function = "ptpsync_4";
-+	};
-+
-+	ptp_ext_pins: ptp-ext-pins {
-+		pins = "GPIO_59";
-+		function = "ptpsync_5";
-+	};
-+};
-+
-+&tmon {
-+	pinctrl-0 = <&fan_pins>;
-+	pinctrl-names = "default";
-+};
-+
-+&mdio0 {
-+	pinctrl-0 = <&mdio_pins>, <&mdio_irq_pins>;
-+	pinctrl-names = "default";
-+	reset-gpios = <&gpio 62 GPIO_ACTIVE_LOW>;
-+	status = "okay";
-+
-+	phy3: phy@3 {
-+		compatible = "ethernet-phy-ieee802.3-c22";
-+		reg = <3>;
-+		interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
-+		interrupt-parent = <&gpio>;
-+	};
-+
-+	phy4: phy@4 {
-+		compatible = "ethernet-phy-ieee802.3-c22";
-+		reg = <4>;
-+		interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
-+		interrupt-parent = <&gpio>;
-+	};
-+
-+	phy5: phy@5 {
-+		compatible = "ethernet-phy-ieee802.3-c22";
-+		reg = <5>;
-+		interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
-+		interrupt-parent = <&gpio>;
-+	};
-+
-+	phy6: phy@6 {
-+		compatible = "ethernet-phy-ieee802.3-c22";
-+		reg = <6>;
-+		interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
-+		interrupt-parent = <&gpio>;
-+	};
-+
-+	phy7: phy@7 {
-+		compatible = "ethernet-phy-ieee802.3-c22";
-+		reg = <7>;
-+		interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
-+		interrupt-parent = <&gpio>;
-+	};
-+
-+	phy8: phy@8 {
-+		compatible = "ethernet-phy-ieee802.3-c22";
-+		reg = <8>;
-+		interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
-+		interrupt-parent = <&gpio>;
-+	};
-+
-+	phy9: phy@9 {
-+		compatible = "ethernet-phy-ieee802.3-c22";
-+		reg = <9>;
-+		interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
-+		interrupt-parent = <&gpio>;
-+	};
-+
-+	phy10: phy@10 {
-+		compatible = "ethernet-phy-ieee802.3-c22";
-+		reg = <10>;
-+		interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
-+		interrupt-parent = <&gpio>;
-+	};
-+
-+	phy11: phy@11 {
-+		compatible = "ethernet-phy-ieee802.3-c22";
-+		reg = <11>;
-+		interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
-+		interrupt-parent = <&gpio>;
-+	};
-+
-+	phy12: phy@12 {
-+		compatible = "ethernet-phy-ieee802.3-c22";
-+		reg = <12>;
-+		interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
-+		interrupt-parent = <&gpio>;
-+	};
-+
-+	phy13: phy@13 {
-+		compatible = "ethernet-phy-ieee802.3-c22";
-+		reg = <13>;
-+		interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
-+		interrupt-parent = <&gpio>;
-+	};
-+
-+	phy14: phy@14 {
-+		compatible = "ethernet-phy-ieee802.3-c22";
-+		reg = <14>;
-+		interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
-+		interrupt-parent = <&gpio>;
-+	};
-+
-+	phy15: phy@15 {
-+		compatible = "ethernet-phy-ieee802.3-c22";
-+		reg = <15>;
-+		interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
-+		interrupt-parent = <&gpio>;
-+	};
-+
-+	phy16: phy@16 {
-+		compatible = "ethernet-phy-ieee802.3-c22";
-+		reg = <16>;
-+		interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
-+		interrupt-parent = <&gpio>;
-+	};
-+
-+	phy17: phy@17 {
-+		compatible = "ethernet-phy-ieee802.3-c22";
-+		reg = <17>;
-+		interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
-+		interrupt-parent = <&gpio>;
-+	};
-+
-+	phy18: phy@18 {
-+		compatible = "ethernet-phy-ieee802.3-c22";
-+		reg = <18>;
-+		interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
-+		interrupt-parent = <&gpio>;
-+	};
-+
-+	phy19: phy@19 {
-+		compatible = "ethernet-phy-ieee802.3-c22";
-+		reg = <19>;
-+		interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
-+		interrupt-parent = <&gpio>;
-+	};
-+
-+	phy20: phy@20 {
-+		compatible = "ethernet-phy-ieee802.3-c22";
-+		reg = <20>;
-+		interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
-+		interrupt-parent = <&gpio>;
-+	};
-+
-+	phy21: phy@21 {
-+		compatible = "ethernet-phy-ieee802.3-c22";
-+		reg = <21>;
-+		interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
-+		interrupt-parent = <&gpio>;
-+	};
-+
-+	phy22: phy@22 {
-+		compatible = "ethernet-phy-ieee802.3-c22";
-+		reg = <22>;
-+		interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
-+		interrupt-parent = <&gpio>;
-+	};
-+
-+	phy23: phy@23 {
-+		compatible = "ethernet-phy-ieee802.3-c22";
-+		reg = <23>;
-+		interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
-+		interrupt-parent = <&gpio>;
-+	};
-+
-+	phy24: phy@24 {
-+		compatible = "ethernet-phy-ieee802.3-c22";
-+		reg = <24>;
-+		interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
-+		interrupt-parent = <&gpio>;
-+	};
-+
-+	phy25: phy@25 {
-+		compatible = "ethernet-phy-ieee802.3-c22";
-+		reg = <25>;
-+		interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
-+		interrupt-parent = <&gpio>;
-+	};
-+
-+	phy26: phy@26 {
-+		compatible = "ethernet-phy-ieee802.3-c22";
-+		reg = <26>;
-+		interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
-+		interrupt-parent = <&gpio>;
-+	};
-+
-+	phy27: phy@27 {
-+		compatible = "ethernet-phy-ieee802.3-c22";
-+		reg = <27>;
-+		interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
-+		interrupt-parent = <&gpio>;
-+	};
-+};
-+
-+&serdes {
-+	status = "okay";
-+};
-+
-+&sgpio {
-+	pinctrl-0 = <&sgpio_pins>;
-+	pinctrl-names = "default";
-+
-+	microchip,sgpio-port-ranges = <0 1>, <6 9>;
-+	status = "okay";
-+
-+	gpio@0 {
-+		ngpios = <128>;
-+	};
-+	gpio@1 {
-+		ngpios = <128>;
-+	};
-+};
-+
-+&switch {
-+	pinctrl-0 = <&ptp_out_pins>, <&ptp_ext_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+	ethernet-ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		port0: port@0 {
-+			reg = <0>;
-+			microchip,bandwidth = <1000>;
-+			phy-handle = <&phy4>;
-+			phy-mode = "qsgmii";
-+			phys = <&serdes 0>;
-+		};
-+
-+		port1: port@1 {
-+			reg = <1>;
-+			microchip,bandwidth = <1000>;
-+			phy-handle = <&phy5>;
-+			phy-mode = "qsgmii";
-+			phys = <&serdes 0>;
-+		};
-+
-+		port2: port@2 {
-+			reg = <2>;
-+			microchip,bandwidth = <1000>;
-+			phy-handle = <&phy6>;
-+			phy-mode = "qsgmii";
-+			phys = <&serdes 0>;
-+		};
-+
-+		port3: port@3 {
-+			reg = <3>;
-+			microchip,bandwidth = <1000>;
-+			phy-handle = <&phy7>;
-+			phy-mode = "qsgmii";
-+			phys = <&serdes 0>;
-+		};
-+
-+		port4: port@4 {
-+			reg = <4>;
-+			microchip,bandwidth = <1000>;
-+			phy-handle = <&phy8>;
-+			phy-mode = "qsgmii";
-+			phys = <&serdes 1>;
-+		};
-+
-+		port5: port@5 {
-+			reg = <5>;
-+			microchip,bandwidth = <1000>;
-+			phy-handle = <&phy9>;
-+			phy-mode = "qsgmii";
-+			phys = <&serdes 1>;
-+		};
-+
-+		port6: port@6 {
-+			reg = <6>;
-+			microchip,bandwidth = <1000>;
-+			phy-handle = <&phy10>;
-+			phy-mode = "qsgmii";
-+			phys = <&serdes 1>;
-+		};
-+
-+		port7: port@7 {
-+			reg = <7>;
-+			microchip,bandwidth = <1000>;
-+			phy-handle = <&phy11>;
-+			phy-mode = "qsgmii";
-+			phys = <&serdes 1>;
-+		};
-+
-+		port8: port@8 {
-+			reg = <8>;
-+			microchip,bandwidth = <1000>;
-+			phy-handle = <&phy12>;
-+			phy-mode = "qsgmii";
-+			phys = <&serdes 2>;
-+		};
-+
-+		port9: port@9 {
-+			reg = <9>;
-+			microchip,bandwidth = <1000>;
-+			phy-handle = <&phy13>;
-+			phy-mode = "qsgmii";
-+			phys = <&serdes 2>;
-+		};
-+
-+		port10: port@10 {
-+			reg = <10>;
-+			microchip,bandwidth = <1000>;
-+			phy-handle = <&phy14>;
-+			phy-mode = "qsgmii";
-+			phys = <&serdes 2>;
-+		};
-+
-+		port11: port@11 {
-+			reg = <11>;
-+			microchip,bandwidth = <1000>;
-+			phy-handle = <&phy15>;
-+			phy-mode = "qsgmii";
-+			phys = <&serdes 2>;
-+		};
-+
-+		port12: port@12 {
-+			reg = <12>;
-+			microchip,bandwidth = <1000>;
-+			phy-handle = <&phy16>;
-+			phy-mode = "qsgmii";
-+			phys = <&serdes 3>;
-+		};
-+
-+		port13: port@13 {
-+			reg = <13>;
-+			microchip,bandwidth = <1000>;
-+			phy-handle = <&phy17>;
-+			phy-mode = "qsgmii";
-+			phys = <&serdes 3>;
-+		};
-+
-+		port14: port@14 {
-+			reg = <14>;
-+			microchip,bandwidth = <1000>;
-+			phy-handle = <&phy18>;
-+			phy-mode = "qsgmii";
-+			phys = <&serdes 3>;
-+		};
-+
-+		port15: port@15 {
-+			reg = <15>;
-+			microchip,bandwidth = <1000>;
-+			phy-handle = <&phy19>;
-+			phy-mode = "qsgmii";
-+			phys = <&serdes 3>;
-+		};
-+
-+		port16: port@16 {
-+			reg = <16>;
-+			microchip,bandwidth = <1000>;
-+			phy-handle = <&phy20>;
-+			phy-mode = "qsgmii";
-+			phys = <&serdes 4>;
-+		};
-+
-+		port17: port@17 {
-+			reg = <17>;
-+			microchip,bandwidth = <1000>;
-+			phy-handle = <&phy21>;
-+			phy-mode = "qsgmii";
-+			phys = <&serdes 4>;
-+		};
-+
-+		port18: port@18 {
-+			reg = <18>;
-+			microchip,bandwidth = <1000>;
-+			phy-handle = <&phy22>;
-+			phy-mode = "qsgmii";
-+			phys = <&serdes 4>;
-+		};
-+
-+		port19: port@19 {
-+			reg = <19>;
-+			microchip,bandwidth = <1000>;
-+			phy-handle = <&phy23>;
-+			phy-mode = "qsgmii";
-+			phys = <&serdes 4>;
-+		};
-+
-+		port20: port@20 {
-+			reg = <20>;
-+			microchip,bandwidth = <1000>;
-+			phy-handle = <&phy24>;
-+			phy-mode = "qsgmii";
-+			phys = <&serdes 5>;
-+		};
-+
-+		port21: port@21 {
-+			reg = <21>;
-+			microchip,bandwidth = <1000>;
-+			phy-handle = <&phy25>;
-+			phy-mode = "qsgmii";
-+			phys = <&serdes 5>;
-+		};
-+
-+		port22: port@22 {
-+			reg = <22>;
-+			microchip,bandwidth = <1000>;
-+			phy-handle = <&phy26>;
-+			phy-mode = "qsgmii";
-+			phys = <&serdes 5>;
-+		};
-+
-+		port23: port@23 {
-+			reg = <23>;
-+			microchip,bandwidth = <1000>;
-+			phy-handle = <&phy27>;
-+			phy-mode = "qsgmii";
-+			phys = <&serdes 5>;
-+		};
-+
-+		port24: port@24 {
-+			reg = <24>;
-+			microchip,bandwidth = <10000>;
-+			phys = <&serdes 6>;
-+			phy-mode = "10gbase-r";
-+			sfp = <&sfp0>;
-+			microchip,sd-sgpio = <24>;
-+			managed = "in-band-status";
-+		};
-+
-+		port25: port@25 {
-+			reg = <25>;
-+			microchip,bandwidth = <10000>;
-+			phys = <&serdes 7>;
-+			phy-mode = "10gbase-r";
-+			sfp = <&sfp1>;
-+			microchip,sd-sgpio = <28>;
-+			managed = "in-band-status";
-+		};
-+
-+		port26: port@26 {
-+			reg = <26>;
-+			microchip,bandwidth = <10000>;
-+			phys = <&serdes 8>;
-+			phy-mode = "10gbase-r";
-+			sfp = <&sfp2>;
-+			microchip,sd-sgpio = <32>;
-+			managed = "in-band-status";
-+		};
-+
-+		port27: port@27 {
-+			reg = <27>;
-+			microchip,bandwidth = <10000>;
-+			phys = <&serdes 9>;
-+			phy-mode = "10gbase-r";
-+			sfp = <&sfp3>;
-+			microchip,sd-sgpio = <36>;
-+			managed = "in-band-status";
-+		};
-+
-+		port29: port@29 {
-+			reg = <29>;
-+			microchip,bandwidth = <1000>;
-+			phys = <&serdes 11>;
-+			phy-handle = <&phy3>;
-+			phy-mode = "rgmii";
-+			rx-internal-delay-ps = <1000>;
-+			tx-internal-delay-ps = <1000>;
-+		};
-+	};
-+};
-+
-+&usb {
-+	status = "okay";
-+	pinctrl-0 = <&usb_ulpi_pins>, <&usb_rst_pins>, <&usb_over_pins>, <&usb_power_pins>;
-+	pinctrl-names = "default";
-+};
-diff --git a/arch/arm64/boot/dts/microchip/lan969x.dtsi b/arch/arm64/boot/dts/microchip/lan969x.dtsi
-new file mode 100644
-index 000000000000..39ea1999c801
---- /dev/null
-+++ b/arch/arm64/boot/dts/microchip/lan969x.dtsi
-@@ -0,0 +1,482 @@
-+// SPDX-License-Identifier: (GPL-2.0-or-later OR MIT)
-+/*
-+ * Copyright (c) 2025 Microchip Technology Inc. and its subsidiaries.
-+ */
-+
-+#include <dt-bindings/clock/microchip,lan969x.h>
-+#include <dt-bindings/dma/at91.h>
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/mfd/at91-usart.h>
-+#include <dt-bindings/mfd/atmel-flexcom.h>
-+
-+/ {
-+	#address-cells = <1>;
-+	#size-cells = <1>;
-+
-+	model = "Microchip LAN969x";
-+	compatible = "microchip,lan969x";
-+	interrupt-parent = <&gic>;
-+
-+	psci {
-+		compatible = "arm,psci-1.0";
-+		method = "smc";
-+	};
-+
-+	clocks {
-+		fx100_clk: fx100-clk {
-+			compatible = "fixed-clock";
-+			#clock-cells = <0>;
-+			clock-frequency = <320000000>;
-+		};
-+
-+		cpu_clk: cpu-clk {
-+			compatible = "fixed-clock";
-+			#clock-cells = <0>;
-+			clock-frequency = <1000000000>;
-+		};
-+
-+		ddr_clk: ddr-clk {
-+			compatible = "fixed-clock";
-+			#clock-cells = <0>;
-+			clock-frequency = <600000000>;
-+		};
-+
-+		fabric_clk: fabric-clk {
-+			compatible = "fixed-clock";
-+			#clock-cells = <0>;
-+			clock-frequency = <250000000>;
-+		};
-+	};
-+
-+	cpus {
-+		#address-cells = <2>;
-+		#size-cells = <0>;
-+
-+		cpu0: cpu@0 {
-+			compatible = "arm,cortex-a53";
-+			device_type = "cpu";
-+			reg = <0x0 0x0>;
-+			next-level-cache = <&l2_0>;
-+		};
-+
-+		l2_0: l2-cache {
-+			compatible = "cache";
-+			cache-level = <2>;
-+			cache-unified;
-+		};
-+	};
-+
-+	pmu {
-+		compatible = "arm,cortex-a53-pmu";
-+		interrupts = <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>;
-+	};
-+
-+	timer {
-+		compatible = "arm,armv8-timer";
-+		interrupts = <GIC_PPI 13 IRQ_TYPE_LEVEL_LOW>, /* Secure Phys IRQ */
-+			     <GIC_PPI 14 IRQ_TYPE_LEVEL_LOW>, /* Non-secure Phys IRQ */
-+			     <GIC_PPI 11 IRQ_TYPE_LEVEL_LOW>, /* Virt IRQ */
-+			     <GIC_PPI 10 IRQ_TYPE_LEVEL_LOW>; /* Hyp IRQ */
-+	};
-+
-+	axi: axi {
-+		compatible = "simple-bus";
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges;
-+
-+		usb: usb@300000 {
-+			compatible = "microchip,lan9691-dwc3", "snps,dwc3";
-+			reg = <0x300000 0x80000>;
-+			interrupts = <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clks GCK_GATE_USB_DRD>,
-+				 <&clks GCK_ID_USB_REFCLK>;
-+			clock-names = "bus_early", "ref";
-+			assigned-clocks = <&clks GCK_ID_USB_REFCLK>;
-+			assigned-clock-rates = <60000000>;
-+			maximum-speed = "high-speed";
-+			dr_mode = "host";
-+			status = "disabled";
-+		};
-+
-+		flx0: flexcom@e0040000 {
-+			compatible = "atmel,sama5d2-flexcom";
-+			reg = <0xe0040000 0x100>;
-+			clocks = <&clks GCK_ID_FLEXCOM0>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			ranges = <0x0 0xe0040000 0x800>;
-+			status = "disabled";
-+
-+			usart0: serial@200 {
-+				compatible = "atmel,at91sam9260-usart";
-+				reg = <0x200 0x200>;
-+				atmel,usart-mode = <AT91_USART_MODE_SERIAL>;
-+				interrupts = <GIC_SPI 46 IRQ_TYPE_LEVEL_HIGH>;
-+				dmas = <&dma AT91_XDMAC_DT_PERID(3)>,
-+				       <&dma AT91_XDMAC_DT_PERID(2)>;
-+				dma-names = "tx", "rx";
-+				clocks = <&fabric_clk>;
-+				clock-names = "usart";
-+				atmel,fifo-size = <32>;
-+				status = "disabled";
-+			};
-+
-+			spi0: spi@400 {
-+				compatible = "atmel,at91rm9200-spi";
-+				reg = <0x400 0x200>;
-+				interrupts = <GIC_SPI 46 IRQ_TYPE_LEVEL_HIGH>;
-+				dmas = <&dma AT91_XDMAC_DT_PERID(3)>,
-+				       <&dma AT91_XDMAC_DT_PERID(2)>;
-+				dma-names = "tx", "rx";
-+				clocks = <&fabric_clk>;
-+				clock-names = "spi_clk";
-+				atmel,fifo-size = <32>;
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				status = "disabled";
-+			};
-+
-+			i2c0: i2c@600 {
-+				compatible = "microchip,sam9x60-i2c";
-+				reg = <0x600 0x200>;
-+				interrupts = <GIC_SPI 46 IRQ_TYPE_LEVEL_HIGH>;
-+				dmas = <&dma AT91_XDMAC_DT_PERID(3)>,
-+				       <&dma AT91_XDMAC_DT_PERID(2)>;
-+				dma-names = "tx", "rx";
-+				clocks = <&fabric_clk>;
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				status = "disabled";
-+			};
-+		};
-+
-+		flx1: flexcom@e0044000 {
-+			compatible = "atmel,sama5d2-flexcom";
-+			reg = <0xe0044000 0x100>;
-+			clocks = <&clks GCK_ID_FLEXCOM1>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			ranges = <0x0 0xe0044000 0x800>;
-+			status = "disabled";
-+
-+			usart1: serial@200 {
-+				compatible = "atmel,at91sam9260-usart";
-+				reg = <0x200 0x200>;
-+				atmel,usart-mode = <AT91_USART_MODE_SERIAL>;
-+				interrupts = <GIC_SPI 47 IRQ_TYPE_LEVEL_HIGH>;
-+				dmas = <&dma AT91_XDMAC_DT_PERID(3)>,
-+				       <&dma AT91_XDMAC_DT_PERID(2)>;
-+				dma-names = "tx", "rx";
-+				clocks = <&fabric_clk>;
-+				clock-names = "usart";
-+				atmel,fifo-size = <32>;
-+				status = "disabled";
-+			};
-+
-+			spi1: spi@400 {
-+				compatible = "atmel,at91rm9200-spi";
-+				reg = <0x400 0x200>;
-+				interrupts = <GIC_SPI 47 IRQ_TYPE_LEVEL_HIGH>;
-+				dmas = <&dma AT91_XDMAC_DT_PERID(3)>,
-+				       <&dma AT91_XDMAC_DT_PERID(2)>;
-+				dma-names = "tx", "rx";
-+				clocks = <&fabric_clk>;
-+				clock-names = "spi_clk";
-+				atmel,fifo-size = <32>;
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				status = "disabled";
-+			};
-+
-+			i2c1: i2c@600 {
-+				compatible = "microchip,sam9x60-i2c";
-+				reg = <0x600 0x200>;
-+				interrupts = <GIC_SPI 47 IRQ_TYPE_LEVEL_HIGH>;
-+				dmas = <&dma AT91_XDMAC_DT_PERID(3)>,
-+				       <&dma AT91_XDMAC_DT_PERID(2)>;
-+				dma-names = "tx", "rx";
-+				clocks = <&fabric_clk>;
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				status = "disabled";
-+			};
-+		};
-+
-+		trng: rng@e0048000 {
-+			compatible = "atmel,at91sam9g45-trng";
-+			reg = <0xe0048000 0x100>;
-+			clocks = <&fabric_clk>;
-+			status = "disabled";
-+		};
-+
-+		aes: crypto@e004c000 {
-+			compatible = "atmel,at91sam9g46-aes";
-+			reg = <0xe004c000 0x100>;
-+			interrupts = <GIC_SPI 51 IRQ_TYPE_LEVEL_HIGH>;
-+			dmas = <&dma AT91_XDMAC_DT_PERID(12)>,
-+			       <&dma AT91_XDMAC_DT_PERID(13)>;
-+			dma-names = "tx", "rx";
-+			clocks = <&fabric_clk>;
-+			clock-names = "aes_clk";
-+			status = "disabled";
-+		};
-+
-+		flx2: flexcom@e0060000 {
-+			compatible = "atmel,sama5d2-flexcom";
-+			reg = <0xe0060000 0x100>;
-+			clocks = <&clks GCK_ID_FLEXCOM2>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			ranges = <0x0 0xe0060000 0x800>;
-+			status = "disabled";
-+
-+			usart2: serial@200 {
-+				compatible = "atmel,at91sam9260-usart";
-+				reg = <0x200 0x200>;
-+				atmel,usart-mode = <AT91_USART_MODE_SERIAL>;
-+				interrupts = <GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>;
-+				dmas = <&dma AT91_XDMAC_DT_PERID(7)>,
-+				       <&dma AT91_XDMAC_DT_PERID(6)>;
-+				dma-names = "tx", "rx";
-+				clocks = <&fabric_clk>;
-+				clock-names = "usart";
-+				atmel,fifo-size = <32>;
-+				status = "disabled";
-+			};
-+
-+			spi2: spi@400 {
-+				compatible = "atmel,at91rm9200-spi";
-+				reg = <0x400 0x200>;
-+				interrupts = <GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>;
-+				dmas = <&dma AT91_XDMAC_DT_PERID(7)>,
-+				       <&dma AT91_XDMAC_DT_PERID(6)>;
-+				dma-names = "tx", "rx";
-+				clocks = <&fabric_clk>;
-+				clock-names = "spi_clk";
-+				atmel,fifo-size = <32>;
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				status = "disabled";
-+			};
-+
-+			i2c2: i2c@600 {
-+				compatible = "microchip,sam9x60-i2c";
-+				reg = <0x600 0x200>;
-+				interrupts = <GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks = <&fabric_clk>;
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				status = "disabled";
-+			};
-+		};
-+
-+		flx3: flexcom@e0064000 {
-+			compatible = "atmel,sama5d2-flexcom";
-+			reg = <0xe0064000 0x100>;
-+			clocks = <&clks GCK_ID_FLEXCOM3>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			ranges = <0x0 0xe0064000 0x800>;
-+			status = "disabled";
-+
-+			usart3: serial@200 {
-+				compatible = "atmel,at91sam9260-usart";
-+				reg = <0x200 0x200>;
-+				atmel,usart-mode = <AT91_USART_MODE_SERIAL>;
-+				interrupts = <GIC_SPI 49 IRQ_TYPE_LEVEL_HIGH>;
-+				dmas = <&dma AT91_XDMAC_DT_PERID(9)>,
-+				       <&dma AT91_XDMAC_DT_PERID(8)>;
-+				dma-names = "tx", "rx";
-+				clocks = <&fabric_clk>;
-+				clock-names = "usart";
-+				atmel,fifo-size = <32>;
-+				status = "disabled";
-+			};
-+
-+			spi3: spi@400 {
-+				compatible = "atmel,at91rm9200-spi";
-+				reg = <0x400 0x200>;
-+				interrupts = <GIC_SPI 49 IRQ_TYPE_LEVEL_HIGH>;
-+				dmas = <&dma AT91_XDMAC_DT_PERID(9)>,
-+				       <&dma AT91_XDMAC_DT_PERID(8)>;
-+				dma-names = "tx", "rx";
-+				clocks = <&fabric_clk>;
-+				clock-names = "spi_clk";
-+				atmel,fifo-size = <32>;
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				status = "disabled";
-+			};
-+
-+			i2c3: i2c@600 {
-+				compatible = "microchip,sam9x60-i2c";
-+				reg = <0x600 0x200>;
-+				interrupts = <GIC_SPI 49 IRQ_TYPE_LEVEL_HIGH>;
-+				dmas = <&dma AT91_XDMAC_DT_PERID(9)>,
-+				       <&dma AT91_XDMAC_DT_PERID(8)>;
-+				dma-names = "tx", "rx";
-+				clocks = <&fabric_clk>;
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				status = "disabled";
-+			};
-+		};
-+
-+		dma: dma-controller@e0068000 {
-+			compatible = "microchip,sama7g5-dma";
-+			reg = <0xe0068000 0x1000>;
-+			interrupts = <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>;
-+			dma-channels = <16>;
-+			#dma-cells = <1>;
-+			clocks = <&fabric_clk>;
-+			clock-names = "dma_clk";
-+		};
-+
-+		sha: crypto@e006c000 {
-+			compatible = "atmel,at91sam9g46-sha";
-+			reg = <0xe006c000 0xec>;
-+			interrupts = <GIC_SPI 55 IRQ_TYPE_LEVEL_HIGH>;
-+			dmas = <&dma AT91_XDMAC_DT_PERID(14)>;
-+			dma-names = "tx";
-+			clocks = <&fabric_clk>;
-+			clock-names = "sha_clk";
-+			status = "disabled";
-+		};
-+
-+		timer: timer@e008c000 {
-+			compatible = "snps,dw-apb-timer";
-+			reg = <0xe008c000 0x400>;
-+			clocks = <&fabric_clk>;
-+			clock-names = "timer";
-+			interrupts = <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>;
-+			status = "disabled";
-+		};
-+
-+		watchdog: watchdog@e0090000 {
-+			compatible = "snps,dw-wdt";
-+			reg = <0xe0090000 0x1000>;
-+			interrupts = <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&fabric_clk>;
-+		};
-+
-+		cpu_ctrl: syscon@e00c0000 {
-+			compatible = "microchip,lan966x-cpu-syscon", "syscon";
-+			reg = <0xe00c0000 0x350>;
-+		};
-+
-+		switch: switch@e00c0000 {
-+			compatible = "microchip,lan9691-switch";
-+			reg = <0xe00c0000 0x0010000>,
-+			      <0xe2010000 0x1410000>;
-+			reg-names = "cpu", "devices";
-+			interrupt-names = "xtr", "fdma", "ptp";
-+			interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI  9 IRQ_TYPE_LEVEL_HIGH>;
-+			resets = <&reset 0>;
-+			reset-names = "switch";
-+			status = "disabled";
-+		};
-+
-+		clks: clock-controller@e00c00b4 {
-+			compatible = "microchip,lan9691-gck";
-+			#clock-cells = <1>;
-+			clocks = <&cpu_clk>, <&ddr_clk>, <&fx100_clk>;
-+			clock-names = "cpu", "ddr", "sys";
-+			reg = <0xe00c00b4 0x30>, <0xe00c0308 0x4>;
-+		};
-+
-+		reset: reset-controller@e201000c {
-+			compatible = "microchip,lan9691-switch-reset",
-+				     "microchip,lan966x-switch-reset";
-+			reg = <0xe201000c 0x4>;
-+			reg-names = "gcb";
-+			#reset-cells = <1>;
-+			cpu-syscon = <&cpu_ctrl>;
-+		};
-+
-+		gpio: pinctrl@e20100d4 {
-+			compatible = "microchip,lan9691-pinctrl";
-+			reg = <0xe20100d4 0xd4>,
-+			      <0xe2010370 0xa8>;
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			gpio-ranges = <&gpio 0 0 66>;
-+			interrupt-controller;
-+			interrupts = <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>;
-+			#interrupt-cells = <2>;
-+		};
-+
-+		mdio0: mdio@e20101a8 {
-+			compatible = "mscc,ocelot-miim";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <0xe20101a8 0x24>;
-+			clocks = <&fx100_clk>;
-+			status = "disabled";
-+		};
-+
-+		mdio1: mdio@e20101cc {
-+			compatible = "mscc,ocelot-miim";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <0xe20101cc 0x24>;
-+			clocks = <&fx100_clk>;
-+			status = "disabled";
-+		};
-+
-+		sgpio: gpio@e2010230 {
-+			compatible = "microchip,sparx5-sgpio";
-+			reg = <0xe2010230 0x118>;
-+			clocks = <&fx100_clk>;
-+			resets = <&reset 0>;
-+			reset-names = "switch";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+
-+			sgpio_in: gpio@0 {
-+				compatible = "microchip,sparx5-sgpio-bank";
-+				reg = <0>;
-+				gpio-controller;
-+				#gpio-cells = <3>;
-+				interrupts = <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>;
-+				interrupt-controller;
-+				#interrupt-cells = <3>;
-+			};
-+
-+			sgpio_out: gpio@1 {
-+				compatible = "microchip,sparx5-sgpio-bank";
-+				reg = <1>;
-+				gpio-controller;
-+				#gpio-cells = <3>;
-+			};
-+		};
-+
-+		tmon: hwmon@e2020100 {
-+			compatible = "microchip,sparx5-temp";
-+			reg = <0xe2020100 0xc>;
-+			clocks = <&fx100_clk>;
-+			#thermal-sensor-cells = <0>;
-+		};
-+
-+		serdes: serdes@e3410000 {
-+			compatible = "microchip,lan9691-serdes";
-+			#phy-cells = <1>;
-+			clocks = <&fabric_clk>;
-+			reg = <0xe3410000 0x150000>;
-+		};
-+
-+		gic: interrupt-controller@e8c11000 {
-+			compatible = "arm,gic-400";
-+			#interrupt-cells = <3>;
-+			interrupt-controller;
-+			reg = <0xe8c11000 0x1000>, /* Distributor GICD_ */
-+			      <0xe8c12000 0x2000>, /* CPU interface GICC_ */
-+			      <0xe8c14000 0x2000>, /* Virt interface control */
-+			      <0xe8c16000 0x2000>; /* Virt CPU interface */
-+			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
-+		};
-+	};
-+};
--- 
-2.52.0
+The hardware configurations are different: these are two distinct hardware blocks.
+
+Based on the block diagrams shown in Figures 9.4-2 (LCDC1) and 9.4-1 (LCDC0),
+the only difference concerns the output, but this variation is internal to the
+hardware blocks themselves.
+Therefore, LCDC0 and LCDC1 are not identical blocks, and their programming models
+differ as a result.
+
+In summary, although most of the internal functions are the same, the two blocks
+have output signals connected to different components within the SoC.
+This requires different hardware configurations and inevitably leads to different
+programming models for LCDC0 and LCDC1.
+
+
+Kind Regards,
+Tommaso
+
+
+> 
+> Best regards,
+> Krzysztof
+> 
+
 
