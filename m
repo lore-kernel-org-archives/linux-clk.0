@@ -1,172 +1,176 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F41DE2E8B8C
-	for <linux-clk@vger.kernel.org>; Wed,  3 Dec 2025 10:52:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC3B42D7388
+	for <linux-clk@vger.kernel.org>; Wed,  3 Dec 2025 12:23:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764759144; cv=none; b=tk0/wpAgHB87VlQZVSsixKPgXKZ1jNTVJaE/Scb6lgv9jX1qgER/WVBLwgGVi46qjWAcLlHW4ZxJEOleeeDrXvtIBkAlTybavd5yeQAYBNsyWw2fpp/7gb+bg8lXuL+55Kz4JVkzc/B9Txyr7x8L+60akT6lnktjG+QGYDOkALk=
+	t=1764764609; cv=none; b=I3zK41tCbiG5LP8+1MEKIWhpeVBZc3+TLN5+AfBfWZc9Cn5ic0SLcE1c3qXZLw97kA9ah9L7f7uXVb/OTz8sWlqISJ4VzovlPyLNBkCj7HkTl3D51Khl0lcfhQ8S92Rm+fEq5kkoNf/cGLwZZd6PDQOf+L1mXOnhfKEIAZB8800=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764759144; c=relaxed/simple;
-	bh=ztTdAKd1Kpr5YomVO8DRG2y5O30QjhJMIPeeeKWJX+I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cL5gy/XyFKdRfAoSis3bqKTm2yo2Wr31bwy54fctTHu3HppUwPnuxA+mCmgNoEVDwK41bzJ9qzqUe5zMF7iTnJuOlqZb1yAkrHjz2t+eUl1C/a4sgPa9frELTTY2G5zM3k3UvjgZHzSqlC3h92RX0Pt+zobA405n7AnvVyLZdgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=peNi5Vc5; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=DyQhdCIz; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1764764609; c=relaxed/simple;
+	bh=hGmcm9QAZ9qqYKdmz2DQfIFan3a5wOxRVnlr9Q0TxhU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=S/JqkcHPAACS0Nu3jWWguiDsv4SF3vXCK0MbY011Mmrxn/dFo6foEUru+mDG8edlp22/diUxwu/TsruxsneXSMbUHmRYr2rzAFGhBdcakHtiD97bMkImbI65ROiaRzsxvpJjv8jSIjCwVEn5pKjtQx2qBmsGkzZxBy8JnOLhPbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sartura.hr; spf=pass smtp.mailfrom=sartura.hr; dkim=pass (2048-bit key) header.d=sartura.hr header.i=@sartura.hr header.b=ToU+Q5gM; arc=none smtp.client-ip=209.85.222.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sartura.hr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sartura.hr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="peNi5Vc5";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="DyQhdCIz"
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5B39rkWK1929087
-	for <linux-clk@vger.kernel.org>; Wed, 3 Dec 2025 10:52:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	5vZ1VnRCXWcgnHJPtqVaYUCxuUng/cpM+q7cKSjAg/c=; b=peNi5Vc5bggo6gKA
-	DfST/T/TqhUlTAs+tCcAEOr7UIjv+nKXP8d3roSYVB6yfJzpJqSnZuvTA1VV5QFS
-	oqfUU0SEduGvZPP1ysSLTp249x02Y7gRwYF3zKwso3uBT/SAoTFrJgaFtEgHakEK
-	Sa0d6LCW//Ua3Yqlt8nPSJudi4NoCY+MqLjB88JDi7hgy6KwVg5wDcXqGOQZi4Qm
-	EXYXykqBYLY8RPI1sDffV6pioCaZCwh5ZPWSQT/50LxfVYoeaRgTwd6rUxGH/cbK
-	xboiRYqJZXiE0pZwm/nuXPiMgs3u4bfUEje03EK9b3dulvp5657JQByPkF0LUaFg
-	ICEUAw==
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4atjyqg5qs-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Wed, 03 Dec 2025 10:52:21 +0000 (GMT)
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-8b1be0fdfe1so199242885a.2
-        for <linux-clk@vger.kernel.org>; Wed, 03 Dec 2025 02:52:21 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=sartura.hr header.i=@sartura.hr header.b="ToU+Q5gM"
+Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-8b2ec756de0so627353385a.3
+        for <linux-clk@vger.kernel.org>; Wed, 03 Dec 2025 04:23:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1764759141; x=1765363941; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5vZ1VnRCXWcgnHJPtqVaYUCxuUng/cpM+q7cKSjAg/c=;
-        b=DyQhdCIzt/jL6g/UtzxdDLHRgTAIdZhT/FvvnhPdYRZUWMtYG9l5Z+WLtP77q9C9Ir
-         p8z8uDeUTAWwTYhD2lf7lBWJbIraK/5x0Dj2lmy2fBWNthqPKCqHf3GmzIVoSiR9D3aZ
-         RelAcFPXpB/UL5AAP9DrPhzsPpsVBOl96Oad9ALpbpKcn/jIzoqSKsdYl7KSI3dvwPkq
-         DXJFM2uY0LqPpKDwvVCEamP41Sk0LjfO9NzVsotumDZJ2o96kSp9H49jg2Ts1RR8gFYj
-         qgiX1R8sovgkH2KglE0AjZK90TnlvelhdzpfH4Crq1F4WZd3mFNk7ngcf0mUA7LJajj7
-         rR0g==
+        d=sartura.hr; s=sartura; t=1764764607; x=1765369407; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=bQw2QNK0m7aXsFhROk4LDansnAN+1Su3gSOuHq49ol0=;
+        b=ToU+Q5gM60eA6jBWYcbEwtlwBaYr0VyzYtcshynS3eyd2i39Z6PTh9cnnJZrPpJbd8
+         nQNLO+/7Gv+U2Yni9xS8JDWIBIlRsLBOaGyeXETM0omBweC6qTRfjB916csq7Ab5nVpQ
+         FDCx7/194GMJSFFf/wX6+ZtN0M22I2AclVu/f/ckzM4nCKnc2MsZdoFFTPqvsiKd070j
+         DmT2r9Iq7dWPaQYnUW4Feo9rntnmDzqeTeJm+azS+10ZmbItOmJiLtDd1dS5lrTTV6Ou
+         HHT1AY0ku5QdnH2Z5MlTZ1qxofNJLEimcJ2F1E9ql/vTakk+toTAc/kS93XiodvP7vKf
+         JKJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764759141; x=1765363941;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5vZ1VnRCXWcgnHJPtqVaYUCxuUng/cpM+q7cKSjAg/c=;
-        b=MFfZv6OIQZ7AlqMllC2y3EVl1FRlWi1D5GcdZ2E4natmE55rstx0+M8rNY4W7y7UX3
-         ylzAS8o/J/jfhwwHR1d7xmtdiA7lqnBaG7NjWDuNlNjYvcmorLsiVZTKKtZHnVaI82+C
-         LqbjEilve+pt+T9E8Olp4/vsdzLiaIeBZmXJyDy3ygObvawbJClYoOvZunKcfUm/M82Z
-         bfgN6LJ6vwEMo5cTWEu1jbPcxZ/5BlDlxXVbc6qSgJHuiV3UVMqu3kqevdZU8rr3Ebz5
-         o5+SoJcEsQDzSTxVSm9dTwz/Yr9E+KwfLGar2q7KMKpLlm6wHiwWqF+xcTNtPsDA3DqV
-         G3yw==
-X-Forwarded-Encrypted: i=1; AJvYcCV0qlkxo1wfJU3A5M5O/xBmbnuHtHAvQeA98Q1atg3h4WgRVGnBidJVVbOrVrO1q8u6cWF7saApdGE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxzZEXrO+LOOgZlKTvsG4lRWlovtbvmg8RNmicPA88BWQkqyhb
-	1/no2FGT0guFmEILkT/zUEphQ95UsicNeb8dnL8F/iedvhOEttT238sCIIPgb6wvNNZHv10NEJj
-	4LJVYh4nfkDAqGWa1MVwFWoNyaaaPH2jHAfoQiwsxRhA3+ZHx9+owEROrFSShE5w=
-X-Gm-Gg: ASbGnctBzGjD3icbOBmy4sL7ocaKVIzaPGHons/ertoqfe2Kf84HnrgRsmDW93ZOrY4
-	L2QYOPpeauvTxxNL15HI7reXIUfls7Ta9dYks6ZHxzyDKvsL50xKDqHU3EKupDt3wgipE9wYlmb
-	u145YjuNfZDLfSVAZ4gtFpgD961UxHDJl3UkRXzvGHIwU8FpQfTWj/Mhw39WZjkdPlIKUfMEyCH
-	1qRToSTfyPxrYTj9+gnEGaZzLfDePgXndnkeLFOBvTciTowXCyyOipoNm9DI5WkgPyPs1OTDcOK
-	LwXDRx1QgEfqPL512rWWCMlaNMMiLRhRa0bRfkFbOGaBdASpSR43hBUU46ltu44eFU6gE8vEcPN
-	UGZyCX6oNCTLN3YMjrgMZcru8C3WcWd41uYGGiSSipPPcOmQfacpfyobermb9E5UdDA==
-X-Received: by 2002:ac8:5aca:0:b0:4ed:6862:cdd0 with SMTP id d75a77b69052e-4f01b3c6537mr7755951cf.10.1764759140847;
-        Wed, 03 Dec 2025 02:52:20 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEdWUGIoNIL31WiMD6DpVjL8veFOOnMngyL++n2fVxw+jql4LOvHqu1/kBYwXN7VlvemkiO8g==
-X-Received: by 2002:ac8:5aca:0:b0:4ed:6862:cdd0 with SMTP id d75a77b69052e-4f01b3c6537mr7755661cf.10.1764759140401;
-        Wed, 03 Dec 2025 02:52:20 -0800 (PST)
-Received: from [192.168.119.72] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b76f59e8612sm1706205766b.52.2025.12.03.02.52.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 03 Dec 2025 02:52:19 -0800 (PST)
-Message-ID: <8d769fb3-cd2a-492c-8aa3-064ebbc5eee4@oss.qualcomm.com>
-Date: Wed, 3 Dec 2025 11:52:17 +0100
+        d=1e100.net; s=20230601; t=1764764607; x=1765369407;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bQw2QNK0m7aXsFhROk4LDansnAN+1Su3gSOuHq49ol0=;
+        b=jpJSrGx/hK/m1t6eaoYicl7QyDqkaYMsQwT50jCRvN5cR5CHN5lRcyn78uhQGboTdv
+         R+rK0yZbvV8Rt0pkYqmjZ3/AkIXvOW3DYdr/eVuX/ykq8dZXYOFNWnpNeJgXz9SBxnhT
+         /3Ze+QIjWtKoNXvbu+xdNzNatqpV7AkVUswE3EcqqsK4wFgN8Cn0beDEpnSr16dQnKYD
+         R64MPCDXLe1USb+dFCn5xoy+J52KVbdskmFqD7ifiyPnknGT2dhyj+m5sY5PRHSYyQZw
+         LkP2JshRbv4INI0zHT2TKK/6/pP45QpnsBCUanYZpDp+sv/zGxteFum53vKHrmdl3afs
+         gdRA==
+X-Forwarded-Encrypted: i=1; AJvYcCUvf7L3X2xmoZpEkTkbMxcAUg2zEzDRjK6KA3nSVJIQwq3OnVB6Rr63IdD8ky3ZSpSrNFb6LOtxD/g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1q4LNgqqJS2Tds8Hy+M25VZN90OTKsTBPOrZB+matzpZ1ZmD1
+	9FpRU5xfIWw3K5ags+WeV9wfoB3zFQvE3gg75ZlJE2cHCfAf4OnwTE89fwEP14nFDYI=
+X-Gm-Gg: ASbGncvFpAIseI2pTBXFfjQ4K6Jc4XYQqlC24UWEdpdFM9yFrHegh2nvRnCSq1tGOHt
+	vZTKYKuQ2bLjNj7z6JZDkviH8UfknZrm1FfsN0B9E3CVT0IJIp37RZ+5eNxUIq060Wxnrk4RM4E
+	Q7K+9D5CCdQEfaI9xz7BI7Au5tJPABmeTpfdYbH8nm98wLcZrGtu9aXY0pZ0g5H1FRuy3yiosuL
+	gFf8uZllRgCdD9ar8xKAb/0yILRk15spRNd3QQ6Q06FLPkdoNJ0Iv7VaRH6zsTEz97SrucPKuR+
+	MuQWTfBUDgANE8vEziSuTEcwZyiGx/u+RKzNnUczeGrW+l/VvQO28eJZUHm60+XF567oLCDGFJS
+	WxRxbw3qIKtc7hcwKDpAhl23AUysJpjNH+qZa4pyRQ25mZSnWmG47XCjRiP/2uhVlVxH3aMtgqF
+	cWCASlZwUH5esMnzOoUgOprjD1mbKV+bSGxKlFGofokxSK
+X-Google-Smtp-Source: AGHT+IFBqItcO02HwRqZQ09Eftjhy8B/A1LUHr5yIyZjuhioLZT8jA3EARqXdnEATjeL7hbCsn7I/g==
+X-Received: by 2002:a05:622a:d05:b0:4ed:423d:48ef with SMTP id d75a77b69052e-4f01f697666mr4823071cf.40.1764764606528;
+        Wed, 03 Dec 2025 04:23:26 -0800 (PST)
+Received: from fedora (cpezg-94-253-146-247-cbl.xnet.hr. [94.253.146.247])
+        by smtp.googlemail.com with ESMTPSA id d75a77b69052e-4efd2f9a755sm115214351cf.3.2025.12.03.04.23.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Dec 2025 04:23:25 -0800 (PST)
+From: Robert Marko <robert.marko@sartura.hr>
+To: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	gregkh@linuxfoundation.org,
+	nicolas.ferre@microchip.com,
+	claudiu.beznea@tuxon.dev,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	richardcochran@gmail.com,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	daniel.machon@microchip.com,
+	UNGLinuxDriver@microchip.com
+Cc: luka.perkov@sartura.hr,
+	Robert Marko <robert.marko@sartura.hr>
+Subject: [PATCH 1/4] dt-bindings: usb: Add Microchip LAN969x support
+Date: Wed,  3 Dec 2025 13:21:29 +0100
+Message-ID: <20251203122313.1287950-1-robert.marko@sartura.hr>
+X-Mailer: git-send-email 2.52.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Revert "clk: qcom: cpu-8996: simplify the
- cpu_clk_notifier_cb"
-To: Christopher Obbard <christopher.obbard@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Dmitry Baryshkov <lumag@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-References: <20251202-wip-obbardc-qcom-msm8096-clk-cpu-fix-downclock-v1-1-90208427e6b1@linaro.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20251202-wip-obbardc-qcom-msm8096-clk-cpu-fix-downclock-v1-1-90208427e6b1@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=fpnRpV4f c=1 sm=1 tr=0 ts=69301665 cx=c_pps
- a=50t2pK5VMbmlHzFWWp8p/g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=wP3pNCr1ah4A:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8 a=EUspDBNiAAAA:8
- a=sfOm8-O8AAAA:8 a=WelLum9FaPyErNbxTGEA:9 a=QEXdDO2ut3YA:10
- a=IoWCM6iH3mJn3m4BftBB:22 a=cvBusfyB2V15izCimMoJ:22 a=TvTJqdcANYtsRzA46cdi:22
-X-Proofpoint-GUID: G5oq5kmh8e0O0cSFt5bBrpEnuGLTTXmn
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMjAzMDA4NiBTYWx0ZWRfX88d0MEb+hADq
- j9hT0YtNeNGV8jgqGoQ+Lwq1o2TlNJeRE7n0Yjf5tIKX3JgcLFtwWuZOf7JBrB5gr6OKSmp5tUY
- Hy18GsQUMx2ywum7wUvoLqTTm3MGZDOqdWHNR6VgMK8yLc4uxHn4Me0O+LuYuVoOauPpGLkwTOX
- JqtDj6iqmzeo2XvMBALBkFTHdXE/D+WjU7LfqBKuuEi+lNCeJIZBrm8/GXl8TpnJKl41JsWD9LT
- vY5wgjRAUZIuUV76+RaT10EIjN0rAd3+tyWR770tLUPbi80vvNFLiWOFhYVFFpi7SHW2hLQr3NW
- kZXzUKaHpG09rg78eSo194DBBQ3DFgDipckcPPU0xRoM1igMNsG7Qfw1Ob1VaVZBeS9g4cVrbDL
- JCrzWOsRyVCqcF6HrMfUv5B6GrlXBw==
-X-Proofpoint-ORIG-GUID: G5oq5kmh8e0O0cSFt5bBrpEnuGLTTXmn
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-12-02_01,2025-11-27_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 impostorscore=0 adultscore=0 suspectscore=0 spamscore=0
- malwarescore=0 bulkscore=0 phishscore=0 lowpriorityscore=0 priorityscore=1501
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2512030086
+Content-Transfer-Encoding: 8bit
 
-On 12/2/25 10:24 PM, Christopher Obbard wrote:
-> This reverts commit b3b274bc9d3d7307308aeaf75f70731765ac999a.
-> 
-> On the DragonBoard 820c (which uses APQ8096/MSM8996) this change causes
-> the CPUs to downclock to roughly half speed under sustained load. The
-> regression is visible both during boot and when running CPU stress
-> workloads such as stress-ng: the CPUs initially ramp up to the expected
-> frequency, then drop to a lower OPP even though the system is clearly
-> CPU-bound.
-> 
-> Bisecting points to this commit and reverting it restores the expected
-> behaviour on the DragonBoard 820c - the CPUs track the cpufreq policy
-> and run at full performance under load.
-> 
-> The exact interaction with the ACD is not yet fully understood and we
-> would like to keep ACD in use to avoid possible SoC reliability issues.
-> Until we have a better fix that preserves ACD while avoiding this
-> performance regression, revert the bisected patch to restore the
-> previous behaviour.
-> 
-> Fixes: b3b274bc9d3d ("clk: qcom: cpu-8996: simplify the cpu_clk_notifier_cb")
-> Cc: stable@vger.kernel.org # v6.3+
-> Link: https://lore.kernel.org/linux-arm-msm/20230113120544.59320-8-dmitry.baryshkov@linaro.org/
-> Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> Signed-off-by: Christopher Obbard <christopher.obbard@linaro.org>
-> ---
+Microchip LAN969x has DWC3 compatible controller, though limited to 2.0(HS)
+speed, so document it.
 
-It may be that your board really has a MSM/APQ8x96*SG* which is another
-name for the PRO SKU, which happens to have a 2 times wider divider, try
+Signed-off-by: Robert Marko <robert.marko@sartura.hr>
+---
+ .../bindings/usb/microchip,lan9691-dwc3.yaml  | 68 +++++++++++++++++++
+ 1 file changed, 68 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/usb/microchip,lan9691-dwc3.yaml
 
-`cat /sys/bus/soc/devices/soc0/soc_id`
+diff --git a/Documentation/devicetree/bindings/usb/microchip,lan9691-dwc3.yaml b/Documentation/devicetree/bindings/usb/microchip,lan9691-dwc3.yaml
+new file mode 100644
+index 000000000000..7ffcbbd1e0f4
+--- /dev/null
++++ b/Documentation/devicetree/bindings/usb/microchip,lan9691-dwc3.yaml
+@@ -0,0 +1,68 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/usb/microchip,lan9691-dwc3.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Microchip LAN969x SuperSpeed DWC3 USB SoC controller
++
++maintainers:
++  - Robert Marko <robert.marko@sartura.hr>
++
++select:
++  properties:
++    compatible:
++      contains:
++        enum:
++          - microchip,lan9691-dwc3
++  required:
++    - compatible
++
++properties:
++  compatible:
++    items:
++      - enum:
++          - microchip,lan9691-dwc3
++      - const: snps,dwc3
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  clocks:
++    items:
++      - description: Gated USB DRD clock
++      - description: Controller reference clock
++
++  clock-names:
++    items:
++      - const: bus_early
++      - const: ref
++
++unevaluatedProperties: false
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - clocks
++  - clock-names
++
++allOf:
++  - $ref: snps,dwc3.yaml#
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++    #include <dt-bindings/clock/microchip,lan969x.h>
++
++    usb@300000 {
++      compatible = "microchip,lan9691-dwc3", "snps,dwc3";
++      reg = <0x300000 0x80000>;
++      interrupts = <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>;
++      clocks = <&clks GCK_GATE_USB_DRD>,
++               <&clks GCK_ID_USB_REFCLK>;
++      clock-names = "bus_early", "ref";
++    };
+-- 
+2.52.0
 
-see:
-
-https://lore.kernel.org/linux-arm-msm/20251111-db820c-pro-v1-0-6eece16c5c23@oss.qualcomm.com/
-
-https://lore.kernel.org/linux-arm-msm/kXrAkKv7RZct22X0wivLWqOAiLKpFuDCAY1KY_KSx649kn7BNmJ2IFFMrsYPAyDlcxIjbQCQ1PHb5KaNFawm9IGIXUbch-DI9OI_l73BAaM=@protonmail.com/
-
-Konrad
