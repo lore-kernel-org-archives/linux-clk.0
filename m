@@ -1,259 +1,283 @@
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C499B2DF700
-	for <linux-clk@vger.kernel.org>; Wed,  3 Dec 2025 09:41:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE03E2853F1
+	for <linux-clk@vger.kernel.org>; Wed,  3 Dec 2025 10:11:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764754918; cv=none; b=RAMkg5bNkDMb5ExtDuO18dI0p2k1a1uz5SlccEXHSdu0f1IV7YE08GtzDO5M7vYIq05iXuCI9lM6VJw/rBcFSMs7wFJZzBbwx6brvxpzVlPVRyG5vK99RmZwltvg0a29RrO9ykUAujckgZVRclUYa1whOK8E09D5+Avx8eUTjaQ=
+	t=1764756685; cv=none; b=cOoBPYZU19fRlfp77XlD1Cr0OQFD7zDkBGMx5ejYgEX0Da421tJ+LpWZF+EKHhNSuDAwrEfkmwMkU9M+va80CUxbUXqdPXxNsfSdDzTKhCuCMwlyOIVkx3vgoeTDo7dKFGpRpsaGzm16HvDlbTCI6+JmSQyfKkgleP3ImzMbfBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764754918; c=relaxed/simple;
-	bh=RHsfC5vxcciQATxe9YarnQGeQw5YnNq/z9D9sXdnhlU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qrBCv3tdVFGKtlUgoQR96Ayw04RfKnu3nq1hReN7sPB//02BckKpfDEkrAv79r38SGMMHmn0kUTLbZJ+N8czmPGo0oTmnPJJUdt7ApBVWQbUS7TrzrOsAMnpDrjuuiNUmyj3/c81ypdQ3muALWSXiBm8FozJmcDnzjCjFaI3OC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nh38ij39; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1764756685; c=relaxed/simple;
+	bh=7ykrGGwCG5UVuu6S46Y+mkYJETdoJx86HhNwtYYoBJs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=f/rnv3IP5AeP5grbHL2aiasni/2A/ZPBHOXc87hZkKJ4ZNrXtPQIMFmx2Fhg/OfkQQxyM9v59mW+kBs7i+NYsBKwzP295ibw+e7nVlRiXuh1kgCApuvwMnZ4ikDO6jbtoWbWylgxxrBDHTyM23UvifkzyFrs4UDwj4yElAqTKms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nh38ij39"
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-47775fb6cb4so46889175e9.0
-        for <linux-clk@vger.kernel.org>; Wed, 03 Dec 2025 01:41:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1764754914; x=1765359714; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QBFclzZ4yxDhuYlk/vr9Dvv4zCnd7JgGJLgkaeVG+Z8=;
-        b=nh38ij39m0AR2O2bfdlQA4P9KEXR9JYphyABYWSCeG6lq8qVA73Jm8jcwBhQfEG4DK
-         ax2HJb7glhs0743uHpE7hp0eUObiDeBhv+BIjHGzz1mNZGaPDbLZmzBrfKlUwyv34Cca
-         mk8RfqgCvpMMp1oKckb/09npnLaq8RigYSNmTiHUxakTyWW7ENXHRaMxrqMeNWAU+Rbg
-         1AaWcKmfQrlb0b/lXMkVjf84lIlR+iJqhvwvX1HP32AGYfQgNpZpIXpEDkwf1QqHFvXh
-         m60UOM+aBE6LQu39E5H3xIQLQDt2yBaWQat4QScoC4bW0rAX0HSmAY+wlpuImvlm/s2I
-         /7vg==
+Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-55b2f2ae1cbso4304661e0c.1
+        for <linux-clk@vger.kernel.org>; Wed, 03 Dec 2025 02:11:23 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764754914; x=1765359714;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+        d=1e100.net; s=20230601; t=1764756682; x=1765361482;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=QBFclzZ4yxDhuYlk/vr9Dvv4zCnd7JgGJLgkaeVG+Z8=;
-        b=StsVredvjCQPy3CpGSUPlZOtGKyZ/7gnz8jPbFA0eSW4AN8eDTTD2KqPu0mxTGiTar
-         Lr0LxIb/zS1tS62vbjRyoXS9Hfwt+JUvPYct85LBw//mcILQSTQNQPS53d7wzbE1Ks/r
-         hTMuovU+qd6ly+V/J6e2QwNv0SXSl+S4wsKFIPVyM3HFWhT7WCYmR6E3O4tmiFZOHxm4
-         ggKO88hqgt/2Yj2RPUXVGfxBk8yrNq8oLKHS9xUFFoC0Dy4/6s2dl8uPBXswK72WzA+b
-         pB4dQf4HW/Qc3a3/R042+Qnf4nQ+Bj/IDi03iKziMQsw5fyhWz93LSlRCVHYzfIjPMyr
-         UoDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWsY5XTPfkLih2FtMwLu50DCwRh4njSoymjlpMQt00K26yMJzQkZmEVDjxakGlmp4rk/Z7k0dUa/zQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxvLD5BDFLuZLjcJS3l10cMLD9f5EI06U0oRMIoGDaCGJqps3Wa
-	AtAMa1tkMxJHWKvbGPrPRW5yRneBcGC0qt+9aGL/9kBdzUJr3FxHj7JM
-X-Gm-Gg: ASbGnctvNC2LGMlgXnz9JnQu0hXxW/4tB1ZWKyrHzU0K4kx7vkzwnbISdlRsTs/eS6X
-	l0wy4YGecxoLrvUpAuoDAZb1tw3MwAc90TK2afTy+XaZpu2OcJrR6tcWrvSil8IXS7GrysEhTHF
-	vCl/pRV4FIvAENQk/DWEULYaEdpakpYjz1Fukv+yfNZIf+EOZjNordAswSjvmgdDkwYLxLuIndJ
-	HP75SzqfouCY6YCkNjbIRqZLbVdsJk43psf8R9GwQ/EiPwRn7TdadCMM8B8xkiYsx/jMQbau1a+
-	/+ZClI/rT1Enpn5EKbXAu9QIom5E7St+yk+6gBDvB7azdJmVXrluNcfKchL0s4bsvxQm5tSCmuG
-	kHkUDEpe+a3Yw51zZ7mN6ZU5EQNHWBQbus2X+NY1ag1u80ucU8zvVnC3no7HTMV8BIhtPWgghAv
-	t8/5IYlsWv+Aa7KPF1OWO3DhNJbjShTjRAOkx5gyuF6beEfQ==
-X-Google-Smtp-Source: AGHT+IE0X/yc7t+huXM01s4RobngVl0mYbYLIe9SYwkdeFS8ZPqHCEyM8fw7wTfQafQZJyM9avrrgQ==
-X-Received: by 2002:a05:600c:3b13:b0:477:952d:fc11 with SMTP id 5b1f17b1804b1-4792af1b157mr19791645e9.16.1764754913746;
-        Wed, 03 Dec 2025 01:41:53 -0800 (PST)
-Received: from iku.Home ([2a06:5906:61b:2d00:7655:4344:c8be:eb31])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4792a7a87f8sm38632815e9.12.2025.12.03.01.41.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Dec 2025 01:41:53 -0800 (PST)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Prabhakar <prabhakar.csengg@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 2/2] clk: renesas: r9a09g057: Add entries for RSCIs
-Date: Wed,  3 Dec 2025 09:41:47 +0000
-Message-ID: <20251203094147.6429-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.52.0
-In-Reply-To: <20251203094147.6429-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20251203094147.6429-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        bh=08y1I8cftAKXa2ZRDPk1QAbO3eRq2UKMz/WOuMZJTrE=;
+        b=uduvHKO+tcbfqfpql0GqoTnfBGLI+m/0/u7i/opnPMPWQuBEaZeFTnIx/Wb/c3t/wQ
+         xQUeM4HkLk7COdC3X98ZlL5bcYmYIvaKP2sZqZpoJ+ylLPWOQ9uROYCiHWtWpeC72mnz
+         GKSyWiaYNInLOUEnb6pGnOJ8eWWuHOad2l8jvI36ApwVzlthgdeHktKlmSuvcNq1gPM6
+         P+vMfpVgyrzzpi4XsJQNL/1nnT51Bg0YTl6uciawimBxlZJ9RXrW/WjYoqQ6XJAKhPfL
+         GOnbexyiiIKcGVNOMHPyos6zBBZSE+gghqVdBe4rQ6RcEaW2KB+hPxyhhzanYRwLZ1/I
+         FQig==
+X-Forwarded-Encrypted: i=1; AJvYcCV2PbJwnbKoSZMj6zZDX5rSh3OWf3p9HBgxX6ku7N2tx1SgXt/Pcig29JqNZJDEEL4JBZ6pMngMaHo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywer/bwdVXtwV8phUyzNkc/C3q8If8gIchYMYSvzftgNCiyoQJ+
+	idy/HiVJ63vI2YArXdl59eWcR0wsOaNZia2Pjd6eL6Zs9+8Sifi3+m8XzPGkTwJe
+X-Gm-Gg: ASbGncv6OzWrRkwiEW67bU/GMYNTiLkqFtGFG1hkmCiSJvcwNxhsNm+T5cR2a9o8xkZ
+	WZpLtl7hkqxpRcYc8zYMkavYxo4IXGmiSGXRQ9IxrIrmIQpHoatu06zfKRxNwIfZVtSDy3u1wgo
+	CrTXBg72MD8rymdhvPpe7XSmRm+b73KyPCyQ4oLHFPhAOP79yncVGr8pNc1t2oZNt//Rg3QFY1l
+	5inEuzb3S/cJskq5W3sLGiTKPK+D9nhHX0yKlYY4liPtHQlJ3cZ/xRO38syCpW2QulLzOJO3+sR
+	xZZxNrOlTYl1ftv+Wlebtf0+igo9Rh7JwCDOJNOmFl/iUbTNYHZYXWLn+eN2GYjmqnE6FbEgXH3
+	fOna5pTcNHl0XxjDgWMiTD/qiZxBN7lJg8CoKPZ/UxSVGxnQVP4KAqhHQA2P/u8xQSMkToLwJpc
+	orEMRoSvFL7sO7MVbgHdQOmz8td0rm19xSwvUuj0akuX/L1IpOQACb
+X-Google-Smtp-Source: AGHT+IFvHXq1BqMYO2IC0dahRdXY9JcpHg8EE+27ECe70bIWTWrM81pY8R03oOPhTuu0W52ATcm2Lg==
+X-Received: by 2002:a05:6122:190b:b0:559:7394:9c3a with SMTP id 71dfb90a1353d-55e5be7fd58mr460976e0c.8.1764756682147;
+        Wed, 03 Dec 2025 02:11:22 -0800 (PST)
+Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com. [209.85.221.170])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-55cf4e1d580sm7569026e0c.1.2025.12.03.02.11.21
+        for <linux-clk@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 03 Dec 2025 02:11:21 -0800 (PST)
+Received: by mail-vk1-f170.google.com with SMTP id 71dfb90a1353d-559f4801609so1587482e0c.0
+        for <linux-clk@vger.kernel.org>; Wed, 03 Dec 2025 02:11:21 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWFFEb9IOMjHF/MHOOJK8M6ETqvFdYrsG+fAg31a3ZeqRTO4YdV23gmjehD96cy0N62h+UejHRrYm8=@vger.kernel.org
+X-Received: by 2002:a05:6102:579a:b0:5df:c1ac:8ad4 with SMTP id
+ ada2fe7eead31-5e48e01012fmr426535137.0.1764756375911; Wed, 03 Dec 2025
+ 02:06:15 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251015071420.1173068-1-herve.codina@bootlin.com>
+ <20251015071420.1173068-2-herve.codina@bootlin.com> <f74ab0a2-b74b-4b96-8469-a716c850e230@gmail.com>
+ <CAL_JsqJDOYuzutMHMeFAogd5a_OX6Hwi8Gwz1Vy7HpXgNeYKsg@mail.gmail.com>
+ <5cf2a12a-7c66-4622-b4a9-14896c6df005@gmail.com> <CAL_JsqJjm12LxpDg6LmpY=Ro_keHwnrWiYMLVnG=s_pSP4X2WQ@mail.gmail.com>
+ <072dde7c-a53c-4525-83ac-57ea38edc0b5@gmail.com> <CAL_JsqKyG98pXGKpL=gxSc92izpzN7YCdq62ZJByhE6aFYs1fw@mail.gmail.com>
+ <55076f4b-d523-4f8c-8bd4-0645b790737e@gmail.com> <20251202102619.5cd971cc@bootlin.com>
+ <CAMuHMdXogrkTAm=4pC0B+Sybr=PR3XovnBgmiEyTvUMmJHvBRA@mail.gmail.com> <20251202182834.65d7f0a1@bootlin.com>
+In-Reply-To: <20251202182834.65d7f0a1@bootlin.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 3 Dec 2025 11:06:04 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdU4y3Faz1nJo5CeYdPY9dgetWrLE9bMdba_QeWwXX41CQ@mail.gmail.com>
+X-Gm-Features: AWmQ_bm_vwtlSlkiVojLd-rzxo_k4pikXV0aLj6bs5bAdLDXgMj28SXkaqQFKI0
+Message-ID: <CAMuHMdU4y3Faz1nJo5CeYdPY9dgetWrLE9bMdba_QeWwXX41CQ@mail.gmail.com>
+Subject: Re: [PATCH v4 01/29] Revert "treewide: Fix probing of devices in DT overlays"
+To: Herve Codina <herve.codina@bootlin.com>
+Cc: Kalle Niemi <kaleposti@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Matti Vaittinen <mazziesaccount@gmail.com>, Andrew Lunn <andrew@lunn.ch>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>, 
+	Wolfram Sang <wsa+renesas@sang-engineering.com>, Peter Rosin <peda@axentia.se>, 
+	Arnd Bergmann <arnd@arndb.de>, Saravana Kannan <saravanak@google.com>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Charles Keepax <ckeepax@opensource.cirrus.com>, 
+	Richard Fitzgerald <rf@opensource.cirrus.com>, David Rhodes <david.rhodes@cirrus.com>, 
+	Linus Walleij <linus.walleij@linaro.org>, Ulf Hansson <ulf.hansson@linaro.org>, 
+	Mark Brown <broonie@kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Daniel Scally <djrscally@gmail.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, Len Brown <lenb@kernel.org>, 
+	Davidlohr Bueso <dave@stgolabs.net>, Jonathan Cameron <jonathan.cameron@huawei.com>, 
+	Dave Jiang <dave.jiang@intel.com>, Alison Schofield <alison.schofield@intel.com>, 
+	Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
+	Dan Williams <dan.j.williams@intel.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Wolfram Sang <wsa@kernel.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org, 
+	linux-pci@vger.kernel.org, linux-sound@vger.kernel.org, 
+	patches@opensource.cirrus.com, linux-gpio@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linux-spi@vger.kernel.org, 
+	linux-acpi@vger.kernel.org, linux-cxl@vger.kernel.org, 
+	Allan Nielsen <allan.nielsen@microchip.com>, Horatiu Vultur <horatiu.vultur@microchip.com>, 
+	Steen Hegelund <steen.hegelund@microchip.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Hi Herv=C3=A9,
 
-Add clock and reset entries for the RSCI IPs.
+On Tue, 2 Dec 2025 at 18:29, Herve Codina <herve.codina@bootlin.com> wrote:
+> On Tue, 2 Dec 2025 17:35:35 +0100
+> Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> > On Tue, 2 Dec 2025 at 10:26, Herve Codina <herve.codina@bootlin.com> wr=
+ote:
+> > > On Fri, 28 Nov 2025 10:34:57 +0200
+> > > Kalle Niemi <kaleposti@gmail.com> wrote:
+> > > > >>>>>> Test system testing drivers for ROHM ICs bisected this commi=
+t to cause
+> > > > >>>>>> BD71847 drivers probe to not be called.
+> > > > >>>>> This driver (and overlay support) is in linux-next or somethi=
+ng out of
+> > > > >>>>> tree on top of linux-next?
+> > > > >>>>>
+> > > > >>>>> Rob
+> > > > >>>> Yes the driver is in mainline linux: /drivers/mfd/rohm-bd718x7=
+.c
+> > > > >>> I don't see any support to apply overlays in that driver.
+> > > > >> Ah. Sorry for the confusion peeps. I asked Kalle to report this =
+without
+> > > > >> proper consideration. 100% my bad.
+> > > > >>
+> > > > >> While the bd718x7 drive indeed is mainline (and tested), the act=
+ual
+> > > > >> 'glue-code' doing the overlay is part of the downstream test
+> > > > >> infrastructure. So yes, this is not a bug in upstream kernel - t=
+his
+> > > > >> falls in the category of an upstream change causing downstream t=
+hings to
+> > > > >> break. So, feel free to say: "Go fix your code" :)
+> > > > >>
+> > > > >> Now that this is sorted, if someone is still interested in helpi=
+ng us to
+> > > > >> get our upstream drivers tested - the downstream piece is just t=
+aking
+> > > > >> the compiled device-tree overlay at runtime (via bin-attribute f=
+ile),
+> > > > >> and applying it using the of_overlay_fdt_apply(). The approach i=
+s
+> > > > >> working for our testing purposes when the device is added to I2C=
+/SPI
+> > > > >> node which is already enabled. However, in case where we have th=
+e I2C
+> > > > >> disabled, and enable it in the same overlay where we add the new=
+ device
+> > > > >> - then the new device does not get probed.
+> > > > >>
+> > > > >> I would be really grateful if someone had a pointer for us.
+> > > > > Seems to be fw_devlink related. I suppose if you turn it off it w=
+orks?
+> > > > > There's info about the dependencies in sysfs or maybe debugfs. I =
+don't
+> > > > > remember the details, but that should help to tell you why things
+> > > > > aren't probing.
+> > >
+> > > Rob reverted patches but I plan to continue my work on it.
+> > > On my side, I need the reverted patches but I fully understand that, =
+on
+> > > your side, you need a working system.
+> > >
+> > > In order to move forward and find a solution for my next iteration, c=
+an you
+> > > send your overlay (dtso) used in your working and non working cases?
+> >
+> > Hmm, I must have missed when Rob applied (part of) this series, as I
+> > do an overlay test (using the out-of-tree configfs) on top of every
+> > (bi-weekly) renesas-drivers release, and saw no issues during the last
+> > few months.
+> >
+> > So I applied this series and tested loading my SPI EEPROM overlay.
+> > And it indeed breaks, with the culprit being this particular patch.
+> >
+> > Interestingly, quoting from this patch:
+> >
+> >    "While the commit fixed fw_devlink overlay handling for one case, it
+> >     broke it for another case. So revert it and redo the fix in a separ=
+ate
+> >     patch."
+> >
+> > Where is the separate patch that redid the fix? I assume it is "[PATCH
+> > v4 03/29] of: dynamic: Fix overlayed devices not probing because
+> > of fw_devlink"?  Unfortunately that doesn't fix the issue for me.
+> >
+> > Quoting more from this patch:
+> >
+> >    "Closes: https://lore.kernel.org/lkml/CAMuHMdXEnSD4rRJ-o90x4OprUacN_=
+rJgyo8x6=3D9F9rZ+-KzjOg@mail.gmail.com/"
+> >
+> > Strange that it claims to fix the issue reported there, as the failure
+> > mode I am seeing is exactly the same as documented in that report?
+> >
+> > Do you know what is wrong? The overlay I am using is referenced in
+> > the bug report linked above.
+>
+> The first patch "Fix probing of devices in DT overlays" didn't fix all ca=
+ses
+> and so Saravana reverted this patch and proposed "of: dynamic: Fix overla=
+yed
+> devices not probing because of fw_devlink".
+>
+> This second patch was needed to fix my use case even if more modification=
+ were
+> needed to have my use case fully fixed (other patches in my series).
+>
+> Rob applied those first patches from my series and some systems were brok=
+en.
+> The breakage has been reported my Kalle and Matti and led to a revert of =
+culprit
+> patches.
+>
+> I tried to understand what was wrong. I am pretty convinced that modifica=
+tion
+> done in "of: dynamic: Fix overlayed devices not probing because of fw_dev=
+link"
+> are really better than modification available in "treewide: Fix probing o=
+f
+> devices in DT overlays".
+>
+> I proposed an update [0] and I will be glad if you can also test this upd=
+ate
+> on your side and give me your feedback.
+>
+> [0] https://lore.kernel.org/lkml/20251202175836.747593c0@bootlin.com/
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
-note, as done on RZ/G3E pclk_sfr clock is dropped as its the same as pclk.
----
- drivers/clk/renesas/r9a09g057-cpg.c | 126 ++++++++++++++++++++++++++++
- 1 file changed, 126 insertions(+)
+Thank you!
 
-diff --git a/drivers/clk/renesas/r9a09g057-cpg.c b/drivers/clk/renesas/r9a09g057-cpg.c
-index 400d9e94f2e9..991f9a2ec12e 100644
---- a/drivers/clk/renesas/r9a09g057-cpg.c
-+++ b/drivers/clk/renesas/r9a09g057-cpg.c
-@@ -46,6 +46,9 @@ enum clk_ids {
- 	CLK_PLLCLN_DIV2,
- 	CLK_PLLCLN_DIV8,
- 	CLK_PLLCLN_DIV16,
-+	CLK_PLLCLN_DIV64,
-+	CLK_PLLCLN_DIV256,
-+	CLK_PLLCLN_DIV1024,
- 	CLK_PLLDTY_ACPU,
- 	CLK_PLLDTY_ACPU_DIV2,
- 	CLK_PLLDTY_ACPU_DIV4,
-@@ -182,6 +185,9 @@ static const struct cpg_core_clk r9a09g057_core_clks[] __initconst = {
- 	DEF_FIXED(".pllcln_div2", CLK_PLLCLN_DIV2, CLK_PLLCLN, 1, 2),
- 	DEF_FIXED(".pllcln_div8", CLK_PLLCLN_DIV8, CLK_PLLCLN, 1, 8),
- 	DEF_FIXED(".pllcln_div16", CLK_PLLCLN_DIV16, CLK_PLLCLN, 1, 16),
-+	DEF_FIXED(".pllcln_div64", CLK_PLLCLN_DIV64, CLK_PLLCLN, 1, 64),
-+	DEF_FIXED(".pllcln_div256", CLK_PLLCLN_DIV256, CLK_PLLCLN, 1, 256),
-+	DEF_FIXED(".pllcln_div1024", CLK_PLLCLN_DIV1024, CLK_PLLCLN, 1, 1024),
- 
- 	DEF_DDIV(".plldty_acpu", CLK_PLLDTY_ACPU, CLK_PLLDTY, CDDIV0_DIVCTL2, dtable_2_64),
- 	DEF_FIXED(".plldty_acpu_div2", CLK_PLLDTY_ACPU_DIV2, CLK_PLLDTY_ACPU, 1, 2),
-@@ -288,6 +294,106 @@ static const struct rzv2h_mod_clk r9a09g057_mod_clks[] __initconst = {
- 						BUS_MSTOP(5, BIT(13))),
- 	DEF_MOD("wdt_3_clk_loco",		CLK_QEXTAL, 5, 2, 2, 18,
- 						BUS_MSTOP(5, BIT(13))),
-+	DEF_MOD("rsci0_pclk",			CLK_PLLCLN_DIV16, 5, 13, 2, 29,
-+						BUS_MSTOP(11, BIT(3))),
-+	DEF_MOD("rsci0_tclk",			CLK_PLLCLN_DIV16, 5, 14, 2, 30,
-+						BUS_MSTOP(11, BIT(3))),
-+	DEF_MOD("rsci0_ps_ps3_n",		CLK_PLLCLN_DIV1024, 5, 15, 2, 31,
-+						BUS_MSTOP(11, BIT(3))),
-+	DEF_MOD("rsci0_ps_ps2_n",		CLK_PLLCLN_DIV256, 6, 0, 3, 0,
-+						BUS_MSTOP(11, BIT(3))),
-+	DEF_MOD("rsci0_ps_ps1_n",		CLK_PLLCLN_DIV64, 6, 1, 3, 1,
-+						BUS_MSTOP(11, BIT(3))),
-+	DEF_MOD("rsci1_pclk",			CLK_PLLCLN_DIV16, 6, 2, 3, 2,
-+						BUS_MSTOP(11, BIT(4))),
-+	DEF_MOD("rsci1_tclk",			CLK_PLLCLN_DIV16, 6, 3, 3, 3,
-+						BUS_MSTOP(11, BIT(4))),
-+	DEF_MOD("rsci1_ps_ps3_n",		CLK_PLLCLN_DIV1024, 6, 4, 3, 4,
-+						BUS_MSTOP(11, BIT(4))),
-+	DEF_MOD("rsci1_ps_ps2_n",		CLK_PLLCLN_DIV256, 6, 5, 3, 5,
-+						BUS_MSTOP(11, BIT(4))),
-+	DEF_MOD("rsci1_ps_ps1_n",		CLK_PLLCLN_DIV64, 6, 6, 3, 6,
-+						BUS_MSTOP(11, BIT(4))),
-+	DEF_MOD("rsci2_pclk",			CLK_PLLCLN_DIV16, 6, 7, 3, 7,
-+						BUS_MSTOP(11, BIT(5))),
-+	DEF_MOD("rsci2_tclk",			CLK_PLLCLN_DIV16, 6, 8, 3, 8,
-+						BUS_MSTOP(11, BIT(5))),
-+	DEF_MOD("rsci2_ps_ps3_n",		CLK_PLLCLN_DIV1024, 6, 9, 3, 9,
-+						BUS_MSTOP(11, BIT(5))),
-+	DEF_MOD("rsci2_ps_ps2_n",		CLK_PLLCLN_DIV256, 6, 10, 3, 10,
-+						BUS_MSTOP(11, BIT(5))),
-+	DEF_MOD("rsci2_ps_ps1_n",		CLK_PLLCLN_DIV64, 6, 11, 3, 11,
-+						BUS_MSTOP(11, BIT(5))),
-+	DEF_MOD("rsci3_pclk",			CLK_PLLCLN_DIV16, 6, 12, 3, 12,
-+						BUS_MSTOP(11, BIT(6))),
-+	DEF_MOD("rsci3_tclk",			CLK_PLLCLN_DIV16, 6, 13, 3, 13,
-+						BUS_MSTOP(11, BIT(6))),
-+	DEF_MOD("rsci3_ps_ps3_n",		CLK_PLLCLN_DIV1024, 6, 14, 3, 14,
-+						BUS_MSTOP(11, BIT(6))),
-+	DEF_MOD("rsci3_ps_ps2_n",		CLK_PLLCLN_DIV256, 6, 15, 3, 15,
-+						BUS_MSTOP(11, BIT(6))),
-+	DEF_MOD("rsci3_ps_ps1_n",		CLK_PLLCLN_DIV64, 7, 0, 3, 16,
-+						BUS_MSTOP(11, BIT(6))),
-+	DEF_MOD("rsci4_pclk",			CLK_PLLCLN_DIV16, 7, 1, 3, 17,
-+						BUS_MSTOP(11, BIT(7))),
-+	DEF_MOD("rsci4_tclk",			CLK_PLLCLN_DIV16, 7, 2, 3, 18,
-+						BUS_MSTOP(11, BIT(7))),
-+	DEF_MOD("rsci4_ps_ps3_n",		CLK_PLLCLN_DIV1024, 7, 3, 3, 19,
-+						BUS_MSTOP(11, BIT(7))),
-+	DEF_MOD("rsci4_ps_ps2_n",		CLK_PLLCLN_DIV256, 7, 4, 3, 20,
-+						BUS_MSTOP(11, BIT(7))),
-+	DEF_MOD("rsci4_ps_ps1_n",		CLK_PLLCLN_DIV64, 7, 5, 3, 21,
-+						BUS_MSTOP(11, BIT(7))),
-+	DEF_MOD("rsci5_pclk",			CLK_PLLCLN_DIV16, 7, 6, 3, 22,
-+						BUS_MSTOP(11, BIT(8))),
-+	DEF_MOD("rsci5_tclk",			CLK_PLLCLN_DIV16, 7, 7, 3, 23,
-+						BUS_MSTOP(11, BIT(8))),
-+	DEF_MOD("rsci5_ps_ps3_n",		CLK_PLLCLN_DIV1024, 7, 8, 3, 24,
-+						BUS_MSTOP(11, BIT(8))),
-+	DEF_MOD("rsci5_ps_ps2_n",		CLK_PLLCLN_DIV256, 7, 9, 3, 25,
-+						BUS_MSTOP(11, BIT(8))),
-+	DEF_MOD("rsci5_ps_ps1_n",		CLK_PLLCLN_DIV64, 7, 10, 3, 26,
-+						BUS_MSTOP(11, BIT(8))),
-+	DEF_MOD("rsci6_pclk",			CLK_PLLCLN_DIV16, 7, 11, 3, 27,
-+						BUS_MSTOP(11, BIT(9))),
-+	DEF_MOD("rsci6_tclk",			CLK_PLLCLN_DIV16, 7, 12, 3, 28,
-+						BUS_MSTOP(11, BIT(9))),
-+	DEF_MOD("rsci6_ps_ps3_n",		CLK_PLLCLN_DIV1024, 7, 13, 3, 29,
-+						BUS_MSTOP(11, BIT(9))),
-+	DEF_MOD("rsci6_ps_ps2_n",		CLK_PLLCLN_DIV256, 7, 14, 3, 30,
-+						BUS_MSTOP(11, BIT(9))),
-+	DEF_MOD("rsci6_ps_ps1_n",		CLK_PLLCLN_DIV64, 7, 15, 3, 31,
-+						BUS_MSTOP(11, BIT(9))),
-+	DEF_MOD("rsci7_pclk",			CLK_PLLCLN_DIV16, 8, 0, 4, 0,
-+						BUS_MSTOP(11, BIT(10))),
-+	DEF_MOD("rsci7_tclk",			CLK_PLLCLN_DIV16, 8, 1, 4, 1,
-+						BUS_MSTOP(11, BIT(10))),
-+	DEF_MOD("rsci7_ps_ps3_n",		CLK_PLLCLN_DIV1024, 8, 2, 4, 2,
-+						BUS_MSTOP(11, BIT(10))),
-+	DEF_MOD("rsci7_ps_ps2_n",		CLK_PLLCLN_DIV256, 8, 3, 4, 3,
-+						BUS_MSTOP(11, BIT(10))),
-+	DEF_MOD("rsci7_ps_ps1_n",		CLK_PLLCLN_DIV64, 8, 4, 4, 4,
-+						BUS_MSTOP(11, BIT(10))),
-+	DEF_MOD("rsci8_pclk",			CLK_PLLCLN_DIV16, 8, 5, 4, 5,
-+						BUS_MSTOP(11, BIT(11))),
-+	DEF_MOD("rsci8_tclk",			CLK_PLLCLN_DIV16, 8, 6, 4, 6,
-+						BUS_MSTOP(11, BIT(11))),
-+	DEF_MOD("rsci8_ps_ps3_n",		CLK_PLLCLN_DIV1024, 8, 7, 4, 7,
-+						BUS_MSTOP(11, BIT(11))),
-+	DEF_MOD("rsci8_ps_ps2_n",		CLK_PLLCLN_DIV256, 8, 8, 4, 8,
-+						BUS_MSTOP(11, BIT(11))),
-+	DEF_MOD("rsci8_ps_ps1_n",		CLK_PLLCLN_DIV64, 8, 9, 4, 9,
-+						BUS_MSTOP(11, BIT(11))),
-+	DEF_MOD("rsci9_pclk",			CLK_PLLCLN_DIV16, 8, 10, 4, 10,
-+						BUS_MSTOP(11, BIT(12))),
-+	DEF_MOD("rsci9_tclk",			CLK_PLLCLN_DIV16, 8, 11, 4, 11,
-+						BUS_MSTOP(11, BIT(12))),
-+	DEF_MOD("rsci9_ps_ps3_n",		CLK_PLLCLN_DIV1024, 8, 12, 4, 12,
-+						BUS_MSTOP(11, BIT(12))),
-+	DEF_MOD("rsci9_ps_ps2_n",		CLK_PLLCLN_DIV256, 8, 13, 4, 13,
-+						BUS_MSTOP(11, BIT(12))),
-+	DEF_MOD("rsci9_ps_ps1_n",		CLK_PLLCLN_DIV64, 8, 14, 4, 14,
-+						BUS_MSTOP(11, BIT(12))),
- 	DEF_MOD("rtc_0_clk_rtc",		CLK_PLLCM33_DIV16, 5, 3, 2, 19,
- 						BUS_MSTOP(3, BIT(11) | BIT(12))),
- 	DEF_MOD("rspi_0_pclk",			CLK_PLLCLN_DIV8, 5, 4, 2, 20,
-@@ -488,6 +594,26 @@ static const struct rzv2h_reset r9a09g057_resets[] __initconst = {
- 	DEF_RST(7, 6, 3, 7),		/* WDT_1_RESET */
- 	DEF_RST(7, 7, 3, 8),		/* WDT_2_RESET */
- 	DEF_RST(7, 8, 3, 9),		/* WDT_3_RESET */
-+	DEF_RST(8, 1, 3, 18),		/* RSCI0_PRESETN */
-+	DEF_RST(8, 2, 3, 19),		/* RSCI0_TRESETN */
-+	DEF_RST(8, 3, 3, 20),		/* RSCI1_PRESETN */
-+	DEF_RST(8, 4, 3, 21),		/* RSCI1_TRESETN */
-+	DEF_RST(8, 5, 3, 22),		/* RSCI2_PRESETN */
-+	DEF_RST(8, 6, 3, 23),		/* RSCI2_TRESETN */
-+	DEF_RST(8, 7, 3, 24),		/* RSCI3_PRESETN */
-+	DEF_RST(8, 8, 3, 25),		/* RSCI3_TRESETN */
-+	DEF_RST(8, 9, 3, 26),		/* RSCI4_PRESETN */
-+	DEF_RST(8, 10, 3, 27),		/* RSCI4_TRESETN */
-+	DEF_RST(8, 11, 3, 28),		/* RSCI5_PRESETN */
-+	DEF_RST(8, 12, 3, 29),		/* RSCI5_TRESETN */
-+	DEF_RST(8, 13, 3, 30),		/* RSCI6_PRESETN */
-+	DEF_RST(8, 14, 3, 31),		/* RSCI6_TRESETN */
-+	DEF_RST(8, 15, 4, 0),		/* RSCI7_PRESETN */
-+	DEF_RST(9, 0, 4, 1),		/* RSCI7_TRESETN */
-+	DEF_RST(9, 1, 4, 2),		/* RSCI8_PRESETN */
-+	DEF_RST(9, 2, 4, 3),		/* RSCI8_TRESETN */
-+	DEF_RST(9, 3, 4, 4),		/* RSCI9_PRESETN */
-+	DEF_RST(9, 4, 4, 5),		/* RSCI9_TRESETN */
- 	DEF_RST(7, 9, 3, 10),		/* RTC_0_RST_RTC */
- 	DEF_RST(7, 10, 3, 11),		/* RTC_0_RST_RTC_V */
- 	DEF_RST(7, 11, 3, 12),		/* RSPI_0_PRESETN */
--- 
-2.52.0
+Unfortunately this does not fix the problem: I still need to do an extra
+overlay rm/add cycle to make the SPI EEPROM work.
 
+In addition, it triggers a bunch of new scary error messages:
+
+rcar_sound ec500000.sound: Failed to create device link (0x180) with
+supplier soc for /soc/sound@ec500000/rcar_sound,src/src-0
+rcar_sound ec500000.sound: Failed to create device link (0x180) with
+supplier soc for /soc/sound@ec500000/rcar_sound,src/src-1
+[...]
+rcar_sound ec500000.sound: Failed to create device link (0x180) with
+supplier soc for /soc/sound@ec500000/rcar_sound,src/src-9
+rcar_sound ec500000.sound: Failed to create device link (0x180) with
+supplier soc for /soc/sound@ec500000/rcar_sound,ssi/ssi-0
+rcar_sound ec500000.sound: Failed to create device link (0x180) with
+supplier soc for /soc/sound@ec500000/rcar_sound,ssi/ssi-1
+[...]
+rcar_sound ec500000.sound: Failed to create device link (0x180) with
+supplier soc for /soc/sound@ec500000/rcar_sound,ssi/ssi-9
+rcar_sound ec500000.sound: Failed to create device link (0x180) with
+supplier soc for /soc/sound@ec500000/rcar_sound,src/src-0
+rcar_sound ec500000.sound: Failed to create device link (0x180) with
+supplier soc for /soc/sound@ec500000/rcar_sound,src/src-1
+[...]
+rcar_sound ec500000.sound: Failed to create device link (0x180) with
+supplier soc for /soc/sound@ec500000/rcar_sound,src/src-9
+rcar_sound ec500000.sound: Failed to create device link (0x180) with
+supplier soc for /soc/sound@ec500000/rcar_sound,ssi/ssi-0
+rcar_sound ec500000.sound: Failed to create device link (0x180) with
+supplier soc for /soc/sound@ec500000/rcar_sound,ssi/ssi-1
+[...]
+rcar_sound ec500000.sound: Failed to create device link (0x180) with
+supplier soc for /soc/sound@ec500000/rcar_sound,ssi/ssi-9
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
