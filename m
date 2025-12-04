@@ -1,48 +1,54 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35D5E26C39E;
-	Thu,  4 Dec 2025 15:37:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D250C7E0FF;
+	Thu,  4 Dec 2025 18:11:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764862626; cv=none; b=GhW1ME8j7SJ/cjqM+HsV5hpnlV+5Hk52boc96Sl9RRiYkLjJ5HAX/J0+rzVSc2Q1+XYGzRzbA7xCCccexlFjIg9K7bmgil3cDTCdqSOUNVDaqKfPFgs3AodxZ2luUfTo8OD6JRbWByF/FKJyTSRKFQ6JEWswwCP98i3htu2AgO0=
+	t=1764871913; cv=none; b=TYlMcF0DAEaqFVsb3eq7ayb18EuDsoVwo5MTNDkhDMDghUozmzaxvdxGwoFWRq4JR4FO9AmEFYQ6iiyebKEpp5EsRTiX1rsSCukr6csX4T7b5n+YxxbJVNkWRjtVoJDwNhLe/hdrzg+6zA8CrK8Zp7andMKB2Rkoau2iCfufB0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764862626; c=relaxed/simple;
-	bh=BGS0FZcNwAT4kN84K1EFaxAPrUGjGKfhVBy6CiQEox4=;
+	s=arc-20240116; t=1764871913; c=relaxed/simple;
+	bh=YGqSHCukN44MtRAA840rsVjxdK53+EwKH0OSFzHnSOw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=duw8S6VBm1aRike6vNc1Ci8YOW3mQNdQUZnrb4FgeNdBfK/Erq9nS8/abAY8sVL9jmtZ8zuZ9C1UUNL7eMc330aN/bweHnjAunTX6u52fu3BJxjHAvfH974s9Fidn7nhlAO1ecCvscy+6wOcvnwDGg/YTKki0+v5w8uctNzuPV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lTA+kkLd; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=Wv7DzC5zsvGXmxIU3rWWHQr4Krji6kk1C8swBOTwG7k4xC0AMX611z0M7JgYA97vslfYq8f8RA5LfpORiiw0ZfPGoe3GtaFZqXUe14jTVWmYlvrLm9dvTZLlqk/Ze+eRwjyadUlWIX6BvE2wXr0Mm3KOeg5p28yAY55+aytFqQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BtUevZnH; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lTA+kkLd"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79090C4CEFB;
-	Thu,  4 Dec 2025 15:37:04 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BtUevZnH"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 308BFC4CEFB;
+	Thu,  4 Dec 2025 18:11:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1764862624;
-	bh=BGS0FZcNwAT4kN84K1EFaxAPrUGjGKfhVBy6CiQEox4=;
+	s=k20201202; t=1764871912;
+	bh=YGqSHCukN44MtRAA840rsVjxdK53+EwKH0OSFzHnSOw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lTA+kkLd3VW7hsowY8sH2q2mgTi7/M3Nkz1kuK4ILH0Br6TKK09/opjnzdYB+ix74
-	 S7MaJWbmq0O7fG1JGlH5IJyEILC5lSPVXbpJs+OECIsD5xRhozl4tsv4WCbmDZqm0y
-	 BeW04I57dfv2WO038B4KRB1AoSR89rwV4AOsj1TnkqzI+ZBhjA9i/s2F16SSxK88EY
-	 v/wKzfBJeo4o1eNTkcZbUKY2nWd1/QGFM5n3H76q77rhn1ePTzmf3U5Y0c2yDFZIaA
-	 d4mjjpeFORlWYMnJSV4RdHq+a07NfZwIpaMkilKYadFbuDBwcbOqKmwwyczrHkZHm9
-	 WUE6YCmQWTCDQ==
-Date: Thu, 4 Dec 2025 09:37:01 -0600
+	b=BtUevZnH9RyvYMwzl477YFL5aNO4tBDkZ7lPcYx+0FpgBO1r42u230DnuXmNz2C+0
+	 te/oUqwKp2gliIPEB/KHHGgPcftaCabfOpcC2i+pl+2Xd0pV4iA4CudTktvHhe/gl0
+	 1gyc0VaX436WtYq7jR7EAO/qlH6Cx867DVjrGd79okmFzGn1lITdoWhnqvjWmnNprI
+	 ESTGJs9WZkYplqJdCCMZLNCPv+nnJRtebqbCGxSyMlPOhaeobI+E59XMXuNwR9p+gp
+	 tos+AGU5KSFED2q0L/bUVmM8Y+mfKL2pScbvZMQUMMqp+BHPpomUgFi7UmaKUdR9pl
+	 wxiKVIAIxP/Qw==
+Date: Thu, 4 Dec 2025 12:11:49 -0600
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Raghav Sharma <raghav.s@samsung.com>
-Cc: sboyd@kernel.org, chandan.vn@samsung.com, krzk@kernel.org,
-	conor+dt@kernel.org, shin.son@samsung.com,
-	linux-kernel@vger.kernel.org, dev.tailor@samsung.com,
-	devicetree@vger.kernel.org, karthik.sun@samsung.com,
-	cw00.choi@samsung.com, s.nawrocki@samsung.com,
-	alim.akhtar@samsung.com, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-	sunyeal.hong@samsung.com, mturquette@baylibre.com
-Subject: Re: [PATCH 1/3] dt-bindings: clock: exynosautov920: add MFD clock
- definitions
-Message-ID: <176486262088.1527918.10847897816665673488.robh@kernel.org>
-References: <20251119114744.1914416-1-raghav.s@samsung.com>
- <CGME20251119113927epcas5p15154cb4a7824e9ca65ac18842b68d785@epcas5p1.samsung.com>
- <20251119114744.1914416-2-raghav.s@samsung.com>
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: linux-clk@vger.kernel.org, MyungJoo Ham <myungjoo.ham@samsung.com>,
+	Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	linux-tegra@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Thierry Reding <treding@nvidia.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v4 03/12] dt-bindings: memory: Document Tegra114 Memory
+ Controller
+Message-ID: <176487190886.1928350.15840507391980964576.robh@kernel.org>
+References: <20251125120559.158860-1-clamor95@gmail.com>
+ <20251125120559.158860-4-clamor95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -51,18 +57,18 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251119114744.1914416-2-raghav.s@samsung.com>
+In-Reply-To: <20251125120559.158860-4-clamor95@gmail.com>
 
 
-On Wed, 19 Nov 2025 17:17:42 +0530, Raghav Sharma wrote:
-> Add device tree clock binding definitions for CMU_MFD
+On Tue, 25 Nov 2025 14:05:50 +0200, Svyatoslav Ryhel wrote:
+> Add Tegra114 support into existing Tegra124 MC schema with the most
+> notable difference in the amount of EMEM timings.
 > 
-> Signed-off-by: Raghav Sharma <raghav.s@samsung.com>
+> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 > ---
->  .../clock/samsung,exynosautov920-clock.yaml   | 19 +++++++++++++++++++
->  .../clock/samsung,exynosautov920.h            |  4 ++++
->  2 files changed, 23 insertions(+)
+>  .../nvidia,tegra124-mc.yaml                   | 31 +++++--------------
+>  1 file changed, 8 insertions(+), 23 deletions(-)
 > 
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
