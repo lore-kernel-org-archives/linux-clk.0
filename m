@@ -1,203 +1,158 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2C6C299937
-	for <linux-clk@vger.kernel.org>; Thu,  4 Dec 2025 07:14:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B588D261B96;
+	Thu,  4 Dec 2025 07:39:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764832468; cv=none; b=KLVkbK3H8fpRK2Vmo4VmSgCCF45piQp/3mpJPYFd/HB6bUP2qRHZbMJq09byc6c5e2/zJb5I9dmf7cRW1YgLJ1HZ3qIAWMspIqeiGbDmYiC19a1Ghi/zEuL8eqJ1NOxEhQKHv/H0jmmII4zJ01XXPJK5BliO6pvqsojBCkTdADw=
+	t=1764833948; cv=none; b=jTATOHate32OklvLIhQwI3zWPNiM9Kjs1Qa56aDY/LSEMhCsJmT/10rqcgqBj5wlloyvSbv260qPEZC8JSDWKqsyMg4sFE1vhP/m9R3p3WSfTgnLsw+uWU5UZui4RF4m71I4yT8x2JEmq+x5HNMLNIGKzcj8HiE57BxZ4STT63I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764832468; c=relaxed/simple;
-	bh=5C7hKuLAvhvfZz+3GAuTKfQ3xGCGPj/4JPyHPx3D4KA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=q/D1uJFADKn2nmvsR9dPLs31+CN1speORw/5/yP8HFByMYz/OyyC8imC5adSRn04FGOr15Zc/PtJG1bX68KjUVezfPVZV/F6UtzBBTgOnbhGR1bn63+Y7b+AexiAA+zGkeEpKYBMLszmawSyIkUDIEz7fibTQ9BUxBVfH0wDJnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=e+Phu7H9; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=SaFzdHfq; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1764833948; c=relaxed/simple;
+	bh=ZBbFP2u19PYaompzZPpRS3munLLvOSa0dafo71gqR4A=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jz6b72SMf5E7xXR7cu3EIUkv/kYYMspkKplYndV8yG2/YzmSE6JLh6Hr97T4byf/J1PE3BH67uv1SEEcRCon/tkDGGWvs8vD6WAYZ0LomcBZq5VWYcErfaxMxWgwYJQ1mQsrfA8Hl4toADXHOLwfX0h1SZe36WLjubU7MLstiAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=PtQg8yrU; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="e+Phu7H9";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="SaFzdHfq"
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5B468nPE823778
-	for <linux-clk@vger.kernel.org>; Thu, 4 Dec 2025 07:14:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	1nF7KRnXPuuP/bAwN9rvMlJ/NT7u6usEQMpt8zz2V+Y=; b=e+Phu7H9jZ2KiMcp
-	2fxKKyJw0GVqKQFfutfDfVrDZFBrQJvfC5nc1Gqf+CVQ1NPUWYmv3Fr7SsT580OS
-	nximFAtXy2KxXsoPv8q33pFrB6oX7i2waI+TWLjOqyKlg911DSJvvwr5A5EerBTD
-	OvhIykmJtN880CNL++d6gW51957oBCg+6aD1wQ7+se5ffU0nWV9FMpbnfavUw1XW
-	smZBVg3aPjX0ieU8ahJ0kIUKdg4Tj3c6NHnjekPcWRqu8B1ywR8vcAWo8k9JBcvD
-	gPChlFBJIgrFq+Tbwdtq1UIGKkQ2483s1oiA2VXFtaHtxQKPkLCwm7aFng0dxQqk
-	uvr2ng==
-Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com [209.85.216.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4atm12b4ne-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Thu, 04 Dec 2025 07:14:25 +0000 (GMT)
-Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-3437863d0easo964054a91.0
-        for <linux-clk@vger.kernel.org>; Wed, 03 Dec 2025 23:14:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1764832464; x=1765437264; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1nF7KRnXPuuP/bAwN9rvMlJ/NT7u6usEQMpt8zz2V+Y=;
-        b=SaFzdHfqP/+hoP8EgbOjJvK4op/neW6T+1iiArb5VcvFkIUZwuA57q3Np74x8maRgy
-         eVZr+a69PSHaThJBQJhsdAu1kyOSrmIDm4hNOD4hVv2YeMhz5tNeiJs13lhX5rqKg+51
-         /kvNE2pPmmvBIohxfE42gYyKoQSsaAh6Opb9eR1+4aTwCg+vNQU2fL1IyDZqoeLUkfIJ
-         bY0IN+kQZVFLExx3SivXTdJwxTcYHOV5k53QoXXrO4szt0fkxXzdTdCdE4JSU/LLSfCB
-         5E5ZRPWLNHaObfKtchapvhqtXtHAcuKq5+cY8+umOuhn04qq2bgcJgnXuEHf2Ihh9/KU
-         r8xA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764832464; x=1765437264;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1nF7KRnXPuuP/bAwN9rvMlJ/NT7u6usEQMpt8zz2V+Y=;
-        b=moAlbKNtrviv+mbAL37h3cXrFNuV8ba2sHHg5y0SktSOvEcYsBHCOn28tc81TNHdp1
-         jSaF13MYmNjRLGSomeohBq3RpJKlGaSHsU47IVGHDPO2FU1Lj7uBek08jwIgZtSjuKB4
-         oLRHZ/qS+wHzIhJKNAiqyNPGuwhDa9O6qHRi6N+sFZsEfkaiJvLajabyIC6nQaJiAueo
-         V6wclbO7JdQyXFiigIrT6lvmqg2QIyymyXInm/HNoi+J4nXAm46eqnasUk2tvNY6sqtm
-         bqijCtRRIVZ9WNz7NBGt2dtvugQS14XST0yVNh03/lSwWiSnRH9JgwRRShjuZuSsta1s
-         lJ+A==
-X-Forwarded-Encrypted: i=1; AJvYcCUYdSO2pDk1iB7az1U0hX4XbTwM/BDLcTNWaBiSBcbe1Ndso1NI7bu5WPq4+i7bT7e1dcegwv2k5YE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YygldctwQS3mzluKogK01M5BsQFR4DgX9VGd923FS4jJCPu0xQh
-	mnNnnz6VQfRoquIgj6ESKUadH6kKxL3uh5ocg8P5SGNhoqokbpQvZE8kwMk6KKJK4fQQJT7L4yC
-	SnK3yorgcCZEt0YeUn8Yfs8J8ovy2P78lEyMhiHqUfqmfHDBHlZL0wDlcFrEdFvM=
-X-Gm-Gg: ASbGnctJkGGVmgfF7FqDpg2YXRbVwGVV/VMle+oVJtrtCxpuTIuWH+IFXYUNeIDcy+p
-	sy5VGoeHKbNDWUfPK6CoXfK0NXWcu41WfNPaGQhd0Oq2YeDsWMDmNQWCYnYZ0S0i7TLtx/bR1YJ
-	rdHGa/hCeNBdOfSb9UGsXNVPd4aXUhQ30ZndG1t43t5w6D7GEqwqUHr+f61fFcBdNask0Ca5qsS
-	+h5uE3sxzp7dfYDh9jNMIALzouLdDo8XC1Yfx7x21p0P8bBhCQoUjEtrMr3OAHbTG+lcGrtZC0B
-	dV5G877rgVHX+63j6XMvjQ6KfId/u31+ojlT1iggCQmcGSG3srrHC+pNvBidQsRgx381KpR9Ufl
-	CJAKC0gkRDLU7eL+6edonvDTZIKJlwIK3gRphyg==
-X-Received: by 2002:a17:90b:534e:b0:32b:9750:10e4 with SMTP id 98e67ed59e1d1-349126f0736mr5893469a91.27.1764832464462;
-        Wed, 03 Dec 2025 23:14:24 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGMj8ey2LgMUls5vb/bDVMguHBOIr4pbhmoevWwLaJZ3BPPsbZLE6wlw8i1niGvDyiNmkNTEQ==
-X-Received: by 2002:a17:90b:534e:b0:32b:9750:10e4 with SMTP id 98e67ed59e1d1-349126f0736mr5893429a91.27.1764832463957;
-        Wed, 03 Dec 2025 23:14:23 -0800 (PST)
-Received: from [10.217.217.147] ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3494f398fa5sm889313a91.8.2025.12.03.23.14.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 03 Dec 2025 23:14:23 -0800 (PST)
-Message-ID: <75e53a37-0fd2-41d6-92bc-fb4ad5856829@oss.qualcomm.com>
-Date: Thu, 4 Dec 2025 12:44:16 +0530
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="PtQg8yrU"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 9D4731A1F38;
+	Thu,  4 Dec 2025 07:39:03 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 6351B6068C;
+	Thu,  4 Dec 2025 07:39:03 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id B9D2611921EB0;
+	Thu,  4 Dec 2025 08:38:40 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1764833941; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=k7CE06tyTx4yxeiWtpPuf1dnd1n3hRXeTtqv9aVcNzw=;
+	b=PtQg8yrUoGAKG/Uii8S7XQtskQAWYlZadXyZzx8jkUIfm66LC9Z6ad4cKNE4THRD7VoZSf
+	VpOBLrkjXDpI5hwZCvijtYB2Vy5ZG58J80S2F53J9dwWk7dpTNG30pcf/51U93DGiwEgRT
+	fQpgrXdq5ncqdGM17SDz8p09cF/kH78uKk1HPXF2geoo/Iq2hdicWw0z1OcT8qIlGWX4io
+	9e/70u+5e6wZE/l9cV4otQ1JJW0py/fWZuwlCOsKVDmZydp44Fq5GitqLtJS5kFRhZ2OUd
+	f1Zx5ECtIQ4aGzbOVCxCdOdmcvN4wJ599iZIa+qSHKGSWZgKnUBDj/ecIp/4rQ==
+Date: Thu, 4 Dec 2025 08:38:39 +0100
+From: Herve Codina <herve.codina@bootlin.com>
+To: Kalle Niemi <kaleposti@gmail.com>, Rob Herring <robh@kernel.org>, Matti
+ Vaittinen <mazziesaccount@gmail.com>, Geert Uytterhoeven
+ <geert+renesas@glider.be>, linux-arm-kernel@lists.infradead.org
+Cc: Andrew Lunn <andrew@lunn.ch>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ Danilo Krummrich <dakr@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha
+ Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team
+ <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Michael
+ Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Andi
+ Shyti <andi.shyti@kernel.org>, Wolfram Sang
+ <wsa+renesas@sang-engineering.com>, Peter Rosin <peda@axentia.se>, Arnd
+ Bergmann <arnd@arndb.de>, Saravana Kannan <saravanak@google.com>, Bjorn
+ Helgaas <bhelgaas@google.com>, Charles Keepax
+ <ckeepax@opensource.cirrus.com>, Richard Fitzgerald
+ <rf@opensource.cirrus.com>, David Rhodes <david.rhodes@cirrus.com>, Linus
+ Walleij <linus.walleij@linaro.org>, Ulf Hansson <ulf.hansson@linaro.org>,
+ Mark Brown <broonie@kernel.org>, Andy Shevchenko
+ <andriy.shevchenko@linux.intel.com>, Daniel Scally <djrscally@gmail.com>,
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>, Sakari Ailus
+ <sakari.ailus@linux.intel.com>, Len Brown <lenb@kernel.org>, Davidlohr
+ Bueso <dave@stgolabs.net>, Jonathan Cameron <jonathan.cameron@huawei.com>,
+ Dave Jiang <dave.jiang@intel.com>, Alison Schofield
+ <alison.schofield@intel.com>, Vishal Verma <vishal.l.verma@intel.com>, Ira
+ Weiny <ira.weiny@intel.com>, Dan Williams <dan.j.williams@intel.com>,
+ Wolfram Sang <wsa@kernel.org>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+ linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org,
+ linux-pci@vger.kernel.org, linux-sound@vger.kernel.org,
+ patches@opensource.cirrus.com, linux-gpio@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-spi@vger.kernel.org,
+ linux-acpi@vger.kernel.org, linux-cxl@vger.kernel.org, Allan Nielsen
+ <allan.nielsen@microchip.com>, Horatiu Vultur
+ <horatiu.vultur@microchip.com>, Steen Hegelund
+ <steen.hegelund@microchip.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v4 01/29] Revert "treewide: Fix probing of devices in DT
+ overlays"
+Message-ID: <20251204083839.4fb8a4b1@bootlin.com>
+In-Reply-To: <dc813fc2-28d2-4f2c-a2a3-08e33eec8ec7@gmail.com>
+References: <20251015071420.1173068-1-herve.codina@bootlin.com>
+	<20251015071420.1173068-2-herve.codina@bootlin.com>
+	<f74ab0a2-b74b-4b96-8469-a716c850e230@gmail.com>
+	<CAL_JsqJDOYuzutMHMeFAogd5a_OX6Hwi8Gwz1Vy7HpXgNeYKsg@mail.gmail.com>
+	<5cf2a12a-7c66-4622-b4a9-14896c6df005@gmail.com>
+	<CAL_JsqJjm12LxpDg6LmpY=Ro_keHwnrWiYMLVnG=s_pSP4X2WQ@mail.gmail.com>
+	<072dde7c-a53c-4525-83ac-57ea38edc0b5@gmail.com>
+	<CAL_JsqKyG98pXGKpL=gxSc92izpzN7YCdq62ZJByhE6aFYs1fw@mail.gmail.com>
+	<55076f4b-d523-4f8c-8bd4-0645b790737e@gmail.com>
+	<20251202102619.5cd971cc@bootlin.com>
+	<088af3ff-bd04-4bc9-b304-85f6ed555f2a@gmail.com>
+	<20251202175836.747593c0@bootlin.com>
+	<dc813fc2-28d2-4f2c-a2a3-08e33eec8ec7@gmail.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 08/11] clk: qcom: dispcc: Add support for display clock
- controller Kaanapali
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
-        Imran Shaik <imran.shaik@oss.qualcomm.com>,
-        Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org
-References: <20251125-kaanapali-mmcc-v2-v2-0-fb44e78f300b@oss.qualcomm.com>
- <20251125-kaanapali-mmcc-v2-v2-8-fb44e78f300b@oss.qualcomm.com>
- <w3ezxipjucswfswfg2z7b7uyu55bssqatdnbxa6jflii4j7nym@lxsnidrewepu>
- <8d0ec7fc-6eb0-4b71-8e0f-3deaf1f489d6@oss.qualcomm.com>
-Content-Language: en-US
-From: Taniya Das <taniya.das@oss.qualcomm.com>
-In-Reply-To: <8d0ec7fc-6eb0-4b71-8e0f-3deaf1f489d6@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMjA0MDA1NyBTYWx0ZWRfX2EA874yCdpSa
- iHUbEhbBfMu+m1DLZkt8whPh0YthKhkXce9VzCZ6CBWWtJnnvDUo6ivZANMHRp/LREhbb7/4LlZ
- ta5kyI7fyi/H7InyzCzHBBq6PeueBu2l5pKtGzXp4JjMvNHaBCOGGS4MAXdbiEnUPtDesR0bBXK
- FVbC68d2xuiLcTdTj4HBhILiqEyGeK++D8y7ggEqA8qyFX4yromyE2JEurr9jWlPhsOdVlmOoCi
- 8g77MNnbNAV5Jmt3vwsLkAVAi5eRQ6XiRQ4sDFXfa870TsNKxcrYPi7VLWnWY3oR2w3e1DyRsA0
- +yCt4vwBzOVvJfso3WUrr2uTa/WUn3HOePnRfHjEysW97gW9xzb4gdN4w8uA6FII2oxE989obo0
- gDBdzjCnvUgXHZa8jCAvXezKczheXQ==
-X-Authority-Analysis: v=2.4 cv=JY6xbEKV c=1 sm=1 tr=0 ts=693134d1 cx=c_pps
- a=vVfyC5vLCtgYJKYeQD43oA==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
- a=IkcTkHD0fZMA:10 a=wP3pNCr1ah4A:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=JxPSEc7MvJ4Lh0wbHXUA:9
- a=QEXdDO2ut3YA:10 a=rl5im9kqc5Lf4LNbBjHf:22
-X-Proofpoint-GUID: HzouwrtbG3QlZW3Vq5SeLWapNTXIeZGd
-X-Proofpoint-ORIG-GUID: HzouwrtbG3QlZW3Vq5SeLWapNTXIeZGd
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-12-04_02,2025-12-03_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 adultscore=0 impostorscore=0 suspectscore=0 priorityscore=1501
- malwarescore=0 bulkscore=0 lowpriorityscore=0 phishscore=0 spamscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2512040057
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
+Hi Kalle,
 
+On Wed, 3 Dec 2025 12:11:45 +0200
+Kalle Niemi <kaleposti@gmail.com> wrote:
 
-On 12/1/2025 6:50 PM, Konrad Dybcio wrote:
-> On 11/26/25 1:09 AM, Dmitry Baryshkov wrote:
->> On Tue, Nov 25, 2025 at 11:15:17PM +0530, Taniya Das wrote:
->>> Support the clock controller driver for Kaanapali to enable display SW to
->>> be able to control the clocks.
->>>
->>> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
->>> ---
+...
 > 
-> [...]
-> 
->>> +/* 257.142858 MHz Configuration */
->>
->> This is a bit strange frequency for the boot config.
-
-The lowest PLL configuration is used as boot config based on the
-MDP_CLK_SRC clock requirement. The PLLs on Kaanapali can support these
-lower frequencies as well.
-
-
-> The frequency map lists this odd cookie as the lowest predefined config,
-> perhaps it was pulled from there.
+> I tried this patch on next-20251127 by manually adding the added lines 
+> to /drivers/of/overlay.c, and it did not solve the issue. I will 
+> continue to test this.
 > 
 
-Correct Konrad.
+Did you observe same traces reported by Geert?
 
-> More interestingly, the only consumer of this PLL (MDP_CLK_SRC) makes no
-> effort to use the m/n/d registers, instead relying on the PLL to re-clock
-> for its ratesetting with a fixed divider of 3 (and div1 @ XO rate).
-> 
+To move forward, I think I will need help.
 
-The m/n is not preferred in the cases where the PLL needs to slew to
-derive a new VCO frequency. That is the reason to keep the divider
-constant as much as possible to derive a particular frequency.
+Indeed, Kalle, Geert, I don't have your hardware, your related overlay or
+a similar one that could be used for test and also I don't have your out of
+tree code used to handle this overlay.
 
-> 257.142858 * 3 = 771.428574 over-drives MDP_CLK_SRC, FWIW.
-> 
+I know overlays and fw_devlink have issues. Links created by fw_devlink
+when an overlay is applied were not correct on my side.
 
-The lowest frequency requirement is 85.7MHz and the frequency is derived
-using
-257.142858 (PLL VCO) / 3 (RCG Div) = 85.714286 MHz
+Can you check your <supplier>--<consumer> links with 'ls /sys/class/devlinks'
 
-there is no over-drive at RCG of MDP.
+On my side, without my patches some links were not correct.
+They linked to the parent of the supplier instead of the supplier itself.
+The consequence is a kernel crash, use after free, refcounting failure, ...
+when the supplier device is removed.
 
-> Taniya, we've seen something like this in camera too. Is there a reason
-> the frequency is being set this way?
-> 
+Indeed, with wrong links consumers were not removed before suppliers they
+used.
 
-We start with the lowest frequency to configure the PLL and frequency
-requirements are decided based on usecases.
+Looking at Geert traces:
+--- 8< ---
+rcar_sound ec500000.sound: Failed to create device link (0x180) with
+supplier soc for /soc/sound@ec500000/rcar_sound,src/src-0
+rcar_sound ec500000.sound: Failed to create device link (0x180) with
+supplier soc for /soc/sound@ec500000/rcar_sound,src/src-1
+[...]
+--- 8< ---
 
--- 
-Thanks,
-Taniya Das
+Even if it is not correct, why the soc device cannot be a provider?
+I don't have the answer to this question yet.
 
+Without having the exact tree structure of the base device-tree, the overlay
+and the way it is applied, and so without been able to reproduce the issue
+on my side, investigating the issue is going to be difficult.
+
+I hope to find some help to move forward and fix the issue.
+
+Saravana's email (Saravana Kannan <saravanak@google.com>) seems incorrect.
+Got emails delivery failure with this email address.
+
+Best regards,
+Hervé
