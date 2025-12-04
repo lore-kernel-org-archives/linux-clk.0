@@ -1,39 +1,87 @@
-Received: from mail-sh.amlogic.com (unknown [114.94.151.114])
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B1DF308F0B;
-	Thu,  4 Dec 2025 05:51:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.94.151.114
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14DCA22DF99
+	for <linux-clk@vger.kernel.org>; Thu,  4 Dec 2025 06:17:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764827515; cv=none; b=UdJ/E+AeSvtzpPQa5HyK2r3IiViToyQ1BzKHjAdRDhmwX+SoZe6zhBBLS9MHhwRMJoDs1QoC+yfGhODIZr5iurI1+dk2+xu1gDZtyBYTvLfxV6CZxlZFpOYqdQ6uAACDbqf5DXdOiJxx808a92f9QWXD11cPk0dR0IiC1XWQiJM=
+	t=1764829034; cv=none; b=crZ5QHC4vqN3jDkFHJGPpLuoZlEhecL+kpp1N9t8Dwvl5MaSWhtM1ykNutwMNXl8HCgmI73ZlPcuwuKcANW5hBHWncb+EcB7zryTAoDVSpDd5KBLMNX7SK+2uQsU5qdlTcpubm6xjFOI2e0LBk16IbLGGeHw6YKuS/8mHS1X6nI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764827515; c=relaxed/simple;
-	bh=af0hA+zDPfoVkn9NLrQS1MdvE2XtFzvsEH809sbGmfg=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZZhmPgQ5eSp576FL9WehJdXPv45/cFdAGnfm6oRxvHvyMPZALkauRJ6usZrfQucK7TPG47HhNexGPn+7/ieWFFqSyz5R5a6J183jNDrGikkK3AvbxLwkW27t9MKwsU+37B7ftA+MvW9BxSXwynYIN+2bi+uTkOWQhD1jbcZ/b60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; arc=none smtp.client-ip=114.94.151.114
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amlogic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
-Received: from rd03-sz.software.amlogic (10.28.11.121) by mail-sh.amlogic.com
- (10.18.11.5) with Microsoft SMTP Server id 15.1.2507.61; Thu, 4 Dec 2025
- 13:36:39 +0800
-From: Jian Hu <jian.hu@amlogic.com>
-To: Jerome Brunet <jbrunet@baylibre.com>, Xianwei Zhao
-	<xianwei.zhao@amlogic.com>, Chuan Liu <chuan.liu@amlogic.com>, Neil Armstrong
-	<neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, "Stephen
- Boyd" <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
-	robh+dt <robh+dt@kernel.org>, Rob Herring <robh@kernel.org>
-CC: Jian Hu <jian.hu@amlogic.com>, devicetree <devicetree@vger.kernel.org>,
-	linux-clk <linux-clk@vger.kernel.org>, linux-amlogic
-	<linux-amlogic@lists.infradead.org>, linux-kernel
-	<linux-kernel@vger.kernel.org>, linux-arm-kernel
-	<linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH v6 2/5] dt-bindings: clock: add Amlogic T7 SCMI clock controller
-Date: Thu, 4 Dec 2025 13:36:31 +0800
-Message-ID: <20251204053635.1234150-3-jian.hu@amlogic.com>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20251204053635.1234150-1-jian.hu@amlogic.com>
-References: <20251204053635.1234150-1-jian.hu@amlogic.com>
+	s=arc-20240116; t=1764829034; c=relaxed/simple;
+	bh=o9IcrFnimv7ibOLrNRYV7WuA4rm8uS1dfW5VR+qdcDs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SXHABeCruBMvLqS0bYl16PGky/D5ENzwo90A0HqSud00+/lEiBnrULLtZXkxzkxk+YD5gLktxNeL4osYz6F4/JQLl8dIHLblPi7T1SyzzvvIVNIR+VoeqrkW561sxkRuGL7GeOJss8oO3Om/UiQZ+/J1qzaJ93BWKm2sj3+3ZxI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kgxBRsKM; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kgxBRsKM"
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-64088c6b309so959758a12.0
+        for <linux-clk@vger.kernel.org>; Wed, 03 Dec 2025 22:17:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1764829031; x=1765433831; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=o5cPONIgu6mzYa/WMF+RelFJ2K/lRyJPaqEbFSvDOqU=;
+        b=kgxBRsKMI227Ed/vvX/GnIK/qV3+r1/uu0E/k3N83xM0cicTTRcq0QQEMs2S3TKmgv
+         xVWBLKj+KSvKbgXqr7lwO7KsA7cLIPv48ieCTvq0V2oiGuXVR3VEVqU6FI+uxpsQlHqT
+         X8Gi3kGecz0+SHX1PkzVuT/ZCpkN5Z72g6LqvMq4MHdmQVnXWNox3AFyEPRogmL3W8Lx
+         v1Vjwov4tl7KdhNpJ/YdTFftvMn+lNN+YOiGLJ3nAaWr93CNGHHHGuxKsCzcotDzeo36
+         qPsDoLoFWfeQuReSS0HOg73+/umFn2VDRzo4zKQy2HIb3JCAsAG0X3Zd9vouqriF3y6+
+         d/6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1764829031; x=1765433831;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=o5cPONIgu6mzYa/WMF+RelFJ2K/lRyJPaqEbFSvDOqU=;
+        b=nAt4lyR3WsLrG3Xx26b5iNmBSNozsxll872C2tKNXSh65HUJwsi/mTqyCpMUoqnd8D
+         aIeNg7dfQ1BJuHIcOCSPc6PltMuHEGfc2KxIYp+5e6EyHAM35pjWTmRIq/5ql/r8ey1G
+         YlOFa4KFVmsQDk3egWB0+KyoQvAfB+EdCDORfWKYVxhurXxYxPGdK3A5ym2gm53NfYrW
+         e1PfIgr7nPeACmPkjAwjBdih0Nqu0ECXYGRHcfG3nDjg0BgULy5M6FfMM10zdEeOS/2S
+         KIEKPamjjK76xnYRJy+RjahXrYXZoYtUhN1WDqwIyy2YUnn76SSkvJHNYKLJRVHBqHh3
+         eDDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXIK1KwM47NZALlKDMTtcJzyn0MJ/thajAwcW+aDAp5pHABWA2ydkSp8y9bwXnnOP7I+QH1coX6uGk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyf2GHaC4oM3UM/8SI0+FGLMs23IhVg7gwS7OfZ+oHHExhyONZp
+	7OKuFwvht8wuXFQvOAiqUFAOUWvUrZYxfS3Hwy00K1Nxmoow18DnpVgX
+X-Gm-Gg: ASbGnctKXcbZ4Hq4Mt02m1A9DZDlbqZ/V6kakhwaGdiJq/gF82MMMdpJYBmlaWrq8J9
+	kWmxp2skkeifA0VAOXa2CllZkDWZYDSOTD1vppex9BvwW+uvdvKFCrfGdodV0C4F+fS+VK5e/Xk
+	+Z2diEzwtuZCpTbvaf+ouLNuzqPC/oBAtCphPCXnHI7YwmrAc/moy7suzvCDhEMoOObxtxSHmyg
+	iJ8PX3wHPUgWv+uwMPLfCkhvv3lM6OGY+vANdZq6T+sZJmQH4/aBRiut6zzwAopzTa2bdSrPBzw
+	4rwJ2mQr3WJ9hyUcQiGzmvgqDF4f57z4kroHoBWYIccimxZ4g2m0wsXptrNugPK9YZl4Hq3GX7k
+	rnHNwsXoOWUw1GwtIz1oGEdzWRTDBhbJnmV2j3psUp8dF/mV8PVLhEP66daptyqUnSIQDLpsrQp
+	4=
+X-Google-Smtp-Source: AGHT+IE96b/uxsEEqrl87S6Pg6TRMB1JugG4AhVEQkgPU/uciaxk7pEZZBKrlSNBh92a+3pEa9CVUQ==
+X-Received: by 2002:a05:6402:1ecd:b0:647:57db:c997 with SMTP id 4fb4d7f45d1cf-6479c4f6d31mr4107684a12.21.1764829031175;
+        Wed, 03 Dec 2025 22:17:11 -0800 (PST)
+Received: from xeon ([188.163.112.74])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-647b2ec2d8csm490159a12.5.2025.12.03.22.17.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Dec 2025 22:17:10 -0800 (PST)
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Thierry Reding <treding@nvidia.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Svyatoslav Ryhel <clamor95@gmail.com>,
+	Dmitry Osipenko <digetx@gmail.com>,
+	Charan Pedumuru <charan.pedumuru@gmail.com>
+Cc: devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	dri-devel@lists.freedesktop.org
+Subject: [PATCH v2 0/4 RESEND] gpu/drm: tegra: add DSI support for Tegra20/Tegra30
+Date: Thu,  4 Dec 2025 08:16:59 +0200
+Message-ID: <20251204061703.5579-1-clamor95@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -41,70 +89,39 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
 
-Add DT bindings for the SCMI clock controller of the Amlogic T7 SoC family.
+Tegra20/Tegra30 DSI is quite similar to Tegra114+ apart MIPI calibration
+logic and clocks. With a few minor tweaks, existing tegra DSI driver
+should work on Tegra20/Tegra30 devices just fine. Tested on
+Motorola Atrix 4G (T20) and ASUS VivoTab RT TF600T (T30).
 
-Signed-off-by: Jian Hu <jian.hu@amlogic.com>
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+This patchset depends on Tegra20/Tegra30 CSI bringup since both share
+MIPI calibration logic. Ideally these patches should be picked after
+CSI bringup but they will not break anything even if picked before
+CSI patches.
+
 ---
- include/dt-bindings/clock/amlogic,t7-scmi.h | 47 +++++++++++++++++++++
- 1 file changed, 47 insertions(+)
- create mode 100644 include/dt-bindings/clock/amlogic,t7-scmi.h
+Changes in v2:
+- removed all MIPI calibration, it is handled within CSI bringup
+- added per-soc structures into of_match
+- added fix for hang caused by register access with uninited hw
+---
 
-diff --git a/include/dt-bindings/clock/amlogic,t7-scmi.h b/include/dt-bindings/clock/amlogic,t7-scmi.h
-new file mode 100644
-index 000000000000..27bd257bd4ea
---- /dev/null
-+++ b/include/dt-bindings/clock/amlogic,t7-scmi.h
-@@ -0,0 +1,47 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR MIT) */
-+/*
-+ * Copyright (C) 2024-2025 Amlogic, Inc. All rights reserved
-+ */
-+
-+#ifndef __T7_SCMI_CLKC_H
-+#define __T7_SCMI_CLKC_H
-+
-+#define CLKID_DDR_PLL_OSC			0
-+#define CLKID_AUD_PLL_OSC			1
-+#define CLKID_TOP_PLL_OSC			2
-+#define CLKID_TCON_PLL_OSC			3
-+#define CLKID_USB_PLL0_OSC			4
-+#define CLKID_USB_PLL1_OSC			5
-+#define CLKID_MCLK_PLL_OSC			6
-+#define CLKID_PCIE_OSC				7
-+#define CLKID_ETH_PLL_OSC			8
-+#define CLKID_PCIE_REFCLK_PLL_OSC		9
-+#define CLKID_EARC_OSC				10
-+#define CLKID_SYS1_PLL_OSC			11
-+#define CLKID_HDMI_PLL_OSC			12
-+#define CLKID_SYS_CLK				13
-+#define CLKID_AXI_CLK				14
-+#define CLKID_FIXED_PLL_DCO			15
-+#define CLKID_FIXED_PLL				16
-+#define CLKID_FCLK_DIV2_DIV			17
-+#define CLKID_FCLK_DIV2				18
-+#define CLKID_FCLK_DIV2P5_DIV			19
-+#define CLKID_FCLK_DIV2P5			20
-+#define CLKID_FCLK_DIV3_DIV			21
-+#define CLKID_FCLK_DIV3				22
-+#define CLKID_FCLK_DIV4_DIV			23
-+#define CLKID_FCLK_DIV4				24
-+#define CLKID_FCLK_DIV5_DIV			25
-+#define CLKID_FCLK_DIV5				26
-+#define CLKID_FCLK_DIV7_DIV			27
-+#define CLKID_FCLK_DIV7				28
-+#define CLKID_FCLK_50M_DIV			29
-+#define CLKID_FCLK_50M				30
-+#define CLKID_CPU_CLK				31
-+#define CLKID_A73_CLK				32
-+#define CLKID_CPU_CLK_DIV16_DIV			33
-+#define CLKID_CPU_CLK_DIV16			34
-+#define CLKID_A73_CLK_DIV16_DIV			35
-+#define CLKID_A73_CLK_DIV16			36
-+
-+#endif /* __T7_SCMI_CLKC_H */
+Svyatoslav Ryhel (4):
+  clk: tegra20: reparent dsi clock to pll_d_out0
+  gpu/drm: tegra: dsi: move prepare function at the top of encoder
+    enable
+  gpu/drm: tegra: dsi: add support for Tegra20/Tegra30
+  ARM: tegra: adjust DSI nodes for Tegra20/Tegra30
+
+ arch/arm/boot/dts/nvidia/tegra20.dtsi |   4 ++
+ arch/arm/boot/dts/nvidia/tegra30.dtsi |   8 +++
+ drivers/clk/tegra/clk-tegra20.c       |   6 +-
+ drivers/gpu/drm/tegra/drm.c           |   2 +
+ drivers/gpu/drm/tegra/dsi.c           | 100 ++++++++++++++++----------
+ drivers/gpu/drm/tegra/dsi.h           |  15 ++++
+ 6 files changed, 95 insertions(+), 40 deletions(-)
+
 -- 
-2.47.1
+2.48.1
 
