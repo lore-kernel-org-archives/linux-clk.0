@@ -1,137 +1,178 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B69D338F2F;
-	Thu,  4 Dec 2025 12:07:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F845223DD6
+	for <linux-clk@vger.kernel.org>; Thu,  4 Dec 2025 13:48:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764850022; cv=none; b=o/sAasjcvCExFeQadeFdNwz44n/BG6yMXAsI9zgmEAqCh4dSAvvantBWA+DTuBzKqFtbcs2OZobkuQSCXLPjfvvy0en7asNdX9JYsyeYjyaFX784IcftcjNWuefDPBkv3GwHOR/txd6db0YnDgHZ1/NffOA9emvu6Ooq7xmFnhQ=
+	t=1764856099; cv=none; b=gTQeyiXcgxcloMN/Q5TUvqmY57mqeijHbKY98IloMtuNDdTqDzQUTB+PJgTmtFBTnce3Ei/mxV3kxUNaq0MTba4dOXx1fV8RyBpLT+KloA7I9q5hn2hq3IVpeFBw5NdknoYHyYzdHCKYXtVAfGVoezwuiH+9AKir59hQlsw122U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764850022; c=relaxed/simple;
-	bh=AACMBGkOYNpC0wc7dBl/A97+VH5lB0jqIQofcJw+rV4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IRrOG2nNswGJOJaEYohaRkU+zDkHPl9BOQ1/VisnELKKRMp3NjphZzB8NkZ08m/SxWf2jFI6L2jFmxYI6QxCbw54oxy8FkBiArE0UN6QTOqEcAl3YzI3UsMgr795fAtk4XrbZ/FL9z7P9Y2ZfgNyUbTCUVm1VF+8kdGzbqYH4f8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=myUB8jID; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1764856099; c=relaxed/simple;
+	bh=ZufCtcgX/fo+fhRW+mLXVfopYYuOEGq5PQElXR6FVSw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HfrFp6tV08Fu/gSZgS0zeuNU8KlDjC4LmK8kW91O5tBcbtxlpYhkF2ujQEUQ+PSqUxtNShkE/gY/pcpbBd0wwiaU+8/I707yorBqzRU3PCRD1u9ZvrM9YAUAtUmYfRLU/J+uzwKqhIFWfLQeQpYRjggHi/FUVNQlCj8fyfJ6y2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=B7vHpEOh; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=F4P1SQoM; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="myUB8jID"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1764850022; x=1796386022;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=AACMBGkOYNpC0wc7dBl/A97+VH5lB0jqIQofcJw+rV4=;
-  b=myUB8jIDTuWr5LLPyVT9Xwr5rRaMwCi+AafuBgaztdtGXHEqoi1+2Ist
-   yuTNIp/kCZ/XQEUMRyMzeY0MeSs5gxW7dtA1uk7Pi70oCfiHZ5zAN+3px
-   s6KA14IS3y+o/Xcprve+uB2glMPp3WmrnJHCGav3gPgqqFfPgLfcRKQoT
-   aBZmGb1tH5ehp52ROwUPBJUNhSZImWwCOLZS++uXI55HLz0TjE9fhKjb8
-   je3Sug5yNMWdOG4ciHJGhQSikqGjNak9U9DFUXDux3R11Fgvz3yg9Qzn7
-   vf9dHTqeMIFTwuZViFuqUcIumG3hLiRisIp7RuxLkAlTXQLq0qxAxeGwl
-   w==;
-X-CSE-ConnectionGUID: ujoGBIBbTQa4rMxZLNs3Xw==
-X-CSE-MsgGUID: z6PPv4ESQiKHyZ6rE1lvGQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11631"; a="66753252"
-X-IronPort-AV: E=Sophos;i="6.20,248,1758610800"; 
-   d="scan'208";a="66753252"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Dec 2025 04:06:58 -0800
-X-CSE-ConnectionGUID: cFBEIPl6S9m77mLooVMGkg==
-X-CSE-MsgGUID: zwed11zQRAih9YysX+gTQg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.20,248,1758610800"; 
-   d="scan'208";a="225924104"
-Received: from egrumbac-mobl6.ger.corp.intel.com (HELO localhost) ([10.245.245.222])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Dec 2025 04:06:46 -0800
-Date: Thu, 4 Dec 2025 14:06:44 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Herve Codina <herve.codina@bootlin.com>,
-	Kalle Niemi <kaleposti@gmail.com>, Rob Herring <robh@kernel.org>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	linux-arm-kernel@lists.infradead.org, Andrew Lunn <andrew@lunn.ch>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Peter Rosin <peda@axentia.se>, Arnd Bergmann <arnd@arndb.de>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Charles Keepax <ckeepax@opensource.cirrus.com>,
-	Richard Fitzgerald <rf@opensource.cirrus.com>,
-	David Rhodes <david.rhodes@cirrus.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Mark Brown <broonie@kernel.org>,
-	Daniel Scally <djrscally@gmail.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Len Brown <lenb@kernel.org>, Davidlohr Bueso <dave@stgolabs.net>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Wolfram Sang <wsa@kernel.org>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
-	linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-sound@vger.kernel.org,
-	patches@opensource.cirrus.com, linux-gpio@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-spi@vger.kernel.org,
-	linux-acpi@vger.kernel.org, linux-cxl@vger.kernel.org,
-	Allan Nielsen <allan.nielsen@microchip.com>,
-	Horatiu Vultur <horatiu.vultur@microchip.com>,
-	Steen Hegelund <steen.hegelund@microchip.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v4 01/29] Revert "treewide: Fix probing of devices in DT
- overlays"
-Message-ID: <aTF5VN2YSpj5uJsr@smile.fi.intel.com>
-References: <CAL_JsqJjm12LxpDg6LmpY=Ro_keHwnrWiYMLVnG=s_pSP4X2WQ@mail.gmail.com>
- <072dde7c-a53c-4525-83ac-57ea38edc0b5@gmail.com>
- <CAL_JsqKyG98pXGKpL=gxSc92izpzN7YCdq62ZJByhE6aFYs1fw@mail.gmail.com>
- <55076f4b-d523-4f8c-8bd4-0645b790737e@gmail.com>
- <20251202102619.5cd971cc@bootlin.com>
- <088af3ff-bd04-4bc9-b304-85f6ed555f2a@gmail.com>
- <20251202175836.747593c0@bootlin.com>
- <dc813fc2-28d2-4f2c-a2a3-08e33eec8ec7@gmail.com>
- <20251204083839.4fb8a4b1@bootlin.com>
- <CAMuHMdXdwf7La1EYBWTJadsTAJG3nKQVW6wtBn-bUqshA=XHRw@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="B7vHpEOh";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="F4P1SQoM"
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5B4AEuSK1159677
+	for <linux-clk@vger.kernel.org>; Thu, 4 Dec 2025 13:48:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	7Kfz6v4DovVmuVuVubrjJnyyd7HdrAE3tSK9e1ucook=; b=B7vHpEOhuO/uX17i
+	L7qJfA7WsWY3hovKEKrsKsUPPPypN8TcJVhjMyH7A9uyQolLIFXEF5TLskmOabnt
+	J7T7ixwJHVoq8dsDYW3iBUqtVitz635GdNjrXQ3nqoC/UYLlWZukaXbqLQ9drP4n
+	RUGPydSgxmRdUFvpL8qi0Yu5mE9kxp6esVCxXWgso6fTGVehsN3YKIzKoNKRad17
+	U5SM2BrCb0aOYeDCFREL9eWzPO6rQZAXq4iBWrx0ALrHjjbJPBdE/bECKeGpJoQe
+	xar1YVLETlgJz6xs1hEOW0+C+IayoJzD/GmDuoZh+2p/vHCknD3yrsqc0Kunh4kJ
+	rnbMJw==
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4atu3h2xy1-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Thu, 04 Dec 2025 13:48:17 +0000 (GMT)
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-8b25c5dc2c3so20182685a.3
+        for <linux-clk@vger.kernel.org>; Thu, 04 Dec 2025 05:48:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1764856096; x=1765460896; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=7Kfz6v4DovVmuVuVubrjJnyyd7HdrAE3tSK9e1ucook=;
+        b=F4P1SQoMI4UntUmegLbqO393UYuIPHageXliksb/AcLEmdIHRhzexjhBMnd740N2uD
+         2RbIHPq1ONW6yPGfxvhfmLKdFlFu3B24uvRdK+3umdZM3RkGhPJtOVmcnd2lHKJhZiif
+         y4XKTdDARgRhmHw4/LMgAdusT6E7UfXkSYU8wvAoZfedIwm0mmHzR6+uURpZfJKG2AZ/
+         9DDLviHSppuBdNTVlGSp0pdv+QiWUWl858Pkj4WV8BXEM2niqt9a70HGT/grBOdrxRa3
+         ogaMM0/0IwOHddYTJ/OQo1kfdE1iXj4U03XGkAtlZRWPCyFr8eDVYKpwKVZiStUpSi+j
+         0g5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1764856096; x=1765460896;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7Kfz6v4DovVmuVuVubrjJnyyd7HdrAE3tSK9e1ucook=;
+        b=W2bsfTWacygxzb+/bA4YgA2lMTsuYjuIf/Uh3JLeqXT3ispDci3Uax2/ugBInLPbwz
+         35nl1jBV8Fa7U7p5Siqak3GUYuUy4nJnX7Hlc6T1WLXpVRJMDm0vgAbGE4qV4xa6cHeg
+         orUyx4RHJsNH08fhiQ5KlOcZ8y6TDJOXkcP+1u9V+uEFca7q3JV10KBRzwGA4mk3FFzj
+         JvyaBnE4/qNHhERgRO9OhbjKojoGiVLKrUr1So8eWGHX/BVEym4z/8gCH6xjqx/SWZ7m
+         jiTDabs4yVJYJvq6dR2Q9ESNTuzDyKdfBTjF9VSsVp7YdqZdZ6Pb7xqWSA8vGxwMmrAw
+         XsAA==
+X-Forwarded-Encrypted: i=1; AJvYcCWqcn6tOPimSWPZjmSVL3RTEd+FV8D3H5WeRP2sy1+bFHrDeAUMzUVs3Tw99Y2DToDAGRObB6WdF4o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0BGjphqLyPjZcBXuG4SrLUg4SYle7iI3aImh8Il6d2MjoGs7/
+	g8u1vNrwPDOWNhwGUCwMfDta2iICDaciXju3ayDF4vA+iMcbFqIL0AY97KVi+TojxpCJnQ+e/u6
+	5FEXdvOSj+5eYpMqxvIDePLSwQuQWkUy0/BOs7oSD/0axsauCVslaYrPAFgcFQuI=
+X-Gm-Gg: ASbGncvqqab4dD6BrhNEDCpox1n++Z4cvPzsZqSYbLC+mUssYr9l9v+g9CXLd9noC3k
+	cSqdfcvLUPBG5YKo482jfzuc2NyYiILmJgS35BsHJLFysYj9wM7KMErNtH/T7DkdO7eTsZxHCTR
+	uTjDKHN209QZQwkvL/2oR2PgmdNJvXK+mJSfdorT7D0mUvv2qKBtx8JHxwa94mhknGDSOUWSFSZ
+	Zxtli+rz01jljIccCa17vRXCM8VUIzCS/JM/FYAEdrvySZRMopxlcBXX21eAz5vmsGbMhAT0KaT
+	qOrj0DHuTxhr1me3GaqHHNELdIKOvzsi6DogRShbITX4ILrJ/e3ygcaXxgNsLv2Rhyqoc/opVdE
+	VIfmX934Y4Nz1xdbYN+nKXcOo6z39gTvIlAq6eANBjbwcxm/SR9aMMG4bAM/XA1MOUg==
+X-Received: by 2002:a05:620a:f04:b0:8b2:1f8d:f11d with SMTP id af79cd13be357-8b5e48d4966mr667014685a.2.1764856096330;
+        Thu, 04 Dec 2025 05:48:16 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGeR2kZUmDLhfH+QWFtgIgv5ITGcHpA+vqJET8rZzXBIvy8V0EVhKzdHKxr7P21AbP88CU+Ww==
+X-Received: by 2002:a05:620a:f04:b0:8b2:1f8d:f11d with SMTP id af79cd13be357-8b5e48d4966mr667011785a.2.1764856095818;
+        Thu, 04 Dec 2025 05:48:15 -0800 (PST)
+Received: from [192.168.119.72] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b79f44597c1sm135442866b.13.2025.12.04.05.48.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 04 Dec 2025 05:48:15 -0800 (PST)
+Message-ID: <898e5a54-3a79-4fdc-bb51-f1eb6a79dc0e@oss.qualcomm.com>
+Date: Thu, 4 Dec 2025 14:48:12 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdXdwf7La1EYBWTJadsTAJG3nKQVW6wtBn-bUqshA=XHRw@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/5] clk: qcom: cmnpll: Add IPQ5332 SoC support
+To: Jie Luo <jie.luo@oss.qualcomm.com>,
+        Bjorn Andersson
+ <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Luo Jie <quic_luoj@quicinc.com>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        quic_kkumarcs@quicinc.com, quic_linchen@quicinc.com,
+        quic_leiwei@quicinc.com, quic_pavir@quicinc.com,
+        quic_suruchia@quicinc.com
+References: <20251128-qcom_ipq5332_cmnpll-v1-0-55127ba85613@oss.qualcomm.com>
+ <20251128-qcom_ipq5332_cmnpll-v1-3-55127ba85613@oss.qualcomm.com>
+ <6e12f446-7792-44da-9e06-99729c3b066d@oss.qualcomm.com>
+ <a3077c95-e6c3-420a-b65e-e4e584009c6c@oss.qualcomm.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <a3077c95-e6c3-420a-b65e-e4e584009c6c@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMjA0MDExMiBTYWx0ZWRfX0rq+OLgvgEfd
+ aq/QYJSHFUAQsaqoSO1rtn5xXHCiVpgTJWUZpWBn2WmEBhPTYhRPmAwJopufJ6WSeL+CHXd6nD4
+ JlGKW09DJWHtgWOkGOVa+I3MYW9m17zCWrW/l5vpv6fpmlJ8dn+81Zqpdo5A/Arp2O7mG4SKifH
+ 0kXefELrRR1AkMKIDiztjioMf9ABtcu2mvkhe0SrD9SE4oicX6Kb9iYuyb2WKcjI9L42T+BLsND
+ 1ylycmPxDNxXLEGN9XnxH2mz08lDv4WFUPfqxpzkV1216jPV/Rb4N+cQvsqilWHavafhOZ1u0Wd
+ DU+D66IiIYEMKVfaLfEA6pdYsonUkVzZV33XDS0VUwnqLq7++jcBMaF+KTCq7T7hOmkZs0fPIug
+ kwa5gtZ09PYpPYUGOqsyg3tPxXKR3w==
+X-Proofpoint-GUID: y0_-ZsAVqeNy0fV9iY2tGRLYPDXyyWdk
+X-Authority-Analysis: v=2.4 cv=KJxXzVFo c=1 sm=1 tr=0 ts=69319121 cx=c_pps
+ a=50t2pK5VMbmlHzFWWp8p/g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=wP3pNCr1ah4A:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=en7o4u-K8g9yutxgwuQA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=IoWCM6iH3mJn3m4BftBB:22
+X-Proofpoint-ORIG-GUID: y0_-ZsAVqeNy0fV9iY2tGRLYPDXyyWdk
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-12-04_03,2025-12-04_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 adultscore=0 impostorscore=0 phishscore=0 priorityscore=1501
+ suspectscore=0 lowpriorityscore=0 malwarescore=0 bulkscore=0 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2512040112
 
-On Thu, Dec 04, 2025 at 11:49:13AM +0100, Geert Uytterhoeven wrote:
-> On Thu, 4 Dec 2025 at 08:39, Herve Codina <herve.codina@bootlin.com> wrote:
-
-...
-
-> > Saravana's email (Saravana Kannan <saravanak@google.com>) seems incorrect.
-> > Got emails delivery failure with this email address.
+On 12/4/25 9:09 AM, Jie Luo wrote:
 > 
-> Yeah, he moved company.
-> He is still alive, I met him in the LPC Training Session yesterday ;-)
+> 
+> On 12/1/2025 9:52 PM, Konrad Dybcio wrote:
+>> On 11/28/25 9:40 AM, Luo Jie wrote:
+>>> The CMN PLL in IPQ5332 SoC produces different output clocks when compared
+>>> to IPQ9574. While most clock outputs match IPQ9574, the ethernet PHY/switch
+>>> (50 Mhz) and PPE clocks (200 Mhz) in IPQ5332 are different.
+>>>
+>>> Add IPQ5332-specific clock definitions and of_device_id entry.
+>>>
+>>> Signed-off-by: Luo Jie <jie.luo@oss.qualcomm.com>
+>>> ---
+>>
+>> [...]
+>>
+>>> +static const struct cmn_pll_fixed_output_clk ipq5332_output_clks[] = {
+>>> +	CLK_PLL_OUTPUT(IPQ5332_XO_24MHZ_CLK, "xo-24mhz", 24000000UL),
+>>> +	CLK_PLL_OUTPUT(IPQ5332_SLEEP_32KHZ_CLK, "sleep-32khz", 32000UL),
+>>> +	CLK_PLL_OUTPUT(IPQ5332_PCS_31P25MHZ_CLK, "pcs-31p25mhz", 31250000UL),
+>>> +	CLK_PLL_OUTPUT(IPQ5332_NSS_300MHZ_CLK, "nss-300mhz", 300000000UL),
+>>> +	CLK_PLL_OUTPUT(IPQ5332_PPE_200MHZ_CLK, "ppe-200mhz", 200000000UL),
+>>> +	CLK_PLL_OUTPUT(IPQ5332_ETH_50MHZ_CLK, "eth-50mhz", 50000000UL),
+>>
+>> I can't really find the source for most of these, but I see that there's both
+>> a 200 and a 300 MHz output to NSS
+>>
+>> Konrad
+> 
+> Both IPQ5332_XO_24MHZ_CLK and IPQ5332_SLEEP_32KHZ_CLK are intended to be
+> used as the input clocks to the GCC block. IPQ5332_PCS_31P25MHZ_CLK
+> provides the reference clock for the Ethernet PCS, and
+> IPQ5332_ETH_50MHZ_CLK is the source clock for the PCS PLL on IPQ5332.
+> On this platform the Ethernet clocking path is:
+> CMN PLL ETH 50 MHz output → PCS PLL (divider + gate) → attached PHY or
+> switch.
 
-Usually people update the MAINTAINERS and/or .mailcapain such a case.
-Can you ping him about this?
+What about that 200 MHz NSS output? Is it just renamed to PPE?
 
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Konrad
