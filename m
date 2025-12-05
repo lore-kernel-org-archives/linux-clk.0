@@ -1,75 +1,95 @@
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D9E1346E6E
-	for <linux-clk@vger.kernel.org>; Fri,  5 Dec 2025 07:22:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDF9B13AD05
+	for <linux-clk@vger.kernel.org>; Fri,  5 Dec 2025 11:33:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764919344; cv=none; b=P5vsXkCVKXnH2Ar811T720mQmrkYJJ6Fj9+5CgeJNKFuDuyi81zx5UADgNMVirIGOK511mBVDP4KGXyZVKhx+DKppMNN9Rv9gpGsKCgDyffkN/q5Ipm4F77Pqub4wkms7KD7fE0WUTObj9wdpFC0Z3S21d8IGZWv0B6kYxq1NX0=
+	t=1764934436; cv=none; b=g/BcgLMbOYqX/C/8Rf1VMf932ewpaB8fJUfFT2ymi8A4txH+j+Pm34M+mv0vkqSEs/ZdvWmzHiUuIxoWD0ZbD8vHGekzehk7eOoNZPy89cXXhMNPYjH+vKwNQqaSFqHg66EZ9uN4z2sm0B9VtILTs2aFMpJRoNneFvaa8LBbY5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764919344; c=relaxed/simple;
-	bh=zO4HfYHyG77lligX58GcpeUsXfmoKe4bOSQJtnv2qnw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=eCoUfsL4HKbEWh5X9OQsBm3I+VRyhQbRZLRvVASaY7s4x+TD9V8p1slkId5yGaaS/1LIeBKrR+ZXZkCa+BtdOAFnQC3ApFvdECBVnEpvt4Gw5HuF9pBQR3k4NIMW95KOmljG4/NOYsAqF2YjOgkvCYD7n5rbbt2FS8qFQvWeD8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bPg4ugI8; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1764934436; c=relaxed/simple;
+	bh=LbT3jVPLKHvakm9K5J5rWn/tGJu+SgRY8N4vHbBATcg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DJuuqSZpz9cF6OLl6j6AXf73NUoWkx2sExqLVPUeugbxjwTf/M6PiVdtG6Es6buWAxJjgTMmxxWfc3rxw9AriiKI9TZ5MhrEYVfnYEUCs46b80+EY0p0XNdSLJnlcUH6DSKE6XO2GlvFkValp5h904lK8oXvEhjEKqDMENkTBx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=H2jpKsDr; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=txG1N8zc; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bPg4ugI8"
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-477563e28a3so13440335e9.1
-        for <linux-clk@vger.kernel.org>; Thu, 04 Dec 2025 23:22:05 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="H2jpKsDr";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="txG1N8zc"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1764934432;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7SiuR9d+PsViqtUAja0334g1LJzjIh7Uvcnu3cxAFw0=;
+	b=H2jpKsDrtoG9emjeoE87kxNuP3gXOETZnvOvkff51K2TvNWDjCw92VCOVPtgpjQGwIIHzu
+	tx+RxVZ14JIRXocsj1y+7F5f52umS9Ay6zdTXXgmizAW4ScLlzPJxRZmyR/Xp2aJ8XWuZm
+	Ok3ebRWGiCJ20hdvBaqo8Fx7D14DBvs=
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
+ [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-613-6UEyVOxAOhmLPFlONlR0-A-1; Fri, 05 Dec 2025 06:33:51 -0500
+X-MC-Unique: 6UEyVOxAOhmLPFlONlR0-A-1
+X-Mimecast-MFC-AGG-ID: 6UEyVOxAOhmLPFlONlR0-A_1764934431
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-8b2217a9c60so157073485a.3
+        for <linux-clk@vger.kernel.org>; Fri, 05 Dec 2025 03:33:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1764919320; x=1765524120; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=FzxFs8LzMrONfI1Cn6UlkRiahNYd5MhF609UmLpQAXo=;
-        b=bPg4ugI8dIDJFbncc0JR8K1CIMwmZ5EN2mJwTMNzHtko24UPdJXcOUWSBA3NqL3o1J
-         U6qYX5bo7xxMYpQuTyeDikPeiZotwBeHJ0uqclWWn7diKot7J34ROdY2NowUz7fjJOvZ
-         h7TvnKU+XPBZiPfRBEPYVTHMrf6kE+guesH3Tk9m4v+Qvq54bFTZdo16plBkpCOjhQi1
-         41lj8wgiQTiTtBLLOK5vAgyjSR/G3xC5WnTeEwEzYQHpw/lDrdFbbGEuF6OZU4kzHeLF
-         G/sNDMGIU20Cw43MDGgDaQLMpqyW4ex0fKcrsEdLl87rUC70J41YCmaHdiEPKGRh+IeG
-         v35w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764919320; x=1765524120;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=redhat.com; s=google; t=1764934430; x=1765539230; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=FzxFs8LzMrONfI1Cn6UlkRiahNYd5MhF609UmLpQAXo=;
-        b=TduhCRFkWNnnz8d1ZZrkE/UeEaWvQQLhNmO4+/ux68oDJp43Bvs1GkYK+zeRFqLlYS
-         Amf/gZ3XnF6XVMVl82okTuSwL9PuBHZvf8RpzMtvRvNOvwKCM4JBmQeJaRL2KwxiIKqD
-         GFmuNU7ScpWg50wV5LnwforZIL9VHzTQee2N9whVcYuOoqLjPb+h+J6OpNC1pV8GeFHF
-         quO9e/uNtU0rx4+7lDk5ytsgbYzmG/9T/2XfgfmYD45pn5niGcwRY4IQMIsT3EHNOUxm
-         DCMzheaXZqfl5uDvAn9E/L/qaNUsdOs9px3fJkNh8L6XqrYloi2xHlpCuTQ8nZwZeHCm
-         ir8A==
-X-Forwarded-Encrypted: i=1; AJvYcCXZtXVQ0zl2Kb8PxfIwAjsUMBFOy+sSoZy6VPFP1gazwOQEscReM2sfZ3tY7b+W0L3JRk8LV5nu/78=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNCk6ViHPixVnY5OtwQB3XXW92gY/KFw9WSFyAE3DPTpDEjhgc
-	u+XZfWDSSZZ0gbzot3wyIx4t+CiPbjGMVB0XxOuhvurodXavvfHGnsLI7Iuipki3yeI=
-X-Gm-Gg: ASbGnctSMVV5x7uS146q8aOCyePrRyHcHKOHVg+/LsdPGeNo4c/bvm3vkifiEOle6Gz
-	i7wKiPZAgCYuarTIOgZ8i77hil+CMIuiOm7ck8u6UlblI3oiaPSkfiiD6YDew9SskoatIith6g8
-	g5OMvRXTLtYwS9WvC1uZPH9EKj8oxDW0urEioJ2D4N/xD/jsmrQN+PKIBUw3DvgyKZf/ihDYPxd
-	7eGzJcWH0FS8MsrrRkyyNvmWwOleS98o73ySdhKeGpm05Ki3Sw7uBnCzbfM85VMm/ulbBy3N7eo
-	WGxpFGZis1+BNTK5J7S/1LYfXMLE9VVo1B0g1vmlNLnhH8NWFa9YvbI9c8g2UYoMnGoUQKUuboe
-	4SYGlQDdxnv+hnuF/K4Rv5kU6YhXviliJidBmxhQk8n448rqSKrCDIER6YJCsxHsMipTOmpBbfA
-	BIwQE1/25f2CutNCxe
-X-Google-Smtp-Source: AGHT+IGY46mYanaDcTERQwYze8S9vgpM9dAzNgia/FegejO4LmlZHO08fLRhzsVOYwX0bqvVtCm5lQ==
-X-Received: by 2002:a05:600c:1f90:b0:477:9e0c:f59 with SMTP id 5b1f17b1804b1-4792eb12478mr66048795e9.2.1764919319970;
-        Thu, 04 Dec 2025 23:21:59 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4792b12411fsm65146265e9.3.2025.12.04.23.21.58
+        bh=7SiuR9d+PsViqtUAja0334g1LJzjIh7Uvcnu3cxAFw0=;
+        b=txG1N8zclEC4mURszwqYmKGacWHFTNQ+ig6ebRsI/OCUvbb/M5bqmmsyuMDZiAsTbx
+         G/5a9BJVxKn77EF3ZvY7gzh0+Wpddo6adTmtsF4vg869CKXli/EaFvUsOke/v5GQ2rFT
+         PLS08qFxX5eveQAUHvzRmNWDUJ3JpvBPTOtfZoTB3zROejCTJymWdNZSAjlJWpzZDWIq
+         fiNCS846Ke6YlYc3mb/MRVHCSpOcvaipKp/Am9uV8K3Lql/s/syP6SGLuYhF2Yhl6P9E
+         DvJXSyRgTwbSa3w7LOuLsok2kkxA3NZBJt1cA1FxOeeiAjRcNxbLenEryC0nDSOtNZvb
+         FdgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1764934430; x=1765539230;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=7SiuR9d+PsViqtUAja0334g1LJzjIh7Uvcnu3cxAFw0=;
+        b=twBiGlhLj0uBNDT+IMPTWhfoHnMJkcGuz36J5r3bRmV5KntEFH+DXjJf1setdblwjR
+         7uMSec/0/2oY42wCtHv9iDI9b30Lk14XDWGrRtgOekFyHAa4GRRdeza+58IAotwhKjvC
+         /0dW6xiXWH7Gi3HsWQ8pPxOM4s5T7L33flaR0wXEuFHR4/F07Qo0JkwGFCx9mvB5TFPm
+         S5KF472i9tfxg/3jWmu0fjTwvnz9gvFuEB8nz4yNooOmfPacz4FHQBt0I+75f6HAFpa6
+         uNf28fQOeNHoUna2KTUz3Gnyeg4LNH6RrqZIaTF/RxXWdJbH3XG8dy8FQ5/uIJMuZI/y
+         WU2g==
+X-Forwarded-Encrypted: i=1; AJvYcCUAKCxEW64XAaXIFw2lZrCmHFyFjV7bAOgL1W2R7M2qQxUvcDH2Vxoi1WICmr759haBUa1CHPAn8Vs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSUE0QkhV3e20TzyOYqlrhTKCCyLbhp5Kr6ziAbQzDrEtlEf0t
+	NFPwoAPyQ1deqGijsmE0huzw9XGAEhcqV8o/Vi0D56ohYyL6xFPfX8risiRyvQmJ3IbUh5aajG7
+	joFWHvFOHqna4hmkUATH5CjCQM1BSFzFLfBOXNDyDKEtlY0jTsMeAvbjfGN7R0g==
+X-Gm-Gg: ASbGncslKUg49buaviGJljp1KgHVHUKZ2WStcjNVcQFh5ZAaXV6UPXrELVNG0fkgE3s
+	in/2Rc7YETUjIw1Pj1rzL1ifyFi+KbwVfxumcqZu+3WkU0ARuRHsDJaSQJEY4gEqDf3gxTTLyvx
+	eH13MkBsqg7jyKpPYg1oX0uPR9ceGTD6FsNmc0z+BHdhJcF33UhK4Insha5LlaENaY0ZyXGyixq
+	l1oHb+Sl8cXa0mHgUSRDBG3234SqOceKoJLBNYIMbZ9qM6VuUBYityODCr6utFVIv4WXe5n8Kf2
+	+r1XC/gScqjpqqFAA//fBakNgp6mMe7tB7tQAzzFhRN8YfyueXiNGdES47xm8tpc4D6Ew/9bXmZ
+	IEuEDSSG72i/SczJt67j+rVyBqdrMCVKkrpk3Lbq1hrrF
+X-Received: by 2002:a05:620a:bce:b0:8b2:edc8:13d0 with SMTP id af79cd13be357-8b5e47a48efmr1441748785a.17.1764934430548;
+        Fri, 05 Dec 2025 03:33:50 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IE9wykJ16DbQPdhh4wIDn2WMVE/7FVuzUzyijuNYKHdKL3aiyIVqnHcx/xOhxOQZ464+ZuuBg==
+X-Received: by 2002:a05:620a:bce:b0:8b2:edc8:13d0 with SMTP id af79cd13be357-8b5e47a48efmr1441744585a.17.1764934430021;
+        Fri, 05 Dec 2025 03:33:50 -0800 (PST)
+Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8b6252a08fbsm375431085a.8.2025.12.05.03.33.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Dec 2025 23:21:59 -0800 (PST)
-Date: Fri, 5 Dec 2025 10:21:55 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: oe-kbuild@lists.linux.dev, Brian Masney <bmasney@redhat.com>,
-	Michael Turquette <mturquette@baylibre.com>,
+        Fri, 05 Dec 2025 03:33:49 -0800 (PST)
+Date: Fri, 5 Dec 2025 06:33:47 -0500
+From: Brian Masney <bmasney@redhat.com>
+To: kernel test robot <lkp@intel.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>, Maxime Ripard <mripard@kernel.org>,
 	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Conor Dooley <conor@kernel.org>
-Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Brian Masney <bmasney@redhat.com>
+	Conor Dooley <conor@kernel.org>, oe-kbuild-all@lists.linux.dev,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 Subject: Re: [PATCH v2 3/3] clk: microchip: core: allow driver to be compiled
  with COMPILE_TEST
-Message-ID: <202512050233.R9hAWsJN-lkp@intel.com>
+Message-ID: <aTLDG_LEGQwgJUwg@redhat.com>
+References: <20251201-clk-microchip-fixes-v2-3-9d5a0daadd98@redhat.com>
+ <202512051151.N3iZUKEG-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -78,55 +98,30 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251201-clk-microchip-fixes-v2-3-9d5a0daadd98@redhat.com>
+In-Reply-To: <202512051151.N3iZUKEG-lkp@intel.com>
+User-Agent: Mutt/2.2.14 (2025-02-20)
 
-Hi Brian,
+On Fri, Dec 05, 2025 at 11:51:12AM +0800, kernel test robot wrote:
+>    drivers/clk/microchip/clk-core.c: Assembler messages:
+> >> drivers/clk/microchip/clk-core.c:721: Error: unrecognized instruction `nop'
+> >> drivers/clk/microchip/clk-core.c:721: Error: unrecognized instruction `nop'
+> >> drivers/clk/microchip/clk-core.c:721: Error: unrecognized instruction `nop'
+> >> drivers/clk/microchip/clk-core.c:721: Error: unrecognized instruction `nop'
+> >> drivers/clk/microchip/clk-core.c:721: Error: unrecognized instruction `nop'
+>    drivers/clk/microchip/clk-core.c:722: Error: unrecognized instruction `nop'
+>    drivers/clk/microchip/clk-core.c:722: Error: unrecognized instruction `nop'
+>    drivers/clk/microchip/clk-core.c:722: Error: unrecognized instruction `nop'
+>    drivers/clk/microchip/clk-core.c:722: Error: unrecognized instruction `nop'
+>    drivers/clk/microchip/clk-core.c:722: Error: unrecognized instruction `nop'
+>    drivers/clk/microchip/clk-core.c:862: Error: unrecognized instruction `nop'
+>    drivers/clk/microchip/clk-core.c:862: Error: unrecognized instruction `nop'
+>    drivers/clk/microchip/clk-core.c:862: Error: unrecognized instruction `nop'
+>    drivers/clk/microchip/clk-core.c:862: Error: unrecognized instruction `nop'
+>    drivers/clk/microchip/clk-core.c:862: Error: unrecognized instruction `nop'
 
-kernel test robot noticed the following build warnings:
+That's related to these calls: __asm__ __volatile__("nop");
+In the case of compile test, I'll just make this a noop. I'll post a new
+version.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Brian-Masney/clk-microchip-core-remove-duplicate-determine_rate-on-pic32_sclk_ops/20251202-060924
-base:   92fd6e84175befa1775e5c0ab682938eca27c0b2
-patch link:    https://lore.kernel.org/r/20251201-clk-microchip-fixes-v2-3-9d5a0daadd98%40redhat.com
-patch subject: [PATCH v2 3/3] clk: microchip: core: allow driver to be compiled with COMPILE_TEST
-config: arm-randconfig-r071-20251204 (https://download.01.org/0day-ci/archive/20251205/202512050233.R9hAWsJN-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 12.5.0
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-| Closes: https://lore.kernel.org/r/202512050233.R9hAWsJN-lkp@intel.com/
-
-smatch warnings:
-drivers/clk/microchip/clk-core.c:300 roclk_get_parent() warn: signedness bug returning '(-22)'
-drivers/clk/microchip/clk-core.c:833 sclk_get_parent() warn: signedness bug returning '(-22)'
-
-vim +300 drivers/clk/microchip/clk-core.c
-
-ce6e11884659988 Purna Chandra Mandal 2016-05-13  286  static u8 roclk_get_parent(struct clk_hw *hw)
-                                                             ^^
-returns a u8.
-
-ce6e11884659988 Purna Chandra Mandal 2016-05-13  287  {
-ce6e11884659988 Purna Chandra Mandal 2016-05-13  288  	struct pic32_ref_osc *refo = clkhw_to_refosc(hw);
-ce6e11884659988 Purna Chandra Mandal 2016-05-13  289  	u32 v, i;
-ce6e11884659988 Purna Chandra Mandal 2016-05-13  290  
-ce6e11884659988 Purna Chandra Mandal 2016-05-13  291  	v = (readl(refo->ctrl_reg) >> REFO_SEL_SHIFT) & REFO_SEL_MASK;
-ce6e11884659988 Purna Chandra Mandal 2016-05-13  292  
-ce6e11884659988 Purna Chandra Mandal 2016-05-13  293  	if (!refo->parent_map)
-ce6e11884659988 Purna Chandra Mandal 2016-05-13  294  		return v;
-ce6e11884659988 Purna Chandra Mandal 2016-05-13  295  
-ce6e11884659988 Purna Chandra Mandal 2016-05-13  296  	for (i = 0; i < clk_hw_get_num_parents(hw); i++)
-ce6e11884659988 Purna Chandra Mandal 2016-05-13  297  		if (refo->parent_map[i] == v)
-ce6e11884659988 Purna Chandra Mandal 2016-05-13  298  			return i;
-ce6e11884659988 Purna Chandra Mandal 2016-05-13  299  
-ce6e11884659988 Purna Chandra Mandal 2016-05-13 @300  	return -EINVAL;
-                                                        ^^^^^^^^^^^^^^^
-So it can't return negative error codes.
-
-ce6e11884659988 Purna Chandra Mandal 2016-05-13  301  }
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Brian
 
