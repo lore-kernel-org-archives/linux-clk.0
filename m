@@ -1,139 +1,192 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7F472FF649
-	for <linux-clk@vger.kernel.org>; Fri,  5 Dec 2025 11:35:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E19C31A046
+	for <linux-clk@vger.kernel.org>; Fri,  5 Dec 2025 12:12:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764934545; cv=none; b=g6+gZ7w53ifETS2dztKI7vagxcW5Zn60x5S63Tm7owa++ubg6cCjvZ91+Utgqxjz44RTp2D+x5coeBfvYMNOsuiXaH4b5gtni1sJQDk8ZZxTwF9jV1vdGiFXwO78xHfhyf4RMRlWtHNVWYtlEDE6gucyiDC9pGqdUltNq6N9ItU=
+	t=1764936734; cv=none; b=cd0EMhZ4fNX+Pw7PaBR6n7xcyoXHv/127qY+98yrw/khr3G6Rnt2kwRtMxL20Hs9GMtvZKLnBkOaJJZDWBFDTcVzV2QgeWi+laUr0hCK0LAamSKwZXG0+xB+n9gTcmJV77KRmpdiixA/ES4IKh68REeiSDLQkxtpn4YAz9oLqio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764934545; c=relaxed/simple;
-	bh=Jzm1bEXUYpHnFh9ZcEKGxsYxoLlxjGYwQ1tCJYuM+v8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OuUub+FcRcsHfyBhbxyiv4iUn4quvQMzdJYGvFmYBk0mgmk3Saa1PBtuThAyeM3wDv/NmEr1PKOaz4ggrrk1XRlGV55RsvX0ki3y6OTWAOmWArisOxeXm4+7aIS92Z/lVROjoXEH1zozbyG5sdodkLRa0PsX8zCb9fsBgm2Q6d0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dkvBvR35; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=XbUWHsgM; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1764936734; c=relaxed/simple;
+	bh=aVwn2y330HaQw1xOwfB3lS9U454n+YnID4doe2Cu3gU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Oh6yHNLJP92AVnE+zqcERkwjC/btIT8fXq9F4dyl8yOfSAs1RWKRNzE7eoy90etltOGE0+gpKNPuYjvoF2B6xw0yQI0CqZO0bpfXFQewEo+po3LPj5S2M7eeI9WlD3EsNI7fFjBRU1WgkWlH9rS0zPrFIYGJ/H+bXGbAps1PxxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=l7BD2kD+; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=a2cfpN+w; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dkvBvR35";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="XbUWHsgM"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1764934541;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WMNKSESp2KhR2u7iq37LU6C6fvZCMOUrQKe23habOVo=;
-	b=dkvBvR358674SeC4wDy1v9nlEc8tdhmL/DixkoBvO/FO/DZgMUgiMh6vVdq/PC0smxL6L+
-	BX+kPQ70w3kANJ0PezJFmxbhYvyLSTEEEqM+DEE3tBRvN5eccHur0WPVp8E/hdTCAgIeZX
-	Es0i7RqWC9eHlAp4kyxQ89eI2br4bv0=
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
- [209.85.160.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-118-Tc8_U6GJMM23KfuN32sY2A-1; Fri, 05 Dec 2025 06:35:40 -0500
-X-MC-Unique: Tc8_U6GJMM23KfuN32sY2A-1
-X-Mimecast-MFC-AGG-ID: Tc8_U6GJMM23KfuN32sY2A_1764934540
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4ee16731ceaso39265091cf.2
-        for <linux-clk@vger.kernel.org>; Fri, 05 Dec 2025 03:35:40 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="l7BD2kD+";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="a2cfpN+w"
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5B5AORnM3572182
+	for <linux-clk@vger.kernel.org>; Fri, 5 Dec 2025 12:12:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	UXe/ESWLSpyiDTiiz1o6w1zfmo3SmKepSqEQzhZ9jiw=; b=l7BD2kD+vxvbmFIC
+	hi/L52M51x7bTjnKUQ4upCp8Y0acd0yOqqn+bijb6vBz5LI6bcAShJ96d2U2EM/N
+	Eiamn/yZ18H4PdQUfc72DJwKpuHIGRe9+y0e2Lgf8WcbLKYMA08gG/GBA81LeLeo
+	x72QxEeNOcjorerdDHg74lVjTQkk1XsyFjvQFjwkVhGqYBHDH0xMaQrgfARl7kO0
+	GRrCQ0WcJZsLbL510YSVwgfsCwijohJP1G8nzuuTIJZaZdliZb72iPQiXII5H3cF
+	iocRiahK2bpi0O2HkvOL0F4f7vvfzHa//m7vEKeVbwjrQohM7iS+1l61i6M3GSjJ
+	Mp1EjQ==
+Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4auwm589j0-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Fri, 05 Dec 2025 12:12:10 +0000 (GMT)
+Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-7b4933bc4aeso1899929b3a.2
+        for <linux-clk@vger.kernel.org>; Fri, 05 Dec 2025 04:12:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1764934540; x=1765539340; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WMNKSESp2KhR2u7iq37LU6C6fvZCMOUrQKe23habOVo=;
-        b=XbUWHsgMRqgSLB452vf8HUj+wSCicsYF0e7ow9QGi4kJlC9+4D375KuHXMbWPdvlYZ
-         Np/N5xZRokrpwcWXh2dLIACjQsn0fRpj3hBos5KBR4fmO44S7z6Q/jvlLKerp8jAG3bo
-         Qs0P4Fc0f20Q8c+GMXkz/yUjLSRpCi+5rL9Y3aF3Xxk3NWX9WjheBx2PxqQ2Eq38X22T
-         i198vIhIYkdpng88WlHC/IUZ4RZCNx3zNjiYt15l2RefB4+xV8hETxEKd8F6WN0kDVfy
-         TYF+m9d5+FRFJEz2sE1HacMQjkpNhUFjgwRaNvqPjbvgFa7s3I270VO1hmev3bnm3xc7
-         I1FA==
+        d=oss.qualcomm.com; s=google; t=1764936730; x=1765541530; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=UXe/ESWLSpyiDTiiz1o6w1zfmo3SmKepSqEQzhZ9jiw=;
+        b=a2cfpN+wgUw5PDHkybXQ2iL58JqQBBmc6O39UMj6Vu0sSOFZBoDaLUXG3+W+jjKJBU
+         eeAzUK0thdO1xTdtC65tROBKRLUqAmD1H590vzo3/8xyhLpZnAXVjuJrahfMa6iaQ/P7
+         E+oQz6WGU86fFlVgaA3H9NU34lLu+R5Fy7/SHR5lXH444uiUOljcLJHUfWmPf6HeE8B2
+         O8wqAXnmfOBz+LAJNJa5oxoCUju8iCS3qpHuRdi0o9J8fpdV9NWL1YnOjFO7rG5Z/XHx
+         Qgm0sZeAZQ7nxnsIdRfs+8e0yQbnQ39o1FgeeWoOFBRYr62azC9ecjd7p7fLaPJBAKnw
+         N5Mw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764934540; x=1765539340;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=WMNKSESp2KhR2u7iq37LU6C6fvZCMOUrQKe23habOVo=;
-        b=BI5uthpQdBzN9fvFujohTWZl+AXPeP2MlkhH3PanirfBFuVQ74ewjzN9PVoHXjYUAF
-         pByKOQDcgxlWhOx+FvBmIBJFVBuxUaP6xz6G8CIzrHh7BTvBN+5IvZIdOXxFLlkdnjW6
-         WCNYnyKNbpp3ZObDSwygPVLg/gTgD3Rd7xsi8fGxdQDqhUb86iSrrbYb3FfbC1c4ysJl
-         EhMDw2GsgzqkXVtBpbU2b5UigDw9VwgJDrx4YFriFlAnO96uTazVpCBIRO4BaFG4B8oh
-         IQ5c7E2wuoReZ+r+aYq0WRqtWlW5T9kdcHMIYRZHeAjfoQAi4Htcq0k/S3nWiAnlj8Ei
-         53tQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWq9jLaXkcz8cePlwfr9ylLWfPTYJ15M/RAYxHBHg7DccHUhAvU2Nied04iaYiywKnbp/i/O/tB5Rw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzhauloWk6OEvHlTohUvZ/yDoAJ28wfPvSZr9yCLVz1YoL8Dnzg
-	oLRckH60IFWY1yXbJaHbrInmj6Ug1kUewB6E5JCPNhKOoJRHqklTI7OA7mR61tvJ6HEzhIx9uxP
-	5b6BbjgkQWAD3R50MxNvBQF28Erp+qJbxiQpGHPj4ZnWpf+th0eG+BFnIU8nXXg==
-X-Gm-Gg: ASbGncvcQh9LPT+caGlfH6oTqj6sXZEa5Q7zf5BPtm1q8bgn+OQ/uqDZo7xNex7EZW1
-	LpJrk4GK9VoS0qmLAX2sC8w5I/tTPv5pYhRu7IlPelMuOmKDgxwYKgqNKZaUzIEZVI3wmYimKv2
-	jKNsJXT62ngQiThKag/Zen56SxaM0no12dnWSixx+0/4ficr52FG4bsRd8Wooq5KoG1nOc7pS/q
-	SYroaN6aX0rry707+/ntTfMARbXxLQuAjRqLdqmlKdBJq6LMymrVOrx7pxYHPO1jV8BKfM7q0bn
-	Bs7y+Hn9ebZJbquMrxw2AfCKmBLTk6vd+hr19tJAYuxqfGWKGAOrnWB0YqZAkxmHA16CgnNHlmi
-	+g6ViPaGMI60HG42wcLlutcZh8a79bMifAwn0CpdMT7rU
-X-Received: by 2002:a05:622a:188f:b0:4ee:2942:c4fb with SMTP id d75a77b69052e-4f017547426mr129887911cf.31.1764934539886;
-        Fri, 05 Dec 2025 03:35:39 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFYtLtTV+jrOOLlUAt4J0kXxIGaZvbsF+GW5Ikr3Ny5hO9ethXcJdrLBtX7RmdExo1wPjVblQ==
-X-Received: by 2002:a05:622a:188f:b0:4ee:2942:c4fb with SMTP id d75a77b69052e-4f017547426mr129887661cf.31.1764934539516;
-        Fri, 05 Dec 2025 03:35:39 -0800 (PST)
-Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8b6252cebddsm368213285a.24.2025.12.05.03.35.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Dec 2025 03:35:38 -0800 (PST)
-Date: Fri, 5 Dec 2025 06:35:36 -0500
-From: Brian Masney <bmasney@redhat.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: oe-kbuild@lists.linux.dev, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Maxime Ripard <mripard@kernel.org>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Conor Dooley <conor@kernel.org>, lkp@intel.com,
-	oe-kbuild-all@lists.linux.dev, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] clk: microchip: core: allow driver to be compiled
- with COMPILE_TEST
-Message-ID: <aTLDiK50Me-iNkdz@redhat.com>
-References: <20251201-clk-microchip-fixes-v2-3-9d5a0daadd98@redhat.com>
- <202512050233.R9hAWsJN-lkp@intel.com>
+        d=1e100.net; s=20230601; t=1764936730; x=1765541530;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UXe/ESWLSpyiDTiiz1o6w1zfmo3SmKepSqEQzhZ9jiw=;
+        b=evwmCNw2GUgAt76beWdOxvNKhmQg8B7Tox2hBK0ethsmEwyj+aFjKYvRgnS1jppF43
+         FAL+MD/YjE+ezIzHt0MBCz6wCakuGUIQxS4F0+yLVmbOKhA6v/8aIEIjNAtQrV90/odK
+         BvvKgIXlGD+KatrASnxM0v147laJpg0SYVYh/H6TJqRvRxQTM5UdT2QIuK4/3BGNNjjS
+         mrDZL26qVjVMC9jBXfBOtqm4QYoPk8f1RCTNSH7SJca1979q8wd8bkEQuBH9tABOM1r+
+         B4eoGSzuqf46iRlfaQ8K9wrSSrAtqUOeGH7x8yF3sV8ELvQd3V/72vxn7aiNzLD4xI9g
+         xZlg==
+X-Forwarded-Encrypted: i=1; AJvYcCWXGqLsqGFt9A756kyWYTS804Zbo38lREiAIrbHys+M6oKOeiD3UGXgbQ9ZI0FBPDJCeLfrHgWm0p4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIKX4/8OC7VxM9n7GkAYgMrdJkgftUKi6cinGA96TPKFM45Q1F
+	hIJFi1KluXuouJ2/CjS8Wg0rI+ey6xCXrdkN7k2SvcoYN9QWKhvgkBgtzbAWuiEYxAL2OXdK1u9
+	CIWuxN20UXosuQBWmVF2fJNRHvTG9+HOJgokfAMNMgRm2DkA022xmI+9zVO4eo6w=
+X-Gm-Gg: ASbGnctrUbi42F++1FstsNhWWCTKZhU9doRNusNbmpKpvPFx46mh2M85FcqUODasqe5
+	ocwo1Oe5fxRZiGQwTtJYDEl1Nb1rCqA7eOvh8j4d1uYiTReOkYb4tiFRb4LTL1OROV3HJ/ZPSvE
+	KNOiGiF1Tu2lEM3g+JPj1Ipk6/iEPynTjuoQiqPdk8nNk3DN5MvqnUs+KRaMHoWm5K6yh8W90zF
+	5o7UIgS8/HK6wPrgotcgT6jV16wClgi6iCWAbzgc4t684wFe5MdGRljbyHlkOVM0ATWLvD2kSZM
+	idKKRCV+ZBkvFckODgWCbuwy0xPFYSc/76XSuca/NWUGduP3gGZ9gKSp0XHUuq2Be4UIlwwjm/x
+	T5OCttRaRRoHueAr8ET+zKCn4r27DIeRCbG4i0tStYOp9fAWTbOpl9BUgYNYcVIGJuFf9nl15E2
+	k=
+X-Received: by 2002:a05:6a00:c87:b0:7ac:acc:1da with SMTP id d2e1a72fcca58-7e22b97f52bmr6933392b3a.25.1764936729441;
+        Fri, 05 Dec 2025 04:12:09 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHQGzsbV3F4h3oMJrcer/uaLOYOw/gOuUSGKFkmONiPaPx6GSGi3mUcqUkgXbtMW7h7XsDUVQ==
+X-Received: by 2002:a05:6a00:c87:b0:7ac:acc:1da with SMTP id d2e1a72fcca58-7e22b97f52bmr6933360b3a.25.1764936728956;
+        Fri, 05 Dec 2025 04:12:08 -0800 (PST)
+Received: from [10.133.33.167] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7e2af658d84sm5030638b3a.60.2025.12.05.04.12.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 05 Dec 2025 04:12:07 -0800 (PST)
+Message-ID: <a548702e-c509-48bf-b3c3-97f67a95bcac@oss.qualcomm.com>
+Date: Fri, 5 Dec 2025 20:11:56 +0800
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202512050233.R9hAWsJN-lkp@intel.com>
-User-Agent: Mutt/2.2.14 (2025-02-20)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/5] clk: qcom: cmnpll: Add IPQ5332 SoC support
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+ <sboyd@kernel.org>, Luo Jie <quic_luoj@quicinc.com>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        quic_kkumarcs@quicinc.com, quic_linchen@quicinc.com,
+        quic_leiwei@quicinc.com, quic_pavir@quicinc.com,
+        quic_suruchia@quicinc.com
+References: <20251128-qcom_ipq5332_cmnpll-v1-0-55127ba85613@oss.qualcomm.com>
+ <20251128-qcom_ipq5332_cmnpll-v1-3-55127ba85613@oss.qualcomm.com>
+ <6e12f446-7792-44da-9e06-99729c3b066d@oss.qualcomm.com>
+ <a3077c95-e6c3-420a-b65e-e4e584009c6c@oss.qualcomm.com>
+ <898e5a54-3a79-4fdc-bb51-f1eb6a79dc0e@oss.qualcomm.com>
+Content-Language: en-US
+From: Jie Luo <jie.luo@oss.qualcomm.com>
+In-Reply-To: <898e5a54-3a79-4fdc-bb51-f1eb6a79dc0e@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-GUID: XyTEHosyjFY15Zni-u4NtljoHm0MHuEF
+X-Proofpoint-ORIG-GUID: XyTEHosyjFY15Zni-u4NtljoHm0MHuEF
+X-Authority-Analysis: v=2.4 cv=XeOEDY55 c=1 sm=1 tr=0 ts=6932cc1a cx=c_pps
+ a=WW5sKcV1LcKqjgzy2JUPuA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=IkcTkHD0fZMA:10 a=wP3pNCr1ah4A:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=9yv6RJPhSQAcbpPXtOcA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=OpyuDcXvxspvyRM73sMx:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMjA1MDA4NyBTYWx0ZWRfX1eVuS8xa1VEr
+ kX/JICBZrEMPFqMVH34zmnkYuzSL1GzqRGXOGX61CCrc4B50T5/e4zjgZr+wQA42Rq7+OS3RB9y
+ lAzpXsf9j3WfZBIdOrTzLJ0PrKePnFRhwyK/9LjfcsHwbftYRnyNUOiDAWFUIqgXyJHO6N43aWB
+ 88P0YjsFGiK9RG4BTdW0XIx7/y543zKqlai5wzHlZcWcdUjwp0r5lLhZ7xOBl5qZOm3yD7HKYhP
+ 7dbulhUXxbs8RleGhn2lh2Ks4jKp17bslzS4/83bHh3LexnGi51zD2DxZKoKTePQK1t0JtYYWYk
+ ztcj7JWJdyZt97fyAdJLSPACnBUX5ndRjJbfu1iOUVq2q/XRZEbMnrh99RGOVid35uPe+Oql/xk
+ eKmQhHUF4xDiJhMDdn8Ju3xJzCsTTQ==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-12-05_04,2025-12-04_04,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 lowpriorityscore=0 adultscore=0 suspectscore=0
+ priorityscore=1501 malwarescore=0 bulkscore=0 clxscore=1015 spamscore=0
+ impostorscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
+ definitions=main-2512050087
 
-On Fri, Dec 05, 2025 at 10:21:55AM +0300, Dan Carpenter wrote:
-> smatch warnings:
-> drivers/clk/microchip/clk-core.c:300 roclk_get_parent() warn: signedness bug returning '(-22)'
-> drivers/clk/microchip/clk-core.c:833 sclk_get_parent() warn: signedness bug returning '(-22)'
-> 
-> vim +300 drivers/clk/microchip/clk-core.c
-> 
-> ce6e11884659988 Purna Chandra Mandal 2016-05-13  286  static u8 roclk_get_parent(struct clk_hw *hw)
->                                                              ^^
-> returns a u8.
-> 
-> ce6e11884659988 Purna Chandra Mandal 2016-05-13  287  {
-> ce6e11884659988 Purna Chandra Mandal 2016-05-13  288  	struct pic32_ref_osc *refo = clkhw_to_refosc(hw);
-> ce6e11884659988 Purna Chandra Mandal 2016-05-13  289  	u32 v, i;
-> ce6e11884659988 Purna Chandra Mandal 2016-05-13  290  
-> ce6e11884659988 Purna Chandra Mandal 2016-05-13  291  	v = (readl(refo->ctrl_reg) >> REFO_SEL_SHIFT) & REFO_SEL_MASK;
-> ce6e11884659988 Purna Chandra Mandal 2016-05-13  292  
-> ce6e11884659988 Purna Chandra Mandal 2016-05-13  293  	if (!refo->parent_map)
-> ce6e11884659988 Purna Chandra Mandal 2016-05-13  294  		return v;
-> ce6e11884659988 Purna Chandra Mandal 2016-05-13  295  
-> ce6e11884659988 Purna Chandra Mandal 2016-05-13  296  	for (i = 0; i < clk_hw_get_num_parents(hw); i++)
-> ce6e11884659988 Purna Chandra Mandal 2016-05-13  297  		if (refo->parent_map[i] == v)
-> ce6e11884659988 Purna Chandra Mandal 2016-05-13  298  			return i;
-> ce6e11884659988 Purna Chandra Mandal 2016-05-13  299  
-> ce6e11884659988 Purna Chandra Mandal 2016-05-13 @300  	return -EINVAL;
->                                                         ^^^^^^^^^^^^^^^
-> So it can't return negative error codes.
-> 
-> ce6e11884659988 Purna Chandra Mandal 2016-05-13  301  }
 
-This was an existing bug in the driver. Since I'm making changes
-to this driver, I'll go ahead and fix this as well.
 
-Brian
+On 12/4/2025 9:48 PM, Konrad Dybcio wrote:
+> On 12/4/25 9:09 AM, Jie Luo wrote:
+>>
+>>
+>> On 12/1/2025 9:52 PM, Konrad Dybcio wrote:
+>>> On 11/28/25 9:40 AM, Luo Jie wrote:
+>>>> The CMN PLL in IPQ5332 SoC produces different output clocks when compared
+>>>> to IPQ9574. While most clock outputs match IPQ9574, the ethernet PHY/switch
+>>>> (50 Mhz) and PPE clocks (200 Mhz) in IPQ5332 are different.
+>>>>
+>>>> Add IPQ5332-specific clock definitions and of_device_id entry.
+>>>>
+>>>> Signed-off-by: Luo Jie <jie.luo@oss.qualcomm.com>
+>>>> ---
+>>>
+>>> [...]
+>>>
+>>>> +static const struct cmn_pll_fixed_output_clk ipq5332_output_clks[] = {
+>>>> +	CLK_PLL_OUTPUT(IPQ5332_XO_24MHZ_CLK, "xo-24mhz", 24000000UL),
+>>>> +	CLK_PLL_OUTPUT(IPQ5332_SLEEP_32KHZ_CLK, "sleep-32khz", 32000UL),
+>>>> +	CLK_PLL_OUTPUT(IPQ5332_PCS_31P25MHZ_CLK, "pcs-31p25mhz", 31250000UL),
+>>>> +	CLK_PLL_OUTPUT(IPQ5332_NSS_300MHZ_CLK, "nss-300mhz", 300000000UL),
+>>>> +	CLK_PLL_OUTPUT(IPQ5332_PPE_200MHZ_CLK, "ppe-200mhz", 200000000UL),
+>>>> +	CLK_PLL_OUTPUT(IPQ5332_ETH_50MHZ_CLK, "eth-50mhz", 50000000UL),
+>>>
+>>> I can't really find the source for most of these, but I see that there's both
+>>> a 200 and a 300 MHz output to NSS
+>>>
+>>> Konrad
+>>
+>> Both IPQ5332_XO_24MHZ_CLK and IPQ5332_SLEEP_32KHZ_CLK are intended to be
+>> used as the input clocks to the GCC block. IPQ5332_PCS_31P25MHZ_CLK
+>> provides the reference clock for the Ethernet PCS, and
+>> IPQ5332_ETH_50MHZ_CLK is the source clock for the PCS PLL on IPQ5332.
+>> On this platform the Ethernet clocking path is:
+>> CMN PLL ETH 50 MHz output → PCS PLL (divider + gate) → attached PHY or
+>> switch.
+> 
+> What about that 200 MHz NSS output? Is it just renamed to PPE?
+> 
+> Konrad
 
+On the IPQ5332 platform, the PPE operates at 200 MHz.
+IPQ5332_PPE_200MHZ_CLK is the 200 MHz reference clock for the Packet
+Processing Engine (PPE), sourced via the NSS clock controller.
+
+The IPQ5332_NSS_300MHZ_CLK refers to the 300 MHz clock that is supplied
+to other NSS blocks, for example, crypto (EIP) block. This is also
+sourced via the NSS clock controller.
