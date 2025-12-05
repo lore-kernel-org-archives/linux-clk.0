@@ -1,65 +1,75 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CA4728642D;
-	Fri,  5 Dec 2025 03:51:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D9E1346E6E
+	for <linux-clk@vger.kernel.org>; Fri,  5 Dec 2025 07:22:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764906719; cv=none; b=Q3zl9B2ASWn9YrTDfV6W8W9Jgc82IJ2UZ0HAxeUOpYS+2QX9OtrUOSbMlpEtYj2DyPQ93ChA/2pOD+elRlPPEMYp1CbnhLPFde2A8AA4NNylqQS2roknG0sdACKzzRWTjWHeAanbNJ9XeNcq4ey90DKNT9q1hzhw8KfO6npShbw=
+	t=1764919344; cv=none; b=P5vsXkCVKXnH2Ar811T720mQmrkYJJ6Fj9+5CgeJNKFuDuyi81zx5UADgNMVirIGOK511mBVDP4KGXyZVKhx+DKppMNN9Rv9gpGsKCgDyffkN/q5Ipm4F77Pqub4wkms7KD7fE0WUTObj9wdpFC0Z3S21d8IGZWv0B6kYxq1NX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764906719; c=relaxed/simple;
-	bh=d6Egk7OgFcUoOnILINix8GJYnjMxYTxMhL9kXIYWTi8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SHxuGGVCN4eN3dEhRO6BSZ7BpqJeNIqShjJuWGLyYzyWMbDl8yk2j0gyqWXvRgfbYWjCt9awcoHs0uk3w3kLAz0CqPrELQHne/AGasA1PFm8dIKfacNFOe3+aA2A24PqdA765CulKobpuaXxS3nZclMd56nNwCOsqg8V/PGVQJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZBegZFTQ; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1764919344; c=relaxed/simple;
+	bh=zO4HfYHyG77lligX58GcpeUsXfmoKe4bOSQJtnv2qnw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=eCoUfsL4HKbEWh5X9OQsBm3I+VRyhQbRZLRvVASaY7s4x+TD9V8p1slkId5yGaaS/1LIeBKrR+ZXZkCa+BtdOAFnQC3ApFvdECBVnEpvt4Gw5HuF9pBQR3k4NIMW95KOmljG4/NOYsAqF2YjOgkvCYD7n5rbbt2FS8qFQvWeD8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bPg4ugI8; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZBegZFTQ"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1764906717; x=1796442717;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=d6Egk7OgFcUoOnILINix8GJYnjMxYTxMhL9kXIYWTi8=;
-  b=ZBegZFTQm+mD//RY5YCORFoNN8CpdwfJMwdaYQ7KX4MccVo2x/ZT8rO8
-   62LROyWG5RgwM8yBLgAW2Oh88HH5oNUBuaZsiyuzASqEZXok8Cev1Bry+
-   J0H0XD5ng3CKnYgGqm3xhNtCS23hpgvyzccDxhaOrHJFdpKbiuAUKEryL
-   A7M+XkhENbznihvXRj2rcIakIS6pYeJZrrTId7qWXmCMkQeUJle3HhwCG
-   MHK3hwhwYOv3M7o2XBh8LuB3cqqnHwVApC6Il+G+sJ21/M8EKtHmrB2uu
-   R2HkxVbPKYdwAvyxFPOzUQSPfXH2YOaUpmXepC8NnSJ8RPU1eZL0MOVBH
-   g==;
-X-CSE-ConnectionGUID: oYmzUus0Tqq+3Wp+Rcx2mg==
-X-CSE-MsgGUID: d7aKxnesRvKj8gEqj7pWRg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11632"; a="70787985"
-X-IronPort-AV: E=Sophos;i="6.20,251,1758610800"; 
-   d="scan'208";a="70787985"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Dec 2025 19:51:56 -0800
-X-CSE-ConnectionGUID: UoMEGpqkRLGcnBQ6P6gViw==
-X-CSE-MsgGUID: ZXphhHdAQSaeHhhG6YTC+g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.20,250,1758610800"; 
-   d="scan'208";a="218537257"
-Received: from lkp-server01.sh.intel.com (HELO 4664bbef4914) ([10.239.97.150])
-  by fmviesa002.fm.intel.com with ESMTP; 04 Dec 2025 19:51:54 -0800
-Received: from kbuild by 4664bbef4914 with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1vRMrI-00000000EYb-0bWP;
-	Fri, 05 Dec 2025 03:51:52 +0000
-Date: Fri, 5 Dec 2025 11:51:12 +0800
-From: kernel test robot <lkp@intel.com>
-To: Brian Masney <bmasney@redhat.com>,
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bPg4ugI8"
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-477563e28a3so13440335e9.1
+        for <linux-clk@vger.kernel.org>; Thu, 04 Dec 2025 23:22:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1764919320; x=1765524120; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=FzxFs8LzMrONfI1Cn6UlkRiahNYd5MhF609UmLpQAXo=;
+        b=bPg4ugI8dIDJFbncc0JR8K1CIMwmZ5EN2mJwTMNzHtko24UPdJXcOUWSBA3NqL3o1J
+         U6qYX5bo7xxMYpQuTyeDikPeiZotwBeHJ0uqclWWn7diKot7J34ROdY2NowUz7fjJOvZ
+         h7TvnKU+XPBZiPfRBEPYVTHMrf6kE+guesH3Tk9m4v+Qvq54bFTZdo16plBkpCOjhQi1
+         41lj8wgiQTiTtBLLOK5vAgyjSR/G3xC5WnTeEwEzYQHpw/lDrdFbbGEuF6OZU4kzHeLF
+         G/sNDMGIU20Cw43MDGgDaQLMpqyW4ex0fKcrsEdLl87rUC70J41YCmaHdiEPKGRh+IeG
+         v35w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1764919320; x=1765524120;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FzxFs8LzMrONfI1Cn6UlkRiahNYd5MhF609UmLpQAXo=;
+        b=TduhCRFkWNnnz8d1ZZrkE/UeEaWvQQLhNmO4+/ux68oDJp43Bvs1GkYK+zeRFqLlYS
+         Amf/gZ3XnF6XVMVl82okTuSwL9PuBHZvf8RpzMtvRvNOvwKCM4JBmQeJaRL2KwxiIKqD
+         GFmuNU7ScpWg50wV5LnwforZIL9VHzTQee2N9whVcYuOoqLjPb+h+J6OpNC1pV8GeFHF
+         quO9e/uNtU0rx4+7lDk5ytsgbYzmG/9T/2XfgfmYD45pn5niGcwRY4IQMIsT3EHNOUxm
+         DCMzheaXZqfl5uDvAn9E/L/qaNUsdOs9px3fJkNh8L6XqrYloi2xHlpCuTQ8nZwZeHCm
+         ir8A==
+X-Forwarded-Encrypted: i=1; AJvYcCXZtXVQ0zl2Kb8PxfIwAjsUMBFOy+sSoZy6VPFP1gazwOQEscReM2sfZ3tY7b+W0L3JRk8LV5nu/78=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNCk6ViHPixVnY5OtwQB3XXW92gY/KFw9WSFyAE3DPTpDEjhgc
+	u+XZfWDSSZZ0gbzot3wyIx4t+CiPbjGMVB0XxOuhvurodXavvfHGnsLI7Iuipki3yeI=
+X-Gm-Gg: ASbGnctSMVV5x7uS146q8aOCyePrRyHcHKOHVg+/LsdPGeNo4c/bvm3vkifiEOle6Gz
+	i7wKiPZAgCYuarTIOgZ8i77hil+CMIuiOm7ck8u6UlblI3oiaPSkfiiD6YDew9SskoatIith6g8
+	g5OMvRXTLtYwS9WvC1uZPH9EKj8oxDW0urEioJ2D4N/xD/jsmrQN+PKIBUw3DvgyKZf/ihDYPxd
+	7eGzJcWH0FS8MsrrRkyyNvmWwOleS98o73ySdhKeGpm05Ki3Sw7uBnCzbfM85VMm/ulbBy3N7eo
+	WGxpFGZis1+BNTK5J7S/1LYfXMLE9VVo1B0g1vmlNLnhH8NWFa9YvbI9c8g2UYoMnGoUQKUuboe
+	4SYGlQDdxnv+hnuF/K4Rv5kU6YhXviliJidBmxhQk8n448rqSKrCDIER6YJCsxHsMipTOmpBbfA
+	BIwQE1/25f2CutNCxe
+X-Google-Smtp-Source: AGHT+IGY46mYanaDcTERQwYze8S9vgpM9dAzNgia/FegejO4LmlZHO08fLRhzsVOYwX0bqvVtCm5lQ==
+X-Received: by 2002:a05:600c:1f90:b0:477:9e0c:f59 with SMTP id 5b1f17b1804b1-4792eb12478mr66048795e9.2.1764919319970;
+        Thu, 04 Dec 2025 23:21:59 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4792b12411fsm65146265e9.3.2025.12.04.23.21.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Dec 2025 23:21:59 -0800 (PST)
+Date: Fri, 5 Dec 2025 10:21:55 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: oe-kbuild@lists.linux.dev, Brian Masney <bmasney@redhat.com>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>, Maxime Ripard <mripard@kernel.org>,
 	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
 	Conor Dooley <conor@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-clk@vger.kernel.org,
+Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev, linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org, Brian Masney <bmasney@redhat.com>
 Subject: Re: [PATCH v2 3/3] clk: microchip: core: allow driver to be compiled
  with COMPILE_TEST
-Message-ID: <202512051151.N3iZUKEG-lkp@intel.com>
-References: <20251201-clk-microchip-fixes-v2-3-9d5a0daadd98@redhat.com>
+Message-ID: <202512050233.R9hAWsJN-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -72,96 +82,51 @@ In-Reply-To: <20251201-clk-microchip-fixes-v2-3-9d5a0daadd98@redhat.com>
 
 Hi Brian,
 
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on 92fd6e84175befa1775e5c0ab682938eca27c0b2]
+kernel test robot noticed the following build warnings:
 
 url:    https://github.com/intel-lab-lkp/linux/commits/Brian-Masney/clk-microchip-core-remove-duplicate-determine_rate-on-pic32_sclk_ops/20251202-060924
 base:   92fd6e84175befa1775e5c0ab682938eca27c0b2
 patch link:    https://lore.kernel.org/r/20251201-clk-microchip-fixes-v2-3-9d5a0daadd98%40redhat.com
 patch subject: [PATCH v2 3/3] clk: microchip: core: allow driver to be compiled with COMPILE_TEST
-config: openrisc-allmodconfig (https://download.01.org/0day-ci/archive/20251205/202512051151.N3iZUKEG-lkp@intel.com/config)
-compiler: or1k-linux-gcc (GCC) 15.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251205/202512051151.N3iZUKEG-lkp@intel.com/reproduce)
+config: arm-randconfig-r071-20251204 (https://download.01.org/0day-ci/archive/20251205/202512050233.R9hAWsJN-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 12.5.0
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202512051151.N3iZUKEG-lkp@intel.com/
+| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+| Closes: https://lore.kernel.org/r/202512050233.R9hAWsJN-lkp@intel.com/
 
-All errors (new ones prefixed by >>):
+smatch warnings:
+drivers/clk/microchip/clk-core.c:300 roclk_get_parent() warn: signedness bug returning '(-22)'
+drivers/clk/microchip/clk-core.c:833 sclk_get_parent() warn: signedness bug returning '(-22)'
 
-   drivers/clk/microchip/clk-core.c: Assembler messages:
->> drivers/clk/microchip/clk-core.c:721: Error: unrecognized instruction `nop'
->> drivers/clk/microchip/clk-core.c:721: Error: unrecognized instruction `nop'
->> drivers/clk/microchip/clk-core.c:721: Error: unrecognized instruction `nop'
->> drivers/clk/microchip/clk-core.c:721: Error: unrecognized instruction `nop'
->> drivers/clk/microchip/clk-core.c:721: Error: unrecognized instruction `nop'
-   drivers/clk/microchip/clk-core.c:722: Error: unrecognized instruction `nop'
-   drivers/clk/microchip/clk-core.c:722: Error: unrecognized instruction `nop'
-   drivers/clk/microchip/clk-core.c:722: Error: unrecognized instruction `nop'
-   drivers/clk/microchip/clk-core.c:722: Error: unrecognized instruction `nop'
-   drivers/clk/microchip/clk-core.c:722: Error: unrecognized instruction `nop'
-   drivers/clk/microchip/clk-core.c:862: Error: unrecognized instruction `nop'
-   drivers/clk/microchip/clk-core.c:862: Error: unrecognized instruction `nop'
-   drivers/clk/microchip/clk-core.c:862: Error: unrecognized instruction `nop'
-   drivers/clk/microchip/clk-core.c:862: Error: unrecognized instruction `nop'
-   drivers/clk/microchip/clk-core.c:862: Error: unrecognized instruction `nop'
+vim +300 drivers/clk/microchip/clk-core.c
 
+ce6e11884659988 Purna Chandra Mandal 2016-05-13  286  static u8 roclk_get_parent(struct clk_hw *hw)
+                                                             ^^
+returns a u8.
 
-vim +721 drivers/clk/microchip/clk-core.c
+ce6e11884659988 Purna Chandra Mandal 2016-05-13  287  {
+ce6e11884659988 Purna Chandra Mandal 2016-05-13  288  	struct pic32_ref_osc *refo = clkhw_to_refosc(hw);
+ce6e11884659988 Purna Chandra Mandal 2016-05-13  289  	u32 v, i;
+ce6e11884659988 Purna Chandra Mandal 2016-05-13  290  
+ce6e11884659988 Purna Chandra Mandal 2016-05-13  291  	v = (readl(refo->ctrl_reg) >> REFO_SEL_SHIFT) & REFO_SEL_MASK;
+ce6e11884659988 Purna Chandra Mandal 2016-05-13  292  
+ce6e11884659988 Purna Chandra Mandal 2016-05-13  293  	if (!refo->parent_map)
+ce6e11884659988 Purna Chandra Mandal 2016-05-13  294  		return v;
+ce6e11884659988 Purna Chandra Mandal 2016-05-13  295  
+ce6e11884659988 Purna Chandra Mandal 2016-05-13  296  	for (i = 0; i < clk_hw_get_num_parents(hw); i++)
+ce6e11884659988 Purna Chandra Mandal 2016-05-13  297  		if (refo->parent_map[i] == v)
+ce6e11884659988 Purna Chandra Mandal 2016-05-13  298  			return i;
+ce6e11884659988 Purna Chandra Mandal 2016-05-13  299  
+ce6e11884659988 Purna Chandra Mandal 2016-05-13 @300  	return -EINVAL;
+                                                        ^^^^^^^^^^^^^^^
+So it can't return negative error codes.
 
-ce6e11884659988 Purna Chandra Mandal 2016-05-13  682  
-ce6e11884659988 Purna Chandra Mandal 2016-05-13  683  static int spll_clk_set_rate(struct clk_hw *hw, unsigned long rate,
-ce6e11884659988 Purna Chandra Mandal 2016-05-13  684  			     unsigned long parent_rate)
-ce6e11884659988 Purna Chandra Mandal 2016-05-13  685  {
-ce6e11884659988 Purna Chandra Mandal 2016-05-13  686  	struct pic32_sys_pll *pll = clkhw_to_spll(hw);
-ce6e11884659988 Purna Chandra Mandal 2016-05-13  687  	unsigned long ret, flags;
-ce6e11884659988 Purna Chandra Mandal 2016-05-13  688  	u32 mult, odiv, v;
-ce6e11884659988 Purna Chandra Mandal 2016-05-13  689  	int err;
-ce6e11884659988 Purna Chandra Mandal 2016-05-13  690  
-ce6e11884659988 Purna Chandra Mandal 2016-05-13  691  	ret = spll_calc_mult_div(pll, rate, parent_rate, &mult, &odiv);
-ce6e11884659988 Purna Chandra Mandal 2016-05-13  692  	if (!ret)
-ce6e11884659988 Purna Chandra Mandal 2016-05-13  693  		return -EINVAL;
-ce6e11884659988 Purna Chandra Mandal 2016-05-13  694  
-ce6e11884659988 Purna Chandra Mandal 2016-05-13  695  	/*
-ce6e11884659988 Purna Chandra Mandal 2016-05-13  696  	 * We can't change SPLL counters when it is in-active use
-ce6e11884659988 Purna Chandra Mandal 2016-05-13  697  	 * by SYSCLK. So check before applying new counters/rate.
-ce6e11884659988 Purna Chandra Mandal 2016-05-13  698  	 */
-ce6e11884659988 Purna Chandra Mandal 2016-05-13  699  
-ce6e11884659988 Purna Chandra Mandal 2016-05-13  700  	/* Is spll_clk active parent of sys_clk ? */
-ce6e11884659988 Purna Chandra Mandal 2016-05-13  701  	if (unlikely(clk_hw_get_parent(pic32_sclk_hw) == hw)) {
-ce6e11884659988 Purna Chandra Mandal 2016-05-13  702  		pr_err("%s: failed, clk in-use\n", __func__);
-ce6e11884659988 Purna Chandra Mandal 2016-05-13  703  		return -EBUSY;
-ce6e11884659988 Purna Chandra Mandal 2016-05-13  704  	}
-ce6e11884659988 Purna Chandra Mandal 2016-05-13  705  
-ce6e11884659988 Purna Chandra Mandal 2016-05-13  706  	spin_lock_irqsave(&pll->core->reg_lock, flags);
-ce6e11884659988 Purna Chandra Mandal 2016-05-13  707  
-ce6e11884659988 Purna Chandra Mandal 2016-05-13  708  	/* apply new multiplier & divisor */
-ce6e11884659988 Purna Chandra Mandal 2016-05-13  709  	v = readl(pll->ctrl_reg);
-ce6e11884659988 Purna Chandra Mandal 2016-05-13  710  	v &= ~(PLL_MULT_MASK << PLL_MULT_SHIFT);
-ce6e11884659988 Purna Chandra Mandal 2016-05-13  711  	v &= ~(PLL_ODIV_MASK << PLL_ODIV_SHIFT);
-ce6e11884659988 Purna Chandra Mandal 2016-05-13  712  	v |= (mult << PLL_MULT_SHIFT) | (odiv << PLL_ODIV_SHIFT);
-ce6e11884659988 Purna Chandra Mandal 2016-05-13  713  
-ce6e11884659988 Purna Chandra Mandal 2016-05-13  714  	/* sys unlock before write */
-ce6e11884659988 Purna Chandra Mandal 2016-05-13  715  	pic32_syskey_unlock();
-ce6e11884659988 Purna Chandra Mandal 2016-05-13  716  
-ce6e11884659988 Purna Chandra Mandal 2016-05-13  717  	writel(v, pll->ctrl_reg);
-ce6e11884659988 Purna Chandra Mandal 2016-05-13  718  	cpu_relax();
-ce6e11884659988 Purna Chandra Mandal 2016-05-13  719  
-ce6e11884659988 Purna Chandra Mandal 2016-05-13  720  	/* insert few nops (5-stage) to ensure CPU does not hang */
-ce6e11884659988 Purna Chandra Mandal 2016-05-13 @721  	cpu_nop5();
-ce6e11884659988 Purna Chandra Mandal 2016-05-13  722  	cpu_nop5();
-ce6e11884659988 Purna Chandra Mandal 2016-05-13  723  
-ce6e11884659988 Purna Chandra Mandal 2016-05-13  724  	/* Wait until PLL is locked (maximum 100 usecs). */
-ce6e11884659988 Purna Chandra Mandal 2016-05-13  725  	err = readl_poll_timeout_atomic(pll->status_reg, v,
-ce6e11884659988 Purna Chandra Mandal 2016-05-13  726  					v & pll->lock_mask, 1, 100);
-ce6e11884659988 Purna Chandra Mandal 2016-05-13  727  	spin_unlock_irqrestore(&pll->core->reg_lock, flags);
-ce6e11884659988 Purna Chandra Mandal 2016-05-13  728  
-ce6e11884659988 Purna Chandra Mandal 2016-05-13  729  	return err;
-ce6e11884659988 Purna Chandra Mandal 2016-05-13  730  }
-ce6e11884659988 Purna Chandra Mandal 2016-05-13  731  
+ce6e11884659988 Purna Chandra Mandal 2016-05-13  301  }
 
 -- 
 0-DAY CI Kernel Test Service
 https://github.com/intel/lkp-tests/wiki
+
