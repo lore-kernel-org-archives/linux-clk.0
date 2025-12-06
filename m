@@ -1,67 +1,67 @@
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B08C222585
-	for <linux-clk@vger.kernel.org>; Sat,  6 Dec 2025 11:11:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 345061FE451
+	for <linux-clk@vger.kernel.org>; Sat,  6 Dec 2025 11:18:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765019511; cv=none; b=E2s77BkvW7r3D/tU9osffyufAIOB+5p/ikqyzKK8VVYTuaAsESZbCRgGe3ES7N1sS41cvZAHVmL5D65tqFFll9ABswJ7PzkddtRUTPT4qPVKkQ1wCaK4gKz3MkDKbyHgigjH0jvBAAKKgJQRC3HX+veLO8m9bLW8hbdWD2jyapA=
+	t=1765019917; cv=none; b=V3G7aO762argTkq0S8hH5xl6zwbbXkt2IL/uH6g2zbBTve2FKwuajdpfYu+UoGtnSZekcpwO0mE3ZLnDzTbeSOMmnutkMrWBwGbXOVaBsPaKFSdDWswkYOR4nOkq37OAuwxQ9nk6d1L8xvP4NX2WPBsLz9BKkgxXfY0eaTgmzqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765019511; c=relaxed/simple;
-	bh=i6DFH1owewNhW67SaCjr52SMT9liSY8pPxcicJCPwkg=;
+	s=arc-20240116; t=1765019917; c=relaxed/simple;
+	bh=2dSCRC+qUHWWpuBfMYiiFHMdNhNbKKMJp7pBFyy5x28=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=k4E7P7c23nTOoGa/ho9wuVeZfTDZX9gnGBJhg5xIJD/MbPvVUxFd2eVG36R7hGu/Gnv7WUqws7SXTHskLN39H3YVhyPGrlaSY68UTXCHxMr1mv5W9t2nTQ/qUdD9KKXR4coZZneLQwzjFYo7Y2uvq40xovZtC9EHMnusVgij1bk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=QEpcormi; arc=none smtp.client-ip=209.85.128.42
+	 In-Reply-To:Content-Type; b=sWbk6kCf/EvoX/go15q++WquCjYnp7r9QhyQI4nnlDbzWlekkeZVANXutNCGR9UiH9Vbg0e1Kc8Cpd1aGSZ6C0iBfnS9JL9lflyJeFsJ8ySzrC2JF4OyRGxg82WKdQRlLJ9bCU9/WftJDhh5Dm5bIelwbxnOx+HqJ1i/mlZQDZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=qKA7brgh; arc=none smtp.client-ip=209.85.221.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="QEpcormi"
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-477b198f4bcso25090065e9.3
-        for <linux-clk@vger.kernel.org>; Sat, 06 Dec 2025 03:11:49 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="qKA7brgh"
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-42e33956e76so1474607f8f.3
+        for <linux-clk@vger.kernel.org>; Sat, 06 Dec 2025 03:18:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1765019508; x=1765624308; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1765019913; x=1765624713; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:content-language:from
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=kA4dYuB49zNcflG5vvLKKvtHOONzwthyiF/LnUsNAAo=;
-        b=QEpcormiRUQoWpOAd9BKXD8tVp1JKrmxelxLLiHPMmoMhrXelQfwXGLFzjkyb6L8JM
-         E7+AHRcMxNk9TCR9wE1usq5zOtI/zY+laCb5i1711Bq3nFSMht6PInpXVH2zu0/qX7Je
-         ADreAEEJBMv6n3sJtb2y19MAD4OHufDYP4jS+PXmmwk6Vytm9hVQoQf1/mk1dcA2GIBy
-         1wVoshSzXVFqE/S9TQ6uepyaRjcFZOotLPa2Ku/T7VRRwcFbSk2ZjGMRi9WeaJ8Bjf2m
-         f1VosxKI1ZlrwarYeaaXai3flwCv6QJLpgznhSvac/WvqQYD24xStPpTQ7ECG+y6BmRj
-         oW/w==
+        bh=SbIrykIurPy4cu/aMennF9ioW6dMGtNcboFPZcYKwp0=;
+        b=qKA7brghGFcrRsBuTZhu3wr05yoBi0XQPIFSvVEnpgMdY4X2hATi5XN2srytZxgO9O
+         /VyKb9JRK5UZY5HXnRE6LfQMSg8kx27LQQAi+ozFYR/TuKOLMz/SunoMv0ca3xlu5Hes
+         1PAB23x8l+uOi4FYu6691bHyktqPmI82V2IXWtaLzShxEVoHvrt3iSJnWYMcqbs6VREW
+         9SIdi2wBK6Z1AEv8oOLYPYufW5HZ1fVYWtu1x/6yBBIBbUXKcqY0s5nk0F6BnX7mKanc
+         WbANPnwycUzxfLvq16Va+lnf8Y/4rB48jxZHy8zsi1IQzOdvidZ5qj7yqUTSsqyGm1z0
+         HOOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765019508; x=1765624308;
+        d=1e100.net; s=20230601; t=1765019913; x=1765624713;
         h=content-transfer-encoding:in-reply-to:content-language:from
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=kA4dYuB49zNcflG5vvLKKvtHOONzwthyiF/LnUsNAAo=;
-        b=QLDC5Gx4lAQ8EUis3DDFsVukr5S3IVYTpCplnVZn3M49zZjbXuFmTBv75P2K+zEE5e
-         ypqRLpJX5qNBOxEEHJI+MG6ZnBEQqkSNbYhXTONCM9ldRE/stwjZSf2IIPtYANimg3Qk
-         SiUWS6lZ0BaWuDLd92+vbpQ3AlGxlC+tFu2q0GfDEVweaDrVF7vJudXTujqUEIa9eJpr
-         /NQqwIhZYU8OsMNmJLRIjzg9fngAqJdJslLsGuiofljhllj2oYtstceKs38uxuwU5IJX
-         EDu3/ucKO7o4uGLVFHV8PteTxYmNejc4obW9OVwQaAioFHNdyUOgluyZfz206uqNHqHi
-         udkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXzrLHqn6mPHJr67oA90NyzxpO6+ELN3WmaVG21jVNT3F7p8qSLd2ESyz/vXSaKBY8pt9ViDiq7eDM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmxfkXlNJxFkz9g0VzfOnl9UYLPo64xjIyoqPav2fGQhXW6qvX
-	EKMw8+bxSpVpcd0aloSNXH1uVppKT+oAFnMeVh+9sjOsx1KckYbmauKnLpJy3e02uqA=
-X-Gm-Gg: ASbGncsKoHytkXKyCwGsLw5UGvJ60sNCg3oAh7loiroA6ORtEsmOzSTDwzjBRnCFLet
-	Al97Oq/cNGFi5+FHLpS7kG3uCiK55cDZ92ycsbcB6ENoy6vk+pmH7kb56HtYxGYO5v7MW4BbIYm
-	3WxIF46q90hy5QnJ1u+AHBDZkTEo38q3tCuila3fiDdqqNhgW8DfJySvPXmlLKHMXvNFSZOg0TD
-	QX0DMW9JAMCiPxARpMHxphHjgKoMJTScigRCMH5XuhmM4jr1+9Q6e0DuF3mRtSvzyG64bASk7iq
-	9ar1N2oX1Y36ntDP87xoql+mu5q9vABcDaxy/u6V9g7kMkYAmT/2mWQZFbU0p/tvXjTk3gxCkuh
-	ZFKoj1o1BSJQBodPZp61ZLCYhpmLTc/uOpusWfvdMzl5CjtAPHi4Z2BoVmZ86uSnoeNqBdEClvW
-	dJ0HCb6zlqjB/uUlVcUbo=
-X-Google-Smtp-Source: AGHT+IEXAY0hNz2eOSoL0Hv03FAjM8+tLdCbApP/CpVTsWfXGDNXQB9mZEeEHfi46Teq/N/IO2sImA==
-X-Received: by 2002:a05:600c:621b:b0:477:55c9:c3ea with SMTP id 5b1f17b1804b1-47939e50ce2mr25774055e9.35.1765019508463;
-        Sat, 06 Dec 2025 03:11:48 -0800 (PST)
+        bh=SbIrykIurPy4cu/aMennF9ioW6dMGtNcboFPZcYKwp0=;
+        b=TObKFMzLs0UJm+ZMH0PgFT2vbQaGjvXcb+BS4PfbR/CafiaZMRkV3khDjEUfv6cTkB
+         Vx5g/HLxlkamA1GH9IrvAQZBsGBTS+j7YfBEQkyfSyyKfPpXXFUt1+dp4k+DyZJ9hdIF
+         WxZDkUBfjhsrmzrYU+Dtrik3N9mVyjSW1rI7kIcHusT4D9DUshJ97AWZ7EIr7tBDhgNC
+         EY48LmuPZ5eyozXGtLH/tEEKj9lHWVnYqYmiYHhF2vEIwjlb6oGcWc+jnEI8WyeIjR7s
+         /ddXJcLnj4NybaAd0ttufxiUDRkGZHrnRJs61WrtIlCTMz/JY8RfGUiLBn/fhxoK+VXm
+         Okow==
+X-Forwarded-Encrypted: i=1; AJvYcCXucI5A9c4CXZBI+KPV64yejGoHtIMqFG6aDAs3AI0JjZ3bUR9HObqKxcHSlmXZOvPMfUCUNx6jHs8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4XsjvIBEacMDuWsM/rMqqMfh406BsuOwQaxDDwEfma0C0F/9R
+	VBrDpoV5LF/iMyKaAs7UlOuLfLIyKHeDNwe6GueQIN0VJQoX1AhoQzzJGocJil550TU=
+X-Gm-Gg: ASbGncsFdKjzycW/V3+IXvbVYV6lq78BFibTJ9yPs0KtDbr5CX2QFqrJkYIqwVaRpnK
+	bTeo9hlCNiBW5wngKa/Uf5TXEzujl9bpBaP79+5NjESXuytJhhiW9eLQ9P9ldRS9TDhR3Bgs2kD
+	/xakAahywqMyZJTop5b2XtoxVp5ETyVZFAgG4geTMcBL9271vFfDonVF52VBuFw66Z9eju3VXWD
+	a0cJDeN+CGdIJFMRF1Sz4ykZsYo87k2C6m5MRYdFd/rm8bj9rh2R/4+nyyWrcu+9imhiCFG+n50
+	FeuXESJKBSdt30jB39uVd20RP4OCCt0KRODh946V+TzEKf2h7iHdHfnoaP2TH+dVdAHDl/hqtJ8
+	CehyDvckeSea0nGtc56i9IFHh+Bko0Tm+b6/l3Ne1i89NVVzlG4278ISxJtlxJ/jIdKEXfZ5vmZ
+	NtO1EntwMG7zaRzWlMwjI=
+X-Google-Smtp-Source: AGHT+IHr7mdkZZdTGhGHXhCyqOpNz/L+eCosT1VVgSOrplrijDQwbTIlvnGL9FzVzlG1uTFmo3H5MQ==
+X-Received: by 2002:a05:6000:290a:b0:429:d565:d7df with SMTP id ffacd0b85a97d-42f89f54886mr2311030f8f.42.1765019913538;
+        Sat, 06 Dec 2025 03:18:33 -0800 (PST)
 Received: from [192.168.50.4] ([82.78.167.134])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-479311fbaf4sm124579745e9.15.2025.12.06.03.11.47
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42f7d353f75sm14403593f8f.42.2025.12.06.03.18.30
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 06 Dec 2025 03:11:47 -0800 (PST)
-Message-ID: <ae7dd616-f09f-4729-a15c-411d964461d6@tuxon.dev>
-Date: Sat, 6 Dec 2025 13:11:46 +0200
+        Sat, 06 Dec 2025 03:18:32 -0800 (PST)
+Message-ID: <86bd75e7-1191-458d-b71e-c3cecb960700@tuxon.dev>
+Date: Sat, 6 Dec 2025 13:18:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -69,7 +69,7 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/3] clk: microchip: drop POLARFIRE from
+Subject: Re: [PATCH v2 1/3] clk: microchip: drop POLARFIRE from
  ARCH_MICROCHIP_POLARFIRE
 To: Conor Dooley <conor@kernel.org>, linux-kernel@vger.kernel.org
 Cc: Conor Dooley <conor.dooley@microchip.com>,
@@ -78,17 +78,17 @@ Cc: Conor Dooley <conor.dooley@microchip.com>,
  <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-riscv@lists.infradead.org,
  linux-clk@vger.kernel.org, devicetree@vger.kernel.org
-References: <20251117-shadow-police-56aba5d855a3@spud>
- <20251117-bulgur-wildfire-a8c5a2b417dc@spud>
+References: <20251121-tartar-drew-ba31c5ec9192@spud>
+ <20251121-prude-dilation-79d275fec296@spud>
 From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 Content-Language: en-US
-In-Reply-To: <20251117-bulgur-wildfire-a8c5a2b417dc@spud>
+In-Reply-To: <20251121-prude-dilation-79d275fec296@spud>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Hi, Conor,
 
-On 11/17/25 17:35, Conor Dooley wrote:
+
+On 11/21/25 15:44, Conor Dooley wrote:
 > From: Conor Dooley <conor.dooley@microchip.com>
 > 
 > This driver is used by non-polarfire devices now, and the ARCH_MICROCHIP
@@ -116,8 +116,8 @@ On 11/17/25 17:35, Conor Dooley wrote:
 >  	select AUXILIARY_BUS
 >  	select COMMON_CLK_DIVIDER_REGMAP
 
-This doesn't apply on top of the current at91-next. Maybe rebase it once
-6.19-rc1 is out.
+OK, I found v2 in my inbox. Same symptom here. It doesn't apply on top of
+the current at91-next either.
 
 Thank you,
 Claudiu
