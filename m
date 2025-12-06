@@ -1,66 +1,66 @@
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 867662DE1E6
-	for <linux-clk@vger.kernel.org>; Sat,  6 Dec 2025 14:30:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 698F9280A5A
+	for <linux-clk@vger.kernel.org>; Sat,  6 Dec 2025 14:31:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765031432; cv=none; b=FnAO76yVHstFj84j7FUlgzLinH1rwg7uxZaaS5x1+TCeMURT1ar1nKDXrtGnxgLVHUe101RvnhtmPsVAl0lUSjAKGIhg7jgh1bKB8OuqkFttAB8wmYehNzMb7E6FXLliAv9Mez23dt6614tU100QVuJMI4pIrTMs8p7dteUGi6U=
+	t=1765031468; cv=none; b=i2/v0s23GNLN2UXk+i+kEmniKoHomv+dQ0nvVomS3yM5ipvQAlLpy1PvYGH4B1EmRyxiEprZHDZaS9cEIv34TGekesdurFa5SJNAW9tjIupUrILPTen+uFriPNaJLP+8gSqiugNIrfZLjkEXL0Gm5Yju+lShYLx3Oj0pvfj3k1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765031432; c=relaxed/simple;
-	bh=l0QdzEMpjtA2/9IVjcKZIBYxDyHt1Sm00OZ68uWx2lg=;
+	s=arc-20240116; t=1765031468; c=relaxed/simple;
+	bh=Na6D7E4kSS7DZJ4XuQYO7vDIvKg3c+obHsbqi5zx/hM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EdUMde6lU9Hd5lez2wTuWyFrIHpu/6vS8VNHvdxaHGXYzijqegJm7eSu4sGMAL1dNSkuhrHfR0CBqTlI0h2TOBgvrNC48K0ngLMHU0jeQwYmN4IuEJ1FSSaww+Q2JMzg54fEp94U8HK5H1WM+jUSUDjKIzup8mTIwYXWwaJLpn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=dW6W8SpZ; arc=none smtp.client-ip=209.85.218.51
+	 In-Reply-To:Content-Type; b=GVQO6Aoyvfl7O7S5tkhoCO2q7G6eRZsnw4iLbZ2Hjn/Ey7shlSg444Sr9DMpcNaBQ7B+cKpMPaYn9951RlaUSgj/U7U/6YyM959OyaNR0Oc6brRIbRmcPyzoGEC4VXy01sa3kRBkIB3hFCmI1II6ovruNS3zz8RYr/KQQSoy1iU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=dRNNNSQQ; arc=none smtp.client-ip=209.85.218.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="dW6W8SpZ"
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-b735b89501fso361115166b.0
-        for <linux-clk@vger.kernel.org>; Sat, 06 Dec 2025 06:30:30 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="dRNNNSQQ"
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-b727f452fffso527692866b.1
+        for <linux-clk@vger.kernel.org>; Sat, 06 Dec 2025 06:31:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1765031429; x=1765636229; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1765031465; x=1765636265; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:content-language:from
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=1w0KMkfLhKs+JVHdq2yV/tGhRmGdiZgXf5K4c1ouFD8=;
-        b=dW6W8SpZ7vBQOb7vricIcw7Hg0ooBDTneJysHDV5b09828yDffKrZ1vR+9TN6KQtvI
-         s45vTd7aQSDuoVnD8xDgdLRDBk+/PhemUkMyzcSjvT2J1WKBb1jaVIh5dV7Ud3o6GBmc
-         D5du6n3KLwstkuMw8l3JZ1Y65Iqp/ToMZ+HTdpri0RuWJxcnJcbusVSGUWmjRlLW1yc+
-         Wqp0yhaNcuKPgPoBFFD3UsfU9HbtMzDnaEgqZ/QO6Z3KYXIH9JGSusTethMmrmLaqlyH
-         hkiJO38cw8wXk4/lQc8xBtdvgb+qpLrc4By1Cknh4FYQXoWjzbUwe9G1erpgUPE+LjBR
-         8R2g==
+        bh=sRIfQPoEDFmFqm2DpO4522h9Id16dk4sZVB/evXjzE0=;
+        b=dRNNNSQQ0clSVGl1ScpX45IvJaO+QPBP73LOL+HnM5SF3KWXYM4/a1j4cS6tZlcJO5
+         dtpUjHq7lJTFVOd946oLwPNAFuznlNWUBxA9XNbdTcqQNq92UjZpKq3BN2rdIHqgw6Uj
+         DuRJQ9E02PWGZ0MbwMEQtsEEPZyL0swixezfES3tpMOgV4tGpPYdpexjc8h33ZDmwI9Y
+         0udXj+inE4/3J9x06885VnMWSrHXkipie+L/AWedqgA5EEI3huNaS0XKLULVi6tvroCW
+         vCBtbPOGGjlA5Binp5ZK0o2N7dUqkxaqX4kuyS8cPVZxxcXd6zgKZkciPUtBsW3TlNzo
+         M3rQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765031429; x=1765636229;
+        d=1e100.net; s=20230601; t=1765031465; x=1765636265;
         h=content-transfer-encoding:in-reply-to:content-language:from
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=1w0KMkfLhKs+JVHdq2yV/tGhRmGdiZgXf5K4c1ouFD8=;
-        b=YKxXCdft6+9mcTC+iz8Nyu8MguZuxZ1qkT154U/Hu0t6cJyJm7cLJPhDUuYQzUgHop
-         XaaoXhCVR5xS3K21kjGk5At33Kiem7iNKa2DHZ0w0kpGz2upf89PuIfKysE1nCiao+PL
-         FCpC9vlJ6CiYZ9CPrnlX2cEz6IWWtPbrhTDNxqBQIU2hUuA5+/AgVwrAoZfJTckWTYUJ
-         snreT7HLQx5sLBQqN6n7MVD+chxBqlzCqTXMeYaDPedxt2C+/JRAT+HQNpJMeQ4X4TqZ
-         gDYgvh5utFMzwcXfGKc/vmoo8qEVhkWCla42PsdvIY5daChYtnrMpGa4/SIcF1Y31LSd
-         arLg==
-X-Gm-Message-State: AOJu0YwXTGYFQqwyUUaDOzLT96s39nC8IwFchVnUOBh+6H5oaDrrSwBT
-	eg8UhqCvoVBrcUC0aZb6XH5r7oUYR0QZppKhyfMyy72SZr/DvGiT0eEjMdHAxnemWd4=
-X-Gm-Gg: ASbGncvgOP2DkfsYu80EdTfHe0f+Tf1QZWDB00JKoq5hV+PNA3SyX93TdR0Y9aSW4u6
-	HQs2Cgsr9rtPT9OQij6A/znpFzGWzI59lnD0xVuEgu9orfpVojqK4K0jLnFgffmSBXeAJk0+6uD
-	t1mlo+QPBzOstpnL/Vr/aQZncIDVI3QY/A3hlgpXWfE4dhmDJOHNGN1UpIYZFcfT6Wx90smGgsq
-	bMGBZ6mbN2ICVLtwcU9ON65WrwakuAfyUqDpDMQ24P4xTRBVGGN6rlf0r2xbCwcXVso36u5PGrd
-	F6OorPN421dO2tfbh+aFBOf4hjOVNbQHxNbIEcFtSaJF8ZPDUgobWm1AlfUEQ/rKi6xIN+Gtan7
-	pRLL/1evQ6HT6yZNfel7Fivk6hpmRZOkFUNweUDcDV8U6uVeUmwO+DoCIcpgd/hO8J7gcOdXra6
-	nv94ChZNgzWQdjhjod2+8=
-X-Google-Smtp-Source: AGHT+IF9jPn5FGYCVY2xBzPy2dddl7nPJsPRd9/4uL1nBGgTZHnCYN09n2MsBmA0SI+/klqfy4ySiA==
-X-Received: by 2002:a17:907:1c98:b0:b72:58b6:b263 with SMTP id a640c23a62f3a-b7a24846c8amr266929266b.60.1765031428792;
-        Sat, 06 Dec 2025 06:30:28 -0800 (PST)
+        bh=sRIfQPoEDFmFqm2DpO4522h9Id16dk4sZVB/evXjzE0=;
+        b=dhIezoCvn6ofG4a27h0bhKDVZwkEnQKr1MbtcGs41i6HQmAQ3c6CTZkKpkH3+CZBC1
+         5xZGdBBw5s8QIRkGMu1g/163Iw20vIJq4AKYwXxoyo2Ag+8QP196u8JQef2UvFr/WXTx
+         P/KybRNgmxLP0eas3Qr3iMg+5EyGqd+CVd3160szeBsDMtSEhyOWs9/2nCMYy6hr0zGp
+         sna3rGNWRYZW33NbZyVqUojm6Ibe3Ft9eUTKMkrxx26YfsX8JrBDtd3vbMVNPp9wDri4
+         blBrEq93MXXumLa/NJGtdCyVIS1k/y2kvAsNu2UKROieevMlD0sqW1RXdH+tuldKCcdM
+         9fKA==
+X-Gm-Message-State: AOJu0Yz3uxtTx5zfazZ0XEJ2oahqLOuHDI4bHc008B1An+URSXtfKC3s
+	evq+hO0sa/eQZhkLpQCEiHgFfiDFgGiTViOoXtBoL/GHpasJO6T6QihK3GIMdB2wuDQ=
+X-Gm-Gg: ASbGnctPUTRxJzbeOlQdzcCP5iOEz1nlKHPxpFSj9ovKhQlZLVyludQ8HXhbchyX0qx
+	GBLZ+N2FXdMJLzGqpyyVMkvzk/gUr61g0782WsPbCZyCwikWFuO5IeX9J9XJMZ2AdM/LssNbV59
+	1X2PaLgoKWZqgy73SJebdQvTZhHAFznFiZ/k2w5e7+O42ja5320yJhSjDIuch640/jQj/H9wb+j
+	WrwrVr45mCubK7TU/FAj0KR50gVEetW2J+CYjJQ0QaS0OV+uDhVHFO5PK15e8n0R9fgl6npgBtE
+	89crzfjvQ4SZmSpqIG1QyjjAJNib/lrWMvu1z4rlzUghiuC01kFMKAsr35rLXXYAgGxpeY1zXmx
+	5mbN47NuVUQHeDVQGsR7qBwZini7JT0xPnkyyDZueeey45eVVVMEec+/EcW2ziwdx6FwRHViTIp
+	EK5hiDxGVqKzrH/auzPn8=
+X-Google-Smtp-Source: AGHT+IE8HnS86RZ2RRuX68coTBZlUOIBKtLFGaYMG3o3vx+kzbYCbEFgmp+n33XmwZVSgRz3VL6TJw==
+X-Received: by 2002:a17:907:9723:b0:afa:1d2c:bbd1 with SMTP id a640c23a62f3a-b7a23b808camr290395666b.30.1765031464792;
+        Sat, 06 Dec 2025 06:31:04 -0800 (PST)
 Received: from [192.168.50.4] ([82.78.167.134])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b79f445967fsm633762866b.10.2025.12.06.06.30.27
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b79f4975c56sm620545866b.33.2025.12.06.06.31.03
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 06 Dec 2025 06:30:28 -0800 (PST)
-Message-ID: <0ce7cb31-b8ed-483d-9260-59da9841049c@tuxon.dev>
-Date: Sat, 6 Dec 2025 16:30:27 +0200
+        Sat, 06 Dec 2025 06:31:04 -0800 (PST)
+Message-ID: <f2d88272-2465-4fcf-b89d-b515a1fbee7f@tuxon.dev>
+Date: Sat, 6 Dec 2025 16:31:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -68,8 +68,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/4] clk: microchip: core: remove duplicate
- determine_rate on pic32_sclk_ops
+Subject: Re: [PATCH v3 2/4] clk: microchip: core: correct return value on
+ *_get_parent()
 To: Brian Masney <bmasney@redhat.com>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
  <sboyd@kernel.org>, Maxime Ripard <mripard@kernel.org>,
@@ -77,30 +77,44 @@ To: Brian Masney <bmasney@redhat.com>,
 Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
  kernel test robot <lkp@intel.com>
 References: <20251205-clk-microchip-fixes-v3-0-a02190705e47@redhat.com>
- <20251205-clk-microchip-fixes-v3-1-a02190705e47@redhat.com>
+ <20251205-clk-microchip-fixes-v3-2-a02190705e47@redhat.com>
 From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 Content-Language: en-US
-In-Reply-To: <20251205-clk-microchip-fixes-v3-1-a02190705e47@redhat.com>
+In-Reply-To: <20251205-clk-microchip-fixes-v3-2-a02190705e47@redhat.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 
 
 On 12/5/25 21:46, Brian Masney wrote:
-> pic32_sclk_ops previously had a sclk_round_rate() member, and this was
-> recently converted over to sclk_determine_rate() with the help of a
-> Coccinelle semantic patch. pic32_sclk_ops now has two conflicting
-> determine_rate ops members.
+> roclk_get_parent() and sclk_get_parent() has the possibility of
+> returning -EINVAL, however the framework expects this call to always
+> succeed since the return value is unsigned.
 > 
-> Prior to the conversion, pic32_sclk_ops already had a determine_rate
-> member that points to __clk_mux_determine_rate(). When both the
-> round_rate() and determine_rate() ops are defined, the clk core only
-> uses the determine_rate() op. Let's go ahead and drop the recently
-> converted sclk_determine_rate() to match the previous functionality
-> prior to the conversion.
+> If there is no parent map defined, then the current value programmed in
+> the hardware is used. Let's use that same value in the case where
+> -EINVAL is currently returned.
 > 
-> Fixes: e9f039c08cdc ("clk: microchip: core: convert from round_rate() to determine_rate()")
+> This index is only used by clk_core_get_parent_by_index(), and it
+> validates that it doesn't overflow the number of available parents.
+> 
 > Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202511222115.uvHrP95A-lkp@intel.com/
+
+I'm getting this from checkpatch:
+
+Applying: clk: microchip: core: correct return value on *_get_parent()
+[Checking commit] 910546c58dc2 clk: microchip: core: correct return value
+on *_get_parent()
+[Checkpatch]      WARNING: Reported-by: should be immediately followed by
+Closes: with a URL to the report
+#17:
+Reported-by: kernel test robot <lkp@intel.com>
+Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+
+
+> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Closes: https://lore.kernel.org/r/202512050233.R9hAWsJN-lkp@intel.com/
 > Signed-off-by: Brian Masney <bmasney@redhat.com>
+
+Other than the above:
 Reviewed-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
