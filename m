@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11C9C2C0274;
-	Mon,  8 Dec 2025 17:10:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B84092F9C3E;
+	Mon,  8 Dec 2025 17:15:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765213840; cv=none; b=FOEJLt08h5opMT3ySiJSUEck4jqzF9Ahik6MvSNjXHEEdmdlnl2TQr4jHxvIlbzZb1BZLkbPawPF85VshvhL6QXEYt2NCqBoLpciuv4oAMdNX8v1PRmDME7WNaLKT3wuuPuilwcyYW+0TLCJ8rLwFNZKQWFH7TCNZqVfb2YaxKM=
+	t=1765214156; cv=none; b=Wan2EUbTF4nGWAAqVY9cMFpCPHXEpM3IJ6kkJhsaobJNenLnhblvgKZmvUqL84xPKbd04xy/r3g/E+X3OIElFUMCszu+ISN1PmNKcEbtKFmHaKgG3O85kCuffSjcWKv54ddIBWFtTr/Blk805uEAvyDspv5Yy3HOneQxNtpLKG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765213840; c=relaxed/simple;
-	bh=HUczN0JOy5c/9Nhyo4/4Hy2U/dsetbWKARZVVXVoP9Q=;
+	s=arc-20240116; t=1765214156; c=relaxed/simple;
+	bh=fjQMhvzUh3wiORRTZ78WaQHW7FYwA9kge4oGJ9+Iwgs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TnOkP8TJwVVEiVFyZhic76rUWy0RNHDFinx+03Y9EDk9Gxw1M/7p7qIje/tY5qA7n66LSc84KwT1CUHEZAKkYYHGX4a/tJ6JRHy2V0kLAOZBdHU+12rKGdlD+/lEshemkjQHKXkRK/l8+OgF3RzFZ5EAcXFdSY3Es/B704XHGCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IomiSZG4; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=qvNySKD9OKfvHKV/svhSC5gfGPJMelz0QkjnXHySeSwnmvx10utdzHQo1jRZ4XDBvaX2Dd8aNOfeI1zkVyjhEXedm3k8gObtIqA/skCIDmXC/27FOb3l0OcIYEBfugLe86A8wWYyJHG/9FLkUtSh4b90NxbRCWjfwEG+wxg9xsk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gPan7WRc; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IomiSZG4"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3945AC4CEF1;
-	Mon,  8 Dec 2025 17:10:36 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gPan7WRc"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D61F5C4CEF1;
+	Mon,  8 Dec 2025 17:15:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1765213839;
-	bh=HUczN0JOy5c/9Nhyo4/4Hy2U/dsetbWKARZVVXVoP9Q=;
+	s=k20201202; t=1765214156;
+	bh=fjQMhvzUh3wiORRTZ78WaQHW7FYwA9kge4oGJ9+Iwgs=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IomiSZG43h+0wzBvViLmonXggdL1L8miPSoGm147yGhfQYDIp64e1fJGYbESJXiy8
-	 NqnE82zKagCuYc7xpcswOpSlliIJEg0He+IwQY++G7PcYLdtKJhoBW3Evg2tjAvV8x
-	 XAegUd63IVJ2e29Jh++NR/1f6koztv2A0KCs4TQW5Gf7i139Ysep8ATNbDgSdRDJ7n
-	 SpTRfbcamtXduMd1gLBdBMZ55NNPcnsQ4cQ2/i0NTitZyBp2sZ/lwz44rPSulZQhgH
-	 x4P8xHfiIK3N6cY5PY775Q0edhoVWQ4cdMQKCwk7KUfUIsIMjLZbTTC7ok5Wu/M18M
-	 h6ZG/jgxbklPA==
-Date: Mon, 8 Dec 2025 17:10:33 +0000
+	b=gPan7WRcbKq5QNjWfxBcZSNm7sOLsHGvpqjhIefFBzbIpPBWq2MG59MSKVdLysyom
+	 g7Op2nL3yMk4p7W7Aw7tan2hgvrUq9st7o4HGyBTaQOGuQ5eTWapjpnrYMj84gDdoR
+	 ubSRoeC3PEiJS1wNnezrPpm6mNwabI7aaM2WJFO5kAZGRksta7HM/X3j30e8aStMhD
+	 z/eF3KeJVhPVUmuEqn2UfrB/Qgd3SZgHl0Mtph2wHOp/GjUsN6qm9w+GZa/Re6FdIv
+	 pLRi6+HM6R9rOfyeplhzAaS1yKLPbfeoAc9/oj+oWneYr2C+DVAho8yroE13pEgst2
+	 JE+TOs/giNgMQ==
+Date: Mon, 8 Dec 2025 17:15:50 +0000
 From: Conor Dooley <conor@kernel.org>
 To: Robert Marko <robert.marko@sartura.hr>
 Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
@@ -37,12 +37,10 @@ Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
 	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
 	daniel.machon@microchip.com, UNGLinuxDriver@microchip.com,
 	luka.perkov@sartura.hr
-Subject: Re: [PATCH 2/4] dt-bindings: arm: Document Microchip LAN969x
-Message-ID: <20251208-absolute-diploma-6575729ab43f@spud>
+Subject: Re: [PATCH 4/4] arm64: dts: microchip: add LAN969x support
+Message-ID: <20251208-deprecate-privatize-c8ab771091b7@spud>
 References: <20251203122313.1287950-1-robert.marko@sartura.hr>
- <20251203122313.1287950-2-robert.marko@sartura.hr>
- <20251203-duly-leotard-86b83bd840c6@spud>
- <CA+HBbNH6wO2VWOp1Dn52ArrYg6z89FgYnT3x-jsHsTVJ5xSBSA@mail.gmail.com>
+ <20251203122313.1287950-4-robert.marko@sartura.hr>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -50,57 +48,54 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="f/ANzMaVIMozCDGI"
+	protocol="application/pgp-signature"; boundary="pDWahq4ruA5O+qrF"
 Content-Disposition: inline
-In-Reply-To: <CA+HBbNH6wO2VWOp1Dn52ArrYg6z89FgYnT3x-jsHsTVJ5xSBSA@mail.gmail.com>
+In-Reply-To: <20251203122313.1287950-4-robert.marko@sartura.hr>
 
 
---f/ANzMaVIMozCDGI
-Content-Type: text/plain; charset=utf-8
+--pDWahq4ruA5O+qrF
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Dec 08, 2025 at 11:30:28AM +0100, Robert Marko wrote:
-> On Wed, Dec 3, 2025 at 8:19=E2=80=AFPM Conor Dooley <conor@kernel.org> wr=
-ote:
-> >
-> > On Wed, Dec 03, 2025 at 01:21:30PM +0100, Robert Marko wrote:
-> > > Microchip LAN969x is a series of multi-port, multi-gigabit switches b=
-ased
-> > > on ARMv8 Cortex-A53 CPU.
-> > >
-> > > Signed-off-by: Robert Marko <robert.marko@sartura.hr>
-> > > ---
-> > >  .../bindings/arm/microchip,lan969x.yaml       | 32 +++++++++++++++++=
-++
-> >
-> > This should not be in a unique file, put it in with the other microchip
-> > arm devices please. Also, the wildcard in the compatible is not
-> > permitted, only way it'd make sense is if these are different binnings
-> > of the same silicon. If that's the case, you need to explain why,
-> > because compatibles are meant to be soc-specific.
+On Wed, Dec 03, 2025 at 01:21:32PM +0100, Robert Marko wrote:
+> Add support for Microchip LAN969x switch SoC, including the EV23X71A
+> EVB board.
 >=20
-> Hi Conor,
-> The issue is that there is no unique place for Microchip SoC-s,
-> LAN966x series is in the AT91 bindings
-> while SparX-5 has its own bindings file.
+> Signed-off-by: Robert Marko <robert.marko@sartura.hr>
+> ---
+>  arch/arm64/boot/dts/microchip/Makefile        |   2 +
+>  .../boot/dts/microchip/lan9696-ev23x71a.dts   | 761 ++++++++++++++++++
+>  arch/arm64/boot/dts/microchip/lan969x.dtsi    | 482 +++++++++++
+>  3 files changed, 1245 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/microchip/lan9696-ev23x71a.dts
+>  create mode 100644 arch/arm64/boot/dts/microchip/lan969x.dtsi
 >=20
-> What would you suggest in this case?
+> diff --git a/arch/arm64/boot/dts/microchip/Makefile b/arch/arm64/boot/dts=
+/microchip/Makefile
+> index c6e0313eea0f..d02ac50aae79 100644
+> --- a/arch/arm64/boot/dts/microchip/Makefile
+> +++ b/arch/arm64/boot/dts/microchip/Makefile
+> @@ -2,3 +2,5 @@
+>  dtb-$(CONFIG_ARCH_SPARX5) +=3D sparx5_pcb125.dtb
+>  dtb-$(CONFIG_ARCH_SPARX5) +=3D sparx5_pcb134.dtb sparx5_pcb134_emmc.dtb
+>  dtb-$(CONFIG_ARCH_SPARX5) +=3D sparx5_pcb135.dtb sparx5_pcb135_emmc.dtb
+> +
 
-Ideally, arm/atmel-at91.yaml and arm/microchip,sparx5.yaml would just
-become arm/microchip.yaml. The axi@600000000 thing in the sparx5 file
-looks pointless and can be deleted IMO.
+> +dtb-$(CONFIG_ARCH_LAN969X) +=3D lan9696-ev23x71a.dtb
 
+ngl, I wonder why this config even exists, it's not meaningfully different
+to ARCH_SPARX5.
 
---f/ANzMaVIMozCDGI
+--pDWahq4ruA5O+qrF
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaTcGiQAKCRB4tDGHoIJi
-0hJgAQDZXZvEtWbFycCBtjtvAkegJzipsK18lKX3sa/WHe6VoQEAzIrZMT4k0/6l
-bcJKf5xlAsTcmcBNT0hxrPSamMF+sA8=
-=rUuT
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaTcHxgAKCRB4tDGHoIJi
+0s2+AQDx39SaQhm0zytJWpmEZPuSOS8u320LlEtdvmYmDAppmQEAmgIqA6PvxFG3
+w4rrmnny5VuydcS+WrxJO79IWsqBJw0=
+=IBLP
 -----END PGP SIGNATURE-----
 
---f/ANzMaVIMozCDGI--
+--pDWahq4ruA5O+qrF--
