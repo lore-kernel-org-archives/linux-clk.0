@@ -1,105 +1,172 @@
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2ADF2FF64D
-	for <linux-clk@vger.kernel.org>; Mon,  8 Dec 2025 10:14:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B810228507B
+	for <linux-clk@vger.kernel.org>; Mon,  8 Dec 2025 10:30:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765188846; cv=none; b=Zt6R/zHcWDlFCrxt9r/hEBiGOtjcj0f49FdSnVVSrzlFJ+F4vNwTq4q+X8abWr2ZaMqQeWYEF6ds8OsOxw1z5U7QBSjfEOoDc5tGhAOjqVLnu760+hOTH4eOxkgmjSjhjt7MfEU7aTEP+qL+IEXAdCxbrcsE1rWKpeBWw8k7hQQ=
+	t=1765189843; cv=none; b=CD6xidzTQuhOUGD/BoRiSx/n0ckxg3XrOtt9VMpNZO+vqfOY0mKJkeZvNWB9r3Whw+MhLRGpjR9NJDOY7tW0u8A3O3GK4eJo5DRF7a39NwP7Su/eo4lfguJTJ7nNJBraHMihRjUqyR3fuTRNIJWx1hnPdcGYg9LpuhQzT0UFGh0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765188846; c=relaxed/simple;
-	bh=OGUGoktCxv+0k4ONqo1t/yzLSpibAYrMGksQDCiuiag=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WGamZKeSNifXf6T2AVFFIzb+Sk7lQ29rkjyz3F0P94rkFJRfcC0rMFjPyUGE1jWN65Qptl8Xo0SeSJYMZXkeRdSLLzCo4KMGDFcNgfHl07YOLm1N+m8Ugsnsf3lIoD6VqEdMrrumnu9RUyLdG0Lak41dMrWLpaNVXpWrfD+Nw2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=abb7oYgU; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1765189843; c=relaxed/simple;
+	bh=RLw9fFUPT6gJ5CGBMzrOruJpNjzbWJE4s01IusHbk/o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=t8Rw4xXUNU8DOUbW60VO8bWZ9ei6Ug70ONPWurDwVvWIzeQzw/WMd45w7GTEMFPmyu7N23+3PFlIgsFH276pxG/Huojz8DhASSH8ernnlK9p0zouYGlACXIHZvYG71Wl8WafTpYp9DMreVhHdq0NSPoNVu4Qq7Z0UwBrgDyhgqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sartura.hr; spf=pass smtp.mailfrom=sartura.hr; dkim=pass (2048-bit key) header.d=sartura.hr header.i=@sartura.hr header.b=I2dttRsi; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sartura.hr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sartura.hr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="abb7oYgU"
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-64951939e1eso390194a12.1
-        for <linux-clk@vger.kernel.org>; Mon, 08 Dec 2025 02:14:01 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=sartura.hr header.i=@sartura.hr header.b="I2dttRsi"
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-b737502f77bso521389866b.2
+        for <linux-clk@vger.kernel.org>; Mon, 08 Dec 2025 02:30:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1765188839; x=1765793639; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=jrsDhKmOIR7ug90SqQaxVq0POQHtj2Sf0DAiQ8VB8DI=;
-        b=abb7oYgUM3gjNdwDphwx0AO0zVm3y4GnghQkL5QgC38usakCoqVvqGcr6PyG3rmm/q
-         L51uiKUQnizzYdJR7upjrP49FbGT4MDqZ9Nd+fByKNpHr161UjsNNBjOfQRZDj5mQVNs
-         LK2jltdDxUjK1tyxXH6+AZnwclCCfhjjj7TkMS2TLVX9imWt/dxtfDR551L8SwGWciQX
-         00RO/1V9Z154Kx5ZO6TB8f0IUEjuCDbXpYRq98cqG2IjxfoFQC+fDWVM6lu9JciZdoHA
-         B5rFtDLgF525AfYN5RiqsPgAbk4ruPr7qKryDxBD0MJI73ybjUGZg4EEkXEIGcR0Jmo7
-         NMYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765188839; x=1765793639;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=sartura.hr; s=sartura; t=1765189840; x=1765794640; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=jrsDhKmOIR7ug90SqQaxVq0POQHtj2Sf0DAiQ8VB8DI=;
-        b=j8loarLvZQxZGfpLnNcgeSoqFhIcNFnB2lK33c+xiEBWcQYSZyM3naCIk1iiK2iQPl
-         wanzCXUpybb1mMijuYRbxNIqvmneieEqHO8BmMGCr2rR/6S98S/RlcIm+g+cCPX/nJmV
-         JCkNZgPe3S2XU8/KQfeXFkIrzbZJplBnbsrHD18ueCzUmPNF4SsVdKZ4ZzhGBku3EIcM
-         2MBvVOfps19Et+lW8daykMI3N525KG/YRnN5JginIs85HD/iHozGtXI/tABKVLqUq64U
-         H149c9GeRLU8Po/DmTmAYoyNqEmC3XdMa0Umns1/85nP0CdqrBwh2YLlH4ec/ALDegdv
-         etmg==
-X-Forwarded-Encrypted: i=1; AJvYcCU57HrhoJYhqxA+7JmkYf7CUv2SQWniD1uDyYMg7Cl7uDvMKnyh2BJ7gOg8O06CtRT8awng7aoFhoM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqCjQaXO1S8l4134E3+9VCCvmmFZDfPy//J50DFGzZnRHGsFZF
-	1dx60bVdEbiBCyJQtWaMJyW1K6wOp40cgGoOPsQHz1+r2QeVCjs/8ABg
-X-Gm-Gg: ASbGncvympVKKoOXvzf65r/829ip1ImGO2isz84igd7DgOZrI6pNZyVqBc897G4Cdtn
-	UQa9OOAV12etziBNFA3U1nZodp/KmGTAPDPZx7ZnmoZdnSFEK88XdoSIpahR0LSIWHFi43N7Kw/
-	sW35bmDYyca8SjDB7PvBuKLEODu4VM0ErAfmGepvYySkfm9CO0f3vMAcpAF5dL3BLByXbY25pCu
-	ZxzL/BH++wc2dh/+guBzaEhR04r98GrDrgZpQfQL80fj18Ij1vCRiVepVU/BzCvxfW3DNODwESH
-	7TgPvhlGSxOKICATy0IHr5pjIwJu42ClKbVR+tHeYVReYOX6yxkX4x7V+As60HSr/oe0cXXbIEC
-	kCstWX3oLlI+s46Sm2uJBbhfXNVeT72kYAfOH/1I9NMYFhMJIeU6VmN0OXbIyqiilj3PhiYhRPz
-	jVnTrLSz6Vsut9PZ9ASkXxWH5CmYHLFF5lBbG5CRPL63qdLjC79iKeN9rrw8hGsZ6Mp19XR6/Gn
-	W0OVnMOUeZQGLpdjjQU0e/+AM8=
-X-Google-Smtp-Source: AGHT+IH2rD/pn61Su/h9KiPu4oiF4zA/ByyzaA9JgtRUgkihMJUMRcUEh402amntg+HsE8+/LFj8fg==
-X-Received: by 2002:a05:6402:4403:b0:647:8538:fcf4 with SMTP id 4fb4d7f45d1cf-64919c10408mr6355625a12.10.1765188839288;
-        Mon, 08 Dec 2025 02:13:59 -0800 (PST)
-Received: from localhost.localdomain (host86-162-200-138.range86-162.btcentralplus.com. [86.162.200.138])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-647b413b590sm10547083a12.35.2025.12.08.02.13.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Dec 2025 02:13:59 -0800 (PST)
-From: Biju <biju.das.au@gmail.com>
-X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH 0/2] clk: renesas: rz{g2l,v2h}: Deassert reset on assert timeout
-Date: Mon,  8 Dec 2025 10:13:32 +0000
-Message-ID: <20251208101356.101379-1-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
+        bh=wNvqYgBG7iSIMiizE0aJ/ECmeySIS6td2ZjzM3JB2Vg=;
+        b=I2dttRsi9UI2sQb6l32Ht5UL7WYQLHqercIt6GSNW/9uFw4hk+pRVltkpZwSTHyKgV
+         YZIF8PtFUwXKToEm/Fr4kbw2yoH5tbAdVGfV+PU+j0Sgr7tcpT0K3EluUNw6K32T29Ci
+         G4FrUfu7WJrRPyLFw+DpJ2ACoXVefpUhTvB8rHJ4TtUQl2Z/IRZPzcal3gZvV++iGQ0s
+         KkRFS6qCxmZqcF0mRwFVwmFxg76CbytQDNUDv3EsRrw5ssHgOllFF9MTdMCljiVeEECA
+         uRxnQZDxMRv9EbqSlAY0VQ0YfJTJjrd5DGpa1Yb7qblufgbp6h4ln4sMil9/MY8ZJqo6
+         /yUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1765189840; x=1765794640;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=wNvqYgBG7iSIMiizE0aJ/ECmeySIS6td2ZjzM3JB2Vg=;
+        b=L/DRZkRyyNnxNU8PgeF+d6V8TC3aTpTTbJi46PNhvxejJSnRHj02AJwY8+fw17gsxF
+         FboZ36ju0sSHy3FtDhUhTWg89EdAAbOCKVyZZ0PONO9olssAznjFLWkEPsLXwoa6iGJG
+         IYQed5wHSEEfO74pmushPLZbsuCDaa2IYh3jtZrEm0e0IZD9SCaVmlPiH0khYgA756IH
+         NS0NrT2eWTXj8dcHyj/D9OgJpjeRU9ZE++BQojSpnEX8JQB2ElzDTRjh4EsqK0mAtH05
+         8tit8zF+7k+c0aTA0oRCyU8p3fG90cvO112cOH0js3JTU3yeJhUERIGznpisC65Z93yT
+         VkMw==
+X-Forwarded-Encrypted: i=1; AJvYcCVT0+gxtrY8BXfoVlEo1CLyoP7qmGVIngrOh94CBnXI4YMeDcWGmcvjLVGqqndmJE9hWhbavsogSGk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YztgP5uujSZl7PfRdea1/pz69AMj/0BH1CxyFE9mqmD5gQ8K0L2
+	Y7mB+mf3oDbG5YLliXGeUlLIVXTLBu6PFirPI92ti6ccKwsr79qRkAtQNbWkNZg5g5HZWzpjBLN
+	EXk/c6PM1mQyE6VfI4t6/Fe1Agtz8HiwSrlMPbg4mtA==
+X-Gm-Gg: ASbGnctsA3BL6PCPhu2eALw8V6msf8Gx+Ktgg57xV9yQ1Cs2p9IfSyXuikqp5L+hcZ9
+	ILkDv7XDwna4Jqpr9A3kPAyqZmvNoMI6FRsGag/0bCi/7m8/O+w/ghHCudcCZB/tjSpgetzuafd
+	Xr3GR/Yu/CBeeq/vx5bHTlSlhsCtdmuKehGxw7ABkqg3Na9ukR5ZXbabVI7NYq+yKIBbIciv4cZ
+	qDQMVKnbnWIUhAa+Qdf+kzEmoxECXPAq/wA0+lagl0IE0lomTHXsmMkE1f7HF0WGAZhrJw=
+X-Google-Smtp-Source: AGHT+IGTGfVyoL064tKoONxhclX3UfjDWBItbzH79CNnYw055wrJS+DIVrLMSFgzEDdDe4VqLWZokTX1m+LMd5COg2g=
+X-Received: by 2002:a17:907:2d9f:b0:b6f:9db1:f831 with SMTP id
+ a640c23a62f3a-b7a2432665emr675738166b.23.1765189839808; Mon, 08 Dec 2025
+ 02:30:39 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251203122313.1287950-1-robert.marko@sartura.hr>
+ <20251203122313.1287950-2-robert.marko@sartura.hr> <20251203-duly-leotard-86b83bd840c6@spud>
+In-Reply-To: <20251203-duly-leotard-86b83bd840c6@spud>
+From: Robert Marko <robert.marko@sartura.hr>
+Date: Mon, 8 Dec 2025 11:30:28 +0100
+X-Gm-Features: AQt7F2rM1STFm1xLFXO9y7ZB3gww-XKs-PW-e-F3Xq1nOQlYXGXTztJZMADERPo
+Message-ID: <CA+HBbNH6wO2VWOp1Dn52ArrYg6z89FgYnT3x-jsHsTVJ5xSBSA@mail.gmail.com>
+Subject: Re: [PATCH 2/4] dt-bindings: arm: Document Microchip LAN969x
+To: Conor Dooley <conor@kernel.org>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	gregkh@linuxfoundation.org, nicolas.ferre@microchip.com, 
+	claudiu.beznea@tuxon.dev, mturquette@baylibre.com, sboyd@kernel.org, 
+	richardcochran@gmail.com, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
+	daniel.machon@microchip.com, UNGLinuxDriver@microchip.com, 
+	luka.perkov@sartura.hr
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Biju Das <biju.das.jz@bp.renesas.com>
+On Wed, Dec 3, 2025 at 8:19=E2=80=AFPM Conor Dooley <conor@kernel.org> wrot=
+e:
+>
+> On Wed, Dec 03, 2025 at 01:21:30PM +0100, Robert Marko wrote:
+> > Microchip LAN969x is a series of multi-port, multi-gigabit switches bas=
+ed
+> > on ARMv8 Cortex-A53 CPU.
+> >
+> > Signed-off-by: Robert Marko <robert.marko@sartura.hr>
+> > ---
+> >  .../bindings/arm/microchip,lan969x.yaml       | 32 +++++++++++++++++++
+>
+> This should not be in a unique file, put it in with the other microchip
+> arm devices please. Also, the wildcard in the compatible is not
+> permitted, only way it'd make sense is if these are different binnings
+> of the same silicon. If that's the case, you need to explain why,
+> because compatibles are meant to be soc-specific.
 
-If the assert() fails due to timeout error, set the reset register bit
-back to deasserted state. This change is needed especially for handling
-assert error in suspend() callback that expect the device to be in
-operational state in case of failure.
+Hi Conor,
+The issue is that there is no unique place for Microchip SoC-s,
+LAN966x series is in the AT91 bindings
+while SparX-5 has its own bindings file.
 
-Ref:
-[1] https://lore.kernel.org/all/b417865397822176e83bca6b9d8094fe92ff2451.camel@pengutronix.de/
+What would you suggest in this case?
 
-Biju Das (2):
-  clk: renesas: rzg2l: Deassert reset on assert timeout
-  clk: renesas: rzv2h: Deassert reset on assert timeout
+As for the wildcard, I understand, will get rid of it in v2.
 
- drivers/clk/renesas/rzg2l-cpg.c | 5 ++++-
- drivers/clk/renesas/rzv2h-cpg.c | 5 ++++-
- 2 files changed, 8 insertions(+), 2 deletions(-)
+Regards,
+Robert
 
--- 
-2.43.0
+>
+> pw-bot: changes-requested
+>
+> >  1 file changed, 32 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/arm/microchip,lan=
+969x.yaml
+> >
+> > diff --git a/Documentation/devicetree/bindings/arm/microchip,lan969x.ya=
+ml b/Documentation/devicetree/bindings/arm/microchip,lan969x.yaml
+> > new file mode 100644
+> > index 000000000000..3fa1d4ed40d1
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/arm/microchip,lan969x.yaml
+> > @@ -0,0 +1,32 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/arm/microchip,lan969x.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Microchip LAN969x Boards
+> > +
+> > +maintainers:
+> > +  - Robert Marko <robert.marko@sartura.hr>
+> > +
+> > +description: |+
+> > +   The Microchip LAN969x SoC is a ARMv8-based used in a family of
+> > +   multi-port, multi-gigabit switches.
+> > +
+> > +properties:
+> > +  $nodename:
+> > +    const: '/'
+> > +  compatible:
+> > +    oneOf:
+> > +      - description: The LAN969x EVB (EV23X71A) is a 24x 1G + 4x 10G
+> > +          Ethernet development system board.
+> > +        items:
+> > +          - const: microchip,ev23x71a
+> > +          - const: microchip,lan969x
+> > +
+> > +required:
+> > +  - compatible
+> > +
+> > +additionalProperties: true
+> > +
+> > +...
+> > --
+> > 2.52.0
+> >
 
+
+
+--=20
+Robert Marko
+Staff Embedded Linux Engineer
+Sartura d.d.
+Lendavska ulica 16a
+10000 Zagreb, Croatia
+Email: robert.marko@sartura.hr
+Web: www.sartura.hr
