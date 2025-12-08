@@ -1,111 +1,249 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F1743B8D53;
-	Mon,  8 Dec 2025 18:02:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51930238D5A
+	for <linux-clk@vger.kernel.org>; Mon,  8 Dec 2025 22:36:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765216972; cv=none; b=ueKI4NfDBrz8To2/k5+rlXqp6aO5f4AJQZoMh7RtVoqN6b64gpXQdm7vGOXH+FQ0JYA9hHHs4acveEx3QvLzDx0IOALZ8IRsXfPPllKC8/kVqftvIg/hmf+dPHphbiawHEKC6n9sTu6Kve6Q42GE7WCSJjv5bZc5WweMkCX7wow=
+	t=1765233385; cv=none; b=OfBcXex9pwQapTTgfBHXZGxhs7eS1W6FMf97ZL5xOFUqSZ7PF/cHQryLuIwBlCrjgB/1hJDY46v8NER5XwEhY7SAyr0u5mujpx/bgbS1tA4Q8Qxqijm1n1CEk50BhH7MlvFZ69uJUhikf4JJq5wtSu6D42jSRuozoOtES5P6zik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765216972; c=relaxed/simple;
-	bh=7q6s7jx4rNURD2mNarlLSt82SNn58lTyP8BfcayLfG0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jBllS7Ggyd9QvXviQY5q4w4FulYmzAZGHocnrteh7yBzFDkvAPoaDPLhrLyMnOqiFIGu6989j0A1+/elwDuMJoEE6NVlL0QHSatRF2HkjzqKe8L0vxoo7kOmKgNMjHrbe5Pe/Gw9yE9Tx/uWvMpIvUpWmdOs0NGApQzD+YcV9O8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hfy4FPNK; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1765233385; c=relaxed/simple;
+	bh=Q2G/MZtVBoEaCJauZ/cHmYZaRZTZNUt7d4RLedJ+aMU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dD3f4N944fEUfsktEqn1O2X1GYwZ7LY3y8EifNLaDUcgbHsHOoiTzQg3DlkeHFVz6+rPTcBsIlPvaRvF3ow19PQOhrDto1tvKiW901+b15Drl0HusrKZImch/wW6/dr1+e9S/il1nI9Dvz0os8N6Lut9tA+m/9QZfGklWw+qq+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=e4nvfd6V; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hfy4FPNK"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DDFA0C4CEF1;
-	Mon,  8 Dec 2025 18:02:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1765216972;
-	bh=7q6s7jx4rNURD2mNarlLSt82SNn58lTyP8BfcayLfG0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hfy4FPNK9p+GuCosrgIElaGczapNltTYDZOAtYAY//Avlm4hGayWMCiLl/T6vi6wD
-	 xeMwgX/ayl8GJkvQGaPiR1Owrr+TX3kG6lVUqyRqOg2isAVEq7DtY8Tyr+OisgEefH
-	 KNRRNjz1PgXtI6tQQdc68bZKfPljiWplTyrYmM3EwvE8pFplSxwLKiZUmbic7hJ2ND
-	 ACO5IEcTWDXtVkk4Ta/D1MYE9G2FIsKkfOCCjpgAkuih+Kmv+vrrUHKdB3d7WxTxdI
-	 nEXDkNphrd5uzsZ+I1ou6PN+enwz3qbcx89F+g5gK4yPfKX4Nbt6oFXm4D0EsDXedk
-	 9UQtOR+aHrAbg==
-Date: Mon, 8 Dec 2025 18:02:47 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Cc: linux-kernel@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>,
-	Daire McNamara <daire.mcnamara@microchip.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] clk: microchip: drop POLARFIRE from
- ARCH_MICROCHIP_POLARFIRE
-Message-ID: <20251208-flatten-devious-56abcfecd510@spud>
-References: <20251121-tartar-drew-ba31c5ec9192@spud>
- <20251121-prude-dilation-79d275fec296@spud>
- <86bd75e7-1191-458d-b71e-c3cecb960700@tuxon.dev>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="e4nvfd6V"
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-42e2e2eccd2so3259630f8f.1
+        for <linux-clk@vger.kernel.org>; Mon, 08 Dec 2025 14:36:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1765233381; x=1765838181; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=D4KD06lq2sAdPsV4RkTZMMEkkcHicyQ03NbVW7+GTqc=;
+        b=e4nvfd6V20myoyx4sPbWfL/RXP1rQwdmAdq2qF8mYdpLIh62GRQVcC3qZmJsVNs0ZT
+         uhfXlCn1Q/1vOm+PKY7kabAAXGhG/u6swFcnKnZMssTWtaAa0v9F+FzU8Uoxx5CNXi4x
+         FhbUWb60nBjum44ZsVEysnD20tJVsotnFiEALa9rcDQaTIQc4IoPSevYFWwa1/3bKweT
+         Wdb3djLiXPLqzDuZvPCHIlciRnDOPQ3eVcd8t58RNBjj1/1Yc8VJeluNEROlbRK9JVKM
+         l9d6QJOrDkj4kanm7TJC7wrmIRWPbCg1n3eb9s8WOArCX7odCy1xAmK7v0dpM/Vri2iE
+         0UHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1765233381; x=1765838181;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=D4KD06lq2sAdPsV4RkTZMMEkkcHicyQ03NbVW7+GTqc=;
+        b=UzC0+kseT1mXXt3p0RUvFHkNlqVQN+vHAAWTfFoz/8Ce24tBK7yybb/7CI8ynTa+T1
+         DuyS2Q9N2LTgL8Ltqhwf8CnAm4zx5ZRqeSivCr5CdQ4p6ueXjDzi9EGHD/gvXgrpVtqV
+         BzhtD0Zb7Zi9OmrtFNQ+OsmBmir1kY6PzJYk05cohCrzvr/MfdqJc7MfYfbXFMmM0p1V
+         bFoSDuQXFQWs99y93cjmuxaC1+kGa2Jza064xejuKlAXWuL7LNQcCoX8kkpjtLvLg2+H
+         7EGHjqaS+RxhCdGCB4wVvzukUeYlO/CS//HIOWG6WyL7GV9GcyA1xEew8eJFg1pgomuH
+         on3A==
+X-Forwarded-Encrypted: i=1; AJvYcCXWUU+bcsvMALVymIu/Nqj+7l+tI+QJsFLUj43B/IgWZdmnKVm2jMrJbqn6MRmKycKwTajZa5uAnXY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxYgMl6wUwpAUuSH6e7bjvHvHCsZhxm5ASbiM9FvKHnpLlLOQyO
+	pwh43NU9u10i0WxMRwgvbGa1NZhM73CGWttdiWzGtvP0DqhsNDoP8MSbXGhYWMACwHZZ5EFyJlA
+	7wmgJzE/byTWxvMaOl8mXav7pvRZOT++BstJKsfvSjuyJNfGdwcstY8o=
+X-Gm-Gg: ASbGncu70EQ9BmeUBlySDsGqBniHoFEqxYX8umj/R1bRjyPIPOLrt6pc8Mo/8KoLHFA
+	AsnQ1yPiOq8+L4MCjB7uekAkoQX1uaX0BDVn/Keo0ljbSohwZVBMm8d3ILKI08asml0yOQRuPVR
+	RIJRYOOY89kAN0MlOaI4xbrt8BD9WqBWV0Ct0ROEaWcLHkFD/dvafjqTxeQX9zMLokbB80a8clM
+	uZNthUlJDHN2yptw88mjGQMSX0DyHicP+uGAaH1pShSjGOjyRtdbyUBsawVNImPDdTjjYE=
+X-Google-Smtp-Source: AGHT+IHdENdqQ5ZpfGKlDmPBmXNvBchycFRz1S91lwgqXoJLXzAP6AzIRd2MqCvVDm4uYekNJP736gqsi3Ttoiy1uEE=
+X-Received: by 2002:a05:6000:26ca:b0:3ff:17ac:a34b with SMTP id
+ ffacd0b85a97d-42f89f7f743mr10799228f8f.42.1765233380524; Mon, 08 Dec 2025
+ 14:36:20 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="SZ4voAMfwUKL6i6u"
-Content-Disposition: inline
-In-Reply-To: <86bd75e7-1191-458d-b71e-c3cecb960700@tuxon.dev>
-
-
---SZ4voAMfwUKL6i6u
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20251202-wip-obbardc-qcom-msm8096-clk-cpu-fix-downclock-v1-1-90208427e6b1@linaro.org>
+ <8d769fb3-cd2a-492c-8aa3-064ebbc5eee4@oss.qualcomm.com>
+In-Reply-To: <8d769fb3-cd2a-492c-8aa3-064ebbc5eee4@oss.qualcomm.com>
+From: Christopher Obbard <christopher.obbard@linaro.org>
+Date: Mon, 8 Dec 2025 22:36:09 +0000
+X-Gm-Features: AQt7F2pyLxXm2GWb6gtwnpa1Ns2Gi_xPr5Pdfa1W2vBee9eceYgn1z1DZ-WxUWw
+Message-ID: <CACr-zFD_Nd=r1Giu2A0h9GHgh-GYPbT1PrwBq7n7JN2AWkXMrw@mail.gmail.com>
+Subject: Re: [PATCH] Revert "clk: qcom: cpu-8996: simplify the cpu_clk_notifier_cb"
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Dmitry Baryshkov <lumag@kernel.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Dec 06, 2025 at 01:18:30PM +0200, Claudiu Beznea wrote:
->=20
->=20
-> On 11/21/25 15:44, Conor Dooley wrote:
-> > From: Conor Dooley <conor.dooley@microchip.com>
-> >=20
-> > This driver is used by non-polarfire devices now, and the ARCH_MICROCHIP
-> > symbol has been defined for some time on RISCV so drop it without any
-> > functional change.
-> >=20
-> > Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+Hi Konrad,
+
+On Wed, 3 Dec 2025 at 10:52, Konrad Dybcio
+<konrad.dybcio@oss.qualcomm.com> wrote:
+>
+> On 12/2/25 10:24 PM, Christopher Obbard wrote:
+> > This reverts commit b3b274bc9d3d7307308aeaf75f70731765ac999a.
+> >
+> > On the DragonBoard 820c (which uses APQ8096/MSM8996) this change causes
+> > the CPUs to downclock to roughly half speed under sustained load. The
+> > regression is visible both during boot and when running CPU stress
+> > workloads such as stress-ng: the CPUs initially ramp up to the expected
+> > frequency, then drop to a lower OPP even though the system is clearly
+> > CPU-bound.
+> >
+> > Bisecting points to this commit and reverting it restores the expected
+> > behaviour on the DragonBoard 820c - the CPUs track the cpufreq policy
+> > and run at full performance under load.
+> >
+> > The exact interaction with the ACD is not yet fully understood and we
+> > would like to keep ACD in use to avoid possible SoC reliability issues.
+> > Until we have a better fix that preserves ACD while avoiding this
+> > performance regression, revert the bisected patch to restore the
+> > previous behaviour.
+> >
+> > Fixes: b3b274bc9d3d ("clk: qcom: cpu-8996: simplify the cpu_clk_notifie=
+r_cb")
+> > Cc: stable@vger.kernel.org # v6.3+
+> > Link: https://lore.kernel.org/linux-arm-msm/20230113120544.59320-8-dmit=
+ry.baryshkov@linaro.org/
+> > Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> > Signed-off-by: Christopher Obbard <christopher.obbard@linaro.org>
 > > ---
-> >  drivers/clk/microchip/Kconfig | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >=20
-> > diff --git a/drivers/clk/microchip/Kconfig b/drivers/clk/microchip/Kcon=
-fig
-> > index cab9a909893b..a0ef14310417 100644
-> > --- a/drivers/clk/microchip/Kconfig
-> > +++ b/drivers/clk/microchip/Kconfig
-> > @@ -5,8 +5,8 @@ config COMMON_CLK_PIC32
-> > =20
-> >  config MCHP_CLK_MPFS
-> >  	bool "Clk driver for PolarFire SoC"
-> > -	depends on ARCH_MICROCHIP_POLARFIRE || COMPILE_TEST
-> > -	default ARCH_MICROCHIP_POLARFIRE
-> > +	depends on ARCH_MICROCHIP || COMPILE_TEST
-> > +	default y
-> >  	depends on MFD_SYSCON
-> >  	select AUXILIARY_BUS
-> >  	select COMMON_CLK_DIVIDER_REGMAP
->=20
-> OK, I found v2 in my inbox. Same symptom here. It doesn't apply on top of
-> the current at91-next either.
 
-I think this should sort itself out after -rc1, but I'll resend if it
-doesn't.
 
---SZ4voAMfwUKL6i6u
-Content-Type: application/pgp-signature; name="signature.asc"
+Apologies for the late response, I was in the process of setting some
+more msm8096 boards up again in my new workspace to test this
+properly.
 
------BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaTcSxwAKCRB4tDGHoIJi
-0gVcAQDoPZftNez0ce9Cr5hdYrZWaD7QcZQW5iseNvgVStkiYgEAtL73tR0IcFyP
-78nHFeNdr2XPy6pfdAdtCgcSvw7Ojg0=
-=t3LO
------END PGP SIGNATURE-----
+> It may be that your board really has a MSM/APQ8x96*SG* which is another
+> name for the PRO SKU, which happens to have a 2 times wider divider, try
+>
+> `cat /sys/bus/soc/devices/soc0/soc_id`
 
---SZ4voAMfwUKL6i6u--
+I read the soc_id from both of the msm8096 boards I have:
+
+Open-Q=E2=84=A2 820 =C2=B5SOM Development Kit (APQ8096)
+```
+$ cat /sys/bus/soc/devices/soc0/soc_id
+291
+```
+(FWIW this board is not in mainline yet; but boots with a DT similar
+enough to the db820c. I have a patch in my upstream backlog enabling
+that board; watch this space)
+
+DragonBoard=E2=84=A2 820c (APQ8096)
+```
+$ cat /sys/bus/soc/devices/soc0/soc_id
+291
+```
+
+
+> see:
+>
+> https://lore.kernel.org/linux-arm-msm/20251111-db820c-pro-v1-0-6eece16c5c=
+23@oss.qualcomm.com/
+>
+> https://lore.kernel.org/linux-arm-msm/kXrAkKv7RZct22X0wivLWqOAiLKpFuDCAY1=
+KY_KSx649kn7BNmJ2IFFMrsYPAyDlcxIjbQCQ1PHb5KaNFawm9IGIXUbch-DI9OI_l73BAaM=3D=
+@protonmail.com/
+
+Thanks for the pointers. Interesting, but it does look like my boards
+are msm8096 (and not the pro SKU). Can you confirm that at all from
+the soc_id above?
+
+Another bit of (hopefully useful) information is that the db820c boot
+firmware log sthe following, which is different to the logs I saw from
+the pro SKU (BUT the firmware could also be outdated?):
+```
+S - QC_IMAGE_VERSION_STRING=3DBOOT.XF.1.0-00301
+S - IMAGE_VARIANT_STRING=3DM8996LAB
+S - OEM_IMAGE_VERSION_STRING=3Dcrm-ubuntu68
+S - Boot Interface: UFS
+S - Secure Boot: Off
+S - Boot Config @ 0x00076044 =3D 0x000001c9
+S - JTAG ID @ 0x000760f4 =3D 0x4003e0e1
+S - OEM ID @ 0x000760f8 =3D 0x00000000
+S - Serial Number @ 0x00074138 =3D 0x14d6d024
+S - OEM Config Row 0 @ 0x00074188 =3D 0x0000000000000000
+S - OEM Config Row 1 @ 0x00074190 =3D 0x0000000000000000
+S - Feature Config Row 0 @ 0x000741a0 =3D 0x0050000010000100
+S - Feature Config Row 1 @ 0x000741a8 =3D 0x00fff00001ffffff
+S - Core 0 Frequency, 1228 MHz
+B -         0 - PBL, Start
+B -     10414 - bootable_media_detect_entry, Start
+B -     50197 - bootable_media_detect_success, Start
+B -     50197 - elf_loader_entry, Start
+B -     51760 - auth_hash_seg_entry, Start
+B -     51863 - auth_hash_seg_exit, Start
+B -     85147 - elf_segs_hash_verify_entry, Start
+B -     87651 - PBL, End
+B -     89700 - SBL1, Start
+B -    185684 - usb: hs_phy_nondrive_start
+B -    186050 - usb: PLL lock success - 0x3
+B -    189039 - usb: hs_phy_nondrive_finish
+B -    193156 - boot_flash_init, Start
+D -        30 - boot_flash_init, Delta
+B -    200263 - sbl1_ddr_set_default_params, Start
+D -        30 - sbl1_ddr_set_default_params, Delta
+B -    208254 - boot_config_data_table_init, Start
+D -    317169 - boot_config_data_table_init, Delta - (60 Bytes)
+B -    529968 - CDT Version:3,Platform ID:24,Major ID:1,Minor ID:0,Subtype:=
+0
+B -    534665 - Image Load, Start
+D -     22448 - PMIC Image Loaded, Delta - (37272 Bytes)
+B -    557143 - pm_device_init, Start
+B -    562908 - PON REASON:PM0:0x60 PM1:0x20
+B -    599294 - PM_SET_VAL:Skip
+D -     40016 - pm_device_init, Delta
+B -    601216 - pm_driver_init, Start
+D -      2897 - pm_driver_init, Delta
+B -    607834 - pm_sbl_chg_init, Start
+D -        91 - pm_sbl_chg_init, Delta
+B -    614575 - vsense_init, Start
+D -         0 - vsense_init, Delta
+B -    624670 - Pre_DDR_clock_init, Start
+D -       396 - Pre_DDR_clock_init, Delta
+B -    628208 - ddr_initialize_device, Start
+B -    631899 - 8996 v3.x detected, Max frequency =3D 1.8 GHz
+B -    641537 - ddr_initialize_device, Delta
+B -    641567 - DDR ID, Rank 0, Rank 1, 0x6, 0x300, 0x300
+B -    645410 - Basic DDR tests done
+B -    714157 - clock_init, Start
+D -       274 - clock_init, Delta
+B -    717543 - Image Load, Start
+D -      4331 - QSEE Dev Config Image Loaded, Delta - (46008 Bytes)
+B -    723002 - Image Load, Start
+D -      5307 - APDP Image Loaded, Delta - (0 Bytes)
+B -    731603 - usb: UFS Serial - a28415ce
+B -    735965 - usb: fedl, vbus_low
+B -    739594 - Image Load, Start
+D -     55449 - QSEE Image Loaded, Delta - (1640572 Bytes)
+B -    795043 - Image Load, Start
+D -      2043 - SEC Image Loaded, Delta - (4096 Bytes)
+B -    802607 - sbl1_efs_handle_cookies, Start
+D -       488 - sbl1_efs_handle_cookies, Delta
+B -    811117 - Image Load, Start
+D -     14365 - QHEE Image Loaded, Delta - (254184 Bytes)
+B -    825482 - Image Load, Start
+D -     14091 - RPM Image Loaded, Delta - (223900 Bytes)
+B -    840397 - Image Load, Start
+D -      3172 - STI Image Loaded, Delta - (0 Bytes)
+B -    847107 - Image Load, Start
+D -     34800 - APPSBL Image Loaded, Delta - (748620 Bytes)
+B -    881999 - SBL1, End
+D -    796569 - SBL1, Delta
+S - Flash Throughput, 94000 KB/s  (2958928 Bytes,  31192 us)
+S - DDR Frequency, 1017 MHz
+Android Bootloader - UART_DM Initialized!!!
+[0] BUILD_VERSION=3D
+[0] BUILD_DATE=3D00:29:31 - Dec  4 2023
+[0] welcome to lk
+...
+```
+
+
+Cheers!
+
+Chris
