@@ -1,249 +1,156 @@
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51930238D5A
-	for <linux-clk@vger.kernel.org>; Mon,  8 Dec 2025 22:36:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCBDD168BD;
+	Tue,  9 Dec 2025 06:01:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765233385; cv=none; b=OfBcXex9pwQapTTgfBHXZGxhs7eS1W6FMf97ZL5xOFUqSZ7PF/cHQryLuIwBlCrjgB/1hJDY46v8NER5XwEhY7SAyr0u5mujpx/bgbS1tA4Q8Qxqijm1n1CEk50BhH7MlvFZ69uJUhikf4JJq5wtSu6D42jSRuozoOtES5P6zik=
+	t=1765260110; cv=none; b=LuYwZ4yXgr5PnupFih4NrlPCceBQqNTmhfBomqosSYjDWZ5wY0E2biAqWr0pJkxP7gEtRB7vIuWThNI6jX41cqtIuGz0RcPSeu6q5DY/2ZRnxDAyifRwNptakqss+036ny6wVUl+W1Ptp76sgt9hSv63FnllCl6m2ttRMF/ZNNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765233385; c=relaxed/simple;
-	bh=Q2G/MZtVBoEaCJauZ/cHmYZaRZTZNUt7d4RLedJ+aMU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dD3f4N944fEUfsktEqn1O2X1GYwZ7LY3y8EifNLaDUcgbHsHOoiTzQg3DlkeHFVz6+rPTcBsIlPvaRvF3ow19PQOhrDto1tvKiW901+b15Drl0HusrKZImch/wW6/dr1+e9S/il1nI9Dvz0os8N6Lut9tA+m/9QZfGklWw+qq+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=e4nvfd6V; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1765260110; c=relaxed/simple;
+	bh=HdtPK6iYrRFuq2CVhFJGFpGIYHyWnTZQI8p7EvGykcM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rz6vckMmhweAxJ2pgO92cE4GbN6qer9ZZ29ZBAWlv6F1nlpbiy52lypDojfKJo47TYAL2eKtJaVLS9WIeNeMHd69lqP2AM/53GkusXvs9s06f/av95XoAy4K8TwgfmXjbHQp4gLk+qkaxaoa8PJI98BZXpLIkmDqRrrk0x5zrRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TFcNpqQN; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="e4nvfd6V"
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-42e2e2eccd2so3259630f8f.1
-        for <linux-clk@vger.kernel.org>; Mon, 08 Dec 2025 14:36:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1765233381; x=1765838181; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=D4KD06lq2sAdPsV4RkTZMMEkkcHicyQ03NbVW7+GTqc=;
-        b=e4nvfd6V20myoyx4sPbWfL/RXP1rQwdmAdq2qF8mYdpLIh62GRQVcC3qZmJsVNs0ZT
-         uhfXlCn1Q/1vOm+PKY7kabAAXGhG/u6swFcnKnZMssTWtaAa0v9F+FzU8Uoxx5CNXi4x
-         FhbUWb60nBjum44ZsVEysnD20tJVsotnFiEALa9rcDQaTIQc4IoPSevYFWwa1/3bKweT
-         Wdb3djLiXPLqzDuZvPCHIlciRnDOPQ3eVcd8t58RNBjj1/1Yc8VJeluNEROlbRK9JVKM
-         l9d6QJOrDkj4kanm7TJC7wrmIRWPbCg1n3eb9s8WOArCX7odCy1xAmK7v0dpM/Vri2iE
-         0UHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765233381; x=1765838181;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=D4KD06lq2sAdPsV4RkTZMMEkkcHicyQ03NbVW7+GTqc=;
-        b=UzC0+kseT1mXXt3p0RUvFHkNlqVQN+vHAAWTfFoz/8Ce24tBK7yybb/7CI8ynTa+T1
-         DuyS2Q9N2LTgL8Ltqhwf8CnAm4zx5ZRqeSivCr5CdQ4p6ueXjDzi9EGHD/gvXgrpVtqV
-         BzhtD0Zb7Zi9OmrtFNQ+OsmBmir1kY6PzJYk05cohCrzvr/MfdqJc7MfYfbXFMmM0p1V
-         bFoSDuQXFQWs99y93cjmuxaC1+kGa2Jza064xejuKlAXWuL7LNQcCoX8kkpjtLvLg2+H
-         7EGHjqaS+RxhCdGCB4wVvzukUeYlO/CS//HIOWG6WyL7GV9GcyA1xEew8eJFg1pgomuH
-         on3A==
-X-Forwarded-Encrypted: i=1; AJvYcCXWUU+bcsvMALVymIu/Nqj+7l+tI+QJsFLUj43B/IgWZdmnKVm2jMrJbqn6MRmKycKwTajZa5uAnXY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYgMl6wUwpAUuSH6e7bjvHvHCsZhxm5ASbiM9FvKHnpLlLOQyO
-	pwh43NU9u10i0WxMRwgvbGa1NZhM73CGWttdiWzGtvP0DqhsNDoP8MSbXGhYWMACwHZZ5EFyJlA
-	7wmgJzE/byTWxvMaOl8mXav7pvRZOT++BstJKsfvSjuyJNfGdwcstY8o=
-X-Gm-Gg: ASbGncu70EQ9BmeUBlySDsGqBniHoFEqxYX8umj/R1bRjyPIPOLrt6pc8Mo/8KoLHFA
-	AsnQ1yPiOq8+L4MCjB7uekAkoQX1uaX0BDVn/Keo0ljbSohwZVBMm8d3ILKI08asml0yOQRuPVR
-	RIJRYOOY89kAN0MlOaI4xbrt8BD9WqBWV0Ct0ROEaWcLHkFD/dvafjqTxeQX9zMLokbB80a8clM
-	uZNthUlJDHN2yptw88mjGQMSX0DyHicP+uGAaH1pShSjGOjyRtdbyUBsawVNImPDdTjjYE=
-X-Google-Smtp-Source: AGHT+IHdENdqQ5ZpfGKlDmPBmXNvBchycFRz1S91lwgqXoJLXzAP6AzIRd2MqCvVDm4uYekNJP736gqsi3Ttoiy1uEE=
-X-Received: by 2002:a05:6000:26ca:b0:3ff:17ac:a34b with SMTP id
- ffacd0b85a97d-42f89f7f743mr10799228f8f.42.1765233380524; Mon, 08 Dec 2025
- 14:36:20 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TFcNpqQN"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3AE53C4CEF5;
+	Tue,  9 Dec 2025 06:01:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1765260109;
+	bh=HdtPK6iYrRFuq2CVhFJGFpGIYHyWnTZQI8p7EvGykcM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=TFcNpqQNRaA8+CIpFtE+dr0meXUL9MCdFSLzg0h04s0hMzM8JajU2tZNXPFbJIjwB
+	 fVBXHLz5VlcYeKC5KKPR4Td/Kv9g5AZ4TH66E2/04tLwPBrvn0Tu6Un3lcDDt3eHyv
+	 98O1wp/XkN41OdQGapaofNzcFC9Do/zIrMNO2o0JAPmyCTLlGAM+TbXSMyZbFXcHjA
+	 miw9GLscxpWPhcRz99KMSwagdy3J1etxKwYgszAbGl3Aj3JXs/h/5LKOcUIfXi072h
+	 l3/7ZRsPvc6dxb2e4rx9uBVVNkts+9qGWQomumkjLcfs/3xQnYq0dvp3yC7jUTQTYA
+	 m6apX/krIJhEQ==
+Message-ID: <4f5ec838-f8d6-4c3b-94f2-b2a60cfe64ec@kernel.org>
+Date: Tue, 9 Dec 2025 07:01:44 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251202-wip-obbardc-qcom-msm8096-clk-cpu-fix-downclock-v1-1-90208427e6b1@linaro.org>
- <8d769fb3-cd2a-492c-8aa3-064ebbc5eee4@oss.qualcomm.com>
-In-Reply-To: <8d769fb3-cd2a-492c-8aa3-064ebbc5eee4@oss.qualcomm.com>
-From: Christopher Obbard <christopher.obbard@linaro.org>
-Date: Mon, 8 Dec 2025 22:36:09 +0000
-X-Gm-Features: AQt7F2pyLxXm2GWb6gtwnpa1Ns2Gi_xPr5Pdfa1W2vBee9eceYgn1z1DZ-WxUWw
-Message-ID: <CACr-zFD_Nd=r1Giu2A0h9GHgh-GYPbT1PrwBq7n7JN2AWkXMrw@mail.gmail.com>
-Subject: Re: [PATCH] Revert "clk: qcom: cpu-8996: simplify the cpu_clk_notifier_cb"
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Dmitry Baryshkov <lumag@kernel.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 2/5] dt-bindings: clock: add Amlogic T7 SCMI clock
+ controller
+To: Jian Hu <jian.hu@amlogic.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+ Xianwei Zhao <xianwei.zhao@amlogic.com>, Chuan Liu <chuan.liu@amlogic.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Kevin Hilman <khilman@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, robh+dt <robh+dt@kernel.org>,
+ Rob Herring <robh@kernel.org>, devicetree <devicetree@vger.kernel.org>,
+ linux-clk <linux-clk@vger.kernel.org>,
+ linux-amlogic <linux-amlogic@lists.infradead.org>,
+ linux-kernel <linux-kernel@vger.kernel.org>,
+ linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+References: <20251204053635.1234150-1-jian.hu@amlogic.com>
+ <20251204053635.1234150-3-jian.hu@amlogic.com>
+ <20251208-independent-warping-macaw-74a169@quoll>
+ <dd90b445-bafb-46d4-8cec-e0877cf425b3@amlogic.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <dd90b445-bafb-46d4-8cec-e0877cf425b3@amlogic.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Konrad,
+On 08/12/2025 09:40, Jian Hu wrote:
+> Hi, Krzysztof
+> 
+> 
+> Thans for your review.
+> 
+> On 12/8/2025 2:17 PM, Krzysztof Kozlowski wrote:
+>> [ EXTERNAL EMAIL ]
+>>
+>> On Thu, Dec 04, 2025 at 01:36:31PM +0800, Jian Hu wrote:
+>>> Add DT bindings for the SCMI clock controller of the Amlogic T7 SoC family.
+>>>
+>>> Signed-off-by: Jian Hu <jian.hu@amlogic.com>
+>>> Acked-by: Rob Herring (Arm) <robh@kernel.org>
+>>> ---
+>>>   include/dt-bindings/clock/amlogic,t7-scmi.h | 47 +++++++++++++++++++++
+>>>   1 file changed, 47 insertions(+)
+>>>   create mode 100644 include/dt-bindings/clock/amlogic,t7-scmi.h
+>>>
+>> Where is any binding doc for this? Why is this a separate patch?
+> 
+> 
+> The ARM SCMI device tree binding specification is located at 
+> ./Documentation/devicetree/bindings/firmware/arm,scmi.yaml.
 
-On Wed, 3 Dec 2025 at 10:52, Konrad Dybcio
-<konrad.dybcio@oss.qualcomm.com> wrote:
->
-> On 12/2/25 10:24 PM, Christopher Obbard wrote:
-> > This reverts commit b3b274bc9d3d7307308aeaf75f70731765ac999a.
-> >
-> > On the DragonBoard 820c (which uses APQ8096/MSM8996) this change causes
-> > the CPUs to downclock to roughly half speed under sustained load. The
-> > regression is visible both during boot and when running CPU stress
-> > workloads such as stress-ng: the CPUs initially ramp up to the expected
-> > frequency, then drop to a lower OPP even though the system is clearly
-> > CPU-bound.
-> >
-> > Bisecting points to this commit and reverting it restores the expected
-> > behaviour on the DragonBoard 820c - the CPUs track the cpufreq policy
-> > and run at full performance under load.
-> >
-> > The exact interaction with the ACD is not yet fully understood and we
-> > would like to keep ACD in use to avoid possible SoC reliability issues.
-> > Until we have a better fix that preserves ACD while avoiding this
-> > performance regression, revert the bisected patch to restore the
-> > previous behaviour.
-> >
-> > Fixes: b3b274bc9d3d ("clk: qcom: cpu-8996: simplify the cpu_clk_notifie=
-r_cb")
-> > Cc: stable@vger.kernel.org # v6.3+
-> > Link: https://lore.kernel.org/linux-arm-msm/20230113120544.59320-8-dmit=
-ry.baryshkov@linaro.org/
-> > Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> > Signed-off-by: Christopher Obbard <christopher.obbard@linaro.org>
-> > ---
+Then git grep for the file name - there is no such compatible. Are you
+sure you follow writing bindings doc?
 
+Think how are you going to use these values. You will have phandle, yes?
+To some controller, yes? Which one?
 
-Apologies for the late response, I was in the process of setting some
-more msm8096 boards up again in my new workspace to test this
-properly.
+> 
+> Certain secure clocks on the T7 rely on the ARM SCMI driver stack, which 
+> is officially supported by ARM.
+> 
+> The kernel-side SCMI client implementation resides in 
+> ./drivers/firmware/arm_scmi/.
+> 
+> To enable ARM SCMI on T7, three components are needed:
+> 
+> - Kernel-side definition of ARM SCMI clock indices (this patch addresses 
+> this component);
+> - SCMI server implementation in the ARM Trusted Firmware (ATF) running 
+> at Exception Level 3 (EL3), which has been integrated into the bootloader;
+> - Device Tree Source (DTS) configuration for ARM SCMI clock nodes (the 
+> DTS changes will be submitted after the T7 clock driver patches are 
+> merged upstream).
 
-
-> It may be that your board really has a MSM/APQ8x96*SG* which is another
-> name for the PRO SKU, which happens to have a 2 times wider divider, try
->
-> `cat /sys/bus/soc/devices/soc0/soc_id`
-
-I read the soc_id from both of the msm8096 boards I have:
-
-Open-Q=E2=84=A2 820 =C2=B5SOM Development Kit (APQ8096)
-```
-$ cat /sys/bus/soc/devices/soc0/soc_id
-291
-```
-(FWIW this board is not in mainline yet; but boots with a DT similar
-enough to the db820c. I have a patch in my upstream backlog enabling
-that board; watch this space)
-
-DragonBoard=E2=84=A2 820c (APQ8096)
-```
-$ cat /sys/bus/soc/devices/soc0/soc_id
-291
-```
-
-
-> see:
->
-> https://lore.kernel.org/linux-arm-msm/20251111-db820c-pro-v1-0-6eece16c5c=
-23@oss.qualcomm.com/
->
-> https://lore.kernel.org/linux-arm-msm/kXrAkKv7RZct22X0wivLWqOAiLKpFuDCAY1=
-KY_KSx649kn7BNmJ2IFFMrsYPAyDlcxIjbQCQ1PHb5KaNFawm9IGIXUbch-DI9OI_l73BAaM=3D=
-@protonmail.com/
-
-Thanks for the pointers. Interesting, but it does look like my boards
-are msm8096 (and not the pro SKU). Can you confirm that at all from
-the soc_id above?
-
-Another bit of (hopefully useful) information is that the db820c boot
-firmware log sthe following, which is different to the logs I saw from
-the pro SKU (BUT the firmware could also be outdated?):
-```
-S - QC_IMAGE_VERSION_STRING=3DBOOT.XF.1.0-00301
-S - IMAGE_VARIANT_STRING=3DM8996LAB
-S - OEM_IMAGE_VERSION_STRING=3Dcrm-ubuntu68
-S - Boot Interface: UFS
-S - Secure Boot: Off
-S - Boot Config @ 0x00076044 =3D 0x000001c9
-S - JTAG ID @ 0x000760f4 =3D 0x4003e0e1
-S - OEM ID @ 0x000760f8 =3D 0x00000000
-S - Serial Number @ 0x00074138 =3D 0x14d6d024
-S - OEM Config Row 0 @ 0x00074188 =3D 0x0000000000000000
-S - OEM Config Row 1 @ 0x00074190 =3D 0x0000000000000000
-S - Feature Config Row 0 @ 0x000741a0 =3D 0x0050000010000100
-S - Feature Config Row 1 @ 0x000741a8 =3D 0x00fff00001ffffff
-S - Core 0 Frequency, 1228 MHz
-B -         0 - PBL, Start
-B -     10414 - bootable_media_detect_entry, Start
-B -     50197 - bootable_media_detect_success, Start
-B -     50197 - elf_loader_entry, Start
-B -     51760 - auth_hash_seg_entry, Start
-B -     51863 - auth_hash_seg_exit, Start
-B -     85147 - elf_segs_hash_verify_entry, Start
-B -     87651 - PBL, End
-B -     89700 - SBL1, Start
-B -    185684 - usb: hs_phy_nondrive_start
-B -    186050 - usb: PLL lock success - 0x3
-B -    189039 - usb: hs_phy_nondrive_finish
-B -    193156 - boot_flash_init, Start
-D -        30 - boot_flash_init, Delta
-B -    200263 - sbl1_ddr_set_default_params, Start
-D -        30 - sbl1_ddr_set_default_params, Delta
-B -    208254 - boot_config_data_table_init, Start
-D -    317169 - boot_config_data_table_init, Delta - (60 Bytes)
-B -    529968 - CDT Version:3,Platform ID:24,Major ID:1,Minor ID:0,Subtype:=
-0
-B -    534665 - Image Load, Start
-D -     22448 - PMIC Image Loaded, Delta - (37272 Bytes)
-B -    557143 - pm_device_init, Start
-B -    562908 - PON REASON:PM0:0x60 PM1:0x20
-B -    599294 - PM_SET_VAL:Skip
-D -     40016 - pm_device_init, Delta
-B -    601216 - pm_driver_init, Start
-D -      2897 - pm_driver_init, Delta
-B -    607834 - pm_sbl_chg_init, Start
-D -        91 - pm_sbl_chg_init, Delta
-B -    614575 - vsense_init, Start
-D -         0 - vsense_init, Delta
-B -    624670 - Pre_DDR_clock_init, Start
-D -       396 - Pre_DDR_clock_init, Delta
-B -    628208 - ddr_initialize_device, Start
-B -    631899 - 8996 v3.x detected, Max frequency =3D 1.8 GHz
-B -    641537 - ddr_initialize_device, Delta
-B -    641567 - DDR ID, Rank 0, Rank 1, 0x6, 0x300, 0x300
-B -    645410 - Basic DDR tests done
-B -    714157 - clock_init, Start
-D -       274 - clock_init, Delta
-B -    717543 - Image Load, Start
-D -      4331 - QSEE Dev Config Image Loaded, Delta - (46008 Bytes)
-B -    723002 - Image Load, Start
-D -      5307 - APDP Image Loaded, Delta - (0 Bytes)
-B -    731603 - usb: UFS Serial - a28415ce
-B -    735965 - usb: fedl, vbus_low
-B -    739594 - Image Load, Start
-D -     55449 - QSEE Image Loaded, Delta - (1640572 Bytes)
-B -    795043 - Image Load, Start
-D -      2043 - SEC Image Loaded, Delta - (4096 Bytes)
-B -    802607 - sbl1_efs_handle_cookies, Start
-D -       488 - sbl1_efs_handle_cookies, Delta
-B -    811117 - Image Load, Start
-D -     14365 - QHEE Image Loaded, Delta - (254184 Bytes)
-B -    825482 - Image Load, Start
-D -     14091 - RPM Image Loaded, Delta - (223900 Bytes)
-B -    840397 - Image Load, Start
-D -      3172 - STI Image Loaded, Delta - (0 Bytes)
-B -    847107 - Image Load, Start
-D -     34800 - APPSBL Image Loaded, Delta - (748620 Bytes)
-B -    881999 - SBL1, End
-D -    796569 - SBL1, Delta
-S - Flash Throughput, 94000 KB/s  (2958928 Bytes,  31192 us)
-S - DDR Frequency, 1017 MHz
-Android Bootloader - UART_DM Initialized!!!
-[0] BUILD_VERSION=3D
-[0] BUILD_DATE=3D00:29:31 - Dec  4 2023
-[0] welcome to lk
-...
-```
+So silently you keep the users hidden? No, I want to see the users.
 
 
-Cheers!
-
-Chris
+Best regards,
+Krzysztof
