@@ -1,174 +1,149 @@
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C97C1E9906
-	for <linux-clk@vger.kernel.org>; Tue,  9 Dec 2025 10:16:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3400721E091
+	for <linux-clk@vger.kernel.org>; Tue,  9 Dec 2025 15:14:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765275417; cv=none; b=Gb4QMcluwPG5moM3t4vbxhIAT3qMDZPmu2pKq+0FrMU5r1BwHIApKqQpxjj+3iAA1/XdwvXpu1nZDqNHxQ11tmgrVFRyXAl38wyn8nq+j8t+Zuht0jnO1HavpoXas8TW9q7g40/GHs/kBmQn8rZ6FAe8D/jiRASeu3m5GLx55Wg=
+	t=1765293292; cv=none; b=oMSMR4xjP0R1QvrDaZ9vwEb4vt5+yGnfD4sb3l1O2qqnhqj2R7+VK6W64A+OCySk3FrDYylP9GyfRLUXlKeEmG1vFPdL6bLq11wszypl2O+lT5064rEGilwPTyMRYQQINBZ6lzUr1TPoMTmY6aQy2j7hZjenZxZwDoazfqGSQYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765275417; c=relaxed/simple;
-	bh=lnP0ofzE8d7DV/VQbUQ/F9NhcdvvDdebrS3l/N8sJM4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=aFigvQsgRpLvqLg+XXW/b/8mFzrhKp9kBT7L6PNxFfcNDWOdIL7qIQw4ypJick3c7d5bBe6uOUogyAVHRJMwamfDP8z/rkOZa5cFByoKIjQlJ4DIAw4fJx/spUvWodZWS4xcZu+YzOOVt9mvod0ZXHOlmX+81p0kCGus3SUb8/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=mMbaVT80; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1765293292; c=relaxed/simple;
+	bh=qAGe2O2qpy6ZBSJ4NW8hsCBg9Hedo84B/WVPGhj/+vw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JsJC9Hzq5DWovpDNmS6MepHAdnFb/XvDCbih77YtDJK1/sQZ7obVPR7s8T5D6sBhncZwmKQ0pvM1tRg/OTg4tSsUr/767VFS5n2EXdVl/WmkR/qWkZneYl/kH+6LpCZD05710kX4aJ330j7cnQhaZVJgxTU4MIqgiPKhm8w/+7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=knpCpBwO; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=DPbEufWx; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="mMbaVT80"
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-42f9ece6387so219620f8f.0
-        for <linux-clk@vger.kernel.org>; Tue, 09 Dec 2025 02:16:54 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="knpCpBwO";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="DPbEufWx"
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5B9F9Fdv030050
+	for <linux-clk@vger.kernel.org>; Tue, 9 Dec 2025 15:14:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=ozMgZZzoOlMa9Tq6myF/RZJR
+	lUgb3Mcu/KMxieUEEik=; b=knpCpBwOhSIbGOWjFPqvig7foVKNvjLerAvrk9zi
+	AsKnV2g8ZvjVbATe7sr/VQhGGFCmeKM9Yk8YmXok4drMK/3ZhikuMqylnKMSTQsD
+	x5X94GgQmfNYp0mWYtp/7sYBAIZqt/Hu/a16v6NB0NTPnt/mrRvvgdgNwWLAWsWs
+	2Uh/MfpjpOtyLg6fRqqzzU7cHUGGIFYR7QPrXf1syrb9sjkxiWrrUuwK55iTYQyA
+	aVOtAr1pzRAlaz4j5DWLPd9U2vt6u56PmlTq0FnfmTNnMHE9rV0Fzfes4Ivs6vjz
+	zUd/8a5t5cB4bvt79VHDS5QErEg3mDBh+2eBTRbeaAv/Rg==
+Received: from mail-vk1-f198.google.com (mail-vk1-f198.google.com [209.85.221.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4axp5p00tu-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Tue, 09 Dec 2025 15:14:49 +0000 (GMT)
+Received: by mail-vk1-f198.google.com with SMTP id 71dfb90a1353d-55b16794625so2858119e0c.2
+        for <linux-clk@vger.kernel.org>; Tue, 09 Dec 2025 07:14:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1765275413; x=1765880213; darn=vger.kernel.org;
-        h=mime-version:message-id:date:user-agent:references:in-reply-to
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=7jqYN1k2sIIVDynNkGogy0+4dYc363N58InYK+olTwA=;
-        b=mMbaVT80BNtcSYVt3NJVjNQbVygQR3cHB8Ey9CCDbZ5/9ThkW7puUCWZBXOTLVhQEZ
-         vGxI8TuJ8upwftqvzwxi9gOup+A0LutK18PpkcAUtz4kWPqRIOsElyW5qasImf+OO9Vr
-         4Hza4Edu1fPlAqL9zUTDfLD9M0rJRtrZtDKPCKKtOcnaHc+YAbMItzhBLnylvxwujGd/
-         pr3yjqJ1PGohSJ3JgYk7dM/G84JWIvkB8kXdlgr3p5VTvYj5ENgRjYiff/PrRWZKuNga
-         z30KB/xtZz/OE31ppBhOsGS/Yjs3NdRdMUFDHP4ARUB8Nl5kKzpEUVRYkYsEVPSyWv/S
-         oMZg==
+        d=oss.qualcomm.com; s=google; t=1765293289; x=1765898089; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ozMgZZzoOlMa9Tq6myF/RZJRlUgb3Mcu/KMxieUEEik=;
+        b=DPbEufWxoJp0slGZi64/1dSabMwXQeLAOevOq984XH/xGT6M9TjLucosxh+x7jnj/2
+         oSegH76jOs2hWSM5RFSBFFblcs+sjhZq4PpElEUiRMo/pPHUBN3aSF8w+uQQryC3NWPZ
+         4uT3NWAVD0BeRGPO/ZYmU5QO9VHJKHHsnvF389ChOQ4q6YkUUAc8kIEzlUZQjf4J6fzJ
+         4G1YG9hWBYqeiyEO9IZJmL1yw04U0Bvf0hWahM4qMscEWXJxlfEI5IyEF2RKis4CMJIK
+         sD4+kESmTKimGM/IycY7gATxeRKQTCs6dQ0TVsqJkXSZ8n/A7iXzutTpmyStzBLZD++7
+         Sfqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765275413; x=1765880213;
-        h=mime-version:message-id:date:user-agent:references:in-reply-to
-         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=7jqYN1k2sIIVDynNkGogy0+4dYc363N58InYK+olTwA=;
-        b=Hyy3YAm7BwKzxk0pkojmBxAYfIZRNOBeLKqoDxg7iLQPp0LHE/vwBbaUrWPuCIX+N+
-         Fve+TL2ZXY5eTNRlVaX4reUuHeWpE/5UErIsiL0qLTmLRdCWY7eaMwwcnuTZCXSott2n
-         yEob2BUrYYFAUqhVOC5t1jeNKSHxmavG4ry1WpvpnsxUBfVkx6l3j7s8YAC6MfQjF/yT
-         kYJOf77ldM7h4THV10E3/fyGOPiVhAcsax1imfpnMKuS35xE7LK7hK4NgxxJp8M+2Kn5
-         SQb7S8SexFrrmduWBmpenvWQRjjoSquYBelMolD81jFP4dfngt7Xwv0HowaPQ2qBK3d/
-         2Q7w==
-X-Forwarded-Encrypted: i=1; AJvYcCVvg9Ju9wWo0RNe9+2fpzJR47Xd+WqIdUzEWVgaUkrT5Ap49Jt1CVM/9vkun5Ipba25U+MFmPUtS2M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkXIHlt+aZtTQ9pZmAfDZoP4iyzQUdPsWGF4ZXrZO/QvpHGPHV
-	EnXBRUiw8wl1hxZeinCqXqJuqT4UBrwnQfF+Zc7zWjynrylgIst0qmpm7ujMo8WB8eU=
-X-Gm-Gg: ASbGncu/crKhtnZ/J92a8FhlsU/agIwQo5GI5s5a43dfL4oB14kuR50082Et9oACOQj
-	EIZTK2Qh5fJMLGNRPlKqAPnB+4myL60l/U/zQT7PqjSXN1cdjnq7/g4X6/OATtignRqjAbxUXoZ
-	wKzd049QdxwVDuAsgYVa6520CGW+XJe4AJuNTm4LZ9XFpgfpIN6NQCoMN7NLodCOjDr5sHFffET
-	WHLYlKoqjaajSuDFwDo08WQY7tEB657AEyaaiqr+FpKu4kkuFkojp55RRhZgY8J6RgvBh3RxzOu
-	cu4vd2S+yFhps23RAa6//rYce3a5Sqb2Zl8x5l5WDbSGCwatt7MbemwKbMzDR4DqJaqgB3ZWndU
-	hB0ElBnKo0LunsFlDk1mAvLUnZU4Wm6UhwJp5+A0E94PWQ240ARPJshKWxPsVtocH1oIALlQM7i
-	SHjdJ+fIMtLg==
-X-Google-Smtp-Source: AGHT+IGYLG3rhZdJLL1r2IWmCryy/+X0jCUOg6jWuDZZCpYYA9nn3V/pWnZyhAXTJz8/W4BJn1NtMw==
-X-Received: by 2002:a5d:42c4:0:b0:42f:9e8d:548 with SMTP id ffacd0b85a97d-42f9e8d1ee0mr1375634f8f.60.1765275413393;
-        Tue, 09 Dec 2025 02:16:53 -0800 (PST)
-Received: from localhost ([2a01:e0a:3c5:5fb1:f9ab:1ddd:a971:a17b])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-42f7cbe9032sm28891327f8f.1.2025.12.09.02.16.52
+        d=1e100.net; s=20230601; t=1765293289; x=1765898089;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ozMgZZzoOlMa9Tq6myF/RZJRlUgb3Mcu/KMxieUEEik=;
+        b=BGwPGpV/sJg1t9oCCET4OX05tUylM3AR+DosAM8fWJ13xRAzH+D/YSP2vb3TTptSNM
+         YWEE8xxog+YfYG5xcvnrRIPrAKhz6SFyATSzOjPMaB+LuYZ2fwhj1ZP550kEHHIdSwdN
+         VsxselOeq0EQVc8IEjBIBarZXOW+B/oOs80iUSOMdb40d9Ipw2S/tf8u0c4Uy67mpYqX
+         //Eo3c1ZtZg1uSuqWfIzu4Z9d9kM/Kud8Hb0VmK0m3Ee36FgLNZ28y83bL1lKKqbaYXq
+         aeKtpGxz6dIZGIzGEb629QOhbxHGs52vC32sTXnRB6NlXqgc/gwlhTmrC2R+NFTRnE9c
+         piNg==
+X-Forwarded-Encrypted: i=1; AJvYcCXYqi1xrrfhcRF1nQoccqqW7uwY8pmKSWbtmVIVy28iR9yUo5e2AiFmvZSQhdBjlNv71Z33naDH4qc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSq8AKG9R0HkrhYNOTcs1zMg/LOGr+u6f0lDRr3fJlI/1cR7IJ
+	OvicA6jc6enHx0hrlwHQpcavVUd6KdP0PPIwYLnXuW79nCDWVsSMDr6bNCbh7Zh5mI2NT6UYzv3
+	Qr2X4K0QDYPMLdESufMHpYa1qlMBu9ve5e9HsQzEK7m5gNYZ/Y5GcvEV/oAuEMSQ=
+X-Gm-Gg: ASbGncvN+g8WD7h4kSTpQ+MTlBR66cZIpqVU/nPofs9b8ImNYsxockzOtG4LSaAdiLa
+	ucFRUnARa2jvGkngtircJR2F0F1BiKNXnElzQeTkMbscxAPlgZGEcepwaHeAwSt2iySg6ActREN
+	ZiFIs6wXUkBBCVn+cES6rQHOCHolZyaAmzO+HfeD4Kyb9Rp3GtJxK1Mghceme8CDJ620S7UtqRP
+	Yx5ZTIfMeBlAhA8guTeqUy9kIRBaEGmqtjGkNRuP4Q2987wnIQZmZpDZVfE7pN75MhUESOCNWHy
+	qedoiVtskw+zMuNnTmi71GSycHGIqaoAvyV11CtyX5JTWTOu4/89NcalmKK1dGHwtKvYwN197z9
+	PQ2qFpyQe3WGsGY/NtLSPPzM15nElfXQ+KO0VBkJr5gTEN53ZkTI4aLir6Iee96KQv0o0udgs9n
+	8P+aoEC6IO5Lmw2HJl6Qy2iu4=
+X-Received: by 2002:a05:6122:1799:b0:55b:74ac:72cf with SMTP id 71dfb90a1353d-55e846d530emr2938581e0c.17.1765293288919;
+        Tue, 09 Dec 2025 07:14:48 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IE9M8JZbVA1dMV/09RyxqBOyLUyWQsBdcFok11K77e8eS19RHj0RBdHTeZO0gCwNRV+kTSK6w==
+X-Received: by 2002:a05:6122:1799:b0:55b:74ac:72cf with SMTP id 71dfb90a1353d-55e846d530emr2938564e0c.17.1765293288414;
+        Tue, 09 Dec 2025 07:14:48 -0800 (PST)
+Received: from umbar.lan (2001-14ba-a073-af00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a073:af00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-597dfc536e8sm3629912e87.7.2025.12.09.07.14.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Dec 2025 02:16:52 -0800 (PST)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Jian Hu <jian.hu@amlogic.com>,  Xianwei Zhao <xianwei.zhao@amlogic.com>,
-  Chuan Liu <chuan.liu@amlogic.com>,  Neil Armstrong
- <neil.armstrong@linaro.org>,  Kevin Hilman <khilman@baylibre.com>,
-  Stephen Boyd <sboyd@kernel.org>,  Michael Turquette
- <mturquette@baylibre.com>,  robh+dt <robh+dt@kernel.org>,  Rob Herring
- <robh@kernel.org>,  devicetree <devicetree@vger.kernel.org>,  linux-clk
- <linux-clk@vger.kernel.org>,  linux-amlogic
- <linux-amlogic@lists.infradead.org>,  linux-kernel
- <linux-kernel@vger.kernel.org>,  linux-arm-kernel
- <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v6 2/5] dt-bindings: clock: add Amlogic T7 SCMI clock
- controller
-In-Reply-To: <4f5ec838-f8d6-4c3b-94f2-b2a60cfe64ec@kernel.org> (Krzysztof
-	Kozlowski's message of "Tue, 9 Dec 2025 07:01:44 +0100")
-References: <20251204053635.1234150-1-jian.hu@amlogic.com>
-	<20251204053635.1234150-3-jian.hu@amlogic.com>
-	<20251208-independent-warping-macaw-74a169@quoll>
-	<dd90b445-bafb-46d4-8cec-e0877cf425b3@amlogic.com>
-	<4f5ec838-f8d6-4c3b-94f2-b2a60cfe64ec@kernel.org>
-User-Agent: mu4e 1.12.9; emacs 30.1
-Date: Tue, 09 Dec 2025 11:16:52 +0100
-Message-ID: <1jy0ncvu23.fsf@starbuckisacylon.baylibre.com>
+        Tue, 09 Dec 2025 07:14:47 -0800 (PST)
+Date: Tue, 9 Dec 2025 17:14:46 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Taniya Das <taniya.das@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
+        Imran Shaik <imran.shaik@oss.qualcomm.com>,
+        Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH v5 1/4] clk: qcom: rpmh: Update the clock suffix for
+ Glymur
+Message-ID: <fece6e6hun7a5kikkronyzphrdbrl7owimeomrhddt4zluqkld@cixvhiht6xy7>
+References: <20251209-gcc_kaanapali-v3-v5-0-3af118262289@oss.qualcomm.com>
+ <20251209-gcc_kaanapali-v3-v5-1-3af118262289@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251209-gcc_kaanapali-v3-v5-1-3af118262289@oss.qualcomm.com>
+X-Proofpoint-ORIG-GUID: 8dxlYgCuMXbt355pDveCz4wNDfZMTwQY
+X-Authority-Analysis: v=2.4 cv=ZZYQ98VA c=1 sm=1 tr=0 ts=69383ce9 cx=c_pps
+ a=1Os3MKEOqt8YzSjcPV0cFA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=wP3pNCr1ah4A:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=EUspDBNiAAAA:8 a=ytHSg5rVBPlbEvibhtIA:9 a=CjuIK1q_8ugA:10
+ a=hhpmQAJR8DioWGSBphRh:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMjA5MDExMiBTYWx0ZWRfX3VJ/5BRz/NBK
+ daLKJVSqeq2+cPYdLl2kxakuei757MaBEIwFBZG3l3yNXd3EbnAAb3p5qvUlmqI5fDwNMpP3sNq
+ uIjmJoIPwCVLUw9dVXq9qo82d1B2TN2jue9EIYDdSqh/z/AzCrAeL3WvIxQKf3w0WpF66wDHIIj
+ vUcP+YOEKQgWBTSH2OZ7VgHv2oRQ1UqGLLjZsfAR+wVrUmDSnimr38+RA8W+hFiAzYE1/Oe+plV
+ 5117IXuiJzRXI1UVJSuJx1FIGol2oR6a0UCsvrqoGkz4FEfwzTpN9A54OZF/3uo6vVmrflDQMm4
+ KooZXgLcmvQxsDpdG3Q9lmSUjzRiU9FQ4fu1Iz1/AxbZavtKgfHPnUBsfsiy4yEfJualKjrq05i
+ I+CFJxGx8STNAhLZusa4ThxnQ54YNQ==
+X-Proofpoint-GUID: 8dxlYgCuMXbt355pDveCz4wNDfZMTwQY
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-12-09_04,2025-12-04_04,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 spamscore=0 impostorscore=0 suspectscore=0 malwarescore=0
+ bulkscore=0 lowpriorityscore=0 phishscore=0 adultscore=0 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2512090112
 
-On Tue 09 Dec 2025 at 07:01, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+On Tue, Dec 09, 2025 at 02:19:24PM +0530, Taniya Das wrote:
+> The current RPMh VRM clock definitions do not accurately represent the
+> hardware mapping of these clocks. While there is no functional impact,
+> this update aligns the definitions with the hardware convention by adding
+> the appropriate suffix to indicate the clock divider and the E0 variant
+> for the C3A_E0, C4A_E0, C5A_E0, and C8A_E0 resources on Glymur.
+> 
+> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
+> ---
+>  drivers/clk/qcom/clk-rpmh.c | 20 ++++++++++----------
+>  1 file changed, 10 insertions(+), 10 deletions(-)
+> 
 
-> On 08/12/2025 09:40, Jian Hu wrote:
->> Hi, Krzysztof
->> 
->> 
->> Thans for your review.
->> 
->> On 12/8/2025 2:17 PM, Krzysztof Kozlowski wrote:
->>> [ EXTERNAL EMAIL ]
->>>
->>> On Thu, Dec 04, 2025 at 01:36:31PM +0800, Jian Hu wrote:
->>>> Add DT bindings for the SCMI clock controller of the Amlogic T7 SoC family.
->>>>
->>>> Signed-off-by: Jian Hu <jian.hu@amlogic.com>
->>>> Acked-by: Rob Herring (Arm) <robh@kernel.org>
->>>> ---
->>>>   include/dt-bindings/clock/amlogic,t7-scmi.h | 47 +++++++++++++++++++++
->>>>   1 file changed, 47 insertions(+)
->>>>   create mode 100644 include/dt-bindings/clock/amlogic,t7-scmi.h
->>>>
->>> Where is any binding doc for this? Why is this a separate patch?
->> 
->> 
->> The ARM SCMI device tree binding specification is located at 
->> ./Documentation/devicetree/bindings/firmware/arm,scmi.yaml.
->
-> Then git grep for the file name - there is no such compatible. Are you
-> sure you follow writing bindings doc?
->
-> Think how are you going to use these values. You will have phandle, yes?
-> To some controller, yes? Which one?
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
-For the C3 (I believe the T7 is the same), the compatible being used is
-"arm,scmi-smc". It is a generic one documented here:
-
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/firmware/arm,scmi.yaml?h=v6.18#n202
-
-The phandle used is a subnode of that, to clock protocol:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi?h=v6.18#n116
-
-Same things is done on imx, stm and rockchip platforms from what I can
-see.
-
-Jian is just adding the arbitrary IDs used to identify the clocks in the
-FW. I don't think there is anything out of the ordirnary here.
-
-Is there something else Rob and I missed reviewing this ?
-
->
->> 
->> Certain secure clocks on the T7 rely on the ARM SCMI driver stack, which 
->> is officially supported by ARM.
->> 
->> The kernel-side SCMI client implementation resides in 
->> ./drivers/firmware/arm_scmi/.
->> 
->> To enable ARM SCMI on T7, three components are needed:
->> 
->> - Kernel-side definition of ARM SCMI clock indices (this patch addresses 
->> this component);
->> - SCMI server implementation in the ARM Trusted Firmware (ATF) running 
->> at Exception Level 3 (EL3), which has been integrated into the bootloader;
->> - Device Tree Source (DTS) configuration for ARM SCMI clock nodes (the 
->> DTS changes will be submitted after the T7 clock driver patches are 
->> merged upstream).
->
-> So silently you keep the users hidden? No, I want to see the users.
->
-
-Is there a new requirement to submit the DTS file changes along with the
-driver changes now ?
-
-This has never been case before, especially since the changes are merged
-through different trees.
-
->
-> Best regards,
-> Krzysztof
 
 -- 
-Jerome
+With best wishes
+Dmitry
