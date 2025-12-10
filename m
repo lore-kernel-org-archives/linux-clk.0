@@ -1,82 +1,118 @@
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EBEF29B216;
-	Wed, 10 Dec 2025 16:06:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 909503B8D68;
+	Wed, 10 Dec 2025 16:33:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765382816; cv=none; b=bTEIwq0D3kwXQakTokNQMWVrgyyMQ5m29qMtV9Ry38XO2W4XGXYtbhRxTaqxQ+OpBM6vRGlRQDljZRSd+nMp2jzMflSfxwFqXuPYD35tvXZ+oOe4FyazMzQbhzlvAUbtBVp3mQXb3TPQizCGCPGzGOwEF0R4IvV0aVRWRmRyo4Y=
+	t=1765384430; cv=none; b=EJ1/DenI9sGrNfsaU0us/0wiJ+OjoHYmHnZc+MBKTGcZuQVl6tXPpBx6tX6Q7AkQ1NJs/UCp+JY7AGqx4Ke10ZLCNJHPdGAQ/70HPIc2yjdawgzf86DW1Z0nknuVa9F+XP3oGeTOLkjsp9JKJ1h0bUA1Y1gw57wEyc0euvjngAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765382816; c=relaxed/simple;
-	bh=j7IMaXSGae8/zSMNH5tabWZidQgz9x1xyATYXrO5kSw=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=fDftPN/n9zW161II65Kg6cZSJh7nhsOfClm875JR8jLv2t3yKnXNs2IVihxesIFdb6GKXuWQT8F+W6aweqq67dyYUjpPbOwzOq4h37NexQP3rnzDEENHUMjQ3O6NSR3X2OOXE2fX8+2VFYAJiQCWfarnFMN0e6wFdUdAl/RJaFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=p5gpe+TY; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1765384430; c=relaxed/simple;
+	bh=RAVkpptHG6oJO9hSoLDzB0Os+BfA+qYSejoiWrxKU4Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AMaY/0u7hczkhzBXnOmnxcPVo8OERvNOy75H1g+lnmYX3rS4Zel/DkRTbgA7mFRHQ0m56/t1SSG2zYh5Yde9Gi7fODbv5aZA45rWHq2nCmYOMfVjXlZwCqZKRwkpiCbNjVDfjujHtpbCcCGdpxcUi7aTp3bO6JqHKlnaEm+Vgzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YZC5I9VH; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="p5gpe+TY"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 2B0551A20B0;
-	Wed, 10 Dec 2025 16:06:51 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id F33E560714;
-	Wed, 10 Dec 2025 16:06:50 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 28B0F11931A8F;
-	Wed, 10 Dec 2025 17:06:48 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1765382810; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=j7IMaXSGae8/zSMNH5tabWZidQgz9x1xyATYXrO5kSw=;
-	b=p5gpe+TY6I51MtjCELzk2RuavVYrxS0W4GzteyJMuGq/AobyDzlbDT6HQpOhBePE+lxBjS
-	vh6x8gTEGWxjhkBfVtvruvJWHlZZU1oonAzdrSsn+d4Mlp4QRVgz2SmQ+EATau9Op5jfa9
-	EYXw1yzBETDD2qFZky97F+TMoyIDj/ISZVbsXTHnVP41gA5LDFbE2ncfmAJnVwmmussDaW
-	P/G62UzJbkbnDna9clHZhjRVOnnQA7eeZjksxcw634AyCJH346fAYQTyaU+SU5uglrFRkm
-	BBpvVyqUgkFjprwvoNcIFB9Jt8BvXbHy/OBJzX+rwQKn7HkabEbs3y4uohsHtw==
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YZC5I9VH"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3253CC4CEF1;
+	Wed, 10 Dec 2025 16:33:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1765384430;
+	bh=RAVkpptHG6oJO9hSoLDzB0Os+BfA+qYSejoiWrxKU4Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YZC5I9VHWyMXJ19/yNiYo6ezpCM8sOhmTUF41m72Jtm2iABVgaS/27p0ZTqrKHh9Z
+	 bG0D7vM+v6w9EOFpDUmmi2mR2Ji9klQGmuoEEXdKT5sH0LKV1NfwG5SyCqR+rwBf22
+	 3f+xgcZscWmZnVWb0mlWjJ+ro/SQtsRiA3jQjRDuC/qc2XyaggmxLmTS0DwfMaRSmE
+	 C5m96GavAQ+CxKaR2ahdr0K0iov94ANatToT9spS59SQ6+q9r08QSUAbHCFTuPXNdh
+	 aJhFk/5B0+DjpskV68Wmb2QqHCarNXOW4Z8+UUSbyglElBaHthmaEo+PNHTbBeOO8u
+	 U6553F6TADWJA==
+Date: Wed, 10 Dec 2025 16:33:43 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Irving-CH Lin =?utf-8?B?KOael+W7uuW8mCk=?= <Irving-CH.Lin@mediatek.com>
+Cc: "robh@kernel.org" <robh@kernel.org>,
+	"ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
+	Sirius Wang =?utf-8?B?KOeOi+eak+aYsSk=?= <Sirius.Wang@mediatek.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"mturquette@baylibre.com" <mturquette@baylibre.com>,
+	"richardcochran@gmail.com" <richardcochran@gmail.com>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	Vince-WL Liu =?utf-8?B?KOWKieaWh+m+jSk=?= <Vince-WL.Liu@mediatek.com>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+	Jh Hsu =?utf-8?B?KOioseW4jOWtnCk=?= <Jh.Hsu@mediatek.com>,
+	Project_Global_Chrome_Upstream_Group <Project_Global_Chrome_Upstream_Group@mediatek.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"sboyd@kernel.org" <sboyd@kernel.org>,
+	Qiqi Wang =?utf-8?B?KOeOi+eQpueQpik=?= <Qiqi.Wang@mediatek.com>,
+	"matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Subject: Re: [PATCH v3 01/21] dt-bindings: clock: mediatek: Add MT8189 clock
+ definitions
+Message-ID: <20251210-progress-overdue-bded69c47048@spud>
+References: <20251106124330.1145600-1-irving-ch.lin@mediatek.com>
+ <20251106124330.1145600-2-irving-ch.lin@mediatek.com>
+ <20251106-hug-stingray-2d3ff42fd365@spud>
+ <626b5c4b810678a7f0de1f109371a6d6694bd2a8.camel@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="6/aPeWQhkTkgoOqT"
+Content-Disposition: inline
+In-Reply-To: <626b5c4b810678a7f0de1f109371a6d6694bd2a8.camel@mediatek.com>
+
+
+--6/aPeWQhkTkgoOqT
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 10 Dec 2025 17:06:47 +0100
-Message-Id: <DEUNZ5TYSY2E.1QO656BT3YQ5D@bootlin.com>
-Subject: Re: [PATCH v4 4/7] clk: eyeq: add EyeQ5 children auxiliary device
- for generic PHYs
-Cc: <linux-mips@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux-phy@lists.infradead.org>,
- <linux-clk@vger.kernel.org>, =?utf-8?q?Beno=C3=AEt_Monin?=
- <benoit.monin@bootlin.com>, "Maxime Chevallier"
- <maxime.chevallier@bootlin.com>, "Tawfik Bayouk"
- <tawfik.bayouk@mobileye.com>, "Thomas Petazzoni"
- <thomas.petazzoni@bootlin.com>
-To: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>, "Vladimir
- Kondratiev" <vladimir.kondratiev@mobileye.com>,
- =?utf-8?q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>, "Rob
- Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
- "Conor Dooley" <conor+dt@kernel.org>, "Vinod Koul" <vkoul@kernel.org>,
- "Kishon Vijay Abraham I" <kishon@kernel.org>, "Michael Turquette"
- <mturquette@baylibre.com>, "Stephen Boyd" <sboyd@kernel.org>, "Philipp
- Zabel" <p.zabel@pengutronix.de>, "Thomas Bogendoerfer"
- <tsbogend@alpha.franken.de>
-From: "Luca Ceresoli" <luca.ceresoli@bootlin.com>
-X-Mailer: aerc 0.20.1
-References: <20251124-macb-phy-v4-0-955c625a81a7@bootlin.com>
- <20251124-macb-phy-v4-4-955c625a81a7@bootlin.com>
-In-Reply-To: <20251124-macb-phy-v4-4-955c625a81a7@bootlin.com>
-X-Last-TLS-Session-Version: TLSv1.3
 
-On Mon Nov 24, 2025 at 3:41 PM CET, Th=C3=A9o Lebrun wrote:
-> Grow our clk-eyeq family; it knows how to spawn reset provider and pin
-> controller children. Expand with a generic PHY driver on EyeQ5.
->
-> Signed-off-by: Th=C3=A9o Lebrun <theo.lebrun@bootlin.com>
+On Wed, Dec 10, 2025 at 10:01:24AM +0000, Irving-CH Lin (=E6=9E=97=E5=BB=BA=
+=E5=BC=98) wrote:
+> Hi Conor,
+>=20
+> On Thu, 2025-11-06 at 17:19 +0000, Conor Dooley wrote:
+> > On Thu, Nov 06, 2025 at 08:41:46PM +0800, irving.ch.lin wrote:
+> > > From: Irving-CH Lin <irving-ch.lin@mediatek.com>
+> > >=20
+> > > Add device tree bindings for the clock of MediaTek MT8189 SoC.
+> > >=20
+> > > Signed-off-by: Irving-CH Lin <irving-ch.lin@mediatek.com>
+> >=20
+> > Before I approve this, can you share the dts that actually uses it?
+> > This many different syscons really does look suspect, and that not
+> > all
+> > of these should be nodes of their own. They may very well be, I would
+> > just like to see what the dts looks like. Doesn't need to be a patch,
+> > a
+> > link to your tree will suffice.
+> >=20
+> > Cheers,
+> > Conor.
+> >=20
+> https://patchwork.kernel.org/project/linux-mediatek/patch/20251111070031.=
+305281-10-jh.hsu@mediatek.com/
+> Please refer to link for mt8189 dts.
 
-Reviewed-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+pw-bot: not-applicable
 
---
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+--6/aPeWQhkTkgoOqT
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaTmg5wAKCRB4tDGHoIJi
+0gQLAQDlf0YH1hYoXc9Bdh1D48xuvf9j1Xm/38X050i72dQjuAEA3Ycuor/nuZxO
+KtGQq2Rg+DlffLIgFceLi1KapRxZVQo=
+=RQBU
+-----END PGP SIGNATURE-----
+
+--6/aPeWQhkTkgoOqT--
