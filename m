@@ -1,38 +1,38 @@
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 450D629B216;
-	Wed, 10 Dec 2025 16:06:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 077A62FD7D2;
+	Wed, 10 Dec 2025 16:06:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765382804; cv=none; b=D5ZbhcD6ykla0PHNykw6RyH+zWnQChLD1TFT/yuObtu6eozQAS26AofKD8wlnpko7TIdGioM6IZOadLzEaYMrihXdWrvj2jdGjbB66ryf3uCpTPGQj6xUsw0FQeEZqGF2rbA4jxngIB7Zwq2LzhOMXvE1cPnrA9kEk+S3UJN+Rw=
+	t=1765382808; cv=none; b=SRzewe47wRrR+NfmilsdmkdKh0ayjMQaBxqk51wmwMSI7V1vr65Hp1rqOE5ofDC9wfyPCDF1QxMznGEBv/7CVcdwIHw6zQ/i/fSC/ClEadUsLdZzpstdqIUwWJFAnNR8KdhmHvcnhxAibHx1jClIW11DxbHUv8DQzwq13WT/BUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765382804; c=relaxed/simple;
-	bh=YqTDeP7D5I5r5oKnPjxrY9VbX1CbJOiMv8dKn9JZXnc=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
-	 References:In-Reply-To; b=i6lgwnZtRpcwt6tFOVwccflVpfkSqysGnIhEKhXgzcs3NiXaGNEqSg2TsPmQbqIz7OmhQaaIVz9/1tvGxhelwgoBAuuY8q/evFmsWnM7lfMvxeejc5fpMiirzruwllKLN9lwxmYNAEqEX3rv7ThcAB50rBivUK1bRSSRyWvk7dY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=1mXvKYJc; arc=none smtp.client-ip=185.246.84.56
+	s=arc-20240116; t=1765382808; c=relaxed/simple;
+	bh=5mMlEr2VNyN1MRfdOk88GRdVzd1UC1Qzmeyd2ltEj9w=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=YOtJsftAQBHjSXIGQuXta/VQozDlLe/hBSPxh0veM1zZcPGbhMGXM0trt1NM6qa6/sr/fJxyo229jrOemR2GMLNViTPYn3BkReUa7ptmPPwUNrJFjtFn1uEQuq3LxKDohiqh18csmEoDW6MIkUL/qUaUXbsYPOgZtpukdKKUiKY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=PyNv6QD+; arc=none smtp.client-ip=185.171.202.116
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="1mXvKYJc"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="PyNv6QD+"
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 5A9861A20B0;
-	Wed, 10 Dec 2025 16:06:39 +0000 (UTC)
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 9E3DBC180F6;
+	Wed, 10 Dec 2025 16:06:21 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 1EF1560714;
-	Wed, 10 Dec 2025 16:06:39 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 4AD4B11931A8C;
-	Wed, 10 Dec 2025 17:06:34 +0100 (CET)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 8DD5A60714;
+	Wed, 10 Dec 2025 16:06:45 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 8B26111931A8C;
+	Wed, 10 Dec 2025 17:06:41 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1765382798; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1765382804; h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=3Z3jV2Yj9IT8vHbljyxoGx7tPeCujNrjG+4aQRJ7ptM=;
-	b=1mXvKYJcP7otAFdBA1ryX/2go8lT8U3Bbf7K0BRl+qYoESbyXVnXH9EWzPhR3dDBvfsMUp
-	eeq31lSCd2ocZgDscsfYsx0pCPppC/3aUYgtxifWBEfwkanF7pYtvMBrPs1CBv6SNTrGW1
-	XrtszL9Wwxzb86DdqKVxpp7t5PDVitjZaWGhxiia7lnBezmnFjMFuDy4uVOXh/nMrOSMSU
-	ejDtV3rD2+syhtpbbM+9BwGuo8nbPmclpZzg02kBJi0NSbJt/sRgdxPhZqHgKz0i4lFiWn
-	LiaOxN7GlQpclyfGbef9spIKmqxgMExAkrBu+Qcf3Olo4zmvB1Tl9t12B5S3Wg==
+	bh=IZ7YZNfW8akNqU2m1GJ0qgSiSInP3u3B1ptG7sHFuMU=;
+	b=PyNv6QD+ueNmdfmWHuSzSH6pk6CG9xsrW2BAm2SFPPRN1XfAywkmLLnJad+Emev4UYCUPY
+	6L45UGxXCOrPn00MKmWN/1LmbVwcRdTy2an29imcy4S6kkhtPnwSYZ8vDiwxrb6Lw2W5IZ
+	Ja2b2JRStJ5sGonAOmEL/1mBQFTIMk+2BGN75aSuBmOs8HqigN0LUj4mYAY1OgdNpBqiqD
+	0IdJ3mUE4eTfcrAoUY8sJQf//gkPwrniY6Z/Ww0QbOrs5ZLgegKYuuzyb1vXE+YnMega8G
+	4cI1y3Bv9iuqFHTfFqxJHsKjw7GJ3j2KlIiRgBtdp4d6ptkVLPIGMEkJhyIviQ==
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -41,15 +41,17 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Date: Wed, 10 Dec 2025 17:06:32 +0100
-Message-Id: <DEUNYYW0Y23E.2SA0SOCS99NA0@bootlin.com>
+Date: Wed, 10 Dec 2025 17:06:41 +0100
+Message-Id: <DEUNZ2R3L0LU.1CO231RCA18A6@bootlin.com>
+Subject: Re: [PATCH v4 3/7] clk: eyeq: use the auxiliary device creation
+ helper
 Cc: <linux-mips@vger.kernel.org>, <devicetree@vger.kernel.org>,
  <linux-kernel@vger.kernel.org>, <linux-phy@lists.infradead.org>,
  <linux-clk@vger.kernel.org>, =?utf-8?q?Beno=C3=AEt_Monin?=
  <benoit.monin@bootlin.com>, "Maxime Chevallier"
  <maxime.chevallier@bootlin.com>, "Tawfik Bayouk"
  <tawfik.bayouk@mobileye.com>, "Thomas Petazzoni"
- <thomas.petazzoni@bootlin.com>
+ <thomas.petazzoni@bootlin.com>, "Jerome Brunet" <jbrunet@baylibre.com>
 To: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>, "Vladimir
  Kondratiev" <vladimir.kondratiev@mobileye.com>,
  =?utf-8?q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>, "Rob
@@ -60,154 +62,26 @@ To: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>, "Vladimir
  Zabel" <p.zabel@pengutronix.de>, "Thomas Bogendoerfer"
  <tsbogend@alpha.franken.de>
 From: "Luca Ceresoli" <luca.ceresoli@bootlin.com>
-Subject: Re: [PATCH v4 2/7] phy: Add driver for EyeQ5 Ethernet PHY wrapper
 X-Mailer: aerc 0.20.1
 References: <20251124-macb-phy-v4-0-955c625a81a7@bootlin.com>
- <20251124-macb-phy-v4-2-955c625a81a7@bootlin.com>
-In-Reply-To: <20251124-macb-phy-v4-2-955c625a81a7@bootlin.com>
+ <20251124-macb-phy-v4-3-955c625a81a7@bootlin.com>
+In-Reply-To: <20251124-macb-phy-v4-3-955c625a81a7@bootlin.com>
 X-Last-TLS-Session-Version: TLSv1.3
 
 On Mon Nov 24, 2025 at 3:41 PM CET, Th=C3=A9o Lebrun wrote:
-> EyeQ5 embeds a system-controller called OLB. It features many unrelated
-> registers, and some of those are registers used to configure the
-> integration of the RGMII/SGMII Cadence PHY used by MACB/GEM instances.
+> From: Jerome Brunet <jbrunet@baylibre.com>
 >
-> Wrap in a neat generic PHY provider, exposing two PHYs with standard
-> phy_init() / phy_set_mode() / phy_power_on() operations.
+> The auxiliary device creation of this driver is simple enough to
+> use the available auxiliary device creation helper.
 >
+> Use it and remove some boilerplate code.
+>
+> Tested-by: Th=C3=A9o Lebrun <theo.lebrun@bootlin.com>  # On Mobileye EyeQ=
+5
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 > Signed-off-by: Th=C3=A9o Lebrun <theo.lebrun@bootlin.com>
 
-[...]
-
-> --- /dev/null
-> +++ b/drivers/phy/phy-eyeq5-eth.c
-> @@ -0,0 +1,254 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +
-> +#include <linux/array_size.h>
-> +#include <linux/auxiliary_bus.h>
-> +#include <linux/bitfield.h>
-> +#include <linux/bits.h>
-> +#include <linux/bug.h>
-> +#include <linux/cleanup.h>
-> +#include <linux/container_of.h>
-> +#include <linux/device.h>
-> +#include <linux/err.h>
-> +#include <linux/errno.h>
-> +#include <linux/init.h>
-> +#include <linux/io.h>
-> +#include <linux/iopoll.h>
-> +#include <linux/lockdep.h>
-> +#include <linux/mod_devicetable.h>
-> +#include <linux/mutex.h>
-> +#include <linux/of.h>
-> +#include <linux/phy.h>
-> +#include <linux/phy/phy.h>
-> +#include <linux/slab.h>
-> +#include <linux/types.h>
-
-Are all these include files really needed? At a quick glance bitfield.h,
-cleanup.h and lockdep.h look unused in this file.
-
-> +#define EQ5_PHY_COUNT	2
-
-[...]
-
-> +static const struct phy_ops eq5_phy_ops =3D {
-> +	.init		=3D eq5_phy_init,
-> +	.exit		=3D eq5_phy_exit,
-> +	.set_mode	=3D eq5_phy_set_mode,
-> +	.power_on	=3D eq5_phy_power_on,
-> +	.power_off	=3D eq5_phy_power_off,
-> +};
-> +
-> +static struct phy *eq5_phy_xlate(struct device *dev,
-> +				 const struct of_phandle_args *args)
-> +{
-> +	struct eq5_phy_private *priv =3D dev_get_drvdata(dev);
-> +
-> +	if (args->args_count !=3D 1 || args->args[0] > 1)
-
-Maybe, for better clarity:
-
-	if (args->args_count !=3D 1 || args->args[0] >=3D EQ5_PHY_COUNT)
-
-> +		return ERR_PTR(-EINVAL);
-> +
-> +	return priv->phys[args->args[0]].phy;
-> +}
-> +
-> +static int eq5_phy_probe_phy(struct eq5_phy_private *priv, unsigned int =
-index,
-> +			     void __iomem *base, unsigned int gp,
-> +			     unsigned int sgmii)
-> +{
-> +	struct eq5_phy_inst *inst =3D &priv->phys[index];
-> +	struct device *dev =3D priv->dev;
-> +	struct phy *phy;
-> +
-> +	phy =3D devm_phy_create(dev, dev->of_node, &eq5_phy_ops);
-> +	if (IS_ERR(phy)) {
-> +		dev_err(dev, "failed to create PHY %u\n", index);
-> +		return PTR_ERR(phy);
-> +	}
-
-Why not dev_err_probe()? It would make code more concise too:
-
-	phy =3D devm_phy_create(dev, dev->of_node, &eq5_phy_ops);
-	if (IS_ERR(phy))
-		return dev_err_probe(dev, PTR_ERR(phy), "failed to create PHY %u\n", inde=
-x);
-
-> +
-> +	inst->priv =3D priv;
-> +	inst->phy =3D phy;
-> +	inst->gp =3D base + gp;
-> +	inst->sgmii =3D base + sgmii;
-> +	inst->phy_interface =3D PHY_INTERFACE_MODE_NA;
-> +	phy_set_drvdata(phy, inst);
-> +
-> +	return 0;
-> +}
-> +
-> +static int eq5_phy_probe(struct auxiliary_device *adev,
-> +			 const struct auxiliary_device_id *id)
-> +{
-> +	struct device *dev =3D &adev->dev;
-> +	struct phy_provider *provider;
-> +	struct eq5_phy_private *priv;
-> +	void __iomem *base;
-> +	int ret;
-> +
-> +	priv =3D devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-> +	if (!priv)
-> +		return -ENOMEM;
-> +
-> +	priv->dev =3D dev;
-> +	dev_set_drvdata(dev, priv);
-> +
-> +	base =3D (void __iomem *)dev_get_platdata(dev);
-> +
-> +	ret =3D eq5_phy_probe_phy(priv, 0, base, EQ5_PHY0_GP, EQ5_PHY0_SGMII);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret =3D eq5_phy_probe_phy(priv, 1, base, EQ5_PHY1_GP, EQ5_PHY1_SGMII);
-> +	if (ret)
-> +		return ret;
-> +
-> +	provider =3D devm_of_phy_provider_register(dev, eq5_phy_xlate);
-> +	if (IS_ERR(provider)) {
-> +		dev_err(dev, "registering provider failed\n");
-> +		return PTR_ERR(provider);
-> +	}
-
-As above, why not dev_err_probe()?
-
-Other than the above minor issues, LGTM. This driver looks cleanly
-implemented.
-
-Luca
+Reviewed-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 
 --
 Luca Ceresoli, Bootlin
