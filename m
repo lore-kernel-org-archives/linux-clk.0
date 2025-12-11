@@ -1,86 +1,86 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 942212DF710
-	for <linux-clk@vger.kernel.org>; Thu, 11 Dec 2025 23:17:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C87462D5A19
+	for <linux-clk@vger.kernel.org>; Thu, 11 Dec 2025 23:17:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765495065; cv=none; b=d6IxxKfPLMbXNx4fMI6w6cSiqQxS0EpYmgqFDfigtLuo1FZkEKSRwkgtPgxe3Fo6EkAsza+bCVRrh2GhNNW7WC9flRQRaIIxgC88i1TV6ysoOThnsztyu7ZLDlVVP5tKcMnA0KujMS8/l+83A/qY9xHRqA2gzqVBmo70C0Ugux0=
+	t=1765495070; cv=none; b=up9GRecvXjhWraE7Q8zZeXfiM/d37STHoqTGuZQMTflf75sV1XhcSXi6INNyOuXQE8nJvNHgOgBfRi+nPeuaOdyz8clTzEV6N187HDsByVRps+j2jQmMHPbd4YNtbqmXufG4nVXUi57m9P4uZympXmT89jcfBU+ZSFl3dnPGFOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765495065; c=relaxed/simple;
-	bh=1Db9NFuUnQhQu9U41X5Z8TkxHRghSnvnQHsnP4RTW7s=;
+	s=arc-20240116; t=1765495070; c=relaxed/simple;
+	bh=NfOJan9Myaz8PWi/tdBEvmDwiM4IlBdU+UqmIR/UHpw=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=KVz0tCknFukH+H8rGAHcQyg3vnnLm55Usg/jpdUEJ4//f76lWIjDtMDpBuCT8Go+bT9C3Q0No8u2pGuK9c9/ZCUAxqrx9nHDXvwmTAbBACln2/d1rK2kCqcJz+FubRCLzeDbbA2sNVqPYGpPyPh6nS3Tnbas5Jg4Ykpvapc+KJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BYDHNO6c; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=QCOMpnBh; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:To:Cc; b=YgrO6GgZG4vOX7TTZxxc6YTYW7Kd4bnEBi58mccY3s0eQpbClzkatqE0nw9P7LZtHtAn7/63NC4PLJVgPFH1gy3xF4GX8DigNXbkA4ruAhxKSQdxYBS5O0WHt9OD6NQR0QEdCA+iDrYLj4P8FI4zDYi7Pe4PBulcWm1QJ2pfPSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hhaceyLH; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=F1QKmuuB; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BYDHNO6c";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="QCOMpnBh"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hhaceyLH";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="F1QKmuuB"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1765495059;
+	s=mimecast20190719; t=1765495067;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=yGIhcNn4hSdtEtR/SXkjUWQp83NGU7A3xjzPvcHPB5M=;
-	b=BYDHNO6cji9UF5K06vYu2iGM2W7Dwi7WJhKHV0EVlDpoOJ7NwLv9UhrP1QfaZRPllj8HhE
-	msJWDH8KhSNUi5JMsJMd6uGv592I/sGCqpz447XtKbEXkx4P3iaOOpM3yDtYf+IUX71L+d
-	CBke5HmQDH9dyXfKDAGVVtfmdojUD+U=
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
- [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=WSMzcnKfH5zogbN6xIJkP7sWMqF2vATubBjeteI/qGc=;
+	b=hhaceyLHy3stJCFI7CcSacWw1PbY3PKzmEyCv0Qpar9n3wKostRdSZwIh0Q0hVceIUX8+2
+	5yZJnmrV7iLgLx2AHJFQ7Y8Rq/vsoOSM2WUk08vNPbwjL/6jInJ7M9mGjOT+RzifocUn9Y
+	MWw7P8FY3GdQ6SwZBzvjA00aAYWdpc0=
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
+ [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-426-esB2c0BJM5azSQYcENXMgA-1; Thu, 11 Dec 2025 18:17:38 -0500
-X-MC-Unique: esB2c0BJM5azSQYcENXMgA-1
-X-Mimecast-MFC-AGG-ID: esB2c0BJM5azSQYcENXMgA_1765495058
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-8b286006ffaso152878385a.2
-        for <linux-clk@vger.kernel.org>; Thu, 11 Dec 2025 15:17:38 -0800 (PST)
+ us-mta-611-Cm055mICMyy6tFxn9OLU7g-1; Thu, 11 Dec 2025 18:17:45 -0500
+X-MC-Unique: Cm055mICMyy6tFxn9OLU7g-1
+X-Mimecast-MFC-AGG-ID: Cm055mICMyy6tFxn9OLU7g_1765495065
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-8bb3388703dso49217685a.1
+        for <linux-clk@vger.kernel.org>; Thu, 11 Dec 2025 15:17:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1765495058; x=1766099858; darn=vger.kernel.org;
+        d=redhat.com; s=google; t=1765495065; x=1766099865; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=yGIhcNn4hSdtEtR/SXkjUWQp83NGU7A3xjzPvcHPB5M=;
-        b=QCOMpnBh5doMdzNcCKsp0PWDHOemjceo3hdw5v4e++H4rweckUTrSWAeKD/K0/kM0P
-         24PtIlEcep6alv+mt8FEkhey+Zc/tigiM97hDdez1WCzuf9Q5bsyd7F2DWbzWEzw8TxN
-         h81snbmE1uXahCiTars+lLoqypuZfOiJzwjLj/noGOyCMKvo9wJDGjnwlDfx+4ENl5lX
-         bENVTPhXvbt94eFXBWavV7EKiW7yl3jb2z4k3DcjpthwLc+lUKBSgV62F8WiR0UPAIvG
-         S1ijOTWe4eoGZm+M+0frGbkXp4eNkCGfIY7TkM5gUp9I/WhevitYlNPfWVwzQdhbnYY4
-         OEeQ==
+        bh=WSMzcnKfH5zogbN6xIJkP7sWMqF2vATubBjeteI/qGc=;
+        b=F1QKmuuBiD+kWHCrPIMgtLAYsiXEd90MFmdWeuGUDpV12Md3s6sLniJ10iXD8+zRoD
+         3lquNpV9CsOJQdfdfmfIYe1kbuzlnmebizvPVnL0lSU6xszwxF8YOg0tSeT71Z5+g0I5
+         XJlt/TNICWy04bkg/ccWz2iZ0nmgNCqSbUTjyMLB+fJr5Btjdxw3uguigaZk01cyzevu
+         QuW8Mqg65D02Ao+EK/uuze6FTCuyMsf7VnBk2K/tmjICdEslsaZqABZPkMlPiZ9lY9Wg
+         m826XqAV94bbH1qGFgafXJ2KynPpo80ykheqmak28DsiY6PY1mJT0YAhHrFxacIbZJ26
+         cQ9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765495058; x=1766099858;
+        d=1e100.net; s=20230601; t=1765495065; x=1766099865;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=yGIhcNn4hSdtEtR/SXkjUWQp83NGU7A3xjzPvcHPB5M=;
-        b=GR9Q5SMkkHsabtHPWsEyIIu31I/FLUEf96gi4C4LJIkqKL/MvvblLOJjF/BGpjgc3o
-         WHjPuKI+nlW7kJ//jbhew7BTV/GpIP3bv66kjtbHvpdO+zEm8iYnbak8kJ3QI7Ymw0hA
-         ZPLjCbFqhoW6Zzku+vH/HHNwKWWKh3PUBgE75qvxy1ZSbX+86AsiGqZYhsdxtAX6/azj
-         DqbVZTk1XM85K0VmPqGalaykONFeEe62JvPMK1BxExpKZ3NoWylHPwvylZnXm3v72Hsn
-         macEnXXF7f6psvUsNyk4Y0Wx4ZDASnb3hufjZGEpxT1noBR1KzriCFCENmmKFaFFczCj
-         F/bg==
-X-Gm-Message-State: AOJu0Yxy3n+BuisX85RbQdSbOu1a70kkJ3ToBt1QKEMyabd9pzWifGiz
-	qNrivA29tGujLfJo7slFM+RFI1csu3IKiYHhFEF9gzs6V99GADc/Hj5jfqp8AV9GBuijZCvxM4X
-	DdJuDjIO14HCkudyMZnTwf68iqZ/M8kefz5Za+Aj4zFsP0bsRewNElgH/+Lbnbw==
-X-Gm-Gg: AY/fxX5w7Hgt4c3ntJi6Ux9qOcZ3VgELFKJRGku9yOtBUjjXTZIIxXIbaJ9pu9TPyZ+
-	5k/bku3lFY11NV7wNopaCrzGcHgub+KIBt06INCkC/VD0netPDp9n5MdQvzUo2uHKafDyeKsU3E
-	XS0DXVUNg8mOLMMHP5ILUVEtCsS5PYII7tJkAa2HQFCQHcXxeMn0jITkcdTG6urRvFVYHREiwFf
-	tc0PPXFz5yyP6AKNYRjzigL5HmlSU0QBcZPFokH5cpPbf4hkhDU7v5xJ9dorRB1tK7XKSmrI2am
-	bVabUCowDaf10c/95mEx+32rIT9TrAo1ZtrjQ3X5wbKCRZ7aZ0kxs+VNrz0In0m1zS+J5HarEE/
-	ZfAppRsc6DJV2iQDUrb3vHBzW8ju1XMwNKjrs1BO9gp2G25fFSWofTA==
-X-Received: by 2002:a05:620a:4143:b0:828:aff4:3c03 with SMTP id af79cd13be357-8bb3b358530mr24779185a.61.1765495057882;
-        Thu, 11 Dec 2025 15:17:37 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGJ6MyvatEvjXLdrucEm3djvv+DCSWYW1g1m07kDWXIN1ABKw8EYPVfgJJ5sUpqpKlTIcYAIw==
-X-Received: by 2002:a05:620a:4143:b0:828:aff4:3c03 with SMTP id af79cd13be357-8bb3b358530mr24775285a.61.1765495057473;
-        Thu, 11 Dec 2025 15:17:37 -0800 (PST)
+        bh=WSMzcnKfH5zogbN6xIJkP7sWMqF2vATubBjeteI/qGc=;
+        b=kyRaobJzz7lgVF3zZFNyY6KqbsrxJe3S1xKPSrsxaUuzZQ3jABO0YIhtRARSyOZYvg
+         eDv+5mK1dsl3EzkA+xVwkbUa+wS3r4jnWbyf/QEegGuZxTsUCqaprdj2Qhg3ZxQ3HZ/Y
+         dPOMxHoowrkU3RRL9L/SZx/Z+B/nAbgH3ihVVFlySjpaLYeabJRQ+YmhuO4EHPeV65KI
+         p7GFZAyy3E5aRyFr+ANcAkbZ7+RNjVmGRdHLCH0jlWfm4zCJBh3jfa/lmSZ42SF2y2sn
+         bO6MEmb1OOxHchI+JzF9Vz0Ei1BqRadbAAvKlJy8L3EgSOEtngt+t2WgCXa/iiWv43OL
+         eYJA==
+X-Gm-Message-State: AOJu0YyIhzm9l40FLxLCvcqrt3juZz6oPAfrX3+UiAK0p3klEefhq3Lj
+	vS0Fr9+jnmSfAGsX75KuWbHtcOZfd0i7Rvug+RDYiBgSFyN6sGZtrI1/oT5Po1e+YHgFDJC3Z/r
+	MrsJGciqGSS+K4yaYphhVTY2HXnId7aIwi+wetg3kWnoBSvTHyjBIRgn3pSKKNQ==
+X-Gm-Gg: AY/fxX6EZay466rd8LYaLRa7W3x5dd9uKAL78bX07bwzAy6Dk6QdcbL3TN9gekyAMEA
+	BxEgESP50fVg+yS8tHBkZkwCSDvNCvurQ+IqdflKhqceysQlRsZRUo+pyRHJ1WREDzzCivIBUbD
+	vEmHZ3kAB35B+4iAWUQ+EhXtrUbhcF3LUhVqbWxKoPvHmBYGaoqtie5nYCdvrmJrmAqvswPTk4m
+	kFGtzewUSCBptOXmbBSo3alUS+FDJvJXjZtwELZcYLFjPNfeSiL6Fmb0Dbt68GQzQk/tA793+60
+	SMBdFUz9DlvcAhhClwdPTEPtjdZnbcxYCW0uxnsQFUA486AO14neCG/M8UQ6dB0ahfg3lUq40oZ
+	WCVbRmc1Hx172kPj6nf7lJJvAjwtPcJynFpe4tUcEOncDoyXCWI5qBg==
+X-Received: by 2002:a05:620a:4416:b0:89e:c659:3f99 with SMTP id af79cd13be357-8bb398d703bmr36052085a.6.1765495065281;
+        Thu, 11 Dec 2025 15:17:45 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHLYKRP7lHhgawU3OEaYHk6OghheRQMM/cwXxtpO8QhTtXeryEcvWYjXWc+lMjIJt9Bnf4lfQ==
+X-Received: by 2002:a05:620a:4416:b0:89e:c659:3f99 with SMTP id af79cd13be357-8bb398d703bmr36048785a.6.1765495064870;
+        Thu, 11 Dec 2025 15:17:44 -0800 (PST)
 Received: from [192.168.101.129] (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8bab5d4edbasm317873585a.51.2025.12.11.15.17.30
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8bab5d4edbasm317873585a.51.2025.12.11.15.17.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Dec 2025 15:17:36 -0800 (PST)
+        Thu, 11 Dec 2025 15:17:44 -0800 (PST)
 From: Brian Masney <bmasney@redhat.com>
-Date: Fri, 12 Dec 2025 08:16:26 +0900
-Subject: [PATCH v3 8/9] phy: rockchip: phy-rockchip-samsung-hdptx: convert
- from round_rate() to determine_rate()
+Date: Fri, 12 Dec 2025 08:16:27 +0900
+Subject: [PATCH v3 9/9] phy: ti: phy-j721e-wiz: convert from round_rate()
+ to determine_rate()
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -89,7 +89,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251212-phy-clk-round-rate-v3-8-beae3962f767@redhat.com>
+Message-Id: <20251212-phy-clk-round-rate-v3-9-beae3962f767@redhat.com>
 References: <20251212-phy-clk-round-rate-v3-0-beae3962f767@redhat.com>
 In-Reply-To: <20251212-phy-clk-round-rate-v3-0-beae3962f767@redhat.com>
 To: Vinod Koul <vkoul@kernel.org>, 
@@ -105,16 +105,15 @@ To: Vinod Koul <vkoul@kernel.org>,
 Cc: linux-clk@vger.kernel.org, linux-phy@lists.infradead.org, 
  linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
  linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
- linux-rockchip@lists.infradead.org, Brian Masney <bmasney@redhat.com>, 
- Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+ linux-rockchip@lists.infradead.org, Brian Masney <bmasney@redhat.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2646; i=bmasney@redhat.com;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1629; i=bmasney@redhat.com;
  s=20250903; h=from:subject:message-id;
- bh=1Db9NFuUnQhQu9U41X5Z8TkxHRghSnvnQHsnP4RTW7s=;
- b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGDKtAy6tv/mBQ3J1ntD97t0PtZ/sXbDtX8XDgquXTd8ZR
- upqaUakdJSyMIhxMciKKbIsyTUqiEhdZXvvjiYLzBxWJpAhDFycAjCRI7UMfyW7Kk4WyCmZJybt
- XVSS8SzsoeutV4+lLCYXcK7IPTTpxzxGho2HvrnXvlrEFdS08UIvr5StzpeJsWwOEuUlB2Zv/XN
- BlQ8A
+ bh=NfOJan9Myaz8PWi/tdBEvmDwiM4IlBdU+UqmIR/UHpw=;
+ b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGDKtAy71PRfV83r1eE1XcMbr4193OXztck+aIzTF0fIwx
+ 8OmyOXFHaUsDGJcDLJiiixLco0KIlJX2d67o8kCM4eVCWQIAxenAEzkcBnDT8bgg94/bv76LP98
+ asNWnk3r2i7mlX2fL39CbHOvzuf29BCGP/wVmU95Y0IeCWi+VV+bOlm/YtKFpXbSLZp8AR0a0lV
+ hPAA=
 X-Developer-Key: i=bmasney@redhat.com; a=openpgp;
  fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
 
@@ -122,59 +121,41 @@ The round_rate() clk ops is deprecated, so migrate this driver from
 round_rate() to determine_rate() using the Coccinelle semantic patch
 on the cover letter of this series.
 
-Reviewed-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
 Signed-off-by: Brian Masney <bmasney@redhat.com>
 ---
- drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+ drivers/phy/ti/phy-j721e-wiz.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c b/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
-index 29de2f7bdae8a31958e31b0a64281532fd76e64d..315ac97f52d8af6d3010dc87788575039c7a6b40 100644
---- a/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
-+++ b/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
-@@ -1870,8 +1870,8 @@ static unsigned long rk_hdptx_phy_clk_recalc_rate(struct clk_hw *hw,
- 	return hdptx->hw_rate;
+diff --git a/drivers/phy/ti/phy-j721e-wiz.c b/drivers/phy/ti/phy-j721e-wiz.c
+index a8b440c6c46bb0c754845655f9c2c0ba6b435b8d..cbc98d4dec74560e6403fb899ebe2bb916440f45 100644
+--- a/drivers/phy/ti/phy-j721e-wiz.c
++++ b/drivers/phy/ti/phy-j721e-wiz.c
+@@ -934,12 +934,15 @@ static unsigned long wiz_clk_div_recalc_rate(struct clk_hw *hw,
+ 	return divider_recalc_rate(hw, parent_rate, val, div->table, 0x0, 2);
  }
  
--static long rk_hdptx_phy_clk_round_rate(struct clk_hw *hw, unsigned long rate,
--					unsigned long *parent_rate)
-+static int rk_hdptx_phy_clk_determine_rate(struct clk_hw *hw,
-+					   struct clk_rate_request *req)
+-static long wiz_clk_div_round_rate(struct clk_hw *hw, unsigned long rate,
+-				   unsigned long *prate)
++static int wiz_clk_div_determine_rate(struct clk_hw *hw,
++				      struct clk_rate_request *req)
  {
- 	struct rk_hdptx_phy *hdptx = to_rk_hdptx_phy(hw);
+ 	struct wiz_clk_divider *div = to_wiz_clk_div(hw);
  
-@@ -1880,9 +1880,9 @@ static long rk_hdptx_phy_clk_round_rate(struct clk_hw *hw, unsigned long rate,
- 	 * To be dropped as soon as the RK DW HDMI QP bridge driver
- 	 * switches to make use of phy_configure().
- 	 */
--	if (!hdptx->restrict_rate_change && rate != hdptx->hdmi_cfg.tmds_char_rate) {
-+	if (!hdptx->restrict_rate_change && req->rate != hdptx->hdmi_cfg.tmds_char_rate) {
- 		struct phy_configure_opts_hdmi hdmi = {
--			.tmds_char_rate = rate,
-+			.tmds_char_rate = req->rate,
- 		};
- 		int ret = rk_hdptx_phy_verify_hdmi_config(hdptx, &hdmi);
- 
-@@ -1897,7 +1897,10 @@ static long rk_hdptx_phy_clk_round_rate(struct clk_hw *hw, unsigned long rate,
- 	 * hence ensure rk_hdptx_phy_clk_set_rate() won't be invoked with
- 	 * a different rate argument.
- 	 */
--	return DIV_ROUND_CLOSEST_ULL(hdptx->hdmi_cfg.tmds_char_rate * 8, hdptx->hdmi_cfg.bpc);
-+	req->rate = DIV_ROUND_CLOSEST_ULL(hdptx->hdmi_cfg.tmds_char_rate * 8,
-+					  hdptx->hdmi_cfg.bpc);
+-	return divider_round_rate(hw, rate, prate, div->table, 2, 0x0);
++	req->rate = divider_round_rate(hw, req->rate, &req->best_parent_rate,
++				       div->table, 2, 0x0);
 +
 +	return 0;
  }
  
- static int rk_hdptx_phy_clk_set_rate(struct clk_hw *hw, unsigned long rate,
-@@ -1927,7 +1930,7 @@ static const struct clk_ops hdptx_phy_clk_ops = {
- 	.prepare = rk_hdptx_phy_clk_prepare,
- 	.unprepare = rk_hdptx_phy_clk_unprepare,
- 	.recalc_rate = rk_hdptx_phy_clk_recalc_rate,
--	.round_rate = rk_hdptx_phy_clk_round_rate,
-+	.determine_rate = rk_hdptx_phy_clk_determine_rate,
- 	.set_rate = rk_hdptx_phy_clk_set_rate,
+ static int wiz_clk_div_set_rate(struct clk_hw *hw, unsigned long rate,
+@@ -958,7 +961,7 @@ static int wiz_clk_div_set_rate(struct clk_hw *hw, unsigned long rate,
+ 
+ static const struct clk_ops wiz_clk_div_ops = {
+ 	.recalc_rate = wiz_clk_div_recalc_rate,
+-	.round_rate = wiz_clk_div_round_rate,
++	.determine_rate = wiz_clk_div_determine_rate,
+ 	.set_rate = wiz_clk_div_set_rate,
  };
  
 
