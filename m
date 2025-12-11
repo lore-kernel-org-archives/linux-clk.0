@@ -1,202 +1,127 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A239520322;
-	Thu, 11 Dec 2025 06:16:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B4D328CF4A
+	for <linux-clk@vger.kernel.org>; Thu, 11 Dec 2025 08:30:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765433792; cv=none; b=qhIKMOsYKIaIU7x1avIkjLbwVPLabF1YySMBfssV4sWgDiIHWrjf9GMtgoshIBRoHpbxjVjGbOPYXGVyMvutiMvvUWZ8/ng4oJMSaNiYD7cvDhDUDHMaUCe997sS7WWLy1fW+AYqV/07M/rMW00TfSFFvN282Eltb9wAOtjw674=
+	t=1765441845; cv=none; b=GpkNvAnb29KgJsYB8WoiTC/I+3m9gdigtRRUxAiVpXXLsUISzcg0rFqkWRBKynj57ybzXcPIOe0uH8qTJObKgyplVknxB8Mv8xLhwfRl7P7FvxE6CZathzkFJng/2iCjQ1jWABGox056MjSQci9JTyJb3vT18BYaXb2TAc/uWCE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765433792; c=relaxed/simple;
-	bh=bvT1VlwRH7XGC2MP4ovfWsz0gA8jdt47wxOpuOfG/XM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e+zJxRds3s66UmNvY+WEyxyysk/3YtZPSoZFzskcP/aXwS8EG0+TxtMtwjaclCD8wPHezGGfl6ETs8S9jGZKiKpUDlK6EvfZm+1zWlkTqovIw4+PLFA8tYpvueH8C/0w87uxF/jeOwyvXYPv0T3OlQRYrytwL0p438FqashNIv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mUGpwECA; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1765441845; c=relaxed/simple;
+	bh=2mC9PgXNY9QTBORzPH1w/03HrdoLFJe2TAO3uEDLd/M=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=f0GdKPiNF8xaHsE/OdUw70SUNlZP6NzoTa+3tJvuevJwzdVcZLDAkdLrH7WwCXiICv6X/PoAnZrbTp0Gmu8rUmbpRGoYTcHMTtj3bxXnMgnjs9qEZG/6ZZAc+Yi8wilWa2Z+w46/hKEPOAS0XdXyPCcZEPLlDPvtnLnbhORANnc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=XS/f4Uw/; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mUGpwECA"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65EBAC4CEFB;
-	Thu, 11 Dec 2025 06:16:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1765433791;
-	bh=bvT1VlwRH7XGC2MP4ovfWsz0gA8jdt47wxOpuOfG/XM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=mUGpwECA6gZn5jHX2eYEMqFzVIFUVnMAR9FSdFdAOxjVkFmZgf+0xS0gNDd4KvaJ5
-	 4cCJG4naR/JkLFnqIlIe43x9XvZajRMCMn1jbROQXq2Zkjd0Et2D5DnSlTuTyAt9SA
-	 l9cJnAwZAARSDNv4YHSpg4C7vFxR0pNvnN9MLzBt4TfE8jUw7op/Vjm/uba1oJmwRj
-	 A+h4tdZFPKmMjQqyYQvNCV7ruRqJAgn5SM9Yo5HHpRwx2YQ6K0J3FHOLHVAo9tMcyK
-	 alKLOAPhAfNKba8GJKYa+StfQ34YRtM3NA3O/0yPVtZzfuHAUQk0nJ5txbVQdufr6T
-	 tHhONQ/igKaGQ==
-Message-ID: <38ef7ee0-1879-42d5-a7fd-d32b96d01367@kernel.org>
-Date: Thu, 11 Dec 2025 07:16:25 +0100
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="XS/f4Uw/"
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-42e2b90ad22so209292f8f.2
+        for <linux-clk@vger.kernel.org>; Thu, 11 Dec 2025 00:30:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1765441839; x=1766046639; darn=vger.kernel.org;
+        h=mime-version:message-id:date:user-agent:references:in-reply-to
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=2X9fr0ZGqhI9r7USka/MTvJqmePaDtXMWQ0HxFh6CQk=;
+        b=XS/f4Uw/roe6COT+k+QkbddCQW/CBBJOQcUd1gJrZUXYg3D8Vqmwpi9lyENaKj/8vi
+         ss+Xk/wRPCL5hTdm0drTk0x6fWw/T1520IE+x3y4eX/Qk2eYFSMgHBkZnrSw2E1ifUQu
+         Qwf3kMEYcbpDzNWQ/jQFehV7pC0jMuPixqvAQGcR5PjwkFHzH7As8zz3raWPu5AiVKGY
+         +nELftZVO5SQavx0WXkLiqUiqbxqmd06V9s+y6vTSlINXoJn7bwTOPIMjWUwNUv5FUeg
+         ZbVxpyUuzBY9Y4yJtsFQk6kJyNLVvfUSr5ldsSRiEmXprayio9gUGCZnFAxM1llr+FTM
+         Q2pA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1765441839; x=1766046639;
+        h=mime-version:message-id:date:user-agent:references:in-reply-to
+         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=2X9fr0ZGqhI9r7USka/MTvJqmePaDtXMWQ0HxFh6CQk=;
+        b=ZJH0kTTW1Nv175VkjDNLf/DdSwg30OEUHmyD5eHQu4LHD2d7w1+zE8Xdn1BQE27uDK
+         /07cQ8XH/SZh3ycvklcx9rWPTGD+jGJ/CDrjyEe/dWK0zJrJ/zx85T9HixTz8BcMujzc
+         A5lYDv6mPbtWUnlUQ6S3HHQkoITHikrqAk7DS5mIb4VWh1d9711Q/3as5eZpFTdzrFJm
+         xta2e1R96LWf8LMfelKyD4EvjjVvgjBFYnLR+bjwGm5WEWOOHwSUADEmdunlOSdVH5PC
+         eEVbXCDKJ0qN6hk9e090KzWoY//GF9wuKbsShmw/2+7AtmGlXtc28vNrr9uK0SCxxzzM
+         Cj7g==
+X-Forwarded-Encrypted: i=1; AJvYcCW1Q6lXGx8a3nybAws1cvckHbGInWlytrnlgDmMrCA+9DaEwbDXfeBoaD/OozgI3q7IG2FixMauViE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzt31b8hJr2vEtt9ARf97VUzcxMFfFKaAz7RFUSQ5a6d01Vvqdr
+	J7WSS7itomvLfxL6eeOQuCU+SNhqQpsZxBDc8UzHMXqlGekQMYvy8/HOpSux3ma7hLw=
+X-Gm-Gg: AY/fxX7pptRWksWTsDH+qO22Y6FvvBedg+TjqKyjpmwEFKO4crd49sMnJuIDrxVPm5O
+	guDedbvgzZExzemxcuzUJsRmzgwcLslei6gRXU7Bs58HMbmJ5wV1WjKAs0OS3BupZuA1HwGP1PO
+	eeV55gWHZQaUCb9DzsTFeAEa1GdxX/+zv6qbwzMgk5Sg5Tl2HTS/vJyV8DqCCz+KNa/yQSXbUJk
+	wwZrehMs4GHZUruLKkGXsBYHYwsQaIYvPovyQ721pDq0gkQXc8zvSv0ebZM2zO4ZGjObXi55DDn
+	nqbeyW13myGMh0aIVsKdJHEJ7WirZyqKjN3uM888oW7ipN1IEmZvBHjpZPx23/lE623Invdc/SB
+	rWwi+v36w9bI3KXRWf4k2jRJD/uyEOaW/X2t6liqk88kWG58rw1sGi7Jkw9tiC9F6VKj8MFBn6o
+	+mQY4K/WMQ8Q==
+X-Google-Smtp-Source: AGHT+IFLEkEWc2D5InTXf1neme6xk0o1jO4IlcHFBsS7rTvGMj+Mx1Yom9idZgRNrYbNQPqpeuss+A==
+X-Received: by 2002:a05:6000:2401:b0:42b:3aee:429e with SMTP id ffacd0b85a97d-42fa3b0dba4mr5792532f8f.56.1765441839135;
+        Thu, 11 Dec 2025 00:30:39 -0800 (PST)
+Received: from localhost ([2a01:e0a:3c5:5fb1:3d4c:c4e0:9658:8033])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-42fa8a66b97sm4371966f8f.7.2025.12.11.00.30.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 Dec 2025 00:30:38 -0800 (PST)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Jian Hu <jian.hu@amlogic.com>,  Xianwei Zhao <xianwei.zhao@amlogic.com>,
+  Chuan Liu <chuan.liu@amlogic.com>,  Neil Armstrong
+ <neil.armstrong@linaro.org>,  Kevin Hilman <khilman@baylibre.com>,
+  Stephen Boyd <sboyd@kernel.org>,  Michael Turquette
+ <mturquette@baylibre.com>,  robh+dt <robh+dt@kernel.org>,  Rob Herring
+ <robh@kernel.org>,  devicetree <devicetree@vger.kernel.org>,  linux-clk
+ <linux-clk@vger.kernel.org>,  linux-amlogic
+ <linux-amlogic@lists.infradead.org>,  linux-kernel
+ <linux-kernel@vger.kernel.org>,  linux-arm-kernel
+ <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v6 2/5] dt-bindings: clock: add Amlogic T7 SCMI clock
+ controller
+In-Reply-To: <38ef7ee0-1879-42d5-a7fd-d32b96d01367@kernel.org> (Krzysztof
+	Kozlowski's message of "Thu, 11 Dec 2025 07:16:25 +0100")
+References: <20251204053635.1234150-1-jian.hu@amlogic.com>
+	<20251204053635.1234150-3-jian.hu@amlogic.com>
+	<20251208-independent-warping-macaw-74a169@quoll>
+	<dd90b445-bafb-46d4-8cec-e0877cf425b3@amlogic.com>
+	<4f5ec838-f8d6-4c3b-94f2-b2a60cfe64ec@kernel.org>
+	<1jy0ncvu23.fsf@starbuckisacylon.baylibre.com>
+	<38ef7ee0-1879-42d5-a7fd-d32b96d01367@kernel.org>
+User-Agent: mu4e 1.12.9; emacs 30.1
+Date: Thu, 11 Dec 2025 09:30:37 +0100
+Message-ID: <1j8qf92zf6.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 2/5] dt-bindings: clock: add Amlogic T7 SCMI clock
- controller
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Jian Hu <jian.hu@amlogic.com>, Xianwei Zhao <xianwei.zhao@amlogic.com>,
- Chuan Liu <chuan.liu@amlogic.com>, Neil Armstrong
- <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Michael Turquette
- <mturquette@baylibre.com>, robh+dt <robh+dt@kernel.org>,
- Rob Herring <robh@kernel.org>, devicetree <devicetree@vger.kernel.org>,
- linux-clk <linux-clk@vger.kernel.org>,
- linux-amlogic <linux-amlogic@lists.infradead.org>,
- linux-kernel <linux-kernel@vger.kernel.org>,
- linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-References: <20251204053635.1234150-1-jian.hu@amlogic.com>
- <20251204053635.1234150-3-jian.hu@amlogic.com>
- <20251208-independent-warping-macaw-74a169@quoll>
- <dd90b445-bafb-46d4-8cec-e0877cf425b3@amlogic.com>
- <4f5ec838-f8d6-4c3b-94f2-b2a60cfe64ec@kernel.org>
- <1jy0ncvu23.fsf@starbuckisacylon.baylibre.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <1jy0ncvu23.fsf@starbuckisacylon.baylibre.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-On 09/12/2025 11:16, Jerome Brunet wrote:
-> On Tue 09 Dec 2025 at 07:01, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> 
->> On 08/12/2025 09:40, Jian Hu wrote:
->>> Hi, Krzysztof
->>>
->>>
->>> Thans for your review.
->>>
->>> On 12/8/2025 2:17 PM, Krzysztof Kozlowski wrote:
->>>> [ EXTERNAL EMAIL ]
->>>>
->>>> On Thu, Dec 04, 2025 at 01:36:31PM +0800, Jian Hu wrote:
->>>>> Add DT bindings for the SCMI clock controller of the Amlogic T7 SoC family.
->>>>>
->>>>> Signed-off-by: Jian Hu <jian.hu@amlogic.com>
->>>>> Acked-by: Rob Herring (Arm) <robh@kernel.org>
->>>>> ---
->>>>>   include/dt-bindings/clock/amlogic,t7-scmi.h | 47 +++++++++++++++++++++
->>>>>   1 file changed, 47 insertions(+)
->>>>>   create mode 100644 include/dt-bindings/clock/amlogic,t7-scmi.h
->>>>>
->>>> Where is any binding doc for this? Why is this a separate patch?
->>>
->>>
->>> The ARM SCMI device tree binding specification is located at 
->>> ./Documentation/devicetree/bindings/firmware/arm,scmi.yaml.
->>
->> Then git grep for the file name - there is no such compatible. Are you
->> sure you follow writing bindings doc?
->>
->> Think how are you going to use these values. You will have phandle, yes?
->> To some controller, yes? Which one?
-> 
-> For the C3 (I believe the T7 is the same), the compatible being used is
-> "arm,scmi-smc". It is a generic one documented here:
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/firmware/arm,scmi.yaml?h=v6.18#n202
-> 
-> The phandle used is a subnode of that, to clock protocol:
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi?h=v6.18#n116
-> 
-> Same things is done on imx, stm and rockchip platforms from what I can
-> see.
-
-I see, thanks for explanation, it's fine.
-
-> 
-> Jian is just adding the arbitrary IDs used to identify the clocks in the
-> FW. I don't think there is anything out of the ordirnary here.
-> 
-> Is there something else Rob and I missed reviewing this ?
-> 
->>
->>>
->>> Certain secure clocks on the T7 rely on the ARM SCMI driver stack, which 
->>> is officially supported by ARM.
->>>
->>> The kernel-side SCMI client implementation resides in 
->>> ./drivers/firmware/arm_scmi/.
->>>
->>> To enable ARM SCMI on T7, three components are needed:
->>>
->>> - Kernel-side definition of ARM SCMI clock indices (this patch addresses 
->>> this component);
->>> - SCMI server implementation in the ARM Trusted Firmware (ATF) running 
->>> at Exception Level 3 (EL3), which has been integrated into the bootloader;
->>> - Device Tree Source (DTS) configuration for ARM SCMI clock nodes (the 
->>> DTS changes will be submitted after the T7 clock driver patches are 
->>> merged upstream).
->>
->> So silently you keep the users hidden? No, I want to see the users.
->>
-> 
-> Is there a new requirement to submit the DTS file changes along with the
-> driver changes now ?
-> 
-> This has never been case before, especially since the changes are merged
-> through different trees.
-
-There is no such requirement, but "has never been case before" is
-clearly not accurate, because I raised this question multiple times last
-two-three years.
-
-There is no reasonable way to hold publishing of DTS, therefore if
-someone uses arguments like above with waiting for driver, I usually got
-suspicious.
-
-Also note, that many contributions from various people (not saying that
-this one here is) were bad quality and badly designed but without seeing
-DTS it takes me significantly more time to understand that design. So
-yes, publish your DTS solving all of the questions and making reviewing
-easier. Or don't and receive questions...
+On Thu 11 Dec 2025 at 07:16, Krzysztof Kozlowski <krzk@kernel.org> wrote:
 
 
-Best regards,
-Krzysztof
+>> 
+>> Is there a new requirement to submit the DTS file changes along with the
+>> driver changes now ?
+>> 
+>> This has never been case before, especially since the changes are merged
+>> through different trees.
+>
+> There is no such requirement, but "has never been case before" is
+> clearly not accurate, because I raised this question multiple times last
+> two-three years.
+>
+> There is no reasonable way to hold publishing of DTS, therefore if
+> someone uses arguments like above with waiting for driver, I usually got
+> suspicious.
+>
+> Also note, that many contributions from various people (not saying that
+> this one here is) were bad quality and badly designed but without seeing
+> DTS it takes me significantly more time to understand that design. So
+> yes, publish your DTS solving all of the questions and making reviewing
+> easier. Or don't and receive questions...
+>
+
+That's fair. Thanks for clarifying.
+
+>
+> Best regards,
+> Krzysztof
+
+-- 
+Jerome
