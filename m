@@ -1,290 +1,202 @@
-Received: from mail98.out.titan.email (mail98.out.titan.email [54.147.227.70])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4216443147
-	for <linux-clk@vger.kernel.org>; Thu, 11 Dec 2025 03:38:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.147.227.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A239520322;
+	Thu, 11 Dec 2025 06:16:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765424315; cv=none; b=af29u2uoH+2km1jxLrp1KpeI/iH7TwOXzLYWGEy4gwjmXiXzOz+dRhHSn4KPy8wN39e3Lm4fQ8kELKSBIjA5ZYH1rpzSpbobzub9MsjkvV+DzehQH3+XcmFnpkhjT+0LAmmi7UBJHNQNMzwnfMC+i2ACCzM01G2MTi824EC9/ik=
+	t=1765433792; cv=none; b=qhIKMOsYKIaIU7x1avIkjLbwVPLabF1YySMBfssV4sWgDiIHWrjf9GMtgoshIBRoHpbxjVjGbOPYXGVyMvutiMvvUWZ8/ng4oJMSaNiYD7cvDhDUDHMaUCe997sS7WWLy1fW+AYqV/07M/rMW00TfSFFvN282Eltb9wAOtjw674=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765424315; c=relaxed/simple;
-	bh=cPNQLUwa+P97Hxd8FElwN4GQt3ITSegw1GxWLMMjdLI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uH6dSBBXs1VR9vPukCNlHhX/sLBuOddhC7YZFVsf8k7OjEFl3geoftt5u993Ee/CNAUk5BcjR4fTOanh4cOzOXT/P8eZM5O2EZQYMa4q3mzJad5BHg9ZSqE7mkSZMkJmYivFJXIMjngT+D0GaUxAGvO9fW0glfY/N+vgK816xJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ziyao.cc; spf=pass smtp.mailfrom=ziyao.cc; dkim=pass (1024-bit key) header.d=ziyao.cc header.i=@ziyao.cc header.b=Sb3V7oy9; arc=none smtp.client-ip=54.147.227.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ziyao.cc
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziyao.cc
+	s=arc-20240116; t=1765433792; c=relaxed/simple;
+	bh=bvT1VlwRH7XGC2MP4ovfWsz0gA8jdt47wxOpuOfG/XM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=e+zJxRds3s66UmNvY+WEyxyysk/3YtZPSoZFzskcP/aXwS8EG0+TxtMtwjaclCD8wPHezGGfl6ETs8S9jGZKiKpUDlK6EvfZm+1zWlkTqovIw4+PLFA8tYpvueH8C/0w87uxF/jeOwyvXYPv0T3OlQRYrytwL0p438FqashNIv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mUGpwECA; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ziyao.cc header.i=@ziyao.cc header.b="Sb3V7oy9"
-Received: from localhost (localhost [127.0.0.1])
-	by smtp-out.flockmail.com (Postfix) with ESMTP id 4dRdbX2hJHz9ry1;
-	Thu, 11 Dec 2025 03:38:32 +0000 (UTC)
-DKIM-Signature: a=rsa-sha256; bh=d8kSlJlqIefSfeNRWxze+FrgjZpC7LfELXdE8F9Z6j8=;
-	c=relaxed/relaxed; d=ziyao.cc;
-	h=to:date:from:references:mime-version:cc:message-id:subject:in-reply-to:from:to:cc:subject:date:message-id:in-reply-to:references:reply-to;
-	q=dns/txt; s=titan1; t=1765424312; v=1;
-	b=Sb3V7oy9M6KtFk/EiXbU3x0sxy5ui/n0npN3DwZKF8ai6I1TaUdKUuz56G7e4T6xOBtat4td
-	U7jdvHVN/nzH2FqZ9JWqOjG2amaNDwxM9UwQmC4f4pRDfrlGty808TiGdu7Mok9omeVG6m7qtjc
-	HQAw30C5S8c3YI8FMn5ialmY=
-Received: from pie (unknown [117.171.66.90])
-	by smtp-out.flockmail.com (Postfix) with ESMTPA id 4dRdbS1wFqz9rwy;
-	Thu, 11 Dec 2025 03:38:27 +0000 (UTC)
-Date: Thu, 11 Dec 2025 03:38:24 +0000
-Feedback-ID: :me@ziyao.cc:ziyao.cc:flockmailId
-From: Yao Zi <me@ziyao.cc>
-To: Yixun Lan <dlan@gentoo.org>, Stephen Boyd <sboyd@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: Haylen Chu <heylenay@4d2.org>, Inochi Amaoto <inochiama@gmail.com>,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC 4/4] clk: spacemit: k3: add the clock tree
-Message-ID: <aTo8sCPpVM1o9PKX@pie>
-References: <20251211-k3-clk-v1-0-8ee47c70c5bc@gentoo.org>
- <20251211-k3-clk-v1-4-8ee47c70c5bc@gentoo.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mUGpwECA"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65EBAC4CEFB;
+	Thu, 11 Dec 2025 06:16:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1765433791;
+	bh=bvT1VlwRH7XGC2MP4ovfWsz0gA8jdt47wxOpuOfG/XM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=mUGpwECA6gZn5jHX2eYEMqFzVIFUVnMAR9FSdFdAOxjVkFmZgf+0xS0gNDd4KvaJ5
+	 4cCJG4naR/JkLFnqIlIe43x9XvZajRMCMn1jbROQXq2Zkjd0Et2D5DnSlTuTyAt9SA
+	 l9cJnAwZAARSDNv4YHSpg4C7vFxR0pNvnN9MLzBt4TfE8jUw7op/Vjm/uba1oJmwRj
+	 A+h4tdZFPKmMjQqyYQvNCV7ruRqJAgn5SM9Yo5HHpRwx2YQ6K0J3FHOLHVAo9tMcyK
+	 alKLOAPhAfNKba8GJKYa+StfQ34YRtM3NA3O/0yPVtZzfuHAUQk0nJ5txbVQdufr6T
+	 tHhONQ/igKaGQ==
+Message-ID: <38ef7ee0-1879-42d5-a7fd-d32b96d01367@kernel.org>
+Date: Thu, 11 Dec 2025 07:16:25 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251211-k3-clk-v1-4-8ee47c70c5bc@gentoo.org>
-X-F-Verdict: SPFVALID
-X-Titan-Src-Out: 1765424312200132238.21635.2368487487041513004@prod-use1-smtp-out1003.
-X-CMAE-Score: 0
-X-CMAE-Analysis: v=2.4 cv=TPG/S0la c=1 sm=1 tr=0 ts=693a3cb8
-	a=rBp+3XZz9uO5KTvnfbZ58A==:117 a=rBp+3XZz9uO5KTvnfbZ58A==:17
-	a=kj9zAlcOel0A:10 a=MKtGQD3n3ToA:10 a=CEWIc4RMnpUA:10 a=7mOBRU54AAAA:8
-	a=prZasoeBdVvYPQNCfvoA:9 a=CjuIK1q_8ugA:10 a=wa9RWnbW_A1YIeRBVszw:22
-	a=3z85VNIBY5UIEeAh_hcH:22 a=NWVoK91CQySWRX1oVYDe:22
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 2/5] dt-bindings: clock: add Amlogic T7 SCMI clock
+ controller
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Jian Hu <jian.hu@amlogic.com>, Xianwei Zhao <xianwei.zhao@amlogic.com>,
+ Chuan Liu <chuan.liu@amlogic.com>, Neil Armstrong
+ <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Michael Turquette
+ <mturquette@baylibre.com>, robh+dt <robh+dt@kernel.org>,
+ Rob Herring <robh@kernel.org>, devicetree <devicetree@vger.kernel.org>,
+ linux-clk <linux-clk@vger.kernel.org>,
+ linux-amlogic <linux-amlogic@lists.infradead.org>,
+ linux-kernel <linux-kernel@vger.kernel.org>,
+ linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+References: <20251204053635.1234150-1-jian.hu@amlogic.com>
+ <20251204053635.1234150-3-jian.hu@amlogic.com>
+ <20251208-independent-warping-macaw-74a169@quoll>
+ <dd90b445-bafb-46d4-8cec-e0877cf425b3@amlogic.com>
+ <4f5ec838-f8d6-4c3b-94f2-b2a60cfe64ec@kernel.org>
+ <1jy0ncvu23.fsf@starbuckisacylon.baylibre.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <1jy0ncvu23.fsf@starbuckisacylon.baylibre.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Dec 11, 2025 at 09:19:44AM +0800, Yixun Lan wrote:
-> Add clock support to SpacemiT K3 SoC, the clock tree consist of several
-> blocks which are APBC, APBS, APMU, DCIU, MPUM.
+On 09/12/2025 11:16, Jerome Brunet wrote:
+> On Tue 09 Dec 2025 at 07:01, Krzysztof Kozlowski <krzk@kernel.org> wrote:
 > 
-> Signed-off-by: Yixun Lan <dlan@gentoo.org>
-> ---
->  drivers/clk/spacemit/Kconfig     |    6 +
->  drivers/clk/spacemit/Makefile    |   11 +-
->  drivers/clk/spacemit/ccu-k3.c    | 1641 ++++++++++++++++++++++++++++++++++++++
->  include/soc/spacemit/ccu.h       |   18 +
->  include/soc/spacemit/k1-syscon.h |   12 +-
->  include/soc/spacemit/k3-syscon.h |  273 +++++++
->  6 files changed, 1947 insertions(+), 14 deletions(-)
+>> On 08/12/2025 09:40, Jian Hu wrote:
+>>> Hi, Krzysztof
+>>>
+>>>
+>>> Thans for your review.
+>>>
+>>> On 12/8/2025 2:17 PM, Krzysztof Kozlowski wrote:
+>>>> [ EXTERNAL EMAIL ]
+>>>>
+>>>> On Thu, Dec 04, 2025 at 01:36:31PM +0800, Jian Hu wrote:
+>>>>> Add DT bindings for the SCMI clock controller of the Amlogic T7 SoC family.
+>>>>>
+>>>>> Signed-off-by: Jian Hu <jian.hu@amlogic.com>
+>>>>> Acked-by: Rob Herring (Arm) <robh@kernel.org>
+>>>>> ---
+>>>>>   include/dt-bindings/clock/amlogic,t7-scmi.h | 47 +++++++++++++++++++++
+>>>>>   1 file changed, 47 insertions(+)
+>>>>>   create mode 100644 include/dt-bindings/clock/amlogic,t7-scmi.h
+>>>>>
+>>>> Where is any binding doc for this? Why is this a separate patch?
+>>>
+>>>
+>>> The ARM SCMI device tree binding specification is located at 
+>>> ./Documentation/devicetree/bindings/firmware/arm,scmi.yaml.
+>>
+>> Then git grep for the file name - there is no such compatible. Are you
+>> sure you follow writing bindings doc?
+>>
+>> Think how are you going to use these values. You will have phandle, yes?
+>> To some controller, yes? Which one?
+> 
+> For the C3 (I believe the T7 is the same), the compatible being used is
+> "arm,scmi-smc". It is a generic one documented here:
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/firmware/arm,scmi.yaml?h=v6.18#n202
+> 
+> The phandle used is a subnode of that, to clock protocol:
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi?h=v6.18#n116
+> 
+> Same things is done on imx, stm and rockchip platforms from what I can
+> see.
 
-...
+I see, thanks for explanation, it's fine.
 
-> diff --git a/drivers/clk/spacemit/ccu-k3.c b/drivers/clk/spacemit/ccu-k3.c
-> new file mode 100644
-> index 000000000000..948889e8ca8c
-> --- /dev/null
-> +++ b/drivers/clk/spacemit/ccu-k3.c
-> @@ -0,0 +1,1641 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (c) 2025 SpacemiT Technology Co. Ltd
-> + */
-> +
-> +#include <linux/array_size.h>
-> +#include <linux/auxiliary_bus.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/delay.h>
-> +#include <linux/mfd/syscon.h>
-> +#include <linux/minmax.h>
-> +#include <linux/module.h>
-> +#include <linux/platform_device.h>
-> +#include <soc/spacemit/k3-syscon.h>
-> +
-> +#include "ccu_common.h"
-> +#include "ccu_pll.h"
-> +#include "ccu_mix.h"
-> +#include "ccu_ddn.h"
-> +
-> +#include <dt-bindings/clock/spacemit,k3-clocks.h>
-> +
-> +struct spacemit_ccu_data {
-> +	const char *reset_name;
-> +	struct clk_hw **hws;
-> +	size_t num;
-> +};
+> 
+> Jian is just adding the arbitrary IDs used to identify the clocks in the
+> FW. I don't think there is anything out of the ordirnary here.
+> 
+> Is there something else Rob and I missed reviewing this ?
+> 
+>>
+>>>
+>>> Certain secure clocks on the T7 rely on the ARM SCMI driver stack, which 
+>>> is officially supported by ARM.
+>>>
+>>> The kernel-side SCMI client implementation resides in 
+>>> ./drivers/firmware/arm_scmi/.
+>>>
+>>> To enable ARM SCMI on T7, three components are needed:
+>>>
+>>> - Kernel-side definition of ARM SCMI clock indices (this patch addresses 
+>>> this component);
+>>> - SCMI server implementation in the ARM Trusted Firmware (ATF) running 
+>>> at Exception Level 3 (EL3), which has been integrated into the bootloader;
+>>> - Device Tree Source (DTS) configuration for ARM SCMI clock nodes (the 
+>>> DTS changes will be submitted after the T7 clock driver patches are 
+>>> merged upstream).
+>>
+>> So silently you keep the users hidden? No, I want to see the users.
+>>
+> 
+> Is there a new requirement to submit the DTS file changes along with the
+> driver changes now ?
+> 
+> This has never been case before, especially since the changes are merged
+> through different trees.
 
-...
+There is no such requirement, but "has never been case before" is
+clearly not accurate, because I raised this question multiple times last
+two-three years.
 
-> +static const struct spacemit_ccu_data k3_ccu_dciu_data = {
-> +	.reset_name	= "dciu-reset",
-> +	.hws		= k3_ccu_dciu_hws,
-> +	.num		= ARRAY_SIZE(k3_ccu_dciu_hws),
-> +};
-> +
-> +static int spacemit_ccu_register(struct device *dev,
-> +				 struct regmap *regmap,
-> +				 struct regmap *lock_regmap,
-> +				 const struct spacemit_ccu_data *data)
-> +{
-> +	struct clk_hw_onecell_data *clk_data;
-> +	int i, ret;
-> +
-> +	/* Nothing to do if the CCU does not implement any clocks */
-> +	if (!data->hws)
-> +		return 0;
-> +
-> +	clk_data = devm_kzalloc(dev, struct_size(clk_data, hws, data->num),
-> +				GFP_KERNEL);
-> +	if (!clk_data)
-> +		return -ENOMEM;
-> +
-> +	for (i = 0; i < data->num; i++) {
-> +		struct clk_hw *hw = data->hws[i];
-> +		struct ccu_common *common;
-> +		const char *name;
-> +
-> +		if (!hw) {
-> +			clk_data->hws[i] = ERR_PTR(-ENOENT);
-> +			continue;
-> +		}
-> +
-> +		name = hw->init->name;
-> +
-> +		common = hw_to_ccu_common(hw);
-> +		common->regmap		= regmap;
-> +		common->lock_regmap	= lock_regmap;
-> +
-> +		ret = devm_clk_hw_register(dev, hw);
-> +		if (ret) {
-> +			dev_err(dev, "Cannot register clock %d - %s\n",
-> +				i, name);
-> +			return ret;
-> +		}
-> +
-> +		clk_data->hws[i] = hw;
-> +	}
-> +
-> +	clk_data->num = data->num;
-> +
-> +	ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get, clk_data);
-> +	if (ret)
-> +		dev_err(dev, "failed to add clock hardware provider (%d)\n", ret);
-> +
-> +	return ret;
-> +}
-> +
-> +static void spacemit_cadev_release(struct device *dev)
-> +{
-> +	struct auxiliary_device *adev = to_auxiliary_dev(dev);
-> +
-> +	kfree(to_spacemit_ccu_adev(adev));
-> +}
-> +
-> +static void spacemit_adev_unregister(void *data)
-> +{
-> +	struct auxiliary_device *adev = data;
-> +
-> +	auxiliary_device_delete(adev);
-> +	auxiliary_device_uninit(adev);
-> +}
-> +
-> +static int spacemit_ccu_reset_register(struct device *dev,
-> +				       struct regmap *regmap,
-> +				       const char *reset_name)
-> +{
-> +	struct spacemit_ccu_adev *cadev;
-> +	struct auxiliary_device *adev;
-> +	static u32 next_id;
-> +	int ret;
-> +
-> +	/* Nothing to do if the CCU does not implement a reset controller */
-> +	if (!reset_name)
-> +		return 0;
-> +
-> +	cadev = devm_kzalloc(dev, sizeof(*cadev), GFP_KERNEL);
-> +	if (!cadev)
-> +		return -ENOMEM;
-> +	cadev->regmap = regmap;
-> +
-> +	adev = &cadev->adev;
-> +	adev->name = reset_name;
-> +	adev->dev.parent = dev;
-> +	adev->dev.release = spacemit_cadev_release;
-> +	adev->dev.of_node = dev->of_node;
-> +	adev->id = next_id++;
-> +
-> +	ret = auxiliary_device_init(adev);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = auxiliary_device_add(adev);
-> +	if (ret) {
-> +		auxiliary_device_uninit(adev);
-> +		return ret;
-> +	}
-> +
-> +	return devm_add_action_or_reset(dev, spacemit_adev_unregister, adev);
-> +}
+There is no reasonable way to hold publishing of DTS, therefore if
+someone uses arguments like above with waiting for driver, I usually got
+suspicious.
 
-This piece of code looks quiet similar to types/functions with the same
-names in ccu-k1.c. If I'm correct, could we separate the logic into a
-new file and avoid duplication?
+Also note, that many contributions from various people (not saying that
+this one here is) were bad quality and badly designed but without seeing
+DTS it takes me significantly more time to understand that design. So
+yes, publish your DTS solving all of the questions and making reviewing
+easier. Or don't and receive questions...
 
-> +static int k3_ccu_probe(struct platform_device *pdev)
-> +{
-> +	struct regmap *base_regmap, *lock_regmap = NULL;
-> +	const struct spacemit_ccu_data *data;
-> +	struct device *dev = &pdev->dev;
-> +	int ret;
-> +
-> +	base_regmap = device_node_to_regmap(dev->of_node);
-> +	if (IS_ERR(base_regmap))
-> +		return dev_err_probe(dev, PTR_ERR(base_regmap),
-> +				     "failed to get regmap\n");
-> +	/*
-> +	 * The lock status of PLLs locate in MPMU region, while PLLs themselves
-> +	 * are in APBS region. Reference to MPMU syscon is required to check PLL
-> +	 * status.
-> +	 */
-> +	if (of_device_is_compatible(dev->of_node, "spacemit,k3-pll")) {
-> +		struct device_node *mpmu = of_parse_phandle(dev->of_node, "spacemit,mpmu", 0);
-> +
-> +		if (!mpmu)
-> +			return dev_err_probe(dev, -ENODEV,
-> +					     "Cannot parse MPMU region\n");
-> +
-> +		lock_regmap = device_node_to_regmap(mpmu);
-> +		of_node_put(mpmu);
-> +
-> +		if (IS_ERR(lock_regmap))
-> +			return dev_err_probe(dev, PTR_ERR(lock_regmap),
-> +					     "failed to get lock regmap\n");
-> +	}
-> +
-> +	data = of_device_get_match_data(dev);
-> +
-> +	ret = spacemit_ccu_register(dev, base_regmap, lock_regmap, data);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "failed to register clocks\n");
-> +
-> +	ret = spacemit_ccu_reset_register(dev, base_regmap, data->reset_name);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "failed to register resets\n");
-> +
-> +	return 0;
-> +}
 
-k3_ccu_probe looks quote similar to k1_ccu_probe, too. The only
-difference is that k3_ccu_probe checks for spacemit,k3-pll instead of
-spacemit,k1-pll.
-
-We could share most of the probe code by writing a SoC-independent probe
-function,
-
-	int spacemit_ccu_probe(struct platform_dev *pdev,
-			       const char *pll_compatible);
-
-and calling it in ccu-k1.c and ccu-k3.c with different pll_compatible.
-
-Regards,
-Yao Zi
+Best regards,
+Krzysztof
