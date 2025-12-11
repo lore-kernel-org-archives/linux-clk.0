@@ -1,118 +1,108 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 909503B8D68;
-	Wed, 10 Dec 2025 16:33:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 867EF228C9D;
+	Thu, 11 Dec 2025 01:20:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765384430; cv=none; b=EJ1/DenI9sGrNfsaU0us/0wiJ+OjoHYmHnZc+MBKTGcZuQVl6tXPpBx6tX6Q7AkQ1NJs/UCp+JY7AGqx4Ke10ZLCNJHPdGAQ/70HPIc2yjdawgzf86DW1Z0nknuVa9F+XP3oGeTOLkjsp9JKJ1h0bUA1Y1gw57wEyc0euvjngAs=
+	t=1765416040; cv=none; b=j9BkgIpqEFXCFsKinszKkPGRvR+TTsHKENlTO7QbF8N8zauiyO92VPDovwpy8hflx4OfL1Spc7eGukL+SpZzPRAe1GYo9RHcCPCLhC+fq6GQ84u9+sWJjTuLLTHqo1jBVGHUydGkRg4lK43UYhYhtK0JkpxChkiDfFkf9AXI2yA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765384430; c=relaxed/simple;
-	bh=RAVkpptHG6oJO9hSoLDzB0Os+BfA+qYSejoiWrxKU4Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AMaY/0u7hczkhzBXnOmnxcPVo8OERvNOy75H1g+lnmYX3rS4Zel/DkRTbgA7mFRHQ0m56/t1SSG2zYh5Yde9Gi7fODbv5aZA45rWHq2nCmYOMfVjXlZwCqZKRwkpiCbNjVDfjujHtpbCcCGdpxcUi7aTp3bO6JqHKlnaEm+Vgzs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YZC5I9VH; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YZC5I9VH"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3253CC4CEF1;
-	Wed, 10 Dec 2025 16:33:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1765384430;
-	bh=RAVkpptHG6oJO9hSoLDzB0Os+BfA+qYSejoiWrxKU4Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YZC5I9VHWyMXJ19/yNiYo6ezpCM8sOhmTUF41m72Jtm2iABVgaS/27p0ZTqrKHh9Z
-	 bG0D7vM+v6w9EOFpDUmmi2mR2Ji9klQGmuoEEXdKT5sH0LKV1NfwG5SyCqR+rwBf22
-	 3f+xgcZscWmZnVWb0mlWjJ+ro/SQtsRiA3jQjRDuC/qc2XyaggmxLmTS0DwfMaRSmE
-	 C5m96GavAQ+CxKaR2ahdr0K0iov94ANatToT9spS59SQ6+q9r08QSUAbHCFTuPXNdh
-	 aJhFk/5B0+DjpskV68Wmb2QqHCarNXOW4Z8+UUSbyglElBaHthmaEo+PNHTbBeOO8u
-	 U6553F6TADWJA==
-Date: Wed, 10 Dec 2025 16:33:43 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Irving-CH Lin =?utf-8?B?KOael+W7uuW8mCk=?= <Irving-CH.Lin@mediatek.com>
-Cc: "robh@kernel.org" <robh@kernel.org>,
-	"ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
-	Sirius Wang =?utf-8?B?KOeOi+eak+aYsSk=?= <Sirius.Wang@mediatek.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"mturquette@baylibre.com" <mturquette@baylibre.com>,
-	"richardcochran@gmail.com" <richardcochran@gmail.com>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	Vince-WL Liu =?utf-8?B?KOWKieaWh+m+jSk=?= <Vince-WL.Liu@mediatek.com>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	Jh Hsu =?utf-8?B?KOioseW4jOWtnCk=?= <Jh.Hsu@mediatek.com>,
-	Project_Global_Chrome_Upstream_Group <Project_Global_Chrome_Upstream_Group@mediatek.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"sboyd@kernel.org" <sboyd@kernel.org>,
-	Qiqi Wang =?utf-8?B?KOeOi+eQpueQpik=?= <Qiqi.Wang@mediatek.com>,
-	"matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Subject: Re: [PATCH v3 01/21] dt-bindings: clock: mediatek: Add MT8189 clock
- definitions
-Message-ID: <20251210-progress-overdue-bded69c47048@spud>
-References: <20251106124330.1145600-1-irving-ch.lin@mediatek.com>
- <20251106124330.1145600-2-irving-ch.lin@mediatek.com>
- <20251106-hug-stingray-2d3ff42fd365@spud>
- <626b5c4b810678a7f0de1f109371a6d6694bd2a8.camel@mediatek.com>
+	s=arc-20240116; t=1765416040; c=relaxed/simple;
+	bh=7wM8kl3qX0xkz3vzrVtu3bOKqohyKqDnNPPd+XJd05Y=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=gU8BPoqBOWraWsJn0Z1VF7zQydM1dG3OmVF9z7q3WPl101GaMGAhuCqqDvm6DSp8tDDk1ifHSCUPhG82QkuaqV/S/EYhMfFIjUltsxqqPLExPCI/R7b0v24613KW2mhGBJb8Ra3IlZ2tFcpsszYoZDKXmgmM4anb9JAB3aY6p4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Received: from [127.0.0.1] (unknown [116.232.18.222])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dlan)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id 68C9E34076D;
+	Thu, 11 Dec 2025 01:20:34 +0000 (UTC)
+From: Yixun Lan <dlan@gentoo.org>
+Subject: [PATCH RFC 0/4] Add clock support for SpacemiT K3 SoC
+Date: Thu, 11 Dec 2025 09:19:40 +0800
+Message-Id: <20251211-k3-clk-v1-0-8ee47c70c5bc@gentoo.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="6/aPeWQhkTkgoOqT"
-Content-Disposition: inline
-In-Reply-To: <626b5c4b810678a7f0de1f109371a6d6694bd2a8.camel@mediatek.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIACwcOmkC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1NDIwMT3Wxj3eScbN2UJCMDQwtjC8vEVGMloOKCotS0zAqwQdFKQW7OSrG
+ 1tQC/nYvtXQAAAA==
+X-Change-ID: 20251204-k3-clk-db2018389ae3
+To: Stephen Boyd <sboyd@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Haylen Chu <heylenay@4d2.org>, Inochi Amaoto <inochiama@gmail.com>, 
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-riscv@lists.infradead.org, spacemit@lists.linux.dev, 
+ linux-kernel@vger.kernel.org, Yixun Lan <dlan@gentoo.org>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1937; i=dlan@gentoo.org;
+ h=from:subject:message-id; bh=7wM8kl3qX0xkz3vzrVtu3bOKqohyKqDnNPPd+XJd05Y=;
+ b=owEB6QIW/ZANAwAKATGq6kdZTbvtAcsmYgBpOhxSgE8RY7oRxus5DTWEvVfuqPsiOXvJ/5p24
+ ZzRX/jullqJAq8EAAEKAJkWIQS1urjJwxtxFWcCI9wxqupHWU277QUCaTocUhsUgAAAAAAEAA5t
+ YW51MiwyLjUrMS4xMSwyLDJfFIAAAAAALgAoaXNzdWVyLWZwckBub3RhdGlvbnMub3BlbnBncC5
+ maWZ0aGhvcnNlbWFuLm5ldEI1QkFCOEM5QzMxQjcxMTU2NzAyMjNEQzMxQUFFQTQ3NTk0REJCRU
+ QACgkQMarqR1lNu+3jqxAAjcVO0Kp1VVSuADxzZ9oL4tR0X0qeWU3MKw5I6T7EEcs+5T1qm+YVE
+ mv1Yry8Im1G5gR49icpkDbLjEknypIijczfs28aDdxfOEIyaBXKqclMQN66x0/5X7l0sUOzhKi8
+ /9lf2kFC8fA3afu3xGeE+JDabx05+B3fZvrB3eAnilzdBHEGjBsY38zLVmjm4tW//tmwTJcqwZB
+ z7IQ0QkaH3H90MUNDOYxee7yrENiRNK3PYzeuPCThbMPmVli7VxbDlaQ0kXSgfejfdLGWIKBsSC
+ Ls8V81iqP2ojjEDZaHJU97vJ1cFZsachOv1aCJH69M2eFsljOBIOX6GMP9ccwFdnClScUXa2C+I
+ 5v2atu9teYxzamZAxl2PVyzydcg7Aa+GlVDtErxGn61LFcm2VxFmF3PD90XttSmqh909hijqiiS
+ ms6+3JEmhK1tyblAipf9dYOMiM0d4BMJ8mMLof3lSq7on4GhgcLFRyqWGMW9PCa5Cb7Gxe1T68/
+ 4BDvX89KAANgu06V8BxfpVFqLZuE6xmTnzfaGrR7VMB758rahOHcUld8/L3aisTMZvx341T4clY
+ Z1cHBBU+VwAHdV9bkdZqcmXwhZlB8gqbGfbvXgy3BTUItpzJxMLr1agJEe4YLNhszq5srdjuPjY
+ XofTqLD7cYbTrePjKJjmsipreaBR7o=
+X-Developer-Key: i=dlan@gentoo.org; a=openpgp;
+ fpr=50B03A1A5CBCD33576EF8CD7920C0DBCAABEFD55
 
+I'm marking this series as RFC for now, as the driver is based on vendor code,
+and only tested on FPGA, the production SoC chip isn't ready yet.
 
---6/aPeWQhkTkgoOqT
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The SpacemiT K3 SoC's CCU (clock control unit) is similar to old K1 generation,
+the clock and reset functionalities are distributed across several IP blocks,
+therefore, we model them as several clock tree accordingly.
 
-On Wed, Dec 10, 2025 at 10:01:24AM +0000, Irving-CH Lin (=E6=9E=97=E5=BB=BA=
-=E5=BC=98) wrote:
-> Hi Conor,
->=20
-> On Thu, 2025-11-06 at 17:19 +0000, Conor Dooley wrote:
-> > On Thu, Nov 06, 2025 at 08:41:46PM +0800, irving.ch.lin wrote:
-> > > From: Irving-CH Lin <irving-ch.lin@mediatek.com>
-> > >=20
-> > > Add device tree bindings for the clock of MediaTek MT8189 SoC.
-> > >=20
-> > > Signed-off-by: Irving-CH Lin <irving-ch.lin@mediatek.com>
-> >=20
-> > Before I approve this, can you share the dts that actually uses it?
-> > This many different syscons really does look suspect, and that not
-> > all
-> > of these should be nodes of their own. They may very well be, I would
-> > just like to see what the dts looks like. Doesn't need to be a patch,
-> > a
-> > link to your tree will suffice.
-> >=20
-> > Cheers,
-> > Conor.
-> >=20
-> https://patchwork.kernel.org/project/linux-mediatek/patch/20251111070031.=
-305281-10-jh.hsu@mediatek.com/
-> Please refer to link for mt8189 dts.
+The PLL clocks has changed register setting layout, so introduce a PLLA type.
+Some gate clocks has inverted enable/disable logic which writing 1 to disable,
+while writing 0 to enable.
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-pw-bot: not-applicable
+Signed-off-by: Yixun Lan <dlan@gentoo.org>
+---
+Yixun Lan (4):
+      dt-bindings: soc: spacemit: add k3 syscon compatible
+      clk: spacemit: ccu_mix: add inverted enable gate clock
+      clk: spacemit: ccu_pll: add plla type clock
+      clk: spacemit: k3: add the clock tree
 
---6/aPeWQhkTkgoOqT
-Content-Type: application/pgp-signature; name="signature.asc"
+ .../devicetree/bindings/clock/spacemit,k1-pll.yaml |    9 +-
+ .../bindings/soc/spacemit/spacemit,k1-syscon.yaml  |   13 +-
+ drivers/clk/spacemit/Kconfig                       |    6 +
+ drivers/clk/spacemit/Makefile                      |   11 +-
+ drivers/clk/spacemit/ccu-k3.c                      | 1641 ++++++++++++++++++++
+ drivers/clk/spacemit/ccu_common.h                  |    1 +
+ drivers/clk/spacemit/ccu_mix.c                     |   12 +-
+ drivers/clk/spacemit/ccu_mix.h                     |   12 +
+ drivers/clk/spacemit/ccu_pll.c                     |  117 ++
+ drivers/clk/spacemit/ccu_pll.h                     |   57 +-
+ include/dt-bindings/clock/spacemit,k3-clocks.h     |  390 +++++
+ include/soc/spacemit/ccu.h                         |   18 +
+ include/soc/spacemit/k1-syscon.h                   |   12 +-
+ include/soc/spacemit/k3-syscon.h                   |  273 ++++
+ 14 files changed, 2539 insertions(+), 33 deletions(-)
+---
+base-commit: 7d0a66e4bb9081d75c82ec4957c50034cb0ea449
+change-id: 20251204-k3-clk-db2018389ae3
 
------BEGIN PGP SIGNATURE-----
+Best regards,
+-- 
+Yixun Lan
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaTmg5wAKCRB4tDGHoIJi
-0gQLAQDlf0YH1hYoXc9Bdh1D48xuvf9j1Xm/38X050i72dQjuAEA3Ycuor/nuZxO
-KtGQq2Rg+DlffLIgFceLi1KapRxZVQo=
-=RQBU
------END PGP SIGNATURE-----
-
---6/aPeWQhkTkgoOqT--
