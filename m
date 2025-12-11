@@ -1,85 +1,85 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4A90296BD4
-	for <linux-clk@vger.kernel.org>; Thu, 11 Dec 2025 23:17:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78E7B28B3E7
+	for <linux-clk@vger.kernel.org>; Thu, 11 Dec 2025 23:17:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765495041; cv=none; b=piqsqIQrX3GxmMYUbvW/e9SfDynLsaiCnZZUPdRj83w4o/7M1U/6O+6rcnjHwayEAL7/mSyJJISQTvdlm7oCYrjMfts9YTtgs+KyOUVTSAK/ab2d8JDdOOXJsZ61/ErossgY3rF+ugPxfWCJ2ZVT2aleYyA0S/fQt/fqBYAlzYY=
+	t=1765495050; cv=none; b=I+ANyEBrnONvI1QMOfIJwIpvK5EJjyEJRKVKNkBQa25RIKfjsng/z8FzCJ7kfbv7v/02+efD6B+zepqQ8PhZs1/gvMIbMkcb976fSx+Y5N4bIc4rp6ef1wbNSOUkxX9XvOeY0FZZECwb7WbAclL/wrWl7+u9JCvH8RiPTCeaPqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765495041; c=relaxed/simple;
-	bh=vrNhEauHRQ5KoNoMMi9AesnXBPWl/Gp5yOh2A0W6gms=;
+	s=arc-20240116; t=1765495050; c=relaxed/simple;
+	bh=nor1PtsS8pW+dX0xsLXLZpeucCjaBZDzA44P1ujZuN4=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=DNvXJK4HXzUccsJ3yeF1drGMXbq9jqblRIptGn1R/wmGjgRPxdd648IYpQYuHplUBW5PGZxkKr4CzsKZoPShLZif80At09mAfbUDBikf0jH7cGpm2c53g6fpkqG5bzwOsjAkZiZznxXPVCxmnyYcsjXWc07aDKkgswnyZsRSYmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UE7T4vvd; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=eOxGX7e6; arc=none smtp.client-ip=170.10.129.124
+	 In-Reply-To:To:Cc; b=FmC/36X5pAYp1ySoP+FC7msBLPU/JE3p0tvjvSsRpua3OhbdE9UslG57VPdwxcf8QDfAMIhTOTMFiL2tiM43zB0H6uWYnxGjkGTFo/DLfILVpr/WP/+zIIBvw6kT779UEknNNWc9YvJPc37kiYuqyBJstLNbabySwwY6wPs0/Ck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dES7AK1D; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=mGVQskGr; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UE7T4vvd";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="eOxGX7e6"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dES7AK1D";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="mGVQskGr"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1765495038;
+	s=mimecast20190719; t=1765495046;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=rPuKV99ifsoh5aqHZAAkYRvR+Rf4lIg7BWEssu/CiJ8=;
-	b=UE7T4vvd4jnngGbwNuAxSpw2up4+Rbh0NRtdnvSDt2wbzWenEKwwJo0LXlf2V/529q4zq/
-	Iv+89Qu41dBXEbj5aIw1+P0mPURJ6wOj0owV9xvFiKAoLII2n4ySYa+rRA/NmYYLKM971R
-	JCBtWhlXbOx3ekYv5YkS+RzRW0Bb34o=
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
- [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=UOBVKGehGZ1UeiGLBGWzyHphkl52SdXlMLeqrDHm0DQ=;
+	b=dES7AK1D8quNL4YrWGRRSaqET+654A4m0np0a5cCdNxj02F879+HhAbgI52bimzhNy3twj
+	19v+wMNQdT9ziP4NpKrdrRoUpzd6CBqIcA3c3gXi7xH314DyMBnokHybXGM6/jEaY0gVR+
+	QupuOiNN0rrJLGiaurhFxqA7jn9Xaeo=
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
+ [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-295-SIONlSjNPS6N1Xj1noesLQ-1; Thu, 11 Dec 2025 18:17:17 -0500
-X-MC-Unique: SIONlSjNPS6N1Xj1noesLQ-1
-X-Mimecast-MFC-AGG-ID: SIONlSjNPS6N1Xj1noesLQ_1765495037
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-8b22d590227so105132085a.1
-        for <linux-clk@vger.kernel.org>; Thu, 11 Dec 2025 15:17:17 -0800 (PST)
+ us-mta-448-gMXzTq_9PxSWnCaLzAEBzg-1; Thu, 11 Dec 2025 18:17:24 -0500
+X-MC-Unique: gMXzTq_9PxSWnCaLzAEBzg-1
+X-Mimecast-MFC-AGG-ID: gMXzTq_9PxSWnCaLzAEBzg_1765495044
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-8b9ff555d2dso162811785a.0
+        for <linux-clk@vger.kernel.org>; Thu, 11 Dec 2025 15:17:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1765495037; x=1766099837; darn=vger.kernel.org;
+        d=redhat.com; s=google; t=1765495043; x=1766099843; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=rPuKV99ifsoh5aqHZAAkYRvR+Rf4lIg7BWEssu/CiJ8=;
-        b=eOxGX7e6L76JO40H/C6OeHjqmlkfZ4fEc/5fTo6HfDqhPlBuLt/ozOUNvPlckZWUyi
-         hmitvpPYeZtF7i9XEu8w973o8DygX4WIRADYfO4/DWNpIbi9sAyzYP+ByqDKq6Fza/b0
-         yBJwqhA4y67Whc5pXHvsR2LUyo8/gDlW25Nn4mVC4eUXFmt1iwxjpnzPakrAgLlJGNtf
-         SF5RiEIQB+7mMBdGjdZihg8N22MEwaDLwRop7637kHM/EDxK9A9KcTFLJUQPU0iYrFFP
-         se7J7LboU/P1K4RsZH9Sn3xcjbwwh0+dM8fBvHsoNjJYb22UjcYcxHpStl1QzXj472vr
-         OrnA==
+        bh=UOBVKGehGZ1UeiGLBGWzyHphkl52SdXlMLeqrDHm0DQ=;
+        b=mGVQskGr2dWaFZ8FiuqvEW1THmqQ9VYMkCCuwvuFjXQCOIN76Sra6mtKO9eifRrDfT
+         oNIjol5D9neXID6rJenZ/Csrgso+NtK7NAYxqmEmwI55k3QYNK1iHZKFq8KxSZ3NlpHG
+         38T5Pv04RGr1HGBTufG4more5l80uTIWQ7SLElSzAE4ae/H01PMEEubYb036vE79WNOK
+         Zp5yl2La7eEhNDFSyKnExuQtjE8mClPog1RU6AnyNkS2GxLzQW1vMvRliBtPj46f6do0
+         dICZn9pBNlkNv2orxU9YoS1MsL8pgUbVr+3fv3w74Rxns5gJouqDvSOproi/mNjo/cLs
+         +TxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765495037; x=1766099837;
+        d=1e100.net; s=20230601; t=1765495044; x=1766099844;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=rPuKV99ifsoh5aqHZAAkYRvR+Rf4lIg7BWEssu/CiJ8=;
-        b=Vd60P00BVtv8U53pQbh/HdTM+RKxAiisZH7lvU7HLIinmCV1Hp6pm4k0Vtk+f8IGiA
-         y7FS7IyfBNa1hwj2Fc8s9b8DpWP+f/K9848ycRYMzmDgDx7bDHC4ckBaNAfk2TPso/J+
-         BM59v3B4AAKCWlLhxyi40gIDKWHSinvjYLda1id6IwCa7OgSl/oBmrpPQeMmOjlEQBVK
-         Z6dQ3FiSDAn9LCcXdW8Lk7N/QJhQRo1FqzO9tnjLIw5VG4n4TpL7GSjU3QDrZoEvo5HM
-         9aY3K9G/KQdjxn4BXHV/zp4tYAlsUMpSOTvHO0W+5V20LRNVzzS7DXzQ+LgEwBOUmeXx
-         j5JA==
-X-Gm-Message-State: AOJu0Yy3KKqztT97rUcqH/z2SCQOfJpXL0KPMWq/pY1tULeSbKbkR9jJ
-	nIFFF4bSAQzqNc5A2zMB2YG8SoN4IFqc1YkeqmMa3REWF68b/vOcJ8Oixez5DVu+rq7l/6jdoN+
-	cpW3HR8XjQOlI/TNKi1pfp+SwB6uqtYcsMn923ocXB3PcOGrv4ye0BiRsW4s6UA==
-X-Gm-Gg: AY/fxX40u/uG4TB85eveZDA6UPtRJraU6QDNxEYrJELUh5Bt4P8oqunCfG0vRGwLwyc
-	GYhtHeEDzis8S+lWQFKtC+gwyNe8n87DKXDvoIc9ijuXqpBsVoS4nygTzV1uYI3Ln5FbyZV7WdV
-	cAhhMaUmtMuo99g9RcLf/dIJ11xLfMdBUEoeUx5dRqY3z3mdrlyc0+n7rff98Dv3WyCrEslEO6s
-	3dKm7nLzkCIRPWBTjULzcB9TpEZYw2U1stPwSPEwVrKy/Os/JGyfV3scfV//0vTMtxwOcH8Rqxy
-	QiJBxIafnRe3vJJKDnGBpN1BYJ5sr7c3gLVx5F9zJrXHOQlExx8pFILNh92FBxO0WjGWj6iMbRf
-	hWXGVXbKyZCgmzJpe7DypT0Iq2L0OQ4xr8ngOh4Ra1HgI5NtTm8c8AQ==
-X-Received: by 2002:a05:620a:711b:b0:8b2:6ac5:bce1 with SMTP id af79cd13be357-8bb3a248c9cmr37437485a.52.1765495037262;
-        Thu, 11 Dec 2025 15:17:17 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGb7AhIjE8zPjDhJfU8aDdJaYDnutBjCMxlmV9mYKDpi24B9muU+pgkYMBUg4HwaDmRYFGfZQ==
-X-Received: by 2002:a05:620a:711b:b0:8b2:6ac5:bce1 with SMTP id af79cd13be357-8bb3a248c9cmr37431985a.52.1765495036753;
-        Thu, 11 Dec 2025 15:17:16 -0800 (PST)
+        bh=UOBVKGehGZ1UeiGLBGWzyHphkl52SdXlMLeqrDHm0DQ=;
+        b=JyiaAnT1nWjU4D9jLrYhgTaYkgkcauor+0SRTBerJOtkCjiT8OP3DHC8jtNpCBImmj
+         fUpDcyiXsHoLG/y1oSEduQkyoTZvjsho1VA6DHqrGaEyat0Perv4oPYV++YZYrEb5QQg
+         rnp653FC/GcgeGSD4Y39YYt0ERsuDZf6VqHQ/RGjqog7lqaTUj+wUTLRdqbHHHDeQqPq
+         cdSbO2c5gXR1I6xQxGFw03zQrDkETCCxO4FqzSG6O0UR1p59nFOh1lU/XFY7hHQrlJq8
+         QnnqFti6+jDXHz7mpBPYzS0jeU8LHVqEEImUfDACwWYt6DPzjZkfbO5s9cHCTwkFHe0J
+         RD+w==
+X-Gm-Message-State: AOJu0Yx71VmUCRbLRAb86TmUOSpaF3DBvfAhRT2RihsQuHYRHiclI8p9
+	VXUHEEweYlubTvXSWemfr1pgN09mMo5sQUEBUM3uR4bHY17wPZGVzedEB2D+d1kJejRKlXI/BPl
+	JnwuBNebv/1im+INUfbBwsRCrxGTGkt4Pxk0yF3nOUsus1HPUf7u1SbnhLl/gEw==
+X-Gm-Gg: AY/fxX72dZrc/DuzwEZxCazfWdRxeufBxJsPhLRrpy6gYFLO0uC8sJPOWfDZNc0ODFO
+	hNHXYp8ZpvBNJvltdJJszq20fUmCfBz7SI3SUAuP3VnvEPE/1OTZRpwZFfaY/wv9iCW9JeNhew3
+	NMjKhUHTLsjczQCLCh2S08BnAID35nc2HgjbCAXlp5fM3OzKVunThB78XPL4bWhgofdD+hdxN1U
+	TiNho1DE7cPzgG6eCHojo0eIyoMhQ+QJ3idvjFDr31RKKV7TBNshNwH1GuNqaSS5aFMLhEzioWu
+	fZHWXNjvUV8+r1WIqDQApN97JXxbJt+LGleiYVPibpc0+NcUZwzCkt29ycpHfj3OVLCajxxJYUX
+	zUU6yqrjaIRsuXPqZjetJbFWtlj+qhexrmG07rv2ehPGbpfP1ziJxlw==
+X-Received: by 2002:a05:620a:4402:b0:8b2:d56a:f2f3 with SMTP id af79cd13be357-8bb3a39ef0amr29575585a.87.1765495043605;
+        Thu, 11 Dec 2025 15:17:23 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFEKudoWCpFXTWryHiRn7BIWdpxq1jIr+pxWiYKNOGd1R/M6vLU3ldrF09g/tRZdBf2bnSeqw==
+X-Received: by 2002:a05:620a:4402:b0:8b2:d56a:f2f3 with SMTP id af79cd13be357-8bb3a39ef0amr29572785a.87.1765495043242;
+        Thu, 11 Dec 2025 15:17:23 -0800 (PST)
 Received: from [192.168.101.129] (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8bab5d4edbasm317873585a.51.2025.12.11.15.17.10
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8bab5d4edbasm317873585a.51.2025.12.11.15.17.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Dec 2025 15:17:16 -0800 (PST)
+        Thu, 11 Dec 2025 15:17:22 -0800 (PST)
 From: Brian Masney <bmasney@redhat.com>
-Date: Fri, 12 Dec 2025 08:16:23 +0900
-Subject: [PATCH v3 5/9] phy: mediatek: phy-mtk-mipi-dsi-mt8173: convert
+Date: Fri, 12 Dec 2025 08:16:24 +0900
+Subject: [PATCH v3 6/9] phy: mediatek: phy-mtk-mipi-dsi-mt8183: convert
  from round_rate() to determine_rate()
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -89,7 +89,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251212-phy-clk-round-rate-v3-5-beae3962f767@redhat.com>
+Message-Id: <20251212-phy-clk-round-rate-v3-6-beae3962f767@redhat.com>
 References: <20251212-phy-clk-round-rate-v3-0-beae3962f767@redhat.com>
 In-Reply-To: <20251212-phy-clk-round-rate-v3-0-beae3962f767@redhat.com>
 To: Vinod Koul <vkoul@kernel.org>, 
@@ -107,13 +107,13 @@ Cc: linux-clk@vger.kernel.org, linux-phy@lists.infradead.org,
  linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
  linux-rockchip@lists.infradead.org, Brian Masney <bmasney@redhat.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1519; i=bmasney@redhat.com;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1507; i=bmasney@redhat.com;
  s=20250903; h=from:subject:message-id;
- bh=vrNhEauHRQ5KoNoMMi9AesnXBPWl/Gp5yOh2A0W6gms=;
- b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGDKtAy4JBrssMboevWX54tAvj//eOnz+u+ekf63rRB59E
- 46P+ym1raOUhUGMi0FWTJFlSa5RQUTqKtt7dzRZYOawMoEMYeDiFICJ7JRhZHhdsj5E7aTq9jcO
- T97sYPf+/rX4c86W8toYzZ7TW7mNTd4zMqwJ9ZdIXKvRpntlr1TQhxi7aRs/WWw1fXTt7j6W+l6
- mubwA
+ bh=nor1PtsS8pW+dX0xsLXLZpeucCjaBZDzA44P1ujZuN4=;
+ b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGDKtAy5JPn9olfEuTvvj3tw1GWwBGU+VG8TbX8XtsrQ1s
+ d435bd/RykLgxgXg6yYIsuSXKOCiNRVtvfuaLLAzGFlAhnCwMUpABNxyWdkaGhpmnjR5MTRYrET
+ y9b6nJrZlTA1uHYXU6Dd9BPilnsqrjAyzK5fnHRCReH6NOn5sVMKMza551xlcVQ5G3RQ+MnShfx
+ 2DAA=
 X-Developer-Key: i=bmasney@redhat.com; a=openpgp;
  fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
 
@@ -123,15 +123,15 @@ on the cover letter of this series.
 
 Signed-off-by: Brian Masney <bmasney@redhat.com>
 ---
- drivers/phy/mediatek/phy-mtk-mipi-dsi-mt8173.c | 10 ++++++----
+ drivers/phy/mediatek/phy-mtk-mipi-dsi-mt8183.c | 10 ++++++----
  1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/phy/mediatek/phy-mtk-mipi-dsi-mt8173.c b/drivers/phy/mediatek/phy-mtk-mipi-dsi-mt8173.c
-index 673cb0f08959e0e4f2b1ade2ebaf796e8b76f8bc..438ff3605d90121b7bfe02b3ddca8194437ed9ba 100644
---- a/drivers/phy/mediatek/phy-mtk-mipi-dsi-mt8173.c
-+++ b/drivers/phy/mediatek/phy-mtk-mipi-dsi-mt8173.c
-@@ -237,16 +237,18 @@ static void mtk_mipi_tx_pll_unprepare(struct clk_hw *hw)
- 	mtk_phy_clear_bits(base + MIPITX_DSI_PLL_CON0, RG_DSI_MPPLL_DIV_MSK);
+diff --git a/drivers/phy/mediatek/phy-mtk-mipi-dsi-mt8183.c b/drivers/phy/mediatek/phy-mtk-mipi-dsi-mt8183.c
+index 553725e1269c9d7ad88f89367dfa1cf367aaf1ce..a54d44ef70ab49937d210f04fdf42300e8e5f2de 100644
+--- a/drivers/phy/mediatek/phy-mtk-mipi-dsi-mt8183.c
++++ b/drivers/phy/mediatek/phy-mtk-mipi-dsi-mt8183.c
+@@ -97,16 +97,18 @@ static void mtk_mipi_tx_pll_disable(struct clk_hw *hw)
+ 	mtk_phy_clear_bits(base + MIPITX_PLL_PWR, AD_DSI_PLL_SDM_PWR_ON);
  }
  
 -static long mtk_mipi_tx_pll_round_rate(struct clk_hw *hw, unsigned long rate,
@@ -139,15 +139,15 @@ index 673cb0f08959e0e4f2b1ade2ebaf796e8b76f8bc..438ff3605d90121b7bfe02b3ddca8194
 +static int mtk_mipi_tx_pll_determine_rate(struct clk_hw *hw,
 +					  struct clk_rate_request *req)
  {
--	return clamp_val(rate, 50000000, 1250000000);
-+	req->rate = clamp_val(req->rate, 50000000, 1250000000);
+-	return clamp_val(rate, 125000000, 1600000000);
++	req->rate = clamp_val(req->rate, 125000000, 1600000000);
 +
 +	return 0;
  }
  
  static const struct clk_ops mtk_mipi_tx_pll_ops = {
- 	.prepare = mtk_mipi_tx_pll_prepare,
- 	.unprepare = mtk_mipi_tx_pll_unprepare,
+ 	.enable = mtk_mipi_tx_pll_enable,
+ 	.disable = mtk_mipi_tx_pll_disable,
 -	.round_rate = mtk_mipi_tx_pll_round_rate,
 +	.determine_rate = mtk_mipi_tx_pll_determine_rate,
  	.set_rate = mtk_mipi_tx_pll_set_rate,
