@@ -1,38 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD3722FE567;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD2D62FE061;
 	Fri, 12 Dec 2025 23:08:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765580902; cv=none; b=buK0PKFsZ+8GZskCS4Gq/ANSIy3rE942I0NXQAZ500wCFsPaZ4CCwYvpJH3lmo+uU2EQ3gy7qoaVWFPx8DCy/D3AXhDQXmSyWKK8wTONkURvbaRRBvtunB1tj7Y1W4wuh5v4bQFKmIDfnfOBax7wGbL9iKYUf6SvmnoPne0jee0=
+	t=1765580902; cv=none; b=pWqggETKGgXwi16CZOrDej0b5OICMklHrkzMR7Or2sPcKFI4rhSnMaCi8b6oypvMRivV0x9eOvtPaLSKW+BYpcGOqYpbnXVKHqCG/tB8YJ9udPeprOHzaKdZbg9mVlMOsmvAVNfz2DT3XUzYEm62h+7yLJG+uofSPv4Duyslu9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1765580902; c=relaxed/simple;
-	bh=t/gPYURpCIZBNgfRI56GeCxQSBGj8q9bKnexQg5Wajc=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=G0bHluphOEJtSFlFNx2CzI4hGQoBKDA3j5YOMzzTW97sI0+JqzbbV4QLegES/23OSeRwMoce3AbOCNLtlqhXc8sifkNnIO78HwI/iVXgsnA4pPKYe8zZLjxA9L5MLG5yEqMZqYOwkJ/HcJPqwJlzRBVSSWGgdRDHpS98pOE8Lk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AHT1nYkC; arc=none smtp.client-ip=10.30.226.201
+	bh=P4YcGCk8qYvmUcD/gYkROZWf22LTLSC5QlmdG/yvtDM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=pUS5DK0j0laM4p5nktaKV6S4k3N7892usfjFvhVNqeXLOuBeOQze1NuDN+5Mt1Dm9ID9c2sm26H80msPkV76M9NU+7Guk3kKBxR3w9ad+dR6HsPV//et60BK5g9lEfajG7pqL6CQOSKBUzkz0tD2/ZC1r/REZ6yLaNMVyPnVwzg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TuZYf3Ox; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AHT1nYkC"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 4961DC4CEF1;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TuZYf3Ox"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 672DCC16AAE;
 	Fri, 12 Dec 2025 23:08:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1765580902;
-	bh=t/gPYURpCIZBNgfRI56GeCxQSBGj8q9bKnexQg5Wajc=;
-	h=From:Subject:Date:To:Cc:Reply-To:From;
-	b=AHT1nYkCOCkFFJXCm0HxYFzzDULfbsMBjoRUJWc6Xdm3mh17veX4GN/F6ZkalhTdx
-	 UFmSfqGkOlgj1N2UYYMJFBbkTOtW9cK50VIrveqYhlx5rMQKBGQyQTipsw5OsgPocG
-	 Vw2UeHO8m4o3Ft5mFVl5felqbJSru44bpR9TZpKb7SxyPdQEHCWvDvv+JbTRSFBrxa
-	 MIcAboUoS6SBJyCn5d/suvovQk5zRjzTigba6U40gfeX9tsOYzuhomqzC3lk3kkqA7
-	 1Krt3r5eWF1+KOomzDV74yy90qTMByLYGoY3AGeJ2DnbYjBHArFlDMnTTWxl3a1gE+
-	 ZS4bwsW61MCTA==
+	bh=P4YcGCk8qYvmUcD/gYkROZWf22LTLSC5QlmdG/yvtDM=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=TuZYf3Oxebod+hoE9hm5BHHAPVP29El+WtO8uIrkbY14iw+hKFtvsCnH/pebvncC3
+	 337E2e8Rp0maBQiuksa9TVrUgZChXSTdR4vtsEtRgx7cDWZWDukfT5XiwhVm96RB1x
+	 pUsnUJA1xxh3+U8S52clz/F2qNMqOIrBuY2UaT5/2idEOUB+VrbyWkea2BQQi4n0gI
+	 0sepGaJS3dwdRyFqWgU0mw+3CgdYGwR3R1keknproJAj10pTAkjAS9RwdrbhG8EIXY
+	 XNAZmU5lvYBcDss9/bApzA7323zv3Cudvcns145sELSrSbw12RjgvPUQacyzUyqlS6
+	 WzGwDtH6TvHew==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38C3DD59F52;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A0F2D59F5B;
 	Fri, 12 Dec 2025 23:08:22 +0000 (UTC)
 From: David Heidelberg via B4 Relay <devnull+david.ixit.cz@kernel.org>
-Subject: [PATCH 0/2] Addressing stability issues on SDM845 with the -next
- tree
-Date: Sat, 13 Dec 2025 00:08:15 +0100
-Message-Id: <20251213-stability-discussion-v1-0-b25df8453526@ixit.cz>
+Date: Sat, 13 Dec 2025 00:08:17 +0100
+Subject: [PATCH 2/2] clk: qcom: rcg2, msm/dsi: Fix hangs caused by register
+ writes while clocks are off
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -41,10 +41,9 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAF+gPGkC/x2MQQqAIBAAvxJ7TsiFhPpKdDDdaiEqXIsi/HvWc
- WBmHhAKTAJt8UCgk4W3NYMuC3CzXSdS7DMDVlhr1Kgk2oEXjrfyLO6QL1Bem9FYl42qgZzugUa
- +/m3Xp/QC2Q9zMmYAAAA=
-X-Change-ID: 20251212-stability-discussion-d16f6ac51209
+Message-Id: <20251213-stability-discussion-v1-2-b25df8453526@ixit.cz>
+References: <20251213-stability-discussion-v1-0-b25df8453526@ixit.cz>
+In-Reply-To: <20251213-stability-discussion-v1-0-b25df8453526@ixit.cz>
 To: Rob Clark <robin.clark@oss.qualcomm.com>, 
  Dmitry Baryshkov <lumag@kernel.org>, 
  Abhinav Kumar <abhinav.kumar@linux.dev>, 
@@ -59,59 +58,114 @@ Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
  linux-clk@vger.kernel.org, phone-devel@vger.kernel.org, 
  David Heidelberg <david@ixit.cz>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1233; i=david@ixit.cz;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2764; i=david@ixit.cz;
  h=from:subject:message-id;
- bh=t/gPYURpCIZBNgfRI56GeCxQSBGj8q9bKnexQg5Wajc=;
- b=owEBbQKS/ZANAwAIAWACP8TTSSByAcsmYgBpPKBkB2JjOkLEDvLoj+opcqGrxXdDaMtPpKgXR
- tIhrpqt6CKJAjMEAAEIAB0WIQTXegnP7twrvVOnBHRgAj/E00kgcgUCaTygZAAKCRBgAj/E00kg
- ciasEAC8eJf5uz/aiExjP/zuDTvmZ+Q/9/jQZ/uI9bGKZSexHfyJu4YMqro6ZTVo3SzDg3SWTaF
- 24OWJcbC/P8DY7hVRrfin2Z/mA00+pd1IJ6G2i4FSQDpaDn9BPIfNiJdkTNGgii8yB7eNnFXwBj
- UrtDPm2bKMP3mSJS3NpCkUQ54HbNPvqoNJO4lG/b2tJBfE/HxZMEiLUaB+jsMhu3v2FNDfFkt0m
- Xph3VXqtYaPX01DE4jCxKf1dCtCWwbtzvwH2vX86sNcjzX4vm6FaBlUAI5Wpp67HTy2DlidGRU4
- Ncb0Uorh8heu/IwqgEx6ddqdJCVaRkQruZWbmlGIE5wcEBRt6Om1BN4JCJfZeqrNNp24GofJSKj
- GpQz4OdFzDYdT8FWrrLI+001CMvZlvb+gV4FwJ1yw+CprB5KzVXtAN/MJOtvD4h44gs8hiM2eKa
- X73+CfPOmkquTopYj+osYkXWDtt63O+HQAvzhuSsUlZr7kMQiQ1rLFErxAOYhj08s8mG4VpLfSQ
- fznB/LyXN+uRb+833vcA3rqgJVhU5HSahR/xtxDSB9iONwR8CQ2aIG6nivPw3Mx7TnUR55OVWkZ
- e9TxEJVwNsa5NHxWrokz8tmE1Mt8pzh0PZy5J0oVZEdimPfgRysNP8JVLxOQvFiLQ/LosNkGUNA
- y1iP73Gps7znU+Q==
+ bh=3WwuH3iPdckITDVjZS20u/lAh5Ab6avBlAX4H4KQQAc=;
+ b=owEBbQKS/ZANAwAIAWACP8TTSSByAcsmYgBpPKBkj9yTavobap8/tJezp4SUEdEk/oBwh1Cov
+ RLrk4Pd4CeJAjMEAAEIAB0WIQTXegnP7twrvVOnBHRgAj/E00kgcgUCaTygZAAKCRBgAj/E00kg
+ cnVqD/4rWYHL9WIoDWye5vQFhBRdRw7fJ7l4Giq25T5Cw+lf79JsiHY3TsLlJDN2jenM3MYKyjV
+ 6mwzr/QnRJEr21FniGTvu1PNK+5Zbu8szUBWbq4IZWJXvhFjLBaScSlnU3H+NusFgNguruc1CVo
+ EB7y3eUU4+JwAkxkDJoOKV/+gHthhorJVlmW2P0JFFanF0KLnic2KgNTbiUrAdroT7hpe7eVWa9
+ uKXV1uci7Lq5zPEw5vYjmMzx+trXm6hYGAMfa3CmIfcjyCOU2Xo4VYVxfStnz9s3nI8R4NrbrsY
+ PYA1gueBL7qfoNqKi2zsCtphlRQnLi4hU1av04XqGHhu3Ftnxwa4bDxIrQ2NeBvhN/MeyrBvur3
+ bt8f4mcxRQLI2ZowkhHTsRTNKzVXI+nXjAdQsWHIMg5BPaep5gWw/GauulMoen40cANCwH/pln/
+ b6NDjv4yzodo5ImSbfjWk9I2+SqgakVeKzaN4TQEJ3NE0S2HwVl09rwBGSoccNiJfYxwOh+cZ9/
+ SXdU+dWNrH+WeM1tAuhbKx2cBQm18RzGZQmYB0HlGz/XoZ8Sekg2v3XbHrSf5qAADpJJbJ63odu
+ JWNVCspHBAA6AbWaJo+AqhmwMVAKt87x+/Rn8We28yCRHEruimKOdepS8KLUt3mFkTfKkPEQ4Bs
+ joLia2cIgFjt10w==
 X-Developer-Key: i=david@ixit.cz; a=openpgp;
  fpr=D77A09CFEEDC2BBD53A7047460023FC4D3492072
 X-Endpoint-Received: by B4 Relay for david@ixit.cz/default with auth_id=355
 X-Original-From: David Heidelberg <david@ixit.cz>
 Reply-To: david@ixit.cz
 
-We are currently running the latest linux-next snapshots (next-202511*
-and next-202512*) and have encountered random freezes and crashes on the
-Pixel 3, as well as crash dumps on the OnePlus 6 and 6T.
+From: Petr Hodina <petr.hodina@protonmail.com>
 
-The two commits included below appear to fix, or at least work around,
-the issues in our testing. We assume, however, that the underlying root
-cause may still be unresolved.
+This patch fixes system hangs that occur when RCG2 and DSI code paths
+perform register accesses while the associated clocks or power domains
+are disabled.
 
-We would appreciate any guidance on how best to proceed, or confirmation
-that these patches are sufficient to move forward.
+For the Qualcomm RCG2 clock driver, updating M/N/D registers while the
+clock is gated can cause the hardware to lock up. Avoid toggling the
+update bit when the clock is disabled and instead write the configuration
+directly.
 
-Thank you for your time and assistance.
-
-Kind regards,
-David and Petr
-
+Signed-off-by: Petr Hodina <petr.hodina@protonmail.com>
 Signed-off-by: David Heidelberg <david@ixit.cz>
 ---
-Petr Hodina (2):
-      drm/msm/dpu: Add NULL pointer check in dpu_crtc_duplicate_state()
-      clk: qcom: rcg2, msm/dsi: Fix hangs caused by register writes while clocks are off
+ drivers/clk/qcom/clk-rcg2.c        | 18 ++++++++++++++++++
+ drivers/gpu/drm/msm/dsi/dsi_host.c | 13 +++++++++++++
+ 2 files changed, 31 insertions(+)
 
- drivers/clk/qcom/clk-rcg2.c              | 18 ++++++++++++++++++
- drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c |  7 ++++++-
- drivers/gpu/drm/msm/dsi/dsi_host.c       | 13 +++++++++++++
- 3 files changed, 37 insertions(+), 1 deletion(-)
----
-base-commit: d9771d0dbe18dd643760431870a6abf9b0866bb0
-change-id: 20251212-stability-discussion-d16f6ac51209
+diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+index e18cb8807d735..a18d2b9319670 100644
+--- a/drivers/clk/qcom/clk-rcg2.c
++++ b/drivers/clk/qcom/clk-rcg2.c
+@@ -1182,6 +1182,24 @@ static int clk_pixel_set_rate(struct clk_hw *hw, unsigned long rate,
+ 		f.m = frac->num;
+ 		f.n = frac->den;
+ 
++		/*
++		 * If clock is disabled, update the M, N and D registers and
++		 * don't hit the update bit.
++		 */
++		if (!clk_hw_is_enabled(hw)) {
++			int ret;
++
++			ret = regmap_read(rcg->clkr.regmap, RCG_CFG_OFFSET(rcg), &cfg);
++			if (ret)
++				return ret;
++
++			ret = __clk_rcg2_configure(rcg, &f, &cfg);
++			if (ret)
++				return ret;
++
++			return regmap_write(rcg->clkr.regmap, RCG_CFG_OFFSET(rcg), cfg);
++		}
++
+ 		return clk_rcg2_configure(rcg, &f);
+ 	}
+ 	return -EINVAL;
+diff --git a/drivers/gpu/drm/msm/dsi/dsi_host.c b/drivers/gpu/drm/msm/dsi/dsi_host.c
+index e0de545d40775..374ed966e960b 100644
+--- a/drivers/gpu/drm/msm/dsi/dsi_host.c
++++ b/drivers/gpu/drm/msm/dsi/dsi_host.c
+@@ -762,6 +762,12 @@ dsi_get_cmd_fmt(const enum mipi_dsi_pixel_format mipi_fmt)
+ 
+ static void dsi_ctrl_disable(struct msm_dsi_host *msm_host)
+ {
++	/* Check if we're already powered off before writing registers */
++	if (!msm_host->power_on) {
++		pr_info("DSI CTRL: Skipping register write - host already powered off\n");
++		return;
++	}
++
+ 	dsi_write(msm_host, REG_DSI_CTRL, 0);
+ }
+ 
+@@ -2489,6 +2495,8 @@ int msm_dsi_host_power_off(struct mipi_dsi_host *host)
+ {
+ 	struct msm_dsi_host *msm_host = to_msm_dsi_host(host);
+ 	const struct msm_dsi_cfg_handler *cfg_hnd = msm_host->cfg_hnd;
++	int ret;
++
+ 
+ 	mutex_lock(&msm_host->dev_mutex);
+ 	if (!msm_host->power_on) {
+@@ -2496,6 +2504,11 @@ int msm_dsi_host_power_off(struct mipi_dsi_host *host)
+ 		goto unlock_ret;
+ 	}
+ 
++	/* Ensure clocks are enabled before register access */
++	ret = pm_runtime_get_sync(&msm_host->pdev->dev);
++	if (ret < 0)
++		pm_runtime_put_noidle(&msm_host->pdev->dev);
++
+ 	dsi_ctrl_disable(msm_host);
+ 
+ 	pinctrl_pm_select_sleep_state(&msm_host->pdev->dev);
 
-Best regards,
 -- 
-David Heidelberg <david@ixit.cz>
+2.51.0
 
 
