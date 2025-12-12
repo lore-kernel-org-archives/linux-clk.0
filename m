@@ -1,321 +1,1171 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-sh.amlogic.com (unknown [114.94.151.114])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D705F281508
-	for <linux-clk@vger.kernel.org>; Thu, 11 Dec 2025 23:42:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BEE2274B2E;
+	Fri, 12 Dec 2025 02:27:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.94.151.114
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765496569; cv=none; b=Z0I8Mo8DHIWbB1qEbetpmIALXYY2Qk76137Y0LOYN0+CM4QgFNi+X3Hby6N2e6OGEcQyr87WuZgV59+JzUqA6wc4zpWM+qJISgVp0NXWY6/UA4R+xa/L3tbdLdZtHWgr8y1OHWsrlQMupgeOtPdzyZ9IBvA5qW/9jG8AFWpdGzA=
+	t=1765506458; cv=none; b=Qfd+TyRXKlxdFvWUcwk2hqH1K3SVgeA6XAj7yUSGToE2si3eQTW9BXe+2G2cOy51gEQoMK5EosETpgE28nKC1s+xN4I4ouWupfB0oyExb8d8Lh5KgEsvh2H9q9mVve1xL1+P2Uzhy0BGwqxz+DmP4whjY2cUwkTOcM+Ptqo8hYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765496569; c=relaxed/simple;
-	bh=Ih9wCYsTB/Pc16jR/dvvroC+fpz/z+qOgLubxgOuVK4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Q66H9/w4Sz2OAYQkbXyrRu/FvcrtYuX8uH+mhdsmXAPLA7VtOeECNBQfC5+HVFXDSMO9TrYYRR6aSE/LIyJ8Wemo4vklF19i77+TRXDtQTC8G90m3rF1xrnplb1n/Zi5XalUswnYC7Fobj/2u5GKgFKVpKjQEJ6iyMJnbrc/PjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ajYnLUE9; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=B70Ei6Fm; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ajYnLUE9";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="B70Ei6Fm"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1765496566;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9GKBhFvbcI606yEMZFba/2jQl9vAZ7vYvocubB3FnYQ=;
-	b=ajYnLUE93GOak89PJUnmTgAOK8o/S/fgeS89ZPOX3pHZXn2h2i0cMY8S/z5KjNxtqJ7q//
-	LFNriNwB0rMEqMCKBMheoiitR+200JQPuvjMWD9UAqHkSuzf5M3aJfe0i7m50K4Vplw4SO
-	33GrOmqtqwDhZCv2jmlcU9IdW0Xn6Hg=
-Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com
- [209.85.214.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-140-SoZsI77MN_6EqEsQ-P9PHQ-1; Thu, 11 Dec 2025 18:42:45 -0500
-X-MC-Unique: SoZsI77MN_6EqEsQ-P9PHQ-1
-X-Mimecast-MFC-AGG-ID: SoZsI77MN_6EqEsQ-P9PHQ_1765496565
-Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-29efd658fadso12885495ad.0
-        for <linux-clk@vger.kernel.org>; Thu, 11 Dec 2025 15:42:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1765496561; x=1766101361; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9GKBhFvbcI606yEMZFba/2jQl9vAZ7vYvocubB3FnYQ=;
-        b=B70Ei6Fm7fH3mA+3s2L68atazaCdX2CmMVcIFUkYQxJBsS5W3tgsVkVH9aa5fJsJ2k
-         Kn6XiTn5sUFYViaeDQSnZVTCwNeOZKj4jHTHyPSreO2NSnKDeoQbNyixvO7THwwAsjTS
-         9kDa62yRJFa7fbpK0bmr7RtXTRvihOQftC+zR6p7Tbzvcd9k/ECX+Dee1Ym9eg+xslFQ
-         FnURSVsJZNr6Utb1LudSDo/u/WKSKINgKLjsD0GuoL/2UnDf6R50Mj0uQm34AJ5OY6zM
-         RgPHhDM6eEVY5na4+QUJOLYJWOKSXe9exilhTztycXo0slZ2kpKYtTwWeVHvYcsyPztd
-         hYjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765496561; x=1766101361;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=9GKBhFvbcI606yEMZFba/2jQl9vAZ7vYvocubB3FnYQ=;
-        b=Ik/tCFQuIJ/bczXy4j6JHmMXCL/VA0gHNhnQbs13G713hv+qooVonDuZgiCjnv+cSH
-         sjDsv3lvgEmCk9+xhVPiJG5r2+tnvxq3FusRNV7OYqncVOO7GNWItq72Mayrc/cvMFTW
-         uB3crhFoy8WKBphiaNFjzLcJrZa3+O6pfMUHXkmGXcB9Veootl8Lvzl0zmiwfNyqA48T
-         LOaQ9tWRBG+MXGI0bTaJacaaHUVcjSUs+LXjZ454GrDTXf6Rl/Oo9vv4GhSz4WhReJVx
-         33Ft1Xk66w1OHFH185lWKtB/ETJgljok7xR3wXcSo3DR7PB0O85s3SVciF9YzkCo22KY
-         q3LA==
-X-Forwarded-Encrypted: i=1; AJvYcCU5EbU6ja48UMQhFTAPX/zZUW4KWg2M43fOueKb4YjIkUXq0FTKq38o5j3XwXMssTFO/ZSOFFXEUPg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YznV2mXeKdny6JwLvlTt5ubOc6KKFdT7QMmsUQBI8h++d9KXANm
-	6lZURlUjR0UrCUot73bIcPBB+2D7lb2Uj/IMYYSdBwvbXx7Xe/8iTEo2LNvCqY93nDtUs1pXZHb
-	sds9fwDH44DHlEyK8k7d7mNXMXUg5EG2C7WdgiXolNY6v+ti1yst1bcxzFuMO4Q==
-X-Gm-Gg: AY/fxX7/D+TVMGvzoWbsvF/i+QxALzD54/22LnheOHitIaDtCwg0/OELeynaitXB7tv
-	oOqIQwvW9DUr+93BPN18O63lTyVhWlsAUx36xn7efPc2uoqtwHQBGjDYHAOrvNDuI5Fe7LBCwaA
-	ohbIJZ5dR6LSH5mLV0GEcEcH9jwa1tP7CI/f1vLvMMXQCxbJuFTOW8pl3n2vbZMRVluahxlIRbJ
-	7ziSdkhLt6JbDEgtRytYRSCdAkZimsYleO2WT6pzXTUSFwoP0oxEozm3pIJCr60U3X+JQwvpNwl
-	9NMcO187grByWVX/PrNvIw1aOU7SUPsv6upIwLXBKnULfL116lQBP4Egop/g6/Dyr56H3lgp7cp
-	fAYaE128cuewX5TMU6TZmB/W72ZPAJ2FEWquYAWC/Gi60HoGbbYU9Uw==
-X-Received: by 2002:a05:701b:2506:b0:11d:fc72:e17f with SMTP id a92af1059eb24-11f34beb468mr201994c88.18.1765496560944;
-        Thu, 11 Dec 2025 15:42:40 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFWbTPegde3SJDmD39k4dPTKiQGShCracrJjHPeU7HNhRaJrE3woOQLP4+L53eZ4gYKS4klhg==
-X-Received: by 2002:a05:701b:2506:b0:11d:fc72:e17f with SMTP id a92af1059eb24-11f34beb468mr201967c88.18.1765496560381;
-        Thu, 11 Dec 2025 15:42:40 -0800 (PST)
-Received: from [192.168.101.129] (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-11f2e304766sm12034395c88.13.2025.12.11.15.42.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Dec 2025 15:42:39 -0800 (PST)
-From: Brian Masney <bmasney@redhat.com>
-Date: Fri, 12 Dec 2025 08:41:42 +0900
-Subject: [PATCH 3/3] clk: remove round_rate() clk ops
+	s=arc-20240116; t=1765506458; c=relaxed/simple;
+	bh=gEfuoWr3Cum6xX41B8kBkTQ1Ud7/Gu74Q9Xfmz3NVPc=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Z6dqaH3PdomCEATezk1Hqsvp/LnONiMz0MbqKUUWnjMVHY/Jh9OxGs8Te8eZEp3bpsXZY5trJX7BZUs9gp27yXuv8IoGczUEFjW6Z9u0hq0TLY79XcZJAHxq/cdy5wfGZ6gaiKAbQqVVDy0LN56vOXjVR9SIyjnei3xwzNbU7BY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; arc=none smtp.client-ip=114.94.151.114
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amlogic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
+Received: from rd03-sz.software.amlogic (10.28.11.121) by mail-sh.amlogic.com
+ (10.18.11.5) with Microsoft SMTP Server id 15.1.2507.61; Fri, 12 Dec 2025
+ 10:26:24 +0800
+From: Jian Hu <jian.hu@amlogic.com>
+To: Jerome Brunet <jbrunet@baylibre.com>, Chuan Liu <chuan.liu@amlogic.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman
+	<khilman@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Michael Turquette
+	<mturquette@baylibre.com>, robh+dt <robh+dt@kernel.org>, Rob Herring
+	<robh@kernel.org>
+CC: Jian Hu <jian.hu@amlogic.com>, devicetree <devicetree@vger.kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>, linux-amlogic
+	<linux-amlogic@lists.infradead.org>, linux-kernel
+	<linux-kernel@vger.kernel.org>, linux-arm-kernel
+	<linux-arm-kernel@lists.infradead.org>
+Subject: [PATCH v7 4/5] clk: meson: t7: add support for the T7 SoC PLL clock
+Date: Fri, 12 Dec 2025 10:26:17 +0800
+Message-ID: <20251212022619.3072132-5-jian.hu@amlogic.com>
+X-Mailer: git-send-email 2.47.1
+In-Reply-To: <20251212022619.3072132-1-jian.hu@amlogic.com>
+References: <20251212022619.3072132-1-jian.hu@amlogic.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251212-clk-remove-round-rate-v1-3-5c3d5f3edc78@redhat.com>
-References: <20251212-clk-remove-round-rate-v1-0-5c3d5f3edc78@redhat.com>
-In-Reply-To: <20251212-clk-remove-round-rate-v1-0-5c3d5f3edc78@redhat.com>
-To: Jonathan Corbet <corbet@lwn.net>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Maxime Ripard <mripard@kernel.org>
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-clk@vger.kernel.org, Brian Masney <bmasney@redhat.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=10244; i=bmasney@redhat.com;
- s=20250903; h=from:subject:message-id;
- bh=Ih9wCYsTB/Pc16jR/dvvroC+fpz/z+qOgLubxgOuVK4=;
- b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGDKtw26uX7v3+D+RF9pMVQ/rA/Pfqj17+my/mFzTzKZpy
- wQCH71521HKwiDGxSArpsiyJNeoICJ1le29O5osMHNYmUCGMHBxCsBEgj0ZGfb5Kvbr9G6vM12x
- p7p859THe38GS6Y/dmf5xyx4VHFx4V9GhltBGhFnb8znf72k9u/MzwGF/strO3l2+gcdcLnL8/e
- LAycA
-X-Developer-Key: i=bmasney@redhat.com; a=openpgp;
- fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-The round_rate() clk ops is deprecated, and all in tree drivers have
-been converted, so let's go ahead and remove any references to the
-round_rate() clk ops.
+Add PLL clock controller driver for the Amlogic T7 SoC family.
 
-Signed-off-by: Brian Masney <bmasney@redhat.com>
+Signed-off-by: Jian Hu <jian.hu@amlogic.com>
 ---
- Documentation/driver-api/clk.rst |  9 +--------
- drivers/clk/clk.c                | 39 ++++++++++++++-------------------------
- include/linux/clk-provider.h     | 18 ++++++------------
- 3 files changed, 21 insertions(+), 45 deletions(-)
+ drivers/clk/meson/Kconfig  |   15 +
+ drivers/clk/meson/Makefile |    1 +
+ drivers/clk/meson/t7-pll.c | 1074 ++++++++++++++++++++++++++++++++++++
+ 3 files changed, 1090 insertions(+)
+ create mode 100644 drivers/clk/meson/t7-pll.c
 
-diff --git a/Documentation/driver-api/clk.rst b/Documentation/driver-api/clk.rst
-index 93bab5336dfda06069eea700d2830089bf3bce03..c6aca8186a7864f77c00feccd68d431303ab01b7 100644
---- a/Documentation/driver-api/clk.rst
-+++ b/Documentation/driver-api/clk.rst
-@@ -77,9 +77,6 @@ the operations defined in clk-provider.h::
- 		void		(*disable_unused)(struct clk_hw *hw);
- 		unsigned long	(*recalc_rate)(struct clk_hw *hw,
- 						unsigned long parent_rate);
--		long		(*round_rate)(struct clk_hw *hw,
--						unsigned long rate,
--						unsigned long *parent_rate);
- 		int		(*determine_rate)(struct clk_hw *hw,
- 						  struct clk_rate_request *req);
- 		int		(*set_parent)(struct clk_hw *hw, u8 index);
-@@ -220,9 +217,7 @@ optional or must be evaluated on a case-by-case basis.
-    +----------------+------+-------------+---------------+-------------+------+
-    |.recalc_rate    |      | y           |               |             |      |
-    +----------------+------+-------------+---------------+-------------+------+
--   |.round_rate     |      | y [1]_      |               |             |      |
--   +----------------+------+-------------+---------------+-------------+------+
--   |.determine_rate |      | y [1]_      |               |             |      |
-+   |.determine_rate |      | y           |               |             |      |
-    +----------------+------+-------------+---------------+-------------+------+
-    |.set_rate       |      | y           |               |             |      |
-    +----------------+------+-------------+---------------+-------------+------+
-@@ -238,8 +233,6 @@ optional or must be evaluated on a case-by-case basis.
-    |.init           |      |             |               |             |      |
-    +----------------+------+-------------+---------------+-------------+------+
- 
--.. [1] either one of round_rate or determine_rate is required.
--
- Finally, register your clock at run-time with a hardware-specific
- registration function.  This function simply populates struct clk_foo's
- data and then passes the common struct clk parameters to the framework
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 85d2f2481acf360f0618a4a382fb51250e9c2fc4..cab715bbe6474451776c95da7e37b24a228a233f 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -1560,8 +1560,6 @@ late_initcall_sync(clk_disable_unused);
- static int clk_core_determine_round_nolock(struct clk_core *core,
- 					   struct clk_rate_request *req)
- {
--	long rate;
--
- 	lockdep_assert_held(&prepare_lock);
- 
- 	if (!core)
-@@ -1591,13 +1589,6 @@ static int clk_core_determine_round_nolock(struct clk_core *core,
- 		req->rate = core->rate;
- 	} else if (core->ops->determine_rate) {
- 		return core->ops->determine_rate(core->hw, req);
--	} else if (core->ops->round_rate) {
--		rate = core->ops->round_rate(core->hw, req->rate,
--					     &req->best_parent_rate);
--		if (rate < 0)
--			return rate;
--
--		req->rate = rate;
- 	} else {
- 		return -EINVAL;
- 	}
-@@ -1682,7 +1673,7 @@ EXPORT_SYMBOL_GPL(clk_hw_forward_rate_request);
- 
- static bool clk_core_can_round(struct clk_core * const core)
- {
--	return core->ops->determine_rate || core->ops->round_rate;
-+	return core->ops->determine_rate;
- }
- 
- static int clk_core_round_rate_nolock(struct clk_core *core,
-@@ -1750,11 +1741,11 @@ EXPORT_SYMBOL_GPL(__clk_determine_rate);
-  * use.
-  *
-  * Context: prepare_lock must be held.
-- *          For clk providers to call from within clk_ops such as .round_rate,
-+ *          For clk providers to call from within clk_ops such as
-  *          .determine_rate.
-  *
-- * Return: returns rounded rate of hw clk if clk supports round_rate operation
-- *         else returns the parent rate.
-+ * Return: returns rounded rate of hw clk if clk supports determine_rate
-+ *         operation; else returns the parent rate.
-  */
- unsigned long clk_hw_round_rate(struct clk_hw *hw, unsigned long rate)
- {
-@@ -2569,12 +2560,13 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
-  *
-  * Setting the CLK_SET_RATE_PARENT flag allows the rate change operation to
-  * propagate up to clk's parent; whether or not this happens depends on the
-- * outcome of clk's .round_rate implementation.  If *parent_rate is unchanged
-- * after calling .round_rate then upstream parent propagation is ignored.  If
-- * *parent_rate comes back with a new rate for clk's parent then we propagate
-- * up to clk's parent and set its rate.  Upward propagation will continue
-- * until either a clk does not support the CLK_SET_RATE_PARENT flag or
-- * .round_rate stops requesting changes to clk's parent_rate.
-+ * outcome of clk's .determine_rate implementation. If req->best_parent_rate
-+ * is unchanged after calling .determine_rate then upstream parent propagation
-+ * is ignored.  If req->best_parent_rate comes back with a new rate for clk's
-+ * parent then we propagate up to clk's parent and set its rate. Upward
-+ * propagation will continue until either a clk does not support the
-+ * CLK_SET_RATE_PARENT flag or .determine_rate stops requesting changes to
-+ * clk's parent_rate.
-  *
-  * Rate changes are accomplished via tree traversal that also recalculates the
-  * rates for the clocks and fires off POST_RATE_CHANGE notifiers.
-@@ -2703,8 +2695,6 @@ static int clk_set_rate_range_nolock(struct clk *clk,
- 	 * FIXME:
- 	 * There is a catch. It may fail for the usual reason (clock
- 	 * broken, clock protected, etc) but also because:
--	 * - round_rate() was not favorable and fell on the wrong
--	 *   side of the boundary
- 	 * - the determine_rate() callback does not really check for
- 	 *   this corner case when determining the rate
- 	 */
-@@ -3915,10 +3905,9 @@ static int __clk_core_init(struct clk_core *core)
- 	}
- 
- 	/* check that clk_ops are sane.  See Documentation/driver-api/clk.rst */
--	if (core->ops->set_rate &&
--	    !((core->ops->round_rate || core->ops->determine_rate) &&
--	      core->ops->recalc_rate)) {
--		pr_err("%s: %s must implement .round_rate or .determine_rate in addition to .recalc_rate\n",
-+	if (core->ops->set_rate && !core->ops->determine_rate &&
-+	      core->ops->recalc_rate) {
-+		pr_err("%s: %s must implement .determine_rate in addition to .recalc_rate\n",
- 		       __func__, core->name);
- 		ret = -EINVAL;
- 		goto out;
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 630705a47129453c241f1b1755f2c2f2a7ed8f77..1cda2c78dffaff037f0f16b0f11106b63b3a746f 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -136,10 +136,6 @@ struct clk_duty {
-  *		0. Returns the calculated rate. Optional, but recommended - if
-  *		this op is not set then clock rate will be initialized to 0.
-  *
-- * @round_rate:	Given a target rate as input, returns the closest rate actually
-- *		supported by the clock. The parent rate is an input/output
-- *		parameter.
-- *
-  * @determine_rate: Given a target rate as input, returns the closest rate
-  *		actually supported by the clock, and optionally the parent clock
-  *		that should be used to provide the clock rate.
-@@ -163,13 +159,13 @@ struct clk_duty {
-  *
-  * @set_rate:	Change the rate of this clock. The requested rate is specified
-  *		by the second argument, which should typically be the return
-- *		of .round_rate call.  The third argument gives the parent rate
-- *		which is likely helpful for most .set_rate implementation.
-+ *		of .determine_rate call.  The third argument gives the parent
-+ *		rate which is likely helpful for most .set_rate implementation.
-  *		Returns 0 on success, -EERROR otherwise.
-  *
-  * @set_rate_and_parent: Change the rate and the parent of this clock. The
-  *		requested rate is specified by the second argument, which
-- *		should typically be the return of .round_rate call.  The
-+ *		should typically be the return of clk_round_rate() call.  The
-  *		third argument gives the parent rate which is likely helpful
-  *		for most .set_rate_and_parent implementation. The fourth
-  *		argument gives the parent index. This callback is optional (and
-@@ -244,8 +240,6 @@ struct clk_ops {
- 	void		(*restore_context)(struct clk_hw *hw);
- 	unsigned long	(*recalc_rate)(struct clk_hw *hw,
- 					unsigned long parent_rate);
--	long		(*round_rate)(struct clk_hw *hw, unsigned long rate,
--					unsigned long *parent_rate);
- 	int		(*determine_rate)(struct clk_hw *hw,
- 					  struct clk_rate_request *req);
- 	int		(*set_parent)(struct clk_hw *hw, u8 index);
-@@ -679,7 +673,7 @@ struct clk_div_table {
-  * @lock:	register lock
-  *
-  * Clock with an adjustable divider affecting its output frequency.  Implements
-- * .recalc_rate, .set_rate and .round_rate
-+ * .recalc_rate, .set_rate and .determine_rate
-  *
-  * @flags:
-  * CLK_DIVIDER_ONE_BASED - by default the divisor is the value read from the
-@@ -1126,7 +1120,7 @@ void of_fixed_factor_clk_setup(struct device_node *node);
-  *
-  * Clock with a fixed multiplier and divider. The output frequency is the
-  * parent clock rate divided by div and multiplied by mult.
-- * Implements .recalc_rate, .set_rate, .round_rate and .recalc_accuracy
-+ * Implements .recalc_rate, .set_rate, .determine_rate and .recalc_accuracy
-  *
-  * Flags:
-  * * CLK_FIXED_FACTOR_FIXED_ACCURACY - Use the value in @acc instead of the
-@@ -1254,7 +1248,7 @@ void clk_hw_unregister_fractional_divider(struct clk_hw *hw);
-  * @lock:	register lock
-  *
-  * Clock with an adjustable multiplier affecting its output frequency.
-- * Implements .recalc_rate, .set_rate and .round_rate
-+ * Implements .recalc_rate, .set_rate and .determine_rate
-  *
-  * @flags:
-  * CLK_MULTIPLIER_ZERO_BYPASS - By default, the multiplier is the value read
-
+diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
+index 71481607a6d5..e6a059bcf636 100644
+--- a/drivers/clk/meson/Kconfig
++++ b/drivers/clk/meson/Kconfig
+@@ -201,4 +201,19 @@ config COMMON_CLK_S4_PERIPHERALS
+ 	help
+ 	  Support for the peripherals clock controller on Amlogic S805X2 and S905Y4
+ 	  devices, AKA S4. Say Y if you want S4 peripherals clock controller to work.
++
++config COMMON_CLK_T7_PLL
++	tristate "Amlogic T7 SoC PLL controller support"
++	depends on ARM64
++	default ARCH_MESON
++	select COMMON_CLK_MESON_REGMAP
++	select COMMON_CLK_MESON_CLKC_UTILS
++	select COMMON_CLK_MESON_MPLL
++	select COMMON_CLK_MESON_PLL
++	imply COMMON_CLK_SCMI
++	help
++	  Support for the PLL clock controller on Amlogic A311D2 based
++	  device, AKA T7. PLLs are required by most peripheral to operate.
++	  Say Y if you want T7 PLL clock controller to work.
++
+ endmenu
+diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
+index c6998e752c68..8e3f7f94c639 100644
+--- a/drivers/clk/meson/Makefile
++++ b/drivers/clk/meson/Makefile
+@@ -26,3 +26,4 @@ obj-$(CONFIG_COMMON_CLK_G12A) += g12a.o g12a-aoclk.o
+ obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b.o meson8-ddr.o
+ obj-$(CONFIG_COMMON_CLK_S4_PLL) += s4-pll.o
+ obj-$(CONFIG_COMMON_CLK_S4_PERIPHERALS) += s4-peripherals.o
++obj-$(CONFIG_COMMON_CLK_T7_PLL) += t7-pll.o
+diff --git a/drivers/clk/meson/t7-pll.c b/drivers/clk/meson/t7-pll.c
+new file mode 100644
+index 000000000000..0a622f45fa36
+--- /dev/null
++++ b/drivers/clk/meson/t7-pll.c
+@@ -0,0 +1,1074 @@
++// SPDX-License-Identifier: (GPL-2.0-only OR MIT)
++/*
++ * Copyright (C) 2024-2025 Amlogic, Inc. All rights reserved.
++ * Author: Jian Hu <jian.hu@amlogic.com>
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/platform_device.h>
++#include "clk-regmap.h"
++#include "clk-pll.h"
++#include "clk-mpll.h"
++#include "meson-clkc-utils.h"
++#include <dt-bindings/clock/amlogic,t7-pll-clkc.h>
++
++#define GP0PLL_CTRL0		0x00
++#define GP0PLL_CTRL1		0x04
++#define GP0PLL_CTRL2		0x08
++#define GP0PLL_CTRL3		0x0c
++#define GP0PLL_CTRL4		0x10
++#define GP0PLL_CTRL5		0x14
++#define GP0PLL_CTRL6		0x18
++#define GP0PLL_STS		0x1c
++
++#define GP1PLL_CTRL0		0x00
++#define GP1PLL_CTRL1		0x04
++#define GP1PLL_CTRL2		0x08
++#define GP1PLL_CTRL3		0x0c
++#define GP1PLL_STS		0x1c
++
++#define HIFIPLL_CTRL0		0x00
++#define HIFIPLL_CTRL1		0x04
++#define HIFIPLL_CTRL2		0x08
++#define HIFIPLL_CTRL3		0x0c
++#define HIFIPLL_CTRL4		0x10
++#define HIFIPLL_CTRL5		0x14
++#define HIFIPLL_CTRL6		0x18
++#define HIFIPLL_STS		0x1c
++
++#define PCIEPLL_CTRL0		0x00
++#define PCIEPLL_CTRL1		0x04
++#define PCIEPLL_CTRL2		0x08
++#define PCIEPLL_CTRL3		0x0c
++#define PCIEPLL_CTRL4		0x10
++#define PCIEPLL_CTRL5		0x14
++#define PCIEPLL_STS		0x18
++
++#define MPLL_CTRL0		0x00
++#define MPLL_CTRL1		0x04
++#define MPLL_CTRL2		0x08
++#define MPLL_CTRL3		0x0c
++#define MPLL_CTRL4		0x10
++#define MPLL_CTRL5		0x14
++#define MPLL_CTRL6		0x18
++#define MPLL_CTRL7		0x1c
++#define MPLL_CTRL8		0x20
++#define MPLL_STS		0x24
++
++#define HDMIPLL_CTRL0		0x00
++#define HDMIPLL_CTRL1		0x04
++#define HDMIPLL_CTRL2		0x08
++#define HDMIPLL_CTRL3		0x0c
++#define HDMIPLL_CTRL4		0x10
++#define HDMIPLL_CTRL5		0x14
++#define HDMIPLL_CTRL6		0x18
++#define HDMIPLL_STS		0x1c
++
++#define MCLK_PLL_CNTL0		0x00
++#define MCLK_PLL_CNTL1		0x04
++#define MCLK_PLL_CNTL2		0x08
++#define MCLK_PLL_CNTL3		0x0c
++#define MCLK_PLL_CNTL4		0x10
++#define MCLK_PLL_STS		0x14
++
++static const struct pll_mult_range t7_media_pll_mult_range = {
++	.min = 125,
++	.max = 250,
++};
++
++static const struct reg_sequence t7_gp0_init_regs[] = {
++	{ .reg = GP0PLL_CTRL1,  .def = 0x00000000 },
++	{ .reg = GP0PLL_CTRL2,  .def = 0x00000000 },
++	{ .reg = GP0PLL_CTRL3,  .def = 0x48681c00 },
++	{ .reg = GP0PLL_CTRL4,  .def = 0x88770290 },
++	{ .reg = GP0PLL_CTRL5,  .def = 0x3927200a },
++	{ .reg = GP0PLL_CTRL6,  .def = 0x56540000 },
++};
++
++static struct clk_regmap t7_gp0_pll_dco = {
++	.data = &(struct meson_clk_pll_data){
++		.en = {
++			.reg_off = GP0PLL_CTRL0,
++			.shift   = 28,
++			.width   = 1,
++		},
++		.m = {
++			.reg_off = GP0PLL_CTRL0,
++			.shift   = 0,
++			.width   = 8,
++		},
++		.n = {
++			.reg_off = GP0PLL_CTRL0,
++			.shift   = 10,
++			.width   = 5,
++		},
++		.l = {
++			.reg_off = GP0PLL_STS,
++			.shift   = 31,
++			.width   = 1,
++		},
++		.rst = {
++			.reg_off = GP0PLL_CTRL0,
++			.shift   = 29,
++			.width   = 1,
++		},
++		.range = &t7_media_pll_mult_range,
++		.init_regs = t7_gp0_init_regs,
++		.init_count = ARRAY_SIZE(t7_gp0_init_regs),
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "gp0_pll_dco",
++		.ops = &meson_clk_pll_ops,
++		.parent_data = &(const struct clk_parent_data) {
++			.fw_name = "in0",
++		},
++		.num_parents = 1,
++	},
++};
++
++static struct clk_regmap t7_gp0_pll = {
++	.data = &(struct clk_regmap_div_data){
++		.offset = GP0PLL_CTRL0,
++		.shift = 16,
++		.width = 3,
++		.flags = CLK_DIVIDER_POWER_OF_TWO,
++	},
++	.hw.init = &(struct clk_init_data) {
++		.name = "gp0_pll",
++		.ops = &clk_regmap_divider_ops,
++		.parent_hws = (const struct clk_hw *[]) {
++			&t7_gp0_pll_dco.hw
++		},
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++/*
++ * Compared with GP0 PLL, GP1 PLL is a newly designed PLL with
++ * a DCO range of 1.6GHz to 3.2GHz.
++ */
++static const struct pll_mult_range t7_gp1_pll_mult_range = {
++	.min = 67,
++	.max = 133,
++};
++
++static const struct reg_sequence t7_gp1_init_regs[] = {
++	{ .reg = GP1PLL_CTRL1,  .def = 0x1420500f },
++	{ .reg = GP1PLL_CTRL2,  .def = 0x00023001 },
++	{ .reg = GP1PLL_CTRL3,  .def = 0x00000000 },
++};
++
++static struct clk_regmap t7_gp1_pll_dco = {
++	.data = &(struct meson_clk_pll_data){
++		.en = {
++			.reg_off = GP1PLL_CTRL0,
++			.shift   = 28,
++			.width   = 1,
++		},
++		.m = {
++			.reg_off = GP1PLL_CTRL0,
++			.shift   = 0,
++			.width   = 8,
++		},
++		.n = {
++			.reg_off = GP1PLL_CTRL0,
++			.shift   = 16,
++			.width   = 5,
++		},
++		.l = {
++			.reg_off = GP1PLL_STS,
++			.shift   = 31,
++			.width   = 1,
++		},
++		.rst = {
++			.reg_off = GP1PLL_CTRL0,
++			.shift   = 29,
++			.width   = 1,
++		},
++		.range = &t7_gp1_pll_mult_range,
++		.init_regs = t7_gp1_init_regs,
++		.init_count = ARRAY_SIZE(t7_gp1_init_regs),
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "gp1_pll_dco",
++		.ops = &meson_clk_pll_ops,
++		.parent_data = &(const struct clk_parent_data) {
++			.fw_name = "in0",
++		},
++		.num_parents = 1,
++	},
++};
++
++static struct clk_regmap t7_gp1_pll = {
++	.data = &(struct clk_regmap_div_data){
++		.offset = GP1PLL_CTRL0,
++		.shift = 12,
++		.width = 3,
++		.flags = CLK_DIVIDER_POWER_OF_TWO,
++	},
++	.hw.init = &(struct clk_init_data) {
++		.name = "gp1_pll",
++		.ops = &clk_regmap_divider_ops,
++		.parent_hws = (const struct clk_hw *[]) {
++			&t7_gp1_pll_dco.hw
++		},
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static const struct reg_sequence t7_hifi_init_regs[] = {
++	{ .reg = HIFIPLL_CTRL1, .def = 0x00000000 },
++	{ .reg = HIFIPLL_CTRL2, .def = 0x00000000 },
++	{ .reg = HIFIPLL_CTRL3, .def = 0x6a285c00 },
++	{ .reg = HIFIPLL_CTRL4, .def = 0x65771290 },
++	{ .reg = HIFIPLL_CTRL5, .def = 0x3927200a },
++	{ .reg = HIFIPLL_CTRL6, .def = 0x56540000 }
++};
++
++static struct clk_regmap t7_hifi_pll_dco = {
++	.data = &(struct meson_clk_pll_data){
++		.en = {
++			.reg_off = HIFIPLL_CTRL0,
++			.shift   = 28,
++			.width   = 1,
++		},
++		.m = {
++			.reg_off = HIFIPLL_CTRL0,
++			.shift   = 0,
++			.width   = 8,
++		},
++		.n = {
++			.reg_off = HIFIPLL_CTRL0,
++			.shift   = 10,
++			.width   = 5,
++		},
++		.frac = {
++			.reg_off = HIFIPLL_CTRL1,
++			.shift   = 0,
++			.width   = 17,
++		},
++		.l = {
++			.reg_off = HIFIPLL_STS,
++			.shift   = 31,
++			.width   = 1,
++		},
++		.rst = {
++			.reg_off = HIFIPLL_CTRL0,
++			.shift   = 29,
++			.width   = 1,
++		},
++		.range = &t7_media_pll_mult_range,
++		.init_regs = t7_hifi_init_regs,
++		.init_count = ARRAY_SIZE(t7_hifi_init_regs),
++		.frac_max = 100000,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "hifi_pll_dco",
++		.ops = &meson_clk_pll_ops,
++		.parent_data = &(const struct clk_parent_data) {
++			.fw_name = "in0",
++		},
++		.num_parents = 1,
++	},
++};
++
++static struct clk_regmap t7_hifi_pll = {
++	.data = &(struct clk_regmap_div_data){
++		.offset = HIFIPLL_CTRL0,
++		.shift = 16,
++		.width = 2,
++		.flags = CLK_DIVIDER_POWER_OF_TWO,
++	},
++	.hw.init = &(struct clk_init_data) {
++		.name = "hifi_pll",
++		.ops = &clk_regmap_divider_ops,
++		.parent_hws = (const struct clk_hw *[]) {
++			&t7_hifi_pll_dco.hw
++		},
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++/*
++ * The T7 PCIE PLL is fined tuned to deliver a very precise
++ * 100MHz reference clock for the PCIe Analog PHY, and thus requires
++ * a strict register sequence to enable the PLL.
++ */
++static const struct reg_sequence t7_pcie_pll_init_regs[] = {
++	{ .reg = PCIEPLL_CTRL0,	.def = 0x200c04c8 },
++	{ .reg = PCIEPLL_CTRL0,	.def = 0x300c04c8 },
++	{ .reg = PCIEPLL_CTRL1,	.def = 0x30000000 },
++	{ .reg = PCIEPLL_CTRL2,	.def = 0x00001100 },
++	{ .reg = PCIEPLL_CTRL3,	.def = 0x10058e00 },
++	{ .reg = PCIEPLL_CTRL4,	.def = 0x000100c0 },
++	{ .reg = PCIEPLL_CTRL5,	.def = 0x68000048 },
++	{ .reg = PCIEPLL_CTRL5,	.def = 0x68000068, .delay_us = 20 },
++	{ .reg = PCIEPLL_CTRL4,	.def = 0x008100c0, .delay_us = 20 },
++	{ .reg = PCIEPLL_CTRL0,	.def = 0x340c04c8 },
++	{ .reg = PCIEPLL_CTRL0,	.def = 0x140c04c8, .delay_us = 20 },
++	{ .reg = PCIEPLL_CTRL2,	.def = 0x00001000 }
++};
++
++static struct clk_regmap t7_pcie_pll_dco = {
++	.data = &(struct meson_clk_pll_data){
++		.en = {
++			.reg_off = PCIEPLL_CTRL0,
++			.shift   = 28,
++			.width   = 1,
++		},
++		.m = {
++			.reg_off = PCIEPLL_CTRL0,
++			.shift   = 0,
++			.width   = 8,
++		},
++		.n = {
++			.reg_off = PCIEPLL_CTRL0,
++			.shift   = 10,
++			.width   = 5,
++		},
++		.l = {
++			.reg_off = PCIEPLL_CTRL0,
++			.shift   = 31,
++			.width   = 1,
++		},
++		.rst = {
++			.reg_off = PCIEPLL_CTRL0,
++			.shift   = 29,
++			.width   = 1,
++		},
++		.init_regs = t7_pcie_pll_init_regs,
++		.init_count = ARRAY_SIZE(t7_pcie_pll_init_regs),
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "pcie_pll_dco",
++		.ops = &meson_clk_pcie_pll_ops,
++		.parent_data = &(const struct clk_parent_data) {
++			.fw_name = "in0",
++		},
++		.num_parents = 1,
++	},
++};
++
++static struct clk_fixed_factor t7_pcie_pll_dco_div2 = {
++	.mult = 1,
++	.div = 2,
++	.hw.init = &(struct clk_init_data){
++		.name = "pcie_pll_dco_div2",
++		.ops = &clk_fixed_factor_ops,
++		.parent_hws = (const struct clk_hw *[]) {
++			&t7_pcie_pll_dco.hw
++		},
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static struct clk_regmap t7_pcie_pll_od = {
++	.data = &(struct clk_regmap_div_data){
++		.offset = PCIEPLL_CTRL0,
++		.shift = 16,
++		.width = 5,
++		/* the divisor is 32 when [16:21] = 0 */
++		.flags = CLK_DIVIDER_MAX_AT_ZERO,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "pcie_pll_od",
++		.ops = &clk_regmap_divider_ops,
++		.parent_hws = (const struct clk_hw *[]) {
++			&t7_pcie_pll_dco_div2.hw
++		},
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static struct clk_fixed_factor t7_pcie_pll = {
++	.mult = 1,
++	.div = 2,
++	.hw.init = &(struct clk_init_data){
++		.name = "pcie_pll",
++		.ops = &clk_fixed_factor_ops,
++		.parent_hws = (const struct clk_hw *[]) {
++			&t7_pcie_pll_od.hw
++		},
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static struct clk_fixed_factor t7_mpll_prediv = {
++	.mult = 1,
++	.div = 2,
++	.hw.init = &(struct clk_init_data){
++		.name = "mpll_prediv",
++		.ops = &clk_fixed_factor_ops,
++		.parent_data = &(const struct clk_parent_data) {
++			.fw_name = "in0",
++		},
++		.num_parents = 1,
++	},
++};
++
++static const struct reg_sequence t7_mpll0_init_regs[] = {
++	{ .reg = MPLL_CTRL2, .def = 0x40000033 }
++};
++
++static struct clk_regmap t7_mpll0_div = {
++	.data = &(struct meson_clk_mpll_data){
++		.sdm = {
++			.reg_off = MPLL_CTRL1,
++			.shift   = 0,
++			.width   = 14,
++		},
++		.sdm_en = {
++			.reg_off = MPLL_CTRL1,
++			.shift   = 30,
++			.width	 = 1,
++		},
++		.n2 = {
++			.reg_off = MPLL_CTRL1,
++			.shift   = 20,
++			.width   = 9,
++		},
++		.ssen = {
++			.reg_off = MPLL_CTRL1,
++			.shift   = 29,
++			.width	 = 1,
++		},
++		.init_regs = t7_mpll0_init_regs,
++		.init_count = ARRAY_SIZE(t7_mpll0_init_regs),
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "mpll0_div",
++		.ops = &meson_clk_mpll_ops,
++		.parent_hws = (const struct clk_hw *[]) {
++			&t7_mpll_prediv.hw
++		},
++		.num_parents = 1,
++	},
++};
++
++static struct clk_regmap t7_mpll0 = {
++	.data = &(struct clk_regmap_gate_data){
++		.offset = MPLL_CTRL1,
++		.bit_idx = 31,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "mpll0",
++		.ops = &clk_regmap_gate_ops,
++		.parent_hws = (const struct clk_hw *[]) { &t7_mpll0_div.hw },
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static const struct reg_sequence t7_mpll1_init_regs[] = {
++	{ .reg = MPLL_CTRL4,	.def = 0x40000033 }
++};
++
++static struct clk_regmap t7_mpll1_div = {
++	.data = &(struct meson_clk_mpll_data){
++		.sdm = {
++			.reg_off = MPLL_CTRL3,
++			.shift   = 0,
++			.width   = 14,
++		},
++		.sdm_en = {
++			.reg_off = MPLL_CTRL3,
++			.shift   = 30,
++			.width	 = 1,
++		},
++		.n2 = {
++			.reg_off = MPLL_CTRL3,
++			.shift   = 20,
++			.width   = 9,
++		},
++		.ssen = {
++			.reg_off = MPLL_CTRL3,
++			.shift   = 29,
++			.width	 = 1,
++		},
++		.init_regs = t7_mpll1_init_regs,
++		.init_count = ARRAY_SIZE(t7_mpll1_init_regs),
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "mpll1_div",
++		.ops = &meson_clk_mpll_ops,
++		.parent_hws = (const struct clk_hw *[]) {
++			&t7_mpll_prediv.hw
++		},
++		.num_parents = 1,
++	},
++};
++
++static struct clk_regmap t7_mpll1 = {
++	.data = &(struct clk_regmap_gate_data){
++		.offset = MPLL_CTRL3,
++		.bit_idx = 31,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "mpll1",
++		.ops = &clk_regmap_gate_ops,
++		.parent_hws = (const struct clk_hw *[]) { &t7_mpll1_div.hw },
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static const struct reg_sequence t7_mpll2_init_regs[] = {
++	{ .reg = MPLL_CTRL6, .def = 0x40000033 }
++};
++
++static struct clk_regmap t7_mpll2_div = {
++	.data = &(struct meson_clk_mpll_data){
++		.sdm = {
++			.reg_off = MPLL_CTRL5,
++			.shift   = 0,
++			.width   = 14,
++		},
++		.sdm_en = {
++			.reg_off = MPLL_CTRL5,
++			.shift   = 30,
++			.width	 = 1,
++		},
++		.n2 = {
++			.reg_off = MPLL_CTRL5,
++			.shift   = 20,
++			.width   = 9,
++		},
++		.ssen = {
++			.reg_off = MPLL_CTRL5,
++			.shift   = 29,
++			.width	 = 1,
++		},
++		.init_regs = t7_mpll2_init_regs,
++		.init_count = ARRAY_SIZE(t7_mpll2_init_regs),
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "mpll2_div",
++		.ops = &meson_clk_mpll_ops,
++		.parent_hws = (const struct clk_hw *[]) {
++			&t7_mpll_prediv.hw
++		},
++		.num_parents = 1,
++	},
++};
++
++static struct clk_regmap t7_mpll2 = {
++	.data = &(struct clk_regmap_gate_data){
++		.offset = MPLL_CTRL5,
++		.bit_idx = 31,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "mpll2",
++		.ops = &clk_regmap_gate_ops,
++		.parent_hws = (const struct clk_hw *[]) { &t7_mpll2_div.hw },
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static const struct reg_sequence t7_mpll3_init_regs[] = {
++	{ .reg = MPLL_CTRL8, .def = 0x40000033 }
++};
++
++static struct clk_regmap t7_mpll3_div = {
++	.data = &(struct meson_clk_mpll_data){
++		.sdm = {
++			.reg_off = MPLL_CTRL7,
++			.shift   = 0,
++			.width   = 14,
++		},
++		.sdm_en = {
++			.reg_off = MPLL_CTRL7,
++			.shift   = 30,
++			.width	 = 1,
++		},
++		.n2 = {
++			.reg_off = MPLL_CTRL7,
++			.shift   = 20,
++			.width   = 9,
++		},
++		.ssen = {
++			.reg_off = MPLL_CTRL7,
++			.shift   = 29,
++			.width	 = 1,
++		},
++		.init_regs = t7_mpll3_init_regs,
++		.init_count = ARRAY_SIZE(t7_mpll3_init_regs),
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "mpll3_div",
++		.ops = &meson_clk_mpll_ops,
++		.parent_hws = (const struct clk_hw *[]) {
++			&t7_mpll_prediv.hw
++		},
++		.num_parents = 1,
++	},
++};
++
++static struct clk_regmap t7_mpll3 = {
++	.data = &(struct clk_regmap_gate_data){
++		.offset = MPLL_CTRL7,
++		.bit_idx = 31,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "mpll3",
++		.ops = &clk_regmap_gate_ops,
++		.parent_hws = (const struct clk_hw *[]) { &t7_mpll3_div.hw },
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static const struct reg_sequence t7_hdmi_init_regs[] = {
++	{ .reg = HDMIPLL_CTRL1, .def = 0x00000000 },
++	{ .reg = HDMIPLL_CTRL2, .def = 0x00000000 },
++	{ .reg = HDMIPLL_CTRL3, .def = 0x6a28dc00 },
++	{ .reg = HDMIPLL_CTRL4, .def = 0x65771290 },
++	{ .reg = HDMIPLL_CTRL5, .def = 0x39272000 },
++	{ .reg = HDMIPLL_CTRL6, .def = 0x56540000 }
++};
++
++static struct clk_regmap t7_hdmi_pll_dco = {
++	.data = &(struct meson_clk_pll_data){
++		.en = {
++			.reg_off = HDMIPLL_CTRL0,
++			.shift   = 28,
++			.width   = 1,
++		},
++		.m = {
++			.reg_off = HDMIPLL_CTRL0,
++			.shift   = 0,
++			.width   = 9,
++		},
++		.n = {
++			.reg_off = HDMIPLL_CTRL0,
++			.shift   = 10,
++			.width   = 5,
++		},
++		.l = {
++			.reg_off = HDMIPLL_CTRL0,
++			.shift   = 31,
++			.width   = 1,
++		},
++		.rst = {
++			.reg_off = HDMIPLL_CTRL0,
++			.shift   = 29,
++			.width   = 1,
++		},
++		.range = &t7_media_pll_mult_range,
++		.init_regs = t7_hdmi_init_regs,
++		.init_count = ARRAY_SIZE(t7_hdmi_init_regs),
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "hdmi_pll_dco",
++		.ops = &meson_clk_pll_ops,
++		.parent_data = (const struct clk_parent_data []) {
++			{ .fw_name = "in0", }
++		},
++		.num_parents = 1,
++	},
++};
++
++static struct clk_regmap t7_hdmi_pll_od = {
++	.data = &(struct clk_regmap_div_data){
++		.offset = HDMIPLL_CTRL0,
++		.shift = 16,
++		.width = 4,
++		.flags = CLK_DIVIDER_POWER_OF_TWO,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "hdmi_pll_od",
++		.ops = &clk_regmap_divider_ops,
++		.parent_hws = (const struct clk_hw *[]) {
++			&t7_hdmi_pll_dco.hw
++		},
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static struct clk_regmap t7_hdmi_pll = {
++	.data = &(struct clk_regmap_div_data){
++		.offset = HDMIPLL_CTRL0,
++		.shift = 20,
++		.width = 2,
++		.flags = CLK_DIVIDER_POWER_OF_TWO,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "hdmi_pll",
++		.ops = &clk_regmap_divider_ops,
++		.parent_hws = (const struct clk_hw *[]) {
++			&t7_hdmi_pll_od.hw
++		},
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static const struct pll_mult_range t7_mclk_pll_mult_range = {
++	.min = 67,
++	.max = 133,
++};
++
++static const struct reg_sequence t7_mclk_init_regs[] = {
++	{ .reg = MCLK_PLL_CNTL1, .def = 0x1470500f },
++	{ .reg = MCLK_PLL_CNTL2, .def = 0x00023001 },
++	{ .reg = MCLK_PLL_CNTL3, .def = 0x18180000 },
++	{ .reg = MCLK_PLL_CNTL4, .def = 0x00180303 },
++};
++
++static struct clk_regmap t7_mclk_pll_dco = {
++	.data = &(struct meson_clk_pll_data){
++		.en = {
++			.reg_off = MCLK_PLL_CNTL0,
++			.shift   = 28,
++			.width   = 1,
++		},
++		.m = {
++			.reg_off = MCLK_PLL_CNTL0,
++			.shift   = 0,
++			.width   = 8,
++		},
++		.n = {
++			.reg_off = MCLK_PLL_CNTL0,
++			.shift   = 16,
++			.width   = 5,
++		},
++		.l = {
++			.reg_off = MCLK_PLL_CNTL0,
++			.shift   = 31,
++			.width   = 1,
++		},
++		.rst = {
++			.reg_off = MCLK_PLL_CNTL0,
++			.shift   = 29,
++			.width   = 1,
++		},
++		.l_detect = {
++			.reg_off = MCLK_PLL_CNTL2,
++			.shift   = 6,
++			.width   = 1,
++		},
++		.range = &t7_mclk_pll_mult_range,
++		.init_regs = t7_mclk_init_regs,
++		.init_count = ARRAY_SIZE(t7_mclk_init_regs),
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "mclk_pll_dco",
++		.ops = &meson_clk_pll_ops,
++		.parent_data = &(const struct clk_parent_data) {
++			.fw_name = "in0",
++		},
++		.num_parents = 1,
++	},
++};
++
++/* max div is 16 */
++static const struct clk_div_table t7_mclk_div[] = {
++	{ .val = 0, .div = 1 },
++	{ .val = 1, .div = 2 },
++	{ .val = 2, .div = 4 },
++	{ .val = 3, .div = 8 },
++	{ .val = 4, .div = 16 },
++	{ /* sentinel */ }
++};
++
++static struct clk_regmap t7_mclk_pre_od = {
++	.data = &(struct clk_regmap_div_data){
++		.offset = MCLK_PLL_CNTL0,
++		.shift = 12,
++		.width = 3,
++		.table = t7_mclk_div,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "mclk_pre_od",
++		.ops = &clk_regmap_divider_ops,
++		.parent_hws = (const struct clk_hw *[]) {
++			&t7_mclk_pll_dco.hw
++		},
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static struct clk_regmap t7_mclk_pll = {
++	.data = &(struct clk_regmap_div_data){
++		.offset = MCLK_PLL_CNTL4,
++		.shift = 16,
++		.width = 5,
++		.flags = CLK_DIVIDER_ONE_BASED,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "mclk_pll",
++		.ops = &clk_regmap_divider_ops,
++		.parent_hws = (const struct clk_hw *[]) {
++			&t7_mclk_pre_od.hw
++		},
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static struct clk_regmap t7_mclk_0_sel = {
++	.data = &(struct clk_regmap_mux_data){
++		.offset = MCLK_PLL_CNTL4,
++		.mask = 0x3,
++		.shift = 4,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "mclk_0_sel",
++		.ops = &clk_regmap_mux_ops,
++		.parent_data = (const struct clk_parent_data []) {
++			{ .hw = &t7_mclk_pll.hw },
++			{ .fw_name = "in1", },
++			{ .fw_name = "in2", },
++		},
++		.num_parents = 3,
++	},
++};
++
++static struct clk_fixed_factor t7_mclk_0_div2 = {
++	.mult = 1,
++	.div = 2,
++	.hw.init = &(struct clk_init_data){
++		.name = "mclk_0_div2",
++		.ops = &clk_fixed_factor_ops,
++		.parent_hws = (const struct clk_hw *[]) { &t7_mclk_0_sel.hw },
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static struct clk_regmap t7_mclk_0_pre = {
++	.data = &(struct clk_regmap_gate_data){
++		.offset = MCLK_PLL_CNTL4,
++		.bit_idx = 2,
++	},
++	.hw.init = &(struct clk_init_data) {
++		.name = "mclk_0_pre",
++		.ops = &clk_regmap_gate_ops,
++		.parent_hws = (const struct clk_hw *[]) {
++			&t7_mclk_0_div2.hw
++		},
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static struct clk_regmap t7_mclk_0 = {
++	.data = &(struct clk_regmap_gate_data){
++		.offset = MCLK_PLL_CNTL4,
++		.bit_idx = 0,
++	},
++	.hw.init = &(struct clk_init_data) {
++		.name = "mclk_0",
++		.ops = &clk_regmap_gate_ops,
++		.parent_hws = (const struct clk_hw *[]) {
++			&t7_mclk_0_pre.hw
++		},
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static struct clk_regmap t7_mclk_1_sel = {
++	.data = &(struct clk_regmap_mux_data){
++		.offset = MCLK_PLL_CNTL4,
++		.mask = 0x3,
++		.shift = 12,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "mclk_1_sel",
++		.ops = &clk_regmap_mux_ops,
++		.parent_data = (const struct clk_parent_data []) {
++			{ .hw = &t7_mclk_pll.hw },
++			{ .fw_name = "in1", },
++			{ .fw_name = "in2", },
++		},
++		.num_parents = 3,
++	},
++};
++
++static struct clk_fixed_factor t7_mclk_1_div2 = {
++	.mult = 1,
++	.div = 2,
++	.hw.init = &(struct clk_init_data){
++		.name = "mclk_1_div2",
++		.ops = &clk_fixed_factor_ops,
++		.parent_hws = (const struct clk_hw *[]) { &t7_mclk_1_sel.hw },
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static struct clk_regmap t7_mclk_1_pre = {
++	.data = &(struct clk_regmap_gate_data){
++		.offset = MCLK_PLL_CNTL4,
++		.bit_idx = 10,
++	},
++	.hw.init = &(struct clk_init_data) {
++		.name = "mclk_1_pre",
++		.ops = &clk_regmap_gate_ops,
++		.parent_hws = (const struct clk_hw *[]) {
++			&t7_mclk_1_div2.hw
++		},
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static struct clk_regmap t7_mclk_1 = {
++	.data = &(struct clk_regmap_gate_data){
++		.offset = MCLK_PLL_CNTL4,
++		.bit_idx = 8,
++	},
++	.hw.init = &(struct clk_init_data) {
++		.name = "mclk_1",
++		.ops = &clk_regmap_gate_ops,
++		.parent_hws = (const struct clk_hw *[]) {
++			&t7_mclk_1_pre.hw
++		},
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static struct clk_hw *t7_gp0_hw_clks[] = {
++	[CLKID_GP0_PLL_DCO]		= &t7_gp0_pll_dco.hw,
++	[CLKID_GP0_PLL]			= &t7_gp0_pll.hw,
++};
++
++static struct clk_hw *t7_gp1_hw_clks[] = {
++	[CLKID_GP1_PLL_DCO]		= &t7_gp1_pll_dco.hw,
++	[CLKID_GP1_PLL]			= &t7_gp1_pll.hw,
++};
++
++static struct clk_hw *t7_hifi_hw_clks[] = {
++	[CLKID_HIFI_PLL_DCO]		= &t7_hifi_pll_dco.hw,
++	[CLKID_HIFI_PLL]		= &t7_hifi_pll.hw,
++};
++
++static struct clk_hw *t7_pcie_hw_clks[] = {
++	[CLKID_PCIE_PLL_DCO]		= &t7_pcie_pll_dco.hw,
++	[CLKID_PCIE_PLL_DCO_DIV2]	= &t7_pcie_pll_dco_div2.hw,
++	[CLKID_PCIE_PLL_OD]		= &t7_pcie_pll_od.hw,
++	[CLKID_PCIE_PLL]		= &t7_pcie_pll.hw,
++};
++
++static struct clk_hw *t7_mpll_hw_clks[] = {
++	[CLKID_MPLL_PREDIV]		= &t7_mpll_prediv.hw,
++	[CLKID_MPLL0_DIV]		= &t7_mpll0_div.hw,
++	[CLKID_MPLL0]			= &t7_mpll0.hw,
++	[CLKID_MPLL1_DIV]		= &t7_mpll1_div.hw,
++	[CLKID_MPLL1]			= &t7_mpll1.hw,
++	[CLKID_MPLL2_DIV]		= &t7_mpll2_div.hw,
++	[CLKID_MPLL2]			= &t7_mpll2.hw,
++	[CLKID_MPLL3_DIV]		= &t7_mpll3_div.hw,
++	[CLKID_MPLL3]			= &t7_mpll3.hw,
++};
++
++static struct clk_hw *t7_hdmi_hw_clks[] = {
++	[CLKID_HDMI_PLL_DCO]		= &t7_hdmi_pll_dco.hw,
++	[CLKID_HDMI_PLL_OD]		= &t7_hdmi_pll_od.hw,
++	[CLKID_HDMI_PLL]		= &t7_hdmi_pll.hw,
++};
++
++static struct clk_hw *t7_mclk_hw_clks[] = {
++	[CLKID_MCLK_PLL_DCO]		= &t7_mclk_pll_dco.hw,
++	[CLKID_MCLK_PRE]		= &t7_mclk_pre_od.hw,
++	[CLKID_MCLK_PLL]		= &t7_mclk_pll.hw,
++	[CLKID_MCLK_0_SEL]		= &t7_mclk_0_sel.hw,
++	[CLKID_MCLK_0_DIV2]		= &t7_mclk_0_div2.hw,
++	[CLKID_MCLK_0_PRE]		= &t7_mclk_0_pre.hw,
++	[CLKID_MCLK_0]			= &t7_mclk_0.hw,
++	[CLKID_MCLK_1_SEL]		= &t7_mclk_1_sel.hw,
++	[CLKID_MCLK_1_DIV2]		= &t7_mclk_1_div2.hw,
++	[CLKID_MCLK_1_PRE]		= &t7_mclk_1_pre.hw,
++	[CLKID_MCLK_1]			= &t7_mclk_1.hw,
++};
++
++static const struct meson_clkc_data t7_gp0_data = {
++	.hw_clks = {
++		.hws = t7_gp0_hw_clks,
++		.num = ARRAY_SIZE(t7_gp0_hw_clks),
++	},
++};
++
++static const struct meson_clkc_data t7_gp1_data = {
++	.hw_clks = {
++		.hws = t7_gp1_hw_clks,
++		.num = ARRAY_SIZE(t7_gp1_hw_clks),
++	},
++};
++
++static const struct meson_clkc_data t7_hifi_data = {
++	.hw_clks = {
++		.hws = t7_hifi_hw_clks,
++		.num = ARRAY_SIZE(t7_hifi_hw_clks),
++	},
++};
++
++static const struct meson_clkc_data t7_pcie_data = {
++	.hw_clks = {
++		.hws = t7_pcie_hw_clks,
++		.num = ARRAY_SIZE(t7_pcie_hw_clks),
++	},
++};
++
++static const struct reg_sequence t7_mpll_init_regs[] = {
++	{ .reg = MPLL_CTRL0, .def = 0x00000543 }
++};
++
++static const struct meson_clkc_data t7_mpll_data = {
++	.hw_clks = {
++		.hws = t7_mpll_hw_clks,
++		.num = ARRAY_SIZE(t7_mpll_hw_clks),
++	},
++	.init_regs = t7_mpll_init_regs,
++	.init_count = ARRAY_SIZE(t7_mpll_init_regs),
++};
++
++static const struct meson_clkc_data t7_hdmi_data = {
++	.hw_clks = {
++		.hws = t7_hdmi_hw_clks,
++		.num = ARRAY_SIZE(t7_hdmi_hw_clks),
++	},
++};
++
++static const struct meson_clkc_data t7_mclk_data = {
++	.hw_clks = {
++		.hws = t7_mclk_hw_clks,
++		.num = ARRAY_SIZE(t7_mclk_hw_clks),
++	},
++};
++
++static const struct of_device_id t7_pll_clkc_match_table[] = {
++	{ .compatible = "amlogic,t7-gp0-pll",	.data = &t7_gp0_data, },
++	{ .compatible = "amlogic,t7-gp1-pll",	.data = &t7_gp1_data, },
++	{ .compatible = "amlogic,t7-hifi-pll",	.data = &t7_hifi_data, },
++	{ .compatible = "amlogic,t7-pcie-pll",	.data = &t7_pcie_data, },
++	{ .compatible = "amlogic,t7-mpll",	.data = &t7_mpll_data, },
++	{ .compatible = "amlogic,t7-hdmi-pll",	.data = &t7_hdmi_data, },
++	{ .compatible = "amlogic,t7-mclk-pll",	.data = &t7_mclk_data, },
++	{}
++};
++MODULE_DEVICE_TABLE(of, t7_pll_clkc_match_table);
++
++static struct platform_driver t7_pll_clkc_driver = {
++	.probe = meson_clkc_mmio_probe,
++	.driver = {
++		.name = "t7-pll-clkc",
++		.of_match_table = t7_pll_clkc_match_table,
++	},
++};
++module_platform_driver(t7_pll_clkc_driver);
++
++MODULE_DESCRIPTION("Amlogic T7 PLL Clock Controller driver");
++MODULE_AUTHOR("Jian Hu <jian.hu@amlogic.com>");
++MODULE_LICENSE("GPL");
++MODULE_IMPORT_NS("CLK_MESON");
 -- 
-2.52.0
+2.47.1
 
