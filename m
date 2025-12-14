@@ -1,82 +1,119 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4861C2D6E6A;
-	Sat, 13 Dec 2025 17:00:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0A5C2EFD95
+	for <linux-clk@vger.kernel.org>; Sun, 14 Dec 2025 19:26:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765645208; cv=none; b=W7b1aNuskS57WPAkf4xS5lUNUKLS6nr2x17M8UGTC6FaLtqaI5qxCwYM0UsfBqExlraPv6T0Qxwp2t0s8doi629w6jp4c+Nx1vDdrfJhX/2HE+9YrG3kNyi/d5SkgfFVfVXfGmxak6V2pICPtSJZ/cy85WpXzXY3AdlF38enUlI=
+	t=1765740387; cv=none; b=MKAoBUSEGiHBUD5bp9uOL951GjuVifXJfDZ8Q0cAqcF5eSMyFkfLB8Iw13jkQ2MUKBq/Wx+u/YhXY3jpnAgY39LMKSJEhBmc+ey+iBFEnO2ZE9T0NkcOgrXucumpNWbygN6EIYOF5NQysE8wjJVYaDkqvTW8hUJuk0ATb5GbR0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765645208; c=relaxed/simple;
-	bh=VzKBYcoy1QLzHCut6+iKlDtsmmJak9U5g55kExj/JFI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SDuFPXgszTYzVwbJMXXIUOF45dM0q52mPtJZlH0Lxjt6kKDFyYsjakf1DV6Hz+5iuwYuwNJNxQqEJE0KG0DSdLuL2TNHUMF3KKDaeewdXB6h/fehxKMZYBet36eZlgDctSWN+nzypdJNHpI1bB5I9LBxG6T1gkkstjRq3i5hobU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RwzsPYFW; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1765740387; c=relaxed/simple;
+	bh=WVvUVNXHWd1pFmBd40ObioZYv7TFHGnsEnJa5VsJHMc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Gu0RTI6k0dW2/ND5yVfmrsD3n9x6qdC8BgCVFVV1QlYMIUcOhSu9scl0stltMvrRVS9fcHD5XI98hR9U/KFIK4YSNps2IhTIcW15U0XR8iRKlbfPxalhoJm+xmyviTozL1/cVeIJUic7dCUzACJYZZq78lO2Tbdnl4g7blW1VUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=A+RPiyEk; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RwzsPYFW"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96631C4CEF7;
-	Sat, 13 Dec 2025 16:59:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1765645207;
-	bh=VzKBYcoy1QLzHCut6+iKlDtsmmJak9U5g55kExj/JFI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=RwzsPYFWZct3fYDaSoH2MO8Pr6OmUerebApwD55CqIDmIjhoGYii118YuorwNlvqq
-	 ScAULQd/58dFFaqTTbGQluGmGyWmjP197/lR0mEIj9eB+4T931oqm6bV+zZ3Dtp3UB
-	 /3rEA58xa9OtbeLC8Sdoct2UoObIYuhaP3mRahKBMFr5MyUfu8A/UkiQKKb0hJJ052
-	 XpUK03v0ZQVQ46uHO5Tv0MUUttfEsK/oQCNHvdjrmUt7X7j38m0kpVAalfiSZ9oRUU
-	 sWgR/3U8XMRryBhIuoNjoTDFmxZ+oM6dTz94zalzS6WErXPW7Vhg3NOCfVaTboJchh
-	 qJxB4vBT3+yhg==
-Date: Sat, 13 Dec 2025 16:59:49 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, Michal Simek
- <michal.simek@amd.com>, Vinod Koul <vkoul@kernel.org>, Matthias Brugger
- <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
- <angelogioacchino.delregno@collabora.com>, David Lechner
- <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy
- Shevchenko <andy@kernel.org>, Yong Wu <yong.wu@mediatek.com>, Peter Rosin
- <peda@axentia.se>, Linus Walleij <linusw@kernel.org>, Chen-Yu Tsai
- <wens@kernel.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel
- Holland <samuel@sholland.org>, Philipp Zabel <p.zabel@pengutronix.de>,
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam
- <festevam@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown
- <broonie@kernel.org>, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- dmaengine@vger.kernel.org, linux-mediatek@lists.infradead.org,
- linux-iio@vger.kernel.org, iommu@lists.linux.dev,
- linux-gpio@vger.kernel.org, linux-sunxi@lists.linux.dev,
- imx@lists.linux.dev, linux-sound@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: Remove unused includes
-Message-ID: <20251213165949.4b51f7cb@jic23-huawei>
-In-Reply-To: <20251212231203.727227-1-robh@kernel.org>
-References: <20251212231203.727227-1-robh@kernel.org>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="A+RPiyEk"
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-477b5e0323bso11558215e9.0
+        for <linux-clk@vger.kernel.org>; Sun, 14 Dec 2025 11:26:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1765740384; x=1766345184; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WVvUVNXHWd1pFmBd40ObioZYv7TFHGnsEnJa5VsJHMc=;
+        b=A+RPiyEkN3Ckk8WLce7h7Sw8AvsBeSFOVBj7oiTnX2XZW8BazLN6/+Tfa/M7Sz0FQK
+         2uLSls3YaO18b9J54FUo/0k81MIuZnpHgDUHnxtj7ncXOoumhdU65qpV7l4xtw+KtPJU
+         lo/8ibxGdYuJ5iztgHy/E62OjtSfsy1RssuLUeRenSJ61JKycPvvGLLnoBJeFPM1rwPh
+         nCh2vVrUHCnS6TIc2sFu2qLoCSjvfdJuQXBXcaxPn0TE/EYtKVgeFr4bGagcIbUFEe8e
+         rMu6GERxfVei9HrznipwUzHw3BpyLwe83aWuIjx53MRs2dOoHJGUSZRIQgyxCBVw4ww9
+         Dfaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1765740384; x=1766345184;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=WVvUVNXHWd1pFmBd40ObioZYv7TFHGnsEnJa5VsJHMc=;
+        b=gAfe+aUF9E1JpjAy8mq3C++szRNZ+tQdJo7Q/JXGDEFRPY4kSaY85mvt/7cgkYapXT
+         k7HSQbswQN7rMGULfjaRTK8MPhFVg14VoxDoG+zxxIi0Y4djppMioZLxjASn8Gd8j3EH
+         evBEIf8JjRirWhAJIC2Qo3DJZEUJD7K8HRUuut1bZnDQv0iYwy2cn4aONtdAH8gG6EUA
+         LVOvnJWgPveEPXluCA1Y9OnxzJCyiVecUofrBijkzSRNsbd/B98orniquHR4PZkn1bPW
+         wEgEdOotz3JmZpfYxEGc+vEqjCnYUslNqAvjCM2Grool8VgptLfd6h8NJ5qtoGokD1rd
+         fwUA==
+X-Forwarded-Encrypted: i=1; AJvYcCVX4WX/QgmEN9/JNpDKVm9Y2ZhmQkvC/iC/trcADsyJxnnLSMnOwcmZayfjZgY8WjmUefspHikcm8k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9puV2QMVH2xb9GRuZ9BNGwP4CdCa08HsxJYd6ID+muUfgQEPy
+	Cv1o7mx2fVuxKx2hdzhTtd0Z6mTAT1XyC/sUFQZoxnOLXU2D8bsYP+THmIX8O2NQ9IpTBfEd5mp
+	UI3TxYpH+7TXch+at5NSnyQX9qngbbcUQd5kmyzD9vw==
+X-Gm-Gg: AY/fxX4/VkRHIu5COlqJoyPwnBV4p5dJHV4TgSvDTROtFkYILd/Q6EBlHQ3oaShO+Tt
+	D3l+qbrV6fezi9qnegSil8jRIPVBvojzlXwWTD5SRNQPy8Nb0bE3KX8YEyqtTCDyIUlgvZpD3/a
+	BD0Gjtis6ylxqGHoHFZQmqLCMrS+P9e2TqP2lfPsxZI1aRhflcbaflozOAojVZGfk0H+FWUuDox
+	hYiaM7SfAENWqlO9gCvxJvR2/Nz/6rdAon/VSkPgD+KZWbxQ7sC8KMgM+qrGuJ08v65XYUzpBYp
+	+gEmMw==
+X-Google-Smtp-Source: AGHT+IGp0URZxcEmKzuJnhkovablE+rc5aXkwhLdHAPUclpKC2fkjaTnvENlFOzSKOUjZ6+NbMexq1Gb63+5Gfmk+Q4=
+X-Received: by 2002:a5d:5704:0:b0:42f:f627:3a88 with SMTP id
+ ffacd0b85a97d-42ff6273cd7mr5138840f8f.4.1765740384249; Sun, 14 Dec 2025
+ 11:26:24 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20251202-wip-obbardc-qcom-msm8096-clk-cpu-fix-downclock-v1-1-90208427e6b1@linaro.org>
+ <8d769fb3-cd2a-492c-8aa3-064ebbc5eee4@oss.qualcomm.com> <CACr-zFD_Nd=r1Giu2A0h9GHgh-GYPbT1PrwBq7n7JN2AWkXMrw@mail.gmail.com>
+In-Reply-To: <CACr-zFD_Nd=r1Giu2A0h9GHgh-GYPbT1PrwBq7n7JN2AWkXMrw@mail.gmail.com>
+From: Christopher Obbard <christopher.obbard@linaro.org>
+Date: Sun, 14 Dec 2025 19:26:13 +0000
+X-Gm-Features: AQt7F2pFoRVbsgf9gdAd9vkk-xGL6wVZ5NRGI1iTg1jQSI3LzAG1OQ6PvpoNNQM
+Message-ID: <CACr-zFA=4_wye-uf3NP6bOGTnV7_Cz3-S3eM_TYrg=HDShbkKg@mail.gmail.com>
+Subject: Re: [PATCH] Revert "clk: qcom: cpu-8996: simplify the cpu_clk_notifier_cb"
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Dmitry Baryshkov <lumag@kernel.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 12 Dec 2025 17:11:52 -0600
-"Rob Herring (Arm)" <robh@kernel.org> wrote:
+Hi Konrad,
 
-> Remove includes which are not referenced by either DTS files or drivers.
-> 
-> There's a few more which are new, so they are excluded for now.
-> 
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+On Mon, 8 Dec 2025 at 22:36, Christopher Obbard
+<christopher.obbard@linaro.org> wrote:
+> Apologies for the late response, I was in the process of setting some
+> more msm8096 boards up again in my new workspace to test this
+> properly.
+>
+>
+> > It may be that your board really has a MSM/APQ8x96*SG* which is another
+> > name for the PRO SKU, which happens to have a 2 times wider divider, tr=
+y
+> >
+> > `cat /sys/bus/soc/devices/soc0/soc_id`
+>
+> I read the soc_id from both of the msm8096 boards I have:
+>
+> Open-Q=E2=84=A2 820 =C2=B5SOM Development Kit (APQ8096)
+> ```
+> $ cat /sys/bus/soc/devices/soc0/soc_id
+> 291
+> ```
+> (FWIW this board is not in mainline yet; but boots with a DT similar
+> enough to the db820c. I have a patch in my upstream backlog enabling
+> that board; watch this space)
+>
+> DragonBoard=E2=84=A2 820c (APQ8096)
+> ```
+> $ cat /sys/bus/soc/devices/soc0/soc_id
+> 291
+> ```
 
-Acked-by: Jonathan Cameron <jonathan.cameron@huawei.com> #for-iio
+Sorry to nag, but are you able to look into this soc_id and see if
+it's the PRO SKU ?
 
-Ideally we'll get a QC ack on those as well.
 
-Jonathan
->  .../dt-bindings/iio/qcom,spmi-adc7-pmr735b.h  |  30 --
->  .../dt-bindings/iio/qcom,spmi-adc7-smb139x.h  |  19 --
+Cheers!
+
+Chris
