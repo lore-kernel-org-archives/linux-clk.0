@@ -1,45 +1,81 @@
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FCBD32F749;
-	Mon, 15 Dec 2025 10:24:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765794302; cv=pass; b=jLR/E5skAi2oCgfhSFsDP3sxlcgScQpJCxeM6Rkd+rCDiDGlOn5yEXrWTvEzEjv3TEQkpZbyMGHI1C+tMgxBGWrRkJk5hiUqgN4G0bakXXkM4BdNZkH+SgXSGu5uVggbcI5el0EmfnwpVNBOhsTphcjkornASKEXkr84PeXFD+g=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765794302; c=relaxed/simple;
-	bh=M9of1vutdkZdNOkB2WXlI70RIQMLMZ+KFNCJRtrstT0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=mCJrsVsCjhP76ok2vNh2qq67GtwGGQgEcf8R9zIHYE9ggnaX+hFpR73bK079IKfRN9hfG9TWYpK8lRt8g4pdnL7iVXsBpDvsxj9e3z2ixINMJCGum+2BHRILL61a/J4q6YsQIqWlfKHdmw61EkuA+OGVid52bpwZeluQ/ROtqQY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=d0l0JuTM; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0577F27FD56
+	for <linux-clk@vger.kernel.org>; Mon, 15 Dec 2025 10:51:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1765795871; cv=none; b=LKwFTu772nKtuWgJgKapmTLERDiSH48fxgKAJFEXm08VcHbN9hrKFbCkqPzT62dZQJ17Ybxhj9vWijXT5YlXelmiuszq4PZ6ujMVlVXpJwEURx3SHMHm1Af3pQCAV5SGxXFfJXsKKWsFwRKCKvp+Uk0Hs3uiFPEpeMjo0wKJKSM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1765795871; c=relaxed/simple;
+	bh=yvmAk8rBkFBQKuxJYkj+f74MCns4mWaW8k5uuvRnc04=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=W6rzHE77afS1oiXf/gYZab+UQxu36KszjBlYFnM9UzyfIe6ahxfAqpCBaZLL47R5tYUlJPovTP/QNywN4yagbV97iw6FrXnwS8xvrh92zzrk47TvAueEkYUMb1tkBqE9Gbot6YXdBYdGwz1LkYoyb1csMCv0joTP4tS2wMiposg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=MtoWYf3D; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="d0l0JuTM"
-ARC-Seal: i=1; a=rsa-sha256; t=1765794280; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=GcECXEGFYhLh60t/Aa77LWVODOx3xxLCmrTPNbriqCodsq1XZNwzpzLbZnLcJDZfoVFVGPiWHS3PcqpPfri/+bT9lurZYVhYhD7Pmrl0W5JHYRlWDzdXRrE5N8wkIAfQnfQdXZkMUaXoSxck7mPAQ5DBRXsXhuYuvmBoMi7M7yY=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1765794280; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=a86bVwjEMxjj0fvsOy3/rDq0QFQ2CRDqkBGI8115LG8=; 
-	b=kI2B1yKKyA979YDlNJjemxXwt+0xoE9rL0gKRay03jUSKo9uD0a5ZsogeA8PiZfIY30z4+lW0aAWPNXSUd0tGwLAEC8wBgyvork+3P7pTAPFkUv6rviSri224BtYDdo6DbHq2KCieqVfMjVMqWTH08ImpIp/2nSJnJdTZF6CkdU=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
-	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1765794280;
-	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
-	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:References:In-Reply-To:To:To:Cc:Cc:Reply-To;
-	bh=a86bVwjEMxjj0fvsOy3/rDq0QFQ2CRDqkBGI8115LG8=;
-	b=d0l0JuTMtXkiQVywnfeLWCYkYfIl5p7qkA6qDZHe38BRrzMmEXkSxyBcMQyXFqZ/
-	Vaqz0KUCI92SEHAyyAcrVK+EV3OlNXTSbSICo5h60I556VYwDv5k1N4lCz39jvmqjpC
-	+yqtqhMF7Cd7+D38qLJcyQK31i7c72rtKQ8ijuG8=
-Received: by mx.zohomail.com with SMTPS id 1765794279261998.4445952166179;
-	Mon, 15 Dec 2025 02:24:39 -0800 (PST)
-From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Date: Mon, 15 Dec 2025 11:24:02 +0100
-Subject: [PATCH RESEND v3 5/5] clk: mediatek: Add mfg_eb as parent to
- mt8196 mfgpll clocks
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="MtoWYf3D"
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-42b3c965cc4so1616582f8f.0
+        for <linux-clk@vger.kernel.org>; Mon, 15 Dec 2025 02:51:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1765795866; x=1766400666; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OiAf1pob1P9A2hs+uuZimsbQclhxUB5vv2ZHT7m9wRk=;
+        b=MtoWYf3DaosfDZd0tWLIg3613awh6P82XfBlTh5POSa3V4BM4OFnndHmjC6RKhPwm/
+         hYFLjUtFfrd/P6AHZ80XIyE1OswDVjMND0hxzs+FqEywUWXKMKVbHppZuNMBBBCWhYnJ
+         UJGD8Ufa03pqb0aPhQ45SJyRR1yazim1/xztfueiMDJdh5HE4/Yxg1dnK97uRnhmRuis
+         NH+VO8g95acreBC0mu+fiobehHVAP/Y9aDDx5P2dbDJAcqKb1TJYb0vPR0zko3YF6QAS
+         qCEmnUW97zrqK3zsl+wxt3ClUV0gKR9FIpasyd6NwfIPaqqz1k8iSA/4jnYrtcxXkPUf
+         Bk6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1765795866; x=1766400666;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=OiAf1pob1P9A2hs+uuZimsbQclhxUB5vv2ZHT7m9wRk=;
+        b=ZeORudTRJoNbS9N/Yj7eEWbrll2xbOKtvcw3mafzzH7beJHZNJWhqMla2yfwFI/YQC
+         SLr2OMtlV72OsH3ktJ+pF6EmIoMSUNB+Ng3eb9Xb/kHTkon3UOkj+BPptxdt4butXTqv
+         WnDhlLqVWyMlfFdd9liznNLNDYE5Oj/FDWLxqgy4lVSwYvBMA2NEQ+MnzWUTjkmb9uIo
+         ewZkxahRGuYzJf7fPoJi16NwTBtRCmHLIqNeBLfDImW5thFzWuuGMZilWVFYfTTiwfeK
+         N9Gwv/x+kDscLrM9WY/aTZdoOwNWckBFijieVD5YOvsdCrHjrni8+lhj6XLtLqR4sUZ+
+         yqRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXeYFBuAlaQaFJt3i1kDTQmzykxGELaiwK/73pePwTObpNx7TSQLXR143l3iOD5EsAIdA5bEHwli+w=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8L7SG9jtu+eSN3IfjVmYimjeLTNdnvJHyorNOqIWkNgQwGlnP
+	OXAJy5/W0rotIm6mThkDnMwNuQgJB5ug+rJTP9ZF0dFWddEG/yXm7TCbGVGgS5vYS8Qv5ivDxqa
+	6YcVO
+X-Gm-Gg: AY/fxX41LNViDPJ9PgSBWOBqF/8zTbkuRi7ZJ4Pcy5tBG0RZ3PKN2mUewez2dbBOkYq
+	Gx2Cw17ETWJb0vmWWSW/A5Xalt5TJWDjV6yrvUfq4SAIatb0CMcOaCqXRoBf2M+k6E7QW+/crv6
+	T8HCuNtxiBmqcWV0/nF4eHOte6gfRTxoao4WlKSaUiDL4m//hP5EFHI6qnM87XoI2aTfZ4MIEK3
+	EpXJvHbMx8ZAeMvS/uDWWp0yDYUEVykbAhbRFohGZZDFy2kiaD42YtfAHbYpnZpDZZKymh7dlc0
+	x/XJ0gPKCcBHKuNd0/tK59ACHdD14G/5Q6zzzywAYSATWjCEkSwFoPlwu9l1rhxrfQToK/w7t7G
+	ndtZAgKqt7Udc44IJ3qKym7QrJAPdVVX57qsogDZqyN00dxo4Mal1626mBJgC13Ws5Q9xQOvY82
+	QNLCTyUK1kJP6I26yAKBuyNJw2
+X-Google-Smtp-Source: AGHT+IEUCXZDYdW1Yaezuo8T8dArAq/O2/s2YiIYeQnjgQdgpxFuf1BEC+kk0V2dJ19iC+eLEyxuDQ==
+X-Received: by 2002:a05:6000:26cf:b0:425:82b4:a099 with SMTP id ffacd0b85a97d-42fab1f9f67mr16105347f8f.0.1765795866090;
+        Mon, 15 Dec 2025 02:51:06 -0800 (PST)
+Received: from toaster.baylibre.com ([2a01:e0a:3c5:5fb1:3f77:1837:bfee:f255])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-430fb078e56sm7695439f8f.21.2025.12.15.02.51.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Dec 2025 02:51:05 -0800 (PST)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Chuan Liu <chuan.liu@amlogic.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Kevin Hilman <khilman@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, robh+dt <robh+dt@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Jian Hu <jian.hu@amlogic.com>
+Cc: devicetree <devicetree@vger.kernel.org>, 
+ linux-clk <linux-clk@vger.kernel.org>, 
+ linux-amlogic <linux-amlogic@lists.infradead.org>, 
+ linux-kernel <linux-kernel@vger.kernel.org>, 
+ linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+In-Reply-To: <20251212022619.3072132-1-jian.hu@amlogic.com>
+References: <20251212022619.3072132-1-jian.hu@amlogic.com>
+Subject: Re: [PATCH v7 0/5] add support for T7 family clock controller
+Message-Id: <176579586493.1510096.5256519771615298068.b4-ty@baylibre.com>
+Date: Mon, 15 Dec 2025 11:51:04 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -48,110 +84,22 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251215-mtk-pll-rpm-v3-5-5afb3191e869@collabora.com>
-References: <20251215-mtk-pll-rpm-v3-0-5afb3191e869@collabora.com>
-In-Reply-To: <20251215-mtk-pll-rpm-v3-0-5afb3191e869@collabora.com>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Dong Aisheng <aisheng.dong@nxp.com>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- Yassine Oudjana <y.oudjana@protonmail.com>, 
- Laura Nao <laura.nao@collabora.com>, 
- =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>, 
- Chia-I Wu <olvaffe@gmail.com>, Chen-Yu Tsai <wenst@chromium.org>
-Cc: kernel@collabora.com, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-mediatek@lists.infradead.org, 
- Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-X-Mailer: b4 0.14.3
+X-Mailer: b4 0.14.2
 
-All the MFGPLL require MFG_EB to be on for any operation on them, and
-they only tick when MFG_EB is on as well, therefore making this a
-parent-child relationship.
+Applied to clk-meson (clk-meson-next), thanks!
 
-This dependency wasn't clear during the initial upstreaming of these
-clock controllers, as it only made itself known when I could observe
-the effects of the clock by bringing up a different piece of hardware.
+[1/5] dt-bindings: clock: add Amlogic T7 PLL clock controller
+      https://github.com/BayLibre/clk-meson/commit/5437753728ac
+[2/5] dt-bindings: clock: add Amlogic T7 SCMI clock controller
+      https://github.com/BayLibre/clk-meson/commit/f5d473e96fe0
+[3/5] dt-bindings: clock: add Amlogic T7 peripherals clock controller
+      https://github.com/BayLibre/clk-meson/commit/b4156204e0f5
+[4/5] clk: meson: t7: add support for the T7 SoC PLL clock
+      https://github.com/BayLibre/clk-meson/commit/140f074c3127
+[5/5] clk: meson: t7: add t7 clock peripherals controller driver
+      https://github.com/BayLibre/clk-meson/commit/fab4d651b592
 
-Add a new PLL_PARENT_EN flag to mediatek's clk-pll.h, and check for it
-when initialising the pll to then translate it into the actual
-CLK_OPS_PARENT_ENABLE flag.
-
-Then add the mfg_eb parent to the mfgpll clocks, and set the new
-PLL_PARENT_EN flag.
-
-Fixes: 03dc02f8c7dc ("clk: mediatek: Add MT8196 mfg clock support")
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
----
- drivers/clk/mediatek/clk-mt8196-mfg.c | 13 +++++++------
- drivers/clk/mediatek/clk-pll.c        |  3 +++
- drivers/clk/mediatek/clk-pll.h        |  1 +
- 3 files changed, 11 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/clk/mediatek/clk-mt8196-mfg.c b/drivers/clk/mediatek/clk-mt8196-mfg.c
-index 8e09c0f7b754..a317183f1681 100644
---- a/drivers/clk/mediatek/clk-mt8196-mfg.c
-+++ b/drivers/clk/mediatek/clk-mt8196-mfg.c
-@@ -58,24 +58,25 @@
- 		.pcw_shift = _pcw_shift,			\
- 		.pcwbits = _pcwbits,				\
- 		.pcwibits = MT8196_INTEGER_BITS,		\
-+		.parent_name = "mfg_eb",			\
- 	}
- 
- static const struct mtk_pll_data mfg_ao_plls[] = {
--	PLL(CLK_MFG_AO_MFGPLL, "mfgpll", MFGPLL_CON0, MFGPLL_CON0, 0, 0, 0,
--	    BIT(0), MFGPLL_CON1, 24, 0, 0, 0,
-+	PLL(CLK_MFG_AO_MFGPLL, "mfgpll", MFGPLL_CON0, MFGPLL_CON0, 0, 0,
-+	    PLL_PARENT_EN, BIT(0), MFGPLL_CON1, 24, 0, 0, 0,
- 	    MFGPLL_CON1, 0, 22),
- };
- 
- static const struct mtk_pll_data mfgsc0_ao_plls[] = {
- 	PLL(CLK_MFGSC0_AO_MFGPLL_SC0, "mfgpll-sc0", MFGPLL_SC0_CON0,
--	    MFGPLL_SC0_CON0, 0, 0, 0, BIT(0), MFGPLL_SC0_CON1, 24, 0, 0, 0,
--	    MFGPLL_SC0_CON1, 0, 22),
-+	    MFGPLL_SC0_CON0, 0, 0, PLL_PARENT_EN, BIT(0), MFGPLL_SC0_CON1, 24,
-+	    0, 0, 0, MFGPLL_SC0_CON1, 0, 22),
- };
- 
- static const struct mtk_pll_data mfgsc1_ao_plls[] = {
- 	PLL(CLK_MFGSC1_AO_MFGPLL_SC1, "mfgpll-sc1", MFGPLL_SC1_CON0,
--	    MFGPLL_SC1_CON0, 0, 0, 0, BIT(0), MFGPLL_SC1_CON1, 24, 0, 0, 0,
--	    MFGPLL_SC1_CON1, 0, 22),
-+	    MFGPLL_SC1_CON0, 0, 0, PLL_PARENT_EN, BIT(0), MFGPLL_SC1_CON1, 24,
-+	    0, 0, 0, MFGPLL_SC1_CON1, 0, 22),
- };
- 
- static const struct of_device_id of_match_clk_mt8196_mfg[] = {
-diff --git a/drivers/clk/mediatek/clk-pll.c b/drivers/clk/mediatek/clk-pll.c
-index c4f9c06e5133..0f3759fcd9d0 100644
---- a/drivers/clk/mediatek/clk-pll.c
-+++ b/drivers/clk/mediatek/clk-pll.c
-@@ -359,6 +359,9 @@ struct clk_hw *mtk_clk_register_pll_ops(struct mtk_clk_pll *pll,
- 
- 	init.name = data->name;
- 	init.flags = (data->flags & PLL_AO) ? CLK_IS_CRITICAL : 0;
-+	if (data->flags & PLL_PARENT_EN)
-+		init.flags |= CLK_OPS_PARENT_ENABLE;
-+
- 	init.ops = pll_ops;
- 	if (data->parent_name)
- 		init.parent_names = &data->parent_name;
-diff --git a/drivers/clk/mediatek/clk-pll.h b/drivers/clk/mediatek/clk-pll.h
-index f6493699c4e3..f49dc2732ffe 100644
---- a/drivers/clk/mediatek/clk-pll.h
-+++ b/drivers/clk/mediatek/clk-pll.h
-@@ -19,6 +19,7 @@ struct mtk_pll_div_table {
- 
- #define HAVE_RST_BAR	BIT(0)
- #define PLL_AO		BIT(1)
-+#define PLL_PARENT_EN	BIT(2)
- #define POSTDIV_MASK	GENMASK(2, 0)
- 
- struct mtk_pll_data {
-
--- 
-2.52.0
+Best regards,
+--
+Jerome
 
