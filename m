@@ -1,138 +1,134 @@
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C700A225416
-	for <linux-clk@vger.kernel.org>; Mon, 15 Dec 2025 13:31:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF51C2DFA5B;
+	Mon, 15 Dec 2025 13:59:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765805476; cv=none; b=AT8lS2PIydNuOsGPjdRaqFKIkhppQcq3jYCzV8OMqmPA7HktOoodC6e5lW7etByatkWSNz1bPI9rR5L65Q+Hn6KdKq7igJmqSr1tBJgOrm3EFvCE/guL/YqyFBmh3opdjazEtK0wG3ZWj3zXrSO0FwqjWXTIXsJ1mzoTLTlnVzY=
+	t=1765807154; cv=none; b=FmSeeKOoG031+F3RbQ55OVWHTBfdYY1tNbi/oQSoCwn71+rptDdZfqMBjFOrK5jsBk3/3q/xKBSvKqto77B/FLcAx2pg3dhO/lp+FGwByc+evEwR0XBHj9NX7EE64woz8ASB/b1B3kmG3lU2Ab4PNN4OewuF3QC9EXzULHTOjW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765805476; c=relaxed/simple;
-	bh=4IqfV+21sXkT4rpB7ZnZy6NpjdC+V8bm8PwvIB2EC48=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AExFg5JGbypkx9XxTeLCA7auxbr5smPAnMXGBgeW+NmSB6sYGi/knnipwqZSsWW6sjFucbI1pgigtd8h6wY+TAm4nMCWq7dDnSsvYuU1+BrqxF32RMDR8iqhZQb9dcLqTjU+8E2IXLjvI1/G3TFxPkpaZUoa3YvPOtySkjcRzKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sartura.hr; spf=pass smtp.mailfrom=sartura.hr; dkim=pass (2048-bit key) header.d=sartura.hr header.i=@sartura.hr header.b=DDc3dK1J; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sartura.hr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sartura.hr
+	s=arc-20240116; t=1765807154; c=relaxed/simple;
+	bh=YQ0YmiEKTBiByyCk2XIiAXJahBqdOSyVHDmgyhFstuo=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=XzPmMP3YiU3w/pPj9bVYZNR37Ocfcegxmehd7SN8cNL4BDQb4jYt7QkT869spT7vDT6GvDOeML/Yzc7UevPoWIcAYHvWEyQqsVCzyc/mzihy8SaXhMAZoOdTjupu7zfNtXXM30piaX1Js/QMCOjB6e5EEKIo4C+ue3oA1QLym1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K0ZSvqo9; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sartura.hr header.i=@sartura.hr header.b="DDc3dK1J"
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-b7697e8b01aso653655966b.2
-        for <linux-clk@vger.kernel.org>; Mon, 15 Dec 2025 05:31:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sartura.hr; s=sartura; t=1765805473; x=1766410273; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Bw+VWiqd/R4wFDIFdR2X28ZvT94yjzl0km0pBRnN7OY=;
-        b=DDc3dK1JEMys5rx3jlagp4hyDgT2wdeH3AuguuaL1lwpP3RSnZaB0xLasscVY5r655
-         NoU75j94IxqSRKfmFoB8DKDcGYpRFRds4QwciNrUqJ83gbZ+20nTtgExzWuXDZ/aM899
-         WVCt+m1pS6PRKov5t91SolcAmZzM+Vy0t+OkPxc2Pzk+PirWOZhHgG8L2RYQaZiNPrlS
-         HAa6KtTrxEeowAwLLv/OyrkghYzyTfi3+LbklsvlrRRzFtT1TE6sm+Phsrv7n59n9luQ
-         0HvQEEEAQDPn5cZhaXm4p31cIw+dza2sRvw/6oAJwKHJW5F7CmUMKSPwyECKzL0U0ev8
-         Gezw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765805473; x=1766410273;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=Bw+VWiqd/R4wFDIFdR2X28ZvT94yjzl0km0pBRnN7OY=;
-        b=qepVQY36DIE8lGJGqEG/wCVZ9xiacWsTfL5u1cq+xkTjY2+jyUsUTrGzQH4APIoLPm
-         V0pGzQj3cbsHjs58zL6ekOHMSZY19C84tVce5HKqzVt9EfVax+xUGHZgVcDUfwFN1Oht
-         nrJuvNrcNv3vFLz5kRpkb73diYlzwhwStzv+x6N4r5LzkyKJs2dp0HYeZNYiP2+YnSjY
-         OGyPTwsTCpal5yZdC0koF1u0fahNLZblTcHkZvuLLJjzvekp3HMs7W2ObTXisfKVSZz+
-         vMus92Vx5m0A39PSkRMDiOaF7QPrSRozPo9VZUo9PlC6InoPzyodzI7/LETy/K1KlLNJ
-         7rNA==
-X-Forwarded-Encrypted: i=1; AJvYcCVdH7MUfiJ1RsL4O97Ddh8kB0zCYL0KmbWwmcnL6dc5Ho+yGpxLeyrJu0b6e+TTJOKWJ760bN9/zfM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxzpBw/u7kzkR+tNQfC/MZ2yO/DcUcsFo3KI373A85JB5BNP1sl
-	L3sMSSDiwszTKZ92/ft1kWqEojelwq14oRBNlLERtrTpLt/97xwXh3wZbjFpdqKVV5I7q5Ob5B8
-	/aLZb7DXECNSDKw5VTiDy6EPw9g7YGRExYVsiz7H3RQ==
-X-Gm-Gg: AY/fxX7RFjOP31q40T5nb1w+HArikVyPpsE0cHtckfLk7kG8j5zbRh76/DreG5Q1eU/
-	ZAE6IsNxQg2tTXaLRPNmg7JIXDlF+UBai9yM5hkzSQwbK0+Tu4yUaPMy/8/1Ba/2gVlMPD0BEZF
-	EkxOEfvRjt2XJS/rIkhlGD8fOIlJw0wUYO9P85tN2b8vLMiYSVVSVCpanQSpsF/QoAbzrKOiytS
-	uw9/HFab65VuSNu04zOfQmY2DgnfRHhnjEycErV74mh/iTyZoBmQdjO1z8fpZNzVpLmWfTo
-X-Google-Smtp-Source: AGHT+IH0jOC7I2V4n9q5hO9cE+4qZGL5l0QgmCHa+z37icAIbpE4GF3fcjaXDt2pkrHPiEtG7N6pGTFx3A7hEnLj0+M=
-X-Received: by 2002:a17:907:9496:b0:b7a:1bde:a01b with SMTP id
- a640c23a62f3a-b7d23d13da0mr931934966b.63.1765805473126; Mon, 15 Dec 2025
- 05:31:13 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K0ZSvqo9"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84039C4CEF5;
+	Mon, 15 Dec 2025 13:59:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1765807153;
+	bh=YQ0YmiEKTBiByyCk2XIiAXJahBqdOSyVHDmgyhFstuo=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=K0ZSvqo9FNH+vPZrOVLOU5ZraIN5/Hx4lzXEVk8deQoFTzZrfVB3Sn8wUVb8UaBDT
+	 IPKJL1FeYjBc4++kymDagnMFo+aO6gmHV+UWQO7cqHTOD6VMMtizrJjRFLGRY7Ee7L
+	 w4mP9rPOGGMbKthLu+r5v9Ru7rhk3vDAc1XCmmrB5wHkqvV8acOQhuC1BVzlP5ME/H
+	 H7EzKs7+bvfSkQA41DZXMI2/LRypKRi0eSe24U8EkDVDNspUAYXac7itmfYbMOTmxv
+	 x+MHyD8AednEYtbIisGEt5V/tIfQDU8l0ImBMScwR5yt2mJk+grnKjhIaLlaCyGSER
+	 QNwLC455/HDNw==
+From: Mark Brown <broonie@kernel.org>
+To: rust-for-linux@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>
+Cc: linux-kernel@vger.kernel.org, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
+ Leon Romanovsky <leon@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+ Boqun Feng <boqun.feng@gmail.com>, Elle Rhumsaa <elle@weathered-steel.dev>, 
+ Carlos Llamas <cmllamas@google.com>, Yury Norov <yury.norov@gmail.com>, 
+ Andreas Hindborg <a.hindborg@kernel.org>, linux-block@vger.kernel.org, 
+ FUJITA Tomonori <fujita.tomonori@gmail.com>, 
+ Miguel Ojeda <ojeda@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, 
+ Benno Lossin <lossin@kernel.org>, Danilo Krummrich <dakr@kernel.org>, 
+ Thomas Gleixner <tglx@linutronix.de>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org, 
+ Paul Moore <paul@paul-moore.com>, Serge Hallyn <sergeh@kernel.org>, 
+ linux-security-module@vger.kernel.org, 
+ Daniel Almeida <daniel.almeida@collabora.com>, 
+ Abdiel Janulgue <abdiel.janulgue@gmail.com>, 
+ Robin Murphy <robin.murphy@arm.com>, Lyude Paul <lyude@redhat.com>, 
+ Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+ linux-fsdevel@vger.kernel.org, Josh Poimboeuf <jpoimboe@kernel.org>, 
+ Jason Baron <jbaron@akamai.com>, Steven Rostedt <rostedt@goodmis.org>, 
+ Ard Biesheuvel <ardb@kernel.org>, 
+ Brendan Higgins <brendan.higgins@linux.dev>, 
+ David Gow <davidgow@google.com>, linux-kselftest@vger.kernel.org, 
+ Andrew Morton <akpm@linux-foundation.org>, 
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+ Andrew Ballance <andrewjballance@gmail.com>, maple-tree@lists.infradead.org, 
+ linux-mm@kvack.org, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+ Uladzislau Rezki <urezki@gmail.com>, Vitaly Wool <vitaly.wool@konsulko.se>, 
+ Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
+ devicetree@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+ linux-pci@vger.kernel.org, Remo Senekowitsch <remo@buenzli.dev>, 
+ "Paul E. McKenney" <paulmck@kernel.org>, rcu@vger.kernel.org, 
+ Will Deacon <will@kernel.org>, Fiona Behrens <me@kloenk.dev>, 
+ Gary Guo <gary@garyguo.net>, Liam Girdwood <lgirdwood@gmail.com>, 
+ Alexandre Courbot <acourbot@nvidia.com>, Vlastimil Babka <vbabka@suse.cz>, 
+ Christoph Lameter <cl@gentwo.org>, David Rientjes <rientjes@google.com>, 
+ Ingo Molnar <mingo@redhat.com>, Waiman Long <longman@redhat.com>, 
+ Mitchell Levy <levymitchell0@gmail.com>, 
+ Frederic Weisbecker <frederic@kernel.org>, 
+ Anna-Maria Behnsen <anna-maria@linutronix.de>, 
+ John Stultz <jstultz@google.com>, linux-usb@vger.kernel.org, 
+ Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>, 
+ Matthew Wilcox <willy@infradead.org>, Tamir Duberstein <tamird@gmail.com>, 
+ Rae Moar <raemoar63@gmail.com>
+In-Reply-To: <20251202-define-rust-helper-v1-0-a2e13cbc17a6@google.com>
+References: <20251202-define-rust-helper-v1-0-a2e13cbc17a6@google.com>
+Subject: Re: (subset) [PATCH 00/46] Allow inlining C helpers into Rust when
+ using LTO
+Message-Id: <176580714194.161338.1959594276727103368.b4-ty@kernel.org>
+Date: Mon, 15 Dec 2025 22:59:01 +0900
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251203122313.1287950-1-robert.marko@sartura.hr>
- <20251203122313.1287950-4-robert.marko@sartura.hr> <20251203-splendor-cubbyhole-eda2d6982b46@spud>
- <CA+HBbNGdd-u=4PtXZtirqRkFBhKwraa5gV-32QChDDjfVARPRg@mail.gmail.com> <173412c8-c2fb-4c38-8de7-5b1c2eebdbf9@microchip.com>
-In-Reply-To: <173412c8-c2fb-4c38-8de7-5b1c2eebdbf9@microchip.com>
-From: Robert Marko <robert.marko@sartura.hr>
-Date: Mon, 15 Dec 2025 14:31:00 +0100
-X-Gm-Features: AQt7F2riRZ6DJPf2Vnc_Dn8R65r6BvztUnfjR9AMbbKZbxLcNxf74LNl1xmAB1k
-Message-ID: <CA+HBbNFzETiySdw-VuzMJx6vdhPU_3d_aU2v9eJ4-_OBaTn2mA@mail.gmail.com>
-Subject: Re: [PATCH 4/4] arm64: dts: microchip: add LAN969x support
-To: Nicolas Ferre <nicolas.ferre@microchip.com>
-Cc: Conor Dooley <conor@kernel.org>, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, gregkh@linuxfoundation.org, claudiu.beznea@tuxon.dev, 
-	mturquette@baylibre.com, sboyd@kernel.org, richardcochran@gmail.com, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-clk@vger.kernel.org, daniel.machon@microchip.com, 
-	UNGLinuxDriver@microchip.com, luka.perkov@sartura.hr
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-47773
 
-On Mon, Dec 15, 2025 at 1:32=E2=80=AFPM Nicolas Ferre
-<nicolas.ferre@microchip.com> wrote:
->
-> Robert,
->
-> On 15/12/2025 at 12:36, Robert Marko wrote:
-> > On Wed, Dec 3, 2025 at 8:21=E2=80=AFPM Conor Dooley <conor@kernel.org> =
-wrote:
-> >>
-> >> On Wed, Dec 03, 2025 at 01:21:32PM +0100, Robert Marko wrote:
-> >>> Add support for Microchip LAN969x switch SoC, including the EV23X71A
-> >>> EVB board.
-> >>>
-> >>> Signed-off-by: Robert Marko <robert.marko@sartura.hr>
-> >>> ---
-> >>>   arch/arm64/boot/dts/microchip/Makefile        |   2 +
-> >>>   .../boot/dts/microchip/lan9696-ev23x71a.dts   | 761 +++++++++++++++=
-+++
-> >>
-> >>>   arch/arm64/boot/dts/microchip/lan969x.dtsi    | 482 +++++++++++
-> >>
-> >> The majority of devices in this file are missing soc-specific
-> >> compatibles.
-> >
-> > Hi,
-> > I missed this before.
-> >
-> > The majority of the devices are simply reused from the AT91 series, so
-> > I thought it was not required to
-> > update all of the bindings to add the LAN9691 compatible.
-> >
-> > If that is required, I will do so in v2.
-> Well, history told us it was better (in addition to be required by DT
-> best practices). Indeed, even if the same IP block is used, sometimes
-> integration subtleties pay game with us and a dedicated compatible
-> string saves us.
+On Tue, 02 Dec 2025 19:37:24 +0000, Alice Ryhl wrote:
+> This patch series adds __rust_helper to every single rust helper. The
+> patches do not depend on each other, so maintainers please go ahead and
+> pick up any patches relevant to your subsystem! Or provide your Acked-by
+> so that Miguel can pick them up.
+> 
+> These changes were generated by adding __rust_helper and running
+> ClangFormat. Unrelated formatting changes were removed manually.
+> 
+> [...]
 
-Ok, I will then update the required bindings and include them in the
-series in v2.
+Applied to
 
-Regards,
-Robert
->
-> Regards,
->    Nicolas
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
 
+Thanks!
 
+[35/46] rust: regulator: add __rust_helper to helpers
+        commit: 03d281f384768610bf90697bce9e35d3d596de77
 
---=20
-Robert Marko
-Staff Embedded Linux Engineer
-Sartura d.d.
-Lendavska ulica 16a
-10000 Zagreb, Croatia
-Email: robert.marko@sartura.hr
-Web: www.sartura.hr
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
