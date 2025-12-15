@@ -1,234 +1,240 @@
-Received: from ixit.cz (ip-94-112-25-9.bb.vodafone.cz [94.112.25.9])
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B474175809;
-	Mon, 15 Dec 2025 14:36:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.112.25.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B21133ADB0;
+	Mon, 15 Dec 2025 15:08:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765809373; cv=none; b=W2towti7qAG/zFInBX93VNtelWdOC9GntPgjYJlwmGmKSRJK7IpvtjXl6hIVTnOH7pvyOR2cx4840+X3Ml/gk0awkvz898rpZMiTw226A0YsPJrlXpv7dYSvJO3O72GV5jZsU3xW5bgXm3UoMsI36BFiIbWQDolc5/QkHzXgEuQ=
+	t=1765811330; cv=none; b=ZW0+idIiHTzMCMSeHQ/V8ZgxaR9z7SpOoKMtDH0wcbzRSyzAGXpmTXAgJj6/+sHR/rT3O6TJ9FZIz9g86raGjjryj7OpH614rdu54RIAXihO0cmuE47tXzBh8zlJjefakaLmAbBRf+uhkikQy746EbTBYW+HolLk4M9LQX6hZI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765809373; c=relaxed/simple;
-	bh=/HnHFXK+LuwyEWC+1DpoK7FadftLYhjt+Bzczr2GylQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BccvwKOD7rHX8J4jTJYeYw/7TvrCcUeWhvQ8fbqmmqYqcxablsM68qcvkbnkxmUKR6ev1aPQ50pRb0Q1SdonscDTAHHBpzJTWZzvI+EwFkHjdtBLI/SBT/lCg6/OwXBfwO6ziNAdZskqOYHcOuSQxfZN14uUscYe2NlVwZkO6BE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz; spf=pass smtp.mailfrom=ixit.cz; dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b=2kUFm4M8; arc=none smtp.client-ip=94.112.25.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ixit.cz
+	s=arc-20240116; t=1765811330; c=relaxed/simple;
+	bh=7rQ26wxuYqci2Mf1dYN+Yh9ZrCi3xlnHewl2axTDFHI=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=J6W3inkWmyuuusZWcvM3kRjt8jd9gX3sHzqKZnu4j3dQd2f3ah0JRIKykefrMBIeUhDolx7vVT8yxfyOQyjs32ShLcMmUeq7sTmo3x0IVxYr5rGWT9iC03myLwkov/Px5VhSV393/zNpsVknInZm1Gs+JKBmC33y4swHDjqTTF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=QysjCSFH; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b="2kUFm4M8"
-Received: from [172.16.12.102] (89-24-64-24.customers.tmcz.cz [89.24.64.24])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange x25519)
-	(No client certificate requested)
-	by ixit.cz (Postfix) with ESMTPSA id 487EF5340D1C;
-	Mon, 15 Dec 2025 15:35:56 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ixit.cz; s=dkim;
-	t=1765809357;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=s/LxO1TnP71dtYZuBpKQAsPafds0lCPJh42zK3IG/Lg=;
-	b=2kUFm4M8RTO5dhSvwonel91l7PTrF9U5L+FmgPy3LaymYh+jNvchKRAsZyEP0k7Z4z2Bav
-	BoSUf66ywghIp3nlAxgCMz8XaXWeDeCZHSMnx2nRUgMY/u8ia80pWbedIGMdITc2TKGzlw
-	TereQ9BpBiS9hTbNSnxk2ks6Hn4LLpA=
-Message-ID: <6a547cb2-4014-4918-8e5d-fc7593ba4f2c@ixit.cz>
-Date: Mon, 15 Dec 2025 15:35:53 +0100
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="QysjCSFH"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id CC28CC19D1D;
+	Mon, 15 Dec 2025 15:08:20 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 122B660664;
+	Mon, 15 Dec 2025 15:08:45 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 1C25711942578;
+	Mon, 15 Dec 2025 16:08:39 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1765811323; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=wcvVTrcx8vE/xL+R1EUIp8wAAMGOJqt3U7lEcNxvCt8=;
+	b=QysjCSFHftpr0PmUk2fnxSR1Y6Bu3cIUU7Zn9AieLfERSZTsbpMh1zKW2UdUJ26DdcTp1c
+	0xoN2ajsm4Z7te9idHtpDmD2IzFFf5pLfG4GOVPdqLijXZnAW3BncMaZDRDtu77U1SqgRx
+	N7hjsBREM/Onkd6v3XxFTcl9+9qFCTJkwwMLod5qPpsbcZNk7dRrX8MctOZJ9Bj9koFBth
+	Zt+NQUahfBlKmRD/1piYFP+FT3tSqRV4hoemDzgVJJQiIaPtIWVKvvhCF5Va65zcBMMh2b
+	liU3i6FuGb5bAkAHGGVtALdagDTNwKLrzPhxkHZFDfOqOAYplARljLJGgbmLwA==
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] clk: qcom: rcg2, msm/dsi: Fix hangs caused by
- register writes while clocks are off
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Rob Clark <robin.clark@oss.qualcomm.com>,
- Dmitry Baryshkov <lumag@kernel.org>, Abhinav Kumar
- <abhinav.kumar@linux.dev>, Jessica Zhang <jesszhan0024@gmail.com>,
- Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Petr Hodina <petr.hodina@protonmail.com>,
- linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
- freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, phone-devel@vger.kernel.org
-References: <20251213-stability-discussion-v1-0-b25df8453526@ixit.cz>
- <20251213-stability-discussion-v1-2-b25df8453526@ixit.cz>
- <aeefcr2yynlgnkiocv5eeqs4heaym6bts55z5iziqkysdzzqnt@oz2yau4nqwq7>
-Content-Language: en-US
-From: David Heidelberg <david@ixit.cz>
-Autocrypt: addr=david@ixit.cz; keydata=
- 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
-In-Reply-To: <aeefcr2yynlgnkiocv5eeqs4heaym6bts55z5iziqkysdzzqnt@oz2yau4nqwq7>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 15 Dec 2025 16:08:38 +0100
+Message-Id: <DEYVVCWBOZSH.2ZY41YCHLS8FU@bootlin.com>
+Subject: Re: [PATCH v4 2/7] phy: Add driver for EyeQ5 Ethernet PHY wrapper
+Cc: <linux-mips@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linux-phy@lists.infradead.org>,
+ <linux-clk@vger.kernel.org>, =?utf-8?q?Beno=C3=AEt_Monin?=
+ <benoit.monin@bootlin.com>, "Maxime Chevallier"
+ <maxime.chevallier@bootlin.com>, "Tawfik Bayouk"
+ <tawfik.bayouk@mobileye.com>, "Thomas Petazzoni"
+ <thomas.petazzoni@bootlin.com>
+To: "Luca Ceresoli" <luca.ceresoli@bootlin.com>,
+ =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>, "Vladimir
+ Kondratiev" <vladimir.kondratiev@mobileye.com>,
+ =?utf-8?q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>, "Rob
+ Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+ "Conor Dooley" <conor+dt@kernel.org>, "Vinod Koul" <vkoul@kernel.org>,
+ "Kishon Vijay Abraham I" <kishon@kernel.org>, "Michael Turquette"
+ <mturquette@baylibre.com>, "Stephen Boyd" <sboyd@kernel.org>, "Philipp
+ Zabel" <p.zabel@pengutronix.de>, "Thomas Bogendoerfer"
+ <tsbogend@alpha.franken.de>
+From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+X-Mailer: aerc 0.21.0-0-g5549850facc2
+References: <20251124-macb-phy-v4-0-955c625a81a7@bootlin.com>
+ <20251124-macb-phy-v4-2-955c625a81a7@bootlin.com>
+ <DEUNYYW0Y23E.2SA0SOCS99NA0@bootlin.com>
+In-Reply-To: <DEUNYYW0Y23E.2SA0SOCS99NA0@bootlin.com>
+X-Last-TLS-Session-Version: TLSv1.3
 
-On 13/12/2025 05:01, Dmitry Baryshkov wrote:
-> On Sat, Dec 13, 2025 at 12:08:17AM +0100, David Heidelberg via B4 Relay wrote:
->> From: Petr Hodina <petr.hodina@protonmail.com>
->>
->> This patch fixes system hangs that occur when RCG2 and DSI code paths
->> perform register accesses while the associated clocks or power domains
->> are disabled.
-> 
-> In general this should not be happening. Do you have a description of
-> the corresponding code path?
-> 
->>
->> For the Qualcomm RCG2 clock driver, updating M/N/D registers while the
->> clock is gated can cause the hardware to lock up. Avoid toggling the
->> update bit when the clock is disabled and instead write the configuration
->> directly.
->>
->> Signed-off-by: Petr Hodina <petr.hodina@protonmail.com>
->> Signed-off-by: David Heidelberg <david@ixit.cz>
->> ---
->>   drivers/clk/qcom/clk-rcg2.c        | 18 ++++++++++++++++++
->>   drivers/gpu/drm/msm/dsi/dsi_host.c | 13 +++++++++++++
->>   2 files changed, 31 insertions(+)
-> 
-> This needs to be split into two patches.
+Hello Luca,
 
-Thank you for the feedback! Petr promised to look into it and sent v2 
-until end of the week.
-
-David
-
-> 
+On Wed Dec 10, 2025 at 5:06 PM CET, Luca Ceresoli wrote:
+> On Mon Nov 24, 2025 at 3:41 PM CET, Th=C3=A9o Lebrun wrote:
+>> EyeQ5 embeds a system-controller called OLB. It features many unrelated
+>> registers, and some of those are registers used to configure the
+>> integration of the RGMII/SGMII Cadence PHY used by MACB/GEM instances.
 >>
->> diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
->> index e18cb8807d735..a18d2b9319670 100644
->> --- a/drivers/clk/qcom/clk-rcg2.c
->> +++ b/drivers/clk/qcom/clk-rcg2.c
->> @@ -1182,6 +1182,24 @@ static int clk_pixel_set_rate(struct clk_hw *hw, unsigned long rate,
->>   		f.m = frac->num;
->>   		f.n = frac->den;
->>   
->> +		/*
->> +		 * If clock is disabled, update the M, N and D registers and
->> +		 * don't hit the update bit.
->> +		 */
->> +		if (!clk_hw_is_enabled(hw)) {
->> +			int ret;
+>> Wrap in a neat generic PHY provider, exposing two PHYs with standard
+>> phy_init() / phy_set_mode() / phy_power_on() operations.
+>>
+>> Signed-off-by: Th=C3=A9o Lebrun <theo.lebrun@bootlin.com>
+>
+> [...]
+>
+>> --- /dev/null
+>> +++ b/drivers/phy/phy-eyeq5-eth.c
+>> @@ -0,0 +1,254 @@
+>> +// SPDX-License-Identifier: GPL-2.0-only
 >> +
->> +			ret = regmap_read(rcg->clkr.regmap, RCG_CFG_OFFSET(rcg), &cfg);
->> +			if (ret)
->> +				return ret;
+>> +#include <linux/array_size.h>
+>> +#include <linux/auxiliary_bus.h>
+>> +#include <linux/bitfield.h>
+>> +#include <linux/bits.h>
+>> +#include <linux/bug.h>
+>> +#include <linux/cleanup.h>
+>> +#include <linux/container_of.h>
+>> +#include <linux/device.h>
+>> +#include <linux/err.h>
+>> +#include <linux/errno.h>
+>> +#include <linux/init.h>
+>> +#include <linux/io.h>
+>> +#include <linux/iopoll.h>
+>> +#include <linux/lockdep.h>
+>> +#include <linux/mod_devicetable.h>
+>> +#include <linux/mutex.h>
+>> +#include <linux/of.h>
+>> +#include <linux/phy.h>
+>> +#include <linux/phy/phy.h>
+>> +#include <linux/slab.h>
+>> +#include <linux/types.h>
+>
+> Are all these include files really needed? At a quick glance bitfield.h,
+> cleanup.h and lockdep.h look unused in this file.
+
+Yes good catch, after having checked all symbols used, updates are:
+- Add delay.h for udelay(), gfp_types.h for GFP_* alloc flags,
+  module.h for MODULE_* macros.
+- Drop array_size.h, bug.h, cleanup.h, container_of.h, lockdep.h,
+  mutex.h.
+
+We do need bitfield.h for FIELD_PREP().
+
+>
+>> +#define EQ5_PHY_COUNT	2
+>
+> [...]
+>
+>> +static const struct phy_ops eq5_phy_ops =3D {
+>> +	.init		=3D eq5_phy_init,
+>> +	.exit		=3D eq5_phy_exit,
+>> +	.set_mode	=3D eq5_phy_set_mode,
+>> +	.power_on	=3D eq5_phy_power_on,
+>> +	.power_off	=3D eq5_phy_power_off,
+>> +};
 >> +
->> +			ret = __clk_rcg2_configure(rcg, &f, &cfg);
->> +			if (ret)
->> +				return ret;
+>> +static struct phy *eq5_phy_xlate(struct device *dev,
+>> +				 const struct of_phandle_args *args)
+>> +{
+>> +	struct eq5_phy_private *priv =3D dev_get_drvdata(dev);
 >> +
->> +			return regmap_write(rcg->clkr.regmap, RCG_CFG_OFFSET(rcg), cfg);
->> +		}
+>> +	if (args->args_count !=3D 1 || args->args[0] > 1)
+>
+> Maybe, for better clarity:
+>
+> 	if (args->args_count !=3D 1 || args->args[0] >=3D EQ5_PHY_COUNT)
+
+Done, indeed the old magic value was not a good idea.
+
+>
+>> +		return ERR_PTR(-EINVAL);
 >> +
->>   		return clk_rcg2_configure(rcg, &f);
->>   	}
->>   	return -EINVAL;
->> diff --git a/drivers/gpu/drm/msm/dsi/dsi_host.c b/drivers/gpu/drm/msm/dsi/dsi_host.c
->> index e0de545d40775..374ed966e960b 100644
->> --- a/drivers/gpu/drm/msm/dsi/dsi_host.c
->> +++ b/drivers/gpu/drm/msm/dsi/dsi_host.c
->> @@ -762,6 +762,12 @@ dsi_get_cmd_fmt(const enum mipi_dsi_pixel_format mipi_fmt)
->>   
->>   static void dsi_ctrl_disable(struct msm_dsi_host *msm_host)
->>   {
->> +	/* Check if we're already powered off before writing registers */
->> +	if (!msm_host->power_on) {
->> +		pr_info("DSI CTRL: Skipping register write - host already powered off\n");
-> 
-> It definitely should be dev_something. Probably dev_warn().
-> 
->> +		return;
+>> +	return priv->phys[args->args[0]].phy;
+>> +}
+>> +
+>> +static int eq5_phy_probe_phy(struct eq5_phy_private *priv, unsigned int=
+ index,
+>> +			     void __iomem *base, unsigned int gp,
+>> +			     unsigned int sgmii)
+>> +{
+>> +	struct eq5_phy_inst *inst =3D &priv->phys[index];
+>> +	struct device *dev =3D priv->dev;
+>> +	struct phy *phy;
+>> +
+>> +	phy =3D devm_phy_create(dev, dev->of_node, &eq5_phy_ops);
+>> +	if (IS_ERR(phy)) {
+>> +		dev_err(dev, "failed to create PHY %u\n", index);
+>> +		return PTR_ERR(phy);
 >> +	}
+>
+> Why not dev_err_probe()? It would make code more concise too:
+>
+> 	phy =3D devm_phy_create(dev, dev->of_node, &eq5_phy_ops);
+> 	if (IS_ERR(phy))
+> 		return dev_err_probe(dev, PTR_ERR(phy), "failed to create PHY %u\n", in=
+dex);
+
+Because I had forgotten. :-) Thanks!
+
+>
 >> +
->>   	dsi_write(msm_host, REG_DSI_CTRL, 0);
->>   }
->>   
->> @@ -2489,6 +2495,8 @@ int msm_dsi_host_power_off(struct mipi_dsi_host *host)
->>   {
->>   	struct msm_dsi_host *msm_host = to_msm_dsi_host(host);
->>   	const struct msm_dsi_cfg_handler *cfg_hnd = msm_host->cfg_hnd;
+>> +	inst->priv =3D priv;
+>> +	inst->phy =3D phy;
+>> +	inst->gp =3D base + gp;
+>> +	inst->sgmii =3D base + sgmii;
+>> +	inst->phy_interface =3D PHY_INTERFACE_MODE_NA;
+>> +	phy_set_drvdata(phy, inst);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int eq5_phy_probe(struct auxiliary_device *adev,
+>> +			 const struct auxiliary_device_id *id)
+>> +{
+>> +	struct device *dev =3D &adev->dev;
+>> +	struct phy_provider *provider;
+>> +	struct eq5_phy_private *priv;
+>> +	void __iomem *base;
 >> +	int ret;
 >> +
-> 
-> Extra empty line
-> 
->>   
->>   	mutex_lock(&msm_host->dev_mutex);
->>   	if (!msm_host->power_on) {
->> @@ -2496,6 +2504,11 @@ int msm_dsi_host_power_off(struct mipi_dsi_host *host)
->>   		goto unlock_ret;
->>   	}
->>   
->> +	/* Ensure clocks are enabled before register access */
-> 
-> And this looks like yet another fix, prompting for a separate commmit.
-> 
->> +	ret = pm_runtime_get_sync(&msm_host->pdev->dev);
->> +	if (ret < 0)
->> +		pm_runtime_put_noidle(&msm_host->pdev->dev);
-> 
-> pm_runtime_resume_and_get()
-> 
-> Also, where is a corresponding put() ? We are leaking the runtime PM
-> counter otherwise.
-> 
+>> +	priv =3D devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+>> +	if (!priv)
+>> +		return -ENOMEM;
 >> +
->>   	dsi_ctrl_disable(msm_host);
->>   
->>   	pinctrl_pm_select_sleep_state(&msm_host->pdev->dev);
->>
->> -- 
->> 2.51.0
->>
->>
-> 
+>> +	priv->dev =3D dev;
+>> +	dev_set_drvdata(dev, priv);
+>> +
+>> +	base =3D (void __iomem *)dev_get_platdata(dev);
+>> +
+>> +	ret =3D eq5_phy_probe_phy(priv, 0, base, EQ5_PHY0_GP, EQ5_PHY0_SGMII);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	ret =3D eq5_phy_probe_phy(priv, 1, base, EQ5_PHY1_GP, EQ5_PHY1_SGMII);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	provider =3D devm_of_phy_provider_register(dev, eq5_phy_xlate);
+>> +	if (IS_ERR(provider)) {
+>> +		dev_err(dev, "registering provider failed\n");
+>> +		return PTR_ERR(provider);
+>> +	}
+>
+> As above, why not dev_err_probe()?
 
--- 
-David Heidelberg
+Good idea once again.
+
+> Other than the above minor issues, LGTM. This driver looks cleanly
+> implemented.
+
+Thanks for the review. Does that imply I can append your Rb trailer?
+
+Thanks Luca,
+
+--
+Th=C3=A9o Lebrun, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
