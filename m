@@ -1,134 +1,234 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from ixit.cz (ip-94-112-25-9.bb.vodafone.cz [94.112.25.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF51C2DFA5B;
-	Mon, 15 Dec 2025 13:59:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B474175809;
+	Mon, 15 Dec 2025 14:36:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.112.25.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765807154; cv=none; b=FmSeeKOoG031+F3RbQ55OVWHTBfdYY1tNbi/oQSoCwn71+rptDdZfqMBjFOrK5jsBk3/3q/xKBSvKqto77B/FLcAx2pg3dhO/lp+FGwByc+evEwR0XBHj9NX7EE64woz8ASB/b1B3kmG3lU2Ab4PNN4OewuF3QC9EXzULHTOjW8=
+	t=1765809373; cv=none; b=W2towti7qAG/zFInBX93VNtelWdOC9GntPgjYJlwmGmKSRJK7IpvtjXl6hIVTnOH7pvyOR2cx4840+X3Ml/gk0awkvz898rpZMiTw226A0YsPJrlXpv7dYSvJO3O72GV5jZsU3xW5bgXm3UoMsI36BFiIbWQDolc5/QkHzXgEuQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765807154; c=relaxed/simple;
-	bh=YQ0YmiEKTBiByyCk2XIiAXJahBqdOSyVHDmgyhFstuo=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=XzPmMP3YiU3w/pPj9bVYZNR37Ocfcegxmehd7SN8cNL4BDQb4jYt7QkT869spT7vDT6GvDOeML/Yzc7UevPoWIcAYHvWEyQqsVCzyc/mzihy8SaXhMAZoOdTjupu7zfNtXXM30piaX1Js/QMCOjB6e5EEKIo4C+ue3oA1QLym1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K0ZSvqo9; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1765809373; c=relaxed/simple;
+	bh=/HnHFXK+LuwyEWC+1DpoK7FadftLYhjt+Bzczr2GylQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BccvwKOD7rHX8J4jTJYeYw/7TvrCcUeWhvQ8fbqmmqYqcxablsM68qcvkbnkxmUKR6ev1aPQ50pRb0Q1SdonscDTAHHBpzJTWZzvI+EwFkHjdtBLI/SBT/lCg6/OwXBfwO6ziNAdZskqOYHcOuSQxfZN14uUscYe2NlVwZkO6BE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz; spf=pass smtp.mailfrom=ixit.cz; dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b=2kUFm4M8; arc=none smtp.client-ip=94.112.25.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ixit.cz
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K0ZSvqo9"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84039C4CEF5;
-	Mon, 15 Dec 2025 13:59:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1765807153;
-	bh=YQ0YmiEKTBiByyCk2XIiAXJahBqdOSyVHDmgyhFstuo=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=K0ZSvqo9FNH+vPZrOVLOU5ZraIN5/Hx4lzXEVk8deQoFTzZrfVB3Sn8wUVb8UaBDT
-	 IPKJL1FeYjBc4++kymDagnMFo+aO6gmHV+UWQO7cqHTOD6VMMtizrJjRFLGRY7Ee7L
-	 w4mP9rPOGGMbKthLu+r5v9Ru7rhk3vDAc1XCmmrB5wHkqvV8acOQhuC1BVzlP5ME/H
-	 H7EzKs7+bvfSkQA41DZXMI2/LRypKRi0eSe24U8EkDVDNspUAYXac7itmfYbMOTmxv
-	 x+MHyD8AednEYtbIisGEt5V/tIfQDU8l0ImBMScwR5yt2mJk+grnKjhIaLlaCyGSER
-	 QNwLC455/HDNw==
-From: Mark Brown <broonie@kernel.org>
-To: rust-for-linux@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>
-Cc: linux-kernel@vger.kernel.org, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
- Leon Romanovsky <leon@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
- Boqun Feng <boqun.feng@gmail.com>, Elle Rhumsaa <elle@weathered-steel.dev>, 
- Carlos Llamas <cmllamas@google.com>, Yury Norov <yury.norov@gmail.com>, 
- Andreas Hindborg <a.hindborg@kernel.org>, linux-block@vger.kernel.org, 
- FUJITA Tomonori <fujita.tomonori@gmail.com>, 
- Miguel Ojeda <ojeda@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, 
- Benno Lossin <lossin@kernel.org>, Danilo Krummrich <dakr@kernel.org>, 
- Thomas Gleixner <tglx@linutronix.de>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, 
- Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org, 
- Paul Moore <paul@paul-moore.com>, Serge Hallyn <sergeh@kernel.org>, 
- linux-security-module@vger.kernel.org, 
- Daniel Almeida <daniel.almeida@collabora.com>, 
- Abdiel Janulgue <abdiel.janulgue@gmail.com>, 
- Robin Murphy <robin.murphy@arm.com>, Lyude Paul <lyude@redhat.com>, 
- Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
- linux-fsdevel@vger.kernel.org, Josh Poimboeuf <jpoimboe@kernel.org>, 
- Jason Baron <jbaron@akamai.com>, Steven Rostedt <rostedt@goodmis.org>, 
- Ard Biesheuvel <ardb@kernel.org>, 
- Brendan Higgins <brendan.higgins@linux.dev>, 
- David Gow <davidgow@google.com>, linux-kselftest@vger.kernel.org, 
- Andrew Morton <akpm@linux-foundation.org>, 
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
- Andrew Ballance <andrewjballance@gmail.com>, maple-tree@lists.infradead.org, 
- linux-mm@kvack.org, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
- Uladzislau Rezki <urezki@gmail.com>, Vitaly Wool <vitaly.wool@konsulko.se>, 
- Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
- devicetree@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, 
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
- linux-pci@vger.kernel.org, Remo Senekowitsch <remo@buenzli.dev>, 
- "Paul E. McKenney" <paulmck@kernel.org>, rcu@vger.kernel.org, 
- Will Deacon <will@kernel.org>, Fiona Behrens <me@kloenk.dev>, 
- Gary Guo <gary@garyguo.net>, Liam Girdwood <lgirdwood@gmail.com>, 
- Alexandre Courbot <acourbot@nvidia.com>, Vlastimil Babka <vbabka@suse.cz>, 
- Christoph Lameter <cl@gentwo.org>, David Rientjes <rientjes@google.com>, 
- Ingo Molnar <mingo@redhat.com>, Waiman Long <longman@redhat.com>, 
- Mitchell Levy <levymitchell0@gmail.com>, 
- Frederic Weisbecker <frederic@kernel.org>, 
- Anna-Maria Behnsen <anna-maria@linutronix.de>, 
- John Stultz <jstultz@google.com>, linux-usb@vger.kernel.org, 
- Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>, 
- Matthew Wilcox <willy@infradead.org>, Tamir Duberstein <tamird@gmail.com>, 
- Rae Moar <raemoar63@gmail.com>
-In-Reply-To: <20251202-define-rust-helper-v1-0-a2e13cbc17a6@google.com>
-References: <20251202-define-rust-helper-v1-0-a2e13cbc17a6@google.com>
-Subject: Re: (subset) [PATCH 00/46] Allow inlining C helpers into Rust when
- using LTO
-Message-Id: <176580714194.161338.1959594276727103368.b4-ty@kernel.org>
-Date: Mon, 15 Dec 2025 22:59:01 +0900
+	dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b="2kUFm4M8"
+Received: from [172.16.12.102] (89-24-64-24.customers.tmcz.cz [89.24.64.24])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange x25519)
+	(No client certificate requested)
+	by ixit.cz (Postfix) with ESMTPSA id 487EF5340D1C;
+	Mon, 15 Dec 2025 15:35:56 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ixit.cz; s=dkim;
+	t=1765809357;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=s/LxO1TnP71dtYZuBpKQAsPafds0lCPJh42zK3IG/Lg=;
+	b=2kUFm4M8RTO5dhSvwonel91l7PTrF9U5L+FmgPy3LaymYh+jNvchKRAsZyEP0k7Z4z2Bav
+	BoSUf66ywghIp3nlAxgCMz8XaXWeDeCZHSMnx2nRUgMY/u8ia80pWbedIGMdITc2TKGzlw
+	TereQ9BpBiS9hTbNSnxk2ks6Hn4LLpA=
+Message-ID: <6a547cb2-4014-4918-8e5d-fc7593ba4f2c@ixit.cz>
+Date: Mon, 15 Dec 2025 15:35:53 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] clk: qcom: rcg2, msm/dsi: Fix hangs caused by
+ register writes while clocks are off
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Rob Clark <robin.clark@oss.qualcomm.com>,
+ Dmitry Baryshkov <lumag@kernel.org>, Abhinav Kumar
+ <abhinav.kumar@linux.dev>, Jessica Zhang <jesszhan0024@gmail.com>,
+ Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Petr Hodina <petr.hodina@protonmail.com>,
+ linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, phone-devel@vger.kernel.org
+References: <20251213-stability-discussion-v1-0-b25df8453526@ixit.cz>
+ <20251213-stability-discussion-v1-2-b25df8453526@ixit.cz>
+ <aeefcr2yynlgnkiocv5eeqs4heaym6bts55z5iziqkysdzzqnt@oz2yau4nqwq7>
+Content-Language: en-US
+From: David Heidelberg <david@ixit.cz>
+Autocrypt: addr=david@ixit.cz; keydata=
+ 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
+In-Reply-To: <aeefcr2yynlgnkiocv5eeqs4heaym6bts55z5iziqkysdzzqnt@oz2yau4nqwq7>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-47773
 
-On Tue, 02 Dec 2025 19:37:24 +0000, Alice Ryhl wrote:
-> This patch series adds __rust_helper to every single rust helper. The
-> patches do not depend on each other, so maintainers please go ahead and
-> pick up any patches relevant to your subsystem! Or provide your Acked-by
-> so that Miguel can pick them up.
+On 13/12/2025 05:01, Dmitry Baryshkov wrote:
+> On Sat, Dec 13, 2025 at 12:08:17AM +0100, David Heidelberg via B4 Relay wrote:
+>> From: Petr Hodina <petr.hodina@protonmail.com>
+>>
+>> This patch fixes system hangs that occur when RCG2 and DSI code paths
+>> perform register accesses while the associated clocks or power domains
+>> are disabled.
 > 
-> These changes were generated by adding __rust_helper and running
-> ClangFormat. Unrelated formatting changes were removed manually.
+> In general this should not be happening. Do you have a description of
+> the corresponding code path?
 > 
-> [...]
+>>
+>> For the Qualcomm RCG2 clock driver, updating M/N/D registers while the
+>> clock is gated can cause the hardware to lock up. Avoid toggling the
+>> update bit when the clock is disabled and instead write the configuration
+>> directly.
+>>
+>> Signed-off-by: Petr Hodina <petr.hodina@protonmail.com>
+>> Signed-off-by: David Heidelberg <david@ixit.cz>
+>> ---
+>>   drivers/clk/qcom/clk-rcg2.c        | 18 ++++++++++++++++++
+>>   drivers/gpu/drm/msm/dsi/dsi_host.c | 13 +++++++++++++
+>>   2 files changed, 31 insertions(+)
+> 
+> This needs to be split into two patches.
 
-Applied to
+Thank you for the feedback! Petr promised to look into it and sent v2 
+until end of the week.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+David
 
-Thanks!
+> 
+>>
+>> diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+>> index e18cb8807d735..a18d2b9319670 100644
+>> --- a/drivers/clk/qcom/clk-rcg2.c
+>> +++ b/drivers/clk/qcom/clk-rcg2.c
+>> @@ -1182,6 +1182,24 @@ static int clk_pixel_set_rate(struct clk_hw *hw, unsigned long rate,
+>>   		f.m = frac->num;
+>>   		f.n = frac->den;
+>>   
+>> +		/*
+>> +		 * If clock is disabled, update the M, N and D registers and
+>> +		 * don't hit the update bit.
+>> +		 */
+>> +		if (!clk_hw_is_enabled(hw)) {
+>> +			int ret;
+>> +
+>> +			ret = regmap_read(rcg->clkr.regmap, RCG_CFG_OFFSET(rcg), &cfg);
+>> +			if (ret)
+>> +				return ret;
+>> +
+>> +			ret = __clk_rcg2_configure(rcg, &f, &cfg);
+>> +			if (ret)
+>> +				return ret;
+>> +
+>> +			return regmap_write(rcg->clkr.regmap, RCG_CFG_OFFSET(rcg), cfg);
+>> +		}
+>> +
+>>   		return clk_rcg2_configure(rcg, &f);
+>>   	}
+>>   	return -EINVAL;
+>> diff --git a/drivers/gpu/drm/msm/dsi/dsi_host.c b/drivers/gpu/drm/msm/dsi/dsi_host.c
+>> index e0de545d40775..374ed966e960b 100644
+>> --- a/drivers/gpu/drm/msm/dsi/dsi_host.c
+>> +++ b/drivers/gpu/drm/msm/dsi/dsi_host.c
+>> @@ -762,6 +762,12 @@ dsi_get_cmd_fmt(const enum mipi_dsi_pixel_format mipi_fmt)
+>>   
+>>   static void dsi_ctrl_disable(struct msm_dsi_host *msm_host)
+>>   {
+>> +	/* Check if we're already powered off before writing registers */
+>> +	if (!msm_host->power_on) {
+>> +		pr_info("DSI CTRL: Skipping register write - host already powered off\n");
+> 
+> It definitely should be dev_something. Probably dev_warn().
+> 
+>> +		return;
+>> +	}
+>> +
+>>   	dsi_write(msm_host, REG_DSI_CTRL, 0);
+>>   }
+>>   
+>> @@ -2489,6 +2495,8 @@ int msm_dsi_host_power_off(struct mipi_dsi_host *host)
+>>   {
+>>   	struct msm_dsi_host *msm_host = to_msm_dsi_host(host);
+>>   	const struct msm_dsi_cfg_handler *cfg_hnd = msm_host->cfg_hnd;
+>> +	int ret;
+>> +
+> 
+> Extra empty line
+> 
+>>   
+>>   	mutex_lock(&msm_host->dev_mutex);
+>>   	if (!msm_host->power_on) {
+>> @@ -2496,6 +2504,11 @@ int msm_dsi_host_power_off(struct mipi_dsi_host *host)
+>>   		goto unlock_ret;
+>>   	}
+>>   
+>> +	/* Ensure clocks are enabled before register access */
+> 
+> And this looks like yet another fix, prompting for a separate commmit.
+> 
+>> +	ret = pm_runtime_get_sync(&msm_host->pdev->dev);
+>> +	if (ret < 0)
+>> +		pm_runtime_put_noidle(&msm_host->pdev->dev);
+> 
+> pm_runtime_resume_and_get()
+> 
+> Also, where is a corresponding put() ? We are leaking the runtime PM
+> counter otherwise.
+> 
+>> +
+>>   	dsi_ctrl_disable(msm_host);
+>>   
+>>   	pinctrl_pm_select_sleep_state(&msm_host->pdev->dev);
+>>
+>> -- 
+>> 2.51.0
+>>
+>>
+> 
 
-[35/46] rust: regulator: add __rust_helper to helpers
-        commit: 03d281f384768610bf90697bce9e35d3d596de77
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+-- 
+David Heidelberg
 
