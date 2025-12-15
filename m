@@ -1,108 +1,100 @@
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92A0731B114
-	for <linux-clk@vger.kernel.org>; Mon, 15 Dec 2025 16:30:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61B9D7494;
+	Mon, 15 Dec 2025 16:37:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765816249; cv=none; b=kaq9K3XqG6j03XdZsFI6cd+W1CFJwGzV7qeArtOjt2MoaPGviYk7y7hQMexBGXk3BXvBJBnjQjoGjzcQuVZBcrDBGoY+nRzCOjsghDHoFHgQ+vbCOOZBk80cEVot13MEDyVKtWtKycPkf1LhH0GJlKtKMxLCU9O0E60KBQMVuBs=
+	t=1765816654; cv=none; b=rYWBaDglXgWeZpTncV9Xkqnmix4SYzqTiKMkK7sLHH7wESyy2gcgBInOH3QvVJJn2ekMEIbtyTs84zr2wfFxJoPXofgJ8eOGz5fFGHDG6Sn8STwO+vUviGNXF70qUAeao02qfGF4E7Nx1ImxB0xuTsVUg1/Umyn67p+rK6FCjGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765816249; c=relaxed/simple;
-	bh=7VUjNg7fMgXMDTFrTqFIf9IV02ig+00RrRe5m1yyOlY=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:Subject:Cc:To:
-	 References:In-Reply-To; b=YG3b8vEckO9GoB8tnOinue3WrGmduCTSvk4zVVCn6EZgMrZ9+gNAr0JbZ+qPAMtUOH6qXUoAjNgkT10LBU1oUDejZ4OvXgWaWsoNM+ZJ2ZAYLAdpHs0MuBcomhAf8K1NbRVelXrK5XsU0srvz9M7+3mmEwsw3IO1qtDtJNIYj/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=b/2TsJQC; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1765816654; c=relaxed/simple;
+	bh=povrRVnkD4sb2LJU1Tc1rqf66LNEj9/0BEQW1JVluXY=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=PqlNZ9ezDGHMY3r0i203Z7Kf7tvrIXFAoA7bgBKCkpzne+xW7r+oSY/onNPkHbXNGBRNlm8use8WcpX01jG0Dx2tAf7d8WBQpnJ5UKNZDYuqnAcUDcnE6hl4BEos/brjXPuOqWhBJeshH+T1db6/UJXQa37/Yk2vmq4vizydFTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r9ROIy/B; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="b/2TsJQC"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 0896D4E41C11;
-	Mon, 15 Dec 2025 16:30:46 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id CE22D60664;
-	Mon, 15 Dec 2025 16:30:45 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 64EAD119426BE;
-	Mon, 15 Dec 2025 17:30:41 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1765816244; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=QF0a2d33ceWGEkE+JlJ9v7Vx9rNUh7hXKpLn5YyCvvc=;
-	b=b/2TsJQCxsrDCyqAit+mCBvkpYAvhFDHIWx/MS8yXW6MI6gytG1BbV0q2aipA/pULv8mq8
-	yXqpyd5/KmToROssOh1ypUWoVWuMVs/NhwnEbUcEvrVngLLjFZkEv6h3xqMUTHw8TEGKN5
-	MlyLBQdacKRzQkpshouWWv5WBTvTp90YJHQkfpbNjxpn+GIWTyUrAKKM0sHbSpkuE8dt6l
-	M6h2WhI901vGItG3UiwTTjOOuM6MhmwzuIw3Zg+tvlQ6ytiAcesHHeqQlU3CTrE5tp5bpQ
-	s6OAIunOjGUaNZukMcJVuEjlRPTS9eNDrAZiYe5MsLTQdkoFfYHcCAXUDIsyaw==
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r9ROIy/B"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC1D5C4CEF5;
+	Mon, 15 Dec 2025 16:37:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1765816653;
+	bh=povrRVnkD4sb2LJU1Tc1rqf66LNEj9/0BEQW1JVluXY=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=r9ROIy/BQFY1qK0HZgSL55FBi5gKYbThyKkqHb/z3PxqTcthn9rk9CiOsc03iBwjB
+	 /4E8qynsP2r8iFoLXTa5uj7VZdzTzb9d65Buqv/TKrHUUr36bQd4oPlFYUt2+LmJ7N
+	 8DSjl3coqXd+gEXXOGpKMDq03gwxN39Y5SZ3ZEuuKplqGmvoR7fv8uWfHt1amaj3kr
+	 MurFmFhuuHXGT2x/ZEtpdH1Nnyg/NaBNqrt8i5fp66VXNOMBy0uzKtfkXfymb5Xhr9
+	 3zjRKQRcXsm2fm37o1QeuAQSiS52MeRLSIlgD+Y+Qoq2TVNzSQ6cpwKNLEfhWtXZ+s
+	 oRNlEe+nXAAmQ==
+Date: Mon, 15 Dec 2025 10:37:32 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 15 Dec 2025 17:30:41 +0100
-Message-Id: <DEYXM6CGJULV.1KKA37ZLEIW1K@bootlin.com>
-From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-Subject: Re: [PATCH v4 2/7] phy: Add driver for EyeQ5 Ethernet PHY wrapper
-Cc: <linux-mips@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux-phy@lists.infradead.org>,
- <linux-clk@vger.kernel.org>, =?utf-8?q?Beno=C3=AEt_Monin?=
- <benoit.monin@bootlin.com>, "Maxime Chevallier"
- <maxime.chevallier@bootlin.com>, "Tawfik Bayouk"
- <tawfik.bayouk@mobileye.com>, "Thomas Petazzoni"
- <thomas.petazzoni@bootlin.com>
-To: "Luca Ceresoli" <luca.ceresoli@bootlin.com>,
- =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>, "Vladimir
- Kondratiev" <vladimir.kondratiev@mobileye.com>,
- =?utf-8?q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>, "Rob
- Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
- "Conor Dooley" <conor+dt@kernel.org>, "Vinod Koul" <vkoul@kernel.org>,
- "Kishon Vijay Abraham I" <kishon@kernel.org>, "Michael Turquette"
- <mturquette@baylibre.com>, "Stephen Boyd" <sboyd@kernel.org>, "Philipp
- Zabel" <p.zabel@pengutronix.de>, "Thomas Bogendoerfer"
- <tsbogend@alpha.franken.de>
-X-Mailer: aerc 0.21.0-0-g5549850facc2
-References: <20251124-macb-phy-v4-0-955c625a81a7@bootlin.com>
- <20251124-macb-phy-v4-2-955c625a81a7@bootlin.com>
- <DEUNYYW0Y23E.2SA0SOCS99NA0@bootlin.com>
- <DEYVVCWBOZSH.2ZY41YCHLS8FU@bootlin.com>
- <DEYVXJI90AA7.KPDEQCNZOOXI@bootlin.com>
-In-Reply-To: <DEYVXJI90AA7.KPDEQCNZOOXI@bootlin.com>
-X-Last-TLS-Session-Version: TLSv1.3
+MIME-Version: 1.0
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Haylen Chu <heylenay@4d2.org>, Inochi Amaoto <inochiama@gmail.com>, 
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-clk@vger.kernel.org, 
+ spacemit@lists.linux.dev, devicetree@vger.kernel.org, 
+ Stephen Boyd <sboyd@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Conor Dooley <conor+dt@kernel.org>
+To: Yixun Lan <dlan@gentoo.org>
+In-Reply-To: <20251211-k3-clk-v1-1-8ee47c70c5bc@gentoo.org>
+References: <20251211-k3-clk-v1-0-8ee47c70c5bc@gentoo.org>
+ <20251211-k3-clk-v1-1-8ee47c70c5bc@gentoo.org>
+Message-Id: <176581665051.3026304.8004386594880695878.robh@kernel.org>
+Subject: Re: [PATCH RFC 1/4] dt-bindings: soc: spacemit: add k3 syscon
+ compatible
 
-On Mon Dec 15, 2025 at 4:11 PM CET, Luca Ceresoli wrote:
-> On Mon Dec 15, 2025 at 4:08 PM CET, Th=C3=A9o Lebrun wrote:
->> On Wed Dec 10, 2025 at 5:06 PM CET, Luca Ceresoli wrote:
->>> On Mon Nov 24, 2025 at 3:41 PM CET, Th=C3=A9o Lebrun wrote:
->>>> +	provider =3D devm_of_phy_provider_register(dev, eq5_phy_xlate);
->>>> +	if (IS_ERR(provider)) {
->>>> +		dev_err(dev, "registering provider failed\n");
->>>> +		return PTR_ERR(provider);
->>>> +	}
->>>
->>> As above, why not dev_err_probe()?
->>
->> Good idea once again.
->>
->>> Other than the above minor issues, LGTM. This driver looks cleanly
->>> implemented.
->>
->> Thanks for the review. Does that imply I can append your Rb trailer?
->
-> If you apply all the changes I have mention, yes, but in doubt you can
-> avoid it and I'll review your next version. Re-reviewing is much faster
-> than reviewing the first time (last famous words).
 
-I've taken the Rb trailer, hoping everything is to your taste.
+On Thu, 11 Dec 2025 09:19:41 +0800, Yixun Lan wrote:
+> The SpacemiT K3 SoC clock IP is scattered over several different blocks,
+> which are APBC, APBS, APMU, DCIU, MPMU, all of them are capable of
+> generating clock and reset signals. APMU and MPMU have additional Power
+> Domain management functionality.
+> 
+> Following is a brief list that shows devices managed in each block:
+> 
+> APBC: UART, GPIO, PWM, SPI, TIMER, I2S, IR, DR, TSEN, IPC, CAN
+> APBS: various PPL clocks control
+> APMU: CCI, CPU, CSI, ISP, LCD, USB, QSPI, DMA, VPU, GPU, DSI, PCIe, EMAC..
+> DCID: SRAM, DMA, TCM
+> MPMU: various PLL1 derived clocks, UART, WATCHDOG, I2S
+> 
+> Signed-off-by: Yixun Lan <dlan@gentoo.org>
+> ---
+>  .../devicetree/bindings/clock/spacemit,k1-pll.yaml |   9 +-
+>  .../bindings/soc/spacemit/spacemit,k1-syscon.yaml  |  13 +-
+>  include/dt-bindings/clock/spacemit,k3-clocks.h     | 390 +++++++++++++++++++++
+>  3 files changed, 407 insertions(+), 5 deletions(-)
+> 
 
-https://lore.kernel.org/lkml/20251215-macb-phy-v5-0-a9dfea39da34@bootlin.co=
-m/
+My bot found errors running 'make dt_binding_check' on your patch:
 
-Thanks,
+yamllint warnings/errors:
+./Documentation/devicetree/bindings/clock/spacemit,k1-pll.yaml:14:7: [warning] wrong indentation: expected 4 but found 6 (indentation)
 
---
-Th=C3=A9o Lebrun, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+dtschema/dtc warnings/errors:
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.kernel.org/project/devicetree/patch/20251211-k3-clk-v1-1-8ee47c70c5bc@gentoo.org
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
