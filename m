@@ -1,100 +1,167 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61B9D7494;
-	Mon, 15 Dec 2025 16:37:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29E2B308F3B
+	for <linux-clk@vger.kernel.org>; Mon, 15 Dec 2025 16:38:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765816654; cv=none; b=rYWBaDglXgWeZpTncV9Xkqnmix4SYzqTiKMkK7sLHH7wESyy2gcgBInOH3QvVJJn2ekMEIbtyTs84zr2wfFxJoPXofgJ8eOGz5fFGHDG6Sn8STwO+vUviGNXF70qUAeao02qfGF4E7Nx1ImxB0xuTsVUg1/Umyn67p+rK6FCjGM=
+	t=1765816713; cv=none; b=K6GEt5FEGKiwyFbTXIAR7y8roy9R6b/+iRzpwdlq5sbSv+7WCPv7c/JEAWwDyKKV5AWxIS6WpBk3k+eH7IpbZ7cIsjaxkG1w32crAU5Y5P6SGVmez5JEgZbOOCmSOEr2Wnb6XvP6d7/3JQayQXhfF9wJTtZWyXnEe7tOzBw7asU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765816654; c=relaxed/simple;
-	bh=povrRVnkD4sb2LJU1Tc1rqf66LNEj9/0BEQW1JVluXY=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=PqlNZ9ezDGHMY3r0i203Z7Kf7tvrIXFAoA7bgBKCkpzne+xW7r+oSY/onNPkHbXNGBRNlm8use8WcpX01jG0Dx2tAf7d8WBQpnJ5UKNZDYuqnAcUDcnE6hl4BEos/brjXPuOqWhBJeshH+T1db6/UJXQa37/Yk2vmq4vizydFTg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r9ROIy/B; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1765816713; c=relaxed/simple;
+	bh=k/Yd1BmFzU0e9UFcJv9URIkTbmDEVBM0hOo+JTGIPAg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZMccETcEl0Czv3Q8wUI9O2KYQLv6rc8hNe4YkndRKTZL4R2tpYnEe+o9RkaH5y7jS4l1fUEGV7c2LUCYixHUh4OK39oZ24C3IZYefh+rpnhoRtZ9mX36+RTJnIO21Ezvv5ixUgh8eR/mCJHGBxYtXbcY2KlMu+QfRcAQwq6KW7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sartura.hr; spf=pass smtp.mailfrom=sartura.hr; dkim=pass (2048-bit key) header.d=sartura.hr header.i=@sartura.hr header.b=AIWJvlhh; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sartura.hr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sartura.hr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r9ROIy/B"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC1D5C4CEF5;
-	Mon, 15 Dec 2025 16:37:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1765816653;
-	bh=povrRVnkD4sb2LJU1Tc1rqf66LNEj9/0BEQW1JVluXY=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=r9ROIy/BQFY1qK0HZgSL55FBi5gKYbThyKkqHb/z3PxqTcthn9rk9CiOsc03iBwjB
-	 /4E8qynsP2r8iFoLXTa5uj7VZdzTzb9d65Buqv/TKrHUUr36bQd4oPlFYUt2+LmJ7N
-	 8DSjl3coqXd+gEXXOGpKMDq03gwxN39Y5SZ3ZEuuKplqGmvoR7fv8uWfHt1amaj3kr
-	 MurFmFhuuHXGT2x/ZEtpdH1Nnyg/NaBNqrt8i5fp66VXNOMBy0uzKtfkXfymb5Xhr9
-	 3zjRKQRcXsm2fm37o1QeuAQSiS52MeRLSIlgD+Y+Qoq2TVNzSQ6cpwKNLEfhWtXZ+s
-	 oRNlEe+nXAAmQ==
-Date: Mon, 15 Dec 2025 10:37:32 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	dkim=pass (2048-bit key) header.d=sartura.hr header.i=@sartura.hr header.b="AIWJvlhh"
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-477619f8ae5so28536165e9.3
+        for <linux-clk@vger.kernel.org>; Mon, 15 Dec 2025 08:38:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sartura.hr; s=sartura; t=1765816709; x=1766421509; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=cnKll+Mu3yr6wHuUg3E47hI29XfbMlTNI5VvcSPHEnI=;
+        b=AIWJvlhhcWl5hbSyydkjLe/GDVS3V4vTDb4qeNWdR80M81ODF67qfM5mpLQNIjN2zg
+         Cg0N+4vq4jQXHdnYY3svgMl/T49I5Zrp29STPCUNk6JrOin56BtaqbkiwBbaqR3OEZxD
+         49isbVf+h4T2y7jhcwZgxNVTn28fbsNDx6pSx03mQF/0PDPnwg/ClnbgMkoHgXwi33ES
+         l4rcR55YPGa4n54zK4ReHi/Fp9QkdZ9iXcPVs3V1UJHq0sTlTOTD31QjCOJN1tBd4HdH
+         ScnT8mVHvKhb7KcWLzK4aDi21gN7q6e+xh5Vf/QLRwsO8/PdYTmcByG2duRS9HvdtUPv
+         m4cQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1765816709; x=1766421509;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cnKll+Mu3yr6wHuUg3E47hI29XfbMlTNI5VvcSPHEnI=;
+        b=IT/30r+C6n3+MdBYlA3T0om8eeo9AA+U2gPWxXHvvviYOpVtF1vx1uRRUBOVDavir3
+         C5GYLaaXMj/z7PXIzxirLxlS4neGFmVLzE49N6+iv9MBlVl800p739iDOIdyyzBTEdzn
+         1bCMZPXePFtxP2EDjD6owVtr1x/cH7cYJve3ex/4R1riJZl5LbTjVRAfIL/H4c3GoJ3L
+         //i1KCxJ4GXqXF+gfWf5FMlAPVgNj5yd5bkTYdvZ/0wbHCmkfyvxhtbogEbqnyARtPlT
+         6XMfv2/xdf3REQ5284SkOG7AsDMeMHnDABC5o7hiSoVzrq/nsVZBqglZzs4YLENqk4PE
+         4MZw==
+X-Forwarded-Encrypted: i=1; AJvYcCVs8wR3JUZ0TFoNe7ezgyWeZhyQyFi16Q4gAuRnaH6TkwNw5t5wrnftmvalb0ToJqdMJDEuVisKyH8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEHPT9V6Mw/Qa88Ei16LPU2EFoxRGaOlZlqv3JpodPgtUyUXAb
+	8GQK38r+y+5UYDY+pYcEIeWaK0YQKSviqhkFADE7ElNt6QBdjcgQE2EEhk7rdkMxzvs=
+X-Gm-Gg: AY/fxX7LoBMqJMfAxoJEP2RIBnZiLRkpYz57Ycxh/Vz6CGjYAAj+OCXMQDJ45OOh9yv
+	nxALFKkM80cJsfCovXAMAQMp9sslAMxFuWD00erpF1+JpkrOhA8M/a7ouuorQloJ+5xKaZVSEZW
+	y7UN7fntnUdtItJWTZHa/zJrl5BqK0fcO2Ieev2i0ZI4yGtXKtN3z4Jk2QfgTOc0iKBx4z7+Kgn
+	CzUjPlHoUXxtC8e4LB5i8X9AJtuxfNl5QBiDwseZTOPLNQUYBupkNb1B51V2rXVYnpWwpxX4LQZ
+	bo8j9z7PHnGacdvtU737uQlnXTN06mq6t1resTkgV+9aNAitwE9tCM9F9uLiSe2LEFoArOE/4eb
+	7Soz5XX6CmOxmuJFK5IFJqn211QWGrd6x5AsC/9qIGmd5h3jhu6AT2pG3ErxBLMZ3jqZUQsY/eU
+	mP0/EExkzzD0f1IGaL+Y3DSrokXI83wekex5faREai4D/h
+X-Google-Smtp-Source: AGHT+IHqk87hRgFNW+4zdWPZBEuhhkRVJA1LnAloDmFeZHxaQu5P+L96TkAMIyaxKGjp4sqU43QQWQ==
+X-Received: by 2002:a05:600c:a086:b0:471:1774:3003 with SMTP id 5b1f17b1804b1-47a8f90fefamr116081975e9.29.1765816709336;
+        Mon, 15 Dec 2025 08:38:29 -0800 (PST)
+Received: from fedora (cpezg-94-253-146-254-cbl.xnet.hr. [94.253.146.254])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-47a8f74b44csm192209725e9.3.2025.12.15.08.38.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Dec 2025 08:38:28 -0800 (PST)
+From: Robert Marko <robert.marko@sartura.hr>
+To: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	nicolas.ferre@microchip.com,
+	alexandre.belloni@bootlin.com,
+	claudiu.beznea@tuxon.dev,
+	Steen.Hegelund@microchip.com,
+	daniel.machon@microchip.com,
+	UNGLinuxDriver@microchip.com,
+	herbert@gondor.apana.org.au,
+	davem@davemloft.net,
+	vkoul@kernel.org,
+	linux@roeck-us.net,
+	andi.shyti@kernel.org,
+	lee@kernel.org,
+	andrew+netdev@lunn.ch,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	linusw@kernel.org,
+	olivia@selenic.com,
+	radu_nicolae.pirea@upb.ro,
+	richard.genoud@bootlin.com,
+	gregkh@linuxfoundation.org,
+	jirislaby@kernel.org,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	richardcochran@gmail.com,
+	wsa+renesas@sang-engineering.com,
+	romain.sioen@microchip.com,
+	Ryan.Wanner@microchip.com,
+	lars.povlsen@microchip.com,
+	tudor.ambarus@linaro.org,
+	charan.pedumuru@microchip.com,
+	kavyasree.kotagiri@microchip.com,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-crypto@vger.kernel.org,
+	dmaengine@vger.kernel.org,
+	linux-hwmon@vger.kernel.org,
+	linux-i2c@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-spi@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	mwalle@kernel.org
+Cc: luka.perkov@sartura.hr,
+	Robert Marko <robert.marko@sartura.hr>
+Subject: [PATCH v2 01/19] include: dt-bindings: add LAN969x clock bindings
+Date: Mon, 15 Dec 2025 17:35:18 +0100
+Message-ID: <20251215163820.1584926-1-robert.marko@sartura.hr>
+X-Mailer: git-send-email 2.52.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Haylen Chu <heylenay@4d2.org>, Inochi Amaoto <inochiama@gmail.com>, 
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-clk@vger.kernel.org, 
- spacemit@lists.linux.dev, devicetree@vger.kernel.org, 
- Stephen Boyd <sboyd@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Conor Dooley <conor+dt@kernel.org>
-To: Yixun Lan <dlan@gentoo.org>
-In-Reply-To: <20251211-k3-clk-v1-1-8ee47c70c5bc@gentoo.org>
-References: <20251211-k3-clk-v1-0-8ee47c70c5bc@gentoo.org>
- <20251211-k3-clk-v1-1-8ee47c70c5bc@gentoo.org>
-Message-Id: <176581665051.3026304.8004386594880695878.robh@kernel.org>
-Subject: Re: [PATCH RFC 1/4] dt-bindings: soc: spacemit: add k3 syscon
- compatible
+Content-Transfer-Encoding: 8bit
 
+Add the required LAN969x clock bindings.
 
-On Thu, 11 Dec 2025 09:19:41 +0800, Yixun Lan wrote:
-> The SpacemiT K3 SoC clock IP is scattered over several different blocks,
-> which are APBC, APBS, APMU, DCIU, MPMU, all of them are capable of
-> generating clock and reset signals. APMU and MPMU have additional Power
-> Domain management functionality.
-> 
-> Following is a brief list that shows devices managed in each block:
-> 
-> APBC: UART, GPIO, PWM, SPI, TIMER, I2S, IR, DR, TSEN, IPC, CAN
-> APBS: various PPL clocks control
-> APMU: CCI, CPU, CSI, ISP, LCD, USB, QSPI, DMA, VPU, GPU, DSI, PCIe, EMAC..
-> DCID: SRAM, DMA, TCM
-> MPMU: various PLL1 derived clocks, UART, WATCHDOG, I2S
-> 
-> Signed-off-by: Yixun Lan <dlan@gentoo.org>
-> ---
->  .../devicetree/bindings/clock/spacemit,k1-pll.yaml |   9 +-
->  .../bindings/soc/spacemit/spacemit,k1-syscon.yaml  |  13 +-
->  include/dt-bindings/clock/spacemit,k3-clocks.h     | 390 +++++++++++++++++++++
->  3 files changed, 407 insertions(+), 5 deletions(-)
-> 
+Signed-off-by: Robert Marko <robert.marko@sartura.hr>
+---
+Changes in v2:
+* Rename file to microchip,lan9691.h
 
-My bot found errors running 'make dt_binding_check' on your patch:
+ include/dt-bindings/clock/microchip,lan9691.h | 24 +++++++++++++++++++
+ 1 file changed, 24 insertions(+)
+ create mode 100644 include/dt-bindings/clock/microchip,lan9691.h
 
-yamllint warnings/errors:
-./Documentation/devicetree/bindings/clock/spacemit,k1-pll.yaml:14:7: [warning] wrong indentation: expected 4 but found 6 (indentation)
-
-dtschema/dtc warnings/errors:
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.kernel.org/project/devicetree/patch/20251211-k3-clk-v1-1-8ee47c70c5bc@gentoo.org
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+diff --git a/include/dt-bindings/clock/microchip,lan9691.h b/include/dt-bindings/clock/microchip,lan9691.h
+new file mode 100644
+index 000000000000..260370c2b238
+--- /dev/null
++++ b/include/dt-bindings/clock/microchip,lan9691.h
+@@ -0,0 +1,24 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
++
++#ifndef _DT_BINDINGS_CLK_LAN9691_H
++#define _DT_BINDINGS_CLK_LAN9691_H
++
++#define GCK_ID_QSPI0		0
++#define GCK_ID_QSPI2		1
++#define GCK_ID_SDMMC0		2
++#define GCK_ID_SDMMC1		3
++#define GCK_ID_MCAN0		4
++#define GCK_ID_MCAN1		5
++#define GCK_ID_FLEXCOM0		6
++#define GCK_ID_FLEXCOM1		7
++#define GCK_ID_FLEXCOM2		8
++#define GCK_ID_FLEXCOM3		9
++#define GCK_ID_TIMER		10
++#define GCK_ID_USB_REFCLK	11
++
++/* Gate clocks */
++#define GCK_GATE_USB_DRD	12
++#define GCK_GATE_MCRAMC		13
++#define GCK_GATE_HMATRIX	14
++
++#endif
+-- 
+2.52.0
 
