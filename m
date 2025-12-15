@@ -1,201 +1,216 @@
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6492F30B533
-	for <linux-clk@vger.kernel.org>; Mon, 15 Dec 2025 15:57:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C71952D0C9D;
+	Mon, 15 Dec 2025 16:26:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765814265; cv=none; b=k2uSOBzjLc5InztXbL7/LUOXnQdmTSE4FLh8yb5+IB6PFcmeUIYTMo8UeTpMsmv2qSujLPuBxubPfZgyEAiRCoaQOGsRqDmMKGvSlKsL/2hNQImpRFdHad0HHAt6/vWQILWHUj9DK9tAmZbDT2GlIuxg6PNUc9IFWawVUFn/q9I=
+	t=1765816015; cv=none; b=UEWeeXh2aabRSZ0HiKYuZxduA85SV6qNbDHqgXHLTNmB56ADWhVq0xqL4qLutz8cD95+F5QfXq6jFzkeTFdQU0F8qq6lwFg8Kp/2FZFJKlQ40mr1giHe1a7dQAPauzRDJDcI6N5uM8TFzxgv1h/7M86qDe9i90ZfTwgpGOyX/Qk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765814265; c=relaxed/simple;
-	bh=wWPC/2Smq4jtjLX5cNQnH721pExURZn2+t/Lpx8wgiY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hwJUstvZ9kDIlJ6X/zwZzSX8VcoXbUrPHHbpBZpTzoXh3xPa1lyzUMM15A+7SJVdT0fGlkXiY/fdC85X0DlW4fhZgsiXRFpOw8QUWf8uvE+ydXGa+iIk7rELvvsUaAtNDu4H+nGNrr/DF+BhLNtRQpRZqUMOa0moVLKt+swDdyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RdSQ/fU/; arc=none smtp.client-ip=209.85.128.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1765816015; c=relaxed/simple;
+	bh=sWaD/Wi0Pr7c62NPFOlUEI21UtdcvelvEmFoM6yLvkg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ll7PSAetqbf/7gbzRcSAyQVE5Ow2eePpZWYPizGLg7cNwjq7kGNuqoJalB+WwA1ZQAQDzpj9dGrGUBmbBLu6np0D34vlIV4WIiKkJ+fyJNTlTObZELiD06y8mEJtF9CkZCxq4mDqUg45wJkGfuZNXMI2wITRt9snd/HDqq+wLzo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ao6iCLcQ; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RdSQ/fU/"
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-787e7aa1631so45120237b3.1
-        for <linux-clk@vger.kernel.org>; Mon, 15 Dec 2025 07:57:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1765814261; x=1766419061; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=jD2gSrbwz8qwRcQAUIoCa/YtmLX1qZ3zgXWUCARLWUM=;
-        b=RdSQ/fU/1PDz3di3Ks5pKKDb8xLXR7WdRNI/1j/0Od0eUew+mRRpGtc49Yc9hTleWE
-         GNd4sWCXVWZ8vvW/SnTb/SEXsdKHBVfQcQeWPUP63rPFcRrOThlyhKkWvme74lWsZdg2
-         Z/FOWHJSzw1CVwIXQo7alxZhy0ioHiBUb92sdbaH45WZqsYcA9eFgxcl9TL6QnSq359m
-         P+ussN5KRMqTaw3dQ076/tslENmEl4Lp0IsMe8XjCeNHy+FUFRNRhy2ocHx8XF0+1m7K
-         9I7XFpVA7yJPstSVNt5ntk83PRH031iQkpmI6mDOEbZCyICiwXFCYBLpEYDVMCTyOjpc
-         NAOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765814261; x=1766419061;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jD2gSrbwz8qwRcQAUIoCa/YtmLX1qZ3zgXWUCARLWUM=;
-        b=bVj2D91FSGoemNHru48S9gmtGYf704u7WTfKp8quPNJod5lRRAYf4fgN4a1OPVqJqG
-         lWnBmc38ZBUPo9xPOy6c68xJTnX53GkxjJnsObxu16dVI3a1dGOguJf5L5LDp/RKEfDh
-         qWcMJO97L7B2FiY2GQuP7wZWXSr5e4q4W0F/6/WqU2E+NdHPCa5nYi8p0y77lnT7Ezr5
-         0VtoJa6j4TQJuN649/TuFnLpAuUUVLN7EYpPJrhSeeCHyzExr8mRNs7vEZhzlwR/y9aZ
-         NU4xkNv0tfz5gyRQtZpCLFSzSl2lBFb/sOxmPAbLHz38owHX18Fmie9KlV4rkGgoYAk9
-         vmvw==
-X-Forwarded-Encrypted: i=1; AJvYcCXXbhWuPsw3DHHAU71OW6ui7HK+UFc9yI7GD5qvcneMtZLdRNd/5EU+fb0MNjYZ6XMXx6otXPP+Wpg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxrcm8eWsvLMnz91tHU9l0y8VJY5f2mGFoy7BcCFC1+mCE1U5QB
-	MsnL9+S+ahBtB7pj6GlY2EeZpT9cgmdthqZd6X54VYCrG0e3SCHxFR8CQ8N6KQiSlFVPdkd1Uc/
-	AqQsJBNrIiCLGfYsAZVxdtuETJx09BZKwFpXKfwv8Iw==
-X-Gm-Gg: AY/fxX78M1khIrqzzHQt8iBJebnp8o8gAi8rdEvw+YDjO/UhXIpX4Xq21BfErxKSGPI
-	T9hjgItmmYo7PeR7BEmZXewQYd7RrzC3OR/iYlykHnYSmb0+jQ2Yv92OCz/1vjjH3S5Ql7eeRQb
-	WSjrfhfq+AMBVomKDJigRsPWpohPvF9fQBgQq9qfSiDye0Xuyy4VH3nO0EUhnmuM5NRUy3a7N8v
-	7iufhltOyuqw7kTzRolD9bcVqVqaHi6XkP5PgET2OxhgjZ2rp29mItwBN5cll0Nr5zqo97X
-X-Google-Smtp-Source: AGHT+IHnzK21TfrVLiBrKEfsBY0yy3nNModkqTwvqLIVjQPjpPnPxA37IWTaMsN5LsanoFGI3JzdpIiVMlmjMLIYn+0=
-X-Received: by 2002:a53:acc2:0:20b0:63f:af94:79d2 with SMTP id
- 956f58d0204a3-6447a58f4a3mr9014275d50.34.1765814261319; Mon, 15 Dec 2025
- 07:57:41 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ao6iCLcQ"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 205081A21E8;
+	Mon, 15 Dec 2025 16:26:51 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id E532860664;
+	Mon, 15 Dec 2025 16:26:50 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 48200119427B8;
+	Mon, 15 Dec 2025 17:26:39 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1765816006; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=5rl3KxG+tLZi8rwlgg6ho0S2qSyMdOaglHTZavWHxDs=;
+	b=ao6iCLcQ7Zb0ESFcCTY1UYt3Kv1+M7klLNwtIfyY0W8OrT71Bbdys+YwDu4W2frMF5k932
+	z8We866C9i7DctDtd7SybrbpEWaaEQMAzej227vet0vT5PAM2p9A6DULmocJgSYZymcVLQ
+	rEbP95aFKH+3+M87yv/z3ayVxaUZhcEeb6Af325wuDAdxyf8lFsMG7T6HAgeJ/Wi8yOQbT
+	MF4NIJcIiJ7Mhw3JvQhQVwqjozIkKTue5KTGK/MXYtf1/e5hxQnk5DbfurSBhZVRZQApEt
+	JncPr43EaY1ANpUo3lcyyWvlpxnGJcha9v8WlUmGaWVps8DpDs8rlZEiExiBuQ==
+From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+Subject: [PATCH v5 0/7] Add generic PHY driver used by MACB/GEM on EyeQ5
+Date: Mon, 15 Dec 2025 17:26:34 +0100
+Message-Id: <20251215-macb-phy-v5-0-a9dfea39da34@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251215034944.2973003-1-irving-ch.lin@mediatek.com>
-In-Reply-To: <20251215034944.2973003-1-irving-ch.lin@mediatek.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Mon, 15 Dec 2025 16:57:03 +0100
-X-Gm-Features: AQt7F2pOE88ysP1TXeUkBFRRwGo0OeDBvPna4LwWc08y3UTdwUmGokrHz2XyogY
-Message-ID: <CAPDyKFrsRTmvc4JmFAT_mCEEaG9yGkZn_JJqqyqCnB-AmpZgsQ@mail.gmail.com>
-Subject: Re: [PATCH v4 00/21] Add support for MT8189 clock/power controller
-To: "irving.ch.lin" <irving-ch.lin@mediatek.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Richard Cochran <richardcochran@gmail.com>, Qiqi Wang <qiqi.wang@mediatek.com>, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org, linux-pm@vger.kernel.org, 
-	netdev@vger.kernel.org, Project_Global_Chrome_Upstream_Group@mediatek.com, 
-	sirius.wang@mediatek.com, vince-wl.liu@mediatek.com, jh.hsu@mediatek.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIALo2QGkC/23MQQ6CMBCF4auYrq1hBgrUlfcwLtoylSZCCRAiI
+ dzdwsYaWb7JfP/CBuodDex6WlhPkxucb8MQ5xMztWqfxF0VNsMEBSSIvFFG866eOYI2GUFltS5
+ YeO96su69p+6PsGs3jL6f9/IE2/UgMgFPuEVpsbSKCoSb9n58ufZifMO2zIRfCglEFAM1IEASW
+ cir9J+mEQUZ0TRQkqrQBGWu0gOaRRSziGaBSiFMjkKVoIpfuq7rB+TZXT5TAQAA
+X-Change-ID: 20251022-macb-phy-21bc4e1dfbb7
+To: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
+ =?utf-8?q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+ Neil Armstrong <neil.armstrong@linaro.org>
+Cc: linux-mips@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, 
+ linux-clk@vger.kernel.org, 
+ =?utf-8?q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>, 
+ Tawfik Bayouk <tawfik.bayouk@mobileye.com>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Luca Ceresoli <luca.ceresoli@bootlin.com>, 
+ =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>, 
+ Conor Dooley <conor.dooley@microchip.com>, 
+ Jerome Brunet <jbrunet@baylibre.com>, Andrew Lunn <andrew@lunn.ch>
+X-Mailer: b4 0.14.3
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Mon, 15 Dec 2025 at 04:50, irving.ch.lin <irving-ch.lin@mediatek.com> wrote:
->
-> From: Irving-CH Lin <irving-ch.lin@mediatek.com>
->
-> Changes since v4:
-> - Fix dt_binding_check warning.
-> - Check prepare_enable before set_parent to ensure our reference clock is ready.
-> - Enable fhctl in apmixed driver.
-> - Refine clock drivers:
->   - Change subsys name, regs base/size (clock related part, instead of whole subsys).
->   - Simply code with GATE_MTK macro.
->   - Add MODULE_DEVICE_TABLE, MODULE_DESCRIPTION
->   - Register remove callback mtk_clk_simple_remove.
->   - Remove most of CLK_OPS_PARENT_ENABLE and CLK_IGNORE_UNUSED which may block bringup,
->       but some subsys will power off before we disable unused clocks, so still need here.
+EyeQ5 SoCs integrate two GEM instances. A system-controller register
+region named "OLB" has some control over the Ethernet PHY integration.
 
-I assume I can pick the pmdomain related changes (patch2, patch20 and
-patch21) from this series, as they are independent from the clock
-changes, right?
+Past iterations [0] touched those syscon registers directly from MACB.
+It was a bad idea. Extend the current OLB ecosystem with a new generic
+PHY driver.
+ - OLB is carried by one main platform driver: clk-eyeq.
+ - It instantiates auxiliary devices: reset-eyeq & pinctrl-eyeq5.
+ - We add a new one: phy-eyeq5-eth.
 
-Kind regards
-Uffe
+I always find devicetree the simplest way to understand device
+interactions, so here is a DT overview:
 
+    olb: system-controller@e00000 {
+            compatible = "mobileye,eyeq5-olb", "syscon";
+            reg = <0 0xe00000 0x0 0x400>;
+            // ...
+            #reset-cells = <2>;
+            #clock-cells = <1>;
+            #phy-cells = <1>; // <- this is new
+    };
 
->
-> changes since v3:
-> - Add power-controller dt-schema to mediatek,power-controller.yaml.
-> - Separates clock commit to small parts (by sub-system).
-> - Change to mtk-pm-domains for new MTK pm framework.
->
-> changes since v2:
-> - Fix dt-schema checking fails
-> - Merge dt-binding files and dt-schema files into one patch.
-> - Add vendor information to dt-binding file name.
-> - Remove NR define in dt-binding header.
-> - Add struct member description.
->
->   This series add support for the clock and power controllers
-> of MediaTek's new SoC, MT8189. With these changes,
-> other modules can easily manage clock and power resources
-> using standard Linux APIs, such as the Common Clock Framework (CCF)
-> and pm_runtime on MT8189 platform.
->
-> Irving-CH Lin (21):
->   dt-bindings: clock: mediatek: Add MT8189 clock definitions
->   dt-bindings: power: mediatek: Add MT8189 power domain definitions
->   clk: mediatek: clk-mux: Make sure bypass clk enabled while setting MFG
->     rate
->   clk: mediatek: Add MT8189 apmixedsys clock support
->   clk: mediatek: Add MT8189 topckgen clock support
->   clk: mediatek: Add MT8189 vlpckgen clock support
->   clk: mediatek: Add MT8189 vlpcfg clock support
->   clk: mediatek: Add MT8189 bus clock support
->   clk: mediatek: Add MT8189 cam clock support
->   clk: mediatek: Add MT8189 dbgao clock support
->   clk: mediatek: Add MT8189 dvfsrc clock support
->   clk: mediatek: Add MT8189 i2c clock support
->   clk: mediatek: Add MT8189 img clock support
->   clk: mediatek: Add MT8189 mdp clock support
->   clk: mediatek: Add MT8189 mfg clock support
->   clk: mediatek: Add MT8189 dispsys clock support
->   clk: mediatek: Add MT8189 scp clock support
->   clk: mediatek: Add MT8189 ufs clock support
->   clk: mediatek: Add MT8189 vcodec clock support
->   pmdomain: mediatek: Add bus protect control flow for MT8189
->   pmdomain: mediatek: Add power domain driver for MT8189 SoC
->
->  .../bindings/clock/mediatek,mt8189-clock.yaml |   90 ++
->  .../clock/mediatek,mt8189-sys-clock.yaml      |   58 +
->  .../power/mediatek,power-controller.yaml      |    1 +
->  drivers/clk/mediatek/Kconfig                  |  146 +++
->  drivers/clk/mediatek/Makefile                 |   14 +
->  drivers/clk/mediatek/clk-mt8189-apmixedsys.c  |  192 ++++
->  drivers/clk/mediatek/clk-mt8189-bus.c         |  196 ++++
->  drivers/clk/mediatek/clk-mt8189-cam.c         |  108 ++
->  drivers/clk/mediatek/clk-mt8189-dbgao.c       |   94 ++
->  drivers/clk/mediatek/clk-mt8189-dispsys.c     |  172 +++
->  drivers/clk/mediatek/clk-mt8189-dvfsrc.c      |   54 +
->  drivers/clk/mediatek/clk-mt8189-iic.c         |  118 ++
->  drivers/clk/mediatek/clk-mt8189-img.c         |  107 ++
->  drivers/clk/mediatek/clk-mt8189-mdpsys.c      |   91 ++
->  drivers/clk/mediatek/clk-mt8189-mfg.c         |   53 +
->  drivers/clk/mediatek/clk-mt8189-scp.c         |   73 ++
->  drivers/clk/mediatek/clk-mt8189-topckgen.c    | 1020 +++++++++++++++++
->  drivers/clk/mediatek/clk-mt8189-ufs.c         |   89 ++
->  drivers/clk/mediatek/clk-mt8189-vcodec.c      |   93 ++
->  drivers/clk/mediatek/clk-mt8189-vlpcfg.c      |  111 ++
->  drivers/clk/mediatek/clk-mt8189-vlpckgen.c    |  280 +++++
->  drivers/clk/mediatek/clk-mux.c                |    9 +-
->  drivers/pmdomain/mediatek/mt8189-pm-domains.h |  485 ++++++++
->  drivers/pmdomain/mediatek/mtk-pm-domains.c    |   36 +-
->  drivers/pmdomain/mediatek/mtk-pm-domains.h    |    5 +
->  .../dt-bindings/clock/mediatek,mt8189-clk.h   |  580 ++++++++++
->  .../dt-bindings/power/mediatek,mt8189-power.h |   38 +
->  27 files changed, 4306 insertions(+), 7 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/clock/mediatek,mt8189-clock.yaml
->  create mode 100644 Documentation/devicetree/bindings/clock/mediatek,mt8189-sys-clock.yaml
->  create mode 100644 drivers/clk/mediatek/clk-mt8189-apmixedsys.c
->  create mode 100644 drivers/clk/mediatek/clk-mt8189-bus.c
->  create mode 100644 drivers/clk/mediatek/clk-mt8189-cam.c
->  create mode 100644 drivers/clk/mediatek/clk-mt8189-dbgao.c
->  create mode 100644 drivers/clk/mediatek/clk-mt8189-dispsys.c
->  create mode 100644 drivers/clk/mediatek/clk-mt8189-dvfsrc.c
->  create mode 100644 drivers/clk/mediatek/clk-mt8189-iic.c
->  create mode 100644 drivers/clk/mediatek/clk-mt8189-img.c
->  create mode 100644 drivers/clk/mediatek/clk-mt8189-mdpsys.c
->  create mode 100644 drivers/clk/mediatek/clk-mt8189-mfg.c
->  create mode 100644 drivers/clk/mediatek/clk-mt8189-scp.c
->  create mode 100644 drivers/clk/mediatek/clk-mt8189-topckgen.c
->  create mode 100644 drivers/clk/mediatek/clk-mt8189-ufs.c
->  create mode 100644 drivers/clk/mediatek/clk-mt8189-vcodec.c
->  create mode 100644 drivers/clk/mediatek/clk-mt8189-vlpcfg.c
->  create mode 100644 drivers/clk/mediatek/clk-mt8189-vlpckgen.c
->  create mode 100644 drivers/pmdomain/mediatek/mt8189-pm-domains.h
->  create mode 100644 include/dt-bindings/clock/mediatek,mt8189-clk.h
->  create mode 100644 include/dt-bindings/power/mediatek,mt8189-power.h
->
-> --
-> 2.45.2
->
+    macb0: ethernet@2a00000 {
+            compatible = "mobileye,eyeq5-gem";
+            phys = <&olb 0>; // <- GEM device consumes the PHY
+            // ...
+    };
+
+    macb1: ethernet@2b00000 {
+            compatible = "mobileye,eyeq5-gem";
+            phys = <&olb 1>; // <- same thing for the second instance
+            // ...
+    };
+
+The Linux MACB driver already consumes a generic PHY for some other
+compatibles, this is nothing new. The MACB series [1] has been merged
+in v6.19-rc1.
+
+--
+
+About merging, Philipp Zabel gave his ACK for [5/7] to go into
+linux-clk. The split is:
+
+ - [PATCH 1/7] dt-bindings: soc: mobileye: OLB is an Ethernet PHY provider on EyeQ5
+   [PATCH 6/7] MIPS: mobileye: eyeq5: add two Cadence GEM Ethernet controllers
+   [PATCH 7/7] MIPS: mobileye: eyeq5-epm: add two Cadence GEM Ethernet PHYs
+   => linux-mips
+
+ - [PATCH 2/7] phy: Add driver for EyeQ5 Ethernet PHY wrapper
+   => linux-phy
+
+ - [PATCH 3/7] clk: eyeq: use the auxiliary device creation helper
+   [PATCH 4/7] clk: eyeq: add EyeQ5 children auxiliary device for generic PHYs
+   [PATCH 5/7] reset: eyeq: drop device_set_of_node_from_dev() done by parent
+   => linux-clk
+
+Have a nice day,
+Thanks!
+Théo
+
+[0]: https://lore.kernel.org/lkml/20250627-macb-v2-15-ff8207d0bb77@bootlin.com/
+[1]: https://lore.kernel.org/lkml/20251022-macb-eyeq5-v2-0-7c140abb0581@bootlin.com/
+
+Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
+---
+Changes in v5:
+- phy-eyeq5-eth:
+  - fix #includes: add delay, gfp_types, module and drop array_size,
+    bug, cleanup, container_of, lockdep, mutex.
+  - eq5_phy_xlate(): avoid magic value, use EQ5_PHY_COUNT.
+  - use dev_err_probe() in error cases of devm_phy_create() and
+    devm_of_phy_provider_register().
+- 3x Reviewed-by: Luca Ceresoli.
+- Add Neil Armstrong to Cc as new PHY subsystem reviewer.
+- Rebase on v6.19-rc1, tested on hardware, no changes.
+- Link to v4: https://lore.kernel.org/r/20251124-macb-phy-v4-0-955c625a81a7@bootlin.com
+
+Changes in v4:
+- Append my SoB to Jerome's patch:
+  [PATCH v4 3/7] clk: eyeq: use the auxiliary device creation helper
+- Rebase on net-next & linux-{clk,mips,phy}. Nothing to report.
+- Link to v3: https://lore.kernel.org/r/20251119-macb-phy-v3-0-e9a7be186a33@bootlin.com
+
+Changes in v3:
+- Take Philipp Zabel's Reviewed-by & Acked-by trailers on reset patch.
+- Take Thomas Bogendoerfer's two Acked-by trailers on DT patches.
+- Rebase on net-next & test on target. Nothing to report.
+- Link to v2: https://lore.kernel.org/r/20251101-macb-phy-v2-0-c1519eef16d3@bootlin.com
+
+Changes in v2:
+- Take Acked-by: Conor Dooley on dt-bindings-patch.
+- s/%ld/%tu/ for printing ptrdiff_t; warnings on 32-bit archs.
+  Reported by NIPA's netdev/build_32bit test.
+  https://patchwork.kernel.org/project/netdevbpf/patch/20251021-macb-eyeq5-v1-7-3b0b5a9d2f85@bootlin.com/
+  https://netdev.bots.linux.dev/static/nipa/1014126/14277857/build_32bit/stderr
+- Link to v1: https://lore.kernel.org/r/20251022-macb-phy-v1-0-f29f28fae721@bootlin.com
+
+Changes since MACB V1:
+- Drop the old "mobileye,olb" properties from DT patches; found while
+  running dtbs_check and dt_binding_check.
+- Drop all patches targeting net-next. That is MACB dt-bindings patch
+  and MACB driver code. See there here [1].
+- Link to v1: https://lore.kernel.org/lkml/20251021-macb-eyeq5-v1-0-3b0b5a9d2f85@bootlin.com/
+
+Past versions of MACB patches:
+ - March 2025: [PATCH net-next 00/13] Support the Cadence MACB/GEM
+   instances on Mobileye EyeQ5 SoCs
+   https://lore.kernel.org/lkml/20250321-macb-v1-0-537b7e37971d@bootlin.com/
+ - June 2025: [PATCH net-next v2 00/18] Support the Cadence MACB/GEM
+   instances on Mobileye EyeQ5 SoCs
+   https://lore.kernel.org/lkml/20250627-macb-v2-0-ff8207d0bb77@bootlin.com/
+ - August 2025: [PATCH net v3 00/16] net: macb: various fixes & cleanup
+   https://lore.kernel.org/lkml/20250808-macb-fixes-v3-0-08f1fcb5179f@bootlin.com/
+
+---
+Jerome Brunet (1):
+      clk: eyeq: use the auxiliary device creation helper
+
+Théo Lebrun (6):
+      dt-bindings: soc: mobileye: OLB is an Ethernet PHY provider on EyeQ5
+      phy: Add driver for EyeQ5 Ethernet PHY wrapper
+      clk: eyeq: add EyeQ5 children auxiliary device for generic PHYs
+      reset: eyeq: drop device_set_of_node_from_dev() done by parent
+      MIPS: mobileye: eyeq5: add two Cadence GEM Ethernet controllers
+      MIPS: mobileye: eyeq5-epm: add two Cadence GEM Ethernet PHYs
+
+ .../bindings/soc/mobileye/mobileye,eyeq5-olb.yaml  |   7 +-
+ MAINTAINERS                                        |   1 +
+ arch/mips/boot/dts/mobileye/eyeq5-epm5.dts         |  26 +++
+ arch/mips/boot/dts/mobileye/eyeq5.dtsi             |  45 ++++
+ drivers/clk/clk-eyeq.c                             |  60 ++---
+ drivers/phy/Kconfig                                |  13 ++
+ drivers/phy/Makefile                               |   1 +
+ drivers/phy/phy-eyeq5-eth.c                        | 249 +++++++++++++++++++++
+ drivers/reset/reset-eyeq.c                         |  24 +-
+ 9 files changed, 358 insertions(+), 68 deletions(-)
+---
+base-commit: 8f0b4cce4481fb22653697cced8d0d04027cb1e8
+change-id: 20251022-macb-phy-21bc4e1dfbb7
+
+Best regards,
+-- 
+Théo Lebrun <theo.lebrun@bootlin.com>
+
