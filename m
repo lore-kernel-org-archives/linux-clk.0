@@ -1,45 +1,44 @@
 Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12DB230DED4;
-	Mon, 15 Dec 2025 10:24:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD9543168F8;
+	Mon, 15 Dec 2025 10:24:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765794286; cv=pass; b=ZotNu17tY2M3jmGpiIFeyCP2yKSwUsBaL59+m3rduaF22NJDCVeuGxMwJzyu2eDEjazt3s1J8CF2hcXxNQUBF8jJv33qaK3hy00zYAzkj24JWa+BfcBTWiInBEz8o6hsYWofRyQ0OxhqxG0PsDdHJ4jwGIw0l5qH48/uHsPeXjk=
+	t=1765794287; cv=pass; b=qhX+0m8KFVjOin8043XtLY9GeSVitacMsCFKVOu9ogOvZIZbv2bf/kr8gRXOI8sMHQcu8fcclwfMeRYgkclASWjBlNjp6t/b5GR670z3ricEOGSPMyBcdfNEXzkcw9NRuuxrZ8ZCNpZIoErqzV3xvL2i7uZP8N5QakpXclgpPRo=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765794286; c=relaxed/simple;
-	bh=WlW3EUq26es4TrN0weHhI3aFBTQgDAEMgb7lM6X5J54=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=O8RUgTzJl4pvPp0Z9caRxrEZh+WPY+hB3xHpiX6e/1GKaiu1R5ULHeKd0FyV1gBIRinAJFo7kjoAKkqegIvu+DdSIzufaQGyg6wDSxT5hvPAC94OtSrRO0brzymFfX+GBQ46VoCH38BOIkNQnQ0zTZ/DHuw5ZYGbsy7qM+pIe4s=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=My4vhPwV; arc=pass smtp.client-ip=136.143.188.112
+	s=arc-20240116; t=1765794287; c=relaxed/simple;
+	bh=NmIUOt0rEOZ3PnRMcnQvX8xxxltSEUHm41Vx+veMZTI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=IfCguxOIPiDcP+ZhbPddx69+TUZE7TGnNMdzzeU/U7jYHdy4+Z/MuMnhcOjUtBurnnUFRBwEMaVq79VzBz4p/Soz/xI8uEGfvxd12PKYYcT3qixq9Bqnfx3HCASybttYSogDrLFyMhzPHsarmDSLplI46ZpqRzNKWZ1yPvIJMj4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=IP0Vvkg7; arc=pass smtp.client-ip=136.143.188.112
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="My4vhPwV"
-ARC-Seal: i=1; a=rsa-sha256; t=1765794264; cv=none; 
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="IP0Vvkg7"
+ARC-Seal: i=1; a=rsa-sha256; t=1765794260; cv=none; 
 	d=zohomail.com; s=zohoarc; 
-	b=TQzOg8qvQn1eHPiJpIWt8Fh9RLoj+P8GiNh+arvhhtSAUxnB2RqSn98kndqe+8X+IeWMijSVVZ8s1N/j1oesfc6SMnOcvGeMZbUJEsUbysqJ9VCO1XHzFrlWie65dK+fh0YS2H6I4NZIW37bLg7sZzA4q8z4aqLJEH7SPbrUP2w=
+	b=QLjlPj+tvZWRAjoGNAGyEoOpem8GcrNjacZoKbw2y6I8mcqEi+D+BhRCQEpe+9nW/4NaMetQNvL/wc/Tws0Wx7OOejSixtTScyLnvri1UeSPZpHvHV3+sMJqoxw8YvDPL5NquTSw5a6xbj1q+qpAZhdKfnQRHW8JyGEHx/ttr8w=
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1765794264; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=oQES7RbZPPxkgsateNmUfmiBsLawo8HPYdbXzx6AWUA=; 
-	b=EtPlzCC+WacBeUHpuJZYvCR3QBEtdjUXDQgdql7mYUPWnxik6FDNSZCS8/NcUj+kyi3KnRsgnTVuo9Fh2aZ+5jlHcp1xuzomzPE6YxLQPqREKcqbscbE8C7dnFni6p0M00xRe2GM0r4B3Mh3Q9pg34D0FuDuxEEu0WLg3tpjYnA=
+	t=1765794260; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=sBsztCZvN1TwT/rBOoE+/nHWNkGvyC+G21JWeCvj0sc=; 
+	b=THSRqDBximEy/ELB6IMOFF1tawjZhVMy/ImN9/MmQIan+l2RorkP4+Gi6Q2RrS3Dv225NYxnlIJZ51kq4M4PMCH1AA1UG8/5SX8BX3PR0IYCj+NpbpP9jfFS8RhFdKKxocUcMP9LwX80P7mSKBZt0/P9YJPbhTlTEVCvqxO2FVQ=
 ARC-Authentication-Results: i=1; mx.zohomail.com;
 	dkim=pass  header.i=collabora.com;
 	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
 	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1765794264;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1765794260;
 	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
-	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:References:In-Reply-To:To:To:Cc:Cc:Reply-To;
-	bh=oQES7RbZPPxkgsateNmUfmiBsLawo8HPYdbXzx6AWUA=;
-	b=My4vhPwVyfOc18nr7Ayop4j98O+bXPyL/4YPoDUquMmvcUQNC/iH1Hhp4Vo4F8z/
-	QuPjiECH1Gxp7XQWe6YWNyCXT8zAsRW3HGw4IpnTAHB/G+CYTdTSr19Oz4gZJgRj4kf
-	neKLw8W9PAY1q5Ci4mY1QEEvJDrVU6H4OzOZ/slg=
-Received: by mx.zohomail.com with SMTPS id 1765794263077348.7746226854614;
-	Mon, 15 Dec 2025 02:24:23 -0800 (PST)
+	h=From:From:Subject:Subject:Date:Date:Message-Id:Message-Id:MIME-Version:Content-Type:Content-Transfer-Encoding:To:To:Cc:Cc:Reply-To;
+	bh=sBsztCZvN1TwT/rBOoE+/nHWNkGvyC+G21JWeCvj0sc=;
+	b=IP0Vvkg70yvbd9j92sv04YVU94CqXrZX64p0QBosLPjHFwyM1m4WiRk3HiJCSsuv
+	E2hxlye0IweZhvgoLWAIUAOnhH1SAaMIKaw/D+XCpKbNyBeJCxlPtnO3+pQuXsOxtE2
+	uh6iu6rzhW73uLqrcse1zHJwDQdl401065frIyn0=
+Received: by mx.zohomail.com with SMTPS id 176579425872939.55466776054391;
+	Mon, 15 Dec 2025 02:24:18 -0800 (PST)
 From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Date: Mon, 15 Dec 2025 11:23:58 +0100
-Subject: [PATCH RESEND v3 1/5] clk: Respect CLK_OPS_PARENT_ENABLE during
- recalc
+Subject: [PATCH RESEND v3 0/5] MediaTek PLL Refactors and Fixes
+Date: Mon, 15 Dec 2025 11:23:57 +0100
+Message-Id: <20251215-mtk-pll-rpm-v3-0-5afb3191e869@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -48,9 +47,6 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251215-mtk-pll-rpm-v3-1-5afb3191e869@collabora.com>
-References: <20251215-mtk-pll-rpm-v3-0-5afb3191e869@collabora.com>
-In-Reply-To: <20251215-mtk-pll-rpm-v3-0-5afb3191e869@collabora.com>
 To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
  Michael Turquette <mturquette@baylibre.com>, 
  Stephen Boyd <sboyd@kernel.org>, Dong Aisheng <aisheng.dong@nxp.com>, 
@@ -65,62 +61,87 @@ Cc: kernel@collabora.com, linux-clk@vger.kernel.org,
  Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
 X-Mailer: b4 0.14.3
 
-When CLK_OPS_PARENT_ENABLE was introduced, it guarded various clock
-operations, such as setting the rate or switching parents. However,
-another operation that can and often does touch actual hardware state is
-recalc_rate, which may also be affected by such a dependency.
+This series refactors all users of mtk-pll, just so we can enable
+runtime power management for the clock controllers that want it. It's
+also generally more useful to have the struct device in the pll code,
+rather than the device node.
 
-Add parent enables/disables where the recalc_rate op is called directly.
+Also fix up MT8196 mfgpll to declare its parent-child relationship with
+mfg_eb, and fix the common clock framework core to take
+CLK_OPS_PARENT_ENABLE into account for the recalc_rate op as well.
 
-Fixes: fc8726a2c021 ("clk: core: support clocks which requires parents enable (part 2)")
-Fixes: a4b3518d146f ("clk: core: support clocks which requires parents enable (part 1)")
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
+The reason why this is all in the same series is that it grew out of me
+first modelling this as an RPM clock for mfgpll, which Angelo disagreed
+with, so I did some investigation and it seems MFG_EB indeed is a parent
+clock. However, the earlier refactoring to pass the device pointer down
+is still useful.
+
 Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
 ---
- drivers/clk/clk.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+Changes in v3:
+- Make device_node forward declaration a device forward declaration
+- Remove forward declarations of struct clk_ops and struct
+  clk_hw_onecell_data. (clk-provider.h include remains as it's needed
+  for a complete type of clk_hw)
+- Move PLL_PARENT_EN flag to individual mfgpll definitions.
+- Link to v2: https://lore.kernel.org/r/20251008-mtk-pll-rpm-v2-0-170ed0698560@collabora.com
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 85d2f2481acf..1b0f9d567f48 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -1921,7 +1921,14 @@ static unsigned long clk_recalc(struct clk_core *core,
- 	unsigned long rate = parent_rate;
- 
- 	if (core->ops->recalc_rate && !clk_pm_runtime_get(core)) {
-+		if (core->flags & CLK_OPS_PARENT_ENABLE)
-+			clk_core_prepare_enable(core->parent);
-+
- 		rate = core->ops->recalc_rate(core->hw, parent_rate);
-+
-+		if (core->flags & CLK_OPS_PARENT_ENABLE)
-+			clk_core_disable_unprepare(core->parent);
-+
- 		clk_pm_runtime_put(core);
- 	}
- 	return rate;
-@@ -4031,6 +4038,9 @@ static int __clk_core_init(struct clk_core *core)
- 	 */
- 	clk_core_update_duty_cycle_nolock(core);
- 
-+	if (core->flags & CLK_OPS_PARENT_ENABLE)
-+		clk_core_prepare_enable(core->parent);
-+
- 	/*
- 	 * Set clk's rate.  The preferred method is to use .recalc_rate.  For
- 	 * simple clocks and lazy developers the default fallback is to use the
-@@ -4046,6 +4056,9 @@ static int __clk_core_init(struct clk_core *core)
- 		rate = 0;
- 	core->rate = core->req_rate = rate;
- 
-+	if (core->flags & CLK_OPS_PARENT_ENABLE)
-+		clk_core_disable_unprepare(core->parent);
-+
- 	/*
- 	 * Enable CLK_IS_CRITICAL clocks so newly added critical clocks
- 	 * don't get accidentally disabled when walking the orphan tree and
+Changes in v2:
+- Drop bindings patch
+- Drop mfgpll RPM patch
+- Add patch to also transition pllfh to passing device
+- Add fixes patch to make CLK_OPS_PARENT_ENABLE also apply to the
+  recalc_rate operation
+- Remodel mfgpll's mfg_eb dependency as parent-child with
+  CLK_OPS_PARENT_ENABLE
+- Link to v1: https://lore.kernel.org/r/20250929-mtk-pll-rpm-v1-0-49541777878d@collabora.com
 
+---
+Nicolas Frattaroli (5):
+      clk: Respect CLK_OPS_PARENT_ENABLE during recalc
+      clk: mediatek: Refactor pll registration to pass device
+      clk: mediatek: Pass device to clk_hw_register for PLLs
+      clk: mediatek: Refactor pllfh registration to pass device
+      clk: mediatek: Add mfg_eb as parent to mt8196 mfgpll clocks
+
+ drivers/clk/clk.c                            | 13 +++++++++++++
+ drivers/clk/mediatek/clk-mt2701.c            |  2 +-
+ drivers/clk/mediatek/clk-mt2712-apmixedsys.c |  2 +-
+ drivers/clk/mediatek/clk-mt6735-apmixedsys.c |  4 ++--
+ drivers/clk/mediatek/clk-mt6765.c            |  2 +-
+ drivers/clk/mediatek/clk-mt6779.c            |  2 +-
+ drivers/clk/mediatek/clk-mt6795-apmixedsys.c |  2 +-
+ drivers/clk/mediatek/clk-mt6797.c            |  2 +-
+ drivers/clk/mediatek/clk-mt7622-apmixedsys.c |  2 +-
+ drivers/clk/mediatek/clk-mt7629.c            |  2 +-
+ drivers/clk/mediatek/clk-mt7981-apmixed.c    |  2 +-
+ drivers/clk/mediatek/clk-mt7986-apmixed.c    |  2 +-
+ drivers/clk/mediatek/clk-mt7988-apmixed.c    |  2 +-
+ drivers/clk/mediatek/clk-mt8135-apmixedsys.c |  3 ++-
+ drivers/clk/mediatek/clk-mt8167-apmixedsys.c |  2 +-
+ drivers/clk/mediatek/clk-mt8173-apmixedsys.c | 14 +++++++-------
+ drivers/clk/mediatek/clk-mt8183-apmixedsys.c |  2 +-
+ drivers/clk/mediatek/clk-mt8186-apmixedsys.c |  2 +-
+ drivers/clk/mediatek/clk-mt8188-apmixedsys.c |  2 +-
+ drivers/clk/mediatek/clk-mt8192-apmixedsys.c |  2 +-
+ drivers/clk/mediatek/clk-mt8195-apmixedsys.c |  2 +-
+ drivers/clk/mediatek/clk-mt8195-apusys_pll.c |  3 ++-
+ drivers/clk/mediatek/clk-mt8196-apmixedsys.c |  3 ++-
+ drivers/clk/mediatek/clk-mt8196-mcu.c        |  2 +-
+ drivers/clk/mediatek/clk-mt8196-mfg.c        | 15 ++++++++-------
+ drivers/clk/mediatek/clk-mt8196-vlpckgen.c   |  2 +-
+ drivers/clk/mediatek/clk-mt8365-apmixedsys.c |  2 +-
+ drivers/clk/mediatek/clk-mt8516-apmixedsys.c |  2 +-
+ drivers/clk/mediatek/clk-pll.c               | 19 +++++++++++++------
+ drivers/clk/mediatek/clk-pll.h               | 15 ++++++++-------
+ drivers/clk/mediatek/clk-pllfh.c             | 13 ++++++++-----
+ drivers/clk/mediatek/clk-pllfh.h             |  2 +-
+ 32 files changed, 87 insertions(+), 59 deletions(-)
+---
+base-commit: adff43957b0d8b9f6ad0e1b1f6daa7136f9ffbef
+change-id: 20250929-mtk-pll-rpm-bf28192dd016
+
+Best regards,
 -- 
-2.52.0
+Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
 
