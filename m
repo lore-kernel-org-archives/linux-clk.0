@@ -1,38 +1,31 @@
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DE643203AA;
-	Mon, 15 Dec 2025 18:15:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4663E283CB5;
+	Mon, 15 Dec 2025 21:40:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765822551; cv=none; b=VZxnEsOvvIpdCncfIGLDtFMTXDEJDMD4dHDn2kn3gS/LSb7VGZbjrluoLlEl07Bld62eJBt4Px2IjQ3CudIVtfUr6qh3kRjh/PXU9mX8K796CqbciC8SL6Li/P1+7KZAppPa/LkQ/ZbHueNw5+kWHyL01JiNjixtqo/fsI0L+60=
+	t=1765834853; cv=none; b=l4BVOQWB7e7Z+OugWCJfnO1HqpMesY2FiKYMB8pT+1Ml8KUheNRCO5YZkCUHRVyJ/h55YOWLNW/s82SpmvlG4+5oLF144UC5Oi9NnuFMeXc3+kUhP8ackpR/ZphNT3cPZOmjJqqBAKhGjP9vTG2uNNQDLhPb3EzZHCGx/Ea/tcA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765822551; c=relaxed/simple;
-	bh=c/PjK3MK1keVLcHji+RqTLxS8TEtW+tU/vQ1gsPWmFw=;
+	s=arc-20240116; t=1765834853; c=relaxed/simple;
+	bh=8+QhW2cFWJDaIsuT5yDSI4nyUtquLCwiDgHnqtP3F00=;
 	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
-	 References:In-Reply-To; b=n4zG+sgXC/0IVdTIbOSBmghZsmFz41Y5gTV/86knZsxXNlyv+aTZpknJ9DMjgQbLZPzcPU6EpfD1tCaoUlhMlwahuwWpc9iXqMqwPcL2KLEqY3oNWifkJnfLYetFpaeH9qk/gIZkvHtagHYUOsQoaMnJyuJXCRPA8KYX9DwzKPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=a5/gTm2q; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	 References:In-Reply-To; b=iZa8a7r+2ylEoXN/5AMjvVHz+9Ocf5w3clQGeqvOoL6mU6WaxQPrufYZ6bmS0TTyy0qv1XHS+IX4Jjp9r7x4HS+Yru/w75me2GbY0seOLoSjNuANpxYIhUgPWfnUtkuUDJnjrHQLol4NXiGRvslMzo0SMqZwm2ACrDUOeawsdkU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qJFBVJaC; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="a5/gTm2q"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 8977C1A21E3;
-	Mon, 15 Dec 2025 18:15:46 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 4FA7160664;
-	Mon, 15 Dec 2025 18:15:46 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 9381311940441;
-	Mon, 15 Dec 2025 19:15:40 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1765822545; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=2me3Ljn4gfmMgfkqKAj40oeX1P+gfTzAJLA5BMsltrI=;
-	b=a5/gTm2qjBEjpF77m0/AebIsh0AMWFDxUBJndGfo8gqphxBM/xne0JolHsTWrIWoBW4uFF
-	zkQUxQaqPH7c3Jcc9x8rV1LEHNjEmY0HhlR/LTOePWxQaPj3lglMC1kL50xCGNNu/NuWjj
-	VbD1K3vFp2sDbpBtxvsVrAEG+sOespBORcsI1E/BP2XR2qo81EjpObRpNs9Mulv3NxKYXk
-	IDU5LMofzpB4Y3KF0lLcoYY9c3j5d71qTM2XcrriiI+6brLfFHstUNIfUVxDF5MbVnN8Z0
-	5n7Ji6HtLVAsEkyZth6KveMNi24V/BWnPDlRXywh+3yPeFjXphK8+KUrd9RW/g==
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qJFBVJaC"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C486BC4CEF5;
+	Mon, 15 Dec 2025 21:40:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1765834852;
+	bh=8+QhW2cFWJDaIsuT5yDSI4nyUtquLCwiDgHnqtP3F00=;
+	h=Date:Cc:To:From:Subject:References:In-Reply-To:From;
+	b=qJFBVJaC0an3Wy7ck/NW3yKgi9jI3ce1I7gVQW8XUmK+OrJgE8FAW+WL7g4D9LvFe
+	 /YXSYPoFx2CSzUrpqi11o2qDr8G6z/1Di0ZaklBXTyTMLUzpgYiEXa6CG+nuC9aEPB
+	 oPLpWQpGwbvBrApASVSXJtWBeD5j9+j8eCEqoYfQukbOTAQU4/7mRVkdeQh7josQjH
+	 EqqCHJPOqdShwjRa6dHuASX87J1if9DJv4RbmhpyPx7LNZQF9y9tpD3TU8/KUvv9Fl
+	 o6XLqSg9GmBVn/+MChjQ3SmuTHxo55lUfl8ovjSyyVqKmJtl1P2uKHl4dlIN5739w4
+	 bHhzsM+PVC1lg==
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -41,72 +34,73 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Date: Mon, 15 Dec 2025 19:15:38 +0100
-Message-Id: <DEYZUJHYWKF7.1D7N8XSD46NKC@bootlin.com>
-Cc: <linux-mips@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux-phy@lists.infradead.org>,
- <linux-clk@vger.kernel.org>, =?utf-8?q?Beno=C3=AEt_Monin?=
- <benoit.monin@bootlin.com>, "Maxime Chevallier"
- <maxime.chevallier@bootlin.com>, "Tawfik Bayouk"
- <tawfik.bayouk@mobileye.com>, "Thomas Petazzoni"
- <thomas.petazzoni@bootlin.com>
-To: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>, "Vladimir
- Kondratiev" <vladimir.kondratiev@mobileye.com>,
- =?utf-8?q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>, "Rob
- Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
- "Conor Dooley" <conor+dt@kernel.org>, "Vinod Koul" <vkoul@kernel.org>,
- "Kishon Vijay Abraham I" <kishon@kernel.org>, "Michael Turquette"
- <mturquette@baylibre.com>, "Stephen Boyd" <sboyd@kernel.org>, "Philipp
- Zabel" <p.zabel@pengutronix.de>, "Thomas Bogendoerfer"
- <tsbogend@alpha.franken.de>
-From: "Luca Ceresoli" <luca.ceresoli@bootlin.com>
-Subject: Re: [PATCH v4 2/7] phy: Add driver for EyeQ5 Ethernet PHY wrapper
-X-Mailer: aerc 0.20.1
-References: <20251124-macb-phy-v4-0-955c625a81a7@bootlin.com>
- <20251124-macb-phy-v4-2-955c625a81a7@bootlin.com>
- <DEUNYYW0Y23E.2SA0SOCS99NA0@bootlin.com>
- <DEYVVCWBOZSH.2ZY41YCHLS8FU@bootlin.com>
- <DEYVXJI90AA7.KPDEQCNZOOXI@bootlin.com>
- <DEYXM6CGJULV.1KKA37ZLEIW1K@bootlin.com>
-In-Reply-To: <DEYXM6CGJULV.1KKA37ZLEIW1K@bootlin.com>
-X-Last-TLS-Session-Version: TLSv1.3
+Date: Mon, 15 Dec 2025 22:40:36 +0100
+Message-Id: <DEZ47GQSH2NC.UBRRY2WDHUJJ@kernel.org>
+Cc: <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Greg
+ Kroah-Hartman" <gregkh@linuxfoundation.org>, "Dave Ertman"
+ <david.m.ertman@intel.com>, "Ira Weiny" <ira.weiny@intel.com>, "Leon
+ Romanovsky" <leon@kernel.org>, "Peter Zijlstra" <peterz@infradead.org>,
+ "Boqun Feng" <boqun.feng@gmail.com>, "Elle Rhumsaa"
+ <elle@weathered-steel.dev>, "Carlos Llamas" <cmllamas@google.com>, "Yury
+ Norov" <yury.norov@gmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
+ <linux-block@vger.kernel.org>, "FUJITA Tomonori"
+ <fujita.tomonori@gmail.com>, "Miguel Ojeda" <ojeda@kernel.org>, "Michael
+ Turquette" <mturquette@baylibre.com>, "Stephen Boyd" <sboyd@kernel.org>,
+ <linux-clk@vger.kernel.org>, "Benno Lossin" <lossin@kernel.org>, "Thomas
+ Gleixner" <tglx@linutronix.de>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ "Viresh Kumar" <viresh.kumar@linaro.org>, <linux-pm@vger.kernel.org>, "Paul
+ Moore" <paul@paul-moore.com>, "Serge Hallyn" <sergeh@kernel.org>,
+ <linux-security-module@vger.kernel.org>, "Daniel Almeida"
+ <daniel.almeida@collabora.com>, "Abdiel Janulgue"
+ <abdiel.janulgue@gmail.com>, "Robin Murphy" <robin.murphy@arm.com>, "Lyude
+ Paul" <lyude@redhat.com>, "Alexander Viro" <viro@zeniv.linux.org.uk>,
+ "Christian Brauner" <brauner@kernel.org>, "Jan Kara" <jack@suse.cz>,
+ <linux-fsdevel@vger.kernel.org>, "Josh Poimboeuf" <jpoimboe@kernel.org>,
+ "Jason Baron" <jbaron@akamai.com>, "Steven Rostedt" <rostedt@goodmis.org>,
+ "Ard Biesheuvel" <ardb@kernel.org>, "Brendan Higgins"
+ <brendan.higgins@linux.dev>, "David Gow" <davidgow@google.com>, "Rae Moar"
+ <rmoar@google.com>, <linux-kselftest@vger.kernel.org>, "Andrew Morton"
+ <akpm@linux-foundation.org>, "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ "Andrew Ballance" <andrewjballance@gmail.com>,
+ <maple-tree@lists.infradead.org>, <linux-mm@kvack.org>, "Lorenzo Stoakes"
+ <lorenzo.stoakes@oracle.com>, "Uladzislau Rezki" <urezki@gmail.com>,
+ "Vitaly Wool" <vitaly.wool@konsulko.se>, "Rob Herring" <robh@kernel.org>,
+ "Saravana Kannan" <saravanak@google.com>, <devicetree@vger.kernel.org>,
+ "Bjorn Helgaas" <bhelgaas@google.com>,
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+ <linux-pci@vger.kernel.org>, "Remo Senekowitsch" <remo@buenzli.dev>, "Paul
+ E. McKenney" <paulmck@kernel.org>, <rcu@vger.kernel.org>, "Will Deacon"
+ <will@kernel.org>, "Fiona Behrens" <me@kloenk.dev>, "Gary Guo"
+ <gary@garyguo.net>, "Liam Girdwood" <lgirdwood@gmail.com>, "Mark Brown"
+ <broonie@kernel.org>, "Alexandre Courbot" <acourbot@nvidia.com>, "Vlastimil
+ Babka" <vbabka@suse.cz>, "Christoph Lameter" <cl@gentwo.org>, "David
+ Rientjes" <rientjes@google.com>, "Ingo Molnar" <mingo@redhat.com>, "Waiman
+ Long" <longman@redhat.com>, "Mitchell Levy" <levymitchell0@gmail.com>,
+ "Frederic Weisbecker" <frederic@kernel.org>, "Anna-Maria Behnsen"
+ <anna-maria@linutronix.de>, "John Stultz" <jstultz@google.com>,
+ <linux-usb@vger.kernel.org>, "Tejun Heo" <tj@kernel.org>, "Lai Jiangshan"
+ <jiangshanlai@gmail.com>, "Matthew Wilcox" <willy@infradead.org>, "Tamir
+ Duberstein" <tamird@gmail.com>
+To: "Alice Ryhl" <aliceryhl@google.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+Subject: Re: [PATCH 00/46] Allow inlining C helpers into Rust when using LTO
+References: <20251202-define-rust-helper-v1-0-a2e13cbc17a6@google.com>
+In-Reply-To: <20251202-define-rust-helper-v1-0-a2e13cbc17a6@google.com>
 
-Hi Th=C3=A9o,
+On Tue Dec 2, 2025 at 8:37 PM CET, Alice Ryhl wrote:
 
-On Mon Dec 15, 2025 at 5:30 PM CET, Th=C3=A9o Lebrun wrote:
-> On Mon Dec 15, 2025 at 4:11 PM CET, Luca Ceresoli wrote:
->> On Mon Dec 15, 2025 at 4:08 PM CET, Th=C3=A9o Lebrun wrote:
->>> On Wed Dec 10, 2025 at 5:06 PM CET, Luca Ceresoli wrote:
->>>> On Mon Nov 24, 2025 at 3:41 PM CET, Th=C3=A9o Lebrun wrote:
->>>>> +	provider =3D devm_of_phy_provider_register(dev, eq5_phy_xlate);
->>>>> +	if (IS_ERR(provider)) {
->>>>> +		dev_err(dev, "registering provider failed\n");
->>>>> +		return PTR_ERR(provider);
->>>>> +	}
->>>>
->>>> As above, why not dev_err_probe()?
->>>
->>> Good idea once again.
->>>
->>>> Other than the above minor issues, LGTM. This driver looks cleanly
->>>> implemented.
->>>
->>> Thanks for the review. Does that imply I can append your Rb trailer?
->>
->> If you apply all the changes I have mention, yes, but in doubt you can
->> avoid it and I'll review your next version. Re-reviewing is much faster
->> than reviewing the first time (last famous words).
->
-> I've taken the Rb trailer, hoping everything is to your taste.
->
-> https://lore.kernel.org/lkml/20251215-macb-phy-v5-0-a9dfea39da34@bootlin.=
-com/
+Applied to driver-core-testing, thanks!
 
-I checked the delta, looks correct, R-by confirmed.
+> Alice Ryhl (46):
+>       rust: auxiliary: add __rust_helper to helpers
+>       rust: device: add __rust_helper to helpers
+>       rust: dma: add __rust_helper to helpers
+>       rust: io: add __rust_helper to helpers
+>       rust: irq: add __rust_helper to helpers
+>       rust: pci: add __rust_helper to helpers
 
-Luca
+        [ Consider latest helper additions. - Danilo ]
 
---
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+>       rust: platform: add __rust_helper to helpers
+>       rust: property: add __rust_helper to helpers
+>       rust: scatterlist: add __rust_helper to helpers
