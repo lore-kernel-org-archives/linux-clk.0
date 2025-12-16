@@ -1,126 +1,106 @@
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC21E2DEA97
-	for <linux-clk@vger.kernel.org>; Tue, 16 Dec 2025 17:03:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 462EF72602;
+	Tue, 16 Dec 2025 17:15:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765904592; cv=none; b=Wu7WhbKe03xOvomlRGEW/CT7aqeoMbuBBhV9mKx30UhyIeKB87mZ5lvb3l/3sGGPgkxPcxGfyDdnKOG1dbEpbYlBdGntP7geb4uP3tdEJ118dA9RWjnN7ZsfcyXrFlciDsFf9floO89EBurXho7de5/6hd88Geeys3+X2X8p0qU=
+	t=1765905309; cv=none; b=LnuBWAAjmNS2H98DgxXyYO0++R/7z6nfVFFmOBNxnmRrzJO4YbXJ3UzLvKgXYTaYKuzM4KQ0XghUM0VymuD4mYmdBnSPH7tynXhqwB3tIbpa+pZxfBb8qkIuscPTn9De8dk61UpXIeDtAYiqlJUl0Np+hUBNBxPfkpeWXrOtUEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765904592; c=relaxed/simple;
-	bh=F5ummgPhzVwfH3aJi4+uY671i9nGNbXpL0FkgxynloY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZBJLI7+Dklbi+k6TL92DhEfMobDZBcHIULUv9oZxwaGY0023/rU5U3yoMKi1//Xk+a60YsUVlBZ2XaMB9RBTLRpeV04rNBFEjKgQJondgTIVRQkrUU8imPs29ARmGgCkdx+rViTi/rMr5qbq3OZY+8taBZ6Nj9NHIJv1cHncykw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sartura.hr; spf=pass smtp.mailfrom=sartura.hr; dkim=pass (2048-bit key) header.d=sartura.hr header.i=@sartura.hr header.b=HUR0c1oP; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sartura.hr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sartura.hr
+	s=arc-20240116; t=1765905309; c=relaxed/simple;
+	bh=mcmdjoIeQ8dVaydge/S3sCXDOzpTarcOqio6eoFh39k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rrHXTHMM8940VyGS/oFtYGMoLc0inKaEen3gfFSjzRe7hxDv+h6CXG8f1C6j1EL+GVsg7SXXRfTic0i4cDAjJGllioKn/CEVIYo3k65J38YH6pkjVC/jeOovTFpI04ejlhHffXEJJeIDMx5eZzfHHNIrto//AQQ7DGmtaBDR07I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fd77r7CV; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sartura.hr header.i=@sartura.hr header.b="HUR0c1oP"
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-6496a8dc5a7so6603067a12.2
-        for <linux-clk@vger.kernel.org>; Tue, 16 Dec 2025 09:03:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sartura.hr; s=sartura; t=1765904589; x=1766509389; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=F5ummgPhzVwfH3aJi4+uY671i9nGNbXpL0FkgxynloY=;
-        b=HUR0c1oP2r19YIGGQc967WfYD/smuI0IJPFKrMRJYAdsvIaZyCJkMtulHBsm50ODwb
-         JauGSBBPrDXsSq6QkLWzTbFOO2IIL4lhNSXyLb8MqULUXURDfgh4GPvBYCnxfqO/uGNH
-         M7T/KWr9FIkE5Oj2EjHFjl5VFswk6OifRQzQIZh7me8snBfVDzURqctiIcbpDzzWfl/X
-         ALEri3nkrW2HWDbC3o0fNTuIobUwibSu89QPHCHEcc1P1KG8qKwBmI39JeSZVzimFedS
-         2b5iNPv4DU/s9e6srUZGkRWZB64tCxPJenC/s7w0P87DEsXXQyZLfIfqFHTWLG0iZxY6
-         DQ9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765904589; x=1766509389;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=F5ummgPhzVwfH3aJi4+uY671i9nGNbXpL0FkgxynloY=;
-        b=makxn1ytvcObiVFJoXxEvTu5E2nZMR8+IBCivzNgspNpPKpJM/A/8Xm/hpkNWrHnjC
-         gdF58ZZhncctIr2bMJuogKsMmN6+0FotEqyW1WsvZF43JYxETSwaWCKir2/TeAXF738a
-         F0J1Shq2/kE5t3z5ccooLjSC3vai5pkAejphgXeP6iGPW3MDQZxCzYkDQrEtcuYbNIR7
-         ixZ4DLee/jLuVk1ghw2OX+7T3MPJfa0XbyRa9y7V2UwCwRt0FZ/6dLjQIPLQuyIKNo1q
-         B4rRZPS4TVN+qXAuY0ESS0pQzzPPxD9ooba8VB1qXTocV/Lacd/DzpMAsnFICnA/2gtN
-         Calg==
-X-Forwarded-Encrypted: i=1; AJvYcCUOnAeVDIs0CWOaAdRU6xrZknTkcjzIpiSlC42ddFpmF1m6AW9ZO/fprMioHwQzJ1LkUUzvCMH7sv4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzt7Mt7aUQK3anDjwsAd7EdQs1mNM0TQzka0r+vGscgfzq5kQiX
-	324JfnkFkLNXSjKWoo2KbRZKKM/ypFKJoalcSXqGr5o97XeDKJFWBqt+T+KgmO/BV98w9G9jyQi
-	/ke58kFTikBLbMcWfpopizQKrV+F6KfRo+2gOhQUxNA==
-X-Gm-Gg: AY/fxX53YNe9TeS5RnILq8vFT2o6CmbOtwVciEAgEiQoTZnPqvy6Kk7cpJzwTyg0egR
-	XvnWYzIXtnzXMfq91Jnknix8qdH7Owh40cxTLqiyLpNU60qjFsM0T2sg7QRHgP0K/ADuBTOEhpz
-	GGfet6Q9lvVVwWkWgsayB2OxN/BMaNUPncN9Ap0z+dzBWG0Q5psljJfPuXArTfx3FYksQ70ip5I
-	N4R6IZG5p+YqFD0TQ036JHZ4LIsltrPcQPQiPeyIwEY/sRBGte8V6LBBa6T7uqcEUocj/15
-X-Google-Smtp-Source: AGHT+IFN/waKvJ1dk6OhR5cf+U/bNCur64fqPTgP6eIpNT5zthYFXF01jY49UDISUGnP6m+DUwrvZmTGOhEzi55R+Mg=
-X-Received: by 2002:a05:6402:1ed1:b0:647:532f:8efc with SMTP id
- 4fb4d7f45d1cf-6499b31266bmr15476133a12.33.1765904588965; Tue, 16 Dec 2025
- 09:03:08 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fd77r7CV"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79985C4CEF1;
+	Tue, 16 Dec 2025 17:15:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1765905308;
+	bh=mcmdjoIeQ8dVaydge/S3sCXDOzpTarcOqio6eoFh39k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fd77r7CVON1lRH0b5ILmf5Gy/OkXnk169H1lioS5jyy9elisWdT1B/13wKfu+8pZc
+	 MMVtqqxS56r1V01p+Q85v7lwRhImLwUnIJJ0vwO75aAuzEyDngWY8pLjYM79dfY8f+
+	 5hyuQnh96NvBdqQApeIyRFLfbs6yW4Y4LKCn8Aw/RrfYIIobxDskLwKUX6wRtVGBKw
+	 R2zpsoAI2i5/AFYKvFT2N8twQh/qnJ6umnF7PnanyQvjDYoEksoloEXlTs+/elMEY/
+	 PTZGiL02hNPhdY5Gtl8RycZ9WpmAyen3c6YEpedvcyXnwPyXz276eehtsd3P+/npXv
+	 IAcWNiEQ0WdfQ==
+Date: Tue, 16 Dec 2025 11:15:05 -0600
+From: Rob Herring <robh@kernel.org>
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Michal Simek <michal.simek@amd.com>, Vinod Koul <vkoul@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, Yong Wu <yong.wu@mediatek.com>,
+	Peter Rosin <peda@axentia.se>, Linus Walleij <linusw@kernel.org>,
+	Chen-Yu Tsai <wens@kernel.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	dmaengine@vger.kernel.org, linux-mediatek@lists.infradead.org,
+	linux-iio@vger.kernel.org, iommu@lists.linux.dev,
+	linux-gpio@vger.kernel.org, linux-sunxi@lists.linux.dev,
+	imx@lists.linux.dev, linux-sound@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: Remove unused includes
+Message-ID: <20251216171505.GA2641341-robh@kernel.org>
+References: <20251212231203.727227-1-robh@kernel.org>
+ <20251213165949.4b51f7cb@jic23-huawei>
+ <695ca5d2-b713-4838-8427-a9d31751c0cf@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251215163820.1584926-1-robert.marko@sartura.hr>
- <20251215163820.1584926-3-robert.marko@sartura.hr> <d9665340-5a96-4105-88e9-ec14a715df5a@kernel.org>
-In-Reply-To: <d9665340-5a96-4105-88e9-ec14a715df5a@kernel.org>
-From: Robert Marko <robert.marko@sartura.hr>
-Date: Tue, 16 Dec 2025 18:02:57 +0100
-X-Gm-Features: AQt7F2rU23EYA-TATIPjguH2zW0uOL-rOKCV2dD8OGkl08WLSt_IEutVu0MO3jw
-Message-ID: <CA+HBbNF2EeP=miC9GpEm2HpPTmZAefV2fwxKjm0vHB6tj_1usQ@mail.gmail.com>
-Subject: Re: [PATCH v2 03/19] dt-bindings: arm: AT91: relicense to dual GPL-2.0/BSD-2-Clause
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com, 
-	claudiu.beznea@tuxon.dev, Steen.Hegelund@microchip.com, 
-	daniel.machon@microchip.com, UNGLinuxDriver@microchip.com, 
-	herbert@gondor.apana.org.au, davem@davemloft.net, vkoul@kernel.org, 
-	linux@roeck-us.net, andi.shyti@kernel.org, lee@kernel.org, 
-	andrew+netdev@lunn.ch, edumazet@google.com, kuba@kernel.org, 
-	pabeni@redhat.com, linusw@kernel.org, olivia@selenic.com, 
-	radu_nicolae.pirea@upb.ro, richard.genoud@bootlin.com, 
-	gregkh@linuxfoundation.org, jirislaby@kernel.org, mturquette@baylibre.com, 
-	sboyd@kernel.org, richardcochran@gmail.com, wsa+renesas@sang-engineering.com, 
-	romain.sioen@microchip.com, Ryan.Wanner@microchip.com, 
-	lars.povlsen@microchip.com, tudor.ambarus@linaro.org, 
-	charan.pedumuru@microchip.com, kavyasree.kotagiri@microchip.com, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org, 
-	dmaengine@vger.kernel.org, linux-hwmon@vger.kernel.org, 
-	linux-i2c@vger.kernel.org, netdev@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-spi@vger.kernel.org, linux-serial@vger.kernel.org, 
-	linux-usb@vger.kernel.org, linux-clk@vger.kernel.org, mwalle@kernel.org, 
-	luka.perkov@sartura.hr
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <695ca5d2-b713-4838-8427-a9d31751c0cf@oss.qualcomm.com>
 
-On Tue, Dec 16, 2025 at 4:55=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.or=
-g> wrote:
->
-> On 15/12/2025 17:35, Robert Marko wrote:
-> > As it is preferred to have bindings dual licensed, lets relicense the A=
-T91
-> > bindings from GPL-2.0 only to GPL-2.0/BSD-2 Clause.
-> >
-> > Signed-off-by: Robert Marko <robert.marko@sartura.hr>
->
-> You need all contributors to ack this...
+On Tue, Dec 16, 2025 at 01:02:52PM +0100, Konrad Dybcio wrote:
+> On 12/13/25 5:59 PM, Jonathan Cameron wrote:
+> > On Fri, 12 Dec 2025 17:11:52 -0600
+> > "Rob Herring (Arm)" <robh@kernel.org> wrote:
+> > 
+> >> Remove includes which are not referenced by either DTS files or drivers.
+> >>
+> >> There's a few more which are new, so they are excluded for now.
+> >>
+> >> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> > 
+> > Acked-by: Jonathan Cameron <jonathan.cameron@huawei.com> #for-iio
+> > 
+> > Ideally we'll get a QC ack on those as well.
+> > 
+> > Jonathan
+> >>  .../dt-bindings/iio/qcom,spmi-adc7-pmr735b.h  |  30 --
+> >>  .../dt-bindings/iio/qcom,spmi-adc7-smb139x.h  |  19 --
+> 
+> Those are being moved to dts/qcom:
+> 
+> https://lore.kernel.org/linux-arm-msm/20251127133903.208760-1-jishnu.prakash@oss.qualcomm.com/
+> 
+> and will hopefully be in use later in this cycle.
+> 
+> Krzysztof and the submitter agreed on that outcome since they represent
+> hw constants and aren't "real" bindings (connecting sw to sw)
 
-I understand, all of the contributors were CC-ed.
+Okay, I'll drop those 2 when applying.
 
-Regards,
-Robert
-
->
-> Best regards,
-> Krzysztof
-
-
-
---=20
-Robert Marko
-Staff Embedded Linux Engineer
-Sartura d.d.
-Lendavska ulica 16a
-10000 Zagreb, Croatia
-Email: robert.marko@sartura.hr
-Web: www.sartura.hr
+Rob
