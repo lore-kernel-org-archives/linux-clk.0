@@ -1,33 +1,67 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 703AA1FE471;
-	Tue, 16 Dec 2025 08:52:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1455A221F0C
+	for <linux-clk@vger.kernel.org>; Tue, 16 Dec 2025 10:47:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765875123; cv=none; b=a3rO/uD5yxWieSb7PUoxCCAS83HghTc0bgfPScPcBC0x5xvs2nHZkDg0060DOV6rAe6VuaVDsx5LHK3jPCCFhokTTED1h5K/Vz3KeiRMJM+jOJ+BV33DSijgiBrp/2fsLQ2Q4/IGtz0zwjESXfWdor9qIYtAO2ZzwM8SHiROlWY=
+	t=1765882073; cv=none; b=qbf47+/FYgrI8qFEd2pcnZaycchf2b3r756ilJrs6gI4YZHGxo3pMEe6BPWu79mp9rXFw94JzTT2mFvBzTEBKhmUmNhfTCmyWrBURbHKxcNlmiF3uSDxonXYo4FX8J0k6EoSIz1wpzp341PjMdW9HUUJQVDShZgwJNbdiwnUW/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765875123; c=relaxed/simple;
-	bh=5yo5JqZWB7fW9gV7EpQXnHOSL2dm1tpCTiFS4yqKKJY=;
+	s=arc-20240116; t=1765882073; c=relaxed/simple;
+	bh=qK2WahaIx91FQUd5b/negr3UGlrtL4mCkdFv/WLMjRk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kFBSZPYhvJbIvBT+kxnvyQ+Sq4Opvr3RPtLRVFmmkLimRqLCXa5PfhiBEGAhwIV3nmjQPcA7KmMGDSAzwtW7y9CZM2C7HnoTNYp59YCMm3khwpuSbaLXyzMXhmfOOdKWx+sIYH2aDYozMahYuVh9+XAr+MBhr8wwF3+YOMfBB/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n/F1mud5; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=o3zLUufgUhWI66MoCbxzw/26J1UpxDfbuGLpfpHVMDkxAgmg8e9NRbcqS/ubhAWeA9SIuZZyDSBIRbGrH3XGeKRLfSkUJi84c7SNR25qiaFeaf7C96j7ii7mO0LTjehCG41FQrNHmQn5hQDn+cY+mKOYJiavplcVRTAgGFz4W8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zZ6BqBER; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n/F1mud5"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CD6BC4CEF1;
-	Tue, 16 Dec 2025 08:51:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1765875123;
-	bh=5yo5JqZWB7fW9gV7EpQXnHOSL2dm1tpCTiFS4yqKKJY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=n/F1mud59bDspQ+N7JBK2BrasxGl7iffNcwcAG0O4e1SqcVQiwos9yL8uIG66HF1T
-	 vkiIBO0ydpAQWExnKTWSuLTtz2oretzZjqes8YCrfQUVLz+s3obZiHzkQdSlEz0v51
-	 avGhZme8uCNMO+JlHdNhv7GkpkKdnivH4E+ikv+X/6fFQa3dWhdCvRLVhWWQEe+fbl
-	 4eQ9NnGz/BwCXXjEfm4xDKjr2U4MTJEeyQZqCwOKtFxv3EmPJZaqWmFufCumv+Y+cB
-	 UqxemO+lsUxri/rcSaV9tHb55JKI/Fyz9Hzx5BoCg5wax3i4lYkThYyEn2W8G8i19t
-	 zhxl3xsEhrx6w==
-Message-ID: <fbe39eac-7c92-4a08-bafb-31e5c51a0613@kernel.org>
-Date: Tue, 16 Dec 2025 09:51:56 +0100
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zZ6BqBER"
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-37e8892d4e0so4758781fa.1
+        for <linux-clk@vger.kernel.org>; Tue, 16 Dec 2025 02:47:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1765882069; x=1766486869; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=wmKGehAtF2aC6hECS065yudbuhoIUUvkuW0P86X+zRI=;
+        b=zZ6BqBERjLoJa7UZuDvuLxysJcIVW1IZURBViObFCiOo5Enz4RwBdmZWQWRU+kmlX4
+         FHE+QnC2/0GD/VQ/QFCZYmFYzsuZTHHNpL6cGT4db/N14s4SSgCj/AfT+6XADT48geYC
+         ovJftVlH1g7dC4s7LPhdgAM9IhUXB4mk03yZi7aArR2lY3MqNCS8BC70zNsCkMA+q603
+         cQpVNOrx/+HKK2NZsav/W3Mh+3/JjugUaQ3D+l2cOH+j6QUobxi0yElXNLE3TYlZNVyC
+         M2L9q2aQMdxvGL+wPnkW5WsUZ3v+0Xah0xoMWYNpDLlRdPwD1B3uz5ISYNCfZP1YqrRq
+         lhjg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1765882069; x=1766486869;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wmKGehAtF2aC6hECS065yudbuhoIUUvkuW0P86X+zRI=;
+        b=GLSWFI3/YCOmnMymku6PxPJLHkNZ56c4CiQz0T9B/qhg5notKyJoE3Ea2bGpMvh9xv
+         ALRuGKNCds18dysLHV0DRId7bNV5Fu1kr8T853pG2s655xBiajVJ2uF2kfDoPVKleEGD
+         Zl1wqhbkw3aqWQW2udSo4py9Ji1kItVzYmH16wHHOU+fnjV3kJQhFq4/19g9HOSELiuV
+         UOwCR4/P69LPHaOb1wY0EhlFZVh5vG1KZyxMCZuLJtWD92tq5X88Fc3Y9XnZVejsTuSu
+         tuD0eTPbJjSU3BPko7+yqL8SLw3PhZepyBPDoYYIh2AHdWLmQRodIiCv3CCa91ejvM2g
+         N1bA==
+X-Forwarded-Encrypted: i=1; AJvYcCWnkXGPlDxCv1vPuIHV+++qpn2FkcoeJHH8TDIE7zsvP1pDb5lljAimz3czNptT6YCwrD0Ncg09d9k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGs3zwc8c0MFsITLx1jubVZEXbv9ruiRnn1RZRoFE01pE66zfa
+	g8evTwyrQc/fROrr/skzWmIuBFpsEk5dmp+1QZMC4VRd6wYUH9+c21YNR6mYIYqS6GA=
+X-Gm-Gg: AY/fxX7loomC/MdvgkY6nhHKAeh8oZiiHCffHoMWuFIaa2X/RmscwzL+eSOLWiIurjd
+	ZJPW9HYTg9nwk9Gdbhk9ctODDyaq/5oKAsE1iDuymuI9EbylXmfoXnJ1kTSpX5sH4TN2H0njaCt
+	8xeReUQZd19u3eLrJHtaBfC/LIsQzZI2zlBo0h63JcmUWuXwkYMycnN2Ml6cVG0sQQldTNCDl50
+	cymmeBplWqSWw4jvK/hzFPZG5pFxiHT0dfw99hhwW/Mgi2SmhT56+brLBDimOiTjy7KNLUaDygH
+	o8CaBSo7Wrj/F2FTg1uZ2iFApYX6bkaz5uVaiM5nHAA8sKq6hGywwwAcerl5HoFKCtmxwSqyZt0
+	15Yz2KdIRlLN+aoyHkWo5cvg+xi2PnOnwWvOVeJ2/qwBZrMhWdObX5LxdV+GjkATIHp4Zzyz4WH
+	C7gBCVLVFwbq+VDp2ZvPNgZgkym6UMb3Ij+ZIWdXCeFOgY6fkf7kCi8Ab5su76UIiDaw==
+X-Google-Smtp-Source: AGHT+IF0H41NSoDHeiVoQB8t5PFRmbwgMPCmvxitVkRlghvklguwBlJGvPt9E5BeekSJvgfAgDKMYA==
+X-Received: by 2002:a05:6512:3c8b:b0:594:2f72:2f78 with SMTP id 2adb3069b0e04-598faab5a2emr2935465e87.8.1765882069039;
+        Tue, 16 Dec 2025 02:47:49 -0800 (PST)
+Received: from [192.168.1.100] (91-159-24-186.elisa-laajakaista.fi. [91.159.24.186])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5990da119c1sm806260e87.18.2025.12.16.02.47.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 16 Dec 2025 02:47:47 -0800 (PST)
+Message-ID: <3658e6cc-755c-4b38-aec7-b8bfdd7c8bd2@linaro.org>
+Date: Tue, 16 Dec 2025 12:47:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,165 +69,126 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 07/11] dt-bindings: clock: qcom: document the Kaanapali
- GPU Clock Controller
-To: Taniya Das <taniya.das@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
+Subject: Re: [PATCH v2 05/11] dt-bindings: clock: qcom: Add support for CAMCC
+ for Kaanapali
+Content-Language: ru-RU
+To: Taniya Das <taniya.das@oss.qualcomm.com>,
+ Bjorn Andersson <andersson@kernel.org>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
  <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
  <conor+dt@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>,
  Maxime Coquelin <mcoquelin.stm32@gmail.com>,
  Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
  Imran Shaik <imran.shaik@oss.qualcomm.com>,
  Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
  linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org,
- Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+ linux-arm-kernel@lists.infradead.org
 References: <20251125-kaanapali-mmcc-v2-v2-0-fb44e78f300b@oss.qualcomm.com>
- <20251125-kaanapali-mmcc-v2-v2-7-fb44e78f300b@oss.qualcomm.com>
- <20251126-elated-stoic-scorpion-25b630@kuoka>
- <de44560d-4ed8-41fe-be7b-56412b933a8c@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <de44560d-4ed8-41fe-be7b-56412b933a8c@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
+ <20251125-kaanapali-mmcc-v2-v2-5-fb44e78f300b@oss.qualcomm.com>
+From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+In-Reply-To: <20251125-kaanapali-mmcc-v2-v2-5-fb44e78f300b@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 04/12/2025 07:49, Taniya Das wrote:
->>> +  power-domains:
->>> +    description:
->>> +      Power domains required for the clock controller to operate
->>> +    items:
->>> +      - description: GFX power domain
->>> +      - description: GMXC power domain
->>> +      - description: GPUCC(CX) power domain
->>> +
->>> +  '#power-domain-cells':
->>
->> Power domain controllers do not belong to clocks, so this is:
->> 1. Misplaced - wrong folder
->> 2. Probably wrongly named. gxclkctl sounds like clock controller, but
->> this is domain controller?
->>
+Hi Taniya.
+
+On 11/25/25 19:45, Taniya Das wrote:
+> Update the compatible and the bindings for CAMCC support on Kaanapali
+> SoC.
 > 
-> The GFXCLKCTL is actually a clock controller which has PLLs, clocks and
-> Power domains (GDSC), but the requirement here is to use the GDSC from
-> the clock controller to recover the GPU firmware in case of any
-> failure/hangs. The rest of the resources of the clock controller are
-> being used by the firmware of GPU. The GDSC is a clock controller
-> resource and modeled from the clock controller drivers across chipsets.
-
-This should be somewhere explained.
-
+> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
+> ---
+>   .../bindings/clock/qcom,sm8450-camcc.yaml          |   6 +
+>   .../clock/qcom,kaanapali-cambistmclkcc.h           |  33 +++++
+>   include/dt-bindings/clock/qcom,kaanapali-camcc.h   | 147 +++++++++++++++++++++
+>   3 files changed, 186 insertions(+)
 > 
->>> +    const: 1
->>> +
->>> +  reg:
->>> +    maxItems: 1
->>> +
->>> +required:
->>> +  - compatible
->>> +  - reg
->>> +  - power-domains
->>> +  - '#power-domain-cells'
->>> +
->>> +unevaluatedProperties: false
->>> +
->>> +examples:
->>> +  - |
->>> +    #include <dt-bindings/power/qcom,rpmhpd.h>
->>> +    soc {
->>> +        #address-cells = <2>;
->>> +        #size-cells = <2>;
->>> +
->>> +        clock-controller@3d68024 {
->>> +            compatible = "qcom,kaanapali-gxclkctl";
->>> +            reg = <0 0x3d68024 0x0 0x8>;
->>
->> Keep consistent hex, so first 0 -> 0x0.
-> 
-> Sure, will fix this.
-> 
->> But the problem is that you defined a device for two registers,
->> basically one domain. I have doubts now whether this is complete and
->> real device.
->>
-> 
-> As the Linux GPU driver requires only the GDSC, I have mapped the region
-> which is required by the clock controller driver. If required, the
-> entire region can be mapped as well.
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
+> index c1e06f39431e68a3cd2f6c2dba84be2a3c143bb1..3ec9bf4d82ad3b0fbb3e58fe312a416b3580c30c 100644
+> --- a/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
+> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
+> @@ -15,6 +15,8 @@ description: |
+>     domains on SM8450.
+>   
+>     See also:
+> +    include/dt-bindings/clock/qcom,kaanapali-camcc.h
+> +    include/dt-bindings/clock/qcom,kaanapali-cambistmclkcc.h
+>       include/dt-bindings/clock/qcom,sm8450-camcc.h
+>       include/dt-bindings/clock/qcom,sm8550-camcc.h
+>       include/dt-bindings/clock/qcom,sm8650-camcc.h
+> @@ -22,6 +24,8 @@ description: |
+>   properties:
+>     compatible:
+>       enum:
+> +      - qcom,kaanapali-cambistmclkcc
+> +      - qcom,kaanapali-camcc
 
-Required is to properly describe the hardware, please read writing
-bindings doc.
+I do have right the same review comment as the given for SM8750 CAMCC one.
 
-> 
->>> +            power-domains = <&rpmhpd RPMHPD_GFX>,
->>> +                            <&rpmhpd RPMHPD_GMXC>,
->>> +                            <&gpucc 0>;
->>> +            #power-domain-cells = <1>;
->>
->> And cells 1 makes no sense in such case.
->>
-> 
-> We would like to leverage the existing common clock driver(GDSC) code to
+The introduced qcom,kaanapali-cambistmclkcc does not inherit reset
+controller or power domain controller properties, thus it should not be
+added to the list of regular camera clock contollers.
 
-Fix the driver code if it cannot handle other cells. Your drivers do not
-matter for choices made in bindings.
+Please create a new dt schema file for qcom,kaanapali-cambistmclkcc
+and qcom,sm8750-cambistmclkcc IP descriptions.
 
-> register the power-domains and also maintain uniformity across chipsets
-> and consistency in consumer GDSC phandle usage.
+>         - qcom,sm8450-camcc
+>         - qcom,sm8475-camcc
+>         - qcom,sm8550-camcc
+> @@ -63,6 +67,8 @@ allOf:
+>           compatible:
+>             contains:
+>               enum:
+> +              - qcom,kaanapali-cambistmclkcc
+> +              - qcom,kaanapali-camcc
+>                 - qcom,sc8280xp-camcc
+>                 - qcom,sm8450-camcc
+>                 - qcom,sm8550-camcc
+> diff --git a/include/dt-bindings/clock/qcom,kaanapali-cambistmclkcc.h b/include/dt-bindings/clock/qcom,kaanapali-cambistmclkcc.h
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..ddb083b5289ecc5ddbf9ce0b8afa5e2b3bd7ccad
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/qcom,kaanapali-cambistmclkcc.h
+> @@ -0,0 +1,33 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+> +/*
+> + * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+> + */
+> +
+> +#ifndef _DT_BINDINGS_CLK_QCOM_CAM_BIST_MCLK_CC_KAANAPALI_H
+> +#define _DT_BINDINGS_CLK_QCOM_CAM_BIST_MCLK_CC_KAANAPALI_H
+> +
+> +/* CAM_BIST_MCLK_CC clocks */
+> +#define CAM_BIST_MCLK_CC_DEBUG_CLK				0
+> +#define CAM_BIST_MCLK_CC_DEBUG_DIV_CLK_SRC			1
+> +#define CAM_BIST_MCLK_CC_MCLK0_CLK				2
+> +#define CAM_BIST_MCLK_CC_MCLK0_CLK_SRC				3
+> +#define CAM_BIST_MCLK_CC_MCLK1_CLK				4
+> +#define CAM_BIST_MCLK_CC_MCLK1_CLK_SRC				5
+> +#define CAM_BIST_MCLK_CC_MCLK2_CLK				6
+> +#define CAM_BIST_MCLK_CC_MCLK2_CLK_SRC				7
+> +#define CAM_BIST_MCLK_CC_MCLK3_CLK				8
+> +#define CAM_BIST_MCLK_CC_MCLK3_CLK_SRC				9
+> +#define CAM_BIST_MCLK_CC_MCLK4_CLK				10
+> +#define CAM_BIST_MCLK_CC_MCLK4_CLK_SRC				11
+> +#define CAM_BIST_MCLK_CC_MCLK5_CLK				12
+> +#define CAM_BIST_MCLK_CC_MCLK5_CLK_SRC				13
+> +#define CAM_BIST_MCLK_CC_MCLK6_CLK				14
+> +#define CAM_BIST_MCLK_CC_MCLK6_CLK_SRC				15
+> +#define CAM_BIST_MCLK_CC_MCLK7_CLK				16
+> +#define CAM_BIST_MCLK_CC_MCLK7_CLK_SRC				17
+> +#define CAM_BIST_MCLK_CC_PLL0					18
+> +#define CAM_BIST_MCLK_CC_PLL_TEST_CLK				19
+> +#define CAM_BIST_MCLK_CC_PLL_TEST_DIV_CLK_SRC			20
+> +#define CAM_BIST_MCLK_CC_SLEEP_CLK				21
+> +
+> +#endif
 
-There is no such consistency rule. Don't make up your own rules.
-
-Best regards,
-Krzysztof
+-- 
+Best wishes,
+Vladimir
