@@ -1,41 +1,40 @@
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D8BD2E9ED8;
-	Wed, 17 Dec 2025 13:36:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AC2C335091;
+	Wed, 17 Dec 2025 13:36:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765978579; cv=none; b=JEyYahsbG0ESxcGct8BthBk4DLIPb6iEjXymIlEqcOZ6GS1/gJxdbgTnW/Vqd1Y+JJB7oS1yPw9ZQcYriL/kwebY6Yo4JiHe8QpQMaB5V9ekuBsoGZCRC00dHm5Wn+MxakphSukqysL4ccge3IEvMqpX+lvLlzfUrHF33pMsU38=
+	t=1765978580; cv=none; b=hSiOk12UeCMr5j2H+bMyzJqYPzuwv/DDn5COpZHpWs5eyNDyBib8dkIPHO62h9Yp8FoK/Cx7kV2bIoq5FxjnKFvwnAJFBG6++O4PmoG0yHUugif4Xb9bOjdpGO7Kao2FVcseDCoCGaK2CnBLjBc9x/DHCuC3LIqqDr2pBP08XWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765978579; c=relaxed/simple;
-	bh=o+GupeOY+r8YgZyrxObSLVD5EDmnxFMJhuyE/zSzo5A=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ckKVquXhNlhWi16JjprFqjheuQrv5Ovu55VbXFAOOBjTR5KSLjMvUgsbShQq9jU9Aq2Hjrcve16FPkepzRDrhWXmHTb9Fw6x907ZHPmVRHjcNSQmKaw+MVoGR45Ye9TMHYDk359/SMxJcjfG0KdtchChrIQ1Mh3iYNgHpcHSAgk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=koUragWV; arc=none smtp.client-ip=185.246.85.4
+	s=arc-20240116; t=1765978580; c=relaxed/simple;
+	bh=BG5WjneFUAcYerU4QAtzF9PfZciUrUH9GPXPrWL5Ik4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=HUAI0u92aCyKkPLnDigMSQhir9M9ZFUPnT1sWm3p1ZIFyJwH+0m6yXn9NvWSgbIAFkoUD/yZPD10PsldVLLa9mWErd5PL6I9woORcP/4KpCgunOC3tlCaerA+xYyV/wAiuyRIGjRVmMu9OVd73X7PglbffDZjXJx9Oq6V/d5DVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=to6fZldY; arc=none smtp.client-ip=185.171.202.116
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="koUragWV"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="to6fZldY"
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id E70384E41C60;
-	Wed, 17 Dec 2025 13:36:15 +0000 (UTC)
+	by smtpout-04.galae.net (Postfix) with ESMTPS id B5031C1A59D;
+	Wed, 17 Dec 2025 13:35:46 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id BCBFD6072F;
-	Wed, 17 Dec 2025 13:36:15 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 46B08102F0ACD;
-	Wed, 17 Dec 2025 14:36:12 +0100 (CET)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 344F56072F;
+	Wed, 17 Dec 2025 13:36:11 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 8C6A3102F0AD2;
+	Wed, 17 Dec 2025 14:36:03 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1765978573; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=wJxpBB208Og7ZQlj+uLD1FyOcfIwt0XO1SwVAEfmt+E=;
-	b=koUragWVKqMauhHvBk2M5mCyonIS/bLwFPekO8yZSjZBUrMYwRw13+uqyT4vAdJkYvKPBX
-	OKuo/rwYo+nHQGdbQepwzxaiVDWPGQbIPCrPiqMclN5U3MSIsImgDrdBYgqRRwMhTXW+FS
-	vRnJI2iByHgKkKyn5WgIWh9K2zcYExrnA7VuzcrQQfCtqnWmq8kyo36i+Zfl9yksaHd0aa
-	fwtFfua8Oyr73ZJPraPB9UkC9lhUrzKVcMnA56LB5s2C7VrYgGWNaAzG5QTSr7ohqxuNuW
-	iBSMtKsfMokedl4BSEonVK054DsQtqHCt79Nlhbzf1cU8anRbtt8yx4UKb+5/g==
+	t=1765978566; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=YMEO4XGsTesQV2me7FMOZ81Y5IcMWo887Z9CgZajqyk=;
+	b=to6fZldYjVFS4arTIkGZex72ttLVnNNpfUGa584NixIVwN7a7kXWOZMiRxziZQsBlEagSL
+	dm7P9SGxgVlCyVv721R+SHWBIArFuAvHswn1BYuNI1vXIc/hcpg0de79GfdCLAgQ5U0WnP
+	g3nddTawnOi04/IwJFMN0r5bOU0AeKDEu3RDXIWkdgH4YsU+aRFy2mH9mSZBXZyHFfIDKS
+	wkhf5kVJ7WZTY8OrnU1gEYsaJQoJ2roJBYJ0mRqzxivTdN4NUfto9Mrq3Y/EMQN3I9G36T
+	nvIpFNoZgU1rSVoSTh15GNM3KbOgFZ53+JmBsf8ca9fyIkD79bFfQH5pNKQvEw==
 From: =?utf-8?q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>
-Date: Wed, 17 Dec 2025 14:35:52 +0100
-Subject: [PATCH 02/13] dt-bindings: soc: mobileye: Add EyeQ6Lplus OLB
+Subject: [PATCH 00/13] Introducing the Mobileye EyeQ6Lplus SoC
+Date: Wed, 17 Dec 2025 14:35:50 +0100
+Message-Id: <20251217-eyeq6lplus-v1-0-e9cdbd3af4c2@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -44,9 +43,10 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20251217-eyeq6lplus-v1-2-e9cdbd3af4c2@bootlin.com>
-References: <20251217-eyeq6lplus-v1-0-e9cdbd3af4c2@bootlin.com>
-In-Reply-To: <20251217-eyeq6lplus-v1-0-e9cdbd3af4c2@bootlin.com>
+X-B4-Tracking: v=1; b=H4sIALaxQmkC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1NDQyML3dTK1EKznIKc0mJdSzPDZDNjgzQDSxMDJaCGgqLUtMwKsGHRsbW
+ 1AHIwZwhcAAAA
+X-Change-ID: 20251128-eyeq6lplus-961c630f0940
 To: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
  Gregory CLEMENT <gregory.clement@bootlin.com>, 
  =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>, 
@@ -64,280 +64,100 @@ Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
 X-Mailer: b4 0.14.3
 X-Last-TLS-Session-Version: TLSv1.3
 
-The "Other Logic Block" found in the EyeQ6Lplus from Mobileye provides
-various functions for the controllers present in the SoC.
+The Eyeq6Lplus is a new system-on-chip part of Mobileye's EyeQ family
+of SoC aimed at Advanced Driver Assistance Systems (ADAS). It is built
+around a multicore MIPS I6500 with 2 cores and 8 threads and integrates
+controllers and accelerators dedicated to driving assistance.
 
-The OLB produces 22 clocks derived from its input, which is connected
-to the main oscillator of the SoC.
+This patchset adds the initial support for the EyeQ6Lplus and its
+evaluation board with the following list of controllers:
+* The OLB ("Other Logic Block") providing clocks, resets and pin controls.
+* One UART from DesignWare.
+* One GPIO controller from DesignWare.
+* Two SPI controllers from DesignWare, one in host mode and one in target
+  mode.
+* One octoSPI flash controller from Cadence, identical to the one found
+  in the EyeQ5.
+* Two I2C controllers from Designware.
 
-It provides reset signals via two reset domains.
+The support for the particularities of the I2C controllers is 
+currently under review[1], but basic operations (single read,
+single write, write-then-read) work with the compatible fallback to
+"snps,designware-i2c".
 
-It also controls 32 pins to be either a GPIO or an alternate function.
+The patch series adds the device tree bindings for the SoC and the OLB. It
+also adds the Kconfig entry for the EyeQ6Lplus, the SoC and evaluation
+board device tree, and the defconfig. For the OLB, the series adds the
+match data to the clk-eyeq, reset-eyeq and pinctrl-eyeq5 drivers.
+
+It also brings three other changes. One for the pinctrl-eyeq5 driver to
+access the pin descriptions, pin functions and pin bank register via
+the match data instead of directly. This is needed to add support for
+the EyeQ6Lplus alongside the EyeQ5 to the pinctrl driver.
+
+To be able to match against compatible entries, An OF node is needed
+but the pinctrl-eyeq5 does not have one as it is an auxiliary device
+of clk-eyeq. As part of his MACB phy series[2], Théo switched to
+devm_auxiliary_device_create() to register the auxiliary devices and this
+helper sets the OF node of the auxiliary device. To avoid a dependency
+between the patch series, eq5p_probe() is able to handle both cases,
+having the of_node field already set in the device structure or getting
+it from the parent device. After both series are merged, a cleanup of
+the pinctrl-eyeq5 probe function can be done.
+
+The two other changes are in the clk-eyeq driver. First we skip the
+post-divisor when computing the PLL frequency in the clk-eyeq driver,
+to match how the clock signal is wired internally in all EyeQ PLL and
+compute the correct frequency for the PLL of the EyeQ6Lplus. Second we
+adjust the accuracy and down spreading computation of the PLL frequency
+as the spread spectrum of all EyeQ PLL is in 1/1024 and not in 1/1000
+as previously thought.
+
+[1]: https://lore.kernel.org/all/20251126-i2c-dw-v4-0-b0654598e7c5@bootlin.com/
+[2]: https://lore.kernel.org/all/20251215-macb-phy-v5-0-a9dfea39da34@bootlin.com/
 
 Signed-off-by: Benoît Monin <benoit.monin@bootlin.com>
 ---
- .../soc/mobileye/mobileye,eyeq6lplus-olb.yaml      | 208 +++++++++++++++++++++
- .../dt-bindings/clock/mobileye,eyeq6lplus-clk.h    |  37 ++++
- 2 files changed, 245 insertions(+)
+Benoît Monin (13):
+      dt-bindings: mips: Add Mobileye EyeQ6Lplus SoC
+      dt-bindings: soc: mobileye: Add EyeQ6Lplus OLB
+      MIPS: Add Mobileye eyeQ6Lplus support
+      reset: eyeq: Add Mobileye EyeQ6Lplus OLB
+      pinctrl: eyeq5: Use match data
+      pinctrl: eyeq5: Add Mobileye EyeQ6Lplus OLB
+      clk: eyeq: Skip post-divisor when computing PLL frequency
+      clk: eyeq: Adjust PLL accuracy computation
+      clk: eyeq: Add Mobileye EyeQ6Lplus OLB
+      MIPS: Add Mobileye EyeQ6Lplus SoC dtsi
+      MIPS: Add Mobileye EyeQ6Lplus evaluation board dts
+      MIPS: config: add eyeq6lplus_defconfig
+      MAINTAINERS: Mobileye: Add EyeQ6Lplus files
 
-diff --git a/Documentation/devicetree/bindings/soc/mobileye/mobileye,eyeq6lplus-olb.yaml b/Documentation/devicetree/bindings/soc/mobileye/mobileye,eyeq6lplus-olb.yaml
-new file mode 100644
-index 000000000000..8334876cf4e6
---- /dev/null
-+++ b/Documentation/devicetree/bindings/soc/mobileye/mobileye,eyeq6lplus-olb.yaml
-@@ -0,0 +1,208 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/soc/mobileye/mobileye,eyeq6lplus-olb.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Mobileye EyeQ6Lplus SoC system controller
-+
-+maintainers:
-+  - Benoît Monin <benoit.monin@bootlin.com>
-+  - Grégory Clement <gregory.clement@bootlin.com>
-+  - Théo Lebrun <theo.lebrun@bootlin.com>
-+  - Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>
-+
-+description:
-+  OLB ("Other Logic Block") is a hardware block grouping smaller blocks.
-+  Clocks, resets, pinctrl are being handled from here. EyeQ6Lplus hosts
-+  a single instance providing 22 clocks, two reset domains and one bank
-+  of 32 pins.
-+
-+properties:
-+  compatible:
-+    items:
-+      - const: mobileye,eyeq6lplus-olb
-+      - const: syscon
-+
-+  reg:
-+    maxItems: 1
-+
-+  '#reset-cells':
-+    description:
-+      First cell is reset domain index.
-+      Second cell is reset index inside that domain.
-+    const: 2
-+
-+  '#clock-cells':
-+    const: 1
-+
-+  clocks:
-+    maxItems: 1
-+    description:
-+      Input parent clock to all PLLs. Expected to be the main crystal.
-+
-+  clock-names:
-+    const: ref
-+
-+patternProperties:
-+  '-pins?$':
-+    type: object
-+    description: Pin muxing configuration.
-+    $ref: /schemas/pinctrl/pinmux-node.yaml#
-+    additionalProperties: false
-+    properties:
-+      pins: true
-+      function:
-+        enum: [gpio, timer0, timer1, uart_ssi, spi0, uart0, timer2, timer3,
-+               timer_ext0, spi1, timer_ext1, ext_ref_clk, mipi_ref_clk]
-+      bias-disable: true
-+      bias-pull-down: true
-+      bias-pull-up: true
-+      drive-strength: true
-+    required:
-+      - pins
-+      - function
-+    allOf:
-+      - if:
-+          properties:
-+            function:
-+              const: gpio
-+        then:
-+          properties:
-+            pins:
-+              items: # PA0 - PA31
-+                pattern: '^(PA[1,2]?[0-9]|PA3[0,1])$'
-+      - if:
-+          properties:
-+            function:
-+              const: timer0
-+        then:
-+          properties:
-+            pins:
-+              items:
-+                enum: [PA0, PA1]
-+      - if:
-+          properties:
-+            function:
-+              const: timer1
-+        then:
-+          properties:
-+            pins:
-+              items:
-+                enum: [PA2, PA3]
-+      - if:
-+          properties:
-+            function:
-+              const: uart_ssi
-+        then:
-+          properties:
-+            pins:
-+              items:
-+                enum: [PA4, PA5]
-+      - if:
-+          properties:
-+            function:
-+              const: spi0
-+        then:
-+          properties:
-+            pins:
-+              items:
-+                enum: [PA6, PA7, PA8, PA9, PA10]
-+      - if:
-+          properties:
-+            function:
-+              const: uart0
-+        then:
-+          properties:
-+            pins:
-+              items:
-+                enum: [PA11, PA12]
-+      - if:
-+          properties:
-+            function:
-+              const: timer2
-+        then:
-+          properties:
-+            pins:
-+              items:
-+                enum: [PA13, PA14]
-+      - if:
-+          properties:
-+            function:
-+              const: timer3
-+        then:
-+          properties:
-+            pins:
-+              items:
-+                enum: [PA15, PA16]
-+      - if:
-+          properties:
-+            function:
-+              const: timer_ext0
-+        then:
-+          properties:
-+            pins:
-+              items:
-+                enum: [PA17, PA18, PA19, PA20]
-+      - if:
-+          properties:
-+            function:
-+              const: spi1
-+        then:
-+          properties:
-+            pins:
-+              items:
-+                enum: [PA21, PA22, PA23, PA24, PA25]
-+      - if:
-+          properties:
-+            function:
-+              const: timer_ext1
-+        then:
-+          properties:
-+            pins:
-+              items:
-+                enum: [PA26, PA27, PA28, PA29]
-+      - if:
-+          properties:
-+            function:
-+              const: ext_ref_clk
-+        then:
-+          properties:
-+            pins:
-+              items:
-+                enum: [PA30]
-+      - if:
-+          properties:
-+            function:
-+              const: mipi_ref_clk
-+        then:
-+          properties:
-+            pins:
-+              items:
-+                enum: [PA31]
-+
-+required:
-+  - compatible
-+  - reg
-+  - '#clock-cells'
-+  - clocks
-+  - clock-names
-+  - '#reset-cells'
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    soc {
-+      #address-cells = <2>;
-+      #size-cells = <2>;
-+
-+      system-controller@e8400000 {
-+        compatible = "mobileye,eyeq6lplus-olb", "syscon";
-+        reg = <0 0xe8400000 0x0 0x80000>;
-+        #reset-cells = <2>;
-+        #clock-cells = <1>;
-+        clocks = <&xtal>;
-+        clock-names = "ref";
-+      };
-+    };
-diff --git a/include/dt-bindings/clock/mobileye,eyeq6lplus-clk.h b/include/dt-bindings/clock/mobileye,eyeq6lplus-clk.h
-new file mode 100644
-index 000000000000..20d84ee24ad5
---- /dev/null
-+++ b/include/dt-bindings/clock/mobileye,eyeq6lplus-clk.h
-@@ -0,0 +1,37 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-+/*
-+ * Copyright (C) 2025 Mobileye Vision Technologies Ltd.
-+ */
-+
-+#ifndef _DT_BINDINGS_CLOCK_MOBILEYE_EYEQ6LPLUS_CLK_H
-+#define _DT_BINDINGS_CLOCK_MOBILEYE_EYEQ6LPLUS_CLK_H
-+
-+#define EQ6LPC_PLL_CPU		0
-+#define EQ6LPC_PLL_DDR		1
-+#define EQ6LPC_PLL_PER		2
-+#define EQ6LPC_PLL_VDI		3
-+#define EQ6LPC_PLL_ACC		4
-+
-+#define EQ6LPC_CPU_OCC		5
-+
-+#define EQ6LPC_ACC_VDI		6
-+#define EQ6LPC_ACC_OCC		7
-+#define EQ6LPC_ACC_FCMU		8
-+
-+#define EQ6LPC_DDR_OCC		9
-+
-+#define EQ6LPC_PER_OCC		10
-+#define EQ6LPC_PER_I2C_SER	11
-+#define EQ6LPC_PER_PCLK		12
-+#define EQ6LPC_PER_TSU		13
-+#define EQ6LPC_PER_OSPI		14
-+#define EQ6LPC_PER_GPIO		15
-+#define EQ6LPC_PER_TIMER	16
-+#define EQ6LPC_PER_I2C		17
-+#define EQ6LPC_PER_UART		18
-+#define EQ6LPC_PER_SPI		19
-+#define EQ6LPC_PER_PERIPH	20
-+
-+#define EQ6LPC_VDI_OCC		21
-+
-+#endif
+ .../devicetree/bindings/mips/mobileye.yaml         |   5 +
+ .../soc/mobileye/mobileye,eyeq6lplus-olb.yaml      | 208 ++++++++++
+ MAINTAINERS                                        |   4 +-
+ arch/mips/boot/dts/mobileye/Makefile               |   1 +
+ arch/mips/boot/dts/mobileye/eyeq6lplus-epm6.dts    | 112 +++++
+ arch/mips/boot/dts/mobileye/eyeq6lplus-pins.dtsi   |  84 ++++
+ arch/mips/boot/dts/mobileye/eyeq6lplus.dtsi        | 169 ++++++++
+ arch/mips/configs/eyeq6lplus_defconfig             | 119 ++++++
+ arch/mips/mobileye/Kconfig                         |   3 +
+ arch/mips/mobileye/Platform                        |   1 +
+ drivers/clk/Kconfig                                |   4 +-
+ drivers/clk/clk-eyeq.c                             |  90 +++-
+ drivers/pinctrl/Kconfig                            |   4 +-
+ drivers/pinctrl/pinctrl-eyeq5.c                    | 462 +++++++++++++++------
+ drivers/reset/Kconfig                              |   4 +-
+ drivers/reset/reset-eyeq.c                         |  31 ++
+ .../dt-bindings/clock/mobileye,eyeq6lplus-clk.h    |  37 ++
+ 17 files changed, 1192 insertions(+), 146 deletions(-)
+---
+base-commit: 8f0b4cce4481fb22653697cced8d0d04027cb1e8
+change-id: 20251128-eyeq6lplus-961c630f0940
 
+Best regards,
 -- 
-2.52.0
+Benoît Monin, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
