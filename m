@@ -1,73 +1,125 @@
-Received: from mail.3ffe.de (0001.3ffe.de [159.69.201.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D785D2AEF5;
-	Tue, 16 Dec 2025 23:53:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.201.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E16F017A2FA
+	for <linux-clk@vger.kernel.org>; Wed, 17 Dec 2025 00:18:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765929202; cv=none; b=Me4NqsWUo0L1g7h0RvCURhhlEKMWsk9EOrjEJGxcizBVeEi09Gk4Tf40ZpPAgjYBjKSe+Bgb86kohiVxQuQ7audjnAKV4fknwXAbeCbrY5B289SndUHn4I5KQk8eyFUWaiTPrVzksjSJptFan4uVxklTPpvHhQ6LftBnqgRNwEI=
+	t=1765930727; cv=none; b=ZyOzzO2wTjTCE/dzcielw2fJV+md/dAQ2w/ChbCJJFU1xwlkD9qnKoZmXDLIqom8fReiefW56z1FPpksHe9fSUoo2mtDYDJqZrsvRkO0FixoKcM8TKrlWxVDrkhsAOlExOQGD55hRJh9Hem69hiz2VRkY7n3qKld9FIQd62ZnrI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765929202; c=relaxed/simple;
-	bh=4R5pP+9fNQ621zzG/hIpJ2sC2WnkVrGLlokwDyF6LWM=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:From:To:
-	 References:In-Reply-To; b=ocW8sMFCqVemjrIdun5o0uJN+sYp0BWUqT9DiDj6nBcgdBNFYnWTDpLsXIxDZktMd6ML4joQ1HoYSICRqCNBnsGjw11jBtdUYQdPT1EMHLJfCnHwKO3USyNWOQDhi/xjvMwxIJgrzZlkC/j9VeZ9IaLJt80dSC9xztD1Dluc+Fg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=walle.cc; arc=none smtp.client-ip=159.69.201.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=walle.cc
-Received: from localhost (unknown [IPv6:2a02:810b:4320:1000:4685:ff:fe12:5967])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	s=arc-20240116; t=1765930727; c=relaxed/simple;
+	bh=Hca14eaABhLrQr5Jn0FiLluqtSz8Gtu8ITf8855oBG0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mGEgBiVF4SV0eBVW5diPrZwEC5SqdLKqkYcieBGDEctO2bS5Yu9s3jcVFQjAMF+QFVALi0vAoLfLQbFwsEDCAeLsw41KYfZDrlBBXr+scyRQdbR3MQEFPvKg/rXB1OIE+nJ26Lz5awzjACykEX+fxCsCHjuUep6ERop+j1j71zk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Received: from localhost (unknown [116.232.18.222])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mail.3ffe.de (Postfix) with ESMTPSA id 189D966;
-	Wed, 17 Dec 2025 00:44:22 +0100 (CET)
+	(Authenticated sender: dlan)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id F0A70340C98;
+	Wed, 17 Dec 2025 00:18:43 +0000 (UTC)
+Date: Wed, 17 Dec 2025 08:18:33 +0800
+From: Yixun Lan <dlan@gentoo.org>
+To: Inochi Amaoto <inochiama@gmail.com>
+Cc: Longbin Li <looong.bin@gmail.com>, linux-clk@vger.kernel.org,
+	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev
+Subject: Re: [PATCH v2] clk: spacemit: Fix module build for spacemit common
+ ccu driver
+Message-ID: <20251217001833-GYE1903981@gentoo.org>
+References: <20251216233514.646263-1-inochiama@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 17 Dec 2025 00:44:21 +0100
-Message-Id: <DF01GRNQ41ZQ.JP9UG9WD02QL@kernel.org>
-Subject: Re: [PATCH v2 03/19] dt-bindings: arm: AT91: relicense to dual
- GPL-2.0/BSD-2-Clause
-Cc: <luka.perkov@sartura.hr>
-From: "Michael Walle" <mwalle@kernel.org>
-To: "Robert Marko" <robert.marko@sartura.hr>, <robh@kernel.org>,
- <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <nicolas.ferre@microchip.com>,
- <alexandre.belloni@bootlin.com>, <claudiu.beznea@tuxon.dev>,
- <Steen.Hegelund@microchip.com>, <daniel.machon@microchip.com>,
- <UNGLinuxDriver@microchip.com>, <herbert@gondor.apana.org.au>,
- <davem@davemloft.net>, <vkoul@kernel.org>, <linux@roeck-us.net>,
- <andi.shyti@kernel.org>, <lee@kernel.org>, <andrew+netdev@lunn.ch>,
- <edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
- <linusw@kernel.org>, <olivia@selenic.com>, <radu_nicolae.pirea@upb.ro>,
- <richard.genoud@bootlin.com>, <gregkh@linuxfoundation.org>,
- <jirislaby@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
- <richardcochran@gmail.com>, <wsa+renesas@sang-engineering.com>,
- <romain.sioen@microchip.com>, <Ryan.Wanner@microchip.com>,
- <lars.povlsen@microchip.com>, <tudor.ambarus@linaro.org>,
- <charan.pedumuru@microchip.com>, <kavyasree.kotagiri@microchip.com>,
- <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
- <linux-kernel@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
- <dmaengine@vger.kernel.org>, <linux-hwmon@vger.kernel.org>,
- <linux-i2c@vger.kernel.org>, <netdev@vger.kernel.org>,
- <linux-gpio@vger.kernel.org>, <linux-spi@vger.kernel.org>,
- <linux-serial@vger.kernel.org>, <linux-usb@vger.kernel.org>,
- <linux-clk@vger.kernel.org>
-X-Mailer: aerc 0.20.0
-References: <20251215163820.1584926-1-robert.marko@sartura.hr>
- <20251215163820.1584926-3-robert.marko@sartura.hr>
-In-Reply-To: <20251215163820.1584926-3-robert.marko@sartura.hr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251216233514.646263-1-inochiama@gmail.com>
 
-On Mon Dec 15, 2025 at 5:35 PM CET, Robert Marko wrote:
-> As it is preferred to have bindings dual licensed, lets relicense the AT9=
-1
-> bindings from GPL-2.0 only to GPL-2.0/BSD-2 Clause.
->
-> Signed-off-by: Robert Marko <robert.marko@sartura.hr>
+Hi Inochi, 
 
-Acked-by: Michael Walle <mwalle@kernel.org>
+just noticed, you failed to CC to the mailing list
+please increase patch version and send a v3 next time..
 
--michael
+also please see my comments below
+
+On 07:35 Wed 17 Dec     , Inochi Amaoto wrote:
+> For build spacemit common clock driver as a module, the build
+> process require MODULE_LICENSE()/MODULE_DESCRIPTION() globally
+> and EXPORT_SYMBOL() for every exposed symbol. Otherwise, the
+> build will fail.
+> 
+> Add these missing hints, so the driver can be built as a module.
+> 
+> Fixes: 1b72c59db0ad ("clk: spacemit: Add clock support for SpacemiT K1 SoC")
+> Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
+> ---
+> Change from v1:
+> 1. Use EXPORT_SYMBOL_NS_GPL to export clock ops
+> ---
+>  drivers/clk/spacemit/ccu-k1.c  | 1 +
+>  drivers/clk/spacemit/ccu_ddn.c | 1 +
+>  drivers/clk/spacemit/ccu_mix.c | 9 +++++++++
+>  drivers/clk/spacemit/ccu_pll.c | 5 +++++
+>  4 files changed, 16 insertions(+)
+> 
+> diff --git a/drivers/clk/spacemit/ccu-k1.c b/drivers/clk/spacemit/ccu-k1.c
+> index 4761bc1e3b6e..1f42b8045bf3 100644
+> --- a/drivers/clk/spacemit/ccu-k1.c
+> +++ b/drivers/clk/spacemit/ccu-k1.c
+> @@ -1204,6 +1204,7 @@ static struct platform_driver k1_ccu_driver = {
+>  };
+>  module_platform_driver(k1_ccu_driver);
+> 
+> +MODULE_IMPORT_NS("SPACEMIT_CCU");
+the name should be ok as long as no collision and unique, but..
+I personally would prefer "CLK_SPACEMIT" which follow "subsytem + vendor"
+
+>  MODULE_DESCRIPTION("SpacemiT K1 CCU driver");
+>  MODULE_AUTHOR("Haylen Chu <heylenay@4d2.org>");
+>  MODULE_LICENSE("GPL");
+> diff --git a/drivers/clk/spacemit/ccu_pll.c b/drivers/clk/spacemit/ccu_pll.c
+
+[snip]...
+
+> index d92f0dae65a4..893af23c6b25 100644
+> --- a/drivers/clk/spacemit/ccu_pll.c
+> +++ b/drivers/clk/spacemit/ccu_pll.c
+> @@ -7,6 +7,7 @@
+>  #include <linux/clk-provider.h>
+>  #include <linux/math.h>
+>  #include <linux/regmap.h>
+> +#include <linux/module.h>
+> 
+>  #include "ccu_common.h"
+>  #include "ccu_pll.h"
+> @@ -157,3 +158,7 @@ const struct clk_ops spacemit_ccu_pll_ops = {
+>  	.determine_rate = ccu_pll_determine_rate,
+>  	.is_enabled	= ccu_pll_is_enabled,
+>  };
+> +EXPORT_SYMBOL_NS_GPL(spacemit_ccu_pll_ops, "SPACEMIT_CCU");
+> +
+..
+> +MODULE_DESCRIPTION("SpacemiT CCU PLL/MIX/DDN common driver");
+how about name it more generic? you don't know whether any other clock type
+will be added in the future, so
+  "SpacemiT CCU common clock driver"
+
+> +MODULE_LICENSE("GPL");
+I've got a comment [1] from Ziyao in the review of K3 clock driver
+that suggest to distill the common probe function, which make sense.
+So, I plan to have separated ccu_common.c file, with this change,
+it would be more proper to put MODULE_DESCRIPTION/MODULE_LICENSE
+into that file
+
+It might takes some time to get there, as I now got a weird panic/hang
+issue with that change..
+
+Link: https://lore.kernel.org/all/aTo8sCPpVM1o9PKX@pie/ [1]
+
+-- 
+Yixun Lan (dlan)
