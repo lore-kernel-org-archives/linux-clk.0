@@ -1,176 +1,164 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D164FE56A
-	for <linux-clk@vger.kernel.org>; Wed, 17 Dec 2025 12:23:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AD1E34214C
+	for <linux-clk@vger.kernel.org>; Wed, 17 Dec 2025 12:33:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765974185; cv=none; b=DO+DBjX6ox0bfjAHZ/4Ai4CQ3vteUJGgR12B06g1vHOP2zZeY8TZdaMLQZlW7I1Ni4nFtDHPUMtHCC052Av5iau0aOgOrEnakBqSHCWs2X2WIt9/62a+ccAa516zcfiuXtd9mxj+k8SHq7pA77O+IUy5wX/zAjaXhB0LhkhibQg=
+	t=1765974840; cv=none; b=pljifEB0L5xKtef/CEjDDaIoyePb7ZDJmQZjGhfxrX3f2CIs+ub07cmBki4Wb7miu1M5aIIDGbvDAyNnMap1UDSA3CZI9wDscrQfAJQNoVegu8JwUXaxthMcPj/zMafRTDR6lIHym4DAE8R39r62H+HyXcRUv1KRkypG6Ng3Zqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765974185; c=relaxed/simple;
-	bh=Awp10APiIZ2kestKFq9vUIReq9xGXekkeKhyao0huTg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bF7WzT09stlhtuxliUFDrVtRl7svRI6rl+QcMacOBfdBAjpvu3HyfEtf6TsfCjQKXkymZAsHqdgNhO+66FXx/3xSQcwgcHwk/kyKW2Jabv79pYQ/oiByZ87uEuJFIX9mRae4AIzV9UdhNQzh0HG2uoI4nnwSapS8O6wStEBILFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=hbPMXCUD; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=dW3qZRPH; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1765974840; c=relaxed/simple;
+	bh=s8GEKXnaSXfLaP2KVal8xoX7Yub2x5YeO61XyI9SmwQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=vDZDKTHKJKB1ue6PaCbdKWLm3sUEc9wnhtSMOk7pK5mEULUXNkbnC/xuptbSWOCrmVtf1mHqcwGNXCG1Xsbj9EVq27uKUD7OBirubo+II6/mCOyqabuPDrIKlfvxihQYwk+XEClnRdQmcO/99qXb8DO2WHFYOLeyihaNJGU3wFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sartura.hr; spf=pass smtp.mailfrom=sartura.hr; dkim=pass (2048-bit key) header.d=sartura.hr header.i=@sartura.hr header.b=A2rYCXgU; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sartura.hr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sartura.hr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="hbPMXCUD";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="dW3qZRPH"
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5BHCKnbh3329725
-	for <linux-clk@vger.kernel.org>; Wed, 17 Dec 2025 12:23:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	wqoGlulHe/LdeEbzUkaTJCJOAGhK6MVWnCG9uWxJq3k=; b=hbPMXCUDDVcvXe+s
-	airqtnpDWfn3n566upaC1v3NthlkOSxhViTg2u8IIOp1XzuSC8pAgqLyn4465cjW
-	LpdQBTcaKX9qDGJ7nLfXwE+nyy3Q5ay3B/f8fHWaUKalxQPIPHBd6cfvWPTIlQYn
-	jZwt+F2c72yx6Qna4p1bs2MDDmtdJj4RMsKxLpA4qtqNew4f4zRTOqp6ry05eT1U
-	gTM3NbYyN/gnWqkfGk3Cso7w9A/R7SlgwqU9VT+ox1ejse3G1NsFEyAAk76FphfI
-	PiOZCUctZLN3CAdKEDc7c/hGfKilr63pqaDWwQtswb+I67tNBUZAAoMTfrfthVPn
-	iwlDig==
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4b3nkkhdqv-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Wed, 17 Dec 2025 12:23:02 +0000 (GMT)
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-8b2ea2b51cfso134986285a.0
-        for <linux-clk@vger.kernel.org>; Wed, 17 Dec 2025 04:23:02 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=sartura.hr header.i=@sartura.hr header.b="A2rYCXgU"
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-b79f98adea4so829826166b.0
+        for <linux-clk@vger.kernel.org>; Wed, 17 Dec 2025 04:33:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1765974182; x=1766578982; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=wqoGlulHe/LdeEbzUkaTJCJOAGhK6MVWnCG9uWxJq3k=;
-        b=dW3qZRPHbyMPQRaPEONH8L3ZKUDJuJisD+53QViBzNQhbcI2CHb/zbua5arOa8jEIh
-         uhjAtbqYPlDERnr4l/461+vKqBGmRlx6ycPGYIfSQ4aOLSH6dxumYexdU9T98w/P+837
-         9XNta0YM4sHfrRkI/fRLinluELXxEWz843vzAJVifMP9kiF5VrCswNr1R69dSMragl26
-         VumXPWMhXxETmMUmXCaY6prFLPPgs+WJW2ikFpWp5D1ci0k2JR5aLV0mYh31Kxgq+vLs
-         UhjXtoo4fvFtdAcADNcm8T8Rc/NaO4zWHu+frM5ecQGMe73FbvoKFgNtvytNKZsK0sJ9
-         2svA==
+        d=sartura.hr; s=sartura; t=1765974835; x=1766579635; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=s8GEKXnaSXfLaP2KVal8xoX7Yub2x5YeO61XyI9SmwQ=;
+        b=A2rYCXgUYr9ALJpNgKYHWr7vJr+BFYlLRilkjQiry5X9M3LQQ88mX4hFh1RagqJ6lZ
+         uLtt7f7uVrILg7+B+4YELj4FONtVCFqJA7XwsLHNNYAUI6dirg68L6UOFtUVg/pflSZn
+         976Z2ay8EvD2m28JR88LPxi35onEJ8E+FN4FGVILCcgQKmTMqb22K5nAnVyqmLxQDd6O
+         LbFKdJDvIY/Y8kWMUSdGNCbLVuKFxZCVvOnWjidEXE282hJwaojoXOnOsdvcE8Yo8AOE
+         MRm/wjI6RrNDNxlhO3goPl87r39rYRTEA/cEsAWTInxIkFYA/Fm8IQlepQjUUy1g/gnO
+         RIDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765974182; x=1766578982;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wqoGlulHe/LdeEbzUkaTJCJOAGhK6MVWnCG9uWxJq3k=;
-        b=EUJHKmFXnzPvCwJ7PYCZ41tBy7MPYZht8xRjaHNx+Ueb3o18h+xRLK3/AmvVFahJKC
-         BzebbqvgXOD0/Ys2n1SUb7jxDi4aQ+XJMH4lE5L/lE0mrIEmmrvxZtxE6CoI0FlJMTLC
-         NvQNSW4j5aCWmz8NpGGAOFQhnfspDTjHwnRr4w1AODdjgV2D3opDMnSlQCQ2/EtxqBX3
-         X1GgJahp2cYXjOKGze8J4CF/PSm8/A/Iq53rVOXMGp5d5hD68RvxhogzBxCvq4fTczMF
-         RfDSOtiXYeAsUSQG16ktxOmIcx2GGarzamfx9kFFDzWhaihyRLwTk+Xjur+edFOYoFMV
-         +kHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUXtTRzgyUZK1IgL+UG83PYPCAB94jKgtMAkwmVWlOvuiBxPcflbZrGmpGNmTev8Bc+7psJDCOIClY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YywhpG8hvEVqpetWlN4ras7ELPZHJtaPCuRVvE7ofANkKhrdFGa
-	DE9e7Xc56Nyk0VFvLWW4/mXsQ5l0lG8p5ezgceRTh+u5Jj8mRtsC144KqN+6/L7y/5pGW/tj0Xv
-	dTqccGGySNtS8223u6kWrLiOR34wrJrI2URFbaPmowHu947ji9ZlqmcB3gbWJHcmza7ALrBM=
-X-Gm-Gg: AY/fxX78DVhLZ1/blqQy+v0JGJCPeo1QKUfpucheiluHE8yiIieSdLE28iOC5DD3XdD
-	QGe4+gqFoTLYj7L/GTye0eVdGWrRNbdms/Gk2S3Zjos/Crt2wJgH33VvNFlyPWBua6zYNoRVpAJ
-	mDvdM5AqH9SwAawWCAdek0m+foKCKc3DNPjQO1MD+7OL7oaGx/+o4jvWlJfbkeUuGrUInqE9KSK
-	UCU24SSQvlTr1qIzhwy/n2RaxcrBWEMnrVEZQ8KtFciWTs/GBq9/hw4xc0A0pFmccx4r6Etm/K+
-	CJXPfaJuuT7V1AteMPWsAIIcdpEdUMItK047gaYa7byaYb6TGJeUsviosK8wYnZvlpKgkEzh7W1
-	6J2TEPmCoyL0TRRRujZnFQqQnzFnyv8opyxrY+HtGmAitHsSMaCdlk8stq+HFQb7pWA==
-X-Received: by 2002:ac8:7f49:0:b0:4ed:b7f0:c76e with SMTP id d75a77b69052e-4f1d06724b0mr189380991cf.8.1765974182093;
-        Wed, 17 Dec 2025 04:23:02 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFyq7grPMT0P/HGG/heSEzfTGD2xol79uE9Jw9iZP/Dkw8v81NVJJCfnvlj5oEWLFd3zBrYQA==
-X-Received: by 2002:ac8:7f49:0:b0:4ed:b7f0:c76e with SMTP id d75a77b69052e-4f1d06724b0mr189380711cf.8.1765974181691;
-        Wed, 17 Dec 2025 04:23:01 -0800 (PST)
-Received: from [192.168.119.72] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b7cfa56be0bsm1883778166b.52.2025.12.17.04.22.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 17 Dec 2025 04:23:01 -0800 (PST)
-Message-ID: <f902ebd4-4b4a-47c3-afd7-2018facdaad6@oss.qualcomm.com>
-Date: Wed, 17 Dec 2025 13:22:59 +0100
+        d=1e100.net; s=20230601; t=1765974835; x=1766579635;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=s8GEKXnaSXfLaP2KVal8xoX7Yub2x5YeO61XyI9SmwQ=;
+        b=wWJ4VZhB2w4vwGhY3HhdjpJe0CdgnigoRffdi7Jsw/ZXxG5Djk+0vfHRUnNIrOIaui
+         RPv2/OnDxR/GKrKo1FAc0qqJD1G7hMKsnl/IVyFSABUZY+O0A4OvGnhP5oP8LQEwiCTC
+         wcip7IGp0OyAx/w0n0saWtWmYFgI5kZTaFkOL7zix2WgJbQuvmjTS/TP5pqB/tnv+UqJ
+         wJvy7HdXTIVrpv/Sh/R9gUQRTlah0WXgBJMMheggdHHBC2nqvlZjg1o5XX0RplVR5KBo
+         MLxscyjHYmzQAybHEsCiDhKMxiO0assIzPQ/xSs+yzbRZE6gBdtEu4c/AA4jNfiT1ag+
+         y49A==
+X-Forwarded-Encrypted: i=1; AJvYcCWCAMnj7pliAk19cTWdhAsOq6pm6Kav+y2jo0OUOTosa03/WkhrYps+2Lu+RxYnXzu/5Mlh5R3UqWo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnVO8WHM1t7c0Kqs2mngo9pjisAIWEXY+Re8ezNGvp2uI9oq6s
+	44d9BOAK6m4M6ZC1GRTQvdKVWIkDc1TnAzoMDG8+bdiP3Co7nWh7lPulP1ejqab8CyLAsiEQDoN
+	3/Msd+h58mDCZV0GuOral9IyhCGhz0Ee3l1CdNRYn9A==
+X-Gm-Gg: AY/fxX7hQ5pDvJzkPzGSSsL4w14mQFZgQO3/ZitcdVoWAjMeupPHymhz9kcESiqabWA
+	QPUV9rHW9JDp1r9f/vkkVA6epJeZ9g8YisYixoqr5BSbg/D3wxnn7reu6l9b6oBGyqIITzMACaW
+	IEkGYRLElaq4wZ6F7SsFOqFzvg+2Rid/Obh4q1nkphOGlPvSqRWo3EWqdirqNcXwPSX8eI+91zA
+	eujV7wUGbl5kI1pgFiY7uFxdzsxHYJrDWe+yYOeMf3TqLuf25cYI70ZUXkbZwnMazI+7Yh1SgrM
+	NBpRXOm9KztlAlRfNoNsF96syNM0NBhTmhh8osYcfGcIa/UH1+Ei
+X-Google-Smtp-Source: AGHT+IE7Hjde/+kkViqYv1A0LhGo3fNDzXkWHEO+dWmCgW+32Gp4be+4LUgDpSNymwFzE86qvkEGL0RYLcWs3u76qoo=
+X-Received: by 2002:a17:907:3d43:b0:b7c:e320:5250 with SMTP id
+ a640c23a62f3a-b7d238ebd71mr1711209066b.7.1765974834580; Wed, 17 Dec 2025
+ 04:33:54 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Revert "clk: qcom: cpu-8996: simplify the
- cpu_clk_notifier_cb"
-To: Christopher Obbard <christopher.obbard@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Dmitry Baryshkov <lumag@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-References: <20251202-wip-obbardc-qcom-msm8096-clk-cpu-fix-downclock-v1-1-90208427e6b1@linaro.org>
- <8d769fb3-cd2a-492c-8aa3-064ebbc5eee4@oss.qualcomm.com>
- <CACr-zFD_Nd=r1Giu2A0h9GHgh-GYPbT1PrwBq7n7JN2AWkXMrw@mail.gmail.com>
- <CACr-zFA=4_wye-uf3NP6bOGTnV7_Cz3-S3eM_TYrg=HDShbkKg@mail.gmail.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <CACr-zFA=4_wye-uf3NP6bOGTnV7_Cz3-S3eM_TYrg=HDShbkKg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: FUGh3Xdadp5Mthm9DDm57lk1u19RxSC5
-X-Proofpoint-ORIG-GUID: FUGh3Xdadp5Mthm9DDm57lk1u19RxSC5
-X-Authority-Analysis: v=2.4 cv=f/RFxeyM c=1 sm=1 tr=0 ts=6942a0a6 cx=c_pps
- a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=wP3pNCr1ah4A:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=KKAkSRfTAAAA:8 a=SGH9_1Kv1uoLAvHqms4A:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=PEH46H7Ffwr30OY-TuGO:22
- a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMjE3MDA5NiBTYWx0ZWRfX2uU58GO4HQEt
- X5EXPisi2Z8yZ9Nw1ZNw8tN5Dt4kULl0PKZWAQLW0wYRM1smWY2g5opH8QkdKkDICSMxZ2C0LNj
- tpUchhqYPViYUbw/9bG84LqiDWOilz8l2IZkdBmoIN+C0bquuTon4Qi4YBOMlI8uCfVdAUmyEPg
- xi2rg88OqgWnbTj6ygb609cVJl8pd7ilPRLnpUHuKBd7P2hIaOLhImVKbeWQqcIG4ZIZjW15dVq
- z3sL/9/ASg6mYZ6S6SdwhQAItWBULNwgJmnLF8hVRWpmEXlK/kVD7wkxe90EYlKhKNH1q9eixi2
- DnSaV7wIlv/7xR8HpY1PA9E4nPCYq8qPLXWrDWa1QAGtBo945nM4M2MbC7V+Wre075Uycc9vyiZ
- +HxGokFLy2IocGIi/Lyjq15VHxLqjQ==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-12-17_01,2025-12-16_05,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 phishscore=0 suspectscore=0 lowpriorityscore=0 clxscore=1015
- priorityscore=1501 malwarescore=0 adultscore=0 bulkscore=0 impostorscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2512170096
+References: <20251215163820.1584926-1-robert.marko@sartura.hr>
+ <20251215163820.1584926-4-robert.marko@sartura.hr> <202512161628415e9896d1@mail.local>
+ <CA+HBbNFG+xNokn5VY5G6Cgh41NZ=KteRi0D9c0B15xb77mzv8w@mail.gmail.com>
+ <202512161726449fe42d71@mail.local> <20251216-underarm-trapped-626f16d856f5@spud>
+ <2025121622404642e6f789@mail.local>
+In-Reply-To: <2025121622404642e6f789@mail.local>
+From: Robert Marko <robert.marko@sartura.hr>
+Date: Wed, 17 Dec 2025 13:33:42 +0100
+X-Gm-Features: AQt7F2rRCO2ytZ0VdvYzTGe4b0Ox8AKF-v29YqVKrXuogSLDfcjlg9rn0S9yxlg
+Message-ID: <CA+HBbNGPWcwzCSGbMCU-n8Y+g6SjBSKcS7p6Mmrn3gFCWCSCeA@mail.gmail.com>
+Subject: Re: [PATCH v2 04/19] dt-bindings: arm: move AT91 to generic Microchip binding
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Conor Dooley <conor@kernel.org>, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, nicolas.ferre@microchip.com, claudiu.beznea@tuxon.dev, 
+	Steen.Hegelund@microchip.com, daniel.machon@microchip.com, 
+	UNGLinuxDriver@microchip.com, herbert@gondor.apana.org.au, 
+	davem@davemloft.net, vkoul@kernel.org, linux@roeck-us.net, 
+	andi.shyti@kernel.org, lee@kernel.org, andrew+netdev@lunn.ch, 
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, linusw@kernel.org, 
+	olivia@selenic.com, radu_nicolae.pirea@upb.ro, richard.genoud@bootlin.com, 
+	gregkh@linuxfoundation.org, jirislaby@kernel.org, mturquette@baylibre.com, 
+	sboyd@kernel.org, richardcochran@gmail.com, wsa+renesas@sang-engineering.com, 
+	romain.sioen@microchip.com, Ryan.Wanner@microchip.com, 
+	lars.povlsen@microchip.com, tudor.ambarus@linaro.org, 
+	kavyasree.kotagiri@microchip.com, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-crypto@vger.kernel.org, dmaengine@vger.kernel.org, 
+	linux-hwmon@vger.kernel.org, linux-i2c@vger.kernel.org, 
+	netdev@vger.kernel.org, linux-gpio@vger.kernel.org, linux-spi@vger.kernel.org, 
+	linux-serial@vger.kernel.org, linux-usb@vger.kernel.org, 
+	linux-clk@vger.kernel.org, mwalle@kernel.org, luka.perkov@sartura.hr
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 12/14/25 8:26 PM, Christopher Obbard wrote:
-> Hi Konrad,
-> 
-> On Mon, 8 Dec 2025 at 22:36, Christopher Obbard
-> <christopher.obbard@linaro.org> wrote:
->> Apologies for the late response, I was in the process of setting some
->> more msm8096 boards up again in my new workspace to test this
->> properly.
->>
->>
->>> It may be that your board really has a MSM/APQ8x96*SG* which is another
->>> name for the PRO SKU, which happens to have a 2 times wider divider, try
->>>
->>> `cat /sys/bus/soc/devices/soc0/soc_id`
->>
->> I read the soc_id from both of the msm8096 boards I have:
->>
->> Open-Q™ 820 µSOM Development Kit (APQ8096)
->> ```
->> $ cat /sys/bus/soc/devices/soc0/soc_id
->> 291
->> ```
->> (FWIW this board is not in mainline yet; but boots with a DT similar
->> enough to the db820c. I have a patch in my upstream backlog enabling
->> that board; watch this space)
->>
->> DragonBoard™ 820c (APQ8096)
->> ```
->> $ cat /sys/bus/soc/devices/soc0/soc_id
->> 291
->> ```
-> 
-> Sorry to nag, but are you able to look into this soc_id and see if
-> it's the PRO SKU ?
+On Tue, Dec 16, 2025 at 11:40=E2=80=AFPM Alexandre Belloni
+<alexandre.belloni@bootlin.com> wrote:
+>
+> On 16/12/2025 19:21:27+0000, Conor Dooley wrote:
+> > On Tue, Dec 16, 2025 at 06:26:44PM +0100, Alexandre Belloni wrote:
+> > > On 16/12/2025 17:56:20+0100, Robert Marko wrote:
+> > > > On Tue, Dec 16, 2025 at 5:29=E2=80=AFPM Alexandre Belloni
+> > > > <alexandre.belloni@bootlin.com> wrote:
+> > > > >
+> > > > > On 15/12/2025 17:35:21+0100, Robert Marko wrote:
+> > > > > > Create a new binding file named microchip.yaml, to which all Mi=
+crochip
+> > > > > > based devices will be moved to.
+> > > > > >
+> > > > > > Start by moving AT91, next will be SparX-5.
+> > > > >
+> > > > > Both lines of SoCs are designed by different business units and a=
+re
+> > > > > wildly different and while both business units are currently owne=
+d by
+> > > > > the same company, there are no guarantees this will stay this way=
+ so I
+> > > > > would simply avoid merging both.
+> > > >
+> > > > Hi Alexandre,
+> > > >
+> > > > The merge was requested by Conor instead of adding a new binding fo=
+r LAN969x [1]
+> > > >
+> > > > [1] https://patchwork.kernel.org/project/linux-arm-kernel/patch/202=
+51203122313.1287950-2-robert.marko@sartura.hr/
+> > > >
+> > >
+> > > I would still keep them separate, SparX-5 is closer to what is
+> > > devicetree/bindings/mips/mscc.txt than to any atmel descended SoCs.
+> >
+> > If you don't want the sparx-5 stuff in with the atmel bits, that's fine=
+,
+> > but I stand over my comments about this lan969x stuff not getting a fil=
+e
+> > of its own.
+> > Probably that means putting it in the atmel file, alongside the lan966x
+> > boards that are in there at the moment.
+>
+> I'm fine with this.
 
-No, it's the "normal" one
+Works for me, will switch to it in v3.
 
-Maybe Dmitry would know a little more what's going on
+Regards,
+Robert
 
-Konrad
+>
+> --
+> Alexandre Belloni, co-owner and COO, Bootlin
+> Embedded Linux and Kernel engineering
+> https://bootlin.com
+
+
+
+--=20
+Robert Marko
+Staff Embedded Linux Engineer
+Sartura d.d.
+Lendavska ulica 16a
+10000 Zagreb, Croatia
+Email: robert.marko@sartura.hr
+Web: www.sartura.hr
