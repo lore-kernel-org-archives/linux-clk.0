@@ -1,197 +1,253 @@
-Received: from MW6PR02CU001.outbound.protection.outlook.com (mail-westus2azon11012018.outbound.protection.outlook.com [52.101.48.18])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3905D285041;
-	Wed, 17 Dec 2025 06:07:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.48.18
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765951663; cv=fail; b=Hq4POI/IS1XsQtAdzPzPM0avya29PBBWO3UXgDDSrtA2qCVvJi/ntbxizCgxMyUOUhHbMKfdXs14HiyaL5ZgW+eUY1wGGzLOQuWBs0E6A8EPaiLwkH/UBXp1aCTvia9Ss3alUvG38W1N8oHo3P6B5dXx6OMFvslP7bfq3hFtLJk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765951663; c=relaxed/simple;
-	bh=1TTDlC/xjS/ZyDCEx59qrVhAISGKJNz1hxxw0/cZ054=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jXkdS70n9GsHJ2pTHmd4Lz2ypHm1exe5gueOTrW7dfH66ZsgnbLxJF1Zak6LLv6u5Hj21uTJ56dNQVD0EnX9+9ChAjWgKLCCus0uwetPwQV2WplZHAXxhPokifdf9mF/wq0QtJRDeiPaLFL2kqmT6V5K+GrIfFRrPzrUZzZfBUY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=WuCzC+A9; arc=fail smtp.client-ip=52.101.48.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1D46336EDC
+	for <linux-clk@vger.kernel.org>; Wed, 17 Dec 2025 09:32:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1765963938; cv=none; b=qeos4s1U6sWd4PxKkKRhQuPr3AFgA8ZN1D+z8zV7bSrNVsthOR1Ufpm9zGGjc69ova4nwcqcj1j+EPys58UoztuFl88EdKA1z3gleQvD8ScFEqjoGbyoWbMwGueMZuLpn7dUWo8kc7gQCuSNsqA5ghBknjWxcRF1t0IFQulSO54=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1765963938; c=relaxed/simple;
+	bh=F94PWeowK21x/MwYXhf/JlJiIyVYHrsYWklQhpd9ZhM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Q+O1FzBCNL6f3+evEW4D2lldIYWbBFxc146IU5c9jzin8zsPvod7DcJ0uZw+mVliHU0d2HZDR9WVG1dERI77sH5NukkNzC6QdvadGnu8d70FArkf7il8fvo5zwWUMwLQ5BCIgS6j3Pj7vbzqAZ+MthSh6ZtoPRIHBAya7tVOmw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=W94gv6xW; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=PBdyNR1u; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="WuCzC+A9"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=f+It8XEvZGfk72wjJO3I4ZOjazPK+8+ZRx/lrc0k9hmSbgg0TK8ygVLsWHTwDNhB1gfYy6XQEWIqRle7ZSzK34oByh347mokG+R7uBPPxtUVO6K6c332TY83f8YU9YceOgrqeBnGf23AnOc19jckli9QZvj9WQsqFXSY0kVlhCkghzA7mGD0iU2QrYSEuEL+zqT9eV+HkB1PMFv1ge1qoMjB2FKUS0pomAPExPWXgLbKFTCxkWbTcUb8qTvRYMeLXqKsNqfZm/aRPvfwipijJ1YMQysDmUXqt8Hc2OUFW9MBDFJWtIZ5zJ/vvRk4wLBiVuc1iSp3WkbMX9ZQKva3TQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=mT6Ob3T+Hck0GCaspJsG1WWYg+sT0c5Mv7HfatwQa4I=;
- b=eBbUSSSF76S9qPjXBKe5yTSpD0A3HtlwyGNFxs0J7usUBl9WLLPOU4fTeTAamyJm115C0Tm1cjiz1IV+Zv5FJ7j/SI3dXcVC/EuCkcnatBDu3NsIUgZXu29y9fjD48vrONmGYSaf3SIADa82vzoSifhmKAip7wJD9H/Edp7igyTrW9lh52eUUfulOGrmIGn9hujfb5vDg83+QH9ZhewU7lLNHdE46aluFxFppnW40nUNRi5sR3GJ1YD9FZFjw6saaeC4Ju/VIQwExMgT0elXqcf+AviwxIwp7VyMiYEnkwNKfWqjpXvG3fF5TH59HarkyfMNmrL+qxtImH7Nkmu9CQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 198.47.21.195) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=ti.com;
- dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=ti.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mT6Ob3T+Hck0GCaspJsG1WWYg+sT0c5Mv7HfatwQa4I=;
- b=WuCzC+A9bsjkS4AZf8e5rcjiE2ukWI25KEztSOb5NOgfPJFUvBJ2iOubJgtp7DIkuNx7L1fGkpVtlVbCfNjMLcWC7YarC6/5FcTN+rQ9kE40rQG/Mpf1O1aafwg90neF95qcQDw0U7jcck43KPuzrafSo6FDT+nEaIwC7As18fE=
-Received: from SJ0PR03CA0186.namprd03.prod.outlook.com (2603:10b6:a03:2ef::11)
- by PH8PR10MB6478.namprd10.prod.outlook.com (2603:10b6:510:22e::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9412.13; Wed, 17 Dec
- 2025 06:07:39 +0000
-Received: from SJ5PEPF000001CD.namprd05.prod.outlook.com
- (2603:10b6:a03:2ef:cafe::bb) by SJ0PR03CA0186.outlook.office365.com
- (2603:10b6:a03:2ef::11) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9434.6 via Frontend Transport; Wed,
- 17 Dec 2025 06:07:38 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.21.195)
- smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
- action=none header.from=ti.com;
-Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
- 198.47.21.195 as permitted sender) receiver=protection.outlook.com;
- client-ip=198.47.21.195; helo=flwvzet201.ext.ti.com; pr=C
-Received: from flwvzet201.ext.ti.com (198.47.21.195) by
- SJ5PEPF000001CD.mail.protection.outlook.com (10.167.242.42) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9434.6 via Frontend Transport; Wed, 17 Dec 2025 06:07:37 +0000
-Received: from DFLE215.ent.ti.com (10.64.6.73) by flwvzet201.ext.ti.com
- (10.248.192.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 17 Dec
- 2025 00:07:29 -0600
-Received: from DFLE209.ent.ti.com (10.64.6.67) by DFLE215.ent.ti.com
- (10.64.6.73) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 17 Dec
- 2025 00:07:28 -0600
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE209.ent.ti.com
- (10.64.6.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Wed, 17 Dec 2025 00:07:28 -0600
-Received: from localhost (lcpd911.dhcp.ti.com [172.24.233.130])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5BH67RnZ1055914;
-	Wed, 17 Dec 2025 00:07:28 -0600
-Date: Wed, 17 Dec 2025 11:37:27 +0530
-From: Dhruva Gole <d-gole@ti.com>
-To: "Thomas Richard (TI.com)" <thomas.richard@bootlin.com>
-CC: Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>, "Santosh
- Shilimkar" <ssantosh@kernel.org>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Gregory CLEMENT
-	<gregory.clement@bootlin.com>, <richard.genoud@bootlin.com>, Udit Kumar
-	<u-kumar1@ti.com>, Prasanth Mantena <p-mantena@ti.com>, Abhash Kumar
-	<a-kumar2@ti.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v3 4/4] firmware: ti_sci: restore clock context during
- resume in BOARDCFG_MANAGED mode
-Message-ID: <20251217060727.idneboxj7kwslie2@lcpd911>
-References: <20251205-ti-sci-jacinto-s2r-restore-irq-v3-0-d06963974ad4@bootlin.com>
- <20251205-ti-sci-jacinto-s2r-restore-irq-v3-4-d06963974ad4@bootlin.com>
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="W94gv6xW";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="PBdyNR1u"
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5BH3FV4l870381
+	for <linux-clk@vger.kernel.org>; Wed, 17 Dec 2025 09:32:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	k5eSqAi+UmVzEQJzPdvYOyZ8r83jZpTMhH6t4IKjvyc=; b=W94gv6xWyx61wULt
+	Ek1YjlEgwrMYRchM8lepWXGvncaTCf0L5BwyIPWatQ/g6dGbx2XEvGmhcQcIYVBo
+	KsXcUGNe7ZiOAkckuVJtN3anaiQUw25cnP336Ey51ctNlSxxpBYke9O8AhxUSCSO
+	qZbG2N6+DVOrSSLPMVkbqvWsmxM375FhNbIIclSVfu/xnCcX/mq7LFQWlXAJUli2
+	xRmoE0T8E9LbOtZFJtdat1WMezMqQXmY9mYbpaW2tJ6b2RbYsAkqfq5z2fH98nZw
+	8ehJU3EC2T9vfybnwZ5ECuwlcblQVGdpusc5JppVI9sjYe+r6aviOl3C1nVLfAX/
+	b06H9Q==
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com [209.85.216.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4b3fj1suxw-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Wed, 17 Dec 2025 09:32:15 +0000 (GMT)
+Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-34aa1d06456so12666491a91.0
+        for <linux-clk@vger.kernel.org>; Wed, 17 Dec 2025 01:32:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1765963935; x=1766568735; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=k5eSqAi+UmVzEQJzPdvYOyZ8r83jZpTMhH6t4IKjvyc=;
+        b=PBdyNR1uYHyBmtEsBB5dylE7Sp0BRrFxAjlUrQGbQX7Zfdiwd6MWDqNZ2sb3n0ldI2
+         8TrrxsaPfOAhyX2ck6Z9ofLO5bWZS/56mMzD8i3Y6s8Z0Na3fU77sac1uqqWs5gARvnx
+         dbTYcUVLJek/fCWhW8Xl/U5nBHdDIBJHeJ2mePpB7idTQxocSql9rKaCtTIeUjXMN2B2
+         EjDki7HKTE55sAeufMIKSqRmCz09YypFBnSfG+UD3kuYHolNoaQVmUZDQVyYEUM/A0vk
+         82w0N0AcpG3Ol3bnJeSLiKfac+82dHD5YobzMewNkK9U21EYPxmjWgJCiyNEwxJdxayr
+         F1Ew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1765963935; x=1766568735;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=k5eSqAi+UmVzEQJzPdvYOyZ8r83jZpTMhH6t4IKjvyc=;
+        b=VwJ1GJLYL8iq0lbVxV+Ou9x49X8KBG3HonEu1diJBnb7OfCdyEK/VbEKgSgaOdQt1L
+         1s+ARLnBUOoRSrGPPQ2cjTqEct9vG4OdGPaZmDf6qSAouf9b1s4B1Vf8oJUuAyBwFcpe
+         cT91hEXmiiO999w+MCTRnCVTarduUQxOeMzVYOhi2tBhJ/b2r7poRQhftGRxPq+rm6bO
+         M5a5QKXFA5T/AdtqLvihW0yzzEOOGfRDX89bDRnmFXm2jm/DUrwGki1SJ8sTGDyFAO1d
+         AqFdC7gt3EoatQ5KdffAYEOzXM9CyoXiXe4fd0WMDJla2zl6+x0W5iRgadrkILMvsDNM
+         bhDA==
+X-Forwarded-Encrypted: i=1; AJvYcCVcGmfyR4lOkKYeRoU1+XwUGkRWMcwA7ov8BmwOoCk4kSimMdoMKV9o/73T+kaDJvK1m7DLjsKU/90=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQnkOEeKGRVmYEHZO+PVuTebpABWY+g6c/rlwQVbZDDkgEph6a
+	Amy4R8xYvr/yiMhuegMnRzeTU6VOAH7NH9lGOOFF80y7uCK6urwOwN6+Ykl2rUnNYwUlb1n0Ylf
+	iop9xVPTPO2Qpbwpt6vDodlc5F+RjeLrhoihWHr7tVYr67Gv0jIjul63/fYBo/7I=
+X-Gm-Gg: AY/fxX5fbNEwVyXzX/AKG622JrU5n0SCP43lzDeNwAa5FO2pJz8GehZSaPJnoq16naa
+	XMVyAxgSAb0anG5Jt+KPrfU6WErZVxR29ysLPwuVoorxprr4gP08myVUk+IUYWngtqxrFOMhoiw
+	krWHNbRAJVNdpt7XPkLEgn34mC+tHLALMCTj+BxYrrQtzKGYKt20yBPzmK5TGQ56p5lSaMaKxi2
+	38IjR34iwFETprklwY0L2bYmDuMxl/MSprBlRTSGVzgWwdbI7eNfdxZAb3JSngYPFfV3Kg/iah4
+	IsyZ6FVpaFw/sAWfHgnDlT3/CidupmNXleH7bWd0/a5CR1aaTg5bVUrP3DPb01eBAHPbe5uQDSa
+	nYqI2c98zfoouy85a9NuDLsiAUYbW6KofleRi
+X-Received: by 2002:a17:90b:37c5:b0:341:2b78:61b8 with SMTP id 98e67ed59e1d1-34abd75b84cmr16118276a91.20.1765963935258;
+        Wed, 17 Dec 2025 01:32:15 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IH2IAzyeAsxmbkCnxnu4u0xxCDf9pVYnBNLb9NM9pOCNAkCdEN4BEa2l81OARdkqZ8OLtxezA==
+X-Received: by 2002:a17:90b:37c5:b0:341:2b78:61b8 with SMTP id 98e67ed59e1d1-34abd75b84cmr16118239a91.20.1765963934714;
+        Wed, 17 Dec 2025 01:32:14 -0800 (PST)
+Received: from [10.218.35.249] ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-34cfdc607c0sm1774392a91.12.2025.12.17.01.32.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 17 Dec 2025 01:32:14 -0800 (PST)
+Message-ID: <503f445e-0d12-407d-bc77-f48ad335639b@oss.qualcomm.com>
+Date: Wed, 17 Dec 2025 15:02:06 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20251205-ti-sci-jacinto-s2r-restore-irq-v3-4-d06963974ad4@bootlin.com>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ5PEPF000001CD:EE_|PH8PR10MB6478:EE_
-X-MS-Office365-Filtering-Correlation-Id: b2f40a9d-5fe2-4b82-e7c5-08de3d329459
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|36860700013|7416014|1800799024|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?zcwQ6esRMnRqMEJaAPvzgGHLzUwBLiPMAaP+JuEWMW5wKK/57mSPl1AWGFEt?=
- =?us-ascii?Q?VaSVsOp6WnQ8nPbkTfHcfUkqwT1dbpRxJgYxlibKpyvTZBatlA45yCFip7Ad?=
- =?us-ascii?Q?BEWL1oYIIwWC5JvJidGiLcarznykIvo7pFdsL+GeaaNNrckRtnqv1vJvwkui?=
- =?us-ascii?Q?6Jg97iypLUNA5xKOlW2UOzSR0ajDmNDbHrJ8/u+NFhX/ndvPnp/cpxcvrh4Y?=
- =?us-ascii?Q?2kvgu102abW1wz5wa2cFEA0qf5V9cAoGfNCYadQ07ecYZgmZyc6il9A1zRIf?=
- =?us-ascii?Q?iq5mWjMJL4acg/EdI6bjGP7C9X4dF1wS/QiFPwxWimwz9ol59j+MxsUV1a+V?=
- =?us-ascii?Q?sWyQPDaQkw6d6lrUtDNiZ5z7M6UEcSAcsYRG6seVJ+gC5831jnKsT+Qzgc9I?=
- =?us-ascii?Q?4Od94jmC5Z3VWYbyeRHyf//ZAzGDcDvzqdLlMcF4ZN/NgSzQHMT30K4sCAcF?=
- =?us-ascii?Q?QTSoONmKzengS/SnCDkeBCTCxabidwq2+nQSoUaLDSTFXs4uYnon/sT99KFr?=
- =?us-ascii?Q?WVMSJcOdLlbU/gaExZmD0KCIDTUJ4SxTbsJuSblNDg/ZXYMqD36JO36hnb/E?=
- =?us-ascii?Q?rTEzUp25ILfwVdZfcZDBeUCeZgtQGWkKf55vj4PfxT+CGrk8ufsZ1FxCJ6nC?=
- =?us-ascii?Q?rg4w53/npSAwuG8wX15x2irR+F/yVSpEm0ybBk7DSmuLjdiH0BDOn+YUCq4Q?=
- =?us-ascii?Q?dAZ4dc5Go4WG8zcB2v2BXT1U4xs049T60Gj0DXjbkTMKRA/7AnvR+d5/Egux?=
- =?us-ascii?Q?/fhFbck1Z/3fAdwVBLgJEjElJcXiXTh3VGjVWkeO4zyE6f/sRuNaIRMzcCRj?=
- =?us-ascii?Q?3AUqzaqISG7lEphJ6v+ETjiMHw0qILit6XpAKU+oHDWiPJ+GH9Jn7xhxN9+3?=
- =?us-ascii?Q?/prUqIdNMm2Bwo62mx+1+pAEe4ey+1Po+TyoxFSgi4tf5IYYfEJtxgVMhTV9?=
- =?us-ascii?Q?Ng67HrLw3IkfDFwjSKHuis/An/9KgkPc10m/qJ3I+5Kwag+R+cBZCjUF+K2w?=
- =?us-ascii?Q?RSZ80bixGPwzqAbN+rDcmUWmDjflq+psEokSEtSWMO9ddNWp6jJIZORhAK76?=
- =?us-ascii?Q?YoX3lYlobCeQ126V0ZIqqoUgmEQgf1nmS9e632Ho4YjvPs31KraReQBKdEfL?=
- =?us-ascii?Q?9CizSsKJZcwVszw6lWDtpYimaN9C9gtmW3lcngcovkXi7jUuwLaSsbqSOzIT?=
- =?us-ascii?Q?9owu4IN7bciCzNrb3xXU0xRAN1661HaRtSmJ+WRV3oKxwdPfImtfaxygwtMF?=
- =?us-ascii?Q?VS/8EIcefMgIqaU0mgMdX4zRirT7ZJqbXfacBGYYrguKcof9GtOoqPhXMUjK?=
- =?us-ascii?Q?MG1lCvDYE2309DC+FiWcvxLPUjHtsLkKrAcCLiG2nbpHgA1TVBmfLM890xv8?=
- =?us-ascii?Q?b/wHD4vcLYsrgKWNn00mIBYAY5B7TsUE0LYXFfHe9LZlyWI9guJ/ldstoDa0?=
- =?us-ascii?Q?nzp3XfUqFnFT1856w4ibzswElQp6vXmrgtbv0kxvtW1G2d+CLg6WVNs2eEnW?=
- =?us-ascii?Q?98Q5ZTentEHwkjGHPLAzHsMzb5zZ2rKI/uaURdkQzMuP+Rad16pIpH691y6g?=
- =?us-ascii?Q?GCpIFPEaMo8m994/IsA=3D?=
-X-Forefront-Antispam-Report:
-	CIP:198.47.21.195;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:flwvzet201.ext.ti.com;PTR:ErrorRetry;CAT:NONE;SFS:(13230040)(376014)(36860700013)(7416014)(1800799024)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: ti.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Dec 2025 06:07:37.8773
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: b2f40a9d-5fe2-4b82-e7c5-08de3d329459
-X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.21.195];Helo=[flwvzet201.ext.ti.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ5PEPF000001CD.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR10MB6478
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 07/11] dt-bindings: clock: qcom: document the Kaanapali
+ GPU Clock Controller
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
+        Imran Shaik <imran.shaik@oss.qualcomm.com>,
+        Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org,
+        Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+References: <20251125-kaanapali-mmcc-v2-v2-0-fb44e78f300b@oss.qualcomm.com>
+ <20251125-kaanapali-mmcc-v2-v2-7-fb44e78f300b@oss.qualcomm.com>
+ <20251126-elated-stoic-scorpion-25b630@kuoka>
+ <de44560d-4ed8-41fe-be7b-56412b933a8c@oss.qualcomm.com>
+ <fbe39eac-7c92-4a08-bafb-31e5c51a0613@kernel.org>
+Content-Language: en-US
+From: Taniya Das <taniya.das@oss.qualcomm.com>
+In-Reply-To: <fbe39eac-7c92-4a08-bafb-31e5c51a0613@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMjE3MDA3NSBTYWx0ZWRfX409p47gEHEsF
+ 232+XiKXyxkNp5tPY5DgZLBguEwNv2e2Rh4MP2qEKmXV43ZHhS3FmR5qdCFzL22cebGr7t1Uug9
+ C3XxmkdwCkqa28T9GAyewIQnGc4gIJFlyypByHSXYoZW6+R9A69MvnSWcfo55UlvUiKkT1cKts1
+ q/iMqrGZd4LPVk5lEqmJxs41PbeopjtTBRC0dMLeD/Hk5T/9qTQrmObULC5eIjpiL3IcgcTYWe0
+ uV8KKP8oRE3/DgRhsBWYNzHiZiiKjQzv7J5/IjVcg2BiFP9BOSXE1qZdZ4zlnbrNZEYb9vb7GIs
+ Kay/xb9b3SxYNU4UZonqq/kszi/5pY7uFTatpXx14inrWk2ezOPzJcNpkfYZ58ONi3D3nw2KrYc
+ Gp78QH2PkdySDSlEopR5Cxd2N8PCWg==
+X-Proofpoint-ORIG-GUID: YTv6WVZbjt4OuMAMyZqX_VSkOSUBJTzl
+X-Proofpoint-GUID: YTv6WVZbjt4OuMAMyZqX_VSkOSUBJTzl
+X-Authority-Analysis: v=2.4 cv=edgwvrEH c=1 sm=1 tr=0 ts=694278a0 cx=c_pps
+ a=UNFcQwm+pnOIJct1K4W+Mw==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=wP3pNCr1ah4A:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=EdL18t7L_n9XgEVTQngA:9 a=QEXdDO2ut3YA:10
+ a=uKXjsCUrEbL0IQVhDsJ9:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-12-17_01,2025-12-16_05,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 spamscore=0 lowpriorityscore=0 clxscore=1015 impostorscore=0
+ adultscore=0 priorityscore=1501 phishscore=0 bulkscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2512170075
 
-On Dec 05, 2025 at 15:28:26 +0100, Thomas Richard (TI.com) wrote:
-> In BOARDCFG_MANAGED mode, the firmware cannot restore the clock rates and
-> the clock parents. This responsibility is therefore delegated to the ti_sci
-> driver, which uses clk_restore_context() to trigger the context_restore()
-> operation for all registered clocks, including those managed by the sci-clk
-> driver. The sci-clk driver implements the context_restore() operation to
-> ensure rates and clock parents are correctly restored.
+
+
+On 12/16/2025 2:21 PM, Krzysztof Kozlowski wrote:
+> On 04/12/2025 07:49, Taniya Das wrote:
+>>>> +  power-domains:
+>>>> +    description:
+>>>> +      Power domains required for the clock controller to operate
+>>>> +    items:
+>>>> +      - description: GFX power domain
+>>>> +      - description: GMXC power domain
+>>>> +      - description: GPUCC(CX) power domain
+>>>> +
+>>>> +  '#power-domain-cells':
+>>>
+>>> Power domain controllers do not belong to clocks, so this is:
+>>> 1. Misplaced - wrong folder
+>>> 2. Probably wrongly named. gxclkctl sounds like clock controller, but
+>>> this is domain controller?
+>>>
+>>
+>> The GFXCLKCTL is actually a clock controller which has PLLs, clocks and
+>> Power domains (GDSC), but the requirement here is to use the GDSC from
+>> the clock controller to recover the GPU firmware in case of any
+>> failure/hangs. The rest of the resources of the clock controller are
+>> being used by the firmware of GPU. The GDSC is a clock controller
+>> resource and modeled from the clock controller drivers across chipsets.
 > 
-> Signed-off-by: Thomas Richard (TI.com) <thomas.richard@bootlin.com>
-> ---
->  drivers/firmware/ti_sci.c | 3 +++
->  1 file changed, 3 insertions(+)
+> This should be somewhere explained.
+
+I will capture it in the binding description in the next patch set.
+
 > 
-> diff --git a/drivers/firmware/ti_sci.c b/drivers/firmware/ti_sci.c
-> index 8d94745376e2a..6ef687e481c49 100644
-> --- a/drivers/firmware/ti_sci.c
-> +++ b/drivers/firmware/ti_sci.c
-> @@ -9,6 +9,7 @@
->  #define pr_fmt(fmt) "%s: " fmt, __func__
->  
->  #include <linux/bitmap.h>
-> +#include <linux/clk.h>
->  #include <linux/cpu.h>
->  #include <linux/debugfs.h>
->  #include <linux/export.h>
-> @@ -3980,6 +3981,8 @@ static int ti_sci_resume_noirq(struct device *dev)
->  				if (ret)
->  					return ret;
->  			}
-> +
-> +			clk_restore_context();
+>>
+>>>> +    const: 1
+>>>> +
+>>>> +  reg:
+>>>> +    maxItems: 1
+>>>> +
+>>>> +required:
+>>>> +  - compatible
+>>>> +  - reg
+>>>> +  - power-domains
+>>>> +  - '#power-domain-cells'
+>>>> +
+>>>> +unevaluatedProperties: false
+>>>> +
+>>>> +examples:
+>>>> +  - |
+>>>> +    #include <dt-bindings/power/qcom,rpmhpd.h>
+>>>> +    soc {
+>>>> +        #address-cells = <2>;
+>>>> +        #size-cells = <2>;
+>>>> +
+>>>> +        clock-controller@3d68024 {
+>>>> +            compatible = "qcom,kaanapali-gxclkctl";
+>>>> +            reg = <0 0x3d68024 0x0 0x8>;
+>>>
+>>> Keep consistent hex, so first 0 -> 0x0.
+>>
+>> Sure, will fix this.
+>>
+>>> But the problem is that you defined a device for two registers,
+>>> basically one domain. I have doubts now whether this is complete and
+>>> real device.
+>>>
+>>
+>> As the Linux GPU driver requires only the GDSC, I have mapped the region
+>> which is required by the clock controller driver. If required, the
+>> entire region can be mapped as well.
+> 
+> Required is to properly describe the hardware, please read writing
+> bindings doc.
+> 
 
-Here as well, make it conditional to only BOARDCFG_MANAGED. Other
-platforms/ firmwares have lived without this for a while now, and it's
-evident that we don't always need this.
+Sure, will map the entire region to be describe the entire hardware.
 
-Thinking more about this, I think we're over using this BOARDCFG_MANAGED
-mode a bit much. We should really just come up with new FW caps for
-this, one for clk_restore , other for the previous IRQ restore patch.
+>>
+>>>> +            power-domains = <&rpmhpd RPMHPD_GFX>,
+>>>> +                            <&rpmhpd RPMHPD_GMXC>,
+>>>> +                            <&gpucc 0>;
+>>>> +            #power-domain-cells = <1>;
+>>>
+>>> And cells 1 makes no sense in such case.
+>>>
+>>
+>> We would like to leverage the existing common clock driver(GDSC) code to
+> 
+> Fix the driver code if it cannot handle other cells. Your drivers do not
+> matter for choices made in bindings.
+> 
 
-That's the only way I can see this scaling. In future if we ever need
-more devices that may actually be BOARDCFG_MANAGED, but don't need the
-IRQ or clock restoration then the current approach won't work.
+As it is still a clock controller from hardware design and in SW I will
+be map the entire hardware region and this way this clock controller
+will also be aligned to the existing clock controllers and keep the
+#power-domain-cells = <1> as other CCs.
 
-MODE should only be passed in the prepare_sleep, where it makes sense.
-Using it for anything else just does not feel clean to me.
-
-Thoughts?
-
+>> register the power-domains and also maintain uniformity across chipsets
+>> and consistency in consumer GDSC phandle usage.
+> 
+> There is no such consistency rule. Don't make up your own rules.
+> 
 -- 
-Best regards,
-Dhruva Gole
-Texas Instruments Incorporated
+Thanks,
+Taniya Das
+
