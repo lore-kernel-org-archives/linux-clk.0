@@ -1,164 +1,104 @@
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AD1E34214C
-	for <linux-clk@vger.kernel.org>; Wed, 17 Dec 2025 12:33:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80497339B52
+	for <linux-clk@vger.kernel.org>; Wed, 17 Dec 2025 12:44:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765974840; cv=none; b=pljifEB0L5xKtef/CEjDDaIoyePb7ZDJmQZjGhfxrX3f2CIs+ub07cmBki4Wb7miu1M5aIIDGbvDAyNnMap1UDSA3CZI9wDscrQfAJQNoVegu8JwUXaxthMcPj/zMafRTDR6lIHym4DAE8R39r62H+HyXcRUv1KRkypG6Ng3Zqo=
+	t=1765975468; cv=none; b=FJUGcFxUjmtdToGYBeSNkcAAOPmdZ1zBWlfJlApPXzpzDLQ6Z26eLJiIm+NWUN4Qhi6U9KSsZwX9OcDrqPl7bUwZRwZGVEVzXLpEI0zZj4AH0O6Nq0VHMZi3o4hTUwZZMDAl5bgZQZv+y/1dC6VjB/TxEBSfS/PjLIXao6xqbYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765974840; c=relaxed/simple;
-	bh=s8GEKXnaSXfLaP2KVal8xoX7Yub2x5YeO61XyI9SmwQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=vDZDKTHKJKB1ue6PaCbdKWLm3sUEc9wnhtSMOk7pK5mEULUXNkbnC/xuptbSWOCrmVtf1mHqcwGNXCG1Xsbj9EVq27uKUD7OBirubo+II6/mCOyqabuPDrIKlfvxihQYwk+XEClnRdQmcO/99qXb8DO2WHFYOLeyihaNJGU3wFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sartura.hr; spf=pass smtp.mailfrom=sartura.hr; dkim=pass (2048-bit key) header.d=sartura.hr header.i=@sartura.hr header.b=A2rYCXgU; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sartura.hr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sartura.hr
+	s=arc-20240116; t=1765975468; c=relaxed/simple;
+	bh=iIZdyaFeufX+pK/TCh2sfB420+8ZkR4Z6GTvQhuGUk8=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=WEFXSRe+WzDiY6CikqXvx8UQu1mwTNeFkt+BKQ1o65xD6hU9umr+vbVjKGp4q32lpd84yxR+V+/DhOShGm2v+m6GRe3W8z6NMaWFyXZyGn3Mqe1MuF5NTLvpAR3YvtFL3+Hjde1N/xK9rjh6r8t+nkMLDBaeZq+7zBT+h5vFVRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=QHodV+re; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sartura.hr header.i=@sartura.hr header.b="A2rYCXgU"
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-b79f98adea4so829826166b.0
-        for <linux-clk@vger.kernel.org>; Wed, 17 Dec 2025 04:33:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sartura.hr; s=sartura; t=1765974835; x=1766579635; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=s8GEKXnaSXfLaP2KVal8xoX7Yub2x5YeO61XyI9SmwQ=;
-        b=A2rYCXgUYr9ALJpNgKYHWr7vJr+BFYlLRilkjQiry5X9M3LQQ88mX4hFh1RagqJ6lZ
-         uLtt7f7uVrILg7+B+4YELj4FONtVCFqJA7XwsLHNNYAUI6dirg68L6UOFtUVg/pflSZn
-         976Z2ay8EvD2m28JR88LPxi35onEJ8E+FN4FGVILCcgQKmTMqb22K5nAnVyqmLxQDd6O
-         LbFKdJDvIY/Y8kWMUSdGNCbLVuKFxZCVvOnWjidEXE282hJwaojoXOnOsdvcE8Yo8AOE
-         MRm/wjI6RrNDNxlhO3goPl87r39rYRTEA/cEsAWTInxIkFYA/Fm8IQlepQjUUy1g/gnO
-         RIDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765974835; x=1766579635;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=s8GEKXnaSXfLaP2KVal8xoX7Yub2x5YeO61XyI9SmwQ=;
-        b=wWJ4VZhB2w4vwGhY3HhdjpJe0CdgnigoRffdi7Jsw/ZXxG5Djk+0vfHRUnNIrOIaui
-         RPv2/OnDxR/GKrKo1FAc0qqJD1G7hMKsnl/IVyFSABUZY+O0A4OvGnhP5oP8LQEwiCTC
-         wcip7IGp0OyAx/w0n0saWtWmYFgI5kZTaFkOL7zix2WgJbQuvmjTS/TP5pqB/tnv+UqJ
-         wJvy7HdXTIVrpv/Sh/R9gUQRTlah0WXgBJMMheggdHHBC2nqvlZjg1o5XX0RplVR5KBo
-         MLxscyjHYmzQAybHEsCiDhKMxiO0assIzPQ/xSs+yzbRZE6gBdtEu4c/AA4jNfiT1ag+
-         y49A==
-X-Forwarded-Encrypted: i=1; AJvYcCWCAMnj7pliAk19cTWdhAsOq6pm6Kav+y2jo0OUOTosa03/WkhrYps+2Lu+RxYnXzu/5Mlh5R3UqWo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwnVO8WHM1t7c0Kqs2mngo9pjisAIWEXY+Re8ezNGvp2uI9oq6s
-	44d9BOAK6m4M6ZC1GRTQvdKVWIkDc1TnAzoMDG8+bdiP3Co7nWh7lPulP1ejqab8CyLAsiEQDoN
-	3/Msd+h58mDCZV0GuOral9IyhCGhz0Ee3l1CdNRYn9A==
-X-Gm-Gg: AY/fxX7hQ5pDvJzkPzGSSsL4w14mQFZgQO3/ZitcdVoWAjMeupPHymhz9kcESiqabWA
-	QPUV9rHW9JDp1r9f/vkkVA6epJeZ9g8YisYixoqr5BSbg/D3wxnn7reu6l9b6oBGyqIITzMACaW
-	IEkGYRLElaq4wZ6F7SsFOqFzvg+2Rid/Obh4q1nkphOGlPvSqRWo3EWqdirqNcXwPSX8eI+91zA
-	eujV7wUGbl5kI1pgFiY7uFxdzsxHYJrDWe+yYOeMf3TqLuf25cYI70ZUXkbZwnMazI+7Yh1SgrM
-	NBpRXOm9KztlAlRfNoNsF96syNM0NBhTmhh8osYcfGcIa/UH1+Ei
-X-Google-Smtp-Source: AGHT+IE7Hjde/+kkViqYv1A0LhGo3fNDzXkWHEO+dWmCgW+32Gp4be+4LUgDpSNymwFzE86qvkEGL0RYLcWs3u76qoo=
-X-Received: by 2002:a17:907:3d43:b0:b7c:e320:5250 with SMTP id
- a640c23a62f3a-b7d238ebd71mr1711209066b.7.1765974834580; Wed, 17 Dec 2025
- 04:33:54 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="QHodV+re"
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20251217124420epoutp029c156a676ab45f8216463e6b1c4bc92a~CAVMx5qH10485204852epoutp02M
+	for <linux-clk@vger.kernel.org>; Wed, 17 Dec 2025 12:44:20 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20251217124420epoutp029c156a676ab45f8216463e6b1c4bc92a~CAVMx5qH10485204852epoutp02M
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1765975460;
+	bh=uKzEm9PCAMc/zZKdtRrga2/5a5ppxdX40J7ntSJOBTY=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=QHodV+rePxcHT2AfUJ5tgUpaf+erfVcd6JeQ1GHAE+lBlO/BFbHG0nIecQXXfPOS4
+	 VEqy1YB4DYx098hV8hwKX+wird1M0i0tthwtg0V57WFxevP096t4BbEyDBODhxIE/2
+	 fXym/Y/Y6uvw+V4I871z/qBGPrZT4IdAodn46PRI=
+Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
+	20251217124419epcas5p434dc74c355eda3f40ba288e5b92a9ad9~CAVLdnpF82366923669epcas5p4x;
+	Wed, 17 Dec 2025 12:44:19 +0000 (GMT)
+Received: from epcas5p3.samsung.com (unknown [182.195.38.91]) by
+	epsnrtp02.localdomain (Postfix) with ESMTP id 4dWYQV2RYDz2SSKb; Wed, 17 Dec
+	2025 12:44:18 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20251217124417epcas5p337b4252e357397f5b2c9d0ad4ea6ab66~CAVKHP8c-1639116391epcas5p3C;
+	Wed, 17 Dec 2025 12:44:17 +0000 (GMT)
+Received: from INBRO002756 (unknown [107.122.3.168]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20251217124414epsmtip17b0220deca35a595dc0943e5bd78b27b~CAVGu3Chi1017810178epsmtip1G;
+	Wed, 17 Dec 2025 12:44:14 +0000 (GMT)
+From: "Alim Akhtar" <alim.akhtar@samsung.com>
+To: "'Raghav Sharma'" <raghav.s@samsung.com>, <krzk@kernel.org>,
+	<s.nawrocki@samsung.com>, <cw00.choi@samsung.com>,
+	<mturquette@baylibre.com>, <sboyd@kernel.org>, <robh@kernel.org>,
+	<conor+dt@kernel.org>, <sunyeal.hong@samsung.com>, <shin.son@samsung.com>
+Cc: <linux-samsung-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <chandan.vn@samsung.com>,
+	<dev.tailor@samsung.com>, <karthik.sun@samsung.com>
+In-Reply-To: <20251119114744.1914416-2-raghav.s@samsung.com>
+Subject: RE: [PATCH 1/3] dt-bindings: clock: exynosautov920: add MFD clock
+ definitions
+Date: Wed, 17 Dec 2025 18:14:12 +0530
+Message-ID: <139901dc6f52$dba09d50$92e1d7f0$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251215163820.1584926-1-robert.marko@sartura.hr>
- <20251215163820.1584926-4-robert.marko@sartura.hr> <202512161628415e9896d1@mail.local>
- <CA+HBbNFG+xNokn5VY5G6Cgh41NZ=KteRi0D9c0B15xb77mzv8w@mail.gmail.com>
- <202512161726449fe42d71@mail.local> <20251216-underarm-trapped-626f16d856f5@spud>
- <2025121622404642e6f789@mail.local>
-In-Reply-To: <2025121622404642e6f789@mail.local>
-From: Robert Marko <robert.marko@sartura.hr>
-Date: Wed, 17 Dec 2025 13:33:42 +0100
-X-Gm-Features: AQt7F2rRCO2ytZ0VdvYzTGe4b0Ox8AKF-v29YqVKrXuogSLDfcjlg9rn0S9yxlg
-Message-ID: <CA+HBbNGPWcwzCSGbMCU-n8Y+g6SjBSKcS7p6Mmrn3gFCWCSCeA@mail.gmail.com>
-Subject: Re: [PATCH v2 04/19] dt-bindings: arm: move AT91 to generic Microchip binding
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: Conor Dooley <conor@kernel.org>, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, nicolas.ferre@microchip.com, claudiu.beznea@tuxon.dev, 
-	Steen.Hegelund@microchip.com, daniel.machon@microchip.com, 
-	UNGLinuxDriver@microchip.com, herbert@gondor.apana.org.au, 
-	davem@davemloft.net, vkoul@kernel.org, linux@roeck-us.net, 
-	andi.shyti@kernel.org, lee@kernel.org, andrew+netdev@lunn.ch, 
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, linusw@kernel.org, 
-	olivia@selenic.com, radu_nicolae.pirea@upb.ro, richard.genoud@bootlin.com, 
-	gregkh@linuxfoundation.org, jirislaby@kernel.org, mturquette@baylibre.com, 
-	sboyd@kernel.org, richardcochran@gmail.com, wsa+renesas@sang-engineering.com, 
-	romain.sioen@microchip.com, Ryan.Wanner@microchip.com, 
-	lars.povlsen@microchip.com, tudor.ambarus@linaro.org, 
-	kavyasree.kotagiri@microchip.com, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-crypto@vger.kernel.org, dmaengine@vger.kernel.org, 
-	linux-hwmon@vger.kernel.org, linux-i2c@vger.kernel.org, 
-	netdev@vger.kernel.org, linux-gpio@vger.kernel.org, linux-spi@vger.kernel.org, 
-	linux-serial@vger.kernel.org, linux-usb@vger.kernel.org, 
-	linux-clk@vger.kernel.org, mwalle@kernel.org, luka.perkov@sartura.hr
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQH7EhboaEaVd13SrnoN6ZCnkjrAPADo0L1uAwo319O0yOkH8A==
+Content-Language: en-us
+X-CMS-MailID: 20251217124417epcas5p337b4252e357397f5b2c9d0ad4ea6ab66
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20251119113927epcas5p15154cb4a7824e9ca65ac18842b68d785
+References: <20251119114744.1914416-1-raghav.s@samsung.com>
+	<CGME20251119113927epcas5p15154cb4a7824e9ca65ac18842b68d785@epcas5p1.samsung.com>
+	<20251119114744.1914416-2-raghav.s@samsung.com>
 
-On Tue, Dec 16, 2025 at 11:40=E2=80=AFPM Alexandre Belloni
-<alexandre.belloni@bootlin.com> wrote:
->
-> On 16/12/2025 19:21:27+0000, Conor Dooley wrote:
-> > On Tue, Dec 16, 2025 at 06:26:44PM +0100, Alexandre Belloni wrote:
-> > > On 16/12/2025 17:56:20+0100, Robert Marko wrote:
-> > > > On Tue, Dec 16, 2025 at 5:29=E2=80=AFPM Alexandre Belloni
-> > > > <alexandre.belloni@bootlin.com> wrote:
-> > > > >
-> > > > > On 15/12/2025 17:35:21+0100, Robert Marko wrote:
-> > > > > > Create a new binding file named microchip.yaml, to which all Mi=
-crochip
-> > > > > > based devices will be moved to.
-> > > > > >
-> > > > > > Start by moving AT91, next will be SparX-5.
-> > > > >
-> > > > > Both lines of SoCs are designed by different business units and a=
-re
-> > > > > wildly different and while both business units are currently owne=
-d by
-> > > > > the same company, there are no guarantees this will stay this way=
- so I
-> > > > > would simply avoid merging both.
-> > > >
-> > > > Hi Alexandre,
-> > > >
-> > > > The merge was requested by Conor instead of adding a new binding fo=
-r LAN969x [1]
-> > > >
-> > > > [1] https://patchwork.kernel.org/project/linux-arm-kernel/patch/202=
-51203122313.1287950-2-robert.marko@sartura.hr/
-> > > >
-> > >
-> > > I would still keep them separate, SparX-5 is closer to what is
-> > > devicetree/bindings/mips/mscc.txt than to any atmel descended SoCs.
-> >
-> > If you don't want the sparx-5 stuff in with the atmel bits, that's fine=
-,
-> > but I stand over my comments about this lan969x stuff not getting a fil=
-e
-> > of its own.
-> > Probably that means putting it in the atmel file, alongside the lan966x
-> > boards that are in there at the moment.
->
-> I'm fine with this.
+Hi Raghav
 
-Works for me, will switch to it in v3.
+> -----Original Message-----
+> From: Raghav Sharma <raghav.s@samsung.com>
+> Sent: Wednesday, November 19, 2025 5:18 PM
+> To: krzk@kernel.org; s.nawrocki@samsung.com; cw00.choi@samsung.com;
+> alim.akhtar@samsung.com; mturquette@baylibre.com; sboyd@kernel.org;
+> robh@kernel.org; conor+dt@kernel.org; sunyeal.hong@samsung.com;
+> shin.son@samsung.com
+> Cc: linux-samsung-soc@vger.kernel.org; linux-clk@vger.kernel.org;
+> devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
+> kernel@vger.kernel.org; chandan.vn@samsung.com;
+> dev.tailor@samsung.com; karthik.sun@samsung.com; Raghav Sharma
+> <raghav.s@samsung.com>
+> Subject: [PATCH 1/3] dt-bindings: clock: exynosautov920: add MFD clock
+> definitions
+> 
+> Add device tree clock binding definitions for CMU_MFD
+> 
+> Signed-off-by: Raghav Sharma <raghav.s@samsung.com>
+> ---
 
-Regards,
-Robert
-
->
-> --
-> Alexandre Belloni, co-owner and COO, Bootlin
-> Embedded Linux and Kernel engineering
-> https://bootlin.com
+Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
 
 
-
---=20
-Robert Marko
-Staff Embedded Linux Engineer
-Sartura d.d.
-Lendavska ulica 16a
-10000 Zagreb, Croatia
-Email: robert.marko@sartura.hr
-Web: www.sartura.hr
