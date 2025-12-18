@@ -1,87 +1,108 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A16E52FD1D6;
-	Thu, 18 Dec 2025 03:03:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B37291DFF0;
+	Thu, 18 Dec 2025 07:38:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766027034; cv=none; b=DxwUpxi9UzQ6KEM8koL8xWf97U9ZzRBgQPHYmsxK3cuyarM3MyhEHqCru7bgtkADoHhReV2b2Jw9f01R6T1sDGNTpzDl7OeJD3ufXMtmMAA/bsxHmgud5MpMVO5OdA0iCgxHkJ9J81pGQ/o3uS8COtIZb/SOH01rNQfMSvFX7mg=
+	t=1766043514; cv=none; b=YJl1awM+qTsP+0UbuPiEEvsjVns+92WYVDv1BuJwikFPi0+RpmLU0YCH2V/y9l7dA3mDNzlXo3gJhluHa+UQJvSOAjd2+THGyw1sP3Donf2+OeOZkXY6sUz/U9bibRKt0Qhhfpt7oCtTeWllf+YSx71Il5PXjQNJJPZqnlXg0qs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766027034; c=relaxed/simple;
-	bh=X0xOLhoU7bqfrQbZ4zwbsy967qNOdyTqGoenxYDjTnU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GAMTrVChXnUmQOF3oEa7mq5niedOKNdCSyMV++8snF0j1yTtj0v1RJcx3wDMCibM5CkBx+rK80+AuTvYdIBUl8Wi0+mbbeUfx/1UK4DJylWRKpMMdR8E2VUTibVEUp8+tlX2CzQQ+To55nk9LraFQTpATCG2tfysMelCf4VIoCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cm9tv9rQ; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cm9tv9rQ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DAD6C4CEF5;
-	Thu, 18 Dec 2025 03:03:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1766027034;
-	bh=X0xOLhoU7bqfrQbZ4zwbsy967qNOdyTqGoenxYDjTnU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Cm9tv9rQYa9HqeFOWCWZqQpTmyZz1j+1xiqWBnySN4elZP/ZcpPK6pFP4Yzkjx0hU
-	 4E4ZrWJRXeARX2RqX+COIVq1VbBsDcPtwxQLapbm01eKcpdlVNVz2zhcCT1jPiPBRt
-	 HHu/RrQPowMlIqdyH8erAj/VAROyEWz1QziOxJiMwYyimJI5HIs4JnS+XLC4GSWSDl
-	 neGxpQdSDNwpBRR1N2JIAUtXkt/iLVyBiUCPTOXjyDsMzEpuQjCbWjRp4aPtgL9/gL
-	 w1xzxS9Bs35IPILZsBgqlIHMN5CmcsyeOIo4cRDRN1in0A816UUBN0hv71vuMdKhue
-	 +mYhdzeS6Ac7g==
-From: Bjorn Andersson <andersson@kernel.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Taniya Das <taniya.das@oss.qualcomm.com>
-Cc: Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
-	Imran Shaik <imran.shaik@oss.qualcomm.com>,
-	Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
-	linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	Abel Vesa <abelvesa@kernel.org>
-Subject: Re: [PATCH v5 0/4] Add support for Clock controllers for Kaanapali
-Date: Wed, 17 Dec 2025 21:11:53 -0600
-Message-ID: <176602747924.229487.14558603114009132510.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.52.0
-In-Reply-To: <20251209-gcc_kaanapali-v3-v5-0-3af118262289@oss.qualcomm.com>
-References: <20251209-gcc_kaanapali-v3-v5-0-3af118262289@oss.qualcomm.com>
+	s=arc-20240116; t=1766043514; c=relaxed/simple;
+	bh=sRgfXaQuFlOWGGsUFkXlWrcFv4yUxkFPAAiCdLTWVoY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i+Z4HHJI+gtOuRFBjiC/goe1zsNnGhYUEnsCuwYkNjVk+HbiQQcOUODHui55U5pTxokVSuy4vs1nRafkVTl+OuBqGS0fNvB4TGJBCtcKIThXLwa3bwPJ0dIxBStNxAIB9lUX6uxhkCt4oWaRof8UmPX4b+jVcyG4weBynj9H7oc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Received: from localhost (unknown [116.232.18.222])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dlan)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id 84644340D96;
+	Thu, 18 Dec 2025 07:38:29 +0000 (UTC)
+Date: Thu, 18 Dec 2025 15:38:18 +0800
+From: Yixun Lan <dlan@gentoo.org>
+To: Inochi Amaoto <inochiama@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Haylen Chu <heylenay@4d2.org>,
+	Alex Elder <elder@riscstar.com>,
+	Troy Mitchell <troy.mitchell@linux.spacemit.com>,
+	Charles Mirabile <cmirabil@redhat.com>,
+	Brian Masney <bmasney@redhat.com>,
+	Akhilesh Patil <akhilesh@ee.iitb.ac.in>, linux-clk@vger.kernel.org,
+	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
+	linux-kernel@vger.kernel.org, Longbin Li <looong.bin@gmail.com>
+Subject: Re: [PATCH v3] clk: spacemit: Fix module build for spacemit common
+ ccu driver
+Message-ID: <20251218073818-GYA1939847@gentoo.org>
+References: <20251218004227.221861-1-inochiama@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251218004227.221861-1-inochiama@gmail.com>
 
+Hi Inochi,
 
-On Tue, 09 Dec 2025 14:19:23 +0530, Taniya Das wrote:
-> Add support for Global clock controller(GCC), TCSR and the RPMH clock
-> controller for the Qualcomm Kaanapali SoC.
+On 08:42 Thu 18 Dec     , Inochi Amaoto wrote:
+> For build spacemit common clock driver as a module, the build
+> process require MODULE_LICENSE()/MODULE_DESCRIPTION() globally
+> and EXPORT_SYMBOL() for every exposed symbol. Otherwise, the
+> build will fail.
 > 
-> Kaanapali(Snapdragon SoC from Qualcomm):
-> https://www.qualcomm.com/products/mobile/snapdragon/smartphones/snapdragon-8-series-mobile-platforms/snapdragon-8-elite-gen-5
+> Add these missing hints, so the driver can be built as a module.
 > 
-> Changes in v5:
->  - update the commit message for the glymur clock pmic resources to
->    describe the problem statement. [Dmitry].
->  - Move the clock definitions for clk1 & clk2 before the clk3.
->  - Add RB-by tag from [Konrad] for RPHCC for Glymur and Kaanapali
->  - Link to v4: https://lore.kernel.org/r/20251126-gcc_kaanapali-v3-v4-0-0fe73d6898e9@oss.qualcomm.com
+> Fixes: 1b72c59db0ad ("clk: spacemit: Add clock support for SpacemiT K1 SoC")
+> Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
+> ---
+>  drivers/clk/spacemit/ccu-k1.c  | 1 +
+>  drivers/clk/spacemit/ccu_ddn.c | 1 +
+>  drivers/clk/spacemit/ccu_mix.c | 9 +++++++++
+>  drivers/clk/spacemit/ccu_pll.c | 5 +++++
+>  4 files changed, 16 insertions(+)
 > 
-> [...]
+[snip]..
+> diff --git a/drivers/clk/spacemit/ccu_pll.c b/drivers/clk/spacemit/ccu_pll.c
+> index d92f0dae65a4..7389202c4831 100644
+> --- a/drivers/clk/spacemit/ccu_pll.c
+> +++ b/drivers/clk/spacemit/ccu_pll.c
+> @@ -7,6 +7,7 @@
+>  #include <linux/clk-provider.h>
+>  #include <linux/math.h>
+>  #include <linux/regmap.h>
+> +#include <linux/module.h>
+>  
+>  #include "ccu_common.h"
+>  #include "ccu_pll.h"
+> @@ -157,3 +158,7 @@ const struct clk_ops spacemit_ccu_pll_ops = {
+>  	.determine_rate = ccu_pll_determine_rate,
+>  	.is_enabled	= ccu_pll_is_enabled,
+>  };
+> +EXPORT_SYMBOL_NS_GPL(spacemit_ccu_pll_ops, "CLK_SPACEMIT");
+> +
+..
+> +MODULE_DESCRIPTION("SpacemiT CCU common clock driver");
+> +MODULE_LICENSE("GPL");
+can you creat a separate file ccu_commom.c, and put above change there?
 
-Applied, thanks!
+the reason I request this is that I'm trying to refactor the driver and
+will extract common code into file ccu_common.c, with this coming change,
+it's more proper to do this adjustment, which will avoid future code movement, 
+refer the link [1] of the review of K3 clock for why I'm requesting this
 
-[1/4] clk: qcom: rpmh: Update the clock suffix for Glymur
-      commit: 3dadc1dc5e85cefc7a2f1c9d428b5622fda12d3d
-[2/4] clk: qcom: rpmh: Add support for Kaanapali rpmh clocks
-      commit: acabfd13859dfa343aa5289f7c2d55fddbaf346f
-[3/4] clk: qcom: Add TCSR clock driver for Kaanapali
-      commit: e5682c953f5a9fbaad060ea000beff80f11c4048
-[4/4] clk: qcom: Add support for Global clock controller on Kaanapali
-      commit: d1919c375f211a2aeef898496b6f3efbefebf7f5
+to Stephen, if you have no objection, I'd hope this patch can be taken via v6.19-rc2-fixes,
+and then I will do other follow-up clock patches on top of it, I can send a PR for this fix..
 
-Best regards,
+if with above change, please add my R-b
+Reviewed-by: Yixun Lan <dlan@gentoo.org>
+
+
+Link: https://lore.kernel.org/all/aTo8sCPpVM1o9PKX@pie/ [1]
 -- 
-Bjorn Andersson <andersson@kernel.org>
+
+Yixun Lan (dlan)
