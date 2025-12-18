@@ -1,119 +1,105 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7162345751;
-	Thu, 18 Dec 2025 15:30:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85E7534CFB3
+	for <linux-clk@vger.kernel.org>; Thu, 18 Dec 2025 15:35:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766071850; cv=none; b=IbMIqIMbpEY9nzxV+2yvXonza8+Ql9+sqiCF+zgU6A2WEn3US1H2h/PmHyNREE34gC3DbJnc04RKw/fmeLd1rW+gJRb/oz4AeVqM7WJVB5N9xdDobWnVS5OJrUY6MleyPqBw5dqZ6GKPs2EpBBDitHSB1IYN0CwRVqpxOgugdCY=
+	t=1766072148; cv=none; b=XPtaGgFnskTNq/YZfcTny3Bi+/TIuGvh6hVr1SPxdbeFkYnpBxv7oSM0dtHS/d0+PyJ59grqofG7aBg9Lz520kiVwyd9XGTXalXYhSY17xAgr722z9BJ6RSIz4WvNWERfmmfI5AZqbZjbgSy5Hpd3aIUG2rIp2vYpZmrRFIxCh0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766071850; c=relaxed/simple;
-	bh=tbLa0xaQ57UsuyDLZCj0v8PQPeQ+P+ZT0BNrFZeFtPs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aAMPnhUDMH29JKGDPtW6HLWQHqws16X85vzKy99D4HQqLbmFgPLCDMkQW6HPkIoXvPT3ZJ92oWyB+3pv1LODdsgm/NlbORVCVgooA6EFSbqSdAeFhxeMEJmLeU7SfZ6U+XQA1AcbS7K3KraeTItrwvwk4dT9QRRURT0mh9lltDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GYd1NHPk; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GYd1NHPk"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15E63C4CEFB;
-	Thu, 18 Dec 2025 15:30:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1766071850;
-	bh=tbLa0xaQ57UsuyDLZCj0v8PQPeQ+P+ZT0BNrFZeFtPs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=GYd1NHPktqVm1ehGa6mrAVa1n+PQfGh/VW9rfLYuaRb224pJRQPWvGll23enL8vUA
-	 oaPE/AxoKhsJwbQYoyxxB03FNq247bu+oQnA9+4HAkXT/3k2XqLs4n8ZYAQTLfhK4l
-	 fWOsOESgslT3auyp6V7I86Oe+XZZryCDm32KWDBZyQZiRYwpKDh2TzEL7Hzdtb6sxX
-	 VWoRdowHg76SS+sOuQwjxGbI+OdBcgiJQqoFBH0KlhZiN3tGJAFZkYX0LeraW0BMIV
-	 NvpCYTgXsoL4CvJ3NWAMJOgKOl436vMlVX4g4aE4+FjFfVb7PmQuplX7p/y498bPeg
-	 SOvTpkmQCch2A==
-Message-ID: <38f097cb-5329-4b91-b1a8-3eb5fed05ad4@kernel.org>
-Date: Thu, 18 Dec 2025 16:30:41 +0100
+	s=arc-20240116; t=1766072148; c=relaxed/simple;
+	bh=azzl09Wx7rt0wPbIl6zF794mRt/KoBI4Cg5cx5Yj+oY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=O+GYavJxChQkmvxFlGK5NHoSdmdUQXD4HizYeyA3aaWr22/eBjIHiWyDEox0M4NTsGIpx1r22goo0f/Srz6e/p/6QL43GWxnNW2qOm7tfzeg5iDl/RGUUEkmexPG00BDk8o7/4Ro3P4SJ0HanwvSBwhh+FOW1KjrmpbHhHYkrXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-8b9f73728e8so78785085a.0
+        for <linux-clk@vger.kernel.org>; Thu, 18 Dec 2025 07:35:47 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1766072146; x=1766676946;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mXHlTDVJTF5vvWPU3rkwyK6a19VuMS7dqDcJr9Xe7V4=;
+        b=HZXGemet2LeB5oJ6jjXNC1Lt3AZUf5AQAl6+/yrLj5psExH+qXNci3od98rT/Tup9F
+         Q0LN99VuGskKcMKRdE8Z9qQtB3318MlqF2lvZcZFjtj9oz6GGuC6sYnpe40jOxqoC/ab
+         yZzocIJjcLZl5wKn+vQ6maFf8TWMbOPFIVmsOMn/B977z5q2yIpDATkMdf2djOgaaoUm
+         eG2cOV2FjQfYFRR5WdLNDJ9PmG/dyrCOVhfeMsSm+kA9OoaAa3JtD0v8bFY3KSbw1Ppd
+         vqLGWrYsUrExAoAxdlwD5MX3huDGBJqwq5fjOspZJMGX1DH0p0DE4WsB89loM/ctsY0y
+         hMMg==
+X-Forwarded-Encrypted: i=1; AJvYcCUnc+bQ76c2oBdkHPuL5rk9/6/l5JLkokT/EI+Eb5kPIouc1HDDzRdkdU5GJywpLxG8E3XiEPkXtic=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxDS1K9WFvkn0ZP28LZRKQgz5zdZGDcMzr6/3aZJtxFiFSBpy4H
+	n2D/Cecm0jo0ksZwsr5GIPJ3+td34zMlAKBswvWBK8LiylvWyqq545aHGkn4hrrX
+X-Gm-Gg: AY/fxX4e2IswdHKEVEjAPAL/w9Qk7vpH5PKPPC4vBi2x9qX+AKLeiC76YRDEXLalO/S
+	NcFqUa44UXYEsMHwDrHeKabVt3ZjRAWEpVJY7VwNT+ch95qjMb9RrEkFMQ3vBsfZN3Ecuxn2AOV
+	Kk7l5FV35kgBcWQ7AFtR6GOpKHHdH090dvLe5jj1L6mNOakU8ii4VmJhZQxsRaVe7jkHVkky/5R
+	m42MkzTjFW1uyM8S4LHkGBty4nmbk7Xw1PzKsuWKSJGbuOaNhXJUjPYSo02w20KceGxOQvw47mf
+	mP6atbmmaMP09T4LcfKjWxRotv9JAyTGAB1d88Gyha5d+bHEoSClbkCD6+rdNNghmfxHkTyv9V5
+	GM8yI8iV4zqXuW0GfPXf4cFSHNVBD9yD3aHd72apcfGfuW4GkmEyDg25FtE89kWXUJdaO8IvFQ9
+	zwCZbZ4qNKlXJ6y8AsGXOapN12HDExtdoIaj/y17CzxnFbzcOlQZgQ
+X-Google-Smtp-Source: AGHT+IE+bpUFdhYtvKuMno3lQwHGInl+TzWpFBi30pZQbX9kYYi5eP2x/xdRfNVU+nVb2UTYGZWJMw==
+X-Received: by 2002:a05:620a:1910:b0:8b2:f191:2b3a with SMTP id af79cd13be357-8c08faaf173mr3073685a.53.1766072146278;
+        Thu, 18 Dec 2025 07:35:46 -0800 (PST)
+Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com. [209.85.222.181])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8beebb4a1fcsm185095085a.55.2025.12.18.07.35.46
+        for <linux-clk@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 18 Dec 2025 07:35:46 -0800 (PST)
+Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-8bb6a27d3edso70818685a.3
+        for <linux-clk@vger.kernel.org>; Thu, 18 Dec 2025 07:35:46 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWr/L8lc2nBHPKfeyNVDonwFRiM4n04ZJpWcflCcFFzuY55GQVeIh/B+CcfMYk7zuVZwW1dLXLtuSA=@vger.kernel.org
+X-Received: by 2002:a05:6102:14a1:b0:5df:af0f:308c with SMTP id
+ ada2fe7eead31-5e827854ca8mr8511390137.38.1766071730637; Thu, 18 Dec 2025
+ 07:28:50 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 11/13] MIPS: Add Mobileye EyeQ6Lplus evaluation board dts
-To: =?UTF-8?Q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>,
- Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
- Gregory CLEMENT <gregory.clement@bootlin.com>,
- =?UTF-8?Q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>,
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
- Linus Walleij <linusw@kernel.org>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- Tawfik Bayouk <tawfik.bayouk@mobileye.com>, linux-mips@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
-References: <20251217-eyeq6lplus-v1-0-e9cdbd3af4c2@bootlin.com>
- <20251217-eyeq6lplus-v1-11-e9cdbd3af4c2@bootlin.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20251217-eyeq6lplus-v1-11-e9cdbd3af4c2@bootlin.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20251218152058.1521806-1-alexander.stein@ew.tq-group.com>
+In-Reply-To: <20251218152058.1521806-1-alexander.stein@ew.tq-group.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 18 Dec 2025 16:28:39 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdUkghCNb96J38hbEZ8Jct6m2MPvnPumGp-y_dPfPW9eAg@mail.gmail.com>
+X-Gm-Features: AQt7F2qLc82Kbfmr6BXfh2mc72SoQ2IFZ770WV9-Gsf5ezj4RJc3ZYutw9_Yvk4
+Message-ID: <CAMuHMdUkghCNb96J38hbEZ8Jct6m2MPvnPumGp-y_dPfPW9eAg@mail.gmail.com>
+Subject: Re: [PATCH 0/6] Support TQMa8QM
+To: Alexander Stein <alexander.stein@ew.tq-group.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Peter Chen <peter.chen@kernel.org>, 
+	Pawel Laszczak <pawell@cadence.com>, Roger Quadros <rogerq@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Magnus Damm <magnus.damm@gmail.com>, Marek Vasut <marex@denx.de>, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-usb@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux@ew.tq-group.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 17/12/2025 14:36, Benoît Monin wrote:
-> +
-> +&spi0 {
-> +	pinctrl-0 = <&spi0_pins>;
-> +	pinctrl-names = "default";
-> +	status = "okay";
-> +	spidev@0 {
-> +		compatible = "lwn,bk4-spi";
+Hi Alexander,
 
-NAK, you are not operating an excavator here.
+On Thu, 18 Dec 2025 at 16:22, Alexander Stein
+<alexander.stein@ew.tq-group.com> wrote:
+> this series adds support for TQ's TQMa8QM. The first 3 patches are prepatory:
+> 1. Add support for clock-output-names for clk-renesas-pcie. This is necessary
+> as clk-imx8qxp-lpcg.c (driver for phyx1 phyx2 clock gating) reqiures that
+> property on the parent clock.
 
-Don't invent hardware.
+Hmm, clock consumers should have no business with the names used by
+clock providers, even less so whether those names are specified in DT
+or not.
 
+Gr{oetje,eeting}s,
 
-Best regards,
-Krzysztof
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
