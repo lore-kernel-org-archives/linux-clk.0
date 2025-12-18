@@ -1,61 +1,50 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D97804CB5B;
-	Thu, 18 Dec 2025 03:03:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A16E52FD1D6;
+	Thu, 18 Dec 2025 03:03:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766027030; cv=none; b=U2bOrATGPXJhS/KBnMrERn4bUJQr9vslu9Qem1eTB+YBLfZKdKmI4D05m236++C2mxUZDs9qiS1aKEGe67cPqkmY1CsuB+Pn60p54qPuFLnOYhlugx9Ny0ClH/YgkSz83US6GVYL4q139AI9jzS9KimQBx4vhYr4DkigjFqiCSY=
+	t=1766027034; cv=none; b=DxwUpxi9UzQ6KEM8koL8xWf97U9ZzRBgQPHYmsxK3cuyarM3MyhEHqCru7bgtkADoHhReV2b2Jw9f01R6T1sDGNTpzDl7OeJD3ufXMtmMAA/bsxHmgud5MpMVO5OdA0iCgxHkJ9J81pGQ/o3uS8COtIZb/SOH01rNQfMSvFX7mg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766027030; c=relaxed/simple;
-	bh=Z8wZk5rgr4d0YHZOf5dLcf+n3IwTzI+IaHFFdyXZvbM=;
+	s=arc-20240116; t=1766027034; c=relaxed/simple;
+	bh=X0xOLhoU7bqfrQbZ4zwbsy967qNOdyTqGoenxYDjTnU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OSYYXe71Y1kCIqlUg+YR84eFLRxP/BLA2MXnshrVIg+trpCWXI/zDSsyvpMSZBLBLxFYvGc98au9vVdorwltRpUVu3FpxUXGS1N+pDEYaZR5/ZPqa0srZ3egJnG/2qTTBrrE1av8EBpiBq6yeI8hIAjRxH1GvRSp3byiR6elYwE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CtVeJcmC; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=GAMTrVChXnUmQOF3oEa7mq5niedOKNdCSyMV++8snF0j1yTtj0v1RJcx3wDMCibM5CkBx+rK80+AuTvYdIBUl8Wi0+mbbeUfx/1UK4DJylWRKpMMdR8E2VUTibVEUp8+tlX2CzQQ+To55nk9LraFQTpATCG2tfysMelCf4VIoCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cm9tv9rQ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CtVeJcmC"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F093DC4CEF5;
-	Thu, 18 Dec 2025 03:03:46 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cm9tv9rQ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DAD6C4CEF5;
+	Thu, 18 Dec 2025 03:03:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1766027028;
-	bh=Z8wZk5rgr4d0YHZOf5dLcf+n3IwTzI+IaHFFdyXZvbM=;
+	s=k20201202; t=1766027034;
+	bh=X0xOLhoU7bqfrQbZ4zwbsy967qNOdyTqGoenxYDjTnU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=CtVeJcmC/ST0wfuLrZze3D8l0VQIYQfACBjDkpSfsN0ki/SOnDHAbOw2DBFK8uRNN
-	 q0I6MG+QYwb9BJeKDSjPgGbUljuihnrxqpHoW2Mne9PUV6eHHZLEtaj6DmYAq0m0Ri
-	 CcR2ygjgDL+S1Vhb32nSH1r3cZGvPabVoy+uWUwrbO2kT/12t1/9KPyyZaZXXIyHbD
-	 9s62E1faqF3ecQBbiZIkv8zC5JLyCFiA1wmd0qkipkGiCmxqZ23fUi2qOgtdS5ay2U
-	 Gkc6UDV/M2V+uoctCu+GDSYZLKZayod6TK1oEZjwNZ8UV02A3Bz34HPeD58RJw77xv
-	 8jcAZ2m80cMAQ==
+	b=Cm9tv9rQYa9HqeFOWCWZqQpTmyZz1j+1xiqWBnySN4elZP/ZcpPK6pFP4Yzkjx0hU
+	 4E4ZrWJRXeARX2RqX+COIVq1VbBsDcPtwxQLapbm01eKcpdlVNVz2zhcCT1jPiPBRt
+	 HHu/RrQPowMlIqdyH8erAj/VAROyEWz1QziOxJiMwYyimJI5HIs4JnS+XLC4GSWSDl
+	 neGxpQdSDNwpBRR1N2JIAUtXkt/iLVyBiUCPTOXjyDsMzEpuQjCbWjRp4aPtgL9/gL
+	 w1xzxS9Bs35IPILZsBgqlIHMN5CmcsyeOIo4cRDRN1in0A816UUBN0hv71vuMdKhue
+	 +mYhdzeS6Ac7g==
 From: Bjorn Andersson <andersson@kernel.org>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
-	Vinod Koul <vkoul@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Dmitry Baryshkov <lumag@kernel.org>,
-	Taniya Das <quic_tdas@quicinc.com>,
-	Melody Olvera <quic_molvera@quicinc.com>,
-	Ajit Pandey <quic_ajipan@quicinc.com>,
-	Imran Shaik <quic_imrashai@quicinc.com>,
-	Luca Weiss <luca.weiss@fairphone.com>,
-	Rajendra Nayak <quic_rjendra@quicinc.com>,
-	Sibi Sankar <sibi.sankar@oss.qualcomm.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	Abel Vesa <abelvesa@kernel.org>,
-	Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>
+	Taniya Das <taniya.das@oss.qualcomm.com>
 Cc: Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
 	Imran Shaik <imran.shaik@oss.qualcomm.com>,
-	Taniya Das <taniya.das@oss.qualcomm.com>,
+	Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
 	linux-arm-msm@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-Subject: Re: [PATCH v2 0/8] clk: qcom: gcc: Update the SDCC RCGs to use shared_floor_ops
-Date: Wed, 17 Dec 2025 21:11:48 -0600
-Message-ID: <176602747923.229487.16213456632068191124.b4-ty@kernel.org>
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	Abel Vesa <abelvesa@kernel.org>
+Subject: Re: [PATCH v5 0/4] Add support for Clock controllers for Kaanapali
+Date: Wed, 17 Dec 2025 21:11:53 -0600
+Message-ID: <176602747924.229487.14558603114009132510.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.52.0
-In-Reply-To: <20251127-sdcc_shared_floor_ops-v2-0-473afc86589c@oss.qualcomm.com>
-References: <20251127-sdcc_shared_floor_ops-v2-0-473afc86589c@oss.qualcomm.com>
+In-Reply-To: <20251209-gcc_kaanapali-v3-v5-0-3af118262289@oss.qualcomm.com>
+References: <20251209-gcc_kaanapali-v3-v5-0-3af118262289@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -66,36 +55,32 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Thu, 27 Nov 2025 23:27:35 +0530, Jagadeesh Kona wrote:
-> This series updates the clock ops to clk_rcg2_shared_floor_ops
-> for the SDCC RCGs on SM8450, SM8750, SM4450, SDX75, Milos,
-> X1E80100, QDU1000 and GLYMUR chipsets.
+On Tue, 09 Dec 2025 14:19:23 +0530, Taniya Das wrote:
+> Add support for Global clock controller(GCC), TCSR and the RPMH clock
+> controller for the Qualcomm Kaanapali SoC.
 > 
-> This change is required to ensure RCG is safely parked during
-> disable and new parent configuration is programmed in hardware
-> only when new parent is enabled, to avoid cases where RCG
-> configuration fails to update and overclocking issues.
+> Kaanapali(Snapdragon SoC from Qualcomm):
+> https://www.qualcomm.com/products/mobile/snapdragon/smartphones/snapdragon-8-series-mobile-platforms/snapdragon-8-elite-gen-5
+> 
+> Changes in v5:
+>  - update the commit message for the glymur clock pmic resources to
+>    describe the problem statement. [Dmitry].
+>  - Move the clock definitions for clk1 & clk2 before the clk3.
+>  - Add RB-by tag from [Konrad] for RPHCC for Glymur and Kaanapali
+>  - Link to v4: https://lore.kernel.org/r/20251126-gcc_kaanapali-v3-v4-0-0fe73d6898e9@oss.qualcomm.com
 > 
 > [...]
 
 Applied, thanks!
 
-[1/8] clk: qcom: gcc-sm8450: Update the SDCC RCGs to use shared_floor_ops
-      commit: 4c052c5df93d07e8aa2ce55680f95742f0a08e7a
-[2/8] clk: qcom: gcc-sm8750: Update the SDCC RCGs to use shared_floor_ops
-      commit: 67d7fb1bbdd63eccb9ac6e483e502f88ca9a1e73
-[3/8] clk: qcom: gcc-sm4450: Update the SDCC RCGs to use shared_floor_ops
-      commit: d1fd65ee5555dcfe4b33999b8950d6626cc28d12
-[4/8] clk: qcom: gcc-sdx75: Update the SDCC RCGs to use shared_floor_ops
-      commit: 757ec77514e3e4b345517deef0f5a5152697238e
-[5/8] clk: qcom: gcc-milos: Update the SDCC RCGs to use shared_floor_ops
-      commit: 113fb9649f0d89bfe71dc4e3d98cfc92fda0d73a
-[6/8] clk: qcom: gcc-x1e80100: Update the SDCC RCGs to use shared_floor_ops
-      commit: 988e585fa4d48faccc50a571b569c38ec3bf69c9
-[7/8] clk: qcom: gcc-qdu1000: Update the SDCC RCGs to use shared_floor_ops
-      commit: 0504b96f110f559e130523efeefc8d1d11530c8a
-[8/8] clk: qcom: gcc-glymur: Update the SDCC RCGs to use shared_floor_ops
-      commit: e4dca3e567813cb49e8ffd3b33ec4c6f43c25d10
+[1/4] clk: qcom: rpmh: Update the clock suffix for Glymur
+      commit: 3dadc1dc5e85cefc7a2f1c9d428b5622fda12d3d
+[2/4] clk: qcom: rpmh: Add support for Kaanapali rpmh clocks
+      commit: acabfd13859dfa343aa5289f7c2d55fddbaf346f
+[3/4] clk: qcom: Add TCSR clock driver for Kaanapali
+      commit: e5682c953f5a9fbaad060ea000beff80f11c4048
+[4/4] clk: qcom: Add support for Global clock controller on Kaanapali
+      commit: d1919c375f211a2aeef898496b6f3efbefebf7f5
 
 Best regards,
 -- 
