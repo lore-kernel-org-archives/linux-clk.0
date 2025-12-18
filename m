@@ -1,95 +1,99 @@
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8140C28134F
-	for <linux-clk@vger.kernel.org>; Thu, 18 Dec 2025 18:58:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62C9420B22
+	for <linux-clk@vger.kernel.org>; Thu, 18 Dec 2025 23:37:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766084330; cv=none; b=tEnzcMoQ/Z5VziZUMcrpDZmkmNdHfxaDn1kpr31trcLCMIy7c3RRDtSE8qvgKG2V30bUBP5bKjG3jB12AFnxzi/d1mPqloq724YWbSIA2rReBSeABDMjx4KBCs3oFSO/Jdsy0ex4tvRBwEHXcDO7mE/4LUV5/tcZ/72SxoI7k14=
+	t=1766101047; cv=none; b=XbUuOY4p772iFc5m8yV00O84MjEC2DRMs1bKaftpYwsWOzKGnAgLE6qxzZfpEYBk0vwFld6ksFqdUOVGmNtT8pyIJ11Xw9eESAS/vAcmqrRzVAlY7bQJsJ4Tu8X/hKALIQzlPfitAaRlRxC7vxwKuYJij7txA3qvboipBLnh7Fs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766084330; c=relaxed/simple;
-	bh=Jku28IM/c1IYSHnKsavbvy9aaLBIgMj3F4YQHgrupho=;
+	s=arc-20240116; t=1766101047; c=relaxed/simple;
+	bh=xrSMLIzsznJyXKpBxy2WiFFTsuEi8RHkrAWj8MUnxYU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iq6Ihb7+usdCMYXbNRipdk7x3erR7/rme94LawiDIPbXZYCIaggqrXSGeil19PFQvSUP9+peHO3RJbG4nJkxJ2bkq2Juk6Wy7wEaTJBLGyjkQfCWPE+HtMw849gYOGYVhQza8idSINh3Jm4GCDk0FPeGcVLNsJvHAAvkJUojKgY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NzOjmPrn; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=on9daalxqX43LH1Rr+7Xvucg9mbJyXB7E13O5ROm66MSwrRs7NzA8FdnGgPYNgUKP9n3JmJfrL4AiHaI2LcrrDjlJPHT/wsXINCcWbogkeh5BkMGP9w0U8BtORCXXuKrk/DS9W7R+CrzM/XSF6qmoMcYrIcMFRBWXbrcIPOmtA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bEjX6jNQ; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=ghN4aU3/; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NzOjmPrn"
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-7fbbb84f034so914508b3a.0
-        for <linux-clk@vger.kernel.org>; Thu, 18 Dec 2025 10:58:38 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bEjX6jNQ";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="ghN4aU3/"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1766101044;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=taL4VecI32GOlELm8+8Vnt26fKCO2BjXM3Lzuu9k69E=;
+	b=bEjX6jNQ9YVK5N6BE8QwuKMKN09IHvdWm5gskXjYbU8ccNTMzMO5ofTwVl/bT7byXs2k0n
+	djbROJznMLsdcuxMWEtpbH4/DblqZAWii71Pv1+IvKsfHjuUZju8mv9/GT3Ebp7EfkCN3o
+	u/5AuwSvVHRgAQ7K3agwGl8M3drYgO4=
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
+ [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-32-Xy6EJxpOPp6kX8ieP9q0Yw-1; Thu, 18 Dec 2025 18:37:22 -0500
+X-MC-Unique: Xy6EJxpOPp6kX8ieP9q0Yw-1
+X-Mimecast-MFC-AGG-ID: Xy6EJxpOPp6kX8ieP9q0Yw_1766101042
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-88a32bf024cso12563676d6.2
+        for <linux-clk@vger.kernel.org>; Thu, 18 Dec 2025 15:37:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1766084317; x=1766689117; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=AQfRVSe9fO1PObUKRZHse1cNpjrf0uUXBusNVMTFfiA=;
-        b=NzOjmPrn46f7eL94kTiu7+0zvL7EqcBFTL/HGLf3Rc6h3rBZjvJM5i3qCCD2fYrXy7
-         eJklrOOWGmpDdYURm2bD9+/3PlBRsY8WKHCZ2GLGzwLcw74QlWuQ3QwUrvnoh8XgWay8
-         gOij/Oftk04H9HcDeMjrum7Gp/tJMDS9TcpBQwDo75WutLi+yiY8j3WBiG0hbm0He5W7
-         e9CpO9bAAOVDpz+N+io0xTJRBjOcs9kNkjAd+Z+kY0znjtSG4hOPaCJlbg1PV1xakEpj
-         cFYP81lVX+QhyL2f1NFGqqWTbtem9suiHwzZLYFwy//KO+NJmpEmbUADkYq65Km/0XcM
-         myZA==
+        d=redhat.com; s=google; t=1766101042; x=1766705842; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=taL4VecI32GOlELm8+8Vnt26fKCO2BjXM3Lzuu9k69E=;
+        b=ghN4aU3/blCCHiK67/oqzMlWTd9amggWI6uzjyYYWuK6OptDfnzENd+HA4hnggrIyM
+         jVGjISZODF+4VF94SLI1rscxeFmbn2HEcqmeN3rMfXSzilUjtsC3AKyKVG+eEWyGDORd
+         2V2uHT+PP1PB5ycuU5G1Pp2DjZn0qJqpcwyidFeoCfLfBcKHUPipmqGhuRJyZbkQL6Kp
+         sotIfBSSdeSE5U3h8PP835xpdKmxQ+xE+ZJqHCQ+oh/xe4qwKa0XAtQBLFVU+fP8gSnw
+         +d8DnPX3pexQYC2AyvNIzax2JwU8StOlkF59PahoWZuep/MyDGE78Vz8eMpJ1tk9HMFp
+         lOdA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1766084317; x=1766689117;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=AQfRVSe9fO1PObUKRZHse1cNpjrf0uUXBusNVMTFfiA=;
-        b=jFskh7sqJwouQ/fy/vqniCisaASqaD/E2tRHou/P0Ihdo6QcQfdh5oyMqKUpc55dwc
-         bbLtarW4a/yhdom7UaePET+Km+VW7Rbz+lK4QF+4jRzT6ASWmTPbnF+hAssxlpjNhRIg
-         aiMuGYu1u9i4Vo2Fp0GSMJMABPCmlsWdQkW0asxLNGAgrJ74XWhLFpJJ2tsXiRcQLhXK
-         7wxERXOWWbvJB7471ZfhoOYbyKcpV725R38KWc6QGrrkk/QM8Et+OzL3D6Uy/MBL6vZv
-         2JFUbMGB3ksvX9v+jd+8T7Jm/xLfASLdLDqTdiaUAiWxtnM9XoTHrDBtB/h0TTDUugkj
-         WXNA==
-X-Forwarded-Encrypted: i=1; AJvYcCV8Ydxm1FyuJBa1LYVdxqU5DPyxt97OXGTBMMzJbQ25BHGRD+hI4+AFIb049nIziq5+nPIsXOCSvM8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwrBknIPAEGl7kHJfW3S54ac7lWSjip2/I+NLCnX2z6Nn+uyn9z
-	ZCxnS6kdTsIcIqYDaSJalQbJKuL6OAfZ5td92lZ1To0oSYlf4INcQKMj
-X-Gm-Gg: AY/fxX6EWbL92a43wzyWnl6nGFieZmaVgfzi8H6o+PzEpYBlMmGqqoOeV4tn6l8HNy8
-	F/Y0b5B6JHGmTI9/7mYe0E3z1UiTV0R/LRFqtVukKvpjn76R7A6Rx7pJ7l/wD9HxV2KtgFzcXdD
-	yAy2s3xUqzSv6AXaJ5k/O+CvcFlrPvbOHcP0HGB7BBVCbqBoxcC9gCwfPtonUlOZpwCOgAx4GNY
-	25BEtNjxuYyfzf+wTDW3gPK56Oyk2sWkaNOoIQSx8CJftXoWExxtVohEjo4T5Qvd0fZsNbdTOrq
-	i9hYasT6w7UraiwFDSI+JsfYWpUS2E5dTX68ekEKP7kuI/pLoiqUJgO+5//oVCcAaNDmHH4jDQj
-	L79ieAZyWHZpY73a51eQTEmFXBrpNkd752Iz2y07fY/ZmiGLgEv5BbqZksBNjpC1GC74qNaYUqp
-	whb2u0C3Sj0RqtcnynT46qsXLU
-X-Google-Smtp-Source: AGHT+IFf3D0xeHaQPPXEeazhorZHgIgTwRHiyRuussKNgJjGtFBYIJhQUMgRhb/IHzjPiFdB5lKzgg==
-X-Received: by 2002:a05:7022:3705:b0:119:e56b:91e9 with SMTP id a92af1059eb24-121722dff1cmr177764c88.26.1766084317443;
-        Thu, 18 Dec 2025 10:58:37 -0800 (PST)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-1217253c0c6sm299016c88.12.2025.12.18.10.58.36
+        d=1e100.net; s=20230601; t=1766101042; x=1766705842;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=taL4VecI32GOlELm8+8Vnt26fKCO2BjXM3Lzuu9k69E=;
+        b=lwbbnN9MCthQCfckvuVK0p2tszdYZxPDNalLKy2etB4h/7dFqtx8E8jbnw5wL/j7nj
+         lSbkHRoCOh2X1tEgosAeCMRnd41uj4OqVeSo0tjg2r6WhuZVCLC1tbq7ycBuTMKFdIwO
+         13yZQCoK/rfw5wj9OwCBZ8Y78gm4QVc7Qp6J6fGEa4b7oTmMRXyg2/H9A0UTQdNH5iBX
+         5X92oOSF5+3afN8A/sVkm3CmGND7jHEk1r3yzbfFaGNI9++4UMxacVaf6sBYK8S+c2NR
+         ivkf2X2VkGVyjUlC3a5WA0WKsa9tU21b5V3fKnuy1W73hfQYRjoDgeZ22xOR4XhmD68g
+         w1aA==
+X-Forwarded-Encrypted: i=1; AJvYcCX4vbeuccDs4nVJ5C7yewtzgCGu0vCau5/W2nV6wnJBnGHR6brmDduvfaDqBvme0FHqaE9Xf51tiVg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFfnwZUssQKMCYAsbcIw/TSOx17UdWIHuUmH9Qk269XgI/JjIw
+	svZ0Ud+idQoKXHn5buN4RDDteQK1nViDWCHep2Gus0JEqFkFe4q5YZ0JuW7GcKo2OVnHv7zGeIZ
+	tW+DWzuM9QX1pzt0S50G+OwiI1VZ3lockJAnnEbZc4wWD2Cvb63lemqCceBqO4w==
+X-Gm-Gg: AY/fxX4I5Wk4rS6rvt7buZjg0ULuXQBxfHUERqXpim0GqiPz1GMZN0iSjmT2N9hfwrH
+	WHcruYt+qJrZs6E7FLJZboEgl7sEFSgtBebp1o/Jd7Fg/MU2vW/9/LR0C/iDaznt1QdBC3oEegQ
+	TF6RzHBzAmMEFEgStrt0gAmtHmMeebRsSrE6WsKqsFYgNI89c+FPig9MSK4+FCAxD1B1bVpobCh
+	m27+gY8zOAKQBmSg7mFPFtNiQTGSMbi/KMPMJ07/do6rGlgFdQdcxulCoAhU8dHvgGyGnkJmmUZ
+	T7VN5ezgLoFkZOVa6OOnxgnDfXA4LuY9KwkMEYt51Ulj4KcE15lmq9pklTDfrQyxuqV2pDzRhtS
+	QY2JyuFg=
+X-Received: by 2002:a05:620a:2845:b0:8b2:a4ec:6f5 with SMTP id af79cd13be357-8c08fbc8df3mr229402685a.11.1766101041957;
+        Thu, 18 Dec 2025 15:37:21 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IF3jIAaZOF2kHstHYRyO1BtEzZDtmYfFo47TmQj/apy+4o6oNz5pTegY6y4DTnGxbC+K1Y2Qg==
+X-Received: by 2002:a05:620a:2845:b0:8b2:a4ec:6f5 with SMTP id af79cd13be357-8c08fbc8df3mr229399685a.11.1766101041544;
+        Thu, 18 Dec 2025 15:37:21 -0800 (PST)
+Received: from redhat.com ([2600:382:812c:5c2a:d26d:b7f:4624:dd34])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8c0973efa97sm54606385a.39.2025.12.18.15.37.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Dec 2025 10:58:36 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Thu, 18 Dec 2025 10:58:35 -0800
-From: Guenter Roeck <linux@roeck-us.net>
-To: Robert Marko <robert.marko@sartura.hr>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
-	claudiu.beznea@tuxon.dev, Steen.Hegelund@microchip.com,
-	daniel.machon@microchip.com, UNGLinuxDriver@microchip.com,
-	herbert@gondor.apana.org.au, davem@davemloft.net, vkoul@kernel.org,
-	andi.shyti@kernel.org, lee@kernel.org, andrew+netdev@lunn.ch,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	linusw@kernel.org, olivia@selenic.com, radu_nicolae.pirea@upb.ro,
-	richard.genoud@bootlin.com, gregkh@linuxfoundation.org,
-	jirislaby@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-	richardcochran@gmail.com, wsa+renesas@sang-engineering.com,
-	romain.sioen@microchip.com, Ryan.Wanner@microchip.com,
-	lars.povlsen@microchip.com, tudor.ambarus@linaro.org,
-	charan.pedumuru@microchip.com, kavyasree.kotagiri@microchip.com,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
-	dmaengine@vger.kernel.org, linux-hwmon@vger.kernel.org,
-	linux-i2c@vger.kernel.org, netdev@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-spi@vger.kernel.org,
-	linux-serial@vger.kernel.org, linux-usb@vger.kernel.org,
-	linux-clk@vger.kernel.org, mwalle@kernel.org,
-	luka.perkov@sartura.hr
-Subject: Re: [PATCH v2 15/19] dt-bindings: hwmon: sparx5: add
- microchip,lan9691-temp
-Message-ID: <8462a516-4e8f-413c-813d-e7ff0e6eaa1d@roeck-us.net>
-References: <20251215163820.1584926-1-robert.marko@sartura.hr>
- <20251215163820.1584926-15-robert.marko@sartura.hr>
+        Thu, 18 Dec 2025 15:37:19 -0800 (PST)
+Date: Thu, 18 Dec 2025 18:37:16 -0500
+From: Brian Masney <bmasney@redhat.com>
+To: Junhui Liu <junhui.liu@pigmoral.tech>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 3/6] clk: anlogic: add cru support for Anlogic DR1V90
+ SoC
+Message-ID: <aUSQLB1fmYgQe_Fg@redhat.com>
+References: <20251216-dr1v90-cru-v3-0-52cc938d1db0@pigmoral.tech>
+ <20251216-dr1v90-cru-v3-3-52cc938d1db0@pigmoral.tech>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -98,15 +102,61 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251215163820.1584926-15-robert.marko@sartura.hr>
+In-Reply-To: <20251216-dr1v90-cru-v3-3-52cc938d1db0@pigmoral.tech>
+User-Agent: Mutt/2.2.14 (2025-02-20)
 
-On Mon, Dec 15, 2025 at 05:35:32PM +0100, Robert Marko wrote:
-> Document LAN969x hwmon temperature sensor compatible.
-> 
-> Signed-off-by: Robert Marko <robert.marko@sartura.hr>
-> Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Hi Junhui,
 
-Applied.
+On Tue, Dec 16, 2025 at 11:39:43AM +0800, Junhui Liu wrote:
+> +static long cru_div_gate_round_rate(struct clk_hw *hw, unsigned long rate,
+> +				    unsigned long *prate)
+> +{
+> +	struct clk_divider *divider = to_clk_divider(hw);
+> +
+> +	return divider_round_rate(hw, rate, prate, divider->table,
+> +				  divider->width, divider->flags);
+> +}
 
-Thanks,
-Guenter
+The round_rate clk op is deprecated and I'm really close to being able
+to remove this from the clk core. Please only use determine_rate()
+below.
+
+> +static int cru_div_gate_determine_rate(struct clk_hw *hw,
+> +				       struct clk_rate_request *req)
+> +{
+> +	struct cru_div_gate *div_gate = hw_to_cru_div_gate(hw);
+> +	struct clk_divider *divider = &div_gate->divider;
+> +	unsigned long maxdiv, mindiv;
+> +	int div = 0;
+> +
+> +	maxdiv = clk_div_mask(divider->width) + 1;
+> +	mindiv = div_gate->min + 1;
+> +
+> +	div = DIV_ROUND_UP_ULL(req->best_parent_rate, req->rate);
+> +	div = div > maxdiv ? maxdiv : div;
+> +	div = div < mindiv ? mindiv : div;
+> +
+> +	req->rate = DIV_ROUND_UP_ULL(req->best_parent_rate, div);
+> +
+> +	return 0;
+> +}
+
+[snip]
+
+> +const struct clk_ops dr1_cru_div_gate_ops = {
+> +	.enable = cru_div_gate_enable,
+> +	.disable = cru_div_gate_disable,
+> +	.is_enabled = cru_div_gate_is_enabled,
+> +	.recalc_rate = cru_div_gate_recalc_rate,
+> +	.round_rate = cru_div_gate_round_rate,
+> +	.determine_rate = cru_div_gate_determine_rate,
+
+When round_rate() and determine_rate() are both defined in the provider,
+only the determine_rate() will be used. Just drop your round_rate()
+implementation.
+
+I didn't look into anything else on this patch. This showed up on my
+search for new implementations.
+
+Brian
+
