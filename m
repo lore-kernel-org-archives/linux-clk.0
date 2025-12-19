@@ -1,131 +1,272 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1F5E2DEA90;
-	Fri, 19 Dec 2025 07:42:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BBD12264AA;
+	Fri, 19 Dec 2025 08:02:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766130169; cv=none; b=kvpoGlT1x+x/YZyUzu5zyngipZ1KRCkFlCQ9CbWFaZO6DufFei+PYAci3v5pe0z5/d3uGRtYi+VXlf52sU+CO4B6yuR82HjD5RIFhSmXQusZIpADJkuY860ziHQU0Jl5lvu4GP/bP/Qm6XTYuPBdpXFtsjMmHVrx/d7kdlR4lRM=
+	t=1766131342; cv=none; b=RtmefSLNO0HRmFM+OAfxXWHQvj7za7ge49PE77tNElWAaPZJ01rcUmPKp/KT+mGyXvbKc5Xp2vECdjTYnubuyX0kbvt8Wy+r1HenwJrxpYyLbqDNN23U1NDxlUZdcKQBp1xEq4+flBxxwLl8+8JrISfXiG0jMocZCySX1jttd/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766130169; c=relaxed/simple;
-	bh=o9a0SgJqbUAbHYVm1/dOBkvhEKRMQ/ZhZBbv3LTvqwE=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=D0MMwtQe7uXWUmCqeWJoTG2VMHS5mrh5Rc1z5TOqNw/dEJW4pj6yPFbecgLKmvTNciszoJ026kQ1wNlm0+NtWLhZpouAFtcivyy5mmoiai46e+9AjEgqRsp4B0aL9NW9TAhJegIkyz9OLaNci9ksi1aU/Mde3WuiADEGJ0wAK2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=piAFod+6; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="piAFod+6"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12CF6C4AF09;
-	Fri, 19 Dec 2025 07:42:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1766130167;
-	bh=o9a0SgJqbUAbHYVm1/dOBkvhEKRMQ/ZhZBbv3LTvqwE=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=piAFod+64TavKMIWyttR8IA+eh+DRbDTa8gZK/wB0wFaWe7VEutajQXWkfStNy9q8
-	 Q99Hi5WVlhhIHvNBm9YGkAfFPU78BMuGon7kmwCC8VJv900yf5KRtZXvlE1NTlCWZ+
-	 q2JS01SJjkLX6oe2vSZJt3ikdaYnJFScMJULP8xBFPnZ7ZOgmxFF+l8xFq2X0g0bzK
-	 T3rBFTcfytVw/YNq30R+fZRXaXIHHHe5koWg+uiVsBIn45vezulGqGAkI1/tIHM7u8
-	 O8q5B5rV8uwS+WZtaV6q7zAi19xKMkuydEVy0lUzKYVYZKGOePvkUjtHzWNK0R5oRE
-	 pHX9WW2yqV9CA==
-Message-ID: <a11bd4dc-6602-4ea1-b68b-e1450ea5f30f@kernel.org>
-Date: Fri, 19 Dec 2025 08:42:36 +0100
+	s=arc-20240116; t=1766131342; c=relaxed/simple;
+	bh=CHVhsEEszqnU4LoxOGS7wHG+fmEdUXxxtRBiyrbO9Tg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qVU/txh5d2PfqnTZ0ZPBzCC7VQHEr0jsArOK1U/cJNd4GWpR8aqALsH74A22A9jkd93c8L+r8RspUw7eNidR1STZkZDISU1UAAMLzTVCefJPaMS3Yz5gHxM6XGFRPH47DO69pmcRTo5iB4HSMAJbywrA+wwwNrFvqPPrjbB1Oj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=isrc.iscas.ac.cn; spf=pass smtp.mailfrom=isrc.iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=isrc.iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=isrc.iscas.ac.cn
+Received: from duge-virtual-machine (unknown [223.160.207.22])
+	by APP-01 (Coremail) with SMTP id qwCowACHLmp4BkVpRhwZAQ--.24049S2;
+	Fri, 19 Dec 2025 16:02:03 +0800 (CST)
+Date: Fri, 19 Dec 2025 16:02:00 +0800
+From: Jiayu Du <jiayu.riscv@isrc.iscas.ac.cn>
+To: Xukai Wang <kingxukai@zohomail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Troy Mitchell <TroyMitchell988@gmail.com>
+Subject: Re: [PATCH v9 2/3] clk: canaan: Add clock driver for Canaan K230
+Message-ID: <aUUGeGnYR+joVR8c@duge-virtual-machine>
+References: <20251127-b4-k230-clk-v9-0-3aa09e17faf5@zohomail.com>
+ <20251127-b4-k230-clk-v9-2-3aa09e17faf5@zohomail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 02/21] dt-bindings: power: mediatek: Add MT8189 power
- domain definitions
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: "irving.ch.lin" <irving-ch.lin@mediatek.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Ulf Hansson <ulf.hansson@linaro.org>,
- Richard Cochran <richardcochran@gmail.com>,
- Qiqi Wang <qiqi.wang@mediatek.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- linux-pm@vger.kernel.org, netdev@vger.kernel.org,
- Project_Global_Chrome_Upstream_Group@mediatek.com, sirius.wang@mediatek.com,
- vince-wl.liu@mediatek.com, jh.hsu@mediatek.com
-References: <20251215034944.2973003-1-irving-ch.lin@mediatek.com>
- <20251215034944.2973003-3-irving-ch.lin@mediatek.com>
- <20251219-hissing-chicken-of-poetry-5fbfd9@quoll>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20251219-hissing-chicken-of-poetry-5fbfd9@quoll>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251127-b4-k230-clk-v9-2-3aa09e17faf5@zohomail.com>
+X-CM-TRANSID:qwCowACHLmp4BkVpRhwZAQ--.24049S2
+X-Coremail-Antispam: 1UD129KBjvJXoW3GrWkXr13XF18XryrJFWUurg_yoW7tr4kpr
+	1Yg34rAF4qyw13Ga1avw1UuF95KF48GF1qga4xW34rAF45GF9FgF1SgryIyF43XFy8C3yF
+	qFyUt3yY93yjyaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvvb7Iv0xC_tr1lb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I2
+	0VC2zVCF04k26cxKx2IYs7xG6r1S6rWUM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
+	A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xII
+	jxv20xvEc7CjxVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4
+	A2jsIEc7CjxVAFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
+	64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8Jw
+	Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l
+	c7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr
+	1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE
+	14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7
+	IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E
+	87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73Uj
+	IFyTuYvjxU2wIDUUUUU
+X-CM-SenderInfo: 5mld534oul2uny6l223fol2u1dvotugofq/
 
-On 19/12/2025 08:36, Krzysztof Kozlowski wrote:
-> On Mon, Dec 15, 2025 at 11:49:11AM +0800, irving.ch.lin wrote:
->> From: Irving-CH Lin <irving-ch.lin@mediatek.com>
->>
->> Add device tree bindings for the power domains of MediaTek MT8189 SoC.
->>
->> Signed-off-by: Irving-CH Lin <irving-ch.lin@mediatek.com>
->> ---
->>  .../power/mediatek,power-controller.yaml      |  1 +
->>  .../dt-bindings/power/mediatek,mt8189-power.h | 38 +++++++++++++++++++
->>  2 files changed, 39 insertions(+)
->>  create mode 100644 include/dt-bindings/power/mediatek,mt8189-power.h
+On Thu, Nov 27, 2025 at 08:45:13PM +0800, Xukai Wang wrote:
+> This patch provides basic support for the K230 clock, which covers
+> all clocks in K230 SoC.
 > 
-> You did not cc maintainer of the binding, so either it's fake entry or
-> you forgot to use tools.
+> The clock tree of the K230 SoC consists of a 24MHZ external crystal
+> oscillator, PLLs and an external pulse input for timerX, and their
+> derived clocks.
+> 
+> Co-developed-by: Troy Mitchell <TroyMitchell988@gmail.com>
+> Signed-off-by: Troy Mitchell <TroyMitchell988@gmail.com>
+> Signed-off-by: Xukai Wang <kingxukai@zohomail.com>
+> ---
+>  drivers/clk/Kconfig    |    6 +
+>  drivers/clk/Makefile   |    1 +
+>  drivers/clk/clk-k230.c | 2443 ++++++++++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 2450 insertions(+)
+...
+> diff --git a/drivers/clk/clk-k230.c b/drivers/clk/clk-k230.c
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..8750e9cbac04f30e31d8f2eb395c9b49027ca278
+> --- /dev/null
+> +++ b/drivers/clk/clk-k230.c
+> @@ -0,0 +1,2443 @@
+...
+> +
+> +K230_CLK_GATE_FORMAT(cpu0_src_gate,
+> +		     K230_CPU0_SRC_GATE,
+> +		     0, 0, 0, 0,
+> +		     &pll0_div2.hw);
 
-Although maintainer's entry for MandyJH Liu seems to be just bogus - no
-maintenance happening here, so I just sent patch to remove them.
+Core-related clocks of cpu0/cpu1 (src/plic/apb/noc_ddrcp4, etc.)
+lack protection flags, which risks accidental disabling.
 
-I would prefer if Mediatek did care about these bindings. It's another
-piece to my complain list about very poor Mediatek company upstreaming.
+Recommend to replace the flag bits for all CPU0/CPU1 core clock
+nodes with `CLK_IS_CRITICAL`,like this:
+`0, 0, 0, 0,` -> `0, 0, CLK_IS_CRITICAL, 0,`
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+> +
+> +K230_CLK_RATE_FORMAT(cpu0_src_rate,
+> +		     K230_CPU0_SRC_RATE,
+> +		     1, 16, 1, 0xF,
+> +		     16, 16, 0, 0x0,
+> +		     0x0, 31, mul, 0x0,
+> +		     false, 0,
+> +		     &cpu0_src_gate.clk.hw);
+> +
+same as above,`false, 0,` ->`false, CLK_IS_CRITICAL,`
+> +K230_CLK_RATE_FORMAT(cpu0_axi_rate,
+> +		     K230_CPU0_AXI_RATE,
+> +		     1, 1, 0, 0,
+> +		     1, 8, 6, 0x7,
+> +		     0x0, 31, div, 0x0,
+> +		     0, 0,
+> +		     &cpu0_src_rate.clk.hw);
+> +
+same as above,`0, 0,` ->`0, CLK_IS_CRITICAL,`
+> +K230_CLK_GATE_FORMAT(cpu0_plic_gate,
+> +		     K230_CPU0_PLIC_GATE,
+> +		     0x0, 9, 0, 0,
+> +		     &cpu0_src_rate.clk.hw);
+> +
+same as above,`0x0, 9, 0, 0,` -> `0x0, 9, CLK_IS_CRITICAL, 0,`
+> +K230_CLK_RATE_FORMAT(cpu0_plic_rate,
+> +		     K230_CPU0_PLIC_RATE,
+> +		     1, 1, 0, 0,
+> +		     1, 8, 10, 0x7,
+> +		     0x0, 31, div, 0x0,
+> +		     false, 0,
+> +		     &cpu0_plic_gate.clk.hw);
+> +
+same as above,`false, 0,` -> `false, CLK_IS_CRITICAL,`
+> +K230_CLK_GATE_FORMAT(cpu0_noc_ddrcp4_gate,
+> +		     K230_CPU0_NOC_DDRCP4_GATE,
+> +		     0x60, 7, 0, 0,
+> +		     &cpu0_src_rate.clk.hw);
+> +
+same as above,`0x60, 7, 0, 0,` -> `0x60, 7, CLK_IS_CRITICAL, 0,`
+> +K230_CLK_GATE_FORMAT(cpu0_apb_gate,
+> +		     K230_CPU0_APB_GATE,
+> +		     0x0, 13, 0, 0,
+> +		     &pll0_div4.hw);
+> +
+same as above,`0x0, 13, 0, 0,` -> `0x0, 13, CLK_IS_CRITICAL, 0,`
+> +K230_CLK_RATE_FORMAT(cpu0_apb_rate,
+> +		     K230_CPU0_APB_RATE,
+> +		     1, 1, 0, 0,
+> +		     1, 8, 15, 0x7,
+> +		     0x0, 31, div, 0x0,
+> +		     false, 0,
+> +		     &cpu0_apb_gate.clk.hw);
+> +
+same as above,`false, 0,` -> `false, CLK_IS_CRITICAL,`
+> +static const struct clk_parent_data k230_cpu1_src_mux_pdata[] = {
+> +	{ .hw = &pll0_div2.hw, },
+> +	{ .hw = &pll3.hw, },
+> +	{ .hw = &pll0.hw, },
+> +};
+> +
+> +K230_CLK_MUX_FORMAT(cpu1_src_mux,
+> +		    K230_CPU1_SRC_MUX,
+> +		    0x4, 1, 0x3,
+> +		    0, 0,
+> +		    k230_cpu1_src_mux_pdata);
+> +
+same as above,`0, 0,` -> `CLK_IS_CRITICAL, 0,`
+> +K230_CLK_GATE_FORMAT(cpu1_src_gate,
+> +		     K230_CPU1_SRC_GATE,
+> +		     0x4, 0, CLK_IGNORE_UNUSED, 0,
+> +		     &cpu1_src_mux.clk.hw);
+> +
+same as above,`0x4, 0, CLK_IGNORE_UNUSED, 0,` -> `0x4, 0, CLK_IS_CRITICAL, 0,`
+> +K230_CLK_RATE_FORMAT(cpu1_src_rate,
+> +		     K230_CPU1_SRC_GATE,
+> +		     1, 1, 0, 0,
+> +		     1, 8, 3, 0x7,
+> +		     0x4, 31, div, 0x0,
+> +		     false, 0,
+> +		     &cpu1_src_gate.clk.hw);
+> +
+same as above,`false, 0,` -> `false, CLK_IS_CRITICAL,`
+> +K230_CLK_RATE_FORMAT(cpu1_axi_rate,
+> +		     K230_CPU1_AXI_RATE,
+> +		     1, 1, 0, 0,
+> +		     1, 8, 12, 0x7,
+> +		     0x4, 31, div, 0x0,
+> +		     false, 0,
+> +		     &cpu1_src_rate.clk.hw);
+> +
+same as above,`false, 0,` -> `false, CLK_IS_CRITICAL,`
+> +K230_CLK_GATE_FORMAT(cpu1_plic_gate,
+> +		     K230_CPU1_PLIC_GATE,
+> +		     0x4, 15, CLK_IGNORE_UNUSED, 0,
+> +		     &cpu1_src_rate.clk.hw);
+> +
+same as above,`0x4, 15, CLK_IGNORE_UNUSED, 0,` -> `0x4, 15, CLK_IS_CRITICAL, 0,`
+> +K230_CLK_RATE_FORMAT(cpu1_plic_rate,
+> +		     K230_CPU1_PLIC_RATE,
+> +		     1, 1, 0, 0,
+> +		     1, 8, 16, 0x7,
+> +		     0x4, 31, div, 0x0,
+> +		     false, 0,
+> +		     &cpu1_plic_gate.clk.hw);
+> +
+same as above,`false, 0,` -> `false, CLK_IS_CRITICAL,`
+> +K230_CLK_GATE_FORMAT(cpu1_apb_gate,
+> +		     K230_CPU1_APB_GATE,
+> +		     0x4, 19, 0, 0,
+> +		     &pll0_div4.hw);
+> +
+same as above,`0x4, 19, 0, 0,` -> `0x4, 19, CLK_IS_CRITICAL, 0,`
+> +K230_CLK_RATE_FORMAT(cpu1_apb_rate,
+> +		     K230_CPU1_APB_RATE,
+> +		     1, 1, 0, 0,
+> +		     1, 8, 15, 0x7,
+> +		     0x0, 31, div, 0x0,
+> +		     false, 0,
+> +		     &cpu1_apb_gate.clk.hw);
+> +
+same as above,`false, 0,` -> `false, CLK_IS_CRITICAL,`
+> +K230_CLK_GATE_FORMAT_PNAME(pmu_apb_gate,
+> +			   K230_PMU_APB_GATE,
+...
+> +K230_CLK_GATE_FORMAT(hs_hclk_src_gate,
+> +		     K230_HS_HCLK_SRC_GATE,
+> +		     0x18, 1, 0, 0,
+> +		     &hs_hclk_high_src_rate.clk.hw);
+> +
 
-Best regards,
-Krzysztof
+Incorrect register bit setting (bit1) and wrong parent
+clock reference (hs_hclk_high_src_rate) for hs_hclk_src_gate,
+which does not comply with K230 hardware specifications.
+Here is correcting advice:
+Register bit correction: `0x18, 1, 0, 0,` -> `0x18, 0, 0, 0,`
+Parent clock correction: `&hs_hclk_high_src_rate.clk.hw` ->
+`&hs_hclk_high_gate.clk.hw`
+
+> +K230_CLK_RATE_FORMAT(hs_hclk_src_rate,
+> +		     K230_HS_HCLK_SRC_RATE,
+...
+> +K230_CLK_RATE_FORMAT(hs_sd_card_src_rate,
+> +		     K230_HS_SD_CARD_SRC_RATE,
+> +		     1, 1, 0, 0,
+> +		     2, 8, 12, 0x7,
+> +		     0x1C, 31, div, 0x0,
+> +		     false, 0,
+> +		     &pll0_div4.hw);
+> +
+
+The parent clock of hs_sd_card_src_rate is incorrectly pointed
+to pll0_div4.
+Here is correcting advice:
+`&pll0_div4.hw` → `&hs_sd_card_src_gate.clk.hw`
+
+> +K230_CLK_GATE_FORMAT(hs_sd0_card_gate,
+> +		     K230_HS_SD0_CARD_GATE,
+> +		     0x18, 15, 0, 0,
+...
+> +	},
+> +	.probe = k230_clk_probe,
+> +};
+> +builtin_platform_driver(k230_clk_driver);
+> 
+> -- 
+> 2.34.1
+> 
+
