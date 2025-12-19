@@ -1,81 +1,78 @@
-Received: from mail-yx1-f50.google.com (mail-yx1-f50.google.com [74.125.224.50])
+Received: from mail-yx1-f49.google.com (mail-yx1-f49.google.com [74.125.224.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A02528BA83
-	for <linux-clk@vger.kernel.org>; Fri, 19 Dec 2025 04:34:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D8F128A72B
+	for <linux-clk@vger.kernel.org>; Fri, 19 Dec 2025 04:34:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766118877; cv=none; b=fcye7i8ymqbDocPB9SsWG05hbVj3/7n/2cOBa6I4yvA2pnRZLh/4S3CYIbZltbY4rkxvZuNT+5uCu0BHYwEMteOZO86uufF7cVkaz8TTowC48zo0uQkQzrwzn0igmhiI6JNC3GnpsBzWviBv+01OSOgHiTEEZc4giGoMY5mrq1k=
+	t=1766118882; cv=none; b=TPZAYbNkOmaEsPOZ+qysbwAiln67UxaVZuA2nspGpPiftWObh0UGrGwpRUIj/IoKNvC9CjhUjf0db8bLK1E/R/PgRukhwIEdmGntdNoxrQdeXTIS65BLf91OFZHSjdofeT2dMaCMoO/VgUltMiGaZ4xhfgFMs7rx40A9IUQ5tas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766118877; c=relaxed/simple;
-	bh=3AjNYVDLj3dIk9Cc/YWpPnzSycJtLhtYlxld7c9jHH8=;
+	s=arc-20240116; t=1766118882; c=relaxed/simple;
+	bh=jCLw58pwV1aYqX9nwbEOCXnzCa22LDTXfkOwal2AGJ0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Ext9aMRdvzw58v3NxiZ7vu9sQKbn5QOWT7ypcJXXePK7X7wVSKp/y7RoIxAYKDCFFUuTLTyYigy1kRyoKuZ8cM44CB5iDgwViS/Zo/7sppeHwpTPq++9wZEQU2GudaOFFxRyWhBWqJXtYKyLJ4PfOzAId4A9UurPb9cmQq0UmsU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nogCCDAn; arc=none smtp.client-ip=74.125.224.50
+	 MIME-Version; b=fFYDVb4QbJ5liYbABRWvuLDHGHbBLl88lILMvIwd5s5Q7x0eZLS/Qa8rF7dgBGqQKuLCa/zIXUQaK6FudzAflYu8DbYtB3lMZcha3Xl0LuD0VnWRYFAlEWN12x+lkDA8AYqPHY8W6xooOGP3WJKGI4q66Zm/QL0gg7cjzyxNYVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KQk8dbdP; arc=none smtp.client-ip=74.125.224.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nogCCDAn"
-Received: by mail-yx1-f50.google.com with SMTP id 956f58d0204a3-64471fcdef0so1025049d50.1
-        for <linux-clk@vger.kernel.org>; Thu, 18 Dec 2025 20:34:35 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KQk8dbdP"
+Received: by mail-yx1-f49.google.com with SMTP id 956f58d0204a3-64472ea7d18so1031910d50.2
+        for <linux-clk@vger.kernel.org>; Thu, 18 Dec 2025 20:34:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1766118874; x=1766723674; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1766118879; x=1766723679; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=IWz1P8414J3OUB/pGvKwvDCZTM3BGlGL3AvsIxO+j/o=;
-        b=nogCCDAnAm01k1M1qD7w4Xy9uRDdcxKFZpSdJRQi1w3KYo2g//+RmKbYFSD9XMNqzj
-         RMS488ipT7KAHPCZEOt7Imb4bCrAbfQkzoSQ8J0imjTcn3JcEEnvyAqct2qcWWAF8M59
-         YmKLoG5dnBI+qQfcUxSRsTxJWDXugXbzjZzYSYSwQKMwCRTbibxbLiYoC0rU/tI7iurd
-         rlxzPoKI/Tmq4T2ulDSBpJwht4A/rEUpzevFEk9ODGWoilbEjBKLHMmalOWa1LGLrNyZ
-         Vm5dPPZLbqfnvEvdMPOMwa8TuE2SCseGHchJKcOmEKP4xK8Zy2KEmO5jUUcx0rQ8uDyA
-         0Q8A==
+        bh=2c7/pm2Gcuf+0EldHZ6eszuf2UQD7smEBPd4ML7SzLo=;
+        b=KQk8dbdPfCe5SkupGjdCW5iCNmI+7npK63NZ7L4nhhqhSohRzLLnRzWHe0b5x33HdD
+         N8xotBryyMoDTxNX4l0MX9omD7dCIcGk+0n/CaR3yPRkFEYb7TOqr8x85gCrneUBvVoH
+         4YfPdOHO/Nua2tLN9QbXc3tV5wUdTlnUmpUEyVt6Qr/vp+MbPICorIc2g9TPbgV9kpD8
+         93uAaKNQ0QJvSLW3B7XZUU/nc7fuHJfO6m2fzbsFD8tF4pchVXcbT5OfPZeaGnCqlKZU
+         5+ZIsYUMdeXmQPI2MMdwNg30Nh51c07v/BfytH/cTfQC3+KutEdk16RjT52d4xymlVRj
+         /AKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1766118874; x=1766723674;
+        d=1e100.net; s=20230601; t=1766118879; x=1766723679;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=IWz1P8414J3OUB/pGvKwvDCZTM3BGlGL3AvsIxO+j/o=;
-        b=X0vFenCZcn2tqot9j8Dx5uiD5R2+a5ZUwe25mc6utcu22iYRUcrvlkD4nYH8lBF57g
-         Kv9hsmBY9ADAI0ySihNqjBl58Aunn/MM3ROhq2I8wGPmxvE5HaKKZFvAtrlCLCaalL/a
-         jYj84/EhjEuWLJpYy2Zvm7RcIDwuWF7ueVpuk9KAP784/LFQ1b9NfabeYC7tdVMHcGld
-         Sd8FxoLMU4La60TOS3Q36Fv/luXsmH3k5VzCqPkCGKegYnI/RWSCGzBU+rp42O4Z8VnO
-         EsMCxhNgheCvs8m3b1Fix/Uge7Zaw+mKR62TRsLr1CK68e+SZID0hbFjzuwEX7epboDS
-         GYOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU4GvalVoE0oTt7fFiBL+1DrziXMpSCX+AKr8peUpfzN60fdHuCDfvNMVi4OyKulzze9qaC7vSD/gg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIWnRsxuu7RkN7rhTMxNyQ7nBtYw+HBcuvWbXtSZbWR+meesjc
-	fhpnvP6ZcuV0eNnsDDpHGgGGohKUj8X7Da4cEz4q8WR2e24aygc6wxwY
-X-Gm-Gg: AY/fxX4kS9tGdqSqKBuomjIgGmv9bGImKWUlvAhBeIKIUkSJ90G4oyqvAGoJe90BAsO
-	DPkdN7V9xDRj0Ds35/4HLzMoA4c7BQgnQZ7nyil9RILuf+CO8ap1yj6YdNgJwlaTz46VH9+u/xy
-	dlb2C7fi0y5vBn6heQlT/tbgyh1TVTW211Uv9IFcC8y9l0AjE20vBE2Uyz/hhi/7WyBX0el8qAr
-	6vCZtBVjhuTiQzzZbP/LzEb0w6210DjqCdu2QuO+U6Ld+4EZtwUJ2C1/fBbLNn7aqZzDukKDJ8P
-	cMHFMNhZodcJlSTY7g7ZmIpyJd3pb7IVFItafdcqqNd70c3IwTGbA/aMmFWWD7MOzCvNCRS9phW
-	dK7DyyPVRD/J1clSh+VSZHZQJnBZW1ekVfvQ7B7nKjEhbU1kAqsQEu2Wf29EbfhSxdmlIYvWtns
-	J3K4kYoEZrWwkD+2LPDSkQzHuBmLEJxl80Z70fD93RDPSFK9LH/LQEXPOC9B8wVp6mpmlnZhCp2
-	dYAk6XHVbt7jPPCFk9m83Q9FVnK
-X-Google-Smtp-Source: AGHT+IHPi6DErBNZ73Fj/39MbWvseTGAB/JcDUsa+hKnG2WsFU+qhmiJiN1U92vxyYiU1pyiYMgGnQ==
-X-Received: by 2002:a05:690c:d1b:b0:788:161c:7117 with SMTP id 00721157ae682-78fb3f05395mr30659917b3.8.1766118874295;
-        Thu, 18 Dec 2025 20:34:34 -0800 (PST)
+        bh=2c7/pm2Gcuf+0EldHZ6eszuf2UQD7smEBPd4ML7SzLo=;
+        b=Y6Od4ybRl87147SF64hLAdF4CD0JPYZiGb54BAgNcs1bQfunhLJirDhnCyLQXT0g2s
+         yZ4r9R9nES3svhCA8JCATWvaVkS5bT3Hsh27DC+Q0IsYBqD+D9DRQFXQl6CxlKDjtGem
+         05JmcCW6hazr2I27cjA6mEr1UjWfaPzJyRYNglC/c8GdRbcRGMuW52w1mWKE5j8T382s
+         Mq35H0EJyB7EoHYYnJkAsVmyeNhiszzr+V72iaa6zEUFBtQAceHeRWv+WClSPV7ehhOD
+         5spYE8nIyC/nViDQJLnDflCgVt4SlL7XxvEtCtfpA+IX1zneNYRWjuzUPal63LEPZAk6
+         lesA==
+X-Forwarded-Encrypted: i=1; AJvYcCWdGDb+A6jrS1zPjgH081dgJeyc0InHOvTUsq6b2BR5/Q8T03asTETLrql1dtrtnepMT+qaJP/NljQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/iG8cYpKcPfXdBEjFCGxoNklGr7OCt1yn84x7r9yGIKl24EWw
+	9eixQFP/MgpGy+oxloSh/6Rx0zi5i/Tc76Cc0i08D2qt3e1VDru/7fIL
+X-Gm-Gg: AY/fxX7X4zxGJ+ehYatbILPF+EzKiyDYWed7Vw+NlX8JmzdJVo1Pd4mNG5uFdVJy09I
+	AFzR6QZUYjNVv9eint83o1S0m/Ws3T3MAvbdyocQkdMyD0Lr7zGGuXxCoZV48OBrixdgfVEH5zo
+	ozZbshkUF4zPt1FNZrw5J/fjHk6G0+KgKtSlyZW5ptO7xpga4ktsIwEw/0f+AdYCfE4Mt6iL4t0
+	3Uutci2tsWBh1Eu85HJhDYqb1HT/mH2xhLhAYi2//qILQwzaEX1iq9vmhLKozmYZLgh4T3tpJto
+	iG/O8onVH+yuiQEb3zIZ7GVcDjXWF3BEIB9kk8lT5TUygHt9c48zaiBqGKaaSSkX9nyKegsGc4L
+	qZWrPVaAbhkEEWoOiat1h+ph1/JrAn+SRQ5z5qqUbZnHjKoiLm3rKsPgAbFrsauPl33Vsk+nxXy
+	EaGpWLSnARDmI8LrQKalc5Bx/JROySQbUKlgBoRDatEb5ITy26BQuShr6JQq1X87AeBjFLsHrF1
+	J8CFH6AZhDSBGsNxhvSh1m2POEJ
+X-Google-Smtp-Source: AGHT+IG1dmB8P1uhl7AeHj0WUex4IdAFDfAWuLdbLTaGW1TUQbKomQWaGeX66Yw5W+ZW/t2rSTm1fQ==
+X-Received: by 2002:a53:c74f:0:b0:63f:beb2:950f with SMTP id 956f58d0204a3-6466a84b000mr1122301d50.34.1766118878508;
+        Thu, 18 Dec 2025 20:34:38 -0800 (PST)
 Received: from nukework.lan (c-98-57-15-22.hsd1.tx.comcast.net. [98.57.15.22])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-78fb452c441sm5610227b3.46.2025.12.18.20.34.32
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-78fb452c441sm5610227b3.46.2025.12.18.20.34.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Dec 2025 20:34:33 -0800 (PST)
+        Thu, 18 Dec 2025 20:34:37 -0800 (PST)
 From: Alexandru Gagniuc <mr.nuke.me@gmail.com>
 To: andersson@kernel.org,
 	mathieu.poirier@linaro.org,
 	krzk+dt@kernel.org,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
+	Stephen Boyd <sboyd@kernel.org>
 Cc: Alexandru Gagniuc <mr.nuke.me@gmail.com>,
 	linux-arm-msm@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 3/9] dt-bindings: clock: gcc-ipq9574: add wcss remoteproc clocks
-Date: Thu, 18 Dec 2025 22:34:11 -0600
-Message-ID: <20251219043425.888585-3-mr.nuke.me@gmail.com>
+Subject: [PATCH 5/9] clk: qcom: gcc-ipq9574: add wcss remoteproc clocks
+Date: Thu, 18 Dec 2025 22:34:13 -0600
+Message-ID: <20251219043425.888585-5-mr.nuke.me@gmail.com>
 X-Mailer: git-send-email 2.45.1
 In-Reply-To: <20251219043425.888585-1-mr.nuke.me@gmail.com>
 References: <20251219043425.888585-1-mr.nuke.me@gmail.com>
@@ -87,91 +84,499 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Commit da040d560319 ("dt-bindings: clock: qcom: gcc-ipq9574: remove q6
-bring up clock macros") removed these clocks on the idea that Q6
-firmware is responsible for clock bringup. That statement seems
-incorrect, as these clocks need to be enabled before the Q6 is booted.
-Otherwise, the host CPU core that starts the Q6 hangs.
+Commit fa1d525404b6 ("clk: qcom: ipq9574: remove q6 bring up clocks")
+removed these clocks on the idea that Q6 firmware is responsible for
+clock bringup. That statement seems incorrect, as these clocks need to
+be enabled before the Q6 is booted. Otherwise, the host CPU core that
+starts the Q6 hangs.
 
 Perhaps the statement meant that the TrustZone firmware will start the
 clocks. This only happens in PAS mode. Under native OS loading, the
-host needs these clocks, so add them back.
+host needs to enable these clocks, so add them back.
 
 Besides the clocks that were erroneously removed, also add defines for
-GCC_WCSS_AHB_S_CLK, GCC_WCSS_AXI_M_CLK, and GCC_Q6_AXIM2_CLK, as all
-these clocks are required to operate the remoteproc.
+GCC_WCSS_AHB_S_CLK, GCC_WCSS_AXI_M_CLK, and GCC_Q6_AXIM2_CLK. These
+clocks are required in order to operate the remoteproc.
 
 Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
 ---
- include/dt-bindings/clock/qcom,ipq9574-gcc.h | 22 ++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+ drivers/clk/qcom/gcc-ipq9574.c | 378 +++++++++++++++++++++++++++++++++
+ 1 file changed, 378 insertions(+)
 
-diff --git a/include/dt-bindings/clock/qcom,ipq9574-gcc.h b/include/dt-bindings/clock/qcom,ipq9574-gcc.h
-index 0e7c319897f3a..8c74f50a27909 100644
---- a/include/dt-bindings/clock/qcom,ipq9574-gcc.h
-+++ b/include/dt-bindings/clock/qcom,ipq9574-gcc.h
-@@ -132,8 +132,16 @@
- #define GCC_NSSNOC_SNOC_1_CLK				123
- #define GCC_QDSS_ETR_USB_CLK				124
- #define WCSS_AHB_CLK_SRC				125
-+#define GCC_Q6_AHB_CLK					126
-+#define GCC_Q6_AHB_S_CLK				127
-+#define GCC_WCSS_ECAHB_CLK				128
-+#define GCC_WCSS_ACMT_CLK				129
-+#define GCC_SYS_NOC_WCSS_AHB_CLK			130
- #define WCSS_AXI_M_CLK_SRC				131
-+#define GCC_ANOC_WCSS_AXI_M_CLK				132
- #define QDSS_AT_CLK_SRC					133
-+#define GCC_Q6SS_ATBM_CLK				134
-+#define GCC_WCSS_DBG_IFC_ATB_CLK			135
- #define GCC_NSSNOC_ATB_CLK				136
- #define GCC_QDSS_AT_CLK					137
- #define GCC_SYS_NOC_AT_CLK				138
-@@ -146,18 +154,27 @@
- #define QDSS_TRACECLKIN_CLK_SRC				145
- #define GCC_QDSS_TRACECLKIN_CLK				146
- #define QDSS_TSCTR_CLK_SRC				147
-+#define GCC_Q6_TSCTR_1TO2_CLK				148
-+#define GCC_WCSS_DBG_IFC_NTS_CLK			149
- #define GCC_QDSS_TSCTR_DIV2_CLK				150
- #define GCC_QDSS_TS_CLK					151
- #define GCC_QDSS_TSCTR_DIV4_CLK				152
- #define GCC_NSS_TS_CLK					153
- #define GCC_QDSS_TSCTR_DIV8_CLK				154
- #define GCC_QDSS_TSCTR_DIV16_CLK			155
-+#define GCC_Q6SS_PCLKDBG_CLK				156
-+#define GCC_Q6SS_TRIG_CLK				157
-+#define GCC_WCSS_DBG_IFC_APB_CLK			158
-+#define GCC_WCSS_DBG_IFC_DAPBUS_CLK			159
- #define GCC_QDSS_DAP_CLK				160
- #define GCC_QDSS_APB2JTAG_CLK				161
- #define GCC_QDSS_TSCTR_DIV3_CLK				162
- #define QPIC_IO_MACRO_CLK_SRC				163
- #define GCC_QPIC_IO_MACRO_CLK                           164
- #define Q6_AXI_CLK_SRC					165
-+#define GCC_Q6_AXIM_CLK					166
-+#define GCC_WCSS_Q6_TBU_CLK				167
-+#define GCC_MEM_NOC_Q6_AXI_CLK				168
- #define Q6_AXIM2_CLK_SRC				169
- #define NSSNOC_MEMNOC_BFDCD_CLK_SRC			170
- #define GCC_NSSNOC_MEMNOC_CLK				171
-@@ -182,6 +199,7 @@
- #define GCC_UNIPHY2_SYS_CLK				190
- #define GCC_CMN_12GPLL_SYS_CLK				191
- #define GCC_NSSNOC_XO_DCD_CLK				192
-+#define GCC_Q6SS_BOOT_CLK				193
- #define UNIPHY_SYS_CLK_SRC				194
- #define NSS_TS_CLK_SRC					195
- #define GCC_ANOC_PCIE0_1LANE_M_CLK			196
-@@ -203,4 +221,8 @@
- #define GCC_PCIE2_PIPE_CLK				212
- #define GCC_PCIE3_PIPE_CLK				213
- #define GPLL0_OUT_AUX					214
-+#define GCC_WCSS_AHB_S_CLK				215
-+#define GCC_WCSS_AXI_M_CLK				216
-+#define GCC_Q6_AXIM2_CLK				217
+diff --git a/drivers/clk/qcom/gcc-ipq9574.c b/drivers/clk/qcom/gcc-ipq9574.c
+index 6dc86e686de46..aef5ed5cd9f50 100644
+--- a/drivers/clk/qcom/gcc-ipq9574.c
++++ b/drivers/clk/qcom/gcc-ipq9574.c
+@@ -2659,6 +2659,24 @@ static struct clk_rcg2 system_noc_bfdcd_clk_src = {
+ 	},
+ };
+ 
++static struct clk_branch gcc_q6ss_boot_clk = {
++	.halt_reg = 0x25080,
++	.halt_check = BRANCH_HALT_SKIP,
++	.clkr = {
++		.enable_reg = 0x25080,
++		.enable_mask = BIT(0),
++		.hw.init = &(const struct clk_init_data) {
++			.name = "gcc_q6ss_boot_clk",
++			.parent_hws = (const struct clk_hw *[]) {
++				&system_noc_bfdcd_clk_src.clkr.hw
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
 +
- #endif
+ static struct clk_branch gcc_nssnoc_snoc_clk = {
+ 	.halt_reg = 0x17028,
+ 	.clkr = {
+@@ -2729,6 +2747,108 @@ static struct clk_rcg2 wcss_ahb_clk_src = {
+ 	},
+ };
+ 
++static struct clk_branch gcc_q6_ahb_clk = {
++	.halt_reg = 0x25014,
++	.clkr = {
++		.enable_reg = 0x25014,
++		.enable_mask = BIT(0),
++		.hw.init = &(const struct clk_init_data) {
++			.name = "gcc_q6_ahb_clk",
++			.parent_hws = (const struct clk_hw *[]) {
++				&wcss_ahb_clk_src.clkr.hw
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch gcc_q6_ahb_s_clk = {
++	.halt_reg = 0x25018,
++	.clkr = {
++		.enable_reg = 0x25018,
++		.enable_mask = BIT(0),
++		.hw.init = &(const struct clk_init_data) {
++			.name = "gcc_q6_ahb_s_clk",
++			.parent_hws = (const struct clk_hw *[]) {
++				&wcss_ahb_clk_src.clkr.hw
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch gcc_wcss_ecahb_clk = {
++	.halt_reg = 0x25058,
++	.clkr = {
++		.enable_reg = 0x25058,
++		.enable_mask = BIT(0),
++		.hw.init = &(const struct clk_init_data) {
++			.name = "gcc_wcss_ecahb_clk",
++			.parent_hws = (const struct clk_hw *[]) {
++				&wcss_ahb_clk_src.clkr.hw
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch gcc_wcss_acmt_clk = {
++	.halt_reg = 0x2505c,
++	.clkr = {
++		.enable_reg = 0x2505c,
++		.enable_mask = BIT(0),
++		.hw.init = &(const struct clk_init_data) {
++			.name = "gcc_wcss_acmt_clk",
++			.parent_hws = (const struct clk_hw *[]) {
++				&wcss_ahb_clk_src.clkr.hw
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++
++static struct clk_branch gcc_wcss_ahb_s_clk = {
++	.halt_reg = 0x25060,
++	.clkr = {
++		.enable_reg = 0x25060,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data) {
++			.name = "gcc_wcss_ahb_s_clk",
++			.parent_hws = (const struct clk_hw *[]) {
++					&wcss_ahb_clk_src.clkr.hw },
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch gcc_sys_noc_wcss_ahb_clk = {
++	.halt_reg = 0x2e030,
++	.clkr = {
++		.enable_reg = 0x2e030,
++		.enable_mask = BIT(0),
++		.hw.init = &(const struct clk_init_data) {
++			.name = "gcc_sys_noc_wcss_ahb_clk",
++			.parent_hws = (const struct clk_hw *[]) {
++				&wcss_ahb_clk_src.clkr.hw
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
+ static const struct freq_tbl ftbl_wcss_axi_m_clk_src[] = {
+ 	F(24000000, P_XO, 1, 0, 0),
+ 	F(133333333, P_GPLL0, 6, 0, 0),
+@@ -2749,6 +2869,39 @@ static struct clk_rcg2 wcss_axi_m_clk_src = {
+ 	},
+ };
+ 
++static struct clk_branch gcc_wcss_axi_m_clk = {
++	.halt_reg = 0x25064,
++	.clkr = {
++		.enable_reg = 0x25064,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data) {
++			.name = "gcc_wcss_axi_m_clk",
++			.parent_hws = (const struct clk_hw *[]) {
++					&wcss_axi_m_clk_src.clkr.hw },
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch gcc_anoc_wcss_axi_m_clk = {
++	.halt_reg = 0x2e0a8,
++	.clkr = {
++		.enable_reg = 0x2e0a8,
++		.enable_mask = BIT(0),
++		.hw.init = &(const struct clk_init_data) {
++			.name = "gcc_anoc_wcss_axi_m_clk",
++			.parent_hws = (const struct clk_hw *[]) {
++				&wcss_axi_m_clk_src.clkr.hw
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
+ static const struct freq_tbl ftbl_qdss_at_clk_src[] = {
+ 	F(240000000, P_GPLL4, 5, 0, 0),
+ 	{ }
+@@ -2767,6 +2920,40 @@ static struct clk_rcg2 qdss_at_clk_src = {
+ 	},
+ };
+ 
++static struct clk_branch gcc_q6ss_atbm_clk = {
++	.halt_reg = 0x2501c,
++	.clkr = {
++		.enable_reg = 0x2501c,
++		.enable_mask = BIT(0),
++		.hw.init = &(const struct clk_init_data) {
++			.name = "gcc_q6ss_atbm_clk",
++			.parent_hws = (const struct clk_hw *[]) {
++				&qdss_at_clk_src.clkr.hw
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch gcc_wcss_dbg_ifc_atb_clk = {
++	.halt_reg = 0x2503c,
++	.clkr = {
++		.enable_reg = 0x2503c,
++		.enable_mask = BIT(0),
++		.hw.init = &(const struct clk_init_data) {
++			.name = "gcc_wcss_dbg_ifc_atb_clk",
++			.parent_hws = (const struct clk_hw *[]) {
++				&qdss_at_clk_src.clkr.hw
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
+ static struct clk_branch gcc_nssnoc_atb_clk = {
+ 	.halt_reg = 0x17014,
+ 	.clkr = {
+@@ -3003,6 +3190,40 @@ static struct clk_fixed_factor qdss_tsctr_div2_clk_src = {
+ 	},
+ };
+ 
++static struct clk_branch gcc_q6_tsctr_1to2_clk = {
++	.halt_reg = 0x25020,
++	.clkr = {
++		.enable_reg = 0x25020,
++		.enable_mask = BIT(0),
++		.hw.init = &(const struct clk_init_data) {
++			.name = "gcc_q6_tsctr_1to2_clk",
++			.parent_hws = (const struct clk_hw *[]) {
++				&qdss_tsctr_div2_clk_src.hw
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch gcc_wcss_dbg_ifc_nts_clk = {
++	.halt_reg = 0x25040,
++	.clkr = {
++		.enable_reg = 0x25040,
++		.enable_mask = BIT(0),
++		.hw.init = &(const struct clk_init_data) {
++			.name = "gcc_wcss_dbg_ifc_nts_clk",
++			.parent_hws = (const struct clk_hw *[]) {
++				&qdss_tsctr_div2_clk_src.hw
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
+ static struct clk_branch gcc_qdss_tsctr_div2_clk = {
+ 	.halt_reg = 0x2d044,
+ 	.clkr = {
+@@ -3177,6 +3398,74 @@ static struct clk_branch gcc_qdss_tsctr_div16_clk = {
+ 	},
+ };
+ 
++static struct clk_branch gcc_q6ss_pclkdbg_clk = {
++	.halt_reg = 0x25024,
++	.clkr = {
++		.enable_reg = 0x25024,
++		.enable_mask = BIT(0),
++		.hw.init = &(const struct clk_init_data) {
++			.name = "gcc_q6ss_pclkdbg_clk",
++			.parent_hws = (const struct clk_hw *[]) {
++				&qdss_dap_sync_clk_src.hw
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch gcc_q6ss_trig_clk = {
++	.halt_reg = 0x25068,
++	.clkr = {
++		.enable_reg = 0x25068,
++		.enable_mask = BIT(0),
++		.hw.init = &(const struct clk_init_data) {
++			.name = "gcc_q6ss_trig_clk",
++			.parent_hws = (const struct clk_hw *[]) {
++				&qdss_dap_sync_clk_src.hw
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch gcc_wcss_dbg_ifc_apb_clk = {
++	.halt_reg = 0x25038,
++	.clkr = {
++		.enable_reg = 0x25038,
++		.enable_mask = BIT(0),
++		.hw.init = &(const struct clk_init_data) {
++			.name = "gcc_wcss_dbg_ifc_apb_clk",
++			.parent_hws = (const struct clk_hw *[]) {
++				&qdss_dap_sync_clk_src.hw
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch gcc_wcss_dbg_ifc_dapbus_clk = {
++	.halt_reg = 0x25044,
++	.clkr = {
++		.enable_reg = 0x25044,
++		.enable_mask = BIT(0),
++		.hw.init = &(const struct clk_init_data) {
++			.name = "gcc_wcss_dbg_ifc_dapbus_clk",
++			.parent_hws = (const struct clk_hw *[]) {
++				&qdss_dap_sync_clk_src.hw
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
+ static struct clk_branch gcc_qdss_dap_clk = {
+ 	.halt_reg = 0x2d058,
+ 	.clkr = {
+@@ -3298,6 +3587,58 @@ static struct clk_rcg2 q6_axi_clk_src = {
+ 	},
+ };
+ 
++static struct clk_branch gcc_q6_axim_clk = {
++	.halt_reg = 0x2500c,
++	.clkr = {
++		.enable_reg = 0x2500c,
++		.enable_mask = BIT(0),
++		.hw.init = &(const struct clk_init_data) {
++			.name = "gcc_q6_axim_clk",
++			.parent_hws = (const struct clk_hw *[]) {
++				&q6_axi_clk_src.clkr.hw
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch gcc_wcss_q6_tbu_clk = {
++	.halt_reg = 0x12050,
++	.halt_check = BRANCH_HALT_DELAY,
++	.clkr = {
++		.enable_reg = 0xb00c,
++		.enable_mask = BIT(6),
++		.hw.init = &(const struct clk_init_data) {
++			.name = "gcc_wcss_q6_tbu_clk",
++			.parent_hws = (const struct clk_hw *[]) {
++				&q6_axi_clk_src.clkr.hw
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch gcc_mem_noc_q6_axi_clk = {
++	.halt_reg = 0x19010,
++	.clkr = {
++		.enable_reg = 0x19010,
++		.enable_mask = BIT(0),
++		.hw.init = &(const struct clk_init_data) {
++			.name = "gcc_mem_noc_q6_axi_clk",
++			.parent_hws = (const struct clk_hw *[]) {
++				&q6_axi_clk_src.clkr.hw
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
+ static const struct freq_tbl ftbl_q6_axim2_clk_src[] = {
+ 	F(342857143, P_GPLL4, 3.5, 0, 0),
+ 	{ }
+@@ -3323,6 +3664,22 @@ static struct clk_rcg2 q6_axim2_clk_src = {
+ 	},
+ };
+ 
++static struct clk_branch gcc_q6_axim2_clk = {
++	.halt_reg = 0x25010,
++	.clkr = {
++		.enable_reg = 0x25010,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data) {
++			.name = "gcc_q6_axim2_clk",
++			.parent_hws = (const struct clk_hw *[]) {
++					&q6_axim2_clk_src.clkr.hw },
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
+ static const struct freq_tbl ftbl_nssnoc_memnoc_bfdcd_clk_src[] = {
+ 	F(533333333, P_GPLL0, 1.5, 0, 0),
+ 	{ }
+@@ -3847,8 +4204,18 @@ static struct clk_regmap *gcc_ipq9574_clks[] = {
+ 	[GCC_NSSNOC_SNOC_1_CLK] = &gcc_nssnoc_snoc_1_clk.clkr,
+ 	[GCC_QDSS_ETR_USB_CLK] = &gcc_qdss_etr_usb_clk.clkr,
+ 	[WCSS_AHB_CLK_SRC] = &wcss_ahb_clk_src.clkr,
++	[GCC_Q6_AHB_CLK] = &gcc_q6_ahb_clk.clkr,
++	[GCC_Q6_AHB_S_CLK] = &gcc_q6_ahb_s_clk.clkr,
++	[GCC_WCSS_ECAHB_CLK] = &gcc_wcss_ecahb_clk.clkr,
++	[GCC_WCSS_ACMT_CLK] = &gcc_wcss_acmt_clk.clkr,
++	[GCC_WCSS_AHB_S_CLK] = &gcc_wcss_ahb_s_clk.clkr,
++	[GCC_SYS_NOC_WCSS_AHB_CLK] = &gcc_sys_noc_wcss_ahb_clk.clkr,
+ 	[WCSS_AXI_M_CLK_SRC] = &wcss_axi_m_clk_src.clkr,
++	[GCC_WCSS_AXI_M_CLK] = &gcc_wcss_axi_m_clk.clkr,
++	[GCC_ANOC_WCSS_AXI_M_CLK] = &gcc_anoc_wcss_axi_m_clk.clkr,
+ 	[QDSS_AT_CLK_SRC] = &qdss_at_clk_src.clkr,
++	[GCC_Q6SS_ATBM_CLK] = &gcc_q6ss_atbm_clk.clkr,
++	[GCC_WCSS_DBG_IFC_ATB_CLK] = &gcc_wcss_dbg_ifc_atb_clk.clkr,
+ 	[GCC_NSSNOC_ATB_CLK] = &gcc_nssnoc_atb_clk.clkr,
+ 	[GCC_QDSS_AT_CLK] = &gcc_qdss_at_clk.clkr,
+ 	[GCC_SYS_NOC_AT_CLK] = &gcc_sys_noc_at_clk.clkr,
+@@ -3861,19 +4228,29 @@ static struct clk_regmap *gcc_ipq9574_clks[] = {
+ 	[QDSS_TRACECLKIN_CLK_SRC] = &qdss_traceclkin_clk_src.clkr,
+ 	[GCC_QDSS_TRACECLKIN_CLK] = &gcc_qdss_traceclkin_clk.clkr,
+ 	[QDSS_TSCTR_CLK_SRC] = &qdss_tsctr_clk_src.clkr,
++	[GCC_Q6_TSCTR_1TO2_CLK] = &gcc_q6_tsctr_1to2_clk.clkr,
++	[GCC_WCSS_DBG_IFC_NTS_CLK] = &gcc_wcss_dbg_ifc_nts_clk.clkr,
+ 	[GCC_QDSS_TSCTR_DIV2_CLK] = &gcc_qdss_tsctr_div2_clk.clkr,
+ 	[GCC_QDSS_TS_CLK] = &gcc_qdss_ts_clk.clkr,
+ 	[GCC_QDSS_TSCTR_DIV4_CLK] = &gcc_qdss_tsctr_div4_clk.clkr,
+ 	[GCC_NSS_TS_CLK] = &gcc_nss_ts_clk.clkr,
+ 	[GCC_QDSS_TSCTR_DIV8_CLK] = &gcc_qdss_tsctr_div8_clk.clkr,
+ 	[GCC_QDSS_TSCTR_DIV16_CLK] = &gcc_qdss_tsctr_div16_clk.clkr,
++	[GCC_Q6SS_PCLKDBG_CLK] = &gcc_q6ss_pclkdbg_clk.clkr,
++	[GCC_Q6SS_TRIG_CLK] = &gcc_q6ss_trig_clk.clkr,
++	[GCC_WCSS_DBG_IFC_APB_CLK] = &gcc_wcss_dbg_ifc_apb_clk.clkr,
++	[GCC_WCSS_DBG_IFC_DAPBUS_CLK] = &gcc_wcss_dbg_ifc_dapbus_clk.clkr,
+ 	[GCC_QDSS_DAP_CLK] = &gcc_qdss_dap_clk.clkr,
+ 	[GCC_QDSS_APB2JTAG_CLK] = &gcc_qdss_apb2jtag_clk.clkr,
+ 	[GCC_QDSS_TSCTR_DIV3_CLK] = &gcc_qdss_tsctr_div3_clk.clkr,
+ 	[QPIC_IO_MACRO_CLK_SRC] = &qpic_io_macro_clk_src.clkr,
+ 	[GCC_QPIC_IO_MACRO_CLK] = &gcc_qpic_io_macro_clk.clkr,
+ 	[Q6_AXI_CLK_SRC] = &q6_axi_clk_src.clkr,
++	[GCC_Q6_AXIM_CLK] = &gcc_q6_axim_clk.clkr,
++	[GCC_WCSS_Q6_TBU_CLK] = &gcc_wcss_q6_tbu_clk.clkr,
++	[GCC_MEM_NOC_Q6_AXI_CLK] = &gcc_mem_noc_q6_axi_clk.clkr,
+ 	[Q6_AXIM2_CLK_SRC] = &q6_axim2_clk_src.clkr,
++	[GCC_Q6_AXIM2_CLK] = &gcc_q6_axim2_clk.clkr,
+ 	[NSSNOC_MEMNOC_BFDCD_CLK_SRC] = &nssnoc_memnoc_bfdcd_clk_src.clkr,
+ 	[GCC_NSSNOC_MEMNOC_CLK] = &gcc_nssnoc_memnoc_clk.clkr,
+ 	[GCC_NSSNOC_MEM_NOC_1_CLK] = &gcc_nssnoc_mem_noc_1_clk.clkr,
+@@ -3896,6 +4273,7 @@ static struct clk_regmap *gcc_ipq9574_clks[] = {
+ 	[GCC_UNIPHY1_SYS_CLK] = &gcc_uniphy1_sys_clk.clkr,
+ 	[GCC_UNIPHY2_SYS_CLK] = &gcc_uniphy2_sys_clk.clkr,
+ 	[GCC_CMN_12GPLL_SYS_CLK] = &gcc_cmn_12gpll_sys_clk.clkr,
++	[GCC_Q6SS_BOOT_CLK] = &gcc_q6ss_boot_clk.clkr,
+ 	[UNIPHY_SYS_CLK_SRC] = &uniphy_sys_clk_src.clkr,
+ 	[NSS_TS_CLK_SRC] = &nss_ts_clk_src.clkr,
+ 	[GCC_ANOC_PCIE0_1LANE_M_CLK] = &gcc_anoc_pcie0_1lane_m_clk.clkr,
 -- 
 2.45.1
 
