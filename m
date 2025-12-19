@@ -1,52 +1,51 @@
-Received: from mx-relay03-hz2.antispameurope.com (mx-relay03-hz2.antispameurope.com [83.246.65.89])
+Received: from mx-relay47-hz3.antispameurope.com (mx-relay47-hz3.antispameurope.com [94.100.134.236])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C54BB2EA156
-	for <linux-clk@vger.kernel.org>; Fri, 19 Dec 2025 08:54:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=83.246.65.89
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E9552EB5AF
+	for <linux-clk@vger.kernel.org>; Fri, 19 Dec 2025 08:56:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=94.100.134.236
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766134447; cv=pass; b=Ry5Kfw7ZDZCnCVOFVHCdIlHV+1t4qkOIpGyFBD3r+n98WE+r84Qc+fd0AA9uug6NV9Ee986EH7jO0lX7mZzW/m0d+vX30h5kU8XZ+kBQNkHnDlW/QDTlmQtXtBmqfgMbIOYU8hrpBJyWBu2eYp6ttBtdRbJkkUwnEqGS5FRt8nk=
+	t=1766134586; cv=pass; b=ezc2vWxR3OoECoAGHBkYaQdTEs03gVEZwW+jqEYgVKst/B8MQmMKYAnIs1dEaYoa9B35wODYRsqtFVDLa9ccZQRRys99CfsSWVZ4QhYXCLfiPOyxCmCCQ8jRVaSDlZHX8PvyKYtxbIrjtY6NCvhyRuQvqiVhhsQng8oqgmkhCsM=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766134447; c=relaxed/simple;
-	bh=7lPH8ZuwqrR0EPFMmGW3KMxzeLFRv6JnjvXAyllK02A=;
+	s=arc-20240116; t=1766134586; c=relaxed/simple;
+	bh=p3q8028oGlh4nUIcsvZ5k6M9thwqXIeyBKTiW1fadvs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fnWDfuUBTc4uojHoOFECcd2V55maOUFPqTejlcvsXtidASiTX2lMhEEGzyy+5qK1DTsJU9nUPNGcySRthq1NcdFv7I9wAumXg6TLgmW3DHFzugb+PXhde4tK8HgQSNEXjLNdlO0Alm0ZQfztuNSh7iECMqTGM/Sp2Gcz0iAx2UU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=Bp1hCPuH; arc=pass smtp.client-ip=83.246.65.89
+	 MIME-Version:Content-Type; b=NExtCGsOLqG+inlswXOBA4pB+QJhx+1puEvoriVeWLI4UztGs+qL0qLSCS0X2pxo4O0SU2UYTzyP1eQDOEzdqOq4reBOpJvqlQKW/wYslWp7ncpj18chVJR9CluVOh+5kqO8EaDar9a8easiVbkME24oDJBO3MOR5Ji1PwcFf9g=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=JHeJ2vs3; arc=pass smtp.client-ip=94.100.134.236
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ew.tq-group.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="Bp1hCPuH"
-ARC-Authentication-Results: i=1; mx-gate03-hz2.hornetsecurity.com 1; spf=pass
+	dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="JHeJ2vs3"
+ARC-Authentication-Results: i=1; mx-gate47-hz3.hornetsecurity.com 1; spf=pass
  reason=mailfrom (ip=94.100.132.6, headerfrom=ew.tq-group.com)
- smtp.mailfrom=ew.tq-group.com
- smtp.helo=hmail-p-smtp01-out04-hz1.hornetsecurity.com; dmarc=pass
- header.from=ew.tq-group.com orig.disposition=pass
+ smtp.mailfrom=ew.tq-group.com smtp.helo=smtp-out01-hz1.hornetsecurity.com;
+ dmarc=pass header.from=ew.tq-group.com orig.disposition=pass
 ARC-Message-Signature: a=rsa-sha256;
- bh=XlXr7igiWKsjjzIb+5AsG+BOhT+y2sXxD6hRFSbAez4=; c=relaxed/relaxed;
+ bh=Lj43oXTOV6UJEnGkyony8860gGIeke9NpD8hIRJrkD4=; c=relaxed/relaxed;
  d=hornetsecurity.com; h=from:to:date:subject:mime-version:; i=1; s=hse1;
- t=1766134354;
- b=qe9kKf3z6ZygIMoIaFGy1oz7e6GdVMSG/0UWxdEGFpTCrAY8sOKQzANKBtJUODttgP0Z6eIh
- Yol60UKTKowYgIMc+G//3rUWKPIl12sqktNn+SZ9/X+9UzLUK7YaxihimXzf9DhNd8Am6uwTIAd
- b0phgI7FcwHbQETR2OtS3McJalmNiD5hae0DAlJaGrSCBA0UTnprt4XBTs0M5h1DCLodh8oO3B4
- 52vhznOqTWc4D0ZrwbtqMjiZ31rGDv4Ek7i0bTt6+0BJILQwdfRlFrGGWceMG3hzEjSfbCWbgNY
- REbJMIDGDJF0z1q50oQ0Btisz9DJkLpHQgB9RKkD/ZQCg==
+ t=1766134553;
+ b=JT7/bQ+tOWM52UtPHny6/vGuylUUboCqrR0MGjUNwRovlsWY2dEsGulZCEIf8zbmZxArexRa
+ M9Oslou0SlbJvu2q4++MBKWjpWhuRKZzqjO+d0zlQkMPrOO1Yl7uU9ZUpi1Lb93hE0R36SNkbjX
+ 2bLDnN9QI15+dCI1iMVSXZRASkf8D6FVvGgDEt77FKbk92TKzPawgum1MTfZlDSeoyqtZ/rzQHm
+ JEoT9ADJLjPJ+zOirrvC8cRe9MZ24o6WCIpI4R8zFBMq73u4cxZ4DIwezSkAutKTg/92KxfhxUm
+ 0YaGdH2RsKwEkhukoQnQRxgvhsqNixa1MgbfEkTAxZ1Lw==
 ARC-Seal: a=rsa-sha256; cv=none; d=hornetsecurity.com; i=1; s=hse1;
- t=1766134354;
- b=SdDZSEGm1OekdIIYCm2Y52dfq8jL2nldnPSkzxNbQ+hOj5DvOFVB6vD4Nxua6rsT2xEuHZrp
- hFidAljk0Jo6BWFkaS+zNvxGFNsOXPTzrr3tRcAnbuhvmnA1g2srUYKty231q3Z+Nmzw6HgNZlL
- Cc3iWOHQfSVNyWy2UOqiEqHK3fw8e2J5MP811M7xmTL8k/JYvbYiirIDpnBQd/MP9ohoYKVNEPm
- s4N43juuhx+CNEfmi3oBqt4EIrEeEs4FW2N8F6zdivFqR0+QIxLke8tBTC81MlvHAvAGT3VnEQH
- GtIczc6usWD1gOHNoTr2kFWSfuGyjS7mbts22cNT/qNIA==
-Received: from he-nlb01-hz1.hornetsecurity.com ([94.100.132.6]) by mx-relay03-hz2.antispameurope.com;
- Fri, 19 Dec 2025 09:52:34 +0100
+ t=1766134553;
+ b=sOUhI1kg02cKPZ/H6/21bcAzWN7aa98DNCDgX5yIIKAH4AxkjrRdXLAy/iv8uW5oxlFoPTP3
+ LzxkqMLiujbGpn53yNIs/9fQuFPjOgz3dwy/kbyVipFpB2vRf01ThP9nviI25k/yIR6OI25+xCV
+ 8Zb5Tlds5jWxujYdb0psE5KxShhibaiEVqCim6yA5vdcPCRaICBmboYJjHctnp7+NFCneTHLRIU
+ TvSWkt+8RFsF9H9xYnWcFVJxI2mUKiYUeCLNYbk/i7ZTbH5yOnW40rj6OXgAB+z80xO+FGRNKo4
+ xcBdDFuZSkmgESZGqmh0I0k75roLqRAKqOwO4V74V6z6w==
+Received: from he-nlb01-hz1.hornetsecurity.com ([94.100.132.6]) by mx-relay47-hz3.antispameurope.com;
+ Fri, 19 Dec 2025 09:55:52 +0100
 Received: from steina-w.localnet (host-82-135-125-110.customer.m-online.net [82.135.125.110])
 	(Authenticated sender: alexander.stein@ew.tq-group.com)
-	by hmail-p-smtp01-out04-hz1.hornetsecurity.com (Postfix) with ESMTPSA id 4751A220D57;
-	Fri, 19 Dec 2025 09:52:16 +0100 (CET)
+	by smtp-out01-hz1.hornetsecurity.com (Postfix) with ESMTPSA id D2D14A4134F;
+	Fri, 19 Dec 2025 09:55:32 +0100 (CET)
 From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
  Conor Dooley <conor+dt@kernel.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
  Peter Chen <peter.chen@kernel.org>, Pawel Laszczak <pawell@cadence.com>,
  Roger Quadros <rogerq@kernel.org>,
@@ -54,90 +53,95 @@ Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
  Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
  Pengutronix Kernel Team <kernel@pengutronix.de>,
  Fabio Estevam <festevam@gmail.com>, Magnus Damm <magnus.damm@gmail.com>,
- Marek Vasut <marex@denx.de>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-usb@vger.kernel.org, imx@lists.linux.dev,
+ Marek Vasut <marex@denx.de>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-usb@vger.kernel.org, imx@lists.linux.dev,
  linux-arm-kernel@lists.infradead.org, linux@ew.tq-group.com
-Subject: Re: [PATCH 0/6] Support TQMa8QM
-Date: Fri, 19 Dec 2025 09:52:15 +0100
-Message-ID: <24355727.EfDdHjke4D@steina-w>
+Subject:
+ Re: [PATCH 2/6] dt-bindings: usb: cdns,usb3: support USB devices in DT
+Date: Fri, 19 Dec 2025 09:55:31 +0100
+Message-ID: <4732491.5fSG56mABF@steina-w>
 Organization: TQ-Systems GmbH
-In-Reply-To:
- <CAMuHMdUkghCNb96J38hbEZ8Jct6m2MPvnPumGp-y_dPfPW9eAg@mail.gmail.com>
+In-Reply-To: <20251218152058.1521806-3-alexander.stein@ew.tq-group.com>
 References:
  <20251218152058.1521806-1-alexander.stein@ew.tq-group.com>
- <CAMuHMdUkghCNb96J38hbEZ8Jct6m2MPvnPumGp-y_dPfPW9eAg@mail.gmail.com>
+ <20251218152058.1521806-3-alexander.stein@ew.tq-group.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: multipart/signed; boundary="nextPart7530110.MhkbZ0Pkbq";
+ micalg="pgp-sha512"; protocol="application/pgp-signature"
 X-cloud-security-sender:alexander.stein@ew.tq-group.com
 X-cloud-security-recipient:linux-clk@vger.kernel.org
 X-cloud-security-crypt: load encryption module
 X-cloud-security-Mailarchiv: E-Mail archived for: alexander.stein@ew.tq-group.com
 X-cloud-security-Mailarchivtype:outbound
 X-cloud-security-Virusscan:CLEAN
-X-cloud-security-disclaimer: This E-Mail was scanned by E-Mailservice on mx-relay03-hz2.antispameurope.com with 4dXh9s3M9TzYd7D
+X-cloud-security-disclaimer: This E-Mail was scanned by E-Mailservice on mx-relay47-hz3.antispameurope.com with 4dXhFf09TXz4MPFj
 X-cloud-security-connect: he-nlb01-hz1.hornetsecurity.com[94.100.132.6], TLS=1, IP=94.100.132.6
-X-cloud-security-Digest:d9ceb68c40de01de860771274803b5bf
-X-cloud-security:scantime:2.014
+X-cloud-security-Digest:fc1b38920f4cdcdd93076212dbcb4bf0
+X-cloud-security:scantime:2.397
 DKIM-Signature: a=rsa-sha256;
- bh=XlXr7igiWKsjjzIb+5AsG+BOhT+y2sXxD6hRFSbAez4=; c=relaxed/relaxed;
+ bh=Lj43oXTOV6UJEnGkyony8860gGIeke9NpD8hIRJrkD4=; c=relaxed/relaxed;
  d=ew.tq-group.com;
  h=content-type:mime-version:subject:from:to:message-id:date; s=hse1;
- t=1766134354; v=1;
- b=Bp1hCPuHUSQ3NIoZRCtnD/ksyilJo4SPapuUPrkQffzOMsTaFpT49jBomSa7ohOyUAoiRsVn
- ssD8sscqQk1KWSbPnvqgRMQ9QeERSTBHkKAzDKuPbO8dnnj582zC2VohtcJOjhIv8Yzvu/7W8yk
- UQJF6ZB/ilLokL6mFKr4/+fsXDBSFXzyfk07jYlh2UwxDRGxqbXzeBA1B7wfzR/ccV8F3UbXvZE
- pvNIzdZK0dBg1EVUS4BQ9JRoeq8b0KmjbEJf0fvSDek1IMg1Fmljy6P6dYLBIwByBmeVeHawVC7
- tpogUtJG+xb18d5v8owimePsJsmpxbw5D5FPn6y2tH/uw==
+ t=1766134552; v=1;
+ b=JHeJ2vs3Skg/UhLK+MecBSVNezuTd3J231LNGCy+7McQjZcQqUddTkOUrjql0IU/P+jOXC6s
+ WfWY5isUGC7hWNlT2EFZfVtCGbKqMRU1JfAXXRMx46xwSCmS98VRhKK6X0HDC69gBXw6D9xUcdV
+ kf7mEX6pYb9/PoYOXve9DsTKiSQYzexhi6+VpnVb/PEV2TWrYwZ2Ti3R5DGtSC0X/o9hZ0zwhHb
+ cr2/NEv6g6rVLh7XrI9IMjC4ALEUuWJXzOYaMx8bnjSWSpRfuOMSh86RgvKSBzrNjMbyIn2jg4M
+ I8Aj6++wkUIfZFdCfKL6Wddue92FKgs4+6AQBe/8k1+9Q==
 
-Am Donnerstag, 18. Dezember 2025, 16:28:39 CET schrieb Geert Uytterhoeven:
-> Hi Alexander,
+--nextPart7530110.MhkbZ0Pkbq
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"; protected-headers="v1"
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+Date: Fri, 19 Dec 2025 09:55:31 +0100
+Message-ID: <4732491.5fSG56mABF@steina-w>
+Organization: TQ-Systems GmbH
+MIME-Version: 1.0
+
+Am Donnerstag, 18. Dezember 2025, 16:20:49 CET schrieb Alexander Stein:
+> Reference usb-hxci.yaml in host mode in order to support on-board USB
+> hubs.
 >=20
-> On Thu, 18 Dec 2025 at 16:22, Alexander Stein
-> <alexander.stein@ew.tq-group.com> wrote:
-> > this series adds support for TQ's TQMa8QM. The first 3 patches are prep=
-atory:
-> > 1. Add support for clock-output-names for clk-renesas-pcie. This is nec=
-essary
-> > as clk-imx8qxp-lpcg.c (driver for phyx1 phyx2 clock gating) reqiures th=
-at
-> > property on the parent clock.
+> Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+> ---
+>  Documentation/devicetree/bindings/usb/cdns,usb3.yaml | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
 >=20
-> Hmm, clock consumers should have no business with the names used by
-> clock providers, even less so whether those names are specified in DT
-> or not.
-
-Well drivers/clk/imx/clk-imx8qxp-lpcg.c does exactly this. AFAIK not just
-the ones references in DT, but also hard codes ones.
-
-The root cause is that clock-hsio-refa and clock-hsio-refb in
-arch/arm64/boot/dts/freescale/imx8-ss-hsio.dtsi are setting platform-specif=
-ic
-GPIOs in SoC .dtsi...
-
-My current idea is to use fixed-factor-clock instead:
-
-> &hsio_refa_clk {
-> 	compatible =3D "fixed-factor-clock";
-> 	clocks =3D <&pcieclk 0>;
-> 	clock-div =3D <1>;
-> 	clock-mult =3D <1>;
-> 	/delete-property/ enable-gpios;
-> };
+> diff --git a/Documentation/devicetree/bindings/usb/cdns,usb3.yaml b/Docum=
+entation/devicetree/bindings/usb/cdns,usb3.yaml
+> index f454ddd9bbaa6..1f7f0adc3b1ed 100644
+> --- a/Documentation/devicetree/bindings/usb/cdns,usb3.yaml
+> +++ b/Documentation/devicetree/bindings/usb/cdns,usb3.yaml
+> @@ -85,6 +85,17 @@ required:
+> =20
+>  allOf:
+>    - $ref: usb-drd.yaml#
+> +  - if:
+> +      properties:
+> +        dr_mode:
+> +          const: peripheral
+> +
+> +      required:
+> +        - dr_mode
+> +    then:
+> +      $ref: usb.yaml#
+> +    else:
+> +      $ref: usb-xhci.yaml#
+> =20
+>  unevaluatedProperties: false
+> =20
 >=20
-> &hsio_refb_clk {
-> 	compatible =3D "fixed-factor-clock";
-> 	clocks =3D <&pcieclk 0>;
-> 	clock-div =3D <1>;
-> 	clock-mult =3D <1>;
-> 	/delete-property/ enable-gpios;
-> };
+
+This one is actually independent of the rest in this series and can be
+picked on it's own, especially as I won't be able to work on the board
+support until February. I just wanted to give some context / usage.
 
 Best regards,
 Alexander
@@ -146,5 +150,24 @@ TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
 Amtsgericht M=FCnchen, HRB 105018
 Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
 http://www.tq-group.com/
+--nextPart7530110.MhkbZ0Pkbq
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEByESxqszIvkmWRwbaS+g2M0Z/iUFAmlFEwMACgkQaS+g2M0Z
+/iUbXAgAhl79VULQpYWRy4jkIxMY+8oVkk+teNBcCC5xgQy+udpq222+0AUAuHMt
+bTeVvx5CZg4BTRrKkhWp+8uESiqCMmddsGZU/5VYApPaiymyWDQGJqx2JbmpJbWU
+2bYnSnvzY5pT3ETFlIpmxDchfAqhj/m961P82Tz+fqPDd/PQQvYdrntnp45JUwyo
+2JisUxSCi/K+hBveATGMjO2hB5rQGhSccTOiE5VBa7PuEo7Jh8nHl0HRtEabNAUK
+QdC+6TE2aj7V4Xq+sCzGNDgMkFPRV2W9gndo6NslrDR9o7QJOzNuk+pMCtVpeAMv
+yBGSEMscs3ucjqkcdiJF97ui1BcEHw==
+=tHiP
+-----END PGP SIGNATURE-----
+
+--nextPart7530110.MhkbZ0Pkbq--
+
 
 
