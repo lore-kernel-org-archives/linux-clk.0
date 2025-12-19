@@ -1,272 +1,136 @@
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+Received: from mx-relay49-hz3.antispameurope.com (mx-relay49-hz3.antispameurope.com [94.100.134.238])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BBD12264AA;
-	Fri, 19 Dec 2025 08:02:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766131342; cv=none; b=RtmefSLNO0HRmFM+OAfxXWHQvj7za7ge49PE77tNElWAaPZJ01rcUmPKp/KT+mGyXvbKc5Xp2vECdjTYnubuyX0kbvt8Wy+r1HenwJrxpYyLbqDNN23U1NDxlUZdcKQBp1xEq4+flBxxwLl8+8JrISfXiG0jMocZCySX1jttd/s=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766131342; c=relaxed/simple;
-	bh=CHVhsEEszqnU4LoxOGS7wHG+fmEdUXxxtRBiyrbO9Tg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qVU/txh5d2PfqnTZ0ZPBzCC7VQHEr0jsArOK1U/cJNd4GWpR8aqALsH74A22A9jkd93c8L+r8RspUw7eNidR1STZkZDISU1UAAMLzTVCefJPaMS3Yz5gHxM6XGFRPH47DO69pmcRTo5iB4HSMAJbywrA+wwwNrFvqPPrjbB1Oj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=isrc.iscas.ac.cn; spf=pass smtp.mailfrom=isrc.iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=isrc.iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=isrc.iscas.ac.cn
-Received: from duge-virtual-machine (unknown [223.160.207.22])
-	by APP-01 (Coremail) with SMTP id qwCowACHLmp4BkVpRhwZAQ--.24049S2;
-	Fri, 19 Dec 2025 16:02:03 +0800 (CST)
-Date: Fri, 19 Dec 2025 16:02:00 +0800
-From: Jiayu Du <jiayu.riscv@isrc.iscas.ac.cn>
-To: Xukai Wang <kingxukai@zohomail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Troy Mitchell <TroyMitchell988@gmail.com>
-Subject: Re: [PATCH v9 2/3] clk: canaan: Add clock driver for Canaan K230
-Message-ID: <aUUGeGnYR+joVR8c@duge-virtual-machine>
-References: <20251127-b4-k230-clk-v9-0-3aa09e17faf5@zohomail.com>
- <20251127-b4-k230-clk-v9-2-3aa09e17faf5@zohomail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F18D52E0B71
+	for <linux-clk@vger.kernel.org>; Fri, 19 Dec 2025 08:10:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=94.100.134.238
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1766131810; cv=pass; b=Fziq8upfhRUJaFV4t+6JwvyDoVwLwxIXXL2j/kbIOQRPXe9PxM+3y500UnDLx3FwYsNA6IkvSYyViU2S3nubBeXX8XY1IxxBamBHBZoNLQ5B5H2UDOZtxrN43jfvOy2CvxP+VuNmf+V5vHQknFtbDx84xNr+zObvzJfxMR+EuBM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1766131810; c=relaxed/simple;
+	bh=SshNRPgIyfZhOL9g00Tx3x9NU8S7Oou4WRUj0p6RJMc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Cxcn53XTIyyGZqyqU5BCglFjy8qUh/d9ycYO6lrA1kO6eumFrpR1b1uw1shY0/Evy9LW3ELEv28F6MXgK1vlz5fjDvxnk3yx1oOYGbqYVz9zdF/lZ/JyGjTvH2WnaNrsXiFSeM8UQ94ZlhBdhdvOCIp9aqg+EoypTl4R7eOzFfU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=lTTAv3p5; arc=pass smtp.client-ip=94.100.134.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="lTTAv3p5"
+ARC-Authentication-Results: i=1; mx-gate49-hz3.hornetsecurity.com 1; spf=pass
+ reason=mailfrom (ip=94.100.132.6, headerfrom=ew.tq-group.com)
+ smtp.mailfrom=ew.tq-group.com
+ smtp.helo=hmail-p-smtp01-out03-hz1.hornetsecurity.com; dmarc=pass
+ header.from=ew.tq-group.com orig.disposition=pass
+ARC-Message-Signature: a=rsa-sha256;
+ bh=9ZkmG5LDdBWcr5F9UYs40lXE33P3xPwDRyGsRHQ2ZJw=; c=relaxed/relaxed;
+ d=hornetsecurity.com; h=from:to:date:subject:mime-version:; i=1; s=hse1;
+ t=1766131783;
+ b=Hh/n6nHDO7aqsOS/50Hyxsq0EnR8fLOGEburW9N26fypL66s0ukapdFo+SAh+FblPRlAZLH6
+ 6feO5keeszBj/cSL1yjbpx3Q9I5FgCnwUzKZNM3gyBg5Rx9HkRapc6//NB6+hV6B3RkNH+GsPo/
+ 5DdizjtnQh/XN7xFMdYO+DmsU2ZB6YRz9onCo1Z2B4pWdMXFrHGtBHDAVoJgNV4KD04Gc2Bthlc
+ wzuYBRDkrO9odnEnYH5JLpKjljm3hgfg9fn2KYjZNBfwjGzsx8oPfE/XDCaLDh4euR19EEBeKSU
+ rSj/0ARcmjAlViSxm6Scghwxq/SoGibZPu7WQLH6ViwYQ==
+ARC-Seal: a=rsa-sha256; cv=none; d=hornetsecurity.com; i=1; s=hse1;
+ t=1766131783;
+ b=NuWFnFQ6UUm6EFSn8fboiklkIfjr5RcQHqKjsHLQOKmI2fsaZEE3nLJyjLEiMFFZqBgyX3tP
+ x7AziNAgmXB74MyApIUQqik47kv65WDVGQp1yrP41eg2o8hTgino/HwQ/nxgiKU/9yXFV8//GGY
+ 5ogDVDnaIVUyDivbXdvejyFRpYNRqnso4IOrgk5hFt+DofCDYqpu+p1tbnR/Bm6WmwbVPTyQ+OG
+ WNN4c0fhpyXmYWfpLsriCeeBZrxmyZN94s7E2s/OpjqVOeByks5d6Zieg/Awx9MN2jZjDo07+UL
+ CrReVJSh8tjmcpev6vqcAKvOJHJ2cu7YGLdY86ptKLSjg==
+Received: from he-nlb01-hz1.hornetsecurity.com ([94.100.132.6]) by mx-relay49-hz3.antispameurope.com;
+ Fri, 19 Dec 2025 09:09:43 +0100
+Received: from steina-w.localnet (host-82-135-125-110.customer.m-online.net [82.135.125.110])
+	(Authenticated sender: alexander.stein@ew.tq-group.com)
+	by hmail-p-smtp01-out03-hz1.hornetsecurity.com (Postfix) with ESMTPSA id AC51CCC0DAC;
+	Fri, 19 Dec 2025 09:09:23 +0100 (CET)
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+ Peter Chen <peter.chen@kernel.org>, Pawel Laszczak <pawell@cadence.com>,
+ Roger Quadros <rogerq@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Magnus Damm <magnus.damm@gmail.com>,
+ Marek Vasut <marex@denx.de>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-usb@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux@ew.tq-group.com
+Subject:
+ Re: [PATCH 1/6] dt-bindings: clk: rs9: add clock-output-names property
+Date: Fri, 19 Dec 2025 09:09:23 +0100
+Message-ID: <3357591.tdWV9SEqCh@steina-w>
+Organization: TQ-Systems GmbH
+In-Reply-To:
+ <CAMuHMdWEJ-eYwUTnotsTVEtKrujYVsEB4kFVjRYh3wXZvyjfGQ@mail.gmail.com>
+References:
+ <20251218152058.1521806-1-alexander.stein@ew.tq-group.com>
+ <20251218152058.1521806-2-alexander.stein@ew.tq-group.com>
+ <CAMuHMdWEJ-eYwUTnotsTVEtKrujYVsEB4kFVjRYh3wXZvyjfGQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251127-b4-k230-clk-v9-2-3aa09e17faf5@zohomail.com>
-X-CM-TRANSID:qwCowACHLmp4BkVpRhwZAQ--.24049S2
-X-Coremail-Antispam: 1UD129KBjvJXoW3GrWkXr13XF18XryrJFWUurg_yoW7tr4kpr
-	1Yg34rAF4qyw13Ga1avw1UuF95KF48GF1qga4xW34rAF45GF9FgF1SgryIyF43XFy8C3yF
-	qFyUt3yY93yjyaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvvb7Iv0xC_tr1lb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I2
-	0VC2zVCF04k26cxKx2IYs7xG6r1S6rWUM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
-	A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xII
-	jxv20xvEc7CjxVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4
-	A2jsIEc7CjxVAFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
-	64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8Jw
-	Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l
-	c7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr
-	1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE
-	14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7
-	IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E
-	87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73Uj
-	IFyTuYvjxU2wIDUUUUU
-X-CM-SenderInfo: 5mld534oul2uny6l223fol2u1dvotugofq/
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
+X-cloud-security-sender:alexander.stein@ew.tq-group.com
+X-cloud-security-recipient:linux-clk@vger.kernel.org
+X-cloud-security-crypt: load encryption module
+X-cloud-security-Mailarchiv: E-Mail archived for: alexander.stein@ew.tq-group.com
+X-cloud-security-Mailarchivtype:outbound
+X-cloud-security-Virusscan:CLEAN
+X-cloud-security-disclaimer: This E-Mail was scanned by E-Mailservice on mx-relay49-hz3.antispameurope.com with 4dXgDN6fwtz3yb91
+X-cloud-security-connect: he-nlb01-hz1.hornetsecurity.com[94.100.132.6], TLS=1, IP=94.100.132.6
+X-cloud-security-Digest:5b88bc5d9b014baba218eed2fec8b5d2
+X-cloud-security:scantime:2.167
+DKIM-Signature: a=rsa-sha256;
+ bh=9ZkmG5LDdBWcr5F9UYs40lXE33P3xPwDRyGsRHQ2ZJw=; c=relaxed/relaxed;
+ d=ew.tq-group.com;
+ h=content-type:mime-version:subject:from:to:message-id:date; s=hse1;
+ t=1766131783; v=1;
+ b=lTTAv3p5k2mBiWpbSAGakugERPYgBYZH6Uf52L+Lb+GaoLYNq6I9RpiS+MtNQTaXQLqgPuNq
+ X+V0d9ifN/fwioeqln06mShiXzdQ8RIDSjzMZINDpXzdZEwxoGRLPOEx5Ib82yotaLW+2tzvttg
+ QWaIsitkpLwO85Uu7i+VKSzUt12r2bQvQlv3FNLyMvi/9Nj92jisoG9eoC+5LJgIK9XzcQDO/dJ
+ 9swJq/AuZNy59gRg6G/E5ZGyU+sk7py7ubLUYi1Ily62FUUaykHS3mIo9n/pfyXyDW30QCqPTGN
+ P6vOhVDaZBEhTXK5LPc0U/apZVHtMFIoU3+VaP1qu1iHA==
 
-On Thu, Nov 27, 2025 at 08:45:13PM +0800, Xukai Wang wrote:
-> This patch provides basic support for the K230 clock, which covers
-> all clocks in K230 SoC.
-> 
-> The clock tree of the K230 SoC consists of a 24MHZ external crystal
-> oscillator, PLLs and an external pulse input for timerX, and their
-> derived clocks.
-> 
-> Co-developed-by: Troy Mitchell <TroyMitchell988@gmail.com>
-> Signed-off-by: Troy Mitchell <TroyMitchell988@gmail.com>
-> Signed-off-by: Xukai Wang <kingxukai@zohomail.com>
-> ---
->  drivers/clk/Kconfig    |    6 +
->  drivers/clk/Makefile   |    1 +
->  drivers/clk/clk-k230.c | 2443 ++++++++++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 2450 insertions(+)
-...
-> diff --git a/drivers/clk/clk-k230.c b/drivers/clk/clk-k230.c
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..8750e9cbac04f30e31d8f2eb395c9b49027ca278
-> --- /dev/null
-> +++ b/drivers/clk/clk-k230.c
-> @@ -0,0 +1,2443 @@
-...
-> +
-> +K230_CLK_GATE_FORMAT(cpu0_src_gate,
-> +		     K230_CPU0_SRC_GATE,
-> +		     0, 0, 0, 0,
-> +		     &pll0_div2.hw);
+Am Donnerstag, 18. Dezember 2025, 16:26:10 CET schrieb Geert Uytterhoeven:
+> Hi Alexander,
+>=20
+> On Thu, 18 Dec 2025 at 16:21, Alexander Stein
+> <alexander.stein@ew.tq-group.com> wrote:
+> > Add "clock-output-names" which is a standard property for clock
+> > providers.
+>=20
+> Why? Isn't that property sort of deprecated?
 
-Core-related clocks of cpu0/cpu1 (src/plic/apb/noc_ddrcp4, etc.)
-lack protection flags, which risks accidental disabling.
+It is? Oh, I wasn't aware of that. Maybe the property should be
+marked deprecated in dt schema then.
 
-Recommend to replace the flag bits for all CPU0/CPU1 core clock
-nodes with `CLK_IS_CRITICAL`,like this:
-`0, 0, 0, 0,` -> `0, 0, CLK_IS_CRITICAL, 0,`
+Thanks and best regards,
+Alexander
 
-> +
-> +K230_CLK_RATE_FORMAT(cpu0_src_rate,
-> +		     K230_CPU0_SRC_RATE,
-> +		     1, 16, 1, 0xF,
-> +		     16, 16, 0, 0x0,
-> +		     0x0, 31, mul, 0x0,
-> +		     false, 0,
-> +		     &cpu0_src_gate.clk.hw);
-> +
-same as above,`false, 0,` ->`false, CLK_IS_CRITICAL,`
-> +K230_CLK_RATE_FORMAT(cpu0_axi_rate,
-> +		     K230_CPU0_AXI_RATE,
-> +		     1, 1, 0, 0,
-> +		     1, 8, 6, 0x7,
-> +		     0x0, 31, div, 0x0,
-> +		     0, 0,
-> +		     &cpu0_src_rate.clk.hw);
-> +
-same as above,`0, 0,` ->`0, CLK_IS_CRITICAL,`
-> +K230_CLK_GATE_FORMAT(cpu0_plic_gate,
-> +		     K230_CPU0_PLIC_GATE,
-> +		     0x0, 9, 0, 0,
-> +		     &cpu0_src_rate.clk.hw);
-> +
-same as above,`0x0, 9, 0, 0,` -> `0x0, 9, CLK_IS_CRITICAL, 0,`
-> +K230_CLK_RATE_FORMAT(cpu0_plic_rate,
-> +		     K230_CPU0_PLIC_RATE,
-> +		     1, 1, 0, 0,
-> +		     1, 8, 10, 0x7,
-> +		     0x0, 31, div, 0x0,
-> +		     false, 0,
-> +		     &cpu0_plic_gate.clk.hw);
-> +
-same as above,`false, 0,` -> `false, CLK_IS_CRITICAL,`
-> +K230_CLK_GATE_FORMAT(cpu0_noc_ddrcp4_gate,
-> +		     K230_CPU0_NOC_DDRCP4_GATE,
-> +		     0x60, 7, 0, 0,
-> +		     &cpu0_src_rate.clk.hw);
-> +
-same as above,`0x60, 7, 0, 0,` -> `0x60, 7, CLK_IS_CRITICAL, 0,`
-> +K230_CLK_GATE_FORMAT(cpu0_apb_gate,
-> +		     K230_CPU0_APB_GATE,
-> +		     0x0, 13, 0, 0,
-> +		     &pll0_div4.hw);
-> +
-same as above,`0x0, 13, 0, 0,` -> `0x0, 13, CLK_IS_CRITICAL, 0,`
-> +K230_CLK_RATE_FORMAT(cpu0_apb_rate,
-> +		     K230_CPU0_APB_RATE,
-> +		     1, 1, 0, 0,
-> +		     1, 8, 15, 0x7,
-> +		     0x0, 31, div, 0x0,
-> +		     false, 0,
-> +		     &cpu0_apb_gate.clk.hw);
-> +
-same as above,`false, 0,` -> `false, CLK_IS_CRITICAL,`
-> +static const struct clk_parent_data k230_cpu1_src_mux_pdata[] = {
-> +	{ .hw = &pll0_div2.hw, },
-> +	{ .hw = &pll3.hw, },
-> +	{ .hw = &pll0.hw, },
-> +};
-> +
-> +K230_CLK_MUX_FORMAT(cpu1_src_mux,
-> +		    K230_CPU1_SRC_MUX,
-> +		    0x4, 1, 0x3,
-> +		    0, 0,
-> +		    k230_cpu1_src_mux_pdata);
-> +
-same as above,`0, 0,` -> `CLK_IS_CRITICAL, 0,`
-> +K230_CLK_GATE_FORMAT(cpu1_src_gate,
-> +		     K230_CPU1_SRC_GATE,
-> +		     0x4, 0, CLK_IGNORE_UNUSED, 0,
-> +		     &cpu1_src_mux.clk.hw);
-> +
-same as above,`0x4, 0, CLK_IGNORE_UNUSED, 0,` -> `0x4, 0, CLK_IS_CRITICAL, 0,`
-> +K230_CLK_RATE_FORMAT(cpu1_src_rate,
-> +		     K230_CPU1_SRC_GATE,
-> +		     1, 1, 0, 0,
-> +		     1, 8, 3, 0x7,
-> +		     0x4, 31, div, 0x0,
-> +		     false, 0,
-> +		     &cpu1_src_gate.clk.hw);
-> +
-same as above,`false, 0,` -> `false, CLK_IS_CRITICAL,`
-> +K230_CLK_RATE_FORMAT(cpu1_axi_rate,
-> +		     K230_CPU1_AXI_RATE,
-> +		     1, 1, 0, 0,
-> +		     1, 8, 12, 0x7,
-> +		     0x4, 31, div, 0x0,
-> +		     false, 0,
-> +		     &cpu1_src_rate.clk.hw);
-> +
-same as above,`false, 0,` -> `false, CLK_IS_CRITICAL,`
-> +K230_CLK_GATE_FORMAT(cpu1_plic_gate,
-> +		     K230_CPU1_PLIC_GATE,
-> +		     0x4, 15, CLK_IGNORE_UNUSED, 0,
-> +		     &cpu1_src_rate.clk.hw);
-> +
-same as above,`0x4, 15, CLK_IGNORE_UNUSED, 0,` -> `0x4, 15, CLK_IS_CRITICAL, 0,`
-> +K230_CLK_RATE_FORMAT(cpu1_plic_rate,
-> +		     K230_CPU1_PLIC_RATE,
-> +		     1, 1, 0, 0,
-> +		     1, 8, 16, 0x7,
-> +		     0x4, 31, div, 0x0,
-> +		     false, 0,
-> +		     &cpu1_plic_gate.clk.hw);
-> +
-same as above,`false, 0,` -> `false, CLK_IS_CRITICAL,`
-> +K230_CLK_GATE_FORMAT(cpu1_apb_gate,
-> +		     K230_CPU1_APB_GATE,
-> +		     0x4, 19, 0, 0,
-> +		     &pll0_div4.hw);
-> +
-same as above,`0x4, 19, 0, 0,` -> `0x4, 19, CLK_IS_CRITICAL, 0,`
-> +K230_CLK_RATE_FORMAT(cpu1_apb_rate,
-> +		     K230_CPU1_APB_RATE,
-> +		     1, 1, 0, 0,
-> +		     1, 8, 15, 0x7,
-> +		     0x0, 31, div, 0x0,
-> +		     false, 0,
-> +		     &cpu1_apb_gate.clk.hw);
-> +
-same as above,`false, 0,` -> `false, CLK_IS_CRITICAL,`
-> +K230_CLK_GATE_FORMAT_PNAME(pmu_apb_gate,
-> +			   K230_PMU_APB_GATE,
-...
-> +K230_CLK_GATE_FORMAT(hs_hclk_src_gate,
-> +		     K230_HS_HCLK_SRC_GATE,
-> +		     0x18, 1, 0, 0,
-> +		     &hs_hclk_high_src_rate.clk.hw);
-> +
+>=20
+> Will be replying to the cover letter next...
+>=20
+> > Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+>=20
+> Gr{oetje,eeting}s,
+>=20
+>                         Geert
+>=20
+>=20
 
-Incorrect register bit setting (bit1) and wrong parent
-clock reference (hs_hclk_high_src_rate) for hs_hclk_src_gate,
-which does not comply with K230 hardware specifications.
-Here is correcting advice:
-Register bit correction: `0x18, 1, 0, 0,` -> `0x18, 0, 0, 0,`
-Parent clock correction: `&hs_hclk_high_src_rate.clk.hw` ->
-`&hs_hclk_high_gate.clk.hw`
 
-> +K230_CLK_RATE_FORMAT(hs_hclk_src_rate,
-> +		     K230_HS_HCLK_SRC_RATE,
-...
-> +K230_CLK_RATE_FORMAT(hs_sd_card_src_rate,
-> +		     K230_HS_SD_CARD_SRC_RATE,
-> +		     1, 1, 0, 0,
-> +		     2, 8, 12, 0x7,
-> +		     0x1C, 31, div, 0x0,
-> +		     false, 0,
-> +		     &pll0_div4.hw);
-> +
+=2D-=20
+TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
+Amtsgericht M=FCnchen, HRB 105018
+Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
+http://www.tq-group.com/
 
-The parent clock of hs_sd_card_src_rate is incorrectly pointed
-to pll0_div4.
-Here is correcting advice:
-`&pll0_div4.hw` → `&hs_sd_card_src_gate.clk.hw`
-
-> +K230_CLK_GATE_FORMAT(hs_sd0_card_gate,
-> +		     K230_HS_SD0_CARD_GATE,
-> +		     0x18, 15, 0, 0,
-...
-> +	},
-> +	.probe = k230_clk_probe,
-> +};
-> +builtin_platform_driver(k230_clk_driver);
-> 
-> -- 
-> 2.34.1
-> 
 
