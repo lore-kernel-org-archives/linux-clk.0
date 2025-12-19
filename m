@@ -1,252 +1,241 @@
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C30424290D;
-	Fri, 19 Dec 2025 06:58:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 018A224468C;
+	Fri, 19 Dec 2025 07:35:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766127489; cv=none; b=Y1b+sCkHNsnGpaML/ts0hhRbDiJA/6vAwTuW9Wam59kGOR+6fh4U6jS0BXb6rQpBlEgoq+SoQ+/0hPy/Y/X9SiLPRvB0bvDRDXhBVKBh2FklE8Oc5uS0xKR0rBwf7qxyef+T5QVr3zcgm0SaIhAVEvXNwvpRMZdJZW3uVOh+z4o=
+	t=1766129710; cv=none; b=OdzogLVJy2ODFX9Oj2G+Nw1GrsJezFofCPAty65hA0qvX9U3eeTFY2xkGo3pYLvXPd5QiMn0Pqy1oZEFY/XWoKcTvBfeJ2i1z6YlTgQRJ4UIOSNtnX7oXNwnupiQ2NMzJvzJueQftcpts5+7l/m1SroxpMRRji2MqIRLka/dseE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766127489; c=relaxed/simple;
-	bh=jQ7aAEVhuaVvlkf3K/L3WD5qp9CJsXHd3Ak+Xkxr1kg=;
+	s=arc-20240116; t=1766129710; c=relaxed/simple;
+	bh=UFYiLPoUdNxWhfMRrjS7vxL4zRDLpmZgX5Xj7zFgNLo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UP2K5eoeswi1sTmSKXZuhNZsIUu7MEp2PVTvzqJoqXVLLhBhgT7vwfYaaLq6/rI7HzE13Bx/tUH4L1WQsMTNZ29eEe18smEu+JIKo636GRFyAEWCn1tS421jrFw8rv9HDeHLPKbNpqKzXxqmrcFHF0+MfN7R6+nEAk2InSShRCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=isrc.iscas.ac.cn; spf=pass smtp.mailfrom=isrc.iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=isrc.iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=isrc.iscas.ac.cn
-Received: from duge-virtual-machine (unknown [223.160.207.22])
-	by APP-05 (Coremail) with SMTP id zQCowAA3yQxe90RphiUoAQ--.14517S2;
-	Fri, 19 Dec 2025 14:57:36 +0800 (CST)
-Date: Fri, 19 Dec 2025 14:57:33 +0800
-From: Jiayu Du <jiayu.riscv@isrc.iscas.ac.cn>
-To: Xukai Wang <kingxukai@zohomail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Troy Mitchell <TroyMitchell988@gmail.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v9 0/3] riscv: canaan: Add support for K230 clock
-Message-ID: <aUT3XYQmn51tLItg@duge-virtual-machine>
-References: <20251127-b4-k230-clk-v9-0-3aa09e17faf5@zohomail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=f+BQiyR0+Yq3/Xa3nuXRDDYWATojkINxTnjsDv2Xwm3xLiLMiia/2KfSPtvzGUFfYy/UheBs+omnLv6dsIMdGXlOu985qX9s+6+FoirY2Y+GbvlRrpSqm1Q6m6tR0UbJ/7MM6Qsrq6jS1yYXm7DpMwoN1H5ATI79RLDlvFJr3ss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rGSzWIMd; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rGSzWIMd"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5800CC4CEF1;
+	Fri, 19 Dec 2025 07:35:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1766129708;
+	bh=UFYiLPoUdNxWhfMRrjS7vxL4zRDLpmZgX5Xj7zFgNLo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rGSzWIMd8xMiGfVw7DbXCqdns9/DzqDprIJx3lPoRaPgJqhu4HEoT2aucmpYhs7+b
+	 iqTj/tPAF+otAIvi6IYCynmAtqmU5VErvdG4XsHn8igDq+hNBnoqsPY7CB1yicq7fp
+	 /VEjfJIRZqTkmcycmss/3BHRCHVomYi1UCi8xgp2ZRPwTyJ89tHFJVHM256nLF/aGl
+	 Zv+n0QmpF+SUFMr0wnqZu5cqZ///KZwqYx6OV+jzxcDYZT6xYbrF+emteN5VV5ezN8
+	 wW4vQwYwZm00PzuKwM9zN76kC9r+9o/RdWgGcYKNHA4hD9YvweTojXFkoLivFxTcEI
+	 KEyVvlZiTY7gA==
+Date: Fri, 19 Dec 2025 08:35:04 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: "irving.ch.lin" <irving-ch.lin@mediatek.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Ulf Hansson <ulf.hansson@linaro.org>, 
+	Richard Cochran <richardcochran@gmail.com>, Qiqi Wang <qiqi.wang@mediatek.com>, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-pm@vger.kernel.org, 
+	netdev@vger.kernel.org, Project_Global_Chrome_Upstream_Group@mediatek.com, 
+	sirius.wang@mediatek.com, vince-wl.liu@mediatek.com, jh.hsu@mediatek.com
+Subject: Re: [PATCH v4 01/21] dt-bindings: clock: mediatek: Add MT8189 clock
+ definitions
+Message-ID: <20251219-venomous-ninja-uakari-bf8d1a@quoll>
+References: <20251215034944.2973003-1-irving-ch.lin@mediatek.com>
+ <20251215034944.2973003-2-irving-ch.lin@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251127-b4-k230-clk-v9-0-3aa09e17faf5@zohomail.com>
-X-CM-TRANSID:zQCowAA3yQxe90RphiUoAQ--.14517S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxtryUCrykAw4kCFyfZrWkJFb_yoW7WrWkpr
-	Wa9w1xtF1jqw4fXanFq348Aan5Ga1xKan8Wa4Iv3s3AF43GFWjqFnagr1xtF47tryI93yj
-	qrWUJrW3Za4UCFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvvb7Iv0xC_Kw4lb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I2
-	0VC2zVCF04k26cxKx2IYs7xG6r1S6rWUM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
-	A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xII
-	jxv20xvEc7CjxVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4
-	A2jsIEc7CjxVAFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
-	64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv67AKxVWUJVW8Jw
-	Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l
-	c7CjxVAaw2AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr
-	1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE
-	14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7
-	IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E
-	87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73Uj
-	IFyTuYvjxUvwvKDUUUU
-X-CM-SenderInfo: 5mld534oul2uny6l223fol2u1dvotugofq/
+In-Reply-To: <20251215034944.2973003-2-irving-ch.lin@mediatek.com>
 
-I'm writing to share test results and the corresponding patch for 
-K230 clock configuration issues, covering critical clock flag 
-settings and HS/SD subsystem clock adjustments.
+On Mon, Dec 15, 2025 at 11:49:10AM +0800, irving.ch.lin wrote:
+> From: Irving-CH Lin <irving-ch.lin@mediatek.com>
+> 
+> Add device tree bindings for the clock of MediaTek MT8189 SoC.
 
-1.  Critical Clock Protection for CPU Subsystems
-I found that cpu0/cpu1 core-related clocks (src/plic/apb/noc_ddrcp4 
-etc.) had no protection, risking accidental disabling and subsystem 
-malfunctions. I added the `CLK_IS_CRITICAL` flag to these clock 
-nodes to block unintended disable operations.
+You in different patchset already received that comment:
 
-2.  HS/SD Clock Setting Fixes
-Two hardware-spec mismatches were fixed:
-- Adjusted `hs_hclk_src_gate` from register bit1 to bit0, and 
-  updated its parent clock from `hs_hclk_high_src_rate` to 
-  `hs_hclk_high_gate`.
-- Corrected `hs_sd_card_src_rate` parent clock from `pll0_div4` to 
-  `hs_sd_card_src_gate`, fixing SD controller clock source 
-  misconfiguration.
+A nit, subject: drop second/last, redundant "bindings" or "definitions"
+or whatever you keep adding here redundantly. The
+"dt-bindings" prefix is already stating that these are bindings.
+See also:
+https://elixir.bootlin.com/linux/v6.17-rc3/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
 
-3.  Test Verification
-Post-fix on-board testing confirmed all modified clock nodes align 
-with K230 hardware specs and the clock tree relationships are 
-correct.
-The CPU core and HS/SD subsystems run stably without any clock-
-related errors or anomalies.
+Can you finally read the docs?
 
-The patch modifies `drivers/clk/clk-k230.c` (19 insertions, 19 
-deletions), with the full diff attached below for your review.
+> 
+> Signed-off-by: Irving-CH Lin <irving-ch.lin@mediatek.com>
+> ---
+>  .../bindings/clock/mediatek,mt8189-clock.yaml |  90 +++
+>  .../clock/mediatek,mt8189-sys-clock.yaml      |  58 ++
+>  .../dt-bindings/clock/mediatek,mt8189-clk.h   | 580 ++++++++++++++++++
+>  3 files changed, 728 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/mediatek,mt8189-clock.yaml
+>  create mode 100644 Documentation/devicetree/bindings/clock/mediatek,mt8189-sys-clock.yaml
+>  create mode 100644 include/dt-bindings/clock/mediatek,mt8189-clk.h
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/mediatek,mt8189-clock.yaml b/Documentation/devicetree/bindings/clock/mediatek,mt8189-clock.yaml
+> new file mode 100644
+> index 000000000000..d21e02df36a1
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/mediatek,mt8189-clock.yaml
+> @@ -0,0 +1,90 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/mediatek,mt8189-clock.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: MediaTek Functional Clock Controller for MT8189
+> +
+> +maintainers:
+> +  - Qiqi Wang <qiqi.wang@mediatek.com>
+
+Why there is n ack for this? Is above person going to provide any
+reviews? Why didn't this person review this binding, already at v4.
+
+> +
+> +description: |
+> +  The clock architecture in MediaTek like below
+> +  PLLs -->
+> +          dividers -->
+> +                      muxes -->
+> +                               clock gate
+> +
+> +  The devices provide clock gate control in different IP blocks.
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - enum:
+> +          - mediatek,mt8189-camsys-main
+> +          - mediatek,mt8189-camsys-rawa
+> +          - mediatek,mt8189-camsys-rawb
+> +          - mediatek,mt8189-dbg-ao
+> +          - mediatek,mt8189-dem
+> +          - mediatek,mt8189-dispsys
+> +          - mediatek,mt8189-dvfsrc-top
+> +          - mediatek,mt8189-gce-d
+> +          - mediatek,mt8189-gce-m
+> +          - mediatek,mt8189-iic-wrap-e
+> +          - mediatek,mt8189-iic-wrap-en
+> +          - mediatek,mt8189-iic-wrap-s
+> +          - mediatek,mt8189-iic-wrap-ws
+> +          - mediatek,mt8189-imgsys1
+> +          - mediatek,mt8189-imgsys2
+> +          - mediatek,mt8189-infra-ao
+> +          - mediatek,mt8189-ipesys
+> +          - mediatek,mt8189-mdpsys
+> +          - mediatek,mt8189-mfgcfg
+> +          - mediatek,mt8189-mm-infra
+> +          - mediatek,mt8189-peri-ao
+> +          - mediatek,mt8189-scp-clk
+> +          - mediatek,mt8189-scp-i2c-clk
+> +          - mediatek,mt8189-ufscfg-ao
+> +          - mediatek,mt8189-ufscfg-pdn
+> +          - mediatek,mt8189-vdec-core
+> +          - mediatek,mt8189-venc
+> +      - const: syscon
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  '#clock-cells':
+> +    const: 1
+> +
+> +  '#reset-cells':
+> +    const: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - '#clock-cells'
+> +
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - mediatek,mt8189-peri-ao
+> +              - mediatek,mt8189-ufscfg-ao
+> +              - mediatek,mt8189-ufscfg-pdn
+> +
+> +    then:
+> +      required:
+> +        - '#reset-cells'
+
+else:
+  properties:
+    reset-cells: false
+
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    clock-controller@11b21000 {
+> +        compatible = "mediatek,mt8189-iic-wrap-ws", "syscon";
+> +        reg = <0x11b21000 0x1000>;
+> +        #clock-cells = <1>;
+> +    };
+> diff --git a/Documentation/devicetree/bindings/clock/mediatek,mt8189-sys-clock.yaml b/Documentation/devicetree/bindings/clock/mediatek,mt8189-sys-clock.yaml
+> new file mode 100644
+> index 000000000000..c94de207e289
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/mediatek,mt8189-sys-clock.yaml
+> @@ -0,0 +1,58 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/mediatek,mt8189-sys-clock.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: MediaTek System Clock Controller for MT8189
+> +
+> +maintainers:
+> +  - Qiqi Wang <qiqi.wang@mediatek.com>
+
+Same problem. We are at v4 and maintainer did not bother to review it in
+public. What sort of maintenance is this?
+
+> +
+> +description: |
+> +  The clock architecture in MediaTek like below
+> +  PLLs -->
+> +          dividers -->
+> +                      muxes -->
+> +                               clock gate
+
+Pretty obvious, no? Is there a clock topology which is different?
+
+> +
+> +  The apmixedsys provides most of PLLs which generated from SoC 26m.
+> +  The topckgen provides dividers and muxes which provide the clock source to other IP blocks.
+> +  The infracfg_ao provides clock gate in peripheral and infrastructure IP blocks.
+> +  The mcusys provides mux control to select the clock source in AP MCU.
+> +  The device nodes also provide the system control capacity for configuration.
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - enum:
+> +          - mediatek,mt8189-apmixedsys
+> +          - mediatek,mt8189-topckgen
+> +          - mediatek,mt8189-vlpckgen
+> +          - mediatek,mt8189-vlp-ao
+> +          - mediatek,mt8189-vlpcfg-ao
+> +      - const: syscon
+
+I do not understand why this is separate from the previous binding. It's
+exactly the same, even description is the same.
 
 Best regards,
-Jiayu Du
-
----
- drivers/clk/clk-k230.c | 38 +++++++++++++++++++-------------------
- 1 file changed, 19 insertions(+), 19 deletions(-)
-
-diff --git a/drivers/clk/clk-k230.c b/drivers/clk/clk-k230.c
-index 8750e9cbac..43a4e61a0c 100644
---- a/drivers/clk/clk-k230.c
-+++ b/drivers/clk/clk-k230.c
-@@ -317,7 +317,7 @@ struct clk_fixed_factor *k230_pll_divs[] = {
- 
- K230_CLK_GATE_FORMAT(cpu0_src_gate,
- 		     K230_CPU0_SRC_GATE,
--		     0, 0, 0, 0,
-+		     0, 0, CLK_IS_CRITICAL, 0,
- 		     &pll0_div2.hw);
- 
- K230_CLK_RATE_FORMAT(cpu0_src_rate,
-@@ -325,7 +325,7 @@ K230_CLK_RATE_FORMAT(cpu0_src_rate,
- 		     1, 16, 1, 0xF,
- 		     16, 16, 0, 0x0,
- 		     0x0, 31, mul, 0x0,
--		     false, 0,
-+		     false, CLK_IS_CRITICAL,
- 		     &cpu0_src_gate.clk.hw);
- 
- K230_CLK_RATE_FORMAT(cpu0_axi_rate,
-@@ -333,12 +333,12 @@ K230_CLK_RATE_FORMAT(cpu0_axi_rate,
- 		     1, 1, 0, 0,
- 		     1, 8, 6, 0x7,
- 		     0x0, 31, div, 0x0,
--		     0, 0,
-+		     0, CLK_IS_CRITICAL,
- 		     &cpu0_src_rate.clk.hw);
- 
- K230_CLK_GATE_FORMAT(cpu0_plic_gate,
- 		     K230_CPU0_PLIC_GATE,
--		     0x0, 9, 0, 0,
-+		     0x0, 9, CLK_IS_CRITICAL, 0,
- 		     &cpu0_src_rate.clk.hw);
- 
- K230_CLK_RATE_FORMAT(cpu0_plic_rate,
-@@ -346,17 +346,17 @@ K230_CLK_RATE_FORMAT(cpu0_plic_rate,
- 		     1, 1, 0, 0,
- 		     1, 8, 10, 0x7,
- 		     0x0, 31, div, 0x0,
--		     false, 0,
-+		     false, CLK_IS_CRITICAL,
- 		     &cpu0_plic_gate.clk.hw);
- 
- K230_CLK_GATE_FORMAT(cpu0_noc_ddrcp4_gate,
- 		     K230_CPU0_NOC_DDRCP4_GATE,
--		     0x60, 7, 0, 0,
-+		     0x60, 7, CLK_IS_CRITICAL, 0,
- 		     &cpu0_src_rate.clk.hw);
- 
- K230_CLK_GATE_FORMAT(cpu0_apb_gate,
- 		     K230_CPU0_APB_GATE,
--		     0x0, 13, 0, 0,
-+		     0x0, 13, CLK_IS_CRITICAL, 0,
- 		     &pll0_div4.hw);
- 
- K230_CLK_RATE_FORMAT(cpu0_apb_rate,
-@@ -364,7 +364,7 @@ K230_CLK_RATE_FORMAT(cpu0_apb_rate,
- 		     1, 1, 0, 0,
- 		     1, 8, 15, 0x7,
- 		     0x0, 31, div, 0x0,
--		     false, 0,
-+		     false, CLK_IS_CRITICAL,
- 		     &cpu0_apb_gate.clk.hw);
- 
- static const struct clk_parent_data k230_cpu1_src_mux_pdata[] = {
-@@ -376,12 +376,12 @@ static const struct clk_parent_data k230_cpu1_src_mux_pdata[] = {
- K230_CLK_MUX_FORMAT(cpu1_src_mux,
- 		    K230_CPU1_SRC_MUX,
- 		    0x4, 1, 0x3,
--		    0, 0,
-+		    CLK_IS_CRITICAL, 0,
- 		    k230_cpu1_src_mux_pdata);
- 
- K230_CLK_GATE_FORMAT(cpu1_src_gate,
- 		     K230_CPU1_SRC_GATE,
--		     0x4, 0, CLK_IGNORE_UNUSED, 0,
-+		     0x4, 0, CLK_IS_CRITICAL, 0,
- 		     &cpu1_src_mux.clk.hw);
- 
- K230_CLK_RATE_FORMAT(cpu1_src_rate,
-@@ -389,7 +389,7 @@ K230_CLK_RATE_FORMAT(cpu1_src_rate,
- 		     1, 1, 0, 0,
- 		     1, 8, 3, 0x7,
- 		     0x4, 31, div, 0x0,
--		     false, 0,
-+		     false, CLK_IS_CRITICAL,
- 		     &cpu1_src_gate.clk.hw);
- 
- K230_CLK_RATE_FORMAT(cpu1_axi_rate,
-@@ -397,12 +397,12 @@ K230_CLK_RATE_FORMAT(cpu1_axi_rate,
- 		     1, 1, 0, 0,
- 		     1, 8, 12, 0x7,
- 		     0x4, 31, div, 0x0,
--		     false, 0,
-+		     false, CLK_IS_CRITICAL,
- 		     &cpu1_src_rate.clk.hw);
- 
- K230_CLK_GATE_FORMAT(cpu1_plic_gate,
- 		     K230_CPU1_PLIC_GATE,
--		     0x4, 15, CLK_IGNORE_UNUSED, 0,
-+		     0x4, 15, CLK_IS_CRITICAL, 0,
- 		     &cpu1_src_rate.clk.hw);
- 
- K230_CLK_RATE_FORMAT(cpu1_plic_rate,
-@@ -410,12 +410,12 @@ K230_CLK_RATE_FORMAT(cpu1_plic_rate,
- 		     1, 1, 0, 0,
- 		     1, 8, 16, 0x7,
- 		     0x4, 31, div, 0x0,
--		     false, 0,
-+		     false, CLK_IS_CRITICAL,
- 		     &cpu1_plic_gate.clk.hw);
- 
- K230_CLK_GATE_FORMAT(cpu1_apb_gate,
- 		     K230_CPU1_APB_GATE,
--		     0x4, 19, 0, 0,
-+		     0x4, 19, CLK_IS_CRITICAL, 0,
- 		     &pll0_div4.hw);
- 
- K230_CLK_RATE_FORMAT(cpu1_apb_rate,
-@@ -423,7 +423,7 @@ K230_CLK_RATE_FORMAT(cpu1_apb_rate,
- 		     1, 1, 0, 0,
- 		     1, 8, 15, 0x7,
- 		     0x0, 31, div, 0x0,
--		     false, 0,
-+		     false, CLK_IS_CRITICAL,
- 		     &cpu1_apb_gate.clk.hw);
- 
- K230_CLK_GATE_FORMAT_PNAME(pmu_apb_gate,
-@@ -446,8 +446,8 @@ K230_CLK_GATE_FORMAT(hs_hclk_high_gate,
- 
- K230_CLK_GATE_FORMAT(hs_hclk_src_gate,
- 		     K230_HS_HCLK_SRC_GATE,
--		     0x18, 1, 0, 0,
--		     &hs_hclk_high_src_rate.clk.hw);
-+		     0x18, 0, 0, 0,
-+		     &hs_hclk_high_gate.clk.hw);
- 
- K230_CLK_RATE_FORMAT(hs_hclk_src_rate,
- 		     K230_HS_HCLK_SRC_RATE,
-@@ -560,7 +560,7 @@ K230_CLK_RATE_FORMAT(hs_sd_card_src_rate,
- 		     2, 8, 12, 0x7,
- 		     0x1C, 31, div, 0x0,
- 		     false, 0,
--		     &pll0_div4.hw);
-+		     &hs_sd_card_src_gate.clk.hw);
- 
- K230_CLK_GATE_FORMAT(hs_sd0_card_gate,
- 		     K230_HS_SD0_CARD_GATE,
+Krzysztof
 
