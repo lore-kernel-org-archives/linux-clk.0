@@ -1,133 +1,208 @@
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C9FA22A4E1
-	for <linux-clk@vger.kernel.org>; Fri, 19 Dec 2025 01:29:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BBF822A4D6
+	for <linux-clk@vger.kernel.org>; Fri, 19 Dec 2025 02:51:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766107775; cv=none; b=SYJA08RoJJj5UkcK5ZiJ3HPekj6jesPk+B/0Yvjm5KnkehRFdvR5YUeEUwf0I2Zl4y0QF1ZxIM4IXM7UVUhX7aq9+12mnvoTtRoO6KgSx0U07upjOKTJVnUHZjnmXd8H9GyuZjOvOy1NIP0EcDBBDhfwehV365NDE/pgbayKcJU=
+	t=1766112682; cv=none; b=BxVKyXzAEDXKdcxVgBtzQJL+V6J1R4ovjB8SNuvBu5UvnVXombWeiCUf2/yQbc0qAfx1hbXz6KYUCRjPzUBaACRl1T/G9kBUWOnizR1bKJQW7x/RJOv9wQeHvKULG0cnl9VWO8gz0O4Cu32XUg+TTl5CqsLGXBWcuNDReEA44Ms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766107775; c=relaxed/simple;
-	bh=coBhJbOTPb7tUUz9onsZhOwWKYw5Qqk4KBE6SRHMqXc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fdAKeXGuJysb2Z/4BPTFh6Mpme6pDpePWZogEHx880PSTKillGSl8IaushbTsoMbhW99jtzcaY0xZAaQzmJsNXMQLqT7+Ih9jUrqOAWLZ0XwJUy3EFd5ELSLX08FykHw+QHtkzw7/6t3UFCCdD7kM2jIqJAo0MpUzjefzznzH30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bb0RhvnQ; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1766112682; c=relaxed/simple;
+	bh=byNlz5pb12vcgNRYGkQCwYfndFV1eWO4Z/7wEk1dE5c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=drUaXluUe9lxGTZOeiWemlFDKSGUhVtsL83l77KPVx9nbgsM4s5JZgq4Ev8t7LkieXcWPZYHNgLvg+eCuYSlTVdXvvQmgeW2TwHNHxJ7Xpwh0CDUqUvjK8fD2E8zCi8ijhzwy/rdciqU+NdGpKM5cga0lDnH39r6Lq/k17clrPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=vvX/772P; arc=none smtp.client-ip=91.218.175.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bb0RhvnQ"
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2a07fac8aa1so13188815ad.1
-        for <linux-clk@vger.kernel.org>; Thu, 18 Dec 2025 17:29:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1766107772; x=1766712572; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UQga6H56NgMAhDmuMLtpPzFbNPail5D+bj27HRwKHs8=;
-        b=bb0RhvnQX2whpAE7wfJmXNur9qZo0OaxvQV43bwax50hFdjt1NRSnUqbC0l2YgnSmV
-         5fbdBokwXSkbBE8xwabL8YHNmKoxo6CERGKkXS9EdZa5xRcvcFedn2w9HgIbVr8BnYhb
-         pTHaqxqeTdskBEhiHQZsaqhoEFoOxp1LZ9fKvW++t8vRPgqmym5GIOsTVA9qzWSxA2Dg
-         hLvVymTrDLVsR+wGPMrRCJ4kfNGPslyXb4BJA4pvpaQCURdj18cymXJXCx8GuGPFhUO5
-         n1d/vB99L9+8mKkhvQv7gtieDHjZ8Ig5WH7tSh++NtkEsWLu+wfrbV7x+hQlbRPNb3nY
-         E97Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1766107772; x=1766712572;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=UQga6H56NgMAhDmuMLtpPzFbNPail5D+bj27HRwKHs8=;
-        b=mWCnSuJkiwYq6giNpGGgQBJWOgx1quJGxUUUJpQShK67Lvx+LVW0vN2DQ5MNuTVtrj
-         ZTGLcPQUTX4yqAIII1zQkUHfVjEBWu3tC3Gf0xp92yDAYAVxr3Jt8Tp7AuTcVjs5N/Ur
-         KFPKuhq96FCQrPaOSXWC8bTDL4C2+KY4M9DB53RVdhSA/DNXEcCE/mfVCdqtfTvPqcwO
-         6LS5kleNPA7932l5le88dyjMdm8mB8wgsdJAx0LyZvqWFdVLGVzRuNYh63w+5n1jLxzt
-         p2aRTjWGevG9J6kUXNH6k1n6gXiexlvPhANOXN81dvxflDfn7GfUvGJeuy5vZB5YfkdM
-         f/bg==
-X-Forwarded-Encrypted: i=1; AJvYcCW8kiydOrbRB772cU70xvfVRgyZqIgdcp3wvVPZsW/E2W1+Me/+I5uhFK7S5NUTCFIF90Qje8bHVI8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLkNZYsCleW+GDwalB6quWl/GfeUDSTm+R8VqGgVb/cbvjWxdd
-	sYsQYhWST6I4zJLnqMWnnnZvo+ESsoksw87hhyeSzq2cDPmS0KANl2eo
-X-Gm-Gg: AY/fxX4WVjKTK4S047C+il3iuoD0EvBuUkpol9TnFtiDFDxNH72tJHkT0sEs7aXZNMl
-	TBmtlOVmTAR73N+1GTtqdn2yhTRn92TsdmDlovXK8DBkGJCMIUkZZvFrujHbCCQQEgi9xLbp0QP
-	Y+6LKou3z+gjTqDzFmrvJiY+Lm70xrwt7WEIcfhD/VH/uHzR+8E6/1aDJ0yUPHj4E7oJ7JHJI7F
-	SplvECHaaDgQPqTl9F9AUl7cQoNA+NSWBERW9axXR3sx2P9nX8de8tSPZ9P/PG0kdH/+/MZtb9C
-	gchw7EQeNA9i6jk23CE2w6WFCSYLbVDWM92VtPc3uYMDUAEuLK8yc4U5koE0WXwJB6auy7oNQ+9
-	gotuHedNEhan9JYQ5dnNQPx+bByKoSwlITD2jHqASaZ98l2LBSMB88IZTCDdwk53Cg/Xq9Vt8/e
-	d1XFGKRH15WA==
-X-Google-Smtp-Source: AGHT+IHMJ6kEWYKA6O5Q+cLJMQcvpcOIDvA3plPH9xUduwHOUSXGLhy5v5hS/sYcHwSl1ox8HAe/gw==
-X-Received: by 2002:a05:7022:b92:b0:119:e55a:9be7 with SMTP id a92af1059eb24-121721aab58mr1352297c88.3.1766107771841;
-        Thu, 18 Dec 2025 17:29:31 -0800 (PST)
-Received: from localhost ([2001:19f0:ac00:4eb8:5400:5ff:fe30:7df3])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-1217254d369sm3053035c88.16.2025.12.18.17.29.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Dec 2025 17:29:31 -0800 (PST)
-From: Inochi Amaoto <inochiama@gmail.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Yixun Lan <dlan@gentoo.org>,
-	Haylen Chu <heylenay@4d2.org>,
-	Alex Elder <elder@riscstar.com>,
-	Inochi Amaoto <inochiama@gmail.com>,
-	Troy Mitchell <troy.mitchell@linux.spacemit.com>,
-	Charles Mirabile <cmirabil@redhat.com>,
-	Brian Masney <bmasney@redhat.com>,
-	Akhilesh Patil <akhilesh@ee.iitb.ac.in>
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	spacemit@lists.linux.dev,
-	Longbin Li <looong.bin@gmail.com>
-Subject: [PATCH v4 2/2] clk: spacemit: Hide common clock driver from user controller
-Date: Fri, 19 Dec 2025 09:28:18 +0800
-Message-ID: <20251219012819.440972-3-inochiama@gmail.com>
-X-Mailer: git-send-email 2.52.0
-In-Reply-To: <20251219012819.440972-1-inochiama@gmail.com>
-References: <20251219012819.440972-1-inochiama@gmail.com>
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="vvX/772P"
+Date: Fri, 19 Dec 2025 10:50:20 +0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1766112673;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MHHbOuACtVt65M/XvY+Am4aG15ahsyxIVkVopdcC560=;
+	b=vvX/772PnNTxi/t0d7qcKtYhcclwLhCBP/h3L15QVwxrqGTmgOKMi7qyuIOaxGSMN/sIl0
+	UIvvWIE0ee1fAJp/ZnoXf9g0oGC6DebdwBV2T4MbDmT+Ga79Y56X+Y3uYiGFy4E4+G6va0
+	30aMVVfHSJwf5prig5DtbC8z356Cy5w=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Troy Mitchell <troy.mitchell@linux.dev>
+To: dongxuyang@eswincomputing.com, mturquette@baylibre.com,
+	sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	troy.mitchell@linux.dev, bmasney@redhat.com
+Cc: ningyu@eswincomputing.com, linmin@eswincomputing.com,
+	huangyifeng@eswincomputing.com, pinkesh.vaghela@einfochips.com
+Subject: Re: [PATCH v8 2/3] clock: eswin: Add eic7700 clock driver
+Message-ID: <aUS9bLVLhIPMOcWa@kernel.org>
+References: <20251113013637.1109-1-dongxuyang@eswincomputing.com>
+ <20251113013846.1222-1-dongxuyang@eswincomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251113013846.1222-1-dongxuyang@eswincomputing.com>
+X-Migadu-Flow: FLOW_OUT
 
-Since the common clock driver is only a dependency for other spacemit
-clock driver, it should not be enabled individually, so hide this in
-the Kconfig UI and let other spacemit clock driver select it.
+Hi Xuyang,
+This is a quick review.
 
-Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
----
- drivers/clk/spacemit/Kconfig | 14 ++++++--------
- 1 file changed, 6 insertions(+), 8 deletions(-)
+On Thu, Nov 13, 2025 at 09:38:46AM +0800, dongxuyang@eswincomputing.com wrote:
+> From: Xuyang Dong <dongxuyang@eswincomputing.com>
+> 
+> Add clock drivers for the EIC7700 SoC. The clock controller on the ESWIN
+> EIC7700 provides various clocks to different IP blocks within the SoC.
+> 
+> Signed-off-by: Yifeng Huang <huangyifeng@eswincomputing.com>
+> Signed-off-by: Xuyang Dong <dongxuyang@eswincomputing.com>
+> ---
+>  drivers/clk/Kconfig             |    1 +
+>  drivers/clk/Makefile            |    1 +
+>  drivers/clk/eswin/Kconfig       |   15 +
+>  drivers/clk/eswin/Makefile      |    8 +
+>  drivers/clk/eswin/clk-eic7700.c | 1033 +++++++++++++++++++++++++++++++
+>  drivers/clk/eswin/clk-eic7700.h |  122 ++++
+>  drivers/clk/eswin/clk.c         |  481 ++++++++++++++
+>  drivers/clk/eswin/clk.h         |  256 ++++++++
+>  8 files changed, 1917 insertions(+)
+>  create mode 100644 drivers/clk/eswin/Kconfig
+>  create mode 100644 drivers/clk/eswin/Makefile
+>  create mode 100644 drivers/clk/eswin/clk-eic7700.c
+>  create mode 100644 drivers/clk/eswin/clk-eic7700.h
+>  create mode 100644 drivers/clk/eswin/clk.c
+>  create mode 100644 drivers/clk/eswin/clk.h
+> 
+[...]
+> diff --git a/drivers/clk/eswin/clk-eic7700.c b/drivers/clk/eswin/clk-eic7700.c
+> new file mode 100644
+> index 000000000000..03540db9cb7d
+> --- /dev/null
+> +++ b/drivers/clk/eswin/clk-eic7700.c
+[...]
+> +static int eic7700_clk_probe(struct platform_device *pdev)
+> +{
+> +	struct eswin_clock_data *clk_data;
+> +	struct device *dev = &pdev->dev;
+> +
+> +	clk_data = eswin_clk_init(dev, EIC7700_NR_CLKS);
+> +	if (!clk_data)
+> +		return dev_err_probe(dev, -EAGAIN, "failed to get clk data!\n");
+> +
+> +	eswin_clk_register_fixed_rate(eic7700_fixed_rate_clks,
+> +				      ARRAY_SIZE(eic7700_fixed_rate_clks),
+> +				      clk_data, dev);
+Please check returned value here and check other places.
 
-diff --git a/drivers/clk/spacemit/Kconfig b/drivers/clk/spacemit/Kconfig
-index 3854f6ae6d0e..3351e8bc801d 100644
---- a/drivers/clk/spacemit/Kconfig
-+++ b/drivers/clk/spacemit/Kconfig
-@@ -1,19 +1,17 @@
- # SPDX-License-Identifier: GPL-2.0-only
- 
-+menu "Clock support for SpacemiT platforms"
-+	depends on ARCH_SPACEMIT || COMPILE_TEST
-+
- config SPACEMIT_CCU
--	tristate "Clock support for SpacemiT SoCs"
--	depends on ARCH_SPACEMIT || COMPILE_TEST
-+	tristate
- 	select AUXILIARY_BUS
- 	select MFD_SYSCON
--	help
--	  Say Y to enable clock controller unit support for SpacemiT SoCs.
--
--if SPACEMIT_CCU
- 
- config SPACEMIT_K1_CCU
- 	tristate "Support for SpacemiT K1 SoC"
--	depends on ARCH_SPACEMIT || COMPILE_TEST
-+	select SPACEMIT_CCU
- 	help
- 	  Support for clock controller unit in SpacemiT K1 SoC.
- 
--endif
-+endmenu
--- 
-2.52.0
+> +
+> +	eswin_clk_register_pll(eic7700_pll_clks, ARRAY_SIZE(eic7700_pll_clks),
+> +			       clk_data, dev);
+> +
+> +	eswin_clk_register_fixed_factor(eic7700_fixed_factor_clks,
+> +					ARRAY_SIZE(eic7700_fixed_factor_clks),
+> +					clk_data, dev);
+> +
+> +	eswin_clk_register_mux(eic7700_mux_clks, ARRAY_SIZE(eic7700_mux_clks),
+> +			       clk_data, dev);
+> +
+> +	eswin_clk_register_divider(eic7700_div_clks,
+> +				   ARRAY_SIZE(eic7700_div_clks), clk_data, dev);
+> +
+> +	eswin_clk_register_gate(eic7700_gate_clks,
+> +				ARRAY_SIZE(eic7700_gate_clks), clk_data, dev);
+> +
+> +	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
+> +					   &clk_data->clk_data);
+> +}
+> +
+[...]
+> diff --git a/drivers/clk/eswin/clk.c b/drivers/clk/eswin/clk.c
+> new file mode 100644
+> index 000000000000..92998da98009
+> --- /dev/null
+> +++ b/drivers/clk/eswin/clk.c
+[...]
+> +static int eswin_calc_pll(u32 *frac_val, u32 *fbdiv_val, u64 rate,
+> +			  const struct eswin_clk_pll *clk)
+> +{
+> +	u64 rem = 0;
+> +	u32 tmp1 = 0, tmp2 = 0;
+> +
+> +	if (clk->id == EIC7700_CLK_APLL_FOUT1 ||
+> +	    clk->id == EIC7700_CLK_PLL_CPU) {
+clk.c appears to be a generic library for ESWIN SoCs, but it references
+specific IDs (EIC7700_...) from a specific chip.
 
+If you add the chip like EIC77XX later, will you add more if/else here?
+
+Could you ove the algorithmic parameters (like rate * 4) into the
+eswin_clk_pll structure flags or data fields. The calculation logic
+should be generic based on the struct fields, not the ID.
+
+Please check other places.
+> +		rate = rate * 4;
+> +		rem = do_div(rate, 1000);
+> +		if (rem)
+> +			tmp1 = rem;
+> +
+> +		rem = do_div(rate, 1000);
+> +		if (rem)
+> +			tmp2 = rem;
+> +
+> +		rem = do_div(rate, 24);
+> +		/* fbdiv = rate * 4 / 24000000 */
+> +		*fbdiv_val = rate;
+> +		/* frac = rate * 4 % 24000000 * (2 ^ 24) */
+> +		*frac_val = (u64)((1000 * (1000 * rem + tmp2) + tmp1) << 24)
+> +				  / 24 / 1000000;
+> +	} else {
+> +		pr_err("Invalid pll set req, rate %lld, clk id %d\n", rate,
+> +		       clk->id);
+> +		return -EINVAL;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static inline struct eswin_clk_pll *to_pll_clk(struct clk_hw *hw)
+> +{
+> +	return container_of(hw, struct eswin_clk_pll, hw);
+> +}
+> +
+> +static int clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+> +			    unsigned long parent_rate)
+> +{
+> +	struct eswin_clk_pll *clk = to_pll_clk(hw);
+> +	struct clk *clk_cpu_lp_pll = NULL;
+> +	struct clk *clk_cpu_mux = NULL;
+> +	struct clk *clk_cpu_pll = NULL;
+> +	u32 postdiv1_val = 0, refdiv_val = 1;
+> +	u32 frac_val, fbdiv_val, val;
+> +	bool lock_flag = false;
+> +	int try_count = 0;
+> +	int ret;
+> +
+> +	ret = eswin_calc_pll(&frac_val,  &fbdiv_val, (u64)rate, clk);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* Must switch the CPU to other CLK before we change the CPU PLL. */
+> +	if (clk->id == EIC7700_CLK_PLL_CPU) {
+> +		clk_cpu_mux = __clk_lookup("mux_cpu_root_3mux1_gfree");
+It seems you want to switch to a safe clock source before setting up the
+PLL, right?
+
+I am not sure whether your approach is correct, but the use of
+__clk_lookup() should be avoided whenever possible. 
+Would it be feasible to obtain a proper clock handle somewhere and
+perform the necessary configuration from within a clk_notifier instead?
+> +		if (!clk_cpu_mux) {
+> +			pr_err("failed to get clk: %s\n",
+> +			       "mux_cpu_root_3mux1_gfree");
+> +			return -EINVAL;
+> +		}
