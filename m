@@ -1,162 +1,239 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62C9420B22
-	for <linux-clk@vger.kernel.org>; Thu, 18 Dec 2025 23:37:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21ABF849C
+	for <linux-clk@vger.kernel.org>; Fri, 19 Dec 2025 00:03:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766101047; cv=none; b=XbUuOY4p772iFc5m8yV00O84MjEC2DRMs1bKaftpYwsWOzKGnAgLE6qxzZfpEYBk0vwFld6ksFqdUOVGmNtT8pyIJ11Xw9eESAS/vAcmqrRzVAlY7bQJsJ4Tu8X/hKALIQzlPfitAaRlRxC7vxwKuYJij7txA3qvboipBLnh7Fs=
+	t=1766102624; cv=none; b=pTYBu5G+NL5+h2/hhux0l6wlqSofSJ83epDJPOEEZ4K1s0KoluKzK5C4rS96dx9jyMzs+Ml4lnH62ryGgxMEmwypZU200YdPTQSPuafF5AVD1aaKpPhzTV3XQzRI9iVHMk7zYDhkKxFRCnXVKIlz3MsV5MzVi8AIY92+ouvQr8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766101047; c=relaxed/simple;
-	bh=xrSMLIzsznJyXKpBxy2WiFFTsuEi8RHkrAWj8MUnxYU=;
+	s=arc-20240116; t=1766102624; c=relaxed/simple;
+	bh=x5RWrMiWaKU8g4N4Zudf9cQiNzypszD2JqK2icLltJ4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=on9daalxqX43LH1Rr+7Xvucg9mbJyXB7E13O5ROm66MSwrRs7NzA8FdnGgPYNgUKP9n3JmJfrL4AiHaI2LcrrDjlJPHT/wsXINCcWbogkeh5BkMGP9w0U8BtORCXXuKrk/DS9W7R+CrzM/XSF6qmoMcYrIcMFRBWXbrcIPOmtA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bEjX6jNQ; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=ghN4aU3/; arc=none smtp.client-ip=170.10.133.124
+	 Content-Type:Content-Disposition:In-Reply-To; b=rlZy1bXrJXmm8RYxUraOKFlKXpGbkfvjAApoMpxcs7CVL1BMeNn99AcJsE+k82UH6frwedjM5lHZN02eV7RgruwMrjiG1mVxZUWiKOQm1TWXOP8Ssz6JTWcM+/ta/iyzUZ6c+EiNpgiO5Gy2vcvt/x9U23YK75nS4drGC1IBXus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JWf8M8BX; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZAUmTmLV; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bEjX6jNQ";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="ghN4aU3/"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JWf8M8BX";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZAUmTmLV"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1766101044;
+	s=mimecast20190719; t=1766102620;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=taL4VecI32GOlELm8+8Vnt26fKCO2BjXM3Lzuu9k69E=;
-	b=bEjX6jNQ9YVK5N6BE8QwuKMKN09IHvdWm5gskXjYbU8ccNTMzMO5ofTwVl/bT7byXs2k0n
-	djbROJznMLsdcuxMWEtpbH4/DblqZAWii71Pv1+IvKsfHjuUZju8mv9/GT3Ebp7EfkCN3o
-	u/5AuwSvVHRgAQ7K3agwGl8M3drYgO4=
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
- [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=g3xCK2ep+l8L+LYfas46rRp+A2nbh8UwR2dn2lWqo60=;
+	b=JWf8M8BX9n800FemyjmzCMp1vnCIk3XlfeLZdxsry6xYNpL1hIXh9kPIgFkM/knc6UtKSw
+	p7dySvvJ+60sNzp7/jpbkQu34FkHM/eWNegqUJcePS93a0RLmDNiC913BkWaa2Sd6fXeJd
+	iMWjB7qdCrh2mCCXFM1LuDp3wEcSi7s=
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
+ [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-32-Xy6EJxpOPp6kX8ieP9q0Yw-1; Thu, 18 Dec 2025 18:37:22 -0500
-X-MC-Unique: Xy6EJxpOPp6kX8ieP9q0Yw-1
-X-Mimecast-MFC-AGG-ID: Xy6EJxpOPp6kX8ieP9q0Yw_1766101042
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-88a32bf024cso12563676d6.2
-        for <linux-clk@vger.kernel.org>; Thu, 18 Dec 2025 15:37:22 -0800 (PST)
+ us-mta-397-fae7HdM3PXOaG5okUiB7qw-1; Thu, 18 Dec 2025 19:03:39 -0500
+X-MC-Unique: fae7HdM3PXOaG5okUiB7qw-1
+X-Mimecast-MFC-AGG-ID: fae7HdM3PXOaG5okUiB7qw_1766102619
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-8b4f267ba01so556621685a.1
+        for <linux-clk@vger.kernel.org>; Thu, 18 Dec 2025 16:03:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1766101042; x=1766705842; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=taL4VecI32GOlELm8+8Vnt26fKCO2BjXM3Lzuu9k69E=;
-        b=ghN4aU3/blCCHiK67/oqzMlWTd9amggWI6uzjyYYWuK6OptDfnzENd+HA4hnggrIyM
-         jVGjISZODF+4VF94SLI1rscxeFmbn2HEcqmeN3rMfXSzilUjtsC3AKyKVG+eEWyGDORd
-         2V2uHT+PP1PB5ycuU5G1Pp2DjZn0qJqpcwyidFeoCfLfBcKHUPipmqGhuRJyZbkQL6Kp
-         sotIfBSSdeSE5U3h8PP835xpdKmxQ+xE+ZJqHCQ+oh/xe4qwKa0XAtQBLFVU+fP8gSnw
-         +d8DnPX3pexQYC2AyvNIzax2JwU8StOlkF59PahoWZuep/MyDGE78Vz8eMpJ1tk9HMFp
-         lOdA==
+        d=redhat.com; s=google; t=1766102616; x=1766707416; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-transfer-encoding
+         :content-disposition:mime-version:references:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=g3xCK2ep+l8L+LYfas46rRp+A2nbh8UwR2dn2lWqo60=;
+        b=ZAUmTmLVlTf0wTE6wfng2fNH/IM0iQn9o01TW/7hGOx91xW4dK83iO1EgpQ8c0aNJo
+         zn96Gz6ZolAbKJ4yKSXjMr85kSec167/iP+0FhWN1z9nMfIq/ULPeD/qQndF/bMVJOpM
+         w0WPs0H1qlw07TGXkv2qP99qEy0wZrqEFcK2/8CBXSN8PAhpE5zOzEdsNVHOezaRCHMN
+         U1EhhpxSwC7wtOSWMa0q90FqFzvkmE19lNTApjso1velYYUpM2Uai6erIoK+bfi5lrR5
+         JgA5C6oZ5fPK7XTEvSQOBX+yXWl7uPoAihcTWeid/R9MN9IuYj1cUKk2snqDR5mOlHrB
+         UcvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1766101042; x=1766705842;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=taL4VecI32GOlELm8+8Vnt26fKCO2BjXM3Lzuu9k69E=;
-        b=lwbbnN9MCthQCfckvuVK0p2tszdYZxPDNalLKy2etB4h/7dFqtx8E8jbnw5wL/j7nj
-         lSbkHRoCOh2X1tEgosAeCMRnd41uj4OqVeSo0tjg2r6WhuZVCLC1tbq7ycBuTMKFdIwO
-         13yZQCoK/rfw5wj9OwCBZ8Y78gm4QVc7Qp6J6fGEa4b7oTmMRXyg2/H9A0UTQdNH5iBX
-         5X92oOSF5+3afN8A/sVkm3CmGND7jHEk1r3yzbfFaGNI9++4UMxacVaf6sBYK8S+c2NR
-         ivkf2X2VkGVyjUlC3a5WA0WKsa9tU21b5V3fKnuy1W73hfQYRjoDgeZ22xOR4XhmD68g
-         w1aA==
-X-Forwarded-Encrypted: i=1; AJvYcCX4vbeuccDs4nVJ5C7yewtzgCGu0vCau5/W2nV6wnJBnGHR6brmDduvfaDqBvme0FHqaE9Xf51tiVg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFfnwZUssQKMCYAsbcIw/TSOx17UdWIHuUmH9Qk269XgI/JjIw
-	svZ0Ud+idQoKXHn5buN4RDDteQK1nViDWCHep2Gus0JEqFkFe4q5YZ0JuW7GcKo2OVnHv7zGeIZ
-	tW+DWzuM9QX1pzt0S50G+OwiI1VZ3lockJAnnEbZc4wWD2Cvb63lemqCceBqO4w==
-X-Gm-Gg: AY/fxX4I5Wk4rS6rvt7buZjg0ULuXQBxfHUERqXpim0GqiPz1GMZN0iSjmT2N9hfwrH
-	WHcruYt+qJrZs6E7FLJZboEgl7sEFSgtBebp1o/Jd7Fg/MU2vW/9/LR0C/iDaznt1QdBC3oEegQ
-	TF6RzHBzAmMEFEgStrt0gAmtHmMeebRsSrE6WsKqsFYgNI89c+FPig9MSK4+FCAxD1B1bVpobCh
-	m27+gY8zOAKQBmSg7mFPFtNiQTGSMbi/KMPMJ07/do6rGlgFdQdcxulCoAhU8dHvgGyGnkJmmUZ
-	T7VN5ezgLoFkZOVa6OOnxgnDfXA4LuY9KwkMEYt51Ulj4KcE15lmq9pklTDfrQyxuqV2pDzRhtS
-	QY2JyuFg=
-X-Received: by 2002:a05:620a:2845:b0:8b2:a4ec:6f5 with SMTP id af79cd13be357-8c08fbc8df3mr229402685a.11.1766101041957;
-        Thu, 18 Dec 2025 15:37:21 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IF3jIAaZOF2kHstHYRyO1BtEzZDtmYfFo47TmQj/apy+4o6oNz5pTegY6y4DTnGxbC+K1Y2Qg==
-X-Received: by 2002:a05:620a:2845:b0:8b2:a4ec:6f5 with SMTP id af79cd13be357-8c08fbc8df3mr229399685a.11.1766101041544;
-        Thu, 18 Dec 2025 15:37:21 -0800 (PST)
+        d=1e100.net; s=20230601; t=1766102616; x=1766707416;
+        h=user-agent:in-reply-to:content-transfer-encoding
+         :content-disposition:mime-version:references:message-id:subject:cc
+         :to:from:date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=g3xCK2ep+l8L+LYfas46rRp+A2nbh8UwR2dn2lWqo60=;
+        b=CymWntkm9dUw3UXYbSEQyE76JOZ8TR3ZInkeOKkupP/S92W+n1rWvlHkeLfub3DARX
+         jkfhSfdgKNz16PExJIzg3RnpopowdPBOSfo4LaIc5YUX41TzkfzsHRF03e2Qfn7oBrnn
+         j0vggWPHSIQVATEI0R1+rL0WLpCxenuOm37NqH+kLyq0+mgU7QmOfiWZj+wtbw7JJNNm
+         Sra1CqhCfI/0zE0StNMxG4ECkF0kIoKqvxWuc+Uh7Jxj9si5aCEbg2yjiO/IK7IAOxI2
+         j7tVC1lH/euJ/ZeVmToY9WPa6ondQVp5jb/r9PgNLx2EthYC6XfeSum32e/Euj33JKLw
+         tHDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUVe8T8Uy5v+EdvksCaFiVluxATCC1WM8xYvg3+RF8w36YHouQTxultBDgBhfLmVxC4YU9/xgP3XqY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyqo5t2OmiAq1WyoF1rCsQ7MjuoBJRqYqO3l3GTU7ZPZGBVWnCE
+	ZCaVsndSN2hQ8ZweDipwsX6ivSmNlIYdiDgMhEi/BUBVSCtwFonejlZwbbg2sJnbKHIPQlkN8de
+	1tl8a7dcCKr0R4N6wye9sMtdkCbJUGDx/yNVRlDJK4cOpO1k1oCoaq5bNE/KRzQ==
+X-Gm-Gg: AY/fxX59RH6KMGZeStRtgNgnmS/FPj/vySDSvxSveW4HMYEIXwt967sAPkh4KlXUvpY
+	X7AwVL9D9uweoa14NiCYBGhRA78qcmKxndofLK5lxuVn3wQG+XZTKe+sRa88o2QEEv6TwwRNMhW
+	PzJpCrSB9oS4rUutopbMyJdtJ7ywm+1V9DQXOyvRpnLgTyzQ8XxASjCMkYaJ3NLMIOTp0618+Db
+	P5Br3lLJrqJ8b3EsjjSXIdQhjKSqnvjv9fdslWSGP81fu53fSdSVW0+u6pZaPfZbljrppUq2Km7
+	o32eRbBrBIxkm7XIPCQW0GBhxDKJ1H/10iD1YrkBAKgHzr2c+olETlAZJ/wjv4bXFcoWoLpZETG
+	/AKsQfnM=
+X-Received: by 2002:a05:620a:4725:b0:8b2:f2fd:e45b with SMTP id af79cd13be357-8bee79ca97dmr749298185a.36.1766102615925;
+        Thu, 18 Dec 2025 16:03:35 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHo7MqUZx1QPyENqkc02VYI6aP8FdDnn8/fughE/h5/HvcuPFOqo+fyNsSnz4VM/XGAJNrN7g==
+X-Received: by 2002:a05:620a:4725:b0:8b2:f2fd:e45b with SMTP id af79cd13be357-8bee79ca97dmr749293385a.36.1766102615429;
+        Thu, 18 Dec 2025 16:03:35 -0800 (PST)
 Received: from redhat.com ([2600:382:812c:5c2a:d26d:b7f:4624:dd34])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8c0973efa97sm54606385a.39.2025.12.18.15.37.17
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-88d96ce3907sm6896516d6.18.2025.12.18.16.03.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Dec 2025 15:37:19 -0800 (PST)
-Date: Thu, 18 Dec 2025 18:37:16 -0500
+        Thu, 18 Dec 2025 16:03:34 -0800 (PST)
+Date: Thu, 18 Dec 2025 19:03:31 -0500
 From: Brian Masney <bmasney@redhat.com>
-To: Junhui Liu <junhui.liu@pigmoral.tech>
+To: Maxime Ripard <mripard@kernel.org>, Stephen Boyd <sboyd@kernel.org>
 Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 3/6] clk: anlogic: add cru support for Anlogic DR1V90
- SoC
-Message-ID: <aUSQLB1fmYgQe_Fg@redhat.com>
-References: <20251216-dr1v90-cru-v3-0-52cc938d1db0@pigmoral.tech>
- <20251216-dr1v90-cru-v3-3-52cc938d1db0@pigmoral.tech>
+	Jonathan Corbet <corbet@lwn.net>,
+	Russell King <linux@armlinux.org.uk>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	Stefan Schmidt <stefan@datenfreihafen.org>,
+	Chen-Yu Tsai <wenst@chromium.org>, Alberto Ruiz <aruiz@redhat.com>
+Subject: Follow up from Linux Plumbers about my clk rate change talk (was Re:
+ [PATCH RFC v4 00/12] clk: add support for v1 / v2 clock rate negotiation and
+ kunit tests)
+Message-ID: <aUSWU7UymULCXOeF@redhat.com>
+References: <20250923-clk-tests-docs-v4-0-9205cb3d3cba@redhat.com>
+ <20250925-eager-delectable-frog-fcbb5d@penduick>
+ <aNVPqHldkVzbyvix@redhat.com>
+ <20250930-brawny-pastel-wildcat-4ba8d8@houat>
+ <aRfH35-jhM-qOrbb@redhat.com>
+ <mbbwnxoik3qhy6gcwglfdch2v2gdhz3uqoaeu3xujnec6uwnoy@lqexuvwyjyny>
+ <CABx5tq+iOpwLDy0VaQt4k9mLyAb8SF3WGHPFh+rwvT9=J4ZnKg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251216-dr1v90-cru-v3-3-52cc938d1db0@pigmoral.tech>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CABx5tq+iOpwLDy0VaQt4k9mLyAb8SF3WGHPFh+rwvT9=J4ZnKg@mail.gmail.com>
 User-Agent: Mutt/2.2.14 (2025-02-20)
 
-Hi Junhui,
+Hi all,
 
-On Tue, Dec 16, 2025 at 11:39:43AM +0800, Junhui Liu wrote:
-> +static long cru_div_gate_round_rate(struct clk_hw *hw, unsigned long rate,
-> +				    unsigned long *prate)
-> +{
-> +	struct clk_divider *divider = to_clk_divider(hw);
-> +
-> +	return divider_round_rate(hw, rate, prate, divider->table,
-> +				  divider->width, divider->flags);
-> +}
+On Fri, Nov 21, 2025 at 03:35:10PM -0500, Brian Masney wrote:
+> On Fri, Nov 21, 2025 at 11:09 AM Maxime Ripard <mripard@kernel.org> wrote:
+> > > I'm giving a talk at Linux Plumbers in Tokyo next month:
+> > >
+> > >     Fixing Clock Tree Propagation in the Common Clk Framework
+> > >     https://lpc.events/event/19/contributions/2152/
+> > >
+> > > Stephen will be there as well, and hopefully we can reach consensus
+> > > about an acceptable approach to fix this.
+> >
+> > Yeah, discussing it at plumbers would probably be a good idea, and maybe
+> > try to record / transcribe the meeting so we can have the minutes too
+> > somewhere?
+> 
+> The talk will be recorded, plus I'm sure there will be discussion
+> after my talk. I'll post a summary to this thread with the next steps
+> after Plumbers.
 
-The round_rate clk op is deprecated and I'm really close to being able
-to remove this from the clk core. Please only use determine_rate()
-below.
+I presented a talk at Linux Plumbers in Tokyo last week about this patch
+set:
 
-> +static int cru_div_gate_determine_rate(struct clk_hw *hw,
-> +				       struct clk_rate_request *req)
-> +{
-> +	struct cru_div_gate *div_gate = hw_to_cru_div_gate(hw);
-> +	struct clk_divider *divider = &div_gate->divider;
-> +	unsigned long maxdiv, mindiv;
-> +	int div = 0;
-> +
-> +	maxdiv = clk_div_mask(divider->width) + 1;
-> +	mindiv = div_gate->min + 1;
-> +
-> +	div = DIV_ROUND_UP_ULL(req->best_parent_rate, req->rate);
-> +	div = div > maxdiv ? maxdiv : div;
-> +	div = div < mindiv ? mindiv : div;
-> +
-> +	req->rate = DIV_ROUND_UP_ULL(req->best_parent_rate, div);
-> +
-> +	return 0;
-> +}
+    Fixing Clock Tree Propagation in the Common Clk Framework
+    https://www.youtube.com/watch?v=R8TytDzlcFs
+    https://lpc.events/event/19/contributions/2152/
+    My slide deck is on the second link. I didn't present all of the
+    slides.
 
-[snip]
+In summary, I made the scope of this patch set too big, and this is an
+intractable problem the way I currently have this setup. Some boards
+are currently unknowingly dependent on the existing behavior, and we
+need to keep things the way they currently are. We can detect when rates
+are unknowingly changed by a sibling, and log a warning, however some
+systems are configured to panic the system on warning, so we don't want
+to go that route.
 
-> +const struct clk_ops dr1_cru_div_gate_ops = {
-> +	.enable = cru_div_gate_enable,
-> +	.disable = cru_div_gate_disable,
-> +	.is_enabled = cru_div_gate_is_enabled,
-> +	.recalc_rate = cru_div_gate_recalc_rate,
-> +	.round_rate = cru_div_gate_round_rate,
-> +	.determine_rate = cru_div_gate_determine_rate,
+Most clock rates are fine to change with the existing behavior. It's
+just some clocks that are dependent on a precise clock rate, such as DRM
+and sound, that are affected by this.
 
-When round_rate() and determine_rate() are both defined in the provider,
-only the determine_rate() will be used. Just drop your round_rate()
-implementation.
+The way forward on this is to leave the existing behavior in the clock
+core, and fix this in the clock providers themselves. When a rate change
+occurs, it can walk down that portion of the subtree inside the clk
+provider via some new helpers that will be added to the clk core, and
+ensure that the clocks that need precise rates will have their rates,
+and their parent (if needed), updated as necessary. An array of rate
+changes can be added to struct clk_rate_request, and the clk core can
+update the clocks in that order. So it'll be up to the clk providers to
+ensure that the array is populated in the correct order.
 
-I didn't look into anything else on this patch. This showed up on my
-search for new implementations.
+I'm going to get this working first in kunit, and I'll post a new
+version of this patch set with these changes. Once that's done, I'll
+work with Maxime and some other folks to find a board that has this
+problem, and I'll ensure my new clk patch set is able to fix the issue.
+
+Thank you to everyone that attended and provided feedback. Please reply
+here if I missed something.
+
+
+Separately, I talked to Stephen about ways that I can help him with clk
+maintenance. Here's some information from my notes:
+
+- I converted from round_rate to determine_rate() across most of the
+  kernel tree in over 200 patches. However, the only remaining patch
+  set is to the phy subsystem. The patches have received Reviewed-by's,
+  however I haven't been able to get the phy maintainer to pick up the
+  patches. Stephen mentioned he can pick them up. There was a merge
+  conflict against the latest linux-next, so I posted a new version that
+  addresses the merge conflict.
+
+  https://lore.kernel.org/linux-clk/20251212-phy-clk-round-rate-v3-0-beae3962f767@redhat.com/T/#t
+
+  Here's the patch set that actually removes round_rate() from the clk
+  core.
+
+  https://lore.kernel.org/linux-clk/20251212-clk-remove-round-rate-v1-0-5c3d5f3edc78@redhat.com/
+
+  We still occasionally get people that try to add new round_rate
+  implementations. I try to catch them when the patches are posted,
+  however I miss some across the tree and will post a patch when it hits
+  linux-next. 
+
+  Someone two days ago posted a patch that adds a new round_rate(), so
+  it'd ideally be nice to get my two patch sets above into linux-next to
+  put a stop to this.
+
+  https://lore.kernel.org/linux-clk/20251216-dr1v90-cru-v3-3-52cc938d1db0@pigmoral.tech/
+
+  I commented on that patch to drop the round_rate.
+
+- There are maybe a dozen or so determine_rate() implementations where
+  it just returns 0, and it lets the firmware deal with setting the
+  appropriate rate. Stephen suggested that we add a new flag to the
+  clk core so that we can drop these empty determine_rate()
+  implementations. We didn't talk about a name, but at the moment I'm
+  leaning towards CLK_IS_FW_MANAGED. If that's set, then the clk core
+  will not allow determine_rate to be set. I'm open to other
+  suggestions for a name.
+
+- I will continue to help review changes to the clk core. As for the
+  clk providers themselves, I don't have access to the data sheets, and
+  I can't really review those in detail. However, I think it would be
+  nice if we add some extra clk-specific checks that we can run against
+  patches. Look for common issues that come up in review. Look for cases
+  where some of the helpers in clk-provider.h can possibly be used.
+  Chen-Yu Tsai pointed out that's may not be entirely accurate in all
+  cases, but we can at least warn about it.
+
+  Another case I thought of is if someone posts a patch set where the
+  clocks referenced in the dt bindings don't match what's actually in
+  the clock provider itself.
+
+  Make this as a clk-specific check script, and ideally see if we can
+  hook that script into checkpatch.pl for clk-specific patches. My
+  perl days are long over though, and I'd like to make the clk check
+  script in python.
+
+  Anyways, with a pre flight check like this, I could help review clk
+  drivers themselves to look for anything else that's out of the
+  ordinary.
+
+It was good to meet so many people in person at Japan.
 
 Brian
 
