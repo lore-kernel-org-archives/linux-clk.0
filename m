@@ -1,64 +1,64 @@
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 996C6215055
-	for <linux-clk@vger.kernel.org>; Fri, 19 Dec 2025 01:29:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C9FA22A4E1
+	for <linux-clk@vger.kernel.org>; Fri, 19 Dec 2025 01:29:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766107771; cv=none; b=IY9kA2Xt87KpIntZ6cVTIVuEAkoVgn2YN8x9c4U+2n/bmitgRqLmpmBASmR/b+rdWF8e6wtIiwHEpPtR9ebux/9bRdaJj0tio7Pak2IjTS+h82sYqupEAXrceIOiw6e5cib2KC82jO60+qGMD8UM4f2rXy8UsBWTKHsk3+onpfs=
+	t=1766107775; cv=none; b=SYJA08RoJJj5UkcK5ZiJ3HPekj6jesPk+B/0Yvjm5KnkehRFdvR5YUeEUwf0I2Zl4y0QF1ZxIM4IXM7UVUhX7aq9+12mnvoTtRoO6KgSx0U07upjOKTJVnUHZjnmXd8H9GyuZjOvOy1NIP0EcDBBDhfwehV365NDE/pgbayKcJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766107771; c=relaxed/simple;
-	bh=Tb7/WE3IPfVHDvtp1yGkJuvJOkxKx/jR/Dnp1byAOd4=;
+	s=arc-20240116; t=1766107775; c=relaxed/simple;
+	bh=coBhJbOTPb7tUUz9onsZhOwWKYw5Qqk4KBE6SRHMqXc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YJKNEQ0hZLbZnO9RakliGtz62dsOAVQCLkQcKK226dLFB6GiMhv273O90DEGmfdzbdrNOvXazIH11unzjoKxVvMiBYZgUI9wAP97RS2MC6A8peXqt0bmwYIoFOE5KtjQvw9AwSfzgQKwFVh5JQpRW0eUbzEEtzkx4TxLdkI4o9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kLD/TXht; arc=none smtp.client-ip=209.85.214.170
+	 MIME-Version; b=fdAKeXGuJysb2Z/4BPTFh6Mpme6pDpePWZogEHx880PSTKillGSl8IaushbTsoMbhW99jtzcaY0xZAaQzmJsNXMQLqT7+Ih9jUrqOAWLZ0XwJUy3EFd5ELSLX08FykHw+QHtkzw7/6t3UFCCdD7kM2jIqJAo0MpUzjefzznzH30=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bb0RhvnQ; arc=none smtp.client-ip=209.85.214.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kLD/TXht"
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2a07fac8aa1so13188555ad.1
-        for <linux-clk@vger.kernel.org>; Thu, 18 Dec 2025 17:29:29 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bb0RhvnQ"
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2a07fac8aa1so13188815ad.1
+        for <linux-clk@vger.kernel.org>; Thu, 18 Dec 2025 17:29:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1766107769; x=1766712569; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1766107772; x=1766712572; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=uWWh4FwGIgdhUsOi3EYtk/dhz8Z1t2Z6pki4bZVI0Bg=;
-        b=kLD/TXht9FNhDds40O+OK4j8gZARDbRwVqD3d61NtFnkv2RHUi/V7v5O8rVMHHI6HF
-         tWmYkcYIeqjbRBdL/x2ER10+m1yXFJywoDmY8bQtwzuwZEzQKZLHG81Gswr9IiTCQDSU
-         BB45Kwb53SIdjEuUAevgCiWMNRqfdiHeT+ip4+My67HeMjwfMuGlu9QKhH3uVRZXpNtW
-         Rd75Ge2IFyrMQjjFmwLp9dnXBvHeoxC18tonZfo8lieHUYQ8phICUIbXZ59Np1ijm4p6
-         toxV5cQpll+Lzabl5Ag/XSVWT4h9F0f7fyQMKeNPbgU5sqx6i+2yimL5m+GUTF4gERPF
-         n+zg==
+        bh=UQga6H56NgMAhDmuMLtpPzFbNPail5D+bj27HRwKHs8=;
+        b=bb0RhvnQX2whpAE7wfJmXNur9qZo0OaxvQV43bwax50hFdjt1NRSnUqbC0l2YgnSmV
+         5fbdBokwXSkbBE8xwabL8YHNmKoxo6CERGKkXS9EdZa5xRcvcFedn2w9HgIbVr8BnYhb
+         pTHaqxqeTdskBEhiHQZsaqhoEFoOxp1LZ9fKvW++t8vRPgqmym5GIOsTVA9qzWSxA2Dg
+         hLvVymTrDLVsR+wGPMrRCJ4kfNGPslyXb4BJA4pvpaQCURdj18cymXJXCx8GuGPFhUO5
+         n1d/vB99L9+8mKkhvQv7gtieDHjZ8Ig5WH7tSh++NtkEsWLu+wfrbV7x+hQlbRPNb3nY
+         E97Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1766107769; x=1766712569;
+        d=1e100.net; s=20230601; t=1766107772; x=1766712572;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=uWWh4FwGIgdhUsOi3EYtk/dhz8Z1t2Z6pki4bZVI0Bg=;
-        b=nAb7HJ0H8OKipHQNfuuxFQSIgARe9Co6BkD3LsvMQLlpeIs2gFAQDPxwRQPlXWMQvX
-         6N6dpPma5a5QR+l5FLRRmm926uGSaKOGVC/cZkSms7NPj+QaGa5Ri2618XW7Cxilemx+
-         WS9m5fDSHSxK12f6WlgQVoAd1hhOZeYS2kad5legAqk+wdyRP4OtsIlbCyWNrG5XxDxr
-         2w9ftumGgdok/HR1i5cvGLFGwdNNzyyjb+fGzSBGYorje0EMVmYd9FxL1AaADJOJboV2
-         cl8zVqeX1qX4OlXP+E35G+YUjTHCqRJjHf5yISGoZf0Q24LrT3qKDdvAMtO72mCsbWmM
-         1E8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCX+XLRrH0nUGPr9Idyg+BQOBDuNUjICrZVIsk/PpKZLjr+nVnndpru54swCo6X9A5MdgGoansDtyLY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyo28iN5PcnxDEV/mHB1KDGUTROGEMAjoGVtbW4oNBt2UvrMJA4
-	Y7hxeCMc2sLaQRCTO9A245npDFpDBgt9n2dXooGJuaCoVUasOs5SZBx0
-X-Gm-Gg: AY/fxX7yGkE9y45J0BDXONlSGduW9Lp8XV1jHt3JnfGcGnK58aItEDoq1+W5fFWNXfI
-	oadWYLO4Yx+LPCwZF6cHsKzjXcQqdq/EwcORljFLAOR4HInDvhWv57y7RbHQJSDgzCiMUhYdzyp
-	XNpMBDKWRqd38ESXZa4L+vncLIjr1IHivC2Rj9YMLi7ybTZ4tC3uES5SZQtZrymDSjqW94hsX+q
-	J5eZQ/Is67DBjmv6+whvYrApPiE0WXFzkVkwSNRG46134iSCXVWhGyRoNbvIPEGrmdKo2sp2SlJ
-	k75fPiRdC3Y9Cc1AGeAjJ4pPeQ0qHr4LutCRNwqvJxt7Ld5moAQFa3ywVnDkvaFrzMGmwG8oZXF
-	ey9luB/2ZYDLbZ/w0AbK/ZzbMYWY5pWqjKL6MiQR+q3WikpGtvSph6+A64dCZPvQ0JM2K0gAhGW
-	afbK87iUD2I5MdJ/YEdaX+
-X-Google-Smtp-Source: AGHT+IE7O1mGEpNS72Vw9iE/o2/iiXWpH+x3e4X6CYZynSGrcKdLgUt7hdbT3MImooLeHtQOOms8UA==
-X-Received: by 2002:a05:7023:c087:b0:11d:f5d5:f699 with SMTP id a92af1059eb24-121722abe01mr1128444c88.20.1766107768634;
-        Thu, 18 Dec 2025 17:29:28 -0800 (PST)
+        bh=UQga6H56NgMAhDmuMLtpPzFbNPail5D+bj27HRwKHs8=;
+        b=mWCnSuJkiwYq6giNpGGgQBJWOgx1quJGxUUUJpQShK67Lvx+LVW0vN2DQ5MNuTVtrj
+         ZTGLcPQUTX4yqAIII1zQkUHfVjEBWu3tC3Gf0xp92yDAYAVxr3Jt8Tp7AuTcVjs5N/Ur
+         KFPKuhq96FCQrPaOSXWC8bTDL4C2+KY4M9DB53RVdhSA/DNXEcCE/mfVCdqtfTvPqcwO
+         6LS5kleNPA7932l5le88dyjMdm8mB8wgsdJAx0LyZvqWFdVLGVzRuNYh63w+5n1jLxzt
+         p2aRTjWGevG9J6kUXNH6k1n6gXiexlvPhANOXN81dvxflDfn7GfUvGJeuy5vZB5YfkdM
+         f/bg==
+X-Forwarded-Encrypted: i=1; AJvYcCW8kiydOrbRB772cU70xvfVRgyZqIgdcp3wvVPZsW/E2W1+Me/+I5uhFK7S5NUTCFIF90Qje8bHVI8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLkNZYsCleW+GDwalB6quWl/GfeUDSTm+R8VqGgVb/cbvjWxdd
+	sYsQYhWST6I4zJLnqMWnnnZvo+ESsoksw87hhyeSzq2cDPmS0KANl2eo
+X-Gm-Gg: AY/fxX4WVjKTK4S047C+il3iuoD0EvBuUkpol9TnFtiDFDxNH72tJHkT0sEs7aXZNMl
+	TBmtlOVmTAR73N+1GTtqdn2yhTRn92TsdmDlovXK8DBkGJCMIUkZZvFrujHbCCQQEgi9xLbp0QP
+	Y+6LKou3z+gjTqDzFmrvJiY+Lm70xrwt7WEIcfhD/VH/uHzR+8E6/1aDJ0yUPHj4E7oJ7JHJI7F
+	SplvECHaaDgQPqTl9F9AUl7cQoNA+NSWBERW9axXR3sx2P9nX8de8tSPZ9P/PG0kdH/+/MZtb9C
+	gchw7EQeNA9i6jk23CE2w6WFCSYLbVDWM92VtPc3uYMDUAEuLK8yc4U5koE0WXwJB6auy7oNQ+9
+	gotuHedNEhan9JYQ5dnNQPx+bByKoSwlITD2jHqASaZ98l2LBSMB88IZTCDdwk53Cg/Xq9Vt8/e
+	d1XFGKRH15WA==
+X-Google-Smtp-Source: AGHT+IHMJ6kEWYKA6O5Q+cLJMQcvpcOIDvA3plPH9xUduwHOUSXGLhy5v5hS/sYcHwSl1ox8HAe/gw==
+X-Received: by 2002:a05:7022:b92:b0:119:e55a:9be7 with SMTP id a92af1059eb24-121721aab58mr1352297c88.3.1766107771841;
+        Thu, 18 Dec 2025 17:29:31 -0800 (PST)
 Received: from localhost ([2001:19f0:ac00:4eb8:5400:5ff:fe30:7df3])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-121725548b5sm3222028c88.17.2025.12.18.17.29.27
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-1217254d369sm3053035c88.16.2025.12.18.17.29.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Dec 2025 17:29:28 -0800 (PST)
+        Thu, 18 Dec 2025 17:29:31 -0800 (PST)
 From: Inochi Amaoto <inochiama@gmail.com>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
@@ -75,9 +75,9 @@ Cc: linux-kernel@vger.kernel.org,
 	linux-riscv@lists.infradead.org,
 	spacemit@lists.linux.dev,
 	Longbin Li <looong.bin@gmail.com>
-Subject: [PATCH v4 1/2] clk: spacemit: Respect Kconfig setting when building modules
-Date: Fri, 19 Dec 2025 09:28:17 +0800
-Message-ID: <20251219012819.440972-2-inochiama@gmail.com>
+Subject: [PATCH v4 2/2] clk: spacemit: Hide common clock driver from user controller
+Date: Fri, 19 Dec 2025 09:28:18 +0800
+Message-ID: <20251219012819.440972-3-inochiama@gmail.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20251219012819.440972-1-inochiama@gmail.com>
 References: <20251219012819.440972-1-inochiama@gmail.com>
@@ -89,156 +89,45 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Currently, the SPACEMIT_CCU entry is only a switch for enabling entry
-SPACEMIT_K1_CCU. It does not guide the build for common clock codes
-even if it is a tristate entry. This makes this entry useless.
+Since the common clock driver is only a dependency for other spacemit
+clock driver, it should not be enabled individually, so hide this in
+the Kconfig UI and let other spacemit clock driver select it.
 
-Change the Makefile to add a separate build for common clock logic,
-so the SPACEMIT_CCU entry takes effect, also add necessary
-MODULE_LICENSE()/MODULE_DESCRIPTION()/EXPORT_SYMBOL() for the module
-build.
-
-Fixes: 1b72c59db0ad ("clk: spacemit: Add clock support for SpacemiT K1 SoC")
 Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
 ---
- drivers/clk/spacemit/Makefile     | 9 +++++++--
- drivers/clk/spacemit/ccu-k1.c     | 1 +
- drivers/clk/spacemit/ccu_common.c | 6 ++++++
- drivers/clk/spacemit/ccu_ddn.c    | 1 +
- drivers/clk/spacemit/ccu_mix.c    | 9 +++++++++
- drivers/clk/spacemit/ccu_pll.c    | 1 +
- 6 files changed, 25 insertions(+), 2 deletions(-)
- create mode 100644 drivers/clk/spacemit/ccu_common.c
+ drivers/clk/spacemit/Kconfig | 14 ++++++--------
+ 1 file changed, 6 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/clk/spacemit/Makefile b/drivers/clk/spacemit/Makefile
-index 5ec6da61db98..ad2bf315109b 100644
---- a/drivers/clk/spacemit/Makefile
-+++ b/drivers/clk/spacemit/Makefile
-@@ -1,5 +1,10 @@
- # SPDX-License-Identifier: GPL-2.0
+diff --git a/drivers/clk/spacemit/Kconfig b/drivers/clk/spacemit/Kconfig
+index 3854f6ae6d0e..3351e8bc801d 100644
+--- a/drivers/clk/spacemit/Kconfig
++++ b/drivers/clk/spacemit/Kconfig
+@@ -1,19 +1,17 @@
+ # SPDX-License-Identifier: GPL-2.0-only
  
--obj-$(CONFIG_SPACEMIT_K1_CCU)	= spacemit-ccu-k1.o
--spacemit-ccu-k1-y		= ccu_pll.o ccu_mix.o ccu_ddn.o
-+obj-$(CONFIG_SPACEMIT_CCU)	+= spacemit-ccu.o
-+spacemit-ccu-y			+= ccu_common.o
-+spacemit-ccu-y			+= ccu_pll.o
-+spacemit-ccu-y			+= ccu_mix.o
-+spacemit-ccu-y			+= ccu_ddn.o
++menu "Clock support for SpacemiT platforms"
++	depends on ARCH_SPACEMIT || COMPILE_TEST
 +
-+obj-$(CONFIG_SPACEMIT_K1_CCU)	+= spacemit-ccu-k1.o
- spacemit-ccu-k1-y		+= ccu-k1.o
-diff --git a/drivers/clk/spacemit/ccu-k1.c b/drivers/clk/spacemit/ccu-k1.c
-index 4761bc1e3b6e..01d9485b615d 100644
---- a/drivers/clk/spacemit/ccu-k1.c
-+++ b/drivers/clk/spacemit/ccu-k1.c
-@@ -1204,6 +1204,7 @@ static struct platform_driver k1_ccu_driver = {
- };
- module_platform_driver(k1_ccu_driver);
+ config SPACEMIT_CCU
+-	tristate "Clock support for SpacemiT SoCs"
+-	depends on ARCH_SPACEMIT || COMPILE_TEST
++	tristate
+ 	select AUXILIARY_BUS
+ 	select MFD_SYSCON
+-	help
+-	  Say Y to enable clock controller unit support for SpacemiT SoCs.
+-
+-if SPACEMIT_CCU
  
-+MODULE_IMPORT_NS("CLK_SPACEMIT");
- MODULE_DESCRIPTION("SpacemiT K1 CCU driver");
- MODULE_AUTHOR("Haylen Chu <heylenay@4d2.org>");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/spacemit/ccu_common.c b/drivers/clk/spacemit/ccu_common.c
-new file mode 100644
-index 000000000000..4412c4104dab
---- /dev/null
-+++ b/drivers/clk/spacemit/ccu_common.c
-@@ -0,0 +1,6 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+
-+#include <linux/module.h>
-+
-+MODULE_DESCRIPTION("SpacemiT CCU common clock driver");
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/spacemit/ccu_ddn.c b/drivers/clk/spacemit/ccu_ddn.c
-index 5b16e273bee5..b5540e0781ff 100644
---- a/drivers/clk/spacemit/ccu_ddn.c
-+++ b/drivers/clk/spacemit/ccu_ddn.c
-@@ -84,3 +84,4 @@ const struct clk_ops spacemit_ccu_ddn_ops = {
- 	.determine_rate = ccu_ddn_determine_rate,
- 	.set_rate	= ccu_ddn_set_rate,
- };
-+EXPORT_SYMBOL_NS_GPL(spacemit_ccu_ddn_ops, "CLK_SPACEMIT");
-diff --git a/drivers/clk/spacemit/ccu_mix.c b/drivers/clk/spacemit/ccu_mix.c
-index 7b7990875372..67f8b12b4f5b 100644
---- a/drivers/clk/spacemit/ccu_mix.c
-+++ b/drivers/clk/spacemit/ccu_mix.c
-@@ -198,24 +198,28 @@ const struct clk_ops spacemit_ccu_gate_ops = {
- 	.enable		= ccu_gate_enable,
- 	.is_enabled	= ccu_gate_is_enabled,
- };
-+EXPORT_SYMBOL_NS_GPL(spacemit_ccu_gate_ops, "CLK_SPACEMIT");
+ config SPACEMIT_K1_CCU
+ 	tristate "Support for SpacemiT K1 SoC"
+-	depends on ARCH_SPACEMIT || COMPILE_TEST
++	select SPACEMIT_CCU
+ 	help
+ 	  Support for clock controller unit in SpacemiT K1 SoC.
  
- const struct clk_ops spacemit_ccu_factor_ops = {
- 	.determine_rate = ccu_factor_determine_rate,
- 	.recalc_rate	= ccu_factor_recalc_rate,
- 	.set_rate	= ccu_factor_set_rate,
- };
-+EXPORT_SYMBOL_NS_GPL(spacemit_ccu_factor_ops, "CLK_SPACEMIT");
- 
- const struct clk_ops spacemit_ccu_mux_ops = {
- 	.determine_rate = ccu_mix_determine_rate,
- 	.get_parent	= ccu_mux_get_parent,
- 	.set_parent	= ccu_mux_set_parent,
- };
-+EXPORT_SYMBOL_NS_GPL(spacemit_ccu_mux_ops, "CLK_SPACEMIT");
- 
- const struct clk_ops spacemit_ccu_div_ops = {
- 	.determine_rate = ccu_mix_determine_rate,
- 	.recalc_rate	= ccu_div_recalc_rate,
- 	.set_rate	= ccu_mix_set_rate,
- };
-+EXPORT_SYMBOL_NS_GPL(spacemit_ccu_div_ops, "CLK_SPACEMIT");
- 
- const struct clk_ops spacemit_ccu_factor_gate_ops = {
- 	.disable	= ccu_gate_disable,
-@@ -226,6 +230,7 @@ const struct clk_ops spacemit_ccu_factor_gate_ops = {
- 	.recalc_rate	= ccu_factor_recalc_rate,
- 	.set_rate	= ccu_factor_set_rate,
- };
-+EXPORT_SYMBOL_NS_GPL(spacemit_ccu_factor_gate_ops, "CLK_SPACEMIT");
- 
- const struct clk_ops spacemit_ccu_mux_gate_ops = {
- 	.disable	= ccu_gate_disable,
-@@ -236,6 +241,7 @@ const struct clk_ops spacemit_ccu_mux_gate_ops = {
- 	.get_parent	= ccu_mux_get_parent,
- 	.set_parent	= ccu_mux_set_parent,
- };
-+EXPORT_SYMBOL_NS_GPL(spacemit_ccu_mux_gate_ops, "CLK_SPACEMIT");
- 
- const struct clk_ops spacemit_ccu_div_gate_ops = {
- 	.disable	= ccu_gate_disable,
-@@ -246,6 +252,7 @@ const struct clk_ops spacemit_ccu_div_gate_ops = {
- 	.recalc_rate	= ccu_div_recalc_rate,
- 	.set_rate	= ccu_mix_set_rate,
- };
-+EXPORT_SYMBOL_NS_GPL(spacemit_ccu_div_gate_ops, "CLK_SPACEMIT");
- 
- const struct clk_ops spacemit_ccu_mux_div_gate_ops = {
- 	.disable	= ccu_gate_disable,
-@@ -259,6 +266,7 @@ const struct clk_ops spacemit_ccu_mux_div_gate_ops = {
- 	.recalc_rate	= ccu_div_recalc_rate,
- 	.set_rate	= ccu_mix_set_rate,
- };
-+EXPORT_SYMBOL_NS_GPL(spacemit_ccu_mux_div_gate_ops, "CLK_SPACEMIT");
- 
- const struct clk_ops spacemit_ccu_mux_div_ops = {
- 	.get_parent	= ccu_mux_get_parent,
-@@ -268,3 +276,4 @@ const struct clk_ops spacemit_ccu_mux_div_ops = {
- 	.recalc_rate	= ccu_div_recalc_rate,
- 	.set_rate	= ccu_mix_set_rate,
- };
-+EXPORT_SYMBOL_NS_GPL(spacemit_ccu_mux_div_ops, "CLK_SPACEMIT");
-diff --git a/drivers/clk/spacemit/ccu_pll.c b/drivers/clk/spacemit/ccu_pll.c
-index d92f0dae65a4..76d0244873d8 100644
---- a/drivers/clk/spacemit/ccu_pll.c
-+++ b/drivers/clk/spacemit/ccu_pll.c
-@@ -157,3 +157,4 @@ const struct clk_ops spacemit_ccu_pll_ops = {
- 	.determine_rate = ccu_pll_determine_rate,
- 	.is_enabled	= ccu_pll_is_enabled,
- };
-+EXPORT_SYMBOL_NS_GPL(spacemit_ccu_pll_ops, "CLK_SPACEMIT");
+-endif
++endmenu
 -- 
 2.52.0
 
