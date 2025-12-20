@@ -1,68 +1,68 @@
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+Received: from mail-wm1-f66.google.com (mail-wm1-f66.google.com [209.85.128.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A47052E54BB
-	for <linux-clk@vger.kernel.org>; Sat, 20 Dec 2025 09:05:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A05562FC000
+	for <linux-clk@vger.kernel.org>; Sat, 20 Dec 2025 09:05:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766221557; cv=none; b=OXtftRw/Xm9DFee4vQufVl1uiqKIZlU5YOkLZUTaHnQTf0O8dpku6WCJgcBmnK0XxQ87dII72bIU1uklBJf51Bb8iWFF8+bGE1wF8a2u8QdaJ9apqr1CS0o0wNcm2WpUmFCUA0sJB8hQ1ZyEcPHa2QQRaaVHdIRLYZC99fMRdYY=
+	t=1766221562; cv=none; b=QQkouBRHRz5AsCtvdTEI5B6gthed7LWtEOXOewTrNuoJIIgcjnYWV6GSNYY588QG6Gxa8lBSaReMpmHhcOY6SFx8u/RhU3tLJcBvItdDH/3BusAivi1DnRLhuJrX7uwOk2c+liSrur+4aTv6VRZeKgODg0lXZpZXMoaw63XQxZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766221557; c=relaxed/simple;
-	bh=bUKPDLDgvyDmiCQQmMkKtxjUpJMIVvdlMfzNhg8FZ4I=;
+	s=arc-20240116; t=1766221562; c=relaxed/simple;
+	bh=w4lPht67fTvYGZmbShhkk5lw4OKSQQI5Wz3XQCPBKDM=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=thRGyCEFguQIBgXAPgc0xXs2YPdfSpKjZv6mQ6UF5X4YXn565Mu9Z5P7ci+BsVLVLAH7BZEY3paGf1jyFz76c/xE1BWFK/b0aUt6WjzmfRd4TaG4JokIVNsfy1vZZ3I+jElCo8huAIfKdaagDZ6DOlu+maQEsF8tzrtYwR8w9qg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sUxiB5tu; arc=none smtp.client-ip=209.85.128.42
+	 In-Reply-To:To:Cc; b=U6ycFP6zAL28NvDPL5fAKc0EIfDU3r0HPkCmDumhyj3DJfcD3j77V4ien/+p6qsgbN/RypmuSezXlu1B+VzcJLcOPfWj6eI3Jk6r6qfSxuk9hDD+xtgItoKK+DmUOngpiSg9qGBf9NbNN+TMkCuT0CF8tL+4JTu1fiNkSmNO4KI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=T0Qx6o7+; arc=none smtp.client-ip=209.85.128.66
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sUxiB5tu"
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4779cb0a33fso25765405e9.0
-        for <linux-clk@vger.kernel.org>; Sat, 20 Dec 2025 01:05:55 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="T0Qx6o7+"
+Received: by mail-wm1-f66.google.com with SMTP id 5b1f17b1804b1-477619f8ae5so14421425e9.3
+        for <linux-clk@vger.kernel.org>; Sat, 20 Dec 2025 01:05:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1766221554; x=1766826354; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1766221557; x=1766826357; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=XVw0aWse2vPhALDrtiy2o4KqkTy0qvB3phpySxD9iBU=;
-        b=sUxiB5tu4BqMJL+YCHWPtDB7ip+7uz1gar90lqE5wFZscDmhYoUnM4MWmLf2Bv+2aK
-         DlPhkhHZDLwXppy/TeQdo1ZaSPPUTh/WQR3eZY5I1KSh4SrdBO4yLD/udPAXWM0ZXcCF
-         kRrBtmJGf/mZ2nN3yXvYr0kAxV1JyFGauDitcCTrljNOe4CTFqx0/LSn1GjU9gHkJ8e8
-         LWKhljXClcUJg39lKb2szjiLknBi/bIDN/bTiovuzKR/ivKV8uvLZYv2FiuNyg3UbvPm
-         KsxxlZHxpPHB8gOss/rQpSi/SEKIqI3fKRKYEfS5goMGwejrlgOAuey0oTZyTHpS2meP
-         ivHA==
+        bh=X8lFBrW+4OdRAv68RetouxFahorox7xHTMUV5fmhvYk=;
+        b=T0Qx6o7+dRiYqTLlvhKlV7vSmgdNhLi//w2dTuE+GrHYxgZ5RU2qv//AsjuMueZ53F
+         JRM+AtP59elBPFZ+hVGCEv56xxp34PD22OmTPZLknzzhk3RrBOmZbzG01EsPdSIYWt/g
+         Fdrf0o1tJCyQbVQOFV5RbMx+hxpz/aZhzj5Blr6uv3QDQJTJ8ueSL6Thb2DqChG9l+C7
+         v9nUqYTy4Oh62Acn+vBLey5QZXTpxy8ux461iEiYzGRlcy39N8gTEm7NnUVRvT8sCNpQ
+         cNyP8bfOoPWPuHjJe5Tb7Qqk2i7d2o8M7PfFj2s+RfOa33CC3P6qjies7eLmW+qEld6O
+         nELg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1766221554; x=1766826354;
+        d=1e100.net; s=20230601; t=1766221557; x=1766826357;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=XVw0aWse2vPhALDrtiy2o4KqkTy0qvB3phpySxD9iBU=;
-        b=WPsr90c/aoADWtYOqkmY22WTpMd1pSTSDa9eG5ywBdPBlO2INfEB8nsCtA9/huFQxm
-         wevqKH9+qcMsPE45908tCbhedU4QDI6lHgpECum9aTUlRYkY3EYIgnemOmQ27clESPc7
-         NKvaIyg5Wy6a3dB0O55Yq1Yx7nwsi9sYt4jrXNc248riE+TNBmNIphs9810ZPDOMJVP3
-         sh3DJv56vww6C7mS/KTkTtHRa+tFGFqpJc78Bk6uk2sb8qWaRdNwHKbG3KBrEmEFzSQ5
-         yagHj15ENhToE9rAebsAYNMsjsIo4KGE37iScvI3lFYxaED3RKhEI7uQJzHfidkGbV39
-         LNwA==
-X-Forwarded-Encrypted: i=1; AJvYcCUZueH7uJgYXMb65adgyqx3KoLT13XxCKi7M2bTEADGIw74ZTC4zwAzBkfct+Y9+WumuO1KDKn2+0w=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7t/n/WLjxgMH5nZ1jARcmbF25sxhTxCz3sHSC/oS45/8gf91r
-	JA2ClzS5zs9spX+MT8PeM4U/iZrDPos4ELsKv5zeIvXzSymLKiW+7tMkOLjXJVChPL0=
-X-Gm-Gg: AY/fxX6649SGmwZRdZHVrDi8ZepIyRcFw8+VKU2biggVkS/dGRscqh27irFJe1gRqUq
-	QGwZa8nQtodsEhBszGRuk9HvLk/LI1RSN3KLu7QBAdMLjJDsbvLbHltJK+MscQz9s9JBbr9sIB8
-	CyBxC+wCe8SdGbYl3lFMaoK5qiSgKIYcHxy23sWVwuYibYmW+LNIdqqFMOBbOY1Zcgxe7yL36xp
-	0YVWVsgr6jC9bcsRNHzMMZmH1S+id/62D51M5C95ce6taDKBXeYl75aTw7AtfxQgOijeeRTeKcs
-	JIRCWC5euhs+LJbw8jkhjRgmpNNR2blA6qqjUfgJ2gY57LyGu5Cmn28jlMPQmVTvtai8OnOi/3r
-	ON1LCdibOMRmQW109bLJlqWHe8GviwLS10WBRZfayYtbRWgE0ef2zXDO/DwxQSwTdKRJF0BK9I+
-	b/PRmwFnhdMoSSTWdgH5ko70IXt+YXhczzxXxD6aQ=
-X-Google-Smtp-Source: AGHT+IHm7esSV913JpdZ+YNyx0nqLo6qDaknHuHbwAmvI0v8Wnn36TQkgkaeC8uL3ugSC4TXAIGoqQ==
-X-Received: by 2002:a05:600c:620d:b0:47b:da85:b9ef with SMTP id 5b1f17b1804b1-47d19569c23mr60792875e9.16.1766221553759;
-        Sat, 20 Dec 2025 01:05:53 -0800 (PST)
+        bh=X8lFBrW+4OdRAv68RetouxFahorox7xHTMUV5fmhvYk=;
+        b=LYQXYeleyUjhNyuG7+zjt55QDlpnoOVG9uwUxqShNsddJHDf4LSZLyGQkbIc6PPNkr
+         xW+lUk9X3rRmKYZwiYf9pXTG+R7LbX5I8bT2XPAYkOMozXcB+lNi2SJVHg3Z+LlBcHnA
+         ooHDlJxROHfZddeN0GwLYE8DsA25wcrBAXYK+WM6lwtz8xz9iv6otnl6uciWVqfPt1It
+         v373TSKkBDxxeEHsoDU7zeB7hdYOjfgJU8elRHYKCzcvBP7Oyx5ZY0Aboicn1ekoJTFa
+         wO0RJaMprw6e/EnjMQqKPJf9+0T84wyd8umKiP1VSeAO9wXDjjbErd3QNkMBZf+fk2e/
+         RzcA==
+X-Forwarded-Encrypted: i=1; AJvYcCXn72lIfAYRC95XmV6mAK8X6LhP7UtK1wfslL101zVhHCHOxXfxEv5fskabyN8UhHvmgwTKgpYD7uo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzV/lIJ5lV5r+5yLpQ6pl2oIZPO816KksbM+6U3o2iHsNhuF62o
+	O4uTSZ31zjRynQ/uJIx9qKC9IJbpssqWXZthJ+cFRZRfU8x0Q/FFXUukLLdr4ssoV9E=
+X-Gm-Gg: AY/fxX4cZ8X7+0yWZtWR77NrCBax8JoF5kewYSn/bT6u7uFePJT4UMGbgd9r9jK+SFo
+	xwgTQ1/vHLLvZbg7x/i+p+umMuztcJu3piXlxYm2UyarQif23QrG9RVaAxeNnURvHM/T2psIchC
+	9JlgrZCwFu8Ng7qyB1dVMCKcx+INScj+INtALoVF1pXpuzJavnyUVQwlZ2cfHpboY34vv1rpBD+
+	qUuR8nue0VBP7kRVBMjEC9XRuLhPDXOPez6yr5NGtbVKk1NBpq2Mj0aXFzifKt1jYiIZOgFRZyM
+	c7o/oABFrnctotb16MbCAk2eLRJEr+36QHKqVmUO+AiQ4oTu1512NPI4ljXoqBFykXmyBFUG8iU
+	Y8zUn516csz8URHYezueIgsCvw+CIFkhoNcxwao5P7fONSk9pnN+h8z5/Gh1B9KNuidZd7toPhR
+	5jm0NYUt+KbtdQ7ns4sr6+lM0NmiqMz/vKegmNHcE=
+X-Google-Smtp-Source: AGHT+IFwZfDLFP2EWtJhDOs01APgVEjeSQpVpF77su7pSmQDZd0T4j0yeJIeZGJrcH+UxcF7A1qTpw==
+X-Received: by 2002:a05:600c:4e8f:b0:477:df7:b020 with SMTP id 5b1f17b1804b1-47d1957da79mr49556975e9.18.1766221556728;
+        Sat, 20 Dec 2025 01:05:56 -0800 (PST)
 Received: from gpeter-l.roam.corp.google.com ([150.228.9.32])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47d1936d220sm88466685e9.8.2025.12.20.01.05.52
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47d1936d220sm88466685e9.8.2025.12.20.01.05.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 20 Dec 2025 01:05:53 -0800 (PST)
+        Sat, 20 Dec 2025 01:05:56 -0800 (PST)
 From: Peter Griffin <peter.griffin@linaro.org>
-Date: Sat, 20 Dec 2025 09:05:39 +0000
-Subject: [PATCH v6 1/4] dt-bindings: clock: google,gs101-clock: add
- samsung,sysreg property as required
+Date: Sat, 20 Dec 2025 09:05:41 +0000
+Subject: [PATCH v6 3/4] clk: samsung: Implement automatic clock gating mode
+ for CMUs
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -71,7 +71,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251220-automatic-clocks-v6-1-36c2f276a135@linaro.org>
+Message-Id: <20251220-automatic-clocks-v6-3-36c2f276a135@linaro.org>
 References: <20251220-automatic-clocks-v6-0-36c2f276a135@linaro.org>
 In-Reply-To: <20251220-automatic-clocks-v6-0-36c2f276a135@linaro.org>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -89,104 +89,795 @@ Cc: Will McVicker <willmcvicker@google.com>,
  kernel-team@android.com, Peter Griffin <peter.griffin@linaro.org>, 
  Krzysztof Kozlowski <krzk@kernel.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2882;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=29438;
  i=peter.griffin@linaro.org; h=from:subject:message-id;
- bh=bUKPDLDgvyDmiCQQmMkKtxjUpJMIVvdlMfzNhg8FZ4I=;
- b=owEBbQKS/ZANAwAKAc7ouNYCNHK6AcsmYgBpRmbtf4HhlaQ6BY7Iw6T389W5xKye2Rc4k0PgV
- PmqcNLorLmJAjMEAAEKAB0WIQQO/I5vVXh1DVa1SfzO6LjWAjRyugUCaUZm7QAKCRDO6LjWAjRy
- un+/D/4puNY+0dl4g/cgXGWqZa6pGPbTlYDisHMcXVvoToKPpj99jEPpUolN+8x04z7ayoFFfn1
- goVpUIp6PRJyLMBy0vEERO47zp1u7CkFIhPhgvqium9Hs8KyfskVBD18nXqd4Mw0hhGmAH3EVkG
- eXUtSs7xDZxfqhX5fIvn6YHpgdqi69o3g3tAAC/99H5YgCmnehe5GGSlnPgKionfjdPUwo2R3p/
- AyRzWJMPDXs+72NxewSTQR8LdwvVPLp2YOk03suCHG5h+vuKgvnPa6omSXu9eN13aGGVkpJzAWZ
- wSbyGrNTGtm/fuU6dkNntTqptaTdXJPBWNFKRmF4jLGyBmcW6xmk9er0qwOqnGWcRwCgT4g7RE+
- WtNYOuNxtzvkMgS5uDVLekdAcH+OiczykTG21Q8Sirx57TfCCu7/QWegwWvTYMh/S8Lqxzr4lZv
- yQV0RypJikvza8EvKol3LHFShVF0fSfpNQCSynxoW0dAuI6wwK0575PeK9w7NlyCuFfjPj7vVqX
- FkBKLvVy5pfYRrB+dqVlOJyRxr0Bjqv3ZAda+aR9le+uGj+NVWmDhNJXY88AwoOuTOrv0hEcmnt
- RnESt47SMVByS2AjZuF8m/dQGqNS6C/RjMGT/xldnPixsfTaeT7U1sarWIad/v9NMch24lNiS6q
- fn7E9263EZC9wYg==
+ bh=w4lPht67fTvYGZmbShhkk5lw4OKSQQI5Wz3XQCPBKDM=;
+ b=owEBbQKS/ZANAwAKAc7ouNYCNHK6AcsmYgBpRmbud8bOu+TKcFm4d5SiWgArKtReZAtRGCBmC
+ UVI3Nj3KQSJAjMEAAEKAB0WIQQO/I5vVXh1DVa1SfzO6LjWAjRyugUCaUZm7gAKCRDO6LjWAjRy
+ umjXD/4lm3MkYbnQAh2gMSUpvjnVvt9lq4al67cTrbxWGydN1f+ZynknSPtGHZrMhRkLnmcPQpr
+ bqCZ0JARWiyEYL1C5NiALkU/SifuhU4zajYRAXw/Dw2uMf5/UOg22aFbb+Rz8Ox6TR7LYP9A5z/
+ wZLHEECSUD91uhHtkjBF5GWVPUoHJVCubixlCljQwEODqbzCQoa3/nddt/ZpAHGijSBlcX4jw7d
+ DNIKu/D8EkbyK9w95UZCkvuMRaDuSH/CC09dJmb6OMLD6RQFMJRAzl1hMIP5qmSDjk12dGpl1Tt
+ RVjjIGN7Yq2MIG5tri1gKkUiD/uVgmfvWdErI5q2MPjtK0ImHr7h3U5K9IfYmEr+vKrwdJftRF3
+ QuQ6O4nkcbT8o92QiaNMKDZY6jvDGTI/eP6FHwqKT2MIpBM3FaAKgfjcKCZCYkyheKDyr7MnbGa
+ qyVJUEHk84lxtAMkXa7uo0695HByjsd2neB1o4vrbuuh8dvmEvdhPlbww9bfOmnnLpFbEVWI4Vg
+ G+a161FiXW4ZuHiU5j/h/t3Ee3DRCRfmCT9Xo/RMvzYhS11sMqtY5hOzg2Td3oGIgn2Op6e1tZh
+ AO5NVb0lteq8K8cyIimnRBLfi3jume+PgDIlFdVMu51WOfIMbLMtrSYAPkBuw9YqZXi0JLD+yB/
+ p8lfDRBAFhcoGSQ==
 X-Developer-Key: i=peter.griffin@linaro.org; a=openpgp;
  fpr=0EFC8E6F5578750D56B549FCCEE8B8D6023472BA
 
-Each CMU (with the exception of cmu_top) has a corresponding sysreg bank
-that contains the BUSCOMPONENT_DRCG_EN and optional MEMCLK registers.
-The BUSCOMPONENT_DRCG_EN register enables dynamic root clock gating of
-bus components and MEMCLK gates the sram clock.
+Update exynos_arm64_init_clocks() so that it enables the automatic clock
+mode bits in the CMU option register if the auto_clock_gate flag and
+option_offset fields are set for the CMU. To ensure compatibility with
+older DTs (that specified an incorrect CMU reg size), detect this and
+fallback to manual clock gate mode as the auto clock mode feature depends
+on registers in this area.
 
-Now the clock driver supports automatic clock mode, to fully enable dynamic
-root clock gating it is required to configure these registers. Update the
-bindings documentation so that all CMUs (with the exception of
-gs101-cmu-top) have samsung,sysreg as a required property.
+The CMU option register bits are global and effect every clock component in
+the CMU, as such clearing the GATE_ENABLE_HWACG bit and setting GATE_MANUAL
+bit on every gate register is only required if auto_clock_gate is false.
 
-Note this is NOT an ABI break, as if the property isn't specified the
-clock driver will fallback to the current behaviour of not initializing
-the registers. The system still boots, but bus components won't benefit
-from dynamic root clock gating and dynamic power will be higher (which has
-been the case until now anyway).
+Additionally if auto_clock_gate is enabled the dynamic root clock gating
+and memclk registers will be configured in the corresponding CMUs sysreg
+bank. These registers are exposed via syscon, so the register
+samsung_clk_save/restore paths are updated to also take a regmap.
 
-Additionally update the DT example to included the correct CMU size as
-registers in that region are used for automatic clock mode.
+As many gates for various Samsung SoCs are already exposed in the Samsung
+clock drivers a new samsung_auto_clk_gate_ops is implemented. This uses
+some CMU debug registers to report whether clocks are enabled or disabled
+when operating in automatic mode. This allows
+/sys/kernel/debug/clk/clk_summary to still dump the entire clock tree and
+correctly report the status of each clock in the system.
 
 Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 ---
-Changes in v5:
-- Invert the test for google,gs101-cmu-top (Andre)
-
-Changes in v4
-- Update commit description with additional requested details (Krzysztof)
-
 Changes in v3:
-- Update commit description as to why the sysreg is required (Krzysztof)
+- Add missing 'np' func param to kerneldoc in samsung_cmu_register_clocks
+(0-DAY CI)
 
 Changes in v2:
-- Update commit description regarding updated example (Andre)
+- Fallback to manual clock gate mode for old DTs with incorrect CMU size
+(added samsung_is_auto_capable()) (Krzysztof)
+- Rename OPT_UNKNOWN bit to OPT_EN_LAYER2_CTRL (Andre)
+- Rename OPT_EN_MEM_PM_GATING to OPT_EN_MEM_PWR_GATING (Andre)
+- Reverse Option bit definitions LSB -> MSB (Krzysztof)
+- Update kerneldoc init_clk_regs comment (Andre)
+- Fix space on various comments (Andre)
+- Fix regmap typo on samsung_clk_save/restore calls (Andre)
+- Include error code in pr_err message (Andre)
+- Add macros for dcrg and memclk (Andre)
+- Avoid confusing !IS_ERR_OR_NULL(ctx->sysreg) test (Krzysztof)
+- Update kerneldoc to mention drcg_offset & memclk_offset are in sysreg (Andre)
+- Fix 0-DAY CI randconfig warning (0-DAY CI)
+- Update clk-s5pv210 and clk-s3c64xx.c samsung_clk_sleep_init call sites (Peter)
 ---
- .../devicetree/bindings/clock/google,gs101-clock.yaml | 19 ++++++++++++++++++-
- 1 file changed, 18 insertions(+), 1 deletion(-)
+ drivers/clk/samsung/clk-exynos-arm64.c   |  62 ++++++++--
+ drivers/clk/samsung/clk-exynos4.c        |  12 +-
+ drivers/clk/samsung/clk-exynos4412-isp.c |   4 +-
+ drivers/clk/samsung/clk-exynos5250.c     |   2 +-
+ drivers/clk/samsung/clk-exynos5420.c     |   4 +-
+ drivers/clk/samsung/clk-s3c64xx.c        |   4 +-
+ drivers/clk/samsung/clk-s5pv210.c        |   2 +-
+ drivers/clk/samsung/clk.c                | 200 ++++++++++++++++++++++++++++---
+ drivers/clk/samsung/clk.h                |  55 ++++++++-
+ 9 files changed, 302 insertions(+), 43 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml b/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
-index 31e106ef913dead9a038b3b6d8b43b950587f6aa..09e679c1a9def03d53b8b493929911ea902a1763 100644
---- a/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
-+++ b/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
-@@ -52,6 +52,11 @@ properties:
-   reg:
-     maxItems: 1
+diff --git a/drivers/clk/samsung/clk-exynos-arm64.c b/drivers/clk/samsung/clk-exynos-arm64.c
+index bf7de21f329ec89069dcf817ca578fcf9b2d9809..11e4d49f2390ba714eff5a329bb1f427cd6437b9 100644
+--- a/drivers/clk/samsung/clk-exynos-arm64.c
++++ b/drivers/clk/samsung/clk-exynos-arm64.c
+@@ -24,6 +24,16 @@
+ #define GATE_MANUAL		BIT(20)
+ #define GATE_ENABLE_HWACG	BIT(28)
  
-+  samsung,sysreg:
-+    $ref: /schemas/types.yaml#/definitions/phandle
-+    description:
-+      Phandle to system registers interface.
++/* Option register bits */
++#define OPT_EN_MEM_PWR_GATING		BIT(24)
++#define OPT_EN_AUTO_GATING		BIT(28)
++#define OPT_EN_PWR_MANAGEMENT		BIT(29)
++#define OPT_EN_LAYER2_CTRL		BIT(30)
++#define OPT_EN_DBG			BIT(31)
 +
- required:
-   - compatible
-   - "#clock-cells"
-@@ -166,6 +171,18 @@ allOf:
-             - const: bus
-             - const: ip
- 
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: google,gs101-cmu-top
-+    then:
-+      properties:
-+        samsung,sysreg: false
-+    else:
-+      required:
-+        - samsung,sysreg
++#define CMU_OPT_GLOBAL_EN_AUTO_GATING	(OPT_EN_DBG | OPT_EN_LAYER2_CTRL | \
++	OPT_EN_PWR_MANAGEMENT | OPT_EN_AUTO_GATING | OPT_EN_MEM_PWR_GATING)
 +
- additionalProperties: false
+ /* PLL_CONx_PLL register offsets range */
+ #define PLL_CON_OFF_START	0x100
+ #define PLL_CON_OFF_END		0x600
+@@ -37,6 +47,8 @@ struct exynos_arm64_cmu_data {
+ 	unsigned int nr_clk_save;
+ 	const struct samsung_clk_reg_dump *clk_suspend;
+ 	unsigned int nr_clk_suspend;
++	struct samsung_clk_reg_dump *clk_sysreg_save;
++	unsigned int nr_clk_sysreg;
  
- examples:
-@@ -175,7 +192,7 @@ examples:
+ 	struct clk *clk;
+ 	struct clk **pclks;
+@@ -76,19 +88,41 @@ static void __init exynos_arm64_init_clocks(struct device_node *np,
+ 	const unsigned long *reg_offs = cmu->clk_regs;
+ 	size_t reg_offs_len = cmu->nr_clk_regs;
+ 	void __iomem *reg_base;
++	bool init_auto;
+ 	size_t i;
  
-     cmu_top: clock-controller@1e080000 {
-         compatible = "google,gs101-cmu-top";
--        reg = <0x1e080000 0x8000>;
-+        reg = <0x1e080000 0x10000>;
-         #clock-cells = <1>;
-         clocks = <&ext_24_5m>;
-         clock-names = "oscclk";
+ 	reg_base = of_iomap(np, 0);
+ 	if (!reg_base)
+ 		panic("%s: failed to map registers\n", __func__);
+ 
++	/* ensure compatibility with older DTs */
++	if (cmu->auto_clock_gate && samsung_is_auto_capable(np))
++		init_auto = true;
++	else
++		init_auto = false;
++
++	if (cmu->option_offset && init_auto) {
++		/*
++		 * Enable the global automatic mode for the entire CMU.
++		 * This overrides the individual HWACG bits in each of the
++		 * individual gate, mux and qch registers.
++		 */
++		writel(CMU_OPT_GLOBAL_EN_AUTO_GATING,
++		       reg_base + cmu->option_offset);
++	}
++
+ 	for (i = 0; i < reg_offs_len; ++i) {
+ 		void __iomem *reg = reg_base + reg_offs[i];
+ 		u32 val;
+ 
+ 		if (cmu->manual_plls && is_pll_con1_reg(reg_offs[i])) {
+ 			writel(PLL_CON1_MANUAL, reg);
+-		} else if (is_gate_reg(reg_offs[i])) {
++		} else if (is_gate_reg(reg_offs[i]) && !init_auto) {
++			/*
++			 * Setting GATE_MANUAL bit (which is described in TRM as
++			 * reserved!) overrides the global CMU automatic mode
++			 * option.
++			 */
+ 			val = readl(reg);
+ 			val |= GATE_MANUAL;
+ 			val &= ~GATE_ENABLE_HWACG;
+@@ -210,8 +244,8 @@ void __init exynos_arm64_register_cmu(struct device *dev,
+ /**
+  * exynos_arm64_register_cmu_pm - Register Exynos CMU domain with PM support
+  *
+- * @pdev:	Platform device object
+- * @set_manual:	If true, set gate clocks to manual mode
++ * @pdev:		Platform device object
++ * @init_clk_regs:	If true, initialize CMU registers
+  *
+  * It's a version of exynos_arm64_register_cmu() with PM support. Should be
+  * called from probe function of platform driver.
+@@ -219,7 +253,7 @@ void __init exynos_arm64_register_cmu(struct device *dev,
+  * Return: 0 on success, or negative error code on error.
+  */
+ int __init exynos_arm64_register_cmu_pm(struct platform_device *pdev,
+-					bool set_manual)
++					bool init_clk_regs)
+ {
+ 	const struct samsung_cmu_info *cmu;
+ 	struct device *dev = &pdev->dev;
+@@ -249,7 +283,7 @@ int __init exynos_arm64_register_cmu_pm(struct platform_device *pdev,
+ 		dev_err(dev, "%s: could not enable bus clock %s; err = %d\n",
+ 		       __func__, cmu->clk_name, ret);
+ 
+-	if (set_manual)
++	if (init_clk_regs)
+ 		exynos_arm64_init_clocks(np, cmu);
+ 
+ 	reg_base = devm_platform_ioremap_resource(pdev, 0);
+@@ -268,8 +302,10 @@ int __init exynos_arm64_register_cmu_pm(struct platform_device *pdev,
+ 	pm_runtime_set_active(dev);
+ 	pm_runtime_enable(dev);
+ 
+-	samsung_cmu_register_clocks(data->ctx, cmu);
++	samsung_cmu_register_clocks(data->ctx, cmu, np);
+ 	samsung_clk_of_add_provider(dev->of_node, data->ctx);
++	/* sysreg DT nodes reference a clock in this CMU */
++	samsung_en_dyn_root_clk_gating(np, data->ctx, cmu);
+ 	pm_runtime_put_sync(dev);
+ 
+ 	return 0;
+@@ -280,14 +316,17 @@ int exynos_arm64_cmu_suspend(struct device *dev)
+ 	struct exynos_arm64_cmu_data *data = dev_get_drvdata(dev);
+ 	int i;
+ 
+-	samsung_clk_save(data->ctx->reg_base, data->clk_save,
++	samsung_clk_save(data->ctx->reg_base, NULL, data->clk_save,
+ 			 data->nr_clk_save);
+ 
++	samsung_clk_save(NULL, data->ctx->sysreg, data->clk_sysreg_save,
++			 data->nr_clk_sysreg);
++
+ 	for (i = 0; i < data->nr_pclks; i++)
+ 		clk_prepare_enable(data->pclks[i]);
+ 
+ 	/* For suspend some registers have to be set to certain values */
+-	samsung_clk_restore(data->ctx->reg_base, data->clk_suspend,
++	samsung_clk_restore(data->ctx->reg_base, NULL, data->clk_suspend,
+ 			    data->nr_clk_suspend);
+ 
+ 	for (i = 0; i < data->nr_pclks; i++)
+@@ -308,9 +347,14 @@ int exynos_arm64_cmu_resume(struct device *dev)
+ 	for (i = 0; i < data->nr_pclks; i++)
+ 		clk_prepare_enable(data->pclks[i]);
+ 
+-	samsung_clk_restore(data->ctx->reg_base, data->clk_save,
++	samsung_clk_restore(data->ctx->reg_base, NULL, data->clk_save,
+ 			    data->nr_clk_save);
+ 
++	if (data->ctx->sysreg)
++		samsung_clk_restore(NULL, data->ctx->sysreg,
++				    data->clk_sysreg_save,
++				    data->nr_clk_sysreg);
++
+ 	for (i = 0; i < data->nr_pclks; i++)
+ 		clk_disable_unprepare(data->pclks[i]);
+ 
+diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
+index cc5c1644c41c08b27bc48d809a08cd8a006cbe8f..246bd28bac2d577a58a7b9e0e93b700548370a36 100644
+--- a/drivers/clk/samsung/clk-exynos4.c
++++ b/drivers/clk/samsung/clk-exynos4.c
+@@ -1361,12 +1361,12 @@ static void __init exynos4_clk_init(struct device_node *np,
+ 					ARRAY_SIZE(exynos4x12_plls));
+ 	}
+ 
+-	samsung_cmu_register_clocks(ctx, &cmu_info_exynos4);
++	samsung_cmu_register_clocks(ctx, &cmu_info_exynos4, np);
+ 
+ 	if (exynos4_soc == EXYNOS4210) {
+-		samsung_cmu_register_clocks(ctx, &cmu_info_exynos4210);
++		samsung_cmu_register_clocks(ctx, &cmu_info_exynos4210, np);
+ 	} else {
+-		samsung_cmu_register_clocks(ctx, &cmu_info_exynos4x12);
++		samsung_cmu_register_clocks(ctx, &cmu_info_exynos4x12, np);
+ 		if (soc == EXYNOS4412)
+ 			samsung_clk_register_cpu(ctx, exynos4412_cpu_clks,
+ 					ARRAY_SIZE(exynos4412_cpu_clks));
+@@ -1378,15 +1378,15 @@ static void __init exynos4_clk_init(struct device_node *np,
+ 	if (soc == EXYNOS4212 || soc == EXYNOS4412)
+ 		exynos4x12_core_down_clock();
+ 
+-	samsung_clk_extended_sleep_init(reg_base,
++	samsung_clk_extended_sleep_init(reg_base, NULL,
+ 			exynos4_clk_regs, ARRAY_SIZE(exynos4_clk_regs),
+ 			src_mask_suspend, ARRAY_SIZE(src_mask_suspend));
+ 	if (exynos4_soc == EXYNOS4210)
+-		samsung_clk_extended_sleep_init(reg_base,
++		samsung_clk_extended_sleep_init(reg_base, NULL,
+ 		    exynos4210_clk_save, ARRAY_SIZE(exynos4210_clk_save),
+ 		    src_mask_suspend_e4210, ARRAY_SIZE(src_mask_suspend_e4210));
+ 	else
+-		samsung_clk_sleep_init(reg_base, exynos4x12_clk_save,
++		samsung_clk_sleep_init(reg_base, NULL, exynos4x12_clk_save,
+ 				       ARRAY_SIZE(exynos4x12_clk_save));
+ 
+ 	samsung_clk_of_add_provider(np, ctx);
+diff --git a/drivers/clk/samsung/clk-exynos4412-isp.c b/drivers/clk/samsung/clk-exynos4412-isp.c
+index fa915057e109e0008ebe0b1b5d1652fd5804e82b..772bc18a1e686f23b11bf160b803becff6279637 100644
+--- a/drivers/clk/samsung/clk-exynos4412-isp.c
++++ b/drivers/clk/samsung/clk-exynos4412-isp.c
+@@ -94,7 +94,7 @@ static int __maybe_unused exynos4x12_isp_clk_suspend(struct device *dev)
+ {
+ 	struct samsung_clk_provider *ctx = dev_get_drvdata(dev);
+ 
+-	samsung_clk_save(ctx->reg_base, exynos4x12_save_isp,
++	samsung_clk_save(ctx->reg_base, NULL, exynos4x12_save_isp,
+ 			 ARRAY_SIZE(exynos4x12_clk_isp_save));
+ 	return 0;
+ }
+@@ -103,7 +103,7 @@ static int __maybe_unused exynos4x12_isp_clk_resume(struct device *dev)
+ {
+ 	struct samsung_clk_provider *ctx = dev_get_drvdata(dev);
+ 
+-	samsung_clk_restore(ctx->reg_base, exynos4x12_save_isp,
++	samsung_clk_restore(ctx->reg_base, NULL, exynos4x12_save_isp,
+ 			    ARRAY_SIZE(exynos4x12_clk_isp_save));
+ 	return 0;
+ }
+diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
+index e90d3a0848cbc24b2709c10795f6affcda404567..f97f30b29be7317db8186bac39cf52e1893eb106 100644
+--- a/drivers/clk/samsung/clk-exynos5250.c
++++ b/drivers/clk/samsung/clk-exynos5250.c
+@@ -854,7 +854,7 @@ static void __init exynos5250_clk_init(struct device_node *np)
+ 		PWR_CTRL2_CORE2_UP_RATIO | PWR_CTRL2_CORE1_UP_RATIO);
+ 	__raw_writel(tmp, reg_base + PWR_CTRL2);
+ 
+-	samsung_clk_sleep_init(reg_base, exynos5250_clk_regs,
++	samsung_clk_sleep_init(reg_base, NULL, exynos5250_clk_regs,
+ 			       ARRAY_SIZE(exynos5250_clk_regs));
+ 	exynos5_subcmus_init(ctx, ARRAY_SIZE(exynos5250_subcmus),
+ 			     exynos5250_subcmus);
+diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+index a9df4e6db82fa7831d4e5c7210b0163d7d301ec1..1982e0751ceec7e57f9e82d96dcbadce1f691092 100644
+--- a/drivers/clk/samsung/clk-exynos5420.c
++++ b/drivers/clk/samsung/clk-exynos5420.c
+@@ -1649,12 +1649,12 @@ static void __init exynos5x_clk_init(struct device_node *np,
+ 				ARRAY_SIZE(exynos5800_cpu_clks));
+ 	}
+ 
+-	samsung_clk_extended_sleep_init(reg_base,
++	samsung_clk_extended_sleep_init(reg_base, NULL,
+ 		exynos5x_clk_regs, ARRAY_SIZE(exynos5x_clk_regs),
+ 		exynos5420_set_clksrc, ARRAY_SIZE(exynos5420_set_clksrc));
+ 
+ 	if (soc == EXYNOS5800) {
+-		samsung_clk_sleep_init(reg_base, exynos5800_clk_regs,
++		samsung_clk_sleep_init(reg_base, NULL, exynos5800_clk_regs,
+ 				       ARRAY_SIZE(exynos5800_clk_regs));
+ 
+ 		exynos5_subcmus_init(ctx, ARRAY_SIZE(exynos5800_subcmus),
+diff --git a/drivers/clk/samsung/clk-s3c64xx.c b/drivers/clk/samsung/clk-s3c64xx.c
+index 397a057af5d1e704e7ead7ba04b477fdc28c45bf..5a2d5a5703ffc5ed48b9a18a20c39be2de827920 100644
+--- a/drivers/clk/samsung/clk-s3c64xx.c
++++ b/drivers/clk/samsung/clk-s3c64xx.c
+@@ -449,10 +449,10 @@ void __init s3c64xx_clk_init(struct device_node *np, unsigned long xtal_f,
+ 	samsung_clk_register_alias(ctx, s3c64xx_clock_aliases,
+ 					ARRAY_SIZE(s3c64xx_clock_aliases));
+ 
+-	samsung_clk_sleep_init(reg_base, s3c64xx_clk_regs,
++	samsung_clk_sleep_init(reg_base, NULL, s3c64xx_clk_regs,
+ 			       ARRAY_SIZE(s3c64xx_clk_regs));
+ 	if (!is_s3c6400)
+-		samsung_clk_sleep_init(reg_base, s3c6410_clk_regs,
++		samsung_clk_sleep_init(reg_base, NULL, s3c6410_clk_regs,
+ 				       ARRAY_SIZE(s3c6410_clk_regs));
+ 
+ 	samsung_clk_of_add_provider(np, ctx);
+diff --git a/drivers/clk/samsung/clk-s5pv210.c b/drivers/clk/samsung/clk-s5pv210.c
+index 9a4217cc1908aa60ebbe51b2b5c841138cc46ef3..4ee4f2b5efbc1d4770fefff22de21f7d4e5e9506 100644
+--- a/drivers/clk/samsung/clk-s5pv210.c
++++ b/drivers/clk/samsung/clk-s5pv210.c
+@@ -782,7 +782,7 @@ static void __init __s5pv210_clk_init(struct device_node *np,
+ 	samsung_clk_register_alias(ctx, s5pv210_aliases,
+ 						ARRAY_SIZE(s5pv210_aliases));
+ 
+-	samsung_clk_sleep_init(reg_base, s5pv210_clk_regs,
++	samsung_clk_sleep_init(reg_base, NULL, s5pv210_clk_regs,
+ 			       ARRAY_SIZE(s5pv210_clk_regs));
+ 
+ 	samsung_clk_of_add_provider(np, ctx);
+diff --git a/drivers/clk/samsung/clk.c b/drivers/clk/samsung/clk.c
+index c149ca6c221725195faeb76b0d73374c3b48261b..06ea5deef4ee2ffb87dcd14102561886ea80b7bc 100644
+--- a/drivers/clk/samsung/clk.c
++++ b/drivers/clk/samsung/clk.c
+@@ -12,8 +12,10 @@
+ #include <linux/clkdev.h>
+ #include <linux/clk-provider.h>
+ #include <linux/io.h>
++#include <linux/mfd/syscon.h>
+ #include <linux/mod_devicetable.h>
+ #include <linux/of_address.h>
++#include <linux/regmap.h>
+ #include <linux/syscore_ops.h>
+ 
+ #include "clk.h"
+@@ -21,19 +23,29 @@
+ static LIST_HEAD(clock_reg_cache_list);
+ 
+ void samsung_clk_save(void __iomem *base,
++				    struct regmap *regmap,
+ 				    struct samsung_clk_reg_dump *rd,
+ 				    unsigned int num_regs)
+ {
+-	for (; num_regs > 0; --num_regs, ++rd)
+-		rd->value = readl(base + rd->offset);
++	for (; num_regs > 0; --num_regs, ++rd) {
++		if (base)
++			rd->value = readl(base + rd->offset);
++		else if (regmap)
++			regmap_read(regmap, rd->offset, &rd->value);
++	}
+ }
+ 
+ void samsung_clk_restore(void __iomem *base,
++				      struct regmap *regmap,
+ 				      const struct samsung_clk_reg_dump *rd,
+ 				      unsigned int num_regs)
+ {
+-	for (; num_regs > 0; --num_regs, ++rd)
+-		writel(rd->value, base + rd->offset);
++	for (; num_regs > 0; --num_regs, ++rd) {
++		if (base)
++			writel(rd->value, base + rd->offset);
++		else if (regmap)
++			regmap_write(regmap, rd->offset, rd->value);
++	}
+ }
+ 
+ struct samsung_clk_reg_dump *samsung_clk_alloc_reg_dump(
+@@ -227,6 +239,103 @@ void __init samsung_clk_register_div(struct samsung_clk_provider *ctx,
+ 	}
+ }
+ 
++/*
++ * Some older DT's have an incorrect CMU resource size which is incompatible
++ * with the auto clock mode feature. In such cases we switch back to manual
++ * clock gating mode.
++ */
++bool samsung_is_auto_capable(struct device_node *np)
++{
++	struct resource res;
++	resource_size_t size;
++
++	if (of_address_to_resource(np, 0, &res))
++		return false;
++
++	size = resource_size(&res);
++	if (size != 0x10000) {
++		pr_warn("%pOF: incorrect res size for automatic clocks\n", np);
++		return false;
++	}
++	return true;
++}
++
++#define ACG_MSK GENMASK(6, 4)
++#define CLK_IDLE GENMASK(5, 4)
++static int samsung_auto_clk_gate_is_en(struct clk_hw *hw)
++{
++	u32 reg;
++	struct clk_gate *gate = to_clk_gate(hw);
++
++	reg = readl(gate->reg);
++	return ((reg & ACG_MSK) == CLK_IDLE) ? 0 : 1;
++}
++
++/* enable and disable are nops in automatic clock mode */
++static int samsung_auto_clk_gate_en(struct clk_hw *hw)
++{
++	return 0;
++}
++
++static void samsung_auto_clk_gate_dis(struct clk_hw *hw)
++{
++}
++
++static const struct clk_ops samsung_auto_clk_gate_ops = {
++	.enable = samsung_auto_clk_gate_en,
++	.disable = samsung_auto_clk_gate_dis,
++	.is_enabled = samsung_auto_clk_gate_is_en,
++};
++
++struct clk_hw *samsung_register_auto_gate(struct device *dev,
++		struct device_node *np, const char *name,
++		const char *parent_name, const struct clk_hw *parent_hw,
++		const struct clk_parent_data *parent_data,
++		unsigned long flags,
++		void __iomem *reg, u8 bit_idx,
++		u8 clk_gate_flags, spinlock_t *lock)
++{
++	struct clk_gate *gate;
++	struct clk_hw *hw;
++	struct clk_init_data init = {};
++	int ret = -EINVAL;
++
++	/* allocate the gate */
++	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
++	if (!gate)
++		return ERR_PTR(-ENOMEM);
++
++	init.name = name;
++	init.ops = &samsung_auto_clk_gate_ops;
++	init.flags = flags;
++	init.parent_names = parent_name ? &parent_name : NULL;
++	init.parent_hws = parent_hw ? &parent_hw : NULL;
++	init.parent_data = parent_data;
++	if (parent_name || parent_hw || parent_data)
++		init.num_parents = 1;
++	else
++		init.num_parents = 0;
++
++	/* struct clk_gate assignments */
++	gate->reg = reg;
++	gate->bit_idx = bit_idx;
++	gate->flags = clk_gate_flags;
++	gate->lock = lock;
++	gate->hw.init = &init;
++
++	hw = &gate->hw;
++	if (dev || !np)
++		ret = clk_hw_register(dev, hw);
++	else if (np)
++		ret = of_clk_hw_register(np, hw);
++	if (ret) {
++		kfree(gate);
++		hw = ERR_PTR(ret);
++	}
++
++	return hw;
++}
++
+ /* register a list of gate clocks */
+ void __init samsung_clk_register_gate(struct samsung_clk_provider *ctx,
+ 				const struct samsung_gate_clock *list,
+@@ -234,14 +343,24 @@ void __init samsung_clk_register_gate(struct samsung_clk_provider *ctx,
+ {
+ 	struct clk_hw *clk_hw;
+ 	unsigned int idx;
++	void __iomem *reg_offs;
+ 
+ 	for (idx = 0; idx < nr_clk; idx++, list++) {
+-		clk_hw = clk_hw_register_gate(ctx->dev, list->name, list->parent_name,
+-				list->flags, ctx->reg_base + list->offset,
++		reg_offs = ctx->reg_base + list->offset;
++
++		if (ctx->auto_clock_gate && ctx->gate_dbg_offset)
++			clk_hw = samsung_register_auto_gate(ctx->dev, NULL,
++				list->name, list->parent_name, NULL, NULL,
++				list->flags, reg_offs + ctx->gate_dbg_offset,
+ 				list->bit_idx, list->gate_flags, &ctx->lock);
++		else
++			clk_hw = clk_hw_register_gate(ctx->dev, list->name,
++				list->parent_name, list->flags,
++				ctx->reg_base + list->offset, list->bit_idx,
++				list->gate_flags, &ctx->lock);
+ 		if (IS_ERR(clk_hw)) {
+-			pr_err("%s: failed to register clock %s\n", __func__,
+-				list->name);
++			pr_err("%s: failed to register clock %s: %ld\n", __func__,
++				list->name, PTR_ERR(clk_hw));
+ 			continue;
+ 		}
+ 
+@@ -276,10 +395,11 @@ static int samsung_clk_suspend(void *data)
+ 	struct samsung_clock_reg_cache *reg_cache;
+ 
+ 	list_for_each_entry(reg_cache, &clock_reg_cache_list, node) {
+-		samsung_clk_save(reg_cache->reg_base, reg_cache->rdump,
+-				reg_cache->rd_num);
+-		samsung_clk_restore(reg_cache->reg_base, reg_cache->rsuspend,
+-				reg_cache->rsuspend_num);
++		samsung_clk_save(reg_cache->reg_base, reg_cache->sysreg,
++				 reg_cache->rdump, reg_cache->rd_num);
++		samsung_clk_restore(reg_cache->reg_base, reg_cache->sysreg,
++				    reg_cache->rsuspend,
++				    reg_cache->rsuspend_num);
+ 	}
+ 	return 0;
+ }
+@@ -289,8 +409,8 @@ static void samsung_clk_resume(void *data)
+ 	struct samsung_clock_reg_cache *reg_cache;
+ 
+ 	list_for_each_entry(reg_cache, &clock_reg_cache_list, node)
+-		samsung_clk_restore(reg_cache->reg_base, reg_cache->rdump,
+-				reg_cache->rd_num);
++		samsung_clk_restore(reg_cache->reg_base, reg_cache->sysreg,
++				    reg_cache->rdump, reg_cache->rd_num);
+ }
+ 
+ static const struct syscore_ops samsung_clk_syscore_ops = {
+@@ -303,6 +423,7 @@ static struct syscore samsung_clk_syscore = {
+ };
+ 
+ void samsung_clk_extended_sleep_init(void __iomem *reg_base,
++			struct regmap *sysreg,
+ 			const unsigned long *rdump,
+ 			unsigned long nr_rdump,
+ 			const struct samsung_clk_reg_dump *rsuspend,
+@@ -323,6 +444,7 @@ void samsung_clk_extended_sleep_init(void __iomem *reg_base,
+ 		register_syscore(&samsung_clk_syscore);
+ 
+ 	reg_cache->reg_base = reg_base;
++	reg_cache->sysreg = sysreg;
+ 	reg_cache->rd_num = nr_rdump;
+ 	reg_cache->rsuspend = rsuspend;
+ 	reg_cache->rsuspend_num = nr_rsuspend;
+@@ -334,10 +456,20 @@ void samsung_clk_extended_sleep_init(void __iomem *reg_base,
+  * samsung_cmu_register_clocks() - Register all clocks provided in CMU object
+  * @ctx: Clock provider object
+  * @cmu: CMU object with clocks to register
++ * @np:  CMU device tree node
+  */
+ void __init samsung_cmu_register_clocks(struct samsung_clk_provider *ctx,
+-					const struct samsung_cmu_info *cmu)
++					const struct samsung_cmu_info *cmu,
++					struct device_node *np)
+ {
++	if (samsung_is_auto_capable(np) && cmu->auto_clock_gate)
++		ctx->auto_clock_gate = cmu->auto_clock_gate;
++
++	ctx->gate_dbg_offset = cmu->gate_dbg_offset;
++	ctx->option_offset = cmu->option_offset;
++	ctx->drcg_offset = cmu->drcg_offset;
++	ctx->memclk_offset = cmu->memclk_offset;
++
+ 	if (cmu->pll_clks)
+ 		samsung_clk_register_pll(ctx, cmu->pll_clks, cmu->nr_pll_clks);
+ 	if (cmu->mux_clks)
+@@ -357,6 +489,37 @@ void __init samsung_cmu_register_clocks(struct samsung_clk_provider *ctx,
+ 		samsung_clk_register_cpu(ctx, cmu->cpu_clks, cmu->nr_cpu_clks);
+ }
+ 
++/* Each bit enable/disables DRCG of a bus component */
++#define DRCG_EN_MSK	GENMASK(31, 0)
++#define MEMCLK_EN	BIT(0)
++
++/* Enable Dynamic Root Clock Gating (DRCG) of bus components */
++void samsung_en_dyn_root_clk_gating(struct device_node *np,
++				    struct samsung_clk_provider *ctx,
++				    const struct samsung_cmu_info *cmu)
++{
++	if (!ctx->auto_clock_gate)
++		return;
++
++	ctx->sysreg = syscon_regmap_lookup_by_phandle(np, "samsung,sysreg");
++	if (IS_ERR(ctx->sysreg)) {
++		pr_warn("%pOF: Unable to get CMU sysreg\n", np);
++		ctx->sysreg = NULL;
++	} else {
++		/* Enable DRCG for all bus components */
++		regmap_write(ctx->sysreg, ctx->drcg_offset, DRCG_EN_MSK);
++		/* Enable memclk gate (not present on all sysreg) */
++		if (ctx->memclk_offset)
++			regmap_write_bits(ctx->sysreg, ctx->memclk_offset,
++					  MEMCLK_EN, 0x0);
++
++		samsung_clk_extended_sleep_init(NULL, ctx->sysreg,
++						cmu->sysreg_clk_regs,
++						cmu->nr_sysreg_clk_regs,
++						NULL, 0);
++	}
++}
++
+ /*
+  * Common function which registers plls, muxes, dividers and gates
+  * for each CMU. It also add CMU register list to register cache.
+@@ -375,14 +538,17 @@ struct samsung_clk_provider * __init samsung_cmu_register_one(
+ 	}
+ 
+ 	ctx = samsung_clk_init(NULL, reg_base, cmu->nr_clk_ids);
+-	samsung_cmu_register_clocks(ctx, cmu);
++	samsung_cmu_register_clocks(ctx, cmu, np);
+ 
+ 	if (cmu->clk_regs)
+-		samsung_clk_extended_sleep_init(reg_base,
++		samsung_clk_extended_sleep_init(reg_base, NULL,
+ 			cmu->clk_regs, cmu->nr_clk_regs,
+ 			cmu->suspend_regs, cmu->nr_suspend_regs);
+ 
+ 	samsung_clk_of_add_provider(np, ctx);
+ 
++	/* sysreg DT nodes reference a clock in this CMU */
++	samsung_en_dyn_root_clk_gating(np, ctx, cmu);
++
+ 	return ctx;
+ }
+diff --git a/drivers/clk/samsung/clk.h b/drivers/clk/samsung/clk.h
+index 18660c1ac6f0106b17b9efc9c6b3cd62d46f7b82..a56aa3be54d817cd24bf2bc29427e783a1a9a859 100644
+--- a/drivers/clk/samsung/clk.h
++++ b/drivers/clk/samsung/clk.h
+@@ -12,6 +12,7 @@
+ 
+ #include <linux/clk-provider.h>
+ #include <linux/mod_devicetable.h>
++#include <linux/regmap.h>
+ #include "clk-pll.h"
+ #include "clk-cpu.h"
+ 
+@@ -19,13 +20,25 @@
+  * struct samsung_clk_provider - information about clock provider
+  * @reg_base: virtual address for the register base
+  * @dev: clock provider device needed for runtime PM
++ * @sysreg: syscon regmap for clock-provider sysreg controller
+  * @lock: maintains exclusion between callbacks for a given clock-provider
++ * @auto_clock_gate: enable auto clk mode for all clocks in clock-provider
++ * @gate_dbg_offset: gate debug reg offset. Used for all gates in auto clk mode
++ * @option_offset: option reg offset. Enables auto mode for clock-provider
++ * @drcg_offset: dynamic root clk gate enable register offset in sysreg
++ * @memclk_offset: memclk enable register offset in sysreg
+  * @clk_data: holds clock related data like clk_hw* and number of clocks
+  */
+ struct samsung_clk_provider {
+ 	void __iomem *reg_base;
+ 	struct device *dev;
++	struct regmap *sysreg;
+ 	spinlock_t lock;
++	bool auto_clock_gate;
++	u32 gate_dbg_offset;
++	u32 option_offset;
++	u32 drcg_offset;
++	u32 memclk_offset;
+ 	/* clk_data must be the last entry due to variable length 'hws' array */
+ 	struct clk_hw_onecell_data clk_data;
+ };
+@@ -310,6 +323,7 @@ struct samsung_cpu_clock {
+ struct samsung_clock_reg_cache {
+ 	struct list_head node;
+ 	void __iomem *reg_base;
++	struct regmap *sysreg;
+ 	struct samsung_clk_reg_dump *rdump;
+ 	unsigned int rd_num;
+ 	const struct samsung_clk_reg_dump *rsuspend;
+@@ -338,7 +352,14 @@ struct samsung_clock_reg_cache {
+  * @suspend_regs: list of clock registers to set before suspend
+  * @nr_suspend_regs: count of clock registers in @suspend_regs
+  * @clk_name: name of the parent clock needed for CMU register access
++ * @sysreg_clk_regs: list of sysreg clock registers
++ * @nr_sysreg_clk_regs: count of clock registers in @sysreg_clk_regs
+  * @manual_plls: Enable manual control for PLL clocks
++ * @auto_clock_gate: enable auto clock mode for all components in CMU
++ * @gate_dbg_offset: gate debug reg offset. Used by all gates in auto clk mode
++ * @option_offset: option reg offset. Enables auto clk mode for entire CMU
++ * @drcg_offset: dynamic root clk gate enable register offset in sysreg
++ * @memclk_offset: memclk enable register offset in sysreg
+  */
+ struct samsung_cmu_info {
+ 	const struct samsung_pll_clock *pll_clks;
+@@ -364,8 +385,16 @@ struct samsung_cmu_info {
+ 	unsigned int nr_suspend_regs;
+ 	const char *clk_name;
+ 
++	const unsigned long *sysreg_clk_regs;
++	unsigned int nr_sysreg_clk_regs;
++
+ 	/* ARM64 Exynos CMUs */
+ 	bool manual_plls;
++	bool auto_clock_gate;
++	u32 gate_dbg_offset;
++	u32 option_offset;
++	u32 drcg_offset;
++	u32 memclk_offset;
+ };
+ 
+ struct samsung_clk_provider *samsung_clk_init(struct device *dev,
+@@ -408,35 +437,55 @@ void samsung_clk_register_cpu(struct samsung_clk_provider *ctx,
+ 		const struct samsung_cpu_clock *list, unsigned int nr_clk);
+ 
+ void samsung_cmu_register_clocks(struct samsung_clk_provider *ctx,
+-				 const struct samsung_cmu_info *cmu);
++				 const struct samsung_cmu_info *cmu,
++				 struct device_node *np);
+ struct samsung_clk_provider *samsung_cmu_register_one(
+ 			struct device_node *,
+ 			const struct samsung_cmu_info *);
+ 
+ #ifdef CONFIG_PM_SLEEP
+ void samsung_clk_extended_sleep_init(void __iomem *reg_base,
++			struct regmap *sysreg,
+ 			const unsigned long *rdump,
+ 			unsigned long nr_rdump,
+ 			const struct samsung_clk_reg_dump *rsuspend,
+ 			unsigned long nr_rsuspend);
+ #else
+ static inline void samsung_clk_extended_sleep_init(void __iomem *reg_base,
++			struct regmap *sysreg,
+ 			const unsigned long *rdump,
+ 			unsigned long nr_rdump,
+ 			const struct samsung_clk_reg_dump *rsuspend,
+ 			unsigned long nr_rsuspend) {}
+ #endif
+-#define samsung_clk_sleep_init(reg_base, rdump, nr_rdump) \
+-	samsung_clk_extended_sleep_init(reg_base, rdump, nr_rdump, NULL, 0)
++#define samsung_clk_sleep_init(reg_base, sysreg, rdump, nr_rdump)	   \
++	samsung_clk_extended_sleep_init(reg_base, sysreg, rdump, nr_rdump, \
++					NULL, 0)
+ 
+ void samsung_clk_save(void __iomem *base,
++			struct regmap *regmap,
+ 			struct samsung_clk_reg_dump *rd,
+ 			unsigned int num_regs);
+ void samsung_clk_restore(void __iomem *base,
++			struct regmap *regmap,
+ 			const struct samsung_clk_reg_dump *rd,
+ 			unsigned int num_regs);
+ struct samsung_clk_reg_dump *samsung_clk_alloc_reg_dump(
+ 			const unsigned long *rdump,
+ 			unsigned long nr_rdump);
+ 
++void samsung_en_dyn_root_clk_gating(struct device_node *np,
++				struct samsung_clk_provider *ctx,
++				const struct samsung_cmu_info *cmu);
++
++struct clk_hw *samsung_register_auto_gate(struct device *dev,
++		struct device_node *np, const char *name,
++		const char *parent_name, const struct clk_hw *parent_hw,
++		const struct clk_parent_data *parent_data,
++		unsigned long flags,
++		void __iomem *reg, u8 bit_idx,
++		u8 clk_gate_flags, spinlock_t *lock);
++
++bool samsung_is_auto_capable(struct device_node *np);
++
+ #endif /* __SAMSUNG_CLK_H */
 
 -- 
 2.52.0.351.gbe84eed79e-goog
