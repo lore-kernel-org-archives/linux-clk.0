@@ -1,15 +1,16 @@
 Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3499F15746E;
-	Sat, 20 Dec 2025 01:40:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A1B1234966;
+	Sat, 20 Dec 2025 01:40:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766194831; cv=none; b=K9/XCn+GZ+gTbz9uk5OZTGyjOQfJ5rHGfyGloFdv3Xb0rfo3jo8CR+h4Bt7h/tSYzGa02b3uvL78BspUP0C/NO443gdKX/M/lwWKQOYxtjrZcxFWeTzCjlRheQ6h+qmbAm/8ONCFyucfYfRlfuDrTbgQ7YM3g+A351fN0Wd9Ph4=
+	t=1766194837; cv=none; b=W5ruOzydXBzYImVYFJa8WZQMSuO5AyIbSyJz6ykNpvv0A0eRkQ06jqr04b2Oq0JaaEOjXrU5So86d4+eXePJlzpekyGfnIGrAB9y3aM30AsMaaRBu62nzQDQApwxBjVc0doiG41o22AGe+EzGc7Qppzj7M8V9r1nn6iPAtew90Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766194831; c=relaxed/simple;
-	bh=3hXRpQvFyucVlxMLGngwSvQY5C6Miw94XqZj97q0aI8=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Vdf3E7Qo9kObWcmwceDL+QRRF1dCK9vsyynf6Z3C5Yk5QZHhQlI9P+hNlo/kwA8uZzNg3zj6PU/fVQr2G1yj8T5mfJ6hBOl1VlsLyDPIyHJaR0IQykjfR1Ofq2gOMn+qHFQ8Taq5khPypAWI1stAZiadyGwT/I8hmXXUzPKy4l0=
+	s=arc-20240116; t=1766194837; c=relaxed/simple;
+	bh=XsEvGv/kOrgAVF/bHvRQ4Tz3FRsA4rjLTJpS+VKmV44=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=GiUrTgL8+ikmlpwzypuDqqx5OqrC3wunij9JHiO8DDpVu/DMXKYtSKsUlsAdCJeQm9L1/mF7yFc5aSyhbMDIqHH8xWw8upwJB0o1xvdJvML+Lr89smIh783xy9Wu6fQNr9RxMnRFgCVWdnpqHtVDEkqsKdctK/zZp55BgPZjS1E=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
@@ -18,12 +19,12 @@ Received: from [127.0.0.1] (unknown [116.232.18.222])
 	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: dlan)
-	by smtp.gentoo.org (Postfix) with ESMTPSA id 67DA43415E7;
-	Sat, 20 Dec 2025 01:40:25 +0000 (UTC)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id 50251341939;
+	Sat, 20 Dec 2025 01:40:30 +0000 (UTC)
 From: Yixun Lan <dlan@gentoo.org>
-Subject: [PATCH RFC v2 0/4] Add clock support for SpacemiT K3 SoC
-Date: Sat, 20 Dec 2025 09:39:54 +0800
-Message-Id: <20251220-k3-clk-v2-0-1297b46a7340@gentoo.org>
+Date: Sat, 20 Dec 2025 09:39:55 +0800
+Subject: [PATCH RFC v2 1/4] dt-bindings: soc: spacemit: add k3 syscon
+ compatible
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -32,12 +33,9 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAGz+RWkC/2XOS2rDMBCA4asErTtGM3ZiqatAoQfotmShyBNbO
- JJayTUtIXevkFsodDkPPv6byJwcZ/G4u4nEq8suhjLQw07YyYSRwQ1lFiRpjyQ7mFuw1xmGM0l
- UrdKGW1Ge3xJf3GeFXsXL85M4leXk8hLTV8VXrKfNQfx1VgQJirnrbS/t/myPI4clxiamUZzum
- 5z4/aOULT+855xNLSuh1SMJ8gAzVtJG72PY5OFCykij8UD4Vy7ufwW1RFKom66TuidAcCHayRl
- vjqM37toUukTdvwEEa7L4NgEAAA==
-X-Change-ID: 20251204-k3-clk-db2018389ae3
+Message-Id: <20251220-k3-clk-v2-1-1297b46a7340@gentoo.org>
+References: <20251220-k3-clk-v2-0-1297b46a7340@gentoo.org>
+In-Reply-To: <20251220-k3-clk-v2-0-1297b46a7340@gentoo.org>
 To: Stephen Boyd <sboyd@kernel.org>, 
  Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -48,82 +46,527 @@ Cc: Haylen Chu <heylenay@4d2.org>, Guodong Xu <guodong@riscstar.com>,
  linux-riscv@lists.infradead.org, spacemit@lists.linux.dev, 
  linux-kernel@vger.kernel.org, Yixun Lan <dlan@gentoo.org>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2796; i=dlan@gentoo.org;
- h=from:subject:message-id; bh=3hXRpQvFyucVlxMLGngwSvQY5C6Miw94XqZj97q0aI8=;
- b=owEB6QIW/ZANAwAKATGq6kdZTbvtAcsmYgBpRf55LlAlPyhdM/vbDPipNg024LU0U722zw2+j
- ysQPPQ7DD2JAq8EAAEKAJkWIQS1urjJwxtxFWcCI9wxqupHWU277QUCaUX+eRsUgAAAAAAEAA5t
+X-Developer-Signature: v=1; a=openpgp-sha256; l=18514; i=dlan@gentoo.org;
+ h=from:subject:message-id; bh=XsEvGv/kOrgAVF/bHvRQ4Tz3FRsA4rjLTJpS+VKmV44=;
+ b=owEB6QIW/ZANAwAKATGq6kdZTbvtAcsmYgBpRf58iPbpkaZfv5ZBdSJRmnF/Bft+zUZhr9v4U
+ 9fq5oXR00qJAq8EAAEKAJkWIQS1urjJwxtxFWcCI9wxqupHWU277QUCaUX+fBsUgAAAAAAEAA5t
  YW51MiwyLjUrMS4xMSwyLDJfFIAAAAAALgAoaXNzdWVyLWZwckBub3RhdGlvbnMub3BlbnBncC5
  maWZ0aGhvcnNlbWFuLm5ldEI1QkFCOEM5QzMxQjcxMTU2NzAyMjNEQzMxQUFFQTQ3NTk0REJCRU
- QACgkQMarqR1lNu+0Rgw/8DWOgPhKFPbtrETwlA5Xg4P8rz0wsYQFQSR/KX0myK7RXyEDvHxNK9
- FqVveJan/3xQ9eWP+/aqvtk+SkkXmlD4h4+UwVvF8yOz+yDKaeL+HoyenkRiTVTK+wgznrEwsm5
- mKNUd1BWGW53m2rvKu00QkCR/MByks+2YAqdhaLdE11NgRSQq/bov48IS5D8QzkFAMjl/Myid4Q
- zJYmmm3bUloAJti/MjCM/7JmU1VzuMvVFBBYeMzRCjHNMklz5NCr1LR35R+IexsXZ/0RSYs4r94
- RQS+/Y/HA7zG3GEGc4yQv5jNSxiaJEC1CVQBepESFgIzTx32C829pNAKEoByuJ+jfLTjnyDIaGU
- 2Y+zr7o4sPrCfEag24uZGLAufHyH2XY/BEnhpbmopXuBiA1rs2Q3qkC1E6Y9Nezfn+khEVVS7sO
- Mz/Lgxas3EQSeH9gQG6FaPcyAq5UW/RJxXSDaEsCb3BtvgZRieKixfi3boOSzFhQJXQ/3K7MQ7L
- wOee2q5cvEXQoH8bJbgq6jQE4q/IY+eJIH5eiR7jl2rNnbi+c8f45lXPF2tggCYL+gDTwwHR6kd
- qlOkDLFsaw3LSBbe53A55EWyfMEjO2bj8HsoB3mixGDEWH/P4t7ehH21iL5yR5HSNIGzq3qko3M
- 8lUWtLUJ4VoPgP5aYWJvqHL2WrFNZM=
+ QACgkQMarqR1lNu+1e3w/6Au62yFrqm5DYGpOqu933e3cC/yG6AAeiY1fkNeVcsRoKckOGJwVIW
+ Vgy2+gQUua+wBdQuxf5BZfFTvdNBaZIQ8yfa/+iGmlV5nt8GbdOoXwis68AoOEEmflDubG0EBuF
+ 7oTh6IkvAcVnWL5RZaqa6eZGbptE8ROGYMAjrU28u4mPPgsqARdT7t/fdFFHumVDzbYb8ZRCLhi
+ s/KX8L4sh+f8LDBaQeEfOHUstVnOyk2k1A8UY1odk94/aZJNM8njOixTL23nwJv+0tz7cLZkfx2
+ DYVR8WwMksL1EPA+/N9VPhoZ81VBMG++fDLKpIMUFGwuQIGhMQmGzx+KPxrr5O1cKpehiTHE4IG
+ /IwtQ7yH5a64wvoOtDqGMm6EnSqHt097NrGdhyKgS0faAXb03byl+nB4gl03PkyOiZ1gWr5LGXQ
+ nucHjRzyDLBYCeXuwra/m1WCTFdtZbiACCO0WoVsM5bMqicMmdsiNA/Sz9etpEmHsaVZvQE+nZK
+ qwTn7aC0MbuEfsKF8fxluPgjwYlsKIEpJbD25b9uCwQewdLGYbv/dtKk/XEosFdkoYA7pTg3+Ax
+ Ol17c5TtExNPD6Uw4p+8cBsLrJJarD3XI089Bg01UP0irfPaD6UA2AUR6ZGsbcB5PJLii5/RTGX
+ yQQJAoFSjVD+hKny4vaZ7xXWglViMo=
 X-Developer-Key: i=dlan@gentoo.org; a=openpgp;
  fpr=50B03A1A5CBCD33576EF8CD7920C0DBCAABEFD55
 
-I'm marking this series as RFC for now, as the driver is based on vendor code,
-and only tested on FPGA, the production SoC chip isn't ready yet.
+The SpacemiT K3 SoC clock IP is scattered over several different blocks,
+which are APBC, APBS, APMU, DCIU, MPMU, all of them are capable of
+generating clock and reset signals. APMU and MPMU have additional Power
+Domain management functionality.
 
-The SpacemiT K3 SoC's CCU (clock control unit) is similar to old K1 generation,
-the clock and reset functionalities are distributed across several IP blocks,
-therefore, we model them as several clock tree accordingly.
+Following is a brief list that shows devices managed in each block:
 
-The PLL clocks has changed register setting layout, so introduce a PLLA type.
-Some gate clocks has inverted enable/disable logic which writing 1 to disable,
-while writing 0 to enable.
-
-This patch will depend on two clock series a) fix building for modules [1],
-b) refacor common ccu driver [2]
-
-Link: https://lore.kernel.org/all/20251219012819.440972-1-inochiama@gmail.com/ [1]
-Link: https://lore.kernel.org/all/20251220-06-k1-clk-common-v1-0-df28a0a91621@gentoo.org [2]
+APBC: UART, GPIO, PWM, SPI, TIMER, I2S, IR, DR, TSEN, IPC, CAN
+APBS: various PPL clocks control
+APMU: CCI, CPU, CSI, ISP, LCD, USB, QSPI, DMA, VPU, GPU, DSI, PCIe, EMAC..
+DCID: SRAM, DMA, TCM
+MPMU: various PLL1 derived clocks, UART, WATCHDOG, I2S
 
 Signed-off-by: Yixun Lan <dlan@gentoo.org>
 ---
-Changes in v2:
-- has dependency on ccu common patch
-- fix wrong indention of DT docs
-- fix kfree() missing header issue
-- Link to v1: https://lore.kernel.org/r/20251211-k3-clk-v1-0-8ee47c70c5bc@gentoo.org
+ .../devicetree/bindings/clock/spacemit,k1-pll.yaml |   9 +-
+ .../bindings/soc/spacemit/spacemit,k1-syscon.yaml  |  13 +-
+ include/dt-bindings/clock/spacemit,k3-clocks.h     | 390 +++++++++++++++++++++
+ 3 files changed, 407 insertions(+), 5 deletions(-)
 
----
-Yixun Lan (4):
-      dt-bindings: soc: spacemit: add k3 syscon compatible
-      clk: spacemit: ccu_mix: add inverted enable gate clock
-      clk: spacemit: ccu_pll: add plla type clock
-      clk: spacemit: k3: add the clock tree
+diff --git a/Documentation/devicetree/bindings/clock/spacemit,k1-pll.yaml b/Documentation/devicetree/bindings/clock/spacemit,k1-pll.yaml
+index 06bafd68c00a..02ebbe4061e3 100644
+--- a/Documentation/devicetree/bindings/clock/spacemit,k1-pll.yaml
++++ b/Documentation/devicetree/bindings/clock/spacemit,k1-pll.yaml
+@@ -4,14 +4,17 @@
+ $id: http://devicetree.org/schemas/clock/spacemit,k1-pll.yaml#
+ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ 
+-title: SpacemiT K1 PLL
++title: SpacemiT K1/K3 PLL
+ 
+ maintainers:
+   - Haylen Chu <heylenay@4d2.org>
+ 
+ properties:
+   compatible:
+-    const: spacemit,k1-pll
++    contains:
++      enum:
++        - spacemit,k1-pll
++        - spacemit,k3-pll
+ 
+   reg:
+     maxItems: 1
+@@ -28,7 +31,7 @@ properties:
+   "#clock-cells":
+     const: 1
+     description:
+-      See <dt-bindings/clock/spacemit,k1-syscon.h> for valid indices.
++      See corresponding file under <dt-bindings/clock/> for valid indices.
+ 
+ required:
+   - compatible
+diff --git a/Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml b/Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml
+index 133a391ee68c..66e6683a3ccb 100644
+--- a/Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml
++++ b/Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml
+@@ -4,7 +4,7 @@
+ $id: http://devicetree.org/schemas/soc/spacemit/spacemit,k1-syscon.yaml#
+ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ 
+-title: SpacemiT K1 SoC System Controller
++title: SpacemiT K1/K3 SoC System Controller
+ 
+ maintainers:
+   - Haylen Chu <heylenay@4d2.org>
+@@ -22,6 +22,10 @@ properties:
+       - spacemit,k1-syscon-rcpu
+       - spacemit,k1-syscon-rcpu2
+       - spacemit,k1-syscon-apbc2
++      - spacemit,k3-syscon-apbc
++      - spacemit,k3-syscon-apmu
++      - spacemit,k3-syscon-dciu
++      - spacemit,k3-syscon-mpmu
+ 
+   reg:
+     maxItems: 1
+@@ -39,7 +43,7 @@ properties:
+   "#clock-cells":
+     const: 1
+     description:
+-      See <dt-bindings/clock/spacemit,k1-syscon.h> for valid indices.
++      See corresponding file under <dt-bindings/clock/> for valid indices.
+ 
+   "#power-domain-cells":
+     const: 1
+@@ -60,6 +64,8 @@ allOf:
+             enum:
+               - spacemit,k1-syscon-apmu
+               - spacemit,k1-syscon-mpmu
++              - spacemit,k3-syscon-apmu
++              - spacemit,k3-syscon-mpmu
+     then:
+       required:
+         - "#power-domain-cells"
+@@ -74,6 +80,9 @@ allOf:
+               - spacemit,k1-syscon-apbc
+               - spacemit,k1-syscon-apmu
+               - spacemit,k1-syscon-mpmu
++              - spacemit,k3-syscon-apbc
++              - spacemit,k3-syscon-apmu
++              - spacemit,k3-syscon-mpmu
+     then:
+       required:
+         - clocks
+diff --git a/include/dt-bindings/clock/spacemit,k3-clocks.h b/include/dt-bindings/clock/spacemit,k3-clocks.h
+new file mode 100644
+index 000000000000..b22336f3ae40
+--- /dev/null
++++ b/include/dt-bindings/clock/spacemit,k3-clocks.h
+@@ -0,0 +1,390 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
++/*
++ * Copyright (c) 2025 SpacemiT Technology Co. Ltd
++ */
++
++#ifndef _DT_BINDINGS_CLOCK_SPACEMIT_K3_CLOCKS_H_
++#define _DT_BINDINGS_CLOCK_SPACEMIT_K3_CLOCKS_H_
++
++/* APBS (PLL) clocks */
++#define CLK_PLL1                 0
++#define CLK_PLL2                 1
++#define CLK_PLL3                 2
++#define CLK_PLL4                 3
++#define CLK_PLL5                 4
++#define CLK_PLL6                 5
++#define CLK_PLL7                 6
++#define CLK_PLL8                 7
++#define CLK_PLL1_D2              8
++#define CLK_PLL1_D3              9
++#define CLK_PLL1_D4              10
++#define CLK_PLL1_D5              11
++#define CLK_PLL1_D6              12
++#define CLK_PLL1_D7              13
++#define CLK_PLL1_D8              14
++#define CLK_PLL1_DX              15
++#define CLK_PLL1_D64             16
++#define CLK_PLL1_D10_AUD         17
++#define CLK_PLL1_D100_AUD        18
++#define CLK_PLL2_D1              19
++#define CLK_PLL2_D2              20
++#define CLK_PLL2_D3              21
++#define CLK_PLL2_D4              22
++#define CLK_PLL2_D5              23
++#define CLK_PLL2_D6              24
++#define CLK_PLL2_D7              25
++#define CLK_PLL2_D8              26
++#define CLK_PLL2_66              27
++#define CLK_PLL2_33              28
++#define CLK_PLL2_50              29
++#define CLK_PLL2_25              30
++#define CLK_PLL2_20              31
++#define CLK_PLL2_D24_125         32
++#define CLK_PLL2_D120_25         33
++#define CLK_PLL3_D1              34
++#define CLK_PLL3_D2              35
++#define CLK_PLL3_D3              36
++#define CLK_PLL3_D4              37
++#define CLK_PLL3_D5              38
++#define CLK_PLL3_D6              39
++#define CLK_PLL3_D7              40
++#define CLK_PLL3_D8              41
++#define CLK_PLL4_D1              42
++#define CLK_PLL4_D2              43
++#define CLK_PLL4_D3              44
++#define CLK_PLL4_D4              45
++#define CLK_PLL4_D5              46
++#define CLK_PLL4_D6              47
++#define CLK_PLL4_D7              48
++#define CLK_PLL4_D8              49
++#define CLK_PLL5_D1              50
++#define CLK_PLL5_D2              51
++#define CLK_PLL5_D3              52
++#define CLK_PLL5_D4              53
++#define CLK_PLL5_D5              54
++#define CLK_PLL5_D6              55
++#define CLK_PLL5_D7              56
++#define CLK_PLL5_D8              57
++#define CLK_PLL6_D1              58
++#define CLK_PLL6_D2              59
++#define CLK_PLL6_D3              60
++#define CLK_PLL6_D4              61
++#define CLK_PLL6_D5              62
++#define CLK_PLL6_D6              63
++#define CLK_PLL6_D7              64
++#define CLK_PLL6_D8              65
++#define CLK_PLL6_80              66
++#define CLK_PLL6_40              67
++#define CLK_PLL6_20              68
++#define CLK_PLL7_D1              69
++#define CLK_PLL7_D2              70
++#define CLK_PLL7_D3              71
++#define CLK_PLL7_D4              72
++#define CLK_PLL7_D5              73
++#define CLK_PLL7_D6              74
++#define CLK_PLL7_D7              75
++#define CLK_PLL7_D8              76
++#define CLK_PLL8_D1              77
++#define CLK_PLL8_D2              78
++#define CLK_PLL8_D3              79
++#define CLK_PLL8_D4              80
++#define CLK_PLL8_D5              81
++#define CLK_PLL8_D6              82
++#define CLK_PLL8_D7              83
++#define CLK_PLL8_D8              84
++
++/* MPMU clocks */
++#define CLK_MPMU_PLL1_307P2      0
++#define CLK_MPMU_PLL1_76P8       1
++#define CLK_MPMU_PLL1_61P44      2
++#define CLK_MPMU_PLL1_153P6      3
++#define CLK_MPMU_PLL1_102P4      4
++#define CLK_MPMU_PLL1_51P2       5
++#define CLK_MPMU_PLL1_51P2_AP    6
++#define CLK_MPMU_PLL1_57P6       7
++#define CLK_MPMU_PLL1_25P6       8
++#define CLK_MPMU_PLL1_12P8       9
++#define CLK_MPMU_PLL1_12P8_WDT   10
++#define CLK_MPMU_PLL1_6P4        11
++#define CLK_MPMU_PLL1_3P2        12
++#define CLK_MPMU_PLL1_1P6        13
++#define CLK_MPMU_PLL1_0P8        14
++#define CLK_MPMU_PLL1_409P6      15
++#define CLK_MPMU_PLL1_204P8      16
++#define CLK_MPMU_PLL1_491        17
++#define CLK_MPMU_PLL1_245P76     18
++#define CLK_MPMU_PLL1_614        19
++#define CLK_MPMU_PLL1_47P26      20
++#define CLK_MPMU_PLL1_31P5       21
++#define CLK_MPMU_PLL1_819        22
++#define CLK_MPMU_PLL1_1228       23
++#define CLK_MPMU_APB             24
++#define CLK_MPMU_SLOW_UART       25
++#define CLK_MPMU_SLOW_UART1      26
++#define CLK_MPMU_SLOW_UART2      27
++#define CLK_MPMU_WDT             28
++#define CLK_MPMU_WDT_BUS         29
++#define CLK_MPMU_RIPC            30
++#define CLK_MPMU_I2S_153P6       31
++#define CLK_MPMU_I2S_153P6_BASE  32
++#define CLK_MPMU_I2S_SYSCLK_SRC  33
++#define CLK_MPMU_I2S1_SYSCLK     34
++#define CLK_MPMU_I2S_BCLK        35
++#define CLK_MPMU_I2S0_SYSCLK_SEL 36
++#define CLK_MPMU_I2S2_SYSCLK_SEL 37
++#define CLK_MPMU_I2S3_SYSCLK_SEL 38
++#define CLK_MPMU_I2S4_SYSCLK_SEL 39
++#define CLK_MPMU_I2S5_SYSCLK_SEL 40
++#define CLK_MPMU_I2S0_SYSCLK_DIV 41
++#define CLK_MPMU_I2S2_SYSCLK_DIV 42
++#define CLK_MPMU_I2S3_SYSCLK_DIV 43
++#define CLK_MPMU_I2S4_SYSCLK_DIV 44
++#define CLK_MPMU_I2S5_SYSCLK_DIV 45
++#define CLK_MPMU_I2S0_SYSCLK     46
++#define CLK_MPMU_I2S2_SYSCLK     47
++#define CLK_MPMU_I2S3_SYSCLK     48
++#define CLK_MPMU_I2S4_SYSCLK     49
++#define CLK_MPMU_I2S5_SYSCLK     50
++
++/* APBC clocks */
++#define CLK_APBC_UART0           0
++#define CLK_APBC_UART2           1
++#define CLK_APBC_UART3           2
++#define CLK_APBC_UART4           3
++#define CLK_APBC_UART5           4
++#define CLK_APBC_UART6           5
++#define CLK_APBC_UART7           6
++#define CLK_APBC_UART8           7
++#define CLK_APBC_UART9           8
++#define CLK_APBC_UART10          9
++#define CLK_APBC_UART0_BUS       10
++#define CLK_APBC_UART2_BUS       11
++#define CLK_APBC_UART3_BUS       12
++#define CLK_APBC_UART4_BUS       13
++#define CLK_APBC_UART5_BUS       14
++#define CLK_APBC_UART6_BUS       15
++#define CLK_APBC_UART7_BUS       16
++#define CLK_APBC_UART8_BUS       17
++#define CLK_APBC_UART9_BUS       18
++#define CLK_APBC_UART10_BUS      19
++#define CLK_APBC_GPIO            20
++#define CLK_APBC_GPIO_BUS        21
++#define CLK_APBC_PWM0            22
++#define CLK_APBC_PWM1            23
++#define CLK_APBC_PWM2            24
++#define CLK_APBC_PWM3            25
++#define CLK_APBC_PWM4            26
++#define CLK_APBC_PWM5            27
++#define CLK_APBC_PWM6            28
++#define CLK_APBC_PWM7            29
++#define CLK_APBC_PWM8            30
++#define CLK_APBC_PWM9            31
++#define CLK_APBC_PWM10           32
++#define CLK_APBC_PWM11           33
++#define CLK_APBC_PWM12           34
++#define CLK_APBC_PWM13           35
++#define CLK_APBC_PWM14           36
++#define CLK_APBC_PWM15           37
++#define CLK_APBC_PWM16           38
++#define CLK_APBC_PWM17           39
++#define CLK_APBC_PWM18           40
++#define CLK_APBC_PWM19           41
++#define CLK_APBC_PWM0_BUS        42
++#define CLK_APBC_PWM1_BUS        43
++#define CLK_APBC_PWM2_BUS        44
++#define CLK_APBC_PWM3_BUS        45
++#define CLK_APBC_PWM4_BUS        46
++#define CLK_APBC_PWM5_BUS        47
++#define CLK_APBC_PWM6_BUS        48
++#define CLK_APBC_PWM7_BUS        49
++#define CLK_APBC_PWM8_BUS        50
++#define CLK_APBC_PWM9_BUS        51
++#define CLK_APBC_PWM10_BUS       52
++#define CLK_APBC_PWM11_BUS       53
++#define CLK_APBC_PWM12_BUS       54
++#define CLK_APBC_PWM13_BUS       55
++#define CLK_APBC_PWM14_BUS       56
++#define CLK_APBC_PWM15_BUS       57
++#define CLK_APBC_PWM16_BUS       58
++#define CLK_APBC_PWM17_BUS       59
++#define CLK_APBC_PWM18_BUS       60
++#define CLK_APBC_PWM19_BUS       61
++#define CLK_APBC_SPI0_I2S_BCLK   62
++#define CLK_APBC_SPI1_I2S_BCLK   63
++#define CLK_APBC_SPI3_I2S_BCLK   64
++#define CLK_APBC_SPI0            65
++#define CLK_APBC_SPI1            66
++#define CLK_APBC_SPI3            67
++#define CLK_APBC_SPI0_BUS        68
++#define CLK_APBC_SPI1_BUS        69
++#define CLK_APBC_SPI3_BUS        70
++#define CLK_APBC_RTC             71
++#define CLK_APBC_RTC_BUS         72
++#define CLK_APBC_TWSI0           73
++#define CLK_APBC_TWSI1           74
++#define CLK_APBC_TWSI2           75
++#define CLK_APBC_TWSI4           76
++#define CLK_APBC_TWSI5           77
++#define CLK_APBC_TWSI6           78
++#define CLK_APBC_TWSI8           79
++#define CLK_APBC_TWSI0_BUS       80
++#define CLK_APBC_TWSI1_BUS       81
++#define CLK_APBC_TWSI2_BUS       82
++#define CLK_APBC_TWSI4_BUS       83
++#define CLK_APBC_TWSI5_BUS       84
++#define CLK_APBC_TWSI6_BUS       85
++#define CLK_APBC_TWSI8_BUS       86
++#define CLK_APBC_TIMERS0         87
++#define CLK_APBC_TIMERS1         88
++#define CLK_APBC_TIMERS2         89
++#define CLK_APBC_TIMERS3         90
++#define CLK_APBC_TIMERS4         91
++#define CLK_APBC_TIMERS5         92
++#define CLK_APBC_TIMERS6         93
++#define CLK_APBC_TIMERS7         94
++#define CLK_APBC_TIMERS0_BUS     95
++#define CLK_APBC_TIMERS1_BUS     96
++#define CLK_APBC_TIMERS2_BUS     97
++#define CLK_APBC_TIMERS3_BUS     98
++#define CLK_APBC_TIMERS4_BUS     99
++#define CLK_APBC_TIMERS5_BUS     100
++#define CLK_APBC_TIMERS6_BUS     101
++#define CLK_APBC_TIMERS7_BUS     102
++#define CLK_APBC_AIB             103
++#define CLK_APBC_AIB_BUS         104
++#define CLK_APBC_ONEWIRE         105
++#define CLK_APBC_ONEWIRE_BUS     106
++#define CLK_APBC_I2S0_BCLK       107
++#define CLK_APBC_I2S1_BCLK       108
++#define CLK_APBC_I2S2_BCLK       109
++#define CLK_APBC_I2S3_BCLK       110
++#define CLK_APBC_I2S4_BCLK       111
++#define CLK_APBC_I2S5_BCLK       112
++#define CLK_APBC_I2S0            113
++#define CLK_APBC_I2S1            114
++#define CLK_APBC_I2S2            115
++#define CLK_APBC_I2S3            116
++#define CLK_APBC_I2S4            117
++#define CLK_APBC_I2S5            118
++#define CLK_APBC_I2S0_BUS        119
++#define CLK_APBC_I2S1_BUS        120
++#define CLK_APBC_I2S2_BUS        121
++#define CLK_APBC_I2S3_BUS        122
++#define CLK_APBC_I2S4_BUS        123
++#define CLK_APBC_I2S5_BUS        124
++#define CLK_APBC_DRO             125
++#define CLK_APBC_IR0             126
++#define CLK_APBC_IR1             127
++#define CLK_APBC_TSEN            128
++#define CLK_APBC_TSEN_BUS        129
++#define CLK_APBC_IPC_AP2RCPU      130
++#define CLK_APBC_IPC_AP2RCPU_BUS  131
++#define CLK_APBC_CAN0            132
++#define CLK_APBC_CAN1            133
++#define CLK_APBC_CAN2            134
++#define CLK_APBC_CAN3            135
++#define CLK_APBC_CAN4            136
++#define CLK_APBC_CAN0_BUS        137
++#define CLK_APBC_CAN1_BUS        138
++#define CLK_APBC_CAN2_BUS        139
++#define CLK_APBC_CAN3_BUS        140
++#define CLK_APBC_CAN4_BUS        141
++
++/* APMU clocks */
++#define CLK_APMU_AXICLK          0
++#define CLK_APMU_CCI550          1
++#define CLK_APMU_CPU_C0_CORE     2
++#define CLK_APMU_CPU_C1_CORE     3
++#define CLK_APMU_CPU_C2_CORE     4
++#define CLK_APMU_CPU_C3_CORE     5
++#define CLK_APMU_CCIC2PHY        6
++#define CLK_APMU_CCIC3PHY        7
++#define CLK_APMU_CSI             8
++#define CLK_APMU_ISP_BUS         9
++#define CLK_APMU_D1P_1228P8      10
++#define CLK_APMU_D1P_819P2       11
++#define CLK_APMU_D1P_614P4       12
++#define CLK_APMU_D1P_491P52      13
++#define CLK_APMU_D1P_409P6       14
++#define CLK_APMU_D1P_307P2       15
++#define CLK_APMU_D1P_245P76      16
++#define CLK_APMU_V2D             17
++#define CLK_APMU_DSI_ESC         18
++#define CLK_APMU_LCD_HCLK        19
++#define CLK_APMU_LCD_DSC         20
++#define CLK_APMU_LCD_PXCLK       21
++#define CLK_APMU_LCD_MCLK        22
++#define CLK_APMU_CCIC_4X         23
++#define CLK_APMU_CCIC1PHY        24
++#define CLK_APMU_SC2_HCLK        25
++#define CLK_APMU_SDH_AXI         26
++#define CLK_APMU_SDH0            27
++#define CLK_APMU_SDH1            28
++#define CLK_APMU_SDH2            29
++#define CLK_APMU_USB2_BUS        30
++#define CLK_APMU_USB3_PORTA_BUS  31
++#define CLK_APMU_USB3_PORTB_BUS  32
++#define CLK_APMU_USB3_PORTC_BUS  33
++#define CLK_APMU_USB3_PORTD_BUS  34
++#define CLK_APMU_QSPI            35
++#define CLK_APMU_QSPI_BUS        36
++#define CLK_APMU_DMA             37
++#define CLK_APMU_AES_WTM         38
++#define CLK_APMU_VPU             39
++#define CLK_APMU_DTC             40
++#define CLK_APMU_GPU             41
++#define CLK_APMU_MC_AHB          42
++#define CLK_APMU_TOP_DCLK        43
++#define CLK_APMU_UCIE            44
++#define CLK_APMU_UCIE_SBCLK      45
++#define CLK_APMU_RCPU            46
++#define CLK_APMU_DSI4LN2_DSI_ESC 47
++#define CLK_APMU_DSI4LN2_LCD_DSC 48
++#define CLK_APMU_DSI4LN2_LCD_PXCLK 49
++#define CLK_APMU_DSI4LN2_LCD_MCLK 50
++#define CLK_APMU_DSI4LN2_DPU_ACLK 51
++#define CLK_APMU_DPU_ACLK        52
++#define CLK_APMU_UFS_ACLK        53
++#define CLK_APMU_EDP0_PXCLK      54
++#define CLK_APMU_EDP1_PXCLK      55
++#define CLK_APMU_PCIE_PORTA_MSTE 56
++#define CLK_APMU_PCIE_PORTA_SLV  57
++#define CLK_APMU_PCIE_PORTB_MSTE 58
++#define CLK_APMU_PCIE_PORTB_SLV  59
++#define CLK_APMU_PCIE_PORTC_MSTE 60
++#define CLK_APMU_PCIE_PORTC_SLV  61
++#define CLK_APMU_PCIE_PORTD_MSTE 62
++#define CLK_APMU_PCIE_PORTD_SLV  63
++#define CLK_APMU_PCIE_PORTE_MSTE 64
++#define CLK_APMU_PCIE_PORTE_SLV  65
++#define CLK_APMU_EMAC0_BUS       66
++#define CLK_APMU_EMAC0_REF       67
++#define CLK_APMU_EMAC0_1588      68
++#define CLK_APMU_EMAC0_RGMII_TX  69
++#define CLK_APMU_EMAC1_BUS       70
++#define CLK_APMU_EMAC1_REF       71
++#define CLK_APMU_EMAC1_1588      72
++#define CLK_APMU_EMAC1_RGMII_TX  73
++#define CLK_APMU_EMAC2_BUS       74
++#define CLK_APMU_EMAC2_REF       75
++#define CLK_APMU_EMAC2_1588      76
++#define CLK_APMU_EMAC2_RGMII_TX  77
++#define CLK_APMU_ESPI_SCLK_SRC   78
++#define CLK_APMU_ESPI_SCLK       79
++#define CLK_APMU_ESPI_MCLK       80
++#define CLK_APMU_CAM_SRC1        81
++#define CLK_APMU_CAM_SRC2        82
++#define CLK_APMU_CAM_SRC3        83
++#define CLK_APMU_CAM_SRC4        84
++#define CLK_APMU_ISIM_VCLK0      85
++#define CLK_APMU_ISIM_VCLK1      86
++#define CLK_APMU_ISIM_VCLK2      87
++#define CLK_APMU_ISIM_VCLK3      88
++
++/* DCIU clocks */
++#define CLK_DCIU_HDMA            0
++#define CLK_DCIU_DMA350          1
++#define CLK_DCIU_C2_TCM_PIPE     2
++#define CLK_DCIU_C3_TCM_PIPE     3
++
++#endif /* _DT_BINDINGS_CLOCK_SPACEMIT_K3_CLOCKS_H_ */
 
- .../devicetree/bindings/clock/spacemit,k1-pll.yaml |    9 +-
- .../bindings/soc/spacemit/spacemit,k1-syscon.yaml  |   13 +-
- drivers/clk/spacemit/Kconfig                       |    6 +
- drivers/clk/spacemit/Makefile                      |    3 +
- drivers/clk/spacemit/ccu-k3.c                      | 1482 ++++++++++++++++++++
- drivers/clk/spacemit/ccu_common.c                  |    3 +-
- drivers/clk/spacemit/ccu_common.h                  |    1 +
- drivers/clk/spacemit/ccu_mix.c                     |   12 +-
- drivers/clk/spacemit/ccu_mix.h                     |   12 +
- drivers/clk/spacemit/ccu_pll.c                     |  118 ++
- drivers/clk/spacemit/ccu_pll.h                     |   57 +-
- include/dt-bindings/clock/spacemit,k3-clocks.h     |  390 ++++++
- include/soc/spacemit/k3-syscon.h                   |  273 ++++
- 13 files changed, 2359 insertions(+), 20 deletions(-)
----
-base-commit: f2e01863fa4ca97dfd4b94654cadd805d34cf986
-change-id: 20251204-k3-clk-db2018389ae3
-prerequisite-message-id: 20251220-06-k1-clk-common-v1-0-df28a0a91621@gentoo.org
-prerequisite-patch-id: 273ee04bcff7701d6645e78566d8624fd8a2cbd9
-prerequisite-patch-id: 64047b0d0d79d767c9686cc7876316d983bea4e6
-prerequisite-message-id: 20251219012819.440972-1-inochiama@gmail.com
-prerequisite-patch-id: df430730ed961011cee5c5d47b7ace84b3c5ebb7
-prerequisite-patch-id: 64003618c33be925602e46b7543f2c13d3f36474
-
-Best regards,
 -- 
-Yixun Lan
+2.52.0
 
