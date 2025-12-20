@@ -1,149 +1,134 @@
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C93E4C97
-	for <linux-clk@vger.kernel.org>; Sat, 20 Dec 2025 09:14:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 117642641FC;
+	Sat, 20 Dec 2025 13:46:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766222056; cv=none; b=L4OtyzkWL90ZQMNg1BCXDjeQg/U0a7GA6ywbf3QLVrJ5urh4LJqXUXAyZrCifKJZTg5M2mnqUDglw4QAI5c+ShSDWqzLctBEqUyMWa//j7zuuNPoMwmamlK0nK1N/9VGkMTjVekhEETbBFe66K7jkRxdV4ysVlBeWVWMwxt+XpQ=
+	t=1766238422; cv=none; b=sBwzXjOO3OikQQ++9x4Gx91Muqnve6p/nfjGOd+V2lwGjl71S7GsK60jMzfBZWVbRuRfHMmG6vC4g4nKXXRiNFqMSqmD9sp9Ee1UARKYqINZDJTkPxsMj9cFZgxc7ReynW1OGmj09MDzh1Bu/hCbVYybUK9FObFi5yvnublXZg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766222056; c=relaxed/simple;
-	bh=/inw8Dh0i7lSvgEv+rdg7GhciJ8+cE9trn51HAd7CVg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FiDs6a/pbyg2r7uoXfjG6+iUYU3ecApYL9rsXd38fJ+IbqbFno/kAV5SgErce5BmJkxOy4knKXssBpbGWnuH6idpgS33q/pIyp0qMvAaetLV9qj82UT6k6ewGIn4SOpXaDo0bD8nusvlW456mszv5FoUcWR++/LEGCKyTaPs1lo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vse4xV9n; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1766238422; c=relaxed/simple;
+	bh=mg0C+4JvGjCoIqDQ0gw+w3ko0LP3L+QMx2EtAcbTWXY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KrGLdBTjDOrsIsypJgEvMqw/Og7pM4YifghpEjnUxsnmW8UI2YNii+nx+FVGynUGlr/CpK79LgjebeP51lB5X0d53RqyO8lSe12Ch5vYqd0thg3FOXA35S1hW3N95T7Wcgo+Wu4F0mnLAAtxDABIriUKu/XbHy7zd3f8qA1ozKM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HCmLMJOG; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vse4xV9n"
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-64b560e425eso3109804a12.1
-        for <linux-clk@vger.kernel.org>; Sat, 20 Dec 2025 01:14:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1766222053; x=1766826853; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=/inw8Dh0i7lSvgEv+rdg7GhciJ8+cE9trn51HAd7CVg=;
-        b=vse4xV9nWGCMitSeF6h3K5bTB0XykDac81ER4edie4CGb0uSfUymnXf1ozLGmQxi1P
-         +mVOu7Ypzb9wUYow6PRc3qGKdr2N8fbfoeRfSzWJR02Lm1tV5h5joU22JNRnUdrGOLJx
-         0JvUT5h9lMf+ud+IfJYSb+9n6hGarE5Cizq22/lGnbv/d4XF/URDSTw51pTCIixfG4pS
-         4DQFgL/5dYb6Sgf150qfTiU7phumMN+w6K6MTOaJxIrmRFt+cRe4qK9hSUowylk6EJwi
-         W7oU9op+v7OMUlhOO5mUbpqlzdvUVVSndf38Epe/HYb2J1dWShYdKg+Tatx3wMbQMbYa
-         7H6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1766222053; x=1766826853;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/inw8Dh0i7lSvgEv+rdg7GhciJ8+cE9trn51HAd7CVg=;
-        b=ZEdizQAtWz++qXP0aSssaHBUqfSSR93rQiYpPBXCvI56Bq2Y2yCzQw5GM51EdLHFO8
-         amg6tWtAuUk5l8LsBAbMmc8oDzbpb/AyjvkRL0bAxmF94f0mWid3EN3No3bWUpnwWdu1
-         beA0y3dAH6DAnKQtQkIxIauiwhOg1Z5QRarkEA3SSwCKNgBGJeaI3WK/R09xl78vwJf4
-         vupDBsGvULYFMg9iYLPWp/PDAj0VP02PA+J2g3VVWnH86wCLxC9P4lRqb3NgSC1kY7sx
-         jwAraAEIWvP92qZQSLe4oUIniGxv+t7seQsYCTzkhVoX7r6N9JV576bs1DuXLZecwE7E
-         LhTg==
-X-Forwarded-Encrypted: i=1; AJvYcCX1PiI8KDfS8TTHxMv8HUddldvNYpHNNUUKy/dSCB9UXFdVZolgXuj7DMfKX78Y8UD0R7b55Qgad8M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZ6+04X/BLjAC9KKmxUj1A/6baN5HujbCYMZjZO+V7bXp+37fC
-	r443LIvqM11eZ34nEmBX4DiyliaYpbhKk8i3tN3qEuKUZujzjSCH33hwKjGAqQ/3r1llidQ/fOX
-	pmiNqf37YkbfLcakQPuvvnR+1B5GUCc3zeeLA1xMHRw==
-X-Gm-Gg: AY/fxX6dbsXzKflQv8myvvxqCMCM/OWjLgkQx6DbOrfdh4GzUgIINvUV2pHeDGiq2r1
-	mM/pbIIEgX5ogIL9Mwz8ceOJRgGVfoe6qwkEadcMF4k7FQb4M3u9r74z5gAOv4Z3NO1EFMwb0gb
-	Ac5AZN4XjYvyH4X7KipBdYUTZA2vls1ynX446Czr6ZTDspoU42wUnbXvGduAiihYFmZ6weS0vHb
-	rvswR5EJ2q7VhlWKbI5zdjfeFDOyNSN2T378qY5T2Xh7CqieGjvI/F21v3DZFfEZ5tuiw==
-X-Google-Smtp-Source: AGHT+IEi2oGHsGZXR7le6EPGgQR/lFz5KV5KMMycyOqdS3p5vqm96+TwVWyXCuuGX8CGH2LK41tImG4vOGHehFDZu9k=
-X-Received: by 2002:a05:6402:2806:b0:649:9159:243d with SMTP id
- 4fb4d7f45d1cf-64b8ec9cf53mr5203694a12.22.1766222052663; Sat, 20 Dec 2025
- 01:14:12 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HCmLMJOG"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1766238420; x=1797774420;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=mg0C+4JvGjCoIqDQ0gw+w3ko0LP3L+QMx2EtAcbTWXY=;
+  b=HCmLMJOGeoCo08qxNOAkg2DxY5JB+UBfcp45M/u9lxUkEY391IRIj3Ck
+   BLaYzn5LU5nIDQY8dFwGNWBjwQaWv4wmB7jivW8cao3zrqZKaz6+vyrvT
+   SzBZi/AUOEZICVlZ1tlu9F1f/5OXZ50R7R4iTDRKw1VGqr/ltqNQP8RUV
+   3cYNbzPA2A6U/TmbhCyT+NjTk2oYd1wW3BW6fiKR2Z7/Lqsnw5LPE4rrP
+   W4AdrFV4f2pwp8k2AcpyrFHRdQzILw0GkmZVuM3tPRqgwkICO6G4TIqMQ
+   Ik9+mCoFHpY82avNPUmzp+OMTLfqCSRV9LV4QJGOhFFHnk0qdICCvm56r
+   g==;
+X-CSE-ConnectionGUID: joPC7Y9AScGl8/HQJU1WGg==
+X-CSE-MsgGUID: oRoN9JEcRWGaQOUb77GIbw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11635"; a="68110717"
+X-IronPort-AV: E=Sophos;i="6.20,256,1758610800"; 
+   d="scan'208";a="68110717"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Dec 2025 05:47:00 -0800
+X-CSE-ConnectionGUID: JzUVON0yTAWl/bhgOMz6qg==
+X-CSE-MsgGUID: uPZuWzmvSUCYCu6PZRn0bQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.21,164,1763452800"; 
+   d="scan'208";a="198864810"
+Received: from lkp-server01.sh.intel.com (HELO 0d09efa1b85f) ([10.239.97.150])
+  by orviesa009.jf.intel.com with ESMTP; 20 Dec 2025 05:46:55 -0800
+Received: from kbuild by 0d09efa1b85f with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1vWxIK-000000004Zt-3NbM;
+	Sat, 20 Dec 2025 13:46:52 +0000
+Date: Sat, 20 Dec 2025 21:46:51 +0800
+From: kernel test robot <lkp@intel.com>
+To: =?iso-8859-1?Q?Beno=EEt?= Monin <benoit.monin@bootlin.com>,
+	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
+	Gregory CLEMENT <gregory.clement@bootlin.com>,
+	=?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Linus Walleij <linusw@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Tawfik Bayouk <tawfik.bayouk@mobileye.com>,
+	linux-mips@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	=?iso-8859-1?Q?Beno=EEt?= Monin <benoit.monin@bootlin.com>
+Subject: Re: [PATCH 05/13] pinctrl: eyeq5: Use match data
+Message-ID: <202512202102.TqCsNdqY-lkp@intel.com>
+References: <20251217-eyeq6lplus-v1-5-e9cdbd3af4c2@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251114-automatic-clocks-v5-0-efb9202ffcd7@linaro.org>
- <20251114-automatic-clocks-v5-3-efb9202ffcd7@linaro.org> <e402ac33-c23a-46a1-b67e-097eb2ea7752@kernel.org>
-In-Reply-To: <e402ac33-c23a-46a1-b67e-097eb2ea7752@kernel.org>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Sat, 20 Dec 2025 09:14:01 +0000
-X-Gm-Features: AQt7F2q9EnqLES2x3fb7MS0OWHPiCmq_EbCvY_7B7i_Ph5AvJoB7PQVDPtGa-S0
-Message-ID: <CADrjBPq2oTz=PomQ08rWgYiQ40ResAUiKg4QVGoYCTYX20dKNA@mail.gmail.com>
-Subject: Re: [PATCH v5 3/4] clk: samsung: Implement automatic clock gating
- mode for CMUs
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	=?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
-	Tudor Ambarus <tudor.ambarus@linaro.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Sam Protsenko <semen.protsenko@linaro.org>, 
-	Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
-	Will McVicker <willmcvicker@google.com>, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
-	kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251217-eyeq6lplus-v1-5-e9cdbd3af4c2@bootlin.com>
 
-Hi Krzysztof,
+Hi Benoît,
 
-On Thu, 18 Dec 2025 at 16:06, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->
-> On 14/11/2025 15:16, Peter Griffin wrote:
-> > Update exynos_arm64_init_clocks() so that it enables the automatic clock
-> > mode bits in the CMU option register if the auto_clock_gate flag and
-> > option_offset fields are set for the CMU. To ensure compatibility with
-> > older DTs (that specified an incorrect CMU reg size), detect this and
-> > fallback to manual clock gate mode as the auto clock mode feature depends
-> > on registers in this area.
-> >
-> > The CMU option register bits are global and effect every clock component in
-> > the CMU, as such clearing the GATE_ENABLE_HWACG bit and setting GATE_MANUAL
-> > bit on every gate register is only required if auto_clock_gate is false.
-> >
-> > Additionally if auto_clock_gate is enabled the dynamic root clock gating
-> > and memclk registers will be configured in the corresponding CMUs sysreg
-> > bank. These registers are exposed via syscon, so the register
-> > samsung_clk_save/restore paths are updated to also take a regmap.
-> >
-> > As many gates for various Samsung SoCs are already exposed in the Samsung
-> > clock drivers a new samsung_auto_clk_gate_ops is implemented. This uses
-> > some CMU debug registers to report whether clocks are enabled or disabled
-> > when operating in automatic mode. This allows
-> > /sys/kernel/debug/clk/clk_summary to still dump the entire clock tree and
-> > correctly report the status of each clock in the system.
-> >
-> > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-> > ---
-> > Changes in v3:
-> > - Add missing 'np' func param to kerneldoc in samsung_cmu_register_clocks
-> > (0-DAY CI)
-> >
-> > Changes in v2:
-> > - Fallback to manual clock gate mode for old DTs with incorrect CMU size
-> > (added samsung_is_auto_capable()) (Krzysztof)
-> > - Rename OPT_UNKNOWN bit to OPT_EN_LAYER2_CTRL (Andre)
-> > - Rename OPT_EN_MEM_PM_GATING to OPT_EN_MEM_PWR_GATING (Andre)
-> > - Reverse Option bit definitions LSB -> MSB (Krzysztof)
-> > - Update kerneldoc init_clk_regs comment (Andre)
-> > - Fix space on various comments (Andre)
-> > - Fix regmap typo on samsung_clk_save/restore calls (Andre)
-> > - Include error code in pr_err message (Andre)
-> > - Add macros for dcrg and memclk (Andre)
-> > - Avoid confusing !IS_ERR_OR_NULL(ctx->sysreg) test (Krzysztof)
-> > - Update kerneldoc to mention drcg_offset & memclk_offset are in sysreg (Andre)
-> > - Fix 0-DAY CI randconfig warning (0-DAY CI)
-> > - Update clk-s5pv210 and clk-s3c64xx.c samsung_clk_sleep_init call sites (Peter)
-> > ---
->
-> This does not apply, please rebase entire set:
+kernel test robot noticed the following build warnings:
 
-Sure thing, I just sent a v6 rebased onto next-20251219
+[auto build test WARNING on 8f0b4cce4481fb22653697cced8d0d04027cb1e8]
 
-Just a heads up I hit a regression in serial on linux-next that I bisected to
-24ec03cc5512 ("serial: core: Restore sysfs fwnode information")
+url:    https://github.com/intel-lab-lkp/linux/commits/Beno-t-Monin/dt-bindings-mips-Add-Mobileye-EyeQ6Lplus-SoC/20251217-214926
+base:   8f0b4cce4481fb22653697cced8d0d04027cb1e8
+patch link:    https://lore.kernel.org/r/20251217-eyeq6lplus-v1-5-e9cdbd3af4c2%40bootlin.com
+patch subject: [PATCH 05/13] pinctrl: eyeq5: Use match data
+config: parisc-randconfig-r051-20251218 (https://download.01.org/0day-ci/archive/20251220/202512202102.TqCsNdqY-lkp@intel.com/config)
+compiler: hppa-linux-gcc (GCC) 15.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251220/202512202102.TqCsNdqY-lkp@intel.com/reproduce)
 
-It is unrelated to this series, but I guess you may also see this in
-your exynos board farm. Now I have identified the culprit commit I see
-others are also hitting it as well
-https://lore.kernel.org/linux-serial/713aa37f-161d-4f08-9417-d7d2abdcdfd9@sirena.org.uk/
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202512202102.TqCsNdqY-lkp@intel.com/
 
-Thanks,
+All warnings (new ones prefixed by >>):
 
-Peter
+   In file included from include/linux/bits.h:5,
+                    from include/linux/ratelimit_types.h:5,
+                    from include/linux/ratelimit.h:5,
+                    from include/linux/dev_printk.h:16,
+                    from include/linux/device.h:15,
+                    from include/linux/auxiliary_bus.h:11,
+                    from drivers/pinctrl/pinctrl-eyeq5.c:21:
+   drivers/pinctrl/pinctrl-eyeq5.c: In function 'eq5p_pinconf_set':
+>> include/vdso/bits.h:7:40: warning: 'offset' is used uninitialized [-Wuninitialized]
+       7 | #define BIT(nr)                 (UL(1) << (nr))
+         |                                 ~~~~~~~^~~~~~~~
+   drivers/pinctrl/pinctrl-eyeq5.c:533:19: note: in expansion of macro 'BIT'
+     533 |         u32 val = BIT(offset);
+         |                   ^~~
+   drivers/pinctrl/pinctrl-eyeq5.c:532:22: note: 'offset' declared here
+     532 |         unsigned int offset;
+         |                      ^~~~~~
+
+
+vim +/offset +7 include/vdso/bits.h
+
+3945ff37d2f48d Vincenzo Frascino 2020-03-20  6  
+3945ff37d2f48d Vincenzo Frascino 2020-03-20 @7  #define BIT(nr)			(UL(1) << (nr))
+cbdb1f163af2bb Andy Shevchenko   2022-11-28  8  #define BIT_ULL(nr)		(ULL(1) << (nr))
+3945ff37d2f48d Vincenzo Frascino 2020-03-20  9  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
