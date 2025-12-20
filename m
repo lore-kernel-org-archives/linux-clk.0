@@ -1,143 +1,102 @@
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5020A2BE7B6
-	for <linux-clk@vger.kernel.org>; Fri, 19 Dec 2025 22:41:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D7C0DDC5;
+	Sat, 20 Dec 2025 01:11:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766184096; cv=none; b=c2jQ/CW0dCEeispTZIN011iE8LlwmJiDBXAYAiCuxC5svZLBsLJs7gyzy54Ab1ynNcaGP0a3E9wOKFqZljiPhWyKMY/LjDiKxiE286q0bXPdkNqbfCZHUGWiZ4F1fF3mZAUiHrmUDFecdmeIAFaDkz7OW0UT7mjr62HGgGZZ/eg=
+	t=1766193103; cv=none; b=KMVPjDGhRx+X1z8CZEVi5qNGl2bBqZdCk0pSMbbg6Jume8FASTfla9W5tidOfipMYVoKbmYEpJiDcQCBkyYAfmZd6Mc/LXqU2SHfe/qNKdm+DpKK87FRjb2MRk9BD2ONMK5ePzTAYgxrTdbrAkeb8zxjAuQ84UxMFypEOklDcnI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766184096; c=relaxed/simple;
-	bh=hgzx5PoMLzGBKv1Ko7649gjCYd1e9j7MWPLV2nFqSkk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=F6nnM+2LpS906TtLvijewVyZFp8oqpkMh76rp+6XADfSZPG2ULUd8E/G72Bov+jwD87vy/xDdITjYRR1a75H2plqIeWitRwYvrBAegZHIZeNbIwEXCHqD31Jfwe8TayoIceB1hOBHBDacIhi+pdKtzJehm7pXo1xg3tYKMmQ2NA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RKN/EUF4; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RKN/EUF4"
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-29f0f875bc5so30591975ad.3
-        for <linux-clk@vger.kernel.org>; Fri, 19 Dec 2025 14:41:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1766184093; x=1766788893; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ZFdCAthq5ASj6VHc2YGV5WzUN0LwLQOv9WVjruH5x/g=;
-        b=RKN/EUF4GY/UbqQxqr01x60TF21tsPBDP9uWj0+YpbVsnkxa5GHjuwe4zGzpF7bXJf
-         RTZsvvVdmpeWwn9L+SgmpzxZYsEayW1VAGZ3CU53Tu4E1D3Lknbyxz/hMRmwTOfmM7Cs
-         rNARS8iaAm1gTaymNBwmkPS8k/W0YIbkqy2LsuFNJk6yIX8I3YQzyxmmCrTuCGKDD7If
-         jhW05td/+xdoMd3Ytrpr1d62cG6eAh5OQbq9OazXrJAhjBCHKrxq6Ecg36Fih7L5ZDLE
-         vRSaWalv4kuESH1U95jcGE2NQS+WF8dK5iRSRxF5xBThf95Re9gGtVtwqTzvJVbEADfO
-         JRcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1766184093; x=1766788893;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZFdCAthq5ASj6VHc2YGV5WzUN0LwLQOv9WVjruH5x/g=;
-        b=FceRxa7bpOIOKG//cO/hMS4zqRk+GF99LCGc4EhOCbIZ9pN6gQU+il7d5VRXA6EyOC
-         SRxRXS2IjmllMTcjf3lh57UsHKSH6XdnPBc3MCJLeDi1GHUoRi/I3YQ5IXhYQ9TlJJkA
-         AcLy0Qu+jePyA/K4/MocuVF8Y2qf2Le/twZMhC6YARqpS+3zz4ujyYR1xJWhQ30PBuO8
-         rhTWxGKXwFxy64OsH4GDwt1NOOql7NlRt6YJMl0oFCLI+LcpusIyVsXJj/vi2FAfUwWt
-         HG+hwM4nzhrxjW/YEEXPxVPjiDoS6sRddTgFtaWwgh9Fw4ob9/B1Zy4h2EGTJ5mhEmmY
-         oqtg==
-X-Forwarded-Encrypted: i=1; AJvYcCWBb9QuZPev0jfOfnWaBa8X6WR8XnuwxZ+6s2hKqyYWkXI+53s+V+nDZMcP/77hwlr3Y43v1O4w2EM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YznEiC8R1N3W4Tc5gehxNle1TloFqyAsK0q/lTAwV5DEVbCGTmA
-	rgvWmBMlHisl4UQMaDkAXbsD/8lc3gG65GpozaWZuMPiVAA5o2eU33Zt
-X-Gm-Gg: AY/fxX5g4g+PJoAJk38HtJAOL+dGr98HGLZHhFMRFBNJU3gnCA6kXr36S0FxGlsBp83
-	M/392gpkqqwvjKTbpvlOdgioilVgjVIblm3NGhQZqnBgZ0C5UeI5ZrybOJoxwp5N86euklMFhB8
-	oTBmdzEIEBHs/3E46TGXyQKsXHNqaaadZbSPIOSZZrGLBwbgBqQD2YFdY2OX1+MKdFP196Oy3dG
-	m0Zv+wPdZPu7Y8ClK9AibRGXKrUr/WYIjuKBQxOMtmuobNMfyAoM32QuqshfY3r0/ny7ceXb9hU
-	jp1nTaEnBBysAXQ2ZXSFwqbtIkJ5XzG9uxUW8aDcHkPauzbq0a9hGDxoXw+D1/TmGyK0Lbxyccx
-	EjeVY2ez3eFlM0Ufv3YWAEoXFI86eayxKb6VW54Rp5MZ/VsyT+hCq4KEZVW3vcYGu/NVNNP4Z3u
-	p9B6QSdzJZdL0t
-X-Google-Smtp-Source: AGHT+IGVt+A1lgqxcT4FlSvp+xbq/a0lG/KBNo3OI5rmHpthKmsWmE2H4WLCb8DIHt5ZxU58e/rv2w==
-X-Received: by 2002:a17:902:ce81:b0:2a0:d63c:7853 with SMTP id d9443c01a7336-2a2f2223714mr37358695ad.16.1766184092672;
-        Fri, 19 Dec 2025 14:41:32 -0800 (PST)
-Received: from [192.168.0.13] ([172.92.174.155])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-c1e7c5307c7sm2983673a12.28.2025.12.19.14.41.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 19 Dec 2025 14:41:31 -0800 (PST)
-Message-ID: <ade7690d-14d1-413a-b4b5-eda91d64207c@gmail.com>
-Date: Fri, 19 Dec 2025 14:39:41 -0800
+	s=arc-20240116; t=1766193103; c=relaxed/simple;
+	bh=LE5+CKwGJWaNVtCNdjn0NY23TOyRwRWlfF4GEP2w9qo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=JcoaQvPaHmDW6Es8mbWoj0/ndnxD0zXWnmmd9LKbNlm0MKnlk0+Ftc+iLq7JeOzPBgTNu4/RKxGvUcIIciIdcwGJkK+29bCayjrYHDrC0g3C4eElAUMtRfjOT+GOTW1MpF3CSkRhX8DzzSZ20EXaykKLrzoF4rZQvC27GS+ANxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Received: from [127.0.0.1] (unknown [116.232.18.222])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dlan)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id 588CD340E69;
+	Sat, 20 Dec 2025 01:11:38 +0000 (UTC)
+From: Yixun Lan <dlan@gentoo.org>
+Subject: [PATCH 0/2] clk: spacemit: refactor common ccu driver
+Date: Sat, 20 Dec 2025 09:11:18 +0800
+Message-Id: <20251220-06-k1-clk-common-v1-0-df28a0a91621@gentoo.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 2/3] clock: eswin: Add eic7700 clock driver
-To: Troy Mitchell <troy.mitchell@linux.dev>, dongxuyang@eswincomputing.com,
- mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, bmasney@redhat.com
-Cc: ningyu@eswincomputing.com, linmin@eswincomputing.com,
- huangyifeng@eswincomputing.com, pinkesh.vaghela@einfochips.com
-References: <20251113013637.1109-1-dongxuyang@eswincomputing.com>
- <20251113013846.1222-1-dongxuyang@eswincomputing.com>
- <aUS9bLVLhIPMOcWa@kernel.org>
-Content-Language: en-US
-From: Bo Gan <ganboing@gmail.com>
-In-Reply-To: <aUS9bLVLhIPMOcWa@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIALb3RWkC/y3NQQ6CMBCF4auQWTuk04ClrLyHYdGUChNoq60aE
+ 8PdbcDl/5L55gvZJXYZ+uoLyb05cwwl6FSBnU2YHPJYGqSQLUlSKM64ENp1QRu9jwG7kWyrtG5
+ Fo6Cc3ZO78Wcnr8PRyT1eRX4eI3iXs9nlvvq7WpDsSNdNI7SSSMgh2pmNN5fJG17r8gyGbfsBx
+ Lo8TrAAAAA=
+X-Change-ID: 20251217-06-k1-clk-common-8d1c57995047
+To: Stephen Boyd <sboyd@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Alex Elder <elder@riscstar.com>, Guodong Xu <guodong@riscstar.com>, 
+ Inochi Amaoto <inochiama@gmail.com>, linux-kernel@vger.kernel.org, 
+ linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org, 
+ spacemit@lists.linux.dev, Yixun Lan <dlan@gentoo.org>, Yao Zi <me@ziyao.cc>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1503; i=dlan@gentoo.org;
+ h=from:subject:message-id; bh=LE5+CKwGJWaNVtCNdjn0NY23TOyRwRWlfF4GEP2w9qo=;
+ b=owEB6QIW/ZANAwAKATGq6kdZTbvtAcsmYgBpRffAcyYEULrDYZEm8BPhkKkxwSgkKVyx74t9q
+ n5TlkdSKsaJAq8EAAEKAJkWIQS1urjJwxtxFWcCI9wxqupHWU277QUCaUX3wBsUgAAAAAAEAA5t
+ YW51MiwyLjUrMS4xMSwyLDJfFIAAAAAALgAoaXNzdWVyLWZwckBub3RhdGlvbnMub3BlbnBncC5
+ maWZ0aGhvcnNlbWFuLm5ldEI1QkFCOEM5QzMxQjcxMTU2NzAyMjNEQzMxQUFFQTQ3NTk0REJCRU
+ QACgkQMarqR1lNu+182w//dkCcQzR+idlS9IC2GC9rh1ArJiMPYgJSrPAUuDDrhtALE0tTfudbw
+ A/2ftD1sx48cPKGvrj+ni/Z2jJ5KmX5MNZ114yGbpGNPdrfPEE1gLr5bpW/gr1VH1yuq3dkOTXb
+ FtyX8kJQD9hfQ+k8DiRvIlXva744zCgUmjtN/fv5bc5XoiLekzj20l8G9hRJWAc1l7nAlzT8EwV
+ i3F/jPNk2J3w+IFqb0ASUnO2wjhFJvMgW/44yNYLGZ30oLblLXBsJgbmPjIHxjlLYIYmzr1HXxa
+ cdZwc46gGBwkmfcUfBwsFSY5Vy6IXQZ4ZOsZGRYZfaB3zsiWySF9BD+ibZ9H0of4w9SQAgr6nuR
+ spqJDs+dQAD3nKOvQj5otG6vHmbrAokbOkZTWlYmsPztUhxj0VFYCqLm3k4wtut8w8W/3Uv0Z2r
+ yPKP4s7s/e23mwU23k5octQFBC57fdSZQe7G6VLLMX/lo/AHkeN+6xQQxZwKoKK9e36IU930+sb
+ OGOz8b4xj8H0BP+yBQ9qsoOMxq29+7/xND0It9Pglek40GIdxs2MGnI8UpZQQbd+MDhblhpnOrz
+ XLkB551pRVLxj0bsF3vJXaDNCaju8D01taFEhGYu3S344RIrF74vewTM+xyRONDHJvVDdvB/SVc
+ wM3Q/QPQ5aDcOm1StHHBsu6m9A/7Bc=
+X-Developer-Key: i=dlan@gentoo.org; a=openpgp;
+ fpr=50B03A1A5CBCD33576EF8CD7920C0DBCAABEFD55
 
-Hi ESWIN folks,
+The goal here is to refactor the clock driver to extract common part, and
+reuse it, so in the future, we can maximize the source code usage once
+adding new clock driver (specifically, for the SpacemiT K3 SoC here)
 
-Please refer to my comments below
+Since reset driver register via auxiliary bus which requires a adjustment
+of the auxiliary device id accordingly.
 
-On 12/18/25 18:50, Troy Mitchell wrote:
-> Hi Xuyang,
-> This is a quick review.
-> 
-> On Thu, Nov 13, 2025 at 09:38:46AM +0800, dongxuyang@eswincomputing.com wrote:
->> From: Xuyang Dong <dongxuyang@eswincomputing.com>
->>
+This patch will depend on Kconfig fix for building modules [1], and the idea
+come from K3 clock's review[2]
 
-...
+Link: https://lore.kernel.org/all/20251219012819.440972-1-inochiama@gmail.com/ [1]
+Link: https://lore.kernel.org/all/aTo8sCPpVM1o9PKX@pie [2]
+Signed-off-by: Yixun Lan <dlan@gentoo.org>
+---
+Yixun Lan (2):
+      clk: spacemit: extract common ccu functions
+      reset: spacemit: fix auxiliary device id
 
->> +static int clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
->> +			    unsigned long parent_rate)
->> +{
->> +	struct eswin_clk_pll *clk = to_pll_clk(hw);
->> +	struct clk *clk_cpu_lp_pll = NULL;
->> +	struct clk *clk_cpu_mux = NULL;
->> +	struct clk *clk_cpu_pll = NULL;
->> +	u32 postdiv1_val = 0, refdiv_val = 1;
->> +	u32 frac_val, fbdiv_val, val;
->> +	bool lock_flag = false;
->> +	int try_count = 0;
->> +	int ret;
->> +
->> +	ret = eswin_calc_pll(&frac_val,  &fbdiv_val, (u64)rate, clk);
->> +	if (ret)
->> +		return ret;
->> +
->> +	/* Must switch the CPU to other CLK before we change the CPU PLL. */
->> +	if (clk->id == EIC7700_CLK_PLL_CPU) {
->> +		clk_cpu_mux = __clk_lookup("mux_cpu_root_3mux1_gfree");
-> It seems you want to switch to a safe clock source before setting up the
-> PLL, right?
-> 
-> I am not sure whether your approach is correct, but the use of
-> __clk_lookup() should be avoided whenever possible.
-> Would it be feasible to obtain a proper clock handle somewhere and
-> perform the necessary configuration from within a clk_notifier instead?
->> +		if (!clk_cpu_mux) {
->> +			pr_err("failed to get clk: %s\n",
->> +			       "mux_cpu_root_3mux1_gfree");
->> +			return -EINVAL;
->> +		}
+ drivers/clk/spacemit/ccu-k1.c     | 176 +-------------------------------------
+ drivers/clk/spacemit/ccu_common.c | 171 ++++++++++++++++++++++++++++++++++++
+ drivers/clk/spacemit/ccu_common.h |  10 +++
+ drivers/reset/reset-spacemit.c    |   2 +-
+ include/soc/spacemit/ccu.h        |  21 +++++
+ include/soc/spacemit/k1-syscon.h  |  12 +--
+ 6 files changed, 205 insertions(+), 187 deletions(-)
+---
+base-commit: fb964a99ad6848a9022c6909365aad23e177387c
+change-id: 20251217-06-k1-clk-common-8d1c57995047
+prerequisite-message-id: 20251219012819.440972-1-inochiama@gmail.com
+prerequisite-patch-id: df430730ed961011cee5c5d47b7ace84b3c5ebb7
+prerequisite-patch-id: 64003618c33be925602e46b7543f2c13d3f36474
 
-I have a strong feeling that this switch to safe clock and back to PLL
-can be done with something very similar to this:
+Best regards,
+-- 
+Yixun Lan
 
-"Add notifier for PLL0 clock and set it 1.5GHz on the JH7110 SoC"
-https://lore.kernel.org/all/20240826080430.179788-1-xingyu.wu@starfivetech.com/
-
-Please take a look. Thanks!
-
-Bo
