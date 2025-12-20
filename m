@@ -1,116 +1,286 @@
-Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f68.google.com (mail-wm1-f68.google.com [209.85.128.68])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 453F4242D67
-	for <linux-clk@vger.kernel.org>; Sat, 20 Dec 2025 03:26:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BB382E54B3
+	for <linux-clk@vger.kernel.org>; Sat, 20 Dec 2025 09:05:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766201162; cv=none; b=DFyIcN7chhjO6ZTBKa90iLVS6WaLbMK2zt0so9p9WF8dnWWy5X3N6tb37Nq9+qIrSjhrDELvMGnSO07mFoE3l+5HMbE4cbAzwO2dj+NWhMQCdNLh0oTALeevarbN5nbRcqTBxzuFDgEVi4KHcdQZyCs8ba/t05FjBk+KZsTHEGQ=
+	t=1766221556; cv=none; b=SuigoxpYjfvjMPPf9r5t1dJwgSlq5krHV+mqdR45b/Sm5Fb6wIlDQ2Zm5BFBi9X6TXutucM0eHoyDUhZqzSxwcCQqi2Uj3ziuob/yi4kTSd8Y3J2OCnqD715pdDX8GvNu0V25QEBMRAmQK5MKnmrbRGmewx7xcYhST9YiVNHRYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766201162; c=relaxed/simple;
-	bh=7eatRauTI6/dprxpeQO2aNgUSBjCWvSs24FopHtwCk0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rV9dq/JcfdFnKkY1RAgNfdTaSgCv14jZJ4R+DkM+xzzAo5H7xzWoUWliBkAMevWMKBGJqS8kLfnRFzrNVQq9ltZKE62GvJ8bEq1HsI/8Qv1FkFbZQN7BpekXeSIgyGaBTmkaBogO0GZ0bN8eYyphUTktFjtHHEqsRjYT3NYhZm0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=OQUB7307; arc=none smtp.client-ip=91.218.175.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	s=arc-20240116; t=1766221556; c=relaxed/simple;
+	bh=//GIb7OAmVjsWQKBizLr0xALXMpGX2EA3Daz0kGWYqA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=rHYqy6h0lDhGQumynpbfyvXHxQcKTvjxR+yRKjJ5TQTx/Sw9UnZwUUsc844uDTQw7LnnInRwhVIomY/ckXu7Vikt5EvSeREM+bpPOitj5ypGfCR9osrMjTxTseIXQUo5itNpjCdNh9nB2mjVVVKSMJfHGJbGZDTMZEuLbSHvSFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GQcPOjkz; arc=none smtp.client-ip=209.85.128.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="OQUB7307"
-Date: Sat, 20 Dec 2025 11:25:48 +0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1766201154;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=A9HZSvwW4qmMonse9RS2qNPLZKcbtYx2zJp4auwFwjU=;
-	b=OQUB7307V4G5M3PRO7JpGLdo1MemhLz1bFIqtwnjK0BnIhVJ2fwHy2Nadr+16Pv0V9yNg+
-	2K7wy3eMnvjD5IsmnlYNVBJl0lazbRfvMWbtFOj7kzX3wR0Y96KZ7B+LD0WYg48ZC3dtwJ
-	F279XmdJQensQq7MUjoG0ypz4G2tiWM=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Troy Mitchell <troy.mitchell@linux.dev>
-To: Bo Gan <ganboing@gmail.com>, Troy Mitchell <troy.mitchell@linux.dev>,
-	dongxuyang@eswincomputing.com, mturquette@baylibre.com,
-	sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	bmasney@redhat.com
-Cc: ningyu@eswincomputing.com, linmin@eswincomputing.com,
-	huangyifeng@eswincomputing.com, pinkesh.vaghela@einfochips.com
-Subject: Re: [PATCH v8 2/3] clock: eswin: Add eic7700 clock driver
-Message-ID: <aUYXPBFhqz3Frdmo@troy-wujie14pro-arch>
-References: <20251113013637.1109-1-dongxuyang@eswincomputing.com>
- <20251113013846.1222-1-dongxuyang@eswincomputing.com>
- <aUS9bLVLhIPMOcWa@kernel.org>
- <ade7690d-14d1-413a-b4b5-eda91d64207c@gmail.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GQcPOjkz"
+Received: by mail-wm1-f68.google.com with SMTP id 5b1f17b1804b1-47d182a8c6cso7630115e9.1
+        for <linux-clk@vger.kernel.org>; Sat, 20 Dec 2025 01:05:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1766221552; x=1766826352; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=bFMhA15AnZZkBHkOxypkP9FvWp2weXL/FALdblTG1mc=;
+        b=GQcPOjkzLgUG9KcEB1KEo3763NkY+7GKnZFsp/k1A71TkRHB6N4ipp56Al6zDu1+di
+         qRP4Nrcln6wkamByR/fYG1SXFj3OZST9ike4Nxw/kmN7+zzaf4j4uYxMBO9Cs33nil4e
+         dl4dElQWXh6Q2SGoc7vGju/VtGkMKslLceHDIwSjNjfxV4pL4JPoaGfzWQIojiANdHXQ
+         xEa8qjMY/QwOgQO1GLp8GcxW0DQMOcfF09IzyOCXa7Gfi4TvuuJ4ijioDJNLX95Cmz+m
+         rAdgk0jDOkDazE9uk9RkqlKIlkZwCIAkQUV4lRox5grY4UX2/G8UsPKLACsH2F8WrjRr
+         LsaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1766221552; x=1766826352;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bFMhA15AnZZkBHkOxypkP9FvWp2weXL/FALdblTG1mc=;
+        b=HzbRyLFwDfd62uf3ZiQjos+zdtEJBpgB0gzX1g003KQDFLTkathwX4zIvciFfo3W+J
+         EeNylUBrKEuVbuIE57Vq0V+qGcQL2JDGEhhBaDOyHUoO6BsZ5klC9z/MzKy+WZcaWXIc
+         DotlT78ZdWEo3mW+FOxlxJ9nwB42703yAVriy5Ok+WiS0aMNWzf/gI+hjWlK5ID5sKzQ
+         osadWlKSO4aY8bkhjO9VonhEvwV3tjIjyVENUkuhxMEiet3oJoHWO4z0qqRrf8e4i6qg
+         L7kKfTqS5RuvwTzxqpce/mcfvOVJYC5mawE5/17YlZNb8KoRS3RDGR6PvDuD2gnNtilz
+         y8aA==
+X-Forwarded-Encrypted: i=1; AJvYcCXh4xEHtY1lWh9FUVoBUXyM/WY3fsxZ7DLCEhzTsXTmrV00g6jyLR0SGu0V12IB9aYYfWFUXtXlSfg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4gdDYfwzcb5dsofFBhO1A0PAsAO2MgBaNM6+B0djYP92ZCBpW
+	o71bVasrSrSdympgWxSTASEldSScnNp7Sm0q/k8Vk6XhDa/lphbyDRKHr53Y2noIPZI=
+X-Gm-Gg: AY/fxX7ecqMA1N4ERJstXAqJbkJ5swR/nS/uSaWaVHYWgdqxO4fbTvtltOfy9+lFME7
+	7MjYOuFrL8cScY9v1gugt46Zi6IRS5acS6hKnE18H51+EU8huHZGCjfr8B2QXvxPlMnY4RISBTA
+	j3aoGcpKaZc0uLBop4BcahPTEsTfl0MwIjbLnIfHwvSPI+JReDTN7A3GYic2In4k7AXbgFYOZIu
+	yTzZZ8UqTgy4h2J6RgdPoHR0eY0f/GkFv16RIgEy/vlry9VCMGzESiEUm9/8c6qCjnzvh1MjzI2
+	DZ6fgMSdJ6MAIr18rxnxNieIY8v9pvDbD+B/tn7Fs8xiSzCn13Fp3EP1o5GRiqSf9QG2BGFP1Yk
+	o8FlmJ3hES6wP+hxmLzOeBbK6qZJNpe7AxILyM6xkybV0sGDRIhqiGFg950K2oRIPxVaheZCk27
+	6Ft0SJCOkIMvaL8LkckR50i05AtMkhKEkIe/SMnWM=
+X-Google-Smtp-Source: AGHT+IGTFt8xSAiM49vZjNVk1KJSFssC5ukYxotoKf59TklT2COwePyitrFqpeG2x5VoR0hvc3/Abg==
+X-Received: by 2002:a05:600c:8116:b0:477:641a:1402 with SMTP id 5b1f17b1804b1-47d1953bd09mr47900365e9.4.1766221552248;
+        Sat, 20 Dec 2025 01:05:52 -0800 (PST)
+Received: from gpeter-l.roam.corp.google.com ([150.228.9.32])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47d1936d220sm88466685e9.8.2025.12.20.01.05.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 20 Dec 2025 01:05:51 -0800 (PST)
+From: Peter Griffin <peter.griffin@linaro.org>
+Subject: [PATCH v6 0/4] Implement hardware automatic clock gating (HWACG)
+ for gs101
+Date: Sat, 20 Dec 2025 09:05:38 +0000
+Message-Id: <20251220-automatic-clocks-v6-0-36c2f276a135@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ade7690d-14d1-413a-b4b5-eda91d64207c@gmail.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAOJmRmkC/23NzU7DMAzA8VeZcibIcT6WcuI90A5p4mwRo0FJV
+ 4GmvjvphERRe/xb9s93VqkkquzlcGeFplRTHlqYpwPzFzeciafQmiGgFgCWu9uYP9yYPPfX7N8
+ rR9W53kA06Im1s89CMX09yLdT60uqYy7fjw+TWKa/mJBbbBIc+BGtFkQAEuD1mgZX8nMuZ7ZoE
+ 64E7HYEbEK0FIJ0GCz2G0H+CY3YEeQiRAHkIhnh7UZQK0HAjqCaYKMyHXZRQ3/cCHotqB1BN4F
+ i37WVGH34L8zz/AOveMr8uQEAAA==
+X-Change-ID: 20251008-automatic-clocks-249ab60f62ce
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Sam Protsenko <semen.protsenko@linaro.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Will McVicker <willmcvicker@google.com>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+ kernel-team@android.com, Peter Griffin <peter.griffin@linaro.org>, 
+ Krzysztof Kozlowski <krzk@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=8951;
+ i=peter.griffin@linaro.org; h=from:subject:message-id;
+ bh=//GIb7OAmVjsWQKBizLr0xALXMpGX2EA3Daz0kGWYqA=;
+ b=owEBbQKS/ZANAwAKAc7ouNYCNHK6AcsmYgBpRmbsjvTmPWdF9+O9fl8lYtSQcJ3i1uNlfNGBb
+ PMdF5DTVjOJAjMEAAEKAB0WIQQO/I5vVXh1DVa1SfzO6LjWAjRyugUCaUZm7AAKCRDO6LjWAjRy
+ us/qEACXdSRPSQFsDMMij1Xsu9Fhsbz1TVM/vnTTFYW/zDKRiM6Oenfk+iugKx57Ll2QIY8kWq4
+ +WkJiNW+ILZanYFV8RHyLf/fD+k8cZhxFt10g3nzfTJGkCaJ+ORyNFLY2hg2bHhK0e+/43YE+Q0
+ pvZntTwYe5kFcVnvVPvFKQUJATj5A7ChK4cMVq/T7N/9q+STAYVJFwzM1ZjTQwC4CBzuRVDYfJD
+ yhGaWa6O7uep/1/fhGBanYFT4LESntGu+W/2hUY99vH6A136jhWpJd/BV2beIIFpl9KeoGdUrMw
+ 4IVYzJr/Totxy0h22BRUuueyEW5uQDaWahrcGb1xwtHZPPRKDUrR9uepqZ0bTf1WSjbrkAQFS8u
+ weu+uOYkADWeExlmMJgFkpyMT1SIYkHVZJTcpZksTlyok8R/AFA2b0R0OLojc3Y+G85VNIGo5vD
+ UKJpK1c8xCrWNaFeJ7ZrQ4lU/9qsDZSSYDge49cTkicKv4zBz3NPUnxNS2OOR4AHPkTYFDfJIUU
+ IXOr4Mq3j6lK+h5vzY+CH0WnX+hQbL9Kp+9ZYsZCRRUA83sn5FWophC8qPyfjKIT0WTEGbdUGTg
+ XJ7wZ2MXCXVsirwb7PyzAj/PQVZ9BDUMRwjwRbXRife+UoHAJ9sskC3pZfJQ/oygaMOA7NoQJlP
+ EoDfKbLysXKdwvw==
+X-Developer-Key: i=peter.griffin@linaro.org; a=openpgp;
+ fpr=0EFC8E6F5578750D56B549FCCEE8B8D6023472BA
 
-On Fri, Dec 19, 2025 at 02:39:41PM -0800, Bo Gan wrote:
-> Hi ESWIN folks,
-> 
-> Please refer to my comments below
-> 
-> On 12/18/25 18:50, Troy Mitchell wrote:
-> > Hi Xuyang,
-> > This is a quick review.
-> > 
-> > On Thu, Nov 13, 2025 at 09:38:46AM +0800, dongxuyang@eswincomputing.com wrote:
-> > > From: Xuyang Dong <dongxuyang@eswincomputing.com>
-> > > 
-> 
-> ...
-> 
-> > > +static int clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
-> > > +			    unsigned long parent_rate)
-> > > +{
-> > > +	struct eswin_clk_pll *clk = to_pll_clk(hw);
-> > > +	struct clk *clk_cpu_lp_pll = NULL;
-> > > +	struct clk *clk_cpu_mux = NULL;
-> > > +	struct clk *clk_cpu_pll = NULL;
-> > > +	u32 postdiv1_val = 0, refdiv_val = 1;
-> > > +	u32 frac_val, fbdiv_val, val;
-> > > +	bool lock_flag = false;
-> > > +	int try_count = 0;
-> > > +	int ret;
-> > > +
-> > > +	ret = eswin_calc_pll(&frac_val,  &fbdiv_val, (u64)rate, clk);
-> > > +	if (ret)
-> > > +		return ret;
-> > > +
-> > > +	/* Must switch the CPU to other CLK before we change the CPU PLL. */
-> > > +	if (clk->id == EIC7700_CLK_PLL_CPU) {
-> > > +		clk_cpu_mux = __clk_lookup("mux_cpu_root_3mux1_gfree");
-> > It seems you want to switch to a safe clock source before setting up the
-> > PLL, right?
-> > 
-> > I am not sure whether your approach is correct, but the use of
-> > __clk_lookup() should be avoided whenever possible.
-> > Would it be feasible to obtain a proper clock handle somewhere and
-> > perform the necessary configuration from within a clk_notifier instead?
-> > > +		if (!clk_cpu_mux) {
-> > > +			pr_err("failed to get clk: %s\n",
-> > > +			       "mux_cpu_root_3mux1_gfree");
-> > > +			return -EINVAL;
-> > > +		}
-> 
-> I have a strong feeling that this switch to safe clock and back to PLL
-> can be done with something very similar to this:
-> 
-> "Add notifier for PLL0 clock and set it 1.5GHz on the JH7110 SoC"
-> https://lore.kernel.org/all/20240826080430.179788-1-xingyu.wu@starfivetech.com/
-> 
-YES, That's what I want.
-Thanks for your link!
+Hi folks,
 
-                    - Troy
-> Please take a look. Thanks!
-> 
-> Bo
+This series addresses an issue with Samsung Exynos based upstream clock driver
+whereby the upstream clock driver sets all the clock gates into "manual mode"
+(which uses a bit that is documented as reserved in the gate registers).
+
+Another issue with the current "manual clock gating" approach upstream is
+there are many bus/interconnect clocks whose relationships to the IPs
+are not well documented or defined in the specs. When adding a new CMU until
+now we have tried to label these clocks appropriately with CLK_IS_CRITICAL and
+CLK_IGNORE_UNUSED but doing so is both error prone and time consuming. If
+your lucky disabling a critical bus clock causes an immediate hang. Other
+clocks however aren't so obvious and show up through random instability
+some period of time later.
+
+Fortunately each CMU (at least on newer Exynos) provides a "hardware
+automatic clock gating" HWACG feature that is used by the downstream
+Samsung clock drivers. Hardware automatic clock gating uses a hardware
+interface between the CMU and IP to control all clocks required by the
+IP. This interface is called Q-channel, and is part of the Arm AMBA low
+power interface specification [1].
+
+The advantage of using this Qchannel hardware interface for
+enabling/disabling the clocks is that it takes care of all clocks
+(including bus/interconnect) ones for the IP automatically thereby reducing
+the dynamic power.
+
+Whilst each clock component (GATE, MUX, DIV, QCH etc) has a HWACG enable
+bit there are also some "global enable override" bits for the entire CMU in
+the CMU_CONTROLLER_OPTION register.
+
+This series makes use of those "global enable" override bits to enable auto
+clock mode for the entire CMU and every component within it. Through
+experimentation we can see that setting the "manual mode" reserved gate bit
+on a particular gate register overides the global enable bits. So the code
+is updated accordingly not to do that.
+
+Auto clock mode has been implemented as a "opt in" by setting a new
+auto_clock_gate flag in the CMU static data. The intention is existing
+platforms in manual mode should not be effected by any of these changes.
+
+If auto_clock_mode flag is set and the option_offset field is specified
+then the global enable override bits will be written for the
+CMU (to avoid relying on any prior bootstage configuration). Again if auto
+mode is enabled the code no longer sets MANUAL and clears HWACG bits on
+each gate register.
+
+To ensure compatibility with older DTs (that specified an incorrect CMU
+size) the resource size is checked and the driver falls back to manual
+clock gate mode in such cases. As the CLK_IGNORE_UNUSED and CLK_IS_CRITICAL
+flags are required for manual clock gate mode, the patch removing these
+flags has been dropped from v2. I tested with an old DT and we successfully
+switch to manual clock gate mode and the system correctly boots.
+
+To have dynamic root clock gating (drcg) of bus components and memclk
+enabled, it is required to set the bus_component_drcg and memclk registers
+in the correspondingly named sysreg controller. If auto clock mode is
+enabled the clock driver will now attempt to get the sysreg syscon via the
+samsung,sysreg property (as used by other Exynos drivers upstream) and set
+the registers accordingly. The suspend/resume code paths are also updated
+to handle saving/restoring registers using a regmap. Note cmu_top is an
+exception and does not have a corresondingly named sysreg_top.
+
+As all clock gates are currently exposed in the gs101 drivers and DT, we
+continue to register all of these gates in auto clock mode, but with some new
+samsung_auto_clk_gate_ops. As clk enable and clk disable are now handled by
+Q-channel interface the .enable and .disable implementations are
+no-ops. However by using some CMU qchannel debug registers we can report
+the current clock status (enabled or disabled) of every clock gate in the
+system. This has the nice effect of still being able to dump the entire
+clock tree from /sys/kernel/debug/clk/clk_summary and see a live view of
+every auto clock in the system.
+
+With the infrastructure in place, all the CMUs registered in clk-gs101 are
+now updated to enable auto clock mode. From dumping
+/sys/kernel/debug/clk/clk_summary it is possible to see that after enabling
+auto clock mode approximately 305 clocks are enabled, and 299 are now
+disabled. This number goes up and down a bit by 3-5 clocks just on a idle
+system sat at a console.
+
+With auto clock mode enabled it is now also possible to boot without the
+clk_ignore_unused kernel command line property for the first time!
+
+For future CMUs in gs101 I propose we continue to expose all gates, but
+register the CMU in "auto mode". For new device drivers or updates to
+existing dt bindings related to clocks to support gs101 I suggest we only
+use the "obviously correct" clock(s). By "obviously correct" I mean a clock
+has the IP name in the clock register name, but not try to deduce other
+obsucurely named bus/interconnect clocks which will now all be handled
+automatically. Note it is still possible to test whether the "obviously
+correct" clock is indeed correct by putting the individual gate in manual
+mode and disabling the clock (e.g. by using devmem).
+
+Note: As everything here will go via one of Krzysztof's trees I've sent it
+as one series.
+
+regards,
+
+Peter
+
+[1] https://documentation-service.arm.com/static/5f915e69f86e16515cdc3b3e?token=
+
+Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+---
+Changes in v6:
+- Rebased onto next-20251219 (Krzysztof)
+- NOTE: linux-next has a regression atm 
+  24ec03cc5512 ("serial: core: Restore sysfs fwnode information") needs to be
+  reverted for boot testing this series on Pixel 6.
+- Link to v5: https://lore.kernel.org/r/20251114-automatic-clocks-v5-0-efb9202ffcd7@linaro.org
+
+Changes in v5:
+- Invert the test in dt-bindings: clock: google,gs101-clock (Andre)
+- Link to v4: https://lore.kernel.org/r/20251110-automatic-clocks-v4-0-8f46929f50b7@linaro.org
+
+Changes in v4:
+- Update commit description with additional requested details (Krzysztof)
+- Remove unnecessary header of_address.h (Peter)
+- Link to v3: https://lore.kernel.org/r/20251102-automatic-clocks-v3-0-ff10eafe61c8@linaro.org
+
+Changes in v3:
+- Add missing 'np' func param to kerneldoc in samsung_cmu_register_clocks
+(0-DAY CI )
+- Link to v2: https://lore.kernel.org/r/20251029-automatic-clocks-v2-0-f8edd3a2d82b@linaro.org
+
+Changes in v2:
+- Rebased onto next-20251024
+- Fallback to manual clock gate mode for old DTs with incorrect CMU reg
+  size (added samsung_is_auto_capable(). Tested with old DT and it works as
+  expected. It does require keeping all the CLK_IS_CRITICAL
+  CLK_IGNORE_UNUSED flags in clk-gs101 so patch removing those is
+  dropped. (Krzysztof)
+- Rename OPT_UNKNOWN bit to OPT_EN_LAYER2_CTRL (Andre)
+- Rename OPT_EN_MEM_PM_GATING to OPT_EN_MEM_PWR_GATING (Peter)
+- Reverse Option bit definitions LSB -> MSB (Krzysztof)
+- Update kerneldoc init_clk_regs comment (Andre)
+- Fix space on various comments (Andre)
+- Fix regmap typo on samsung_clk_save/restore calls (Andre)
+- Include error code in pr_err message (Andre)
+- Add macros for dcrg and memclk (Andre)
+- Avoid confusing !IS_ERR_OR_NULL(ctx->sysreg) test (Krzysztof)
+- Update kerneldoc to mention drcg_offset & memclk_offset are in sysreg
+(Andre)
+- Update bindings commit description as to why the sysreg is required
+(Krzysztof)
+- Link to v1: https://lore.kernel.org/r/20251013-automatic-clocks-v1-0-72851ee00300@linaro.org
+
+---
+Peter Griffin (4):
+      dt-bindings: clock: google,gs101-clock: add samsung,sysreg property as required
+      arm64: dts: exynos: gs101: add samsung,sysreg property to CMU nodes
+      clk: samsung: Implement automatic clock gating mode for CMUs
+      clk: samsung: gs101: Enable auto_clock_gate mode for each gs101 CMU
+
+ .../bindings/clock/google,gs101-clock.yaml         |  19 +-
+ arch/arm64/boot/dts/exynos/google/gs101.dtsi       |   6 +
+ drivers/clk/samsung/clk-exynos-arm64.c             |  62 ++++++-
+ drivers/clk/samsung/clk-exynos4.c                  |  12 +-
+ drivers/clk/samsung/clk-exynos4412-isp.c           |   4 +-
+ drivers/clk/samsung/clk-exynos5250.c               |   2 +-
+ drivers/clk/samsung/clk-exynos5420.c               |   4 +-
+ drivers/clk/samsung/clk-gs101.c                    |  55 ++++++
+ drivers/clk/samsung/clk-s3c64xx.c                  |   4 +-
+ drivers/clk/samsung/clk-s5pv210.c                  |   2 +-
+ drivers/clk/samsung/clk.c                          | 200 +++++++++++++++++++--
+ drivers/clk/samsung/clk.h                          |  55 +++++-
+ 12 files changed, 381 insertions(+), 44 deletions(-)
+---
+base-commit: cc3aa43b44bdb43dfbac0fcb51c56594a11338a8
+change-id: 20251008-automatic-clocks-249ab60f62ce
+
+Best regards,
+-- 
+Peter Griffin <peter.griffin@linaro.org>
+
