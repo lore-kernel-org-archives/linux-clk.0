@@ -1,187 +1,153 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98AB72BE7D2;
-	Sat, 20 Dec 2025 14:35:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A11D1155322;
+	Sun, 21 Dec 2025 13:26:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766241317; cv=none; b=HUMOTJ2Wse217U+Ikn68WSKVx6dlBCIjBaIryWZ+KLUpyTyQG4eb4dk2tpyqNzJHhstLkAem9LzdZEBaICWQOWNBCTvxRzdcQAtu0WKFgFx8sEjpQPy5H1URuA/Fdxt5t5FyHMf1xj6kGnXeSUCXGThnPwtZ3ZHR6oVsqfxEAFk=
+	t=1766323597; cv=none; b=eK8WK4Y8+mdgA0lH7QDHdQZbTZXrf8FSfOjj6hSTgIeVRvkmBmAdHgSbauHc20v4+tjoFPLHNa2NKRfM38Jfwt0D3kfS1kh55uZfJ4L7f+dYH/sui3kc1c0OaAzysUl8TfdXHEOme9iQmgGa4rUqCIR8ysJNwrRZqN3NvZLzSeY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766241317; c=relaxed/simple;
-	bh=GsZe3oYDGQQQdCIWN2VonPdTj7WIfct+WPUTYIxdLoo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QBYU7cLKj7TA3+sDWcG28l+V99yuRVxtr1uLZAkLTic0vHb6cfAwghbyA07UPf0IgAkOf1EFYZWpSFkrJKpdO4IJmpE3WI2yDhC89YCeN1dejdKe2PsRUyoddg7cKjoMPZvWVzOuPThBOUrxhBHQ4jYBVnbVshGxQf/SPLxSMUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gjDup0Jo; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1766323597; c=relaxed/simple;
+	bh=7uu8Cf6pnmQ0EvcFNFySVt+XjU4StaGESLINwYgeJEw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pSPnJT+JQJsV6fmCjkyK7/OLGklCV7jMGGOtw+ff9QMsrPlgRrYsVayx44LOYxjEVitPV0CY8gB/ZFQCTLT7cyeuBMhItTKqvQzmxdEtj8MVG2AkeQtjc8zMGDH84/hfAMNe4dZBXqEaCE9CJIYIWpOjzRsWT4HJApZ46lP8dn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OSEwjr8J; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gjDup0Jo"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1766241315; x=1797777315;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=GsZe3oYDGQQQdCIWN2VonPdTj7WIfct+WPUTYIxdLoo=;
-  b=gjDup0JoCNn8cgVde1fg+HRVwkSbF77dVjtU6bodbOicImQK/mx4dsru
-   GKRH46deQy2OJTkjuv3oEJzJ3eZ7oZdOKzTqaoJ+xSDVF0srVTXRBRYk1
-   Wfv63pQMjPIsI/1t0NgWwMZA1wqMEM/oIjzTtEXr08n/mSHwIxjkbIQ87
-   XvfeiAPL2SiWRP5QN6bxoiKUR6C/tvrTcTHEtXsx9OK+KdE3bYpagPots
-   YdRGLxsKnGQ3OUFaFjuOgVE8bnnBlDl9R40JQ9VJnT+Oz7DDL+A/eAVAD
-   APx8Yy5X3R+ne4WCqOQgJqOc9lQh0bRoYGAGWpZij/El9sbKqNmGR/1tq
-   w==;
-X-CSE-ConnectionGUID: +NdrpYCzQbC8nvIqcvGe6A==
-X-CSE-MsgGUID: 1m7p9f0tSyGDbR90wtY/hw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11648"; a="93650042"
-X-IronPort-AV: E=Sophos;i="6.21,164,1763452800"; 
-   d="scan'208";a="93650042"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Dec 2025 06:35:11 -0800
-X-CSE-ConnectionGUID: NyNwaJ+vTy2l5No14hj0xg==
-X-CSE-MsgGUID: bt6upZJbQYeISeMZTtOfIg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,164,1763452800"; 
-   d="scan'208";a="199023541"
-Received: from lkp-server01.sh.intel.com (HELO 0d09efa1b85f) ([10.239.97.150])
-  by fmviesa006.fm.intel.com with ESMTP; 20 Dec 2025 06:35:07 -0800
-Received: from kbuild by 0d09efa1b85f with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1vWy2z-000000004eD-05w0;
-	Sat, 20 Dec 2025 14:35:05 +0000
-Date: Sat, 20 Dec 2025 22:34:48 +0800
-From: kernel test robot <lkp@intel.com>
-To: =?iso-8859-1?Q?Beno=EEt?= Monin <benoit.monin@bootlin.com>,
-	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
-	Gregory CLEMENT <gregory.clement@bootlin.com>,
-	=?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Linus Walleij <linusw@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Tawfik Bayouk <tawfik.bayouk@mobileye.com>,
-	linux-mips@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	=?iso-8859-1?Q?Beno=EEt?= Monin <benoit.monin@bootlin.com>
-Subject: Re: [PATCH 05/13] pinctrl: eyeq5: Use match data
-Message-ID: <202512202142.StvDXvbg-lkp@intel.com>
-References: <20251217-eyeq6lplus-v1-5-e9cdbd3af4c2@bootlin.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OSEwjr8J"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 213BEC4CEFB;
+	Sun, 21 Dec 2025 13:26:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1766323597;
+	bh=7uu8Cf6pnmQ0EvcFNFySVt+XjU4StaGESLINwYgeJEw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=OSEwjr8JBdRpzaFaEp2uDyb305z3sBFhHgZKmUM42h0bdPCXh5dxS48OAZL8z7urN
+	 fFOy8CAnRBcR5oE4wwItPaseVwkM8lM3jgTkG7zcv+YwX/j/bINRIBgdFZ9oEaxF+J
+	 hFRuoUEy5EQrc6n/q+NsXfGR223r/LKgbkQfEAFlrBtGW7Xa2PgwPz/1gczASCaVE2
+	 fQkLvLcaGAh7a9Ds95LU14H3Qomzhq6aqN0hleCeIXxspbLJBtc6Ayh/21m1+0OiN4
+	 TtEBgYONJ9m5LvcCaeXXLVbXr96Zb1Q/KhCx5LZd8vmidSnZa+hWMCKTq0BDMRGv+c
+	 G6bbw8q0v/Z1w==
+Message-ID: <215eb434-683f-4cf2-9bcd-0860991ae23e@kernel.org>
+Date: Sun, 21 Dec 2025 14:26:28 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251217-eyeq6lplus-v1-5-e9cdbd3af4c2@bootlin.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 1/4] dt-bindings: clock: google,gs101-clock: add
+ samsung,sysreg property as required
+To: Peter Griffin <peter.griffin@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Tudor Ambarus <tudor.ambarus@linaro.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Sam Protsenko <semen.protsenko@linaro.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Will McVicker <willmcvicker@google.com>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ kernel-team@android.com
+References: <20251220-automatic-clocks-v6-0-36c2f276a135@linaro.org>
+ <20251220-automatic-clocks-v6-1-36c2f276a135@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20251220-automatic-clocks-v6-1-36c2f276a135@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Benoît,
-
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on 8f0b4cce4481fb22653697cced8d0d04027cb1e8]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Beno-t-Monin/dt-bindings-mips-Add-Mobileye-EyeQ6Lplus-SoC/20251217-214926
-base:   8f0b4cce4481fb22653697cced8d0d04027cb1e8
-patch link:    https://lore.kernel.org/r/20251217-eyeq6lplus-v1-5-e9cdbd3af4c2%40bootlin.com
-patch subject: [PATCH 05/13] pinctrl: eyeq5: Use match data
-config: parisc-allyesconfig (https://download.01.org/0day-ci/archive/20251220/202512202142.StvDXvbg-lkp@intel.com/config)
-compiler: hppa-linux-gcc (GCC) 15.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251220/202512202142.StvDXvbg-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202512202142.StvDXvbg-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   drivers/pinctrl/pinctrl-eyeq5.c: In function 'eq5p_pinconf_set':
->> drivers/pinctrl/pinctrl-eyeq5.c:533:13: warning: 'offset' is used uninitialized [-Wuninitialized]
-     533 |         u32 val = BIT(offset);
-         |             ^~~
-   drivers/pinctrl/pinctrl-eyeq5.c:532:22: note: 'offset' was declared here
-     532 |         unsigned int offset;
-         |                      ^~~~~~
+On 20/12/2025 10:05, Peter Griffin wrote:
+> Each CMU (with the exception of cmu_top) has a corresponding sysreg bank
+> that contains the BUSCOMPONENT_DRCG_EN and optional MEMCLK registers.
+> The BUSCOMPONENT_DRCG_EN register enables dynamic root clock gating of
+> bus components and MEMCLK gates the sram clock.
+> 
+> Now the clock driver supports automatic clock mode, to fully enable dynamic
+> root clock gating it is required to configure these registers. Update the
+> bindings documentation so that all CMUs (with the exception of
+> gs101-cmu-top) have samsung,sysreg as a required property.
+> 
+> Note this is NOT an ABI break, as if the property isn't specified the
+> clock driver will fallback to the current behaviour of not initializing
+> the registers. The system still boots, but bus components won't benefit
+> from dynamic root clock gating and dynamic power will be higher (which has
+> been the case until now anyway).
+> 
+> Additionally update the DT example to included the correct CMU size as
+> registers in that region are used for automatic clock mode.
+> 
+> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> ---
+> Changes in v5:
+> - Invert the test for google,gs101-cmu-top (Andre)
+> 
 
 
-vim +/offset +533 drivers/pinctrl/pinctrl-eyeq5.c
+<form letter>
+This is a friendly reminder during the review process.
 
-41795aa1f56a6e Théo Lebrun  2024-07-30  524  
-41795aa1f56a6e Théo Lebrun  2024-07-30  525  static int eq5p_pinconf_set(struct pinctrl_dev *pctldev, unsigned int pin,
-41795aa1f56a6e Théo Lebrun  2024-07-30  526  			    unsigned long *configs, unsigned int num_configs)
-41795aa1f56a6e Théo Lebrun  2024-07-30  527  {
-41795aa1f56a6e Théo Lebrun  2024-07-30  528  	struct eq5p_pinctrl *pctrl = pinctrl_dev_get_drvdata(pctldev);
-41795aa1f56a6e Théo Lebrun  2024-07-30  529  	const char *pin_name = pctldev->desc->pins[pin].name;
-41795aa1f56a6e Théo Lebrun  2024-07-30  530  	struct device *dev = pctldev->dev;
-e3ba56038b97ee Benoît Monin 2025-12-17  531  	const struct eq5p_bank *bank;
-e3ba56038b97ee Benoît Monin 2025-12-17  532  	unsigned int offset;
-41795aa1f56a6e Théo Lebrun  2024-07-30 @533  	u32 val = BIT(offset);
-41795aa1f56a6e Théo Lebrun  2024-07-30  534  	unsigned int i;
-e3ba56038b97ee Benoît Monin 2025-12-17  535  	int ret;
-e3ba56038b97ee Benoît Monin 2025-12-17  536  
-e3ba56038b97ee Benoît Monin 2025-12-17  537  	ret = eq5p_pin_to_bank_offset(pctrl, pin, &bank, &offset);
-e3ba56038b97ee Benoît Monin 2025-12-17  538  	if (ret)
-e3ba56038b97ee Benoît Monin 2025-12-17  539  		return ret;
-41795aa1f56a6e Théo Lebrun  2024-07-30  540  
-41795aa1f56a6e Théo Lebrun  2024-07-30  541  	for (i = 0; i < num_configs; i++) {
-41795aa1f56a6e Théo Lebrun  2024-07-30  542  		enum pin_config_param param = pinconf_to_config_param(configs[i]);
-41795aa1f56a6e Théo Lebrun  2024-07-30  543  		u32 arg = pinconf_to_config_argument(configs[i]);
-41795aa1f56a6e Théo Lebrun  2024-07-30  544  
-41795aa1f56a6e Théo Lebrun  2024-07-30  545  		switch (param) {
-41795aa1f56a6e Théo Lebrun  2024-07-30  546  		case PIN_CONFIG_BIAS_DISABLE:
-41795aa1f56a6e Théo Lebrun  2024-07-30  547  			dev_dbg(dev, "pin=%s bias_disable\n", pin_name);
-41795aa1f56a6e Théo Lebrun  2024-07-30  548  
-41795aa1f56a6e Théo Lebrun  2024-07-30  549  			eq5p_update_bits(pctrl, bank, EQ5P_PD, val, 0);
-41795aa1f56a6e Théo Lebrun  2024-07-30  550  			eq5p_update_bits(pctrl, bank, EQ5P_PU, val, 0);
-41795aa1f56a6e Théo Lebrun  2024-07-30  551  			break;
-41795aa1f56a6e Théo Lebrun  2024-07-30  552  
-41795aa1f56a6e Théo Lebrun  2024-07-30  553  		case PIN_CONFIG_BIAS_PULL_DOWN:
-41795aa1f56a6e Théo Lebrun  2024-07-30  554  			dev_dbg(dev, "pin=%s bias_pull_down arg=%u\n",
-41795aa1f56a6e Théo Lebrun  2024-07-30  555  				pin_name, arg);
-41795aa1f56a6e Théo Lebrun  2024-07-30  556  
-41795aa1f56a6e Théo Lebrun  2024-07-30  557  			if (arg == 0) /* cannot connect to GND */
-41795aa1f56a6e Théo Lebrun  2024-07-30  558  				return -ENOTSUPP;
-41795aa1f56a6e Théo Lebrun  2024-07-30  559  
-41795aa1f56a6e Théo Lebrun  2024-07-30  560  			eq5p_update_bits(pctrl, bank, EQ5P_PD, val, val);
-41795aa1f56a6e Théo Lebrun  2024-07-30  561  			eq5p_update_bits(pctrl, bank, EQ5P_PU, val, 0);
-41795aa1f56a6e Théo Lebrun  2024-07-30  562  			break;
-41795aa1f56a6e Théo Lebrun  2024-07-30  563  
-41795aa1f56a6e Théo Lebrun  2024-07-30  564  		case PIN_CONFIG_BIAS_PULL_UP:
-41795aa1f56a6e Théo Lebrun  2024-07-30  565  			dev_dbg(dev, "pin=%s bias_pull_up arg=%u\n",
-41795aa1f56a6e Théo Lebrun  2024-07-30  566  				pin_name, arg);
-41795aa1f56a6e Théo Lebrun  2024-07-30  567  
-41795aa1f56a6e Théo Lebrun  2024-07-30  568  			if (arg == 0) /* cannot connect to VDD */
-41795aa1f56a6e Théo Lebrun  2024-07-30  569  				return -ENOTSUPP;
-41795aa1f56a6e Théo Lebrun  2024-07-30  570  
-41795aa1f56a6e Théo Lebrun  2024-07-30  571  			eq5p_update_bits(pctrl, bank, EQ5P_PD, val, 0);
-41795aa1f56a6e Théo Lebrun  2024-07-30  572  			eq5p_update_bits(pctrl, bank, EQ5P_PU, val, val);
-41795aa1f56a6e Théo Lebrun  2024-07-30  573  			break;
-41795aa1f56a6e Théo Lebrun  2024-07-30  574  
-41795aa1f56a6e Théo Lebrun  2024-07-30  575  		case PIN_CONFIG_DRIVE_STRENGTH:
-41795aa1f56a6e Théo Lebrun  2024-07-30  576  			dev_dbg(dev, "pin=%s drive_strength arg=%u\n",
-41795aa1f56a6e Théo Lebrun  2024-07-30  577  				pin_name, arg);
-41795aa1f56a6e Théo Lebrun  2024-07-30  578  
-41795aa1f56a6e Théo Lebrun  2024-07-30  579  			eq5p_pinconf_set_drive_strength(pctldev, pin, arg);
-41795aa1f56a6e Théo Lebrun  2024-07-30  580  			break;
-41795aa1f56a6e Théo Lebrun  2024-07-30  581  
-41795aa1f56a6e Théo Lebrun  2024-07-30  582  		default:
-41795aa1f56a6e Théo Lebrun  2024-07-30  583  			dev_err(dev, "Unsupported pinconf %u\n", param);
-41795aa1f56a6e Théo Lebrun  2024-07-30  584  			return -ENOTSUPP;
-41795aa1f56a6e Théo Lebrun  2024-07-30  585  		}
-41795aa1f56a6e Théo Lebrun  2024-07-30  586  	}
-41795aa1f56a6e Théo Lebrun  2024-07-30  587  
-41795aa1f56a6e Théo Lebrun  2024-07-30  588  	return 0;
-41795aa1f56a6e Théo Lebrun  2024-07-30  589  }
-41795aa1f56a6e Théo Lebrun  2024-07-30  590  
+It looks like you received a tag and forgot to add it.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+If you do not know the process, here is a short explanation:
+Please add Acked-by/Reviewed-by/Tested-by tags when posting new versions
+of patchset, under or above your Signed-off-by tag, unless patch changed
+significantly (e.g. new properties added to the DT bindings). Tag is
+"received", when provided in a message replied to you on the mailing
+list. Tools like b4 can help here. However, there's no need to repost
+patches *only* to add the tags. The upstream maintainer will do that for
+tags received on the version they apply.
+
+Please read:
+https://elixir.bootlin.com/linux/v6.12-rc3/source/Documentation/process/submitting-patches.rst#L577
+
+If a tag was not added on purpose, please state why and what changed.
+</form letter>
+
+
+Best regards,
+Krzysztof
