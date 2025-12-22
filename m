@@ -1,43 +1,43 @@
 Received: from sender4-pp-o92.zoho.com (sender4-pp-o92.zoho.com [136.143.188.92])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B91938003D;
-	Sun, 21 Dec 2025 15:09:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CE265477E;
+	Mon, 22 Dec 2025 04:01:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.92
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766329766; cv=pass; b=LXdbCqHcT7iI0QaUjq+lN8HZOwtc9NdHtRi0FiNMqBxTXIVU+xrt36wMf7l/wQEQsjMdJzlB/LjKF+z4JR/pXZc+1jvTOiJMX0gi4GUfw11kNvjRbMp3QfIotqb7whCWoB1ZW7uFdkIV0opHBcq3aYU9EJZP97FDjVi3AhXlkoE=
+	t=1766376098; cv=pass; b=NiKt8rlE1eXZYHviQAyrRBky0Iz+2Z4MJ+qgp9lbf5b27pcyt0sEqsF7e9uDj8DWBveBTYuHNili3cmZti+SugfVzVP8STGWtfXgNRR19CwBcoHsw7wVugi9KqZ7+1e8fDoL5BHFWBjIKP1+jbthRWvAILDPLgTbNphc7UAgqGs=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766329766; c=relaxed/simple;
-	bh=CdMIlybao4EMye4wO7C68HcPhsVrb7qluhHpYQK5HjI=;
+	s=arc-20240116; t=1766376098; c=relaxed/simple;
+	bh=NPgPMuiYKDXuB0iGuLyQTO8dWLMcvG4uWs2/KeMN6ho=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=A/AQPqRmt9JrVLM3LL/1AjeeSKLA2UPpiChrUtV0CelHzB/rOP8y6yjD7e7T/oSv76+HeFc9piLMlporej8g0nkWd0+AJyxk+TtcG2AnzJOIwW26oSKEN8IVUd44iDaRat6kJe+4MN/mVyKr5a2isgQWXpodPMqSByrqjFSiMr0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b=KbcmyuSG; arc=pass smtp.client-ip=136.143.188.92
+	 In-Reply-To:Content-Type; b=RmKPMwnP/0d1uGK01XYrRhP1+tWBNzi9DDFKfTPZlZyzWWe9ZJOajJAAnKSKzAcBjoQl7eI4qbSFfdE0SG4QzKuSCYMnXmf559Lh4HqXy3BMaxIvQ+BWuHwqc0ypwACm6ljQ3yEksT2toHFXfmqewGdFLzDNIMS46Vwe8ObvfAg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b=XrLqBu3G; arc=pass smtp.client-ip=136.143.188.92
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b="KbcmyuSG"
-ARC-Seal: i=1; a=rsa-sha256; t=1766329740; cv=none; 
+	dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b="XrLqBu3G"
+ARC-Seal: i=1; a=rsa-sha256; t=1766376071; cv=none; 
 	d=zohomail.com; s=zohoarc; 
-	b=GCdIr7q++CZ1rnJO2UDv1Hs/4sS3X7ostA7dPNs3XLRw0oghG6bfNU98/8kHZp6962p13b5pFX9DFR36BuUORATVMwzjJnpQwWjr67nclcUUP4GIfol9M56HN1EmRkdOAf2BOxeF+ST0kBFdAkkEG7nc08A1K96RLzcfMbbJRvE=
+	b=jJTQzpISHipMt3HLUpoJRYGm/IKIVJaBVnxnj6e3DoDi0oj64OvULk5kXub9IJDC1MvZGH2GkyomLe3KTKjGhftmv9sA8uagKf4qEMoewurIaOJwfHCPg02Sy6JDB8EOkCnWZ91akI80I+9Aj/6JkWLXApOeV2QZIEtoAacFfJk=
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1766329740; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=UX0Ujw2PD/K2tYYP3yHJDgWY39Znwpjg+z+cHhIZ01Q=; 
-	b=F4zFLvkcCQJ4t9ORemcG9vbE5miBoqhO8TqUBS9vv4QwJmOm1E/2x4k5tEsZWizbXzDAbC8l4PNX7qMXd2yoE9VEvSSI7MY0fjYyzT+s0DTQ7KUFxHCLxYLrzKwzl3qEfUaq+WAMhPAjyNfkHiJKCa6iIk1pBLI/fVO4c1+EZV8=
+	t=1766376071; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=oBEFJoFmTU+vEOGTCKO2z7+KnNU8YcaoRn4bK/FMXBA=; 
+	b=PM24BrMntV095i2mdbSWntFpBirgJ+WNLRytUnPc6i+WNHoAnUlRHQxuh7GNR81ZEgy+7Xte+LW6zyPW3abYOU4eTO/R3FI8Tvzab/K+IOwW33LyjP5Ar/H0aZvFODMlaMq/AwFh7tYnR5gVh+EzV19Xko3FYZgeyBuX6tjBRGs=
 ARC-Authentication-Results: i=1; mx.zohomail.com;
 	dkim=pass  header.i=zohomail.com;
 	spf=pass  smtp.mailfrom=kingxukai@zohomail.com;
 	dmarc=pass header.from=<kingxukai@zohomail.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1766329740;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1766376071;
 	s=zm2022; d=zohomail.com; i=kingxukai@zohomail.com;
 	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
-	bh=UX0Ujw2PD/K2tYYP3yHJDgWY39Znwpjg+z+cHhIZ01Q=;
-	b=KbcmyuSGXiOQ9JwvDhm55JQDIvuuUmkDGc70KEXgTpf2YdsKrLKS7cbTIlDa1wON
-	kGD6A01mpgpKSlwK1YvAEctcgrH92OlrVp+fYvFSyUIkV5yOhUap+85PYXVBbFVNYG/
-	1wPebABxJ/6BwT9LVmPGNDR0KGfBhzJcP9nmk5R4=
-Received: by mx.zohomail.com with SMTPS id 1766329732031723.5314899504488;
-	Sun, 21 Dec 2025 07:08:52 -0800 (PST)
-Message-ID: <159615d3-cc52-43be-bf6d-5fe717ef1cc4@zohomail.com>
-Date: Sun, 21 Dec 2025 23:08:32 +0800
+	bh=oBEFJoFmTU+vEOGTCKO2z7+KnNU8YcaoRn4bK/FMXBA=;
+	b=XrLqBu3GKd7xwRUNBXGIgRrVx9VyGq3ZdnSbfyUzbsn8Yv04FT9eIYQ5U7b3VHhj
+	ef+innxJTCFYfqmcN+L7cGlAYWxtXOrsrOLpl02PpH4bHPr/TTMSKfTnYCwai+AhI49
+	DVRuEW2vv61xxYT5JyNbrbk7/etKuN0v2H/CwZHg=
+Received: by mx.zohomail.com with SMTPS id 176637606573635.396960694368545;
+	Sun, 21 Dec 2025 20:01:05 -0800 (PST)
+Message-ID: <6e03598a-e64b-4967-8f89-f50bde9b830d@zohomail.com>
+Date: Mon, 22 Dec 2025 12:00:51 +0800
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -48,11 +48,10 @@ User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v9 2/3] clk: canaan: Add clock driver for Canaan K230
 To: Jiayu Du <jiayu.riscv@isrc.iscas.ac.cn>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Conor Dooley <conor@kernel.org>
+ <sboyd@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Paul Walmsley
+ <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>
 Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
  Samuel Holland <samuel.holland@sifive.com>,
@@ -64,8 +63,8 @@ From: Xukai Wang <kingxukai@zohomail.com>
 Content-Language: en-US
 In-Reply-To: <aUUGeGnYR+joVR8c@duge-virtual-machine>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Feedback-ID: rr080112272dacd3307bc12eb9efc14afb000030c0ea914924bd42e65f6f8bd29054d56c70272add6ef00a72:zu08011227952f7c85760f0a0815f8be44000025411d7b5419e31de20d2757fa5e43bee102f9986953eac086:rf0801122c48b7d601294da21e6fedbda600008d0ec30cf86e9c4eb95b2e97d86358f1eed49f07556fd17cc812a72020dc:ZohoMail
+Content-Transfer-Encoding: 7bit
+Feedback-ID: rr080112273b93726cead76ead8813bb2200003d9a5c6b4d17009bff3a7becc08ab060c66a7138e180c948a9:zu0801122720c840063080d6e6cf514a4d0000b0bee724e5468a7038436aafd3691ee76d6ad180dd2795d4b6:rf0801122c96364ed9249f1d3ec01a3c4c00000e250bc758d4aea3154b9aed0c14b3444959420cab0c2037f289276a2cfc:ZohoMail
 X-ZohoMailClient: External
 
 
@@ -93,51 +92,141 @@ On 2025/12/19 16:02, Jiayu Du wrote:
 >> --- /dev/null
 >> +++ b/drivers/clk/clk-k230.c
 >> @@ -0,0 +1,2443 @@
-...
-> Incorrect register bit setting (bit1) and wrong parent
-> clock reference (hs_hclk_high_src_rate) for hs_hclk_src_gate,
-> which does not comply with K230 hardware specifications.
-> Here is correcting advice:
-> Register bit correction: `0x18, 1, 0, 0,` -> `0x18, 0, 0, 0,`
-You're right, thanks for the correction. The bit index should be 0, not 1.
-> Parent clock correction: `&hs_hclk_high_src_rate.clk.hw` ->
-> `&hs_hclk_high_gate.clk.hw`
-
-According to the vendor's code [1], the parent clock of hs_hclk_src is
-hs_hclk_high_src.
-
->
->> +K230_CLK_RATE_FORMAT(hs_hclk_src_rate,
->> +		     K230_HS_HCLK_SRC_RATE,
 > ...
->> +K230_CLK_RATE_FORMAT(hs_sd_card_src_rate,
->> +		     K230_HS_SD_CARD_SRC_RATE,
->> +		     1, 1, 0, 0,
->> +		     2, 8, 12, 0x7,
->> +		     0x1C, 31, div, 0x0,
+>> +
+>> +K230_CLK_GATE_FORMAT(cpu0_src_gate,
+>> +		     K230_CPU0_SRC_GATE,
+>> +		     0, 0, 0, 0,
+>> +		     &pll0_div2.hw);
+> Core-related clocks of cpu0/cpu1 (src/plic/apb/noc_ddrcp4, etc.)
+> lack protection flags, which risks accidental disabling.
+>
+> Recommend to replace the flag bits for all CPU0/CPU1 core clock
+> nodes with `CLK_IS_CRITICAL`,like this:
+> `0, 0, 0, 0,` -> `0, 0, CLK_IS_CRITICAL, 0,`
+>
+>> +
+>> +K230_CLK_RATE_FORMAT(cpu0_src_rate,
+>> +		     K230_CPU0_SRC_RATE,
+>> +		     1, 16, 1, 0xF,
+>> +		     16, 16, 0, 0x0,
+>> +		     0x0, 31, mul, 0x0,
 >> +		     false, 0,
+>> +		     &cpu0_src_gate.clk.hw);
+>> +
+> same as above,`false, 0,` ->`false, CLK_IS_CRITICAL,`
+>> +K230_CLK_RATE_FORMAT(cpu0_axi_rate,
+>> +		     K230_CPU0_AXI_RATE,
+>> +		     1, 1, 0, 0,
+>> +		     1, 8, 6, 0x7,
+>> +		     0x0, 31, div, 0x0,
+>> +		     0, 0,
+>> +		     &cpu0_src_rate.clk.hw);
+>> +
+> same as above,`0, 0,` ->`0, CLK_IS_CRITICAL,`
+>> +K230_CLK_GATE_FORMAT(cpu0_plic_gate,
+>> +		     K230_CPU0_PLIC_GATE,
+>> +		     0x0, 9, 0, 0,
+>> +		     &cpu0_src_rate.clk.hw);
+>> +
+> same as above,`0x0, 9, 0, 0,` -> `0x0, 9, CLK_IS_CRITICAL, 0,`
+>> +K230_CLK_RATE_FORMAT(cpu0_plic_rate,
+>> +		     K230_CPU0_PLIC_RATE,
+>> +		     1, 1, 0, 0,
+>> +		     1, 8, 10, 0x7,
+>> +		     0x0, 31, div, 0x0,
+>> +		     false, 0,
+>> +		     &cpu0_plic_gate.clk.hw);
+>> +
+> same as above,`false, 0,` -> `false, CLK_IS_CRITICAL,`
+>> +K230_CLK_GATE_FORMAT(cpu0_noc_ddrcp4_gate,
+>> +		     K230_CPU0_NOC_DDRCP4_GATE,
+>> +		     0x60, 7, 0, 0,
+>> +		     &cpu0_src_rate.clk.hw);
+>> +
+> same as above,`0x60, 7, 0, 0,` -> `0x60, 7, CLK_IS_CRITICAL, 0,`
+>> +K230_CLK_GATE_FORMAT(cpu0_apb_gate,
+>> +		     K230_CPU0_APB_GATE,
+>> +		     0x0, 13, 0, 0,
 >> +		     &pll0_div4.hw);
 >> +
-> The parent clock of hs_sd_card_src_rate is incorrectly pointed
-> to pll0_div4.
-> Here is correcting advice:
-> `&pll0_div4.hw` → `&hs_sd_card_src_gate.clk.hw`
-You're right, that's my mistake. Thanks for pointing it out.
->
->> +K230_CLK_GATE_FORMAT(hs_sd0_card_gate,
->> +		     K230_HS_SD0_CARD_GATE,
->> +		     0x18, 15, 0, 0,
-> ...
->> +	},
->> +	.probe = k230_clk_probe,
+> same as above,`0x0, 13, 0, 0,` -> `0x0, 13, CLK_IS_CRITICAL, 0,`
+>> +K230_CLK_RATE_FORMAT(cpu0_apb_rate,
+>> +		     K230_CPU0_APB_RATE,
+>> +		     1, 1, 0, 0,
+>> +		     1, 8, 15, 0x7,
+>> +		     0x0, 31, div, 0x0,
+>> +		     false, 0,
+>> +		     &cpu0_apb_gate.clk.hw);
+>> +
+> same as above,`false, 0,` -> `false, CLK_IS_CRITICAL,`
+>> +static const struct clk_parent_data k230_cpu1_src_mux_pdata[] = {
+>> +	{ .hw = &pll0_div2.hw, },
+>> +	{ .hw = &pll3.hw, },
+>> +	{ .hw = &pll0.hw, },
 >> +};
->> +builtin_platform_driver(k230_clk_driver);
->>
->> -- 
->> 2.34.1
->>
-Link:
-
-[1]
-https://github.com/kendryte/k230_sdk/blob/main/src/little/linux/arch/riscv/boot/dts/kendryte/clock_provider.dtsi#L578
-
+>> +
+>> +K230_CLK_MUX_FORMAT(cpu1_src_mux,
+>> +		    K230_CPU1_SRC_MUX,
+>> +		    0x4, 1, 0x3,
+>> +		    0, 0,
+>> +		    k230_cpu1_src_mux_pdata);
+>> +
+> same as above,`0, 0,` -> `CLK_IS_CRITICAL, 0,`
+>> +K230_CLK_GATE_FORMAT(cpu1_src_gate,
+>> +		     K230_CPU1_SRC_GATE,
+>> +		     0x4, 0, CLK_IGNORE_UNUSED, 0,
+>> +		     &cpu1_src_mux.clk.hw);
+>> +
+> same as above,`0x4, 0, CLK_IGNORE_UNUSED, 0,` -> `0x4, 0, CLK_IS_CRITICAL, 0,`
+>> +K230_CLK_RATE_FORMAT(cpu1_src_rate,
+>> +		     K230_CPU1_SRC_GATE,
+>> +		     1, 1, 0, 0,
+>> +		     1, 8, 3, 0x7,
+>> +		     0x4, 31, div, 0x0,
+>> +		     false, 0,
+>> +		     &cpu1_src_gate.clk.hw);
+>> +
+> same as above,`false, 0,` -> `false, CLK_IS_CRITICAL,`
+>> +K230_CLK_RATE_FORMAT(cpu1_axi_rate,
+>> +		     K230_CPU1_AXI_RATE,
+>> +		     1, 1, 0, 0,
+>> +		     1, 8, 12, 0x7,
+>> +		     0x4, 31, div, 0x0,
+>> +		     false, 0,
+>> +		     &cpu1_src_rate.clk.hw);
+>> +
+> same as above,`false, 0,` -> `false, CLK_IS_CRITICAL,`
+>> +K230_CLK_GATE_FORMAT(cpu1_plic_gate,
+>> +		     K230_CPU1_PLIC_GATE,
+>> +		     0x4, 15, CLK_IGNORE_UNUSED, 0,
+>> +		     &cpu1_src_rate.clk.hw);
+>> +
+> same as above,`0x4, 15, CLK_IGNORE_UNUSED, 0,` -> `0x4, 15, CLK_IS_CRITICAL, 0,`
+>> +K230_CLK_RATE_FORMAT(cpu1_plic_rate,
+>> +		     K230_CPU1_PLIC_RATE,
+>> +		     1, 1, 0, 0,
+>> +		     1, 8, 16, 0x7,
+>> +		     0x4, 31, div, 0x0,
+>> +		     false, 0,
+>> +		     &cpu1_plic_gate.clk.hw);
+>> +
+> same as above,`false, 0,` -> `false, CLK_IS_CRITICAL,`
+>> +K230_CLK_GATE_FORMAT(cpu1_apb_gate,
+>> +		     K230_CPU1_APB_GATE,
+>> +		     0x4, 19, 0, 0,
+>> +		     &pll0_div4.hw);
+>> +
+> same as above,`0x4, 19, 0, 0,` -> `0x4, 19, CLK_IS_CRITICAL, 0,`
+>> +K230_CLK_RATE_FORMAT(cpu1_apb_rate,
+>> +		     K230_CPU1_APB_RATE,
+>> +		     1, 1, 0, 0,
+>> +		     1, 8, 15, 0x7,
+>> +		     0x0, 31, div, 0x0,
+>> +		     false, 0,
+>> +		     &cpu1_apb_gate.clk.hw);
+>> +
+> same as above,`false, 0,` -> `false, CLK_IS_CRITICAL,`
+Thanks for the recommendation. I'll add the CLK_IS_CRITICAL flag to all
+clk_gate clocks for CPU-related clocks, but not to the rate clocks, as
+they don't need this flag.
