@@ -1,160 +1,195 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 807BF2FFF89
-	for <linux-clk@vger.kernel.org>; Mon, 22 Dec 2025 17:00:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EA2834D38A
+	for <linux-clk@vger.kernel.org>; Mon, 22 Dec 2025 17:08:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766422806; cv=none; b=dTmwDsOzlnNkzTxs4riYxP5XRnOQh/qM0lBmJeDMiRIL0d1K3nUA6BxvW8xaDIQeqZF7sfFxEd2hDW0ROeJ5iKuG4s0j7qQ/JdVYWXeizVRBTaIh8HgarOW/IJZ02hUZfYVdFz7RI8p84RKUbSnHSwUGctMzCCIIEFpGchhmwK4=
+	t=1766423306; cv=none; b=XYYQUWWtn1BAorpu2Uk0GwgH+toDey/CCGzxqiBFOMGGh7u2Jqrk4s1ffJJwnEeqcO9YDq/lJbvxQ0lp0zTAtSSYoQpZPk0PtsT2XLyN/yvNsa4ylkrgVnrD8EFHREedbFEjFMNN5mpd3kt57Zsi4Qz/QJgBYjtW9zc30l4t67Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766422806; c=relaxed/simple;
-	bh=VIFf1U5GRy0XwNaSKn2IE50Ho6S8Qyrd1XW4SiN5kJ0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LJvkMPF9r3MwHw1t9bXTE3fY36DLMQirMeKDDAAL+dSnPGBOmPIyaHZHbtBCfR50cmEU7lqPO6z3aOurebnD6KftqjXsXEzGoHyY9cNjngqWTNWIzmg22NL43bLXaN3Eav3XxNneq0kNwlV5v1rxkH4WF3StRldl+lPWel7pSbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DynX/JLy; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=noqQNVzH; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1766423306; c=relaxed/simple;
+	bh=yuU6e2e1qZAfjqJxAR2lxB+hua/aywi4MlVW193eIY0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=W1NUmK7NnUMzhzN1sf6mnOZ8F0+Exp9ELotO4d4Fg8NDxtJyWEMtwygz1s0/cVSwsjPjIXgwzCJSsVFoBw3PwlhoRRRurA+KaSNuAIGzUb656YB1yzh/fV0BP9roubzzQWfTbnJtzHgSMkoHc9qrWEplPNPOqr0GMKi3wB3fXU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=S8aZRTTt; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=LLohvLkm; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DynX/JLy";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="noqQNVzH"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1766422803;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0f4fyk4zQd9fdm0CypX1izzvghVD+Nvn4s4UeRXutpY=;
-	b=DynX/JLywm7WGzHdQeYUDFRE67wpzJImZS2RNXAvPtjf3hAcKq1y+ZsxJELoCwnv8V10DX
-	W4seGhz+4taPvZrRd+H9dvyRUPrp4xF5UB2tgBwPNhkrmMjAw3lZD9zPqQn2YRCwPoZaoj
-	/FsiHyjw+advtHQBisYYqyRH9WwP7Uc=
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
- [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-365-Zkau9-x5P_eSUhaxoBq_dg-1; Mon, 22 Dec 2025 12:00:01 -0500
-X-MC-Unique: Zkau9-x5P_eSUhaxoBq_dg-1
-X-Mimecast-MFC-AGG-ID: Zkau9-x5P_eSUhaxoBq_dg_1766422801
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-8b2e235d4d2so1505808785a.3
-        for <linux-clk@vger.kernel.org>; Mon, 22 Dec 2025 09:00:01 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="S8aZRTTt";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="LLohvLkm"
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5BMGr0EO1902190
+	for <linux-clk@vger.kernel.org>; Mon, 22 Dec 2025 17:08:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=uTJu74kOrD+Mhqkhf+/YtY
+	rkCua8e6faBgar0XkLxRo=; b=S8aZRTTtflFDOmze8vOzRZTug63Skr2gyWXOpb
+	OffiUxIl5oNZCMMUZa04HTcCciY6IdMvKuLwlM+RUFjz5lbeJX7Uyzc5Ba2bMqPf
+	oQvbhHBcMh2ZavbA83C2U0p9GIklyKPgvREKjnZAjqbHigc0hOqZLVJ3TfFLZNr8
+	pF7WkMi2SztxV+xBohB21/c1FL+sOpAfgRTZkzzZb1OhNVTx1dFs9jcwCXZ+59bI
+	+X8MJXoOtRBFhBhnPj62Eiai8YyAdYnvmqLAPsRo9+DV0DFPRC49l1C9iuvw5w/6
+	+kF+eaZgvNYHr5nMzyqTXjvJd8Tnz1QCUVa6OA1hgedYXypQ==
+Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com [209.85.210.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4b79w8g1nm-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Mon, 22 Dec 2025 17:08:23 +0000 (GMT)
+Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-7fc82eff4adso3970203b3a.1
+        for <linux-clk@vger.kernel.org>; Mon, 22 Dec 2025 09:08:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1766422801; x=1767027601; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0f4fyk4zQd9fdm0CypX1izzvghVD+Nvn4s4UeRXutpY=;
-        b=noqQNVzHciN3yMdTX8Dps/u2bH4VTzq0tnVvPTofml8KAZrO+4P0lpIIMO3/T2vodi
-         PQNClCNfQs9EjrbREkdMuszY2rGCVl4NPbCIh2XIa0n8Vv/Y1dQAm2z+GAAXJYlgQFG8
-         UYTZxrzJIPSVy00b0cBTQ7MCkQ/uWHwr2AyvLqxXGc7HNKUtvNWrDr9NN1jLW2xLcLtG
-         1tUfD3aECYCKF/ew/6o3rcfX8pSP8uwp0IFN/8SCXnh8GZDEFIGojS1yRh55o6RVFmyA
-         CMFGze0BpNxTeJiYCZx0zM9idpYSOUCaJtzgU5mDBtGVWxZ7AHnThZEAknwtkvMA2n7J
-         Rvlw==
+        d=oss.qualcomm.com; s=google; t=1766423302; x=1767028102; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=uTJu74kOrD+Mhqkhf+/YtYrkCua8e6faBgar0XkLxRo=;
+        b=LLohvLkmfFK78HAwveZyRNtuuOkoBwu7DHQCIJemISLWt51qcvGnnw5HD7Odc8U3wf
+         NBVbMLi2Z6TDDsK2eNSGtbup7TOkV82JU1+FpeYowacAq4RvOYafdm98NW2362S6GxR4
+         QCHQRYZpbtmYs5+P2umJLpzu6Ly5ZxGRYWKVHSN76OUren5ip3I0FnRrUcIXTADRv+TX
+         fLprU8Z5uEa2ArHo0+0cRzXAneE8y0wfaVse5Ns4/SKQy7FSOErQKxKOWjKkmS3mubHD
+         GGLYqCNubk4gfSz4ZGG09GrZ+0wxfr+aV/ONmDrRTL2k9yzI9Prxq/qmIbxSGYuOah3P
+         C6FQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1766422801; x=1767027601;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=0f4fyk4zQd9fdm0CypX1izzvghVD+Nvn4s4UeRXutpY=;
-        b=KkpyIVvLDShI6A6MQzDW3pxKJytUdap84tUdN/cGy/F0QvcWaQgQ09z5havRWfx57W
-         y1CETBFPXgGXlaArQppiW8TgjNB4lN/dyKnDSCd9J179p9MzE16gFgzFqMQ21I4iWCFE
-         qXxoUNp5nKx1DMQvcIencsrp43lqeaK32xIKxFskTUYrQpCmsU0lPi4Vz5gNWnufYsmi
-         8jiKppbE1F8bAB3mTvZM47rT076UM+z+JNiY9VsQJHWvcybDpNNI0hbJd61U9wXMCVi0
-         B01AQtpPcypw/Tv9t4Y8WT5Lklsxf2T3kjfpCwneV1T5PH10XCR72ovrqjSkxaX+jXiP
-         IchA==
-X-Forwarded-Encrypted: i=1; AJvYcCWlWo/3SAE3ROWyQqNkmJnhn/SPuE4G70cEMXDxaJvwgPCwXYhK9fLgaW7wDg6za7sXIa6EAwbO//w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzuKu7upxkct9l4kRJhbedgbjnT9pGJg3Y+w/Gb9cXOSrllVbO4
-	aNwvUnBfp84NVzWEAfL2vcoETlBU0eD6iweOyuJr/a6NmqZxkUNUOxPTUgRsGGP4bdDarQ5AssT
-	hA7ScdEeV/aTxJB7BiZzMNfYU3xq+C/96qjZFzGDHU8rRCMlODsvkzgPW29LpDA==
-X-Gm-Gg: AY/fxX7FTxDOdTuAHRI1C2EQcJKWVNGY8kgIuYsXlI21ozLv54PosCA+3NS/vq8oTpu
-	AaO5hAI95kN+lnj3vb8r1AMJ8Fyx1ST2K8xMR1VaLgOZoVdCU4wVd1z41w/EQKSPucggDTCiQu1
-	0kKy1FGhfLkCxdTa1Z3tL01/CDfqNKg37TN8yum3EzXnyCQCLujlGKcLcF6Q0S3OIxEObuO0zpR
-	gnhUVUrAcTGxVjDqbuc6nSy5nRSxMvPvWdRVbKm7Hr/Pm+0jsSB354YlCibORWSy5g5JmpigrVW
-	f8cyCZGfzIUuF95B9qhrjPDDW2PAma+lwQL1aIutWK3lM9Y+UZvrqKKl2WPYECGLVMvOV15BLMN
-	MvsJ/PuPtIjFPL5f4QxUeR77FGr2dYtg8/PTmPU9wLPIo
-X-Received: by 2002:a05:620a:691a:b0:8a3:22d7:6ca3 with SMTP id af79cd13be357-8c08f66c311mr1952379985a.31.1766422801379;
-        Mon, 22 Dec 2025 09:00:01 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEAXWK3aLK/w4OobjiC8eVjtvAbAxtwT1W5l5sKLlnUZ5at1LIDG+lvn7LFEDMGYJA0qFTMJw==
-X-Received: by 2002:a05:620a:691a:b0:8a3:22d7:6ca3 with SMTP id af79cd13be357-8c08f66c311mr1952376385a.31.1766422800985;
-        Mon, 22 Dec 2025 09:00:00 -0800 (PST)
-Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-88d997addd5sm86399716d6.33.2025.12.22.08.59.56
+        d=1e100.net; s=20230601; t=1766423302; x=1767028102;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uTJu74kOrD+Mhqkhf+/YtYrkCua8e6faBgar0XkLxRo=;
+        b=ATX6feK5N++Ie9Tx8QWj9U2CAKu2YxFBUW6JErC4Fi91ppAGmvcza0Gc4g8FJRAgr5
+         Jcm5+8O1pBkkVE4NljShYHNiwVFP5oVK1En8nhTT2qa/RFjs5cb5CpUo0tnzZVxuWJoG
+         pZ6cwGwo4YZNyCoRQ5o1AdvW5TkhOW/ck9BJELms9xLdD9kkzeX+CLoquk7paYHfHgFc
+         kmq0jnBp+uignavfV7UuXtalduFV4ArJ6vWsMC/ZJ+gqTUGi0St/XSZQCoq9+TKCjqFf
+         BBTlcFBHckwQeXGNnQ6YP0jKKReLc1fV+4mUXjnHnmHeyFUtr/vNRAegqs0G5X/O5nJX
+         XE3A==
+X-Forwarded-Encrypted: i=1; AJvYcCVSRyHluXj7kut1JhhsmXkyaJdPJkkuAqvAqCmvh9YfxrjyhHbKiRIszODbarMIEqYk6D7xCIKiuDk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzlUio5/o7vTQRvOeNOwyFRELWNst5caUrU5kKQb1BbQZCwsSo0
+	gS/HkZORqIzu3DQb5ucCM8Jzb+jmBQol+yMnQxnzAlB0gX+uRnUaToPph11vCYr9cIUFzNNNWTE
+	s6B6z3KpE5iF8nQRu6cE6Mtm7uYrYyUL28wNpqiF7n3MOEDGD9G6JOvx1GnyVzPM=
+X-Gm-Gg: AY/fxX4sg1jpA5EjNYCexPNDfLZDhpAIgzVD3Zwir0IeUOZ4QAEwybmWOSLQNtw3HlV
+	M/yEkyO+X1Dm7YbVoZ2vyyoamJ/D3TZeKEhuZYvwg4acDDL6II/44YhqCRHYHKeWt5KzGJRJKPG
+	oAyi4BuBmXeib2Xr4zKnUSEnEScHiIpP/h2xmf+SR1RDr1zf4xotB34DXDdtAFNaXTNbW8wiAQZ
+	Q+RmoJGk60egTFD1erNc+rXxWLVflfO+mj3Xp2Qj5fKYviBVlCgTn+G07kcchxDVRQ0UWoZBPZi
+	DZZFWB+6TlzJI977W4LYM35ifTbNOBAi7gkabsagT9tZP3ZWcp8L7zZJFkSr4AvyhWJW8QJJdzK
+	Way7+Z7AkMO6pLkN+3Nq7ZSmSCCNUY/kbow==
+X-Received: by 2002:a05:6a00:4ac3:b0:7e8:3fcb:bc4b with SMTP id d2e1a72fcca58-7ff551df0c1mr11653891b3a.32.1766423302222;
+        Mon, 22 Dec 2025 09:08:22 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEQGoTkq6ENiYiLQXUVP+Xrflpg7TfjqSAtigwX2xx0bLzHFHk7HDNLAGumk7ig3V+Qu2T7RA==
+X-Received: by 2002:a05:6a00:4ac3:b0:7e8:3fcb:bc4b with SMTP id d2e1a72fcca58-7ff551df0c1mr11653863b3a.32.1766423301721;
+        Mon, 22 Dec 2025 09:08:21 -0800 (PST)
+Received: from hu-tdas-hyd.qualcomm.com ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7ff7a939ea2sm10897176b3a.4.2025.12.22.09.08.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Dec 2025 09:00:00 -0800 (PST)
-Date: Mon, 22 Dec 2025 11:59:56 -0500
-From: Brian Masney <bmasney@redhat.com>
-To: Ryan Chen <ryan_chen@aspeedtech.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Mo Elbadry <elbadrym@google.com>,
-	Rom Lemarchand <romlem@google.com>,
-	William Kennington <wak@google.com>,
-	Yuxiao Zhang <yuxiaozhang@google.com>,
-	"wthai@nvidia.com" <wthai@nvidia.com>,
-	"leohu@nvidia.com" <leohu@nvidia.com>,
-	"dkodihalli@nvidia.com" <dkodihalli@nvidia.com>,
-	"spuranik@nvidia.com" <spuranik@nvidia.com>
-Subject: Re: [PATCH v15 3/3] clk: aspeed: add AST2700 clock driver
-Message-ID: <aUl5DPMq8jC1xjRu@redhat.com>
-References: <20251010072540.666673-1-ryan_chen@aspeedtech.com>
- <20251010072540.666673-4-ryan_chen@aspeedtech.com>
- <TY2PPF5CB9A1BE64DCD487138F3BAC4FD34F2FCA@TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com>
+        Mon, 22 Dec 2025 09:08:21 -0800 (PST)
+From: Taniya Das <taniya.das@oss.qualcomm.com>
+Date: Mon, 22 Dec 2025 22:38:14 +0530
+Subject: [PATCH] clk: qcom: rcg2: compute 2d using duty fraction directly
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <TY2PPF5CB9A1BE64DCD487138F3BAC4FD34F2FCA@TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com>
-User-Agent: Mutt/2.2.14 (2025-02-20)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20251222-duty_cycle_precision-v1-1-b0da8e9fdab7@oss.qualcomm.com>
+X-B4-Tracking: v=1; b=H4sIAP16SWkC/x2M0QpAQBAAf0X77IrNEb8iXWdvsSV0h0j+3eVxm
+ mYeCOyFAzTJA55PCbIuEfI0AZrsMrISFxkwQ50jonLHfhu6aWazeaY/UFVd6gJ7y2R7iGk0g1z
+ /tu3e9wNYNxqjZgAAAA==
+X-Change-ID: 20251222-duty_cycle_precision-796542baecab
+To: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Taniya Das <quic_tdas@quicinc.com>
+Cc: Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
+        Imran Shaik <imran.shaik@oss.qualcomm.com>,
+        Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Taniya Das <taniya.das@oss.qualcomm.com>
+X-Mailer: b4 0.15-dev-aa3f6
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMjIyMDE1NyBTYWx0ZWRfX23AJoDvS8KtN
+ eYslQHKLg2wPxbpZZYz31ZTlU1sU0FzWgZFyUfFNtDR0QjlMiqlxKtS5V96VTFFiARby2AZoRQ3
+ 8eqn+XInRm/1MY/d+te8YlehfocOnz3DCUuZQYvJpoPHwvM5WC7lrJjeEI2mCoudFS+NpEXHF6D
+ G0dDaQ4ymzIADjbEZhgOGtL6POL69ajv+Ek4LFl4Uwny2ceAxpZACLk0QSomv70PZ7sv3NpTZNX
+ wSZdt4OpuoWZvRv1WOPRzWsWMDODqsXbRSNi/Fs62bCJXz7JqufUMqE37ioQuG802Jmy+IUgvzm
+ Zj79z7g/Umx/pY28diQMjmYHUV0uahZO+uM8200pYy7dsO81xyo3Fn8ObMZ49wsNY4RZX9jTlOi
+ EEPraY+qddKGPx0z2Ks6Btcf1Hw2GpaXQ5C1LRd9EzOnziv6XlTUo5ewsZ5gbyv6nCeRhwbwTY9
+ 6wtgR5nd2p0McF8IIqQ==
+X-Proofpoint-GUID: pb2tSmDY2xihGksCPv0J8N1VQ7iEm3-_
+X-Proofpoint-ORIG-GUID: pb2tSmDY2xihGksCPv0J8N1VQ7iEm3-_
+X-Authority-Analysis: v=2.4 cv=T/eBjvKQ c=1 sm=1 tr=0 ts=69497b07 cx=c_pps
+ a=rEQLjTOiSrHUhVqRoksmgQ==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=wP3pNCr1ah4A:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8
+ a=igsz0PQQFTjIY3ArcIwA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=2VI0MkxyNR6bbpdq8BZq:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-12-22_02,2025-12-22_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 lowpriorityscore=0 impostorscore=0 bulkscore=0
+ clxscore=1015 suspectscore=0 malwarescore=0 adultscore=0 phishscore=0
+ spamscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.22.0-2512120000
+ definitions=main-2512220157
 
-Hi Ryan,
+From: Taniya Das <quic_tdas@quicinc.com>
 
-On Mon, Oct 27, 2025 at 06:24:59AM +0000, Ryan Chen wrote:
-> Hello Stephen,
-> 	Will this be accepted in clk-next?
+The duty-cycle calculation in clk_rcg2_set_duty_cycle() currently
+derives an intermediate percentage `duty_per = (num * 100) / den` and
+then computes:
 
-Given that aspeed is a SoC vendor, and you already have multiple clk
-drivers, I think at this point your best bet is to do what the other SoC
-vendors currently do. I think you should:
+    d = DIV_ROUND_CLOSEST(n * duty_per * 2, 100);
 
-- Create a new subdirectory drivers/clk/aspeed/
-- Move the existing aspeed clk drivers into this subdirectory, and
-  update the Makefiles / Kconfigs as appropriate.
-- Add a new entry to the MAINTAINERS file for the aspeed clk drivers.
-  You probably also want to have that entry cover the reset driver,
-  and any other aspeed-specific drivers as well.
-- Post that patch set. Include this new clk driver as a separate patch
-  in that series. Feel free to CC me to the series and I'll review it
-  for you.
-- After it's reviewed, wait a week or two, and send Stephen a 
-  'GIT PULL' using git request-pull. I can help you with the workflow
-  if needed.
-  
-  One important detail is that you want to base your branch for the GIT
-  PULL on the lowest common denominator, which is usually the latest rc1
-  from Linus. So even if Linus is at rc5, try to base yours on rc1, unless
-  there's some issue, and you need to document why. Stephen should get the
-  merge to newer rcX branches from Linus, and not you.
+This introduces integer truncation at the percentage step (division by
+`den`) and a redundant scaling by 100, which can reduce precision for
+large `den` and skew the final rounding.
 
-When you send a PULL to Stephen, you can use 'b4 am' to assemble the
-contents of your branch. When I sent him a PULL a few months ago, I
-included the b4 commands that I used.
+Compute `2d` directly from the duty fraction to preserve precision and
+avoid the unnecessary scaling:
 
-https://lore.kernel.org/all/aL8MXYrR5uoBa4cB@x1/
+    d = DIV_ROUND_CLOSEST(n * duty->num * 2, duty->den);
 
-If he accepts the pull, you'll still need to post your patches to the
-clk mailinglist, and have them reviewed on list. Folks from aspeed
-should do that review publicly on the list.
+This keeps the intended formula `d ≈ n * 2 * (num/den)` while performing
+a single, final rounded division, improving accuracy especially for small
+duty cycles or large denominators. It also removes the unused `duty_per`
+variable, simplifying the code.
 
-Brian
+There is no functional changes beyond improved numerical accuracy.
+
+Fixes: 7f891faf596ed ("clk: qcom: clk-rcg2: Add support for duty-cycle for RCG")
+Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+---
+Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
+---
+ drivers/clk/qcom/clk-rcg2.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+index e18cb8807d73534c6437c08aeb524353a2eab06f..2838d4cb2d58ea1e351d6a5599045c72f4dc3801 100644
+--- a/drivers/clk/qcom/clk-rcg2.c
++++ b/drivers/clk/qcom/clk-rcg2.c
+@@ -755,7 +755,7 @@ static int clk_rcg2_get_duty_cycle(struct clk_hw *hw, struct clk_duty *duty)
+ static int clk_rcg2_set_duty_cycle(struct clk_hw *hw, struct clk_duty *duty)
+ {
+ 	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
+-	u32 notn_m, n, m, d, not2d, mask, duty_per, cfg;
++	u32 notn_m, n, m, d, not2d, mask, cfg;
+ 	int ret;
+ 
+ 	/* Duty-cycle cannot be modified for non-MND RCGs */
+@@ -774,10 +774,8 @@ static int clk_rcg2_set_duty_cycle(struct clk_hw *hw, struct clk_duty *duty)
+ 
+ 	n = (~(notn_m) + m) & mask;
+ 
+-	duty_per = (duty->num * 100) / duty->den;
+-
+ 	/* Calculate 2d value */
+-	d = DIV_ROUND_CLOSEST(n * duty_per * 2, 100);
++	d = DIV_ROUND_CLOSEST(n * duty->num * 2, duty->den);
+ 
+ 	/*
+ 	 * Check bit widths of 2d. If D is too big reduce duty cycle.
+
+---
+base-commit: cc3aa43b44bdb43dfbac0fcb51c56594a11338a8
+change-id: 20251222-duty_cycle_precision-796542baecab
+
+Best regards,
+-- 
+Taniya Das <taniya.das@oss.qualcomm.com>
 
