@@ -1,88 +1,139 @@
-Received: from zg8tmja2lje4os4yms4ymjma.icoremail.net (zg8tmja2lje4os4yms4ymjma.icoremail.net [206.189.21.223])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D9FB311940;
-	Mon, 22 Dec 2025 09:30:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=206.189.21.223
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DA25311C14
+	for <linux-clk@vger.kernel.org>; Mon, 22 Dec 2025 09:39:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766395818; cv=none; b=ouIxDig+NbDiQKaYn6UF5yPcZEJmRvCyN0T8GfWdlWtdY4HEwwn+Qis3kvNq8hQsQ8DcYx0ozVZgwL/dG7lxewxKZYq/BCxMcdcxRzGn7x33ns1TSiZSuFQ4xJ9UVxSf9efWeU7pxGaDJMC8V4CjB5knEoUDkSTaccxhLoutVcg=
+	t=1766396398; cv=none; b=Gcb/qIlTKMVy4yDzUOE3BJNJxyjTpRtX0jA4Gw1aTLgndYRp8G9X07CRad90qqoMHI0G6Y0m5tGtS6qBe2qgUQskMwSPlggu96RP8Pb6rdsjrstMlFstc7a/4ElevyWNISavYAqxtapO/qX2/efXZaW0kGBRwFrsbgj2OoTn3eQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766395818; c=relaxed/simple;
-	bh=5qsFh65Grpotg1I+ei/8ADeZUlIcWYKpKdLOF83J9zc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=p0AprTptOfaVHl0MBYEJj0K9o/aEvQnXh8/aXH5l5wckFV8IyLGHbZ2wCiBqR0DvtEHyqI8NhMLsPW5rPIbBHuDcWLCmco7BsLLVVpLDXTvhTNFqY0W7B2tHOmYWit+BcCJNYKxbKtugmPU6Lyzd6WrfCoSb/3jf1IhGiGuH6fc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=206.189.21.223
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
-Received: from dongxuyang$eswincomputing.com ( [10.12.96.41] ) by
- ajax-webmail-app2 (Coremail) ; Mon, 22 Dec 2025 17:29:48 +0800 (GMT+08:00)
-Date: Mon, 22 Dec 2025 17:29:48 +0800 (GMT+08:00)
-X-CM-HeaderCharset: UTF-8
-From: "Xuyang Dong" <dongxuyang@eswincomputing.com>
-To: "Troy Mitchell" <troy.mitchell@linux.dev>, "Bo Gan" <ganboing@gmail.com>,
-	mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	bmasney@redhat.com
-Cc: ningyu@eswincomputing.com, linmin@eswincomputing.com,
-	huangyifeng@eswincomputing.com, pinkesh.vaghela@einfochips.com
-Subject: Re: Re: [PATCH v8 2/3] clock: eswin: Add eic7700 clock driver
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version 2024.2-cmXT6 build
- 20241203(6b039d88) Copyright (c) 2002-2025 www.mailtech.cn
- mispb-72143050-eaf5-4703-89e0-86624513b4ce-eswincomputing.com
-In-Reply-To: <aUYXPBFhqz3Frdmo@troy-wujie14pro-arch>
-References: <20251113013637.1109-1-dongxuyang@eswincomputing.com>
- <20251113013846.1222-1-dongxuyang@eswincomputing.com>
- <aUS9bLVLhIPMOcWa@kernel.org>
- <ade7690d-14d1-413a-b4b5-eda91d64207c@gmail.com>
- <aUYXPBFhqz3Frdmo@troy-wujie14pro-arch>
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	s=arc-20240116; t=1766396398; c=relaxed/simple;
+	bh=N3xDxT4wRLdO9sVfi+qzznU4KwqN9oaA0Ye/urJkYm0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UlKvKnLzvQOPmq8XDPmcMIzS9qXmu/qRBBPMO4jjZagwOtztYPoicyfrOkfkj8biIzSWJGd+TUFBey7ifEfwjtnuArzpPLk/nePhiRCEQYpnvhIYg39vIcE5VrVFGeQ/MAV+tHKi59MfocPt9brMJCq6DBOddgh+opJmSIYnzBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LFSuGGr2; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LFSuGGr2"
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-64b83949fdaso4259331a12.2
+        for <linux-clk@vger.kernel.org>; Mon, 22 Dec 2025 01:39:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1766396395; x=1767001195; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=N3xDxT4wRLdO9sVfi+qzznU4KwqN9oaA0Ye/urJkYm0=;
+        b=LFSuGGr2FIZ7cQtTf0GHtxVnLbpR3FR7EZANlDpurXGgfuzdAW8S8/j4XBce0E6xOG
+         uhxDACUgY5npFUVXxA2P3KGVyBdmWgzn5/kMuLwMkVuqYa4Cw8U0MRqg4VKVTKgMjttA
+         cjELqliCfjg6peCPmG+1OIcCunYLCFO0SK5spY4Hwfe1eH8gUB4P21voysm+R1HmC1aU
+         HPMqcOnDWEC2p/ps7jxXrfC8xzLby1Zery6Q5EvheSG176iHn7fXW6sLOQ+l1XEJNGF8
+         DILq+ZLUjhqoMtiyF1B3yptOcppcrZYn94tj8olOuka51q3YSWB+tzWIUWH5aG5r077e
+         7XTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1766396395; x=1767001195;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=N3xDxT4wRLdO9sVfi+qzznU4KwqN9oaA0Ye/urJkYm0=;
+        b=bzWZXjV5CEfdxd3FOHP1T7z10VZcv4pupMkYFHdUmjVgTlFcgfM22wg7lDEgIXVQRI
+         C22OZpQcM5hYXc5GmPmgbmGjeEANw8wFS3s7PMV391UXavoDlO/2FZFLjWBE9KIo8Mak
+         RiW+m4vsoikprvgT1vCRwxY2Z/EbYVTOW9YJIcMCf8KXZ5p0n1OxWJpJSonSP8EaLN8g
+         06zim8llD3VLwuqXfKtFu0XISHQbOYMEqZLYxaMrOjzOkrK0JWVvXUKcMPRXcRdPdz9v
+         8OiWc2lz1oQACPX+S3k4/rF7UPkEmdgJhO6ahPf3dbPFNgxHC5wjDj5+it/e6zLXlumv
+         TzzA==
+X-Forwarded-Encrypted: i=1; AJvYcCXpM4fxAVlKJIqkoQZR1Bco2o8Go5NQac4QSi9EEA5MMIhlW4NMXJePREQR/FDS+Nn5VbzMRGc+kFY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKgHjTN0zMav7OHHzuyBklvkfqLCietDXO2DIRZLRfluTtEbU0
+	RIhJYivXhphJcLjN/BYvMRvoPOp/NZx4qmZHmUF4GPxGHJlwGbbNT/PD2N3ddJMmM7eVcQ00Cdu
+	YppvE8YO5VbynpEJ919so8IYmvR2Lpeu1WUEH1zdrbQ==
+X-Gm-Gg: AY/fxX4oWq2O48ykRexIOgQzeFyrY9hvEcBDg75n4aogjU39Kv/GJtFCjyVjxoxMjcG
+	Lw8gyH/L3XhJVC99PqcUdGtlBwl/Zr4Ym8tTcc60eRMkpV1lHxgAC6gf/42tENGRfh7ZYIxcaXh
+	d81/AlQgb8BJj8nDtgRfLrfeMW12bTPKq2PswalxMwI7A7cRGLvtU+W921ESbcW3P693hiUYIpj
+	Uf/uHz5fOM/6DfksaRTP8qFcmU03rOtMjPByNjOY57MQHxtDxcSIOngNUVfII4ge46frQ==
+X-Google-Smtp-Source: AGHT+IGPSwnqIzk14b53jhsi0LLKrWwl4Jdj+i+v0Qtc8GexQDbm48IQKNXUeCL0o0600WDhojcpvCkUpASsKgmBQ8c=
+X-Received: by 2002:a05:6402:1ed5:b0:64b:7885:c985 with SMTP id
+ 4fb4d7f45d1cf-64b8e93c197mr10800970a12.3.1766396395392; Mon, 22 Dec 2025
+ 01:39:55 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <6077b3be.17c4.19b4564be0d.Coremail.dongxuyang@eswincomputing.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:TQJkCgC3+q2MD0lp7r6IAA--.4164W
-X-CM-SenderInfo: pgrqw5xx1d0w46hv4xpqfrz1xxwl0woofrz/1tbiAQEEAmlIIQc4e
-	QABsB
-X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWxJw
-	CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
-	daVFxhVjvjDU=
+References: <20251220-automatic-clocks-v6-0-36c2f276a135@linaro.org>
+ <20251220-automatic-clocks-v6-1-36c2f276a135@linaro.org> <215eb434-683f-4cf2-9bcd-0860991ae23e@kernel.org>
+In-Reply-To: <215eb434-683f-4cf2-9bcd-0860991ae23e@kernel.org>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Mon, 22 Dec 2025 09:39:44 +0000
+X-Gm-Features: AQt7F2p0LonyB7NCXdfWFQondzzQDwR97Lxzguv-wlpyW3em81jQv8hflpu1MCU
+Message-ID: <CADrjBPoWcONhJJdCeovkwQ9Oha+t+dpHY_ohKPV7BQS1tougGw@mail.gmail.com>
+Subject: Re: [PATCH v6 1/4] dt-bindings: clock: google,gs101-clock: add
+ samsung,sysreg property as required
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	=?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+	Tudor Ambarus <tudor.ambarus@linaro.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Sam Protsenko <semen.protsenko@linaro.org>, 
+	Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
+	Will McVicker <willmcvicker@google.com>, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+	kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
 
-PiA+IAo+ID4gLi4uCj4gPiAKPiA+ID4gPiArc3RhdGljIGludCBjbGtfcGxsX3NldF9yYXRlKHN0
-cnVjdCBjbGtfaHcgKmh3LCB1bnNpZ25lZCBsb25nIHJhdGUsCj4gPiA+ID4gKwkJCSAgICB1bnNp
-Z25lZCBsb25nIHBhcmVudF9yYXRlKQo+ID4gPiA+ICt7Cj4gPiA+ID4gKwlzdHJ1Y3QgZXN3aW5f
-Y2xrX3BsbCAqY2xrID0gdG9fcGxsX2Nsayhodyk7Cj4gPiA+ID4gKwlzdHJ1Y3QgY2xrICpjbGtf
-Y3B1X2xwX3BsbCA9IE5VTEw7Cj4gPiA+ID4gKwlzdHJ1Y3QgY2xrICpjbGtfY3B1X211eCA9IE5V
-TEw7Cj4gPiA+ID4gKwlzdHJ1Y3QgY2xrICpjbGtfY3B1X3BsbCA9IE5VTEw7Cj4gPiA+ID4gKwl1
-MzIgcG9zdGRpdjFfdmFsID0gMCwgcmVmZGl2X3ZhbCA9IDE7Cj4gPiA+ID4gKwl1MzIgZnJhY192
-YWwsIGZiZGl2X3ZhbCwgdmFsOwo+ID4gPiA+ICsJYm9vbCBsb2NrX2ZsYWcgPSBmYWxzZTsKPiA+
-ID4gPiArCWludCB0cnlfY291bnQgPSAwOwo+ID4gPiA+ICsJaW50IHJldDsKPiA+ID4gPiArCj4g
-PiA+ID4gKwlyZXQgPSBlc3dpbl9jYWxjX3BsbCgmZnJhY192YWwsICAmZmJkaXZfdmFsLCAodTY0
-KXJhdGUsIGNsayk7Cj4gPiA+ID4gKwlpZiAocmV0KQo+ID4gPiA+ICsJCXJldHVybiByZXQ7Cj4g
-PiA+ID4gKwo+ID4gPiA+ICsJLyogTXVzdCBzd2l0Y2ggdGhlIENQVSB0byBvdGhlciBDTEsgYmVm
-b3JlIHdlIGNoYW5nZSB0aGUgQ1BVIFBMTC4gKi8KPiA+ID4gPiArCWlmIChjbGstPmlkID09IEVJ
-Qzc3MDBfQ0xLX1BMTF9DUFUpIHsKPiA+ID4gPiArCQljbGtfY3B1X211eCA9IF9fY2xrX2xvb2t1
-cCgibXV4X2NwdV9yb290XzNtdXgxX2dmcmVlIik7Cj4gPiA+IEl0IHNlZW1zIHlvdSB3YW50IHRv
-IHN3aXRjaCB0byBhIHNhZmUgY2xvY2sgc291cmNlIGJlZm9yZSBzZXR0aW5nIHVwIHRoZQo+ID4g
-PiBQTEwsIHJpZ2h0Pwo+ID4gPiAKPiA+ID4gSSBhbSBub3Qgc3VyZSB3aGV0aGVyIHlvdXIgYXBw
-cm9hY2ggaXMgY29ycmVjdCwgYnV0IHRoZSB1c2Ugb2YKPiA+ID4gX19jbGtfbG9va3VwKCkgc2hv
-dWxkIGJlIGF2b2lkZWQgd2hlbmV2ZXIgcG9zc2libGUuCj4gPiA+IFdvdWxkIGl0IGJlIGZlYXNp
-YmxlIHRvIG9idGFpbiBhIHByb3BlciBjbG9jayBoYW5kbGUgc29tZXdoZXJlIGFuZAo+ID4gPiBw
-ZXJmb3JtIHRoZSBuZWNlc3NhcnkgY29uZmlndXJhdGlvbiBmcm9tIHdpdGhpbiBhIGNsa19ub3Rp
-ZmllciBpbnN0ZWFkPwo+ID4gPiA+ICsJCWlmICghY2xrX2NwdV9tdXgpIHsKPiA+ID4gPiArCQkJ
-cHJfZXJyKCJmYWlsZWQgdG8gZ2V0IGNsazogJXNcbiIsCj4gPiA+ID4gKwkJCSAgICAgICAibXV4
-X2NwdV9yb290XzNtdXgxX2dmcmVlIik7Cj4gPiA+ID4gKwkJCXJldHVybiAtRUlOVkFMOwo+ID4g
-PiA+ICsJCX0KPiA+IAo+ID4gSSBoYXZlIGEgc3Ryb25nIGZlZWxpbmcgdGhhdCB0aGlzIHN3aXRj
-aCB0byBzYWZlIGNsb2NrIGFuZCBiYWNrIHRvIFBMTAo+ID4gY2FuIGJlIGRvbmUgd2l0aCBzb21l
-dGhpbmcgdmVyeSBzaW1pbGFyIHRvIHRoaXM6Cj4gPiAKPiA+ICJBZGQgbm90aWZpZXIgZm9yIFBM
-TDAgY2xvY2sgYW5kIHNldCBpdCAxLjVHSHogb24gdGhlIEpINzExMCBTb0MiCj4gPiBodHRwczov
-L2xvcmUua2VybmVsLm9yZy9hbGwvMjAyNDA4MjYwODA0MzAuMTc5Nzg4LTEteGluZ3l1Lnd1QHN0
-YXJmaXZldGVjaC5jb20vCj4gPiAKPiBZRVMsIFRoYXQncyB3aGF0IEkgd2FudC4KPiBUaGFua3Mg
-Zm9yIHlvdXIgbGluayEKPiAKPiAgICAgICAgICAgICAgICAgICAgIC0gVHJveQo+ID4gUGxlYXNl
-IHRha2UgYSBsb29rLiBUaGFua3MhCj4gPiAKPiA+IEJvCgpUaGFua3MuIFRoZSBtZW50aW9uZWQg
-cHJvYmxlbXMgd2lsbCBiZSBjb3JyZWN0ZWQgaW4gdGhlIHN1YnNlcXVlbnQgcGF0Y2ggdmVyc2lv
-bi4KClJlZ2FyZHMsClh1eWFuZyBEb25nCgo=
+Hi Krzysztof,
+
+On Sun, 21 Dec 2025 at 13:26, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>
+> On 20/12/2025 10:05, Peter Griffin wrote:
+> > Each CMU (with the exception of cmu_top) has a corresponding sysreg bank
+> > that contains the BUSCOMPONENT_DRCG_EN and optional MEMCLK registers.
+> > The BUSCOMPONENT_DRCG_EN register enables dynamic root clock gating of
+> > bus components and MEMCLK gates the sram clock.
+> >
+> > Now the clock driver supports automatic clock mode, to fully enable dynamic
+> > root clock gating it is required to configure these registers. Update the
+> > bindings documentation so that all CMUs (with the exception of
+> > gs101-cmu-top) have samsung,sysreg as a required property.
+> >
+> > Note this is NOT an ABI break, as if the property isn't specified the
+> > clock driver will fallback to the current behaviour of not initializing
+> > the registers. The system still boots, but bus components won't benefit
+> > from dynamic root clock gating and dynamic power will be higher (which has
+> > been the case until now anyway).
+> >
+> > Additionally update the DT example to included the correct CMU size as
+> > registers in that region are used for automatic clock mode.
+> >
+> > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> > ---
+> > Changes in v5:
+> > - Invert the test for google,gs101-cmu-top (Andre)
+> >
+>
+>
+> <form letter>
+> This is a friendly reminder during the review process.
+>
+> It looks like you received a tag and forgot to add it.
+>
+> If you do not know the process, here is a short explanation:
+> Please add Acked-by/Reviewed-by/Tested-by tags when posting new versions
+> of patchset, under or above your Signed-off-by tag, unless patch changed
+> significantly (e.g. new properties added to the DT bindings). Tag is
+> "received", when provided in a message replied to you on the mailing
+> list. Tools like b4 can help here. However, there's no need to repost
+> patches *only* to add the tags. The upstream maintainer will do that for
+> tags received on the version they apply.
+>
+> Please read:
+> https://elixir.bootlin.com/linux/v6.12-rc3/source/Documentation/process/submitting-patches.rst#L577
+>
+> If a tag was not added on purpose, please state why and what changed.
+> </form letter>
+
+Apologies, your tag should have been added.... got kind of sidetracked
+bisecting the linux-next regression with the serial console and then
+forgot to apply it.
+
+Peter.
