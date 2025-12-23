@@ -1,151 +1,106 @@
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+Received: from mail-vk1-f195.google.com (mail-vk1-f195.google.com [209.85.221.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ED6E350A1A
-	for <linux-clk@vger.kernel.org>; Tue, 23 Dec 2025 10:35:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 681A634CFBB
+	for <linux-clk@vger.kernel.org>; Tue, 23 Dec 2025 10:40:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766486113; cv=none; b=L3D40vbECPfSES8AVb8CwJpMV7THvwAKrqBjdrw3x4H0OacANFNgC20hxkn4jPV8NYnvXVlsXGjsRvkhrOOTasGdcIXuOtfXo57oWDUp6PHkMlN3cmQgLyAQaP43enDQKcJ1iixorcNujp/Y0CjJPC1Io594oBZAd/JQ4ec3Wmw=
+	t=1766486453; cv=none; b=sEGuRBNR/ibgcw2erMbDo81+xQq1stfPoL2l+iUaViX+sCBH75JrHpqXYTjY2jiiv2XPDA+k6uf71Cuhkaqe30SyQR2BAQ5bzuRLn8MZwU5CbPomDByODrm4Ncnn/kR4Vb3gT0bA3JFX/JMW+clJa4z72JeAx+KU5K1TsoVZH70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766486113; c=relaxed/simple;
-	bh=nhnhn/ujbA1yivMUlMSXRd1v6Sz4LmmXkvWUytEJhUI=;
+	s=arc-20240116; t=1766486453; c=relaxed/simple;
+	bh=He4BjfuJKlOVZCSqBFYthIZfM2I1ZkSLAml5bdxckng=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PAH6rOX+1awbRjYsjCv9weEVkgpvKDqh9MzI+r47BZ+yPOxPDwEH+WYzFwdMWxVkRf9YWRKpFoisU4MKXPB6Mqmo+rBlx4PTLxxQLA2zIsuwNjYOXIzsECvM4+34tuCFiiypvjnB1cZg1Tqftf4r1H+/A0W1oDczl5/DUptVG/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sartura.hr; spf=pass smtp.mailfrom=sartura.hr; dkim=pass (2048-bit key) header.d=sartura.hr header.i=@sartura.hr header.b=GF2uS7wi; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sartura.hr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sartura.hr
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sartura.hr header.i=@sartura.hr header.b="GF2uS7wi"
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b727f452fffso944171966b.1
-        for <linux-clk@vger.kernel.org>; Tue, 23 Dec 2025 02:35:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sartura.hr; s=sartura; t=1766486106; x=1767090906; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SWwHgDUayFaSdSqe2T6d6UFJFmjd2ZLae5KHc+yXH7I=;
-        b=GF2uS7wiRyhBmf1kLR0gIF3Rip3N0z7rurwMgvhBqXkpElhZHM//c4ztfkOfl34VXQ
-         1X14GkorXLzezj84xr2Y/dQLW+EfbQhQVOVhtnuM3M454FOIn2PNXJXS36N8bH/whQBV
-         zY0fHit1GfAmUbUyKlPfmB88R6AoVgxYJryPviR3Xhc9pr/mmX1utNgHaFZ5HiT/+TFT
-         EPfJeiatuCcTI+Wko2Rrfq/cDBpi0ycNUhFAp5hGmFIf/u3Ol72pdr/MxF3qgwek5A2i
-         SlQTW3sCFS0UxINftvR9ief03PbV1fiyjZferC+QgdFvMpknr46FIg9k8YC+cFlkaq8w
-         fJHg==
+	 To:Cc:Content-Type; b=J90jRzHffJpT69bxC3BPblv7aSflO4vvPaYSvcVuwIRkNbP8TwUeBp9PXsEJyhI8R5JKs9SI2taJAlCC7tPbuF5NRo6XA5uqkcZzNViTJfq9TwIo21/duxxKWvM0TIHMmRdV9VMIMD3B8v1Q9YQDpHUI/p2HWVfDv0Ony8XSlEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f195.google.com with SMTP id 71dfb90a1353d-55b09d690dcso1700993e0c.1
+        for <linux-clk@vger.kernel.org>; Tue, 23 Dec 2025 02:40:51 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1766486106; x=1767090906;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=SWwHgDUayFaSdSqe2T6d6UFJFmjd2ZLae5KHc+yXH7I=;
-        b=FS2Gg4GKUGe+7TTnoW1yULpYW/7Tz1RjacDo174Vvbi6ZatxYHALIUo4SI6+6eDtWF
-         O3iLkXFkfmMKFhDYCC+Mwxm1MghyUgoeC/fdiCQ0QNWp8qT2imhNocEvGw7nBOPbFgyn
-         omPFZQlu22xqCW9i2W8vcWAJATiVMjN3P6Yo3NKBG4hZ8sf0KWKL4FF276n6Z47kadS0
-         1FBbVvc/SQZkA+KLGkWe4KAvJUpnu7C3uvbjsRdPFkuTRF1Fsx3kVHM7GROow8vLpguq
-         fei3yBygy/icKF3PsTdGrjlBxvvvm3GVSvzsCES7strcjlAQ0S4gvQaOWeGPicQ3LASX
-         YBeA==
-X-Forwarded-Encrypted: i=1; AJvYcCUGQ91W0WYNKJxh/rmsQ4HDxa6o8zmA+0lfiGWsmK+LPG8t75wKP8koCthCF27a2lcGOMRI3l610NU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzhTOv+nsW7NkwpZMD1AKBh+wS94ouMau742e6BaGnYtnrSyNYR
-	XZj5lLOnTWvnXjS2g1UiKod2WFBW9l29vcBdLVE5M+nKrXtSKq8lJccpcTvymAYkvBbywxDRbO6
-	9LL7akKGDY96RTOLdpznrgugCQMylITU5mpSRCn04UA==
-X-Gm-Gg: AY/fxX52lrEUaDEmMiCU5BFaYkN/VfDWKE41myQDYKzLfUChEWirOzivTDPPGSz/ZAS
-	if9TAkstEZpJ6Bxac6xqOuG1FQ5OpK7BsboiLCiOl/yxB4ozbrLUNz+l5KzGKjGmTovETCjTEzb
-	H+b30GNGWwzn+ozL7mAmG78F4Re0+epvbmJfC32kaow0JhynLp0l/9JwBSNDpOFac/75A9DJyOs
-	2fzNEdZPEh5Azgq+YoHHMEIEsaOeXW1SdmFPw+yZfwyzACVIf/+xi2VSB/MmDdfIaVFVfW1jSbq
-	17TmIuZmEEpatjTf6UHu3iIZuk0r5t8vQVBy2n27KzySAYt8Iw==
-X-Google-Smtp-Source: AGHT+IEJHssgBNa10sdxlMZ0RfBcXjnBKXrp4KRUpqNBX0cKMLRNtJZXOvlDmXwgBRgg1wr13xel6K2BxjWOkHuOL+E=
-X-Received: by 2002:a17:907:a45:b0:b81:ec7c:31fd with SMTP id
- a640c23a62f3a-b81ec7c321bmr332573366b.13.1766486105902; Tue, 23 Dec 2025
- 02:35:05 -0800 (PST)
+        d=1e100.net; s=20230601; t=1766486450; x=1767091250;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ju2WEPZhFSwJDfyX+hF0G6cQfKmw2zuzSQc8O9oxIig=;
+        b=M9BO1y2Y5bgAPfwZhw+b/NWRU78koCwXaH0tLILZZ3aNielNUS9MRjY+2PMm7nxiba
+         XTKjJyDAnycDvvgexaF1/7rcwJC3RYFrHwyNmHPHxRUbs8iq0EfSoQI5zvLiqAINZOAL
+         CfgrjXcY3ewg86PKkQggnfOTl7TQ4JNoiyDF+qmEIJcvIvkibj4Ob8ZuXbUEufK9RoX9
+         H0hf6XvhbDrarw/mi9vrbQw3aXUtMBRkVI5oRwZ+Uv8E8+ajluEYxop3aLcnC5qlWEkE
+         yAxLucluoLTvfeCmrWCQjWWI1dVG+8y+X8HUrNkSG/OO7M7EKeGyA3GGL5GwFyfKy40q
+         rxEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX4D70iM5kD1VyPCr4D4nWMe+xuouaTcHC/yiwjPY3EnbtAeONV0Q+OFmiLWqBXV6L0eKV2LpFxjvQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YysGFqOj7OrF2mJww82fcIx9dBg771CvL2g1ARqGdai87Wc6hBC
+	cxQjdvYpFaQ/3Ta1d6g5VcKfvLqJRGMCL+D3QxAtD1kJcJmv6UrZ2PxLU3cH5MdL03w=
+X-Gm-Gg: AY/fxX6wnBhgpVfEnjw3EjnXuLlFhFrAOzeH/p7Cr4I+IYTNQvmSG7cms0NLqZWRJqf
+	TYS6E17PezASX5yXwpTtaupd9vizKsNegaeQXa39Pna4vp+XkHLPNWUiC8kXoEO6c/MXISuwsld
+	bkJGagghTeBFmOClp3zzo1TVoiRLVmHP2A2v1omvJP/11vaT4+MsNOz7eaxzYOWWp6e4syHkvha
+	BH8x+6Iu2mwrbykUY3bCZ/scg0OhMdHRLtFi0wOvQi2OBz1vwzWxNaaG46ipMBgIQJUA+vWwp+k
+	0+PDJtv8Cx3tdMe3qO52WuN1c9McsW+xp82PonH9eZLqsbEAbcLh08xyf3fZBRYX4oA71JYuksJ
+	7JKgzwrpSL/hqDW/J1d3VyfhFqLA/xGX1czlc5RDF/Iwd++0oVx0HU4roo0CnqmuEZ6bzoMwLxJ
+	pVN0NYE5ZC7VfySjL6jnd0mSeTwg/2lfog9N44dhaL00xKqByR
+X-Google-Smtp-Source: AGHT+IEkPoxF1SCn2IlC0F1Y63WrjiU7kO5mmLk34WM9AXAfiKmMnOV8eOdT1qizTvvX6U7tKYn8pQ==
+X-Received: by 2002:a05:6122:3282:b0:55b:305b:51b7 with SMTP id 71dfb90a1353d-5615bf0ec82mr4780503e0c.20.1766486450051;
+        Tue, 23 Dec 2025 02:40:50 -0800 (PST)
+Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com. [209.85.217.43])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5615d15f5d4sm4237949e0c.18.2025.12.23.02.40.49
+        for <linux-clk@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 23 Dec 2025 02:40:49 -0800 (PST)
+Received: by mail-vs1-f43.google.com with SMTP id ada2fe7eead31-5dfa9c01c54so2938835137.0
+        for <linux-clk@vger.kernel.org>; Tue, 23 Dec 2025 02:40:49 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWbWyIuIpytlAN0hcIm1J9CLY45gqroCMpwBo3UXnYuJGi9sIIbwgvJj1opkOjqAcKx+p7nvPSbyY4=@vger.kernel.org
+X-Received: by 2002:a05:6102:688c:b0:5df:c10a:6683 with SMTP id
+ ada2fe7eead31-5eb1a817ff8mr4650551137.35.1766486449690; Tue, 23 Dec 2025
+ 02:40:49 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251215163820.1584926-1-robert.marko@sartura.hr>
- <20251215163820.1584926-18-robert.marko@sartura.hr> <20251216-endorse-password-ae692dda5a9c@spud>
-In-Reply-To: <20251216-endorse-password-ae692dda5a9c@spud>
-From: Robert Marko <robert.marko@sartura.hr>
-Date: Tue, 23 Dec 2025 11:34:55 +0100
-X-Gm-Features: AQt7F2rp1ybXWw2BWzfekoJJeczrMeV1nO2lvHuguNeXKU1awsBcuKjFcFE-_B8
-Message-ID: <CA+HBbNF-=W7A3Joftsqn+A6s170sqOZ77jpS105s5HPqkskQzA@mail.gmail.com>
-Subject: Re: [PATCH v2 18/19] dt-bindings: arm: microchip: document EV23X71A board
-To: Conor Dooley <conor@kernel.org>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com, 
-	claudiu.beznea@tuxon.dev, Steen.Hegelund@microchip.com, 
-	daniel.machon@microchip.com, UNGLinuxDriver@microchip.com, 
-	herbert@gondor.apana.org.au, davem@davemloft.net, vkoul@kernel.org, 
-	linux@roeck-us.net, andi.shyti@kernel.org, lee@kernel.org, 
-	andrew+netdev@lunn.ch, edumazet@google.com, kuba@kernel.org, 
-	pabeni@redhat.com, linusw@kernel.org, olivia@selenic.com, 
-	radu_nicolae.pirea@upb.ro, richard.genoud@bootlin.com, 
-	gregkh@linuxfoundation.org, jirislaby@kernel.org, mturquette@baylibre.com, 
-	sboyd@kernel.org, richardcochran@gmail.com, wsa+renesas@sang-engineering.com, 
-	romain.sioen@microchip.com, Ryan.Wanner@microchip.com, 
-	lars.povlsen@microchip.com, tudor.ambarus@linaro.org, 
-	kavyasree.kotagiri@microchip.com, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-crypto@vger.kernel.org, dmaengine@vger.kernel.org, 
-	linux-hwmon@vger.kernel.org, linux-i2c@vger.kernel.org, 
-	netdev@vger.kernel.org, linux-gpio@vger.kernel.org, linux-spi@vger.kernel.org, 
-	linux-serial@vger.kernel.org, linux-usb@vger.kernel.org, 
-	linux-clk@vger.kernel.org, mwalle@kernel.org, luka.perkov@sartura.hr
+References: <20251209091115.8541-1-ovidiu.panait.rb@renesas.com> <20251209091115.8541-2-ovidiu.panait.rb@renesas.com>
+In-Reply-To: <20251209091115.8541-2-ovidiu.panait.rb@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 23 Dec 2025 11:40:38 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdX1QQWf4mTDRPgOdRGLttUMPewbRaq1GrksBK6xA-mi+Q@mail.gmail.com>
+X-Gm-Features: AQt7F2rxebZz2lpc976a4wNX_gG9-mxMoPf2hgGvnyD8PTUzp05nnW-kYeuYB18
+Message-ID: <CAMuHMdX1QQWf4mTDRPgOdRGLttUMPewbRaq1GrksBK6xA-mi+Q@mail.gmail.com>
+Subject: Re: [PATCH 1/3] dt-bindings: thermal: r9a09g047-tsu: Document RZ/V2N TSU
+To: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
+Cc: john.madieu.xa@bp.renesas.com, rafael@kernel.org, 
+	daniel.lezcano@linaro.org, rui.zhang@intel.com, lukasz.luba@arm.com, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	magnus.damm@gmail.com, mturquette@baylibre.com, sboyd@kernel.org, 
+	linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Dec 16, 2025 at 6:32=E2=80=AFPM Conor Dooley <conor@kernel.org> wro=
-te:
+On Tue, 9 Dec 2025 at 10:11, Ovidiu Panait <ovidiu.panait.rb@renesas.com> wrote:
+> The Renesas RZ/V2N SoC includes a Thermal Sensor Unit (TSU) block designed
+> to measure the junction temperature. The device provides real-time
+> temperature measurements for thermal management, utilizing two dedicated
+> channels for temperature sensing.
 >
-> On Mon, Dec 15, 2025 at 05:35:35PM +0100, Robert Marko wrote:
-> > Microchip EV23X71A board is an LAN9696 based evaluation board.
-> >
-> > Signed-off-by: Robert Marko <robert.marko@sartura.hr>
-> > ---
-> >  Documentation/devicetree/bindings/arm/microchip.yaml | 8 ++++++++
-> >  1 file changed, 8 insertions(+)
-> >
-> > diff --git a/Documentation/devicetree/bindings/arm/microchip.yaml b/Doc=
-umentation/devicetree/bindings/arm/microchip.yaml
-> > index 910ecc11d5d7..b20441edaac7 100644
-> > --- a/Documentation/devicetree/bindings/arm/microchip.yaml
-> > +++ b/Documentation/devicetree/bindings/arm/microchip.yaml
-> > @@ -239,6 +239,14 @@ properties:
-> >            - const: microchip,lan9668
-> >            - const: microchip,lan966
-> >
-> > +      - description: The LAN969x EVB (EV23X71A) is a 24x 1G + 4x 10G
-> > +          Ethernet development system board.
-> > +      - items:
-> > +          - enum:
-> > +              - microchip,ev23x71a
-> > +              - microchip,lan9696
+> The Renesas RZ/V2N SoC is using the same TSU IP found on the RZ/G3E SoC,
+> the only difference being that it has two channels instead of one.
 >
-> This looks wrong, unless "microchip,lan9696" is a board (which I suspect
-> it isn't).
-
-Hi,
-No, LAN9696 is the exact SoC SKU used on the board.
-I will drop it in v3.
-
-Regards
-Robert
+> Add new compatible string "renesas,r9a09g056-tsu" for RZ/V2N and use
+> "renesas,r9a09g047-tsu" as a fallback compatible to indicate hardware
+> compatibility with the RZ/G3E implementation.
 >
-> > +          - const: microchip,lan9691
-> > +
-> >        - description: The Sparx5 pcb125 board is a modular board,
-> >            which has both spi-nor and eMMC storage. The modular design
-> >            allows for connection of different network ports.
-> > --
-> > 2.52.0
-> >
+> Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
 
 
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
---=20
-Robert Marko
-Staff Embedded Linux Engineer
-Sartura d.d.
-Lendavska ulica 16a
-10000 Zagreb, Croatia
-Email: robert.marko@sartura.hr
-Web: www.sartura.hr
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
