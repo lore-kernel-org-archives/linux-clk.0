@@ -1,155 +1,372 @@
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61EB634F24A
-	for <linux-clk@vger.kernel.org>; Tue, 23 Dec 2025 15:29:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04B101DA62E;
+	Tue, 23 Dec 2025 15:53:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766503777; cv=none; b=odduQv0BZ4GzPdlArtjDW5UHk/Qy29NTG+CiE55yov6SLrnWwNqD1SQBtv0JoxEbB0sQrK3VieDD8fz/LSxDZMFSzVlOIZ8Sg79mAAsh0Ug30jREuwgvZvVP9VKvDdxiXQaFdASW3lE1lyu8UFLW9k+CTiA4YozE6wDA8IebCrQ=
+	t=1766505239; cv=none; b=FJ4Ab1+iJ29i0E+xseRRspbhWAOecXEX3/u8muLJaD7ucSDfbVEOdjdn/CzYFhLNGfR9/Lp0KmlOk+4mXnLRO8sV69BIrLt2wlX1hDBT8FvG9quDEZyAyXGolQrEW0AvZVTVYRRq50WvpYLbRDQcyUZodTPQFLdBtPVjCbvMsmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766503777; c=relaxed/simple;
-	bh=UJ4a8K9wry/JPIeGH5DwpGba6bA4R4gax6qub7x2SY4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aqLHEDi5fwEr1dnpAEYxBNmwQ6MtDjTL3inAU9Pv1U08SJA8iWRLRA0AQnFuZK6jEw1PdbLfU1oXuAKM2kT3nv4/53IxqbHPJmJbXGamr/xsCWFcaYVosAPqUOABe41/VrxOqC//UAB8cwS/trYFDbpZptlWWOrmXGtCVhnov9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sartura.hr; spf=pass smtp.mailfrom=sartura.hr; dkim=pass (2048-bit key) header.d=sartura.hr header.i=@sartura.hr header.b=lDOkL1Fy; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sartura.hr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sartura.hr
+	s=arc-20240116; t=1766505239; c=relaxed/simple;
+	bh=CZrJo1LdW7bruNZUu+2L6WzM2CBpusjxOX4oWgrjvAg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Eu+vsHFpeO4MEgYc8R7mt5tumgqWkZSi97f0B+6uNvI8BqZpIDapaiRvZ42XmfDDMvvYNvJ01OFr2MtqPdKT/iFg2i7f+gTpPoTR8qA8s7PimwVwEtuskwmQW55x1K4MR783dH1t5XfrLQPMY9UhTJ0ewcXikoIMea2w5O0XKoU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ML9nBi3A; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sartura.hr header.i=@sartura.hr header.b="lDOkL1Fy"
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-b727f452fffso986225566b.1
-        for <linux-clk@vger.kernel.org>; Tue, 23 Dec 2025 07:29:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sartura.hr; s=sartura; t=1766503774; x=1767108574; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cLjISIOInag6cJNCp9GAXmtvydDuwUZOD3O+6EuGMpA=;
-        b=lDOkL1FyHZFJ/9/OvPdkMyYxnkNuTkuKFAJlUBUCP6HN0MqcClWvGh955PsXfCG+TE
-         XTJ9K//mvDtqzzy+8UpL1y6RStVl9cIPSZrvePcdWuCn+ocgGrIKDtG9+54W1w2//ou8
-         OA5XU6YHOGYGLPwmx49l4TBtdurcyXq+U5KGyoNvmaVZMCeozr9d58t7zZ1j+zZEQDsh
-         Kf3pekwyW72hmnLuSoSmitxCpGyWf6IWLHLSubohN8Q1uFEJ0jlLdVAnxp2afKolq/Di
-         Hpo3XANTXWdDsDg7UaN6dPqi5wLfeRPeuisBuru1875FAqqqDaYDIxgxJJ2SJLG7SJGQ
-         +dlw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1766503774; x=1767108574;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=cLjISIOInag6cJNCp9GAXmtvydDuwUZOD3O+6EuGMpA=;
-        b=kfUOTOPyjBPc2TN+dnuZdww2ZWdqGOF7GE+4nHOe3y5uI6gCZTdqBulDJn3iRywVQJ
-         +HMGQV8scZg+VAU1Gmfa5Xf6iUu5PsBhoJUx3KRF30KKuL9Qx5yeM5uvQBhkm6pAvddS
-         Q6m6RUTpVrDvsW6deDrWUF2e9L79m7n/8HJfdniB+LFmXZa/K1obTiqA92ErMhWneerX
-         QdeEgqHej65nmEUD41JsFucB97oJl81m/F+b68sqhmGuxtNQiqZfNHTnEEeXsLi6WpyY
-         zv6SfdZVtmZwDk4c11TFo09dmqg86s+ceWVwVfrY2KNKXGolL9bLR7kCrOTpB0Iyo04d
-         RYvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUBJGAjoOWEaS9UUcnInw5Dh6O7hgRZzW+n2M5x1byNYDa9wRqwM3X57h3dK9pyB4vQV0YaYBI1DiU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2KaKd7ZgdUhK9/V6yRz5ZR8OpfTajipTgaax++8VQFFCkiaC0
-	BmqqKUWTAwKRVJIgE9sgQwxgJbguRuESFzxrITvmINrXfRsUShVMV1xP6A45bz+LvoBYRBfCt0y
-	ZVfunnms/Ay3jtPMwTmZ+5v5y3tYn9bzbw+cv/9PXRQ==
-X-Gm-Gg: AY/fxX4wONY8R5mNBw4O5TMuednMnGw1OvlCW6lGy7qF3UprfepaGZuH8ZsLJsRUiTt
-	7Tx0UlOdZDvNOfoBvRbzHj2j072EpC7tZuHuDfKnwuoFCA+2NN4sBzWSv3f4qnCEv99ysGi4oDA
-	p/qnJcS1yPjTaXSuNDMxLM83HepxunNFh08SrVC+EBfyceDKc4wGWrUaavjKhXWBXRq/YCuzXTE
-	afnPTYXhHY40scgRc9/WflSe8gwpr86fFWQWwVSjxxo0xDTyFFGinoTF0yrXyGp6V2QqW5DU6Bz
-	xUmpgilT8noD/NSQmBtfMSeZtzB8PLSyi0R/gVaFvismOIv+zg==
-X-Google-Smtp-Source: AGHT+IE+xxKz9WunQGu5xp3nWvZrKUFIZLNano4iauMvK7wBVyl981tNBySUR5mcD+g4BmTew6KluXuH/rQplznm+8E=
-X-Received: by 2002:a17:906:30d4:b0:b7c:cc8d:14f4 with SMTP id
- a640c23a62f3a-b8020400995mr1538956066b.4.1766503773539; Tue, 23 Dec 2025
- 07:29:33 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ML9nBi3A"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2644DC116C6;
+	Tue, 23 Dec 2025 15:53:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1766505238;
+	bh=CZrJo1LdW7bruNZUu+2L6WzM2CBpusjxOX4oWgrjvAg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ML9nBi3A2UxEqoBQvpJw2FYCOwagkl8EmF2lJKZv9Tf3x0t0MNrXw6kXbWS/7OV5C
+	 NrWKOpuV6HgLsf3UgsmQxITSXQMBv05/cmh9m5DAMTPnLz1ouHyKDKe2Wrtai7MmrO
+	 CCDhEltgaIINL00jfFxonf3Pi9bXQi/qkIX7l1g+gLeI2YXHpMAOG5BiPCmeqm+Qz9
+	 GuH3rWjCWp2lhyORyacmg9DJefht43b9N8eqdf/kHAul2ZVdlixE6PWzYfqw9c8zVd
+	 NhANqpA1pmGmX4CXVImx74zY/V0hyl5DmFeZPhZ/pSxc0uyQmlxNVhtDvfw4oxYhGQ
+	 A37UT8IbO3a1A==
+Date: Tue, 23 Dec 2025 21:23:55 +0530
+From: Vinod Koul <vkoul@kernel.org>
+To: =?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>
+Cc: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
+	=?iso-8859-1?Q?Gr=E9gory?= Clement <gregory.clement@bootlin.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	linux-mips@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	=?iso-8859-1?Q?Beno=EEt?= Monin <benoit.monin@bootlin.com>,
+	Tawfik Bayouk <tawfik.bayouk@mobileye.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>
+Subject: Re: [PATCH v5 2/7] phy: Add driver for EyeQ5 Ethernet PHY wrapper
+Message-ID: <aUq7E4yh0OgTfdxF@vaman>
+References: <20251215-macb-phy-v5-0-a9dfea39da34@bootlin.com>
+ <20251215-macb-phy-v5-2-a9dfea39da34@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251215163820.1584926-1-robert.marko@sartura.hr>
- <20251215163820.1584926-18-robert.marko@sartura.hr> <20251216-endorse-password-ae692dda5a9c@spud>
- <CA+HBbNF-=W7A3Joftsqn+A6s170sqOZ77jpS105s5HPqkskQzA@mail.gmail.com> <20251223-chrome-simile-8cf1e9afe155@spud>
-In-Reply-To: <20251223-chrome-simile-8cf1e9afe155@spud>
-From: Robert Marko <robert.marko@sartura.hr>
-Date: Tue, 23 Dec 2025 16:29:22 +0100
-X-Gm-Features: AQt7F2rjEyMDZrOpK1oplok3NPPf4ZxKJg97_UNzU27UIMOHDSKt5OOOHzhM_mA
-Message-ID: <CA+HBbNFhVVoaiVJtH-fB3Wmeh6O3C_H=bwz2vBDR2MO4o0qy_w@mail.gmail.com>
-Subject: Re: [PATCH v2 18/19] dt-bindings: arm: microchip: document EV23X71A board
-To: Conor Dooley <conor@kernel.org>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com, 
-	claudiu.beznea@tuxon.dev, Steen.Hegelund@microchip.com, 
-	daniel.machon@microchip.com, UNGLinuxDriver@microchip.com, 
-	herbert@gondor.apana.org.au, davem@davemloft.net, vkoul@kernel.org, 
-	linux@roeck-us.net, andi.shyti@kernel.org, lee@kernel.org, 
-	andrew+netdev@lunn.ch, edumazet@google.com, kuba@kernel.org, 
-	pabeni@redhat.com, linusw@kernel.org, olivia@selenic.com, 
-	radu_nicolae.pirea@upb.ro, richard.genoud@bootlin.com, 
-	gregkh@linuxfoundation.org, jirislaby@kernel.org, mturquette@baylibre.com, 
-	sboyd@kernel.org, richardcochran@gmail.com, wsa+renesas@sang-engineering.com, 
-	romain.sioen@microchip.com, Ryan.Wanner@microchip.com, 
-	lars.povlsen@microchip.com, tudor.ambarus@linaro.org, 
-	kavyasree.kotagiri@microchip.com, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-crypto@vger.kernel.org, dmaengine@vger.kernel.org, 
-	linux-hwmon@vger.kernel.org, linux-i2c@vger.kernel.org, 
-	netdev@vger.kernel.org, linux-gpio@vger.kernel.org, linux-spi@vger.kernel.org, 
-	linux-serial@vger.kernel.org, linux-usb@vger.kernel.org, 
-	linux-clk@vger.kernel.org, mwalle@kernel.org, luka.perkov@sartura.hr
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251215-macb-phy-v5-2-a9dfea39da34@bootlin.com>
 
-On Tue, Dec 23, 2025 at 3:43=E2=80=AFPM Conor Dooley <conor@kernel.org> wro=
-te:
->
-> On Tue, Dec 23, 2025 at 11:34:55AM +0100, Robert Marko wrote:
-> > On Tue, Dec 16, 2025 at 6:32=E2=80=AFPM Conor Dooley <conor@kernel.org>=
- wrote:
-> > >
-> > > On Mon, Dec 15, 2025 at 05:35:35PM +0100, Robert Marko wrote:
-> > > > Microchip EV23X71A board is an LAN9696 based evaluation board.
-> > > >
-> > > > Signed-off-by: Robert Marko <robert.marko@sartura.hr>
-> > > > ---
-> > > >  Documentation/devicetree/bindings/arm/microchip.yaml | 8 ++++++++
-> > > >  1 file changed, 8 insertions(+)
-> > > >
-> > > > diff --git a/Documentation/devicetree/bindings/arm/microchip.yaml b=
-/Documentation/devicetree/bindings/arm/microchip.yaml
-> > > > index 910ecc11d5d7..b20441edaac7 100644
-> > > > --- a/Documentation/devicetree/bindings/arm/microchip.yaml
-> > > > +++ b/Documentation/devicetree/bindings/arm/microchip.yaml
-> > > > @@ -239,6 +239,14 @@ properties:
-> > > >            - const: microchip,lan9668
-> > > >            - const: microchip,lan966
-> > > >
-> > > > +      - description: The LAN969x EVB (EV23X71A) is a 24x 1G + 4x 1=
-0G
-> > > > +          Ethernet development system board.
-> > > > +      - items:
-> > > > +          - enum:
-> > > > +              - microchip,ev23x71a
-> > > > +              - microchip,lan9696
-> > >
-> > > This looks wrong, unless "microchip,lan9696" is a board (which I susp=
-ect
-> > > it isn't).
-> >
-> > Hi,
-> > No, LAN9696 is the exact SoC SKU used on the board.
-> > I will drop it in v3.
->
-> Instead of dropping it, this should become an items list with 3 consts I
-> think.
+On 15-12-25, 17:26, Théo Lebrun wrote:
+> EyeQ5 embeds a system-controller called OLB. It features many unrelated
+> registers, and some of those are registers used to configure the
+> integration of the RGMII/SGMII Cadence PHY used by MACB/GEM instances.
+> 
+> Wrap in a neat generic PHY provider, exposing two PHYs with standard
+> phy_init() / phy_set_mode() / phy_power_on() operations.
+> 
+> Reviewed-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+> Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
+> ---
+>  MAINTAINERS                 |   1 +
+>  drivers/phy/Kconfig         |  13 +++
+>  drivers/phy/Makefile        |   1 +
+>  drivers/phy/phy-eyeq5-eth.c | 249 ++++++++++++++++++++++++++++++++++++++++++++
+>  4 files changed, 264 insertions(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 5b11839cba9d..2f67ec9fad57 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -17605,6 +17605,7 @@ F:	arch/mips/boot/dts/mobileye/
+>  F:	arch/mips/configs/eyeq5_defconfig
+>  F:	arch/mips/mobileye/board-epm5.its.S
+>  F:	drivers/clk/clk-eyeq.c
+> +F:	drivers/phy/phy-eyeq5-eth.c
+>  F:	drivers/pinctrl/pinctrl-eyeq5.c
+>  F:	drivers/reset/reset-eyeq.c
+>  F:	include/dt-bindings/clock/mobileye,eyeq5-clk.h
+> diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
+> index 678dd0452f0a..1aa6eff12dbc 100644
+> --- a/drivers/phy/Kconfig
+> +++ b/drivers/phy/Kconfig
+> @@ -101,6 +101,19 @@ config PHY_NXP_PTN3222
+>  	  schemes. It supports all three USB 2.0 data rates: Low Speed, Full
+>  	  Speed and High Speed.
+>  
+> +config PHY_EYEQ5_ETH
 
-Ok, that lines up with what other boards in the binding do, will do that in=
- v3.
+sorted please
 
-Regards,
-Robert
+> +	tristate "Ethernet PHY Driver on EyeQ5"
+> +	depends on OF
+> +	depends on MACH_EYEQ5 || COMPILE_TEST
+> +	select AUXILIARY_BUS
+> +	select GENERIC_PHY
+> +	default MACH_EYEQ5
 
+hmmm why should it be default? Maybe add this is respective defconfig for
+platform instead..?
 
+> +	help
+> +	  Enable this to support the Ethernet PHY integrated on EyeQ5.
+> +	  It supports both RGMII and SGMII. Registers are located in a
+> +	  shared register region called OLB. If M is selected, the
+> +	  module will be called phy-eyeq5-eth.
+> +
+>  source "drivers/phy/allwinner/Kconfig"
+>  source "drivers/phy/amlogic/Kconfig"
+>  source "drivers/phy/broadcom/Kconfig"
+> diff --git a/drivers/phy/Makefile b/drivers/phy/Makefile
+> index bfb27fb5a494..8289497ece55 100644
+> --- a/drivers/phy/Makefile
+> +++ b/drivers/phy/Makefile
+> @@ -13,6 +13,7 @@ obj-$(CONFIG_PHY_SNPS_EUSB2)		+= phy-snps-eusb2.o
+>  obj-$(CONFIG_USB_LGM_PHY)		+= phy-lgm-usb.o
+>  obj-$(CONFIG_PHY_AIROHA_PCIE)		+= phy-airoha-pcie.o
+>  obj-$(CONFIG_PHY_NXP_PTN3222)		+= phy-nxp-ptn3222.o
+> +obj-$(CONFIG_PHY_EYEQ5_ETH)		+= phy-eyeq5-eth.o
 
---=20
-Robert Marko
-Staff Embedded Linux Engineer
-Sartura d.d.
-Lendavska ulica 16a
-10000 Zagreb, Croatia
-Email: robert.marko@sartura.hr
-Web: www.sartura.hr
+sorted please
+
+>  obj-y					+= allwinner/	\
+>  					   amlogic/	\
+>  					   broadcom/	\
+> diff --git a/drivers/phy/phy-eyeq5-eth.c b/drivers/phy/phy-eyeq5-eth.c
+> new file mode 100644
+> index 000000000000..6e28f7e24835
+> --- /dev/null
+> +++ b/drivers/phy/phy-eyeq5-eth.c
+> @@ -0,0 +1,249 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +
+> +#include <linux/auxiliary_bus.h>
+> +#include <linux/bitfield.h>
+> +#include <linux/bits.h>
+> +#include <linux/delay.h>
+> +#include <linux/device.h>
+> +#include <linux/err.h>
+> +#include <linux/errno.h>
+> +#include <linux/gfp_types.h>
+> +#include <linux/init.h>
+> +#include <linux/io.h>
+> +#include <linux/iopoll.h>
+> +#include <linux/mod_devicetable.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/phy.h>
+> +#include <linux/phy/phy.h>
+> +#include <linux/slab.h>
+> +#include <linux/types.h>
+> +
+> +#define EQ5_PHY_COUNT	2
+> +
+> +#define EQ5_PHY0_GP	0x128
+> +#define EQ5_PHY1_GP	0x12c
+> +#define EQ5_PHY0_SGMII	0x134
+> +#define EQ5_PHY1_SGMII	0x138
+> +
+> +#define EQ5_GP_TX_SWRST_DIS	BIT(0)		// Tx SW reset
+> +#define EQ5_GP_TX_M_CLKE	BIT(1)		// Tx M clock enable
+> +#define EQ5_GP_SYS_SWRST_DIS	BIT(2)		// Sys SW reset
+> +#define EQ5_GP_SYS_M_CLKE	BIT(3)		// Sys clock enable
+> +#define EQ5_GP_SGMII_MODE	BIT(4)		// SGMII mode
+> +#define EQ5_GP_RGMII_DRV	GENMASK(8, 5)	// RGMII drive strength
+> +
+> +#define EQ5_SGMII_PWR_EN	BIT(0)
+> +#define EQ5_SGMII_RST_DIS	BIT(1)
+> +#define EQ5_SGMII_PLL_EN	BIT(2)
+> +#define EQ5_SGMII_SIG_DET_SW	BIT(3)
+> +#define EQ5_SGMII_PWR_STATE	BIT(4)
+> +#define EQ5_SGMII_PLL_ACK	BIT(18)
+> +#define EQ5_SGMII_PWR_STATE_ACK	GENMASK(24, 20)
+> +
+> +struct eq5_phy_inst {
+> +	struct eq5_phy_private	*priv;
+> +	struct phy		*phy;
+> +	void __iomem		*gp, *sgmii;
+> +	phy_interface_t		phy_interface;
+> +};
+> +
+> +struct eq5_phy_private {
+> +	struct device		*dev;
+> +	struct eq5_phy_inst	phys[EQ5_PHY_COUNT];
+> +};
+> +
+> +static int eq5_phy_init(struct phy *phy)
+> +{
+> +	struct eq5_phy_inst *inst = phy_get_drvdata(phy);
+> +	struct eq5_phy_private *priv = inst->priv;
+> +	struct device *dev = priv->dev;
+> +	u32 reg;
+> +
+> +	dev_dbg(dev, "phy_init(inst=%td)\n", inst - priv->phys);
+> +
+> +	writel(0, inst->gp);
+> +	writel(0, inst->sgmii);
+> +
+> +	udelay(5);
+> +
+> +	reg = readl(inst->gp) | EQ5_GP_TX_SWRST_DIS | EQ5_GP_TX_M_CLKE |
+> +	      EQ5_GP_SYS_SWRST_DIS | EQ5_GP_SYS_M_CLKE |
+> +	      FIELD_PREP(EQ5_GP_RGMII_DRV, 0x9);
+> +	writel(reg, inst->gp);
+> +
+> +	return 0;
+> +}
+> +
+> +static int eq5_phy_exit(struct phy *phy)
+> +{
+> +	struct eq5_phy_inst *inst = phy_get_drvdata(phy);
+> +	struct eq5_phy_private *priv = inst->priv;
+> +	struct device *dev = priv->dev;
+> +
+> +	dev_dbg(dev, "phy_exit(inst=%td)\n", inst - priv->phys);
+> +
+> +	writel(0, inst->gp);
+> +	writel(0, inst->sgmii);
+> +	udelay(5);
+
+this is same patter in init as well...?
+
+> +
+> +	return 0;
+> +}
+> +
+> +static int eq5_phy_set_mode(struct phy *phy, enum phy_mode mode, int submode)
+> +{
+> +	struct eq5_phy_inst *inst = phy_get_drvdata(phy);
+> +	struct eq5_phy_private *priv = inst->priv;
+> +	struct device *dev = priv->dev;
+> +
+> +	dev_dbg(dev, "phy_set_mode(inst=%td, mode=%d, submode=%d)\n",
+> +		inst - priv->phys, mode, submode);
+
+these are good for debug but not for upstream, please drop
+
+> +
+> +	if (mode != PHY_MODE_ETHERNET)
+> +		return -EOPNOTSUPP;
+> +
+> +	if (!phy_interface_mode_is_rgmii(submode) &&
+> +	    submode != PHY_INTERFACE_MODE_SGMII)
+> +		return -EOPNOTSUPP;
+> +
+> +	inst->phy_interface = submode;
+> +	return 0;
+> +}
+> +
+> +static int eq5_phy_power_on(struct phy *phy)
+> +{
+> +	struct eq5_phy_inst *inst = phy_get_drvdata(phy);
+> +	struct eq5_phy_private *priv = inst->priv;
+> +	struct device *dev = priv->dev;
+> +	u32 reg;
+> +
+> +	dev_dbg(dev, "phy_power_on(inst=%td)\n", inst - priv->phys);
+> +
+> +	if (inst->phy_interface == PHY_INTERFACE_MODE_SGMII) {
+> +		writel(readl(inst->gp) | EQ5_GP_SGMII_MODE, inst->gp);
+> +
+> +		reg = EQ5_SGMII_PWR_EN | EQ5_SGMII_RST_DIS | EQ5_SGMII_PLL_EN;
+> +		writel(reg, inst->sgmii);
+> +
+> +		if (readl_poll_timeout(inst->sgmii, reg,
+> +				       reg & EQ5_SGMII_PLL_ACK, 1, 100)) {
+> +			dev_err(dev, "PLL timeout\n");
+> +			return -ETIMEDOUT;
+> +		}
+> +
+> +		reg = readl(inst->sgmii);
+> +		reg |= EQ5_SGMII_PWR_STATE | EQ5_SGMII_SIG_DET_SW;
+> +		writel(reg, inst->sgmii);
+> +	} else {
+> +		writel(readl(inst->gp) & ~EQ5_GP_SGMII_MODE, inst->gp);
+> +		writel(0, inst->sgmii);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int eq5_phy_power_off(struct phy *phy)
+> +{
+> +	struct eq5_phy_inst *inst = phy_get_drvdata(phy);
+> +	struct eq5_phy_private *priv = inst->priv;
+> +	struct device *dev = priv->dev;
+> +
+> +	dev_dbg(dev, "phy_power_off(inst=%td)\n", inst - priv->phys);
+> +
+> +	writel(readl(inst->gp) & ~EQ5_GP_SGMII_MODE, inst->gp);
+> +	writel(0, inst->sgmii);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct phy_ops eq5_phy_ops = {
+> +	.init		= eq5_phy_init,
+> +	.exit		= eq5_phy_exit,
+> +	.set_mode	= eq5_phy_set_mode,
+> +	.power_on	= eq5_phy_power_on,
+> +	.power_off	= eq5_phy_power_off,
+> +};
+> +
+> +static struct phy *eq5_phy_xlate(struct device *dev,
+> +				 const struct of_phandle_args *args)
+> +{
+> +	struct eq5_phy_private *priv = dev_get_drvdata(dev);
+> +
+> +	if (args->args_count != 1 || args->args[0] >= EQ5_PHY_COUNT)
+> +		return ERR_PTR(-EINVAL);
+> +
+> +	return priv->phys[args->args[0]].phy;
+> +}
+> +
+> +static int eq5_phy_probe_phy(struct eq5_phy_private *priv, unsigned int index,
+> +			     void __iomem *base, unsigned int gp,
+> +			     unsigned int sgmii)
+> +{
+> +	struct eq5_phy_inst *inst = &priv->phys[index];
+> +	struct device *dev = priv->dev;
+> +	struct phy *phy;
+> +
+> +	phy = devm_phy_create(dev, dev->of_node, &eq5_phy_ops);
+> +	if (IS_ERR(phy))
+> +		return dev_err_probe(dev, PTR_ERR(phy),
+> +				     "failed to create PHY %u\n", index);
+> +
+> +	inst->priv = priv;
+> +	inst->phy = phy;
+> +	inst->gp = base + gp;
+> +	inst->sgmii = base + sgmii;
+> +	inst->phy_interface = PHY_INTERFACE_MODE_NA;
+> +	phy_set_drvdata(phy, inst);
+> +
+> +	return 0;
+> +}
+> +
+> +static int eq5_phy_probe(struct auxiliary_device *adev,
+> +			 const struct auxiliary_device_id *id)
+> +{
+> +	struct device *dev = &adev->dev;
+> +	struct phy_provider *provider;
+> +	struct eq5_phy_private *priv;
+> +	void __iomem *base;
+> +	int ret;
+> +
+> +	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+> +	if (!priv)
+> +		return -ENOMEM;
+> +
+> +	priv->dev = dev;
+> +	dev_set_drvdata(dev, priv);
+> +
+> +	base = (void __iomem *)dev_get_platdata(dev);
+
+no need to cast for void *
+-- 
+~Vinod
