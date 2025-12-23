@@ -1,30 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C2A530E0D8;
-	Tue, 23 Dec 2025 12:47:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 644721531C8;
+	Tue, 23 Dec 2025 12:47:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766494062; cv=none; b=NJ/nctXX7F03oGyDWCevb2GeX17I3yFHlevPRrmCoCvIW6jXM6L6MhmtyaWZEwJrm8mynrV9Ko/YD6oMWVaD/XTwYVIHUJqwm7G/OPPPe9RtCTvkT/wsAh3wjCIhunifs32AdGkHVhQ3SzrpFLRRVyCupqPlRMFWw1UJiUqh+hg=
+	t=1766494068; cv=none; b=B/6NXyn4yB7nKkososT5VQx1AbYBbW8KXj+GWVfBI0oUofuBsXKxCJwmYkLq1beBFUQdP3Gie89bt7sH62GME1eH36JLiHjZQ0EM9hgckoU4sEW9OJW3a9ViUmd2w64A8XJ4Cf5AhRpeDZVrM4dzCx4wH4YFWDPhjR6lodiYtj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766494062; c=relaxed/simple;
-	bh=vIDLcNDvZkN5LTCFnFI3qztjOOsnOhIPYziKgleG5U4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UXiBa2yMgO+61Tv0jijTozbwGfDtYaO0DtvguzsP6c0L3Nwkh9XUOBgg3hxqy0+fg+RrCXPacPWX5Q6MGs+jrb2GuPW3wlZLEePrcpgeyzUj4E8H1sn+jxnNLNJgXTBmJ7/SiUUToLTy9gPHa1hkgBgebgvlPbKNJoiBcfv4V1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nS/LYUGG; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1766494068; c=relaxed/simple;
+	bh=2MjDtfXLypEJRTDTl8IzvcRwXY4LSxBOkoiWuhZLK/c=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=p0vtCqJi/eFoEoQ7FMr0FwSln6EyuveKIPeeOhQGghJbb0EBzkTxpS9HrYHQw5+ETZjTBFJrKYAYAyNKkLde3ahoI7RRkYXL2tjZMja68z7FrlUKyxwvyPMC4vzEYk7hn8EFnWROONEh8Y6cCVlO0K2f+V2WQCygXdgEuF8u9iU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u/xMO7Nw; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nS/LYUGG"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECD6EC113D0;
-	Tue, 23 Dec 2025 12:47:36 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u/xMO7Nw"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E2EDC116C6;
+	Tue, 23 Dec 2025 12:47:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1766494061;
-	bh=vIDLcNDvZkN5LTCFnFI3qztjOOsnOhIPYziKgleG5U4=;
-	h=From:To:Cc:Subject:Date:From;
-	b=nS/LYUGG3bQWx8kgoisYWGHKKh0DWJMRI4/JUwCUzxuCqJhdEffcw8bQ6NJDCLArK
-	 +yD6VkIsifDT4qNnKcj9Y318Gr+O0v8AdqXcjAnSPubjbv3c2DSqAw/x83DeYTgl8A
-	 cTuhu28oH0JFPZn0F5NDPomxfJfbHUnfowah+2KMDXlDg2Td4MsdMTvD8XXuK2xDsI
-	 azj/89k4Qgct2+VIjwZKvEweKsuNrW37HxfPtjBMb0FDBRruLcHNo6B4ek8cvv4QT3
-	 /A/B5HnDGrZgFKBHz9thgkbQkT2EyxyH1qB/r/kDXAiispTT/+youTbGrEvK3FeCHe
-	 pWTuHBusy9TSQ==
+	s=k20201202; t=1766494066;
+	bh=2MjDtfXLypEJRTDTl8IzvcRwXY4LSxBOkoiWuhZLK/c=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=u/xMO7Nw3t3IKgf7oRNo8bj7RH9qndcM/dAQAGbmZiPkooJ0K4tsMdl+JnfF1FmoU
+	 px3VoHsX5JNFtyIcOvePmF15TGIUSD90DN9EQ0sdmmq345AS69CX+KI7FEz6FEpG3q
+	 zNIDJKg9jWU7X/ArBmIuFsB1wZs6wNeA7R5p1p7ykjTaKei7TLSNn/b4iR8wb3W/wj
+	 fqc6ImWdPssVqoUjrok/PQ88iquzXfa/AERl89HenBCD7OVvAWG44AUOQIOel+BsEW
+	 AmV5Hspqhp3BgCCdpmE/mQikQwBQALq2sq4FSS5ccQ0uZt64MsBiJyWJZjcwWoyT2j
+	 D8g5SnmSMLvJA==
 From: Michael Walle <mwalle@kernel.org>
 To: Frank Binns <frank.binns@imgtec.com>,
 	Matt Coster <matt.coster@imgtec.com>,
@@ -50,11 +51,14 @@ Cc: linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	Michael Walle <mwalle@kernel.org>
-Subject: [PATCH v2 0/4] drm/imagination: add AM62P/AM67A/J722S support
-Date: Tue, 23 Dec 2025 13:47:12 +0100
-Message-ID: <20251223124729.2482877-1-mwalle@kernel.org>
+	Michael Walle <mwalle@kernel.org>,
+	Conor Dooley <conor.dooley@microchip.com>
+Subject: [PATCH v2 1/4] dt-bindings: gpu: img: Add AM62P SoC specific compatible
+Date: Tue, 23 Dec 2025 13:47:13 +0100
+Message-ID: <20251223124729.2482877-2-mwalle@kernel.org>
 X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20251223124729.2482877-1-mwalle@kernel.org>
+References: <20251223124729.2482877-1-mwalle@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -63,47 +67,35 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The AM62P and AM67A/J722S feature the same BXS-4 GPU as the J721S2.
-In theory, one have to just add the DT node. But it turns out, that
-the clock handling is not working. If I understood Nishan Menon
-correct, it is working on the J721S2 because there, the clock is
-shared, while on the AM62P the GPU has its own PLL.
-In the latter case, the driver will fail with a WARN() because the
-queried clock rate is zero due to a wrong cached value.
+The AM62P and the J722S features the same BXS-4 GPU as the J721S2. Add a
+new SoC specific compatible.
 
-This was tested on the sa67 board which is based on the AM67A SoC.
+Signed-off-by: Michael Walle <mwalle@kernel.org>
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+---
+ Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-v2:
- - collect ACKs
- - rebase onto latest -next
- - new patch which enables 800MHz operation for the sa67 board
-
-v1:
- - https://lore.kernel.org/r/20250915143440.2362812-1-mwalle@kernel.org/
- - Don't set the clock to 800MHz in the soc dtsi. 800MHz is only
-   possible if the core voltage is 0.85V. Just use the hardware
-   default of 720MHz. A board device tree can set the 800MHz if
-   applicable. Thanks Nishan.
- - Also add the new compatible to a conditional in the DT schema.
-   Thanks Andrew.
- - Dropped the wrong of_clk_set_defaults() and instead disable
-   caching of the clock rate.
-
-RFC:
- - https://lore.kernel.org/r/20250716134717.4085567-1-mwalle@kernel.org/
-
-Michael Walle (4):
-  dt-bindings: gpu: img: Add AM62P SoC specific compatible
-  clk: keystone: don't cache clock rate
-  arm64: dts: ti: add GPU node
-  arm64: dts: ti: sa67: set the GPU clock to 800MHz
-
- .../devicetree/bindings/gpu/img,powervr-rogue.yaml    |  2 ++
- .../arm64/boot/dts/ti/k3-am62p-j722s-common-main.dtsi | 11 +++++++++++
- arch/arm64/boot/dts/ti/k3-am67a-kontron-sa67-base.dts |  6 ++++++
- drivers/clk/keystone/sci-clk.c                        |  8 ++++++++
- 4 files changed, 27 insertions(+)
-
+diff --git a/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml b/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
+index 86ef68985317..a1f54dbae3f3 100644
+--- a/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
++++ b/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
+@@ -40,6 +40,7 @@ properties:
+           - const: img,img-rogue
+       - items:
+           - enum:
++              - ti,am62p-gpu
+               - ti,j721s2-gpu
+           - const: img,img-bxs-4-64
+           - const: img,img-rogue
+@@ -100,6 +101,7 @@ allOf:
+           contains:
+             enum:
+               - ti,am62-gpu
++              - ti,am62p-gpu
+               - ti,j721s2-gpu
+     then:
+       properties:
 -- 
 2.47.3
 
