@@ -1,65 +1,65 @@
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF7FD352951
-	for <linux-clk@vger.kernel.org>; Tue, 23 Dec 2025 20:21:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67D9F354AE2
+	for <linux-clk@vger.kernel.org>; Tue, 23 Dec 2025 20:21:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766521262; cv=none; b=aFFusX1jeacXHK5CeWYrUx6jrSSJg1gOt4J5l/QxQ7IUsWv43XhI6wI2P/WhbU0k5O8YAaotyaBafUUasvB5D0hLT62bMRbOqF4clvlnLrM4rVdQBfgBbb4EgBlSdpVdJwMS8517dmGSBrmFam/aT39oaPjVSTNKp9wNoOs300s=
+	t=1766521271; cv=none; b=cLtURluUJk+ufNjWFCeHpp8yTgwSn9pgWjcMeUZ0zXFn1IEtkapDsdc6TCbSzi0OQo8xy/AXQlvl7fF02SygWFzKpduvjK+3P2mOoccMwxsb89KBszLqWilFNP9lia7bqsnawQ+Gm1HuuttsxSmXR0kaa9ePtF9H2wHJcZZQLRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766521262; c=relaxed/simple;
-	bh=7hKH5EzmH1tw2QTQXNXPEJl0sVHK/le/PcpUxmqe6fQ=;
+	s=arc-20240116; t=1766521271; c=relaxed/simple;
+	bh=7jtkvldmPSo6tJBxZSibRZu5hmUTyLaiO8iQq/Sa4wg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OeWil4jPzHk+npTTpr+f5OiFPznIvaim8zLF8u4Mwpim6KCv64x2+PC4Mp9Q4ALZ+nB72cW/5xJp3YBP9bKDKiTZCiBqRAiEDV3PzhiHI3pkoffHJ1kNEMDD4qE9Pey9Hf34gcbENLkHEJEODlFXo0X8WU0ZZhzdyoz3galCcdI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sartura.hr; spf=pass smtp.mailfrom=sartura.hr; dkim=pass (2048-bit key) header.d=sartura.hr header.i=@sartura.hr header.b=qEXm32uj; arc=none smtp.client-ip=209.85.210.175
+	 MIME-Version; b=FhwAc8CM/+/rARVJnnUNXYaAQjDDDmYBGGFNseIxpRcGAX+pPwh+ERRC/T9YiLb3j9cCwHlaRW88kMRXGRsIBTcfWwI/kaN1KUScJ2PfdJWHkdsvZHIem6AS2XD4WIt5mLGeKuwd7j5D/5jl1e8OeMWE8atg46gdkqUB46BLHLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sartura.hr; spf=pass smtp.mailfrom=sartura.hr; dkim=pass (2048-bit key) header.d=sartura.hr header.i=@sartura.hr header.b=ojfFSlET; arc=none smtp.client-ip=209.85.214.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sartura.hr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sartura.hr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sartura.hr header.i=@sartura.hr header.b="qEXm32uj"
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-7b8bbf16b71so5324265b3a.2
-        for <linux-clk@vger.kernel.org>; Tue, 23 Dec 2025 12:21:00 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=sartura.hr header.i=@sartura.hr header.b="ojfFSlET"
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2a07f8dd9cdso57888405ad.1
+        for <linux-clk@vger.kernel.org>; Tue, 23 Dec 2025 12:21:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sartura.hr; s=sartura; t=1766521260; x=1767126060; darn=vger.kernel.org;
+        d=sartura.hr; s=sartura; t=1766521269; x=1767126069; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=MElNA+evLW3q9gh9PLqoqAuYhUoiUgxuy1qDVWGw3Ao=;
-        b=qEXm32uj1+odh+mia+XgDAG39bxsV8BBnWSP0gbyH5RJhUfEzyjInuhiC1FtX9Wppx
-         KLxk0YDYruP0rpIpgefdNHqLi8+C65Db06vxmizhWFJNlUeyE4PALzO+idf0NA0jEvMt
-         4bfGeG4K9boAoeBljyhuYdHQPXx1fzDNbBeLm+/ymuEu2mywxvu0nFbFozqKna0aW5o9
-         UF/l+z+RE/wWwKcEoAMBfnOLbiRWzz5O8Ua1eIoWr08agzCuSQBanUqTE3b4fvbRKl4J
-         RwJDjpDIeBb/IhuLWShFAWC3/IHBkQBxlolO5/7LijryExtWwxx8zreGCz/caCv02scj
-         QTrQ==
+        bh=ZY5t/vT8/2JoNFBpsoZEjWJnrTyKVma3HFBR0NVkIKs=;
+        b=ojfFSlET0cv79OaTDF1oKOqUXItgurMOgYcFv8b26PVp6292pJdfQ79anRb5B1+0uZ
+         crU6noIRI5hrwH6+UBj3tgm9TBiCgBtq1MFeUM+P/kFaGiC3sxHi5NwmveHrG+90Fq5o
+         +fRaB9u1u9Ldhg65JUonooSLko3zOgChDlBBUota2eUoVVNbVpEE9ZJhAK4YnlT13kuZ
+         E8AIksIE7PjEyyrs7wStSwLN6vio4NMCgjATLzIr7LsdS7PcEQ/s8WsI174oVmnIoh9i
+         daQbQa+9rLjpjcUf7Tgx8EBLVVp9f44DfK0v7fmYSVhOHs9bQMd6l9J1qZdOOXgjmz0K
+         NS9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1766521260; x=1767126060;
+        d=1e100.net; s=20230601; t=1766521269; x=1767126069;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=MElNA+evLW3q9gh9PLqoqAuYhUoiUgxuy1qDVWGw3Ao=;
-        b=hQSYKY0zMsTVDnN9NXiODjmdVVwi7GCJgQ8qKtF8pHZ2w1mWy6E+mAwtiH809r6ZNU
-         5Sy9W9dvagdK8yYtvpgS7x+h8uq4F3sMG2Csr3YN9w2TxMUyTnnJ1l6JVc076JxLdVM7
-         NBQ8Vt1xVU+6l2GjsZaOz6Z5DeH56c8C/2K5VRw93l4cvUxNHSVbixkbuIqX/1z9rLGV
-         QEGcT+gy5w27vpv5cXFSsxnuUzcsjW3cdId2Mm8+Fy6mUX1/xOkytgmmZQgKpyJhCPOO
-         RZggRlLmlEIFLI5XMqKp3DBhl2yZ/HzyYK7ORxXsZnC+DgAmtbgcTa6h/BAQOK8g9GRM
-         Pk2g==
-X-Forwarded-Encrypted: i=1; AJvYcCU1nE/rPWW21LR/qho9jy08kh35fqIussE1YbNf6IRYERdUTjP59VWgVl0Hpw81DlFEgRVjZeqWwKg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YydHp8XA0NsJ7Cir51nhIqlk9FnK+GEUnvvGoKkEPMr6jIlxpDk
-	AdvKoxixHhLy58kO0Ry6n8A1M0LHBwJ2M/cNplvkM1dUt2FEvvb5qe8USHuZa1H+S8g=
-X-Gm-Gg: AY/fxX7WzSFgLHL+9cbEOnWzcGUo6PwtnevTSOXSQLKg17aiMwj5cBIm/uXYYF5Wm6U
-	/H81ubQ6nTsHwMFdbD4MFC2ttOehT49RYdK7BvU1wS+SsVr64dm2wL7u4Y5HnwuwP2NVbYMVuCY
-	rPkF9RrP8ZnLqn2N1FRir1AkX0bFnfW+QQwP3ChUEfaY+MbYwxs9lRNEs+BrUjSr2LESyVhg9PI
-	fFjyZT05pgGmQrxKGfgqlhAEH+HPVx1qva0+CGyufyFKPaX8rPyBS/6ZGq/2jGtxUYsD6LCXOe9
-	+Bd+Tl2NIfjTXu9XEntTToaYjChPMjWYNv1wi3jAq3wVsvHwUuXUjBuQoO7qsXoZqKuRJ4pgUzl
-	NZHnyv9ZhggF9L0aTliGaSt8vNTBPQjppjcXa2zydWXacT7lGKjDsNa2N80s2fOeOrwJxnZSVRL
-	leMqRARx4ZeIydDM30CrR68vZFagblhG6D3l2+lEADAdazE2z1Rr7fEM8lQeOfuvTLE2BVUMITK
-	CqjiSe0
-X-Google-Smtp-Source: AGHT+IHKfwHDjFbBjFoOP1ZNZG2yYIy8Xdi86MslAqVbrnS76U8emwCJO7CURd8duOcxnItzlu++Ng==
-X-Received: by 2002:a05:6a20:7289:b0:366:1880:7e06 with SMTP id adf61e73a8af0-376a5449622mr15082294637.0.1766521260025;
-        Tue, 23 Dec 2025 12:21:00 -0800 (PST)
+        bh=ZY5t/vT8/2JoNFBpsoZEjWJnrTyKVma3HFBR0NVkIKs=;
+        b=bGsq9RBXBi85fu17ACdGoOC2PiCJhBM/9VoaEj7aS+X/IjyAiLJr77bn1DUenbcsX3
+         ZK8pzHdf07zrh5mZj1YQqbrOSFx7xFHdUB32HkA4vEs2qoE3cVmDrn2Peo/tjYlNXAh1
+         +hwv6aYy8/s2CL4NNUJMQofzEGo1PJJPDFI8QDqEbW7wfsjmqqO5GnLJUBGGhADYjFgv
+         z0UMtiSRxZN2Z235vVlCAvZe4bWbJaflksQ+CyBqmLgXggy4szCBsc+pwYliWQCfvwfQ
+         b05rXoafCRBUQY51uD5C+Ob+fLS+e8e9BdH91kVngaVHsX+SXoiQ111PNViCkl5Mge/F
+         vz/g==
+X-Forwarded-Encrypted: i=1; AJvYcCXOTTvenspDIW33IFCRw+7dHDJZ+eEpl1yXxyVx/Gu98xM/1dYRaP8I7ZpCdCF2x6CAtvFP1MX2YRY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YztrducFbJ4MamFPvx83kREU31WWPQI8pWI+PFxmZsY6LGZOhmx
+	Q/LxgOlrOQp09cr9vrdwpkeBv0frYF+nG6f7ckBTyLePm83BJfvCA2ATkS/zPXRlg+I=
+X-Gm-Gg: AY/fxX5giizXdYGXRQHKfto/r0nhp2n6ugtgxi9tdPnPmNUOrp/3xlLKd7sO0bM69mW
+	fbROxooW/KOSsnnvIZ6BhqVK/DA8w4VJBXo8kIIOKGV50T9Whhh5XOB3crdne3KFSEHhlZUQCt2
+	k9EjgE8DkZhA+64cvCXBOG6j9rV1YA8d0DEvv+opqVLlJL8P3P/0XTu+ERZ+TDRxDVkyKkmjc/V
+	qSnmJas/NT3eZBHDxjG4f5UJaky0poqEIeJEBXuu6tLUb5gP+rvYYJAMoYA95BnUW4OBl8fR6lq
+	vkoq+TxVRgMRimJwa5jm4EzcIUO8/eL6YW9D0d8C50uKixJ8JXRWTxP1Y/pgw3bKkPChiNaeUmU
+	lo56ANQIpOSUMQVybUqKXYg2DzdKBWc60YDuylfn9n8hcx/wfJ6ABz/mSyfkbdgH3WCsZFr+T6x
+	XlcIP1jH0tWTCBW4OMS/NBxn/NM0O1yD0FCYbpJTNcvvKXPRDBrPf48bJTWYdt2EOxK0B7d17sV
+	/O9iKNpgFgGmcoawlc=
+X-Google-Smtp-Source: AGHT+IG1vVzPBAn5k790jfykavL0vRFl8+h9Eo75I4DE3aZwMJ8QtXRL/RgKMb5SBrHdzfjqO29A2w==
+X-Received: by 2002:a17:902:ccc4:b0:2a2:f0cb:dfa2 with SMTP id d9443c01a7336-2a2f222a763mr171273565ad.13.1766521268730;
+        Tue, 23 Dec 2025 12:21:08 -0800 (PST)
 Received: from fedora (dh207-15-53.xnet.hr. [88.207.15.53])
-        by smtp.googlemail.com with ESMTPSA id 41be03b00d2f7-c1e7cbfa619sm12567549a12.36.2025.12.23.12.20.51
+        by smtp.googlemail.com with ESMTPSA id 41be03b00d2f7-c1e7cbfa619sm12567549a12.36.2025.12.23.12.21.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Dec 2025 12:20:59 -0800 (PST)
+        Tue, 23 Dec 2025 12:21:08 -0800 (PST)
 From: Robert Marko <robert.marko@sartura.hr>
 To: robh@kernel.org,
 	krzk+dt@kernel.org,
@@ -102,11 +102,10 @@ To: robh@kernel.org,
 	linux-usb@vger.kernel.org,
 	linux-clk@vger.kernel.org
 Cc: luka.perkov@sartura.hr,
-	Robert Marko <robert.marko@sartura.hr>,
-	Conor Dooley <conor.dooley@microchip.com>
-Subject: [PATCH v3 09/15] dt-bindings: crypto: atmel,at91sam9g46-sha: add microchip,lan9691-sha
-Date: Tue, 23 Dec 2025 21:16:20 +0100
-Message-ID: <20251223201921.1332786-10-robert.marko@sartura.hr>
+	Robert Marko <robert.marko@sartura.hr>
+Subject: [PATCH v3 10/15] dt-bindings: dma: atmel: add microchip,lan9691-dma
+Date: Tue, 23 Dec 2025 21:16:21 +0100
+Message-ID: <20251223201921.1332786-11-robert.marko@sartura.hr>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20251223201921.1332786-1-robert.marko@sartura.hr>
 References: <20251223201921.1332786-1-robert.marko@sartura.hr>
@@ -118,29 +117,32 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Document Microchip LAN969x SHA compatible.
+Document Microchip LAN969x DMA compatible which is compatible to SAMA7G5.
 
 Signed-off-by: Robert Marko <robert.marko@sartura.hr>
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
 ---
 Changes in v3:
-* Pick Acked-by from Conor
+* Merged with microchip,sama7d65-dma since that also falls back to
+microchip,sama7g5-dma
 
- .../devicetree/bindings/crypto/atmel,at91sam9g46-sha.yaml        | 1 +
- 1 file changed, 1 insertion(+)
+ Documentation/devicetree/bindings/dma/atmel,sama5d4-dma.yaml | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/crypto/atmel,at91sam9g46-sha.yaml b/Documentation/devicetree/bindings/crypto/atmel,at91sam9g46-sha.yaml
-index 39e076b275b3..16704ff0dd7f 100644
---- a/Documentation/devicetree/bindings/crypto/atmel,at91sam9g46-sha.yaml
-+++ b/Documentation/devicetree/bindings/crypto/atmel,at91sam9g46-sha.yaml
-@@ -16,6 +16,7 @@ properties:
-       - const: atmel,at91sam9g46-sha
+diff --git a/Documentation/devicetree/bindings/dma/atmel,sama5d4-dma.yaml b/Documentation/devicetree/bindings/dma/atmel,sama5d4-dma.yaml
+index 73fc13b902b3..197efb19b07a 100644
+--- a/Documentation/devicetree/bindings/dma/atmel,sama5d4-dma.yaml
++++ b/Documentation/devicetree/bindings/dma/atmel,sama5d4-dma.yaml
+@@ -33,7 +33,9 @@ properties:
+               - microchip,sam9x7-dma
+           - const: atmel,sama5d4-dma
        - items:
-           - enum:
-+              - microchip,lan9691-sha
-               - microchip,sam9x7-sha
-               - microchip,sama7d65-sha
-           - const: atmel,at91sam9g46-sha
+-          - const: microchip,sama7d65-dma
++          - enum:
++              - microchip,lan9691-dma
++              - microchip,sama7d65-dma
+           - const: microchip,sama7g5-dma
+ 
+   "#dma-cells":
 -- 
 2.52.0
 
