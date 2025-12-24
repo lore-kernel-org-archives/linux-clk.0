@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A167926ED35;
-	Wed, 24 Dec 2025 21:53:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAD11278753;
+	Wed, 24 Dec 2025 21:55:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766613227; cv=none; b=g4wuP0aMi8fsZmXXs8pk9KBuEWkOOPON3aTuMfazNe1PXiFIm1Lx45eCmonfabrgRndaEySIfdcvAJwokcXoGDIdfTkywajCAvhzlAoHuTyezWSJ2r4HKI8Na+O0S50ZdBh5CV0WuxJvI3aRru+093QtuRRQ4GKqY/aORwzt4Ro=
+	t=1766613341; cv=none; b=jroumhNba6oGnaxcPsgUxJ3V/ivMh+uvmu6BViGBPlqdARietJeq068Sgd69m9FPudJ2Ka76+cVx9J5z/gU3bfrPNRoqzUs2+kvuf7gifl6cmLuhkuqQPI5i1kA+3UmS7ijT80wYzWtApHhMpENvj29GFf6vNS83exYTWavFiG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766613227; c=relaxed/simple;
-	bh=jBtUeNJRO+RbhNPQJjWLbiBQiPsGJ9VvONJQVLV0Q1c=;
+	s=arc-20240116; t=1766613341; c=relaxed/simple;
+	bh=7IYjCwwm1VJE64uY0+VvI0CNAetRZ6wxWGE1IDILpTA=;
 	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=kaoOQwlIUIcHjr/qSODtSiYl5S59VPazY0CaE3fHc7APwgvBL0ubMGtlobTPkGa9fys2e0/Hcw1vQwgwB3gMX2ZkcnAZV7mbaY9dU+d/6pQzsfnMv8nEg1qVg49NqEb6l0uUUtVXDFwnU56NEn1H16X94kxSm6W+v6JVQUAgwvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C7KSL8HL; arc=none smtp.client-ip=10.30.226.201
+	 To:Date:Message-ID; b=LneG23HKHVFT9XxE/6M4yolag+OdjiLX39ty48qBn1vkKrdbhOJH4DALTi3afwg6skm44XObXgE6NVB6OMS6/DzRrXmihwiMK6Br92Du1cJr2A9oKeaZ9EKCPIpltRbUmAw0VZnJYzTHjPTI1tuXO64AVtTwUgUMrLwE3qO4cHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i0MFr15+; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C7KSL8HL"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 154BDC4CEF7;
-	Wed, 24 Dec 2025 21:53:46 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i0MFr15+"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48EDCC4CEF7;
+	Wed, 24 Dec 2025 21:55:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1766613227;
-	bh=jBtUeNJRO+RbhNPQJjWLbiBQiPsGJ9VvONJQVLV0Q1c=;
+	s=k20201202; t=1766613340;
+	bh=7IYjCwwm1VJE64uY0+VvI0CNAetRZ6wxWGE1IDILpTA=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=C7KSL8HLRTy1Rk1rIfQkwTEDk+GAA7eqse4JiJ11JBbVPOp9zcd+4E+g3RRAUbTs4
-	 KinvoQ/FKT32X7ZJqskw6uFUnCH0qXEATSskCo7yhDmKB7Hm5uHr/XBb8jY2q5K0ck
-	 jSyXCbdZO5E2aetjKXi/ns+jPd1X1ZpQr6og2NXOYv0RGZuBp0X4SeEf3B0TAatLnS
-	 vMzH9uvgjAv+1qTEY3KS/4SuX9KN/B70QJ6ix/RhVGURosukgDjftpbxLO6g2WBCjS
-	 gtOJesCpyd1vP8p1pVqS2UqZuOUAt8f4toWDUdbha5uTIJD/a17dQ2JKVFPXHvtv5g
-	 uKeORvnnmAZyw==
+	b=i0MFr15+ELitFr7bwkhJTpRfJetSCLCDGrP87mqdM5k9w4qbk7T/rgPioPLyzaAOU
+	 XjxyykrMEh9C3o5vBc9uedsVX+G0gG8PA/tsXqjuleShzfPOAfswcG5ajjfuKeO9O6
+	 snGrYsTQPmfiOf9bqcHGPzuMpAru0x8a9Uofzt/YABvft267y0N65YpcUZe7GrmXPy
+	 Pm1gaG935/MnV7YN1HBuQV4puNDM/qr3pt9b7KZ9Evym2YCsr00MX3RA5q54dpoGGO
+	 mv9bd3PuF0aHHQc0cVUATgUVgf9edK7VnxnrPz/vRyXWvXAX4dsDZkjwWW/zVTHCFs
+	 EKpUQ1rB4jADQ==
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -34,20 +34,32 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <176656156358.817806.16966474957670370356.b4-ty@kernel.org>
-References: <20251212-phy-clk-round-rate-v3-0-beae3962f767@redhat.com> <176656156358.817806.16966474957670370356.b4-ty@kernel.org>
-Subject: Re: [PATCH v3 0/9] phy: convert from clk round_rate() to determine_rate()
+In-Reply-To: <emy273nvnbzznvufe6fmbysrln6d7lm4xi5rwsuwnj4kjlalvx@7j4dxyd2f25l>
+References: <20251222-duty_cycle_precision-v1-1-b0da8e9fdab7@oss.qualcomm.com> <emy273nvnbzznvufe6fmbysrln6d7lm4xi5rwsuwnj4kjlalvx@7j4dxyd2f25l>
+Subject: Re: [PATCH] clk: qcom: rcg2: compute 2d using duty fraction directly
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>, Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Brian Masney <bmasney@redhat.com>, Chun-Kuang Hu <chunkuang.hu@kernel.org>, Chunfeng Yun <chunfeng.yun@mediatek.com>, Heiko Stuebner <heiko@sntech.de>, Kishon Vijay Abraham I <kishon@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, Maxime Ripard <mripard@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>, Vinod Koul <vkoul@kernel.org>
-Date: Wed, 24 Dec 2025 11:53:43 -1000
-Message-ID: <176661322399.4169.14248756511703978007@lazor>
+Cc: Michael Turquette <mturquette@baylibre.com>, Taniya Das <quic_tdas@quicinc.com>, Ajit Pandey <ajit.pandey@oss.qualcomm.com>, Imran Shaik <imran.shaik@oss.qualcomm.com>, Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Bjorn Andersson <andersson@kernel.org>, Taniya Das <taniya.das@oss.qualcomm.com>
+Date: Wed, 24 Dec 2025 11:55:37 -1000
+Message-ID: <176661333774.4169.12534802903262524563@lazor>
 User-Agent: alot/0.11
 
-Quoting Vinod Koul (2025-12-23 21:32:43)
+Quoting Bjorn Andersson (2025-12-22 09:09:54)
+> On Mon, Dec 22, 2025 at 10:38:14PM +0530, Taniya Das wrote:
+> > @@ -774,10 +774,8 @@ static int clk_rcg2_set_duty_cycle(struct clk_hw *=
+hw, struct clk_duty *duty)
+> > =20
+> >       n =3D (~(notn_m) + m) & mask;
+> > =20
+> > -     duty_per =3D (duty->num * 100) / duty->den;
+> > -
+> >       /* Calculate 2d value */
+> > -     d =3D DIV_ROUND_CLOSEST(n * duty_per * 2, 100);
+> > +     d =3D DIV_ROUND_CLOSEST(n * duty->num * 2, duty->den);
 >=20
-> Applied, thanks!
+> This looks better/cleaner. But for my understanding, can you share some
+> example numbers that shows the problem?
 >=20
 
-Thanks Vinod! Can you provide a tag or immutable branch so I can remove
-round rate from the clk core in linux-next?
+Even better would be to add some KUnit tests for the qcom clk driver
+functions like this so we know they're still working.
