@@ -1,40 +1,42 @@
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88AA64086A;
-	Wed, 24 Dec 2025 10:07:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D789A3321D3
+	for <linux-clk@vger.kernel.org>; Wed, 24 Dec 2025 10:07:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766570867; cv=none; b=dlal308z2yItQZ9G8WbCN81d8l8ybkWsPTbapacQsxUo+Xyd7Fw/Kc4o/Bw763NzktXkiYKBVG1S50cVBCIjmxYcR0aTA9acgS2/CRl2D2f0rJfatTKExjAvHnOJowEg7qzFkMSrNKdn8kHkdzHvHuUnfuLHbs2z+ooqwTnQYzc=
+	t=1766570868; cv=none; b=IE8iNIiL0fJYRTsT/Jl9xzakaKjuUJYu02Yl3d8bg/Is1X/myR8x2+S5l6Qh7NVPvtLUFvGcXuXaDSk1kjDg7Ul12eA6unjSko5PifpsLBaZdJhpguy61hxdIkXALZ0siNW4r/vHtkpUPipqpvCo5jpM3DPq8Of1zY6O0UNYeCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766570867; c=relaxed/simple;
-	bh=fsLYjhPlKssiRgdurczwowNdLst5dMoDdTsA/VQvmEs=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=iqOaGQNubEj3wTehG+1IVksO5uUXu37tPPTzZMZiYEDpiPBa7DUTwUSPdI5DRzAfcTwKwXyJXDrkCXNhUovg728zmLZTrOrxiPR8g4aKwDNBdehbPQ089ParuCsVF1/7V4eQ+bzVo+KwP6QMQCsxkJr7Hc974149IC+WVsaTeno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=NB0P+MJ2; arc=none smtp.client-ip=185.246.84.56
+	s=arc-20240116; t=1766570868; c=relaxed/simple;
+	bh=EKVg88+rOfU6IBSekC8pnT+bypbtFSFkwvN72GA69wY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=GwLF+Eq6dV6P1ftR6ono8bjo+UPJd7hhqCojQ5epLvU7zs+cyTzcpJSe0UVHnm9G4g4yufFs8XJMA7RvLcNReQMLUyvWUm/qPYLUcU4afheLzmvAKkIh2uQP/1vBiUsPk0FXTKvkBTvRhSW61qHYz4jFiPpriQD5NCCgZeA7yM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=UShAc3g8; arc=none smtp.client-ip=185.171.202.116
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="NB0P+MJ2"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="UShAc3g8"
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id B8E201A23D1;
-	Wed, 24 Dec 2025 10:07:36 +0000 (UTC)
+	by smtpout-04.galae.net (Postfix) with ESMTPS id EE2BFC1A5A4;
+	Wed, 24 Dec 2025 10:07:17 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 77B256073D;
-	Wed, 24 Dec 2025 10:07:36 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 5344B10AB10F6;
-	Wed, 24 Dec 2025 11:07:29 +0100 (CET)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 1BB3C6073D;
+	Wed, 24 Dec 2025 10:07:43 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id D4C7910AB10F6;
+	Wed, 24 Dec 2025 11:07:39 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1766570855; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding; bh=JQGCcUmMu806V35ODm5yV8pthUB4/SIzyc0QTyc3ybk=;
-	b=NB0P+MJ28RJJE5sBMj8TQ0x+1xEJ0RG5Ku3v5ums3G/57mbI55mZlJn55t7y3VcSFg8IeZ
-	XTGgaCjGJZ/OeZECoMdY/Ve2lG9UEQThBu0h951ypOc2BslUzh35uSaO9FGQuSQPZ05FFa
-	zjj3qcjU5knFjQ5Xt04Lo9z76qekgE9Du1EdFT5qaieOwksGQX5DRJozVbxkC5poeEjjEE
-	FwOxOLNeuVwSI6EpccT0dDSYDs10EQ1PQcfd1DwfnxGTDEWbJi0W+e0AXiDo+GQQbMIoW/
-	COMuZwXfXkqcclwu8EBAe7cdvuvnYFwHt+wCbryGPSssoxQBAxFMWHNve88+Ig==
+	t=1766570862; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=N7RyILljdMQfZkiQ7TRm3/JaE4XCEFcEURo9J0hqJe8=;
+	b=UShAc3g89kaQfeyubq4YYzZlNFo6zeGn2gWeTwRAcjmIFCBbRZmDTyr7iSkd7PJzD/cNSG
+	JNWW15Bd8l1LpxgLpT4RK8WVjd7cACWs1uJBaGBunQsZTFKIaC7WGE5mtAhjnk6MOBNxbf
+	Z9Sme5srhRz4eEEvDjImWQasMTcZKZj2Og1K3qGU0STAhBp3QF+aVgnTYyYZr0YuQgpVcg
+	lEAYXpJzT0rl1p7NoQaEKdETGcL933BjMaAYy3RIRwND0JoWJdKzC5z/GgU6UQiQWNYRcs
+	gEwkWtcLfNz6fv9KViHLyM/5tRiKg2lkZpz6tXVoBJYymDjA9SoYF6mWbFEVig==
 From: =?utf-8?q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>
-Subject: [PATCH v2 00/10] Add clock and reset support for Mobileye EyeQ7H
-Date: Wed, 24 Dec 2025 11:07:13 +0100
-Message-Id: <20251224-clk-eyeq7-v2-0-81744d1025d9@bootlin.com>
+Date: Wed, 24 Dec 2025 11:07:16 +0100
+Subject: [PATCH v2 03/10] clk: fixed-factor: Rework initialization with
+ parent clocks
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -43,12 +45,9 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-B4-Tracking: v=1; b=H4sIAFG7S2kC/03OTW7DIBCG4atYrEs1/BnwqveosgA8NKiOScCxE
- kW5e4i9aJcfQs+8D1KxJKxk6B6k4JpqynMb/KMj4ejmH6RpbJtw4AoMaBqmX4p3vGgabejRSTE
- yYUj7fy4Y022zvg9tH1Ndcrlv9Mrer7tiQfxTVkaBiqiAS6/GHvmXz3mZ0vwZ8okcnjtc8HJtb
- cuu/6W10kYyxs3G9dN5ulZqexZ6ARGshGHl7zjvKtImntIydFZKo6zxnAcFwTjlvdbOMhDIR2k
- jEzJYpU07/3wB+UhtkyIBAAA=
-X-Change-ID: 20250807-clk-eyeq7-f9c6ea43d138
+Message-Id: <20251224-clk-eyeq7-v2-3-81744d1025d9@bootlin.com>
+References: <20251224-clk-eyeq7-v2-0-81744d1025d9@bootlin.com>
+In-Reply-To: <20251224-clk-eyeq7-v2-0-81744d1025d9@bootlin.com>
 To: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
  Gregory CLEMENT <gregory.clement@bootlin.com>, 
  =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>, 
@@ -62,117 +61,107 @@ Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
  Tawfik Bayouk <tawfik.bayouk@mobileye.com>, linux-riscv@lists.infradead.org, 
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
  linux-clk@vger.kernel.org, linux-mips@vger.kernel.org, 
- =?utf-8?q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>, 
- Sari Khoury <sari.khoury@mobileye.com>
+ =?utf-8?q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>
 X-Mailer: b4 0.14.3
 X-Last-TLS-Session-Version: TLSv1.3
 
-This patchset brings the support of the Other Logic Blocks (OLB)
-found in the first Mobileye SoC based on the RISC-V architecture, the
-EyeQ7H. Despite the change from MIPS to RISC-V, the Other Logic Blocks
-provide similar clock and reset functions to the controllers of the
-chip. This series introduces the device tree bindings of the SoC and
-the necessary changes to the clock and reset eyeq drivers.
+Use the same sequence as clk-divider, clk-gate and other to set the
+parent_names, parent_hws and parent_data in the init struct when
+registering a fixed-factor clock. The number of parent clocks is now
+only set to one if a parent clock is provided.
 
-Since this series affects drivers used on Mobileye MIPS SoCs, mainly
-clk-eyeq, I tested that it does not introduce regressions on EyeQ5,
-EyeQ6H, and EyeQ6Lplus evaluation boards.
-    
-In detail, the first patch adds the dt-bindings yaml and headers for
-the EyeQ7H OLB.
+Previously the number of parent clocks was always one, forcing callers
+of __clk_hw_register_fixed_factor() to provide a dummy parent_data
+struct with an invalid clock index in case they were not provided with
+a non-NULL parent_name or parent_hw. Drop this dummy parent_data as is
+not necessary anymore.
 
-Patch 2 adds the compatible entries to the reset-eyeq driver, and the
-necessary changes for the reset domains found in the EyeQ7H OLB.
+This change only has a small impact on mis-configured fixed-factor. Now a
+call to clk_hw_register_fixed_factor() with a NULL parent will register
+a fixed-factor with zero parent while previously it was registered with
+one invalid parent. In both cases the rate of the fixed-factor is 0Hz
+but it is no longer shown as orphaned.
 
-Patches 3 and 4 rework the handling of parent clocks in
-__clk_hw_register_fixed_factor() to make it identical to other clock types
-like divider or gate. This allows simplifying the registration functions
-built on top of the now exported __clk_hw_register_fixed_factor(). A
-new clk_hw_register_fixed_factor_pdata() is added that will be used in
-clk-eyeq later in the series.
-
-Patch 5 renames the defines and functions related to the PLL with the
-PLL type fracg, to make room for the other types of PLL found the in
-EyeQ7H OLB.
-
-Patch 6 introduces a new generic type of clock structure that can
-represents all clocks found in OLB. Then patch 7 and 8 converts all
-clocks defined in the driver to the new struct eqc_clock and remove all
-the previous separate clocks structures.
-
-Patch 9 adds the list of clocks as match data for the 14 OLB present
-in the EyeQ7H SoC, and the functions needed to probe the two PLL types
-found in the chip.
-
-Finally patch 10 adds an entry for Mobileye RISC-V SoCs to the MAINTAINERS
-file for the newly added dt-bindings files.
-
-This series depends on the EyeQ6Lplus support patchset posted
-previously[1]. In particular on the patch adding the dt-binding header
-and the ones modifying the clk-eyeq driver:
-      dt-bindings: soc: mobileye: Add EyeQ6Lplus OLB
-      clk: eyeq: Skip post-divisor when computing PLL frequency
-      clk: eyeq: Adjust PLL accuracy computation
-      clk: eyeq: Add Mobileye EyeQ6Lplus OLB
-
-[1]: https://lore.kernel.org/all/20251223-eyeq6lplus-v2-0-cd1fd21d182c@bootlin.com/
+This has no impact on properly configured fixed-factors clocks.
 
 Signed-off-by: Benoît Monin <benoit.monin@bootlin.com>
 ---
-Changes in v2:
-- Move the dt-bindings to their own files and sort the compatibles.
-- Reorder the changes in reset-eyeq and make the register access more
-  readable.
-- Drop the validity check on even divider. Unnecessary since it is
-  always called from a clock .set_rate().
-- Drop the parameters check on divider registration. Will be posted
-  separately.
-- Switch to a new generic struct for describing the clocks.
-- Add an entry to MAINTAINERS.
-- Link to v1: https://lore.kernel.org/r/20250903-clk-eyeq7-v1-0-3f5024b5d6e2@bootlin.com
+ drivers/clk/clk-fixed-factor.c | 28 ++++++++++------------------
+ 1 file changed, 10 insertions(+), 18 deletions(-)
 
----
-Benoît Monin (10):
-      dt-bindings: soc: mobileye: Add EyeQ7H OLB
-      reset: eyeq: Add EyeQ7H compatibles
-      clk: fixed-factor: Rework initialization with parent clocks
-      clk: fixed-factor: Export __clk_hw_register_fixed_factor()
-      clk: eyeq: Prefix the PLL registers with the PLL type
-      clk: eyeq: Introduce a generic clock type
-      clk: eyeq: Convert clocks declaration to eqc_clock
-      clk: eyeq: Drop PLL, dividers, and fixed factors structs
-      clk: eyeq: Add EyeQ7H compatibles
-      MAINTAINERS: Add entry for Mobileye RISC-V SoCs
+diff --git a/drivers/clk/clk-fixed-factor.c b/drivers/clk/clk-fixed-factor.c
+index de658c9e4c53..63082115fd25 100644
+--- a/drivers/clk/clk-fixed-factor.c
++++ b/drivers/clk/clk-fixed-factor.c
+@@ -124,13 +124,13 @@ __clk_hw_register_fixed_factor(struct device *dev, struct device_node *np,
+ 	init.name = name;
+ 	init.ops = &clk_fixed_factor_ops;
+ 	init.flags = flags;
+-	if (parent_name)
+-		init.parent_names = &parent_name;
+-	else if (parent_hw)
+-		init.parent_hws = &parent_hw;
++	init.parent_names = parent_name ? &parent_name : NULL;
++	init.parent_hws = parent_hw ? &parent_hw : NULL;
++	init.parent_data = pdata;
++	if (parent_name || parent_hw || pdata)
++		init.num_parents = 1;
+ 	else
+-		init.parent_data = pdata;
+-	init.num_parents = 1;
++		init.num_parents = 0;
+ 
+ 	hw = &fix->hw;
+ 	if (dev)
+@@ -190,10 +190,8 @@ struct clk_hw *devm_clk_hw_register_fixed_factor_parent_hw(struct device *dev,
+ 		const char *name, const struct clk_hw *parent_hw,
+ 		unsigned long flags, unsigned int mult, unsigned int div)
+ {
+-	const struct clk_parent_data pdata = { .index = -1 };
+-
+ 	return __clk_hw_register_fixed_factor(dev, NULL, name, NULL, parent_hw,
+-					      &pdata, flags, mult, div, 0, 0, true);
++					      NULL, flags, mult, div, 0, 0, true);
+ }
+ EXPORT_SYMBOL_GPL(devm_clk_hw_register_fixed_factor_parent_hw);
+ 
+@@ -201,10 +199,8 @@ struct clk_hw *clk_hw_register_fixed_factor_parent_hw(struct device *dev,
+ 		const char *name, const struct clk_hw *parent_hw,
+ 		unsigned long flags, unsigned int mult, unsigned int div)
+ {
+-	const struct clk_parent_data pdata = { .index = -1 };
+-
+ 	return __clk_hw_register_fixed_factor(dev, NULL, name, NULL, parent_hw,
+-					      &pdata, flags, mult, div, 0, 0, false);
++					      NULL, flags, mult, div, 0, 0, false);
+ }
+ EXPORT_SYMBOL_GPL(clk_hw_register_fixed_factor_parent_hw);
+ 
+@@ -212,10 +208,8 @@ struct clk_hw *clk_hw_register_fixed_factor(struct device *dev,
+ 		const char *name, const char *parent_name, unsigned long flags,
+ 		unsigned int mult, unsigned int div)
+ {
+-	const struct clk_parent_data pdata = { .index = -1 };
+-
+ 	return __clk_hw_register_fixed_factor(dev, NULL, name, parent_name, NULL,
+-					      &pdata, flags, mult, div, 0, 0, false);
++					      NULL, flags, mult, div, 0, 0, false);
+ }
+ EXPORT_SYMBOL_GPL(clk_hw_register_fixed_factor);
+ 
+@@ -296,10 +290,8 @@ struct clk_hw *devm_clk_hw_register_fixed_factor(struct device *dev,
+ 		const char *name, const char *parent_name, unsigned long flags,
+ 		unsigned int mult, unsigned int div)
+ {
+-	const struct clk_parent_data pdata = { .index = -1 };
+-
+ 	return __clk_hw_register_fixed_factor(dev, NULL, name, parent_name, NULL,
+-			&pdata, flags, mult, div, 0, 0, true);
++			NULL, flags, mult, div, 0, 0, true);
+ }
+ EXPORT_SYMBOL_GPL(devm_clk_hw_register_fixed_factor);
+ 
 
- .../bindings/soc/mobileye/mobileye,eyeq7h-olb.yaml |  192 +++
- MAINTAINERS                                        |   13 +-
- drivers/clk/clk-eyeq.c                             | 1244 +++++++++++++-------
- drivers/clk/clk-fixed-factor.c                     |   72 +-
- drivers/reset/reset-eyeq.c                         |  268 ++++-
- include/dt-bindings/clock/mobileye,eyeq7h-clk.h    |  119 ++
- include/linux/clk-provider.h                       |   56 +-
- 7 files changed, 1467 insertions(+), 497 deletions(-)
----
-base-commit: 9448598b22c50c8a5bb77a9103e2d49f134c9578
-change-id: 20250807-clk-eyeq7-f9c6ea43d138
-prerequisite-change-id: 20251128-eyeq6lplus-961c630f0940:v2
-prerequisite-patch-id: ee24f0dcdb893f3850e9dd0d54e848782a1b9ed7
-prerequisite-patch-id: 781c4ae465c2af54c28ef4ad7a3c142da8390cf0
-prerequisite-patch-id: 5de50e537525f326cd3478f8cf88df947c66a7ee
-prerequisite-patch-id: cbb05dadd49dbf4ef54548b1016bba1e80c90805
-prerequisite-patch-id: 235ce9ae215732262730062ad0d94b192456b492
-prerequisite-patch-id: 1ee9fc5cf027bc9211c1a5e1547036e33d30fcf7
-prerequisite-patch-id: 30f092cffaae6e2adc8f6520af6073b9cd20c59e
-prerequisite-patch-id: 90361e8b03b1160a73257cc7d69e32435f319423
-prerequisite-patch-id: 5db4ab27d470485e90f50a95ab7fc423ae63f5c8
-prerequisite-patch-id: e87f2d3a017960908b7fd4ca285c643403b3bcb5
-prerequisite-patch-id: 27c86e0ecfdabca4bca4bdc44e1bc9db8c27634a
-prerequisite-patch-id: f46c35cfd0f9493e5f8ee2a4a5f53442c3846336
-prerequisite-patch-id: a8952e1ae521fd6f757ebed446f15523791003ac
-
-Best regards,
 -- 
-Benoît Monin, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+2.52.0
 
