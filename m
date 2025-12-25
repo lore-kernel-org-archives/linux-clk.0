@@ -1,486 +1,117 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E686C31A056
-	for <linux-clk@vger.kernel.org>; Thu, 25 Dec 2025 09:50:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9985C24E4B4;
+	Thu, 25 Dec 2025 16:25:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766656207; cv=none; b=ey8RRwGUlLx/lEQirIP+uBb3NUzcTaPkmEn91q+ZnFjAD03jL8xQGnXMIWUvw4JrHtkiCyI0q9bvJvRFBfGjCdmwSi/A8d1EjbNmrHNRtXYRI9Cd3k3jFDpiKYbsfjfl1y+EH6J7vwsxPt2gZ2NRu/PP0vEuYsUUhJfM/RkxrqI=
+	t=1766679920; cv=none; b=qHs+YKZR29rUIAu6HGKmC4+IUOlkeiYENxrLwbVR+gx8o2es+p5vcZouunuMJT3zOEOWs61+xftEKih+9FHdV7ALgwm/f4XafcjNqC7ekfcaI1HoLWaijsXa5ZosvdL4fkvkVdYtIIz1eDgr8cyx4Tru/ekjQ7ZYjDe4fR0E/40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766656207; c=relaxed/simple;
-	bh=Z+LojugKlODv0WdjM0vbdLv2JUaHooTEqULsVCPjc3A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OHd561gL12ZqV47OhVG7qYW3niPZoq4kBO+fd94ypswXxUTWALnGoebMmf6MleuYOeJPsfu+tYT1n250Eouedu1EjkP2mLLXsBP5D7LDUATM0xd+ATvaSse2DZadNxBPhTS4mLe9oyOXtoE6c3oW53IRimkXVRB3nlhiFpyPLNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r7e1/XEM; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1766679920; c=relaxed/simple;
+	bh=TLU2BdrHcQkvuM7H/hYIg10i3NgoaJ1oOt4xioffyJQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QR1vgQ70Agcx7OGzN6In3kqu6x6RhLa98EU84mREdGQ7Qac8ORGQUsRCzrEOS8MQUGYInq0BdtM/51A4+Amq4WUyjzSvMahUg2o2/Ir53SA2DflBW+YRoAf/HBwBSJe9xt0tjry8/eeWjkYqDYnDGTCAXHwX/8O9l0t33SU7nvU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=JEp21IQ6; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r7e1/XEM"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 590F6C2BCB1
-	for <linux-clk@vger.kernel.org>; Thu, 25 Dec 2025 09:50:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1766656204;
-	bh=Z+LojugKlODv0WdjM0vbdLv2JUaHooTEqULsVCPjc3A=;
-	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc:From;
-	b=r7e1/XEM5jHtY1SlLBn6/a0yxquH74NoIdZrMM6A1SRfOMH4PWeLBD2dRi6maRny9
-	 uZMPGp0jhno/WOj7679yeMdT045B7m/EfEtrDMZFaHmMvyJR6Dsb3uZH6JINqk0tKI
-	 V+rEERTbZqh9h5ODBM63CtrrAFER2XjJJzrVKxfDkmxTd0BkqRmg6Eohu5zhHZv+Wb
-	 cHJJQzF+/6NP2UZ2nO2kOA/D++mbJoOVIuJ1yzfF5Tiswk7WU4rnRL/oOoiVvLVOvC
-	 RLX12qwJnMwvII7Tfo397bEOPcTaWspn8X6ZhQH8MlZA5vLMh7xc+WoHZ7HdHJtgH8
-	 q5EBdCRX6bdIw==
-Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-3f13043e2fdso2153472fac.1
-        for <linux-clk@vger.kernel.org>; Thu, 25 Dec 2025 01:50:04 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXUL4lemO0ingDV4cMpioQ+2B2XVb/QzuBq4QpUQDButZiJfF/elIoC6VNgquKwhsVxxYC7thd8llk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YznwC60Xmz66XbDZ8hKY7Qja/cg3P8uqbkfo0yc+onPRnvrgcYY
-	vytACbDSgbG/+EVy1b88kZMoGxSf9S6LoWLa/Ug1hEzajfn4VY5LgT6MQWAI5h5/o7TR+jfWeDY
-	Fn6C7GU6rzDKHFtCCJt+EyXxHpMuTYto=
-X-Google-Smtp-Source: AGHT+IHy0s6wJhLRaq9jruYRmygY6NK9VE5jQGXxTqsz4FjEgyVHcOX4VpvlGiLLnkQjinIJ1/ugZHsD7xDfX/L8/t4=
-X-Received: by 2002:a05:6820:1691:b0:65b:29af:b55f with SMTP id
- 006d021491bc7-65d0e9b71d0mr7606538eaf.35.1766656203125; Thu, 25 Dec 2025
- 01:50:03 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="JEp21IQ6"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id DA610C1BE9A;
+	Thu, 25 Dec 2025 16:24:43 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id DF33360742;
+	Thu, 25 Dec 2025 16:25:08 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 8BF4C103C8CAF;
+	Thu, 25 Dec 2025 17:24:56 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1766679907; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=9w9PoOAphBvrMeuMPvt+UDtYQWc7xDRbIiFcY8PW7pU=;
+	b=JEp21IQ6lhvA7GHyuGEFtjRTQ4IGqq4eZbh2FLAyWSrqCEeOvJV9lOYHMkYJknW5QyyXv6
+	PGQpmEkwa+Ttf+W+qBq/IViwdlSgz1BWTOI98b7sbc7y7ggDQCzB+GcyEaNdPW63p56nD7
+	VUyEVD8AvdIbBgxmgEW+Ou1evzJhsH2mU8zW39XvcYQ9aON4sQMY3Pc8VNGd8rU1LZ7N67
+	v9mruJxmT99O7L9E+AcZwKtSMRHEUdVlFS3hcqeiJ7hZOgufxVRRQoPJ8bQgbMx0b9vV2Q
+	SQEfEaeFx0h6BJIg8LdoIOmGeDEhG4BSWIKmxlXpY911xsKxLvOwGckKnEa1jw==
+Date: Thu, 25 Dec 2025 17:24:55 +0100
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Robert Marko <robert.marko@sartura.hr>, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org,
+	nicolas.ferre@microchip.com, claudiu.beznea@tuxon.dev,
+	herbert@gondor.apana.org.au, davem@davemloft.net, vkoul@kernel.org,
+	andi.shyti@kernel.org, lee@kernel.org, andrew+netdev@lunn.ch,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	linusw@kernel.org, Steen.Hegelund@microchip.com,
+	daniel.machon@microchip.com, UNGLinuxDriver@microchip.com,
+	olivia@selenic.com, radu_nicolae.pirea@upb.ro,
+	richard.genoud@bootlin.com, gregkh@linuxfoundation.org,
+	jirislaby@kernel.org, broonie@kernel.org, mturquette@baylibre.com,
+	sboyd@kernel.org, lars.povlsen@microchip.com,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
+	dmaengine@vger.kernel.org, linux-i2c@vger.kernel.org,
+	netdev@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-spi@vger.kernel.org, linux-serial@vger.kernel.org,
+	linux-usb@vger.kernel.org, linux-clk@vger.kernel.org,
+	luka.perkov@sartura.hr
+Subject: Re: [PATCH v3 01/15] include: dt-bindings: add LAN969x clock bindings
+Message-ID: <2025122516245554f59e2e@mail.local>
+References: <20251223201921.1332786-1-robert.marko@sartura.hr>
+ <20251223201921.1332786-2-robert.marko@sartura.hr>
+ <20251224-berserk-mackerel-of-snow-4cae54@quoll>
+ <CA+HBbNGym6Q9b166n-P=h_JssOHm0yfyL73JZ+G9P81muK=g4A@mail.gmail.com>
+ <78bf252c-fd5e-4a36-b1a3-ca8ed26fde7a@kernel.org>
+ <CA+HBbNG+ZVD6grGDp32Ninx7H1AyEbGvP0nwc0zUv94tOV8hYg@mail.gmail.com>
+ <d210552f-c8bf-4084-9317-b743075d9946@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251115141347.13087-1-jernej.skrabec@gmail.com> <20251115141347.13087-8-jernej.skrabec@gmail.com>
-In-Reply-To: <20251115141347.13087-8-jernej.skrabec@gmail.com>
-Reply-To: wens@kernel.org
-From: Chen-Yu Tsai <wens@kernel.org>
-Date: Thu, 25 Dec 2025 17:49:47 +0800
-X-Gmail-Original-Message-ID: <CAGb2v67B_2SMsDbATVu51Ed+2o+6=FRLw7KmjeL1KYgxm=gyDw@mail.gmail.com>
-X-Gm-Features: AQt7F2rLIS4H7Xj_k6kBZKKbWXDlqSHssxeujnFrIM_IapLVNe6Uj-8rhSrFP2s
-Message-ID: <CAGb2v67B_2SMsDbATVu51Ed+2o+6=FRLw7KmjeL1KYgxm=gyDw@mail.gmail.com>
-Subject: Re: [PATCH 7/7] drm/sun4i: switch DE33 to new bindings
-To: Jernej Skrabec <jernej.skrabec@gmail.com>
-Cc: samuel@sholland.org, mripard@kernel.org, maarten.lankhorst@linux.intel.com, 
-	tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, mturquette@baylibre.com, 
-	sboyd@kernel.org, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <d210552f-c8bf-4084-9317-b743075d9946@kernel.org>
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Sat, Nov 15, 2025 at 10:14=E2=80=AFPM Jernej Skrabec
-<jernej.skrabec@gmail.com> wrote:
->
-> Now that everything is in place, switch DE33 to new bindings.
->
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@gmail.com>
-> ---
->  drivers/gpu/drm/sun4i/sun8i_mixer.c | 130 +++++++++++++++-------------
->  drivers/gpu/drm/sun4i/sun8i_mixer.h |  10 +--
->  2 files changed, 71 insertions(+), 69 deletions(-)
->
-> diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.c b/drivers/gpu/drm/sun4i/=
-sun8i_mixer.c
-> index fde3b677e925..da213e54e653 100644
-> --- a/drivers/gpu/drm/sun4i/sun8i_mixer.c
-> +++ b/drivers/gpu/drm/sun4i/sun8i_mixer.c
-> @@ -13,6 +13,7 @@
->  #include <linux/of.h>
->  #include <linux/of_device.h>
->  #include <linux/of_graph.h>
-> +#include <linux/of_platform.h>
->  #include <linux/platform_device.h>
->  #include <linux/reset.h>
->
-> @@ -24,6 +25,7 @@
->  #include <drm/drm_probe_helper.h>
->
->  #include "sun4i_drv.h"
-> +#include "sun50i_planes.h"
->  #include "sun8i_mixer.h"
->  #include "sun8i_ui_layer.h"
->  #include "sun8i_vi_layer.h"
-> @@ -256,7 +258,6 @@ static void sun8i_mixer_commit(struct sunxi_engine *e=
-ngine,
->  {
->         struct sun8i_mixer *mixer =3D engine_to_sun8i_mixer(engine);
->         u32 bld_base =3D sun8i_blender_base(mixer);
-> -       struct regmap *bld_regs =3D sun8i_blender_regmap(mixer);
->         struct drm_plane_state *plane_state;
->         struct drm_plane *plane;
->         u32 route =3D 0, pipe_en =3D 0;
-> @@ -293,16 +294,16 @@ static void sun8i_mixer_commit(struct sunxi_engine =
-*engine,
->                 route |=3D layer->index << SUN8I_MIXER_BLEND_ROUTE_PIPE_S=
-HIFT(zpos);
->                 pipe_en |=3D SUN8I_MIXER_BLEND_PIPE_CTL_EN(zpos);
->
-> -               regmap_write(bld_regs,
-> +               regmap_write(engine->regs,
->                              SUN8I_MIXER_BLEND_ATTR_COORD(bld_base, zpos)=
-,
->                              SUN8I_MIXER_COORD(x, y));
-> -               regmap_write(bld_regs,
-> +               regmap_write(engine->regs,
->                              SUN8I_MIXER_BLEND_ATTR_INSIZE(bld_base, zpos=
-),
->                              SUN8I_MIXER_SIZE(w, h));
->         }
->
-> -       regmap_write(bld_regs, SUN8I_MIXER_BLEND_ROUTE(bld_base), route);
-> -       regmap_write(bld_regs, SUN8I_MIXER_BLEND_PIPE_CTL(bld_base),
-> +       regmap_write(engine->regs, SUN8I_MIXER_BLEND_ROUTE(bld_base), rou=
-te);
-> +       regmap_write(engine->regs, SUN8I_MIXER_BLEND_PIPE_CTL(bld_base),
->                      pipe_en | SUN8I_MIXER_BLEND_PIPE_CTL_FC_EN(0));
->
->         if (mixer->cfg->de_type !=3D SUN8I_MIXER_DE33)
-> @@ -317,7 +318,6 @@ static struct drm_plane **sun8i_layers_init(struct dr=
-m_device *drm,
->         struct sun8i_mixer *mixer =3D engine_to_sun8i_mixer(engine);
->         int plane_cnt =3D mixer->cfg->ui_num + mixer->cfg->vi_num;
->         enum drm_plane_type type;
-> -       unsigned int phy_index;
->         int i;
->
->         planes =3D devm_kcalloc(drm->dev, plane_cnt, sizeof(*planes), GFP=
-_KERNEL);
-> @@ -332,12 +332,8 @@ static struct drm_plane **sun8i_layers_init(struct d=
-rm_device *drm,
->                 else
->                         type =3D DRM_PLANE_TYPE_OVERLAY;
->
-> -               phy_index =3D i;
-> -               if (mixer->cfg->de_type =3D=3D SUN8I_MIXER_DE33)
-> -                       phy_index =3D mixer->cfg->map[i];
-> -
->                 layer =3D sun8i_vi_layer_init_one(drm, type, mixer->engin=
-e.regs,
-> -                                               i, phy_index, plane_cnt,
-> +                                               i, i, plane_cnt,
->                                                 &mixer->cfg->lay_cfg);
->                 if (IS_ERR(layer)) {
->                         dev_err(drm->dev,
-> @@ -357,12 +353,8 @@ static struct drm_plane **sun8i_layers_init(struct d=
-rm_device *drm,
->                 else
->                         type =3D DRM_PLANE_TYPE_OVERLAY;
->
-> -               phy_index =3D index;
-> -               if (mixer->cfg->de_type =3D=3D SUN8I_MIXER_DE33)
-> -                       phy_index =3D mixer->cfg->map[index];
-> -
->                 layer =3D sun8i_ui_layer_init_one(drm, type, mixer->engin=
-e.regs,
-> -                                               index, phy_index, plane_c=
-nt,
-> +                                               index, index, plane_cnt,
->                                                 &mixer->cfg->lay_cfg);
->                 if (IS_ERR(layer)) {
->                         dev_err(drm->dev, "Couldn't initialize %s plane\n=
-",
-> @@ -376,16 +368,25 @@ static struct drm_plane **sun8i_layers_init(struct =
-drm_device *drm,
->         return planes;
->  }
->
-> +static struct drm_plane **sun50i_layers_init(struct drm_device *drm,
-> +                                            struct sunxi_engine *engine)
-> +{
-> +       struct sun8i_mixer *mixer =3D engine_to_sun8i_mixer(engine);
-> +
-> +       if (IS_ENABLED(CONFIG_DRM_SUN50I_PLANES))
-> +               return sun50i_planes_setup(mixer->planes_dev, drm, engine=
-->id);
-> +
-> +       return NULL;
-> +}
-> +
->  static void sun8i_mixer_mode_set(struct sunxi_engine *engine,
->                                  const struct drm_display_mode *mode)
->  {
->         struct sun8i_mixer *mixer =3D engine_to_sun8i_mixer(engine);
-> -       struct regmap *bld_regs;
->         u32 bld_base, size, val;
->         bool interlaced;
->
->         bld_base =3D sun8i_blender_base(mixer);
-> -       bld_regs =3D sun8i_blender_regmap(mixer);
->         interlaced =3D !!(mode->flags & DRM_MODE_FLAG_INTERLACE);
->         size =3D SUN8I_MIXER_SIZE(mode->hdisplay, mode->vdisplay);
->
-> @@ -397,14 +398,14 @@ static void sun8i_mixer_mode_set(struct sunxi_engin=
-e *engine,
->         else
->                 regmap_write(mixer->engine.regs, SUN8I_MIXER_GLOBAL_SIZE,=
- size);
->
-> -       regmap_write(bld_regs, SUN8I_MIXER_BLEND_OUTSIZE(bld_base), size)=
-;
-> +       regmap_write(engine->regs, SUN8I_MIXER_BLEND_OUTSIZE(bld_base), s=
-ize);
->
->         if (interlaced)
->                 val =3D SUN8I_MIXER_BLEND_OUTCTL_INTERLACED;
->         else
->                 val =3D 0;
->
-> -       regmap_update_bits(bld_regs, SUN8I_MIXER_BLEND_OUTCTL(bld_base),
-> +       regmap_update_bits(engine->regs, SUN8I_MIXER_BLEND_OUTCTL(bld_bas=
-e),
->                            SUN8I_MIXER_BLEND_OUTCTL_INTERLACED, val);
->
->         DRM_DEBUG_DRIVER("Switching display mixer interlaced mode %s\n",
-> @@ -417,8 +418,14 @@ static const struct sunxi_engine_ops sun8i_engine_op=
-s =3D {
->         .mode_set       =3D sun8i_mixer_mode_set,
->  };
->
-> +static const struct sunxi_engine_ops sun50i_engine_ops =3D {
-> +       .commit         =3D sun8i_mixer_commit,
-> +       .layers_init    =3D sun50i_layers_init,
-> +       .mode_set       =3D sun8i_mixer_mode_set,
-> +};
-> +
->  static const struct regmap_config sun8i_mixer_regmap_config =3D {
-> -       .name           =3D "layers",
-> +       .name           =3D "display",
->         .reg_bits       =3D 32,
->         .val_bits       =3D 32,
->         .reg_stride     =3D 4,
-> @@ -433,14 +440,6 @@ static const struct regmap_config sun8i_top_regmap_c=
-onfig =3D {
->         .max_register   =3D 0x3c,
->  };
->
-> -static const struct regmap_config sun8i_disp_regmap_config =3D {
-> -       .name           =3D "display",
-> -       .reg_bits       =3D 32,
-> -       .val_bits       =3D 32,
-> -       .reg_stride     =3D 4,
-> -       .max_register   =3D 0x20000,
-> -};
-> -
->  static int sun8i_mixer_of_get_id(struct device_node *node)
->  {
->         struct device_node *ep, *remote;
-> @@ -463,17 +462,14 @@ static int sun8i_mixer_of_get_id(struct device_node=
- *node)
->
->  static void sun8i_mixer_init(struct sun8i_mixer *mixer)
->  {
-> -       struct regmap *top_regs, *disp_regs;
->         unsigned int base =3D sun8i_blender_base(mixer);
-> +       struct regmap *top_regs;
->         int plane_cnt, i;
->
-> -       if (mixer->cfg->de_type =3D=3D SUN8I_MIXER_DE33) {
-> +       if (mixer->cfg->de_type =3D=3D SUN8I_MIXER_DE33)
->                 top_regs =3D mixer->top_regs;
-> -               disp_regs =3D mixer->disp_regs;
-> -       } else {
-> +       else
->                 top_regs =3D mixer->engine.regs;
-> -               disp_regs =3D mixer->engine.regs;
-> -       }
->
->         /* Enable the mixer */
->         regmap_write(top_regs, SUN8I_MIXER_GLOBAL_CTL,
-> @@ -483,25 +479,25 @@ static void sun8i_mixer_init(struct sun8i_mixer *mi=
-xer)
->                 regmap_write(top_regs, SUN50I_MIXER_GLOBAL_CLK, 1);
->
->         /* Set background color to black */
-> -       regmap_write(disp_regs, SUN8I_MIXER_BLEND_BKCOLOR(base),
-> +       regmap_write(mixer->engine.regs, SUN8I_MIXER_BLEND_BKCOLOR(base),
->                      SUN8I_MIXER_BLEND_COLOR_BLACK);
->
->         /*
->          * Set fill color of bottom plane to black. Generally not needed
->          * except when VI plane is at bottom (zpos =3D 0) and enabled.
->          */
-> -       regmap_write(disp_regs, SUN8I_MIXER_BLEND_PIPE_CTL(base),
-> +       regmap_write(mixer->engine.regs, SUN8I_MIXER_BLEND_PIPE_CTL(base)=
-,
->                      SUN8I_MIXER_BLEND_PIPE_CTL_FC_EN(0));
-> -       regmap_write(disp_regs, SUN8I_MIXER_BLEND_ATTR_FCOLOR(base, 0),
-> +       regmap_write(mixer->engine.regs, SUN8I_MIXER_BLEND_ATTR_FCOLOR(ba=
-se, 0),
->                      SUN8I_MIXER_BLEND_COLOR_BLACK);
->
->         plane_cnt =3D mixer->cfg->vi_num + mixer->cfg->ui_num;
->         for (i =3D 0; i < plane_cnt; i++)
-> -               regmap_write(disp_regs,
-> +               regmap_write(mixer->engine.regs,
->                              SUN8I_MIXER_BLEND_MODE(base, i),
->                              SUN8I_MIXER_BLEND_MODE_DEF);
->
-> -       regmap_update_bits(disp_regs, SUN8I_MIXER_BLEND_PIPE_CTL(base),
-> +       regmap_update_bits(mixer->engine.regs, SUN8I_MIXER_BLEND_PIPE_CTL=
-(base),
->                            SUN8I_MIXER_BLEND_PIPE_CTL_EN_MSK, 0);
->  }
->
-> @@ -532,7 +528,6 @@ static int sun8i_mixer_bind(struct device *dev, struc=
-t device *master,
->         if (!mixer)
->                 return -ENOMEM;
->         dev_set_drvdata(dev, mixer);
-> -       mixer->engine.ops =3D &sun8i_engine_ops;
->         mixer->engine.node =3D dev->of_node;
->
->         if (of_property_present(dev->of_node, "iommus")) {
-> @@ -562,6 +557,11 @@ static int sun8i_mixer_bind(struct device *dev, stru=
-ct device *master,
->         if (!mixer->cfg)
->                 return -EINVAL;
->
-> +       if (mixer->cfg->de_type =3D=3D SUN8I_MIXER_DE33)
-> +               mixer->engine.ops =3D &sun50i_engine_ops;
+On 25/12/2025 09:47:34+0100, Krzysztof Kozlowski wrote:
+> On 24/12/2025 15:01, Robert Marko wrote:
+> > On Wed, Dec 24, 2025 at 2:05 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> >>
+> >> On 24/12/2025 11:30, Robert Marko wrote:
+> >>> On Wed, Dec 24, 2025 at 11:21 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> >>>>
+> >>>> On Tue, Dec 23, 2025 at 09:16:12PM +0100, Robert Marko wrote:
+> >>>>> Add the required LAN969x clock bindings.
+> >>>>
+> >>>> I do not see clock bindings actually here. Where is the actual binding?
+> >>>> Commit msg does not help me at all to understand why you are doing this
+> >>>> without actual required bindings.
+> >>>
+> >>> I guess it is a bit confusing, there is no schema here, these are the
+> >>> clock indexes that
+> >>> reside in dt-bindings and are used by the SoC DTSI.
+> >>
+> >> I understand as not used by drivers? Then no ABI and there is no point
+> >> in putting them into bindings.
+> > 
+> > It is not included by the driver directly, but it requires these exact
+> > indexes to be passed
+> > so its effectively ABI.
+> 
+> How it requires the exact index? In what way? I do not see anything in
+> the gck driver using/relying on these values. Nothing. Please point me
+> to the line which directly uses these values.... or how many times I
+> will need to write this is not ABI?
+> 
 
-You're missing an IS_ENABLED() clause here if you wanted to make the DE 3.3
-planes driver optional. Though as I mentioned in the other patch, splittig
-the two modules might not work.
-
-> +       else
-> +               mixer->engine.ops =3D &sun8i_engine_ops;
-> +
->         regs =3D devm_platform_ioremap_resource(pdev, 0);
->         if (IS_ERR(regs))
->                 return PTR_ERR(regs);
-> @@ -584,17 +584,6 @@ static int sun8i_mixer_bind(struct device *dev, stru=
-ct device *master,
->                         dev_err(dev, "Couldn't create the top regmap\n");
->                         return PTR_ERR(mixer->top_regs);
->                 }
-> -
-> -               regs =3D devm_platform_ioremap_resource_byname(pdev, "dis=
-play");
-> -               if (IS_ERR(regs))
-> -                       return PTR_ERR(regs);
-> -
-> -               mixer->disp_regs =3D devm_regmap_init_mmio(dev, regs,
-> -                                                        &sun8i_disp_regm=
-ap_config);
-> -               if (IS_ERR(mixer->disp_regs)) {
-> -                       dev_err(dev, "Couldn't create the disp regmap\n")=
-;
-> -                       return PTR_ERR(mixer->disp_regs);
-> -               }
->         }
->
->         mixer->reset =3D devm_reset_control_get(dev, NULL);
-> @@ -634,6 +623,33 @@ static int sun8i_mixer_bind(struct device *dev, stru=
-ct device *master,
->
->         clk_prepare_enable(mixer->mod_clk);
->
-> +       if (mixer->cfg->de_type =3D=3D SUN8I_MIXER_DE33) {
-> +               struct platform_device *pdev;
-> +               struct device_node *np;
-> +               void *data;
-> +
-> +               np =3D of_parse_phandle(dev->of_node, "allwinner,planes",=
- 0);
-> +               if (!np) {
-> +                       ret =3D -ENODEV;
-> +                       goto err_disable_mod_clk;
-> +               }
-> +
-> +               pdev =3D of_find_device_by_node(np);
-
-You need to add a matching put_device() in the unbind function.
-
-Side note:
-
-This bind function is using a lot of devm_ functions. These have the wrong
-lifetime. I think it would be better if we could move resource acquisition
-into the probe function.
+The index here is the exact id that needs to be set in the PMC_PCR
+register and so it is dictated by the hardware.
 
 
-> +               of_node_put(np);
-> +               if (!pdev) {
-> +                       ret =3D -EPROBE_DEFER;
-> +                       goto err_disable_mod_clk;
-> +               }
-> +
-> +               data =3D platform_get_drvdata(pdev);
-> +               if (!data) {
-> +                       put_device(&pdev->dev);
-> +                       return -EPROBE_DEFER;
-
-Should be a goto here?
-
-
-ChenYu
-
-> +               }
-> +
-> +               mixer->planes_dev =3D &pdev->dev;
-> +       }
-> +
->         list_add_tail(&mixer->engine.list, &drv->engine_list);
->
->         /* Reset registers and disable unused sub-engines */
-> @@ -668,6 +684,8 @@ static int sun8i_mixer_bind(struct device *dev, struc=
-t device *master,
->
->         return 0;
->
-> +err_disable_mod_clk:
-> +       clk_disable_unprepare(mixer->mod_clk);
->  err_disable_bus_clk:
->         clk_disable_unprepare(mixer->bus_clk);
->  err_assert_reset:
-> @@ -863,16 +881,8 @@ static const struct sun8i_mixer_cfg sun50i_h6_mixer0=
-_cfg =3D {
->  };
->
->  static const struct sun8i_mixer_cfg sun50i_h616_mixer0_cfg =3D {
-> -       .lay_cfg =3D {
-> -               .de_type        =3D SUN8I_MIXER_DE33,
-> -               .scaler_mask    =3D 0xf,
-> -               .scanline_yuv   =3D 4096,
-> -       },
->         .de_type        =3D SUN8I_MIXER_DE33,
->         .mod_rate       =3D 600000000,
-> -       .ui_num         =3D 3,
-> -       .vi_num         =3D 1,
-> -       .map            =3D {0, 6, 7, 8},
->  };
->
->  static const struct of_device_id sun8i_mixer_of_table[] =3D {
-> diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.h b/drivers/gpu/drm/sun4i/=
-sun8i_mixer.h
-> index e2f83301aae8..7abc88c898d9 100644
-> --- a/drivers/gpu/drm/sun4i/sun8i_mixer.h
-> +++ b/drivers/gpu/drm/sun4i/sun8i_mixer.h
-> @@ -202,7 +202,6 @@ struct sun8i_mixer_cfg {
->         int                     ui_num;
->         unsigned int            de_type;
->         unsigned long           mod_rate;
-> -       unsigned int            map[6];
->  };
->
->  struct sun8i_mixer {
-> @@ -216,7 +215,7 @@ struct sun8i_mixer {
->         struct clk                      *mod_clk;
->
->         struct regmap                   *top_regs;
-> -       struct regmap                   *disp_regs;
-> +       struct device                   *planes_dev;
->  };
->
->  enum {
-> @@ -252,13 +251,6 @@ sun8i_blender_base(struct sun8i_mixer *mixer)
->         return mixer->cfg->de_type =3D=3D SUN8I_MIXER_DE3 ? DE3_BLD_BASE =
-: DE2_BLD_BASE;
->  }
->
-> -static inline struct regmap *
-> -sun8i_blender_regmap(struct sun8i_mixer *mixer)
-> -{
-> -       return mixer->cfg->de_type =3D=3D SUN8I_MIXER_DE33 ?
-> -               mixer->disp_regs : mixer->engine.regs;
-> -}
-> -
->  static inline u32
->  sun8i_channel_base(struct sun8i_layer *layer)
->  {
-> --
-> 2.51.2
->
->
+-- 
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
