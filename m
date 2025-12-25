@@ -1,65 +1,78 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAD11278753;
-	Wed, 24 Dec 2025 21:55:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DEB62236E0;
+	Thu, 25 Dec 2025 02:22:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766613341; cv=none; b=jroumhNba6oGnaxcPsgUxJ3V/ivMh+uvmu6BViGBPlqdARietJeq068Sgd69m9FPudJ2Ka76+cVx9J5z/gU3bfrPNRoqzUs2+kvuf7gifl6cmLuhkuqQPI5i1kA+3UmS7ijT80wYzWtApHhMpENvj29GFf6vNS83exYTWavFiG4=
+	t=1766629359; cv=none; b=haKK9vDhyOSDXvXIUkTYoGb25mmzTeyJpvWmy3dqXNeE3EsPd30RnGTPdCKZSqojWWmj3O33FZtb1TGeJ2lz/6rxESsmkuFL0rgncO/eJfAxtUu3po8YlLLut4jNwdnYq/nxXJvhjo7ehcMz2ftIU+aO5JxCrzDEKBe2n2bls20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766613341; c=relaxed/simple;
-	bh=7IYjCwwm1VJE64uY0+VvI0CNAetRZ6wxWGE1IDILpTA=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=LneG23HKHVFT9XxE/6M4yolag+OdjiLX39ty48qBn1vkKrdbhOJH4DALTi3afwg6skm44XObXgE6NVB6OMS6/DzRrXmihwiMK6Br92Du1cJr2A9oKeaZ9EKCPIpltRbUmAw0VZnJYzTHjPTI1tuXO64AVtTwUgUMrLwE3qO4cHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i0MFr15+; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i0MFr15+"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48EDCC4CEF7;
-	Wed, 24 Dec 2025 21:55:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1766613340;
-	bh=7IYjCwwm1VJE64uY0+VvI0CNAetRZ6wxWGE1IDILpTA=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=i0MFr15+ELitFr7bwkhJTpRfJetSCLCDGrP87mqdM5k9w4qbk7T/rgPioPLyzaAOU
-	 XjxyykrMEh9C3o5vBc9uedsVX+G0gG8PA/tsXqjuleShzfPOAfswcG5ajjfuKeO9O6
-	 snGrYsTQPmfiOf9bqcHGPzuMpAru0x8a9Uofzt/YABvft267y0N65YpcUZe7GrmXPy
-	 Pm1gaG935/MnV7YN1HBuQV4puNDM/qr3pt9b7KZ9Evym2YCsr00MX3RA5q54dpoGGO
-	 mv9bd3PuF0aHHQc0cVUATgUVgf9edK7VnxnrPz/vRyXWvXAX4dsDZkjwWW/zVTHCFs
-	 EKpUQ1rB4jADQ==
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1766629359; c=relaxed/simple;
+	bh=j90WaRFwhzrnXfMTTC3vaWpis6v50jLev126IuRr+Jw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qBkB0RYDBCQHCdAx7kmzil+soj/IPIsZcA2wRB6emx5qOhpz98bnR6Uns/f2tRTKdYANaJA+95rWyEjqx/F4RGqWApONpRpvGblb7qyUcAAv0znQHGa5TaxeZWWUI5AQS/1hGb3nVMxO4KWRz9Ewv4+eaGCjkqYZyCebMgHWlRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Received: from ofsar (unknown [116.232.18.222])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dlan)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id 33C4A341030;
+	Thu, 25 Dec 2025 02:22:32 +0000 (UTC)
+From: Yixun Lan <dlan@gentoo.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Haylen Chu <heylenay@4d2.org>,
+	Alex Elder <elder@riscstar.com>,
+	Troy Mitchell <troy.mitchell@linux.spacemit.com>,
+	Charles Mirabile <cmirabil@redhat.com>,
+	Brian Masney <bmasney@redhat.com>,
+	Akhilesh Patil <akhilesh@ee.iitb.ac.in>,
+	Inochi Amaoto <inochiama@gmail.com>
+Cc: Yixun Lan <dlan@gentoo.org>,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	spacemit@lists.linux.dev,
+	Longbin Li <looong.bin@gmail.com>
+Subject: Re: [PATCH v4 0/2] clk: spacemit: Fix module build for spacemit common ccu driver
+Date: Thu, 25 Dec 2025 10:22:25 +0800
+Message-ID: <176662919110.361686.13875991021272017337.b4-ty@gentoo.org>
+X-Mailer: git-send-email 2.52.0
+In-Reply-To: <20251219012819.440972-1-inochiama@gmail.com>
+References: <20251219012819.440972-1-inochiama@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <emy273nvnbzznvufe6fmbysrln6d7lm4xi5rwsuwnj4kjlalvx@7j4dxyd2f25l>
-References: <20251222-duty_cycle_precision-v1-1-b0da8e9fdab7@oss.qualcomm.com> <emy273nvnbzznvufe6fmbysrln6d7lm4xi5rwsuwnj4kjlalvx@7j4dxyd2f25l>
-Subject: Re: [PATCH] clk: qcom: rcg2: compute 2d using duty fraction directly
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Taniya Das <quic_tdas@quicinc.com>, Ajit Pandey <ajit.pandey@oss.qualcomm.com>, Imran Shaik <imran.shaik@oss.qualcomm.com>, Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-To: Bjorn Andersson <andersson@kernel.org>, Taniya Das <taniya.das@oss.qualcomm.com>
-Date: Wed, 24 Dec 2025 11:55:37 -1000
-Message-ID: <176661333774.4169.12534802903262524563@lazor>
-User-Agent: alot/0.11
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Quoting Bjorn Andersson (2025-12-22 09:09:54)
-> On Mon, Dec 22, 2025 at 10:38:14PM +0530, Taniya Das wrote:
-> > @@ -774,10 +774,8 @@ static int clk_rcg2_set_duty_cycle(struct clk_hw *=
-hw, struct clk_duty *duty)
-> > =20
-> >       n =3D (~(notn_m) + m) & mask;
-> > =20
-> > -     duty_per =3D (duty->num * 100) / duty->den;
-> > -
-> >       /* Calculate 2d value */
-> > -     d =3D DIV_ROUND_CLOSEST(n * duty_per * 2, 100);
-> > +     d =3D DIV_ROUND_CLOSEST(n * duty->num * 2, duty->den);
->=20
-> This looks better/cleaner. But for my understanding, can you share some
-> example numbers that shows the problem?
->=20
 
-Even better would be to add some KUnit tests for the qcom clk driver
-functions like this so we know they're still working.
+On Fri, 19 Dec 2025 09:28:16 +0800, Inochi Amaoto wrote:
+> Currently, the SPACEMIT_CCU entry is only a switch for enabling entry
+> SPACEMIT_K1_CCU. It does not guide the build for common clock codes
+> even if it is a tristate entry. This makes this entry useless.
+> 
+> Change the Makefile to add a separate build for common clock logic,
+> so the SPACEMIT_CCU entry takes effect, also add necessary
+> MODULE_LICENSE()/MODULE_DESCRIPTION()/EXPORT_SYMBOL() for the module
+> build.
+> 
+> [...]
+
+Applied, thanks!
+
+[1/2] clk: spacemit: Respect Kconfig setting when building modules
+      https://github.com/spacemit-com/linux/commit/5ec8cbbc54c82c0bdae4dbf0e5aecf9817bde2b9
+[2/2] clk: spacemit: Hide common clock driver from user controller
+      https://github.com/spacemit-com/linux/commit/99735a742f7e9a3e7f4cb6c58edf1b38101e7657
+
+Best regards,
+-- 
+Yixun Lan
+
