@@ -1,73 +1,72 @@
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9705A3D3B3;
-	Thu, 25 Dec 2025 07:47:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63FA630AAC0
+	for <linux-clk@vger.kernel.org>; Thu, 25 Dec 2025 08:22:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766648881; cv=none; b=eCqLNbzdqh8gzTTT578Qg6o/h89o2zNEgN+RORrfliFYjoGz1caE7Fkdo0FxOsw5KD/UNxMfyBft6wcpJs4IZ4/18NGI9IYovSZ9ImqrOL5p3lGplSD0xAZc4Eh5IwujSDD5nplORUWwqsgSGSwIF+BsppqJlla4+4e0lhjZcgM=
+	t=1766650948; cv=none; b=r0XIctS2KtjO0V9QM41f4q7rleZJsLmiOd8PqXZYg/ez+LW/Dv02eLiXlOujGlHSvWrMS2c7je4Ohwc4HSuMOYoD08hmH0LbFDpsCAuNLywFF3vT/halIXBOTLEp5nLqmgda7sS87o1Qr6UNRNiipIIJG9S46IMRd8GQW3caQCE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766648881; c=relaxed/simple;
-	bh=qkFtS0tU+hPAO86pGnO+Q9wZJVOF4wKvHVlwO7gN+LA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dHpyzQowExLb1kUHfEjATWLXHQsXfO8262pXemrX6aiV/kRMk75tzqIenKMvgRtvEjo+febpOy/DbOa1WZWe44ufPrEqoDa5yDTQvzpxRI1kOXjtnnV/HHABBR8fJ+UaDOiILgzSsb/o4jVlO8fqY/5r0W9Gdo3E41mL5jZRSqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Received: from localhost (unknown [116.232.18.222])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dlan)
-	by smtp.gentoo.org (Postfix) with ESMTPSA id 8A9A3341093;
-	Thu, 25 Dec 2025 07:47:58 +0000 (UTC)
-Date: Thu, 25 Dec 2025 15:47:44 +0800
-From: Yixun Lan <dlan@gentoo.org>
-To: Stephen Boyd <sboyd@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Alex Elder <elder@riscstar.com>, Guodong Xu <guodong@riscstar.com>,
-	Inochi Amaoto <inochiama@gmail.com>, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org,
-	spacemit@lists.linux.dev
-Subject: Re: [PATCH 2/2] reset: spacemit: fix auxiliary device id
-Message-ID: <20251225074744-GYA2000703@gentoo.org>
-References: <20251220-06-k1-clk-common-v1-0-df28a0a91621@gentoo.org>
- <20251220-06-k1-clk-common-v1-2-df28a0a91621@gentoo.org>
+	s=arc-20240116; t=1766650948; c=relaxed/simple;
+	bh=GBIp9kX+hl2mkbN1urGov/Z/70FEgI+eflqjn/ioE4Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=axDT4wF3fVSDEsyaK5q0bIUqbryjZLBuNupj0Pg82Xyjh/ew7hGRZR+aQeYgwQZySnYWXKaahj+SfOzBvyNSBEzeAad7c6l0N78MrXoYCxLXFdAlCdoJ9OnvkL3BUcL2/YRV82hbMa3xs+1bRkBi1Jh7q952ADDwtXFqeY4Y5HI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tLXJclho; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tLXJclho"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D20BC2BCB1
+	for <linux-clk@vger.kernel.org>; Thu, 25 Dec 2025 08:22:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1766650948;
+	bh=GBIp9kX+hl2mkbN1urGov/Z/70FEgI+eflqjn/ioE4Y=;
+	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc:From;
+	b=tLXJclhoGJ0ix5OyqI0QDTFogKnKbKmwfBj+4RTKf3PAqjGz4/FCZy266J8Qeme7Q
+	 SkPtwPEsJqOAOoOwjCULpmYZItwKYuluhTvFlnMZ/6hNfq1d8q4hzTY9YjezQBeXTu
+	 V6AzIHk1DMyaR8wgLGW3uKt1NTTvB4ZwFbXCy/bhOBzXaAWNAdUKf9xg1uGpcyV5CJ
+	 xzZVvrumaa0bD6A1CvBonM86kw6BhmI3dCOyvTf0jyS3QIuzx4HKmqb4aZRYAZtNuU
+	 alvAexP+G0QH+QJw28v9o0/GI1kqEMBPhClJ4fN/co/QaccRM+0u2vK2r5oe09JMuA
+	 mm4+VKKK9Grcg==
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-37a33b06028so56693261fa.2
+        for <linux-clk@vger.kernel.org>; Thu, 25 Dec 2025 00:22:27 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWhJTt0qkDgSCrC2rRP0MCfdSuUJcGdZvcC+iqrV4MTxubwtQOisIHPThJdw38ZVooWj7DBPUGbBSI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzd4rrADdNjLJ8cUa3BEq73w37akienUdlxka6SXFgmDUokCt5e
+	vTQ68OqrvuWs1L7dWzeRVcu0+kVg+f88obmFxd/ri7KwIf/vr7hL/gkxS6MQv+sUD4LovE+acbR
+	pGtPMiyLJhWnx9L3MNhkTSirKHKsXzKA=
+X-Google-Smtp-Source: AGHT+IFppeSVdlVccV8ZLOVWMT/HmjByzAPqOV4k8UjgxAxDAQTT6kTjy5H+aCpOAkmg3adrDHLP6/5j+VdObqpd5IA=
+X-Received: by 2002:a05:651c:544:b0:37b:95ee:f605 with SMTP id
+ 38308e7fff4ca-381215af948mr71834481fa.10.1766650946149; Thu, 25 Dec 2025
+ 00:22:26 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251220-06-k1-clk-common-v1-2-df28a0a91621@gentoo.org>
+References: <20251115141347.13087-1-jernej.skrabec@gmail.com> <20251115141347.13087-2-jernej.skrabec@gmail.com>
+In-Reply-To: <20251115141347.13087-2-jernej.skrabec@gmail.com>
+Reply-To: wens@kernel.org
+From: Chen-Yu Tsai <wens@kernel.org>
+Date: Thu, 25 Dec 2025 16:22:11 +0800
+X-Gmail-Original-Message-ID: <CAGb2v64h5E+hz-G4HEBesVgu4bkFfTi5vNEpU2BQFUYHKCqY8A@mail.gmail.com>
+X-Gm-Features: AQt7F2p6GeAz5pE56ddcluDZYRCFD_O3UDD7G_yS9PvFCxlCXBqEjAn8ZBftz2A
+Message-ID: <CAGb2v64h5E+hz-G4HEBesVgu4bkFfTi5vNEpU2BQFUYHKCqY8A@mail.gmail.com>
+Subject: Re: [PATCH 1/7] drm/sun4i: Add support for DE33 CSC
+To: Jernej Skrabec <jernej.skrabec@gmail.com>
+Cc: samuel@sholland.org, mripard@kernel.org, maarten.lankhorst@linux.intel.com, 
+	tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, mturquette@baylibre.com, 
+	sboyd@kernel.org, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi All,
+On Sat, Nov 15, 2025 at 10:14=E2=80=AFPM Jernej Skrabec
+<jernej.skrabec@gmail.com> wrote:
+>
+> DE33 has channel CSC units (for each plane separately) so pipeline can
+> be configured to output in desired colorspace.
+>
+> Signed-off-by: Jernej Skrabec <jernej.skrabec@gmail.com>
 
-On 09:11 Sat 20 Dec     , Yixun Lan wrote:
-> Due to the auxiliary register procedure moved to ccu common module,
-> the auxiliary device id need to be adjusted, otherwise reset driver
-> will fail to probe.
-> 
-> Signed-off-by: Yixun Lan <dlan@gentoo.org>
-> ---
->  drivers/reset/reset-spacemit.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/reset/reset-spacemit.c b/drivers/reset/reset-spacemit.c
-> index e1272aff28f7..0bfd90567011 100644
-> --- a/drivers/reset/reset-spacemit.c
-> +++ b/drivers/reset/reset-spacemit.c
-> @@ -278,7 +278,7 @@ static int spacemit_reset_probe(struct auxiliary_device *adev,
->  
->  #define K1_AUX_DEV_ID(_unit) \
->  	{ \
-> -		.name = "spacemit_ccu_k1." #_unit "-reset", \
-> +		.name = "spacemit_ccu." #_unit "-reset", \
-To distinguish support from K3 SoC, the k1 namespace still need to be
-kept, I will update this in next version
-
--- 
-Yixun Lan (dlan)
+Reviewed-by: Chen-Yu Tsai <wens@kernel.org>
