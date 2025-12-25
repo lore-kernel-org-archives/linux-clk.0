@@ -1,83 +1,83 @@
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45EB518872A
-	for <linux-clk@vger.kernel.org>; Thu, 25 Dec 2025 17:47:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9478772610
+	for <linux-clk@vger.kernel.org>; Thu, 25 Dec 2025 17:47:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766684823; cv=none; b=FJkf2N6BnDETMPEShc52ZUbkCG64wjjViAz6h0lpnEthT8oTFra0VuH04EQfywQJTbLB9hes35ujgLIZ8ltWQ8C6V/gxm5KiBzr3nxJO79eP0i9GfEoy/CIWQY32cRlwFVceRLGQIYgoNwtBNYaJNPycHPJOeIDQokBgWUXTTf4=
+	t=1766684856; cv=none; b=uedr8xEbGN7XGrhGgqLGDOYlmT4nDqiGiOyjDRnzh13hHo5QlgBQsslrgkrFzb3KgfXARbrJUlxBqxAlwhcQy6XrQJLCaKhWgH0Fun35SMDhljY2ALLq0C2YI9FNoUM3bFdc3fJq+RX1pq38nxrwC/KSkyIS6UXrI7T8SR0HiSM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766684823; c=relaxed/simple;
-	bh=Gk9zBLBFdeodBkH9ZpjVPzjbpei1UHJVk5RrILCm9Ns=;
+	s=arc-20240116; t=1766684856; c=relaxed/simple;
+	bh=fPiwt7bFT2B7ol6lRMCzjbdE9hXU1E5OUFOHbDORWGE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=osmS9ZBkfKVRs9vMcscEOPkiFPrVe+GQDyuuXS+GScQoNauw1S0n4N5EC+/PBa1qqsBu4c1AdXUisdFMjrzK7B6+ZBRPBPEym1060sV2EoG/CQ5R6p3l9jRFscn/z0J2bBex5G0g6oJtTgsKHqrW2kGg6MOMGZx2bDFU+Ep9HE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CeSYSAyC; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=PkmbQToP; arc=none smtp.client-ip=170.10.129.124
+	 Content-Type:Content-Disposition:In-Reply-To; b=QgpYTQvjPRfOuYwZW+sQ58px1jFAxEu5ELij8D2Fy74PmhoF3ZCBpqO6IWp+RkX9GGP9V/MeXl5GAGMmVk8y3s/m1JrFyu9pz4rnShUygvTFLDkV6nidVcCVlW663PXXAxM1kJh3Qm4VYm7uwfEJbhu0+4CuwGTfyUlFtXmyKqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TKuDpY5z; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=GMN83onG; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CeSYSAyC";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="PkmbQToP"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TKuDpY5z";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="GMN83onG"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1766684821;
+	s=mimecast20190719; t=1766684853;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=0kJtkYpkUPuI2JipA1QFCVFw9kslwydenMOjeWpb0No=;
-	b=CeSYSAyCOafdgXCq2Urnk9kbLtXI2WYC86KBKbPT376utGH5+FcUp/EG49FU3gbBi1Xu6Q
-	QHtU4nWB1HHUtzolZfIagLHTtVUc1FGPy7Gno+Zt7z+1mDaEsLF0oyiESkBKx2SIdSV1Wt
-	IoMMbbygJBvdK9Qa6t0C2MQGjd64oys=
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
- [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=wG4I6VxM3eFd1aSSwTbKPww5ITUYVRbPhiSShA5xEIY=;
+	b=TKuDpY5zEem1fsSFYdsHfZJR4TIfyG2bfkAWuQ8JjRkKIVjBrQCetW7WMMEytFBdGoLqGl
+	L+vIhuqijZNkT/V6yZA/MIIUFrMVB/NXMUvcIitA0LFY2OQA8T2L1Ktou8I+P7sl9n8eSV
+	p+6T97WrOYP6dUIOd6VanhqGOl6RoYA=
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
+ [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-7--N4zKESAOK-45DN0-UP_HA-1; Thu, 25 Dec 2025 12:46:59 -0500
-X-MC-Unique: -N4zKESAOK-45DN0-UP_HA-1
-X-Mimecast-MFC-AGG-ID: -N4zKESAOK-45DN0-UP_HA_1766684819
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-8b2de6600c0so1748936685a.1
-        for <linux-clk@vger.kernel.org>; Thu, 25 Dec 2025 09:46:59 -0800 (PST)
+ us-mta-331-Qn9Vg2WdPQ6_cm0SspO9TA-1; Thu, 25 Dec 2025 12:47:32 -0500
+X-MC-Unique: Qn9Vg2WdPQ6_cm0SspO9TA-1
+X-Mimecast-MFC-AGG-ID: Qn9Vg2WdPQ6_cm0SspO9TA_1766684852
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4f4a92bf359so148891641cf.2
+        for <linux-clk@vger.kernel.org>; Thu, 25 Dec 2025 09:47:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1766684819; x=1767289619; darn=vger.kernel.org;
+        d=redhat.com; s=google; t=1766684852; x=1767289652; darn=vger.kernel.org;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=0kJtkYpkUPuI2JipA1QFCVFw9kslwydenMOjeWpb0No=;
-        b=PkmbQToP/fi8vRHdinOrXfkbJj/1gmPVoMpHQhf+4TH4t2M9AVemKbB/3LNiF6A5n2
-         WWC8HH23CuLBOrPMN2gz7aozRMqvuYwuOVQ3Ooy/R/UCESjva6JLJRs0FixjrjYugibV
-         Oh64N1o6PzrZlVj17FdAGZ30gPtGLqnX0kNbUEEoeDC4ebA4tmbhHtxoMDXF8eoQzLlJ
-         N128eJK9SYuQV9/00W6n5BYgBP56yb0qaDb1el2YSDdNvZS0BRdvPEkqsR4Ip01Z5XEj
-         XBpKzyIWUBOw0i11lyM6N3ArI8UfjGVtNdKDLn0kBmr8qWyVLVBLYoq+AQsPDPk5iOpW
-         vdRw==
+        bh=wG4I6VxM3eFd1aSSwTbKPww5ITUYVRbPhiSShA5xEIY=;
+        b=GMN83onGhPlrD8qdSNnkUtZJy/AqAxBxlIGugBKcteF24f6onT0ZXzrxI2J9squ/dy
+         5Kc6/Qj8NZhA/hpI6jrwOtJnUQQBqAnaON1LmWLKiaOVTiLC9d06+g6mPPFl0Y4TWKK2
+         mCvUjcZRyPkRWZn8rGB43Rl4ZkJVwuDLIrObXzfH/sirmRJW86anmn7t3Vw7z57v+nef
+         ABCeYgH38tM0uXrK56XNw72a1j17v1qJbjiCiJYt94Nrxmk27pNbAwsksz26qjPFceW9
+         Z4AYeDuZzMUFgQJ2cYXPK1RKw5YFTJkTPKhO08JKFB/UrIuGiAqLWHcXuTN2AERbhaqr
+         051A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1766684819; x=1767289619;
+        d=1e100.net; s=20230601; t=1766684852; x=1767289652;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=0kJtkYpkUPuI2JipA1QFCVFw9kslwydenMOjeWpb0No=;
-        b=cvA5gmfGJyh/AxCZi5WXuwZCRxX7qrqjCAqv9EZDYJG4fGiIo8iYs2vFoe7ggKOdnJ
-         JsQ6qkqg7Rkq+b0dz4r97DGJFryE1fUZYY94s7buSJk4HRwPdUOA6eg0oEWazLufxQx/
-         UzdcjnFiNOC2XJdAlVf/U9lB0aEIPHOYPMBbNTd2AU4ucBDCsT9G275fS0Dby42T9z7M
-         AFzMq2O/gNK04zLpAmmsxACCdDaKoaNbNNAEnrCvH3TP1Ph7fjA/SeeElPfljJ0OUZoy
-         HE6Cply4Piv1YkIAPVz+XPRltl42DQZl6xHt1Htv5EHybS7PiRKrfTWW1fquykghz0u4
-         f6+w==
-X-Forwarded-Encrypted: i=1; AJvYcCUpqwBV8DMHNZBNSEF9Qc1VvtsV7xmntLvQMCc5uPv4mq+duU4d7mwr0ino+ltCXCQjazBOgP3Xkdw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxynuPLBzg1nAGuy0qiv1PMcesEkigUwZeqnxMund2QFa0dBLaf
-	MdfXy0PWZYkit3oOwoAcLw/ZJoNsmtZYNk6IG3MVI0UV7XoON8g3ABkAkNLrvCeHaufMfTyrnWZ
-	RQCZyEIxhXz950bDZo2FK4vbWgPoqPNgUkhQEY8rjPeEmNpT5ua71PuLUoGVCEw==
-X-Gm-Gg: AY/fxX42eYEvchGCp5Sgtef+ItA8tYVA0FAIjmCP0lsGAllFAIGbgrCjco6kNDNhstj
-	/y3JOgMYOcBX2nG5LO0ljGs4Sc0auApyYNdg8F4rVyjv18tAzeruM7bJz4E+3cBOrZsG28fHT6i
-	isqbV+y0TXf75OJ7d6DnboSBpShbla/FSu3ShuD5ZD3VNbrz1WcwALEa5ObOS5xJSYZM0vPCv9Y
-	p1gWkEBxJ5AQvh5Hkt9gykIBwmH5K1FYT6XhXMdYPwrOKJY23MfmC07khdCqGu+i5NWb5xo29Lx
-	XCXmqIsQ6eJcwIHfcC+YWDwg1TSlNXEAIpFmGgIWTDZPbVQ2KUPYeWnqp8DXHWnZM6N/KiknclJ
-	DAwP3q/y+MXnYQ2Bkj7ssPoPAFdMJ344TJnrmJW3CCM4s
-X-Received: by 2002:a05:620a:4109:b0:8b1:498b:77fc with SMTP id af79cd13be357-8c08f6742f1mr3088094785a.33.1766684819228;
-        Thu, 25 Dec 2025 09:46:59 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IF7WXmE0cMDSwpEq7NOgN64FHK9QeM+bXc3yG0olFDRDC23yLs0+NqXOH85EiqPqZlaeHq21w==
-X-Received: by 2002:a05:620a:4109:b0:8b1:498b:77fc with SMTP id af79cd13be357-8c08f6742f1mr3088093785a.33.1766684818831;
-        Thu, 25 Dec 2025 09:46:58 -0800 (PST)
+        bh=wG4I6VxM3eFd1aSSwTbKPww5ITUYVRbPhiSShA5xEIY=;
+        b=c/lNseezMnWqsvkhbd91dBklOTU7rrVYF1030JNO+iiclebgbxj3frgZNRMlKFKYRX
+         1KxJEZSk1PkPxlIQ/OarIaDfpfs5lJKp38fUo3/+JijkChxsCLqgqsEl0tgVsm9JAL9y
+         E6fGNRsOLNeebjda8skwju24gX73qdpdI0veWWXtEI92oxLehiaOuGJgvi8/xIRbfkEP
+         zJxyiwuAby3RK/sWxporenvSMiwiViavRzOImBo+dFPx14VIYExs4P7lSFixsqHKbs3T
+         ShtAWvBwbEkrlpab6lNADzq3SkN1E+Xvvm22NGgLw65o0fRgtAfEliYX91Exc/eX7lKd
+         9JhA==
+X-Forwarded-Encrypted: i=1; AJvYcCV6+7sSCuIZSfaXsq37zhWtZEXT+VR6Zjw4696kedtji1J35N7o5oWPWhdxox2hFqY/Sjgx2ofiChU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyICH4Z3iBFyfCDUdXVLcXBEKFzcobpaDpekJwLTbmRcY9/oLr9
+	hfOmT0a9DmBpvx6A7k4Awdxzr1LHVeeMF67EnpC1SOyU4wCEaVCp6LAZJEGtUg/PgyaDXWr/sfP
+	qkidPglE9CvrkOsfgMOLlYy2e2LrtsNo80RWepPZNCXm1NMuDlBCX+FZ+EO3DkQ==
+X-Gm-Gg: AY/fxX4BUyxQl9uidii61OFuolfwCcCFqlEGAjjs2E80ERo3LdUUp/TCxHtzmt7bhuG
+	/LP3BdxyVIJZRL/93Mtg0VyiUs1f+OWuvs0n8cWu4tyRylwCA7BfQP1spysTGLTbsSc2hPPxYFp
+	ezmopS6Nx4+SZK8TNrw6PQCOcGET4Id5vkhVWQONbYuH2oRljci1ULuJw1tdELe1zdrc42yvw/O
+	gsR2Iq8UGKXHIisQnsLdjbGo7osAfpwja87O2iBEq+YWrw7Z49dL1GS9f32y72OihmQXfhKOvWB
+	E2yR2Y+vAJ9qAqRGILDqYX9nmYEVxmhO3ycXU6pp6Pj9YmSqxjKttPqpxsKdXdILGZ4nqfdjAJP
+	IpAAR91KZRWHIw3hf0s88jVcVxc6q9BHtCNudZa6MSEjv
+X-Received: by 2002:a05:622a:115:b0:4f1:acd4:6846 with SMTP id d75a77b69052e-4f4abd9819dmr295761181cf.50.1766684851980;
+        Thu, 25 Dec 2025 09:47:31 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFcXKCygnM4kDt881UZTTXHcdEXXO2Rd0nQZmfuJ4gtrB34tIkzBXQRGXaaucUOf12IVpIiBQ==
+X-Received: by 2002:a05:622a:115:b0:4f1:acd4:6846 with SMTP id d75a77b69052e-4f4abd9819dmr295760931cf.50.1766684851608;
+        Thu, 25 Dec 2025 09:47:31 -0800 (PST)
 Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8c0971ee247sm1538002385a.27.2025.12.25.09.46.56
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4f4ac64e43asm142776531cf.26.2025.12.25.09.47.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Dec 2025 09:46:57 -0800 (PST)
-Date: Thu, 25 Dec 2025 12:46:55 -0500
+        Thu, 25 Dec 2025 09:47:31 -0800 (PST)
+Date: Thu, 25 Dec 2025 12:47:28 -0500
 From: Brian Masney <bmasney@redhat.com>
 To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 Cc: Michael Turquette <mturquette@baylibre.com>,
@@ -85,10 +85,11 @@ Cc: Michael Turquette <mturquette@baylibre.com>,
 	Michal Simek <michal.simek@amd.com>,
 	Jassi Brar <jassisinghbrar@gmail.com>, linux-clk@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] clk: zynqmp: divider: Fix
+Subject: Re: [PATCH 2/3] clk: zynqmp: pll: Fix
  zynqmp_clk_divider_determine_rate kerneldoc
-Message-ID: <aU14j4Xxes1BJLob@redhat.com>
+Message-ID: <aU14sKwiL_wJRUO7@redhat.com>
 References: <20251224114210.139817-4-krzysztof.kozlowski@oss.qualcomm.com>
+ <20251224114210.139817-5-krzysztof.kozlowski@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -97,17 +98,17 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251224114210.139817-4-krzysztof.kozlowski@oss.qualcomm.com>
+In-Reply-To: <20251224114210.139817-5-krzysztof.kozlowski@oss.qualcomm.com>
 User-Agent: Mutt/2.2.14 (2025-02-20)
 
-On Wed, Dec 24, 2025 at 12:42:11PM +0100, Krzysztof Kozlowski wrote:
+On Wed, Dec 24, 2025 at 12:42:12PM +0100, Krzysztof Kozlowski wrote:
 > After renaming round_rate->determine, kerneldoc does not match anymore,
 > causing W=1 warnings:
 > 
->   Warning: drivers/clk/zynqmp/divider.c:122 function parameter 'req' not described in 'zynqmp_clk_divider_determine_rate'
->   Warning: drivers/clk/zynqmp/divider.c:122 expecting prototype for zynqmp_clk_divider_round_rate(). Prototype was for zynqmp_clk_divider_determine_rate() instead
+>   pll.c:102 function parameter 'req' not described in 'zynqmp_pll_determine_rate'
+>   pll.c:102 expecting prototype for zynqmp_pll_round_rate(). Prototype was for zynqmp_pll_determine_rate() instead
 > 
-> Fixes: 0f9cf96a01fd ("clk: zynqmp: divider: convert from round_rate() to determine_rate()")
+> Fixes: 193650c7a873 ("clk: zynqmp: pll: convert from round_rate() to determine_rate()")
 > Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
 Thanks for the fixup!
