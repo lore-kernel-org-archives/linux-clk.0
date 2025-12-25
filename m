@@ -1,157 +1,94 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E423EEC3;
-	Thu, 25 Dec 2025 03:51:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8753137C52;
+	Thu, 25 Dec 2025 07:12:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766634668; cv=none; b=CEQP9VdoUCWF20uujyUznLHm78LJxyaayhy8gTxxJ3FjcWaPL/aBUvUfR/8XzUfzRpLKGYiT+6TcKnw2Cs8gFHfDLMvi8wLPPnV/HlKq8qvomKP9gsCBohODuNpNg4urbsi8vJZLhWESLr8AkAZNAJlIL/LkZ89iU3dSR7u3X3E=
+	t=1766646751; cv=none; b=fOG7pSzdW5UZxFYV/ys8RuqGr5mX2ClYeD9FCPeslJ9IrB0LK+IgpnrvOh5k4W5ANguyJXhIBv09g5MIAlU8T383du7EtXqAeJlhozK9gvnmx6HSueLiV3zOe7Dp0EAR2tMSWRzi3V7wv3ZrfXceR7KHkZMAavv6l4fXnXdA1q0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766634668; c=relaxed/simple;
-	bh=e5B3SSMk1rIkgvNAsHWBN98zYrKbsmUDNmz3J/BZDiw=;
+	s=arc-20240116; t=1766646751; c=relaxed/simple;
+	bh=ww+YwWpI5rV856DXA3DaYe7RNRWBcOMSTLaALI/1imQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IZ7jnyc20XmnXTZVgLIrr6oW4MmM/Tw5dJRfNYFvFlSLaj1cffswsP/rRqa40rP2f5r7DleTr8f/wRL5w0S7oU9p4UJN54hjpQkCNC4eUzzV1g8scwiybMjWj1MK4SpyipezTXtx0A2T2Kuyqq74bFQqi5J9EC/QOms3XrIJGq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R521H4wZ; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R521H4wZ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 994D5C4CEF1;
-	Thu, 25 Dec 2025 03:51:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1766634668;
-	bh=e5B3SSMk1rIkgvNAsHWBN98zYrKbsmUDNmz3J/BZDiw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=R521H4wZGoK0XBn6ZlrjT/+I+u7qEaqGP5pmsMY52UVwUMypLD/4D8MEJDFvizqWL
-	 vids4LmB9oPOjL/f7lpXbko/6x7f/wr9SpsD6FlxBZNtDp1KGSljJMM5L+eATAt4Jn
-	 DKAvF7krq4kMeTv+3zm+Yxrvj76Vp34yuP46k6Y4c8rNyfrPfB+Y+Qgv4dNxAqkWGS
-	 6cJKSdDXLupMuLuA0T6aa7ZFcG5FtB1MOsSudXn8aVIVRUm4WZ+3PhSywXBvXj+N6e
-	 Ms/BAhqTDJ/Yjwc+cOb9cQKV7TtwT2QfoWWgJvzzN6NXPI5ZkhLfk8q5FeLM2ljTb4
-	 NK3iutt7aqcKw==
-Date: Wed, 24 Dec 2025 21:51:05 -0600
-From: Bjorn Andersson <andersson@kernel.org>
-To: Taniya Das <taniya.das@oss.qualcomm.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Taniya Das <quic_tdas@quicinc.com>, 
-	Ajit Pandey <ajit.pandey@oss.qualcomm.com>, Imran Shaik <imran.shaik@oss.qualcomm.com>, 
-	Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	 Content-Type:Content-Disposition:In-Reply-To; b=FFQScwvxXsNxj2eDLLpSzOrleejqD8BGnKrDHrbIN+BF/WVZG0GYs6dRfqe/i9szgXtcv0ZwQvtoWT/yyF67pDg0Sxv8MtoXa6I+eJsuucVmZ1P+GZnlJw9UtyfauH2pefKxxuToI+98ierMJaIcPPoXvL66JU+9wlfbGfn7kNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=isrc.iscas.ac.cn; spf=pass smtp.mailfrom=isrc.iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=isrc.iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=isrc.iscas.ac.cn
+Received: from duge-virtual-machine (unknown [223.160.207.251])
+	by APP-03 (Coremail) with SMTP id rQCowADn_tWg40xpZeHvAQ--.12506S2;
+	Thu, 25 Dec 2025 15:11:31 +0800 (CST)
+Date: Thu, 25 Dec 2025 15:11:27 +0800
+From: Jiayu Du <jiayu.riscv@isrc.iscas.ac.cn>
+To: Yangyu Chen <cyy@cyyself.name>, linux-riscv@lists.infradead.org
+Cc: Conor Dooley <conor@kernel.org>, Damien Le Moal <dlemoal@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Guo Ren <guoren@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-gpio@vger.kernel.org,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: qcom: rcg2: compute 2d using duty fraction directly
-Message-ID: <jxj23rczlysmrrrzdmtaa2ymrntamp2hgkzwnfaxgnnzsqqxoy@l5shaguts5oj>
-References: <20251222-duty_cycle_precision-v1-1-b0da8e9fdab7@oss.qualcomm.com>
- <emy273nvnbzznvufe6fmbysrln6d7lm4xi5rwsuwnj4kjlalvx@7j4dxyd2f25l>
- <fa75d5b1-e805-4d3f-9b6c-a21358d3d4b8@oss.qualcomm.com>
+Subject: Re: [PATCH v6 10/11] riscv: dts: add initial canmv-k230 and k230-evb
+ dts
+Message-ID: <aUzjn3XHJTSl3vY9@duge-virtual-machine>
+References: <tencent_F76EB8D731C521C18D5D7C4F8229DAA58E08@qq.com>
+ <tencent_DF5D7CD182AFDA188E0FB80E314A21038D08@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <fa75d5b1-e805-4d3f-9b6c-a21358d3d4b8@oss.qualcomm.com>
+In-Reply-To: <tencent_DF5D7CD182AFDA188E0FB80E314A21038D08@qq.com>
+X-CM-TRANSID:rQCowADn_tWg40xpZeHvAQ--.12506S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrKFy5Kr4xuFWkZFWUXw15XFb_yoWxtwb_Wr
+	1fuw4FkF4DCFyIka4DZws5JF1fA3s7Cws8tr9xXrn7Xa4kXF1DCr1jv3yDXr4rA3ZxKFs3
+	tFZxXFs3AFn2gjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbsxYjsxI4VWxJwAYFVCjjxCrM7AC8VAFwI0_Xr0_Wr1l1xkIjI8I
+	6I8E6xAIw20EY4v20xvaj40_JFC_Wr1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM2
+	8CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2Ix0
+	cI8IcVCY1x0267AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7xvwVC2z2
+	80aVCY1x0267AKxVW8JVW8Jr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IE
+	w4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMc
+	vjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kIc2xKxwCY
+	1x0262kKe7AKxVW8ZVWrXwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8Jw
+	C20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAF
+	wI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjx
+	v20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2
+	jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0x
+	ZFpf9x07jhmiiUUUUU=
+X-CM-SenderInfo: 5mld534oul2uny6l223fol2u1dvotugofq/
 
-On Tue, Dec 23, 2025 at 04:18:20PM +0530, Taniya Das wrote:
-> 
-> 
-> On 12/23/2025 12:39 AM, Bjorn Andersson wrote:
-> > On Mon, Dec 22, 2025 at 10:38:14PM +0530, Taniya Das wrote:
-> >> From: Taniya Das <quic_tdas@quicinc.com>
-> > 
-> > Please use oss.qualcomm.com.
-> > 
-> 
-> My bad, will update it.
-> 
-> >>
-> >> The duty-cycle calculation in clk_rcg2_set_duty_cycle() currently
-> >> derives an intermediate percentage `duty_per = (num * 100) / den` and
-> >> then computes:
-> >>
-> >>     d = DIV_ROUND_CLOSEST(n * duty_per * 2, 100);
-> >>
-> >> This introduces integer truncation at the percentage step (division by
-> >> `den`) and a redundant scaling by 100, which can reduce precision for
-> >> large `den` and skew the final rounding.
-> >>
-> >> Compute `2d` directly from the duty fraction to preserve precision and
-> >> avoid the unnecessary scaling:
-> >>
-> >>     d = DIV_ROUND_CLOSEST(n * duty->num * 2, duty->den);
-> >>
-> >> This keeps the intended formula `d ≈ n * 2 * (num/den)` while performing
-> >> a single, final rounded division, improving accuracy especially for small
-> >> duty cycles or large denominators. It also removes the unused `duty_per`
-> >> variable, simplifying the code.
-> >>
-> >> There is no functional changes beyond improved numerical accuracy.
-> >>
-> >> Fixes: 7f891faf596ed ("clk: qcom: clk-rcg2: Add support for duty-cycle for RCG")
-> >> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
-> >> ---
-> >> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
-> >> ---
-> >>  drivers/clk/qcom/clk-rcg2.c | 6 ++----
-> >>  1 file changed, 2 insertions(+), 4 deletions(-)
-> >>
-> >> diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
-> >> index e18cb8807d73534c6437c08aeb524353a2eab06f..2838d4cb2d58ea1e351d6a5599045c72f4dc3801 100644
-> >> --- a/drivers/clk/qcom/clk-rcg2.c
-> >> +++ b/drivers/clk/qcom/clk-rcg2.c
-> >> @@ -755,7 +755,7 @@ static int clk_rcg2_get_duty_cycle(struct clk_hw *hw, struct clk_duty *duty)
-> >>  static int clk_rcg2_set_duty_cycle(struct clk_hw *hw, struct clk_duty *duty)
-> >>  {
-> >>  	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-> >> -	u32 notn_m, n, m, d, not2d, mask, duty_per, cfg;
-> >> +	u32 notn_m, n, m, d, not2d, mask, cfg;
-> >>  	int ret;
-> >>  
-> >>  	/* Duty-cycle cannot be modified for non-MND RCGs */
-> >> @@ -774,10 +774,8 @@ static int clk_rcg2_set_duty_cycle(struct clk_hw *hw, struct clk_duty *duty)
-> >>  
-> >>  	n = (~(notn_m) + m) & mask;
-> >>  
-> >> -	duty_per = (duty->num * 100) / duty->den;
-> >> -
-> >>  	/* Calculate 2d value */
-> >> -	d = DIV_ROUND_CLOSEST(n * duty_per * 2, 100);
-> >> +	d = DIV_ROUND_CLOSEST(n * duty->num * 2, duty->den);
-> > 
-> > This looks better/cleaner. But for my understanding, can you share some
-> > example numbers that shows the problem?
-> > 
-> 
-> Sure Bjorn, will share the examples.
-> 
+On Sat, Mar 23, 2024 at 08:12:22PM +0800, Yangyu Chen wrote:
+...
+> diff --git a/arch/riscv/boot/dts/canaan/k230.dtsi b/arch/riscv/boot/dts/canaan/k230.dtsi
+...
+> +
+> +	aliases {
+> +		serial0 = &uart0;
+> +	};
 
-I don't think these examples need to necessarily be added in the git
-history - in particular since the proposed new style looks more
-reasonable than what's currently is in the code.
+The aliases should be set in the board-level dts file,
+so please consider removing the aliases.
 
-So, providing them here would suffice, for me at least.
-
-
-Adding kunit tests certainly sounds useful though.
-
-Regards,
-Bjorn
-
-> > Regards,
-> > Bjorn
-> > 
-> >>  
-> >>  	/*
-> >>  	 * Check bit widths of 2d. If D is too big reduce duty cycle.
-> >>
-> >> ---
-> >> base-commit: cc3aa43b44bdb43dfbac0fcb51c56594a11338a8
-> >> change-id: 20251222-duty_cycle_precision-796542baecab
-> >>
-> >> Best regards,
-> >> -- 
-> >> Taniya Das <taniya.das@oss.qualcomm.com>
-> >>
-> 
+...
+> +
+> +		plic: interrupt-controller@f00000000 {
+> +			compatible = "canaan,k230-plic" ,"thead,c900-plic";
+Incorrect comma separation. It should be: "canaan,k230-plic", "thead,c900-plic";
+> +			reg = <0xf 0x00000000 0x0 0x04000000>;
+> +			interrupts-extended = <&cpu0_intc 11>, <&cpu0_intc 9>;
+> +			interrupt-controller;
+> +			#address-cells = <0>;
+> +			#interrupt-cells = <2>;
+...
 > -- 
-> Thanks,
-> Taniya Das
+> 2.43.0
 > 
+
