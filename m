@@ -1,16 +1,16 @@
 Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D0472BDC17;
-	Fri, 26 Dec 2025 11:02:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECF5821FF21;
+	Fri, 26 Dec 2025 11:02:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766746948; cv=none; b=phiiyvxuz29+n51Ak7afC3v/ZFYEZpXSEFHSJPl0r+YOcs7fY6UzTyzgCW+U0vI+h1nprgcFoIJF311YfOZJNJIDzCOcfxY1tmfdfgf3G/JbbhEMiwfLor1+TZSZzNwdrQst6R+1caVsurLyQcl5R5mv4AONiEvGFcsBX1pRc+A=
+	t=1766746971; cv=none; b=IJg4jDT7xPd6CxtN1lcVbNd5VjZhnpCo797vcBz9hRBpb6pIuxERq+oZ3/o2tHsr3oTr5vLjDOpGa0M3/wXzERDWPbl2Y+/aZK8oWh7yT+4jM6F6G0wQEAA8O8ry7Gtz0xoxhGBzwZu2RXu4iueOuANJ+R1W7JW6TON1MDbSwME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766746948; c=relaxed/simple;
-	bh=ipL2B/NzInRqtMt2AU3bNhpY6GimKKXFXudISgvQy5c=;
+	s=arc-20240116; t=1766746971; c=relaxed/simple;
+	bh=mUHj9ZAHWGQ3v6fyISmzoZMQS7Hvm/9zP2Uaa21XFaQ=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=sL6xb4+luH0kPERpQnll81q34z1AO3CjiWd8d0DQ1zip7vclBY4r63qqBilTSV88pUCC90fartg6GQ95FqFu0aIKsVy46aVmENfCyOdAhO2fk0U//9zsonMyZuWQdRzTqbiNR5OEdjR/r7slst2e7Wpc/VLKSv/gzR0fYLTaqGA=
+	 In-Reply-To:To:Cc; b=TFLOVCcQW41waYd4Ko2VeKZkWH0Pjo9hE31shXB6uAa7ZrPOPxFSCI10lpKhMFd/d9V/jzeffmoQ3lCoA+oMlzrgz0QyZTC4S1oF0mJC0IoxXb/aT5JqHToBAPxqd80UDWxQL/JoyYcv7Bkl83/rZ2tk2bDLsFoTf79/MdaM3SY=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
@@ -19,12 +19,11 @@ Received: from [127.0.0.1] (unknown [116.232.18.222])
 	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: dlan)
-	by smtp.gentoo.org (Postfix) with ESMTPSA id 9E9CF341F5F;
-	Fri, 26 Dec 2025 11:02:17 +0000 (UTC)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id 8137A341F62;
+	Fri, 26 Dec 2025 11:02:33 +0000 (UTC)
 From: Yixun Lan <dlan@gentoo.org>
-Date: Fri, 26 Dec 2025 19:01:17 +0800
-Subject: [PATCH v3 2/5] clk: spacemit: ccu_mix: add inverted enable gate
- clock
+Date: Fri, 26 Dec 2025 19:01:18 +0800
+Subject: [PATCH v3 3/5] clk: spacemit: ccu_pll: add plla type clock
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -33,7 +32,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251226-k3-clk-v3-2-602ce93bb6c3@gentoo.org>
+Message-Id: <20251226-k3-clk-v3-3-602ce93bb6c3@gentoo.org>
 References: <20251226-k3-clk-v3-0-602ce93bb6c3@gentoo.org>
 In-Reply-To: <20251226-k3-clk-v3-0-602ce93bb6c3@gentoo.org>
 To: Stephen Boyd <sboyd@kernel.org>, 
@@ -46,114 +45,299 @@ Cc: Haylen Chu <heylenay@4d2.org>, Guodong Xu <guodong@riscstar.com>,
  linux-riscv@lists.infradead.org, spacemit@lists.linux.dev, 
  linux-kernel@vger.kernel.org, Yixun Lan <dlan@gentoo.org>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3259; i=dlan@gentoo.org;
- h=from:subject:message-id; bh=ipL2B/NzInRqtMt2AU3bNhpY6GimKKXFXudISgvQy5c=;
- b=owEB6QIW/ZANAwAKATGq6kdZTbvtAcsmYgBpTmsgT5jR+vsd4BZvgWGwSQBBDvmHrGe+HfU6O
- AvgT2dEykSJAq8EAAEKAJkWIQS1urjJwxtxFWcCI9wxqupHWU277QUCaU5rIBsUgAAAAAAEAA5t
+X-Developer-Signature: v=1; a=openpgp-sha256; l=8636; i=dlan@gentoo.org;
+ h=from:subject:message-id; bh=mUHj9ZAHWGQ3v6fyISmzoZMQS7Hvm/9zP2Uaa21XFaQ=;
+ b=owEB6QIW/ZANAwAKATGq6kdZTbvtAcsmYgBpTmsjad1/aUZ5B7eS4nzaLibzk9i37k9Pk4iMY
+ ShfAj5BtAGJAq8EAAEKAJkWIQS1urjJwxtxFWcCI9wxqupHWU277QUCaU5rIxsUgAAAAAAEAA5t
  YW51MiwyLjUrMS4xMSwyLDJfFIAAAAAALgAoaXNzdWVyLWZwckBub3RhdGlvbnMub3BlbnBncC5
  maWZ0aGhvcnNlbWFuLm5ldEI1QkFCOEM5QzMxQjcxMTU2NzAyMjNEQzMxQUFFQTQ3NTk0REJCRU
- QACgkQMarqR1lNu+2x2A/+KORoRk38Z+VQGD8ZU+EKJ6aUdh9LCcl8lBNRAxuA8ZHa9dUSgPNO/
- xyoS6jJImkR8/rHiL7+omcFBZVQ4A4E9ImULLaYflYhcR0wg9M58Rz9pOZsFEd0MACIYX8rQJfj
- BkPqN8od5A0FvehUvHgMQzjrFD59hMAf3msadjvRnSsyz64Pb56druX1socRrzeJx4rm7RBoGXd
- X837rODIQ35rGrbT1nfhZAJAdmlOhQM0GMdywteopfK+JG+P+XR2naa5K4bcOplJ3Dx1bbUwm9B
- uLFJoOSKuRcoYSeqVq2FBe0Bpp4Hvyz/YLUjYeVeAwUSPrOWXhAhv1X0jJXUgjjmAPMEpIcSDD7
- OwbLTo2kPJKbw6K48hZwKceLqZBQkrNIhQc1WwIqr95stJcixANGDsFOUMA7pucoJgZKT4drojm
- 6P6OjdnWEpqTSyWn9jquhIYO56Prc5jKBi4bOrEQIZrPhfVbqsBoDIT2jl1jD+qOxcTlO0cLkHA
- NJX+7+/KnVwyL7+LEsc7mmVyoksz8SgnpxRpA1QM+tEjfl/jwx7Tv1TKxInNH+ethvoaIePsZai
- HwNCTqkhmc05rf9fLKcLiq5Xc2nXt8qM2dYGkHwoP7BlPQYmGsbrpqY9J41699UmcsmZ92ehpnD
- mEgKe9WcHVf+kTQNTAXe18w8efef14=
+ QACgkQMarqR1lNu+1sbQ//XkM5C6RS8cYwtPprl0BSBVANUuHpnlloJy3S1JunOEnCRkoFaHcLo
+ +1PpFIcKg/dAYbDgsj4LXve+nrVWB0JXabfqDOVssn+nD2ZA37ioTQbYdGAjde/0eaV7gIpbmn5
+ nfIAoJeyWC5bJnBHHd3LWMXoWFSyv1r30YXp4B1VFs7F1BBBkU01fZHb5h6nT2besAw43gWD+4J
+ 6XHGapYOYNhQ1xpxas6uCPc/RCR1f6dX80agc7fPGOBAlrcimex7witAEcCDVUFwqXJRoeLkDHm
+ c9hSOTUfl2Lgp5ay1dSzJNiyUP2RXWilhMTDGc1Dz+3DwkRrODmGhjWG5tV/gnMwuixPZYHYgWO
+ INgQMJZqExNLDJ11a0VOVVM8IJ3WiNUp8ih2Ypy73xZHzmMhA5CgmbSh11PBWwttW5hny7ynQ1Z
+ Flj8EhUrw5LAfWSN/KLqRL5ZrLHUrxEzCH5PuomtcbBkKgRqlbM9eYVNMEMVJXx+8YdjFY2tBgP
+ +7F2e0wD+FU53LKdSIbt+2xrkruJtVpeQbxuoJgi6PxOJwcyL4ozTyogboEwU3VJekV85l61mEg
+ IRXBrpk+la6ox4VV66RHMguiuZOOhRRtStXLYRAdfqDiZtnrb3d8I21hkTljwLR0qon0Yr7i+Bx
+ 9IH5fgj5TwWo0OLxHaBT/v1KpmYXWs=
 X-Developer-Key: i=dlan@gentoo.org; a=openpgp;
  fpr=50B03A1A5CBCD33576EF8CD7920C0DBCAABEFD55
 
-K3 SoC has the clock IP which support to write value 0 for enabling the
-clock, while write 1 for disabling it, thus the enable BIT is inverted.
-So, introduce a flag to support the inverted gate clock.
+Introduce a new clock PLLA for SpacemiT's K3 SoC which has a different
+register layout comparing to previous PPL type. And, It is configured
+by swcr1, swcr3 and swcr2 BIT[15:8].
 
 Signed-off-by: Yixun Lan <dlan@gentoo.org>
 ---
- drivers/clk/spacemit/ccu_mix.c | 12 ++++++++----
- drivers/clk/spacemit/ccu_mix.h | 12 ++++++++++++
- 2 files changed, 20 insertions(+), 4 deletions(-)
+ drivers/clk/spacemit/ccu_common.h |   1 +
+ drivers/clk/spacemit/ccu_pll.c    | 118 ++++++++++++++++++++++++++++++++++++++
+ drivers/clk/spacemit/ccu_pll.h    |  57 ++++++++++++++----
+ 3 files changed, 166 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/clk/spacemit/ccu_mix.c b/drivers/clk/spacemit/ccu_mix.c
-index 67f8b12b4f5b..9578366e9746 100644
---- a/drivers/clk/spacemit/ccu_mix.c
-+++ b/drivers/clk/spacemit/ccu_mix.c
-@@ -16,17 +16,19 @@
- static void ccu_gate_disable(struct clk_hw *hw)
+diff --git a/drivers/clk/spacemit/ccu_common.h b/drivers/clk/spacemit/ccu_common.h
+index 9b4ef24875e5..e23167172044 100644
+--- a/drivers/clk/spacemit/ccu_common.h
++++ b/drivers/clk/spacemit/ccu_common.h
+@@ -26,6 +26,7 @@ struct ccu_common {
+ 		/* For PLL */
+ 		struct {
+ 			u32 reg_swcr1;
++			u32 reg_swcr2;
+ 			u32 reg_swcr3;
+ 		};
+ 	};
+diff --git a/drivers/clk/spacemit/ccu_pll.c b/drivers/clk/spacemit/ccu_pll.c
+index 76d0244873d8..d4066a0ed452 100644
+--- a/drivers/clk/spacemit/ccu_pll.c
++++ b/drivers/clk/spacemit/ccu_pll.c
+@@ -17,6 +17,9 @@
+ #define PLL_SWCR3_EN		((u32)BIT(31))
+ #define PLL_SWCR3_MASK		GENMASK(30, 0)
+ 
++#define PLLA_SWCR2_EN		((u32)BIT(16))
++#define PLLA_SWCR2_MASK		GENMASK(15, 8)
++
+ static const struct ccu_pll_rate_tbl *ccu_pll_lookup_best_rate(struct ccu_pll *pll,
+ 							       unsigned long rate)
  {
- 	struct ccu_mix *mix = hw_to_ccu_mix(hw);
-+	struct ccu_gate_config *gate = &mix->gate;
-+	u32 val = gate->inverted ? gate->mask : 0;
- 
--	ccu_update(&mix->common, ctrl, mix->gate.mask, 0);
-+	ccu_update(&mix->common, ctrl, gate->mask, val);
- }
- 
- static int ccu_gate_enable(struct clk_hw *hw)
- {
- 	struct ccu_mix *mix = hw_to_ccu_mix(hw);
- 	struct ccu_gate_config *gate = &mix->gate;
-+	u32 val = gate->inverted ? 0 : gate->mask;
- 
--	ccu_update(&mix->common, ctrl, gate->mask, gate->mask);
--
-+	ccu_update(&mix->common, ctrl, gate->mask, val);
+@@ -148,6 +151,110 @@ static int ccu_pll_init(struct clk_hw *hw)
  	return 0;
  }
  
-@@ -34,8 +36,10 @@ static int ccu_gate_is_enabled(struct clk_hw *hw)
- {
- 	struct ccu_mix *mix = hw_to_ccu_mix(hw);
- 	struct ccu_gate_config *gate = &mix->gate;
-+	u32 tmp = ccu_read(&mix->common, ctrl) & gate->mask;
-+	u32 val = gate->inverted ? 0 : gate->mask;
- 
--	return (ccu_read(&mix->common, ctrl) & gate->mask) == gate->mask;
-+	return !!(tmp == val);
- }
- 
- static unsigned long ccu_factor_recalc_rate(struct clk_hw *hw,
-diff --git a/drivers/clk/spacemit/ccu_mix.h b/drivers/clk/spacemit/ccu_mix.h
-index c406508e3504..dbba9bf49b3b 100644
---- a/drivers/clk/spacemit/ccu_mix.h
-+++ b/drivers/clk/spacemit/ccu_mix.h
-@@ -16,9 +16,11 @@
++static const struct ccu_pll_rate_tbl *ccu_plla_lookup_matched_entry(struct ccu_pll *pll)
++{
++	struct ccu_pll_config *config = &pll->config;
++	const struct ccu_pll_rate_tbl *entry;
++	u32 i, swcr1, swcr2, swcr3;
++
++	swcr1 = ccu_read(&pll->common, swcr1);
++	swcr2 = ccu_read(&pll->common, swcr2);
++	swcr2 &= PLLA_SWCR2_MASK;
++	swcr3 = ccu_read(&pll->common, swcr3);
++
++	for (i = 0; i < config->tbl_num; i++) {
++		entry = &config->rate_tbl[i];
++
++		if (swcr1 == entry->swcr1 &&
++		    swcr2 == entry->swcr2 &&
++		    swcr3 == entry->swcr3)
++			return entry;
++	}
++
++	return NULL;
++}
++
++static void ccu_plla_update_param(struct ccu_pll *pll, const struct ccu_pll_rate_tbl *entry)
++{
++	struct ccu_common *common = &pll->common;
++
++	regmap_write(common->regmap, common->reg_swcr1, entry->swcr1);
++	regmap_write(common->regmap, common->reg_swcr3, entry->swcr3);
++	ccu_update(common, swcr2, PLLA_SWCR2_MASK, entry->swcr2);
++}
++
++static int ccu_plla_is_enabled(struct clk_hw *hw)
++{
++	struct ccu_common *common = hw_to_ccu_common(hw);
++
++	return ccu_read(common, swcr2) & PLLA_SWCR2_EN;
++}
++
++static int ccu_plla_enable(struct clk_hw *hw)
++{
++	struct ccu_pll *pll = hw_to_ccu_pll(hw);
++	struct ccu_common *common = &pll->common;
++	unsigned int tmp;
++
++	ccu_update(common, swcr2, PLLA_SWCR2_EN, PLLA_SWCR2_EN);
++
++	/* check lock status */
++	return regmap_read_poll_timeout_atomic(common->lock_regmap,
++					       pll->config.reg_lock,
++					       tmp,
++					       tmp & pll->config.mask_lock,
++					       PLL_DELAY_US, PLL_TIMEOUT_US);
++}
++
++static void ccu_plla_disable(struct clk_hw *hw)
++{
++	struct ccu_common *common = hw_to_ccu_common(hw);
++
++	ccu_update(common, swcr2, PLLA_SWCR2_EN, 0);
++}
++
++/*
++ * PLLAs must be gated before changing rate, which is ensured by
++ * flag CLK_SET_RATE_GATE.
++ */
++static int ccu_plla_set_rate(struct clk_hw *hw, unsigned long rate,
++			     unsigned long parent_rate)
++{
++	struct ccu_pll *pll = hw_to_ccu_pll(hw);
++	const struct ccu_pll_rate_tbl *entry;
++
++	entry = ccu_pll_lookup_best_rate(pll, rate);
++	ccu_plla_update_param(pll, entry);
++
++	return 0;
++}
++
++static unsigned long ccu_plla_recalc_rate(struct clk_hw *hw,
++					  unsigned long parent_rate)
++{
++	struct ccu_pll *pll = hw_to_ccu_pll(hw);
++	const struct ccu_pll_rate_tbl *entry;
++
++	entry = ccu_plla_lookup_matched_entry(pll);
++
++	WARN_ON_ONCE(!entry);
++
++	return entry ? entry->rate : 0;
++}
++
++static int ccu_plla_init(struct clk_hw *hw)
++{
++	struct ccu_pll *pll = hw_to_ccu_pll(hw);
++
++	if (ccu_plla_lookup_matched_entry(pll))
++		return 0;
++
++	ccu_plla_disable(hw);
++	ccu_plla_update_param(pll, &pll->config.rate_tbl[0]);
++
++	return 0;
++}
++
+ const struct clk_ops spacemit_ccu_pll_ops = {
+ 	.init		= ccu_pll_init,
+ 	.enable		= ccu_pll_enable,
+@@ -158,3 +265,14 @@ const struct clk_ops spacemit_ccu_pll_ops = {
+ 	.is_enabled	= ccu_pll_is_enabled,
+ };
+ EXPORT_SYMBOL_NS_GPL(spacemit_ccu_pll_ops, "CLK_SPACEMIT");
++
++const struct clk_ops spacemit_ccu_plla_ops = {
++	.init		= ccu_plla_init,
++	.enable		= ccu_plla_enable,
++	.disable	= ccu_plla_disable,
++	.set_rate	= ccu_plla_set_rate,
++	.recalc_rate	= ccu_plla_recalc_rate,
++	.determine_rate	= ccu_pll_determine_rate,
++	.is_enabled	= ccu_plla_is_enabled,
++};
++EXPORT_SYMBOL_NS_GPL(spacemit_ccu_plla_ops, "CLK_SPACEMIT");
+diff --git a/drivers/clk/spacemit/ccu_pll.h b/drivers/clk/spacemit/ccu_pll.h
+index 0592f4c3068c..e41db5c97c1a 100644
+--- a/drivers/clk/spacemit/ccu_pll.h
++++ b/drivers/clk/spacemit/ccu_pll.h
+@@ -16,14 +16,31 @@
+  * configuration.
   *
-  * @mask:	Mask to enable the gate. Some clocks may have more than one bit
-  *		set in this field.
-+ * @inverted:	Enable bit is inverted, 1 - disable clock, 0 - enable clock
+  * @rate:	PLL rate
+- * @swcr1:	Register value of PLLX_SW1_CTRL (PLLx_SWCR1).
+- * @swcr3:	Register value of the PLLx_SW3_CTRL's lowest 31 bits of
+- *		PLLx_SW3_CTRL (PLLx_SWCR3). This highest bit is for enabling
+- *		the PLL and not contained in this field.
++ * @swcr1:	Value of register PLLx_SW1_CTRL.
++ * @swcr2:	Value of register PLLAx_SW2_CTRL.
++ * @swcr3:	value of register PLLx_SW3_CTRL.
++ *
++ * See below tables for the register used in PPL/PPLA clocks
++ *
++ * Regular PLL type
++ *  | Enable | swcr3 | PLLx_SW3_CTRL - BIT[31]    |
++ *  -----------------------------------------------
++ *  | Config | swcr1 | PLLx_SW1_CTRL - BIT[31:0]  |
++ *  |        | swcr2 | Not used                   |
++ *  |        | swcr3 | PLLx_SW3_CTRL - BIT[30:0]  |
++ *
++ * Special PLL type A
++ *  | Enable | swcr2 | PLLAx_SW2_CTRL - BIT[16]   |
++ *  -----------------------------------------------
++ *  | Config | swcr1 | PLLAx_SW1_CTRL - BIT[31:0] |
++ *  |        | swcr2 | PLLAx_SW2_CTRL - BIT[15:8] |
++ *  |        | swcr3 | PLLAx_SW3_CTRL - BIT[31:0] |
++ *
   */
- struct ccu_gate_config {
- 	u32 mask;
-+	bool inverted;
+ struct ccu_pll_rate_tbl {
+ 	unsigned long rate;
+ 	u32 swcr1;
++	u32 swcr2;
+ 	u32 swcr3;
  };
  
- struct ccu_factor_config {
-@@ -48,6 +50,7 @@ struct ccu_mix {
- #define CCU_FACTOR_INIT(_div, _mul)	{ .div = _div, .mul = _mul }
- #define CCU_MUX_INIT(_shift, _width)	{ .shift = _shift, .width = _width }
- #define CCU_DIV_INIT(_shift, _width)	{ .shift = _shift, .width = _width }
-+#define CCU_GATE_FLAGS_INIT(_mask, _inverted)	{ .mask = _mask, .inverted = _inverted }
+@@ -36,11 +53,19 @@ struct ccu_pll_config {
  
- #define CCU_PARENT_HW(_parent)		{ .hw = &_parent.common.hw }
- #define CCU_PARENT_NAME(_name)		{ .fw_name = #_name }
-@@ -101,6 +104,15 @@ static struct ccu_mix _name = {							\
+ #define CCU_PLL_RATE(_rate, _swcr1, _swcr3) \
+ 	{									\
+-		.rate	= _rate,							\
++		.rate	= _rate,						\
+ 		.swcr1	= _swcr1,						\
+ 		.swcr3	= _swcr3,						\
+ 	}
+ 
++#define CCU_PLLA_RATE(_rate, _swcr1, _swcr2, _swcr3) \
++	{									\
++		.rate	= _rate,						\
++		.swcr1	= _swcr1,						\
++		.swcr2	= _swcr2,						\
++		.swcr3	= _swcr3,						\
++	}
++
+ struct ccu_pll {
+ 	struct ccu_common	common;
+ 	struct ccu_pll_config	config;
+@@ -54,26 +79,37 @@ struct ccu_pll {
+ 		.mask_lock	= (_mask_lock),					\
+ 	}
+ 
+-#define CCU_PLL_HWINIT(_name, _flags)						\
++#define CCU_PLL_COMMON_HWINIT(_name, _ops, _flags)				\
+ 	(&(struct clk_init_data) {						\
+ 		.name		= #_name,					\
+-		.ops		= &spacemit_ccu_pll_ops,			\
++		.ops		= _ops,						\
+ 		.parent_data	= &(struct clk_parent_data) { .index = 0 },	\
+ 		.num_parents	= 1,						\
+ 		.flags		= _flags,					\
+ 	})
+ 
+-#define CCU_PLL_DEFINE(_name, _table, _reg_swcr1, _reg_swcr3, _reg_lock,	\
+-		       _mask_lock, _flags)					\
++#define CCU_PLL_X_DEFINE(_name, _table, _reg_swcr1, _reg_swcr2, _reg_swcr3,	\
++		       _reg_lock, _mask_lock, _ops, _flags)			\
+ static struct ccu_pll _name = {							\
+ 	.config	= CCU_PLL_CONFIG(_table, _reg_lock, _mask_lock),		\
+ 	.common = {								\
+ 		.reg_swcr1	= _reg_swcr1,					\
++		.reg_swcr2	= _reg_swcr2,					\
+ 		.reg_swcr3	= _reg_swcr3,					\
+-		.hw.init	= CCU_PLL_HWINIT(_name, _flags)			\
++		.hw.init	= CCU_PLL_COMMON_HWINIT(_name, _ops, _flags)	\
  	}									\
  }
  
-+#define CCU_GATE_FLAGS_DEFINE(_name, _parent, _reg_ctrl, _mask_gate, _inverted, _flags)		\
-+static struct ccu_mix _name = {							\
-+	.gate	= CCU_GATE_FLAGS_INIT(_mask_gate, _inverted),			\
-+	.common	= {								\
-+		.reg_ctrl	= _reg_ctrl,					\
-+		CCU_MIX_INITHW(_name, _parent, spacemit_ccu_gate_ops, _flags),	\
-+	}									\
-+}
++#define CCU_PLL_DEFINE(_name, _table, _reg_swcr1, _reg_swcr3, _reg_lock,	\
++		       _mask_lock, _flags)					\
++	CCU_PLL_X_DEFINE(_name, _table, _reg_swcr1, 0, _reg_swcr3,		\
++		       _reg_lock, _mask_lock, &spacemit_ccu_pll_ops, _flags)
 +
- #define CCU_FACTOR_GATE_FLAGS_DEFINE(_name, _parent, _reg_ctrl, _mask_gate, _div,	\
- 			       _mul, _flags)					\
- static struct ccu_mix _name = {							\
++#define CCU_PLLA_DEFINE(_name, _table, _reg_swcr1, _reg_swcr2, _reg_swcr3,	\
++		       _reg_lock, _mask_lock, _flags)				\
++	CCU_PLL_X_DEFINE(_name, _table, _reg_swcr1, _reg_swcr2, _reg_swcr3,	\
++		       _reg_lock, _mask_lock, &spacemit_ccu_plla_ops, _flags)
++
+ static inline struct ccu_pll *hw_to_ccu_pll(struct clk_hw *hw)
+ {
+ 	struct ccu_common *common = hw_to_ccu_common(hw);
+@@ -82,5 +118,6 @@ static inline struct ccu_pll *hw_to_ccu_pll(struct clk_hw *hw)
+ }
+ 
+ extern const struct clk_ops spacemit_ccu_pll_ops;
++extern const struct clk_ops spacemit_ccu_plla_ops;
+ 
+ #endif
 
 -- 
 2.52.0
