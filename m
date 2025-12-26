@@ -1,96 +1,116 @@
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB21827442;
-	Fri, 26 Dec 2025 12:18:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20786D27E;
+	Fri, 26 Dec 2025 15:30:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766751500; cv=none; b=qZB5+yJfSpE2xqF4Mh3JhmF/cHdwceYQAiOJfjOJkNnGVXp8Y8U2AqKzBI8oiDQZw0coNXuuODsUAjwPFG7rR4t4I0kbdy+rnoAf1OqIFEuWkWoGyLHb7rHZ4r9N6n149N62/8nJiCMICACyZSmx92ThipA06b4BRcYlyUIu3Jg=
+	t=1766763040; cv=none; b=ub+eS+uK6twK7XueDHEo11GG14ITOmVZkidAUYDbaJxPELf2jFjriB6vnCVLxd1F8rb64TfHHjfNAM6YwfCsA4cPmLOMeJSkMt1cqm36KJ4Gz9/MYQawfP9zEBh3yIDc17V9QPLAFPTX62zj9v9tPxFbUYLwUMtKNOArAntLVeA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766751500; c=relaxed/simple;
-	bh=h9CgFTFilRzjMtx4ewKo4ScsC7MNsvFHnDRkjClR7UQ=;
+	s=arc-20240116; t=1766763040; c=relaxed/simple;
+	bh=RyZbK7uJYOhWI9dcoiLP7LXlTwKZf+N6eHUD0tVmLKc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kRdVL5UxCsQRNZwLs/9POIK8ljyTazJlucU5bCXI2kbZB1DnYmswxf5q4TuFwvt+xFW0/MLAYN4kpCEAYcsHJ2XP5x90RcjSFQQVO+xio3Kl5IVBxUT8mwfpqiJmI4fBsvRIr7L9+HZVQmoIXLVZQBGldsLssTNeTZfZt9W9gpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Received: from localhost (unknown [116.232.18.222])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dlan)
-	by smtp.gentoo.org (Postfix) with ESMTPSA id E0D16341F62;
-	Fri, 26 Dec 2025 12:18:17 +0000 (UTC)
-Date: Fri, 26 Dec 2025 20:18:12 +0800
-From: Yixun Lan <dlan@gentoo.org>
-To: Yao Zi <me@ziyao.cc>
-Cc: Stephen Boyd <sboyd@kernel.org>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=BEOcP/y0MVEEFcM731VriDi2iji5nrGtzVsj/kkAIfzfKOk1UsPTxf1RWSshSKw1wzXD73HgzwVj1pMuh7GcPj/p1n8SCCFaTnPcK7fQmw2VNWtSIeTAVJzWLgDQoZwc/xFK04pD8q35wQh4ZAMopT0Y+afyCfWh9usnBdZg3ss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XOKc67Ko; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XOKc67Ko"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60CA9C116D0;
+	Fri, 26 Dec 2025 15:30:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1766763039;
+	bh=RyZbK7uJYOhWI9dcoiLP7LXlTwKZf+N6eHUD0tVmLKc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XOKc67KonQASLOJpRT1C3yITZWldDUqMnULeHL/+Zis5ZOxt6X7dmWNnfH0CJRoM5
+	 p7NZMcsfOgVhMWxFg2zP2WSGuqHexkWDU9TkD7LWH9XMNZcZ9HOghiitLvJdLEzwQg
+	 ztzDYeUwO9no08M8NQbDm8FFQfWek52GIjynfJhPmVPgIPUL30G07Iegpi7fb+vHh4
+	 AJdlruOhI6dDtRMucpxsFYZqT3znNCrpVajLSOrRAwGsspOCeTl98sYgGBgmkoxwKo
+	 zSNsPzt8NDnogyGA1cadVgazQMne0cMyUer52NhvtJfWOFrkWyn7L4FmRNfR+t8Xhi
+	 0AGO6VCnjm99g==
+Date: Fri, 26 Dec 2025 15:30:34 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Jiayu Du <jiayu.riscv@isrc.iscas.ac.cn>
+Cc: Yangyu Chen <cyy@cyyself.name>, linux-riscv@lists.infradead.org,
+	Damien Le Moal <dlemoal@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Guo Ren <guoren@kernel.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Haylen Chu <heylenay@4d2.org>,
-	Guodong Xu <guodong@riscstar.com>,
-	Inochi Amaoto <inochiama@gmail.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
-	spacemit@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 5/5] clk: spacemit: k3: add the clock tree
-Message-ID: <20251226121812-GYA2007514@gentoo.org>
-References: <20251226-k3-clk-v3-0-602ce93bb6c3@gentoo.org>
- <20251226-k3-clk-v3-5-602ce93bb6c3@gentoo.org>
- <aU50DIe9qMneb0GT@pie>
+	Stephen Boyd <sboyd@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-gpio@vger.kernel.org,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 10/11] riscv: dts: add initial canmv-k230 and k230-evb
+ dts
+Message-ID: <20251226-immunity-morale-67aad0a0fda1@spud>
+References: <tencent_F76EB8D731C521C18D5D7C4F8229DAA58E08@qq.com>
+ <tencent_DF5D7CD182AFDA188E0FB80E314A21038D08@qq.com>
+ <aUzjn3XHJTSl3vY9@duge-virtual-machine>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="pv4dX9VFg9vNdESc"
+Content-Disposition: inline
+In-Reply-To: <aUzjn3XHJTSl3vY9@duge-virtual-machine>
+
+
+--pv4dX9VFg9vNdESc
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aU50DIe9qMneb0GT@pie>
+Content-Transfer-Encoding: quoted-printable
 
-Hi Yao,
-
-On 11:39 Fri 26 Dec     , Yao Zi wrote:
-> On Fri, Dec 26, 2025 at 07:01:20PM +0800, Yixun Lan wrote:
-> > Add clock support to SpacemiT K3 SoC, the clock tree consist of several
-> > blocks which are APBC, APBS, APMU, DCIU, MPUM.
-> > 
-> > Signed-off-by: Yixun Lan <dlan@gentoo.org>
-> > ---
-> >  drivers/clk/spacemit/Kconfig      |    6 +
-> >  drivers/clk/spacemit/Makefile     |    3 +
-> >  drivers/clk/spacemit/ccu-k3.c     | 1482 +++++++++++++++++++++++++++++++++++++
-> >  drivers/clk/spacemit/ccu_common.c |    3 +-
-> >  4 files changed, 1493 insertions(+), 1 deletion(-)
-> 
+On Thu, Dec 25, 2025 at 03:11:27PM +0800, Jiayu Du wrote:
+> On Sat, Mar 23, 2024 at 08:12:22PM +0800, Yangyu Chen wrote:
 > ...
-> 
-> > diff --git a/drivers/clk/spacemit/ccu_common.c b/drivers/clk/spacemit/ccu_common.c
-> > index f1a837aafb46..5132f73be68d 100644
-> > --- a/drivers/clk/spacemit/ccu_common.c
-> > +++ b/drivers/clk/spacemit/ccu_common.c
-> > @@ -144,7 +144,8 @@ int spacemit_ccu_probe(struct platform_device *pdev)
-> >  	 * are in APBS region. Reference to MPMU syscon is required to check PLL
-> >  	 * status.
-> >  	 */
-> > -	if (of_device_is_compatible(dev->of_node, "spacemit,k1-pll")) {
-> > +	if (of_device_is_compatible(dev->of_node, "spacemit,k1-pll") ||
-> > +		of_device_is_compatible(dev->of_node, "spacemit,k3-pll")) {
-> 
-> To me it's better to add a argument to spacemit_ccu_probe to specify the
-> compatible of PLL, so we don't need to modify ccu_common.c each time a
-> new SoC is introduced, and the condition won't be pretty long in the
-> future.
-Adding extra argument will break {struct platform_driver}.probe() prototype
+> > diff --git a/arch/riscv/boot/dts/canaan/k230.dtsi b/arch/riscv/boot/dts=
+/canaan/k230.dtsi
+> ...
+> > +
+> > +	aliases {
+> > +		serial0 =3D &uart0;
+> > +	};
+>=20
+> The aliases should be set in the board-level dts file,
+> so please consider removing the aliases.
+>=20
+> ...
+> > +
+> > +		plic: interrupt-controller@f00000000 {
+> > +			compatible =3D "canaan,k230-plic" ,"thead,c900-plic";
+> Incorrect comma separation. It should be: "canaan,k230-plic", "thead,c900=
+-plic";
 
-I can think of creating a sepecific helper function for each driver to
-hide the change, but still will bring extra cost, something will like:
- k1_ccu_probe(pdev) -> spacemit_ccu_probe(pdev, compatible)
+If you send a follow-up patch, I'll squash it into my current k230
+branch:
+https://git.kernel.org/pub/scm/linux/kernel/git/conor/linux.git/log/?h=3Dk2=
+30-basic
 
-> 
-> It isn't a serious issue for now, and I think this piece of code is
-> acceptable.
-right, I'd be reluctant to do the change
+> > +			reg =3D <0xf 0x00000000 0x0 0x04000000>;
+> > +			interrupts-extended =3D <&cpu0_intc 11>, <&cpu0_intc 9>;
+> > +			interrupt-controller;
+> > +			#address-cells =3D <0>;
+> > +			#interrupt-cells =3D <2>;
+> ...
+> > --=20
+> > 2.43.0
+> >=20
+>=20
 
--- 
-Yixun Lan (dlan)
+--pv4dX9VFg9vNdESc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaU6qGQAKCRB4tDGHoIJi
+0k6AAP4u0EmWqs7RVpZTsIhPhImspKGTDirwrgX5zDYM35145wEAnxKsxiCGjnRF
+5P5BedAwKl8ThZYT4gBz1GaGGbX1jgw=
+=E41A
+-----END PGP SIGNATURE-----
+
+--pv4dX9VFg9vNdESc--
