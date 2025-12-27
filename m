@@ -1,58 +1,46 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9CC92853E9;
-	Sat, 27 Dec 2025 11:17:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 465053126AF;
+	Sat, 27 Dec 2025 11:25:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766834242; cv=none; b=uhe4DrJrk75m79+0UDM0BwCiS6ANvW8eGqYX61HQFEfOkNRvX2TeCyB52HECIZmkz9gpit9gLJBJZPpNBOm9V3HX24+XspYGkYfS8WhsqYG1ki22Y153sU81Fz3neAv+zZJS1aer2zUhlDQRjfymETOPyL6SLa1BDrPQ8tuDHWE=
+	t=1766834714; cv=none; b=RFAkRLfZ71psC5lmqMmUkRPkuFwhLt4djNgpOU8eK8ZmiPMKxfXvFDfVYhaqjcSzLim+WrIq34muW5EtG7yVV756E9SL0mIh4Xp0sQByy+isF6BPjgUMzq4hRIY6B2om3e0uSDymQxPwUxRZSlVlFc+/VLnUYfDgq/JgrKaHeEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766834242; c=relaxed/simple;
-	bh=mkTJBdGWaaGFXpk4ABan/EOXP8frmcAGWpzfe9DTQsY=;
+	s=arc-20240116; t=1766834714; c=relaxed/simple;
+	bh=8kGUYYmACHqbfyv/84HV3f5JbyVZmQjIEIeVSleHFXU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RHdvuj2XjjAJUdzKsASVVjPnTmzXKv0m8dNl+CQdZxXSe1HLlFDbCXsKPV9eUur4dK/dm3kgTtrZHXIVqPBY4YsorIRmVKlu4yv2Nh+vm21pp69jPbjnRQ5XWJmIQCxnoGdp3RNTprAbmc/9KYc2Fx9On5/StfvYvCH++XGaa0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mp7Vf87Q; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=GkQ8k3V4KLZqYW3yzSgHrnTuO0D3NV+8fXJlg6P1pMgHaGYYu1j4B+gyQMbNyHwkjFbkxPk9tVc7G7LVUTFKBaRCiOgqPbQvS8t3uy4iRR3i4hMRxLi5uW39zVHBBtRXDsRqBcxmnoVCqo+UGMLwg4nK4Z7HjsjZiRkRSqHc2LM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ukx2DgGu; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mp7Vf87Q"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F9FCC4CEF1;
-	Sat, 27 Dec 2025 11:17:20 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ukx2DgGu"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 558CFC4CEF1;
+	Sat, 27 Dec 2025 11:25:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1766834241;
-	bh=mkTJBdGWaaGFXpk4ABan/EOXP8frmcAGWpzfe9DTQsY=;
+	s=k20201202; t=1766834713;
+	bh=8kGUYYmACHqbfyv/84HV3f5JbyVZmQjIEIeVSleHFXU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mp7Vf87QB6NclKUBLSZgG25HwjCXi0w1BFQg/Xi32LC2n/3/VELl6cCodVL+Uaohv
-	 knt2f4OAFECmBI2yR6QaJKc4Fu3a0RgdjeQelMCbEngpVtwWKTYTsHw2W1Iz+bxEWv
-	 0zWs04mKwiyvgUvPwIasj1QjjKsDJq89hdt7OjelzvGxzL+3ihvEu5fdHBabQtgXr8
-	 DllSXXTp5/+fVCOegZ18LBeyKqUAgJDvKyYQhRds9kFnFYu05Qmf5FSqSpvj2eGiJS
-	 UXpqSihw//fBPaMJNj+nca6ZTcB88RkYwMxJpkTmCUhvWbKSEP90A++xF9C0FO43Cv
-	 F68a/aRlgpAVQ==
-Date: Sat, 27 Dec 2025 12:17:18 +0100
+	b=Ukx2DgGuJJW8VM0jkB5y54tMYE+yR5zUT5DlW3aP2nFAn36KzQ3f4p+WO1XQIJPQA
+	 qKHKRR2LM3VFXPQqZWE/V4yloNs/7P4C1QBl5/dgEoO62JbyWr9IfKbBPo827bWAH2
+	 RYkhchHY79Ln7No3atWXIebFoBaUYn1tylRnx5Tl2TiZ+ZPczhsTcu3ve3nelkbkjY
+	 fq3K69Fpg67sgOLFegbiz7BsOikvBHxT37gp4zisUeW1C6SG5bgDG6gqqj4EGd/ZEL
+	 8/gokM+Ww/KEtkhW+5cPbQH6EraPLeytne7tSUWUOmUpbE0rG7CVriMjYex1Prmj1U
+	 Mh1TsMbSMSpAg==
+Date: Sat, 27 Dec 2025 12:25:11 +0100
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: Robert Marko <robert.marko@sartura.hr>, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, nicolas.ferre@microchip.com, 
-	claudiu.beznea@tuxon.dev, herbert@gondor.apana.org.au, davem@davemloft.net, 
-	vkoul@kernel.org, andi.shyti@kernel.org, lee@kernel.org, andrew+netdev@lunn.ch, 
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, linusw@kernel.org, 
-	Steen.Hegelund@microchip.com, daniel.machon@microchip.com, UNGLinuxDriver@microchip.com, 
-	olivia@selenic.com, radu_nicolae.pirea@upb.ro, richard.genoud@bootlin.com, 
-	gregkh@linuxfoundation.org, jirislaby@kernel.org, broonie@kernel.org, 
-	mturquette@baylibre.com, sboyd@kernel.org, lars.povlsen@microchip.com, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org, dmaengine@vger.kernel.org, 
-	linux-i2c@vger.kernel.org, netdev@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-spi@vger.kernel.org, linux-serial@vger.kernel.org, linux-usb@vger.kernel.org, 
-	linux-clk@vger.kernel.org, luka.perkov@sartura.hr
-Subject: Re: [PATCH v3 01/15] include: dt-bindings: add LAN969x clock bindings
-Message-ID: <20251227-splendid-striped-starfish-ece074@quoll>
-References: <20251223201921.1332786-1-robert.marko@sartura.hr>
- <20251223201921.1332786-2-robert.marko@sartura.hr>
- <20251224-berserk-mackerel-of-snow-4cae54@quoll>
- <CA+HBbNGym6Q9b166n-P=h_JssOHm0yfyL73JZ+G9P81muK=g4A@mail.gmail.com>
- <78bf252c-fd5e-4a36-b1a3-ca8ed26fde7a@kernel.org>
- <CA+HBbNG+ZVD6grGDp32Ninx7H1AyEbGvP0nwc0zUv94tOV8hYg@mail.gmail.com>
- <d210552f-c8bf-4084-9317-b743075d9946@kernel.org>
- <2025122516245554f59e2e@mail.local>
+To: Yixun Lan <dlan@gentoo.org>
+Cc: Stephen Boyd <sboyd@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Haylen Chu <heylenay@4d2.org>, Guodong Xu <guodong@riscstar.com>, 
+	Inochi Amaoto <inochiama@gmail.com>, Yao Zi <me@ziyao.cc>, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org, spacemit@lists.linux.dev, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/5] dt-bindings: soc: spacemit: add k3 syscon
+ compatible
+Message-ID: <20251227-glaring-aromatic-raven-cbe30c@quoll>
+References: <20251226-k3-clk-v3-0-602ce93bb6c3@gentoo.org>
+ <20251226-k3-clk-v3-1-602ce93bb6c3@gentoo.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -61,51 +49,54 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <2025122516245554f59e2e@mail.local>
+In-Reply-To: <20251226-k3-clk-v3-1-602ce93bb6c3@gentoo.org>
 
-On Thu, Dec 25, 2025 at 05:24:55PM +0100, Alexandre Belloni wrote:
-> On 25/12/2025 09:47:34+0100, Krzysztof Kozlowski wrote:
-> > On 24/12/2025 15:01, Robert Marko wrote:
-> > > On Wed, Dec 24, 2025 at 2:05=E2=80=AFPM Krzysztof Kozlowski <krzk@ker=
-nel.org> wrote:
-> > >>
-> > >> On 24/12/2025 11:30, Robert Marko wrote:
-> > >>> On Wed, Dec 24, 2025 at 11:21=E2=80=AFAM Krzysztof Kozlowski <krzk@=
-kernel.org> wrote:
-> > >>>>
-> > >>>> On Tue, Dec 23, 2025 at 09:16:12PM +0100, Robert Marko wrote:
-> > >>>>> Add the required LAN969x clock bindings.
-> > >>>>
-> > >>>> I do not see clock bindings actually here. Where is the actual bin=
-ding?
-> > >>>> Commit msg does not help me at all to understand why you are doing=
- this
-> > >>>> without actual required bindings.
-> > >>>
-> > >>> I guess it is a bit confusing, there is no schema here, these are t=
-he
-> > >>> clock indexes that
-> > >>> reside in dt-bindings and are used by the SoC DTSI.
-> > >>
-> > >> I understand as not used by drivers? Then no ABI and there is no poi=
-nt
-> > >> in putting them into bindings.
-> > >=20
-> > > It is not included by the driver directly, but it requires these exact
-> > > indexes to be passed
-> > > so its effectively ABI.
-> >=20
-> > How it requires the exact index? In what way? I do not see anything in
-> > the gck driver using/relying on these values. Nothing. Please point me
-> > to the line which directly uses these values.... or how many times I
-> > will need to write this is not ABI?
-> >=20
->=20
-> The index here is the exact id that needs to be set in the PMC_PCR
-> register and so it is dictated by the hardware.
+On Fri, Dec 26, 2025 at 07:01:16PM +0800, Yixun Lan wrote:
+> The SpacemiT K3 SoC clock IP is scattered over several different blocks,
+> which are APBC, APBS, APMU, DCIU, MPMU, all of them are capable of
+> generating clock and reset signals. APMU and MPMU have additional Power
+> Domain management functionality.
+> 
+> Following is a brief list that shows devices managed in each block:
+> 
+> APBC: UART, GPIO, PWM, SPI, TIMER, I2S, IR, DR, TSEN, IPC, CAN
+> APBS: various PPL clocks control
+> APMU: CCI, CPU, CSI, ISP, LCD, USB, QSPI, DMA, VPU, GPU, DSI, PCIe, EMAC..
+> DCID: SRAM, DMA, TCM
+> MPMU: various PLL1 derived clocks, UART, WATCHDOG, I2S
+> 
+> Signed-off-by: Yixun Lan <dlan@gentoo.org>
+> ---
+>  .../devicetree/bindings/clock/spacemit,k1-pll.yaml |   9 +-
+>  .../bindings/soc/spacemit/spacemit,k1-syscon.yaml  |  13 +-
+>  include/dt-bindings/clock/spacemit,k3-clocks.h     | 390 +++++++++++++++++++++
+>  3 files changed, 407 insertions(+), 5 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/spacemit,k1-pll.yaml b/Documentation/devicetree/bindings/clock/spacemit,k1-pll.yaml
+> index 06bafd68c00a..02ebbe4061e3 100644
+> --- a/Documentation/devicetree/bindings/clock/spacemit,k1-pll.yaml
+> +++ b/Documentation/devicetree/bindings/clock/spacemit,k1-pll.yaml
+> @@ -4,14 +4,17 @@
+>  $id: http://devicetree.org/schemas/clock/spacemit,k1-pll.yaml#
+>  $schema: http://devicetree.org/meta-schemas/core.yaml#
+>  
+> -title: SpacemiT K1 PLL
+> +title: SpacemiT K1/K3 PLL
+>  
+>  maintainers:
+>    - Haylen Chu <heylenay@4d2.org>
+>  
+>  properties:
+>    compatible:
+> -    const: spacemit,k1-pll
+> +    contains:
 
-So not a binding between Linux and DTS.
+No drop, there is no such syntax for this property, so you copied here
+something completely different.
+
+> +      enum:
+> +        - spacemit,k1-pll
+> +        - spacemit,k3-pll
 
 Best regards,
 Krzysztof
