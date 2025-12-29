@@ -1,133 +1,231 @@
-Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FE251EEE6
-	for <linux-clk@vger.kernel.org>; Mon, 29 Dec 2025 10:19:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.181
+Received: from zg8tmja2lje4os4yms4ymjma.icoremail.net (zg8tmja2lje4os4yms4ymjma.icoremail.net [206.189.21.223])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFF8426F46E;
+	Mon, 29 Dec 2025 10:59:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=206.189.21.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767003549; cv=none; b=j91lfHyONTlqanbpxx8qy77tM7ZX6acgRs2ht8eABHs4klnt9n6MUUHadzIEWRfOEV/JTDTmMaHoChPN/D+WwxfbMntgp4Kzb/yG0J69nmjo68fBkZYQyJLoHapLsHmbP84M4VtjcRRXIZh7mp+lORI3QfH7SV9WZ/eL5G05bT0=
+	t=1767005966; cv=none; b=G1zGxbkj3ae8r3Udh8Coit+kIBmUvmpJyMGTkbOPbYAc2ZEy/eneu2tf/1L2r8/ZfvtoQT3IxGHFScempQCveBeav/6dHhNG5GryNdBrvTHOaeXPfhHjUv1YO8RR9/bjT1nsQoCbDOHwEHjk8acg2R443DzobNEg594t0A+BE+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767003549; c=relaxed/simple;
-	bh=wOvZYVr1Xmht+qg4N/eWC1Dqx8L6NJMYCGXov6tSwow=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iSlUSZo9VYUlebpgLTS0zPn0q1lNIir90ZM37KtCPjGZDmshrDvtmiCXn6eXtTA+O8IOpF1Af/K+es7deQc2xndaEaM7HESaE4UIUluVkGa4lDLb2OzoC0xmRKZvkLH6o939VU0dqAMVFVS6lFuCUNw6ughq5JUNxOm6fGI1TJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-55b09d690dcso3116371e0c.1
-        for <linux-clk@vger.kernel.org>; Mon, 29 Dec 2025 02:19:06 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767003545; x=1767608345;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fEHua9B0eiJ9krPOOGN9l1YijNcHX4oQExQFKvr6EFA=;
-        b=bAHqlGje0SWwu3pKr8OmDD+x60rTjVV2PbIahsWA2G8ZTJGFYlyS6tkypW52GtdypF
-         mh7FE2eOd4fA3ctUDPf2ebHw7Ja0SwjksJ4waALzZlqirW6YTlTEJiS+UOVHtIdvMnli
-         I0nHHrqa9ET40wUY3sYZtMiMaHmcU3iV4VycPAhB4rCuJQH5AaUwHB8naLGptvjfkBgp
-         /nRApQgVBEeWLWDEEawCJ4wiLxe3r+p0voEBI6i0hbVn8084XRSHfckbzd97c76EZNBp
-         J/H/5kz2X3i3wg9uI97tMSW5YKm+ppuB8nyH0AtxQfjRjbDnDzlMP3FlclSSQ0KOBuhB
-         NfVw==
-X-Forwarded-Encrypted: i=1; AJvYcCWjweHqALtd5MqYUkxvR6jSbfUQuCLzV2RtYPspuwoZtP4IUgBnRB4OwoZmGoYJ6T9u/ROqjmWSdaA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIM1N5YNOWEZyfkimsYW6r+4aD9UT7lJJF/x+SWpgv+XbJfdfN
-	ZCQgTydYapI6be93RyMFJwNl9gsvxKp+kaTv2QNRUXJaNiJeH7ouU85SgJX9+eNN
-X-Gm-Gg: AY/fxX7ROlqJy53dOu24RgFTmvBzNJlHP+dgWWzhbFaErdBtHqhrCgrq0rVo0PvXJya
-	BlOj2pfhGeVuPO6m3exACnL8HpF+uK3PLWDWuVNcr5q9cbpl9zZ0ZpxmwVuUMtRcDazL1oxxAts
-	HmJ0Abik9djCaUZ1rEDiuZfWm1v3ydv8tfYEm9iGXoxNuuRq/Dx8ORRykvYTUyj5ilvC4LdNK5T
-	4x8M7EiEqi0RszVHMuWmIbh5HNXWWaGLTvaXF1Q/ncxddPPUbVN4z2ypn1RjcCi4H+aHLMOrTiW
-	dl1eX6Lk7SfAwdlao5t4PpoS8X0Yth2xmc46AcHtwjNjCgN0E6HXe0Pknn5JGfli/g3aCumUd7m
-	fX191U/qmxTv0undAfSj3dX3iGFctmmm6oFHaYd7snkVPXgPo/3pEJDB3N+GQJcsR+BGTIn5m41
-	f0M8xkQZOL+KnfOCVJNDYFRYWyAy/8N5vaAWWBxkFLFEq4jH2rKJzW
-X-Google-Smtp-Source: AGHT+IEpg/I8xfx644VVaBE9975HSKHnI8DyNsPh8QsfXyAUyRtzzEz/jIEHW9ehnFsCEuIWrV8oqg==
-X-Received: by 2002:a05:6122:8c0f:b0:55f:e6f5:4794 with SMTP id 71dfb90a1353d-5615bd70f29mr10136067e0c.6.1767003545548;
-        Mon, 29 Dec 2025 02:19:05 -0800 (PST)
-Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com. [209.85.221.182])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5615d1665f2sm9762301e0c.21.2025.12.29.02.19.03
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 29 Dec 2025 02:19:04 -0800 (PST)
-Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-55b302b8369so7384155e0c.0
-        for <linux-clk@vger.kernel.org>; Mon, 29 Dec 2025 02:19:03 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUC9oZTLnaUR/X1ddChHEfwlzXJLYCdnS2U33CIVVAe8WXySUUk5+2TyGOKPsREjhXe72j/OWTmHBY=@vger.kernel.org
-X-Received: by 2002:a05:6122:d85:b0:557:ddc4:dea4 with SMTP id
- 71dfb90a1353d-5615bd7150bmr9849393e0c.5.1767003543582; Mon, 29 Dec 2025
- 02:19:03 -0800 (PST)
+	s=arc-20240116; t=1767005966; c=relaxed/simple;
+	bh=e85/10ayVPtpn4AK9xcOsYP46eUkRMb/mCYHt5uOKH0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ccV5QSFpC9iZ6BHqOkuZGYeftRwf4fp+7Nxj75asIVxlbDr1s6G5rMJQsAfKO/SuYZEB9I0DYry35u8VFJE27WblLCQonfVGkkKrRhdF+gmRNsP2x+mTmVaIbjSbfeeipmZ6PMJBeHobSnEq4Wp6iN02t7ctPJF5ef7pRGvwKh0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=206.189.21.223
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
+Received: from E0005152DT.eswin.cn (unknown [10.12.96.41])
+	by app1 (Coremail) with SMTP id TAJkCgDX0WnyXlJpVr6LAA--.57442S2;
+	Mon, 29 Dec 2025 18:59:00 +0800 (CST)
+From: dongxuyang@eswincomputing.com
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	troy.mitchell@linux.dev,
+	bmasney@redhat.com
+Cc: ningyu@eswincomputing.com,
+	linmin@eswincomputing.com,
+	huangyifeng@eswincomputing.com,
+	pinkesh.vaghela@einfochips.com,
+	ganboing@gmail.com,
+	Xuyang Dong <dongxuyang@eswincomputing.com>
+Subject: [PATCH v9 0/3] Add driver support for ESWIN eic700 SoC clock controller
+Date: Mon, 29 Dec 2025 18:58:44 +0800
+Message-Id: <20251229105844.1089-1-dongxuyang@eswincomputing.com>
+X-Mailer: git-send-email 2.31.1.windows.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251212-phy-clk-round-rate-v3-0-beae3962f767@redhat.com> <20251212-phy-clk-round-rate-v3-9-beae3962f767@redhat.com>
-In-Reply-To: <20251212-phy-clk-round-rate-v3-9-beae3962f767@redhat.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 29 Dec 2025 11:18:52 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdXudWW3MPKqP0-d+DyMNRF-X62oyHRnj=MM_9MSpJw6sw@mail.gmail.com>
-X-Gm-Features: AQt7F2rKWfaXfoMj8qssy3Tj3BKKzf9SWfuNGXkoZ2xYV04eFqP8YoD995Ts3mk
-Message-ID: <CAMuHMdXudWW3MPKqP0-d+DyMNRF-X62oyHRnj=MM_9MSpJw6sw@mail.gmail.com>
-Subject: Re: [PATCH v3 9/9] phy: ti: phy-j721e-wiz: convert from round_rate()
- to determine_rate()
-To: Brian Masney <bmasney@redhat.com>
-Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, 
-	Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Chunfeng Yun <chunfeng.yun@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Heiko Stuebner <heiko@sntech.de>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Stephen Boyd <sboyd@kernel.org>, 
-	Maxime Ripard <mripard@kernel.org>, linux-clk@vger.kernel.org, 
-	linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:TAJkCgDX0WnyXlJpVr6LAA--.57442S2
+X-Coremail-Antispam: 1UD129KBjvJXoW3WF4DKw1UCw4DXw1UZw4Dtwb_yoW3GryUpF
+	4kGr98CFs0gryxXan7tayIgFyrXanrJFWjkryxXw1jv3WYk34vyr4SvFy5AFZrZr1fAw1D
+	JFnxWa1jkF4UZFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBv14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lw4CEc2x0rVAKj4xxMxkF7I0En4kS14v26r1q6r43MxkIecxEwVCm-wCF04
+	k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18
+	MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr4
+	1lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1l
+	IxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4
+	A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUmjgxUUUUU=
+X-CM-SenderInfo: pgrqw5xx1d0w46hv4xpqfrz1xxwl0woofrz/
 
-Hi Brian,
+From: Xuyang Dong <dongxuyang@eswincomputing.com>
 
-On Fri, 12 Dec 2025 at 00:21, Brian Masney <bmasney@redhat.com> wrote:
-> The round_rate() clk ops is deprecated, so migrate this driver from
-> round_rate() to determine_rate() using the Coccinelle semantic patch
-> on the cover letter of this series.
->
-> Signed-off-by: Brian Masney <bmasney@redhat.com>
+The link [1] provides the official documentation for the EIC7700. Section 3.2
+covers the clock subsystem.
 
-Thanks for your patch, which is now commit 27287e3b52b5954b ("phy:
-ti: phy-j721e-wiz: convert from round_rate() to determine_rate()")
-in phy/next
+[1] https://www.sifive.com/document-file/eic7700x-datasheet
 
-> --- a/drivers/phy/ti/phy-j721e-wiz.c
-> +++ b/drivers/phy/ti/phy-j721e-wiz.c
-> @@ -934,12 +934,15 @@ static unsigned long wiz_clk_div_recalc_rate(struct clk_hw *hw,
->         return divider_recalc_rate(hw, parent_rate, val, div->table, 0x0, 2);
->  }
->
-> -static long wiz_clk_div_round_rate(struct clk_hw *hw, unsigned long rate,
-> -                                  unsigned long *prate)
-> +static int wiz_clk_div_determine_rate(struct clk_hw *hw,
-> +                                     struct clk_rate_request *req)
->  {
->         struct wiz_clk_divider *div = to_wiz_clk_div(hw);
->
-> -       return divider_round_rate(hw, rate, prate, div->table, 2, 0x0);
-> +       req->rate = divider_round_rate(hw, req->rate, &req->best_parent_rate,
-> +                                      div->table, 2, 0x0);
+Updates:
+  Changes in v9:
+  - Updated driver file
+    - Checked return values of eswin_clk_register_*() in the probe function.
+    - Removed binding IDs check from pll functions in clk.c, as these functions
+      were exclusively used by pll clocks and did not require ID validation.
+    - The PLL structure has been extended with max_rate and min_rate fields to
+      explicitly define the frequency operating range of the PLL. These limits
+      were now utilized by the clk_pll_determine_rate() function.
+    - Removed __clk_lookup() in clk_pll_set_rate. Added clk_notifier support
+      in clk-eic7700.c.
+    - Added five previously missing clocks from [1].
 
-Is this correct?  divider_round_rate() can return a negative error code
-(from divider_ro_determine_rate()), which is not handled here?
+  - Link to v8: https://lore.kernel.org/all/20251113013637.1109-1-dongxuyang@eswincomputing.com/
 
-Looks like several other users of divider_round_rate() use this
-same logic, and thus are affected, too.
+  Changes in v8:
+  - Updated YAML file
+    - Added "Acked-by: Troy Mitchell <troy.mitchell@linux.dev>"
+  - Updated driver file
+    - Changed Kconfig from bool to tristate.
+  - Updated MAINTAINERS file
+    - Added "ESWIN SOC SERIES CLOCK DRIVER"
 
-> +
-> +       return 0;
->  }
->
->  static int wiz_clk_div_set_rate(struct clk_hw *hw, unsigned long rate,
+  - Link to v7: https://lore.kernel.org/all/20251023071658.455-1-dongxuyang@eswincomputing.com/
 
-Gr{oetje,eeting}s,
+  Changes in v7:
+  - Updated YAML file
+    - Added "Acked-by: Conor Dooley <conor.dooley@microchip.com>" for bindings.
+  - Updated driver file
+    - Added description for clk of eswin_calc_pll().
+    - Added macro EIC7700_MUX_TBL to manage mux clock-tree.
+    - Added eswin_clk_register_mux_tbl() to register mux clocks with
+      discontinuous parent indexes.
 
-                        Geert
+  - Link to v6: https://lore.kernel.org/all/20251009092029.140-1-dongxuyang@eswincomputing.com/
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+  Changes in v6:
+  - Removed config option patch dependency from cover letter, because the patch
+    was applied.
+  - Updated YAML file
+    - Added an oscillator as the clock input, named xtal24m.
+    - Added clocks property.
+  - Updated driver file
+    - Replaced fixed_rate_clk_xtal_24m with xtal24m.
+    - Dropped fixed_rate_clk_xtal_24m from driver. Because clock xtal24m was
+      registered by fixed-clock as oscillator.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+  - Link to v5: https://lore.kernel.org/all/20250923084637.1223-1-dongxuyang@eswincomputing.com/
+
+  Changes in v5:
+  - Removed vendor prefix patch dependency from cover letter, because the patch
+    was applied.
+  - Updated YAML file
+    - Placed the required after all properties.
+    - Removed patternProperties. Also removed compatible of eswin,pll-clock,
+      eswin,mux-clock, eswin,divider-clock and eswin,gate-clock as we have moved
+      clock tree from DTS to Linux driver.
+    - Removed the clock tree from DTS. Used clock-controller to manage all
+      clock. Removed all child nodes in clock-controller.
+    - Removed '#address-cells' and '#size-cells' properties, because the clock
+      controller did not need to define these properties.
+    - Removed eic7700-clocks.dtsi.
+    - Added dt-bindings header for clock IDs. Because used the IDs to register
+      clocks.
+  - Updated driver file
+    - Modified the commit for clock driver. Dropped indentation in commit.
+    - Removed CLK_OF_DECLARE(). Used *clk_hw_register* to register clocks. Used
+      devm_of_clk_add_hw_provider.
+    - Dropped singletons.
+    - Checked the value right after obtaining it.
+    - Removed the definitions of macro frequency in clk.h like CLK_FREQ_24M.
+    - Modified description of help in Kconfig.
+    - Added COMPILE_TEST. Added COMMON_CLK_ESWIN for clk.o. And added
+      "select COMMON_CLK_ESWIN" for clk-eic7700.c. Without COMMON_CLK_EIC7700,
+      clk.c could not be compiled.
+    - Used .determined_rate.
+    - Added macro definitions of EIC7700_DIV, EIC7700_FIXED, EIC7700_FACTOR,
+      EIC7700_MUX and EIC7700_PLL to manage clock tree.
+    - Added clk-eic7700.h to place eic7700 SoC clock registers.
+    - Removed refdiv_val and postdiv1_val from clk_pll_recalc_rate(). Because
+      these values were unused.
+
+  - Link to v4: https://lore.kernel.org/all/20250815093539.975-1-dongxuyang@eswincomputing.com/
+
+  Changes in v4:
+  - Updated YAML file
+    - Changed name from cpu-default-frequency to cpu-default-freq-hz.
+    - Dropped $ref of cpu-default-frequency.
+    - Added cpu-default-frequency for required.
+    - Removed cpu-default-frequency in updated file, because there was no
+      need to add cpu-default-frequency.
+    - Moved DIVIDER to DIV.
+    - Arranged the IDs in order.
+    - Dropped EIC7700_NR_CLKS.
+    - Removed dt-bindings eswin,eic7700-clock.h. Because IDs was not used,
+      and used clock device nodes.
+    - According to the updated driver codes, the YAML has been updated.
+  - Updated driver file
+    - Remove undocumented parameters "cpu_no_boost_1_6ghz" and
+      "cpu-default-frequency".
+    - Modified the comment and used the correct Linux coding style.
+    - Removed codes of voltage, because it was not the clock driver.
+    - Updated the formula of clock frequency calculation. Removed the logic
+      that only used register selection.
+    - Used CLK_OF_DECLARE() to register clocks. Registered pll-clock,
+      mux-clock, divider-clock, and gate-clock in clk-eic7700.c.
+      The specific implementation of clock registration was in clk.c.
+    - Added eic7700-clocks.dtsi.
+    - Moved device information to DTS. Put all clocks' node in the
+      eic7700-clocks.dtsi.
+
+  - Link to v3: https://lore.kernel.org/all/20250624103212.287-1-dongxuyang@eswincomputing.com/
+
+  Changes in v3:
+  - Update example, drop child node and add '#clock-cells' to the parent
+    node.
+  - Change parent node from sys-crg to clock-controller for this yaml.
+  - Drop "syscon", "simple-mfd" to clear warnings/errors by using "make
+    dt_binding_check". And these are not necessary.
+  - Add "cpu-default-frequency" definition in yaml for "undocumented ABI".
+  - Drop Reviewed-by, this is misunderstanding. We have not received such
+    an email.
+  - Link to v2: https://lore.kernel.org/all/20250523090747.1830-1-dongxuyang@eswincomputing.com/
+
+  Changes in v2:
+  - Update example, drop child node.
+  - Clear warnings/errors for using "make dt_binding_check".
+  - Change to the correct format.
+  - Drop some non-stanard code.
+  - Use dev_err_probe() in probe functions.
+  - Link to v1: https://lore.kernel.org/all/20250514002233.187-1-dongxuyang@eswincomputing.com/
+
+Xuyang Dong (3):
+  dt-bindings: clock: eswin: Documentation for eic7700 SoC
+  clock: eswin: Add eic7700 clock driver
+  MAINTAINERS: Add entry for ESWIN EIC7700 clock driver
+
+ .../bindings/clock/eswin,eic7700-clock.yaml   |   46 +
+ MAINTAINERS                                   |    8 +
+ drivers/clk/Kconfig                           |    1 +
+ drivers/clk/Makefile                          |    1 +
+ drivers/clk/eswin/Kconfig                     |   15 +
+ drivers/clk/eswin/Makefile                    |    8 +
+ drivers/clk/eswin/clk-eic7700.c               | 1110 +++++++++++++++++
+ drivers/clk/eswin/clk-eic7700.h               |  122 ++
+ drivers/clk/eswin/clk.c                       |  396 ++++++
+ drivers/clk/eswin/clk.h                       |  266 ++++
+ .../dt-bindings/clock/eswin,eic7700-clock.h   |  285 +++++
+ 11 files changed, 2258 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/eswin,eic7700-clock.yaml
+ create mode 100644 drivers/clk/eswin/Kconfig
+ create mode 100644 drivers/clk/eswin/Makefile
+ create mode 100644 drivers/clk/eswin/clk-eic7700.c
+ create mode 100644 drivers/clk/eswin/clk-eic7700.h
+ create mode 100644 drivers/clk/eswin/clk.c
+ create mode 100644 drivers/clk/eswin/clk.h
+ create mode 100644 include/dt-bindings/clock/eswin,eic7700-clock.h
+
+--
+2.43.0
+
