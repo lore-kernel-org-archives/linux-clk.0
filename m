@@ -1,107 +1,65 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E56C32E12D
-	for <linux-clk@vger.kernel.org>; Tue, 30 Dec 2025 18:09:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABCC1322C6D;
+	Tue, 30 Dec 2025 18:14:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767118191; cv=none; b=h7NJvZPKeL/jnZxB08qSjVT4CpBUBucGNm7AeKLwVIJuWICHDax+syAkOj5Dz+WlIMu9Xsyy3t/KEMPS5RFBZX64kI53TRLL1Z3rcH782fCU7sJitugv3qwi0yar8b09exSoESc0IPX0D8kcc+/42nZOmlT8Y5m7QvzCuj9MiOw=
+	t=1767118490; cv=none; b=tVtJVcYmwsxNzXyT1yJAZrOSNjCOuljnT6XrDFFZ4xIC7PFrztY/1e3UDFFKlvuOAEqo32i1x3by5Tty4DPwJ6Cq5zpyMaklw/kQDkp2maXpJwEPR/MmhZ1YHQeI3rhxRnd0JuWzPrh3xo8zw+6JBTJvctpXsh2X1mNOrlqk3Ig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767118191; c=relaxed/simple;
-	bh=JrSdVQs8umFznETgBJlE+gXeHhfL90x8ie9YdD53G1Y=;
+	s=arc-20240116; t=1767118490; c=relaxed/simple;
+	bh=bdbbfWgfMzDAL+5IkIGKCTmg3U/g11pNnwB241QoLmA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FNntcwSwe6+LxebBCUFlHuWRHUwUlFoIgfCnRkoJNNT+WFMT81vclrsmaNgE8qZM2DN0tmxfqNsD4l5IJAef6M4Dzi0dm5pZ8ifZfOhJK1GXRBDoFlnUr6XW37yIN4iOkuqvicm4MPWvmTe13P+eAG/DGf/XNNV6Bf9NwIPw1ss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=BPXLLEXB; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=QBsuRG5v; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=cFsVHLVEoVM55I5gx38XJIWN2TtYMqMbVYvXrp9YjVl0H5CrCO11ZOCCKnlqkeK5MJ4G40pXZQ1Vnr0Z5as+mofGuP8p5OxJiOe/HdaVhlC37t+b/Xx/siIAUnVUspbe0W++KZJMETRwouq8mbKsNozkwHKpHZa1zqCzQki6WQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IreUnIxO; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="BPXLLEXB";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="QBsuRG5v"
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5BU9ARjU1752576
-	for <linux-clk@vger.kernel.org>; Tue, 30 Dec 2025 18:09:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=zxrwpCmrklVLd3dQvhy5lVUw
-	gtJd/h93CSb4e5jlCrA=; b=BPXLLEXBsPw34p4n2MYC608hjPf56FSEz2azi6q5
-	stJS8yullh+R9JVp3o8ivlYABdl4kJKEFkPsw36PXRMMLLtbukTDmqNdjrCP/HSK
-	79iC1zaFf89Hx3PSnBRLWJ3aCze9rYrJafQgcKCwCTJiURAyYO5d3rdcKK6SddIX
-	RbiuW03Ggjpkm0ActZ6Sw9I+3ewap8TarhlDvEE8BXhFSShM+GXaz41DLdrSPnN1
-	mOSyNNcVpd4ptxyJmbss8mHs/qdv5RrCyAH6hgc/AoCcsoXDg0MY6HBpy2OAM68S
-	MLzI7IedeNxuTBD8wFIhxEhm6/qYQ9mwn3t0fgpCnvHzmQ==
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4bc0sgtkkx-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Tue, 30 Dec 2025 18:09:45 +0000 (GMT)
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4ee3dfe072dso266570041cf.2
-        for <linux-clk@vger.kernel.org>; Tue, 30 Dec 2025 10:09:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1767118185; x=1767722985; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=zxrwpCmrklVLd3dQvhy5lVUwgtJd/h93CSb4e5jlCrA=;
-        b=QBsuRG5vWv/pwnTdex1h3SaM8/3DrXlgsvxQ5hkueo0bqYFYTYJKCPniaS8XTPlwn4
-         pwvUt7NA46eHZwVMqUGm99jNlhHrN7lrFW9W79bViv0lzHGeKQiSC24hq7PU62s/AzLx
-         Gw2oLTGNHtSdI5s4lPDuo43UpDb/ltregxeIfXL6rWgFGTPbOdFDghgjDpWMlj/ksrvv
-         n9DJlAHWBYLjXJMQq2c87K9q+vewzm2ia7lwdx9XbVD5EeE+VXe0Za8Pc6SX+AhrLGl2
-         ffu2YTG5VUGu7sZc7tBuLgwn93MWSmINUaqbz3hafeGDMsYqXy+X7NGE/96faPR6DM0a
-         EJeQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767118185; x=1767722985;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zxrwpCmrklVLd3dQvhy5lVUwgtJd/h93CSb4e5jlCrA=;
-        b=MMPFev4jm2KrmL3XvjJmwgwmNgjXcmNl5UKEwkOagrV5xWLgqyiipvXu6wlNs0+cqb
-         MxIG+Mom/MFu4i2DXD1cStuwgirawhbGmWOSQ1+zm/r/82JAo4XYKNevaSxvvMAu4ojh
-         IIJ6uewBafBWW7RL4OQydsQrz3Ukmw4IwyL3kcly7QuLZaHErgRy9De1KRxZu/wbUJz0
-         1Wlm2LlmDmfy3jdF2aH2wimYR/DhqULJfQ3WA+qzgSexfR3pubGkJDwn3WxMJNw5RKHU
-         8d/h5rnPRzNgxWPkHbEBkb7KYvDb5eRYzE0FZ4opNEYaz/QQGnuoSAeAT4w2AuE6ggXW
-         tYQg==
-X-Forwarded-Encrypted: i=1; AJvYcCXZf5X82h7YpYlphxQlNmQSCVCA1BbhB2W+veD6yvMOuzKc6HfpDDmkIJEubpX9RI79q9fFq3tGRK4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzoeVcXz5XKVwL/KwCAK/LY1bOX+9YIFZ2rWUxDsvfTU6O8Uhlj
-	XGRNX73eVl4s/m3bhcE3N6cY43D+2I5RLzwHolirXLUOnm0aC+MBglH5JXJ0jyGK1xUhdZsGpyv
-	DKPCDAhAs2ExPBXpq7hBG6x96UxRpocUhJ2IP5GhRZx25I2oUMgafn5RDJRpjJGU=
-X-Gm-Gg: AY/fxX7IK3EU6sY9MkaCIotIOooJjs/Zg+OU6tD+ZlQ+RERW0ScqE7h+roJhf2tkoeS
-	q7TkuGzTxl2mHWxr2AxMAT4ayDV+8V+HIQFwVC5zUXxoHyTAQJ5xR28CZZanqYtfD3CN0qwvZPx
-	pcVH5pWpTS7P/sNaW4fcqoNqAIFeeLP8+IHqIegYWMQ7lfuIOSULf46j57GwJNFIUkhhHYarC2L
-	dSu1D1zKX1vLNzEa5g7Ah+dI1C2KsAjSsjjMsllJF61XYYmvJ07n6BDz0SZ/HotBE8QgCzgP9hj
-	a5ehPmmqz7t2D5K544ux7x3fcHnNXtITkf0zYgmn8b4S40BS/eC7vsSbs4W/Wfp0JguP8+pV2CZ
-	PNgWM7ntw04SJNeedJboWJeXHT0TrDe78Bb9rznmIlPe8rUDTmHYSjx4332JDRT+1QBf0ORzECy
-	dtrzOj6qDwGOzZ0C5MLE3aJ6Y=
-X-Received: by 2002:a05:622a:5916:b0:4ee:43e1:e591 with SMTP id d75a77b69052e-4f4abd939e4mr466238971cf.58.1767118185044;
-        Tue, 30 Dec 2025 10:09:45 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHeXCP+TMD7l4jEeTo5UrB+NryoWkj/z31BYNSG5ir92U/bAlxqI4Nt4wzjzofiPgyNK0hgag==
-X-Received: by 2002:a05:622a:5916:b0:4ee:43e1:e591 with SMTP id d75a77b69052e-4f4abd939e4mr466238471cf.58.1767118184633;
-        Tue, 30 Dec 2025 10:09:44 -0800 (PST)
-Received: from umbar.lan (2001-14ba-a073-af00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a073:af00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-59a1862840asm10427036e87.96.2025.12.30.10.09.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Dec 2025 10:09:44 -0800 (PST)
-Date: Tue, 30 Dec 2025 20:09:42 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Taniya Das <taniya.das@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Rajendra Nayak <quic_rjendra@quicinc.com>,
-        Abel Vesa <abelvesa@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
-        Imran Shaik <imran.shaik@oss.qualcomm.com>,
-        Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Sibi Sankar <sibi.sankar@oss.qualcomm.com>,
-        Pradeep P V K <pradeep.pragallapati@oss.qualcomm.com>
-Subject: Re: [PATCH 3/3] arm64: dts: qcom: hamoa: Extend the gcc input clock
- list
-Message-ID: <73dxvqekezl5oo3wnlhsr6ok4usnoabfp7p3uodkkusiql45b4@tmwx22gcfugd>
-References: <20251230-ufs_symbol_clk-v1-0-47d46b24c087@oss.qualcomm.com>
- <20251230-ufs_symbol_clk-v1-3-47d46b24c087@oss.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IreUnIxO"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1767118489; x=1798654489;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=bdbbfWgfMzDAL+5IkIGKCTmg3U/g11pNnwB241QoLmA=;
+  b=IreUnIxOIbTDm6uV5BCIGZ5aGl8N/b2C6DGIH/X84ei9t6o0kf5hrHX3
+   EUwdvaldlPqcSFTQgKLARtZ3a2iE4zE1Iq7qg7ND7kVwQ2Q09iF3lumTp
+   nf7fpqmivBG2pB7+SHJlloh9BIJ3AuqeBLweZUcVxOCxgEPrhs2OOFgvp
+   EWi+Ce0hqSiNBKP9GOhTn0k/Atp6yKfFvYsuQvA1VGyy7OnZSHVQ4jW5a
+   pfUpy7wz3ODE9MtFJLt6WhWrsuoG3jwfP4uqWfYiN5Gt/h+W5gdFCu/h0
+   re4dvXniT5LiNrGQRdn7dqUOfhkusppX+nyFXholqRKHCyCNO972OA8MB
+   g==;
+X-CSE-ConnectionGUID: x6uC3PZkQeqzyA6L1CxQiQ==
+X-CSE-MsgGUID: blDntWy5Tk6EMCc8DPx4XA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11657"; a="71288913"
+X-IronPort-AV: E=Sophos;i="6.21,189,1763452800"; 
+   d="scan'208";a="71288913"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Dec 2025 10:14:48 -0800
+X-CSE-ConnectionGUID: JGdpHVWqSByvPKHbN0THdA==
+X-CSE-MsgGUID: Bt6QBa3tSreVBdq4GWCA5Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.21,189,1763452800"; 
+   d="scan'208";a="201150732"
+Received: from lkp-server01.sh.intel.com (HELO c9aa31daaa89) ([10.239.97.150])
+  by fmviesa006.fm.intel.com with ESMTP; 30 Dec 2025 10:14:44 -0800
+Received: from kbuild by c9aa31daaa89 with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1vaeF0-000000000bN-1V35;
+	Tue, 30 Dec 2025 18:14:42 +0000
+Date: Wed, 31 Dec 2025 02:14:15 +0800
+From: kernel test robot <lkp@intel.com>
+To: Yu-Chun Lin <eleanor.lin@realtek.com>, mturquette@baylibre.com,
+	sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, p.zabel@pengutronix.de, cylee12@realtek.com,
+	jyanchou@realtek.com
+Cc: oe-kbuild-all@lists.linux.dev, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	james.tai@realtek.com, cy.huang@realtek.com,
+	stanley_chang@realtek.com, eleanor.lin@realtek.com
+Subject: Re: [PATCH 3/9] clk: realtek: Introduce a common probe()
+Message-ID: <202512310241.H75NfTMw-lkp@intel.com>
+References: <20251229075313.27254-4-eleanor.lin@realtek.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -110,47 +68,112 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251230-ufs_symbol_clk-v1-3-47d46b24c087@oss.qualcomm.com>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMjMwMDE2MyBTYWx0ZWRfX1Je8CnM1fMh8
- Kh/pyYFRJ0dpvDS2tHhoQGqD5vvLKBvLZRxf/C/XH71WV8I6uTTHWQ1IXbfhwzbfMCKXbxkPi/c
- 02W/9HJQAonknU1Utot9k/vQq73TaFzIIRtHVdezUFbFy3ktY54zvf2M+Fw/0g+FKzZHRX5JvnA
- Pp+Qd93tIM9mkwtNgpk/82krc9OmEGSCUjeygnbpittLDY4Qz9nj0KckvWgYN7/8ptIyCZqSD5w
- U8bTuQVNCEHhPBhXRMN/uea/ouJKnNqKFmoxjqFMUPSFg5/iMknOmAMMn3gB1lXKBIvUc2GLBkq
- bkWHwwEGmtcluyCFJbGQ3oaF8JWB4chn0AeWmnGfwU9J8JlcxGGA7nDUk5Gs537J5IaAVcu7XaR
- 9M7owlU0kq19EFRe0ktGovK3+Nh7vOKxSNoKAqr5280C/osF6sQU9jToWW8YIJJs+b+CzpbxdjU
- Xs1bDwNDWRASwWrzSVg==
-X-Proofpoint-GUID: 7XvlLfOmzYyczl_pLq5VC1VfRZHptlNn
-X-Proofpoint-ORIG-GUID: 7XvlLfOmzYyczl_pLq5VC1VfRZHptlNn
-X-Authority-Analysis: v=2.4 cv=foHRpV4f c=1 sm=1 tr=0 ts=69541569 cx=c_pps
- a=WeENfcodrlLV9YRTxbY/uA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=wP3pNCr1ah4A:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=EUspDBNiAAAA:8 a=q0JkR4NhiA7wQx93E64A:9 a=CjuIK1q_8ugA:10
- a=kacYvNCVWA4VmyqE58fU:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-12-30_02,2025-12-30_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 clxscore=1015 malwarescore=0 suspectscore=0 phishscore=0
- impostorscore=0 bulkscore=0 lowpriorityscore=0 priorityscore=1501 spamscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2512120000 definitions=main-2512300163
+In-Reply-To: <20251229075313.27254-4-eleanor.lin@realtek.com>
 
-On Tue, Dec 30, 2025 at 11:08:36PM +0530, Taniya Das wrote:
-> The recent dt-bindings were updated for the missing RX/TX symbol clocks
-> for UFS.
-> 
-> Extend the existing list to make sure the DT contains the expected
-> amount of 'clocks' entries.
-> 
-> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
-> ---
->  arch/arm64/boot/dts/qcom/hamoa.dtsi | 3 +++
->  1 file changed, 3 insertions(+)
-> 
+Hi Yu-Chun,
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+kernel test robot noticed the following build warnings:
 
+[auto build test WARNING on clk/clk-next]
+[also build test WARNING on linus/master v6.19-rc3 next-20251219]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Yu-Chun-Lin/dt-bindings-clock-Add-Realtek-RTD1625-Clock-Reset-Controller/20251229-155549
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
+patch link:    https://lore.kernel.org/r/20251229075313.27254-4-eleanor.lin%40realtek.com
+patch subject: [PATCH 3/9] clk: realtek: Introduce a common probe()
+config: arc-randconfig-002-20251231 (https://download.01.org/0day-ci/archive/20251231/202512310241.H75NfTMw-lkp@intel.com/config)
+compiler: arc-linux-gcc (GCC) 8.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251231/202512310241.H75NfTMw-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202512310241.H75NfTMw-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   In file included from include/linux/device.h:15,
+                    from drivers/clk/realtek/common.c:7:
+   drivers/clk/realtek/common.c: In function 'rtk_clk_probe':
+>> drivers/clk/realtek/common.c:58:4: warning: format '%lu' expects argument of type 'long unsigned int', but argument 3 has type 'size_t' {aka 'const unsigned int'} [-Wformat=]
+       "Missing reset banks data though num_reset_banks is %lu\n",
+       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/dev_printk.h:110:16: note: in definition of macro 'dev_printk_index_wrap'
+      _p_func(dev, fmt, ##__VA_ARGS__);   \
+                   ^~~
+   include/linux/dev_printk.h:154:49: note: in expansion of macro 'dev_fmt'
+     dev_printk_index_wrap(_dev_err, KERN_ERR, dev, dev_fmt(fmt), ##__VA_ARGS__)
+                                                    ^~~~~~~
+   drivers/clk/realtek/common.c:57:3: note: in expansion of macro 'dev_err'
+      dev_err(dev,
+      ^~~~~~~
+
+
+vim +58 drivers/clk/realtek/common.c
+
+    12	
+    13	int rtk_clk_probe(struct platform_device *pdev, const struct rtk_clk_desc *desc)
+    14	{
+    15		int i, ret;
+    16		struct device *dev = &pdev->dev;
+    17		struct rtk_reset_initdata reset_initdata = { 0 };
+    18	
+    19		struct regmap *regmap = device_node_to_regmap(pdev->dev.of_node);
+    20	
+    21		if (IS_ERR(regmap)) {
+    22			ret = PTR_ERR(regmap);
+    23			dev_err(dev, "Failed to get regmap: %d\n", ret);
+    24			return ret;
+    25		}
+    26	
+    27		for (i = 0; i < desc->num_clks; i++)
+    28			desc->clks[i]->regmap = regmap;
+    29	
+    30		for (i = 0; i < desc->clk_data->num; i++) {
+    31			struct clk_hw *hw = desc->clk_data->hws[i];
+    32	
+    33			if (!hw)
+    34				continue;
+    35	
+    36			ret = devm_clk_hw_register(dev, hw);
+    37	
+    38			if (ret) {
+    39				dev_warn(dev, "failed to register hw of clk%d: %d\n", i,
+    40					 ret);
+    41				desc->clk_data->hws[i] = NULL;
+    42			}
+    43		}
+    44	
+    45		ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
+    46						  desc->clk_data);
+    47	
+    48		if (ret) {
+    49			dev_err(dev, "Failed to add clock provider\n");
+    50			return ret;
+    51		}
+    52	
+    53		if (!desc->num_reset_banks)
+    54			return 0;
+    55	
+    56		if (!desc->reset_banks) {
+    57			dev_err(dev,
+  > 58				"Missing reset banks data though num_reset_banks is %lu\n",
+    59				desc->num_reset_banks);
+    60			return -EINVAL;
+    61		}
+    62	
+    63		reset_initdata.regmap = regmap;
+    64		reset_initdata.num_banks = desc->num_reset_banks;
+    65		reset_initdata.banks = desc->reset_banks;
+    66	
+    67		return rtk_reset_controller_add(dev, &reset_initdata);
+    68	}
+    69	EXPORT_SYMBOL_GPL(rtk_clk_probe);
+    70	
 
 -- 
-With best wishes
-Dmitry
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
