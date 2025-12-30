@@ -1,206 +1,101 @@
-Received: from PH0PR06CU001.outbound.protection.outlook.com (mail-westus3azon11011021.outbound.protection.outlook.com [40.107.208.21])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3E50233D85;
-	Tue, 30 Dec 2025 20:12:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.208.21
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767125570; cv=fail; b=Zo4jIP1Dd9he7VHIBpuwh2kz4xRt/uLb6cr1DiYvVWd7IaRGYLU8oDlow5cwbjA7keLXhEoiFCbOkS3uLJJT61l6Lny+GJL5lH5YYhejTzPMVhfJHS77aRd7U7Vu+3UfX6p7RkomuLiYqRk5hfD095RNJ1FwFeeAZmTpNw8TJi0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767125570; c=relaxed/simple;
-	bh=SDu1VnPT2tOkx5vhfjmaod7SazhGgbb9mT0owUwyAQk=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F6CS1sUtp5uuNtsrLdF+C8Ue04RnYnnggq6whj3gjRt179ALoVeWUObW1xJ6X0Pv1ZZ80AmsRpZx1fhD4diCTvU7F6TYalFu4+ef4dXfMncdgRcMcBdkMjdSzgVcgOnw90fdFiacZuq5ZZjZ/twZ2YdN+gQgwdvsHVlITdgz/8Y=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=sqpHxkA9; arc=fail smtp.client-ip=40.107.208.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A44D1E8329;
+	Tue, 30 Dec 2025 20:18:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1767125937; cv=none; b=shMdjiAujyDfX2jEJi5Kjn3orrQOVXUJ00nj8nUI6EPbHbkAYvCEUcjnIxU04TgHEQVAUtFnkYdXrzgo1UrzOM9DFUfk77PlS/dLeZXt9wOx3Sjp4MYKAzLgGJt+0N8Eaa+fMNNaV6XWkPritQhz/YLpAJBrQItFOX2VwzxP4XQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1767125937; c=relaxed/simple;
+	bh=0IH2d6n06/PtQC0NQfXK5mHr1ajMLfWNqsF4W74Sorg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tpNJFbjHBlwcW6BfhEITGkx4g+5wIHhjNawF7ZLMpCKMv8eTPn8Vt6BflqjcTwXPPSGqoJKKZmMA8QXAsn2bv7W4wMA2ATB8GTUkcG6x6ZE0g5VEZXBM9q2CyNYMZ1n9zRTkFOpfp8ZwZtfB6ZWo455BIGeuz4l2IhZbhsdHnnM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=h0zrAwUb; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="sqpHxkA9"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=GPDER6MCzT6KePZV6jOPTL81AewlcIEEeo2RCQy15rp/RYk2uUnzEbWJWg7m45R7aZCXKyjvp3reSmzW3VSTFCrMHB5bTHgUdkT1veCVQrSvnriH4/43UJokEZmAEhkMlZAEoO7Pa0TWSs+eht/2OMYU5iLpjFYMf7khimWD8xqWdwkjd8o3WI6O83SNM7gZtoBP+v1o37hDQO7FhgFogsVFZIC6LhNlTs1DjgqDk21x0WOdBvJyofkLH+Fm26tHoJdoubnyKQEAONEAcxdCDrBPYKQSK2FjPStyp0YHOMTjVgjva8SvCkCJLmwE/uhxLagNdU5f7Kxgkekhj3Sqgg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=tj1/K7dWkyBv6qsp6OezuXLeXtpWM/HHMPTUUPPCFmg=;
- b=T0GYbQat1mU71s73FKXafVzCykvMi23DCmrA60MWH9v6iYdOdK6JG3woQQwWkmB2I6YCY0WpKqBM1E6mlPiUm1uDhJIvg091EbwPUU3p8xa6E765LEGmHY7TW2CTCzVQBcwSfi/gAPWf5PpBwZTkyuIniQ34RI7trDaVPD5GIYKzyoOrK3ClrcuRMX8oeuOFSFE6o8EWtmGwkn2YVGQhWvbd5qf/s9P4Uvh61C6plxPStIiRz3i/3MTssDRnFpOa8lukL6psCheaBcWCmVstyYsjBdQsKFoq7UjApcFOdvrW1D6iW7BWuyAN/rD2tkmCLOCwwlUXEmB1+z5l/vbxlw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 198.47.21.194) smtp.rcpttodomain=lists.infradead.org smtp.mailfrom=ti.com;
- dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=ti.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=tj1/K7dWkyBv6qsp6OezuXLeXtpWM/HHMPTUUPPCFmg=;
- b=sqpHxkA97pd7/4WqID5cNmkBnfuexxxR1Upidr/3g/RHXLAINMtb3Zan+g85OzNufo8DGLYBGKERNf2FT9LyRqVXLrOukwxj4bligkCvW/OyfMocPe1ASNtT5b89ZzNT9S8aSxaBLzMF4jXqWlvPbA5U3EZ13dLB9N+1y+6t/7Y=
-Received: from BN0PR03CA0035.namprd03.prod.outlook.com (2603:10b6:408:e7::10)
- by IA1PR10MB7285.namprd10.prod.outlook.com (2603:10b6:208:3fe::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9478.4; Tue, 30 Dec
- 2025 20:12:44 +0000
-Received: from BN2PEPF000044A8.namprd04.prod.outlook.com
- (2603:10b6:408:e7:cafe::3b) by BN0PR03CA0035.outlook.office365.com
- (2603:10b6:408:e7::10) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9478.4 via Frontend Transport; Tue,
- 30 Dec 2025 20:12:42 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.21.194)
- smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
- action=none header.from=ti.com;
-Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
- 198.47.21.194 as permitted sender) receiver=protection.outlook.com;
- client-ip=198.47.21.194; helo=flwvzet200.ext.ti.com; pr=C
-Received: from flwvzet200.ext.ti.com (198.47.21.194) by
- BN2PEPF000044A8.mail.protection.outlook.com (10.167.243.102) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9478.4 via Frontend Transport; Tue, 30 Dec 2025 20:12:42 +0000
-Received: from DFLE215.ent.ti.com (10.64.6.73) by flwvzet200.ext.ti.com
- (10.248.192.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 30 Dec
- 2025 14:12:33 -0600
-Received: from DFLE215.ent.ti.com (10.64.6.73) by DFLE215.ent.ti.com
- (10.64.6.73) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 30 Dec
- 2025 14:12:33 -0600
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE215.ent.ti.com
- (10.64.6.73) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Tue, 30 Dec 2025 14:12:33 -0600
-Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5BUKCXQr1206900;
-	Tue, 30 Dec 2025 14:12:33 -0600
-Date: Tue, 30 Dec 2025 14:12:33 -0600
-From: Nishanth Menon <nm@ti.com>
-To: Michael Walle <mwalle@kernel.org>
-CC: Frank Binns <frank.binns@imgtec.com>, Matt Coster
-	<matt.coster@imgtec.com>, Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, "Vignesh
- Raghavendra" <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>, Andrew Davis
-	<afd@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Kevin Hilman
-	<khilman@baylibre.com>, Randolph Sapp <rs@ti.com>,
-	<linux-clk@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v2 2/4] clk: keystone: don't cache clock rate
-Message-ID: <20251230201233.n36d5fiensqyb6fc@splice>
-References: <20251223124729.2482877-1-mwalle@kernel.org>
- <20251223124729.2482877-3-mwalle@kernel.org>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="h0zrAwUb"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1767125935; x=1798661935;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=0IH2d6n06/PtQC0NQfXK5mHr1ajMLfWNqsF4W74Sorg=;
+  b=h0zrAwUbKvUh5rLFv7xOuaGmYxhwjRzrq8SB1WvmcMVN55Rx4KasL0Oo
+   WoGGS6lWHqwEQPVNrJ9nH0iLq3RG9knL7+jLymEjmdeRS7QOyP7x0ooOE
+   qWsnGxqSkhGkOdvHTbpPfM2zTFiuuNWzlftKNdI6bmkYMD7xtUjqNmKr5
+   gljzNPn9TphJB+SgXZLff9b7UGo5X9t5868J0s9TMcUbkDGEH9on/QlwS
+   OexO7yjlRNKf5MgXdFBvwzQvM5WUph15/vfgssBV7JWe9BQGGMsP6W4ed
+   pU8iIvtuHjAOwtOQV4g+gEIMnizpggtI3+l/BWUT1qQttKkl1Rh29aIzS
+   w==;
+X-CSE-ConnectionGUID: Kt7hlXmgSAmmjhqG96qptQ==
+X-CSE-MsgGUID: iDNbu93zTlyEPYh2sFI5mg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11657"; a="86293631"
+X-IronPort-AV: E=Sophos;i="6.21,189,1763452800"; 
+   d="scan'208";a="86293631"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Dec 2025 12:18:54 -0800
+X-CSE-ConnectionGUID: 5R+pX459R/yXjV8yqd/QVA==
+X-CSE-MsgGUID: I79DhSofSV26XM3mhe1CBw==
+X-ExtLoop1: 1
+Received: from lkp-server01.sh.intel.com (HELO c9aa31daaa89) ([10.239.97.150])
+  by fmviesa003.fm.intel.com with ESMTP; 30 Dec 2025 12:18:51 -0800
+Received: from kbuild by c9aa31daaa89 with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1vagB7-000000000gH-238c;
+	Tue, 30 Dec 2025 20:18:49 +0000
+Date: Wed, 31 Dec 2025 04:18:07 +0800
+From: kernel test robot <lkp@intel.com>
+To: Yu-Chun Lin <eleanor.lin@realtek.com>, mturquette@baylibre.com,
+	sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, p.zabel@pengutronix.de, cylee12@realtek.com,
+	jyanchou@realtek.com
+Cc: oe-kbuild-all@lists.linux.dev, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	james.tai@realtek.com, cy.huang@realtek.com,
+	stanley_chang@realtek.com, eleanor.lin@realtek.com
+Subject: Re: [PATCH 4/9] clk: realtek: Add support for phase locked loops
+ (PLLs)
+Message-ID: <202512310333.lXVsAtZ9-lkp@intel.com>
+References: <20251229075313.27254-5-eleanor.lin@realtek.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251223124729.2482877-3-mwalle@kernel.org>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN2PEPF000044A8:EE_|IA1PR10MB7285:EE_
-X-MS-Office365-Filtering-Correlation-Id: d20f1127-0f02-41bf-76bd-08de47dfc9ef
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|82310400026|36860700013|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?eyh+m94nJ7xhlkRwq3ovPpQR4VKBSPuRLNMiUKduZVy7XGkDB9V7bEA1A8v7?=
- =?us-ascii?Q?mIhiM9SKB+KVUJ5D+a14AT/G79ZVtTqlbZ8bEqD9dLDPyDIEkcEOvVrCDRgg?=
- =?us-ascii?Q?UTTNRAeCDhVui9ZdHkay4G01bNx+iOEuWxKOLBMZNcGlrdM45HbKdu0XimRN?=
- =?us-ascii?Q?/UwYth0qIO42On6ajq4U/LFWnzopeWTy5T2XbnWMgA+EBsEK3ZQTFi1vq0ep?=
- =?us-ascii?Q?2PNNeY7naYK6Ab89lStMA09CM05nzfUiOg/GrARWt0fbUQBLQVUBxR5AQJyI?=
- =?us-ascii?Q?xRVCIukmPBRt9Q7mt37Yj1i2nzyX5PdVueNrPZ2J1DNGBLa+zQp4pjwVn770?=
- =?us-ascii?Q?HubD0RiVzpEO49nSC2Ol53u6PQYISeRcEUm4pMOqXY0ZKkBCIkbKDNnZgNSY?=
- =?us-ascii?Q?Xh0/7zZSeFcsDSbcqknjVrtbePStcARjYQs9SvkL6VEkHj8h39P097xYSLcF?=
- =?us-ascii?Q?lqV0qIGnWp9FQ9ed1D2P3xHqVUEmm4b8w8Lk7w3hXnmVSM1SAK9O1IQdH0wa?=
- =?us-ascii?Q?1Scdm1jGm7FuA4ZDkNP9xGTXPFYrrLC6LNIlFempWobrxfr0zEH9QUHu1gwV?=
- =?us-ascii?Q?Nqo5Q84omFUKUhJ9gy/NpRH2hdJgAQsYq8Mf4DXa5oxsMWTkxA5R2dzmb796?=
- =?us-ascii?Q?dgnEYlb9747fY84kdpFIk/kwMgbZupNe27dWEGwC/VEtCU8J0fbtQPOCbI1s?=
- =?us-ascii?Q?TAlAnmdv+0BClHdcKnNIKx9qfpx1Cd2Xwz12vCTgkhMYaWvHpEToXb+VMSZa?=
- =?us-ascii?Q?AOcL0RprpJkvRuB2g0JITuXG9JOUJKA/1vM8755ptYEC27+ZiZIs52NkCbd1?=
- =?us-ascii?Q?vCU36jz8pYR3zaWbqNdz3OCNNLh87M4QKp9JQBZYuX+mSC2Ww6S+LvcLL20C?=
- =?us-ascii?Q?/5HwtvxsLa7WwW1jQ8O4jLwfKiovWf8LCTwPNhnOw/XbueisVbDy0bB/KqoJ?=
- =?us-ascii?Q?G82mpRXILgElgma+Rh16Taj9FI0oDis5dg1nKG1yo52/VrGF8RPlUXYBoVnp?=
- =?us-ascii?Q?2n/EDYkOlMNQ17Q2bRSkwW4BiMYMCniiCBTb1iFzn3T4NUR2d6SyPEo+1RtR?=
- =?us-ascii?Q?WnSlrbWPpYG6j3GIr21VQk8z+9r7dwYoE6irhsmnm0/njelQ28ZVdFEjGJQZ?=
- =?us-ascii?Q?M+MwEp/n8R3vKkEvhv+X/FIY8P+m0N8nd+ZVkmqZ2IzIWspphHmlOhgW5U/P?=
- =?us-ascii?Q?fyF4FgY7+ASD0x65DgVI6+B4sJFpfFnx3iGpXj7VQIo6Sb7jH2SqhcMFb8OZ?=
- =?us-ascii?Q?TYDjCb9U3W5XMkEtqeVL/GHUNc2m4Ki2j/wC28aqZuv07Z6xrNAMI0ANtQru?=
- =?us-ascii?Q?K/vNTUe0vg5veolVKVRkenXQT3MSKtArlez4ELJif1gEn+qqDvE8ypGR5Jls?=
- =?us-ascii?Q?tpKJ/sosdil2QiPryqI70U/w/o+UZGQh8VttP8U38zuiSH35HLFwsp4akRRx?=
- =?us-ascii?Q?2xuoItusx5cmD9X7ZL8KMvI4GLirLQUBJNwRerTpYsZ14QlJIqnu0MBJAZKe?=
- =?us-ascii?Q?zF5y/N5dgNmMF/5qdR9k8sj78RPcDC2U/wXsJUa8SG6V3zR4hI9s4+EtEwRz?=
- =?us-ascii?Q?NSKAOFzzzSYsrF5ZmG0=3D?=
-X-Forefront-Antispam-Report:
-	CIP:198.47.21.194;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:flwvzet200.ext.ti.com;PTR:ErrorRetry;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(36860700013)(7416014)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: ti.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Dec 2025 20:12:42.3304
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d20f1127-0f02-41bf-76bd-08de47dfc9ef
-X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.21.194];Helo=[flwvzet200.ext.ti.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN2PEPF000044A8.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR10MB7285
+In-Reply-To: <20251229075313.27254-5-eleanor.lin@realtek.com>
 
-On 13:47-20251223, Michael Walle wrote:
-> The TISCI firmware will return 0 if the clock or consumer is not
-> enabled although there is a stored value in the firmware. IOW a call to
-> set rate will work but at get rate will always return 0 if the clock is
-> disabled.
-> The clk framework will try to cache the clock rate when it's requested
-> by a consumer. If the clock or consumer is not enabled at that point,
-> the cached value is 0, which is wrong. Thus, disable the cache
-> altogether.
-> 
-> Signed-off-by: Michael Walle <mwalle@kernel.org>
-> Reviewed-by: Kevin Hilman <khilman@baylibre.com>
-> Reviewed-by: Randolph Sapp <rs@ti.com>
-> ---
->  drivers/clk/keystone/sci-clk.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/drivers/clk/keystone/sci-clk.c b/drivers/clk/keystone/sci-clk.c
-> index 9d5071223f4c..0a1565fdbb3b 100644
-> --- a/drivers/clk/keystone/sci-clk.c
-> +++ b/drivers/clk/keystone/sci-clk.c
-> @@ -333,6 +333,14 @@ static int _sci_clk_build(struct sci_clk_provider *provider,
->  
->  	init.ops = &sci_clk_ops;
->  	init.num_parents = sci_clk->num_parents;
-> +
-> +	/*
-> +	 * A clock rate query to the SCI firmware will return 0 if either the
-> +	 * clock itself is disabled or the attached device/consumer is disabled.
-> +	 * This makes it inherently unsuitable for the caching of the clk
-> +	 * framework.
-> +	 */
-> +	init.flags = CLK_GET_RATE_NOCACHE;
->  	sci_clk->hw.init = &init;
->  
->  	ret = devm_clk_hw_register(provider->dev, &sci_clk->hw);
-> -- 
-> 2.47.3
-> 
+Hi Yu-Chun,
 
-Reviewed-by: Nishanth Menon <nm@ti.com>
+kernel test robot noticed the following build errors:
 
-I wish there was a better scheme, but inherently, just like SCMI and
-other systems where power management co-processor controls clocks, there
-is no real feasible caching scheme I can think of. I wonder if Stephen
-or others have a thought on this?
+[auto build test ERROR on clk/clk-next]
+[also build test ERROR on linus/master v6.19-rc3 next-20251219]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-That said, I wonder if we need fixes tag to this? I am sure there are
-other clocks susceptible to this as well. I wonder if
-commit 3c13933c6033 ("clk: keystone: sci-clk: add support for
-dynamically probing clocks") is the appropriate tag?
+url:    https://github.com/intel-lab-lkp/linux/commits/Yu-Chun-Lin/dt-bindings-clock-Add-Realtek-RTD1625-Clock-Reset-Controller/20251229-155549
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
+patch link:    https://lore.kernel.org/r/20251229075313.27254-5-eleanor.lin%40realtek.com
+patch subject: [PATCH 4/9] clk: realtek: Add support for phase locked loops (PLLs)
+config: i386-buildonly-randconfig-001-20251230 (https://download.01.org/0day-ci/archive/20251231/202512310333.lXVsAtZ9-lkp@intel.com/config)
+compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251231/202512310333.lXVsAtZ9-lkp@intel.com/reproduce)
 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202512310333.lXVsAtZ9-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> ld: drivers/clk/realtek/clk-pll.o:(.rodata+0x80): multiple definition of `clk_pll_ops'; drivers/clk/qcom/clk-pll.o:(.rodata+0x100): first defined here
 
 -- 
-Regards,
-Nishanth Menon
-Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
-https://ti.com/opensource
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
