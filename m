@@ -1,90 +1,252 @@
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F2AD1E492D;
-	Wed, 31 Dec 2025 02:12:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767147132; cv=none; b=qJavcez6Q+Qg14TxOfh11ELjniGOl8ZqslClvqMDN2PfYeNGq4bPW3BBt68xFE4iLVBg1GUiGX0J4Humx+6yP5j2i2nO9+YHl92Aa8BzdPRq76eKyJWnMU+2PAokCJPpmgKQ0mU/k30LDXJ6zFyg81sZQLRoZPKc7d5ZByDYV8A=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767147132; c=relaxed/simple;
-	bh=QvmG+eFKv1JWtWQnjs/o6EkdNYKRf7Abk90+EMzqHUk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I9znJhT0gxt6stCe9N1r4U90rSRHf1HwPUP3qCc6nT6YhV7QNTikbXjbCWM4PB+L4ESNlmLrF9Nau2li5zKbE5bTqDLbg7b9Wql9rVgkeZP16r2+G1PcVvE3YB7ZBAmIgAda8U6N3FK5PiVdWQ+To5x2oyq4RR+xG0Mb3GWFoGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Received: from localhost (unknown [116.232.18.222])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dlan)
-	by smtp.gentoo.org (Postfix) with ESMTPSA id 94570340D40;
-	Wed, 31 Dec 2025 02:12:09 +0000 (UTC)
-Date: Wed, 31 Dec 2025 10:12:05 +0800
-From: Yixun Lan <dlan@gentoo.org>
-To: Yao Zi <me@ziyao.cc>
-Cc: Alex Elder <elder@riscstar.com>, Stephen Boyd <sboyd@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Guodong Xu <guodong@riscstar.com>,
-	Inochi Amaoto <inochiama@gmail.com>, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org,
-	spacemit@lists.linux.dev
-Subject: Re: [PATCH v2 2/3] clk: spacemit: extract common ccu functions
-Message-ID: <20251231021205-GYB2019108@gentoo.org>
-References: <20251226-06-k1-clk-common-v2-0-28b59418b4df@gentoo.org>
- <20251226-06-k1-clk-common-v2-2-28b59418b4df@gentoo.org>
- <3ea5b28b-a0ed-49fb-a8a8-6f575a24820d@riscstar.com>
- <aVNOYuC0-lcymn-P@pie>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90F3A30F948;
+	Wed, 31 Dec 2025 06:43:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1767163435; cv=pass; b=K4lyf1KC2TInfqU3tlGf4syHT2n6aG3LdSPLPrhthb7pJIttY7BMGCJ5BI2M9wwIvlXNdQ6YzrjIL4mrpVS3KWfGMeEQUUDjvPpc5VoDRLLpvRmaNudTvSfbA/Rbg+nSoQ9VDE3kBQ8WDz5pa0qWbZvks5nazh0as2uB32Y4Glo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1767163435; c=relaxed/simple;
+	bh=ORPYr/fLoaoza0TzdWVFYu7i9Ci0Ozw5DP/1TyMufoc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=e8hCX7JZpetgukv61Msp69htsjG5k3rpYetGGnHbARiamk+30j/rkbPe5tUbLmR03KPMZyRzhnAy/bsSOITbj8hEwFXMPQsS1Q1ISyMRoSCUF7POevlxsCYyELUK/LONzDCXC7EGLLo26HfrLqFQWZBI2w8F4F8y2DX+Q3hC09I=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech; spf=pass smtp.mailfrom=pigmoral.tech; dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b=pZFZlm17; arc=pass smtp.client-ip=136.143.188.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pigmoral.tech
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b="pZFZlm17"
+ARC-Seal: i=1; a=rsa-sha256; t=1767163408; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=j8SBYxrWQIli5jy88uUWFblzunVVbvowkUGbEdrVPk6x2otZlusIhzPljwi5/nbItADhwkj7Q2XrY/6jG+xCCDcaNTC87SQqpRumSjqoGiidCkCTlASt8YmxhxT9Bu3L0jeUSH0TC9TfdBErHRBIWjfCPitc+66fPqwNERJg9a4=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1767163408; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=w9AeUWrNf9a9wsZpNu+3dKUaPoG751aNT6wfowPspzo=; 
+	b=FV1uSpV4rDDV8Qd+NeUhya98XjqI/jxbeZV7IkxUSjNwV4I65aBMGvezPNJiX7YabbMeGW9Q3Uaj5PMCagQN5l+XlbwvIhBCxrfMZeXtROtaVY7kS+s+CIxZqG+R7cKUiTcLgVVLUYdaGl+e92Qz+y/2spx/9HxdsknVd6a9WwY=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=pigmoral.tech;
+	spf=pass  smtp.mailfrom=junhui.liu@pigmoral.tech;
+	dmarc=pass header.from=<junhui.liu@pigmoral.tech>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1767163408;
+	s=zmail; d=pigmoral.tech; i=junhui.liu@pigmoral.tech;
+	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:References:In-Reply-To:To:To:Cc:Cc:Reply-To;
+	bh=w9AeUWrNf9a9wsZpNu+3dKUaPoG751aNT6wfowPspzo=;
+	b=pZFZlm17CFcTXzCpEdg96MyRIa9QJ12IkjQTwEuJtl8b9i3Jxliwrca8eQsHrOee
+	Y5T9lPs3RFhJ5j4w9TZVPU+b+oRi1tAmPt3/hLPrXcSmuLyxwC1uD0axhGyizowwulh
+	7Z5SFRqr1AoaXYOjUFBMAWkJuEqJWlJSzCLuHTGg=
+Received: by mx.zohomail.com with SMTPS id 1767163407083906.179019697353;
+	Tue, 30 Dec 2025 22:43:27 -0800 (PST)
+From: Junhui Liu <junhui.liu@pigmoral.tech>
+Date: Wed, 31 Dec 2025 14:40:06 +0800
+Subject: [PATCH v4 2/6] dt-bindings: clock: add Anlogic DR1V90 CRU
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aVNOYuC0-lcymn-P@pie>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251231-dr1v90-cru-v4-2-1db8c877eb91@pigmoral.tech>
+References: <20251231-dr1v90-cru-v4-0-1db8c877eb91@pigmoral.tech>
+In-Reply-To: <20251231-dr1v90-cru-v4-0-1db8c877eb91@pigmoral.tech>
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+ Junhui Liu <junhui.liu@pigmoral.tech>, Paul Walmsley <pjw@kernel.org>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+ Alexandre Ghiti <alex@ghiti.fr>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
+ Conor Dooley <conor.dooley@microchip.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1767163372; l=5066;
+ i=junhui.liu@pigmoral.tech; s=20251228; h=from:subject:message-id;
+ bh=ORPYr/fLoaoza0TzdWVFYu7i9Ci0Ozw5DP/1TyMufoc=;
+ b=62wqT5UceohvQhGx9JeUa2tfNDGr/M6QOJK8bctDmDLQGMHmgo/NLKXzL+stiz1uxFX7gBdNk
+ alOAgD5GPyAB7qXK+B3vgYIuvTOw23ot7yA0tjjTfq1+C809ZXPPbQb
+X-Developer-Key: i=junhui.liu@pigmoral.tech; a=ed25519;
+ pk=3vU0qIPJAH8blXmLyqBhKx+nLOjcLwwYhZXelEpw7h4=
+X-ZohoMailClient: External
 
-Hi Alex, Yao,
+Add the Clock and Reset Unit (CRU) support for the Anlogic DR1V90 SoC,
+which is responsible for clock and reset management.
 
-On 04:00 Tue 30 Dec     , Yao Zi wrote:
-> On Mon, Dec 29, 2025 at 06:50:14PM -0600, Alex Elder wrote:
-> > On 12/26/25 12:55 AM, Yixun Lan wrote:
-> > > Refactor the probe function of SpacemiT's clock, and extract a common ccu
-> > > file, so new clock driver added in the future can share the same code,
-> > > which would lower the burden of maintenance. Since this commit changes the
-> > > module name where the auxiliary device registered, the auxiliary device id
-> > > need to be adjusted. Idea of the patch is come from review of K3 clock
-> > > driver, please refer this disucssion [1].
-> > 
-> > I understand the point here, and it's just like the first patch:
-> > you're extracting generic code out of the K1-specific file so a
-> > new K3-specific source file can use it too.  This is really good.
-> > 
-> > However the end result should incorporate *only* generic code
-> > in the generic file, and have the SoC-specific source files
-> > contain everything else.
-> > 
-> > But as you have it now, the (new) generic probe function
-> > contains special handling for "spacemit,k1-pll", and that's
-> > not generic.
-> > 
-> > So I suggest you still implement k1_ccu_probe() (and k3_ccu_probe())
-> > separately, allowing each of them to do platform-specific things
-> > before (and/or after) calling the generic probe function.
-> 
-> I've raised similar concerns in the series for K3 clock tree[1].
-> 
-> Regards,
-> Yao Zi
-> 
-> [1]: https://lore.kernel.org/all/aU50DIe9qMneb0GT@pie/
-> 
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+Signed-off-by: Junhui Liu <junhui.liu@pigmoral.tech>
+---
+ .../bindings/clock/anlogic,dr1v90-cru.yaml         | 60 ++++++++++++++++++++++
+ include/dt-bindings/clock/anlogic,dr1v90-cru.h     | 46 +++++++++++++++++
+ include/dt-bindings/reset/anlogic,dr1v90-cru.h     | 41 +++++++++++++++
+ 3 files changed, 147 insertions(+)
 
-Ok, since both of you raise this, I will do it in next version
-thanks
+diff --git a/Documentation/devicetree/bindings/clock/anlogic,dr1v90-cru.yaml b/Documentation/devicetree/bindings/clock/anlogic,dr1v90-cru.yaml
+new file mode 100644
+index 000000000000..165c71ce333a
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/anlogic,dr1v90-cru.yaml
+@@ -0,0 +1,60 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/anlogic,dr1v90-cru.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Anlogic DR1V90 Clock and Reset Unit (CRU)
++
++maintainers:
++  - Junhui Liu <junhui.liu@pigmoral.tech>
++
++properties:
++  compatible:
++    const: anlogic,dr1v90-cru
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    items:
++      - description: Main Oscillator (33 MHz)
++      - description: External CAN clock
++      - description: External WDT clock
++
++  clock-names:
++    items:
++      - const: osc_33m
++      - const: can_ext
++      - const: wdt_ext
++
++  "#clock-cells":
++    const: 1
++    description:
++      Refer <dt-bindings/clock/anlogic,dr1v90-cru.h> for valid indices.
++
++  "#reset-cells":
++    const: 1
++    description:
++      Refer <dt-bindings/reset/anlogic,dr1v90-cru.h> for valid indices.
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - clock-names
++  - "#clock-cells"
++  - "#reset-cells"
++
++additionalProperties: false
++
++examples:
++  - |
++    clock-controller@f8801000 {
++        compatible = "anlogic,dr1v90-cru";
++        reg = <0xf8801000 0x400>;
++        clocks = <&osc_33m>, <&can_ext>, <&wdt_ext>;
++        clock-names = "osc_33m", "can_ext", "wdt_ext";
++        #clock-cells = <1>;
++        #reset-cells = <1>;
++    };
+diff --git a/include/dt-bindings/clock/anlogic,dr1v90-cru.h b/include/dt-bindings/clock/anlogic,dr1v90-cru.h
+new file mode 100644
+index 000000000000..664daf3946a7
+--- /dev/null
++++ b/include/dt-bindings/clock/anlogic,dr1v90-cru.h
+@@ -0,0 +1,46 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
++/*
++ * Copyright (C) 2024-2025 Anlogic, Inc.
++ * Copyright (C) 2025 Junhui Liu <junhui.liu@pigmoral.tech>
++ */
++
++#ifndef _DT_BINDINGS_CLOCK_ANLOGIC_DR1V90_CRU_H_
++#define _DT_BINDINGS_CLOCK_ANLOGIC_DR1V90_CRU_H_
++
++#define CLK_OSC_DIV2		0
++#define CLK_CPU_PLL		1
++#define CLK_CPU_PLL_4X		2
++#define CLK_CPU_4X		3
++#define CLK_CPU_2X		4
++#define CLK_CPU_1X		5
++#define CLK_IO_PLL		6
++#define CLK_IO_1000M		7
++#define CLK_IO_400M		8
++#define CLK_IO_25M		9
++#define CLK_IO_80M		10
++#define CLK_IO_400M_DIV2	11
++#define CLK_IO_400M_DIV4	12
++#define CLK_IO_400M_DIV8	13
++#define CLK_IO_400M_DIV16	14
++#define CLK_QSPI		15
++#define CLK_SPI			16
++#define CLK_SMC			17
++#define CLK_SDIO		18
++#define CLK_GPIO_DB		19
++#define CLK_EFUSE		20
++#define CLK_TVS			21
++#define CLK_TRNG		22
++#define CLK_OSC_DIV		23
++#define CLK_PWM			24
++#define CLK_FCLK0		25
++#define CLK_FCLK1		26
++#define CLK_FCLK2		27
++#define CLK_FCLK3		28
++#define CLK_WDT_SEL		29
++#define CLK_EFUSE_SEL		30
++#define CLK_CAN_SEL		31
++#define CLK_CPU_SEL		32
++#define CLK_CAN0		33
++#define CLK_CAN1		34
++
++#endif /* _DT_BINDINGS_CLOCK_ANLOGIC_DR1V90_CRU_H_ */
+diff --git a/include/dt-bindings/reset/anlogic,dr1v90-cru.h b/include/dt-bindings/reset/anlogic,dr1v90-cru.h
+new file mode 100644
+index 000000000000..c5b7aae1ab6a
+--- /dev/null
++++ b/include/dt-bindings/reset/anlogic,dr1v90-cru.h
+@@ -0,0 +1,41 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
++/*
++ * Copyright (C) 2025 Junhui Liu <junhui.liu@pigmoral.tech>
++ */
++
++#ifndef _DT_BINDINGS_RESET_ANLOGIC_DR1V90_CRU_H_
++#define _DT_BINDINGS_RESET_ANLOGIC_DR1V90_CRU_H_
++
++#define RESET_OCM		0
++#define RESET_QSPI		1
++#define RESET_SMC		2
++#define RESET_WDT		3
++#define RESET_DMAC_AXI		4
++#define RESET_DMAC_AHB		5
++#define RESET_NPU		6
++#define RESET_JPU		7
++#define RESET_DDRBUS		8
++#define RESET_NIC_HP0		9
++#define RESET_NIC_HP1		10
++#define RESET_NIC_GP0M		11
++#define RESET_NIC_GP1M		12
++#define RESET_GPIO		13
++#define RESET_IPC		14
++#define RESET_USB0		15
++#define RESET_USB1		16
++#define RESET_GBE0		17
++#define RESET_GBE1		18
++#define RESET_SDIO0		19
++#define RESET_SDIO1		20
++#define RESET_UART0		21
++#define RESET_UART1		22
++#define RESET_SPI0		23
++#define RESET_SPI1		24
++#define RESET_CAN0		25
++#define RESET_CAN1		26
++#define RESET_TTC0		27
++#define RESET_TTC1		28
++#define RESET_I2C0		29
++#define RESET_I2C1		30
++
++#endif /* _DT_BINDINGS_RESET_ANLOGIC_DR1V90_CRU_H_ */
 
 -- 
-Yixun Lan (dlan)
+2.52.0
+
