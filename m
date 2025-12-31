@@ -1,64 +1,41 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A44D1E8329;
-	Tue, 30 Dec 2025 20:18:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 711EB17B505;
+	Wed, 31 Dec 2025 02:10:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767125937; cv=none; b=shMdjiAujyDfX2jEJi5Kjn3orrQOVXUJ00nj8nUI6EPbHbkAYvCEUcjnIxU04TgHEQVAUtFnkYdXrzgo1UrzOM9DFUfk77PlS/dLeZXt9wOx3Sjp4MYKAzLgGJt+0N8Eaa+fMNNaV6XWkPritQhz/YLpAJBrQItFOX2VwzxP4XQ=
+	t=1767147005; cv=none; b=GHghO3pWHjzSeZdMED6/SiKeE4mNSjqxa3sDakGXCSPpE8oR9lVh3Hd26G3b4k+cAF09z1SiBszhYmCM4nzEXVzZoDgU48JUzKAnJnJFYwbMbRSMtlDiFYG10xV1/yEwtlUq/vXE5oG9j4Byt1zxqo3xCLtTBQ9rNTyZ93XCcpM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767125937; c=relaxed/simple;
-	bh=0IH2d6n06/PtQC0NQfXK5mHr1ajMLfWNqsF4W74Sorg=;
+	s=arc-20240116; t=1767147005; c=relaxed/simple;
+	bh=/z8UFiJt6hXfRaXhksX1v+WlN6k3OSaQoN3aZg3xXmc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tpNJFbjHBlwcW6BfhEITGkx4g+5wIHhjNawF7ZLMpCKMv8eTPn8Vt6BflqjcTwXPPSGqoJKKZmMA8QXAsn2bv7W4wMA2ATB8GTUkcG6x6ZE0g5VEZXBM9q2CyNYMZ1n9zRTkFOpfp8ZwZtfB6ZWo455BIGeuz4l2IhZbhsdHnnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=h0zrAwUb; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="h0zrAwUb"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1767125935; x=1798661935;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=0IH2d6n06/PtQC0NQfXK5mHr1ajMLfWNqsF4W74Sorg=;
-  b=h0zrAwUbKvUh5rLFv7xOuaGmYxhwjRzrq8SB1WvmcMVN55Rx4KasL0Oo
-   WoGGS6lWHqwEQPVNrJ9nH0iLq3RG9knL7+jLymEjmdeRS7QOyP7x0ooOE
-   qWsnGxqSkhGkOdvHTbpPfM2zTFiuuNWzlftKNdI6bmkYMD7xtUjqNmKr5
-   gljzNPn9TphJB+SgXZLff9b7UGo5X9t5868J0s9TMcUbkDGEH9on/QlwS
-   OexO7yjlRNKf5MgXdFBvwzQvM5WUph15/vfgssBV7JWe9BQGGMsP6W4ed
-   pU8iIvtuHjAOwtOQV4g+gEIMnizpggtI3+l/BWUT1qQttKkl1Rh29aIzS
-   w==;
-X-CSE-ConnectionGUID: Kt7hlXmgSAmmjhqG96qptQ==
-X-CSE-MsgGUID: iDNbu93zTlyEPYh2sFI5mg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11657"; a="86293631"
-X-IronPort-AV: E=Sophos;i="6.21,189,1763452800"; 
-   d="scan'208";a="86293631"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Dec 2025 12:18:54 -0800
-X-CSE-ConnectionGUID: 5R+pX459R/yXjV8yqd/QVA==
-X-CSE-MsgGUID: I79DhSofSV26XM3mhe1CBw==
-X-ExtLoop1: 1
-Received: from lkp-server01.sh.intel.com (HELO c9aa31daaa89) ([10.239.97.150])
-  by fmviesa003.fm.intel.com with ESMTP; 30 Dec 2025 12:18:51 -0800
-Received: from kbuild by c9aa31daaa89 with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1vagB7-000000000gH-238c;
-	Tue, 30 Dec 2025 20:18:49 +0000
-Date: Wed, 31 Dec 2025 04:18:07 +0800
-From: kernel test robot <lkp@intel.com>
-To: Yu-Chun Lin <eleanor.lin@realtek.com>, mturquette@baylibre.com,
-	sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, p.zabel@pengutronix.de, cylee12@realtek.com,
-	jyanchou@realtek.com
-Cc: oe-kbuild-all@lists.linux.dev, devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	james.tai@realtek.com, cy.huang@realtek.com,
-	stanley_chang@realtek.com, eleanor.lin@realtek.com
-Subject: Re: [PATCH 4/9] clk: realtek: Add support for phase locked loops
- (PLLs)
-Message-ID: <202512310333.lXVsAtZ9-lkp@intel.com>
-References: <20251229075313.27254-5-eleanor.lin@realtek.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ThHFyh8YxIXtd4V+y5FQVxzlpkxXU45OGsB0GafR7MGYrtJMN3bFzSOtARXE5qQYImt1BsazvZtZlbscBKnYNEK1dZ2xaDht7ZOvcnuUYrlJ8lXgGKWMlhRTLNU30PX6ytTE90I94Cb91n9pZQAR+PlrdWOlcArQTEJ+fnnQ/90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Received: from localhost (unknown [116.232.18.222])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dlan)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id 2B55B340C98;
+	Wed, 31 Dec 2025 02:10:00 +0000 (UTC)
+Date: Wed, 31 Dec 2025 10:09:51 +0800
+From: Yixun Lan <dlan@gentoo.org>
+To: Alex Elder <elder@riscstar.com>
+Cc: Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Guodong Xu <guodong@riscstar.com>,
+	Inochi Amaoto <inochiama@gmail.com>, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org,
+	spacemit@lists.linux.dev
+Subject: Re: [PATCH v2 3/3] reset: spacemit: fix auxiliary device id
+Message-ID: <20251231020951-GYA2019108@gentoo.org>
+References: <20251226-06-k1-clk-common-v2-0-28b59418b4df@gentoo.org>
+ <20251226-06-k1-clk-common-v2-3-28b59418b4df@gentoo.org>
+ <546ab443-d0b1-4f21-856c-c74e84511d06@riscstar.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -67,35 +44,49 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251229075313.27254-5-eleanor.lin@realtek.com>
+In-Reply-To: <546ab443-d0b1-4f21-856c-c74e84511d06@riscstar.com>
 
-Hi Yu-Chun,
+Hi Alex,
 
-kernel test robot noticed the following build errors:
+On 18:50 Mon 29 Dec     , Alex Elder wrote:
+> On 12/26/25 12:55 AM, Yixun Lan wrote:
+> > Due to the auxiliary register procedure moved to ccu common module,
+> > the auxiliary device id need to be adjusted, otherwise reset driver
+> > will fail to probe.
+> > 
+> > Signed-off-by: Yixun Lan <dlan@gentoo.org>
+> > ---
+> >   drivers/reset/reset-spacemit.c | 2 +-
+> >   1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/reset/reset-spacemit.c b/drivers/reset/reset-spacemit.c
+> > index e1272aff28f7..8922e14fa836 100644
+> > --- a/drivers/reset/reset-spacemit.c
+> > +++ b/drivers/reset/reset-spacemit.c
+> > @@ -278,7 +278,7 @@ static int spacemit_reset_probe(struct auxiliary_device *adev,
+> >   
+> >   #define K1_AUX_DEV_ID(_unit) \
+> >   	{ \
+> > -		.name = "spacemit_ccu_k1." #_unit "-reset", \
+> > +		.name = "spacemit_ccu." _K_RST(_unit), \
+> >   		.driver_data = (kernel_ulong_t)&k1_ ## _unit ## _reset_data, \
+> >   	}
+> 
+> The above macro is named K1_AUX_DEV_ID().  Why don't you
+> define K3_AUX_DEV_ID(), which could use "k3" in its name?
+> 
+that should also works, the idea of using same macro '_K_RST()' here
+is trying to explictly tell users the clock and reset shares same name
 
-[auto build test ERROR on clk/clk-next]
-[also build test ERROR on linus/master v6.19-rc3 next-20251219]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> Anyway, if you go this route I suggest you drop "K1_" from the
+> name of this macro.
+> 
+or could further refactor the code, to make K1/K3 drivers share same macro
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Yu-Chun-Lin/dt-bindings-clock-Add-Realtek-RTD1625-Clock-Reset-Controller/20251229-155549
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
-patch link:    https://lore.kernel.org/r/20251229075313.27254-5-eleanor.lin%40realtek.com
-patch subject: [PATCH 4/9] clk: realtek: Add support for phase locked loops (PLLs)
-config: i386-buildonly-randconfig-001-20251230 (https://download.01.org/0day-ci/archive/20251231/202512310333.lXVsAtZ9-lkp@intel.com/config)
-compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251231/202512310333.lXVsAtZ9-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202512310333.lXVsAtZ9-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> ld: drivers/clk/realtek/clk-pll.o:(.rodata+0x80): multiple definition of `clk_pll_ops'; drivers/clk/qcom/clk-pll.o:(.rodata+0x100): first defined here
+anyway I don't want to change this patch, my goal here is tring to fix
+reset driver after clock common driver refactored plus the modularization 
+introduced, it's more proper to leave those refactor work up to Guodong,
+since he did a lot adjustment to add reset support for K3 SoC
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Yixun Lan (dlan)
