@@ -1,45 +1,44 @@
 Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C5E23112B4;
-	Wed, 31 Dec 2025 06:43:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4338331194C;
+	Wed, 31 Dec 2025 06:44:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767163442; cv=pass; b=IEhH6xDVeMXZ36JdsaBuILd20fdtoqZCQXHL0/5gw2Ll+wwYi0xom7nY7TVJbMV21qXXkKVPy9+4sfqkFYCxHubOPzARqAfv4HkFoWzMuxa+zoXW7VriioI7dgsoJNWsCh39hxK/NBO/lIbhXzclxXDHTvEMiF4ymsq1DijKWCA=
+	t=1767163443; cv=pass; b=mIZWJ1i0+iQrMd9a02R4T/cP3MQoF2ip43ZXISsKxIgDiOtaOuFVFigsKcZEYLsZUuxaqOc2xyJqpFFioQo52oHuioqsKzt99kYPBjKEPm7NPjSUGlGrOe25MTpJWxjfd6LAOxTwhIDsNxtC7ycaGxkNAMRTYbdc+ppWvgMoE40=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767163442; c=relaxed/simple;
-	bh=6xxsPe06pP424hmp2lSDvjnTfSkqa057ogeF9N7ArvY=;
+	s=arc-20240116; t=1767163443; c=relaxed/simple;
+	bh=7Z8Oyywf4lTy+Lf3caJtJQ00JSZ0EovWOTO+6O8u2Do=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=SBLH2mNZV47jI2piXulLLPU5Aa18QjMjnQ2hzV06Q+VZX4e0D+zPYHOs7tUrNLmQgsCHQsqN6yzVT2XCk1Mj2I777xHTfBA7AycW1NDUNI5gLsvvTRTF42TrVqizLuplUbbW9TeZ4enL63LWg48xl3iUr5d+tkDiqS3PQ48QjdQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech; spf=pass smtp.mailfrom=pigmoral.tech; dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b=C0CdZlzV; arc=pass smtp.client-ip=136.143.188.15
+	 In-Reply-To:To:Cc; b=f4Uuazogg2zTWI5L+vifFy/75rf+I2XBV3H1JWT95MEHhXeW+CfxzeN09awUfw4H+Sh4zxyAd0W9zZSY0PhoJTex/Fyy77PTBHrF+Z4dazF1iHlvLj5SxXcymiaQefUzBAqqdfYsSdBXreuRTSSnywmpB2WIpxXN/ZtGltSQpNg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech; spf=pass smtp.mailfrom=pigmoral.tech; dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b=NjFzGMMl; arc=pass smtp.client-ip=136.143.188.15
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pigmoral.tech
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b="C0CdZlzV"
-ARC-Seal: i=1; a=rsa-sha256; t=1767163422; cv=none; 
+	dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b="NjFzGMMl"
+ARC-Seal: i=1; a=rsa-sha256; t=1767163428; cv=none; 
 	d=zohomail.com; s=zohoarc; 
-	b=MZYhWeeSQuxQorcbamR0aRZNpfSu1xZ4m3J+097OvfRhDyilvbNtM0Z0ZnTfZ+1CNCJd7YEQmEwlkZIWPdiwmGJR2pdVSFXsRZ4/Wf8RUjUmla20va4Uv2CJ4NxGhjZWDB665SRTToFbmjw8PBSpNRg/NN5oxIRDCEmZz1+MRkE=
+	b=XTrNaxRDtdp7JDrrVOMWDPUPWM8b2OMEkCtP7+K7IwycHaxd38i0Vg44NLWHiefXt76fvOEy5DORTcmXm7QGylaAu6OyMtn6RXqlKEQl6cvwzPJ0o73a/LD1D32LlB7Vz4R8hELbOw4F7jy7MuS0BgD8dcpZdmPjsHAgY0BTPyA=
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1767163422; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=zhhTX3sB1zXlbXfCVxDXjHNuYAlN+tC4PWtX0p71ri4=; 
-	b=lCJGnT/6wp1r8/FUUmxtIf7Pc0/lOclg4iuXg2LGtUJzzgUP7uEbWhKwzts34aCWCu8EkdsJkMv7JrcrgX57ixg9OkSY6GTy/OXHrr2LFx72ZLVrkaFbX16/vyTYYR2N0XwDiQfHLUeHyvfTbE5vgJyoUlpE7Ggm8MlQaGuYqi0=
+	t=1767163428; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=O9ruwUrsJjqNt3jdYDDnHcKNR2Bix4VjMQh/33wsq9E=; 
+	b=g+MwTl02IK2sNwO4gBU6KwEgiuRaKACaXrjBOlu9TI2X8ie8HNeKn1uRgfuojiXH/9QvVFczaVNmWu7xkTTXdQwqYnnT2ak7Hc8Z/L4dgm8IqRYhQFqVerSkqs4Eyoua1PCDVLP+DUSSNt01Nzn4gYYPN3ZOkjLCnkvgMXupWtU=
 ARC-Authentication-Results: i=1; mx.zohomail.com;
 	dkim=pass  header.i=pigmoral.tech;
 	spf=pass  smtp.mailfrom=junhui.liu@pigmoral.tech;
 	dmarc=pass header.from=<junhui.liu@pigmoral.tech>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1767163422;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1767163428;
 	s=zmail; d=pigmoral.tech; i=junhui.liu@pigmoral.tech;
 	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:References:In-Reply-To:To:To:Cc:Cc:Reply-To;
-	bh=zhhTX3sB1zXlbXfCVxDXjHNuYAlN+tC4PWtX0p71ri4=;
-	b=C0CdZlzVffVj6UZQmZlWHnDrA4hU/GvQT64Iv6EVizrYoOsaUI1eMYmxkWhkx5nm
-	mLwaN9sstDtSRGGzL5ZzBhyqvKxXSncrHtJBQ38LcfKpDiZ3IWx5OZnpdtJaukhx7ov
-	oCZaL+MSNXGitenn9UfMuY823q0XJJHNiqiZQHfs=
-Received: by mx.zohomail.com with SMTPS id 1767163419968789.3297264926058;
-	Tue, 30 Dec 2025 22:43:39 -0800 (PST)
+	bh=O9ruwUrsJjqNt3jdYDDnHcKNR2Bix4VjMQh/33wsq9E=;
+	b=NjFzGMMlqKpHoBJM4/7xtQ+8wgSW8kvqmEZHGp8C3dpF3He21Cd81KiKOJw9C6JO
+	KiwlD2ukyV6nc0dnGEsTvUqDXOR6rRAdlEwA2zL5yxkJieaTnw+MJvWFDN594E1Nf2e
+	t81M8snS+h+CE9Vemx/4gBXGOQYrYmNRIiXQBQxw=
+Received: by mx.zohomail.com with SMTPS id 1767163426492522.9548214585175;
+	Tue, 30 Dec 2025 22:43:46 -0800 (PST)
 From: Junhui Liu <junhui.liu@pigmoral.tech>
-Date: Wed, 31 Dec 2025 14:40:08 +0800
-Subject: [PATCH v4 4/6] reset: anlogic: add support for Anlogic DR1V90
- resets
+Date: Wed, 31 Dec 2025 14:40:09 +0800
+Subject: [PATCH v4 5/6] riscv: dts: anlogic: add clocks and CRU for DR1V90
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -48,7 +47,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251231-dr1v90-cru-v4-4-1db8c877eb91@pigmoral.tech>
+Message-Id: <20251231-dr1v90-cru-v4-5-1db8c877eb91@pigmoral.tech>
 References: <20251231-dr1v90-cru-v4-0-1db8c877eb91@pigmoral.tech>
 In-Reply-To: <20251231-dr1v90-cru-v4-0-1db8c877eb91@pigmoral.tech>
 To: Michael Turquette <mturquette@baylibre.com>, 
@@ -61,206 +60,106 @@ To: Michael Turquette <mturquette@baylibre.com>,
 Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
  linux-riscv@lists.infradead.org, devicetree@vger.kernel.org
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1767163372; l=6107;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1767163372; l=2728;
  i=junhui.liu@pigmoral.tech; s=20251228; h=from:subject:message-id;
- bh=6xxsPe06pP424hmp2lSDvjnTfSkqa057ogeF9N7ArvY=;
- b=KYSffAUTrYrkiFJTHPc77iJhv0wN5Z5d4OSI8KpV5ULzDFUzPE/saU/zHATp7toEhUUqYwVzE
- I2H+kOoxGrdAZvD13Bp9g3bpERj8ojdQVVyQJp7YmRGSu9po84uKUTq
+ bh=7Z8Oyywf4lTy+Lf3caJtJQ00JSZ0EovWOTO+6O8u2Do=;
+ b=YSTuVg4V4pxUNMT9oDVTuQOaWFSGEHAIyU/3OM73J7iKzKqB0gzbROwdTROgiRU6pJQmA1bij
+ lW+ib1NyYBADXflp/zx27Dgsw5py5N755kzgD3yppb4K6KzEN5iwgc7
 X-Developer-Key: i=junhui.liu@pigmoral.tech; a=ed25519;
  pk=3vU0qIPJAH8blXmLyqBhKx+nLOjcLwwYhZXelEpw7h4=
 X-ZohoMailClient: External
 
-Add reset controller support for the Anlogic DR1V90 SoC, which is an
-auxiliary device associated with the Clock and Reset Unit (CRU). All
-resets are active-low.
+Add clocks and introduce the CRU (Clock and Reset) unit node
+for Anlogic DR1V90 SoC, providing both clock and reset support.
+
+The DR1V90 SoC uses three external clocks:
+- A 33 MHz crystal oscillator as the main system clock.
+- Two optional external clocks (via IO) for the CAN and WDT modules.
 
 Signed-off-by: Junhui Liu <junhui.liu@pigmoral.tech>
 ---
- drivers/reset/Kconfig        |  10 +++
- drivers/reset/Makefile       |   1 +
- drivers/reset/reset-dr1v90.c | 141 +++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 152 insertions(+)
+ arch/riscv/boot/dts/anlogic/dr1v90.dtsi | 41 +++++++++++++++++++++++++++++++--
+ 1 file changed, 39 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-index 6e5d6deffa7d..5dd07555557e 100644
---- a/drivers/reset/Kconfig
-+++ b/drivers/reset/Kconfig
-@@ -73,6 +73,16 @@ config RESET_BRCMSTB_RESCAL
- 	  This enables the RESCAL reset controller for SATA, PCIe0, or PCIe1 on
- 	  BCM7216 or the BCM2712.
+diff --git a/arch/riscv/boot/dts/anlogic/dr1v90.dtsi b/arch/riscv/boot/dts/anlogic/dr1v90.dtsi
+index a5d0765ade32..dc8358b35751 100644
+--- a/arch/riscv/boot/dts/anlogic/dr1v90.dtsi
++++ b/arch/riscv/boot/dts/anlogic/dr1v90.dtsi
+@@ -3,6 +3,9 @@
+  * Copyright (C) 2025 Junhui Liu <junhui.liu@pigmoral.tech>
+  */
  
-+config RESET_DR1V90
-+	tristate "Anlogic DR1V90 reset controller"
-+	depends on ARCH_ANLOGIC || COMPILE_TEST
-+	depends on ANLOGIC_DR1V90_CRU
-+	select AUXILIARY_BUS
-+	default ARCH_ANLOGIC
-+	help
-+	  This enables the reset controller driver for Anlogic DR1V90 SoCs
-+	  provided by the CRU unit.
-+
- config RESET_EIC7700
- 	bool "Reset controller driver for ESWIN SoCs"
- 	depends on ARCH_ESWIN || COMPILE_TEST
-diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
-index 9c3e484dfd81..2e6804ff463e 100644
---- a/drivers/reset/Makefile
-+++ b/drivers/reset/Makefile
-@@ -13,6 +13,7 @@ obj-$(CONFIG_RESET_BCM6345) += reset-bcm6345.o
- obj-$(CONFIG_RESET_BERLIN) += reset-berlin.o
- obj-$(CONFIG_RESET_BRCMSTB) += reset-brcmstb.o
- obj-$(CONFIG_RESET_BRCMSTB_RESCAL) += reset-brcmstb-rescal.o
-+obj-$(CONFIG_RESET_DR1V90) += reset-dr1v90.o
- obj-$(CONFIG_RESET_EIC7700) += reset-eic7700.o
- obj-$(CONFIG_RESET_EYEQ) += reset-eyeq.o
- obj-$(CONFIG_RESET_GPIO) += reset-gpio.o
-diff --git a/drivers/reset/reset-dr1v90.c b/drivers/reset/reset-dr1v90.c
-new file mode 100644
-index 000000000000..b21d28a68677
---- /dev/null
-+++ b/drivers/reset/reset-dr1v90.c
-@@ -0,0 +1,141 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (C) 2025 Junhui Liu <junhui.liu@pigmoral.tech>
-+ */
-+
-+#include <linux/auxiliary_bus.h>
-+#include <linux/cleanup.h>
-+#include "linux/device.h"
-+#include <linux/io.h>
-+#include <linux/of_address.h>
-+#include <linux/reset-controller.h>
-+
++#include <dt-bindings/clock/anlogic,dr1v90-cru.h>
 +#include <dt-bindings/reset/anlogic,dr1v90-cru.h>
 +
-+struct dr1v90_reset_map {
-+	u32 offset;
-+	u32 bit;
-+};
+ /dts-v1/;
+ / {
+ 	#address-cells = <2>;
+@@ -39,6 +42,27 @@ cpu0_intc: interrupt-controller {
+ 		};
+ 	};
+ 
++	clocks {
++		can_ext: clock-ext-can {
++			compatible = "fixed-clock";
++			clock-output-names = "can_ext";
++			#clock-cells = <0>;
++		};
 +
-+struct dr1v90_reset_controller {
-+	struct reset_controller_dev rcdev;
-+	void __iomem *base;
-+	spinlock_t lock; /* protect register read-modify-write */
-+};
++		osc_33m: clock-33m {
++			compatible = "fixed-clock";
++			clock-frequency = <33333333>;
++			clock-output-names = "osc_33m";
++			#clock-cells = <0>;
++		};
 +
-+static inline struct dr1v90_reset_controller *
-+to_dr1v90_reset_controller(struct reset_controller_dev *rcdev)
-+{
-+	return container_of(rcdev, struct dr1v90_reset_controller, rcdev);
-+}
++		wdt_ext: clock-ext-wdt {
++			compatible = "fixed-clock";
++			clock-output-names = "wdt_ext";
++			#clock-cells = <0>;
++		};
++	};
 +
-+static const struct dr1v90_reset_map dr1v90_resets[] = {
-+	[RESET_OCM]		= { 0x74, BIT(4)},
-+	[RESET_QSPI]		= { 0x74, BIT(5)},
-+	[RESET_SMC]		= { 0x74, BIT(6)},
-+	[RESET_WDT]		= { 0x74, BIT(7)},
-+	[RESET_DMAC_AXI]	= { 0x74, BIT(8)},
-+	[RESET_DMAC_AHB]	= { 0x74, BIT(9)},
-+	[RESET_NPU]		= { 0x74, BIT(12)},
-+	[RESET_JPU]		= { 0x74, BIT(13)},
-+	[RESET_DDRBUS]		= { 0x74, BIT(14)},
-+	[RESET_NIC_HP0]		= { 0x78, BIT(0)},
-+	[RESET_NIC_HP1]		= { 0x78, BIT(1)},
-+	[RESET_NIC_GP0M]	= { 0x78, BIT(4)},
-+	[RESET_NIC_GP1M]	= { 0x78, BIT(5)},
-+	[RESET_GPIO]		= { 0x78, BIT(8)},
-+	[RESET_IPC]		= { 0x78, BIT(12)},
-+	[RESET_USB0]		= { 0x7C, BIT(0)},
-+	[RESET_USB1]		= { 0x7C, BIT(1)},
-+	[RESET_GBE0]		= { 0x7C, BIT(4)},
-+	[RESET_GBE1]		= { 0x7C, BIT(5)},
-+	[RESET_SDIO0]		= { 0x7C, BIT(8)},
-+	[RESET_SDIO1]		= { 0x7C, BIT(9)},
-+	[RESET_UART0]		= { 0x7C, BIT(12)},
-+	[RESET_UART1]		= { 0x7C, BIT(13)},
-+	[RESET_SPI0]		= { 0x7C, BIT(16)},
-+	[RESET_SPI1]		= { 0x7C, BIT(17)},
-+	[RESET_CAN0]		= { 0x7C, BIT(20)},
-+	[RESET_CAN1]		= { 0x7C, BIT(21)},
-+	[RESET_TTC0]		= { 0x7C, BIT(24)},
-+	[RESET_TTC1]		= { 0x7C, BIT(25)},
-+	[RESET_I2C0]		= { 0x7C, BIT(28)},
-+	[RESET_I2C1]		= { 0x7C, BIT(29)}
-+};
+ 	soc {
+ 		compatible = "simple-bus";
+ 		interrupt-parent = <&plic>;
+@@ -80,21 +104,34 @@ plic: interrupt-controller@6c000000 {
+ 		uart0: serial@f8400000 {
+ 			compatible = "anlogic,dr1v90-uart", "snps,dw-apb-uart";
+ 			reg = <0x0 0xf8400000 0x0 0x1000>;
+-			clock-frequency = <50000000>;
++			clocks = <&cru CLK_IO_400M_DIV8>, <&cru CLK_CPU_1X>;
++			clock-names = "baudclk", "apb_pclk";
+ 			interrupts = <71>;
+ 			reg-io-width = <4>;
+ 			reg-shift = <2>;
++			resets = <&cru RESET_UART0>;
+ 			status = "disabled";
+ 		};
+ 
+ 		uart1: serial@f8401000 {
+ 			compatible = "anlogic,dr1v90-uart", "snps,dw-apb-uart";
+ 			reg = <0x0 0xf8401000 0x0 0x1000>;
+-			clock-frequency = <50000000>;
++			clocks = <&cru CLK_IO_400M_DIV8>, <&cru CLK_CPU_1X>;
++			clock-names = "baudclk", "apb_pclk";
+ 			interrupts = <72>;
+ 			reg-io-width = <4>;
+ 			reg-shift = <2>;
++			resets = <&cru RESET_UART1>;
+ 			status = "disabled";
+ 		};
 +
-+static int dr1v90_reset_control_update(struct reset_controller_dev *rcdev,
-+				       unsigned long id, bool assert)
-+{
-+	struct dr1v90_reset_controller *rstc = to_dr1v90_reset_controller(rcdev);
-+	u32 offset = dr1v90_resets[id].offset;
-+	u32 bit = dr1v90_resets[id].bit;
-+	u32 reg;
-+
-+	guard(spinlock_irqsave)(&rstc->lock);
-+
-+	reg = readl(rstc->base + offset);
-+	if (assert)
-+		reg &= ~bit;
-+	else
-+		reg |= bit;
-+	writel(reg, rstc->base + offset);
-+
-+	return 0;
-+}
-+
-+static int dr1v90_reset_control_assert(struct reset_controller_dev *rcdev,
-+				       unsigned long id)
-+{
-+	return dr1v90_reset_control_update(rcdev, id, true);
-+}
-+
-+static int dr1v90_reset_control_deassert(struct reset_controller_dev *rcdev,
-+					 unsigned long id)
-+{
-+	return dr1v90_reset_control_update(rcdev, id, false);
-+}
-+
-+static const struct reset_control_ops dr1v90_reset_control_ops = {
-+	.assert = dr1v90_reset_control_assert,
-+	.deassert = dr1v90_reset_control_deassert,
-+};
-+
-+static int dr1v90_reset_probe(struct auxiliary_device *adev,
-+			      const struct auxiliary_device_id *id)
-+{
-+	struct dr1v90_reset_controller *rstc;
-+	struct device *dev = &adev->dev;
-+
-+	rstc = devm_kzalloc(dev, sizeof(*rstc), GFP_KERNEL);
-+	if (!rstc)
-+		return -ENOMEM;
-+
-+	spin_lock_init(&rstc->lock);
-+
-+	rstc->base = dev->platform_data;
-+	rstc->rcdev.dev = dev;
-+	rstc->rcdev.nr_resets = ARRAY_SIZE(dr1v90_resets);
-+	rstc->rcdev.of_node = dev->parent->of_node;
-+	rstc->rcdev.ops = &dr1v90_reset_control_ops;
-+	rstc->rcdev.owner = THIS_MODULE;
-+
-+	return devm_reset_controller_register(dev, &rstc->rcdev);
-+}
-+
-+static const struct auxiliary_device_id dr1v90_reset_ids[] = {
-+	{
-+		.name = "anlogic_dr1_cru.reset"
-+	},
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(auxiliary, dr1v90_reset_ids);
-+
-+static struct auxiliary_driver dr1v90_reset_driver = {
-+	.probe = dr1v90_reset_probe,
-+	.id_table = dr1v90_reset_ids,
-+};
-+module_auxiliary_driver(dr1v90_reset_driver);
-+
-+MODULE_AUTHOR("Junhui Liu <junhui.liu@pigmoral.tech>");
-+MODULE_DESCRIPTION("Anlogic DR1V90 reset controller driver");
-+MODULE_LICENSE("GPL");
++		cru: clock-controller@f8801000 {
++			compatible = "anlogic,dr1v90-cru";
++			reg = <0x0 0xf8801000 0 0x400>;
++			clocks = <&osc_33m>, <&can_ext>, <&wdt_ext>;
++			clock-names = "osc_33m", "can_ext", "wdt_ext";
++			#clock-cells = <1>;
++			#reset-cells = <1>;
++		};
+ 	};
+ };
 
 -- 
 2.52.0
