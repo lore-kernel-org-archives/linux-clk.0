@@ -1,45 +1,44 @@
 Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B55E93101AB;
-	Wed, 31 Dec 2025 06:43:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52DF73101B0;
+	Wed, 31 Dec 2025 06:43:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767163435; cv=pass; b=K+o+KGWOLdBR8dWH1jQ+1n4MJKhhzyX3WF7YvT1ThQThNDuEjl/pztBavyFiO3sFuvrrYOSqOP50oQ2chaQyQbVgCUcLri4vtkJx2E0yyEdiGZEhmncUMZ0SUTB2QqLv9YaxMAqN3a/q/4LVy4lTssnc2TVI57BD7bSod4HbL+Q=
+	t=1767163436; cv=pass; b=OmvsjbWSKD50HBHM6ay4rGu9c2yjz/Bp/mHTzGfIQMdnFDWsiKb2PFwtZg4V3yCsIfvZ6TVPxt2NiVKGAj7mQovXNNdF08AdS2saLWAVYlmLuCNOaM01yuzvyTu+f+p1dIG0jZtPQBUFrueH4mX3SPcBdT5tPGCdqWFFmvDoDxo=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767163435; c=relaxed/simple;
-	bh=Zt2ZFWEQWPCjuhNqBTL1Ms9NEQgcmV9ScY6KDJoDJuI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=pMBvq6k26cZbvDKegDYmJub8RVeX7mxBzrKNfbFX2XF0NehOOKBMo1EJQiLKQVDrc5kst6OSbStjaowvt0vrVFxhoa6kX680rFQRN9/msiqlQt6xKoknH1VmTo+FvfSgjgy284AMeA4kY4yZLZ8F+JvqHoVeI+j4egqTFUxUV7E=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech; spf=pass smtp.mailfrom=pigmoral.tech; dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b=M4e5CA0G; arc=pass smtp.client-ip=136.143.188.15
+	s=arc-20240116; t=1767163436; c=relaxed/simple;
+	bh=ltE7Nxid9ZRZpr3XgkD0CgmMAQGqavxTEGqVL5UJvDU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=t1qxVypPbmOg/k0yy7pv/rvedHhrKdDS+R7VWZB9Wph7ATolJ8ti1AekojKl6RC68B3Hh/552Toqb84XiPhEVg00qLKXQ6zTR3KpohzDpayjPzllQXNfu4jTFKAbHmM5F+Jt9/I29Bg32DLTT4zoi7aIrGNylF3wwifPbLUcwmc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech; spf=pass smtp.mailfrom=pigmoral.tech; dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b=lgLDZELa; arc=pass smtp.client-ip=136.143.188.15
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pigmoral.tech
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b="M4e5CA0G"
-ARC-Seal: i=1; a=rsa-sha256; t=1767163402; cv=none; 
+	dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b="lgLDZELa"
+ARC-Seal: i=1; a=rsa-sha256; t=1767163394; cv=none; 
 	d=zohomail.com; s=zohoarc; 
-	b=DLZWDUu6ddRnviGOFJJNEkcdRgfjhGGfDWwcugZ2yZcab+BGZMg32dLoZNDLuZQjJNqvNK3rkxkde4t0YAAaBe2xY3WDmhRfWtFdIH2ap/L9+GISZDf7kdJLFHMkIB1c0ujoheCy/LroLm9e2yCAXYipRUthDJYmV+d3Jt0kyEU=
+	b=UD0SSaNqyxTIB8dboRduJpgQYio+KbXhgmQcCeYlyvHFgfosrWFrCFqgstDqr6b9wgDN4oHB0fWRaHrSLPoAENdN0L+HuYW6H0hER/6W6iqXVqTlbIwJxPiriYoJvrudB1sN5JKnwFK1L8wfhjygehNSktV4UX7/WQOhHV8TZvs=
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1767163402; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=4zRxeIGs8y23jXBsR9znLJ6VfQ+IjZXlTpP+EKM8K+8=; 
-	b=g7CQ3lhlj0wFQrIUlxhwmAp1OiHEFH47jYUHHDt7uQ3Gfc5JEOZDJEK9RwS0jQmQZu6kv9zNRRI3dwoNbF0EEgmILKSS5x/CjHrJu9vX6WOlU4CWwoi54hKRN1iTA+qhInLJkjbTIfMmpFnoerj0+63vZvoqkswaHZtanUl9SOs=
+	t=1767163394; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=q9ypLDTMdw6YB/ZXsROHAJR2hTEvtbYVlYoJ86mENKk=; 
+	b=IwfjPWwqnJCvETo8D1T8H1DARNTMRQ6ryPsl90vLUxzAtcUgRWqUppmYMTiGYnpOAEWfkUXafFdybPuMID8vve6R+KOQDFwF8BK8ZbDKSq9i4OkCH5XXzMzFIosDHlD+D/6GuhHZv0DienauvpSKS181D2udk0igBJjNA0doFug=
 ARC-Authentication-Results: i=1; mx.zohomail.com;
 	dkim=pass  header.i=pigmoral.tech;
 	spf=pass  smtp.mailfrom=junhui.liu@pigmoral.tech;
 	dmarc=pass header.from=<junhui.liu@pigmoral.tech>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1767163402;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1767163394;
 	s=zmail; d=pigmoral.tech; i=junhui.liu@pigmoral.tech;
-	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:References:In-Reply-To:To:To:Cc:Cc:Reply-To;
-	bh=4zRxeIGs8y23jXBsR9znLJ6VfQ+IjZXlTpP+EKM8K+8=;
-	b=M4e5CA0GhG0fygFGN2iZDjO+xwVWrRyviZG2Ehk7vNftfb/ipRibOICuNiCc7O3c
-	mE2jq+ezXK78OXCTy09VqTPMKvIv83T9gxd3hQIbUvEThKpZZUl8VcqaCm11zErbJxt
-	p/ziqs4z3iBxPUW0NRHm6pCz1x1MigcjUgLXR96U=
-Received: by mx.zohomail.com with SMTPS id 1767163400138691.5606100786748;
-	Tue, 30 Dec 2025 22:43:20 -0800 (PST)
+	h=From:From:Subject:Subject:Date:Date:Message-Id:Message-Id:MIME-Version:Content-Type:Content-Transfer-Encoding:To:To:Cc:Cc:Reply-To;
+	bh=q9ypLDTMdw6YB/ZXsROHAJR2hTEvtbYVlYoJ86mENKk=;
+	b=lgLDZELa6JYw8p6hXLbC6aJQaW0i3FsaJkyGcE1ZDCqAhEQLkedNovaHKMGFQxmb
+	/xjyD5A8YgADNTUh4raRl7XAqdfUWdMGt9OrizNWM2VQbMXO7VBkpf+cejrZ+nh7DZM
+	XT9d3Rs/9Un4FG4B5bjKkzPy+oLRoeYgwzXR6sEU=
+Received: by mx.zohomail.com with SMTPS id 176716339210269.79354772892998;
+	Tue, 30 Dec 2025 22:43:12 -0800 (PST)
 From: Junhui Liu <junhui.liu@pigmoral.tech>
-Date: Wed, 31 Dec 2025 14:40:05 +0800
-Subject: [PATCH v4 1/6] clk: correct clk_div_mask() return value for width
- == 32
+Subject: [PATCH v4 0/6] clk/reset: anlogic: add support for DR1V90 SoC
+Date: Wed, 31 Dec 2025 14:40:04 +0800
+Message-Id: <20251231-dr1v90-cru-v4-0-1db8c877eb91@pigmoral.tech>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -48,9 +47,11 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251231-dr1v90-cru-v4-1-1db8c877eb91@pigmoral.tech>
-References: <20251231-dr1v90-cru-v4-0-1db8c877eb91@pigmoral.tech>
-In-Reply-To: <20251231-dr1v90-cru-v4-0-1db8c877eb91@pigmoral.tech>
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/23NQQ6CMBCF4auQrq1pp4WCK+9hXEBnhCYqWKDRG
+ O5uwUSjYfkm+f55sp68o57tkifzFFzv2mscepMw25TXmrjDuBkISEUBwNHLUAhu/ciNListrDm
+ BUSyCztPJ3ZfY4fjenm5jbA7fY+P6ofWP5WGQ83W1HSQXnFSh0KQ5kqZ95+pL68vzdiDbsDkV4
+ MOlgOyHQ+RaVZkpLWaIuMbVl4P85SryFKwtVI4SK/HPp2l6AQs1FqY7AQAA
+X-Change-ID: 20250922-dr1v90-cru-74ab40c7f273
 To: Michael Turquette <mturquette@baylibre.com>, 
  Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -61,50 +62,93 @@ To: Michael Turquette <mturquette@baylibre.com>,
 Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
  linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
  Troy Mitchell <troy.mitchell@linux.spacemit.com>, 
- Brian Masney <bmasney@redhat.com>
+ Brian Masney <bmasney@redhat.com>, 
+ Conor Dooley <conor.dooley@microchip.com>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1767163372; l=1255;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1767163372; l=3705;
  i=junhui.liu@pigmoral.tech; s=20251228; h=from:subject:message-id;
- bh=Zt2ZFWEQWPCjuhNqBTL1Ms9NEQgcmV9ScY6KDJoDJuI=;
- b=dXmGwZRFz+yTIccspMDDfQDQ1u1njRUTf6ZIS2DxwddcODGo/8mW0fW5uBI9prwdLMj84Jqfv
- 2Kc9fqlMifbBlmxMRjSKF1HY9o704GcLi/RmDGRDJDB0AyM4AZxkf0b
+ bh=ltE7Nxid9ZRZpr3XgkD0CgmMAQGqavxTEGqVL5UJvDU=;
+ b=WzR+JeiXhaXIqPJdMcNMbaQ3MufDdeWpxvGqt+s1R9kAFcnPP72AoFJgfA8JV4kQRf5L2O2q3
+ wzbA+xDl6JIDxWcns3z7SkNcjjl1DfXDpxrdWCId6U7mgdRX3TCh60R
 X-Developer-Key: i=junhui.liu@pigmoral.tech; a=ed25519;
  pk=3vU0qIPJAH8blXmLyqBhKx+nLOjcLwwYhZXelEpw7h4=
 X-ZohoMailClient: External
 
-The macro clk_div_mask() currently wraps to zero when width is 32 due to
-1 << 32 being undefined behavior. This leads to incorrect mask generation
-and prevents correct retrieval of register field values for 32-bit-wide
-dividers.
+Add Clock and Reset Unit (CRU) support for the Anlogic DR1V90 SoC, as
+well as corresponding dts bindings and dts integration.
 
-Although it is unlikely to exhaust all U32_MAX div, some clock IPs may rely
-on a 32-bit val entry in their div_table to match a div, so providing a
-full 32-bit mask is necessary.
+The CRU driver framework is built around the clock controller as the
+primary device, with the reset controller implemented as an auxiliary
+device. The clock part refers to the vendor's code [1] to determine the
+structure of the clock tree.
 
-Fix this by casting 1 to long, ensuring proper behavior for valid widths up
-to 32.
+The Anlogic DR1 series includes not only the DR1V90 (based on the Nuclei
+UX900 RISC-V core), but also the DR1M90 (based on the Cortex-A35 ARM64
+core). Most of the clock tree and CRU design can be shared between them.
+This series only adds CRU support for DR1V90. Nevertheless, the driver
+is structured to make future extension to other DR1 variants like
+DR1M90.
 
-Reviewed-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Reviewed-by: Brian Masney <bmasney@redhat.com>
-Signed-off-by: Junhui Liu <junhui.liu@pigmoral.tech>
+Link: https://gitee.com/anlogic/linux/blob/anlogic-6.1.54/drivers/clk/anlogic/anl_dr1x90_crp.c [1]
+
 ---
- include/linux/clk-provider.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes in v4:
+- Change common cru_dr1 code into a standalone module for future reuse
+- Remove redundant .round_rate() in the clock driver
+- Use devm_auxiliary_device_create() to simplify auxiliary device
+  registration
+- Pass register base from clk to reset via platform_data instead of
+  performing a second ioremap
+- Update clock Kconfig and Makefile licenses to GPL-2.0-only from
+  deprecated GPL-2.0
+- Add Kconfig dependency for the reset driver on the clock driver
+- Link to v3: https://lore.kernel.org/r/20251216-dr1v90-cru-v3-0-52cc938d1db0@pigmoral.tech
 
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 630705a47129..a651ccaf1b44 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -720,7 +720,7 @@ struct clk_divider {
- 	spinlock_t	*lock;
- };
- 
--#define clk_div_mask(width)	((1 << (width)) - 1)
-+#define clk_div_mask(width)	((1L << (width)) - 1)
- #define to_clk_divider(_hw) container_of(_hw, struct clk_divider, hw)
- 
- #define CLK_DIVIDER_ONE_BASED		BIT(0)
+Changes in v3:
+- Remove incorrect __free(kfree) usage for auxiliary_device in clock
+  driver
+- Replace __clk_get_enable_count with __clk_is_enabled in clock driver
+- Add a lock to protect register read-modify-write in reset driver
+- Rebase to v6.19-rc1
+- Link to v2: https://lore.kernel.org/r/20251026-dr1v90-cru-v2-0-43b67acd6ddd@pigmoral.tech
 
+Changes in v2:
+- Update copyright infomation
+- Add the original vendor author's infomation to the clock driver
+- Rebase on the v3 basic DT patch, which is based on v6.18-rc1
+- Link to v1: https://lore.kernel.org/r/20250922-dr1v90-cru-v1-0-e393d758de4e@pigmoral.tech
+
+---
+Junhui Liu (6):
+      clk: correct clk_div_mask() return value for width == 32
+      dt-bindings: clock: add Anlogic DR1V90 CRU
+      clk: anlogic: add cru support for Anlogic DR1V90 SoC
+      reset: anlogic: add support for Anlogic DR1V90 resets
+      riscv: dts: anlogic: add clocks and CRU for DR1V90
+      MAINTAINERS: Add entry for Anlogic DR1V90 SoC drivers
+
+ .../bindings/clock/anlogic,dr1v90-cru.yaml         |  60 ++++++
+ MAINTAINERS                                        |   7 +
+ arch/riscv/boot/dts/anlogic/dr1v90.dtsi            |  41 +++-
+ drivers/clk/Kconfig                                |   1 +
+ drivers/clk/Makefile                               |   1 +
+ drivers/clk/anlogic/Kconfig                        |  21 ++
+ drivers/clk/anlogic/Makefile                       |   7 +
+ drivers/clk/anlogic/cru-dr1v90.c                   | 192 +++++++++++++++++
+ drivers/clk/anlogic/cru_dr1.c                      | 226 +++++++++++++++++++++
+ drivers/clk/anlogic/cru_dr1.h                      | 117 +++++++++++
+ drivers/reset/Kconfig                              |  10 +
+ drivers/reset/Makefile                             |   1 +
+ drivers/reset/reset-dr1v90.c                       | 141 +++++++++++++
+ include/dt-bindings/clock/anlogic,dr1v90-cru.h     |  46 +++++
+ include/dt-bindings/reset/anlogic,dr1v90-cru.h     |  41 ++++
+ include/linux/clk-provider.h                       |   2 +-
+ 16 files changed, 911 insertions(+), 3 deletions(-)
+---
+base-commit: 8f0b4cce4481fb22653697cced8d0d04027cb1e8
+change-id: 20250922-dr1v90-cru-74ab40c7f273
+
+Best regards,
 -- 
-2.52.0
+Junhui Liu <junhui.liu@pigmoral.tech>
 
