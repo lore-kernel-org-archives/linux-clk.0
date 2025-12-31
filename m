@@ -1,44 +1,45 @@
 Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52DF73101B0;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87AE0310636;
 	Wed, 31 Dec 2025 06:43:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767163436; cv=pass; b=OmvsjbWSKD50HBHM6ay4rGu9c2yjz/Bp/mHTzGfIQMdnFDWsiKb2PFwtZg4V3yCsIfvZ6TVPxt2NiVKGAj7mQovXNNdF08AdS2saLWAVYlmLuCNOaM01yuzvyTu+f+p1dIG0jZtPQBUFrueH4mX3SPcBdT5tPGCdqWFFmvDoDxo=
+	t=1767163436; cv=pass; b=adm23Xd+3EWr5aMLKRCb1tZuOsUGwF/TP863GJr7utm8jfXhDuvvpunRo9h6XGfpcuqkjZjzFXQPTDPEJCF6qUVwYJr9dWKRuokKJdxzTbUCo3ob1QJW3k545zB/byijb6BJY60F3+2jjAHWFCPuCsuDzySa+8W8q86mR9fYciA=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1767163436; c=relaxed/simple;
-	bh=ltE7Nxid9ZRZpr3XgkD0CgmMAQGqavxTEGqVL5UJvDU=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=t1qxVypPbmOg/k0yy7pv/rvedHhrKdDS+R7VWZB9Wph7ATolJ8ti1AekojKl6RC68B3Hh/552Toqb84XiPhEVg00qLKXQ6zTR3KpohzDpayjPzllQXNfu4jTFKAbHmM5F+Jt9/I29Bg32DLTT4zoi7aIrGNylF3wwifPbLUcwmc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech; spf=pass smtp.mailfrom=pigmoral.tech; dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b=lgLDZELa; arc=pass smtp.client-ip=136.143.188.15
+	bh=re+7mofBoaAWhUINTBob9awY7Lk33WfALKQjkQqYL+U=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=iQYirPC2f5psQdquOqc2sagRVLuipVYbdo5TwU5slC5BYzzWP4woSRCQggIZsBmgAIEcwBD1DzPHA4CW+Ci9Iwy23zEnRd8yA7ZU8/ShhJPMob7J98F/DVCDJ4PoJGGYs4hGqsohAiG+blG5N4DCqBgIu32mNBVuEPIFtbW+9/c=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech; spf=pass smtp.mailfrom=pigmoral.tech; dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b=DIw1CzZv; arc=pass smtp.client-ip=136.143.188.15
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pigmoral.tech
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b="lgLDZELa"
-ARC-Seal: i=1; a=rsa-sha256; t=1767163394; cv=none; 
+	dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b="DIw1CzZv"
+ARC-Seal: i=1; a=rsa-sha256; t=1767163416; cv=none; 
 	d=zohomail.com; s=zohoarc; 
-	b=UD0SSaNqyxTIB8dboRduJpgQYio+KbXhgmQcCeYlyvHFgfosrWFrCFqgstDqr6b9wgDN4oHB0fWRaHrSLPoAENdN0L+HuYW6H0hER/6W6iqXVqTlbIwJxPiriYoJvrudB1sN5JKnwFK1L8wfhjygehNSktV4UX7/WQOhHV8TZvs=
+	b=cSPdTncJXhxZlcjCE8UXAGfZWbtg/1b2fK0jYsMkGIMy5C02roJTehKWWyIKkghIA+SHvD/vkWDVa1tMcxbOYmrCuFgryX51ji0EvCh2gYWn2qJIZVs4+X2qSgsxLn0S+nHwUcA/rXZkAsmgzGrWutXh2WkHSrxXvMaaFywfM3g=
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1767163394; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=q9ypLDTMdw6YB/ZXsROHAJR2hTEvtbYVlYoJ86mENKk=; 
-	b=IwfjPWwqnJCvETo8D1T8H1DARNTMRQ6ryPsl90vLUxzAtcUgRWqUppmYMTiGYnpOAEWfkUXafFdybPuMID8vve6R+KOQDFwF8BK8ZbDKSq9i4OkCH5XXzMzFIosDHlD+D/6GuhHZv0DienauvpSKS181D2udk0igBJjNA0doFug=
+	t=1767163416; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=ibYe3TzDaTH9sDzs2ks/96xwvk8obgDPAwBom8bdoAs=; 
+	b=QIuiM/K54DeonUO2uQVoVBTO7DGZaQ4TxNLoaysln8ldWv/DOP/Suu9FuxS6v18kFDuPcD/jYtnsQKYWM189abDT4661SluA0L9T0/bs/NdCjgYzUqjxSHdBZmjhb1YoZ8eSFh0f9QhueC9w/oykK3e90g4QXIUIeA8ZdDbcbxw=
 ARC-Authentication-Results: i=1; mx.zohomail.com;
 	dkim=pass  header.i=pigmoral.tech;
 	spf=pass  smtp.mailfrom=junhui.liu@pigmoral.tech;
 	dmarc=pass header.from=<junhui.liu@pigmoral.tech>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1767163394;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1767163416;
 	s=zmail; d=pigmoral.tech; i=junhui.liu@pigmoral.tech;
-	h=From:From:Subject:Subject:Date:Date:Message-Id:Message-Id:MIME-Version:Content-Type:Content-Transfer-Encoding:To:To:Cc:Cc:Reply-To;
-	bh=q9ypLDTMdw6YB/ZXsROHAJR2hTEvtbYVlYoJ86mENKk=;
-	b=lgLDZELa6JYw8p6hXLbC6aJQaW0i3FsaJkyGcE1ZDCqAhEQLkedNovaHKMGFQxmb
-	/xjyD5A8YgADNTUh4raRl7XAqdfUWdMGt9OrizNWM2VQbMXO7VBkpf+cejrZ+nh7DZM
-	XT9d3Rs/9Un4FG4B5bjKkzPy+oLRoeYgwzXR6sEU=
-Received: by mx.zohomail.com with SMTPS id 176716339210269.79354772892998;
-	Tue, 30 Dec 2025 22:43:12 -0800 (PST)
+	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:References:In-Reply-To:To:To:Cc:Cc:Reply-To;
+	bh=ibYe3TzDaTH9sDzs2ks/96xwvk8obgDPAwBom8bdoAs=;
+	b=DIw1CzZv6UNK2lgM7l6I5MqiDu6vS33U1KCmK3GL9ct1+w30poZCCNHpLIYj4HCG
+	pfKnZlCVh58SAdrQ7reNCUx1o7pdmCwtEfT+lJ55xegMQX0cpPabvm/3AD3IWhMz7YF
+	24y/9BxTNTH025Gk9MUbM2kVNgRdd8LdconzTR/4=
+Received: by mx.zohomail.com with SMTPS id 1767163413594955.9661763474763;
+	Tue, 30 Dec 2025 22:43:33 -0800 (PST)
 From: Junhui Liu <junhui.liu@pigmoral.tech>
-Subject: [PATCH v4 0/6] clk/reset: anlogic: add support for DR1V90 SoC
-Date: Wed, 31 Dec 2025 14:40:04 +0800
-Message-Id: <20251231-dr1v90-cru-v4-0-1db8c877eb91@pigmoral.tech>
+Date: Wed, 31 Dec 2025 14:40:07 +0800
+Subject: [PATCH v4 3/6] clk: anlogic: add cru support for Anlogic DR1V90
+ SoC
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -47,11 +48,9 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/23NQQ6CMBCF4auQrq1pp4WCK+9hXEBnhCYqWKDRG
- O5uwUSjYfkm+f55sp68o57tkifzFFzv2mscepMw25TXmrjDuBkISEUBwNHLUAhu/ciNListrDm
- BUSyCztPJ3ZfY4fjenm5jbA7fY+P6ofWP5WGQ83W1HSQXnFSh0KQ5kqZ95+pL68vzdiDbsDkV4
- MOlgOyHQ+RaVZkpLWaIuMbVl4P85SryFKwtVI4SK/HPp2l6AQs1FqY7AQAA
-X-Change-ID: 20250922-dr1v90-cru-74ab40c7f273
+Message-Id: <20251231-dr1v90-cru-v4-3-1db8c877eb91@pigmoral.tech>
+References: <20251231-dr1v90-cru-v4-0-1db8c877eb91@pigmoral.tech>
+In-Reply-To: <20251231-dr1v90-cru-v4-0-1db8c877eb91@pigmoral.tech>
 To: Michael Turquette <mturquette@baylibre.com>, 
  Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -60,95 +59,661 @@ To: Michael Turquette <mturquette@baylibre.com>,
  Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
  Alexandre Ghiti <alex@ghiti.fr>
 Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
- Troy Mitchell <troy.mitchell@linux.spacemit.com>, 
- Brian Masney <bmasney@redhat.com>, 
- Conor Dooley <conor.dooley@microchip.com>
+ linux-riscv@lists.infradead.org, devicetree@vger.kernel.org
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1767163372; l=3705;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1767163372; l=21536;
  i=junhui.liu@pigmoral.tech; s=20251228; h=from:subject:message-id;
- bh=ltE7Nxid9ZRZpr3XgkD0CgmMAQGqavxTEGqVL5UJvDU=;
- b=WzR+JeiXhaXIqPJdMcNMbaQ3MufDdeWpxvGqt+s1R9kAFcnPP72AoFJgfA8JV4kQRf5L2O2q3
- wzbA+xDl6JIDxWcns3z7SkNcjjl1DfXDpxrdWCId6U7mgdRX3TCh60R
+ bh=re+7mofBoaAWhUINTBob9awY7Lk33WfALKQjkQqYL+U=;
+ b=wkx/E1EGPcTYemK4rz+UW+5j5Lnsj28cwalkpEgfH5U9ocXP39ylq6x/bssRkCAZLiIlgD/+r
+ JJvyK32rk6qAtFNvbghyd5gKyZb1P8xY3xlBWbxSbJp2yAFxB84pXX/
 X-Developer-Key: i=junhui.liu@pigmoral.tech; a=ed25519;
  pk=3vU0qIPJAH8blXmLyqBhKx+nLOjcLwwYhZXelEpw7h4=
 X-ZohoMailClient: External
 
-Add Clock and Reset Unit (CRU) support for the Anlogic DR1V90 SoC, as
-well as corresponding dts bindings and dts integration.
+The Clock and Reset Unit (CRU) in the Anlogic DR1V90 SoC provides
+management for the clock and reset.
 
-The CRU driver framework is built around the clock controller as the
-primary device, with the reset controller implemented as an auxiliary
-device. The clock part refers to the vendor's code [1] to determine the
-structure of the clock tree.
+The clock driver includes support for:
+- Generic clocks: fixed-factor, divider, mux and gate.
+- PLL: "nm" type (parent * n / m) and "c" type (parent / c). These PLLs
+  are set up by the FSBL and mared as "don't touch" in the datasheet, so
+  only the recal_rate() op is provided.
+- Divider with gate: support both division and gating (by setting value
+  to 0); some of them require a minimum divider value to avoid timing
+  issues.
 
-The Anlogic DR1 series includes not only the DR1V90 (based on the Nuclei
-UX900 RISC-V core), but also the DR1M90 (based on the Cortex-A35 ARM64
-core). Most of the clock tree and CRU design can be shared between them.
-This series only adds CRU support for DR1V90. Nevertheless, the driver
-is structured to make future extension to other DR1 variants like
-DR1M90.
+This also prepares the structure for the reset controller support,
+registering an auxiliary device for resets.
 
-Link: https://gitee.com/anlogic/linux/blob/anlogic-6.1.54/drivers/clk/anlogic/anl_dr1x90_crp.c [1]
-
+Signed-off-by: Junhui Liu <junhui.liu@pigmoral.tech>
 ---
-Changes in v4:
-- Change common cru_dr1 code into a standalone module for future reuse
-- Remove redundant .round_rate() in the clock driver
-- Use devm_auxiliary_device_create() to simplify auxiliary device
-  registration
-- Pass register base from clk to reset via platform_data instead of
-  performing a second ioremap
-- Update clock Kconfig and Makefile licenses to GPL-2.0-only from
-  deprecated GPL-2.0
-- Add Kconfig dependency for the reset driver on the clock driver
-- Link to v3: https://lore.kernel.org/r/20251216-dr1v90-cru-v3-0-52cc938d1db0@pigmoral.tech
+ drivers/clk/Kconfig              |   1 +
+ drivers/clk/Makefile             |   1 +
+ drivers/clk/anlogic/Kconfig      |  21 ++++
+ drivers/clk/anlogic/Makefile     |   7 ++
+ drivers/clk/anlogic/cru-dr1v90.c | 192 +++++++++++++++++++++++++++++++++
+ drivers/clk/anlogic/cru_dr1.c    | 226 +++++++++++++++++++++++++++++++++++++++
+ drivers/clk/anlogic/cru_dr1.h    | 117 ++++++++++++++++++++
+ 7 files changed, 565 insertions(+)
 
-Changes in v3:
-- Remove incorrect __free(kfree) usage for auxiliary_device in clock
-  driver
-- Replace __clk_get_enable_count with __clk_is_enabled in clock driver
-- Add a lock to protect register read-modify-write in reset driver
-- Rebase to v6.19-rc1
-- Link to v2: https://lore.kernel.org/r/20251026-dr1v90-cru-v2-0-43b67acd6ddd@pigmoral.tech
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index 3a1611008e48..b61d6c799bc7 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -513,6 +513,7 @@ config COMMON_CLK_RPMI
+ 
+ source "drivers/clk/actions/Kconfig"
+ source "drivers/clk/analogbits/Kconfig"
++source "drivers/clk/anlogic/Kconfig"
+ source "drivers/clk/baikal-t1/Kconfig"
+ source "drivers/clk/bcm/Kconfig"
+ source "drivers/clk/hisilicon/Kconfig"
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index 61ec08404442..4eea2736f468 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -114,6 +114,7 @@ obj-$(CONFIG_COMMON_CLK_XGENE)		+= clk-xgene.o
+ # please keep this section sorted lexicographically by directory path name
+ obj-y					+= actions/
+ obj-y					+= analogbits/
++obj-y					+= anlogic/
+ obj-$(CONFIG_COMMON_CLK_AT91)		+= at91/
+ obj-$(CONFIG_ARCH_ARTPEC)		+= axis/
+ obj-$(CONFIG_ARC_PLAT_AXS10X)		+= axs10x/
+diff --git a/drivers/clk/anlogic/Kconfig b/drivers/clk/anlogic/Kconfig
+new file mode 100644
+index 000000000000..b3b17540176d
+--- /dev/null
++++ b/drivers/clk/anlogic/Kconfig
+@@ -0,0 +1,21 @@
++# SPDX-License-Identifier: GPL-2.0-only
++
++config ANLOGIC_DR1_CRU
++	tristate "Clock support for Anlogic DR1 series SoCs"
++	depends on ARCH_ANLOGIC || COMPILE_TEST
++	select AUXILIARY_BUS
++	default ARCH_ANLOGIC
++	help
++	  Say Y to enable clock controller unit support for Anlogic DR1 series
++	  SoCs.
++
++if ANLOGIC_DR1_CRU
++
++config ANLOGIC_DR1V90_CRU
++	tristate "Anlogic DR1V90 clock support"
++	depends on ARCH_ANLOGIC || COMPILE_TEST
++	default ARCH_ANLOGIC
++	help
++	  Support for the Clock and Reset Unit in Anlogic DR1V90 SoCs.
++
++endif
+diff --git a/drivers/clk/anlogic/Makefile b/drivers/clk/anlogic/Makefile
+new file mode 100644
+index 000000000000..fab7f29bb097
+--- /dev/null
++++ b/drivers/clk/anlogic/Makefile
+@@ -0,0 +1,7 @@
++# SPDX-License-Identifier: GPL-2.0-only
++
++obj-$(CONFIG_ANLOGIC_DR1_CRU)		+= anlogic-dr1-cru.o
++anlogic-dr1-cru-y			+= cru_dr1.o
++
++obj-$(CONFIG_ANLOGIC_DR1V90_CRU)	+= anlogic-dr1v90-cru.o
++anlogic-dr1v90-cru-y			+= cru-dr1v90.o
+diff --git a/drivers/clk/anlogic/cru-dr1v90.c b/drivers/clk/anlogic/cru-dr1v90.c
+new file mode 100644
+index 000000000000..46fc83aa2044
+--- /dev/null
++++ b/drivers/clk/anlogic/cru-dr1v90.c
+@@ -0,0 +1,192 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Copyright (C) 2024-2025 Anlogic, Inc.
++ * Copyright (C) 2025 Junhui Liu <junhui.liu@pigmoral.tech>
++ */
++
++#include <linux/array_size.h>
++#include <linux/clk-provider.h>
++#include <linux/device.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
++
++#include "cru_dr1.h"
++
++#include <dt-bindings/clock/anlogic,dr1v90-cru.h>
++
++static const struct clk_div_table cru_div_table_24[] = {
++	{ 0xFFFFFF, 1 },  { 0x555555, 2 },  { 0x249249, 3 },  { 0x111111, 4 },
++	{ 0x084210, 5 },  { 0x041041, 6 },  { 0x020408, 7 },  { 0x010101, 8 },
++	{ 0x008040, 9 },  { 0x004010, 10 }, { 0x002004, 11 }, { 0x001001, 12 },
++	{ 0x000800, 13 }, { 0x000400, 14 }, { 0x000200, 15 }, { 0x000100, 16 },
++	{ 0x000080, 17 }, { 0x000040, 18 }, { 0x000020, 19 }, { 0x000010, 20 },
++	{ 0x000008, 21 }, { 0x000004, 22 }, { 0x000002, 23 }, { 0x000001, 24 },
++	{ /* sentinel */ }
++};
++
++static const struct clk_div_table cru_div_table_32[] = {
++	{ 0xFFFFFFFF, 1 },  { 0x55555555, 2 },	{ 0x24924924, 3 },
++	{ 0x11111111, 4 },  { 0x08421084, 5 },	{ 0x04104104, 6 },
++	{ 0x02040810, 7 },  { 0x01010101, 8 },	{ 0x00804020, 9 },
++	{ 0x00401004, 10 }, { 0x00200400, 11 }, { 0x00100100, 12 },
++	{ 0x00080040, 13 }, { 0x00040010, 14 }, { 0x00020004, 15 },
++	{ 0x00010001, 16 }, { 0x00008000, 17 }, { 0x00004000, 18 },
++	{ 0x00002000, 19 }, { 0x00001000, 20 }, { 0x00000800, 21 },
++	{ 0x00000400, 22 }, { 0x00000200, 23 }, { 0x00000100, 24 },
++	{ 0x00000080, 25 }, { 0x00000040, 26 }, { 0x00000020, 27 },
++	{ 0x00000010, 28 }, { 0x00000008, 29 }, { 0x00000004, 30 },
++	{ 0x00000002, 31 }, { 0x00000001, 32 }, { /* sentinel */ }
++};
++
++CLK_FIXED_FACTOR_FW_NAME(osc_div2, "osc_div2", "osc_33m", 2, 1, 0);
++
++CRU_PLL_NM_DEFINE(cpu_pll, CRU_PARENT_NAME(osc_33m), 0x120);
++CRU_PLL_C_DEFINE(cpu_pll_4x, CRU_PARENT_HW(cpu_pll), 0x14c);
++
++CRU_DIV_DEFINE(cpu_4x_div1, CRU_PARENT_HW(cpu_pll_4x), 0x010, 0, 24,
++	       cru_div_table_24, CLK_DIVIDER_READ_ONLY);
++CRU_DIV_DEFINE(cpu_4x_div2, CRU_PARENT_HW(cpu_pll_4x), 0x014, 0, 24,
++	       cru_div_table_24, CLK_DIVIDER_READ_ONLY);
++CRU_DIV_DEFINE(cpu_4x_div4, CRU_PARENT_HW(cpu_pll_4x), 0x018, 0, 24,
++	       cru_div_table_24, CLK_DIVIDER_READ_ONLY);
++
++CRU_PLL_NM_DEFINE(io_pll, CRU_PARENT_NAME(osc_33m), 0x220);
++CRU_PLL_C_DEFINE(io_1000m, CRU_PARENT_HW(io_pll), 0x248);
++CRU_PLL_C_DEFINE(io_400m, CRU_PARENT_HW(io_pll), 0x24c);
++CRU_PLL_C_DEFINE(io_25m, CRU_PARENT_HW(io_pll), 0x250);
++CRU_PLL_C_DEFINE(io_80m, CRU_PARENT_HW(io_pll), 0x254);
++
++CRU_DIV_DEFINE(io_400m_div2, CRU_PARENT_HW(io_400m), 0x020, 0, 32,
++	       cru_div_table_32, CLK_DIVIDER_READ_ONLY);
++CRU_DIV_DEFINE(io_400m_div4, CRU_PARENT_HW(io_400m), 0x024, 0, 32,
++	       cru_div_table_32, CLK_DIVIDER_READ_ONLY);
++CRU_DIV_DEFINE(io_400m_div8, CRU_PARENT_HW(io_400m), 0x028, 0, 32,
++	       cru_div_table_32, CLK_DIVIDER_READ_ONLY);
++CRU_DIV_DEFINE(io_400m_div16, CRU_PARENT_HW(io_400m), 0x02c, 0, 32,
++	       cru_div_table_32, CLK_DIVIDER_READ_ONLY);
++
++CRU_DIV_GATE_DEFINE(qspi, CRU_PARENT_HW(io_1000m), 0x030, 0, 6, NULL, 0, 2);
++CRU_DIV_GATE_DEFINE(spi, CRU_PARENT_HW(io_1000m), 0x030, 8, 6, NULL, 0, 4);
++CRU_DIV_GATE_DEFINE(smc, CRU_PARENT_HW(io_1000m), 0x030, 16, 6, NULL, 0, 4);
++CRU_DIV_DEFINE(sdio, CRU_PARENT_HW(io_400m), 0x030, 24, 6, NULL, 0);
++
++CRU_DIV_GATE_DEFINE(gpio_db, CRU_PARENT_HW(io_25m), 0x034, 0, 6, NULL, 0, 1);
++CRU_DIV_GATE_DEFINE(efuse, CRU_PARENT_HW(io_25m), 0x034, 8, 6, NULL, 0, 1);
++CRU_DIV_GATE_DEFINE(tvs, CRU_PARENT_HW(io_25m), 0x034, 16, 6, NULL, 0, 1);
++CRU_DIV_GATE_DEFINE(trng, CRU_PARENT_HW(io_25m), 0x034, 24, 7, NULL, 0, 1);
++
++CRU_DIV_GATE_DEFINE(osc_div, CRU_PARENT_NAME(osc_33m), 0x038, 0, 6, NULL, 0, 1);
++CRU_DIV_GATE_DEFINE(pwm, CRU_PARENT_NAME(osc_33m), 0x038, 8, 12, NULL, 0, 1);
++
++CRU_DIV_GATE_DEFINE(fclk0, CRU_PARENT_HW(io_400m), 0x03c, 0, 6, NULL, 0, 1);
++CRU_DIV_GATE_DEFINE(fclk1, CRU_PARENT_HW(io_400m), 0x03c, 8, 6, NULL, 0, 1);
++CRU_DIV_GATE_DEFINE(fclk2, CRU_PARENT_HW(io_400m), 0x03c, 16, 6, NULL, 0, 1);
++CRU_DIV_GATE_DEFINE(fclk3, CRU_PARENT_HW(io_400m), 0x03c, 24, 6, NULL, 0, 1);
++
++static const struct clk_parent_data wdt_parents[] = {
++	CRU_PARENT_HW(osc_div2),
++	CRU_PARENT_NAME(wdt_ext)
++};
++CRU_MUX_DEFINE(wdt_sel, wdt_parents, 0x040, 1, 1);
++
++static const struct clk_parent_data efuse_parents[] = {
++	CRU_PARENT_NAME(osc_33m),
++	CRU_PARENT_DIV_HW(efuse)
++};
++CRU_MUX_DEFINE(efuse_sel, efuse_parents, 0x040, 2, 1);
++
++static const struct clk_parent_data can_parents[] = {
++	CRU_PARENT_HW(io_80m),
++	CRU_PARENT_NAME(can_ext)
++};
++CRU_MUX_DEFINE(can_sel, can_parents, 0x040, 3, 1);
++
++static const struct clk_parent_data cpu_parents[] = {
++	CRU_PARENT_HW(cpu_4x_div1),
++	CRU_PARENT_HW(cpu_4x_div2)
++};
++CRU_MUX_DEFINE(cpu_sel, cpu_parents, 0x040, 5, 1);
++
++CRU_GATE_DEFINE(can0, CRU_PARENT_HW(can_sel), 0x08c, 20, CLK_GATE_SET_TO_DISABLE);
++CRU_GATE_DEFINE(can1, CRU_PARENT_HW(can_sel), 0x08c, 21, CLK_GATE_SET_TO_DISABLE);
++
++static const struct cru_clk dr1v90_cru_clks[] = {
++	[CLK_OSC_DIV2]		= { &osc_div2.hw,	NULL },
++	[CLK_CPU_PLL]		= { &cpu_pll.hw,	&cpu_pll.reg },
++	[CLK_CPU_PLL_4X]	= { &cpu_pll_4x.hw,	&cpu_pll_4x.reg },
++	[CLK_CPU_4X]		= { &cpu_4x_div1.hw,	&cpu_4x_div1.reg },
++	[CLK_CPU_2X]		= { &cpu_4x_div2.hw,	&cpu_4x_div2.reg },
++	[CLK_CPU_1X]		= { &cpu_4x_div4.hw,	&cpu_4x_div4.reg },
++	[CLK_IO_PLL]		= { &io_pll.hw,		&io_pll.reg },
++	[CLK_IO_1000M]		= { &io_1000m.hw,	&io_1000m.reg },
++	[CLK_IO_400M]		= { &io_400m.hw,	&io_400m.reg },
++	[CLK_IO_25M]		= { &io_25m.hw,		&io_25m.reg },
++	[CLK_IO_80M]		= { &io_80m.hw,		&io_80m.reg },
++	[CLK_IO_400M_DIV2]	= { &io_400m_div2.hw,	&io_400m_div2.reg },
++	[CLK_IO_400M_DIV4]	= { &io_400m_div4.hw,	&io_400m_div4.reg },
++	[CLK_IO_400M_DIV8]	= { &io_400m_div8.hw,	&io_400m_div8.reg },
++	[CLK_IO_400M_DIV16]	= { &io_400m_div16.hw,	&io_400m_div16.reg },
++	[CLK_QSPI]		= { &qspi.divider.hw,	&qspi.divider.reg },
++	[CLK_SPI]		= { &spi.divider.hw,	&spi.divider.reg },
++	[CLK_SMC]		= { &smc.divider.hw,	&smc.divider.reg },
++	[CLK_SDIO]		= { &sdio.hw,		&sdio.reg },
++	[CLK_GPIO_DB]		= { &gpio_db.divider.hw, &gpio_db.divider.reg },
++	[CLK_EFUSE]		= { &efuse.divider.hw,	&efuse.divider.reg },
++	[CLK_TVS]		= { &tvs.divider.hw,	&tvs.divider.reg },
++	[CLK_TRNG]		= { &trng.divider.hw,	&trng.divider.reg },
++	[CLK_OSC_DIV]		= { &osc_div.divider.hw, &osc_div.divider.reg },
++	[CLK_PWM]		= { &pwm.divider.hw,	&pwm.divider.reg },
++	[CLK_FCLK0]		= { &fclk0.divider.hw,	&fclk0.divider.reg },
++	[CLK_FCLK1]		= { &fclk1.divider.hw,	&fclk1.divider.reg },
++	[CLK_FCLK2]		= { &fclk2.divider.hw,	&fclk2.divider.reg },
++	[CLK_FCLK3]		= { &fclk3.divider.hw,	&fclk3.divider.reg },
++	[CLK_WDT_SEL]		= { &wdt_sel.hw,	&wdt_sel.reg },
++	[CLK_EFUSE_SEL]		= { &efuse_sel.hw,	&efuse_sel.reg },
++	[CLK_CAN_SEL]		= { &can_sel.hw,	&can_sel.reg },
++	[CLK_CPU_SEL]		= { &cpu_sel.hw,	&cpu_sel.reg },
++	[CLK_CAN0]		= { &can0.hw,		&can0.reg },
++	[CLK_CAN1]		= { &can1.hw,		&can1.reg }
++};
++
++static int dr1v90_cru_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	void __iomem *base;
++	int ret;
++
++	base = devm_platform_ioremap_resource(pdev, 0);
++	if (IS_ERR(base))
++		return PTR_ERR(base);
++
++	ret = dr1_cru_clk_register(dev, base, dr1v90_cru_clks,
++				   ARRAY_SIZE(dr1v90_cru_clks));
++	if (ret)
++		return dev_err_probe(dev, ret, "failed to register clocks\n");
++
++	ret = dr1_cru_reset_register(dev, base);
++	if (ret)
++		return dev_err_probe(dev, ret, "failed to register resets\n");
++
++	return 0;
++}
++
++static const struct of_device_id dr1v90_cru_ids[] = {
++	{ .compatible = "anlogic,dr1v90-cru" },
++	{ /* sentinel */ }
++};
++MODULE_DEVICE_TABLE(of, dr1v90_cru_ids);
++
++static struct platform_driver dr1v90_cru_driver = {
++	.driver = {
++		.name = "dr1v90-cru",
++		.of_match_table = dr1v90_cru_ids,
++	},
++	.probe = dr1v90_cru_probe,
++};
++module_platform_driver(dr1v90_cru_driver);
++
++MODULE_AUTHOR("Fushan Zeng <fushan.zeng@anlogic.com>");
++MODULE_AUTHOR("Junhui Liu <junhui.liu@pigmoral.tech>");
++MODULE_DESCRIPTION("Anlogic DR1V90 CRU driver");
++MODULE_IMPORT_NS("CLK_ANLOGIC");
++MODULE_LICENSE("GPL");
+diff --git a/drivers/clk/anlogic/cru_dr1.c b/drivers/clk/anlogic/cru_dr1.c
+new file mode 100644
+index 000000000000..2a729957a702
+--- /dev/null
++++ b/drivers/clk/anlogic/cru_dr1.c
+@@ -0,0 +1,226 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Copyright (C) 2024-2025 Anlogic, Inc.
++ * Copyright (C) 2025 Junhui Liu <junhui.liu@pigmoral.tech>
++ */
++
++#include <linux/auxiliary_bus.h>
++#include <linux/bitfield.h>
++#include <linux/bits.h>
++#include <linux/clk-provider.h>
++#include <linux/device.h>
++#include <linux/io.h>
++#include <linux/slab.h>
++#include <linux/types.h>
++
++#include "cru_dr1.h"
++
++static unsigned long cru_pll_nm_recalc_rate(struct clk_hw *hw,
++					    unsigned long parent_rate)
++{
++	struct cru_pll *pll = hw_to_cru_pll(hw);
++	u32 mult, div;
++
++	div = FIELD_GET(GENMASK(6, 0), readl(pll->reg)) + 1;
++	mult = FIELD_GET(GENMASK(6, 0), readl(pll->reg + 4)) + 1;
++
++	return parent_rate * mult / div;
++}
++
++const struct clk_ops dr1_cru_pll_nm_ops = {
++	.recalc_rate = cru_pll_nm_recalc_rate,
++};
++EXPORT_SYMBOL_NS_GPL(dr1_cru_pll_nm_ops, "CLK_ANLOGIC");
++
++static unsigned long cru_pll_c_recalc_rate(struct clk_hw *hw,
++					   unsigned long parent_rate)
++{
++	struct cru_pll *pll = hw_to_cru_pll(hw);
++	u32 div;
++
++	div = FIELD_GET(GENMASK(30, 24), readl(pll->reg)) + 1;
++
++	return parent_rate / div;
++}
++
++const struct clk_ops dr1_cru_pll_c_ops = {
++	.recalc_rate = cru_pll_c_recalc_rate,
++};
++EXPORT_SYMBOL_NS_GPL(dr1_cru_pll_c_ops, "CLK_ANLOGIC");
++
++static void cru_div_gate_endisable(struct clk_hw *hw, int enable)
++{
++	struct cru_div_gate *div_gate = hw_to_cru_div_gate(hw);
++	struct clk_divider *divider = &div_gate->divider;
++	u32 reg;
++
++	reg = readl(divider->reg);
++	reg &= ~(clk_div_mask(divider->width) << divider->shift);
++
++	if (enable)
++		reg |= div_gate->val << divider->shift;
++
++	writel(reg, divider->reg);
++}
++
++static int cru_div_gate_enable(struct clk_hw *hw)
++{
++	cru_div_gate_endisable(hw, 1);
++
++	return 0;
++}
++
++static void cru_div_gate_disable(struct clk_hw *hw)
++{
++	cru_div_gate_endisable(hw, 0);
++}
++
++static int cru_div_gate_is_enabled(struct clk_hw *hw)
++{
++	struct cru_div_gate *div_gate = hw_to_cru_div_gate(hw);
++	struct clk_divider *divider = &div_gate->divider;
++	u32 val;
++
++	val = readl(divider->reg) >> divider->shift;
++	val &= clk_div_mask(divider->width);
++
++	return !!val;
++}
++
++static unsigned long cru_div_gate_recalc_rate(struct clk_hw *hw,
++					      unsigned long parent_rate)
++{
++	struct cru_div_gate *div_gate = hw_to_cru_div_gate(hw);
++	struct clk_divider *divider = &div_gate->divider;
++	unsigned int val;
++
++	val = readl(divider->reg) >> divider->shift;
++	val &= clk_div_mask(divider->width);
++
++	if (val < div_gate->min)
++		return 0;
++
++	return divider_recalc_rate(hw, parent_rate, val, divider->table,
++				   divider->flags, divider->width);
++}
++
++static int cru_div_gate_determine_rate(struct clk_hw *hw,
++				       struct clk_rate_request *req)
++{
++	struct cru_div_gate *div_gate = hw_to_cru_div_gate(hw);
++	struct clk_divider *divider = &div_gate->divider;
++	unsigned long maxdiv, mindiv;
++	int div = 0;
++
++	maxdiv = clk_div_mask(divider->width) + 1;
++	mindiv = div_gate->min + 1;
++
++	div = DIV_ROUND_UP_ULL(req->best_parent_rate, req->rate);
++	div = div > maxdiv ? maxdiv : div;
++	div = div < mindiv ? mindiv : div;
++
++	req->rate = DIV_ROUND_UP_ULL(req->best_parent_rate, div);
++
++	return 0;
++}
++
++static int cru_div_gate_set_rate(struct clk_hw *hw, unsigned long rate,
++				 unsigned long parent_rate)
++{
++	struct cru_div_gate *div_gate = hw_to_cru_div_gate(hw);
++	struct clk_divider *divider = &div_gate->divider;
++	int value;
++	u32 reg;
++
++	if (!__clk_is_enabled(hw->clk))
++		return 0;
++
++	value = divider_get_val(rate, parent_rate, divider->table,
++				divider->width, divider->flags);
++	if (value < 0)
++		return value;
++
++	if (value < div_gate->min)
++		value = div_gate->min;
++
++	reg = readl(divider->reg);
++	reg &= ~(clk_div_mask(divider->width) << divider->shift);
++	reg |= (u32)value << divider->shift;
++	writel(reg, divider->reg);
++
++	div_gate->val = reg;
++
++	return 0;
++}
++
++static int cru_div_gate_init(struct clk_hw *hw)
++{
++	struct cru_div_gate *div_gate = hw_to_cru_div_gate(hw);
++	struct clk_divider *divider = &div_gate->divider;
++	u32 val;
++
++	val = readl(divider->reg) >> divider->shift;
++	val &= clk_div_mask(divider->width);
++	div_gate->val = val;
++
++	return 0;
++}
++
++const struct clk_ops dr1_cru_div_gate_ops = {
++	.enable = cru_div_gate_enable,
++	.disable = cru_div_gate_disable,
++	.is_enabled = cru_div_gate_is_enabled,
++	.recalc_rate = cru_div_gate_recalc_rate,
++	.determine_rate = cru_div_gate_determine_rate,
++	.set_rate = cru_div_gate_set_rate,
++	.init = cru_div_gate_init,
++};
++EXPORT_SYMBOL_NS_GPL(dr1_cru_div_gate_ops, "CLK_ANLOGIC");
++
++int dr1_cru_clk_register(struct device *dev, void __iomem *base,
++			 const struct cru_clk *clks, int nr_clks)
++{
++	struct clk_hw_onecell_data *priv;
++	int i, ret;
++
++	priv = devm_kzalloc(dev, struct_size(priv, hws, nr_clks), GFP_KERNEL);
++	if (!priv)
++		return -ENOMEM;
++
++	for (i = 0; i < nr_clks; i++) {
++		const struct cru_clk *clk = &clks[i];
++
++		if (clk->reg)
++			*(clk->reg) += (uintptr_t)base;
++
++		ret = devm_clk_hw_register(dev, clk->hw);
++		if (ret)
++			return ret;
++
++		priv->hws[i] = clk->hw;
++	}
++
++	priv->num = nr_clks;
++
++	ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get, priv);
++	if (ret)
++		dev_err(dev, "failed to add clock hardware provider\n");
++
++	return ret;
++}
++EXPORT_SYMBOL_NS_GPL(dr1_cru_clk_register, "CLK_ANLOGIC");
++
++int dr1_cru_reset_register(struct device *dev, void __iomem *base)
++{
++	struct auxiliary_device *adev;
++
++	adev = devm_auxiliary_device_create(dev, "reset", base);
++	if (!adev)
++		return -ENODEV;
++
++	return 0;
++}
++EXPORT_SYMBOL_NS_GPL(dr1_cru_reset_register, "CLK_ANLOGIC");
++
++MODULE_DESCRIPTION("Anlogic DR1 CRU driver");
++MODULE_LICENSE("GPL");
+diff --git a/drivers/clk/anlogic/cru_dr1.h b/drivers/clk/anlogic/cru_dr1.h
+new file mode 100644
+index 000000000000..d1c5d46dea97
+--- /dev/null
++++ b/drivers/clk/anlogic/cru_dr1.h
+@@ -0,0 +1,117 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * Copyright (C) 2024-2025 Anlogic, Inc.
++ * Copyright (C) 2025 Junhui Liu <junhui.liu@pigmoral.tech>
++ */
++
++#ifndef _CRU_DR1_H_
++#define _CRU_DR1_H_
++
++#include "linux/clk-provider.h"
++
++struct cru_pll {
++	struct clk_hw hw;
++	void __iomem *reg;
++};
++
++struct cru_div_gate {
++	struct clk_divider divider;
++	u32 val;
++	u8 min; /* Minimum divider value to avoid timing issues */
++};
++
++struct cru_clk {
++	struct clk_hw *hw;
++	void **reg;
++};
++
++#define CRU_PARENT_NAME(_name)		{ .fw_name = #_name }
++#define CRU_PARENT_HW(_parent)		{ .hw = &_parent.hw }
++#define CRU_PARENT_DIV_HW(_parent)	{ .hw = &_parent.divider.hw }
++
++#define CRU_INITHW(_name, _parent, _ops)				\
++	.hw.init = &(struct clk_init_data) {				\
++		.name		= #_name,				\
++		.parent_data	= (const struct clk_parent_data[])	\
++					{ _parent },			\
++		.num_parents	= 1,					\
++		.ops		= &_ops,				\
++	}
++
++#define CRU_INITHW_PARENTS(_name, _parents, _ops)			\
++	.hw.init = CLK_HW_INIT_PARENTS_DATA(#_name, _parents, &_ops, 0)
++
++#define CRU_PLL_NM_DEFINE(_name, _parent, _reg)				\
++static struct cru_pll _name = {						\
++	.reg = (void __iomem *)(_reg),					\
++	CRU_INITHW(_name, _parent, dr1_cru_pll_nm_ops),			\
++}
++
++#define CRU_PLL_C_DEFINE(_name, _parent, _reg)				\
++static struct cru_pll _name = {						\
++	.reg = (void __iomem *)(_reg),					\
++	CRU_INITHW(_name, _parent, dr1_cru_pll_c_ops),			\
++}
++
++#define CRU_DIV_DEFINE(_name, _parent, _reg, _shift, _width, _table,	\
++		       _flags)						\
++static struct clk_divider _name = {					\
++	.shift = _shift,						\
++	.width = _width,						\
++	.flags = _flags,						\
++	.table = _table,						\
++	.reg = (void __iomem *)(_reg),					\
++	CRU_INITHW(_name, _parent, clk_divider_ops),			\
++}
++
++#define CRU_DIV_GATE_DEFINE(_name, _parent, _reg, _shift, _width,	\
++			    _table, _flags, _min)			\
++static struct cru_div_gate _name = {					\
++	.min = _min,							\
++	.divider = {							\
++		.shift = _shift,					\
++		.width = _width,					\
++		.flags = _flags,					\
++		.table = _table,					\
++		.reg = (void __iomem *)(_reg),				\
++		CRU_INITHW(_name, _parent, dr1_cru_div_gate_ops),	\
++	}								\
++}
++
++#define CRU_MUX_DEFINE(_name, _parents, _reg, _shift, _width)		\
++static struct clk_mux _name = {						\
++	.shift = _shift,						\
++	.mask = GENMASK(_width - 1, 0),					\
++	.reg = (void __iomem *)(_reg),					\
++	CRU_INITHW_PARENTS(_name, _parents, clk_mux_ops)		\
++}
++
++#define CRU_GATE_DEFINE(_name, _parent, _reg, _bit_idx, _flags)		\
++static struct clk_gate _name = {					\
++	.bit_idx = _bit_idx,						\
++	.flags = _flags,						\
++	.reg = (void __iomem *)(_reg),					\
++	CRU_INITHW(_name, _parent, clk_gate_ops)			\
++}
++
++static inline struct cru_pll *hw_to_cru_pll(struct clk_hw *hw)
++{
++	return container_of(hw, struct cru_pll, hw);
++}
++
++static inline struct cru_div_gate *hw_to_cru_div_gate(struct clk_hw *hw)
++{
++	struct clk_divider *divider = to_clk_divider(hw);
++
++	return container_of(divider, struct cru_div_gate, divider);
++}
++
++extern const struct clk_ops dr1_cru_pll_nm_ops;
++extern const struct clk_ops dr1_cru_pll_c_ops;
++extern const struct clk_ops dr1_cru_div_gate_ops;
++
++int dr1_cru_clk_register(struct device *dev, void __iomem *base,
++			 const struct cru_clk *clks, int nr_clks);
++int dr1_cru_reset_register(struct device *dev, void __iomem *base);
++
++#endif /* _CRU_DR1_H_ */
 
-Changes in v2:
-- Update copyright infomation
-- Add the original vendor author's infomation to the clock driver
-- Rebase on the v3 basic DT patch, which is based on v6.18-rc1
-- Link to v1: https://lore.kernel.org/r/20250922-dr1v90-cru-v1-0-e393d758de4e@pigmoral.tech
-
----
-Junhui Liu (6):
-      clk: correct clk_div_mask() return value for width == 32
-      dt-bindings: clock: add Anlogic DR1V90 CRU
-      clk: anlogic: add cru support for Anlogic DR1V90 SoC
-      reset: anlogic: add support for Anlogic DR1V90 resets
-      riscv: dts: anlogic: add clocks and CRU for DR1V90
-      MAINTAINERS: Add entry for Anlogic DR1V90 SoC drivers
-
- .../bindings/clock/anlogic,dr1v90-cru.yaml         |  60 ++++++
- MAINTAINERS                                        |   7 +
- arch/riscv/boot/dts/anlogic/dr1v90.dtsi            |  41 +++-
- drivers/clk/Kconfig                                |   1 +
- drivers/clk/Makefile                               |   1 +
- drivers/clk/anlogic/Kconfig                        |  21 ++
- drivers/clk/anlogic/Makefile                       |   7 +
- drivers/clk/anlogic/cru-dr1v90.c                   | 192 +++++++++++++++++
- drivers/clk/anlogic/cru_dr1.c                      | 226 +++++++++++++++++++++
- drivers/clk/anlogic/cru_dr1.h                      | 117 +++++++++++
- drivers/reset/Kconfig                              |  10 +
- drivers/reset/Makefile                             |   1 +
- drivers/reset/reset-dr1v90.c                       | 141 +++++++++++++
- include/dt-bindings/clock/anlogic,dr1v90-cru.h     |  46 +++++
- include/dt-bindings/reset/anlogic,dr1v90-cru.h     |  41 ++++
- include/linux/clk-provider.h                       |   2 +-
- 16 files changed, 911 insertions(+), 3 deletions(-)
----
-base-commit: 8f0b4cce4481fb22653697cced8d0d04027cb1e8
-change-id: 20250922-dr1v90-cru-74ab40c7f273
-
-Best regards,
 -- 
-Junhui Liu <junhui.liu@pigmoral.tech>
+2.52.0
 
