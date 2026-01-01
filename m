@@ -1,41 +1,106 @@
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5917A179A3;
-	Thu,  1 Jan 2026 14:38:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89BD521FF2A
+	for <linux-clk@vger.kernel.org>; Thu,  1 Jan 2026 18:55:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767278303; cv=none; b=mkxkxGk4j0Avq6ZGaHXR0IGI9XzcHqdzTnWlJ4glkl1W5tTfQTn7obYbIa2SblLpNTptfL/LmRLPc8qkeCYIY25dz4fcml7j+0gCMgHZ45ebTLpFtKE9uFTGCAW7G2tqTfCJHLOrB+OrFwYHxQxEu2Z+O1FbobpGHpZE6/YXnfY=
+	t=1767293745; cv=none; b=BPk1pJPQlaqemz99mgwqOKCcVax48VaKXj3mU06Rdu93ssMfYYFHVORVs4e8Yps+wtH71pTzADnEsxqHdueWWgPjmytxjUGLRVdUQjw746nTVOt2wvzc/vyIfzO11ZCAU11Viwd195/RryVkY7Mh9OEoeVxKE5dmsKicE1FDS+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767278303; c=relaxed/simple;
-	bh=T47W/F1l2yWVLSGFayW2suCfigXYHmLyi9rRC0ZXRcs=;
+	s=arc-20240116; t=1767293745; c=relaxed/simple;
+	bh=BsHbCL31zaCsSjy+gR/aV0LOVFxYgDWTaTyqMVziIck=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eepcaFblNs/Z0L3R1hK3I72mlSAIB3m/8USxrxjmsYD1ePxe7OSu1FInQyinkEfYHBsVjtOdeDLs/+OF5TLYWO4c5xdx6SBrll1e9/PFwgud0LPDdkT0DWaoOwQ7MkxUKgSFKA+n78p7Efr1xmEv3eMJI9p8mkExsYlkBin9+F0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Received: from localhost (unknown [116.232.18.222])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dlan)
-	by smtp.gentoo.org (Postfix) with ESMTPSA id 4F0583415D6;
-	Thu, 01 Jan 2026 14:38:21 +0000 (UTC)
-Date: Thu, 1 Jan 2026 22:38:10 +0800
-From: Yixun Lan <dlan@gentoo.org>
-To: Alex Elder <elder@riscstar.com>
-Cc: Stephen Boyd <sboyd@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Guodong Xu <guodong@riscstar.com>,
-	Inochi Amaoto <inochiama@gmail.com>, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org,
-	spacemit@lists.linux.dev
-Subject: Re: [PATCH v2 1/3] clk: spacemit: prepare common ccu header
-Message-ID: <20260101143810-GYC2019108@gentoo.org>
-References: <20251226-06-k1-clk-common-v2-0-28b59418b4df@gentoo.org>
- <20251226-06-k1-clk-common-v2-1-28b59418b4df@gentoo.org>
- <17c27455-897d-4249-8206-88364230af7d@riscstar.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=YBXjffV2HgS9PfNf9Gz65VqGXVUxUcx9T2hmSvNESjFw+bPt3c95esDrtoE+Ui5GJuhz9gguDDaRZcO8iRiaChBHyro4eu5vjl5yohyzd6hsxPW+xsS0Z0N9EDB16fXCZVQVdnvxn1yR3l6hVEHS5c9e8H3YqFKatHmxPooZiOA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=D6XRqEBy; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=BkDp6+gB; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="D6XRqEBy";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="BkDp6+gB"
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 601IXdTs1745026
+	for <linux-clk@vger.kernel.org>; Thu, 1 Jan 2026 18:55:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=mJDBD6C6FOpNftcz8V52aQRx
+	AwwFr6Nbn/iLAulEz4c=; b=D6XRqEBycoPfywrFAJMOwk0Td+BVQj6fDUJfxnGS
+	R3ROIporwU3L5GF5iDHGxOWrZIN1qZTLysreBXAyBp2BX43nWUDLwGRQmeIlYdqH
+	5Z6a28TE2AqARWhtHoib6vRkDZVkKY/XzaEcGaOLaZmiNcPTWx76ZUrs1TP42REV
+	TPCKEHQLq47czWMkWNWIulVH3P9APWdVdYlL1k3iJZ/WEULiw9a7bU9DwFN1BGoA
+	SQ+DsGDQNEzOBlne2OzWiWOUOF1Ww4EI08YNPLAAgXGk5ohX7C/zizexcL2Ktttl
+	1i95KkjLxPt2XxZV1iK1VFNsxm/QUJYqeHPcgxLrIUuEcQ==
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4bd77v1wcq-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Thu, 01 Jan 2026 18:55:42 +0000 (GMT)
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-8bb6a7fea4dso2667048285a.0
+        for <linux-clk@vger.kernel.org>; Thu, 01 Jan 2026 10:55:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1767293742; x=1767898542; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=mJDBD6C6FOpNftcz8V52aQRxAwwFr6Nbn/iLAulEz4c=;
+        b=BkDp6+gBegPOL8jynqa+AcKYjYMif9bEtspAEuP9Tc/idGOuTPOT9hQ/A67wFHcE/d
+         wNhmAVQkSJA1+e+QVlrG849ciCWY/KZ6Y60naEMYDhgw3trbEg5brol7dHNJU0KwJMmZ
+         WXyALzytQkzWEbGQM2ZOVgUA5oZd9+TgDRz0bLjMBgmpebs5dVDcKzfYkn7WU9O/52PH
+         JPBCPKJQsKNiIJ5rIaSQnhOX+VuOo+SCQXhYwtD8JLtEiVMb8QnHONbPXKj+lUr1YBg5
+         5zzSI5UAq7J5d1sKkqjuOwb4W+6KOIqMfkATRNtpcwYgYDuri1VF1Ui3my9cm7orEtoD
+         KVcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1767293742; x=1767898542;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mJDBD6C6FOpNftcz8V52aQRxAwwFr6Nbn/iLAulEz4c=;
+        b=cU8MUc747XkzKeGyo9242cVKkgTMDlnbK3hUtSJRFZaTZO9pvyGmFigdDf6tfO7zE0
+         CAmUDJbrY2C3kbTmNfDXacIewpDOClmcyHIrIFsGaVkfKX4Lw9GHKsMbwRi4s9Bu8GF9
+         PV4SLTIvdCfDyZwNZ7qIUs4mz9iEJsV1SYRRuUANu16UnF0GMrvFj3C2hCX9A3cax4cp
+         Lwsd2IlIKxODAPc7lq6NaFrQAu1eaQJZCqIZqRqjk/iyShLNF52E4SJWEon+uabAs18e
+         q8Vail+o3BXgoS96H19OpHPMHPpE33GlkQKFhiV0diA4U8RxbDgte6DAV+PsiSobvfky
+         4Azw==
+X-Forwarded-Encrypted: i=1; AJvYcCUWsNYR7JsHJ0zVsUy6cUZmdovQH8omeNxULJZEz9vh2KhzvPFAQ3q7Zc0TXEzFrL/ypN+mo5rpL2U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yykffqe9D8m4CQDzn6IGnJUFFEJLeOdMNjmgmQwoGA2ac1XuUNj
+	h3BIh6VW8YGBexkX+fUUf8BgvmPHY7F+A3MqwkIkuMA5Cs70gsXFv8Yeqmsc9nMEWeLpbbuee++
+	MiF+5jiNa4wBKZf8im/FUoVSW4biR8JApeZ3CmDBtaQuR7jL+y4z3nwiJsWNnkpc=
+X-Gm-Gg: AY/fxX5AqS0e3DNz3lG19bTcyL+2p6PP9Kgv3amELFPaLL+zkYZdpkNrl4N+HO6J+Wu
+	mWDW5lwhApKUeHkSCUocKv7MLIJBWm7tAiqhK1ISEv1c0IFRR/mwKB0sNswv5shIE4C2UmyCNLk
+	opiNGBjN+KyMsIuat3gJ7Iv6Ahzm2u/tkPMipfL4oDEF0bnGQ7ns8cYJRPzcXh4PYkKxApWMATG
+	797HKh+yuExrUUT9RGzFWASAHL1ejwPysDjFnuPZRKgA9VnNW0nehQRPIdIxp4hFvX4XEJYJkJ2
+	wMEpUMTNiS4oRT7f4+ygIZz3AHHDt6D7udD2sDQDg+mVn++wNO9Y6jm/bSEn59+iGB04WC7Z50H
+	yyOsji5IMjz8fZx424WDt
+X-Received: by 2002:a05:622a:198b:b0:4ee:2074:4b6e with SMTP id d75a77b69052e-4f4abd8cc2amr520843891cf.45.1767293741749;
+        Thu, 01 Jan 2026 10:55:41 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHMAbbN36NDUCpPhQ3JWoVexrYcy5eDxCWj72SmBlpn3w+//Rky11IVt9UffX5P4zBC9TQvFQ==
+X-Received: by 2002:a05:622a:198b:b0:4ee:2074:4b6e with SMTP id d75a77b69052e-4f4abd8cc2amr520843631cf.45.1767293741267;
+        Thu, 01 Jan 2026 10:55:41 -0800 (PST)
+Received: from oss.qualcomm.com ([86.121.7.10])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4324ea82f6asm82585080f8f.27.2026.01.01.10.55.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 01 Jan 2026 10:55:40 -0800 (PST)
+Date: Thu, 1 Jan 2026 20:55:37 +0200
+From: Abel Vesa <abel.vesa@oss.qualcomm.com>
+To: Taniya Das <taniya.das@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Rajendra Nayak <quic_rjendra@quicinc.com>,
+        Abel Vesa <abelvesa@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
+        Imran Shaik <imran.shaik@oss.qualcomm.com>,
+        Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Sibi Sankar <sibi.sankar@oss.qualcomm.com>,
+        Pradeep P V K <pradeep.pragallapati@oss.qualcomm.com>
+Subject: Re: [PATCH 3/3] arm64: dts: qcom: hamoa: Extend the gcc input clock
+ list
+Message-ID: <xoehtndy4et4axedhpeeqhpfph5jom4jqvl4mrt6obnv7azz73@53kxqndkysae>
+References: <20251230-ufs_symbol_clk-v1-0-47d46b24c087@oss.qualcomm.com>
+ <20251230-ufs_symbol_clk-v1-3-47d46b24c087@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -44,146 +109,38 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <17c27455-897d-4249-8206-88364230af7d@riscstar.com>
+In-Reply-To: <20251230-ufs_symbol_clk-v1-3-47d46b24c087@oss.qualcomm.com>
+X-Proofpoint-GUID: WB4_BelxKwqeiEUdKgNRZFSDJfk2FkW0
+X-Proofpoint-ORIG-GUID: WB4_BelxKwqeiEUdKgNRZFSDJfk2FkW0
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTAxMDE3MiBTYWx0ZWRfX0QlPj+Hu6AIN
+ Nw8yZrKTeEK6TUuIZr9jxfdJ4KYvu9RZ84s1SvPznH/FEIalWl+j9i2zuuHOLRI+bZmSIYT8WYV
+ tmF1IcB1AaxIRsgUGiIodBixpPxXW0yKnn1ZWmFQW0q/ksL3mbPRb153eg90dT/55D2KvwYGZnb
+ 97qYk+NrZbMSKfbhQgcdTtNZ+OZ2kOWUSwG4+i5mGYSNSTh0/CrAUVUbWl9P9lkcd18dEzcOijZ
+ xsLVX0HnU2jvtenIDGub/ND7bWf1hUZWSxCVnMlpjUbrc1xaFBADlsGBTIaArG1rQNbsQG5RwHP
+ nGYVgfVjxzIbp1s/mtwJD4ElhmdEpzpWbo6L/Cof1T4S0uO7TDcQMP2+mxAXvgWfyCfkmzPg6D5
+ RfMp4Uai+mmngv0IdWhy8d1R4jMt9FYbV3ccsb/+hc4TSnnZVk5dtEyBgKbDZqmzySY3lSY8b1S
+ QEgBhNcoqYWfYo5EdbA==
+X-Authority-Analysis: v=2.4 cv=ev7SD4pX c=1 sm=1 tr=0 ts=6956c32e cx=c_pps
+ a=50t2pK5VMbmlHzFWWp8p/g==:117 a=hZ5Vz02otkLiOpJ15TJmsQ==:17
+ a=kj9zAlcOel0A:10 a=vUbySO9Y5rIA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=q0JkR4NhiA7wQx93E64A:9
+ a=CjuIK1q_8ugA:10 a=IoWCM6iH3mJn3m4BftBB:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2026-01-01_07,2025-12-31_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 bulkscore=0 malwarescore=0 clxscore=1011 adultscore=0
+ phishscore=0 impostorscore=0 lowpriorityscore=0 spamscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2512120000 definitions=main-2601010172
 
-Hi Alex,
+On 25-12-30 23:08:36, Taniya Das wrote:
+> The recent dt-bindings were updated for the missing RX/TX symbol clocks
+> for UFS.
+> 
+> Extend the existing list to make sure the DT contains the expected
+> amount of 'clocks' entries.
+> 
+> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
 
-On 18:50 Mon 29 Dec     , Alex Elder wrote:
-> On 12/26/25 12:55 AM, Yixun Lan wrote:
-> > In order to prepare adding clock driver for new SoC, extract common
-> > ccu header file, so it can be shared by all drivers.
-> 
-> You are moving the definition of the SpacemiT CCU auxiliary
-> device structure, plus the to_spacemit_ccu_adev() function,
-> into a new header file.  
-yes, and this is explaining the code which I consider not necessary,
-it's more obvious to read the code..
-
-> The reason you're doing this is
-> because these two things are generic, but they're defined
-> in the K1 SoC-specific header file "k1-syscon.h".  So you
-> are creating a new header file for this purpose.
-> 
-right
-> These are things you should explain here, to help orient
-> reviewers and will inform anyone in the future looking at
-> commit history.
-I thought I've explained the goal/motivation already with above
-commit message, maybe I can improve it, so how about:
-
-In order to prepare adding clock driver for new K3 SoC, extract generic
-code to a separate common ccu header file, so they are not defined
-in K1 SoC-specific file, and then can be shared by all drivers.
-
-> 
-> > Also introduce a reset name macro, so it can be both used in clock
-> > and reset subsystem, explicitly to make them match each other.
-> 
-> This should go in a separate patch, and should change the
-> code to use the macro so it builds and continues to function
-> with the new change place.
->
-yes, I could do this in a separate patch
-
-> However I don't understand why you think it's necessary to
-> introduce the reset name macro.  Is it because you want to
-> incorporate an SoC identifier in the name?
-> 
-I've explained here:
-https://lore.kernel.org/r/20251231020951-GYA2019108@gentoo.org
-
-It's necessary to incorporate the SoC identifier which will help
-to differentiate K1 and K3 reset driver, otherwise there will be
-driver name collision, lead to reset driver probe failure while
-adding K3 SoC ..
-
-> Even if this is your reason, I still don't think you need
-> the macro.  I'll try to explain what I mean in the
-> next patch.
-> 
-If you still have concerns, and we can't reach certain agreement,
-then I could drop this macro in next version, leave this optimization
-to future patches, I don't want main clock driver delayed by it.
-
-I personally tend to keep the macro, but probably the naming need some
-improvement..
-
-> One more comment, below.
-> 
-> > Signed-off-by: Yixun Lan <dlan@gentoo.org>
-> > ---
-> >   include/soc/spacemit/ccu.h       | 21 +++++++++++++++++++++
-> >   include/soc/spacemit/k1-syscon.h | 13 +++----------
-> >   2 files changed, 24 insertions(+), 10 deletions(-)
-> > 
-> > diff --git a/include/soc/spacemit/ccu.h b/include/soc/spacemit/ccu.h
-> > new file mode 100644
-> > index 000000000000..84dcdecccc05
-> > --- /dev/null
-> > +++ b/include/soc/spacemit/ccu.h
-> > @@ -0,0 +1,21 @@
-> > +/* SPDX-License-Identifier: GPL-2.0-only */
-> > +
-> > +#ifndef __SOC_SPACEMIT_CCU_H__
-> > +#define __SOC_SPACEMIT_CCU_H__
-> > +
-> > +#include <linux/auxiliary_bus.h>
-> > +#include <linux/regmap.h>
-> > +
-> > +/* Auxiliary device used to represent a CCU reset controller */
-> > +struct spacemit_ccu_adev {
-> > +	struct auxiliary_device adev;
-> > +	struct regmap *regmap;
-> > +};
-> > +
-> > +static inline struct spacemit_ccu_adev *
-> > +to_spacemit_ccu_adev(struct auxiliary_device *adev)
-> > +{
-> > +	return container_of(adev, struct spacemit_ccu_adev, adev);
-> > +}
-> > +
-> > +#endif /* __SOC_SPACEMIT_CCU_H__ */
-> > diff --git a/include/soc/spacemit/k1-syscon.h b/include/soc/spacemit/k1-syscon.h
-> > index 354751562c55..13efa7a30853 100644
-> > --- a/include/soc/spacemit/k1-syscon.h
-> > +++ b/include/soc/spacemit/k1-syscon.h
-> > @@ -5,17 +5,10 @@
-> >   #ifndef __SOC_K1_SYSCON_H__
-> >   #define __SOC_K1_SYSCON_H__
-> >   
-> > -/* Auxiliary device used to represent a CCU reset controller */
-> > -struct spacemit_ccu_adev {
-> > -	struct auxiliary_device adev;
-> > -	struct regmap *regmap;
-> > -};
-> > +#include "ccu.h"
-> >   
-> > -static inline struct spacemit_ccu_adev *
-> > -to_spacemit_ccu_adev(struct auxiliary_device *adev)
-> > -{
-> > -	return container_of(adev, struct spacemit_ccu_adev, adev);
-> > -}
-> > +/* Reset name macro, should match in clock and reset */
-> > +#define _K_RST(_unit)			"k1-" #_unit "-reset"
-> 
-> The generic-sounding _K_RST() encodes "k1" in the name,
-> and it shouldn't.  Also, why do you use the underscore
-> prefix?
-> 
-want to make it slightly generic/short but still keep it local for K1 driver,
-and also avoid potential collision with other drivers in kernel code..
-
-or do you have any sugestion for better naming?
-> Anyway, I'll keep reading.
-> 
-> 					-Alex
-> 
-> >   
-> >   /* APBS register offset */
-> >   #define APBS_PLL1_SWCR1			0x100
-> > 
-> 
-> 
-
--- 
-Yixun Lan (dlan)
+Reviewed-by: Abel Vesa <abel.vesa@oss.qualcomm.com>
