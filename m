@@ -1,112 +1,152 @@
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 498A91D5151;
-	Fri,  2 Jan 2026 05:56:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68B4F2D3226;
+	Fri,  2 Jan 2026 07:55:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767333377; cv=none; b=rEJ3JVBwF+WGpP2jFpIrsmWfSH6i6/VX3udeC0YJyLLH+DeI16kjWRVy5Qnz1xZuAxmpf/XUd0M9jihAw9rncSbX3XywGhENsioIMi+KvdYxWP+tsaYd3InL2xH0hx1uC4I/XC6o8RogAsbPr6rSqy4OeohwJ72J23OpfJNQu8w=
+	t=1767340518; cv=none; b=nblQ8cYTLkXhiLIXE6PNZNl7uHXmSAHbhIeqpWc+LuIX+C+zpH/HsUsxU2dJC/8qdzSgtBTlVEu5zJdRkw3FWDGCjWq3nKcNrf6bm9Ms0TmLdSRm5pAasWx9nIcrgsp3D+Vu1eyj4cUajPc6QxfG7ZUNQHmKULhtdwk+ok7YL/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767333377; c=relaxed/simple;
-	bh=nA6PGmigAPbGVKKLm/HMfzwnFxHn5yXESTtLv9G3P7Y=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=ckgvrCyoSdWzoKc/5DPsaC+1bGnVTroIVjfT4auzCgBjfOvtPz+UeuLMlRvSRM5CtHuLnyF6Aypy9gdgKL0HcJUXVLIeEYOQ0osgRvm2bGpZ75xneIegzIjNf253WVudMNujJUCm7F3K1Cco/BfpHYTiT3q6vBQOKMsO3Fp8PBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=REGjHIWi; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+	s=arc-20240116; t=1767340518; c=relaxed/simple;
+	bh=pOnKyluOFkW2N+u900uU1w6ot1ZQJr+Jq/KOEnjgfZU=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:From:To:
+	 References:In-Reply-To; b=JvhYpiMdl/lo0POO69W3SiW2iq2x0nBJv13USsCUkGMJJyieQe0F9DRpFEmyDaIBZn0WEVZ6gDr5cMckl2ax4hcrIFKuQSp08+gqkAKRYP/lm+Z+XvHDBbxteg8gG+o/iCi/p7kutrn75cx1w9kuDPUgtQVK4uv6o6WX3NRPeEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NdgqqMWX; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="REGjHIWi"
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 6025u1GK1390066, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
-	t=1767333362; bh=nA6PGmigAPbGVKKLm/HMfzwnFxHn5yXESTtLv9G3P7Y=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:MIME-Version;
-	b=REGjHIWi5J01ErrmgPrStw+UcZrUuDcmQz4D0TferXroPFG0TjaIU5JTVHMROQbZM
-	 ylft83EtvcJtYuMFXxn0VWjSYteVNNwhixyVMjCGPs/3p5w1dBaeVZ9mPNuHixskR9
-	 7Yyj4vhl7owQ99pEuATQ+Nmjg2APx3qYw3LWF2mzRwpJIg/f8SgowsEQdzVZEy8wly
-	 H9aWTH47l+3c1F5U25fp+5DwqxhletV3s+d821JIlkSaUiPHucVDC/8HMaL8QtteGu
-	 8HDEJO3PhBsbTv0/KSo4E6NECQB+QmUtVcoAPtqU+MdPVRZDZmwqBmfVJ1G+49bJdL
-	 rzk4nWrQdUmIg==
-Received: from mail.realtek.com (rtkexhmbs04.realtek.com.tw[10.21.1.54])
-	by rtits2.realtek.com.tw (8.15.2/3.21/5.94) with ESMTPS id 6025u1GK1390066
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 2 Jan 2026 13:56:01 +0800
-Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
- RTKEXHMBS04.realtek.com.tw (10.21.1.54) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.10; Fri, 2 Jan 2026 13:56:02 +0800
-Received: from RTKEXHMBS06.realtek.com.tw ([fe80::4cbd:6c6c:b92b:3913]) by
- RTKEXHMBS06.realtek.com.tw ([fe80::4cbd:6c6c:b92b:3913%10]) with mapi id
- 15.02.1748.010; Fri, 2 Jan 2026 13:56:02 +0800
-From: =?utf-8?B?WXUtQ2h1biBMaW4gW+ael+elkOWQm10=?= <eleanor.lin@realtek.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@kernel.org"
-	<sboyd@kernel.org>,
-        "robh@kernel.org" <robh@kernel.org>,
-        "krzk+dt@kernel.org"
-	<krzk+dt@kernel.org>,
-        "conor+dt@kernel.org" <conor+dt@kernel.org>,
-        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
-        =?utf-8?B?RWRnYXIgTGVlIFvmnY7mib/oq61d?= <cylee12@realtek.com>,
-        =?utf-8?B?SnlhbiBDaG91IFvlkajoirflrold?= <jyanchou@realtek.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        =?utf-8?B?SmFtZXMgVGFpIFvmiLTlv5fls7Bd?= <james.tai@realtek.com>,
-        =?utf-8?B?Q1lfSHVhbmdb6buD6Ymm5pmPXQ==?= <cy.huang@realtek.com>,
-        =?utf-8?B?U3RhbmxleSBDaGFuZ1vmmIzogrLlvrdd?= <stanley_chang@realtek.com>
-Subject: RE: [PATCH 2/9] clk: realtek: Add basic reset support
-Thread-Topic: [PATCH 2/9] clk: realtek: Add basic reset support
-Thread-Index: AQHceJgv88dAdSPz/EqPk0F3y7OVFrU5lfYAgATRsHA=
-Date: Fri, 2 Jan 2026 05:56:02 +0000
-Message-ID: <44e84af7d4564cebab1ff285b74faf53@realtek.com>
-References: <20251229075313.27254-1-eleanor.lin@realtek.com>
- <20251229075313.27254-3-eleanor.lin@realtek.com>
- <20251230-impetuous-quizzical-locust-daffda@quoll>
-In-Reply-To: <20251230-impetuous-quizzical-locust-daffda@quoll>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NdgqqMWX"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F83AC116B1;
+	Fri,  2 Jan 2026 07:55:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1767340518;
+	bh=pOnKyluOFkW2N+u900uU1w6ot1ZQJr+Jq/KOEnjgfZU=;
+	h=Date:Subject:Cc:From:To:References:In-Reply-To:From;
+	b=NdgqqMWXvqkjNpDjD8aQSm+E5nZXDdEbJTJ1qQ5erI4m+6RsR4CQ32EKznn+4kSXV
+	 aY56PD7oxNvBUOr6ZUwhqe3nfj93uX+zsZrPsM2pR34X9GHZf31J5/Akb7ZHgR4UBK
+	 XTx8D2836y/iG0zXPKBArfeBjG0oBjuX9UkkLhOpxqRT2pJf7atCZA8xD2EWtRAXBx
+	 I/0VbIgMmSkNOoBe5H6StvBs6oZIEd9vqIK5US1EyifRP3D/WkpQYCa/Q57BDTWPzy
+	 MgYf8L4uXhj2N5DPwTPBpzmKxXoGdWPCF9+KMFCQ5oyya29ZLm/HcI/0nCu+BYm6j0
+	 QfueNXF+FND+A==
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
+Content-Type: multipart/signed;
+ boundary=1b07cf6eaa5d19226fd67d51c3e66b8bf06a0a75186b45da8bdf50e1e5cb;
+ micalg=pgp-sha384; protocol="application/pgp-signature"
+Date: Fri, 02 Jan 2026 08:55:13 +0100
+Message-Id: <DFDXXBFG13CK.385K2HM9FOWS6@kernel.org>
+Subject: Re: [PATCH v2 2/4] clk: keystone: don't cache clock rate
+Cc: "Frank Binns" <frank.binns@imgtec.com>, "Matt Coster"
+ <matt.coster@imgtec.com>, "Maarten Lankhorst"
+ <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
+ "Thomas Zimmermann" <tzimmermann@suse.de>, "David Airlie"
+ <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Rob Herring"
+ <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor
+ Dooley" <conor+dt@kernel.org>, "Vignesh Raghavendra" <vigneshr@ti.com>,
+ "Tero Kristo" <kristo@kernel.org>, "Andrew Davis" <afd@ti.com>, "Santosh
+ Shilimkar" <ssantosh@kernel.org>, "Michael Turquette"
+ <mturquette@baylibre.com>, "Stephen Boyd" <sboyd@kernel.org>, "Kevin
+ Hilman" <khilman@baylibre.com>, "Randolph Sapp" <rs@ti.com>,
+ <linux-clk@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+ <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <linux-arm-kernel@lists.infradead.org>
+From: "Michael Walle" <mwalle@kernel.org>
+To: "Nishanth Menon" <nm@ti.com>
+X-Mailer: aerc 0.20.0
+References: <20251223124729.2482877-1-mwalle@kernel.org>
+ <20251223124729.2482877-3-mwalle@kernel.org>
+ <20251230201233.n36d5fiensqyb6fc@splice>
+In-Reply-To: <20251230201233.n36d5fiensqyb6fc@splice>
 
-PiBPbiBNb24sIERlYyAyOSwgMjAyNSBhdCAwMzo1MzowNlBNICswODAwLCBZdS1DaHVuIExpbiB3
-cm90ZToNCj4gPiArDQo+ID4gK2ludCBydGtfcmVzZXRfY29udHJvbGxlcl9hZGQoc3RydWN0IGRl
-dmljZSAqZGV2LA0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgIHN0cnVjdCBydGtfcmVz
-ZXRfaW5pdGRhdGEgKmluaXRkYXRhKSB7DQo+ID4gKyAgICAgc3RydWN0IHJ0a19yZXNldF9kYXRh
-ICpkYXRhOw0KPiA+ICsNCj4gPiArICAgICBkYXRhID0gZGV2bV9remFsbG9jKGRldiwgc2l6ZW9m
-KCpkYXRhKSwgR0ZQX0tFUk5FTCk7DQo+ID4gKw0KPiANCj4gV2hhdCBzb3J0IG9mIGNvZGluZyBz
-dHlsZSBkbyB5b3UgdXNlPyBUaGVyZSBpcyBhYnNvbHV0ZWx5IG5ldmVyIGEgYmxhbmsgbGluZQ0K
-PiBiZXR3ZWVuIGt6YWxsb2MgYW5kIHRoZSBpZigpLg0KPiANCg0KV2lsbCByZW1vdmUgdGhlIGJs
-YW5rIGxpbmUuDQoNCj4gPiArICAgICBpZiAoIWRhdGEpDQo+ID4gKyAgICAgICAgICAgICByZXR1
-cm4gLUVOT01FTTsNCj4gPiArDQo+ID4gKyAgICAgZGF0YS0+ZGV2ID0gZGV2Ow0KPiA+ICsgICAg
-IGRhdGEtPm51bV9iYW5rcyA9IGluaXRkYXRhLT5udW1fYmFua3M7DQo+ID4gKyAgICAgZGF0YS0+
-YmFua3MgPSBpbml0ZGF0YS0+YmFua3M7DQo+ID4gKyAgICAgZGF0YS0+cmVnbWFwID0gaW5pdGRh
-dGEtPnJlZ21hcDsNCj4gPiArICAgICBkYXRhLT5yY2Rldi5vd25lciA9IFRISVNfTU9EVUxFOw0K
-PiANCj4gVEhJU19NT0RVTEU/IHNvIHdoaWNoIG1vZHVsZSBpcyBleGFjdGx5IHRoZSBvd25lciAt
-IGNsay1ydGsua28gb3IgYWN0dWFsDQo+IGRyaXZlcj8NCj4gDQo+IFRoaXMgZmVlbHMgYnVnZ3ks
-IGJ1dCBJIGRpZCBub3QgY2hlY2sgeW91ciBNYWtlZmlsZS4NCj4gDQoNClRoZSByZXNldCBzdXBw
-b3J0IGFuZCB0aGUgY2xvY2sgZHJpdmVyIGFyZSBkZXNpZ25lZCB0byBiZSBsaW5rZWQgdG9nZXRo
-ZXIgaW50bw0KYSBzaW5nbGUga2VybmVsIG1vZHVsZSAoY2xrLXJ0ay5rbykuIFRoZXJlZm9yZSwg
-VEhJU19NT0RVTEUgaXMgdGhlIGNvcnJlY3Qgb3duZXIuDQoNCj4gPiArICAgICBkYXRhLT5yY2Rl
-di5vcHMgPSAmcnRrX3Jlc2V0X29wczsNCj4gPiArICAgICBkYXRhLT5yY2Rldi5kZXYgPSBkZXY7
-DQo+ID4gKyAgICAgZGF0YS0+cmNkZXYub2Zfbm9kZSA9IGRldi0+b2Zfbm9kZTsNCj4gPiArICAg
-ICBkYXRhLT5yY2Rldi5ucl9yZXNldHMgPSBpbml0ZGF0YS0+bnVtX2JhbmtzICogMHgxMDA7DQo+
-ID4gKyAgICAgZGF0YS0+cmNkZXYub2ZfeGxhdGUgPSBydGtfb2ZfcmVzZXRfeGxhdGU7DQo+ID4g
-KyAgICAgZGF0YS0+cmNkZXYub2ZfcmVzZXRfbl9jZWxscyA9IDE7DQo+ID4gKw0KPiA+ICsgICAg
-IHJldHVybiBkZXZtX3Jlc2V0X2NvbnRyb2xsZXJfcmVnaXN0ZXIoZGV2LCAmZGF0YS0+cmNkZXYp
-OyB9DQo+ID4gK0VYUE9SVF9TWU1CT0xfR1BMKHJ0a19yZXNldF9jb250cm9sbGVyX2FkZCk7DQo+
-ID4gKw0KPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2Nsay9yZWFsdGVrL3Jlc2V0LmggYi9kcml2
-ZXJzL2Nsay9yZWFsdGVrL3Jlc2V0LmgNCj4gPiBuZXcgZmlsZSBtb2RlIDEwMDY0NCBpbmRleCAw
-MDAwMDAwMDAwMDAuLmNkNDQ2YjA5ODQyOQ0KPiA+IC0tLSAvZGV2L251bGwNCj4gPiArKysgYi9k
-cml2ZXJzL2Nsay9yZWFsdGVrL3Jlc2V0LmgNCj4gPiBAQCAtMCwwICsxLDM2IEBADQo+ID4gKy8q
-IFNQRFgtTGljZW5zZS1JZGVudGlmaWVyOiBHUEwtMi4wLW9ubHkgKi8NCj4gPiArLyoNCj4gPiAr
-ICogQ29weXJpZ2h0IChDKSAyMDE5IFJlYWx0ZWsgU2VtaWNvbmR1Y3RvciBDb3Jwb3JhdGlvbg0K
-PiANCj4gQWgsIHNvIHRoYXQncyB3aHkgeW91IHNlbnQgcHJvYmUoKSBmcm9tIH4xMCB5ZWFycyBh
-Z28uLi4NCj4gDQo+IEJlc3QgcmVnYXJkcywNCj4gS3J6eXN6dG9mDQoNCg==
+--1b07cf6eaa5d19226fd67d51c3e66b8bf06a0a75186b45da8bdf50e1e5cb
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+
+On Tue Dec 30, 2025 at 9:12 PM CET, Nishanth Menon wrote:
+> On 13:47-20251223, Michael Walle wrote:
+>> The TISCI firmware will return 0 if the clock or consumer is not
+>> enabled although there is a stored value in the firmware. IOW a call to
+>> set rate will work but at get rate will always return 0 if the clock is
+>> disabled.
+>> The clk framework will try to cache the clock rate when it's requested
+>> by a consumer. If the clock or consumer is not enabled at that point,
+>> the cached value is 0, which is wrong. Thus, disable the cache
+>> altogether.
+>>=20
+>> Signed-off-by: Michael Walle <mwalle@kernel.org>
+>> Reviewed-by: Kevin Hilman <khilman@baylibre.com>
+>> Reviewed-by: Randolph Sapp <rs@ti.com>
+>> ---
+>>  drivers/clk/keystone/sci-clk.c | 8 ++++++++
+>>  1 file changed, 8 insertions(+)
+>>=20
+>> diff --git a/drivers/clk/keystone/sci-clk.c b/drivers/clk/keystone/sci-c=
+lk.c
+>> index 9d5071223f4c..0a1565fdbb3b 100644
+>> --- a/drivers/clk/keystone/sci-clk.c
+>> +++ b/drivers/clk/keystone/sci-clk.c
+>> @@ -333,6 +333,14 @@ static int _sci_clk_build(struct sci_clk_provider *=
+provider,
+>> =20
+>>  	init.ops =3D &sci_clk_ops;
+>>  	init.num_parents =3D sci_clk->num_parents;
+>> +
+>> +	/*
+>> +	 * A clock rate query to the SCI firmware will return 0 if either the
+>> +	 * clock itself is disabled or the attached device/consumer is disable=
+d.
+>> +	 * This makes it inherently unsuitable for the caching of the clk
+>> +	 * framework.
+>> +	 */
+>> +	init.flags =3D CLK_GET_RATE_NOCACHE;
+>>  	sci_clk->hw.init =3D &init;
+>> =20
+>>  	ret =3D devm_clk_hw_register(provider->dev, &sci_clk->hw);
+>> --=20
+>> 2.47.3
+>>=20
+>
+> Reviewed-by: Nishanth Menon <nm@ti.com>
+>
+> I wish there was a better scheme, but inherently, just like SCMI and
+> other systems where power management co-processor controls clocks, there
+> is no real feasible caching scheme I can think of. I wonder if Stephen
+> or others have a thought on this?
+>
+> That said, I wonder if we need fixes tag to this? I am sure there are
+> other clocks susceptible to this as well. I wonder if
+> commit 3c13933c6033 ("clk: keystone: sci-clk: add support for
+> dynamically probing clocks") is the appropriate tag?
+
+From my previous versions of this patch:
+
+> Regarding a Fixes: tag. I didn't include one because it might have a
+> slight performance impact because the firmware has to be queried
+> every time now and it doesn't have been a problem for now. OTOH I've
+> enabled tracing during boot and there were just a handful
+> clock_{get/set}_rate() calls.
+
+I'm still undecided if this needs a Fixes tag or not. Strictly
+speaking it would need one. Although, I'm not sure it's the one
+you mentioned, because the culprit is the "we return 0 if the clock
+or it's consumer is disabled", which then caches the wrong value.
+So it is probably the very first commit b745c0794e2f ("clk:
+keystone: Add sci-clk driver support").
+
+-michael
+
+--1b07cf6eaa5d19226fd67d51c3e66b8bf06a0a75186b45da8bdf50e1e5cb
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iKgEABMJADAWIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCaVd54hIcbXdhbGxlQGtl
+cm5lbC5vcmcACgkQEic87j4CH/gcUQGAg2jdevhmzIo3MpxW/fmQhTzma7f+Pz6n
+47sV9LU70CQ37MlbGTA2td+AP2lBAewMAYCpZT5T5yRgVP3N00Tn5GVG4Ag10GUP
+WDnpYZrhnC6qDHRhIUdH2Nn1H0y4a99g1XY=
+=VIxe
+-----END PGP SIGNATURE-----
+
+--1b07cf6eaa5d19226fd67d51c3e66b8bf06a0a75186b45da8bdf50e1e5cb--
