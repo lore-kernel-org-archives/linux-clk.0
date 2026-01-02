@@ -1,108 +1,82 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 934431E5734;
-	Fri,  2 Jan 2026 21:43:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE2F726E6F0
+	for <linux-clk@vger.kernel.org>; Fri,  2 Jan 2026 21:57:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767390197; cv=none; b=dC1FCaqwCglzIEiyyGaAva8suE/dYEWRIBp+psHwTn5BjrMr12AqK/BoJgiDLtt+ON1NX6ZqMduQelXh1dMefqyXy4PpMYFUm7gKUZaGkiyfPV1IZpIFes9CaNg0jR6zaNWZrtguG+s91HzsbLqBtGBXnxNEa8yEDycz2aprY0w=
+	t=1767391076; cv=none; b=b6eNFjH5hBLRD748kZILKBMMapOFTOzMhpP4LpCZkzAbD0S++q0BU8BtGQcMvmzehKXsqTBudOQ/MK/pZB7f70W4whNZnv+zxIG/txhQoy7C+CMdNbHBRDHpobGipNg0IQqzliyJ4a/TWCDVdEQXCKdJMACVsU2o1bRkZtEHrOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767390197; c=relaxed/simple;
-	bh=Fw+n87duyCWC01lK5K2jFFX5rVfSDfVEdaklPH7wBhY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jxEQ6afs6dbI4smO1D2Eqzv0To0NHUZohwAH+D/UvYqiofqvxf30izrHQe5D3RLMiUm9fg5Ot2d7h1mf0DQVdmdyeoSfkBNOpe9QSeO8NoO9WLFrB+ghzwKxF7Pox6q0SF/yqFy+olbd4FXI42g91nIPUqsRIHz4Oq9WlIoEBKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VbYWheCb; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1767391076; c=relaxed/simple;
+	bh=fTs6oGgbwPQlKyYfk29PS4txtHAFR2mw78lr28VH2FI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CMcrpHj7lpI5jygvmeY5/+pQQaK1/B/hZDcyICJu7upkUKLQbIubMM5Su+Z5rWNuWhCFbdoJgYkzCkjML4y89UIPIiSNoMbusIJV0ULKe4UZaGEMSGHtkwyPYuy2RIZXX2Ku8zAjWzCOfNFU/LiO4PcrQjzZqL3YCyO0bKI5M+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t8sbqvwe; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VbYWheCb"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2E4EC116B1;
-	Fri,  2 Jan 2026 21:43:15 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t8sbqvwe"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B1D3C2BCAF
+	for <linux-clk@vger.kernel.org>; Fri,  2 Jan 2026 21:57:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1767390197;
-	bh=Fw+n87duyCWC01lK5K2jFFX5rVfSDfVEdaklPH7wBhY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VbYWheCbEJaftH7XdKLEv6KJpO8gDZ15tPFP1cYhFzfY0/Kg3SDNTo4X1bUU/skrn
-	 c+EPew1DA7meDcq19YyXeh0V2sbTmcte/T8otK2oAISivBal2xmLq/mca3KNb015V7
-	 lMZjij3sMPLOb+JxbGLYmLRaePkQyTwt3qwkrNmdfSgY5AssfKG/BEpw89wvmtFm97
-	 4JjedgwxCY8GeAjEFc36HYRC9ehJzFk6rSexdSGAY6hu2/nKnZKKzngW6oHdpgV7G6
-	 5oWYt+jtGrEWjRJFg8R6v1CFyJ861MCdrYtu5vG90kefWuNWUMr7TCVd4gVHAcNyW1
-	 KC4F4EPMYcoYQ==
-Date: Fri, 2 Jan 2026 15:43:14 -0600
-From: Bjorn Andersson <andersson@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
-	Taniya Das <taniya.das@oss.qualcomm.com>, Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	llvm@lists.linux.dev
-Subject: Re: [PATCH 1/2] clk: qcom: gcc-kaanapali: Fix double array
- initializer
-Message-ID: <ldcherld5hsyvgdzzoqvetcfleh7olj6zswc5qx5q3nntejbht@jhrgo4yitsva>
-References: <20251224112257.83874-3-krzysztof.kozlowski@oss.qualcomm.com>
- <j2qvtpdsak2z2l3o5ckpin7zun4wo3c5uc6jvutfdkfbqebfxa@zvbg6tmph7eg>
+	s=k20201202; t=1767391076;
+	bh=fTs6oGgbwPQlKyYfk29PS4txtHAFR2mw78lr28VH2FI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=t8sbqvwepuOROzW0vidBuOJL+fU1E5vAZxW8DnB7gIOQnWkIv0SlypFBTYM4SO+/D
+	 eP9hOTFX2tty3e3rXcN/LvXmzhlNXmwJcS+3r36YIz0mv6s6lCqkZbn2TG988ocsBd
+	 PEY/Ya185+Xusa8hjxkRkzwMy8milwl3cs/QJY9r5Rh7nJJasiy/+K9TRfER9JT/TF
+	 /162CKIGLuDTwXTI1MoqqyyO4l/+rtvytt732mn/Jjz5WIGu7juXFzQ5Z6KaCmtydx
+	 +t/ARZl86hb9fc2XH3LTeWyQd+WYmxmiILFOBvnap/ijVoz/WIMM22bqtfzUcnOkPW
+	 qKV/s5BecpDpA==
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-78fb5764382so94464327b3.0
+        for <linux-clk@vger.kernel.org>; Fri, 02 Jan 2026 13:57:56 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXtZfyU4zL1YbSn7iO34Oqmov+Fp6wjNC5JfOiJsCIUXaHmKnhImGDTPeKFAgQIjMM7fXIDDx2YcrQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzgLQFydjDVolcB8eQrwcrzS/W/t35OS68EVZ64rF1Z6/atI/6p
+	DCFOEv45fKDVUKk/IFJBU5IE3gRe+jspyrQBMtUQ7gMtm8ofS5dkRKoXXJutwUG5JJ6prq2ae/q
+	Uos4kHIUZ4dis2JL61f784IYC6HtVxrI=
+X-Google-Smtp-Source: AGHT+IFvit43PZt9CuDzKVz8Z4nOImtIM3mmQbkBxLTqEsYzLUfYqHgxNY5RM/1/uMvN5EeCL22OJeziENQQsOw38sI=
+X-Received: by 2002:a05:690c:6012:b0:78c:6854:2771 with SMTP id
+ 00721157ae682-78fb40291d2mr364053437b3.36.1767391075577; Fri, 02 Jan 2026
+ 13:57:55 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <j2qvtpdsak2z2l3o5ckpin7zun4wo3c5uc6jvutfdkfbqebfxa@zvbg6tmph7eg>
+References: <20251223-eyeq6lplus-v2-0-cd1fd21d182c@bootlin.com> <20251223-eyeq6lplus-v2-6-cd1fd21d182c@bootlin.com>
+In-Reply-To: <20251223-eyeq6lplus-v2-6-cd1fd21d182c@bootlin.com>
+From: Linus Walleij <linusw@kernel.org>
+Date: Fri, 2 Jan 2026 22:57:44 +0100
+X-Gmail-Original-Message-ID: <CAD++jLnBMXQAv75a8k=mbEt8pAxS0UXhayQPz1YWCiLic9_+ig@mail.gmail.com>
+X-Gm-Features: AQt7F2pVCJ5RIFpGUV8kYR4yF4m1vRENrYeYecI6n6ttv8lwmY7u2GpoB-2JCic
+Message-ID: <CAD++jLnBMXQAv75a8k=mbEt8pAxS0UXhayQPz1YWCiLic9_+ig@mail.gmail.com>
+Subject: Re: [PATCH v2 06/13] pinctrl: eyeq5: Add Mobileye EyeQ6Lplus OLB
+To: =?UTF-8?Q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>
+Cc: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
+	Gregory CLEMENT <gregory.clement@bootlin.com>, =?UTF-8?B?VGjDqW8gTGVicnVu?= <theo.lebrun@bootlin.com>, 
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+	Tawfik Bayouk <tawfik.bayouk@mobileye.com>, linux-mips@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jan 02, 2026 at 03:10:10PM -0600, Bjorn Andersson wrote:
-> On Wed, Dec 24, 2025 at 12:22:58PM +0100, Krzysztof Kozlowski wrote:
-> > [GCC_QMIP_VIDEO_VCODEC_AHB_CLK] element in clk_regmap array is already
-> > initialized, as reported by W=1 clang warning:
-> > 
-> >   gcc-kaanapali.c:3383:36: error: initializer overrides prior initialization of this subobject [-Werror,-Winitializer-overrides]
-> > 
-> > Fixes: d1919c375f21 ("clk: qcom: Add support for Global clock controller on Kaanapali")
-> > Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-> > 
-> > ---
-> > 
-> > Does anyone even build this code before sending it to upstream?
-> 
-> It hope the author does...but I of couse sanity check the result through
-> an allmodconfig build across a few different architectures before
-> pushing.
-> 
-> But it seems passing '--environment "W=1"' to tuxmake doesn't actually
-> enable these warnings :(
-> 
+Hi Benoit,
 
-Realized that W=1 should be passed as a build target, not through
-environment.
+thanks for your patch!
 
-Do you have any sensible post-processing tools/steps that you could
-share to make the output usable?
+On Tue, Dec 23, 2025 at 11:02=E2=80=AFAM Beno=C3=AEt Monin <benoit.monin@bo=
+otlin.com> wrote:
 
-Regards,
-Bjorn
+>  static const struct of_device_id eq5p_match_table[] =3D {
+>         { .compatible =3D "mobileye,eyeq5-olb", .data =3D &eq5p_eyeq5_dat=
+a },
+> +       { .compatible =3D "mobileye,eyeq6lplus-olb", .data =3D &eq5p_eyeq=
+6lplus_data },
 
-> Thanks for the report, and the fixes.
-> 
-> Regards,
-> Bjorn
-> 
-> > ---
-> >  drivers/clk/qcom/gcc-kaanapali.c | 1 -
-> >  1 file changed, 1 deletion(-)
-> > 
-> > diff --git a/drivers/clk/qcom/gcc-kaanapali.c b/drivers/clk/qcom/gcc-kaanapali.c
-> > index 182b152df14c..b9743284927d 100644
-> > --- a/drivers/clk/qcom/gcc-kaanapali.c
-> > +++ b/drivers/clk/qcom/gcc-kaanapali.c
-> > @@ -3380,7 +3380,6 @@ static struct clk_regmap *gcc_kaanapali_clocks[] = {
-> >  	[GCC_QMIP_VIDEO_CV_CPU_AHB_CLK] = &gcc_qmip_video_cv_cpu_ahb_clk.clkr,
-> >  	[GCC_QMIP_VIDEO_CVP_AHB_CLK] = &gcc_qmip_video_cvp_ahb_clk.clkr,
-> >  	[GCC_QMIP_VIDEO_V_CPU_AHB_CLK] = &gcc_qmip_video_v_cpu_ahb_clk.clkr,
-> > -	[GCC_QMIP_VIDEO_VCODEC_AHB_CLK] = &gcc_qmip_video_vcodec_ahb_clk.clkr,
-> >  };
-> >  
-> >  static struct gdsc *gcc_kaanapali_gdscs[] = {
-> > -- 
-> > 2.51.0
-> > 
+Which patch can I find this new binding in? Or is it already upstream?
+
+Yours,
+Linus Walleij
