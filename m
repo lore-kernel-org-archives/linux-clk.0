@@ -1,87 +1,87 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E39D2D8391
-	for <linux-clk@vger.kernel.org>; Fri,  2 Jan 2026 09:43:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD3671A9FBA
+	for <linux-clk@vger.kernel.org>; Fri,  2 Jan 2026 09:43:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767347032; cv=none; b=LUa/11QdyAbe3HyRGHvxKcTmAp8wYwdTsD1cFfiGUugg6sjilmVZ0Lni3dn2LV/Q8phnxG4+MeWdrEfXtFb5brUnU6WTAfnHNqi0fIR22aripsWPKgWL5ePOPbXwOpAF0Z5xUFmIR4jt1JItOh5rLZL0ybVbCaqPM+nT+QI7MX8=
+	t=1767347039; cv=none; b=WI0O1dXn0fQRNL5/EwVFh3rHviRvNt3ZMKcV2HqpesCMHI5AkF7MR+GdES4TF9N9XMbsjUDXLWl8CdTkWeS9iPfRQrwbfBhSXvxbQb1qt7sOmrDFw95pHt6gmP+Q/E1FUmvhdYaKw8YcH6o93QkCfWgWItFSKazI/tMofkTHcjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767347032; c=relaxed/simple;
-	bh=u7E+JsBFtSP2Aq79SX7r0MLZ8E+3lGXEhvVfek+8kDs=;
+	s=arc-20240116; t=1767347039; c=relaxed/simple;
+	bh=XOkRcbE8VNIcaH72U7IUKRFd2thHuZrA+nnkmZR8f54=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=JsrXdYtF7sfphvITTfncmOJqUy3kvjj4Uzl/PbubAs8cYAlapYS13TJBNleGrG6kcfYjUWXKnNpHRwolTy+q24z7nfOXMUecAPyP95lhXbziYxxJYSfLYoEp7Q5UrvoCAiaX14P4P0wHImgmdqLK3iEwKoWLxKXwnBJY5l37Jgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ZOXwlXQp; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=kMp9wCT+; arc=none smtp.client-ip=205.220.168.131
+	 In-Reply-To:To:Cc; b=hTNbu3ZtinchcG6F5imkiA+jrcRVQWq7VwN6eNuhTpdknEFxbLLTI9g3NwksiXKk+XMEh+Lq6wp48L9Fgyr7BvQ23YY7jWzt5s4tEHCdst8MwRzXWDkV9/N2h0g5GJ966vvBRAC/ruoA0ww1FhOzk8zpp0kM1Lnohi6lI2TMHBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=PxQnKX3V; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=FvZnHEu1; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ZOXwlXQp";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="kMp9wCT+"
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6029WcVV824913
-	for <linux-clk@vger.kernel.org>; Fri, 2 Jan 2026 09:43:50 GMT
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="PxQnKX3V";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="FvZnHEu1"
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6029Vxti637453
+	for <linux-clk@vger.kernel.org>; Fri, 2 Jan 2026 09:43:56 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	viTJoTt+fY6CVrcrdzVYmyIcj6URFL2FJNsEU07SeTA=; b=ZOXwlXQpzJkqmYIE
-	ZewEzVPQD7o8JJDY7VP2F1ponzpxQ9N7zF3H5xN6CEgz7ZX7FPi2IAPm1p9rpLJl
-	Ozy1Nr6AGhB5ONhm/1O7QVJPrO1EbuOBcEATd3U2ZHzd7NPkUbMoNtQUM4lGcaj3
-	Gnf7xgtt6AmUtd5BhM+31txCkMvpLRvjQ7TgnBNeJkdt3LJxH4ob5ozmKD1PFUw2
-	POLA7yWLbFDJxKquyUwRQUYTCjegj2u4KCSN47pO9/bNrbCipGkl4Rp9qKdyMeJV
-	27Wtfx66/LZ5ZgCe38Db/al/WE08i8eciX+lvSGfMgJnYZ86yHq5AHk1hZaIMCnb
-	hUajRg==
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4bd85331fk-1
+	VOB3/Mj6YEEp2iQxLvfoYJN8gYJUopTS6O2MzTLgi4U=; b=PxQnKX3VyQiRuG0G
+	nSnOLCfx5jkOruw24HWijrmFHmjdovTfpsWMRxbMIPK9khBflY0cGAT0q/C7cV3x
+	sCrIxLKagRfLnRtEccmzAO3t6/za9hdZ3v1RKy8VhY0dep4dyT7XKnINcCe0bfVj
+	6WNp9VwLnU+2/1h1to4i4NvhDMkIgwtmR797jgM3hkA/UqNWzfghV9EmU+vv8s5K
+	iafLOXC7lo8aEnKWzYczVkCSrdjttdwU+LBCLWjBlkjgOW1QBPbZrq1PzzQQsWfy
+	OW7Frw6Xptwux2I3I/3PzgAvSlXu7D4Z3zdliQAx2uQDXnDwLFnYbgB5InZ362U3
+	4ro4gg==
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com [209.85.216.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4bd3v8ufuw-1
 	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Fri, 02 Jan 2026 09:43:50 +0000 (GMT)
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-2a0b7eb0a56so290803485ad.1
-        for <linux-clk@vger.kernel.org>; Fri, 02 Jan 2026 01:43:50 -0800 (PST)
+	for <linux-clk@vger.kernel.org>; Fri, 02 Jan 2026 09:43:56 +0000 (GMT)
+Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-34c43f8ef9bso11167701a91.1
+        for <linux-clk@vger.kernel.org>; Fri, 02 Jan 2026 01:43:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1767347030; x=1767951830; darn=vger.kernel.org;
+        d=oss.qualcomm.com; s=google; t=1767347036; x=1767951836; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=viTJoTt+fY6CVrcrdzVYmyIcj6URFL2FJNsEU07SeTA=;
-        b=kMp9wCT+nl09A9T+Ui8BCHfGLOcxugyX+op/wvCePEAyCfR41sV9RWIji5LweTCk0N
-         hsVIZ46KhuS1qsmOlxHij6MKFsf1W16+24Z+TO1WY89xqY2yDcG6fQadlkNWe8VMGTXV
-         wilH6hsEPpWhDC+zJGrfFqtD4bW5lzsEuf4mboAvlLKsX7nmgxanGHWzP+7f/x6aaaM5
-         GlLkt/zdlVi8SIydrzp1/M2JWPKLjRuUnfMWZmlR8/h9fiaU5k+OaFVxyZeh5xpZbqNy
-         5zF9Q9kZRwWAy+ex39EC+zXohCisTBwyOBrZynzd0h/NYbSj5BNCgqe4A7MX9uiRibmH
-         4iFw==
+        bh=VOB3/Mj6YEEp2iQxLvfoYJN8gYJUopTS6O2MzTLgi4U=;
+        b=FvZnHEu1xZKOvP8N8hMNVQwN2G1PbpC5xI80J0oEeGcHoYQ2oY7PuV84hbhv6XKizX
+         8DfM1aLGWo19oMksjXzQrFEGRd7QK0T6iMEnhtwlT6ZF2rcHmudoqZ1LiXCQnfVMpU2W
+         ngVz8BZr9Zw8AUsfrDLA1nSkBd4AmSUR5uItMQY7vddPQHUw5QtBQgCe7WOlOd+fnNX0
+         JUnhWkrUPp38S3BProLIqW4KhHBOeotwmaqBtYNeKGCy6zGgy6L5h6jp7Q62jLQ33Esm
+         QLz1NVTZFrK4FsSSOCXFn95MgcakRZr0iNtdGMkpjhquWJCzT7iq6czQX3N61SjfeGD8
+         8vEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767347030; x=1767951830;
+        d=1e100.net; s=20230601; t=1767347036; x=1767951836;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=viTJoTt+fY6CVrcrdzVYmyIcj6URFL2FJNsEU07SeTA=;
-        b=X1umuHp8wE3V/D1A6jqI4zEl/x92lVEMuQc74FY+skU7/FS16xJ+h+njXkmiGZVY6r
-         U0IzqkfpV5yAqWhMlbRXTF9Us/wtmXJGVMdUFGaW6RswXHOjzS/zmsyblr1pre5kOhdZ
-         CWJX7+5f6tZMk39M4d3+0SStj+1ca35ZOdPlhZy9H53nILCEUNE/2SP6Y4OB5Ehy+wDS
-         w92PDKcMmpFHSCQHF3cTXWgBu75uxFSlY68mee/anBNgLyQZVb96Yju/1QjjhByNWcP6
-         mC1u3v1G5AnJE1jCopOJt0BvdBqsXkAOURf6FgUiUwZb0JQzn6wYGbJRjb+iiR4MUst2
-         VXZA==
-X-Forwarded-Encrypted: i=1; AJvYcCW0bZ58o8ZlFKdWV/UTqcHwmmH9w5C1ETAJ0PPgfKmZAHSbsbtGKxpZO+xFyrF0i1idp4VNcCkF1BA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHKeHeTgpNAXDfqr/6koxBz5OffSet2D9G3WfyhR0oy0UBhOVf
-	o52ovF5am5QNdKRDTWb1Rr/2qyJLSlPZ/icFb34ousewgOIcz0haNIUuqfdAV5hqanjaWeqK2Ca
-	HG3LEEslLY64ssLH71/3kpX+aRLf/Ezc2InrVxBX0/4g36Sff1I2UawmobBokRIg=
-X-Gm-Gg: AY/fxX5S4CcE8Qmlj7Iy73lgGR1ujyam+Db4B7kEaB/4/5RGqFGrYvY29iMqY6/lZ8D
-	YnjntGVfxovq3q8t4EKp171kiksSFw/CrjWLMmI2vVGtWMpruez0yFAhXLpRTE6eawCujkEBBZg
-	Jr4WTl1GpIp7MGAbohBrldgi9uVMPQxWq3YUy/iDJ5/HjfUIJQH0fKLSkdvZItZpOof1Fmlzamz
-	k4MZB6xExJRuHwfrdzLsXlkd0AtvqqamYDsuXYmd/d8lz8/bozKJlK2JfDSMxe7MGdfSB/B3uBr
-	AI5jCIE4AVTqDQjoHl8Geonwd3KytrLjDckdHDF5vseBpv/iIv3f1djYJ23ZPAhRELcZWl13rhw
-	AT7U5jGp/+mm3Hm0Gnt9Ilb5T08Gvs7ZrO/un1hgufRqV
-X-Received: by 2002:a17:902:e552:b0:2a0:8360:3a74 with SMTP id d9443c01a7336-2a2f2835cfdmr296990815ad.51.1767347029750;
-        Fri, 02 Jan 2026 01:43:49 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IG99w9kGvmU/akNsiKNiP9c9Yd1UyuMwX3o8fit0vRApV/y9Gq7EiMqWPo3SKK1au30ydlmww==
-X-Received: by 2002:a17:902:e552:b0:2a0:8360:3a74 with SMTP id d9443c01a7336-2a2f2835cfdmr296990465ad.51.1767347029272;
-        Fri, 02 Jan 2026 01:43:49 -0800 (PST)
+        bh=VOB3/Mj6YEEp2iQxLvfoYJN8gYJUopTS6O2MzTLgi4U=;
+        b=nnxbTm0hw1qMZn3Hdx8fffgXr6SoDX51kz67paAThPRiEKHLu56/Chvqa9LvCMz5OE
+         HEciqMmkIzVlPsuSLVJD9P6ooo61O4UJKmrBcq4ODbp6P5wdUkMhy8IUHaakZ3u0Atw9
+         FRIQF661D4Mgie8IF7CA6kfHIHTplvLW53A/Z5si055W3ZShmVZXJwjEDwC4SNQOEKRy
+         lJxksTBVe2mgntwcau1CbEUEqQf/9M96cco51MKE31tAZ+wInM035fqW1QuKRaro53ZP
+         qXJgfchJs1he35phjdjarnRO92i2nhRZpV3FqTE40CQOj36V1XHhM2AUP17px9iLMLv5
+         YOUA==
+X-Forwarded-Encrypted: i=1; AJvYcCVW4cvwVmaNDiyYxV5nqCO5KKh5nt+aB6aCIcWYwprv2EUKSd4qKkJi0Wlw+PAy1iuHjSr1ZNxQeNo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQa9E7/CBvWD3bqZgeIMC7dfI6lBH7YwYUMYEelvwsj6ZwOhCr
+	UmpiWxZdvMphnnaSa+uIrHelBz7RqA7huOwbO9oCoI3J0Gf6i9Safd6+Ckx57lbD16u09+DC2Nl
+	hnj0dddY4/Pxa9pe90GVfoMt1dKPUrhR/WELRn/PJEGZMt7ig3E7VSFNPifhPM40=
+X-Gm-Gg: AY/fxX7oJe7cIToxlGTC3hm/28vNuwXaxtbkDhuHx08SxBswiY/UsarIxY0OBtLr071
+	gug7JRF7At0vGgn46RrJToa+QeL8PgLovU7FkNYvyA0L3E23y/hDKjw6Ln7k7+GxbCuslaJCfwl
+	2gSAGqXbDA4iz/PIFD7VywFdTgcupJrWGNsuF6ho55Ml5cPL95MTa5j3CvIVouzWGsMmthUwk+V
+	/3UDYFcb+/sb7BVMFTnrHlPfC+FcwKQqs1iueRxs5OZQthqaWtWJC3auyxaFIBILVOhmxGm0adW
+	OggWJyzBinWFRYJSk52u1dubxVPOjuoC3sJxrVo5hPaUHQfrdjUDzXvzo58tvylcnhsqmIMBvc8
+	fpqy1srKufgvPvSIRQwiYSwypfXr5g0WmrthbvhGhE+7h
+X-Received: by 2002:a17:902:ce92:b0:295:99f0:6c65 with SMTP id d9443c01a7336-2a2cac808c8mr473754985ad.30.1767347035596;
+        Fri, 02 Jan 2026 01:43:55 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEke919yfCWNZoHyxZwMBFBZAVTXKnc3GjZ0LA3ZosF28wiOBSbRO02LbB0Gbt21fRWjNr44w==
+X-Received: by 2002:a17:902:ce92:b0:295:99f0:6c65 with SMTP id d9443c01a7336-2a2cac808c8mr473754745ad.30.1767347035105;
+        Fri, 02 Jan 2026 01:43:55 -0800 (PST)
 Received: from hu-krichai-hyd.qualcomm.com ([202.46.23.25])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2a2f3c66829sm376154255ad.10.2026.01.02.01.43.43
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2a2f3c66829sm376154255ad.10.2026.01.02.01.43.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 02 Jan 2026 01:43:49 -0800 (PST)
+        Fri, 02 Jan 2026 01:43:54 -0800 (PST)
 From: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-Date: Fri, 02 Jan 2026 15:13:05 +0530
-Subject: [PATCH 5/7] clk: qcom: gcc-qcs8300: Do not turn off PCIe GDSCs
+Date: Fri, 02 Jan 2026 15:13:06 +0530
+Subject: [PATCH 6/7] clk: qcom: gcc-x1e80100: Do not turn off PCIe GDSCs
  during gdsc_disable()
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -91,7 +91,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260102-pci_gdsc_fix-v1-5-b17ed3d175bc@oss.qualcomm.com>
+Message-Id: <20260102-pci_gdsc_fix-v1-6-b17ed3d175bc@oss.qualcomm.com>
 References: <20260102-pci_gdsc_fix-v1-0-b17ed3d175bc@oss.qualcomm.com>
 In-Reply-To: <20260102-pci_gdsc_fix-v1-0-b17ed3d175bc@oss.qualcomm.com>
 To: Bjorn Andersson <andersson@kernel.org>,
@@ -116,36 +116,36 @@ Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
         stable@vger.kernel.org
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1767346994; l=1437;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1767346994; l=2890;
  i=krishna.chundru@oss.qualcomm.com; s=20230907; h=from:subject:message-id;
- bh=u7E+JsBFtSP2Aq79SX7r0MLZ8E+3lGXEhvVfek+8kDs=;
- b=RJFKvTyOagR67CMBwF37mQF7o3oIncFgOLlUIkbsKuTa9uLUqkCjDQVXtCnQRYot8z0Vw3LTO
- xvzwJxCZF1pA2j3cEBmCY5mhEN0Fy1RWGLOdgMCpaT/qcRRz3z5m7cP
+ bh=XOkRcbE8VNIcaH72U7IUKRFd2thHuZrA+nnkmZR8f54=;
+ b=0lEpbA+NtXZaGfYZfqD7BMu6USHFAdGSoxKy6fsm8Qv5CX5UPMkw7AeRdMhwVUuKINcq+KX2V
+ 3Y7ItxyFdHBAV3D28EafXpNBRIZANTx7XWom0Hc4uuwcP5TDNbSu/JO
 X-Developer-Key: i=krishna.chundru@oss.qualcomm.com; a=ed25519;
  pk=10CL2pdAKFyzyOHbfSWHCD0X0my7CXxj8gJScmn1FAg=
-X-Proofpoint-GUID: OrOIFswNIm0Xn1RJqYbj0yzxdWLYSkzT
-X-Authority-Analysis: v=2.4 cv=fL80HJae c=1 sm=1 tr=0 ts=69579356 cx=c_pps
- a=IZJwPbhc+fLeJZngyXXI0A==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTAyMDA4NiBTYWx0ZWRfX0F5q1tkaphBT
+ tMekQVOMvI4VohPTTijePu0RGaq3uYv8k9Dd5iK1+95L7zjBC0WP7Bhq9pIs6B3rtxWCY7oUpa2
+ MTuzZsB9dsQ1VhQnjnnBtAKXUERpV6SbW2ykWHIuxAcwW/aVsQkXAtJVqiJ6v76dRzHACjj6Rtj
+ hyInYikVhbn2GF7ElxpB4em9GQLM2i9umyBYRXPdJAb4hqxbFdrDPPGWew2Cj2UsaGRLCTjrIPa
+ SK5teZoy2Nn9ZRITYoBUcpYXPcUZnlD/bk5vheT9nFV+Va5orPXQKGTiSir5FWFbsuabkNp6Pcc
+ QR0hBbDZf/xgRU/xn4nYlOhDKTChLgl4HjHYHC8c7KIHde7WqI2lMNXICaZCOExpiOEXobpUoCe
+ +0wYOjKeK2EL3/17LDgxTZR3d9WeUTtm8jEY8FZG/+ji1gZSh9iXZL/xWPTiILVeeeYscALJI0f
+ QW/VX/eSciTuLlNSrqw==
+X-Authority-Analysis: v=2.4 cv=JdOxbEKV c=1 sm=1 tr=0 ts=6957935c cx=c_pps
+ a=UNFcQwm+pnOIJct1K4W+Mw==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
  a=IkcTkHD0fZMA:10 a=vUbySO9Y5rIA:10 a=s4-Qcg_JpJYA:10
  a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
- a=ByFm4HHrRE6C6VNyrcUA:9 a=QEXdDO2ut3YA:10 a=uG9DUKGECoFWVXl0Dc02:22
-X-Proofpoint-ORIG-GUID: OrOIFswNIm0Xn1RJqYbj0yzxdWLYSkzT
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTAyMDA4NiBTYWx0ZWRfX5vmcPy7ZtvFm
- eRnbfZimButHL9B9gG/qJ7EdodAz/XBPYEZkiL98mkHhecZe9JYvkyY6PeYp2OyhzWtab4Lz2l3
- s1w5oHVLBSrndurO9ZlZbVltoLYAWyVjLnMTt3E+0v3y49BnOFL1QuVDke65N66OR5eclNXoW0e
- 1X7kNwtlJJFDvCzx84+hY1DilfzoyH8iMarLN2wFGG9Lly3fJy2h1EM7+zpjPWbAyt6gFx4M8+u
- URIuurBJOX+x6sKAHHEnKtLo8DhQBtji2+XHxptEA2H5ofrHs0tkIPgi/bo/BFIeokaxkWk+znU
- rCvRhGclnBScONdnru86gxvWihDYQRMdCbq8F/WbRJofjwf+AWdUODKmICp88RCS+nbco++eY9G
- kpf1hscRIed6LtIDn71MQ0gMoTWAhJ1gX7SIjmPvz4tUHdpIrQoOM7WrW6mftNA7zCHFTtwsaaa
- 0KZzK9DJxzYVbnpchFQ==
+ a=APsdKiKIpUGVn09es9MA:9 a=QEXdDO2ut3YA:10 a=uKXjsCUrEbL0IQVhDsJ9:22
+X-Proofpoint-GUID: 7A1lwctX-XfodsXzRgdMftMvAjasZ-k9
+X-Proofpoint-ORIG-GUID: 7A1lwctX-XfodsXzRgdMftMvAjasZ-k9
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
  definitions=2026-01-01_07,2025-12-31_01,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 malwarescore=0 lowpriorityscore=0 suspectscore=0
- priorityscore=1501 phishscore=0 spamscore=0 impostorscore=0 adultscore=0
- bulkscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.22.0-2512120000
+ suspectscore=0 spamscore=0 malwarescore=0 lowpriorityscore=0
+ priorityscore=1501 bulkscore=0 adultscore=0 phishscore=0 clxscore=1015
+ impostorscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2512120000
  definitions=main-2601020086
 
 With PWRSTS_OFF_ON, PCIe GDSCs are turned off during gdsc_disable(). This
@@ -157,33 +157,87 @@ during gdsc_disable() and allow the hardware to transition the GDSCs to
 retention when the parent domain enters low power state during system
 suspend.
 
-Fixes: 95eeb2ffce73 ("clk: qcom: Add support for Global Clock Controller on QCS8300")
+Fixes: 161b7c401f4b ("clk: qcom: Add Global Clock controller (GCC) driver for X1E80100")
 Cc: stable@vger.kernel.org
 Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
 ---
- drivers/clk/qcom/gcc-qcs8300.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/clk/qcom/gcc-x1e80100.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/clk/qcom/gcc-qcs8300.c b/drivers/clk/qcom/gcc-qcs8300.c
-index 80831c7dea3bcde0ced46054783df02b07a985db..009672b75fb9099cb0c6db7af3863654f2fa6648 100644
---- a/drivers/clk/qcom/gcc-qcs8300.c
-+++ b/drivers/clk/qcom/gcc-qcs8300.c
-@@ -3268,7 +3268,7 @@ static struct gdsc gcc_pcie_0_gdsc = {
+diff --git a/drivers/clk/qcom/gcc-x1e80100.c b/drivers/clk/qcom/gcc-x1e80100.c
+index e46e65e631513e315de2f663f3dab73e1eb70604..d659d988660ea5e548fcae6f9f2a9a25081e6dda 100644
+--- a/drivers/clk/qcom/gcc-x1e80100.c
++++ b/drivers/clk/qcom/gcc-x1e80100.c
+@@ -6490,7 +6490,7 @@ static struct gdsc gcc_pcie_0_tunnel_gdsc = {
  	.pd = {
- 		.name = "gcc_pcie_0_gdsc",
+ 		.name = "gcc_pcie_0_tunnel_gdsc",
  	},
 -	.pwrsts = PWRSTS_OFF_ON,
 +	.pwrsts = PWRSTS_RET_ON,
- 	.flags = VOTABLE | RETAIN_FF_ENABLE | POLL_CFG_GDSCR,
+ 	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE | VOTABLE,
  };
  
-@@ -3282,7 +3282,7 @@ static struct gdsc gcc_pcie_1_gdsc = {
+@@ -6502,7 +6502,7 @@ static struct gdsc gcc_pcie_1_tunnel_gdsc = {
  	.pd = {
- 		.name = "gcc_pcie_1_gdsc",
+ 		.name = "gcc_pcie_1_tunnel_gdsc",
  	},
 -	.pwrsts = PWRSTS_OFF_ON,
 +	.pwrsts = PWRSTS_RET_ON,
- 	.flags = VOTABLE | RETAIN_FF_ENABLE | POLL_CFG_GDSCR,
+ 	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE | VOTABLE,
+ };
+ 
+@@ -6514,7 +6514,7 @@ static struct gdsc gcc_pcie_2_tunnel_gdsc = {
+ 	.pd = {
+ 		.name = "gcc_pcie_2_tunnel_gdsc",
+ 	},
+-	.pwrsts = PWRSTS_OFF_ON,
++	.pwrsts = PWRSTS_RET_ON,
+ 	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE | VOTABLE,
+ };
+ 
+@@ -6526,7 +6526,7 @@ static struct gdsc gcc_pcie_3_gdsc = {
+ 	.pd = {
+ 		.name = "gcc_pcie_3_gdsc",
+ 	},
+-	.pwrsts = PWRSTS_OFF_ON,
++	.pwrsts = PWRSTS_RET_ON,
+ 	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE | VOTABLE,
+ };
+ 
+@@ -6550,7 +6550,7 @@ static struct gdsc gcc_pcie_4_gdsc = {
+ 	.pd = {
+ 		.name = "gcc_pcie_4_gdsc",
+ 	},
+-	.pwrsts = PWRSTS_OFF_ON,
++	.pwrsts = PWRSTS_RET_ON,
+ 	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE | VOTABLE,
+ };
+ 
+@@ -6574,7 +6574,7 @@ static struct gdsc gcc_pcie_5_gdsc = {
+ 	.pd = {
+ 		.name = "gcc_pcie_5_gdsc",
+ 	},
+-	.pwrsts = PWRSTS_OFF_ON,
++	.pwrsts = PWRSTS_RET_ON,
+ 	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE | VOTABLE,
+ };
+ 
+@@ -6610,7 +6610,7 @@ static struct gdsc gcc_pcie_6a_gdsc = {
+ 	.pd = {
+ 		.name = "gcc_pcie_6a_gdsc",
+ 	},
+-	.pwrsts = PWRSTS_OFF_ON,
++	.pwrsts = PWRSTS_RET_ON,
+ 	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE | VOTABLE,
+ };
+ 
+@@ -6622,7 +6622,7 @@ static struct gdsc gcc_pcie_6b_gdsc = {
+ 	.pd = {
+ 		.name = "gcc_pcie_6b_gdsc",
+ 	},
+-	.pwrsts = PWRSTS_OFF_ON,
++	.pwrsts = PWRSTS_RET_ON,
+ 	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE | VOTABLE,
  };
  
 
