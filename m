@@ -1,350 +1,185 @@
-Received: from CH4PR04CU002.outbound.protection.outlook.com (mail-northcentralusazon11013046.outbound.protection.outlook.com [40.107.201.46])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87D9F2D6E62;
-	Fri,  2 Jan 2026 08:55:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.201.46
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767344127; cv=fail; b=bZ0MFtVniH4hXKoFOnLgbgfL/hKJ4v2/dZ45IaujQvAS8RsOBXdd4v4srqmyc7il6FWpUI8WHvtG+hNOeH0BSCSRdUf4Q2G2Zbf9Ijejgt/5/V6AIYcSjYNpyd24Ckk7gFdoGsVDPCUvkNbxXE+OWaFx5L75nmOkDsOl6BtUEG8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767344127; c=relaxed/simple;
-	bh=21GWd8KfbZiY6gdA64kUybuxxFQHtAwlOxnxWD6iD3Q=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HLMgSmUH+XMtcnzgqDw6/MHge6tjMj5hITZiKZSQhXvlTnJK3kFTgdKNsLgwJfUDT7WeunJ0aEbkvesYTeFt9MuCJyfSn+IF/cRk1aPJt/ljHnmh7c+DwoOQHi8o8L5k/NOOv9CwQHtwb0tUSOMzOiRjYAMwd+gZ9TWmMjg41rA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=nT2HOoYz; arc=fail smtp.client-ip=40.107.201.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1551C214228
+	for <linux-clk@vger.kernel.org>; Fri,  2 Jan 2026 09:43:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1767347003; cv=none; b=dgsxdwm4KjZufyGrJLhs6bYli/U0BnwprjLwk5itOh/UyzET2ui6rzbGBAwmGSGyZmi04NVv7vHShUVDLFR5DXyGKxb5MBv3uLM2odfEiAhp+VJ1kiW8kxBs1dobm35TRkdT01qQi1hoL8Okmo65+y4Z/8HZbT+wNBUdq1VdAe4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1767347003; c=relaxed/simple;
+	bh=3qEjXTfpfPxJwNXPUcopGq7QMiHdWpFPIFbYzag/qgo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=QQcECnqCGKwn7t+gAE+gKiTGELdd8T2Yird9v7z+frhJk95BKIa9NFdDQ3Gj7Dyt60kUupqybyMJa60QF/Uls/To4sVLbMR0B4/ImFveBvvQPhpxL7WnLUUxqrCaR7KTsRGCgRTYoEC9yqqb+zDSqnvyTrFJ12yDv+T0KkbXZKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=idcYAhKG; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=VLGCuss8; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="nT2HOoYz"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=DYfi9D4WShgkPuvTkHdC98gioZ0NwcWfEIeNfGjy5JQrQPIRFZIjB7Gqr3HJv2jx3jJ3p8fbnLwT6D43D3aD7JpO12p70EU9laLhZ7cZHw+zTGbZUX6XaQksE+23XDmTvv3GeKySOlcGMFIyumcGDALP5NcESjzQcXzf6hvGRkDMSaHaursrX/8SRk0L0MKUVv8NfGA05sxpRY1uRr1vQtEpJcYpA+fo8FxrOzNM4vjetfh7Int7P42Jua5Wz9S6RXHouWYwHeeq4kM25SJEN5i/+0RtKyff7MpU0xfE2TILig3jcd11KsfnbBw7yc5io4X9TPxKsdlBF7t0ldC7dA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=FgxeFhQEmdQG8SiC1NxXcu8Ej/mmP9Gpsq8A155OxqE=;
- b=LlaZ53PqPqQAIqxPwZzkFjxYH4fpwB6dFQtgRpO+b9H5rPwt3mMs6U0z3nXrKh2La5enzohgQeO+29z7g4A/VeI/jbejON871FkrKBuoywdFgiBaFQxPXn5r45VGarWUBK96kRoYEqObPvAWK5E+OlehZKdw8I4iPF7ZKsBw5KZoHp9680oaG7V/bSkMO0BlPh8zOVL7MQMcfvdlrR6PBjS5jEsiboTGC0HskyFlv3QDRc34FQje2I8PE+OlPsU3MnoVBqw7MMDwCczNduj/PV62sq6Z5Jm3/MbV4xkvpSCxusj5H/thBJBOZwN4aMcSS+xNulMLqCKoOS22akvMIQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=baylibre.com smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FgxeFhQEmdQG8SiC1NxXcu8Ej/mmP9Gpsq8A155OxqE=;
- b=nT2HOoYz3nAjhQqzx4GC4Gld7ep/BoAoaGxHVxh/8xCy+v0Bn68A0hORdhnPgi+jWc2gPrE9XqCx7U+PMyAQrlcYXpbTlXHd4yTcVH1rpjRzTum6tNVNupOb8SBIiNmF/LYFuvtztRAC/8AkjLemXpglUQ3+GCWpHf3mlEd0d54=
-Received: from CH0P220CA0020.NAMP220.PROD.OUTLOOK.COM (2603:10b6:610:ef::33)
- by PH7PR12MB7892.namprd12.prod.outlook.com (2603:10b6:510:27e::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9478.4; Fri, 2 Jan
- 2026 08:55:20 +0000
-Received: from CH3PEPF00000013.namprd21.prod.outlook.com
- (2603:10b6:610:ef:cafe::64) by CH0P220CA0020.outlook.office365.com
- (2603:10b6:610:ef::33) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9478.4 via Frontend Transport; Fri, 2
- Jan 2026 08:55:00 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
-Received: from satlexmb07.amd.com (165.204.84.17) by
- CH3PEPF00000013.mail.protection.outlook.com (10.167.244.118) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9499.0 via Frontend Transport; Fri, 2 Jan 2026 08:55:20 +0000
-Received: from Satlexmb09.amd.com (10.181.42.218) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Fri, 2 Jan
- 2026 02:55:11 -0600
-Received: from satlexmb08.amd.com (10.181.42.217) by satlexmb09.amd.com
- (10.181.42.218) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Fri, 2 Jan
- 2026 00:55:11 -0800
-Received: from xhdsuragupt40.xilinx.com (10.180.168.240) by satlexmb08.amd.com
- (10.181.42.217) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
- Transport; Fri, 2 Jan 2026 02:55:08 -0600
-From: Suraj Gupta <suraj.gupta2@amd.com>
-To: <mturquette@baylibre.com>, <sboyd@kernel.org>,
-	<radhey.shyam.pandey@amd.com>, <andrew+netdev@lunn.ch>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <michal.simek@amd.com>
-CC: <sean.anderson@linux.dev>, <linux@armlinux.org.uk>,
-	<linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<netdev@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-Subject: [RFC PATCH 2/2] net: axienet: Fix resource release ordering
-Date: Fri, 2 Jan 2026 14:24:54 +0530
-Message-ID: <20260102085454.3439195-3-suraj.gupta2@amd.com>
-X-Mailer: git-send-email 2.49.1
-In-Reply-To: <20260102085454.3439195-1-suraj.gupta2@amd.com>
-References: <20260102085454.3439195-1-suraj.gupta2@amd.com>
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="idcYAhKG";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="VLGCuss8"
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6029WEem618058
+	for <linux-clk@vger.kernel.org>; Fri, 2 Jan 2026 09:43:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=RchF6Uw2hATAz7C5kI0Mo+
+	7CgNCiyMK9RKLhpwaAY7o=; b=idcYAhKGgqOKHhnlIIRAhfBu69fJf+zL4RmRFH
+	GucTjL/tXv88PdPWMyl4cSqoF5UdarwypuRqAVpYzw9RKrPDiiTKw8qHoUKLcg/x
+	ROKe80+3aWzUBMv6FoMNPr1omfWbvxbTwap9zotRvAbkRly7kQHCvkm8XSR8Uj3a
+	Xzc1KxOKgv/jtevIjW6SdYF2jw6LnOUf0tMRV5nG6Qq5wUwjWib/QrZqmALzsoZJ
+	MaDtu0WwIbr+LBH4rpVI1ikFnBqzl1TBFWqgpyLlLZp+mi4Kt/cONbBZi1lSkmJk
+	pPw5ma916E1waiqAoEa+FolKbRHjFnIR4WSs9+nVXeWbz+Gw==
+Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4beb4wr2dh-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Fri, 02 Jan 2026 09:43:21 +0000 (GMT)
+Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-2a0e952f153so405310615ad.0
+        for <linux-clk@vger.kernel.org>; Fri, 02 Jan 2026 01:43:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1767347000; x=1767951800; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=RchF6Uw2hATAz7C5kI0Mo+7CgNCiyMK9RKLhpwaAY7o=;
+        b=VLGCuss8+CPRAx1AN++SLmLvh2cXKjgr/f+4IP9EHDpuT9rMetVcMEmfWLqTXNZWt2
+         wiAWysGZT1aSN/2im6FYDI2LyPVVjNhF6UJQfS6rQZHjkgq9mPovAO+uubNoGJacQDVc
+         PHG75eBqUp8RHzV1a7MSDA7I4Gm/lhBZiJzoIBGn4Dq/mqQVK4r+CxE7nGevj/X7QGm0
+         +Y5cl99gF9edHmpBdk0zsjEyzPGbtMkxh60WRiVRBrFiHZfdzG51Bm7T+FshZ5LQXfwB
+         yFvzy8azAaF5y5gFFOHFDgH2vYgTbtRh8k7IX9g8kWYD4jKtVYFhU30vnBTLuPOBFOY1
+         qNWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1767347000; x=1767951800;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RchF6Uw2hATAz7C5kI0Mo+7CgNCiyMK9RKLhpwaAY7o=;
+        b=ruO27B/RZAezGm2w0Y03e2pDS56y7U+iQL9RWgig8PPXk/uMdn86ZwSSowfZlMZK0R
+         Lh1z2UrfGl53r5oW3+Fvkzq7/MtUMNos2jaqdAgCdWXwFsvxq9xbB9c36zdHDC3fGI/I
+         dKIxi8HNWsoE/YwelBUB/zy6NtqgD7swvJDVtudUIt5JVShKqou8waB0g4kZcvAKSwWZ
+         cmQyRMnStSUb7co/ldFkZWXqRQyWCf98kgIEdzY9d2S9A6yGJkgAgDFZ8Q6mD2gw8CKn
+         ZrgMBlIMMU72Euc4PdJYpy2diC2f3Nw+urtrmvFbD/WzFRWvcB83Txtb0EPOdfuQ/hRS
+         emDg==
+X-Forwarded-Encrypted: i=1; AJvYcCUUnziClXDgD97wdjTjwSAZXZ49IG1kbA41Yot2cqXFzDE27U1LLy8+whTaUeNKprtNnhgNhtJDo8c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyu/BZirs9dMSsZ/WdBGS/u4CEQFxqNuYbuHeW8T+Mk9nh45QYp
+	mnM7Dk/Hd9LcVW60btbtPJQJ4Dx1Wt58yxNh/3UYTHqlNokFuJxJISpTZbrhpSIHtWQkO8H6pJO
+	g77ytfRJjsLOn4UFT7xu1TBc99ku1CiPM9HwC1sHYfNzVAXXem7fREMv3/OSCp9c=
+X-Gm-Gg: AY/fxX4cr/GfXAilwCb3oYGciNDtQoQE+nkCH4EyXejNCPB/t24eKj0Md/Nt2um3viU
+	01M+W/JHkJgFnOAbu+AM6di2WM309uB1hvO1GFZ+xNnRpQ+RCgLKpqu9aAZpCQaxGpEHkoqNzEi
+	2gwqD0xPjlFIkCBhbALfwkzxxbtr26g7m2pkEBlZm15IFGOb+7F1zGJFICqKEqs8lTyT/JO3MB5
+	Ujc2nPiRM7ydmylzYy+vEmgJoh4HHGfVYM5p2HnCeC6qFkDYP4fd/SnnuPYfUGS4bvIPLyZmchn
+	U20Qzyc2iann0n9UpbqKGF0F9/74qtwBVLAuldN7OhW2YGSY/HdgUhzOsTJvRrEjk5NDv59y/oc
+	38h3y55vjYo0JXQgXfbp76vDjwzxFK/a43UhJSCzIYmVM
+X-Received: by 2002:a17:903:943:b0:29e:fd60:2cf9 with SMTP id d9443c01a7336-2a2f2a40096mr399639945ad.54.1767347000598;
+        Fri, 02 Jan 2026 01:43:20 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHakUz7/Chtf5vwSGXnO6GNAt32n4eUGOveiUOpdo4/CelbIlLvS3AGDpCpYc72c8Nzb3F/Ng==
+X-Received: by 2002:a17:903:943:b0:29e:fd60:2cf9 with SMTP id d9443c01a7336-2a2f2a40096mr399639735ad.54.1767347000102;
+        Fri, 02 Jan 2026 01:43:20 -0800 (PST)
+Received: from hu-krichai-hyd.qualcomm.com ([202.46.23.25])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2a2f3c66829sm376154255ad.10.2026.01.02.01.43.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 02 Jan 2026 01:43:19 -0800 (PST)
+From: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+Subject: [PATCH 0/7] clk: qcom: gcc: Do not turn off PCIe GDSCs during
+ gdsc_disable()
+Date: Fri, 02 Jan 2026 15:13:00 +0530
+Message-Id: <20260102-pci_gdsc_fix-v1-0-b17ed3d175bc@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PEPF00000013:EE_|PH7PR12MB7892:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0abf7fac-300f-45fa-4322-08de49dca877
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|36860700013|1800799024|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?0kXEgNxFlcK9bHczVUnEoRLzhKmegCFfFU4t9lfjpwfTmPBVyZLEg+R8p/0y?=
- =?us-ascii?Q?bn5qxT27237TLX5l5nlM4hZqC7ZEyDItZBWCE+I7O6uGZSW1IFZksZBCa3qd?=
- =?us-ascii?Q?YXgqf/tc2La+4dbEL7tVZKQCMaLmIBavhtcv5MtfyDKzuH728DhkMnI47nTd?=
- =?us-ascii?Q?9iZ87GqB64afjtXvBYmTZIQUhXbk5p/ZLlm3IoGfBpcJi4uH6aOGVatCkb34?=
- =?us-ascii?Q?CNNTuGxgfQU8idlzUzGAK3aQZ8FhFu707mUtpqVwHyD2npfnHzf7U+W+d26D?=
- =?us-ascii?Q?R/HK3UDlePICn6SZvsWhQ7OdXvYM+pS180OskIuqQpUzOnjCh0MivVi7k06C?=
- =?us-ascii?Q?VaOYOQ5qdNw0HZYqMFq6D8zgwgN0EzHsejItUrUohm6TDE9y1AhSVzAKTCt5?=
- =?us-ascii?Q?cDl9QIyKZv2zfKjxiCMTMbhM3IIGElHzscbkGwLfq2gTyC+5cd/YqvFQDNW6?=
- =?us-ascii?Q?YHc0Xa7DsGq7WFQgnhxii1hzjkiBqA3xxICD3p+nf9hOFensu6mye5z3FehS?=
- =?us-ascii?Q?KIoq/8VTt6uH/hET65qBRbe76tXiRjx507YW0GtflfyTYdw4ls2SBDUlXS7g?=
- =?us-ascii?Q?rw7me418Cd9denELZJJApabo648lFYToWnlf9P2ZJI2Ps91fgOOcABozB1bK?=
- =?us-ascii?Q?ThTM2+fh5lErMQxmMG/YFyPuzg2PEINsqVafCqJQapIefnoX2a3Uo2o9fl5o?=
- =?us-ascii?Q?YqfTup0o9McIehYWq4qR47+XOjVCBpb/rZ0LRqG/hNe6Znie9OJuC78aukwf?=
- =?us-ascii?Q?WnJHCjw0gDvOUC1ylxyf6b+t7B/HKYClPRBnomUB+qNED6x2NaV7JX+VvD7V?=
- =?us-ascii?Q?mMYgLv7jQM6fm1lTuGWe0MoWA4lQr63FGdLY7NbgMinNS03udVRB5+DK2Lpk?=
- =?us-ascii?Q?pqTYzb7tYXY3EcBojMFO11IRqtN6LjZTz/2ybcxYO9SxTz6mnFuX/JuLPmeb?=
- =?us-ascii?Q?wnMETWKzB08gdYFbkH4LvnwblJvWygFZCuVFwgL2i2oKe1Lczr+vIJsLkNk8?=
- =?us-ascii?Q?+cH7wIFl2gnY6LQo7WAoxIYZn3LuGM+PTg91G1OkrynGkYtQwgXKNT+xiZuu?=
- =?us-ascii?Q?rsIHIoekYpx90Ws29vOTe2SUvUETXKTjyhQwFXLFj+MNL8/CZ3TB729mVusB?=
- =?us-ascii?Q?LzVkw+f8jpKrmSSAg2xZYmMAi5ylmmUO4V1pvFuNUmYocWeCyEvBUi/0H8oI?=
- =?us-ascii?Q?z04fMFYnsmjTJbPFY7oQBIdbZn0bwGUG+WowDhVH+cvcVmextn2SPFVi2Wo+?=
- =?us-ascii?Q?pDCgyLntt0cwLTe0qsIQu1OIWH+P8S2eSZyuFoQeT/SliYYwUB0jwhG2uIEi?=
- =?us-ascii?Q?mDVuV5m/6RQDKod+obbGQ47nOHJyz93ni8XQF5oasdSq87Xr8QvXfwnYQYP2?=
- =?us-ascii?Q?HEhYJclcvteSiTf8Clfd47XTPtTimwOkeLUou2PkB3tuKH9vUHAOmRckt8Iv?=
- =?us-ascii?Q?aOeXFaf+izyw9lYlpnLjQ3m23uTod/RRWkC87WAa+Kuyt+rx1FR9qIeKMAb7?=
- =?us-ascii?Q?PLmS06I8LcKH+BKfq/kCHmYbd5vzKRWrp0jXR4dtOClJWRTTiF6kab2cMo6y?=
- =?us-ascii?Q?3p0b+0iNi8tjiBAdHDA=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(7416014)(36860700013)(1800799024)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Jan 2026 08:55:20.0887
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0abf7fac-300f-45fa-4322-08de49dca877
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH3PEPF00000013.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7892
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIACSTV2kC/x2MQQqAIBAAvyJ7TtANovpKhMS62l5MFCKQ/p50n
+ IGZBpWLcIVVNSh8S5UrdbCDAjqPFFmL7wxocDLWoM4kLvpKLsijradgZsRxQYSe5MJd/7ttf98
+ PAPwqll4AAAA=
+X-Change-ID: 20260102-pci_gdsc_fix-1dcf08223922
+To: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Taniya Das <quic_tdas@quicinc.com>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Bartosz Golaszewski <brgl@kernel.org>,
+        Shazad Hussain <quic_shazhuss@quicinc.com>,
+        Sibi Sankar <sibi.sankar@oss.qualcomm.com>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Melody Olvera <quic_molvera@quicinc.com>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Taniya Das <taniya.das@oss.qualcomm.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Imran Shaik <quic_imrashai@quicinc.com>,
+        Abel Vesa <abelvesa@kernel.org>, Abel Vesa <abelvesa@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Rajendra Nayak <quic_rjendra@quicinc.com>,
+        manivannan.sadhasivam@oss.qualcomm.com,
+        Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
+        stable@vger.kernel.org
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1767346994; l=1671;
+ i=krishna.chundru@oss.qualcomm.com; s=20230907; h=from:subject:message-id;
+ bh=3qEjXTfpfPxJwNXPUcopGq7QMiHdWpFPIFbYzag/qgo=;
+ b=6PABdqOqvWLT1nIpzSfHMDdCtk+Rx3dUt/cDgJO9P3KXmfY7W1J2n1Byu471uKCDHI1RMKtMZ
+ 7y6A9GG+PLHABEd5PsxY1gh0w/k0plzVMLekZnhsV+57rSV864U9WGr
+X-Developer-Key: i=krishna.chundru@oss.qualcomm.com; a=ed25519;
+ pk=10CL2pdAKFyzyOHbfSWHCD0X0my7CXxj8gJScmn1FAg=
+X-Proofpoint-ORIG-GUID: xJVyYSzp1zLMegFzTSifnYeKUwcDUyb-
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTAyMDA4NiBTYWx0ZWRfXwNM4eBTLidau
+ CQpK8qS+vvmOy3M2bVxzyr9tsEsNfqtiwcyFrCTGw3NSVDk5QIAyOBiNCINgUNzgzs2GHfTxnJd
+ P2mO5KBSJ1RPG9C1pQqTSS1TBE19hqj0oi21xbBOeE+u8UDD/gXlSGQizMLa18DkNrJyptQw+Ia
+ GYqsU3VzBRUSv8bKir94vei8fIevvW7DTOkvN50ZKRc2b1kSwWcExmUZBLjN5McCe/cJyQ7/0g+
+ S1zaIDhG9imIBvrQ4tetyHjywCgExfMeC4EaPfXjHv1oFlV9WtCbYhnxOsLpyOl1JEFd8gkCfRk
+ wY/I2P6njZbH+QtQ2MdB7f+r+2MKVbaIPDl67P+laJsZAxE2p0Cknewp9ZoY3VVBUKVJUGVTN9e
+ BgsXVCW9DFmHEubK5LWMJxYlywnOhrsCL3IGUsqoQBMb0wwAUyjwaSHeZ4OpXR/Mi8k+xR68+3f
+ 1LyGMum53adbmR4ncPQ==
+X-Authority-Analysis: v=2.4 cv=I5pohdgg c=1 sm=1 tr=0 ts=69579339 cx=c_pps
+ a=cmESyDAEBpBGqyK7t0alAg==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+ a=IkcTkHD0fZMA:10 a=vUbySO9Y5rIA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=zEZ2UId_wajk7SiTBasA:9
+ a=QEXdDO2ut3YA:10 a=1OuFwYUASf3TG4hYMiVC:22
+X-Proofpoint-GUID: xJVyYSzp1zLMegFzTSifnYeKUwcDUyb-
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2026-01-01_07,2025-12-31_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 clxscore=1011 priorityscore=1501 suspectscore=0
+ lowpriorityscore=0 malwarescore=0 spamscore=0 impostorscore=0 adultscore=0
+ phishscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2512120000
+ definitions=main-2601020086
 
-From: Sean Anderson <sean.anderson@linux.dev>
+With PWRSTS_OFF_ON, PCIe GDSCs are turned off during gdsc_disable(). This
+can happen during scenarios such as system suspend and breaks the resume
+of PCIe controllers from suspend.
 
-Device-managed resources are released after manually-managed resources.
-Therefore, once any manually-managed resource is acquired, all further
-resources must be manually-managed too.
+So use PWRSTS_RET_ON to indicate the GDSC driver to not turn off the GDSCs
+during gdsc_disable() and allow the hardware to transition the GDSCs to
+retention when the parent domain enters low power state during system
+suspend.
 
-Convert all resources before the MDIO bus is created into device-managed
-resources. In all cases but one there are already devm variants available.
-
-Fixes: 46aa27df8853 ("net: axienet: Use devm_* calls")
-Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
-Co-developed-by: Suraj Gupta <suraj.gupta2@amd.com>
-Signed-off-by: Suraj Gupta <suraj.gupta2@amd.com>
+Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
 ---
- .../net/ethernet/xilinx/xilinx_axienet_main.c | 83 ++++++-------------
- 1 file changed, 27 insertions(+), 56 deletions(-)
+Krishna Chaitanya Chundru (7):
+      clk: qcom: gcc-sc7280: Do not turn off PCIe GDSCs during gdsc_disable()
+      clk: qcom: gcc-sa8775p: Do not turn off PCIe GDSCs during gdsc_disable()
+      clk: qcom: gcc-sm8750: Do not turn off PCIe GDSCs during gdsc_disable()
+      clk: qcom: gcc-glymur: Do not turn off PCIe GDSCs during gdsc_disable()
+      clk: qcom: gcc-qcs8300: Do not turn off PCIe GDSCs during gdsc_disable()
+      clk: qcom: gcc-x1e80100: Do not turn off PCIe GDSCs during gdsc_disable()
+      clk: qcom: gcc-kaanapali: Do not turn off PCIe GDSCs during gdsc_disable()
 
-diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-index 284031fb2e2c..998bacd508b8 100644
---- a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-+++ b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-@@ -2787,7 +2787,7 @@ static int axienet_probe(struct platform_device *pdev)
- 	int addr_width = 32;
- 	u32 value;
- 
--	ndev = alloc_etherdev(sizeof(*lp));
-+	ndev = devm_alloc_etherdev(&pdev->dev, sizeof(*lp));
- 	if (!ndev)
- 		return -ENOMEM;
- 
-@@ -2815,41 +2815,32 @@ static int axienet_probe(struct platform_device *pdev)
- 	seqcount_mutex_init(&lp->hw_stats_seqcount, &lp->stats_lock);
- 	INIT_DEFERRABLE_WORK(&lp->stats_work, axienet_refresh_stats);
- 
--	lp->axi_clk = devm_clk_get_optional(&pdev->dev, "s_axi_lite_clk");
-+	lp->axi_clk = devm_clk_get_optional_enabled(&pdev->dev,
-+						    "s_axi_lite_clk");
- 	if (!lp->axi_clk) {
- 		/* For backward compatibility, if named AXI clock is not present,
- 		 * treat the first clock specified as the AXI clock.
- 		 */
--		lp->axi_clk = devm_clk_get_optional(&pdev->dev, NULL);
--	}
--	if (IS_ERR(lp->axi_clk)) {
--		ret = PTR_ERR(lp->axi_clk);
--		goto free_netdev;
--	}
--	ret = clk_prepare_enable(lp->axi_clk);
--	if (ret) {
--		dev_err(&pdev->dev, "Unable to enable AXI clock: %d\n", ret);
--		goto free_netdev;
-+		lp->axi_clk = devm_clk_get_optional_enabled(&pdev->dev, NULL);
- 	}
-+	if (IS_ERR(lp->axi_clk))
-+		return dev_err_probe(&pdev->dev, PTR_ERR(lp->axi_clk),
-+				     "could not get AXI clock\n");
- 
- 	lp->misc_clks[0].id = "axis_clk";
- 	lp->misc_clks[1].id = "ref_clk";
- 	lp->misc_clks[2].id = "mgt_clk";
- 
--	ret = devm_clk_bulk_get_optional(&pdev->dev, XAE_NUM_MISC_CLOCKS, lp->misc_clks);
--	if (ret)
--		goto cleanup_clk;
--
--	ret = clk_bulk_prepare_enable(XAE_NUM_MISC_CLOCKS, lp->misc_clks);
-+	ret = devm_clk_bulk_get_optional_enable(&pdev->dev, XAE_NUM_MISC_CLOCKS,
-+						lp->misc_clks);
- 	if (ret)
--		goto cleanup_clk;
-+		return dev_err_probe(&pdev->dev, ret,
-+				     "could not get/enable misc. clocks\n");
- 
- 	/* Map device registers */
- 	lp->regs = devm_platform_get_and_ioremap_resource(pdev, 0, &ethres);
--	if (IS_ERR(lp->regs)) {
--		ret = PTR_ERR(lp->regs);
--		goto cleanup_clk;
--	}
-+	if (IS_ERR(lp->regs))
-+		return PTR_ERR(lp->regs);
- 	lp->regs_start = ethres->start;
- 
- 	/* Setup checksum offload, but default to off if not specified */
-@@ -2918,19 +2909,17 @@ static int axienet_probe(struct platform_device *pdev)
- 			lp->phy_mode = PHY_INTERFACE_MODE_1000BASEX;
- 			break;
- 		default:
--			ret = -EINVAL;
--			goto cleanup_clk;
-+			return -EINVAL;
- 		}
- 	} else {
- 		ret = of_get_phy_mode(pdev->dev.of_node, &lp->phy_mode);
- 		if (ret)
--			goto cleanup_clk;
-+			return ret;
- 	}
- 	if (lp->switch_x_sgmii && lp->phy_mode != PHY_INTERFACE_MODE_SGMII &&
- 	    lp->phy_mode != PHY_INTERFACE_MODE_1000BASEX) {
- 		dev_err(&pdev->dev, "xlnx,switch-x-sgmii only supported with SGMII or 1000BaseX\n");
--		ret = -EINVAL;
--		goto cleanup_clk;
-+		return -EINVAL;
- 	}
- 
- 	if (!of_property_present(pdev->dev.of_node, "dmas")) {
-@@ -2945,7 +2934,7 @@ static int axienet_probe(struct platform_device *pdev)
- 				dev_err(&pdev->dev,
- 					"unable to get DMA resource\n");
- 				of_node_put(np);
--				goto cleanup_clk;
-+				return ret;
- 			}
- 			lp->dma_regs = devm_ioremap_resource(&pdev->dev,
- 							     &dmares);
-@@ -2962,19 +2951,17 @@ static int axienet_probe(struct platform_device *pdev)
- 		}
- 		if (IS_ERR(lp->dma_regs)) {
- 			dev_err(&pdev->dev, "could not map DMA regs\n");
--			ret = PTR_ERR(lp->dma_regs);
--			goto cleanup_clk;
-+			return PTR_ERR(lp->dma_regs);
- 		}
- 		if (lp->rx_irq <= 0 || lp->tx_irq <= 0) {
- 			dev_err(&pdev->dev, "could not determine irqs\n");
--			ret = -ENOMEM;
--			goto cleanup_clk;
-+			return -ENOMEM;
- 		}
- 
- 		/* Reset core now that clocks are enabled, prior to accessing MDIO */
- 		ret = __axienet_device_reset(lp);
- 		if (ret)
--			goto cleanup_clk;
-+			return ret;
- 
- 		/* Autodetect the need for 64-bit DMA pointers.
- 		 * When the IP is configured for a bus width bigger than 32 bits,
-@@ -3001,14 +2988,13 @@ static int axienet_probe(struct platform_device *pdev)
- 		}
- 		if (!IS_ENABLED(CONFIG_64BIT) && lp->features & XAE_FEATURE_DMA_64BIT) {
- 			dev_err(&pdev->dev, "64-bit addressable DMA is not compatible with 32-bit architecture\n");
--			ret = -EINVAL;
--			goto cleanup_clk;
-+			return -EINVAL;
- 		}
- 
- 		ret = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(addr_width));
- 		if (ret) {
- 			dev_err(&pdev->dev, "No suitable DMA available\n");
--			goto cleanup_clk;
-+			return ret;
- 		}
- 		netif_napi_add(ndev, &lp->napi_rx, axienet_rx_poll);
- 		netif_napi_add(ndev, &lp->napi_tx, axienet_tx_poll);
-@@ -3018,15 +3004,12 @@ static int axienet_probe(struct platform_device *pdev)
- 
- 		lp->eth_irq = platform_get_irq_optional(pdev, 0);
- 		if (lp->eth_irq < 0 && lp->eth_irq != -ENXIO) {
--			ret = lp->eth_irq;
--			goto cleanup_clk;
-+			return lp->eth_irq;
- 		}
- 		tx_chan = dma_request_chan(lp->dev, "tx_chan0");
--		if (IS_ERR(tx_chan)) {
--			ret = PTR_ERR(tx_chan);
--			dev_err_probe(lp->dev, ret, "No Ethernet DMA (TX) channel found\n");
--			goto cleanup_clk;
--		}
-+		if (IS_ERR(tx_chan))
-+			return dev_err_probe(lp->dev, PTR_ERR(tx_chan),
-+					     "No Ethernet DMA (TX) channel found\n");
- 
- 		cfg.reset = 1;
- 		/* As name says VDMA but it has support for DMA channel reset */
-@@ -3034,7 +3017,7 @@ static int axienet_probe(struct platform_device *pdev)
- 		if (ret < 0) {
- 			dev_err(&pdev->dev, "Reset channel failed\n");
- 			dma_release_channel(tx_chan);
--			goto cleanup_clk;
-+			return ret;
- 		}
- 
- 		dma_release_channel(tx_chan);
-@@ -3139,13 +3122,6 @@ static int axienet_probe(struct platform_device *pdev)
- 		put_device(&lp->pcs_phy->dev);
- 	if (lp->mii_bus)
- 		axienet_mdio_teardown(lp);
--cleanup_clk:
--	clk_bulk_disable_unprepare(XAE_NUM_MISC_CLOCKS, lp->misc_clks);
--	clk_disable_unprepare(lp->axi_clk);
--
--free_netdev:
--	free_netdev(ndev);
--
- 	return ret;
- }
- 
-@@ -3163,11 +3139,6 @@ static void axienet_remove(struct platform_device *pdev)
- 		put_device(&lp->pcs_phy->dev);
- 
- 	axienet_mdio_teardown(lp);
--
--	clk_bulk_disable_unprepare(XAE_NUM_MISC_CLOCKS, lp->misc_clks);
--	clk_disable_unprepare(lp->axi_clk);
--
--	free_netdev(ndev);
- }
- 
- static void axienet_shutdown(struct platform_device *pdev)
+ drivers/clk/qcom/gcc-glymur.c    | 16 ++++++++--------
+ drivers/clk/qcom/gcc-kaanapali.c |  2 +-
+ drivers/clk/qcom/gcc-qcs8300.c   |  4 ++--
+ drivers/clk/qcom/gcc-sa8775p.c   |  4 ++--
+ drivers/clk/qcom/gcc-sc7280.c    |  2 +-
+ drivers/clk/qcom/gcc-sm8750.c    |  2 +-
+ drivers/clk/qcom/gcc-x1e80100.c  | 16 ++++++++--------
+ 7 files changed, 23 insertions(+), 23 deletions(-)
+---
+base-commit: 98e506ee7d10390b527aeddee7bbeaf667129646
+change-id: 20260102-pci_gdsc_fix-1dcf08223922
+
+Best regards,
 -- 
-2.25.1
+Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
 
