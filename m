@@ -1,105 +1,102 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1541F1C69D
-	for <linux-clk@vger.kernel.org>; Sat,  3 Jan 2026 19:01:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3382823C50A;
+	Sat,  3 Jan 2026 22:00:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767466906; cv=none; b=mfRxdILn2IidR6Ex0HIpGGPFm0AwWhzMZxFdc/7b7+VWgbckOaH0tdbU8pZnC/8SzI4IHFlMZW3hy2WPAW7h4B6sMuv30CsKh029t3nSNwXgj9h0GpriqPsu5Ua1OOIKY4cD6BC/EOz/A/j/vgoIitVsEE/4/Q+caFYL2ogUFc4=
+	t=1767477612; cv=none; b=LVBf4RnqAuOmHmIrMlpC2xXotf4aKUxL/+4v9GzZW2h21LuOYxMrmsDWm89qQQvWOVobMEi/sn01Y63nshca7r1R5XpqyUm4XioIlMk5pHCx5icLgvj1hDjMlEQ3uW5EeO7PQPUgN/l+RQlf43M8Aov0jnMHtChQfg6g81vHzjE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767466906; c=relaxed/simple;
-	bh=a0WHpEQRu4csEQWT8GI5MyK6jG9oqi1WLmbV26JweCU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rPPEKQuw8aMcTnc2K9HwHQ1IJpVWwtP/+wlqQ3gdYi9MwkU4BHpxb1XS0be+sVtX+2UpAkP5pW1NEPkA85yevMbHWVngX+c6EXhX45le/jeobf6fDHQh/13CIkvl+0z6BPiJvNpQ306HwjOOQbvMfvxCTB3JBP1gUDugo5gJ4hk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rgqyhFrF; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rgqyhFrF"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE2FFC2BCAF
-	for <linux-clk@vger.kernel.org>; Sat,  3 Jan 2026 19:01:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1767466905;
-	bh=a0WHpEQRu4csEQWT8GI5MyK6jG9oqi1WLmbV26JweCU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=rgqyhFrFF0MvUgL4wtsfojC2r4dE++V8lRFqpC/T6Qty4d8BtieBmV/wtJ9Ep9Jgx
-	 1TyLgboK4yqkhqOV7ABGNbl1FRD3LqWMsKLcJ+Vi7uaDi9lpDLPGU/xNuZ98CmMwoF
-	 bxoFkSiDwWQg07BdMA9GhWG/52qR7LOvSq9O84koyWD5wyYlnU1MzS0q6UQbXdYxLL
-	 OBgeHkET2OLA/1VYCYeg0ojnIOu36eTaR45ki0eUQy0dINxQE6j0TLWt5myU2ITxIQ
-	 ci3kUMBvT569W6TmKzNGW3wTfkaNKqHP0YwNUpIiFMvJsdc7+jobANJqeDGLj7Y81g
-	 cJSNTz1Vkd7/g==
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-7904a401d5cso33586027b3.3
-        for <linux-clk@vger.kernel.org>; Sat, 03 Jan 2026 11:01:45 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUdarh3PH0Kw+2TGwtZrBghsPi87K6UBjy9hGGNLyIxJMLaz3iAi9Nb94lLswlyLo1ZqEZaAGwBMl0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxn6DnmLnHDaNfuOCVd8hTkLE9X0/6XXvnJfGVCdm8+5z4Dt7dU
-	d35t1dlbFopsBnomkSzYt1i5xTxK+Zv0pJy6nw42oYYt/yUwtaGrCeda+KyPuELMADTawNmYhg/
-	NQIueC5R6Ugm+QzrCB0qfi5J0ntwEj80=
-X-Google-Smtp-Source: AGHT+IHPR+FiigDgOrVHfu/QzSSoj0L27E99iL7Of0KlIPcheIALHeerHtk54K1ng7vvbQEGhJ9+qfx4s/y8haF8/vc=
-X-Received: by 2002:a05:690c:9c0a:b0:787:d1e7:e75b with SMTP id
- 00721157ae682-78fb40ae4e3mr287015967b3.64.1767466905216; Sat, 03 Jan 2026
- 11:01:45 -0800 (PST)
+	s=arc-20240116; t=1767477612; c=relaxed/simple;
+	bh=1qfvbOaJT1rI/jOnELZtoU2y2KY6/wZyQHSfEUZTTDI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GsN7T/cfHrxfTpVbdtdhSMzegBp2K9KV/jASxzBZlQiDRAfguH7J1MMauNAUq1hszosAs/UKcAymzQLC6+WDYNFg6TUAYOL4LqmFvXH+TgpHQpF0wdMz4UMfRZSWr06jmn4Y4LW4W0YHqu9Hi+w7Nu2K0ngXLO0MAwAullxzvXE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Received: from localhost (unknown [116.232.18.222])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dlan)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id 0ABC6341050;
+	Sat, 03 Jan 2026 22:00:09 +0000 (UTC)
+Date: Sun, 4 Jan 2026 06:00:05 +0800
+From: Yixun Lan <dlan@gentoo.org>
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Alex Elder <elder@riscstar.com>, Guodong Xu <guodong@riscstar.com>,
+	Inochi Amaoto <inochiama@gmail.com>, Yao Zi <me@ziyao.cc>,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev
+Subject: Re: [PATCH 2/2] reset: spacemit: fix auxiliary device id
+Message-ID: <20260103220005-GYA2070627@gentoo.org>
+References: <20251220-06-k1-clk-common-v1-0-df28a0a91621@gentoo.org>
+ <20251220-06-k1-clk-common-v1-2-df28a0a91621@gentoo.org>
+ <aUYMjAi8YIqValwb@pie>
+ <20251220025926-GYA1962618@gentoo.org>
+ <20251224114848-GYA1993014@gentoo.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251223-eyeq6lplus-v2-0-cd1fd21d182c@bootlin.com>
- <20251223-eyeq6lplus-v2-6-cd1fd21d182c@bootlin.com> <CAD++jLnBMXQAv75a8k=mbEt8pAxS0UXhayQPz1YWCiLic9_+ig@mail.gmail.com>
- <20260102230322.29d2ea65@windsurf> <CAD++jLkH3MK_GWE_HueDaRmM_xT4Ud3J6OXX_6X3XTD=fgn1sQ@mail.gmail.com>
-In-Reply-To: <CAD++jLkH3MK_GWE_HueDaRmM_xT4Ud3J6OXX_6X3XTD=fgn1sQ@mail.gmail.com>
-From: Linus Walleij <linusw@kernel.org>
-Date: Sat, 3 Jan 2026 20:01:34 +0100
-X-Gmail-Original-Message-ID: <CAD++jL=ibsk+dfet9hFaAi_r+UrBSdL3ixYabJsucKT09Kq4Mg@mail.gmail.com>
-X-Gm-Features: AQt7F2otcw52Tkucy1qvZOzI8mO5TZGFEGxDwvKQoVO1KXk8sqLIYa6Bur_06LI
-Message-ID: <CAD++jL=ibsk+dfet9hFaAi_r+UrBSdL3ixYabJsucKT09Kq4Mg@mail.gmail.com>
-Subject: Re: [PATCH v2 06/13] pinctrl: eyeq5: Add Mobileye EyeQ6Lplus OLB
-To: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Cc: =?UTF-8?Q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>, 
-	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
-	Gregory CLEMENT <gregory.clement@bootlin.com>, =?UTF-8?B?VGjDqW8gTGVicnVu?= <theo.lebrun@bootlin.com>, 
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Tawfik Bayouk <tawfik.bayouk@mobileye.com>, 
-	linux-mips@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-gpio@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251224114848-GYA1993014@gentoo.org>
 
-On Sat, Jan 3, 2026 at 7:59=E2=80=AFPM Linus Walleij <linusw@kernel.org> wr=
-ote:
-> On Fri, Jan 2, 2026 at 11:03=E2=80=AFPM Thomas Petazzoni
-> <thomas.petazzoni@bootlin.com> wrote:
-> > On Fri, 2 Jan 2026 22:57:44 +0100
-> > Linus Walleij <linusw@kernel.org> wrote:
-> >
-> > > On Tue, Dec 23, 2025 at 11:02=E2=80=AFAM Beno=C3=AEt Monin <benoit.mo=
-nin@bootlin.com> wrote:
-> > >
-> > > >  static const struct of_device_id eq5p_match_table[] =3D {
-> > > >         { .compatible =3D "mobileye,eyeq5-olb", .data =3D &eq5p_eye=
-q5_data },
-> > > > +       { .compatible =3D "mobileye,eyeq6lplus-olb", .data =3D &eq5=
-p_eyeq6lplus_data },
-> > >
-> > > Which patch can I find this new binding in? Or is it already upstream=
-?
-> >
-> > In the same series, PATCH 02/13:
-> >
-> >   https://lore.kernel.org/all/20251223-eyeq6lplus-v2-2-cd1fd21d182c@boo=
-tlin.com/
->
-> Aha OK.
->
-> Once I know 02/13 is ACKed and will be merged, maybe I can merge the pinc=
-trl
-> patches separately to the pinctrl tree? There doesn't seem to be any buil=
-d-time
-> dependency?
+Hi Philipp Zabel,
 
-...and seeing Rob has ACKed it, what about I just merge patches 5+6 so we
-get some traction in the patch set? These two patches look good to me.
+ I still need your opinion in order to know which direction I should
+go..
 
-Yours,
-Linus Walleij
+On 19:48 Wed 24 Dec     , Yixun Lan wrote:
+> Hi Philipp Zabel,
+> 
+> I'd like to see your preference for this issue, see my comment below
+> 
+> On 10:59 Sat 20 Dec     , Yixun Lan wrote:
+> > Hi Yao,
+> > 
+> > On 02:40 Sat 20 Dec     , Yao Zi wrote:
+> > > On Sat, Dec 20, 2025 at 09:11:20AM +0800, Yixun Lan wrote:
+> > > > Due to the auxiliary register procedure moved to ccu common module,
+> > > > the auxiliary device id need to be adjusted, otherwise reset driver
+> > > > will fail to probe.
+> > > 
+> > > Does it mean the reset driver fails to probe with only PATCH 1 in the
+> > > series applied? If so these two patches should probably be merged, or we
+> > > will get unfunctional commits.
+> > yes, it will fail with only patch 1
+> > 
+> > and no, I do not want to combine them together as they belong to
+> > different subsystem. it shouldn't be a problem if they are accepted in
+> > same merge window, or if people too picky to worry bisectable breakage,
+> > then I would ask reset/clock maintainer an ack instead to make it go
+> > via clock tree in one combined PR
+> > 
+..
+> I'd consider above approach is less optimal, would it ok if I create an
+> immutable tag for this single patch, and send it to you? so can be shared
+> by both clock and reset subsystem.. eventually reset driver should go via
+> reset tree, and I also know Guodong is working on new reset driver to
+> add support for incoming K3 SoC, which means potential conflicts or
+> extra dependency..
+> 
+see my above comment
+
+although I've updated this series[1] to v3, the problem still exist,
+for this refactoring work, taking this single patch[2] should be enough
+
+but for incoming K3 reset driver, a shared header file[3] also need to go
+with same approach.. as both clock and reset driver need it
+(we could postpone this for now, and take action once things really happen)
+
+[1] https://lore.kernel.org/spacemit/20260103-06-k1-clk-common-v3-0-6061d9f69eef@gentoo.org/
+[2] https://lore.kernel.org/spacemit/20260103-06-k1-clk-common-v3-4-6061d9f69eef@gentoo.org/
+[3] https://lore.kernel.org/spacemit/20260103-k3-clk-v4-4-4cccba2360f0@gentoo.org/
+
+-- 
+Yixun Lan (dlan)
