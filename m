@@ -1,88 +1,29 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAEF22749DC
-	for <linux-clk@vger.kernel.org>; Sat,  3 Jan 2026 05:57:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 373D223BD1B;
+	Sat,  3 Jan 2026 07:26:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767419853; cv=none; b=gU/Cj+UR2kt2HH1g43b5IkxoCE14VCrZk7RipUiR6tllknSX4cKbaR/BEN1HMr6FGiCGgdSSS8xjNGC7D+84jmeInAoRLCcJSeD57WLN92C9sLeU7Y+E24cnB3xlhG8n64lyCEvdSRJ3HgjdOKSfuOeZvI9W99SZmH7kPIMeZN8=
+	t=1767425209; cv=none; b=XgLQDNH25MZKU7K/TkCmhh6hTvqiYP+zxTQ7UjXbSe/PzV7mFWNRBwEGesvTrHNC8lV1OAfxS9SWcYwQKjNDNZtB5ly3k2RaX03rH48QEm2puyfMG4KsPd/oEwxos445f5RMrSyp768He1J5UYi0HscF2WdVH/2MygfgThaHBq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767419853; c=relaxed/simple;
-	bh=2pAbQ7vKfrqSqpvKuGBPoFyWbimAgVMkbmR4XRUDqZc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Jgy9WaLtM43Nbrd0gGG1RBAySlFrBJRIww4jiLj2KysPp2xRx8HiqPHwy5AB3J/2kdHNXnSJaesDjXMQYVILO883+cAm2EtgKntD00H3guxwHgx/a0Hyjm5p4Osk+Mp89mchqqgwsp414yWuN4m/AIUrtmPt/qS7mV2Qmhj/NOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ZggmQhCQ; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=NOlcxBaX; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ZggmQhCQ";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="NOlcxBaX"
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6033Qrn22793221
-	for <linux-clk@vger.kernel.org>; Sat, 3 Jan 2026 05:57:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	L2wPt/bh0eDEJhclxcj9TAW/aPcYy5+cyfmqyWSjfD0=; b=ZggmQhCQbkrPJS/C
-	804V7SE9FcYCV/aFIknFLRSE4v8Dt16X7M6cxB/Gq7rgVLpbVHJUGMjCBriLpjHU
-	Aqa6OeEeWE7IyyKHuCuwXX1p1lMEaiyXGbEhDuirLYxbz8AeTr3c0qX15tYSmVYZ
-	d1t5NhT18vM/KHdkaO7qrT7XN493F0faIUcpEbMutqQB3T64kEhv1f3IX74+Ll3o
-	q81JJ/iCF3IN66GXiIUwgVYQtB56phMAgV+ShjqXzeIUtVl+VGQMnLUW6t33Ljjb
-	yM78BA9SEnBf3qrI9ZzdBKyZEqz0ozlDzoyPziLxO6pJxtDBJaTzc28ZgSijaJR0
-	KByr0g==
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com [209.85.216.71])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4beu6t05c2-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Sat, 03 Jan 2026 05:57:31 +0000 (GMT)
-Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-34c5d6193daso25653513a91.1
-        for <linux-clk@vger.kernel.org>; Fri, 02 Jan 2026 21:57:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1767419850; x=1768024650; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=L2wPt/bh0eDEJhclxcj9TAW/aPcYy5+cyfmqyWSjfD0=;
-        b=NOlcxBaXmKwfj3rANUW7E43230Xp8D2XxkAwljpgDcP6PxDhJBcLKXK58vq65+eC9T
-         XeKsxHBZv9m7wAPBKVB2eL+aTsMETSC/Wsoqtc5N3gIrS0aHtanVnjWE/NmtnMEAR159
-         wFRNbeluFN4MudkRhgAYVXuufWSD3uQH9izYHbDbvJOMSCi3nC/3GEzZGoAcwegXwo+p
-         BUHIjxHCxcxpJgQQRhKZ2nZQ2IKye7B8qhEIj0MhNV8pGeulJoLfv23C5Bbr7hVEuaCQ
-         d5R+qwg48j5sn6liJc5DHArbpfcJJ8La/JOF5UEWHAFcoNUb3YJ6ih3zad+wPvUPpjhE
-         5rvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767419850; x=1768024650;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=L2wPt/bh0eDEJhclxcj9TAW/aPcYy5+cyfmqyWSjfD0=;
-        b=Z2Sd6l0slZ5sOP/RPfDsK6nW6phsX8LkSYXXak9B/f+8DnkzdHRmoHkHGRJmD92KHq
-         I3F9dsXFztps2HAGFMC6whjpysN/45u+MvD8wTtbFJufLsLzG7y2FtQc4Vjgow4qyDaC
-         lxvKHCSom5ujgsCFWBmDHE48cnnbfVvDBQ+A3B8fL3j5rxOGrnubiam9vb4nPFwTt53N
-         A3rNswP9+UyvR1ysRAK/4Wwi6Abcwztc4hq5CvFSbRwQyuYD4czpTU+3IA1oHU/LdP6u
-         b1Y1UbSGMpgBaKKEMbS1vkVz17IEmY1TwCqm0ccVJNTl8lGqnMgAZZeE3ZmDotXq1RkG
-         T0XQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVLRlzNfQ9b+ZBgNJQznh++NMBG0czd8yrjGHr2b3iK1AHwcnOumOI/8HRmGLFG/6TWpCnLADvSR+M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzbdRwUcbbF++qAXU49J5EuVTZ6D8dB68DNlBZ0lyzpTAfDrM/U
-	l8rpEpYxLEXZp0iGhqbMk72kiEAKpxcO/CW7jiTRoWIHlT4l330rkqQTxakzN+7BAW5B28sUMhV
-	ULD8t4niWoSPABpZEPoq8TJBdUFCNQOmAjUhhldK6zOzaJwv1bI1LawsN1b26/KQ=
-X-Gm-Gg: AY/fxX6R+Id57wrGo9hxU5R9WfOVbq8xRJmgSk/H3Yq5D1xvXs9x+zBK9643uVMLdPW
-	kVyHCFWTNu60ECE4hHTwmmNaOOQ1Kwr0QmSaG0jjd+oFUyQxUqjMY5rdUYv08U09LN1BcCXt8cJ
-	qL2qWmmKFS34Lnqa5dryWBoa8AbcSogQWbcAfPHG/wAHf5SwvPYfcQmqBCacTLNcwu0EFtnpkw/
-	8VEXyjPQgruLVNXKuB8d74S0swJsdLvyj000/WFSUX/MLO7R5xu+3BDFe/+edJZw9YB+Xtb3LW0
-	611UJXGcSFW2qBIV+JesAlUZZcq9tlinNRyoV/u0Ah+jvvoWUfSeoFulWiMiK9QL3hqB5ZI+B+7
-	OdkuheJI89jyGJidpjo2kyvmZ8Fi4WvYwAQ==
-X-Received: by 2002:a17:90b:2e08:b0:340:ad5e:ca with SMTP id 98e67ed59e1d1-34e92139e3amr39340758a91.12.1767419850095;
-        Fri, 02 Jan 2026 21:57:30 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEpcCg9fX+H0Pn+w+Tps8ZXvwhpB5foLwu3uwOPMtZE7QA+g21xkYFtg/YbNaZowr2UC0nDaw==
-X-Received: by 2002:a17:90b:2e08:b0:340:ad5e:ca with SMTP id 98e67ed59e1d1-34e92139e3amr39340751a91.12.1767419849639;
-        Fri, 02 Jan 2026 21:57:29 -0800 (PST)
-Received: from hu-tdas-hyd.qualcomm.com ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-34f475f1726sm754760a91.4.2026.01.02.21.57.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 02 Jan 2026 21:57:28 -0800 (PST)
-From: Taniya Das <taniya.das@oss.qualcomm.com>
-Date: Sat, 03 Jan 2026 11:27:07 +0530
-Subject: [PATCH v2 3/3] arm64: dts: qcom: hamoa: Extend the gcc input clock
- list
+	s=arc-20240116; t=1767425209; c=relaxed/simple;
+	bh=2UBPL2Yd1+yxV1XJdoGNsQHljb9tjz7tzWyKUEq7MBk=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=KZm3PvuFIYtN61ifUMXc3VG9Hww/Nss0FJu6ABKcDp0yG3byUpcAYzn/JjFeL53TEcxCZwE5zL6gjW6VoxfZz8gSaPXZdjpdFIp0dnj5GKsJMc/aAPVVgFQT1mxhSzhP6tRCXEiYWEazWDaXrOEJoZ2Ev9sZ9NVEeofRovItFaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Received: from [127.0.0.1] (unknown [116.232.18.222])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dlan)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id E96C7340FC1;
+	Sat, 03 Jan 2026 07:26:40 +0000 (UTC)
+From: Yixun Lan <dlan@gentoo.org>
+Subject: [PATCH v3 0/4] clk: spacemit: refactor common ccu driver
+Date: Sat, 03 Jan 2026 15:26:11 +0800
+Message-Id: <20260103-06-k1-clk-common-v3-0-6061d9f69eef@gentoo.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -91,81 +32,89 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260103-ufs_symbol_clk-v2-3-51828cc76236@oss.qualcomm.com>
-References: <20260103-ufs_symbol_clk-v2-0-51828cc76236@oss.qualcomm.com>
-In-Reply-To: <20260103-ufs_symbol_clk-v2-0-51828cc76236@oss.qualcomm.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Rajendra Nayak <quic_rjendra@quicinc.com>,
-        Abel Vesa <abelvesa@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Cc: Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
-        Imran Shaik <imran.shaik@oss.qualcomm.com>,
-        Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Sibi Sankar <sibi.sankar@oss.qualcomm.com>,
-        Pradeep P V K <pradeep.pragallapati@oss.qualcomm.com>,
-        Taniya Das <taniya.das@oss.qualcomm.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Abel Vesa <abel.vesa@oss.qualcomm.com>
-X-Mailer: b4 0.15-dev-aa3f6
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTAzMDA1MiBTYWx0ZWRfXxUjUET+UKvxz
- ZpfjQbmk/kQ2eyKv9aEwZrxg0YGjuBcTkmMw70ha3z5mLliLv+CPElqN3fdUDiEAD6AKQ0CYatu
- mYr+RtnPPRfyH1r77UE2w+KksJGggqS+JqlBJ3+6VcvWLxMteg3W3ruUBayua/ILp9ZbYdVpVpC
- SkKi2EPHnzHArt8nYJk6hJuavvcYKudM3vUgkf6g/UCHdWqb9kxcDdxVJcku+gAT1yybvH6c/9u
- kDAf+TTGKZq6P3Xal+ASKKPRCr3/QSoV+Uc/PSwfsaX8RMbbsvPUSgmFPdj5aBzpxWUKrUd5g/W
- gnPog+v5c6U9CiO4E7idO0rOciwC8bxy4Qmvl75/HIAdlyhwyHGunekyic6/Xgu7vCcls93BI46
- DKpc0UzR+gEbohDR+ChgdAsMb8NxFOGIeCz6ARSAb43oe/JNnK4/W/g4+ZjoHgM8HdLhBGfTFso
- UC2FHg4QHNAe9zcBjsw==
-X-Authority-Analysis: v=2.4 cv=HLbO14tv c=1 sm=1 tr=0 ts=6958afcb cx=c_pps
- a=UNFcQwm+pnOIJct1K4W+Mw==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
- a=IkcTkHD0fZMA:10 a=vUbySO9Y5rIA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=us8TmX896EGkFYs_XRIA:9
- a=QEXdDO2ut3YA:10 a=uKXjsCUrEbL0IQVhDsJ9:22
-X-Proofpoint-GUID: EnEBUeYD-B86c9oVkyKjzgA-u617STlN
-X-Proofpoint-ORIG-GUID: EnEBUeYD-B86c9oVkyKjzgA-u617STlN
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2026-01-02_04,2025-12-31_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 clxscore=1015 malwarescore=0 lowpriorityscore=0 impostorscore=0
- spamscore=0 priorityscore=1501 adultscore=0 phishscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2512120000 definitions=main-2601030052
+X-B4-Tracking: v=1; b=H4sIAJTEWGkC/23OwU7EIBAG4FdpODsNM9IW9rTvYTywlLZkF1Coj
+ WbTdxepB40e/0nm+/87yzY5m9mpubNkN5ddDCU8PjTMLDrMFtxYMiNOHRIOwHu4IpjbFUz0Pga
+ QI5puUKrjYmDl7SXZyb1X8un5yMm+vhV5PY7M25x1lU/Nt6s4kkTVCsHVQIDgQjSL016fZ6/dr
+ S1l7EtbXF5j+qh7N6zcQRD/O21D4DBOJDXXCnvC82zDGmMb01y1jX4K/T8CFYHkpVMC5UWM0y9
+ h3/dPXMw+SEEBAAA=
+X-Change-ID: 20251217-06-k1-clk-common-8d1c57995047
+To: Stephen Boyd <sboyd@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Alex Elder <elder@riscstar.com>, Guodong Xu <guodong@riscstar.com>, 
+ Inochi Amaoto <inochiama@gmail.com>, linux-kernel@vger.kernel.org, 
+ linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org, 
+ spacemit@lists.linux.dev, Yixun Lan <dlan@gentoo.org>, Yao Zi <me@ziyao.cc>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2288; i=dlan@gentoo.org;
+ h=from:subject:message-id; bh=2UBPL2Yd1+yxV1XJdoGNsQHljb9tjz7tzWyKUEq7MBk=;
+ b=owEB6QIW/ZANAwAKATGq6kdZTbvtAcsmYgBpWMSgZ6lZNd20/VmyN2CFgIClwQKAnNpSevaIR
+ JVJEjknD9GJAq8EAAEKAJkWIQS1urjJwxtxFWcCI9wxqupHWU277QUCaVjEoBsUgAAAAAAEAA5t
+ YW51MiwyLjUrMS4xMSwyLDJfFIAAAAAALgAoaXNzdWVyLWZwckBub3RhdGlvbnMub3BlbnBncC5
+ maWZ0aGhvcnNlbWFuLm5ldEI1QkFCOEM5QzMxQjcxMTU2NzAyMjNEQzMxQUFFQTQ3NTk0REJCRU
+ QACgkQMarqR1lNu+3VwRAAm0p9O+pUjjGDtkLvJfflAyKfliyq6r189UJNV9UCe9L2A/kvs8pg+
+ yiue77H9fhmQOfN5Z2ZyIhm2nEjwynB5UBIllXwy7pfxywS9riRRCW5l3UTZNFctJ8ivKJnun8V
+ tAf5AaT/XFvqAehJ2Qhdv7hmKW3rVQxX03onWMYiq891fyG3BTkO4GesWcafDiPoxcQQI8S5Ili
+ moN7ZUWt+HmgaiBkARsyHrqlWPWaqpgoVEgq+XIJZI2yMbogNC7EOY44eDWLn4qWezvpeX1O+X+
+ 33tJkqayEJD2parIsC67mZoVY5oRXOzhudJ+Rf0EK77ESvlUy6ZA+W8dDIvYprRQ60P8V4hRltf
+ VSVwUTTYx519UR4KqCZUSQLo7G79HSQxITepyv4CC1/wBh2IYT5gLoDS/5UPPBmweD6vlqNpj2X
+ PSZmtm2ixk9QbDk1eDN2qVSI3vnaURRASGg5FgDyD9oyWAAMg9hIeArk0yj5kf7zSuDYuFI6UCk
+ SrNPeACxnKIisDNnk3xNWarkt3B6ph8nHwRZc6l2Oc4eg90faPaxRoh+0pdBn9qlbj31/TyW2+i
+ LXaB1WPi1P8YCEE7ip8hrOHPqhNc1ZclsNtSlDGPYESX793LkP63vWzSSR8yEjWXxamVFREeSYc
+ 2VATG8HPTZ9/UZh7ksrvaSXIRMZtBI=
+X-Developer-Key: i=dlan@gentoo.org; a=openpgp;
+ fpr=50B03A1A5CBCD33576EF8CD7920C0DBCAABEFD55
 
-The recent dt-bindings were updated for the missing RX/TX symbol clocks
-for UFS.
+The goal here is to refactor the clock driver to extract common part, and
+reuse it, so in the future, we can maximize the source code usage once
+adding new clock driver (specifically, for the SpacemiT K3 SoC here)
 
-Extend the existing list to make sure the DT contains the expected
-amount of 'clocks' entries.
+Since reset driver register via auxiliary bus which requires a adjustment
+of the auxiliary device id accordingly.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Reviewed-by: Abel Vesa <abel.vesa@oss.qualcomm.com>
-Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
+This patch will depend on Kconfig fix for building modules [1], and the idea
+come from K3 clock's review[2]
+
+Please note, Patch 1 is needed for both clock and reset driver, so extract it
+out as single independent patch. Then it can be pulled into both subsystem.
+
+Link: https://lore.kernel.org/all/20251219012819.440972-1-inochiama@gmail.com/ [1]
+Link: https://lore.kernel.org/all/aTo8sCPpVM1o9PKX@pie [2]
+Signed-off-by: Yixun Lan <dlan@gentoo.org>
 ---
- arch/arm64/boot/dts/qcom/hamoa.dtsi | 3 +++
- 1 file changed, 3 insertions(+)
+Changes in v3:
+- drop reset macro, and have separate patch for changing reset name
+- extract common spacemit_ccu_probe(), leave SoC specific change out
+- improve commit message
+- Link to v2: https://lore.kernel.org/r/20251226-06-k1-clk-common-v2-0-28b59418b4df@gentoo.org
 
-diff --git a/arch/arm64/boot/dts/qcom/hamoa.dtsi b/arch/arm64/boot/dts/qcom/hamoa.dtsi
-index bb7c14d473c9c523e1501f9379ee7049c6287e96..21ab6ef61520695d977f9d741ce633cf537171ac 100644
---- a/arch/arm64/boot/dts/qcom/hamoa.dtsi
-+++ b/arch/arm64/boot/dts/qcom/hamoa.dtsi
-@@ -834,6 +834,9 @@ gcc: clock-controller@100000 {
- 				 <0>,
- 				 <0>,
- 				 <0>,
-+				 <0>,
-+				 <0>,
-+				 <0>,
- 				 <0>;
- 
- 			power-domains = <&rpmhpd RPMHPD_CX>;
+Changes in v2:
+- extract common header file which shared by clock and reset
+- add SoC namespace to differentiate reset for auxiliary bus
+- Link to v1: https://lore.kernel.org/r/20251220-06-k1-clk-common-v1-0-df28a0a91621@gentoo.org
 
+---
+Yixun Lan (4):
+      clk: spacemit: prepare common ccu header
+      clk: spacemit: extract common ccu functions
+      clk: spacemit: add platform SoC prefix to reset name
+      reset: spacemit: fix auxiliary device id
+
+ drivers/clk/spacemit/ccu-k1.c     | 191 +++-----------------------------------
+ drivers/clk/spacemit/ccu_common.c | 171 ++++++++++++++++++++++++++++++++++
+ drivers/clk/spacemit/ccu_common.h |  10 ++
+ drivers/reset/reset-spacemit.c    |   2 +-
+ include/soc/spacemit/ccu.h        |  21 +++++
+ include/soc/spacemit/k1-syscon.h  |  12 +--
+ 6 files changed, 215 insertions(+), 192 deletions(-)
+---
+base-commit: 99735a742f7e9a3e7f4cb6c58edf1b38101e7657
+change-id: 20251217-06-k1-clk-common-8d1c57995047
+prerequisite-message-id: 20251219012819.440972-1-inochiama@gmail.com
+prerequisite-patch-id: df430730ed961011cee5c5d47b7ace84b3c5ebb7
+prerequisite-patch-id: 64003618c33be925602e46b7543f2c13d3f36474
+
+Best regards,
 -- 
-2.34.1
+Yixun Lan
 
