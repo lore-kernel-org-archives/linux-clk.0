@@ -1,155 +1,124 @@
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6F33231A23;
-	Sun,  4 Jan 2026 21:37:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE51A231A23;
+	Sun,  4 Jan 2026 21:40:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767562676; cv=none; b=S5nzeIn5gB5kj3CBhcjicW4bl81fCumv3dCZ8L0QauGjbm+6YFDJl5TJ9k681omcnmRRi0TOHNP9O3asNIuWGjNMUzhV87IIrQ9iv0c4U4a3BtoYl/a8zKFEGnRB3awnyHJK5PSJWtrqCM5bvIBEop5KpANNaXJXDCsdWJFKhy4=
+	t=1767562824; cv=none; b=kyRl9J5w+cu61aXHUe2viRvvttbnfs417WKK5KVQVnb98i6pUz/Ok3NeOEoFCnkHFf1ozDvBvl/zrBN7paC0rXEynvr8EX00Ugw7yMBFfc6tZJBYprUjwzHFLQqevT4lAgnpl8Tl1P3Rm+4G0eAK8ON0i2QY6E3M7soXTYzJOTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767562676; c=relaxed/simple;
-	bh=KSzgjK4e+E6D70E4dpaEiZn8TsO6P7Yrhmq5G683Wsg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pWsO0S1EIPtLkPq5ix74b1Z3TOAQNiRbkLT5VkfMqegRfg2lSoF3ZDE2pkqTFnNuBJPYtQonqvMUQjHt42Yeli6VtMHxjNiJ6ijHsIbjPlkGYdE6tD9AZbdMfMXsFSqAqpdx/TlmQHO+4I5kBZ0LKELgRp1n92/Y+VEEgLVw0oU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=aTO66Wca; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=J7f/WaJS; arc=none smtp.client-ip=80.241.56.172
+	s=arc-20240116; t=1767562824; c=relaxed/simple;
+	bh=Gsnw34my1PvdRzpDMLFQBJTrOOnt4eNJvpKW7PiEFCA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HLGIqmlVEeVTNGNOjX9r4GzppF0SfbsdvhmGByh1zEhUPjfPoqDxi+vuggPyQ91NOfViAOeELAwpio+lWYS4Q5gDVw9IArzWQtT4oLMQNO43w8M1yxD0KhotS3g9G0NYox27QiOXKh5iL3aLcSDyGx4qGT0Vaotnm14ENVzoRpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=Msu6Gk2u; arc=none smtp.client-ip=80.241.56.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="aTO66Wca";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="J7f/WaJS"
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="Msu6Gk2u"
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4dkrPs397pz9tQk;
-	Sun,  4 Jan 2026 22:37:53 +0100 (CET)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4dkrSg0v8tz9ssn;
+	Sun,  4 Jan 2026 22:40:19 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1767562673;
+	t=1767562819;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=yBAOLlPWvQKPDIs4oNpFowTmGYJ0Aw9K3RVBoc5XL58=;
-	b=aTO66WcaO2ZLlVvq4JDA5p7yBXNrVyPdJrvbmt8f1NmePrda1TZXKMnUGiPwksOeCIN6Mg
-	vRbjDw3fGufGRD0m0wamyD9P3iHs6hbqX6DFb42jNk5P+9vM/mgNz54av+PUiTMYDx45ql
-	BaZOzUiwYm30b6TKtRmXYwskRo1PlK2aLNepYRnBsJIvwsUjIMSwjR1nGg9ZcGRlvTf4Q9
-	jLi09rrT159NORZkYK0t7nYTYB8mk3K6ZdpYTZ6IKSdlwfZxScZMMyHdsyxlKo64ohQi9w
-	3Emlc0Ons27WINVJ84jbP0Ggms9gI3qFKnLLbhl1cur2ML5lW7gtWObEmdjoOA==
-From: Marek Vasut <marek.vasut@mailbox.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1767562671;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=yBAOLlPWvQKPDIs4oNpFowTmGYJ0Aw9K3RVBoc5XL58=;
-	b=J7f/WaJSMmCS7cVrcvcidcItnK33nQnmhVlAADhOZQqBIZRH0/eqO7D2YENp/nhze4d5pg
-	psXihdu0bDo7yo+bFJ93PJ7p/8sSKeEEYDVI1gDBkPm49iU3R1CUIT1avj1MyHOMdqbznd
-	S+TcPjTsEs7e3Sjr8YIC8AJxirB5mhus6nW6TtocPS/CiSpX8PfekDbsibRDXkm3cvUaft
-	qB2zdqlICAmaLWSsZuTmL8oNq5CpuuwQvDhqhYcJ8Foj7ol/8/if5B8Wt48YNcSEjebkwC
-	F8fTROEtStEI9AyCgUI+HOFTXJICLbQBjAiff+ng2N+lJriN4EBahKrEpCrG2w==
-To: dri-devel@lists.freedesktop.org
-Cc: Marek Vasut <marek.vasut@mailbox.org>,
-	Abel Vesa <abelvesa@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Fabio Estevam <festevam@gmail.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Liu Ying <victor.liu@nxp.com>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Peng Fan <peng.fan@nxp.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Rob Herring <robh@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	devicetree@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH v3] drm/imx: dc-plane: Add more RGB swizzling options
-Date: Sun,  4 Jan 2026 22:37:29 +0100
-Message-ID: <20260104213743.129012-1-marek.vasut@mailbox.org>
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gcJ4qySzjY0KVAwHFonFKf4MTj/0gwZsfwoy4TTth9c=;
+	b=Msu6Gk2uRTh5Wq0JBpm6P79Un8o0EIiWk7gZyzhdv1eu7gjtktlm0JfFbc5Mru1GIjkcfm
+	MSuBQ/6/odPVQ5sR9YsFCVD7dv+F5jq5STFexwJX3ae2hwQmh4J9bcEnJXf43Ak5KOuH5e
+	CoJ5u5JHO6Nju1m8shUA/9tD/0WskxcnsFyMzo7B71D83LSFLg+bUlKBB02HfQm8JnzCZy
+	sc7BoxXDNU806d5wxTCkSgWK6t4IQ5hEakURlxbah3WuTOzjSltSV26Z4zCeW9/2KABVUD
+	FklBU0Nhat3neYUY6xLBuqDIUop6f8E/q3PIxutPe30bgGl67nbHIut9AA9yyg==
+Message-ID: <e4504a0b-65af-4749-8702-7b51dc933059@mailbox.org>
+Date: Sun, 4 Jan 2026 22:09:18 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-MBO-RS-META: iyjq8igyayzh8csskzzn8sx7t147bmuk
-X-MBO-RS-ID: 8419a03abb6d8fa209e
+Subject: Re: [PATCH] drm/bridge: fsl-ldb: Parse register offsets from DT
+To: Liu Ying <victor.liu@nxp.com>, dri-devel@lists.freedesktop.org
+Cc: Abel Vesa <abelvesa@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Fabio Estevam <festevam@gmail.com>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Lucas Stach <l.stach@pengutronix.de>, Peng Fan <peng.fan@nxp.com>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Rob Herring <robh@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, devicetree@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org
+References: <20251017154029.105099-1-marek.vasut@mailbox.org>
+ <dc4b1b65-542f-4bd2-bd91-af3fe4223b63@nxp.com>
+ <55d44163-4f37-462f-b860-c862cb5ada5a@mailbox.org>
+ <b65d9221-bdb3-4e69-beed-6b7646c5d5eb@nxp.com>
+ <3064e20f-92c8-4e3b-82bc-ef949f312826@mailbox.org>
+ <ac21053f-21d9-4844-9049-09deb3708a6d@nxp.com>
+Content-Language: en-US
+From: Marek Vasut <marek.vasut@mailbox.org>
+In-Reply-To: <ac21053f-21d9-4844-9049-09deb3708a6d@nxp.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-MBO-RS-ID: 4ef6ba8cb8fdf258150
+X-MBO-RS-META: 376wawhc1tkcnnz9scobhr58t5iu3ewg
 
-Add additional buffer format swizzling options beyond XR24, the
-hardware is capable of sampling other formats, fill them in.
+On 11/4/25 6:25 AM, Liu Ying wrote:
 
-Signed-off-by: Marek Vasut <marek.vasut@mailbox.org>
----
-Cc: Abel Vesa <abelvesa@kernel.org>
-Cc: Conor Dooley <conor+dt@kernel.org>
-Cc: Fabio Estevam <festevam@gmail.com>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
-Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
-Cc: Liu Ying <victor.liu@nxp.com>
-Cc: Lucas Stach <l.stach@pengutronix.de>
-Cc: Peng Fan <peng.fan@nxp.com>
-Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
-Cc: Rob Herring <robh@kernel.org>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Cc: Thomas Zimmermann <tzimmermann@suse.de>
-Cc: devicetree@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org
-Cc: imx@lists.linux.dev
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-clk@vger.kernel.org
----
-V2: - Adjust commit subject
-    - Drop the alpha formats for now, add RGB888/BGR888 to dc_plane_formats[]
-V3: - Drop even more formats for now, because they do not work with
-      prefetch engine, which seems currently unimplemented.
----
- drivers/gpu/drm/imx/dc/dc-fu.c    | 16 ++++++++++++++++
- drivers/gpu/drm/imx/dc/dc-plane.c |  4 ++++
- 2 files changed, 20 insertions(+)
+Hello Liu,
 
-diff --git a/drivers/gpu/drm/imx/dc/dc-fu.c b/drivers/gpu/drm/imx/dc/dc-fu.c
-index 1d8f74babef8a..8a2c1c2a54d2c 100644
---- a/drivers/gpu/drm/imx/dc/dc-fu.c
-+++ b/drivers/gpu/drm/imx/dc/dc-fu.c
-@@ -65,6 +65,22 @@ static const struct dc_fu_pixel_format pixel_formats[] = {
- 		DRM_FORMAT_XRGB8888,
- 		R_BITS(8)   | G_BITS(8)   | B_BITS(8)   | A_BITS(0),
- 		R_SHIFT(16) | G_SHIFT(8)  | B_SHIFT(0)  | A_SHIFT(0),
-+	}, {
-+		DRM_FORMAT_XBGR8888,
-+		R_BITS(8)   | G_BITS(8)   | B_BITS(8)   | A_BITS(0),
-+		R_SHIFT(0)  | G_SHIFT(8)  | B_SHIFT(16) | A_SHIFT(0),
-+	}, {
-+		DRM_FORMAT_RGBX8888,
-+		R_BITS(8)   | G_BITS(8)   | B_BITS(8)   | A_BITS(0),
-+		R_SHIFT(24) | G_SHIFT(16) | B_SHIFT(8)  | A_SHIFT(0),
-+	}, {
-+		DRM_FORMAT_BGRX8888,
-+		R_BITS(8)   | G_BITS(8)   | B_BITS(8)   | A_BITS(0),
-+		R_SHIFT(8)  | G_SHIFT(16) | B_SHIFT(24) | A_SHIFT(0),
-+	}, {
-+		DRM_FORMAT_RGB565,
-+		R_BITS(5)   | G_BITS(6)   | B_BITS(5)   | A_BITS(0),
-+		R_SHIFT(11) | G_SHIFT(5)  | B_SHIFT(0)  | A_SHIFT(0),
- 	},
- };
- 
-diff --git a/drivers/gpu/drm/imx/dc/dc-plane.c b/drivers/gpu/drm/imx/dc/dc-plane.c
-index e40d5d66c5c1f..2f009a5a1fb3c 100644
---- a/drivers/gpu/drm/imx/dc/dc-plane.c
-+++ b/drivers/gpu/drm/imx/dc/dc-plane.c
-@@ -33,6 +33,10 @@ do {									\
- 
- static const uint32_t dc_plane_formats[] = {
- 	DRM_FORMAT_XRGB8888,
-+	DRM_FORMAT_XBGR8888,
-+	DRM_FORMAT_RGBX8888,
-+	DRM_FORMAT_BGRX8888,
-+	DRM_FORMAT_RGB565,
- };
- 
- static const struct drm_plane_funcs dc_plane_funcs = {
--- 
-2.51.0
+sorry for my late reply.
 
+>>>>>> +++ b/drivers/gpu/drm/bridge/fsl-ldb.c
+>>>>>> @@ -61,24 +61,16 @@ enum fsl_ldb_devtype {
+>>>>>>     };
+>>>>>>       struct fsl_ldb_devdata {
+>>>>>> -    u32 ldb_ctrl;
+>>>>>> -    u32 lvds_ctrl;
+>>>>>>         bool lvds_en_bit;
+>>>>>>         bool single_ctrl_reg;
+>>>>>
+>>>>> single_ctrl_reg can be dropped then, as it can be expressed by failing to
+>>>>> get the second register.
+>>>>>
+>>>>> Furthermore, with this done, lvds_en_bit is the only member left and hence
+>>>>> struct fsl_ldb_devdata can also be dropped, as IIRC there is no need to
+>>>>> use a structure for device data with only a flag.
+>>>> I plan to add more bits into the driver match data when adding the MX95,
+>>>> so I would like to retain these instead of removing them and the adding
+>>>> them back.
+>>>
+>>> i.MX95 LDB supports two LVDS channels.  Two DRM bridges are needed in single
+>>> or separate LDB mode, while one DRM bridge is needed in split LDB mode.
+>>
+>> What do you refer to by "split LDB mode" , some interleaving or some such
+>> thing ?
+> 
+> I mean "Split Channel DI0" and "Split Channel DI1" use cases in the below
+> table in i.MX95 TRM.
+> 
+> +------------------------------------------------------------+
+> |Table: Channel Mapping                                      |
+> |------------------------------------------------------------|
+> |Use Case           |  LVDS Channel 0   |  LVDS Channel 1    |
+> |------------------------------------------------------------|
+> |Single Channel DI0 | DI0               | Disabled           |
+> |------------------------------------------------------------|
+> |Single Channel DI1 | Disabled          | DI1                |
+> |------------------------------------------------------------|
+> |Separate Channels  | DI0               | DI1                |
+> |------------------------------------------------------------|
+> |Dual Channels DI0  | DI0               | DI0                |
+> |------------------------------------------------------------|
+> |Dual Channels DI1  | DI1               | DI1                |
+> |------------------------------------------------------------|
+> |Split Channel DI0  | DI0 (first pixel) | DI0 (second pixel) |
+> |------------------------------------------------------------|
+> |Split Channel DI1  | DI1 (first pixel) | DI1 (second pixel) |
+> +------------------------------------------------------------+
+So yes, split mode is effectively interleaving. But that should only be 
+a matter of syscon configuration.
