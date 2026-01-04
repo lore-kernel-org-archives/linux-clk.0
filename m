@@ -1,88 +1,92 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32513286D60
-	for <linux-clk@vger.kernel.org>; Sun,  4 Jan 2026 11:38:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EA304A3E;
+	Sun,  4 Jan 2026 11:53:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767526687; cv=none; b=l0XZ1lwrtmygFF7IN0yAXbcHRI0Hut9mHgYMlDWwRUL82KpZ0L3fo9bG8G7gJoQgcJLcQvkV+CMhH5wA7E43/9i5isJ2FpkJ0fb27tMxNhfCrs22LUL6IjaBdhKwy7FP+JjOliyDE3S3Ss5Ayz9RspxUp/8jcDUxx6fzNwY7nDA=
+	t=1767527623; cv=none; b=P74ku0zIbwA8DxDsWnu5uKJzx8yDtDiOYubEd60tTpTiQWcZVer4RfidDR6gwVSVN24TI+6ZxCiyT6+KHqJyFpPapvhpSeyxHUBrJMoJ3aXO3W4mb76gFVxISpE5xmEzdfPh+lz1f21UIQiU2vSWF8KvBm1iAjr1kPtRVYzYkAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767526687; c=relaxed/simple;
-	bh=zzt8nsTReCOrFFimHSYnuwYVhyLibD7TXrGiySpB+f0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TYLDmR7NJ/gkqOIUHaftt6XDnaUmaExwVcKJ6m+O7tSZn4Hus0VjnXE9nGqqknEV5LnK3WQEyYQy3wE2k3UoFLKmNmfT/ukZJ2K8rSJ0b3ltCiZXSKW9vETMMaAbq8L2J5J1wRT6iLFx2MtfjWSB7vJBXzJFW+L1tKtRA1UWlVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lSrmBejJ; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1767527623; c=relaxed/simple;
+	bh=AIprCMecqfWvn68c5BFxnum4U31MRe9S40v01yZYSHA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gJ8xBzN2FnmRHRBgKmZxJFsNTCxWN1v8895RAqK+e206bxPUW1/4sauFpPEO4S/m1c0rhSO5oO/ziRmFjoc+TqSjM4HHek2WG5h5n8cryBQ9uFkkvKmHXk79PdsxIgxJhwAfsiun+ajyL+AxY2oU3W66ApQKKYV7KdpBsI+jy+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JCr1Msa1; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lSrmBejJ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF892C2BCC6
-	for <linux-clk@vger.kernel.org>; Sun,  4 Jan 2026 11:38:06 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JCr1Msa1"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC281C4CEF7;
+	Sun,  4 Jan 2026 11:53:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1767526686;
-	bh=zzt8nsTReCOrFFimHSYnuwYVhyLibD7TXrGiySpB+f0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=lSrmBejJxZP8gHrW1lt8qLoXx5i5yIr8c9JjAw76JwT4w2DU5Bw/V3A8ds+61J9gA
-	 qrA1BD0oGFxFt5TGFqAv6/RSxsC53w/k7B87GXnPPGu5JyBIFEy/k2xW5XqJfBLQwZ
-	 s7To43MM/23LrjwnT2MHsbj2v+MNR3gch8pFv9yPYQDYuMjuaAik+CInCYu5+ZmfZA
-	 x9Du36muqnYdgEnwcEtBPGE0Q2krb+xtqRR3x8L+34PJR5hQ5QQvm7VmmsMrN+wnM9
-	 I2UaQA0Jag3f/lobO/fONtZhnVUHsQ9680OTtldkoKQt1MckmCleLVqFj0F055vXis
-	 sgoDnkXq9m56w==
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-78fba1a1b1eso14063147b3.1
-        for <linux-clk@vger.kernel.org>; Sun, 04 Jan 2026 03:38:06 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVzS7E+Zyt1riA9LBQyzk4sE84APoZozWJz4jdH1VjUNsUA71mYaG2Xsij6dv+p9Fbqz7eSn6ohMrk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1rs7buzzz7uKFim6ccBnreb5D8v4mqIgZDHVG9iccG6WzbPI4
-	uoki43196Oam4M+vDFwqF9nCZMndL9jF7ATJAhOeQCeZh864/Qe5+d836UWBGku8lIbB/V3wVA6
-	NmudjuTgsCE3q1WjeT1RdYI4IiC2joLc=
-X-Google-Smtp-Source: AGHT+IF4Orabbp+U3oU6DE4mJfK9KKnbEOxrcm3UcvoG3IBBIUd0oK3DmWjwYq82sAXiIcIbWSh2iznA2Fvf8inAirk=
-X-Received: by 2002:a05:690e:b4d:b0:645:591a:cb5c with SMTP id
- 956f58d0204a3-646e341a6cdmr3638468d50.23.1767526685648; Sun, 04 Jan 2026
- 03:38:05 -0800 (PST)
+	s=k20201202; t=1767527623;
+	bh=AIprCMecqfWvn68c5BFxnum4U31MRe9S40v01yZYSHA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=JCr1Msa18TAtDoNH856kGTE3S0BaMMbRGJaiFeOIvSrDvHB78FOIy4354A7DwkG0H
+	 y4WZfdUdWqHW5uXCmWdW/Z31i57wRagcwMh9YEZaQtpBJbi0RueNn8yISX03VUq6I0
+	 uB8cQ/vmNeVtZfK94UTOD16RU7C3ahVliokQoPwidLmVoZRZoQMfnPNe3G6KEAbkfY
+	 xQpMsgodFfhH77DhRoPgOOnzdsECFg179R2+Ov4GKGHEFbsyu+DsqVL28TbCBh1zXg
+	 YNuUeywEsLZWYj82UYonlCVjlXeknHbmgVvYjUFwzaeDJ32HWugmti1LNc9WUlVVlr
+	 /ryxdv7c7ML8w==
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+To: linux-tegra@vger.kernel.org, Linux PM <linux-pm@vger.kernel.org>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>,
+ Prashant Gaikwad <pgaikwad@nvidia.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org,
+ LKML <linux-kernel@vger.kernel.org>, Dmitry Osipenko <digetx@gmail.com>,
+ Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH v1] clk: tegra: Adjust callbacks in tegra_clock_pm
+Date: Sun, 04 Jan 2026 12:53:36 +0100
+Message-ID: <5088794.31r3eYUQgx@rafael.j.wysocki>
+Organization: Linux Kernel Development
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251212231203.727227-1-robh@kernel.org>
-In-Reply-To: <20251212231203.727227-1-robh@kernel.org>
-From: Linus Walleij <linusw@kernel.org>
-Date: Sun, 4 Jan 2026 12:37:54 +0100
-X-Gmail-Original-Message-ID: <CAD++jLkAaAH9_YdTGqHUcOp8PfW+1P=ZLZzS_QseVYWxA4kiWw@mail.gmail.com>
-X-Gm-Features: AQt7F2qijkDXeXovdHRRQ5QEL33UZBQlEMiEIzun3p2-rj7cwfnP7kAmQfWhUyg
-Message-ID: <CAD++jLkAaAH9_YdTGqHUcOp8PfW+1P=ZLZzS_QseVYWxA4kiWw@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: Remove unused includes
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Michal Simek <michal.simek@amd.com>, 
-	Vinod Koul <vkoul@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, 
-	=?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	Andy Shevchenko <andy@kernel.org>, Yong Wu <yong.wu@mediatek.com>, Peter Rosin <peda@axentia.se>, 
-	Chen-Yu Tsai <wens@kernel.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Samuel Holland <samuel@sholland.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	dmaengine@vger.kernel.org, linux-mediatek@lists.infradead.org, 
-	linux-iio@vger.kernel.org, iommu@lists.linux.dev, linux-gpio@vger.kernel.org, 
-	linux-sunxi@lists.linux.dev, imx@lists.linux.dev, linux-sound@vger.kernel.org
+Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Sat, Dec 13, 2025 at 12:12=E2=80=AFAM Rob Herring (Arm) <robh@kernel.org=
-> wrote:
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-> Remove includes which are not referenced by either DTS files or drivers.
->
-> There's a few more which are new, so they are excluded for now.
->
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+System suspend and resume callbacks run after the core has bumped
+up the runtime PM usage counters of all devices, so these callbacks
+need not worry about runtime PM reference counting.
 
-Good.
-Reviewed-by: Linus Walleij <linusw@kernel.org>
+Accordingly, to eliminate useless overhead related to runtime PM
+usage counter manipulation, set the suspend callback pointer in
+tegra_clock_pm to pm_runtime_resume() and do not set the resume
+callback in it at all.
 
-Yours,
-Linus Walleij
+This will also facilitate a planned change of the pm_runtime_put()
+return type to void in the future.
+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+
+This patch is requisite for converting pm_runtime_put() into a void
+function.
+
+If you decide to pick it up, please let me know.
+
+Otherwise, an ACK or equivalent will be appreciated, but also the lack
+of specific criticism will be eventually regarded as consent.
+
+---
+ drivers/clk/tegra/clk-device.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/drivers/clk/tegra/clk-device.c
++++ b/drivers/clk/tegra/clk-device.c
+@@ -175,7 +175,7 @@ unreg_clk:
+  * perspective since voltage is kept at a nominal level during suspend anyways.
+  */
+ static const struct dev_pm_ops tegra_clock_pm = {
+-	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_resume_and_get, pm_runtime_put)
++	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_resume, NULL)
+ };
+ 
+ static const struct of_device_id tegra_clock_match[] = {
+
+
+
