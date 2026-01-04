@@ -1,150 +1,84 @@
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D462A95E
-	for <linux-clk@vger.kernel.org>; Sun,  4 Jan 2026 02:30:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [13.76.78.106])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15E4D2C0299;
+	Sun,  4 Jan 2026 03:23:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.76.78.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767493838; cv=none; b=sXIHgWziRTVxalwNFh//yaLise4scAVhHVC5v2i5NKtYDwIB02UnT+NksNA3ixLF/BiN6HdxiOu7OmFeO0GJDQUKfagmfXEp/bzqZ5i+secI0WfcwoiNhZAhU8/+5svWbUrociZSkNPrUNQK7wSEucZjFXUpwVs352gNRQ4ueDs=
+	t=1767497029; cv=none; b=RzG1NP1cGybki1300UQsq9fDVSgjnbEMKU9rQUr4xOAMVuSlvls8/f7VTJoMEG5MmkCjOPZC4CuMc59g6NZgaOOsTvskO6dmNMKBEyzUgYhV29fNDG8yNPt/aIwsLOt4VlwfL7U/zBhHS/1jpLQy89vol4L6Q332vusATDbO12U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767493838; c=relaxed/simple;
-	bh=DlvFdaYcgS6BsgkwyRXsWgdKt6YfqaxoNOvxoPmtE6g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=X0TvK6VT1r0OJAJhGE4JID7YIMUnCugidYu6dG6nJqYv6Ni5GJAWu5nyJd+CRGDbI7PV7AYhxYJrruYu49tXdP9TbJm9xGdHB36XhrdyWLwICqm9RzodFcbSu6WpS+FtGHt9Ju/zwQt8OvDFFQW458obGSm6WpEuhDRK0w2E4kI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cA+vT6AY; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cA+vT6AY"
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-598f8136a24so14598767e87.3
-        for <linux-clk@vger.kernel.org>; Sat, 03 Jan 2026 18:30:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1767493834; x=1768098634; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wAb7Y2d/CNC20RUajmwVdxtej01XI7Qcxiae7kFT2aQ=;
-        b=cA+vT6AYhzBC77qF88JJdxCwEfxL5qFToNEO6XBylCHDZa2hdv7Rw1fXqEiFjN+5xa
-         rXmwOzVWsJ1Us+ubewRN2c2YgO7aBTr9AREprNQ09SHcS5ceFvhmMF6bh3PeiQSAMZ3Y
-         6fwJm4wIihCyYkOvLPdIBov5R6cmq8KOMrI1LWVnQTV/Cf6H+kj0pyROtR3M4wDshw1Q
-         N+Doa14PMza3ed0YQjX8ueJETt3fLfOJSIEov8oPchPEuojHXoW8+k0AoauMOtSKt7+S
-         g1Kdb1jczAo84ft99NWQQJXf2hZp906naJ6+sxW6SoznE6NtOD6XcofhD/dKsrD5lpYF
-         2+rw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767493834; x=1768098634;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=wAb7Y2d/CNC20RUajmwVdxtej01XI7Qcxiae7kFT2aQ=;
-        b=xNN7vJ6br90n/DegH6zLBT/AckKtr/aNau2omXSzqZloVBHuAs2Jxn7hXb7inPwkiW
-         PLQIODhNxdzXdRGAO502MIit4xAWbBLzaypDZ/n3VJUDGJwb+I3EVVNskYeexZ5CGdRR
-         TLjrt6e+TSZ8AlwWEhkANyMNJ0mBKYMqDKfWxsjXsCxaUQRQJdxZ1Fo9FSF8kK724jaa
-         +b3gYAYoEkPwzXnIiZiYKywuiNiYXgbEZVv/shEiwXk4f9/lKT9DHxDqm6wlF7YjAMSj
-         SB2b6jeZSNX5Ivc9lptcW4lv3cL14BX9jqt2ibDwBROSfN2PX+eWAftUH40gIgmLdTme
-         t3zw==
-X-Gm-Message-State: AOJu0YxVKH2guXfUgDxKekYNCYEBPMI11f0r7p9mOFi4NBWfJoxildCN
-	QRSgOdlb0j0EXJe8crS+N6bc61C5N8UBfGCMlwAMd9ek5xn8ithqSBZoCODRMbhT7lT+xIja6Y4
-	R7MPPtXdpBJxBtRzEumXP5c2QBFazq94=
-X-Gm-Gg: AY/fxX76K9LKV8H6Kqqd2rParKPgOYdhd+vtYJaRL2c9wSCt8uOZgz/6CD7QgSxmEbJ
-	D5HduFfYQR+HV3PoM/+bbnuHtW/KHDyq8chYWo2QyQZwdD5F0H+TyeLZ+FJVXJzP1XSiq/r8g+Y
-	OCMCnZxn5KtafxA2Ou76HE2KYP7cjcuMqEdUf+kk16xgllwlFOw+Bod+1JnqcloYFRVUfwfLhNL
-	CIXCdC31DSo0SLbwFofZ2LLnDZHT5nS6ziGAMXRRMI97rDuwlZIxf2EMZii3Ez7BZWLVJ5SnVYq
-	y7ZIIZ8UdCP1eG3U+6RrhMDL3fTUChsBXTjNmqiqIfK3do3xxf0JFHEZ45fvI80kqai25PgXqid
-	CCT5tfdbjhQUIdJfr7klrcu/NTbKIVIAj5bkezfKdnA==
-X-Google-Smtp-Source: AGHT+IEcHkXfCVSN9NSSZ24rasJq8edRgueT2UH4kaFUqTRZLzj4M5TZS5QUbg08PW1poxCCe9WkjMVLSCQi7hbJc8A=
-X-Received: by 2002:a05:6512:3f26:b0:577:318a:a1c6 with SMTP id
- 2adb3069b0e04-59a17d6521cmr13569645e87.23.1767493834050; Sat, 03 Jan 2026
- 18:30:34 -0800 (PST)
+	s=arc-20240116; t=1767497029; c=relaxed/simple;
+	bh=Ri0yn1kHs7I1qeTNJLplp3x7lLC7KDEsmIJ1wVIweH8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=j0B2TdEeXnqO6tUF7nLZ3TK5apOs3RabCHg1bcsDFHgL6tOKE+u1IOWZ4aMJyk5vc+ynkqxbeHHECPLD9DFnRXI9csLEBR2f8rCQOKvIdEAyKjKrY6ugUQ2N5zn+nPwolKTIBABhSAUmub/BsDO5gYCjOkljuLfMIHlHM7NYmHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=13.76.78.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
+Received: from dongxuyang$eswincomputing.com ( [10.12.96.41] ) by
+ ajax-webmail-app2 (Coremail) ; Sun, 4 Jan 2026 11:23:21 +0800 (GMT+08:00)
+Date: Sun, 4 Jan 2026 11:23:21 +0800 (GMT+08:00)
+X-CM-HeaderCharset: UTF-8
+From: "Xuyang Dong" <dongxuyang@eswincomputing.com>
+To: "Marcel Ziswiler" <marcel@ziswiler.com>, mturquette@baylibre.com,
+	sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	troy.mitchell@linux.dev, bmasney@redhat.com
+Cc: ningyu@eswincomputing.com, linmin@eswincomputing.com,
+	huangyifeng@eswincomputing.com, pinkesh.vaghela@einfochips.com,
+	ganboing@gmail.com
+Subject: Re: Re: [PATCH v9 2/3] clock: eswin: Add eic7700 clock driver
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version 2024.2-cmXT6 build
+ 20241203(6b039d88) Copyright (c) 2002-2026 www.mailtech.cn
+ mispb-72143050-eaf5-4703-89e0-86624513b4ce-eswincomputing.com
+In-Reply-To: <a7f4cf00b396096512d6947612031207c4d4459b.camel@ziswiler.com>
+References: <20251229105844.1089-1-dongxuyang@eswincomputing.com>
+ <20251229105949.1202-1-dongxuyang@eswincomputing.com>
+ <a7f4cf00b396096512d6947612031207c4d4459b.camel@ziswiler.com>
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251222-cstr-clk-v1-1-ef0687717aa1@gmail.com>
-In-Reply-To: <20251222-cstr-clk-v1-1-ef0687717aa1@gmail.com>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Sat, 3 Jan 2026 21:29:57 -0500
-X-Gm-Features: AQt7F2r7n9Xs0cRif1ZHf3PmV71z-bkOeEDKkEDT7FB3UNkC76XgQQjhdM64nBE
-Message-ID: <CAJ-ks9mjBY7x1s_4wqMC8xqWsX2+aCM6NHn0j7yh_+daKiyS1Q@mail.gmail.com>
-Subject: Re: [PATCH] rust: clk: replace `kernel::c_str!` with C-Strings
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>
-Cc: linux-clk@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Viresh Kumar <viresh.kumar@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Message-ID: <480d671d.1db1.19b8707eb98.Coremail.dongxuyang@eswincomputing.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:TQJkCgDnK68p3Vlp4x+PAA--.5798W
+X-CM-SenderInfo: pgrqw5xx1d0w46hv4xpqfrz1xxwl0woofrz/1tbiAgERAmlZRP4dS
+	QABsP
+X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWxJw
+	CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
+	daVFxhVjvjDU=
 
-On Mon, Dec 22, 2025 at 7:17=E2=80=AFAM Tamir Duberstein <tamird@kernel.org=
-> wrote:
->
-> From: Tamir Duberstein <tamird@gmail.com>
->
-> C-String literals were added in Rust 1.77. Replace instances of
-> `kernel::c_str!` with C-String literals where possible.
->
-> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-> Reviewed-by: Benno Lossin <lossin@kernel.org>
-> Acked-by: Stephen Boyd <sboyd@kernel.org>
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
-> ---
->  rust/kernel/clk.rs | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
->
-> diff --git a/rust/kernel/clk.rs b/rust/kernel/clk.rs
-> index c1cfaeaa36a2..68a0c2f4e318 100644
-> --- a/rust/kernel/clk.rs
-> +++ b/rust/kernel/clk.rs
-> @@ -104,13 +104,12 @@ mod common_clk {
->      /// The following example demonstrates how to obtain and configure a=
- clock for a device.
->      ///
->      /// ```
-> -    /// use kernel::c_str;
->      /// use kernel::clk::{Clk, Hertz};
->      /// use kernel::device::Device;
->      /// use kernel::error::Result;
->      ///
->      /// fn configure_clk(dev: &Device) -> Result {
-> -    ///     let clk =3D Clk::get(dev, Some(c_str!("apb_clk")))?;
-> +    ///     let clk =3D Clk::get(dev, Some(c"apb_clk"))?;
->      ///
->      ///     clk.prepare_enable()?;
->      ///
-> @@ -272,13 +271,12 @@ fn drop(&mut self) {
->      /// device. The code functions correctly whether or not the clock is=
- available.
->      ///
->      /// ```
-> -    /// use kernel::c_str;
->      /// use kernel::clk::{OptionalClk, Hertz};
->      /// use kernel::device::Device;
->      /// use kernel::error::Result;
->      ///
->      /// fn configure_clk(dev: &Device) -> Result {
-> -    ///     let clk =3D OptionalClk::get(dev, Some(c_str!("apb_clk")))?;
-> +    ///     let clk =3D OptionalClk::get(dev, Some(c"apb_clk"))?;
->      ///
->      ///     clk.prepare_enable()?;
->      ///
->
-> ---
-> base-commit: 8f0b4cce4481fb22653697cced8d0d04027cb1e8
-> change-id: 20251222-cstr-clk-122a1428b919
->
-> Best regards,
-> --
-> Tamir Duberstein <tamird@gmail.com>
->
-
-@Stephen could you please have a look?
-
-Cheers.
-Tamir
+PiA+ICsKPiA+ICsvKiBkaXZpZGVyIGNsb2NrcyAqLwo+ID4gK3N0YXRpYyBzdHJ1Y3QgZXN3aW5f
+ZGl2aWRlcl9jbG9jayBlaWM3NzAwX2Rpdl9jbGtzW10gPSB7Cj4gPiArCUVJQzc3MDBfRElWKEVJ
+Qzc3MDBfQ0xLX0RJVl9TWVNfQ0ZHX0RZTk0sICJkaXZpZGVyX3N5c19jZmdfZGl2X2R5bm0iLAo+
+ID4gKwkJwqDCoMKgICJmaXhlZF9yYXRlX2Nsa19zcGxsMF9mb3V0MyIsIDAsCj4gPiArCQnCoMKg
+wqAgRUlDNzcwMF9SRUdfT0ZGU0VUX1NZU0NGR19DVFJMLCA0LCAzLAo+ID4gKwkJwqDCoMKgIENM
+S19ESVZJREVSX09ORV9CQVNFRCksCj4gPiArCUVJQzc3MDBfRElWKEVJQzc3MDBfQ0xLX0RJVl9O
+T0NfTlNQX0RZTk0sICJkaXZpZGVyX25vY19uc3BfZGl2X2R5bm0iLAo+ID4gKwkJwqDCoMKgICJm
+aXhlZF9yYXRlX2Nsa19zcGxsMl9mb3V0MSIsIDAsCj4gPiArCQnCoMKgwqAgRUlDNzcwMF9SRUdf
+T0ZGU0VUX05PQ19DVFJMLCAwLCAzLCBDTEtfRElWSURFUl9PTkVfQkFTRUQpLAo+ID4gKwlFSUM3
+NzAwX0RJVihFSUM3NzAwX0NMS19ESVZfQk9PVFNQSV9EWU5NLCAiZGl2aWRlcl9ib290c3BpX2Rp
+dl9keW5tIiwKPiA+ICsJCcKgwqDCoCAiZ2F0ZV9jbGtfc3BsbDBfZm91dDIiLCAwLCBFSUM3NzAw
+X1JFR19PRkZTRVRfQk9PVFNQSV9DVFJMLAo+ID4gKwkJwqDCoMKgIDQsIDYsIENMS19ESVZJREVS
+X09ORV9CQVNFRCksCj4gPiArCUVJQzc3MDBfRElWKEVJQzc3MDBfQ0xLX0RJVl9TQ1BVX0NPUkVf
+RFlOTSwKPiA+ICsJCcKgwqDCoCAiZGl2aWRlcl9zY3B1X2NvcmVfZGl2X2R5bm0iLCAiZml4ZWRf
+cmF0ZV9jbGtfc3BsbDBfZm91dDEiLAo+ID4gKwkJwqDCoMKgIDAsIEVJQzc3MDBfUkVHX09GRlNF
+VF9TQ1BVX0NPUkVfQ1RSTCwgNCwgNCwKPiA+ICsJCcKgwqDCoCBDTEtfRElWSURFUl9PTkVfQkFT
+RUQpLAo+ID4gKwlFSUM3NzAwX0RJVihFSUM3NzAwX0NMS19ESVZfTFBDUFVfQ09SRV9EWU5NLAo+
+ID4gKwkJwqDCoMKgICJkaXZpZGVyX2xwY3B1X2NvcmVfZGl2X2R5bm0iLCAiZml4ZWRfcmF0ZV9j
+bGtfc3BsbDBfZm91dDEiLAo+ID4gKwkJwqDCoMKgIDAsIEVJQzc3MDBfUkVHX09GRlNFVF9MUENQ
+VV9DT1JFX0NUUkwsIDQsIDQsCj4gPiArCQnCoMKgwqAgQ0xLX0RJVklERVJfT05FX0JBU0VEKSwK
+PiAKPiBEdXJpbmcgdGVzdGluZyBvbiB0b3Agb2YgbmV4dC0yMDI1MTIxOSBJIGdvdCB0aGUgZm9s
+bG93aW5nOgo+IAo+IFsgICAgMC4xMjYxMDJdIGRpdmlkZXJfbHBjcHVfY29yZV9kaXZfZHlubTog
+WmVybyBkaXZpc29yIGFuZCBDTEtfRElWSURFUl9BTExPV19aRVJPIG5vdCBzZXQKPiBbICAgIDAu
+MTI2MTk0XSBXQVJOSU5HOiBkcml2ZXJzL2Nsay9jbGstZGl2aWRlci5jOjE0NSBhdCBkaXZpZGVy
+X3JlY2FsY19yYXRlKzB4OGEvMHg5YywgQ1BVIzA6IHN3YXBwZXIvMC8xCj4gCj4gVGhlcmVmb3Jl
+IEkgc3VnZ2VzdCBmb3IgYWJvdmUgbGluZSBuZWVkaW5nIHRvIGJlOgo+IAo+ICsgICAgICAgICAg
+ICAgICAgICAgQ0xLX0RJVklERVJfT05FX0JBU0VEIHwgQ0xLX0RJVklERVJfQUxMT1dfWkVSTyks
+CgpIaSBNYXJjZWwsCgpUaGFuayB5b3UhIFRoaXMgaXMgaW5kZWVkIGEgYnVnIGFuZCB3aWxsIGJl
+IGZpeGVkIGluIHRoZSBuZXh0IHZlcnNpb24uwqAKQ291bGQgeW91IHBsZWFzZSBzaGFyZSB0aGUg
+ZGV0YWlsZWQgdGVzdGluZyBtZXRob2RzIHdpdGggbWUgc28gdGhhdCBJwqAKY2FuIHJlcHJvZHVj
+ZSB0aGlzIGlzc3VlIG9uIG15IHNpZGU/CgpCZXN0IHJlZ2FyZHMsClh1eWFuZyBEb25nCg==
