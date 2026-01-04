@@ -1,92 +1,123 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from fout-b2-smtp.messagingengine.com (fout-b2-smtp.messagingengine.com [202.12.124.145])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EA304A3E;
-	Sun,  4 Jan 2026 11:53:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53EA419A2A3;
+	Sun,  4 Jan 2026 20:56:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767527623; cv=none; b=P74ku0zIbwA8DxDsWnu5uKJzx8yDtDiOYubEd60tTpTiQWcZVer4RfidDR6gwVSVN24TI+6ZxCiyT6+KHqJyFpPapvhpSeyxHUBrJMoJ3aXO3W4mb76gFVxISpE5xmEzdfPh+lz1f21UIQiU2vSWF8KvBm1iAjr1kPtRVYzYkAI=
+	t=1767560171; cv=none; b=icwyoF/5ERKVl5R/Y7YL9/gEAZgq/H6NtXOJ32INywHuNkg7SQK1mRLrqn9iRGTu0BnKHJTsZ9VHbfd8ZIiC+OkRGAgeObDqGJquE+KG1Tw/RVwfa+R2BeLUA5Qo81XcEp7bH8qcueT7YvRdXaT/YwfERLzSY3XSngIqd3w2XhA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767527623; c=relaxed/simple;
-	bh=AIprCMecqfWvn68c5BFxnum4U31MRe9S40v01yZYSHA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gJ8xBzN2FnmRHRBgKmZxJFsNTCxWN1v8895RAqK+e206bxPUW1/4sauFpPEO4S/m1c0rhSO5oO/ziRmFjoc+TqSjM4HHek2WG5h5n8cryBQ9uFkkvKmHXk79PdsxIgxJhwAfsiun+ajyL+AxY2oU3W66ApQKKYV7KdpBsI+jy+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JCr1Msa1; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1767560171; c=relaxed/simple;
+	bh=43XsIEvVY8IxIp1X8ePvKqA/sZQxe3whRcUqzFs4hQo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GUXpFMKBwPq+/vFys3pxqnKxG809bwXeF8WC0UKPhD7tX4G45cNiI0YlqLLzrmwZCc0jY9jMdjzDhpSx7PRvjlGIU987PEHpYoIiIKosNyeH7Q9AfaN+gfZ3s0lhQHYMWnss94eyH7R7joC1Y0KWhuAtIBsu+ALx/Hxzh4wZqfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=Bblw5nT+; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=jve/oBlE; arc=none smtp.client-ip=202.12.124.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JCr1Msa1"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC281C4CEF7;
-	Sun,  4 Jan 2026 11:53:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1767527623;
-	bh=AIprCMecqfWvn68c5BFxnum4U31MRe9S40v01yZYSHA=;
-	h=From:To:Cc:Subject:Date:From;
-	b=JCr1Msa18TAtDoNH856kGTE3S0BaMMbRGJaiFeOIvSrDvHB78FOIy4354A7DwkG0H
-	 y4WZfdUdWqHW5uXCmWdW/Z31i57wRagcwMh9YEZaQtpBJbi0RueNn8yISX03VUq6I0
-	 uB8cQ/vmNeVtZfK94UTOD16RU7C3ahVliokQoPwidLmVoZRZoQMfnPNe3G6KEAbkfY
-	 xQpMsgodFfhH77DhRoPgOOnzdsECFg179R2+Ov4GKGHEFbsyu+DsqVL28TbCBh1zXg
-	 YNuUeywEsLZWYj82UYonlCVjlXeknHbmgVvYjUFwzaeDJ32HWugmti1LNc9WUlVVlr
-	 /ryxdv7c7ML8w==
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-To: linux-tegra@vger.kernel.org, Linux PM <linux-pm@vger.kernel.org>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>,
- Prashant Gaikwad <pgaikwad@nvidia.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org,
- LKML <linux-kernel@vger.kernel.org>, Dmitry Osipenko <digetx@gmail.com>,
- Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH v1] clk: tegra: Adjust callbacks in tegra_clock_pm
-Date: Sun, 04 Jan 2026 12:53:36 +0100
-Message-ID: <5088794.31r3eYUQgx@rafael.j.wysocki>
-Organization: Linux Kernel Development
+	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="Bblw5nT+";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="jve/oBlE"
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+	by mailfout.stl.internal (Postfix) with ESMTP id 45DF51D000D2;
+	Sun,  4 Jan 2026 15:56:07 -0500 (EST)
+Received: from phl-frontend-03 ([10.202.2.162])
+  by phl-compute-03.internal (MEProxy); Sun, 04 Jan 2026 15:56:07 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:message-id:mime-version:reply-to
+	:subject:subject:to:to; s=fm1; t=1767560167; x=1767646567; bh=P2
+	VkFqho94I+6wSqldw5zMGqgoysj5bINcPyRpedIK4=; b=Bblw5nT+WEyQ6XQJdE
+	YIT1Av8H+xZ2h2ELlNhkDsJkEtB5uzxnlH3nDMSWIS560PjpvzlGZJV3yDeUiBT5
+	v49TLmgOYM1WFNgLY/MEKStTZQkpaWj0bJfU7vrjOayjJaOtE92BcA0V76lRP2LG
+	UJ47PnL6XO+1RghBiN/kFFzRPJlfvZmH/A08uRF9JERIGG2Q/L/7OnKRXPtLUKOJ
+	b916hbyHRllZnhmIkIcIbTCQpilfkKnC4LvtJ2yyuRXGlA08mrIT1bTI9mbTyhPz
+	pgEyWKAMsTqI3QvfL0jvck4wDIGCNgpI4JyM+h16+XL/zYtM2ZufHZPuJqIh2OLx
+	BKgg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1767560167; x=1767646567; bh=P2VkFqho94I+6wSqldw5zMGqgoys
+	j5bINcPyRpedIK4=; b=jve/oBlEyNz1XvUQomMKBQxzLEJ5G+liE7m5px50moNj
+	SnEIp7jcwT5u9QdQUjWqdwqQM4S5czBBanc16IJGQe8TlzMdZ2bUlTga/gZ6VtTI
+	iUebmAE3QPQf/LorYDkPA4jAQlsW0+W4OiULPCtOESZsdQVArBojxdmq0eUgJFvo
+	kzD8n5PFxfS9qB4RSdoiOQbAmJqeZ1vn2f5KKVzgbBs8eU6iq6JZFOXJYl5l/iCK
+	TOU3noaZnPZJAxRlZYimAhwYcSnXQHR40y74t4xHmO9dtE+Qiakec7bAvzQNP29h
+	YGgPr7pxxkUecNjW+Ws7Z3ftVDg33X8URvP8H0Zt7Q==
+X-ME-Sender: <xms:5tNaaWTeB-K8WJ3oYKLikPbQFFp8WYzja0Nk8Xbi_tV2Bfp_O3Fr7g>
+    <xme:5tNaaVH4RO8RN5DVk_MzNONKf6qknhsUvrYubCAIZiDuQDSNHQnDmNcTSo80y_mq5
+    sX3dY3ManDaVz60rPYvpwLZtMHhfzt6eUqfUt9kIje9cDxX4cesxg>
+X-ME-Received: <xmr:5tNaabFPmGb6ulZLF-OYL9_7fddOe7jIUmcVhCUc55Sro7ddQQ4jvYeiUWWsvPPrRwfDd7YqlmurEqxGwyfVu-Tm>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdelheeggecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefhvfevufffkffogggtgfesthekredtredtjeenucfhrhhomheppfhikhhlrghsucfu
+    npguvghrlhhunhguuceonhhikhhlrghsrdhsohguvghrlhhunhguodhrvghnvghsrghsse
+    hrrghgnhgrthgvtghhrdhsvgeqnecuggftrfgrthhtvghrnhepheduleetteekgffffedu
+    feeuvdejiedvkefhveeifeegffehledtvdevhfefteegnecuvehluhhsthgvrhfuihiivg
+    eptdenucfrrghrrghmpehmrghilhhfrhhomhepnhhikhhlrghsrdhsohguvghrlhhunhgu
+    sehrrghgnhgrthgvtghhrdhsvgdpnhgspghrtghpthhtohepiedpmhhouggvpehsmhhtph
+    houhhtpdhrtghpthhtohepghgvvghrthdorhgvnhgvshgrshesghhlihguvghrrdgsvgdp
+    rhgtphhtthhopehmthhurhhquhgvthhtvgessggrhihlihgsrhgvrdgtohhmpdhrtghpth
+    htohepshgsohihugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqrhgv
+    nhgvshgrshdqshhotgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlih
+    hnuhigqdgtlhhksehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepnhhikhhl
+    rghsrdhsohguvghrlhhunhguodhrvghnvghsrghssehrrghgnhgrthgvtghhrdhsvg
+X-ME-Proxy: <xmx:5tNaaTQTzwqR_busw8Hcbo2efTR3yN-fkAtDs6rK2MTUIyUpie_Jxw>
+    <xmx:5tNaacJbZH90Mm899GO3caimDldT76_U8rtrKn1dQOEkNlIpP9OaRw>
+    <xmx:5tNaaeZh0TnqQ5-DuGdvnj97zP66WaFbtLH0Z3--i1thc2n7qnr5zg>
+    <xmx:5tNaae8uZ1svyEL0kFs4b1T_e57PllbaJmte9RY67pAltRvcUlSA3g>
+    <xmx:59NaaVqcIILjhBIapxsocub6N8X1sbhsO9QjvpQfFPFWwmE69B_SpSqf>
+Feedback-ID: i80c9496c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
+ 4 Jan 2026 15:56:05 -0500 (EST)
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH] clk: renesas: r8a77995: Add ZG and 3DGE support
+Date: Sun,  4 Jan 2026 21:56:01 +0100
+Message-ID: <20260104205601.1587576-1-niklas.soderlund+renesas@ragnatech.se>
+X-Mailer: git-send-email 2.52.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Describe the ZG and 3DGE clocks needed to operate the PowerVR GPU.
 
-System suspend and resume callbacks run after the core has bumped
-up the runtime PM usage counters of all devices, so these callbacks
-need not worry about runtime PM reference counting.
-
-Accordingly, to eliminate useless overhead related to runtime PM
-usage counter manipulation, set the suspend callback pointer in
-tegra_clock_pm to pm_runtime_resume() and do not set the resume
-callback in it at all.
-
-This will also facilitate a planned change of the pm_runtime_put()
-return type to void in the future.
-
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
+ drivers/clk/renesas/r8a77995-cpg-mssr.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-This patch is requisite for converting pm_runtime_put() into a void
-function.
-
-If you decide to pick it up, please let me know.
-
-Otherwise, an ACK or equivalent will be appreciated, but also the lack
-of specific criticism will be eventually regarded as consent.
-
----
- drivers/clk/tegra/clk-device.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- a/drivers/clk/tegra/clk-device.c
-+++ b/drivers/clk/tegra/clk-device.c
-@@ -175,7 +175,7 @@ unreg_clk:
-  * perspective since voltage is kept at a nominal level during suspend anyways.
-  */
- static const struct dev_pm_ops tegra_clock_pm = {
--	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_resume_and_get, pm_runtime_put)
-+	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_resume, NULL)
+diff --git a/drivers/clk/renesas/r8a77995-cpg-mssr.c b/drivers/clk/renesas/r8a77995-cpg-mssr.c
+index 162fa86c81ff..677c107d8f21 100644
+--- a/drivers/clk/renesas/r8a77995-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a77995-cpg-mssr.c
+@@ -80,6 +80,7 @@ static const struct cpg_core_clk r8a77995_core_clks[] __initconst = {
+ 	/* Core Clock Outputs */
+ 	DEF_FIXED("za2",       R8A77995_CLK_ZA2,   CLK_PLL0D3,     2, 1),
+ 	DEF_FIXED("z2",        R8A77995_CLK_Z2,    CLK_PLL0D3,     1, 1),
++	DEF_FIXED("zg",        R8A77995_CLK_ZG,    CLK_PLL0D3,     5, 1),
+ 	DEF_FIXED("ztr",       R8A77995_CLK_ZTR,   CLK_PLL1,       6, 1),
+ 	DEF_FIXED("zt",        R8A77995_CLK_ZT,    CLK_PLL1,       4, 1),
+ 	DEF_FIXED("zx",        R8A77995_CLK_ZX,    CLK_PLL1,       3, 1),
+@@ -119,6 +120,7 @@ static const struct cpg_core_clk r8a77995_core_clks[] __initconst = {
  };
  
- static const struct of_device_id tegra_clock_match[] = {
-
-
+ static const struct mssr_mod_clk r8a77995_mod_clks[] __initconst = {
++	DEF_MOD("3dge",			 112,	R8A77995_CLK_ZG),
+ 	DEF_MOD("tmu4",			 121,	R8A77995_CLK_S1D4C),
+ 	DEF_MOD("tmu3",			 122,	R8A77995_CLK_S3D2C),
+ 	DEF_MOD("tmu2",			 123,	R8A77995_CLK_S3D2C),
+-- 
+2.52.0
 
