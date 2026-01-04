@@ -1,123 +1,253 @@
-Received: from fout-b2-smtp.messagingengine.com (fout-b2-smtp.messagingengine.com [202.12.124.145])
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53EA419A2A3;
-	Sun,  4 Jan 2026 20:56:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BD4D3A1E9D;
+	Sun,  4 Jan 2026 21:37:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767560171; cv=none; b=icwyoF/5ERKVl5R/Y7YL9/gEAZgq/H6NtXOJ32INywHuNkg7SQK1mRLrqn9iRGTu0BnKHJTsZ9VHbfd8ZIiC+OkRGAgeObDqGJquE+KG1Tw/RVwfa+R2BeLUA5Qo81XcEp7bH8qcueT7YvRdXaT/YwfERLzSY3XSngIqd3w2XhA=
+	t=1767562649; cv=none; b=ZtpPxmdgQq9YnkjvBmG/KDDPF3nyN/mDk0ss/rB/7z3ggpiMUbMLYmr7rhKBBgpu/Nyddl8ApJ5uD8zAr1RTiWxESoR7bmmvErJ3AUQofSRM8r48MPsKJqXOTDa2Xnxe2TQpbZqzrd+ZmAnrXc2TsKSjbeN32mzZX85Z/OU0I+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767560171; c=relaxed/simple;
-	bh=43XsIEvVY8IxIp1X8ePvKqA/sZQxe3whRcUqzFs4hQo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GUXpFMKBwPq+/vFys3pxqnKxG809bwXeF8WC0UKPhD7tX4G45cNiI0YlqLLzrmwZCc0jY9jMdjzDhpSx7PRvjlGIU987PEHpYoIiIKosNyeH7Q9AfaN+gfZ3s0lhQHYMWnss94eyH7R7joC1Y0KWhuAtIBsu+ALx/Hxzh4wZqfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=Bblw5nT+; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=jve/oBlE; arc=none smtp.client-ip=202.12.124.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
+	s=arc-20240116; t=1767562649; c=relaxed/simple;
+	bh=P/92fCV5fbiobw7u0GExJMaWSIVVbUKUbfbkxcN0gZQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Zxi6jIqEj+328eoXq52+hfBAzAmd8Y6hSeSu82fnOL3RVoZhY+wxjvcyN+rE1zS5vu/fuETs6ZIhXalNWAChqHVmBmtlet/3LCgjgo/PojZs+vdiFs/7aeGIfk5J4B0GFDaKcoumLz6wus1QOMdlYpfv0zFQOkYOI4RontrLfCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=eDMNEcb3; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=cwq0F/N4; arc=none smtp.client-ip=80.241.56.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="Bblw5nT+";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="jve/oBlE"
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
-	by mailfout.stl.internal (Postfix) with ESMTP id 45DF51D000D2;
-	Sun,  4 Jan 2026 15:56:07 -0500 (EST)
-Received: from phl-frontend-03 ([10.202.2.162])
-  by phl-compute-03.internal (MEProxy); Sun, 04 Jan 2026 15:56:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:message-id:mime-version:reply-to
-	:subject:subject:to:to; s=fm1; t=1767560167; x=1767646567; bh=P2
-	VkFqho94I+6wSqldw5zMGqgoysj5bINcPyRpedIK4=; b=Bblw5nT+WEyQ6XQJdE
-	YIT1Av8H+xZ2h2ELlNhkDsJkEtB5uzxnlH3nDMSWIS560PjpvzlGZJV3yDeUiBT5
-	v49TLmgOYM1WFNgLY/MEKStTZQkpaWj0bJfU7vrjOayjJaOtE92BcA0V76lRP2LG
-	UJ47PnL6XO+1RghBiN/kFFzRPJlfvZmH/A08uRF9JERIGG2Q/L/7OnKRXPtLUKOJ
-	b916hbyHRllZnhmIkIcIbTCQpilfkKnC4LvtJ2yyuRXGlA08mrIT1bTI9mbTyhPz
-	pgEyWKAMsTqI3QvfL0jvck4wDIGCNgpI4JyM+h16+XL/zYtM2ZufHZPuJqIh2OLx
-	BKgg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
-	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm2; t=1767560167; x=1767646567; bh=P2VkFqho94I+6wSqldw5zMGqgoys
-	j5bINcPyRpedIK4=; b=jve/oBlEyNz1XvUQomMKBQxzLEJ5G+liE7m5px50moNj
-	SnEIp7jcwT5u9QdQUjWqdwqQM4S5czBBanc16IJGQe8TlzMdZ2bUlTga/gZ6VtTI
-	iUebmAE3QPQf/LorYDkPA4jAQlsW0+W4OiULPCtOESZsdQVArBojxdmq0eUgJFvo
-	kzD8n5PFxfS9qB4RSdoiOQbAmJqeZ1vn2f5KKVzgbBs8eU6iq6JZFOXJYl5l/iCK
-	TOU3noaZnPZJAxRlZYimAhwYcSnXQHR40y74t4xHmO9dtE+Qiakec7bAvzQNP29h
-	YGgPr7pxxkUecNjW+Ws7Z3ftVDg33X8URvP8H0Zt7Q==
-X-ME-Sender: <xms:5tNaaWTeB-K8WJ3oYKLikPbQFFp8WYzja0Nk8Xbi_tV2Bfp_O3Fr7g>
-    <xme:5tNaaVH4RO8RN5DVk_MzNONKf6qknhsUvrYubCAIZiDuQDSNHQnDmNcTSo80y_mq5
-    sX3dY3ManDaVz60rPYvpwLZtMHhfzt6eUqfUt9kIje9cDxX4cesxg>
-X-ME-Received: <xmr:5tNaabFPmGb6ulZLF-OYL9_7fddOe7jIUmcVhCUc55Sro7ddQQ4jvYeiUWWsvPPrRwfDd7YqlmurEqxGwyfVu-Tm>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdelheeggecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefhvfevufffkffogggtgfesthekredtredtjeenucfhrhhomheppfhikhhlrghsucfu
-    npguvghrlhhunhguuceonhhikhhlrghsrdhsohguvghrlhhunhguodhrvghnvghsrghsse
-    hrrghgnhgrthgvtghhrdhsvgeqnecuggftrfgrthhtvghrnhepheduleetteekgffffedu
-    feeuvdejiedvkefhveeifeegffehledtvdevhfefteegnecuvehluhhsthgvrhfuihiivg
-    eptdenucfrrghrrghmpehmrghilhhfrhhomhepnhhikhhlrghsrdhsohguvghrlhhunhgu
-    sehrrghgnhgrthgvtghhrdhsvgdpnhgspghrtghpthhtohepiedpmhhouggvpehsmhhtph
-    houhhtpdhrtghpthhtohepghgvvghrthdorhgvnhgvshgrshesghhlihguvghrrdgsvgdp
-    rhgtphhtthhopehmthhurhhquhgvthhtvgessggrhihlihgsrhgvrdgtohhmpdhrtghpth
-    htohepshgsohihugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqrhgv
-    nhgvshgrshdqshhotgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlih
-    hnuhigqdgtlhhksehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepnhhikhhl
-    rghsrdhsohguvghrlhhunhguodhrvghnvghsrghssehrrghgnhgrthgvtghhrdhsvg
-X-ME-Proxy: <xmx:5tNaaTQTzwqR_busw8Hcbo2efTR3yN-fkAtDs6rK2MTUIyUpie_Jxw>
-    <xmx:5tNaacJbZH90Mm899GO3caimDldT76_U8rtrKn1dQOEkNlIpP9OaRw>
-    <xmx:5tNaaeZh0TnqQ5-DuGdvnj97zP66WaFbtLH0Z3--i1thc2n7qnr5zg>
-    <xmx:5tNaae8uZ1svyEL0kFs4b1T_e57PllbaJmte9RY67pAltRvcUlSA3g>
-    <xmx:59NaaVqcIILjhBIapxsocub6N8X1sbhsO9QjvpQfFPFWwmE69B_SpSqf>
-Feedback-ID: i80c9496c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 4 Jan 2026 15:56:05 -0500 (EST)
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-renesas-soc@vger.kernel.org,
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="eDMNEcb3";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="cwq0F/N4"
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4dkrPJ3MR3z9t6y;
+	Sun,  4 Jan 2026 22:37:24 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1767562644;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=F2V5ptOG/OSrQxpQxBR9vp2eUi6mQ1sEOZ5f+v4+ETo=;
+	b=eDMNEcb3IB8WSnKLI4oDXY36itZPosnOUPuuEjLSAjYPckXTAV6x1paAfLi9m4WA6MHhWv
+	qIzkXvQMlRHf3sHa+lSgVPHMj/72UClLmN9JOT5MMi0/H1qgv57cPUp9it/idmQHzeJNMp
+	Qvre3qG+27LATqVjiRf7oy3ddC11EK8n58M/ARJbA1jEbZ1IEhAjP9mHfr2E5jGzBDWyoU
+	ROX0ELAg0i3tAKAjAnUXa0mSdx8AbFpPWjUx7jNOgTLzfKH4JbB5xqddxAGZFGEIEAt1p4
+	Ym+ORFezYOnz4IvzSwr0xpoDMwoYf3cYC4M954PC/ef5lD9125vR4Ilnb1K2QA==
+From: Marek Vasut <marek.vasut@mailbox.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1767562641;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=F2V5ptOG/OSrQxpQxBR9vp2eUi6mQ1sEOZ5f+v4+ETo=;
+	b=cwq0F/N4btyasfbpeGahGUTV8M2V6HQlEL4Iv41s/13SF58JHHhveRPe7DA+WMiIRFaZBE
+	fZE2C01qSPa0W1+uuJaXG8T5BQV5S8BCoQ3rPD/NjxAFnKv1hHyoop9rFxgOfSBMeFMJPT
+	y0mW7LbF5b1TrQsAaL2f6by06nEmmotwsAJ/r1I0gEoGe8zTdY+QLpbIuK8iesBcJxypF6
+	Nya6mthA+oBGgt6LuHIDdLigkj6Xk4XC3MjKrOoMVT4ReW5vCyMW8FJPXtp6AnqbE6YHLc
+	hXKG72Jx9YNqnRobPDxReAEzny/5nzt0ruL61JByF/YWerkXfwNB/dGYydMKmw==
+To: dri-devel@lists.freedesktop.org
+Cc: Marek Vasut <marek.vasut@mailbox.org>,
+	Abel Vesa <abelvesa@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Fabio Estevam <festevam@gmail.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Liu Ying <victor.liu@nxp.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Peng Fan <peng.fan@nxp.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Rob Herring <robh@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	devicetree@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
 	linux-clk@vger.kernel.org
-Cc: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH] clk: renesas: r8a77995: Add ZG and 3DGE support
-Date: Sun,  4 Jan 2026 21:56:01 +0100
-Message-ID: <20260104205601.1587576-1-niklas.soderlund+renesas@ragnatech.se>
-X-Mailer: git-send-email 2.52.0
+Subject: [PATCH v3] drm/bridge: fsl-ldb: Parse register offsets from DT
+Date: Sun,  4 Jan 2026 22:36:55 +0100
+Message-ID: <20260104213712.128982-1-marek.vasut@mailbox.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-MBO-RS-ID: 45dc74af1c849cb0d34
+X-MBO-RS-META: qoxrmye94k13yy8yo3ohm8y8f6dfdsmn
 
-Describe the ZG and 3DGE clocks needed to operate the PowerVR GPU.
+The DT bindings for this bridge describe register offsets for the LDB,
+parse the register offsets from DT instead of hard-coding them in the
+driver. No functional change.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+The LDB was always meant to parse the 'reg' offsets out of the DT, it
+only went somewhat wrong in the process and we ended up with hard-coded
+reg<->compatible mapping. It was never intended to be that way, so fix
+it.
+
+Signed-off-by: Marek Vasut <marek.vasut@mailbox.org>
 ---
- drivers/clk/renesas/r8a77995-cpg-mssr.c | 2 ++
- 1 file changed, 2 insertions(+)
+Cc: Abel Vesa <abelvesa@kernel.org>
+Cc: Conor Dooley <conor+dt@kernel.org>
+Cc: Fabio Estevam <festevam@gmail.com>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
+Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
+Cc: Liu Ying <victor.liu@nxp.com>
+Cc: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc: Lucas Stach <l.stach@pengutronix.de>
+Cc: Peng Fan <peng.fan@nxp.com>
+Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
+Cc: Rob Herring <robh@kernel.org>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Thomas Zimmermann <tzimmermann@suse.de>
+Cc: devicetree@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org
+Cc: imx@lists.linux.dev
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-clk@vger.kernel.org
+---
+V2: - Switch to of_property_read_reg()
+    - Parse single-register LDB variants from DT too
+V3: - Update commit message
+    - Drop "likely" from the comment
+---
+ drivers/gpu/drm/bridge/fsl-ldb.c | 58 ++++++++++++++++++++------------
+ 1 file changed, 36 insertions(+), 22 deletions(-)
 
-diff --git a/drivers/clk/renesas/r8a77995-cpg-mssr.c b/drivers/clk/renesas/r8a77995-cpg-mssr.c
-index 162fa86c81ff..677c107d8f21 100644
---- a/drivers/clk/renesas/r8a77995-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a77995-cpg-mssr.c
-@@ -80,6 +80,7 @@ static const struct cpg_core_clk r8a77995_core_clks[] __initconst = {
- 	/* Core Clock Outputs */
- 	DEF_FIXED("za2",       R8A77995_CLK_ZA2,   CLK_PLL0D3,     2, 1),
- 	DEF_FIXED("z2",        R8A77995_CLK_Z2,    CLK_PLL0D3,     1, 1),
-+	DEF_FIXED("zg",        R8A77995_CLK_ZG,    CLK_PLL0D3,     5, 1),
- 	DEF_FIXED("ztr",       R8A77995_CLK_ZTR,   CLK_PLL1,       6, 1),
- 	DEF_FIXED("zt",        R8A77995_CLK_ZT,    CLK_PLL1,       4, 1),
- 	DEF_FIXED("zx",        R8A77995_CLK_ZX,    CLK_PLL1,       3, 1),
-@@ -119,6 +120,7 @@ static const struct cpg_core_clk r8a77995_core_clks[] __initconst = {
+diff --git a/drivers/gpu/drm/bridge/fsl-ldb.c b/drivers/gpu/drm/bridge/fsl-ldb.c
+index 5c3cf37200bce..aa352c70b9ab2 100644
+--- a/drivers/gpu/drm/bridge/fsl-ldb.c
++++ b/drivers/gpu/drm/bridge/fsl-ldb.c
+@@ -8,6 +8,7 @@
+ #include <linux/mfd/syscon.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
++#include <linux/of_address.h>
+ #include <linux/of_graph.h>
+ #include <linux/platform_device.h>
+ #include <linux/regmap.h>
+@@ -61,24 +62,13 @@ enum fsl_ldb_devtype {
  };
  
- static const struct mssr_mod_clk r8a77995_mod_clks[] __initconst = {
-+	DEF_MOD("3dge",			 112,	R8A77995_CLK_ZG),
- 	DEF_MOD("tmu4",			 121,	R8A77995_CLK_S1D4C),
- 	DEF_MOD("tmu3",			 122,	R8A77995_CLK_S3D2C),
- 	DEF_MOD("tmu2",			 123,	R8A77995_CLK_S3D2C),
+ struct fsl_ldb_devdata {
+-	u32 ldb_ctrl;
+-	u32 lvds_ctrl;
+ 	bool lvds_en_bit;
+-	bool single_ctrl_reg;
+ };
+ 
+ static const struct fsl_ldb_devdata fsl_ldb_devdata[] = {
+-	[IMX6SX_LDB] = {
+-		.ldb_ctrl = 0x18,
+-		.single_ctrl_reg = true,
+-	},
+-	[IMX8MP_LDB] = {
+-		.ldb_ctrl = 0x5c,
+-		.lvds_ctrl = 0x128,
+-	},
++	[IMX6SX_LDB] = { },
++	[IMX8MP_LDB] = { },
+ 	[IMX93_LDB] = {
+-		.ldb_ctrl = 0x20,
+-		.lvds_ctrl = 0x24,
+ 		.lvds_en_bit = true,
+ 	},
+ };
+@@ -90,8 +80,11 @@ struct fsl_ldb {
+ 	struct clk *clk;
+ 	struct regmap *regmap;
+ 	const struct fsl_ldb_devdata *devdata;
++	u64 ldb_ctrl;
++	u64 lvds_ctrl;
+ 	bool ch0_enabled;
+ 	bool ch1_enabled;
++	bool single_ctrl_reg;
+ };
+ 
+ static bool fsl_ldb_is_dual(const struct fsl_ldb *fsl_ldb)
+@@ -204,15 +197,15 @@ static void fsl_ldb_atomic_enable(struct drm_bridge *bridge,
+ 		reg |=	(fsl_ldb->ch0_enabled ? LDB_CTRL_DI0_VSYNC_POLARITY : 0) |
+ 			(fsl_ldb->ch1_enabled ? LDB_CTRL_DI1_VSYNC_POLARITY : 0);
+ 
+-	regmap_write(fsl_ldb->regmap, fsl_ldb->devdata->ldb_ctrl, reg);
++	regmap_write(fsl_ldb->regmap, fsl_ldb->ldb_ctrl, reg);
+ 
+-	if (fsl_ldb->devdata->single_ctrl_reg)
++	if (fsl_ldb->single_ctrl_reg)
+ 		return;
+ 
+ 	/* Program LVDS_CTRL */
+ 	reg = LVDS_CTRL_CC_ADJ(2) | LVDS_CTRL_PRE_EMPH_EN |
+ 	      LVDS_CTRL_PRE_EMPH_ADJ(3) | LVDS_CTRL_VBG_EN;
+-	regmap_write(fsl_ldb->regmap, fsl_ldb->devdata->lvds_ctrl, reg);
++	regmap_write(fsl_ldb->regmap, fsl_ldb->lvds_ctrl, reg);
+ 
+ 	/* Wait for VBG to stabilize. */
+ 	usleep_range(15, 20);
+@@ -220,7 +213,7 @@ static void fsl_ldb_atomic_enable(struct drm_bridge *bridge,
+ 	reg |=	(fsl_ldb->ch0_enabled ? LVDS_CTRL_CH0_EN : 0) |
+ 		(fsl_ldb->ch1_enabled ? LVDS_CTRL_CH1_EN : 0);
+ 
+-	regmap_write(fsl_ldb->regmap, fsl_ldb->devdata->lvds_ctrl, reg);
++	regmap_write(fsl_ldb->regmap, fsl_ldb->lvds_ctrl, reg);
+ }
+ 
+ static void fsl_ldb_atomic_disable(struct drm_bridge *bridge,
+@@ -231,12 +224,12 @@ static void fsl_ldb_atomic_disable(struct drm_bridge *bridge,
+ 	/* Stop channel(s). */
+ 	if (fsl_ldb->devdata->lvds_en_bit)
+ 		/* Set LVDS_CTRL_LVDS_EN bit to disable. */
+-		regmap_write(fsl_ldb->regmap, fsl_ldb->devdata->lvds_ctrl,
++		regmap_write(fsl_ldb->regmap, fsl_ldb->lvds_ctrl,
+ 			     LVDS_CTRL_LVDS_EN);
+ 	else
+-		if (!fsl_ldb->devdata->single_ctrl_reg)
+-			regmap_write(fsl_ldb->regmap, fsl_ldb->devdata->lvds_ctrl, 0);
+-	regmap_write(fsl_ldb->regmap, fsl_ldb->devdata->ldb_ctrl, 0);
++		if (!fsl_ldb->single_ctrl_reg)
++			regmap_write(fsl_ldb->regmap, fsl_ldb->lvds_ctrl, 0);
++	regmap_write(fsl_ldb->regmap, fsl_ldb->ldb_ctrl, 0);
+ 
+ 	clk_disable_unprepare(fsl_ldb->clk);
+ }
+@@ -296,7 +289,7 @@ static int fsl_ldb_probe(struct platform_device *pdev)
+ 	struct device_node *remote1, *remote2;
+ 	struct drm_panel *panel;
+ 	struct fsl_ldb *fsl_ldb;
+-	int dual_link;
++	int dual_link, idx, ret;
+ 
+ 	fsl_ldb = devm_drm_bridge_alloc(dev, struct fsl_ldb, bridge, &funcs);
+ 	if (IS_ERR(fsl_ldb))
+@@ -309,6 +302,27 @@ static int fsl_ldb_probe(struct platform_device *pdev)
+ 	fsl_ldb->dev = &pdev->dev;
+ 	fsl_ldb->bridge.of_node = dev->of_node;
+ 
++	/* No "reg-names" property means single-register LDB */
++	idx = of_property_match_string(dev->of_node, "reg-names", "ldb");
++	if (idx < 0) {
++		fsl_ldb->single_ctrl_reg = true;
++		idx = 0;
++	}
++
++	ret = of_property_read_reg(dev->of_node, idx, &fsl_ldb->ldb_ctrl, NULL);
++	if (ret)
++		return ret;
++
++	if (!fsl_ldb->single_ctrl_reg) {
++		idx = of_property_match_string(dev->of_node, "reg-names", "lvds");
++		if (idx < 0)
++			return idx;
++
++		ret = of_property_read_reg(dev->of_node, idx, &fsl_ldb->lvds_ctrl, NULL);
++		if (ret)
++			return ret;
++	}
++
+ 	fsl_ldb->clk = devm_clk_get(dev, "ldb");
+ 	if (IS_ERR(fsl_ldb->clk))
+ 		return PTR_ERR(fsl_ldb->clk);
 -- 
-2.52.0
+2.51.0
 
