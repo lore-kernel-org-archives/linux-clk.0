@@ -1,127 +1,167 @@
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.perfora.net (mout.perfora.net [74.208.4.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4975122E3E9
-	for <linux-clk@vger.kernel.org>; Mon,  5 Jan 2026 20:47:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ED5320DD72;
+	Mon,  5 Jan 2026 22:16:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.208.4.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767646061; cv=none; b=gazQKHsN+qPvGKQb8Q3U9vb4o6WPiHlF5HayJZbkEB3/BE8ojMEP2y9npUS8cGcKRFYB+emFdtxsAwHFSZ0R6MDTNjS/q6j4J+LqQBYpIY3K5VwEoWe8KETOyYq87Iq89WScxwQu++oNiYGufQknNzCtQIs6IazQFmxQoOiPzYM=
+	t=1767651376; cv=none; b=PiVoRvrraqPyXWJfsJaCCfV8RdWJvhGsYDkoiUR2ytOP1X6MC6PaH9J79RGoxn2niT2did/PLSHpu7DSJpwTIN2dQ3RCRMTLBS1YgDaFpfj6eLjOQBgcxfPXjodnbd0ebE+FlwiPjfDU3S22ttqWQiXHx1gcIZ8SOnBRMh3enfY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767646061; c=relaxed/simple;
-	bh=lZpRH2X0H7PicY/ye0cxWgd6UDfMRpb5kRZrYazmO9Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=k6JEqjwi6hrXOJ9Stx56n35rtaNGcBeOdmwPwrhOQ2O/jVgPvWYqPO+p6DmUhK2Aro2ihetkKraMn5SFwNMAlJNeFFyxsi97Vqmo12uc4wSsOJjK3ijU5Gt6U3sUXBAp28iBoZGGMWaNmV48nshjnGszMEbD/HAchdEAnKjHGjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=TaCb1ESO; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+	s=arc-20240116; t=1767651376; c=relaxed/simple;
+	bh=8e2dZgeyhJlSkCTzL1IOjiKmTNcjngu01WsSxCQbR10=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=MqYhr64VCKNPJ5IPt+KFbeQyymztFD0tuYIHp1F7895SUyLzCLNqLx1tSi1z4dG7HSKuTtr59Ye5jdAVv3Z2gjaZt5afbtIGX35VFlquX0TMdvZhQpl0Ow5HY6Fe/hKkMKeQE/l62gRqIRyhBcNzLMH3mgN0bIQngE7FGO0VIqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziswiler.com; spf=pass smtp.mailfrom=ziswiler.com; dkim=pass (2048-bit key) header.d=ziswiler.com header.i=marcel@ziswiler.com header.b=2z/aTDhH; arc=none smtp.client-ip=74.208.4.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziswiler.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziswiler.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="TaCb1ESO"
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-b8010b8f078so65691866b.0
-        for <linux-clk@vger.kernel.org>; Mon, 05 Jan 2026 12:47:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1767646059; x=1768250859; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=751CuOfDHWCSCZjhCuc+hswoKKu5SgRYZYXOY8EmB64=;
-        b=TaCb1ESOKV9L6aMOoDB4B7NXSR/M5g94i2M7powFo/XjXDoeURA7wPT6xcHWQwofVH
-         iARHzO07Xl1Wfu/8VAERc4xwPjJMsy+SGM6CwAZ/ve+AR/WekdrsIVJTHSNwSpNRWFMW
-         6wMWfkHj9mFZgyU0Cj1jZbeTYwbfZbIcTtrMRH5JU3Ug3ljfjLDkEja7A9/Iltf6xeYp
-         BJhTGsaw9JZbEx8lQunYScTPs/vkeTTUDPnWCx3WjqdDug0cyL4LrDZIy2nnU0HwVDCC
-         jz0GfN+Q4qFl7OQ421C7jzleqTutrsYm5omFeR48qy7i1Noq/cOICH2oR8xENnEw/kb8
-         bSow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767646059; x=1768250859;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=751CuOfDHWCSCZjhCuc+hswoKKu5SgRYZYXOY8EmB64=;
-        b=EPQK/CcgnKcsirTW6AFwKBl3kewnJc7PIcth/mtXRFVBKKvmxe2SrjuLNuw0qGhpgc
-         z7xwpzDNQAHHg3of2HdpmuvKvVd/2HKnsSZU4P9OQxkxI3R9iFMze6OflxISUqLKPB/Q
-         teu4wGRdZz6Dn3CaLlYFXYD8XyeX5HEB8UNbhMngZo4P4ON8uZ9vAJhLtsdcr3rbgmLI
-         wFPKBxlqmOqfqX6SFYqM68+zkK9BsK9FCu9pWya5ofLT3RKXBzjKMccz0hL+/+eeIkFS
-         g/xSTCITr7lD7iCxS6hH7voHOshpLthAodi5Tpn/7+Oh3QSdgXWmfh+7bIuX4ogAaV3s
-         euKw==
-X-Gm-Message-State: AOJu0Yy3en5NGf7G1VfjWuH4ac69FAGIcaNO+d37sG6l4RzzecLqPHg5
-	ydUdTETLMwvtOeKoQhOLaIh0WkD841hZGzxjt8iD/QXJE4Vk0S9Kn1I4
-X-Gm-Gg: AY/fxX5+bK1ao6tiaZWXXpMg4XfNN6Eej8zCrB3ug5jIeIhvhNF/ydg1UEVU4gFi+vs
-	twVp2V9khWfxR5dOne9A5XqbJM16RGy9XWKIxIu88U5vGno2K/F1iUiU4/Uc2v6THIHWx6zGxO9
-	rBKyqcn+Bko1Z3XubDqJOktWR7DdeG6J+HCvuzzaUDHroIDiz1zNdtsDw9r9kJHzOYDkd+JuoN4
-	bDUIjJlvlrqGF2s7QFnhWxRbd77YcOk+n3cAIOoy79CH636DifHVjN6lW7HkD/q0Pc65k317ZdF
-	7vxSBXnPjzmgWw20xt6h74ClcuMn9wM+SY/NUF8Bso1L2FBt1K5okZRph7UaPHLuaICPjbK0hr8
-	sw218SfuY4z05QylbISQn5RIUNYvtrS0mBg/f7dgtGkP6/JNeF3Wj5S1D6402iPqDEJqHN4OoDr
-	us1sRwNmmib8tR3vxPVoZSeYdG7e2csbVdxnsA5jK8Z211yOWvyRaaNeV1WIWk4Wjj6omTzyW0T
-	nYolBcLiudWizFmrnJ5C/KGfvIBRPWYTiDfJcrlpg==
-X-Google-Smtp-Source: AGHT+IHscVxlfHz208YtyaMmjqXOYh5awKkGUsfs0wVHVO6V3dthos7Mjn3E5Y2bxNVyJyfpmXuwsw==
-X-Received: by 2002:a17:907:2d8c:b0:b40:b54d:e687 with SMTP id a640c23a62f3a-b8426bf1761mr111212866b.47.1767646058523;
-        Mon, 05 Jan 2026 12:47:38 -0800 (PST)
-Received: from blackbox (dynamic-2a02-3100-a8ad-5500-1e86-0bff-fe2f-57b7.310.pool.telefonica.de. [2a02:3100:a8ad:5500:1e86:bff:fe2f:57b7])
-        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-b842a233ef3sm26240566b.1.2026.01.05.12.47.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Jan 2026 12:47:38 -0800 (PST)
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-To: linux-amlogic@lists.infradead.org
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	jian.hu@amlogic.com,
-	jbrunet@baylibre.com,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH v1 3/3] clk: meson: gxbb: use the existing HHI_HDMI_PLL_CNTL3 macro
-Date: Mon,  5 Jan 2026 21:47:10 +0100
-Message-ID: <20260105204710.447779-4-martin.blumenstingl@googlemail.com>
-X-Mailer: git-send-email 2.52.0
-In-Reply-To: <20260105204710.447779-1-martin.blumenstingl@googlemail.com>
-References: <20260105204710.447779-1-martin.blumenstingl@googlemail.com>
+	dkim=pass (2048-bit key) header.d=ziswiler.com header.i=marcel@ziswiler.com header.b="2z/aTDhH"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ziswiler.com;
+	s=s1-ionos; t=1767651337; x=1768256137; i=marcel@ziswiler.com;
+	bh=Y6HJq4OhR0K8CkEt79OYGigmyf/NkQlnBfoQsVERq6c=;
+	h=X-UI-Sender-Class:Message-ID:Subject:From:To:Cc:Date:In-Reply-To:
+	 References:Content-Type:Content-Transfer-Encoding:MIME-Version:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=2z/aTDhHrB0X0/fYaSsDmHDINo8EABmBj+xXRDWIizKlBKqLmbQQqnAZEw8rq4TU
+	 qC2IsYVIYX+IWHXHlXOtltr0HkbmgZwXseU5eqOhumQsuMo3PNN+WvprNWHB0RRzG
+	 SQxRjuiFd96fi8iprBZy9Ypp7DY2jB9/0cOJA+lGsQlEb36W++H0kx8mDSMkB4k2T
+	 0UhZ238koYktLPcSgws8r8uW3lYZpiFO9sP/m8/Py/OkpbW9y7WVs/En9gl1RSVii
+	 GJY9joPHQEd8MynHf/ofJ2njqaXOKp/9QBy6CNDzW+6wULvtNlaNpK+YYay8hfF9k
+	 +vJn3vibCFmDhaZniA==
+X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
+Received: from [10.13.73.253] ([213.55.223.158]) by mrelay.perfora.net
+ (mreueus002 [74.208.5.2]) with ESMTPSA (Nemesis) id 0MQgyx-1vR5iH12pJ-00K0zY;
+ Mon, 05 Jan 2026 23:15:36 +0100
+Message-ID: <819b2f6e5db5411b3ea923bca70482617464594c.camel@ziswiler.com>
+Subject: Re: Re: [PATCH v9 2/3] clock: eswin: Add eic7700 clock driver
+From: Marcel Ziswiler <marcel@ziswiler.com>
+To: Xuyang Dong <dongxuyang@eswincomputing.com>, mturquette@baylibre.com, 
+	sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ 	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, troy.mitchell@linux.dev, bmasney@redhat.com
+Cc: ningyu@eswincomputing.com, linmin@eswincomputing.com, 
+	huangyifeng@eswincomputing.com, pinkesh.vaghela@einfochips.com, 
+	ganboing@gmail.com
+Date: Mon, 05 Jan 2026 23:15:29 +0100
+In-Reply-To: <480d671d.1db1.19b8707eb98.Coremail.dongxuyang@eswincomputing.com>
+References: <20251229105844.1089-1-dongxuyang@eswincomputing.com>
+	 <20251229105949.1202-1-dongxuyang@eswincomputing.com>
+	 <a7f4cf00b396096512d6947612031207c4d4459b.camel@ziswiler.com>
+	 <480d671d.1db1.19b8707eb98.Coremail.dongxuyang@eswincomputing.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.2 (by Flathub.org) 
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:/nB+dkILdDoZDzC9GCjB3kbknd63+3kWkUoF4DEeqF9TQrt+RP+
+ 3It2QgjW0hPs1HN0A9zU6vvVI8AKgWKEQId4iwwnZwX+rFGVUg+PPUSbw3ut+cD2a2EtMDl
+ c3nwyWl/ByYLOb+dcIVG+aygRLBDCEm3L4DhQhrd22FQ1Zhua15ClrbU6mRooGpwQsxmy2y
+ lxuA+0kXl30zZvEXkNFIw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:zCdJ8JVYXbM=;yohgFPbjlABC+ZJhh//NVoJg9qA
+ klY98Einnj0+/so1FJ95GDJSZ2eg1sW0ibF6p4bxrdq7CSN15EZfjKow2Mo5UIU8C2B8wlmX9
+ M/1ZBXqR6PiTDpVNmOfjDLzxyx5fraeaSKIGeYW3Y8ogy1XveovpPAKqTR+cjtsfEjpKnERo0
+ ANIMWXS2anoxd7wfH0xfrMDDt+/9jbLBPRE0j3Fa1dXc6oCu0sSdVJqKL0+jMD2FBgKfMY2tn
+ 4MFCVNXhx6i6bAaIK3q225lITHUA4/yXLakdP6ni+MBVgauKkM3ry+ukpPqLmuSCINtK9CbDj
+ Mz1+UdVOjgNYfF1448EjBM4f3YYrjvEPse7z9M8w1BCWspbWd9y8CrNgK9gUGfP0La85uvvFa
+ PP2fvuClC26wuHBMSYgjjqKKqIuwX+f2UsX3pDhXFrpv554jVJDqqzVUPuKse6mKJM8m27yi9
+ NgZ652y2RHemVfZlWZoqG4PknhYjfYCNwJdYC+st3P1ssE42veoS86hwuc1aNnPOoAF1bPf2W
+ mAdRGHwZZ13FkEY9UgRjaxS/fUIprNaXZBvkd9AAromgGvYFf5mdK9b+Rdpo4rPi7Udsw/amY
+ QXBsNIGmuD4JNRLF5nEA+ZBEIJqAkF3ebOmfkfag7tSSVWiaN1FAigVJW9NZwZG6uhZ4NjSM6
+ A/W+6S6EQwKJ4oZSsfp84vdXgiueG/qAUhE1p8Rli/qvsuSpitexy43dHifaO3g5fm3l2AUPA
+ Nw9pyYeAObHa+/kjz6WbKgXwARPc2BanOhlbrXhETU8zJPwzs8n1scxww6hZGs9ATg0T7L71y
+ L35lHv23i3/kSAz6C2R1a1KZTGLfcfPHwTx2VNzTi0v5aDHSwrLGssTnc73+5/zX600YGFPR2
+ 8uNm3sU4yU2mMb7n4q1szI0dpfJMl7OiOlH8Wi5tVvLfm8uVgSbl/zxZIm7/4I/3gU6cda0zb
+ VuoYANKcgXF/YfwU2ZlRBvH9ed4nxrbkqlM6vvOpzL39S5KOvy4Wmf2ooUvrccUXqBGuNTj/4
+ 3RaAm6z9Qtb031881wGNyeMTnJyoUyi2fYmtLOBk/xzRfda1R8M4WIHnA9EGSnlviXPxRkUYy
+ MKkm+tzSAvBdbIWjQB2VxvB/9LeOeere1+X7kgivdXUUp3lzvx4JSPlDxHdFIanKBH+OHziFQ
+ OSjM7cv0xvYM9y5EA5v9OgunuiHQJHmgbXfebgZ7PUzg0f4vJ6bzpnXiA/B/BNnDELHsBaR7Q
+ hK72F3woYwd8cYWoABLfAWqr28QMDovlb8ya87Ta44DI6b0QMyIBJkgSDPb0vQJnUb7aV6fpF
+ 9CXOv6SBsbWiWmWnC+HQ2Wx6odf6GcEZdDfAYqT0eCNpX0mblI0/cXzD9w9mb10zCgwmtsAO8
+ oUjVjSqh8EeOliNYl29PrroFJMI8RUKepultkde9lJdhU+Ai9Yq12V9x/We8H7lw66IZb1Idu
+ 31DhrLHxazYthfOehKI6t2BqJoGCpcO+JFLAnDxhhibXi32x9j2gUofWm51VvNSAf2hjy9Lj9
+ QKbXfj/nAapgEfhTMAYNsrSyZThspQJYN1abHqU+FGj9T04v5vE38MPTrhyjeAYjh8RqVBTV9
+ QbXMFm7ZpLiIYy1L1k4kyNlLPclkh8KG3R4CzQVKhYAOg167L+f5KJUkD5L1xTZvcfrDdKIcR
+ X4D5474X4KF/ij+ssRS0WMRqyMp9oZxM1eaWtbkStAx5TdMsJV4A/Y5ZVa2TM3eNV9Po3gBDO
+ 2DOEqQAtV97Rl7kdvmLCI7ezdKinEknLqS5xmK/3ywlK4U90ikdvWkQHxQUt3AiGRQkBr3xM6
+ 87iy
 
-There's no need to calculate HHI_HDMI_PLL_CNTL + 8 when we have a
-HHI_HDMI_PLL_CNTL3 macro that has the correct offset already. No
-functional changes, this makes it easier to compare the driver with the
-datasheets.
+Hi Xuyang Dong
 
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
----
- drivers/clk/meson/gxbb.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+On Sun, 2026-01-04 at 11:23 +0800, Xuyang Dong wrote:
+> > > +
+> > > +/* divider clocks */
+> > > +static struct eswin_divider_clock eic7700_div_clks[] =3D {
+> > > +	EIC7700_DIV(EIC7700_CLK_DIV_SYS_CFG_DYNM, "divider_sys_cfg_div_dynm=
+",
+> > > +		=C2=A0=C2=A0=C2=A0 "fixed_rate_clk_spll0_fout3", 0,
+> > > +		=C2=A0=C2=A0=C2=A0 EIC7700_REG_OFFSET_SYSCFG_CTRL, 4, 3,
+> > > +		=C2=A0=C2=A0=C2=A0 CLK_DIVIDER_ONE_BASED),
+> > > +	EIC7700_DIV(EIC7700_CLK_DIV_NOC_NSP_DYNM, "divider_noc_nsp_div_dynm=
+",
+> > > +		=C2=A0=C2=A0=C2=A0 "fixed_rate_clk_spll2_fout1", 0,
+> > > +		=C2=A0=C2=A0=C2=A0 EIC7700_REG_OFFSET_NOC_CTRL, 0, 3, CLK_DIVIDER_=
+ONE_BASED),
+> > > +	EIC7700_DIV(EIC7700_CLK_DIV_BOOTSPI_DYNM, "divider_bootspi_div_dynm=
+",
+> > > +		=C2=A0=C2=A0=C2=A0 "gate_clk_spll0_fout2", 0, EIC7700_REG_OFFSET_B=
+OOTSPI_CTRL,
+> > > +		=C2=A0=C2=A0=C2=A0 4, 6, CLK_DIVIDER_ONE_BASED),
+> > > +	EIC7700_DIV(EIC7700_CLK_DIV_SCPU_CORE_DYNM,
+> > > +		=C2=A0=C2=A0=C2=A0 "divider_scpu_core_div_dynm", "fixed_rate_clk_s=
+pll0_fout1",
+> > > +		=C2=A0=C2=A0=C2=A0 0, EIC7700_REG_OFFSET_SCPU_CORE_CTRL, 4, 4,
+> > > +		=C2=A0=C2=A0=C2=A0 CLK_DIVIDER_ONE_BASED),
+> > > +	EIC7700_DIV(EIC7700_CLK_DIV_LPCPU_CORE_DYNM,
+> > > +		=C2=A0=C2=A0=C2=A0 "divider_lpcpu_core_div_dynm", "fixed_rate_clk_=
+spll0_fout1",
+> > > +		=C2=A0=C2=A0=C2=A0 0, EIC7700_REG_OFFSET_LPCPU_CORE_CTRL, 4, 4,
+> > > +		=C2=A0=C2=A0=C2=A0 CLK_DIVIDER_ONE_BASED),
+> >=20
+> > During testing on top of next-20251219 I got the following:
+> >=20
+> > [=C2=A0=C2=A0=C2=A0 0.126102] divider_lpcpu_core_div_dynm: Zero divisor=
+ and CLK_DIVIDER_ALLOW_ZERO not set
+> > [=C2=A0=C2=A0=C2=A0 0.126194] WARNING: drivers/clk/clk-divider.c:145 at=
+ divider_recalc_rate+0x8a/0x9c, CPU#0: swapper/0/1
+> >=20
+> > Therefore I suggest for above line needing to be:
+> >=20
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 CLK_DIVIDER_ONE_BASED | CLK_DIVIDER=
+_ALLOW_ZERO),
+>=20
+> Hi Marcel,
+>=20
+> Thank you! This is indeed a bug and will be fixed in the next version.=C2=
+=A0
+> Could you please share the detailed testing methods with me so that I=C2=
+=A0
+> can reproduce this issue on my side?
 
-diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-index 0788b9b1ed21..0900f4e44764 100644
---- a/drivers/clk/meson/gxbb.c
-+++ b/drivers/clk/meson/gxbb.c
-@@ -358,7 +358,7 @@ static const struct clk_div_table gxl_hdmi_pll_od_div_table[] = {
- 
- static struct clk_regmap gxl_hdmi_pll_od = {
- 	.data = &(struct clk_regmap_div_data){
--		.offset = HHI_HDMI_PLL_CNTL + 8,
-+		.offset = HHI_HDMI_PLL_CNTL3,
- 		.shift = 21,
- 		.width = 2,
- 		.table = gxl_hdmi_pll_od_div_table,
-@@ -376,7 +376,7 @@ static struct clk_regmap gxl_hdmi_pll_od = {
- 
- static struct clk_regmap gxl_hdmi_pll_od2 = {
- 	.data = &(struct clk_regmap_div_data){
--		.offset = HHI_HDMI_PLL_CNTL + 8,
-+		.offset = HHI_HDMI_PLL_CNTL3,
- 		.shift = 23,
- 		.width = 2,
- 		.table = gxl_hdmi_pll_od_div_table,
-@@ -394,7 +394,7 @@ static struct clk_regmap gxl_hdmi_pll_od2 = {
- 
- static struct clk_regmap gxl_hdmi_pll = {
- 	.data = &(struct clk_regmap_div_data){
--		.offset = HHI_HDMI_PLL_CNTL + 8,
-+		.offset = HHI_HDMI_PLL_CNTL3,
- 		.shift = 19,
- 		.width = 2,
- 		.table = gxl_hdmi_pll_od_div_table,
--- 
-2.52.0
+Sure, this was first tested on top of next-20251219, then I re-based it on =
+top of next-20260105 and finally I
+ported it to v6.19-rc4 as part of the yocto project integration for the esw=
+in-ebc77-mainline machine [1].
 
+I will further refine this for one of my talks at FOSDEM'26 [2].
+
+Let me know if you have any further questions.
+
+Thanks!
+
+[1] https://github.com/ziswiler/meta-riscv/tree/add-eswin-ebc77-support
+[2] https://fosdem.org/2026/schedule/event/LX3NNU-upstream-embedded-linux-o=
+n-risc-v-sbcs
+
+> Best regards,
+> Xuyang Dong
+
+Cheers
+
+Marcel
