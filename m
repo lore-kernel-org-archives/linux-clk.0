@@ -1,99 +1,298 @@
-Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com [209.85.217.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDE92332EBC
-	for <linux-clk@vger.kernel.org>; Mon,  5 Jan 2026 16:24:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B7BD330313;
+	Mon,  5 Jan 2026 16:24:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767630264; cv=none; b=so2R1b0ihy1FpXvaebC7dOdsr45Vg8wtpRC8DCAUcX+x40GiO2gfYbnByxHXRdsKDtle/+18/PYUOwGnQuTtDoo8n7NH7y4QaNd2FKnYNVGDNxFa9y7HH4p0U07F0vlBGiSnHn2wxJwcWr8VXCq0YpYLRH1fO3DhgPMc6i3QFK4=
+	t=1767630266; cv=none; b=oS0ePftNA46t/NPXPZBTESSgfC2ipmJkPBl4RW261S77ZTLuJ27f5cE8cpaeRY3nI37kWI3G7AKK959Ll5eDygoZeabTa7G7UkyluJwS8RDJ8SD7/KPBhzidxpnfpkBrm+cnmKWfALOI6eR6xl9WGfw3lYWHv8q+BsMapEX+NO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767630264; c=relaxed/simple;
-	bh=MQJHVWGVMvEgY0pTCRXhfF0hcdx5A6vuZ3OGEmwJLyc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=txnT3LTE/plAVsEt9xlBWAKgm5wY++jm20tJNQvsDeg4hJAt93nY76rrEtEmfQ8AqSaHYXsbVeLkqjtyNEoqbMDe0LRojJMtnE+yao4JEOBaX7x3xKOXvXQhRpC4sqcENS7GLdaC2IN6z2RRFUqeURe7AzKzjmz+AxXVI2uo7PQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-5dfaceec8deso61340137.0
-        for <linux-clk@vger.kernel.org>; Mon, 05 Jan 2026 08:24:20 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767630259; x=1768235059;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JG5F5JQHgu2xOW906W6PARHJHbrMbK+KGI+iRwpYzNQ=;
-        b=I1yiO0qk3qep0AFdZW20WGHDw6H2hxik+YxJGZ9EuQRPE2+17GYlLnCLqm7WDc2unX
-         3NeG32RgbESWReHBsl9thM3evHG1qaaMFSaYRPDOGGAbEE7ZlErf9PQojPOFvxcwmWSg
-         mOw/yndWsFQj+SMNAd8Ei6vUbar9HgyjVhcKRmolWlBW4XdYbj8048yP0CtI3mcjW4tk
-         yfSPdu2xQrJwwkzY9yHukERL8lZSfD97cN8AZz88qpV1ssSAmaX9oeCPKoU+gdErLDO5
-         /LpwHuX3G8nkRWaK1j4d60jo0CKeh223XPsALLEyxmdYChMRssIyQCkSwVwvB5I01Bs3
-         S1OA==
-X-Forwarded-Encrypted: i=1; AJvYcCWv9M80E6xYID8dTGKv+otQLnwlx0eghEPFrB55MvxDQCwZbjrixo8CYOXxEa9NaG+l/Oxh3k6RLbg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxeAf5Aoz2ELOjs3xeTcE1fYqAttyrWylw3A0oJOkI9DI0PgFwY
-	b9O0RZyiv8b5frK2PzYCs8d2mL07KPpRNCUAB9aRtXht9/s1ymoTuTlv7KZqtjl2
-X-Gm-Gg: AY/fxX4ovaNmCs5kw5bv9OkyUYcRMLlc+LXz74sNp6V1wcea5c15dqdV4EDjUGrAl2H
-	W5cyXNtH/jXC+OJq2Lsf7rOUCMZBmSv8VE8MABnI/BPzzJWHk4ABqTxLhLcKkZcKN8qNtotjxPA
-	cRj15+3GjdC86FxLlPZWFSgKFATHKKsJQ6StKK4+FOO1kcEA8v5yFAiNcYoT7QhLJMWplBafrSr
-	1ALYyjMYiFmN0K3mwHMftnfFocoEsE8tFr/I1ckeC/6MyeWJbmg6Xkl0PB5jmSuBXLFtaq375x8
-	I5eQnN/x21fpWdSkOdQltpVLfEmxrC86u0aiqaD7u5TqorxAMZQ5Y6hdTxWnLDCIjIC32Wwn8p1
-	xshl+3SPeJkseE3EstB/M8huPU9kdkza9h2DCUqHQ1BSAouv4ZlHgAXiuqdijzyTaWZ/rMNhAm0
-	jmRq7P72t49041NA1fkFgSvMYx0cUo0kQ8E5bbD1YFWys09BDP
-X-Google-Smtp-Source: AGHT+IHd8LtK/M6ou1uPeG6XeTZj0t5dADbzdxpjxxMCmTRU8vDv2IF7JaSsT2MUF4IGm1q5rypKzA==
-X-Received: by 2002:a05:6102:2ad2:b0:5db:de8f:3278 with SMTP id ada2fe7eead31-5ec30b2c8ffmr2685857137.10.1767630257279;
-        Mon, 05 Jan 2026 08:24:17 -0800 (PST)
-Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com. [209.85.222.51])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-943417972f5sm13300960241.14.2026.01.05.08.24.16
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 05 Jan 2026 08:24:16 -0800 (PST)
-Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-93f5910b06cso57292241.0
-        for <linux-clk@vger.kernel.org>; Mon, 05 Jan 2026 08:24:16 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUhwx7Itka+YJYD6cqfc+95rEy8ltQNSmRTPmHJ0KrHzMucmyB9TyfvjbIXJ0Zr/xrO4WF4RgHI8YQ=@vger.kernel.org
-X-Received: by 2002:a05:6102:5544:b0:5db:dad4:840 with SMTP id
- ada2fe7eead31-5ec30b2d62amr3150905137.12.1767630256405; Mon, 05 Jan 2026
- 08:24:16 -0800 (PST)
+	s=arc-20240116; t=1767630266; c=relaxed/simple;
+	bh=ZF375abMaqPcCosbr7HThENC1dI3rMKv9Td3V3QBTUc=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=rZsIak4YgAaG3yk+ZM1qeY7yIMMZL3Di2++6W5ifpnCgEq65XJ8tpW6rll7JKDxemERKvbHo7o2MYfbCTDg1+GuscxBZ+KzJdQTQD5s7MgZIC/rKG5M/ys18806G/USara1PnHm/0fQSH7ALID4BQT+aLlpR+YmAiX9orT7GhRA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=wiwfgUos; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="wiwfgUos"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 4CD4F1A2667;
+	Mon,  5 Jan 2026 16:24:17 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 1F2BD60726;
+	Mon,  5 Jan 2026 16:24:17 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 04C34103C84AA;
+	Mon,  5 Jan 2026 17:24:11 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1767630255; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=wmAT0T9ABuwHAf6f+472JmLmotK1cUNIQRvscL78Si8=;
+	b=wiwfgUos9MN+41ojRE2Afdk860+ixAWP0mMipfgftY8bfriiGODeIcNdsxpSEyxSzZuFJa
+	/ainyHboytM31BdO6DwPeUAdCWVwmTT2dmK1QgCmhf1rblhzkcKWE34hWiu4CZCaBzpA4k
+	zvYPutcJjurtbcSdNtsSf5IxXetg/3xZ9i6XBgqQ9GzGrOj1A41xb/1AfYHG4l5vSLjtg8
+	bAgrdxFHJsFVQztX8r+3KfCNYlP9TP0gLQ5N+OvP2QC1uszibhEe5U/Vi3CZV4pQ3ADf2A
+	GbZdubbRrJ3aTaVd1bVKNCKFbyDfTtjVDECyFrqQtuMpK3UtzTLVLQPw9fHe2g==
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20251127145654.3253992-1-cosmin-gabriel.tanislav.xa@renesas.com> <TYRPR01MB1561941846EC8C92EEB39E1278586A@TYRPR01MB15619.jpnprd01.prod.outlook.com>
-In-Reply-To: <TYRPR01MB1561941846EC8C92EEB39E1278586A@TYRPR01MB15619.jpnprd01.prod.outlook.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 5 Jan 2026 17:24:03 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdVnY2D8vLMd0Y2ypeSr_nm6ziiyG57sUNqkgNM-Jn-_OA@mail.gmail.com>
-X-Gm-Features: AQt7F2owp4Lx4gxw43Zb9iibAIGGiEAsj4FfeLdF5mBM8hUhf0xrJMxP_puaoqc
-Message-ID: <CAMuHMdVnY2D8vLMd0Y2ypeSr_nm6ziiyG57sUNqkgNM-Jn-_OA@mail.gmail.com>
-Subject: Re: [PATCH 0/2] Fix CPG suspend/resume on RZ/T2H and RZ/N2H
-To: Cosmin-Gabriel Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Thierry Bultel <thierry.bultel.yh@bp.renesas.com>, 
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, 
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 05 Jan 2026 17:24:11 +0100
+Message-Id: <DFGSMN8268O0.33TYCQDBVHUHZ@bootlin.com>
+Subject: Re: [PATCH v5 2/7] phy: Add driver for EyeQ5 Ethernet PHY wrapper
+Cc: "Vladimir Kondratiev" <vladimir.kondratiev@mobileye.com>,
+ =?utf-8?q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>, "Rob
+ Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+ "Conor Dooley" <conor+dt@kernel.org>, "Kishon Vijay Abraham I"
+ <kishon@kernel.org>, "Michael Turquette" <mturquette@baylibre.com>,
+ "Stephen Boyd" <sboyd@kernel.org>, "Philipp Zabel"
+ <p.zabel@pengutronix.de>, "Thomas Bogendoerfer"
+ <tsbogend@alpha.franken.de>, "Neil Armstrong" <neil.armstrong@linaro.org>,
+ <linux-mips@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linux-phy@lists.infradead.org>,
+ <linux-clk@vger.kernel.org>, =?utf-8?q?Beno=C3=AEt_Monin?=
+ <benoit.monin@bootlin.com>, "Tawfik Bayouk" <tawfik.bayouk@mobileye.com>,
+ "Thomas Petazzoni" <thomas.petazzoni@bootlin.com>, "Luca Ceresoli"
+ <luca.ceresoli@bootlin.com>
+To: "Vinod Koul" <vkoul@kernel.org>, =?utf-8?q?Th=C3=A9o_Lebrun?=
+ <theo.lebrun@bootlin.com>
+From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+X-Mailer: aerc 0.21.0-0-g5549850facc2
+References: <20251215-macb-phy-v5-0-a9dfea39da34@bootlin.com>
+ <20251215-macb-phy-v5-2-a9dfea39da34@bootlin.com> <aUq7E4yh0OgTfdxF@vaman>
+In-Reply-To: <aUq7E4yh0OgTfdxF@vaman>
+X-Last-TLS-Session-Version: TLSv1.3
 
-Hi Cosmin,
+Hello Vinod,
 
-On Mon, 5 Jan 2026 at 08:42, Cosmin-Gabriel Tanislav
-<cosmin-gabriel.tanislav.xa@renesas.com> wrote:
-> > -----Original Message-----
-> > This series fixes an issue when entering s2idle on RZ/T2H and RZ/N2H, as
-> > the register layout in use by them was not accounted for, causing
-> > aborts.
+On Tue Dec 23, 2025 at 4:53 PM CET, Vinod Koul wrote:
+> On 15-12-25, 17:26, Th=C3=A9o Lebrun wrote:
+>> EyeQ5 embeds a system-controller called OLB. It features many unrelated
+>> registers, and some of those are registers used to configure the
+>> integration of the RGMII/SGMII Cadence PHY used by MACB/GEM instances.
+>>=20
+>> Wrap in a neat generic PHY provider, exposing two PHYs with standard
+>> phy_init() / phy_set_mode() / phy_power_on() operations.
+>>=20
+>> Reviewed-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+>> Signed-off-by: Th=C3=A9o Lebrun <theo.lebrun@bootlin.com>
+>> ---
+>>  MAINTAINERS                 |   1 +
+>>  drivers/phy/Kconfig         |  13 +++
+>>  drivers/phy/Makefile        |   1 +
+>>  drivers/phy/phy-eyeq5-eth.c | 249 +++++++++++++++++++++++++++++++++++++=
++++++++
+>>  4 files changed, 264 insertions(+)
+>>=20
+>> diff --git a/MAINTAINERS b/MAINTAINERS
+>> index 5b11839cba9d..2f67ec9fad57 100644
+>> --- a/MAINTAINERS
+>> +++ b/MAINTAINERS
+>> @@ -17605,6 +17605,7 @@ F:	arch/mips/boot/dts/mobileye/
+>>  F:	arch/mips/configs/eyeq5_defconfig
+>>  F:	arch/mips/mobileye/board-epm5.its.S
+>>  F:	drivers/clk/clk-eyeq.c
+>> +F:	drivers/phy/phy-eyeq5-eth.c
+>>  F:	drivers/pinctrl/pinctrl-eyeq5.c
+>>  F:	drivers/reset/reset-eyeq.c
+>>  F:	include/dt-bindings/clock/mobileye,eyeq5-clk.h
+>> diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
+>> index 678dd0452f0a..1aa6eff12dbc 100644
+>> --- a/drivers/phy/Kconfig
+>> +++ b/drivers/phy/Kconfig
+>> @@ -101,6 +101,19 @@ config PHY_NXP_PTN3222
+>>  	  schemes. It supports all three USB 2.0 data rates: Low Speed, Full
+>>  	  Speed and High Speed.
+>> =20
+>> +config PHY_EYEQ5_ETH
 >
-> Hi Geert! Was this skipped intentionally?
+> sorted please
 
-No, it is just suffering badly from the conference and holiday season...
+I wouldn't mind, but entries are currently (v6.19-rc4) not sorted:
 
-Gr{oetje,eeting}s,
+$ diff -U100 <(grep ^config drivers/phy/Kconfig) \
+             <(grep ^config drivers/phy/Kconfig | sort)
+--- /dev/fd/63 2026-01-05 15:55:53.891922890 +0100
++++ /dev/fd/62 2026-01-05 15:55:53.891922890 +0100
+@@ -1,11 +1,11 @@
+ config GENERIC_PHY
+ config GENERIC_PHY_MIPI_DPHY
++config PHY_AIROHA_PCIE
++config PHY_CAN_TRANSCEIVER
++config PHY_EYEQ5_ETH
+ config PHY_LPC18XX_USB_OTG
++config PHY_NXP_PTN3222
+ config PHY_PISTACHIO_USB
+ config PHY_SNPS_EUSB2
+ config PHY_XGENE
+ config USB_LGM_PHY
+-config PHY_CAN_TRANSCEIVER
+-config PHY_AIROHA_PCIE
+-config PHY_NXP_PTN3222
+-config PHY_EYEQ5_ETH
 
-                        Geert
+This is why I appended. In V2, I'll send a first patch to reorder
+entries to then be able to add PHY_EYEQ5_ETH in the correct location.
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+>> +	tristate "Ethernet PHY Driver on EyeQ5"
+>> +	depends on OF
+>> +	depends on MACH_EYEQ5 || COMPILE_TEST
+>> +	select AUXILIARY_BUS
+>> +	select GENERIC_PHY
+>> +	default MACH_EYEQ5
+>
+> hmmm why should it be default? Maybe add this is respective defconfig for
+> platform instead..?
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+We have been doing this for other parts of OLB. If you are doing a
+config for EyeQ5, most probably you want this enabled.
+
+One example usecase this default field makes config easier: when you
+migrate an eyeq* config to eyeq5 without resetting the full config by
+applying eyeq5_defconfig. With default field you get this driver
+enabled, otherwise you don't and Ethernet doesn't work.
+
+I'd prefer keeping this default but we can drop it if you lean strongly
+against it.
+
+>> +	help
+>> +	  Enable this to support the Ethernet PHY integrated on EyeQ5.
+>> +	  It supports both RGMII and SGMII. Registers are located in a
+>> +	  shared register region called OLB. If M is selected, the
+>> +	  module will be called phy-eyeq5-eth.
+>> +
+>>  source "drivers/phy/allwinner/Kconfig"
+>>  source "drivers/phy/amlogic/Kconfig"
+>>  source "drivers/phy/broadcom/Kconfig"
+>> diff --git a/drivers/phy/Makefile b/drivers/phy/Makefile
+>> index bfb27fb5a494..8289497ece55 100644
+>> --- a/drivers/phy/Makefile
+>> +++ b/drivers/phy/Makefile
+>> @@ -13,6 +13,7 @@ obj-$(CONFIG_PHY_SNPS_EUSB2)		+=3D phy-snps-eusb2.o
+>>  obj-$(CONFIG_USB_LGM_PHY)		+=3D phy-lgm-usb.o
+>>  obj-$(CONFIG_PHY_AIROHA_PCIE)		+=3D phy-airoha-pcie.o
+>>  obj-$(CONFIG_PHY_NXP_PTN3222)		+=3D phy-nxp-ptn3222.o
+>> +obj-$(CONFIG_PHY_EYEQ5_ETH)		+=3D phy-eyeq5-eth.o
+>
+> sorted please
+
+Same as for Kconfig. Will do it in two steps: first sort, then add the
+CONFIG_PHY_EYEQ5_ETH line.
+
+$ diff -U100 <(grep ^obj-\\$ drivers/phy/Makefile) \
+             <(grep ^obj-\\$ drivers/phy/Makefile | sort)
+--- /dev/fd/63 2026-01-05 16:11:10.977537425 +0100
++++ /dev/fd/62 2026-01-05 16:11:10.978537396 +0100
+@@ -1,11 +1,11 @@
+-obj-$(CONFIG_GENERIC_PHY)              +=3D phy-core.o
+ obj-$(CONFIG_GENERIC_PHY_MIPI_DPHY)    +=3D phy-core-mipi-dphy.o
++obj-$(CONFIG_GENERIC_PHY)              +=3D phy-core.o
++obj-$(CONFIG_PHY_AIROHA_PCIE)          +=3D phy-airoha-pcie.o
+ obj-$(CONFIG_PHY_CAN_TRANSCEIVER)      +=3D phy-can-transceiver.o
++obj-$(CONFIG_PHY_EYEQ5_ETH)            +=3D phy-eyeq5-eth.o
+ obj-$(CONFIG_PHY_LPC18XX_USB_OTG)      +=3D phy-lpc18xx-usb-otg.o
+-obj-$(CONFIG_PHY_XGENE)                +=3D phy-xgene.o
++obj-$(CONFIG_PHY_NXP_PTN3222)          +=3D phy-nxp-ptn3222.o
+ obj-$(CONFIG_PHY_PISTACHIO_USB)        +=3D phy-pistachio-usb.o
+ obj-$(CONFIG_PHY_SNPS_EUSB2)           +=3D phy-snps-eusb2.o
++obj-$(CONFIG_PHY_XGENE)                +=3D phy-xgene.o
+ obj-$(CONFIG_USB_LGM_PHY)              +=3D phy-lgm-usb.o
+-obj-$(CONFIG_PHY_AIROHA_PCIE)          +=3D phy-airoha-pcie.o
+-obj-$(CONFIG_PHY_NXP_PTN3222)          +=3D phy-nxp-ptn3222.o
+-obj-$(CONFIG_PHY_EYEQ5_ETH)            +=3D phy-eyeq5-eth.o
+
+[...]
+
+>> +static int eq5_phy_exit(struct phy *phy)
+>> +{
+>> +	struct eq5_phy_inst *inst =3D phy_get_drvdata(phy);
+>> +	struct eq5_phy_private *priv =3D inst->priv;
+>> +	struct device *dev =3D priv->dev;
+>> +
+>> +	dev_dbg(dev, "phy_exit(inst=3D%td)\n", inst - priv->phys);
+>> +
+>> +	writel(0, inst->gp);
+>> +	writel(0, inst->sgmii);
+>> +	udelay(5);
+>
+> this is same patter in init as well...?
+
+Yes! phy_ops::init() must reinit the HW to ensure its config fields
+are well taken into account. We might inherit an already initialised
+PHY from the bootloader.
+
+We could in theory move those three ops (writel+writel+udelay) into a
+helper function but I feel like it would decrease readability without
+increasing code quality.
+
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int eq5_phy_set_mode(struct phy *phy, enum phy_mode mode, int su=
+bmode)
+>> +{
+>> +	struct eq5_phy_inst *inst =3D phy_get_drvdata(phy);
+>> +	struct eq5_phy_private *priv =3D inst->priv;
+>> +	struct device *dev =3D priv->dev;
+>> +
+>> +	dev_dbg(dev, "phy_set_mode(inst=3D%td, mode=3D%d, submode=3D%d)\n",
+>> +		inst - priv->phys, mode, submode);
+>
+> these are good for debug but not for upstream, please drop
+
+Ah this is surprising! They helped me debug this driver and fix one bug
+or two so I thought I'd leave them in. They get compiled out by
+default. And there is no ftrace events equivalent which would make
+those dev_dbg() moot.
+
+=E2=9F=A9 git grep -F dev_dbg\( drivers/ | wc -l
+25174
+=E2=9F=A9 git grep -F dev_dbg\( drivers/phy/ | wc -l
+260
+
+[...]
+
+>> +static int eq5_phy_probe(struct auxiliary_device *adev,
+>> +			 const struct auxiliary_device_id *id)
+>> +{
+>> +	struct device *dev =3D &adev->dev;
+>> +	struct phy_provider *provider;
+>> +	struct eq5_phy_private *priv;
+>> +	void __iomem *base;
+>> +	int ret;
+>> +
+>> +	priv =3D devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+>> +	if (!priv)
+>> +		return -ENOMEM;
+>> +
+>> +	priv->dev =3D dev;
+>> +	dev_set_drvdata(dev, priv);
+>> +
+>> +	base =3D (void __iomem *)dev_get_platdata(dev);
+>
+> no need to cast for void *
+
+Yes! My initial goal was to prevent a sparse warning about the implicit
+cast from `void *` as returned by dev_get_platdata() and
+`void __iomem *base`.
+
+But it does not matter in our case (and the correct solution for
+explicit cast would have implied __force).
+
+--
+
+I'll wait for feedback on `default MACH_EYEQ5` and `dev_dbg()` before
+sending the next revision.
+
+Thanks for the review!
+
+--
+Th=C3=A9o Lebrun, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
