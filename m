@@ -1,179 +1,225 @@
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 750523346BD
-	for <linux-clk@vger.kernel.org>; Mon,  5 Jan 2026 12:42:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 336F12BEFF8
+	for <linux-clk@vger.kernel.org>; Mon,  5 Jan 2026 13:33:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767616967; cv=none; b=lGpbjMY28pe5c3y3AdCyYC9NW4SM/BODen9KIwtVQ8M3zLA55KoLpcUkj4iQDGtxVxsMA1vd8+kBYWryvqVyv68gKpcdgb4xabk1J4arWjI772IiBA6QXipEFQ5H1cTYm+XXanj/riF7R/U9k6SEsiTdI6DFjkVbQHP3rWtLXh8=
+	t=1767620039; cv=none; b=jLk11MORs7ikJLlugx/TGx+yyn818K3RR/ouwCuPDmjOvziVr5J70djhZFH0C68rLowMhTp0Dyh45J2YbNpRCmrX4sMEf2dz8cc+qm6HNcueClwKnfbdeCuiTirg+gC+snSHixT/PTrwHDtJySOfIjpx4ewyeWm1zAKKg5Nxo3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767616967; c=relaxed/simple;
-	bh=WRkPJEy+GjVSZxgwl7Jzpi8fMHqkkFMtQU4c0+Tod0Q=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=vDTQWbVquZD6sydoU5rA6BChEwGEIhpXhLAfjFqASzg2O5vKpp9gHxjJf4X9T1ub6wlVPn+THqVV1PkwO4ddVLzL7ckrzTIEg8svBBOI//YapRh9fUjBUmdeWCvKVj1jh5agCxk+xFhAaeqIBoUkohvNep5yTOV1yPXCr6xbrlY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RiE10I/I; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+	s=arc-20240116; t=1767620039; c=relaxed/simple;
+	bh=LOzUYd+dRmkv3oMmU7xQB3tIB1OpRm86ei1dR0EieQM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=VOksfoLkihO3D5aySmbZ3S8MIbG60yRZlyh+OxP0WubRniuuaLEn0qsKnHQ22q314MvdgQ1RjPPK7NzdtQsXSGQIDsuz+wnkM6STT+3gH83fE0XfYZsagrevBx1P1Ppf80w/392DIaatHl8gp3BzMXuUz0oxOtidSU+Oreewygw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=MIb4tc2o; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=kXTq6m3J; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RiE10I/I"
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-47a97b719ccso83801925e9.2
-        for <linux-clk@vger.kernel.org>; Mon, 05 Jan 2026 04:42:45 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="MIb4tc2o";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="kXTq6m3J"
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6059nqvp3541817
+	for <linux-clk@vger.kernel.org>; Mon, 5 Jan 2026 13:33:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=eBLWi/Kbuhx9TqF7mhxf1H
+	8jWhbGxH4EXAW6f0Ac6FE=; b=MIb4tc2omLHC+vOEDy0doL7yPHZHY3nhgmuou4
+	tYf+C7eylsOinYlUZQnPWRjlT4buir1bjJnhXin1wqH5aHgV88H5mYY8r8dv72xP
+	q/F8xrIpvv8VwuMU0MtOQ7cGLH5qZ0qtXt55KUUW1lGFeqthcRgPUZfMMOwJWF3X
+	rXJ0Bz8xQSaTbbDEEvB1oaxjA20tmKa2910eoYv53t1kCjospC0LPgy2U9e4kZCL
+	OVzWgnhkwPtXTXcGKLui980aI6cvSzj8E0XktjoMwI5OiJQrm16siZNsBan9ekBk
+	DQ1R0+DI7W+cR5JNb3nZffJHN82h/WNKN4SRT/AQKXKJKHoA==
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4bg57shm9q-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Mon, 05 Jan 2026 13:33:56 +0000 (GMT)
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4ee0c1c57bcso574511641cf.2
+        for <linux-clk@vger.kernel.org>; Mon, 05 Jan 2026 05:33:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1767616964; x=1768221764; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Kn0DewO2Lv099plLn+ktyqm9+gJNKKN0vCwkcu0MBU4=;
-        b=RiE10I/Ie82fUB7UvLZVvz9Bz87wh48envxDsKWeciS28ZY3QBiyOn+QvoXw5b8R1J
-         cNY3vbveHMVSc/9iO7Wc9L96ikSeZNlnAF4dbC2DoG1QC16Zjun4P16g73rVwzX4DN4N
-         F6phdv+Xk5SAAS+/dB9JB3C4Zss8CuaUkA4rh/B8OVkFJ2OcCQI9PEbXi/NsTyybbC/O
-         Axdw+3aTAS9yiKDsk5hMgnbFS87RA/3zqvFfhGAufZ7Yo/eddiUMB2fdy6AnUbGx+EAu
-         QCPbEYlfyl5B0UnvcA9M6Vhuu3Hd4nlEFZYC+TkdO63adpHuYSaLd07nJbE5aj1T3AnE
-         EpCQ==
+        d=oss.qualcomm.com; s=google; t=1767620035; x=1768224835; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=eBLWi/Kbuhx9TqF7mhxf1H8jWhbGxH4EXAW6f0Ac6FE=;
+        b=kXTq6m3J5gZEheCKTxzhp1OdcUwahLhwoBUQEZTTjcG94T96cwxSqatt8gXBSKHsQr
+         uzmi0zlS9L8CtfCRhSbWQWrg2NKfCCGhbkHd+1sqJy9ae8SfvPdqm0EMqpZCAF/dcXwb
+         dVZjuIAZt22UQgbN0spfucgb99acD7YNj03YvVSHhVemZ90g4hWjXD/YOMiUjXadjfnb
+         9w2wMjhuNFLktWZSryCqs7RtzOYk2ifS18nQ7Kc/eK/nHy8EZKOwklYMLmcJnsFzv4eY
+         lrKA8P8O2Rvf7tTGx3FZZEUeutsH1+ik5HWcUpcR0/hvvHzvycGUiwJD2/iKutWjI2US
+         St0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767616964; x=1768221764;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Kn0DewO2Lv099plLn+ktyqm9+gJNKKN0vCwkcu0MBU4=;
-        b=TNjkRauqQmFsrBSAGLctyRkwARbAuEgT/PkUpGBkFwOxOpsMTtnYatHJM2Ywxdo+oO
-         DFboVscD/UswQ+/AYAd4Ym2JWegc1R2mMVrxIxjTiDjFC1aK6Of4MSSn9LLPKHFccimU
-         02a0UyR92li0TZ1E832a7DR0FdEHIV4Td0QzOhGXVEYZZdmhzl9M7WS4hlVNk/gMBuMr
-         BrB79BvQelF7HpecTdiWcX2IpOHmLk44FZ+IWkIVETlyllkAdAsdDRByw+rDzLaQ6af+
-         7HvSIVb9SiMJLh8LVD7wX46IVlrzQURj1GKAfAl1JNXCdX2VscRyHXo11cI6gCdHEkN9
-         dz6A==
-X-Forwarded-Encrypted: i=1; AJvYcCWnxqKX7kl542eDQ+7PlsNVFBSNKYVKr9n8HsRs0DDSfUwnOakNRW1Cf9A+E27T4mj+rlasGQOxnJA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0By3GWOTpzB2WUDTyaXeBX3vSMASb9q+xnMqLfaG5QjSDqAnh
-	pfPuWCO7mtEG0SxoD5op+iikJhJoF3G/c/TBssVCDx9qmRB686HHlMADUY4XGGZ4aebYMDaCxPf
-	5zCt2l049gJmGhRorIg==
-X-Google-Smtp-Source: AGHT+IHm2U4tWkUDpICYqeLNPlKYam++VODEibw8EVXPE4rw87vgRP74KmElTW/bk6q2Gh7YOrjrH2FB/w7L3E8=
-X-Received: from wrbay21.prod.google.com ([2002:a5d:6f15:0:b0:432:57a6:83b8])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:46c4:b0:477:7bd2:693f with SMTP id 5b1f17b1804b1-47d1953b80bmr675231065e9.6.1767616963860;
- Mon, 05 Jan 2026 04:42:43 -0800 (PST)
-Date: Mon, 05 Jan 2026 12:42:17 +0000
-In-Reply-To: <20260105-define-rust-helper-v2-0-51da5f454a67@google.com>
+        d=1e100.net; s=20230601; t=1767620035; x=1768224835;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eBLWi/Kbuhx9TqF7mhxf1H8jWhbGxH4EXAW6f0Ac6FE=;
+        b=fYtihZJ83GcBI3j1EhgiOpdTI0Ec34+91MNWLy0Jkp3QlFyLpvlkCfaVsjLQwRXimu
+         LbPtbs4T9mroNugx4HwdeN/FwGFpNe/Xk3khEk4thl1EHCp5xKEDvWmPsXuM0TQTvDYg
+         q4yIYn5uMUAs3IXDaPMl6m5Rf4MD2XZMUTCdm49UjL7X+qvNUc1BDHQ75L0iWaCV8q0r
+         iJI8OYPeMoaksNFciUQqtqNbzBRcm4R2UNAg4alxRW2Yp0OOId8k4+CGuwojyKsP92Qk
+         FjiZUq8lDJBrq6ckvw4s9LNbP7Dwg7y9UTW0O6aJJnuRfvdzucb0ChPpN9JprNTDG6N9
+         OpjA==
+X-Forwarded-Encrypted: i=1; AJvYcCUAJabVzz9urneZhRquZj9I57QQuR2dk+E1kAgwNqIClHV5P6n5WJZn4e8Zb+iwTY/fzb6Qq2uMDo8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxnXTg7dvfTyC0nAgPlHbIegksVKpbYec42pGobZBBXnKAvM8TB
+	1BcPbSjUa4ffnBlxrX3ZS1AcLjbNzyWBslnZMh9qFGuUqGDcon7U5m2IWETj9H8nH1QMBtFiAxV
+	y4It3+UMUo0zo/6JUlmg1/iPzu6Ja4r9y6KZvGYSNQyO+emZuniaqXASCf19ztLs=
+X-Gm-Gg: AY/fxX4iiVpBhS/HwNCEpzk0cAiQuNABssGSSKTvxdV4Fy1LXQDa+BOxqP/EG5b5BFk
+	8EbupOzF6FwvADLHnijHlEcc21twjwAgmqCqQc8O+CmHyOdSJcDQHUJ1efhXMAwvvuOOuHihLDG
+	+rly8L3ZxWtAWg0lTAa5Y1wGbKa9W4GZs/7tB4a09prCh6XL1MIwKUtyycbjwFWfH3iLYAHlcAu
+	gvB0KnSKpvU1THbPVzG+4/kMbnceZDTi8FH1Wtb/eoaJFbeDQZ2I/YhpN1knLUahU5sNKOVK6S8
+	w0sfmlbRgFZmBRsSLCyi5o65h6eILZsM89z/12VYQvse4DzIyZc6V+4pAtiUQNWX3v/ORtuT/QG
+	ucaWLnvIdrH+NWhY5H9RKoFS/GLvm9oFP3A==
+X-Received: by 2002:ac8:6f0d:0:b0:4e8:93a1:7464 with SMTP id d75a77b69052e-4f4abcb8d23mr696751701cf.15.1767620035231;
+        Mon, 05 Jan 2026 05:33:55 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEJyENY1AnKxxs/GvCTILXx+88Wewnlpw6vtBkZZehwqeQb52jMZGVzw5b/PZHtR1M+E/dfEA==
+X-Received: by 2002:ac8:6f0d:0:b0:4e8:93a1:7464 with SMTP id d75a77b69052e-4f4abcb8d23mr696751151cf.15.1767620034778;
+        Mon, 05 Jan 2026 05:33:54 -0800 (PST)
+Received: from [127.0.1.1] ([178.197.218.229])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47d6d143f75sm147211015e9.5.2026.01.05.05.33.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 Jan 2026 05:33:54 -0800 (PST)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Subject: [PATCH 00/11] of/treewide: Simplify with
+ for_each_compatible_node_scoped()
+Date: Mon, 05 Jan 2026 14:33:38 +0100
+Message-Id: <20260105-of-for-each-compatible-scoped-v1-0-24e99c177164@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20260105-define-rust-helper-v2-0-51da5f454a67@google.com>
-X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2687; i=aliceryhl@google.com;
- h=from:subject:message-id; bh=WRkPJEy+GjVSZxgwl7Jzpi8fMHqkkFMtQU4c0+Tod0Q=;
- b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBpW7G7/A1DRVQMGUVLN9y7nYjZEkCgkcSSu4DQy
- 6uUz+hUdG2JAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCaVuxuwAKCRAEWL7uWMY5
- RkRsD/wMFku/Kwblx7IjsnrjOEZXCpxGGikfBuDosOgmFw9jmdn5ADXBxOm8abSZXynhJSWNE6F
- r/A+F6scg2H2A9XnnFVXv0vrQoYgQA8HpZF/jfrcje7PBpCk0g22PtwWyMS8Mt+Me79FvjJwsJz
- XFyCkBeMJwWvpVFOgqa34v96JpSonIAqJuQhAVDcFViumNNf5CFoFFRBrKYuMCe2NWNC+JQSkcS
- ZE6ER8Vc8lh3Nr4eQ3M1MOhn/xabwWIE8Uoxmv4ZcPG0sMmNZgP6YfRL6HvHsVJorIxSFvL27R5
- M4afb5QgjN4I+tQi2YWjhtZa37g+LC9UiM7Y8Ybyn7uD27YR/KhFG7kURxW0RI6riqCkUCYRj8Y
- X16DewOhh9QjXRSUv/vMPvzpr3ZJDD0kdfmyt244jxqBav73uzJgpym1GM7bhdiUCFz/rOcNFpG
- Y4f68/Nh9ReeB7ofuKfnpJzm1gM21UkhFCXkyY/ieX6pkJrzWW1jxL5GAyXhmsvIPH5bZu20uVI
- IbrOUiFqfhUZ3uIq+0Gy0Ms35XiVBUahQOr+6LKUC8XK75xjQwhls8LGZhPW0A67ay1WLjdzL3O
- Lr8M3tnCxQac6kwl+SUiF+nH1G+TJT3TjtmTdhBCjotXLRqB10EZ9JBAb7QJMo4wBiQ43tiVOFk OC0IAytIX5dnRjA==
-X-Mailer: b4 0.14.2
-Message-ID: <20260105-define-rust-helper-v2-4-51da5f454a67@google.com>
-Subject: [PATCH v2 04/27] rust: clk: add __rust_helper to helpers
-From: Alice Ryhl <aliceryhl@google.com>
-To: rust-for-linux@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
+MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIALK9W2kC/x3MSwqDMBAA0KvIrB2IkUjpVcRFPhMz0GZCIiKId
+ 2/o8m3eDY0qU4P3cEOlkxtL7pjGAXyyeSfk0A1a6UVNyqBEjFKRrE/o5Vvswe5D2LwUCqhfxs3
+ BBavNDP0olSJf/3/dnucHfr4aQG8AAAA=
+X-Change-ID: 20260105-of-for-each-compatible-scoped-285b3dbda253
+To: Miguel Ojeda <ojeda@kernel.org>, Rob Herring <robh@kernel.org>,
+        Saravana Kannan <saravanak@google.com>,
+        Nathan Chancellor <nathan@kernel.org>,
+        Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+        Bill Wendling <morbo@google.com>,
+        Justin Stitt <justinstitt@google.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Madhavan Srinivasan <maddy@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        "Christophe Leroy (CS GROUP)" <chleroy@kernel.org>,
+        Nipun Gupta <nipun.gupta@amd.com>,
+        Nikhil Agarwal <nikhil.agarwal@amd.com>,
+        Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>, Vinod Koul <vkoul@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        llvm@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-clk@vger.kernel.org, imx@lists.linux.dev,
+        dmaengine@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-pm@vger.kernel.org,
+        Jonathan Cameron <jonathan.cameron@huawei.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2238;
+ i=krzysztof.kozlowski@oss.qualcomm.com; h=from:subject:message-id;
+ bh=LOzUYd+dRmkv3oMmU7xQB3tIB1OpRm86ei1dR0EieQM=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBpW7212LDD9aWpmO2pXajLqrMXSfYpdw8+/wsif
+ 01n3q4kghCJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaVu9tQAKCRDBN2bmhouD
+ 1/fJD/9T1pJUb2ZATSYxfBTsBulhDfg4M2cKxMAn3j5J2ZUJ0IpQxNIT0HTjj1huRozwEiSTEz8
+ jbTVcl4uwbM2MppZBpdsT7l0qa2DcDLLsicU2afLE40cOYHueRcPJ0yCOWOeVopVIZ0ooCjHwMQ
+ IFQhnUiEIOjtB0CNSBe7uYU/43VB4uovE1YiNWZHBHuRQYShbjHtDQObKlx0H0wW+jxBmZLbjnZ
+ uQNYKHFL5PGqilIwKhBt9yWAWSSse5KGau0nb9iBuI/OJCNaEEoGmv9ozbm/jkvLQ7tFZA5BTBR
+ d13IEKUNKAbdek4MPdbypLIp8yag7xIgPxRGSnLnmHIS2+vtASaXW+CqNg2GdYAq0jQjo9PAeyh
+ rS/S5zJ30SOZxVJTNuJC7lTcBOLv379N2H6pvnRejAzj690y8b+uJRDSMHpLeqqKZ/VoZgutyP6
+ ZJqJy4SMwUqO+G0EuIFfAFXgxMF3NyEJ4XMZu6rTRncQxM8TbfHJiof8isywUEkxs/iCcDvlSXs
+ 2Dejv85c5Kqs93S9INZGOwQrv9mQp2rfKM4GC+VOT279jb/n4qFaJcOW6iiW/ipRYmtPvDgBqJA
+ trjLF6akNFp8akjaJCMwOEw6cZOkvAqoK2RTjO5BkrsLl5ZmYP20XaNI237J0dPJhrDpUIm61s6
+ 10hjLcSwFVNVocw==
+X-Developer-Key: i=krzysztof.kozlowski@oss.qualcomm.com; a=openpgp;
+ fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
+X-Authority-Analysis: v=2.4 cv=UJ/Q3Sfy c=1 sm=1 tr=0 ts=695bbdc4 cx=c_pps
+ a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=Eb9f15NH/cHKzfGOmZSO4Q==:17
+ a=IkcTkHD0fZMA:10 a=vUbySO9Y5rIA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=d9g9ln5aRjr3gUnP3tUA:9
+ a=QEXdDO2ut3YA:10 a=dawVfQjAaf238kedN5IG:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTA1MDExOCBTYWx0ZWRfXwfLG5k/+1hgX
+ iqROqo1qU9LFlrtYUjVBGYgVSE8REAogBjk6l+Q9iBdHIAkaiYTzaxqIn7kCroUF6BLfz/Qk7Lt
+ thR3DE8RXbg4aAjW7u2kBKf/sLPHfTlcOoXSg5cKcCX2b+jiWz6XUQHDbFe94Lhy7SYwsEtnt9y
+ HiZThuejElBLLO5Pokv4UqykGiVklMUxB7nTJ+/OPLPOOMviW23VEbmI+YiXJXedtjKTiCS/Iz8
+ qB0EapOVtyELokUUvoB3NRLrxqGb1jgacJp1FDm9dmnRWnqcLhgPSG21tkbGitBCtTAZohS6vmx
+ N+2oPY4JbKybI2P3sbAjZNYv739vzMyNy4yK/wrzetnNpqJepNznUNbs6jpv9WfuD7x27dfBVaY
+ +jVaz9lih2HtqrtdlUmpoaa8WFl9mZ0t13XFK7VOWiXSGl1Ds1GqspqvbJDxg7kcVIhz0Ok05ZT
+ MScNBjScs9CdeIVEWMg==
+X-Proofpoint-ORIG-GUID: t63MuLo0lLYJIzNvlcgm0eEAEG9VAukv
+X-Proofpoint-GUID: t63MuLo0lLYJIzNvlcgm0eEAEG9VAukv
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2026-01-05_01,2025-12-31_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 adultscore=0 spamscore=0 bulkscore=0 phishscore=0
+ lowpriorityscore=0 clxscore=1015 priorityscore=1501 impostorscore=0
+ malwarescore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2512120000
+ definitions=main-2601050118
 
-This is needed to inline these helpers into Rust code.
+Dependencies/merging
+====================
+1. First patch is a prerequisite for entire set, so either everything
+   goes via same tree, the further patches wait a cycle or stable tag is
+   shared from DT tree.
 
-Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
-Reviewed-by: Gary Guo <gary@garyguo.net>
-Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+2. The last media patch depends on my earlier cleanup.
+
+Description
+===========
+Simplify for_each_compatible_node() users with a new helper -
+for_each_compatible_node_scoped().
+
+Best regards,
+Krzysztof
+
 ---
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org
+Krzysztof Kozlowski (11):
+      of: Add for_each_compatible_node_scoped() helper
+      ARM: at91: Simplify with scoped for each OF child loop
+      ARM: exynos: Simplify with scoped for each OF child loop
+      powerpc/fsp2: Simplify with scoped for each OF child loop
+      powerpc/wii: Simplify with scoped for each OF child loop
+      cdx: Simplify with scoped for each OF child loop
+      clk: imx: imx27: Simplify with scoped for each OF child loop
+      clk: imx: imx31: Simplify with scoped for each OF child loop
+      dmaengine: fsl_raid: Simplify with scoped for each OF child loop
+      media: samsung: exynos4-is: Simplify with scoped for each OF child loop
+      cpufreq: s5pv210: Simplify with scoped for each OF child loop
+
+ .clang-format                                       |  1 +
+ arch/arm/mach-at91/pm.c                             |  7 ++-----
+ arch/arm/mach-exynos/exynos.c                       |  8 ++------
+ arch/powerpc/platforms/44x/fsp2.c                   |  5 +----
+ arch/powerpc/platforms/embedded6xx/hlwd-pic.c       |  4 +---
+ drivers/cdx/cdx.c                                   |  4 +---
+ drivers/clk/imx/clk-imx27.c                         |  7 ++-----
+ drivers/clk/imx/clk-imx31.c                         |  7 ++-----
+ drivers/cpufreq/s5pv210-cpufreq.c                   | 10 ++++------
+ drivers/dma/fsl_raid.c                              |  4 +---
+ drivers/media/platform/samsung/exynos4-is/fimc-is.c |  8 +++-----
+ include/linux/of.h                                  |  7 +++++++
+ 12 files changed, 27 insertions(+), 45 deletions(-)
 ---
- rust/helpers/clk.c | 24 +++++++++++++-----------
- 1 file changed, 13 insertions(+), 11 deletions(-)
+base-commit: 4d27ce1b1abefb22e277e715901cc52acdc5af2c
+change-id: 20260105-of-for-each-compatible-scoped-285b3dbda253
 
-diff --git a/rust/helpers/clk.c b/rust/helpers/clk.c
-index 6d04372c9f3bbc4355c86eda5b1ebd7576d26442..15fd7e469cddf2e10d9e996c5055c7afb219e68c 100644
---- a/rust/helpers/clk.c
-+++ b/rust/helpers/clk.c
-@@ -7,60 +7,62 @@
-  * CONFIG_HAVE_CLK or CONFIG_HAVE_CLK_PREPARE aren't set.
-  */
- #ifndef CONFIG_HAVE_CLK
--struct clk *rust_helper_clk_get(struct device *dev, const char *id)
-+__rust_helper struct clk *rust_helper_clk_get(struct device *dev,
-+					      const char *id)
- {
- 	return clk_get(dev, id);
- }
- 
--void rust_helper_clk_put(struct clk *clk)
-+__rust_helper void rust_helper_clk_put(struct clk *clk)
- {
- 	clk_put(clk);
- }
- 
--int rust_helper_clk_enable(struct clk *clk)
-+__rust_helper int rust_helper_clk_enable(struct clk *clk)
- {
- 	return clk_enable(clk);
- }
- 
--void rust_helper_clk_disable(struct clk *clk)
-+__rust_helper void rust_helper_clk_disable(struct clk *clk)
- {
- 	clk_disable(clk);
- }
- 
--unsigned long rust_helper_clk_get_rate(struct clk *clk)
-+__rust_helper unsigned long rust_helper_clk_get_rate(struct clk *clk)
- {
- 	return clk_get_rate(clk);
- }
- 
--int rust_helper_clk_set_rate(struct clk *clk, unsigned long rate)
-+__rust_helper int rust_helper_clk_set_rate(struct clk *clk, unsigned long rate)
- {
- 	return clk_set_rate(clk, rate);
- }
- #endif
- 
- #ifndef CONFIG_HAVE_CLK_PREPARE
--int rust_helper_clk_prepare(struct clk *clk)
-+__rust_helper int rust_helper_clk_prepare(struct clk *clk)
- {
- 	return clk_prepare(clk);
- }
- 
--void rust_helper_clk_unprepare(struct clk *clk)
-+__rust_helper void rust_helper_clk_unprepare(struct clk *clk)
- {
- 	clk_unprepare(clk);
- }
- #endif
- 
--struct clk *rust_helper_clk_get_optional(struct device *dev, const char *id)
-+__rust_helper struct clk *rust_helper_clk_get_optional(struct device *dev,
-+						       const char *id)
- {
- 	return clk_get_optional(dev, id);
- }
- 
--int rust_helper_clk_prepare_enable(struct clk *clk)
-+__rust_helper int rust_helper_clk_prepare_enable(struct clk *clk)
- {
- 	return clk_prepare_enable(clk);
- }
- 
--void rust_helper_clk_disable_unprepare(struct clk *clk)
-+__rust_helper void rust_helper_clk_disable_unprepare(struct clk *clk)
- {
- 	clk_disable_unprepare(clk);
- }
-
+Best regards,
 -- 
-2.52.0.351.gbe84eed79e-goog
+Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
