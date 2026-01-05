@@ -1,137 +1,121 @@
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69879254B19;
-	Mon,  5 Jan 2026 13:41:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD34D26AAAB
+	for <linux-clk@vger.kernel.org>; Mon,  5 Jan 2026 14:06:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767620517; cv=none; b=SXFcVHYiil8Ot3x38aSLX4bcX4CD+HOGSlG76O7u5mpesom2xwTVgLUiImWSE48ZsMrc3TiZ7fxQt63Obhe2loqS0H5rU3LBpiiCS83sajnwT7+/7oam5DqBfJ0CTtsCIs+MJqXp28aL5O5yKfpG7thRwa9DhubEAJDki1GhHVU=
+	t=1767621992; cv=none; b=K0m3xWqUb/BJ9WHjTvtOiQssaMrCb5dJAgR6WNpTO9Li3JvBEXPv+nJEQff6c5ook9/w6m2tbTw6CoW3+eI8e5T7nEfcPlhfyMktS+xvUsRDt875jPjZZijOz+CkEus+3Yn+oVGmo6uNNTY3xJDmHXbaq2pVcU94vgseft72TQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767620517; c=relaxed/simple;
-	bh=a3Sj0a26r3lVQlAJmFwNu/sL9HQAEQqcEw3msVeSpzM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=fcl+jfEMe/mNUFn6zmJq9yVULWGvO/XBC7yWTd6Arrgtdv3dchWYqSC0QwAmrN97Ka1Iltejqt3US6youl0vze6DHP7VqHh2ayS8FnFxu9P2T04IVh0FSaqR7uyO62EuM/p9niW2pnmSTPeVi7zCS8tyTR+UCfmHp1WqGCNKI4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=vytZmFC1; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+	s=arc-20240116; t=1767621992; c=relaxed/simple;
+	bh=YDm68YWhw+GEjf0gozJmWl/ojKKZcva9ZQA+L2+6sjg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=myZEI8HEu1o6VHyGd0CBL796v0E6pPIFMVHsJoYRCezu67QhZcAYk3t+WIaw920FiP3hkFY0OXeFNyrstNWpA+YShSlJ8m55gaGKSy1e6TyqPTMjJ+OfQJhIenLexYYBvSHHprW5KBxDBtHaofMyHl6Uer1MrAx48jFVjFfIDVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bfY0BrIT; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="vytZmFC1"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1767620514; x=1799156514;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=a3Sj0a26r3lVQlAJmFwNu/sL9HQAEQqcEw3msVeSpzM=;
-  b=vytZmFC1inOCa0CmBOTec6lCQHktGHtYs0j1yF+KbGznCOoobE9c0mb5
-   qbsf3pFBLtO7dpMx13/+g9lRkX5viZWKLpDIHKWUTencZzfXW0WWR2W2t
-   9SnCJu4av6vtKJ1HwGwPpeCT8+OlH4gFOiohUb5uMtIyq8I6JU6hte+Cg
-   PwSdeCtCbF5rBKYj9aTRZu+sArpltNL1v2ynSYOAXQuUgzAVeVf25gp5Y
-   1BKgmvPbJvqIVc/JvlFZBim05Hjqj+YCxpr7YChpQ/GpNN/S0iBquzoro
-   xaKjXC/fSCf5RztQgM8+G2G0yb9QTK3sXjad6g44c5rNmF7cptvFZ/Ta9
-   w==;
-X-CSE-ConnectionGUID: HBkZ5l8JRtWI55dHimVviw==
-X-CSE-MsgGUID: JZGd2c01Rd6FFUdxsxi0Mw==
-X-IronPort-AV: E=Sophos;i="6.21,203,1763449200"; 
-   d="scan'208";a="58252843"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 05 Jan 2026 06:41:52 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.58; Mon, 5 Jan 2026 06:41:52 -0700
-Received: from [10.159.245.205] (10.10.85.11) by chn-vm-ex04.mchp-main.com
- (10.10.85.152) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
- Transport; Mon, 5 Jan 2026 06:41:43 -0700
-Message-ID: <49ebaa9d-cad9-42cd-8bb9-5210fe18eeb5@microchip.com>
-Date: Mon, 5 Jan 2026 14:41:47 +0100
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bfY0BrIT"
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-4327790c4e9so3101709f8f.2
+        for <linux-clk@vger.kernel.org>; Mon, 05 Jan 2026 06:06:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1767621989; x=1768226789; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=hOJglpam6Y6tV/ZKx1vMYagmOMEwuqgdfcTZ8FECwao=;
+        b=bfY0BrITyJmlzAuK4dl2gKORFURQMa5qUWtsIk1z7hdhyxnaSoukrin8kyedcEBDog
+         DwjWDOeXM8bTDQGKrCfKT6PLUidxANICUHqOiOnaCXgUBaPmh/Kqh5BZ2xdsmFB3MvFi
+         DFR3MQwICb4rdWiCEbwODtRrocGF7TN9uNhsIliRaWDftwzg4bQFq10RHI2kRgJVcsYg
+         2x2IATe/ERh9rTpMULI01HwuMhm/NEE6gKQbjMvDvgrbrJ2sj50d/Ie5Zkfmrsc4qo2m
+         G7cbyoc/RtlHehdp+G8Kg9Xq8GFdCI1Br6sB5gUCfXgaPcsVW0OU4q4s4v7YLVMTgiuC
+         jelw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1767621989; x=1768226789;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hOJglpam6Y6tV/ZKx1vMYagmOMEwuqgdfcTZ8FECwao=;
+        b=ee4TffwQZpq2tF/C4bfswQ55wYlOMrv8YRQyFMp9rs6vTGEumBGtwhMdCZOlzXz9MV
+         r1CWYcTUbSKa5vGrDidHUF4vhr1larBb+qkUJ6suFy1arJKpf10ibypX+qOpUP8d0al/
+         h8yVI9cy6oPUqlKAC06FA8WhbSsu5CxDcDU7I4q5t974jNQ045ChmAICUW/YPa0FijeQ
+         GCOc/KDPPFjRYTuoSUEr7zrU9EhcRrfYlmiiR8+W08gn8EX1TZZH0onvVg4SFqHLMxuD
+         PVAIuXcTXD4rD6B5lSGkF1JieXt8dhwtsjwe0IvJyy4l7Xsm6C5YumG284b4K4Nxqe5I
+         QMIg==
+X-Forwarded-Encrypted: i=1; AJvYcCWYQnDGzb6utwOO/GtTSpFRnFrGPjY4xrdDyVAkCkTr8fUUgElxN6kmHOi5QuWBIXFojHSa1ZE36XA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxv47gFTr4ZP5jBrp5QEhyk2e7cgUnjr9FLsjIMSh1NRrmlb0jv
+	3eEDaNkxqAWwrr2EmOvqo5FpWRKfjPXWuhd8EGgDYJyMooUhgG5iqTsI
+X-Gm-Gg: AY/fxX6wy22Jo1ydxjrjR2QoO8HMTX9qHWBM/bo3klOAEtQBkVNJTudlRLebXR/Z/SK
+	xnjsj/cS9JCrKD9vwejjJyTihtppLFhi0euFbzZPMMQ0JBvmK3FEbtH4I+FGXuoxEwsHeRHV8TI
+	fcyvjMnqsqJ5v41MLm+3czpF8q0LSuajK1/jG1gXQsQbeq/aOmbFHuFtw7G1R1gTIRkAN694b0j
+	A24ELjbenQn9taiZvGEV5qCMEhiSXBCMfUNCtS7mwa7ELaMPEeBuZ54N39dyUe+lvOV+6QFBE0Y
+	dwNvl/bL52L9qncWp9LHXbF+i9UMfA34wWSbagZBixqEfDboqnWsTIyWKroQQ0r4cTju7rd09xl
+	/7CP72nYT4S3enB9tKp+pcQDC2VPCBmiPyTwqWianK0IzynyicuBSgnFquxXu2ttKOqaDfK2KNC
+	ftYjA21AHanqnJaeFzIdMMVYpZN4CVUth8Ljn2uyrWRLpuDaz7BuOv4TGOnJji1vqe4eoW0Ww3t
+	sfsQdFT3nezwbDrib7AZaR/gp3O3b/IwDZFpfaA01fk
+X-Google-Smtp-Source: AGHT+IHYjz/XhcS6cgCdmHSfRfjnK952JHLNhqtvsHW++gGz2atIPw5gFfbGYXmxHJxJ2yyaYDBXJA==
+X-Received: by 2002:adf:f18c:0:b0:432:8036:4a0e with SMTP id ffacd0b85a97d-43280364b6dmr31538076f8f.35.1767621988981;
+        Mon, 05 Jan 2026 06:06:28 -0800 (PST)
+Received: from iku.example.org ([2a06:5906:61b:2d00:b8c0:9e58:2df0:631f])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4324ea1aee5sm102452753f8f.4.2026.01.05.06.06.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 Jan 2026 06:06:28 -0800 (PST)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Pavel Machek <pavel@nabladev.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH] clk: renesas: cpg-mssr: Unlock before reset verification
+Date: Mon,  5 Jan 2026 14:06:25 +0000
+Message-ID: <20260105140625.2590685-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.52.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 02/11] ARM: at91: Simplify with scoped for each OF child
- loop
-To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>, Miguel Ojeda
-	<ojeda@kernel.org>, Rob Herring <robh@kernel.org>, Saravana Kannan
-	<saravanak@google.com>, Nathan Chancellor <nathan@kernel.org>, Nick
- Desaulniers <nick.desaulniers+lkml@gmail.com>, Bill Wendling
-	<morbo@google.com>, Justin Stitt <justinstitt@google.com>, Russell King
-	<linux@armlinux.org.uk>, Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>, Krzysztof Kozlowski
-	<krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Madhavan Srinivasan
-	<maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin
-	<npiggin@gmail.com>, "Christophe Leroy (CS GROUP)" <chleroy@kernel.org>,
-	Nipun Gupta <nipun.gupta@amd.com>, Nikhil Agarwal <nikhil.agarwal@amd.com>,
-	Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>, Michael
- Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Shawn
- Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix
- Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
-	Vinod Koul <vkoul@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>, "Rafael J. Wysocki"
-	<rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>
-CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<llvm@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-samsung-soc@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
-	<linux-clk@vger.kernel.org>, <imx@lists.linux.dev>,
-	<dmaengine@vger.kernel.org>, <linux-media@vger.kernel.org>,
-	<linux-pm@vger.kernel.org>
-References: <20260105-of-for-each-compatible-scoped-v1-0-24e99c177164@oss.qualcomm.com>
- <20260105-of-for-each-compatible-scoped-v1-2-24e99c177164@oss.qualcomm.com>
-From: Nicolas Ferre <nicolas.ferre@microchip.com>
-Content-Language: en-US, fr
-Organization: microchip
-In-Reply-To: <20260105-of-for-each-compatible-scoped-v1-2-24e99c177164@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Krzysztof,
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-On 05/01/2026 at 14:33, Krzysztof Kozlowski wrote:
-> Use scoped for-each loop when iterating over device nodes to make code a
-> bit simpler.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Move spin_unlock_irqrestore() before verifying the reset result and
+printing errors. The verification condition only uses local variables
+and does not require locking.
 
-Thanks for handling this!
-Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+Reported-by: Pavel Machek <pavel@nabladev.com>
+Closes: https://lore.kernel.org/all/aVujAQJSDn6WyORK@duo.ucw.cz/
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
+ drivers/clk/renesas/renesas-cpg-mssr.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-Best regards,
-   Nicolas
-
-> ---
-> 
-> Depends on the first patch.
-> ---
->   arch/arm/mach-at91/pm.c | 7 ++-----
->   1 file changed, 2 insertions(+), 5 deletions(-)
-> 
-> diff --git a/arch/arm/mach-at91/pm.c b/arch/arm/mach-at91/pm.c
-> index 35058b99069c..68bb4a86cd94 100644
-> --- a/arch/arm/mach-at91/pm.c
-> +++ b/arch/arm/mach-at91/pm.c
-> @@ -982,15 +982,12 @@ static void __init at91_pm_sram_init(void)
->          struct gen_pool *sram_pool;
->          phys_addr_t sram_pbase;
->          unsigned long sram_base;
-> -       struct device_node *node;
->          struct platform_device *pdev = NULL;
-> 
-> -       for_each_compatible_node(node, NULL, "mmio-sram") {
-> +       for_each_compatible_node_scoped(node, NULL, "mmio-sram") {
->                  pdev = of_find_device_by_node(node);
-> -               if (pdev) {
-> -                       of_node_put(node);
-> +               if (pdev)
->                          break;
-> -               }
->          }
-> 
->          if (!pdev) {
-> 
-> --
-> 2.51.0
-> 
+diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
+index 35cb49763014..a6df0d2538c7 100644
+--- a/drivers/clk/renesas/renesas-cpg-mssr.c
++++ b/drivers/clk/renesas/renesas-cpg-mssr.c
+@@ -806,14 +806,12 @@ static int cpg_mrcr_set_reset_state(struct reset_controller_dev *rcdev,
+ 
+ 	/* Verify the operation */
+ 	val = readl(reg_addr);
++	spin_unlock_irqrestore(&priv->pub.rmw_lock, flags);
+ 	if (set == !(bitmask & val)) {
+ 		dev_err(priv->dev, "Reset register %u%02u operation failed\n", reg, bit);
+-		spin_unlock_irqrestore(&priv->pub.rmw_lock, flags);
+ 		return -EIO;
+ 	}
+ 
+-	spin_unlock_irqrestore(&priv->pub.rmw_lock, flags);
+-
+ 	return 0;
+ }
+ 
+-- 
+2.52.0
 
