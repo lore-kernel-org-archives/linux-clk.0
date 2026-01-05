@@ -1,167 +1,132 @@
-Received: from mout.perfora.net (mout.perfora.net [74.208.4.194])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ED5320DD72;
-	Mon,  5 Jan 2026 22:16:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.208.4.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D033D2D7802;
+	Mon,  5 Jan 2026 22:36:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767651376; cv=none; b=PiVoRvrraqPyXWJfsJaCCfV8RdWJvhGsYDkoiUR2ytOP1X6MC6PaH9J79RGoxn2niT2did/PLSHpu7DSJpwTIN2dQ3RCRMTLBS1YgDaFpfj6eLjOQBgcxfPXjodnbd0ebE+FlwiPjfDU3S22ttqWQiXHx1gcIZ8SOnBRMh3enfY=
+	t=1767652606; cv=none; b=CKMFXpmwbo6gsGoffpgz2NJVp+vDgXbUOhIPC1zwd+sSTYLiujRDWoRI2aYdFj9Lq98Z2s0op51f8bL5LznF3K1fq4z/2mZVJLU/PtOsKkRcfw01SthnsepXRwQZeYcBECxlIoNCxcOzvU4T3T+L2f7HZuO/EKR08QAU/h7fvok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767651376; c=relaxed/simple;
-	bh=8e2dZgeyhJlSkCTzL1IOjiKmTNcjngu01WsSxCQbR10=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=MqYhr64VCKNPJ5IPt+KFbeQyymztFD0tuYIHp1F7895SUyLzCLNqLx1tSi1z4dG7HSKuTtr59Ye5jdAVv3Z2gjaZt5afbtIGX35VFlquX0TMdvZhQpl0Ow5HY6Fe/hKkMKeQE/l62gRqIRyhBcNzLMH3mgN0bIQngE7FGO0VIqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziswiler.com; spf=pass smtp.mailfrom=ziswiler.com; dkim=pass (2048-bit key) header.d=ziswiler.com header.i=marcel@ziswiler.com header.b=2z/aTDhH; arc=none smtp.client-ip=74.208.4.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziswiler.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziswiler.com
+	s=arc-20240116; t=1767652606; c=relaxed/simple;
+	bh=kzkUocZGzbldAqL7H+ZbDJj1W7al0AimC+VuLG+yvHQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cJLFygb0USqQfTS6wZQRAehzfJJPwW8wU0lX1PTY0XandKY8GS15TquxWZOSvQoG4XSp5e018JntgMsah1QtqfRtrwCmNyhg/XvEjfXIJEeC8OtMSJmYYcrZlfuNl8rVuux2uJnT9nI5xpDO2kDeV+w+i+lhwPvq4EJxMm/5Ovk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dmbHwuIs; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziswiler.com header.i=marcel@ziswiler.com header.b="2z/aTDhH"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ziswiler.com;
-	s=s1-ionos; t=1767651337; x=1768256137; i=marcel@ziswiler.com;
-	bh=Y6HJq4OhR0K8CkEt79OYGigmyf/NkQlnBfoQsVERq6c=;
-	h=X-UI-Sender-Class:Message-ID:Subject:From:To:Cc:Date:In-Reply-To:
-	 References:Content-Type:Content-Transfer-Encoding:MIME-Version:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=2z/aTDhHrB0X0/fYaSsDmHDINo8EABmBj+xXRDWIizKlBKqLmbQQqnAZEw8rq4TU
-	 qC2IsYVIYX+IWHXHlXOtltr0HkbmgZwXseU5eqOhumQsuMo3PNN+WvprNWHB0RRzG
-	 SQxRjuiFd96fi8iprBZy9Ypp7DY2jB9/0cOJA+lGsQlEb36W++H0kx8mDSMkB4k2T
-	 0UhZ238koYktLPcSgws8r8uW3lYZpiFO9sP/m8/Py/OkpbW9y7WVs/En9gl1RSVii
-	 GJY9joPHQEd8MynHf/ofJ2njqaXOKp/9QBy6CNDzW+6wULvtNlaNpK+YYay8hfF9k
-	 +vJn3vibCFmDhaZniA==
-X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
-Received: from [10.13.73.253] ([213.55.223.158]) by mrelay.perfora.net
- (mreueus002 [74.208.5.2]) with ESMTPSA (Nemesis) id 0MQgyx-1vR5iH12pJ-00K0zY;
- Mon, 05 Jan 2026 23:15:36 +0100
-Message-ID: <819b2f6e5db5411b3ea923bca70482617464594c.camel@ziswiler.com>
-Subject: Re: Re: [PATCH v9 2/3] clock: eswin: Add eic7700 clock driver
-From: Marcel Ziswiler <marcel@ziswiler.com>
-To: Xuyang Dong <dongxuyang@eswincomputing.com>, mturquette@baylibre.com, 
-	sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- 	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, troy.mitchell@linux.dev, bmasney@redhat.com
-Cc: ningyu@eswincomputing.com, linmin@eswincomputing.com, 
-	huangyifeng@eswincomputing.com, pinkesh.vaghela@einfochips.com, 
-	ganboing@gmail.com
-Date: Mon, 05 Jan 2026 23:15:29 +0100
-In-Reply-To: <480d671d.1db1.19b8707eb98.Coremail.dongxuyang@eswincomputing.com>
-References: <20251229105844.1089-1-dongxuyang@eswincomputing.com>
-	 <20251229105949.1202-1-dongxuyang@eswincomputing.com>
-	 <a7f4cf00b396096512d6947612031207c4d4459b.camel@ziswiler.com>
-	 <480d671d.1db1.19b8707eb98.Coremail.dongxuyang@eswincomputing.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.58.2 (by Flathub.org) 
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dmbHwuIs"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47434C116D0;
+	Mon,  5 Jan 2026 22:36:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1767652605;
+	bh=kzkUocZGzbldAqL7H+ZbDJj1W7al0AimC+VuLG+yvHQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dmbHwuIs+Jus28fsK5wm0xq/ylwPIKhkr5dyCyT/XQL2ulRMOn63qz9aCdKiEaCov
+	 Jd9a57EMPcFXqJhga7Fp0ZIjS73JKd5dOkHRg2dEcMidwoO77HKO1vriP/dsVzHPfA
+	 dzPOnbxH4z4WVGzGyN2Nr4qg2ODsudK2C4wa2JDGQ0ENC81eHPfEfU/stMY7zXBjiK
+	 hvO+GP6m++TN9SO+Pnmaf14Kg/z0dcI+Z+ggkx97EtvnNELUIPfS8uHdbyyFT1OCs6
+	 RzPiRnzPyb2M/xb2uU6ERe6nlnPwbEx5h/c8oyr8ufiJP2RVk6dBGg0wT0ctIQs++l
+	 kUKgFhWdsrlYw==
+Date: Mon, 5 Jan 2026 16:36:44 -0600
+From: Rob Herring <robh@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Saravana Kannan <saravanak@google.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	"Christophe Leroy (CS GROUP)" <chleroy@kernel.org>,
+	Nipun Gupta <nipun.gupta@amd.com>,
+	Nikhil Agarwal <nikhil.agarwal@amd.com>,
+	Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Vinod Koul <vkoul@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	llvm@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	linux-clk@vger.kernel.org, imx@lists.linux.dev,
+	dmaengine@vger.kernel.org, linux-media@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	Jonathan Cameron <jonathan.cameron@huawei.com>
+Subject: Re: [PATCH 01/11] of: Add for_each_compatible_node_scoped() helper
+Message-ID: <20260105223644.GA3633916-robh@kernel.org>
+References: <20260105-of-for-each-compatible-scoped-v1-0-24e99c177164@oss.qualcomm.com>
+ <20260105-of-for-each-compatible-scoped-v1-1-24e99c177164@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Provags-ID: V03:K1:/nB+dkILdDoZDzC9GCjB3kbknd63+3kWkUoF4DEeqF9TQrt+RP+
- 3It2QgjW0hPs1HN0A9zU6vvVI8AKgWKEQId4iwwnZwX+rFGVUg+PPUSbw3ut+cD2a2EtMDl
- c3nwyWl/ByYLOb+dcIVG+aygRLBDCEm3L4DhQhrd22FQ1Zhua15ClrbU6mRooGpwQsxmy2y
- lxuA+0kXl30zZvEXkNFIw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:zCdJ8JVYXbM=;yohgFPbjlABC+ZJhh//NVoJg9qA
- klY98Einnj0+/so1FJ95GDJSZ2eg1sW0ibF6p4bxrdq7CSN15EZfjKow2Mo5UIU8C2B8wlmX9
- M/1ZBXqR6PiTDpVNmOfjDLzxyx5fraeaSKIGeYW3Y8ogy1XveovpPAKqTR+cjtsfEjpKnERo0
- ANIMWXS2anoxd7wfH0xfrMDDt+/9jbLBPRE0j3Fa1dXc6oCu0sSdVJqKL0+jMD2FBgKfMY2tn
- 4MFCVNXhx6i6bAaIK3q225lITHUA4/yXLakdP6ni+MBVgauKkM3ry+ukpPqLmuSCINtK9CbDj
- Mz1+UdVOjgNYfF1448EjBM4f3YYrjvEPse7z9M8w1BCWspbWd9y8CrNgK9gUGfP0La85uvvFa
- PP2fvuClC26wuHBMSYgjjqKKqIuwX+f2UsX3pDhXFrpv554jVJDqqzVUPuKse6mKJM8m27yi9
- NgZ652y2RHemVfZlWZoqG4PknhYjfYCNwJdYC+st3P1ssE42veoS86hwuc1aNnPOoAF1bPf2W
- mAdRGHwZZ13FkEY9UgRjaxS/fUIprNaXZBvkd9AAromgGvYFf5mdK9b+Rdpo4rPi7Udsw/amY
- QXBsNIGmuD4JNRLF5nEA+ZBEIJqAkF3ebOmfkfag7tSSVWiaN1FAigVJW9NZwZG6uhZ4NjSM6
- A/W+6S6EQwKJ4oZSsfp84vdXgiueG/qAUhE1p8Rli/qvsuSpitexy43dHifaO3g5fm3l2AUPA
- Nw9pyYeAObHa+/kjz6WbKgXwARPc2BanOhlbrXhETU8zJPwzs8n1scxww6hZGs9ATg0T7L71y
- L35lHv23i3/kSAz6C2R1a1KZTGLfcfPHwTx2VNzTi0v5aDHSwrLGssTnc73+5/zX600YGFPR2
- 8uNm3sU4yU2mMb7n4q1szI0dpfJMl7OiOlH8Wi5tVvLfm8uVgSbl/zxZIm7/4I/3gU6cda0zb
- VuoYANKcgXF/YfwU2ZlRBvH9ed4nxrbkqlM6vvOpzL39S5KOvy4Wmf2ooUvrccUXqBGuNTj/4
- 3RaAm6z9Qtb031881wGNyeMTnJyoUyi2fYmtLOBk/xzRfda1R8M4WIHnA9EGSnlviXPxRkUYy
- MKkm+tzSAvBdbIWjQB2VxvB/9LeOeere1+X7kgivdXUUp3lzvx4JSPlDxHdFIanKBH+OHziFQ
- OSjM7cv0xvYM9y5EA5v9OgunuiHQJHmgbXfebgZ7PUzg0f4vJ6bzpnXiA/B/BNnDELHsBaR7Q
- hK72F3woYwd8cYWoABLfAWqr28QMDovlb8ya87Ta44DI6b0QMyIBJkgSDPb0vQJnUb7aV6fpF
- 9CXOv6SBsbWiWmWnC+HQ2Wx6odf6GcEZdDfAYqT0eCNpX0mblI0/cXzD9w9mb10zCgwmtsAO8
- oUjVjSqh8EeOliNYl29PrroFJMI8RUKepultkde9lJdhU+Ai9Yq12V9x/We8H7lw66IZb1Idu
- 31DhrLHxazYthfOehKI6t2BqJoGCpcO+JFLAnDxhhibXi32x9j2gUofWm51VvNSAf2hjy9Lj9
- QKbXfj/nAapgEfhTMAYNsrSyZThspQJYN1abHqU+FGj9T04v5vE38MPTrhyjeAYjh8RqVBTV9
- QbXMFm7ZpLiIYy1L1k4kyNlLPclkh8KG3R4CzQVKhYAOg167L+f5KJUkD5L1xTZvcfrDdKIcR
- X4D5474X4KF/ij+ssRS0WMRqyMp9oZxM1eaWtbkStAx5TdMsJV4A/Y5ZVa2TM3eNV9Po3gBDO
- 2DOEqQAtV97Rl7kdvmLCI7ezdKinEknLqS5xmK/3ywlK4U90ikdvWkQHxQUt3AiGRQkBr3xM6
- 87iy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260105-of-for-each-compatible-scoped-v1-1-24e99c177164@oss.qualcomm.com>
 
-Hi Xuyang Dong
+On Mon, Jan 05, 2026 at 02:33:39PM +0100, Krzysztof Kozlowski wrote:
+> Just like looping through children and available children, add a scoped
+> helper for for_each_compatible_node() so error paths can drop
+> of_node_put() leading to simpler code.
+> 
+> Suggested-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+> 
+> ---
+> 
+> Prerequisite for all further patches.
+> ---
+>  .clang-format      | 1 +
+>  include/linux/of.h | 7 +++++++
+>  2 files changed, 8 insertions(+)
 
-On Sun, 2026-01-04 at 11:23 +0800, Xuyang Dong wrote:
-> > > +
-> > > +/* divider clocks */
-> > > +static struct eswin_divider_clock eic7700_div_clks[] =3D {
-> > > +	EIC7700_DIV(EIC7700_CLK_DIV_SYS_CFG_DYNM, "divider_sys_cfg_div_dynm=
-",
-> > > +		=C2=A0=C2=A0=C2=A0 "fixed_rate_clk_spll0_fout3", 0,
-> > > +		=C2=A0=C2=A0=C2=A0 EIC7700_REG_OFFSET_SYSCFG_CTRL, 4, 3,
-> > > +		=C2=A0=C2=A0=C2=A0 CLK_DIVIDER_ONE_BASED),
-> > > +	EIC7700_DIV(EIC7700_CLK_DIV_NOC_NSP_DYNM, "divider_noc_nsp_div_dynm=
-",
-> > > +		=C2=A0=C2=A0=C2=A0 "fixed_rate_clk_spll2_fout1", 0,
-> > > +		=C2=A0=C2=A0=C2=A0 EIC7700_REG_OFFSET_NOC_CTRL, 0, 3, CLK_DIVIDER_=
-ONE_BASED),
-> > > +	EIC7700_DIV(EIC7700_CLK_DIV_BOOTSPI_DYNM, "divider_bootspi_div_dynm=
-",
-> > > +		=C2=A0=C2=A0=C2=A0 "gate_clk_spll0_fout2", 0, EIC7700_REG_OFFSET_B=
-OOTSPI_CTRL,
-> > > +		=C2=A0=C2=A0=C2=A0 4, 6, CLK_DIVIDER_ONE_BASED),
-> > > +	EIC7700_DIV(EIC7700_CLK_DIV_SCPU_CORE_DYNM,
-> > > +		=C2=A0=C2=A0=C2=A0 "divider_scpu_core_div_dynm", "fixed_rate_clk_s=
-pll0_fout1",
-> > > +		=C2=A0=C2=A0=C2=A0 0, EIC7700_REG_OFFSET_SCPU_CORE_CTRL, 4, 4,
-> > > +		=C2=A0=C2=A0=C2=A0 CLK_DIVIDER_ONE_BASED),
-> > > +	EIC7700_DIV(EIC7700_CLK_DIV_LPCPU_CORE_DYNM,
-> > > +		=C2=A0=C2=A0=C2=A0 "divider_lpcpu_core_div_dynm", "fixed_rate_clk_=
-spll0_fout1",
-> > > +		=C2=A0=C2=A0=C2=A0 0, EIC7700_REG_OFFSET_LPCPU_CORE_CTRL, 4, 4,
-> > > +		=C2=A0=C2=A0=C2=A0 CLK_DIVIDER_ONE_BASED),
-> >=20
-> > During testing on top of next-20251219 I got the following:
-> >=20
-> > [=C2=A0=C2=A0=C2=A0 0.126102] divider_lpcpu_core_div_dynm: Zero divisor=
- and CLK_DIVIDER_ALLOW_ZERO not set
-> > [=C2=A0=C2=A0=C2=A0 0.126194] WARNING: drivers/clk/clk-divider.c:145 at=
- divider_recalc_rate+0x8a/0x9c, CPU#0: swapper/0/1
-> >=20
-> > Therefore I suggest for above line needing to be:
-> >=20
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 CLK_DIVIDER_ONE_BASED | CLK_DIVIDER=
-_ALLOW_ZERO),
->=20
-> Hi Marcel,
->=20
-> Thank you! This is indeed a bug and will be fixed in the next version.=C2=
-=A0
-> Could you please share the detailed testing methods with me so that I=C2=
-=A0
-> can reproduce this issue on my side?
+You need to update scripts/dtc/dt-extract-compatibles
 
-Sure, this was first tested on top of next-20251219, then I re-based it on =
-top of next-20260105 and finally I
-ported it to v6.19-rc4 as part of the yocto project integration for the esw=
-in-ebc77-mainline machine [1].
-
-I will further refine this for one of my talks at FOSDEM'26 [2].
-
-Let me know if you have any further questions.
-
-Thanks!
-
-[1] https://github.com/ziswiler/meta-riscv/tree/add-eswin-ebc77-support
-[2] https://fosdem.org/2026/schedule/event/LX3NNU-upstream-embedded-linux-o=
-n-risc-v-sbcs
-
-> Best regards,
-> Xuyang Dong
-
-Cheers
-
-Marcel
+> 
+> diff --git a/.clang-format b/.clang-format
+> index c7060124a47a..1cc151e2adcc 100644
+> --- a/.clang-format
+> +++ b/.clang-format
+> @@ -259,6 +259,7 @@ ForEachMacros:
+>    - 'for_each_collection'
+>    - 'for_each_comp_order'
+>    - 'for_each_compatible_node'
+> +  - 'for_each_compatible_node_scoped'
+>    - 'for_each_component_dais'
+>    - 'for_each_component_dais_safe'
+>    - 'for_each_conduit'
+> diff --git a/include/linux/of.h b/include/linux/of.h
+> index 9bbdcf25a2b4..be6ec4916adf 100644
+> --- a/include/linux/of.h
+> +++ b/include/linux/of.h
+> @@ -1485,6 +1485,13 @@ static inline int of_property_read_s32(const struct device_node *np,
+>  #define for_each_compatible_node(dn, type, compatible) \
+>  	for (dn = of_find_compatible_node(NULL, type, compatible); dn; \
+>  	     dn = of_find_compatible_node(dn, type, compatible))
+> +
+> +#define for_each_compatible_node_scoped(dn, type, compatible) \
+> +	for (struct device_node *dn __free(device_node) =		\
+> +	     of_find_compatible_node(NULL, type, compatible);		\
+> +	     dn;							\
+> +	     dn = of_find_compatible_node(dn, type, compatible))
+> +
+>  #define for_each_matching_node(dn, matches) \
+>  	for (dn = of_find_matching_node(NULL, matches); dn; \
+>  	     dn = of_find_matching_node(dn, matches))
+> 
+> -- 
+> 2.51.0
+> 
