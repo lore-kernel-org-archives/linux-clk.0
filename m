@@ -1,51 +1,44 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53B0728688C;
-	Mon,  5 Jan 2026 14:07:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BCD3337BAB;
+	Mon,  5 Jan 2026 14:08:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767622076; cv=none; b=tXgZWgXOiSJ+O5U64thZFIKrIiXlb3tsC3QTHHcCi0xejDTy2sZVfWOvAvGFGcRdbUNaJqNOAtjV7tW9r1UYik1RRpoo6gGKODpsWMqmURO8QkchUy/ufTCTcVj6atketoOXiXykyh6RKTORSRs5Bf0P5wV0g1i+ZPVVAv+4rWw=
+	t=1767622099; cv=none; b=rwGJm9wsbiLWwpaqrhHqpSH11Vbr5Jh77GTqnlHRAPyqBhY/R15O8wUCNAlgvy9nXI318pSOSr4t5xGM3aEePmpyY11dnox6MY6xmlMBYXI6WN0fm7ev5ZBptTQEP9PvDo56mANkjvodZxVsZIe22enBVfUoglzVjDcvwSV8V1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767622076; c=relaxed/simple;
-	bh=KKwzmj9H2BnD78UzVWO6VmD+bqtcS1yCsoqh3DJz1CQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CmHg9mldqPh/YIqAax/nytJ2Js0S//33+9B/bnAF2qNoVK1KTDpVQhVrknSQiqkd67k3Eiy15ZmkT3O5fc7ULyjYTMR/ddlsl6f4nhoLLMzA7dXcAF6SKDQxyGc9pln6dxXBkAzE2CNJB/m1b3+pBVPOygbh6yyHloHpz/sCbD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kUAsESDl; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1767622099; c=relaxed/simple;
+	bh=+gsM4tZBW+duEJ1CNrXpEyjGX+4OF30WvH6kUiXoNiQ=;
+	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tHZYVIsoc4XYoSbUz3n6yGqKpg2t9jNT2kdUvj3nmqib1CfV5FyrVMc3hkIgLY6wyGHRkPXZybFNNDl/Y8bexIJVnNjplJiKx1GYcXriLBbstfnSEXXimVcE1JZeZTyP30n57aC+QGAzg/rkHGfpaCAPp5TfPJJO3l1Hjuf2Qjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y+Q6qas0; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kUAsESDl"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DDAFDC116D0;
-	Mon,  5 Jan 2026 14:07:54 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y+Q6qas0"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5AB9C116D0;
+	Mon,  5 Jan 2026 14:08:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1767622076;
-	bh=KKwzmj9H2BnD78UzVWO6VmD+bqtcS1yCsoqh3DJz1CQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=kUAsESDlrplXhP55fEBIPVKwvLy1ck6EkXVVwgQ7csYGms0wYpNhhCi81siqHY5dG
-	 m2oxyMjPI/RS1vD/0RPdFEfQhBxQ3DVjFAQfMcWvdxSdXRfQYcI7bbjSxI6wrsaVBR
-	 bf3jct7ZLWo5C279kxa3T/c/1YPWHLdX6U/SXutczVqjrqrkY9LUkWlaQwGktjGF2j
-	 RxTcuiCxmCYH6wcuMWeyZ8K7guHzxjWflSERy9yGVzYcylQuF/WRmVWyzLOHIavUxt
-	 0ON/sB8KMLQDZK9tvI6v3tCKbmtr2e3JXdjXmvvfX1z4/wsVymDUHNvDaFm1mSxhwN
-	 VA/XTC+eTaHNw==
+	s=k20201202; t=1767622099;
+	bh=+gsM4tZBW+duEJ1CNrXpEyjGX+4OF30WvH6kUiXoNiQ=;
+	h=From:To:Subject:Date:In-Reply-To:References:From;
+	b=Y+Q6qas0IL8QgC9RbomZYmuRiq6UIW47LjHZVyLHB0d0+a9Vfn/cg3oJgPW3Vo2Pw
+	 u8HsgexYrmB4jtCc+AMPvVEq4nQwuOiSQknAucmBQG0B8CQt+/iqLwmQr8d41hQdg0
+	 sQvmKyH8lr6y6sq3f7vvLWmQxGYi8pgl1MOrXAZSU41NPvDXF6wRK0r82GicVEHSti
+	 NC5adXMEC0arr28Mbw5ufSrgT6/dasNsMQnGEcW++6AmF9gXAOMrwt34lagEKkZBgh
+	 d9Q1tUCpTMqL50SXdnEJEvmceWU/i/5B1sW9ZwrT3+QwWTr71GOi+RVatovUlcJrzW
+	 cdOkc0gp53W+Q==
 From: Bjorn Andersson <andersson@kernel.org>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	=?UTF-8?q?Barnab=C3=A1s=20Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
-Cc: linux-arm-msm@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Taniya Das <taniya.das@oss.qualcomm.com>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: (subset) [PATCH v2 0/4] MSM8917/MSM837: Add missing MDSS reset
-Date: Mon,  5 Jan 2026 08:07:11 -0600
-Message-ID: <176762206412.2923194.13671718596625242836.b4-ty@kernel.org>
+	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Subject: Re: [PATCH] clk: qcom: videocc-sm8750: Constify qcom_cc_desc
+Date: Mon,  5 Jan 2026 08:07:28 -0600
+Message-ID: <176762206392.2923194.13091505187833672085.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.52.0
-In-Reply-To: <20251117-mdss-resets-msm8917-msm8937-v2-0-a7e9bbdaac96@mainlining.org>
-References: <20251117-mdss-resets-msm8917-msm8937-v2-0-a7e9bbdaac96@mainlining.org>
+In-Reply-To: <20251208020621.4514-2-krzysztof.kozlowski@oss.qualcomm.com>
+References: <20251208020621.4514-2-krzysztof.kozlowski@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -56,17 +49,16 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Mon, 17 Nov 2025 18:17:51 +0100, Barnabás Czémán wrote:
-> Add missing MDSS reset can be found on MSM8917 and MSM8937.
+On Mon, 08 Dec 2025 03:06:22 +0100, Krzysztof Kozlowski wrote:
+> Static 'struct qcom_cc_desc' is not modified by drivers and can be made
+> const for code safety.
 > 
 > 
 
 Applied, thanks!
 
-[3/4] arm64: dts: qcom: msm8917: add reset for display subsystem
-      commit: 2ffe611f896857ef542e60f9e1b3bc1869faabdd
-[4/4] arm64: dts: qcom: msm8937: add reset for display subsystem
-      commit: 3ad80ba51eb931c7fcba0bec5b1c9ca5f6d99cea
+[1/1] clk: qcom: videocc-sm8750: Constify qcom_cc_desc
+      commit: 77d0ea71b30bcb9f06d36a804542851081d4da3c
 
 Best regards,
 -- 
