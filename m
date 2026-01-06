@@ -1,96 +1,154 @@
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D73DA25DB0D
-	for <linux-clk@vger.kernel.org>; Tue,  6 Jan 2026 14:18:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 925C135950
+	for <linux-clk@vger.kernel.org>; Tue,  6 Jan 2026 14:43:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767709126; cv=none; b=QIMklRblLWqKZH9r4gSsSEq2dLCEGOLDuM4oH/NarddxiN2LbCfEMTUeYyxK/OHIuJQ4L6HaZATr3Gle2nRPDjoJ5ThTBu1gjgg9A9qmRszIFGmsfQ++ZHbc1yrQeqGRzoD+B0PUv/8WTOQAzyZJA+1QwxFERvhhw3aeYVElaLU=
+	t=1767710638; cv=none; b=so7q71v2AxaDsj04c16+GfftBSJhFvi7QKvnh5+b00VAKA4DQY+GMMYF9oay/CW+2dl5OTeYkqvoJZgrBlftvFabOpYV0CM2QuHrRhQ8T2WJfmvGUMCZPP3hJbi04hskM8qxv4HUv1WqqLNG1HAK/V6cxhIGnSgOy07hFgA4wYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767709126; c=relaxed/simple;
-	bh=wn8RNdj2smZtv9veOt/ubSRx5qISALrPSQch/va4bwg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iuaQXqsSvyYaQWB3T8gh93eXCYeEKrsy52Ora3WnQmg2DNK7Q/eFfUSIaMNV6/liwPTReFJU52kJejXzHoDye54W5qSpv06ZS8W2HOaebcSTLV5rzhwiP6YZjgjGqtAkWFeZdgnKBojIeebikxf2/edGaI4H7FwMI6YGn2IJSuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=n1gWr7rL; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1767710638; c=relaxed/simple;
+	bh=lgMKRFdh5v9iRb/pm3a055Mp9ATD38LF+MvykHbBixc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pVKNJjnj7QT6qXU53/xoHNXTePcKDS/uPPXZU4pqBMQY1JaehQ/qrSpncpe5bTYhq5KA9F4+LGsG/JvTJBYmAf62LCJ2wObdn+uggi/Hy0IHQzLautk2c3Mk/dnyf0FeQeYDsfCUbfTkPq1Uo+sL/kN4ewJXqS7dMdMixbqWOHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=IPrevUTE; arc=none smtp.client-ip=209.85.222.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="n1gWr7rL"
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-47d3ffa6720so10070805e9.0
-        for <linux-clk@vger.kernel.org>; Tue, 06 Jan 2026 06:18:41 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="IPrevUTE"
+Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-8b2a4b6876fso127612485a.3
+        for <linux-clk@vger.kernel.org>; Tue, 06 Jan 2026 06:43:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1767709120; x=1768313920; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PDyomPMwSX0nUznUeSpIGPTPKXqo/Pa069JTwjCcRpo=;
-        b=n1gWr7rLfgPEuw38idGDWtgZKaCu7yPe8vExM/MibOtypgupkoBVOzVztWz5lVy96R
-         EOCIwO5enXWkeLbUK6CzeAc+IUOtHQQG03KgtF9Hv7yrLzJ2iRdMeJdVXntupSLjZxwi
-         cw6ImBi/K7GHkjn2OnopT+ZArjS1Y6FE0+L6KizlxWT/P3UgoXHTNkd/anwG316vV+BY
-         PdNODd3xNmaAnoIbMA8ukh5OqxKmAjQHr+lJQcGfCjaJngfzzD50xep2NfDdEkwMj6SB
-         1vVW0kDXD3tIrkiEyciWZS+ehM0yERW89h+/q7inxSOts1RFDkZlvHrb2mZHEmwhj3Hn
-         vNZQ==
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1767710635; x=1768315435; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=yjnd3cJi73pItwYWnZ/AGVro8SITV6ewWmgFqzGpdOc=;
+        b=IPrevUTEPRsOZW6vSN66tVtbTQWZf8soBWefuU+HTkefSYRcJoSmjiz5ZgIdmf/H9e
+         hh+p63r0/MuJagfsELcEoYBMmSFB6DrX7qs1piS/KeqNBrbmkTmfmwBRt6A+B/K/qDub
+         36cbQfzpGkWBwm+jRqCL1ZOl8euf9fT3qMNAnAyXzrbvrBFcih4wN+bvOUBMrrjp09Sz
+         U+nJ/LdAewnGYhYnhDFJE0ZZVIqfjezlMpQu89/85g741BbBkezReWvehtWHXpeZDbMS
+         05uq67WtQaL2f4Q83so4tIZHXtAGh6FZ63ggh8SGVFA5fFeGzQRdkuRAUAwULZSw0sW5
+         WS8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767709120; x=1768313920;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=PDyomPMwSX0nUznUeSpIGPTPKXqo/Pa069JTwjCcRpo=;
-        b=ODhp+VPerFv74MSJRD9CJxNcX5tl99yNBkTowuUOMCBl5/UGSxRtac8U+lHqRSJZYd
-         zVJYweDHcHRVBdrmgsrwrlNrGjRVaUx/yLGuKxtf7cowdNeiJR42tL7c2NWFbhLw6nrJ
-         /hiapMus4wdUELomTU8pMEH49vUNCB1JAQQbun51I8Ljnj7A8J8ennj0VwVjk7bt3pZB
-         wiFtBSLwXWwPr22WCy+0GZoFVGMhbl09Ml66HE8oR/2gwBSuGnVcBcOZTKeS0BR8dhqR
-         hdSlJbpX2ot4JHFYYGe/s43Cw6qQxLJKbCPHmU4fNVM+1OAXVwGx5FurgqeCre+USOwB
-         LZ7g==
-X-Forwarded-Encrypted: i=1; AJvYcCXbe01IhMsKfhDH3H15frDJlhu6n0YASpPBCZOklzwCLnouJVk73zLMqqQ49k9M1Fvpx63PwTwP690=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1ZcoVjIKbczb/8nZ0uha5S/slxBRN3WS13P4xMVdIMA58mMeM
-	ews6tyVQcKYaqtvoVd3nUtfVEHnzhqmF5WgU/9Tbj37v6wpbsGodd3F7yoy7dCE0bww=
-X-Gm-Gg: AY/fxX6oSOJoKJm1ri8o/jSLrHvtPxW/mz+iAwXht0bQagpXWTHaiC0WDgrc2I9Zjn0
-	1vxU+S3+8ZVF4Hqn8RXizVroh9EPzAGSwI84mxzztGeXY2WQTaliErjTIUOyu2sCWPIIGh364sD
-	rW+qg5qLuhVuA0Ee3F+LFEcPeEvP+h3f37AV+zR+Kl39Zs17EfJaUout2wqSgogORdjCetUQhKR
-	Lr8EzuUa81S0VWm5HrM7moDshfBB/Et8g89+bzKqmXmlNQIy+28N+bKB008KOjI1Xhup3QSMhPS
-	Y0KVA40AkuiQ6yScMZvJJdmnX7BGFoph7rZVkNur8Zj2VhEmQt1A6apLZwXzANmNomiQJ2/8j1y
-	K2LMlD+aoLxg7XU9UkUPaBHfAiSpKNvpeSa8+eAKj+/Z32oEB8kPspwV+pRr4syTAQn86APHkqT
-	Ay5DETKPlelDVF9YvdKaOE
-X-Google-Smtp-Source: AGHT+IG4RoI4YqTRfLqMtHqERY+dKFavuI8R+zT2rhNFCJf6Ipd0EyH0ZjVfMEfxdwK/NE7/Y+RH/w==
-X-Received: by 2002:a05:600c:1d8c:b0:46e:4b79:551 with SMTP id 5b1f17b1804b1-47d7f0a324emr36773525e9.31.1767709120058;
-        Tue, 06 Jan 2026 06:18:40 -0800 (PST)
-Received: from localhost ([2a01:e0a:3c5:5fb1:e488:b673:7409:68d0])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-47d7f7035f2sm43558785e9.12.2026.01.06.06.18.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Jan 2026 06:18:39 -0800 (PST)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: linux-amlogic@lists.infradead.org,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	jian.hu@amlogic.com
-Subject: Re: [PATCH v1 0/3] clk: meson: small fixes for HDMI PLL OD
-Date: Tue,  6 Jan 2026 15:18:23 +0100
-Message-ID: <176770907988.1004563.13571465521875416136.b4-ty@baylibre.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260105204710.447779-1-martin.blumenstingl@googlemail.com>
-References: <20260105204710.447779-1-martin.blumenstingl@googlemail.com>
+        d=1e100.net; s=20230601; t=1767710635; x=1768315435;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yjnd3cJi73pItwYWnZ/AGVro8SITV6ewWmgFqzGpdOc=;
+        b=uRh1990/yDYWW79yAGDV94WydfHefjGxSC4ywuT00+Smq36IY1DEQyRFUIdQRSqbBv
+         r5aQHY+t6VJjI31ORDMhvJBKZ4TBUlaVpG/PwZzrsLj5MQxIL6PeVRSDDGxG/l7aoE1N
+         Wygyv4W8sW3bPA9C1TImSORHYkx36pDW1WdrMJBVyMsXmWoJnH2dYPczM/IdxJ83MBNn
+         yj5mR1cfAtDwWnFzOBd0kCyy4nQ76v5H35qUQHQnMuSZM3etW9YnI6Y0hJC28q2YAUMJ
+         4PfxTWPFQZhsX9XvCLAx1+1Xpe8AqL7sk9vkblwc7AwEtSoT6P3ozSJrP/Kt4Qyh9kum
+         NyVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWlduIstYO8Bpf8CW8jgH07nQgy5FLpzsgwqtlEB8SqPuukhA66/ZYNAAOp+gyRRD8uUubS2I5Tm5s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSwTjMPvuRJfk1pH/HqZiHkeTb8Yh0peWSycpsEDRAN6/pTC1i
+	STnq6/Fyq1BWm4G8PrwW7+97npmjkwqvBQqugPoqFn+UEBmn7qmujW16C7LKZ5lcEmA=
+X-Gm-Gg: AY/fxX6wsW9oGFdJLJU/GkwS8QCiWclaoV8eCON5K3xWeQO0dYg78/Y6PZCo2D4ZvRY
+	2DfkW41ZepDTGYEFoR28oKU65blvqYhKGngT6xGYyuNvpJRV6LmPjrbh1ebyj26rx84c/gRQQJw
+	E2tGjrj38Mavz1g5GyWZ7xpZWsM4mj+ayPebqh9B1Qbs0XHcNzgg8jcHz5cfuB/wkE0b4NDoHte
+	R0U/WU2ytAtTh20A80/vqNNT0pPHjtvnbezloVRK7bdKd6Xq8+9IZO9viip0VFK4iM8FLbgDfxD
+	+UkTGlZRLLqGpwBMzYa8pTz8h8IwWUPAWwFqLIeS+GXRD5XExCAnZYSP+3B9KMNfvkFLAyh1zg3
+	aVWp2uAF5xJCn6WPu+r+zMrW+Tx3pxKBnq39oA1Cd5HzNI64dgUUdCpKrFLrp8ELnz3+Slc67co
+	dVIv2NU8GYekr+J4g7VfGEUJ5Xw06l2iMH2hN+pA1EcaCfTXEkJBs=
+X-Google-Smtp-Source: AGHT+IEt3VwJP5rxykKJZ4q+39Q3RxlylF53FJBHrqUXpOK98r/RkrMmPUkkduDxAmcDVa9qHWO1bA==
+X-Received: by 2002:a05:620a:254a:b0:8b2:1f8d:f115 with SMTP id af79cd13be357-8c37ebcb5b5mr442348785a.65.1767710634577;
+        Tue, 06 Jan 2026 06:43:54 -0800 (PST)
+Received: from [172.22.22.28] (c-75-72-117-212.hsd1.mn.comcast.net. [75.72.117.212])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8c37f51b732sm173883085a.25.2026.01.06.06.43.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 06 Jan 2026 06:43:54 -0800 (PST)
+Message-ID: <9ceca23a-8709-43b4-b266-38cc0d924aac@riscstar.com>
+Date: Tue, 6 Jan 2026 08:43:52 -0600
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/4] clk: spacemit: prepare common ccu header
+To: Yixun Lan <dlan@gentoo.org>, Stephen Boyd <sboyd@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Guodong Xu <guodong@riscstar.com>, Inochi Amaoto <inochiama@gmail.com>,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-riscv@lists.infradead.org, spacemit@lists.linux.dev
+References: <20260103-06-k1-clk-common-v3-0-6061d9f69eef@gentoo.org>
+ <20260103-06-k1-clk-common-v3-1-6061d9f69eef@gentoo.org>
+Content-Language: en-US
+From: Alex Elder <elder@riscstar.com>
+In-Reply-To: <20260103-06-k1-clk-common-v3-1-6061d9f69eef@gentoo.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Applied to clk-meson (clk-meson-next), thanks!
+On 1/3/26 1:26 AM, Yixun Lan wrote:
+> In order to prepare adding clock driver for new K3 SoC, extract generic
+> code to a separate common ccu header file, so they are not defined
+> in K1 SoC-specific file, and then can be shared by all clock drivers.
+> 
+> Signed-off-by: Yixun Lan <dlan@gentoo.org>
 
-[1/3] clk: meson: gxbb: Limit the HDMI PLL OD to /4 on GXL/GXM SoCs
-      https://github.com/BayLibre/clk-meson/commit/5b1a43950fd3
-[2/3] clk: meson: g12a: Limit the HDMI PLL OD to /4
-      https://github.com/BayLibre/clk-meson/commit/7aa6c24697ef
-[3/3] clk: meson: gxbb: use the existing HHI_HDMI_PLL_CNTL3 macro
-      https://github.com/BayLibre/clk-meson/commit/2fe1ef40b58c
+Looks good.
 
-Best regards,
---
-Jerome
+Reviewed-by: Alex Elder <elder@riscstar.com>
+
+> ---
+>   include/soc/spacemit/ccu.h       | 21 +++++++++++++++++++++
+>   include/soc/spacemit/k1-syscon.h | 12 +-----------
+>   2 files changed, 22 insertions(+), 11 deletions(-)
+> 
+> diff --git a/include/soc/spacemit/ccu.h b/include/soc/spacemit/ccu.h
+> new file mode 100644
+> index 000000000000..84dcdecccc05
+> --- /dev/null
+> +++ b/include/soc/spacemit/ccu.h
+> @@ -0,0 +1,21 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
+> +
+> +#ifndef __SOC_SPACEMIT_CCU_H__
+> +#define __SOC_SPACEMIT_CCU_H__
+> +
+> +#include <linux/auxiliary_bus.h>
+> +#include <linux/regmap.h>
+> +
+> +/* Auxiliary device used to represent a CCU reset controller */
+> +struct spacemit_ccu_adev {
+> +	struct auxiliary_device adev;
+> +	struct regmap *regmap;
+> +};
+> +
+> +static inline struct spacemit_ccu_adev *
+> +to_spacemit_ccu_adev(struct auxiliary_device *adev)
+> +{
+> +	return container_of(adev, struct spacemit_ccu_adev, adev);
+> +}
+> +
+> +#endif /* __SOC_SPACEMIT_CCU_H__ */
+> diff --git a/include/soc/spacemit/k1-syscon.h b/include/soc/spacemit/k1-syscon.h
+> index 354751562c55..0be7a2e8d445 100644
+> --- a/include/soc/spacemit/k1-syscon.h
+> +++ b/include/soc/spacemit/k1-syscon.h
+> @@ -5,17 +5,7 @@
+>   #ifndef __SOC_K1_SYSCON_H__
+>   #define __SOC_K1_SYSCON_H__
+>   
+> -/* Auxiliary device used to represent a CCU reset controller */
+> -struct spacemit_ccu_adev {
+> -	struct auxiliary_device adev;
+> -	struct regmap *regmap;
+> -};
+> -
+> -static inline struct spacemit_ccu_adev *
+> -to_spacemit_ccu_adev(struct auxiliary_device *adev)
+> -{
+> -	return container_of(adev, struct spacemit_ccu_adev, adev);
+> -}
+> +#include "ccu.h"
+>   
+>   /* APBS register offset */
+>   #define APBS_PLL1_SWCR1			0x100
+> 
+
