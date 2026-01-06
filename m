@@ -1,173 +1,96 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4199A2F1FD7;
-	Tue,  6 Jan 2026 12:19:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D73DA25DB0D
+	for <linux-clk@vger.kernel.org>; Tue,  6 Jan 2026 14:18:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767701994; cv=none; b=N+GMmFWZtbwEe62YT9eBv1YiyrbWwXSX219bP8A4z903R+JaeiDcTRPlla3Hs2D4MxsSPTRsWu14BQq1fhMDDcj6NQ0/17deinW5bgL1LDqBye5aGRMQeZgWlC9pesmN/NUAnuT2KAzvkFvY9MiKqIwTcccPeAE4tMiAjMTq/Vs=
+	t=1767709126; cv=none; b=QIMklRblLWqKZH9r4gSsSEq2dLCEGOLDuM4oH/NarddxiN2LbCfEMTUeYyxK/OHIuJQ4L6HaZATr3Gle2nRPDjoJ5ThTBu1gjgg9A9qmRszIFGmsfQ++ZHbc1yrQeqGRzoD+B0PUv/8WTOQAzyZJA+1QwxFERvhhw3aeYVElaLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767701994; c=relaxed/simple;
-	bh=O/dUHVimSNITbK1jFp8OUa64TxXXBUiAJEVnK2fNV/g=;
+	s=arc-20240116; t=1767709126; c=relaxed/simple;
+	bh=wn8RNdj2smZtv9veOt/ubSRx5qISALrPSQch/va4bwg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CNfmAFtJNYhYHLdadq8OVqHxjZmQf8TQQOwBg75ynvRw7sLpFUBnRmxss3IrbSBZUw6Vh/jV/D/3eqkTVbLwECIJLt3e/k5EFd8MR5HmFQPCYguVXSc2mgkOk8dOrIaBveZljdJXiS73BdnLzlVEF0IUZVgxPmGs6UtCpFSk5GI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MndQZg5Q; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=iuaQXqsSvyYaQWB3T8gh93eXCYeEKrsy52Ora3WnQmg2DNK7Q/eFfUSIaMNV6/liwPTReFJU52kJejXzHoDye54W5qSpv06ZS8W2HOaebcSTLV5rzhwiP6YZjgjGqtAkWFeZdgnKBojIeebikxf2/edGaI4H7FwMI6YGn2IJSuQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=n1gWr7rL; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MndQZg5Q"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B767FC116C6;
-	Tue,  6 Jan 2026 12:19:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1767701993;
-	bh=O/dUHVimSNITbK1jFp8OUa64TxXXBUiAJEVnK2fNV/g=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=MndQZg5QHrZwZC1tYQynC9cmXs+i3bh5G0apx7/tSIZthxiU6TtnFHAHMUZahaL8Q
-	 p7i6PasNNZZiT19/veZrVEFTUXP//jULMvD/d9+mNJQhdqsPJxc8al5f7kWt4DacQX
-	 1GL3S1d3AWG+ugm2hGSInej54TguCh/SmJWzI3whN54twSKAjw8m23yqWS/Y/fvqGN
-	 UWY/hpbgbP2BuDdc+VbqOnOSUvz+Ss7e5hcMgN7rc9molpJkDAqmfm11HaqQWd3LCf
-	 yVRVCjqdLB6bqV09T0pDlOdWL+dRVsKBYBrMCXA6kU2SNh52uBodk2eeJx5qwmEzxo
-	 r8BsQZoIAKotw==
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-To: Jon Hunter <jonathanh@nvidia.com>, Linux PM <linux-pm@vger.kernel.org>
-Cc: linux-tegra@vger.kernel.org, Prashant Gaikwad <pgaikwad@nvidia.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
- Thierry Reding <thierry.reding@gmail.com>, linux-clk@vger.kernel.org,
- LKML <linux-kernel@vger.kernel.org>, Dmitry Osipenko <digetx@gmail.com>,
- Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH v2] clk: tegra: Adjust callbacks in tegra_clock_pm
-Date: Tue, 06 Jan 2026 13:19:47 +0100
-Message-ID: <5956349.DvuYhMxLoT@rafael.j.wysocki>
-Organization: Linux Kernel Development
-In-Reply-To:
- <CAJZ5v0i7Rbk5sWCo2Z1Y4j_ZFW7nCUr18H8i2JCM=aPpfZOQ4w@mail.gmail.com>
-References:
- <5088794.31r3eYUQgx@rafael.j.wysocki>
- <2d55ebec-1e42-4ddb-b0e2-529d3b2d7b85@nvidia.com>
- <CAJZ5v0i7Rbk5sWCo2Z1Y4j_ZFW7nCUr18H8i2JCM=aPpfZOQ4w@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="n1gWr7rL"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-47d3ffa6720so10070805e9.0
+        for <linux-clk@vger.kernel.org>; Tue, 06 Jan 2026 06:18:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1767709120; x=1768313920; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PDyomPMwSX0nUznUeSpIGPTPKXqo/Pa069JTwjCcRpo=;
+        b=n1gWr7rLfgPEuw38idGDWtgZKaCu7yPe8vExM/MibOtypgupkoBVOzVztWz5lVy96R
+         EOCIwO5enXWkeLbUK6CzeAc+IUOtHQQG03KgtF9Hv7yrLzJ2iRdMeJdVXntupSLjZxwi
+         cw6ImBi/K7GHkjn2OnopT+ZArjS1Y6FE0+L6KizlxWT/P3UgoXHTNkd/anwG316vV+BY
+         PdNODd3xNmaAnoIbMA8ukh5OqxKmAjQHr+lJQcGfCjaJngfzzD50xep2NfDdEkwMj6SB
+         1vVW0kDXD3tIrkiEyciWZS+ehM0yERW89h+/q7inxSOts1RFDkZlvHrb2mZHEmwhj3Hn
+         vNZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1767709120; x=1768313920;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=PDyomPMwSX0nUznUeSpIGPTPKXqo/Pa069JTwjCcRpo=;
+        b=ODhp+VPerFv74MSJRD9CJxNcX5tl99yNBkTowuUOMCBl5/UGSxRtac8U+lHqRSJZYd
+         zVJYweDHcHRVBdrmgsrwrlNrGjRVaUx/yLGuKxtf7cowdNeiJR42tL7c2NWFbhLw6nrJ
+         /hiapMus4wdUELomTU8pMEH49vUNCB1JAQQbun51I8Ljnj7A8J8ennj0VwVjk7bt3pZB
+         wiFtBSLwXWwPr22WCy+0GZoFVGMhbl09Ml66HE8oR/2gwBSuGnVcBcOZTKeS0BR8dhqR
+         hdSlJbpX2ot4JHFYYGe/s43Cw6qQxLJKbCPHmU4fNVM+1OAXVwGx5FurgqeCre+USOwB
+         LZ7g==
+X-Forwarded-Encrypted: i=1; AJvYcCXbe01IhMsKfhDH3H15frDJlhu6n0YASpPBCZOklzwCLnouJVk73zLMqqQ49k9M1Fvpx63PwTwP690=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1ZcoVjIKbczb/8nZ0uha5S/slxBRN3WS13P4xMVdIMA58mMeM
+	ews6tyVQcKYaqtvoVd3nUtfVEHnzhqmF5WgU/9Tbj37v6wpbsGodd3F7yoy7dCE0bww=
+X-Gm-Gg: AY/fxX6oSOJoKJm1ri8o/jSLrHvtPxW/mz+iAwXht0bQagpXWTHaiC0WDgrc2I9Zjn0
+	1vxU+S3+8ZVF4Hqn8RXizVroh9EPzAGSwI84mxzztGeXY2WQTaliErjTIUOyu2sCWPIIGh364sD
+	rW+qg5qLuhVuA0Ee3F+LFEcPeEvP+h3f37AV+zR+Kl39Zs17EfJaUout2wqSgogORdjCetUQhKR
+	Lr8EzuUa81S0VWm5HrM7moDshfBB/Et8g89+bzKqmXmlNQIy+28N+bKB008KOjI1Xhup3QSMhPS
+	Y0KVA40AkuiQ6yScMZvJJdmnX7BGFoph7rZVkNur8Zj2VhEmQt1A6apLZwXzANmNomiQJ2/8j1y
+	K2LMlD+aoLxg7XU9UkUPaBHfAiSpKNvpeSa8+eAKj+/Z32oEB8kPspwV+pRr4syTAQn86APHkqT
+	Ay5DETKPlelDVF9YvdKaOE
+X-Google-Smtp-Source: AGHT+IG4RoI4YqTRfLqMtHqERY+dKFavuI8R+zT2rhNFCJf6Ipd0EyH0ZjVfMEfxdwK/NE7/Y+RH/w==
+X-Received: by 2002:a05:600c:1d8c:b0:46e:4b79:551 with SMTP id 5b1f17b1804b1-47d7f0a324emr36773525e9.31.1767709120058;
+        Tue, 06 Jan 2026 06:18:40 -0800 (PST)
+Received: from localhost ([2a01:e0a:3c5:5fb1:e488:b673:7409:68d0])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-47d7f7035f2sm43558785e9.12.2026.01.06.06.18.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Jan 2026 06:18:39 -0800 (PST)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: linux-amlogic@lists.infradead.org,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	jian.hu@amlogic.com
+Subject: Re: [PATCH v1 0/3] clk: meson: small fixes for HDMI PLL OD
+Date: Tue,  6 Jan 2026 15:18:23 +0100
+Message-ID: <176770907988.1004563.13571465521875416136.b4-ty@baylibre.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20260105204710.447779-1-martin.blumenstingl@googlemail.com>
+References: <20260105204710.447779-1-martin.blumenstingl@googlemail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Tuesday, January 6, 2026 1:07:15 PM CET Rafael J. Wysocki wrote:
-> Hi Jon,
->=20
-> On Tue, Jan 6, 2026 at 11:36=E2=80=AFAM Jon Hunter <jonathanh@nvidia.com>=
- wrote:
-> >
-> > Hi Rafael,
-> >
-> > On 04/01/2026 11:53, Rafael J. Wysocki wrote:
-> > > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > >
-> > > System suspend and resume callbacks run after the core has bumped
-> > > up the runtime PM usage counters of all devices, so these callbacks
-> > > need not worry about runtime PM reference counting.
-> > >
-> > > Accordingly, to eliminate useless overhead related to runtime PM
-> > > usage counter manipulation, set the suspend callback pointer in
-> > > tegra_clock_pm to pm_runtime_resume() and do not set the resume
-> > > callback in it at all.
-> > >
-> > > This will also facilitate a planned change of the pm_runtime_put()
-> > > return type to void in the future.
-> > >
-> > > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > > ---
-> > >
-> > > This patch is requisite for converting pm_runtime_put() into a void
-> > > function.
-> > >
-> > > If you decide to pick it up, please let me know.
-> > >
-> > > Otherwise, an ACK or equivalent will be appreciated, but also the lack
-> > > of specific criticism will be eventually regarded as consent.
-> > >
-> > > ---
-> > >   drivers/clk/tegra/clk-device.c |    2 +-
-> > >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > >
-> > > --- a/drivers/clk/tegra/clk-device.c
-> > > +++ b/drivers/clk/tegra/clk-device.c
-> > > @@ -175,7 +175,7 @@ unreg_clk:
-> > >    * perspective since voltage is kept at a nominal level during susp=
-end anyways.
-> > >    */
-> > >   static const struct dev_pm_ops tegra_clock_pm =3D {
-> > > -     SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_resume_and_get, pm_runtime_p=
-ut)
-> > > +     SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_resume, NULL)
-> > >   };
-> > >
-> > >   static const struct of_device_id tegra_clock_match[] =3D {
-> >
-> >
-> > I gave this a quick test and this is causing a suspend regression on
-> > Tegra20 and Tegra30 that use this driver. Looking at the console log
-> > on Tegra20 I see the following errors ...
-> >
-> >   tegra-clock tegra_clk_sclk: PM: dpm_run_callback(): pm_runtime_resume=
- returns 1
->=20
-> Of course, it needs a wrapper.
+Applied to clk-meson (clk-meson-next), thanks!
 
-So the patch below should work better.
+[1/3] clk: meson: gxbb: Limit the HDMI PLL OD to /4 on GXL/GXM SoCs
+      https://github.com/BayLibre/clk-meson/commit/5b1a43950fd3
+[2/3] clk: meson: g12a: Limit the HDMI PLL OD to /4
+      https://github.com/BayLibre/clk-meson/commit/7aa6c24697ef
+[3/3] clk: meson: gxbb: use the existing HHI_HDMI_PLL_CNTL3 macro
+      https://github.com/BayLibre/clk-meson/commit/2fe1ef40b58c
 
-=2D--
-=46rom: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Subject: [PATCH v2] clk: tegra: Adjust callbacks in tegra_clock_pm
-
-System suspend and resume callbacks run after the core has bumped
-up the runtime PM usage counters of all devices, so these callbacks
-need not worry about runtime PM reference counting.
-
-Accordingly, to eliminate useless overhead related to runtime PM
-usage counter manipulation, set the suspend callback pointer in
-tegra_clock_pm to a wrapper around pm_runtime_resume() called
-tegra_clock_suspend() and do not set the resume callback in it at all.
-
-This will also facilitate a planned change of the pm_runtime_put()
-return type to void in the future.
-
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-=2D--
-
-v1 -> v2:
-   * Use a wrapper around pm_runtime_resume() to avoid aborting
-     system suspend when it returns 1 (which is always when the
-     clock is active during system suspend).
-
-=2D--
- drivers/clk/tegra/clk-device.c |   13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
-
-=2D-- a/drivers/clk/tegra/clk-device.c
-+++ b/drivers/clk/tegra/clk-device.c
-@@ -174,8 +174,19 @@ unreg_clk:
-  * problem. In practice this makes no difference from a power management
-  * perspective since voltage is kept at a nominal level during suspend any=
-ways.
-  */
-+static inline int tegra_clock_suspend(struct device *dev)
-+{
-+	int ret;
-+
-+	ret =3D pm_runtime_resume(dev);
-+	if (ret < 0)
-+		return ret;
-+
-+	return 0;
-+}
-+
- static const struct dev_pm_ops tegra_clock_pm =3D {
-=2D	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_resume_and_get, pm_runtime_put)
-+	SET_SYSTEM_SLEEP_PM_OPS(tegra_clock_suspend, NULL)
- };
-=20
- static const struct of_device_id tegra_clock_match[] =3D {
-
-
-
+Best regards,
+--
+Jerome
