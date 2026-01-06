@@ -1,121 +1,131 @@
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9893E32F749;
-	Tue,  6 Jan 2026 10:23:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FD63321456
+	for <linux-clk@vger.kernel.org>; Tue,  6 Jan 2026 10:25:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767695033; cv=none; b=GyfmDgAa9IPz4a3HMktMSPnQ4tm8Pk2S18chYvm430a4SWq9HKpaK2bdzhUhae9xrl8Ij461P/2IUnmZ8WD+acZzW8Pw/KdPU/w3jHzTE597TTUISGnch7OVM/EGvHqaNc4GIvG+5qbsbUVHN91M9/aT9iPdnf3IKstINpGZ8BA=
+	t=1767695130; cv=none; b=o39uYIQxXxh+Lm0Y2fvfUj9iY2xxidDTL/XWA0wT7sCOrqj4uE7eyU7RogXAJStd6Yi7LZfrxIxPLkAmm5UIRQ1aBorKX3OUDX0ehg1LUB/0md75knoGdKsaKXd7Y487AQgGmf0GxTk2VOd20l07lruEjRkkRREnNzhRhk68WR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767695033; c=relaxed/simple;
-	bh=kWEr6KRd8QtmW6gX41iN9OsDNbx6l3BZrOL5rcpiSjA=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gHul35KT6JMc3LtiKAqSU4xhEFf3Js7ND5J/9tJokhSJc3iLrjqzG/IpMmd33QZKmm1etH1PMXNgc0k/HIXYDADCJIA9wV44aG1CwuKKn7lMmztENa5Tj1mujC7mkEeg3M2ZMnXrlFSQofBYUNKeSc4AdkuCLaSjXVKGHoiMh4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.224.107])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4dlnM661F0zJ4703;
-	Tue,  6 Jan 2026 18:23:46 +0800 (CST)
-Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
-	by mail.maildlp.com (Postfix) with ESMTPS id 3D53640570;
-	Tue,  6 Jan 2026 18:23:48 +0800 (CST)
-Received: from localhost (10.48.149.114) by dubpeml100005.china.huawei.com
- (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.36; Tue, 6 Jan
- 2026 10:23:45 +0000
-Date: Tue, 6 Jan 2026 10:23:44 +0000
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-CC: Miguel Ojeda <ojeda@kernel.org>, Rob Herring <robh@kernel.org>, "Saravana
- Kannan" <saravanak@google.com>, Nathan Chancellor <nathan@kernel.org>, "Nick
- Desaulniers" <nick.desaulniers+lkml@gmail.com>, Bill Wendling
-	<morbo@google.com>, Justin Stitt <justinstitt@google.com>, Russell King
-	<linux@armlinux.org.uk>, Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea
-	<claudiu.beznea@tuxon.dev>, Krzysztof Kozlowski <krzk@kernel.org>, "Alim
- Akhtar" <alim.akhtar@samsung.com>, Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>, "Nicholas Piggin" <npiggin@gmail.com>,
-	"Christophe Leroy (CS GROUP)" <chleroy@kernel.org>, Nipun Gupta
-	<nipun.gupta@amd.com>, Nikhil Agarwal <nikhil.agarwal@amd.com>, Abel Vesa
-	<abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>, Michael Turquette
-	<mturquette@baylibre.com>, "Stephen Boyd" <sboyd@kernel.org>, Shawn Guo
-	<shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix
- Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
-	Vinod Koul <vkoul@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>, "Rafael J. Wysocki"
-	<rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<llvm@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-samsung-soc@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
-	<linux-clk@vger.kernel.org>, <imx@lists.linux.dev>,
-	<dmaengine@vger.kernel.org>, <linux-media@vger.kernel.org>,
-	<linux-pm@vger.kernel.org>
-Subject: Re: [PATCH 08/11] clk: imx: imx31: Simplify with scoped for each OF
- child loop
-Message-ID: <20260106102344.00003201@huawei.com>
-In-Reply-To: <20260105-of-for-each-compatible-scoped-v1-8-24e99c177164@oss.qualcomm.com>
-References: <20260105-of-for-each-compatible-scoped-v1-0-24e99c177164@oss.qualcomm.com>
-	<20260105-of-for-each-compatible-scoped-v1-8-24e99c177164@oss.qualcomm.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1767695130; c=relaxed/simple;
+	bh=nong8fdB1qEQv1HMJAMSfz5xFyfxpst7My1lNS5fUHc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ALvimymIX8psL6N1iAEMNiqGvDhAZ4zWDSsyH7cJ31HqZg6ldvfhlgWPvz75pbF8ez4j8NS3DZHTTQLqEWc6GSP2dZZjZZvOF+OnTVsggrB8umUYCsUWPE8KoSwEXJiuZzcOXMQtCyrLu4kunhy3hr9WppciFYgyIrpSZ6xvJ28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=zqDRzQ6D; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="zqDRzQ6D"
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-430f57cd471so362459f8f.0
+        for <linux-clk@vger.kernel.org>; Tue, 06 Jan 2026 02:25:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1767695122; x=1768299922; darn=vger.kernel.org;
+        h=mime-version:message-id:date:user-agent:references:in-reply-to
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=0qANYzoev4CDFAFriC0/ymDfXiPKNr8QETcgvp/u6vU=;
+        b=zqDRzQ6DqrxtDdZFY230e+12dTk4UtbYss55fPdu8mvj0PA1NvMISVBdjRcaEgjci2
+         /Pl16T/tB3PC8laHJq0gQgxB31MD15PiSbY0mRYgeORASGXxohGcbOQq24CEchH7EunW
+         Ks4a4P0lkAXLFYvBxjxhb/IjhcvUAjv91Glsk7XWXQZhQvKozZr/DV3QmNzGmT1ZydRj
+         pYd/dh4yxE56pjsk6TUvw8ED3T1zKPmKeu7vTkAoMzyvz92/ZAuDOl8lSwvvaXvQmqPr
+         f5n3nF5Nnj+rpXmSptrPe6EiR4kuTQfZIWfxRIeoeUT03hEdG/seOy2C1jiPvJCAPQch
+         039g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1767695122; x=1768299922;
+        h=mime-version:message-id:date:user-agent:references:in-reply-to
+         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=0qANYzoev4CDFAFriC0/ymDfXiPKNr8QETcgvp/u6vU=;
+        b=nJUXFL0FgCVuRKpIZqurUlDu8gvvsICBUHx7k5KetvX2fIugwKRwjKR7Yct0oidP9b
+         59VVJHolxl9zdMWl7Sqn9QgyJ/K0dYT6YNJmEaWYplw52HLg/sxujIuoHxk4J34qyG/B
+         B4puTPWpgb4ngaLD7wO2LRX59eUqOYGFSP9OUddJtpR9jiATkyYSFz2pOXmsoThQ98TC
+         dQ7drb6nkzfdd9oC4K2wKLV5jEbnNwT4fmftlnuPnnvhIJaEPhbcd6Pi1rdvg6aT9ZLw
+         2EbV4eVN1ZY93iAy4drIeaJBLKVCEVf7aQsCGmyx7AbNzjrKQHeez73vf5DkVW+AAmBm
+         /jEA==
+X-Forwarded-Encrypted: i=1; AJvYcCXkpkbAn7rr9KHnvTrxH1Qrpo6ZfJGvgf7ZIzk0VyoNDgW5RcObve84a/zkbrdPP/D6PkjzzBpUJ+o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywv/AXRnXhJd7iMPcjYj4yLx6hB14fNZGMaskHjv0IMtlRQ0OjQ
+	q4x9BBFvHqzNejBrTeUU0ee0qPfLQijeyYypfiD/yDaMmPgVpESMZLrwB9x0+gALLV8osdFO9yi
+	E+lnun+w=
+X-Gm-Gg: AY/fxX5onlzIwF1IeMx+6cn6akkFeJJmHnVbsFDCrCCGYsn2wlHvhtg18ScQUXKpPM4
+	dx7BxnAEQMeSSa0ieBqq6XEtCDjrRGD/c+LgSFlBkUCk9Yzu6JkKdacGVojx2DbmJTe3kCCnTyP
+	1CwbNRlKF9j0S044EAen0VXSYd67Rlas1GxY/mzh6BFYLjbVjMOSNWGbK3hoB6vUGB+4IdGmiBz
+	DAXOZwvCwQ++Vx9zytbKG9mfs5/QydmX639xZ+jF9CujC+SVGZ4KCvxEWvDBzpKP81M7EDy9wiG
+	bVnzASSKqTuIT5IpZUeGUwAbPo1cHozlgv8yELLNZvIxD487nPfH3y5HikAYHRwGwsCyVtIiip5
+	2TqYwMmJW9kkE/Vr2gDObOIAX01U14AmcWywsh8VI9sNTbbMRj81lde8S7VXWeRJY0L7YV2mQ3n
+	6FbCeQp3nlNg==
+X-Google-Smtp-Source: AGHT+IEv0FV/dLsQxvu+BoaxabRvTrsfnnhhr1sy/Eszfp34wH82WJypgYYqe5SNFW9OsYmIAalYIQ==
+X-Received: by 2002:a05:6000:26cb:b0:430:fcbb:2e6b with SMTP id ffacd0b85a97d-432bca3f1c9mr3845176f8f.27.1767695122452;
+        Tue, 06 Jan 2026 02:25:22 -0800 (PST)
+Received: from localhost ([2a01:e0a:3c5:5fb1:e12b:7496:6c81:d3aa])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-432bd5ff0b2sm3584447f8f.42.2026.01.06.02.25.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Jan 2026 02:25:21 -0800 (PST)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: linux-amlogic@lists.infradead.org,  linux-clk@vger.kernel.org,
+  linux-arm-kernel@lists.infradead.org,  linux-kernel@vger.kernel.org,
+  jian.hu@amlogic.com
+Subject: Re: [PATCH v1 0/3] clk: meson: small fixes for HDMI PLL OD
+In-Reply-To: <20260105204710.447779-1-martin.blumenstingl@googlemail.com>
+	(Martin Blumenstingl's message of "Mon, 5 Jan 2026 21:47:07 +0100")
+References: <20260105204710.447779-1-martin.blumenstingl@googlemail.com>
+User-Agent: mu4e 1.12.9; emacs 30.1
+Date: Tue, 06 Jan 2026 11:25:20 +0100
+Message-ID: <1jfr8jdomn.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100010.china.huawei.com (7.191.174.197) To
- dubpeml100005.china.huawei.com (7.214.146.113)
+Content-Type: text/plain
 
-On Mon, 05 Jan 2026 14:33:46 +0100
-Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com> wrote:
+On lun. 05 janv. 2026 at 21:47, Martin Blumenstingl <martin.blumenstingl@googlemail.com> wrote:
 
-> Use scoped for-each loop when iterating over device nodes to make code a
-> bit simpler.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+> Hi Jerome,
+>
+> this series contains two fixes for preventing HDMI PLL OD /8 on
+> GXL/GXM and G12A/G12B/SM1, like the downstream driver does. See:
+> - downstream GXBB code: [0]
+> - downstream GXL/GXM code: [1]
+> - downstream G12A/G12B/SM1 code: [2]
+>
+> I have verified this on GXL (Le Potato) by setting HDMI PLL OD1 to 0x3
+> (which should result in divide-by-8). The resulting frequency reported
+> by meson-clk-msr is double (meaning: only divide-by-4) compared to what
+> CCF sees.
+>
+> These are not critical for now since the CCF code-path for the HDMI PLL
+> is read-only (as drm/meson directly programs the registers).
+>
+> Additionally there's a cosmetic fix to use the HHI_HDMI_PLL_CNTL3 macro
+> instead of calculating HHI_HDMI_PLL_CNTL + 8.
+>
+>
+> [0] https://github.com/hardkernel/linux/blob/0e658067af67835a625e41e289effc4ee390d62f/drivers/amlogic/media/vout/hdmitx/hdmi_tx_20/hw/hw_clk.c#L505-L627
+> [1] https://github.com/hardkernel/linux/blob/0e658067af67835a625e41e289effc4ee390d62f/drivers/amlogic/media/vout/hdmitx/hdmi_tx_20/hw/hw_gxl.c#L501-L553
+> [2] https://github.com/hardkernel/linux/blob/0e658067af67835a625e41e289effc4ee390d62f/drivers/amlogic/media/vout/hdmitx/hdmi_tx_20/hw/hw_g12a.c#L671-L721
+>
+>
+> Martin Blumenstingl (3):
+>   clk: meson: gxbb: Limit the HDMI PLL OD to /4 on GXL/GXM SoCs
+>   clk: meson: g12a: Limit the HDMI PLL OD to /4
+>   clk: meson: gxbb: use the existing HHI_HDMI_PLL_CNTL3 macro
 
-I guess this is papering over similar compatibility issues with old DT
-as the previous one (so fsl,imx-osc26m which may or may not have fallback
-compatible to fixed-clock).
+Looks good.
 
-Jonathan
+I'd like to add a comment like this in the code
 
-> 
-> ---
-> 
-> Depends on first patch.
-> ---
->  drivers/clk/imx/clk-imx31.c | 7 ++-----
->  1 file changed, 2 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/clk/imx/clk-imx31.c b/drivers/clk/imx/clk-imx31.c
-> index 4c8d9ff0b2ad..962eccac63ce 100644
-> --- a/drivers/clk/imx/clk-imx31.c
-> +++ b/drivers/clk/imx/clk-imx31.c
-> @@ -123,18 +123,15 @@ static void __init _mx31_clocks_init(void __iomem *base, unsigned long fref)
->  
->  static void __init mx31_clocks_init_dt(struct device_node *np)
->  {
-> -	struct device_node *osc_np;
->  	u32 fref = 26000000; /* default */
->  	void __iomem *ccm;
->  
-> -	for_each_compatible_node(osc_np, NULL, "fixed-clock") {
-> +	for_each_compatible_node_scoped(osc_np, NULL, "fixed-clock") {
->  		if (!of_device_is_compatible(osc_np, "fsl,imx-osc26m"))
->  			continue;
->  
-> -		if (!of_property_read_u32(osc_np, "clock-frequency", &fref)) {
-> -			of_node_put(osc_np);
-> +		if (!of_property_read_u32(osc_np, "clock-frequency", &fref))
->  			break;
-> -		}
->  	}
->  
->  	ccm = of_iomap(np, 0);
-> 
++/*
++ * GXL hdmi OD dividers are POWER_OF_TWO dividers but limited to /4.
++ * A divider value of 3 should map to /8 but instead map /4 so ignore it.
++ */
 
+(and a similar one for the G12). Is this Ok with you ?
+
+>
+>  drivers/clk/meson/g12a.c | 13 ++++++++++---
+>  drivers/clk/meson/gxbb.c | 19 +++++++++++++------
+>  2 files changed, 23 insertions(+), 9 deletions(-)
+
+-- 
+Jerome
