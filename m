@@ -1,119 +1,109 @@
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D19A634EF19
-	for <linux-clk@vger.kernel.org>; Tue,  6 Jan 2026 20:03:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 801A02236E3;
+	Tue,  6 Jan 2026 22:28:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767729817; cv=none; b=tZBwYnkA+J4trht7Z/8SjJ0vYltV6BhUtZH9uO9bWao2qNou053ANjM6Mwi9C2L80229w3mZUBtDG0LEHNUjoEm+Ex19W9+XZPxCv2+ZLmsB/d/nqXJjFFpahLohK8+oTP+GdpwmJpq67KmheZjMzITqoR+5i+4R2QiF5T80/so=
+	t=1767738487; cv=none; b=dDp3Buuc0COGaidYoZgQX/1l8MJE8JVC0huS3g9aB1K+HjBQjXd1Uw7QyvcPH2IeOxwDJsYsyr2wrlFjU7GO4LLPXW9wN3kkvoB1iNcedK6vgTppBu/7WWhnWtB8oYmpTn3Cnm6MpyU+olyh3qlgGbWDLoMVEpBe7fEXh4wpwBw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767729817; c=relaxed/simple;
-	bh=hDKC/3noErk1Q8ZsV7ssZTkXWKMDpO84KVg5itJCTxs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PtAty9MYwVwgQ4h80WbrCkcouiAiMmyOMoEh4I671GMVDDOQtR1s/TYAiiDPa2HRhvvHO5CWgQ11j+vum1VPsxVmUsWnd/jB+cAQqzEgo8GbiWhxL8Hscgczxua7qFFzAEUlzsmptpc4BwOanwzU0p9tuYOCPNGptzbPBmtinXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aooa5/e+; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aooa5/e+"
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-b79af62d36bso247095066b.3
-        for <linux-clk@vger.kernel.org>; Tue, 06 Jan 2026 12:03:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1767729812; x=1768334612; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=hDKC/3noErk1Q8ZsV7ssZTkXWKMDpO84KVg5itJCTxs=;
-        b=aooa5/e+oWtRhdnfriJHRmLDfHXFrjiStkLph4hzhtEIcCzaBC6Xfu23rVY5BU61Ml
-         lbBJHjQsFhdRLXhzbm+MeS42mVr9XnE7jQppW97EVjngfGSNg05grlaQYdnt8k+j0ErW
-         PSoo+pI6OI3hGTwDI7AAgvhXkIh/w5HlhpJ4LA7k4mj1b6/8lp6jBa8q6i4ydH5uw1Si
-         fT0H35xJ8bixUVvfxne+LI31dCpR3tDx2wjNegh3X0S+N153PMCL0Rb+sxiEdgrmlMny
-         AG9PHTHY4K2J2Z+eI7cSp8oeud/DN4mmdXFccnHGMOPX/z5LE0pZOWRk6TiXDIoLA0zN
-         M+2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767729812; x=1768334612;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hDKC/3noErk1Q8ZsV7ssZTkXWKMDpO84KVg5itJCTxs=;
-        b=KHWsJvEAwJu440k5RVapmqB0tOnO53JeqowAuJoVxmwFCYlpiDEE2Ekp7waHyjmq3b
-         boT1SCsae4c42qAsFSYlA5F+Ne37o4HA9FuZyLm05BuizWGpIhNwtwppoEqGlZ0SgfhQ
-         BThA9JNU90furGh4suVAZrZYvGeINafdeuU/nirius0fj0pXq4Toqk411nrXIQdd7GjI
-         Fwm+fIGBdb/FkGF0D21kV+aVRVl5esQ4rQCq91vvLJz3+KM1ZncPbPn10ob+dkIDJPIU
-         CGQcqALJjGw8BLtX+r1HzQimlPIZ1v6xjNLozserHbaKeCtiCKT4kmjYlXrqgAkfFbYs
-         0klA==
-X-Forwarded-Encrypted: i=1; AJvYcCUEtDvHl3btgJmIu1RBzScGQLASU8fpkQkr94uhOQszP6votLXbmxtaPPB1KtqNJGkHGlsO2ldkxqM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YximwqDZYBwR4TkS0Hwwo6EbquqoaZ1s8CSdFrqDueaOpW0d9Gl
-	Hs6LEpO+SGUAcoiPeOXZyDfjv2jEDVVRKPEPR70qg59XZDa08VEKBfnZ7BNO0DkPbmdcQJ/gLAu
-	/CmCTDhHYmu+FCN9MCLK2FsH9dOimBezva+d2GQ+R9Q==
-X-Gm-Gg: AY/fxX5ZR8ml0W+kvt5ggIjZn0lVimlNjh6ZOL+cMVeAHsfmTrzB3F34oQRf4lXhc59
-	c0f1uAEIoKK9Z+zbww6IZCTVLapaN7o5+kLIejwn95L3GazmcaOIEiP4tq99d7cblolLsAJIbyL
-	uLv8sn1AwUw6s/NGT3qkO9uNAx2TbZAOUz4i/QUaGbTVl14GP3fETdsK7+uzuA98VmdIYZSuSR1
-	AZFYUHC9DnotH7+gUsOPqHeTmQqXLSEHaWCo05s0/vmOjfdyxJRN9pYsilEC/HY3nmuUUqp
-X-Google-Smtp-Source: AGHT+IEmmXc6X3lklLmC0mCRNpoBur3TPS2BGNaDYr/bqjA6QRWH7eFRQJKdL8KVJ+yPvHwZtBcG2RvEv+KputuzJWc=
-X-Received: by 2002:a17:907:96a1:b0:b6d:9576:3890 with SMTP id
- a640c23a62f3a-b8444f9664fmr26102366b.45.1767729811848; Tue, 06 Jan 2026
- 12:03:31 -0800 (PST)
+	s=arc-20240116; t=1767738487; c=relaxed/simple;
+	bh=6CiPxeQxVfJU8cdBtL7Wlr0ubBG27Af5dVrFloYcVzM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O7WYFnhdkIAFLCuW1Fnmiby4tdOulaX5lA2iQuBcyfhRW0rLiA3RjLN0l9/HHIUHXDLiuGj4vORpaKz74epixQlt22Z2R2oheYNcNPOZK4lCRnt3obuWbwOBjSozVn0dMYwHy2CJC6XZVq+P5xXgJ4RthG5u8siX6TN9JupNmtk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Received: from localhost (unknown [116.232.18.222])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dlan)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id 7B48C340F7B;
+	Tue, 06 Jan 2026 22:28:04 +0000 (UTC)
+Date: Wed, 7 Jan 2026 06:27:53 +0800
+From: Yixun Lan <dlan@gentoo.org>
+To: Alex Elder <elder@riscstar.com>
+Cc: Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Guodong Xu <guodong@riscstar.com>,
+	Inochi Amaoto <inochiama@gmail.com>, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org,
+	spacemit@lists.linux.dev, Yao Zi <me@ziyao.cc>
+Subject: Re: [PATCH v3 2/4] clk: spacemit: extract common ccu functions
+Message-ID: <20260106222753-GYA2092678@gentoo.org>
+References: <20260103-06-k1-clk-common-v3-0-6061d9f69eef@gentoo.org>
+ <20260103-06-k1-clk-common-v3-2-6061d9f69eef@gentoo.org>
+ <a198d2d2-0c82-4c9d-abca-d17221ef1453@riscstar.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251222-automatic-clocks-v7-0-fec86fa89874@linaro.org> <c0eeae31-6951-47ca-8651-868db18d349e@kernel.org>
-In-Reply-To: <c0eeae31-6951-47ca-8651-868db18d349e@kernel.org>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Tue, 6 Jan 2026 20:03:20 +0000
-X-Gm-Features: AQt7F2oLfa1exLAxy6kjOxPF0LQxcKRjhYroQ-B3HvTQJnB9vgg9Cr5KITN-rwA
-Message-ID: <CADrjBPocyZFz--xCaZahyUA9wwuS7P0E9Gt4Z=53rbT-nEQ7ng@mail.gmail.com>
-Subject: Re: [PATCH v7 0/4] Implement hardware automatic clock gating (HWACG)
- for gs101
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	=?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
-	Tudor Ambarus <tudor.ambarus@linaro.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Sam Protsenko <semen.protsenko@linaro.org>, 
-	Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
-	Will McVicker <willmcvicker@google.com>, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
-	kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a198d2d2-0c82-4c9d-abca-d17221ef1453@riscstar.com>
 
-Hi Krzysztof,
+Hi Alex,
 
-On Mon, 22 Dec 2025 at 11:50, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->
-> On 22/12/2025 11:22, Peter Griffin wrote:
-> > Hi folks,
-> >
-> > This series addresses an issue with Samsung Exynos based upstream clock driver
-> > whereby the upstream clock driver sets all the clock gates into "manual mode"
-> > (which uses a bit that is documented as reserved in the gate registers).
-> >
->
-> Applied.
+On 08:43 Tue 06 Jan     , Alex Elder wrote:
+> On 1/3/26 1:26 AM, Yixun Lan wrote:
+> > Refactor the probe function of SpacemiT's clock, and extract a common ccu
+> > file, so new clock driver added in the future can share the same code,
+> > which would lower the burden of maintenance. Since this commit changes the
+> > module name where the auxiliary device registered, the auxiliary device id
+> > need to be adjusted. Idea of the patch comes from the review of K3 clock
+> > driver, please refer to this disucssion[1] for more detail.
+> 
+> Are all of the hunks of moved code moved without change (I
+> think so)?  If so I think it's worth mentioning that.  If
+> not, you should explain whatever differs, and why.  (I would
+yes, no literal changes with this patch except probe() refactored,
+and the real effective change is the module name changed which
+I mentioned already
 
-Thanks.
+> expect the only thing that would have to change is making
+> spacemit_ccu_probe() public.)
+to make spacemit_ccu_probe() public, we move SoC specific code
+out of this function which should have no functionality change..
 
- There were several checkpatch notices/less important warnings
-> of which most were result of existing code but few were introduced.
-> Please be sure you do not introduce new warnings NEXT TIME.
+(I think the above commit message is ok, and would not plan to send
+out another version if no serious comment incoming, unless you insist)
 
-Will do.
+> 
+> I made one minor comment below.  I didn't verify, but I
+> assume this is all just moving the code around, and based
+> on that:
+> 
+> Reviewed-by: Alex Elder <elder@riscstar.com>
+> 
+[snip]...
+> > diff --git a/drivers/clk/spacemit/ccu_common.c b/drivers/clk/spacemit/ccu_common.c
+> > index 4412c4104dab..5f05b17f8452 100644
+> > --- a/drivers/clk/spacemit/ccu_common.c
+> > +++ b/drivers/clk/spacemit/ccu_common.c
+> > @@ -1,6 +1,177 @@
+> >   // SPDX-License-Identifier: GPL-2.0-only
+> >   
+> > +#include <linux/clk-provider.h>
+> > +#include <linux/device/devres.h>
+> > +#include <linux/mfd/syscon.h>
+> >   #include <linux/module.h>
+> > +#include <linux/of.h>
+> > +#include <linux/slab.h>
+> > +#include <soc/spacemit/ccu.h>
+> > +
+> > +#include "ccu_common.h"
+> > +
+> > +static DEFINE_IDA(auxiliary_ids);
+> 
+> I'd insert a space here to make the definition above stand out a
+> bit more.
+> 
+do you mean a blank line?
+(I could do this while applying this patch since it's quite trivial..)
 
->
-> Also, DTS cannot be in the middle of the patchset. It's almost always
-> wrong, like in this case as well. This was raised, also by me, multiple
-> times on the lists and it is explicitly documented in submitting
-> patches. Putting it in the middle suggests you try to fix up broken
-> unbisectable things by reordering patches, but you cannot.
-
-Noted. Thanks for pointing this out. I suppose the last time I read
-submitting-patches.rst must have been before Feb 25th 2025 when you
-documented this rule in b31cc6af1bb1 ("docs: dt: submitting-patches:
-Document sending DTS patches")
-
-regards,
-
-Peter
+-- 
+Yixun Lan (dlan)
