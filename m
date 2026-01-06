@@ -1,270 +1,119 @@
-Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1004349B1F;
-	Tue,  6 Jan 2026 19:26:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D19A634EF19
+	for <linux-clk@vger.kernel.org>; Tue,  6 Jan 2026 20:03:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767727589; cv=none; b=CkVRr2l+DJDopHUYzZscSbyorHFOhm8xFa4QNF1+v2aZuszPKEVVcz4xVa+m7OF8DqzY8g7MK+mcPATL0qin2W/PakyIA09MJJkgF5u8F5W9decn34HXwTrwqVqBSgv1dAffqrH0IGQjdwsQqDcs9t/l3BMYUsWdiw3VpeYnxZI=
+	t=1767729817; cv=none; b=tZBwYnkA+J4trht7Z/8SjJ0vYltV6BhUtZH9uO9bWao2qNou053ANjM6Mwi9C2L80229w3mZUBtDG0LEHNUjoEm+Ex19W9+XZPxCv2+ZLmsB/d/nqXJjFFpahLohK8+oTP+GdpwmJpq67KmheZjMzITqoR+5i+4R2QiF5T80/so=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767727589; c=relaxed/simple;
-	bh=rEXURhxxqLJlNxkqpMsZ06/rDEKN8IdxY7vYnW1GsR0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ESJnNBdArdsWhesRFyppFcFqNrMBKh5v0WyvOqEohY/UjssoVmO+ZLIW+W0SsmDFCoTLU3eqIfke3trDaJ/KP9kIoX3xu6CW71DOls3VlHOHXDg2dGfbBOLRrQpx/Ayj2iOefhLa9oiYJC+hTbCI6FgydJr7Dr2Yj/eLUABpEfw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Fj1Xaccs; arc=none smtp.client-ip=95.215.58.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	s=arc-20240116; t=1767729817; c=relaxed/simple;
+	bh=hDKC/3noErk1Q8ZsV7ssZTkXWKMDpO84KVg5itJCTxs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PtAty9MYwVwgQ4h80WbrCkcouiAiMmyOMoEh4I671GMVDDOQtR1s/TYAiiDPa2HRhvvHO5CWgQ11j+vum1VPsxVmUsWnd/jB+cAQqzEgo8GbiWhxL8Hscgczxua7qFFzAEUlzsmptpc4BwOanwzU0p9tuYOCPNGptzbPBmtinXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aooa5/e+; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Fj1Xaccs"
-Message-ID: <97983e82-698a-4042-9417-f9d9c1247e77@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1767727584;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=e8Uv8ViAxWsHdMXcBt3qZfhJJPVyoN2bV3IhBd0MKqI=;
-	b=Fj1XaccsM8tAaJ6yXQgYuvaedm/5E8T3WwjZ5YHl5OcO+68ianotJqnNyrWaqLLtvFkFET
-	r53GUxCF5eZ5muXC6P8OHoUe4qQZmjwMi77Vqy5u3ZAtx5C4s9jp+2reo5ZXw/GxG1vRC5
-	q5M1rHfdrurF1GM/WDhuzbca4MhqB9I=
-Date: Tue, 6 Jan 2026 14:26:00 -0500
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aooa5/e+"
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-b79af62d36bso247095066b.3
+        for <linux-clk@vger.kernel.org>; Tue, 06 Jan 2026 12:03:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1767729812; x=1768334612; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=hDKC/3noErk1Q8ZsV7ssZTkXWKMDpO84KVg5itJCTxs=;
+        b=aooa5/e+oWtRhdnfriJHRmLDfHXFrjiStkLph4hzhtEIcCzaBC6Xfu23rVY5BU61Ml
+         lbBJHjQsFhdRLXhzbm+MeS42mVr9XnE7jQppW97EVjngfGSNg05grlaQYdnt8k+j0ErW
+         PSoo+pI6OI3hGTwDI7AAgvhXkIh/w5HlhpJ4LA7k4mj1b6/8lp6jBa8q6i4ydH5uw1Si
+         fT0H35xJ8bixUVvfxne+LI31dCpR3tDx2wjNegh3X0S+N153PMCL0Rb+sxiEdgrmlMny
+         AG9PHTHY4K2J2Z+eI7cSp8oeud/DN4mmdXFccnHGMOPX/z5LE0pZOWRk6TiXDIoLA0zN
+         M+2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1767729812; x=1768334612;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hDKC/3noErk1Q8ZsV7ssZTkXWKMDpO84KVg5itJCTxs=;
+        b=KHWsJvEAwJu440k5RVapmqB0tOnO53JeqowAuJoVxmwFCYlpiDEE2Ekp7waHyjmq3b
+         boT1SCsae4c42qAsFSYlA5F+Ne37o4HA9FuZyLm05BuizWGpIhNwtwppoEqGlZ0SgfhQ
+         BThA9JNU90furGh4suVAZrZYvGeINafdeuU/nirius0fj0pXq4Toqk411nrXIQdd7GjI
+         Fwm+fIGBdb/FkGF0D21kV+aVRVl5esQ4rQCq91vvLJz3+KM1ZncPbPn10ob+dkIDJPIU
+         CGQcqALJjGw8BLtX+r1HzQimlPIZ1v6xjNLozserHbaKeCtiCKT4kmjYlXrqgAkfFbYs
+         0klA==
+X-Forwarded-Encrypted: i=1; AJvYcCUEtDvHl3btgJmIu1RBzScGQLASU8fpkQkr94uhOQszP6votLXbmxtaPPB1KtqNJGkHGlsO2ldkxqM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YximwqDZYBwR4TkS0Hwwo6EbquqoaZ1s8CSdFrqDueaOpW0d9Gl
+	Hs6LEpO+SGUAcoiPeOXZyDfjv2jEDVVRKPEPR70qg59XZDa08VEKBfnZ7BNO0DkPbmdcQJ/gLAu
+	/CmCTDhHYmu+FCN9MCLK2FsH9dOimBezva+d2GQ+R9Q==
+X-Gm-Gg: AY/fxX5ZR8ml0W+kvt5ggIjZn0lVimlNjh6ZOL+cMVeAHsfmTrzB3F34oQRf4lXhc59
+	c0f1uAEIoKK9Z+zbww6IZCTVLapaN7o5+kLIejwn95L3GazmcaOIEiP4tq99d7cblolLsAJIbyL
+	uLv8sn1AwUw6s/NGT3qkO9uNAx2TbZAOUz4i/QUaGbTVl14GP3fETdsK7+uzuA98VmdIYZSuSR1
+	AZFYUHC9DnotH7+gUsOPqHeTmQqXLSEHaWCo05s0/vmOjfdyxJRN9pYsilEC/HY3nmuUUqp
+X-Google-Smtp-Source: AGHT+IEmmXc6X3lklLmC0mCRNpoBur3TPS2BGNaDYr/bqjA6QRWH7eFRQJKdL8KVJ+yPvHwZtBcG2RvEv+KputuzJWc=
+X-Received: by 2002:a17:907:96a1:b0:b6d:9576:3890 with SMTP id
+ a640c23a62f3a-b8444f9664fmr26102366b.45.1767729811848; Tue, 06 Jan 2026
+ 12:03:31 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [RFC PATCH 2/2] net: axienet: Fix resource release ordering
-To: Suraj Gupta <suraj.gupta2@amd.com>, mturquette@baylibre.com,
- sboyd@kernel.org, radhey.shyam.pandey@amd.com, andrew+netdev@lunn.ch,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, michal.simek@amd.com
-Cc: linux@armlinux.org.uk, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-References: <20260102085454.3439195-1-suraj.gupta2@amd.com>
- <20260102085454.3439195-3-suraj.gupta2@amd.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Sean Anderson <sean.anderson@linux.dev>
-In-Reply-To: <20260102085454.3439195-3-suraj.gupta2@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+References: <20251222-automatic-clocks-v7-0-fec86fa89874@linaro.org> <c0eeae31-6951-47ca-8651-868db18d349e@kernel.org>
+In-Reply-To: <c0eeae31-6951-47ca-8651-868db18d349e@kernel.org>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Tue, 6 Jan 2026 20:03:20 +0000
+X-Gm-Features: AQt7F2oLfa1exLAxy6kjOxPF0LQxcKRjhYroQ-B3HvTQJnB9vgg9Cr5KITN-rwA
+Message-ID: <CADrjBPocyZFz--xCaZahyUA9wwuS7P0E9Gt4Z=53rbT-nEQ7ng@mail.gmail.com>
+Subject: Re: [PATCH v7 0/4] Implement hardware automatic clock gating (HWACG)
+ for gs101
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	=?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+	Tudor Ambarus <tudor.ambarus@linaro.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Sam Protsenko <semen.protsenko@linaro.org>, 
+	Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
+	Will McVicker <willmcvicker@google.com>, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+	kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 1/2/26 03:54, Suraj Gupta wrote:
-> From: Sean Anderson <sean.anderson@linux.dev>
-> 
-> Device-managed resources are released after manually-managed resources.
-> Therefore, once any manually-managed resource is acquired, all further
-> resources must be manually-managed too.
-> 
-> Convert all resources before the MDIO bus is created into device-managed
-> resources. In all cases but one there are already devm variants available.
-> 
-> Fixes: 46aa27df8853 ("net: axienet: Use devm_* calls")
-> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
-> Co-developed-by: Suraj Gupta <suraj.gupta2@amd.com>
-> Signed-off-by: Suraj Gupta <suraj.gupta2@amd.com>
-> ---
->  .../net/ethernet/xilinx/xilinx_axienet_main.c | 83 ++++++-------------
->  1 file changed, 27 insertions(+), 56 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-> index 284031fb2e2c..998bacd508b8 100644
-> --- a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-> +++ b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-> @@ -2787,7 +2787,7 @@ static int axienet_probe(struct platform_device *pdev)
->  	int addr_width = 32;
->  	u32 value;
->  
-> -	ndev = alloc_etherdev(sizeof(*lp));
-> +	ndev = devm_alloc_etherdev(&pdev->dev, sizeof(*lp));
->  	if (!ndev)
->  		return -ENOMEM;
->  
-> @@ -2815,41 +2815,32 @@ static int axienet_probe(struct platform_device *pdev)
->  	seqcount_mutex_init(&lp->hw_stats_seqcount, &lp->stats_lock);
->  	INIT_DEFERRABLE_WORK(&lp->stats_work, axienet_refresh_stats);
->  
-> -	lp->axi_clk = devm_clk_get_optional(&pdev->dev, "s_axi_lite_clk");
-> +	lp->axi_clk = devm_clk_get_optional_enabled(&pdev->dev,
-> +						    "s_axi_lite_clk");
->  	if (!lp->axi_clk) {
->  		/* For backward compatibility, if named AXI clock is not present,
->  		 * treat the first clock specified as the AXI clock.
->  		 */
-> -		lp->axi_clk = devm_clk_get_optional(&pdev->dev, NULL);
-> -	}
-> -	if (IS_ERR(lp->axi_clk)) {
-> -		ret = PTR_ERR(lp->axi_clk);
-> -		goto free_netdev;
-> -	}
-> -	ret = clk_prepare_enable(lp->axi_clk);
-> -	if (ret) {
-> -		dev_err(&pdev->dev, "Unable to enable AXI clock: %d\n", ret);
-> -		goto free_netdev;
-> +		lp->axi_clk = devm_clk_get_optional_enabled(&pdev->dev, NULL);
->  	}
-> +	if (IS_ERR(lp->axi_clk))
-> +		return dev_err_probe(&pdev->dev, PTR_ERR(lp->axi_clk),
-> +				     "could not get AXI clock\n");
->  
->  	lp->misc_clks[0].id = "axis_clk";
->  	lp->misc_clks[1].id = "ref_clk";
->  	lp->misc_clks[2].id = "mgt_clk";
->  
-> -	ret = devm_clk_bulk_get_optional(&pdev->dev, XAE_NUM_MISC_CLOCKS, lp->misc_clks);
-> -	if (ret)
-> -		goto cleanup_clk;
-> -
-> -	ret = clk_bulk_prepare_enable(XAE_NUM_MISC_CLOCKS, lp->misc_clks);
-> +	ret = devm_clk_bulk_get_optional_enable(&pdev->dev, XAE_NUM_MISC_CLOCKS,
-> +						lp->misc_clks);
->  	if (ret)
-> -		goto cleanup_clk;
-> +		return dev_err_probe(&pdev->dev, ret,
-> +				     "could not get/enable misc. clocks\n");
->  
->  	/* Map device registers */
->  	lp->regs = devm_platform_get_and_ioremap_resource(pdev, 0, &ethres);
-> -	if (IS_ERR(lp->regs)) {
-> -		ret = PTR_ERR(lp->regs);
-> -		goto cleanup_clk;
-> -	}
-> +	if (IS_ERR(lp->regs))
-> +		return PTR_ERR(lp->regs);
->  	lp->regs_start = ethres->start;
->  
->  	/* Setup checksum offload, but default to off if not specified */
-> @@ -2918,19 +2909,17 @@ static int axienet_probe(struct platform_device *pdev)
->  			lp->phy_mode = PHY_INTERFACE_MODE_1000BASEX;
->  			break;
->  		default:
-> -			ret = -EINVAL;
-> -			goto cleanup_clk;
-> +			return -EINVAL;
->  		}
->  	} else {
->  		ret = of_get_phy_mode(pdev->dev.of_node, &lp->phy_mode);
->  		if (ret)
-> -			goto cleanup_clk;
-> +			return ret;
->  	}
->  	if (lp->switch_x_sgmii && lp->phy_mode != PHY_INTERFACE_MODE_SGMII &&
->  	    lp->phy_mode != PHY_INTERFACE_MODE_1000BASEX) {
->  		dev_err(&pdev->dev, "xlnx,switch-x-sgmii only supported with SGMII or 1000BaseX\n");
-> -		ret = -EINVAL;
-> -		goto cleanup_clk;
-> +		return -EINVAL;
->  	}
->  
->  	if (!of_property_present(pdev->dev.of_node, "dmas")) {
-> @@ -2945,7 +2934,7 @@ static int axienet_probe(struct platform_device *pdev)
->  				dev_err(&pdev->dev,
->  					"unable to get DMA resource\n");
->  				of_node_put(np);
-> -				goto cleanup_clk;
-> +				return ret;
->  			}
->  			lp->dma_regs = devm_ioremap_resource(&pdev->dev,
->  							     &dmares);
-> @@ -2962,19 +2951,17 @@ static int axienet_probe(struct platform_device *pdev)
->  		}
->  		if (IS_ERR(lp->dma_regs)) {
->  			dev_err(&pdev->dev, "could not map DMA regs\n");
-> -			ret = PTR_ERR(lp->dma_regs);
-> -			goto cleanup_clk;
-> +			return PTR_ERR(lp->dma_regs);
->  		}
->  		if (lp->rx_irq <= 0 || lp->tx_irq <= 0) {
->  			dev_err(&pdev->dev, "could not determine irqs\n");
-> -			ret = -ENOMEM;
-> -			goto cleanup_clk;
-> +			return -ENOMEM;
->  		}
->  
->  		/* Reset core now that clocks are enabled, prior to accessing MDIO */
->  		ret = __axienet_device_reset(lp);
->  		if (ret)
-> -			goto cleanup_clk;
-> +			return ret;
->  
->  		/* Autodetect the need for 64-bit DMA pointers.
->  		 * When the IP is configured for a bus width bigger than 32 bits,
-> @@ -3001,14 +2988,13 @@ static int axienet_probe(struct platform_device *pdev)
->  		}
->  		if (!IS_ENABLED(CONFIG_64BIT) && lp->features & XAE_FEATURE_DMA_64BIT) {
->  			dev_err(&pdev->dev, "64-bit addressable DMA is not compatible with 32-bit architecture\n");
-> -			ret = -EINVAL;
-> -			goto cleanup_clk;
-> +			return -EINVAL;
->  		}
->  
->  		ret = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(addr_width));
->  		if (ret) {
->  			dev_err(&pdev->dev, "No suitable DMA available\n");
-> -			goto cleanup_clk;
-> +			return ret;
->  		}
->  		netif_napi_add(ndev, &lp->napi_rx, axienet_rx_poll);
->  		netif_napi_add(ndev, &lp->napi_tx, axienet_tx_poll);
-> @@ -3018,15 +3004,12 @@ static int axienet_probe(struct platform_device *pdev)
->  
->  		lp->eth_irq = platform_get_irq_optional(pdev, 0);
->  		if (lp->eth_irq < 0 && lp->eth_irq != -ENXIO) {
-> -			ret = lp->eth_irq;
-> -			goto cleanup_clk;
-> +			return lp->eth_irq;
->  		}
->  		tx_chan = dma_request_chan(lp->dev, "tx_chan0");
-> -		if (IS_ERR(tx_chan)) {
-> -			ret = PTR_ERR(tx_chan);
-> -			dev_err_probe(lp->dev, ret, "No Ethernet DMA (TX) channel found\n");
-> -			goto cleanup_clk;
-> -		}
-> +		if (IS_ERR(tx_chan))
-> +			return dev_err_probe(lp->dev, PTR_ERR(tx_chan),
-> +					     "No Ethernet DMA (TX) channel found\n");
->  
->  		cfg.reset = 1;
->  		/* As name says VDMA but it has support for DMA channel reset */
-> @@ -3034,7 +3017,7 @@ static int axienet_probe(struct platform_device *pdev)
->  		if (ret < 0) {
->  			dev_err(&pdev->dev, "Reset channel failed\n");
->  			dma_release_channel(tx_chan);
-> -			goto cleanup_clk;
-> +			return ret;
->  		}
->  
->  		dma_release_channel(tx_chan);
-> @@ -3139,13 +3122,6 @@ static int axienet_probe(struct platform_device *pdev)
->  		put_device(&lp->pcs_phy->dev);
->  	if (lp->mii_bus)
->  		axienet_mdio_teardown(lp);
-> -cleanup_clk:
-> -	clk_bulk_disable_unprepare(XAE_NUM_MISC_CLOCKS, lp->misc_clks);
-> -	clk_disable_unprepare(lp->axi_clk);
-> -
-> -free_netdev:
-> -	free_netdev(ndev);
-> -
->  	return ret;
->  }
->  
-> @@ -3163,11 +3139,6 @@ static void axienet_remove(struct platform_device *pdev)
->  		put_device(&lp->pcs_phy->dev);
->  
->  	axienet_mdio_teardown(lp);
-> -
-> -	clk_bulk_disable_unprepare(XAE_NUM_MISC_CLOCKS, lp->misc_clks);
-> -	clk_disable_unprepare(lp->axi_clk);
-> -
-> -	free_netdev(ndev);
->  }
->  
->  static void axienet_shutdown(struct platform_device *pdev)
+Hi Krzysztof,
 
-Reviewed-by: Sean Anderson <sean.anderson@linux.dev>
+On Mon, 22 Dec 2025 at 11:50, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>
+> On 22/12/2025 11:22, Peter Griffin wrote:
+> > Hi folks,
+> >
+> > This series addresses an issue with Samsung Exynos based upstream clock driver
+> > whereby the upstream clock driver sets all the clock gates into "manual mode"
+> > (which uses a bit that is documented as reserved in the gate registers).
+> >
+>
+> Applied.
 
-I think you should resend this without RFC now that the merge window is open.
+Thanks.
+
+ There were several checkpatch notices/less important warnings
+> of which most were result of existing code but few were introduced.
+> Please be sure you do not introduce new warnings NEXT TIME.
+
+Will do.
+
+>
+> Also, DTS cannot be in the middle of the patchset. It's almost always
+> wrong, like in this case as well. This was raised, also by me, multiple
+> times on the lists and it is explicitly documented in submitting
+> patches. Putting it in the middle suggests you try to fix up broken
+> unbisectable things by reordering patches, but you cannot.
+
+Noted. Thanks for pointing this out. I suppose the last time I read
+submitting-patches.rst must have been before Feb 25th 2025 when you
+documented this rule in b31cc6af1bb1 ("docs: dt: submitting-patches:
+Document sending DTS patches")
+
+regards,
+
+Peter
