@@ -1,127 +1,103 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12C69327C19
-	for <linux-clk@vger.kernel.org>; Tue,  6 Jan 2026 12:07:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 332B132E128
+	for <linux-clk@vger.kernel.org>; Tue,  6 Jan 2026 12:10:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767701249; cv=none; b=ozvL/9h9DoEXGMe4ztWyNOEIMTXJb6mvranLPmDPpQ4rCKl7XRIoAFfPnjUIlxRTJ5BllnD0IdvZOa3RO91g4rZJ9esH6ZBYlrJ7qO1qvBPIAvoiOPyhJeSzI9o+MqMQxIEIKiKzSno+I3ceRhTYOBNwI2Aq/IeyRC5fJIN1WVw=
+	t=1767701448; cv=none; b=Jo2MgQ64I0sclWZVCwdSvoYsc/63DoYolaoseP1dZ+KvoN2I+GyQTOiZMkSap5KBD94qcBrfZ8VeGPKuAi1qTkgQ4TYVbQwR2dodB9m42W4iUoZaSl2ZbK4476cZi5E1ckjcICxojeUDz33oyFjxdIO3q77GjXgyzEN+zPLf4v0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767701249; c=relaxed/simple;
-	bh=/mjh/Q/tS+61kVfSsdJlx94WJRS29YqK7ZVoYoUlvUc=;
+	s=arc-20240116; t=1767701448; c=relaxed/simple;
+	bh=eTgHCNChjNd4nT4RI+bK0AEaWQQTs324Bn0hklbY4Vw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ussoboL6x+cZVx3ke/GMZmVBODyjgP7ZEDBLEKHCCX+9SLPEnT17u9ODr20c7R/IxqVlNg4sMeL6h7WLOconoAeoVSUZko7lVvoil9C1mGm5ldOjlOB1HsWgx9BxIz3lJ61KGMIQEi4gwfdU0E9rlCRoBrURHuI50tbh/mgxB/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sTcZr5jL; arc=none smtp.client-ip=10.30.226.201
+	 To:Cc:Content-Type; b=mtHS9QBS0seMjOtms6PLJdjzruZyHkZtXd8fxyNeuN3m+KCva/zbWaKlb2tngeTgy8htjuBNuuE6AfeTD+epSVDYJvblfC+qWpSlnXl6JAl2qjxPTyB1bsDMAwWbn+6yoOosldIS9LN5EydRM4q859n/052W4F7zXWRQDouxL5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=HbNNOF3K; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sTcZr5jL"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B08AEC2BC87
-	for <linux-clk@vger.kernel.org>; Tue,  6 Jan 2026 12:07:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1767701248;
-	bh=/mjh/Q/tS+61kVfSsdJlx94WJRS29YqK7ZVoYoUlvUc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=sTcZr5jLmGsMbgutqwZSdRax5nqfG8474PHWm3/O8Vq8aq6ppj3bprFs/yRcQPiuV
-	 EXh/fTilgHjc4mRMSLEkxZm8dnYso4S3mujc1S/3DCkqgin8RaHrun0RlCeTyZZ9ZO
-	 bSe3+JZa+50uttDkgFIZAO2V2OiZHGhhPQXoip7cHBFZade/yG9r9aNLOLJvUZ1TW1
-	 xZ66pjtm1Y6Ml+pRrwz9zFjDjc5DKv1MC0dYXMYt1wsdn1i4vTiv15hhyQo3qJ+PhN
-	 o6GZzSVe3xetFc8JSVM6Y+JMCbb2upCyt/sa7Ptz5ntDjRm6hPa6JpZxCTphIcI30R
-	 BcsHdYJi9A5RA==
-Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-65cff0c342eso574751eaf.3
-        for <linux-clk@vger.kernel.org>; Tue, 06 Jan 2026 04:07:28 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVNKKndPzxP7Voi73diQ8AvAc+ljquVYCnJW3a6PVbdmrWlo1ZCLplW6x63L0QQ49y/vSrXKu3FmDE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyAXs5d2kPzN2S9CAZyfiffTUTg7x1h0LR1TYw3Rk4mmwMLELKi
-	3aI93rp7JMioJRqyygvHJcJX1krH2LIJN4/ALUrfqmqKMpXIoK4VD5fIMZOmeZL/qNspqOfONcE
-	6RvXnHiZTf4PVE4N5EMnQeS/PMJE60Zc=
-X-Google-Smtp-Source: AGHT+IHU78EL+YYo1xtqlNPAW/eedsiitl/vGn03rLf1ZPbM90twcsTJD+wDRrcpygcvKdWRWTHtTonI94comtqslcM=
-X-Received: by 2002:a05:6820:5306:b0:65b:31cf:ca92 with SMTP id
- 006d021491bc7-65f47acf9b9mr1221486eaf.84.1767701247505; Tue, 06 Jan 2026
- 04:07:27 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="HbNNOF3K"
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2a0ac29fca1so9424095ad.2
+        for <linux-clk@vger.kernel.org>; Tue, 06 Jan 2026 04:10:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20230601; t=1767701446; x=1768306246; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Lu4UdpjKL0W6oqeLyvjU5YjPqjVIJexotO7ZxwODpnY=;
+        b=HbNNOF3KzsDY2x89gCiUaOiOR69LnNYoF4XLL1A8qePPfE1+Lv7nvsT2420X/Par3M
+         T4Z0+cP/m0VqYmVBnnAbeXyYFxIEb+4PSMfxnlNmy48BIgBBjM9kGljWc+y7pSoxJkkQ
+         9Yu50lcsf6J2cFtqvjzJtmOeYnyhIDo3Aw0gu/2mgU05cunpm1H+Y/6cPE1Uim+HZAIB
+         sOldGG2knXsG7wIZzJTsguU2QjdKQ0Z6gOdB40u6OhTdWlUzKbYWtvGmraNCg+u72ZBy
+         pnuc+HR+3QyXdPF22y0OHYQryj7vqDarhkWLxCmcN6bOpf6FYJlXsd5q+Rn5Us3K/IHx
+         ReOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1767701446; x=1768306246;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=Lu4UdpjKL0W6oqeLyvjU5YjPqjVIJexotO7ZxwODpnY=;
+        b=QhJHEosCsP1p4UOUsiqgJvbUUQKiTGdLjlMnhLyE7fIPJL3j/5UgUIB1kcEWsEOyG3
+         +/tNB65aLLPCFp4rjpzE6kD1G4EcYwj4ZQlxrwHYQrFmmeTFfjWlcP40IGS19KKcseFL
+         PBt8ybTFsopEVjAFKqyER5bTG49IP26mp+/va2NaKMBHm6YEzQWN+tEZdClwLss+Na7d
+         r68jt4s8VlE7v0LUFQWZKB4KcDU3h84sDhblB+uhZilea8YcJ7Qz2jZ2yDDJ9hCV2MIP
+         dd3L+90Y1UtuMCR1YOzVDFNHlpyg5lYKN6qRCMMR3pIup3jcTQxr11+JRLEtPe8i0m0t
+         mFRw==
+X-Forwarded-Encrypted: i=1; AJvYcCU1wXBB+CwLL9R9Axq85liO9ubjBFgyJaajAviZzWHQURZw24jFAIhXXCpL7Qvt8DJ5sMO7n0R1lQ4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzq0XNYlo4jjiNSM2NYJWpncjzEqWm1khExPVblk6IfPzVL4/5n
+	BWhSNv8Vp5uAVUlxnmrpY8cPFTZY1RnZmm+9x1gH/fHmZYfaf4rTXlxJrY3mAzcCNozZcl14DxJ
+	xVK25rJogpJTqY/QizSPXka03gnxsnbA=
+X-Gm-Gg: AY/fxX4PMgX3A+zXosnJjesLgMYD9/8khhOD6dJ8eSFGa1yFatZaphw2imlni6Qhq+6
+	wdTe9UrBhBv7Uc+70fH4SyfVl2MzOnjIklj16CIoHV6255Wi5DjxICnOfXJRjwIpMY4Nm2+ArMd
+	8gR/BhX2wc7CXcozuPPt8RfxmH+R23EG3aS1Pqp19V+zbbY9ByR6LlNGx5iFcUqO6Yse6xV3Wgj
+	YuhUY+ae6y/tocVIkA1uSmv81Sq2S17g6YIlMPV9Al28YLk5DU9MIw5gYXgM1Cgaumx+8AVmn1a
+	yMqmJjH/HmlrMMqHdhBkj2riyKY=
+X-Google-Smtp-Source: AGHT+IERFxDvDyxM58p44igbMDmAinSOq4k8E/VpLs0ECbN/nL2j5w231U1e4IjWyRKHGXv8g0yfXLtUOkPrS0reals=
+X-Received: by 2002:a17:903:1b0c:b0:2a0:92a6:955 with SMTP id
+ d9443c01a7336-2a3e2ca5661mr29241295ad.23.1767701446433; Tue, 06 Jan 2026
+ 04:10:46 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <5088794.31r3eYUQgx@rafael.j.wysocki> <2d55ebec-1e42-4ddb-b0e2-529d3b2d7b85@nvidia.com>
-In-Reply-To: <2d55ebec-1e42-4ddb-b0e2-529d3b2d7b85@nvidia.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 6 Jan 2026 13:07:15 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0i7Rbk5sWCo2Z1Y4j_ZFW7nCUr18H8i2JCM=aPpfZOQ4w@mail.gmail.com>
-X-Gm-Features: AQt7F2q4RS2sF-HYZqBJgxgSFV1f7UNgugvNRibacX_GZnHtOjHkhHkP0YpJYrc
-Message-ID: <CAJZ5v0i7Rbk5sWCo2Z1Y4j_ZFW7nCUr18H8i2JCM=aPpfZOQ4w@mail.gmail.com>
-Subject: Re: [PATCH v1] clk: tegra: Adjust callbacks in tegra_clock_pm
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, linux-tegra@vger.kernel.org, 
-	Linux PM <linux-pm@vger.kernel.org>, Peter De Schrijver <pdeschrijver@nvidia.com>, 
-	Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, linux-clk@vger.kernel.org, 
-	LKML <linux-kernel@vger.kernel.org>, Dmitry Osipenko <digetx@gmail.com>, 
-	Ulf Hansson <ulf.hansson@linaro.org>
+References: <20260105204710.447779-1-martin.blumenstingl@googlemail.com> <1jfr8jdomn.fsf@starbuckisacylon.baylibre.com>
+In-Reply-To: <1jfr8jdomn.fsf@starbuckisacylon.baylibre.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date: Tue, 6 Jan 2026 13:10:35 +0100
+X-Gm-Features: AQt7F2rhaIwEaER7uzhe61Gje-3tMQEv-Jz_Lw7J4PipXub8W6EZ-9ebNWcXzOY
+Message-ID: <CAFBinCALRXSmYQEXWWfOhXWUEKC8sYC5vg2=G0K+P=UK+TJhgw@mail.gmail.com>
+Subject: Re: [PATCH v1 0/3] clk: meson: small fixes for HDMI PLL OD
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	jian.hu@amlogic.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jon,
+Hi Jerome,
 
-On Tue, Jan 6, 2026 at 11:36=E2=80=AFAM Jon Hunter <jonathanh@nvidia.com> w=
-rote:
+On Tue, Jan 6, 2026 at 11:25=E2=80=AFAM Jerome Brunet <jbrunet@baylibre.com=
+> wrote:
+[...]
+> > Martin Blumenstingl (3):
+> >   clk: meson: gxbb: Limit the HDMI PLL OD to /4 on GXL/GXM SoCs
+> >   clk: meson: g12a: Limit the HDMI PLL OD to /4
+> >   clk: meson: gxbb: use the existing HHI_HDMI_PLL_CNTL3 macro
 >
-> Hi Rafael,
+> Looks good.
 >
-> On 04/01/2026 11:53, Rafael J. Wysocki wrote:
-> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> >
-> > System suspend and resume callbacks run after the core has bumped
-> > up the runtime PM usage counters of all devices, so these callbacks
-> > need not worry about runtime PM reference counting.
-> >
-> > Accordingly, to eliminate useless overhead related to runtime PM
-> > usage counter manipulation, set the suspend callback pointer in
-> > tegra_clock_pm to pm_runtime_resume() and do not set the resume
-> > callback in it at all.
-> >
-> > This will also facilitate a planned change of the pm_runtime_put()
-> > return type to void in the future.
-> >
-> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > ---
-> >
-> > This patch is requisite for converting pm_runtime_put() into a void
-> > function.
-> >
-> > If you decide to pick it up, please let me know.
-> >
-> > Otherwise, an ACK or equivalent will be appreciated, but also the lack
-> > of specific criticism will be eventually regarded as consent.
-> >
-> > ---
-> >   drivers/clk/tegra/clk-device.c |    2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > --- a/drivers/clk/tegra/clk-device.c
-> > +++ b/drivers/clk/tegra/clk-device.c
-> > @@ -175,7 +175,7 @@ unreg_clk:
-> >    * perspective since voltage is kept at a nominal level during suspen=
-d anyways.
-> >    */
-> >   static const struct dev_pm_ops tegra_clock_pm =3D {
-> > -     SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_resume_and_get, pm_runtime_put=
-)
-> > +     SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_resume, NULL)
-> >   };
-> >
-> >   static const struct of_device_id tegra_clock_match[] =3D {
+> I'd like to add a comment like this in the code
 >
+> +/*
+> + * GXL hdmi OD dividers are POWER_OF_TWO dividers but limited to /4.
+> + * A divider value of 3 should map to /8 but instead map /4 so ignore it=
+.
+> + */
 >
-> I gave this a quick test and this is causing a suspend regression on
-> Tegra20 and Tegra30 that use this driver. Looking at the console log
-> on Tegra20 I see the following errors ...
->
->   tegra-clock tegra_clk_sclk: PM: dpm_run_callback(): pm_runtime_resume r=
-eturns 1
+> (and a similar one for the G12). Is this Ok with you ?
+Sure, I'm happy to either have you add the comment when applying or me
+doing it and sending a v2 - whichever you prefer.
 
-Of course, it needs a wrapper.
-
->   tegra-clock tegra_clk_sclk: PM: failed to suspend: error 1
->   PM: Some devices failed to suspend, or early wake event detected
-
-Thanks for reporting!
+Best regards,
+Martin
