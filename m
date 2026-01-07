@@ -1,49 +1,52 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C25DC3A0B20;
-	Wed,  7 Jan 2026 18:38:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2294434A773;
+	Wed,  7 Jan 2026 18:38:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767811107; cv=none; b=IdA1w55eXqyb//yiIuUBlAzSAm9o9XVf+nBogWmCTj1qOAYHW9K77l+urv1KmQs1rcjeF6foq8MAUuw8X35uxNbDFDD41RuNGBpIK3I07VGJYgGyQfldqqFnvO8dh8g6m9RlKtelQxABwVOQ2ZxzgiZImtkJcY0ZteNuFIjz7ro=
+	t=1767811109; cv=none; b=F9+QfXx/JLvVQYj4j6aYQA6q9JawBJ9m2cBdiOoacV7r9jvR5vBeQZ1lskrp2YPEYpaUnAXQHOJMc1tERTlfl/gBfxAt9ZSWrx9RwF8fHBRPocUy+pzPcC737b2v3CPU3S9jrxxUb7gjirWqXcTtuAXrD0TfVzrTzcu7XMOtHLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767811107; c=relaxed/simple;
-	bh=oyvNuXb7taYW8VLoMJoGgmNG+UIKqDnWUMoNNAUQEa4=;
+	s=arc-20240116; t=1767811109; c=relaxed/simple;
+	bh=ILzARUgL8KTi0QD49We7SA7OHkkw6swzfzVK56zVIac=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YRoD8uaSlWrGXba9Cc1Yxz/q1vOLfy4T48Ujy77+GcJhZ5y9ZedcZXEc1pxga/33hE16CE2g0M+FfCT3Pie3e8x7/yIQfLe99P0OlBrWCbKoU2Uxrwpt73KbTfmUKs2olCc3SeI+dohOVOY9O542bVD07nAA1nHLb4BCJPOMtkw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o9s2CUzG; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=o6M+8XvehjoBEmbUirBFa4Emuag5ktFyVsDLXV77BvbbUttG2pBf+59Afc2nIFa6sTVYeuRRnIUdASNfTqtsTYsMGktlB1mtapI3OHwI6r+I+S/s5InUW0Xqnx/YetW6m/EAYcyMyq1/wLgpdXCstHn2/S199mMAy29gL9KpFQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N2RvgzIR; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o9s2CUzG"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AC0BC4CEF1;
-	Wed,  7 Jan 2026 18:38:26 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N2RvgzIR"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A772BC19422;
+	Wed,  7 Jan 2026 18:38:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1767811107;
-	bh=oyvNuXb7taYW8VLoMJoGgmNG+UIKqDnWUMoNNAUQEa4=;
+	s=k20201202; t=1767811108;
+	bh=ILzARUgL8KTi0QD49We7SA7OHkkw6swzfzVK56zVIac=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=o9s2CUzGnHtfrNJIqX9PiY+Lszwi4Hwsc9KRXUTHerIvb1l0+LiN2pHQV4+a9Wltp
-	 sV5j0X4UcuniG0sqs5Q5zcH5QUdjuOCsecRaHiorMyyHVvJi/1bNGgxNamVUoCxkXe
-	 O+1FnWI9LSFTLtxvlqAzfYM4EG2p1fI5r/cZ6ef4vYwh980ZCcFUaE6nT53Egs/gAv
-	 IqAurX+hhyBMq4l3RebhAFX+loEC92dUUVV6FJXNnW+slTDqiEcO+ZZgbrntbw7vjx
-	 zmvX3UfXrqemL5YKioIFsGyfkFx40cllWXIYjqb7ocAeLHsVsvrX5B2Mahd3aOsFLd
-	 bExdywyjgvaOQ==
+	b=N2RvgzIR2XtXlgB79JbTx6/iOahkB8ZDWY6fe0ej0QB7efY26diMTK59yA+rqA+Hm
+	 57m99ocNWyFxjb3hMbYTpXpLdclHtwjVdn6e7JApv1ulqoeoN1kVZUVkEwRw650JGw
+	 K7aI8yEDz8WEM371Y+ODF95v1nyQE6hEkqsJG0Z53mUnsRgyNKkZA45b4YeIdUiT2e
+	 nd5hAq98J0EaPKXzz22XzG2yjndlldBPhtJ+Jd4KI7HF5Ouo9l9HVZYRVNZyHUGi4i
+	 GvVDYvu7lsbjRWSufC23F7uRpSVkwnO4bSQCNijsLj6wZkN8qWxGltajfKb+qKGgcK
+	 4YluRw05K+TIA==
 From: Bjorn Andersson <andersson@kernel.org>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
-	Sireesh Kodali <sireeshkodali@protonmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
 	Adam Skladowski <a_skl39@protonmail.com>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Vladimir Lypak <junak.pub@gmail.com>,
-	=?UTF-8?q?Otto=20Pfl=C3=BCger?= <otto.pflueger@abscue.de>,
+	Sireesh Kodali <sireeshkodali@protonmail.com>,
 	=?UTF-8?q?Barnab=C3=A1s=20Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
 Cc: linux-arm-msm@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] MSM8917/MSM8953 Remove ALWAYS_ON flag from cpp_gdsc
-Date: Wed,  7 Jan 2026 12:38:16 -0600
-Message-ID: <176781109961.3262943.7043862169715494791.b4-ty@kernel.org>
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Daniil Titov <daniilt971@gmail.com>
+Subject: Re: [PATCH v2 0/4] Add Global Clock Controller for MSM8940 and SDM439
+Date: Wed,  7 Jan 2026 12:38:17 -0600
+Message-ID: <176781109960.3262943.14096756489283237069.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.52.0
-In-Reply-To: <20251117-fix-gdsc-cpp-msm8917-msm8953-v1-0-db33adcff28a@mainlining.org>
-References: <20251117-fix-gdsc-cpp-msm8917-msm8953-v1-0-db33adcff28a@mainlining.org>
+In-Reply-To: <20251117-gcc-msm8940-sdm439-v2-0-4af57c8bc7eb@mainlining.org>
+References: <20251117-gcc-msm8940-sdm439-v2-0-4af57c8bc7eb@mainlining.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -54,19 +57,21 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Mon, 17 Nov 2025 18:58:46 +0100, Barnabás Czémán wrote:
-> cpp_gdsc should not be always on, ALWAYS_ON flag was set accidentally.
-> The flags were used for debugging purpose and they were left as always on
-> at the gcc drivers submissions.
+On Mon, 17 Nov 2025 17:57:05 +0100, Barnabás Czémán wrote:
+> Add GCC support for MSM8940 and SDM439.
 > 
 > 
 
 Applied, thanks!
 
-[1/2] clk: qcom: gcc-msm8953: Remove ALWAYS_ON flag from cpp_gdsc
-      commit: 5f613e7034187179a9d088ff5fd02b1089d0cf20
-[2/2] clk: qcom: gcc-msm8917: Remove ALWAYS_ON flag from cpp_gdsc
-      commit: e4eb42f290aecac0ba355b1f8d7243be6de11f32
+[1/4] dt-bindings: clock: qcom: Add MSM8940 Global Clock Controller
+      commit: d88d5bedb502eed6f439838b1e6148942a9232b7
+[2/4] clk: qcom: gcc: Add support for Global Clock controller found on MSM8940
+      commit: b97a6150050c7274d72a349afe017fb1fed34799
+[3/4] dt-bindings: clock: qcom: Add SDM439 Global Clock Controller
+      commit: 7a5a8a67c06ecba23d547a57d9fd317f628e1790
+[4/4] clk: qcom: gcc: Add support for Global Clock controller found on SDM439
+      commit: a6df111d55ffea7926fc7b136f96f16b314ad362
 
 Best regards,
 -- 
