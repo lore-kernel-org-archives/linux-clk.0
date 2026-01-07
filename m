@@ -1,138 +1,121 @@
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com [209.85.217.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2944036403A;
-	Wed,  7 Jan 2026 15:10:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28183331A41
+	for <linux-clk@vger.kernel.org>; Wed,  7 Jan 2026 15:12:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767798617; cv=none; b=ngBuqc4R6NHFPiIMHJgNYeM6mwJ/VB8fy7jtk4lsKFQZJfmtMsDwZrrD2XdSuo9hPpoi+0RPyegLhnj3vNwqrPUzt08J94g0AYgz06fPr0qKFZ2NGNhaU3KdEIA0oPLZuuo9eZUC/L8aPnT2TXMeFNhHdg98EKZsIAcYdvu1uBQ=
+	t=1767798759; cv=none; b=RoHNl/9Wn47OTeuixnpBDj4EDu615EhIl46X2JuLPUOf1Pd4QF8BPlobq29ICjzSwE2OXvw00kbbRhsUCChoT92J+cafuBNOH1TpE5vQdfdJBQlAUH1CjBdfaeEA3zLX8y5qySeOhQMDjLtZNUqudzfm5XNAczGeRo9/T+x5Iog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767798617; c=relaxed/simple;
-	bh=ruLJwy622onfjhp6xw4ADLI848biIUuAYSyoTpnglgk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=EXZU1um8PsGdkyqdrILpaLcRPp3tqKVoBLLPBgBiqz8rynZICKJBWf+IULPFXTtFitF1KxMZYoWVg7O/20Dk7VvE4D5+zK3yBG8jRtKmJKR4QyPV3BQLp4VHwDgMETTU+QYTHiHR9nrprEemY6gTLpJIlBFk/HyzEeFtOI5TVBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Ns//fbuH; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Ns//fbuH"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1767798613;
-	bh=ruLJwy622onfjhp6xw4ADLI848biIUuAYSyoTpnglgk=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=Ns//fbuHmUm/HgngBvDsWHryUZciMHDGToh4HmqboY21nv7PgA6YRLVzqwc/ussOs
-	 ZQP3qHnEY7LqDX37RDggfwg/Ml0FDGY0sMDUIiqk025dyeZ/kBFFdFq1l/kvUm0b5r
-	 WXGEzLK7OW0bpfwKe3UVLwAfAsO6VZFPBNuX15y7DalJk+OIispsFWxNJqFoIgCif8
-	 5BkFdTvV+ZVCAekmzuVxH/MuWSigA7mpmnDmERHcXxWk+noVZu12+Q28ujpxY4BxnW
-	 pfNz18biBjrIzEvESliCT7I1uNocZbY439hV4UveGeKp3PvIvaxLxcSIUtDiznvijR
-	 6j8wQDyLu0zfA==
-Received: from [192.168.0.79] (unknown [IPv6:2804:14d:72b4:81ae:67c:16ff:fe57:b5a3])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dwlsalmeida)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 2D03E17E1534;
-	Wed,  7 Jan 2026 16:10:09 +0100 (CET)
-From: Daniel Almeida <daniel.almeida@collabora.com>
-Date: Wed, 07 Jan 2026 12:09:54 -0300
-Subject: [PATCH v3 3/3] rust: clk: use 'kernel vertical style' for imports
+	s=arc-20240116; t=1767798759; c=relaxed/simple;
+	bh=lQH1FRm/rJzskVoeclFFS2ftwdSJglbw9Ah8hTk5DQk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mOyLJnpDgeHgR2wC88IciZi6IlgQRn/bSLUwx2fYNaujyOK0S13Lo/RXYRO0R9XwtFjAMwcW/2xcakfJy+/OrLgNxvfOqu+u8mAFT+Sz5I1y45GPVZshgsUeHlC4xYlnLUe5J2kKsoVu1MBAFDS6+TF4IzkFtejSQZF/B/tfNrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f43.google.com with SMTP id ada2fe7eead31-5ed09471ab9so201788137.0
+        for <linux-clk@vger.kernel.org>; Wed, 07 Jan 2026 07:12:38 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1767798757; x=1768403557;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hTnh7CkZFGGtUC43ryOTlC9N4pV7qcvjxYMPMpt68WY=;
+        b=ZccSDVcfCjCS3kAhrakiIiOTfjUNlJSsjw7dzVUk/fPfiNaKTLh/Sj8tGyn4xeSGwx
+         kd3KqQlmvPuKu1f25Ry47xmmjcex8tvXNG6XRGq0VR+PQPzzPk2VBYJUjIF8DqrXeRG+
+         nXJF9pNoJQ6ypfvuVaagXSutVp/GdOp15yd0Y1ackrOEpmsBPP7WRiqk4HpR8j/cbdL0
+         vztFSoFZ9L9+mLsV/QFmt/Dr7OOPAhAUismPF92B0ovyA6uS90j+e0IWOMpkYA2pji1w
+         2h/xOwyyXyRC+rQ+y9pOWlTUvhFzBxtixcFS15tr0ViR2FX+RFAxWyxslUFlr0omyrct
+         0qbw==
+X-Forwarded-Encrypted: i=1; AJvYcCWcs4xQtWfu2dSEnuibF9WQxzESfv8DkTMPCFKDDUqbw2GWPeLfsUU8TEXtoH+NOFtCNKPaLdTvKbE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSkSr2Wf3EDF9G3/zahGvPLlDpdZU0Gm+uA7XS+TIKlAYKl0Iv
+	OVLG8KPGxi6EF6937gdP+qet9FXx4u+bkhqWejV2OAUu2Hn0y3ebDJWqSXm7HyH2
+X-Gm-Gg: AY/fxX4gJW4IKRNLNn38t6lAAkXdAz0MawkD6XwJI4FZ1xU7vhymhNdwTKrruZTIHOw
+	ReTNDlPEgb03StkWlypwxyxu8IouDhTpuyisWrtqHag4ksBR9U8usL8qhCT+PF3N/rxUKXtz/Il
+	4umS4hU6KiUjzln3YqqD7hqrtxdVHvpUGGSwIPNIL3hL2KkKhOHfE04nhjBYVOmsIjHPccIn5N8
+	TLqUPDJyijRFxsKH++0xN11GPOgx45xlom8twuiSD6cqpLEApLqVKW7CXCMjVEUHypS+TpN0/5I
+	HTV8d+wv9Fb0djmvnpGQHc3VC9zlLYFUuPxxovcxC0tMOmmZZLQukt2a/g1rVAnIyYhQnoo6BHx
+	rarDJc97mT/+1rmbvw9aXX53qT0u3ZDOSFl/+DFUz19qT31w2U3Jgl2x5olhBzjj0wUSFrdlvxM
+	WBkvGzpczmTEnnMDambM1sd9CMcBgbwJBkqk3v8ChuMcl0TvVc
+X-Google-Smtp-Source: AGHT+IFVeS8cpSZNoSQlTOXznUCKOgRrui/HY64Fc7ZFvJ5oVCD1joVCJNmtCxCOK6lbt+1AarD/9A==
+X-Received: by 2002:a05:6102:304a:b0:5e5:6360:1f5c with SMTP id ada2fe7eead31-5ecbb160489mr1037420137.42.1767798756867;
+        Wed, 07 Jan 2026 07:12:36 -0800 (PST)
+Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com. [209.85.222.41])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-5ec772e322asm3220746137.13.2026.01.07.07.12.36
+        for <linux-clk@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 07 Jan 2026 07:12:36 -0800 (PST)
+Received: by mail-ua1-f41.google.com with SMTP id a1e0cc1a2514c-93f56a97064so649593241.1
+        for <linux-clk@vger.kernel.org>; Wed, 07 Jan 2026 07:12:36 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCX1pHpofacQHNvI+MzM2SXZyOp+mJP2IPtObL0RiJWM3h0xTgXNt3o7ZbGivd2FFy6xUWiLj0chSAY=@vger.kernel.org
+X-Received: by 2002:a05:6102:560b:b0:5db:3b75:a2aa with SMTP id
+ ada2fe7eead31-5ecb688e212mr1021167137.18.1767798755697; Wed, 07 Jan 2026
+ 07:12:35 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260107-clk-type-state-v3-3-77d3e3ee59c2@collabora.com>
-References: <20260107-clk-type-state-v3-0-77d3e3ee59c2@collabora.com>
-In-Reply-To: <20260107-clk-type-state-v3-0-77d3e3ee59c2@collabora.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>, 
- Viresh Kumar <viresh.kumar@linaro.org>, Danilo Krummrich <dakr@kernel.org>, 
- Alice Ryhl <aliceryhl@google.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Drew Fustini <fustini@kernel.org>, Guo Ren <guoren@kernel.org>, 
- Fu Wei <wefu@redhat.com>, 
- =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
- Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
- Trevor Gross <tmgross@umich.edu>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- dri-devel@lists.freedesktop.org, linux-riscv@lists.infradead.org, 
- linux-pwm@vger.kernel.org, linux-clk@vger.kernel.org, 
- rust-for-linux@vger.kernel.org, 
- Daniel Almeida <daniel.almeida@collabora.com>
-X-Mailer: b4 0.14.3
+References: <20251224165049.3384870-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20251224165049.3384870-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20251224165049.3384870-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 7 Jan 2026 16:12:24 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdV9CnVBybm5ipadp5MeUZTfG0GrBXLNmV2A3sOq7s87VA@mail.gmail.com>
+X-Gm-Features: AQt7F2oy55RsF88MDpvy-XJ8ZxqntDCnKvwZjjY1H7FzCraTsk4lAgUrlROdqFc
+Message-ID: <CAMuHMdV9CnVBybm5ipadp5MeUZTfG0GrBXLNmV2A3sOq7s87VA@mail.gmail.com>
+Subject: Re: [PATCH 2/4] clk: renesas: r9a09g077: Add CANFD clocks
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Convert all imports to use the new import style. This will make it easier
-to land new changes in the future.
+Hi Prabhakar,
 
-No change of functionality implied.
+On Wed, 24 Dec 2025 at 17:51, Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> The Renesas RZ/T2H (R9A09G077) and RZ/N2H (R9A09G087) SoCs have a CANFD
+> peripheral which has three input clocks PCLKM (peripheral clock),
+> PCLKH (RAM clock) and PCLKCAN (CANFD clock).
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Link: https://docs.kernel.org/rust/coding-guidelines.html#imports
-Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
----
- rust/kernel/clk.rs | 32 ++++++++++++++++++++++++++------
- 1 file changed, 26 insertions(+), 6 deletions(-)
+Thanks for your patch!
 
-diff --git a/rust/kernel/clk.rs b/rust/kernel/clk.rs
-index e840e7c20af7..73a2b51414a1 100644
---- a/rust/kernel/clk.rs
-+++ b/rust/kernel/clk.rs
-@@ -80,12 +80,23 @@ fn from(freq: Hertz) -> Self {
- mod common_clk {
-     use super::Hertz;
-     use crate::{
--        device::{Bound, Device},
--        error::{from_err_ptr, to_result, Result},
--        prelude::*,
-+        device::{
-+            Bound,
-+            Device, //
-+        },
-+        error::{
-+            from_err_ptr,
-+            to_result,
-+            Result, //
-+        },
-+        prelude::*, //
-     };
- 
--    use core::{marker::PhantomData, mem::ManuallyDrop, ptr};
-+    use core::{
-+        marker::PhantomData,
-+        mem::ManuallyDrop,
-+        ptr, //
-+    };
- 
-     mod private {
-         pub trait Sealed {}
-@@ -216,8 +227,17 @@ pub struct Error<State: ClkState> {
-     ///
-     /// ```
-     /// use kernel::c_str;
--    /// use kernel::clk::{Clk, Enabled, Hertz, Unprepared, Prepared};
--    /// use kernel::device::{Bound, Device};
-+    /// use kernel::clk::{
-+    ///     Clk,
-+    ///     Enabled,
-+    ///     Hertz,
-+    ///     Prepared,
-+    ///     Unprepared, //
-+    /// };
-+    /// use kernel::device::{
-+    ///     Bound,
-+    ///     Device, //
-+    /// };
-     /// use kernel::error::Result;
-     ///
-     /// fn configure_clk(dev: &Device<Bound>) -> Result {
+> --- a/drivers/clk/renesas/r9a09g077-cpg.c
+> +++ b/drivers/clk/renesas/r9a09g077-cpg.c
+
+> @@ -251,6 +261,7 @@ static const struct mssr_mod_clk r9a09g077_mod_clks[] __initconst = {
+>         DEF_MOD("adc1", 207, R9A09G077_CLK_PCLKH),
+>         DEF_MOD("adc2", 225, R9A09G077_CLK_PCLKM),
+>         DEF_MOD("tsu", 307, R9A09G077_CLK_PCLKL),
+> +       DEF_MOD("canfd", 310, R9A09G077_CLK_PCLKM),
+
+The documentation is a bit confusing (it states that PCLKCAN is the
+peripheral module clock for CANFD), but after some more digging,
+PCLKM seems to be correct here.
+
+>         DEF_MOD("gmac0", 400, R9A09G077_CLK_PCLKM),
+>         DEF_MOD("ethsw", 401, R9A09G077_CLK_PCLKM),
+>         DEF_MOD("ethss", 403, R9A09G077_CLK_PCLKM),
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk for v6.20.
+
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
-2.52.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
