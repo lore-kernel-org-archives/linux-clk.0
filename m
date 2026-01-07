@@ -1,761 +1,324 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9553F31ED94
-	for <linux-clk@vger.kernel.org>; Wed,  7 Jan 2026 09:44:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 412E0C13B;
+	Wed,  7 Jan 2026 10:50:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767779077; cv=none; b=oS5XC4k8x//uojtTRu+rg30noZhN2jwdsYMx61u7vqj+NYJQdpU0wy2AjU1h8Tp50PXBd6n0dHY51L0fvMXr1R4MQEvh3tQ0G6xDQjuNsOHEkUbSJefgdMiB+l7whiG9uuYytood7x7pNtT3PTz6+4Xm4vzi84oF8M32ok2d55g=
+	t=1767783044; cv=none; b=cEQ49po69wms6Cwl7c7VUiws1i2BD2uzp71NANnxUYL1xsydw+2Vr6IUsMzk+//1d07AbLWFSBXs4ptfkuj2ZEzLGmp3AOcBfE2aTC0cGBaEwcqJOtdXxWj627p7Q/DCJm4+6vRAMPlrzLB/+N0IK9RC7dxUWwu/m3l2TH42dbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767779077; c=relaxed/simple;
-	bh=bA7ziELlq1jJDxozxIwpkqGWWnS2/WPpviXDAAcgEPY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=dyphxyRxgCO+2KYFCjmRS4EtIas3wmmreBMPoxJUeMnat5PIbVkO/htm9t6gHydkqT9Ov/hrJFVDwgw5ruxkqxCjc/hbPC72m+RDtdqHHkVeeNKabPqaDAqr/U/L/XbrIKO8mP/2hGfrxcG23leVN7Sw907zLDBlmJemWkrI4kM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=igRpbmDT; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=Nu4O4eNb; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1767783044; c=relaxed/simple;
+	bh=OOEM2V7wmBUmKVTf01wtGZkc6rmxQefZn7h4q+ROt8g=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
+	 References:In-Reply-To; b=sqKB0KDxYd4ia9Ih7Qr6vLxrs7riKkpO0C8AHpgPib8rqB/NlXKhhWhbJp39gcjDgHVSUOjXjTJXFy/nMcd7GpoePpnwjWZdEHB+yTLLSD82D1pOpiElu4afGFe77SSdK6JMqBv5bL05OSDV+sOpGiHkbBj35AZW1p3HztSJu4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=i/z5UE9Y; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="igRpbmDT";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="Nu4O4eNb"
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6079dqcR2593314
-	for <linux-clk@vger.kernel.org>; Wed, 7 Jan 2026 09:44:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	fmFNLDhJPPtYIHKpMvQr4DdUUEpwS3Il/WVt/6KCEEk=; b=igRpbmDTosRzSClx
-	zQ/5eC85urbe8w7xC+tpDkH7XyEy6e1M0MJQYDmtfHQVcuAicUtr1WTb5IH03G94
-	jUUA5YlHOj0yyqk7XnJlqNniC399hXpef2hu64OvAK3FcKM04dYgvdFBwuZ60c/i
-	uDlH2rMx7raaosMVx+08m5B0FYrGwPyUDq7ksrsjoYdzFAgFESb4Gy0NjRX6/Pmu
-	5NUbrLdWjOnYv/Zf2GLogF89tmwZibun5uSuA9bHhcgHMJObvPyQQfXVEJwyC9cV
-	Jl3gPkQuleI+2mLyIB40NhRGRDFGFwefZFtIe23UGr2B355vweiaDz4e9riRAWzX
-	i/wyIg==
-Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com [209.85.210.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4bhn2900j8-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Wed, 07 Jan 2026 09:44:34 +0000 (GMT)
-Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-7b90740249dso2662886b3a.0
-        for <linux-clk@vger.kernel.org>; Wed, 07 Jan 2026 01:44:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1767779074; x=1768383874; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fmFNLDhJPPtYIHKpMvQr4DdUUEpwS3Il/WVt/6KCEEk=;
-        b=Nu4O4eNbtd+T8MjDHgbABPbPAFAiNVPU+YRAYaBMHEMeDrF/qK4BtKXwEiZ/xXZkkF
-         z3Nzi+eptGKeO//C3fEIkEzJ/gju/Ium+XJJIdyDYHg9gcitEOWyVLIh9MwL3fLv9FRK
-         Vb1XzpYi69HAwg9aMQZ7KHxsdNlI3FknaXAYGQvSX4Wk8Yyq4VGvYxTd3OYv7Lw9aZRE
-         Na2czHDh8cilJFHm3pEJkj5P75KQ6ieA8U+6BLnv9/qku8+3lqtsPl33f5FPAuLhYxnJ
-         JB4AOCNxg/JePPNLqhBiJ/mU5kwcJaxURKyn6RbRlo9OEX1azbav1uKOtIqjBg3OJIBC
-         xuIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767779074; x=1768383874;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=fmFNLDhJPPtYIHKpMvQr4DdUUEpwS3Il/WVt/6KCEEk=;
-        b=WWz27q0+eDQFp6ut00/5dudcSugeSajdht4DWBFYQS33mZfZOtMr+7wwJcsR7f7dkf
-         BYHrodcynP9avxEGjXV/1bJPoqsUPNuqU1L5chkyyYpNWhL/DYcied6rbW8/0ZpswYSq
-         TFk/9/NUAUzxEPaNngEhmR3u7Saoi9FLMkH4Q8LPyVKXJh12PtY48EgXekefIfgeyRXA
-         RoihzcteVaEnAOZagxSp8aaIWxDTko1Gk/5yEhS3UTTYXhMiH/xlaUBGIVCxfOI0ouqx
-         HZzZKxX9VXokaAQy4ZjaeeVbImklNVqwoOnzYZmzVlA2DTpH3fEyLsM2U10y4xCt5rdC
-         oqSg==
-X-Forwarded-Encrypted: i=1; AJvYcCXifXGBu5hmvkSGujQc50V091YIPDrp9tMg8DUtudqlw2w0LlBd9Bt8Gi6fuMgJyL+2wdskLSEqx6E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzGCIDnGfZ5xyhxLB8aH/Zwxe/girPAc8DxHlobZ+7pl43PjAm7
-	i+a4Zkj6YcUlDuLDlrKPfWOk2X7FhedO7eKzh1n851vF3ZCge5b/LWOT3SwpSYLucoJrXPB3dpK
-	CX22JNAoMftUdm2G4yW2cL63PvYbb+Tq4gSTtNmczXDclwjp6mcaAJT89NL4yw6Q=
-X-Gm-Gg: AY/fxX6whb8NxweqahG604XdV03SfPmZNqFC5dCs/n62Cr/TVr9jfTjTG6YnJO/5FQv
-	jHr+Eoi9PBdJj3CxeUVzuGJJfeqE1vt5inV4yIuO++y7hq4zpWtAy8p6cTrddmMVT0faY2xXDKi
-	4I5rjgmaCEqUynDv0tGrXPAHO8KkKqsbA3oD2Q+4r7EsBcqV3lKyGZ0atGkPUpqTzbmj4G9yM6k
-	4BCvZvo3Zi3zQGaqnyPE0pQsMR91JqmTeeJBu04r0eBBGKacmaRPlsL8b10xgmYh1/4lucInVAy
-	pvfTFREe2ctVyu+3qj/uYLTW8SP2hEcWSK2U7N9jqW50T7B0zsPlkBaW1BPvKCqR4W+QTik1uO1
-	chkES0EKvKysLsN4aP4HAZDeez0X0kuSNNw==
-X-Received: by 2002:a05:6a00:ac03:b0:7e8:450c:61c0 with SMTP id d2e1a72fcca58-81b80ac4ad2mr2061408b3a.48.1767779073841;
-        Wed, 07 Jan 2026 01:44:33 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHBwvQZhrbviBiibT0rpL9+0h1/qDZwiKUwNNauuQBOnmOUufQNE2l3XSvQJoJ8LH6o0AgEAg==
-X-Received: by 2002:a05:6a00:ac03:b0:7e8:450c:61c0 with SMTP id d2e1a72fcca58-81b80ac4ad2mr2061377b3a.48.1767779073303;
-        Wed, 07 Jan 2026 01:44:33 -0800 (PST)
-Received: from hu-tdas-hyd.qualcomm.com ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-819bafe9568sm4472944b3a.15.2026.01.07.01.44.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Jan 2026 01:44:33 -0800 (PST)
-From: Taniya Das <taniya.das@oss.qualcomm.com>
-Date: Wed, 07 Jan 2026 15:13:14 +0530
-Subject: [PATCH v3 11/11] clk: qcom: Add support for GPUCC and GXCLK for
- Kaanapali
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="i/z5UE9Y"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id DAB28C1EC8A;
+	Wed,  7 Jan 2026 10:50:10 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id D0289606F8;
+	Wed,  7 Jan 2026 10:50:36 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id CA1F4103C8685;
+	Wed,  7 Jan 2026 11:50:29 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1767783035; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=GA/hu2RLtmCfSA+ycqCvVPt72H5xnCs3qPPLfl8kPqM=;
+	b=i/z5UE9YECDQqMK7d5an++SeTsCHx3gjfks4pomP/GxKN/tPNpOjhvRgnfa/EW35WPie3P
+	hJqNuIOiREFI9fTYnDY4XVSO48rsGN9H/qsF83ONpserb6SgyyUaDsvsdwjNxv8/7Vp6xM
+	zZsAUgeLh+aypgccu+LxtRjKUR7RsK1Sf94MZHIqYIwdhp3WuRY6ULtXkPgcB3LbUWPD35
+	qbKPpsoal32oywF601Kmbo4+/bxnVUSaQFUCux/tGgXfhtlmgzrk/M25wLSYAq08tJ54+b
+	qLuyBsSWWUDBDj5ieJt/hVi6ZTz7fdppdesod5o3QWN0I/Zzm9udxZtB9x/Y/Q==
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260107-kaanapali-mmcc-v3-v3-11-8e10adc236a8@oss.qualcomm.com>
-References: <20260107-kaanapali-mmcc-v3-v3-0-8e10adc236a8@oss.qualcomm.com>
-In-Reply-To: <20260107-kaanapali-mmcc-v3-v3-0-8e10adc236a8@oss.qualcomm.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>,
-        Konrad Dybcio <konradybcio@kernel.org>
-Cc: Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
-        Imran Shaik <imran.shaik@oss.qualcomm.com>,
-        Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org,
-        Taniya Das <taniya.das@oss.qualcomm.com>
-X-Mailer: b4 0.15-dev-aa3f6
-X-Proofpoint-ORIG-GUID: N1JlOepfJY4vEkPou78vS9iahF7_dGAu
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTA3MDA3NyBTYWx0ZWRfX1IJ62zPH463N
- WPsufzmNFvnYjkOdgMQjWHRWyyNj3assBbKAnBRFmQUqTuv/me5C5uYHmtiUsbDbYY/0c1WRViN
- vCrsYZPv3nH4qIwr8gOd5lze9T8Mb4041cI++6+oHyWzYapD91+djTjPjFMfRJnkGqvKN/KWQJZ
- OGdQudAxwJZ+VE3uUO43MMcKH5ZYgGUxU83idqhHu21mp7BmKTH/jjd60iRdTqDCOQYIT3PtHaU
- 846BhyEXjghundskga+i95z2pW7tR8S7IFTZFHgE58ImD0ZCaTmRN7O/g+y8QJyYN5A6d++x7DJ
- FsmcgMbUAGKDAtOs/61QwWP1CYg1Xn4qjTydbcObyF2ReSmogegDwkCOt4YTVEO/XtEOrRow6e9
- hn7qJlmgrjF640JD5hwSDuZIpB7+UtVSG0zWdzQ6B83OZJBdEKUORhDAKUtHNVIoSrZi6iADWc0
- IfhQRsRIS1bDyg6oD4Q==
-X-Authority-Analysis: v=2.4 cv=P7k3RyAu c=1 sm=1 tr=0 ts=695e2b03 cx=c_pps
- a=rEQLjTOiSrHUhVqRoksmgQ==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
- a=IkcTkHD0fZMA:10 a=vUbySO9Y5rIA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=B_MwUqmwx3FHfgWfen4A:9
- a=QEXdDO2ut3YA:10 a=2VI0MkxyNR6bbpdq8BZq:22
-X-Proofpoint-GUID: N1JlOepfJY4vEkPou78vS9iahF7_dGAu
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2026-01-06_03,2026-01-06_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 spamscore=0 phishscore=0 clxscore=1015 malwarescore=0
- lowpriorityscore=0 impostorscore=0 adultscore=0 priorityscore=1501
- bulkscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.22.0-2512120000
- definitions=main-2601070077
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 07 Jan 2026 11:50:28 +0100
+Message-Id: <DFIAS83MXT6G.VF4EDD56MNOR@bootlin.com>
+Cc: "Danilo Krummrich" <dakr@kernel.org>, "Greg Kroah-Hartman"
+ <gregkh@linuxfoundation.org>, "Len Brown" <len.brown@intel.com>, "Michael
+ Turquette" <mturquette@baylibre.com>, "Miquel Raynal"
+ <miquel.raynal@bootlin.com>, "Pavel Machek" <pavel@ucw.cz>, "Rafael J.
+ Wysocki" <rafael@kernel.org>, "Thomas Petazzoni"
+ <thomas.petazzoni@bootlin.com>, <linux-pm@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>, "Chen-Yu Tsai"
+ <wenst@chromium.org>, "Lucas Stach" <l.stach@pengutronix.de>, "Laurent
+ Pinchart" <laurent.pinchart@ideasonboard.com>, "Marek Vasut"
+ <marex@denx.de>, "Ulf Hansson" <ulf.hansson@linaro.org>, "Kevin Hilman"
+ <khilman@kernel.org>, "Fabio Estevam" <festevam@denx.de>, "Jacky Bai"
+ <ping.bai@nxp.com>, "Peng Fan" <peng.fan@nxp.com>, "Shawn Guo"
+ <shawnguo@kernel.org>, "Shengjiu Wang" <shengjiu.wang@nxp.com>,
+ <linux-imx@nxp.com>, "Ian Ray" <ian.ray@gehealthcare.com>,
+ =?utf-8?q?Herv=C3=A9_Codina?= <herve.codina@bootlin.com>, "Saravana Kannan"
+ <saravanak@google.com>
+To: "Luca Ceresoli" <luca.ceresoli@bootlin.com>, "Stephen Boyd"
+ <sboyd@kernel.org>
+From: "Luca Ceresoli" <luca.ceresoli@bootlin.com>
+Subject: Re: [PATCH RFC 00/10] Fix the ABBA locking situation between clk
+ and runtime PM
+X-Mailer: aerc 0.20.1
+References: <20250326-cross-lock-dep-v1-0-3199e49e8652@bootlin.com>
+ <8dfe4bfff1256c1ceffeab81cd587d0d@kernel.org>
+ <20251003182407.70d495ba@booty>
+In-Reply-To: <20251003182407.70d495ba@booty>
+X-Last-TLS-Session-Version: TLSv1.3
 
-Support the graphics clock controller for Kaanapali for Graphics SW
-driver to use the clocks. GXCLKCTL (Graphics GX Clock Controller) is a
-block dedicated to managing clocks for the GPU subsystem on GX power
-domain. The GX clock controller driver manages only the GX GDSC and the
-rest of the resources of the controller are managed by the firmware.
+Hello Stephen, all,
 
-Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
----
- drivers/clk/qcom/Kconfig              |   9 +
- drivers/clk/qcom/Makefile             |   1 +
- drivers/clk/qcom/gpucc-kaanapali.c    | 482 ++++++++++++++++++++++++++++++++++
- drivers/clk/qcom/gxclkctl-kaanapali.c |  76 ++++++
- 4 files changed, 568 insertions(+)
+On Fri Oct 3, 2025 at 6:24 PM CEST, Luca Ceresoli wrote:
+> Hello Stephen, all,
+>
+> On Mon, 14 Apr 2025 18:00:15 -0700
+> Stephen Boyd <sboyd@kernel.org> wrote:
+>
+>> Quoting Miquel Raynal (2025-03-26 11:26:15)
+>> > As explained in the following thread, there is a known ABBA locking
+>> > dependency between clk and runtime PM.
+>> > Link: https://lore.kernel.org/linux-clk/20240527181928.4fc6b5f0@xps-13=
+/
+>> >
+>> > The problem is that the clk subsystem uses a mutex to protect concurre=
+nt
+>> > accesses to its tree structure, and so do other subsystems such as
+>> > generic power domains. While it holds its own mutex, the clk subsystem
+>> > performs runtime PM calls which end up executing callbacks from other
+>> > subsystems (again, gen PD is in the loop). But typically power domains
+>> > may also need to perform clock related operations, and thus the
+>> > following two situations may happen:
+>> >
+>> > mutex_lock(clk);
+>> > mutex_lock(genpd);
+>> >
+>> > or
+>> >
+>> > mutex_lock(genpd);
+>> > mutex_lock(clk);
+>> >
+>> > As of today I know that at least NXP i.MX8MP and MediaTek MT8183 SoCs
+>> > are complex enough to face this kind of issues.
+>> >
+>> > There's been a first workaround to "silence" lockdep with the most
+>> > obvious case triggering the warning: making sure all clocks are RPM
+>> > enabled before running the clk_disable_unused() work, but this is just
+>> > addressing one situation among many other potentially problematic
+>> > situations. In the past, both Laurent Pinchart and Marek Vasut have
+>> > experienced these issues when enabling HDMI and audio support,
+>> > respectively.
+>> >
+>> > Following a discussion we had at last Plumbers with Steven, I am
+>> > proposing to decouple both locks by changing a bit the clk approach:
+>> > let's always runtime resume all clocks that we *might* need before
+>> > taking the clock lock. But how do we know the list? Well, depending on
+>> > the situation we may either need to wake up:
+>> > - the upper part of the tree during prepare/unprepare operations.
+>> > - the lower part of the tree during (read) rate operations.
+>> > - the upper part and the lower part of the tree otherwise (especially
+>> >   during rate changes which may involve reparenting).
+>>
+>> Thanks for taking on this work. This problem is coming up more and more
+>> often.
+>
+> Reviving this thread after today I had a very rare occurrence of
+> apparently this same issue:
+>
+>   WARNING: possible circular locking dependency detected
 
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index a97e18703f20acbcd605a8c24795b5073d7ad1b0..301e52a78384674024a0c63e6ae0a298979515a0 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -75,6 +75,15 @@ config CLK_KAANAPALI_GCC
- 	  Say Y if you want to use peripheral devices such as UART,
- 	  SPI, I2C, USB, SD/UFS, PCIe etc.
- 
-+config CLK_KAANAPALI_GPUCC
-+	tristate "Kaanapali Graphics Clock Controller"
-+	depends on ARM64 || COMPILE_TEST
-+	select CLK_KAANAPALI_GCC
-+	help
-+	  Support for the graphics clock controller on Kaanapali devices.
-+	  Say Y if you want to support graphics controller devices and
-+	  functionality such as 3D graphics.
-+
- config CLK_KAANAPALI_TCSRCC
- 	tristate "Kaanapali TCSR Clock Controller"
- 	depends on ARM64 || COMPILE_TEST
-diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-index 781edb0bc9a3ea160d6755ccf2b04af815baa27d..0d4d9f4eb582a1baa398727d2c32b80195e1bb2f 100644
---- a/drivers/clk/qcom/Makefile
-+++ b/drivers/clk/qcom/Makefile
-@@ -27,6 +27,7 @@ obj-$(CONFIG_CLK_GLYMUR_TCSRCC) += tcsrcc-glymur.o
- obj-$(CONFIG_CLK_KAANAPALI_CAMCC) += cambistmclkcc-kaanapali.o camcc-kaanapali.o
- obj-$(CONFIG_CLK_KAANAPALI_DISPCC) += dispcc-kaanapali.o
- obj-$(CONFIG_CLK_KAANAPALI_GCC) += gcc-kaanapali.o
-+obj-$(CONFIG_CLK_KAANAPALI_GPUCC) += gpucc-kaanapali.o gxclkctl-kaanapali.o
- obj-$(CONFIG_CLK_KAANAPALI_TCSRCC) += tcsrcc-kaanapali.o
- obj-$(CONFIG_CLK_KAANAPALI_VIDEOCC) += videocc-kaanapali.o
- obj-$(CONFIG_CLK_X1E80100_CAMCC) += camcc-x1e80100.o
-diff --git a/drivers/clk/qcom/gpucc-kaanapali.c b/drivers/clk/qcom/gpucc-kaanapali.c
-new file mode 100644
-index 0000000000000000000000000000000000000000..52be48c15c67203f64e54eb836d6cd67b505b77e
---- /dev/null
-+++ b/drivers/clk/qcom/gpucc-kaanapali.c
-@@ -0,0 +1,482 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/mod_devicetable.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+
-+#include <dt-bindings/clock/qcom,kaanapali-gpucc.h>
-+
-+#include "clk-alpha-pll.h"
-+#include "clk-branch.h"
-+#include "clk-pll.h"
-+#include "clk-rcg.h"
-+#include "clk-regmap.h"
-+#include "clk-regmap-divider.h"
-+#include "clk-regmap-mux.h"
-+#include "common.h"
-+#include "gdsc.h"
-+#include "reset.h"
-+
-+enum {
-+	DT_BI_TCXO,
-+	DT_GPLL0_OUT_MAIN,
-+	DT_GPLL0_OUT_MAIN_DIV,
-+};
-+
-+enum {
-+	P_BI_TCXO,
-+	P_GPLL0_OUT_MAIN,
-+	P_GPLL0_OUT_MAIN_DIV,
-+	P_GPU_CC_PLL0_OUT_EVEN,
-+	P_GPU_CC_PLL0_OUT_MAIN,
-+	P_GPU_CC_PLL0_OUT_ODD,
-+};
-+
-+static const struct pll_vco taycan_eko_t_vco[] = {
-+	{ 249600000, 2500000000, 0 },
-+};
-+
-+/* 950.0 MHz Configuration */
-+static const struct alpha_pll_config gpu_cc_pll0_config = {
-+	.l = 0x31,
-+	.cal_l = 0x48,
-+	.alpha = 0x7aaa,
-+	.config_ctl_val = 0x25c400e7,
-+	.config_ctl_hi_val = 0x0a8062e0,
-+	.config_ctl_hi1_val = 0xf51dea20,
-+	.user_ctl_val = 0x00000408,
-+	.user_ctl_hi_val = 0x00000002,
-+};
-+
-+static struct clk_alpha_pll gpu_cc_pll0 = {
-+	.offset = 0x0,
-+	.config = &gpu_cc_pll0_config,
-+	.vco_table = taycan_eko_t_vco,
-+	.num_vco = ARRAY_SIZE(taycan_eko_t_vco),
-+	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_TAYCAN_EKO_T],
-+	.clkr = {
-+		.hw.init = &(const struct clk_init_data) {
-+			.name = "gpu_cc_pll0",
-+			.parent_data = &(const struct clk_parent_data) {
-+				.index = DT_BI_TCXO,
-+			},
-+			.num_parents = 1,
-+			.ops = &clk_alpha_pll_taycan_eko_t_ops,
-+		},
-+	},
-+};
-+
-+static const struct clk_div_table post_div_table_gpu_cc_pll0_out_even[] = {
-+	{ 0x1, 2 },
-+	{ }
-+};
-+
-+static struct clk_alpha_pll_postdiv gpu_cc_pll0_out_even = {
-+	.offset = 0x0,
-+	.post_div_shift = 10,
-+	.post_div_table = post_div_table_gpu_cc_pll0_out_even,
-+	.num_post_div = ARRAY_SIZE(post_div_table_gpu_cc_pll0_out_even),
-+	.width = 4,
-+	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_TAYCAN_EKO_T],
-+	.clkr.hw.init = &(const struct clk_init_data) {
-+		.name = "gpu_cc_pll0_out_even",
-+		.parent_hws = (const struct clk_hw*[]) {
-+			&gpu_cc_pll0.clkr.hw,
-+		},
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+		.ops = &clk_alpha_pll_postdiv_taycan_eko_t_ops,
-+	},
-+};
-+
-+static const struct parent_map gpu_cc_parent_map_0[] = {
-+	{ P_BI_TCXO, 0 },
-+	{ P_GPU_CC_PLL0_OUT_MAIN, 1 },
-+	{ P_GPU_CC_PLL0_OUT_EVEN, 2 },
-+	{ P_GPU_CC_PLL0_OUT_ODD, 3 },
-+	{ P_GPLL0_OUT_MAIN, 5 },
-+	{ P_GPLL0_OUT_MAIN_DIV, 6 },
-+};
-+
-+static const struct clk_parent_data gpu_cc_parent_data_0[] = {
-+	{ .index = DT_BI_TCXO },
-+	{ .hw = &gpu_cc_pll0.clkr.hw },
-+	{ .hw = &gpu_cc_pll0_out_even.clkr.hw },
-+	{ .hw = &gpu_cc_pll0.clkr.hw },
-+	{ .index = DT_GPLL0_OUT_MAIN },
-+	{ .index = DT_GPLL0_OUT_MAIN_DIV },
-+};
-+
-+static const struct freq_tbl ftbl_gpu_cc_gmu_clk_src[] = {
-+	F(19200000, P_BI_TCXO, 1, 0, 0),
-+	F(475000000, P_GPU_CC_PLL0_OUT_EVEN, 1, 0, 0),
-+	F(575000000, P_GPU_CC_PLL0_OUT_EVEN, 1, 0, 0),
-+	F(700000000, P_GPU_CC_PLL0_OUT_EVEN, 1, 0, 0),
-+	F(725000000, P_GPU_CC_PLL0_OUT_EVEN, 1, 0, 0),
-+	F(750000000, P_GPU_CC_PLL0_OUT_EVEN, 1, 0, 0),
-+	{ }
-+};
-+
-+static struct clk_rcg2 gpu_cc_gmu_clk_src = {
-+	.cmd_rcgr = 0x9318,
-+	.mnd_width = 0,
-+	.hid_width = 5,
-+	.parent_map = gpu_cc_parent_map_0,
-+	.hw_clk_ctrl = true,
-+	.freq_tbl = ftbl_gpu_cc_gmu_clk_src,
-+	.clkr.hw.init = &(const struct clk_init_data) {
-+		.name = "gpu_cc_gmu_clk_src",
-+		.parent_data = gpu_cc_parent_data_0,
-+		.num_parents = ARRAY_SIZE(gpu_cc_parent_data_0),
-+		.flags = CLK_SET_RATE_PARENT,
-+		.ops = &clk_rcg2_shared_ops,
-+	},
-+};
-+
-+static const struct freq_tbl ftbl_gpu_cc_hub_clk_src[] = {
-+	F(150000000, P_GPLL0_OUT_MAIN_DIV, 2, 0, 0),
-+	F(200000000, P_GPLL0_OUT_MAIN, 3, 0, 0),
-+	F(300000000, P_GPLL0_OUT_MAIN, 2, 0, 0),
-+	F(400000000, P_GPLL0_OUT_MAIN, 1.5, 0, 0),
-+	{ }
-+};
-+
-+static struct clk_rcg2 gpu_cc_hub_clk_src = {
-+	.cmd_rcgr = 0x93f0,
-+	.mnd_width = 0,
-+	.hid_width = 5,
-+	.parent_map = gpu_cc_parent_map_0,
-+	.hw_clk_ctrl = true,
-+	.freq_tbl = ftbl_gpu_cc_hub_clk_src,
-+	.clkr.hw.init = &(const struct clk_init_data) {
-+		.name = "gpu_cc_hub_clk_src",
-+		.parent_data = gpu_cc_parent_data_0,
-+		.num_parents = ARRAY_SIZE(gpu_cc_parent_data_0),
-+		.flags = CLK_SET_RATE_PARENT,
-+		.ops = &clk_rcg2_shared_ops,
-+	},
-+};
-+
-+static struct clk_regmap_div gpu_cc_hub_div_clk_src = {
-+	.reg = 0x9430,
-+	.shift = 0,
-+	.width = 4,
-+	.clkr.hw.init = &(const struct clk_init_data) {
-+		.name = "gpu_cc_hub_div_clk_src",
-+		.parent_hws = (const struct clk_hw*[]) {
-+			&gpu_cc_hub_clk_src.clkr.hw,
-+		},
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+		.ops = &clk_regmap_div_ro_ops,
-+	},
-+};
-+
-+static struct clk_branch gpu_cc_ahb_clk = {
-+	.halt_reg = 0x90bc,
-+	.halt_check = BRANCH_HALT_DELAY,
-+	.clkr = {
-+		.enable_reg = 0x90bc,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(const struct clk_init_data) {
-+			.name = "gpu_cc_ahb_clk",
-+			.parent_hws = (const struct clk_hw*[]) {
-+				&gpu_cc_hub_div_clk_src.clkr.hw,
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gpu_cc_cx_accu_shift_clk = {
-+	.halt_reg = 0x9104,
-+	.halt_check = BRANCH_HALT_VOTED,
-+	.clkr = {
-+		.enable_reg = 0x9104,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(const struct clk_init_data) {
-+			.name = "gpu_cc_cx_accu_shift_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gpu_cc_cx_gmu_clk = {
-+	.halt_reg = 0x90d4,
-+	.halt_check = BRANCH_HALT_VOTED,
-+	.clkr = {
-+		.enable_reg = 0x90d4,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(const struct clk_init_data) {
-+			.name = "gpu_cc_cx_gmu_clk",
-+			.parent_hws = (const struct clk_hw*[]) {
-+				&gpu_cc_gmu_clk_src.clkr.hw,
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_aon_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gpu_cc_cxo_clk = {
-+	.halt_reg = 0x90e4,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x90e4,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(const struct clk_init_data) {
-+			.name = "gpu_cc_cxo_clk",
-+			.ops = &clk_branch2_aon_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gpu_cc_demet_clk = {
-+	.halt_reg = 0x9010,
-+	.halt_check = BRANCH_HALT_VOTED,
-+	.clkr = {
-+		.enable_reg = 0x9010,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(const struct clk_init_data) {
-+			.name = "gpu_cc_demet_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gpu_cc_dpm_clk = {
-+	.halt_reg = 0x9108,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x9108,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(const struct clk_init_data) {
-+			.name = "gpu_cc_dpm_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gpu_cc_freq_measure_clk = {
-+	.halt_reg = 0x900c,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x900c,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(const struct clk_init_data) {
-+			.name = "gpu_cc_freq_measure_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gpu_cc_gpu_smmu_vote_clk = {
-+	.halt_reg = 0x7000,
-+	.halt_check = BRANCH_HALT_VOTED,
-+	.clkr = {
-+		.enable_reg = 0x7000,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(const struct clk_init_data) {
-+			.name = "gpu_cc_gpu_smmu_vote_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gpu_cc_gx_accu_shift_clk = {
-+	.halt_reg = 0x9070,
-+	.halt_check = BRANCH_HALT_VOTED,
-+	.clkr = {
-+		.enable_reg = 0x9070,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(const struct clk_init_data) {
-+			.name = "gpu_cc_gx_accu_shift_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gpu_cc_gx_gmu_clk = {
-+	.halt_reg = 0x9060,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x9060,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(const struct clk_init_data) {
-+			.name = "gpu_cc_gx_gmu_clk",
-+			.parent_hws = (const struct clk_hw*[]) {
-+				&gpu_cc_gmu_clk_src.clkr.hw,
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gpu_cc_hub_aon_clk = {
-+	.halt_reg = 0x93ec,
-+	.halt_check = BRANCH_HALT_VOTED,
-+	.clkr = {
-+		.enable_reg = 0x93ec,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(const struct clk_init_data) {
-+			.name = "gpu_cc_hub_aon_clk",
-+			.parent_hws = (const struct clk_hw*[]) {
-+				&gpu_cc_hub_clk_src.clkr.hw,
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_aon_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gpu_cc_hub_cx_int_clk = {
-+	.halt_reg = 0x90e8,
-+	.halt_check = BRANCH_HALT_VOTED,
-+	.clkr = {
-+		.enable_reg = 0x90e8,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(const struct clk_init_data) {
-+			.name = "gpu_cc_hub_cx_int_clk",
-+			.parent_hws = (const struct clk_hw*[]) {
-+				&gpu_cc_hub_clk_src.clkr.hw,
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_aon_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gpu_cc_memnoc_gfx_clk = {
-+	.halt_reg = 0x90ec,
-+	.halt_check = BRANCH_HALT_VOTED,
-+	.clkr = {
-+		.enable_reg = 0x90ec,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(const struct clk_init_data) {
-+			.name = "gpu_cc_memnoc_gfx_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct gdsc gpu_cc_cx_gdsc = {
-+	.gdscr = 0x9080,
-+	.gds_hw_ctrl = 0x9094,
-+	.en_rest_wait_val = 0x2,
-+	.en_few_wait_val = 0x2,
-+	.clk_dis_wait_val = 0x8,
-+	.pd = {
-+		.name = "gpu_cc_cx_gdsc",
-+	},
-+	.pwrsts = PWRSTS_OFF_ON,
-+	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
-+};
-+
-+static struct clk_regmap *gpu_cc_kaanapali_clocks[] = {
-+	[GPU_CC_AHB_CLK] = &gpu_cc_ahb_clk.clkr,
-+	[GPU_CC_CX_ACCU_SHIFT_CLK] = &gpu_cc_cx_accu_shift_clk.clkr,
-+	[GPU_CC_CX_GMU_CLK] = &gpu_cc_cx_gmu_clk.clkr,
-+	[GPU_CC_CXO_CLK] = &gpu_cc_cxo_clk.clkr,
-+	[GPU_CC_DEMET_CLK] = &gpu_cc_demet_clk.clkr,
-+	[GPU_CC_DPM_CLK] = &gpu_cc_dpm_clk.clkr,
-+	[GPU_CC_FREQ_MEASURE_CLK] = &gpu_cc_freq_measure_clk.clkr,
-+	[GPU_CC_GMU_CLK_SRC] = &gpu_cc_gmu_clk_src.clkr,
-+	[GPU_CC_GPU_SMMU_VOTE_CLK] = &gpu_cc_gpu_smmu_vote_clk.clkr,
-+	[GPU_CC_GX_ACCU_SHIFT_CLK] = &gpu_cc_gx_accu_shift_clk.clkr,
-+	[GPU_CC_GX_GMU_CLK] = &gpu_cc_gx_gmu_clk.clkr,
-+	[GPU_CC_HUB_AON_CLK] = &gpu_cc_hub_aon_clk.clkr,
-+	[GPU_CC_HUB_CLK_SRC] = &gpu_cc_hub_clk_src.clkr,
-+	[GPU_CC_HUB_CX_INT_CLK] = &gpu_cc_hub_cx_int_clk.clkr,
-+	[GPU_CC_HUB_DIV_CLK_SRC] = &gpu_cc_hub_div_clk_src.clkr,
-+	[GPU_CC_MEMNOC_GFX_CLK] = &gpu_cc_memnoc_gfx_clk.clkr,
-+	[GPU_CC_PLL0] = &gpu_cc_pll0.clkr,
-+	[GPU_CC_PLL0_OUT_EVEN] = &gpu_cc_pll0_out_even.clkr,
-+};
-+
-+static struct gdsc *gpu_cc_kaanapali_gdscs[] = {
-+	[GPU_CC_CX_GDSC] = &gpu_cc_cx_gdsc,
-+};
-+
-+static const struct qcom_reset_map gpu_cc_kaanapali_resets[] = {
-+	[GPU_CC_CB_BCR] = { 0x93a0 },
-+	[GPU_CC_CX_BCR] = { 0x907c },
-+	[GPU_CC_FAST_HUB_BCR] = { 0x93e4 },
-+	[GPU_CC_FF_BCR] = { 0x9470 },
-+	[GPU_CC_GMU_BCR] = { 0x9314 },
-+	[GPU_CC_GX_BCR] = { 0x905c },
-+	[GPU_CC_XO_BCR] = { 0x9000 },
-+};
-+
-+static struct clk_alpha_pll *gpu_cc_kaanapali_plls[] = {
-+	&gpu_cc_pll0,
-+};
-+
-+static u32 gpu_cc_kaanapali_critical_cbcrs[] = {
-+	0x9008, /* GPU_CC_CXO_AON_CLK */
-+	0x93e8, /* GPU_CC_RSCC_HUB_AON_CLK */
-+	0x9004, /* GPU_CC_RSCC_XO_AON_CLK */
-+};
-+
-+static const struct regmap_config gpu_cc_kaanapali_regmap_config = {
-+	.reg_bits = 32,
-+	.reg_stride = 4,
-+	.val_bits = 32,
-+	.max_register = 0x95e8,
-+	.fast_io = true,
-+};
-+
-+static struct qcom_cc_driver_data gpu_cc_kaanapali_driver_data = {
-+	.alpha_plls = gpu_cc_kaanapali_plls,
-+	.num_alpha_plls = ARRAY_SIZE(gpu_cc_kaanapali_plls),
-+	.clk_cbcrs = gpu_cc_kaanapali_critical_cbcrs,
-+	.num_clk_cbcrs = ARRAY_SIZE(gpu_cc_kaanapali_critical_cbcrs),
-+};
-+
-+static const struct qcom_cc_desc gpu_cc_kaanapali_desc = {
-+	.config = &gpu_cc_kaanapali_regmap_config,
-+	.clks = gpu_cc_kaanapali_clocks,
-+	.num_clks = ARRAY_SIZE(gpu_cc_kaanapali_clocks),
-+	.resets = gpu_cc_kaanapali_resets,
-+	.num_resets = ARRAY_SIZE(gpu_cc_kaanapali_resets),
-+	.gdscs = gpu_cc_kaanapali_gdscs,
-+	.num_gdscs = ARRAY_SIZE(gpu_cc_kaanapali_gdscs),
-+	.use_rpm = true,
-+	.driver_data = &gpu_cc_kaanapali_driver_data,
-+};
-+
-+static const struct of_device_id gpu_cc_kaanapali_match_table[] = {
-+	{ .compatible = "qcom,kaanapali-gpucc" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, gpu_cc_kaanapali_match_table);
-+
-+static int gpu_cc_kaanapali_probe(struct platform_device *pdev)
-+{
-+	return qcom_cc_probe(pdev, &gpu_cc_kaanapali_desc);
-+}
-+
-+static struct platform_driver gpu_cc_kaanapali_driver = {
-+	.probe = gpu_cc_kaanapali_probe,
-+	.driver = {
-+		.name = "gpucc-kaanapali",
-+		.of_match_table = gpu_cc_kaanapali_match_table,
-+	},
-+};
-+
-+module_platform_driver(gpu_cc_kaanapali_driver);
-+
-+MODULE_DESCRIPTION("QTI GPUCC Kaanapali Driver");
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/qcom/gxclkctl-kaanapali.c b/drivers/clk/qcom/gxclkctl-kaanapali.c
-new file mode 100644
-index 0000000000000000000000000000000000000000..c209ce5fe4f003aabefd4421eb4f5662e257912a
---- /dev/null
-+++ b/drivers/clk/qcom/gxclkctl-kaanapali.c
-@@ -0,0 +1,76 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/mod_devicetable.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+
-+#include <dt-bindings/clock/qcom,kaanapali-gxclkctl.h>
-+
-+#include "common.h"
-+#include "gdsc.h"
-+
-+enum {
-+	DT_BI_TCXO,
-+};
-+
-+static struct gdsc gx_clkctl_gx_gdsc = {
-+	.gdscr = 0x4024,
-+	.en_rest_wait_val = 0x2,
-+	.en_few_wait_val = 0x2,
-+	.clk_dis_wait_val = 0xf,
-+	.pd = {
-+		.name = "gx_clkctl_gx_gdsc",
-+		.power_on = gdsc_gx_do_nothing_enable,
-+	},
-+	.pwrsts = PWRSTS_OFF_ON,
-+	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
-+};
-+
-+static struct gdsc *gx_clkctl_gdscs[] = {
-+	[GX_CLKCTL_GX_GDSC] = &gx_clkctl_gx_gdsc,
-+};
-+
-+static const struct regmap_config gx_clkctl_regmap_config = {
-+	.reg_bits = 32,
-+	.reg_stride = 4,
-+	.val_bits = 32,
-+	.max_register = 0x4038,
-+	.fast_io = true,
-+};
-+
-+static const struct qcom_cc_desc gx_clkctl_kaanapali_desc = {
-+	.config = &gx_clkctl_regmap_config,
-+	.gdscs = gx_clkctl_gdscs,
-+	.num_gdscs = ARRAY_SIZE(gx_clkctl_gdscs),
-+	.use_rpm = true,
-+};
-+
-+static const struct of_device_id gx_clkctl_kaanapali_match_table[] = {
-+	{ .compatible = "qcom,kaanapali-gxclkctl" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, gx_clkctl_kaanapali_match_table);
-+
-+static int gx_clkctl_kaanapali_probe(struct platform_device *pdev)
-+{
-+	return qcom_cc_probe(pdev, &gx_clkctl_kaanapali_desc);
-+}
-+
-+static struct platform_driver gx_clkctl_kaanapali_driver = {
-+	.probe = gx_clkctl_kaanapali_probe,
-+	.driver = {
-+		.name = "gxclkctl-kaanapali",
-+		.of_match_table = gx_clkctl_kaanapali_match_table,
-+	},
-+};
-+
-+module_platform_driver(gx_clkctl_kaanapali_driver);
-+
-+MODULE_DESCRIPTION("QTI GXCLKCTL Kaanapali Driver");
-+MODULE_LICENSE("GPL");
+I just had another occurrence, this time on 6.19-rc4:
 
--- 
-2.34.1
+[    0.000000][    T0] Booting Linux on physical CPU 0x0000000000 [0x410fd0=
+34]
+[    0.000000][    T0] Linux version 6.19.0-rc4+ (murray@booty) (aarch64-li=
+nux-gcc.br_real (Buildroot 2021.11-12449-g1bef613319) 13.3.0, GNU ld (GNU B=
+inutils) 2.41) #1 SMP PREEMPT Wed Jan  7 11:20:58 CET 2026
 
+[    0.000912][    T0] Lock dependency validator: Copyright (c) 2006 Red Ha=
+t, Inc., Ingo Molnar
+[    0.000917][    T0] ... MAX_LOCKDEP_SUBCLASSES:  8
+[    0.000922][    T0] ... MAX_LOCK_DEPTH:          48
+[    0.000926][    T0] ... MAX_LOCKDEP_KEYS:        8192
+[    0.000931][    T0] ... CLASSHASH_SIZE:          4096
+[    0.000935][    T0] ... MAX_LOCKDEP_ENTRIES:     32768
+[    0.000939][    T0] ... MAX_LOCKDEP_CHAINS:      65536
+[    0.000944][    T0] ... CHAINHASH_SIZE:          32768
+[    0.000948][    T0]  memory used by lock dependency info: 6429 kB
+[    0.000952][    T0]  memory used for stack traces: 4224 kB
+[    0.000956][    T0]  per task-struct memory footprint: 1920 bytes
+
+[    5.034910][   T78] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+[    5.041795][   T78] WARNING: possible circular locking dependency detect=
+ed
+[    5.048677][   T78] 6.19.0-rc4+ #1 Not tainted
+[    5.053131][   T78] ----------------------------------------------------=
+--
+[    5.060010][   T78] kworker/u16:7/78 is trying to acquire lock:
+[    5.065936][   T78] ffff800081976c50 (prepare_lock){+.+.}-{4:4}, at: clk=
+_prepare_lock+0x58/0xc0
+[    5.074671][   T78]
+[    5.074671][   T78] but task is already holding lock:
+[    5.081895][   T78] ffff000001aab740 (&genpd->mlock){+.+.}-{4:4}, at: ge=
+npd_lock_mtx+0x20/0x38
+[    5.090534][   T78]
+[    5.090534][   T78] which lock already depends on the new lock.
+[    5.090534][   T78]
+[    5.100796][   T78]
+[    5.100796][   T78] the existing dependency chain (in reverse order) is:
+[    5.109671][   T78]
+[    5.109671][   T78] -> #1 (&genpd->mlock){+.+.}-{4:4}:
+[    5.116995][   T78]        __mutex_lock+0xa8/0x830
+[    5.121794][   T78]        mutex_lock_nested+0x2c/0x40
+[    5.126939][   T78]        genpd_lock_mtx+0x20/0x38
+[    5.131824][   T78]        genpd_runtime_resume+0x118/0x298
+[    5.137404][   T78]        __rpm_callback+0x50/0x200
+[    5.142380][   T78]        rpm_callback+0x7c/0x90
+[    5.147089][   T78]        rpm_resume+0x53c/0x720
+[    5.151801][   T78]        __pm_runtime_resume+0x58/0xa8
+[    5.157120][   T78]        clk_pm_runtime_get.part.0.isra.0+0x24/0x98
+[    5.163570][   T78]        __clk_register+0x574/0x9c8
+[    5.168631][   T78]        devm_clk_hw_register+0x64/0xe8
+[    5.174036][   T78]        imx8mp_hsio_blk_ctrl_probe+0xa0/0xf8
+[    5.179964][   T78]        imx8mp_blk_ctrl_probe+0x358/0x568
+[    5.185633][   T78]        platform_probe+0x64/0xa8
+[    5.190520][   T78]        really_probe+0xc4/0x2b8
+[    5.195319][   T78]        __driver_probe_device+0x80/0x140
+[    5.200899][   T78]        driver_probe_device+0xe0/0x170
+[    5.206305][   T78]        __device_attach_driver+0xc0/0x148
+[    5.211972][   T78]        bus_for_each_drv+0x90/0xf8
+[    5.217030][   T78]        __device_attach+0xa8/0x1a0
+[    5.222089][   T78]        device_initial_probe+0x58/0x68
+[    5.227496][   T78]        bus_probe_device+0x40/0xb8
+[    5.232554][   T78]        deferred_probe_work_func+0x90/0xd8
+[    5.238306][   T78]        process_one_work+0x214/0x608
+[    5.243542][   T78]        worker_thread+0x1b4/0x368
+[    5.248513][   T78]        kthread+0x14c/0x230
+[    5.252966][   T78]        ret_from_fork+0x10/0x20
+[    5.257765][   T78]
+[    5.257765][   T78] -> #0 (prepare_lock){+.+.}-{4:4}:
+[    5.265002][   T78]        __lock_acquire+0x132c/0x1f48
+[    5.270236][   T78]        lock_acquire+0x1c4/0x338
+[    5.275120][   T78]        __mutex_lock+0xa8/0x830
+[    5.279918][   T78]        mutex_lock_nested+0x2c/0x40
+[    5.285062][   T78]        clk_prepare_lock+0x58/0xc0
+[    5.290121][   T78]        clk_prepare+0x28/0x58
+[    5.294747][   T78]        clk_bulk_prepare+0x54/0xe8
+[    5.299804][   T78]        imx_pgc_power_up+0x7c/0x348
+[    5.304950][   T78]        _genpd_power_on+0xa0/0x168
+[    5.310010][   T78]        genpd_power_on+0xd8/0x248
+[    5.314978][   T78]        genpd_runtime_resume+0x12c/0x298
+[    5.320557][   T78]        __rpm_callback+0x50/0x200
+[    5.325528][   T78]        rpm_callback+0x7c/0x90
+[    5.330239][   T78]        rpm_resume+0x53c/0x720
+[    5.334951][   T78]        __pm_runtime_resume+0x58/0xa8
+[    5.340270][   T78]        imx8mp_blk_ctrl_power_on+0x3c/0x260
+[    5.346111][   T78]        _genpd_power_on+0xa0/0x168
+[    5.351171][   T78]        genpd_power_on+0xd8/0x248
+[    5.356139][   T78]        genpd_runtime_resume+0x12c/0x298
+[    5.361718][   T78]        __rpm_callback+0x50/0x200
+[    5.366687][   T78]        rpm_callback+0x7c/0x90
+[    5.371399][   T78]        rpm_resume+0x53c/0x720
+[    5.376110][   T78]        __pm_runtime_resume+0x58/0xa8
+[    5.381430][   T78]        pm_runtime_get_suppliers+0x6c/0xa0
+[    5.387185][   T78]        __driver_probe_device+0x50/0x140
+[    5.392765][   T78]        driver_probe_device+0xe0/0x170
+[    5.398171][   T78]        __device_attach_driver+0xc0/0x148
+[    5.403838][   T78]        bus_for_each_drv+0x90/0xf8
+[    5.408896][   T78]        __device_attach+0xa8/0x1a0
+[    5.413955][   T78]        device_initial_probe+0x58/0x68
+[    5.419361][   T78]        bus_probe_device+0x40/0xb8
+[    5.424419][   T78]        deferred_probe_work_func+0x90/0xd8
+[    5.430172][   T78]        process_one_work+0x214/0x608
+[    5.435406][   T78]        worker_thread+0x1b4/0x368
+[    5.440380][   T78]        kthread+0x14c/0x230
+[    5.444829][   T78]        ret_from_fork+0x10/0x20
+[    5.449627][   T78]
+[    5.449627][   T78] other info that might help us debug this:
+[    5.449627][   T78]
+[    5.459716][   T78]  Possible unsafe locking scenario:
+[    5.459716][   T78]
+[    5.467024][   T78]        CPU0                    CPU1
+[    5.472250][   T78]        ----                    ----
+[    5.477478][   T78]   lock(&genpd->mlock);
+[    5.481582][   T78]                                lock(prepare_lock);
+[    5.488117][   T78]                                lock(&genpd->mlock);
+[    5.494740][   T78]   lock(prepare_lock);
+[    5.498755][   T78]
+[    5.498755][   T78]  *** DEADLOCK ***
+[    5.498755][   T78]
+[    5.506761][   T78] 6 locks held by kworker/u16:7/78:
+[    5.511816][   T78]  #0: ffff00000001cd48 ((wq_completion)events_unbound=
+#2){+.+.}-{0:0}, at: process_one_work+0x198/0x608
+[    5.522802][   T78]  #1: ffff800082c8bd80 (deferred_probe_work){+.+.}-{0=
+:0}, at: process_one_work+0x1c0/0x608
+[    5.532746][   T78]  #2: ffff000000c320f8 (&dev->mutex){....}-{4:4}, at:=
+ __device_attach+0x44/0x1a0
+[    5.541819][   T78]  #3: ffff80008199b220 (device_links_srcu){.+.+}-{0:0=
+}, at: device_links_read_lock+0x8/0x80
+[    5.551846][   T78]  #4: ffff000006fb87c0 (&blk_ctrl_genpd_lock_class){+=
+.+.}-{4:4}, at: genpd_lock_mtx+0x20/0x38
+[    5.562048][   T78]  #5: ffff000001aab740 (&genpd->mlock){+.+.}-{4:4}, a=
+t: genpd_lock_mtx+0x20/0x38
+[    5.571120][   T78]
+[    5.571120][   T78] stack backtrace:
+[    5.576872][   T78] CPU: 1 UID: 0 PID: 78 Comm: kworker/u16:7 Not tainte=
+d 6.19.0-rc4+ #1 PREEMPT
+[    5.585751][   T78] Hardware name: GE HealthCare Supernova Patient Hub v=
+1 (DT)
+[    5.592977][   T78] Workqueue: events_unbound deferred_probe_work_func
+[    5.599516][   T78] Call trace:
+[    5.602661][   T78]  show_stack+0x20/0x38 (C)
+[    5.607026][   T78]  dump_stack_lvl+0x8c/0xd0
+[    5.611392][   T78]  dump_stack+0x18/0x28
+[    5.615410][   T78]  print_circular_bug+0x28c/0x370
+[    5.620298][   T78]  check_noncircular+0x170/0x188
+[    5.625099][   T78]  __lock_acquire+0x132c/0x1f48
+[    5.629818][   T78]  lock_acquire+0x1c4/0x338
+[    5.634185][   T78]  __mutex_lock+0xa8/0x830
+[    5.638463][   T78]  mutex_lock_nested+0x2c/0x40
+[    5.643089][   T78]  clk_prepare_lock+0x58/0xc0
+[    5.647628][   T78]  clk_prepare+0x28/0x58
+[    5.651735][   T78]  clk_bulk_prepare+0x54/0xe8
+[    5.656274][   T78]  imx_pgc_power_up+0x7c/0x348
+[    5.660901][   T78]  _genpd_power_on+0xa0/0x168
+[    5.665445][   T78]  genpd_power_on+0xd8/0x248
+[    5.669896][   T78]  genpd_runtime_resume+0x12c/0x298
+[    5.674953][   T78]  __rpm_callback+0x50/0x200
+[    5.679405][   T78]  rpm_callback+0x7c/0x90
+[    5.683597][   T78]  rpm_resume+0x53c/0x720
+[    5.687791][   T78]  __pm_runtime_resume+0x58/0xa8
+[    5.692591][   T78]  imx8mp_blk_ctrl_power_on+0x3c/0x260
+[    5.697910][   T78]  _genpd_power_on+0xa0/0x168
+[    5.702453][   T78]  genpd_power_on+0xd8/0x248
+[    5.706902][   T78]  genpd_runtime_resume+0x12c/0x298
+[    5.711961][   T78]  __rpm_callback+0x50/0x200
+[    5.716414][   T78]  rpm_callback+0x7c/0x90
+[    5.720608][   T78]  rpm_resume+0x53c/0x720
+[    5.724803][   T78]  __pm_runtime_resume+0x58/0xa8
+[    5.729605][   T78]  pm_runtime_get_suppliers+0x6c/0xa0
+[    5.734840][   T78]  __driver_probe_device+0x50/0x140
+[    5.739903][   T78]  driver_probe_device+0xe0/0x170
+[    5.744790][   T78]  __device_attach_driver+0xc0/0x148
+[    5.749937][   T78]  bus_for_each_drv+0x90/0xf8
+[    5.754478][   T78]  __device_attach+0xa8/0x1a0
+[    5.759019][   T78]  device_initial_probe+0x58/0x68
+[    5.763908][   T78]  bus_probe_device+0x40/0xb8
+[    5.768447][   T78]  deferred_probe_work_func+0x90/0xd8
+[    5.773683][   T78]  process_one_work+0x214/0x608
+[    5.778398][   T78]  worker_thread+0x1b4/0x368
+[    5.782854][   T78]  kthread+0x14c/0x230
+[    5.786786][   T78]  ret_from_fork+0x10/0x20
+
+Luca
+
+--
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
