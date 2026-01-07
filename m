@@ -1,39 +1,39 @@
 Received: from ixit.cz (ixit.cz [185.100.197.86])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A740D1D5160;
-	Wed,  7 Jan 2026 11:50:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F31EA312813;
+	Wed,  7 Jan 2026 11:52:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.100.197.86
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767786661; cv=none; b=SrWNq1rQKYTktP1P+Jg13bWQ4skvvImVk81GS/QnUqmaDfXyc6wbEgk51wJh2WCnK1Qgb/1tyUsfipJw3Tcu0CrgZ0I7xzYVcEJUGEu3xVoEB/4+cMeMD8LV03CiHbaXj8C5r80McZ0F97ydv2+brOHLW+2U8RDNc0ICMOOecbE=
+	t=1767786770; cv=none; b=f0RNvf/flE5BGNc9sdYH/wfX6diyLVNsL4dYjqwrMaxpAhndLxmRhLjHu7NLfQUKoFlO+ENFs3THA5J5R0FFQHOwifoIOc+9CaM35ZhKFeH/9pJ561nmCfVNIXUIM1CcPwdtqNRJlOr9EsM3VXPxvy7b/Smy4u3mlHYztzUucvI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767786661; c=relaxed/simple;
-	bh=2eb19aCeWweN3OjT/ZnQX8/lB3Pd4ALGr9WmOf5pFxE=;
+	s=arc-20240116; t=1767786770; c=relaxed/simple;
+	bh=bZg8m3cKROY+1Tqf7JKBzI2I3vcVyp7FfY8czhrin74=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uaUZfrwgtTmVox6JymGs3UqXDci4tAeS7s15K7yFcMCQwIyTSsS0LvJow1Vr5VpRFKlzobP3fBmbgOF6N6tRtSWY30MpcR1f/eXK1gNqfLw9vqYNP6blLATeMEy+N8rkl7IFhwNpQPfQaBE3k0bupfOmCJhAx5NRkfw1acNpZvk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz; spf=pass smtp.mailfrom=ixit.cz; dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b=JXFsQ47D; arc=none smtp.client-ip=185.100.197.86
+	 In-Reply-To:Content-Type; b=BcLwtbILrtij9UEm7GuxAGudLFKQ34wXNuvsKk5CYpvHPgPtyyjYc98yYDmlABa2SWf2yY44jV1bg7STQBGZQIhHgA2itOWfHgMufRj3Oe4vXA+O0l7WKYPAFT52SxB1nie9CrN6pBL3VajBTkUS848FHkNkI88a35d/hs4PeJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz; spf=pass smtp.mailfrom=ixit.cz; dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b=M+YCveE8; arc=none smtp.client-ip=185.100.197.86
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ixit.cz
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b="JXFsQ47D"
+	dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b="M+YCveE8"
 Received: from [192.168.1.229] (unknown [194.212.224.132])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange x25519)
 	(No client certificate requested)
-	by ixit.cz (Postfix) with ESMTPSA id 79948534070A;
-	Wed, 07 Jan 2026 12:50:47 +0100 (CET)
+	by ixit.cz (Postfix) with ESMTPSA id C5299534070B;
+	Wed, 07 Jan 2026 12:52:44 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ixit.cz; s=dkim;
-	t=1767786647;
+	t=1767786765;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=zlDXa7q5Il5XZMyfDiGTvjFsmqM32++P20NGolMCuBo=;
-	b=JXFsQ47Dvis72dtWeon5DMtklesDEQjE7ysMNBlsS3Vf+JeVarJqopl8BSzBzRfkyh6OuH
-	iMwv6wB1GEcSUsdWhLbGmUzQBQnFY+kBZD0D/EDb0MyQPabtAfz/hexmYjTuXlJhy8dAeH
-	oSF4D3TL/oD8KWYfQtE4ECIH8QWZptI=
-Message-ID: <bbcbb227-7dd4-45dd-93a9-023ac445f4c0@ixit.cz>
-Date: Wed, 7 Jan 2026 12:50:45 +0100
+	bh=aS/cRuQZc4+qVgpsY1PgxDG7HqC1Gqd9wTGV+veBTSM=;
+	b=M+YCveE8YUEnmv4Qhy186TMdCkwO+f+fHaOkNNvNjx1mvqRmunnMxZRj7+NuEMa70dbtG2
+	6uwfX3D1Cx3Qb//Svp2E4x8FaeW+5leTFmFQq7B3m5BsWQkCj6metG4H1FjXUH/Nf7sOzd
+	J3BAu1Iq9Lh6oF47EyL4gbUvuWFcwQ8=
+Message-ID: <3d5868e7-13df-4608-95c7-02f08ae2024e@ixit.cz>
+Date: Wed, 7 Jan 2026 12:52:44 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -41,22 +41,21 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] clk: qcom: dispcc-sm7150: Fix
- dispcc_mdss_pclk0_clk_src
-To: Jens Reidel <adrian@mainlining.org>,
+Subject: Re: [PATCH v2] clk: qcom: dispcc-sdm845: Enable parents for pixel
+ clocks
+To: petr.hodina@protonmail.com, Konrad Dybcio
+ <konrad.dybcio@oss.qualcomm.com>, Rob Clark <robin.clark@oss.qualcomm.com>,
+ Dmitry Baryshkov <lumag@kernel.org>, Abhinav Kumar
+ <abhinav.kumar@linux.dev>, Jessica Zhang <jesszhan0024@gmail.com>,
+ Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
  Bjorn Andersson <andersson@kernel.org>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Danila Tikhonov <danila@jiaxyga.com>,
- David Wronek <david@mainlining.org>, Petr Hodina <phodina@protonmail.com>,
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- phone-devel@vger.kernel.org, linux@mainlining.org,
- ~postmarketos/upstreaming@lists.sr.ht
-References: <20250919-sm7150-dispcc-fixes-v1-0-308ad47c5fce@mainlining.org>
- <20250919-sm7150-dispcc-fixes-v1-3-308ad47c5fce@mainlining.org>
+ <sboyd@kernel.org>, Taniya Das <quic_tdas@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, phone-devel@vger.kernel.org
+References: <20260107-stability-discussion-v2-1-ef7717b435ff@protonmail.com>
 Content-Language: en-US
 From: David Heidelberg <david@ixit.cz>
 Autocrypt: addr=david@ixit.cz; keydata=
@@ -102,45 +101,39 @@ Autocrypt: addr=david@ixit.cz; keydata=
  zRKcgRumz2Tc1ouHj6qINlzEe3a5ldctIn/dvR1l2Ko7GBTG+VGp9U5NOAEkGpxHG9yg6eeY
  fFYnMme51H/HKiyUlFiE3yd5LSmv8Dhbf+vsI4x6BOOOq4Iyop/Exavj1owGxW0hpdUGcCl1
  ovlwVPO/6l/XLAmSGwdnGqok5eGZQzSst0tj9RC9O0dXO1TZocOsf0tJ8dR2egX4kxM=
-In-Reply-To: <20250919-sm7150-dispcc-fixes-v1-3-308ad47c5fce@mainlining.org>
+In-Reply-To: <20260107-stability-discussion-v2-1-ef7717b435ff@protonmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 19/09/2025 14:34, Jens Reidel wrote:
-> Set CLK_OPS_PARENT_ENABLE to ensure the parent gets prepared and enabled
-> when switching to it, fixing an "rcg didn't update its configuration"
-> warning.
+On 07/01/2026 12:44, Petr Hodina via B4 Relay wrote:
+> From: Petr Hodina <petr.hodina@protonmail.com>
 > 
-> Signed-off-by: Jens Reidel <adrian@mainlining.org>
+> Add CLK_OPS_PARENT_ENABLE to MDSS pixel clock sources to ensure parent
+> clocks are enabled during clock operations, preventing potential
+> stability issues during display configuration.
+> 
+> Fixes: 81351776c9fb ("clk: qcom: Add display clock controller driver for SDM845")
+> Signed-off-by: Petr Hodina <petr.hodina@protonmail.com>
 > ---
->   drivers/clk/qcom/dispcc-sm7150.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+> We are currently running the latest linux-next snapshots (next-202511*
+> and next-202512*) and have encountered random freezes and crashes on the
+> Pixel 3, as well as crash dumps on the OnePlus 6 and 6T.
 > 
-> diff --git a/drivers/clk/qcom/dispcc-sm7150.c b/drivers/clk/qcom/dispcc-sm7150.c
-> index 0a7f6ec7a2a737c6f6f0484c71dd80f3dbf758b6..811d380a8e9f9bd8a8f1aecba567ebffdb893f5d 100644
-> --- a/drivers/clk/qcom/dispcc-sm7150.c
-> +++ b/drivers/clk/qcom/dispcc-sm7150.c
-> @@ -357,7 +357,7 @@ static struct clk_rcg2 dispcc_mdss_pclk0_clk_src = {
->   		.name = "dispcc_mdss_pclk0_clk_src",
->   		.parent_data = dispcc_parent_data_4,
->   		.num_parents = ARRAY_SIZE(dispcc_parent_data_4),
-> -		.flags = CLK_SET_RATE_PARENT,
-> +		.flags = CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE,
->   		.ops = &clk_pixel_ops,
->   	},
->   };
+> This commit fixes the stability issue. I've checked other SDM dispcc
+> files and they also contain this configuration.
+> 
+> For safety I also set the configuration for `disp_cc_mdss_pclk1_clk_src`
+> though it should be sufficient only for `disp_cc_mdss_pclk0_clk_src`.
+> 
+> Kind regards,
+> Petr
+> ---
+> Changes in v2:
+> - Remove commits from v1 and introduce proper fix.
+> - Link to v1: https://lore.kernel.org/r/20251213-stability-discussion-v1-0-b25df8453526@ixit.cz
+> ---
+>   drivers/clk/qcom/dispcc-sdm845.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
 > 
 
-Hello Jens,
-
-do you know if in the addition to dispcc_mdss_pclk0_clk_src 
-pclk1_clk_src may need  this flag too?
-
-We sent similar patch for sdm845 with both receiving 
-CLK_OPS_PARENT_ENABLE, as some sdm845/sm7150 device may have two DSI.
-
-What do you think?
-
-David
-
-P.S. Added +Petr and +Konrad to Cc.
+Reviewed-by: David Heidelberg <david@ixit.cz>
