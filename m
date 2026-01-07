@@ -1,123 +1,105 @@
-Received: from mail-ua1-f65.google.com (mail-ua1-f65.google.com [209.85.222.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C78B9302773
-	for <linux-clk@vger.kernel.org>; Wed,  7 Jan 2026 11:17:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88CDA30276A;
+	Wed,  7 Jan 2026 11:29:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767784675; cv=none; b=CoEREWa78e/jU7HcGLBPEwRsdhxLU7NNbRqdSkTDOdWXz4/u7kq1BDk2GPdGGRbJaUJ0RTK871OQrfiTtoBhkknYtrqbEBm2TNsrBaTf9rlKN7JbcbPs3BxK1PFTVxJz1RYxDloAZ8A83O8PmgAZwDVinaU1pgpZmoEeynycqvI=
+	t=1767785368; cv=none; b=ETzwbRSlLsFeWfoHfSiqEk5DHunfpLD+jSD6yMSUR6/kK/ZjdM2Wbn7Cpm89/OdzUd947LbHFvn478giEAD2xxO1IKQchimmSkf1gdfL1SViPI5W0dQOY0kX8+NHLIz33vNW4Cp3Fq5NXgvmjWa1IjC/GPN0ZNgHrvO5hLBTlgU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767784675; c=relaxed/simple;
-	bh=BU2zF0S3mv+/DgWWcbZd1AF3XocUunMy7BAPkCdJ31o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rg6fRixw9WfBGRqrC9JjMWwQLhKTRDcBPgWU/rfQRC8bRZURrITUE6y9mprtdM3PwD1XphB+aNcrB2wTYWI9m+JqzFmeTn81Oe9kiknHMci0VH/vcmlkanO47XZhyGiS4maEAEYYGKv+Sm1cJLCadwcBFubXnYRsKG3wW0GXPKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f65.google.com with SMTP id a1e0cc1a2514c-943d0cafe77so637568241.3
-        for <linux-clk@vger.kernel.org>; Wed, 07 Jan 2026 03:17:53 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767784672; x=1768389472;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=z2xoUaAszeiwsol2C34FUeUV6F5U7+1lQLKuib8MADg=;
-        b=Ht7rrBj3kz+GchFjQ2K0hGbbf0IpzKj+HjJeyWDZzvkqgnPPEP/mT+Bjv7xpWL0LgP
-         eR8zyySGqSVsV37W7PSsMK2DSTqUBhkAL3i76LSgCHUDYrFQMh3kup/YI8GS1OMUCKn8
-         T1pFKbUTY7DxQMh/3kCHNNSWPnpob+8t569d2QHcU9Q/qwUmVLI8CaHeUJes4Sk39Rkm
-         JRaj3qrFvwBU5ZIIoyPhp5zzxq9/1/Yy3JLT938iOomP3rN0rwZHJSiP0RMjWJ/K17wh
-         Gh5MwkuaAMNSoVqJYqFkLw/Hx/B3KO4StLGnb09ABjKUFtHLEQNRRjyl3B2qJzpdK8Oy
-         oo+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXBY4TuhXBkwkYOM6QBt0nZr8lokwyG3wlqJg4AkXijreToaL5WocRywRm95Vh5AUPaoArcnUFvmMY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0JfaI6WK3tEFbVXNvDwZ8s5vO+AfqrBPDkedwzZXqlHBaKCrX
-	0racOfpE/kfjwpOJKzbRbdTlYUUhj+wLNy2hpA87hjIy5+KhHp9FkXKLOvDGUGMANYg=
-X-Gm-Gg: AY/fxX5QuEkwF2onJ2jmRbyqZ6YRokHVJwTr+sCpTV6EQiOBwKxQTCegXL8lNZUiEPz
-	RvR8qqXIwHMATjuPGaUeLs3PJt6vd5YqQ/nCzLgJD54DPdABJGXGGaBV+1RTI15x9Nn8RtEPwXI
-	e5Uy70zFYhRWn5v5PPkuDpjpoapG/JyXun+e+58i2cJWHtIoZ9oUfMt0baEYOeDF1uYtx7pFcWg
-	4hH7zC4QDhSqxztpfVZRE75HXQ2777DMPaSVRmhZH4k3kcqTiq/gUShpwVgR+egJSB4eKe3ou1i
-	eEPSLw1TxntSlt5uNSiqOVUBjU7/rhW2yWyCMi8eiDxY0kyGnHYSsru2OtjFzZRHWdGW4Hk+3OS
-	GQERarANb3XXIzq7alRDp4vpAGDkQdZRYxcK1uxY7cGXXc+cznwS14XFsX1l7v6ew2iEfRDnAPO
-	4G0nv+zV3wfC9my9iWUIJ52TNuaKMRbSlUs0Vxcjw72jixJlCZH3VM
-X-Google-Smtp-Source: AGHT+IGHLaIbIE5SZ62cSs5Hit3Zs1B2YWNT5V5L415UO2Lp5C8GSQ/MSnzu9i4CSTBvX/giAoFm4g==
-X-Received: by 2002:a05:6102:5043:b0:5b1:15:1986 with SMTP id ada2fe7eead31-5ecb6859ca0mr630100137.15.1767784672585;
-        Wed, 07 Jan 2026 03:17:52 -0800 (PST)
-Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com. [209.85.221.180])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-5ec772afecasm2478424137.11.2026.01.07.03.17.52
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 07 Jan 2026 03:17:52 -0800 (PST)
-Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-559966a86caso547881e0c.2
-        for <linux-clk@vger.kernel.org>; Wed, 07 Jan 2026 03:17:52 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXmCUeQ9Gc6IhSd2yNvAjWAaylKLFD43LNWLnSGZjXEN+RgUMHKRGLpANnPWKY/ILyE5Xx8OOH7Rbw=@vger.kernel.org
-X-Received: by 2002:a05:6122:18b5:b0:563:4a88:6ecb with SMTP id
- 71dfb90a1353d-5634a88727dmr391501e0c.18.1767784672114; Wed, 07 Jan 2026
- 03:17:52 -0800 (PST)
+	s=arc-20240116; t=1767785368; c=relaxed/simple;
+	bh=i1yo2t54coFzK3rbZvyf0Jb3hljZY56To9lo5lRmA/0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RPEHaVgvks2keFJ/iTN2H1iHwaMjGBCNHHPhxYAGkYQpad4x3C8OfHQGXu7L60CXvIJqWhUkCZYm2EFE7pByUzp699x/yc9TsJxEUqiaQApEi1Jt9BT0HF5Z8KN+LCRSGDVHahajdBMdFt8GvCnggl8iD9719rSkxcbomeGSTBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=t7B8QgSm; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="t7B8QgSm"
+X-UUID: 1c6e8e56ebbc11f0942a039f3f28ce95-20260107
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=FFpEL9NcSyNwFOdBNUyHmSYnBxBxO+PAWBfQ2Qv2ozs=;
+	b=t7B8QgSmgoAeQx87QOqBVhGzN4bRJIy88/WK/5DJA5Ydr0SFX4U/ax1U5XkQJ+bCwTkEjV1yLsWfWz7AYrvqZPxLLc22A+J4WRmGHXwagN8ZEZ6W+cU+VAVVyb+dBykVM2+QD9GHpIXObcsYxkyuTPVIbDnigbireQHci3I9ojI=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.9,REQID:815aec23-fa90-4a52-a056-a6b17772bbfd,IP:0,UR
+	L:0,TC:0,Content:-25,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:-25
+X-CID-META: VersionHash:5047765,CLOUDID:69617c26-5093-468b-b7e7-d8195251fc6e,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102|836|888|898,TC:-5,Content:0|15|5
+	0,EDM:-3,IP:nil,URL:0,File:130,RT:0,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OS
+	A:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: 1c6e8e56ebbc11f0942a039f3f28ce95-20260107
+Received: from mtkmbs11n2.mediatek.inc [(172.21.101.187)] by mailgw01.mediatek.com
+	(envelope-from <macpaul.lin@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1712382546; Wed, 07 Jan 2026 19:29:21 +0800
+Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
+ mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.29; Wed, 7 Jan 2026 19:29:19 +0800
+Received: from mtksitap99.mediatek.inc (10.233.130.16) by
+ mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.2562.29 via Frontend Transport; Wed, 7 Jan 2026 19:29:19 +0800
+From: Macpaul Lin <macpaul.lin@mediatek.com>
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Macpaul
+ Lin <macpaul.lin@mediatek.com>, "Garmin . Chang" <Garmin.Chang@mediatek.com>,
+	<linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>
+CC: Jian Hui Lee <jianhui.lee@canonical.com>, "Andy . Hsieh"
+	<andy.hsieh@mediatek.com>, Zoran Zhan <zoran.zhan@mediatek.com>, Cyril Chao
+	<Cyril.Chao@mediatek.com>, Chris-QJ Chen <chris-qj.chen@mediatek.com>, Ann
+ Cheng <ann.cheng@arm.com>, Bear Wang <bear.wang@mediatek.com>, Pablo Sun
+	<pablo.sun@mediatek.com>, Ramax Lo <ramax.lo@mediatek.com>, Macpaul Lin
+	<macpaul@gmail.com>, MediaTek Chromebook Upstream
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>, <Stable@vger.kernel.org>
+Subject: [PATCH RESEND] clk: mediatek: set CLK_IGNORE_UNUSED to clock mt8188 adsp audio26m
+Date: Wed, 7 Jan 2026 19:29:02 +0800
+Message-ID: <20260107112902.3080554-1-macpaul.lin@mediatek.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251208101356.101379-1-biju.das.jz@bp.renesas.com> <20251208101356.101379-3-biju.das.jz@bp.renesas.com>
-In-Reply-To: <20251208101356.101379-3-biju.das.jz@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 7 Jan 2026 12:17:41 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdUbAU68yuW7aok1WXMzNOVGTZtVJNZQLJyyrbvk976szg@mail.gmail.com>
-X-Gm-Features: AQt7F2rbOvROcLbmdVhiAEERGEuuY21engHsV7c_FEPthrjOFbc3I4Drmat3D7o
-Message-ID: <CAMuHMdUbAU68yuW7aok1WXMzNOVGTZtVJNZQLJyyrbvk976szg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] clk: renesas: rzv2h: Deassert reset on assert timeout
-To: Biju <biju.das.au@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Stephen Boyd <sboyd@kernel.org>, Biju Das <biju.das.jz@bp.renesas.com>, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-MTK: N
 
-Hi Biju,
+Set CLK_IGNORE_UNUSED flag to clock adsp audio26m to prevent disabling
+this clock during early boot, as turning it off causes other modules
+to fail probing and leads to boot failures in ARM SystemReady test cases
+and the EFI boot process (on Linux Distributions, for example, debian,
+openSuse, etc.). Without this flag, disabling unused clocks cannot
+complete properly after adsp_audio26m is turned off.
 
-On Mon, 8 Dec 2025 at 11:14, Biju <biju.das.au@gmail.com> wrote:
-> From: Biju Das <biju.das.jz@bp.renesas.com>
->
-> If the assert() fails due to timeout error, set the reset register bit
-> back to deasserted state. This change is needed especially for handling
-> assert error in suspend() callback that expect the device to be in
-> operational state in case of failure.
->
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Fixes: 0d2f2cefba64 ("clk: mediatek: Add MT8188 adsp clock support")
+Cc: Stable@vger.kernel.org
+Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
+---
+ drivers/clk/mediatek/clk-mt8188-adsp_audio26m.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Thanks for your patch!
-
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-> --- a/drivers/clk/renesas/rzv2h-cpg.c
-> +++ b/drivers/clk/renesas/rzv2h-cpg.c
-> @@ -1366,8 +1366,11 @@ static int __rzv2h_cpg_assert(struct reset_controller_dev *rcdev,
->
->         ret = readl_poll_timeout_atomic(priv->base + reg, value,
->                                         assert == !!(value & mask), 10, 200);
-> -       if (ret && !assert) {
-> +       if (ret) {
->                 value = mask << 16;
-> +               if (assert)
-> +                       value |= mask;
-> +
-
-Same here: if readl_poll_timeout_atomic() would use its own
-variable:
-
-    value ^= mask;
-
->                 writel(value, priv->base + GET_RST_OFFSET(priv->resets[id].reset_index));
->         }
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/drivers/clk/mediatek/clk-mt8188-adsp_audio26m.c b/drivers/clk/mediatek/clk-mt8188-adsp_audio26m.c
+index dcde2187d24a..b9fe66ef4f2e 100644
+--- a/drivers/clk/mediatek/clk-mt8188-adsp_audio26m.c
++++ b/drivers/clk/mediatek/clk-mt8188-adsp_audio26m.c
+@@ -20,8 +20,8 @@ static const struct mtk_gate_regs adsp_audio26m_cg_regs = {
+ };
+ 
+ #define GATE_ADSP_FLAGS(_id, _name, _parent, _shift)		\
+-	GATE_MTK(_id, _name, _parent, &adsp_audio26m_cg_regs, _shift,		\
+-		&mtk_clk_gate_ops_no_setclr)
++	GATE_MTK_FLAGS(_id, _name, _parent, &adsp_audio26m_cg_regs, _shift,	\
++		&mtk_clk_gate_ops_no_setclr, CLK_IGNORE_UNUSED)
+ 
+ static const struct mtk_gate adsp_audio26m_clks[] = {
+ 	GATE_ADSP_FLAGS(CLK_AUDIODSP_AUDIO26M, "audiodsp_audio26m", "clk26m", 3),
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.45.2
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
