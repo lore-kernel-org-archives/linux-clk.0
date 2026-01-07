@@ -1,164 +1,136 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C2D7328B48
-	for <linux-clk@vger.kernel.org>; Wed,  7 Jan 2026 11:38:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 409A72E228C;
+	Wed,  7 Jan 2026 11:44:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767785915; cv=none; b=H5IGxQahpX4brNj4Fxl6bv6i4oerpWel/A3uAIKaQdBQ9HpRX3sPtHY9xNrjIO0eos8n71bOEgX/OBy5JiYw4HbX4sQA4d5Glpt6L7kc/8GtAnv6QI5KL2yJqlrKbFLedS1pKHKVBoNOK9/LTCnC19/rJzX37X51PP/yhJss0ak=
+	t=1767786293; cv=none; b=fOksGfi4cEwgPyF54pPiKHvKZUrwY2j8emCaV1ErV/aoRUx+3SQe8i25QDhEPqcand7ssU9M+nY66Jk6XBoNsLVEU+SsH6HnOTitW1r3cV7slHJRoVYzKnpyAT63eoXbTOuKbk9PE+lYcqJsk2Jh0BB7Wh+9auRkoDZ8Za0uzzc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767785915; c=relaxed/simple;
-	bh=4zB7b0UM3QAE303z2aGV2y+diJT3NVYpuvJUbKRl2Ng=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m3g6AEj20zQs+oGeMwEzAHC343tnlwY5h96W19C10bDf9Cm7Bs6WY9+AcK+vq7ODI5iQAsxnUSEpuctqytIjCY2qXj1+uD9Qb22jm4bKNoNWxcMiO8dGExFlvtOdcUg60i68t+8zGmSSwPgrMP+uUavj6Ah7t3//G4q71zukmNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=OZOLRGdb; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=d/EZpGTY; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1767786293; c=relaxed/simple;
+	bh=i12dijGR2EG5TROlBAmjQZIcGVlj0wQM3L9IkBSHFK8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=nBWIkpJsszILROG3nRlDYk76b1fY4vfLXYR5s7Ynzf3KVRCrHnlDbaos1Paezzd1u+2WGIVZLD4/++Oimzqx/3Bqb8h+pSzr+oFa/xccnFQjtE9EsbY3x9P5PdHYiBu7IFHVCjCf23Ysu+//mxdsuOYkAdXO8tq8AddPnpT0bck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nqlN334W; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="OZOLRGdb";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="d/EZpGTY"
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6079ehCs2988609
-	for <linux-clk@vger.kernel.org>; Wed, 7 Jan 2026 11:38:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=cTH/4ZeodwA/Q+RzWHaBeEgt
-	NJJIoFwg96ta/DUybCQ=; b=OZOLRGdbF+iM/6nGiViEWp6GUVmJ1jbNqw8BDRKy
-	GVRMBFHZbDKcdByXYp9f1Y2L25UOk6U1YXqXadHLdz/z6ORpu9vLR8zZhBkwKGv0
-	4mf88z583y1k7VTLxclG4zVIwN5BUB7tSbEziwxi5nFlnVmX310ppbpU9wK2POSi
-	FtahubmmKFvcRx9S1MBjShx+9W2JSed33cU1hsKMs47z3+lNhBE7GGcWrqGheKN4
-	PKKtVkDbi3ovCo9yDiUukmkP1wbwDW4HA2wnDkfd5sm4jZXr7o+jUqbWSRs3zC07
-	7cesJYcAew9cWh60c+O4JnZEsS7p/3MqLFuEyNNFXy3rDA==
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4bhn2nrbnf-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Wed, 07 Jan 2026 11:38:31 +0000 (GMT)
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-8b22ab98226so144938885a.2
-        for <linux-clk@vger.kernel.org>; Wed, 07 Jan 2026 03:38:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1767785910; x=1768390710; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=cTH/4ZeodwA/Q+RzWHaBeEgtNJJIoFwg96ta/DUybCQ=;
-        b=d/EZpGTYQA1AXciiIDf0+Pt+VkUi0wpoXS9+RpPtC/rYW1lGQHELMMtAdRg3kv7Wqg
-         IaaDFuR1Wndw9BwyyBcaFgcYAHuIO0Lo2KIIN9Z+Sv3oMuJTTYmGPwvQio/xncMsHdq/
-         745arw+L6A1kGIKIr9+hwRvDarT7lX2qhWECsDTja1DCKERxVzn7YBbDiNmFlzbksFlG
-         MYr+1ge5iU14LmcE7ri4rYhdoqti/Rh1KsUIyQFAEGj/1FPhbaGu7tRrH6rFfqKdwR9w
-         hVhhB8XXd0Usn3BGliBU3qa/URKZEsHDtnJtQF6l1ElTNRNGzHeLUY9AGe2Y42004xSz
-         /49A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767785910; x=1768390710;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cTH/4ZeodwA/Q+RzWHaBeEgtNJJIoFwg96ta/DUybCQ=;
-        b=Z4NEs7cPQpu1NkKpVJMPfFCwKvdxWKqm/Aqdqw4UksaDhGUk8rl7a8WeI8VSvYrAbw
-         iA65/cE70a4ePamtml9q04in+zriogHS8512+hFHYJPmwSBW6l198Dj0YWmaJvfapxHU
-         TMSis1HbXZ97NVortKKHsUzn+SoCZ9Q8sH1wag/QCQLqYnc1kIs7/tSgSeCVQ0lBsvXe
-         AdXesEbhipUOmzzQFJcFC8cZj+pO5lQmVBm6/Ggw6E6MDF5bkmcq6iFL38k5+8bygus/
-         6pWhYtm+5eo2fpn/0gE7YEaJXosIYECssUmGzr8k+0sRgpfnYuJyF6bf2LHJl1NRxN4P
-         GkxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWGLslG1h8LmO7kqNobGh3Q44SRiBhXSLYZnEJ/MjdLVCKYhAiODy6fEIEZyTBvDW3u1riePuuaesU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNvSXp8sbtJcCtHtbbgYuz4X+L5Tne3f1k4+bGbOyownLataqQ
-	d6o+ku6HLIGj9k0zItJ1G8qLeWdIdtI7O7fdrPUR52hYH4bSFL51Xhso5NVh6ne4//zUFyjEEe1
-	DP+qGCc19xJ20YlETJQsZ55xxCgXh9mSQxyXgdIgtu2fTYOTpMJ0wt6xTv0ABYGQ=
-X-Gm-Gg: AY/fxX5uA2MjyruGBN6/Oe/2pdyEmqIoZ/+0TtFccU3Zsm/yaWqmHAYOyjNxcTy5VUT
-	zn3oATdObhbXu6+YRw1axrkeJkuhOW67BEIdJ1Jy32xt4mZ8jS7hNAFLodl/SrNpHF5TmNFsSYP
-	3Ju4Ofc46sQc2DIjCJsXa2i0b8dbFWs8R6/Rld6rpUBegkSEvlConmFzCTzOjK0Rdpf8NJQM5Ne
-	1/v8nx7Nm3b3wcUAvU6Kruyusnrjs+jcWIkKVpWE0a84GTWHqiOAVDT6GzrQSJYyKeVaK907d1P
-	X3m2XZuYVxR9yIpw0/74XnPFmg/zVS/MwEOewuXAc9qaIasQIP7bbtURTaNohSDxi7yZYiaIp+J
-	Z65kp0xL5F8BzFrLcVdY/bsMSIJQB4Egqvs5+4XznF8GCfiZss5i75YoNwIO2sCYzgD8PA7NnaF
-	s1NNFqRZTJpQ/GUL662NB00Xk=
-X-Received: by 2002:a05:622a:20e:b0:4f4:e15e:528f with SMTP id d75a77b69052e-4ffb49c7d3emr28885811cf.62.1767785910434;
-        Wed, 07 Jan 2026 03:38:30 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFfaBxfXO0EARRWs+zjZ9c7H9zOXqTKVd04HB62R5Cos9qRCEQe2HmgxwEezgO5LrfADT4Gyg==
-X-Received: by 2002:a05:622a:20e:b0:4f4:e15e:528f with SMTP id d75a77b69052e-4ffb49c7d3emr28885451cf.62.1767785910039;
-        Wed, 07 Jan 2026 03:38:30 -0800 (PST)
-Received: from umbar.lan (2001-14ba-a073-af00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a073:af00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-59b65b89842sm1242653e87.0.2026.01.07.03.38.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Jan 2026 03:38:29 -0800 (PST)
-Date: Wed, 7 Jan 2026 13:38:27 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Taniya Das <taniya.das@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
-        Imran Shaik <imran.shaik@oss.qualcomm.com>,
-        Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org,
-        Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH v3 02/11] clk: qcom: clk-alpha-pll: Add support for
- controlling Pongo EKO_T PLL
-Message-ID: <7lbw6rrrsxitcldgahf2wwqklzy3nvcmem7aylsw5yvbsbom2b@lgel7iicehrf>
-References: <20260107-kaanapali-mmcc-v3-v3-0-8e10adc236a8@oss.qualcomm.com>
- <20260107-kaanapali-mmcc-v3-v3-2-8e10adc236a8@oss.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nqlN334W"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id B73D1C4CEF7;
+	Wed,  7 Jan 2026 11:44:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1767786292;
+	bh=i12dijGR2EG5TROlBAmjQZIcGVlj0wQM3L9IkBSHFK8=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=nqlN334WX/TxihteSi+cCHq2vtVfblVpOeOxwUcMH7tl8POZAXBErk8tlfwy6KiH6
+	 dCIcme6hB0I0NPs/IF1+C0fi5tX5HAv6OFnFUWHBgdBIed+kt2k+3MRAlp+jzNr9ar
+	 uGeeEYWdQXr53Sa+nf7DRrqI8+KW/rXNReIiMI/Cm+R1a96IRuKAjjmomCz1NZFZL7
+	 NroZBHgFA/GNLNGBxjwdc3CpWh36q6RilYZP4a1WtF7dpjbTvAhetMVFUh8W/DAETE
+	 6qM793cd/Z5mjXsqzhNCbRdKUaRCgNPZ/7DE3rp4lpDhosEKrehfgqkCXb195Dcc/X
+	 hYEtDZwO53d4g==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC968CD5856;
+	Wed,  7 Jan 2026 11:44:52 +0000 (UTC)
+From: Petr Hodina via B4 Relay <devnull+petr.hodina.protonmail.com@kernel.org>
+Date: Wed, 07 Jan 2026 12:44:43 +0100
+Subject: [PATCH v2] clk: qcom: dispcc-sdm845: Enable parents for pixel
+ clocks
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260107-kaanapali-mmcc-v3-v3-2-8e10adc236a8@oss.qualcomm.com>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTA3MDA5MiBTYWx0ZWRfX29uhwQ8lrYId
- R7Bq2iGkG5/DNhsi4SQO/BoA3zu6LT/N8zkFDJ7k/IHRo3tVn6OrGfnih4vbV44RPf1b73JL8vs
- 9xWkCZDOAnlQ1YhhqT8oysMtWc6yit8thdUWxzTO0woI6iW0t7ob8mMa01+z22xfcjO9CiPthH4
- tq2WNdB/xERPTfQgpl1E4j3nkn7E0FWfAPNVGdoORw2xa66rdv9yk9vPxpmsPpqO3Do6fG/A6ee
- XI0/CAT+axol9WFbwjlUh3dNHvcfCSslRjEVvXZdS8RoMvbjUtuKa8dQnwTfM3gZsprHSDu2JjY
- oglmNhWNIKu6PzLu839LtG+fIMYuEuq6fUUP8qp3bkPvLC7Ykulo+JDv3JpVnpxc2o5hO7iiBCY
- lNrKK34VD6C9CfpwA4vyDa/C8Uf3heXLAXungUP82e8Usf/S6mhpXeiZyKGc98bb+2hKVkYQWxw
- Zo6wBY8vS4v22dPUdrA==
-X-Authority-Analysis: v=2.4 cv=CYEFJbrl c=1 sm=1 tr=0 ts=695e45b7 cx=c_pps
- a=50t2pK5VMbmlHzFWWp8p/g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=vUbySO9Y5rIA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=EUspDBNiAAAA:8 a=Rar_LHnIVK7gKg-YXgkA:9 a=CjuIK1q_8ugA:10
- a=IoWCM6iH3mJn3m4BftBB:22
-X-Proofpoint-GUID: QVqyHyJaa0_QK8HCOajaZs5fsDizTLi5
-X-Proofpoint-ORIG-GUID: QVqyHyJaa0_QK8HCOajaZs5fsDizTLi5
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2026-01-07_01,2026-01-06_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 lowpriorityscore=0 suspectscore=0 clxscore=1015
- impostorscore=0 malwarescore=0 phishscore=0 spamscore=0 adultscore=0
- bulkscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.22.0-2512120000
- definitions=main-2601070092
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260107-stability-discussion-v2-1-ef7717b435ff@protonmail.com>
+X-B4-Tracking: v=1; b=H4sIACpHXmkC/22NzQ6CMBCEX4Xs2Rq62EY9+R6GA/RHNjFgurUBS
+ d/dQuLN4zeZ+WYFdoEcw7VaIbhETNNYAA8VmKEbH06QLQxYo5IoUXDsenpSXIQlNm/eBsJK7XV
+ nSqO+QJm+gvM079p7W3ggjlNY9pckt/QnbP4LkxS16FFZfz6pRqG+0UzxaD7Q5py/CAgnTbYAA
+ AA=
+X-Change-ID: 20251212-stability-discussion-d16f6ac51209
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
+ Rob Clark <robin.clark@oss.qualcomm.com>, 
+ Dmitry Baryshkov <lumag@kernel.org>, 
+ Abhinav Kumar <abhinav.kumar@linux.dev>, 
+ Jessica Zhang <jesszhan0024@gmail.com>, Sean Paul <sean@poorly.run>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Petr Hodina <petr.hodina@protonmail.com>, 
+ David Heidelberg <david@ixit.cz>, Taniya Das <quic_tdas@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ linux-clk@vger.kernel.org, phone-devel@vger.kernel.org
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1767786291; l=2169;
+ i=petr.hodina@protonmail.com; s=20260107; h=from:subject:message-id;
+ bh=rhHlOC5VvJkw1jNcO5wjpQE+ODSzLv7eBLSkXsZ0iyw=;
+ b=WTR4lz69OoEn9zFkm8BKk7lSNL6QEdFohSqc+8MLAekv3FMBPnv7HPsoadbU3e3BuDvuWolXZ
+ r5ZqrFE4sdpAeoGdrfVv6WacO2nwHCegWEbP4Qbn6nUKp3eJInBeEf7
+X-Developer-Key: i=petr.hodina@protonmail.com; a=ed25519;
+ pk=3QaVc6AaAu1IsyyH86+LIOOFhD7kCws8Xhe+wwyE7Bg=
+X-Endpoint-Received: by B4 Relay for petr.hodina@protonmail.com/20260107
+ with auth_id=594
+X-Original-From: Petr Hodina <petr.hodina@protonmail.com>
+Reply-To: petr.hodina@protonmail.com
 
-On Wed, Jan 07, 2026 at 03:13:05PM +0530, Taniya Das wrote:
-> Add clock ops for Pongo EKO_T PLL, add the pll ops for supporting
+From: Petr Hodina <petr.hodina@protonmail.com>
 
-Nit: PLL
+Add CLK_OPS_PARENT_ENABLE to MDSS pixel clock sources to ensure parent
+clocks are enabled during clock operations, preventing potential
+stability issues during display configuration.
 
-> the PLL.
-> 
-> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
-> ---
->  drivers/clk/qcom/clk-alpha-pll.h | 2 ++
->  1 file changed, 2 insertions(+)
-> 
+Fixes: 81351776c9fb ("clk: qcom: Add display clock controller driver for SDM845")
+Signed-off-by: Petr Hodina <petr.hodina@protonmail.com>
+---
+We are currently running the latest linux-next snapshots (next-202511*
+and next-202512*) and have encountered random freezes and crashes on the
+Pixel 3, as well as crash dumps on the OnePlus 6 and 6T.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+This commit fixes the stability issue. I've checked other SDM dispcc
+files and they also contain this configuration.
 
-> 
+For safety I also set the configuration for `disp_cc_mdss_pclk1_clk_src`
+though it should be sufficient only for `disp_cc_mdss_pclk0_clk_src`.
 
+Kind regards,
+Petr
+---
+Changes in v2:
+- Remove commits from v1 and introduce proper fix.
+- Link to v1: https://lore.kernel.org/r/20251213-stability-discussion-v1-0-b25df8453526@ixit.cz
+---
+ drivers/clk/qcom/dispcc-sdm845.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/qcom/dispcc-sdm845.c b/drivers/clk/qcom/dispcc-sdm845.c
+index 2f9e9665d7e9..78e43f6d7502 100644
+--- a/drivers/clk/qcom/dispcc-sdm845.c
++++ b/drivers/clk/qcom/dispcc-sdm845.c
+@@ -280,7 +280,7 @@ static struct clk_rcg2 disp_cc_mdss_pclk0_clk_src = {
+ 		.name = "disp_cc_mdss_pclk0_clk_src",
+ 		.parent_data = disp_cc_parent_data_4,
+ 		.num_parents = ARRAY_SIZE(disp_cc_parent_data_4),
+-		.flags = CLK_SET_RATE_PARENT,
++		.flags = CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE,
+ 		.ops = &clk_pixel_ops,
+ 	},
+ };
+@@ -295,7 +295,7 @@ static struct clk_rcg2 disp_cc_mdss_pclk1_clk_src = {
+ 		.name = "disp_cc_mdss_pclk1_clk_src",
+ 		.parent_data = disp_cc_parent_data_4,
+ 		.num_parents = ARRAY_SIZE(disp_cc_parent_data_4),
+-		.flags = CLK_SET_RATE_PARENT,
++		.flags = CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE,
+ 		.ops = &clk_pixel_ops,
+ 	},
+ };
+
+---
+base-commit: f96074c6d01d8a5e9e2fccd0bba5f2ed654c1f2d
+change-id: 20251212-stability-discussion-d16f6ac51209
+
+Best regards,
 -- 
-With best wishes
-Dmitry
+Petr Hodina <petr.hodina@protonmail.com>
+
+
