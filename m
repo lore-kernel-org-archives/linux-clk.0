@@ -1,185 +1,224 @@
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2E68310640
-	for <linux-clk@vger.kernel.org>; Wed,  7 Jan 2026 09:27:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33D5231690E
+	for <linux-clk@vger.kernel.org>; Wed,  7 Jan 2026 09:43:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767778072; cv=none; b=W4Nqn+mo5ternHFnzzPDLade5YiqFKqge2UfmiB5ys8kReWWlK8elgvE0Wp+yja+LfVYgwG+WrZNXHf8MCGBqLk2eeFL4AtaQ0xJSYENanx2l1tVYCugAOioUAURipkwWT4Xf8ReS5eWaM4hPe+L6AKoukWcT5JOiqTUYOd+Gac=
+	t=1767779008; cv=none; b=KsaaqW7SbuN5jxnr1vbZV7cHZE3Ouj3WFz2nqBO2Uc6xbfw4BifSO+YJmkjh/u5F5jqAN5T1d5QvWaJc5j/GNNZTIxSe7xpDR2ehOAJez0zw/98+lhvbAtK5uyNIJj0wyuLp8DZGvGOwcQcLZTdBOlFk4DBNMqKay1/tHNJCoyU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767778072; c=relaxed/simple;
-	bh=s9kdm9Cpsfog1txHC6+3qJtrUIxz3gqYU88O+Wpev3k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XVx1Y7+wKu472S1Uxs+4KzXkhYxJa9b37nYbGT6IH35zo++BpVwyAxIaTRpEBJsyCOR7qIBIUwuftLciwSe8e+7QuHLCKLcClOu86DQEG0JHQUUQ8LXySZod9vDjvOdUPawQ1/FLN5nua6Zy9nM6f7/3L1dFdbVjiMos8PZUBss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PkNdO39Z; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1767779008; c=relaxed/simple;
+	bh=coDXjf0PxQnV7qdSfM1xAyiHQJbdRPteYaZAy29zZPs=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=fp6qKjmtuS4t3aH23Vj5JAoLZgRVSTW+zf/DVm6HF+20R2NtpdwZ0G/m9oQwOB7ohxHW1XC+Z43RGOp0VHR5N2L+aU6AeLWahlUmzi2eTHFbVeL7ScUPRegcaZmd2FQ2fgBUR+u6T6eIh7j1w+PXrt38bvXPpnde1eoyBXtdfR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=bVBEMGcw; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=fJiXeo+G; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PkNdO39Z"
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-64ba74e6892so3007579a12.2
-        for <linux-clk@vger.kernel.org>; Wed, 07 Jan 2026 01:27:50 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="bVBEMGcw";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="fJiXeo+G"
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6078ZN0Q1979616
+	for <linux-clk@vger.kernel.org>; Wed, 7 Jan 2026 09:43:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=l6RdcxF0KkuoMThTWV/0U3
+	PjiCm3+6V4PEqv1V5VmIM=; b=bVBEMGcww4Vw7b/c9KYdn7pvMqA4Tcdx8irdqG
+	mzf1riG3iQ0XlX0ZlwbBzRBQM7ZrRUGp5n+13S86FKN2q4QS6sxTVHuWZUWGAO9r
+	9lEUlf5IudA8uVWFSYsUqhbHR2Zy2C51c5PSxb4HwYmQa8jPilcy0SLsFQkVcLno
+	xkfkYz49ekF8qo+LXA8+CCBTOJYVuHSm8DyxvtLIanHO5nL8IDBT/3G3jVOfl+gl
+	B/VA5iUTeSH/9HhgkVAzuXSNGvotvF+d3QL1ExXYu/aj9g4z8NHQJs4axaeGG4Zq
+	HU/SQvdHqdIqfhVlp2FoXgU20BGKsGRcUlDK5IWxxkZH9VGA==
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com [209.85.216.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4bhdavhhaf-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Wed, 07 Jan 2026 09:43:24 +0000 (GMT)
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-34abd303b4aso4282632a91.1
+        for <linux-clk@vger.kernel.org>; Wed, 07 Jan 2026 01:43:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1767778069; x=1768382869; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rUQ2FZFamqfueQvHyQVTRqAwPzH7oh4++3k/htlzBQE=;
-        b=PkNdO39ZgazAU10Y2baWsh0/NQplwsXowmqRcpufCoGrCxU+Uznx1o6Vmr1RH630Su
-         XMjS5CQn9uAWu16ij7MZ6QLVMcwdANAxLoDYZH8/GGTlBdP2SltFIZU4A2DyL0kNIAnR
-         c4kI07MEW8mEpYW8q3UIYEmRdqwi+ns9MjBzKdO6BzKwtd0+ausYJMRH1On3UolCKngu
-         PiMG+6r4/yy9a+PACZioUEOQvSOZwyzS02hWmJ8HebMifWCJK9oOKPwCpoxjx4dmsjxY
-         0A1GSm8RN673qsE/JErFYmOX6ByMlEHt3xy8ASSRRPre90L7MEFw+rZSgbuJ3EU5ethP
-         sk+w==
+        d=oss.qualcomm.com; s=google; t=1767779004; x=1768383804; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=l6RdcxF0KkuoMThTWV/0U3PjiCm3+6V4PEqv1V5VmIM=;
+        b=fJiXeo+GteH0mFt501Nnd2+lYjAAuJaWrPs0Nt9+SdRJiIqPqGiA/qWkCJl9PP3nvY
+         2Ljr3fSI5z77sofZGMiyCYOfjLekGJAGhiqGfJLFmJ6IMkBOev7vrCZ1k2yZh7ACQwCe
+         FaEGxB7e6oJwOLGiRm1W3ak9245ql4FoQSZwPBBC6RUahkLwbIcAeRwrZS+wDyXmsSbO
+         o9RWHl04oXzXZJ+jQqRr2Zb+OuL1Aa25H/SEQNvv9W9UF/0URjpQFaCHmzaUnDIxM/Fl
+         Xv8L00EeiUM81U32G8TqOF8pMA/bWcZqumYRc5c+c+E6cCdRpXCcs9hxsBCy1A27Gtsc
+         BNkg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767778069; x=1768382869;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=rUQ2FZFamqfueQvHyQVTRqAwPzH7oh4++3k/htlzBQE=;
-        b=rcGq72wXSOp/sufpowbBErX2M94MKDPHaM0sLT2hWaMmYZ7oR7ab+Q5peAEOJIYIdV
-         vjYrE/tdA7aVMFyGH22uVdpLHfH197beua1vS8YKz9akHdoQrgRWfONwzy0oWy4A1K0B
-         k5OK3DBvXcsBZTLS+JDufh3UHhcXovz29AW/S8domnMLI8+Sj9oLUdA25++/niui8Gh6
-         KmAeGgTjpYEiOGOuNwSvm9gTqxR8ulowDqZZr8FmH4YW5eWAKRNLxUByA0tyITSilAO5
-         J6+/86mYn2lvt8UWNXEf3zUiwfINTvk50IsdgbsMGWZFnH/+CKY70iktvnnraRHgBRDN
-         cuoA==
-X-Forwarded-Encrypted: i=1; AJvYcCWbUYvzg7w2k0YlOhxpKr8NpLrzDJ+QG7Rr+Jsfvl385h79xBqOW1j4HeLbogP/gaaXyoSDuCM17d4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWfQhunBhdF5I0Z0nyVvds6fIcH0zFDPRaaWNRoF12rE4iubVH
-	2zhLfL8Il2HZjVThRMIEvIpT0stak57YCJftQ1D9K8ZsG4c5xyoakq5mV0OAbT+IKIW1Y9GGh8D
-	ZWOEULTBcZKDhmHdzI0dNPwugD9N15v19WmRRbw9hag==
-X-Gm-Gg: AY/fxX650whdyKu8xJvlCNy9ksX2ZpHIZBZRRkGnCOJjzJnGM7TN6ArIu3I17kTfRPA
-	EqNZQigc6I97LBSqLaFkc+0eqTpjCP07Pxb0e+YECY8RswZmTuRm2gHsrbHVhpH4/sVcyndZWqC
-	mYBOS3d5urWCFUMLcSpVrMCCU3MoH9XuP7uh4LU083SCMCj4BLFBGeKFEZmcJEGMyFN8C10ZtZw
-	FHxPv/xseqh7Cy/BWj2lKUTDYtS0Rn5EwXlpYH52RYTyjIFNLhbLLCxlFhK+pk/g2Ql/dk7
-X-Google-Smtp-Source: AGHT+IHiv/XFqOWBUi/CNmLl6EwV4ivEMM/garbS3U0jXJNjchmOMi1m/XfEc/owU/7EasgEeZaY3c7VeTK0LzQnHO8=
-X-Received: by 2002:a05:6402:4309:b0:64d:65d:2315 with SMTP id
- 4fb4d7f45d1cf-65097e8e3b3mr1716117a12.30.1767778068941; Wed, 07 Jan 2026
- 01:27:48 -0800 (PST)
+        d=1e100.net; s=20230601; t=1767779004; x=1768383804;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=l6RdcxF0KkuoMThTWV/0U3PjiCm3+6V4PEqv1V5VmIM=;
+        b=hrX0Zcl/UDgbgvAmBIFXEQyziY5K8sSiJPURh5alHoPKGoNivZ5mTla+AM1oXgPRLj
+         ZBTGTMcR906rBz4zutrCpJcyAeptaagAv8MHHGPSsdOC3pLVVpppl8Emek6OZfsQwlRP
+         Ob0LEmwleOykmRFC2MK1sDJTaIUjDMpL74s58NC5w8s+MDvjy/urldSGW9h15X9EAUl/
+         hOATXKjxSyDkdu51JfmYc8XsAB72dSm6gDNYLQpMBQRUsv15SuQAR6lOj4wa4dDvdYzT
+         9aNAZgN+flBK35QajLI+/KLAQCDP+jUI0Bq5NwcPDpAIuDRSQoZiU/BtQPbFd3w+qMTb
+         srdA==
+X-Forwarded-Encrypted: i=1; AJvYcCWiWL3fzpKe48iZbpo0vrcIHWxaAalpMt973VEPfoFeWZGNCmEDCQnF5aEd6PP2t0D7h9vb0EAlDrg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YymvHwCfsMYR8xr4bVmJwYbVq8T4cluNgjVHOiTckmgX29JiyHH
+	KGvX0Ra81cb2LBQ2vIZscKZCDOX88oy5vnAy6IGEoPBwC1PGlg6NMs4W73ssHfUqsQlvMXmuoxq
+	ZOYlNIoYI2Blih7HmRVr9BtbzqAD+UGy3SWSF5iX7JZFgPHbWP3jelZsy5ZSXLhs=
+X-Gm-Gg: AY/fxX5vhcyfwFHNTeSbkzbf+/VnSffnVVPkLkevOBXUAXZ7aJes4GRFNwGH037odLN
+	FVfUtHXAaAqB/IJKMPlHUcOigxUo9ZerhKaQUKWQAvy61otOolrDizXBkIBJdcgRPUhVbEc5TG0
+	a051MT/MpKfSdSLCwxCgHlBr+FruKIALqqWeJXwDQzqhvQsd7HDFnIin4rKg0M2O50fjNzn3Nwj
+	g5tlhlBXBU/8nO5jFh87dJKPrmQ9Fo7JLW+tbscK0yNkOs+wWQ02QfEfXbW707zAuXNT16jix61
+	OtoidGCpLsU48zyC0ZtdyyzgeLHuUnUaJU6qQNxqCLSMgUupRnWiJuA18PKyKHBs7QVN7UUFI8p
+	uBNlj0utOI/CZTWPOmk9sJrhkq4p9i0iIxQ==
+X-Received: by 2002:a17:90b:4a07:b0:339:ec9c:b275 with SMTP id 98e67ed59e1d1-34f68c308camr1992716a91.6.1767779003901;
+        Wed, 07 Jan 2026 01:43:23 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IE9utHaerxlmRKQBS/EdaJNmJ7bFN1nMsGjL366kf8cZMjULjE7RzNmpNRtkBxRkq0JoaMtcg==
+X-Received: by 2002:a17:90b:4a07:b0:339:ec9c:b275 with SMTP id 98e67ed59e1d1-34f68c308camr1992696a91.6.1767779003444;
+        Wed, 07 Jan 2026 01:43:23 -0800 (PST)
+Received: from hu-tdas-hyd.qualcomm.com ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-819bafe9568sm4472944b3a.15.2026.01.07.01.43.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 Jan 2026 01:43:23 -0800 (PST)
+From: Taniya Das <taniya.das@oss.qualcomm.com>
+Subject: [PATCH v3 00/11] Add support for Multimedia Clock controllers for
+ Kaanapali
+Date: Wed, 07 Jan 2026 15:13:03 +0530
+Message-Id: <20260107-kaanapali-mmcc-v3-v3-0-8e10adc236a8@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251222-automatic-clocks-v7-0-fec86fa89874@linaro.org>
- <20251222-automatic-clocks-v7-3-fec86fa89874@linaro.org> <39019203631fdd183fb5ddaa7fada5da5f2a31ad.camel@linaro.org>
-In-Reply-To: <39019203631fdd183fb5ddaa7fada5da5f2a31ad.camel@linaro.org>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Wed, 7 Jan 2026 09:27:37 +0000
-X-Gm-Features: AQt7F2q63jqr_CpXwSvIXdsTqXahUYQlfSvLBPEss-eRzMgkwuCaYjXxjzncKeY
-Message-ID: <CADrjBPpZY9QfX7YEfM2tkAkt5qGpzYuJ0JkLMK0v4jujO3mRhQ@mail.gmail.com>
-Subject: Re: [PATCH v7 3/4] clk: samsung: Implement automatic clock gating
- mode for CMUs
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Tudor Ambarus <tudor.ambarus@linaro.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Sam Protsenko <semen.protsenko@linaro.org>, 
-	Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
-	Will McVicker <willmcvicker@google.com>, Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
-	kernel-team@android.com, Rob Herring <robh@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAKcqXmkC/x3MMQqAMAxA0atIZgNRsaBXEYfYRg1qlRaKIN7d4
+ viG/x+IElQi9MUDQZJGPX1GUxZgV/aLoLpsqKk2VFGLG7Pni3fF47AWU4NuImvIGWfmDnJ3BZn
+ 1/p/D+L4fuMB+e2MAAAA=
+X-Change-ID: 20260105-kaanapali-mmcc-v3-db0c60d6d6f9
+To: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Cc: Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
+        Imran Shaik <imran.shaik@oss.qualcomm.com>,
+        Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org,
+        Taniya Das <taniya.das@oss.qualcomm.com>,
+        Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+X-Mailer: b4 0.15-dev-aa3f6
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTA3MDA3OCBTYWx0ZWRfX3gcreHs+HZWH
+ sPstdEuaqIFnraJBBssuUl0tTsmnVnu2AITWCgbHygq71IMiJD0nT9Xc1owI8GwFLt4dYjdM7C8
+ FvEIMJ7DM3Qne2KUJhOnBS1sewh1hmQaMGifTmy/DuLecYcmBYV3I5ogHJNhVw31iS1TaqcrN/3
+ FN2WaPJqgti08S1hpD+Xc5r0x3pwXAUNfogLqio2etw8l+I6MGihi3QHqZiOBYAhpwJXzb9064w
+ A1kTz2ac/vWn5+nxqDO33QxMT/E/bIzk3wyiYY1r1ae61d7R0KZ+vDGJJS7nIQyxfFUUnXraE/Z
+ CZDBl5GEHlyWvR87RyUuWGpiV2ZPLd976ulgb+D/Vl/CWhazkIxwslCf1ssUd26JQLDNJldx9Sj
+ sPy1+geCs7z0WFN+iajfmVkIGvqoIDhaxjYOTrv6/fd5fRvplCyg2KWuCR3mFXFwJ3rtbNW2JXN
+ HhVYZevl91i6tRKx/MQ==
+X-Proofpoint-ORIG-GUID: pkCDyVDyAxTMTIyZMfB9kmJWEuyh3dL8
+X-Authority-Analysis: v=2.4 cv=comWUl4i c=1 sm=1 tr=0 ts=695e2abc cx=c_pps
+ a=0uOsjrqzRL749jD1oC5vDA==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=vUbySO9Y5rIA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
+ a=AqjRrIuq8FlCCJD4mHwA:9 a=QEXdDO2ut3YA:10 a=mQ_c8vxmzFEMiUWkPHU9:22
+X-Proofpoint-GUID: pkCDyVDyAxTMTIyZMfB9kmJWEuyh3dL8
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2026-01-06_03,2026-01-06_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 lowpriorityscore=0 adultscore=0 priorityscore=1501
+ phishscore=0 malwarescore=0 bulkscore=0 clxscore=1015 spamscore=0
+ suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2512120000
+ definitions=main-2601070078
 
-Hi Andr=C3=A9,
+Add support for Display clock controller, Video, Camera and GPU
+clock controller for the Qualcomm Kaanapali SoC.
 
-On Wed, 7 Jan 2026 at 07:22, Andr=C3=A9 Draszik <andre.draszik@linaro.org> =
-wrote:
->
-> Hi,
->
-> On Mon, 2025-12-22 at 10:22 +0000, Peter Griffin wrote:
-> > Update exynos_arm64_init_clocks() so that it enables the automatic cloc=
-k
-> > mode bits in the CMU option register if the auto_clock_gate flag and
-> > option_offset fields are set for the CMU. To ensure compatibility with
-> > older DTs (that specified an incorrect CMU reg size), detect this and
-> > fallback to manual clock gate mode as the auto clock mode feature depen=
-ds
-> > on registers in this area.
-> >
-> > The CMU option register bits are global and effect every clock componen=
-t in
-> > the CMU, as such clearing the GATE_ENABLE_HWACG bit and setting GATE_MA=
-NUAL
-> > bit on every gate register is only required if auto_clock_gate is false=
-.
-> >
-> > Additionally if auto_clock_gate is enabled the dynamic root clock gatin=
-g
-> > and memclk registers will be configured in the corresponding CMUs sysre=
-g
-> > bank. These registers are exposed via syscon, so the register
-> > samsung_clk_save/restore paths are updated to also take a regmap.
->
-> The implementation described in this paragraph this causes pm-runtime to
-> stop working for the CMU if auto clock gating is enabled.
->
-> See below.
->
-> > [...]
-> > diff --git a/drivers/clk/samsung/clk.c b/drivers/clk/samsung/clk.c
-> > index c149ca6c221725195faeb76b0d73374c3b48261b..06ea5deef4ee2ffb87dcd14=
-102561886ea80b7bc 100644
-> > --- a/drivers/clk/samsung/clk.c
-> > +++ b/drivers/clk/samsung/clk.c
-> > [...]
-> > @@ -357,6 +489,37 @@ void __init samsung_cmu_register_clocks(struct sam=
-sung_clk_provider *ctx,
-> >               samsung_clk_register_cpu(ctx, cmu->cpu_clks, cmu->nr_cpu_=
-clks);
-> >  }
-> >
-> > +/* Each bit enable/disables DRCG of a bus component */
-> > +#define DRCG_EN_MSK  GENMASK(31, 0)
-> > +#define MEMCLK_EN    BIT(0)
-> > +
-> > +/* Enable Dynamic Root Clock Gating (DRCG) of bus components */
-> > +void samsung_en_dyn_root_clk_gating(struct device_node *np,
-> > +                                 struct samsung_clk_provider *ctx,
-> > +                                 const struct samsung_cmu_info *cmu)
-> > +{
-> > +     if (!ctx->auto_clock_gate)
-> > +             return;
-> > +
-> > +     ctx->sysreg =3D syscon_regmap_lookup_by_phandle(np, "samsung,sysr=
-eg");
->
-> With this, the CMU driver (e.g. cmu_hsi0) now gets a reference to the res=
-pective
-> sysreg (sysreg_hsi0), which in turn creates a regmap with a clock handle
-> (CLK_GOUT_HSI0_SYSREG_HSI0_PCLK), and the clock is 'prepared'. Hence the =
-CMU
-> providing this clock (cmu_hsi0) is not idle anymore, and runtime PM for t=
-his
-> CMU can't kick in anymore
->
-> I see two straight forward options to fix this:
->
-> 1) The easiest fix is to just drop the clock from the sysreg DT node. The=
- sysreg
-> clock shouldn't matter now, as the whole CMU is in auto mode now anyway.
->
-> 2) change above code to use device_node_to_regmap() which ignores resourc=
-es (the
-> sysreg clock in the example case), and manage the clock manually during s=
-ave and
-> restore in samsung_clk_save() and samsung_clk_restore()
+Changes in v3:
+ - Add RB tag for CAMCC dt-bindings [Krzysztof]
+ - Add more description, commit message for the newly added GX Clock controller
+   for GPUCC dt-bindings. Update the complete region for the controller. [Krzysztof]
+ - Add RB tag for display clock controller [Konrad]
+ - Fix the below for the Video clock controller
+	- use lowercase for mem_enable/mem_ack reg.
+	- use GENMASK for mem_enable_ack_mask.
+	- fix the indentation issue.
+	- update to use regmap_set_bits().
+ - Fix the below for gx clock controller
+	- update offset for gdsc as per new mapping
+	- update regmap_config as per new mapping
+ - Link to v2: https://lore.kernel.org/lkml/20251125-kaanapali-mmcc-v2-v2-0-fb44e78f300b@oss.qualcomm.com/
 
-I think option 2 is likely better, as it isn't an ABI break. It would
-need a comment explaining why we use that API when a clock resource is
-defined in DT for the syscon though (we don't want the clock managed
-as it affects runtime PM). Maybe Krzysztof has other thoughts though.
+Changes in v2:
+ - bring in the PLL related code from https://lore.kernel.org/all/20250924-knp-clk-v1-0-29b02b818782@oss.qualcomm.com/
+   to this series.
+ - Add RB tag for DISPCC dt-bindings [Krzysztof]
+ - Remove the patch 'Remove sc8280xp camcc to from sm8450 camcc' as this
+   series has no functional dependency.
+ - Add RB tag for VIDEOCC dt-bindings [Krzysztof , Bryan D]
+ - Add RB tag for GPUCC dt-bindings [Bryan D]
+ - Fix the commit log for camera cc driver and add RB tag [Byran D]
+ - Add comment for using 'ACCU_CFG_MASK' in video cc driver [Bryan D]
+ - Describe GXCLKCTL the newly introduced clock controller in the commit
+   log [Bjorn]
+ - Move the 'gx_clkctl' driver from subsys initlevel to module.
+ - Link to v1: https://lore.kernel.org/lkml/20250924-knp-mmclk-v1-0-d7ea96b4784a@oss.qualcomm.com/
 
-runtime pm isn't currently enabled for gs101, so auto clock support
-hasn't regressed anything. But AIUI Andre was close to
-posting/enabling it, and this issue would block that.
+Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
+---
+Taniya Das (11):
+      clk: qcom: clk-alpha-pll: Update the PLL support for cal_l
+      clk: qcom: clk-alpha-pll: Add support for controlling Pongo EKO_T PLL
+      clk: qcom: clk-alpha-pll: Add support for controlling Rivian PLL
+      dt-bindings: clock: qcom: document Kaanapali DISPCC clock controller
+      dt-bindings: clock: qcom: Add support for CAMCC for Kaanapali
+      dt-bindings: clock: qcom: Add Kaanapali video clock controller
+      dt-bindings: clock: qcom: document the Kaanapali GPU Clock Controller
+      clk: qcom: dispcc: Add support for display clock controller Kaanapali
+      clk: qcom: camcc: Add support for camera clock controller for Kaanapali
+      clk: qcom: Add support for VideoCC driver for Kaanapali
+      clk: qcom: Add support for GPUCC and GXCLK for Kaanapali
 
-> Any better ideas?
+ .../bindings/clock/qcom,kaanapali-gxclkctl.yaml    |   63 +
+ .../bindings/clock/qcom,sm8450-camcc.yaml          |    6 +
+ .../bindings/clock/qcom,sm8450-gpucc.yaml          |    2 +
+ .../bindings/clock/qcom,sm8450-videocc.yaml        |    3 +
+ .../bindings/clock/qcom,sm8550-dispcc.yaml         |    2 +
+ drivers/clk/qcom/Kconfig                           |   38 +
+ drivers/clk/qcom/Makefile                          |    4 +
+ drivers/clk/qcom/cambistmclkcc-kaanapali.c         |  437 ++++
+ drivers/clk/qcom/camcc-kaanapali.c                 | 2661 ++++++++++++++++++++
+ drivers/clk/qcom/clk-alpha-pll.c                   |   20 +-
+ drivers/clk/qcom/clk-alpha-pll.h                   |    7 +
+ drivers/clk/qcom/dispcc-kaanapali.c                | 1956 ++++++++++++++
+ drivers/clk/qcom/gpucc-kaanapali.c                 |  482 ++++
+ drivers/clk/qcom/gxclkctl-kaanapali.c              |   76 +
+ drivers/clk/qcom/videocc-kaanapali.c               |  821 ++++++
+ .../clock/qcom,kaanapali-cambistmclkcc.h           |   33 +
+ include/dt-bindings/clock/qcom,kaanapali-camcc.h   |  147 ++
+ include/dt-bindings/clock/qcom,kaanapali-dispcc.h  |  109 +
+ include/dt-bindings/clock/qcom,kaanapali-gpucc.h   |   47 +
+ .../dt-bindings/clock/qcom,kaanapali-gxclkctl.h    |   13 +
+ include/dt-bindings/clock/qcom,kaanapali-videocc.h |   58 +
+ 21 files changed, 6984 insertions(+), 1 deletion(-)
+---
+base-commit: f8f97927abf7c12382dddc93a144fc9df7919b77
+change-id: 20260105-kaanapali-mmcc-v3-db0c60d6d6f9
 
-None I can think of currently.
+Best regards,
+-- 
+Taniya Das <taniya.das@oss.qualcomm.com>
 
-Thanks,
-
-Peter.
