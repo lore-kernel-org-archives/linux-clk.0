@@ -1,200 +1,152 @@
-Received: from OS0P286CU010.outbound.protection.outlook.com (mail-japanwestazon11011025.outbound.protection.outlook.com [40.107.74.25])
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2CA6449EBF;
-	Thu,  8 Jan 2026 11:33:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.74.25
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767872028; cv=fail; b=BpyAACdfu6b4Y/Ym+GmS6d0cJBARa/EsbCbQAf6MKsJkM4itgK1Qy+G3l0w/rXyuwZu1AtQd6BZF85yAMGQ5IXGxg+jBHd6/7FP0N53rnbAKNoTjtm6hKHTK6LJsF+UMfdaHuCtAsCG0EKJCZlKHK/11h0XwkXxhqBcf5i86EOw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767872028; c=relaxed/simple;
-	bh=bP04hvOPKRBsXYWXRxZUxwuBUN6EC4S26MLlJmDXxX8=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=HBssEitnTM3F3hjk5y3gqZmQpZh7m//Riqo8FNQUTCLUnmZnK+gH70DPAG5n1AYEfKVte0bPp2N1vgOuNrVCBkI+OWedHHvrdJ4ic77ZrxThynQEPrDj89QasrrhMUp5mvc1NKUMWalWZMV9WWdFGC2K/imX2UcUPQaL+sLXR6M=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=pUvvY+vn; arc=fail smtp.client-ip=40.107.74.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C2574A22D5;
+	Thu,  8 Jan 2026 12:09:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1767874177; cv=none; b=GdtE7k/rKmM45YkJcnsKEcTzinl4h3CU/Y7wCr8cp6Wsx3hkAyU41pKYRBhIvrWgIHBsV4q00S427PCItUi6OaL+inrIad+2YZpP7cjFUOTOta75uMmAYoImcv4Ud2ocyO3BAviJxmJj3x/5hyNg8hSDwbfq23wa0Ar498HZiCQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1767874177; c=relaxed/simple;
+	bh=q0TlDqpr415sq727uuVVX4LyTiAOn5O9CGBq1T+5u5k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=W1VwkMheHpwMxfiP+jGoWEBY47HwvBWSfKEe8VF/ndHEFSZoZBL2B/WaINAlnr+Ht6i5gFomeoO7yjtc7EUq35s/uvgU2DUZ0E2fT5/Y7lIpNv3db58fPTV203jy8SH1LYuVbrM3TxHB1h5HiMsPWxpOyDsrqJOvud9zOjr3ttc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=X6DBAXPG; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="pUvvY+vn"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ePttQjH26GS3+8+aQ3S4rYUg/ezjhnvlvvpjXKC8HxagHi+yHWBdkANEFG/hnewuc0ly6F5zdLnfBwICdQf2iBOW70I8GDK+zUycbk6vh0SzwS/E7TU0iZ3hV6v1T8Q701V9pcIhb0sbmLFliD1hwfnTPUmFegMI8jGVqmMhgthQs3cKJ+FqGfYo4hU0OrdyeNvAvf0yhSu2s4Cz1ZCw5TmlLnf03+kfO3ONN3ymQK6s2K5zuI7aUzeDEfwgD68paGXmEVLcRnFHIguFVCBXKcyqUqtxvPqYH8qAs4dzwE9OIBIYYBy6jaWu8Ub+kZKP9j2BeaoO7t1uavFZva6xIQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=bP04hvOPKRBsXYWXRxZUxwuBUN6EC4S26MLlJmDXxX8=;
- b=eB1IgxErCg9DOzA+jUj9tggau+7Dd80iHM70hzdT0fRPdjhAQ25FyW4Fq/af670YXsZWpA5pfJu/2zRiGAS7gmj9R0sHkrTzbL/U5YVFH5Mtp5nhzJ+mMqI7eod/6iJEQNS1yFIv3zRwYf8b1RhzK97nHuxLFeFCfHLMXSRBbqrdxW/U/i4+/icdsyrfQ3ma8HGTZwFt9SUNSpbWZ2V+49Inp7c7HZ7dKhGk5kwwhD5fVPbBNcznEGsOMyCvqimK7pa7mEGGbwDCI+Xyv5M0UbFjEsJnfnEdUJ1Nu0GRgozK4EiRU+gJP/X2WRY9OCAznHXHu0ZbquY0CgzaITyrFw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bP04hvOPKRBsXYWXRxZUxwuBUN6EC4S26MLlJmDXxX8=;
- b=pUvvY+vnujEqezUq0cJjDkLURuTz2kJZ1PusC+ypnb6whO5AaKMM1FbAk2q6K39BXj+00seVHdPsZdO2ilpAE6KoapjHgLmjEE5HKmMvmwGUjfJz3ON5sQUZi/KLiBvF8ISmoCCdjwpBc5Tp0Tfb+bgHteSR15XwQPAsjLZ7j8w=
-Received: from TYCPR01MB11332.jpnprd01.prod.outlook.com (2603:1096:400:3c0::7)
- by OS9PR01MB17397.jpnprd01.prod.outlook.com (2603:1096:604:44c::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9499.1; Thu, 8 Jan
- 2026 11:33:41 +0000
-Received: from TYCPR01MB11332.jpnprd01.prod.outlook.com
- ([fe80::2511:10cd:e497:4d97]) by TYCPR01MB11332.jpnprd01.prod.outlook.com
- ([fe80::2511:10cd:e497:4d97%2]) with mapi id 15.20.9520.000; Thu, 8 Jan 2026
- 11:33:41 +0000
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: geert <geert@linux-m68k.org>, biju.das.au <biju.das.au@gmail.com>
-CC: Michael Turquette <mturquette@baylibre.com>, Philipp Zabel
-	<p.zabel@pengutronix.de>, Stephen Boyd <sboyd@kernel.org>,
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Prabhakar
- Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: RE: [PATCH 2/2] clk: renesas: rzv2h: Deassert reset on assert timeout
-Thread-Topic: [PATCH 2/2] clk: renesas: rzv2h: Deassert reset on assert
- timeout
-Thread-Index: AQHcaCtibMJqsnntuUOEg2wJmjZhwrVGviKAgAGWlNA=
-Date: Thu, 8 Jan 2026 11:33:41 +0000
-Message-ID:
- <TYCPR01MB113322F3C6A7C71C20F4B42868685A@TYCPR01MB11332.jpnprd01.prod.outlook.com>
-References: <20251208101356.101379-1-biju.das.jz@bp.renesas.com>
- <20251208101356.101379-3-biju.das.jz@bp.renesas.com>
- <CAMuHMdUbAU68yuW7aok1WXMzNOVGTZtVJNZQLJyyrbvk976szg@mail.gmail.com>
-In-Reply-To:
- <CAMuHMdUbAU68yuW7aok1WXMzNOVGTZtVJNZQLJyyrbvk976szg@mail.gmail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TYCPR01MB11332:EE_|OS9PR01MB17397:EE_
-x-ms-office365-filtering-correlation-id: 1c268a28-bd02-4895-d78f-08de4ea9c669
-x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|38070700021;
-x-microsoft-antispam-message-info:
- =?utf-8?B?TkJxUzNIZ0pmZXpTa0l3WjRzNGc0blBFMlFUekdNY0dwVXJ2U1FWbG5zU3Fh?=
- =?utf-8?B?T3pBYUozWHhsNHhSV0d1WjcyZlBWYmJnaHBMRWZxQU9YTGRkSkpLNFdZOEJW?=
- =?utf-8?B?ZmppWTRYblRzaFA3aEgvSDhnbGdFNllnZUhWbVQycW9zN05Xb2NKVGFxNXZk?=
- =?utf-8?B?SGZ2YjN3S3VteEhoRkZ6L08rM0c4eWpSWjBYU2pFV2VFNU1NZXpiTUdOMUVm?=
- =?utf-8?B?ZFNpL0RwTm9LU1ptQ2Y3dEd0QjFzMGN4eS9rd09mbGMzWUNlTmYyWEtJNkVh?=
- =?utf-8?B?YW4zVFVVc1BzTEdTenEzazc3UzIzMkx6TGsxRkNkWHFPOUs3eDc1MGNPWTNM?=
- =?utf-8?B?ZXVFbmJ2VmlOOHJ1RHE4ZFhkSUtjREswWUEzZVNnclhwckVoRmFpdWRQMnAr?=
- =?utf-8?B?SlIzRHlscy9wWGFEbGc2VFplQVF0cVo3V2JoSVdXaVVzbWtXZTVuTG5pWjJw?=
- =?utf-8?B?UWVoUVQ3REl4aXo0bkcvditZeEQ0VkMrRFVvTjhpL055WnNReVlyRTFCdEFV?=
- =?utf-8?B?Rzh4T3ZIZ1NZSW1jUTJhVStZWHdYRldueUc3eG50WUxNbUNzajlrUkN4QWQv?=
- =?utf-8?B?SDB4QldpN28vTEZSZW9ZRkVxbUtQeEkwempjVXNwM1o1QWdQZ1ZhNkhKWUJ6?=
- =?utf-8?B?Um9ueWJZNmk1UWN4NGx2SUVzdnZUUWlpNUNsaEtZK0pSQVFKT1ZmNVF4ZGlP?=
- =?utf-8?B?Nkdtek4vclJvcW1uNlJQb09sNjRyT1lvckc2ZStNMW5uK0txeTZ3YmtqTzQv?=
- =?utf-8?B?aDhZWnZjOE10VWtMR1dvaHRMbXgrRWFNTW9TYy9hNk5odGU2WmNzdTB4Nnk4?=
- =?utf-8?B?VmtuN01LT0ZCS2U5dmlWWDUwVytMMzIvWDZua0hnb3lQZ2JCU2FUZzVjNXZH?=
- =?utf-8?B?YXltMHdBMm5jcnh1cHFlTUMrUllwdkc5eVY1bkMzM01jVUFKTGRHSm9raXN4?=
- =?utf-8?B?ZlpTNlFlSFhZZ0piYWJkQUNlb2dLWU1RaHZrNkhZendGNjNMTEVkLzF3SFNW?=
- =?utf-8?B?eFBjYVZyV2NjYWxBVzNZdHppbFIxVmwyb3N6emMwcmJ5T2RRcUtjd1hVSldt?=
- =?utf-8?B?bllwQUNwY09HQmduQlpWME9Zd3U5UDdPdklpbTBsMm5uYmJCYUJSMGtrdll6?=
- =?utf-8?B?aVlkc0x5ZnpvVVdwRUJGeFRMSlpQMWVXS3UydjJvZ1ZzTU40Z0dCaUtxd1Ay?=
- =?utf-8?B?QVRJVmMyYkhHQnljaGN2N20yNHBiOEd5ZHkyWnprMEF6MUVBYTVDLy9TTzdm?=
- =?utf-8?B?dUw3VW9NUXBibHhranNNWEIxY1RZQXBWcUNBSzA1WHUwZzJZRlF3bXliT0Z3?=
- =?utf-8?B?UUlwZGR3bFNxbWE1WGJzY0YzT0dqdnRaMklRckVBRWx2dGRrM25VbmRSRzBn?=
- =?utf-8?B?S3J1b0ZYWjNpdDJqeVE0VXorSGNQL2JGc0xyWmtLY242TFFQd1ZLelZlTUhW?=
- =?utf-8?B?QnJ0dm9NclV5Vjdod2lxMHVIazgwaklLRit6bEY5azVaNk5ScCtlQ3QzNTB6?=
- =?utf-8?B?QnBCdVNJYnRnc2wvTTkwQnBwUmtQaENobGU2MG9EVWpGS2ZCb3NITmVaSndY?=
- =?utf-8?B?cHdQb052M3o2dTJCZ282RmhKMC85WHZOeWg2N1BOcS9PQ0p4elI2eXg0a1dn?=
- =?utf-8?B?MTlocm1LR0JxLzJRdll2ZzZUV1VQaGg1VzRXeHVOZVhXREpxNW1PdDZyYmh4?=
- =?utf-8?B?cG1xZUl4RFBGc29xeVlBY0xsbHgzakdOVzk0ODQzRU1SQmE1UENzb2pCODN2?=
- =?utf-8?B?RUQvQ1dqYjJYKy9uMS9NVCtQc3dnZmc3K0VwZDdqNi8zWlhHS2xISXVndjV0?=
- =?utf-8?B?elNSTjNBMW1OZlJhaWJNZk44aWszRmZ3bGFjRUY3Q0FKbncxTitsTlJzVDZU?=
- =?utf-8?B?MnI0ays5V2pJRG1LSnZtQ0ZtQ3N6ajlwS2V5Zm1QSVZPYWhidnduZmFXN0JM?=
- =?utf-8?B?cmdyNllPUyszY0drKzhJeXlWOTZHZUQzbXBJRUNZTzkxRmtVRC94RlZXcG9v?=
- =?utf-8?B?TmhreTVjYzZrUGtubDc2Uitnbmh0dTNKazlCYVBrRDFNWC95QUo5Nm1MUFZl?=
- =?utf-8?Q?229zw8?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB11332.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?c3Qxc2I2SGMzeUx6YzVOeWNZT0kzWlFrcEFMUkJoeEdwQ0l0UUp5OE9xZnlo?=
- =?utf-8?B?YTRITmZvSXcvb0FsMDA3YlhiU084UERiblBVU1RCTG1rOVJvaEthYlM2Vldq?=
- =?utf-8?B?clRCNVRFajJUdHloaGFPcDVwcHBNV091MUFLS2lmL1cwWm9qeUVIRzdOSnlK?=
- =?utf-8?B?Ylg1WmpwTEJhS3crdnhKcmw1TlB0MzVwaEh4am1FSDEyL2JYd2xPTlllb1kx?=
- =?utf-8?B?bVpic0drY2IrQklkL1hmcW45VmJXRTlWUk1NcVVJL0xRc2pGb2pidDkySjk1?=
- =?utf-8?B?UXpYdG12WDg2bXFFRmdNdFhFNWFCbm1MemQrVGtmRW8vcnU5SFRyYVloRDE5?=
- =?utf-8?B?TC9EaGEzQU4rOVlVWE8xMzRxdFE4ek5FMVJrT3hYdDFNRDBVdGFkMHpla1BQ?=
- =?utf-8?B?UGd2QUV5NTNydTBFKzYxTWFVMU40cmU1c3dOUVAzZlI3cU9rdEV4RjVLTHF1?=
- =?utf-8?B?ZUlrVUt0dzNxL2lDNE1rdE1oRlhDYnFCSzJ3Vm1tRWYrM3BieXc5alI2Zm5u?=
- =?utf-8?B?WFBoTVJBNnI0UEJYRE5JLzlpNXFuUisza1VzY3g1bzJqY3JkOHVMbXpMNFFP?=
- =?utf-8?B?Mm9YUmhNZkJDd1QyVjJrVnpoNmNmK1ZvdlpSTlcwQVQ3d3pSZjJsalozdE5W?=
- =?utf-8?B?cmVDMzZsaW9lMENiMkFJbmtiQmg0SDcvSTNZbWplREEyZEtkNWpsQ0U5UVZa?=
- =?utf-8?B?cllRM2dpYi83bkZVazNBRlVtbHk4djN2M1ZvL2lUaWVEbFBUSDNxajF0SkVS?=
- =?utf-8?B?cE1TRVJmdUlDUy9rK3Y4aS9hR3ZQdUNXVkg0SUhyUGc1c25xZlYzRHBoN21o?=
- =?utf-8?B?RldsN3FLZ3FqUE95RDB5UWI0L1hlSFFjejY3ZkZTekh5ZSthN1VkUGsrOEtm?=
- =?utf-8?B?UVFpVlBjajRIbk42WlZDNkV0cWk1QTJDNzFKV3RNZ3h0M3MwYWlqMnpidVJB?=
- =?utf-8?B?ZVdsZ1RRZ1dzRmJjamxyREIxRnp5WTllcHJCcWJHdTRVTjNOTjVCZURLMXFN?=
- =?utf-8?B?WWh1eExZNTBwNTIybXloemEvWjFQL1Z6WG9aY2NoKzF1cjZSYy94RjdSNWw2?=
- =?utf-8?B?REFTS09razZ5Qm90QStDVGV0ZEhJZmp2Zkk5MWhTRW43ajZhRFdOWEVIaXBT?=
- =?utf-8?B?ZVlkcVF0d1gzM1ZkUHEwT3RhVmZGdCtZdEJhMmhPdXd5eHRXcmd2c1A4VmpD?=
- =?utf-8?B?Z2NFSGlOdnBDN2wzZkZ5aDFsenVmWHVMVGNCS244WnVWVUtxN2ROek9xaEVZ?=
- =?utf-8?B?UVp4SjIvNkJVQ04yaW8zckFZTUo5QmlGQ3phL3NBK0Ryb3p4OTVwemdKbXM2?=
- =?utf-8?B?MUhkdWRKZFVmWEIvOWxJOHZTaGRWLzc3RmZpOEhnamV2QVhoVi96V3JLNngz?=
- =?utf-8?B?ZXJoMk1GVTMwbEo1RlVPUkZrY21PeVZadDR1dDNSOFM4TmtFMkRHbElFNzlN?=
- =?utf-8?B?czhhdWl1Q1RiV2daMHU5aEpZQnlNVjg5elUyMVM4d0tPY01yc09nVTN2UG5U?=
- =?utf-8?B?M3BFK2VHU3AzTHMwSTVRT0F6RnROK2srcEdtaUFpTHdWYW85RGtzMzJ0cHdR?=
- =?utf-8?B?SFI5a1g1eEQySjk4cG83ZUZuK2x2ZDlhUmppLysrMUdHNXhzQlpoOGlkaDNN?=
- =?utf-8?B?cEdnSmZXMis0L2E0ZDdLUmdROXA2cGc0MU9oUlhyYUZzRysxRlY5cURKWm9F?=
- =?utf-8?B?MVEzem0yRXN4K0FTRmxXNjZCTkwyRGxNT3BKOW1zdGpIWThXWmhpdDg5ZzN5?=
- =?utf-8?B?a0swWEpUYXZ0K3NLd2dHUTRFWnZMRStSOGo0RnNJMUd5bHNqbkIxNEJmMnk4?=
- =?utf-8?B?dmpaS1F6VThMeUhqekFLZzNWOExBWGpoNTdpNVZaRldqM1VUazZjVitMd1hl?=
- =?utf-8?B?TXluMVF1cG9BWmh3N01HRzExNSsxVXBqRnJjOFdPczJQSFhUK01qckgvaWFj?=
- =?utf-8?B?Zyt5K3FxYmRIMisvaHArRXl5NDhXRElzVkFZczZvcWwzckVudktJQ1kxa213?=
- =?utf-8?B?RnRWa25pT1ltWm5wL3FwU0pmdzBaR251VnltZnI5Q2l3d0pSd2daVmFaK3BV?=
- =?utf-8?B?bkkrMnNZN1RwbnhDSjBaT0RkRG55S2tDUEhQdytSd3VZc1hUV1lQUGUyTWls?=
- =?utf-8?B?YmdGczFlMDc5QWpEeFRSY1ZOQVZNZ1FpL3ZCUkRRVTAxaEpGL1A5L0JibGhE?=
- =?utf-8?B?ZzFyam82Q1N2MysvbkFWQi93ekRFOFdYOHo1T1A2a0NZalpRcXFxbktjbjlR?=
- =?utf-8?B?bklRMFE0MmYzNnRlRjNZenZoUTNlNVBUSkZ4WGtVVUwxUWdPR2c5SnR4V2pY?=
- =?utf-8?B?L28yNUtHOEk4b1o0dHJxeHlZMENPMVZUTlRDREUyNlJXU0hMYUJiQT09?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="X6DBAXPG"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1767874168;
+	bh=q0TlDqpr415sq727uuVVX4LyTiAOn5O9CGBq1T+5u5k=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=X6DBAXPGYo6G7Y2+a2GriXbE3SBz4uZEUzVNJiatCA25v20IsluEZJEpDAs1lM48v
+	 rvU8IAIQDxDViRGTGd8HXh7uOs9Fyj0OVdtzoC/6Z3uB5LPQr9PoMzUm+xvA4/f+d1
+	 DjXTs7qgGRyf0J+Hq+YGuaRRN8FArMODeHh8S9fU80u44nyQdZCam0jvzaciS/CdO9
+	 VREtv9ox10zpqn+px+AO+O8LwbwCSAVce6Hn9H2jXXmsq82Hr3IQ8deRop4VeKx9kI
+	 rTPlWxHBN9etr7LzfOheJ0BMt73xKUYxfqVPs4FXNpEhKPwsJax1VkJeFFWzmQ09Jc
+	 Lo8ql6Lv4Y+6g==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id C9B5A17E13D8;
+	Thu,  8 Jan 2026 13:09:27 +0100 (CET)
+Message-ID: <f73a57bf-8527-4d1d-9f2e-78fe3c9973cb@collabora.com>
+Date: Thu, 8 Jan 2026 13:09:27 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB11332.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1c268a28-bd02-4895-d78f-08de4ea9c669
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Jan 2026 11:33:41.7941
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: pijNjzPj2531HgyAwerfGMva8KHmSjUU5EWcXaTj9hMlUVsUHqb78YkiutuFhkqWtdXoFTo0NDQZFr6gTkOzWkk08NxW1xz5DJtRJL/d5Ds=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS9PR01MB17397
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND v3 0/5] MediaTek PLL Refactors and Fixes
+To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Dong Aisheng <aisheng.dong@nxp.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ Yassine Oudjana <y.oudjana@protonmail.com>,
+ Laura Nao <laura.nao@collabora.com>,
+ =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>,
+ Chia-I Wu <olvaffe@gmail.com>, Chen-Yu Tsai <wenst@chromium.org>
+Cc: kernel@collabora.com, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org
+References: <20251215-mtk-pll-rpm-v3-0-5afb3191e869@collabora.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20251215-mtk-pll-rpm-v3-0-5afb3191e869@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-SGkgR2VlcnQsDQoNClRoYW5rcyBmb3IgdGhlIGZlZWRiYWNrDQoNCj4gLS0tLS1PcmlnaW5hbCBN
-ZXNzYWdlLS0tLS0NCj4gRnJvbTogR2VlcnQgVXl0dGVyaG9ldmVuIDxnZWVydEBsaW51eC1tNjhr
-Lm9yZz4NCj4gU2VudDogMDcgSmFudWFyeSAyMDI2IDExOjE4DQo+IFN1YmplY3Q6IFJlOiBbUEFU
-Q0ggMi8yXSBjbGs6IHJlbmVzYXM6IHJ6djJoOiBEZWFzc2VydCByZXNldCBvbiBhc3NlcnQgdGlt
-ZW91dA0KPiANCj4gSGkgQmlqdSwNCj4gDQo+IE9uIE1vbiwgOCBEZWMgMjAyNSBhdCAxMToxNCwg
-QmlqdSA8YmlqdS5kYXMuYXVAZ21haWwuY29tPiB3cm90ZToNCj4gPiBGcm9tOiBCaWp1IERhcyA8
-YmlqdS5kYXMuanpAYnAucmVuZXNhcy5jb20+DQo+ID4NCj4gPiBJZiB0aGUgYXNzZXJ0KCkgZmFp
-bHMgZHVlIHRvIHRpbWVvdXQgZXJyb3IsIHNldCB0aGUgcmVzZXQgcmVnaXN0ZXIgYml0DQo+ID4g
-YmFjayB0byBkZWFzc2VydGVkIHN0YXRlLiBUaGlzIGNoYW5nZSBpcyBuZWVkZWQgZXNwZWNpYWxs
-eSBmb3INCj4gPiBoYW5kbGluZyBhc3NlcnQgZXJyb3IgaW4gc3VzcGVuZCgpIGNhbGxiYWNrIHRo
-YXQgZXhwZWN0IHRoZSBkZXZpY2UgdG8NCj4gPiBiZSBpbiBvcGVyYXRpb25hbCBzdGF0ZSBpbiBj
-YXNlIG9mIGZhaWx1cmUuDQo+ID4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBCaWp1IERhcyA8YmlqdS5k
-YXMuanpAYnAucmVuZXNhcy5jb20+DQo+IA0KPiBUaGFua3MgZm9yIHlvdXIgcGF0Y2ghDQo+IA0K
-PiBSZXZpZXdlZC1ieTogR2VlcnQgVXl0dGVyaG9ldmVuIDxnZWVydCtyZW5lc2FzQGdsaWRlci5i
-ZT4NCj4gDQo+ID4gLS0tIGEvZHJpdmVycy9jbGsvcmVuZXNhcy9yenYyaC1jcGcuYw0KPiA+ICsr
-KyBiL2RyaXZlcnMvY2xrL3JlbmVzYXMvcnp2MmgtY3BnLmMNCj4gPiBAQCAtMTM2Niw4ICsxMzY2
-LDExIEBAIHN0YXRpYyBpbnQgX19yenYyaF9jcGdfYXNzZXJ0KHN0cnVjdA0KPiA+IHJlc2V0X2Nv
-bnRyb2xsZXJfZGV2ICpyY2RldiwNCj4gPg0KPiA+ICAgICAgICAgcmV0ID0gcmVhZGxfcG9sbF90
-aW1lb3V0X2F0b21pYyhwcml2LT5iYXNlICsgcmVnLCB2YWx1ZSwNCj4gPiAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgYXNzZXJ0ID09ICEhKHZhbHVlICYgbWFzayksIDEw
-LCAyMDApOw0KPiA+IC0gICAgICAgaWYgKHJldCAmJiAhYXNzZXJ0KSB7DQo+ID4gKyAgICAgICBp
-ZiAocmV0KSB7DQo+ID4gICAgICAgICAgICAgICAgIHZhbHVlID0gbWFzayA8PCAxNjsNCj4gPiAr
-ICAgICAgICAgICAgICAgaWYgKGFzc2VydCkNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICB2
-YWx1ZSB8PSBtYXNrOw0KPiA+ICsNCj4gDQo+IFNhbWUgaGVyZTogaWYgcmVhZGxfcG9sbF90aW1l
-b3V0X2F0b21pYygpIHdvdWxkIHVzZSBpdHMgb3duDQo+IHZhcmlhYmxlOg0KDQpPSyB3aWxsIGRv
-IGluIG5leHQgdmVyc2lvbi4NCg0KQ2hlZXJzLA0KQmlqdQ0K
+Il 15/12/25 11:23, Nicolas Frattaroli ha scritto:
+> This series refactors all users of mtk-pll, just so we can enable
+> runtime power management for the clock controllers that want it. It's
+> also generally more useful to have the struct device in the pll code,
+> rather than the device node.
+> 
+> Also fix up MT8196 mfgpll to declare its parent-child relationship with
+> mfg_eb, and fix the common clock framework core to take
+> CLK_OPS_PARENT_ENABLE into account for the recalc_rate op as well.
+> 
+> The reason why this is all in the same series is that it grew out of me
+> first modelling this as an RPM clock for mfgpll, which Angelo disagreed
+> with, so I did some investigation and it seems MFG_EB indeed is a parent
+> clock. However, the earlier refactoring to pass the device pointer down
+> is still useful.
+> 
+> Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+
+Whole series is
+
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+
+> ---
+> Changes in v3:
+> - Make device_node forward declaration a device forward declaration
+> - Remove forward declarations of struct clk_ops and struct
+>    clk_hw_onecell_data. (clk-provider.h include remains as it's needed
+>    for a complete type of clk_hw)
+> - Move PLL_PARENT_EN flag to individual mfgpll definitions.
+> - Link to v2: https://lore.kernel.org/r/20251008-mtk-pll-rpm-v2-0-170ed0698560@collabora.com
+> 
+> Changes in v2:
+> - Drop bindings patch
+> - Drop mfgpll RPM patch
+> - Add patch to also transition pllfh to passing device
+> - Add fixes patch to make CLK_OPS_PARENT_ENABLE also apply to the
+>    recalc_rate operation
+> - Remodel mfgpll's mfg_eb dependency as parent-child with
+>    CLK_OPS_PARENT_ENABLE
+> - Link to v1: https://lore.kernel.org/r/20250929-mtk-pll-rpm-v1-0-49541777878d@collabora.com
+> 
+> ---
+> Nicolas Frattaroli (5):
+>        clk: Respect CLK_OPS_PARENT_ENABLE during recalc
+>        clk: mediatek: Refactor pll registration to pass device
+>        clk: mediatek: Pass device to clk_hw_register for PLLs
+>        clk: mediatek: Refactor pllfh registration to pass device
+>        clk: mediatek: Add mfg_eb as parent to mt8196 mfgpll clocks
+> 
+>   drivers/clk/clk.c                            | 13 +++++++++++++
+>   drivers/clk/mediatek/clk-mt2701.c            |  2 +-
+>   drivers/clk/mediatek/clk-mt2712-apmixedsys.c |  2 +-
+>   drivers/clk/mediatek/clk-mt6735-apmixedsys.c |  4 ++--
+>   drivers/clk/mediatek/clk-mt6765.c            |  2 +-
+>   drivers/clk/mediatek/clk-mt6779.c            |  2 +-
+>   drivers/clk/mediatek/clk-mt6795-apmixedsys.c |  2 +-
+>   drivers/clk/mediatek/clk-mt6797.c            |  2 +-
+>   drivers/clk/mediatek/clk-mt7622-apmixedsys.c |  2 +-
+>   drivers/clk/mediatek/clk-mt7629.c            |  2 +-
+>   drivers/clk/mediatek/clk-mt7981-apmixed.c    |  2 +-
+>   drivers/clk/mediatek/clk-mt7986-apmixed.c    |  2 +-
+>   drivers/clk/mediatek/clk-mt7988-apmixed.c    |  2 +-
+>   drivers/clk/mediatek/clk-mt8135-apmixedsys.c |  3 ++-
+>   drivers/clk/mediatek/clk-mt8167-apmixedsys.c |  2 +-
+>   drivers/clk/mediatek/clk-mt8173-apmixedsys.c | 14 +++++++-------
+>   drivers/clk/mediatek/clk-mt8183-apmixedsys.c |  2 +-
+>   drivers/clk/mediatek/clk-mt8186-apmixedsys.c |  2 +-
+>   drivers/clk/mediatek/clk-mt8188-apmixedsys.c |  2 +-
+>   drivers/clk/mediatek/clk-mt8192-apmixedsys.c |  2 +-
+>   drivers/clk/mediatek/clk-mt8195-apmixedsys.c |  2 +-
+>   drivers/clk/mediatek/clk-mt8195-apusys_pll.c |  3 ++-
+>   drivers/clk/mediatek/clk-mt8196-apmixedsys.c |  3 ++-
+>   drivers/clk/mediatek/clk-mt8196-mcu.c        |  2 +-
+>   drivers/clk/mediatek/clk-mt8196-mfg.c        | 15 ++++++++-------
+>   drivers/clk/mediatek/clk-mt8196-vlpckgen.c   |  2 +-
+>   drivers/clk/mediatek/clk-mt8365-apmixedsys.c |  2 +-
+>   drivers/clk/mediatek/clk-mt8516-apmixedsys.c |  2 +-
+>   drivers/clk/mediatek/clk-pll.c               | 19 +++++++++++++------
+>   drivers/clk/mediatek/clk-pll.h               | 15 ++++++++-------
+>   drivers/clk/mediatek/clk-pllfh.c             | 13 ++++++++-----
+>   drivers/clk/mediatek/clk-pllfh.h             |  2 +-
+>   32 files changed, 87 insertions(+), 59 deletions(-)
+> ---
+> base-commit: adff43957b0d8b9f6ad0e1b1f6daa7136f9ffbef
+> change-id: 20250929-mtk-pll-rpm-bf28192dd016
+> 
+> Best regards,
+
+
