@@ -1,85 +1,86 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52A6133B970
-	for <linux-clk@vger.kernel.org>; Thu,  8 Jan 2026 21:19:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F25DD3370F4
+	for <linux-clk@vger.kernel.org>; Thu,  8 Jan 2026 21:19:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767907173; cv=none; b=huQDAjaIH48Vrt7u7WWqE96SaIRahOXD/RfvS7hHxtZmbTkRcjpQC4hwbtOmaDdZ8tHq1M/fpK7YcKuanOLX0GcIvi0gMtsKPLJY3MBKEHG9GoXxAT7oYlBKaVHHl4XNxOyW5JJPHkDKTL2BcTKOii5QJKBkTFtw5qeWo5ZOGQg=
+	t=1767907181; cv=none; b=dU82VYPYY6zju6IFchmhpmN5C+JxHg+sdh7mEb+xE1szRlFWj/iPs9We2wT3Ggs43qP2SrTZ9JlegGTjTV2f69lOqXeNn+gUEhzv1RHCx66jdHsX9aBLj9k0O/umBhqjZPYOJi3wIoPN0EHXSMoP29NNvCy7GFoYa4ppgQXu3+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767907173; c=relaxed/simple;
-	bh=t4zM8uFO3UkM6b2fxrdGu4KeHudrxCPL9CXUAD5cYTg=;
+	s=arc-20240116; t=1767907181; c=relaxed/simple;
+	bh=7gS8R9ubIL8YOU5prWLYeLbasyiJ1ewi1xZXoJO78ak=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ZxOUBnSG+ynm21rgYS9jp4EoCfEhR6dWTg7SvCGlTT9M6TPHSB/cT21CY9jw+BdP5S9BUzW+njgwjcKcOWwMFhYXhbvLwVv3SulnuybsERJDAvJH/sPRXs4rtpznIPyIJv0SAZEwzcbKOyHBKWZAyTVivrycHri3OghArukjqio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eTBWlP4E; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=mjmXoAcH; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:To:Cc; b=U4WmASucDkAmOCYtUxcNzRwRWkhPwd7/0G1zn6yFRVB9trczcOjUOBMnnl/YaijqJIN2OHpfZnORo2kajhU4V7X1oVwK8jZYMzS7kepgZwlkmuv9TUWDEmqL88zyNk1aSJX0ubUvQX43hmzaauJqXbnnFwR2dpeibxSJCaL86v8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ELWTyJa/; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=qv5NO9OE; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eTBWlP4E";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="mjmXoAcH"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ELWTyJa/";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="qv5NO9OE"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1767907168;
+	s=mimecast20190719; t=1767907173;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=8XFWRNQY7I7tUqJ0Pt1aWTLNa81jETDo2Sqeshx+vWY=;
-	b=eTBWlP4EAQUPiMjj78CaGXqFMA+I3EpiD/NZOqULJ1B8pMyLYknbAxScPUp1qnyj9Ok9Xa
-	2HmIvsgPZxu3z/CfMFRy9YhdVOCckupnfypD/qcOBhzxQOfssRBxotDMTV+7H7VdnXtkI1
-	mK7aM381oJZYRusaqzDJs4qyeKNh5mM=
-Received: from mail-ua1-f69.google.com (mail-ua1-f69.google.com
- [209.85.222.69]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=bgA35QJPt6bn7Cwt8Wzj2jn50koHv1JzEeGEjnq2gUU=;
+	b=ELWTyJa/0mUOJKNbHGHuJcEZaak5XP5ldCEqZYVEOZlvB+ooXED3HSaX8VVTK028g9x49/
+	6WR0CRLwAq+FyAI/+FTkjLAZUumPjl4TwnvXLgYfy6yBU3+KJOHtESxOlX/kgWrmLK5Y8M
+	jT8K6G2TXQKjMEQkmNzwBa/1JbRddFQ=
+Received: from mail-vs1-f71.google.com (mail-vs1-f71.google.com
+ [209.85.217.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-216-JvzhqoyuNIiFBd2p7fPkqQ-1; Thu, 08 Jan 2026 16:19:27 -0500
-X-MC-Unique: JvzhqoyuNIiFBd2p7fPkqQ-1
-X-Mimecast-MFC-AGG-ID: JvzhqoyuNIiFBd2p7fPkqQ_1767907167
-Received: by mail-ua1-f69.google.com with SMTP id a1e0cc1a2514c-93f39594413so3800865241.3
-        for <linux-clk@vger.kernel.org>; Thu, 08 Jan 2026 13:19:27 -0800 (PST)
+ us-mta-85-_8VSIqjXPO24CkHoQERbZQ-1; Thu, 08 Jan 2026 16:19:32 -0500
+X-MC-Unique: _8VSIqjXPO24CkHoQERbZQ-1
+X-Mimecast-MFC-AGG-ID: _8VSIqjXPO24CkHoQERbZQ_1767907171
+Received: by mail-vs1-f71.google.com with SMTP id ada2fe7eead31-5ec86f86afbso1701148137.0
+        for <linux-clk@vger.kernel.org>; Thu, 08 Jan 2026 13:19:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1767907167; x=1768511967; darn=vger.kernel.org;
+        d=redhat.com; s=google; t=1767907171; x=1768511971; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=8XFWRNQY7I7tUqJ0Pt1aWTLNa81jETDo2Sqeshx+vWY=;
-        b=mjmXoAcHXH4zEq/J3L94+yADPmqh4LF9gdxXbhq6951Fec3XCYrTH65LaFt4P9EqUA
-         x6O3ZRoDdOW3S229eM6+DkPSQuRDte0QsZexVDHOSBjbOP7Xa0+eQ6Yqd9vww8Wsg68O
-         bQy0T39zrJOfzvIYa8pnVUy0KTYAFRGKUU6x953CGbOQBo78TcxL4rUG/zyvAHq14aJf
-         +Xf6YM0AMvRYNwaT8nLOdR//Aap1cJGv4xTXmRGZRcYySFmLtLJFJrxJmDffiMeHgfWM
-         /H7csEJthTiDPB3lCsYaRTgr0wYUDVvCtOFqIUz1dYmsMlqgvOqog6jtdap7PEPqShB+
-         n1cg==
+        bh=bgA35QJPt6bn7Cwt8Wzj2jn50koHv1JzEeGEjnq2gUU=;
+        b=qv5NO9OEQEYkb74Tp1qGn+FXlLV2xTguTO3V0KkF7IRMbN9s4tK6G3sAjgTFiwL8pE
+         o0aPrf9WQWiO3TwXTsE2/64q0oAEq/oAIhXAMoakYSJapemjXhbaLeO8meGWxVfmCmAK
+         YoC03hl+9J8QSJVUUr/+c2TwI1dDOktzMOUyTXsGAYVEuHbM4ITsiMAHwWzcrX76ljIG
+         7meWclWDdoXUnMwH/GkfYD84gVFGxT+bm1iiGd7FB1yz6JskMfSgloBEondc85ZWVFzP
+         KixSWCJ2D0/QPemNDUNsCjC56dEKc0PfkLMapjRwFzMTkY4WytQlsnA5ENIxvscoq6qp
+         30eg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767907167; x=1768511967;
+        d=1e100.net; s=20230601; t=1767907171; x=1768511971;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=8XFWRNQY7I7tUqJ0Pt1aWTLNa81jETDo2Sqeshx+vWY=;
-        b=Dug1SHuFrWXUVH1BQzR3vsRGcYV2ZMd3CO73Vo2CuZGrjCtT8kZOvzYkJnQQc2pgq4
-         7KILOMFLIZUx/Efz+zgr3BJsj4EtiDOFI6KZqYg0CNMuvOFzMKmj4I0QYdeWJ7jhIgoy
-         wiZy9GC3HGQAesOnnyJlj71A/DJuUlMlQA4hUK7lXYhcWE//1rsU7qLj5x8R98MumQjV
-         7zRy1KGwNsglVYW227LToBNFvaxj4Urrt5JevZxkX+kvYAdN5WVvNOtEHfUYBatmEopw
-         0JgO5ERmhHAAmfV9pWRFCQasCaFPl4mlJUZcY9+0YI5QmLLEIzWrTMoPSz96xQ5hyavt
-         2Uig==
-X-Gm-Message-State: AOJu0YzKL4lu8F3Lloe5qeFGEGRWU8csHVXmAyt7elrzZXgukITZ45Zv
-	VnzaYib+aPqA/sMvjB4tyoCX29g/R0hYaL15ubL2laXqBYuYoUijn4JgHBbQkbMCVsI3Yk7mtUF
-	xdkahR+y+Iexbwk1M78Z3YdF6s8WjUpa+HmMmJR5fNSbgK0hhOX9KCYT3wWQPaw==
-X-Gm-Gg: AY/fxX64KGzit85SZsJhvDclxdriAC/TzRhDVR9w4XenELThNv4z2ibckscuhPztOBl
-	QJ48+xJeFVv0fk1AE58MnDGy3Prcu8QUxG6HcJxOro47QsrNEEVoF+enJhHKXYByUvnnBGiQzI0
-	FEKF5jfgvLjPogkDJrLACKMMuj5LVroE61xggThaBI83+Tm+BWAjSinD3058QaEuA6J/qJc4u+m
-	CIVXZOp9MQXzWgGa5mu8FbWwXZWdwTm7gAqygQtTAjKOYXZ4cSWbq9MNLFVjsSxLp3kqqBJfpjn
-	uREtLp2JhdJH+AAFVSZRk+vGvDmwZsx7GxXOrWDfYErc0js2Mu8lIMp2zxryDTtQ7G2MFKl+C7B
-	zh4WQ3+Yp48+VEy0=
-X-Received: by 2002:a67:e113:0:b0:5ec:c528:4df0 with SMTP id ada2fe7eead31-5ecc5284f85mr2719220137.34.1767907166735;
-        Thu, 08 Jan 2026 13:19:26 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGOrsvvufL5nGv9YAlp9TLDtBx6ki9n9l+q0ZIfj+0L81Pet9Ugf8yY/kN38alUABtcfu66ow==
-X-Received: by 2002:a67:e113:0:b0:5ec:c528:4df0 with SMTP id ada2fe7eead31-5ecc5284f85mr2719217137.34.1767907166381;
-        Thu, 08 Jan 2026 13:19:26 -0800 (PST)
+        bh=bgA35QJPt6bn7Cwt8Wzj2jn50koHv1JzEeGEjnq2gUU=;
+        b=eGIm2Bupe15abiwk7QVrLG9Iddr81fDyWZhUNJj2svVq08M4HLHRawyOG6gnLE9t8U
+         aKXbhXwf+XgIZzC83l5Ce6GzWBYaly/9t2Qlg+So9m/n5Z4QLdbucJ8S7rvkb9LXmkyl
+         UqCGYysjaMib9NCARIGlA5pP5z62bAeNLmuhwyAhixhfoCbLBEXD+hErg+dJR2QJw2Ro
+         wvF0SWxIUIarxgCfJqQTmP820SKK6NAxrq4Z30/dZqQUgrH/HLzgs+I0khZAq3F/oflP
+         gBsrPDzzM2b3ON+kpKnRQFEhJ0tGXWB8houj/97mr29OJUBXP3wfEK+1p2BRFXm4Cv0I
+         oDhw==
+X-Gm-Message-State: AOJu0YxU2FVFtR79MVWrIM6ajI2gjAiywwGqekH2njXT499juPMTpzqt
+	ACshf+7rK+UCJhjC5KS8uZyAQ4lwWrbTv4kQNIe+eg7AYMdLytRAgZTdk2VRIX/ZYsTmPiluS4/
+	B5aBPzKMdedXkOvk1vGUtdl2Of747FpFdf2wW2S4ir3xlXGtrCK+NuF+1750m6oge1nB80w==
+X-Gm-Gg: AY/fxX6NT3ucLOisr8uh+Hiu2hS6rojIQTc4DU2kSODuUUGnNLZpRBisd8lUYdjwFGW
+	TjEqxCrqaZUs00mvZXyE1daxjQlkY6+qz/2/PAEWRsFKwCRoRrJOGlVWntg/5BpdymyRTNg7/DJ
+	qBB6A40wdbji5iG67DYUGiNXkFwKd4F3DLXYMsXCXFuFv8nSHFUeV9XSAAaLssx4qjAW+g8ezRw
+	6/NEFYCeHVFge1JoO3gVKDF3mmFmV0NPtK202nvTciv9+/aByneJ8P4mD3Xr4dHHnQ5DSJvkU0/
+	pyPuHGVeEYKIfYHNex6tkRf0mmvzOlhEzPKkHvPC+eriQbZEbMROQCIM1LZ9P1vxjosw3+x8O5N
+	Oqlm8DOE72FWXRWw=
+X-Received: by 2002:a05:6102:952:b0:5ef:24aa:986f with SMTP id ada2fe7eead31-5ef24aaa8aemr42518137.2.1767907171068;
+        Thu, 08 Jan 2026 13:19:31 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHR8SU0cC6J7ZM6ORTAUjC6oyDRWxh5N7rfmic1Z80tAO+vimFrecGsZaskUobrNYaLX9pXEw==
+X-Received: by 2002:a05:6102:952:b0:5ef:24aa:986f with SMTP id ada2fe7eead31-5ef24aaa8aemr42510137.2.1767907170711;
+        Thu, 08 Jan 2026 13:19:30 -0800 (PST)
 Received: from [10.30.226.224] ([2600:382:811f:d757:daa5:b867:12a3:9d12])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-5ec77064e86sm7623329137.7.2026.01.08.13.19.22
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-5ec77064e86sm7623329137.7.2026.01.08.13.19.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Jan 2026 13:19:25 -0800 (PST)
+        Thu, 08 Jan 2026 13:19:30 -0800 (PST)
 From: Brian Masney <bmasney@redhat.com>
-Date: Thu, 08 Jan 2026 16:16:44 -0500
-Subject: [PATCH 26/27] clk: divider: remove divider_ro_round_rate_parent()
+Date: Thu, 08 Jan 2026 16:16:45 -0500
+Subject: [PATCH 27/27] clk: divider: remove divider_round_rate() and
+ divider_round_rate_parent()
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -88,7 +89,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260108-clk-divider-round-rate-v1-26-535a3ed73bf3@redhat.com>
+Message-Id: <20260108-clk-divider-round-rate-v1-27-535a3ed73bf3@redhat.com>
 References: <20260108-clk-divider-round-rate-v1-0-535a3ed73bf3@redhat.com>
 In-Reply-To: <20260108-clk-divider-round-rate-v1-0-535a3ed73bf3@redhat.com>
 To: Michael Turquette <mturquette@baylibre.com>, 
@@ -96,37 +97,37 @@ To: Michael Turquette <mturquette@baylibre.com>,
 Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
  Brian Masney <bmasney@redhat.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2855; i=bmasney@redhat.com;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2813; i=bmasney@redhat.com;
  s=20250903; h=from:subject:message-id;
- bh=t4zM8uFO3UkM6b2fxrdGu4KeHudrxCPL9CXUAD5cYTg=;
- b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGDIT5HZN8om3M/l1PUFwY1RC2E87z+8RItV+nVqrN1X/m
- 3jx2MrDHaUsDGJcDLJiiixLco0KIlJX2d67o8kCM4eVCWQIAxenAEykZTsjw/0vZjc/x1aKpOqy
- e1vPmMQSrGs31eFxxwqG3s8TFA+6PmNk+LXWs97TTPDgrI5ZbSaH2cMOzbhhXe35qKT1gvkUnRR
- fDgA=
+ bh=7gS8R9ubIL8YOU5prWLYeLbasyiJ1ewi1xZXoJO78ak=;
+ b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGDIT5Hb58B//GHHWfp3R8+QtIk27eMQ+zz2hs6VFrSDP2
+ pNxNducjlIWBjEuBlkxRZYluUYFEamrbO/d0WSBmcPKBDKEgYtTACbCfYGRYRd/E+/ZHfFxSj0d
+ Gda2HWIC9Tt+WLPJxM9+XF/IK+fpxvA/pPTY9AMiZYv/nDnyklXtWJpzfF66jrHAcrPZs1KKqyL
+ 5AA==
 X-Developer-Key: i=bmasney@redhat.com; a=openpgp;
  fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
 
-There are no remaining users of divider_ro_round_rate_parent(), so let's
-go ahead and remove it.
+There are no remaining users of divider_round_rate() and
+divider_round_rate_parent(), so let's go ahead and remove them.
 
 Signed-off-by: Brian Masney <bmasney@redhat.com>
 ---
  drivers/clk/clk-divider.c    | 22 ----------------------
- include/linux/clk-provider.h | 15 ---------------
- 2 files changed, 37 deletions(-)
+ include/linux/clk-provider.h | 13 -------------
+ 2 files changed, 35 deletions(-)
 
 diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
-index 2601b6155afb7391c6a0ffb91c58fa66cde98197..7e414017afa12c3838634ec030f960d8aa028b99 100644
+index 7e414017afa12c3838634ec030f960d8aa028b99..8439784ba08572dcd970d5d4ce3857c6c145763e 100644
 --- a/drivers/clk/clk-divider.c
 +++ b/drivers/clk/clk-divider.c
-@@ -409,28 +409,6 @@ long divider_round_rate_parent(struct clk_hw *hw, struct clk_hw *parent,
+@@ -387,28 +387,6 @@ int divider_ro_determine_rate(struct clk_hw *hw, struct clk_rate_request *req,
  }
- EXPORT_SYMBOL_GPL(divider_round_rate_parent);
+ EXPORT_SYMBOL_GPL(divider_ro_determine_rate);
  
--long divider_ro_round_rate_parent(struct clk_hw *hw, struct clk_hw *parent,
--				  unsigned long rate, unsigned long *prate,
--				  const struct clk_div_table *table, u8 width,
--				  unsigned long flags, unsigned int val)
+-long divider_round_rate_parent(struct clk_hw *hw, struct clk_hw *parent,
+-			       unsigned long rate, unsigned long *prate,
+-			       const struct clk_div_table *table,
+-			       u8 width, unsigned long flags)
 -{
 -	struct clk_rate_request req;
 -	int ret;
@@ -135,7 +136,7 @@ index 2601b6155afb7391c6a0ffb91c58fa66cde98197..7e414017afa12c3838634ec030f960d8
 -	req.best_parent_rate = *prate;
 -	req.best_parent_hw = parent;
 -
--	ret = divider_ro_determine_rate(hw, &req, table, width, flags, val);
+-	ret = divider_determine_rate(hw, &req, table, width, flags);
 -	if (ret)
 -		return ret;
 -
@@ -143,39 +144,37 @@ index 2601b6155afb7391c6a0ffb91c58fa66cde98197..7e414017afa12c3838634ec030f960d8
 -
 -	return req.rate;
 -}
--EXPORT_SYMBOL_GPL(divider_ro_round_rate_parent);
+-EXPORT_SYMBOL_GPL(divider_round_rate_parent);
 -
  static int clk_divider_determine_rate(struct clk_hw *hw,
  				      struct clk_rate_request *req)
  {
 diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 630705a47129453c241f1b1755f2c2f2a7ed8f77..000f4063e0d10e6772f6d2af7feb0de7741e7255 100644
+index 000f4063e0d10e6772f6d2af7feb0de7741e7255..85f456be5f12ec46e86e5819643fed3fe3790fcb 100644
 --- a/include/linux/clk-provider.h
 +++ b/include/linux/clk-provider.h
-@@ -743,10 +743,6 @@ long divider_round_rate_parent(struct clk_hw *hw, struct clk_hw *parent,
- 			       unsigned long rate, unsigned long *prate,
- 			       const struct clk_div_table *table,
- 			       u8 width, unsigned long flags);
--long divider_ro_round_rate_parent(struct clk_hw *hw, struct clk_hw *parent,
--				  unsigned long rate, unsigned long *prate,
--				  const struct clk_div_table *table, u8 width,
--				  unsigned long flags, unsigned int val);
+@@ -739,10 +739,6 @@ extern const struct clk_ops clk_divider_ro_ops;
+ unsigned long divider_recalc_rate(struct clk_hw *hw, unsigned long parent_rate,
+ 		unsigned int val, const struct clk_div_table *table,
+ 		unsigned long flags, unsigned long width);
+-long divider_round_rate_parent(struct clk_hw *hw, struct clk_hw *parent,
+-			       unsigned long rate, unsigned long *prate,
+-			       const struct clk_div_table *table,
+-			       u8 width, unsigned long flags);
  int divider_determine_rate(struct clk_hw *hw, struct clk_rate_request *req,
  			   const struct clk_div_table *table, u8 width,
  			   unsigned long flags);
-@@ -1446,17 +1442,6 @@ static inline long divider_round_rate(struct clk_hw *hw, unsigned long rate,
- 					 rate, prate, table, width, flags);
+@@ -1433,15 +1429,6 @@ static inline void __clk_hw_set_clk(struct clk_hw *dst, struct clk_hw *src)
+ 	dst->core = src->core;
  }
  
--static inline long divider_ro_round_rate(struct clk_hw *hw, unsigned long rate,
--					 unsigned long *prate,
--					 const struct clk_div_table *table,
--					 u8 width, unsigned long flags,
--					 unsigned int val)
+-static inline long divider_round_rate(struct clk_hw *hw, unsigned long rate,
+-				      unsigned long *prate,
+-				      const struct clk_div_table *table,
+-				      u8 width, unsigned long flags)
 -{
--	return divider_ro_round_rate_parent(hw, clk_hw_get_parent(hw),
--					    rate, prate, table, width, flags,
--					    val);
+-	return divider_round_rate_parent(hw, clk_hw_get_parent(hw),
+-					 rate, prate, table, width, flags);
 -}
 -
  /*
