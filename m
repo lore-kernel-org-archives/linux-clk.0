@@ -1,120 +1,109 @@
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+Received: from mail-ej1-f65.google.com (mail-ej1-f65.google.com [209.85.218.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACAE74CB3BB;
-	Thu,  8 Jan 2026 12:24:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 962684F29BB
+	for <linux-clk@vger.kernel.org>; Thu,  8 Jan 2026 12:34:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767875060; cv=none; b=ZCtV6VNWQvhp4vXKYs0MxBV+dBdyjOoUFU02FJbq2uP1DhGf6RpCQ104y5LQh/8fsQHqa1OR0Kp7omDO1M0TbPH+K9dQbgiga+Yr+zEYamNgYBLIweSqJhfWQeq7oWp7D3tU74qyc+pIiY2hjnHBlG2WdBbl13qcPvMaGS3EqkQ=
+	t=1767875679; cv=none; b=CfL/SC4w/DG7dfTYvCgNZOym7zVpaoreZlFrchUm7JEuDUzZY4SEcPjhfSWvogdS+pFU85dPEhKClxw7V2pSx2//lrnIuGFXjFLKqSiIAxhbMEA4486Pw9bTKa3/JsCz6vrlbbdKNkXNozv31UIMgJId4CXW9VdcFIeulwDmHEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767875060; c=relaxed/simple;
-	bh=uluj15nv0I39/Rq0UuYS/cxHYmelKtaJjmNgYItHxnA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y+70V14AQBSZuqgCuZAAJ5Bu8kXsENKZlqVVafWs/D/CNvF4n7O0dXQ3vvXkJKhHL20sEBDGTF3qPRIaMxRVawOpFPY4oIn6lk1qxxf2iq3U81Cf7cgaIWhUKDuvEnmCcDMMo+evvCh+eWS3rdLwGf/1QhAFdi1uXPx1KKtSe18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Received: from localhost (unknown [116.232.18.222])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dlan)
-	by smtp.gentoo.org (Postfix) with ESMTPSA id A82FE340DF7;
-	Thu, 08 Jan 2026 12:24:17 +0000 (UTC)
-Date: Thu, 8 Jan 2026 20:24:13 +0800
-From: Yixun Lan <dlan@gentoo.org>
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Alex Elder <elder@riscstar.com>, Stephen Boyd <sboyd@kernel.org>,
+	s=arc-20240116; t=1767875679; c=relaxed/simple;
+	bh=F1x0vYfegBL7n3iJichIb1PGAil9viNpxvOdcjfDOjY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=liUn3u3eaOrtbqew4zzp+XsWCizmHm1M9HBTmnuE1Jb5Zqf4c4rSpO115hJPWyUIMJlZ82nAmK/vm08pcs/vX7jb522I7prJ2yVwhgAYub1/peeKDwnMBKzuK37MOR5mo46y0BiHrEM/J0NRJNWmzGobZwJSeZZlE77Q5GBNNIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YBm0FK7n; arc=none smtp.client-ip=209.85.218.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YBm0FK7n"
+Received: by mail-ej1-f65.google.com with SMTP id a640c23a62f3a-b7ffbf4284dso457450966b.3
+        for <linux-clk@vger.kernel.org>; Thu, 08 Jan 2026 04:34:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1767875676; x=1768480476; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=QxA3rCi4n4Zd11T4YjtWJ+fLfFPU0EDYmXEJgipwb9E=;
+        b=YBm0FK7nhFpRjm14qR7F9a3mNpJpnA8FH8kueIg4n6zYlybC3DCkLmjJCl5xR1o4U/
+         lqW/kNaWnsjTuSd04FGdK0RHZMNdnQUj45ixrJXrN7Wp8C+pzoWBwYMc1BLp41YBDziQ
+         AZkU1jQPMZYIqAbsauPWENFFBQl6sPKR68cIza7LtNc+sNMFLJvNGnVIEFIF+BMweJm/
+         vbyL2a/0mT+MR+e2aShGCzzjovXoWDD4LyvDmG7bWipJ2ewvH4cnzxPsdyu7otkjMij1
+         moZSDnXPY0sjILrSQZIHKlN+KQWBjmHaMz9ok9KdgvFP57C3N60PsZH4yAPnnORhI9Le
+         D6uA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1767875676; x=1768480476;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QxA3rCi4n4Zd11T4YjtWJ+fLfFPU0EDYmXEJgipwb9E=;
+        b=uaUxr9SuT5fbnyyddkjsJrIEtnxW3cjf0wXO7UnCgcfoS0COBDtmI+dA/PyDSg+Qqd
+         5y/LOEiP78GQ6IGq/7bhxBlQy2gWNtlVR2Hnvnq9y7goGigSiu1beon/fjX2YxjVdkQ2
+         +olP8R7Wt1708zpPbR7HE4Y3C7WNafuB+JORrL8F2bVOoRoqqJcMqv85a+vzj2aCrEk3
+         PT6F2eLionq4QgN/H60zLkkSB5eJPViA8G9CY00/jodrbfQpxByhcMhrji6VC+WZVXBj
+         ue7yJu490tSqEijGKVDw6woeKSCbxcKHvMrhQqLSunUWKQq7Li5Rezebc5SigkE6ZXdr
+         AkPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUHtPYgPt5cdTBgHuB/OgoVIRaHNSy1gyqxK1cPO6WacBT40TqzfE0k5GMjTH73NINmf11lDAIcLAI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPAbXohBFaxmGdDrplIeKSK3GTZnL6TDQLfC3Fh2IBxrjC3ccL
+	8E29Y357tqIjDnHG20MokDXnPnkJtHz2vWLHKbZNFYTP5xMFR6ZPTesg
+X-Gm-Gg: AY/fxX51Q8SQc4PUP+0JdShHVueq+mZp0/jpPNkTUFJochk23u1mp7dLpiExK9ZUxJy
+	GKhX7BA8UdqpHez6ywLqpXHj65DhEJDh8G7P6bFI5Vnkj2nEHdDK2LIOfLF3bsaor75TM5OD70Z
+	jsEeUiDXThnLMvLqfIaRjP91068Zcge+MD1HWIqS3eYc/msHkJYkU4BWTs+RFsqTRHAPJhLlFne
+	H9vao5ZJPCfmoq8H2MuxzzzzAzbquj2PrY3zXj6ngqB5swFEvg7cla+DFsvbijnj30YuznMhcyT
+	94SWhvA/gPePyriwjhEgb3KxDvGDWfXNWnbu7BiuM068pN9rTuvUkIXdsIYtxxUkzeIGLOTY4RT
+	N3N9pTs4OkewSdYYGqdEFmJMPqc1znYsx1FYzsjExZjD1PxqWOvnSaJjAmqNKwKjWrVtji6hTSH
+	yxbEeqwdNE4c7EsMMmcsLYagBx28ZN/KXNDuk=
+X-Google-Smtp-Source: AGHT+IGDYWBzdLP3GPBfT4boWtLi0Nz7sIczo+oyRUwJh3nn+ZhSgyvvzjobNVrE7I2+mIZQNWdOhg==
+X-Received: by 2002:a17:906:6a1b:b0:b83:3294:af63 with SMTP id a640c23a62f3a-b8445031bd4mr517614466b.1.1767875675518;
+        Thu, 08 Jan 2026 04:34:35 -0800 (PST)
+Received: from localhost.localdomain ([2a00:23c4:a758:8a01:a172:15fe:21c8:edf5])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b842a56db21sm780412166b.71.2026.01.08.04.34.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 Jan 2026 04:34:35 -0800 (PST)
+From: Biju <biju.das.au@gmail.com>
+X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Guodong Xu <guodong@riscstar.com>,
-	Inochi Amaoto <inochiama@gmail.com>, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org,
-	spacemit@lists.linux.dev
-Subject: Re: [PATCH v3 4/4] reset: spacemit: fix auxiliary device id
-Message-ID: <20260108122413-GYB4052@gentoo.org>
-References: <20260103-06-k1-clk-common-v3-0-6061d9f69eef@gentoo.org>
- <20260103-06-k1-clk-common-v3-4-6061d9f69eef@gentoo.org>
- <058d3911-ff2d-4151-b585-5bcb8810bedf@riscstar.com>
- <e7fa69f1febc37062a59f566be97537a3a1e6ee0.camel@pengutronix.de>
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Biju Das <biju.das.au@gmail.com>
+Subject: [PATCH v2 0/2] clk: renesas: rz{g2l,v2h}: Deassert reset on assert timeout
+Date: Thu,  8 Jan 2026 12:34:26 +0000
+Message-ID: <20260108123433.104464-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e7fa69f1febc37062a59f566be97537a3a1e6ee0.camel@pengutronix.de>
+Content-Transfer-Encoding: 8bit
 
-Hi Philipp,
+From: Biju Das <biju.das.jz@bp.renesas.com>
 
-On 12:07 Thu 08 Jan     , Philipp Zabel wrote:
-> On Di, 2026-01-06 at 08:43 -0600, Alex Elder wrote:
-> > On 1/3/26 1:26 AM, Yixun Lan wrote:
-> > > Due to the auxiliary register procedure moved to ccu common module where
-> > > the module name changed to spacemit_ccu, then the reset auxiliary device
-> > > register id also need to be adjusted in order to prepare for adding new
-> > > K3 reset driver, otherwise two reset drivers will claim to support same
-> > > "compatible" auxiliary device.
-> > > 
-> > > Signed-off-by: Yixun Lan <dlan@gentoo.org>
-> > 
-> > This would ideally be merged with the previous patch.  Maybe
-> > Philipp can negotiate with Stephen to have that happen.
-> > 
-> > Reviewed-by: Alex Elder <elder@riscstar.com>
-> > 
-> > > ---
-> > >   drivers/reset/reset-spacemit.c | 2 +-
-> > >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > > 
-> > > diff --git a/drivers/reset/reset-spacemit.c b/drivers/reset/reset-spacemit.c
-> > > index e1272aff28f7..cc7fd1f8750d 100644
-> > > --- a/drivers/reset/reset-spacemit.c
-> > > +++ b/drivers/reset/reset-spacemit.c
-> > > @@ -278,7 +278,7 @@ static int spacemit_reset_probe(struct auxiliary_device *adev,
-> > >   
-> > >   #define K1_AUX_DEV_ID(_unit) \
-> > >   	{ \
-> > > -		.name = "spacemit_ccu_k1." #_unit "-reset", \
-> > > +		.name = "spacemit_ccu.k1-" #_unit "-reset", \
-> > >   		.driver_data = (kernel_ulong_t)&k1_ ## _unit ## _reset_data, \
-> > >   	}
-> > >   
-> 
-> Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
-> 
-thanks
+If the assert() fails due to timeout error, set the reset register bit
+back to deasserted state. This change is needed especially for handling
+assert error in suspend() callback that expect the device to be in
+operational state in case of failure.
 
-> to be merged via the clock tree.
-> 
-ok, got!
+Ref:
+[1] https://lore.kernel.org/all/b417865397822176e83bca6b9d8094fe92ff2451.camel@pengutronix.de/
 
-and, here is my plan, I will prepare an immutable tag for the patch 4 -
-the change to reset driver ID, and merge it with the whole series,
-then send them along via clock tree.
+v1->v2:
+ * Added the variable "mon" and used in readl_poll_timeout_atomic()
+   instead of reusing "value".
+ * Dropped the assert check in error path and simplified value using xor.
+ * Added Rb tag from Geert.
 
-the tag would be useful if follow-up K3 reset patch[1] need to be merged, since
-both will change the reset driver, and with the tag, patch 4 can be pulled into
-both clock and reset subsystem, future reset patches can commit on top of it.
-even there is no price to pay if above doesn't happen.
+Biju Das (2):
+  clk: renesas: rzg2l: Deassert reset on assert timeout
+  clk: renesas: rzv2h: Deassert reset on assert timeout
 
-
-> Note that the commits for both patches 2 and 3 will fail to probe the
-> reset driver when bisecting.
-> If you don't want do merge the corresponding changes to K1_AUX_DEV_ID()
-> into those two patches, to make this series (runtime) bisectable, you
-no, I do not want to merge changes K1_AUX_DEV_ID() into patch 2/3
-
-> should add a warning to both their commit messages that the reset
-> driver will be adapted in the following patch 4.
-ok, I will send a new version and add a warning message
-
-> 
-> regards
-> Philipp
-
-Link: https://lore.kernel.org/all/20251229-k3-reset-v1-0-eda0747bded3@riscstar.com/ [1]
+ drivers/clk/renesas/rzg2l-cpg.c | 9 +++++----
+ drivers/clk/renesas/rzv2h-cpg.c | 9 +++++----
+ 2 files changed, 10 insertions(+), 8 deletions(-)
 
 -- 
-Yixun Lan (dlan)
+2.43.0
+
