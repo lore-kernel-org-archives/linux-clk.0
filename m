@@ -1,1599 +1,234 @@
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5F2923D291;
-	Thu,  8 Jan 2026 02:12:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7E8833A008
+	for <linux-clk@vger.kernel.org>; Thu,  8 Jan 2026 05:58:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767838336; cv=none; b=OFgKfIIAYZiWUYSFlJXOhxYMIkHA1Puj+41giYs8iyJeC2GrIn29gGyENukfW+tw2aOO5Uoy8+n8F2fFrqw/zmpLk2cBUU9WkoJi0uy21LntWIq5ccK045Sf1nlU1oc62g965eMUJKIJZlE+4MPSHTCQ98R+9Awkx795JlZlNRk=
+	t=1767851919; cv=none; b=aTynqlzQniJThxZUvGbNiSbQz9Rl6mKRwEalWsf/WAiMCg9j6Enj6G4tRT8VW7IRuNhUuAfclDR110qo9eqbyCizjvo5QYlFHMFNfDhpu7tx2iTDoZCn1LYtDwNTC25TyQhqqweXuoO/q/7j8WdOiI/tFUGZbuMEm0+4861CA8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767838336; c=relaxed/simple;
-	bh=xisVlRhsDjEjmHANrliFSGrzqfJNY+nLhLN8si1IpeI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=mzR7kMcrWOHT/UGr2qbTZs9ozU+gZ3TUF0UtbRPETvSvrqYaNDd3ylzjAKfzDNFkWDhdxGTiGD5uIXJsLYkFwGEbH5Oyc4VzBRYEKMc8bQGBUUK13zipHLuKh7LFgO+EnErx2/miemeNiUC9eUywsK2ibiI1hT1yJgPnijItZv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Received: from [127.0.0.1] (unknown [116.232.18.222])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dlan)
-	by smtp.gentoo.org (Postfix) with ESMTPSA id F2A20341CB9;
-	Thu, 08 Jan 2026 02:12:07 +0000 (UTC)
-From: Yixun Lan <dlan@gentoo.org>
-Date: Thu, 08 Jan 2026 10:11:09 +0800
-Subject: [PATCH v5 5/5] clk: spacemit: k3: add the clock tree
+	s=arc-20240116; t=1767851919; c=relaxed/simple;
+	bh=jmuRz7laWsvaVKWvXCL5E6YwClFXNXcylq9sPTclTPU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p35aF48YL2eRJVYJ4E3hA68tDIe/wsKIHf4fw0PC81NuIxjT8GPERMTptoK5yqh5OzI3EvqieR/gggSWpg+MiKCMPoJ10SVIOyZgilLeLKkR6tpo5zx+WUaFhgftokO1k+DxdnKNgRXWdCpuWBaCw/uCnq7z29BWa7DiK/raIOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=UIPrSe/N; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=fZ25sWF/; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="UIPrSe/N";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="fZ25sWF/"
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 607Noh3R474505
+	for <linux-clk@vger.kernel.org>; Thu, 8 Jan 2026 05:58:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	KPYorIOVmCg/xCSHrscU+vX13wArRA8uiPCnnOt9eD4=; b=UIPrSe/NnwlzeUdy
+	fdeCO4z9d8qcJLSYHLI3XqItHFFjrk88rCm/sHTFN6TSAcjNwVZSdih6qjvI/TkI
+	LeiR4XhnZQpgFJhnNBRLWdhRnac23BGhq2l6xLcmsM5oZAiaOy60OcwWI0rmWrvB
+	kK9+9zyTRm22a323Du6U9+F/Diy6rhdbUZtaLiBR2/Vz9yGxc/I5YAO/m0pBLztk
+	GJdkFAZHefmpAFNxH4RyN76gaVIL2T3H1QwPWVNRY6VenFug1rqSlTnnJl4VP247
+	/nQhOVu8r9zirj1RZ2KvmHTMS3Pa+rPyjDWBT3LnlmHqAEQtSECdN90bXx5LMH4I
+	/4h3Yg==
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4bhuy71wa4-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Thu, 08 Jan 2026 05:58:36 +0000 (GMT)
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-29f1f69eec6so30742015ad.1
+        for <linux-clk@vger.kernel.org>; Wed, 07 Jan 2026 21:58:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1767851916; x=1768456716; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=KPYorIOVmCg/xCSHrscU+vX13wArRA8uiPCnnOt9eD4=;
+        b=fZ25sWF/aq4T4dJGpiusgRSjdXu17AMJINZN0yd09nRV0DxYocf//Y1a0r7/4R5GDw
+         NcEVV9joHw4xU2dAr3PpzuFZysyee/vgvai2an50SqDxbUejqgzAdL0vsy1OmV6hDNLS
+         jWv83xkncekhCoqgvXqPjDuu7I23gKiJTFI9S1FzgyUKmoUnC64uRvEdmphaziaH8veh
+         kzSUpnXugP2urXvraaQjgeBMDkTWJ13aSW+0YcwUAkVippeHutCdI5Ba/B7QBW+hsT07
+         XZAJh/ZK7FkRZqlpLZwSDcpDePbbTIn2DqOKHIuBUoyMHN0bpxIOo+ZqNw/Xq2c7lcH3
+         saLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1767851916; x=1768456716;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KPYorIOVmCg/xCSHrscU+vX13wArRA8uiPCnnOt9eD4=;
+        b=GU9lXvnMZRaExkwJGbzooF4L4089xyhsvHkbTuFoKbwvgZu9ffB3pMLsuyxY2D4L+i
+         wrUzMLNX0Q7czuNNYCsgAvZ74NO9DLQkt4nFFzDVk7VDNnAzMrZI2jJ/LbCDNcFiDMQ8
+         0Nabn3ulnL/xSAHVWuLnX9dn+Oq8AE5ZR0BH8OYaGOYzJfTQoaYGEg5Kswy5KN7DjnRy
+         b/GdGtKRDXXyBdvhH/zkvvTHOZxgtLA2FhiUcC2Fc3K6rxP6m/S1uoHhwYlGQKx87AKW
+         sUpvx6OIzc1weVBbk9ZTuwLZ01qHV08CwMvCSPRrtZxgGhbmtbbXPWElX2LaezW1b4TT
+         h9vQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWPiPlAhQCcxec3H0bM/CVacCIge+ABqOnSlYENvoqy7Ny7NuY5+ZNLDO23n0lS9bmgFT4D8EvYb2I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YziYBkiK+1H/CaGX1YxWZxtCyS4p5Y82UhLKh+/IduTE9Q03TJG
+	Z89PUcl1R8/zE9dCvJcy9glIWutr2TE/nblec9iBNJvKf4eaQa4p9Vzwov3IgNSlxccCWqL2Cja
+	055pI6Xfxfw1o1mu9aJwH+GoiAlwvVAXIt0f0a7+UVHf4YMuZwBZfywr+Lb/AgbQ=
+X-Gm-Gg: AY/fxX4i/lZbke0CDwgi2MdZRgeMFLta0W3zGwS1DFy1bmMfHF+4LV37yTcQ1sCKFe0
+	7beCzZl9WKPvG3bhALq1V52bhxUd/KYilk6QQNVo074UF6TV5jGfBCQatAUIaVHbBn04HWQodgo
+	F+oF1DpViKN5BfBr+x+rAxFefj5NOpT0c1Ba+XdphOGtFEbgAt7ibIGRDqrjSYSILtSiSqm7kCM
+	pVO39OayLGnaWZfrHyHWV+MgP4BImh8nORK0AHUlQVcoUzNCkyyswWi35DMKCTA3Vj8b3xoCosP
+	jrJ7p7V1rrDSWUDihEFSJMxSv2q8zZz+OPbtG5yBJB2Fqa4RdQaKoMzVOZ9F0Pji4ywm7LSMJVQ
+	IpVCWGFqEfHGefI8RXDhNRA==
+X-Received: by 2002:a17:903:248:b0:2a0:fb1c:144c with SMTP id d9443c01a7336-2a3ee40ee95mr46423295ad.5.1767851915330;
+        Wed, 07 Jan 2026 21:58:35 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHVWFzdCH0NvCqAqzFjiQJZqOIin8TQmPH0h0f7iHo4faS2uHD2sRCtyN4+GHqvUTWJPMNp0Q==
+X-Received: by 2002:a17:903:248:b0:2a0:fb1c:144c with SMTP id d9443c01a7336-2a3ee40ee95mr46422955ad.5.1767851914736;
+        Wed, 07 Jan 2026 21:58:34 -0800 (PST)
+Received: from work ([120.60.56.4])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2a3e3cd492esm67610355ad.98.2026.01.07.21.58.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 Jan 2026 21:58:34 -0800 (PST)
+Date: Thu, 8 Jan 2026 11:28:27 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+To: Stephan Gerhold <stephan.gerhold@linaro.org>
+Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Taniya Das <quic_tdas@quicinc.com>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Bartosz Golaszewski <brgl@kernel.org>,
+        Shazad Hussain <quic_shazhuss@quicinc.com>,
+        Sibi Sankar <sibi.sankar@oss.qualcomm.com>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Melody Olvera <quic_molvera@quicinc.com>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Taniya Das <taniya.das@oss.qualcomm.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+        Imran Shaik <quic_imrashai@quicinc.com>,
+        Abel Vesa <abelvesa@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Rajendra Nayak <quic_rjendra@quicinc.com>, stable@vger.kernel.org
+Subject: Re: [PATCH 0/7] clk: qcom: gcc: Do not turn off PCIe GDSCs during
+ gdsc_disable()
+Message-ID: <oysexostrdzcyapwpf2ele22lje4limgdknz3xcjgbs5tpvr46@cxzefx6ep477>
+References: <20260102-pci_gdsc_fix-v1-0-b17ed3d175bc@oss.qualcomm.com>
+ <a42f963f-a869-4789-a353-e574ba22eca8@oss.qualcomm.com>
+ <edca97aa-429e-4a6b-95a0-2a6dfe510ef2@oss.qualcomm.com>
+ <500313f1-51fd-450e-877e-e4626b7652bc@oss.qualcomm.com>
+ <4d61e8b3-0d40-4b78-9f40-a68b05284a3d@oss.qualcomm.com>
+ <e917e98a-4ff3-45b8-87a0-fe0d6823ac2e@oss.qualcomm.com>
+ <2lpx7rsko24e45gexsv3jp4ntwwenag47vgproqljqeuk4j7iy@zgh6hrln4h4e>
+ <aVuIsUR0pinI0Wp7@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260108-k3-clk-v5-5-42a11b74ad58@gentoo.org>
-References: <20260108-k3-clk-v5-0-42a11b74ad58@gentoo.org>
-In-Reply-To: <20260108-k3-clk-v5-0-42a11b74ad58@gentoo.org>
-To: Stephen Boyd <sboyd@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: Haylen Chu <heylenay@4d2.org>, Guodong Xu <guodong@riscstar.com>, 
- Inochi Amaoto <inochiama@gmail.com>, Yao Zi <me@ziyao.cc>, 
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-riscv@lists.infradead.org, spacemit@lists.linux.dev, 
- linux-kernel@vger.kernel.org, Yixun Lan <dlan@gentoo.org>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=71932; i=dlan@gentoo.org;
- h=from:subject:message-id; bh=xisVlRhsDjEjmHANrliFSGrzqfJNY+nLhLN8si1IpeI=;
- b=owEB6QIW/ZANAwAKATGq6kdZTbvtAcsmYgBpXxJbUr9A15pTvKq8Z1aVphWs+LhGTFqM0LzEw
- ccGmpng1MmJAq8EAAEKAJkWIQS1urjJwxtxFWcCI9wxqupHWU277QUCaV8SWxsUgAAAAAAEAA5t
- YW51MiwyLjUrMS4xMSwyLDJfFIAAAAAALgAoaXNzdWVyLWZwckBub3RhdGlvbnMub3BlbnBncC5
- maWZ0aGhvcnNlbWFuLm5ldEI1QkFCOEM5QzMxQjcxMTU2NzAyMjNEQzMxQUFFQTQ3NTk0REJCRU
- QACgkQMarqR1lNu+05xA//SUGXaJd/MOCysSWPEofyLKV1AoGSG0E7JGAhBKSjwsBP3nrY0PYt7
- DGt1UOB4/XTjFy2NGrnP5lPtL0nZnEAMMLLdnJpHSPZb/8/7gNIJ1woGuqZR+rVWOeEzbbtjYya
- E10Gn5Kcpcz3B3gNGV9qE1qMi7xSPU63xrb6qi4SNDf3+wCg38Pty9afwhpK383NFA/60+m6ZEC
- qLyHsBEMhGnjMZJLY0EI2mRbrcXEpNQKCfQWc3f74p/1+w/Kd9Q1UP1Ok09c46vwexCYAQpsdkA
- SFCp62j+JDzJ4UW2a+X/8CB+WbGwpv2+8KjdvD3f7ecr5Hjq9IOWHxG0jYL0IkjqrjsqcVsOhbK
- Fl/sWg4lBewq7s6wPpATmL9bnkMSfWC/FOc9Kk+desasqZEZTRe/gyTryxku8Zm6wA9GvZharkK
- 9s4ZlBhciIZyxWvGA1tJ2JeQ9FI6ISGmyi/wdCF1/zleuK5EcyVGazvdDGuO6KxZErfvMQd0N9q
- OlT3bTPplKeJHDlavpSbES9NAzstzz1ugj9ZYjYW735idzCp4bv7DIUsLuuj4TMrXf19r3MKnqs
- n4DG3G+9GGsw9PPvxtPGZihRxfWo8S3Pg5RFboJc8tD0i0kXZPBOxUJjwHvsh6+WTs/ZIgzSBt6
- JsgcRRqXmKDzueFzjYmagLoNCJAAvE=
-X-Developer-Key: i=dlan@gentoo.org; a=openpgp;
- fpr=50B03A1A5CBCD33576EF8CD7920C0DBCAABEFD55
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aVuIsUR0pinI0Wp7@linaro.org>
+X-Proofpoint-ORIG-GUID: EjKGYBUCagjLUwGpezk0DvMjjOuHyprP
+X-Proofpoint-GUID: EjKGYBUCagjLUwGpezk0DvMjjOuHyprP
+X-Authority-Analysis: v=2.4 cv=DZEaa/tW c=1 sm=1 tr=0 ts=695f478c cx=c_pps
+ a=JL+w9abYAAE89/QcEU+0QA==:117 a=RufU61fwOX414azV3ffNTg==:17
+ a=IkcTkHD0fZMA:10 a=vUbySO9Y5rIA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=gMOyne7U4qER8HjkPQQA:9 a=3ZKOabzyN94A:10
+ a=QEXdDO2ut3YA:10 a=324X-CrmTo6CU4MGRt3R:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTA4MDAzNSBTYWx0ZWRfXxVuMkYHeHfTb
+ Sr1cWZsX4CthlPhUzkpQEoSUQXNXWxNftsrUQVS27alzMwHNUv+FBydAfEhc1ukOjmvRHFhbOLV
+ OegcOHIuWK+UruCmZwByoHCBfvSzhVxJkgbxkVk+mevizaSmWVlIvzio8YtdUzKClV7rL3l/nzx
+ M1eilaMLtsS3CfIMRVY4VEs+egdH6tuyIDdcKSDXwioeFOZdo0XDv50oQBaRGBs5ZTxtSEAI7zY
+ KxUGvMytzF2B4bLmuHyY0Ks5XB9rox0jcu4g4dZVV8t8Y3B+nZhLAtEANnkYexIGTUOhVxnHInZ
+ G3f9Y4vxbjs8WX1SisIBnmuHCQx6AaDiQhwnlSlJIQrwIfLncvr+ZSHhfgPBvudGNiF+m0dssSg
+ 6nBfHsn133GukdVt3jqSYMBLANDd0YMmkvpx/pVtgJELzqVD11t1VQTlTYKKY6Nh1ADs8MdtePl
+ CYfGUvCyct1HAdeKQSg==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2026-01-08_01,2026-01-07_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 impostorscore=0 phishscore=0 bulkscore=0 adultscore=0
+ spamscore=0 clxscore=1015 suspectscore=0 lowpriorityscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2512120000 definitions=main-2601080035
 
-Add clock support to SpacemiT K3 SoC, the clock tree consist of several
-blocks which are APBC, APBS, APMU, DCIU, MPUM.
+On Mon, Jan 05, 2026 at 10:47:29AM +0100, Stephan Gerhold wrote:
+> On Mon, Jan 05, 2026 at 10:44:39AM +0530, Manivannan Sadhasivam wrote:
+> > On Fri, Jan 02, 2026 at 02:57:56PM +0100, Konrad Dybcio wrote:
+> > > On 1/2/26 2:19 PM, Krishna Chaitanya Chundru wrote:
+> > > > On 1/2/2026 5:09 PM, Konrad Dybcio wrote:
+> > > >> On 1/2/26 12:36 PM, Krishna Chaitanya Chundru wrote:
+> > > >>> On 1/2/2026 5:04 PM, Konrad Dybcio wrote:
+> > > >>>> On 1/2/26 10:43 AM, Krishna Chaitanya Chundru wrote:
+> > > >>>>> With PWRSTS_OFF_ON, PCIe GDSCs are turned off during gdsc_disable(). This
+> > > >>>>> can happen during scenarios such as system suspend and breaks the resume
+> > > >>>>> of PCIe controllers from suspend.
+> > > >>>> Isn't turning the GDSCs off what we want though? At least during system
+> > > >>>> suspend?
+> > > >>> If we are keeping link in D3cold it makes sense, but currently we are not keeping in D3cold
+> > > >>> so we don't expect them to get off.
+> > > >> Since we seem to be tackling that in parallel, it seems to make sense
+> > > >> that adding a mechanism to let the PCIe driver select "on" vs "ret" vs
+> > > >> "off" could be useful for us
+> > > > At least I am not aware of such API where we can tell genpd not to turn off gdsc
+> > > > at runtime if we are keeping the device in D3cold state.
+> > > > But anyway the PCIe gdsc supports Retention, in that case adding this flag here makes
+> > > > more sense as it represents HW.
+> > > > sm8450,sm8650 also had similar problem which are fixed by mani[1].
+> > > 
+> > > Perhaps I should ask for a clarification - is retention superior to
+> > > powering the GDSC off? Does it have any power costs?
+> > > 
+> > 
+> > In terms of power saving it is not superior, but that's not the only factor we
+> > should consider here. If we keep GDSCs PWRSTS_OFF_ON, then the devices (PCIe)
+> > need to be be in D3Cold. Sure we can change that using the new genpd API
+> > dev_pm_genpd_rpm_always_on() dynamically, but I would prefer to avoid doing
+> > that.
+> > 
+> > In my POV, GDSCs default state should be retention, so that the GDSCs will stay
+> > ON if the rentention is not entered in hw and enter retention otherwise. This
+> > requires no extra modification in the genpd client drivers. One more benefit is,
+> > the hw can enter low power state even when the device is not in D3Cold state
+> > i.e., during s2idle (provided we unvote other resources).
+> > 
+> 
+> What about PCIe instances that are completely unused? The boot firmware
+> on X1E for example is notorious for powering on completely unused PCIe
+> links and powering them down in some half-baked off state (the &pcie3
+> instance, in particular). I'm not sure if the GDSC remains on, but if it
+> does then the unused PD cleanup would also only put them in retention
+> state. I can't think of a good reason to keep those on at all.
+>
 
-Signed-off-by: Yixun Lan <dlan@gentoo.org>
----
- drivers/clk/spacemit/Kconfig  |    6 +
- drivers/clk/spacemit/Makefile |    3 +
- drivers/clk/spacemit/ccu-k3.c | 1487 +++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 1496 insertions(+)
+This is a good point. I didn't think of it.
 
-diff --git a/drivers/clk/spacemit/Kconfig b/drivers/clk/spacemit/Kconfig
-index 3351e8bc801d..4ebe6aaa1980 100644
---- a/drivers/clk/spacemit/Kconfig
-+++ b/drivers/clk/spacemit/Kconfig
-@@ -14,4 +14,10 @@ config SPACEMIT_K1_CCU
- 	help
- 	  Support for clock controller unit in SpacemiT K1 SoC.
- 
-+config SPACEMIT_K3_CCU
-+	tristate "Support for SpacemiT K3 SoC"
-+	select SPACEMIT_CCU
-+	help
-+	  Support for clock controller unit in SpacemiT K3 SoC.
-+
- endmenu
-diff --git a/drivers/clk/spacemit/Makefile b/drivers/clk/spacemit/Makefile
-index ad2bf315109b..0925eda384b4 100644
---- a/drivers/clk/spacemit/Makefile
-+++ b/drivers/clk/spacemit/Makefile
-@@ -8,3 +8,6 @@ spacemit-ccu-y			+= ccu_ddn.o
- 
- obj-$(CONFIG_SPACEMIT_K1_CCU)	+= spacemit-ccu-k1.o
- spacemit-ccu-k1-y		+= ccu-k1.o
-+
-+obj-$(CONFIG_SPACEMIT_K3_CCU)	+= spacemit-ccu-k3.o
-+spacemit-ccu-k3-y		+= ccu-k3.o
-diff --git a/drivers/clk/spacemit/ccu-k3.c b/drivers/clk/spacemit/ccu-k3.c
-new file mode 100644
-index 000000000000..e98afd59f05c
---- /dev/null
-+++ b/drivers/clk/spacemit/ccu-k3.c
-@@ -0,0 +1,1487 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (c) 2025 SpacemiT Technology Co. Ltd
-+ */
-+
-+#include <linux/array_size.h>
-+#include <linux/clk-provider.h>
-+#include <linux/module.h>
-+#include <soc/spacemit/k3-syscon.h>
-+
-+#include "ccu_common.h"
-+#include "ccu_pll.h"
-+#include "ccu_mix.h"
-+#include "ccu_ddn.h"
-+
-+#include <dt-bindings/clock/spacemit,k3-clocks.h>
-+
-+/* APBS clocks start, APBS region contains and only contains all PLL clocks */
-+
-+/*
-+ * PLL{1,2} must run at fixed frequencies to provide clocks in correct rates for
-+ * peripherals.
-+ */
-+static const struct ccu_pll_rate_tbl pll1_rate_tbl[] = {
-+	CCU_PLLA_RATE(2457600000UL, 0x0b330ccc, 0x0000cd00, 0xa0558989),
-+};
-+
-+static const struct ccu_pll_rate_tbl pll2_rate_tbl[] = {
-+	CCU_PLLA_RATE(3000000000UL, 0x0b3e2000, 0x00000000, 0xa0558c8c),
-+};
-+
-+static const struct ccu_pll_rate_tbl pll3_rate_tbl[] = {
-+	CCU_PLLA_RATE(2200000000UL, 0x0b2d3555, 0x00005500, 0xa0558787),
-+};
-+
-+static const struct ccu_pll_rate_tbl pll4_rate_tbl[] = {
-+	CCU_PLLA_RATE(2200000000UL, 0x0b2d3555, 0x00005500, 0xa0558787),
-+};
-+
-+static const struct ccu_pll_rate_tbl pll5_rate_tbl[] = {
-+	CCU_PLLA_RATE(2000000000UL, 0x0b292aaa, 0x0000ab00, 0xa0558686),
-+};
-+
-+static const struct ccu_pll_rate_tbl pll6_rate_tbl[] = {
-+	CCU_PLLA_RATE(3200000000UL, 0x0b422aaa, 0x0000ab00, 0xa0558e8e),
-+};
-+
-+static const struct ccu_pll_rate_tbl pll7_rate_tbl[] = {
-+	CCU_PLLA_RATE(2800000000UL, 0x0b3a1555, 0x00005500, 0xa0558b8b),
-+};
-+
-+static const struct ccu_pll_rate_tbl pll8_rate_tbl[] = {
-+	CCU_PLLA_RATE(2000000000UL, 0x0b292aaa, 0x0000ab00, 0xa0558686),
-+};
-+
-+CCU_PLLA_DEFINE(pll1, pll1_rate_tbl, APBS_PLL1_SWCR1, APBS_PLL1_SWCR2, APBS_PLL1_SWCR3,
-+		MPMU_POSR, POSR_PLL1_LOCK, CLK_SET_RATE_GATE);
-+CCU_PLLA_DEFINE(pll2, pll2_rate_tbl, APBS_PLL2_SWCR1, APBS_PLL2_SWCR2, APBS_PLL2_SWCR3,
-+		MPMU_POSR, POSR_PLL2_LOCK, CLK_SET_RATE_GATE);
-+CCU_PLLA_DEFINE(pll3, pll3_rate_tbl, APBS_PLL3_SWCR1, APBS_PLL3_SWCR2, APBS_PLL3_SWCR3,
-+		MPMU_POSR, POSR_PLL3_LOCK, CLK_SET_RATE_GATE);
-+CCU_PLLA_DEFINE(pll4, pll4_rate_tbl, APBS_PLL4_SWCR1, APBS_PLL4_SWCR2, APBS_PLL4_SWCR3,
-+		MPMU_POSR, POSR_PLL4_LOCK, CLK_SET_RATE_GATE);
-+CCU_PLLA_DEFINE(pll5, pll5_rate_tbl, APBS_PLL5_SWCR1, APBS_PLL5_SWCR2, APBS_PLL5_SWCR3,
-+		MPMU_POSR, POSR_PLL5_LOCK, CLK_SET_RATE_GATE);
-+CCU_PLLA_DEFINE(pll6, pll6_rate_tbl, APBS_PLL6_SWCR1, APBS_PLL6_SWCR2, APBS_PLL6_SWCR3,
-+		MPMU_POSR, POSR_PLL6_LOCK, CLK_SET_RATE_GATE);
-+CCU_PLLA_DEFINE(pll7, pll7_rate_tbl, APBS_PLL7_SWCR1, APBS_PLL7_SWCR2, APBS_PLL7_SWCR3,
-+		MPMU_POSR, POSR_PLL7_LOCK, CLK_SET_RATE_GATE);
-+CCU_PLLA_DEFINE(pll8, pll8_rate_tbl, APBS_PLL8_SWCR1, APBS_PLL8_SWCR2, APBS_PLL8_SWCR3,
-+		MPMU_POSR, POSR_PLL8_LOCK, CLK_SET_RATE_GATE);
-+
-+CCU_FACTOR_GATE_DEFINE(pll1_d2, CCU_PARENT_HW(pll1), APBS_PLL1_SWCR2, BIT(1), 2, 1);
-+CCU_FACTOR_GATE_DEFINE(pll1_d3, CCU_PARENT_HW(pll1), APBS_PLL1_SWCR2, BIT(2), 3, 1);
-+CCU_FACTOR_GATE_DEFINE(pll1_d4, CCU_PARENT_HW(pll1), APBS_PLL1_SWCR2, BIT(3), 4, 1);
-+CCU_FACTOR_GATE_DEFINE(pll1_d5, CCU_PARENT_HW(pll1), APBS_PLL1_SWCR2, BIT(4), 5, 1);
-+CCU_FACTOR_GATE_DEFINE(pll1_d6, CCU_PARENT_HW(pll1), APBS_PLL1_SWCR2, BIT(5), 6, 1);
-+CCU_FACTOR_GATE_DEFINE(pll1_d7, CCU_PARENT_HW(pll1), APBS_PLL1_SWCR2, BIT(6), 7, 1);
-+CCU_FACTOR_GATE_FLAGS_DEFINE(pll1_d8, CCU_PARENT_HW(pll1), APBS_PLL1_SWCR2, BIT(7), 8, 1,
-+			     CLK_IS_CRITICAL);
-+CCU_DIV_GATE_DEFINE(pll1_dx, CCU_PARENT_HW(pll1), APBS_PLL1_SWCR2, 23, 5, BIT(22), 0);
-+CCU_FACTOR_GATE_DEFINE(pll1_d64_38p4, CCU_PARENT_HW(pll1), APBS_PLL1_SWCR2, BIT(31), 64, 1);
-+CCU_FACTOR_GATE_DEFINE(pll1_aud_245p7, CCU_PARENT_HW(pll1), APBS_PLL1_SWCR2, BIT(21), 10, 1);
-+CCU_FACTOR_DEFINE(pll1_aud_24p5, CCU_PARENT_HW(pll1_aud_245p7), 10, 1);
-+
-+CCU_FACTOR_GATE_DEFINE(pll2_d1, CCU_PARENT_HW(pll2), APBS_PLL2_SWCR2, BIT(0), 1, 1);
-+CCU_FACTOR_GATE_DEFINE(pll2_d2, CCU_PARENT_HW(pll2), APBS_PLL2_SWCR2, BIT(1), 2, 1);
-+CCU_FACTOR_GATE_DEFINE(pll2_d3, CCU_PARENT_HW(pll2), APBS_PLL2_SWCR2, BIT(2), 3, 1);
-+CCU_FACTOR_GATE_DEFINE(pll2_d4, CCU_PARENT_HW(pll2), APBS_PLL2_SWCR2, BIT(3), 4, 1);
-+CCU_FACTOR_GATE_DEFINE(pll2_d5, CCU_PARENT_HW(pll2), APBS_PLL2_SWCR2, BIT(4), 5, 1);
-+CCU_FACTOR_GATE_DEFINE(pll2_d6, CCU_PARENT_HW(pll2), APBS_PLL2_SWCR2, BIT(5), 6, 1);
-+CCU_FACTOR_GATE_DEFINE(pll2_d7, CCU_PARENT_HW(pll2), APBS_PLL2_SWCR2, BIT(6), 7, 1);
-+CCU_FACTOR_GATE_DEFINE(pll2_d8, CCU_PARENT_HW(pll2), APBS_PLL2_SWCR2, BIT(7), 8, 1);
-+CCU_FACTOR_DEFINE(pll2_66, CCU_PARENT_HW(pll2_d5), 9, 1);
-+CCU_FACTOR_DEFINE(pll2_33, CCU_PARENT_HW(pll2_66), 2, 1);
-+CCU_FACTOR_DEFINE(pll2_50, CCU_PARENT_HW(pll2_d5), 12, 1);
-+CCU_FACTOR_DEFINE(pll2_25, CCU_PARENT_HW(pll2_50), 2, 1);
-+CCU_FACTOR_DEFINE(pll2_20, CCU_PARENT_HW(pll2_d5), 30, 1);
-+CCU_FACTOR_DEFINE(pll2_d24_125, CCU_PARENT_HW(pll2_d3), 8, 1);
-+CCU_FACTOR_DEFINE(pll2_d120_25, CCU_PARENT_HW(pll2_d3), 40, 1);
-+
-+CCU_FACTOR_GATE_DEFINE(pll3_d1, CCU_PARENT_HW(pll3), APBS_PLL3_SWCR2, BIT(0), 1, 1);
-+CCU_FACTOR_GATE_DEFINE(pll3_d2, CCU_PARENT_HW(pll3), APBS_PLL3_SWCR2, BIT(1), 2, 1);
-+CCU_FACTOR_GATE_DEFINE(pll3_d3, CCU_PARENT_HW(pll3), APBS_PLL3_SWCR2, BIT(2), 3, 1);
-+CCU_FACTOR_GATE_DEFINE(pll3_d4, CCU_PARENT_HW(pll3), APBS_PLL3_SWCR2, BIT(3), 4, 1);
-+CCU_FACTOR_GATE_DEFINE(pll3_d5, CCU_PARENT_HW(pll3), APBS_PLL3_SWCR2, BIT(4), 5, 1);
-+CCU_FACTOR_GATE_DEFINE(pll3_d6, CCU_PARENT_HW(pll3), APBS_PLL3_SWCR2, BIT(5), 6, 1);
-+CCU_FACTOR_GATE_DEFINE(pll3_d7, CCU_PARENT_HW(pll3), APBS_PLL3_SWCR2, BIT(6), 7, 1);
-+CCU_FACTOR_GATE_DEFINE(pll3_d8, CCU_PARENT_HW(pll3), APBS_PLL3_SWCR2, BIT(7), 8, 1);
-+
-+CCU_FACTOR_GATE_DEFINE(pll4_d1, CCU_PARENT_HW(pll4), APBS_PLL4_SWCR2, BIT(0), 1, 1);
-+CCU_FACTOR_GATE_DEFINE(pll4_d2, CCU_PARENT_HW(pll4), APBS_PLL4_SWCR2, BIT(1), 2, 1);
-+CCU_FACTOR_GATE_DEFINE(pll4_d3, CCU_PARENT_HW(pll4), APBS_PLL4_SWCR2, BIT(2), 3, 1);
-+CCU_FACTOR_GATE_DEFINE(pll4_d4, CCU_PARENT_HW(pll4), APBS_PLL4_SWCR2, BIT(3), 4, 1);
-+CCU_FACTOR_GATE_DEFINE(pll4_d5, CCU_PARENT_HW(pll4), APBS_PLL4_SWCR2, BIT(4), 5, 1);
-+CCU_FACTOR_GATE_DEFINE(pll4_d6, CCU_PARENT_HW(pll4), APBS_PLL4_SWCR2, BIT(5), 6, 1);
-+CCU_FACTOR_GATE_DEFINE(pll4_d7, CCU_PARENT_HW(pll4), APBS_PLL4_SWCR2, BIT(6), 7, 1);
-+CCU_FACTOR_GATE_DEFINE(pll4_d8, CCU_PARENT_HW(pll4), APBS_PLL4_SWCR2, BIT(7), 8, 1);
-+
-+CCU_FACTOR_GATE_DEFINE(pll5_d1, CCU_PARENT_HW(pll5), APBS_PLL5_SWCR2, BIT(0), 1, 1);
-+CCU_FACTOR_GATE_DEFINE(pll5_d2, CCU_PARENT_HW(pll5), APBS_PLL5_SWCR2, BIT(1), 2, 1);
-+CCU_FACTOR_GATE_DEFINE(pll5_d3, CCU_PARENT_HW(pll5), APBS_PLL5_SWCR2, BIT(2), 3, 1);
-+CCU_FACTOR_GATE_DEFINE(pll5_d4, CCU_PARENT_HW(pll5), APBS_PLL5_SWCR2, BIT(3), 4, 1);
-+CCU_FACTOR_GATE_DEFINE(pll5_d5, CCU_PARENT_HW(pll5), APBS_PLL5_SWCR2, BIT(4), 5, 1);
-+CCU_FACTOR_GATE_DEFINE(pll5_d6, CCU_PARENT_HW(pll5), APBS_PLL5_SWCR2, BIT(5), 6, 1);
-+CCU_FACTOR_GATE_DEFINE(pll5_d7, CCU_PARENT_HW(pll5), APBS_PLL5_SWCR2, BIT(6), 7, 1);
-+CCU_FACTOR_GATE_DEFINE(pll5_d8, CCU_PARENT_HW(pll5), APBS_PLL5_SWCR2, BIT(7), 8, 1);
-+
-+CCU_FACTOR_GATE_DEFINE(pll6_d1, CCU_PARENT_HW(pll6), APBS_PLL6_SWCR2, BIT(0), 1, 1);
-+CCU_FACTOR_GATE_DEFINE(pll6_d2, CCU_PARENT_HW(pll6), APBS_PLL6_SWCR2, BIT(1), 2, 1);
-+CCU_FACTOR_GATE_DEFINE(pll6_d3, CCU_PARENT_HW(pll6), APBS_PLL6_SWCR2, BIT(2), 3, 1);
-+CCU_FACTOR_GATE_DEFINE(pll6_d4, CCU_PARENT_HW(pll6), APBS_PLL6_SWCR2, BIT(3), 4, 1);
-+CCU_FACTOR_GATE_DEFINE(pll6_d5, CCU_PARENT_HW(pll6), APBS_PLL6_SWCR2, BIT(4), 5, 1);
-+CCU_FACTOR_GATE_DEFINE(pll6_d6, CCU_PARENT_HW(pll6), APBS_PLL6_SWCR2, BIT(5), 6, 1);
-+CCU_FACTOR_GATE_DEFINE(pll6_d7, CCU_PARENT_HW(pll6), APBS_PLL6_SWCR2, BIT(6), 7, 1);
-+CCU_FACTOR_GATE_DEFINE(pll6_d8, CCU_PARENT_HW(pll6), APBS_PLL6_SWCR2, BIT(7), 8, 1);
-+CCU_FACTOR_DEFINE(pll6_80, CCU_PARENT_HW(pll6_d5), 8, 1);
-+CCU_FACTOR_DEFINE(pll6_40, CCU_PARENT_HW(pll6_d5), 16, 1);
-+CCU_FACTOR_DEFINE(pll6_20, CCU_PARENT_HW(pll6_d5), 32, 1);
-+
-+CCU_FACTOR_GATE_DEFINE(pll7_d1, CCU_PARENT_HW(pll7), APBS_PLL7_SWCR2, BIT(0), 1, 1);
-+CCU_FACTOR_GATE_DEFINE(pll7_d2, CCU_PARENT_HW(pll7), APBS_PLL7_SWCR2, BIT(1), 2, 1);
-+CCU_FACTOR_GATE_DEFINE(pll7_d3, CCU_PARENT_HW(pll7), APBS_PLL7_SWCR2, BIT(2), 3, 1);
-+CCU_FACTOR_GATE_DEFINE(pll7_d4, CCU_PARENT_HW(pll7), APBS_PLL7_SWCR2, BIT(3), 4, 1);
-+CCU_FACTOR_GATE_DEFINE(pll7_d5, CCU_PARENT_HW(pll7), APBS_PLL7_SWCR2, BIT(4), 5, 1);
-+CCU_FACTOR_GATE_DEFINE(pll7_d6, CCU_PARENT_HW(pll7), APBS_PLL7_SWCR2, BIT(5), 6, 1);
-+CCU_FACTOR_GATE_DEFINE(pll7_d7, CCU_PARENT_HW(pll7), APBS_PLL7_SWCR2, BIT(6), 7, 1);
-+CCU_FACTOR_GATE_DEFINE(pll7_d8, CCU_PARENT_HW(pll7), APBS_PLL7_SWCR2, BIT(7), 8, 1);
-+
-+CCU_FACTOR_GATE_DEFINE(pll8_d1, CCU_PARENT_HW(pll8), APBS_PLL8_SWCR2, BIT(0), 1, 1);
-+CCU_FACTOR_GATE_DEFINE(pll8_d2, CCU_PARENT_HW(pll8), APBS_PLL8_SWCR2, BIT(1), 2, 1);
-+CCU_FACTOR_GATE_DEFINE(pll8_d3, CCU_PARENT_HW(pll8), APBS_PLL8_SWCR2, BIT(2), 3, 1);
-+CCU_FACTOR_GATE_DEFINE(pll8_d4, CCU_PARENT_HW(pll8), APBS_PLL8_SWCR2, BIT(3), 4, 1);
-+CCU_FACTOR_GATE_DEFINE(pll8_d5, CCU_PARENT_HW(pll8), APBS_PLL8_SWCR2, BIT(4), 5, 1);
-+CCU_FACTOR_GATE_DEFINE(pll8_d6, CCU_PARENT_HW(pll8), APBS_PLL8_SWCR2, BIT(5), 6, 1);
-+CCU_FACTOR_GATE_DEFINE(pll8_d7, CCU_PARENT_HW(pll8), APBS_PLL8_SWCR2, BIT(6), 7, 1);
-+CCU_FACTOR_GATE_DEFINE(pll8_d8, CCU_PARENT_HW(pll8), APBS_PLL8_SWCR2, BIT(7), 8, 1);
-+/* APBS clocks end */
-+
-+/* MPMU clocks start */
-+CCU_GATE_DEFINE(pll1_d8_307p2, CCU_PARENT_HW(pll1_d8), MPMU_ACGR, BIT(13), 0);
-+CCU_FACTOR_DEFINE(pll1_d32_76p8, CCU_PARENT_HW(pll1_d8_307p2), 4, 1);
-+CCU_FACTOR_DEFINE(pll1_d40_61p44, CCU_PARENT_HW(pll1_d8_307p2), 5, 1);
-+CCU_FACTOR_DEFINE(pll1_d16_153p6, CCU_PARENT_HW(pll1_d8), 2, 1);
-+CCU_FACTOR_GATE_DEFINE(pll1_d24_102p4, CCU_PARENT_HW(pll1_d8), MPMU_ACGR, BIT(12), 3, 1);
-+CCU_FACTOR_GATE_DEFINE(pll1_d48_51p2, CCU_PARENT_HW(pll1_d8), MPMU_ACGR, BIT(7), 6, 1);
-+CCU_FACTOR_GATE_DEFINE(pll1_d48_51p2_ap, CCU_PARENT_HW(pll1_d8), MPMU_ACGR, BIT(11), 6, 1);
-+CCU_FACTOR_GATE_DEFINE(pll1_m3d128_57p6, CCU_PARENT_HW(pll1_d8), MPMU_ACGR, BIT(8), 16, 3);
-+CCU_FACTOR_GATE_DEFINE(pll1_d96_25p6, CCU_PARENT_HW(pll1_d8), MPMU_ACGR, BIT(4), 12, 1);
-+CCU_FACTOR_GATE_DEFINE(pll1_d192_12p8, CCU_PARENT_HW(pll1_d8), MPMU_ACGR, BIT(3), 24, 1);
-+CCU_FACTOR_GATE_DEFINE(pll1_d192_12p8_wdt, CCU_PARENT_HW(pll1_d8), MPMU_ACGR, BIT(19), 24, 1);
-+CCU_FACTOR_GATE_DEFINE(pll1_d384_6p4, CCU_PARENT_HW(pll1_d8), MPMU_ACGR, BIT(2), 48, 1);
-+
-+CCU_FACTOR_DEFINE(pll1_d768_3p2, CCU_PARENT_HW(pll1_d384_6p4), 2, 1);
-+CCU_FACTOR_DEFINE(pll1_d1536_1p6, CCU_PARENT_HW(pll1_d384_6p4), 4, 1);
-+CCU_FACTOR_DEFINE(pll1_d3072_0p8, CCU_PARENT_HW(pll1_d384_6p4), 8, 1);
-+
-+CCU_GATE_DEFINE(pll1_d6_409p6, CCU_PARENT_HW(pll1_d6), MPMU_ACGR, BIT(0), 0);
-+CCU_FACTOR_GATE_DEFINE(pll1_d12_204p8, CCU_PARENT_HW(pll1_d6), MPMU_ACGR, BIT(5), 2, 1);
-+
-+CCU_GATE_DEFINE(pll1_d5_491p52, CCU_PARENT_HW(pll1_d5), MPMU_ACGR, BIT(21), 0);
-+CCU_FACTOR_GATE_DEFINE(pll1_d10_245p76, CCU_PARENT_HW(pll1_d5), MPMU_ACGR, BIT(18), 2, 1);
-+
-+CCU_GATE_DEFINE(pll1_d4_614p4, CCU_PARENT_HW(pll1_d4), MPMU_ACGR, BIT(15), 0);
-+CCU_FACTOR_GATE_DEFINE(pll1_d52_47p26, CCU_PARENT_HW(pll1_d4), MPMU_ACGR, BIT(10), 13, 1);
-+CCU_FACTOR_GATE_DEFINE(pll1_d78_31p5, CCU_PARENT_HW(pll1_d4), MPMU_ACGR, BIT(6), 39, 2);
-+
-+CCU_GATE_DEFINE(pll1_d3_819p2, CCU_PARENT_HW(pll1_d3), MPMU_ACGR, BIT(14), 0);
-+
-+CCU_GATE_DEFINE(pll1_d2_1228p8, CCU_PARENT_HW(pll1_d2), MPMU_ACGR, BIT(16), 0);
-+
-+static const struct clk_parent_data apb_parents[] = {
-+	CCU_PARENT_HW(pll1_d96_25p6),
-+	CCU_PARENT_HW(pll1_d48_51p2),
-+	CCU_PARENT_HW(pll1_d96_25p6),
-+	CCU_PARENT_HW(pll1_d24_102p4),
-+};
-+CCU_MUX_DEFINE(apb_clk, apb_parents, MPMU_APBCSCR, 0, 2, 0);
-+
-+CCU_GATE_DEFINE(slow_uart, CCU_PARENT_NAME(osc_32k), MPMU_ACGR, BIT(1), CLK_IGNORE_UNUSED);
-+CCU_DDN_DEFINE(slow_uart1_14p74, pll1_d16_153p6, MPMU_SUCCR, 16, 13, 0, 13, 2, 0);
-+CCU_DDN_DEFINE(slow_uart2_48, pll1_d4_614p4, MPMU_SUCCR_1, 16, 13, 0, 13, 2, 0);
-+
-+CCU_GATE_DEFINE(wdt_clk, CCU_PARENT_HW(pll1_d96_25p6), MPMU_WDTPCR, BIT(1), 0);
-+CCU_GATE_DEFINE(wdt_bus_clk, CCU_PARENT_HW(apb_clk), MPMU_WDTPCR, BIT(0), 0);
-+
-+CCU_GATE_DEFINE(r_ipc_clk, CCU_PARENT_HW(apb_clk), MPMU_RIPCCR, BIT(0), 0);
-+
-+CCU_FACTOR_DEFINE(i2s_153p6, CCU_PARENT_HW(pll1_d8_307p2), 2, 1);
-+
-+static const struct clk_parent_data i2s_153p6_base_parents[] = {
-+	CCU_PARENT_HW(i2s_153p6),
-+	CCU_PARENT_HW(pll1_d8_307p2),
-+};
-+CCU_MUX_DEFINE(i2s_153p6_base, i2s_153p6_base_parents, MPMU_FCCR, 29, 1, 0);
-+
-+static const struct clk_parent_data i2s_sysclk_src_parents[] = {
-+	CCU_PARENT_HW(pll1_d96_25p6),
-+	CCU_PARENT_HW(i2s_153p6_base),
-+};
-+CCU_MUX_GATE_DEFINE(i2s_sysclk_src, i2s_sysclk_src_parents, MPMU_ISCCR, 30, 1, BIT(31), 0);
-+
-+CCU_DDN_DEFINE(i2s1_sysclk, i2s_sysclk_src, MPMU_ISCCR, 0, 15, 15, 12, 1, 0);
-+
-+CCU_DIV_GATE_DEFINE(i2s_bclk, CCU_PARENT_HW(i2s1_sysclk), MPMU_ISCCR, 27, 2, BIT(29), 0);
-+
-+static const struct clk_parent_data i2s_sysclk_parents[] = {
-+	CCU_PARENT_HW(pll1_d4_614p4),
-+	CCU_PARENT_NAME(vctcxo_24m),
-+	CCU_PARENT_HW(pll2_d5),
-+	CCU_PARENT_NAME(vctcxo_24m),
-+};
-+CCU_MUX_DEFINE(i2s0_sysclk_sel, i2s_sysclk_parents, MPMU_I2S_SYSCLK_CTRL, 0, 2, 0);
-+CCU_MUX_DEFINE(i2s2_sysclk_sel, i2s_sysclk_parents, MPMU_I2S_SYSCLK_CTRL, 4, 2, 0);
-+CCU_MUX_DEFINE(i2s3_sysclk_sel, i2s_sysclk_parents, MPMU_I2S_SYSCLK_CTRL, 12, 2, 0);
-+CCU_MUX_DEFINE(i2s4_sysclk_sel, i2s_sysclk_parents, MPMU_I2S_SYSCLK_CTRL, 16, 2, 0);
-+CCU_MUX_DEFINE(i2s5_sysclk_sel, i2s_sysclk_parents, MPMU_I2S_SYSCLK_CTRL, 20, 2, 0);
-+
-+CCU_DDN_DEFINE(i2s0_sysclk_div, i2s0_sysclk_sel, MPMU_I2S0_SYSCLK, 0, 16, 16, 16, 1, 0);
-+CCU_DDN_DEFINE(i2s2_sysclk_div, i2s2_sysclk_sel, MPMU_I2S2_SYSCLK, 0, 16, 16, 16, 1, 0);
-+CCU_DDN_DEFINE(i2s3_sysclk_div, i2s3_sysclk_sel, MPMU_I2S3_SYSCLK, 0, 16, 16, 16, 1, 0);
-+CCU_DDN_DEFINE(i2s4_sysclk_div, i2s4_sysclk_sel, MPMU_I2S4_SYSCLK, 0, 16, 16, 16, 1, 0);
-+CCU_DDN_DEFINE(i2s5_sysclk_div, i2s5_sysclk_sel, MPMU_I2S5_SYSCLK, 0, 16, 16, 16, 1, 0);
-+
-+static const struct clk_parent_data i2s2_sysclk_parents[] = {
-+	CCU_PARENT_HW(i2s1_sysclk),
-+	CCU_PARENT_HW(i2s2_sysclk_div),
-+};
-+CCU_GATE_DEFINE(i2s0_sysclk, CCU_PARENT_HW(i2s0_sysclk_div), MPMU_I2S_SYSCLK_CTRL, BIT(2), 0);
-+CCU_MUX_GATE_DEFINE(i2s2_sysclk, i2s2_sysclk_parents, MPMU_I2S_SYSCLK_CTRL, 8, 1, BIT(6), 0);
-+CCU_GATE_DEFINE(i2s3_sysclk, CCU_PARENT_HW(i2s3_sysclk_div), MPMU_I2S_SYSCLK_CTRL, BIT(14), 0);
-+CCU_GATE_DEFINE(i2s4_sysclk, CCU_PARENT_HW(i2s4_sysclk_div), MPMU_I2S_SYSCLK_CTRL, BIT(18), 0);
-+CCU_GATE_DEFINE(i2s5_sysclk, CCU_PARENT_HW(i2s5_sysclk_div), MPMU_I2S_SYSCLK_CTRL, BIT(22), 0);
-+/* MPMU clocks end */
-+
-+/* APBC clocks start */
-+static const struct clk_parent_data uart_clk_parents[] = {
-+	CCU_PARENT_HW(pll1_m3d128_57p6),
-+	CCU_PARENT_HW(slow_uart1_14p74),
-+	CCU_PARENT_HW(slow_uart2_48),
-+};
-+CCU_MUX_GATE_DEFINE(uart0_clk, uart_clk_parents, APBC_UART0_CLK_RST, 4, 3, BIT(1), 0);
-+CCU_MUX_GATE_DEFINE(uart2_clk, uart_clk_parents, APBC_UART2_CLK_RST, 4, 3, BIT(1), 0);
-+CCU_MUX_GATE_DEFINE(uart3_clk, uart_clk_parents, APBC_UART3_CLK_RST, 4, 3, BIT(1), 0);
-+CCU_MUX_GATE_DEFINE(uart4_clk, uart_clk_parents, APBC_UART4_CLK_RST, 4, 3, BIT(1), 0);
-+CCU_MUX_GATE_DEFINE(uart5_clk, uart_clk_parents, APBC_UART5_CLK_RST, 4, 3, BIT(1), 0);
-+CCU_MUX_GATE_DEFINE(uart6_clk, uart_clk_parents, APBC_UART6_CLK_RST, 4, 3, BIT(1), 0);
-+CCU_MUX_GATE_DEFINE(uart7_clk, uart_clk_parents, APBC_UART7_CLK_RST, 4, 3, BIT(1), 0);
-+CCU_MUX_GATE_DEFINE(uart8_clk, uart_clk_parents, APBC_UART8_CLK_RST, 4, 3, BIT(1), 0);
-+CCU_MUX_GATE_DEFINE(uart9_clk, uart_clk_parents, APBC_UART9_CLK_RST, 4, 3, BIT(1), 0);
-+CCU_MUX_GATE_DEFINE(uart10_clk, uart_clk_parents, APBC_UART10_CLK_RST, 4, 3, BIT(1), 0);
-+
-+CCU_GATE_DEFINE(uart0_bus_clk, CCU_PARENT_HW(apb_clk), APBC_UART0_CLK_RST, BIT(0), 0);
-+CCU_GATE_DEFINE(uart2_bus_clk, CCU_PARENT_HW(apb_clk), APBC_UART2_CLK_RST, BIT(0), 0);
-+CCU_GATE_DEFINE(uart3_bus_clk, CCU_PARENT_HW(apb_clk), APBC_UART3_CLK_RST, BIT(0), 0);
-+CCU_GATE_DEFINE(uart4_bus_clk, CCU_PARENT_HW(apb_clk), APBC_UART4_CLK_RST, BIT(0), 0);
-+CCU_GATE_DEFINE(uart5_bus_clk, CCU_PARENT_HW(apb_clk), APBC_UART5_CLK_RST, BIT(0), 0);
-+CCU_GATE_DEFINE(uart6_bus_clk, CCU_PARENT_HW(apb_clk), APBC_UART6_CLK_RST, BIT(0), 0);
-+CCU_GATE_DEFINE(uart7_bus_clk, CCU_PARENT_HW(apb_clk), APBC_UART7_CLK_RST, BIT(0), 0);
-+CCU_GATE_DEFINE(uart8_bus_clk, CCU_PARENT_HW(apb_clk), APBC_UART8_CLK_RST, BIT(0), 0);
-+CCU_GATE_DEFINE(uart9_bus_clk, CCU_PARENT_HW(apb_clk), APBC_UART9_CLK_RST, BIT(0), 0);
-+CCU_GATE_DEFINE(uart10_bus_clk, CCU_PARENT_HW(apb_clk), APBC_UART10_CLK_RST, BIT(0), 0);
-+
-+CCU_GATE_DEFINE(gpio_clk, CCU_PARENT_NAME(vctcxo_24m), APBC_GPIO_CLK_RST, BIT(1), 0);
-+CCU_GATE_DEFINE(gpio_bus_clk, CCU_PARENT_HW(apb_clk), APBC_GPIO_CLK_RST, BIT(0), 0);
-+
-+static const struct clk_parent_data pwm_parents[] = {
-+	CCU_PARENT_HW(pll1_d192_12p8),
-+	CCU_PARENT_NAME(osc_32k),
-+};
-+CCU_MUX_GATE_DEFINE(pwm0_clk, pwm_parents, APBC_PWM0_CLK_RST, 4, 3, BIT(1), 0);
-+CCU_MUX_GATE_DEFINE(pwm1_clk, pwm_parents, APBC_PWM1_CLK_RST, 4, 3, BIT(1), 0);
-+CCU_MUX_GATE_DEFINE(pwm2_clk, pwm_parents, APBC_PWM2_CLK_RST, 4, 3, BIT(1), 0);
-+CCU_MUX_GATE_DEFINE(pwm3_clk, pwm_parents, APBC_PWM3_CLK_RST, 4, 3, BIT(1), 0);
-+CCU_MUX_GATE_DEFINE(pwm4_clk, pwm_parents, APBC_PWM4_CLK_RST, 4, 3, BIT(1), 0);
-+CCU_MUX_GATE_DEFINE(pwm5_clk, pwm_parents, APBC_PWM5_CLK_RST, 4, 3, BIT(1), 0);
-+CCU_MUX_GATE_DEFINE(pwm6_clk, pwm_parents, APBC_PWM6_CLK_RST, 4, 3, BIT(1), 0);
-+CCU_MUX_GATE_DEFINE(pwm7_clk, pwm_parents, APBC_PWM7_CLK_RST, 4, 3, BIT(1), 0);
-+CCU_MUX_GATE_DEFINE(pwm8_clk, pwm_parents, APBC_PWM8_CLK_RST, 4, 3, BIT(1), 0);
-+CCU_MUX_GATE_DEFINE(pwm9_clk, pwm_parents, APBC_PWM9_CLK_RST, 4, 3, BIT(1), 0);
-+CCU_MUX_GATE_DEFINE(pwm10_clk, pwm_parents, APBC_PWM10_CLK_RST, 4, 3, BIT(1), 0);
-+CCU_MUX_GATE_DEFINE(pwm11_clk, pwm_parents, APBC_PWM11_CLK_RST, 4, 3, BIT(1), 0);
-+CCU_MUX_GATE_DEFINE(pwm12_clk, pwm_parents, APBC_PWM12_CLK_RST, 4, 3, BIT(1), 0);
-+CCU_MUX_GATE_DEFINE(pwm13_clk, pwm_parents, APBC_PWM13_CLK_RST, 4, 3, BIT(1), 0);
-+CCU_MUX_GATE_DEFINE(pwm14_clk, pwm_parents, APBC_PWM14_CLK_RST, 4, 3, BIT(1), 0);
-+CCU_MUX_GATE_DEFINE(pwm15_clk, pwm_parents, APBC_PWM15_CLK_RST, 4, 3, BIT(1), 0);
-+CCU_MUX_GATE_DEFINE(pwm16_clk, pwm_parents, APBC_PWM16_CLK_RST, 4, 3, BIT(1), 0);
-+CCU_MUX_GATE_DEFINE(pwm17_clk, pwm_parents, APBC_PWM17_CLK_RST, 4, 3, BIT(1), 0);
-+CCU_MUX_GATE_DEFINE(pwm18_clk, pwm_parents, APBC_PWM18_CLK_RST, 4, 3, BIT(1), 0);
-+CCU_MUX_GATE_DEFINE(pwm19_clk, pwm_parents, APBC_PWM19_CLK_RST, 4, 3, BIT(1), 0);
-+
-+CCU_GATE_DEFINE(pwm0_bus_clk, CCU_PARENT_HW(apb_clk), APBC_PWM0_CLK_RST, BIT(0), 0);
-+CCU_GATE_DEFINE(pwm1_bus_clk, CCU_PARENT_HW(apb_clk), APBC_PWM1_CLK_RST, BIT(0), 0);
-+CCU_GATE_DEFINE(pwm2_bus_clk, CCU_PARENT_HW(apb_clk), APBC_PWM2_CLK_RST, BIT(0), 0);
-+CCU_GATE_DEFINE(pwm3_bus_clk, CCU_PARENT_HW(apb_clk), APBC_PWM3_CLK_RST, BIT(0), 0);
-+CCU_GATE_DEFINE(pwm4_bus_clk, CCU_PARENT_HW(apb_clk), APBC_PWM4_CLK_RST, BIT(0), 0);
-+CCU_GATE_DEFINE(pwm5_bus_clk, CCU_PARENT_HW(apb_clk), APBC_PWM5_CLK_RST, BIT(0), 0);
-+CCU_GATE_DEFINE(pwm6_bus_clk, CCU_PARENT_HW(apb_clk), APBC_PWM6_CLK_RST, BIT(0), 0);
-+CCU_GATE_DEFINE(pwm7_bus_clk, CCU_PARENT_HW(apb_clk), APBC_PWM7_CLK_RST, BIT(0), 0);
-+CCU_GATE_DEFINE(pwm8_bus_clk, CCU_PARENT_HW(apb_clk), APBC_PWM8_CLK_RST, BIT(0), 0);
-+CCU_GATE_DEFINE(pwm9_bus_clk, CCU_PARENT_HW(apb_clk), APBC_PWM9_CLK_RST, BIT(0), 0);
-+CCU_GATE_DEFINE(pwm10_bus_clk, CCU_PARENT_HW(apb_clk), APBC_PWM10_CLK_RST, BIT(0), 0);
-+CCU_GATE_DEFINE(pwm11_bus_clk, CCU_PARENT_HW(apb_clk), APBC_PWM11_CLK_RST, BIT(0), 0);
-+CCU_GATE_DEFINE(pwm12_bus_clk, CCU_PARENT_HW(apb_clk), APBC_PWM12_CLK_RST, BIT(0), 0);
-+CCU_GATE_DEFINE(pwm13_bus_clk, CCU_PARENT_HW(apb_clk), APBC_PWM13_CLK_RST, BIT(0), 0);
-+CCU_GATE_DEFINE(pwm14_bus_clk, CCU_PARENT_HW(apb_clk), APBC_PWM14_CLK_RST, BIT(0), 0);
-+CCU_GATE_DEFINE(pwm15_bus_clk, CCU_PARENT_HW(apb_clk), APBC_PWM15_CLK_RST, BIT(0), 0);
-+CCU_GATE_DEFINE(pwm16_bus_clk, CCU_PARENT_HW(apb_clk), APBC_PWM16_CLK_RST, BIT(0), 0);
-+CCU_GATE_DEFINE(pwm17_bus_clk, CCU_PARENT_HW(apb_clk), APBC_PWM17_CLK_RST, BIT(0), 0);
-+CCU_GATE_DEFINE(pwm18_bus_clk, CCU_PARENT_HW(apb_clk), APBC_PWM18_CLK_RST, BIT(0), 0);
-+CCU_GATE_DEFINE(pwm19_bus_clk, CCU_PARENT_HW(apb_clk), APBC_PWM19_CLK_RST, BIT(0), 0);
-+
-+static const struct clk_parent_data i2s_bclk_parents[] = {
-+	CCU_PARENT_NAME(vctcxo_1m),
-+	CCU_PARENT_HW(i2s_bclk),
-+};
-+CCU_MUX_DEFINE(spi0_i2s_bclk, i2s_bclk_parents, APBC_SSP0_CLK_RST, 3, 1, 0);
-+CCU_MUX_DEFINE(spi1_i2s_bclk, i2s_bclk_parents, APBC_SSP1_CLK_RST, 3, 1, 0);
-+CCU_MUX_DEFINE(spi3_i2s_bclk, i2s_bclk_parents, APBC_SSP3_CLK_RST, 3, 1, 0);
-+
-+static const struct clk_parent_data spi0_parents[] = {
-+	CCU_PARENT_HW(pll1_d384_6p4),
-+	CCU_PARENT_HW(pll1_d192_12p8),
-+	CCU_PARENT_HW(pll1_d96_25p6),
-+	CCU_PARENT_HW(pll1_d48_51p2),
-+	CCU_PARENT_HW(pll1_d768_3p2),
-+	CCU_PARENT_HW(pll1_d1536_1p6),
-+	CCU_PARENT_HW(pll1_d3072_0p8),
-+	CCU_PARENT_HW(spi0_i2s_bclk),
-+};
-+CCU_MUX_GATE_DEFINE(spi0_clk, spi0_parents, APBC_SSP0_CLK_RST, 4, 3, BIT(1), 0);
-+
-+static const struct clk_parent_data spi1_parents[] = {
-+	CCU_PARENT_HW(pll1_d384_6p4),
-+	CCU_PARENT_HW(pll1_d192_12p8),
-+	CCU_PARENT_HW(pll1_d96_25p6),
-+	CCU_PARENT_HW(pll1_d48_51p2),
-+	CCU_PARENT_HW(pll1_d768_3p2),
-+	CCU_PARENT_HW(pll1_d1536_1p6),
-+	CCU_PARENT_HW(pll1_d3072_0p8),
-+	CCU_PARENT_HW(spi1_i2s_bclk),
-+};
-+CCU_MUX_GATE_DEFINE(spi1_clk, spi1_parents, APBC_SSP1_CLK_RST, 4, 3, BIT(1), 0);
-+
-+static const struct clk_parent_data spi3_parents[] = {
-+	CCU_PARENT_HW(pll1_d384_6p4),
-+	CCU_PARENT_HW(pll1_d192_12p8),
-+	CCU_PARENT_HW(pll1_d96_25p6),
-+	CCU_PARENT_HW(pll1_d48_51p2),
-+	CCU_PARENT_HW(pll1_d768_3p2),
-+	CCU_PARENT_HW(pll1_d1536_1p6),
-+	CCU_PARENT_HW(pll1_d3072_0p8),
-+	CCU_PARENT_HW(spi3_i2s_bclk),
-+};
-+CCU_MUX_GATE_DEFINE(spi3_clk, spi3_parents, APBC_SSP3_CLK_RST, 4, 3, BIT(1), 0);
-+
-+CCU_GATE_DEFINE(spi0_bus_clk, CCU_PARENT_HW(apb_clk), APBC_SSP0_CLK_RST, BIT(0), 0);
-+CCU_GATE_DEFINE(spi1_bus_clk, CCU_PARENT_HW(apb_clk), APBC_SSP1_CLK_RST, BIT(0), 0);
-+CCU_GATE_DEFINE(spi3_bus_clk, CCU_PARENT_HW(apb_clk), APBC_SSP3_CLK_RST, BIT(0), 0);
-+
-+
-+CCU_GATE_DEFINE(rtc_clk, CCU_PARENT_NAME(osc_32k), APBC_RTC_CLK_RST,
-+		BIT(7) | BIT(1), 0);
-+CCU_GATE_DEFINE(rtc_bus_clk, CCU_PARENT_HW(apb_clk), APBC_RTC_CLK_RST, BIT(0), 0);
-+
-+static const struct clk_parent_data twsi_parents[] = {
-+	CCU_PARENT_HW(pll1_d78_31p5),
-+	CCU_PARENT_HW(pll1_d48_51p2),
-+	CCU_PARENT_HW(pll1_d40_61p44),
-+};
-+CCU_MUX_GATE_DEFINE(twsi0_clk, twsi_parents, APBC_TWSI0_CLK_RST, 4, 3, BIT(1), 0);
-+CCU_MUX_GATE_DEFINE(twsi1_clk, twsi_parents, APBC_TWSI1_CLK_RST, 4, 3, BIT(1), 0);
-+CCU_MUX_GATE_DEFINE(twsi2_clk, twsi_parents, APBC_TWSI2_CLK_RST, 4, 3, BIT(1), 0);
-+CCU_MUX_GATE_DEFINE(twsi4_clk, twsi_parents, APBC_TWSI4_CLK_RST, 4, 3, BIT(1), 0);
-+CCU_MUX_GATE_DEFINE(twsi5_clk, twsi_parents, APBC_TWSI5_CLK_RST, 4, 3, BIT(1), 0);
-+CCU_MUX_GATE_DEFINE(twsi6_clk, twsi_parents, APBC_TWSI6_CLK_RST, 4, 3, BIT(1), 0);
-+CCU_MUX_GATE_DEFINE(twsi8_clk, twsi_parents, APBC_TWSI8_CLK_RST, 4, 3, BIT(1), 0);
-+
-+CCU_GATE_DEFINE(twsi0_bus_clk, CCU_PARENT_HW(apb_clk), APBC_TWSI0_CLK_RST, BIT(0), 0);
-+CCU_GATE_DEFINE(twsi1_bus_clk, CCU_PARENT_HW(apb_clk), APBC_TWSI1_CLK_RST, BIT(0), 0);
-+CCU_GATE_DEFINE(twsi2_bus_clk, CCU_PARENT_HW(apb_clk), APBC_TWSI2_CLK_RST, BIT(0), 0);
-+CCU_GATE_DEFINE(twsi4_bus_clk, CCU_PARENT_HW(apb_clk), APBC_TWSI4_CLK_RST, BIT(0), 0);
-+CCU_GATE_DEFINE(twsi5_bus_clk, CCU_PARENT_HW(apb_clk), APBC_TWSI5_CLK_RST, BIT(0), 0);
-+CCU_GATE_DEFINE(twsi6_bus_clk, CCU_PARENT_HW(apb_clk), APBC_TWSI6_CLK_RST, BIT(0), 0);
-+CCU_GATE_DEFINE(twsi8_bus_clk, CCU_PARENT_HW(apb_clk), APBC_TWSI8_CLK_RST, BIT(0), 0);
-+
-+static const struct clk_parent_data timer_parents[] = {
-+	CCU_PARENT_HW(pll1_d192_12p8),
-+	CCU_PARENT_NAME(osc_32k),
-+	CCU_PARENT_HW(pll1_d384_6p4),
-+	CCU_PARENT_NAME(vctcxo_3m),
-+	CCU_PARENT_NAME(vctcxo_1m),
-+};
-+CCU_MUX_GATE_DEFINE(timers0_clk, timer_parents, APBC_TIMERS0_CLK_RST, 4, 3, BIT(1), 0);
-+CCU_MUX_GATE_DEFINE(timers1_clk, timer_parents, APBC_TIMERS1_CLK_RST, 4, 3, BIT(1), 0);
-+CCU_MUX_GATE_DEFINE(timers2_clk, timer_parents, APBC_TIMERS2_CLK_RST, 4, 3, BIT(1), 0);
-+CCU_MUX_GATE_DEFINE(timers3_clk, timer_parents, APBC_TIMERS3_CLK_RST, 4, 3, BIT(1), 0);
-+CCU_MUX_GATE_DEFINE(timers4_clk, timer_parents, APBC_TIMERS4_CLK_RST, 4, 3, BIT(1), 0);
-+CCU_MUX_GATE_DEFINE(timers5_clk, timer_parents, APBC_TIMERS5_CLK_RST, 4, 3, BIT(1), 0);
-+CCU_MUX_GATE_DEFINE(timers6_clk, timer_parents, APBC_TIMERS6_CLK_RST, 4, 3, BIT(1), 0);
-+CCU_MUX_GATE_DEFINE(timers7_clk, timer_parents, APBC_TIMERS7_CLK_RST, 4, 3, BIT(1), 0);
-+
-+CCU_GATE_DEFINE(timers0_bus_clk, CCU_PARENT_HW(apb_clk), APBC_TIMERS0_CLK_RST, BIT(0), 0);
-+CCU_GATE_DEFINE(timers1_bus_clk, CCU_PARENT_HW(apb_clk), APBC_TIMERS1_CLK_RST, BIT(0), 0);
-+CCU_GATE_DEFINE(timers2_bus_clk, CCU_PARENT_HW(apb_clk), APBC_TIMERS2_CLK_RST, BIT(0), 0);
-+CCU_GATE_DEFINE(timers3_bus_clk, CCU_PARENT_HW(apb_clk), APBC_TIMERS3_CLK_RST, BIT(0), 0);
-+CCU_GATE_DEFINE(timers4_bus_clk, CCU_PARENT_HW(apb_clk), APBC_TIMERS4_CLK_RST, BIT(0), 0);
-+CCU_GATE_DEFINE(timers5_bus_clk, CCU_PARENT_HW(apb_clk), APBC_TIMERS5_CLK_RST, BIT(0), 0);
-+CCU_GATE_DEFINE(timers6_bus_clk, CCU_PARENT_HW(apb_clk), APBC_TIMERS6_CLK_RST, BIT(0), 0);
-+CCU_GATE_DEFINE(timers7_bus_clk, CCU_PARENT_HW(apb_clk), APBC_TIMERS7_CLK_RST, BIT(0), 0);
-+
-+CCU_GATE_DEFINE(aib_clk, CCU_PARENT_NAME(vctcxo_24m), APBC_AIB_CLK_RST, BIT(1), 0);
-+CCU_GATE_DEFINE(aib_bus_clk, CCU_PARENT_HW(apb_clk), APBC_AIB_CLK_RST, BIT(0), 0);
-+
-+CCU_GATE_DEFINE(onewire_clk, CCU_PARENT_NAME(vctcxo_24m), APBC_ONEWIRE_CLK_RST, BIT(1), 0);
-+CCU_GATE_DEFINE(onewire_bus_clk, CCU_PARENT_HW(apb_clk), APBC_ONEWIRE_CLK_RST, BIT(0), 0);
-+
-+/*
-+ * When i2s_bclk is selected as the parent clock of sspa,
-+ * the hardware requires bit3 to be set
-+ */
-+
-+CCU_MUX_DEFINE(i2s0_i2s_bclk, i2s_bclk_parents, APBC_SSPA0_CLK_RST, 3, 1, 0);
-+CCU_MUX_DEFINE(i2s1_i2s_bclk, i2s_bclk_parents, APBC_SSPA1_CLK_RST, 3, 1, 0);
-+CCU_MUX_DEFINE(i2s2_i2s_bclk, i2s_bclk_parents, APBC_SSPA2_CLK_RST, 3, 1, 0);
-+CCU_MUX_DEFINE(i2s3_i2s_bclk, i2s_bclk_parents, APBC_SSPA3_CLK_RST, 3, 1, 0);
-+CCU_MUX_DEFINE(i2s4_i2s_bclk, i2s_bclk_parents, APBC_SSPA4_CLK_RST, 3, 1, 0);
-+CCU_MUX_DEFINE(i2s5_i2s_bclk, i2s_bclk_parents, APBC_SSPA5_CLK_RST, 3, 1, 0);
-+
-+static const struct clk_parent_data i2s0_parents[] = {
-+	CCU_PARENT_HW(pll1_d384_6p4),
-+	CCU_PARENT_HW(pll1_d192_12p8),
-+	CCU_PARENT_HW(pll1_d96_25p6),
-+	CCU_PARENT_HW(pll1_d48_51p2),
-+	CCU_PARENT_HW(pll1_d768_3p2),
-+	CCU_PARENT_HW(pll1_d1536_1p6),
-+	CCU_PARENT_HW(pll1_d3072_0p8),
-+	CCU_PARENT_HW(i2s0_i2s_bclk),
-+};
-+CCU_MUX_GATE_DEFINE(i2s0_clk, i2s0_parents, APBC_SSPA0_CLK_RST, 4, 3, BIT(1), 0);
-+
-+static const struct clk_parent_data i2s1_parents[] = {
-+	CCU_PARENT_HW(pll1_d384_6p4),
-+	CCU_PARENT_HW(pll1_d192_12p8),
-+	CCU_PARENT_HW(pll1_d96_25p6),
-+	CCU_PARENT_HW(pll1_d48_51p2),
-+	CCU_PARENT_HW(pll1_d768_3p2),
-+	CCU_PARENT_HW(pll1_d1536_1p6),
-+	CCU_PARENT_HW(pll1_d3072_0p8),
-+	CCU_PARENT_HW(i2s1_i2s_bclk),
-+};
-+CCU_MUX_GATE_DEFINE(i2s1_clk, i2s1_parents, APBC_SSPA1_CLK_RST, 4, 3, BIT(1), 0);
-+
-+static const struct clk_parent_data i2s2_parents[] = {
-+	CCU_PARENT_HW(pll1_d384_6p4),
-+	CCU_PARENT_HW(pll1_d192_12p8),
-+	CCU_PARENT_HW(pll1_d96_25p6),
-+	CCU_PARENT_HW(pll1_d48_51p2),
-+	CCU_PARENT_HW(pll1_d768_3p2),
-+	CCU_PARENT_HW(pll1_d1536_1p6),
-+	CCU_PARENT_HW(pll1_d3072_0p8),
-+	CCU_PARENT_HW(i2s2_i2s_bclk),
-+};
-+CCU_MUX_GATE_DEFINE(i2s2_clk, i2s2_parents, APBC_SSPA2_CLK_RST, 4, 3, BIT(1), 0);
-+
-+static const struct clk_parent_data i2s3_parents[] = {
-+	CCU_PARENT_HW(pll1_d384_6p4),
-+	CCU_PARENT_HW(pll1_d192_12p8),
-+	CCU_PARENT_HW(pll1_d96_25p6),
-+	CCU_PARENT_HW(pll1_d48_51p2),
-+	CCU_PARENT_HW(pll1_d768_3p2),
-+	CCU_PARENT_HW(pll1_d1536_1p6),
-+	CCU_PARENT_HW(pll1_d3072_0p8),
-+	CCU_PARENT_HW(i2s3_i2s_bclk),
-+};
-+CCU_MUX_GATE_DEFINE(i2s3_clk, i2s3_parents, APBC_SSPA3_CLK_RST, 4, 3, BIT(1), 0);
-+
-+static const struct clk_parent_data i2s4_parents[] = {
-+	CCU_PARENT_HW(pll1_d384_6p4),
-+	CCU_PARENT_HW(pll1_d192_12p8),
-+	CCU_PARENT_HW(pll1_d96_25p6),
-+	CCU_PARENT_HW(pll1_d48_51p2),
-+	CCU_PARENT_HW(pll1_d768_3p2),
-+	CCU_PARENT_HW(pll1_d1536_1p6),
-+	CCU_PARENT_HW(pll1_d3072_0p8),
-+	CCU_PARENT_HW(i2s4_i2s_bclk),
-+};
-+CCU_MUX_GATE_DEFINE(i2s4_clk, i2s4_parents, APBC_SSPA4_CLK_RST, 4, 3, BIT(1), 0);
-+
-+static const struct clk_parent_data i2s5_parents[] = {
-+	CCU_PARENT_HW(pll1_d384_6p4),
-+	CCU_PARENT_HW(pll1_d192_12p8),
-+	CCU_PARENT_HW(pll1_d96_25p6),
-+	CCU_PARENT_HW(pll1_d48_51p2),
-+	CCU_PARENT_HW(pll1_d768_3p2),
-+	CCU_PARENT_HW(pll1_d1536_1p6),
-+	CCU_PARENT_HW(pll1_d3072_0p8),
-+	CCU_PARENT_HW(i2s5_i2s_bclk),
-+};
-+CCU_MUX_GATE_DEFINE(i2s5_clk, i2s5_parents, APBC_SSPA5_CLK_RST, 4, 3, BIT(1), 0);
-+
-+CCU_GATE_DEFINE(i2s0_bus_clk, CCU_PARENT_HW(apb_clk), APBC_SSPA0_CLK_RST, BIT(0), 0);
-+CCU_GATE_DEFINE(i2s1_bus_clk, CCU_PARENT_HW(apb_clk), APBC_SSPA1_CLK_RST, BIT(0), 0);
-+CCU_GATE_DEFINE(i2s2_bus_clk, CCU_PARENT_HW(apb_clk), APBC_SSPA2_CLK_RST, BIT(0), 0);
-+CCU_GATE_DEFINE(i2s3_bus_clk, CCU_PARENT_HW(apb_clk), APBC_SSPA3_CLK_RST, BIT(0), 0);
-+CCU_GATE_DEFINE(i2s4_bus_clk, CCU_PARENT_HW(apb_clk), APBC_SSPA4_CLK_RST, BIT(0), 0);
-+CCU_GATE_DEFINE(i2s5_bus_clk, CCU_PARENT_HW(apb_clk), APBC_SSPA5_CLK_RST, BIT(0), 0);
-+
-+CCU_GATE_DEFINE(dro_clk, CCU_PARENT_HW(apb_clk), APBC_DRO_CLK_RST, BIT(1), 0);
-+CCU_GATE_DEFINE(ir0_clk, CCU_PARENT_HW(apb_clk), APBC_IR0_CLK_RST, BIT(1), 0);
-+CCU_GATE_DEFINE(ir1_clk, CCU_PARENT_HW(apb_clk), APBC_IR1_CLK_RST, BIT(1), 0);
-+
-+CCU_GATE_DEFINE(tsen_clk, CCU_PARENT_HW(apb_clk), APBC_TSEN_CLK_RST, BIT(1), 0);
-+CCU_GATE_DEFINE(tsen_bus_clk, CCU_PARENT_HW(apb_clk), APBC_TSEN_CLK_RST, BIT(0), 0);
-+
-+CCU_GATE_DEFINE(ipc_ap2rcpu_clk, CCU_PARENT_HW(apb_clk), APBC_IPC_AP2AUD_CLK_RST, BIT(1), 0);
-+CCU_GATE_DEFINE(ipc_ap2rcpu_bus_clk, CCU_PARENT_HW(apb_clk), APBC_IPC_AP2AUD_CLK_RST, BIT(0), 0);
-+
-+static const struct clk_parent_data can_parents[] = {
-+	CCU_PARENT_HW(pll6_20),
-+	CCU_PARENT_HW(pll6_40),
-+	CCU_PARENT_HW(pll6_80),
-+};
-+CCU_MUX_GATE_DEFINE(can0_clk, can_parents, APBC_CAN0_CLK_RST, 4, 3, BIT(1), 0);
-+CCU_MUX_GATE_DEFINE(can1_clk, can_parents, APBC_CAN1_CLK_RST, 4, 3, BIT(1), 0);
-+CCU_MUX_GATE_DEFINE(can2_clk, can_parents, APBC_CAN2_CLK_RST, 4, 3, BIT(1), 0);
-+CCU_MUX_GATE_DEFINE(can3_clk, can_parents, APBC_CAN3_CLK_RST, 4, 3, BIT(1), 0);
-+CCU_MUX_GATE_DEFINE(can4_clk, can_parents, APBC_CAN4_CLK_RST, 4, 3, BIT(1), 0);
-+
-+CCU_GATE_DEFINE(can0_bus_clk, CCU_PARENT_HW(apb_clk), APBC_CAN0_CLK_RST, BIT(0), 0);
-+CCU_GATE_DEFINE(can1_bus_clk, CCU_PARENT_HW(apb_clk), APBC_CAN1_CLK_RST, BIT(0), 0);
-+CCU_GATE_DEFINE(can2_bus_clk, CCU_PARENT_HW(apb_clk), APBC_CAN2_CLK_RST, BIT(0), 0);
-+CCU_GATE_DEFINE(can3_bus_clk, CCU_PARENT_HW(apb_clk), APBC_CAN3_CLK_RST, BIT(0), 0);
-+CCU_GATE_DEFINE(can4_bus_clk, CCU_PARENT_HW(apb_clk), APBC_CAN4_CLK_RST, BIT(0), 0);
-+/* APBC clocks end */
-+
-+/* APMU clocks start */
-+static const struct clk_parent_data axi_clk_parents[] = {
-+	CCU_PARENT_HW(pll1_d8_307p2),
-+	CCU_PARENT_HW(pll1_d6_409p6),
-+};
-+CCU_MUX_DIV_FC_DEFINE(axi_clk, axi_clk_parents, APMU_ACLK_CLK_CTRL, 1, 2, BIT(4), 0, 1, 0);
-+
-+static const struct clk_parent_data cci550_clk_parents[] = {
-+	CCU_PARENT_HW(pll1_d10_245p76),
-+	CCU_PARENT_HW(pll1_d6_409p6),
-+	CCU_PARENT_HW(pll1_d4_614p4),
-+	CCU_PARENT_HW(pll1_d3_819p2),
-+	CCU_PARENT_HW(pll7_d3),
-+	CCU_PARENT_HW(pll2_d3),
-+	CCU_PARENT_HW(pll1_d2_1228p8),
-+	CCU_PARENT_HW(pll7_d2),
-+};
-+CCU_MUX_DIV_FC_DEFINE(cci550_clk, cci550_clk_parents, APMU_CCI550_CLK_CTRL, 8, 2, BIT(12), 0, 3,
-+		      CLK_IS_CRITICAL);
-+
-+static const struct clk_parent_data cpu_c0_clk_parents[] = {
-+	CCU_PARENT_HW(pll1_d3_819p2),
-+	CCU_PARENT_HW(pll1_d5_491p52),
-+	CCU_PARENT_HW(pll1_d4_614p4),
-+	CCU_PARENT_HW(pll2_d3),
-+	CCU_PARENT_HW(pll3_d2),
-+	CCU_PARENT_HW(pll1_d2_1228p8),
-+	CCU_PARENT_HW(pll2_d2),
-+	CCU_PARENT_HW(pll3_d1),
-+};
-+CCU_MUX_DIV_FC_DEFINE(cpu_c0_core_clk, cpu_c0_clk_parents, APMU_CPU_C0_CLK_CTRL,
-+		      3, 3, BIT(12), 0, 3, CLK_IS_CRITICAL);
-+
-+static const struct clk_parent_data cpu_c1_clk_parents[] = {
-+	CCU_PARENT_HW(pll1_d3_819p2),
-+	CCU_PARENT_HW(pll1_d5_491p52),
-+	CCU_PARENT_HW(pll1_d4_614p4),
-+	CCU_PARENT_HW(pll2_d3),
-+	CCU_PARENT_HW(pll4_d2),
-+	CCU_PARENT_HW(pll1_d2_1228p8),
-+	CCU_PARENT_HW(pll2_d2),
-+	CCU_PARENT_HW(pll4_d1),
-+};
-+CCU_MUX_DIV_FC_DEFINE(cpu_c1_core_clk, cpu_c1_clk_parents, APMU_CPU_C1_CLK_CTRL,
-+		      3, 3, BIT(12), 0, 3, CLK_IS_CRITICAL);
-+
-+static const struct clk_parent_data cpu_c2_clk_parents[] = {
-+	CCU_PARENT_HW(pll1_d3_819p2),
-+	CCU_PARENT_HW(pll1_d5_491p52),
-+	CCU_PARENT_HW(pll1_d4_614p4),
-+	CCU_PARENT_HW(pll2_d3),
-+	CCU_PARENT_HW(pll5_d2),
-+	CCU_PARENT_HW(pll1_d2_1228p8),
-+	CCU_PARENT_HW(pll2_d2),
-+	CCU_PARENT_HW(pll5_d1),
-+};
-+CCU_MUX_DIV_FC_DEFINE(cpu_c2_core_clk, cpu_c2_clk_parents, APMU_CPU_C2_CLK_CTRL,
-+		      3, 3, BIT(12), 0, 3, CLK_IS_CRITICAL);
-+
-+static const struct clk_parent_data cpu_c3_clk_parents[] = {
-+	CCU_PARENT_HW(pll1_d3_819p2),
-+	CCU_PARENT_HW(pll1_d5_491p52),
-+	CCU_PARENT_HW(pll1_d4_614p4),
-+	CCU_PARENT_HW(pll2_d3),
-+	CCU_PARENT_HW(pll8_d2),
-+	CCU_PARENT_HW(pll1_d2_1228p8),
-+	CCU_PARENT_HW(pll2_d2),
-+	CCU_PARENT_HW(pll8_d1),
-+};
-+CCU_MUX_DIV_FC_DEFINE(cpu_c3_core_clk, cpu_c3_clk_parents, APMU_CPU_C3_CLK_CTRL,
-+		      3, 3, BIT(12), 0, 3, CLK_IS_CRITICAL);
-+
-+static const struct clk_parent_data ccic2phy_parents[] = {
-+	CCU_PARENT_HW(pll1_d24_102p4),
-+	CCU_PARENT_HW(pll1_d48_51p2_ap),
-+};
-+CCU_MUX_GATE_DEFINE(ccic2phy_clk, ccic2phy_parents, APMU_CSI_CCIC2_CLK_RES_CTRL, 7, 1, BIT(5), 0);
-+
-+static const struct clk_parent_data ccic3phy_parents[] = {
-+	CCU_PARENT_HW(pll1_d24_102p4),
-+	CCU_PARENT_HW(pll1_d48_51p2_ap),
-+};
-+CCU_MUX_GATE_DEFINE(ccic3phy_clk, ccic3phy_parents, APMU_CSI_CCIC2_CLK_RES_CTRL, 31, 1, BIT(30), 0);
-+
-+static const struct clk_parent_data csi_parents[] = {
-+	CCU_PARENT_HW(pll1_d5_491p52),
-+	CCU_PARENT_HW(pll1_d6_409p6),
-+	CCU_PARENT_HW(pll1_d4_614p4),
-+	CCU_PARENT_HW(pll1_d3_819p2),
-+	CCU_PARENT_HW(pll2_d2),
-+	CCU_PARENT_HW(pll2_d3),
-+	CCU_PARENT_HW(pll2_d4),
-+	CCU_PARENT_HW(pll1_d2_1228p8),
-+};
-+CCU_MUX_DIV_GATE_FC_DEFINE(csi_clk, csi_parents, APMU_CSI_CCIC2_CLK_RES_CTRL, 20, 3, BIT(15),
-+			   16, 3, BIT(4), 0);
-+
-+static const struct clk_parent_data isp_bus_parents[] = {
-+	CCU_PARENT_HW(pll1_d6_409p6),
-+	CCU_PARENT_HW(pll1_d5_491p52),
-+	CCU_PARENT_HW(pll1_d4_614p4),
-+	CCU_PARENT_HW(pll1_d10_245p76),
-+};
-+CCU_MUX_DIV_GATE_FC_DEFINE(isp_bus_clk, isp_bus_parents, APMU_ISP_CLK_RES_CTRL, 18, 3, BIT(23),
-+			   21, 2, BIT(17), 0);
-+
-+CCU_GATE_DEFINE(d1p_1228p8, CCU_PARENT_HW(pll1_d2_1228p8), APMU_PMU_CLK_GATE_CTRL, BIT(31), 0);
-+CCU_GATE_DEFINE(d1p_819p2, CCU_PARENT_HW(pll1_d3_819p2), APMU_PMU_CLK_GATE_CTRL, BIT(30), 0);
-+CCU_GATE_DEFINE(d1p_614p4, CCU_PARENT_HW(pll1_d4_614p4), APMU_PMU_CLK_GATE_CTRL, BIT(29), 0);
-+CCU_GATE_DEFINE(d1p_491p52, CCU_PARENT_HW(pll1_d5_491p52), APMU_PMU_CLK_GATE_CTRL, BIT(28), 0);
-+CCU_GATE_DEFINE(d1p_409p6, CCU_PARENT_HW(pll1_d6_409p6), APMU_PMU_CLK_GATE_CTRL, BIT(27), 0);
-+CCU_GATE_DEFINE(d1p_307p2, CCU_PARENT_HW(pll1_d8_307p2), APMU_PMU_CLK_GATE_CTRL, BIT(26), 0);
-+CCU_GATE_DEFINE(d1p_245p76, CCU_PARENT_HW(pll1_d10_245p76), APMU_PMU_CLK_GATE_CTRL, BIT(22), 0);
-+
-+static const struct clk_parent_data v2d_parents[] = {
-+	CCU_PARENT_HW(pll1_d5_491p52),
-+	CCU_PARENT_HW(pll2_d4),
-+	CCU_PARENT_HW(pll1_d8_307p2),
-+	CCU_PARENT_HW(pll1_d4_614p4),
-+};
-+CCU_MUX_DIV_GATE_FC_DEFINE(v2d_clk, v2d_parents, APMU_LCD_CLK_RES_CTRL1, 9, 3, BIT(28), 12, 2,
-+			   BIT(8), 0);
-+
-+static const struct clk_parent_data dsiesc_parents[] = {
-+	CCU_PARENT_HW(pll1_d48_51p2_ap),
-+	CCU_PARENT_HW(pll1_d52_47p26),
-+	CCU_PARENT_HW(pll1_d96_25p6),
-+	CCU_PARENT_HW(pll1_d32_76p8),
-+};
-+CCU_MUX_GATE_DEFINE(dsi_esc_clk, dsiesc_parents, APMU_LCD_CLK_RES_CTRL1, 0, 2, BIT(2), 0);
-+
-+CCU_GATE_DEFINE(lcd_hclk, CCU_PARENT_HW(axi_clk), APMU_LCD_CLK_RES_CTRL1, BIT(5), 0);
-+
-+static const struct clk_parent_data lcd_dsc_parents[] = {
-+	CCU_PARENT_HW(pll1_d4_614p4),
-+	CCU_PARENT_HW(pll1_d5_491p52),
-+	CCU_PARENT_HW(pll1_d10_245p76),
-+	CCU_PARENT_HW(pll7_d5),
-+	CCU_PARENT_HW(pll2_d7),
-+	CCU_PARENT_HW(pll1_d6_409p6),
-+	CCU_PARENT_HW(pll1_d48_51p2_ap),
-+	CCU_PARENT_HW(pll2_d8),
-+};
-+CCU_MUX_DIV_GATE_SPLIT_FC_DEFINE(lcd_dsc_clk, lcd_dsc_parents, APMU_LCD_CLK_RES_CTRL2,
-+				 APMU_LCD_CLK_RES_CTRL1, 25, 3, BIT(26), 29, 3, BIT(14), 0);
-+
-+static const struct clk_parent_data lcdpx_parents[] = {
-+	CCU_PARENT_HW(pll1_d4_614p4),
-+	CCU_PARENT_HW(pll1_d5_491p52),
-+	CCU_PARENT_HW(pll1_d10_245p76),
-+	CCU_PARENT_HW(pll7_d5),
-+	CCU_PARENT_HW(pll2_d7),
-+	CCU_PARENT_HW(pll2_d4),
-+	CCU_PARENT_HW(pll1_d48_51p2_ap),
-+	CCU_PARENT_HW(pll2_d8),
-+};
-+CCU_MUX_DIV_GATE_SPLIT_FC_DEFINE(lcd_pxclk, lcdpx_parents, APMU_LCD_CLK_RES_CTRL2,
-+				 APMU_LCD_CLK_RES_CTRL1, 17, 3, BIT(30), 21, 3, BIT(16), 0);
-+
-+static const struct clk_parent_data lcdmclk_parents[] = {
-+	CCU_PARENT_HW(pll1_d6_409p6),
-+	CCU_PARENT_HW(pll1_d5_491p52),
-+	CCU_PARENT_HW(pll1_d4_614p4),
-+	CCU_PARENT_HW(pll1_d8_307p2),
-+};
-+CCU_MUX_DIV_GATE_SPLIT_FC_DEFINE(lcd_mclk, lcdmclk_parents, APMU_LCD_CLK_RES_CTRL2,
-+				 APMU_LCD_CLK_RES_CTRL1, 1, 4, BIT(29), 5, 3, BIT(0), 0);
-+
-+static const struct clk_parent_data ccic_4x_parents[] = {
-+	CCU_PARENT_HW(pll1_d5_491p52),
-+	CCU_PARENT_HW(pll1_d6_409p6),
-+	CCU_PARENT_HW(pll1_d4_614p4),
-+	CCU_PARENT_HW(pll1_d3_819p2),
-+	CCU_PARENT_HW(pll2_d2),
-+	CCU_PARENT_HW(pll2_d3),
-+	CCU_PARENT_HW(pll2_d4),
-+	CCU_PARENT_HW(pll1_d2_1228p8),
-+};
-+CCU_MUX_DIV_GATE_FC_DEFINE(ccic_4x_clk, ccic_4x_parents, APMU_CCIC_CLK_RES_CTRL, 18, 3,
-+			   BIT(15), 23, 2, BIT(4), 0);
-+
-+static const struct clk_parent_data ccic1phy_parents[] = {
-+	CCU_PARENT_HW(pll1_d24_102p4),
-+	CCU_PARENT_HW(pll1_d48_51p2_ap),
-+};
-+CCU_MUX_GATE_DEFINE(ccic1phy_clk, ccic1phy_parents, APMU_CCIC_CLK_RES_CTRL, 7, 1, BIT(5), 0);
-+
-+
-+static const struct clk_parent_data sc2hclk_parents[] = {
-+	CCU_PARENT_HW(pll1_d8_307p2),
-+	CCU_PARENT_HW(pll1_d4_614p4),
-+	CCU_PARENT_HW(pll1_d5_491p52),
-+	CCU_PARENT_HW(pll2_d4),
-+};
-+CCU_MUX_DIV_GATE_FC_DEFINE(sc2_hclk, sc2hclk_parents, APMU_CCIC_CLK_RES_CTRL, 10, 3,
-+			   BIT(16), 8, 2, BIT(3), 0);
-+
-+CCU_GATE_DEFINE(sdh_axi_aclk, CCU_PARENT_HW(axi_clk), APMU_SDH0_CLK_RES_CTRL, BIT(3), 0);
-+static const struct clk_parent_data sdh01_parents[] = {
-+	CCU_PARENT_HW(pll1_d6_409p6),
-+	CCU_PARENT_HW(pll1_d4_614p4),
-+	CCU_PARENT_HW(pll2_d8),
-+	CCU_PARENT_HW(pll2_d5),
-+	CCU_PARENT_NAME(reserved_clk),
-+	CCU_PARENT_NAME(reserved_clk),
-+	CCU_PARENT_HW(pll1_dx),
-+};
-+CCU_MUX_DIV_GATE_FC_DEFINE(sdh0_clk, sdh01_parents, APMU_SDH0_CLK_RES_CTRL, 8, 3,
-+			   BIT(11), 5, 3, BIT(4), 0);
-+CCU_MUX_DIV_GATE_FC_DEFINE(sdh1_clk, sdh01_parents, APMU_SDH1_CLK_RES_CTRL, 8, 3,
-+			   BIT(11), 5, 3, BIT(4), 0);
-+static const struct clk_parent_data sdh2_parents[] = {
-+	CCU_PARENT_HW(pll1_d6_409p6),
-+	CCU_PARENT_HW(pll1_d4_614p4),
-+	CCU_PARENT_HW(pll2_d8),
-+	CCU_PARENT_HW(pll1_d3_819p2),
-+	CCU_PARENT_NAME(reserved_clk),
-+	CCU_PARENT_NAME(reserved_clk),
-+	CCU_PARENT_HW(pll1_dx),
-+};
-+CCU_MUX_DIV_GATE_FC_DEFINE(sdh2_clk, sdh2_parents, APMU_SDH2_CLK_RES_CTRL, 8, 3,
-+			   BIT(11), 5, 3, BIT(4), 0);
-+
-+CCU_GATE_DEFINE(usb2_bus_clk, CCU_PARENT_HW(axi_clk), APMU_USB_CLK_RES_CTRL, BIT(0), 0);
-+CCU_GATE_DEFINE(usb3_porta_bus_clk, CCU_PARENT_HW(axi_clk), APMU_USB_CLK_RES_CTRL, BIT(4), 0);
-+CCU_GATE_DEFINE(usb3_portb_bus_clk, CCU_PARENT_HW(axi_clk), APMU_USB_CLK_RES_CTRL, BIT(8), 0);
-+CCU_GATE_DEFINE(usb3_portc_bus_clk, CCU_PARENT_HW(axi_clk), APMU_USB_CLK_RES_CTRL, BIT(12), 0);
-+CCU_GATE_DEFINE(usb3_portd_bus_clk, CCU_PARENT_HW(axi_clk), APMU_USB_CLK_RES_CTRL, BIT(16), 0);
-+
-+static const struct clk_parent_data qspi_parents[] = {
-+	CCU_PARENT_HW(pll1_d6_409p6),
-+	CCU_PARENT_HW(pll2_d8),
-+	CCU_PARENT_HW(pll1_d8_307p2),
-+	CCU_PARENT_HW(pll1_d10_245p76),
-+	CCU_PARENT_NAME(reserved_clk),
-+	CCU_PARENT_HW(pll1_dx),
-+	CCU_PARENT_HW(pll1_d5_491p52),
-+	CCU_PARENT_NAME(reserved_clk),
-+};
-+CCU_MUX_DIV_GATE_FC_DEFINE(qspi_clk, qspi_parents, APMU_QSPI_CLK_RES_CTRL, 9, 3,
-+			   BIT(12), 6, 3, BIT(4), 0);
-+CCU_GATE_DEFINE(qspi_bus_clk, CCU_PARENT_HW(axi_clk), APMU_QSPI_CLK_RES_CTRL, BIT(3), 0);
-+
-+CCU_GATE_DEFINE(dma_clk, CCU_PARENT_HW(axi_clk), APMU_DMA_CLK_RES_CTRL, BIT(3), 0);
-+
-+static const struct clk_parent_data aes_wtm_parents[] = {
-+	CCU_PARENT_HW(pll1_d12_204p8),
-+	CCU_PARENT_HW(pll1_d24_102p4),
-+};
-+CCU_MUX_GATE_DEFINE(aes_wtm_clk, aes_wtm_parents, APMU_AES_CLK_RES_CTRL, 6, 1, BIT(5), 0);
-+
-+static const struct clk_parent_data vpu_parents[] = {
-+	CCU_PARENT_HW(pll1_d4_614p4),
-+	CCU_PARENT_HW(pll1_d5_491p52),
-+	CCU_PARENT_HW(pll1_d3_819p2),
-+	CCU_PARENT_HW(pll1_d6_409p6),
-+	CCU_PARENT_HW(pll1_d2_1228p8),
-+	CCU_PARENT_HW(pll2_d3),
-+	CCU_PARENT_HW(pll2_d4),
-+	CCU_PARENT_HW(pll2_d5),
-+};
-+CCU_MUX_DIV_GATE_FC_DEFINE(vpu_clk, vpu_parents, APMU_VPU_CLK_RES_CTRL, 13, 3,
-+			   BIT(21), 10, 3, BIT(3), 0);
-+
-+CCU_GATE_DEFINE(dtc_clk, CCU_PARENT_HW(axi_clk), APMU_DTC_CLK_RES_CTRL, BIT(3), 0);
-+
-+static const struct clk_parent_data gpu_parents[] = {
-+	CCU_PARENT_HW(pll1_d4_614p4),
-+	CCU_PARENT_HW(pll1_d5_491p52),
-+	CCU_PARENT_HW(pll1_d3_819p2),
-+	CCU_PARENT_HW(pll1_d6_409p6),
-+	CCU_PARENT_HW(pll1_d2_1228p8),
-+	CCU_PARENT_HW(pll2_d3),
-+	CCU_PARENT_HW(pll2_d4),
-+	CCU_PARENT_HW(pll2_d5),
-+};
-+CCU_MUX_DIV_GATE_FC_DEFINE(gpu_clk, gpu_parents, APMU_GPU_CLK_RES_CTRL, 12, 3,
-+			   BIT(15), 18, 3, BIT(4), 0);
-+
-+CCU_GATE_DEFINE(mc_ahb_clk, CCU_PARENT_HW(axi_clk), APMU_PMUA_MC_CTRL, BIT(1), 0);
-+
-+static const struct clk_parent_data top_parents[] = {
-+	CCU_PARENT_HW(pll1_d8_307p2),
-+	CCU_PARENT_HW(pll1_d6_409p6),
-+	CCU_PARENT_HW(pll3_d4),
-+	CCU_PARENT_HW(pll6_d5),
-+	CCU_PARENT_HW(pll7_d4),
-+	CCU_PARENT_HW(pll6_d4),
-+	CCU_PARENT_HW(pll7_d3),
-+	CCU_PARENT_HW(pll6_d3),
-+};
-+CCU_MUX_DIV_GATE_FC_DEFINE(top_dclk, top_parents, APMU_TOP_DCLK_CTRL, 5, 3,
-+			   BIT(8), 2, 3, BIT(1), 0);
-+
-+static const struct clk_parent_data ucie_parents[] = {
-+	CCU_PARENT_HW(pll1_d8_307p2),
-+	CCU_PARENT_HW(pll1_d6_409p6),
-+	CCU_PARENT_HW(pll3_d4),
-+	CCU_PARENT_HW(pll6_d5),
-+	CCU_PARENT_HW(pll7_d4),
-+	CCU_PARENT_HW(pll6_d4),
-+};
-+CCU_MUX_GATE_DEFINE(ucie_clk, ucie_parents, APMU_UCIE_CTRL, 4, 3, BIT(0), 0);
-+CCU_GATE_DEFINE(ucie_sbclk, CCU_PARENT_HW(axi_clk), APMU_UCIE_CTRL, BIT(8), 0);
-+
-+static const struct clk_parent_data rcpu_clk_parents[] = {
-+	CCU_PARENT_HW(pll1_aud_245p7),
-+	CCU_PARENT_HW(pll1_d8_307p2),
-+	CCU_PARENT_HW(pll1_d5_491p52),
-+	CCU_PARENT_HW(pll1_d6_409p6),
-+};
-+CCU_MUX_DIV_GATE_FC_DEFINE(rcpu_clk, rcpu_clk_parents, APMU_RCPU_CLK_RES_CTRL,
-+			   4, 3, BIT(15), 7, 3, BIT(12), 0);
-+
-+static const struct clk_parent_data dsi4ln2_dsi_esc_parents[] = {
-+	CCU_PARENT_HW(pll1_d48_51p2_ap),
-+	CCU_PARENT_HW(pll1_d52_47p26),
-+	CCU_PARENT_HW(pll1_d96_25p6),
-+	CCU_PARENT_HW(pll1_d32_76p8),
-+};
-+CCU_MUX_GATE_DEFINE(dsi4ln2_dsi_esc_clk, dsi4ln2_dsi_esc_parents, APMU_LCD_CLK_RES_CTRL3,
-+		    0, 1, BIT(2), 0);
-+
-+static const struct clk_parent_data dsi4ln2_lcd_dsc_parents[] = {
-+	CCU_PARENT_HW(pll1_d4_614p4),
-+	CCU_PARENT_HW(pll1_d5_491p52),
-+	CCU_PARENT_HW(pll7_d5),
-+	CCU_PARENT_HW(pll6_d6),
-+	CCU_PARENT_HW(pll2_d7),
-+	CCU_PARENT_HW(pll1_d6_409p6),
-+	CCU_PARENT_HW(pll1_d48_51p2_ap),
-+};
-+CCU_MUX_DIV_GATE_SPLIT_FC_DEFINE(dsi4ln2_lcd_dsc_clk, dsi4ln2_lcd_dsc_parents,
-+				 APMU_LCD_CLK_RES_CTRL4, APMU_LCD_CLK_RES_CTRL3,
-+				 25, 3, BIT(26), 29, 3, BIT(14), 0);
-+
-+static const struct clk_parent_data dsi4ln2_lcdpx_parents[] = {
-+	CCU_PARENT_HW(pll1_d4_614p4),
-+	CCU_PARENT_HW(pll1_d5_491p52),
-+	CCU_PARENT_HW(pll7_d5),
-+	CCU_PARENT_HW(pll6_d6),
-+	CCU_PARENT_HW(pll2_d7),
-+	CCU_PARENT_HW(pll2_d4),
-+	CCU_PARENT_HW(pll1_d48_51p2_ap),
-+	CCU_PARENT_HW(pll2_d8),
-+};
-+CCU_MUX_DIV_GATE_SPLIT_FC_DEFINE(dsi4ln2_lcd_pxclk, dsi4ln2_lcdpx_parents, APMU_LCD_CLK_RES_CTRL4,
-+				 APMU_LCD_CLK_RES_CTRL3, 17, 3, BIT(30), 21, 3, BIT(16), 0);
-+
-+static const struct clk_parent_data dsi4ln2_lcd_mclk_parents[] = {
-+	CCU_PARENT_HW(pll1_d6_409p6),
-+	CCU_PARENT_HW(pll1_d5_491p52),
-+	CCU_PARENT_HW(pll1_d4_614p4),
-+	CCU_PARENT_HW(pll1_d8_307p2),
-+};
-+CCU_MUX_DIV_GATE_SPLIT_FC_DEFINE(dsi4ln2_lcd_mclk, dsi4ln2_lcd_mclk_parents, APMU_LCD_CLK_RES_CTRL4,
-+				 APMU_LCD_CLK_RES_CTRL3, 1, 4, BIT(29), 5, 3, BIT(0), 0);
-+
-+static const struct clk_parent_data dpu_aclk_parents[] = {
-+	CCU_PARENT_HW(pll1_d6_409p6),
-+	CCU_PARENT_HW(pll1_d5_491p52),
-+	CCU_PARENT_HW(pll1_d4_614p4),
-+	CCU_PARENT_HW(pll1_d8_307p2),
-+	CCU_PARENT_HW(pll2_d4),
-+};
-+CCU_MUX_DIV_GATE_FC_DEFINE(dsi4ln2_dpu_aclk, dpu_aclk_parents, APMU_LCD_CLK_RES_CTRL5,
-+			   2, 3, BIT(30), 5, 3, BIT(1), 0);
-+
-+CCU_MUX_DIV_GATE_FC_DEFINE(dpu_aclk, dpu_aclk_parents, APMU_LCD_CLK_RES_CTRL5, 17, 3, BIT(31),
-+			   20, 3, BIT(16), 0);
-+
-+static const struct clk_parent_data ufs_aclk_parents[] = {
-+	CCU_PARENT_HW(pll1_d6_409p6),
-+	CCU_PARENT_HW(pll1_d5_491p52),
-+	CCU_PARENT_HW(pll1_d4_614p4),
-+	CCU_PARENT_HW(pll1_d8_307p2),
-+	CCU_PARENT_HW(pll2_d4),
-+};
-+CCU_MUX_DIV_GATE_FC_DEFINE(ufs_aclk, ufs_aclk_parents, APMU_UFS_CLK_RES_CTRL, 5, 3, BIT(8),
-+			   2, 3, BIT(1), 0);
-+
-+static const struct clk_parent_data edp0_pclk_parents[] = {
-+	CCU_PARENT_HW(lcd_pxclk),
-+	CCU_PARENT_NAME(external_clk),
-+};
-+CCU_MUX_GATE_DEFINE(edp0_pxclk, edp0_pclk_parents, APMU_LCD_EDP_CTRL, 2, 1, BIT(1), 0);
-+
-+static const struct clk_parent_data edp1_pclk_parents[] = {
-+	CCU_PARENT_HW(dsi4ln2_lcd_pxclk),
-+	CCU_PARENT_NAME(external_clk),
-+};
-+CCU_MUX_GATE_DEFINE(edp1_pxclk, edp1_pclk_parents, APMU_LCD_EDP_CTRL, 18, 1, BIT(17), 0);
-+
-+CCU_GATE_DEFINE(pciea_mstr_clk, CCU_PARENT_HW(axi_clk), APMU_PCIE_CLK_RES_CTRL_A, BIT(2), 0);
-+CCU_GATE_DEFINE(pciea_slv_clk, CCU_PARENT_HW(axi_clk), APMU_PCIE_CLK_RES_CTRL_A, BIT(1), 0);
-+CCU_GATE_DEFINE(pcieb_mstr_clk, CCU_PARENT_HW(axi_clk), APMU_PCIE_CLK_RES_CTRL_B, BIT(2), 0);
-+CCU_GATE_DEFINE(pcieb_slv_clk, CCU_PARENT_HW(axi_clk), APMU_PCIE_CLK_RES_CTRL_B, BIT(1), 0);
-+CCU_GATE_DEFINE(pciec_mstr_clk, CCU_PARENT_HW(axi_clk), APMU_PCIE_CLK_RES_CTRL_C, BIT(2), 0);
-+CCU_GATE_DEFINE(pciec_slv_clk, CCU_PARENT_HW(axi_clk), APMU_PCIE_CLK_RES_CTRL_C, BIT(1), 0);
-+CCU_GATE_DEFINE(pcied_mstr_clk, CCU_PARENT_HW(axi_clk), APMU_PCIE_CLK_RES_CTRL_D, BIT(2), 0);
-+CCU_GATE_DEFINE(pcied_slv_clk, CCU_PARENT_HW(axi_clk), APMU_PCIE_CLK_RES_CTRL_D, BIT(1), 0);
-+CCU_GATE_DEFINE(pciee_mstr_clk, CCU_PARENT_HW(axi_clk), APMU_PCIE_CLK_RES_CTRL_E, BIT(2), 0);
-+CCU_GATE_DEFINE(pciee_slv_clk, CCU_PARENT_HW(axi_clk), APMU_PCIE_CLK_RES_CTRL_E, BIT(1), 0);
-+
-+static const struct clk_parent_data emac_1588_parents[] = {
-+	CCU_PARENT_NAME(vctcxo_24m),
-+	CCU_PARENT_HW(pll2_d24_125),
-+};
-+
-+CCU_GATE_DEFINE(emac0_bus_clk, CCU_PARENT_HW(axi_clk), APMU_EMAC0_CLK_RES_CTRL, BIT(0), 0);
-+CCU_GATE_FLAGS_DEFINE(emac0_ref_clk, CCU_PARENT_HW(pll2_d120_25), APMU_EMAC0_CLK_RES_CTRL,
-+		      BIT(14), true, 0);
-+CCU_MUX_DEFINE(emac0_1588_clk, emac_1588_parents, APMU_EMAC0_CLK_RES_CTRL, 15, 1, 0);
-+CCU_GATE_DEFINE(emac0_rgmii_tx_clk, CCU_PARENT_HW(pll2_d24_125), APMU_EMAC0_CLK_RES_CTRL,
-+		BIT(8), 0);
-+CCU_GATE_DEFINE(emac1_bus_clk, CCU_PARENT_HW(axi_clk), APMU_EMAC1_CLK_RES_CTRL, BIT(0), 0);
-+CCU_GATE_FLAGS_DEFINE(emac1_ref_clk, CCU_PARENT_HW(pll2_d120_25), APMU_EMAC1_CLK_RES_CTRL,
-+		      BIT(14), true, 0);
-+CCU_MUX_DEFINE(emac1_1588_clk, emac_1588_parents, APMU_EMAC1_CLK_RES_CTRL, 15, 1, 0);
-+CCU_GATE_DEFINE(emac1_rgmii_tx_clk, CCU_PARENT_HW(pll2_d24_125), APMU_EMAC1_CLK_RES_CTRL,
-+		BIT(8), 0);
-+CCU_GATE_DEFINE(emac2_bus_clk, CCU_PARENT_HW(axi_clk), APMU_EMAC2_CLK_RES_CTRL, BIT(0), 0);
-+CCU_GATE_FLAGS_DEFINE(emac2_ref_clk, CCU_PARENT_HW(pll2_d120_25), APMU_EMAC2_CLK_RES_CTRL,
-+		      BIT(14), true, 0);
-+CCU_MUX_DEFINE(emac2_1588_clk, emac_1588_parents, APMU_EMAC2_CLK_RES_CTRL, 15, 1, 0);
-+CCU_GATE_DEFINE(emac2_rgmii_tx_clk, CCU_PARENT_HW(pll2_d24_125), APMU_EMAC2_CLK_RES_CTRL,
-+		BIT(8), 0);
-+
-+static const struct clk_parent_data espi_sclk_src_parents[] = {
-+	CCU_PARENT_HW(pll2_20),
-+	CCU_PARENT_HW(pll2_25),
-+	CCU_PARENT_HW(pll2_33),
-+	CCU_PARENT_HW(pll2_50),
-+	CCU_PARENT_HW(pll2_66),
-+};
-+CCU_MUX_DEFINE(espi_sclk_src, espi_sclk_src_parents, APMU_ESPI_CLK_RES_CTRL, 4, 3, 0);
-+
-+static const struct clk_parent_data espi_sclk_parents[] = {
-+	CCU_PARENT_NAME(external_clk),
-+	CCU_PARENT_HW(espi_sclk_src),
-+};
-+CCU_MUX_GATE_DEFINE(espi_sclk, espi_sclk_parents, APMU_ESPI_CLK_RES_CTRL, 7, 1, BIT(3), 0);
-+
-+CCU_GATE_DEFINE(espi_mclk, CCU_PARENT_HW(axi_clk), APMU_ESPI_CLK_RES_CTRL, BIT(1), 0);
-+
-+CCU_FACTOR_DEFINE(cam_src1_clk, CCU_PARENT_HW(pll1_d6_409p6), 15, 1);
-+CCU_FACTOR_DEFINE(cam_src2_clk, CCU_PARENT_HW(pll2_d5), 25, 1);
-+CCU_FACTOR_DEFINE(cam_src3_clk, CCU_PARENT_HW(pll2_d6), 20, 1);
-+CCU_FACTOR_DEFINE(cam_src4_clk, CCU_PARENT_HW(pll1_d6_409p6), 16, 1);
-+
-+static const struct clk_parent_data isim_vclk_parents[] = {
-+	CCU_PARENT_HW(cam_src1_clk),
-+	CCU_PARENT_HW(cam_src2_clk),
-+	CCU_PARENT_HW(cam_src3_clk),
-+	CCU_PARENT_HW(cam_src4_clk),
-+};
-+CCU_MUX_DIV_GATE_DEFINE(isim_vclk_out0, isim_vclk_parents, APMU_SNR_ISIM_VCLK_CTRL, 3, 4,
-+			1, 2, BIT(0), 0);
-+CCU_MUX_DIV_GATE_DEFINE(isim_vclk_out1, isim_vclk_parents, APMU_SNR_ISIM_VCLK_CTRL, 11, 4,
-+			9, 2, BIT(8), 0);
-+CCU_MUX_DIV_GATE_DEFINE(isim_vclk_out2, isim_vclk_parents, APMU_SNR_ISIM_VCLK_CTRL, 19, 4,
-+			17, 2, BIT(16), 0);
-+CCU_MUX_DIV_GATE_DEFINE(isim_vclk_out3, isim_vclk_parents, APMU_SNR_ISIM_VCLK_CTRL, 27, 4,
-+			25, 2, BIT(24), 0);
-+/* APMU clocks end */
-+
-+/* DCIU clocks start */
-+CCU_GATE_DEFINE(hdma_clk, CCU_PARENT_HW(axi_clk), DCIU_DMASYS_CLK_EN, BIT(0), 0);
-+CCU_GATE_DEFINE(dma350_clk, CCU_PARENT_HW(axi_clk), DCIU_DMASYS_SDMA_CLK_EN, BIT(0), 0);
-+CCU_GATE_DEFINE(c2_tcm_pipe_clk, CCU_PARENT_HW(axi_clk), DCIU_C2_TCM_PIPE_CLK, BIT(0), 0);
-+CCU_GATE_DEFINE(c3_tcm_pipe_clk, CCU_PARENT_HW(axi_clk), DCIU_C3_TCM_PIPE_CLK, BIT(0), 0);
-+/* DCIU clocks end */
-+
-+static struct clk_hw *k3_ccu_pll_hws[] = {
-+	[CLK_PLL1]		= &pll1.common.hw,
-+	[CLK_PLL2]		= &pll2.common.hw,
-+	[CLK_PLL3]		= &pll3.common.hw,
-+	[CLK_PLL4]		= &pll4.common.hw,
-+	[CLK_PLL5]		= &pll5.common.hw,
-+	[CLK_PLL6]		= &pll6.common.hw,
-+	[CLK_PLL7]		= &pll7.common.hw,
-+	[CLK_PLL8]		= &pll8.common.hw,
-+	[CLK_PLL1_D2]		= &pll1_d2.common.hw,
-+	[CLK_PLL1_D3]		= &pll1_d3.common.hw,
-+	[CLK_PLL1_D4]		= &pll1_d4.common.hw,
-+	[CLK_PLL1_D5]		= &pll1_d5.common.hw,
-+	[CLK_PLL1_D6]		= &pll1_d6.common.hw,
-+	[CLK_PLL1_D7]		= &pll1_d7.common.hw,
-+	[CLK_PLL1_D8]		= &pll1_d8.common.hw,
-+	[CLK_PLL1_DX]		= &pll1_dx.common.hw,
-+	[CLK_PLL1_D64]		= &pll1_d64_38p4.common.hw,
-+	[CLK_PLL1_D10_AUD]	= &pll1_aud_245p7.common.hw,
-+	[CLK_PLL1_D100_AUD]	= &pll1_aud_24p5.common.hw,
-+	[CLK_PLL2_D1]		= &pll2_d1.common.hw,
-+	[CLK_PLL2_D2]		= &pll2_d2.common.hw,
-+	[CLK_PLL2_D3]		= &pll2_d3.common.hw,
-+	[CLK_PLL2_D4]		= &pll2_d4.common.hw,
-+	[CLK_PLL2_D5]		= &pll2_d5.common.hw,
-+	[CLK_PLL2_D6]		= &pll2_d6.common.hw,
-+	[CLK_PLL2_D7]		= &pll2_d7.common.hw,
-+	[CLK_PLL2_D8]		= &pll2_d8.common.hw,
-+	[CLK_PLL2_66]		= &pll2_66.common.hw,
-+	[CLK_PLL2_33]		= &pll2_33.common.hw,
-+	[CLK_PLL2_50]		= &pll2_50.common.hw,
-+	[CLK_PLL2_25]		= &pll2_25.common.hw,
-+	[CLK_PLL2_20]		= &pll2_20.common.hw,
-+	[CLK_PLL2_D24_125]	= &pll2_d24_125.common.hw,
-+	[CLK_PLL2_D120_25]	= &pll2_d120_25.common.hw,
-+	[CLK_PLL3_D1]		= &pll3_d1.common.hw,
-+	[CLK_PLL3_D2]		= &pll3_d2.common.hw,
-+	[CLK_PLL3_D3]		= &pll3_d3.common.hw,
-+	[CLK_PLL3_D4]		= &pll3_d4.common.hw,
-+	[CLK_PLL3_D5]		= &pll3_d5.common.hw,
-+	[CLK_PLL3_D6]		= &pll3_d6.common.hw,
-+	[CLK_PLL3_D7]		= &pll3_d7.common.hw,
-+	[CLK_PLL3_D8]		= &pll3_d8.common.hw,
-+	[CLK_PLL4_D1]		= &pll4_d1.common.hw,
-+	[CLK_PLL4_D2]		= &pll4_d2.common.hw,
-+	[CLK_PLL4_D3]		= &pll4_d3.common.hw,
-+	[CLK_PLL4_D4]		= &pll4_d4.common.hw,
-+	[CLK_PLL4_D5]		= &pll4_d5.common.hw,
-+	[CLK_PLL4_D6]		= &pll4_d6.common.hw,
-+	[CLK_PLL4_D7]		= &pll4_d7.common.hw,
-+	[CLK_PLL4_D8]		= &pll4_d8.common.hw,
-+	[CLK_PLL5_D1]		= &pll5_d1.common.hw,
-+	[CLK_PLL5_D2]		= &pll5_d2.common.hw,
-+	[CLK_PLL5_D3]		= &pll5_d3.common.hw,
-+	[CLK_PLL5_D4]		= &pll5_d4.common.hw,
-+	[CLK_PLL5_D5]		= &pll5_d5.common.hw,
-+	[CLK_PLL5_D6]		= &pll5_d6.common.hw,
-+	[CLK_PLL5_D7]		= &pll5_d7.common.hw,
-+	[CLK_PLL5_D8]		= &pll5_d8.common.hw,
-+	[CLK_PLL6_D1]		= &pll6_d1.common.hw,
-+	[CLK_PLL6_D2]		= &pll6_d2.common.hw,
-+	[CLK_PLL6_D3]		= &pll6_d3.common.hw,
-+	[CLK_PLL6_D4]		= &pll6_d4.common.hw,
-+	[CLK_PLL6_D5]		= &pll6_d5.common.hw,
-+	[CLK_PLL6_D6]		= &pll6_d6.common.hw,
-+	[CLK_PLL6_D7]		= &pll6_d7.common.hw,
-+	[CLK_PLL6_D8]		= &pll6_d8.common.hw,
-+	[CLK_PLL6_80]		= &pll6_80.common.hw,
-+	[CLK_PLL6_40]		= &pll6_40.common.hw,
-+	[CLK_PLL6_20]		= &pll6_20.common.hw,
-+	[CLK_PLL7_D1]		= &pll7_d1.common.hw,
-+	[CLK_PLL7_D2]		= &pll7_d2.common.hw,
-+	[CLK_PLL7_D3]		= &pll7_d3.common.hw,
-+	[CLK_PLL7_D4]		= &pll7_d4.common.hw,
-+	[CLK_PLL7_D5]		= &pll7_d5.common.hw,
-+	[CLK_PLL7_D6]		= &pll7_d6.common.hw,
-+	[CLK_PLL7_D7]		= &pll7_d7.common.hw,
-+	[CLK_PLL7_D8]		= &pll7_d8.common.hw,
-+	[CLK_PLL8_D1]		= &pll8_d1.common.hw,
-+	[CLK_PLL8_D2]		= &pll8_d2.common.hw,
-+	[CLK_PLL8_D3]		= &pll8_d3.common.hw,
-+	[CLK_PLL8_D4]		= &pll8_d4.common.hw,
-+	[CLK_PLL8_D5]		= &pll8_d5.common.hw,
-+	[CLK_PLL8_D6]		= &pll8_d6.common.hw,
-+	[CLK_PLL8_D7]		= &pll8_d7.common.hw,
-+	[CLK_PLL8_D8]		= &pll8_d8.common.hw,
-+};
-+
-+static const struct spacemit_ccu_data k3_ccu_pll_data = {
-+	/* The APBS CCU implements PLLs, but no resets */
-+	.hws		= k3_ccu_pll_hws,
-+	.num		= ARRAY_SIZE(k3_ccu_pll_hws),
-+};
-+
-+static struct clk_hw *k3_ccu_mpmu_hws[] = {
-+	[CLK_MPMU_PLL1_307P2]		= &pll1_d8_307p2.common.hw,
-+	[CLK_MPMU_PLL1_76P8]		= &pll1_d32_76p8.common.hw,
-+	[CLK_MPMU_PLL1_61P44]		= &pll1_d40_61p44.common.hw,
-+	[CLK_MPMU_PLL1_153P6]		= &pll1_d16_153p6.common.hw,
-+	[CLK_MPMU_PLL1_102P4]		= &pll1_d24_102p4.common.hw,
-+	[CLK_MPMU_PLL1_51P2]		= &pll1_d48_51p2.common.hw,
-+	[CLK_MPMU_PLL1_51P2_AP]		= &pll1_d48_51p2_ap.common.hw,
-+	[CLK_MPMU_PLL1_57P6]		= &pll1_m3d128_57p6.common.hw,
-+	[CLK_MPMU_PLL1_25P6]		= &pll1_d96_25p6.common.hw,
-+	[CLK_MPMU_PLL1_12P8]		= &pll1_d192_12p8.common.hw,
-+	[CLK_MPMU_PLL1_12P8_WDT]	= &pll1_d192_12p8_wdt.common.hw,
-+	[CLK_MPMU_PLL1_6P4]		= &pll1_d384_6p4.common.hw,
-+	[CLK_MPMU_PLL1_3P2]		= &pll1_d768_3p2.common.hw,
-+	[CLK_MPMU_PLL1_1P6]		= &pll1_d1536_1p6.common.hw,
-+	[CLK_MPMU_PLL1_0P8]		= &pll1_d3072_0p8.common.hw,
-+	[CLK_MPMU_PLL1_409P6]		= &pll1_d6_409p6.common.hw,
-+	[CLK_MPMU_PLL1_204P8]		= &pll1_d12_204p8.common.hw,
-+	[CLK_MPMU_PLL1_491]		= &pll1_d5_491p52.common.hw,
-+	[CLK_MPMU_PLL1_245P76]		= &pll1_d10_245p76.common.hw,
-+	[CLK_MPMU_PLL1_614]		= &pll1_d4_614p4.common.hw,
-+	[CLK_MPMU_PLL1_47P26]		= &pll1_d52_47p26.common.hw,
-+	[CLK_MPMU_PLL1_31P5]		= &pll1_d78_31p5.common.hw,
-+	[CLK_MPMU_PLL1_819]		= &pll1_d3_819p2.common.hw,
-+	[CLK_MPMU_PLL1_1228]		= &pll1_d2_1228p8.common.hw,
-+	[CLK_MPMU_APB]			= &apb_clk.common.hw,
-+	[CLK_MPMU_SLOW_UART]		= &slow_uart.common.hw,
-+	[CLK_MPMU_SLOW_UART1]		= &slow_uart1_14p74.common.hw,
-+	[CLK_MPMU_SLOW_UART2]		= &slow_uart2_48.common.hw,
-+	[CLK_MPMU_WDT]			= &wdt_clk.common.hw,
-+	[CLK_MPMU_WDT_BUS]		= &wdt_bus_clk.common.hw,
-+	[CLK_MPMU_RIPC]			= &r_ipc_clk.common.hw,
-+	[CLK_MPMU_I2S_153P6]		= &i2s_153p6.common.hw,
-+	[CLK_MPMU_I2S_153P6_BASE]	= &i2s_153p6_base.common.hw,
-+	[CLK_MPMU_I2S_SYSCLK_SRC]	= &i2s_sysclk_src.common.hw,
-+	[CLK_MPMU_I2S1_SYSCLK]		= &i2s1_sysclk.common.hw,
-+	[CLK_MPMU_I2S_BCLK]		= &i2s_bclk.common.hw,
-+	[CLK_MPMU_I2S0_SYSCLK_SEL]	= &i2s0_sysclk_sel.common.hw,
-+	[CLK_MPMU_I2S2_SYSCLK_SEL]	= &i2s2_sysclk_sel.common.hw,
-+	[CLK_MPMU_I2S3_SYSCLK_SEL]	= &i2s3_sysclk_sel.common.hw,
-+	[CLK_MPMU_I2S4_SYSCLK_SEL]	= &i2s4_sysclk_sel.common.hw,
-+	[CLK_MPMU_I2S5_SYSCLK_SEL]	= &i2s5_sysclk_sel.common.hw,
-+	[CLK_MPMU_I2S0_SYSCLK_DIV]	= &i2s0_sysclk_div.common.hw,
-+	[CLK_MPMU_I2S2_SYSCLK_DIV]	= &i2s2_sysclk_div.common.hw,
-+	[CLK_MPMU_I2S3_SYSCLK_DIV]	= &i2s3_sysclk_div.common.hw,
-+	[CLK_MPMU_I2S4_SYSCLK_DIV]	= &i2s4_sysclk_div.common.hw,
-+	[CLK_MPMU_I2S5_SYSCLK_DIV]	= &i2s5_sysclk_div.common.hw,
-+	[CLK_MPMU_I2S0_SYSCLK]		= &i2s0_sysclk.common.hw,
-+	[CLK_MPMU_I2S2_SYSCLK]		= &i2s2_sysclk.common.hw,
-+	[CLK_MPMU_I2S3_SYSCLK]		= &i2s3_sysclk.common.hw,
-+	[CLK_MPMU_I2S4_SYSCLK]		= &i2s4_sysclk.common.hw,
-+	[CLK_MPMU_I2S5_SYSCLK]		= &i2s5_sysclk.common.hw,
-+};
-+
-+static const struct spacemit_ccu_data k3_ccu_mpmu_data = {
-+	.reset_name	= "k3-mpmu-reset",
-+	.hws		= k3_ccu_mpmu_hws,
-+	.num		= ARRAY_SIZE(k3_ccu_mpmu_hws),
-+};
-+
-+static struct clk_hw *k3_ccu_apbc_hws[] = {
-+	[CLK_APBC_UART0]		= &uart0_clk.common.hw,
-+	[CLK_APBC_UART2]		= &uart2_clk.common.hw,
-+	[CLK_APBC_UART3]		= &uart3_clk.common.hw,
-+	[CLK_APBC_UART4]		= &uart4_clk.common.hw,
-+	[CLK_APBC_UART5]		= &uart5_clk.common.hw,
-+	[CLK_APBC_UART6]		= &uart6_clk.common.hw,
-+	[CLK_APBC_UART7]		= &uart7_clk.common.hw,
-+	[CLK_APBC_UART8]		= &uart8_clk.common.hw,
-+	[CLK_APBC_UART9]		= &uart9_clk.common.hw,
-+	[CLK_APBC_UART10]		= &uart10_clk.common.hw,
-+	[CLK_APBC_UART0_BUS]		= &uart0_bus_clk.common.hw,
-+	[CLK_APBC_UART2_BUS]		= &uart2_bus_clk.common.hw,
-+	[CLK_APBC_UART3_BUS]		= &uart3_bus_clk.common.hw,
-+	[CLK_APBC_UART4_BUS]		= &uart4_bus_clk.common.hw,
-+	[CLK_APBC_UART5_BUS]		= &uart5_bus_clk.common.hw,
-+	[CLK_APBC_UART6_BUS]		= &uart6_bus_clk.common.hw,
-+	[CLK_APBC_UART7_BUS]		= &uart7_bus_clk.common.hw,
-+	[CLK_APBC_UART8_BUS]		= &uart8_bus_clk.common.hw,
-+	[CLK_APBC_UART9_BUS]		= &uart9_bus_clk.common.hw,
-+	[CLK_APBC_UART10_BUS]		= &uart10_bus_clk.common.hw,
-+	[CLK_APBC_GPIO]			= &gpio_clk.common.hw,
-+	[CLK_APBC_GPIO_BUS]		= &gpio_bus_clk.common.hw,
-+	[CLK_APBC_PWM0]			= &pwm0_clk.common.hw,
-+	[CLK_APBC_PWM1]			= &pwm1_clk.common.hw,
-+	[CLK_APBC_PWM2]			= &pwm2_clk.common.hw,
-+	[CLK_APBC_PWM3]			= &pwm3_clk.common.hw,
-+	[CLK_APBC_PWM4]			= &pwm4_clk.common.hw,
-+	[CLK_APBC_PWM5]			= &pwm5_clk.common.hw,
-+	[CLK_APBC_PWM6]			= &pwm6_clk.common.hw,
-+	[CLK_APBC_PWM7]			= &pwm7_clk.common.hw,
-+	[CLK_APBC_PWM8]			= &pwm8_clk.common.hw,
-+	[CLK_APBC_PWM9]			= &pwm9_clk.common.hw,
-+	[CLK_APBC_PWM10]		= &pwm10_clk.common.hw,
-+	[CLK_APBC_PWM11]		= &pwm11_clk.common.hw,
-+	[CLK_APBC_PWM12]		= &pwm12_clk.common.hw,
-+	[CLK_APBC_PWM13]		= &pwm13_clk.common.hw,
-+	[CLK_APBC_PWM14]		= &pwm14_clk.common.hw,
-+	[CLK_APBC_PWM15]		= &pwm15_clk.common.hw,
-+	[CLK_APBC_PWM16]		= &pwm16_clk.common.hw,
-+	[CLK_APBC_PWM17]		= &pwm17_clk.common.hw,
-+	[CLK_APBC_PWM18]		= &pwm18_clk.common.hw,
-+	[CLK_APBC_PWM19]		= &pwm19_clk.common.hw,
-+	[CLK_APBC_PWM0_BUS]		= &pwm0_bus_clk.common.hw,
-+	[CLK_APBC_PWM1_BUS]		= &pwm1_bus_clk.common.hw,
-+	[CLK_APBC_PWM2_BUS]		= &pwm2_bus_clk.common.hw,
-+	[CLK_APBC_PWM3_BUS]		= &pwm3_bus_clk.common.hw,
-+	[CLK_APBC_PWM4_BUS]		= &pwm4_bus_clk.common.hw,
-+	[CLK_APBC_PWM5_BUS]		= &pwm5_bus_clk.common.hw,
-+	[CLK_APBC_PWM6_BUS]		= &pwm6_bus_clk.common.hw,
-+	[CLK_APBC_PWM7_BUS]		= &pwm7_bus_clk.common.hw,
-+	[CLK_APBC_PWM8_BUS]		= &pwm8_bus_clk.common.hw,
-+	[CLK_APBC_PWM9_BUS]		= &pwm9_bus_clk.common.hw,
-+	[CLK_APBC_PWM10_BUS]		= &pwm10_bus_clk.common.hw,
-+	[CLK_APBC_PWM11_BUS]		= &pwm11_bus_clk.common.hw,
-+	[CLK_APBC_PWM12_BUS]		= &pwm12_bus_clk.common.hw,
-+	[CLK_APBC_PWM13_BUS]		= &pwm13_bus_clk.common.hw,
-+	[CLK_APBC_PWM14_BUS]		= &pwm14_bus_clk.common.hw,
-+	[CLK_APBC_PWM15_BUS]		= &pwm15_bus_clk.common.hw,
-+	[CLK_APBC_PWM16_BUS]		= &pwm16_bus_clk.common.hw,
-+	[CLK_APBC_PWM17_BUS]		= &pwm17_bus_clk.common.hw,
-+	[CLK_APBC_PWM18_BUS]		= &pwm18_bus_clk.common.hw,
-+	[CLK_APBC_PWM19_BUS]		= &pwm19_bus_clk.common.hw,
-+	[CLK_APBC_SPI0_I2S_BCLK]	= &spi0_i2s_bclk.common.hw,
-+	[CLK_APBC_SPI1_I2S_BCLK]	= &spi1_i2s_bclk.common.hw,
-+	[CLK_APBC_SPI3_I2S_BCLK]	= &spi3_i2s_bclk.common.hw,
-+	[CLK_APBC_SPI0]			= &spi0_clk.common.hw,
-+	[CLK_APBC_SPI1]			= &spi1_clk.common.hw,
-+	[CLK_APBC_SPI3]			= &spi3_clk.common.hw,
-+	[CLK_APBC_SPI0_BUS]		= &spi0_bus_clk.common.hw,
-+	[CLK_APBC_SPI1_BUS]		= &spi1_bus_clk.common.hw,
-+	[CLK_APBC_SPI3_BUS]		= &spi3_bus_clk.common.hw,
-+	[CLK_APBC_RTC]			= &rtc_clk.common.hw,
-+	[CLK_APBC_RTC_BUS]		= &rtc_bus_clk.common.hw,
-+	[CLK_APBC_TWSI0]		= &twsi0_clk.common.hw,
-+	[CLK_APBC_TWSI1]		= &twsi1_clk.common.hw,
-+	[CLK_APBC_TWSI2]		= &twsi2_clk.common.hw,
-+	[CLK_APBC_TWSI4]		= &twsi4_clk.common.hw,
-+	[CLK_APBC_TWSI5]		= &twsi5_clk.common.hw,
-+	[CLK_APBC_TWSI6]		= &twsi6_clk.common.hw,
-+	[CLK_APBC_TWSI8]		= &twsi8_clk.common.hw,
-+	[CLK_APBC_TWSI0_BUS]		= &twsi0_bus_clk.common.hw,
-+	[CLK_APBC_TWSI1_BUS]		= &twsi1_bus_clk.common.hw,
-+	[CLK_APBC_TWSI2_BUS]		= &twsi2_bus_clk.common.hw,
-+	[CLK_APBC_TWSI4_BUS]		= &twsi4_bus_clk.common.hw,
-+	[CLK_APBC_TWSI5_BUS]		= &twsi5_bus_clk.common.hw,
-+	[CLK_APBC_TWSI6_BUS]		= &twsi6_bus_clk.common.hw,
-+	[CLK_APBC_TWSI8_BUS]		= &twsi8_bus_clk.common.hw,
-+	[CLK_APBC_TIMERS0]		= &timers0_clk.common.hw,
-+	[CLK_APBC_TIMERS1]		= &timers1_clk.common.hw,
-+	[CLK_APBC_TIMERS2]		= &timers2_clk.common.hw,
-+	[CLK_APBC_TIMERS3]		= &timers3_clk.common.hw,
-+	[CLK_APBC_TIMERS4]		= &timers4_clk.common.hw,
-+	[CLK_APBC_TIMERS5]		= &timers5_clk.common.hw,
-+	[CLK_APBC_TIMERS6]		= &timers6_clk.common.hw,
-+	[CLK_APBC_TIMERS7]		= &timers7_clk.common.hw,
-+	[CLK_APBC_TIMERS0_BUS]		= &timers0_bus_clk.common.hw,
-+	[CLK_APBC_TIMERS1_BUS]		= &timers1_bus_clk.common.hw,
-+	[CLK_APBC_TIMERS2_BUS]		= &timers2_bus_clk.common.hw,
-+	[CLK_APBC_TIMERS3_BUS]		= &timers3_bus_clk.common.hw,
-+	[CLK_APBC_TIMERS4_BUS]		= &timers4_bus_clk.common.hw,
-+	[CLK_APBC_TIMERS5_BUS]		= &timers5_bus_clk.common.hw,
-+	[CLK_APBC_TIMERS6_BUS]		= &timers6_bus_clk.common.hw,
-+	[CLK_APBC_TIMERS7_BUS]		= &timers7_bus_clk.common.hw,
-+	[CLK_APBC_AIB]			= &aib_clk.common.hw,
-+	[CLK_APBC_AIB_BUS]		= &aib_bus_clk.common.hw,
-+	[CLK_APBC_ONEWIRE]		= &onewire_clk.common.hw,
-+	[CLK_APBC_ONEWIRE_BUS]		= &onewire_bus_clk.common.hw,
-+	[CLK_APBC_I2S0_BCLK]		= &i2s0_i2s_bclk.common.hw,
-+	[CLK_APBC_I2S1_BCLK]		= &i2s1_i2s_bclk.common.hw,
-+	[CLK_APBC_I2S2_BCLK]		= &i2s2_i2s_bclk.common.hw,
-+	[CLK_APBC_I2S3_BCLK]		= &i2s3_i2s_bclk.common.hw,
-+	[CLK_APBC_I2S4_BCLK]		= &i2s4_i2s_bclk.common.hw,
-+	[CLK_APBC_I2S5_BCLK]		= &i2s5_i2s_bclk.common.hw,
-+	[CLK_APBC_I2S0]			= &i2s0_clk.common.hw,
-+	[CLK_APBC_I2S1]			= &i2s1_clk.common.hw,
-+	[CLK_APBC_I2S2]			= &i2s2_clk.common.hw,
-+	[CLK_APBC_I2S3]			= &i2s3_clk.common.hw,
-+	[CLK_APBC_I2S4]			= &i2s4_clk.common.hw,
-+	[CLK_APBC_I2S5]			= &i2s5_clk.common.hw,
-+	[CLK_APBC_I2S0_BUS]		= &i2s0_bus_clk.common.hw,
-+	[CLK_APBC_I2S1_BUS]		= &i2s1_bus_clk.common.hw,
-+	[CLK_APBC_I2S2_BUS]		= &i2s2_bus_clk.common.hw,
-+	[CLK_APBC_I2S3_BUS]		= &i2s3_bus_clk.common.hw,
-+	[CLK_APBC_I2S4_BUS]		= &i2s4_bus_clk.common.hw,
-+	[CLK_APBC_I2S5_BUS]		= &i2s5_bus_clk.common.hw,
-+	[CLK_APBC_DRO]			= &dro_clk.common.hw,
-+	[CLK_APBC_IR0]			= &ir0_clk.common.hw,
-+	[CLK_APBC_IR1]			= &ir1_clk.common.hw,
-+	[CLK_APBC_TSEN]			= &tsen_clk.common.hw,
-+	[CLK_APBC_TSEN_BUS]		= &tsen_bus_clk.common.hw,
-+	[CLK_APBC_IPC_AP2RCPU]		= &ipc_ap2rcpu_clk.common.hw,
-+	[CLK_APBC_IPC_AP2RCPU_BUS]	= &ipc_ap2rcpu_bus_clk.common.hw,
-+	[CLK_APBC_CAN0]			= &can0_clk.common.hw,
-+	[CLK_APBC_CAN1]			= &can1_clk.common.hw,
-+	[CLK_APBC_CAN2]			= &can2_clk.common.hw,
-+	[CLK_APBC_CAN3]			= &can3_clk.common.hw,
-+	[CLK_APBC_CAN4]			= &can4_clk.common.hw,
-+	[CLK_APBC_CAN0_BUS]		= &can0_bus_clk.common.hw,
-+	[CLK_APBC_CAN1_BUS]		= &can1_bus_clk.common.hw,
-+	[CLK_APBC_CAN2_BUS]		= &can2_bus_clk.common.hw,
-+	[CLK_APBC_CAN3_BUS]		= &can3_bus_clk.common.hw,
-+	[CLK_APBC_CAN4_BUS]		= &can4_bus_clk.common.hw,
-+};
-+
-+static const struct spacemit_ccu_data k3_ccu_apbc_data = {
-+	.reset_name	= "k3-apbc-reset",
-+	.hws		= k3_ccu_apbc_hws,
-+	.num		= ARRAY_SIZE(k3_ccu_apbc_hws),
-+};
-+
-+static struct clk_hw *k3_ccu_apmu_hws[] = {
-+	[CLK_APMU_AXICLK]		= &axi_clk.common.hw,
-+	[CLK_APMU_CCI550]		= &cci550_clk.common.hw,
-+	[CLK_APMU_CPU_C0_CORE]		= &cpu_c0_core_clk.common.hw,
-+	[CLK_APMU_CPU_C1_CORE]		= &cpu_c1_core_clk.common.hw,
-+	[CLK_APMU_CPU_C2_CORE]		= &cpu_c2_core_clk.common.hw,
-+	[CLK_APMU_CPU_C3_CORE]		= &cpu_c3_core_clk.common.hw,
-+	[CLK_APMU_CCIC2PHY]		= &ccic2phy_clk.common.hw,
-+	[CLK_APMU_CCIC3PHY]		= &ccic3phy_clk.common.hw,
-+	[CLK_APMU_CSI]			= &csi_clk.common.hw,
-+	[CLK_APMU_ISP_BUS]		= &isp_bus_clk.common.hw,
-+	[CLK_APMU_D1P_1228P8]		= &d1p_1228p8.common.hw,
-+	[CLK_APMU_D1P_819P2]		= &d1p_819p2.common.hw,
-+	[CLK_APMU_D1P_614P4]		= &d1p_614p4.common.hw,
-+	[CLK_APMU_D1P_491P52]		= &d1p_491p52.common.hw,
-+	[CLK_APMU_D1P_409P6]		= &d1p_409p6.common.hw,
-+	[CLK_APMU_D1P_307P2]		= &d1p_307p2.common.hw,
-+	[CLK_APMU_D1P_245P76]		= &d1p_245p76.common.hw,
-+	[CLK_APMU_V2D]			= &v2d_clk.common.hw,
-+	[CLK_APMU_DSI_ESC]		= &dsi_esc_clk.common.hw,
-+	[CLK_APMU_LCD_HCLK]		= &lcd_hclk.common.hw,
-+	[CLK_APMU_LCD_DSC]		= &lcd_dsc_clk.common.hw,
-+	[CLK_APMU_LCD_PXCLK]		= &lcd_pxclk.common.hw,
-+	[CLK_APMU_LCD_MCLK]		= &lcd_mclk.common.hw,
-+	[CLK_APMU_CCIC_4X]		= &ccic_4x_clk.common.hw,
-+	[CLK_APMU_CCIC1PHY]		= &ccic1phy_clk.common.hw,
-+	[CLK_APMU_SC2_HCLK]		= &sc2_hclk.common.hw,
-+	[CLK_APMU_SDH_AXI]		= &sdh_axi_aclk.common.hw,
-+	[CLK_APMU_SDH0]			= &sdh0_clk.common.hw,
-+	[CLK_APMU_SDH1]			= &sdh1_clk.common.hw,
-+	[CLK_APMU_SDH2]			= &sdh2_clk.common.hw,
-+	[CLK_APMU_USB2_BUS]		= &usb2_bus_clk.common.hw,
-+	[CLK_APMU_USB3_PORTA_BUS]	= &usb3_porta_bus_clk.common.hw,
-+	[CLK_APMU_USB3_PORTB_BUS]	= &usb3_portb_bus_clk.common.hw,
-+	[CLK_APMU_USB3_PORTC_BUS]	= &usb3_portc_bus_clk.common.hw,
-+	[CLK_APMU_USB3_PORTD_BUS]	= &usb3_portd_bus_clk.common.hw,
-+	[CLK_APMU_QSPI]			= &qspi_clk.common.hw,
-+	[CLK_APMU_QSPI_BUS]		= &qspi_bus_clk.common.hw,
-+	[CLK_APMU_DMA]			= &dma_clk.common.hw,
-+	[CLK_APMU_AES_WTM]		= &aes_wtm_clk.common.hw,
-+	[CLK_APMU_VPU]			= &vpu_clk.common.hw,
-+	[CLK_APMU_DTC]			= &dtc_clk.common.hw,
-+	[CLK_APMU_GPU]			= &gpu_clk.common.hw,
-+	[CLK_APMU_MC_AHB]		= &mc_ahb_clk.common.hw,
-+	[CLK_APMU_TOP_DCLK]		= &top_dclk.common.hw,
-+	[CLK_APMU_UCIE]			= &ucie_clk.common.hw,
-+	[CLK_APMU_UCIE_SBCLK]		= &ucie_sbclk.common.hw,
-+	[CLK_APMU_RCPU]			= &rcpu_clk.common.hw,
-+	[CLK_APMU_DSI4LN2_DSI_ESC]	= &dsi4ln2_dsi_esc_clk.common.hw,
-+	[CLK_APMU_DSI4LN2_LCD_DSC]	= &dsi4ln2_lcd_dsc_clk.common.hw,
-+	[CLK_APMU_DSI4LN2_LCD_PXCLK]	= &dsi4ln2_lcd_pxclk.common.hw,
-+	[CLK_APMU_DSI4LN2_LCD_MCLK]	= &dsi4ln2_lcd_mclk.common.hw,
-+	[CLK_APMU_DSI4LN2_DPU_ACLK]	= &dsi4ln2_dpu_aclk.common.hw,
-+	[CLK_APMU_DPU_ACLK]		= &dpu_aclk.common.hw,
-+	[CLK_APMU_UFS_ACLK]		= &ufs_aclk.common.hw,
-+	[CLK_APMU_EDP0_PXCLK]		= &edp0_pxclk.common.hw,
-+	[CLK_APMU_EDP1_PXCLK]		= &edp1_pxclk.common.hw,
-+	[CLK_APMU_PCIE_PORTA_MSTE]	= &pciea_mstr_clk.common.hw,
-+	[CLK_APMU_PCIE_PORTA_SLV]	= &pciea_slv_clk.common.hw,
-+	[CLK_APMU_PCIE_PORTB_MSTE]	= &pcieb_mstr_clk.common.hw,
-+	[CLK_APMU_PCIE_PORTB_SLV]	= &pcieb_slv_clk.common.hw,
-+	[CLK_APMU_PCIE_PORTC_MSTE]	= &pciec_mstr_clk.common.hw,
-+	[CLK_APMU_PCIE_PORTC_SLV]	= &pciec_slv_clk.common.hw,
-+	[CLK_APMU_PCIE_PORTD_MSTE]	= &pcied_mstr_clk.common.hw,
-+	[CLK_APMU_PCIE_PORTD_SLV]	= &pcied_slv_clk.common.hw,
-+	[CLK_APMU_PCIE_PORTE_MSTE]	= &pciee_mstr_clk.common.hw,
-+	[CLK_APMU_PCIE_PORTE_SLV]	= &pciee_slv_clk.common.hw,
-+	[CLK_APMU_EMAC0_BUS]		= &emac0_bus_clk.common.hw,
-+	[CLK_APMU_EMAC0_REF]		= &emac0_ref_clk.common.hw,
-+	[CLK_APMU_EMAC0_1588]		= &emac0_1588_clk.common.hw,
-+	[CLK_APMU_EMAC0_RGMII_TX]	= &emac0_rgmii_tx_clk.common.hw,
-+	[CLK_APMU_EMAC1_BUS]		= &emac1_bus_clk.common.hw,
-+	[CLK_APMU_EMAC1_REF]		= &emac1_ref_clk.common.hw,
-+	[CLK_APMU_EMAC1_1588]		= &emac1_1588_clk.common.hw,
-+	[CLK_APMU_EMAC1_RGMII_TX]	= &emac1_rgmii_tx_clk.common.hw,
-+	[CLK_APMU_EMAC2_BUS]		= &emac2_bus_clk.common.hw,
-+	[CLK_APMU_EMAC2_REF]		= &emac2_ref_clk.common.hw,
-+	[CLK_APMU_EMAC2_1588]		= &emac2_1588_clk.common.hw,
-+	[CLK_APMU_EMAC2_RGMII_TX]	= &emac2_rgmii_tx_clk.common.hw,
-+	[CLK_APMU_ESPI_SCLK_SRC]	= &espi_sclk_src.common.hw,
-+	[CLK_APMU_ESPI_SCLK]		= &espi_sclk.common.hw,
-+	[CLK_APMU_ESPI_MCLK]		= &espi_mclk.common.hw,
-+	[CLK_APMU_CAM_SRC1]		= &cam_src1_clk.common.hw,
-+	[CLK_APMU_CAM_SRC2]		= &cam_src2_clk.common.hw,
-+	[CLK_APMU_CAM_SRC3]		= &cam_src3_clk.common.hw,
-+	[CLK_APMU_CAM_SRC4]		= &cam_src4_clk.common.hw,
-+	[CLK_APMU_ISIM_VCLK0]		= &isim_vclk_out0.common.hw,
-+	[CLK_APMU_ISIM_VCLK1]		= &isim_vclk_out1.common.hw,
-+	[CLK_APMU_ISIM_VCLK2]		= &isim_vclk_out2.common.hw,
-+	[CLK_APMU_ISIM_VCLK3]		= &isim_vclk_out3.common.hw,
-+};
-+
-+static const struct spacemit_ccu_data k3_ccu_apmu_data = {
-+	.reset_name	= "k3-apmu-reset",
-+	.hws		= k3_ccu_apmu_hws,
-+	.num		= ARRAY_SIZE(k3_ccu_apmu_hws),
-+};
-+
-+static struct clk_hw *k3_ccu_dciu_hws[] = {
-+	[CLK_DCIU_HDMA]			= &hdma_clk.common.hw,
-+	[CLK_DCIU_DMA350]		= &dma350_clk.common.hw,
-+	[CLK_DCIU_C2_TCM_PIPE]		= &c2_tcm_pipe_clk.common.hw,
-+	[CLK_DCIU_C3_TCM_PIPE]		= &c3_tcm_pipe_clk.common.hw,
-+};
-+
-+static const struct spacemit_ccu_data k3_ccu_dciu_data = {
-+	.reset_name	= "k3-dciu-reset",
-+	.hws		= k3_ccu_dciu_hws,
-+	.num		= ARRAY_SIZE(k3_ccu_dciu_hws),
-+};
-+
-+static const struct of_device_id of_k3_ccu_match[] = {
-+	{
-+		.compatible	= "spacemit,k3-pll",
-+		.data		= &k3_ccu_pll_data,
-+	},
-+	{
-+		.compatible	= "spacemit,k3-syscon-mpmu",
-+		.data		= &k3_ccu_mpmu_data,
-+	},
-+	{
-+		.compatible	= "spacemit,k3-syscon-apbc",
-+		.data		= &k3_ccu_apbc_data,
-+	},
-+	{
-+		.compatible	= "spacemit,k3-syscon-apmu",
-+		.data		= &k3_ccu_apmu_data,
-+	},
-+	{
-+		.compatible	= "spacemit,k3-syscon-dciu",
-+		.data		= &k3_ccu_dciu_data,
-+	},
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, of_k3_ccu_match);
-+
-+static int k3_ccu_probe(struct platform_device *pdev)
-+{
-+	return spacemit_ccu_probe(pdev, "spacemit,k3-pll");
-+}
-+
-+static struct platform_driver k3_ccu_driver = {
-+	.driver = {
-+		.name		= "spacemit,k3-ccu",
-+		.of_match_table = of_k3_ccu_match,
-+	},
-+	.probe	= k3_ccu_probe,
-+};
-+module_platform_driver(k3_ccu_driver);
-+
-+MODULE_IMPORT_NS("CLK_SPACEMIT");
-+MODULE_DESCRIPTION("SpacemiT K3 CCU driver");
-+MODULE_LICENSE("GPL");
+> The implementation of PWRSTS_RET_ON essentially makes the PD power_off()
+> callback a no-op. Everything in Linux (sysfs, debugfs, ...) will tell
+> you that the power domain has been shut down, but at the end it will
+> remain fully powered until you manage to reach a retention state for the
+> parent power domain. Due to other consumers, that will likely happen
+> only if you reach VDDmin or some equivalent SoC-wide low-power state,
+> something barely any (or none?) of the platforms supported upstream is
+> capable of today.
+> 
+
+Unfortunately, that's the current state of retention today. It is only a
+firmware visible state. Ofc, the OS could query SMEM and figure out after
+resume, but there is no way currently to translate that to individual power
+domains.
+
+> PWRSTS_RET_ON is actually pretty close to setting GENPD_FLAG_ALWAYS_ON,
+> the only advantage of PWRSTS_RET_ON I can think of is that unused GDSCs
+> remain off iff you are lucky enough that the boot firmware has not
+> already turned them on.
+> 
+> IMHO, for GDSCs that support OFF state in the hardware, PWRSTS_RET_ON is
+> a hack to workaround limitations in the consumer drivers. They should
+> either save/restore registers and handle the power collapse or they
+> should vote for the power domain to stay on. That way, sysfs/debugfs
+> will show the real votes held by Linux and you won't be mislead when
+> looking at those while trying to optimize power consumption.
+>
+
+Maybe we should just use dev_pm_genpd_rpm_always_on() in the client drivers if
+they know for sure that the device context should be preserved and keep
+PWRSTS_OFF_ON flag.
+
+- Mani
 
 -- 
-2.52.0
-
+மணிவண்ணன் சதாசிவம்
