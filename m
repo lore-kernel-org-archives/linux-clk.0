@@ -1,16 +1,16 @@
 Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04A4D4DF3D6;
-	Thu,  8 Jan 2026 13:40:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C29EF4DF3D6;
+	Thu,  8 Jan 2026 13:40:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767879621; cv=none; b=OzZOssdsXenGSTjcyslSLZ+xm77/rE8uQYMBIKV15C28jGCq+gvHF5/EBWfWDIVZjxfsEjpfb5Y8MI7qp7uc3noJjpiZkAe5SVVQmQfgUJxqwXUonR9ToXuTZ2ou4Wc7ATgSUQn3sQtDVOxALbJS40qDi91UhEYxYOfV5zj01SA=
+	t=1767879626; cv=none; b=Gd2y5FaNu8lmmMkA+P6CH72eeSYyw3Gw8i+iPV8qsZyBbuBQUIBgrgFb34+aqBi+iSCU7WmoK60CLxAR/j7tBy1KMPnoRcDeHoXlVzawTTQo1P/qNlPjlBNf3PTfZqH+U0xxQXpf74KGQm37p5ZUqE61Wcxtq/BYwEi6xMFbbqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767879621; c=relaxed/simple;
-	bh=y46B++74XJZhaiqzj4f4dZZT9CJ1nDQjfA9Aref6lV0=;
+	s=arc-20240116; t=1767879626; c=relaxed/simple;
+	bh=1H8Z3f7ZzM80z/iMzeQsDFj5WxSrKZyntFw1N0hz2E4=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=pc13r8e/Mv1hupn1RVnsi/rk9MxjaY+DpwR6iBMmIsV3H1cmLnBeIaTzoV8SW/UBc0GMhljw1xUQqPCoLQvsIhhCXUUdlb0kOt3S9kq7XeZmkSMhg2CU9Ydr+uBbyYTQL2uvLEJW8jjM1hqV6TfInRNL54iN97arpZBaMmwnVTg=
+	 In-Reply-To:To:Cc; b=kI9y4Ftc5D7jnmLYbdQBc4/FdnIBl8MTZhjOQAHLlSs90V1N9zMuJQJbp9qzVshhcce9cBvaftxC8RlCGNoVQfNvEjB7VmpJJkQw+UPCNmiP+XsZck+HRJ7RvVDVf+uF76Oh1oC5zww4/iI1cPSh72nHyxVHjJtU2+MtXvPYPgA=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
@@ -19,12 +19,11 @@ Received: from [127.0.0.1] (unknown [116.232.18.222])
 	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: dlan)
-	by smtp.gentoo.org (Postfix) with ESMTPSA id 0B0F0341EC9;
-	Thu, 08 Jan 2026 13:40:15 +0000 (UTC)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id 3494C341ECC;
+	Thu, 08 Jan 2026 13:40:19 +0000 (UTC)
 From: Yixun Lan <dlan@gentoo.org>
-Date: Thu, 08 Jan 2026 21:39:24 +0800
-Subject: [PATCH v4 3/4] clk: spacemit: add platform SoC prefix to reset
- name
+Date: Thu, 08 Jan 2026 21:39:25 +0800
+Subject: [PATCH v4 4/4] reset: spacemit: fix auxiliary device id
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -33,7 +32,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260108-06-k1-clk-common-v4-3-badf635993d3@gentoo.org>
+Message-Id: <20260108-06-k1-clk-common-v4-4-badf635993d3@gentoo.org>
 References: <20260108-06-k1-clk-common-v4-0-badf635993d3@gentoo.org>
 In-Reply-To: <20260108-06-k1-clk-common-v4-0-badf635993d3@gentoo.org>
 To: Stephen Boyd <sboyd@kernel.org>, 
@@ -44,92 +43,57 @@ Cc: Alex Elder <elder@riscstar.com>, Guodong Xu <guodong@riscstar.com>,
  linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org, 
  spacemit@lists.linux.dev, Yixun Lan <dlan@gentoo.org>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2313; i=dlan@gentoo.org;
- h=from:subject:message-id; bh=y46B++74XJZhaiqzj4f4dZZT9CJ1nDQjfA9Aref6lV0=;
- b=owEB6QIW/ZANAwAKATGq6kdZTbvtAcsmYgBpX7Or4znHv7fFH5P5hyMKb2zjYhnFCIqLSMEvh
- faRGE9IBweJAq8EAAEKAJkWIQS1urjJwxtxFWcCI9wxqupHWU277QUCaV+zqxsUgAAAAAAEAA5t
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1394; i=dlan@gentoo.org;
+ h=from:subject:message-id; bh=1H8Z3f7ZzM80z/iMzeQsDFj5WxSrKZyntFw1N0hz2E4=;
+ b=owEB6QIW/ZANAwAKATGq6kdZTbvtAcsmYgBpX7Ou6VH6nun8PKQLWXt5Ac58rGXOK5r0iKto4
+ WcVU0dBwyGJAq8EAAEKAJkWIQS1urjJwxtxFWcCI9wxqupHWU277QUCaV+zrhsUgAAAAAAEAA5t
  YW51MiwyLjUrMS4xMSwyLDJfFIAAAAAALgAoaXNzdWVyLWZwckBub3RhdGlvbnMub3BlbnBncC5
  maWZ0aGhvcnNlbWFuLm5ldEI1QkFCOEM5QzMxQjcxMTU2NzAyMjNEQzMxQUFFQTQ3NTk0REJCRU
- QACgkQMarqR1lNu+1OPQ/8CHyUffWJfqCg1OOScglpE4LG83/kQZSon3DGctzZFwfcuq6i737W3
- 2/dmdFjwuhTQ4okGLYtRfy+fU7XgRCW+5sVQ6ZeuzdNv5gXSRUpYNtgcCQeIEjynn7k4n5LnSs6
- lLQNMGhlKYANZvOskjYmo0PiKgaSLzVPIKuQOQloFOkVLwYwGavoGKhL4e949y83AGJCh4WNKd8
- 4U7OXPlX5ANDK3KjksTC5njjUzql602fpnd/E7RisU965iXwMbKMOBSCyrSTIe8Jj2nC16wpRu2
- /GPHYVS/9rfzqBnwIcINMvuU9/9bgI6VN8wTMMXyLoGKFJH/hS0KakIXzpKiVT3bmvdKNe/bhSm
- JKS+uBQqG6Q4aZ013e9R+O495ZyQ3i+Sk+8qX15oCPU6eyTSdWBIBRRVub/GF7p+kQ9lRw8QCYl
- 69XzAQ1FUzveHbJqcef0U+YdN/w4t30H5Qm9uk/XIZsc/bpOsX2SVi25Ru097KUwgWHQMjTwgAU
- pB79ZnytvLRKHAq62qlube0QaxYTSjlWY9mt/azV7vgouw8dkpUs618tUxeq9nveSxLPK8CMMGb
- vCI/QQz6YoCDcgo13QhxWfoZQLrlS+harz73a9MUfcnzmjyRwxaXOEY1T4Pmv3P3dA72gV4wnwF
- 7VGg06nF9ptH/XwzFWVOrOV3YLvchE=
+ QACgkQMarqR1lNu+0LeQ//f826Vjtrq9fIHoahuT856hkDj2NVqRN3NHXTcOkZyS3uUUudjEUiY
+ ZKZeoP2HBQUbLY1NeEXiwrtwIww3azIT6Xqtlk6ZN6KSRpTYWxwydqWPBtRj/LRadXZaJwSJOcS
+ enxpiZHkzJZBzjmrQ+LDQoOa2Lc21PGtjmxqd9Im/4486ZFB/Ma0TUQjhDDiF9WHt1U3gCR0JQZ
+ 5QBgChycoK1o+G4UJSpUTWt2b9HeR+ymAbj2sv1H0xPpK2v/Shek+2N3+HxDyzoIK2g9Q73FMYI
+ m61NuNlscttcozUH6+LKTp2GCGMCscJpLiaV7c3ke9cSuKjA2EhyC5yg+urigai6m6U1qR/hOuC
+ Bnq7yGwXbJ9WE/DXF8wmWCvMO3KEmGYCiGI998ElinPAlD6tnhmGrkBF8bJPC9CKbPmpQ2o/Yz9
+ /m+dLpOHMtC1qhiR30rnR7Bz5Ivg3aRqJuOx8CSjMRYRKjCzfb1vmE5x4D1KKHIs5z5o6UYKz/1
+ 481AHojGbvUMwHiYTo7TScIxcc4iIP6if6hY8Q0aZ6iCH3VaD0WhkMHwuSOYMGD3EpcF674yx1K
+ ttLBE5Y4mm0e5tYSndNYI873Id47FX9J21hzpBMI0TVycek1+ZrJA+ZSfi0rqR1pQVH6y2QSXTQ
+ ZQKhssjoMpCS27Pg1vw8YGO8NJZ/5I=
 X-Developer-Key: i=dlan@gentoo.org; a=openpgp;
  fpr=50B03A1A5CBCD33576EF8CD7920C0DBCAABEFD55
 
-This change is needed for adding future new SpacemiT K3 reset driver.
+Due to the auxiliary register procedure moved to ccu common module where
+the module name changed to spacemit_ccu, then the reset auxiliary device
+register id also need to be adjusted in order to prepare for adding new
+K3 reset driver, otherwise two reset drivers will claim to support same
+"compatible" auxiliary device.
 
-Since both K1 and K3 reset code register via the same module which its
-name changed to spacemit_ccu, it's necessary to encode the platform/SoC
-in the reset auxiliary device name to distinguish them, otherwise two
-reset drivers will claim to support same "compatible" auxiliary device
-even in the case of only one CCU clock driver got registered, which in
-the end lead to a broken reset driver.
+In order to prevent the reset driver breakage, this commit is necessary
+as a post-fix for changes introduced by two patches below, and should be
+merged with them to make the patch series runtime bisectable.
+("clk: spacemit: add platform SoC prefix to reset name")
+("clk: spacemit: extract common ccu functions")
 
-This change will introduce a runtime break to reset driver, and will be
-fixed in follow-up commit:
-("reset: spacemit: fix auxiliary device id")
-
+Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
 Reviewed-by: Alex Elder <elder@riscstar.com>
 Signed-off-by: Yixun Lan <dlan@gentoo.org>
 ---
- drivers/clk/spacemit/ccu-k1.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/reset/reset-spacemit.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/spacemit/ccu-k1.c b/drivers/clk/spacemit/ccu-k1.c
-index 02c792a73759..dee14d25f75d 100644
---- a/drivers/clk/spacemit/ccu-k1.c
-+++ b/drivers/clk/spacemit/ccu-k1.c
-@@ -789,7 +789,7 @@ static struct clk_hw *k1_ccu_mpmu_hws[] = {
- };
+diff --git a/drivers/reset/reset-spacemit.c b/drivers/reset/reset-spacemit.c
+index e1272aff28f7..cc7fd1f8750d 100644
+--- a/drivers/reset/reset-spacemit.c
++++ b/drivers/reset/reset-spacemit.c
+@@ -278,7 +278,7 @@ static int spacemit_reset_probe(struct auxiliary_device *adev,
  
- static const struct spacemit_ccu_data k1_ccu_mpmu_data = {
--	.reset_name	= "mpmu-reset",
-+	.reset_name	= "k1-mpmu-reset",
- 	.hws		= k1_ccu_mpmu_hws,
- 	.num		= ARRAY_SIZE(k1_ccu_mpmu_hws),
- };
-@@ -900,7 +900,7 @@ static struct clk_hw *k1_ccu_apbc_hws[] = {
- };
+ #define K1_AUX_DEV_ID(_unit) \
+ 	{ \
+-		.name = "spacemit_ccu_k1." #_unit "-reset", \
++		.name = "spacemit_ccu.k1-" #_unit "-reset", \
+ 		.driver_data = (kernel_ulong_t)&k1_ ## _unit ## _reset_data, \
+ 	}
  
- static const struct spacemit_ccu_data k1_ccu_apbc_data = {
--	.reset_name	= "apbc-reset",
-+	.reset_name	= "k1-apbc-reset",
- 	.hws		= k1_ccu_apbc_hws,
- 	.num		= ARRAY_SIZE(k1_ccu_apbc_hws),
- };
-@@ -971,21 +971,21 @@ static struct clk_hw *k1_ccu_apmu_hws[] = {
- };
- 
- static const struct spacemit_ccu_data k1_ccu_apmu_data = {
--	.reset_name	= "apmu-reset",
-+	.reset_name	= "k1-apmu-reset",
- 	.hws		= k1_ccu_apmu_hws,
- 	.num		= ARRAY_SIZE(k1_ccu_apmu_hws),
- };
- 
- static const struct spacemit_ccu_data k1_ccu_rcpu_data = {
--	.reset_name	= "rcpu-reset",
-+	.reset_name	= "k1-rcpu-reset",
- };
- 
- static const struct spacemit_ccu_data k1_ccu_rcpu2_data = {
--	.reset_name	= "rcpu2-reset",
-+	.reset_name	= "k1-rcpu2-reset",
- };
- 
- static const struct spacemit_ccu_data k1_ccu_apbc2_data = {
--	.reset_name	= "apbc2-reset",
-+	.reset_name	= "k1-apbc2-reset",
- };
- 
- static const struct of_device_id of_k1_ccu_match[] = {
 
 -- 
 2.52.0
