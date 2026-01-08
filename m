@@ -1,234 +1,369 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7E8833A008
-	for <linux-clk@vger.kernel.org>; Thu,  8 Jan 2026 05:58:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14DC527CB35;
+	Thu,  8 Jan 2026 06:08:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767851919; cv=none; b=aTynqlzQniJThxZUvGbNiSbQz9Rl6mKRwEalWsf/WAiMCg9j6Enj6G4tRT8VW7IRuNhUuAfclDR110qo9eqbyCizjvo5QYlFHMFNfDhpu7tx2iTDoZCn1LYtDwNTC25TyQhqqweXuoO/q/7j8WdOiI/tFUGZbuMEm0+4861CA8E=
+	t=1767852506; cv=none; b=RSSk/hNpy6+6UE+fYOimquRk5F46ExXre6CBzSUIXEuossvqrAYaTp7ZhO/W1iDWrrGY4qJD7UH/X/iAOOjOhRA1w/1fsEBCcphE/w0x+NCOhuccUlpq1OU2OnwPMTuYL9UvnH470QmKIbIwh4FEFr1FpiN4LIyW9mQL+UvOQ6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767851919; c=relaxed/simple;
-	bh=jmuRz7laWsvaVKWvXCL5E6YwClFXNXcylq9sPTclTPU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p35aF48YL2eRJVYJ4E3hA68tDIe/wsKIHf4fw0PC81NuIxjT8GPERMTptoK5yqh5OzI3EvqieR/gggSWpg+MiKCMPoJ10SVIOyZgilLeLKkR6tpo5zx+WUaFhgftokO1k+DxdnKNgRXWdCpuWBaCw/uCnq7z29BWa7DiK/raIOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=UIPrSe/N; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=fZ25sWF/; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1767852506; c=relaxed/simple;
+	bh=kj2bz78IILEIstewiqZHT9qts3FHFYfsPylDGJjB5eM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=K9P8XGoHKsb2ob6/wLWU4/z9H6WFqTyXGaHerSKO0c5MjVx5BCNMponfP9w1C9pwP/NFt/syVb42zhBlM0jiC7qPbXNIR+SLhLs5nj1/eSE+VaomeTAeZoVjo1Odgvt5SUT+vBQJMbTYvIdopCOMRrNJcsTa3sis5KoX+EZuTao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BiENFdwZ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="UIPrSe/N";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="fZ25sWF/"
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 607Noh3R474505
-	for <linux-clk@vger.kernel.org>; Thu, 8 Jan 2026 05:58:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	KPYorIOVmCg/xCSHrscU+vX13wArRA8uiPCnnOt9eD4=; b=UIPrSe/NnwlzeUdy
-	fdeCO4z9d8qcJLSYHLI3XqItHFFjrk88rCm/sHTFN6TSAcjNwVZSdih6qjvI/TkI
-	LeiR4XhnZQpgFJhnNBRLWdhRnac23BGhq2l6xLcmsM5oZAiaOy60OcwWI0rmWrvB
-	kK9+9zyTRm22a323Du6U9+F/Diy6rhdbUZtaLiBR2/Vz9yGxc/I5YAO/m0pBLztk
-	GJdkFAZHefmpAFNxH4RyN76gaVIL2T3H1QwPWVNRY6VenFug1rqSlTnnJl4VP247
-	/nQhOVu8r9zirj1RZ2KvmHTMS3Pa+rPyjDWBT3LnlmHqAEQtSECdN90bXx5LMH4I
-	/4h3Yg==
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4bhuy71wa4-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Thu, 08 Jan 2026 05:58:36 +0000 (GMT)
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-29f1f69eec6so30742015ad.1
-        for <linux-clk@vger.kernel.org>; Wed, 07 Jan 2026 21:58:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1767851916; x=1768456716; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=KPYorIOVmCg/xCSHrscU+vX13wArRA8uiPCnnOt9eD4=;
-        b=fZ25sWF/aq4T4dJGpiusgRSjdXu17AMJINZN0yd09nRV0DxYocf//Y1a0r7/4R5GDw
-         NcEVV9joHw4xU2dAr3PpzuFZysyee/vgvai2an50SqDxbUejqgzAdL0vsy1OmV6hDNLS
-         jWv83xkncekhCoqgvXqPjDuu7I23gKiJTFI9S1FzgyUKmoUnC64uRvEdmphaziaH8veh
-         kzSUpnXugP2urXvraaQjgeBMDkTWJ13aSW+0YcwUAkVippeHutCdI5Ba/B7QBW+hsT07
-         XZAJh/ZK7FkRZqlpLZwSDcpDePbbTIn2DqOKHIuBUoyMHN0bpxIOo+ZqNw/Xq2c7lcH3
-         saLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767851916; x=1768456716;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KPYorIOVmCg/xCSHrscU+vX13wArRA8uiPCnnOt9eD4=;
-        b=GU9lXvnMZRaExkwJGbzooF4L4089xyhsvHkbTuFoKbwvgZu9ffB3pMLsuyxY2D4L+i
-         wrUzMLNX0Q7czuNNYCsgAvZ74NO9DLQkt4nFFzDVk7VDNnAzMrZI2jJ/LbCDNcFiDMQ8
-         0Nabn3ulnL/xSAHVWuLnX9dn+Oq8AE5ZR0BH8OYaGOYzJfTQoaYGEg5Kswy5KN7DjnRy
-         b/GdGtKRDXXyBdvhH/zkvvTHOZxgtLA2FhiUcC2Fc3K6rxP6m/S1uoHhwYlGQKx87AKW
-         sUpvx6OIzc1weVBbk9ZTuwLZ01qHV08CwMvCSPRrtZxgGhbmtbbXPWElX2LaezW1b4TT
-         h9vQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWPiPlAhQCcxec3H0bM/CVacCIge+ABqOnSlYENvoqy7Ny7NuY5+ZNLDO23n0lS9bmgFT4D8EvYb2I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YziYBkiK+1H/CaGX1YxWZxtCyS4p5Y82UhLKh+/IduTE9Q03TJG
-	Z89PUcl1R8/zE9dCvJcy9glIWutr2TE/nblec9iBNJvKf4eaQa4p9Vzwov3IgNSlxccCWqL2Cja
-	055pI6Xfxfw1o1mu9aJwH+GoiAlwvVAXIt0f0a7+UVHf4YMuZwBZfywr+Lb/AgbQ=
-X-Gm-Gg: AY/fxX4i/lZbke0CDwgi2MdZRgeMFLta0W3zGwS1DFy1bmMfHF+4LV37yTcQ1sCKFe0
-	7beCzZl9WKPvG3bhALq1V52bhxUd/KYilk6QQNVo074UF6TV5jGfBCQatAUIaVHbBn04HWQodgo
-	F+oF1DpViKN5BfBr+x+rAxFefj5NOpT0c1Ba+XdphOGtFEbgAt7ibIGRDqrjSYSILtSiSqm7kCM
-	pVO39OayLGnaWZfrHyHWV+MgP4BImh8nORK0AHUlQVcoUzNCkyyswWi35DMKCTA3Vj8b3xoCosP
-	jrJ7p7V1rrDSWUDihEFSJMxSv2q8zZz+OPbtG5yBJB2Fqa4RdQaKoMzVOZ9F0Pji4ywm7LSMJVQ
-	IpVCWGFqEfHGefI8RXDhNRA==
-X-Received: by 2002:a17:903:248:b0:2a0:fb1c:144c with SMTP id d9443c01a7336-2a3ee40ee95mr46423295ad.5.1767851915330;
-        Wed, 07 Jan 2026 21:58:35 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHVWFzdCH0NvCqAqzFjiQJZqOIin8TQmPH0h0f7iHo4faS2uHD2sRCtyN4+GHqvUTWJPMNp0Q==
-X-Received: by 2002:a17:903:248:b0:2a0:fb1c:144c with SMTP id d9443c01a7336-2a3ee40ee95mr46422955ad.5.1767851914736;
-        Wed, 07 Jan 2026 21:58:34 -0800 (PST)
-Received: from work ([120.60.56.4])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2a3e3cd492esm67610355ad.98.2026.01.07.21.58.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Jan 2026 21:58:34 -0800 (PST)
-Date: Thu, 8 Jan 2026 11:28:27 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
-To: Stephan Gerhold <stephan.gerhold@linaro.org>
-Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Taniya Das <quic_tdas@quicinc.com>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Bartosz Golaszewski <brgl@kernel.org>,
-        Shazad Hussain <quic_shazhuss@quicinc.com>,
-        Sibi Sankar <sibi.sankar@oss.qualcomm.com>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Melody Olvera <quic_molvera@quicinc.com>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Taniya Das <taniya.das@oss.qualcomm.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Imran Shaik <quic_imrashai@quicinc.com>,
-        Abel Vesa <abelvesa@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Rajendra Nayak <quic_rjendra@quicinc.com>, stable@vger.kernel.org
-Subject: Re: [PATCH 0/7] clk: qcom: gcc: Do not turn off PCIe GDSCs during
- gdsc_disable()
-Message-ID: <oysexostrdzcyapwpf2ele22lje4limgdknz3xcjgbs5tpvr46@cxzefx6ep477>
-References: <20260102-pci_gdsc_fix-v1-0-b17ed3d175bc@oss.qualcomm.com>
- <a42f963f-a869-4789-a353-e574ba22eca8@oss.qualcomm.com>
- <edca97aa-429e-4a6b-95a0-2a6dfe510ef2@oss.qualcomm.com>
- <500313f1-51fd-450e-877e-e4626b7652bc@oss.qualcomm.com>
- <4d61e8b3-0d40-4b78-9f40-a68b05284a3d@oss.qualcomm.com>
- <e917e98a-4ff3-45b8-87a0-fe0d6823ac2e@oss.qualcomm.com>
- <2lpx7rsko24e45gexsv3jp4ntwwenag47vgproqljqeuk4j7iy@zgh6hrln4h4e>
- <aVuIsUR0pinI0Wp7@linaro.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BiENFdwZ"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id DF64CC19423;
+	Thu,  8 Jan 2026 06:08:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1767852505;
+	bh=kj2bz78IILEIstewiqZHT9qts3FHFYfsPylDGJjB5eM=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=BiENFdwZp8m2RDrbVp1RlI4CRW0v9lxo7yUpugu2CyXxds6muI780yixEgvBKoPY2
+	 ahzsS2O+tAMMFPtM75te3BuhmUrPNkNtxjSV4j2RnHgxqSqXddD2P3M6mm2C869iY/
+	 D1IwsHDkOLPwYFoH1w0e2YJmG9W/hSyOvyr68NqLJF4X9E1FcadLQRz8MAwMwMUVqx
+	 fNhx4gVmTwlZ+2jgRnV52t2yVtcVS9ikEP1tF9IHIVQHqaom5W5G9E6mbU4aJRdIR6
+	 9Lz4XnpRfMiSCxr04v08cL6ubN6cAleLFekTJiZNLq3wMV+aqEVJ3HZdaMTbXICill
+	 hBFBLmC+FRJuA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7FB3D148A3;
+	Thu,  8 Jan 2026 06:08:25 +0000 (UTC)
+From: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
+Date: Thu, 08 Jan 2026 14:08:17 +0800
+Subject: [PATCH v5 3/8] dt-bindings: clock: Add Amlogic A5 peripherals
+ clock controller
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aVuIsUR0pinI0Wp7@linaro.org>
-X-Proofpoint-ORIG-GUID: EjKGYBUCagjLUwGpezk0DvMjjOuHyprP
-X-Proofpoint-GUID: EjKGYBUCagjLUwGpezk0DvMjjOuHyprP
-X-Authority-Analysis: v=2.4 cv=DZEaa/tW c=1 sm=1 tr=0 ts=695f478c cx=c_pps
- a=JL+w9abYAAE89/QcEU+0QA==:117 a=RufU61fwOX414azV3ffNTg==:17
- a=IkcTkHD0fZMA:10 a=vUbySO9Y5rIA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=gMOyne7U4qER8HjkPQQA:9 a=3ZKOabzyN94A:10
- a=QEXdDO2ut3YA:10 a=324X-CrmTo6CU4MGRt3R:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTA4MDAzNSBTYWx0ZWRfXxVuMkYHeHfTb
- Sr1cWZsX4CthlPhUzkpQEoSUQXNXWxNftsrUQVS27alzMwHNUv+FBydAfEhc1ukOjmvRHFhbOLV
- OegcOHIuWK+UruCmZwByoHCBfvSzhVxJkgbxkVk+mevizaSmWVlIvzio8YtdUzKClV7rL3l/nzx
- M1eilaMLtsS3CfIMRVY4VEs+egdH6tuyIDdcKSDXwioeFOZdo0XDv50oQBaRGBs5ZTxtSEAI7zY
- KxUGvMytzF2B4bLmuHyY0Ks5XB9rox0jcu4g4dZVV8t8Y3B+nZhLAtEANnkYexIGTUOhVxnHInZ
- G3f9Y4vxbjs8WX1SisIBnmuHCQx6AaDiQhwnlSlJIQrwIfLncvr+ZSHhfgPBvudGNiF+m0dssSg
- 6nBfHsn133GukdVt3jqSYMBLANDd0YMmkvpx/pVtgJELzqVD11t1VQTlTYKKY6Nh1ADs8MdtePl
- CYfGUvCyct1HAdeKQSg==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2026-01-08_01,2026-01-07_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 impostorscore=0 phishscore=0 bulkscore=0 adultscore=0
- spamscore=0 clxscore=1015 suspectscore=0 lowpriorityscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2512120000 definitions=main-2601080035
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260108-a5-clk-v5-3-9a69fc1ef00a@amlogic.com>
+References: <20260108-a5-clk-v5-0-9a69fc1ef00a@amlogic.com>
+In-Reply-To: <20260108-a5-clk-v5-0-9a69fc1ef00a@amlogic.com>
+To: Chuan Liu <chuan.liu@amlogic.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Jerome Brunet <jbrunet@baylibre.com>, 
+ Xianwei Zhao <xianwei.zhao@amlogic.com>, 
+ Kevin Hilman <khilman@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org, 
+ linux-arm-kernel@lists.infradead.org
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1767852503; l=9596;
+ i=chuan.liu@amlogic.com; s=20240902; h=from:subject:message-id;
+ bh=hHd35yALxxbdvq1KX85En5uKgtIsw1h8WtM1CzHm1rY=;
+ b=atN8iueNaSD1TaBRACfkI02U9D89XWdFhqLDU6s7qitXF5BqrM3jVSsOvHX/jpwjGL1mfv0yK
+ KGQUtPPcsNnBn/93LwJoechgCjr2tVds12mj+KhvYrpxyC9PWWY9AIr
+X-Developer-Key: i=chuan.liu@amlogic.com; a=ed25519;
+ pk=fnKDB+81SoWGKW2GJNFkKy/ULvsDmJZRGBE7pR5Xcpo=
+X-Endpoint-Received: by B4 Relay for chuan.liu@amlogic.com/20240902 with
+ auth_id=203
+X-Original-From: Chuan Liu <chuan.liu@amlogic.com>
+Reply-To: chuan.liu@amlogic.com
 
-On Mon, Jan 05, 2026 at 10:47:29AM +0100, Stephan Gerhold wrote:
-> On Mon, Jan 05, 2026 at 10:44:39AM +0530, Manivannan Sadhasivam wrote:
-> > On Fri, Jan 02, 2026 at 02:57:56PM +0100, Konrad Dybcio wrote:
-> > > On 1/2/26 2:19 PM, Krishna Chaitanya Chundru wrote:
-> > > > On 1/2/2026 5:09 PM, Konrad Dybcio wrote:
-> > > >> On 1/2/26 12:36 PM, Krishna Chaitanya Chundru wrote:
-> > > >>> On 1/2/2026 5:04 PM, Konrad Dybcio wrote:
-> > > >>>> On 1/2/26 10:43 AM, Krishna Chaitanya Chundru wrote:
-> > > >>>>> With PWRSTS_OFF_ON, PCIe GDSCs are turned off during gdsc_disable(). This
-> > > >>>>> can happen during scenarios such as system suspend and breaks the resume
-> > > >>>>> of PCIe controllers from suspend.
-> > > >>>> Isn't turning the GDSCs off what we want though? At least during system
-> > > >>>> suspend?
-> > > >>> If we are keeping link in D3cold it makes sense, but currently we are not keeping in D3cold
-> > > >>> so we don't expect them to get off.
-> > > >> Since we seem to be tackling that in parallel, it seems to make sense
-> > > >> that adding a mechanism to let the PCIe driver select "on" vs "ret" vs
-> > > >> "off" could be useful for us
-> > > > At least I am not aware of such API where we can tell genpd not to turn off gdsc
-> > > > at runtime if we are keeping the device in D3cold state.
-> > > > But anyway the PCIe gdsc supports Retention, in that case adding this flag here makes
-> > > > more sense as it represents HW.
-> > > > sm8450,sm8650 also had similar problem which are fixed by mani[1].
-> > > 
-> > > Perhaps I should ask for a clarification - is retention superior to
-> > > powering the GDSC off? Does it have any power costs?
-> > > 
-> > 
-> > In terms of power saving it is not superior, but that's not the only factor we
-> > should consider here. If we keep GDSCs PWRSTS_OFF_ON, then the devices (PCIe)
-> > need to be be in D3Cold. Sure we can change that using the new genpd API
-> > dev_pm_genpd_rpm_always_on() dynamically, but I would prefer to avoid doing
-> > that.
-> > 
-> > In my POV, GDSCs default state should be retention, so that the GDSCs will stay
-> > ON if the rentention is not entered in hw and enter retention otherwise. This
-> > requires no extra modification in the genpd client drivers. One more benefit is,
-> > the hw can enter low power state even when the device is not in D3Cold state
-> > i.e., during s2idle (provided we unvote other resources).
-> > 
-> 
-> What about PCIe instances that are completely unused? The boot firmware
-> on X1E for example is notorious for powering on completely unused PCIe
-> links and powering them down in some half-baked off state (the &pcie3
-> instance, in particular). I'm not sure if the GDSC remains on, but if it
-> does then the unused PD cleanup would also only put them in retention
-> state. I can't think of a good reason to keep those on at all.
->
+From: Chuan Liu <chuan.liu@amlogic.com>
 
-This is a good point. I didn't think of it.
+Add the peripherals clock controller dt-bindings for the Amlogic A5
+SoC family.
 
-> The implementation of PWRSTS_RET_ON essentially makes the PD power_off()
-> callback a no-op. Everything in Linux (sysfs, debugfs, ...) will tell
-> you that the power domain has been shut down, but at the end it will
-> remain fully powered until you manage to reach a retention state for the
-> parent power domain. Due to other consumers, that will likely happen
-> only if you reach VDDmin or some equivalent SoC-wide low-power state,
-> something barely any (or none?) of the platforms supported upstream is
-> capable of today.
-> 
+Co-developed-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
+Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
+Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+---
+ .../clock/amlogic,a5-peripherals-clkc.yaml         | 134 +++++++++++++++++++++
+ .../clock/amlogic,a5-peripherals-clkc.h            | 132 ++++++++++++++++++++
+ 2 files changed, 266 insertions(+)
 
-Unfortunately, that's the current state of retention today. It is only a
-firmware visible state. Ofc, the OS could query SMEM and figure out after
-resume, but there is no way currently to translate that to individual power
-domains.
-
-> PWRSTS_RET_ON is actually pretty close to setting GENPD_FLAG_ALWAYS_ON,
-> the only advantage of PWRSTS_RET_ON I can think of is that unused GDSCs
-> remain off iff you are lucky enough that the boot firmware has not
-> already turned them on.
-> 
-> IMHO, for GDSCs that support OFF state in the hardware, PWRSTS_RET_ON is
-> a hack to workaround limitations in the consumer drivers. They should
-> either save/restore registers and handle the power collapse or they
-> should vote for the power domain to stay on. That way, sysfs/debugfs
-> will show the real votes held by Linux and you won't be mislead when
-> looking at those while trying to optimize power consumption.
->
-
-Maybe we should just use dev_pm_genpd_rpm_always_on() in the client drivers if
-they know for sure that the device context should be preserved and keep
-PWRSTS_OFF_ON flag.
-
-- Mani
+diff --git a/Documentation/devicetree/bindings/clock/amlogic,a5-peripherals-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,a5-peripherals-clkc.yaml
+new file mode 100644
+index 000000000000..88d71d9a72ea
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/amlogic,a5-peripherals-clkc.yaml
+@@ -0,0 +1,134 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++# Copyright (C) 2024 Amlogic, Inc. All rights reserved
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/amlogic,a5-peripherals-clkc.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Amlogic A5 series Peripheral Clock Controller
++
++maintainers:
++  - Xianwei Zhao <xianwei.zhao@amlogic.com>
++  - Chuan Liu <chuan.liu@amlogic.com>
++
++properties:
++  compatible:
++    const: amlogic,a5-peripherals-clkc
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    minItems: 18
++    items:
++      - description: input oscillator
++      - description: input oscillators multiplexer
++      - description: input fix pll
++      - description: input fclk div 2
++      - description: input fclk div 2p5
++      - description: input fclk div 3
++      - description: input fclk div 4
++      - description: input fclk div 5
++      - description: input fclk div 7
++      - description: input mpll2
++      - description: input mpll3
++      - description: input gp0 pll
++      - description: input gp1 pll
++      - description: input hifi pll
++      - description: input sys clk
++      - description: input axi clk
++      - description: input sys pll div 16
++      - description: input cpu clk div 16
++      - description: input pad clock for rtc clk (optional)
++      - description: input ddr pll (optional)
++      - description: input source from clk-measure (optional)
++      - description: input rtc pll (optional)
++
++  clock-names:
++    minItems: 18
++    items:
++      - const: xtal
++      - const: oscin
++      - const: fix
++      - const: fdiv2
++      - const: fdiv2p5
++      - const: fdiv3
++      - const: fdiv4
++      - const: fdiv5
++      - const: fdiv7
++      - const: mpll2
++      - const: mpll3
++      - const: gp0
++      - const: gp1
++      - const: hifi
++      - const: sysclk
++      - const: axiclk
++      - const: sysplldiv16
++      - const: cpudiv16
++      - const: pad_osc
++      - const: ddr
++      - const: clkmsr
++      - const: rtc
++
++  "#clock-cells":
++    const: 1
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - clock-names
++  - "#clock-cells"
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/amlogic,a5-scmi-clkc.h>
++    #include <dt-bindings/clock/amlogic,a5-pll-clkc.h>
++    apb {
++        #address-cells = <2>;
++        #size-cells = <2>;
++
++        clock-controller@0 {
++            compatible = "amlogic,a5-peripherals-clkc";
++            reg = <0x0 0x0 0x0 0x224>;
++            #clock-cells = <1>;
++            clocks = <&xtal>,
++                     <&scmi_clk CLKID_OSC>,
++                     <&scmi_clk CLKID_FIXED_PLL>,
++                     <&scmi_clk CLKID_FCLK_DIV2>,
++                     <&scmi_clk CLKID_FCLK_DIV2P5>,
++                     <&scmi_clk CLKID_FCLK_DIV3>,
++                     <&scmi_clk CLKID_FCLK_DIV4>,
++                     <&scmi_clk CLKID_FCLK_DIV5>,
++                     <&scmi_clk CLKID_FCLK_DIV7>,
++                     <&clkc_pll CLKID_MPLL2>,
++                     <&clkc_pll CLKID_MPLL3>,
++                     <&clkc_pll CLKID_GP0_PLL>,
++                     <&scmi_clk CLKID_GP1_PLL>,
++                     <&clkc_pll CLKID_HIFI_PLL>,
++                     <&scmi_clk CLKID_SYS_CLK>,
++                     <&scmi_clk CLKID_AXI_CLK>,
++                     <&scmi_clk CLKID_SYS_PLL_DIV16>,
++                     <&scmi_clk CLKID_CPU_CLK_DIV16>;
++            clock-names = "xtal",
++                          "oscin",
++                          "fix",
++                          "fdiv2",
++                          "fdiv2p5",
++                          "fdiv3",
++                          "fdiv4",
++                          "fdiv5",
++                          "fdiv7",
++                          "mpll2",
++                          "mpll3",
++                          "gp0",
++                          "gp1",
++                          "hifi",
++                          "sysclk",
++                          "axiclk",
++                          "sysplldiv16",
++                          "cpudiv16";
++        };
++    };
+diff --git a/include/dt-bindings/clock/amlogic,a5-peripherals-clkc.h b/include/dt-bindings/clock/amlogic,a5-peripherals-clkc.h
+new file mode 100644
+index 000000000000..b8a68b7f29dc
+--- /dev/null
++++ b/include/dt-bindings/clock/amlogic,a5-peripherals-clkc.h
+@@ -0,0 +1,132 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR MIT) */
++/*
++ * Copyright (c) 2024 Amlogic, Inc. All rights reserved.
++ * Author: Chuan Liu <chuan.liu@amlogic.com>
++ */
++
++#ifndef _DT_BINDINGS_CLOCK_AMLOGIC_A5_PERIPHERALS_CLKC_H
++#define _DT_BINDINGS_CLOCK_AMLOGIC_A5_PERIPHERALS_CLKC_H
++
++#define CLKID_RTC_DUALDIV_CLKIN			0
++#define CLKID_RTC_DUALDIV			1
++#define CLKID_RTC_DUALDIV_SEL			2
++#define CLKID_RTC_DUALDIV_CLKOUT		3
++#define CLKID_RTC_CLK				4
++#define CLKID_SYS_RESET_CTRL			5
++#define CLKID_SYS_PWR_CTRL			6
++#define CLKID_SYS_PAD_CTRL			7
++#define CLKID_SYS_CTRL				8
++#define CLKID_SYS_TS_PLL			9
++#define CLKID_SYS_DEV_ARB			10
++#define CLKID_SYS_MAILBOX			11
++#define CLKID_SYS_JTAG_CTRL			12
++#define CLKID_SYS_IR_CTRL			13
++#define CLKID_SYS_MSR_CLK			14
++#define CLKID_SYS_ROM				15
++#define CLKID_SYS_CPU_ARB			16
++#define CLKID_SYS_RSA				17
++#define CLKID_SYS_SARADC			18
++#define CLKID_SYS_STARTUP			19
++#define CLKID_SYS_SECURE			20
++#define CLKID_SYS_SPIFC				21
++#define CLKID_SYS_DSPA				22
++#define CLKID_SYS_NNA				23
++#define CLKID_SYS_ETH_MAC			24
++#define CLKID_SYS_RAMA				25
++#define CLKID_SYS_RAMB				26
++#define CLKID_SYS_AUDIO_TOP			27
++#define CLKID_SYS_AUDIO_VAD			28
++#define CLKID_SYS_USB				29
++#define CLKID_SYS_SD_EMMC_A			30
++#define CLKID_SYS_SD_EMMC_C			31
++#define CLKID_SYS_PWM_AB			32
++#define CLKID_SYS_PWM_CD			33
++#define CLKID_SYS_PWM_EF			34
++#define CLKID_SYS_PWM_GH			35
++#define CLKID_SYS_SPICC_1			36
++#define CLKID_SYS_SPICC_0			37
++#define CLKID_SYS_UART_A			38
++#define CLKID_SYS_UART_B			39
++#define CLKID_SYS_UART_C			40
++#define CLKID_SYS_UART_D			41
++#define CLKID_SYS_UART_E			42
++#define CLKID_SYS_I2C_M_A			43
++#define CLKID_SYS_I2C_M_B			44
++#define CLKID_SYS_I2C_M_C			45
++#define CLKID_SYS_I2C_M_D			46
++#define CLKID_SYS_RTC				47
++#define CLKID_AXI_AUDIO_VAD			48
++#define CLKID_AXI_AUDIO_TOP			49
++#define CLKID_AXI_RAMB				50
++#define CLKID_AXI_RAMA				51
++#define CLKID_AXI_NNA				52
++#define CLKID_AXI_DEV1_DMC			53
++#define CLKID_AXI_DEV0_DMC			54
++#define CLKID_AXI_DSP_DMC			55
++#define CLKID_12_24M_IN				56
++#define CLKID_12M_24M				57
++#define CLKID_FCLK_25M_DIV			58
++#define CLKID_FCLK_25M				59
++#define CLKID_GEN_SEL				60
++#define CLKID_GEN_DIV				61
++#define CLKID_GEN				62
++#define CLKID_SARADC_SEL			63
++#define CLKID_SARADC_DIV			64
++#define CLKID_SARADC				65
++#define CLKID_PWM_A_SEL				66
++#define CLKID_PWM_A_DIV				67
++#define CLKID_PWM_A				68
++#define CLKID_PWM_B_SEL				69
++#define CLKID_PWM_B_DIV				70
++#define CLKID_PWM_B				71
++#define CLKID_PWM_C_SEL				72
++#define CLKID_PWM_C_DIV				73
++#define CLKID_PWM_C				74
++#define CLKID_PWM_D_SEL				75
++#define CLKID_PWM_D_DIV				76
++#define CLKID_PWM_D				77
++#define CLKID_PWM_E_SEL				78
++#define CLKID_PWM_E_DIV				79
++#define CLKID_PWM_E				80
++#define CLKID_PWM_F_SEL				81
++#define CLKID_PWM_F_DIV				82
++#define CLKID_PWM_F				83
++#define CLKID_PWM_G_SEL				84
++#define CLKID_PWM_G_DIV				85
++#define CLKID_PWM_G				86
++#define CLKID_PWM_H_SEL				87
++#define CLKID_PWM_H_DIV				88
++#define CLKID_PWM_H				89
++#define CLKID_SPICC_0_SEL			90
++#define CLKID_SPICC_0_DIV			91
++#define CLKID_SPICC_0				92
++#define CLKID_SPICC_1_SEL			93
++#define CLKID_SPICC_1_DIV			94
++#define CLKID_SPICC_1				95
++#define CLKID_SD_EMMC_A_SEL			96
++#define CLKID_SD_EMMC_A_DIV			97
++#define CLKID_SD_EMMC_A				98
++#define CLKID_SD_EMMC_C_SEL			99
++#define CLKID_SD_EMMC_C_DIV			100
++#define CLKID_SD_EMMC_C				101
++#define CLKID_TS_DIV				102
++#define CLKID_TS				103
++#define CLKID_ETH_125M_DIV			104
++#define CLKID_ETH_125M				105
++#define CLKID_ETH_RMII_DIV			106
++#define CLKID_ETH_RMII				107
++#define CLKID_DSPA_0_SEL			108
++#define CLKID_DSPA_0_DIV			109
++#define CLKID_DSPA_0				110
++#define CLKID_DSPA_1_SEL			111
++#define CLKID_DSPA_1_DIV			112
++#define CLKID_DSPA_1				113
++#define CLKID_DSPA				114
++#define CLKID_NNA_CORE_SEL			115
++#define CLKID_NNA_CORE_DIV			116
++#define CLKID_NNA_CORE				117
++#define CLKID_NNA_AXI_SEL			118
++#define CLKID_NNA_AXI_DIV			119
++#define CLKID_NNA_AXI				120
++
++#endif  /* _DT_BINDINGS_CLOCK_AMLOGIC_A5_PERIPHERALS_CLKC_H */
 
 -- 
-மணிவண்ணன் சதாசிவம்
+2.42.0
+
+
