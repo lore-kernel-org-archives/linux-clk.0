@@ -1,16 +1,16 @@
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B5AB4B8DCF
-	for <linux-clk@vger.kernel.org>; Thu,  8 Jan 2026 11:07:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 044F8450902
+	for <linux-clk@vger.kernel.org>; Thu,  8 Jan 2026 11:07:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767870461; cv=none; b=V1zHMmJmW30sl1Sbn75x10Sk8LNCOZjnITGQGGKTi70Nw8CBYBBAq3XKRaFk7Kvrh67ckn9YPncr5D4H7EMzOtk4jyltn0CNbx9NUGAk8ZU+bgp/n+wJ/k03Bx3wVB9klggnsDV3rXX4LDCpNRDyPk5+ouedVO24HG0phsQQbrE=
+	t=1767870468; cv=none; b=AgtA0/Z0ZScgN5fwb+sOW/kLEvTa9K5G/nBIJJDCYL85GqO6fLjE/WdyQPf6f95qQf5LBCJxkXw1+Xrj5AU0HlzKVks2nX8PrtdAmPkJcGpRiXB9wsbsrcm2nTE/ExY+4YB33x/FUqMOJyFurHid4GKJMoh+1ylJcRDhLUGZ+M8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767870461; c=relaxed/simple;
-	bh=4ARUFy/0mqoSVLaK6Rqs10QOx8KtOwrI/t5eQyddFCw=;
+	s=arc-20240116; t=1767870468; c=relaxed/simple;
+	bh=1slDODdYtFbvx+9LgPP0qBuwCcQV//dVL7NoB3/LS0s=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=HMRq1Z3+fNhrGUECkt/QW64d9minIT3DWqO09YU1ZGsV++sLbcLJ4u9S33uQd7K8IPMdd9v6R4VGcIDpyRlon+uVuGUGYW7XGtGbDtAWoat5VwsqC+CfRr917wENrbVYJKjgaNwHVaI+IQdgITiWvwfeSfLCSnZrXdjKbzXVAKE=
+	 Content-Type:MIME-Version; b=cEkysVXpJiVb9mQCrJPmDAKEIcG6WEc2//XgtaXDgYVREIWtV/cUSaQTZ0rxkrO/I5gyVu/YMZLp0TrnBsyrydKlorSblEwwrgTTB5efteSZOoTHar2OFMQs2DMqeLgVzlOX0SvXW/ySh+fcnPecvx7khzuyReX4JtRSnRbAiIE=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
@@ -18,30 +18,33 @@ Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
 	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
 	(Exim 4.92)
 	(envelope-from <p.zabel@pengutronix.de>)
-	id 1vdnrR-0006Ib-0m; Thu, 08 Jan 2026 12:07:25 +0100
+	id 1vdnrY-0006JF-Tu; Thu, 08 Jan 2026 12:07:32 +0100
 Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
 	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96)
 	(envelope-from <p.zabel@pengutronix.de>)
-	id 1vdnrQ-009fT1-25;
-	Thu, 08 Jan 2026 12:07:24 +0100
+	id 1vdnrY-009fT8-27;
+	Thu, 08 Jan 2026 12:07:32 +0100
 Received: from pza by lupine with local (Exim 4.98.2)
 	(envelope-from <p.zabel@pengutronix.de>)
-	id 1vdnrQ-000000005Vi-2KUV;
-	Thu, 08 Jan 2026 12:07:24 +0100
-Message-ID: <e7fa69f1febc37062a59f566be97537a3a1e6ee0.camel@pengutronix.de>
-Subject: Re: [PATCH v3 4/4] reset: spacemit: fix auxiliary device id
+	id 1vdnrY-000000005W0-2NQQ;
+	Thu, 08 Jan 2026 12:07:32 +0100
+Message-ID: <00ad0d7f5eebd96717d37be19944bdd2e7d77eef.camel@pengutronix.de>
+Subject: Re: [PATCH 2/2] reset: spacemit: fix auxiliary device id
 From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Alex Elder <elder@riscstar.com>, Yixun Lan <dlan@gentoo.org>, Stephen
- Boyd	 <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>
-Cc: Guodong Xu <guodong@riscstar.com>, Inochi Amaoto <inochiama@gmail.com>, 
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+To: Yixun Lan <dlan@gentoo.org>
+Cc: Stephen Boyd <sboyd@kernel.org>, Michael Turquette
+ <mturquette@baylibre.com>,  Alex Elder <elder@riscstar.com>, Guodong Xu
+ <guodong@riscstar.com>, Inochi Amaoto <inochiama@gmail.com>,  Yao Zi
+ <me@ziyao.cc>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
 	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev
-Date: Thu, 08 Jan 2026 12:07:24 +0100
-In-Reply-To: <058d3911-ff2d-4151-b585-5bcb8810bedf@riscstar.com>
-References: <20260103-06-k1-clk-common-v3-0-6061d9f69eef@gentoo.org>
-	 <20260103-06-k1-clk-common-v3-4-6061d9f69eef@gentoo.org>
-	 <058d3911-ff2d-4151-b585-5bcb8810bedf@riscstar.com>
+Date: Thu, 08 Jan 2026 12:07:32 +0100
+In-Reply-To: <20260103220005-GYA2070627@gentoo.org>
+References: <20251220-06-k1-clk-common-v1-0-df28a0a91621@gentoo.org>
+	 <20251220-06-k1-clk-common-v1-2-df28a0a91621@gentoo.org>
+	 <aUYMjAi8YIqValwb@pie> <20251220025926-GYA1962618@gentoo.org>
+	 <20251224114848-GYA1993014@gentoo.org>
+	 <20260103220005-GYA2070627@gentoo.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.56.2-0+deb13u1 
@@ -56,53 +59,13 @@ X-SA-Exim-Mail-From: p.zabel@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 
-On Di, 2026-01-06 at 08:43 -0600, Alex Elder wrote:
-> On 1/3/26 1:26 AM, Yixun Lan wrote:
-> > Due to the auxiliary register procedure moved to ccu common module wher=
-e
-> > the module name changed to spacemit_ccu, then the reset auxiliary devic=
-e
-> > register id also need to be adjusted in order to prepare for adding new
-> > K3 reset driver, otherwise two reset drivers will claim to support same
-> > "compatible" auxiliary device.
-> >=20
-> > Signed-off-by: Yixun Lan <dlan@gentoo.org>
+On So, 2026-01-04 at 06:00 +0800, Yixun Lan wrote:
+> Hi Philipp Zabel,
 >=20
-> This would ideally be merged with the previous patch.  Maybe
-> Philipp can negotiate with Stephen to have that happen.
->=20
-> Reviewed-by: Alex Elder <elder@riscstar.com>
->=20
-> > ---
-> >   drivers/reset/reset-spacemit.c | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> >=20
-> > diff --git a/drivers/reset/reset-spacemit.c b/drivers/reset/reset-space=
-mit.c
-> > index e1272aff28f7..cc7fd1f8750d 100644
-> > --- a/drivers/reset/reset-spacemit.c
-> > +++ b/drivers/reset/reset-spacemit.c
-> > @@ -278,7 +278,7 @@ static int spacemit_reset_probe(struct auxiliary_de=
-vice *adev,
-> >  =20
-> >   #define K1_AUX_DEV_ID(_unit) \
-> >   	{ \
-> > -		.name =3D "spacemit_ccu_k1." #_unit "-reset", \
-> > +		.name =3D "spacemit_ccu.k1-" #_unit "-reset", \
-> >   		.driver_data =3D (kernel_ulong_t)&k1_ ## _unit ## _reset_data, \
-> >   	}
-> >  =20
+>  I still need your opinion in order to know which direction I should
+> go..
 
-Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
-
-to be merged via the clock tree.
-
-Note that the commits for both patches 2 and 3 will fail to probe the
-reset driver when bisecting.
-If you don't want do merge the corresponding changes to K1_AUX_DEV_ID()
-into those two patches, to make this series (runtime) bisectable, you
-should add a warning to both their commit messages that the reset
-driver will be adapted in the following patch 4.
+I say merge via clock tree. I'll comment on v3.
 
 regards
 Philipp
