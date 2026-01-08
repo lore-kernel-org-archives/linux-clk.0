@@ -1,86 +1,99 @@
-Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com [209.85.217.49])
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D4C334250D
-	for <linux-clk@vger.kernel.org>; Thu,  8 Jan 2026 08:52:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 369083BF2F8
+	for <linux-clk@vger.kernel.org>; Thu,  8 Jan 2026 09:13:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767862329; cv=none; b=rndMjeegQmet6YgacJ/YUu2obhg2Egwu72ePqsTjok8unAtExIZ3MDfKlIhaIREfosxMfyDFbqfdKAPSZPsdpFysAX/F4rntX3VX+ordNQ3oWw0q1NjM4Bv1ile4fvZwraR5gB2+5dWn4hgzZjgls7besBLWc2ibbEi8KFKlVrk=
+	t=1767863589; cv=none; b=VUtDQ6rrpE0KXnx5/uXBahFbuzEf0KlWAWCg8+M+sgQVZgdl7k3yEJHC9cWf14C5vtsH/bJEGc4kyzV3uac1uxagvkFNINbj8rRDtS33zt3SUcJ1lleRKuERvR5cL53xRYKr8hLteiCF7he23tF7aWZFJeuoeXdbrAW2aNGjQdc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767862329; c=relaxed/simple;
-	bh=aMdAwqjAIuA5BNC1s2ojBgskSNly1VQWwxOIfoMD0cw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XdAnJVYgE1RXD+Wk2QPxdSW6hFD/KgrRdMjniavxvKrV0JHEBRM8uU843kOGgkz7ESXtWgxoDqwI+Q+G7pyybhx/7aMOkXZczJ5zk8hl3jwUxqT/FmKV2CyFAhsUXRpuGsvkN/3xBQlitwCnkt5lm7Qjv0ASNlsrxZ5QV3M+e7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-5ed0bccd0easo939614137.0
-        for <linux-clk@vger.kernel.org>; Thu, 08 Jan 2026 00:52:02 -0800 (PST)
+	s=arc-20240116; t=1767863589; c=relaxed/simple;
+	bh=/B5yiqA+ekMUmtc6Bq+Hgdkj26PJlhDLIdx4NpvlZcY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=I0vGrfhFyF7QNTzSo3ixC7A3bkkfsC3DK63RmvR4pSfxTHTdb5zjWIGA2fONNsVpdSlJoM68W1uNPyjYZt3NyA9NRSS3OzTl6TTQX6wnSAClKF2wLCgrJVH/nidEknuD2a1+uawlAQxGBVyqT0Yfvuzi2VuAkY2CI3nAY14y2Fo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=mhVbFqOo; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="mhVbFqOo"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-47d182a8c6cso18729485e9.1
+        for <linux-clk@vger.kernel.org>; Thu, 08 Jan 2026 01:12:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1767863576; x=1768468376; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=qcvzzJMrh0MsjpTIZP7Mzs3g/YqR5+Qi1rSgpNg9db0=;
+        b=mhVbFqOopEU9ULbv80Yr8Yt9hyJx8n0T2RG49I6JZZy7GUCZ3asmt1tx6l5OLgqPlJ
+         /sjBXJfN4O1sXP5kMeCcbUfhnX7Ugr4EBKadfYOLk0EF3vQF3aLZU8Ck2ujzmDbudZ78
+         yKCfhY1fAqTyNwOcp3IYKf6n0Z5y9Tym2FtqYL07EzhYJDSElHeEnCNFr7DbS8CJk2hP
+         qQZZVoTbiTXcWEbbFcDur5Klo0tFFakhjpHud29Ckk6t9bViyiOCsoX7lvtKpQ1DrcYC
+         iEZ69iAddlWPN+yrHBoLzbA/KioFHWnW8c3+1xhRqtiHl4wjcnzJuvuydgNdGePCIjkZ
+         RktA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767862317; x=1768467117;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZMmmgiMrP7PykuOoZT5Ct8AU80Hz1S68kZySKKagG2w=;
-        b=N+X7jEzwDKj/2Z4o2DFN5rlr0+vlRN2fYc/bFZzcZNNx+Jc+Uj7e3ig1nXR7baJ5FJ
-         ZD7zWth2QoNppTqv5Uiw5hXIwG19sWzf6rsF7S7G7t9Exl6nnA3iDE4XpI5zNdlS5giR
-         FXIfEr7JNxloXAvPpO6z7Eqv4bVFutN+F1vyO9/sUEIUiKHfaQu7nyRvQIrZlmRLD9r6
-         z2PTIP+BiB9nfEnUv94IS93MlWwCt1iQVo89EcWzH9ICAE4Gq7zdsSEdKCkHjIJ0F7e/
-         muBCKIs/WDvfVcqMaub6hD53fe0F76IW8f5M3JSjQ7nwMY56pcv4cyd2fS5fF6Pp+BGJ
-         0bCw==
-X-Forwarded-Encrypted: i=1; AJvYcCWjl3p4kJ0cV6POY5EVomw+geY7y2Y5sLEOan1hKH/7PUGAEid/AprNnYnZoSSbsstK3y2pOZMZwms=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz46PQWjdhWqbciaznjlf9yIaacUWgMO2LC81Xa59gPIJXbzdXq
-	C44X4rfgyMSp4KF6y7amh0888FD3aK/Llsa4Ct6JHZM6cCqJUDgX10uwzar7lLGI
-X-Gm-Gg: AY/fxX6dgjb9qiXfNVjaNJntFEC4PU7mZjRq3hiyJRucXHlaaPjj6Yv/aeRT8err5St
-	IrXPyo9GA7mSK/6WpQ536Xn5jqRqp5nI1b+Dqr6TkrJezoU9prt9uRRylcVzSM1Xl4iOyuluLh1
-	ZbqZMoghL3pPMuGf6bQCjSfrZ0zDq6g8kwUH1sNivk7Pmi6K8KPX8Ger6qk5E4IS5EiQd72F7wW
-	rGP3EsOLLf1fXAE5scXnx4lDGigl7cr56AoMOo1iI+2DaYzebUYc44zHQEDwKT2Zpxl5xwKVriS
-	nOiAls1j2gWaMx6z1/I5+gkmlMgyWC8ZrRxS0z0WQfJ6xNLMdzlkswv5BuiQNyToZxwskbuF+vo
-	N442a5MLvsds3bLezHnxQSBWWIGSPi/tl+0gelnzWyR6FpPdH4jz/6MMcHPtTmLRbTTObZ0p2tJ
-	faIoqxjkfWJW3FjnpyfhQe2nE5SqK/pnZRlatz3/wPzU8SLDuJ
-X-Google-Smtp-Source: AGHT+IF3XxxI+P1qzYdxgUB2CBNIwvmZZ00tjd1ykARLU42KuA+NyMq/HrBdltY/rmiG9Kl6Nj0DyQ==
-X-Received: by 2002:a05:6102:dc6:b0:5db:3d11:c8d3 with SMTP id ada2fe7eead31-5ecb1e8de77mr2033022137.8.1767862317448;
-        Thu, 08 Jan 2026 00:51:57 -0800 (PST)
-Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com. [209.85.217.42])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-94412404678sm5225618241.8.2026.01.08.00.51.57
-        for <linux-clk@vger.kernel.org>
+        d=1e100.net; s=20230601; t=1767863576; x=1768468376;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qcvzzJMrh0MsjpTIZP7Mzs3g/YqR5+Qi1rSgpNg9db0=;
+        b=AXI3gzsi9HMHbmoaRnvkvDw7f6ELre4Gb9qUksSuSg27oKYtm7YZ08evvr6Dd/0EUR
+         EXcBr1t3v65ORSUnA+WACOQxKKwShMr5gmw4D9saNJr2sYB7quC1BrLkvqm3YazSnMw1
+         pq3XStesek5ENpIwoJFjuWebh1wv6TDLcaCADsHmH6nmgUGpUQ8wZeQ3+/hC0S4GtLcr
+         jIR/iIF/LP3cnjaxrPojXwmG/qgYqAwqUp/KFWbHCqKsWWetwkQWIXlyETbnF955nDeS
+         oZM5SNGaV0SO6PObbXBxC75Lr745pZACWll92Hui+eRbEStLSHdr5o9L/uFdm+4qdy/2
+         lIyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX3ayp5ug7y/BzaftjGo4PxcHZvf6aNJkSy6E+OehPPm+0SWXqFHqOu8dASoy5rHtLL9WWqHMd3FXI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywz1xgQVVCwK71dGpMPKGqZEZsgWf4r6aVPkFktLc8o4yXYT2/J
+	II68eEENeN4gtxFGlS5rgnRACXPuFM/Sh6I6GNb23TT0LOxp9vDOQQt3KsbfN3ZILpM=
+X-Gm-Gg: AY/fxX50ETJeGuK8u8MxAQT5WTI47k/aIVU7enDqxQm3UhAc5Ug876vj7Ldl064wiEf
+	c3X+9p65PEkwofMfAVlm5oU6WlwZ+O7Yf8l/7iDHAT4cAdxRnDUWnp8K0MCdYUqciXVKBj1pwJe
+	0woDM8r8c9VsgLjujnlRKuvYSuf50Xnpv+tN2nu4WdwdMZNhbCI1amFyzEVpf0/XxQ9W4bw1q+B
+	lGHmjNP5T9BNDttPdOVKfeJkPM/JAtr0HlmL3wT0My0EbHtLRrxvkJPWVSUqmpduwJaLIaQ7q4z
+	BaybzVV/43nFPZ+B9Sg45oKDuKgQkrKSfrE3mSr8yXCGok+RGPXEoNnbdIrhVElwy2qX0/AzLp1
+	rht5CRaYv8SyTRp+sQlOwPMl0Nm04KMYdC25Je0775OMQaHJCK7NkMJLTWfRsVTmL0OZQedUpE2
+	42Ar0x91WkKEjdtAFQqw==
+X-Google-Smtp-Source: AGHT+IEP9/Gf0jNEPP/nIaOJ3PVVTz+nOM75oWhn7OGPLdOsoh+kDwG2RY2j3+SjdUgMnPGB8cg9XA==
+X-Received: by 2002:a05:600c:470c:b0:46e:53cb:9e7f with SMTP id 5b1f17b1804b1-47d84b3b4ccmr57983425e9.18.1767863576326;
+        Thu, 08 Jan 2026 01:12:56 -0800 (PST)
+Received: from [192.168.50.4] ([82.78.167.17])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47d7f4184cbsm151578795e9.6.2026.01.08.01.12.54
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 08 Jan 2026 00:51:57 -0800 (PST)
-Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-5eea31b5c48so54192137.1
-        for <linux-clk@vger.kernel.org>; Thu, 08 Jan 2026 00:51:57 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVET2rqe5jKh9FpBBKxQuHPEzDT0o9BhmUW5sfJphpQQBJ/RKGl5OHuqBcjum2JtU8zVtu1+dzoVNo=@vger.kernel.org
-X-Received: by 2002:a05:6102:c0b:b0:5db:fce3:af72 with SMTP id
- ada2fe7eead31-5ecb1eadbd9mr2251987137.11.1767862317065; Thu, 08 Jan 2026
- 00:51:57 -0800 (PST)
+        Thu, 08 Jan 2026 01:12:55 -0800 (PST)
+Message-ID: <f2aaa95a-fb69-46d8-ba0b-fdc793273455@tuxon.dev>
+Date: Thu, 8 Jan 2026 11:12:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260107164839.a490a194d975edc399d72d01@hugovil.com>
-In-Reply-To: <20260107164839.a490a194d975edc399d72d01@hugovil.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 8 Jan 2026 09:51:46 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdXbiZUbBJp5CBNfsgcX6u1sRGpXKhutg2VP_HLspc7Sqg@mail.gmail.com>
-X-Gm-Features: AQt7F2r8moIHrOkMlf_6a8GIEX9x_afn5WPax_SKTXguBO_eSWO-zKA_pd40Nf8
-Message-ID: <CAMuHMdXbiZUbBJp5CBNfsgcX6u1sRGpXKhutg2VP_HLspc7Sqg@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
 Subject: Re: [BUG] drm/panel: ilitek-ili9881c: kernel panic on reboot
-To: Hugo Villeneuve <hugo@hugovil.com>
-Cc: dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <jesszhan0024@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Biju Das Biju Das <biju.das.jz@bp.renesas.com>, Chris Brandt <Chris.Brandt@renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+To: Hugo Villeneuve <hugo@hugovil.com>, dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Jessica Zhang <jesszhan0024@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Biju Das Biju Das <biju.das.jz@bp.renesas.com>,
+ Chris Brandt <Chris.Brandt@renesas.com>
+References: <20260107164839.a490a194d975edc399d72d01@hugovil.com>
+Content-Language: en-US
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <20260107164839.a490a194d975edc399d72d01@hugovil.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Hugo,
+Hi, Hugo,
 
-On Wed, 7 Jan 2026 at 23:06, Hugo Villeneuve <hugo@hugovil.com> wrote:
+On 1/7/26 23:48, Hugo Villeneuve wrote:
+> Hi,
 > when issuing a reboot command, I encounter the following kernel panic:
->
+> 
 > [   36.183478] SError Interrupt on CPU1, code 0x00000000be000011 -- SError
 > [   36.183492] CPU: 1 UID: 0 PID: 1 Comm: systemd-shutdow Tainted: G   M                6.19.0-rc4-arm64-renesas-00019-g067a81578add #62 NONE
 > [   36.183504] Tainted: [M]=MACHINE_CHECK
@@ -144,36 +157,59 @@ On Wed, 7 Jan 2026 at 23:06, Hugo Villeneuve <hugo@hugovil.com> wrote:
 > [   36.184022] CPU features: 0x200000,00020001,4000c501,0400720b
 > [   36.184028] Memory Limit: none
 > [   36.495305] ---[ end Kernel panic - not syncing: Asynchronous SError Interrupt ]---
->
+> 
 > The problem is present since linux-6.18-rc1, but not in linux-6.17. I also confirm the bug is present in linux-6.19-rc4.
->
+> 
 > The bug seems to be happening in rzg2l_mipi_dsi_host_transfer().
->
+> 
 > After bisecting, here is the first bad commit:
->
->     commit 56de5e305d4b ("clk: renesas: r9a07g044: Add MSTOP for RZ/G2L")
->
+> 
+>      commit 56de5e305d4b ("clk: renesas: r9a07g044: Add MSTOP for RZ/G2L")
+> 
 > Reverting this change makes the bug disappear.
->
+> 
 > My limited understanding seems to indicate that the MIPI/DSI host may
 > no longer be available/on when the panel tries to send MIPI/DSI
 > commands in ili9881c_unprepare(), maybe because the MIPI/DSI clock has been stopped...
-
-Looks like the RZ/G2L driver is missing a pm_runtime_resume_and_get()
-call in the shutdown path, or calls pm_runtime_put() too early.
-
+> 
 > The exact same board with two other panels (jd9365da and st7703) doesn't have the bug.
 
-The drivers for these panel indeed do not make any mipi_dsi_*() calls
-from their .unprepare() callbacks.
+Could you please provide the output of command:
 
-Gr{oetje,eeting}s,
+cat /sys/kernel/debug/mstop
 
-                        Geert
+for both cases?
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Also, could you please check if the following diff solves your problem:
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c 
+b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
+index 5edd45424562..62957632a96f 100644
+--- a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
++++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
+@@ -1282,6 +1282,10 @@ static ssize_t 
+rzg2l_mipi_dsi_host_transfer(struct mipi_dsi_host *host,
+                 value |= SQCH0DSC0AR_FMT_SHORT;
+         }
+
++       ret = pm_runtime_resume_and_get(dsi->dev);
++       if (ret)
++               return ret;
++
+         rzg2l_mipi_dsi_link_write(dsi, SQCH0DSC0AR, value);
+
+         /*
+@@ -1322,6 +1326,8 @@ static ssize_t rzg2l_mipi_dsi_host_transfer(struct 
+mipi_dsi_host *host,
+                         ret = packet.payload_length;
+         }
+
++       pm_runtime_put(dsi->dev);
++
+         return ret;
+  }
+
+Thank you,
+Claudiu
+
+
