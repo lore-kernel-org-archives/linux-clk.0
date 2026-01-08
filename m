@@ -1,152 +1,120 @@
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C2574A22D5;
-	Thu,  8 Jan 2026 12:09:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACAE74CB3BB;
+	Thu,  8 Jan 2026 12:24:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767874177; cv=none; b=GdtE7k/rKmM45YkJcnsKEcTzinl4h3CU/Y7wCr8cp6Wsx3hkAyU41pKYRBhIvrWgIHBsV4q00S427PCItUi6OaL+inrIad+2YZpP7cjFUOTOta75uMmAYoImcv4Ud2ocyO3BAviJxmJj3x/5hyNg8hSDwbfq23wa0Ar498HZiCQ=
+	t=1767875060; cv=none; b=ZCtV6VNWQvhp4vXKYs0MxBV+dBdyjOoUFU02FJbq2uP1DhGf6RpCQ104y5LQh/8fsQHqa1OR0Kp7omDO1M0TbPH+K9dQbgiga+Yr+zEYamNgYBLIweSqJhfWQeq7oWp7D3tU74qyc+pIiY2hjnHBlG2WdBbl13qcPvMaGS3EqkQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767874177; c=relaxed/simple;
-	bh=q0TlDqpr415sq727uuVVX4LyTiAOn5O9CGBq1T+5u5k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=W1VwkMheHpwMxfiP+jGoWEBY47HwvBWSfKEe8VF/ndHEFSZoZBL2B/WaINAlnr+Ht6i5gFomeoO7yjtc7EUq35s/uvgU2DUZ0E2fT5/Y7lIpNv3db58fPTV203jy8SH1LYuVbrM3TxHB1h5HiMsPWxpOyDsrqJOvud9zOjr3ttc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=X6DBAXPG; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="X6DBAXPG"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1767874168;
-	bh=q0TlDqpr415sq727uuVVX4LyTiAOn5O9CGBq1T+5u5k=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=X6DBAXPGYo6G7Y2+a2GriXbE3SBz4uZEUzVNJiatCA25v20IsluEZJEpDAs1lM48v
-	 rvU8IAIQDxDViRGTGd8HXh7uOs9Fyj0OVdtzoC/6Z3uB5LPQr9PoMzUm+xvA4/f+d1
-	 DjXTs7qgGRyf0J+Hq+YGuaRRN8FArMODeHh8S9fU80u44nyQdZCam0jvzaciS/CdO9
-	 VREtv9ox10zpqn+px+AO+O8LwbwCSAVce6Hn9H2jXXmsq82Hr3IQ8deRop4VeKx9kI
-	 rTPlWxHBN9etr7LzfOheJ0BMt73xKUYxfqVPs4FXNpEhKPwsJax1VkJeFFWzmQ09Jc
-	 Lo8ql6Lv4Y+6g==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	s=arc-20240116; t=1767875060; c=relaxed/simple;
+	bh=uluj15nv0I39/Rq0UuYS/cxHYmelKtaJjmNgYItHxnA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y+70V14AQBSZuqgCuZAAJ5Bu8kXsENKZlqVVafWs/D/CNvF4n7O0dXQ3vvXkJKhHL20sEBDGTF3qPRIaMxRVawOpFPY4oIn6lk1qxxf2iq3U81Cf7cgaIWhUKDuvEnmCcDMMo+evvCh+eWS3rdLwGf/1QhAFdi1uXPx1KKtSe18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Received: from localhost (unknown [116.232.18.222])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id C9B5A17E13D8;
-	Thu,  8 Jan 2026 13:09:27 +0100 (CET)
-Message-ID: <f73a57bf-8527-4d1d-9f2e-78fe3c9973cb@collabora.com>
-Date: Thu, 8 Jan 2026 13:09:27 +0100
+	(Authenticated sender: dlan)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id A82FE340DF7;
+	Thu, 08 Jan 2026 12:24:17 +0000 (UTC)
+Date: Thu, 8 Jan 2026 20:24:13 +0800
+From: Yixun Lan <dlan@gentoo.org>
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Alex Elder <elder@riscstar.com>, Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Guodong Xu <guodong@riscstar.com>,
+	Inochi Amaoto <inochiama@gmail.com>, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org,
+	spacemit@lists.linux.dev
+Subject: Re: [PATCH v3 4/4] reset: spacemit: fix auxiliary device id
+Message-ID: <20260108122413-GYB4052@gentoo.org>
+References: <20260103-06-k1-clk-common-v3-0-6061d9f69eef@gentoo.org>
+ <20260103-06-k1-clk-common-v3-4-6061d9f69eef@gentoo.org>
+ <058d3911-ff2d-4151-b585-5bcb8810bedf@riscstar.com>
+ <e7fa69f1febc37062a59f566be97537a3a1e6ee0.camel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND v3 0/5] MediaTek PLL Refactors and Fixes
-To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Dong Aisheng <aisheng.dong@nxp.com>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- Yassine Oudjana <y.oudjana@protonmail.com>,
- Laura Nao <laura.nao@collabora.com>,
- =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>,
- Chia-I Wu <olvaffe@gmail.com>, Chen-Yu Tsai <wenst@chromium.org>
-Cc: kernel@collabora.com, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org
-References: <20251215-mtk-pll-rpm-v3-0-5afb3191e869@collabora.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20251215-mtk-pll-rpm-v3-0-5afb3191e869@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e7fa69f1febc37062a59f566be97537a3a1e6ee0.camel@pengutronix.de>
 
-Il 15/12/25 11:23, Nicolas Frattaroli ha scritto:
-> This series refactors all users of mtk-pll, just so we can enable
-> runtime power management for the clock controllers that want it. It's
-> also generally more useful to have the struct device in the pll code,
-> rather than the device node.
-> 
-> Also fix up MT8196 mfgpll to declare its parent-child relationship with
-> mfg_eb, and fix the common clock framework core to take
-> CLK_OPS_PARENT_ENABLE into account for the recalc_rate op as well.
-> 
-> The reason why this is all in the same series is that it grew out of me
-> first modelling this as an RPM clock for mfgpll, which Angelo disagreed
-> with, so I did some investigation and it seems MFG_EB indeed is a parent
-> clock. However, the earlier refactoring to pass the device pointer down
-> is still useful.
-> 
-> Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Hi Philipp,
 
-Whole series is
+On 12:07 Thu 08 Jan     , Philipp Zabel wrote:
+> On Di, 2026-01-06 at 08:43 -0600, Alex Elder wrote:
+> > On 1/3/26 1:26 AM, Yixun Lan wrote:
+> > > Due to the auxiliary register procedure moved to ccu common module where
+> > > the module name changed to spacemit_ccu, then the reset auxiliary device
+> > > register id also need to be adjusted in order to prepare for adding new
+> > > K3 reset driver, otherwise two reset drivers will claim to support same
+> > > "compatible" auxiliary device.
+> > > 
+> > > Signed-off-by: Yixun Lan <dlan@gentoo.org>
+> > 
+> > This would ideally be merged with the previous patch.  Maybe
+> > Philipp can negotiate with Stephen to have that happen.
+> > 
+> > Reviewed-by: Alex Elder <elder@riscstar.com>
+> > 
+> > > ---
+> > >   drivers/reset/reset-spacemit.c | 2 +-
+> > >   1 file changed, 1 insertion(+), 1 deletion(-)
+> > > 
+> > > diff --git a/drivers/reset/reset-spacemit.c b/drivers/reset/reset-spacemit.c
+> > > index e1272aff28f7..cc7fd1f8750d 100644
+> > > --- a/drivers/reset/reset-spacemit.c
+> > > +++ b/drivers/reset/reset-spacemit.c
+> > > @@ -278,7 +278,7 @@ static int spacemit_reset_probe(struct auxiliary_device *adev,
+> > >   
+> > >   #define K1_AUX_DEV_ID(_unit) \
+> > >   	{ \
+> > > -		.name = "spacemit_ccu_k1." #_unit "-reset", \
+> > > +		.name = "spacemit_ccu.k1-" #_unit "-reset", \
+> > >   		.driver_data = (kernel_ulong_t)&k1_ ## _unit ## _reset_data, \
+> > >   	}
+> > >   
+> 
+> Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
+> 
+thanks
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> to be merged via the clock tree.
+> 
+ok, got!
 
-> ---
-> Changes in v3:
-> - Make device_node forward declaration a device forward declaration
-> - Remove forward declarations of struct clk_ops and struct
->    clk_hw_onecell_data. (clk-provider.h include remains as it's needed
->    for a complete type of clk_hw)
-> - Move PLL_PARENT_EN flag to individual mfgpll definitions.
-> - Link to v2: https://lore.kernel.org/r/20251008-mtk-pll-rpm-v2-0-170ed0698560@collabora.com
-> 
-> Changes in v2:
-> - Drop bindings patch
-> - Drop mfgpll RPM patch
-> - Add patch to also transition pllfh to passing device
-> - Add fixes patch to make CLK_OPS_PARENT_ENABLE also apply to the
->    recalc_rate operation
-> - Remodel mfgpll's mfg_eb dependency as parent-child with
->    CLK_OPS_PARENT_ENABLE
-> - Link to v1: https://lore.kernel.org/r/20250929-mtk-pll-rpm-v1-0-49541777878d@collabora.com
-> 
-> ---
-> Nicolas Frattaroli (5):
->        clk: Respect CLK_OPS_PARENT_ENABLE during recalc
->        clk: mediatek: Refactor pll registration to pass device
->        clk: mediatek: Pass device to clk_hw_register for PLLs
->        clk: mediatek: Refactor pllfh registration to pass device
->        clk: mediatek: Add mfg_eb as parent to mt8196 mfgpll clocks
-> 
->   drivers/clk/clk.c                            | 13 +++++++++++++
->   drivers/clk/mediatek/clk-mt2701.c            |  2 +-
->   drivers/clk/mediatek/clk-mt2712-apmixedsys.c |  2 +-
->   drivers/clk/mediatek/clk-mt6735-apmixedsys.c |  4 ++--
->   drivers/clk/mediatek/clk-mt6765.c            |  2 +-
->   drivers/clk/mediatek/clk-mt6779.c            |  2 +-
->   drivers/clk/mediatek/clk-mt6795-apmixedsys.c |  2 +-
->   drivers/clk/mediatek/clk-mt6797.c            |  2 +-
->   drivers/clk/mediatek/clk-mt7622-apmixedsys.c |  2 +-
->   drivers/clk/mediatek/clk-mt7629.c            |  2 +-
->   drivers/clk/mediatek/clk-mt7981-apmixed.c    |  2 +-
->   drivers/clk/mediatek/clk-mt7986-apmixed.c    |  2 +-
->   drivers/clk/mediatek/clk-mt7988-apmixed.c    |  2 +-
->   drivers/clk/mediatek/clk-mt8135-apmixedsys.c |  3 ++-
->   drivers/clk/mediatek/clk-mt8167-apmixedsys.c |  2 +-
->   drivers/clk/mediatek/clk-mt8173-apmixedsys.c | 14 +++++++-------
->   drivers/clk/mediatek/clk-mt8183-apmixedsys.c |  2 +-
->   drivers/clk/mediatek/clk-mt8186-apmixedsys.c |  2 +-
->   drivers/clk/mediatek/clk-mt8188-apmixedsys.c |  2 +-
->   drivers/clk/mediatek/clk-mt8192-apmixedsys.c |  2 +-
->   drivers/clk/mediatek/clk-mt8195-apmixedsys.c |  2 +-
->   drivers/clk/mediatek/clk-mt8195-apusys_pll.c |  3 ++-
->   drivers/clk/mediatek/clk-mt8196-apmixedsys.c |  3 ++-
->   drivers/clk/mediatek/clk-mt8196-mcu.c        |  2 +-
->   drivers/clk/mediatek/clk-mt8196-mfg.c        | 15 ++++++++-------
->   drivers/clk/mediatek/clk-mt8196-vlpckgen.c   |  2 +-
->   drivers/clk/mediatek/clk-mt8365-apmixedsys.c |  2 +-
->   drivers/clk/mediatek/clk-mt8516-apmixedsys.c |  2 +-
->   drivers/clk/mediatek/clk-pll.c               | 19 +++++++++++++------
->   drivers/clk/mediatek/clk-pll.h               | 15 ++++++++-------
->   drivers/clk/mediatek/clk-pllfh.c             | 13 ++++++++-----
->   drivers/clk/mediatek/clk-pllfh.h             |  2 +-
->   32 files changed, 87 insertions(+), 59 deletions(-)
-> ---
-> base-commit: adff43957b0d8b9f6ad0e1b1f6daa7136f9ffbef
-> change-id: 20250929-mtk-pll-rpm-bf28192dd016
-> 
-> Best regards,
+and, here is my plan, I will prepare an immutable tag for the patch 4 -
+the change to reset driver ID, and merge it with the whole series,
+then send them along via clock tree.
+
+the tag would be useful if follow-up K3 reset patch[1] need to be merged, since
+both will change the reset driver, and with the tag, patch 4 can be pulled into
+both clock and reset subsystem, future reset patches can commit on top of it.
+even there is no price to pay if above doesn't happen.
 
 
+> Note that the commits for both patches 2 and 3 will fail to probe the
+> reset driver when bisecting.
+> If you don't want do merge the corresponding changes to K1_AUX_DEV_ID()
+> into those two patches, to make this series (runtime) bisectable, you
+no, I do not want to merge changes K1_AUX_DEV_ID() into patch 2/3
+
+> should add a warning to both their commit messages that the reset
+> driver will be adapted in the following patch 4.
+ok, I will send a new version and add a warning message
+
+> 
+> regards
+> Philipp
+
+Link: https://lore.kernel.org/all/20251229-k3-reset-v1-0-eda0747bded3@riscstar.com/ [1]
+
+-- 
+Yixun Lan (dlan)
