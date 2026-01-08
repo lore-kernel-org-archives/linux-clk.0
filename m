@@ -1,215 +1,77 @@
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 369083BF2F8
-	for <linux-clk@vger.kernel.org>; Thu,  8 Jan 2026 09:13:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A21538BDAB
+	for <linux-clk@vger.kernel.org>; Thu,  8 Jan 2026 09:56:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767863589; cv=none; b=VUtDQ6rrpE0KXnx5/uXBahFbuzEf0KlWAWCg8+M+sgQVZgdl7k3yEJHC9cWf14C5vtsH/bJEGc4kyzV3uac1uxagvkFNINbj8rRDtS33zt3SUcJ1lleRKuERvR5cL53xRYKr8hLteiCF7he23tF7aWZFJeuoeXdbrAW2aNGjQdc=
+	t=1767866202; cv=none; b=iconiyY/OsomfC58p0iU69G51XBR5fD4jKqFeKp7O0miHPwbkVpX5+6bHoGmzWNSnTPog6pA0at7LKTYdv8Bd/MHLHpEZw0xoGlp1ADET4GtM28H6Y1ra6P5DfYT0I9Hcgz17cpB4U2hMQWmlP+EftHwCkGA6F6j/1//JivM2Ns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767863589; c=relaxed/simple;
-	bh=/B5yiqA+ekMUmtc6Bq+Hgdkj26PJlhDLIdx4NpvlZcY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=I0vGrfhFyF7QNTzSo3ixC7A3bkkfsC3DK63RmvR4pSfxTHTdb5zjWIGA2fONNsVpdSlJoM68W1uNPyjYZt3NyA9NRSS3OzTl6TTQX6wnSAClKF2wLCgrJVH/nidEknuD2a1+uawlAQxGBVyqT0Yfvuzi2VuAkY2CI3nAY14y2Fo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=mhVbFqOo; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="mhVbFqOo"
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-47d182a8c6cso18729485e9.1
-        for <linux-clk@vger.kernel.org>; Thu, 08 Jan 2026 01:12:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1767863576; x=1768468376; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qcvzzJMrh0MsjpTIZP7Mzs3g/YqR5+Qi1rSgpNg9db0=;
-        b=mhVbFqOopEU9ULbv80Yr8Yt9hyJx8n0T2RG49I6JZZy7GUCZ3asmt1tx6l5OLgqPlJ
-         /sjBXJfN4O1sXP5kMeCcbUfhnX7Ugr4EBKadfYOLk0EF3vQF3aLZU8Ck2ujzmDbudZ78
-         yKCfhY1fAqTyNwOcp3IYKf6n0Z5y9Tym2FtqYL07EzhYJDSElHeEnCNFr7DbS8CJk2hP
-         qQZZVoTbiTXcWEbbFcDur5Klo0tFFakhjpHud29Ckk6t9bViyiOCsoX7lvtKpQ1DrcYC
-         iEZ69iAddlWPN+yrHBoLzbA/KioFHWnW8c3+1xhRqtiHl4wjcnzJuvuydgNdGePCIjkZ
-         RktA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767863576; x=1768468376;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qcvzzJMrh0MsjpTIZP7Mzs3g/YqR5+Qi1rSgpNg9db0=;
-        b=AXI3gzsi9HMHbmoaRnvkvDw7f6ELre4Gb9qUksSuSg27oKYtm7YZ08evvr6Dd/0EUR
-         EXcBr1t3v65ORSUnA+WACOQxKKwShMr5gmw4D9saNJr2sYB7quC1BrLkvqm3YazSnMw1
-         pq3XStesek5ENpIwoJFjuWebh1wv6TDLcaCADsHmH6nmgUGpUQ8wZeQ3+/hC0S4GtLcr
-         jIR/iIF/LP3cnjaxrPojXwmG/qgYqAwqUp/KFWbHCqKsWWetwkQWIXlyETbnF955nDeS
-         oZM5SNGaV0SO6PObbXBxC75Lr745pZACWll92Hui+eRbEStLSHdr5o9L/uFdm+4qdy/2
-         lIyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX3ayp5ug7y/BzaftjGo4PxcHZvf6aNJkSy6E+OehPPm+0SWXqFHqOu8dASoy5rHtLL9WWqHMd3FXI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywz1xgQVVCwK71dGpMPKGqZEZsgWf4r6aVPkFktLc8o4yXYT2/J
-	II68eEENeN4gtxFGlS5rgnRACXPuFM/Sh6I6GNb23TT0LOxp9vDOQQt3KsbfN3ZILpM=
-X-Gm-Gg: AY/fxX50ETJeGuK8u8MxAQT5WTI47k/aIVU7enDqxQm3UhAc5Ug876vj7Ldl064wiEf
-	c3X+9p65PEkwofMfAVlm5oU6WlwZ+O7Yf8l/7iDHAT4cAdxRnDUWnp8K0MCdYUqciXVKBj1pwJe
-	0woDM8r8c9VsgLjujnlRKuvYSuf50Xnpv+tN2nu4WdwdMZNhbCI1amFyzEVpf0/XxQ9W4bw1q+B
-	lGHmjNP5T9BNDttPdOVKfeJkPM/JAtr0HlmL3wT0My0EbHtLRrxvkJPWVSUqmpduwJaLIaQ7q4z
-	BaybzVV/43nFPZ+B9Sg45oKDuKgQkrKSfrE3mSr8yXCGok+RGPXEoNnbdIrhVElwy2qX0/AzLp1
-	rht5CRaYv8SyTRp+sQlOwPMl0Nm04KMYdC25Je0775OMQaHJCK7NkMJLTWfRsVTmL0OZQedUpE2
-	42Ar0x91WkKEjdtAFQqw==
-X-Google-Smtp-Source: AGHT+IEP9/Gf0jNEPP/nIaOJ3PVVTz+nOM75oWhn7OGPLdOsoh+kDwG2RY2j3+SjdUgMnPGB8cg9XA==
-X-Received: by 2002:a05:600c:470c:b0:46e:53cb:9e7f with SMTP id 5b1f17b1804b1-47d84b3b4ccmr57983425e9.18.1767863576326;
-        Thu, 08 Jan 2026 01:12:56 -0800 (PST)
-Received: from [192.168.50.4] ([82.78.167.17])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47d7f4184cbsm151578795e9.6.2026.01.08.01.12.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 08 Jan 2026 01:12:55 -0800 (PST)
-Message-ID: <f2aaa95a-fb69-46d8-ba0b-fdc793273455@tuxon.dev>
-Date: Thu, 8 Jan 2026 11:12:54 +0200
+	s=arc-20240116; t=1767866202; c=relaxed/simple;
+	bh=xD5y6I5ED+awsboXcZBD4Y4YB9ZOIqfXv+SpP7f45ag=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=m7XbQIwQknu4eOr+bf0Tx+1YwwXYy4Ys2gZeu7K0wnYppk/jh479HQ4MULxYo4eCKiWkWH0yDGhPx97A8htjcBMlfd1yKcudfSGxA00JIQ/JPIP4dScC4UDyW7i2rIe/TQVp2+uWZACIQ5AXkEFcIE/B/0Vh4UiPv3h7ZJ+Q7ek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1vdmkN-0004h1-Ca; Thu, 08 Jan 2026 10:56:03 +0100
+Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1vdmkM-009eit-2n;
+	Thu, 08 Jan 2026 10:56:02 +0100
+Received: from pza by lupine with local (Exim 4.98.2)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1vdmkM-0000000044p-3Gjs;
+	Thu, 08 Jan 2026 10:56:02 +0100
+Message-ID: <5efcdfff3b259294954fdd14d12e16f20944d4ab.camel@pengutronix.de>
+Subject: Re: [PATCH v2 04/13] reset: eyeq: Add Mobileye EyeQ6Lplus OLB
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: =?ISO-8859-1?Q?Beno=EEt?= Monin <benoit.monin@bootlin.com>, Vladimir
+ Kondratiev <vladimir.kondratiev@mobileye.com>, Gregory CLEMENT
+ <gregory.clement@bootlin.com>,  =?ISO-8859-1?Q?Th=E9o?= Lebrun	
+ <theo.lebrun@bootlin.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,  Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Linus Walleij
+ <linusw@kernel.org>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Tawfik Bayouk
+	 <tawfik.bayouk@mobileye.com>, linux-mips@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
+Date: Thu, 08 Jan 2026 10:56:02 +0100
+In-Reply-To: <20251223-eyeq6lplus-v2-4-cd1fd21d182c@bootlin.com>
+References: <20251223-eyeq6lplus-v2-0-cd1fd21d182c@bootlin.com>
+	 <20251223-eyeq6lplus-v2-4-cd1fd21d182c@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2-0+deb13u1 
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [BUG] drm/panel: ilitek-ili9881c: kernel panic on reboot
-To: Hugo Villeneuve <hugo@hugovil.com>, dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Jessica Zhang <jesszhan0024@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Biju Das Biju Das <biju.das.jz@bp.renesas.com>,
- Chris Brandt <Chris.Brandt@renesas.com>
-References: <20260107164839.a490a194d975edc399d72d01@hugovil.com>
-Content-Language: en-US
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <20260107164839.a490a194d975edc399d72d01@hugovil.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 
-Hi, Hugo,
+On Di, 2025-12-23 at 11:02 +0100, Beno=C3=AEt Monin wrote:
+> Declare the two reset domains found in the EyeQ6Lplus OLB and add
+> them to the data matched by 'mobileye,eyeq6lplus-olb' compatible.
+>=20
+> Those reset domains are identical to those present in the EyeQ5
+> OLB, so no changes are needed to support them.
+>=20
+> Signed-off-by: Beno=C3=AEt Monin <benoit.monin@bootlin.com>
 
-On 1/7/26 23:48, Hugo Villeneuve wrote:
-> Hi,
-> when issuing a reboot command, I encounter the following kernel panic:
-> 
-> [   36.183478] SError Interrupt on CPU1, code 0x00000000be000011 -- SError
-> [   36.183492] CPU: 1 UID: 0 PID: 1 Comm: systemd-shutdow Tainted: G   M                6.19.0-rc4-arm64-renesas-00019-g067a81578add #62 NONE
-> [   36.183504] Tainted: [M]=MACHINE_CHECK
-> [   36.183507] Hardware name: Gecko ECO2 nxtpad (DT)
-> [   36.183512] pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> [   36.183519] pc : rzg2l_mipi_dsi_host_transfer+0x114/0x458
-> [   36.183538] lr : rzg2l_mipi_dsi_host_transfer+0x98/0x458
-> [   36.183547] sp : ffff8000813db860
-> [   36.183550] x29: ffff8000813db890 x28: ffff800080c602c0 x27: ffff000009dd7450
-> [   36.183563] x26: ffff800080c5fcc0 x25: ffff000009dd7450 x24: ffff800080e1f7a8
-> [   36.183573] x23: ffff000009dd7400 x22: 0000000000000000 x21: ffff000009dd7430
-> [   36.183582] x20: ffff8000813db8e8 x19: 0000000002050028 x18: 00000000ffffffff
-> [   36.183592] x17: 0000000000000000 x16: 0000000000000000 x15: ffff8000813db220
-> [   36.183602] x14: 0000000000000000 x13: ffff800081255bc0 x12: 00000000000009a2
-> [   36.183611] x11: 0000000000000336 x10: ffff8000812b28d0 x9 : ffff800081255bc0
-> [   36.183621] x8 : ffff800081399000 x7 : ffff00000a042600 x6 : 0000000000000000
-> [   36.183631] x5 : 0000000000000805 x4 : 0000000002000000 x3 : 0000000000000028
-> [   36.183640] x2 : 0000000049627000 x1 : ffff800080c60b40 x0 : ffff800081780000
-> [   36.183652] Kernel panic - not syncing: Asynchronous SError Interrupt
-> [   36.183657] CPU: 1 UID: 0 PID: 1 Comm: systemd-shutdow Tainted: G   M                6.19.0-rc4-arm64-renesas-00019-g067a81578add #62 NONE
-> [   36.183665] Tainted: [M]=MACHINE_CHECK
-> [   36.183668] Hardware name: devboard1 (DT)
-> [   36.183672] Call trace:
-> [   36.183675]  show_stack+0x18/0x24 (C)
-> [   36.183692]  dump_stack_lvl+0x34/0x8c
-> [   36.183702]  dump_stack+0x18/0x24
-> [   36.183708]  vpanic+0x314/0x35c
-> [   36.183716]  nmi_panic+0x0/0x64
-> [   36.183722]  add_taint+0x0/0xbc
-> [   36.183728]  arm64_serror_panic+0x70/0x80
-> [   36.183735]  do_serror+0x28/0x68
-> [   36.183742]  el1h_64_error_handler+0x34/0x50
-> [   36.183751]  el1h_64_error+0x6c/0x70
-> [   36.183758]  rzg2l_mipi_dsi_host_transfer+0x114/0x458 (P)
-> [   36.183770]  mipi_dsi_device_transfer+0x44/0x58
-> [   36.183781]  mipi_dsi_dcs_set_display_off_multi+0x9c/0xc4
-> [   36.183792]  ili9881c_unprepare+0x38/0x88
-> [   36.183802]  drm_panel_unprepare+0xbc/0x108
-> [   36.183814]  panel_bridge_atomic_post_disable+0x50/0x60
-> [   36.183823]  drm_atomic_bridge_call_post_disable+0x24/0x4c
-> [   36.183835]  drm_atomic_bridge_chain_post_disable+0xa8/0x100
-> [   36.183845]  drm_atomic_helper_commit_modeset_disables+0x2fc/0x5f8
-> [   36.183856]  drm_atomic_helper_commit_tail_rpm+0x24/0x7c
-> [   36.183865]  commit_tail+0xa4/0x18c
-> [   36.183874]  drm_atomic_helper_commit+0x17c/0x194
-> [   36.183884]  drm_atomic_commit+0x8c/0xcc
-> [   36.183892]  drm_atomic_helper_disable_all+0x200/0x210
-> [   36.183901]  drm_atomic_helper_shutdown+0xa8/0x150
-> [   36.183911]  rzg2l_du_shutdown+0x18/0x24
-> [   36.183920]  platform_shutdown+0x24/0x34
-> [   36.183931]  device_shutdown+0x128/0x284
-> [   36.183938]  kernel_restart+0x44/0xa4
-> [   36.183950]  __do_sys_reboot+0x178/0x270
-> [   36.183959]  __arm64_sys_reboot+0x24/0x30
-> [   36.183968]  invoke_syscall.constprop.0+0x50/0xe4
-> [   36.183979]  do_el0_svc+0x40/0xc0
-> [   36.183988]  el0_svc+0x3c/0x164
-> [   36.183995]  el0t_64_sync_handler+0xa0/0xe4
-> [   36.184002]  el0t_64_sync+0x198/0x19c
-> [   36.184020] Kernel Offset: disabled
-> [   36.184022] CPU features: 0x200000,00020001,4000c501,0400720b
-> [   36.184028] Memory Limit: none
-> [   36.495305] ---[ end Kernel panic - not syncing: Asynchronous SError Interrupt ]---
-> 
-> The problem is present since linux-6.18-rc1, but not in linux-6.17. I also confirm the bug is present in linux-6.19-rc4.
-> 
-> The bug seems to be happening in rzg2l_mipi_dsi_host_transfer().
-> 
-> After bisecting, here is the first bad commit:
-> 
->      commit 56de5e305d4b ("clk: renesas: r9a07g044: Add MSTOP for RZ/G2L")
-> 
-> Reverting this change makes the bug disappear.
-> 
-> My limited understanding seems to indicate that the MIPI/DSI host may
-> no longer be available/on when the panel tries to send MIPI/DSI
-> commands in ili9881c_unprepare(), maybe because the MIPI/DSI clock has been stopped...
-> 
-> The exact same board with two other panels (jd9365da and st7703) doesn't have the bug.
+Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
 
-Could you please provide the output of command:
-
-cat /sys/kernel/debug/mstop
-
-for both cases?
-
-Also, could you please check if the following diff solves your problem:
-
-diff --git a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c 
-b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-index 5edd45424562..62957632a96f 100644
---- a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-+++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-@@ -1282,6 +1282,10 @@ static ssize_t 
-rzg2l_mipi_dsi_host_transfer(struct mipi_dsi_host *host,
-                 value |= SQCH0DSC0AR_FMT_SHORT;
-         }
-
-+       ret = pm_runtime_resume_and_get(dsi->dev);
-+       if (ret)
-+               return ret;
-+
-         rzg2l_mipi_dsi_link_write(dsi, SQCH0DSC0AR, value);
-
-         /*
-@@ -1322,6 +1326,8 @@ static ssize_t rzg2l_mipi_dsi_host_transfer(struct 
-mipi_dsi_host *host,
-                         ret = packet.payload_length;
-         }
-
-+       pm_runtime_put(dsi->dev);
-+
-         return ret;
-  }
-
-Thank you,
-Claudiu
-
-
+regards
+Philipp
