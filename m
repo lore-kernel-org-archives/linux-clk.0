@@ -1,258 +1,663 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from TYVP286CU001.outbound.protection.outlook.com (mail-japaneastazon11011063.outbound.protection.outlook.com [52.101.125.63])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD9F335CBD4
-	for <linux-clk@vger.kernel.org>; Fri,  9 Jan 2026 16:11:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767975109; cv=none; b=lJM1JuBQm/4bCG16Ar1mWO63TdSEhwCZIt6CzDumEp6m8Ip3aK1CUEZqHSFjkGoGL8qKwfD+nPFuR+5bSx0ELyZCbQd7AU4opKHWDH9tK2XYisgnTeX1xmov0WXHDJV6lMIR2W/4ZNToSEAc4lImLEyf282CIQrRbsoBQAIZnjg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767975109; c=relaxed/simple;
-	bh=bRsahIX3ht0GHBJx1blAhDC+PMafKVdC6FTNh9VJlp4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZssiR3R5Gii6JyqRCTyyB8CDQk8nX5aduWFDKKYSSZFZ7nKEGI+PX1czmvydtPvaJGonFOq8tTGPJWy5ecFhN8ZSXdHdYgQpkSau5MlBHfmNogorZaecmd4DXCLzQw+iG+DtcoZHMjG8fhLZ2K15kEJg4n61WXgzSZ8VUvxiH3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=LHHNohgL; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=Dki+qCnN; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE3CA274B3A;
+	Fri,  9 Jan 2026 16:14:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.125.63
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1767975253; cv=fail; b=jGztveos6jShsoW61lEneeMFWXnajpE+f/3ptG+scsovFLhCFPILqFWr1fY/hTNSaTPOSc8dXOE0GOA1/XsCTQysXkif1ko4Vxy5b0OO6sANoBEW72RX/B1btLAUpylXDIgUzvT7peLNSDLuyGuQ2BX95H0TcZ1ePqL1KzdmbBo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1767975253; c=relaxed/simple;
+	bh=6+heHwkkLDH/HDEb2rB1RMQrT+/BrJWoVv4SGY9tPT0=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=dm7IdunpAbHOnJWVT7yQ+oKxOp8R1IUGhJyRs2DGtm7RpDnb2UWxgsRQJ5scK3iIeMrkaeydJzUaMmC6rz1NeV8v7NPm6CqF9Weu5hEzfeq8jzP60cW3OKPK+fi69kxxp4WQunoBFsEsVG8uXDxQcbcJkZi+yB+cyHWgTDWzfYo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=NMfnLvYq; arc=fail smtp.client-ip=52.101.125.63
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="LHHNohgL";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="Dki+qCnN"
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 609Fjb2c822855
-	for <linux-clk@vger.kernel.org>; Fri, 9 Jan 2026 16:11:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	y0F3msY51CEG685pZ5Vd9mM1nAPXE1h7mU6gkqrwSxw=; b=LHHNohgL+h8Dn5BK
-	Ux0iUHBCy+yQettxBalskTQBCp9f7oc/8kKry1xzZZAg/e3HaDlMuSC1eH0k2mZv
-	NLdHhuDM1ICNanc+q02wF5T1l+Usdnj2MdK6MQcHS/Q6VnnEnRDvaDV6wLA1lldb
-	ypeirGKyy1Zqh1J3qSsREe8bJxe+iRebKpO4DmkFW42xoHb2T+QTHt7djRdBeZAh
-	IXE7Efyg03dJBZQscswdBQASgMnfVelmSNrC5zcGzHVIOCrAv3T9OzC5IzQ6vcow
-	4X/1XN8dGT+CnXNDgHwnRIaTBslEI1RnXfBK8h1plNlHnK+Yg27Rb4uX6AveXiZ7
-	cB4S0w==
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4bjx94hbya-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Fri, 09 Jan 2026 16:11:47 +0000 (GMT)
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-8b259f0da04so1099700685a.0
-        for <linux-clk@vger.kernel.org>; Fri, 09 Jan 2026 08:11:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1767975106; x=1768579906; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=y0F3msY51CEG685pZ5Vd9mM1nAPXE1h7mU6gkqrwSxw=;
-        b=Dki+qCnNjIH3V341Y0rvruCGF2FZT2JAlbqHfGdh7AMjNwTtx6r/ststKlcaFjLLzr
-         qdkMJaeV+F3JU9TQTY5xnybM002XEtcv/BCczXJKjrsqehbbHm3kEz/FFewPKR4s0b4F
-         Em/ZcFJbzo+t98NXTe6DgeDDUf2BvUK1lyMyPutrPc+6V5DI3DJ9Cs760dDlQBm3wxhr
-         b0+H+2v3967rjo43h9+Qv8Xgp7jrUQ7TMNGJT2t3fq093rBACGoyZPsfmz7XKs+KP4mw
-         n7wiQ1ckcAfab5eHpzodyaoQVpsK8J/n6YD9SYlcOYFTY8kMt9AQ8XWVYl3EmU9mz6Kv
-         ZsSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767975106; x=1768579906;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=y0F3msY51CEG685pZ5Vd9mM1nAPXE1h7mU6gkqrwSxw=;
-        b=TDWzRSi0QdOZ3a8fMDDKlOfeZxj4EO1vPgM+G76h++Fpvf4GJpZvnK2FI3ujOSNz2/
-         Sn1x7EgyyN1tmhbyik4x043w4Diey3aULTD0livzXru2IlM21z1pxSVUCFcwWk9YNA8L
-         Jq0iD68wWjL2I5qOG7cXERLVvncaYxzM6y8ijmk58YhA5XkG387UZOj/V/0lSjcNUqZx
-         mng/EbIOD6BXHlw3AU8YDIWrRWb5vKcEF1VXYQw1nvvYa3MShi89D0ycFASSSrezd2C5
-         uLam93glI0chLQnJB8gdxkEEILqTgJ4Q6tDOqa2/tuRG4bgrqzKpwp5lIDrlwFN/DjNt
-         csWA==
-X-Forwarded-Encrypted: i=1; AJvYcCUJCRG0ZdIGfDq5Grx3uPlXO2sfSUvTSu0niwEJ1gI7WGPaRx3+72dcK6n1RW8PjWGzF6SQbA2GMys=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFhKMKTftBm6Ha76vTNDsIgn60ZjQ8MjCVEv3xTxvZtt2aowey
-	gRNxbiuiXxRwcUu63DoSHiCFHdANcv7UgTYbkW/NMEmJJjkqdyKqrslNuXTJ1Yga3BEvu8f9SwV
-	yz8h8TzGC9aVGyE644TLcdnoqxBAr18Qxv9UBuTO+RD/of96zil2VoV54+c2ioIw=
-X-Gm-Gg: AY/fxX7q5TiYGi4TzhyK3wBnvkKo1OTvNKIq6PzZatxXlIpdsQZsJHhi06/Y/N3q7nS
-	mHSAXrzfATlNBzCFVCO9el5fGAwVNl+kXQ3g9ireCoNSkuOHuAeWqSLCvHTIxl4kkq1ruiM5KTU
-	szCXwx/h8/Q6UAGfbkc6dm8Xt/xiETZ6eGDsq5hywqyh3qLKNSu9567IQiU4VOMPD9LBmoEb1pN
-	xIFzi9mF7WeOdoxe8rTsT8dsnDCfuhF4NknajKzJMnRuWI41yXFfbIDS3ZrMY9MvzJZbdLdelI+
-	qLvWzpXsvVqad2tjvjQpxS6GSLKRo8q5IAeKQPiymLoPoFk+ohIbTq6h9hvsP4U8/r260zMM6l8
-	0lxDjluwdPvIWqP0eYEwr96eeRBQfZGgUkjC+5Q==
-X-Received: by 2002:a05:620a:2849:b0:8b1:f1e4:a3d2 with SMTP id af79cd13be357-8c3893917c6mr1302267585a.24.1767975106083;
-        Fri, 09 Jan 2026 08:11:46 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGy5T1E7jUrBX1bssLpIPnC4OcyFtfkLbBfyt51Wt45hTzCQ0qm3TofJwyMoPJOoK6/cA59Eg==
-X-Received: by 2002:a05:620a:2849:b0:8b1:f1e4:a3d2 with SMTP id af79cd13be357-8c3893917c6mr1302260485a.24.1767975105583;
-        Fri, 09 Jan 2026 08:11:45 -0800 (PST)
-Received: from [192.168.1.29] ([178.197.218.229])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b842a4d31e7sm1189140466b.42.2026.01.09.08.11.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 09 Jan 2026 08:11:44 -0800 (PST)
-Message-ID: <09bc1f51-1836-4981-9fec-e3385c61aac6@oss.qualcomm.com>
-Date: Fri, 9 Jan 2026 17:11:41 +0100
+	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="NMfnLvYq"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=g/AgZlGali6Fw4evU3G7RJEYbzxmvnK3hgBk3cX6Jxp+powrZsqUZYPOOPPmuUAlhC+4XwiJ+lAbtPtJPm2uq4DF+FvA8CaLg9nuEXveuEizQYautoYvakoQ9LcZnNOhLJg+x8gg6mudgfROwJI4+ecu/oLw+ZCySrA+yugkOtvRIvTq8WXTV/qNY+kaB4ZdBIr2bM6DUJmsZObzGe8cgbIUisQ7CBCCaKwYzhl9VJJ9gZrZ9ScbcmI3gUBBFu/NRJSXAuN3br+JkHuQSe1XXyXU1QclleiFeXkVB3oeZbSK/bbyJ2d9ca+YaR/25wGC68ad4z00AoF14zkHMrGp7A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ntw8Snk8191vuehTNEyL1QsJnBFjBSe27ZjlLViXezg=;
+ b=Nd9sMQWKzoEd13eUR48KA7RszX79jy7jWcmAWv/1dt+h3nOBRXMogw5gWGVRzfe4N3tnIte4wnFvMkIASuLjk3gRP/O1xQBb/PqK3aKmOlbN2DVlNA3KAZ66VCZ7qG2YCSSkE4t/qfrcE4hrqHj5hsPuCATZlVAZ3JYjYRBhBpH8veZMFF9wLRVtfolza/USO49hvgBrFgHXupiVTRxPgeWakvZ0VX7H6dNn/hcAac5ScKuBI1JHvuIqn33NWE8IAUQZ8jkaVCmKyaguh1CawWvFY++qacikGlB3r8bYIKnaKC76g1Dbj1pgHEc/9fbdOcKE0FYljliROeXzPdJwpw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ntw8Snk8191vuehTNEyL1QsJnBFjBSe27ZjlLViXezg=;
+ b=NMfnLvYqCd7cOPtuSMTXpOstdHmO892Brjno/yoN28hVsLE73Re+ox/0OPtwkbhfKu0djRNDUdjkTT55eE1Ado8ritQ0qdWcln1V1h4f3MJUaXn2uVJXyEq8x4z3pK9rTXKW5qruwAitLCSFnV2B3m/u4k1QdZmKnSFHYG2g6Fw=
+Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com (2603:1096:400:3d0::7)
+ by TY4PR01MB15234.jpnprd01.prod.outlook.com (2603:1096:405:26a::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9520.1; Fri, 9 Jan
+ 2026 16:14:03 +0000
+Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com
+ ([fe80::86ef:ca98:234d:60e1]) by TY3PR01MB11346.jpnprd01.prod.outlook.com
+ ([fe80::86ef:ca98:234d:60e1%6]) with mapi id 15.20.9520.001; Fri, 9 Jan 2026
+ 16:14:03 +0000
+From: Biju Das <biju.das.jz@bp.renesas.com>
+To: Hugo Villeneuve <hugo@hugovil.com>
+CC: Claudiu.Beznea <claudiu.beznea@tuxon.dev>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Claudiu Beznea
+	<claudiu.beznea.uj@bp.renesas.com>, Neil Armstrong
+	<neil.armstrong@linaro.org>, Jessica Zhang <jesszhan0024@gmail.com>, Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+	<mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Chris Brandt
+	<Chris.Brandt@renesas.com>
+Subject: RE: [BUG] drm/panel: ilitek-ili9881c: kernel panic on reboot
+Thread-Topic: [BUG] drm/panel: ilitek-ili9881c: kernel panic on reboot
+Thread-Index:
+ AQHcgH7+LfMjCpngTEmutarkKkFyQ7VIbNOAgAAJDQCAABf9AIAAOKJggAErDACAAA5bAIAAAQMAgAAAT8CAAAGGgIAAARPg
+Date: Fri, 9 Jan 2026 16:14:03 +0000
+Message-ID:
+ <TY3PR01MB113461A7892183DDCDB7720C98682A@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+References: <20260107164839.a490a194d975edc399d72d01@hugovil.com>
+	<f2aaa95a-fb69-46d8-ba0b-fdc793273455@tuxon.dev>
+	<20260108105319.6bef21d3fc60b261792d07c6@hugovil.com>
+	<TY3PR01MB11346AA75CAA2496A06BCEC438685A@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+	<20260108125134.6ce05fd214a217a37de9ed4b@hugovil.com>
+	<TY3PR01MB113467DBEE7A2A0B3A93050788685A@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+	<20260109100436.f499618affc1fecd11c25097@hugovil.com>
+	<TY3PR01MB11346170A13E303D80369DE128682A@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+	<20260109105936.111c6ce42243eedafa7ad02c@hugovil.com>
+	<TY3PR01MB1134663A44CD9ECB52EFDB9378682A@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <20260109110609.868b0e75ebaefca898e8393e@hugovil.com>
+In-Reply-To: <20260109110609.868b0e75ebaefca898e8393e@hugovil.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=bp.renesas.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TY3PR01MB11346:EE_|TY4PR01MB15234:EE_
+x-ms-office365-filtering-correlation-id: d59cb62d-a949-4bdd-17f3-08de4f9a1b19
+x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|7416014|376014|1800799024|366016|38070700021;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?pzqJpBs3kLaFGLYnmRnxVCGjQBWFvmCVkeEzCHjOk7D/S3QiESFZT7+N+8We?=
+ =?us-ascii?Q?uZojUMtGxkkrTPKI+/gk8RGCJcPt7IJeT+9W3GwlPGmMcQpbnaacqn1S/5vK?=
+ =?us-ascii?Q?/TagaLzcGSaGwgcwSZ/FBJ7AS14tAdMMcc3psschSPq1UuTaRBJz1VYMGVMg?=
+ =?us-ascii?Q?Rm+v+8xHro8fm2en2PiWv7ho+Tvne7bJqnM6eMoOrPZxGOcT6vgw5/F9LKUt?=
+ =?us-ascii?Q?8X+PxZVgiNK/bPAGM2gfHr3zTZyABVtll93wI0MGQKlR7b42LoD0uy3IB/Lk?=
+ =?us-ascii?Q?NfKJJrmHCHVk2iaDOByVNd7B6VbVXWLrAb8TKvuovGMBntzp47NmRESl7cW8?=
+ =?us-ascii?Q?vd68YN2qXdWk+53CW/Nc6biW7UzY0U8KIIeoplE/aZFv4OceVQZKviP4XgZO?=
+ =?us-ascii?Q?5qLEKFWfv2adb73tsEwI0mae03145YLV/EgrFcQuGotVKEGVxY3IdMdQejpV?=
+ =?us-ascii?Q?FIjVzPFp1ROv5vIpvx8G0BTLhOJ0j1DI/8A4tge/y+0nXj8LnWc5ugn+csy6?=
+ =?us-ascii?Q?k+1alcG6DB3C0An/LYpih+7sWfq5lFGEPS3++1SG0Ww2eF6NSZiCuU717mqp?=
+ =?us-ascii?Q?d5i0FZeVjmbVBRIRgxomfNvKFT8EEbBM+fGSEhb53bYVYXoY2j9xIXlh3LiU?=
+ =?us-ascii?Q?WJEmWINrb3bQXicAi+7vsRvNXDrk8LgcRA95yNnr758ouxF1OaJBy6jc7Sp1?=
+ =?us-ascii?Q?FlzRYlKC8xu+LiGwwUaAXiHlDk+Gp0qSmAneVnPzzv6k5qSP4Z7pBdqU46Td?=
+ =?us-ascii?Q?CbIrUkO78c3IqJ1aw/DAvjziAmqU91HIASCXWfCXQBKtYU07kEPdXBYIVKNG?=
+ =?us-ascii?Q?Kt92LnsKSa6p6x20L4UzZ0jJ6CI05mLdVGz1kICw2t2TDThT/ex+u9s3xyt9?=
+ =?us-ascii?Q?s+z0Md2/jrzVyTQ2JdvaSRL+FLbdEnddxN1FSiNzFlVIizObR713U/+/+4Oz?=
+ =?us-ascii?Q?q9v4u7DkV44FE+aM8+H11oFUtYOhgKtWITMVICjEQsX7fnLGu3JQKD6xzgP9?=
+ =?us-ascii?Q?lVC0kMgtJVlzkucdgwzwcCA4AMWW1gpVWveznwf4tNPfrx0KyXhr6wIIDSxi?=
+ =?us-ascii?Q?4wAuRq91SyjrDrE3RRqHrKTgsElU1oW9MhzfvnGkqktAazfm2+EjURDvSzZh?=
+ =?us-ascii?Q?CMx6TOdte7cCz9a/UBQWGLP9pCxqgZ1qgJBVAUPd4AzsstSPqR7ec5odq9Fc?=
+ =?us-ascii?Q?/GS9jOctSaPTiJ1n7dcTwwxYge3q7hlWwu2iiuig2GR/A7C/1ie7nI6NkObH?=
+ =?us-ascii?Q?6sJDQ8HuUJegW7TICk8z0hCfB8rMSdgDGjz2omDTBx/Dyx3sMad5aJYGZ1eH?=
+ =?us-ascii?Q?WmbXYiBtaTfEmqjCW1qH07S+k6LkwSyIVqAywF/EiHrA5l/9bgxv8nrScKEY?=
+ =?us-ascii?Q?WFFOPY57ZaXahHh6zmzCqDoPUL6yS8xd7V1umEDRhrjRNq7NGB2ypcceO0G2?=
+ =?us-ascii?Q?taKX0rxtQ/0igj/CswA5ncH5wI80bewwlD2AUpNu4rWQG1PNHTK3TJVRit64?=
+ =?us-ascii?Q?wIG/pTcjkIT+ubHfGbr8MZGqkzuNozXTnBi4?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11346.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?2JFv9N/HI9a9CkEBqCRfMKpRMk3OtLJpmgl8KDFoEicQX7xk+zRrepsZi9A/?=
+ =?us-ascii?Q?vWq9LTu1mvZ29Ybpqxy+JqPli+m3UjVcHjtk8t0GiU3sgqyjyySkUMK+hLry?=
+ =?us-ascii?Q?4gU4o8uhdadLYVZ9s0Q8Y9DQIaQ2W9AuzPCHqW4JjrWtW51fKWpG2NvxKyMy?=
+ =?us-ascii?Q?ZFzCnmlg2wGGoG2JcTdc2c0fwpTafj812k7/+ywMFeyG91J5fKZkyeCrBP5U?=
+ =?us-ascii?Q?Wxy8EWbXHZ6dWHSsRJI5VojlxZkphfnAFlTj0Hef7/1e0x3nmSgE9olC8QLT?=
+ =?us-ascii?Q?l53eXzW6lMnADDcVvRE765LJND+7ovQ7JNjwVyi2SUH+hazkMBuD2DyWcXTd?=
+ =?us-ascii?Q?jIv9EXiqfKpoOcpJfy1bTDW61fI+cNFEHpVs+S6+yWhrRWUKxb0hs/l0w7jX?=
+ =?us-ascii?Q?V45EAoTf0KRBiNq4hSXUhNxHo7UCQXwWEdzew0FIRGAcHpOZHn3lL9I6h7tP?=
+ =?us-ascii?Q?vDsr53gJrq5FClplHjEfMIpslyntMerFXfq1fVFzCbdTJSawkxbW7UMjQYqT?=
+ =?us-ascii?Q?JW6fP41XDDo+CEKovtCEVApw5VDeYAFD3VrUDkD+01XOwEZOBdgUn0IoImLu?=
+ =?us-ascii?Q?Di4wa1WWAvSrfGuCPH39q8dsHWjfcGHCW+XPvnTVkPZWVFzu7I0kGoaMUGBc?=
+ =?us-ascii?Q?PpodM0DMtuPxmPzPWynSEzxQDhfffKRhMgcdlLBCuBqY2BOq4/XUASzrSQny?=
+ =?us-ascii?Q?7jhQZht7ltddxpQzrYGphAumTfwfp5or6TJbGY2kzajMyu6kdoB6rpBjqP3Y?=
+ =?us-ascii?Q?hfReWqr3FCVgV9i/GpGMj+Yp6YVB6iSVB0Ii4RKisDxCio0G3SaX4+VJK797?=
+ =?us-ascii?Q?6XHEMV82AAzXbLOnBZQRVF51Ef7xkH3jYvPW1FT62/vW038foR5SR85Q6RBY?=
+ =?us-ascii?Q?1ODpMzj/AxPAsoIfRT2YCLf6O/Rbd74x1YmdDp0nRhiN5GCdu4JSInk7DeKa?=
+ =?us-ascii?Q?nRQs/zbw/+huPNZWecHDsKg8mMguRI9r8kH/znlj7uocA2I2t93N0Zy9NCs/?=
+ =?us-ascii?Q?+cCF567xhrTQr5dEiq2iVK9nlDtd/Y0pFpkB59rjkm+5u8NTqRhPlKWEbQx7?=
+ =?us-ascii?Q?XI2/oPDMzthfdC0wJ7TPHeZv5bDxfnko2C2F/PwdTyZkAKL8FEjR/ptgzQ4D?=
+ =?us-ascii?Q?hsjpKI+OxkORcE/UWxMDGbLS4Ecw7sDvVAjypdelO5bTfQbYbEtarUTJLqTv?=
+ =?us-ascii?Q?aqLBYfAcwNilgoiIBdUzZ+RHgqE7fnoGv6Hs9wcPiqzoTuKfWuKPOzImoCse?=
+ =?us-ascii?Q?GhnO5p6uJsHxT+Sh3LqGqq1oGBkKTR+mWIYGF3BWQwGlYSgNcy/4IB4ZSkF2?=
+ =?us-ascii?Q?ahLzyNnAm6QEtgyjjQiPevQUTOKvoqcFvYqL055cVQKQWqIZUnEjfNX5tJOO?=
+ =?us-ascii?Q?zFw8LowVzPru0JAimiOkSdlDsnUh+D7P4lm3JrHWch0vRLjtKBVLGMzHqP2B?=
+ =?us-ascii?Q?v8SoECyLpVyn4WEgEE7SuLyzDF9XbHWv/OLAHz8FIZmcU7vGsvExEUFa+NzW?=
+ =?us-ascii?Q?fJda0GTgLAyKZ1i804NGINC6zp9L1XbHrEJhwfulOcgImPEp8gcAc3ZhzQOK?=
+ =?us-ascii?Q?cvAhMVBFfo7DVpJt7mQoS8wZ5e7TK1TZOKaBrMPe4WHrYUtEetz74zAvTqV+?=
+ =?us-ascii?Q?WSjwJfadFqu9QAPrO2vdCjU/M7OEJhUFA6LPuUslX/hwuv5Awiu+jhc6Qwtu?=
+ =?us-ascii?Q?EVXpWPtCPPKNbhN+sodX7xheTvbM8yuzsbn4/AdhI2etHdedgvl4eH4yCEFu?=
+ =?us-ascii?Q?Q+hZIXu5dg=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 06/11] cdx: Simplify with scoped for each OF child loop
-To: Jonathan Cameron <jonathan.cameron@huawei.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Rob Herring <robh@kernel.org>,
-        Saravana Kannan <saravanak@google.com>,
-        Nathan Chancellor
- <nathan@kernel.org>,
-        Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-        Bill Wendling <morbo@google.com>,
-        Justin Stitt <justinstitt@google.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Alim Akhtar
- <alim.akhtar@samsung.com>,
-        Madhavan Srinivasan <maddy@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        "Christophe Leroy (CS GROUP)" <chleroy@kernel.org>,
-        Nipun Gupta <nipun.gupta@amd.com>,
-        Nikhil Agarwal <nikhil.agarwal@amd.com>,
-        Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>, Vinod Koul <vkoul@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, llvm@lists.linux.dev,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-clk@vger.kernel.org, imx@lists.linux.dev,
-        dmaengine@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-pm@vger.kernel.org
-References: <20260105-of-for-each-compatible-scoped-v1-0-24e99c177164@oss.qualcomm.com>
- <20260105-of-for-each-compatible-scoped-v1-6-24e99c177164@oss.qualcomm.com>
- <20260106101733.000059e9@huawei.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@oss.qualcomm.com; keydata=
- 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
- cwzYbmi/Et7T2+47PN9NZAOyb771QoVr8A==
-In-Reply-To: <20260106101733.000059e9@huawei.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=RN2+3oi+ c=1 sm=1 tr=0 ts=696128c3 cx=c_pps
- a=HLyN3IcIa5EE8TELMZ618Q==:117 a=Eb9f15NH/cHKzfGOmZSO4Q==:17
- a=IkcTkHD0fZMA:10 a=vUbySO9Y5rIA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=XFS3ILgPfShOvr1i8A8A:9
- a=QEXdDO2ut3YA:10 a=bTQJ7kPSJx9SKPbeHEYW:22
-X-Proofpoint-GUID: L-RwNmaFkzwHGTMdqDbxf1xBo7nYC1yE
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTA5MDEyMSBTYWx0ZWRfX/4gPPmV2+CqG
- Uk6+fg2S9hw8xHh65eDN9hEn1rtZ2CnU9OSIRaV4Zzuq989+yoYKzfokYeBQST5kZXQjI04YvSY
- i48Xe5EKSihZgMfzCZdsRPlJn/1if+deL3fflL9ETRZ5vr6FKp4d1GF+om8EEx0OdN5KuEbVqc7
- 1koWb8vLyPQMUM9O+N1LstqRk3VJXaJ2G4rgEFzP036TjT3z+91vG80K2T+C2HyuYX8TUSkufJ7
- SVoVZmqHpk0l7vwtbUhbIscHbZgjBcDrDkBtFlSjIthfgyLG8skARVrr0xPe2nXxZIEQFEZWc3t
- PRG5W+1wQ5PWIQUa5sXrbtvzBxR3/531PbZw7fX+/8Ji4UBwdiq7qJjEKk5JWBhu5LA1cyuxcXU
- x8v8gajemfF49bNrdg2lSJ9IOl3ASekUs664CuVLqYt3mUtxiGXfKQ3mp1o7tDoF5TyEHbR6ROR
- IEB+YKOk4g4giXT3CCQ==
-X-Proofpoint-ORIG-GUID: L-RwNmaFkzwHGTMdqDbxf1xBo7nYC1yE
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2026-01-09_04,2026-01-08_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 spamscore=0 lowpriorityscore=0 priorityscore=1501 phishscore=0
- malwarescore=0 impostorscore=0 adultscore=0 bulkscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2512120000 definitions=main-2601090121
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11346.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d59cb62d-a949-4bdd-17f3-08de4f9a1b19
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Jan 2026 16:14:03.1355
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 0mPRV/8eBtnX4lfnvLIRS3USuAarOj7lRN6vSfvAJtUVK9sH5s6DC9/lZ8rSKT+Vrz0VDDlj1XZtzd2/sLOtUKOMVfKZ6/OSmdtPoYDLhNU=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY4PR01MB15234
 
-On 06/01/2026 11:17, Jonathan Cameron wrote:
-> On Mon, 05 Jan 2026 14:33:44 +0100
-> Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com> wrote:
-> 
->> Use scoped for-each loop when iterating over device nodes to make code a
->> bit simpler.
->>
->> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-> I'd be tempted to make one more tweak in this one to bring
-> it inline with the suggestions around not combining scoped cleanups
-> with gotos (see the comments in cleanup.h)
-> 
-> No bug here, just nice to have.
->>
->> ---
->>
->> Depends on the first patch.
->> ---
->>  drivers/cdx/cdx.c | 4 +---
->>  1 file changed, 1 insertion(+), 3 deletions(-)
->>
->> diff --git a/drivers/cdx/cdx.c b/drivers/cdx/cdx.c
->> index b39af2f1937f..bbde529aaa93 100644
->> --- a/drivers/cdx/cdx.c
->> +++ b/drivers/cdx/cdx.c
->> @@ -608,7 +608,6 @@ static ssize_t rescan_store(const struct bus_type *bus,
->>  {
->>  	struct cdx_controller *cdx;
->>  	struct platform_device *pd;
->> -	struct device_node *np;
->>  	bool val;
->>  
->>  	if (kstrtobool(buf, &val) < 0)
->> @@ -623,10 +622,9 @@ static ssize_t rescan_store(const struct bus_type *bus,
->>  	cdx_unregister_devices(&cdx_bus_type);
->>  
->>  	/* Rescan all the devices */
->> -	for_each_compatible_node(np, NULL, compat_node_name) {
->> +	for_each_compatible_node_scoped(np, NULL, compat_node_name) {
->>  		pd = of_find_device_by_node(np);
->>  		if (!pd) {
->> -			of_node_put(np);
->>  			count = -EINVAL;
->>  			goto unlock;
-> break instead.
-> Or better yet a follow up patch to use guard() for the mutex allowing a
-> direct return here.
+Hi Hugo,
 
-Oh yes and it allows to drop that -EINVAL assignment to size_t.
+> -----Original Message-----
+> From: Hugo Villeneuve <hugo@hugovil.com>
+> Sent: 09 January 2026 16:06
+> Subject: Re: [BUG] drm/panel: ilitek-ili9881c: kernel panic on reboot
+>=20
+> Hi Biju,
+>=20
+> On Fri, 9 Jan 2026 16:03:29 +0000
+> Biju Das <biju.das.jz@bp.renesas.com> wrote:
+>=20
+> > Hi Hugo,
+> >
+> > > -----Original Message-----
+> > > From: Hugo Villeneuve <hugo@hugovil.com>
+> > > Sent: 09 January 2026 16:00
+> > > Subject: Re: [BUG] drm/panel: ilitek-ili9881c: kernel panic on
+> > > reboot
+> > >
+> > > Hi Biju,
+> > >
+> > > On Fri, 9 Jan 2026 15:57:17 +0000
+> > > Biju Das <biju.das.jz@bp.renesas.com> wrote:
+> > >
+> > > > Hi Hugo,
+> > > >
+> > > > > -----Original Message-----
+> > > > > From: dri-devel <dri-devel-bounces@lists.freedesktop.org> On
+> > > > > Behalf Of Hugo Villeneuve
+> > > > > Sent: 09 January 2026 15:05
+> > > > > Subject: Re: [BUG] drm/panel: ilitek-ili9881c: kernel panic on
+> > > > > reboot
+> > > > >
+> > > > > Hi Biju,
+> > > > >
+> > > > > On Thu, 8 Jan 2026 21:21:00 +0000 Biju Das
+> > > > > <biju.das.jz@bp.renesas.com> wrote:
+> > > > >
+> > > > > > Hi Hugo,
+> > > > > >
+> > > > > > > From: Hugo Villeneuve <hugo@hugovil.com>
+> > > > > > > Sent: 08 January 2026 17:52
+> > > > > > > Subject: Re: [BUG] drm/panel: ilitek-ili9881c: kernel panic
+> > > > > > > on reboot
+> > > > > > >
+> > > > > > > Hi Biju,
+> > > > > > >
+> > > > > > > On Thu, 8 Jan 2026 16:44:37 +0000 Biju Das
+> > > > > > > <biju.das.jz@bp.renesas.com> wrote:
+> > > > > > >
+> > > > > > > > Hi Hugo Villeneuve,
+> > > > > > > >
+> > > > > > > > > -----Original Message-----
+> > > > > > > > > From: Hugo Villeneuve <hugo@hugovil.com>
+> > > > > > > > > Sent: 08 January 2026 15:53
+> > > > > > > > > Subject: Re: [BUG] drm/panel: ilitek-ili9881c: kernel
+> > > > > > > > > panic on reboot
+> > > > > > > > >
+> > > > > > > > > Hi Claudiu,
+> > > > > > > > >
+> > > > > > > > > On Thu, 8 Jan 2026 11:12:54 +0200 Claudiu Beznea
+> > > > > > > > > <claudiu.beznea@tuxon.dev> wrote:
+> > > > > > > > >
+> > > > > > > > > > Hi, Hugo,
+> > > > > > > > > >
+> > > > > > > > > > On 1/7/26 23:48, Hugo Villeneuve wrote:
+> > > > > > > > > > > Hi,
+> > > > > > > > > > > when issuing a reboot command, I encounter the follow=
+ing kernel panic:
+> > > > > > > > > > >
+> > > > > > > > > > > [   36.183478] SError Interrupt on CPU1, code 0x00000=
+000be000011 -- SError
+> > > > > > > > > > > [   36.183492] CPU: 1 UID: 0 PID: 1 Comm: systemd-shu=
+tdow Tainted: G   M
+> > > > > > > 6.19.0-
+> > > > > > > > > rc4-arm64-renesas-00019-g067a81578add #62 NONE
+> > > > > > > > > > > [   36.183504] Tainted: [M]=3DMACHINE_CHECK
+> > > > > > > > > > > [   36.183507] Hardware name: Gecko ECO2 nxtpad (DT)
+> > > > > > > > > > > [   36.183512] pstate: 80400005 (Nzcv daif +PAN -UAO =
+-TCO -DIT -SSBS BTYPE=3D--)
+> > > > > > > > > > > [   36.183519] pc : rzg2l_mipi_dsi_host_transfer+0x11=
+4/0x458
+> > > > > > > > > > > [   36.183538] lr : rzg2l_mipi_dsi_host_transfer+0x98=
+/0x458
+> > > > > > > > > > > [   36.183547] sp : ffff8000813db860
+> > > > > > > > > > > [   36.183550] x29: ffff8000813db890 x28: ffff800080c=
+602c0 x27: ffff000009dd7450
+> > > > > > > > > > > [   36.183563] x26: ffff800080c5fcc0 x25: ffff000009d=
+d7450 x24: ffff800080e1f7a8
+> > > > > > > > > > > [   36.183573] x23: ffff000009dd7400 x22: 00000000000=
+00000 x21: ffff000009dd7430
+> > > > > > > > > > > [   36.183582] x20: ffff8000813db8e8 x19: 00000000020=
+50028 x18: 00000000ffffffff
+> > > > > > > > > > > [   36.183592] x17: 0000000000000000 x16: 00000000000=
+00000 x15: ffff8000813db220
+> > > > > > > > > > > [   36.183602] x14: 0000000000000000 x13: ffff8000812=
+55bc0 x12: 00000000000009a2
+> > > > > > > > > > > [   36.183611] x11: 0000000000000336 x10: ffff8000812=
+b28d0 x9 : ffff800081255bc0
+> > > > > > > > > > > [   36.183621] x8 : ffff800081399000 x7 : ffff00000a0=
+42600 x6 : 0000000000000000
+> > > > > > > > > > > [   36.183631] x5 : 0000000000000805 x4 : 00000000020=
+00000 x3 : 0000000000000028
+> > > > > > > > > > > [   36.183640] x2 : 0000000049627000 x1 : ffff800080c=
+60b40 x0 : ffff800081780000
+> > > > > > > > > > > [   36.183652] Kernel panic - not syncing: Asynchrono=
+us SError Interrupt
+> > > > > > > > > > > [   36.183657] CPU: 1 UID: 0 PID: 1 Comm: systemd-shu=
+tdow Tainted: G   M
+> > > > > > > 6.19.0-
+> > > > > > > > > rc4-arm64-renesas-00019-g067a81578add #62 NONE
+> > > > > > > > > > > [   36.183665] Tainted: [M]=3DMACHINE_CHECK
+> > > > > > > > > > > [   36.183668] Hardware name: devboard1 (DT)
+> > > > > > > > > > > [   36.183672] Call trace:
+> > > > > > > > > > > [   36.183675]  show_stack+0x18/0x24 (C)
+> > > > > > > > > > > [   36.183692]  dump_stack_lvl+0x34/0x8c
+> > > > > > > > > > > [   36.183702]  dump_stack+0x18/0x24
+> > > > > > > > > > > [   36.183708]  vpanic+0x314/0x35c
+> > > > > > > > > > > [   36.183716]  nmi_panic+0x0/0x64
+> > > > > > > > > > > [   36.183722]  add_taint+0x0/0xbc
+> > > > > > > > > > > [   36.183728]  arm64_serror_panic+0x70/0x80
+> > > > > > > > > > > [   36.183735]  do_serror+0x28/0x68
+> > > > > > > > > > > [   36.183742]  el1h_64_error_handler+0x34/0x50
+> > > > > > > > > > > [   36.183751]  el1h_64_error+0x6c/0x70
+> > > > > > > > > > > [   36.183758]  rzg2l_mipi_dsi_host_transfer+0x114/0x=
+458 (P)
+> > > > > > > > > > > [   36.183770]  mipi_dsi_device_transfer+0x44/0x58
+> > > > > > > > > > > [   36.183781]  mipi_dsi_dcs_set_display_off_multi+0x=
+9c/0xc4
+> > > > > > > > > > > [   36.183792]  ili9881c_unprepare+0x38/0x88
+> > > > > > > > > > > [   36.183802]  drm_panel_unprepare+0xbc/0x108
+> > > > > > > > > > > [   36.183814]  panel_bridge_atomic_post_disable+0x50=
+/0x60
+> > > > > > > > > > > [   36.183823]  drm_atomic_bridge_call_post_disable+0=
+x24/0x4c
+> > > > > > > > > > > [   36.183835]  drm_atomic_bridge_chain_post_disable+=
+0xa8/0x100
+> > > > > > > > > > > [   36.183845]  drm_atomic_helper_commit_modeset_disa=
+bles+0x2fc/0x5f8
+> > > > > > > > > > > [   36.183856]  drm_atomic_helper_commit_tail_rpm+0x2=
+4/0x7c
+> > > > > > > > > > > [   36.183865]  commit_tail+0xa4/0x18c
+> > > > > > > > > > > [   36.183874]  drm_atomic_helper_commit+0x17c/0x194
+> > > > > > > > > > > [   36.183884]  drm_atomic_commit+0x8c/0xcc
+> > > > > > > > > > > [   36.183892]  drm_atomic_helper_disable_all+0x200/0=
+x210
+> > > > > > > > > > > [   36.183901]  drm_atomic_helper_shutdown+0xa8/0x150
+> > > > > > > > > > > [   36.183911]  rzg2l_du_shutdown+0x18/0x24
+> > > > > > > > > > > [   36.183920]  platform_shutdown+0x24/0x34
+> > > > > > > > > > > [   36.183931]  device_shutdown+0x128/0x284
+> > > > > > > > > > > [   36.183938]  kernel_restart+0x44/0xa4
+> > > > > > > > > > > [   36.183950]  __do_sys_reboot+0x178/0x270
+> > > > > > > > > > > [   36.183959]  __arm64_sys_reboot+0x24/0x30
+> > > > > > > > > > > [   36.183968]  invoke_syscall.constprop.0+0x50/0xe4
+> > > > > > > > > > > [   36.183979]  do_el0_svc+0x40/0xc0
+> > > > > > > > > > > [   36.183988]  el0_svc+0x3c/0x164
+> > > > > > > > > > > [   36.183995]  el0t_64_sync_handler+0xa0/0xe4
+> > > > > > > > > > > [   36.184002]  el0t_64_sync+0x198/0x19c
+> > > > > > > > > > > [   36.184020] Kernel Offset: disabled
+> > > > > > > > > > > [   36.184022] CPU features: 0x200000,00020001,4000c5=
+01,0400720b
+> > > > > > > > > > > [   36.184028] Memory Limit: none
+> > > > > > > > > > > [   36.495305] ---[ end Kernel panic - not syncing: A=
+synchronous SError
+> Interrupt ]---
+> > > > > > > > > > >
+> > > > > > > > > > > The problem is present since linux-6.18-rc1, but not
+> > > > > > > > > > > in linux-6.17. I also confirm the bug is
+> > > > > > > > > present in linux-6.19-rc4.
+> > > > > > > > > > >
+> > > > > > > > > > > The bug seems to be happening in rzg2l_mipi_dsi_host_=
+transfer().
+> > > > > > > > > > >
+> > > > > > > > > > > After bisecting, here is the first bad commit:
+> > > > > > > > > > >
+> > > > > > > > > > >      commit 56de5e305d4b ("clk: renesas: r9a07g044:
+> > > > > > > > > > > Add MSTOP for
+> > > > > > > > > > > RZ/G2L")
+> > > > > > > > > > >
+> > > > > > > > > > > Reverting this change makes the bug disappear.
+> > > > > > > > > > >
+> > > > > > > > > > > My limited understanding seems to indicate that the
+> > > > > > > > > > > MIPI/DSI host may no longer be available/on when the
+> > > > > > > > > > > panel tries to send MIPI/DSI commands in
+> > > > > > > > > > > ili9881c_unprepare(), maybe because the MIPI/DSI
+> > > > > > > > > > > clock has been
+> > > > > > > stopped...
+> > > > > > > > > > >
+> > > > > > > > > > > The exact same board with two other panels (jd9365da =
+and st7703) doesn't have the
+> bug.
+> > > > > > > > > >
+> > > > > > > > > > Could you please provide the output of command:
+> > > > > > > > > >
+> > > > > > > > > > cat /sys/kernel/debug/mstop
+> > > > > > > > > >
+> > > > > > > > > > for both cases?
+> > > > > > > > >
+> > > > > > > > > Here it is for the panel which has the bug:
+> > > > > > > > >
+> > > > > > > > > ----------------------------------
+> > > > > > > > >                            MSTOP
+> > > > > > > > >                      clk   -------------------------
+> > > > > > > > > clk_name             cnt   cnt   off   val    shared
+> > > > > > > > > --------             ----- ----- ----- ------ ------
+> > > > > > > > > gic                  1     1     0xb80 0x0
+> > > > > > > > > ia55_clk             2     2     0xb70 0x0    ia55_pclk i=
+a55_clk
+> > > > > > > > > ia55_pclk            1     2     0xb70 0x0    ia55_pclk i=
+a55_clk
+> > > > > > > > > dmac_aclk            2     1     0xb80 0x0
+> > > > > > > > > dmac_pclk            1     1     0xb80 0x0
+> > > > > > > > > ostm0_pclk           0     0     0xb7c 0x10
+> > > > > > > > > ostm1_pclk           1     1     0xb7c 0x0
+> > > > > > > > > ostm2_pclk           1     1     0xb7c 0x0
+> > > > > > > > > mtu_x_mck            0     0     0xb64 0x4
+> > > > > > > > > gpt_pclk             1     1     0xb64 0x0
+> > > > > > > > > poeg_a_clkp          0     0     0xb64 0x20
+> > > > > > > > > poeg_b_clkp          0     0     0xb64 0x40
+> > > > > > > > > poeg_c_clkp          0     0     0xb64 0x80
+> > > > > > > > > poeg_d_clkp          0     0     0xb64 0x100
+> > > > > > > > > wdt0_pclk            1     2     0xb7c 0x0    wdt0_pclk w=
+dt0_clk
+> > > > > > > > > wdt0_clk             1     2     0xb7c 0x0    wdt0_pclk w=
+dt0_clk
+> > > > > > > > > wdt1_pclk            0     0     0xb7c 0x8    wdt1_pclk w=
+dt1_clk
+> > > > > > > > > wdt1_clk             0     0     0xb7c 0x8    wdt1_pclk w=
+dt1_clk
+> > > > > > > > > spi_clk2             0     0     0xb64 0x2    spi_clk2 sp=
+i_clk
+> > > > > > > > > spi_clk              0     0     0xb64 0x2    spi_clk2 sp=
+i_clk
+> > > > > > > > > sdhi0_imclk          1     4     0xb6c 0x0    sdhi0_imclk=
+ sdhi0_imclk2 sdhi0_clk_hs
+> > > sdhi0_aclk
+> > > > > > > > > sdhi0_imclk2         2     4     0xb6c 0x0    sdhi0_imclk=
+ sdhi0_imclk2 sdhi0_clk_hs
+> > > sdhi0_aclk
+> > > > > > > > > sdhi0_clk_hs         1     4     0xb6c 0x0    sdhi0_imclk=
+ sdhi0_imclk2 sdhi0_clk_hs
+> > > sdhi0_aclk
+> > > > > > > > > sdhi0_aclk           1     4     0xb6c 0x0    sdhi0_imclk=
+ sdhi0_imclk2 sdhi0_clk_hs
+> > > sdhi0_aclk
+> > > > > > > > > sdhi1_imclk          0     0     0xb6c 0x2    sdhi1_imclk=
+ sdhi1_imclk2 sdhi1_clk_hs
+> > > sdhi1_aclk
+> > > > > > > > > sdhi1_imclk2         0     0     0xb6c 0x2    sdhi1_imclk=
+ sdhi1_imclk2 sdhi1_clk_hs
+> > > sdhi1_aclk
+> > > > > > > > > sdhi1_clk_hs         0     0     0xb6c 0x2    sdhi1_imclk=
+ sdhi1_imclk2 sdhi1_clk_hs
+> > > sdhi1_aclk
+> > > > > > > > > sdhi1_aclk           0     0     0xb6c 0x2    sdhi1_imclk=
+ sdhi1_imclk2 sdhi1_clk_hs
+> > > sdhi1_aclk
+> > > > > > > > > gpu_clk              1     1     0xb80 0x0
+> > > > > > > > > cru_sysclk           0     0     0xb78 0x8    cru_sysclk =
+cru_vclk cru_pclk cru_aclk
+> > > > > > > > > cru_vclk             0     0     0xb78 0x8    cru_sysclk =
+cru_vclk cru_pclk cru_aclk
+> > > > > > > > > cru_pclk             0     0     0xb78 0x8    cru_sysclk =
+cru_vclk cru_pclk cru_aclk
+> > > > > > > > > cru_aclk             0     0     0xb78 0x8    cru_sysclk =
+cru_vclk cru_pclk cru_aclk
+> > > > > > > > > dsi_pll_clk          1     6     0xb78 0x0    dsi_pll_clk=
+ dsi_sys_clk dsi_aclk
+> dsi_pclk
+> > > > > dsi_vclk
+> > > > > > > > > dsi_lpclk
+> > > > > > > > > dsi_sys_clk          1     6     0xb78 0x0    dsi_pll_clk=
+ dsi_sys_clk dsi_aclk
+> dsi_pclk
+> > > > > dsi_vclk
+> > > > > > > > > dsi_lpclk
+> > > > > > > > > dsi_aclk             1     6     0xb78 0x0    dsi_pll_clk=
+ dsi_sys_clk dsi_aclk
+> dsi_pclk
+> > > > > dsi_vclk
+> > > > > > > > > dsi_lpclk
+> > > > > > > > > dsi_pclk             1     6     0xb78 0x0    dsi_pll_clk=
+ dsi_sys_clk dsi_aclk
+> dsi_pclk
+> > > > > dsi_vclk
+> > > > > > > > > dsi_lpclk
+> > > > > > > > > dsi_vclk             1     6     0xb78 0x0    dsi_pll_clk=
+ dsi_sys_clk dsi_aclk
+> dsi_pclk
+> > > > > dsi_vclk
+> > > > > > > > > dsi_lpclk
+> > > > > > > > > dsi_lpclk            1     6     0xb78 0x0    dsi_pll_clk=
+ dsi_sys_clk dsi_aclk
+> dsi_pclk
+> > > > > dsi_vclk
+> > > > > > > > > dsi_lpclk
+> > > > > > > > > lcdc_a               3     1     0xb78 0x0    lcdc_a lcdc=
+_p
+> > > > > > > > > lcdc_p               3     1     0xb78 0x0    lcdc_a lcdc=
+_p
+> > > > > > > > > lcdc_clk_d           3     1     0xb78 0x0
+> > > > > > > > > ssi0_pclk            0     0     0xb64 0x400  ssi0_pclk s=
+si0_sfr
+> > > > > > > > > ssi0_sfr             0     0     0xb64 0x400  ssi0_pclk s=
+si0_sfr
+> > > > > > > > > ssi1_pclk            0     0     0xb64 0x800  ssi1_pclk s=
+si1_sfr
+> > > > > > > > > ssi1_sfr             0     0     0xb64 0x800  ssi1_pclk s=
+si1_sfr
+> > > > > > > > > ssi2_pclk            0     0     0xb64 0x1000 ssi2_pclk s=
+si2_sfr
+> > > > > > > > > ssi2_sfr             0     0     0xb64 0x1000 ssi2_pclk s=
+si2_sfr
+> > > > > > > > > ssi3_pclk            0     0     0xb64 0x2000 ssi3_pclk s=
+si3_sfr
+> > > > > > > > > ssi3_sfr             0     0     0xb64 0x2000 ssi3_pclk s=
+si3_sfr
+> > > > > > > > > usb0_host            3     1     0xb6c 0x0
+> > > > > > > > > usb1_host            0     0     0xb6c 0x80
+> > > > > > > > > usb0_func            1     1     0xb6c 0x0
+> > > > > > > > > usb_pclk             5     1     0xb6c 0x0
+> > > > > > > > > eth0_axi             0     0     0xb6c 0x4    eth0_axi et=
+h0_chi
+> > > > > > > > > eth0_chi             0     0     0xb6c 0x4    eth0_axi et=
+h0_chi
+> > > > > > > > > eth1_axi             0     0     0xb6c 0x8    eth1_axi et=
+h1_chi
+> > > > > > > > > eth1_chi             0     0     0xb6c 0x8    eth1_axi et=
+h1_chi
+> > > > > > > > > i2c0                 0     0     0xb68 0x400
+> > > > > > > > > i2c1                 0     0     0xb68 0x800
+> > > > > > > > > i2c2                 0     0     0xb68 0x1000
+> > > > > > > > > i2c3                 0     0     0xb68 0x2000
+> > > > > > > > > scif0                2     1     0xb68 0x0
+> > > > > > > > > scif1                0     0     0xb68 0x4
+> > > > > > > > > scif2                0     0     0xb68 0x8
+> > > > > > > > > scif3                0     0     0xb68 0x10
+> > > > > > > > > scif4                0     0     0xb68 0x20
+> > > > > > > > > sci0                 0     0     0xb68 0x80
+> > > > > > > > > sci1                 0     0     0xb68 0x100
+> > > > > > > > > rspi0                0     0     0xb64 0x4000
+> > > > > > > > > rspi1                0     0     0xb64 0x8000
+> > > > > > > > > rspi2                0     0     0xb68 0x1
+> > > > > > > > > canfd                0     0     0xb68 0x200
+> > > > > > > > > gpio                 1     1     0xb70 0x0
+> > > > > > > > > adc_adclk            0     0     0xb68 0x4000 adc_adclk a=
+dc_pclk
+> > > > > > > > > adc_pclk             0     0     0xb68 0x4000 adc_adclk a=
+dc_pclk
+> > > > > > > > > tsu_pclk             1     1     0xb68 0x0
+> > > > > > > > > ----------------------------------
+> > > > > > > > >
+> > > > > > > > > I do not have acces to the other panels for the moment to=
+ run the same command.
+> > > > > > > > >
+> > > > > > > > >
+> > > > > > > > > > Also, could you please check if the following diff solv=
+es your problem:
+> > > > > > > > > >
+> > > > > > > > > > diff --git
+> > > > > > > > > > a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
+> > > > > > > > > > b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
+> > > > > > > > > > index 5edd45424562..62957632a96f 100644
+> > > > > > > > > > --- a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
+> > > > > > > > > > +++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
+> > > > > > > > > > @@ -1282,6 +1282,10 @@ static ssize_t
+> > > > > > > > > > rzg2l_mipi_dsi_host_transfer(struct mipi_dsi_host *host=
+,
+> > > > > > > > > >                  value |=3D SQCH0DSC0AR_FMT_SHORT;
+> > > > > > > > > >          }
+> > > > > > > > > >
+> > > > > > > > > > +       ret =3D pm_runtime_resume_and_get(dsi->dev);
+> > > > > > > > > > +       if (ret)
+> > > > > > > > > > +               return ret;
+> > > > > > > > > > +
+> > > > > > > > > >          rzg2l_mipi_dsi_link_write(dsi, SQCH0DSC0AR,
+> > > > > > > > > > value);
+> > > > > > > > > >
+> > > > > > > > > >          /*
+> > > > > > > > > > @@ -1322,6 +1326,8 @@ static ssize_t
+> > > > > > > > > > rzg2l_mipi_dsi_host_transfer(struct
+> > > > > > > > > > mipi_dsi_host *host,
+> > > > > > > > > >                          ret =3D packet.payload_length;
+> > > > > > > > > >          }
+> > > > > > > > > >
+> > > > > > > > > > +       pm_runtime_put(dsi->dev);
+> > > > > > > > > > +
+> > > > > > > > > >          return ret;
+> > > > > > > > > >   }
+> > > > > > > > >
+> > > > > > > > > I confirm that it fixes the bug, altought I assume this
+> > > > > > > > > is just for testing and is not the
+> > > > > > > "proper"
+> > > > > > > > > fix.
+> > > > > > > >
+> > > > > > > > Pre-MSTOP case during reboot, without clk it is accessing
+> > > > > > > > registers)(mstop off always) it won't crash. But looks
+> > > > > > > > like you may have ignored timeout error from
+> > > > > > > [1].
+> > > > > > >
+> > > > > > > In case of a timeout error, it is not really ignored as the
+> > > > > > > proper error code -ETIMEDOUT will be returned by
+> > > > > > > rzg2l_mipi_dsi_host_transfer() (see log below). The hardware
+> > > > > > > manual doesn't seem to properly explain how to deal with a
+> > > > > > > timeout (or I could not find it). Do you have
+> > > > > any suggestion on how to improve this?
+> > > > > > >
+> > > > > > > >
+> > > > > > > > Post MSTOP case, if you access registers with mstop on, it =
+will lead to crash.
+> > > > > > > >
+> > > > > > > > and the patch fixes crash.
+> > > > > > > >
+> > > > > > > > Basically, you are accessing link register after video is s=
+topped with this panel.
+> > > > > > > > Looks like it is a fix for me.
+> > > > > > >
+> > > > > > > Ok, like I said I am not an expert on this, but I was just
+> > > > > > > assuming that there was a better way to ensure that the
+> > > > > > > mipi/dsi interface was still active until the panel
+> > > > > > > unprepare() function could do its work. I was looking at
+> > > > > > > some other drivers mipi/dsi
+> > > > > > > host_transfer() functions and did not see a similar
+> > > > > > > pm_runtime_resume_and_get() scheme, hence my confusion.
+> > > > > > >
+> > > > > > > > Better check if there is any timeout error[1] with this pat=
+ch.
+> > > > > > > > if not, It is proper fix.
+> > > > > > >
+> > > > > > > The patch does fixes the kernel panic, but doesn't allow the
+> > > > > > > panel to be properly unprepared, as I just noticed the timeou=
+t message:
+> > > > > > >
+> > > > > > >     [   39.321153] ili9881c-dsi 10850000.dsi.0: sending DCS S=
+ET_DISPLAY_OFF failed: -110
+> > > > > > >
+> > > > > > > In my case, for a reboot, this is not a problem, but it may
+> > > > > > > be a problem for systems where it can be suspended (I assume)=
+?
+> > > > > > >
+> > > > > > > Thank you for your help with this.
+> > > > > >
+> > > > > > Can you please try implement .atomic_post_disable()
+> > > > > > symmetrical to
+> > > rzg2l_mipi_dsi_atomic_pre_enable?
+> > > > > >
+> > > > > > Ie, move just rzg2l_mipi_dsi_stop(dsi) from
+> > > > > > rzg2l_mipi_dsi_atomic_disable() to
+> > > > > > rzg2l_mipi_dsi_atomic_post_disable()
+> > > > > >
+> > > > > > and check  you can send DCS SET_DISPLAY_OFF successfully.
+> > > > >
+> > > > > I reverted the previous fix (pm_runtime_resume_and_get), and
+> > > > > implemented .atomic_post_disable as you suggested, and this
+> > > > > works great: the bug is  no longer
+> > > present and I do not see timeout errors:
+> > > > >
+> > > > > [  537.727556] systemd-shutdown[1]: Syncing filesystems and block=
+ devices.
+> > > > > [  537.734544] systemd-shutdown[1]: Rebooting.
+> > > > > [  538.520174] rzg2l-mipi-dsi 10850000.dsi:
+> > > > > rzg2l_mipi_dsi_atomic_disable(): entry [  538.547848] ili9881c-ds=
+i 10850000.dsi.0:
+> > > ili9881c_unprepare(): entry [  538.564524] rzg2l-mipi-dsi 10850000.ds=
+i:
+> > > > > rzg2l_mipi_dsi_atomic_post_disable(): entry [  538.574016] reboot=
+:
+> > > > > Restarting system
+> > > >
+> > > > Great!
+> > >
+> > > Will you send a patch for this?
+> >
+> > Please feel free to send the patch, as you have the hardware to test it=
+.
+> >
+> > I will add my Tb tag after testing your patch on my bridge setup.
+>=20
+> Ok, will do.
+>=20
+> Can you also check on what Claudiu mentioned about MSTOP values for this =
+driver?
 
-Best regards,
-Krzysztof
+MSTOP is working as expected that is the reason you got abort during reboot=
+.
+If there is an issue with mstop usage count, you won't get abort.
+
+All the clocks are turned off and usage count of mstop becomes 0 during reb=
+oot
+and mstop set to 1.
+
+Cheers,
+Biju
