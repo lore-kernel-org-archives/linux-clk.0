@@ -1,278 +1,164 @@
-Received: from mail.hugovil.com (mail.hugovil.com [162.243.120.170])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1030535CB9E;
-	Fri,  9 Jan 2026 15:47:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.120.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9595C35CBDF;
+	Fri,  9 Jan 2026 15:49:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767973631; cv=none; b=m32GU/wruHritw9M5oXUzQeKMAqbu2SGqXBSzpSvoXBjBSbQq+5fy7Qz0YHpvXKNzezFSuAq5eYI4AUf7YNS05efx5XHviop6KGC9cU/KlUmQmGvYMUKafZoc1pXQx5orGx7VcTIgMx0WpFgYneMmGbDeG3AN/m1glm3k94+8yA=
+	t=1767973796; cv=none; b=O0Fc5un7ogT5Go8Iq4Z5fnexc+xs0AbjnvR/eoSBEpfngtwkuQfiNxROSSgwi6FAkzGiQnZ7k22KKb71Ih8URS9TDasf0LsEn1B14yJvn7D/asqHeI/Z3dP5NZ6kxa1LXnQ18eI7sBt0OOIip1UsEMIPI7dvHydwxfIUJgJY7lA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767973631; c=relaxed/simple;
-	bh=lHGhOz83jxTSQ/GpN7VXl0Vqal3UprDmMlla2Qkm7+I=;
-	h=Date:From:To:Cc:Message-Id:In-Reply-To:References:Mime-Version:
-	 Content-Type:Subject; b=YJ141GzWQOds+CwoCO8AlqEUZTpi8f3f1ZQM+wqG7EmObGv5VLTUHLOvV9qFRATr6QWxRd7mq6ZDASKzzFmwnoIPZLGsVsjdmZvCsqWyEin+DqhuC/0oycPmpVQBfIETdBPPDP9dFYSoA0y8adFumVsX69ddjUiUy5BCp110p4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com; spf=pass smtp.mailfrom=hugovil.com; dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b=RgqZxjHV; arc=none smtp.client-ip=162.243.120.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hugovil.com
+	s=arc-20240116; t=1767973796; c=relaxed/simple;
+	bh=ks5cLM4HjmJnxZRS9mtcBfjstrm3sF2xoB7Xv8yMahY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A0+wzTxu/tH+CFY3cCkH6y6WsEL5l1QElF9bX8ZERKgqkAoaWqN3lV53Hfyf/frNXPYnkIg+X9hOVF6wmC25vFO9AbFTM7gAqp+8k1K9eEWpmLXCjznhNRKxzs/9Dj3gc0UOz20asio6jEB+nGOXBWIzZxwg37UgkKD3vGejt9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YElPG/0V; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b="RgqZxjHV"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hugovil.com
-	; s=x; h=Subject:Content-Transfer-Encoding:Mime-Version:Message-Id:Cc:To:From
-	:Date:subject:date:message-id:reply-to;
-	bh=CpcA2IZyojKZsMfkNyX19rE5IA0g6n/bkKNz/08jVm0=; b=RgqZxjHV9kpC6Q1RmCfgbNnqnv
-	+jP2Zo6BJUzMrCRDxFzd3kODaAZUQjMNB9LGQ0MYvT/iRqigeh9YJB7e3exgty6jLQRoSkSSjxr4e
-	gTaY/oGRNnkcgHLi99UmG4qqWVpeTz+nwyZndXkqI2NZWXvlQPbcJ6aACx/POi50kb8E=;
-Received: from modemcable168.174-80-70.mc.videotron.ca ([70.80.174.168]:39428 helo=pettiford.lan)
-	by mail.hugovil.com with esmtpa (Exim 4.92)
-	(envelope-from <hugo@hugovil.com>)
-	id 1veEhb-0003ld-Pd; Fri, 09 Jan 2026 10:47:04 -0500
-Date: Fri, 9 Jan 2026 10:47:03 -0500
-From: Hugo Villeneuve <hugo@hugovil.com>
-To: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Cc: dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Claudiu Beznea
- <claudiu.beznea.uj@bp.renesas.com>, Neil Armstrong
- <neil.armstrong@linaro.org>, Jessica Zhang <jesszhan0024@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Biju Das Biju Das
- <biju.das.jz@bp.renesas.com>, Chris Brandt <Chris.Brandt@renesas.com>
-Message-Id: <20260109104703.98d8ec6fd6b482b94d103f0c@hugovil.com>
-In-Reply-To: <02e48c5d-439f-4292-9df9-c0bba6f44f16@tuxon.dev>
-References: <20260107164839.a490a194d975edc399d72d01@hugovil.com>
-	<f2aaa95a-fb69-46d8-ba0b-fdc793273455@tuxon.dev>
-	<20260108105319.6bef21d3fc60b261792d07c6@hugovil.com>
-	<02e48c5d-439f-4292-9df9-c0bba6f44f16@tuxon.dev>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YElPG/0V"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87AE3C4CEF1;
+	Fri,  9 Jan 2026 15:49:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1767973796;
+	bh=ks5cLM4HjmJnxZRS9mtcBfjstrm3sF2xoB7Xv8yMahY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YElPG/0Vu5oezq25vOQYaGh3AArlcnn+slPhobPg6WMdAtTPsU3Doq7YBYHeYGd2J
+	 JnLQuh+7XC9szSlkxLZuLrQDdnVboOsLE2b7TvbU9GINrYW8+PMtktV+xsTI6IbKwh
+	 iHvoVNbQW2km3yqIeuJxe+mB4bEvXgvTIgkb83Q/1msPWxjuGnZdX193NHneuPMsR0
+	 sISbHmWRnvNGow01JHBUXoRbsIH7TY2pQ9EFgW5Avs0g1KiP5/xmGhC8l1ExyS1ZKI
+	 d561TxHnO2zptZiqQQSQlHzOBu3/26HLB+cpqcs/4VkHi0c6d4AsJpP2kfWdjpPmtY
+	 N4aNNwHU6T6tQ==
+Date: Fri, 9 Jan 2026 09:49:52 -0600
+From: Bjorn Andersson <andersson@kernel.org>
+To: Stephan Gerhold <stephan.gerhold@linaro.org>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>, 
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Taniya Das <quic_tdas@quicinc.com>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Bartosz Golaszewski <brgl@kernel.org>, Shazad Hussain <quic_shazhuss@quicinc.com>, 
+	Sibi Sankar <sibi.sankar@oss.qualcomm.com>, Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
+	Melody Olvera <quic_molvera@quicinc.com>, Dmitry Baryshkov <lumag@kernel.org>, 
+	Taniya Das <taniya.das@oss.qualcomm.com>, Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+	Imran Shaik <quic_imrashai@quicinc.com>, Abel Vesa <abelvesa@kernel.org>, linux-arm-msm@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Rajendra Nayak <quic_rjendra@quicinc.com>, stable@vger.kernel.org
+Subject: Re: [PATCH 0/7] clk: qcom: gcc: Do not turn off PCIe GDSCs during
+ gdsc_disable()
+Message-ID: <jejrexm235dxondzjbk5ek46ilq2gbrrhoojfcghkcpclqvtks@yfsgrxueo5es>
+References: <20260102-pci_gdsc_fix-v1-0-b17ed3d175bc@oss.qualcomm.com>
+ <a42f963f-a869-4789-a353-e574ba22eca8@oss.qualcomm.com>
+ <edca97aa-429e-4a6b-95a0-2a6dfe510ef2@oss.qualcomm.com>
+ <500313f1-51fd-450e-877e-e4626b7652bc@oss.qualcomm.com>
+ <4d61e8b3-0d40-4b78-9f40-a68b05284a3d@oss.qualcomm.com>
+ <e917e98a-4ff3-45b8-87a0-fe0d6823ac2e@oss.qualcomm.com>
+ <2lpx7rsko24e45gexsv3jp4ntwwenag47vgproqljqeuk4j7iy@zgh6hrln4h4e>
+ <aVuIsUR0pinI0Wp7@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 70.80.174.168
-X-SA-Exim-Mail-From: hugo@hugovil.com
-X-Spam-Level: 
-X-Spam-Report: 
-	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-	* -1.6 NICE_REPLY_A Looks like a legit reply (A)
-Subject: Re: [BUG] drm/panel: ilitek-ili9881c: kernel panic on reboot
-X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
-X-SA-Exim-Scanned: Yes (on mail.hugovil.com)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aVuIsUR0pinI0Wp7@linaro.org>
 
-Hi Claudiu,
-
-On Fri, 9 Jan 2026 11:49:23 +0200
-Claudiu Beznea <claudiu.beznea@tuxon.dev> wrote:
-
-> Hi, Hugo,
-> 
-> On 1/8/26 17:53, Hugo Villeneuve wrote:
-> > Hi Claudiu,
+On Mon, Jan 05, 2026 at 10:47:29AM +0100, Stephan Gerhold wrote:
+> On Mon, Jan 05, 2026 at 10:44:39AM +0530, Manivannan Sadhasivam wrote:
+> > On Fri, Jan 02, 2026 at 02:57:56PM +0100, Konrad Dybcio wrote:
+> > > On 1/2/26 2:19 PM, Krishna Chaitanya Chundru wrote:
+> > > > On 1/2/2026 5:09 PM, Konrad Dybcio wrote:
+> > > >> On 1/2/26 12:36 PM, Krishna Chaitanya Chundru wrote:
+> > > >>> On 1/2/2026 5:04 PM, Konrad Dybcio wrote:
+> > > >>>> On 1/2/26 10:43 AM, Krishna Chaitanya Chundru wrote:
+> > > >>>>> With PWRSTS_OFF_ON, PCIe GDSCs are turned off during gdsc_disable(). This
+> > > >>>>> can happen during scenarios such as system suspend and breaks the resume
+> > > >>>>> of PCIe controllers from suspend.
+> > > >>>> Isn't turning the GDSCs off what we want though? At least during system
+> > > >>>> suspend?
+> > > >>> If we are keeping link in D3cold it makes sense, but currently we are not keeping in D3cold
+> > > >>> so we don't expect them to get off.
+> > > >> Since we seem to be tackling that in parallel, it seems to make sense
+> > > >> that adding a mechanism to let the PCIe driver select "on" vs "ret" vs
+> > > >> "off" could be useful for us
+> > > > At least I am not aware of such API where we can tell genpd not to turn off gdsc
+> > > > at runtime if we are keeping the device in D3cold state.
+> > > > But anyway the PCIe gdsc supports Retention, in that case adding this flag here makes
+> > > > more sense as it represents HW.
+> > > > sm8450,sm8650 also had similar problem which are fixed by mani[1].
+> > > 
+> > > Perhaps I should ask for a clarification - is retention superior to
+> > > powering the GDSC off? Does it have any power costs?
+> > > 
 > > 
-> > On Thu, 8 Jan 2026 11:12:54 +0200
-> > Claudiu Beznea <claudiu.beznea@tuxon.dev> wrote:
+> > In terms of power saving it is not superior, but that's not the only factor we
+> > should consider here. If we keep GDSCs PWRSTS_OFF_ON, then the devices (PCIe)
+> > need to be be in D3Cold. Sure we can change that using the new genpd API
+> > dev_pm_genpd_rpm_always_on() dynamically, but I would prefer to avoid doing
+> > that.
 > > 
-> >> Hi, Hugo,
-> >>
-> >> On 1/7/26 23:48, Hugo Villeneuve wrote:
-> >>> Hi,
-> >>> when issuing a reboot command, I encounter the following kernel panic:
-> >>>
-> >>> [   36.183478] SError Interrupt on CPU1, code 0x00000000be000011 -- SError
-> >>> [   36.183492] CPU: 1 UID: 0 PID: 1 Comm: systemd-shutdow Tainted: G   M                6.19.0-rc4-arm64-renesas-00019-g067a81578add #62 NONE
-> >>> [   36.183504] Tainted: [M]=MACHINE_CHECK
-> >>> [   36.183507] Hardware name: Gecko ECO2 nxtpad (DT)
-> >>> [   36.183512] pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> >>> [   36.183519] pc : rzg2l_mipi_dsi_host_transfer+0x114/0x458
-> >>> [   36.183538] lr : rzg2l_mipi_dsi_host_transfer+0x98/0x458
-> >>> [   36.183547] sp : ffff8000813db860
-> >>> [   36.183550] x29: ffff8000813db890 x28: ffff800080c602c0 x27: ffff000009dd7450
-> >>> [   36.183563] x26: ffff800080c5fcc0 x25: ffff000009dd7450 x24: ffff800080e1f7a8
-> >>> [   36.183573] x23: ffff000009dd7400 x22: 0000000000000000 x21: ffff000009dd7430
-> >>> [   36.183582] x20: ffff8000813db8e8 x19: 0000000002050028 x18: 00000000ffffffff
-> >>> [   36.183592] x17: 0000000000000000 x16: 0000000000000000 x15: ffff8000813db220
-> >>> [   36.183602] x14: 0000000000000000 x13: ffff800081255bc0 x12: 00000000000009a2
-> >>> [   36.183611] x11: 0000000000000336 x10: ffff8000812b28d0 x9 : ffff800081255bc0
-> >>> [   36.183621] x8 : ffff800081399000 x7 : ffff00000a042600 x6 : 0000000000000000
-> >>> [   36.183631] x5 : 0000000000000805 x4 : 0000000002000000 x3 : 0000000000000028
-> >>> [   36.183640] x2 : 0000000049627000 x1 : ffff800080c60b40 x0 : ffff800081780000
-> >>> [   36.183652] Kernel panic - not syncing: Asynchronous SError Interrupt
-> >>> [   36.183657] CPU: 1 UID: 0 PID: 1 Comm: systemd-shutdow Tainted: G   M                6.19.0-rc4-arm64-renesas-00019-g067a81578add #62 NONE
-> >>> [   36.183665] Tainted: [M]=MACHINE_CHECK
-> >>> [   36.183668] Hardware name: devboard1 (DT)
-> >>> [   36.183672] Call trace:
-> >>> [   36.183675]  show_stack+0x18/0x24 (C)
-> >>> [   36.183692]  dump_stack_lvl+0x34/0x8c
-> >>> [   36.183702]  dump_stack+0x18/0x24
-> >>> [   36.183708]  vpanic+0x314/0x35c
-> >>> [   36.183716]  nmi_panic+0x0/0x64
-> >>> [   36.183722]  add_taint+0x0/0xbc
-> >>> [   36.183728]  arm64_serror_panic+0x70/0x80
-> >>> [   36.183735]  do_serror+0x28/0x68
-> >>> [   36.183742]  el1h_64_error_handler+0x34/0x50
-> >>> [   36.183751]  el1h_64_error+0x6c/0x70
-> >>> [   36.183758]  rzg2l_mipi_dsi_host_transfer+0x114/0x458 (P)
-> >>> [   36.183770]  mipi_dsi_device_transfer+0x44/0x58
-> >>> [   36.183781]  mipi_dsi_dcs_set_display_off_multi+0x9c/0xc4
-> >>> [   36.183792]  ili9881c_unprepare+0x38/0x88
-> >>> [   36.183802]  drm_panel_unprepare+0xbc/0x108
-> >>> [   36.183814]  panel_bridge_atomic_post_disable+0x50/0x60
-> >>> [   36.183823]  drm_atomic_bridge_call_post_disable+0x24/0x4c
-> >>> [   36.183835]  drm_atomic_bridge_chain_post_disable+0xa8/0x100
-> >>> [   36.183845]  drm_atomic_helper_commit_modeset_disables+0x2fc/0x5f8
-> >>> [   36.183856]  drm_atomic_helper_commit_tail_rpm+0x24/0x7c
-> >>> [   36.183865]  commit_tail+0xa4/0x18c
-> >>> [   36.183874]  drm_atomic_helper_commit+0x17c/0x194
-> >>> [   36.183884]  drm_atomic_commit+0x8c/0xcc
-> >>> [   36.183892]  drm_atomic_helper_disable_all+0x200/0x210
-> >>> [   36.183901]  drm_atomic_helper_shutdown+0xa8/0x150
-> >>> [   36.183911]  rzg2l_du_shutdown+0x18/0x24
-> >>> [   36.183920]  platform_shutdown+0x24/0x34
-> >>> [   36.183931]  device_shutdown+0x128/0x284
-> >>> [   36.183938]  kernel_restart+0x44/0xa4
-> >>> [   36.183950]  __do_sys_reboot+0x178/0x270
-> >>> [   36.183959]  __arm64_sys_reboot+0x24/0x30
-> >>> [   36.183968]  invoke_syscall.constprop.0+0x50/0xe4
-> >>> [   36.183979]  do_el0_svc+0x40/0xc0
-> >>> [   36.183988]  el0_svc+0x3c/0x164
-> >>> [   36.183995]  el0t_64_sync_handler+0xa0/0xe4
-> >>> [   36.184002]  el0t_64_sync+0x198/0x19c
-> >>> [   36.184020] Kernel Offset: disabled
-> >>> [   36.184022] CPU features: 0x200000,00020001,4000c501,0400720b
-> >>> [   36.184028] Memory Limit: none
-> >>> [   36.495305] ---[ end Kernel panic - not syncing: Asynchronous SError Interrupt ]---
-> >>>
-> >>> The problem is present since linux-6.18-rc1, but not in linux-6.17. I also confirm the bug is present in linux-6.19-rc4.
-> >>>
-> >>> The bug seems to be happening in rzg2l_mipi_dsi_host_transfer().
-> >>>
-> >>> After bisecting, here is the first bad commit:
-> >>>
-> >>>       commit 56de5e305d4b ("clk: renesas: r9a07g044: Add MSTOP for RZ/G2L")
-> >>>
-> >>> Reverting this change makes the bug disappear.
-> >>>
-> >>> My limited understanding seems to indicate that the MIPI/DSI host may
-> >>> no longer be available/on when the panel tries to send MIPI/DSI
-> >>> commands in ili9881c_unprepare(), maybe because the MIPI/DSI clock has been stopped...
-> >>>
-> >>> The exact same board with two other panels (jd9365da and st7703) doesn't have the bug.
-> >>
-> >> Could you please provide the output of command:
-> >>
-> >> cat /sys/kernel/debug/mstop
-> >>
-> >> for both cases?
+> > In my POV, GDSCs default state should be retention, so that the GDSCs will stay
+> > ON if the rentention is not entered in hw and enter retention otherwise. This
+> > requires no extra modification in the genpd client drivers. One more benefit is,
+> > the hw can enter low power state even when the device is not in D3Cold state
+> > i.e., during s2idle (provided we unvote other resources).
 > > 
-> > Here it is for the panel which has the bug:
-> > 
-> > ----------------------------------
-> >                             MSTOP
-> >                       clk   -------------------------
-> > clk_name             cnt   cnt   off   val    shared
-> > --------             ----- ----- ----- ------ ------
-> > gic                  1     1     0xb80 0x0
-> > ia55_clk             2     2     0xb70 0x0    ia55_pclk ia55_clk
-> > ia55_pclk            1     2     0xb70 0x0    ia55_pclk ia55_clk
-> > dmac_aclk            2     1     0xb80 0x0
-> > dmac_pclk            1     1     0xb80 0x0
-> > ostm0_pclk           0     0     0xb7c 0x10
-> > ostm1_pclk           1     1     0xb7c 0x0
-> > ostm2_pclk           1     1     0xb7c 0x0
-> > mtu_x_mck            0     0     0xb64 0x4
-> > gpt_pclk             1     1     0xb64 0x0
-> > poeg_a_clkp          0     0     0xb64 0x20
-> > poeg_b_clkp          0     0     0xb64 0x40
-> > poeg_c_clkp          0     0     0xb64 0x80
-> > poeg_d_clkp          0     0     0xb64 0x100
-> > wdt0_pclk            1     2     0xb7c 0x0    wdt0_pclk wdt0_clk
-> > wdt0_clk             1     2     0xb7c 0x0    wdt0_pclk wdt0_clk
-> > wdt1_pclk            0     0     0xb7c 0x8    wdt1_pclk wdt1_clk
-> > wdt1_clk             0     0     0xb7c 0x8    wdt1_pclk wdt1_clk
-> > spi_clk2             0     0     0xb64 0x2    spi_clk2 spi_clk
-> > spi_clk              0     0     0xb64 0x2    spi_clk2 spi_clk
-> > sdhi0_imclk          1     4     0xb6c 0x0    sdhi0_imclk sdhi0_imclk2 sdhi0_clk_hs sdhi0_aclk
-> > sdhi0_imclk2         2     4     0xb6c 0x0    sdhi0_imclk sdhi0_imclk2 sdhi0_clk_hs sdhi0_aclk
-> > sdhi0_clk_hs         1     4     0xb6c 0x0    sdhi0_imclk sdhi0_imclk2 sdhi0_clk_hs sdhi0_aclk
-> > sdhi0_aclk           1     4     0xb6c 0x0    sdhi0_imclk sdhi0_imclk2 sdhi0_clk_hs sdhi0_aclk
-> > sdhi1_imclk          0     0     0xb6c 0x2    sdhi1_imclk sdhi1_imclk2 sdhi1_clk_hs sdhi1_aclk
-> > sdhi1_imclk2         0     0     0xb6c 0x2    sdhi1_imclk sdhi1_imclk2 sdhi1_clk_hs sdhi1_aclk
-> > sdhi1_clk_hs         0     0     0xb6c 0x2    sdhi1_imclk sdhi1_imclk2 sdhi1_clk_hs sdhi1_aclk
-> > sdhi1_aclk           0     0     0xb6c 0x2    sdhi1_imclk sdhi1_imclk2 sdhi1_clk_hs sdhi1_aclk
-> > gpu_clk              1     1     0xb80 0x0
-> > cru_sysclk           0     0     0xb78 0x8    cru_sysclk cru_vclk cru_pclk cru_aclk
-> > cru_vclk             0     0     0xb78 0x8    cru_sysclk cru_vclk cru_pclk cru_aclk
-> > cru_pclk             0     0     0xb78 0x8    cru_sysclk cru_vclk cru_pclk cru_aclk
-> > cru_aclk             0     0     0xb78 0x8    cru_sysclk cru_vclk cru_pclk cru_aclk
 > 
-> > dsi_pll_clk          1     6     0xb78 0x0    dsi_pll_clk dsi_sys_clk dsi_aclk dsi_pclk dsi_vclk dsi_lpclk
-> > dsi_sys_clk          1     6     0xb78 0x0    dsi_pll_clk dsi_sys_clk dsi_aclk dsi_pclk dsi_vclk dsi_lpclk
-> > dsi_aclk             1     6     0xb78 0x0    dsi_pll_clk dsi_sys_clk dsi_aclk dsi_pclk dsi_vclk dsi_lpclk
-> > dsi_pclk             1     6     0xb78 0x0    dsi_pll_clk dsi_sys_clk dsi_aclk dsi_pclk dsi_vclk dsi_lpclk
-> > dsi_vclk             1     6     0xb78 0x0    dsi_pll_clk dsi_sys_clk dsi_aclk dsi_pclk dsi_vclk dsi_lpclk
-> > dsi_lpclk            1     6     0xb78 0x0    dsi_pll_clk dsi_sys_clk dsi_aclk dsi_pclk dsi_vclk dsi_lpclk
-> 
-> I was expected the MSTOP for these to be set to anythong other than 0x0 
-> here. But I presume, they are somehow set in the reboot process before 
-> exectution reach rzg2l_mipi_dsi_host_transfer(). To be honest, I don't 
-> know the rz-du code.
-
-Maybe Biju can shed some light on this?
-
-
-> 
-> [...]
-> 
-> > 
-> > I do not have acces to the other panels for the moment to run the same command.
-> > 
-> > 
-> >> Also, could you please check if the following diff solves your problem:
-> >>
-> >> diff --git a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-> >> b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-> >> index 5edd45424562..62957632a96f 100644
-> >> --- a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-> >> +++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-> >> @@ -1282,6 +1282,10 @@ static ssize_t
-> >> rzg2l_mipi_dsi_host_transfer(struct mipi_dsi_host *host,
-> >>                   value |= SQCH0DSC0AR_FMT_SHORT;
-> >>           }
-> >>
-> >> +       ret = pm_runtime_resume_and_get(dsi->dev);
-> >> +       if (ret)
-> >> +               return ret;
-> >> +
-> >>           rzg2l_mipi_dsi_link_write(dsi, SQCH0DSC0AR, value);
-> >>
-> >>           /*
-> >> @@ -1322,6 +1326,8 @@ static ssize_t rzg2l_mipi_dsi_host_transfer(struct
-> >> mipi_dsi_host *host,
-> >>                           ret = packet.payload_length;
-> >>           }
-> >>
-> >> +       pm_runtime_put(dsi->dev);
-> >> +
-> >>           return ret;
-> >>    }
-> > 
-> > I confirm that it fixes the bug, altought I assume this is just for testing and is not the "proper" fix.
-> 
-> To me, this, or something similar should be done anyway. Previously it 
-> used to work because there was no MSTOP support available.
-> 
-> The MSTOP is now set when all of the clocks sharing it are disabled. 
-> With the MSTOP set, any master accessing a HW block that has MSTOP set 
-> will get sync abort. That wasn't the case previously, when the HW 
-> registers could have been accessed w/o generating such exeception.
-> 
-> Thank you,
-> Claudiu
+> What about PCIe instances that are completely unused? The boot firmware
+> on X1E for example is notorious for powering on completely unused PCIe
+> links and powering them down in some half-baked off state (the &pcie3
+> instance, in particular). I'm not sure if the GDSC remains on, but if it
+> does then the unused PD cleanup would also only put them in retention
+> state. I can't think of a good reason to keep those on at all.
 > 
 
+Conceptually I agree, but do we have any data indicating that there's
+practical benefit to this complication?
 
--- 
-Hugo Villeneuve
+> The implementation of PWRSTS_RET_ON essentially makes the PD power_off()
+> callback a no-op. Everything in Linux (sysfs, debugfs, ...) will tell
+> you that the power domain has been shut down, but at the end it will
+> remain fully powered until you manage to reach a retention state for the
+> parent power domain. Due to other consumers, that will likely happen
+> only if you reach VDDmin or some equivalent SoC-wide low-power state,
+> something barely any (or none?) of the platforms supported upstream is
+> capable of today.
+> 
+
+Yes, PWRSTS_RET_ON effectively means that Linux has "dropped its vote"
+on the GDSC and its parents. But with the caveat that we assume when
+going to ON again some state will have been retained.
+
+> PWRSTS_RET_ON is actually pretty close to setting GENPD_FLAG_ALWAYS_ON,
+> the only advantage of PWRSTS_RET_ON I can think of is that unused GDSCs
+> remain off iff you are lucky enough that the boot firmware has not
+> already turned them on.
+> 
+
+Doesn't GENPD_FLAG_ALWAYS_ON imply that the parent will also be always
+on?
+
+> IMHO, for GDSCs that support OFF state in the hardware, PWRSTS_RET_ON is
+> a hack to workaround limitations in the consumer drivers. They should
+> either save/restore registers and handle the power collapse or they
+> should vote for the power domain to stay on. That way, sysfs/debugfs
+> will show the real votes held by Linux and you won't be mislead when
+> looking at those while trying to optimize power consumption.
+> 
+
+No, it's not working around limitations in the consumer drivers.
+
+It does work around a limitation in the API, in that the consumer
+drivers can't indicate in which cases they would be willing to restore
+and in which cases they would prefer retention. This is something the
+downstream solution has had, but we don't have a sensible and generic
+way to provide this.
+
+Keeping GDSCs in retention is a huge gain when it comes to the time it
+takes to resume the system after being in low power. PCIe is a good
+example of this, where the GDSC certainly support entering OFF, at the
+cost of tearing link and all down.
+
+Regards,
+Bjorn
+
+> Thanks,
+> Stephan
