@@ -1,84 +1,84 @@
-Received: from mail-oa1-f42.google.com (mail-oa1-f42.google.com [209.85.160.42])
+Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF4F92C11E1
-	for <linux-clk@vger.kernel.org>; Fri,  9 Jan 2026 04:34:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2BA22DC789
+	for <linux-clk@vger.kernel.org>; Fri,  9 Jan 2026 04:34:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767933253; cv=none; b=uMYLbRtc9QbfOPkVVvopHGzpZF62qroaRs/7oQ4TSp4YtUYuA3HGKWrgEj17itJRgevCaY/ZtikGO2LKGRnmRQJGS+fM5m6+b8K/LxXuguH+yYrQvgvCkZPq3MX6TgNuHbbhwiCV1xt7q5FrkyMQ1V3SDQZIVyK08FrToHinA/w=
+	t=1767933258; cv=none; b=OlaAviTZzsfuurMt0sihYNsFIaXi/+8KB4GFqlgmfClJwHGXpT3XCOWToyhkvCAh2UeiAClabxFnr5WDtL66rDrJoc1gcg2PmJrB28i4UEjhgDUrYicqPkT1l0ufiIupYtLRRyzd6clFcjUPzFT+DKU6ejFDe+6NNcppsSl4PJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767933253; c=relaxed/simple;
-	bh=64oxlB1oPc2I3UCUYL7TYYxHgANHA24BJHFDbLU57BQ=;
+	s=arc-20240116; t=1767933258; c=relaxed/simple;
+	bh=Rj5PF4kkx8UYCh2Z9Zcdx9RhapFodlCcdhqtn13jraI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=L/31HjdDoL94bukvu0o9aFtnfjTxkg5UkokBq4AATdpY7HFkyoDHlF6bXXsmiJG5PIDg03YO0Efp9DKF/Am/MGQAZDsiz3oXlhneImmh1TLA/589vOvypLuQZDFBbNAyQg3MyKLw2Qx+U+Rxcp/obvNbBqJ+GDEWUkijSZGWCZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fMYaSpvs; arc=none smtp.client-ip=209.85.160.42
+	 MIME-Version; b=aNqLkzqYiPJUMOwyMdSk5KE0Vb43ym/opz1O34aBDC5NK/ldBSMYr1oOsDRTohOjYf0XmbQJ+g+l14qSAUoGIWQpr4/YKDpIKiEzsiqkLvBVlcWnZn96rycNVqS7vSjdrpGx2f21ON+aLjHuXuSPR+J7NfLaKKHPOf2ITzILqFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ka564WqA; arc=none smtp.client-ip=209.85.160.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fMYaSpvs"
-Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-3fff664b610so300657fac.1
-        for <linux-clk@vger.kernel.org>; Thu, 08 Jan 2026 20:34:07 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ka564WqA"
+Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-3e80c483a13so2449871fac.2
+        for <linux-clk@vger.kernel.org>; Thu, 08 Jan 2026 20:34:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1767933246; x=1768538046; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1767933253; x=1768538053; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=DP/uE01G83nxTUrDw+o0CPnPYzVPpmwRmdm0c2AEYD8=;
-        b=fMYaSpvs/LisUHPKs6l6qeZZ+N4Ayp9xVYKwIrk0F6wN4DIe/LUDcyx2rX8bSQmYwN
-         3n2QmUHWscFPsTDxcusQF+HRd7SXdhm3bFTnwcBxe8cpDm4R+RFcMM3SBxbccVyOq3u4
-         Mquj5T3IYw4GdTBzSwJP88msvwTMDDUn+tJTNg7zm9IkyqHFLo/LoRRx0aTKAJJ4Fp/l
-         4+DK3v3F5c6vRnetmHcZN0ciSxHw1uDFkQr3jISDfrTACDhLd25DAe71t80Y+Hcnh6M3
-         oOltjrzDDwUilN86wx3JaXxj+maRqEBLDz1ZRQJ83NH4aLVZ/vq8U6CQxYWNh/biNbhA
-         DOwA==
+        bh=nLAZec+69W0xvV+E29B/iSJ71Q0zPCP3JKbVoTTx9Tg=;
+        b=ka564WqAwbDWkk5vubPgKmfOZC6oGceuv6syzKSg1CQff/dZICUXtFx6Qmt7FFGQ+0
+         7mFRGnl6aVtdcn0H+zTTl2mZ/1SJVUY1q/fHO4C/JobRXuTIbWhoSnWvtDwy63k/wJuZ
+         acf4U9rxxcNFuefU1QzYcngKE8zmNJMtSJHTd4gvKi44+9vHc+LTR1DJ+JiN9cuJQxRu
+         fN/RcuO+j7ZONhuyVTDfpkEIdRwbiQjPuPz5KS6FYOH7wWdE/agSfR4JKA1TZF9VfZMv
+         YYStORNmBXMduVr10QLuPLYuvaOxlP+AttG+2nvfryJ4tniocx4QK8CMjXMDM5TEJAIE
+         wzoQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767933246; x=1768538046;
+        d=1e100.net; s=20230601; t=1767933253; x=1768538053;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=DP/uE01G83nxTUrDw+o0CPnPYzVPpmwRmdm0c2AEYD8=;
-        b=isAsNbJEXJfaos8Xrc76d2u/aro5KfgCTR++1esC+QsEbMjC2AhEmOfMuwQuqrEnG7
-         0KTCnd7QDBGVQHwwgn+SADmWc3gnLFVIwGvmUM47YTyOg9D8lqNW935w+ZZugbr9Hq+I
-         ai/5+txynOXV2EXGRWb1k+5mE1y7dZnyoV15McqvOmduyJG+NMdbrUrZnwHZqIItKMvH
-         gXoDOSPD0eRb7DCokmy5/SgMipZc7ZGz9RvDSYg0LeWaiVq5AmupHTFNUd1rxZgo9WhT
-         +3EYq07c+EpuxHmV+x6i9A9qRP00c3XTFVNcHNTgpPau9Hp6OwrkoEdRfFsmiJnDmhv2
-         kMyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXpcYYMLHYBiCvLq+XkOR9DSu9RNK1B7URtrtABayo4Kyw+yZkH87kKCzkjQ5zf3GcNkuqJTpHpp7g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5K0Pl12LvPAOflT/ixO3sjsIc65HSFNEl1fYPhVzvIfLzWKnf
-	CcduuiXaCFQ7VzytEM6tBKT2jLJkgrEzq6nYBNcoLVVY1Gg7mATGLMyJ
-X-Gm-Gg: AY/fxX6tMVVHZm18Hb2qQMGBE1+dXJ9IhCMTO3iQvVmrqZQ6Y0p3RSbPQ27PPYALLBS
-	wywPrZrH+cbunHOzFfgOhkfk1ZgT91Mxj5q36utqk5IKdwKS1tMerB3C/dS/Pn0Xj/MB/ivEbiI
-	zsXqRqvqE+nRDIJRB/csHVODkC5L1sERHK4ul/8hkk0Mxx8EEbkmOVXAdM0PxO8srSNY4MviFqj
-	eF9wxSyy/r7VjR8x98bj99pAYETyaEjlFu6qZ6B0dhK4qq7TaEgoF40Da9bKsh3+YB2rWokddcY
-	ouISrLe4CGUSkBCP/Uso8L35g8b8pYYpV970mSsB397MVCB34Tce/N/7QzHaVhn122WtJWyRIEh
-	WaItCvraH2fZCkP8rIJ4G18nKUt0YabTZTgosD7liwP/aN3v3NleaGZsImtj5pCpbccFI+rA4TL
-	IygvpaWnG047xdexOKxEU8choP5Pi7Iu9T6tkjY1U84lENVz/MdgqCMwOcp/09RxGG5q+ZKfC1Q
-	oG2qD/Wl5Wbip5DDijqGmVtyjQL
-X-Google-Smtp-Source: AGHT+IGZBF8CWH9Y4AsgArGmLsciCkh8nXRx0fV3kjm1s9pw8Jm99eiy+DaFGOLLrhK4ZAZqC7M1/w==
-X-Received: by 2002:a05:6870:71c4:b0:3e8:3176:a342 with SMTP id 586e51a60fabf-3ffc09ff519mr4258246fac.22.1767933246452;
-        Thu, 08 Jan 2026 20:34:06 -0800 (PST)
+        bh=nLAZec+69W0xvV+E29B/iSJ71Q0zPCP3JKbVoTTx9Tg=;
+        b=RrX0GZvBtwNDqeIX2Uw4yYInFJ69O9sAJ2ucVm3K6TkGmO32e9I4XZXLMMReEGbjhS
+         5McutgFJEpihXsvzSXtkTTBwp46/cTt/pIVPkJrDZ+LSsRBMos9OyoVWH1NM2bk3ATKO
+         3VCbKyPoJWs62NznbZzc9JJjxmNgMo3+4DMO9cpNzj0PUp90Es8l0GxSfzQ65ZuEUrcz
+         ImuLtzbblr2A96qhkbIBnwv1EsjsUUIXZ/RoAsYoLe7oRzjOl+Ih+UQqVyQvz7vnTY2H
+         LrbjDZum1DpJrgHAxdsXzQ189TeHxI7UP4ph+KftToW4P6wiIabiKW/ZerzNMxEzOj5T
+         xenA==
+X-Forwarded-Encrypted: i=1; AJvYcCUgkKxB15DMs2Yx+oDny2N0uPzuPzs9XbPqsIkk0GBsWr5jzlH067O0f7fxsNbSqeCvvnCNVZvjxLs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzEU9viWZUUm75TThNs/qRAo2ZQYgh+tL8HaCn6Qdes/F6wojTk
+	jkPu/tt9OA0Tz4OAZqGsrUKZqNZfIY/E7t75hxs3CBc21CL/6krLwAVH
+X-Gm-Gg: AY/fxX7VMMMZEFqi/RNhB3ohql+dG7fYilST47kD/WoBttITuQvr37NcIi33TnkZK/D
+	wuqIaNb7pH6FREoPi3rDlk2IuvH9I+7UNtwP2XQShAIt4mwpoBj0bGLsKHrddN3WRJb8JVfy240
+	OwTFrzhpc3T7U0XX+2biWR1VuOcQgYoO1BnuN8rTLi8/cuZLvVajV6uYvhi2YYg4yMqwBSOuMyV
+	GbA7ovgg1S4wEN3RY02yeyWti5Purtzs5PwDaFmHXetwMHL/rz98ey+6BeUAZYV6PavKVn7EB7t
+	lKAzeGajl52MDGzTIxU9ijv7WKLBkxlzy7ZBJOKwLxLcptubWrJ+/OJBEnyDUYCxfO/k1cypoLr
+	NUjsOO4FlxImTzS7YDSPqvaoj4SVQ+9Mo5l3Jj/livjxOcz5mDTFl1FYlBoRNWAJrwlHjq+omeh
+	f9qBCYn3+PLNysjSfnFV9fLqCoITyZI/ZERYR70NCikzKvFZMV0J36/ecmuPP2rt7s1aE1J6d9I
+	M066Nlz9s6WpHQYuq7SUI2IO6zu
+X-Google-Smtp-Source: AGHT+IHhmLd9QokCnmdrjmN460hm0QSVTgysKbvdgBbpEqXgCTi50/GZXdPKyd7ggwHgyojjtJjDzQ==
+X-Received: by 2002:a05:6870:3353:b0:3f5:b004:314e with SMTP id 586e51a60fabf-3ffc0b5e85bmr4714763fac.46.1767933252709;
+        Thu, 08 Jan 2026 20:34:12 -0800 (PST)
 Received: from nukework.lan (c-98-57-15-22.hsd1.tx.comcast.net. [98.57.15.22])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-3ffa515f4dasm6274421fac.21.2026.01.08.20.34.04
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-3ffa515f4dasm6274421fac.21.2026.01.08.20.34.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Jan 2026 20:34:05 -0800 (PST)
+        Thu, 08 Jan 2026 20:34:11 -0800 (PST)
 From: Alexandru Gagniuc <mr.nuke.me@gmail.com>
 To: andersson@kernel.org,
 	krzk+dt@kernel.org,
 	mturquette@baylibre.com,
 	linux-remoteproc@vger.kernel.org,
-	Stephen Boyd <sboyd@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
 	Rob Herring <robh@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>
 Cc: mathieu.poirier@linaro.org,
-	konradybcio@kernel.org,
+	sboyd@kernel.org,
 	p.zabel@pengutronix.de,
 	linux-arm-msm@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	Alexandru Gagniuc <mr.nuke.me@gmail.com>
-Subject: [PATCH v2 3/9] dt-bindings: clock: gcc-ipq9574: add wcss remoteproc clocks
-Date: Thu,  8 Jan 2026 22:33:38 -0600
-Message-ID: <20260109043352.3072933-4-mr.nuke.me@gmail.com>
+Subject: [PATCH v2 5/9] arm64: dts: qcom: ipq9574: add wcss remoteproc nodes
+Date: Thu,  8 Jan 2026 22:33:40 -0600
+Message-ID: <20260109043352.3072933-6-mr.nuke.me@gmail.com>
 X-Mailer: git-send-email 2.45.1
 In-Reply-To: <20260109043352.3072933-1-mr.nuke.me@gmail.com>
 References: <20260109043352.3072933-1-mr.nuke.me@gmail.com>
@@ -90,91 +90,134 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Commit da040d560319 ("dt-bindings: clock: qcom: gcc-ipq9574: remove q6
-bring up clock macros") removed these clocks on the idea that Q6
-firmware is responsible for clock bringup. That statement seems
-incorrect, as these clocks need to be enabled before the Q6 is booted.
-Otherwise, the host CPU core that starts the Q6 hangs.
-
-Perhaps the statement meant that the TrustZone firmware will start the
-clocks. This only happens in PAS mode. Under native OS loading, the
-host needs these clocks, so add them back.
-
-Besides the clocks that were erroneously removed, also add defines for
-GCC_WCSS_AHB_S_CLK, GCC_WCSS_AXI_M_CLK, and GCC_Q6_AXIM2_CLK, as all
-these clocks are required to operate the remoteproc.
+The WCSS remoteproc is typically used by ath11k to load wifi firmware
+to the Hexagon q6 procesor. Add the nodes required to bring up this
+processor.
 
 Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
 ---
- include/dt-bindings/clock/qcom,ipq9574-gcc.h | 22 ++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+ arch/arm64/boot/dts/qcom/ipq9574.dtsi | 101 ++++++++++++++++++++++++++
+ 1 file changed, 101 insertions(+)
 
-diff --git a/include/dt-bindings/clock/qcom,ipq9574-gcc.h b/include/dt-bindings/clock/qcom,ipq9574-gcc.h
-index 0e7c319897f3..8c74f50a2790 100644
---- a/include/dt-bindings/clock/qcom,ipq9574-gcc.h
-+++ b/include/dt-bindings/clock/qcom,ipq9574-gcc.h
-@@ -132,8 +132,16 @@
- #define GCC_NSSNOC_SNOC_1_CLK				123
- #define GCC_QDSS_ETR_USB_CLK				124
- #define WCSS_AHB_CLK_SRC				125
-+#define GCC_Q6_AHB_CLK					126
-+#define GCC_Q6_AHB_S_CLK				127
-+#define GCC_WCSS_ECAHB_CLK				128
-+#define GCC_WCSS_ACMT_CLK				129
-+#define GCC_SYS_NOC_WCSS_AHB_CLK			130
- #define WCSS_AXI_M_CLK_SRC				131
-+#define GCC_ANOC_WCSS_AXI_M_CLK				132
- #define QDSS_AT_CLK_SRC					133
-+#define GCC_Q6SS_ATBM_CLK				134
-+#define GCC_WCSS_DBG_IFC_ATB_CLK			135
- #define GCC_NSSNOC_ATB_CLK				136
- #define GCC_QDSS_AT_CLK					137
- #define GCC_SYS_NOC_AT_CLK				138
-@@ -146,18 +154,27 @@
- #define QDSS_TRACECLKIN_CLK_SRC				145
- #define GCC_QDSS_TRACECLKIN_CLK				146
- #define QDSS_TSCTR_CLK_SRC				147
-+#define GCC_Q6_TSCTR_1TO2_CLK				148
-+#define GCC_WCSS_DBG_IFC_NTS_CLK			149
- #define GCC_QDSS_TSCTR_DIV2_CLK				150
- #define GCC_QDSS_TS_CLK					151
- #define GCC_QDSS_TSCTR_DIV4_CLK				152
- #define GCC_NSS_TS_CLK					153
- #define GCC_QDSS_TSCTR_DIV8_CLK				154
- #define GCC_QDSS_TSCTR_DIV16_CLK			155
-+#define GCC_Q6SS_PCLKDBG_CLK				156
-+#define GCC_Q6SS_TRIG_CLK				157
-+#define GCC_WCSS_DBG_IFC_APB_CLK			158
-+#define GCC_WCSS_DBG_IFC_DAPBUS_CLK			159
- #define GCC_QDSS_DAP_CLK				160
- #define GCC_QDSS_APB2JTAG_CLK				161
- #define GCC_QDSS_TSCTR_DIV3_CLK				162
- #define QPIC_IO_MACRO_CLK_SRC				163
- #define GCC_QPIC_IO_MACRO_CLK                           164
- #define Q6_AXI_CLK_SRC					165
-+#define GCC_Q6_AXIM_CLK					166
-+#define GCC_WCSS_Q6_TBU_CLK				167
-+#define GCC_MEM_NOC_Q6_AXI_CLK				168
- #define Q6_AXIM2_CLK_SRC				169
- #define NSSNOC_MEMNOC_BFDCD_CLK_SRC			170
- #define GCC_NSSNOC_MEMNOC_CLK				171
-@@ -182,6 +199,7 @@
- #define GCC_UNIPHY2_SYS_CLK				190
- #define GCC_CMN_12GPLL_SYS_CLK				191
- #define GCC_NSSNOC_XO_DCD_CLK				192
-+#define GCC_Q6SS_BOOT_CLK				193
- #define UNIPHY_SYS_CLK_SRC				194
- #define NSS_TS_CLK_SRC					195
- #define GCC_ANOC_PCIE0_1LANE_M_CLK			196
-@@ -203,4 +221,8 @@
- #define GCC_PCIE2_PIPE_CLK				212
- #define GCC_PCIE3_PIPE_CLK				213
- #define GPLL0_OUT_AUX					214
-+#define GCC_WCSS_AHB_S_CLK				215
-+#define GCC_WCSS_AXI_M_CLK				216
-+#define GCC_Q6_AXIM2_CLK				217
+diff --git a/arch/arm64/boot/dts/qcom/ipq9574.dtsi b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
+index 86c9cb9fffc9..56e6f1370d6c 100644
+--- a/arch/arm64/boot/dts/qcom/ipq9574.dtsi
++++ b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
+@@ -226,6 +226,37 @@ smem@4aa00000 {
+ 			hwlocks = <&tcsr_mutex 3>;
+ 			no-map;
+ 		};
 +
- #endif
++
++		q6_region: wcnss@4ab00000 {
++			no-map;
++			reg = <0x0 0x4ab00000 0x0 0x02b00000>;
++		};
++	};
++
++	wcss: smp2p-wcss {
++		compatible = "qcom,smp2p";
++		qcom,smem = <435>, <428>;
++
++		interrupt-parent = <&intc>;
++		interrupts = <GIC_SPI 322 IRQ_TYPE_EDGE_RISING>;
++
++		mboxes = <&apcs_glb 9>;
++
++		qcom,local-pid = <0>;
++		qcom,remote-pid = <1>;
++
++		wcss_smp2p_out: master-kernel {
++			qcom,entry-name = "master-kernel";
++			qcom,smp2p-feature-ssr-ack;
++			#qcom,smem-state-cells = <1>;
++		};
++
++		wcss_smp2p_in: slave-kernel {
++			qcom,entry-name = "slave-kernel";
++			interrupt-controller;
++			#interrupt-cells = <2>;
++		};
+ 	};
+ 
+ 	soc: soc@0 {
+@@ -903,6 +934,76 @@ frame@b128000 {
+ 			};
+ 		};
+ 
++		q6v5_wcss: remoteproc@cd00000 {
++			compatible = "qcom,ipq9574-wcss-pil";
++			reg = <0x0cd00000 0x4040>,
++			      <0x004ab000 0x20>;
++			reg-names = "qdsp6",
++				    "rmb";
++
++			interrupts-extended = <&intc GIC_SPI 325 IRQ_TYPE_EDGE_RISING>,
++					      <&wcss_smp2p_in 0 IRQ_TYPE_NONE>,
++					      <&wcss_smp2p_in 1 IRQ_TYPE_NONE>,
++					      <&wcss_smp2p_in 2 IRQ_TYPE_NONE>,
++					      <&wcss_smp2p_in 3 IRQ_TYPE_NONE>;
++			interrupt-names = "wdog",
++					  "fatal",
++					  "ready",
++					  "handover",
++					  "stop-ack";
++
++			resets = <&gcc GCC_WCSSAON_RESET>,
++				 <&gcc GCC_WCSS_BCR>,
++				 <&gcc GCC_WCSS_Q6_BCR>;
++			reset-names = "wcss_aon_reset",
++				      "wcss_reset",
++				      "wcss_q6_reset";
++
++			clocks = <&gcc GCC_ANOC_WCSS_AXI_M_CLK>,
++				 <&gcc GCC_Q6_AHB_CLK>,
++				 <&gcc GCC_Q6_AHB_S_CLK>,
++				 <&gcc GCC_Q6_AXIM_CLK>,
++				 <&gcc GCC_Q6SS_BOOT_CLK>,
++				 <&gcc GCC_MEM_NOC_Q6_AXI_CLK>,
++				 <&gcc GCC_SYS_NOC_WCSS_AHB_CLK>,
++				 <&gcc GCC_WCSS_ACMT_CLK>,
++				 <&gcc GCC_WCSS_ECAHB_CLK>,
++				 <&gcc GCC_WCSS_Q6_TBU_CLK>,
++				 <&gcc GCC_WCSS_AHB_S_CLK>,
++				 <&gcc GCC_Q6_AXIM2_CLK>,
++				 <&gcc GCC_WCSS_AXI_M_CLK>;
++
++			clock-names = "anoc_wcss_axi_m",
++				      "q6_ahb",
++				      "q6_ahb_s",
++				      "q6_axim",
++				      "q6ss_boot",
++				      "mem_noc_q6_axi",
++				      "sys_noc_wcss_ahb",
++				      "wcss_acmt",
++				      "wcss_ecahb",
++				      "wcss_q6_tbu",
++				      "q6_axim2",
++				      "wcss_ahb_s",
++				      "wcss_axi_m";
++
++			qcom,halt-regs = <&tcsr 0x18000 0x1b000 0xe000>;
++
++			qcom,smem-states = <&wcss_smp2p_out 0>,
++					   <&wcss_smp2p_out 1>;
++			qcom,smem-state-names = "shutdown",
++						"stop";
++
++			memory-region = <&q6_region>;
++
++			glink-edge {
++				interrupts = <GIC_SPI 321 IRQ_TYPE_EDGE_RISING>;
++				label = "rtr";
++				qcom,remote-pid = <1>;
++				mboxes = <&apcs_glb 8>;
++			};
++		};
++
+ 		pcie1: pcie@10000000 {
+ 			compatible = "qcom,pcie-ipq9574";
+ 			reg = <0x10000000 0xf1d>,
 -- 
 2.45.1
 
