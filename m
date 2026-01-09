@@ -1,84 +1,84 @@
-Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
+Received: from mail-oa1-f51.google.com (mail-oa1-f51.google.com [209.85.160.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2BA22DC789
-	for <linux-clk@vger.kernel.org>; Fri,  9 Jan 2026 04:34:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65A9B2D8377
+	for <linux-clk@vger.kernel.org>; Fri,  9 Jan 2026 04:34:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767933258; cv=none; b=OlaAviTZzsfuurMt0sihYNsFIaXi/+8KB4GFqlgmfClJwHGXpT3XCOWToyhkvCAh2UeiAClabxFnr5WDtL66rDrJoc1gcg2PmJrB28i4UEjhgDUrYicqPkT1l0ufiIupYtLRRyzd6clFcjUPzFT+DKU6ejFDe+6NNcppsSl4PJA=
+	t=1767933259; cv=none; b=rJzdfmSFMyK7jqOgX2/tCxSMQFVyrAVfIwsKMQM7K3bF23wTrT3oXY/R2KfLO2Doa+YzDGivFWpCJWNF0x/AwT7ugdgXDZ6gmvORmHgOiOxYMda/VpdAPLFIKqUgeEBGWBICjtUHZQIUfr2qn7aFfOEoh7Y4Y+aQHDoQY70JfVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767933258; c=relaxed/simple;
-	bh=Rj5PF4kkx8UYCh2Z9Zcdx9RhapFodlCcdhqtn13jraI=;
+	s=arc-20240116; t=1767933259; c=relaxed/simple;
+	bh=LhJaa2EqMb5zW7D+67KHtimJSY7IGXFH2uVklgbAO1c=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=aNqLkzqYiPJUMOwyMdSk5KE0Vb43ym/opz1O34aBDC5NK/ldBSMYr1oOsDRTohOjYf0XmbQJ+g+l14qSAUoGIWQpr4/YKDpIKiEzsiqkLvBVlcWnZn96rycNVqS7vSjdrpGx2f21ON+aLjHuXuSPR+J7NfLaKKHPOf2ITzILqFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ka564WqA; arc=none smtp.client-ip=209.85.160.41
+	 MIME-Version; b=CnZBFEP0cRZJm31ciYsBRqnQWRI0HhjVA3+iIzQt6cbiGxHRPl/9HzhSb2Qw4Emuszc85ZJB/eWu4FxGHK3r4nBPg0Y22HgMDeoBOA1VX+MgK0mFy/h1p8PYW3s3bJUKAfKoH3sXTYyOLRWWS1v7gQCtEo+E2mP478pVNeRcp2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Vt8sm4tb; arc=none smtp.client-ip=209.85.160.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ka564WqA"
-Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-3e80c483a13so2449871fac.2
-        for <linux-clk@vger.kernel.org>; Thu, 08 Jan 2026 20:34:13 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vt8sm4tb"
+Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-3eae4e590a4so2022177fac.1
+        for <linux-clk@vger.kernel.org>; Thu, 08 Jan 2026 20:34:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1767933253; x=1768538053; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1767933249; x=1768538049; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=nLAZec+69W0xvV+E29B/iSJ71Q0zPCP3JKbVoTTx9Tg=;
-        b=ka564WqAwbDWkk5vubPgKmfOZC6oGceuv6syzKSg1CQff/dZICUXtFx6Qmt7FFGQ+0
-         7mFRGnl6aVtdcn0H+zTTl2mZ/1SJVUY1q/fHO4C/JobRXuTIbWhoSnWvtDwy63k/wJuZ
-         acf4U9rxxcNFuefU1QzYcngKE8zmNJMtSJHTd4gvKi44+9vHc+LTR1DJ+JiN9cuJQxRu
-         fN/RcuO+j7ZONhuyVTDfpkEIdRwbiQjPuPz5KS6FYOH7wWdE/agSfR4JKA1TZF9VfZMv
-         YYStORNmBXMduVr10QLuPLYuvaOxlP+AttG+2nvfryJ4tniocx4QK8CMjXMDM5TEJAIE
-         wzoQ==
+        bh=+ZyuZP5Wvq2lu1NK8tZ306A4v+hSioBXOaeCovmmUS4=;
+        b=Vt8sm4tb+SxfK7P1II24mvskPWhyyi3LFvoAb1mUKwiLc04bgmhfl1GtgcjJZ3Ckan
+         nzO8zpqdUmdC3Du8iVWPo4O6fa0KOFQWhKPbKyu3CbgaYZ5YCJsIume0WOy+Wcd25P3P
+         fK/O4Yv4qf1zXFyHcN+3nbU0hg/6L2CRHCRsdBgQROORGwy/Xt7ymp/JoCJoBcUt5jlV
+         LAFtE3xJ/ZVGJKLvXSI/rKxOd9TO3BmNk7Cr/2BmKk8mX3X80CEDQW2AIOLHmb76QCin
+         8nZG6bpgVDmPrPrXCU3xCll5iBCgMOaUmrh5Q/ulU023n2L44rfkLsS9OJb9iVyzHIbl
+         LXoA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767933253; x=1768538053;
+        d=1e100.net; s=20230601; t=1767933249; x=1768538049;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=nLAZec+69W0xvV+E29B/iSJ71Q0zPCP3JKbVoTTx9Tg=;
-        b=RrX0GZvBtwNDqeIX2Uw4yYInFJ69O9sAJ2ucVm3K6TkGmO32e9I4XZXLMMReEGbjhS
-         5McutgFJEpihXsvzSXtkTTBwp46/cTt/pIVPkJrDZ+LSsRBMos9OyoVWH1NM2bk3ATKO
-         3VCbKyPoJWs62NznbZzc9JJjxmNgMo3+4DMO9cpNzj0PUp90Es8l0GxSfzQ65ZuEUrcz
-         ImuLtzbblr2A96qhkbIBnwv1EsjsUUIXZ/RoAsYoLe7oRzjOl+Ih+UQqVyQvz7vnTY2H
-         LrbjDZum1DpJrgHAxdsXzQ189TeHxI7UP4ph+KftToW4P6wiIabiKW/ZerzNMxEzOj5T
-         xenA==
-X-Forwarded-Encrypted: i=1; AJvYcCUgkKxB15DMs2Yx+oDny2N0uPzuPzs9XbPqsIkk0GBsWr5jzlH067O0f7fxsNbSqeCvvnCNVZvjxLs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEU9viWZUUm75TThNs/qRAo2ZQYgh+tL8HaCn6Qdes/F6wojTk
-	jkPu/tt9OA0Tz4OAZqGsrUKZqNZfIY/E7t75hxs3CBc21CL/6krLwAVH
-X-Gm-Gg: AY/fxX7VMMMZEFqi/RNhB3ohql+dG7fYilST47kD/WoBttITuQvr37NcIi33TnkZK/D
-	wuqIaNb7pH6FREoPi3rDlk2IuvH9I+7UNtwP2XQShAIt4mwpoBj0bGLsKHrddN3WRJb8JVfy240
-	OwTFrzhpc3T7U0XX+2biWR1VuOcQgYoO1BnuN8rTLi8/cuZLvVajV6uYvhi2YYg4yMqwBSOuMyV
-	GbA7ovgg1S4wEN3RY02yeyWti5Purtzs5PwDaFmHXetwMHL/rz98ey+6BeUAZYV6PavKVn7EB7t
-	lKAzeGajl52MDGzTIxU9ijv7WKLBkxlzy7ZBJOKwLxLcptubWrJ+/OJBEnyDUYCxfO/k1cypoLr
-	NUjsOO4FlxImTzS7YDSPqvaoj4SVQ+9Mo5l3Jj/livjxOcz5mDTFl1FYlBoRNWAJrwlHjq+omeh
-	f9qBCYn3+PLNysjSfnFV9fLqCoITyZI/ZERYR70NCikzKvFZMV0J36/ecmuPP2rt7s1aE1J6d9I
-	M066Nlz9s6WpHQYuq7SUI2IO6zu
-X-Google-Smtp-Source: AGHT+IHhmLd9QokCnmdrjmN460hm0QSVTgysKbvdgBbpEqXgCTi50/GZXdPKyd7ggwHgyojjtJjDzQ==
-X-Received: by 2002:a05:6870:3353:b0:3f5:b004:314e with SMTP id 586e51a60fabf-3ffc0b5e85bmr4714763fac.46.1767933252709;
-        Thu, 08 Jan 2026 20:34:12 -0800 (PST)
+        bh=+ZyuZP5Wvq2lu1NK8tZ306A4v+hSioBXOaeCovmmUS4=;
+        b=uCqlIOaJRIUUXK3pkd/jz/a6mUJUs3NvS7IeJCQMN7SevUk0hSptv2psHV9i7rH+an
+         y99aBijbbXt3vwGUYqBngiq1Tz1w0DgaDLoEE3rxvpzCJe8PsbV73eXvOScVbGmu+e55
+         qHMWj8hMrveV3uA/5bb8bBctVjke3NwOor3Js3QhqO62y6klzD3hrnu0+7W9223icu7n
+         m3ni1EdOSI3uzCgyqZit+xZjwIB5gi42seZsdhTLgx9a+TCn7rDUku/fn8FZQ9FeyQbG
+         X6XnZrmsjBWMaQk44KSyU8aSy97Ymk9tduPZxzVwySIA4dSLffKu2iosBDEDIjsa8HlS
+         ttoA==
+X-Forwarded-Encrypted: i=1; AJvYcCUdi24n8VE2/awgW4tEMlyCZtLKv/swiTeXaC/ogun6HZehjWEqdp4Dp3xm1W1UOpMez7/nlXtz2ZU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHdtpMpuJt5k7B5JQsdtUvhqz5PXJLRJ3Wsw9xCdrk75yl6W32
+	VUXm/2/3vCT/T3R49tuwSZhOQOU+8esIJOLVE3XepIdJGkikqyaT1zGX
+X-Gm-Gg: AY/fxX7CKUBVYa8EI3+ccCpx1Wy0gEUX7/+okY19WzHrbaXBGZlrhGEdgNYhcTqfJ7v
+	T7BfqtOO6xtsjlE5bPJGIopfV9o3GrjfU89MTTHus9NZ6KRY0bdb/9K472/dU6CbFtPWdoC9DFo
+	DuvLKK8hsoNgTna5XvnmNg4n2KoJyHSnPIRKEL3fLRzoHkdDkcFgHkZ52ag6gCMilY6VG0TRNuA
+	kD2caweXtVZIfm66lySI4Nz1Uri8msCSwBU1B3lZ2XgZJBXGa3uFMDgwdLFRLUnIg9bSpnNoBeE
+	6lc07PAEkppQoDEXbHO6o8cpSVpJOlsQYPYn/wZqZy0Ox9821HLOdR3QhUlt3qs3ty1+E8QNv68
+	ooyXdzJP9dEH4ipQEHIm/C4XgyDDMrav8ajs0VhzlUJmpCtVXhgoouWKn9yh8S2d4k+6zr4utQO
+	BDPzNmRB8dKpZrPw/gBTMKdseTl1igd6IWElaHa4Giyn1b12IylzxMFiyBrhXToyY26ydPm546l
+	kMUaCnsSzchctxn/geCadTlfxG/al4K7mPc2OU=
+X-Google-Smtp-Source: AGHT+IG42nYET+oAEeyex5Lzv/1BoWn0YgdOYIjQB8kYL7Gk9E5M2tIrz3ZjMHML9QGGDUPQUmBFlA==
+X-Received: by 2002:a05:6871:e6:b0:3ec:3dbd:d4cc with SMTP id 586e51a60fabf-3ffc08ff16dmr4184456fac.8.1767933249275;
+        Thu, 08 Jan 2026 20:34:09 -0800 (PST)
 Received: from nukework.lan (c-98-57-15-22.hsd1.tx.comcast.net. [98.57.15.22])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-3ffa515f4dasm6274421fac.21.2026.01.08.20.34.10
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-3ffa515f4dasm6274421fac.21.2026.01.08.20.34.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Jan 2026 20:34:11 -0800 (PST)
+        Thu, 08 Jan 2026 20:34:07 -0800 (PST)
 From: Alexandru Gagniuc <mr.nuke.me@gmail.com>
 To: andersson@kernel.org,
 	krzk+dt@kernel.org,
 	mturquette@baylibre.com,
 	linux-remoteproc@vger.kernel.org,
-	Konrad Dybcio <konradybcio@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
 	Rob Herring <robh@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: mathieu.poirier@linaro.org,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alexandru Gagniuc <mr.nuke.me@gmail.com>
+Cc: konradybcio@kernel.org,
 	sboyd@kernel.org,
 	p.zabel@pengutronix.de,
 	linux-arm-msm@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Alexandru Gagniuc <mr.nuke.me@gmail.com>
-Subject: [PATCH v2 5/9] arm64: dts: qcom: ipq9574: add wcss remoteproc nodes
-Date: Thu,  8 Jan 2026 22:33:40 -0600
-Message-ID: <20260109043352.3072933-6-mr.nuke.me@gmail.com>
+	linux-clk@vger.kernel.org
+Subject: [PATCH v2 4/9] dt-bindings: remoteproc: qcom: add IPQ9574 image loader
+Date: Thu,  8 Jan 2026 22:33:39 -0600
+Message-ID: <20260109043352.3072933-5-mr.nuke.me@gmail.com>
 X-Mailer: git-send-email 2.45.1
 In-Reply-To: <20260109043352.3072933-1-mr.nuke.me@gmail.com>
 References: <20260109043352.3072933-1-mr.nuke.me@gmail.com>
@@ -90,134 +90,170 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The WCSS remoteproc is typically used by ath11k to load wifi firmware
-to the Hexagon q6 procesor. Add the nodes required to bring up this
-processor.
+Document the IPQ9574 native (non-PAS) WCSS image loader. It is similar
+to IPQ8074 WCSS, but requires several new clocks. These clocks must be
+enabled by the host in non-PAS mode, and are not optional.
+
+This binding did not have an example, so add one which uses the
+"qcom,ipq9574-wcss-pil" binding.
 
 Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
 ---
- arch/arm64/boot/dts/qcom/ipq9574.dtsi | 101 ++++++++++++++++++++++++++
- 1 file changed, 101 insertions(+)
+Changes since v1:
+ - Fixed order of clock-names
+ - Also use minItems: for clocks and clock-names
+ - Explained why example is added to binding.
+---
+ .../remoteproc/qcom,ipq8074-wcss-pil.yaml     | 116 +++++++++++++++++-
+ 1 file changed, 114 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/ipq9574.dtsi b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-index 86c9cb9fffc9..56e6f1370d6c 100644
---- a/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-+++ b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-@@ -226,6 +226,37 @@ smem@4aa00000 {
- 			hwlocks = <&tcsr_mutex 3>;
- 			no-map;
- 		};
-+
-+
-+		q6_region: wcnss@4ab00000 {
-+			no-map;
-+			reg = <0x0 0x4ab00000 0x0 0x02b00000>;
-+		};
-+	};
-+
-+	wcss: smp2p-wcss {
-+		compatible = "qcom,smp2p";
-+		qcom,smem = <435>, <428>;
-+
-+		interrupt-parent = <&intc>;
-+		interrupts = <GIC_SPI 322 IRQ_TYPE_EDGE_RISING>;
-+
-+		mboxes = <&apcs_glb 9>;
-+
-+		qcom,local-pid = <0>;
-+		qcom,remote-pid = <1>;
-+
-+		wcss_smp2p_out: master-kernel {
-+			qcom,entry-name = "master-kernel";
-+			qcom,smp2p-feature-ssr-ack;
-+			#qcom,smem-state-cells = <1>;
-+		};
-+
-+		wcss_smp2p_in: slave-kernel {
-+			qcom,entry-name = "slave-kernel";
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+		};
- 	};
+diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,ipq8074-wcss-pil.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,ipq8074-wcss-pil.yaml
+index c9bdd46fc745..865c11ee6d0c 100644
+--- a/Documentation/devicetree/bindings/remoteproc/qcom,ipq8074-wcss-pil.yaml
++++ b/Documentation/devicetree/bindings/remoteproc/qcom,ipq8074-wcss-pil.yaml
+@@ -19,6 +19,7 @@ properties:
+   compatible:
+     enum:
+       - qcom,ipq8074-wcss-pil
++      - qcom,ipq9574-wcss-pil
+       - qcom,qcs404-wcss-pil
  
- 	soc: soc@0 {
-@@ -903,6 +934,76 @@ frame@b128000 {
- 			};
- 		};
+   reg:
+@@ -50,10 +51,12 @@ properties:
+       - const: wcss_q6_reset
  
-+		q6v5_wcss: remoteproc@cd00000 {
-+			compatible = "qcom,ipq9574-wcss-pil";
-+			reg = <0x0cd00000 0x4040>,
-+			      <0x004ab000 0x20>;
-+			reg-names = "qdsp6",
-+				    "rmb";
+   clocks:
+-    maxItems: 10
++    minItems: 10
++    maxItems: 13
+ 
+   clock-names:
+-    maxItems: 10
++    minItems: 10
++    maxItems: 13
+ 
+   cx-supply:
+     description:
+@@ -121,6 +124,44 @@ allOf:
+         clock-names: false
+         clocks: false
+ 
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - qcom,ipq9574-wcss-pil
++    then:
++      properties:
++        clocks:
++          minItems: 13
++        clock-names:
++          items:
++            - const: anoc_wcss_axi_m
++            - const: q6_ahb
++            - const: q6_ahb_s
++            - const: q6_axim
++            - const: q6ss_boot
++            - const: mem_noc_q6_axi
++            - const: sys_noc_wcss_ahb
++            - const: wcss_acmt
++            - const: wcss_ecahb
++            - const: wcss_q6_tbu
++            - const: q6_axim2
++            - const: wcss_ahb_s
++            - const: wcss_axi_m
++        qcom,smem-states:
++          items:
++            - description: Shutdown Q6
++            - description: Stop Q6
++        qcom,smem-state-names:
++          items:
++            - const: shutdown
++            - const: stop
 +
-+			interrupts-extended = <&intc GIC_SPI 325 IRQ_TYPE_EDGE_RISING>,
-+					      <&wcss_smp2p_in 0 IRQ_TYPE_NONE>,
-+					      <&wcss_smp2p_in 1 IRQ_TYPE_NONE>,
-+					      <&wcss_smp2p_in 2 IRQ_TYPE_NONE>,
-+					      <&wcss_smp2p_in 3 IRQ_TYPE_NONE>;
-+			interrupt-names = "wdog",
-+					  "fatal",
-+					  "ready",
-+					  "handover",
-+					  "stop-ack";
++      required:
++        - clocks
++        - clock-names
 +
-+			resets = <&gcc GCC_WCSSAON_RESET>,
-+				 <&gcc GCC_WCSS_BCR>,
-+				 <&gcc GCC_WCSS_Q6_BCR>;
-+			reset-names = "wcss_aon_reset",
-+				      "wcss_reset",
-+				      "wcss_q6_reset";
+   - if:
+       properties:
+         compatible:
+@@ -155,3 +196,74 @@ allOf:
+         - cx-supply
+ 
+ additionalProperties: false
 +
-+			clocks = <&gcc GCC_ANOC_WCSS_AXI_M_CLK>,
-+				 <&gcc GCC_Q6_AHB_CLK>,
-+				 <&gcc GCC_Q6_AHB_S_CLK>,
-+				 <&gcc GCC_Q6_AXIM_CLK>,
-+				 <&gcc GCC_Q6SS_BOOT_CLK>,
-+				 <&gcc GCC_MEM_NOC_Q6_AXI_CLK>,
-+				 <&gcc GCC_SYS_NOC_WCSS_AHB_CLK>,
-+				 <&gcc GCC_WCSS_ACMT_CLK>,
-+				 <&gcc GCC_WCSS_ECAHB_CLK>,
-+				 <&gcc GCC_WCSS_Q6_TBU_CLK>,
-+				 <&gcc GCC_WCSS_AHB_S_CLK>,
-+				 <&gcc GCC_Q6_AXIM2_CLK>,
-+				 <&gcc GCC_WCSS_AXI_M_CLK>;
++examples:
++  - |
++    #include <dt-bindings/clock/qcom,ipq9574-gcc.h>
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++    #include <dt-bindings/reset/qcom,ipq9574-gcc.h>
 +
-+			clock-names = "anoc_wcss_axi_m",
-+				      "q6_ahb",
-+				      "q6_ahb_s",
-+				      "q6_axim",
-+				      "q6ss_boot",
-+				      "mem_noc_q6_axi",
-+				      "sys_noc_wcss_ahb",
-+				      "wcss_acmt",
-+				      "wcss_ecahb",
-+				      "wcss_q6_tbu",
-+				      "q6_axim2",
-+				      "wcss_ahb_s",
-+				      "wcss_axi_m";
++    q6v5_wcss: remoteproc@cd00000 {
++        compatible = "qcom,ipq9574-wcss-pil";
++        reg = <0x0cd00000 0x4040>,
++              <0x004ab000 0x20>;
++        reg-names = "qdsp6", "rmb";
 +
-+			qcom,halt-regs = <&tcsr 0x18000 0x1b000 0xe000>;
++        interrupts-extended = <&intc GIC_SPI 325 IRQ_TYPE_EDGE_RISING>,
++                              <&wcss_smp2p_in 0 IRQ_TYPE_NONE>,
++                              <&wcss_smp2p_in 1 IRQ_TYPE_NONE>,
++                              <&wcss_smp2p_in 2 IRQ_TYPE_NONE>,
++                              <&wcss_smp2p_in 3 IRQ_TYPE_NONE>;
++        interrupt-names = "wdog", "fatal", "ready",
++                          "handover", "stop-ack";
 +
-+			qcom,smem-states = <&wcss_smp2p_out 0>,
-+					   <&wcss_smp2p_out 1>;
-+			qcom,smem-state-names = "shutdown",
-+						"stop";
++        resets = <&gcc GCC_WCSSAON_RESET>,
++                 <&gcc GCC_WCSS_BCR>,
++                 <&gcc GCC_WCSS_Q6_BCR>;
++        reset-names = "wcss_aon_reset",
++                      "wcss_reset",
++                      "wcss_q6_reset";
 +
-+			memory-region = <&q6_region>;
++        clocks = <&gcc GCC_ANOC_WCSS_AXI_M_CLK>,
++                 <&gcc GCC_Q6_AHB_CLK>,
++                 <&gcc GCC_Q6_AHB_S_CLK>,
++                 <&gcc GCC_Q6_AXIM_CLK>,
++                 <&gcc GCC_Q6SS_BOOT_CLK>,
++                 <&gcc GCC_MEM_NOC_Q6_AXI_CLK>,
++                 <&gcc GCC_SYS_NOC_WCSS_AHB_CLK>,
++                 <&gcc GCC_WCSS_ACMT_CLK>,
++                 <&gcc GCC_WCSS_ECAHB_CLK>,
++                 <&gcc GCC_WCSS_Q6_TBU_CLK>,
++                 <&gcc GCC_WCSS_AHB_S_CLK>,
++                 <&gcc GCC_Q6_AXIM2_CLK>,
++                 <&gcc GCC_WCSS_AXI_M_CLK>;
 +
-+			glink-edge {
-+				interrupts = <GIC_SPI 321 IRQ_TYPE_EDGE_RISING>;
-+				label = "rtr";
-+				qcom,remote-pid = <1>;
-+				mboxes = <&apcs_glb 8>;
-+			};
-+		};
++        clock-names = "anoc_wcss_axi_m",
++                      "q6_ahb",
++                      "q6_ahb_s",
++                      "q6_axim",
++                      "q6ss_boot",
++                      "mem_noc_q6_axi",
++                      "sys_noc_wcss_ahb",
++                      "wcss_acmt",
++                      "wcss_ecahb",
++                      "wcss_q6_tbu",
++                      "q6_axim2",
++                      "wcss_ahb_s",
++                      "wcss_axi_m";
 +
- 		pcie1: pcie@10000000 {
- 			compatible = "qcom,pcie-ipq9574";
- 			reg = <0x10000000 0xf1d>,
++        qcom,halt-regs = <&tcsr 0x18000 0x1b000 0xe000>;
++
++        qcom,smem-states = <&wcss_smp2p_out 0>,
++                           <&wcss_smp2p_out 1>;
++        qcom,smem-state-names = "shutdown",
++                                "stop";
++        memory-region = <&q6_region>;
++
++        glink-edge {
++            interrupts = <GIC_SPI 321 IRQ_TYPE_EDGE_RISING>;
++            label = "rtr";
++            qcom,remote-pid = <1>;
++            mboxes = <&apcs_glb 8>;
++        };
++    };
 -- 
 2.45.1
 
