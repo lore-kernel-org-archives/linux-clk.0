@@ -1,134 +1,126 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CBA53659F8
-	for <linux-clk@vger.kernel.org>; Fri,  9 Jan 2026 17:14:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 949643659EF;
+	Fri,  9 Jan 2026 17:22:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767978881; cv=none; b=Mpgqdtcv08145SMCSnSej3GEzxryn/2NkGVF/RufMI02zVIruWWiYYhPfUkQKfmO6/K2Bbvv1VvNNi5jGGnNco0jf/DHviCqo016bXf2rkvSrvjaWXRxyCb1lhfPfW42uQiXynJ54SbyLsjYtF1uA1BQGHrSOs+bp5xfwFqM2+Y=
+	t=1767979321; cv=none; b=q4/8T4Q05WrjQm9EnLa2Raz+DgJ9RxLVUVkPDMFQWnMEelvsJ/zNuO4mkjfJpQPq2RJxHdnECdG6x4D2JJWqzTVCB/t703CKSktYHSFwfBfncr0/grT5mSUaqB683VNxWMyjLFkWdGJFvAATfoMe0gVb/9ulj+5kclrbamqMcco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767978881; c=relaxed/simple;
-	bh=F7zcGk8nCH165bG+Lq3YX1vuc4Qm0989LRhZOuxR4Qo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=diI8/NK0jyLhe5HLktmrd9Kr70xMGeRsUONAA1j0gCabAZjNVdFqzHJI4FuZkFn2TkhrQ0G6YXzOv7JjuB3UAgCKjVg6PSwTXvlbVhkRLbhW127JDLsENZQ4YHcd2/ZE/5GZi8mqkuYw71A0W98otPbizYHUZDdt8TUfeR76PjI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AeazqGNL; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=MSgb6EGe; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1767979321; c=relaxed/simple;
+	bh=G0CdK1BbKzMKU+qqbitcHl4o9Pf/LHQ1vf98qGeQbYE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TFUaBIpcmHwjwasjaEuto3g/MeetL5WXz1gS7eMXHclT6lcx2pHE9/LES0wK011h13SfS5loShbtrf5deWwBt7rmq/YJUL5ipOJ8xAFS3SBPCT2TFFLMiPLmXpnF6N++jl/mrKExgRsMdsYQH9UBVjD0ITzxPkkO0UiDU4qA80o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fMWxy9I1; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AeazqGNL";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="MSgb6EGe"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1767978878;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lSDwbxYjO8+HiZzQaZwthav/1dzwRPtawpHAGU+oOsQ=;
-	b=AeazqGNLs6R9hsYax8J58O6snCHIdtbsEJk1z0dRPN475Xe1WGO5ZUHkINc8KhEaLBK+GW
-	TDBBTRf86svvG2oqDSYgJeBd7jZNiKFwXp8VfHcOH/s3jbk+UCrZChaqWNH+Hr92yvuCpe
-	SCu7SptAfa3McqUjlMhzI9DIFue76iw=
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
- [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-274-plof47dHPe-a2NMc2fd2jA-1; Fri, 09 Jan 2026 12:14:37 -0500
-X-MC-Unique: plof47dHPe-a2NMc2fd2jA-1
-X-Mimecast-MFC-AGG-ID: plof47dHPe-a2NMc2fd2jA_1767978876
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-8b22d590227so552089985a.1
-        for <linux-clk@vger.kernel.org>; Fri, 09 Jan 2026 09:14:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1767978876; x=1768583676; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lSDwbxYjO8+HiZzQaZwthav/1dzwRPtawpHAGU+oOsQ=;
-        b=MSgb6EGeh8JT3IbLKfH4m6CAu+Js0nnr3SoBBcPnaQU8c1LnlqRh1dGBm9UK3849GL
-         2F7fHF6f+YV5RlJvlmFgwUQN2M+IU2WfowHmtq1jXIXe8uuq9sEdgcYeVofDRiGmqM3U
-         SrvQ204jUXmCTbbJxynwSK4pTs947d9OH2xnBOqvA1dOz19pG2opZc2dPapF3Okos/lE
-         LrXpNVOnOFrkUlSgyTrFHN/Zbm/Jg2uNz1iyOVmaEOuorO2ViVR2J3IeGdOVbAHu9chp
-         OwBqDmZ3LcTj/kYzGtSXQ0PDWqpHXJMTnce1o0WPxR4UY+C2dncvyGK61g1s3Ceb5Qgt
-         UM3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767978876; x=1768583676;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=lSDwbxYjO8+HiZzQaZwthav/1dzwRPtawpHAGU+oOsQ=;
-        b=lAm2OcHmribkZAFRKQxrzH3KlLHlFUAxIqhTSJBvEm4F+/rsoouh3MXYVkZikUNwQj
-         kEr7o6URoRHWAQXeKIMSbkNYRragZKTGQccXwkB53Jd2TsVhHHE1HqCCMGmKRdr3cITK
-         d05BMsZLOzC1A6mCNnTxZQYsZa5o8hv17X+xR8h6OOXYg+UyCfXIAstdgUqVCnSd9QoB
-         2hhnr67jsreqP2O6k6sn5wOcwr7v4N03LWl/QsrsN4m5KnjC9TVM880m6a3TboVFMPd6
-         2yAbcB5PEf3n+0iwsEgrGPhKSnjTvGOsfTWWKVAUn2Ppbj04Lmsz/WwNdjYYMOzily95
-         nirw==
-X-Forwarded-Encrypted: i=1; AJvYcCWTPAgo4vhFfCVvnt2lWBn9gYegP7COFsC+Ie20VdeGML/dzgqdV9FjAijNJV3WIY1Tv1uhkn/kM44=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJm4CtkQpJvxgVW3KFteODsfRy0ercGNjaBpgobfmFqfRsLkvZ
-	yQnvEHvOBBmkqCxlLFbLkae+0kOiYY2t/Nb8VP655aAfDLF66sIFDew73HMGiqaN+Sj7XE8ZGmJ
-	cFbhYcnZHeHccDuw8H1XOb2Gznx3312IldNMsuzgoboPaFDcNph59HIvYfmGFZQ==
-X-Gm-Gg: AY/fxX7f0aBd6XcO/NW8e4jcoiayu1RyAIj7c0zFZ0KrzkvBN+iwHg0h+M8d/qrPedI
-	KPaMHmM3up6SwhxuoJHStYixCdyaebbdE137+/SyUkEUdU09IhaTKG4FSHw1hVfNUrONNy9hRD1
-	KKPM3hbSK2uTw5bS3q7EUcOSKsBme52mL5t3wk/ZZc8qbyGwBp4y8bHy3M+6Ta9BvWf31JW81ex
-	1n4iC/kO3Ob9nsyz8/xZPHJybFFThhEAFWuq86Eo50tI7A6+GPuviVvBlrjaOe5k8slx1LpB29P
-	KkGCRKIwr3mwoNQg/dB5Hwb6ox8SJ71iRakoP5S/1Rkamqe5nJIcEEc/aeL8yh5hmJcsXls85oJ
-	+udLBiAaQs7qGW3kizsPt/PFqHrTJwsZAn1/6UqKEHshA
-X-Received: by 2002:a05:620a:4109:b0:8bb:a675:aa61 with SMTP id af79cd13be357-8c3893fbb30mr1217152385a.79.1767978876358;
-        Fri, 09 Jan 2026 09:14:36 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHotayWWfWtWeRCvw1eejr8Fm0argOz9TlIuQkrGTqEF91Uo7p3dq/qiwtr88DHNoO1lgXL4w==
-X-Received: by 2002:a05:620a:4109:b0:8bb:a675:aa61 with SMTP id af79cd13be357-8c3893fbb30mr1217146085a.79.1767978875890;
-        Fri, 09 Jan 2026 09:14:35 -0800 (PST)
-Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8907726041fsm82384206d6.45.2026.01.09.09.14.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Jan 2026 09:14:35 -0800 (PST)
-Date: Fri, 9 Jan 2026 12:14:33 -0500
-From: Brian Masney <bmasney@redhat.com>
-To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Cc: linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org,
-	Linus Walleij <linusw@kernel.org>, linux-gpio@vger.kernel.org,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	linux-rtc@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>, linux-serial@vger.kernel.org,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Guenter Roeck <linux@roeck-us.net>, linux-watchdog@vger.kernel.org
-Subject: Re: [PATCH 00/13] MIPS: move pic32.h header file from asm to
- platform_data
-Message-ID: <aWE3eWL_8U33TcsT@redhat.com>
-References: <20260109-mips-pic32-header-move-v1-0-99859c55783d@redhat.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fMWxy9I1"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2F1AC4CEF1;
+	Fri,  9 Jan 2026 17:21:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1767979321;
+	bh=G0CdK1BbKzMKU+qqbitcHl4o9Pf/LHQ1vf98qGeQbYE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=fMWxy9I1T3LHdLmPtdMUL88DS3wYXB71qViQVOCn0+8QCbajTFBrfCs8mqRUXy+Y4
+	 4E+eBYsitwzT/qE/4+xLri8dA5feTyUtep33ImpFVLB2+Wxssd+JDlhKBMSAEgTwgb
+	 jnchWeKlErbxlJm9dPOlSzhoP46/HA2MEdAQR6j1cvUjT1Z48s7+DCjf3C8gGAwNSr
+	 BUXYSgbI6w2J7+HijlF38X8OoLlcZ7PktPyZMuYV6gFQjkfwBvlk7LRC/7Nd22e6Z+
+	 gB/+xmfzZzhw6BchvPsR2Qael3H05SiSbrl7pdb++/DLGljx6tybl/LamhByeVke5T
+	 r+n5loRskMeeA==
+Message-ID: <48faa7b1-d486-406a-a8c4-a1c9609e7fc6@kernel.org>
+Date: Fri, 9 Jan 2026 18:21:47 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260109-mips-pic32-header-move-v1-0-99859c55783d@redhat.com>
-User-Agent: Mutt/2.2.14 (2025-02-20)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 04/12] powerpc/fsp2: Simplify with scoped for each OF
+ child loop
+To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
+ Miguel Ojeda <ojeda@kernel.org>, Rob Herring <robh@kernel.org>,
+ Saravana Kannan <saravanak@google.com>, Nathan Chancellor
+ <nathan@kernel.org>, Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
+ Russell King <linux@armlinux.org.uk>,
+ Nicolas Ferre <nicolas.ferre@microchip.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+ Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar
+ <alim.akhtar@samsung.com>, Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Nipun Gupta <nipun.gupta@amd.com>, Nikhil Agarwal <nikhil.agarwal@amd.com>,
+ Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Vinod Koul <vkoul@kernel.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ llvm@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ linux-clk@vger.kernel.org, imx@lists.linux.dev, dmaengine@vger.kernel.org,
+ linux-media@vger.kernel.org, linux-pm@vger.kernel.org,
+ Jonathan Cameron <jonathan.cameron@huawei.com>
+References: <20260109-of-for-each-compatible-scoped-v3-0-c22fa2c0749a@oss.qualcomm.com>
+ <20260109-of-for-each-compatible-scoped-v3-4-c22fa2c0749a@oss.qualcomm.com>
+Content-Language: fr-FR
+From: "Christophe Leroy (CS GROUP)" <chleroy@kernel.org>
+In-Reply-To: <20260109-of-for-each-compatible-scoped-v3-4-c22fa2c0749a@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jan 09, 2026 at 11:41:13AM -0500, Brian Masney wrote:
-> There are currently some pic32 MIPS drivers that are in tree, and are
-> only configured to be compiled on the MIPS pic32 platform. There's a
-> risk of breaking some of these drivers when migrating drivers away from
-> legacy APIs. It happened to me with a pic32 clk driver.
+
+
+Le 09/01/2026 à 17:57, Krzysztof Kozlowski a écrit :
+> Use scoped for-each loop when iterating over device nodes to make code a
+> bit simpler.
 > 
-> Let's go ahead and move the pic32.h from the asm to the platform_data
-> include directory in the tree. This will make it easier, and cleaner to
-> enable COMPILE_TEST for some of these pic32 drivers.
+> Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+
+Reviewed-by: Christophe Leroy (CS GROUP) <chleroy@kernel.org>
+
+> ---
 > 
-> I included a patch at the end that shows enabling COMPILE_TEST for a
-> pic32 clk driver.
-
-I didn't CC everyone on patch 1 to this series that copes pic32.h from
-the MIPS ASM directory to linux/platform_data/pic32.h. It's available at
-the following location if you want to see it:
-
-https://lore.kernel.org/linux-mips/20260109-mips-pic32-header-move-v1-0-99859c55783d@redhat.com/T/#m1e0e50adfe2ea4bf430025660fada7b1468d0fbf
-
-Patch 12 of this series is where I remove the asm variant of pic32.h.
-
-Brian
+> Depends on the first patch.
+> ---
+>   arch/powerpc/platforms/44x/fsp2.c | 5 +----
+>   1 file changed, 1 insertion(+), 4 deletions(-)
+> 
+> diff --git a/arch/powerpc/platforms/44x/fsp2.c b/arch/powerpc/platforms/44x/fsp2.c
+> index f6b8d02e08b0..b06d9220844c 100644
+> --- a/arch/powerpc/platforms/44x/fsp2.c
+> +++ b/arch/powerpc/platforms/44x/fsp2.c
+> @@ -199,16 +199,14 @@ static irqreturn_t rst_wrn_handler(int irq, void *data) {
+>   
+>   static void __init node_irq_request(const char *compat, irq_handler_t errirq_handler)
+>   {
+> -	struct device_node *np;
+>   	unsigned int irq;
+>   	int32_t rc;
+>   
+> -	for_each_compatible_node(np, NULL, compat) {
+> +	for_each_compatible_node_scoped(np, NULL, compat) {
+>   		irq = irq_of_parse_and_map(np, 0);
+>   		if (!irq) {
+>   			pr_err("device tree node %pOFn is missing a interrupt",
+>   			      np);
+> -			of_node_put(np);
+>   			return;
+>   		}
+>   
+> @@ -216,7 +214,6 @@ static void __init node_irq_request(const char *compat, irq_handler_t errirq_han
+>   		if (rc) {
+>   			pr_err("fsp_of_probe: request_irq failed: np=%pOF rc=%d",
+>   			      np, rc);
+> -			of_node_put(np);
+>   			return;
+>   		}
+>   	}
+> 
 
