@@ -1,73 +1,125 @@
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A41E2DB794;
-	Fri,  9 Jan 2026 20:43:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB7C5500942;
+	Fri,  9 Jan 2026 21:32:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767991386; cv=none; b=rPyTNlB0kba1QzQVIsgIcpSj3OcM+wTfbg/knMce5v7mVJjSr8p0JPtwl8ysuJkW5T++yd4t5yc0POt39lxOBXKwfF3NlDzHOgdgECQQu0NT0wBvXocKki/Ctxk9SzDB1TJb8eGMhgqDuHTDASuHk4UmoaVaLvSlLQbAQWy8UmU=
+	t=1767994325; cv=none; b=FG6y4YFlf1XX7TZH0O0HI4UTjU4btIkWFoEBncXA/PIzu2tXXk/RhvZ79vcVhDIth+ycH+ludOBOKaJ4hiZE51H9pxukHcIEdmv0C8D1hTHwg8EP8w1isxB7E+uBeyuOLHDPXsTz38E2RypvtGGOkxIt+93htqX0/0o7/fXHGxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767991386; c=relaxed/simple;
-	bh=miKcZWol48Jw+2UO6gt4cVVV1UHKKRtEl1qwPzQqXP8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GFJsQLRPRZDEWYAauJMkvpHrYIuVoTq4oQQMEoq6LthybJqe4U3tUnFRm+XnLprx+k/Y+x5Sblhe+imrpl4IrIj0COJvcQtDDQpApoGtXX8erGYuVnrjr0th3XcUT6gJkGgSxZvoqAxN4kKTFpr66BY1cavUT/NPHQ6ZCPSgQ04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=0mvT/PbG; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+	s=arc-20240116; t=1767994325; c=relaxed/simple;
+	bh=jmXgesLrf6BlXMJgU46sieiYHnF1uBZSohRg/Opr9CY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jXocST472lhHppkeQG0VlhDt16IJmgUqqfbR/zXFXqHeddrD8ml/C5MEypCUursKfna/ACkjlxCpBveAbSK1sIrhx8kfIwGl9k15NUAbBbSeHdUSrHTa5JUI4X16rQfEd8EcCEmOHKjp4cIfsCpU/bw5A79FIvIkFHn79AErHew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nPYFodVY; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="0mvT/PbG"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
-	bh=f5RJrE9iu3AAG2e7ylgK1ozseoLRQiyaoirBfZJAtnQ=; b=0mvT/PbGRh9OZnqLcSrZpsjnOb
-	yP9cFt3trK6oUFCtVbEP5qujsrD2emQSMPcusA0XHuETJz9fqvtMjU73AzVcgO1ujqxJGCRBUblyb
-	fI8kdZWpF0bkNWE+pMVAKS1z2egHEQ8f853vglLDqtJdFFCGoWz2GsSwcC+cyCwsYrd+eEKI7Yzo4
-	XNPjNcasRe3avUpDqs5zYAaIhGoUS4MjDUxYbXx1j5e+BPjcHwaz3dsSm28CJnl+J13NNBL3OUOiO
-	RQl9nCXZNcnCJR8j9Z0vzjpDrakKEYiormETfKSNa7eyh+i5Wp2SSBRg+90qCTZcrvNl2/5rpGuXi
-	/0oMxuAw==;
-Received: from [192.76.154.238] (helo=phil.dip.tu-dresden.de)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1veJJs-001g9m-Nf; Fri, 09 Jan 2026 21:42:53 +0100
-From: Heiko Stuebner <heiko@sntech.de>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Sebastian Reichel <sebastian.reichel@collabora.com>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Miaoqian Lin <linmq006@gmail.com>
-Cc: Heiko Stuebner <heiko@sntech.de>
-Subject: Re: [PATCH] clk: rockchip: Fix error pointer check after rockchip_clk_register_gate_link()
-Date: Fri,  9 Jan 2026 21:42:51 +0100
-Message-ID: <176799135865.3468380.11555784321903491011.b4-ty@sntech.de>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250805030358.3665878-1-linmq006@gmail.com>
-References: <20250805030358.3665878-1-linmq006@gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nPYFodVY"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C968C4CEF1;
+	Fri,  9 Jan 2026 21:32:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1767994324;
+	bh=jmXgesLrf6BlXMJgU46sieiYHnF1uBZSohRg/Opr9CY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nPYFodVYkJKKaNAmB7BJ6Y3jrMXONYgVTwTovhmDd6J/LvLCc34t0iP3QzU7+A2X8
+	 1T47XWL06CnA0qDIp4Br08bs4I8RuUwwyVa88KHZXFM4tFT9cAj49jTBGQs/NTwvne
+	 7zNBwvEnFwbRWkmzNyrEsWvoL1rCi/hm/n7xWpuOucmW/RWemKwH7y/rwhZMPofeeR
+	 rcZS2jisdQoHW+bDNUsN97ID6z9TRKvWsE6U6zUd5txphAICycVtxbB+WcqhPwJAca
+	 +tUfw2HwFfX2qoIIc/V+orTsnboD3x55KlRUwkZx+WTDqSh28ys7UBf6BfQ5ztqCqj
+	 r5eaZ2BoZKVJg==
+Date: Fri, 9 Jan 2026 21:32:00 +0000
+From: Conor Dooley <conor@kernel.org>
+To: claudiu beznea <claudiu.beznea@tuxon.dev>
+Cc: linux-kernel@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>,
+	Daire McNamara <daire.mcnamara@microchip.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] clk: microchip: drop POLARFIRE from
+ ARCH_MICROCHIP_POLARFIRE
+Message-ID: <20260109-static-sauciness-be0ab0b410d2@spud>
+References: <20251121-tartar-drew-ba31c5ec9192@spud>
+ <20251121-prude-dilation-79d275fec296@spud>
+ <86bd75e7-1191-458d-b71e-c3cecb960700@tuxon.dev>
+ <20251208-flatten-devious-56abcfecd510@spud>
+ <af02ffd7-4876-4bce-8a79-2b34114d6ccc@tuxon.dev>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="/ujGXdfmic+jHB7W"
+Content-Disposition: inline
+In-Reply-To: <af02ffd7-4876-4bce-8a79-2b34114d6ccc@tuxon.dev>
 
 
-On Tue, 05 Aug 2025 07:03:58 +0400, Miaoqian Lin wrote:
-> Replace NULL check with IS_ERR_OR_NULL() check after calling
-> rockchip_clk_register_gate_link() since this function
-> returns error pointers (ERR_PTR).
-> 
-> 
+--/ujGXdfmic+jHB7W
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Applied, thanks!
+On Fri, Jan 09, 2026 at 09:22:25AM +0200, claudiu beznea wrote:
+>=20
+>=20
+> On 12/8/25 20:02, Conor Dooley wrote:
+> > On Sat, Dec 06, 2025 at 01:18:30PM +0200, Claudiu Beznea wrote:
+> > >=20
+> > >=20
+> > > On 11/21/25 15:44, Conor Dooley wrote:
+> > > > From: Conor Dooley <conor.dooley@microchip.com>
+> > > >=20
+> > > > This driver is used by non-polarfire devices now, and the ARCH_MICR=
+OCHIP
+> > > > symbol has been defined for some time on RISCV so drop it without a=
+ny
+> > > > functional change.
+> > > >=20
+> > > > Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+> > > > ---
+> > > >   drivers/clk/microchip/Kconfig | 4 ++--
+> > > >   1 file changed, 2 insertions(+), 2 deletions(-)
+> > > >=20
+> > > > diff --git a/drivers/clk/microchip/Kconfig b/drivers/clk/microchip/=
+Kconfig
+> > > > index cab9a909893b..a0ef14310417 100644
+> > > > --- a/drivers/clk/microchip/Kconfig
+> > > > +++ b/drivers/clk/microchip/Kconfig
+> > > > @@ -5,8 +5,8 @@ config COMMON_CLK_PIC32
+> > > >   config MCHP_CLK_MPFS
+> > > >   	bool "Clk driver for PolarFire SoC"
+> > > > -	depends on ARCH_MICROCHIP_POLARFIRE || COMPILE_TEST
+> > > > -	default ARCH_MICROCHIP_POLARFIRE
+> > > > +	depends on ARCH_MICROCHIP || COMPILE_TEST
+> > > > +	default y
+> > > >   	depends on MFD_SYSCON
+> > > >   	select AUXILIARY_BUS
+> > > >   	select COMMON_CLK_DIVIDER_REGMAP
+> > >=20
+> > > OK, I found v2 in my inbox. Same symptom here. It doesn't apply on to=
+p of
+> > > the current at91-next either.
+> >=20
+> > I think this should sort itself out after -rc1, but I'll resend if it
+> > doesn't.
+>=20
+> Still doesn't apply. It conflicts at least with
+> commit c6f2dddfa7f9 ("clk: microchip: mpfs: use regmap for clocks")
 
-[1/1] clk: rockchip: Fix error pointer check after rockchip_clk_register_gate_link()
-      commit: a8d722f03923b1c6166d39482c6df8f017e185d9
+Right, I'll resend. Thought it was based on the aforementioned patch
+tbh!
 
-Best regards,
--- 
-Heiko Stuebner <heiko@sntech.de>
+--/ujGXdfmic+jHB7W
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaWFz0AAKCRB4tDGHoIJi
+0lDFAP41AelcberGgT4Fh6QhHg746myZBCiXqHa6oCY+lLjliwEAizke4evc/wgP
+3w0M939O+a5TZLZwHMXtuSzTsWDDRQg=
+=PVZG
+-----END PGP SIGNATURE-----
+
+--/ujGXdfmic+jHB7W--
