@@ -1,84 +1,84 @@
-Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com [209.85.160.54])
+Received: from mail-oa1-f44.google.com (mail-oa1-f44.google.com [209.85.160.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E781D2E093F
-	for <linux-clk@vger.kernel.org>; Fri,  9 Jan 2026 04:34:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EB392DFA5A
+	for <linux-clk@vger.kernel.org>; Fri,  9 Jan 2026 04:34:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767933265; cv=none; b=AV2d/2n0a+AW2UV4LVW0dkJhLc91w6O1MtDmtMsn64aG52pESR5aVLXHekuCtLp8KA+FtWF6TN/zk4ihYQqQMX78muLQCdWbI5NUSaW7jthkMGLXqPvuSML/rjxsPT1SecE9vpvc+26knmj40vjoBtemYRZzQyaH1BjtY3kMS6k=
+	t=1767933271; cv=none; b=OGXFuwM5GdUfiLOGvXefRv8QPezfQ0h8YJ7R8Bg1wRDEzredyXyMvN+3ej0ZZ6XZi6xoPl0CRUX4xu5N1hXxtvq1sj7ojnif2jUXFSg0wJvrM+x0eGVaQPGwQQMNtIaNE/I4fO15s5wEyrwKUrwO13KehsxRZmODA+h5Ejyd9yI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767933265; c=relaxed/simple;
-	bh=MRR96YRL/BnW1TS6FRX/9kI3Hyxu+j1AhYRaOe8ePBM=;
+	s=arc-20240116; t=1767933271; c=relaxed/simple;
+	bh=2abIKdioHKuqFCVVrc2rlxdq1wJZS4xz8H+W/r0DMWw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UxwdWOFyTQQxq4JMog/qMJgbLsEZnKvn9EMP2by5SbgO3x1z0NSuLQVPuYSwTHSxjwIif2ExttnIDOQTYgebFWzR+ZlYMgPRDzABQuvyZIe7n6dYXm11ngKgWmtrPRSwYCqxYV7OKJRNlQEmWePoz5EV5gpGRlo4Tb0oYzkrXTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mSkgQcbt; arc=none smtp.client-ip=209.85.160.54
+	 MIME-Version; b=ESdMPa9DGtFAPCdptCZmCR9rNSgh8hNMXz0vtCPUhOogdRDRRpEsfvrQnntvPVV2TMJ1MDKOSho9Sv0ZMH5aGwzJpo+Xtp1A3Hn8QDXpr6lArxyaii3PHUd4FedZlAUyfeuhyCK5ZTz8nT5GINzWa9Om5jW0xQDZcF9a8JTQL0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TQ60iQqM; arc=none smtp.client-ip=209.85.160.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mSkgQcbt"
-Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-3e37ad3d95aso2681190fac.3
-        for <linux-clk@vger.kernel.org>; Thu, 08 Jan 2026 20:34:19 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TQ60iQqM"
+Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-3eae4e590a4so2022254fac.1
+        for <linux-clk@vger.kernel.org>; Thu, 08 Jan 2026 20:34:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1767933259; x=1768538059; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1767933264; x=1768538064; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=aQB/JYeBaUeD1NoNXFs5NwTVmBLqqvOE3WDrmvFYil8=;
-        b=mSkgQcbtVz5iY9uQHO9C0Uo70KyWQK4IGUWHqrSL+0pDTAbobUCzsO6cfgegHYgrLU
-         UAkJBAg7JKSM/QpwZl5IORjkF8b73EQSza9G5OwcuoOaILppWdsMvZ3HUxgDfmZuq3Iq
-         iW050J+rLYefruYOSkz1qW5f4eA5LY472rTR5I3/E4QtN2bZJoU8JBMJ3jjY+5Ip/Nia
-         hnk9Bvo0hWNcsoXLW5qBb8fxwUI7694jHYjxJbO8YsTlH50kKSOJYBhL/562XNWgMpqc
-         tOoJ3knLqcnwzIjDBn5PcYbTKEoJimbIjtOb5DyNhI1jnxcf2ppr2drsV6oPFZNsOB4B
-         Lhhw==
+        bh=VymCizJkrbUg3Dme3lvHp49OC7wgHu27DgIm2cwwCWU=;
+        b=TQ60iQqMUKe2uCIohS5XyyzpfJ+dTYRvxRLDE0Xgbtx7DE3bLIQWau5OksA0C+V3rz
+         es0U/abwqL98tjLiDUCCzfmYgN+wyAFt6+hzP9RuCqR6X/ChQB3+Wncu2sIJ77ZY4NXW
+         JKCC4TcdFBOhmAWfrEdy8kx28MWZXVRya3E2bWeJcgCI19FfV2MUsq5H2XKLinPg1imw
+         6pdKS8TiII5/3bxAPh5uYNdkYrzcHfbeePIIrOSBVaX94WTSBKA65HrK2VbgGhuhhndi
+         TU7ltlw0fkpyRz0lZ6pRAkgjgC4G3Hv6b+eH+5kc0EPX8RewboN6PcJerraeuqeuZyPm
+         YAkw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767933259; x=1768538059;
+        d=1e100.net; s=20230601; t=1767933264; x=1768538064;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=aQB/JYeBaUeD1NoNXFs5NwTVmBLqqvOE3WDrmvFYil8=;
-        b=b+Z8ZPNAIVHfTCKXuoC9/U2Szi/FajBX4OjcaNHI5i421qeSht9KUzaDqZZjkJnere
-         JvtVBnDLXBTC912r1Tc8u5G4y0RtgC6F8H9DQ5Dt4FvoA4+BtldOkcemubHbaW/rw+9s
-         wxQlYDVduy+6utSM8x8CXOIMkC95x+C+i7ImEes6/JRHUPS37VP+v8ahInLpikJcF7HY
-         fzoKP1ZwHJZWnZUeLRzINpFiR/jkHMzIXw+EznCbxx/yk5Vr4wn/INNxUnWThvSSAZNi
-         GI/vIT4bMaiyaCzXWGw4+pJiRqMB0w48GIrs9qyLJC8vZB7DlBm6JP0of/IqEyXi64tM
-         fp3w==
-X-Forwarded-Encrypted: i=1; AJvYcCW+nLQ8ouXRA1Rpo5MM9ev5hHsZYxubA4NizEjZ5xsTddtn8dKQ95xF1j9GalVdzrQGSYL9Owoj5pI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwlgX5B6XKIBXO65IrPBbTPZnyACfilbhKn/WG302xeygCXq8DO
-	v9M/9q1o8h7S/H4s1k7EKK7+pf95U6ftYYkc5Qejd2dJ67oyXLp8KUliVfpF9g==
-X-Gm-Gg: AY/fxX44vZOZT87yVVSyyU18w7zLq/BFuV8K0q7wc+cy8ZVoOAIY0T/z9avtzOGmfL+
-	iwpn3Fq43tKpaVg27lP1KRZb3jQaV/iXCMi5KX6tXK0shRCWIBs4ZnJpnzRygRHhGjvXwzfDUfW
-	n9oJAvFmHlWwjvnVneql9o6rng3dPLxE5EPTfjFRaORpjW6ghFd15L+wMGchxqKsJA613aRRbo+
-	2CGorlajax63kzhcWEpqFMmomwUQszTvtMwYp2TGAGeHwDY1MG5/FsPirWcNAWrcL4mn2MCVhQK
-	2LHl3gDeqbQ3MKFElDRAt3L/1x2OHh83fFwwpUA+vI6ao5YCLiBQSOXOrDO2mfh2bkMEDLZ4Xdq
-	nAXUxowaEQQwMM6z6ljKumwuiU1Z1AjA6WL/IwiWH23CKvyiVT3qxs7Sriz7odBWtRc/8fx4ClC
-	PaMutDS6//yoTN3sYkf8vZ522cbS2fxiDks/dLF5SG31QhPO4dJyxsORHd5Bmx5/I3Qp8KbwTSG
-	1OMIsfqFdRl48ekfrl9EboyJ3Jd
-X-Google-Smtp-Source: AGHT+IHwX+GNh5/DwiG7T8HWYUrWoLfZr0QWP9ORLGp7c/Mh7CX2gaYJOOtLXTTaret+B4ss2zrolg==
-X-Received: by 2002:a05:6870:1989:b0:2e9:93c6:6e4a with SMTP id 586e51a60fabf-3ffc0b652demr4312921fac.38.1767933258739;
-        Thu, 08 Jan 2026 20:34:18 -0800 (PST)
+        bh=VymCizJkrbUg3Dme3lvHp49OC7wgHu27DgIm2cwwCWU=;
+        b=DQApvF23QNeWfverUTICzeoPidZenZUilWg3sF6B4ysUceuYe9omkH8JIsmcFFYSXQ
+         ORBf79ImnZjxxQ4ULHzH2mZFXGDpJ3yrY80kfBi8xr7LZYoM8dzOLG5xF8yeaMfaK3GH
+         DpOMjR/uwnKcgAct8r57tqRBoapQfXSRiqU7XXOnxxjBsIJRpo0Oq7oG9P2JR69mlzPO
+         IKCI9fPjcutu0XxCZ3SZOIc76KYuy+0qv+qlVQiX+aWP1rh2oafC4LNWjd2oUASGNoV2
+         yS60RW4d8OOhUbu/hIVk2GZBW4m8vloL4CmWV0ostT+6d1zHUuJK917rUen9TB5XQjYZ
+         ofRg==
+X-Forwarded-Encrypted: i=1; AJvYcCXAlFxwtZcuiVuzqKFd21HZ2V7gIKW0KwlH2q6WDiWOIXsEsIk/BzZ2sE/qOME0Y/NgwLNSnMLsbQc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywzkhw7Le6ORm2C0mYqNFQFZ0IvG+IjldAJo7absbFz0G0vYh2x
+	3R6d/EBE6noILsd6jfdgfGcZXN3Y7kA+YW5+2zi6VpyxJ1wVBjOo78sB
+X-Gm-Gg: AY/fxX4HAJ8Kr3MlmXihck3QDVvu5utUHKBwHWYtGv/0mEIwD/DR+LCQfO/mAUAj1Iv
+	fgS0MUGC03hOO/j21V4cCz00foX8vr+8Bn1SFD+PAbSQ0D7FDBloOJwF0K2woD505X1/5mafrIw
+	hzITHN1T3qh2zasjpiXAPgZo5fvjvjbzUZW9uSvCbNhCn6yTW7LcRwc47XxRTnW7JXkZqMzHs5M
+	Zh3KmwEGf3ooeq2Kd6sIwt57dcESqtVHFzzh2W7JMpHUjFOmmK+PGk5KR+q8AyvYhKkIUiP6YV/
+	+SMm/DM7uK5V3IvBwtt5okFSK9bgPsCAJWKYKKgRqxviIpFYd3/afXRVtg6mEnpVOGC72jz5JlR
+	gVD9DZd+fDyK0ZOr4bIrRPB5uM0KVbYfLD7bpLwDUTOqrk8oPCVPa5lGnj+A/UnCUL9r+7WXyIB
+	OIuxqVy4FcxcShAb3Iuv7YaJGgZao6NZWgI5PMdNRA53x8b06hyKTHs8j2ujv3vL7+w56dBS87q
+	00PuLiKJ5jIXBDl1ecRTzWXYzesnpFpC45/ksE=
+X-Google-Smtp-Source: AGHT+IGKogmUEb02ZbJlLltI7+PDxuLuhx/ja1knaw86NH00xOU50PG9fwQfnQN39e+H79FvmbOjIA==
+X-Received: by 2002:a05:6871:e709:b0:3e9:35d4:213f with SMTP id 586e51a60fabf-3ffc090099amr4432615fac.10.1767933264320;
+        Thu, 08 Jan 2026 20:34:24 -0800 (PST)
 Received: from nukework.lan (c-98-57-15-22.hsd1.tx.comcast.net. [98.57.15.22])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-3ffa515f4dasm6274421fac.21.2026.01.08.20.34.17
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-3ffa515f4dasm6274421fac.21.2026.01.08.20.34.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Jan 2026 20:34:18 -0800 (PST)
+        Thu, 08 Jan 2026 20:34:22 -0800 (PST)
 From: Alexandru Gagniuc <mr.nuke.me@gmail.com>
 To: andersson@kernel.org,
 	krzk+dt@kernel.org,
 	mturquette@baylibre.com,
 	linux-remoteproc@vger.kernel.org,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>
+	Mathieu Poirier <mathieu.poirier@linaro.org>
 Cc: robh@kernel.org,
 	conor+dt@kernel.org,
 	konradybcio@kernel.org,
 	sboyd@kernel.org,
+	p.zabel@pengutronix.de,
 	linux-arm-msm@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	Alexandru Gagniuc <mr.nuke.me@gmail.com>
-Subject: [PATCH v2 7/9] remoteproc: qcom_q6v5_wcss: support IPQ9574
-Date: Thu,  8 Jan 2026 22:33:42 -0600
-Message-ID: <20260109043352.3072933-8-mr.nuke.me@gmail.com>
+Subject: [PATCH v2 9/9] remoteproc: qcom_q6v5_wcss: use bulk clk API for q6 clocks in QCS404
+Date: Thu,  8 Jan 2026 22:33:44 -0600
+Message-ID: <20260109043352.3072933-10-mr.nuke.me@gmail.com>
 X-Mailer: git-send-email 2.45.1
 In-Reply-To: <20260109043352.3072933-1-mr.nuke.me@gmail.com>
 References: <20260109043352.3072933-1-mr.nuke.me@gmail.com>
@@ -90,437 +90,184 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Q6 based firmware loading is also present on IPQ9574, when coupled
-with a wifi-6 device, such as QCN5024. Populate driver data for
-IPQ9574 with values from the downstream 5.4 kerrnel.
-
-Add the new sequences for the WCSS reset and stop. The downstream
-5.4 kernel calls these "Q6V7", so keep the name. This is still worth
-using with the "q6v5" driver because all other parts of the driver
-can be seamlessly reused.
-
-The IPQ9574 uses two sets of clocks. the first, dubbed "pre_boot_clks"
-must be enabled before the Q6 is started by writing the Q6SS_RST_EVB
-register. The second set of clocks, "clks" should only be enabled
-after the Q6 is placed out of reset. Otherwise, the host CPU core that
-tries to start the remoteproc will hang.
-
-The shutdown path requires a small delay between asserting the Q6 and
-WCSS resets. The delay is handled in q6v7_q6_powerdown(). Also add it
-in the error path of q6v5_wcss_start().
-
-The downstream kernel had a funny comment, "Pray god and wait for
-reset to complete", which I decided to keep for entertainment value.
+Five of the clocks on QCS404 are consistently enabled and disabled
+together. Use the bulk clock API to get and enable them. They are
+enabled after the Q6 reset is deasserted, implying that pre_boot is
+not the appropriate designator. Store them in wcss->clks.
 
 Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
 ---
 Changes since v1:
- - rename "q6_clks" to "pre_boot_clks"
- - drop step numbers from q6v7_wcss_reset() comments
- - disable clocks on init failures in q6v7_wcss_reset()
- - Add Q6SS_CBCR_CLKEN macro
+ - Use wcss->clks, since wcss->q6_clks has been renamed.
 ---
- drivers/remoteproc/qcom_q6v5_wcss.c | 253 +++++++++++++++++++++++++++-
- 1 file changed, 246 insertions(+), 7 deletions(-)
+ drivers/remoteproc/qcom_q6v5_wcss.c | 99 ++++++++---------------------
+ 1 file changed, 28 insertions(+), 71 deletions(-)
 
 diff --git a/drivers/remoteproc/qcom_q6v5_wcss.c b/drivers/remoteproc/qcom_q6v5_wcss.c
-index 07bba47eb084..ccf5fbc5be66 100644
+index 2bb83e6afb6b..3c1794fde3f0 100644
 --- a/drivers/remoteproc/qcom_q6v5_wcss.c
 +++ b/drivers/remoteproc/qcom_q6v5_wcss.c
-@@ -31,6 +31,9 @@
- #define Q6SS_MEM_PWR_CTL		0x0B0
- #define Q6SS_STRAP_ACC			0x110
- #define Q6SS_CGC_OVERRIDE		0x034
-+#define Q6SS_BOOT_CORE_START		0x400
-+#define Q6SS_BOOT_CMD                   0x404
-+#define Q6SS_BOOT_STATUS		0x408
- #define Q6SS_BCR_REG			0x6000
+@@ -128,14 +128,9 @@ struct q6v5_wcss {
+ 	u32 halt_nc;
  
- /* AXI Halt Register Offsets */
-@@ -48,7 +51,11 @@
- /* Q6SS_BRC_RESET */
- #define Q6SS_BRC_BLK_ARES		BIT(0)
- 
-+/* QDSP6SS CBCR */
-+#define Q6SS_CBCR_CLKEN			BIT(0)
-+
- /* Q6SS_GFMUX_CTL */
-+#define Q6SS_CLK_SRC_MUX		BIT(0)
- #define Q6SS_CLK_ENABLE			BIT(1)
- #define Q6SS_SWITCH_CLK_SRC		BIT(8)
- 
-@@ -67,6 +74,7 @@
- #define HALT_CHECK_MAX_LOOPS		200
- #define Q6SS_XO_CBCR		GENMASK(5, 3)
- #define Q6SS_SLEEP_CBCR		GENMASK(5, 2)
-+#define Q6SS_CORE_CBCR		BIT(5)
- 
- /* Q6SS config/status registers */
- #define TCSR_GLOBAL_CFG0	0x0
-@@ -77,9 +85,11 @@
- #define Q6SS_RST_EVB		0x10
- 
- #define BHS_EN_REST_ACK		BIT(0)
-+#define WCSS_HM_RET		BIT(1)
- #define SSCAON_ENABLE		BIT(13)
- #define SSCAON_BUS_EN		BIT(15)
- #define SSCAON_BUS_MUX_MASK	GENMASK(18, 16)
-+#define SSCAON_MASK             GENMASK(17, 15)
- 
- #define MEM_BANKS		19
- #define TCSR_WCSS_CLK_MASK	0x1F
-@@ -88,6 +98,7 @@
- #define MAX_HALT_REG		4
- enum {
- 	WCSS_IPQ8074,
-+	WCSS_IPQ9574,
- 	WCSS_QCS404,
- };
- 
-@@ -125,6 +136,12 @@ struct q6v5_wcss {
- 	struct clk *qdsp6ss_abhm_cbcr;
- 	struct clk *qdsp6ss_axim_cbcr;
+ 	struct clk *xo;
+-	struct clk *ahbfabric_cbcr_clk;
+ 	struct clk *gcc_abhs_cbcr;
+ 	struct clk *gcc_axim_cbcr;
+-	struct clk *lcc_csr_cbcr;
+ 	struct clk *ahbs_cbcr;
+-	struct clk *tcm_slave_cbcr;
+-	struct clk *qdsp6ss_abhm_cbcr;
+-	struct clk *qdsp6ss_axim_cbcr;
  	struct clk *lcc_bcr_sleep;
-+	struct clk_bulk_data *clks;
-+	/* clocks that must be started before the Q6 is booted */
-+	struct clk_bulk_data *pre_boot_clks;
-+	int num_clks;
-+	int num_pre_boot_clks;
-+
- 	struct regulator *cx_supply;
- 	struct qcom_sysmon *sysmon;
+ 	struct clk_bulk_data *clks;
+ 	/* clocks that must be started before the Q6 is booted */
+@@ -427,35 +422,16 @@ static int q6v5_wcss_qcs404_power_on(struct q6v5_wcss *wcss)
+ 	/* Remove reset to the WCNSS QDSP6SS */
+ 	reset_control_deassert(wcss->wcss_q6_bcr_reset);
  
-@@ -233,6 +250,97 @@ static int q6v5_wcss_reset(struct q6v5_wcss *wcss)
- 	return 0;
- }
- 
-+static int q6v7_wcss_reset(struct q6v5_wcss *wcss, struct rproc *rproc)
-+{
-+	int ret;
-+	u32 val;
-+
-+	ret = regmap_update_bits(wcss->halt_map,
-+				 wcss->halt_nc + TCSR_GLOBAL_CFG1,
-+				 0xff00, 0x1100);
-+	if (ret) {
-+		dev_err(wcss->dev, "TCSR_GLOBAL_CFG1 failed\n");
-+		return ret;
-+	}
-+
-+	ret = clk_bulk_prepare_enable(wcss->num_pre_boot_clks,
-+				      wcss->pre_boot_clks);
-+	if (ret) {
-+		dev_err(wcss->dev, "failed to enable clocks, err=%d\n", ret);
-+		return ret;
-+	};
-+
-+	/* Write bootaddr to Q6WCSS */
-+	writel(rproc->bootaddr >> 4, wcss->reg_base + Q6SS_RST_EVB);
-+
-+	/* Deassert AON Reset */
-+	ret = reset_control_deassert(wcss->wcss_aon_reset);
-+	if (ret) {
-+		dev_err(wcss->dev, "wcss_aon_reset failed\n");
-+		goto disable_pre_boot_clocks;
-+		return ret;
-+	}
-+
-+	/* Set MPM configs*/
-+	/*set CFG[18:15]=1*/
-+	val = readl(wcss->rmb_base + SSCAON_CONFIG);
-+	val &= ~SSCAON_MASK;
-+	val |= SSCAON_BUS_EN;
-+	writel(val, wcss->rmb_base + SSCAON_CONFIG);
-+
-+	/* Wait for SSCAON_STATUS, up to 1 second */
-+	ret = readl_poll_timeout(wcss->rmb_base + SSCAON_STATUS,
-+				 val, (val & 0xffff) == 0x10, 1000, 1000000);
-+	if (ret) {
-+		dev_err(wcss->dev, " Boot Error, SSCAON=0x%08X\n", val);
-+		goto assert_aon_reset;
-+	}
-+
-+	/* BHS require xo cbcr to be enabled */
-+	val = readl(wcss->reg_base + Q6SS_XO_CBCR);
-+	val |= Q6SS_CBCR_CLKEN;
-+	writel(val, wcss->reg_base + Q6SS_XO_CBCR);
-+
-+	/* Enable core cbcr */
-+	val = readl(wcss->reg_base + Q6SS_CORE_CBCR);
-+	val |= Q6SS_CBCR_CLKEN;
-+	writel(val, wcss->reg_base + Q6SS_CORE_CBCR);
-+
-+	/* Enable sleep cbcr */
-+	val = readl(wcss->reg_base + Q6SS_SLEEP_CBCR);
-+	val |= Q6SS_CBCR_CLKEN;
-+	writel(val, wcss->reg_base + Q6SS_SLEEP_CBCR);
-+
-+	/* Boot core start */
-+	writel(0x1, wcss->reg_base + Q6SS_BOOT_CORE_START);
-+	writel(0x1, wcss->reg_base + Q6SS_BOOT_CMD);
-+
-+	/* Pray god and wait for reset to complete */
-+	ret = readl_poll_timeout(wcss->reg_base + Q6SS_BOOT_STATUS, val,
-+				 (val & BIT(0)), 1000, 20000);
-+	if (ret) {
-+		dev_err(wcss->dev, "WCSS boot timed out\n");
-+		ret = -ETIMEDOUT;
-+		goto assert_aon_reset;
-+	}
-+
-+	/* Enable post-boot clocks */
+-	/* Enable Q6SSTOP_AHBFABRIC_CBCR clock */
+-	ret = clk_prepare_enable(wcss->ahbfabric_cbcr_clk);
+-	if (ret)
 +	ret = clk_bulk_prepare_enable(wcss->num_clks, wcss->clks);
 +	if (ret) {
-+		dev_err(wcss->dev, "failed to enable clocks, err=%d\n", ret);
-+		goto assert_aon_reset;
++		dev_err(wcss->dev, "failed to enable q6 clocks, err=%d\n", ret);
+ 		goto disable_gcc_abhs_cbcr_clk;
+-
+-	/* Enable the LCCCSR CBC clock, Q6SSTOP_Q6SSTOP_LCC_CSR_CBCR clock */
+-	ret = clk_prepare_enable(wcss->lcc_csr_cbcr);
+-	if (ret)
+-		goto disable_ahbfabric_cbcr_clk;
 +	};
-+
-+	return 0;
-+
-+assert_aon_reset:
-+	reset_control_assert(wcss->wcss_aon_reset);
-+disable_pre_boot_clocks:
-+	clk_bulk_disable_unprepare(wcss->num_pre_boot_clks,
-+				   wcss->pre_boot_clks);
-+	return ret;
-+}
-+
- static int q6v5_wcss_start(struct rproc *rproc)
- {
- 	struct q6v5_wcss *wcss = rproc->priv;
-@@ -267,10 +375,18 @@ static int q6v5_wcss_start(struct rproc *rproc)
+ 
+ 	/* Enable the Q6AHBS CBC, Q6SSTOP_Q6SS_AHBS_CBCR clock */
+ 	ret = clk_prepare_enable(wcss->ahbs_cbcr);
  	if (ret)
- 		goto wcss_q6_reset;
+-		goto disable_csr_cbcr_clk;
+-
+-	/* Enable the TCM slave CBC, Q6SSTOP_Q6SS_TCM_SLAVE_CBCR clock */
+-	ret = clk_prepare_enable(wcss->tcm_slave_cbcr);
+-	if (ret)
+-		goto disable_ahbs_cbcr_clk;
+-
+-	/* Enable the Q6SS AHB master CBC, Q6SSTOP_Q6SS_AHBM_CBCR clock */
+-	ret = clk_prepare_enable(wcss->qdsp6ss_abhm_cbcr);
+-	if (ret)
+-		goto disable_tcm_slave_cbcr_clk;
+-
+-	/* Enable the Q6SS AXI master CBC, Q6SSTOP_Q6SS_AXIM_CBCR clock */
+-	ret = clk_prepare_enable(wcss->qdsp6ss_axim_cbcr);
+-	if (ret)
+-		goto disable_abhm_cbcr_clk;
++		goto disable_clks;
  
--	/* Write bootaddr to EVB so that Q6WCSS will jump there after reset */
--	writel(rproc->bootaddr >> 4, wcss->reg_base + Q6SS_RST_EVB);
-+	switch (wcss->version) {
-+	case WCSS_QCS404:
-+	case WCSS_IPQ8074:
-+		/* Write bootaddr to Q6WCSS */
-+		writel(rproc->bootaddr >> 4, wcss->reg_base + Q6SS_RST_EVB);
-+		ret = q6v5_wcss_reset(wcss);
-+		break;
-+	case WCSS_IPQ9574:
-+		ret = q6v7_wcss_reset(wcss, rproc);
-+		break;
-+	}
- 
--	ret = q6v5_wcss_reset(wcss);
- 	if (ret)
- 		goto wcss_q6_reset;
- 
-@@ -282,6 +398,7 @@ static int q6v5_wcss_start(struct rproc *rproc)
- 
- wcss_q6_reset:
- 	reset_control_assert(wcss->wcss_q6_reset);
-+	usleep_range(1000, 2000);
- 
- wcss_reset:
- 	reset_control_assert(wcss->wcss_reset);
-@@ -635,6 +752,41 @@ static int q6v5_wcss_powerdown(struct q6v5_wcss *wcss)
- 	return 0;
- }
- 
-+static int q6v7_wcss_powerdown(struct q6v5_wcss *wcss)
-+{
-+	u32 val;
-+	int ret;
-+
-+	q6v5_wcss_halt_axi_port(wcss, wcss->halt_map, wcss->halt_wcss);
-+
-+	val = readl(wcss->rmb_base + SSCAON_CONFIG);
-+	val &= ~SSCAON_MASK;
-+	val |= SSCAON_BUS_EN;
-+	writel(val, wcss->rmb_base + SSCAON_CONFIG);
-+
-+	val |= WCSS_HM_RET;
-+	writel(val, wcss->rmb_base + SSCAON_CONFIG);
-+
-+	ret = readl_poll_timeout(wcss->rmb_base + SSCAON_STATUS,
-+				 val, (val & 0xffff) == 0x400, 1000,
-+				 HALT_CHECK_MAX_LOOPS);
-+	if (ret) {
-+		dev_err(wcss->dev,
-+			"can't get SSCAON_STATUS rc:%d)\n", ret);
-+		return ret;
-+	}
-+
-+	usleep_range(2000, 4000);
-+
-+	reset_control_assert(wcss->wcss_aon_reset);
-+
-+	val = readl(wcss->rmb_base + SSCAON_CONFIG);
-+	val &= ~WCSS_HM_RET;
-+	writel(val, wcss->rmb_base + SSCAON_CONFIG);
-+
-+	return 0;
-+}
-+
- static int q6v5_q6_powerdown(struct q6v5_wcss *wcss)
- {
- 	int ret;
-@@ -702,6 +854,26 @@ static int q6v5_q6_powerdown(struct q6v5_wcss *wcss)
- 	return 0;
- }
- 
-+static void q6v7_q6_powerdown(struct q6v5_wcss *wcss)
-+{
-+	u32 val;
-+
-+	q6v5_wcss_halt_axi_port(wcss, wcss->halt_map, wcss->halt_q6);
-+
-+	/* Disable Q6 Core clock */
-+	val = readl(wcss->reg_base + Q6SS_GFMUX_CTL_REG);
-+	val &= ~Q6SS_CLK_SRC_MUX;
-+	writel(val, wcss->reg_base + Q6SS_GFMUX_CTL_REG);
-+
+ 	/* Enable the Q6SS XO CBC */
+ 	val = readl(wcss->reg_base + Q6SS_XO_CBCR);
+@@ -538,17 +514,9 @@ static int q6v5_wcss_qcs404_power_on(struct q6v5_wcss *wcss)
+ 	val = readl(wcss->reg_base + Q6SS_XO_CBCR);
+ 	val &= ~Q6SS_CLK_ENABLE;
+ 	writel(val, wcss->reg_base + Q6SS_XO_CBCR);
+-	clk_disable_unprepare(wcss->qdsp6ss_axim_cbcr);
+-disable_abhm_cbcr_clk:
+-	clk_disable_unprepare(wcss->qdsp6ss_abhm_cbcr);
+-disable_tcm_slave_cbcr_clk:
+-	clk_disable_unprepare(wcss->tcm_slave_cbcr);
+-disable_ahbs_cbcr_clk:
+ 	clk_disable_unprepare(wcss->ahbs_cbcr);
+-disable_csr_cbcr_clk:
+-	clk_disable_unprepare(wcss->lcc_csr_cbcr);
+-disable_ahbfabric_cbcr_clk:
+-	clk_disable_unprepare(wcss->ahbfabric_cbcr_clk);
++disable_clks:
 +	clk_bulk_disable_unprepare(wcss->num_clks, wcss->clks);
-+	clk_bulk_disable_unprepare(wcss->num_pre_boot_clks,
-+				   wcss->pre_boot_clks);
-+
-+	reset_control_assert(wcss->wcss_q6_reset);
-+	usleep_range(1000, 2000);
-+	reset_control_assert(wcss->wcss_reset);
-+}
-+
- static int q6v5_wcss_stop(struct rproc *rproc)
+ disable_gcc_abhs_cbcr_clk:
+ 	clk_disable_unprepare(wcss->gcc_abhs_cbcr);
+ 
+@@ -666,11 +634,7 @@ static int q6v5_qcs404_wcss_shutdown(struct q6v5_wcss *wcss)
+ 	val &= ~Q6SS_BHS_ON;
+ 	writel(val, wcss->reg_base + Q6SS_PWR_CTL_REG);
+ 
+-	clk_disable_unprepare(wcss->ahbfabric_cbcr_clk);
+-	clk_disable_unprepare(wcss->lcc_csr_cbcr);
+-	clk_disable_unprepare(wcss->tcm_slave_cbcr);
+-	clk_disable_unprepare(wcss->qdsp6ss_abhm_cbcr);
+-	clk_disable_unprepare(wcss->qdsp6ss_axim_cbcr);
++	clk_bulk_disable_unprepare(wcss->num_clks, wcss->clks);
+ 
+ 	val = readl(wcss->reg_base + Q6SS_SLEEP_CBCR);
+ 	val &= ~BIT(0);
+@@ -1112,6 +1076,20 @@ static int q6v5_alloc_memory_region(struct q6v5_wcss *wcss)
+ 
+ static int q6v5_wcss_init_clock(struct q6v5_wcss *wcss)
  {
- 	struct q6v5_wcss *wcss = rproc->priv;
-@@ -716,11 +888,21 @@ static int q6v5_wcss_stop(struct rproc *rproc)
- 		}
- 	}
- 
--	if (wcss->version == WCSS_QCS404) {
-+	switch (wcss->version) {
-+	case WCSS_QCS404:
- 		ret = q6v5_qcs404_wcss_shutdown(wcss);
- 		if (ret)
- 			return ret;
--	} else {
-+		break;
-+	case WCSS_IPQ9574:
-+		ret = q6v7_wcss_powerdown(wcss);
-+		if (ret)
-+			return ret;
++	static const char *const bulk_clks[] = {
++		"lcc_ahbfabric_cbc", "tcsr_lcc_cbc", "lcc_tcm_slave_cbc",
++		"lcc_abhm_cbc", "lcc_axim_cbc" };
++	int ret, i;
 +
-+		q6v7_q6_powerdown(wcss);
-+
-+		break;
-+	default:
- 		ret = q6v5_wcss_powerdown(wcss);
- 		if (ret)
- 			return ret;
-@@ -729,6 +911,7 @@ static int q6v5_wcss_stop(struct rproc *rproc)
- 		ret = q6v5_q6_powerdown(wcss);
- 		if (ret)
- 			return ret;
-+		break;
- 	}
- 
- 	qcom_q6v5_unprepare(&wcss->q6v5);
-@@ -835,7 +1018,9 @@ static int q6v5_wcss_init_mmio(struct q6v5_wcss *wcss,
- 	if (!wcss->reg_base)
- 		return -ENOMEM;
- 
--	if (wcss->version == WCSS_IPQ8074) {
-+	switch (wcss->version) {
-+	case WCSS_IPQ8074:
-+	case WCSS_IPQ9574:
- 		wcss->rmb_base = devm_platform_ioremap_resource_byname(pdev, "rmb");
- 		if (IS_ERR(wcss->rmb_base))
- 			return PTR_ERR(wcss->rmb_base);
-@@ -962,6 +1147,43 @@ static int q6v5_wcss_init_regulator(struct q6v5_wcss *wcss)
- 	return 0;
- }
- 
-+static int ipq9574_init_clocks(struct q6v5_wcss *wcss)
-+{
-+	static const char *const pre_boot_clks[] = {
-+		"anoc_wcss_axi_m", "q6_ahb", "q6_ahb_s", "q6_axim", "q6ss_boot",
-+		"mem_noc_q6_axi", "sys_noc_wcss_ahb", "wcss_acmt", "wcss_ecahb",
-+		"wcss_q6_tbu" };
-+	static const char *const clks[] = {
-+		"q6_axim2", "wcss_ahb_s", "wcss_axi_m" };
-+	int i, ret;
-+
-+	wcss->num_clks = ARRAY_SIZE(clks);
-+	wcss->num_pre_boot_clks = ARRAY_SIZE(pre_boot_clks);
-+
-+	wcss->pre_boot_clks = devm_kcalloc(wcss->dev, wcss->num_pre_boot_clks,
-+				     sizeof(*wcss->pre_boot_clks), GFP_KERNEL);
-+	if (!wcss->pre_boot_clks)
-+		return -ENOMEM;
-+
++	wcss->num_clks = ARRAY_SIZE(bulk_clks);
 +	wcss->clks = devm_kcalloc(wcss->dev, wcss->num_clks,
-+				  sizeof(*wcss->clks), GFP_KERNEL);
++				       sizeof(*wcss->clks), GFP_KERNEL);
 +	if (!wcss->clks)
 +		return -ENOMEM;
 +
-+	for (i = 0; i < wcss->num_pre_boot_clks; i++)
-+		wcss->pre_boot_clks[i].id = pre_boot_clks[i];
-+
 +	for (i = 0; i < wcss->num_clks; i++)
-+		wcss->clks[i].id = clks[i];
++		wcss->clks[i].id = bulk_clks[i];
 +
-+	ret = devm_clk_bulk_get(wcss->dev, wcss->num_pre_boot_clks,
-+				wcss->pre_boot_clks);
-+	if (ret < 0)
-+		return ret;
+ 	wcss->xo = devm_clk_get(wcss->dev, "xo");
+ 	if (IS_ERR(wcss->xo))
+ 		return dev_err_probe(wcss->dev, PTR_ERR(wcss->xo),
+@@ -1127,44 +1105,23 @@ static int q6v5_wcss_init_clock(struct q6v5_wcss *wcss)
+ 		return dev_err_probe(wcss->dev, PTR_ERR(wcss->gcc_axim_cbcr),
+ 				     "failed to get gcc axim clock\n");
+ 
+-	wcss->ahbfabric_cbcr_clk = devm_clk_get(wcss->dev,
+-						"lcc_ahbfabric_cbc");
+-	if (IS_ERR(wcss->ahbfabric_cbcr_clk))
+-		return dev_err_probe(wcss->dev, PTR_ERR(wcss->ahbfabric_cbcr_clk),
+-				     "failed to get ahbfabric clock\n");
+-
+-	wcss->lcc_csr_cbcr = devm_clk_get(wcss->dev, "tcsr_lcc_cbc");
+-	if (IS_ERR(wcss->lcc_csr_cbcr))
+-		return dev_err_probe(wcss->dev, PTR_ERR(wcss->lcc_csr_cbcr),
+-				     "failed to get csr cbcr clk\n");
+-
+ 	wcss->ahbs_cbcr = devm_clk_get(wcss->dev,
+ 				       "lcc_abhs_cbc");
+ 	if (IS_ERR(wcss->ahbs_cbcr))
+ 		return dev_err_probe(wcss->dev, PTR_ERR(wcss->ahbs_cbcr),
+ 				     "failed to get ahbs_cbcr clk\n");
+ 
+-	wcss->tcm_slave_cbcr = devm_clk_get(wcss->dev,
+-					    "lcc_tcm_slave_cbc");
+-	if (IS_ERR(wcss->tcm_slave_cbcr))
+-		return dev_err_probe(wcss->dev, PTR_ERR(wcss->tcm_slave_cbcr),
+-				     "failed to get tcm cbcr clk\n");
+-
+-	wcss->qdsp6ss_abhm_cbcr = devm_clk_get(wcss->dev, "lcc_abhm_cbc");
+-	if (IS_ERR(wcss->qdsp6ss_abhm_cbcr))
+-		return dev_err_probe(wcss->dev, PTR_ERR(wcss->qdsp6ss_abhm_cbcr),
+-				     "failed to get abhm cbcr clk\n");
+-
+-	wcss->qdsp6ss_axim_cbcr = devm_clk_get(wcss->dev, "lcc_axim_cbc");
+-	if (IS_ERR(wcss->qdsp6ss_axim_cbcr))
+-		return dev_err_probe(wcss->dev, PTR_ERR(wcss->qdsp6ss_axim_cbcr),
+-				     "failed to get axim cbcr clk\n");
+-
+ 	wcss->lcc_bcr_sleep = devm_clk_get(wcss->dev, "lcc_bcr_sleep");
+ 	if (IS_ERR(wcss->lcc_bcr_sleep))
+ 		return dev_err_probe(wcss->dev, PTR_ERR(wcss->lcc_bcr_sleep),
+ 				     "failed to get bcr cbcr clk\n");
+ 
++	ret = devm_clk_bulk_get(wcss->dev, wcss->num_clks, wcss->clks);
++	if (ret < 0) {
++		return dev_err_probe(wcss->dev, ret,
++				     "failed to bulk get q6 clocks\n");
++	}
 +
-+	return devm_clk_bulk_get(wcss->dev, wcss->num_clks, wcss->clks);
-+}
-+
- static int q6v5_wcss_probe(struct platform_device *pdev)
- {
- 	const struct wcss_data *desc;
-@@ -994,7 +1216,8 @@ static int q6v5_wcss_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
+ 	return 0;
+ }
  
--	if (wcss->version == WCSS_QCS404) {
-+	switch (wcss->version) {
-+	case WCSS_QCS404:
- 		ret = q6v5_wcss_init_clock(wcss);
- 		if (ret)
- 			return ret;
-@@ -1002,6 +1225,11 @@ static int q6v5_wcss_probe(struct platform_device *pdev)
- 		ret = q6v5_wcss_init_regulator(wcss);
- 		if (ret)
- 			return ret;
-+		break;
-+	case WCSS_IPQ9574:
-+		ret = ipq9574_init_clocks(wcss);
-+		if (ret)
-+			return ret;
- 	}
- 
- 	ret = q6v5_wcss_init_reset(wcss, desc);
-@@ -1064,6 +1292,16 @@ static const struct wcss_data wcss_ipq8074_res_init = {
- 	.requires_force_stop = true,
- };
- 
-+static const struct wcss_data wcss_ipq9574_res_init = {
-+	.firmware_name = "IPQ9574/q6_fw.mdt",
-+	.version = WCSS_IPQ9574,
-+	.crash_reason_smem = WCSS_CRASH_REASON,
-+	.aon_reset_required = true,
-+	.ssr_name = "q6wcss",
-+	.ops = &q6v5_wcss_ipq8074_ops,
-+	.requires_force_stop = true,
-+};
-+
- static const struct wcss_data wcss_qcs404_res_init = {
- 	.crash_reason_smem = WCSS_CRASH_REASON,
- 	.firmware_name = "wcnss.mdt",
-@@ -1079,6 +1317,7 @@ static const struct wcss_data wcss_qcs404_res_init = {
- 
- static const struct of_device_id q6v5_wcss_of_match[] = {
- 	{ .compatible = "qcom,ipq8074-wcss-pil", .data = &wcss_ipq8074_res_init },
-+	{ .compatible = "qcom,ipq9574-wcss-pil", .data = &wcss_ipq9574_res_init },
- 	{ .compatible = "qcom,qcs404-wcss-pil", .data = &wcss_qcs404_res_init },
- 	{ },
- };
 -- 
 2.45.1
 
