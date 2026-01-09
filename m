@@ -1,253 +1,134 @@
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96D2D2E4247;
-	Fri,  9 Jan 2026 17:03:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CBA53659F8
+	for <linux-clk@vger.kernel.org>; Fri,  9 Jan 2026 17:14:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767978230; cv=none; b=a6xXke0ef4j9nBZplz5MKB+S3sdcFgNtLWqsVuiD1NP9FqR6HQcIB5lyeDSCtspwuXPq4qktgbZsYBAmdFAXiqMogoH2mooo/1WVMkFEr0D8rDK0Xh1U482D+6yZs4sEQthaH9ToC0QQ1XWXlr1SF6h2/8qEeyTvRtXYrODEbEo=
+	t=1767978881; cv=none; b=Mpgqdtcv08145SMCSnSej3GEzxryn/2NkGVF/RufMI02zVIruWWiYYhPfUkQKfmO6/K2Bbvv1VvNNi5jGGnNco0jf/DHviCqo016bXf2rkvSrvjaWXRxyCb1lhfPfW42uQiXynJ54SbyLsjYtF1uA1BQGHrSOs+bp5xfwFqM2+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767978230; c=relaxed/simple;
-	bh=HAnLULaMUOc5Nc5jyCi1DTCw+t7mBlxZV/qBH8OF/pw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=mSCRVE+wu7izqfTmRoi6huU9bQJVe/bWsL164SND+WVzpgDlnsB1XXcho60J0qyAQsraU2quBXdCQ1DX5gH908CInclsPc5KMrd9YP0w5PO9sXd/bLKAhqH7mpx4sd+Vzchv8ZJhhNac3X4kPR4lCHN2ft+rslWJOR1+OrsCXQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=BvMpH1m5; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+	s=arc-20240116; t=1767978881; c=relaxed/simple;
+	bh=F7zcGk8nCH165bG+Lq3YX1vuc4Qm0989LRhZOuxR4Qo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=diI8/NK0jyLhe5HLktmrd9Kr70xMGeRsUONAA1j0gCabAZjNVdFqzHJI4FuZkFn2TkhrQ0G6YXzOv7JjuB3UAgCKjVg6PSwTXvlbVhkRLbhW127JDLsENZQ4YHcd2/ZE/5GZi8mqkuYw71A0W98otPbizYHUZDdt8TUfeR76PjI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AeazqGNL; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=MSgb6EGe; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="BvMpH1m5"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1767978227; x=1799514227;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=HAnLULaMUOc5Nc5jyCi1DTCw+t7mBlxZV/qBH8OF/pw=;
-  b=BvMpH1m5YeoMP4Mq80DV2/+doUvbiLjz1Z16P49F4UZB0BkH6fyCTS3w
-   rksO9sGfOSNkM8uq0ClaplGFof8dw/Jj5msdgqj5OCICI2DRz/83y9jGf
-   sE+QVIB/Z5EFuPIzr7r+dHejfwG+OI35lYQ8hjy5m4fUvDg3kxpSTTtp5
-   WhKKSZVg8/iDbuRccPQXN3H0SOFJN1ElbsK/x5OXG7r9vjNMxY5IDG0OO
-   H0WKuMAsztfWrN1THqw+6xZEQ+Y9FVVUAxXablV2+z6NLZl61cAsD2X+x
-   Y5qqFPEhJkIc093RBg6XXZ6kqNKv9XinQUOIhzexkqmyBsQ6CLenAMyHC
-   A==;
-X-CSE-ConnectionGUID: RKd1RUMeRFOIyoqLuXNK1Q==
-X-CSE-MsgGUID: SNK/4r0HSISKVG1n6XCSeg==
-X-IronPort-AV: E=Sophos;i="6.21,214,1763449200"; 
-   d="scan'208";a="50915444"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jan 2026 10:03:40 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.87.152) by
- chn-vm-ex1.mchp-main.com (10.10.87.30) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.2562.29; Fri, 9 Jan 2026 10:03:25 -0700
-Received: from [10.10.179.162] (10.10.85.11) by chn-vm-ex03.mchp-main.com
- (10.10.85.151) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
- Transport; Fri, 9 Jan 2026 10:03:25 -0700
-Message-ID: <0402804e-7575-42b2-9990-1b09fca80451@microchip.com>
-Date: Fri, 9 Jan 2026 10:03:42 -0700
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AeazqGNL";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="MSgb6EGe"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1767978878;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lSDwbxYjO8+HiZzQaZwthav/1dzwRPtawpHAGU+oOsQ=;
+	b=AeazqGNLs6R9hsYax8J58O6snCHIdtbsEJk1z0dRPN475Xe1WGO5ZUHkINc8KhEaLBK+GW
+	TDBBTRf86svvG2oqDSYgJeBd7jZNiKFwXp8VfHcOH/s3jbk+UCrZChaqWNH+Hr92yvuCpe
+	SCu7SptAfa3McqUjlMhzI9DIFue76iw=
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
+ [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-274-plof47dHPe-a2NMc2fd2jA-1; Fri, 09 Jan 2026 12:14:37 -0500
+X-MC-Unique: plof47dHPe-a2NMc2fd2jA-1
+X-Mimecast-MFC-AGG-ID: plof47dHPe-a2NMc2fd2jA_1767978876
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-8b22d590227so552089985a.1
+        for <linux-clk@vger.kernel.org>; Fri, 09 Jan 2026 09:14:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1767978876; x=1768583676; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lSDwbxYjO8+HiZzQaZwthav/1dzwRPtawpHAGU+oOsQ=;
+        b=MSgb6EGeh8JT3IbLKfH4m6CAu+Js0nnr3SoBBcPnaQU8c1LnlqRh1dGBm9UK3849GL
+         2F7fHF6f+YV5RlJvlmFgwUQN2M+IU2WfowHmtq1jXIXe8uuq9sEdgcYeVofDRiGmqM3U
+         SrvQ204jUXmCTbbJxynwSK4pTs947d9OH2xnBOqvA1dOz19pG2opZc2dPapF3Okos/lE
+         LrXpNVOnOFrkUlSgyTrFHN/Zbm/Jg2uNz1iyOVmaEOuorO2ViVR2J3IeGdOVbAHu9chp
+         OwBqDmZ3LcTj/kYzGtSXQ0PDWqpHXJMTnce1o0WPxR4UY+C2dncvyGK61g1s3Ceb5Qgt
+         UM3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1767978876; x=1768583676;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=lSDwbxYjO8+HiZzQaZwthav/1dzwRPtawpHAGU+oOsQ=;
+        b=lAm2OcHmribkZAFRKQxrzH3KlLHlFUAxIqhTSJBvEm4F+/rsoouh3MXYVkZikUNwQj
+         kEr7o6URoRHWAQXeKIMSbkNYRragZKTGQccXwkB53Jd2TsVhHHE1HqCCMGmKRdr3cITK
+         d05BMsZLOzC1A6mCNnTxZQYsZa5o8hv17X+xR8h6OOXYg+UyCfXIAstdgUqVCnSd9QoB
+         2hhnr67jsreqP2O6k6sn5wOcwr7v4N03LWl/QsrsN4m5KnjC9TVM880m6a3TboVFMPd6
+         2yAbcB5PEf3n+0iwsEgrGPhKSnjTvGOsfTWWKVAUn2Ppbj04Lmsz/WwNdjYYMOzily95
+         nirw==
+X-Forwarded-Encrypted: i=1; AJvYcCWTPAgo4vhFfCVvnt2lWBn9gYegP7COFsC+Ie20VdeGML/dzgqdV9FjAijNJV3WIY1Tv1uhkn/kM44=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJm4CtkQpJvxgVW3KFteODsfRy0ercGNjaBpgobfmFqfRsLkvZ
+	yQnvEHvOBBmkqCxlLFbLkae+0kOiYY2t/Nb8VP655aAfDLF66sIFDew73HMGiqaN+Sj7XE8ZGmJ
+	cFbhYcnZHeHccDuw8H1XOb2Gznx3312IldNMsuzgoboPaFDcNph59HIvYfmGFZQ==
+X-Gm-Gg: AY/fxX7f0aBd6XcO/NW8e4jcoiayu1RyAIj7c0zFZ0KrzkvBN+iwHg0h+M8d/qrPedI
+	KPaMHmM3up6SwhxuoJHStYixCdyaebbdE137+/SyUkEUdU09IhaTKG4FSHw1hVfNUrONNy9hRD1
+	KKPM3hbSK2uTw5bS3q7EUcOSKsBme52mL5t3wk/ZZc8qbyGwBp4y8bHy3M+6Ta9BvWf31JW81ex
+	1n4iC/kO3Ob9nsyz8/xZPHJybFFThhEAFWuq86Eo50tI7A6+GPuviVvBlrjaOe5k8slx1LpB29P
+	KkGCRKIwr3mwoNQg/dB5Hwb6ox8SJ71iRakoP5S/1Rkamqe5nJIcEEc/aeL8yh5hmJcsXls85oJ
+	+udLBiAaQs7qGW3kizsPt/PFqHrTJwsZAn1/6UqKEHshA
+X-Received: by 2002:a05:620a:4109:b0:8bb:a675:aa61 with SMTP id af79cd13be357-8c3893fbb30mr1217152385a.79.1767978876358;
+        Fri, 09 Jan 2026 09:14:36 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHotayWWfWtWeRCvw1eejr8Fm0argOz9TlIuQkrGTqEF91Uo7p3dq/qiwtr88DHNoO1lgXL4w==
+X-Received: by 2002:a05:620a:4109:b0:8bb:a675:aa61 with SMTP id af79cd13be357-8c3893fbb30mr1217146085a.79.1767978875890;
+        Fri, 09 Jan 2026 09:14:35 -0800 (PST)
+Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8907726041fsm82384206d6.45.2026.01.09.09.14.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 Jan 2026 09:14:35 -0800 (PST)
+Date: Fri, 9 Jan 2026 12:14:33 -0500
+From: Brian Masney <bmasney@redhat.com>
+To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Cc: linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org,
+	Linus Walleij <linusw@kernel.org>, linux-gpio@vger.kernel.org,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	linux-rtc@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>, linux-serial@vger.kernel.org,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Guenter Roeck <linux@roeck-us.net>, linux-watchdog@vger.kernel.org
+Subject: Re: [PATCH 00/13] MIPS: move pic32.h header file from asm to
+ platform_data
+Message-ID: <aWE3eWL_8U33TcsT@redhat.com>
+References: <20260109-mips-pic32-header-move-v1-0-99859c55783d@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 21/31] clk: at91: dt-compat: switch to parent_hw and
- parent_data
-To: Claudiu Beznea <claudiu.beznea@tuxon.dev>, <mturquette@baylibre.com>,
-	<sboyd@kernel.org>, <alexandre.belloni@bootlin.com>,
-	<nicolas.ferre@microchip.com>
-CC: <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <varshini.rajendran@microchip.com>
-References: <cover.1758226719.git.Ryan.Wanner@microchip.com>
- <628859234f4b2523f43b3ac05d5e29ceb05a7f61.1758226719.git.Ryan.Wanner@microchip.com>
- <eed15c43-dde3-410b-b2a3-655f4acf8d97@tuxon.dev>
-From: Ryan Wanner <ryan.wanner@microchip.com>
-Content-Language: en-US
-In-Reply-To: <eed15c43-dde3-410b-b2a3-655f4acf8d97@tuxon.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260109-mips-pic32-header-move-v1-0-99859c55783d@redhat.com>
+User-Agent: Mutt/2.2.14 (2025-02-20)
 
-On 10/20/25 12:15, Claudiu Beznea wrote:
-> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
+On Fri, Jan 09, 2026 at 11:41:13AM -0500, Brian Masney wrote:
+> There are currently some pic32 MIPS drivers that are in tree, and are
+> only configured to be compiled on the MIPS pic32 platform. There's a
+> risk of breaking some of these drivers when migrating drivers away from
+> legacy APIs. It happened to me with a pic32 clk driver.
 > 
-> Hi, Ryan,
+> Let's go ahead and move the pic32.h from the asm to the platform_data
+> include directory in the tree. This will make it easier, and cleaner to
+> enable COMPILE_TEST for some of these pic32 drivers.
 > 
-> On 9/19/25 00:16, Ryan.Wanner@microchip.com wrote:
->> From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
->>
->> Switch old dt-compat clocks to use parent_hw and parent_data. Having
->> parent_hw instead of parent names improves to clock registration
->> speed and re-parenting.
->>
->> Signed-off-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
->> Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
->> ---
->>  drivers/clk/at91/dt-compat.c | 80 +++++++++++++++++++++++++-----------
->>  1 file changed, 56 insertions(+), 24 deletions(-)
->>
->> diff --git a/drivers/clk/at91/dt-compat.c b/drivers/clk/at91/dt-compat.c
->> index fa8658d3be7b..9ca871b817e0 100644
->> --- a/drivers/clk/at91/dt-compat.c
->> +++ b/drivers/clk/at91/dt-compat.c
->> @@ -43,7 +43,8 @@ static void __init of_sama5d2_clk_audio_pll_frac_setup(struct device_node *np)
->>
->>       parent_name = of_clk_get_parent_name(np, 0);
->>
->> -     hw = at91_clk_register_audio_pll_frac(regmap, name, parent_name, NULL);
->> +     hw = at91_clk_register_audio_pll_frac(regmap, name, NULL,
->> +                                           &AT91_CLK_PD_NAME(parent_name));
->>       if (IS_ERR(hw))
->>               return;
->>
->> @@ -69,7 +70,8 @@ static void __init of_sama5d2_clk_audio_pll_pad_setup(struct device_node *np)
->>
->>       parent_name = of_clk_get_parent_name(np, 0);
->>
->> -     hw = at91_clk_register_audio_pll_pad(regmap, name, parent_name, NULL);
->> +     hw = at91_clk_register_audio_pll_pad(regmap, name, NULL,
->> +                                          &AT91_CLK_PD_NAME(parent_name));
->>       if (IS_ERR(hw))
->>               return;
->>
->> @@ -95,7 +97,7 @@ static void __init of_sama5d2_clk_audio_pll_pmc_setup(struct device_node *np)
->>
->>       parent_name = of_clk_get_parent_name(np, 0);
->>
->> -     hw = at91_clk_register_audio_pll_pmc(regmap, name, parent_name, NULL);
->> +     hw = at91_clk_register_audio_pll_pmc(regmap, name, NULL, &AT91_CLK_PD_NAME(parent_name));
->>       if (IS_ERR(hw))
->>               return;
->>
->> @@ -129,6 +131,7 @@ static void __init of_sama5d2_clk_generated_setup(struct device_node *np)
->>       struct clk_hw *hw;
->>       unsigned int num_parents;
->>       const char *parent_names[GENERATED_SOURCE_MAX];
->> +     struct clk_parent_data parent_data[GENERATED_SOURCE_MAX];
->>       struct device_node *gcknp, *parent_np;
->>       struct clk_range range = CLK_RANGE(0, 0);
->>       struct regmap *regmap;
->> @@ -149,6 +152,8 @@ static void __init of_sama5d2_clk_generated_setup(struct device_node *np)
->>       if (IS_ERR(regmap))
->>               return;
->>
->> +     for (unsigned int i = 0; i < num_parents; i++)
->> +             parent_data[i] = AT91_CLK_PD_NAME(parent_names[i]);
->>       for_each_child_of_node(np, gcknp) {
->>               int chg_pid = INT_MIN;
->>
->> @@ -171,7 +176,7 @@ static void __init of_sama5d2_clk_generated_setup(struct device_node *np)
->>
->>               hw = at91_clk_register_generated(regmap, &pmc_pcr_lock,
->>                                                &dt_pcr_layout, name,
->> -                                              parent_names, NULL, NULL,
->> +                                              NULL, parent_data, NULL,
->>                                                num_parents, id, &range,
->>                                                chg_pid);
->>               if (IS_ERR(hw))
->> @@ -201,7 +206,7 @@ static void __init of_sama5d4_clk_h32mx_setup(struct device_node *np)
->>
->>       parent_name = of_clk_get_parent_name(np, 0);
->>
->> -     hw = at91_clk_register_h32mx(regmap, name, parent_name, NULL);
->> +     hw = at91_clk_register_h32mx(regmap, name, NULL, &AT91_CLK_PD_NAME(parent_name));
->>       if (IS_ERR(hw))
->>               return;
->>
->> @@ -228,6 +233,8 @@ static void __init of_sama5d2_clk_i2s_mux_setup(struct device_node *np)
->>               return;
->>
->>       for_each_child_of_node(np, i2s_mux_np) {
->> +             struct clk_parent_data parent_data[2];
->> +
->>               if (of_property_read_u8(i2s_mux_np, "reg", &bus_id))
->>                       continue;
->>
->> @@ -238,8 +245,10 @@ static void __init of_sama5d2_clk_i2s_mux_setup(struct device_node *np)
->>               if (ret != 2)
->>                       continue;
->>
->> +             parent_data[0] = AT91_CLK_PD_NAME(parent_names[0]);
->> +             parent_data[1] = AT91_CLK_PD_NAME(parent_names[1]);
->>               hw = at91_clk_i2s_mux_register(regmap_sfr, i2s_mux_np->name,
->> -                                            parent_names, NULL, 2, bus_id);
->> +                                            NULL, parent_data, 2, bus_id);
->>               if (IS_ERR(hw))
->>                       continue;
->>
->> @@ -269,7 +278,8 @@ static void __init of_at91rm9200_clk_main_osc_setup(struct device_node *np)
->>       if (IS_ERR(regmap))
->>               return;
->>
->> -     hw = at91_clk_register_main_osc(regmap, name, parent_name, NULL, bypass);
->> +     hw = at91_clk_register_main_osc(regmap, name, NULL,
->> +                                     &AT91_CLK_PD_NAME(parent_name), bypass);
->>       if (IS_ERR(hw))
->>               return;
->>
->> @@ -323,7 +333,7 @@ static void __init of_at91rm9200_clk_main_setup(struct device_node *np)
->>       if (IS_ERR(regmap))
->>               return;
->>
->> -     hw = at91_clk_register_rm9200_main(regmap, name, parent_name, NULL);
->> +     hw = at91_clk_register_rm9200_main(regmap, name, NULL, &AT91_CLK_PD_NAME(parent_name));
->>       if (IS_ERR(hw))
->>               return;
->>
->> @@ -336,6 +346,7 @@ static void __init of_at91sam9x5_clk_main_setup(struct device_node *np)
->>  {
->>       struct clk_hw *hw;
->>       const char *parent_names[2];
->> +     struct clk_parent_data parent_data[2];
->>       unsigned int num_parents;
->>       const char *name = np->name;
->>       struct regmap *regmap;
->> @@ -354,7 +365,9 @@ static void __init of_at91sam9x5_clk_main_setup(struct device_node *np)
->>
->>       of_property_read_string(np, "clock-output-names", &name);
->>
->> -     hw = at91_clk_register_sam9x5_main(regmap, name, parent_names, NULL,
->> +     parent_data[0] = AT91_CLK_PD_NAME(parent_names[0]);
->> +     parent_data[1] = AT91_CLK_PD_NAME(parent_names[1]);
->> +     hw = at91_clk_register_sam9x5_main(regmap, name, NULL, parent_data,
->>                                          num_parents);
->>       if (IS_ERR(hw))
->>               return;
->> @@ -396,6 +409,7 @@ of_at91_clk_master_setup(struct device_node *np,
->>       struct clk_hw *hw;
->>       unsigned int num_parents;
->>       const char *parent_names[MASTER_SOURCE_MAX];
->> +     struct clk_parent_data parent_data[MASTER_SOURCE_MAX];
->>       const char *name = np->name;
->>       struct clk_master_characteristics *characteristics;
->>       struct regmap *regmap;
->> @@ -419,13 +433,15 @@ of_at91_clk_master_setup(struct device_node *np,
->>       if (IS_ERR(regmap))
->>               return;
->>
->> +     for (unsigned int i = 0; i < MASTER_SOURCE_MAX; i++)
->> +             parent_data[i] = AT91_CLK_PD_NAME(parent_names[i]);
->>       hw = at91_clk_register_master_pres(regmap, "masterck_pres", num_parents,
->> -                                        parent_names, NULL, layout,
->> +                                        NULL, parent_data, layout,
->>                                          characteristics, &mck_lock);
->>       if (IS_ERR(hw))
->>               goto out_free_characteristics;
->>
->> -     hw = at91_clk_register_master_div(regmap, name, "masterck_pres", NULL,
->> +     hw = at91_clk_register_master_div(regmap, name, NULL, &AT91_CLK_PD_HW(hw),
->>                                         layout, characteristics,
->>                                         &mck_lock, CLK_SET_RATE_GATE, 0);
-> 
-> Looks like at91_clk_register_master_div() could be kept to use parent_hws
-> instead of parent_data.
+> I included a patch at the end that shows enabling COMPILE_TEST for a
+> pic32 clk driver.
 
-Looking into this more the register_master_div calls
-at91_clk_register_master_internal() which is used for all of the SoCs.
-Some of the SoCs that use this function only have the parents passed in
-by name string and not clk_hw. Would it be wise to add another function
-for this to account for clk_hw and parent name? Or keep the use of
-parent_data?
+I didn't CC everyone on patch 1 to this series that copes pic32.h from
+the MIPS ASM directory to linux/platform_data/pic32.h. It's available at
+the following location if you want to see it:
 
-Ryan
+https://lore.kernel.org/linux-mips/20260109-mips-pic32-header-move-v1-0-99859c55783d@redhat.com/T/#m1e0e50adfe2ea4bf430025660fada7b1468d0fbf
+
+Patch 12 of this series is where I remove the asm variant of pic32.h.
+
+Brian
 
