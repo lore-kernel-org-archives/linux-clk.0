@@ -1,292 +1,144 @@
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E317334C2B
-	for <linux-clk@vger.kernel.org>; Fri,  9 Jan 2026 09:49:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C3AA3168E8
+	for <linux-clk@vger.kernel.org>; Fri,  9 Jan 2026 11:30:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767952169; cv=none; b=AkdbsxlqCMTdGaEH0J+XdbLm/zcz/zwTTyG1oe5NDPpox8E1FxD3GZC1vyoOjudRysJu+A7IIxy/9ShEn71qdDfKsoaDR0ly0kVy5pMqoxupklOfW4WjsMKGzCcqiVLVyHZkuILs+InuO0k91SA/t1BnNqfekW8u2nXoShReExk=
+	t=1767958250; cv=none; b=OVs6K973dGtiyaldJ9rJ5fpFyTxEfmZGMg0qlbnrC/HZKGlIqGjnaMM1g3VAAPUQlKxR2UopGthHCS3MDJ4SU69w+GHsimJKQ+FpKSxdnKcgPLPMMZZnRFOEAEO15wUuY9TIJfPxfyY04VRrIBLHHA8wHgKFaM/5v/mTy+5y6nw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767952169; c=relaxed/simple;
-	bh=P6ym1pKlcArn1VJ4w3ggn4ZfGn1mbCofeDl/fgc8FfI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EVyYms8q3lQEvYem2FRpauHH2CtieD707YJsn3eFui9D6OmtjL4x5O5ckM+7/W2V1Y/i3hQgi013YU8OSFLUVrLxMAhNbq+EzX7OjoeFLJrMtBg7Fblj0J5/7JQYvGIb928QVqsUH+XDro3rGbvYHj/OzPX++I6SES091m4z2v0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=Ba2EdRp2; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+	s=arc-20240116; t=1767958250; c=relaxed/simple;
+	bh=hX8QoInMSSmT+Eu3xppZ5ZFqPNqLP1E6amFpuz+9lV0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MywpvHnz9IgT+6LYbRLOzz80XiwsRChbmvRwSsNa6u2aHXQKZJtOr25PNuZw0VB6KEMrqe0UHuB07oZCrMz6hzZJis7He72YZKOiuNEUy8BjtdtqTuyYx9vGoyQIIM5gFAWJhzuQam2bWHT5qzsBY5PHDfq8WWUFLiF9W9DCdhE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LUiayFCP; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=NJSTU7mO; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="Ba2EdRp2"
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-b72b495aa81so785134666b.2
-        for <linux-clk@vger.kernel.org>; Fri, 09 Jan 2026 01:49:27 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LUiayFCP";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="NJSTU7mO"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1767958247;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DxP3jexOTjA2W5uk/m4wnMS2LnFu0zsvKD0G0RKhxtE=;
+	b=LUiayFCPqEugTkYADlAQfah2YQA4xFm42/XV4VJ7duv1z1OLxCW0p4NKAiOU+wakihVLdE
+	llrQFIGKUE1uC2pS5uBUwC7qJoB++8e2JrGINpbl3s3sjBvdbkUb/URMlQLHg8hc5wViO/
+	LNM4ljo1yKuE9IyUT1FOYrjDcs3bJUU=
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
+ [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-3--eqhbDMCNrCIMcGnNsS07g-1; Fri, 09 Jan 2026 06:30:45 -0500
+X-MC-Unique: -eqhbDMCNrCIMcGnNsS07g-1
+X-Mimecast-MFC-AGG-ID: -eqhbDMCNrCIMcGnNsS07g_1767958245
+Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-b8012456296so386361566b.0
+        for <linux-clk@vger.kernel.org>; Fri, 09 Jan 2026 03:30:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1767952166; x=1768556966; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=g6jwkAOZXv8yK/1ZVco7YXGM+PEJF0jRilnjoWS+qQE=;
-        b=Ba2EdRp2hA7FhZM0Svn7FhxQ6W7qd3UKTwGMBWo4+QVMA+JNvodASvZWMkcXP0BCHl
-         JV3RlvktvfF+49s+INz+nZwOxCObWWtd8LWiGdRaD4DWVa9RhDu22dRTEOgLbG49D4LT
-         CPGkk/k2VBGw4D1h9ej7BxFHPin47QXBsfhcq1n7s4a6X5SxRCaohRXN3Lrv9hGF+vBF
-         01Gq3AL8IKGH6rpPPkx2eIP+ANBbtX/87uKJtlU96umumjkpPJopPQ1c/Y6Gx0MLR5Za
-         q5jd4eIeyDioI241RGqZJrCg3B0Jo2KSM8QeCDnvFjKPsfTb3EZk5nSd2bFlYT0J9hlS
-         b2aA==
+        d=redhat.com; s=google; t=1767958244; x=1768563044; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DxP3jexOTjA2W5uk/m4wnMS2LnFu0zsvKD0G0RKhxtE=;
+        b=NJSTU7mOtwnhJXfP36cVMGwLq3xjUBXrJAtsTJso7yLuJZZogAmx2hFIv9RcjaCIbd
+         RZ0KWIm9mAzBgtXjOEQLk4V29OJyIhO3MAnhsR4WGxjqmd8jkarJc+cutFXkqQxAHOgi
+         qK0oknSZF7F3RpVBgP9Mmp7WLPfsFGZevelTpsdP/ayBg7kUkHqd50M4cNaLSiVr+16l
+         AJe6X0qCIW4n4N4E/UDcFxBT//hJX3LaYgm5KLrNj3P+g0qTQeTDlZxwdqAaGljr7LYX
+         5pBtwceuX9FMZuMlZRDa7v2ddmA8bJjF4DMPNsUm22JahtuYckHmTqvMngXmI97nNnHo
+         8q6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767952166; x=1768556966;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=g6jwkAOZXv8yK/1ZVco7YXGM+PEJF0jRilnjoWS+qQE=;
-        b=E4NKrRNXKnNIz7UJDCkKEUst0K+MtxO6nh1zNHP87h/84r3+cW77FlmBDmOSt9VbEP
-         Cwx0fQqGDJLBOpqijvKM5pBnDnUt/7newbCBUMU9gMpGlEeUH+ss/9GLMgktFFqXSRL4
-         PQry/4Zwg23JlizG+1GfdMmMY7aoPK6uE3nni6pqOBIamzXWE6Qsgh6Y+MvGmhgjK2hd
-         sNPT5e6wVUmEZkV4VnrXcMGKxRL6bCA0rV1fnyQq8vFCFKDIVaxkUsHyqt4vMmKXtbfp
-         Q+Ns5M2Ml+msk3vtNEoihcmL8DA1hOy/a65nCYkeuuVAOUmPNlhBx4gfV6gvSJeWHy91
-         DirA==
-X-Forwarded-Encrypted: i=1; AJvYcCUYYVf5vzs8vCSTbTmOFpwic6MExcX8aEf1TviHIsc+OyZY3MhX5xqhBMloQ0ZZLaD/TFuZEOkOaXU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzbdssJ2+SQaWbhl6lxB7QQumbkak+VfqwPorkCsN2PRLQMdltU
-	H54MuMz81KEbeBJ8gX8b37gP8YwMLJ7E4k3r6JEWoqxYqrzFLqy+3ZzRSOIC71YEkWM=
-X-Gm-Gg: AY/fxX4tFpNHpyMCHMb09uHTmd2Zovsum9fMUF2i7qD/ENTGOiQyIw7KK7gpID8UXnP
-	QMeHEr2siKgPlT6z2GgjVGakbpiCvG1C61nLn2XhewBgEcDJhYV1oZf0phEp29vIRjqsqpxOIlW
-	KI9BrnPx70zcSWMXpxrOsFDr4I1hJ+orS1Um/7KRLzLPdJ+nMGV1nevSnt7OEK8YflkOJA0pXM+
-	JWGyyH/yK9q10IGb0xLC454Zx+k47JRcL7oM2+72HiAJO1+Ro2grO5Gj4AYTjSjPilHi3RovpCy
-	vBwE/F4Z50pfWWIu6EdfO0rOc6RIjN8FiayFG6G2gioG6WmxWeOpRdg3UQ18vhRPCdigWowbEU9
-	dNmpzNEhl3LIbHYoPvPUbWmE5Sl31BswxMB5ou/q4oz1Xw/2NOznYqkK0uRR9sGGQQ7b1GEjhhB
-	Q3RHRCgDyTbFJiKFpj3Q==
-X-Google-Smtp-Source: AGHT+IFlGLXBLJjwIMP1Y+bwdPXzgZ9u/rkR2C7JIn4koWtHtP9uBeT/1shQNVRN1Wd+lohf55QRLA==
-X-Received: by 2002:a17:907:3d0b:b0:b83:a88c:b4e7 with SMTP id a640c23a62f3a-b8445461628mr714987366b.65.1767952165413;
-        Fri, 09 Jan 2026 01:49:25 -0800 (PST)
-Received: from [192.168.50.4] ([82.78.167.17])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6507bf667fcsm9624950a12.29.2026.01.09.01.49.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 09 Jan 2026 01:49:24 -0800 (PST)
-Message-ID: <02e48c5d-439f-4292-9df9-c0bba6f44f16@tuxon.dev>
-Date: Fri, 9 Jan 2026 11:49:23 +0200
+        d=1e100.net; s=20230601; t=1767958244; x=1768563044;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=DxP3jexOTjA2W5uk/m4wnMS2LnFu0zsvKD0G0RKhxtE=;
+        b=rtVMIwKsRbQbLAkck1eUaHxM6PGta2NzqjQ/47XBZaYTE3039LxgXhpQLNm3vspdYZ
+         hQAWqVgDKw2snQZruW7uduCHf9hHVv/qNl9ocxt9O3urhsu6oZQoanNz2m37ZAzqzqfn
+         E6nAUEkz9wQMi6nV7VMPOP2n1yIsa012zIja5r9cUgfRAfpotBShaH+/Uu4MG0JSe1YJ
+         eyl7s74B1qgkv9mHDOxQXc+u5I4I2bx8RVpiCS+/XrE2GZeDsPXZrzELIEEoatAc2t8R
+         /R3GC7kowI3jhXBy3a5WiojaMSCe8NdIaS4QCt8a8NJ93w9tMcXcQRcKgtcazRLx27aa
+         cYgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVH3kqMdhnumXkG+9nB3PIXjysfx74Klkk0VaawWaJtIzabmCMg7G6eFdITyaosgwoyvXGHGkmbX9E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4CEJrwc9Un6leSTh7J+k63+WQ4U/W9ajjcMtiIOTMNZ2Z2tr4
+	grqL1o7jWmfU6tgkBg8uWh9CZ9RJBQZqpdQb3o47B3Opc5OfeLj6luEH4kLRn5crhNXWaxM7i94
+	OMV+L4vqh/lokgcw/eABKkw2RvDKXXBTWwD9rFou2AbVv+d0H7kw+pXeF+f/3mntyAp2nJ8KXuD
+	+CxSCu+E0uGqizno9SpQo6fK2fbuWMvlO1a3Hj
+X-Gm-Gg: AY/fxX7tE4Jd5T1v6XcCFZLZwNTsbLfod+upDv9AG57vlgyYhtuetNA0hkTBVGM/GEG
+	y97TxIyfaMXekJoVyMz/UGl1YiOqpkQO8SO1Gwz7wJubInCE4xv9WqpXguWqeNvKpg68Czn8oHG
+	T4XtRnaRsj5dxYZhyeQdw9b8fT947BPlLLdbQSWtfzikEc7Pw10n9zBHuzNbd/SXWztQ==
+X-Received: by 2002:a17:907:d93:b0:b80:751:ee5b with SMTP id a640c23a62f3a-b844540cb89mr901506366b.49.1767958244600;
+        Fri, 09 Jan 2026 03:30:44 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFVmXeE8AhEfK6T08eNrAxn76T8DxtU0Qo65IkfrZqE8T7XU9qkdX19TO393u/6yx6/Sf79D4T/ROQEGFrKr0Y=
+X-Received: by 2002:a17:907:d93:b0:b80:751:ee5b with SMTP id
+ a640c23a62f3a-b844540cb89mr901503766b.49.1767958244088; Fri, 09 Jan 2026
+ 03:30:44 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [BUG] drm/panel: ilitek-ili9881c: kernel panic on reboot
-To: Hugo Villeneuve <hugo@hugovil.com>
-Cc: dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Jessica Zhang <jesszhan0024@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Biju Das Biju Das <biju.das.jz@bp.renesas.com>,
- Chris Brandt <Chris.Brandt@renesas.com>
-References: <20260107164839.a490a194d975edc399d72d01@hugovil.com>
- <f2aaa95a-fb69-46d8-ba0b-fdc793273455@tuxon.dev>
- <20260108105319.6bef21d3fc60b261792d07c6@hugovil.com>
-Content-Language: en-US
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <20260108105319.6bef21d3fc60b261792d07c6@hugovil.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20251205-clk-microchip-fixes-v3-0-a02190705e47@redhat.com>
+ <aWA6rNLNqYfJKTzf@redhat.com> <baaaccab-3ac8-47ed-b4c5-13401d08228f@tuxon.dev>
+In-Reply-To: <baaaccab-3ac8-47ed-b4c5-13401d08228f@tuxon.dev>
+From: Brian Masney <bmasney@redhat.com>
+Date: Fri, 9 Jan 2026 06:30:32 -0500
+X-Gm-Features: AZwV_QhwqP9OJmcksKErXzol7iiFllGhZ-NWTltU-KzJ5qLgs2fV7oABV3BpO6A
+Message-ID: <CABx5tq+eOocJ41X-GSgkGy6S+s+Am1yCS099wqP695NtwALTmg@mail.gmail.com>
+Subject: Re: [PATCH v3 0/4] clk: microchip: core: fix issue with round_rate
+ conversion and allow compile test
+To: claudiu beznea <claudiu.beznea@tuxon.dev>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Maxime Ripard <mripard@kernel.org>, Conor Dooley <conor@kernel.org>, 
+	Dan Carpenter <dan.carpenter@linaro.org>, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi, Hugo,
+On Fri, Jan 9, 2026 at 2:16=E2=80=AFAM claudiu beznea <claudiu.beznea@tuxon=
+.dev> wrote:
+> On 1/9/26 01:15, Brian Masney wrote:
+> > Hi Stephen and Claudiu,
+> >
+> > On Fri, Dec 05, 2025 at 02:46:26PM -0500, Brian Masney wrote:
+> >> Here's a series that fixes an issue with my round_rate conversion on
+> >> this PIC32 driver, fixes a minor bug, and allows building this driver
+> >> on other architectures with COMPILE_TEST enabled.
+> >>
+> >> Changes in v3:
+> >> - Mock out cpu_nop5() in the case of COMPILE_TEST
+> >> - Don't return -EINVAL in *_get_parent()
+> >> - Link to v2: https://lore.kernel.org/r/20251201-clk-microchip-fixes-v=
+2-0-9d5a0daadd98@redhat.com
+> >>
+> >> Changes in v2:
+> >> - Add new patch to drop unused asm/traps.h
+> >> - Link to v1: https://lore.kernel.org/r/20251125-clk-microchip-fixes-v=
+1-0-6c1f5573d1b9@redhat.com
+> >>
+> >> Signed-off-by: Brian Masney <bmasney@redhat.com>
+> >> ---
+> >> Brian Masney (4):
+> >>        clk: microchip: core: remove duplicate determine_rate on pic32_=
+sclk_ops
+> >>        clk: microchip: core: correct return value on *_get_parent()
+> >>        clk: microchip: core: remove unused include asm/traps.h
+> >>        clk: microchip: core: allow driver to be compiled with COMPILE_=
+TEST
+> >
+> > Stephen: Can you just pick up the first 3 patches in this series? Let's
+> > drop patch 4 for now. I'm going to send to the MIPS maintainers a patch
+> > to move arch/mips/include/asm/mach-pic32/pic32.h to
+> > include/linux/platform_data, and update all of the drivers to use that
+> > new header.
+>
+> I'm going to take those though clk-microchip tree if that's good for ever=
+ybody.
 
-On 1/8/26 17:53, Hugo Villeneuve wrote:
-> Hi Claudiu,
-> 
-> On Thu, 8 Jan 2026 11:12:54 +0200
-> Claudiu Beznea <claudiu.beznea@tuxon.dev> wrote:
-> 
->> Hi, Hugo,
->>
->> On 1/7/26 23:48, Hugo Villeneuve wrote:
->>> Hi,
->>> when issuing a reboot command, I encounter the following kernel panic:
->>>
->>> [   36.183478] SError Interrupt on CPU1, code 0x00000000be000011 -- SError
->>> [   36.183492] CPU: 1 UID: 0 PID: 1 Comm: systemd-shutdow Tainted: G   M                6.19.0-rc4-arm64-renesas-00019-g067a81578add #62 NONE
->>> [   36.183504] Tainted: [M]=MACHINE_CHECK
->>> [   36.183507] Hardware name: Gecko ECO2 nxtpad (DT)
->>> [   36.183512] pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
->>> [   36.183519] pc : rzg2l_mipi_dsi_host_transfer+0x114/0x458
->>> [   36.183538] lr : rzg2l_mipi_dsi_host_transfer+0x98/0x458
->>> [   36.183547] sp : ffff8000813db860
->>> [   36.183550] x29: ffff8000813db890 x28: ffff800080c602c0 x27: ffff000009dd7450
->>> [   36.183563] x26: ffff800080c5fcc0 x25: ffff000009dd7450 x24: ffff800080e1f7a8
->>> [   36.183573] x23: ffff000009dd7400 x22: 0000000000000000 x21: ffff000009dd7430
->>> [   36.183582] x20: ffff8000813db8e8 x19: 0000000002050028 x18: 00000000ffffffff
->>> [   36.183592] x17: 0000000000000000 x16: 0000000000000000 x15: ffff8000813db220
->>> [   36.183602] x14: 0000000000000000 x13: ffff800081255bc0 x12: 00000000000009a2
->>> [   36.183611] x11: 0000000000000336 x10: ffff8000812b28d0 x9 : ffff800081255bc0
->>> [   36.183621] x8 : ffff800081399000 x7 : ffff00000a042600 x6 : 0000000000000000
->>> [   36.183631] x5 : 0000000000000805 x4 : 0000000002000000 x3 : 0000000000000028
->>> [   36.183640] x2 : 0000000049627000 x1 : ffff800080c60b40 x0 : ffff800081780000
->>> [   36.183652] Kernel panic - not syncing: Asynchronous SError Interrupt
->>> [   36.183657] CPU: 1 UID: 0 PID: 1 Comm: systemd-shutdow Tainted: G   M                6.19.0-rc4-arm64-renesas-00019-g067a81578add #62 NONE
->>> [   36.183665] Tainted: [M]=MACHINE_CHECK
->>> [   36.183668] Hardware name: devboard1 (DT)
->>> [   36.183672] Call trace:
->>> [   36.183675]  show_stack+0x18/0x24 (C)
->>> [   36.183692]  dump_stack_lvl+0x34/0x8c
->>> [   36.183702]  dump_stack+0x18/0x24
->>> [   36.183708]  vpanic+0x314/0x35c
->>> [   36.183716]  nmi_panic+0x0/0x64
->>> [   36.183722]  add_taint+0x0/0xbc
->>> [   36.183728]  arm64_serror_panic+0x70/0x80
->>> [   36.183735]  do_serror+0x28/0x68
->>> [   36.183742]  el1h_64_error_handler+0x34/0x50
->>> [   36.183751]  el1h_64_error+0x6c/0x70
->>> [   36.183758]  rzg2l_mipi_dsi_host_transfer+0x114/0x458 (P)
->>> [   36.183770]  mipi_dsi_device_transfer+0x44/0x58
->>> [   36.183781]  mipi_dsi_dcs_set_display_off_multi+0x9c/0xc4
->>> [   36.183792]  ili9881c_unprepare+0x38/0x88
->>> [   36.183802]  drm_panel_unprepare+0xbc/0x108
->>> [   36.183814]  panel_bridge_atomic_post_disable+0x50/0x60
->>> [   36.183823]  drm_atomic_bridge_call_post_disable+0x24/0x4c
->>> [   36.183835]  drm_atomic_bridge_chain_post_disable+0xa8/0x100
->>> [   36.183845]  drm_atomic_helper_commit_modeset_disables+0x2fc/0x5f8
->>> [   36.183856]  drm_atomic_helper_commit_tail_rpm+0x24/0x7c
->>> [   36.183865]  commit_tail+0xa4/0x18c
->>> [   36.183874]  drm_atomic_helper_commit+0x17c/0x194
->>> [   36.183884]  drm_atomic_commit+0x8c/0xcc
->>> [   36.183892]  drm_atomic_helper_disable_all+0x200/0x210
->>> [   36.183901]  drm_atomic_helper_shutdown+0xa8/0x150
->>> [   36.183911]  rzg2l_du_shutdown+0x18/0x24
->>> [   36.183920]  platform_shutdown+0x24/0x34
->>> [   36.183931]  device_shutdown+0x128/0x284
->>> [   36.183938]  kernel_restart+0x44/0xa4
->>> [   36.183950]  __do_sys_reboot+0x178/0x270
->>> [   36.183959]  __arm64_sys_reboot+0x24/0x30
->>> [   36.183968]  invoke_syscall.constprop.0+0x50/0xe4
->>> [   36.183979]  do_el0_svc+0x40/0xc0
->>> [   36.183988]  el0_svc+0x3c/0x164
->>> [   36.183995]  el0t_64_sync_handler+0xa0/0xe4
->>> [   36.184002]  el0t_64_sync+0x198/0x19c
->>> [   36.184020] Kernel Offset: disabled
->>> [   36.184022] CPU features: 0x200000,00020001,4000c501,0400720b
->>> [   36.184028] Memory Limit: none
->>> [   36.495305] ---[ end Kernel panic - not syncing: Asynchronous SError Interrupt ]---
->>>
->>> The problem is present since linux-6.18-rc1, but not in linux-6.17. I also confirm the bug is present in linux-6.19-rc4.
->>>
->>> The bug seems to be happening in rzg2l_mipi_dsi_host_transfer().
->>>
->>> After bisecting, here is the first bad commit:
->>>
->>>       commit 56de5e305d4b ("clk: renesas: r9a07g044: Add MSTOP for RZ/G2L")
->>>
->>> Reverting this change makes the bug disappear.
->>>
->>> My limited understanding seems to indicate that the MIPI/DSI host may
->>> no longer be available/on when the panel tries to send MIPI/DSI
->>> commands in ili9881c_unprepare(), maybe because the MIPI/DSI clock has been stopped...
->>>
->>> The exact same board with two other panels (jd9365da and st7703) doesn't have the bug.
->>
->> Could you please provide the output of command:
->>
->> cat /sys/kernel/debug/mstop
->>
->> for both cases?
-> 
-> Here it is for the panel which has the bug:
-> 
-> ----------------------------------
->                             MSTOP
->                       clk   -------------------------
-> clk_name             cnt   cnt   off   val    shared
-> --------             ----- ----- ----- ------ ------
-> gic                  1     1     0xb80 0x0
-> ia55_clk             2     2     0xb70 0x0    ia55_pclk ia55_clk
-> ia55_pclk            1     2     0xb70 0x0    ia55_pclk ia55_clk
-> dmac_aclk            2     1     0xb80 0x0
-> dmac_pclk            1     1     0xb80 0x0
-> ostm0_pclk           0     0     0xb7c 0x10
-> ostm1_pclk           1     1     0xb7c 0x0
-> ostm2_pclk           1     1     0xb7c 0x0
-> mtu_x_mck            0     0     0xb64 0x4
-> gpt_pclk             1     1     0xb64 0x0
-> poeg_a_clkp          0     0     0xb64 0x20
-> poeg_b_clkp          0     0     0xb64 0x40
-> poeg_c_clkp          0     0     0xb64 0x80
-> poeg_d_clkp          0     0     0xb64 0x100
-> wdt0_pclk            1     2     0xb7c 0x0    wdt0_pclk wdt0_clk
-> wdt0_clk             1     2     0xb7c 0x0    wdt0_pclk wdt0_clk
-> wdt1_pclk            0     0     0xb7c 0x8    wdt1_pclk wdt1_clk
-> wdt1_clk             0     0     0xb7c 0x8    wdt1_pclk wdt1_clk
-> spi_clk2             0     0     0xb64 0x2    spi_clk2 spi_clk
-> spi_clk              0     0     0xb64 0x2    spi_clk2 spi_clk
-> sdhi0_imclk          1     4     0xb6c 0x0    sdhi0_imclk sdhi0_imclk2 sdhi0_clk_hs sdhi0_aclk
-> sdhi0_imclk2         2     4     0xb6c 0x0    sdhi0_imclk sdhi0_imclk2 sdhi0_clk_hs sdhi0_aclk
-> sdhi0_clk_hs         1     4     0xb6c 0x0    sdhi0_imclk sdhi0_imclk2 sdhi0_clk_hs sdhi0_aclk
-> sdhi0_aclk           1     4     0xb6c 0x0    sdhi0_imclk sdhi0_imclk2 sdhi0_clk_hs sdhi0_aclk
-> sdhi1_imclk          0     0     0xb6c 0x2    sdhi1_imclk sdhi1_imclk2 sdhi1_clk_hs sdhi1_aclk
-> sdhi1_imclk2         0     0     0xb6c 0x2    sdhi1_imclk sdhi1_imclk2 sdhi1_clk_hs sdhi1_aclk
-> sdhi1_clk_hs         0     0     0xb6c 0x2    sdhi1_imclk sdhi1_imclk2 sdhi1_clk_hs sdhi1_aclk
-> sdhi1_aclk           0     0     0xb6c 0x2    sdhi1_imclk sdhi1_imclk2 sdhi1_clk_hs sdhi1_aclk
-> gpu_clk              1     1     0xb80 0x0
-> cru_sysclk           0     0     0xb78 0x8    cru_sysclk cru_vclk cru_pclk cru_aclk
-> cru_vclk             0     0     0xb78 0x8    cru_sysclk cru_vclk cru_pclk cru_aclk
-> cru_pclk             0     0     0xb78 0x8    cru_sysclk cru_vclk cru_pclk cru_aclk
-> cru_aclk             0     0     0xb78 0x8    cru_sysclk cru_vclk cru_pclk cru_aclk
+Sounds good. Thanks!
 
-> dsi_pll_clk          1     6     0xb78 0x0    dsi_pll_clk dsi_sys_clk dsi_aclk dsi_pclk dsi_vclk dsi_lpclk
-> dsi_sys_clk          1     6     0xb78 0x0    dsi_pll_clk dsi_sys_clk dsi_aclk dsi_pclk dsi_vclk dsi_lpclk
-> dsi_aclk             1     6     0xb78 0x0    dsi_pll_clk dsi_sys_clk dsi_aclk dsi_pclk dsi_vclk dsi_lpclk
-> dsi_pclk             1     6     0xb78 0x0    dsi_pll_clk dsi_sys_clk dsi_aclk dsi_pclk dsi_vclk dsi_lpclk
-> dsi_vclk             1     6     0xb78 0x0    dsi_pll_clk dsi_sys_clk dsi_aclk dsi_pclk dsi_vclk dsi_lpclk
-> dsi_lpclk            1     6     0xb78 0x0    dsi_pll_clk dsi_sys_clk dsi_aclk dsi_pclk dsi_vclk dsi_lpclk
+I'll CC you on the MIPS changes to move the header file.
 
-I was expected the MSTOP for these to be set to anythong other than 0x0 
-here. But I presume, they are somehow set in the reboot process before 
-exectution reach rzg2l_mipi_dsi_host_transfer(). To be honest, I don't 
-know the rz-du code.
+Brian
 
-[...]
-
-> 
-> I do not have acces to the other panels for the moment to run the same command.
-> 
-> 
->> Also, could you please check if the following diff solves your problem:
->>
->> diff --git a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
->> b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
->> index 5edd45424562..62957632a96f 100644
->> --- a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
->> +++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
->> @@ -1282,6 +1282,10 @@ static ssize_t
->> rzg2l_mipi_dsi_host_transfer(struct mipi_dsi_host *host,
->>                   value |= SQCH0DSC0AR_FMT_SHORT;
->>           }
->>
->> +       ret = pm_runtime_resume_and_get(dsi->dev);
->> +       if (ret)
->> +               return ret;
->> +
->>           rzg2l_mipi_dsi_link_write(dsi, SQCH0DSC0AR, value);
->>
->>           /*
->> @@ -1322,6 +1326,8 @@ static ssize_t rzg2l_mipi_dsi_host_transfer(struct
->> mipi_dsi_host *host,
->>                           ret = packet.payload_length;
->>           }
->>
->> +       pm_runtime_put(dsi->dev);
->> +
->>           return ret;
->>    }
-> 
-> I confirm that it fixes the bug, altought I assume this is just for testing and is not the "proper" fix.
-
-To me, this, or something similar should be done anyway. Previously it 
-used to work because there was no MSTOP support available.
-
-The MSTOP is now set when all of the clocks sharing it are disabled. 
-With the MSTOP set, any master accessing a HW block that has MSTOP set 
-will get sync abort. That wasn't the case previously, when the HW 
-registers could have been accessed w/o generating such exeception.
-
-Thank you,
-Claudiu
