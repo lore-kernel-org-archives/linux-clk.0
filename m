@@ -1,67 +1,66 @@
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 274BA15B998
-	for <linux-clk@vger.kernel.org>; Sat, 10 Jan 2026 14:49:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF956339B3D
+	for <linux-clk@vger.kernel.org>; Sat, 10 Jan 2026 14:59:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768056544; cv=none; b=A62XzAI4O3qR11kAAbWcrhQeymZKDe5ztxm4h9+gqGJi9vTpdWAAlvbse/CraJjmj0HjrfrL5HnAUeM9ZdGA+fbvtX7jqroTs0cyVPIWiy5/SSNzVESPiDP8Y6SmCdl+M/qNtQpwucQuqOuHEIFbVX0kApPS/JnEwMisfibAV9E=
+	t=1768057185; cv=none; b=gLbZpbgJKZr/le/rZmK7aN54EkDghdYWp0eI97xSL1QDtBRs+wC/sk5EdGKfjJmiAfm2m6nlZXfbl5oRzBaCOEkX5tTGwRiJKFWuc7ioSfmuIhaexuinctZdq5trO2weI7WSwK70tsMreNTwkOY9KvIR0kq7GOHALt6vi6IKtQk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768056544; c=relaxed/simple;
-	bh=8cZF88ZHHeswEWIoZ1XSpuokeFUHz2t/rDtmfT1Fb54=;
+	s=arc-20240116; t=1768057185; c=relaxed/simple;
+	bh=Jqgy1IXF0Q4rKBBQ0+4eAt2wRe0v5i5JpgcYk2Crzm8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=b0vIoduMBxi2HHSaNClPC6XJwrp7DtPSHmQBXX6rj6hSmW79Iz/j3EmEuOWM7ozJsYlRl2Enqjgs2QYOKFsVwPUHOhHLJM6AHKUJj0XS1gUppCVGWUTmQPMWnzhUgbqh/wtqjvAsYNQjE7oFlSLo5YjOws00cjoq3VxpJhdTmPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=EecNqfHS; arc=none smtp.client-ip=209.85.221.53
+	 In-Reply-To:Content-Type; b=tMm1QwJx3VzVer7wbr+OcsNwxgzD7bA0jncjypq28JAhDiBHUZwEsUvj8Dq1Vd8e/wO6xQujDaUA2vsPJwyjaS+nC1GYwtKV/FuIVJYAs7BU/QvvZoO+8DH3fblN3LkxQ2aTM9Ff3CMrelWRwCQh2itWa6q61/8MD8XGL6zRk+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=jeVUI/pc; arc=none smtp.client-ip=209.85.221.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="EecNqfHS"
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-430f2ee2f00so2851812f8f.3
-        for <linux-clk@vger.kernel.org>; Sat, 10 Jan 2026 06:49:01 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="jeVUI/pc"
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-432d2670932so1735517f8f.2
+        for <linux-clk@vger.kernel.org>; Sat, 10 Jan 2026 06:59:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1768056540; x=1768661340; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1768057182; x=1768661982; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=IHk6EgoNk8lP2vqJMYUzvRzyl3K2JzNhjFEm/rJg//s=;
-        b=EecNqfHSZs06v18jqARlP9k1rRdjxC5rUdz/jxGgFVrZljBbTmYS9L0TQobkdqccxN
-         TTe2xjZtAdjKQ57catv9RuhOA2LeI5qXpQYtyGFLy1B8mUnqC+1Wfrc4bF+zjsQjK4en
-         V9sGY/5D9wzFWxSLIrSHmL6MnugPw62J02oboA4OVLBToaF0g1oEbYvWvK9PBC0QAqxm
-         X7DfQ1R3AeNHbmI6nAlJTc569VGTwaIOA4MTx25J+sVjBzQW9DAOpbZyVU3yMYPSVaOR
-         vn/4Gg+tvob/2yq4G0xQEIgD6SjeC4Fn4rnONlaSH7sfgZxhEnI/kLpOQMR0nl82B0Wt
-         AJHQ==
+        bh=I9ieHs//1181ugE50jNQnqsW76Rg38tPU069b0hhiN0=;
+        b=jeVUI/pc4D48L4NlrTOH2ONa3+X/0snxiSnNC5nRCKHjC/auFVOg4QG1cXb2fwM5dO
+         YTu7JggzGZT11W/l3SJmCtne2bcKJRsC0Ix3dtzGhEHVpaqL/0L3xJxxCPj2O/5u6IRG
+         Dvptk6OH1kmMuTqqL5RKCj9XITPjGfaTNiQVNfNIXJfhTsdUPikmnX0dPnMmfYhJkMF9
+         5zuT/gRnHfw8I7vuWtZ4l6sZGJt67BNHdL29ry45Lf8qTFLvidQEajlOAQ8loQVgFTPs
+         wc3NVVF96gVnzVG+SUoBU9O0qyaQf0jW5dHm+qQ5pqpdFPz/i/Xy1+9NMZnTezsnW37v
+         wgTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768056540; x=1768661340;
+        d=1e100.net; s=20230601; t=1768057182; x=1768661982;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=IHk6EgoNk8lP2vqJMYUzvRzyl3K2JzNhjFEm/rJg//s=;
-        b=K1cVt388BO/vb7o/SVu65FtKDNVu2THjoUToWJgwctDn8v9H7I23utk/8LvSqxe53+
-         EXhrDB4vrD0Lrv0gtTvECXodeg/HbHumVmz273YA8oQqA1sjPgEYqS+83m30Qy1z4PYo
-         javcv9QQPyfXQlpxfYpTbj5/M1QXqP4en3sVTli9NGysDm7z6JAtad1RGJ/UkRYiImOJ
-         5RVZw9oKvryDVguS/7+Wyyi6+j1WbE8LbkHanXf183J0Zqk2LIHSlHQ3dbttsMpvCRQU
-         mBALvhH27rvjARxivq+eoOWJ1pTncL2bADBPC83pjNPln/qvJs7kue4/fR3QYoMCRW8l
-         t2jQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWL6CpfVC/cpim0qD4H4sdKvI2ModXR4p7a66+LyhOrjnh2cjoT0Jjtp3S3h9YJOdxwd2WUCV6vXcI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHa/aYxpuy+adbFd3KrBa2ecYmZEX+3BpclBpbZVfGMCrWQqGS
-	oBvjGEHoN17K+yBaPsxV+j/5fCn1YNhHatgAzys53wTlB7Dv8pSrBD9UPBx3gpjlo0I=
-X-Gm-Gg: AY/fxX6XujKQYa62CH0KZt0JjhVx8vLz/Ks1pzp/UyAPFkRFLd0JYJXnir+jPGfBTG4
-	DPUJyQswFfS9/Vyb5lRmxu/b+ZJX/H0ZLptk5NF0moGh8ZT1o1UO1QPkcI8aG4hvejXKkRUorLk
-	rhYFbwneKdnkmVAmLPg2fh4fLuAQzuI+WUNuCnq6L7CkxAlOPLBkgaiV7qbQF9l0sNPVv8GyVUh
-	+jiK+J652VoUAtHaStjoFcPCXJoegrwXwRjXjbmBHoBVbo7xhqvnAnazqA8jrBiYIkLqoUI2suA
-	snlEowZR1rlZgxQDUyiEd0qph1JOLNAb8XPmsacUbu03XZzrzw/zdIbspgvv1oZdyAGCRzv4oam
-	QneR9A5DPBcFntjYEvAZCb2zJPxQZIBnj1zCKFR94QFvWFHhopoQfHMNy+oSaFvJzdHNTwfer1u
-	O4as49LaSm6NvoBpT6TsbMLA4LcSF/
-X-Google-Smtp-Source: AGHT+IExDiyl6+cMqnLU0OScR46v/DhXxaFlI7KfbIz5c0gjBYd8wiO/Eo5iH1Cn00OMlkpwekH3Hg==
-X-Received: by 2002:adf:f54f:0:b0:432:e00b:866f with SMTP id ffacd0b85a97d-432e00b8b14mr2891143f8f.60.1768056540373;
-        Sat, 10 Jan 2026 06:49:00 -0800 (PST)
+        bh=I9ieHs//1181ugE50jNQnqsW76Rg38tPU069b0hhiN0=;
+        b=Zzmo+dSd99T5Bjn6+7QjRveabXYamJuoojQ4waSe1GGd16lVroQXuVtIQZVHTKSMUa
+         w362d70UlydqNrkiyCYccgOcm35+7QmiFpTL1cVbx8prZv3v3g22CYKLf21AU2WcYkJ0
+         E1/XQ0C0SFsekk2cmELlOrjCIXvo7iByNwu56P4amQGr6TuJaedzKL9Rr0XVL8PS4Isi
+         Ogsq4qDmy8djEZmXkhDk3tLMQtHjImTTcPKUsGzAkwrB/PSvyhe69ITXlHBeWd2X4wWR
+         V3nKsv43gEa+T3cMP4IEAB+7LJJ8KcMI3l8p029FInOX2/G3Vp51vB5yj/BK/gjwTDNq
+         YrVA==
+X-Gm-Message-State: AOJu0YwZfAJxoidRc80W6t0GJWMy7K6Y2edqWZQmNZCitoMohQC5UbTs
+	jpsc6hk28bH25xGtUOGILV0+/yIKs91FG2OU2CnwZW+HdzCILPsEWeaaKcHsKgh4DGw=
+X-Gm-Gg: AY/fxX69FYXnKvjSDtDEsiLcEI2C2YEerrKJcwteKWaiTSDqBQ2mopA63OXuQfXvFCn
+	0JIpa5UTRRqd/2i3cgCf6lx/9syOlkTsAPefHPPoGQdJQtxSMmPXkRsI6Vflgap0q1kPmu7x+aH
+	WIFE3dTgjt57dCErCF8wAuI9xy32iDDolIPdzQtCNWVmTQZdBAbDh8zJhV8L2x8Hbyt+UJ8p2Be
+	QcAJEcqVOSVKgJ0hDz97SzG4mAgViZqH0igE7gtJE35HrXzl+K0+io5T0obwfOx11IMXg2P0nMJ
+	xqXY/yun2pVKD+hxXEBsVN9cV18gCg6P06ntvqBGW4QzGYJuOzBjbRqHC99XwWkvUZRf/zj1v9t
+	91nq8/u6z7w7C+NrgAIfXR9uNIP6jMfFSJsJc2eYf01/3Y2IJ7FrwI/MFJJsbs0DkXN4+5Nunhx
+	V7ja2tgk5Bc/Aar6mD6g==
+X-Google-Smtp-Source: AGHT+IFDcBSQg6Ek8ErtvM5azLc+7xSaY3SW65kbf+7eTKxC3Ac3BnoMYnb7erJ+kxt79LyXU3MULA==
+X-Received: by 2002:a05:6000:2289:b0:430:b100:f591 with SMTP id ffacd0b85a97d-432c3794e96mr16287338f8f.28.1768057182127;
+        Sat, 10 Jan 2026 06:59:42 -0800 (PST)
 Received: from [192.168.50.4] ([82.78.167.31])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-432bd0dacd1sm27764794f8f.4.2026.01.10.06.48.56
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-432bd5ff319sm28575913f8f.43.2026.01.10.06.59.40
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 10 Jan 2026 06:48:59 -0800 (PST)
-Message-ID: <b0dec3fb-51df-4bcd-ba13-c2049695266e@tuxon.dev>
-Date: Sat, 10 Jan 2026 16:48:55 +0200
+        Sat, 10 Jan 2026 06:59:41 -0800 (PST)
+Message-ID: <205b289a-925e-42e5-9e4d-14873d157dc0@tuxon.dev>
+Date: Sat, 10 Jan 2026 16:59:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -69,51 +68,27 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 02/11] ARM: at91: Simplify with scoped for each OF child
- loop
-To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
- Miguel Ojeda <ojeda@kernel.org>, Rob Herring <robh@kernel.org>,
- Saravana Kannan <saravanak@google.com>, Nathan Chancellor
- <nathan@kernel.org>, Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
- Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
- Russell King <linux@armlinux.org.uk>,
- Nicolas Ferre <nicolas.ferre@microchip.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar
- <alim.akhtar@samsung.com>, Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- "Christophe Leroy (CS GROUP)" <chleroy@kernel.org>,
- Nipun Gupta <nipun.gupta@amd.com>, Nikhil Agarwal <nikhil.agarwal@amd.com>,
- Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+Subject: Re: [PATCH v3 0/4] clk: microchip: core: fix issue with round_rate
+ conversion and allow compile test
+To: Brian Masney <bmasney@redhat.com>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Vinod Koul <vkoul@kernel.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- llvm@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- linux-clk@vger.kernel.org, imx@lists.linux.dev, dmaengine@vger.kernel.org,
- linux-media@vger.kernel.org, linux-pm@vger.kernel.org
-References: <20260105-of-for-each-compatible-scoped-v1-0-24e99c177164@oss.qualcomm.com>
- <20260105-of-for-each-compatible-scoped-v1-2-24e99c177164@oss.qualcomm.com>
+ <sboyd@kernel.org>, Maxime Ripard <mripard@kernel.org>,
+ Conor Dooley <conor@kernel.org>, Dan Carpenter <dan.carpenter@linaro.org>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel test robot <lkp@intel.com>
+References: <20251205-clk-microchip-fixes-v3-0-a02190705e47@redhat.com>
 Content-Language: en-US
 From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <20260105-of-for-each-compatible-scoped-v1-2-24e99c177164@oss.qualcomm.com>
+In-Reply-To: <20251205-clk-microchip-fixes-v3-0-a02190705e47@redhat.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 
 
-On 1/5/26 15:33, Krzysztof Kozlowski wrote:
-> Use scoped for-each loop when iterating over device nodes to make code a
-> bit simpler.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-> 
+On 12/5/25 21:46, Brian Masney wrote:
+> Brian Masney (4):
+>        clk: microchip: core: remove duplicate determine_rate on pic32_sclk_ops
+>        clk: microchip: core: correct return value on *_get_parent()
+>        clk: microchip: core: remove unused include asm/traps.h
 
-Reviewed-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Applied to clk-microchip, thanks!
