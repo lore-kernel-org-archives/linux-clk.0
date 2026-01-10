@@ -1,103 +1,117 @@
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A70FE500946
-	for <linux-clk@vger.kernel.org>; Sat, 10 Jan 2026 16:17:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B217121E087;
+	Sat, 10 Jan 2026 19:11:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768061865; cv=none; b=GUbpzrLh0S6tQWDfx9q3afC80XLi/hpyM0yDd5tbcltr/CR2c0upUq1hwbd+UlniOHCKQcZLoafFqjr0pCuvl+Ktxhdh/ktjQpr1UjHTnJmwjVe0R7nz6NVGuVb7gnVVk9EwOtRCYXkk+Z0PlndDXTFwGqQtWcAFTgBoVU9R/5g=
+	t=1768072294; cv=none; b=QwT1XYNeJFXuLjbcgEmh3MztQsokWMgiH+PSrcauS5N+SAX1cb9nvYyac8MVMFUTW7vaNKOfgIPk+a140jci5d7V/mWfD1y8NXSm2PgoEbufz8gpPeK3/srQ991VgVCJ4MDlCrs0ANd8MeqSCSFSCOa53ewfx5kMVUq2lzP0PNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768061865; c=relaxed/simple;
-	bh=LtJAiYMPu3vSOcm4a9eAPwUHnr6T9RENKRy7pFLUvEE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jhWpCpCjYkCQBnvBxI7pzxvkQEl4S7c7fZlOVW/ist8RL9jgx3vh43kRVQQjLRFt8MQg+NK+RTluM1ix0CGnhjqi27EcQk1jxg/vj9kGJgSagkJexEntHyi7ghQaDwAK9L+Rnb9/zpxwZjVt2IDTQBJKKFC0k0NeKvQ/+MCKVZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=pSJMnZSl; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+	s=arc-20240116; t=1768072294; c=relaxed/simple;
+	bh=ifQtDtBDcokzLccqf8aQCht97s3eipcMMEmXbpDw6Aw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fA8vRN20KwBVAS1O9++wDTOR7UCFtDd0sNZAP9UFzr1t3q6eyWgJ9WsSAckSdEizj3PhNVvRad2I3NNHoX8wryLd2BxCv3vePVdSkxAdfvX1J4Qhd0icRCA9mccsUjnFVOckFMQcdqdYOdGtk8d7y86bWJrFSLqO4aHFVzdTDdk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qCiyrFAU; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="pSJMnZSl"
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-b87003e998bso43625366b.1
-        for <linux-clk@vger.kernel.org>; Sat, 10 Jan 2026 08:17:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1768061862; x=1768666662; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qncqnLubMYC4ApM8lJi4wrVgA/Yt4u3+/s/LwC2vUkg=;
-        b=pSJMnZSlQVhTHFHaqE66mMqTmAGNtWlCDAHBIg9t2twjVQp+xEz+s/XCLXwzuYgCwd
-         ytaWWeZtHyTV0zSwf8pjyCCt+72CpTvEdcO/N10nv6HcrNtIBBjHPFFCNsbm/i5iAAWf
-         o3xe4d2l1OY/BGosx/Px/POCkAE/R0a9fNwySWVkO9KPxR79UU0auNDeC11t0ORrdD4G
-         mArJewFClqxyGljfJKlMXhWrkMMD5UB6Kt+0xITsqOOxQWDLHqJCFzxS3SQf/uU+pAPl
-         tR1vwrG2gZh5YDT+fxvHO1x44gAKwGiwKYUU7H8I+IJnoK8ZahgRlcUIYgWzcktKWuGq
-         xDLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768061862; x=1768666662;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qncqnLubMYC4ApM8lJi4wrVgA/Yt4u3+/s/LwC2vUkg=;
-        b=ncj5Z1Xh2NTTsmnB624ZyhWV6XFTA7CDjvkjGUWmYo64hl85xOjSi8N4bLxMNgK8WX
-         EBOEeBdwdPILwCGeaADkwbEVf5vLet9LBxALuz7nIlwMGo2CwNldu9C95ZHf6yIJ93EA
-         48IfSwcvkhyclG1bzvhpjMV02ZLFE7PxYjDeBFyreHndNa/E53xpAFCxoJxKqU3oQzAU
-         eUHEzQO+uikGuMX9q0N34TBwB30fjBbZiqlNG45CtWhRp5ikNzWtlkT+6Fjeg1p4OGkw
-         I2H9hWWvrrcGQJp3YxoDWE8MI1kF84pejlXaK/MJhbsHC6h9qyctTI2C7KlCgoCZgEB1
-         nWtg==
-X-Gm-Message-State: AOJu0Yy1JBjMI2YZuUcsNd4J7UzDod5T6LVS1BRB1TiUlcXzHa9QIQvb
-	owl4vt4+W+vtI7Ik3wxgHohbFxppgKdm07sXPIdj/iNRhUGaG8tEJCrLQizRACXl4tQQ95pKOOW
-	3L36h
-X-Gm-Gg: AY/fxX4WT5cih6enrBN82fiqH0wCX5aZpBk2HCacTYXh/CxW0jRrtsrigMzPEuVA9+M
-	CIQsEYB8Vh+2iIzbx87ZyYmM9tvI1e2bZz9Yi+z33as9HvbEVf1I6DmlUO13ryk92FaWzQPHW5w
-	Iwse7WCnPIDvLXTX3ppXm7VYR/eU0crZWBaGeHkMmD8ehG5Hyzo32UD7N8CS9njdpQWtKK/qhrH
-	cMlZcZjOH1N3QyjBhA1eld8PMC8DLM9j1XNYMuerr9d5GGZ3RN5l8hQZaJ+MIph79FgPzhuWa4c
-	oGxB1vXe2TXqy7M9ClJK5aJ6tImULBHfVUsnWioIi1BBAiaf5EH5OITWXj4HmS0a3Dv/NN9l36f
-	3LeEWzEKOL5Uk+Cjo51Me1N0zWfVRzZkczYpkAOgxjvXnDXX32gc7J3gpsmH+wR4l6ocUQp/a4O
-	3WrPzOKzI2NJDBX3c1/g==
-X-Google-Smtp-Source: AGHT+IEt1vR7d0Du0VgJnxJCpzSziFh+TSZwsM8O+w7rOv3sQtzjQL9vGDgyVHyYf8b4VXURK530tw==
-X-Received: by 2002:a17:907:3d11:b0:b80:3fb7:8e68 with SMTP id a640c23a62f3a-b84299be630mr1773773866b.21.1768061862067;
-        Sat, 10 Jan 2026 08:17:42 -0800 (PST)
-Received: from [192.168.50.4] ([82.78.167.31])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b86f0d6d7c6sm213670766b.42.2026.01.10.08.17.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 10 Jan 2026 08:17:41 -0800 (PST)
-Message-ID: <b288af38-f0b2-42ee-a950-c8f9739fdfdd@tuxon.dev>
-Date: Sat, 10 Jan 2026 18:17:40 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qCiyrFAU"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22EEFC4CEF1;
+	Sat, 10 Jan 2026 19:11:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1768072294;
+	bh=ifQtDtBDcokzLccqf8aQCht97s3eipcMMEmXbpDw6Aw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=qCiyrFAU2xicKCibTXPIf3XhBQmk0g6ZWmSgHHXVP1B02QbrV77FWTZFOP1VjWDCw
+	 qjMrQb+XKb5f4XadhrY/24Ap8FT4i3zPkyp8Hq83pZ7Qd05yBLYY/SjBLAoBYN1J91
+	 tZcXYUR9WCowuaBnwQNH+5l+izoJ34YwXyJn9pNjN9mFqtBAcF6dVgtvosb5DN2PQH
+	 UkWDCIMetOEIB1XAkKVOYI7Wkyc0F3Lm5PBO/vh7rnB4GSTP0L4HqCSOjm7fLM7dry
+	 DJ/5zv35sUADTSmPEivxJvudoLJxOMiPSlaVLC0wreck+xhcPR7Tw1K+pdiPCNoYJW
+	 fAQibqBj2d1ug==
+From: Bjorn Andersson <andersson@kernel.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney@redhat.com>
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Inochi Amaoto <inochiama@gmail.com>,
+	sophgo@lists.linux.dev,
+	Chen-Yu Tsai <wens@kernel.org>,
+	Maxime Ripard <mripard@kernel.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	linux-rtc@vger.kernel.org,
+	=?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	linux-actions@lists.infradead.org,
+	Keguang Zhang <keguang.zhang@gmail.com>,
+	linux-mips@vger.kernel.org,
+	Taichi Sugaya <sugaya.taichi@socionext.com>,
+	Takao Orito <orito.takao@socionext.com>,
+	Jacky Huang <ychuang3@nuvoton.com>,
+	Shan-Chun Hung <schung@nuvoton.com>,
+	Vladimir Zapolskiy <vz@mleia.com>,
+	Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>,
+	linux-arm-msm@vger.kernel.org,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	linux-stm32@st-md-mailman.stormreply.com,
+	Michal Simek <michal.simek@amd.com>,
+	Rob Clark <robin.clark@oss.qualcomm.com>,
+	Dmitry Baryshkov <lumag@kernel.org>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Abhinav Kumar <abhinav.kumar@linux.dev>,
+	Jessica Zhang <jesszhan0024@gmail.com>,
+	Sean Paul <sean@poorly.run>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	dri-devel@lists.freedesktop.org,
+	freedreno@lists.freedesktop.org,
+	Vinod Koul <vkoul@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	linux-phy@lists.infradead.org
+Subject: Re: (subset) [PATCH 00/27] clk: remove deprecated API divider_round_rate() and friends
+Date: Sat, 10 Jan 2026 13:11:17 -0600
+Message-ID: <176807228457.3708332.10766520174431957453.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.52.0
+In-Reply-To: <20260108-clk-divider-round-rate-v1-0-535a3ed73bf3@redhat.com>
+References: <20260108-clk-divider-round-rate-v1-0-535a3ed73bf3@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFT PATCH v2] Use kmalloc_array() instead of kmalloc()
-To: Sidharth Seela <sidharthseela@gmail.com>, alexandre.belloni@bootlin.com,
- nicolas.ferre@microchip.com, sboyd@kernel.org, mturquette@baylibre.com
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, david.hunter.linux@gmail.com,
- skhan@linuxfoundation.org, khalid@kernel.org
-References: <20251123070905.93652-2-sidharthseela@gmail.com>
-Content-Language: en-US
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <20251123070905.93652-2-sidharthseela@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Please use "clk: at91: Use kmalloc_array() instead of kmalloc()" in 
-patch title.
 
-On 11/23/25 09:09, Sidharth Seela wrote:
-> Refactor to new API, for cases with dynamic size calculations
-> inside kmalloc(). Such calculations were found using grep in the
-> sources. The patch compiles properly with multi_v7_defconfig
-> and multi_v5_defconfig and generates object files for the following
-> driver files.
+On Thu, 08 Jan 2026 16:16:18 -0500, Brian Masney wrote:
+> Here's a series that gets rid of the deprecated APIs
+> divider_round_rate(), divider_round_rate_parent(), and
+> divider_ro_round_rate_parent() since these functions are just wrappers
+> for the determine_rate variant.
+> 
+> Note that when I converted some of these drivers from round_rate to
+> determine_rate, this was mistakenly converted to the following in some
+> cases:
+> 
+> [...]
 
-Patch description should answer to "what?" are you doing and "why?" are 
-you doing it. Please specify also why are you doing this change.
+Applied, thanks!
 
-The rest looks good to me.
+[14/27] clk: qcom: alpha-pll: convert from divider_round_rate() to divider_determine_rate()
+        commit: e1f08613e113f02a3ec18c9a7964de97f940acbf
+[15/27] clk: qcom: regmap-divider: convert from divider_ro_round_rate() to divider_ro_determine_rate()
+        commit: 35a48f41b63f67c490f3a2a89b042536be67cf0f
+[16/27] clk: qcom: regmap-divider: convert from divider_round_rate() to divider_determine_rate()
+        commit: b2f36d675e09299d9aee395c6f83d8a95d4c9441
 
-I tested it and saw no issues.
-
-Thank you,
-Claudiu
+Best regards,
+-- 
+Bjorn Andersson <andersson@kernel.org>
