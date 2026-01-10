@@ -1,66 +1,103 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47FBC223328;
-	Sat, 10 Jan 2026 19:53:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D273428DB56
+	for <linux-clk@vger.kernel.org>; Sat, 10 Jan 2026 22:09:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768074788; cv=none; b=X03eQxUn4J7otlUCWVJ8+R1zsbInohBXCPWXNJCt+aFT+Bo3bDmCjjJmOI90GFRcooHgYRSH6ao+Xi5euSEpPgKvrd2OcA/PMa3NW3+nYMGkJ2ZasIenazbNDQN2962tHxZIlZBJ32xTeprrlKnDbs8dTuKjaJlrehLB/zJ99mg=
+	t=1768082950; cv=none; b=mpaq4U/WcH5ZklGoiZbwiriE69MhO4n+4JcIAamT+0/voU/cNq7VdiI1qLX2mVZ3mPiGQga6fwlXRKE4ADlejVOE7BVh8V3Xw1CwiCe5AqfiNkG5NpiJuObYgT+AaKryzBO4zW0GWxH/kD54zTQnz7cmv0kyUJPqzo1ZYyY9lLo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768074788; c=relaxed/simple;
-	bh=1pce/+hL+mT4ikoF0LMeY9bsocfA5If5JoWOMV1Ha+s=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=A6HzBTr0LNv3Kd92KAyl4eXuGvCkijciyqCqUu+Hw0OS7+l2NHjRmfuR8cF4DmoDFbm/bVNQb5fXkzfmOUTuWZe0coUxv2HJHlMg4SSPqhB2t5HsNSLCpsP8/zTfyBIak67VT23tElSXIvIymoNpxArenEp3pSVkPmbHD6Go4Po=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JymwyqmP; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1768082950; c=relaxed/simple;
+	bh=eMAwqgYdzBAxFlWVE3o0bvOrDYiX//on6ARzmgYSZGw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DoUrVceTN7rkgo1CTlWxcBzPvmBW3f0z4D1uyTjShQtJ2gVwrhbPt/+qFvDlluyFVgMD2R39dPuvH+/8bjtHpUnHraZFAwuhxqO19W4jDJMhaZyZZkpvGgduh6IPTBX3XJ2DdPF+4C540zmTRN3OVExePmAjytneVFj2sZh3a48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=kFNEuxbq; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JymwyqmP"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 147CFC4CEF1;
-	Sat, 10 Jan 2026 19:53:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768074787;
-	bh=1pce/+hL+mT4ikoF0LMeY9bsocfA5If5JoWOMV1Ha+s=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=JymwyqmPz+GxaedKcYJ6EC3ttFAS5FDePO0zeT7fWqdqt7dV/ssMsrJpEH087slQ/
-	 JYSwT7uOPDdBaWSiYF+vShftlrQiLGCj8M9zRKT6J3iAkiFPxB3tpzW+czsKweMrgm
-	 KKcaN2sOoMEKok8AJVORKtJNrcu/nEZrXHsP4kVaAOI8WUwBTVtk4FbO0O33aTDav7
-	 jqJY/ct3miD0F6lz1AZe4XtWtsrnxyaBzkiu5EZq//MKX75FbA4NefQDUX9StIxl8z
-	 wqKm2PAn5HwW3jg4Nla9XU8uX9Wv2DrO8A0YmwxPwevEIhwNp1dpIAWDrE1QIcp7zh
-	 dHoaeaPGYwfxg==
-Date: Sat, 10 Jan 2026 11:53:06 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Suraj Gupta <suraj.gupta2@amd.com>
-Cc: <mturquette@baylibre.com>, <sboyd@kernel.org>,
- <radhey.shyam.pandey@amd.com>, <andrew+netdev@lunn.ch>,
- <davem@davemloft.net>, <edumazet@google.com>, <pabeni@redhat.com>,
- <michal.simek@amd.com>, <sean.anderson@linux.dev>, <linux@armlinux.org.uk>,
- <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <netdev@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
- <bmasney@redhat.com>
-Subject: Re: [PATCH 2/2] net: axienet: Fix resource release ordering
-Message-ID: <20260110115306.4049b2cb@kernel.org>
-In-Reply-To: <20260109071051.4101460-3-suraj.gupta2@amd.com>
-References: <20260109071051.4101460-1-suraj.gupta2@amd.com>
-	<20260109071051.4101460-3-suraj.gupta2@amd.com>
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="kFNEuxbq"
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2a09757004cso49701965ad.3
+        for <linux-clk@vger.kernel.org>; Sat, 10 Jan 2026 14:09:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20230601; t=1768082948; x=1768687748; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pjgSj6a3kunrFN67IT5JMHaUrlt+PXfCgDXfeu5dl9k=;
+        b=kFNEuxbqBC3Q23eWc4kL2qsvGObAMpVanHzsnqjRUIp2Trsyg0lhDZWwZYSDbgKFAX
+         CefOxCIqk7Es9wDpCua0nI1L9Gg/J7JBBMjnzO7Yp4j4SPXgF4yorQu8paU7a+DvS1OE
+         1SeTnYWe0xZvpBbw80wG1Bx1/UQ1VlTWGYe6dw1Llcl8Qzzib21tDpvcvsfozz2Xga9I
+         Y04eD7WV8PLqhxHTrX2N+u//Lr578v7k2KhE5bVRTnoUffiEK0JyUHsWFMxUTFJ0JLbk
+         l2t7sA/7ALtcvewZH6hRBCW8wKco2HbG5bDZt3L9doyoFeRtUTZu0dZ94/tsOwD6fLJl
+         wbmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1768082948; x=1768687748;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=pjgSj6a3kunrFN67IT5JMHaUrlt+PXfCgDXfeu5dl9k=;
+        b=N1ztvAgKJ35xqES2Q0JIbRevs3usrbtyCKInk3f3MUrUA7iUawImBAs2NTXgSScj01
+         chVeQ006mD7ivxfVU68UR9HpPJXYsoVboKi+wRbHynfnPy/wJss3Jr8UfafIVv2d7Puc
+         vR4Otyta3gGAvkNd7csQ0xrHyWT6A5KJLgAfHO9rhZCnK0wNYRW5KWZeUzQmH+w5K7O1
+         jSn7rImG4A4rQTrvTT0ofzjthIkVjI/1Z/UijNU7SUFHXc/s/D63xINtwS4HwsX/ECMl
+         0ner5JWs2c7vJ7hI5DxphWQJuuOPmbmREpT1CQ/q0gq+7Ng2AgphEt3XK2KkHFxsZm7F
+         Pj4w==
+X-Forwarded-Encrypted: i=1; AJvYcCWoVjlUJi4LEXc+24fMPxY+8zCvQGG8iMkyH4KZAOUQSihzGxBI+VLPiGLseQv0UpGDQAih0SH1zOo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywksr6N2/oS9OZCYbru2K7a4zYv1Z7v2IoDW4cZqgXkkKVwNU9D
+	mTUEZzTbBqrsVIC3eGjJYKKrGhv0C7UQQWNIf1wlojTLHEop/snzd/cw4aXAGYNtAzMFuO7sxaq
+	h+BuMjQG7BGuFVPdnkoNuegg5yPZooZc=
+X-Gm-Gg: AY/fxX4jvLeUjI+MRcC18Ibowd/8WXko25DeUnbMh14aN2eWtcRFrq4It+zf+vvekPh
+	3NZJpNR9NZYadOtlZW5SG/8LtNSWzoEd+aoj7sd+4Yh2EDR/Ozj2L7aKi/Eda/1Hyy0cJAwwct6
+	xbXJw71C23zbgWfXtD2LVCqQEBrzdpHu0459ley67FoVqjDQTsLeFzddF7DeOfZvre1Jt0agFAg
+	g0lwRyv0mAr4OU+W4Vosgh3gjw9g+GXZC+od6zBAPMJY2640moOfVhqpWMK3WhOC5ep1ZUf8DuV
+	CX/8g+I/VPspQusJcnpTw2LdSdaKgWgaNZWj++s=
+X-Google-Smtp-Source: AGHT+IEAqhyKZ4Zb9mGUXaf4V+H313p3cDSNfGR8K+R50WWW/gF491i/LIbVtoG+64AdUYGn/0TAd6Uaqs+FGGXp2Yc=
+X-Received: by 2002:a17:902:e78b:b0:295:6122:5c42 with SMTP id
+ d9443c01a7336-2a3ee43da5cmr117317715ad.24.1768082948085; Sat, 10 Jan 2026
+ 14:09:08 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20260108-a5-clk-v5-0-9a69fc1ef00a@amlogic.com> <20260108-a5-clk-v5-6-9a69fc1ef00a@amlogic.com>
+In-Reply-To: <20260108-a5-clk-v5-6-9a69fc1ef00a@amlogic.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date: Sat, 10 Jan 2026 23:08:57 +0100
+X-Gm-Features: AZwV_QhAKgfsFN9tGWs1QKxT7kBr72Z-TUCf9Thx-La55n8xXLTiY8eWe0kVLVk
+Message-ID: <CAFBinCCPsaywQuePJ_bxMby0MJeh2ohkXcduRy=yxr8EExJ9nw@mail.gmail.com>
+Subject: Re: [PATCH v5 6/8] arm64: dts: amlogic: A5: Add scmi-clk node
+To: chuan.liu@amlogic.com
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Jerome Brunet <jbrunet@baylibre.com>, 
+	Xianwei Zhao <xianwei.zhao@amlogic.com>, Kevin Hilman <khilman@baylibre.com>, 
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 9 Jan 2026 12:40:51 +0530 Suraj Gupta wrote:
-> Device-managed resources are released after manually-managed resources.
-> Therefore, once any manually-managed resource is acquired, all further
-> resources must be manually-managed too.
+Hi,
 
-only for resources which have dependencies. Please include in the commit
-message what exactly is going wrong in this driver. The commit under
-Fixes seems to be running ioremap, I don't see how that matters vs
-netdev allocation for example..
+thanks for your patch!
 
-> Convert all resources before the MDIO bus is created into device-managed
-> resources. In all cases but one there are already devm variants available.
--- 
-pw-bot: cr
+On Thu, Jan 8, 2026 at 7:08=E2=80=AFAM Chuan Liu via B4 Relay
+<devnull+chuan.liu.amlogic.com@kernel.org> wrote:
+[...]
+> +       firmware {
+> +               scmi {
+> +                       compatible =3D "arm,scmi-smc";
+> +                       arm,smc-id =3D <0x820000C1>;
+Just before your v5 Neil merged a patch to use lowercase hex consistently: =
+[0]
+Please update this here as well.
+
+
+Thank you!
+Martin
+
+
+[0] https://git.kernel.org/amlogic/c/7bcbedd64ecf5624583140faebfdb0e2e2f6b4=
+3e
