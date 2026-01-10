@@ -1,67 +1,66 @@
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0986825332E
-	for <linux-clk@vger.kernel.org>; Sat, 10 Jan 2026 15:03:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6680225A33F
+	for <linux-clk@vger.kernel.org>; Sat, 10 Jan 2026 15:08:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768057405; cv=none; b=miAmd9Tc0AXLKaz/uG2MakiTmsNyzMZXXVhToTzM1F7zq/ZS84rX6oHfS+d2CP86+Sj5gqy407Q9Ft34neIrZhubdZHqvy4eUBzvXLFLeCb8hJlojMPmR2ThQff9N6yHkrArfnzPd99kV/DTy5jJa73NKRJaR/cX4jsAwgz8CqY=
+	t=1768057682; cv=none; b=A5GCUoowBHvqHGle6lBlOch7WvpVJW3q8HV+OZy7cazC11THGfEJIhB21AFNLTA5QHNt3qEGv7CkFcdn2F2phgk/7H1F/+KzV7/6Dv3kM44y1MwlhsXawAneuXs0epJZuTsaJnzCZa0asi0xT5TYAI9yNXKntbDpexvjC2Wyh04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768057405; c=relaxed/simple;
-	bh=eXK4ig+LMC8/45Zm1sPkAIst0O35fg1hHP6hf/VGUMk=;
+	s=arc-20240116; t=1768057682; c=relaxed/simple;
+	bh=3Jtr8hfXIcpoL2wm9KUeSEOach/8o8JimSto8d6MKMs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XhsKDxRzNRfyjMvjdsHaumqK8MoX30Yz13W2f1cN1B+/YzS1njfOi3IZcKP9VjCIMIx2gAsbLYtnF7UTnSFgjnRGm9N5aYNKLEu6XRQtAjrXJGAylbTr43XG+FEb8C0Mm7rwI+E9Y45Y03IdXuP2Hd7L08nyb6vU5kxFfXpTHMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=ZKay3EF3; arc=none smtp.client-ip=209.85.208.43
+	 In-Reply-To:Content-Type; b=dCzdIRaCMeD3non9/ybSJwZGeOMB15YFAQ1nQRvuXAYx0DjV0JVAcSjhSg6oGvq4y87nWJz0LyYMx9Lc940zBHzbv0fiQ74KCa23t9NwTuOBuer/KEH3zkCVFF5b86fBLhHt/zNu1SyDsc3/XyJMX7Jqp+ZFDMGcXZKfIBIOTfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=fLacILKX; arc=none smtp.client-ip=209.85.128.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="ZKay3EF3"
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-64d02c01865so8534022a12.1
-        for <linux-clk@vger.kernel.org>; Sat, 10 Jan 2026 07:03:23 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="fLacILKX"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4779aa4f928so53910925e9.1
+        for <linux-clk@vger.kernel.org>; Sat, 10 Jan 2026 07:08:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1768057402; x=1768662202; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1768057679; x=1768662479; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=5N1miC9eVACfUePlD2aX/h3g2e1YcWNd2wzjqT16Zso=;
-        b=ZKay3EF3DxcZm2l1XR7JtnXOW0kEg4Q+GrDxIvutp+f0FzQYshmE2veMlnlNr0bBdj
-         iRnJ+9Z16CK5426NiVUYAxhcIUAJ+vpON195+oboJLM5mfewuHQ40e721vgV5tspa0ja
-         zqNNvTsQeC98so1WaRTHsirTWHK4UzbCYz82974cvZMAQM7KuRZljni8Zm0E1tc7L489
-         qrDnVA1z7GX00VUVFbOcwczo/LZvA4QQmeY+fCN2sUzb1asHGCho/QHHxpFNojoKs5kH
-         ygQ3CMb0aD+8mCpXqUxabUkEkQtLuoNQ7JVQzx58PqQfpiQcRluDl0qs6SLhKgVLD5B1
-         bfnQ==
+        bh=cR+G5T80P/4PxmcURhvOtZwvVr9pTtR/m1ae5uYMxT8=;
+        b=fLacILKXFGRHFHL1J7il5DogkcFIsK6tLBI0ORjS9+I4PiZZ6IqobYGJLUCJXDa2Ev
+         yUVTPQZOooLpJKmlTa4BVdifEE/12RB3jdFgmALPX6DNmalTag5yysltFYLXYQPf16Fs
+         lKIDREgdCjCOtOz/3zWow3XZrNnlLu8HsslCrvT0QQpdAmjsixgpu07L8vvf2Kcy/vvm
+         MgS9RQIgA5O68LNfM+ULvBD/ucVHJFWd+/ByqX7tyOAs29akssCHfh8R16n5h5JmG8cI
+         JfESK8eDaxprs5PYvMalJ37Wgv5G0cFjWRJvjOuZZ6IuLzoDr0dz+V1KXwM68PRsxLXi
+         q9iw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768057402; x=1768662202;
+        d=1e100.net; s=20230601; t=1768057679; x=1768662479;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=5N1miC9eVACfUePlD2aX/h3g2e1YcWNd2wzjqT16Zso=;
-        b=IkcL1As+V8zQ8ZbMpZ4voO9J1qhBlTfRyHP++i5Q2dGCi0Aw1xIXU3YOYkEGKKDC3K
-         9o5eoFKD318wf6JCN1QWQonrkJADZBf3UI7Y+xffVA4BV7qZ/275sVzr1ATUd1HLStpI
-         8G+ZFVsjLpt4luN116G9U/k//yyE+fz8LfN1KirlgZGYmhTUhKn+AxCUbmKa6lVE+z6q
-         5jNqa+NWkEfFRP4LjzpLwPsBK04HqUL+wXrX/NVCcocECC19T8FlyJVZp8H4g14lNivb
-         wFFBBQ9P3nZijKYQlUYBX0Ih9E9NbF2ESLa3/aiNQ6wLIXDcTXHYECZ4dEdu6VaVvG3z
-         dgvg==
-X-Gm-Message-State: AOJu0YykY+XMIAtUtcD/fZuaJtUOzj8GDMxcwnI03C+aKQerPQvWJwVn
-	ucX0NWYjt9sihN8iY4gRddyuUgC0G4/H4weu+rMTehn2+iTJ90BHPKrhX9uJgPB4jL6P8ILiV/l
-	LEkNE
-X-Gm-Gg: AY/fxX42E03uv6zj+WZgYCt1xXsvaaItEMj9rezcnJpzzMLTqCCI0jSsf+BL09Y2RqQ
-	xPm3qB3yDbxHmYPGiW9cSKkfXrm6WzO4qgZn4TGNy/5d0LNVyWq2hJ2BLSbowh1T8ezLdi8AO3d
-	C5k3aXBPobCseuapMXBoY1gOQp+z2LCcsO+FxkXiSJHvEOtELL7eT0a2QfdrbYFqwMT/1Nrwce+
-	FbkFuzJ4hHM1oY6WHekNNhwSZysnLua82/8d8qQC20BF6xE1jeekqryuP/xRCeXee016M17PXQm
-	kfOeVjYayXNF9bpVm+6oTlPxAlmT5ufjukCldsBZI+yw35O8+tjvlDQxqHlBEHJt7D0Fmq8Y3Tz
-	f9AxatiWNvoF8Q8aUSnCGjmgfkzdJLltkKJNHrp9eRYBP1Ue23yOMCiIDI7cs8rnfDCRcpDbKZD
-	61z3I9hOnXj9nOohz88g==
-X-Google-Smtp-Source: AGHT+IHaWhSM19cCp0YqzDorDOXvKVjCzix83PyP8GROo+XI/axIv7q7HlX7FUG1DTQizKZCY8BoIA==
-X-Received: by 2002:aa7:df9a:0:b0:64b:9fa4:b586 with SMTP id 4fb4d7f45d1cf-65097e71207mr11073823a12.25.1768057402414;
-        Sat, 10 Jan 2026 07:03:22 -0800 (PST)
+        bh=cR+G5T80P/4PxmcURhvOtZwvVr9pTtR/m1ae5uYMxT8=;
+        b=HRTas/0R4mpSkQYOTa8xQkcY4u/xOQ2GTQtU888f66X9T+kQygRqzta/FBzJpz1V/j
+         zr4avNjNRSkXAcHZY/VeGb+ppIjGatLfyC6coCt7IpCBI9SQ9pWHjxklSjgo9Aa/ogNQ
+         yT5/P9c2kkvrKcMCLUItvksu+NCwIjfEtphqJ0qQeR+oZ+lKIKWevymgxD4H3w8NBnZ2
+         4/GTB8mHX0DawNB9rAAPib9F/dCm37dthTwZ0jDHhzDJ37gXrsPquqmDlnKDIQjXhEoU
+         UGecAjX4Wc8dUPBkQLWTFbPt0lEKVXNXSyvMzAAiMc4sMHVxEhW/6cmYGegOOw3LqsfP
+         n+1A==
+X-Gm-Message-State: AOJu0Yyyf2CY91HuRXpRAgIJtblKHOQuq0+hjf14siqLO/wsoR70a8zR
+	CgczCiaddYDW/FxdxkaE/kM7cD7QgJap54qirueFgJmF2/koEApSX+qO4jY/oEUQpb8=
+X-Gm-Gg: AY/fxX5aCUY0gMZ8abAm6xPLc9p6khicsc9zF77ipvnHCjmvJGxumZP7EKhahrzuUts
+	/D0Kfoam046d0XGDgBsP2Y315A42ujPLhdiqpJ14RsqnO6YVanu05fmiWnq2sCB7oXN6X2dRvHy
+	sqw1DWhiqP56LFFwas7U98LtCveagJ3kGAwssPkirP82oJ6xU/qoSNWCZ6it8qQanNODZN9LcwG
+	PqFTvxWyGM+uBlOC/THtSaUpj+vA3XqqGnPnGfOngRHfgehOb/8jiPi6oIZDOdqddr9jRsLR22I
+	3jWmSZpdlgpr1gv1uAxTjTwJ0K4WeE/X1FS+2iVdBL5NoWMzsIDeziKCfcfAlAhMjot73Fm8vLz
+	Ezi+EKOjdeuNkyLQLJNnfGZI3PFRz7fJmB3mnsyZJ/TtFM+OPniq/Ibo23KwhCeEjZev1hrtGrt
+	der61WK/WPnQTYAv6rnm2ic+okxFvh
+X-Google-Smtp-Source: AGHT+IEYVV6CVZiBIJH8fcJdAkX68YotvoK8xvZNjWkRE9J4wka7M63evPSE8cyIGECtjH50PiK0aw==
+X-Received: by 2002:a05:600c:1d19:b0:47d:5089:a476 with SMTP id 5b1f17b1804b1-47d84b386fdmr173305105e9.31.1768057678732;
+        Sat, 10 Jan 2026 07:07:58 -0800 (PST)
 Received: from [192.168.50.4] ([82.78.167.31])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6507bf66214sm12929650a12.27.2026.01.10.07.03.21
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47d7f4184cbsm274940855e9.6.2026.01.10.07.07.57
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 10 Jan 2026 07:03:21 -0800 (PST)
-Message-ID: <81e9c0ea-ca06-4cb9-8f5f-08fec370812b@tuxon.dev>
-Date: Sat, 10 Jan 2026 17:03:20 +0200
+        Sat, 10 Jan 2026 07:07:58 -0800 (PST)
+Message-ID: <5b43e5de-f262-457a-b797-f545abb4ee17@tuxon.dev>
+Date: Sat, 10 Jan 2026 17:07:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -69,113 +68,207 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 11/31] clk: at91: clk-usb: add support for
- clk_parent_data
-To: Ryan.Wanner@microchip.com, mturquette@baylibre.com, sboyd@kernel.org,
- alexandre.belloni@bootlin.com, Nicolas.Ferre@microchip.com
+Subject: Re: [PATCH v4 21/31] clk: at91: dt-compat: switch to parent_hw and
+ parent_data
+To: Ryan Wanner <ryan.wanner@microchip.com>, mturquette@baylibre.com,
+ sboyd@kernel.org, alexandre.belloni@bootlin.com, nicolas.ferre@microchip.com
 Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Varshini.Rajendran@microchip.com
+ linux-kernel@vger.kernel.org, varshini.rajendran@microchip.com
 References: <cover.1758226719.git.Ryan.Wanner@microchip.com>
- <6979b3734462c97381159f3968a3f22b6193e04d.1758226719.git.Ryan.Wanner@microchip.com>
- <27aab227-01e3-4074-8aab-38623b4d9808@tuxon.dev>
- <14ea374c-2889-4bc5-b0c9-fb5b5498593e@microchip.com>
- <cb19cd94-7f81-4f75-a7db-bf25192986ed@tuxon.dev>
- <9b97b3b8-9e46-4482-8420-ebabe00254fe@microchip.com>
+ <628859234f4b2523f43b3ac05d5e29ceb05a7f61.1758226719.git.Ryan.Wanner@microchip.com>
+ <eed15c43-dde3-410b-b2a3-655f4acf8d97@tuxon.dev>
+ <0402804e-7575-42b2-9990-1b09fca80451@microchip.com>
 Content-Language: en-US
 From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <9b97b3b8-9e46-4482-8420-ebabe00254fe@microchip.com>
+In-Reply-To: <0402804e-7575-42b2-9990-1b09fca80451@microchip.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-Hi, Ryan,
 
-Sorry for the late reply, I was off for a while.
 
-On 1/5/26 19:58, Ryan.Wanner@microchip.com wrote:
-> On 12/23/25 07:00, claudiu beznea wrote:
->> EXTERNAL EMAIL: Do not click links or open attachments unless you know
->> the content is safe
+On 1/9/26 19:03, Ryan Wanner wrote:
+> On 10/20/25 12:15, Claudiu Beznea wrote:
+>> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
 >>
->> On 12/18/25 18:23, Ryan.Wanner@microchip.com wrote:
->>> On 10/20/25 12:17, Claudiu Beznea wrote:
->>>> EXTERNAL EMAIL: Do not click links or open attachments unless you
->>>> know the content is safe
->>>>
->>>> Hi, Ryan,
->>>>
->>>> On 9/19/25 00:15, Ryan.Wanner@microchip.com wrote:
->>>>> From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
->>>>>
->>>>> Add support for clk_parent_data in usb clock driver.
->>>>>
->>>>> All the SoC based drivers that rely on clk-usb were adapted
->>>>> to the new API change. The switch itself for SoCs will be done
->>>>> in subsequent patches.
->>>>>
->>>>> Remove the use of __clk_get_hw() for the slow clocks.
->>>>>
->>>>> Signed-off-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
->>>>> [ryan.wanner@microchip: Add SAMA7D65 and SAM9X75 SoCs to the changes.
->>>>> Change how the main_xtal and slcks are initialized so they match the
->>>>> parent_data API]
->>>>> Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
->>>>> ---
->>>>>    drivers/clk/at91/at91rm9200.c  |  2 +-
->>>>>    drivers/clk/at91/at91sam9260.c |  2 +-
->>>>>    drivers/clk/at91/at91sam9g45.c |  2 +-
->>>>>    drivers/clk/at91/at91sam9n12.c |  2 +-
->>>>>    drivers/clk/at91/at91sam9x5.c  |  2 +-
->>>>>    drivers/clk/at91/clk-usb.c     | 41 +++++++++++++++++++++
->>>>> +------------
->>>>>    drivers/clk/at91/dt-compat.c   |  6 ++---
->>>>>    drivers/clk/at91/pmc.h         | 11 +++++----
->>>>>    drivers/clk/at91/sam9x60.c     |  2 +-
->>>>>    drivers/clk/at91/sam9x7.c      | 21 +++++++++--------
->>>>>    drivers/clk/at91/sama5d2.c     |  2 +-
->>>>>    drivers/clk/at91/sama5d3.c     |  2 +-
->>>>>    drivers/clk/at91/sama5d4.c     |  2 +-
->>>>>    drivers/clk/at91/sama7d65.c    | 24 +++++++++++---------
->>>>>    14 files changed, 72 insertions(+), 49 deletions(-)
->>>>>
->>>>
->>>> [ ... ]
->>>>
->>>>> @@ -882,10 +885,10 @@ static void __init sam9x7_pmc_setup(struct
->>>>> device_node *np)
->>>>>
->>>>>         sam9x7_pmc->chws[PMC_MCK] = hw;
->>>>>
->>>>> -     parent_names[0] = "plla_divpmcck";
->>>>> -     parent_names[1] = "upll_divpmcck";
->>>>> -     parent_names[2] = "main_osc";
->>>>> -     usbck_hw = sam9x60_clk_register_usb(regmap, "usbck",
->>>>> parent_names, 3);
->>>>> +     parent_data[0] = AT91_CLK_PD_HW(sam9x7_plls[PLL_ID_PLLA]
->>>>> [PLL_COMPID_DIV0].hw);
->>>>> +     parent_data[1] = AT91_CLK_PD_HW(sam9x7_plls[PLL_ID_UPLL]
->>>>> [PLL_COMPID_DIV0].hw);
->>>>> +     parent_data[2] = AT91_CLK_PD_HW(main_osc_hw);
->>>>> +     usbck_hw = sam9x60_clk_register_usb(regmap, "usbck", NULL,
->>>>> parent_data, 3);
->>>>
->>>> sam9x60_clk_register_usb() could be converted to use parent_hws
->>>> member of
->>>> struct clk_init_data instead of parent_data.
->>>
->>> So this would mean that I would pass in an array of the plls as
->>> parent_hws, and use that to load the clk_init_data struct instead of
->>> filling the array of parent_data as it is changed to in this patch set?
->>>
->>> And this would be functionally the same since parent_data points to
->>> clk_hw?>
->>>
+>> Hi, Ryan,
 >>
->> It should be something like:
+>> On 9/19/25 00:16, Ryan.Wanner@microchip.com wrote:
+>>> From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+>>>
+>>> Switch old dt-compat clocks to use parent_hw and parent_data. Having
+>>> parent_hw instead of parent names improves to clock registration
+>>> speed and re-parenting.
+>>>
+>>> Signed-off-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+>>> Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
+>>> ---
+>>>   drivers/clk/at91/dt-compat.c | 80 +++++++++++++++++++++++++-----------
+>>>   1 file changed, 56 insertions(+), 24 deletions(-)
+>>>
+>>> diff --git a/drivers/clk/at91/dt-compat.c b/drivers/clk/at91/dt-compat.c
+>>> index fa8658d3be7b..9ca871b817e0 100644
+>>> --- a/drivers/clk/at91/dt-compat.c
+>>> +++ b/drivers/clk/at91/dt-compat.c
+>>> @@ -43,7 +43,8 @@ static void __init of_sama5d2_clk_audio_pll_frac_setup(struct device_node *np)
+>>>
+>>>        parent_name = of_clk_get_parent_name(np, 0);
+>>>
+>>> -     hw = at91_clk_register_audio_pll_frac(regmap, name, parent_name, NULL);
+>>> +     hw = at91_clk_register_audio_pll_frac(regmap, name, NULL,
+>>> +                                           &AT91_CLK_PD_NAME(parent_name));
+>>>        if (IS_ERR(hw))
+>>>                return;
+>>>
+>>> @@ -69,7 +70,8 @@ static void __init of_sama5d2_clk_audio_pll_pad_setup(struct device_node *np)
+>>>
+>>>        parent_name = of_clk_get_parent_name(np, 0);
+>>>
+>>> -     hw = at91_clk_register_audio_pll_pad(regmap, name, parent_name, NULL);
+>>> +     hw = at91_clk_register_audio_pll_pad(regmap, name, NULL,
+>>> +                                          &AT91_CLK_PD_NAME(parent_name));
+>>>        if (IS_ERR(hw))
+>>>                return;
+>>>
+>>> @@ -95,7 +97,7 @@ static void __init of_sama5d2_clk_audio_pll_pmc_setup(struct device_node *np)
+>>>
+>>>        parent_name = of_clk_get_parent_name(np, 0);
+>>>
+>>> -     hw = at91_clk_register_audio_pll_pmc(regmap, name, parent_name, NULL);
+>>> +     hw = at91_clk_register_audio_pll_pmc(regmap, name, NULL, &AT91_CLK_PD_NAME(parent_name));
+>>>        if (IS_ERR(hw))
+>>>                return;
+>>>
+>>> @@ -129,6 +131,7 @@ static void __init of_sama5d2_clk_generated_setup(struct device_node *np)
+>>>        struct clk_hw *hw;
+>>>        unsigned int num_parents;
+>>>        const char *parent_names[GENERATED_SOURCE_MAX];
+>>> +     struct clk_parent_data parent_data[GENERATED_SOURCE_MAX];
+>>>        struct device_node *gcknp, *parent_np;
+>>>        struct clk_range range = CLK_RANGE(0, 0);
+>>>        struct regmap *regmap;
+>>> @@ -149,6 +152,8 @@ static void __init of_sama5d2_clk_generated_setup(struct device_node *np)
+>>>        if (IS_ERR(regmap))
+>>>                return;
+>>>
+>>> +     for (unsigned int i = 0; i < num_parents; i++)
+>>> +             parent_data[i] = AT91_CLK_PD_NAME(parent_names[i]);
+>>>        for_each_child_of_node(np, gcknp) {
+>>>                int chg_pid = INT_MIN;
+>>>
+>>> @@ -171,7 +176,7 @@ static void __init of_sama5d2_clk_generated_setup(struct device_node *np)
+>>>
+>>>                hw = at91_clk_register_generated(regmap, &pmc_pcr_lock,
+>>>                                                 &dt_pcr_layout, name,
+>>> -                                              parent_names, NULL, NULL,
+>>> +                                              NULL, parent_data, NULL,
+>>>                                                 num_parents, id, &range,
+>>>                                                 chg_pid);
+>>>                if (IS_ERR(hw))
+>>> @@ -201,7 +206,7 @@ static void __init of_sama5d4_clk_h32mx_setup(struct device_node *np)
+>>>
+>>>        parent_name = of_clk_get_parent_name(np, 0);
+>>>
+>>> -     hw = at91_clk_register_h32mx(regmap, name, parent_name, NULL);
+>>> +     hw = at91_clk_register_h32mx(regmap, name, NULL, &AT91_CLK_PD_NAME(parent_name));
+>>>        if (IS_ERR(hw))
+>>>                return;
+>>>
+>>> @@ -228,6 +233,8 @@ static void __init of_sama5d2_clk_i2s_mux_setup(struct device_node *np)
+>>>                return;
+>>>
+>>>        for_each_child_of_node(np, i2s_mux_np) {
+>>> +             struct clk_parent_data parent_data[2];
+>>> +
+>>>                if (of_property_read_u8(i2s_mux_np, "reg", &bus_id))
+>>>                        continue;
+>>>
+>>> @@ -238,8 +245,10 @@ static void __init of_sama5d2_clk_i2s_mux_setup(struct device_node *np)
+>>>                if (ret != 2)
+>>>                        continue;
+>>>
+>>> +             parent_data[0] = AT91_CLK_PD_NAME(parent_names[0]);
+>>> +             parent_data[1] = AT91_CLK_PD_NAME(parent_names[1]);
+>>>                hw = at91_clk_i2s_mux_register(regmap_sfr, i2s_mux_np->name,
+>>> -                                            parent_names, NULL, 2, bus_id);
+>>> +                                            NULL, parent_data, 2, bus_id);
+>>>                if (IS_ERR(hw))
+>>>                        continue;
+>>>
+>>> @@ -269,7 +278,8 @@ static void __init of_at91rm9200_clk_main_osc_setup(struct device_node *np)
+>>>        if (IS_ERR(regmap))
+>>>                return;
+>>>
+>>> -     hw = at91_clk_register_main_osc(regmap, name, parent_name, NULL, bypass);
+>>> +     hw = at91_clk_register_main_osc(regmap, name, NULL,
+>>> +                                     &AT91_CLK_PD_NAME(parent_name), bypass);
+>>>        if (IS_ERR(hw))
+>>>                return;
+>>>
+>>> @@ -323,7 +333,7 @@ static void __init of_at91rm9200_clk_main_setup(struct device_node *np)
+>>>        if (IS_ERR(regmap))
+>>>                return;
+>>>
+>>> -     hw = at91_clk_register_rm9200_main(regmap, name, parent_name, NULL);
+>>> +     hw = at91_clk_register_rm9200_main(regmap, name, NULL, &AT91_CLK_PD_NAME(parent_name));
+>>>        if (IS_ERR(hw))
+>>>                return;
+>>>
+>>> @@ -336,6 +346,7 @@ static void __init of_at91sam9x5_clk_main_setup(struct device_node *np)
+>>>   {
+>>>        struct clk_hw *hw;
+>>>        const char *parent_names[2];
+>>> +     struct clk_parent_data parent_data[2];
+>>>        unsigned int num_parents;
+>>>        const char *name = np->name;
+>>>        struct regmap *regmap;
+>>> @@ -354,7 +365,9 @@ static void __init of_at91sam9x5_clk_main_setup(struct device_node *np)
+>>>
+>>>        of_property_read_string(np, "clock-output-names", &name);
+>>>
+>>> -     hw = at91_clk_register_sam9x5_main(regmap, name, parent_names, NULL,
+>>> +     parent_data[0] = AT91_CLK_PD_NAME(parent_names[0]);
+>>> +     parent_data[1] = AT91_CLK_PD_NAME(parent_names[1]);
+>>> +     hw = at91_clk_register_sam9x5_main(regmap, name, NULL, parent_data,
+>>>                                           num_parents);
+>>>        if (IS_ERR(hw))
+>>>                return;
+>>> @@ -396,6 +409,7 @@ of_at91_clk_master_setup(struct device_node *np,
+>>>        struct clk_hw *hw;
+>>>        unsigned int num_parents;
+>>>        const char *parent_names[MASTER_SOURCE_MAX];
+>>> +     struct clk_parent_data parent_data[MASTER_SOURCE_MAX];
+>>>        const char *name = np->name;
+>>>        struct clk_master_characteristics *characteristics;
+>>>        struct regmap *regmap;
+>>> @@ -419,13 +433,15 @@ of_at91_clk_master_setup(struct device_node *np,
+>>>        if (IS_ERR(regmap))
+>>>                return;
+>>>
+>>> +     for (unsigned int i = 0; i < MASTER_SOURCE_MAX; i++)
+>>> +             parent_data[i] = AT91_CLK_PD_NAME(parent_names[i]);
+>>>        hw = at91_clk_register_master_pres(regmap, "masterck_pres", num_parents,
+>>> -                                        parent_names, NULL, layout,
+>>> +                                        NULL, parent_data, layout,
+>>>                                           characteristics, &mck_lock);
+>>>        if (IS_ERR(hw))
+>>>                goto out_free_characteristics;
+>>>
+>>> -     hw = at91_clk_register_master_div(regmap, name, "masterck_pres", NULL,
+>>> +     hw = at91_clk_register_master_div(regmap, name, NULL, &AT91_CLK_PD_HW(hw),
+>>>                                          layout, characteristics,
+>>>                                          &mck_lock, CLK_SET_RATE_GATE, 0);
+>>
+>> Looks like at91_clk_register_master_div() could be kept to use parent_hws
+>> instead of parent_data.
 > 
-> I see, I guess my question is why the usbclk system only? Is it just due
-> to how little parents there are for the usbclk? Or is it because this is
-> the only clock that only uses clk_hw for all of its parents?
-Because this is the only clock that uses clk_hw for all of its parents.
+> Looking into this more the register_master_div calls
+> at91_clk_register_master_internal() which is used for all of the SoCs.
+> Some of the SoCs that use this function only have the parents passed in
+> by name string and not clk_hw. Would it be wise to add another function
+> for this to account for clk_hw and parent name? Or keep the use of
+> parent_data?
+
+Let's keep it as is for now.
 
 Thank you,
 Claudiu
