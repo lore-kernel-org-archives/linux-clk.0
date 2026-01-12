@@ -1,219 +1,316 @@
-Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from OS0P286CU011.outbound.protection.outlook.com (mail-japanwestazon11010065.outbound.protection.outlook.com [52.101.228.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 785681FECBA
-	for <linux-clk@vger.kernel.org>; Mon, 12 Jan 2026 11:41:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768218096; cv=none; b=oD8ElFtfb4jjUgeutvNdEWDV/0VMhE8ktOG0ggnGgvWJZrpCFEwgqPCrC1pzZGauIqVc28bXnAZ4Owec7gfIRMYkKAWeuhe/p63tx8vy0LHC908qwW8PUDI5KiN1M+JKhnHVMPJPbISEqiWufUOWLcG5/x90nHZhr40UxeZsH8c=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768218096; c=relaxed/simple;
-	bh=e8sL06nXoNEupuikp31TvXrN3i392xMPCHbyF8xMO04=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=O7JC2f23czgB56RBPT4tFbNoIESc+OXUvhIw6hyG/XFmt1J962uFIkhpr1wGsWfv1X1IS1WMaZ+V3sRuy/wRcM3jUuALwDTnAAAv+Rq9gJ4hfUyYah4YJAQpCVbyazdgtYkL9+aCh4ewCQDUWVh3XjjPs/xMGd5EifrX57n8YIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-88a2ad13c24so60906546d6.1
-        for <linux-clk@vger.kernel.org>; Mon, 12 Jan 2026 03:41:35 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768218094; x=1768822894;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kCwZy8nplNPe4SBnl4QbdPCHxaIVjw84NdLZ03XKiqs=;
-        b=H4LvohdLSxiyMgMWtXn1+2mDxDFMAgfN3iCMIBWG99dECGydkX+IV/kxc/kEg/pG/3
-         DvjOYr4LOwQK2iejI98nWshAZgeqLhFDsTfb0kCs1p+pUVzQsfI9NfQ+13N2srMy9lx/
-         OZvSmHRI3XMrIyT/OlF3u6qeWIvmAUMLyhh+mWjdDqgOuqV4vNeCIePkMRGjgxsb6WjF
-         V0HwOsA7oTAs5ZuUT0pUO/iaRXHu0Ax/10Odu8hXkkWyCNOA9lbpom7NlBMB3kyds9lE
-         TPJ9vtTqqTfsK1EOyyYChtYtcBfvQgVIwd2LEcYsBTOd8Dv1hGw57nXUwN5mUSZ3d+i6
-         CylA==
-X-Forwarded-Encrypted: i=1; AJvYcCUYgUBgctUM3/MBZHIgUcAPIpJ/VAdgRM/smReXe7R9pPKDSPlrvWvr7CjaTwvBRhppa+26XETgeJA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwloWfiOPZbAYw3lWFVEKSTxpQCArEtiy85waWP83g/vKbwyeqF
-	E8GpN9mNFmnJ6xW/I0Oh5jXVBkkM1hFrxVSlMm5fUFIqDQGJu4jMRjZPDSeRI9by
-X-Gm-Gg: AY/fxX53UT7l8GH956jk9Ul0AwXGan/XgHyse29YsTm4GSCZQTAz1IBGj47GXiyq37s
-	FbHuVaIYeMTynMRuhJEGpJ4Q+PpzGuGEPw2Meczv4a7uEbqe3nBJTNRDTV4nEMu6qQrWYIg4aGX
-	W26rEBVR2kWbEKCddspX2or5gNUennCGFXCvbPpHOE3tWJFjLYDCn218ygmNcA8ozELndmI5WMI
-	Cw8sNZ8k+ZT0KQ/aL4IaQOIS3fx4AnNy4hVRrbS9iNcJaZmsrMu4jFR/urYSUqvQno/iQeLukTw
-	0ZYk0rtFVOEOc8fyjJm/sYTD6ozpHBL5/iQC48pWLFRdmi1EHsF9kDOfXTwYAf4ZqqM/HVNkzTW
-	nSBCrFWBrpn+TD6GECB/71JXJrTVInu9l+Khot0ITPPStTqA+8umtnuPYVdvwYultifkcHE+xwb
-	hvhyf/BH2q31Q+xggxNol4um6OYzfEU4O6mIZE5A8czzcm7slE
-X-Google-Smtp-Source: AGHT+IGSBdhIqEXLgPYfFchplEc/qvEocyB9aDAs7WvI1cZs7qxeiNkhDcBBrC5MhSrR6Vl78MUZig==
-X-Received: by 2002:a05:6214:5a0a:b0:88a:2b12:f746 with SMTP id 6a1803df08f44-890842a452fmr267618656d6.56.1768218094343;
-        Mon, 12 Jan 2026 03:41:34 -0800 (PST)
-Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com. [209.85.219.48])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-89077280fd3sm134219096d6.55.2026.01.12.03.41.34
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 12 Jan 2026 03:41:34 -0800 (PST)
-Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-88a3d2f3299so75536486d6.2
-        for <linux-clk@vger.kernel.org>; Mon, 12 Jan 2026 03:41:34 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUUjfeXCU3/2qg35KNUGjBNw2DpBTBjriguyWHZbGhtEm2rJvPteCJ4KXP8kipMKE19BR4es5YsAz0=@vger.kernel.org
-X-Received: by 2002:a05:6102:6058:b0:5ec:c528:4dd3 with SMTP id
- ada2fe7eead31-5ecc5284f7amr6284383137.42.1768217726081; Mon, 12 Jan 2026
- 03:35:26 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEF5D346FD1;
+	Mon, 12 Jan 2026 12:00:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.228.65
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1768219203; cv=fail; b=c6gRosjDS6d5NoCyr7RAaJcfM8rRA81md46NKzDzA59LFji4J/1GBmwWlIg2v1huRRv4RUhE2f9IWcq6mTXy7v3n1FtS+Q53swzH9eTs4ws3WxT30xg7QtPa5SYnroZyMKrEzk8xDM2N0MOFFkcAXf18LKUARdM78rgDIXHJbEw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1768219203; c=relaxed/simple;
+	bh=kmgAtHV5w3ARoRWmHTZrmgy+3fPbOUWngoXgNDT6uTM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=W+17S9DssktqKeBkgL8E7joRvHZSLV3/345c9JZviU4sMPdyUaoOH+OC9kcyYqpOCmgc/QiqjImmlADGGI1rzQnptVWBIMfzpLIP5eKjrSjTsc6m0lhcvPTvtujO4iXP1/cXZtu9gNkfNPitfkRyWCWXBpEmk9kdgXLuIh37luM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=VRUDcRsx; arc=fail smtp.client-ip=52.101.228.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="VRUDcRsx"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=n0OlHXnlCiWF7KP1ASO9m1KCAE4pU0R7KG582lRm7F8FCChCuPVapi4kMqkXJMlZfSkgjIZOekv0hlKJCsnGCubHgtDTjSC4NqL3sph/9IwfS5Huy64jtXMUKiAmwgZ2HGPMD1d0bCyLxHFI3DoXQAU88ObVa5vYc7FihXyiSNaqLBZMij/fHtEyechVKh8hM0vEBhzcfzGU2CE276LqV9U0+Rs8DwtKDxInEo4v27OCc7dbp0e8E6yBYqns0l7lTNd3y5JAxGjEVVr4ih2/rHWKF5986E4bK9VNnKOBSscwwvtGdu0x/OrHj8hE9W9L62IIbT793xp1HIrS+xH16Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Gyqu2gF4PpmoD8ysDPqfYjBYqBHS8NS8AectZQO6fB4=;
+ b=Io+T9draECsplCHJF0nxZfrugkSdp7FMFKKl0YwmBjWMnZ62UnZPaJxgFT3g6zzkenH7BgS7h6WqcL4xPlFB1d8PjVwSt/fPIgYdeIVpfsrNmwnpSndqNaMo5o+ceYg+9t5snlUUFvMcEJadpDEPi/EyeeyclEI97S9uOCpkNje3hhHJQ/oMZI1tUeMftq1jJE17uru8tbEUDbxUTPWslsngobEUYhWr9c/OQqVYkBsKYv22KyK5Q4nzDSY6R+Eub9Ib1BotrTWH+xM0Mq/b8ivO/622qBlAplrviqoF7XBFuXhJ2+6XRLIdn5pQnd6EkEABic0mrmvC4Lhw15fOsA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Gyqu2gF4PpmoD8ysDPqfYjBYqBHS8NS8AectZQO6fB4=;
+ b=VRUDcRsxynVl8dlHHFTvPvBJd47gz8EsU2qs0GRcXd25BOCMmo2KKqLga+PczelS1iUSsdUSpfZ8jA78dc7uYHJMP/SBWdyfuqSOgWKJV0PzLy6N2roRDUifLIUPXTNa+wAkg3T8SMbp69mL2W+tusZBf6xucqhgtg6zpGeNf4M=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=bp.renesas.com;
+Received: from TYCPR01MB11947.jpnprd01.prod.outlook.com (2603:1096:400:3e1::6)
+ by TYYPR01MB12544.jpnprd01.prod.outlook.com (2603:1096:405:198::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9520.4; Mon, 12 Jan
+ 2026 11:59:56 +0000
+Received: from TYCPR01MB11947.jpnprd01.prod.outlook.com
+ ([fe80::33f1:f7cd:46be:e4d8]) by TYCPR01MB11947.jpnprd01.prod.outlook.com
+ ([fe80::33f1:f7cd:46be:e4d8%5]) with mapi id 15.20.9520.003; Mon, 12 Jan 2026
+ 11:59:56 +0000
+Date: Mon, 12 Jan 2026 12:59:37 +0100
+From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, tomm.merciai@gmail.com,
+	linux-renesas-soc@vger.kernel.org, biju.das.jz@bp.renesas.com,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 09/22] dt-bindings: display: bridge: renesas,dsi: Add
+ support for RZ/G3E SoC
+Message-ID: <aWTiKQFBZT4hpaG_@tom-desktop>
+References: <cover.1764165783.git.tommaso.merciai.xr@bp.renesas.com>
+ <1c7657d6c06d99bc2f90251995ad272b5704717d.1764165783.git.tommaso.merciai.xr@bp.renesas.com>
+ <42bbdec7-ce6d-417c-a13d-ce0a6782bc9a@kernel.org>
+ <aWEnfJonv4egKhXo@tom-desktop>
+ <CAMuHMdUm-yHkRw0k42pfq9BD8urLO7rqF2yD7s2JbkMFpRTQwQ@mail.gmail.com>
+ <aWE8ikhsthB_0VQV@tom-desktop>
+ <CAMuHMdWGf7MgFzxjuea8agZgSyAMzXwFYO22NmRZ7i1-VPzqFw@mail.gmail.com>
+ <aWTYS9BjWn2bY5Lz@tom-desktop>
+ <CAMuHMdVdntJrcT8d4sCBXdnYr1m3X7s-_58KBiEDV5+GAW353A@mail.gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdVdntJrcT8d4sCBXdnYr1m3X7s-_58KBiEDV5+GAW353A@mail.gmail.com>
+X-ClientProxiedBy: FR2P281CA0186.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:9f::20) To TYCPR01MB11947.jpnprd01.prod.outlook.com
+ (2603:1096:400:3e1::6)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1764165783.git.tommaso.merciai.xr@bp.renesas.com>
- <1c7657d6c06d99bc2f90251995ad272b5704717d.1764165783.git.tommaso.merciai.xr@bp.renesas.com>
- <42bbdec7-ce6d-417c-a13d-ce0a6782bc9a@kernel.org> <aWEnfJonv4egKhXo@tom-desktop>
- <CAMuHMdUm-yHkRw0k42pfq9BD8urLO7rqF2yD7s2JbkMFpRTQwQ@mail.gmail.com>
- <aWE8ikhsthB_0VQV@tom-desktop> <CAMuHMdWGf7MgFzxjuea8agZgSyAMzXwFYO22NmRZ7i1-VPzqFw@mail.gmail.com>
- <aWTYS9BjWn2bY5Lz@tom-desktop>
-In-Reply-To: <aWTYS9BjWn2bY5Lz@tom-desktop>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 12 Jan 2026 12:35:15 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdVdntJrcT8d4sCBXdnYr1m3X7s-_58KBiEDV5+GAW353A@mail.gmail.com>
-X-Gm-Features: AZwV_QgqmWBfwmu_212Rxj3vjBBvkBDNMwpqCH0FZHQJKUGeDVAXwigjiGPPHlA
-Message-ID: <CAMuHMdVdntJrcT8d4sCBXdnYr1m3X7s-_58KBiEDV5+GAW353A@mail.gmail.com>
-Subject: Re: [PATCH 09/22] dt-bindings: display: bridge: renesas,dsi: Add
- support for RZ/G3E SoC
-To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, tomm.merciai@gmail.com, 
-	linux-renesas-soc@vger.kernel.org, biju.das.jz@bp.renesas.com, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TYCPR01MB11947:EE_|TYYPR01MB12544:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6ddfa839-8381-4206-6f76-08de51d21aa0
+X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+ BCL:0;ARA:13230040|1800799024|366016|7416014|376014|52116014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+ =?us-ascii?Q?k/0kQWHaTwZ1DVMr8WBJS8U0DXI7xsWp8GYh3Mz0gu5NQlLiGA7GeNBosg3R?=
+ =?us-ascii?Q?bcw/RRgaH8mMs9EAj57QZLwAhellxox84pSa0+9oGrglLOKIOgGwEVpedoAN?=
+ =?us-ascii?Q?N6qiJaTJ5B35pojoD2MU0ArFReaeTGV1Z6PKEyCR+Y+DO0a/o0S5GmVb9oUi?=
+ =?us-ascii?Q?Z8DjPUANnIdaKjrfEjDFEK5L9HS1Lt96/9VfhimQFjedWBZqL5OKvsUzh/mo?=
+ =?us-ascii?Q?fMAyPC2a3zNPl59Lv2ndVL98jXRE3yLjRAcqc/0WZkn4Q58WyPWQe29TLHOl?=
+ =?us-ascii?Q?Jhp5UC99PBuH7Xf9e6d/E/jO0W9Q5+2LreUigyP6jM5gl+5YoGgVwFT2Bwws?=
+ =?us-ascii?Q?CCqOgOGVtaMHKtsV4+Hw6YzPrO/FxnE5OyD1M315bVIDv9DJhPQxq/szDVMu?=
+ =?us-ascii?Q?IyMSzZb3kMOyRxTUfCHmSL9pawwX0jHtS7KHnx/PVClMV0L0kF4GFMheos4q?=
+ =?us-ascii?Q?89eLNxLr+0etO9nDXwm740FWphaXnyi8lzq6Uxd4zvO/qgcpGSK+SF1f2akH?=
+ =?us-ascii?Q?Ih3kE8gYLceqlHKwKsHkLkfQNWmroILlNBnNvROD6A/SmbRk0LWIIEE8Nhak?=
+ =?us-ascii?Q?wLaoAyDS8cNZ4dj9ppSzZElcIDQapICCw17XglukODQuoMqMP9kKN9ZAsaqD?=
+ =?us-ascii?Q?jwZcv+taAs4eVorJmGDwneT9XQ3ca9saylq/c63olkwYgjWXKu+vZy6uoC/7?=
+ =?us-ascii?Q?FJYOt/7zF4VbGAWEtTkDNK1sL8gnxgjqLRopBBvXSzKJo+J9GaSr2i9HCZFC?=
+ =?us-ascii?Q?rNKdC1yUJfkkLvmkEGI7pQH4h5xLmjci22GRdKKxfqfDlYmko1GIqr3A+97Z?=
+ =?us-ascii?Q?C724rXz9LTe+qYmB7Uk2GYgss0Ul5MOi2gDxZ0vvFPV3eJuX7KanlVDXzKTr?=
+ =?us-ascii?Q?owY6TQrKcHYK82tC4T36T4Hgg7KYnqjchPsj2Dh6Fkn9Ew/nCqfKe9W5xreF?=
+ =?us-ascii?Q?zyVY3jW8+hX1m1NBsQxVCEDprYQ1QaLBGvsISr5STzFNZ/L3WdNLkL2iXYap?=
+ =?us-ascii?Q?a73RI3NUtwz3pg6UFmPeNFjw4hl07lOsRN2HEiIT/ZWsKH6+IlfLLsEeAsQx?=
+ =?us-ascii?Q?MoK8yfjyySMPVmf/jqxwrw0/WAP19vqiL9HCf3079nEREIQVxz6a6fOortsH?=
+ =?us-ascii?Q?ZpAMgas+Wl4xx/YZo8Ulc90BBWAxVkhOEcmpOBVWU45YCX4hHYypIoQlD2qM?=
+ =?us-ascii?Q?XROVmp4qTkrvvuNDMYy1FetTxBxxYUPzO5+SS9bn+kQjBI4741hpL65164YR?=
+ =?us-ascii?Q?IsP/v05Cq23NAY15w2Oqy+sWxCH7WclRGyyjju1md7ZQHOr7j3e5arL5tA1Q?=
+ =?us-ascii?Q?n2YjpaJCpSTwDgbR98k0CD/BsW2KFWnFmDOBNR+ZY4XfVR0ORkv1ILOjmbEc?=
+ =?us-ascii?Q?w+yqJWa+gVxLFZQDIQqtjpmMbNd2lCmeMGbLkdACwxZKdaBTE7fMj53xGJbz?=
+ =?us-ascii?Q?NdQ2TVzd4QED8YjGoYAupgaqcu7BVvhZ27f4H+hCf3uaumiyKVHhC1kfuRYG?=
+ =?us-ascii?Q?o4+EK3f4z22JalzTjDToQYr6qJrp5i4ZtdnC?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB11947.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(52116014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?us-ascii?Q?0rw9xftp5YClaxp2M+YO+A0laYDRmchTrZ1yQLGfVtP7ScHIHB1Rinq8mVp6?=
+ =?us-ascii?Q?oYhlJmDsHo2VDkobs+FGylkGdq9cYzWS5FfpGuSBEyOyN2ifibjr3q/Bkm2e?=
+ =?us-ascii?Q?yktiW0PYEOeiu4FCEqoPpW41GjOHIoze2ci8/+XjiT9Azrrg5jAa08j3xAN8?=
+ =?us-ascii?Q?xcw1KWzCERkYojJosoyUV3yB8/VbnN1hBRSwtCogY5K8YFHX/329zfFJVTJ8?=
+ =?us-ascii?Q?EjI38wtveKFcsrksgsk4OlogsQMtyCfxUPg9OMhzNFxL4t+iD1Td6FwHpI90?=
+ =?us-ascii?Q?cUd7BJUBasuyLSbj5gXyhxonAZCZWeZ+/EAcYuiRFJqwu0bj+/BR9ZtWSUS6?=
+ =?us-ascii?Q?52mJ+nsblv2eUZj0Ij21J216VBDUXXhf5B3DNr9uqNbnK7GdpnDAhHFJvslV?=
+ =?us-ascii?Q?8K/i3r0pi1gt85srgD7f2QzfwlvYiDIKbk8SNbR1G8aNG6ZeMCuGK9gPUNQE?=
+ =?us-ascii?Q?3GJrbUwc6KnaeM87lw72NBaMFvPp+FFn7LgbARWRtUbfj3y7sRBiRLhGTqmv?=
+ =?us-ascii?Q?g4FX+78r/P0dmVS+zu22KBlUvFk8GIHblzhsa+cbR09n8Ga+QBc7EtJhA/Yd?=
+ =?us-ascii?Q?o2iPTx54YVocx5BjSRfWkNZC6WrF6wjTpsUTysWnfSy5lKUVVmT2KLNOoyhQ?=
+ =?us-ascii?Q?yMGGajEuu53T5oBdUKlXgjlmBtAHmiPJzqJNJQtfG9AwJSWhKd/NRhMAvPjp?=
+ =?us-ascii?Q?JTkHe/r9f8dROpxPO9p4p9CLWrcrC0wgdGbnQ6gnkbXMIB5iBolJFKwVckre?=
+ =?us-ascii?Q?3Nvub/JTChWcfTjx66Td+nSkfVZup2MBcMvzc1AJ1fGuTM9zN96T/3f/4LH5?=
+ =?us-ascii?Q?e/KpLgixr2Yl3N54gxAQ3SJXpTvdteqIlJsHO5ScabGUVSVBENOVyGeelL/H?=
+ =?us-ascii?Q?HYajA6QEs0jbR5tUA9+mpyeqRykvyOIE6T5Xw4P0iDHS/GV16GRseN1lpeaW?=
+ =?us-ascii?Q?Mred1DSl4vMLQhHWrUOJy+WCsoyBEZT2cliOL5f0KBpcLAgiE3RhLYFkwgN9?=
+ =?us-ascii?Q?8XvZ1G5cs+oIkRiZF4l6a0srBn02YuKRJsRPEXv3umZwW8VXVoxKxmi02Izi?=
+ =?us-ascii?Q?2/UTo6zCd+N5+UQhyv/4H1m56wJnFuabsOXXN2rXqZER3GafB9g0BOwE5hbA?=
+ =?us-ascii?Q?g6Du1B+2cCPgVmVd3i9DDENLYg++2mNsM67t9urhfpIYtyQYz/oHhKxlt4RQ?=
+ =?us-ascii?Q?0vl3749xxpWpw32Iai+Gwl4NTskhH2tZHxL2fwo3yoc6UINEZ7o8IP43Jn15?=
+ =?us-ascii?Q?W9jSQRg+bOpwt6Mep4ggdbW6RjfrDBZdsew+rugq7NpOK4Diwmi2xUUueSHG?=
+ =?us-ascii?Q?vbOQxSACVEDQ/UPjVkP1hHTP/h+CkFNPCuqTjKwy0BNmmXRVAtxUqvB2eF2c?=
+ =?us-ascii?Q?I7X93VMRWNvFSVMduf9H1gJgN01HCU6eUjYmqpdk1L/J9YvunIL0WznVmMz3?=
+ =?us-ascii?Q?FuN8VdlX5b3yPfqDWUcwIm9iUsJa6AAQr7qROydCIx1A//AMpmSZ+wtxBiI2?=
+ =?us-ascii?Q?HyN72ZxtnuQ4POV84t3GzYfO1X5alna+t1f6LolUXBIhDiL/zCoDIG1c40i9?=
+ =?us-ascii?Q?hPdNRi6Y2w3Pln6T5LYQ/u1rXcaJ1vEvC7C3qPl4zXDOByIshKxE9q4X4oQi?=
+ =?us-ascii?Q?HEQ6lO7IM6ou9KicWXxmRt4IwxovsejZtCC6A+dCo2wsXqTJRW73G4GmTi9V?=
+ =?us-ascii?Q?W/GZWrjNS0j128SrAHlJHdUEAiDY15vMwyH54Xh76RakB8BJ1wZsjnfVgwqb?=
+ =?us-ascii?Q?yaDmcfLOvxAvXQD4muLJ4x8VODy71WppQAKkN4K1SU6VAUOCGRTE?=
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6ddfa839-8381-4206-6f76-08de51d21aa0
+X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB11947.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jan 2026 11:59:56.8113
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 10YYqQvxrfs9ZoqF08opFdpVeZiOBKtGVDVtPDIfhJnOxIpdXI7pzuT/7n56ZSf12naSN3WTm3v8AY4ZiV3uHfXu8M5ytqYRQlT7Pzd41pA3o3Le1TnKUs4S1aiZQaLL
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYYPR01MB12544
 
-Hi Tommaso,
+Hi Geert,
+Thanks for your comment.
 
-On Mon, 12 Jan 2026 at 12:18, Tommaso Merciai
-<tommaso.merciai.xr@bp.renesas.com> wrote:
-> On Fri, Jan 09, 2026 at 06:59:12PM +0100, Geert Uytterhoeven wrote:
-> > On Fri, 9 Jan 2026 at 18:36, Tommaso Merciai
-> > <tommaso.merciai.xr@bp.renesas.com> wrote:
-> > > On Fri, Jan 09, 2026 at 05:22:02PM +0100, Geert Uytterhoeven wrote:
-> > > > On Fri, 9 Jan 2026 at 17:06, Tommaso Merciai
-> > > > <tommaso.merciai.xr@bp.renesas.com> wrote:
-> > > > > On Sun, Nov 30, 2025 at 09:24:57AM +0100, Krzysztof Kozlowski wrote:
-> > > > > > On 26/11/2025 15:07, Tommaso Merciai wrote:
-> > > > > > > The MIPI DSI interface on the RZ/G3E SoC is nearly identical to that of
-> > > > > > > the RZ/V2H(P) SoC, except that this have 2 input port and can use vclk1
-> > > > > > > or vclk2 as DSI Video clock, depending on the selected port.
+On Mon, Jan 12, 2026 at 12:35:15PM +0100, Geert Uytterhoeven wrote:
+> Hi Tommaso,
+> 
+> On Mon, 12 Jan 2026 at 12:18, Tommaso Merciai
+> <tommaso.merciai.xr@bp.renesas.com> wrote:
+> > On Fri, Jan 09, 2026 at 06:59:12PM +0100, Geert Uytterhoeven wrote:
+> > > On Fri, 9 Jan 2026 at 18:36, Tommaso Merciai
+> > > <tommaso.merciai.xr@bp.renesas.com> wrote:
+> > > > On Fri, Jan 09, 2026 at 05:22:02PM +0100, Geert Uytterhoeven wrote:
+> > > > > On Fri, 9 Jan 2026 at 17:06, Tommaso Merciai
+> > > > > <tommaso.merciai.xr@bp.renesas.com> wrote:
+> > > > > > On Sun, Nov 30, 2025 at 09:24:57AM +0100, Krzysztof Kozlowski wrote:
+> > > > > > > On 26/11/2025 15:07, Tommaso Merciai wrote:
+> > > > > > > > The MIPI DSI interface on the RZ/G3E SoC is nearly identical to that of
+> > > > > > > > the RZ/V2H(P) SoC, except that this have 2 input port and can use vclk1
+> > > > > > > > or vclk2 as DSI Video clock, depending on the selected port.
+> > > > > > > >
+> > > > > > > > To accommodate these differences, a SoC-specific
+> > > > > > > > `renesas,r9a09g047-mipi-dsi` compatible string has been added for the
+> > > > > > > > RZ/G3E SoC.
+> > > > > > > >
+> > > > > > > > Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+> 
+> > > > > > > > --- a/Documentation/devicetree/bindings/display/bridge/renesas,dsi.yaml
+> > > > > > > > +++ b/Documentation/devicetree/bindings/display/bridge/renesas,dsi.yaml
+> > > > > > > > @@ -28,6 +28,7 @@ properties:
+> > > > > > > >            - const: renesas,r9a09g057-mipi-dsi
+> > > > > > > >
+> > > > > > > >        - enum:
+> > > > > > > > +          - renesas,r9a09g047-mipi-dsi # RZ/G3E
+> > > > > > > >            - renesas,r9a09g057-mipi-dsi # RZ/V2H(P)
+> > > > > > > >
+> > > > > > > >    reg:
+> > > > > > > > @@ -84,6 +85,13 @@ properties:
+> > > > > > > >            - const: pclk
+> > > > > > > >            - const: vclk
+> > > > > > > >            - const: lpclk
+> > > > > > > > +      - items:
+> > > > > > > > +          - const: pllrefclk
+> > > > > > > > +          - const: aclk
+> > > > > > > > +          - const: pclk
+> > > > > > > > +          - const: vclk1
+> > > > > > > > +          - const: vclk2
+> > > > > > > > +          - const: lpclk
 > > > > > > >
-> > > > > > > To accommodate these differences, a SoC-specific
-> > > > > > > `renesas,r9a09g047-mipi-dsi` compatible string has been added for the
-> > > > > > > RZ/G3E SoC.
+> > > > > > > Why are you creating completely new lists every time?
 > > > > > > >
-> > > > > > > Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-
-> > > > > > > --- a/Documentation/devicetree/bindings/display/bridge/renesas,dsi.yaml
-> > > > > > > +++ b/Documentation/devicetree/bindings/display/bridge/renesas,dsi.yaml
-> > > > > > > @@ -28,6 +28,7 @@ properties:
-> > > > > > >            - const: renesas,r9a09g057-mipi-dsi
-> > > > > > >
-> > > > > > >        - enum:
-> > > > > > > +          - renesas,r9a09g047-mipi-dsi # RZ/G3E
-> > > > > > >            - renesas,r9a09g057-mipi-dsi # RZ/V2H(P)
-> > > > > > >
-> > > > > > >    reg:
-> > > > > > > @@ -84,6 +85,13 @@ properties:
-> > > > > > >            - const: pclk
-> > > > > > >            - const: vclk
-> > > > > > >            - const: lpclk
-> > > > > > > +      - items:
-> > > > > > > +          - const: pllrefclk
-> > > > > > > +          - const: aclk
-> > > > > > > +          - const: pclk
-> > > > > > > +          - const: vclk1
-> > > > > > > +          - const: vclk2
-> > > > > > > +          - const: lpclk
+> > > > > > > No, come with unified approach.
 > > > > > >
-> > > > > > Why are you creating completely new lists every time?
+> > > > > > The intent is not to create a completely new clock list per IP, but to keep a
+> > > > > > unified clock definition that can scale with feature differences.
 > > > > > >
-> > > > > > No, come with unified approach.
+> > > > > > The previous IP supports a single DSI input port, whereas this IP supports two
+> > > > > > DSI input ports.
+> > > > > >
+> > > > > > Because of this added capability, the hardware naturally introduced an
+> > > > > > additional clock.
+> > > > > >
+> > > > > > Can you please suggest how to handle it?
 > > > > >
-> > > > > The intent is not to create a completely new clock list per IP, but to keep a
-> > > > > unified clock definition that can scale with feature differences.
-> > > > >
-> > > > > The previous IP supports a single DSI input port, whereas this IP supports two
-> > > > > DSI input ports.
-> > > > >
-> > > > > Because of this added capability, the hardware naturally introduced an
-> > > > > additional clock.
-> > > > >
-> > > > > Can you please suggest how to handle it?
+> > > > > Keep on calling the first vclk "vclk", and add "vclk2" at the end of the list?
+> > > > > Then RZ/V2H can specify the first 5 clocks, and RZ/G3E can specify all 6.
 > > > >
-> > > > Keep on calling the first vclk "vclk", and add "vclk2" at the end of the list?
-> > > > Then RZ/V2H can specify the first 5 clocks, and RZ/G3E can specify all 6.
+> > > > Testing a bit your suggestion
+> > > > we can do:
+> > > >
+> > > >   clock-names:
+> > > >     oneOf:
+> > > >       - items:
+> > > >           - const: pllclk
+> > > >           - const: sysclk
+> > > >           - const: aclk
+> > > >           - const: pclk
+> > > >           - const: vclk
+> > > >           - const: lpclk
+> > > >       - minItems: 5
+> > > >         items:
+> > > >           - const: pllrefclk
+> > > >           - const: aclk
+> > > >           - const: pclk
+> > > >           - const: vclk
+> > > >           - const: lpclk
+> > > >           - const: vclk2
+> > > >
+> > > > Then later into the compatible if switch we can do:
+> > > >
+> > > >
+> > > >   - if:
+> > > >       properties:
+> > > >         compatible:
+> > > >           contains:
+> > > >             const: renesas,r9a09g047-mipi-dsi
+> > > >     then:
+> > > >       properties:
+> > > >         clocks:
+> > > >           items:
+> > > >             - description: DSI PLL reference input clock
+> > > >             - description: DSI AXI bus clock
+> > > >             - description: DSI Register access clock
+> > > >             - description: DSI Video clock
+> > > >             - description: DSI D-PHY Escape mode transmit clock
+> > > >             - description: DSI Video clock (2nd input clock)
 > > >
-> > > Testing a bit your suggestion
-> > > we can do:
-> > >
-> > >   clock-names:
-> > >     oneOf:
-> > >       - items:
-> > >           - const: pllclk
-> > >           - const: sysclk
-> > >           - const: aclk
-> > >           - const: pclk
-> > >           - const: vclk
-> > >           - const: lpclk
-> > >       - minItems: 5
-> > >         items:
-> > >           - const: pllrefclk
-> > >           - const: aclk
-> > >           - const: pclk
-> > >           - const: vclk
-> > >           - const: lpclk
-> > >           - const: vclk2
-> > >
-> > > Then later into the compatible if switch we can do:
-> > >
-> > >
-> > >   - if:
-> > >       properties:
-> > >         compatible:
-> > >           contains:
-> > >             const: renesas,r9a09g047-mipi-dsi
-> > >     then:
-> > >       properties:
-> > >         clocks:
-> > >           items:
-> > >             - description: DSI PLL reference input clock
-> > >             - description: DSI AXI bus clock
-> > >             - description: DSI Register access clock
-> > >             - description: DSI Video clock
-> > >             - description: DSI D-PHY Escape mode transmit clock
-> > >             - description: DSI Video clock (2nd input clock)
+> > > All descriptions belong at the top level. Just add the 6th one.
 > >
-> > All descriptions belong at the top level. Just add the 6th one.
->
-> Please correct me if I'm wrong but if we move up:
->
->         - description: DSI Video clock (2nd input clock)
->
-> To the top level description we will have 6 clocks for G3E and 6 for
-> RZ/G2L. With that I think dt_binding_check will fail ("is valid under
-> each of") because of the oneOf.
-
-RZ/G2L and RZ/V2H need "maxItems: 5" in their if-sections.
-
-> > >         clock-names:
-> > >           minItems: 6
+> > Please correct me if I'm wrong but if we move up:
 > >
-> > Exactly.
+> >         - description: DSI Video clock (2nd input clock)
+> >
+> > To the top level description we will have 6 clocks for G3E and 6 for
+> > RZ/G2L. With that I think dt_binding_check will fail ("is valid under
+> > each of") because of the oneOf.
+> 
+> RZ/G2L and RZ/V2H need "maxItems: 5" in their if-sections.
 
-Gr{oetje,eeting}s,
+RZ/V2H -> maxItems: 5 is fine.
+RZ/G2L -> needs 6 clocks no?
 
-                        Geert
+Please correct me if I'm wrong.
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Kind Regards,
+Tommaso
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> 
+> > > >         clock-names:
+> > > >           minItems: 6
+> > >
+> > > Exactly.
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> -- 
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
+> 
