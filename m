@@ -1,104 +1,146 @@
-Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com [209.85.222.45])
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FFAD24BBFD
-	for <linux-clk@vger.kernel.org>; Mon, 12 Jan 2026 14:22:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF1F22BCF45
+	for <linux-clk@vger.kernel.org>; Mon, 12 Jan 2026 14:26:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768227774; cv=none; b=G3xU6EIpxNR5maN/bJhfl6KbqaK2zR0Ax4yJonFYruGtbRmUNtbPy+gz7cplqIaQHWdu3PuwBiv6+tTZmJocDzVnTOVVE9wOjBCOyxRteJi1y2RKEDwg5n5B4yjPrrD/BxMo/1lvLqHYEt9CbUw91U2QEfN2SXOBk0mJQvQCYhs=
+	t=1768227973; cv=none; b=Ae/PywU9t3VysePMzflO4Ow3oO1mXEtKDS9fRBLpHS+JsgzfUqNta7T08lxsPcLn/7UmiXr05cLcbNio5HBgq9RkrnyRjTYQGLRcugZVR9S6bXiZyXiXNkCG2c3P9wJ9B0DFTulTr1dQUojZGW7hLoXxKKhf2LCbU2m69NtFC2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768227774; c=relaxed/simple;
-	bh=/R2fMo2K7fslFxoihMBkpzJzSmjn8g0vMl/pHIiNkKQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=P9tdRfMVXjwFmp0A9rmpBHmDsy7cBFJ3ED5BQv4XCFnyTkhsdw2CeMePgXmD+Z6F6DPSsQPjsvuviz2tujS6kChSKiW/KJDl0pEFEKpN66ZUteJkZczGKmZ5bonFVkkU5eMdlMZWGgYdf3vZbKieC/0GjfwojXZ8TLJkbYxdzj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YvkZwNu4; arc=none smtp.client-ip=209.85.222.45
+	s=arc-20240116; t=1768227973; c=relaxed/simple;
+	bh=MS8wKf7u9HcQpruwLfOyUPj69gKiTphjKQB/fIaDSQ8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=nqn8fBuQFGaKsEH1J6yGrntoAWt5TYZNZaaRaSxfvodxXB39FFh7AaxgeRqJtnQvfFVsLpHVLVN94Am/WUEfudd6CGdfn+wQ2OLIz5ODnk1+pkwMdW4OOlVIdQmchNK/k6vnvUDP1ZEs1J8GU3uws+PGJ4FH9igHfdLni3GaXOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=knWp3W29; arc=none smtp.client-ip=209.85.222.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YvkZwNu4"
-Received: by mail-ua1-f45.google.com with SMTP id a1e0cc1a2514c-94240659ceaso2113917241.3
-        for <linux-clk@vger.kernel.org>; Mon, 12 Jan 2026 06:22:52 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="knWp3W29"
+Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-8c30365ac43so612465885a.0
+        for <linux-clk@vger.kernel.org>; Mon, 12 Jan 2026 06:26:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1768227772; x=1768832572; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/R2fMo2K7fslFxoihMBkpzJzSmjn8g0vMl/pHIiNkKQ=;
-        b=YvkZwNu4cY9uOPmaGckFZv8jb6K4FWVAN54/tfRlOEGGwMIPvX6oNd+1JV0Nnafto8
-         3pUN0Dn7e6mkEmXw97xuNY2seLqn5dvimiZK6iUDzyAgWWHzZMGJvhi4l6P/SpfIxkW3
-         qjN3ZnYqTs/P0jKgM93xgp6pQ+T2dvKTpMm/XJ6F2H6ZokqhziQJQrMGPrCbH9vlVgVb
-         UO6PGvOoKmnm7LZK7Y1Nw6TujSLslmBYclpI7xCtKDktONPSspUk50CWqLpJxg9s7xyN
-         +kCgCl22gS4GloB0PuMToi5miEOzaYhI1nw+ptBn2MNILxekscOUV0o+8IdpUaFqaw99
-         Mi0A==
+        d=linaro.org; s=google; t=1768227970; x=1768832770; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=MS8wKf7u9HcQpruwLfOyUPj69gKiTphjKQB/fIaDSQ8=;
+        b=knWp3W29f/bmH/9fyi0pIIWdXQDlIsPlvpXHZQMlNdiwhZ6lpY0qbZf3YX6EaZ9IxK
+         bEEJY/naMXnfVbqp+tA94PClq/pc7tu5dr3kefOmvgCl3jn2UdAFjdC0lpnvv19s0i5U
+         AdmV2LXqP4F/9u7N2uYoccN+cM5Mm8W/OoAkAn1iMfnBUbj4g1rhuw7akm1fnHRFVOUi
+         1PGYVcKxLU3kV3k5dh4pynAwundoqm7Vvxr9dseGj9jz/pVu4XOouov3hmVZJPtjOlXA
+         S2ryjqdHUx9Zp4Hy+v7m2qHep6p8eq1alKBf06YzoKrcmeXt77Wtu8qL33bGxDgTp6Dz
+         Hwig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768227772; x=1768832572;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=/R2fMo2K7fslFxoihMBkpzJzSmjn8g0vMl/pHIiNkKQ=;
-        b=CfDIGMDTio3Cb2iNZc0iKxPfwtCHuoP6HI7oSYiSKvZJaMhG90amxlQ63iNFtGizYi
-         seBS203J9/X58lUBr6Y+eNz50zIUbHEsJgG8t47JIbYRDlE8M9oiV3lRN5Rrs4ZHUiNG
-         LjxRkxmUyiael9kVuLezTSxWjRBn9XoP+XZyXZcG+unksv3EbRSlAlRpgJm9w5p8uPlQ
-         3c6qYBNvqNctcNdIjSfBNfU5rD5mB9MNIsBmYCGniTEmz0LKHnJhn4z/3qrWwKC/W+sU
-         xqXZ2YtCgaYxUne/gfXkX6BXX0GMiYxOqty3Ci/XDYX3P6UKdQU4ge8IcHq4i4dKaCGl
-         zAHg==
-X-Forwarded-Encrypted: i=1; AJvYcCVpgEralr4xEIMVur+hYPpkY7L+U16TIClVvraZ4/QHPlzfM/2J6+5bpwTj1gQNDnB80YHhc2dqHoQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywh653qu8JSrovU187oOAT9I5foB0qP85N13iIH8XAoo2upQv3R
-	xvsy3gpMfSsbz3ItfHdGC/HfDTp9jxmJb9JF6E5eeJLU8GnI7HdrMsClATU7I1wBm9BHAfzIjNl
-	vLusLgYA2ayAwRDQHBT0Wp3huGVKF58aeIeH19HAD2g==
-X-Gm-Gg: AY/fxX7lWSw2gkXDSb0EgQb40OlzidVbWg5zWkWOce2k5rwyAieYtQs8KzHqy9uUoXG
-	1IKNPaZ+xBlPaJ6Eh4bFDK5i6LHNGFO3m2fynZy6s2JU93wyI3yRmB0sTE9J4yy1RFZnK368/Bb
-	EEoVf5rTq1d3QOplq+HotoMHVITQwZpJJBi/vXVX0S7blY9WLRzkbId4yYk5l2KfYR+w77Xms3S
-	69B5ynQxV7pI6L/Dxkn0k2X1NWemh3mGJFz3Cv8mV6I1IKex5Ze0fLaVtZ/TuWIigeOnTd6ONI3
-	RMDBDULsENDgNBJ0Tq5eb3FOxEg1cg==
-X-Google-Smtp-Source: AGHT+IFa3uP73sKTwXvKWrh65KpYYLhONepO2yhtiz6R2pvhmfRlUTjI4ifsl0y8t5/reFgRMiV/Pdv5o+0tykFNm7Y=
-X-Received: by 2002:a67:e704:0:b0:5ea:62ee:1b5b with SMTP id
- ada2fe7eead31-5ecb1e924a9mr6520896137.10.1768227770485; Mon, 12 Jan 2026
- 06:22:50 -0800 (PST)
+        d=1e100.net; s=20230601; t=1768227970; x=1768832770;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MS8wKf7u9HcQpruwLfOyUPj69gKiTphjKQB/fIaDSQ8=;
+        b=cZGMX3oJci7o0kjS7WcgZIuTV+doy7b5S9I3ooS8XOTnHpyKiG4b9+G7JQYofHUHx+
+         Pr47ojz07jroZmH7Jd+J7qfeR6QqZpNIWV9L8QwOiZNOmVj+ikCo1+1f48PN8iGdbKYP
+         659hbinvGTSIKQCUZyjgmW+FM3+GtpSRIi73rQ7LdCkhoO9s5bo6kYn9bl6KUWXABS2q
+         zHIk23H92LNcUfbGa46yGm8qrRobfTNU3A1AZXwb/U4shsoXArtEmVvuHuJhfoscvAzj
+         sEu2vnUrkjXQO1sctEwAvbdVDqS79M+IjjG5gkTS6EeeTGuNFDw4NVBu6e3wPORmwC+g
+         xPjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVnHc7D8veKd2rayslETb5zwgJAfrUl6GaZRnxe7aOtFvfVBbRfsGdzHrkSCQ4bNjzxWQfDZD7iFr4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/+54UKhUsnHZsUZyNkhMk3CmNKvGCg/9ZMUi3+4sT9Pqpk4/s
+	RoQ9B4piD39rXCF0TgYO2cVz9aiuEpjP7klaaPtDf0LFnCdZOWhqR9CT/guLYZl1Qfk=
+X-Gm-Gg: AY/fxX7U6XQijwD2kFmfttjReshH8hM/uPLULQqK2bcQMS95nJXdpEjOgP4QQLomaVs
+	fbrDVEpF+F9wCzWII3iibCwPwvGBq17M2Vh/jotHhA5JztOdXKtikdC5syTq41BXD/hCzjnD94+
+	aIhQwW5pZLp/KGql87y4bXp+3/If95W5YSXekjY5xzREO1bgZkySVm4JCEAlppYTHvS9e5XB0oI
+	gEotgZr1vInP5//b+z3RFRAcfBX8Jao/IPwDQAxTxaCnUG4NlUSb5A8P3c01oQulnaP/Yg4vTvr
+	MwNbVj4riYEx642QPDXg8iQfsjkRSsyIUSBYUyhKsQxYAXOIDzpEq7w2cvgnK5YGq+3MCYlbZZ0
+	D1qmIK0RfIR81FdLaerUfp1apCyrYjgnbcm8vRVwrXzw71laPTH93+tSsplUosP0qqm3LhTTNDP
+	3bXT9AEU19C6M5JTFw
+X-Google-Smtp-Source: AGHT+IEXjJKk5zH4bo+R8LKpMF4MK489YPX2dESNeMCN9H3Av3eoQMSWyP5H4NLuxZlAI34TDI5m9A==
+X-Received: by 2002:a05:620a:708a:b0:8b2:e827:14bc with SMTP id af79cd13be357-8c3893ea256mr2530528585a.56.1768227970407;
+        Mon, 12 Jan 2026 06:26:10 -0800 (PST)
+Received: from draszik.lan ([212.129.79.54])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8c37f530f99sm1509223485a.36.2026.01.12.06.26.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 12 Jan 2026 06:26:10 -0800 (PST)
+Message-ID: <ba585515010ab9a9b417d000ba744f8178ca9e24.camel@linaro.org>
+Subject: Re: [PATCH v2 1/5] dt-bindings: clock: google,gs101-clock: fix
+ alphanumeric ordering
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus	
+ <tudor.ambarus@linaro.org>, Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,  Conor Dooley <conor+dt@kernel.org>, Alim
+ Akhtar <alim.akhtar@samsung.com>, Sylwester Nawrocki	
+ <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ 	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, 
+	kernel-team@android.com, Will McVicker <willmcvicker@google.com>, Juan
+ Yescas	 <jyescas@google.com>, Doug Anderson <dianders@google.com>
+Date: Mon, 12 Jan 2026 14:26:48 +0000
+In-Reply-To: <20260112-dpu-clocks-v2-1-bd00903fdeb9@linaro.org>
+References: <20260112-dpu-clocks-v2-0-bd00903fdeb9@linaro.org>
+	 <20260112-dpu-clocks-v2-1-bd00903fdeb9@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2-2+build3 
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260109-clk-samsung-autoclk-updates-v1-0-2394dcf242a9@linaro.org>
- <20260109-clk-samsung-autoclk-updates-v1-1-2394dcf242a9@linaro.org>
-In-Reply-To: <20260109-clk-samsung-autoclk-updates-v1-1-2394dcf242a9@linaro.org>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Mon, 12 Jan 2026 14:22:36 +0000
-X-Gm-Features: AZwV_QhvEXr6GUxPXZ8zhrOsq2grsq3qSCluicx7SScTHv37UQRTS1YD7I721QA
-Message-ID: <CADrjBPq5R25QDzqzeJ274DTCpAPfjBFQ=c1szVzYj7rBOC=y7Q@mail.gmail.com>
-Subject: Re: [PATCH 1/3] clk: samsung: avoid warning message on legacy Exynos
- (auto clock gating)
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
-	Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Tudor Ambarus <tudor.ambarus@linaro.org>, Will McVicker <willmcvicker@google.com>, 
-	Juan Yescas <jyescas@google.com>, linux-samsung-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, 
-	Marek Szyprowski <m.szyprowski@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, 9 Jan 2026 at 17:27, Andr=C3=A9 Draszik <andre.draszik@linaro.org> =
-wrote:
->
-> We currently print a warning message that the IO memory size is not
-> compatible with automatic clock gating for many Exynos-based boards,
-> including legacy ones, even if not requested to enable automatic clock
-> gating in the first place.
->
-> Change the test in question to avoid that warning.
->
-> Fixes: 298fac4f4b96 ("clk: samsung: Implement automatic clock gating mode=
- for CMUs")
-> Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Closes: https://lore.kernel.org/all/8b2c412d-3e1e-4be0-a9d5-ef67f6f0d409@=
-samsung.com/
-> Suggested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+On Mon, 2026-01-12 at 14:16 +0000, Peter Griffin wrote:
+> Fix the places that don't have correct alphanumeric ordering. This will
+> make reasoning about where to add future entries more straightforward.
+>=20
+> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 > ---
+> =C2=A0Documentation/devicetree/bindings/clock/google,gs101-clock.yaml | 6=
+ +++---
+> =C2=A01 file changed, 3 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/clock/google,gs101-clock.y=
+aml b/Documentation/devicetree/bindings/clock/google,gs101-
+> clock.yaml
+> index 09e679c1a9def03d53b8b493929911ea902a1763..a8176687bb773ae90800b9c25=
+6bcccebfdef2e49 100644
+> --- a/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
+> +++ b/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
+> @@ -27,13 +27,13 @@ description: |
+> =C2=A0properties:
+> =C2=A0=C2=A0 compatible:
+> =C2=A0=C2=A0=C2=A0=C2=A0 enum:
+> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - google,gs101-cmu-top
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - google,gs101-cmu-apm
+> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - google,gs101-cmu-misc
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - google,gs101-cmu-hsi0
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - google,gs101-cmu-hsi2
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - google,gs101-cmu-misc
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - google,gs101-cmu-peric0
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - google,gs101-cmu-peric1
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - google,gs101-cmu-top
 
-Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
+If we keep 'top' at the top as one outlier, it'd reflect that it is the
+top unit and all other CMUs are children of it.
+
+> =C2=A0
+> =C2=A0=C2=A0 clocks:
+> =C2=A0=C2=A0=C2=A0=C2=A0 minItems: 1
+> @@ -70,8 +70,8 @@ allOf:
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 compatible:
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 contains:
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
+enum:
+> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 - google,gs101-cmu-top
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 - google,gs101-cmu-apm
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 - google,gs101-cmu-top
+
+And here.
+
+Either way, I don't mind:
+Reviewed-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+
+Cheers,
+Andre'
