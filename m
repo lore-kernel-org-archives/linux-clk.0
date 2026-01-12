@@ -1,80 +1,225 @@
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com [209.85.167.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 740D52222C4;
-	Mon, 12 Jan 2026 13:25:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35D4E311588
+	for <linux-clk@vger.kernel.org>; Mon, 12 Jan 2026 13:40:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768224324; cv=none; b=orVoxeyo+0tF+7WCphaHTgcZvJjlXtbF3MdiY1/QeRfvZyGpOvtk8C36aj3mScQO764DjHG3p8nngkINt7/CR0rvtzJ8q7SY0cVrJJnbfCMjrs6IOSXazNZbzTqDGd3gZWwa//PoedevJ+3ze1RhwsyDO+wgBh4bTg+Z2dD9kRk=
+	t=1768225253; cv=none; b=TFTQKT1iFYzfNYMlM2v6DvhIIS53lTst8y9slrbhS2DiLnvFEOk1dmm3PT4JIXfM9Ho2b37qLQQbDQz/DIukaekAyrIlIsncebtIVYpAXaIdr+CAELMnynZWXDq6YUCK5bk6eUe/yrIfThhKZutsqQOJ+WDjhxqkxZrN9YeAQXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768224324; c=relaxed/simple;
-	bh=ZtIEImTdbFc51Ru7QpmEbr/ImRDQRUOshNIVRQzsSoE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WcV0yOF9u1Ix1K/NBbsSKPDLuVA+gEu01hUJoV61H7FJl5J9ehygopsNUwAAKQ3H5Nq1YsupEODOFTdYSgihN9foYuHoslrlf9mjD80S/O+qKU4hzvBvKPKrMEjhMKM+Ig4fgOrMPuwCstCtcnEC0vL1pGigh3zE2Mk5T8Re7Ko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Qpn3gOt5; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Qpn3gOt5"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=iHbP176mpgAGq9kCi92VZjk+dqr0heKyjL7PyZirZAU=; b=Qpn3gOt5j18vViglQafGzGgs7Z
-	aGqRBHTEbpMRnopGmke0ysw231OEgJmD+vg9xfpc0ycQ0Lt1ybVN33dI5rPguR8HkSCbSPgSDqr2u
-	nAW7TKLGpuTHekdPm53Fjs4hafIeYNNY2r8qRd5reJvitrHsAdMHLJHa5W6PS5RjbyJg=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1vfHui-002Tf4-4v; Mon, 12 Jan 2026 14:24:56 +0100
-Date: Mon, 12 Jan 2026 14:24:56 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-Cc: Sven Schnelle <svens@linux.ibm.com>, Wen Gu <guwen@linux.alibaba.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Richard Cochran <richardcochran@gmail.com>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Dust Li <dust.li@linux.alibaba.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	David Woodhouse <dwmw2@infradead.org>,
-	virtualization@lists.linux.dev, Nick Shi <nick.shi@broadcom.com>,
-	Paolo Abeni <pabeni@redhat.com>, linux-clk@vger.kernel.org
-Subject: Re: [RFC] Defining a home/maintenance model for non-NIC PHC devices
- using the /dev/ptpX API
-Message-ID: <7be41f07-50ab-4363-8a53-dcdda63b9147@lunn.ch>
-References: <0afe19db-9c7f-4228-9fc2-f7b34c4bc227@linux.alibaba.com>
- <yt9decnv6qpc.fsf@linux.ibm.com>
- <6a32849d-6c7b-4745-b7f0-762f1b541f3d@linux.dev>
+	s=arc-20240116; t=1768225253; c=relaxed/simple;
+	bh=9yBqdyrTqxi+3IyjZow+5t2Zev5EGWYpylLGOmF6JTY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=c6IsFoTz3cTvwuOoZ2FLksuVY+Cmf00v0JiEZ7fmncjENaaj9sk/gfYoGOIwZEtUVXmkp17B7MCkyMfFnMN4yE997a9cS3nRNbXHHnDHpyZOcIMN2R0JPBXIaxFLp58JlyAMmNhfOl/aJ3vErczyMRYIDkVKDXbBREEWO+kOFwk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f177.google.com with SMTP id 5614622812f47-4503ee5c160so4083330b6e.1
+        for <linux-clk@vger.kernel.org>; Mon, 12 Jan 2026 05:40:52 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1768225251; x=1768830051;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mw1aKltaSTC5rf8Ujw6cZSHrtgE4MMBQjtQaAe26qy0=;
+        b=FTDen2pd+JKUxsj0QRs/w5GpcThIcnMpybokeZic4y+2Nz0vliLhPPAjWBFKMtYl5h
+         yFMkOaZQ+M42KlTY1zFYtSmv2fA7ksBF1POPxlszr7yliHFjGUv/xClnMs6M8z2fPh09
+         eVO00udklTh7M0wvjiuRx8KtSss66T/q2lvirxgkeyzt5K4QfYiRzokYHjJAIaEYHk1I
+         glByxf04GazM10OFQB7ei/MsjYNvLG59sCaYpx6pkbyKLABlXLQXGJXveMMFAtqCZtRo
+         XzBWIM2QxsQc4h6KuQCUP6pL5MpFCGvEb2/Vs+PR66MFP4barhacX2/pQUi+SiRW9Fws
+         4BIg==
+X-Forwarded-Encrypted: i=1; AJvYcCWfpwFOvqCusCtPKk7x8SyOUk1xGK74c/iCe4ofUBnKXVLDYHZeQy78E7Q0yOXvV0AOraNKhSSsRag=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWzApQQnIHdN+VJquNWDtT+5zIm/SyB4e0+qG6ilwwYAAiB0u7
+	i2OIEXG0C/eNRwuAkRHUw7KOYTeJF5ZSeiu543efgoCbRzGSl51in1kzIZ3DANbs
+X-Gm-Gg: AY/fxX5o5zuwHD1w0abKMbx+4+J0GONBDRrgH2EL2H+WmtbGldAn0RqqTpFTsyQMH2l
+	wjKLRJ+Y5jF+IngVjfqxLG944mQ47rC8MAd4ZJhZZWT3ajC3tNlpjfKnSduljF8dEO9GChBfHy6
+	fJmpyJowR5qcVO1/4ZsOwC4ca1WSs+v16DVqvto0oZ+7dWOv1/RhwPAfzOdKkP4MfPEeYJV/fZ3
+	d3ZTrFA7GOW+BfNPF+o3gp3xGWzoKUbPtwmcjXEZ6n49we5UeQ5gLMzB+43uVzXUzf1ftX8H56/
+	xX/LH8tcKzzg8SsZjLar0wRoHASOsh2sJXPVUlXaf8pkL3GtTUQBVeYXEFanQKl09SGp3LhULeM
+	7Ixg4IXYMKbfUWrLXKb9RPaO+RmBXxfr4LukL46W9LdrEpWFOLlJxQnwKzAQqYdgnXs2b5ZWhuk
+	UvMiqs0AXETqUkptYK36WMAbTldlv42QHUmPJGpIIfBwRlmS+EtqnlHoMJQdc=
+X-Google-Smtp-Source: AGHT+IFtj321NkSGZXbzvkg24jybrPzf6zno4MbyXI26jonk7sAx8FUcuZ/GyHFFV+VVDN1cL005Mg==
+X-Received: by 2002:a05:6808:1306:b0:450:ca65:ef59 with SMTP id 5614622812f47-45a6bd4ae89mr9754887b6e.30.1768225250953;
+        Mon, 12 Jan 2026 05:40:50 -0800 (PST)
+Received: from mail-oa1-f46.google.com (mail-oa1-f46.google.com. [209.85.160.46])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-45a76abe858sm6053164b6e.9.2026.01.12.05.40.50
+        for <linux-clk@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 12 Jan 2026 05:40:50 -0800 (PST)
+Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-3f4f9ea26aaso4868099fac.0
+        for <linux-clk@vger.kernel.org>; Mon, 12 Jan 2026 05:40:50 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXYrl5z6qIAZPqB1zACSC9XoOnXKUxEc7TXVWd13gr10dHj8KKC3LxKx7E7280NBLHjAaJsiZlISpU=@vger.kernel.org
+X-Received: by 2002:a67:e716:0:b0:5db:f615:1819 with SMTP id
+ ada2fe7eead31-5ecb5cbba6cmr5928342137.3.1768224845221; Mon, 12 Jan 2026
+ 05:34:05 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6a32849d-6c7b-4745-b7f0-762f1b541f3d@linux.dev>
+References: <cover.1764165783.git.tommaso.merciai.xr@bp.renesas.com>
+ <1c7657d6c06d99bc2f90251995ad272b5704717d.1764165783.git.tommaso.merciai.xr@bp.renesas.com>
+ <42bbdec7-ce6d-417c-a13d-ce0a6782bc9a@kernel.org> <aWEnfJonv4egKhXo@tom-desktop>
+ <CAMuHMdUm-yHkRw0k42pfq9BD8urLO7rqF2yD7s2JbkMFpRTQwQ@mail.gmail.com>
+ <aWE8ikhsthB_0VQV@tom-desktop> <CAMuHMdWGf7MgFzxjuea8agZgSyAMzXwFYO22NmRZ7i1-VPzqFw@mail.gmail.com>
+ <aWTYS9BjWn2bY5Lz@tom-desktop> <CAMuHMdVdntJrcT8d4sCBXdnYr1m3X7s-_58KBiEDV5+GAW353A@mail.gmail.com>
+ <aWTiKQFBZT4hpaG_@tom-desktop>
+In-Reply-To: <aWTiKQFBZT4hpaG_@tom-desktop>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 12 Jan 2026 14:33:54 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdV4hkcU6v4v9kSddyOftZnExZ6B5Q9DykRig1rosDT8bQ@mail.gmail.com>
+X-Gm-Features: AZwV_QipiAWkh5RwyVe2WxFleu8eNUYqxvAWPYb1wspLI2J-Wc5fAFHMdZBQFTI
+Message-ID: <CAMuHMdV4hkcU6v4v9kSddyOftZnExZ6B5Q9DykRig1rosDT8bQ@mail.gmail.com>
+Subject: Re: [PATCH 09/22] dt-bindings: display: bridge: renesas,dsi: Add
+ support for RZ/G3E SoC
+To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, tomm.merciai@gmail.com, 
+	linux-renesas-soc@vger.kernel.org, biju.das.jz@bp.renesas.com, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-> > drivers/ptp/core    - API as written above
-> > drivers/ptp/virtual - all PtP drivers somehow emulating a PtP clock
-> >                        (like the ptp_s390 driver)
-> > drivers/ptp/net     - all NIC related drivers.
-> > 
-> 
-> 
-> Well, drivers/ptp/virtual is not really good, because some drivers are
-> for physical devices exporting PTP interface, but without NIC.
+Hi Tommaso,
 
-If the lack of a NIC is the differentiating property:
+On Mon, 12 Jan 2026 at 13:00, Tommaso Merciai
+<tommaso.merciai.xr@bp.renesas.com> wrote:
+> On Mon, Jan 12, 2026 at 12:35:15PM +0100, Geert Uytterhoeven wrote:
+> > On Mon, 12 Jan 2026 at 12:18, Tommaso Merciai
+> > <tommaso.merciai.xr@bp.renesas.com> wrote:
+> > > On Fri, Jan 09, 2026 at 06:59:12PM +0100, Geert Uytterhoeven wrote:
+> > > > On Fri, 9 Jan 2026 at 18:36, Tommaso Merciai
+> > > > <tommaso.merciai.xr@bp.renesas.com> wrote:
+> > > > > On Fri, Jan 09, 2026 at 05:22:02PM +0100, Geert Uytterhoeven wrote:
+> > > > > > On Fri, 9 Jan 2026 at 17:06, Tommaso Merciai
+> > > > > > <tommaso.merciai.xr@bp.renesas.com> wrote:
+> > > > > > > On Sun, Nov 30, 2025 at 09:24:57AM +0100, Krzysztof Kozlowski wrote:
+> > > > > > > > On 26/11/2025 15:07, Tommaso Merciai wrote:
+> > > > > > > > > The MIPI DSI interface on the RZ/G3E SoC is nearly identical to that of
+> > > > > > > > > the RZ/V2H(P) SoC, except that this have 2 input port and can use vclk1
+> > > > > > > > > or vclk2 as DSI Video clock, depending on the selected port.
+> > > > > > > > >
+> > > > > > > > > To accommodate these differences, a SoC-specific
+> > > > > > > > > `renesas,r9a09g047-mipi-dsi` compatible string has been added for the
+> > > > > > > > > RZ/G3E SoC.
+> > > > > > > > >
+> > > > > > > > > Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+> >
+> > > > > > > > > --- a/Documentation/devicetree/bindings/display/bridge/renesas,dsi.yaml
+> > > > > > > > > +++ b/Documentation/devicetree/bindings/display/bridge/renesas,dsi.yaml
+> > > > > > > > > @@ -28,6 +28,7 @@ properties:
+> > > > > > > > >            - const: renesas,r9a09g057-mipi-dsi
+> > > > > > > > >
+> > > > > > > > >        - enum:
+> > > > > > > > > +          - renesas,r9a09g047-mipi-dsi # RZ/G3E
+> > > > > > > > >            - renesas,r9a09g057-mipi-dsi # RZ/V2H(P)
+> > > > > > > > >
+> > > > > > > > >    reg:
+> > > > > > > > > @@ -84,6 +85,13 @@ properties:
+> > > > > > > > >            - const: pclk
+> > > > > > > > >            - const: vclk
+> > > > > > > > >            - const: lpclk
+> > > > > > > > > +      - items:
+> > > > > > > > > +          - const: pllrefclk
+> > > > > > > > > +          - const: aclk
+> > > > > > > > > +          - const: pclk
+> > > > > > > > > +          - const: vclk1
+> > > > > > > > > +          - const: vclk2
+> > > > > > > > > +          - const: lpclk
+> > > > > > > >
+> > > > > > > > Why are you creating completely new lists every time?
+> > > > > > > >
+> > > > > > > > No, come with unified approach.
+> > > > > > >
+> > > > > > > The intent is not to create a completely new clock list per IP, but to keep a
+> > > > > > > unified clock definition that can scale with feature differences.
+> > > > > > >
+> > > > > > > The previous IP supports a single DSI input port, whereas this IP supports two
+> > > > > > > DSI input ports.
+> > > > > > >
+> > > > > > > Because of this added capability, the hardware naturally introduced an
+> > > > > > > additional clock.
+> > > > > > >
+> > > > > > > Can you please suggest how to handle it?
+> > > > > >
+> > > > > > Keep on calling the first vclk "vclk", and add "vclk2" at the end of the list?
+> > > > > > Then RZ/V2H can specify the first 5 clocks, and RZ/G3E can specify all 6.
+> > > > >
+> > > > > Testing a bit your suggestion
+> > > > > we can do:
+> > > > >
+> > > > >   clock-names:
+> > > > >     oneOf:
+> > > > >       - items:
+> > > > >           - const: pllclk
+> > > > >           - const: sysclk
+> > > > >           - const: aclk
+> > > > >           - const: pclk
+> > > > >           - const: vclk
+> > > > >           - const: lpclk
+> > > > >       - minItems: 5
+> > > > >         items:
+> > > > >           - const: pllrefclk
+> > > > >           - const: aclk
+> > > > >           - const: pclk
+> > > > >           - const: vclk
+> > > > >           - const: lpclk
+> > > > >           - const: vclk2
+> > > > >
+> > > > > Then later into the compatible if switch we can do:
+> > > > >
+> > > > >
+> > > > >   - if:
+> > > > >       properties:
+> > > > >         compatible:
+> > > > >           contains:
+> > > > >             const: renesas,r9a09g047-mipi-dsi
+> > > > >     then:
+> > > > >       properties:
+> > > > >         clocks:
+> > > > >           items:
+> > > > >             - description: DSI PLL reference input clock
+> > > > >             - description: DSI AXI bus clock
+> > > > >             - description: DSI Register access clock
+> > > > >             - description: DSI Video clock
+> > > > >             - description: DSI D-PHY Escape mode transmit clock
+> > > > >             - description: DSI Video clock (2nd input clock)
+> > > >
+> > > > All descriptions belong at the top level. Just add the 6th one.
+> > >
+> > > Please correct me if I'm wrong but if we move up:
+> > >
+> > >         - description: DSI Video clock (2nd input clock)
+> > >
+> > > To the top level description we will have 6 clocks for G3E and 6 for
+> > > RZ/G2L. With that I think dt_binding_check will fail ("is valid under
+> > > each of") because of the oneOf.
+> >
+> > RZ/G2L and RZ/V2H need "maxItems: 5" in their if-sections.
+>
+> RZ/V2H -> maxItems: 5 is fine.
+> RZ/G2L -> needs 6 clocks no?
+>
+> Please correct me if I'm wrong.
 
-> > drivers/ptp/net     - all NIC related drivers.
-> > drivers/ptp/netless - all related drivers which are not associated to a NIC.
+Sorry, RZ/G2L indeed has 6 clocks, as it has sysclk.
 
-Or
+Gr{oetje,eeting}s,
 
-> > drivers/ptp/emulating - all drivers emulating a PtP clock
+                        Geert
 
-	Andrew
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
