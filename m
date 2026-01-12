@@ -1,81 +1,80 @@
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25FCC34DB7C;
-	Mon, 12 Jan 2026 12:48:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 740D52222C4;
+	Mon, 12 Jan 2026 13:25:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768222129; cv=none; b=YIdHgNXQYFfSQ+JG9FjXTby7+VPvYMCGnC9WsVPktduJ617eW9NyKAt1F+qYZLwwgriGbOSjoG3T/nhYnlE9OSQ2I5ULjQQ0jm3pC9aymxrfKV32Oct+r/Z4ovyOCypBKI0tUxKIiyPUo1xbE5j5V8BuuhEDJsJLVmwaOadUXd8=
+	t=1768224324; cv=none; b=orVoxeyo+0tF+7WCphaHTgcZvJjlXtbF3MdiY1/QeRfvZyGpOvtk8C36aj3mScQO764DjHG3p8nngkINt7/CR0rvtzJ8q7SY0cVrJJnbfCMjrs6IOSXazNZbzTqDGd3gZWwa//PoedevJ+3ze1RhwsyDO+wgBh4bTg+Z2dD9kRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768222129; c=relaxed/simple;
-	bh=DYmhRT2B6+NWegRsRpcwKSc962uSxxB8YULaTAogTMA=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PObZ4yrqLxMIUrAkIeFBiEYy1Cj03uHChL9Qs+XspBb8kRwRGDI82McANxplVa+lnO3ME7Gx4hMddLfO7iHrTg3+La+1jNpZTkVOJwjasjNa/JTdhqRmZP1vAuAhzE59Cnb8sh2QfiN2c3mQNvKrxoe3gkIwD+9LWnmuuuR1Atg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.224.107])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4dqXHP3MsrzJ468F;
-	Mon, 12 Jan 2026 20:48:33 +0800 (CST)
-Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
-	by mail.maildlp.com (Postfix) with ESMTPS id D14BE40570;
-	Mon, 12 Jan 2026 20:48:44 +0800 (CST)
-Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
- (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.36; Mon, 12 Jan
- 2026 12:48:43 +0000
-Date: Mon, 12 Jan 2026 12:48:41 +0000
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-CC: Miguel Ojeda <ojeda@kernel.org>, Rob Herring <robh@kernel.org>, "Saravana
- Kannan" <saravanak@google.com>, Nathan Chancellor <nathan@kernel.org>, "Nick
- Desaulniers" <nick.desaulniers+lkml@gmail.com>, Bill Wendling
-	<morbo@google.com>, Justin Stitt <justinstitt@google.com>, Russell King
-	<linux@armlinux.org.uk>, Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea
-	<claudiu.beznea@tuxon.dev>, Krzysztof Kozlowski <krzk@kernel.org>, "Alim
- Akhtar" <alim.akhtar@samsung.com>, Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>, "Nicholas Piggin" <npiggin@gmail.com>,
-	"Christophe Leroy (CS GROUP)" <chleroy@kernel.org>, Nipun Gupta
-	<nipun.gupta@amd.com>, Nikhil Agarwal <nikhil.agarwal@amd.com>, Abel Vesa
-	<abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>, Michael Turquette
-	<mturquette@baylibre.com>, "Stephen Boyd" <sboyd@kernel.org>, Shawn Guo
-	<shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix
- Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
-	Vinod Koul <vkoul@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>, "Rafael J. Wysocki"
-	<rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<llvm@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-samsung-soc@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
-	<linux-clk@vger.kernel.org>, <imx@lists.linux.dev>,
-	<dmaengine@vger.kernel.org>, <linux-media@vger.kernel.org>,
-	<linux-pm@vger.kernel.org>
-Subject: Re: [PATCH v3 07/12] cdx: Use mutex guard to simplify error
- handling
-Message-ID: <20260112124841.0000781d@huawei.com>
-In-Reply-To: <20260109-of-for-each-compatible-scoped-v3-7-c22fa2c0749a@oss.qualcomm.com>
-References: <20260109-of-for-each-compatible-scoped-v3-0-c22fa2c0749a@oss.qualcomm.com>
-	<20260109-of-for-each-compatible-scoped-v3-7-c22fa2c0749a@oss.qualcomm.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1768224324; c=relaxed/simple;
+	bh=ZtIEImTdbFc51Ru7QpmEbr/ImRDQRUOshNIVRQzsSoE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WcV0yOF9u1Ix1K/NBbsSKPDLuVA+gEu01hUJoV61H7FJl5J9ehygopsNUwAAKQ3H5Nq1YsupEODOFTdYSgihN9foYuHoslrlf9mjD80S/O+qKU4hzvBvKPKrMEjhMKM+Ig4fgOrMPuwCstCtcnEC0vL1pGigh3zE2Mk5T8Re7Ko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Qpn3gOt5; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Qpn3gOt5"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=iHbP176mpgAGq9kCi92VZjk+dqr0heKyjL7PyZirZAU=; b=Qpn3gOt5j18vViglQafGzGgs7Z
+	aGqRBHTEbpMRnopGmke0ysw231OEgJmD+vg9xfpc0ycQ0Lt1ybVN33dI5rPguR8HkSCbSPgSDqr2u
+	nAW7TKLGpuTHekdPm53Fjs4hafIeYNNY2r8qRd5reJvitrHsAdMHLJHa5W6PS5RjbyJg=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1vfHui-002Tf4-4v; Mon, 12 Jan 2026 14:24:56 +0100
+Date: Mon, 12 Jan 2026 14:24:56 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+Cc: Sven Schnelle <svens@linux.ibm.com>, Wen Gu <guwen@linux.alibaba.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Richard Cochran <richardcochran@gmail.com>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Dust Li <dust.li@linux.alibaba.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	David Woodhouse <dwmw2@infradead.org>,
+	virtualization@lists.linux.dev, Nick Shi <nick.shi@broadcom.com>,
+	Paolo Abeni <pabeni@redhat.com>, linux-clk@vger.kernel.org
+Subject: Re: [RFC] Defining a home/maintenance model for non-NIC PHC devices
+ using the /dev/ptpX API
+Message-ID: <7be41f07-50ab-4363-8a53-dcdda63b9147@lunn.ch>
+References: <0afe19db-9c7f-4228-9fc2-f7b34c4bc227@linux.alibaba.com>
+ <yt9decnv6qpc.fsf@linux.ibm.com>
+ <6a32849d-6c7b-4745-b7f0-762f1b541f3d@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100009.china.huawei.com (7.191.174.83) To
- dubpeml100005.china.huawei.com (7.214.146.113)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6a32849d-6c7b-4745-b7f0-762f1b541f3d@linux.dev>
 
-On Fri, 09 Jan 2026 17:57:51 +0100
-Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com> wrote:
-
-> Mutex guard allows to drop one goto/break in error handling and the
-> less expected code of assigning -EINVAL to unsigned size_t count
-> variable.
+> > drivers/ptp/core    - API as written above
+> > drivers/ptp/virtual - all PtP drivers somehow emulating a PtP clock
+> >                        (like the ptp_s390 driver)
+> > drivers/ptp/net     - all NIC related drivers.
+> > 
 > 
-> Suggested-by: Jonathan Cameron <jonathan.cameron@huawei.com>
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+> 
+> Well, drivers/ptp/virtual is not really good, because some drivers are
+> for physical devices exporting PTP interface, but without NIC.
+
+If the lack of a NIC is the differentiating property:
+
+> > drivers/ptp/net     - all NIC related drivers.
+> > drivers/ptp/netless - all related drivers which are not associated to a NIC.
+
+Or
+
+> > drivers/ptp/emulating - all drivers emulating a PtP clock
+
+	Andrew
