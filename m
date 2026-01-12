@@ -1,99 +1,83 @@
-Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08D2D2652AF
-	for <linux-clk@vger.kernel.org>; Mon, 12 Jan 2026 12:16:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FCEE35772B;
+	Mon, 12 Jan 2026 12:48:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768220177; cv=none; b=CVTQg6sZ/W5NPZYTh9Lei6oHzS/anlAOlOMlJv8JYQfNkqS+gXSpn5+nj49+OaraRGHd8U0sWxJK4O6vW+c8IVUeqwu1mRSxwS8cwyyYik2JPSgs7o7p44ZwJFK5wViV5supI7M4Hs/qXrXVVlR/njdo1yXMBfo20R0oh1vzuUg=
+	t=1768222110; cv=none; b=SfBXDScJ6FEpPmULWgO1ShwM7Z7961kgfuocENBXmvdRTA1vmNsE1jHSyG8+UoTKmLEoEEoZq4pRfwJTA5cuiWU0NGqw1z2T2MBPACH59TEmkcEpuvSSdmg4GTs3lRs0VYYIyaJH93GH8us2EcNgDfEdvHy2hY4NX5sqNbM+YXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768220177; c=relaxed/simple;
-	bh=Wby5pbdHdinyNuXLsFl325fcmFwTqK/T+r+vbQV3SXg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=I0ru0vzHxQ93m00VbCTQVqCu12GltS3JIBi0LxWNfi3RQS+QrOML014g8T2NsH9dF8qR0OA+rbeu8ALNgDTNiI/P6j0A9DG7peM+qyX/GzFo67OMgJhyB7aupinOCtAg0DkpEJY6qrALliCRaqV3C78RteA4qiFrhsetAPSTnjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=P/osox+N; arc=none smtp.client-ip=95.215.58.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="P/osox+N"
-Message-ID: <6a32849d-6c7b-4745-b7f0-762f1b541f3d@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1768220164;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kQOVXHvilFwT2FBnezNb20RaGtDqm9YgbZmZmrCoGto=;
-	b=P/osox+NY4xQtjyJmj+VCJmeEbGjsEtbj77i5VxoBNeSBT8EvnUzJSMpKnDoSsn4WaC6bl
-	mtClrW/QQkhq72pJC8M/u2erWIjlkVE0zrbVLc33Jb5ArL9AU1kwNoCVw4XdOU3Rxf+5JE
-	gefLsSj51b6M6XmEy2c9A+BDgCSUy6U=
-Date: Mon, 12 Jan 2026 12:15:19 +0000
+	s=arc-20240116; t=1768222110; c=relaxed/simple;
+	bh=WkaPTiV8TQtCiPgnvyz0DsHGKB4cte7MIW/802CqqOs=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=aFTA1svRz3TwJy4xRpEwBgWwIh8sVIqR4n4gZpGPiXmPJH4HGdFjfZGCisBUve83b6VLzpbPQBbJImR1hxRTCEK82B6ApFZVDAXTGNbgg1jjU8VHoUm2X6TumJpoanHcuHSyQ4ZbfoH/p+TFtDQ8/LpXeFz32PPi845QeMqDl2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.224.83])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4dqXGw4LYvzHnH6K;
+	Mon, 12 Jan 2026 20:48:08 +0800 (CST)
+Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
+	by mail.maildlp.com (Postfix) with ESMTPS id 9539B40086;
+	Mon, 12 Jan 2026 20:48:24 +0800 (CST)
+Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
+ (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.36; Mon, 12 Jan
+ 2026 12:48:22 +0000
+Date: Mon, 12 Jan 2026 12:48:21 +0000
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+CC: Miguel Ojeda <ojeda@kernel.org>, Rob Herring <robh@kernel.org>, "Saravana
+ Kannan" <saravanak@google.com>, Nathan Chancellor <nathan@kernel.org>, "Nick
+ Desaulniers" <nick.desaulniers+lkml@gmail.com>, Bill Wendling
+	<morbo@google.com>, Justin Stitt <justinstitt@google.com>, Russell King
+	<linux@armlinux.org.uk>, Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea
+	<claudiu.beznea@tuxon.dev>, Krzysztof Kozlowski <krzk@kernel.org>, "Alim
+ Akhtar" <alim.akhtar@samsung.com>, Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>, "Nicholas Piggin" <npiggin@gmail.com>,
+	"Christophe Leroy (CS GROUP)" <chleroy@kernel.org>, Nipun Gupta
+	<nipun.gupta@amd.com>, Nikhil Agarwal <nikhil.agarwal@amd.com>, Abel Vesa
+	<abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>, Michael Turquette
+	<mturquette@baylibre.com>, "Stephen Boyd" <sboyd@kernel.org>, Shawn Guo
+	<shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix
+ Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
+	Vinod Koul <vkoul@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>, "Rafael J. Wysocki"
+	<rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<llvm@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-samsung-soc@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
+	<linux-clk@vger.kernel.org>, <imx@lists.linux.dev>,
+	<dmaengine@vger.kernel.org>, <linux-media@vger.kernel.org>,
+	<linux-pm@vger.kernel.org>
+Subject: Re: [PATCH v3 06/12] cdx: Simplify with scoped for each OF child
+ loop
+Message-ID: <20260112124821.00001a04@huawei.com>
+In-Reply-To: <20260109-of-for-each-compatible-scoped-v3-6-c22fa2c0749a@oss.qualcomm.com>
+References: <20260109-of-for-each-compatible-scoped-v3-0-c22fa2c0749a@oss.qualcomm.com>
+	<20260109-of-for-each-compatible-scoped-v3-6-c22fa2c0749a@oss.qualcomm.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [RFC] Defining a home/maintenance model for non-NIC PHC devices
- using the /dev/ptpX API
-To: Sven Schnelle <svens@linux.ibm.com>, Wen Gu <guwen@linux.alibaba.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
- Richard Cochran <richardcochran@gmail.com>,
- "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
- LKML <linux-kernel@vger.kernel.org>, Jakub Kicinski <kuba@kernel.org>,
- Dust Li <dust.li@linux.alibaba.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, David Woodhouse <dwmw2@infradead.org>,
- virtualization@lists.linux.dev, Nick Shi <nick.shi@broadcom.com>,
- Paolo Abeni <pabeni@redhat.com>, linux-clk@vger.kernel.org
-References: <0afe19db-9c7f-4228-9fc2-f7b34c4bc227@linux.alibaba.com>
- <yt9decnv6qpc.fsf@linux.ibm.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-In-Reply-To: <yt9decnv6qpc.fsf@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+X-ClientProxiedBy: lhrpeml100009.china.huawei.com (7.191.174.83) To
+ dubpeml100005.china.huawei.com (7.214.146.113)
 
-On 12/01/2026 11:00, Sven Schnelle wrote:
-> Hi Wen,
-> 
-> Wen Gu <guwen@linux.alibaba.com> writes:
-> 
->> 1. Reorganize drivers/ptp/ to make the interface/implementation split
->>     explicit,
->>
->>     * drivers/ptp/core      : PTP core infrastructure and API.
->>                               (e.g. ptp_chardev.c, ptp_clock.c,
->>                                ptp_sysfs.c, etc.)
->>
->>     * drivers/ptp/pure      : Non-network ("pure clock") implementation,
->>                               they are typically platform/architecture/
->>                               virtualization-provided time sources.
->>                               (e.g. ptp_kvm, ptp_vmw, ptp_vmclock,
->>                                ptp_s390, etc.)
->>
->>     * drivers/ptp/*         : Network timestamping oriented implementation,
->>                               they primarily used together with IEEE1588
->>                               over the network.
->>                               (e.g. ptp_qoriq, ptp_pch, ptp_dp83640,
->>                                ptp_idt82p33 etc.)
-> 
-> I'm fine with splitting paths - but I would propose a different naming
-> scheme as 'pure' is not really a common term in the driver world (at
-> least in my perception, which might be wrong. How about the following
-> instead:
-> 
-> drivers/ptp/core    - API as written above
-> drivers/ptp/virtual - all PtP drivers somehow emulating a PtP clock
->                        (like the ptp_s390 driver)
-> drivers/ptp/net     - all NIC related drivers.
-> 
+On Fri, 09 Jan 2026 17:57:50 +0100
+Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com> wrote:
 
+> Use scoped for-each loop when iterating over device nodes to make code a
+> bit simpler.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+but only on basis next one merges as well just for that 'obey the strict
+rules in cleanup.h'.
 
-Well, drivers/ptp/virtual is not really good, because some drivers are
-for physical devices exporting PTP interface, but without NIC.
-Another way is to split physical board drivers to another category, like
-drivers/ptp/hardware. The main difference to virtual is that these 
-devices can output signals on external physical pins as well as
-timestamp inputs on physical pins.
+No bug bug I like not having to think about whether there is or not :)
