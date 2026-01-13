@@ -1,135 +1,148 @@
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D7B431691A
-	for <linux-clk@vger.kernel.org>; Tue, 13 Jan 2026 06:28:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DB4D38945E
+	for <linux-clk@vger.kernel.org>; Tue, 13 Jan 2026 09:14:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768285737; cv=none; b=TzCgsFNGiYbx/aELypjSltQQ7BKptk+tMCkyfEnVbSs+o7KhW+VVVfXkpE7X5cKqCPZUPhkZ68sPelaehDhR3CaVorMKM+KLmUIMIZsQPhgYaHrJO3VcsNblL9mZBSBOijuDFU3r6qK5oCRHD0tja1PZ1llg+Y/ASSEL064rD58=
+	t=1768295655; cv=none; b=ANhq1vcZ8PVvOVqF7axO8ru14RrUsXLv/zCJLHuWE0m/kEffrBHbwTs+W3K2eIh+cy8M+X1sAyi5ajNtK0TpI5ClYII2DIHmgQcMaA3tFsYpiesDXBZTHEdDYb8g69kIifk3pca8RjjwA+w5ic2SKMDDCmL9xbNCLQW/L2iOBBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768285737; c=relaxed/simple;
-	bh=49Xtuu1beNUg9QlwNiHN6EBbAr4oftfRASjMhDj6J/s=;
+	s=arc-20240116; t=1768295655; c=relaxed/simple;
+	bh=xqGpVB7r89YsbJUHXZJjT54kH83zTdXiwx5zs/NAmxc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=O7b3jnVe048qPSIiAGNs/uN/4W6RW3AdkZd+eeiRdQ4FBghCoIQ/W/bLyKSk6gSY1E4wKctyzFPZR6fvsBbQeQ+NyIXn2Zm7FFCPlIqjDgPmsVGA1UfiQ+P0j4sdKasLFlq0h3Sx4btYCo75cRsnNbXEF2bkpvsqVWUbwS0z6N4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QtrD6kXt; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 To:Cc:Content-Type; b=lJKGQp9pJD9mJxbP7fsmIrDtfLjtOahvEoI8YdfEKK5JJvPaAJjwfcUD8UH5T99ydTjZuF0AEtjobPbgo5uxPtUK+wGAGY6B+2CF7C4zxW6dcI8xkHFaroZR4X+1H/jn4qwE+IaiLShatCqv91nVUelBxZX5yNUmFn1OjWD75To=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AHu5DkFt; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QtrD6kXt"
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-38301bf7864so53465581fa.0
-        for <linux-clk@vger.kernel.org>; Mon, 12 Jan 2026 22:28:56 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AHu5DkFt"
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-6505cac9879so12380439a12.1
+        for <linux-clk@vger.kernel.org>; Tue, 13 Jan 2026 01:14:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1768285734; x=1768890534; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1768295647; x=1768900447; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=JiUmV1eprmnhg37r9cMuLPaBFu+xlgYzvvvG7aZcdkk=;
-        b=QtrD6kXtgDPukrxP/rH1IgFE5ZR8VwmNR4vA6G7gppucdNYoxYVIHf6rDmVi59m7B8
-         qhrqcuXP1/2Tc9jr/Ihp9T94WyllHVUj92E0xJZ8Mx3oqsZePHHeepmURRFmKvAME2gQ
-         1vVP6RXFt+cg2BBSAmH+9pLBs9p0uLVfX+BdZueiWkWb2ZUa0jwdMkdHXoh3uom9sH87
-         FCitru2fghHG7tAB0OHlslGsZHW+nhIbgzz8S15+takbiYy0kynnHmT9twdY8mB3J9gE
-         iLXImB9ySbP6Q9is9UuqlwiPV9A8sJ67UO6pk8JcVNHbsvZ3rUjgUEZ+aocWZI4oD16U
-         IeXQ==
+        bh=Bn5NX0zVHIadFPbViV8yMvWD/kdQPjminzNjM4/y1Bk=;
+        b=AHu5DkFtrB5y5doJltu1DuEV7iX0jCJ2eB3NoH3VI3UpLMgP79e+Dwn740++a5A8RQ
+         d1o3my1h5U0p2BSQRW3PWeUcPaFidmWGeYDp6Rkroo4rZI5qCH5mb/8H9ZC6cE7P3Pme
+         sUwo2AS4YlXe7eVM9QkJ+/qKTcjlBt5bEtF2T6KpBFbu+cAte+fwi/e9Z3zBVIagpJHq
+         ptw+j1pwH2deF4XQknX5jcX+04Qu9qNJVPsybw85UPzcrAM+w75pBJ9FW/mtazH7IYlo
+         ACxzjY1pTDtMFKSP3p9tavM+fG3Q5z+vXdpDp1nFRsfFsQ7ryv/qhwZheE3n8GzOv0lx
+         idNQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768285734; x=1768890534;
+        d=1e100.net; s=20230601; t=1768295647; x=1768900447;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=JiUmV1eprmnhg37r9cMuLPaBFu+xlgYzvvvG7aZcdkk=;
-        b=obng43MCTDuBCMm5q3EXZ0tlSimv1EzniDX1bseSPuIcqIbLqAWdnXpf5sAcmN8V6J
-         hZoDyhVej5Pg4vnIqb7r66nWchmJq10GQMrKYPNeVqrGd2cfj/wmhhWlPhgvyXt/JPOq
-         LlICuDqWByg1Ics5iO9RlxVvgi2aFtkOiEW8FFdGHMkCLDX871K0TJYtBFxR/Wci01wS
-         fVjAJc5przjs3JWvVtFmNhf7WfscBeiHghxwBi2pBK6o7TJg7tpt2drJxxB0Va3ZV8RO
-         JHoNiyN4pptwa1197ep6FtvX4lvGWxB10sUagyJWA2VEpGHM+SlGXOR9LWkOCIc6LtqL
-         3T9w==
-X-Forwarded-Encrypted: i=1; AJvYcCW1Rzda8SfnUHJwfLU8KBpokKdubnuzFVqHsrSr68oATxczw8WsKFZL4nTWUV/2V/LTw4+g7uvH4ZU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEGooVf4pPkbW/xYrtcQMmXhUWgV/6FwoJv+TdHi+Hushxn2nr
-	2bQsV+Spzob7LIa3ahMmBBMm+36GHJratGnrhqHlPpmAeiTKZMpNmy7m8BU+dbLA7+ECWiBx48P
-	+MhkhDsAfYdlhKm41rBVEB6YNAoWnYms=
-X-Gm-Gg: AY/fxX6lRWdttW/Wrf7r333rWCiLe6POMCm895G2aqWo8w8AXdE9AupX4PQE+NgfYvQ
-	ffbxalyizbw8hV8Th4WTJ1/EaJMBhez5B9tuf7T4Gx8zf8jP13em7sUaT8wVNC28GmxVWUrhIaC
-	2kkN4RDLzgXQBfIH5MTkpWrU00VukX9uPpjRhhFKP3lN+TDTSDviY/KJxhLnu7WCBfT4xngPWtw
-	Qt5BYcEKc0Qi5XOYiTxECJgoGmxALNb7NDEChKqT50928T4FiWw82T+rNSvY1vKos759biq+WCD
-	ZgmApAruuWCYb7Kz8GhXFa1hjb4d62XW7W4G1QMN93PjoG50TTXDVuDA8UBqNwlgCQiu
-X-Received: by 2002:a05:651c:31d2:b0:382:fccd:f99b with SMTP id
- 38308e7fff4ca-38350c03886mr5317011fa.15.1768285734277; Mon, 12 Jan 2026
- 22:28:54 -0800 (PST)
+        bh=Bn5NX0zVHIadFPbViV8yMvWD/kdQPjminzNjM4/y1Bk=;
+        b=r0wWhA8mrBhXhcTULOu4BxFnS/GxakdekV0NFMvIgaYNLh+5u5vQ2mnBNZydqlGxKT
+         t2ya4JOfNMhYJgk6MRQKPIukHovy7/npeppAU8RsjLtzYLtEaOO4VV8ecAvEFb2BWpXS
+         T8YTkytNDw83YMIRvfIHFqxQcpcjY9/q1RxzGxaRGpNczvL71v2qmJUTBWKCeEOz5Cpz
+         GiaGaTyoqjJE4vDn8eppzDiXwG3OA647AFCPidFJpz1T86+8CUXGAyzTec3i7dAElGku
+         Ykq1Kw3N+JbTb3M8rE3n0NUWtJ4K0pnafHOB1y+ul7oxlBQNoYH0G/yhBRFW2/wbBLn1
+         jpVg==
+X-Forwarded-Encrypted: i=1; AJvYcCXGpfiwo5VCjCSUk78dj2PGvA5O71u9z6XRSs1jwepSJtKdGVPzsE3UvD3VdfpyBQTL5YrVqj2JhOs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLA7uDKJwnkavc3hE6M2Bs7cMMa9SJUTJKIWvxw4OJVJALrBZ8
+	ITyOwULgxWqZxMMXEFoF2CNEfS+1UQb4jldyziAR835X9wNJ4/wd3ywDCpJ1yLmLTaE1bwW5my4
+	TZ7hgi1LGdNeQGedviMNgkSieybgUlTj2U7pB0v97nQ==
+X-Gm-Gg: AY/fxX7UztRQG2XeoOTH1Pm+gbBXMizXt9pj9zmxbmswzuYQkkb9asvRFMGSgsHznqo
+	SeR5egMIsgWhiXi8GlStFCzwbRslX9PZ8qRdVQ8pBktBbrYgvp9/Ed6XUG7E068XEcIQ+47SpDd
+	tbAhcdWVUTurlzLlRAdQUfSbbQLPeDIlXr4VY1zSGHEbrj1vdXxLfGhHM3audZnc8zGYLoj6JZs
+	Wr0rZszxktaWtVP1BRG6SVVQhKLKrSQTvF1j0bDUmGE5CsP1Yc9pbvTE1c6LqJlU6T7P8XJOO2z
+	1SGtNMCKvC5coB1iSJMi5UwKYoZ0pwBmSBFrKKg=
+X-Google-Smtp-Source: AGHT+IF/uMz8MYijvgNH6EAmeQTRc6aRXVQ6Ac2y4GTApWuNrbNhRowJgw1xPnWbWQMx4L4kzhRYmGW628wrmJp9buE=
+X-Received: by 2002:a05:6402:524c:b0:647:9380:103c with SMTP id
+ 4fb4d7f45d1cf-65097df5672mr20320306a12.13.1768295646934; Tue, 13 Jan 2026
+ 01:14:06 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260108-clk-divider-round-rate-v1-0-535a3ed73bf3@redhat.com> <20260108-clk-divider-round-rate-v1-9-535a3ed73bf3@redhat.com>
-In-Reply-To: <20260108-clk-divider-round-rate-v1-9-535a3ed73bf3@redhat.com>
-From: Keguang Zhang <keguang.zhang@gmail.com>
-Date: Tue, 13 Jan 2026 14:28:17 +0800
-X-Gm-Features: AZwV_QjXA3_FExPm1PeZJleY4KCWVtWfl5lLiACQHtAnheJostrobrRWjaNB7bU
-Message-ID: <CAJhJPsXG_UKnVk7RypkKuM8M87+1DNvJND1PRxoPVzAm=P2Rbg@mail.gmail.com>
-Subject: Re: [PATCH 09/27] clk: loongson1: convert from divider_round_rate()
- to divider_determine_rate()
-To: Brian Masney <bmasney@redhat.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org
+References: <20260112-dpu-clocks-v2-0-bd00903fdeb9@linaro.org>
+ <20260112-dpu-clocks-v2-1-bd00903fdeb9@linaro.org> <ba585515010ab9a9b417d000ba744f8178ca9e24.camel@linaro.org>
+In-Reply-To: <ba585515010ab9a9b417d000ba744f8178ca9e24.camel@linaro.org>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Tue, 13 Jan 2026 09:13:55 +0000
+X-Gm-Features: AZwV_QjDqNTFOct4T-rP7w13f_DSbKkRMZMwlRNVBJ9q5uu_3B70MKV9_itceMo
+Message-ID: <CADrjBPomC-QaL8aR4QsEPm+Uu5_QoWQZUomLMZt+09-ywH3wjA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/5] dt-bindings: clock: google,gs101-clock: fix
+ alphanumeric ordering
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+	Chanwoo Choi <cw00.choi@samsung.com>, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Krzysztof Kozlowski <krzk@kernel.org>, kernel-team@android.com, 
+	Will McVicker <willmcvicker@google.com>, Juan Yescas <jyescas@google.com>, 
+	Doug Anderson <dianders@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Keguang Zhang <keguang.zhang@gmail.com>
-Tested-by: Keguang Zhang <keguang.zhang@gmail.com> # on LS1B & LS1C
+Hi Andr=C3=A9,
 
-On Fri, Jan 9, 2026 at 5:17=E2=80=AFAM Brian Masney <bmasney@redhat.com> wr=
-ote:
+On Mon, 12 Jan 2026 at 14:26, Andr=C3=A9 Draszik <andre.draszik@linaro.org>=
+ wrote:
 >
-> The divider_round_rate() function is now deprecated, so let's migrate
-> to divider_determine_rate() instead so that this deprecated API can be
-> removed.
+> On Mon, 2026-01-12 at 14:16 +0000, Peter Griffin wrote:
+> > Fix the places that don't have correct alphanumeric ordering. This will
+> > make reasoning about where to add future entries more straightforward.
+> >
+> > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> > ---
+> >  Documentation/devicetree/bindings/clock/google,gs101-clock.yaml | 6 ++=
++---
+> >  1 file changed, 3 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/Documentation/devicetree/bindings/clock/google,gs101-clock=
+.yaml b/Documentation/devicetree/bindings/clock/google,gs101-
+> > clock.yaml
+> > index 09e679c1a9def03d53b8b493929911ea902a1763..a8176687bb773ae90800b9c=
+256bcccebfdef2e49 100644
+> > --- a/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
+> > +++ b/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
+> > @@ -27,13 +27,13 @@ description: |
+> >  properties:
+> >    compatible:
+> >      enum:
+> > -      - google,gs101-cmu-top
+> >        - google,gs101-cmu-apm
+> > -      - google,gs101-cmu-misc
+> >        - google,gs101-cmu-hsi0
+> >        - google,gs101-cmu-hsi2
+> > +      - google,gs101-cmu-misc
+> >        - google,gs101-cmu-peric0
+> >        - google,gs101-cmu-peric1
+> > +      - google,gs101-cmu-top
 >
-> Note that when the main function itself was migrated to use
-> determine_rate, this was mistakenly converted to:
->
->     req->rate =3D divider_round_rate(...)
->
-> This is invalid in the case when an error occurs since it can set the
-> rate to a negative value.
->
-> Fixes: bb40a2ef4fc9 ("clk: loongson1: convert from round_rate() to determ=
-ine_rate()")
-> Signed-off-by: Brian Masney <bmasney@redhat.com>
->
-> ---
-> To: Keguang Zhang <keguang.zhang@gmail.com>
-> Cc: linux-mips@vger.kernel.org
-> ---
->  drivers/clk/clk-loongson1.c | 5 +----
->  1 file changed, 1 insertion(+), 4 deletions(-)
->
-> diff --git a/drivers/clk/clk-loongson1.c b/drivers/clk/clk-loongson1.c
-> index f9f060d08a5fae3291a9408c6dc93531b435609f..1674181a1107dc4f30e78ee41=
-0a55a49b6d0b4b5 100644
-> --- a/drivers/clk/clk-loongson1.c
-> +++ b/drivers/clk/clk-loongson1.c
-> @@ -99,10 +99,7 @@ static int ls1x_divider_determine_rate(struct clk_hw *=
-hw,
->         struct ls1x_clk *ls1x_clk =3D to_ls1x_clk(hw);
->         const struct ls1x_clk_div_data *d =3D ls1x_clk->data;
->
-> -       req->rate =3D divider_round_rate(hw, req->rate, &req->best_parent=
-_rate,
-> -                                      d->table, d->width, d->flags);
-> -
-> -       return 0;
-> +       return divider_determine_rate(hw, req, d->table, d->width, d->fla=
-gs);
->  }
->
->  static int ls1x_divider_set_rate(struct clk_hw *hw, unsigned long rate,
->
-> --
-> 2.52.0
->
+> If we keep 'top' at the top as one outlier, it'd reflect that it is the
+> top unit and all other CMUs are children of it.
 
+Thanks for the review. I opted to just keep it alphanumeric so it's
+(hopefully) obvious what all future ordering should be.
 
---=20
-Best regards,
+>
+> >
+> >    clocks:
+> >      minItems: 1
+> > @@ -70,8 +70,8 @@ allOf:
+> >          compatible:
+> >            contains:
+> >              enum:
+> > -              - google,gs101-cmu-top
+> >                - google,gs101-cmu-apm
+> > +              - google,gs101-cmu-top
+>
+> And here.
+>
+> Either way, I don't mind:
+> Reviewed-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
 
-Keguang Zhang
+regards,
+
+Peter
