@@ -1,74 +1,276 @@
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C792A3446A7;
-	Tue, 13 Jan 2026 16:14:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06AC030FC08
+	for <linux-clk@vger.kernel.org>; Tue, 13 Jan 2026 16:39:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768320882; cv=none; b=uaKtblZBA1kg4+1yFdDimsmPdyWdpWLwNFQ7kzQadham0AKYCAM41ph6R1zRRT5vLxtFBiOJbYYS/FSQ+WQ1cxT2ItuQRQJtUkWxMAE0saCcWKzYoB6RjXY1vwj9feeUQheYjkr5BP+vEcO9RiUcVIDVp8sjlak5+paxhK3SGGs=
+	t=1768322390; cv=none; b=DPb/czJzooJfeKWEs50AYK+H/6EFIHDTPDmwFT2jhkaWph03Bl84wpf6AwmU/QWnqAsr2Rc5mlFnusQxTM2kdQiGIOmorNxFMMLkTtiKVj+viQhJ8Nkt7s7YsO/mGjO3c1xA/RIFn1cg44cA64xEMJY/D274rm79fbVguIyHKQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768320882; c=relaxed/simple;
-	bh=2YW3/cPoutnCooMdmymtn+e337rPX1kRy4+1I4m7VUA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=uDnC7maWYt3tjHeChReuZccx2L+1DTbr2HtMhQMZ2eWepJpJGFzZ1lFfCqNyR60g7EW8IDMrBwuwiQ49kbOt+ZwGhFTTPwBuatY9U3eqFFmXJpEdSRErjNWIq/3qh2s38Cpv6KuMGCrC82o3O4c5mg6LWpGt6zKhZiQS+Gp6VKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=XedH2MOI; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="XedH2MOI"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1768320877;
-	bh=2YW3/cPoutnCooMdmymtn+e337rPX1kRy4+1I4m7VUA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=XedH2MOIpcd6couG9mkaZ4Fl8l1e6a/voT52yGUm+RbFki8MzaViyLD2P3g7qPjDD
-	 tDvsMWRGJ8dC+8k5JUSGj3OPlznZYkNQ3xieiywt0vRgMsp4ei+lgwiAW2SdQfrRr8
-	 dzkMuZMni1oKf4vUbwrk5jJREv6nK4NC19VAo9e4yw4x/dpOOpTMKhO40f+dqiWHNK
-	 W4u3azu/3vUxT00CHgMUi3zqKNjx3qNxdk25MNXpN79BzBWPmDL881sBX99IPAEksG
-	 QU9HJ+mlKHkW73qzZYnVvnvFtt283W4CIgVXw6mXepsTETn9vAt/XryQk6zh8RznWh
-	 SJuXhhC/JE1wQ==
-Received: from laura.lan (unknown [IPv6:2001:b07:646b:e2:366f:770f:eaa8:d3d])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: laura.nao)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 388A017E0B8E;
-	Tue, 13 Jan 2026 17:14:36 +0100 (CET)
-From: Laura Nao <laura.nao@collabora.com>
-To: sjoerd@collabora.com
-Cc: angelogioacchino.delregno@collabora.com,
-	kernel@collabora.com,
-	laura.nao@collabora.com,
+	s=arc-20240116; t=1768322390; c=relaxed/simple;
+	bh=un+OnYAKpWv31OPXE9Ml69Wwy72czNmDKes0PjOtimM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U8J6OOwtK9i5c3OTtkhltM0axZ/ncBfSmOgqAE9CrWo7oW+JdAxLRQvlm5n+W0uxn6s8C1Sc67NwDCtXx79RAlJ/LHrGEYyXzmXzaKR9m3DX95nB4TWaVonUpWTecfFw9gWy9H/8UWPZT2VSM0HdW8LQQPN0QoGPdCk7UIK6Tgs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1vfhQc-0007MI-35; Tue, 13 Jan 2026 17:39:34 +0100
+Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1vfhQb-000SBd-12;
+	Tue, 13 Jan 2026 17:39:32 +0100
+Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1vfhQa-009v7W-1h;
+	Tue, 13 Jan 2026 17:39:32 +0100
+Date: Tue, 13 Jan 2026 17:39:32 +0100
+From: Marco Felsch <m.felsch@pengutronix.de>
+To: Marek Vasut <marek.vasut@mailbox.org>
+Cc: dri-devel@lists.freedesktop.org, Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>, devicetree@vger.kernel.org,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Peng Fan <peng.fan@nxp.com>, Liu Ying <victor.liu@nxp.com>,
+	imx@lists.linux.dev,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, linux-clk@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,
-	matthias.bgg@gmail.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	stable@vger.kernel.org,
-	wenst@chromium.org
-Subject: Re: [PATCH] clk: mediatek: Drop __initconst from gates
-Date: Tue, 13 Jan 2026 17:14:16 +0100
-Message-Id: <20260113161416.1256164-1-laura.nao@collabora.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20251223-mtk-gate-v1-1-e4a489ab33de@collabora.com>
-References: <20251223-mtk-gate-v1-1-e4a489ab33de@collabora.com>
+	Abel Vesa <abelvesa@kernel.org>
+Subject: Re: [PATCH v3] drm/bridge: fsl-ldb: Parse register offsets from DT
+Message-ID: <20260113163932.vx4245vyiafwvehg@pengutronix.de>
+References: <20260104213712.128982-1-marek.vasut@mailbox.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260104213712.128982-1-marek.vasut@mailbox.org>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 
-On 12/23/25 12:05, Sjoerd Simons wrote:
-> Since commit 8ceff24a754a ("clk: mediatek: clk-gate: Refactor
-> mtk_clk_register_gate to use mtk_gate struct") the mtk_gate structs
-> are no longer just used for initialization/registration, but also at
-> runtime. So drop __initconst annotations.
->
-> Fixes: 8ceff24a754a ("clk: mediatek: clk-gate: Refactor mtk_clk_register_gate to use mtk_gate struct")
-> Signed-off-by: Sjoerd Simons <sjoerd@collabora.com>
+Hi Marek,
 
-Reviewed-by: Laura Nao <laura.nao@collabora.com>
+On 26-01-04, Marek Vasut wrote:
+> The DT bindings for this bridge describe register offsets for the LDB,
+> parse the register offsets from DT instead of hard-coding them in the
+> driver. No functional change.
 
+during the discussion of the i.MX9 PDFC bridge dt-bindings [1] we came
+to the conclusion that the 'reg' property shouldn't have been added to
+the dt-bindings in the first place.
+
+[1] https://lore.kernel.org/all/20251219153537.zgxcokyhcqerw4jp@pengutronix.de/
+
+As descibed in [1], the PDFC and LDB aren't standalone IPs with
+dedicated register spaces. For some cases like the LDB, there may be two
+dedicated registers, but for other cases like the PDFC, there is only a
+single register-field and the register containing this field is shared
+between the PDFC and the MIPI-DSI block.
+
+Therefore the 'reg' DT abstraction is wrong, instead the BLK-CTRL child
+devices should appear without a 'reg' property as simple child devices.
+The child devices need to get the register space from the syscon parent
+and need to code the registers and register-fields within the driver
+like the LDB does currently.
+
+Sorry for the late feedback.
+
+Regards,
+  Marco
+
+> The LDB was always meant to parse the 'reg' offsets out of the DT, it
+> only went somewhat wrong in the process and we ended up with hard-coded
+> reg<->compatible mapping. It was never intended to be that way, so fix
+> it.
+> 
+> Signed-off-by: Marek Vasut <marek.vasut@mailbox.org>
+> ---
+> Cc: Abel Vesa <abelvesa@kernel.org>
+> Cc: Conor Dooley <conor+dt@kernel.org>
+> Cc: Fabio Estevam <festevam@gmail.com>
+> Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
+> Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
+> Cc: Liu Ying <victor.liu@nxp.com>
+> Cc: Luca Ceresoli <luca.ceresoli@bootlin.com>
+> Cc: Lucas Stach <l.stach@pengutronix.de>
+> Cc: Peng Fan <peng.fan@nxp.com>
+> Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: Shawn Guo <shawnguo@kernel.org>
+> Cc: Thomas Zimmermann <tzimmermann@suse.de>
+> Cc: devicetree@vger.kernel.org
+> Cc: dri-devel@lists.freedesktop.org
+> Cc: imx@lists.linux.dev
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-clk@vger.kernel.org
+> ---
+> V2: - Switch to of_property_read_reg()
+>     - Parse single-register LDB variants from DT too
+> V3: - Update commit message
+>     - Drop "likely" from the comment
+> ---
+>  drivers/gpu/drm/bridge/fsl-ldb.c | 58 ++++++++++++++++++++------------
+>  1 file changed, 36 insertions(+), 22 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/bridge/fsl-ldb.c b/drivers/gpu/drm/bridge/fsl-ldb.c
+> index 5c3cf37200bce..aa352c70b9ab2 100644
+> --- a/drivers/gpu/drm/bridge/fsl-ldb.c
+> +++ b/drivers/gpu/drm/bridge/fsl-ldb.c
+> @@ -8,6 +8,7 @@
+>  #include <linux/mfd/syscon.h>
+>  #include <linux/module.h>
+>  #include <linux/of.h>
+> +#include <linux/of_address.h>
+>  #include <linux/of_graph.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/regmap.h>
+> @@ -61,24 +62,13 @@ enum fsl_ldb_devtype {
+>  };
+>  
+>  struct fsl_ldb_devdata {
+> -	u32 ldb_ctrl;
+> -	u32 lvds_ctrl;
+>  	bool lvds_en_bit;
+> -	bool single_ctrl_reg;
+>  };
+>  
+>  static const struct fsl_ldb_devdata fsl_ldb_devdata[] = {
+> -	[IMX6SX_LDB] = {
+> -		.ldb_ctrl = 0x18,
+> -		.single_ctrl_reg = true,
+> -	},
+> -	[IMX8MP_LDB] = {
+> -		.ldb_ctrl = 0x5c,
+> -		.lvds_ctrl = 0x128,
+> -	},
+> +	[IMX6SX_LDB] = { },
+> +	[IMX8MP_LDB] = { },
+>  	[IMX93_LDB] = {
+> -		.ldb_ctrl = 0x20,
+> -		.lvds_ctrl = 0x24,
+>  		.lvds_en_bit = true,
+>  	},
+>  };
+> @@ -90,8 +80,11 @@ struct fsl_ldb {
+>  	struct clk *clk;
+>  	struct regmap *regmap;
+>  	const struct fsl_ldb_devdata *devdata;
+> +	u64 ldb_ctrl;
+> +	u64 lvds_ctrl;
+>  	bool ch0_enabled;
+>  	bool ch1_enabled;
+> +	bool single_ctrl_reg;
+>  };
+>  
+>  static bool fsl_ldb_is_dual(const struct fsl_ldb *fsl_ldb)
+> @@ -204,15 +197,15 @@ static void fsl_ldb_atomic_enable(struct drm_bridge *bridge,
+>  		reg |=	(fsl_ldb->ch0_enabled ? LDB_CTRL_DI0_VSYNC_POLARITY : 0) |
+>  			(fsl_ldb->ch1_enabled ? LDB_CTRL_DI1_VSYNC_POLARITY : 0);
+>  
+> -	regmap_write(fsl_ldb->regmap, fsl_ldb->devdata->ldb_ctrl, reg);
+> +	regmap_write(fsl_ldb->regmap, fsl_ldb->ldb_ctrl, reg);
+>  
+> -	if (fsl_ldb->devdata->single_ctrl_reg)
+> +	if (fsl_ldb->single_ctrl_reg)
+>  		return;
+>  
+>  	/* Program LVDS_CTRL */
+>  	reg = LVDS_CTRL_CC_ADJ(2) | LVDS_CTRL_PRE_EMPH_EN |
+>  	      LVDS_CTRL_PRE_EMPH_ADJ(3) | LVDS_CTRL_VBG_EN;
+> -	regmap_write(fsl_ldb->regmap, fsl_ldb->devdata->lvds_ctrl, reg);
+> +	regmap_write(fsl_ldb->regmap, fsl_ldb->lvds_ctrl, reg);
+>  
+>  	/* Wait for VBG to stabilize. */
+>  	usleep_range(15, 20);
+> @@ -220,7 +213,7 @@ static void fsl_ldb_atomic_enable(struct drm_bridge *bridge,
+>  	reg |=	(fsl_ldb->ch0_enabled ? LVDS_CTRL_CH0_EN : 0) |
+>  		(fsl_ldb->ch1_enabled ? LVDS_CTRL_CH1_EN : 0);
+>  
+> -	regmap_write(fsl_ldb->regmap, fsl_ldb->devdata->lvds_ctrl, reg);
+> +	regmap_write(fsl_ldb->regmap, fsl_ldb->lvds_ctrl, reg);
+>  }
+>  
+>  static void fsl_ldb_atomic_disable(struct drm_bridge *bridge,
+> @@ -231,12 +224,12 @@ static void fsl_ldb_atomic_disable(struct drm_bridge *bridge,
+>  	/* Stop channel(s). */
+>  	if (fsl_ldb->devdata->lvds_en_bit)
+>  		/* Set LVDS_CTRL_LVDS_EN bit to disable. */
+> -		regmap_write(fsl_ldb->regmap, fsl_ldb->devdata->lvds_ctrl,
+> +		regmap_write(fsl_ldb->regmap, fsl_ldb->lvds_ctrl,
+>  			     LVDS_CTRL_LVDS_EN);
+>  	else
+> -		if (!fsl_ldb->devdata->single_ctrl_reg)
+> -			regmap_write(fsl_ldb->regmap, fsl_ldb->devdata->lvds_ctrl, 0);
+> -	regmap_write(fsl_ldb->regmap, fsl_ldb->devdata->ldb_ctrl, 0);
+> +		if (!fsl_ldb->single_ctrl_reg)
+> +			regmap_write(fsl_ldb->regmap, fsl_ldb->lvds_ctrl, 0);
+> +	regmap_write(fsl_ldb->regmap, fsl_ldb->ldb_ctrl, 0);
+>  
+>  	clk_disable_unprepare(fsl_ldb->clk);
+>  }
+> @@ -296,7 +289,7 @@ static int fsl_ldb_probe(struct platform_device *pdev)
+>  	struct device_node *remote1, *remote2;
+>  	struct drm_panel *panel;
+>  	struct fsl_ldb *fsl_ldb;
+> -	int dual_link;
+> +	int dual_link, idx, ret;
+>  
+>  	fsl_ldb = devm_drm_bridge_alloc(dev, struct fsl_ldb, bridge, &funcs);
+>  	if (IS_ERR(fsl_ldb))
+> @@ -309,6 +302,27 @@ static int fsl_ldb_probe(struct platform_device *pdev)
+>  	fsl_ldb->dev = &pdev->dev;
+>  	fsl_ldb->bridge.of_node = dev->of_node;
+>  
+> +	/* No "reg-names" property means single-register LDB */
+> +	idx = of_property_match_string(dev->of_node, "reg-names", "ldb");
+> +	if (idx < 0) {
+> +		fsl_ldb->single_ctrl_reg = true;
+> +		idx = 0;
+> +	}
+> +
+> +	ret = of_property_read_reg(dev->of_node, idx, &fsl_ldb->ldb_ctrl, NULL);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (!fsl_ldb->single_ctrl_reg) {
+> +		idx = of_property_match_string(dev->of_node, "reg-names", "lvds");
+> +		if (idx < 0)
+> +			return idx;
+> +
+> +		ret = of_property_read_reg(dev->of_node, idx, &fsl_ldb->lvds_ctrl, NULL);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+>  	fsl_ldb->clk = devm_clk_get(dev, "ldb");
+>  	if (IS_ERR(fsl_ldb->clk))
+>  		return PTR_ERR(fsl_ldb->clk);
+> -- 
+> 2.51.0
+> 
+> 
+> 
+
+-- 
+#gernperDu 
+#CallMeByMyFirstName
+
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | https://www.pengutronix.de/ |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-9    |
