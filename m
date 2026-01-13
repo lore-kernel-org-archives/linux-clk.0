@@ -1,30 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E54EF241690;
-	Tue, 13 Jan 2026 22:12:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A502A241690;
+	Tue, 13 Jan 2026 22:12:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768342323; cv=none; b=qK4K2lW+IK/jzfoaArI7KHHpIoQrqMplKi9fo8ypHh8PCNRmsg1Kder+koZIlQV0DX38vYWPkgHdhyDrvgZFqg2SATwPd4Dt/TWFZFQ6bdzVNzKNoLX3UQqvQGMGD+b8MWnlzavyOInIyuncFVJtqIJUpA2lboLGX3MVqYByIJ4=
+	t=1768342327; cv=none; b=LDjy/j0HNPZ0vywLFQCllrsw5icLb34gHsgF4SAaO5/Uw7gFo2qAXCzD0lv79ER4oYC1burtnUJEEJv4anXm6gOQh+CicOTR7lpbbP4okkzcRSyXV7Gqe/0Bo/Dh61eaNbE5aTnlFw79dEesrxGT7lRgMi2y3ChxY/5awSyJH8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768342323; c=relaxed/simple;
-	bh=8piZ3BAylRiP5AdshOvRIEN3ooGFtRYuj3L56yhJI1U=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Nfyo5PHgVrfDHAK8bml/Xe8QezXyZzEekcfJ8HXHVsoZyfcq2cHrFL7uo2OwsPb0ipL25TDXKgU84LGl+5q+wAW9RFqJx11HDxPbgRhqk+bfIPEsMu88zrL63kA8Qo5Vm/n2H7XzXtEpCaS6Wd0dClLh3Xw8CKInE4cMXYNpt7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Va65M8i0; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1768342327; c=relaxed/simple;
+	bh=z9Z05zc/VWYsbYT8EM5TL2vypSw4nX+Y7bZcGHAZZrM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=aRNrlsxWENSDzorcG311LF+pIZkJHttfytPxaIn9w9ncwaz7xAkjTnvXuDUTcxtXXtJt7mkU40kvh/9T2XafC8j5JycIp7+fPfc//u5iZCGP7z7ngsUvBnTeH6ayizODQWMKcZZWDv9Zht0bjBN2jOrTZv8Ia7eawb0xmD74hdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iLa9WMRa; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Va65M8i0"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35168C116C6;
-	Tue, 13 Jan 2026 22:12:00 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iLa9WMRa"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8D60C16AAE;
+	Tue, 13 Jan 2026 22:12:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768342322;
-	bh=8piZ3BAylRiP5AdshOvRIEN3ooGFtRYuj3L56yhJI1U=;
-	h=From:To:Cc:Subject:Date:From;
-	b=Va65M8i07ZbmUATu4F20jFEafvnHFQfGnbXrGxxM8jCxFepDLm4GUAGmxfdC9Vncj
-	 AfqTQXqPfhqNZw4d6dpuUTCe5ffbJ5BlLM7af63LqVHOvpRDQ+u3LKV5dvZLarHcem
-	 luMuPze15Ty3JnIY8lEkOIhFlAvkXkPBFsqeoXjLMXP6UR7aDdRGYJNV5rO2jLUhVu
-	 N9PhzmKiLtoW6rLRZajypZPbz4vopwmPuXGHrKVD0Sy7IM6huqW10oIR2HiA381yOB
-	 2mKlX5WKxBYm38EJHS4xCavJIyqfsqOm2RnqoQUXpKxs6QtsEa78PhD/iiKeS/TmAn
-	 FrYicdTQxwjVw==
+	s=k20201202; t=1768342325;
+	bh=z9Z05zc/VWYsbYT8EM5TL2vypSw4nX+Y7bZcGHAZZrM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=iLa9WMRa0BI5mFgcBhKgbGqCqCyqiwiJ/6PFb+vhdT0ADLaybSrsgmuXzXWpPEIHO
+	 heA+m6ymnnOLn9ve0MBQk+F4gzAhZmf4w1jOmPl6lJ2xl61L2WXVT42ytZemRdHAm1
+	 MODsE1aLcKOESSF62wbUyMFPRLvGTQ99RvGXc8cHtrSk+jfRLiSzY3buGGGmfFjVcq
+	 C6bsQ86ydXweYz0f1JNZtc97D/ZBHO2QF5aI6FVxfnNYhRUpDNUa0HIYoWSAbDyKzP
+	 4llQnjdLBP4xEABt+SUP8gtsbotKPFjCXGgLBlWcPLm+qSPfo1qUrJfC1c/fO6nHBW
+	 kdyMR7SN+84xg==
 From: Conor Dooley <conor@kernel.org>
 To: linux-kernel@vger.kernel.org
 Cc: conor@kernel.org,
@@ -38,53 +39,48 @@ Cc: conor@kernel.org,
 	linux-riscv@lists.infradead.org,
 	linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org
-Subject: [PATCH v3 0/3] pic64gx clk kconfig/binding changes
-Date: Tue, 13 Jan 2026 22:11:44 +0000
-Message-ID: <20260113-snagged-blemish-52af3d00d88e@spud>
+Subject: [PATCH v3 1/3] clk: microchip: drop POLARFIRE from ARCH_MICROCHIP_POLARFIRE
+Date: Tue, 13 Jan 2026 22:11:45 +0000
+Message-ID: <20260113-doing-surplus-dc45866f71d4@spud>
 X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20260113-snagged-blemish-52af3d00d88e@spud>
+References: <20260113-snagged-blemish-52af3d00d88e@spud>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1116; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=l6nheBj3BQQJEV+4zoKyudCtdj+MNDvSBpqn5C3pvu0=; b=owGbwMvMwCVWscWwfUFT0iXG02pJDJlph+Wvpl59FHq2sFWod9LfVXNFAlqPri9szZXsqZabx u5VOm1iRykLgxgXg6yYIkvi7b4WqfV/XHY497yFmcPKBDKEgYtTACbS68jIcHIqp/K0bY9+iRcV HRL9nSK6wzRrw7R8R7a/gW+Tblz4ZcfwP9HoW3uumo65X+cShW0/dm1ePmXtyffOnxbM3CvrPum iPhcA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=853; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=FjTWJC1wwS572Ik3G363c372pfHUYilsmPiBl9AksjM=; b=owGbwMvMwCVWscWwfUFT0iXG02pJDJlph9UKVaf39veueVPBdfJ7xK4LS37bOJ3V2efFVGIeH LDNq/J0RwkLgxgXg6yYIkvi7b4WqfV/XHY497yFmcPKBDKEgYtTACYStZHhx1PL3/oqT4KWP9g/ 6/0RH4m5oVHX9nwUOxttmzj1MbOmOiPD/KrzVZG+q5W7HnJ9/Jt5QVpKKH/ZxEvrcrXLZR7p+Mz mBQA=
 X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
 Content-Transfer-Encoding: 8bit
 
 From: Conor Dooley <conor.dooley@microchip.com>
 
-Mostly this is stuff that PH did last year, but rebased on top of
-current work, now that the clock driver rework patches have been
-applied.
+This driver is used by non-polarfire devices now, and the ARCH_MICROCHIP
+symbol has been defined for some time on RISCV so drop it without any
+functional change.
 
-v3: rebase on linus' tree
+Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+---
+ drivers/clk/microchip/Kconfig | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-v2: fix the binding, d'oh
-
-CC: Conor Dooley <conor.dooley@microchip.com>
-CC: Daire McNamara <daire.mcnamara@microchip.com>
-CC: Michael Turquette <mturquette@baylibre.com>
-CC: Stephen Boyd <sboyd@kernel.org>
-CC: Rob Herring <robh@kernel.org>
-CC: Krzysztof Kozlowski <krzk+dt@kernel.org>
-CC: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-CC: linux-riscv@lists.infradead.org
-CC: linux-clk@vger.kernel.org
-CC: devicetree@vger.kernel.org
-
-Conor Dooley (1):
-  clk: microchip: drop POLARFIRE from ARCH_MICROCHIP_POLARFIRE
-
-Pierre-Henry Moussay (2):
-  dt-bindings: clock: mpfs-ccc: Add pic64gx compatibility
-  dt-bindings: clock: mpfs-clkcfg: Add pic64gx compatibility
-
- .../bindings/clock/microchip,mpfs-ccc.yaml       |  6 +++++-
- .../bindings/clock/microchip,mpfs-clkcfg.yaml    | 16 +++++++++++++++-
- drivers/clk/microchip/Kconfig                    |  4 ++--
- 3 files changed, 22 insertions(+), 4 deletions(-)
-
+diff --git a/drivers/clk/microchip/Kconfig b/drivers/clk/microchip/Kconfig
+index 1b9e43eb5497..0c03b14699bf 100644
+--- a/drivers/clk/microchip/Kconfig
++++ b/drivers/clk/microchip/Kconfig
+@@ -5,8 +5,8 @@ config COMMON_CLK_PIC32
+ 
+ config MCHP_CLK_MPFS
+ 	bool "Clk driver for PolarFire SoC"
+-	depends on ARCH_MICROCHIP_POLARFIRE || COMPILE_TEST
+-	default ARCH_MICROCHIP_POLARFIRE
++	depends on ARCH_MICROCHIP || COMPILE_TEST
++	default y
+ 	depends on MFD_SYSCON
+ 	select AUXILIARY_BUS
+ 	select REGMAP_MMIO
 -- 
 2.51.0
 
