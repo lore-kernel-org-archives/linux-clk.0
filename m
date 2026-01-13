@@ -1,67 +1,68 @@
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8C7A38171D
-	for <linux-clk@vger.kernel.org>; Tue, 13 Jan 2026 10:59:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43416389DEE
+	for <linux-clk@vger.kernel.org>; Tue, 13 Jan 2026 10:59:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768301980; cv=none; b=emguRYXedqp7IwWz/ndPS3Z3bkWf7xoFX/3wB8020Nn5K9093lsns9mFVOs4D3sQrSJ3nRIo3Evjo1FEIGBXlxG/EvUYypMuMokk7VL/gCgD1T6jvNTLyJMJd0xisZ3bVqj1r1okArD6Q6pP/F61tirFFq5IVAF+VDVKYqNl8hU=
+	t=1768301982; cv=none; b=sezLSP+rD3lgNIzJQXw7XbT8hU3inJvzu+FoKUHnq1fN4+1CYTtVy1r5LrFQRgM7R/MA8MReBQygxAua52trX4b7JrLfB1UurywaKjFLAOueZv9MlyzuRlKk7ipD0lfkXJ62l0xHLCYaQzGLXrpHAc3DGNrXHL3tq8w9TsdKrbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768301980; c=relaxed/simple;
-	bh=2yubVwhwO7ns8FZQYj8MKduIIlis7alJ8q+O1SQ6y/c=;
+	s=arc-20240116; t=1768301982; c=relaxed/simple;
+	bh=zdOdJQNPdlZKaryJV0eSRMq15kBV8C8+9A0Oans/k8I=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Dk0GYneRPUDnH+e9DXSDeqH4sIGYDCv2xAtwjqy8a52dXrHiRGQDjEKxT9BucERtvj7ppXRR6EX2UMzJ5C4L6O9nGfZd4h3XAQN7rq77S+MnhOg4RfYlwqCdhVVOOwBDPQOPP61HsOyoF2ITXsI7JKD6U+mFcouUOsettq9Cm5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HDDBTUN1; arc=none smtp.client-ip=209.85.221.42
+	 In-Reply-To:To:Cc; b=VyL6UpOQI92LfkhUi4A5lJJ2NbyTr5m+zkCW7zjD1DHoXlII60yt2xY5Qt+IFRaEHnOr1lMi9J1ZAqYfyhHhN+uU/2Gw55oN7N2AzUOz3B29s31dJRLDaXCJzxYQ9UOnbYNFcQuDRG/b0NCTxXaH8vyETgRxEk6He7f9vWRm60g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Q/aMhIX8; arc=none smtp.client-ip=209.85.221.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HDDBTUN1"
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-431048c4068so3827827f8f.1
-        for <linux-clk@vger.kernel.org>; Tue, 13 Jan 2026 02:59:33 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Q/aMhIX8"
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-42fb5810d39so3867355f8f.2
+        for <linux-clk@vger.kernel.org>; Tue, 13 Jan 2026 02:59:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1768301972; x=1768906772; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1768301973; x=1768906773; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=i2O+ICvJOvqFIrMEVsuBmNNVxd9PD5RyBiEWFT9yHBo=;
-        b=HDDBTUN1G75/pt4RgMFqcelGHCicXgUjak/a+ZId7OAY1Vk9cipm7U4MZXqSfrEIZp
-         YMy+Tn0ywWBV+MOi9SBCk2rTqVGcRTT2LgDIstf1RLo343dkPyqGj4k/ZhhzR1gXt7nn
-         BSNXQ4ssbEvKAZDxt6QEysCZYfTiBLxDiQHaCiUDUuOR8719X7kSxG+n7eIB4mereTqv
-         r6LDqf3ATRfq6qtX3bToS5Skz3Ni4UTXH5wngUi17pfiJKoYKOiwltaRDINAUZaM+MjC
-         +fpJbY6viVaEWXmEb2BfEFNnEOa71B4tq7Bj+xJjnC9huUSSUrlyNudoCKL0Wopw2pL7
-         UVZg==
+        bh=74ELsg7vhoXLfA9GfHrjCg3jNxskfuERCguyJAcC0EQ=;
+        b=Q/aMhIX8/3PdbO/DafUHBhhrXPLkZyDfos9Nyml2vMqUHqmWnpsPoavzNXiLLSDIfg
+         NCeiLUWIMQw5TnORkFvf9Cl6+nezppebLyxJLNN4uYKc7wPbTQFqH2RNfBevvaT3vywI
+         cunF5fS/AGX6ysSlRF7kFidmxjbT9vZiN865qPrgK56I6noHvMkKQlzWxPhexcbIEZgB
+         9jXYe99eaI4+9dT47ohwUUfum0YlCGaljYSCH5dv8KEJTyRuIo8EwR3EyN5sA+4gRULa
+         thdPGfQJ7jrEsm6+K8unCOw+hvLBxbkR/vYgdOCGC1bwZzXTuT6pfhgLIdasABYxvInU
+         2L8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768301972; x=1768906772;
+        d=1e100.net; s=20230601; t=1768301973; x=1768906773;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=i2O+ICvJOvqFIrMEVsuBmNNVxd9PD5RyBiEWFT9yHBo=;
-        b=IsP5cHPGdkXoca20Boy/4EO5vmUKSvP+beBwCwFN129gkJky3dwhwPV5m+3dnlHHNw
-         6XH7zKdx594E5PNidjvjp0mmwUz9kJPwBsNhlIIQDqbWQHBX0n6lYTxUIhWohpRE56zj
-         uHdtQ8owv7gnNlUn7WkFEX57pehSrz9blZJPCw/dRb59r+9AUi9P1X8Py2sTvoOzA1dM
-         id5IzZvArUBcRadjlSW08s1AEbwq775MSBOpmAEowpix95ihagpxdFoaEEQat2AMe86f
-         g/2/ooy4Lcki33HOtaiuvdCboFxRNSTBP0oxCmTsKVjT0eSo0MP68S/WnBEu09S6sbcQ
-         +m/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWC7MdAcTPRmTp+umrdKZYa4uDeecd1nVOI9CFZAnolIk7g2Mpnaq6mUChsiLhE5tpvozVZRmDz7/E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6uoKrr+AHYCw++4SnjmZZ1NFVanyn5m2wBYkG4hM7xRjhj5LY
-	5vC8omJVRa1wr74x0t/DbkQs7uWbt/4rZW/z0yp5F+LEQyWa5ic0kCfnIPo45Yxktvs=
-X-Gm-Gg: AY/fxX4WknAcOWpiRT7Es7LclgUDeRW93omVNKLGf4Xe6uwlseLG2yoFyCJ+JNX+MDC
-	tAXpoMYZ+vYE5O2TM9SSFWHpcx+4H6qq6Tg0roN+exzqCMwDYMP5eV7liEdVNi7UckKhsy6bpXT
-	J8rlibc7JBm4RXfrvfU1Tm54p5NFcICHUMzed3YItjk1HdqPbMVW0z3m3JJ+CuAZBKOauNnFbKA
-	c+HRsnklbniP+44nroPasRN30AiOH4iPfGVf7QWvjtRErHT7LeUuz5YVenUzeHKui57sQS0GvW7
-	vP7HlAJqDyyfd23BBlb3Vmh61X3hrydHvjOeAJFyp5F2H/BdKIUYlr3T3fKQO84srCMu2Vjpcry
-	BVEQXN09dggICOpg/Hr1zILjaLgM7iV5Ov3AWCuAreQYhehHH1K4X/x2ObP9gAOg0Ufkb1UjKY7
-	9EsX5cCUamDloAWP9juG5MOO4Hg3FC9uNK4P0Luts5Jxo=
-X-Received: by 2002:a05:6000:1862:b0:432:5b18:2cc3 with SMTP id ffacd0b85a97d-43423e7458dmr3411889f8f.4.1768301972016;
-        Tue, 13 Jan 2026 02:59:32 -0800 (PST)
+        bh=74ELsg7vhoXLfA9GfHrjCg3jNxskfuERCguyJAcC0EQ=;
+        b=tcGfuLP0UdI8smahAG7XduTSqEcwm20WVc2ubgftcvSJ0Y87WA2Q4Hi36VQnIMGmYG
+         HhbGMsVnKs6hswNcdvnBAIN6zaa4D26RFMNB99nOHGbr/ntJI94NFmomWsPFqiz3hHxG
+         x6v//BtpmWrTrCg/ejrDQz8KB7duuAtDiry0r+12Ue/j3DVlTDE4m4qcVn7j3PXH3Zer
+         WL055JBtPty0PIcYc3AXH6X/QRpzpt0/nfy2RPv/7PkiX/RcihGpsZ/iuPLKtw89pWm8
+         KOOzwYfAqxAEVLfzR/qxjhr1/AgGeyu+reIn/fqXjoOkJnIAtNQ5aZsYuWROwLueq2bN
+         c5yQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXw4q8gYrlcN9aZ2wtfqEWaJQahAmq0pMvSuW0wbbviz/rvtfK5UpRa65upuVd880jAx5z4ixZxwPY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1OxWBIomWWrwiYkW8n/h412Ls43eyM0R6awfpIyKEYN1q6Mk2
+	hHa5TP173SH9DMZQ2w5Vc88vp+9dBUsKztGihZAlxW/eXukdtb+7AcMjADGD7XayS1M=
+X-Gm-Gg: AY/fxX7UBETPaJrzSeQSYU94MeJOmbQsRpY90XmF5wp50hdvasILVMyFEW5QMFtHYoS
+	wsuAHx62wV1miaHhV6Td0vhC23T03gzRd/YTtzJ6xK84uDc9BrdDbZc1GuveFVNMVOYWUC9SVx6
+	9HsFGAkpd6vrIZ7/FGQCqrG7INJb4SrsWWXX0G/yrs09MSQplZA89Q4EDKnEkRd/JH5ua+a3ZwL
+	PfGYySdL3izWXy3nAV6GBJ8aKKRzjcwNIY3Yn2Ibk8z/GcSA/E+rT/aEAmjYm9n12JWqhEW3ZRi
+	fgKYJMD14EyJd5I/hdYeo60FscJOrbn8jY9cGe8ngfG4R9wT+55Oqz0OOu5t6QRr1FTmEe/rBXQ
+	x/iJl1jeH7xm9MEr4SCW7wPfzMk/cqLhpD4ZENggvU96G6WBWX2TyiMwJjaG3edQ5yBTocQktNQ
+	LvlFtRGoTqRorCDpe9wDLZXKzWgFqw43lkGtqBajUSPfg=
+X-Google-Smtp-Source: AGHT+IH2JbtL21jIgggvul12eFS//aGQrO5ZAtOVHTe2wEpJpvpWq9B0uugc4X9NenGB+bHx3VYl2w==
+X-Received: by 2002:adf:f54f:0:b0:432:e00b:8669 with SMTP id ffacd0b85a97d-432e00b8adamr10557403f8f.18.1768301973374;
+        Tue, 13 Jan 2026 02:59:33 -0800 (PST)
 Received: from gpeter-l.roam.corp.google.com ([2a00:23c7:3122:c601:3454:384:9eef:8e29])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-432bd5ee243sm43729881f8f.31.2026.01.13.02.59.30
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-432bd5ee243sm43729881f8f.31.2026.01.13.02.59.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Jan 2026 02:59:31 -0800 (PST)
+        Tue, 13 Jan 2026 02:59:32 -0800 (PST)
 From: Peter Griffin <peter.griffin@linaro.org>
-Date: Tue, 13 Jan 2026 10:58:59 +0000
-Subject: [PATCH v3 2/5] dt-bindings: clock: google,gs101-clock: Add DPU
- clock management unit
+Date: Tue, 13 Jan 2026 10:59:00 +0000
+Subject: [PATCH v3 3/5] dt-bindings: samsung: exynos-sysreg: add gs101 dpu
+ compatible
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -69,8 +70,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260113-dpu-clocks-v3-2-cb85424f2c72@linaro.org>
+Content-Transfer-Encoding: 8bit
+Message-Id: <20260113-dpu-clocks-v3-3-cb85424f2c72@linaro.org>
 References: <20260113-dpu-clocks-v3-0-cb85424f2c72@linaro.org>
 In-Reply-To: <20260113-dpu-clocks-v3-0-cb85424f2c72@linaro.org>
 To: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
@@ -88,123 +89,53 @@ Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
  Juan Yescas <jyescas@google.com>, Doug Anderson <dianders@google.com>, 
  Peter Griffin <peter.griffin@linaro.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3729;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1317;
  i=peter.griffin@linaro.org; h=from:subject:message-id;
- bh=2yubVwhwO7ns8FZQYj8MKduIIlis7alJ8q+O1SQ6y/c=;
- b=owEBbQKS/ZANAwAKAc7ouNYCNHK6AcsmYgBpZiWOE3nOy29Cjg+ucJWaFXVn+xlXgJc+sb9Yx
- oBWrDqH0GyJAjMEAAEKAB0WIQQO/I5vVXh1DVa1SfzO6LjWAjRyugUCaWYljgAKCRDO6LjWAjRy
- ugTlD/9NkVH/qEv0c/R6L8J1N386xpJvXJ4ZWLMUvx103TNRGX8cpOZTDA81xch3tj2qyam6OGE
- pxcoUYH6SMoXuiCGb/SpiF2EbtZSV4wWHn4DaeX7KjIGwbBOanMVstVMDNBNJnQiHyODT347Wq+
- LxHO0WRSf8WGhZiHPQIkdGXw5wRTqMLQviyLFmg1f8DpQO/vUuKsJHHVrkiARSvnREj/YztvV+u
- EjPFDCTQ9kojSCduthNhE42DcfdD+QOiSj8mUsh9z4YfenGtz+C53RTA1V8FxJdW/KfYLUMGyhU
- LWOfo8YOBgjGqPKHa7YXXFVXkWJ+w7oHhedfeLiRg+gZ20/FtJ9Hev++WrN60wmubxuSenKoy4P
- mFAC72neP2rpiqRwXAHPdv+y4xfqq/06Yfjgv2tPbzlBoXeOVjKxPJLYDqhMvLP7CmRgxZpd2p4
- qFppyKsolpBsedaYne/JSqDLLs8ekCUIhnBaUECa/cpsJ+JosOYIukgfPkRoXGWJLkPFBUFxI5D
- 8KOO2vQTbwQDFWZOWACjTONcSwfyNoXQRvvbA0M78O2ITYCM/96rXA749a5hxiDRB+7TRQtQu30
- wrQz2ZIALpR99tRvznwM7o9bv7Tm6otahymTRAwmB7GJidt7vYtcAsJo2YNXfkckCTzD6tGK8is
- nEnOE7heVyTB/2A==
+ bh=zdOdJQNPdlZKaryJV0eSRMq15kBV8C8+9A0Oans/k8I=;
+ b=owEBbQKS/ZANAwAKAc7ouNYCNHK6AcsmYgBpZiWOP8X+oM5w43jD1skqX2op7mjV09xdPbxHj
+ sBrRp1J/XOJAjMEAAEKAB0WIQQO/I5vVXh1DVa1SfzO6LjWAjRyugUCaWYljgAKCRDO6LjWAjRy
+ ujvRD/49YLewRuYcBVZ+8v+DqIvcqjsd4JOFG+gfylt/oY4oN+0q/Em+TL9AfmFLcGUEUmUiMn4
+ P0JghNWmeaHU7gE5oc/9Mka3Ms3aCmP1UOpEnCJgYqt0kC1HA2VPXcIM279BSaNd7pyODhGASDG
+ ipamtPTrN8R1zwxwN//IbCsFpEN8IQ6RHSrL7A7iNsASKLbal8C+kzQjTzBmL2m9NG0FaFBBpmU
+ LTH6lsuZ6GQBQCkL3w9ciH1f6+EMLNHlJuQudL/wzr9JlPVhzoVs8z0hVj04TgGDEoj/nrQ6bkY
+ k4PHlP2RWfBDuY731dV9OyKx6qoQyn7jmRpX8HsAaQEkbjZbQ1lU6CzLchREYdDh4Y6mtCAARxx
+ 1SRm0wSikmODQp7Cp++FjRVMdGOay2QxMeqRkMQ0mvqn6Z+ZMVR4OVTALnmuitA9XDN2ocd20DE
+ 1etByCbWGLjQiztV8wZUNaZZrAX4Sf95xu+dHJwKJL87N4uDkoxzyYISTxM2LBGvLU9UPfylgJl
+ 772El4IyxYtcWqwzf4GLz42DPWKRP6k8/pVmM7nmoug75TMay3KIcYqZDitgupn41IC/3Mj7yN0
+ JlmlZM6CREMS60lB8Vf4UZRr2g5xiPeBPtHE/+QCJKD6jH2ioHA2VRVb+ZOWJTguIin2vU1EyB+
+ WPgqVUsAISqoyKQ==
 X-Developer-Key: i=peter.griffin@linaro.org; a=openpgp;
  fpr=0EFC8E6F5578750D56B549FCCEE8B8D6023472BA
 
-Add dt schema documentation and clock IDs for the Display Process Unit
-(DPU) clock management unit (CMU). This CMU feeds IPs such as image scaler,
-enhancer and compressor.
+Add dedicated compatibles for gs101 dpu sysreg controllers to the
+documentation.
 
+Reviewed-by: André Draszik <andre.draszik@linaro.org>
 Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 ---
-Changes in v3
- - alphanumeric in gs101.h header (Andre)
-Changes in v2
- - alphanumeric placement (Krzysztof)
----
- .../bindings/clock/google,gs101-clock.yaml         | 19 ++++++++++++
- include/dt-bindings/clock/google,gs101.h           | 36 ++++++++++++++++++++++
- 2 files changed, 55 insertions(+)
+ .../devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml          | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml b/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
-index c41043c7d25200fe947a2ca5b2780e4dd50ad433..5122c5827718a3e3defbbecd926ec40e16574529 100644
---- a/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
-+++ b/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
-@@ -29,6 +29,7 @@ properties:
-     enum:
-       - google,gs101-cmu-top
-       - google,gs101-cmu-apm
-+      - google,gs101-cmu-dpu
-       - google,gs101-cmu-hsi0
-       - google,gs101-cmu-hsi2
-       - google,gs101-cmu-misc
-@@ -82,6 +83,24 @@ allOf:
-           items:
-             - const: oscclk
- 
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: google,gs101-cmu-dpu
-+
-+    then:
-+      properties:
-+        clocks:
-+          items:
-+            - description: External reference clock (24.576 MHz)
-+            - description: DPU bus clock (from CMU_TOP)
-+
-+        clock-names:
-+          items:
-+            - const: oscclk
-+            - const: bus
-+
-   - if:
-       properties:
+diff --git a/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml b/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
+index 5e1e155510b3b1137d95b87a1bade36c814eec4f..9c63dbcd4d77f930b916087b8008c7f9888a56f5 100644
+--- a/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
++++ b/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
+@@ -15,6 +15,7 @@ properties:
+       - items:
+           - enum:
+               - google,gs101-apm-sysreg
++              - google,gs101-dpu-sysreg
+               - google,gs101-hsi0-sysreg
+               - google,gs101-hsi2-sysreg
+               - google,gs101-misc-sysreg
+@@ -92,6 +93,7 @@ allOf:
          compatible:
-diff --git a/include/dt-bindings/clock/google,gs101.h b/include/dt-bindings/clock/google,gs101.h
-index 442f9e9037dc33198a1cee20af62fc70bbd96605..7a14dcb9f17b1e95d792b0c29fc6b8bfdc78213d 100644
---- a/include/dt-bindings/clock/google,gs101.h
-+++ b/include/dt-bindings/clock/google,gs101.h
-@@ -313,6 +313,42 @@
- #define CLK_APM_PLL_DIV4_APM				70
- #define CLK_APM_PLL_DIV16_APM				71
- 
-+/* CMU_DPU */
-+#define CLK_MOUT_DPU_BUS_USER				1
-+#define CLK_DOUT_DPU_BUSP				2
-+#define CLK_GOUT_DPU_PCLK				3
-+#define CLK_GOUT_DPU_CLK_DPU_OSCCLK_CLK			4
-+#define CLK_GOUT_DPU_AD_APB_DPU_DMA_PCLKM		5
-+#define CLK_GOUT_DPU_DPUF_ACLK_DMA			6
-+#define CLK_GOUT_DPU_DPUF_ACLK_DPP			7
-+#define CLK_GOUT_DPU_D_TZPC_DPU_PCLK			8
-+#define CLK_GOUT_DPU_GPC_DPU_PCLK			9
-+#define CLK_GOUT_DPU_LHM_AXI_P_DPU_I_CLK		10
-+#define CLK_GOUT_DPU_LHS_AXI_D0_DPU_I_CLK		11
-+#define CLK_GOUT_DPU_LHS_AXI_D1_DPU_I_CLK		12
-+#define CLK_GOUT_DPU_LHS_AXI_D2_DPU_I_CLK		13
-+#define CLK_GOUT_DPU_PPMU_DPUD0_ACLK			14
-+#define CLK_GOUT_DPU_PPMU_DPUD0_PCLK			15
-+#define CLK_GOUT_DPU_PPMU_DPUD1_ACLK			16
-+#define CLK_GOUT_DPU_PPMU_DPUD1_PCLK			17
-+#define CLK_GOUT_DPU_PPMU_DPUD2_ACLK			18
-+#define CLK_GOUT_DPU_PPMU_DPUD2_PCLK			19
-+#define CLK_GOUT_DPU_CLK_DPU_BUSD_CLK			20
-+#define CLK_GOUT_DPU_CLK_DPU_BUSP_CLK			21
-+#define CLK_GOUT_DPU_SSMT_DPU0_ACLK			22
-+#define CLK_GOUT_DPU_SSMT_DPU0_PCLK			23
-+#define CLK_GOUT_DPU_SSMT_DPU1_ACLK			24
-+#define CLK_GOUT_DPU_SSMT_DPU1_PCLK			25
-+#define CLK_GOUT_DPU_SSMT_DPU2_ACLK			26
-+#define CLK_GOUT_DPU_SSMT_DPU2_PCLK			27
-+#define CLK_GOUT_DPU_SYSMMU_DPUD0_CLK_S1		28
-+#define CLK_GOUT_DPU_SYSMMU_DPUD0_CLK_S2		29
-+#define CLK_GOUT_DPU_SYSMMU_DPUD1_CLK_S1		30
-+#define CLK_GOUT_DPU_SYSMMU_DPUD1_CLK_S2		31
-+#define CLK_GOUT_DPU_SYSMMU_DPUD2_CLK_S1		32
-+#define CLK_GOUT_DPU_SYSMMU_DPUD2_CLK_S2		33
-+#define CLK_GOUT_DPU_SYSREG_DPU_PCLK			34
-+
- /* CMU_HSI0 */
- #define CLK_FOUT_USB_PLL					1
- #define CLK_MOUT_PLL_USB					2
+           contains:
+             enum:
++              - google,gs101-dpu-sysreg
+               - google,gs101-hsi0-sysreg
+               - google,gs101-hsi2-sysreg
+               - google,gs101-misc-sysreg
 
 -- 
 2.52.0.457.g6b5491de43-goog
