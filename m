@@ -1,152 +1,85 @@
-Received: from mail-wm1-f65.google.com (mail-wm1-f65.google.com [209.85.128.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C88038A2A7
-	for <linux-clk@vger.kernel.org>; Tue, 13 Jan 2026 10:59:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 699E82BE7D6;
+	Tue, 13 Jan 2026 11:00:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768301983; cv=none; b=bi1oK0e3baSMLVXfJoj7mRIXiu9OcCbsgvGcQyO5w+Ml82ph9nXAKNpKuoOcbX5Q+QP/0tv+iq/X8B60LqU+eh9iMlO7DIoWskl0O4y9QAMv931vnmiYDKfqrerdqphLj5bjnikJb5pq4e2pHmzKsIFNHDVjSRXlWhapcDtQN4g=
+	t=1768302018; cv=none; b=peooEVlsYPw149boJb6LT5BMbquF5X3JLHP/W4bO3ys+r1cXGcRUgUbwGNXx9kE60Jubl+MI6j178/5ikgVRgAHILDLYPfuRLUwLikj5ep9gA2nfZWaZpY2tzmVY0jK4GqKeiM9oYRhWkYJcCOmHxmzel9T9v6jg9tr8ANDid00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768301983; c=relaxed/simple;
-	bh=WUdMAX8z4QhtVQSfFhWdE8LzEGj91H8aYjzAX8V+ueA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=NpFBz681hYunqbR7ZLkt30vsJ2OrpCEO4zurf3GeSnPPxemHmYSbPHhAecKn2/mvomJH1iUvOVdRhdDbXLTv4m2DUyyv2xXoEWC34phtiy8isS8w7JRe2ZTI7e/umM7oKDHCIME4o9g44jIdGlucjvOpUuMNc5rPcQd9A9blylE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fio7FhER; arc=none smtp.client-ip=209.85.128.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1768302018; c=relaxed/simple;
+	bh=zucZeLDjTuMkSGcuXiR7OU6C7Qz5H4JCwJizqZNqjEA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rgfdEXFrrLWOpvcsi2J+zllgGWrA4oS9tPX6amUiVEQhm/zOPptaHe1ytmgTAeQQLO7LYKBOIckB5E6zG8EfhBxboUCz14/ofzsU6qU2S+Idy7lWUiIlxqbUxyA8JtLA/u1cB6Py4Cy4CCHINjJsfNyT4quHxA8yYQW6iy9vv9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=O+sTOvcX; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fio7FhER"
-Received: by mail-wm1-f65.google.com with SMTP id 5b1f17b1804b1-47795f6f5c0so46022405e9.1
-        for <linux-clk@vger.kernel.org>; Tue, 13 Jan 2026 02:59:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1768301976; x=1768906776; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0oQMGTyMi20OxWQa8x3f8sz8cBzKODyRyWVPXoBWeNQ=;
-        b=fio7FhERSGIwBLdjC65oMhkXwbHE0dF6ea08IxfG/xFgnsjCOmSvKiMQpgSSHjqscW
-         0mA5XDGM1gem0eUN6+LxMCjdF++qaDkGSOicWwgotXJf1EbP1PIsS6exV7M5Pd0BvlO2
-         Q7Eplk1NOVUUicixcuaraQ6IqWApA2nbjTzc4iVxqpgYksTqqJjlesYMxPdFmy1V1n+N
-         E3mgXSbbeQlEqcGgfpIsKa/lMLDy3+v0mOshrcVQcUWUwU2szuliC7CzjLJN1o8pAtul
-         dUmJIv540AkXPpdL09BrQhfAKIRHqjx1VRgKl6Xm7j/9jCgzGTbUUYNI7AR9e4uLXya6
-         NYHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768301976; x=1768906776;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=0oQMGTyMi20OxWQa8x3f8sz8cBzKODyRyWVPXoBWeNQ=;
-        b=F4vuDODSmNkeD9j+M9m5ih3PxFCHb87DOR4XNyQHg5Cw/4Cn75hRvSAwdCr8cKUvD2
-         UhxwT0zLmW/sTRzy+BSJHP46xYVtPDCj9hT9T+ISH0iVjewgRwk0+tBIgK+DapZoeoaJ
-         tiXqIYKkJ4c/hYTGikiKczBzRVcdVk8Gk9mGVcCcEpmXxbxiRFnYaL2ianwNOtHfko63
-         sS2EGfy0DIAZoywvmOAU3osU/ZZmx93bLB14O884k+zaZ7IQYvgwMGLAf4IgzFKMwRUN
-         KGM4B07r09IpGCXIdQA7360CtPaD4kfA8FqXGPXTYvbAQiS60Aj/1f6nsZWvrQgCLWFi
-         Y/qg==
-X-Forwarded-Encrypted: i=1; AJvYcCWryUW5fCT7bWG9r6Oc5Sug6MWcH1Tp1UYo8O+l5YXKzwW5x2XRm9EXotec7y8U0UT4xDyebyilKso=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMCeqmhI9QZOvmenmBVyD/IDaHky680lapnnHt0XcJCZjW4tjF
-	c9aIk0zGWgA/QOxQPk7QrzENdtDmkQsf1li/6ALXnhxxrfzqGQDsiV8kJvEQCy6G8Vo=
-X-Gm-Gg: AY/fxX49o/eZqycVU8p2WjgmU4cBt/KWOMFqHI3nyz0OvJWn6PTEQi+e2eHWZ8MTyrw
-	hZFL59TRIVX7Krz00SCsEf+BCWApeCkkwcNq/jMbjlbndUdHZVLKipI7niCu1sd5zC29EFm3Mxf
-	NuviDxr1eu1BB8VhBMdgoztCXar6LOaUaqsbGkXi9CaAkJRJUHciRySXP+0FATn3Bw5caV4zKlF
-	jXythZlaai+jQZpRCWJyKr+wTZgDOgshzpkdiujZg9ybd6LPBI/MQ2zBVwEZUX27ZFNPHaKG+xe
-	gEpj2dpGRaiMvMpDW7Pnl2u/1Bk2sp8ZBtHUUlAWfdKig9Li6AdP8jwgz3IFbHFFcEFtUQYxsJV
-	bVj2n1WdVPppRB7mMEtBvDFnTA8bLeDqMik/BQuMbYeQ0iwig5Gtipp9asdcaQZ8DWO4fXwCYfs
-	agqYW4tRUTuGQTXYmnnAq6L4IrYF/8b6CvW10lkANY9y8=
-X-Google-Smtp-Source: AGHT+IFn1dzqQ/D+0QCf5k/jfSxOt6mGZYAi0NlFjRq6667iKCclfMYVXNjtvPWRLhP0JCbSG1j+yQ==
-X-Received: by 2002:a05:600c:6815:b0:471:1716:11c4 with SMTP id 5b1f17b1804b1-47d84b61379mr229758235e9.34.1768301976084;
-        Tue, 13 Jan 2026 02:59:36 -0800 (PST)
-Received: from gpeter-l.roam.corp.google.com ([2a00:23c7:3122:c601:3454:384:9eef:8e29])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-432bd5ee243sm43729881f8f.31.2026.01.13.02.59.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Jan 2026 02:59:35 -0800 (PST)
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Tue, 13 Jan 2026 10:59:02 +0000
-Subject: [PATCH v3 5/5] arm64: dts: exynos: gs101: add cmu_dpu and
- sysreg_dpu dt nodes
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="O+sTOvcX"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1768302014;
+	bh=zucZeLDjTuMkSGcuXiR7OU6C7Qz5H4JCwJizqZNqjEA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=O+sTOvcXNxPfmpbEaUCfSIkpcIboG/hK/pHBnTLDnMjrCRYwhOzXk9JFBLAKTS/2n
+	 od4OD8fnSwgWsSGuY8McAzh8OAVFMAdwSV/rx87RfWa+z776Jcf2ma+6+QvAKbvXrq
+	 8vqhSL42zsr7LyzrjvT2WzkNOIhH1YUzplvZyLZMC8f29r7KALtwSkryrIkg310d7C
+	 wEe/wc8sBlCwPkgh4KDjcoGBETY96EivwrVUuO1C3d9G672pU1FRbi9s5Z7pw4h/B0
+	 lSc7BNLFEiqeUQ0GcYIT1JoT1Ui7CcLhuItFJVlLJyt3fLHRB93vH8xJi2wkZoPVoN
+	 P5tbTz7gTHN5Q==
+Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 0786317E1523;
+	Tue, 13 Jan 2026 12:00:13 +0100 (CET)
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+To: linux-mediatek@lists.infradead.org
+Cc: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com,
+	ulf.hansson@linaro.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-pm@vger.kernel.org,
+	kernel@collabora.com
+Subject: [PATCH 0/5] Fix dtbs_check warnings for MediaTek MT7622 platform
+Date: Tue, 13 Jan 2026 12:00:07 +0100
+Message-ID: <20260113110012.36984-1-angelogioacchino.delregno@collabora.com>
+X-Mailer: git-send-email 2.52.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20260113-dpu-clocks-v3-5-cb85424f2c72@linaro.org>
-References: <20260113-dpu-clocks-v3-0-cb85424f2c72@linaro.org>
-In-Reply-To: <20260113-dpu-clocks-v3-0-cb85424f2c72@linaro.org>
-To: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
- Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Chanwoo Choi <cw00.choi@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, 
- kernel-team@android.com, Will McVicker <willmcvicker@google.com>, 
- Juan Yescas <jyescas@google.com>, Doug Anderson <dianders@google.com>, 
- Peter Griffin <peter.griffin@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1517;
- i=peter.griffin@linaro.org; h=from:subject:message-id;
- bh=WUdMAX8z4QhtVQSfFhWdE8LzEGj91H8aYjzAX8V+ueA=;
- b=owEBbQKS/ZANAwAKAc7ouNYCNHK6AcsmYgBpZiWP4MHYOnVwKJEasNjKHdnZaE44GyYpHQ0eI
- GH3W5ErJ/uJAjMEAAEKAB0WIQQO/I5vVXh1DVa1SfzO6LjWAjRyugUCaWYljwAKCRDO6LjWAjRy
- ujQ8D/0egS4XV5yKcYX3dsAb/ybBt7n2mTIbl+uUqSkgvnQZ4m5Z72v80opr2qbajInKVtXcyIh
- Jy+EKJV/MQ8kUT+Ptz6K9lt3BGqpy/ENLkUpoMjRI62kaOEYMC4NbWoUBh2hm26kW+V78zO2bwK
- yiuMYKmrlxrH2Qwl+JOSGIfrXHuXfVGGe3afw1hqcSD0e4GQ9zh7zWQY5DsyIt0GEGx/HInusG/
- MNVzUo+EgdqjsLETTL1QCGQ5krRshz0FwxSCzMr7B6NYmpq3uKQpFHed7712dMqirj4O+R1KkKy
- cE66+RPBeHYdUFSa4R38rYgs1IUOTZcPoVeBlOoZFt1+bGldxxdWpvqownj8/iyxRXACvPX/dn8
- IxrbtKDgzsIOfiukT8wt+8Wu+ziVTOLPI+EyL9NObwqKaSDI5GQhAj6hZ7o3TzG4nMINEv5T9Y/
- MuWE0zWmQCqWzDVMAHoQXQSVs2Aw8bl5mDs8YxWkzSs8OJi9khsmtsCqP/AikzP+U3p0u/IZnxW
- I/LFdJc5Rx/AxGlxcXwUHZUR5F+QZUnMI/EoIyhkZb5FqWR0juEfUzntE9T8NhEtHuvlhHPJjFk
- Eqkvrwkt0CWt6izsAwwvdftnn+0Dmuv3JvmY0CIpEekqibusF7gU53gw20iP6MmSU0RUEzmcfYf
- fs11GbJxI6Ibbzw==
-X-Developer-Key: i=peter.griffin@linaro.org; a=openpgp;
- fpr=0EFC8E6F5578750D56B549FCCEE8B8D6023472BA
 
-Enable the cmu_dpu clock management unit. It feeds some of the display
-IPs. Additionally add the sysreg_dpu node which contains the
-BUSCOMPONENT_DRCG_EN and MEMCLK registers required by cmu_dpu to enable
-dynamic root clock gating of bus components.
+This series fixes various dtbs_check warnings happening on the MediaTek
+MT7622 Home Router platforms devicetrees.
 
-Reviewed-by: André Draszik <andre.draszik@linaro.org>
-Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
----
- arch/arm64/boot/dts/exynos/google/gs101.dtsi | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+Depending on correctness, either the bindings or the devicetree was
+changed as a dtbs_check warning fix.
 
-diff --git a/arch/arm64/boot/dts/exynos/google/gs101.dtsi b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-index 48f3819590cf8c05d6bd7241cfed8720149c7db4..d085f9fb0f62ac2f57b104c20880e64d885d0bee 100644
---- a/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-+++ b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-@@ -1815,6 +1815,23 @@ pinctrl_gsacore: pinctrl@17a80000 {
- 			status = "disabled";
- 		};
- 
-+		cmu_dpu: clock-controller@1c000000 {
-+			compatible = "google,gs101-cmu-dpu";
-+			reg = <0x1c000000 0x10000>;
-+			#clock-cells = <1>;
-+
-+			clocks = <&ext_24_5m>,
-+				 <&cmu_top CLK_DOUT_CMU_DPU_BUS>;
-+			clock-names = "oscclk", "bus";
-+			samsung,sysreg = <&sysreg_dpu>;
-+		};
-+
-+		sysreg_dpu: syscon@1c020000 {
-+			compatible = "google,gs101-dpu-sysreg", "syscon";
-+			reg = <0x1c020000 0x10000>;
-+			clocks = <&cmu_dpu CLK_GOUT_DPU_SYSREG_DPU_PCLK>;
-+		};
-+
- 		cmu_top: clock-controller@1e080000 {
- 			compatible = "google,gs101-cmu-top";
- 			reg = <0x1e080000 0x10000>;
+AngeloGioacchino Del Regno (5):
+  dt-bindings: clock: mediatek,mt7622-pciesys: Remove syscon compatible
+  dt-bindings: power: mt7622-power: Add MT7622_POWER_DOMAIN_AUDIO
+  pmdomain: mediatek: scpsys: Add MT7622 Audio power domain to legacy
+    driver
+  arm64: dts: mediatek: mt7622: Add missing clock to audio-controller
+  arm64: dts: mediatek: mt7622: Add missing power domain to afe
+
+ .../bindings/clock/mediatek,mt7622-pciesys.yaml        | 10 ++++------
+ arch/arm64/boot/dts/mediatek/mt7622.dtsi               |  7 +++++--
+ drivers/pmdomain/mediatek/mtk-scpsys.c                 | 10 ++++++++++
+ include/dt-bindings/power/mt7622-power.h               |  1 +
+ 4 files changed, 20 insertions(+), 8 deletions(-)
 
 -- 
-2.52.0.457.g6b5491de43-goog
+2.52.0
 
