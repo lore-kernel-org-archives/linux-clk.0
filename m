@@ -1,69 +1,80 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAA573191D8;
-	Tue, 13 Jan 2026 21:34:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91B9332ED30;
+	Tue, 13 Jan 2026 21:36:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768340096; cv=none; b=UdVhQCj50eUpCYHY5IA/IhEK80ODmCnx7yooJEdovCeHA2DPhHImhu1cVeyAnBvAXwIsxTcgI9aiQO+L46zfzst7b+QgRT/+HBDWebnT6Q7y/ajInOXE+MVda0orf994sKAFqA2cNGGIAF/Ok8YTOarhlmc/x4kysLc2e8n2XvA=
+	t=1768340182; cv=none; b=BnjTm47cYiQshwhgiIuRxdnF0kA9ug+kD09LX5qYs6iHYN6mV3XH5jLhDb22A75SsNL+0Kk/vhProzaBiHZtegbgVrNEXtQea3fFFrijkH93WJzhhzWb2Jfh18WDsDdvaz1+7ZYydUn1zOo0T+WdxORgy98l9b+clLEcmrQzr94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768340096; c=relaxed/simple;
-	bh=AnaM8x3f3W5v51ldvRJdYxt23fxs7tH71LL/EHiuuHs=;
+	s=arc-20240116; t=1768340182; c=relaxed/simple;
+	bh=FEkMizbDSsQypYg+svblccChMUIqdyLjDJVlgTL1oeM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y6orTYFF6Fvk+8TMESF/nesYfu2gVH+xZZc8k9zdJiP2A/T+jPi6PU3McMUO7f+5AgHV4Z6AGt/SjK/Md8f0o6tjEaPOP6agI0Er5mucsMCcujvjOcDY5GjPtiJHmIk3VzAu0KMQSJfmD788p9gKBKBEhFydV/3OUQkkTzqet98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F7DOZsRt; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=B/mTC91Kq1uXK0tM4seaxrI0YUTp4WwbSqg8yt+CBcwcXnwDQfB2lCj/skESQe1xtxZUMrMt7mBoSIBbWf4DguFYFgafOoUuU5gyyjiNh8tSuU+EPO9LAJjd9TZgqZbX1YqXEzRZlalkNSJ2GYl3J4MpZiQLEBSkgCanAO7mAH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lKYTYVTY; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F7DOZsRt"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F2E4C116C6;
-	Tue, 13 Jan 2026 21:34:56 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lKYTYVTY"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36014C16AAE;
+	Tue, 13 Jan 2026 21:36:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768340096;
-	bh=AnaM8x3f3W5v51ldvRJdYxt23fxs7tH71LL/EHiuuHs=;
+	s=k20201202; t=1768340182;
+	bh=FEkMizbDSsQypYg+svblccChMUIqdyLjDJVlgTL1oeM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=F7DOZsRtYsi8tQ07yvJmBY197Ps+YF5i45xHC7lnF4We8vBF0KOQCCjaVE6MQnmK1
-	 BewQRe/Xe4mibBZd+IiOA/EHpZ35RqlMKn3vXzTrRWoDKCwRtzRqcVTAvOaejd6mqF
-	 uLXiD+wmN1eNahhvm826cWRK/mjL2Cy3NWCufJG6E47CoYYGE6g/GlCFzTAT9lhLGq
-	 wxIZ6phqwK0QtFlfy08DmUoeduPbP8q4PLVaUHUxxCU2bjhEDaMXvUb2VB339469vz
-	 tuH22HCo0I2X9kszfxQOmyCpH1gfKA5L48itAsFk0HskG+P7FQ1goKEocSuvGAXtGU
-	 k22NPKK05CY4w==
-Date: Tue, 13 Jan 2026 15:34:55 -0600
+	b=lKYTYVTY2nqg+BQH/i5PvS6FoyoODvwBzij8SP8vPrb4+MurhvFUSXQbPuG1U1rzW
+	 LVyclwmUIVHDVYlUrAwI5//tA8K58bumt/c/yr+D0c/wwaUyWfljPr2fqfb1wdQk3P
+	 fJNqdTFqU391Ncj5t1QNEuz8fZzeunfYG0cxN9FBc0GCzA9GVftZtzXEqS9HcL4RyN
+	 YY7rVG4kp6QHVyjD9702xOXOIGSqkyV5mTM8yTz2xhyiQ8xvHTwzTxB4I7MWAAlMBs
+	 jZc9xZ+zkJ6E/K933mOi6U+wH1/s/xbGPOO38WCWQq6PKQ+Lv27SN3eLsLkJsMyL+k
+	 pU9FmDJkUpgdQ==
+Date: Tue, 13 Jan 2026 15:36:21 -0600
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: ulf.hansson@linaro.org, krzk+dt@kernel.org, matthias.bgg@gmail.com,
-	linux-kernel@vger.kernel.org, sboyd@kernel.org,
-	mturquette@baylibre.com, linux-pm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, kernel@collabora.com,
-	linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, conor+dt@kernel.org
-Subject: Re: [PATCH 1/5] dt-bindings: clock: mediatek,mt7622-pciesys: Remove
- syscon compatible
-Message-ID: <176834009281.195401.17311235589252333547.robh@kernel.org>
-References: <20260113110012.36984-1-angelogioacchino.delregno@collabora.com>
- <20260113110012.36984-2-angelogioacchino.delregno@collabora.com>
+To: Peter Griffin <peter.griffin@linaro.org>
+Cc: Juan Yescas <jyescas@google.com>, linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	linux-clk@vger.kernel.org,
+	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
+	Will McVicker <willmcvicker@google.com>,
+	linux-kernel@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	linux-samsung-soc@vger.kernel.org,
+	Doug Anderson <dianders@google.com>, kernel-team@android.com
+Subject: Re: [PATCH v3 1/5] dt-bindings: clock: google,gs101-clock: fix
+ alphanumeric ordering
+Message-ID: <176834017914.197388.17009547252471169772.robh@kernel.org>
+References: <20260113-dpu-clocks-v3-0-cb85424f2c72@linaro.org>
+ <20260113-dpu-clocks-v3-1-cb85424f2c72@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20260113110012.36984-2-angelogioacchino.delregno@collabora.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260113-dpu-clocks-v3-1-cb85424f2c72@linaro.org>
 
 
-On Tue, 13 Jan 2026 12:00:08 +0100, AngeloGioacchino Del Regno wrote:
-> The PCIESYS register space contains a pure clock controller, which
-> has no system controller register, so this definitely doesn't need
-> any "syscon" compatible.
+On Tue, 13 Jan 2026 10:58:58 +0000, Peter Griffin wrote:
+> Ensure children of cmu_top have alphanumeric ordering. Top is special as it
+> feeds all the other children CMUs. This ordering then matches the
+> clk-gs101.c file.
 > 
-> As a side note, luckily no devicetree ever added the syscon string
-> to PCIESYS clock controller node compatibles, so this also resolves
-> a dtbs_check warning for mt7622.
-> 
-> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> Reviewed-by: André Draszik <andre.draszik@linaro.org>
+> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 > ---
->  .../bindings/clock/mediatek,mt7622-pciesys.yaml        | 10 ++++------
->  1 file changed, 4 insertions(+), 6 deletions(-)
+> Changes in v3:
+>  - keep 'top' first and alphanumeric for cmu_top children (André)
+> ---
+>  Documentation/devicetree/bindings/clock/google,gs101-clock.yaml | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
 
 Acked-by: Rob Herring (Arm) <robh@kernel.org>
