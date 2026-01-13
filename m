@@ -1,130 +1,92 @@
-Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
+Received: from mail-dl1-f50.google.com (mail-dl1-f50.google.com [74.125.82.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46B17369961
-	for <linux-clk@vger.kernel.org>; Tue, 13 Jan 2026 15:13:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 768EF24503F
+	for <linux-clk@vger.kernel.org>; Tue, 13 Jan 2026 15:49:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768317214; cv=none; b=A7q792UB7s+sCNUCLL3Rugg/BTMaMZQ5bnBZo7x+2gLk+XnO5NskLwZSnNC0H2Gr8A7utJ8tJbxJk6syd/UXJzrW5ejOFxR8nSxRXv2i/lX7D6OKu0uFz6Q1ZF5HcbXCOzOMkOzt2b4YwHJhuWKop/HH/RmZypTJT1GLVpkGvP8=
+	t=1768319351; cv=none; b=lVrHT8DUd0fj8Z0aYA1jaSMl5dqsnUBFxTiA0C6BeHOj+kiUjcMuDAJb4LLjflKylDJwOjwpxx3GbdG5KCKM7Zlaimxo2rp3g8/hS4EhA9i2udHahYAUuV1mPUwZ/SXZf1GLpK/Mw1wnZtwn251+MMVwVSp/CM8MYyiiTWqYGl8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768317214; c=relaxed/simple;
-	bh=5DE8fHUHNeug+88kGFo3S/QoXnkelD/PvswD8rGjIrM=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=HsR2v6iWcFdssnYrTX1fS1WLPqfpxy+NMC9TTrN1ZI42CQh+JziVak5yzerb7EbjRVUNovjTRixvjP2FzcMDTuvi3I/gDyrOOE/RvTyTzsdCsrpetfjPM4n9e7fhMlVtPjnqmWDm5agz8AZqTBmq5K2rzm5qRcNAVlyWaecuw6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=I0xhZ6ud; arc=none smtp.client-ip=209.85.221.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+	s=arc-20240116; t=1768319351; c=relaxed/simple;
+	bh=L3oLbFvwOOJts0UzMwGyJmDUy99A1kmDLLXXtP4qNCY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HpvHtnZtH108t8zl7uskk9drnDba+Enwmtedc7p4AvCz2riJzFUnN/rAS0drdDrQ2A2DOjcWgYk9hpzMztZiEnkU/3hWEgxHnCwmHuEhN+JE198k4ojfjjALXe92tRWemVRNteyN/BW2lD8luAoh18Dv4X8arTuRkyWiMMwg16M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EpLJAg6q; arc=none smtp.client-ip=74.125.82.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="I0xhZ6ud"
-Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-431054c09e3so4532823f8f.0
-        for <linux-clk@vger.kernel.org>; Tue, 13 Jan 2026 07:13:28 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EpLJAg6q"
+Received: by mail-dl1-f50.google.com with SMTP id a92af1059eb24-11f1fb91996so447764c88.1
+        for <linux-clk@vger.kernel.org>; Tue, 13 Jan 2026 07:49:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1768317207; x=1768922007; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=clahOJSyAVmCLVNVjHaJTlJ4hThwgbY6ylIwpTEN8h8=;
-        b=I0xhZ6udPcaRNeEhWztS9BIlheYHH78ilQ0ssnqyG+aDyEtt2ZgRIJEFMXcZxmErFh
-         Ej2OY3B9/C1PglWoh/3bi7ywKQ9Bu5WqQgOzme5UiIqNVRzyb/pQXdUnkO6Qmgkjtrt+
-         VV8NK9cTKMs6OTRzWSN8SAXRtB9ypauip8DK5c77gK3x0M6AZ5GljGjFio4BWiy7IzkO
-         OSIzEOHDw6GimKjcPKgT/IlhLE7eXigs3cSRMyYQcP+NVnhC02k7+z2xaiaE4vOvtQbp
-         oq2p3JqOcIirjWXkhLjLJdZo5/nTn7RtXay4utXCAc9lv569lZArjJVIyxu8U2kfUKi3
-         eAZQ==
+        d=gmail.com; s=20230601; t=1768319349; x=1768924149; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=L3oLbFvwOOJts0UzMwGyJmDUy99A1kmDLLXXtP4qNCY=;
+        b=EpLJAg6qn+XEeGomahvnwnwTH1SsGUH2IkEnFZDPHzfjXOCAGYmIzhwisNw0Ji1z2f
+         jgJ5N7E+qtd6CBYUerqddp7yEoqIAMzctbi0BTWNPf9KZrILqBGmk4yw6zM9o/t8jYft
+         NfP1Ch7Mn9eWn21sU0jUi3vd+AbllqecE/114AdueyleJ2oAC8yIA7LSqsTmTFlUEPiA
+         D2fYv7EVgRzgsoDsYyNgB9Ld5wZ8CEbc9GIssqBv1zeD+tptYP2CDYxGYHkwRLdMLacT
+         vxDaaq/19KW4Y4jBaMwdz3uwqWvUP+D9DaN8bwZwOptIQWAY2FnKkyMWEMBGNCLDR7Uy
+         iodg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768317207; x=1768922007;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=clahOJSyAVmCLVNVjHaJTlJ4hThwgbY6ylIwpTEN8h8=;
-        b=S7nSFLSx6Z3/OzGbfc1eqokkSe74jsZFhbED2PADFZGOWpBFYbVGOwXr5fCPnJaRJx
-         7KPMDNL+jn9vXpxBN2P3A8VbsL8zEFeDcGS7gDJCbzwLjnz87SuysA8CJ9+uQyrzv15K
-         RKiOLFuVf7gzVjf7BOHiY5Lr3bd1304SPWrfK+Fq40TirH4xAl8/CyRTUD/kwI/hUT1F
-         1RzF8HzPo3lae2EK9UUHc4qJQOra1spi03me7P4dkQWkvl6+rfi2aruStIQ2EzmCKNQX
-         3jsKSvKSMR7L9rFqVkIWcIQ/g7W6LkpK2EfNjF87CNZwVxuaRoY+yQHaNAeze8smeiOD
-         YP5A==
-X-Forwarded-Encrypted: i=1; AJvYcCXDKpI/ChCPltMAvBDgtxwzfsOa5hlh9cKnNhE4Fbr3iMgHCBwQil1YYmXwnoJBPIk+wKZkEcalNaM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YykMgK2u/n9CubfpiEOC2OiYUZlkoIiE8TEDauppRZIDpkgYxqh
-	Sshat8YPivmXTuqFej+9/k2JAP7MMxwCcdj1y1Mm+XATv9W+OM+CR6vQZ936JFP3kWeEyztb62E
-	u7hQGd2LejVisM1Vvyg==
-X-Google-Smtp-Source: AGHT+IFANjV4vLX5QPuJ5KpCs0Rj644PourkYIVXhMKZkYuRk0oEaR0gmzWWf8Xi/v74hg4ToVXO6AC9XE7qoTU=
-X-Received: from wrbbs10.prod.google.com ([2002:a05:6000:70a:b0:430:a835:4ce8])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6000:1a8b:b0:432:84f9:95f4 with SMTP id ffacd0b85a97d-432c374f4a7mr27176145f8f.31.1768317206801;
- Tue, 13 Jan 2026 07:13:26 -0800 (PST)
-Date: Tue, 13 Jan 2026 15:12:36 +0000
-In-Reply-To: <20260113-clk-send-sync-v4-0-712bc7d94a79@google.com>
+        d=1e100.net; s=20230601; t=1768319349; x=1768924149;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=L3oLbFvwOOJts0UzMwGyJmDUy99A1kmDLLXXtP4qNCY=;
+        b=t3RoZdzadnFLouoKCpb2nIOzi9fWqHFw98sYEitWlfMy6/5bq85WeEpavNSUUE1yyJ
+         4eudsZ864odN8aalo8rQH/cmXq/2/xXMjbeMO7GiXTKLxpH+eqnxkvX3uRfS96hQiD62
+         1riWyfrt6arrq8gZvjah+ZQMrj/bS76cUyZc55gkQOdlCCkoPt+QqvHdSw19EQEyBfjs
+         17jyqlg9tmDJF0jFyl69KGcU3xbwp8ZS/Nv70U01hpWMdzhPO/0XZjzNyhDpkvTZ/fod
+         CyRBLH7tA8tsT4LirwJ+8FWRvB+yfGFn9+cFJ4XCfI8U/Cmw+eJpfjj45vqRRCTHDVDn
+         vNkA==
+X-Forwarded-Encrypted: i=1; AJvYcCW6Ylucx/cS1oPLoLNt77jLJhIUJgCWL0sb/AF8a8DcOT8/qv6G/lODZLHfMWMboQqy2orx8hPZEiM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz60lmpbvQyIHkyobKXE1LCZcMUxbLyvDmAvPZopYjInZYPrzCO
+	Ri+7QIdrf5tY2Mwfb4w21X7Xwo6hjxWQAftGzdw//Y1ZdkiBvRtR2/G4uErFHsWxNPbSA11m2dW
+	KtqsNsiGmJNpnpttNfKNcPLibuflMMqpReJ5l
+X-Gm-Gg: AY/fxX4hMrZ+ACgwbruifbRFcfmNKApYNiYIx7euCUXGs1ctWzuR2MrSJ6g0eYmhCP6
+	sSQ4H5IVL5L1WTrhTJt7ebDahgLpfZcNEdkYnSn1FK2pRzZvQaCJFK3FrA4GIJiwIEQRKzPeoQS
+	dF7esY//GInSo8qwywnMdpy+x9IBjh2RtBpLvzWxMYL4jbaDRpjWAujt6JL8aXzE65Z5HY8qVxg
+	gOAvVr5rJexoCRPeF92SIz7pDs77dWx9P5esmlbCknLBqaOpJYWE/eSZZyAD1knOjZE01BLk190
+	IDoTXRFMOELEm7KW8G0q/wh9GcFpVPgCnDi0catKwPewIBU3u5Nps/elxpoPVCX0IS14ppsjU1X
+	8YjTcfw3/LX/ZLKmK1MW6
+X-Google-Smtp-Source: AGHT+IEtf3xHFMK7bh85v7wy+tj/RylyAyqCoV9aOeql1xusdXvXq6rsq1/RBjQjsVrrgZEZyOQmOhuD4FnrB8WmMNE=
+X-Received: by 2002:a05:701b:2207:b0:11b:9386:a3c1 with SMTP id
+ a92af1059eb24-121f8b750d4mr14170039c88.44.1768319349465; Tue, 13 Jan 2026
+ 07:49:09 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20260113-clk-send-sync-v4-0-712bc7d94a79@google.com>
-X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1369; i=aliceryhl@google.com;
- h=from:subject:message-id; bh=5DE8fHUHNeug+88kGFo3S/QoXnkelD/PvswD8rGjIrM=;
- b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBpZmEQNNwQvfw9jQxuDNt4fC2n5Cfx+vcwSjcWB
- EjbHAg9hU2JAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCaWZhEAAKCRAEWL7uWMY5
- RvRxEACuwFIesZvoHE5gK5RQaiufwGNORvDKEuP1GJmMebtB3qC4PmH2wFMguWvNpJTUKWU0D5d
- jdQ+ITMxKWDtDMpGzdoBMliByodTN5wwtvNZGIPaLLEUZ+uImdP1HlZ+5M03+eyQJOMs05GW7Zc
- TSlL6zpiv+54WAj40TJH1d5HPB0WLbITPscM6xHXaCvfaCMxSEcbqqDprp8VoDZ6zgZSeAIqc8v
- zVSXwizZxkbc9uGfqfyY6kGS2soNpo+IyeElYFqMNY4pR992VOqL1+37BbqF6BxAxLrtBwNoyBC
- KbUq7ZcC+1DqYAejPv1soQ+e+hcJK9X/dtfkBjW6GBe3B9P0Y6s7qEHIUqV7BSEvxOB/mIQ5UZ0
- rtRm3VEAOnA8v8E2oGTQazJ58ezoKWwB5L6muDTmHlSyEYQhVqNUNAVsxi61bWxCcuXPu9KmxgC
- LHI3zLNriAuors7Gzwlu7Ahzu/6yPgqwJ6ebzzMhWAwTKLvVRvIL7BbAMjEEfFofP9IEuyazi/l
- Up8zWnwYgaiqqLz/g9gxZdaF1h1dm0DWqMUCkAe0/o95w00/ZUtgyOkYMGdSqL8zyYHhS6K7/Qg
- NaPzd6f01DT77HGn2DEO6xOX2PbrAgvzU9PVSXxUEpt/0wR1I5PF2aS3brFDfpjwLpJ/0c2p8pf 28UFVHEynEoLnxg==
-X-Mailer: b4 0.14.2
-Message-ID: <20260113-clk-send-sync-v4-1-712bc7d94a79@google.com>
-Subject: [PATCH v4 1/3] rust: clk: implement Send and Sync
-From: Alice Ryhl <aliceryhl@google.com>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Drew Fustini <fustini@kernel.org>, Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, 
-	"=?utf-8?q?Uwe_Kleine-K=C3=B6nig?=" <ukleinek@kernel.org>, Michal Wilczynski <m.wilczynski@samsung.com>, 
-	Viresh Kumar <viresh.kumar@linaro.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, Daniel Almeida <daniel.almeida@collabora.com>, 
-	linux-clk@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	linux-pwm@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+References: <20260113-v6-18-topic-clk-fracn-gppll-v3-0-45da70f43c98@pengutronix.de>
+ <20260113-v6-18-topic-clk-fracn-gppll-v3-1-45da70f43c98@pengutronix.de>
+In-Reply-To: <20260113-v6-18-topic-clk-fracn-gppll-v3-1-45da70f43c98@pengutronix.de>
+From: Daniel Baluta <daniel.baluta@gmail.com>
+Date: Tue, 13 Jan 2026 17:51:38 +0200
+X-Gm-Features: AZwV_QiQSE65KDDt7M1WU-fsU0Y3sGYlf63F7cu4HgA_-IsmphqZd0FRyAjQOBM
+Message-ID: <CAEnQRZCUJKmH5TM9F9zMHpTtZ8K55bNL+7AtaMysyaCBru3wug@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] clk: imx: fracn-gppll: Add 332.60 MHz Support
+To: Marco Felsch <m.felsch@pengutronix.de>
+Cc: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, linux-clk@vger.kernel.org, 
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Primoz Fiser <primoz.fiser@norik.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-These traits are required for drivers to embed the Clk type in their own
-data structures because driver data structures are usually required to
-be Send. Since the Clk type is thread-safe, implement the relevant
-traits.
+On Tue, Jan 13, 2026 at 4:53=E2=80=AFPM Marco Felsch <m.felsch@pengutronix.=
+de> wrote:
+>
+> Some parallel panels have a pixelclk of 33.260 MHz. Add support for
+> 332.60 MHz so a by 10 divider can be used to derive the exact pixelclk.
+>
+> Reviewed-by: Primoz Fiser <primoz.fiser@norik.com>
+> Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
 
-Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
-Reviewed-by: Danilo Krummrich <dakr@kernel.org>
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
-Reviewed-by: Gary Guo <gary@garyguo.net>
-Signed-off-by: Alice Ryhl <aliceryhl@google.com>
----
- rust/kernel/clk.rs | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/rust/kernel/clk.rs b/rust/kernel/clk.rs
-index c1cfaeaa36a22be2e3180b1e9142bb608ab276ea..d192fbd97861212d738d24510eebcd99c9177f2c 100644
---- a/rust/kernel/clk.rs
-+++ b/rust/kernel/clk.rs
-@@ -129,6 +129,13 @@ mod common_clk {
-     #[repr(transparent)]
-     pub struct Clk(*mut bindings::clk);
- 
-+    // SAFETY: It is safe to call `clk_put` on another thread than where `clk_get` was called.
-+    unsafe impl Send for Clk {}
-+
-+    // SAFETY: It is safe to call any combination of the `&self` methods in parallel, as the
-+    // methods are synchronized internally.
-+    unsafe impl Sync for Clk {}
-+
-     impl Clk {
-         /// Gets [`Clk`] corresponding to a [`Device`] and a connection id.
-         ///
-
--- 
-2.52.0.457.g6b5491de43-goog
-
+Acked-by: Daniel Baluta <daniel.baluta@nxp.com>
