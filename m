@@ -1,569 +1,410 @@
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from TY3P286CU002.outbound.protection.outlook.com (mail-japaneastazon11010054.outbound.protection.outlook.com [52.101.229.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 350CA37BE90
-	for <linux-clk@vger.kernel.org>; Wed, 14 Jan 2026 09:26:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768382766; cv=none; b=plgWvWV7IzY/48noLpPMIMg9m2mHcgv0Q1dbmrxwwdw2i3l8JtSdkRzarmNRHsPQLSM8c5JEWAy1AUfa8bpKzVR/5ZwxQqsIvE46X8nnk4I8iLd5ssOyG3aUGHkQDGITRJMpYRB93z/DVi2EL/EdES6xG7XC8SLAzKLJ7vSxInM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768382766; c=relaxed/simple;
-	bh=mfSjzPtewToyWGbZklE40lv8Ydr4yGvAwCINFR8WIQM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=V3MR16xF84SzTRbxPP7FLZxGsbPvaFLEKq5F0nyQcMP/1ZHrFd4UMU0HHSw8GL6ZfnGmXHv7fjnPQve8Zem4BNwKlKj2BM37EiNbk8ysmpC2vLD5qHB9FaStucNUmUCqoThLOEqgYWyi7ZOqCaj9gKdw7rIOgudSKGsYvYhc3/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=PdCER1c4; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3CD537BE97;
+	Wed, 14 Jan 2026 09:58:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.229.54
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1768384715; cv=fail; b=pBi1slprkgsXSKNFu77m6Kd9clbEViring0SWCIIc4/3C4rNIVUSXnTxEyVwYuHosOt8q7L3kbtA8V6Prkd1nGwe/doBa/nj3yDTuiF3QoOfSufXUjPU34bJ08EVodOvgTXVKuR/1Si1hjPwIbdWrEyUrkl8F9Z3T1jxpNgtEaU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1768384715; c=relaxed/simple;
+	bh=DeQanNgn5p0XcSsIpBwVeJLjhYkbDmaJB+ODBpUCWtg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=OW2vLWAz4TiMpB6Yh6KfsS1E4P/OlMKLUy11UOVyrAvzz8hYiPrI78LU954hRiz+YdqTb0qLROleHQqR/puAmdghX0zDdNQGvTdg/UuyL2Yi8YBTw3C1z+8PkCEemy5+6ET6HuuMlYG/cwyAwiMeIYZbUflxEy4hQsIdU66R1EI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=COD86YnI; arc=fail smtp.client-ip=52.101.229.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="PdCER1c4"
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-47ee0291921so9338795e9.3
-        for <linux-clk@vger.kernel.org>; Wed, 14 Jan 2026 01:26:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1768382761; x=1768987561; darn=vger.kernel.org;
-        h=mime-version:message-id:date:user-agent:references:in-reply-to
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=9weBqObxH8DPoWd4EEXh1inSDulmXc6nULjQD6fasTg=;
-        b=PdCER1c4Y11vkSlmOGcrUVZwqxKKd8FZFwduCRWZKokZ3JFxFSCMInqBf9Y2UyIdfA
-         mr7MFWb4byWb6jGjHdH/qR5faPHdQ0aVg5zIjsiRVEdBdtVat6TZrCdQ7/ag5evcccVN
-         SwCHzzfszIqj3mMhja+uJdAblXqbxkBTsVMRFqmO/hiPVYZVsamdyC3un/2i1kmwSiW+
-         WUThgSw/CFnwB9q0mJLyrC5tY9MSiSIvkXA3ybS/yKS3QwvuL7IyCuHegLjlGpsvLbdb
-         O337Q+zUSr3InnU3asFpDyZXkIDrr7txqih+DiDAjYgNpXbNnuOZtHj/GHKZ8HguAuHJ
-         Z0iQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768382761; x=1768987561;
-        h=mime-version:message-id:date:user-agent:references:in-reply-to
-         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=9weBqObxH8DPoWd4EEXh1inSDulmXc6nULjQD6fasTg=;
-        b=SAzus+o2rJlCZH5DF/BkUKFIxRiwK5j04mde/nPcpePMk8tSAPAORaYWE/GfUzQHYc
-         FsVOhxFfvm2HgLNTFhQE46ij/kNQKT1FL8zmZg0UEIwxrrkLA6lWtUm9IlgVYhLkiXmC
-         bzF2wTRrb3TalBYlRePnxZmBiczHY58+zN8ixU12QcO35x+B+/KSWlqZs240kNRamR5v
-         4hTCZjmrDoqXyQfv/SkAkeP0YRuCCTcXTmehGtfmAZzGR88Os2YCU+FJAdYPK8erERHf
-         BdRSozdfnm2WSFtHgs8HmDxjetLItCZagf93qjIS8BiTscVbVoK8GCMy8xnbzcCeNHpn
-         Z+3g==
-X-Forwarded-Encrypted: i=1; AJvYcCVbDOMZ5jy0k18JDY3aXLJKzO3v1+ImM/59S2EbmrhDZK7nFSCmPeeUfj6/AbyAogf5M0VJVqmLVic=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMNRLALNlvE4ACDsCD9JuNuhi3gv2MSNp1ezU6x/uT7J5rYcJg
-	PZvN9T7DdFsaOCiRcHkhtSQJnW7UPX/NnvRga+Qta52mIvx2SctgHYfjpqpW0dYZ8K4=
-X-Gm-Gg: AY/fxX7aP0OAzXNhn7lrY1MugkmsmoIiMglmo7c+d8cQf3306RAfrJvwt9HrGcfjcM8
-	lJlYJ3BRfFc3tdlp3p3pgk4QfuOJdyZkVSSJywVPyiBujKS3y0QkXOG5XPE5/WvzJZCY04DrDhU
-	LhfSmhzApvVR6mg0MziGUUuM8tJBl8dFMwqSdQme18KtZUJm8N1nkN0PgsxEwAh1gio6ha12auy
-	E1NnJSkO8ipLxsDUWW8nmQkjSYb+DXP0hwxpusaYHUoB39UG1D0QtRUwmfTo+Jc5N4chh1Iheni
-	jhP7Wv7BIOCDsdO8ypdEAbhU1QiK36xgsP+dqmoyi1C0w1oJbRW0U4wHu3GNPdPYBNOJkxgTqvj
-	PvVIi9W9pUq/hzElu/cd+dO5d8pBByx8T0P0DYlKrdWy30behQyNYjZRaWFYrO1+YnoHZuiD14g
-	Ixf8XSjVwe8OPfygSFigM9
-X-Received: by 2002:a05:600c:3555:b0:477:63b5:6f3a with SMTP id 5b1f17b1804b1-47ee33a1b80mr22290985e9.27.1768382761437;
-        Wed, 14 Jan 2026 01:26:01 -0800 (PST)
-Received: from localhost ([2a01:e0a:3c5:5fb1:db84:c9f1:21bc:dca1])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-47ee573e2eesm18698295e9.15.2026.01.14.01.26.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Jan 2026 01:26:00 -0800 (PST)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
-Cc: Chuan Liu <chuan.liu@amlogic.com>,  Michael Turquette
- <mturquette@baylibre.com>,  Stephen Boyd <sboyd@kernel.org>,  Rob Herring
- <robh@kernel.org>,  Krzysztof Kozlowski <krzk+dt@kernel.org>,  Conor
- Dooley <conor+dt@kernel.org>,  Neil Armstrong <neil.armstrong@linaro.org>,
-  Xianwei Zhao <xianwei.zhao@amlogic.com>,  Kevin Hilman
- <khilman@baylibre.com>,  Martin Blumenstingl
- <martin.blumenstingl@googlemail.com>,  linux-kernel@vger.kernel.org,
-  linux-clk@vger.kernel.org,  devicetree@vger.kernel.org,
-  linux-amlogic@lists.infradead.org,  linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v5 5/8] clk: amlogic: Add A5 clock peripherals
- controller driver
-In-Reply-To: <20260108-a5-clk-v5-5-9a69fc1ef00a@amlogic.com> (Chuan Liu via's
-	message of "Thu, 08 Jan 2026 14:08:19 +0800")
-References: <20260108-a5-clk-v5-0-9a69fc1ef00a@amlogic.com>
-	<20260108-a5-clk-v5-5-9a69fc1ef00a@amlogic.com>
-User-Agent: mu4e 1.12.9; emacs 30.1
-Date: Wed, 14 Jan 2026 10:25:59 +0100
-Message-ID: <1jecnsr1eg.fsf@starbuckisacylon.baylibre.com>
+	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="COD86YnI"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=SBZqcFaO630Y5KCY1/oT7aiPFA+EP50w0g7mdLouAcC0J/MqEhtR8sQKW9S2guH8AZh5tRx+HLNHTenkdA2dLbzSbFS/+eerqjD8MPtiVvdyZ9zBOcMTYAyQJbZa+7yNsy1v1KcBG9nLHGkIYgnRbYxM+9BI0Bx9lB1VdmPsPsiJAaepCscf3LfQ1SiOE1hDiO4lVUhfUO2y5h3rf5LSa3AKN5OMQ5fgEbBblhWtz7NKY9tHI7OTYzjPqRhs8PGy1/e4QjaC+wFBryA6Ww31IYmw0uNTYfGDhLCTz+iMA5Jxr3ALIH/hhMMbSeul8ltwpISLMpjm8Q/eoUJJ9oqTYQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=3JSyd0II6pcVOhb9dv7ynRUUKpiCZeYdbhjRHR2d38w=;
+ b=x0mi2s7u4b0dTBttPq306IW8cvUacIVMjgwxD0NYwK/3qXnRoxmLXT4QJvbUEdFv15YLG/XTxdmai0O4EHsT1Pqrs0D49+5N/fW+zawYFAkUlJi0vExwU6MO/b5NjP4J/LNJKw4fn1t/zRjrd4YZooZluw0kRc6K2WI6JF5ECJFfX4+9sjdyLhPtsmQjD+47HBkYwCQwc29GdTv7CV5tWEyE9S2Oqsn/J881bDQmH9ZHflWvuH++MxQlymLshVP1WaXk5yLw77Ucjy8N+AyXfFDsIQZ2xMmLksUkgc4aFIn/RyKI6f7NGDqgs118+h9owxvhYQX0qhZqoi3L4P15Ug==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3JSyd0II6pcVOhb9dv7ynRUUKpiCZeYdbhjRHR2d38w=;
+ b=COD86YnIeECxAcLoChp7zetrjo97OdWCEddqneS38UV/XnuibvKDOmGoNTaX2kSx+1mRwJaL4TEEKG7Q+EbIzRs1HTHR1l1Di3UFxDu2iiuFt0+qW2qRgXfI7wN0FRfAHZpFrD1HfYlruomW52dbJcLfPDhNIzE71co7/4+C8zc=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=bp.renesas.com;
+Received: from TYCPR01MB11947.jpnprd01.prod.outlook.com (2603:1096:400:3e1::6)
+ by TYRPR01MB15090.jpnprd01.prod.outlook.com (2603:1096:405:225::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9520.5; Wed, 14 Jan
+ 2026 09:58:27 +0000
+Received: from TYCPR01MB11947.jpnprd01.prod.outlook.com
+ ([fe80::33f1:f7cd:46be:e4d8]) by TYCPR01MB11947.jpnprd01.prod.outlook.com
+ ([fe80::33f1:f7cd:46be:e4d8%5]) with mapi id 15.20.9520.005; Wed, 14 Jan 2026
+ 09:58:27 +0000
+Date: Wed, 14 Jan 2026 10:58:06 +0100
+From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+To: tomm.merciai@gmail.com
+Cc: linux-renesas-soc@vger.kernel.org, biju.das.jz@bp.renesas.com,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 14/22] drm: renesas: rz-du: Add RZ/G3E support
+Message-ID: <aWdoros0gYXj_fxE@tom-desktop>
+References: <cover.1764165783.git.tommaso.merciai.xr@bp.renesas.com>
+ <d7361a77744b7c8720addaaa064162470e7f3581.1764165783.git.tommaso.merciai.xr@bp.renesas.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d7361a77744b7c8720addaaa064162470e7f3581.1764165783.git.tommaso.merciai.xr@bp.renesas.com>
+X-ClientProxiedBy: FR4P281CA0173.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:b7::16) To TYCPR01MB11947.jpnprd01.prod.outlook.com
+ (2603:1096:400:3e1::6)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TYCPR01MB11947:EE_|TYRPR01MB15090:EE_
+X-MS-Office365-Filtering-Correlation-Id: 15758ad5-1f05-433c-3208-08de535376ab
+X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+ BCL:0;ARA:13230040|376014|1800799024|52116014|366016|7416014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+ =?us-ascii?Q?3gBWJb8Vamqz8Hcsv0kovvCy0SQHFiW03f3v+cykkM6Xcc8nx0RgGElvPJB4?=
+ =?us-ascii?Q?zhKjj3acn04SkdoGYxUt429DIMn6/S/9o7AHzwTen11sKTNOcN8RXV8lVRcl?=
+ =?us-ascii?Q?W+hueXy6xgwpm+P0jpbRk7pfeWppjprEri7Sb42+5jvj2zfnqpRD7DGeZ+Yf?=
+ =?us-ascii?Q?r+BMMS2zFCSqSvmm5uIEOp6YxMXe2EawyMDdXnXkEYDqEbRAE91KpzYiHfsc?=
+ =?us-ascii?Q?Vn8nITySVcBRd1o8ynJGhTuI4CiK2J5mEsjp9lIJfWTkg4ZmOALNl/OZbnHS?=
+ =?us-ascii?Q?3ulCDui+pzWv6VUrdwMXMEAoYKK9dvuT1R1q18alRzDamov8j1gLNP0Z6Vsx?=
+ =?us-ascii?Q?SaudAPC9ToUSI8O8zCkVRWr+jBKeMa6z+G2sliPgulArz5PTiEAfBL7dNRWm?=
+ =?us-ascii?Q?sv4vvzWNkb9t/iayN/nl7oMIc+rllOiTnUnx41U4J8SFD3wbXYX/dzRxeSvA?=
+ =?us-ascii?Q?Uz02ME37DV5+ccIzMFnAaSdrcSF2rIVL1TgQgULdDi05zD9MZkAxZhBgjqbI?=
+ =?us-ascii?Q?C8VPmmvaIwhV+Fa//DAOKb1YNSXmV1Ua4AdMMTDnngAC89lKm29/2k766Glb?=
+ =?us-ascii?Q?2cZ55b848EnnRbBMJdMU0nLXlityyQKhODJAT4imkJVnP01E96qE2a+9KozC?=
+ =?us-ascii?Q?LYUsMRJm2lA8mQ/TLPSUah4bcU5Npbmy5VwYGbbM4jz05qyU9Bw4nYkmyfCD?=
+ =?us-ascii?Q?NJNLZacufTH0BG3LdhJQ/kUAxjIUiznFcZGMwDDpouFb4SwKsKPivNfSyzpY?=
+ =?us-ascii?Q?h1b//j60DKnK8GHdVLxnhrclbu6pUphiZr8U932ajLWBPZe+nySnE7eIS19B?=
+ =?us-ascii?Q?PUIbwUnOKTNli22057lJ4ajWYvc4OHUcQK4FccmdQdwd9nsZOy8qcjMZeDMy?=
+ =?us-ascii?Q?0NYky/az4pJfD3EbvpOAzZTeOnSatGQtR9J3zM27qFg0fTbKXk8hkzMIRVGk?=
+ =?us-ascii?Q?mtCKzVoQGFhGZA0SvjLoZPBXMtHAy6HYFx5tWDgIpuY4evDV5oGtbeInRH0g?=
+ =?us-ascii?Q?SAT5wGosd7jxisuGeimRvsCyqDk4/+/+cdeeQ/eqIDsHvlng1F+pjCF9Npng?=
+ =?us-ascii?Q?qv9JlvgB7xQRjbk2kiD6Lu0mft7zAq4hA2Teja1qzIQSeGQ+wM5d/HDJMg8o?=
+ =?us-ascii?Q?mfSbVJ5IRi88Kh/tqLOIwWy5fBsJkya7YjiUIKIN64WS++ecSrOCsbIukzvp?=
+ =?us-ascii?Q?hqcHI8IUgKNuVoQRmLsnIvPJePYyRzvNabV2ioAtTYmmc558kIi8lxs8f8nA?=
+ =?us-ascii?Q?tgoAOEWSwp9R9SixqyIn2sUjYgigdqeFVqxk7AMeu4qOQGD8q3p6J3p+N3Zm?=
+ =?us-ascii?Q?U+vFWKoKsSwNbQD8EoytLP7iBXHlFMlgZQmovh+1K0uWlnziVrjbEX+6HmIx?=
+ =?us-ascii?Q?SgZldbY6f7eVFnSvQWV0lpF5PR2MAXzVbSIKqIb/MgevcSJvmG6Mxposff0x?=
+ =?us-ascii?Q?/AXNqA3S2Srri16PY1V4mpJ+EXS3vJWK2oK5AeFPdCNmkt2QyBl1PoaZmNJs?=
+ =?us-ascii?Q?CwMGagyOQWHfSbOsFhQnF5L5IwAjau8XXb98?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB11947.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(52116014)(366016)(7416014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?us-ascii?Q?cZlJ/JQNm6MIw++5WLnJsnnpYsnmYwqjFCefgnXG445qJKBylXe0/4n9gFZS?=
+ =?us-ascii?Q?IVy2hqogS2slyCfY+yHktFHQVqDGuNBbNL3t+r8o1+eflBm/dY8XOIJAwVQd?=
+ =?us-ascii?Q?yuinVce2vIHXTH38ZlykJRsoaTCdnxXDVmIrEfr24issL6I1W16heId1RTC8?=
+ =?us-ascii?Q?epxJ0qu5/2GO+/0zxdtD3VnRBmiL3eo3FVUvkgHETC0vtDRqSedseikYSS3G?=
+ =?us-ascii?Q?9H+o8BxCp6ljx6qcsx4jPH2nUd7O1Crg2DiKWTiS0C4ZsSoOokRaVdLiEgKF?=
+ =?us-ascii?Q?sKBaHBWb765A06DaTeMdF8o9cDYzYizze6GpNQMT953TmNOXydeKe5EJr1bR?=
+ =?us-ascii?Q?bDYapcyrhieQdw1pwBQfnJ24S40Xt0iMBW7F4mxV7lMbGxOhZC2JWtjPj5X4?=
+ =?us-ascii?Q?CXvPuXHWJVkcZ9UwJxyzLjKxb6hGvCcd3Er7+3v94Zn+rAjZbVZ4fNpZVkqk?=
+ =?us-ascii?Q?MjhqKRdrcmnd9pN2huc3W0J+CmaI2+diZ+eNy7j7G5wNOJDGZvqkLnNAWxlX?=
+ =?us-ascii?Q?Hia5th8QDORXLDiOYKm075i0jADRbNC4/u4Cwi+2GcNrPvQNuXaap8h7seUr?=
+ =?us-ascii?Q?zDd3Hgdt8li675Mpif1XfWCnTsEP8bwGbpWrxnjqjDi7oxzDP7K6KrZk1pxD?=
+ =?us-ascii?Q?84M+gTm1WfmOAH7dpvV/LMpX9XmXL7P/qxnGdm2D9FDG75+gJdEHecBHgQWy?=
+ =?us-ascii?Q?pMpcKMmlitRCDugVOQ58/V1EzfB0dMBoeDWeXy5FBPLjQ77Dm37u43HAdrxj?=
+ =?us-ascii?Q?6zTq/JwpssBQXORxAfinbklBf5mgpvXUAucEVScXAk40UeCE9Si935qreO2x?=
+ =?us-ascii?Q?IRW3J7fM6YmRIUymJPusP4kDtgccvJHPB3xz92Fgu6jiA6q/TGXF+RFeBWkL?=
+ =?us-ascii?Q?KAyRwpX58y4OxAkXoaeFT5Mu50yyoYlReBCheV4cHUotTS2XMvw1jO6RhZD2?=
+ =?us-ascii?Q?IhdTXgGncjVkG2bT0IjGOlS3Qn7mAreMyn2FrO0XECPj1p9YRSQ23+VjzxdS?=
+ =?us-ascii?Q?8VfhpB9C3rAfeHnOimonH5CgGep+kQAoV3/+n27DYXsj3sp8Imp0XH6xRmbC?=
+ =?us-ascii?Q?wtZj/V4oZcNu4h2qZ3h4DATNYnwv0huqkXVsiDH0AdDWDBY23UPIVvXRJZtw?=
+ =?us-ascii?Q?tB4Mx03rtMd4HUndq+ry7xoSzTatwq/ftY8RfiKc1KPhzzhpALhsqX+XmY04?=
+ =?us-ascii?Q?5J2iHEw9xOwYX/Ld2rAGvMvweozPRP0wpbluQhQZ2ZQFfWKwoT3E7krN4JH3?=
+ =?us-ascii?Q?vlypvIHYJbVQc41DelPV+9WyEMQ+c+PdMxybV/D/YWlMq9zezlGbqnMpZt4C?=
+ =?us-ascii?Q?F+Mph0JQPr4I2Dej0Gwf0oU3cwAiLm5udCt3HGpas5ZqSZ9ze53fPyZMy1pL?=
+ =?us-ascii?Q?CfhE8Q3y6RwROfVElQvhWTHTLg14yH9EFxPwLuK0AdUBqUnWhMlJFD2HVIT9?=
+ =?us-ascii?Q?JO8Vmh1Tn/2TuKiIVF4begDVFwFNyNmbfG9GAYHrbxgaK8Iqfl59Z+nKoi4R?=
+ =?us-ascii?Q?j0139cGqHCCC3H2lCSB+3kLzbFt24XyWFZifKiZr3KS0ByWiMGJ3zc2lhI1A?=
+ =?us-ascii?Q?DuPUbtYnQ4qjW686uSJ/xNm2aktW1647ElQ1IK81nW49Yz4wdTz2+G00nRsy?=
+ =?us-ascii?Q?96UMpH7KK4ocW+9hHlhbU1qKSj7MnkX8ptFCLWH+lDt8qUSEifCnnGhcYvHR?=
+ =?us-ascii?Q?FC6PwtdldThCQ1x/XsBEPPCz27uBVtg3safp8UwL+vKVxsnf/CTFipxNJz4l?=
+ =?us-ascii?Q?tERtqwWV6Oc5l8gH4mGWtBb37VmmLuk/xOyboFWV/TWBVuc4UlZv?=
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 15758ad5-1f05-433c-3208-08de535376ab
+X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB11947.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Jan 2026 09:58:27.5809
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: sYUcXTLjVJa+jCBmDA6eXk6ob9ANesNYaEVo/Aikc70Ds7wIJMb2Czvg4Fci3vxbRPwyLZ2IpeAecohCXmBCVCp6mxZwUd8HiaAWMLQFGXwLV3u2XvLZDuIV5kLEh00g
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYRPR01MB15090
 
-On jeu. 08 janv. 2026 at 14:08, Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org> wrote:
+Hi Geert, Laurent,
 
-> +static struct clk_regmap a5_rtc_clk = {
-> +	.data = &(struct clk_regmap_mux_data) {
-> +		.offset = RTC_CTRL,
-> +		.mask = 0x3,
-> +		.shift = 0,
-> +	},
-> +	.hw.init = &(struct clk_init_data) {
-> +		.name = "rtc_clk",
-> +		.ops = &clk_regmap_mux_ops,
-> +		.parent_data = a5_rtc_clk_parents,
-> +		.num_parents = ARRAY_SIZE(a5_rtc_clk_parents),
-> +		.flags = CLK_SET_RATE_NO_REPARENT,
-> +	},
-> +};
+On Wed, Nov 26, 2025 at 03:07:26PM +0100, Tommaso Merciai wrote:
+> The RZ/G3E Soc has 2 LCD controller (LCDC), contain a Frame Compression
+> Processor (FCPVD), a Video Signal Processor (VSPD), Video Signal
+> Processor (VSPD), and Display Unit (DU).
+> 
+> LCDC0 supports DSI and LVDS (single or dual-channel) outputs.
+> LCDC1 supports DSI, LVDS (single-channel), and RGB outputs.
+> 
+> Depending on the selected output, the correct SMUX2 clock parent must be
+> chosen:
+> 
+>  - Index 0 if LVDS0 or LVDS1 is used
+>  - Index 1 for all other cases
+> 
+> To support this behavior, introduce the `RG2L_DU_FEATURE_SMUX2_DSI_CLK`
+> feature flag and extend the `rzg2l_du_device_info` structure to include a
+> features field. Also, add a new helper function `rzg2l_du_has()` to check
+> for feature flags.
+> 
+> Add support for the RZ/G3E SoC by introducing:
+>  - `rzg2l_du_r9a09g047_du{0,1}_info` structures
+>  - The `renesas,r9a09g047-du{0,1}` compatible strings
+> 
+> Additionally, introduce the missing output definitions
+> `RZG2L_DU_OUTPUT_LVDS{0,1}`.
+> 
+> Introduce `rzg2l_du_crtc_atomic_check()` helper to store the routes from
+> the CRTC output to the DU outputs.
+> 
+> Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+> ---
+>  drivers/gpu/drm/renesas/rz-du/rzg2l_du_crtc.c | 51 +++++++++++++++++++
+>  drivers/gpu/drm/renesas/rz-du/rzg2l_du_drv.c  | 42 +++++++++++++++
+>  drivers/gpu/drm/renesas/rz-du/rzg2l_du_drv.h  | 11 ++++
+>  3 files changed, 104 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/renesas/rz-du/rzg2l_du_crtc.c b/drivers/gpu/drm/renesas/rz-du/rzg2l_du_crtc.c
+> index 6e7aac6219be..044ac16256c7 100644
+> --- a/drivers/gpu/drm/renesas/rz-du/rzg2l_du_crtc.c
+> +++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_du_crtc.c
+> @@ -8,6 +8,7 @@
+>   */
+>  
+>  #include <linux/clk.h>
+> +#include <linux/clk-provider.h>
+>  #include <linux/mutex.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/reset.h>
+> @@ -64,11 +65,34 @@
+>  static void rzg2l_du_crtc_set_display_timing(struct rzg2l_du_crtc *rcrtc)
+>  {
+>  	const struct drm_display_mode *mode = &rcrtc->crtc.state->adjusted_mode;
+> +	struct rzg2l_du_crtc_state *rstate =
+> +		to_rzg2l_crtc_state(rcrtc->crtc.state);
+>  	unsigned long mode_clock = mode->clock * 1000;
+>  	u32 ditr0, ditr1, ditr2, ditr3, ditr4, pbcr0;
+>  	struct rzg2l_du_device *rcdu = rcrtc->dev;
+>  
+>  	clk_prepare_enable(rcrtc->rzg2l_clocks.dclk);
 > +
-> +#define A5_PCLK(_name, _reg, _bit, _pdata, _flags)			\
-> +struct clk_regmap a5_##_name = {					\
-> +	.data = &(struct clk_regmap_gate_data) {			\
-> +		.offset = (_reg),					\
-> +		.bit_idx = (_bit),					\
-> +	},								\
-> +	.hw.init = &(struct clk_init_data) {				\
-> +		.name = #_name,						\
-> +		.ops = &clk_regmap_gate_ops,				\
-> +		.parent_data = (_pdata),				\
-> +		.num_parents = 1,					\
-> +		.flags = (_flags),					\
-> +	},								\
+> +	if (rzg2l_du_has(rcdu, RG2L_DU_FEATURE_SMUX2_DSI_CLK)) {
+> +		struct clk_hw *hw_parent, *hw_pparent;
+> +		struct clk *clk_parent;
+> +
+> +		clk_parent = clk_get_parent(rcrtc->rzg2l_clocks.dclk);
+> +		hw_parent = __clk_get_hw(clk_parent);
+> +
+> +		/*
+> +		 * SMUX2_DSI0_CLK: if LVDS0 is used, be sure to set 0b.
+> +		 * SMUX2_DSI1_CLK: if LVDS1 is used, be sure to set 0b.
+> +		 */
+> +		if (rstate->outputs == BIT(RZG2L_DU_OUTPUT_LVDS0) ||
+> +		    rstate->outputs == BIT(RZG2L_DU_OUTPUT_LVDS1))
+> +			hw_pparent = clk_hw_get_parent_by_index(hw_parent, 0);
+> +		else
+> +			hw_pparent = clk_hw_get_parent_by_index(hw_parent, 1);
+> +
+> +		clk_set_parent(clk_parent, hw_pparent->clk);
+> +	}
+> +
+
+Here is the reason on why we need the CLK_TYPE_PLLDSI_SMUX.
+As LVDS needs clock parent = vclk * 7
+
+For that we need the custom mux (rzv2h_cpg_plldsi_smux_determine_rate())
+to generate the rights pll rate.
+
+What do you think? Please gently let me know.
+
+Thanks & Regards,
+Tommmaso
+
+>  	clk_set_rate(rcrtc->rzg2l_clocks.dclk, mode_clock);
+>  
+>  	ditr0 = (DU_DITR0_DEMD_HIGH
+> @@ -248,6 +272,32 @@ static void rzg2l_du_crtc_stop(struct rzg2l_du_crtc *rcrtc)
+>   * CRTC Functions
+>   */
+>  
+> +static int rzg2l_du_crtc_atomic_check(struct drm_crtc *crtc,
+> +				      struct drm_atomic_state *state)
+> +{
+> +	struct drm_crtc_state *crtc_state = drm_atomic_get_new_crtc_state(state,
+> +									  crtc);
+> +	struct rzg2l_du_crtc_state *rstate = to_rzg2l_crtc_state(crtc_state);
+> +	struct drm_encoder *encoder;
+> +
+> +	/* Store the routes from the CRTC output to the DU outputs. */
+> +	rstate->outputs = 0;
+> +
+> +	drm_for_each_encoder_mask(encoder, crtc->dev,
+> +				  crtc_state->encoder_mask) {
+> +		struct rzg2l_du_encoder *renc;
+> +
+> +		/* Skip the writeback encoder. */
+> +		if (encoder->encoder_type == DRM_MODE_ENCODER_VIRTUAL)
+> +			continue;
+> +
+> +		renc = to_rzg2l_encoder(encoder);
+> +		rstate->outputs |= BIT(renc->output);
+> +	}
+> +
+> +	return 0;
 > +}
-
-I wonder why I bothered reviewing v4 ... 
-
 > +
-> +static const struct clk_parent_data a5_sys_pclk_parents = { .fw_name = "sysclk" };
-> +
-> +#define A5_SYS_PCLK(_name, _reg, _bit, _flags) \
-> +	A5_PCLK(_name, _reg, _bit, &a5_sys_pclk_parents, _flags)
-> +
-> +static A5_SYS_PCLK(sys_reset_ctrl,	SYS_CLK_EN0_REG0, 1, 0);
-> +static A5_SYS_PCLK(sys_pwr_ctrl,	SYS_CLK_EN0_REG0, 3, 0);
-> +static A5_SYS_PCLK(sys_pad_ctrl,	SYS_CLK_EN0_REG0, 4, 0);
-> +static A5_SYS_PCLK(sys_ctrl,		SYS_CLK_EN0_REG0, 5, 0);
-> +static A5_SYS_PCLK(sys_ts_pll,		SYS_CLK_EN0_REG0, 6, 0);
-> +
->
-
-[...]
-
-> +
-> +static struct clk_regmap a5_gen = {
-> +	.data = &(struct clk_regmap_gate_data) {
-> +		.offset = GEN_CLK_CTRL,
-> +		.bit_idx = 11,
-> +	},
-> +	.hw.init = &(struct clk_init_data) {
-> +		.name = "gen",
-> +		.ops = &clk_regmap_gate_ops,
-> +		.parent_hws = (const struct clk_hw *[]) {
-> +			&a5_gen_div.hw
+>  static void rzg2l_du_crtc_atomic_enable(struct drm_crtc *crtc,
+>  					struct drm_atomic_state *state)
+>  {
+> @@ -296,6 +346,7 @@ static void rzg2l_du_crtc_atomic_flush(struct drm_crtc *crtc,
+>  }
+>  
+>  static const struct drm_crtc_helper_funcs crtc_helper_funcs = {
+> +	.atomic_check = rzg2l_du_crtc_atomic_check,
+>  	.atomic_flush = rzg2l_du_crtc_atomic_flush,
+>  	.atomic_enable = rzg2l_du_crtc_atomic_enable,
+>  	.atomic_disable = rzg2l_du_crtc_atomic_disable,
+> diff --git a/drivers/gpu/drm/renesas/rz-du/rzg2l_du_drv.c b/drivers/gpu/drm/renesas/rz-du/rzg2l_du_drv.c
+> index 0fef33a5a089..73ff095e49ae 100644
+> --- a/drivers/gpu/drm/renesas/rz-du/rzg2l_du_drv.c
+> +++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_du_drv.c
+> @@ -51,6 +51,44 @@ static const struct rzg2l_du_device_info rzg2l_du_r9a07g044_info = {
+>  	}
+>  };
+>  
+> +static const struct rzg2l_du_device_info rzg2l_du_r9a09g047_du0_info = {
+> +	.features = RG2L_DU_FEATURE_SMUX2_DSI_CLK,
+> +	.channels_mask = BIT(0),
+> +	.routes = {
+> +		[RZG2L_DU_OUTPUT_DSI0] = {
+> +			.possible_outputs = BIT(0),
+> +			.port = 0,
 > +		},
-> +		.num_parents = 1,
-> +		.flags = CLK_SET_RATE_PARENT,
-> +	},
-> +};
-> +
-> +#define A5_COMP_SEL(_name, _reg, _shift, _mask, _pdata, _table) \
-> +	MESON_COMP_SEL(a5_, _name, _reg, _shift, _mask, _pdata, _table, 0, 0)
-> +
-> +#define A5_COMP_DIV(_name, _reg, _shift, _width) \
-> +	MESON_COMP_DIV(a5_, _name, _reg, _shift, _width, 0, CLK_SET_RATE_PARENT)
-> +
-> +#define A5_COMP_GATE(_name, _reg, _bit, _iflags) \
-> +	MESON_COMP_GATE(a5_, _name, _reg, _bit, CLK_SET_RATE_PARENT | (_iflags))
-> +
-
-At the top. like C3 and T7
-
-> +static const struct clk_parent_data a5_saradc_parents[] = {
-> +	{ .fw_name = "oscin" },
-> +	{ .fw_name = "sysclk" }
-> +};
-> +
-> +static A5_COMP_SEL(saradc, SAR_CLK_CTRL0, 9, 0x3, a5_saradc_parents, NULL);
-> +static A5_COMP_DIV(saradc, SAR_CLK_CTRL0, 0, 8);
-> +static A5_COMP_GATE(saradc, SAR_CLK_CTRL0, 8, 0);
-> +
-> +static const struct clk_parent_data a5_pwm_parents[] = {
-> +	{ .fw_name = "oscin" },
-> +	{ .hw = &a5_rtc_clk.hw },
-> +	{ .fw_name = "fdiv4" },
-> +	{ .fw_name = "fdiv3" }
-> +};
-> +
-> +static A5_COMP_SEL(pwm_a, PWM_CLK_AB_CTRL, 9, 0x3, a5_pwm_parents, NULL);
-> +static A5_COMP_DIV(pwm_a, PWM_CLK_AB_CTRL, 0, 8);
-> +static A5_COMP_GATE(pwm_a, PWM_CLK_AB_CTRL, 8, 0);
-> +
-> +static A5_COMP_SEL(pwm_b, PWM_CLK_AB_CTRL, 25, 0x3, a5_pwm_parents, NULL);
-> +static A5_COMP_DIV(pwm_b, PWM_CLK_AB_CTRL, 16, 8);
-> +static A5_COMP_GATE(pwm_b, PWM_CLK_AB_CTRL, 24, 0);
-> +
-> +static A5_COMP_SEL(pwm_c, PWM_CLK_CD_CTRL, 9, 0x3, a5_pwm_parents, NULL);
-> +static A5_COMP_DIV(pwm_c, PWM_CLK_CD_CTRL, 0, 8);
-> +static A5_COMP_GATE(pwm_c, PWM_CLK_CD_CTRL, 8, 0);
-> +
-> +static A5_COMP_SEL(pwm_d, PWM_CLK_CD_CTRL, 25, 0x3, a5_pwm_parents, NULL);
-> +static A5_COMP_DIV(pwm_d, PWM_CLK_CD_CTRL, 16, 8);
-> +static A5_COMP_GATE(pwm_d, PWM_CLK_CD_CTRL, 24, 0);
-> +
-> +static A5_COMP_SEL(pwm_e, PWM_CLK_EF_CTRL, 9, 0x3, a5_pwm_parents, NULL);
-> +static A5_COMP_DIV(pwm_e, PWM_CLK_EF_CTRL, 0, 8);
-> +static A5_COMP_GATE(pwm_e, PWM_CLK_EF_CTRL, 8, 0);
-> +
-> +static A5_COMP_SEL(pwm_f, PWM_CLK_EF_CTRL, 25, 0x3, a5_pwm_parents, NULL);
-> +static A5_COMP_DIV(pwm_f, PWM_CLK_EF_CTRL, 16, 8);
-> +static A5_COMP_GATE(pwm_f, PWM_CLK_EF_CTRL, 24, 0);
-> +
-> +static A5_COMP_SEL(pwm_g, PWM_CLK_GH_CTRL, 9, 0x3, a5_pwm_parents, NULL);
-> +static A5_COMP_DIV(pwm_g, PWM_CLK_GH_CTRL, 0, 8);
-> +static A5_COMP_GATE(pwm_g, PWM_CLK_GH_CTRL, 8, 0);
-> +
-> +static A5_COMP_SEL(pwm_h, PWM_CLK_GH_CTRL, 25, 0x3, a5_pwm_parents, NULL);
-> +static A5_COMP_DIV(pwm_h, PWM_CLK_GH_CTRL, 16, 8);
-> +static A5_COMP_GATE(pwm_h, PWM_CLK_GH_CTRL, 24, 0);
-> +
-> +/*
-> + * NOTE: Channel 7 is gp1, because gp1 is designed for DSU, so spicc does not
-> + * support this source in the driver.
-> + */
-> +static const struct clk_parent_data a5_spicc_parents[] = {
-> +	{ .fw_name = "oscin" },
-> +	{ .fw_name = "sysclk" },
-> +	{ .fw_name = "fdiv4" },
-> +	{ .fw_name = "fdiv3" },
-> +	{ .fw_name = "fdiv2" },
-> +	{ .fw_name = "fdiv5" },
-> +	{ .fw_name = "fdiv7" }
-> +};
-> +
-> +static A5_COMP_SEL(spicc_0, SPICC_CLK_CTRL, 7, 0x7, a5_spicc_parents, NULL);
-> +static A5_COMP_DIV(spicc_0, SPICC_CLK_CTRL, 0, 6);
-> +static A5_COMP_GATE(spicc_0, SPICC_CLK_CTRL, 6, 0);
-> +
-> +static A5_COMP_SEL(spicc_1, SPICC_CLK_CTRL, 23, 0x7, a5_spicc_parents, NULL);
-> +static A5_COMP_DIV(spicc_1, SPICC_CLK_CTRL, 16, 6);
-> +static A5_COMP_GATE(spicc_1, SPICC_CLK_CTRL, 22, 0);
-> +
-> +static const struct clk_parent_data a5_sd_emmc_parents[] = {
-> +	{ .fw_name = "oscin" },
-> +	{ .fw_name = "fdiv2" },
-> +	{ .fw_name = "fdiv3" },
-> +	{ .fw_name = "hifi" },
-> +	{ .fw_name = "fdiv2p5" },
-> +	{ .fw_name = "mpll2" },
-> +	{ .fw_name = "mpll3" },
-> +	{ .fw_name = "gp0" }
-> +};
-> +
-> +static A5_COMP_SEL(sd_emmc_a, SD_EMMC_CLK_CTRL, 9, 0x7, a5_sd_emmc_parents,
-> +		   NULL);
-> +static A5_COMP_DIV(sd_emmc_a, SD_EMMC_CLK_CTRL, 0, 7);
-> +static A5_COMP_GATE(sd_emmc_a, SD_EMMC_CLK_CTRL, 7, 0);
-> +
-> +static A5_COMP_SEL(sd_emmc_c, NAND_CLK_CTRL, 9, 0x7, a5_sd_emmc_parents,
-> +		   NULL);
-> +static A5_COMP_DIV(sd_emmc_c, NAND_CLK_CTRL, 0, 7);
-> +static A5_COMP_GATE(sd_emmc_c, NAND_CLK_CTRL, 7, 0);
-> +
-> +static struct clk_regmap a5_ts_div = {
-> +	.data = &(struct clk_regmap_div_data) {
-> +		.offset = TS_CLK_CTRL,
-> +		.shift = 0,
-> +		.width = 8,
-> +	},
-> +	.hw.init = &(struct clk_init_data) {
-> +		.name = "ts_div",
-> +		.ops = &clk_regmap_divider_ops,
-> +		.parent_data = &(const struct clk_parent_data) {
-> +			.fw_name = "oscin",
+> +		[RZG2L_DU_OUTPUT_LVDS0] = {
+> +			.possible_outputs = BIT(0),
+> +			.port = 1,
 > +		},
-> +		.num_parents = 1,
-> +	},
-> +};
-> +
-> +static struct clk_regmap a5_ts = {
-> +	.data = &(struct clk_regmap_gate_data) {
-> +		.offset = TS_CLK_CTRL,
-> +		.bit_idx = 8,
-> +	},
-> +	.hw.init = &(struct clk_init_data) {
-> +		.name = "ts",
-> +		.ops = &clk_regmap_gate_ops,
-> +		.parent_hws = (const struct clk_hw *[]) {
-> +			&a5_ts_div.hw
+> +		[RZG2L_DU_OUTPUT_LVDS1] = {
+> +			.possible_outputs = BIT(0),
+> +			.port = 2,
 > +		},
-> +		.num_parents = 1,
-> +		.flags = CLK_SET_RATE_PARENT,
 > +	},
 > +};
 > +
-> +static struct clk_fixed_factor a5_eth_125m_div = {
-> +	.mult = 1,
-> +	.div = 8,
-> +	.hw.init = &(struct clk_init_data) {
-> +		.name = "eth_125m_div",
-> +		.ops = &clk_fixed_factor_ops,
-> +		.parent_data = &(const struct clk_parent_data) {
-> +			.fw_name = "fdiv2",
+> +static const struct rzg2l_du_device_info rzg2l_du_r9a09g047_du1_info = {
+> +	.features = RG2L_DU_FEATURE_SMUX2_DSI_CLK,
+> +	.channels_mask = BIT(0),
+> +	.routes = {
+> +		[RZG2L_DU_OUTPUT_DSI0] = {
+> +			.possible_outputs = BIT(0),
+> +			.port = 0,
 > +		},
-> +		.num_parents = 1,
-> +	},
-> +};
-> +
-> +static struct clk_regmap a5_eth_125m = {
-> +	.data = &(struct clk_regmap_gate_data) {
-> +		.offset = ETH_CLK_CTRL,
-> +		.bit_idx = 7,
-> +	},
-> +	.hw.init = &(struct clk_init_data) {
-> +		.name = "eth_125m",
-> +		.ops = &clk_regmap_gate_ops,
-> +		.parent_hws = (const struct clk_hw *[]) {
-> +			&a5_eth_125m_div.hw
+> +		[RZG2L_DU_OUTPUT_LVDS0] = {
+> +			.possible_outputs = BIT(0),
+> +			.port = 1,
 > +		},
-> +		.num_parents = 1,
-> +	},
-> +};
-> +
-> +static struct clk_regmap a5_eth_rmii_div = {
-> +	.data = &(struct clk_regmap_div_data) {
-> +		.offset = ETH_CLK_CTRL,
-> +		.shift = 0,
-> +		.width = 7,
-> +	},
-> +	.hw.init = &(struct clk_init_data) {
-> +		.name = "eth_rmii_div",
-> +		.ops = &clk_regmap_divider_ops,
-> +		.parent_data = &(const struct clk_parent_data) {
-> +			.fw_name = "fdiv2",
+> +		[RZG2L_DU_OUTPUT_DPAD0] = {
+> +			.possible_outputs = BIT(0),
+> +			.port = 2,
 > +		},
-> +		.num_parents = 1,
 > +	},
 > +};
 > +
-> +static struct clk_regmap a5_eth_rmii = {
-> +	.data = &(struct clk_regmap_gate_data) {
-> +		.offset = ETH_CLK_CTRL,
-> +		.bit_idx = 8,
-> +	},
-> +	.hw.init = &(struct clk_init_data) {
-> +		.name = "eth_rmii",
-> +		.ops = &clk_regmap_gate_ops,
-> +		.parent_hws = (const struct clk_hw *[]) {
-> +			&a5_eth_rmii_div.hw
-> +		},
-> +		.num_parents = 1,
-> +		.flags = CLK_SET_RATE_PARENT,
-> +	},
-> +};
+>  static const struct rzg2l_du_device_info rzg2l_du_r9a09g057_info = {
+>  	.channels_mask = BIT(0),
+>  	.routes = {
+> @@ -64,6 +102,8 @@ static const struct rzg2l_du_device_info rzg2l_du_r9a09g057_info = {
+>  static const struct of_device_id rzg2l_du_of_table[] = {
+>  	{ .compatible = "renesas,r9a07g043u-du", .data = &rzg2l_du_r9a07g043u_info },
+>  	{ .compatible = "renesas,r9a07g044-du", .data = &rzg2l_du_r9a07g044_info },
+> +	{ .compatible = "renesas,r9a09g047-du0", .data = &rzg2l_du_r9a09g047_du0_info },
+> +	{ .compatible = "renesas,r9a09g047-du1", .data = &rzg2l_du_r9a09g047_du1_info },
+>  	{ .compatible = "renesas,r9a09g057-du", .data = &rzg2l_du_r9a09g057_info },
+>  	{ /* sentinel */ }
+>  };
+> @@ -74,6 +114,8 @@ const char *rzg2l_du_output_name(enum rzg2l_du_output output)
+>  {
+>  	static const char * const names[] = {
+>  		[RZG2L_DU_OUTPUT_DSI0] = "DSI0",
+> +		[RZG2L_DU_OUTPUT_LVDS0] = "LVDS0",
+> +		[RZG2L_DU_OUTPUT_LVDS1] = "LVDS1",
+>  		[RZG2L_DU_OUTPUT_DPAD0] = "DPAD0"
+>  	};
+>  
+> diff --git a/drivers/gpu/drm/renesas/rz-du/rzg2l_du_drv.h b/drivers/gpu/drm/renesas/rz-du/rzg2l_du_drv.h
+> index 58806c2a8f2b..c6f9dc46ab31 100644
+> --- a/drivers/gpu/drm/renesas/rz-du/rzg2l_du_drv.h
+> +++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_du_drv.h
+> @@ -20,8 +20,12 @@
+>  struct device;
+>  struct drm_property;
+>  
+> +#define RG2L_DU_FEATURE_SMUX2_DSI_CLK	BIT(0)	/* Per output mux */
 > +
-> +/* Channel 6 is gp1 dedicated to the DSU. */
-> +static u32 a5_dspa_parents_val_table[] = { 0, 1, 2, 3, 4, 5, 7};
+>  enum rzg2l_du_output {
+>  	RZG2L_DU_OUTPUT_DSI0,
+> +	RZG2L_DU_OUTPUT_LVDS0,
+> +	RZG2L_DU_OUTPUT_LVDS1,
+>  	RZG2L_DU_OUTPUT_DPAD0,
+>  	RZG2L_DU_OUTPUT_MAX,
+>  };
+> @@ -46,6 +50,7 @@ struct rzg2l_du_output_routing {
+>   * @routes: array of CRTC to output routes, indexed by output (RZG2L_DU_OUTPUT_*)
+>   */
+>  struct rzg2l_du_device_info {
+> +	unsigned int features;
+>  	unsigned int channels_mask;
+>  	struct rzg2l_du_output_routing routes[RZG2L_DU_OUTPUT_MAX];
+>  };
+> @@ -73,6 +78,12 @@ static inline struct rzg2l_du_device *to_rzg2l_du_device(struct drm_device *dev)
+>  	return container_of(dev, struct rzg2l_du_device, ddev);
+>  }
+>  
+> +static inline bool rzg2l_du_has(struct rzg2l_du_device *rcdu,
+> +				unsigned int feature)
+> +{
+> +	return rcdu->info->features & feature;
+> +}
 > +
-> +static const struct clk_parent_data a5_dspa_parents[] = {
-> +	{ .fw_name = "oscin" },
-> +	{ .fw_name = "fdiv2p5" },
-> +	{ .fw_name = "fdiv3" },
-> +	{ .fw_name = "rtc" },  /* rtc_pll */
-> +	{ .fw_name = "hifi" },
-> +	{ .fw_name = "fdiv4" },
-> +	{ .hw = &a5_rtc_clk.hw }
-> +};
-> +
-> +static A5_COMP_SEL(dspa_0, DSPA_CLK_CTRL0, 10, 0x7, a5_dspa_parents,
-> +		   a5_dspa_parents_val_table);
-> +static A5_COMP_DIV(dspa_0, DSPA_CLK_CTRL0, 0, 10);
-> +static A5_COMP_GATE(dspa_0, DSPA_CLK_CTRL0, 13, 0);
-> +
-> +static A5_COMP_SEL(dspa_1, DSPA_CLK_CTRL0, 26, 0x7, a5_dspa_parents,
-> +		   a5_dspa_parents_val_table);
-> +static A5_COMP_DIV(dspa_1, DSPA_CLK_CTRL0, 16, 10);
-> +static A5_COMP_GATE(dspa_1, DSPA_CLK_CTRL0, 29, 0);
-> +
-> +static struct clk_regmap a5_dspa = {
-> +	.data = &(struct clk_regmap_mux_data){
-> +		.offset = DSPA_CLK_CTRL0,
-> +		.mask = 0x1,
-> +		.shift = 15,
-> +	},
-> +	.hw.init = &(struct clk_init_data) {
-> +		.name = "dspa",
-> +		.ops = &clk_regmap_mux_ops,
-> +		.parent_hws = (const struct clk_hw *[]) {
-> +			&a5_dspa_0.hw,
-> +			&a5_dspa_1.hw
-> +		},
-> +		.num_parents = 2,
-> +		.flags = CLK_SET_RATE_PARENT,
-> +	},
-> +};
-> +
-> +/* Channel 6 is gp1 dedicated to the DSU. */
-> +static u32 a5_nna_parents_val_table[] = { 0, 1, 2, 3, 4, 5, 7};
-> +
-> +static const struct clk_parent_data a5_nna_parents[] = {
-> +	{ .fw_name = "oscin" },
-> +	{ .fw_name = "fdiv2p5" },
-> +	{ .fw_name = "fdiv4" },
-> +	{ .fw_name = "fdiv3" },
-> +	{ .fw_name = "fdiv5" },
-> +	{ .fw_name = "fdiv2" },
-> +	{ .fw_name = "hifi" }
-> +};
-> +
-> +static A5_COMP_SEL(nna_core, NNA_CLK_CNTL, 9, 0x7, a5_nna_parents,
-> +		   a5_nna_parents_val_table);
-> +static A5_COMP_DIV(nna_core, NNA_CLK_CNTL, 0, 7);
-> +static A5_COMP_GATE(nna_core, NNA_CLK_CNTL, 8, 0);
-> +
-> +static A5_COMP_SEL(nna_axi, NNA_CLK_CNTL, 25, 0x7, a5_nna_parents,
-> +		   a5_nna_parents_val_table);
-> +static A5_COMP_DIV(nna_axi, NNA_CLK_CNTL, 16, 7);
-> +static A5_COMP_GATE(nna_axi, NNA_CLK_CNTL, 24, 0);
-> +
-> +static struct clk_hw *a5_peripherals_hw_clks[] = {
-> +	[CLKID_RTC_DUALDIV_CLKIN]	= &a5_rtc_dualdiv_clkin.hw,
-> +	[CLKID_RTC_DUALDIV]		= &a5_rtc_dualdiv.hw,
-> +	[CLKID_RTC_DUALDIV_SEL]		= &a5_rtc_dualdiv_sel.hw,
-> +	[CLKID_RTC_DUALDIV_CLKOUT]	= &a5_rtc_dualdiv_clkout.hw,
-> +	[CLKID_RTC_CLK]			= &a5_rtc_clk.hw,
-> +	[CLKID_SYS_RESET_CTRL]		= &a5_sys_reset_ctrl.hw,
-> +	[CLKID_SYS_PWR_CTRL]		= &a5_sys_pwr_ctrl.hw,
-> +	[CLKID_SYS_PAD_CTRL]		= &a5_sys_pad_ctrl.hw,
-> +	[CLKID_SYS_CTRL]		= &a5_sys_ctrl.hw,
-> +	[CLKID_SYS_TS_PLL]		= &a5_sys_ts_pll.hw,
-> +	[CLKID_SYS_DEV_ARB]		= &a5_sys_dev_arb.hw,
-> +	[CLKID_SYS_MAILBOX]		= &a5_sys_mailbox.hw,
-> +	[CLKID_SYS_JTAG_CTRL]		= &a5_sys_jtag_ctrl.hw,
-> +	[CLKID_SYS_IR_CTRL]		= &a5_sys_ir_ctrl.hw,
-> +	[CLKID_SYS_MSR_CLK]		= &a5_sys_msr_clk.hw,
-> +	[CLKID_SYS_ROM]			= &a5_sys_rom.hw,
-> +	[CLKID_SYS_CPU_ARB]		= &a5_sys_cpu_apb.hw,
-> +	[CLKID_SYS_RSA]			= &a5_sys_rsa.hw,
-> +	[CLKID_SYS_SARADC]		= &a5_sys_saradc.hw,
-> +	[CLKID_SYS_STARTUP]		= &a5_sys_startup.hw,
-> +	[CLKID_SYS_SECURE]		= &a5_sys_secure.hw,
-> +	[CLKID_SYS_SPIFC]		= &a5_sys_spifc.hw,
-> +	[CLKID_SYS_DSPA]		= &a5_sys_dspa.hw,
-> +	[CLKID_SYS_NNA]			= &a5_sys_nna.hw,
-> +	[CLKID_SYS_ETH_MAC]		= &a5_sys_eth_mac.hw,
-> +	[CLKID_SYS_RAMA]		= &a5_sys_rama.hw,
-> +	[CLKID_SYS_RAMB]		= &a5_sys_ramb.hw,
-> +	[CLKID_SYS_AUDIO_TOP]		= &a5_sys_audio_top.hw,
-> +	[CLKID_SYS_AUDIO_VAD]		= &a5_sys_audio_vad.hw,
-> +	[CLKID_SYS_USB]			= &a5_sys_usb.hw,
-> +	[CLKID_SYS_SD_EMMC_A]		= &a5_sys_sd_emmc_a.hw,
-> +	[CLKID_SYS_SD_EMMC_C]		= &a5_sys_sd_emmc_c.hw,
-> +	[CLKID_SYS_PWM_AB]		= &a5_sys_pwm_ab.hw,
-> +	[CLKID_SYS_PWM_CD]		= &a5_sys_pwm_cd.hw,
-> +	[CLKID_SYS_PWM_EF]		= &a5_sys_pwm_ef.hw,
-> +	[CLKID_SYS_PWM_GH]		= &a5_sys_pwm_gh.hw,
-> +	[CLKID_SYS_SPICC_1]		= &a5_sys_spicc_1.hw,
-> +	[CLKID_SYS_SPICC_0]		= &a5_sys_spicc_0.hw,
-> +	[CLKID_SYS_UART_A]		= &a5_sys_uart_a.hw,
-> +	[CLKID_SYS_UART_B]		= &a5_sys_uart_b.hw,
-> +	[CLKID_SYS_UART_C]		= &a5_sys_uart_c.hw,
-> +	[CLKID_SYS_UART_D]		= &a5_sys_uart_d.hw,
-> +	[CLKID_SYS_UART_E]		= &a5_sys_uart_e.hw,
-> +	[CLKID_SYS_I2C_M_A]		= &a5_sys_i2c_m_a.hw,
-> +	[CLKID_SYS_I2C_M_B]		= &a5_sys_i2c_m_b.hw,
-> +	[CLKID_SYS_I2C_M_C]		= &a5_sys_i2c_m_c.hw,
-> +	[CLKID_SYS_I2C_M_D]		= &a5_sys_i2c_m_d.hw,
-> +	[CLKID_SYS_RTC]			= &a5_sys_rtc.hw,
-> +	[CLKID_AXI_AUDIO_VAD]		= &a5_axi_audio_vad.hw,
-> +	[CLKID_AXI_AUDIO_TOP]		= &a5_axi_audio_top.hw,
-> +	[CLKID_AXI_RAMB]		= &a5_axi_ramb.hw,
-> +	[CLKID_AXI_RAMA]		= &a5_axi_rama.hw,
-> +	[CLKID_AXI_NNA]			= &a5_axi_nna.hw,
-> +	[CLKID_AXI_DEV1_DMC]		= &a5_axi_dev1_dmc.hw,
-> +	[CLKID_AXI_DEV0_DMC]		= &a5_axi_dev0_dmc.hw,
-> +	[CLKID_AXI_DSP_DMC]		= &a5_axi_dsp_dmc.hw,
-> +	[CLKID_12_24M_IN]		= &a5_clk_12_24m_in.hw,
-> +	[CLKID_12M_24M]			= &a5_clk_12_24m.hw,
-> +	[CLKID_FCLK_25M_DIV]		= &a5_fclk_25m_div.hw,
-> +	[CLKID_FCLK_25M]		= &a5_fclk_25m.hw,
-> +	[CLKID_GEN_SEL]			= &a5_gen_sel.hw,
-> +	[CLKID_GEN_DIV]			= &a5_gen_div.hw,
-> +	[CLKID_GEN]			= &a5_gen.hw,
-> +	[CLKID_SARADC_SEL]		= &a5_saradc_sel.hw,
-> +	[CLKID_SARADC_DIV]		= &a5_saradc_div.hw,
-> +	[CLKID_SARADC]			= &a5_saradc.hw,
-> +	[CLKID_PWM_A_SEL]		= &a5_pwm_a_sel.hw,
-> +	[CLKID_PWM_A_DIV]		= &a5_pwm_a_div.hw,
-> +	[CLKID_PWM_A]			= &a5_pwm_a.hw,
-> +	[CLKID_PWM_B_SEL]		= &a5_pwm_b_sel.hw,
-> +	[CLKID_PWM_B_DIV]		= &a5_pwm_b_div.hw,
-> +	[CLKID_PWM_B]			= &a5_pwm_b.hw,
-> +	[CLKID_PWM_C_SEL]		= &a5_pwm_c_sel.hw,
-> +	[CLKID_PWM_C_DIV]		= &a5_pwm_c_div.hw,
-> +	[CLKID_PWM_C]			= &a5_pwm_c.hw,
-> +	[CLKID_PWM_D_SEL]		= &a5_pwm_d_sel.hw,
-> +	[CLKID_PWM_D_DIV]		= &a5_pwm_d_div.hw,
-> +	[CLKID_PWM_D]			= &a5_pwm_d.hw,
-> +	[CLKID_PWM_E_SEL]		= &a5_pwm_e_sel.hw,
-> +	[CLKID_PWM_E_DIV]		= &a5_pwm_e_div.hw,
-> +	[CLKID_PWM_E]			= &a5_pwm_e.hw,
-> +	[CLKID_PWM_F_SEL]		= &a5_pwm_f_sel.hw,
-> +	[CLKID_PWM_F_DIV]		= &a5_pwm_f_div.hw,
-> +	[CLKID_PWM_F]			= &a5_pwm_f.hw,
-> +	[CLKID_PWM_G_SEL]		= &a5_pwm_g_sel.hw,
-> +	[CLKID_PWM_G_DIV]		= &a5_pwm_g_div.hw,
-> +	[CLKID_PWM_G]			= &a5_pwm_g.hw,
-> +	[CLKID_PWM_H_SEL]		= &a5_pwm_h_sel.hw,
-> +	[CLKID_PWM_H_DIV]		= &a5_pwm_h_div.hw,
-> +	[CLKID_PWM_H]			= &a5_pwm_h.hw,
-> +	[CLKID_SPICC_0_SEL]		= &a5_spicc_0_sel.hw,
-> +	[CLKID_SPICC_0_DIV]		= &a5_spicc_0_div.hw,
-> +	[CLKID_SPICC_0]			= &a5_spicc_0.hw,
-> +	[CLKID_SPICC_1_SEL]		= &a5_spicc_1_sel.hw,
-> +	[CLKID_SPICC_1_DIV]		= &a5_spicc_1_div.hw,
-> +	[CLKID_SPICC_1]			= &a5_spicc_1.hw,
-> +	[CLKID_SD_EMMC_A_SEL]		= &a5_sd_emmc_a_sel.hw,
-> +	[CLKID_SD_EMMC_A_DIV]		= &a5_sd_emmc_a_div.hw,
-> +	[CLKID_SD_EMMC_A]		= &a5_sd_emmc_a.hw,
-> +	[CLKID_SD_EMMC_C_SEL]		= &a5_sd_emmc_c_sel.hw,
-> +	[CLKID_SD_EMMC_C_DIV]		= &a5_sd_emmc_c_div.hw,
-> +	[CLKID_SD_EMMC_C]		= &a5_sd_emmc_c.hw,
-> +	[CLKID_TS_DIV]			= &a5_ts_div.hw,
-> +	[CLKID_TS]			= &a5_ts.hw,
-> +	[CLKID_ETH_125M_DIV]		= &a5_eth_125m_div.hw,
-> +	[CLKID_ETH_125M]		= &a5_eth_125m.hw,
-> +	[CLKID_ETH_RMII_DIV]		= &a5_eth_rmii_div.hw,
-> +	[CLKID_ETH_RMII]		= &a5_eth_rmii.hw,
-> +	[CLKID_DSPA_0_SEL]		= &a5_dspa_0_sel.hw,
-> +	[CLKID_DSPA_0_DIV]		= &a5_dspa_0_div.hw,
-> +	[CLKID_DSPA_0]			= &a5_dspa_0.hw,
-> +	[CLKID_DSPA_1_SEL]		= &a5_dspa_1_sel.hw,
-> +	[CLKID_DSPA_1_DIV]		= &a5_dspa_1_div.hw,
-> +	[CLKID_DSPA_1]			= &a5_dspa_1.hw,
-> +	[CLKID_DSPA]			= &a5_dspa.hw,
-> +	[CLKID_NNA_CORE_SEL]		= &a5_nna_core_sel.hw,
-> +	[CLKID_NNA_CORE_DIV]		= &a5_nna_core_div.hw,
-> +	[CLKID_NNA_CORE]		= &a5_nna_core.hw,
-> +	[CLKID_NNA_AXI_SEL]		= &a5_nna_axi_sel.hw,
-> +	[CLKID_NNA_AXI_DIV]		= &a5_nna_axi_div.hw,
-> +	[CLKID_NNA_AXI]			= &a5_nna_axi.hw,
-> +};
-> +
-> +static const struct meson_clkc_data a5_peripherals_clkc_data = {
-> +	.hw_clks = {
-> +		.hws = a5_peripherals_hw_clks,
-> +		.num = ARRAY_SIZE(a5_peripherals_hw_clks),
-> +	},
-> +};
-> +
-> +static const struct of_device_id a5_peripherals_clkc_match_table[] = {
-> +	{
-> +		.compatible = "amlogic,a5-peripherals-clkc",
-> +		.data = &a5_peripherals_clkc_data,
-> +	},
-> +	{}
-> +};
-> +MODULE_DEVICE_TABLE(of, a5_peripherals_clkc_match_table);
-> +
-> +static struct platform_driver a5_peripherals_clkc_driver = {
-> +	.probe = meson_clkc_mmio_probe,
-> +	.driver = {
-> +		.name = "a5-peripherals-clkc",
-> +		.of_match_table = a5_peripherals_clkc_match_table,
-> +	},
-> +};
-> +module_platform_driver(a5_peripherals_clkc_driver);
-> +
-> +MODULE_DESCRIPTION("Amlogic A5 Peripherals Clock Controller driver");
-> +MODULE_AUTHOR("Chuan Liu <chuan.liu@amlogic.com>");
-> +MODULE_LICENSE("GPL");
-> +MODULE_IMPORT_NS("CLK_MESON");
-
--- 
-Jerome
+>  const char *rzg2l_du_output_name(enum rzg2l_du_output output);
+>  
+>  #endif /* __RZG2L_DU_DRV_H__ */
+> -- 
+> 2.43.0
+> 
