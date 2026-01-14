@@ -1,146 +1,73 @@
-Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66AD839525B
-	for <linux-clk@vger.kernel.org>; Wed, 14 Jan 2026 10:50:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97B4130C343;
+	Wed, 14 Jan 2026 11:00:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768388009; cv=none; b=qa3/wCcQqphZaPjR/TILELNbibbfwz51JhoDL9m3IfQoTG2XwAHdg4IseOXogn2y4iL7G3k7sBrfHR9oa/zvsmnMYeXbiKmMi+RdG08FvDu6fgUkDqd0KW9Duz20R6gFmVXXJw0Kmc3e69paksbSPy6sHLHVPrHWkyx+01R8vUo=
+	t=1768388405; cv=none; b=EwescqvfauiNv47gTgryJJSuWNgCpedQURgKdFTtoEkwvUULbuAmlrc/BD/LadtTmlItmWG5Ed0fOz5h7wsCO8y382G2jpst7BduXg1ycEcs/SdDNtMie6iqctGkS3UT6i9Hcw/VA1fpTOdMqnUV18FUl8Kds3IIWpZ/pYLAM3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768388009; c=relaxed/simple;
-	bh=SP1C5ECn6qTrc/ADnDGMjhhdfGm40PhkP1D0vbgxzkY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=m5Yu79zDSDmDO2gkAVeIoeXTScp+iaQb4CrycK9d5uqlm1AMN8s4IrQfxSBVOIewqH0bxR+lBxq99oN1iZ/1mm9DbI6wb1y5lPkBlOgnWz2fuFzein/6XoSFd3yik5cCvajjlbWS0EUGvLyuiYEwWn+y5kNfuiN/Bj8ofs3kvoY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=X4Now13q; arc=none smtp.client-ip=91.218.175.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	s=arc-20240116; t=1768388405; c=relaxed/simple;
+	bh=d85CVElszEKzb8v9RY4JGMFUuDl4vhTlslS0oFyl2v8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CpkP8v0J7SWZVZDJTxGv0cN2elA6xeFE41T+anTaeStFXI+IimZ/JNnqMSp6tDqP8TShtWUq+ncZaosoeaXGAabxU6wQAgQgoAhgL35fnw9elNionJWazZpicQTMCplyTD+wo1DX37DLYnHuRxmPVsGA3MXoDhlAVHb0J+l8OEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X0yIRxhM; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="X4Now13q"
-Message-ID: <c85c77bc-9a8c-4336-ab79-89a981c43e01@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1768387856;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MglISJSdDcSFcnyvQNdU82M1uemIRPK39gzYMnHql/s=;
-	b=X4Now13qTN/viHhNP4N1Z2ONBdtxfKZiA0ArDQgEpfyRmsi8HtuJPMtQA20rvH1BCujEQS
-	Uuv6G9O7wwnr4IyXrr+7EpnPu5z1+w+4UW9TPf6456yI2uDiV7XPM3RbLg/pbJFh7dBDmg
-	XMJ4mOhzwuiTeSWh6sKLs88D/dWvvio=
-Date: Wed, 14 Jan 2026 10:50:52 +0000
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X0yIRxhM"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B180C4CEF7;
+	Wed, 14 Jan 2026 11:00:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1768388401;
+	bh=d85CVElszEKzb8v9RY4JGMFUuDl4vhTlslS0oFyl2v8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=X0yIRxhMibzYH1bjwup4nkDDyMg/Alta+LZP2Jl4qyeHDkOxGwkNAcd8yKrcFiR3e
+	 093DPW47UnoSY67YvaBzjQI6jpx1+/VnIoWceij7qb6XTYKCFaCqFzRsGYJKDcGoCC
+	 YOSpP6dy6+XdpmD/hA9rbKhOvWbBYedzV7xUv/3w4UV8ZewVX/dVchA88W8nLoAiRA
+	 xzI9AqVSqmxuobRJi+NaHQurqCxJpDLetf6NiHA1oiodVWIKZshJpLhbby8C+QPuEq
+	 y7ImBeDbmCinkjXbgwKcPftjKLAzvDKkkqLm93qDVn0iKGPfSkzp4GSytxf5Wv8Xh7
+	 NHCsqqMRHdgpg==
+Received: from johan by xi.lan with local (Exim 4.98.2)
+	(envelope-from <johan@kernel.org>)
+	id 1vfybS-000000002xJ-1rSw;
+	Wed, 14 Jan 2026 11:59:54 +0100
+Date: Wed, 14 Jan 2026 11:59:54 +0100
+From: Johan Hovold <johan@kernel.org>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Thierry Reding <thierry.reding@gmail.com>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	Miaoqian Lin <linmq006@gmail.com>, linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] clk: tegra: tegra124-emc: fix device leak on set_rate()
+Message-ID: <aWd3KmGKfaUX87ya@hovoldconsulting.com>
+References: <20251121164003.13047-1-johan@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [RFC] Defining a home/maintenance model for non-NIC PHC devices
- using the /dev/ptpX API
-To: Wen Gu <guwen@linux.alibaba.com>, Andrew Lunn <andrew@lunn.ch>,
- Sven Schnelle <svens@linux.ibm.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
- Richard Cochran <richardcochran@gmail.com>,
- "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
- LKML <linux-kernel@vger.kernel.org>, Jakub Kicinski <kuba@kernel.org>,
- Dust Li <dust.li@linux.alibaba.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, David Woodhouse <dwmw2@infradead.org>,
- virtualization@lists.linux.dev, Nick Shi <nick.shi@broadcom.com>,
- Paolo Abeni <pabeni@redhat.com>, linux-clk@vger.kernel.org
-References: <0afe19db-9c7f-4228-9fc2-f7b34c4bc227@linux.alibaba.com>
- <yt9decnv6qpc.fsf@linux.ibm.com>
- <6a32849d-6c7b-4745-b7f0-762f1b541f3d@linux.dev>
- <7be41f07-50ab-4363-8a53-dcdda63b9147@lunn.ch>
- <87495044-59a3-49ed-b00c-01a7e9a23f6b@linux.dev>
- <b5a60753-85ed-4d61-a652-568393e0dff3@linux.alibaba.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-In-Reply-To: <b5a60753-85ed-4d61-a652-568393e0dff3@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251121164003.13047-1-johan@kernel.org>
 
-On 14/01/2026 09:13, Wen Gu wrote:
+On Fri, Nov 21, 2025 at 05:40:03PM +0100, Johan Hovold wrote:
+> Make sure to drop the reference taken when looking up the EMC device and
+> its driver data on first set_rate().
 > 
+> Note that holding a reference to a device does not prevent its driver
+> data from going away so there is no point in keeping the reference.
 > 
-> On 2026/1/12 22:52, Vadim Fedorenko wrote:
->> On 12/01/2026 13:24, Andrew Lunn wrote:
->>>>> drivers/ptp/core    - API as written above
->>>>> drivers/ptp/virtual - all PtP drivers somehow emulating a PtP clock
->>>>>                         (like the ptp_s390 driver)
->>>>> drivers/ptp/net     - all NIC related drivers.
->>>>>
->>>>
->>>>
->>>> Well, drivers/ptp/virtual is not really good, because some drivers are
->>>> for physical devices exporting PTP interface, but without NIC.
->>>
->>> If the lack of a NIC is the differentiating property:
->>>
->>>>> drivers/ptp/net     - all NIC related drivers.
->>>>> drivers/ptp/netless - all related drivers which are not associated 
->>>>> to a NIC.
->>>
->>> Or
->>>
->>>>> drivers/ptp/emulating - all drivers emulating a PtP clock
->>
->> I would go with "emulating" then.
->>
->>>
->>>     Andrew
-> 
-> Thank you all for your suggestions.
-> 
-> The drivers under drivers/ptp can be divided into (to my knowledge):
-> 
-> 1. Network/1588-oriented clocks, which allow the use of tools like
->     ptp4l to synchronize the local PHC with an external reference clock
->     (based on the network or other methods) via the 1588 protocol to
->     maintain accuracy. Examples include:
-> 
->     - ptp_dte
->     - ptp_qoriq
->     - ptp_ines
->     - ptp_pch
->     - ptp_idt82p33
->     - ptp_clockmatrix
->     - ptp_fc3
->     - ptp_mock (mock/testing)
->     - ptp_dfl_tod
->     - ptp_netc
->     - ptp_ocp (a special case which provides a grandmaster
->                clock for a PTP enabled network, generally
->                serves as the reference clock)
+> Fixes: 2db04f16b589 ("clk: tegra: Add EMC clock driver")
+> Fixes: 6d6ef58c2470 ("clk: tegra: tegra124-emc: Fix missing put_device() call in emc_ensure_emc_driver")
+> Cc: stable@vger.kernel.org	# 4.2: 6d6ef58c2470
+> Cc: Mikko Perttunen <mperttunen@nvidia.com>
+> Cc: Miaoqian Lin <linmq006@gmail.com>
+> Signed-off-by: Johan Hovold <johan@kernel.org>
 
-ptp_ocp is a timecard driver, which doesn't require calibration by
-ptp4l/ts2phc. OCP TimeCards have their own Atomic Clock onboard which
-is disciplined by 1-PPS or 10mhz signal from configurable source. The
-disciplining algorithm is implemented in Atomic Clock package
-controller. The driver exposes ptp device mostly for reading the time.
-So I believe it belongs to group 2 rather than 1588 group.
+Can this one be picked up for 6.19 (or 6.20) now?
 
-> 
-> 2. Platform/infrastructure/hypervisor-provided clocks. They don't
->     require calibration by ptp4l based on 1588 and reference clocks,
->     instead the underlay handle this. Users generally read the time.
->     They include:
-> 
->     - ptp_kvm
->     - ptp_vmclock
->     - ptp_vmw
->     - ptp_s390
->     - ptp_cipu (upstreaming)
-> 
->  From this perspective, I agree that "emulating" could be an appropriate
-> name for the second ones.
-> 
-> And I would like to further group the first ones to "1588", thus
-> divide drivers/ptp to:
-> 
-> - drivers/ptp/core
-> - drivers/ptp/1588
-> - drivers/ptp/emulating
-> 
-> Regards.
-
+Johan
