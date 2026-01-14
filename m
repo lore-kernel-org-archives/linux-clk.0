@@ -1,110 +1,109 @@
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-dy1-f181.google.com (mail-dy1-f181.google.com [74.125.82.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E15ED38B9B1;
-	Wed, 14 Jan 2026 10:05:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C02D738B99D
+	for <linux-clk@vger.kernel.org>; Wed, 14 Jan 2026 10:08:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768385154; cv=none; b=T6abvNN6hDvh4KmZn7uDGBPthocZoxjcd2thGLSZ1sPnrtJbU/6PU25xKErrsQPl6XaCh9dZHAUjDogTPLN16d+y9hrl5vw0Qi0q3TZeiFiCm+r9/vtITZ4q0kZdDq35xcXqg80LSZAQ1AUz2yfMbkFaqryODN9YnsZjGAbk+r0=
+	t=1768385326; cv=none; b=cB2cjktChVdYOFHXiQDzQk8+LmR5szdvTa0lfVYxYjhwjhmVBvH1tUeVMAWvtaMtMU0Mps4Z6d0gwrXrwskhMYEWUrP4KCYVnCWS01XRmj+PQS31T9hqFDqM4+lWd2FEyurxpSCKy1xCbv+pbWk6P2tXLahSaBdrOWX4/dGtnh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768385154; c=relaxed/simple;
-	bh=vn9WQj9VhG7AviNjexEImiEIi/iAGVf/ODoubgj8esg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=VksiZuWNt4Hx4fcVdWCWcje6uPOs4rfHo7N0+jePM37R9xBUQLNhgBUdwGotO6TIF43tLoEdlLF0eyfKXOt+UkK/8cGtcYVHTF+WN66dPqek6mw77Va2oepI5SNOAdJQEIkUI9HGNlVAK8tiT9UVArJnX11XU75DXdyaknj0PKU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=hdfbGTc3; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1768385326; c=relaxed/simple;
+	bh=/VVV4Ijmp3Ls2wh1WtR/yQpGrW85l4Zba4/iPpipd0s=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=RCnY5rNXRr6xkhdA6NQ3NdGCjTucTzGBLmi8WEOQy7W83mPp+d15tVrWbHn7srU3ZYtvbqk9u5ODJgNgEsE+9QQgwmPTrrZgzZRKDUPUqbRAA6Wx+q+687tTioIwTSWcapb+DTvsiBqeCsfjR4VuwFVTapoN6HWucQSaVRQupXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ghupxcdT; arc=none smtp.client-ip=74.125.82.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="hdfbGTc3"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 848B64E420D4;
-	Wed, 14 Jan 2026 10:05:51 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 593046074A;
-	Wed, 14 Jan 2026 10:05:51 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id E0045103C89F6;
-	Wed, 14 Jan 2026 11:05:48 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1768385150; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=cI1JQH6Wxakl2cHxkxeZUP6cWNzaIt5ffNvTU0ZKfI0=;
-	b=hdfbGTc3zLFHQsrfj3a+R/1bCMFqPb2m7wcFInciJspN5WcU5JSXT3D4chNPvKJzivJ0Fi
-	xqvT3gV1gz6Nu0Ld6ASC2Ts2u4399zJcN1U7iuWO0uS4Zxm6QGut42EeIPOULga6KjJhfA
-	Ad+ahGuY44dNAdOu6QNH0nJ0tmb8WORG2EA6QWyzLi/yWvdPYEv7zpuCVHDpHu/nQeRiMA
-	vRHXlSMmHQ0kLNgGG/JtmX8UzpmrdIrW6ZpY52yfE6ekJhnGR1NWg2K18eFCbWhk1eOVch
-	uffXSwxrf/8CQMS8xFWp8ymBm/5lx6LTIe8GHo3KIc7VEQmGP0Xf1D5bTU3RZw==
-From: =?utf-8?q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>
-Date: Wed, 14 Jan 2026 11:05:14 +0100
-Subject: [PATCH v3 10/10] MAINTAINERS: Add entry for Mobileye RISC-V SoCs
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ghupxcdT"
+Received: by mail-dy1-f181.google.com with SMTP id 5a478bee46e88-2b04a410f42so7623620eec.0
+        for <linux-clk@vger.kernel.org>; Wed, 14 Jan 2026 02:08:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1768385324; x=1768990124; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=/VVV4Ijmp3Ls2wh1WtR/yQpGrW85l4Zba4/iPpipd0s=;
+        b=ghupxcdT/aeHjf39mpyt5EcQaM6/SMavCFYJkPV3iqxOvscTht/DQNCF8XpBuKX0OL
+         4dCm4+Xpc6pL0zNpm2sNbj0C9A7k4UyYH1TNm1FGRoo2cHlV01XOYAqYW6j1gTV6tgrq
+         bYNXc82y4LdmyjeNxAYCmig+5ZUEeIuBe/pEswyWFcll+gqgg2Y2HzWId7D77SpA2Kle
+         IBM1RUOF94aIlOWB+E+Z0MipQW1QchLHE1yoh23nMF0CukXbbEDEWXRxmCUcHLeAxHJL
+         Gkw/eKwcsihF1W2axNw17An/0HOioTLhOD5nMXPkOvWTHY4DN7zjHQnHOeLoRzOXXdXK
+         vK6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1768385324; x=1768990124;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/VVV4Ijmp3Ls2wh1WtR/yQpGrW85l4Zba4/iPpipd0s=;
+        b=gcecM72K4gzOdW46z4Dq90Msg48sFY+hN/iS54p919c/j731UMDFz96ukFovWY4tRm
+         zGyY7Tj1HoonUROoow4V2DILS7ANTvy2y1SUTLfof3VRx6oYaHoImN0j3uDxU+8tr//R
+         hfZyBi9yejW9LDrwOcw6oZ8mWH9dUFXVDsbcWyEVGe0btODol6sll6S7l7phgzrRdCk1
+         zZ1zOKn/FjhPL2wOHATukdPiS9gS+TfHBoOBM8GYfGWP73KEGt4a+FbWjivankv9dLEJ
+         kRqJ9ezTXNjac6uMhO/kyEjiGdefDSVZTOMuD02wilJs9g6DYN2QLyVAxsx23WImbhfU
+         gGWw==
+X-Forwarded-Encrypted: i=1; AJvYcCUYw6kHS3qOTBkPejmewlXkVQAeofnDjfS2e49ByMF6UuOSdTixpJP3Mr7n1xq//jsrG+WABz3IEL4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzxV0z/tRRvkKuwC2WLlmObJqKhGNJLj43YttofLrfD8Eo1mwp6
+	JHgg3q3cKkHfmHIddT8xxGaDZjPa4K+xRXZYf+VebGferum3mNja7kpb5adE7MneZ/w=
+X-Gm-Gg: AY/fxX5j5X4fDqNE2tI8LNvh6KUHrl4nAcZG9giGGwFz1O1YH7wTpEBtqlt/xoo4hlX
+	3f7rafC31/XKxgjpxxFj+6C8pte3N/gLoegFSVnEVYgSpkZYkNg7P392MDTQTIsQULqLtMZ3L7D
+	uqcBmGFobsF+rarm3jIMP/aU2fslDDgoJoVTPWRY5CHr/ZovaJHhc3gTIO8am1mAhlMBPPfiWDr
+	h3g6DIXP2qHd/CXDMLm2iV6+fIrnFh/59HCy5pNupGCRNVNALs6KMrjVS4vpsfYCc/DrvhAhZkP
+	HQP/v4MXux3Weo9KsJVvySRZwxAAn1YJUeyqMKfZeUMh9toXj9wwdv9QTIsc7Awx0yZvOnq/G3M
+	JBTK6gC96Cj3qpCBgcddBQwsHfheU+BHE1qprXci150SlJpCqNjxFpF+AaxXrmfjUZRolHQ6rs7
+	H1OsXQO1zEg2soqHmy
+X-Received: by 2002:a05:7301:4e08:b0:2ac:1c5a:9950 with SMTP id 5a478bee46e88-2b4871eb693mr2526439eec.34.1768385323644;
+        Wed, 14 Jan 2026 02:08:43 -0800 (PST)
+Received: from draszik.lan ([212.129.75.26])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-2b1707d60b1sm19790893eec.31.2026.01.14.02.08.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Jan 2026 02:08:43 -0800 (PST)
+Message-ID: <c449218000258224fd9460e898b9705c1d0d415e.camel@linaro.org>
+Subject: Re: [PATCH v3 4/5] clk: samsung: gs101: add support for Display
+ Process Unit (DPU) clocks
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus	
+ <tudor.ambarus@linaro.org>, Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,  Conor Dooley <conor+dt@kernel.org>, Alim
+ Akhtar <alim.akhtar@samsung.com>, Sylwester Nawrocki	
+ <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ 	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, 
+	kernel-team@android.com, Will McVicker <willmcvicker@google.com>, Juan
+ Yescas	 <jyescas@google.com>, Doug Anderson <dianders@google.com>
+Date: Wed, 14 Jan 2026 10:09:20 +0000
+In-Reply-To: <20260113-dpu-clocks-v3-4-cb85424f2c72@linaro.org>
+References: <20260113-dpu-clocks-v3-0-cb85424f2c72@linaro.org>
+	 <20260113-dpu-clocks-v3-4-cb85424f2c72@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2-2+build3 
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20260114-clk-eyeq7-v3-10-8ebdba7b0133@bootlin.com>
-References: <20260114-clk-eyeq7-v3-0-8ebdba7b0133@bootlin.com>
-In-Reply-To: <20260114-clk-eyeq7-v3-0-8ebdba7b0133@bootlin.com>
-To: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
- Gregory CLEMENT <gregory.clement@bootlin.com>, 
- =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
- Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, 
- Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Tawfik Bayouk <tawfik.bayouk@mobileye.com>, linux-riscv@lists.infradead.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-clk@vger.kernel.org, linux-mips@vger.kernel.org, 
- =?utf-8?q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>
-X-Mailer: b4 0.14.3
-X-Last-TLS-Session-Version: TLSv1.3
 
-Add Vlad, Gregory, Théo and myself as co-maintainers for the Mobileye
-RISC-V SoCs, and clarify the dt-bindings entries between MIPS and
-RISC-V SoCs.
+On Tue, 2026-01-13 at 10:59 +0000, Peter Griffin wrote:
+> cmu_dpu is the clock management unit used for the Display Process Unit
+> block. It generates clocks for image scaler, compressor etc.
+>=20
+> Add support for the muxes, dividers and gates in cmu_dpu.
+>=20
+> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> ---
+> Changes in v3
+> =C2=A0- Alpabetic ordering for all cmu_top children (Andr=C3=A9)
+>=20
+> Changes in v2:
+> =C2=A0- Update gout_dpu_dpu_pclk to gout_dpu_gpc_dpu_pclk (Peter)
+> =C2=A0- Fix dout_dpu_busp parent (Peter)
+> ---
+> =C2=A0drivers/clk/samsung/clk-gs101.c | 283 +++++++++++++++++++++++++++++=
++++++++++++
+> =C2=A01 file changed, 283 insertions(+)
 
-Signed-off-by: Benoît Monin <benoit.monin@bootlin.com>
----
- MAINTAINERS | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 670e93ddf2f1..bc675d62d567 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -17601,7 +17601,8 @@ M:	Théo Lebrun <theo.lebrun@bootlin.com>
- L:	linux-mips@vger.kernel.org
- S:	Maintained
- F:	Documentation/devicetree/bindings/mips/mobileye.yaml
--F:	Documentation/devicetree/bindings/soc/mobileye/
-+F:	Documentation/devicetree/bindings/soc/mobileye/mobileye,eyeq5-olb.yaml
-+F:	Documentation/devicetree/bindings/soc/mobileye/mobileye,eyeq6lplus-olb.yaml
- F:	arch/mips/boot/dts/mobileye/
- F:	arch/mips/configs/eyeq*_defconfig
- F:	arch/mips/mobileye/board-epm5.its.S
-@@ -17611,6 +17612,16 @@ F:	drivers/reset/reset-eyeq.c
- F:	include/dt-bindings/clock/mobileye,eyeq5-clk.h
- F:	include/dt-bindings/clock/mobileye,eyeq6lplus-clk.h
- 
-+MOBILEYE RISC-V SOCS
-+M:	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>
-+M:	Benoît Monin <benoit.monin@bootlin.com>
-+M:	Gregory CLEMENT <gregory.clement@bootlin.com>
-+M:	Théo Lebrun <theo.lebrun@bootlin.com>
-+L:	linux-riscv@lists.infradead.org
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/soc/mobileye/mobileye,eyeq7h-olb.yaml
-+F:	include/dt-bindings/clock/mobileye,eyeq7h-clk.h
-+
- MODULE SUPPORT
- M:	Luis Chamberlain <mcgrof@kernel.org>
- M:	Petr Pavlu <petr.pavlu@suse.com>
-
--- 
-2.52.0
-
+Reviewed-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
