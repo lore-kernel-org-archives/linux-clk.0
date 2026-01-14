@@ -1,113 +1,134 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AE5B36C588;
-	Wed, 14 Jan 2026 06:18:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E16D427FB3A
+	for <linux-clk@vger.kernel.org>; Wed, 14 Jan 2026 08:17:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768371514; cv=none; b=bV5Mr+s5EfIsJpafdKH1gP8A/TGdy3+qVWqZdsdVibFSWP4rOV4dSoSXIV4fENPbhsCDFTUeXgxZFDwCfxa9+rew4IUCW57Br1iqVLrkyFPiyoHWdxz/ps8lE16N+Q20GP3orwb0Zjw4abFjWRNGXYZg9w6zNusHsuLUklko/kA=
+	t=1768378629; cv=none; b=bMgO6GrAdgLzxTmFIF03sZu6CAAcLRoQPn26mDSPPk8bVhi9jyhMsDLaOiQUmR92D8jiA6QwjN0JXCIn3+VuyXUgOhYqXz1XzW1TCcjEiNB60iZrkeaZRxTLbeGznlQ9MvQWoAPBz6w80C9llJbG3PnuS3v+eT8Td2nX3WOJvmI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768371514; c=relaxed/simple;
-	bh=nxSzcvzzHWdNAdgrMcbrS7ggZ6h97hhB6Q4JayxrBCU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Usle8NQsNQklE6oNnQwrdrDkwJdOiu6ZahajuBNjIgdgfKg/1WU/x9YWoLHd6ZGHGobf/IQOtDoGgcufx+QBjESZIISmvzHVsoLIASx/U3hs2s/ewuCncSFmDJ9KCB2pr2rFIw/3u8U8mKne+UFzzNxeup/qBK2/yQCc1FfxKy4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=n+6g8WGo; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1768378629; c=relaxed/simple;
+	bh=o5URozGNlcTJCoUm4Mq2kJtCRIFDHpPaYBHu8P+apsU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=D01KJXHAibXqeNUW+96WV776R15rmnQuojlF6SONpepT8HgTS4gnX8yrIcvYlaQJEw881zsj5joOCtJIgYj5XJcgbe6qUmB1hki5+WhBk9YDYBAVHmWE+mZDeGdYlibU/8QYj9mdjSimHHz/feflXJSwFKYJanEK5gpTFoNVh4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HHNZyi4h; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="n+6g8WGo"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1768371507; x=1799907507;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=nxSzcvzzHWdNAdgrMcbrS7ggZ6h97hhB6Q4JayxrBCU=;
-  b=n+6g8WGoY40HeDRMVhJC88f+mzimot+jaq1aMwNG8+UWcxVhO0D6l8uH
-   NQPJYFBPNxRZ8fP/TvEcgKYeaBHLMMdKZqckFJaTMaa9NRbwEe8LHKqr+
-   EZ/5laLg4L9orewcj2s8wgmBDOXl4EZV5igrzri5TN6Gyup4/5wTmb9vK
-   mWoqDOFhSwDgEkxfvOWOfVn89amT1r7YAotkRiUkWdhqTGpxy3eIBs0Z1
-   9Ft1xh0IOLoDZx8N1sDOqnfFlOQzNdrjz/FHXRwGneKKw4e/Eg6heVAvD
-   oL64Wm/tux6tXRnDIDocjkxruYPwEFcZqE2ahvYROj9YVKgNaWw83GDDE
-   Q==;
-X-CSE-ConnectionGUID: Gg0LH/xLRQqYNK5UoSU8Ww==
-X-CSE-MsgGUID: z1b0tmleTZicQBgan8LJ4Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11670"; a="69717670"
-X-IronPort-AV: E=Sophos;i="6.21,225,1763452800"; 
-   d="scan'208";a="69717670"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jan 2026 22:18:20 -0800
-X-CSE-ConnectionGUID: o25ooGa8RS+SpnjyHfhupg==
-X-CSE-MsgGUID: vvV9pNS8S/ylru/27TlyKA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,225,1763452800"; 
-   d="scan'208";a="204224659"
-Received: from lkp-server01.sh.intel.com (HELO 765f4a05e27f) ([10.239.97.150])
-  by fmviesa007.fm.intel.com with ESMTP; 13 Jan 2026 22:18:16 -0800
-Received: from kbuild by 765f4a05e27f with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1vfuCs-00000000Fum-0xFe;
-	Wed, 14 Jan 2026 06:18:14 +0000
-Date: Wed, 14 Jan 2026 14:17:23 +0800
-From: kernel test robot <lkp@intel.com>
-To: Yu-Chun Lin <eleanor.lin@realtek.com>, mturquette@baylibre.com,
-	sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, p.zabel@pengutronix.de, cylee12@realtek.com,
-	jyanchou@realtek.com
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, james.tai@realtek.com,
-	cy.huang@realtek.com, stanley_chang@realtek.com,
-	eleanor.lin@realtek.com
-Subject: Re: [PATCH v2 5/9] clk: realtek: Add support for gate clock
-Message-ID: <202601141328.Q3kIKTpo-lkp@intel.com>
-References: <20260113112333.821-6-eleanor.lin@realtek.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HHNZyi4h"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-47d6a1f08bbso34093505e9.2
+        for <linux-clk@vger.kernel.org>; Wed, 14 Jan 2026 00:17:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1768378620; x=1768983420; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=rdiAvhIBSkRBz7twMnAqXfiNrByqG73RL/D6sMKeEGU=;
+        b=HHNZyi4hc9y+JApGqSROX7Y8aOukpnS9ItxVBFyIelltRrhL8lW5X5isxwPuJCgUGP
+         xMClHs7uLwJ75kuZx2y1gsUxqDb4wTKs7vdOL0SjKQZQ28072mtp4POSEewP3adJT1ai
+         QXWwVipsjcS044mepsn3IVkqPxfOuFAEduH9aBrqy4lrasIPPLGqNkXHEOsJhUwPI1Hs
+         C1gL6EnXXdzTPw3zRsUUj54hhMxgS4yKegebMbZOI4GzoE0o8/jPEZZrjvDFU5oHdS0k
+         3+qMVowdouDOvz+syicD5FBrVNrsk8npGrqCfpbsZ1e2rajTSJ50EkcWUj3rI4fEYDkm
+         PEUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1768378620; x=1768983420;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rdiAvhIBSkRBz7twMnAqXfiNrByqG73RL/D6sMKeEGU=;
+        b=gZOrDD6KQMl0VcOC7npqFaNPO/VRCQMZcdGp+//pXGg/KEVIdrptmN5uQIV5UdYsET
+         srKpc/FxSmdj+QmGajhMXxu24lR1X1JcBKW4YQShaV3Uh4zg4J3lhshTNTJujrhV5aUe
+         aHg37vma1EOI44hkQNZ4xQrCghAWx+Qfypc/KeJc793aJm9vSYi0HlhNeV7q8ZAUcBt3
+         aClUZ1f49S3QLBvM8w0Gnu2Fl88b2PeY59ORAYNx4i8iurUgtLd10vm6i0tFTLeE2RLh
+         RL5j2uVrfBTfrCug9UN01XHJ42vltgHscyeL6NgtjaLKnbiQQq6A8mQ4aAgKS6+Ygisa
+         AkaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXrvudfkQ94bdezgTH4jX/VYoTqpQndijm5YJBqlbsYq105WJgqrN+r9o5H1BNJh7zVnwpT8VBl1CU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNKaxbSzcP7Q6JCvl2m5H6Sg/RwQGz+LnaSU91I8INobkX8FWA
+	1mzF7wUOTLVk7qzoPkN+uNiFVszVzgfHrFqoZBXDkUq38P65Bd1YgITl
+X-Gm-Gg: AY/fxX7AqR/AxEbt2SMOxnUk6iJQg0/jisu923XvBwy44tM3oRp9GueuHXocXrTEQ+w
+	lppG+RpuVqvy0uVn0vsgv5EKd1Kg+BLN+dFJ02Fb7tWtNptGBBSLtkkdirqgRKFBQEp+y7T1Djc
+	uO7WFvpFOHZU4BQSsHCKx4ZsFJ1TcejRBQI9jHJ1R6hn0EGa9naEl48d30ntJW/TPHf6cTujsd9
+	FczfMSTIZTFn3uw+xiCew1WgmwfM5ncql68tegqU9P1vT6T0ovrB0J/NrCSfdBbhl2JHd6VpecI
+	gVoruUu2qA8ZtePOUq3q6d2AIssaXpsI2a8T8yiH6QQK70kNCzZgtXA4jfeGi+5B5VzlhIKoaT/
+	8kAcs19gRgY+f4RudgtmCbSe0EiAgU/RorUYz+V3WIi+tOVOH+eKzwTY3y7JSTe0hibbYBsdYep
+	JVl3jsGUGlZ6h8PsPcDtivGICT+9EZz3MiuFtS5KjT6SesNpT9DgcsiHSKEdYL1rwFd1Y=
+X-Received: by 2002:a05:600c:c0d0:b0:47e:e78a:c831 with SMTP id 5b1f17b1804b1-47ee78ac9e2mr3070835e9.36.1768378620011;
+        Wed, 14 Jan 2026 00:17:00 -0800 (PST)
+Received: from [192.168.1.27] (84.121.134.198.dyn.user.ono.com. [84.121.134.198])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47ee578d37esm15572945e9.1.2026.01.14.00.16.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 14 Jan 2026 00:16:59 -0800 (PST)
+Message-ID: <0eb5086c-39f1-4cf3-aa71-440036930052@gmail.com>
+Date: Wed, 14 Jan 2026 09:16:58 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260113112333.821-6-eleanor.lin@realtek.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/5] dt-bindings: clock: mediatek,mt7622-pciesys: Remove
+ syscon compatible
+Content-Language: en-GB
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ linux-mediatek@lists.infradead.org
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ mturquette@baylibre.com, sboyd@kernel.org, matthias.bgg@gmail.com,
+ ulf.hansson@linaro.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
+ kernel@collabora.com
+References: <20260113110012.36984-1-angelogioacchino.delregno@collabora.com>
+ <20260113110012.36984-2-angelogioacchino.delregno@collabora.com>
+From: Matthias Brugger <matthias.bgg@gmail.com>
+In-Reply-To: <20260113110012.36984-2-angelogioacchino.delregno@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Yu-Chun,
+On 13/1/26 12:00, AngeloGioacchino Del Regno wrote:
+> The PCIESYS register space contains a pure clock controller, which
+> has no system controller register, so this definitely doesn't need
+> any "syscon" compatible.
+> 
+> As a side note, luckily no devicetree ever added the syscon string
+> to PCIESYS clock controller node compatibles, so this also resolves
+> a dtbs_check warning for mt7622.
+> 
+> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-kernel test robot noticed the following build errors:
+Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
 
-[auto build test ERROR on clk/clk-next]
-[also build test ERROR on linus/master v6.19-rc5 next-20260113]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> ---
+>   .../bindings/clock/mediatek,mt7622-pciesys.yaml        | 10 ++++------
+>   1 file changed, 4 insertions(+), 6 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/mediatek,mt7622-pciesys.yaml b/Documentation/devicetree/bindings/clock/mediatek,mt7622-pciesys.yaml
+> index 9c3913f9092c..c77111d10f90 100644
+> --- a/Documentation/devicetree/bindings/clock/mediatek,mt7622-pciesys.yaml
+> +++ b/Documentation/devicetree/bindings/clock/mediatek,mt7622-pciesys.yaml
+> @@ -14,11 +14,9 @@ maintainers:
+>   
+>   properties:
+>     compatible:
+> -    oneOf:
+> -      - items:
+> -          - const: mediatek,mt7622-pciesys
+> -          - const: syscon
+> -      - const: mediatek,mt7629-pciesys
+> +    enum:
+> +      - mediatek,mt7622-pciesys
+> +      - mediatek,mt7629-pciesys
+>   
+>     reg:
+>       maxItems: 1
+> @@ -40,7 +38,7 @@ additionalProperties: false
+>   examples:
+>     - |
+>       clock-controller@1a100800 {
+> -        compatible = "mediatek,mt7622-pciesys", "syscon";
+> +        compatible = "mediatek,mt7622-pciesys";
+>           reg = <0x1a100800 0x1000>;
+>           #clock-cells = <1>;
+>           #reset-cells = <1>;
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Yu-Chun-Lin/dt-bindings-clock-Add-Realtek-RTD1625-Clock-Reset-Controller/20260113-192709
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
-patch link:    https://lore.kernel.org/r/20260113112333.821-6-eleanor.lin%40realtek.com
-patch subject: [PATCH v2 5/9] clk: realtek: Add support for gate clock
-config: arm64-randconfig-002-20260114 (https://download.01.org/0day-ci/archive/20260114/202601141328.Q3kIKTpo-lkp@intel.com/config)
-compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 9b8addffa70cee5b2acc5454712d9cf78ce45710)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260114/202601141328.Q3kIKTpo-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202601141328.Q3kIKTpo-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> ld.lld: error: duplicate symbol: clk_regmap_gate_ops
-   >>> defined at clk-regmap.c
-   >>>            drivers/clk/meson/clk-regmap.o:(clk_regmap_gate_ops) in archive vmlinux.a
-   >>> defined at clk-regmap-gate.c
-   >>>            drivers/clk/realtek/clk-regmap-gate.o:(.rodata+0x0) in archive vmlinux.a
---
->> ld.lld: error: duplicate symbol: clk_regmap_gate_ro_ops
-   >>> defined at clk-regmap.c
-   >>>            drivers/clk/meson/clk-regmap.o:(clk_regmap_gate_ro_ops) in archive vmlinux.a
-   >>> defined at clk-regmap-gate.c
-   >>>            drivers/clk/realtek/clk-regmap-gate.o:(.rodata+0xc8) in archive vmlinux.a
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
