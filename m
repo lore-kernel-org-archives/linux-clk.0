@@ -1,110 +1,154 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40A44352F98;
-	Tue, 13 Jan 2026 22:12:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768342331; cv=none; b=lX4Klbd4IcpIN0g67F8vuYPusfuox7We4eDSrbsvnQf0f92KqW7coTF1QlrDc265k3a12sHiIgDNoczL0sDarwWSfM3YBb1+Iyct2JBPxVJl5Icrx3vW2kgK7yo7l76IvBGp7tk2MAnDv4XiXg6Ol9Jpj3aFP7pSZoLqfFBK5Oo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768342331; c=relaxed/simple;
-	bh=28SFQN8Tnumdev8ylgHSFbtz98QUFPG1RsovO8KRHrE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OhoqC9q7zdwiOeH3dXb0bWbJUh/kimVRcSnoMOZoBTVy9VJLlcazBoAcwe2sxDKst2WKWsc16peeGQL3QTr6KIYSI3myNzgKgwEWaX9Rsqlq/YKDMpKQtMkFslf/anAPDFlGhB+INw7sexktFuBb1j6AOXlq3PW0y+aErFDjXJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ckhfq/su; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2740A59;
+	Wed, 14 Jan 2026 00:26:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1768350413; cv=pass; b=B/e5yqgEG7HLsgf9GY0ntx8pr76JGKkbNnBAulvKWXkLahe5Z0QHMgF/MhJhxd++vL8VYsCVGQehSx7b3Ld1trnQBd+FmDGXEHgfLnK8OpZvsBEnSpDcrw2hqg8gjTk4eYetClZdTGsKhArXo4K6kNRuZDNeAkfplNwlZ86iPv4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1768350413; c=relaxed/simple;
+	bh=8GF8mdMqO42VpHXmcHhn6Rd2npsDpkhfv448ZcXuDOE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fp5C9n5coHFtlU6vw9mfZrV9fJVX80Y+uVB4NURVx5gOqsmvk6rqtGIpLxuFCBOWKi/WieMyi/k1YMCdpd1bgiJpKWT4wz8HVLc9ZWJ9cwBj0q7TAPdbBVhlxRj7iWVHUjP6bXnXfFaXuxcYrqXmKaqJAP8hp2KUsMZQvOZ5fSU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=J83zjl/g; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ckhfq/su"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81689C116C6;
-	Tue, 13 Jan 2026 22:12:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768342331;
-	bh=28SFQN8Tnumdev8ylgHSFbtz98QUFPG1RsovO8KRHrE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ckhfq/suIKuhvaMuOr780x/hkTKkcGahNklE+Tr1T6YGG9oi7RpP+4esk/EI7tx93
-	 QECxZEXR+th+48q2IV7UMsYRuIDeAhh5x3d020i/9AeA8fICKHicO212HYVVv0YIqI
-	 5SFy829TBOT2hKZIM37JngyOyyHSFK3YyJd5DQ34OcIKHMVfTYhEYYTONeTxJcReDK
-	 b1LjmVughVgH7w7POgNaJMnfi9k+lW/zqpWojftXYxWMYKeHsZBcymGX/+7OUTc/wQ
-	 63NKLrBxKWmX/7vidKEriZgQHLrceTIMW0yAk22fGDnjzmWMZ82YrT914C76jHHLK0
-	 /Xjdlf/izYsgQ==
-From: Conor Dooley <conor@kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: conor@kernel.org,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Daire McNamara <daire.mcnamara@microchip.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	linux-riscv@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Pierre-Henry Moussay <pierre-henry.moussay@microchip.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Subject: [PATCH v3 3/3] dt-bindings: clock: mpfs-clkcfg: Add pic64gx compatibility
-Date: Tue, 13 Jan 2026 22:11:47 +0000
-Message-ID: <20260113-glue-justifier-566ffab2ffd3@spud>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20260113-snagged-blemish-52af3d00d88e@spud>
-References: <20260113-snagged-blemish-52af3d00d88e@spud>
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="J83zjl/g"
+ARC-Seal: i=1; a=rsa-sha256; t=1768350389; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=PZLFWYd0p8ZCUQbhq2E2e0G1rTnMvY70rbrX5ddbVjaVVUL3jmSlF6TCgB6ndDnxOHmldZA999g72uZxoDBKHbD8hQGQryW4nxcu8Cwaef7Syu2La5wsZAhcKNo+qVHApi3cC0MclSSrztYyOgbILVTDMwNCDON2tO6wyXFz9IQ=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1768350389; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=8GF8mdMqO42VpHXmcHhn6Rd2npsDpkhfv448ZcXuDOE=; 
+	b=S1Gl2gNo/QR7tV/HZLAvxu2uWFRRF583nMezuUtcD4B8U7lJD0j35OhbF6pUWCSFWT9fAeZmKXTStxEurqo1FFkJePair08A86l/4wNREydTHobUYMZSBxbMD60a/ROu77PDganRigyw6f0P9T6nH9FjpbuQQqcOUEc/c8oUEVw=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
+	dmarc=pass header.from=<sebastian.reichel@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1768350389;
+	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
+	bh=8GF8mdMqO42VpHXmcHhn6Rd2npsDpkhfv448ZcXuDOE=;
+	b=J83zjl/gr+Giru9ZrvebGie4XonpdcF69R/3yVnB6erNhSMiwGlCveLyiPbEX74G
+	kAZ3CaMqEPfBgF01RXP54TwMkHlmEEnC3k5Zqoglge8Q0xpcB6vb6IHFV5fH1OgxmnC
+	iuvL9cyCoEWK0eqjDYMcH4b+q1YQO8t4yCZZUFws=
+Received: by mx.zohomail.com with SMTPS id 1768350388284515.6380475328023;
+	Tue, 13 Jan 2026 16:26:28 -0800 (PST)
+Received: by venus (Postfix, from userid 1000)
+	id 00C2D181010; Wed, 14 Jan 2026 01:26:21 +0100 (CET)
+Date: Wed, 14 Jan 2026 01:26:21 +0100
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Lee Jones <lee@kernel.org>, 
+	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org, 
+	Andreas Kemnade <andreas@kemnade.info>
+Subject: Re: [PATCH RESEND v6 00/17] Support ROHM BD72720 PMIC
+Message-ID: <aWbg3PTf677Jt9rG@venus>
+References: <cover.1765804226.git.mazziesaccount@gmail.com>
+ <20260108172735.GK302752@google.com>
+ <63bc889a-b97e-43c3-9f46-9ca444873b70@gmail.com>
+ <20260109093831.GB1118061@google.com>
+ <aWRFs3CJvd37BaoH@venus>
+ <ebb14cef-9927-4211-94ef-2f209abeb406@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1501; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=2bDhTZLUYJ0LPw3YfkkGQ1+HBQ8bn68ICCZRyZt/Obw=; b=owGbwMvMwCVWscWwfUFT0iXG02pJDJlph9V76l4sco0wN/9lWFc8b7v8FgPLz81zs5WiUx59X 9DZu6++o5SFQYyLQVZMkSXxdl+L1Po/Ljuce97CzGFlAhnCwMUpABMxDWP4K5x28LrNFyPdFS/b 2OLDAu9o75zuuX6TS0ho/LMdVoZMsgz/M/VZznJtKj1+faqk3vfy2ZH12iq95jW8VwV3L2LzUHr FBgA=
-X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="7npdp75ywl7qg3g2"
+Content-Disposition: inline
+In-Reply-To: <ebb14cef-9927-4211-94ef-2f209abeb406@gmail.com>
+X-Zoho-Virus-Status: 1
+X-Zoho-Virus-Status: 1
+X-Zoho-AV-Stamp: zmail-av-1.5.1/268.322.40
+X-ZohoMailClient: External
 
-From: Pierre-Henry Moussay <pierre-henry.moussay@microchip.com>
 
-pic64gx has a clock controller compatible with mpfs-clkcfg. Don't permit
-the deprecated configuration that was never supported for this SoC.
+--7npdp75ywl7qg3g2
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH RESEND v6 00/17] Support ROHM BD72720 PMIC
+MIME-Version: 1.0
 
-Signed-off-by: Pierre-Henry Moussay <pierre-henry.moussay@microchip.com>
-Co-developed-by: Conor Dooley <conor.dooley@microchip.com>
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Reviewed-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
----
- .../bindings/clock/microchip,mpfs-clkcfg.yaml    | 16 +++++++++++++++-
- 1 file changed, 15 insertions(+), 1 deletion(-)
+Hi,
 
-diff --git a/Documentation/devicetree/bindings/clock/microchip,mpfs-clkcfg.yaml b/Documentation/devicetree/bindings/clock/microchip,mpfs-clkcfg.yaml
-index ee4f31596d97..a23703c281d1 100644
---- a/Documentation/devicetree/bindings/clock/microchip,mpfs-clkcfg.yaml
-+++ b/Documentation/devicetree/bindings/clock/microchip,mpfs-clkcfg.yaml
-@@ -19,7 +19,11 @@ description: |
- 
- properties:
-   compatible:
--    const: microchip,mpfs-clkcfg
-+    oneOf:
-+      - items:
-+          - const: microchip,pic64gx-clkcfg
-+          - const: microchip,mpfs-clkcfg
-+      - const: microchip,mpfs-clkcfg
- 
-   reg:
-     oneOf:
-@@ -69,6 +73,16 @@ required:
-   - clocks
-   - '#clock-cells'
- 
-+if:
-+  properties:
-+    compatible:
-+      contains:
-+        const: microchip,pic64gx-clkcfg
-+then:
-+  properties:
-+    reg:
-+      maxItems: 1
-+
- additionalProperties: false
- 
- examples:
--- 
-2.51.0
+On Mon, Jan 12, 2026 at 02:04:47PM +0200, Matti Vaittinen wrote:
+> On 12/01/2026 02:53, Sebastian Reichel wrote:
+> > On Fri, Jan 09, 2026 at 09:38:31AM +0000, Lee Jones wrote:
+> > > [...]
+> > > > > The MFD parts LGTM.
+> > > >=20
+> > > > Thanks Lee!
+> > > >=20
+> > > > > What Acks are you waiting on? What's the merge strategy?
+> > > >=20
+> > > > I think everything else has been acked by maintainers, except the
+> > > > power-supply parts. I think those have only been looked at by Andre=
+as and
+> > > > Linus W. Haven't heard anything from Sebastian :(
+> >=20
+> > Yes, I'm lacking behind quite a bit, sorry for that.
+> >=20
+> > > > I would love to see the patches 1 - 14 and 17 to be merged (via MFD=
+?). I
+> > > > could then re-spin the 15 and 16 to limited audience as I hope Seba=
+stian had
+> > > > time to take a look at them. However, I don't think any of the othe=
+r patches
+> > > > in the series depend on the last .
+> >=20
+> > Sounds good to me.
+>=20
+> Ah. Since the 15/17:
+> "[PATCH RESEND v6 15/17] power: supply: bd71828: Support wider register
+> addresses" was now acked by Sebastian, then it can also go via MFD?
+>=20
+> Also, if it is Ok to address all the "dev_err() + return ERRNO" =3D> "ret=
+urn
+> dev_err_probe(,ERRNO,)" conversions in a follow-up, then I guess the whole
+> series, including 16/17 is good to go? If this is the case, please just l=
+et
+> me know and I'll send the follow-up. Otherwise, I will re-spin the 16/17 =
+and
+> add a new patch for the remaining "dev_err() + return ERRNO" =3D> "return
+> dev_err_probe(,ERRNO,)" case(s)
 
+That's fine with me.
+
+Greetings,
+
+-- Sebastian
+
+--7npdp75ywl7qg3g2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmlm4qoACgkQ2O7X88g7
++ppD3A//R8n9hZADutZUgDRTVjqCd71YvQdLiff2FiW3L6d0QvZ46c9INcqhNLUQ
+ciUNNmgtac7YtIi7Lt7SXL1W3wgWfrnHY98jIrnUrZuGj+NSGrqxqK4PhlCyv1Jg
+iqO2wIC2EQey4Cc5qZlY1ajvvyfx06h8FOzliNZX/hmjXe9Mn6Xuy262yW84d6OR
+3wNtrje0geiPezOYHqF/9FtHuodaKAqaPNQdm1NvPjBFTwE/fzfLS2a0WGLLpq02
+DthCyaGj/N7+CnezA7jyJjB/1Oz6XelEvS2OkUwZnyD5l6frQhRaC1tkEOre4BX3
+UGBxQVd3mUGgLl7dkgvnwCEOs0wGnqzfR7tvYqXaSmuQktOcJ17HF+PsudCX1BGi
+S4hhWXW5XPIhJj1c7wZIiqz0ewyv9ZuKuov4w8oaMkdVqpLYxCMtKlN6tZdZfdFO
+fyK9E8DxmkjTl0/HwKNpOHO1BN+QEohnlAxCOI724seBoStdHpYMt0jUH+hoYkym
+7Hbfmg1+qi1Zx265b89yGW9cn325br79sZ1o1yFd3LIzPaTiRgiAO3UUiYRiqPiu
+NxMqGzU5wYZ2o8zR+bG/KXavXrzx/WDMzKU5QvSvPYUo3QJkTnqbZrfFrW8SmMeX
+Qqox+xoHhBekn9ZcIszzBS0j5JFs4+egcIzfT254DL5AJSDjQMU=
+=0iKX
+-----END PGP SIGNATURE-----
+
+--7npdp75ywl7qg3g2--
