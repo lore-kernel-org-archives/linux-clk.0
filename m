@@ -1,134 +1,151 @@
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E16D427FB3A
-	for <linux-clk@vger.kernel.org>; Wed, 14 Jan 2026 08:17:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FCDD37B41F;
+	Wed, 14 Jan 2026 08:46:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768378629; cv=none; b=bMgO6GrAdgLzxTmFIF03sZu6CAAcLRoQPn26mDSPPk8bVhi9jyhMsDLaOiQUmR92D8jiA6QwjN0JXCIn3+VuyXUgOhYqXz1XzW1TCcjEiNB60iZrkeaZRxTLbeGznlQ9MvQWoAPBz6w80C9llJbG3PnuS3v+eT8Td2nX3WOJvmI=
+	t=1768380389; cv=none; b=f1N3kzUZIYHovpmpYrXaiNDZJhdNrtFybzpv0aMLJeC4sHWuQIPrJYJLmWUCwBSAoZx2TTulNMzoWZkOXyMhod8fmNayutjZTuwSuhHjseMjes1B+QWIbZsCC4p/Hid0zNG16VmrhtLTzG7AcXy49uxsmXfW+HqopVBHPI7EH5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768378629; c=relaxed/simple;
-	bh=o5URozGNlcTJCoUm4Mq2kJtCRIFDHpPaYBHu8P+apsU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=D01KJXHAibXqeNUW+96WV776R15rmnQuojlF6SONpepT8HgTS4gnX8yrIcvYlaQJEw881zsj5joOCtJIgYj5XJcgbe6qUmB1hki5+WhBk9YDYBAVHmWE+mZDeGdYlibU/8QYj9mdjSimHHz/feflXJSwFKYJanEK5gpTFoNVh4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HHNZyi4h; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1768380389; c=relaxed/simple;
+	bh=6Ll8Ht/Fca12qE3DQR7uKG2qN0tG9al50MTY6YzyiNk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RgtfzeX3Kpc2h5aTecQ0idm9t8rWbyX5DGXmJ/YV3zMktGmadPRNTvSJ0gSELDn4ddop3C6FQt8xxivpcOhUV5WXes3w7UBD3206zJlWsLFuRdCk32/sd5kFV+zbdKKYzXHDqbA2EpUTcJYML7rJhhnmNQSoABfN1hN8HHevGV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L8sdU4rE; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HHNZyi4h"
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-47d6a1f08bbso34093505e9.2
-        for <linux-clk@vger.kernel.org>; Wed, 14 Jan 2026 00:17:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1768378620; x=1768983420; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=rdiAvhIBSkRBz7twMnAqXfiNrByqG73RL/D6sMKeEGU=;
-        b=HHNZyi4hc9y+JApGqSROX7Y8aOukpnS9ItxVBFyIelltRrhL8lW5X5isxwPuJCgUGP
-         xMClHs7uLwJ75kuZx2y1gsUxqDb4wTKs7vdOL0SjKQZQ28072mtp4POSEewP3adJT1ai
-         QXWwVipsjcS044mepsn3IVkqPxfOuFAEduH9aBrqy4lrasIPPLGqNkXHEOsJhUwPI1Hs
-         C1gL6EnXXdzTPw3zRsUUj54hhMxgS4yKegebMbZOI4GzoE0o8/jPEZZrjvDFU5oHdS0k
-         3+qMVowdouDOvz+syicD5FBrVNrsk8npGrqCfpbsZ1e2rajTSJ50EkcWUj3rI4fEYDkm
-         PEUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768378620; x=1768983420;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rdiAvhIBSkRBz7twMnAqXfiNrByqG73RL/D6sMKeEGU=;
-        b=gZOrDD6KQMl0VcOC7npqFaNPO/VRCQMZcdGp+//pXGg/KEVIdrptmN5uQIV5UdYsET
-         srKpc/FxSmdj+QmGajhMXxu24lR1X1JcBKW4YQShaV3Uh4zg4J3lhshTNTJujrhV5aUe
-         aHg37vma1EOI44hkQNZ4xQrCghAWx+Qfypc/KeJc793aJm9vSYi0HlhNeV7q8ZAUcBt3
-         aClUZ1f49S3QLBvM8w0Gnu2Fl88b2PeY59ORAYNx4i8iurUgtLd10vm6i0tFTLeE2RLh
-         RL5j2uVrfBTfrCug9UN01XHJ42vltgHscyeL6NgtjaLKnbiQQq6A8mQ4aAgKS6+Ygisa
-         AkaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXrvudfkQ94bdezgTH4jX/VYoTqpQndijm5YJBqlbsYq105WJgqrN+r9o5H1BNJh7zVnwpT8VBl1CU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNKaxbSzcP7Q6JCvl2m5H6Sg/RwQGz+LnaSU91I8INobkX8FWA
-	1mzF7wUOTLVk7qzoPkN+uNiFVszVzgfHrFqoZBXDkUq38P65Bd1YgITl
-X-Gm-Gg: AY/fxX7AqR/AxEbt2SMOxnUk6iJQg0/jisu923XvBwy44tM3oRp9GueuHXocXrTEQ+w
-	lppG+RpuVqvy0uVn0vsgv5EKd1Kg+BLN+dFJ02Fb7tWtNptGBBSLtkkdirqgRKFBQEp+y7T1Djc
-	uO7WFvpFOHZU4BQSsHCKx4ZsFJ1TcejRBQI9jHJ1R6hn0EGa9naEl48d30ntJW/TPHf6cTujsd9
-	FczfMSTIZTFn3uw+xiCew1WgmwfM5ncql68tegqU9P1vT6T0ovrB0J/NrCSfdBbhl2JHd6VpecI
-	gVoruUu2qA8ZtePOUq3q6d2AIssaXpsI2a8T8yiH6QQK70kNCzZgtXA4jfeGi+5B5VzlhIKoaT/
-	8kAcs19gRgY+f4RudgtmCbSe0EiAgU/RorUYz+V3WIi+tOVOH+eKzwTY3y7JSTe0hibbYBsdYep
-	JVl3jsGUGlZ6h8PsPcDtivGICT+9EZz3MiuFtS5KjT6SesNpT9DgcsiHSKEdYL1rwFd1Y=
-X-Received: by 2002:a05:600c:c0d0:b0:47e:e78a:c831 with SMTP id 5b1f17b1804b1-47ee78ac9e2mr3070835e9.36.1768378620011;
-        Wed, 14 Jan 2026 00:17:00 -0800 (PST)
-Received: from [192.168.1.27] (84.121.134.198.dyn.user.ono.com. [84.121.134.198])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47ee578d37esm15572945e9.1.2026.01.14.00.16.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 14 Jan 2026 00:16:59 -0800 (PST)
-Message-ID: <0eb5086c-39f1-4cf3-aa71-440036930052@gmail.com>
-Date: Wed, 14 Jan 2026 09:16:58 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L8sdU4rE"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBB8CC16AAE;
+	Wed, 14 Jan 2026 08:46:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1768380388;
+	bh=6Ll8Ht/Fca12qE3DQR7uKG2qN0tG9al50MTY6YzyiNk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=L8sdU4rERV3HgeN+UlGaW74UIy6dT6PzFnFULdYmUw3h6glG7TLZ0xMmHBxbMGAya
+	 BtMvNceoDkCBqWebmHnKNpzCfu2kJiiwH7pmT2Z4MuikuQqr2Dk3cNy8s+4udGfAuM
+	 tvg2KpunjOy4AoLR4XWNhM0vZ2BYGVFgfTvR5Yz3GMMdn+dMB7yhGJYFU6CM9QLRId
+	 8zkx4CfhtvEC5kaZojtbGXL8Su7KYkfvMmiRbG7ByY8XFSdVqLHIsWqMDiiEhGGijT
+	 sTm+mc2KKN2fdp33eCsb/ue05x+YL5R/O7nuMIvigqvf8HKQJwiH2fymkIj4KU9y8y
+	 yGX+4hNOIRUFA==
+Date: Wed, 14 Jan 2026 09:46:25 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Yu-Chun Lin <eleanor.lin@realtek.com>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, p.zabel@pengutronix.de, cylee12@realtek.com, 
+	jyanchou@realtek.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, james.tai@realtek.com, cy.huang@realtek.com, 
+	stanley_chang@realtek.com
+Subject: Re: [PATCH v2 1/9] dt-bindings: clock: Add Realtek RTD1625 Clock &
+ Reset Controller
+Message-ID: <20260114-nice-quick-salmon-cace2f@quoll>
+References: <20260113112333.821-1-eleanor.lin@realtek.com>
+ <20260113112333.821-2-eleanor.lin@realtek.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/5] dt-bindings: clock: mediatek,mt7622-pciesys: Remove
- syscon compatible
-Content-Language: en-GB
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- linux-mediatek@lists.infradead.org
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- mturquette@baylibre.com, sboyd@kernel.org, matthias.bgg@gmail.com,
- ulf.hansson@linaro.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
- kernel@collabora.com
-References: <20260113110012.36984-1-angelogioacchino.delregno@collabora.com>
- <20260113110012.36984-2-angelogioacchino.delregno@collabora.com>
-From: Matthias Brugger <matthias.bgg@gmail.com>
-In-Reply-To: <20260113110012.36984-2-angelogioacchino.delregno@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20260113112333.821-2-eleanor.lin@realtek.com>
 
-On 13/1/26 12:00, AngeloGioacchino Del Regno wrote:
-> The PCIESYS register space contains a pure clock controller, which
-> has no system controller register, so this definitely doesn't need
-> any "syscon" compatible.
+On Tue, Jan 13, 2026 at 07:23:24PM +0800, Yu-Chun Lin wrote:
+> Add DT binding schema for Realtek RTD1625 clock and reset controller
 > 
-> As a side note, luckily no devicetree ever added the syscon string
-> to PCIESYS clock controller node compatibles, so this also resolves
-> a dtbs_check warning for mt7622.
-> 
-> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-
-Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
-
+> Co-developed-by: Cheng-Yu Lee <cylee12@realtek.com>
+> Signed-off-by: Cheng-Yu Lee <cylee12@realtek.com>
+> Signed-off-by: Yu-Chun Lin <eleanor.lin@realtek.com>
 > ---
->   .../bindings/clock/mediatek,mt7622-pciesys.yaml        | 10 ++++------
->   1 file changed, 4 insertions(+), 6 deletions(-)
+> Changes in v2:
+> - Added missing Co-developed-by tag.
+> - Shortened binding description.
+> - Updated MAINTAINERS entry (BINDINGS -> DRIVERS).
+> - Moved software variables to driver.
+> ---
+>  .../bindings/clock/realtek,rtd1625-clk.yaml   |  51 ++++++
+>  MAINTAINERS                                   |   9 +
+>  .../dt-bindings/clock/realtek,rtd1625-clk.h   | 164 ++++++++++++++++++
+>  3 files changed, 224 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/realtek,rtd1625-clk.yaml
+>  create mode 100644 include/dt-bindings/clock/realtek,rtd1625-clk.h
 > 
-> diff --git a/Documentation/devicetree/bindings/clock/mediatek,mt7622-pciesys.yaml b/Documentation/devicetree/bindings/clock/mediatek,mt7622-pciesys.yaml
-> index 9c3913f9092c..c77111d10f90 100644
-> --- a/Documentation/devicetree/bindings/clock/mediatek,mt7622-pciesys.yaml
-> +++ b/Documentation/devicetree/bindings/clock/mediatek,mt7622-pciesys.yaml
-> @@ -14,11 +14,9 @@ maintainers:
->   
->   properties:
->     compatible:
-> -    oneOf:
-> -      - items:
-> -          - const: mediatek,mt7622-pciesys
-> -          - const: syscon
-> -      - const: mediatek,mt7629-pciesys
+> diff --git a/Documentation/devicetree/bindings/clock/realtek,rtd1625-clk.yaml b/Documentation/devicetree/bindings/clock/realtek,rtd1625-clk.yaml
+> new file mode 100644
+> index 000000000000..26ec7d68b991
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/realtek,rtd1625-clk.yaml
+> @@ -0,0 +1,51 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/realtek,rtd1625-clk.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Realtek RTD1625 Clock & Reset Controller
+> +
+> +maintainers:
+> +  - Yu-Chun Lin <eleanor.lin@realtek.com>
+> +
+> +description: |
+> +  The Realtek RTD1625 Clock Controller manages and distributes clock
+> +  signals to various controllers and implements a Reset Controller for the
+> +  SoC peripherals.
+> +
+> +  Clocks are referenced by unique identifiers, which are defined as
+> +  preprocessor macros in dt-bindings/clock/realtek,rtd1625-clk.h.
+
+Full path needed.
+
+> +
+> +properties:
+> +  compatible:
 > +    enum:
-> +      - mediatek,mt7622-pciesys
-> +      - mediatek,mt7629-pciesys
->   
->     reg:
->       maxItems: 1
-> @@ -40,7 +38,7 @@ additionalProperties: false
->   examples:
->     - |
->       clock-controller@1a100800 {
-> -        compatible = "mediatek,mt7622-pciesys", "syscon";
-> +        compatible = "mediatek,mt7622-pciesys";
->           reg = <0x1a100800 0x1000>;
->           #clock-cells = <1>;
->           #reset-cells = <1>;
+> +      - realtek,rtd1625-crt-clk
+> +      - realtek,rtd1625-iso-clk
+> +      - realtek,rtd1625-iso-s-clk
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  "#clock-cells":
+> +    const: 1
+> +
+> +  "#reset-cells":
+> +    const: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - "#clock-cells"
+> +  - "#reset-cells"
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    clock-controller@98000000 {
+> +      compatible = "realtek,rtd1625-crt-clk";
+> +      reg = <98000000 0x1000>;
+> +      #clock-cells = <1>;
+> +      #reset-cells = <1>;
+> +    };
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 12f49de7fe03..66c0f4924c1e 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -21968,6 +21968,15 @@ S:	Maintained
+>  F:	Documentation/devicetree/bindings/net/dsa/realtek.yaml
+>  F:	drivers/net/dsa/realtek/*
+>  
+> +REALTEK SOC CLOCK AND RESET DRIVERS
+> +M:	Cheng-Yu Lee <cylee12@realtek.com>
+
+Just to clarify, because sometimes people add here authors not actual
+maintainers, this is a list of active maintainers, so reviewing in
+the future will be from both of you.
+
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+
+Best regards,
+Krzysztof
 
