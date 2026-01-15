@@ -1,128 +1,66 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B37527510E
-	for <linux-clk@vger.kernel.org>; Thu, 15 Jan 2026 21:05:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 165F3327C0C
+	for <linux-clk@vger.kernel.org>; Thu, 15 Jan 2026 23:42:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768511155; cv=none; b=WkKHt7suwJBcMhjRs9yryd1rd6p3MhpXMuld7qKWzfTm/ouZ8z67C6GlwDRQO7DpLG+Yzh/dqKubSd/xFsGbX5CQcAIUeQ5Z2D3qPV5pY3cTqNfjdyX+GrHpYlsRJSr9qUg6ofBnxel75TRgFhDd+58zLwERvja9qFT8vI7ZUds=
+	t=1768520567; cv=none; b=tNd8qFG50T7Po3AdFpolDN9tAnXvJY0tDZD42bzkNVhFDzG0JpaDgkNEQqVZEAGbnsaGGYvtwKvk+kMiCfCjP2llUM5avMIgXuoQX4Rex/YL2vs6a+JoKOvoiZKyo7+TvxLK7m5uOURt8WfxH0bIiAIOhxHXEbsYc+YfDhji5pE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768511155; c=relaxed/simple;
-	bh=ENmGoObji0+Hq4MublklfZhpzGxYbI0JiS47cctdDv4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MroEJwv8eLodYEE0y1aPqpk0C5AeJNw4kzdAWFAjcs+KBFMqU6XbcF2D3Ki9nTTdq2SxDLTHawMW2tn7eF3OJA+Qe+TyJcx3cMZtbO6vMLoUN+wKvB3NWg4WqiEmLHwvx3orLhQlm3f2efbfQ/URQxNuQWdmwtirv9pS9XwyOcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=LcyP4ZgH; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=SkH5SnJ3; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1768520567; c=relaxed/simple;
+	bh=4+/gILBdjn1eZEBZTvS6mqsYmffWsLQnnJt5jEOLzKI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=CE/5fAMtbpHqi3xeMbTdtivRYWv0SiM8dhm9lFU47E1P039D7wCtNXI7r6lqSXif60XW6WG1d24FukK7SQIN04Os5u6pGcfG/ns8+rV+PLgk6asHFlpYDLI1IQJ9HTKVEDUJtjUPGk2ItXEMc5bkTIKfRSCj/Lcz6as66Bvf4Ig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oss.tenstorrent.com; spf=pass smtp.mailfrom=tenstorrent.com; dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b=N4go62Cg; arc=none smtp.client-ip=209.85.128.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oss.tenstorrent.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tenstorrent.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="LcyP4ZgH";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="SkH5SnJ3"
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 60FFYGvV1910150
-	for <linux-clk@vger.kernel.org>; Thu, 15 Jan 2026 21:05:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	WLhM43u7KTCNMftZSAW1g9y9SRicJ/aCzV4l0MaawTE=; b=LcyP4ZgHar0lfCNc
-	erfRehhLm+Jly3LD5YZe+gnbNWLMPpKpCHqXWqbxOusksc+bO9tXicyW7jh//NJi
-	usIGfOEjO9AEv9gpfGj/98YCcHfrTukl/zYmQLydJsdQKttHrSPAJdyOP2ZwhZgo
-	JBQMEwdzMGLiVdBk1W/SXyZVvNdc5NRZT+FM7qpEx7/7NvdPOy5frXysA8s0gU8J
-	ZqNYay2ewVXzcLHlbBz3ecFwu6edWv5ajyjydAsDG19/Yj+LuCA7AN0opCmt5loq
-	k4QJeBZL720AEGIBMtghVzSNUa8Qz2OgpGPhh0XGju56X61amGvdnRG64wNypL3C
-	6E2Taw==
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4bpxgn1ryt-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Thu, 15 Jan 2026 21:05:51 +0000 (GMT)
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-8c6a4c50fe5so220328685a.3
-        for <linux-clk@vger.kernel.org>; Thu, 15 Jan 2026 13:05:51 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b="N4go62Cg"
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-792815157f3so15542607b3.1
+        for <linux-clk@vger.kernel.org>; Thu, 15 Jan 2026 15:42:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1768511151; x=1769115951; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WLhM43u7KTCNMftZSAW1g9y9SRicJ/aCzV4l0MaawTE=;
-        b=SkH5SnJ379fWvURX63Vxc3HKwmbQ79q3DlQeJxE9g4FlrriS9zaYSuSuPMlmUCV4QK
-         DpRNVNewpczX1tlQzgDUQOZnvKg+Nphjndr5bm9yha71Zjs5lJsVbkaqMfRzVKFh+xgX
-         X/fcOZiCyUht3n94f+7rX0GtudAaecYxgAQHimpeo0VQKQOOj2CVRnvJTLDcp7nVz4Jl
-         oAKptckF98NDSVGF0+cRhCVSG7cu4FJ5noowFbqGQDYohVwmWbAF92FGZ8t5J648GMHC
-         Ckf8ygMXs3kivXkLEAwByI1qSB9WDyHuy6J5s/SCjoxa50JQWtGsy+Uka2rBOLBVnrL2
-         pbVw==
+        d=tenstorrent.com; s=google; t=1768520564; x=1769125364; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=v6vy68HrZiN7lT0nxeuJXtxrb4j0PV95v5MAtlSQSF0=;
+        b=N4go62CgnPyeeeqgNojZRccmBL44eQJQrQLhLbNHBkJct2kQO8DRYS9qNfcQThmyPJ
+         fdamRuGHNOh12CbSNWpVcBKxA4wm0b+11e/EqjooLUwQASoRrI/WK/mAQ+rajY8osPYO
+         1OU1wyxGtnM0eVJ7gFVBHIN5Qw1VyixJJONLNFaeCZ2605Sglvai89W6Zv4kjJZz0c1q
+         w0B8SmhxlGgJvjsJtxGogU28THZBi7Pcjdy7+YeaKDqiQqS+Oh7Ccg9LBMkUeiiL/0K0
+         uSSfU/hN7j5L0VXFF/sB92hvfmZ3zfeyuReDGuY37dP8hL4x+7zpjnmRPhFFPu0gkP5s
+         tKrw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768511151; x=1769115951;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=WLhM43u7KTCNMftZSAW1g9y9SRicJ/aCzV4l0MaawTE=;
-        b=itDEZfURFvDLJol0KB7nANyV4Ipas3jLNMmOrd3LwJHimAHV3Osg4rPIP06By0r+cA
-         g9WV+teWWSdoMgO6QvRmMXj1kpEIUim4VyNwgi1NAmJbM0fMO1yXXtGkYwjtomIdTzAN
-         BRUFEb6ZxNrqBhMcNzghCl3dfzLAgxeE6z8Vxgq5jNyviX7HGWJsVoJXkEQ5StA9Mkeb
-         rBFHDf6hzl1r1YdsJT4R9RWBXlaLkOo2yVpiUoFN6ZynKBebrXTDAK0J/wWmlsbOw92s
-         FWOvZvji5vFQKnv/8cn2/Z6dEpynegrrF9TWG+F1EdcSI6JnJPOpWaAP1lB5IrWABIiB
-         VskQ==
-X-Gm-Message-State: AOJu0YzPYc7uiaB5490ms8jQDPjju7lcT8+j5n96uwatBP01cYRv9kab
-	yQCH1RgbD6H7+2YD8Gjy3p9u80TtV9kXqrhXZ8Mssxv4REYpV2jR0r9dGDCXKT+UNTZajC+mzfL
-	nfGoULHJYBK5qYmuRRu+R29tKr1GQ3qKwrsqcCULcoYbJBN63z0nrtVgIZ+r5QMk=
-X-Gm-Gg: AY/fxX5AldcOcxC533LOlI7czFzgmjrAX7bRXSaeo1UzYtlrl2Y12y0f0MeK5RJVVbT
-	nkgkXWneOnnOwye2IbAd9arwZyd9AF1URqFzQoc2iPeP0xzBQ9QivCcwdwvZA1giz5/3gXv6pKJ
-	RXX2MR0ymq9mgOBvE1CE+Y5Pk/1NdqtPM2OkEvd69M2oevdLhlm1RNa19CucLbJp/RboYeCfHfa
-	dZYDTWQtHwm3IW/YzW2zWmy2J4LA1SwjIxlZ0IxQ8dZwmQrCDZ8r2MCgNi08SXxpawuddfeAWmr
-	2eypohQvEBcu8cY5V4JPmZep40DTDi9NHIFjBrA0z3eTdaHOBFZKm0mCjjeCFqw7m0rEGd6UNj5
-	yWvO40SLrjzPfstL7amJNHFnccIFqHFa233bb8LfbD244pXoarCBUPzJGXonvbUr45j1RnykAGi
-	72HkQF+0wimm1sWrsj/JV0OzY=
-X-Received: by 2002:a05:620a:1723:b0:8b2:dfda:66c4 with SMTP id af79cd13be357-8c6a68d2f67mr120083585a.8.1768511150971;
-        Thu, 15 Jan 2026 13:05:50 -0800 (PST)
-X-Received: by 2002:a05:620a:1723:b0:8b2:dfda:66c4 with SMTP id af79cd13be357-8c6a68d2f67mr120072385a.8.1768511150340;
-        Thu, 15 Jan 2026 13:05:50 -0800 (PST)
-Received: from umbar.lan (2001-14ba-a073-af00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a073:af00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-59baf397672sm155740e87.61.2026.01.15.13.05.49
+        d=1e100.net; s=20230601; t=1768520564; x=1769125364;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=v6vy68HrZiN7lT0nxeuJXtxrb4j0PV95v5MAtlSQSF0=;
+        b=OFHLohlknb+j1xWiodSmIrsMLt3/F9pBUyaK5wBc4hzvxNrsMH0UseE+GBzK7wMm+j
+         2KoCf64OsDTJTvY3wvp9pLPuAG/X9mMqfLNvJdBJ5+C++MiDG6ZxhxTKXteO8ZhZshrg
+         lO3RDfY0gsUgSQ5PTYgF1ud/kKRTm4O4ecYpHv+O79DyWF7v48bIrPfezdfGk7jGlhGl
+         bfgSvj5aZVT8zPN4/4e0iZs3S94+es5FVvg8ayYt/xtBX9NPGCbTvbWk9MaZXfHbHL6a
+         dqxxljDjTYA6K7vDfW7iD9/W6PJHQwDhxU3aC5oKfXId1Wc5xS2irF2yVj5i5MO23Bah
+         kOEA==
+X-Forwarded-Encrypted: i=1; AJvYcCUPx3itzoCC4BUXiZNqnhNJTO+PhioD56jjFFtKstYrLOZlAyXUHh7twWP+pl0zXoyh9FG0Ty3UbTc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwtzWE4GVVEjLkrh6IUXZgsoXrOhFL2T6KVvJOP+CaNBddw3L7B
+	2ydo6Dni0HXfH4KQ3uJYMZDklTtobbRHBOrhVL5toR7bHWsqi0zPTu14ERce0lKIcYU=
+X-Gm-Gg: AY/fxX4IGzKlQGNHuQ1T6PGo9T+dsbBiEllj+x49PJ+l1z9+bibgDRG7K4B99UzCHCI
+	LBeJZ4WbQg0zGob6xDdFQD6kkrQfjdJi6AjVzxGdH5prYrAoHTve7TZ2XfjJga/3jg/iU1i5kN1
+	VhrYdQK+HtM4thFHJ/L+J5AvdSlBereaQsHYEEBCPlsRTiFyhCHMZcbn8nYlPR/TpyXK1MLU8bv
+	X6BZpd3UVLZcjNp29mXcvvqGNLG8m1GlT5pQAD9qL8/mHGVtTdkEh/XTNDHIt156kjZJC90mFIJ
+	/L0NKtqZaYHrU3Cam/9g6xyViQNS1HxHQzyI6CiUWlqaf4qZTlQ9egLv5MzfAtU6M6cX2MrRa9f
+	n0ydC/nLvkMpChpz0KAmoAabGeNdyPahLERzqIDKoCdvZjSNxSYE5VwHBY+XH3WqWA/dv+pE+5S
+	oWx6bkIYki3zh65W6wKtTaS0HGLg4CiOq+kGGqcmMpnD+ztWHm4A8x0xHJozOuqdhT3E8jX2PMF
+	sVtdWTUYg==
+X-Received: by 2002:a05:690c:498f:b0:784:8338:ff78 with SMTP id 00721157ae682-793c67115eamr8895767b3.29.1768520564077;
+        Thu, 15 Jan 2026 15:42:44 -0800 (PST)
+Received: from [192.168.5.15] ([68.95.197.245])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-793c66c72aesm3027117b3.11.2026.01.15.15.42.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Jan 2026 13:05:49 -0800 (PST)
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Chen Wang <unicorn_wang@outlook.com>,
-        Inochi Amaoto <inochiama@gmail.com>, sophgo@lists.linux.dev,
-        Chen-Yu Tsai <wens@kernel.org>, Maxime Ripard <mripard@kernel.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-rtc@vger.kernel.org,
-        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        linux-actions@lists.infradead.org,
-        Keguang Zhang <keguang.zhang@gmail.com>, linux-mips@vger.kernel.org,
-        Taichi Sugaya <sugaya.taichi@socionext.com>,
-        Takao Orito <orito.takao@socionext.com>,
-        Jacky Huang <ychuang3@nuvoton.com>,
-        Shan-Chun Hung <schung@nuvoton.com>, Vladimir Zapolskiy <vz@mleia.com>,
-        Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>,
-        Bjorn Andersson <andersson@kernel.org>, linux-arm-msm@vger.kernel.org,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Michal Simek <michal.simek@amd.com>,
-        Rob Clark <robin.clark@oss.qualcomm.com>,
-        Dmitry Baryshkov <lumag@kernel.org>, David Airlie <airlied@gmail.com>,
-        Simona Vetter <simona@ffwll.ch>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Jessica Zhang <jesszhan0024@gmail.com>, Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        Vinod Koul <vkoul@kernel.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        linux-phy@lists.infradead.org
-Subject: Re: [PATCH 00/27] clk: remove deprecated API divider_round_rate() and friends
-Date: Thu, 15 Jan 2026 23:05:48 +0200
-Message-ID: <176851027322.3933285.17869583744437773979.b4-ty@oss.qualcomm.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260108-clk-divider-round-rate-v1-0-535a3ed73bf3@redhat.com>
-References: <20260108-clk-divider-round-rate-v1-0-535a3ed73bf3@redhat.com>
+        Thu, 15 Jan 2026 15:42:43 -0800 (PST)
+From: Anirudh Srinivasan <asrinivasan@oss.tenstorrent.com>
+Subject: [PATCH 0/8] Add Tenstorrent Atlantis Clock/Reset Controller
+Date: Thu, 15 Jan 2026 17:41:59 -0600
+Message-Id: <20260115-atlantis-clocks-v1-0-7356e671f28b@oss.tenstorrent.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -130,51 +68,62 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: uyXpOQUQvCGQ-fLRIkURYVdmEDJEQrSj
-X-Proofpoint-ORIG-GUID: uyXpOQUQvCGQ-fLRIkURYVdmEDJEQrSj
-X-Authority-Analysis: v=2.4 cv=ANDFHcx+ c=1 sm=1 tr=0 ts=696956af cx=c_pps
- a=qKBjSQ1v91RyAK45QCPf5w==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=vUbySO9Y5rIA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=e5mUnYsNAAAA:8 a=whp_R4xS9ENlu3RGya8A:9 a=QEXdDO2ut3YA:10
- a=NFOGd7dJGGMPyQGDc5-O:22 a=Vxmtnl_E_bksehYqCbjh:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTE1MDE2NSBTYWx0ZWRfXwTfbxbPdV3Nl
- sDV+Z1nhkcqSbu1vA+dGOo18l5cWLIPLk+aiyLW/gXi9lbSICbYQrEaQvUpju2w6RwLaanwkocs
- sJRwFICQb1HdB2+nRJ/EzB5zybHmUP3O9tNhHoYY2JQeLZllF4RYvGmLEs3HD+4+gg1dZJwQ7qc
- 5YeoqjdYceiCNNn6wFn/SZsXUFOS6ZB4WuKBkNOlyGbopG9A4taID+H9IFfBvnOh/cfZQG6ctzk
- 3+ZyOkvJ5aBbgO2R5DZ939SaKlZH8gxKEFvshzKfE9vZXBWvs/LoXgQAHP67EfN6mTI7G2v+m8n
- Zx7YCEkA2Ug5pXQLBFa/3yljOlUAcgFmQdFtVUB0KBgzZ1FUCqQgr9BYE4wj3pmBb3wN3wDAunG
- qlIi4fU5ZUvTDAkzweNz/LPOAMh/lV06gpoIEmcY3n+MlRTcLr1JXBetGkF6uI1UyQ7OuP24EzU
- U+EleicCiDYjrdPH+VQ==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2026-01-15_06,2026-01-15_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 phishscore=0 clxscore=1015 bulkscore=0 malwarescore=0
- spamscore=0 lowpriorityscore=0 adultscore=0 priorityscore=1501 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2512120000 definitions=main-2601150165
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEd7aWkC/x3MQQqAIBBA0avErBNGF5FdJVqYTTUkFk5EIN49a
+ fkW/2cQSkwCQ5Mh0cPCZ6zQbQN+d3EjxUs1GDQdam2Uu4OLN4vy4fSHqBUtem1x7rsFanUlWvn
+ 9j+NUygfoh+4lYQAAAA==
+X-Change-ID: 20260112-atlantis-clocks-f090c190b86d
+To: Drew Fustini <dfustini@oss.tenstorrent.com>, 
+ Joel Stanley <jms@oss.tenstorrent.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, 
+ Anirudh Srinivasan <asrinivasan@oss.tenstorrent.com>, 
+ Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, joel@jms.id.au, 
+ fustini@kernel.org, mpe@kernel.org, mpe@oss.tenstorrent.com, 
+ npiggin@oss.tenstorrent.com, agross@kernel.org, agross@oss.tenstorrent.com
+X-Mailer: b4 0.14.3
 
-On Thu, 08 Jan 2026 16:16:18 -0500, Brian Masney wrote:
-> Here's a series that gets rid of the deprecated APIs
-> divider_round_rate(), divider_round_rate_parent(), and
-> divider_ro_round_rate_parent() since these functions are just wrappers
-> for the determine_rate variant.
-> 
-> Note that when I converted some of these drivers from round_rate to
-> determine_rate, this was mistakenly converted to the following in some
-> cases:
-> 
-> [...]
+This series adds support for a Syscon block in the upcoming Tenstorrent
+Atlantis SoC that covers clocks and resets. This block is instantiated
+multiple times in the SoC. The current series covers the "RCPU" syscon
+block that controls clocks and resets for most low speed IO interfaces
+found in the chip.
 
-Applied to msm-next, thanks!
+Signed-off-by: Anirudh Srinivasan <asrinivasan@oss.tenstorrent.com>
 
-[24/27] drm/msm/dsi_phy_14nm: convert from divider_round_rate() to divider_determine_rate()
-        https://gitlab.freedesktop.org/lumag/msm/-/commit/1d232f793d4d
+---
+Anirudh Srinivasan (8):
+      dt-bindings: soc: tenstorrent: Add tenstorrent,atlantis-syscon
+      soc: tenstorrent: Add header with Atlantis syscon register offsets
+      clk: tenstorrent: Add Atlantis clock controller driver
+      dt-bindings: soc: tenstorrent: Add atlantis resets
+      soc: tenstorrent: Add rcpu syscon reset register definitions
+      soc: tenstorrent: Add auxiliary device definitions for Atlantis
+      reset: tenstorrent: Add reset controller for Atlantis
+      clk: tenstorrent: Add reset controller to Atlantis clock controller probe
+
+ .../tenstorrent/tenstorrent,atlantis-syscon.yaml   |  63 ++
+ MAINTAINERS                                        |   5 +
+ drivers/clk/Kconfig                                |   1 +
+ drivers/clk/Makefile                               |   1 +
+ drivers/clk/tenstorrent/Kconfig                    |  14 +
+ drivers/clk/tenstorrent/Makefile                   |   3 +
+ drivers/clk/tenstorrent/atlantis-ccu.c             | 991 +++++++++++++++++++++
+ drivers/reset/Kconfig                              |  11 +
+ drivers/reset/Makefile                             |   1 +
+ drivers/reset/reset-tenstorrent-atlantis.c         | 164 ++++
+ .../clock/tenstorrent,atlantis-syscon.h            | 101 +++
+ include/soc/tenstorrent/atlantis-syscon.h          |  53 ++
+ 12 files changed, 1408 insertions(+)
+---
+base-commit: 9448598b22c50c8a5bb77a9103e2d49f134c9578
+change-id: 20260112-atlantis-clocks-f090c190b86d
 
 Best regards,
 -- 
-With best wishes
-Dmitry
-
+Anirudh Srinivasan <asrinivasan@oss.tenstorrent.com>
 
