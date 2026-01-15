@@ -1,204 +1,149 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from mout.web.de (mout.web.de [212.227.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DE3C39C64F
-	for <linux-clk@vger.kernel.org>; Thu, 15 Jan 2026 13:02:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E146354AEC;
+	Thu, 15 Jan 2026 13:03:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768482137; cv=none; b=G4LyHT2HkaQ+SHfjqXMxeNiPGF2QtN8SnXTeG7S0eBiageas9/DSvcawSVpEAvNG0eVFZnTynvKRNJ62Oekv8SYexOylLiC16pTTeUufe3mcWRa5SWGFr9FfowEsixU9tGpOLajlDhnvvBS6uydbEOK1mlJGH7xy5zqI+RM7D8k=
+	t=1768482228; cv=none; b=PS5LXoi/PoSIo0N8QH0cdvoUoB4yLb64u4zNBQCXXyh2f6kdtN0Hpj08EMn9s8ACwGJr/UC7UWxOyQYJS3/WwybXkig6r2h7zQ7h6HRURvHSYU711IK+dTaG41rbkxhBgi/Cvlgh3U++L5bB6+ZN/coHl/WRrAwEV/thuieiX00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768482137; c=relaxed/simple;
-	bh=A69ZO/7VQGiujVunOWYUggbHdGjMD0FduSfe6mMsudA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CJoTnYuUIwGIoiQEEnCJdv0shGxd+W8HJMmAjj8W67nkVr55pmee3FflZHi8IreVeY+i5ix90dg/WwY/Pfi2Ug9ty2fD4FDlvN+Fph+tV9NttOPOoza0+P0b8+VGj3ELNACCMsztGXiBd6Ho3Ojx9Ukq93eWg4VMwLSVxlkxnhM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dtyabFTV; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=sIHk3CNa; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1768482228; c=relaxed/simple;
+	bh=WlDu/kL1qmIdf/AYZ8utNV5Icv6uFtizvReTaXdHMec=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=i2QSlnzJqM4L/9JMdqdUhUi7p9dcnHdIcwFvt0fI1MnHg0brQgjTyq47XNsSdGYgB9X4BiZjNpBm+LJrSv7NofQRm5nmzWIqdJan1LJcBeWet/jg4l5jzZJ86JtdTS5oqDvLDFmu6Zb6T2q6ZW3mhWpxmRdQE8+6SkMvFDdmgMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=JwxF9rvq; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dtyabFTV";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="sIHk3CNa"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1768482134;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yvng5JA6e+TbWXXcdfj/MzIBnSNMDZIedFcqPEoc/GU=;
-	b=dtyabFTVrkQER7mEhW4c2XO37Kka5sN2bMr8oj9dY8pUTcv3M8zkRfoK0gDnI6ee6FkKQl
-	vZ+mbN0Dk2RMbooYKvB0aJOMckrJ50wSqzwGZAk9XsKCuFZw+R232LuKAA+iLPvXt6AAtp
-	5mUMuQHeE7+Qog2+Xw5mRRATX1vEd7k=
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
- [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-271-oj-WwSl7O4elbw4f1SWveA-1; Thu, 15 Jan 2026 08:02:13 -0500
-X-MC-Unique: oj-WwSl7O4elbw4f1SWveA-1
-X-Mimecast-MFC-AGG-ID: oj-WwSl7O4elbw4f1SWveA_1768482132
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-5014c472ad5so27530171cf.0
-        for <linux-clk@vger.kernel.org>; Thu, 15 Jan 2026 05:02:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1768482132; x=1769086932; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:mime-version:references:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=yvng5JA6e+TbWXXcdfj/MzIBnSNMDZIedFcqPEoc/GU=;
-        b=sIHk3CNav0Xx+C5NM0pO+LfK/7Kb+/g6M3Z4rwAYl4a92j1uRX3BlkTfyfMgbx7CPf
-         gJCzuSNK4HPq+Jj4SR+WnMkYAnypP6lj7WJs5no4WSqMFqB00gzsoo8gOb9JqQz3H0Ma
-         MQE39LL9MpSd7jA/gJ7uOeVPsb6tn8MrhYDo45PVw3nAgrmTgJLDdQypAnhYzYyYKWsv
-         y6/Ma/wKTpfSGE7gsIUquYw2j6uf6rARZApLZxcaoXdffaCOLpc3MHYkS3Fi4Fj4/wTd
-         yYhe9x9xOiUffXBRzRTO9VNVlWBOPOLq7T98wJiQYBue6lRgx0cpxiiIbcbf/lZnSXfU
-         rozw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768482132; x=1769086932;
-        h=user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:mime-version:references:message-id:subject:cc
-         :to:from:date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yvng5JA6e+TbWXXcdfj/MzIBnSNMDZIedFcqPEoc/GU=;
-        b=SW3iQbu/QqS9RS9/0IG+H61RSjitNfrtxAZNP72/ruQUcrTBI2YB2RjzCGMRTBfthq
-         sws/QHK2Jd9YqH3xSu9n8DTTuBAlYU3dQrFF52CHOnrgHh3xFKKN7U712OawEgkzTQUr
-         MSZLHLW34KtuCQsHdG+SiRTIEIUapeU7nlIJ+bTC6xjRKs1S0S5AXoMhJACH1WdkWhAR
-         QLPCa/kuO1xjBj9WjL9tU6mzTM8pPzpUHD7TyIAIOsBWF5V7Ih4ZVc+yVjZsh2EOxh01
-         ogqDRpC3HmPRQvhfK0tVcEdmFFzPAef4mHQ2zvgqtJJwvUa5c7qJGi/Y2y5md8tPPZ/m
-         asoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWPtlnwoUJ1Lfi0CNteyqjSxEjASndLb2zIv8nDB01PlDTCjheeeziNmYhHIMinFdvp9kmHuiBtf5s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwO6p/7f6cjaVZwmUJbdJIQYugX1ER6TbL0DfUjKLhhLzx/Xqq9
-	eKpUBQ/F3462obI7Tcmjh7NWL92wLxPt511hkLz2KoBM9jENcEb18ENuWbCphSq2GCqE0TDDEOh
-	/dIsexWcA1UQ8ARkIdZhxcjK4hmkKnMzesSvS3bjtDniVLW2TS2/yzsiaEGi+uw==
-X-Gm-Gg: AY/fxX41WkgBCOqu5By9BRSZ3ceXGPp5s1sA2yFCY8w42wb+yYwhgnoCYWyISUwmJhr
-	PqHxHzIUoYGihVcG0UN6ed3jpb2hbtc5ArBH2lTp9eSDNfPMsTvD4tmakWqGvi90DBF8CIPx5oG
-	NktQPZIwFBBoVwtvdTlWPKgN5dbDNSkuZbMLgOsee1f+400ABDUuB23eZ7TnTQvXUBJpmDFktTF
-	53cRAmHtAh+XqbjkkBW4+Qx0PBUL468jsZ7x3AL2/rzn0SexV4IePuPOwKeWBurx0gLUh8TveWg
-	/8/uPo/RZJrSYSrpTYlFwxBKAWY1hLo6bhhmlViwHAsZObbxx9RrqqMKoJSB3S/nwpjVbmfdCSt
-	UNwSnihUcBQ5aEVoK6Elfq9Vugm8leUuzJ7sTQs7VNCV4
-X-Received: by 2002:a05:622a:4203:b0:4ed:df82:ca30 with SMTP id d75a77b69052e-501481e9360mr76195421cf.13.1768482132105;
-        Thu, 15 Jan 2026 05:02:12 -0800 (PST)
-X-Received: by 2002:a05:622a:4203:b0:4ed:df82:ca30 with SMTP id d75a77b69052e-501481e9360mr76172571cf.13.1768482100257;
-        Thu, 15 Jan 2026 05:01:40 -0800 (PST)
-Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8c530be5446sm385631385a.54.2026.01.15.05.01.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Jan 2026 05:01:39 -0800 (PST)
-Date: Thu, 15 Jan 2026 08:01:38 -0500
-From: Brian Masney <bmasney@redhat.com>
-To: Chuan Liu <chuan.liu@amlogic.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: Ensure correct consumer's rate boundaries
-Message-ID: <aWjlMrlCEbprgKg5@redhat.com>
-References: <20260109-fix_error_setting_clk_rate_range-v1-1-bae0b40e870f@amlogic.com>
- <aWhDLNFtaoU7A-AN@redhat.com>
- <fe437139-4c33-489f-90f9-44e3dd3b0f9e@amlogic.com>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="JwxF9rvq"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1768482216; x=1769087016; i=markus.elfring@web.de;
+	bh=WlDu/kL1qmIdf/AYZ8utNV5Icv6uFtizvReTaXdHMec=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=JwxF9rvqn0jSg1/sUIdfo2/kJ04HmhTDPNrCiUW5GbgAERu8pkXfd3v2TceATiTr
+	 r1xIY2dPypeAcozPBekVqv1+JTSWoouNKZ0uU3A28CT3YGRY2JDFrXYa/uYIr3e74
+	 CzT3yUQr2HIJObKFs+DYUJCXPcvNvuf22ObdKyn2ajjUa9ozjzKbN3lNtqax6xa+M
+	 1Cz/JTXQTFFsUs0Db4NCsM98dtH6Ughnpaw6G7rkosnq9CIJ5Yme+l+cZ0ZfIYwes
+	 ZUh9sjrgFE56PcD7HMZxgLW/71aJu63S01Z/SZJJ8JyCpHZ8XbqI6cOzlgud9Nn4F
+	 yXfXLu+NdaMUygMHLQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.69.191]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MjgSv-1w5EMe3YPj-00eiic; Thu, 15
+ Jan 2026 14:03:35 +0100
+Message-ID: <bf800455-6f93-4695-a36d-e6bfcb9a7e34@web.de>
+Date: Thu, 15 Jan 2026 14:03:34 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <fe437139-4c33-489f-90f9-44e3dd3b0f9e@amlogic.com>
-User-Agent: Mutt/2.2.14 (2025-02-20)
+User-Agent: Mozilla Thunderbird
+To: Haoxiang Li <lihaoxiang@isrc.iscas.ac.cn>, linux-clk@vger.kernel.org,
+ Brian Masney <bmasney@redhat.com>,
+ Gabriel Fernandez <gabriel.fernandez@st.com>,
+ Michael Turquette <mturquette@baylibre.com>, Pankaj Dev <pankaj.dev@st.com>,
+ Stephen Boyd <sboyd@kernel.org>
+Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ Mike Turquette <mturquette@linaro.org>
+References: <20260115045524.640427-1-lihaoxiang@isrc.iscas.ac.cn>
+Subject: Re: [PATCH] clk: st: clkgen-pll: Fix a memory leak in
+ clkgen_odf_register()
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20260115045524.640427-1-lihaoxiang@isrc.iscas.ac.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:wbSSppVOlzr1nMS0rjlbXEpiEq+Fq/k4Azpc63cQ+PRlLQ5I1jF
+ YD0xhXvyMaXE+I46KdhwD+AxARLBGNFxNO5igYwvUy83NNkf4x0x1PO3iGAJvCUlmi7NqB5
+ IXm6Ml7FUTgSeohz3rAWmVsDEyVNStp6Xyp/Pr/eCxt5MyjaLzLEraWg8l/Q0dKH+C5THnw
+ LsUsIrXmJ1O7db6N/BbrQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:CXHYAnd1jmU=;8COkaR6/h+L7oeAGNKsM0Y3NSMU
+ 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
 
-Hi Chuan,
+> If clk_register_composite() fails, call kfree() to release
+> div and gate.
 
-On Thu, Jan 15, 2026 at 10:37:55AM +0800, Chuan Liu wrote:
-> On 1/15/2026 9:30 AM, Brian Masney wrote:
-> > On Fri, Jan 09, 2026 at 11:24:22AM +0800, Chuan Liu via B4 Relay wrote:
-> > > From: Chuan Liu <chuan.liu@amlogic.com>
-> > > 
-> > > If we were to have two users of the same clock, doing something like:
-> > > 
-> > > clk_set_rate_range(user1, 1000, 2000);
-> > > clk_set_rate_range(user2, 3000, 4000);
-> > > 
-> > > Even when user2's call returns -EINVAL, the min_rate and max_rate of
-> > > user2 are still incorrectly updated. This causes subsequent calls by
-> > > user1 to fail when setting the clock rate, as clk_core_get_boundaries()
-> > > returns corrupted boundaries (min_rate = 3000, max_rate = 2000).
-> > > 
-> > > To prevent this, clk_core_check_boundaries() now rollback to the old
-> > > boundaries when the check fails.
-> > > 
-> > > Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
-> > > ---
-> > >   drivers/clk/clk.c | 8 ++++++--
-> > >   1 file changed, 6 insertions(+), 2 deletions(-)
-> > > 
-> > > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> > > index 85d2f2481acf..0dfb16bf3f31 100644
-> > > --- a/drivers/clk/clk.c
-> > > +++ b/drivers/clk/clk.c
-> > > @@ -2710,13 +2710,17 @@ static int clk_set_rate_range_nolock(struct clk *clk,
-> > >         */
-> > >        rate = clamp(rate, min, max);
-> > >        ret = clk_core_set_rate_nolock(clk->core, rate);
-> > > +
-> > > +out:
-> > >        if (ret) {
-> > > -             /* rollback the changes */
-> > > +             /*
-> > > +              * Rollback the consumer’s old boundaries if check_boundaries or
-> > > +              * set_rate fails.
-> > > +              */
-> > >                clk->min_rate = old_min;
-> > >                clk->max_rate = old_max;
-> > >        }
-> > > 
-> > > -out:
-> > >        if (clk->exclusive_count)
-> > >                clk_core_rate_protect(clk->core);
-> > 
-> > This looks correct to me. Just a quick question though to possibly
-> > simplify this further. Currently clk_set_rate_range_nolock() has the
-> > following code:
-> > 
-> >          /* Save the current values in case we need to rollback the change */
-> >          old_min = clk->min_rate;
-> >          old_max = clk->max_rate;
-> >          clk->min_rate = min;
-> >          clk->max_rate = max;
-> > 
-> >          if (!clk_core_check_boundaries(clk->core, min, max)) {
-> >                  ret = -EINVAL;
-> >                  goto out;
-> >          }
-> > 
-> > Since clk_core_check_boundaries() is a readonly operation, what do you
-> > think about moving clk_core_check_boundaries above the code that saves the
-> > previous values? That way we only need to rollback in the case where
-> > set_rate() fails.
-> > 
-> 
-> Perhaps it would be more appropriate to move the clk_core_check_boundaries()
-> check before saving the previous values, like this:
-> 
-> 	if (!clk_core_check_boundaries(clk->core, min, max)) {
-> 		ret = -EINVAL;
-> 		goto out;
-> 	}
-> 
-> 	/* Save the current values in case we need to rollback the change */
-> 	old_min = clk->min_rate;
-> 	old_max = clk->max_rate;
-> 	clk->min_rate = min;
-> 	clk->max_rate = max;
+You may put such information also into a single text line.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.19-rc5#n659
 
-Yes, that's what I had in mind.
+How do you think about to avoid a bit of duplicate source code here?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/coding-style.rst?h=v6.19-rc5#n526
 
-> The changes in this patch are intended to avoid altering the original driver
-> execution flow, while making the minimal modification to fix the issue where
-> the range is incorrectly assigned.
-
-It's ultimately up to Stephen what he wants to take. I personally have a
-slight preference to the approach above, however I don't have a strong
-opinion about it. I'm just calling this out to help with reviews.
-
-The one thing that Stephen will want though is kunit tests for this
-since it changes the clk core. There's already a bunch of kunit tests in
-drivers/clk/clk_test.c. Feel free to reach out to me if you need help
-writing a new test.
-
-Brian
-
+Regards,
+Markus
