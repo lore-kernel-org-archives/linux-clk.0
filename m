@@ -1,210 +1,377 @@
-Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11013034.outbound.protection.outlook.com [40.93.201.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 454001E7C03;
-	Thu, 15 Jan 2026 07:08:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.201.34
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768460935; cv=fail; b=LvLN0z/vHsYYQ2qzw/tdMdmR+CuKZkdoUhrgdySbJnf2YO/t9rJMVEJoRlDHYFQWbXBsqkZAm8ZMUjKx/wNqINk6we0Sb+eSA966n7c4AOXDj10sRNGFFs82SqhMRlh8zWUDTSygilHAw25cydn1+CVGOO7YSYviWP14dKbe0Gc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768460935; c=relaxed/simple;
-	bh=Ogko5feR/cle58PkAFFF4XQZx8h6TsEyf13HkaXodXk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ToUTQpvXMY0jo47o0GsqaKOfJiR0tIPMQvTf0GjBlFCukZ2zVHDExDOgOttGgsq0pyqSEb3STtd8HhqtmgVtUc+P5Gia+x8Ug3GlbVbFKoJakd5DbC9QU+OwI5k5M8GWiDu/IrpXvkUKb4ZtlFykiBw7Z+42yt7CtW+HVqGN6Tc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=JMSlbrdS; arc=fail smtp.client-ip=40.93.201.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C80D032BF47
+	for <linux-clk@vger.kernel.org>; Thu, 15 Jan 2026 07:45:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1768463136; cv=none; b=dVLcNG9JdzYXkBoeW/yRKNmEWj5MS4g3lMmXcZfdOa+Zb6Kp8A9ZKaUQrUKKwj8/Ieo8fsdNmLCt1Hy33kwQuRMYIvmvZubopJ5Zc4vfiGz4f6WHtsxMHyYLBA5LFaJYSSwpQ6uhFmQ+gNOLzhMngk7rv7tO/SVxp/Zk/GIg9KQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1768463136; c=relaxed/simple;
+	bh=dpx4mUFK6XN5uyKG/yfPFKPAE3fHsCMh1GGGOBFeAlQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=E8cRVPQJrNG4OK0B9cANofmoAtcuN63KEgg29bn0/AlBWwW184fW6YvYQeTJZFeYr6sSa6RTGAJSSixl5BhAsaHRnacb83J/cIeI9nWyTVjauo/MV/rQ1vke2A753ynDMHkkMmDzeKSKzlcSvIdBsLRGyIZYyp03sKi7YrLwX8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FXwZZH3a; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="JMSlbrdS"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=lWqAiAoDGIUcA5oJiN44pPcDaPcEcJZPDVjNyKCb01dsfv22vRkPCgsQ6YiRnZm/sZ9bzK4J/Hi9JIoI76S5GM6rVlE/YYopwJwD23qYtOSgJLoO3/MyKXUd0/2bupbCL/cotnNUnLkATvDsJ8Xp8pfAXJZqt675VYd5NDKfhXTSmrh1b0vljpgGIJpxOIuhsiR4iyv78HdQKoxJgMa10RUyQktcv89G2FLoDIaG4Ch96Znyuh67mwI/maC/yonzWbG1ME1u8fPDWPxfZYL+vjVEwSMiCgieZYRxRUJjleoaBFdFXwF7t8LaqOowh3iFkr5l3T/2SUxiKmflbzG/eA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=8X22t99z42UCIWWwxXCvvFt/wqXg4JEWSGqTos44AzI=;
- b=SG97LCcSw47SMQc6vs3zpuC33+bdrNP7ic/tEkY9TwSiLXJl02mSqZGj0WuoF4CaNeSPNk00yANfRkRt1e9lUFl+IKqeJgXSmDALih0pZ77afnnQP0pKO6K0EEgUHKVo9G24pIIHZ02+NdlbHPef2i0CnobvauIqBi2s4mmI1xZw7YI8+Ai1HZogOZdb9xd6nIzazmi5hmgRc4JG2tXqEoRL6GeyGV4S7RLiNWJ5liQh8YPaGv2Ilr/w0hvUSJ+s6nORFhq6xjhV2kf5dm3mXkLgd1uhkUPnG234pOKht6SetqP1NptLOFdn+CR2zULIRmP0QhD/1scIIIcKtdbbug==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8X22t99z42UCIWWwxXCvvFt/wqXg4JEWSGqTos44AzI=;
- b=JMSlbrdSJ3bhPPguReq82NryZHdSm+xhgcX9kzX85hbwg9VJvdGtWryt4hK/ngOuLri83fYfSufNFS22H4b+2EK1pIdx/PmuI9Lyu/jv3qm7/FnLezvs73PHDP1i6M00uTTRplrEHIK53aDwEqOyYYbGax3rXQSXLI4v4cvD/rGFFaMxjbOXqvuXLNBzuwvqHq7YXezL8Wm7kEBEDpl2OY5MID4IbtRj02S+Fm6li2fruMiLKRQsR0EjGwJLeocaJzBy1RfdSlF7hnfNQKdRw3mrGtbldel+BCVDwQ1GQZOTEWguR8TO0NB0F17Q/hEFaRFooPs6Oi2YAtB1X2067Q==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SJ2PR12MB9161.namprd12.prod.outlook.com (2603:10b6:a03:566::20)
- by BL3PR12MB9049.namprd12.prod.outlook.com (2603:10b6:208:3b8::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9520.6; Thu, 15 Jan
- 2026 07:08:50 +0000
-Received: from SJ2PR12MB9161.namprd12.prod.outlook.com
- ([fe80::1f16:244a:2a9d:2c93]) by SJ2PR12MB9161.namprd12.prod.outlook.com
- ([fe80::1f16:244a:2a9d:2c93%3]) with mapi id 15.20.9499.002; Thu, 15 Jan 2026
- 07:08:50 +0000
-From: Mikko Perttunen <mperttunen@nvidia.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Thierry Reding <thierry.reding@gmail.com>,
- Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>,
- Prashant Gaikwad <pgaikwad@nvidia.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Svyatoslav Ryhel <clamor95@gmail.com>, Dmitry Osipenko <digetx@gmail.com>,
- Charan Pedumuru <charan.pedumuru@gmail.com>,
- Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- dri-devel@lists.freedesktop.org
-Subject:
- Re: [PATCH v2 1/4 RESEND] clk: tegra20: reparent dsi clock to pll_d_out0
-Date: Thu, 15 Jan 2026 16:08:47 +0900
-Message-ID: <23752317.EfDdHjke4D@senjougahara>
-In-Reply-To: <20251204061703.5579-2-clamor95@gmail.com>
-References:
- <20251204061703.5579-1-clamor95@gmail.com>
- <20251204061703.5579-2-clamor95@gmail.com>
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
-X-ClientProxiedBy: TY4P301CA0072.JPNP301.PROD.OUTLOOK.COM
- (2603:1096:405:36f::19) To SJ2PR12MB9161.namprd12.prod.outlook.com
- (2603:10b6:a03:566::20)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FXwZZH3a"
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-42fb2314eb0so400398f8f.2
+        for <linux-clk@vger.kernel.org>; Wed, 14 Jan 2026 23:45:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1768463133; x=1769067933; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sx9HvTuC/nWJTqeXB5NCIb7B2MpOD8Vg8GMhrdv3oCU=;
+        b=FXwZZH3ahFxGsIOxuqbdOVmgAOVLweIDlZYpjslmf0LKd1+zCE8FDkH8hWP8Z0o5Sg
+         tc/zKDKtScCbLGrbXo33HEdUjTUDZVJO1f+WU/4DzP7zL3fmQQrNxTBRxFAUWsdtH2K6
+         UrureS4YG9nCHykVtVS+r+jyBeeOh9+BNokUkDIhRYFwkaP2+KRy5m7LEwtaWtohoEIH
+         H1qIGUAm8p51FfhFOjnodElqcKe1fx63qJGXEHhKqzmflljUrxv6wVVJdvfpPni9Yat1
+         d+sDYUWU2TWr6Rgfj7j5+J3Y/xVzsmqKMnqA8LP1ec+ZND44faHNtLYzFOeQiexfRq/C
+         NWvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1768463133; x=1769067933;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=sx9HvTuC/nWJTqeXB5NCIb7B2MpOD8Vg8GMhrdv3oCU=;
+        b=CHZiZ7rLcuxkvSvTNGm02/2krfepMrCrPzFREzRvJmD35jxCmaWggLlN4KakJsurR1
+         v9bTTRKFQVtOM+E9N3X01CRzUQxC3VbR3ZTGCP26jgOBEDz+XbDxgOyTqKIvDH5eZXM2
+         gBKBfbPsk/v+0rwz24M7k/mComsrURQwReQWdbPBx9iDs8f2h3qYlCck4ypbW0TjbkSH
+         TUAM9UbzatPYtH9USKbdWXdbPF4Ps00Q5/01c4ZKtRnv7FeaDUYV7DfbGLuuPro8dVhQ
+         uMgz6tOEcgo8dziLIH1RTjuzXK3C9TPE554UN/Cn6z8+GQYD71xlSrABsgG3bykzL37b
+         yNSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX/mjYc7B/Gu7Arf1Xxw3TmbsSHsoem8UgVrJB/GSghoTAznHCHfxcS9KAs0YnZqOZ77/+lHywTm3Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLvwuXehwy3qNwxmytpmQ+kc1hhkXp6Cv+1eYWma78otAdh78o
+	gLl/OtApSTSeGVS9+wIY2x1hyelzRjEdYtEISW7v1sDnS+xxJ1vm7ANaKHsOuMtORKfvsJ4hc3s
+	F03uT2c6Pyl/XqQbnbhZYPBsNsF3A+Wc=
+X-Gm-Gg: AY/fxX6AeJjxFO90a9Y7S/4MABFH65HLndgNEQjSv+s59kVoKze+eOwIEO/dWZvcK2C
+	FqBLdQ/7nbn+I+GtMLkPDzG34JqdF/rivY+Y/WBm7mgmOcrJKNeLiRN+SEBBwqsp46EzWJfqTfO
+	+UPVPFO/83LV0jn/Wq4olIAgWbZk6MBXyKVxoo3jK4FWgOTbu+G64n9JsxZcQ5+i6dJl0TU5QlX
+	7v+cBir0CSs1UJK1JO54HsRYPYd5BbQfQafKhFclv8K6GwEx0bTpTKXvvM/HCUhjdfQXE2J
+X-Received: by 2002:a05:6000:25ca:b0:430:f301:3e6c with SMTP id
+ ffacd0b85a97d-4342c5422f0mr5713481f8f.34.1768463132683; Wed, 14 Jan 2026
+ 23:45:32 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR12MB9161:EE_|BL3PR12MB9049:EE_
-X-MS-Office365-Filtering-Correlation-Id: 792a4289-9f32-44d6-5a30-08de5404ef41
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|366016|1800799024|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?M0FGamJiMUZYV05mRHdyU3lRK29MRWdtUkN4emIwSStRdlNZZDUzeCtpOXJr?=
- =?utf-8?B?Z0hnU0F4cTRvR3RKZ294eWxFWFk2dWtVeVJsZGJhalhJNndRcUI4ditLK1RN?=
- =?utf-8?B?b2JmOFhCaWpRcXNiU0czYXFwNS8yWjBZNXFCTWVNVmlPdDAyVG5hZUxzNWFq?=
- =?utf-8?B?SkFZdWFJeUc4ajVqZk11TGRudk9wdUdTT09yN2FFU0FuZVZCTU5NRE5VV0Qx?=
- =?utf-8?B?aGFvVGJ0aW81TUhQV1NQQjBsbnI4bDl5OXFJRmtnemJ4dXk0Ym9Ga1B4d2JN?=
- =?utf-8?B?OE1vRjBWS01CRXcyOGxXOS95L3hRMjkvc1oxMnN5cjMxR0tYY092b3BWTkE4?=
- =?utf-8?B?OWRMbzRRSE5mcTJxY0x0WGthVllzNTdNR1F4UlZQbUY2YzJDNG56ODRBb3o3?=
- =?utf-8?B?MUl2MER5K1ZSQ1YzcDV0bzA3SmlMY2cyR3g4dHlTODBWN0h6S1VHRVhPaW0z?=
- =?utf-8?B?UGxjdjluTkZZYkV2S2lPMnVzZzN3V0RtNkY3dUhqdDlBQkppNkFwRGpZVUJa?=
- =?utf-8?B?cVI4QWYvZU45blZ1TDJrU0tzQ21ON09id2cwQ3BFSVJIK3Q3azFublNnOVg1?=
- =?utf-8?B?eWZoSHhSMWorRXJneWRydWdWdEp5WVZJa2ZyRyswMlhxeTc2L2ozamdEc2Zw?=
- =?utf-8?B?QmIzTndIcmxHVzFSZWN3QWY0S0ZXSUh4K0t3R3RjTE5RcjlOVGFBYmtGbUk5?=
- =?utf-8?B?aWFsK3d2cVo1MUNPSGx3OWVuUGNTNm45ckRvV1RrNzJKeGVySE1IWVlnVlpv?=
- =?utf-8?B?ZSt3ZWtjZFFmOHRtUURYUGlxdFR6OTVvTFVJcC9uOXpLc2ZyVmlLVGFIRUhj?=
- =?utf-8?B?bm9kVFlxMDE2N1ZYamRtU2wrN29oQ0RYMkhkU09vL1c2WE4vMHVualFmWkhY?=
- =?utf-8?B?MnhpZnQwMmpYOW93K2hMNCs3NWNvaUdrVjBQUXFuMitrZmVwTSsvaDVCb2pw?=
- =?utf-8?B?ODEyd0hRMk10eDE3Q1ZLRTJURHpVZUZpaDNINk41WjViRkwrVm11TFROb2wr?=
- =?utf-8?B?ODJ1Qm1YcUpmYkt1NUlmaGdkQ1FWazJDVEtqcjVnQ1dNV0o5U1lRYW5DQzY0?=
- =?utf-8?B?ZFZqeEV2ak9IZEtkaUl6c3NuWld6N0l4eVpXMDdvRTNjSElIVEh0MXZ2NFd5?=
- =?utf-8?B?aGNTOGpyN1Yyc1kxVXRScUwxbVFudXN5eUtnQ0JlQ0xQTjA1N09yc05mRXpY?=
- =?utf-8?B?TGNuK3FuaEthTjNpVmFCaGE0QnVIN0RRRVgyakJxYVJvbmYwWmFMbkQyYUk4?=
- =?utf-8?B?WERDN3c3a2lRV3BDWTJFUnZtVEczNndaS041L0k4clFuZXZCbkpKdEh3a2F1?=
- =?utf-8?B?cDRhK3haTzFyUEtWRkZWMnB5L0xlUHFnRHJZZWpWTlBsODJROGNieml6b09Y?=
- =?utf-8?B?UDZzZURma3Nhc1FkOUdmNFBUQW1RbEVJQ0dsLzdIOEtzUDBxcWo1QlE2ZXRK?=
- =?utf-8?B?Tzh5T2NmSWdSbDU1VHp5WHRxVHh4Ync0aEFRVTkxK2NsYXY3angzMXpOdjB4?=
- =?utf-8?B?NzFlMVRWZlN4eXgzd1hOOXVvckY0b1pBVDU0YkRlazZOc2IyRWxHR0xxbFR4?=
- =?utf-8?B?V0FnOW5DNkl6a2VZb0pUUTVHNlBsTDVJbUpVQlZMOXNHMHBvODhXOS9VakN2?=
- =?utf-8?B?NnptK3BhU0tneHB0eFp6ck14dU9NT05ud1RueTlHR0FGRVFER0FCVGlNRW83?=
- =?utf-8?B?Q29TanY3QjhmTUtEVjBWUHZVM0JJYnE1b1MwenpBZUF6dlVLK0hwbXk0YXFX?=
- =?utf-8?B?TkowTWhBMlo3SXpnV1daUmE3K0JyS1JvU3g0R0NWS0pXQ1h6bFdFNjgzR3Zi?=
- =?utf-8?B?cUtHNExVcnRnNVE2RG5wZjJJUTJESnNtTUhlaEU1cEpuWnJHT2xqU3pITC9L?=
- =?utf-8?B?VnVBYzFRbUMwaTZyN25ReE55KzBNMTFSNnBBSDlDa285UlFIYnF3MFNmcS9k?=
- =?utf-8?B?eG02bjMyQzN5SkpzZ0EzQ0JrRFRoSi9JelZEMmxyaU9zRjJDU0N3TTZ5bnFD?=
- =?utf-8?B?TjBvcUpWL2dFbUkvR0FxckFwcUhjUm11dDV0Sk1nR2RxdUdKMEt4SExIWmw1?=
- =?utf-8?B?UHNxbFZEUEhIalY2QTBuUjZYL1owcjNhdDd5elJROVVGdXUxU3FYSlBGdWFS?=
- =?utf-8?B?anMvNXJ3TUJpWk8zcUgwT25HTkVtcnZiSlBrWk91RnlDTSs3VmNVbWhINWwy?=
- =?utf-8?B?T2c9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB9161.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ZnZqZkhIa0JBRUlJNjJmdUw4bUpaYVJEUzRPVmF3MnBDdlY3Z2dlYmZMQTkz?=
- =?utf-8?B?ZlRPcVg5VlZYRTYxQTJaejFOS2NZTk1Za3VnaVpsN0RreEpRVXJYMzQ0aW9G?=
- =?utf-8?B?ZllkRnR1TXU1QWtBTDBqdGxhV1U5NlhCeXk1MjBkdVNUc0Z3QUtnNUMrNE1n?=
- =?utf-8?B?K2UxYW9PeVR2akQwMXIvMHh6TUFrRmh5OVE4aUhCUmdIRFIzQ2I3TTJBOU5k?=
- =?utf-8?B?SFdYVUhaS1VWTmRDWEFFenNFK3lIWVFPeVpCRC9YWk9vRm9UWEZKZHBOUVA0?=
- =?utf-8?B?czBTa3E3cjdGQVkrTU5SLzJVTXB4WlgyMXVBK2pVSSthVWlwSkhNTmdJUXV5?=
- =?utf-8?B?VDE4NFhCTlZITXdGS2lNYVplb2JickMrVXk2SmQycVVxTDBqN1RuSnpvb1Ro?=
- =?utf-8?B?SzBxZlZFbjMvVVBMYkJEM3M5Y1BUMDJxdEdUS0pyQVJ1OGsrSzI0OHlzN3RS?=
- =?utf-8?B?azRXNkdWSzlCT1BubUlvNnF2Q2JzS1cxVWpFY2xnelQxSGlJVEduOVYzR1V3?=
- =?utf-8?B?RTlrdURCKzR3SEo2SEgvc1FzY2N3V1ZZV1F6MkRscmV2QUozOEFONXlLdXZH?=
- =?utf-8?B?TVdyS1Z4Qm5VM0lVaDI3VjdXRDBzTTVEUXgwalJDeCs4OUJXRENZdDVja2d5?=
- =?utf-8?B?NnhabjVyQSt5MmV0SkxrZ0VXcm9tdzRpaFRoQjYrREM4NVM1VTYrejNZdTZG?=
- =?utf-8?B?eDJ3RzRMUDRla25jMTY1ZmptMk5NaWcycUkzZXczRnNST0d1SHdISnpERnFm?=
- =?utf-8?B?NCtRZzk4bXV5Yyt1c2swczArUm16RVliTHh2aXZWWmdRczRFTjB5V2FoZDU5?=
- =?utf-8?B?dmhXYVZXU2JxaWJkaElxT2JPVkFBaUFhM0pJNElvS1E0OXpzN0k1TzVieFJv?=
- =?utf-8?B?ZVR0Vis3bFBsajVtWHNTM01ETjkvQlZHQys3aHgrTkpGbWJkeTE1aDFzSlFK?=
- =?utf-8?B?TC9SdTNFbzlOdTRQR1VlRWlrQ1JjNFczVzFwZjRPRjNLM3E3bGlrWU1mM1V1?=
- =?utf-8?B?V2lLSmhWTGI1OUhvT2UzRUtJUzZ0M2RkcTBlRm9CTzlwQWVlTWFTUTZtN1Yw?=
- =?utf-8?B?c3lULzExUEUwL1ZUZnVBaHRLbGRVSURwUkYwSXdTcXlkMTM1eW5TUDVSUWw3?=
- =?utf-8?B?Um5QRmd6T2JiUzVvY3kwcmo0bjlzNFMxTFBYM09NaVFmaDZtMVpHd2dlZTJl?=
- =?utf-8?B?bXNYNkZ0TEJVbXlCenluV2NEK3YwK1F4ZkNhMkFtWFprRW9MVkZSbTB4djl0?=
- =?utf-8?B?dHg1ei9VRlk0ck5pSVNmMEZEVlFJdzM2S0JtcmxTUnprMGFNK0loSEdROGps?=
- =?utf-8?B?SEN6b2xSVm5ud3UrUGpkaXVHWC9RQUwvUTJacCtTRHpBc0JoTzFUSnRCcmp4?=
- =?utf-8?B?RkppbjJtMUphTnpWckRBMG5ncHI1bjZRUExwNk9HVStnMzE4WTNqTU1OUzlv?=
- =?utf-8?B?NVkrVkU5VmJRTC8yL08yT3U4U3dJUzluYm4xSXErWDNOYnFyUmZ4a1pkVUNN?=
- =?utf-8?B?OXg0blUzMERTRzk1VWlYbWJGK3o2MkVneXVUQWVldmV1Z2VTVko0c0dwQlE0?=
- =?utf-8?B?OG5QNFdkZ3hnSnVCaUhVc3hRUy96ZlpWZGRpNk9yYlNLTUlGTjJnK29JMExH?=
- =?utf-8?B?Z0p6enlvSzQvYWNoL3ovU1FSakdQbzFxNEt5QmJ1MVJUb1lkcXF5VnFSSGFB?=
- =?utf-8?B?T1oydUVMSksycGF3U3FWRTZJUDg2dVA4YkFpZDNZazFvT29vSDhGQW9YTHpi?=
- =?utf-8?B?Qm9COW1QcXlaUHEzaVRLNjlaVUZmbVVlUnNXbSt0MWdTQUJJRHVOME1tUkli?=
- =?utf-8?B?WktYME1yLzQzQSs5ZmJsd0FrUWw2TVErb2s0bDdqZHpPaE0xSWlJbGZmTEJ2?=
- =?utf-8?B?TFUyRElmUzdTRUtvUEwxcmI3K3lRVVNqcVRiOERuUGFmb3o1emJSQ2JJb0g5?=
- =?utf-8?B?VXMyNGZvQTIwczRXc0F4aXZ5QlFwMmVPeng2bHg2UW5xbE5YaC9vREJQWkty?=
- =?utf-8?B?OGRhTkNyUFBDRFlPbVdPc0k1aS8xaTJBTmhDZlhCQU5nOHF5VHpEOTBTbGU1?=
- =?utf-8?B?VENTU1RXZEM1bDdiV202bWNwSXUyenlBODZuVmJpd2MyVzVPV2FtY25Oakht?=
- =?utf-8?B?RjVKY2tFRW5LNGRuMFk5aUpoNFhsZEN5VHh1K2RrZEVqcDFYZDcvSkRJbklP?=
- =?utf-8?B?bEtMZ3Q0dG95bmluaVgxL3dCWEp2M1JLcWlZVEVWTWJac3RraUJoN2M5UHF5?=
- =?utf-8?B?ckR4OTRJbkw2aE9Dd09LdnBsRngvUXRLck0wTUpFWGJoOVlRTFg0aWtVb0FM?=
- =?utf-8?B?UC9ZcjJ3S2N0a3ZVUEQyaC9SekVMOS9meGl2WVFvSzR4NU1NV0R5dz09?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 792a4289-9f32-44d6-5a30-08de5404ef41
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB9161.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jan 2026 07:08:50.4987
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ZXi0hh4uiY1TOzNQppTKZ79eCJPjDBmgZtErMqJwvuPnTJf760vab4dmoK5Wgnhz/Swsy09Gj8QQiucYugtMKw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR12MB9049
+References: <20251204061703.5579-1-clamor95@gmail.com> <20251204061703.5579-4-clamor95@gmail.com>
+ <9411928.T7Z3S40VBb@senjougahara>
+In-Reply-To: <9411928.T7Z3S40VBb@senjougahara>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Thu, 15 Jan 2026 09:45:21 +0200
+X-Gm-Features: AZwV_QghD6FXe-dPVjxSUHWWVRcMlfFVLJpdZ72C5Ypff7V3j-uUvEj-3slTUkw
+Message-ID: <CAPVz0n3fwQNb2JozBx8G+r=txrENf1g3We5-P+sYJWepDJqU2Q@mail.gmail.com>
+Subject: Re: [PATCH v2 3/4 RESEND] gpu/drm: tegra: dsi: add support for Tegra20/Tegra30
+To: Mikko Perttunen <mperttunen@nvidia.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
+	Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Dmitry Osipenko <digetx@gmail.com>, Charan Pedumuru <charan.pedumuru@gmail.com>, devicetree@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thursday, December 4, 2025 3:17=E2=80=AFPM Svyatoslav Ryhel wrote:
-> Reparent DSI clock to PLLD_OUT0 instead of directly descend from PLLD.
->=20
-> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> Acked-by: Stephen Boyd <sboyd@kernel.org>
-> ---
->  drivers/clk/tegra/clk-tegra20.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
->=20
-> diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegr=
-a20.c
-> index bf9a9f8ddf62..9160f27a6cf0 100644
-> --- a/drivers/clk/tegra/clk-tegra20.c
-> +++ b/drivers/clk/tegra/clk-tegra20.c
-> @@ -801,9 +801,9 @@ static void __init tegra20_periph_clk_init(void)
->  	clks[TEGRA20_CLK_MC] =3D clk;
-> =20
->  	/* dsi */
-> -	clk =3D tegra_clk_register_periph_gate("dsi", "pll_d", 0, clk_base, 0,
-> -				    48, periph_clk_enb_refcnt);
-> -	clk_register_clkdev(clk, NULL, "dsi");
-> +	clk =3D tegra_clk_register_periph_gate("dsi", "pll_d_out0", 0,
-> +					     clk_base, 0, TEGRA20_CLK_DSI,
-> +					     periph_clk_enb_refcnt);
->  	clks[TEGRA20_CLK_DSI] =3D clk;
-> =20
->  	/* csus */
->=20
+=D1=87=D1=82, 15 =D1=81=D1=96=D1=87. 2026=E2=80=AF=D1=80. =D0=BE 09:02 Mikk=
+o Perttunen <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
+>
+> On Thursday, December 4, 2025 3:17=E2=80=AFPM Svyatoslav Ryhel wrote:
+> > Tegra20 and Tegra30 are fully compatible with existing tegra DSI driver
+> > apart from clock configuration and PAD calibration which are addressed =
+by
+> > this patch.
+> >
+> > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> > ---
+> >  drivers/gpu/drm/tegra/drm.c |  2 +
+> >  drivers/gpu/drm/tegra/dsi.c | 88 ++++++++++++++++++++++++-------------
+> >  drivers/gpu/drm/tegra/dsi.h | 15 +++++++
+> >  3 files changed, 74 insertions(+), 31 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
+> > index 4596073fe28f..5d64cd57e764 100644
+> > --- a/drivers/gpu/drm/tegra/drm.c
+> > +++ b/drivers/gpu/drm/tegra/drm.c
+> > @@ -1359,10 +1359,12 @@ static SIMPLE_DEV_PM_OPS(host1x_drm_pm_ops, hos=
+t1x_drm_suspend,
+> >
+> >  static const struct of_device_id host1x_drm_subdevs[] =3D {
+> >       { .compatible =3D "nvidia,tegra20-dc", },
+> > +     { .compatible =3D "nvidia,tegra20-dsi", },
+> >       { .compatible =3D "nvidia,tegra20-hdmi", },
+> >       { .compatible =3D "nvidia,tegra20-gr2d", },
+> >       { .compatible =3D "nvidia,tegra20-gr3d", },
+> >       { .compatible =3D "nvidia,tegra30-dc", },
+> > +     { .compatible =3D "nvidia,tegra30-dsi", },
+> >       { .compatible =3D "nvidia,tegra30-hdmi", },
+> >       { .compatible =3D "nvidia,tegra30-gr2d", },
+> >       { .compatible =3D "nvidia,tegra30-gr3d", },
+> > diff --git a/drivers/gpu/drm/tegra/dsi.c b/drivers/gpu/drm/tegra/dsi.c
+> > index 8e80c7efe8b4..d079aa7d2a85 100644
+> > --- a/drivers/gpu/drm/tegra/dsi.c
+> > +++ b/drivers/gpu/drm/tegra/dsi.c
+> > @@ -53,6 +53,10 @@ to_dsi_state(struct drm_connector_state *state)
+> >       return container_of(state, struct tegra_dsi_state, base);
+> >  }
+> >
+> > +struct tegra_dsi_config {
+> > +     u32 dsi_version;
+>
+> Rather than a dsi_version field, we should have something that describes =
+the difference. e.g. 'bool has_multiple_pad_controls' being true for the "V=
+1" hardware.
+>
 
-Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
+I used versioning from downstream dsi sources, where with addition of
+Tegra114 support older DSI controller got v0 and newer v1, but if you
+find 'has_multiple_pad_controls' more suitable I have no objections.
 
+> > +};
+> > +
+> >  struct tegra_dsi {
+> >       struct host1x_client client;
+> >       struct tegra_output output;
+> > @@ -82,6 +86,8 @@ struct tegra_dsi {
+> >       /* for ganged-mode support */
+> >       struct tegra_dsi *master;
+> >       struct tegra_dsi *slave;
+> > +
+> > +     const struct tegra_dsi_config *config;
+> >  };
+> >
+> >  static inline struct tegra_dsi *
+> > @@ -663,39 +669,46 @@ static int tegra_dsi_pad_enable(struct tegra_dsi =
+*dsi)
+> >  {
+> >       u32 value;
+> >
+> > -     value =3D DSI_PAD_CONTROL_VS1_PULLDN(0) | DSI_PAD_CONTROL_VS1_PDI=
+O(0);
+> > -     tegra_dsi_writel(dsi, value, DSI_PAD_CONTROL_0);
+> > +     if (dsi->config->dsi_version =3D=3D TEGRA_DSI_V1) {
+> > +             /*
+> > +              * XXX Is this still needed? The module reset is deassert=
+ed right
+> > +              * before this function is called.
+> > +              */
+> > +             tegra_dsi_writel(dsi, 0, DSI_PAD_CONTROL_0);
+> > +             tegra_dsi_writel(dsi, 0, DSI_PAD_CONTROL_1);
+> > +             tegra_dsi_writel(dsi, 0, DSI_PAD_CONTROL_2);
+> > +             tegra_dsi_writel(dsi, 0, DSI_PAD_CONTROL_3);
+> > +             tegra_dsi_writel(dsi, 0, DSI_PAD_CONTROL_4);
+> > +
+> > +             value =3D DSI_PAD_CONTROL_VS1_PULLDN(0) | DSI_PAD_CONTROL=
+_VS1_PDIO(0);
+> > +             tegra_dsi_writel(dsi, value, DSI_PAD_CONTROL_0);
+> > +
+> > +             value =3D DSI_PAD_SLEW_UP(0x7) | DSI_PAD_SLEW_DN(0x7) |
+> > +                     DSI_PAD_LP_UP(0x1) | DSI_PAD_LP_DN(0x1) |
+> > +                     DSI_PAD_OUT_CLK(0x0);
+> > +             tegra_dsi_writel(dsi, value, DSI_PAD_CONTROL_2);
+> > +
+> > +             value =3D DSI_PAD_PREEMP_PD_CLK(0x3) | DSI_PAD_PREEMP_PU_=
+CLK(0x3) |
+> > +                     DSI_PAD_PREEMP_PD(0x03) | DSI_PAD_PREEMP_PU(0x3);
+> > +             tegra_dsi_writel(dsi, value, DSI_PAD_CONTROL_3);
+> > +     } else {
+> > +             value =3D DSI_PAD_CONTROL_LPUPADJ(0x1) | DSI_PAD_CONTROL_=
+LPDNADJ(0x1) |
+> > +                     DSI_PAD_CONTROL_PREEMP_EN(0x1) | DSI_PAD_CONTROL_=
+SLEWDNADJ(0x6) |
+> > +                     DSI_PAD_CONTROL_SLEWUPADJ(0x6) | DSI_PAD_CONTROL_=
+PDIO(0) |
+> > +                     DSI_PAD_CONTROL_PDIO_CLK(0) | DSI_PAD_CONTROL_PUL=
+LDN_ENAB(0);
+> > +             tegra_dsi_writel(dsi, value, DSI_PAD_CONTROL_0);
+> > +     }
+> >
+> >       return 0;
+> >  }
+> >
+> >  static int tegra_dsi_pad_calibrate(struct tegra_dsi *dsi)
+> >  {
+> > -     u32 value;
+> >       int err;
+> >
+> > -     /*
+> > -      * XXX Is this still needed? The module reset is deasserted right
+> > -      * before this function is called.
+> > -      */
+> > -     tegra_dsi_writel(dsi, 0, DSI_PAD_CONTROL_0);
+> > -     tegra_dsi_writel(dsi, 0, DSI_PAD_CONTROL_1);
+> > -     tegra_dsi_writel(dsi, 0, DSI_PAD_CONTROL_2);
+> > -     tegra_dsi_writel(dsi, 0, DSI_PAD_CONTROL_3);
+> > -     tegra_dsi_writel(dsi, 0, DSI_PAD_CONTROL_4);
+> > -
+> >       /* start calibration */
+> >       tegra_dsi_pad_enable(dsi);
+> >
+> > -     value =3D DSI_PAD_SLEW_UP(0x7) | DSI_PAD_SLEW_DN(0x7) |
+> > -             DSI_PAD_LP_UP(0x1) | DSI_PAD_LP_DN(0x1) |
+> > -             DSI_PAD_OUT_CLK(0x0);
+> > -     tegra_dsi_writel(dsi, value, DSI_PAD_CONTROL_2);
+> > -
+> > -     value =3D DSI_PAD_PREEMP_PD_CLK(0x3) | DSI_PAD_PREEMP_PU_CLK(0x3)=
+ |
+> > -             DSI_PAD_PREEMP_PD(0x03) | DSI_PAD_PREEMP_PU(0x3);
+> > -     tegra_dsi_writel(dsi, value, DSI_PAD_CONTROL_3);
+> > -
+> >       err =3D tegra_mipi_start_calibration(dsi->mipi);
+> >       if (err < 0)
+> >               return err;
+> > @@ -1577,6 +1590,7 @@ static int tegra_dsi_probe(struct platform_device=
+ *pdev)
+> >       if (!dsi)
+> >               return -ENOMEM;
+> >
+> > +     dsi->config =3D of_device_get_match_data(&pdev->dev);
+> >       dsi->output.dev =3D dsi->dev =3D &pdev->dev;
+> >       dsi->video_fifo_depth =3D 1920;
+> >       dsi->host_fifo_depth =3D 64;
+> > @@ -1615,7 +1629,7 @@ static int tegra_dsi_probe(struct platform_device=
+ *pdev)
+> >               goto remove;
+> >       }
+> >
+> > -     dsi->clk_lp =3D devm_clk_get(&pdev->dev, "lp");
+> > +     dsi->clk_lp =3D devm_clk_get_optional(&pdev->dev, "lp");
+> >       if (IS_ERR(dsi->clk_lp)) {
+> >               err =3D dev_err_probe(&pdev->dev, PTR_ERR(dsi->clk_lp),
+> >                                   "cannot get low-power clock\n");
+> > @@ -1636,10 +1650,12 @@ static int tegra_dsi_probe(struct platform_devi=
+ce *pdev)
+> >               goto remove;
+> >       }
+> >
+> > -     err =3D tegra_dsi_setup_clocks(dsi);
+>
+> > -     if (err < 0) {
+> > -             dev_err(&pdev->dev, "cannot setup clocks\n");
+> > -             goto remove;
+> > +     if (dsi->config->dsi_version =3D=3D TEGRA_DSI_V1) {
+>
+> And 'has_mux_parent_clk', perhaps? Not a very good name, if you come up w=
+ith something better feel free to use it.
 
+Noted
 
+>
+> I checked, and looks like Tegra30 in fact allows DSIA/DSIB to be muxed to=
+ either PLL_D or PLL_D2, it is just not modelled in the clock driver. The s=
+ame applies to all of Tegra114, 124, and 210, but only Tegra114 has it pres=
+ently modelled as a mux whereas 124 and 210 have a gate. The TRMs for 124 a=
+nd 210 specify that only PLL_D can be used in the mux bit documentation so =
+the bit is probably dysfunctional on those chips.
+>
+> The correct solution, hence, I think is to have that config field, and it=
+ be false for Tegra20, 124, and 210; and true for Tegra30, and 114. Then im=
+plement the mux clock in the Tegra30 clock driver.
+>
+> However, I would settle for setting it to false for both Tegra20 and Tegr=
+a30 and leaving a comment next to the Tegra30 entry describing the situatio=
+n (the mux clock is not currently modelled).
+>
+
+I clearly understand your point. I agree regarding setting it to false
+for both Tegra20 and Tegra30 and leaving a comment for Tegra30, it
+seems to be the optimal solution. Later on if there would be such
+need, Tegra30 can get its mux too.
+
+A little note regarding mux on Tegra124/210, it seems that bit is not
+dysfunctional but behavior is intentional to diverge PLLD and D2 as
+"internal" and "external" main display clock. At least this is what I
+have concluded while working with Tegra display controller stuff.
+
+> Cheers,
+> Mikko
+>
+
+Thank you for your review!
+
+Best regards,
+Svyatoslav R.
+
+> > +             err =3D tegra_dsi_setup_clocks(dsi);
+> > +             if (err < 0) {
+> > +                     dev_err(&pdev->dev, "cannot setup clocks\n");
+> > +                     goto remove;
+> > +             }
+> >       }
+> >
+> >       dsi->regs =3D devm_platform_ioremap_resource(pdev, 0);
+> > @@ -1703,11 +1719,21 @@ static void tegra_dsi_remove(struct platform_de=
+vice *pdev)
+> >       tegra_mipi_free(dsi->mipi);
+> >  }
+> >
+> > +static const struct tegra_dsi_config tegra20_dsi_config =3D {
+> > +     .dsi_version =3D TEGRA_DSI_V0,
+> > +};
+> > +
+> > +static const struct tegra_dsi_config tegra114_dsi_config =3D {
+> > +     .dsi_version =3D TEGRA_DSI_V1,
+> > +};
+> > +
+> >  static const struct of_device_id tegra_dsi_of_match[] =3D {
+> > -     { .compatible =3D "nvidia,tegra210-dsi", },
+> > -     { .compatible =3D "nvidia,tegra132-dsi", },
+> > -     { .compatible =3D "nvidia,tegra124-dsi", },
+> > -     { .compatible =3D "nvidia,tegra114-dsi", },
+> > +     { .compatible =3D "nvidia,tegra210-dsi", .data =3D &tegra114_dsi_=
+config },
+> > +     { .compatible =3D "nvidia,tegra132-dsi", .data =3D &tegra114_dsi_=
+config },
+> > +     { .compatible =3D "nvidia,tegra124-dsi", .data =3D &tegra114_dsi_=
+config },
+> > +     { .compatible =3D "nvidia,tegra114-dsi", .data =3D &tegra114_dsi_=
+config },
+> > +     { .compatible =3D "nvidia,tegra30-dsi", .data =3D &tegra20_dsi_co=
+nfig },
+> > +     { .compatible =3D "nvidia,tegra20-dsi", .data =3D &tegra20_dsi_co=
+nfig },
+> >       { },
+> >  };
+> >  MODULE_DEVICE_TABLE(of, tegra_dsi_of_match);
+> > diff --git a/drivers/gpu/drm/tegra/dsi.h b/drivers/gpu/drm/tegra/dsi.h
+> > index f39594e65e97..5049ec7813c7 100644
+> > --- a/drivers/gpu/drm/tegra/dsi.h
+> > +++ b/drivers/gpu/drm/tegra/dsi.h
+> > @@ -95,6 +95,16 @@
+> >  #define DSI_TALLY_LRX(x)             (((x) & 0xff) <<  8)
+> >  #define DSI_TALLY_HTX(x)             (((x) & 0xff) <<  0)
+> >  #define DSI_PAD_CONTROL_0            0x4b
+> > +/* DSI V0 */
+> > +#define DSI_PAD_CONTROL_PULLDN_ENAB(x)       (((x) & 0x1) << 28)
+> > +#define DSI_PAD_CONTROL_SLEWUPADJ(x) (((x) & 0x7) << 24)
+> > +#define DSI_PAD_CONTROL_SLEWDNADJ(x) (((x) & 0x7) << 20)
+> > +#define DSI_PAD_CONTROL_PREEMP_EN(x) (((x) & 0x1) << 19)
+> > +#define DSI_PAD_CONTROL_PDIO_CLK(x)  (((x) & 0x1) << 18)
+> > +#define DSI_PAD_CONTROL_PDIO(x)              (((x) & 0x3) << 16)
+> > +#define DSI_PAD_CONTROL_LPUPADJ(x)   (((x) & 0x3) << 14)
+> > +#define DSI_PAD_CONTROL_LPDNADJ(x)   (((x) & 0x3) << 12)
+> > +/* DSI V1 */
+> >  #define DSI_PAD_CONTROL_VS1_PDIO(x)  (((x) & 0xf) <<  0)
+> >  #define DSI_PAD_CONTROL_VS1_PDIO_CLK (1 <<  8)
+> >  #define DSI_PAD_CONTROL_VS1_PULLDN(x)        (((x) & 0xf) << 16)
+> > @@ -140,4 +150,9 @@ enum tegra_dsi_format {
+> >       TEGRA_DSI_FORMAT_24P,
+> >  };
+> >
+> > +enum tegra_dsi_version {
+> > +     TEGRA_DSI_V0,
+> > +     TEGRA_DSI_V1,
+> > +};
+> > +
+> >  #endif
+> >
+>
+>
+>
+>
