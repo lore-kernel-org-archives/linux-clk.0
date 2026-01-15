@@ -1,210 +1,116 @@
-Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC08A2D4816
-	for <linux-clk@vger.kernel.org>; Thu, 15 Jan 2026 10:51:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE28A11CBA
+	for <linux-clk@vger.kernel.org>; Thu, 15 Jan 2026 12:01:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768474295; cv=none; b=lgFTD88tk41paUwqaG2zd/NKoer75c6mgDzVZZlELlwFBwYiGlWyQqmGqylBBwLF9FfIk/WN5D6R7Tc2bjh8Xi6gW6dKStxz6zqEcgIkzJKHLvH/wOchUkeVteYvwax0H1AjsTLwDeXcKMf3uTGguyaXjw+sbVV0w/jSoHwH2xg=
+	t=1768478478; cv=none; b=lUor3kigqxdxsP23UTuHUZ21B2WOyqQ+xWg9cwIt1X6LZarLmBXdAXrf05RxcWYUpUVTmbQYIJFTozp03LlZeKaoQv8F/tp4y7ZXzbDaZCTura33UxmSw4kNXQYicnPWIa2iRNR6ZnnWjC31JY742KwzfWxmIGKCSorhQw+OFsc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768474295; c=relaxed/simple;
-	bh=P1FD/wr7+afVlqV25iSV2nfWgm/XY0tGUT3/RQg7DuU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QaA5AcDs5l96OCvTYrvkGc2KV2pdUfY434iIDvmeYcGIg+JAzDHuG9C6VDaXmrLmrOw8mXjM7cFs8FWhODiImeXhyQ79B60lEOWWmdRP8tdiKo2siDgfd26BaK2Z+zgkh5nq7sjcTKQKNQy7mCxz/yVa/yalm9FE0XUItrow1BE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-563641b24b9so264908e0c.3
-        for <linux-clk@vger.kernel.org>; Thu, 15 Jan 2026 02:51:33 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768474293; x=1769079093;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+	s=arc-20240116; t=1768478478; c=relaxed/simple;
+	bh=HGrCcAWK8+bJScOVj4GyD53aQQY2PTSVg+l13f7Owwk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z3kEiRn7M+nwzbvuInL9OyoDtNtVbirjscI4SLlRO9ilv/a/y4ioadaoi3gzWbs5Ez8evi3Pq+JpKAShcyXW3G3+OAwBlIObSCYyOgnpS3thWIAmJmgTxCGDZ+Qj7Zue5gs4LExIlyjSSAbr8ybvdGDnOkq5FOyloxJmL9RFtgI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=f6xLzzyf; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=A4c/beiL; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="f6xLzzyf";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="A4c/beiL"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1768478475;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HbFTVSTAF+qKU6LVtQSbnv/YXWJKOg3pN9JnvD/UC9k=;
+	b=f6xLzzyfHTeaCeDSKniRe0FQxlPhiEPMXeNb3KEIbh1DuriYB/T/+wIjBDu+1aXX3GGc7O
+	zKf5XSBpCxrT9ooHnOjtEmeBUj9seZ3qiN5ClIbObMWqGgjbsK2KeRihf794SffyoM7LEN
+	ZrZtoXgueSOun/fwn8P/lH2WTsqUz8Q=
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
+ [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-53-gPY45dYsMTSG1PdFhSddDg-1; Thu, 15 Jan 2026 07:01:14 -0500
+X-MC-Unique: gPY45dYsMTSG1PdFhSddDg-1
+X-Mimecast-MFC-AGG-ID: gPY45dYsMTSG1PdFhSddDg_1768478474
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4ffb4222a4eso20745211cf.0
+        for <linux-clk@vger.kernel.org>; Thu, 15 Jan 2026 04:01:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1768478474; x=1769083274; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ki7PmTjePRuEfFjGffE5fBihup/8aCNWyf/0N1CI9Sw=;
-        b=aefXkhBgxp2bGuvjSMdYt3HpaDMApCx7l9bXpXLa9H7D1yH+WKyPehsKIpGRKHCJn4
-         qBVk2LWl4gXgnetdx4fASe8a6oik3ZAxddZ9XDctoE+np1gj/TbrOvhvuigOaaEoQtGZ
-         0ofeIb/qgbE4mbyGUWM00J/acOhen6PnOvADvGDtLtwpiaLVdxYQ9/pi6PK5iV6M7mNA
-         YXKCk77y6oIppS876Mtbqs/Ocd5HH5qVjnudM5tWOOaEoziYAjoJqQRc30ywLaEOl2Hq
-         5aWOeKovGmZwqmJkzGq+k9lScm7+0FzhA2FtofSUZjr+JUGBSKZB2XM7KWbssqDpHYhp
-         BXAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWfqwgV2VmIuhe/XekDJL1ocbnKimL5Qrgvzjq2uRxTu3x9NVcSzcdlAmoRyY5kaSTYfkwmOdJHibE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+mvJ+8ORMONdhc8zXncjfZw3yvxpTarYdDqjIlj6NXCQS+f//
-	zCM8Bl1FLxKF40gp/FA31YAPvfD5sEBCeBaD4ZzcuIXyyaRjpFxbZvnBeH3gbj49HK8=
-X-Gm-Gg: AY/fxX5oiSpc2rp6K3LcY0Ll9Vq+vWQPjt9ODIRk8OLEQ8yYgzvDuEOswtfz0fSToIP
-	QaJBfxFsDGODpbghNXJtD9QOwRiv1RPeXHW+idNlqAk2+9P4SRjjypifmTM6R1MpxWKkGzApfAV
-	sdQZ4TZ6W73/arqPFEE87GfORf0TG/9m6Tx/efXvW01ltvruwJEEbkgKpIveed/T1nSVFcgG6f2
-	W5vagYwGMc53ZM/8ABaXUokSM7UN3A6Z62a5TXiiOIZXRp6FKm3qADuVOBojY+tTz111gP0q3rB
-	yILp3TTuylrC2GQ3Mfz99ocDND39xrrq4FPoEz63eHHsKavcT2ggdLMgkQYmwGZeazYlTHA+LDw
-	EeejFTM/KsoaqgbzSq1lHaZDBe2BzM9/Y0pWelVkxShhFK9No7A/BG7A8GD4Wig1DYRg9/OyiGN
-	lB5Tnh5/gwpZr87OFKZqrEqIAQn3Bs0h1P/55/4l0qG/2OwQ4l
-X-Received: by 2002:a05:6122:829d:b0:55b:305b:4e3e with SMTP id 71dfb90a1353d-563a0a18d5dmr2176519e0c.20.1768474292773;
-        Thu, 15 Jan 2026 02:51:32 -0800 (PST)
-Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com. [209.85.222.42])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-56367b7dc8fsm18224834e0c.21.2026.01.15.02.51.32
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 15 Jan 2026 02:51:32 -0800 (PST)
-Received: by mail-ua1-f42.google.com with SMTP id a1e0cc1a2514c-94388cfa259so243817241.3
-        for <linux-clk@vger.kernel.org>; Thu, 15 Jan 2026 02:51:32 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWHvppvOySZcFD5392/27JkwPgq3vE2JSOHebL7JivkUBElY/Z+RF5+rDcXsjJBnYeNZey6gKlBnSA=@vger.kernel.org
-X-Received: by 2002:a05:6102:6887:b0:5db:e851:9389 with SMTP id
- ada2fe7eead31-5f17f3f875bmr2192851137.3.1768474292003; Thu, 15 Jan 2026
- 02:51:32 -0800 (PST)
+        bh=HbFTVSTAF+qKU6LVtQSbnv/YXWJKOg3pN9JnvD/UC9k=;
+        b=A4c/beiLQhGBW6p1FeG4XY/FIGemGFzc4QTMMqgST6gw1jWGsS9Hc32yfVdEibSsFC
+         1BVSX6pt9KP1gwI1MjXp2+G7fugaiwmG5gK/C9HAsFu6VGaYkiS88JswnsT9N4UkpuLN
+         TGn1DNICWn/BtYy+OZp8shc2Lz4IWoHp0XBL76j2WXyxEMZufG6jlBq5W4X6//CPRRMK
+         PoMxgdwoj7gsN0K3JUMSpKDAeDPpekhRw21iwkbAnc5N/ydwHzhFczZqHPY9r0Hu1MU0
+         /lwQCBmdGSwDN++pIqcUD1npm+tJ6gvlEFRy7ZW06ZOwPrgt6WXnFpQnHAw/x57oq1H3
+         msKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1768478474; x=1769083274;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=HbFTVSTAF+qKU6LVtQSbnv/YXWJKOg3pN9JnvD/UC9k=;
+        b=ryg+PctAIkmoJMAQ7kEkGGBKZgIMjftAbNRXHMbVw3tX1X1loeRwJq0Aoc4cFjsy0Y
+         XUMR9Sa+JvDEOaj+vi23keVJqB0Z5eXOP5QKrCfW5CehcyWnGz+j8kTOG75vmZ7Nbmpd
+         CnTWWGJuniYw6kbYpzSueXlq7uDirgwU7FeE4ZPxzmAeTF2XMmuNMU4VH23TMH4xA2TJ
+         L6b5trQvuApI/6TUA51Nwf22RI92DYnvfdtrZ5R17W35Psi4wFHPai2fqCAUbWBjzkIN
+         6SOIAciQsPKcKQY+iM73krAk+3tJYilAESKsxKw/s44TABnhO/bDlg1TDkSmx3TSDVtD
+         umFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUC55XY2wv1fpyozjmebC2X4fHqVBR6NPW+Ms6WBB3zNKJlOQ3ju1Y/PApfCP1gAZu6hlMnqnISZYY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzyFbposx7MnjYsppC1DzWDPZjeczdsLFZ1oJbvUdTEVJ7G9wTG
+	vgTMrG5OPXOno8VDMRUk8owvgzWpI7jNXo+QYYlV9XZjjlTm4dqlzHjJkA1tvVmSCCv0tKCxzgY
+	+6Us0JcFRo+m8sokJgERx/xPGFMJEEFfK/lu6WZx/pjvSz4w0caQfBinX5e9pvw==
+X-Gm-Gg: AY/fxX5XzmGj7MZH4Ik43dVENorntxqBV0C7810oJpTdcIqSGgB2TgfB48z3jfHDZ79
+	5Jyx2ozH8R5aNclxoHnjVRYeFrj+Kq6Ezb7x94bsGhZVOhF7SOv/ZfBHrzV3T3KScnXvGbT8ff5
+	xQLO7RqHTQE3e0em+uqPFM3LTDyy9w2F1k+ywgbpauCSiFeSor2hS6yB0dXyFvtX8an7PNdza/t
+	ynH9lEuhGt9l+0KIxMNv04bo9Di1OjPeWH0JWpeFh7z8Iq9fBADBlMUSJiSU8Qmf2DZIdehm+GM
+	BGf9mraW2+VRgX923aoDc49XMYo3/gr4v3ymv+SaFqJKV6D6ylJSy5JUQ92LF9IXuLFVlyBRq8q
+	tvNSqpKBrYW9otxXNp4goobtwFux0ahOgw3CHiXf7iu6o
+X-Received: by 2002:a05:622a:1f11:b0:4ed:b0f9:767f with SMTP id d75a77b69052e-5014848f4c9mr87190261cf.70.1768478474105;
+        Thu, 15 Jan 2026 04:01:14 -0800 (PST)
+X-Received: by 2002:a05:622a:1f11:b0:4ed:b0f9:767f with SMTP id d75a77b69052e-5014848f4c9mr87189551cf.70.1768478473665;
+        Thu, 15 Jan 2026 04:01:13 -0800 (PST)
+Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-89077280fd3sm196986366d6.55.2026.01.15.04.01.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 Jan 2026 04:01:12 -0800 (PST)
+Date: Thu, 15 Jan 2026 07:01:11 -0500
+From: Brian Masney <bmasney@redhat.com>
+To: Haoxiang Li <lihaoxiang@isrc.iscas.ac.cn>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, mturquette@linaro.org,
+	pankaj.dev@st.com, gabriel.fernandez@st.com,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] clk: st: clkgen-pll: Fix a memory leak in
+ clkgen_odf_register()
+Message-ID: <aWjXB8BiPgKs6wlm@redhat.com>
+References: <20260115045524.640427-1-lihaoxiang@isrc.iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1764165783.git.tommaso.merciai.xr@bp.renesas.com>
- <fcfc4fc5123c2351d96ac102aa5081bd99c8a40e.1764165783.git.tommaso.merciai.xr@bp.renesas.com>
- <20251203-shrew-of-original-tempering-8a8cfc@quoll> <aTA-Hj6DvjN4zeK6@tom-desktop>
- <CAMuHMdW=UkZxhf-pbtp6OBFd_3jPcjUaKFmH4piuc+P=kgxzGA@mail.gmail.com>
- <TY3PR01MB11346DF85F8F7EA9ADDED16EB868CA@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <CAMuHMdUhke83ZVXxDQE_Dt1HRwyGeoMq1pYmEP47WOgR_vYNtA@mail.gmail.com>
- <TY3PR01MB113463EE3F22A0E0E6C97DC40868CA@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <CAMuHMdVP4M6mS6itgN13QG_w7rxUo6wUbA2cbWU38=vPA0XLhw@mail.gmail.com> <TY3PR01MB11346DB362955A62D2A2E828A868CA@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-In-Reply-To: <TY3PR01MB11346DB362955A62D2A2E828A868CA@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 15 Jan 2026 11:51:20 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdXmzxO1A-7OBdcEmkOY3XNZ9hh=13wfcOrh+A8+Au0kGw@mail.gmail.com>
-X-Gm-Features: AZwV_QhxPxYEyoRCedfJ4RqRUDbD--3dA-NRn1itW-sJznM5g4jpJVdKBvOoCkI
-Message-ID: <CAMuHMdXmzxO1A-7OBdcEmkOY3XNZ9hh=13wfcOrh+A8+Au0kGw@mail.gmail.com>
-Subject: Re: [PATCH 10/22] dt-bindings: display: renesas,rzg2l-du: Add support
- for RZ/G3E SoC
-To: Biju Das <biju.das.jz@bp.renesas.com>
-Cc: "laurent.pinchart" <laurent.pinchart@ideasonboard.com>, 
-	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Tommaso Merciai <tomm.merciai@gmail.com>, 
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	"magnus.damm" <magnus.damm@gmail.com>, 
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260115045524.640427-1-lihaoxiang@isrc.iscas.ac.cn>
+User-Agent: Mutt/2.2.14 (2025-02-20)
 
-Hi Biju,
+On Thu, Jan 15, 2026 at 12:55:24PM +0800, Haoxiang Li wrote:
+> If clk_register_composite() fails, call kfree() to release
+> div and gate.
+> 
+> Fixes: b9b8e614b580 ("clk: st: Support for PLLs inside ClockGenA(s)")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Haoxiang Li <lihaoxiang@isrc.iscas.ac.cn>
 
-On Thu, 15 Jan 2026 at 11:34, Biju Das <biju.das.jz@bp.renesas.com> wrote:
-> > From: Geert Uytterhoeven <geert@linux-m68k.org>
-> > On Thu, 15 Jan 2026 at 11:10, Biju Das <biju.das.jz@bp.renesas.com> wrote:
-> > > > From: Geert Uytterhoeven <geert@linux-m68k.org> On Thu, 15 Jan 2026
-> > > > at 08:48, Biju Das <biju.das.jz@bp.renesas.com> wrote:
-> > > > > > From: Geert Uytterhoeven <geert@linux-m68k.org> On Wed, 3 Dec
-> > > > > > 2025 at 14:42, Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com> wrote:
-> > > > > > > On Wed, Dec 03, 2025 at 09:23:53AM +0100, Krzysztof Kozlowski wrote:
-> > > > > > > > On Wed, Nov 26, 2025 at 03:07:22PM +0100, Tommaso Merciai wrote:
-> > > > > > > > > The RZ/G3E Soc has 2 LCD controller (LCDC), contain a
-> > > > > > > > > Frame Compression Processor (FCPVD), a Video Signal
-> > > > > > > > > Processor (VSPD), Video Signal Processor (VSPD), and Display Unit (DU).
-> > > > > > > > >
-> > > > > > > > >  - LCDC0 supports DSI and LVDS (single or dual-channel) outputs.
-> > > > > > > > >  - LCDC1 supports DSI, LVDS (single-channel), and RGB outputs.
-> > > > > > > > >
-> > > > > > > > > Add then two new SoC-specific compatible strings 'renesas,r9a09g047-du0'
-> > > > > > > > > and 'renesas,r9a09g047-du1'.
-> > > > > > > >
-> > > > > > > > LCDC0/1 but compatibles du0/du1...
-> > > > > > > >
-> > > > > > > > What are the differences between DU0 and DU1? Just different
-> > > > > > > > outputs? Is the programming model the same?
-> > > > > > >
-> > > > > > > The hardware configurations are different: these are two distinct hardware blocks.
-> > > > > > >
-> > > > > > > Based on the block diagrams shown in Figures 9.4-2 (LCDC1) and
-> > > > > > > 9.4-1 (LCDC0), the only difference concerns the output, but
-> > > > > > > this variation is internal to the hardware blocks themselves.
-> > > > > > > Therefore, LCDC0 and LCDC1 are not identical blocks, and their
-> > > > > > > programming models differ as a result.
-> > > > > > >
-> > > > > > > In summary, although most of the internal functions are the
-> > > > > > > same, the two blocks have output signals connected to different components within the SoC.
-> > > > > > > This requires different hardware configurations and inevitably
-> > > > > > > leads to different programming models for LCDC0 and LCDC1.
-> > > > > >
-> > > > > > Isn't that merely an SoC integration issue?
-> > > > > > Are there any differences in programming LCDC0 or LCDC1 for the
-> > > > > > common output types supported by both (single channel LVDS and 4-lane MIPI-DSI)?
-> > > > >
-> > > > > Dual LVDS case, dot clock from LCDC0 is used in both LCDC's.
-> > > >
-> > > > For the single dual-channel LVDS output on LCDC0, or for using two
-> > > > independent LVDS outputs on both instances? How is this handled?
-> > >
-> > > Dual-channel LVDS output on LCDC0, we use the data from LCDC0.
-> >
-> > That's the "dual-link" case below? But that case doesn't use LCDC1 at all, so how can "dot clock from
-> > LCDC0 is used in both LCDC's" be true?
->
-> That is a typo. Sorry for that.
+Reviewed-by: Brian Masney <bmasney@redhat.com>
 
-Np.
+This patch looks good, however this patch belongs in a series with
+your other work to clkgen-pll. I'm going to leave some comments on your
+other patch that you posted to this driver.
 
-> > What am I missing?
->
-> Dual-link case, LVDS_TOP_CLK_CH0, LVDS_TOP_CLK_DOT_CH0 used to drive both the LVDS channels.
-> In this case, the clks LVDS_TOP_CLK_CH1, LVDS_TOP_CLK_DOT_CH1 are not used.
+Brian
 
-These are clock inputs to the LVDS module, hence do not matter for
-programming the LCDC?
-
-> > > We have the following use cases:
-> > >
-> > > Single-link(ch0 only):
-> > >   This mode outputs the image data of LCDC0 to LVDS (ch0). In this mode,
-> > >   LVDS (ch1) is not used.
-> > >
-> > > Single-link(ch1 only):
-> > >   This mode outputs the image data of LCDC1 to LVDS (ch1).
-> > >   In this mode, LVDS (ch0) is not used.
-> > >
-> > > Single-link(2ch):
-> > >   In this mode, the image data of LCDC0 is output to LVDS (ch0) and the
-> > >   image data of LCDC1 is output to LVDS (ch1).
-> > >   Since LVDS (ch0) and LVDS (ch1) are not synchronously related, they
-> > >   can be output in different image formats and can be operated asynchronously.
-> > >
-> > > Single-link(Multi)
-> > >   In this mode, the image data of LCDC0 is output to both LVDS (ch0) and
-> > >   LVDS (ch1). LVDS (ch0) and LVDS (ch1) operate synchronously.
-> > >
-> > > Dual-link:
-> > >   In this mode, the input image data from LCDC0 is separated into Even pixels and
-> > >   Odd pixels, and the output is distributed to LVDS ch0 and ch1.
-> > >
-> > >
-> > > > Don't you need a companion property to link them together?
-> > >
-> > > Yes, We use companion property for Dual channel LVDS(Dual-Link) use case.
-> > > >
-> > > > Is this similar to dual-channel LVDS on R-Car E3 and RZ/G2E?
-> > >
-> > > Yes.
-> >
-> > OK, "companion" is in the renesas,lvds bindings, which are not yet updated for RZ/G3E? Do you need it
-> > in "renesas,rzg2l-du", too?
->
-> Not required. Without that it works like RZ/G2E.
-
-Hence the two LCDC instances are identical and independent, thus can
-use the same compatible value?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
