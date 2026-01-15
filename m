@@ -1,67 +1,68 @@
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A30F32E14F
-	for <linux-clk@vger.kernel.org>; Thu, 15 Jan 2026 23:42:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24A40331215
+	for <linux-clk@vger.kernel.org>; Thu, 15 Jan 2026 23:42:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768520567; cv=none; b=J3j2uuGmlm7v1pl4G7K4XOXrISQ6h0IEwzQcwOVYOQKjD6a+ks/a0K37QPw3lFqmRX/HtNPPqQw3rOWkcE3w0SPgM87FTnllYssc5W8nRH6Z45t+Rde163ZzW0LJOfdhaMDjmRaO0CFWvNZEga5lX4QL4Spm5Oe2OazqwZZN1hc=
+	t=1768520575; cv=none; b=kdhEENuVmMHae5a63qSdJ/CKoqyvJYuTjw5x8/B07aeIKaP0lzywrOq2u9uef39N88Z7C2IEQzWUdOcJYm50KGqupNYkxnYzirzdgW1w2e26zvwyY2EO9WYYwkmq+zFSKAnkS3RjJHquVwpaUv1mT+x5Ik5HVBRmUxErg65oXF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768520567; c=relaxed/simple;
-	bh=ok/oOy2H/gCmt8aqGtg4bivoLspv42jnrduGYWvKsXI=;
+	s=arc-20240116; t=1768520575; c=relaxed/simple;
+	bh=wRP8FmdA12Aje5GTOxIiYJPqjm12DSPC5YqsI4gARmc=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=bb6xYJLLpQCcD5uveIjMYf/2ZMccATXtXAECMaDa0GvrNdDMElwCWoF4dkp8fVx0x7tN+0DnEavHU6I3Y4VgVZr81AHT/3WsI8o3xo3qCg/qpKnErSVciigJvPmqsaNmywUvozRsPlqwz8f4Vo2PnlHwsScjSJH4ar7QBS14j+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oss.tenstorrent.com; spf=pass smtp.mailfrom=tenstorrent.com; dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b=FKJa5zs9; arc=none smtp.client-ip=209.85.128.173
+	 In-Reply-To:To:Cc; b=sYLGirdUOQG7DLLQ0Z4E6o+EWbq+9oZyDDlLgUUhfJii4MrbsckYgTN/CuNzgaqeu2jifKB7FcwEwMZxEPbYnLph8hvorvTiMHpa6qrQJrBLO9Gcb/go2BiS+D3vWnEheFsSxu4jA6TDJlxmdlFYT3Askz4I1WVb0AM2W5A3ir4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oss.tenstorrent.com; spf=pass smtp.mailfrom=tenstorrent.com; dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b=Ey47b6zA; arc=none smtp.client-ip=209.85.128.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oss.tenstorrent.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tenstorrent.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b="FKJa5zs9"
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-79018a412edso14885327b3.0
-        for <linux-clk@vger.kernel.org>; Thu, 15 Jan 2026 15:42:45 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b="Ey47b6zA"
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-790b7b3e594so13792237b3.3
+        for <linux-clk@vger.kernel.org>; Thu, 15 Jan 2026 15:42:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tenstorrent.com; s=google; t=1768520565; x=1769125365; darn=vger.kernel.org;
+        d=tenstorrent.com; s=google; t=1768520566; x=1769125366; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=o+0cIAGDGMmJvU1Q3VxQyqOTGo8fl+3oX0TiLK3VJIY=;
-        b=FKJa5zs9lAD3kxox6Qw4a1JhouM2W1aX+GxFBSkqZad8jmaUsemVeqjlUKh2kRrcFj
-         IV5GbasDfH6IV3J9hpYLwfDGQcBBUVx31TMsEDf5LkiPkqAl96mQOpCvc38Vw/U7BWsa
-         GwryW7Yq/Kp1421opTlzWb9LPwfHDB/pRFxiPN0h9tm39vu6z3/85ZbKrBEtgk+JLwrS
-         gmolz29jCNwXJOH85z1dO40+YFtPZE4J+ICWz6GdcL2wbE5PwyTrHScXoRdvw1YGCtcm
-         13T5Syaxk2x+xV+FLyE3JQzji6HkoRaEHs8eMW3Pxpelg4Sr42QhmyBC+rwxh2ZHb+Sq
-         mTyg==
+        bh=FhfgD4MLmYb5AUeJY2eVc/fXqLoD7qd7hkr+2xTsRcM=;
+        b=Ey47b6zAzIAhxR+xJDoAjvJOeWR2uF7yXf84lb1fDQlLiCUQPHFS/qhbtoZulQ2d7M
+         Gub2oNlAY/lMNmz8Jhb+zuOErZ1fArV3zSgKm1pCmtak75L4it+0IClXiqhsGNgVU4li
+         qLY/tYHAcX0Ui+/5gseJQr0RCeinj9yiq+htJGF63aaSpG99gwlkDQyUYSD17kha2Jc8
+         xZl05KhoH1ig1ul+N1rSia/NQP9ZcD3R9aRDp+gk7JFLZekVsgtxbNWPBvOAcO72CwWt
+         rMv8b16rT2ihbsKIj2WB4kAP2pbsfmBozRBoZenXR15fbp11Vw5Wkf6hW5VnDhtlSuaV
+         Oh6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768520565; x=1769125365;
+        d=1e100.net; s=20230601; t=1768520566; x=1769125366;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=o+0cIAGDGMmJvU1Q3VxQyqOTGo8fl+3oX0TiLK3VJIY=;
-        b=KidUOr8FRFV+cLOTI1igRwjI9ExWkPtjgOtVU4VbnH5LIM2oWN+1HLdW9LR5hpc5Gv
-         zjfkLh3WS6npbkCrQ3kfgWe/EdCC2iw4r77zu+bn/Q+iMTxZ7HW/C9CWC/HYSe+U9JRj
-         TB7QG3T7q2VFFk8xXWRkA25PEuqIhXQZbugfUPupdNLLaP2MYJi0lZuaPcP3EoFJcQsI
-         ZWeDqs0FAAHvPz5neEawIWabP35fS33lEFBxQ2Atf0j6rDQ06kfFcbIUoggvLfnssuxB
-         D8FeT/Kaq2p3BuwoJeHjNtP0ejXDT0kK0/YzPV8sBsC7NjbNexSvsgGKkrWXvDAf3sEm
-         +fJA==
-X-Forwarded-Encrypted: i=1; AJvYcCX70PzrQG1P8adYQQ+S0gQZYxRXbqCk4jbQpMUm/EwIwnym6auq+RB7LrvJpuuDuOwUc8zl2Y4e/PU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwgW7K8it2MwhopXzkQq48HYyezG1U4MB1koSEQm+gGD8x6gVH/
-	d+BwP1c7gVn+vFv2VZsP6/BJdpARylsqoBN211p1qUOxesNfc8zaDYQXFgOsPEq6xzk=
-X-Gm-Gg: AY/fxX7rf1Xp+MOg8QTkq1QXwRWHiH9qBCgM6sZUARRXScYS0u8QTbjasLmMvLKrQiM
-	JWiKmmTqk+BF+0sRqIkONauHWu3lLVzG1wceZZfpd/iJfO4qy85om1K8PDET12pZqQUPMYWUYh5
-	3DUY/tsKSDyGfv6VHSPNHkaFdDRX29LrSej3w8xkuhSoskqO6kp/TVI3oDfFaNwFYb7BOBtZ/8a
-	aVMiw46sDRMMGYNiRD4JxKwtxfE0I6Ag0Ld0bZa1TMkpWzqnPXnXWpNF/UYiiLo6ha180QmniaW
-	1lLlnlp4aFhSBrN/+K1ugoIB5in1KPlFkImKEBgxjCqeteLnZc4xFdmDnKS+Wo9msMEraluyWHn
-	NG890eWSfjs0xoPEm5qMpPcmogEspoqbVOwApJxPLvB2VF4JGr6fAmCMRJVtqbWTF6RIs3Q3dny
-	jTCSOea8333GPnfoBvGGmq8vj4zBdNhENcE452wcaDMhvwSoUvxiWtpg8ycSrGJSeyAvQMUcU=
-X-Received: by 2002:a05:690c:7206:b0:78c:2d5c:1988 with SMTP id 00721157ae682-793c52ab10bmr12877617b3.15.1768520565147;
-        Thu, 15 Jan 2026 15:42:45 -0800 (PST)
+        bh=FhfgD4MLmYb5AUeJY2eVc/fXqLoD7qd7hkr+2xTsRcM=;
+        b=s/t4us6WTXqfoX1u3yYgDNefX8JqSRVfCz/YPV+s1BCxUqamP7LUVcvWqScELMjhbA
+         NN0ob7CsC+vmKgAIEwfKtbuEFts7/VXD8VrcfjvXmn1S/yxLWpKktiLhsy/3l1KqppAR
+         H+YhljvCelkuK2r1Vzq5VU/SbIEh4rktc7K9LXLj0K+hz2LXPzVkoUzJ7i5kH2sok3uR
+         Q1USj+wO/4ipqyf0y7IFtlGxY6CfQp3YW2ct5GNAbXureofgMeBXqZiKxjIgGuuCc+iq
+         24DCJVrFhZtvxQg3gOEErfzVfp/uqtf/PM61EewfQVG9BRMp8lUeLMIjpz1QlRTqi2VP
+         082w==
+X-Forwarded-Encrypted: i=1; AJvYcCU5/nw7UKaxUJt1XmICJrAAIXES83eSGBY2SL/yn71Cbw/ppA6mKdP6PFa/m6un1OFjIlIfoOr5Nl0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOyBfKM8vLUKvdXHCqhjPsebxqWqzS1LsWJ/JmPGaALw4Yqy9J
+	8EZYSXfgE+Tq5k0LU9ruUsDVUuCgV9rNHNOFfh5rz609aU7VMnVZy6A6fvPT1chwK2c=
+X-Gm-Gg: AY/fxX5eKhXOi8z0sNSpu0J0eLWQlDmXvwhvBrSN9gEs2uklSBu/m6eaXPFrKpQfzcW
+	Eqqyp37umLoyDGkae0LkRzVcqqPMnjJx5812TezZvFW5fJrZp7Wu8X2I89i5b5IB3Z/s/nYB650
+	ZcCbW/ykAyout6beuL+kLoH30LRBb/R80CR1OsAtRGP0WfpHXnVW8A21Z1EyNZW4SgptmN1wIWF
+	s3SD/BogP5quUu0rri79tVOy3aV2DXQhpSXP8MLDGEwgoIOtBObRCFE8kbCfx/S8TZcJyh6QgTN
+	i6Z1Fxqg7+1gDrWVbUSJWSqDX2Ah1MYOLfnqPawsRgRUzBB+kc0stfzoi4IXn9M1cZV8JAHacI0
+	rXz7OHbZSOZkdC67L/skdOAUINDyjq+BATW3bQl/5WrcBOQS06hrg6JJXhjEoav7uQJ+S3f/hyv
+	+f1adj2+ekkHLdna5d2yRK/YhcxFUD7ne7tK5PwPmsGntafhOFMTO5LSQmREwHtOM+gdmlwN6PI
+	xded3mmCA==
+X-Received: by 2002:a05:690c:b0b:b0:788:c22:1f0 with SMTP id 00721157ae682-793c53c4539mr12329207b3.54.1768520566220;
+        Thu, 15 Jan 2026 15:42:46 -0800 (PST)
 Received: from [192.168.5.15] ([68.95.197.245])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-793c66c72aesm3027117b3.11.2026.01.15.15.42.44
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-793c66c72aesm3027117b3.11.2026.01.15.15.42.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Jan 2026 15:42:44 -0800 (PST)
+        Thu, 15 Jan 2026 15:42:45 -0800 (PST)
 From: Anirudh Srinivasan <asrinivasan@oss.tenstorrent.com>
-Date: Thu, 15 Jan 2026 17:42:00 -0600
-Subject: [PATCH 1/8] dt-bindings: soc: tenstorrent: Add
- tenstorrent,atlantis-syscon
+Date: Thu, 15 Jan 2026 17:42:01 -0600
+Subject: [PATCH 2/8] soc: tenstorrent: Add header with Atlantis syscon
+ register offsets
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -70,7 +71,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260115-atlantis-clocks-v1-1-7356e671f28b@oss.tenstorrent.com>
+Message-Id: <20260115-atlantis-clocks-v1-2-7356e671f28b@oss.tenstorrent.com>
 References: <20260115-atlantis-clocks-v1-0-7356e671f28b@oss.tenstorrent.com>
 In-Reply-To: <20260115-atlantis-clocks-v1-0-7356e671f28b@oss.tenstorrent.com>
 To: Drew Fustini <dfustini@oss.tenstorrent.com>, 
@@ -87,168 +88,70 @@ Cc: linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
  npiggin@oss.tenstorrent.com, agross@kernel.org, agross@oss.tenstorrent.com
 X-Mailer: b4 0.14.3
 
-Document bindings for Tenstorrent Atlantis syscon that manages clocks
-and resets. This syscon block is instantiated 4 times in the SoC.
-This commit documents the clocks from the RCPU syscon block.
+Document register offsets used for controlling clocks in Atlantis
 
 Signed-off-by: Anirudh Srinivasan <asrinivasan@oss.tenstorrent.com>
 ---
- .../tenstorrent/tenstorrent,atlantis-syscon.yaml   | 58 +++++++++++++++++++
- MAINTAINERS                                        |  2 +
- .../clock/tenstorrent,atlantis-syscon.h            | 67 ++++++++++++++++++++++
- 3 files changed, 127 insertions(+)
+ MAINTAINERS                               |  1 +
+ include/soc/tenstorrent/atlantis-syscon.h | 38 +++++++++++++++++++++++++++++++
+ 2 files changed, 39 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/soc/tenstorrent/tenstorrent,atlantis-syscon.yaml b/Documentation/devicetree/bindings/soc/tenstorrent/tenstorrent,atlantis-syscon.yaml
-new file mode 100644
-index 000000000000..3915d78dfeda
---- /dev/null
-+++ b/Documentation/devicetree/bindings/soc/tenstorrent/tenstorrent,atlantis-syscon.yaml
-@@ -0,0 +1,58 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/soc/tenstorrent/tenstorrent,atlantis-syscon.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Tenstorrent Atlantis SoC System Controller
-+
-+maintainers:
-+  - Anirudh Srinivasan <asrinivasan@oss.tenstorrent.com>
-+
-+description:
-+  System controller found in Tenstorrent Atlantis SoC, which is capable of
-+  clock and reset functions.
-+
-+  RCPU syscon controls clocks and resets for low speed IO interfaces on chip
-+
-+properties:
-+  compatible:
-+    enum:
-+      - tenstorrent,atlantis-syscon-rcpu
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    maxItems: 1
-+
-+  "#clock-cells":
-+    const: 1
-+    description:
-+      See <dt-bindings/clock/tenstorrent,atlantis-syscon.h> for valid indices.
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - "#clock-cells"
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    clocks {
-+      osc_24m: clock-24m {
-+        compatible = "fixed-clock";
-+        clock-frequency = <24000000>;
-+        clock-output-names = "osc_24m";
-+        #clock-cells = <0>;
-+      };
-+    };
-+
-+    syscon_rcpu: system-controller@a8000000 {
-+      compatible = "tenstorrent,atlantis-sycon-rcpu";
-+      reg = <0x0 0xa8000000 0x0 0x10000>;
-+      clocks = <&osc_24m>;
-+      #clock-cells = <1>;
-+    };
 diff --git a/MAINTAINERS b/MAINTAINERS
-index dc731d37c8fe..19a98b1fa456 100644
+index 19a98b1fa456..4a2017d647b0 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -22535,7 +22535,9 @@ L:	linux-riscv@lists.infradead.org
- S:	Maintained
- T:	git https://github.com/tenstorrent/linux.git
- F:	Documentation/devicetree/bindings/riscv/tenstorrent.yaml
-+F:	Documentation/devicetree/bindings/soc/tenstorrent/tenstorrent,atlantis-syscon.yaml
+@@ -22538,6 +22538,7 @@ F:	Documentation/devicetree/bindings/riscv/tenstorrent.yaml
+ F:	Documentation/devicetree/bindings/soc/tenstorrent/tenstorrent,atlantis-syscon.yaml
  F:	arch/riscv/boot/dts/tenstorrent/
-+F:	include/dt-bindings/clock/tenstorrent,atlantis-syscon.h
+ F:	include/dt-bindings/clock/tenstorrent,atlantis-syscon.h
++F:	include/soc/tenstorrent/
  
  RISC-V THEAD SoC SUPPORT
  M:	Drew Fustini <fustini@kernel.org>
-diff --git a/include/dt-bindings/clock/tenstorrent,atlantis-syscon.h b/include/dt-bindings/clock/tenstorrent,atlantis-syscon.h
+diff --git a/include/soc/tenstorrent/atlantis-syscon.h b/include/soc/tenstorrent/atlantis-syscon.h
 new file mode 100644
-index 000000000000..a8518319642a
+index 000000000000..b15dabfb42b5
 --- /dev/null
-+++ b/include/dt-bindings/clock/tenstorrent,atlantis-syscon.h
-@@ -0,0 +1,67 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
++++ b/include/soc/tenstorrent/atlantis-syscon.h
+@@ -0,0 +1,38 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
 +/*
 + * Copyright (c) 2026 Tenstorrent
 + */
++#ifndef __SOC_ATLANTIS_SYSCON_H__
++#define __SOC_ATLANTIS_SYSCON_H__
 +
-+#ifndef _DT_BINDINGS_ATLANTIS_SYSCON_H
-+#define _DT_BINDINGS_ATLANTIS_SYSCON_H
++#include <linux/bits.h>
++#include <linux/types.h>
 +
-+/*
-+ * RCPU Domain Clock IDs
-+ */
-+#define CLK_RCPU_PLL 0
-+#define CLK_RCPU_ROOT 1
-+#define CLK_RCPU_DIV2 2
-+#define CLK_RCPU_DIV4 3
-+#define CLK_RCPU_RTC 4
-+#define CLK_SMNDMA0_ACLK 5
-+#define CLK_SMNDMA1_ACLK 6
-+#define CLK_WDT0_PCLK 7
-+#define CLK_WDT1_PCLK 8
-+#define CLK_TIMER_PCLK 9
-+#define CLK_PVTC_PCLK 10
-+#define CLK_PMU_PCLK 11
-+#define CLK_MAILBOX_HCLK 12
-+#define CLK_SEC_SPACC_HCLK 13
-+#define CLK_SEC_OTP_HCLK 14
-+#define CLK_TRNG_PCLK 15
-+#define CLK_SEC_CRC_HCLK 16
-+#define CLK_SMN_HCLK 17
-+#define CLK_AHB0_HCLK 18
-+#define CLK_SMN_PCLK 19
-+#define CLK_SMN_CLK 20
-+#define CLK_SCRATCHPAD_CLK 21
-+#define CLK_RCPU_CORE_CLK 22
-+#define CLK_RCPU_ROM_CLK 23
-+#define CLK_OTP_LOAD_CLK 24
-+#define CLK_NOC_PLL 25
-+#define CLK_NOCC_CLK 26
-+#define CLK_NOCC_DIV2 27
-+#define CLK_NOCC_DIV4 28
-+#define CLK_NOCC_RTC 29
-+#define CLK_NOCC_CAN 30
-+#define CLK_QSPI_SCLK 31
-+#define CLK_QSPI_HCLK 32
-+#define CLK_I2C0_PCLK 33
-+#define CLK_I2C1_PCLK 34
-+#define CLK_I2C2_PCLK 35
-+#define CLK_I2C3_PCLK 36
-+#define CLK_I2C4_PCLK 37
-+#define CLK_UART0_PCLK 38
-+#define CLK_UART1_PCLK 39
-+#define CLK_UART2_PCLK 40
-+#define CLK_UART3_PCLK 41
-+#define CLK_UART4_PCLK 42
-+#define CLK_SPI0_PCLK 43
-+#define CLK_SPI1_PCLK 44
-+#define CLK_SPI2_PCLK 45
-+#define CLK_SPI3_PCLK 46
-+#define CLK_GPIO_PCLK 47
-+#define CLK_CAN0_HCLK 48
-+#define CLK_CAN0_CLK 49
-+#define CLK_CAN1_HCLK 50
-+#define CLK_CAN1_CLK 51
-+#define CLK_CAN0_TIMER_CLK 52
-+#define CLK_CAN1_TIMER_CLK 53
++/* RCPU Clock Register Offsets */
++#define RCPU_PLL_CFG_REG 0x0000
++#define RCPU_NOCC_PLL_CFG_REG 0x0004
++#define RCPU_NOCC_CLK_CFG_REG 0x0008
++#define RCPU_DIV_CFG_REG 0x000C
++#define RCPU_BLK_CG_REG 0x0014
++#define LSIO_BLK_CG_REG 0x0018
++#define PLL_RCPU_EN_REG 0x11c
++#define PLL_NOCC_EN_REG 0x120
++#define BUS_CG_REG 0x01FC
 +
-+#endif /* _DT_BINDINGS_ATLANTIS_SYSCON_H */
++/* PLL Bit Definitions */
++#define PLL_CFG_EN_BIT BIT(0)
++#define PLL_CFG_BYPASS_BIT BIT(1)
++#define PLL_CFG_REFDIV_MASK GENMASK(7, 2)
++#define PLL_CFG_REFDIV_SHIFT 2
++#define PLL_CFG_POSTDIV1_MASK GENMASK(10, 8)
++#define PLL_CFG_POSTDIV1_SHIFT 8
++#define PLL_CFG_POSTDIV2_MASK GENMASK(13, 11)
++#define PLL_CFG_POSTDIV2_SHIFT 11
++#define PLL_CFG_FBDIV_MASK GENMASK(25, 14)
++#define PLL_CFG_FBDIV_SHIFT 14
++#define PLL_CFG_LKDT_BIT BIT(30)
++#define PLL_CFG_LOCK_BIT BIT(31)
++#define PLL_LOCK_TIMEOUT_US 1000
++#define PLL_BYPASS_WAIT_US 500
++
++#endif
 
 -- 
 2.43.0
