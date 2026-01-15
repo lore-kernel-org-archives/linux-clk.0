@@ -1,155 +1,257 @@
-Received: from mout.web.de (mout.web.de [212.227.17.12])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2557D34846A;
-	Thu, 15 Jan 2026 12:27:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4457A395268
+	for <linux-clk@vger.kernel.org>; Thu, 15 Jan 2026 12:34:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768480078; cv=none; b=f6sBGvePfKrhj8wrZxkeF4RNuPPtAP30VCqlvx1yWwugphldoyUx/7UzbhSzPgexWBWZ5utEN8rMH+TCXBACXF3zq/69BLpdVSKomobTqao0NcYvxPLhoXpdI//OBwzU3me6+7IiIVD/tU/2QM383Nn+WiWi6xygfLmlPy4efGA=
+	t=1768480463; cv=none; b=jddEzwi48CAtzOIQviMJTGqObuxnX8EinezNpYaBsxMs66vuQLV7Bq+Y5Ev6eFA1lAfAIAJnRZmW5w/Eu54U8emYpHXCAuI8+P/VylSgeKOrUQLHiBXan/2+P2kkCveNz0fCfPGN2zKcLFGrYkpcDPoLEIDT2u+AOERE+ntCuU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768480078; c=relaxed/simple;
-	bh=1XEX8kGREtCY9I8HwWSyDf/rK4x4kdVrblnHh5DRwiM=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=qeahkf7iNQ1MbmVZILsVeX/TZc5y2udGwVb5ggjqAwjBa1HIKw/xeqH/U63PCpoDdIHCMNMHYsW/wN6KL+fyLAZ7KSszBAycer8AY5tA+2/+9s6MUfnFIE27pY1Hq9qob7wt9thxm4CwP9D/gtpwtta0Q9/hMm86YBj0A+FDiR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=pDk/V+DE; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1768480463; c=relaxed/simple;
+	bh=0DhpSjvfpByGwWWxOmMrQayWYnhrw3lEnX0Y7SfxVQs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jOCQbous+dkpBhsRg3isc0G6wWiQz3XEQsIjHdRERxP6I4MYCyRZc37aEvOiY4mnDXz5pZEwjVjylStUyi2JtnreXFEo10XvoyhR22MpFCPlUz7AknCoILxh2qBIXYF2YAgQIEA/1sG5hmRu95sl5t3ZDMbnCpCDX+4QxVyJlJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Hpp2oms7; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=H6ptA+BQ; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="pDk/V+DE"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1768480068; x=1769084868; i=markus.elfring@web.de;
-	bh=PJnhVagQPwLaJRVDaQhPdi2Js0eyFEPWniT6mv2MpJw=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=pDk/V+DE6jtRfXhRfLuVcsUwRqQVcYU3ZINPX9brupcpNWNd8W0X2+Sl5qYzS7zP
-	 oReLGktbwqGfAX6S5hKkV+8d3vuPGeoWseQ9dT+qWIBZxHVkft9sOR6vyrMVeZToh
-	 neZ4A+kYaBRsddWnRaXsss+IgJy5btu0YBRHbfdX5qmWRDyFozDCP3VozOGUYApUy
-	 DTnnxQhsjVB6zWYZ7sPK3hbX0Q8pVHqlQgQTepS46Lotef6UGNvYq4UK+5VfcD2Ut
-	 VPPFnhNpvomWZj7jUkeW2NguF8/RIH2fco6mEmniu5jckCdHMEviB1KlhYp6jr7OY
-	 SiXAaymaGMhd+4cK0g==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.69.191]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1M604f-1vjMSm3rYZ-00A4WZ; Thu, 15
- Jan 2026 13:27:47 +0100
-Message-ID: <c72b1bfa-706d-4ef0-913e-38c42a49d182@web.de>
-Date: Thu, 15 Jan 2026 13:27:46 +0100
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Hpp2oms7";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="H6ptA+BQ"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1768480461;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QNPf7AyEdd66U2b9EqbJGKRCPDJ9Ni2qNv6cJ5EgabI=;
+	b=Hpp2oms7EOhrA8au3uhiOPW2EfiCwTAWwd1HvWJNAQxVIwL3PLtHER+GzMB3fPGpSh4rOM
+	VvtSKqKm51EirKHetXDGdb5yT5Ak4BMix6fEXudRiy5dkhLu65/VJCUiOP5DQujgzEsxxn
+	ni1SXtLAplmv0eE/dSI9T0iU/88sXzQ=
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
+ [209.85.160.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-634-Coh0-cUmOi2Bo7TDp1U6-g-1; Thu, 15 Jan 2026 07:34:20 -0500
+X-MC-Unique: Coh0-cUmOi2Bo7TDp1U6-g-1
+X-Mimecast-MFC-AGG-ID: Coh0-cUmOi2Bo7TDp1U6-g_1768480460
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-5014d8b3ae0so19655261cf.1
+        for <linux-clk@vger.kernel.org>; Thu, 15 Jan 2026 04:34:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1768480460; x=1769085260; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QNPf7AyEdd66U2b9EqbJGKRCPDJ9Ni2qNv6cJ5EgabI=;
+        b=H6ptA+BQ7phrtzMfq7/hodb6VRvUoWQ3TYmXuwgBomjjVMozauVcy3/GsTRZ0d41aC
+         wKzbzqfUy0qCU8IqrlK5GrqUAJFpiVt5z06VU3Bak8LxRJmw7HDEg+WYrq9mt3gAKzss
+         W7jnKleZLnMto30g8y4cFiLI2J9GyLTVPUwMhGnAxSKCuGPxBd9u40PMvflQ1mUvGLEJ
+         26zpvc/Mubgj0E/RlSatW8Q27nHycVGcgRUuxLSI/CX0kKDDM//1fXYa9BnbK4t0lzM8
+         aP2SANhXFu267X1p1+c0UZTTQg5Xo1ln+0U2bsY1rVL6fsmq/Rhxq8cDGpbAjSAGZ8qE
+         s7HQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1768480460; x=1769085260;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=QNPf7AyEdd66U2b9EqbJGKRCPDJ9Ni2qNv6cJ5EgabI=;
+        b=dicBHCWh4IijGFeBMsG8UWt24B7QJurazRjVkT9E2ldV7u5hQ6y+CgdSLXWeto1CES
+         qVW90HfjRziRxV7BjxZm9YLqlL4JnwI1qvHXae8Hqm/Eo7CRtWp2G/5p4GU6GRunZBy/
+         l6PEh5mIsqFpAt8P5DXAFLeiFIlwHFGb548FpMhxjh0eSUVvxzZhTYLSlB3C9IVwE23C
+         nMaRdlXZozSPo52BUAzGqDuA1dgs7q16Yohkl3xSOnYBYPkuG/zDfYQbNjIWeykSNcSA
+         N/vUk/szgpiei6+M/0Nsrdqp6V4lbYrBD8ttnkLAvZfpdSwK2PcKzZPwj/nFkRo/c7WL
+         mwqg==
+X-Forwarded-Encrypted: i=1; AJvYcCU3PUawFD4P/xTdNQivzM3fhJt9Ns9rXG5/7OA8gtd20GYrCy52LdBlR2kFS1pvdunUpKxbj16UrUo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMhc39fw8FBuz/WNW0Iz65kTo6mAOsyTnWjCsKrvmbiVCvg7a1
+	K7f35HROqY98i1L3TJbvRqoJP2kLMRpMDi7q2WuykJoUge0ZOjKOmZ0omjwyxawpKBB1DbXbqz7
+	giYpE7NjG6ryoqA9djOd5M066OZLenEIraAai4xu0WXADk3qOwYlTKAN8bZCGGQ==
+X-Gm-Gg: AY/fxX7rCczp996nMImzTlobbzN3lK9GEMwxnBT8g3BmBT4afsMCPLaLCk4dOlVhl5S
+	HraeJlMcfC1NWRuJgEOAkUqWkaNEFnZh/Njr/d2t10U1/BGazs6gmvb7EvtAO0fWnPwZP8ebtve
+	woVRmiFQAGDq76dU5CFgR66WV0Dt1FzQNe3CnrvYtICcy+BQSd7Y10+KsVxukWpR02n8XKNx1rz
+	h2UKe3tJ2q+HR2DXNuVJyzABOJ/3kgtnG4stbx9RZB2UEA4WIjHrQFmqc9pTc1DSEOacQnni88T
+	SL4Pam2D09fLhhN/Kw5GBKMp6k2zVu1uRSNLdWhSX4f9foMKhfb9VpkhsOh644cQ2KEISVI7GW8
+	WO2fHtD4MTC72c5f/x/3sWZMe58NrZfUvAQf99Nr+etLa
+X-Received: by 2002:a05:622a:22aa:b0:4ff:c295:3c3e with SMTP id d75a77b69052e-501481e4073mr69470261cf.10.1768480459602;
+        Thu, 15 Jan 2026 04:34:19 -0800 (PST)
+X-Received: by 2002:a05:622a:22aa:b0:4ff:c295:3c3e with SMTP id d75a77b69052e-501481e4073mr69468971cf.10.1768480457851;
+        Thu, 15 Jan 2026 04:34:17 -0800 (PST)
+Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-892668a2419sm68145076d6.30.2026.01.15.04.34.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 Jan 2026 04:34:17 -0800 (PST)
+Date: Thu, 15 Jan 2026 07:34:16 -0500
+From: Brian Masney <bmasney@redhat.com>
+To: Haoxiang Li <lihaoxiang@isrc.iscas.ac.cn>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] clk: st: clkgen-pll: Add cleaup in
+ clkgen_c32_pll_setup()
+Message-ID: <aWjeyNfrfY5dQLg3@redhat.com>
+References: <20260115044439.632676-1-lihaoxiang@isrc.iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Haoxiang Li <lihaoxiang@isrc.iscas.ac.cn>, linux-clk@vger.kernel.org,
- Brian Masney <bmasney@redhat.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20260115044439.632676-1-lihaoxiang@isrc.iscas.ac.cn>
-Subject: Re: [PATCH v2] clk: st: clkgen-pll: Add cleaup in
- clkgen_c32_pll_setup()
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 In-Reply-To: <20260115044439.632676-1-lihaoxiang@isrc.iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:BVdaiydgnCmJpN2ATf17kuVgQWDx0YPLbBAgGdPBhjNYCnqEfza
- aaoC2sHH4a8ZWgCf9RNp3J4qGyxw9NzwKRPfwSJTnsdN0TNz4ockF44FsV+azgzzdORxDo2
- utKSMuxBgMn5vOyivoOGaRA+CAkG5mBtY2D6rITPds+8uaO+htfL7fkeGtqTVmNVrZxgo1H
- DeFMxmSfFpcFGH6QCfH7w==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:c9gXUAUtnqA=;DkhcUT7UPxM8IOmTdjwN+VRhxav
- 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
- ShC8mzP/6zCQlApxA=
+User-Agent: Mutt/2.2.14 (2025-02-20)
 
+Hi Haoxiang,
+
+Thanks for the patch!
+
+On Thu, Jan 15, 2026 at 12:44:39PM +0800, Haoxiang Li wrote:
 > In clkgen_c32_pll_setup(), there exists several leaks if errors ouccers.
-
-                                                                  occur?
-
-
 > Add iounmap() to free the memory allocated by clkgen_get_register_base().
 > Add clk_unregister() and kfree to do the cleaup for clkgen_pll_register().
-
-                                () calls?  cleanup?
-
-Please avoid such typos at more places (including the summary phrase).
-
-
 > Add a while to do the cleaup for clkgen_odf_register().
 > Use distinct variable names for two register calls' return values.
+> 
+> Signed-off-by: Haoxiang Li <lihaoxiang@isrc.iscas.ac.cn>
 
-I would find such sentences a bit nicer with a formatting for enumerations.
+There's a lot going on in this patch, and it's hard for someone else to
+review. Can you break this up into several patches? For example:
 
-Regards,
-Markus
+- The kfree(pll_name) should be in it's own patch, with it's own
+  explanation.
+
+- It would help if the rename of 'clk' to 'pll_clk' was in it's own
+  patch. Along with the rename of 'clk' to 'odf_clk' in a separate
+  patch. You can say in these two commit messages that the renames
+  are in preparation for cleaning up some memory leaks.
+
+I'll pick up below with more suggestions.
+
+> ---
+> Changes in v2:
+> - Add several cleanups. Thanks, Brian!
+> - Modify the changelog.
+> ---
+>  drivers/clk/st/clkgen-pll.c | 44 +++++++++++++++++++++++++------------
+>  1 file changed, 30 insertions(+), 14 deletions(-)
+> 
+> diff --git a/drivers/clk/st/clkgen-pll.c b/drivers/clk/st/clkgen-pll.c
+> index c258ff87a171..100172f9fdf8 100644
+> --- a/drivers/clk/st/clkgen-pll.c
+> +++ b/drivers/clk/st/clkgen-pll.c
+> @@ -752,11 +752,10 @@ static struct clk * __init clkgen_odf_register(const char *parent_name,
+>  	return clk;
+>  }
+>  
+> -
+>  static void __init clkgen_c32_pll_setup(struct device_node *np,
+>  		struct clkgen_pll_data_clks *datac)
+>  {
+> -	struct clk *clk;
+> +	struct clk *pll_clk;
+>  	const char *parent_name, *pll_name;
+>  	void __iomem *pll_base;
+>  	int num_odfs, odf;
+> @@ -774,18 +773,18 @@ static void __init clkgen_c32_pll_setup(struct device_node *np,
+>  
+>  	of_clk_detect_critical(np, 0, &pll_flags);
+>  
+> -	clk = clkgen_pll_register(parent_name, datac->data, pll_base, pll_flags,
+> +	pll_clk = clkgen_pll_register(parent_name, datac->data, pll_base, pll_flags,
+>  				  np->name, datac->data->lock);
+> -	if (IS_ERR(clk))
+> -		return;
+> +	if (IS_ERR(pll_clk))
+> +		goto err_unmap;
+>  
+> -	pll_name = __clk_get_name(clk);
+> +	pll_name = __clk_get_name(pll_clk);
+>  
+>  	num_odfs = datac->data->num_odfs;
+>  
+>  	clk_data = kzalloc(sizeof(*clk_data), GFP_KERNEL);
+>  	if (!clk_data)
+> -		return;
+> +		goto err_pll_unregister;
+
+This could also be it's own cleanup patch.
+
+>  
+>  	clk_data->clk_num = num_odfs;
+>  	clk_data->clks = kcalloc(clk_data->clk_num, sizeof(struct clk *),
+> @@ -795,7 +794,7 @@ static void __init clkgen_c32_pll_setup(struct device_node *np,
+>  		goto err;
+>  
+>  	for (odf = 0; odf < num_odfs; odf++) {
+> -		struct clk *clk;
+> +		struct clk *odf_clk;
+>  		const char *clk_name;
+>  		unsigned long odf_flags = 0;
+>  
+> @@ -806,28 +805,45 @@ static void __init clkgen_c32_pll_setup(struct device_node *np,
+>  			if (of_property_read_string_index(np,
+>  							  "clock-output-names",
+>  							  odf, &clk_name))
+> -				return;
+> +				goto err;
+>  
+>  			of_clk_detect_critical(np, odf, &odf_flags);
+>  		}
+>  
+> -		clk = clkgen_odf_register(pll_name, pll_base, datac->data,
+> +		odf_clk = clkgen_odf_register(pll_name, pll_base, datac->data,
+>  				odf_flags, odf, &clkgena_c32_odf_lock,
+>  				clk_name);
+> -		if (IS_ERR(clk))
+> -			goto err;
+> +		if (IS_ERR(odf_clk))
+> +			goto err_odf_unregister;
+>  
+> -		clk_data->clks[odf] = clk;
+> +		clk_data->clks[odf] = odf_clk;
+>  	}
+>  
+>  	of_clk_add_provider(np, of_clk_src_onecell_get, clk_data);
+>  	return;
+>  
+> +err_odf_unregister:
+> +	while (odf--) {
+
+odf is not initialized at the top of the function. It would be good to
+default it to 0. I know it is in the for loop, but just to be safe.
+
+> +		struct clk_gate *gate = to_clk_gate(__clk_get_hw(clk_data->clks[odf]));
+> +		struct clk_divider *div = to_clk_divider(__clk_get_hw(clk_data->clks[odf]));
+> +
+> +		clk_unregister_composite(clk_data->clks[odf]);
+> +		kfree(div);
+> +		kfree(gate);
+> +	}
+>  err:
+> -	kfree(pll_name);
+>  	kfree(clk_data->clks);
+>  	kfree(clk_data);
+> +err_pll_unregister:
+> +	struct clkgen_pll *pll = to_clkgen_pll(__clk_get_hw(pll_clk));
+
+Generally declarations go at the top of the function, or the top of an
+if / while.
+
+Since you are making changes to the top of the function, it would be
+good to add another patch to put the variables in reverse Christmas tree
+order (longest to shortest by name).
+
+> +
+> +       clk_unregister(pll_clk);
+
+The clk_unregister() can also be it's own cleanup patch.
+
+> +       kfree(pll);
+> +err_unmap:
+> +       if (pll_base)
+> +               iounmap(pll_base);
+
+The iounmap() can also be in it's own patch like you had in v1.
+
+You may end up with 6-8 patches, but each one will be small, boring, and
+it will make it easier for others review.
+
+Thanks!
+
+Brian
+
