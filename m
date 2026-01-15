@@ -1,68 +1,66 @@
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
+Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3A39330B31
-	for <linux-clk@vger.kernel.org>; Thu, 15 Jan 2026 23:42:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88D713314C8
+	for <linux-clk@vger.kernel.org>; Thu, 15 Jan 2026 23:42:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768520576; cv=none; b=HyYWjqB+HHsEwRQFHWLdy9X9FQ5LsLsa0clg9WuJ1JnIEN+Y9n6SFD3wE5eKsLQRHbV/pYoFuy7Ash6+bcZru1e3tt0hjC4vgBDFXI3lf3YhXdhddiJVIJ1x59Kq0Lyf5Hrderb6gCwTpLcbWfgM6PJFYwNrchXopjJDPzuACyQ=
+	t=1768520577; cv=none; b=bCBUukOFrteHY+8QyUv35AIE7ZyoLrsPikbT46nQUkMS3O3/96+CzACRDMxhaCyVsoAxTtMldvqlIr3LwumrjA1aUj6rbSBO+FpIVevfJzr5gvk0hRQY6ylH/0SRl+omQyKa9VWVyEd3NbIJL0ISig+gby41Z7STs6tPTe8RTiQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768520576; c=relaxed/simple;
-	bh=9zrQEYyTHE0rrNAGV+bZFy/DeHKOGDCLqOIbqW74yYQ=;
+	s=arc-20240116; t=1768520577; c=relaxed/simple;
+	bh=EEjRqQx/H6A5D0M2EPOuD3mdpqZCKoJ2C5PoaUS/a6s=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=gRcvRUwVDHpm0NZskpa1nIBoVs2tBeSKPY6peB0otL8IijseF6j4FcXilrgLo1tLMLE7lVrp8tmyVIgWoT9af4Pib/RnYe3obLvQtJJOefoAA/v+oPyxsZjwYq5Z7WQ//wfSWR7gXzFwtj5mGgHNmicb+P/WgEHMezK9KCwiUh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oss.tenstorrent.com; spf=pass smtp.mailfrom=tenstorrent.com; dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b=QtwcZK/c; arc=none smtp.client-ip=209.85.128.176
+	 In-Reply-To:To:Cc; b=L+sYPv3RGdKL8y/pdQvvwT3yg4hMRjnNFKrqqh4AMKIXXGagXiWDkN69wbyeu3ClzYJOBgjulw79elDLH2fVexhI5aViER7muwlyA/T8E4SjxfSu/RxvrgVUuzEEp0osudJorLLUtQEidT5U1Zj6aUdL7nOE/YT1SVdagaLQVd0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oss.tenstorrent.com; spf=pass smtp.mailfrom=tenstorrent.com; dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b=LGJqUAEs; arc=none smtp.client-ip=209.85.128.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oss.tenstorrent.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tenstorrent.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b="QtwcZK/c"
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-790ac42fd00so14213407b3.3
-        for <linux-clk@vger.kernel.org>; Thu, 15 Jan 2026 15:42:50 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b="LGJqUAEs"
+Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-78fb9a67b06so14328547b3.1
+        for <linux-clk@vger.kernel.org>; Thu, 15 Jan 2026 15:42:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tenstorrent.com; s=google; t=1768520570; x=1769125370; darn=vger.kernel.org;
+        d=tenstorrent.com; s=google; t=1768520568; x=1769125368; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=mr+DET/MCWrJ44Xgox+RvCv0LCqYSg+k7ueyqWHNGvw=;
-        b=QtwcZK/ctxiYUTkjVj8LgQ09+euJ6fPCTkhRluM+k+RluCngf0fR5GaJHWUXnmHjDl
-         j6gg5A+ZEQXx8s2IzGzZOrG8174On30zGQkVIy4JFao8CtqKNFWLp+jV0EP2VZO7j89A
-         W2aF8WJ+Tl7QXNCYQi/DNZQ1J1ANLCLT2qnRC1MRjEP9SEAfnoSPW8Dum/84if53FDlP
-         hia77MsnzfFKlPHEBefRaMhvaC34yie1v0y1YAX8ZpQf7JOVxc4DDs8svn2rja1yDWQS
-         b7CCInyUZ/yth7hg8Qy/Es66y0bD9TXKYhj9/+IxsIchanddpxOxYOI+HpGpyG9QQBNe
-         bQAg==
+        bh=ZgauUMDVjNkmmnUZThthivYhABO9DN7YXuMbhZ6n408=;
+        b=LGJqUAEsUnEnN0ikvATmZswx8eb+G/Mya/WMhzivBIpUsdNVOszB3GIAtwPobmkXyD
+         L56PM7wYScxVxcsSYijAawebASbGnFfZD2DBcInywb1CaNmcUVGbu+CTS8dzqXB1ujU6
+         4rUb9AtHGDbtFldWnbquRcnsjlHJMyO4NcosKJCRtk5BJCCJvy1cbaEJu10RbFyLuALh
+         RgQCZRFJ73JU6icvP4vi4CcH6CIBVOY89/rd2HFeGBHncRCBI818SXqCYd+BK9tJoPYo
+         dphijL2J7h2M4j/q8GY2iaYicCcRHJg3GQZEGLH28X4Aj8fbfvsu7ZuYNBobhBJDool5
+         zAfA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768520570; x=1769125370;
+        d=1e100.net; s=20230601; t=1768520568; x=1769125368;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=mr+DET/MCWrJ44Xgox+RvCv0LCqYSg+k7ueyqWHNGvw=;
-        b=B9EJh5noDZLZtpaeEEt2kBTsvlrL4TAtLb6SsOlUUeEHz/n9SHyQuCXHqc9sqKGV9t
-         ZDLbFVAPgmGCNPf674o3urZDQRy5vQi3tNrJ3/IMYE6mmrxGoizSQZTxa0kEZT8yKJDk
-         e8hRrAXn30YpH7fE2Lq26zJcCYbK8umMRACbPtq6t7SLCrdZ7OzhzNyjxMmx36OutJxA
-         vDg1yYL7e7F5PggI59qNYISXgFC1kygEhkmzbJj+i4GIrpojaUz9miCn/HnGFI3u91Y/
-         42sCIcYmd4j4O0QF3IrasoRuMd8Qz3J4cmb3/Tn7WA+O+b8uG0wmjh8TrTNpVCaags5D
-         R4wA==
-X-Forwarded-Encrypted: i=1; AJvYcCWNUx1CjRBcJE6D/Ijogg2PRmupDlHfSUu0wtzhzPaFFGlzF0Ta7vE0i2goPodXSlA7CHITRJBpK7w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYHazWwCgSKjNOkmle/rQpnzv5+rb6id722unCNBH2E0kRGQAO
-	OW1AjKDmz9/hyIG1OFU3Wyu77V2PkXAhZ8aeS8hyK3qcRdfYVL5OAuSWx9Z7gEj+LUc=
-X-Gm-Gg: AY/fxX5OhmP6w6xT6qcgcrrr1MQGeDmFeDxqhpQ1Sv7IqeaxQYwiagPIgG0SDmFC4ci
-	klA0JGazerOwwEfiOVBr4mYOIKdsoN45Ld/wvGUCpQGsJwduhp39Xdo4iV7jR0HoDEx0AjnueyB
-	Hxgztut9qxWA2cZv2dhcwVyTzNuyiaZyGYjO6ZVIrfyd6/Y2mRrF+dz1R/m+34c0UC4EOJUXHpC
-	I+thS7GrPOuvIB2FPuKKzeR4VCyz8tIxZ60vn7j7k1L1aLE8pdkumNKOm12V1paXOtE1Xhrdzc5
-	UNKI1yeyz91Tqoe1Kw5lRz/ZDOvZxP1z+gkooWH8NOupRqChKpIRz8ZXhZu/gghcybUas866o8c
-	Sp2ryOYgP93Rr4uf4JT+Wp0sVEzbqsC/kjx+KxUJ7qzMBZ9uXX06nFsSXTF5p7deUeP/UNHT9n0
-	uQ+KbyU55A0H5dXBkG9Kfu1OKvzJNHssMzRLhcKmQHZ5fi8+27yKJk1Bu87Tw3B00wOisxDVPA/
-	TrfWdntNA==
-X-Received: by 2002:a05:690c:e3cc:b0:78f:b820:f2f3 with SMTP id 00721157ae682-793c523ce6dmr26018967b3.12.1768520569702;
-        Thu, 15 Jan 2026 15:42:49 -0800 (PST)
+        bh=ZgauUMDVjNkmmnUZThthivYhABO9DN7YXuMbhZ6n408=;
+        b=QWV70qDEnAPdIbdEXqZa4ECCaxcJ993QfDYb6fW2tRIxxmfiZ/yMUGxciTwI/Bd1l1
+         3RN7RqTA7JVogtDQS2U9bdpaMNF3CF4nqzpnfXXpohDHf/p5F8VcJLeNYkG1ZiVgf7ZX
+         lBPe6wyhz+XeE2yyy+/4WtEmBT9m1Ele/LM2fRPoXhUjKfsDXskcgfhnZttNIZK63BoZ
+         tx9PViAb17qgdz08kmfOci1FC5sghtvgzaNpmGyiuZPot41BAR8dCGteJ4PyYwXSvvqY
+         /kytOanO8ZoKNKWEYcT73/gN4OhmTHeTYRNdRvGk9DEMA/2mOggjz/mHSMicycHLlDy/
+         afzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXG1fit/6275Nlu+2zB2IzgU5+TvtURGmrNlqU0Xkk/PQY9sflVxCfI8o8/4w7PiluAowGrVfNsnuU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzlcXwBkBGF40NUDhoBaXq4MJdiwdW5vgZ49XENdov1zhvtEm22
+	PBTlgmWtaKTIZoiuurCNJTLUdvo2bC54zX3yJnIfDBHuF39krOlqQiLl5AO4rBySc/k=
+X-Gm-Gg: AY/fxX6n3Nkd/GNyvRjUVMyvZxFsZJIHurC14kzdWLL3e+LCzgyuO1T+mI9kYxZNatu
+	eUM0HoJkXfXUWTRYtTe1T8kKnJST3iI70/CwB3BKbFqL1o5WP5yhawPliWFBkQO0paDMPMSNxvV
+	JWLt/UkDNd6ZWx77+5kLbmAE4p30gHqV5D+C9YYXMmHyE5AT9LV4+ZiuVTVYRoeqiPP/vKuhcQl
+	souYv5N7c5nH48LvPrD6wd+pncKCau7CVp6UZtMZ6dY7tTiVkI8foUqV2PffpgMVEmMoOSxdqKH
+	kUolABWgv9SlzrhA/XeAl2qTA1KHIQFCipPnSv3fN/liw27phEZm9S9SIoI5Gxzes2DdHMCpd5U
+	68hFszyoCKArtnxNxQHYLw/MxVs/b0Bis3LcSMO7J/6TFVX6+RVMpRB8+q+4/bODd7k5E1pMbUG
+	6Wiuc4hNHONc7UfOwmBLazoXuHSilaSO/sULgqWHWX27V513J1hVO2ZT+pwmQC8jU9wlrEXMc=
+X-Received: by 2002:a05:690c:6e0b:b0:793:bbd2:5675 with SMTP id 00721157ae682-793c67f7993mr7567597b3.44.1768520568667;
+        Thu, 15 Jan 2026 15:42:48 -0800 (PST)
 Received: from [192.168.5.15] ([68.95.197.245])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-793c66c72aesm3027117b3.11.2026.01.15.15.42.48
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-793c66c72aesm3027117b3.11.2026.01.15.15.42.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Jan 2026 15:42:49 -0800 (PST)
+        Thu, 15 Jan 2026 15:42:48 -0800 (PST)
 From: Anirudh Srinivasan <asrinivasan@oss.tenstorrent.com>
-Date: Thu, 15 Jan 2026 17:42:04 -0600
-Subject: [PATCH 5/8] soc: tenstorrent: Add rcpu syscon reset register
- definitions
+Date: Thu, 15 Jan 2026 17:42:03 -0600
+Subject: [PATCH 4/8] dt-bindings: soc: tenstorrent: Add atlantis resets
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -71,7 +69,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260115-atlantis-clocks-v1-5-7356e671f28b@oss.tenstorrent.com>
+Message-Id: <20260115-atlantis-clocks-v1-4-7356e671f28b@oss.tenstorrent.com>
 References: <20260115-atlantis-clocks-v1-0-7356e671f28b@oss.tenstorrent.com>
 In-Reply-To: <20260115-atlantis-clocks-v1-0-7356e671f28b@oss.tenstorrent.com>
 To: Drew Fustini <dfustini@oss.tenstorrent.com>, 
@@ -88,31 +86,83 @@ Cc: linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
  npiggin@oss.tenstorrent.com, agross@kernel.org, agross@oss.tenstorrent.com
 X-Mailer: b4 0.14.3
 
-Document register offsets used for resets in Atlantis
+Document resets from RCPU syscon for atlantis.
 
 Signed-off-by: Anirudh Srinivasan <asrinivasan@oss.tenstorrent.com>
 ---
- include/soc/tenstorrent/atlantis-syscon.h | 7 +++++++
- 1 file changed, 7 insertions(+)
+ .../tenstorrent/tenstorrent,atlantis-syscon.yaml   |  5 ++++
+ .../clock/tenstorrent,atlantis-syscon.h            | 34 ++++++++++++++++++++++
+ 2 files changed, 39 insertions(+)
 
-diff --git a/include/soc/tenstorrent/atlantis-syscon.h b/include/soc/tenstorrent/atlantis-syscon.h
-index b15dabfb42b5..f1dc6ad33c6d 100644
---- a/include/soc/tenstorrent/atlantis-syscon.h
-+++ b/include/soc/tenstorrent/atlantis-syscon.h
-@@ -19,6 +19,13 @@
- #define PLL_NOCC_EN_REG 0x120
- #define BUS_CG_REG 0x01FC
+diff --git a/Documentation/devicetree/bindings/soc/tenstorrent/tenstorrent,atlantis-syscon.yaml b/Documentation/devicetree/bindings/soc/tenstorrent/tenstorrent,atlantis-syscon.yaml
+index 3915d78dfeda..7e9c8d85ba9e 100644
+--- a/Documentation/devicetree/bindings/soc/tenstorrent/tenstorrent,atlantis-syscon.yaml
++++ b/Documentation/devicetree/bindings/soc/tenstorrent/tenstorrent,atlantis-syscon.yaml
+@@ -31,11 +31,15 @@ properties:
+     description:
+       See <dt-bindings/clock/tenstorrent,atlantis-syscon.h> for valid indices.
  
-+/* RCPU Reset Register Offsets */
-+#define RCPU_BLK_RST_REG 0x1c
-+#define LSIO_BLK_RST_REG 0x20
-+#define HSIO_BLK_RST_REG 0x0c
-+#define PCIE_SUBS_RST_REG 0x00
-+#define MM_RSTN_REG 0x14
++  "#reset-cells":
++    const: 1
 +
- /* PLL Bit Definitions */
- #define PLL_CFG_EN_BIT BIT(0)
- #define PLL_CFG_BYPASS_BIT BIT(1)
+ required:
+   - compatible
+   - reg
+   - clocks
+   - "#clock-cells"
++  - "#reset-cells"
+ 
+ additionalProperties: false
+ 
+@@ -55,4 +59,5 @@ examples:
+       reg = <0x0 0xa8000000 0x0 0x10000>;
+       clocks = <&osc_24m>;
+       #clock-cells = <1>;
++      #reset-cells = <1>;
+     };
+diff --git a/include/dt-bindings/clock/tenstorrent,atlantis-syscon.h b/include/dt-bindings/clock/tenstorrent,atlantis-syscon.h
+index a8518319642a..ac6afc95b224 100644
+--- a/include/dt-bindings/clock/tenstorrent,atlantis-syscon.h
++++ b/include/dt-bindings/clock/tenstorrent,atlantis-syscon.h
+@@ -64,4 +64,38 @@
+ #define CLK_CAN0_TIMER_CLK 52
+ #define CLK_CAN1_TIMER_CLK 53
+ 
++/* RCPU domain reset */
++#define RST_SMNDMA0  0
++#define RST_SMNDMA1  1
++#define RST_WDT0     2
++#define RST_WDT1     3
++#define RST_TMR      4
++#define RST_PVTC     5
++#define RST_PMU      6
++#define RST_MAILBOX  7
++#define RST_SPACC    8
++#define RST_OTP      9
++#define RST_TRNG     10
++#define RST_CRC      11
++#define RST_QSPI     12
++#define RST_I2C0     13
++#define RST_I2C1     14
++#define RST_I2C2     15
++#define RST_I2C3     16
++#define RST_I2C4     17
++#define RST_UART0    18
++#define RST_UART1    19
++#define RST_UART2    20
++#define RST_UART3    21
++#define RST_UART4    22
++#define RST_SPI0     23
++#define RST_SPI1     24
++#define RST_SPI2     25
++#define RST_SPI3     26
++#define RST_GPIO     27
++#define RST_CAN0     28
++#define RST_CAN1     29
++#define RST_I2S0     30
++#define RST_I2S1     31
++
+ #endif /* _DT_BINDINGS_ATLANTIS_SYSCON_H */
 
 -- 
 2.43.0
