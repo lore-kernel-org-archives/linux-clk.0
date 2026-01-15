@@ -1,67 +1,68 @@
 Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8D6032E14F
-	for <linux-clk@vger.kernel.org>; Thu, 15 Jan 2026 23:42:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3A39330B31
+	for <linux-clk@vger.kernel.org>; Thu, 15 Jan 2026 23:42:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768520576; cv=none; b=Tom/jtVC1ipQ9b3bPS+fFMxuobCbcnVtHoMHIqIJlUVgXFbKz94HeoWAqvD7hcqTZlRnisjtN2uuV+Y3l3+IVS/KVjS0zjEqsa505z6fDlVfs71FzSw0ULnDEMAfdQILQDgaUBXlI8LLFk3EuBEvn/evD53P8LTKFN8TrJqd2RE=
+	t=1768520576; cv=none; b=HyYWjqB+HHsEwRQFHWLdy9X9FQ5LsLsa0clg9WuJ1JnIEN+Y9n6SFD3wE5eKsLQRHbV/pYoFuy7Ash6+bcZru1e3tt0hjC4vgBDFXI3lf3YhXdhddiJVIJ1x59Kq0Lyf5Hrderb6gCwTpLcbWfgM6PJFYwNrchXopjJDPzuACyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1768520576; c=relaxed/simple;
-	bh=6upf/F2Vdl/fKKyIKJ8WQQzcZoV1JG7cvz5xZhRldFE=;
+	bh=9zrQEYyTHE0rrNAGV+bZFy/DeHKOGDCLqOIbqW74yYQ=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=s7YC3E3MLlJM8WffHHCbLTzIhLGJpIHkUpjvIFfeOSpT7T7oN+yUdofLT6cSEirUgE2MM1/znuqSExLgNI9x4rTI9pMXjOxetGjypqpr+Ppj0ZWe9PknlneOGuEy4IdLYJa/gxykEcRPbmylvbvJbSQ+zETZ466Hf0nJsomz+p8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oss.tenstorrent.com; spf=pass smtp.mailfrom=tenstorrent.com; dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b=fep03Ckw; arc=none smtp.client-ip=209.85.128.176
+	 In-Reply-To:To:Cc; b=gRcvRUwVDHpm0NZskpa1nIBoVs2tBeSKPY6peB0otL8IijseF6j4FcXilrgLo1tLMLE7lVrp8tmyVIgWoT9af4Pib/RnYe3obLvQtJJOefoAA/v+oPyxsZjwYq5Z7WQ//wfSWR7gXzFwtj5mGgHNmicb+P/WgEHMezK9KCwiUh0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oss.tenstorrent.com; spf=pass smtp.mailfrom=tenstorrent.com; dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b=QtwcZK/c; arc=none smtp.client-ip=209.85.128.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oss.tenstorrent.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tenstorrent.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b="fep03Ckw"
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-78fb6c7874cso16221907b3.0
-        for <linux-clk@vger.kernel.org>; Thu, 15 Jan 2026 15:42:51 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b="QtwcZK/c"
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-790ac42fd00so14213407b3.3
+        for <linux-clk@vger.kernel.org>; Thu, 15 Jan 2026 15:42:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tenstorrent.com; s=google; t=1768520571; x=1769125371; darn=vger.kernel.org;
+        d=tenstorrent.com; s=google; t=1768520570; x=1769125370; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=6iZRWuyORG3HiSopQBMtG8viyXNEvTSjWImQZ3xz+Po=;
-        b=fep03CkwYFxnuhSSNm10JUrlFHvAk0zxGoI7PT6wQBqeddR74JowNB9DPjZhc+0yoh
-         0EaXu7CukphMVJBD3GUADX3VvJdlETKFqNsaQklevo3ENCtuRKSYN2YbEi2AYdwUvWWN
-         vtvdHUdiY8OwTFN8pzexh1gxyt28ud9wczJ3q1fiuFbftQZRuoAzaUCQ7guJT3EaAGp/
-         HMaIUqnSE59SBvPToxnqXgm7/tarU4K4BRDA4bp1BlksAroGFv2blLN/EquVGQzD07kJ
-         kRprhbg3J2QbNkC2T1ZsekupA80UUTQo0k8PcOdQlwzaFU0Q9HHx9bgTFS8DgtFB81AC
-         tGDA==
+        bh=mr+DET/MCWrJ44Xgox+RvCv0LCqYSg+k7ueyqWHNGvw=;
+        b=QtwcZK/ctxiYUTkjVj8LgQ09+euJ6fPCTkhRluM+k+RluCngf0fR5GaJHWUXnmHjDl
+         j6gg5A+ZEQXx8s2IzGzZOrG8174On30zGQkVIy4JFao8CtqKNFWLp+jV0EP2VZO7j89A
+         W2aF8WJ+Tl7QXNCYQi/DNZQ1J1ANLCLT2qnRC1MRjEP9SEAfnoSPW8Dum/84if53FDlP
+         hia77MsnzfFKlPHEBefRaMhvaC34yie1v0y1YAX8ZpQf7JOVxc4DDs8svn2rja1yDWQS
+         b7CCInyUZ/yth7hg8Qy/Es66y0bD9TXKYhj9/+IxsIchanddpxOxYOI+HpGpyG9QQBNe
+         bQAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768520571; x=1769125371;
+        d=1e100.net; s=20230601; t=1768520570; x=1769125370;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=6iZRWuyORG3HiSopQBMtG8viyXNEvTSjWImQZ3xz+Po=;
-        b=PbOHTu+aUdG+azvAmT/SNH/jmzsx4vpuq+JraDia50HuGXZygYYMuXLymqRgSHUXIZ
-         dPcuMV+7a9HOaSXyIcJRtC68Ffs8lA1uFChER88kJ48M/m3SajkPgAefiqgMV+4eVCrx
-         DICCT1Y1I0Rfqj+3Ci40yomLB5d37YTRlwPu0j8WI8rXiP1uJP5rCm3zjpRclKWwbutM
-         u3mLGb/qb6WuNophg717lUYjdJyNn21S1Wl/PfHVPQ5ONoD9FNdnGj/sW5517LCiNzJY
-         8nb+W8JUorEpcqYL0ZNTnBNJSTp1RscGMJBgnIhOTl5Hy/y2Xx4QJho49UfQ76yWhGuL
-         EDXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUSC0EKhI0mIWwky0cSdLGLiNHbbDDynZjRBdFKfCGZtWn/tgAsOZQMNkWVNJSkKlci8NqL5KNELAM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWmhv0kJG/ZKL1/4IpbfqBHXX7dWLUUBJinBj1F2L2QVPD5g8M
-	jsvNLto00JgC1G79G0z3COTARFAIGFvwKaHG/OpK7ihAoc1JMEfbbLYxF0A7MN/DsGw=
-X-Gm-Gg: AY/fxX7OWv0BsAYWBeiIGde830foBI1edrdC9LqSP0TLascBC+7+6Cy8d/HalbOhi2p
-	EP6YPS+vKT+2Sx7Kfqv/Obwf/YRoTpWCq/qsQyawRTRzCQp5YIP06LWOM/H1qyKLmM70fr42Brw
-	doICkxAVl1Ayk26I7YCRBzPK5vEFjXrF48hmP+mI8wZuExWrvL0hw0bI+Omiv9OwQpgXyO22oES
-	RL/9tgExZByfI/Vc68BaAWXxsuQj/H3HDLHwMHLmhD+ZBcS9p15pthilv0W8lkjc545VPvmn33O
-	vPkqoS7af6EUCni+72I+TOQ0h7Y0FTugBISHWb26iUbeFbEnnGRMZCr43TdvravWWLuElLWR30U
-	d+khiS/1VOhH0DDwPTTqQeFYLzi44emRs37+0FIhhz6yZrVsRYRP11SxzHQUFXT3T2QXyjOe14N
-	K0//4rM6O6NrXXh5LHkcSCA3cWqfFnnVVJ0r0Ig3XUlvulCaG7AbaQFSVJ4a7DlNq8NsVVFJM=
-X-Received: by 2002:a05:690c:46ca:b0:787:1aba:3081 with SMTP id 00721157ae682-793c683dcafmr8332397b3.58.1768520570793;
-        Thu, 15 Jan 2026 15:42:50 -0800 (PST)
+        bh=mr+DET/MCWrJ44Xgox+RvCv0LCqYSg+k7ueyqWHNGvw=;
+        b=B9EJh5noDZLZtpaeEEt2kBTsvlrL4TAtLb6SsOlUUeEHz/n9SHyQuCXHqc9sqKGV9t
+         ZDLbFVAPgmGCNPf674o3urZDQRy5vQi3tNrJ3/IMYE6mmrxGoizSQZTxa0kEZT8yKJDk
+         e8hRrAXn30YpH7fE2Lq26zJcCYbK8umMRACbPtq6t7SLCrdZ7OzhzNyjxMmx36OutJxA
+         vDg1yYL7e7F5PggI59qNYISXgFC1kygEhkmzbJj+i4GIrpojaUz9miCn/HnGFI3u91Y/
+         42sCIcYmd4j4O0QF3IrasoRuMd8Qz3J4cmb3/Tn7WA+O+b8uG0wmjh8TrTNpVCaags5D
+         R4wA==
+X-Forwarded-Encrypted: i=1; AJvYcCWNUx1CjRBcJE6D/Ijogg2PRmupDlHfSUu0wtzhzPaFFGlzF0Ta7vE0i2goPodXSlA7CHITRJBpK7w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYHazWwCgSKjNOkmle/rQpnzv5+rb6id722unCNBH2E0kRGQAO
+	OW1AjKDmz9/hyIG1OFU3Wyu77V2PkXAhZ8aeS8hyK3qcRdfYVL5OAuSWx9Z7gEj+LUc=
+X-Gm-Gg: AY/fxX5OhmP6w6xT6qcgcrrr1MQGeDmFeDxqhpQ1Sv7IqeaxQYwiagPIgG0SDmFC4ci
+	klA0JGazerOwwEfiOVBr4mYOIKdsoN45Ld/wvGUCpQGsJwduhp39Xdo4iV7jR0HoDEx0AjnueyB
+	Hxgztut9qxWA2cZv2dhcwVyTzNuyiaZyGYjO6ZVIrfyd6/Y2mRrF+dz1R/m+34c0UC4EOJUXHpC
+	I+thS7GrPOuvIB2FPuKKzeR4VCyz8tIxZ60vn7j7k1L1aLE8pdkumNKOm12V1paXOtE1Xhrdzc5
+	UNKI1yeyz91Tqoe1Kw5lRz/ZDOvZxP1z+gkooWH8NOupRqChKpIRz8ZXhZu/gghcybUas866o8c
+	Sp2ryOYgP93Rr4uf4JT+Wp0sVEzbqsC/kjx+KxUJ7qzMBZ9uXX06nFsSXTF5p7deUeP/UNHT9n0
+	uQ+KbyU55A0H5dXBkG9Kfu1OKvzJNHssMzRLhcKmQHZ5fi8+27yKJk1Bu87Tw3B00wOisxDVPA/
+	TrfWdntNA==
+X-Received: by 2002:a05:690c:e3cc:b0:78f:b820:f2f3 with SMTP id 00721157ae682-793c523ce6dmr26018967b3.12.1768520569702;
+        Thu, 15 Jan 2026 15:42:49 -0800 (PST)
 Received: from [192.168.5.15] ([68.95.197.245])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-793c66c72aesm3027117b3.11.2026.01.15.15.42.49
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-793c66c72aesm3027117b3.11.2026.01.15.15.42.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Jan 2026 15:42:50 -0800 (PST)
+        Thu, 15 Jan 2026 15:42:49 -0800 (PST)
 From: Anirudh Srinivasan <asrinivasan@oss.tenstorrent.com>
-Date: Thu, 15 Jan 2026 17:42:05 -0600
-Subject: [PATCH 6/8] soc: tenstorrent: Add auxiliary device definitions for
- Atlantis
+Date: Thu, 15 Jan 2026 17:42:04 -0600
+Subject: [PATCH 5/8] soc: tenstorrent: Add rcpu syscon reset register
+ definitions
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -70,7 +71,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260115-atlantis-clocks-v1-6-7356e671f28b@oss.tenstorrent.com>
+Message-Id: <20260115-atlantis-clocks-v1-5-7356e671f28b@oss.tenstorrent.com>
 References: <20260115-atlantis-clocks-v1-0-7356e671f28b@oss.tenstorrent.com>
 In-Reply-To: <20260115-atlantis-clocks-v1-0-7356e671f28b@oss.tenstorrent.com>
 To: Drew Fustini <dfustini@oss.tenstorrent.com>, 
@@ -87,35 +88,31 @@ Cc: linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
  npiggin@oss.tenstorrent.com, agross@kernel.org, agross@oss.tenstorrent.com
 X-Mailer: b4 0.14.3
 
-Reset shares the same registers as the Clock Controller, so it is
-implemented as an auxiliary device of the Clock Controller.
-
-This commit adds the auxiliary device definitions needed for this.
+Document register offsets used for resets in Atlantis
 
 Signed-off-by: Anirudh Srinivasan <asrinivasan@oss.tenstorrent.com>
 ---
- include/soc/tenstorrent/atlantis-syscon.h | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ include/soc/tenstorrent/atlantis-syscon.h | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
 diff --git a/include/soc/tenstorrent/atlantis-syscon.h b/include/soc/tenstorrent/atlantis-syscon.h
-index f1dc6ad33c6d..972a9b7da596 100644
+index b15dabfb42b5..f1dc6ad33c6d 100644
 --- a/include/soc/tenstorrent/atlantis-syscon.h
 +++ b/include/soc/tenstorrent/atlantis-syscon.h
-@@ -8,6 +8,14 @@
- #include <linux/bits.h>
- #include <linux/types.h>
+@@ -19,6 +19,13 @@
+ #define PLL_NOCC_EN_REG 0x120
+ #define BUS_CG_REG 0x01FC
  
-+struct atlantis_ccu_adev {
-+	struct auxiliary_device adev;
-+	struct regmap *regmap;
-+};
++/* RCPU Reset Register Offsets */
++#define RCPU_BLK_RST_REG 0x1c
++#define LSIO_BLK_RST_REG 0x20
++#define HSIO_BLK_RST_REG 0x0c
++#define PCIE_SUBS_RST_REG 0x00
++#define MM_RSTN_REG 0x14
 +
-+#define to_atlantis_ccu_adev(_adev) \
-+	container_of((_adev), struct atlantis_ccu_adev, adev)
-+
- /* RCPU Clock Register Offsets */
- #define RCPU_PLL_CFG_REG 0x0000
- #define RCPU_NOCC_PLL_CFG_REG 0x0004
+ /* PLL Bit Definitions */
+ #define PLL_CFG_EN_BIT BIT(0)
+ #define PLL_CFG_BYPASS_BIT BIT(1)
 
 -- 
 2.43.0
