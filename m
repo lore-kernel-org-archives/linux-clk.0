@@ -1,144 +1,232 @@
-Received: from mail-oi1-f174.google.com (mail-oi1-f174.google.com [209.85.167.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from CO1PR03CU002.outbound.protection.outlook.com (mail-westus2azon11010034.outbound.protection.outlook.com [52.101.46.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1BC72D7DF5
-	for <linux-clk@vger.kernel.org>; Thu, 15 Jan 2026 05:27:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.174
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768454880; cv=none; b=TpafVWLzzJM69D3C5uDfkrtS6ca8A56sonklLFWednWiZpGAOqEDjY9dzOOz/3z0QBVY8/M0sLRezUGKs7VMJqW0CHdzhFdXrTfKzD7Itxfv3/8dU/gl4r5AlMkrp0ZCb6VnTG5YXZGBeG+JTmM6hrWagub0VKlnhLY6ABHIhN4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768454880; c=relaxed/simple;
-	bh=oQqaoD9CWxihva9z43UC4l+nSw+HBzDnr6z/ms6gO2w=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 174ED27732;
+	Thu, 15 Jan 2026 05:54:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.46.34
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1768456491; cv=fail; b=ghb3c0lTM6qgbxOU2ym4dBrNjzxDCs7ALbFXvaOF5UpbMPvM2x4Zc3pi1Iw1y3skJ8UXTQR3/TXFyCJ0c/DnNHK2WDvK8G7GpVs3ec7zGX25z3Z1zntQtxrrJ2q7Vwpj6F0+1aCXMcJE1DyqIrvTi5rV1SQwIUzJ1EQnf232WLc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1768456491; c=relaxed/simple;
+	bh=ojRPwKbYmOBa+ZCVhnR8hN5hK8/nCTPogIeagunXUeI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JxT2TCLBo42PL+HvzExZrOPFjV3S2PdaYvg9RmtwExUkHpcKX1jU2LohNUSnnVcPb2CWcZ2oB+k8coD3vkC3KsMiuXxDoj/IFQ/u5ewWHDij006WiJVLcNeAkiQ2pM6+7APlJjy6+X5XXCZcSX8agxGIPSGIt7ewVdugLqBKuvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T2fDgReC; arc=none smtp.client-ip=209.85.167.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 Content-Type:MIME-Version; b=QEwSlaV4wPHK1hKOe2O2yNdZhW2m9ik+xhFtNxXJ7RfHwgGWdXaL+etxws/9+YSg8upgdgEi9umo5HZy9ShBityZBcqwzwpBo7CIHqqysgUz9up2u4JnqEvaPGQQipL4IBwlSZr1pT5gHqlHbWKw4Bi2QqPmBNrfLwGdjVEjbws=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=KvEW/f2Q; arc=fail smtp.client-ip=52.101.46.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T2fDgReC"
-Received: by mail-oi1-f174.google.com with SMTP id 5614622812f47-45c719bb855so321433b6e.1
-        for <linux-clk@vger.kernel.org>; Wed, 14 Jan 2026 21:27:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1768454877; x=1769059677; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7Hja+osRR3fdOtBUZSkMF+9cn4r00td+5ctV4DGDt1o=;
-        b=T2fDgReCIOabBORtFQ5rg9UknhjuKcCscoLJjwYd70GsczUK9izNhVlA+mHXsQ4cOf
-         7Cm2W0eY0m7dBynv0MygZUFKcs5dncGSSTLVkD8/Ui/I7+fHf1EzW8zZfJc+R38Dsexr
-         FFPQVEo5oX3bWrv/JjHBgFK4iPQwSp7hxj9+6gd0TXcMVrDToOxlSlXF/1vi8eEWNNYW
-         890m55QXNTV4fWfhQIBGFDzq+C9tOJACFaZNjmQtgeE4s7lTUSQxmOz5mC8Na+i5sOsG
-         9+OuihdGM0NdFj3XJgpgyONtFfHeWGmWChoM3yspBjU42hLAqLfUmvHZgFQiQ6hc8sJs
-         aGbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768454877; x=1769059677;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=7Hja+osRR3fdOtBUZSkMF+9cn4r00td+5ctV4DGDt1o=;
-        b=xAFI9mJc88j+WJ7VC5jpJDUdEBw+SgPkUVBzJcSNeHKOZZcfHERqHFXe6A41ot2kM5
-         73vWe/snnVI0Dc9VPqpmGYOQX3ZmT7M5sfLqUox0+0FBttUyhQM0/AfvcLnUVyvvfbXp
-         kpyuXwTujFc+Ce4KZ0s/QMYst4lLMdKedAde/Iom5219pvkOZnBbYmCCd8FwjabZEZpF
-         acah+ihLrOzFP0mqavrHpXl0Fennd0lMKZxpb2iDVOb0Rmqie9XKTXWklBiDmX+mzgOK
-         ru7GgQ5CFMu/WYm40HWRC+YIbUPxdbFBGbMZUOP99E6OeTnYBmA1bRd2WSmfJFE4FlJZ
-         MDuA==
-X-Forwarded-Encrypted: i=1; AJvYcCXuZN3+RA/xg5hhGW92OYH8fb+h7dBIstKuWBmGZC1xZ8ZEwr2wlOnde60E8LSDoCksYvW23gDhKDU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDMc7ARmq+rf9LN2WiBv+tsQwh8v7AnDjMQDULbYcJ2w8YAGTw
-	zmoZRR90Axl2yQQNPyzDDbJype53T2ia4LevCJCVCrCiGpVfIdHC2tmS
-X-Gm-Gg: AY/fxX6TGiAPWRSQMorfLE34vcNY7vPjuO1BTtZI0cufFc/yZ8mpy7lfjcQqq43edR1
-	C9YJxQtg5D/0A9b3rRBQVeVgYv9ZonhuwKOJVQgOAC6wSS+NiDRv3rlpq/2cdyf1aUxBkEEC3pP
-	E0VbSkjKktzJQhRZtnZTf0gG8OSR5RNfuIdlZskVzhLOzdjH8PJeMrdyn4pfk/LGSg4Ss9NVVJQ
-	LubE9YMggrp+5Ovm1Y0SZEXja5EflB62Efn60juE5W9bENf0qzBm0LSM5Pf03q41v3yi4Q9wd4k
-	x/GXIWjve/ISgiJIgEZTHiJR3HjORQfnfHpXoBtmN+a+sx7dDfNlCntI9RZbA3XMUVUy1HzvzZ0
-	KSR1LN3rFSzgw4K4EdQJsTn/1V9x04ZnsV0VzUWDBsxuXkovS9nm2oM00eoxeWM4ytqyoD4S8zK
-	PNYiCx2moyMyTRDH4f/A6hsRpjcC7v+UH0UNUcmPz0yF/rmW8P4gxn5DHypJ9++dqZLN4Nw9FOw
-	kfQOv1iiTmo+jwOzjVQZohWleIu548=
-X-Received: by 2002:a05:6808:a585:20b0:45c:71ff:1f69 with SMTP id 5614622812f47-45c71ff212fmr2335636b6e.50.1768454877438;
-        Wed, 14 Jan 2026 21:27:57 -0800 (PST)
-Received: from nukework.gtech (c-98-57-15-22.hsd1.tx.comcast.net. [98.57.15.22])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7cfd68b13fesm803256a34.3.2026.01.14.21.27.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Jan 2026 21:27:55 -0800 (PST)
-From: "Alex G." <mr.nuke.me@gmail.com>
-To: andersson@kernel.org, krzk+dt@kernel.org, mturquette@baylibre.com,
- linux-remoteproc@vger.kernel.org,
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: mathieu.poirier@linaro.org, robh@kernel.org, conor+dt@kernel.org,
- konradybcio@kernel.org, sboyd@kernel.org, p.zabel@pengutronix.de,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="KvEW/f2Q"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=uzbbyl2hyIKZzmVRk9Yal+OJWsSjJ7pmtpivBlSNMGpOqFFmeLlOSCS8aaOxerRre7PLBXoGQtFzQJ/mTXfZ842/2R21+5LmKlz6S9vPQBG8kdtY33d3nq0txw1Tj4TvigVuAKwAfCos+YXqJxgIzIJnqejGOFNBCrFLtCptXtZZxTfzvspigmWC3Ox8Nl+bq+VutIAseGgdoAHuk+7tUFW3Dhs1hJUhPvBe42peNIaJvV5noSKyWGVyBc8UaKVeustTdrinR/WBYQpWtpZWRt/szwGlg92GImsVQCUO3vGXUsbiDgruA1xAKa5sDPOP9YvOXLV5xn16A/ITuFoJ7w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=a/oMb6uc5M6ful+S1fylOD2pLO1Odhz/9xyOG8b/68w=;
+ b=BeTt9wguhaBVr6cNEKgDcQl/bUA9tVDxH7NyvCiYxYLpbPRIDnUPVxV77vRKonHWZYexmErO/6HDVDioEx3XmETNTd9Ga12DuVSxfvN7A8iYYyEuooyiR3wf4L2qLL1+Rb4ZuxrXNv6sjEtxrr6MEMdLu9P5zfm50MSYx4S74qxdTfbB2n3Q7VHfr7pEiGNuOfVB3SrK+AHNlY7fn7JNRydVMn9U7LX82fPXwxEnf/uMM52vWrFTMxntWMhhD5Xbepb3t/mlOgJuHUNF6R5FGSqeutD4Yn4nxzmCLrPCkXHEDo79yQJKnXCzcxOhbccDjXvZSEib8zY/KonX9HObkg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=a/oMb6uc5M6ful+S1fylOD2pLO1Odhz/9xyOG8b/68w=;
+ b=KvEW/f2QyehJgT+clnF+Kwd+4s/0DdjpEXrPKCJ7wvHTHqCJAFFsnJU9V6QQZ4GqiS/xFdTdynZo2i9Vt+oTqix3SpcDrrNL6uEiQ6uVMXeO0J/9lNHDHiQYKkq675MlZ1QrsZp4zUpWgFBsHyWOrNVR8GI/kZYPUvwZzNgftKjiixfxybakCht0h2A18Cy03i8ei1KS1iYQz2zCTk8VnXJhqPorOOyGvR6qoZ/t57XqGM+M3qrKIm1L9T2+iMnb6TkvRiDzSGAE420gzuEEBe0K8JAizszGUj4Fj7aD0g9wF0xkfl3kdzqmY6WSMdqucYjSY0QFb5XoOZ30S44/cA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SJ2PR12MB9161.namprd12.prod.outlook.com (2603:10b6:a03:566::20)
+ by CY8PR12MB7562.namprd12.prod.outlook.com (2603:10b6:930:95::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9520.6; Thu, 15 Jan
+ 2026 05:54:48 +0000
+Received: from SJ2PR12MB9161.namprd12.prod.outlook.com
+ ([fe80::1f16:244a:2a9d:2c93]) by SJ2PR12MB9161.namprd12.prod.outlook.com
+ ([fe80::1f16:244a:2a9d:2c93%3]) with mapi id 15.20.9499.002; Thu, 15 Jan 2026
+ 05:54:47 +0000
+From: Mikko Perttunen <mperttunen@nvidia.com>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>,
+ Prashant Gaikwad <pgaikwad@nvidia.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Svyatoslav Ryhel <clamor95@gmail.com>, Dmitry Osipenko <digetx@gmail.com>,
+ Charan Pedumuru <charan.pedumuru@gmail.com>,
+ Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ dri-devel@lists.freedesktop.org
 Subject:
- Re: [PATCH v2 0/9] remoteproc: qcom_q6v5_wcss: add native ipq9574 support
-Date: Wed, 14 Jan 2026 23:27:53 -0600
-Message-ID: <27098742.6Emhk5qWAg@nukework.gtech>
-In-Reply-To: <577d547e-6311-49b3-9c74-84797b281447@oss.qualcomm.com>
+ Re: [PATCH v2 2/4 RESEND] gpu/drm: tegra: dsi: move prepare function to the
+ top of encoder enable
+Date: Thu, 15 Jan 2026 14:47:36 +0900
+Message-ID: <7012249.lOV4Wx5bFT@senjougahara>
+In-Reply-To: <20251204061703.5579-3-clamor95@gmail.com>
 References:
- <20260109043352.3072933-1-mr.nuke.me@gmail.com>
- <4814455.tdWV9SEqCh@nukework.gtech>
- <577d547e-6311-49b3-9c74-84797b281447@oss.qualcomm.com>
+ <20251204061703.5579-1-clamor95@gmail.com>
+ <20251204061703.5579-3-clamor95@gmail.com>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-ClientProxiedBy: TYCP286CA0364.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:405:79::8) To SJ2PR12MB9161.namprd12.prod.outlook.com
+ (2603:10b6:a03:566::20)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR12MB9161:EE_|CY8PR12MB7562:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1ec0df3b-ebfd-4bff-9960-08de53fa972d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|7416014|366016|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?b3pZaHRxZVlHSlFLMlU2UFJaRTRvT3NYaHNoMDNISFFESEQ2eUFacWorSyt6?=
+ =?utf-8?B?Z2E1ZTdBTHBCdXF4UUVrcytxb1o1eHdmWEtYS3FkNlNXRmYza2xiUHdUalU3?=
+ =?utf-8?B?ZThaUzRjaktEUmtaSHorTDdsdDJoeFhZM0RuUFBKUFBKY0ppSnRDbm1MVUxr?=
+ =?utf-8?B?TDFuME95MWJIOVEwS0QzQnpScG44VzIydEEvelRITk5DKzFvdGorNFRqQXgv?=
+ =?utf-8?B?UVhEbXdhTCtQN2ZJUHhuMzNmdTJxQ1FaWHA1bE5hNlVKK2pheFBrT05SUmxV?=
+ =?utf-8?B?aGZLdVVwTEU0eW5UZXU3b052TVRYRTlTR3lYMjREQ05yemsvNHh1cy9qQ25i?=
+ =?utf-8?B?ck5lNllNNldCdlhqMnlXZWJTc0dqaVBRWFloaEd5c0ZJUysxQ3RvRlpHaERZ?=
+ =?utf-8?B?eWhuQUlxNmgwVC9TSzBwT0dtSkI2ZzlqWms2ejRBTjFGTTlyY2l6QVFmTHMz?=
+ =?utf-8?B?cmJyRWdMQmdVZS9pVk1qM0x1SU1YNWh5ZlE3eGdybTlkQVdha25QR0tqaVBy?=
+ =?utf-8?B?a0o2V2p6TXRCdy9aWEdzb1NtQm9KWjNHb3JoSTcwTkpHeklISnIrcWE3dGUw?=
+ =?utf-8?B?YUtuOHJyWnNEaFpYd01zRUVqTng4MkJhZjdHTDZ4TDRqcGtHTG1nTXdsQzJU?=
+ =?utf-8?B?VUNkZTI3M3N4NFk4UExtMVkrK09RYlBHWDVNMk1KTnlFUTJtWWt1RXJySFNC?=
+ =?utf-8?B?blRDUnhpUm9rV0FSWjNrcW1QNEkzVmNIQkRFdVlSTWZnN3dYcGZWNG1PK1Ex?=
+ =?utf-8?B?d0RycW5jckRoZ3RDTzFpYjAwYVBGWHNGd2dpVHhYN3dDcEZPMHhXR1BjL3Y5?=
+ =?utf-8?B?RDAzaFM1eU1GSWppR2IxZUJoN0pZZ085czl3ZUt5SEpxekdDcTdtdnJoOHpv?=
+ =?utf-8?B?TGdYUURHTUUvMHBrKzc3UUFLdStWaHRIYzJpUnY2T01iWWk2MjkwRHowdzB6?=
+ =?utf-8?B?MjZaQmxXMkY5OFJITFhKMGExWDhLL0N2RFd6eFNnYWJuRTJtb3dBVEZQVThY?=
+ =?utf-8?B?TGFRMWNRZ3pNdFNSYUtKRHZ2Z0dJemJJWEZlQytybXJLdkIvZ1NRUkFLZi9n?=
+ =?utf-8?B?bHRMeGllaDRESEc1Zm1KMERjdFJSSWdXblRGY2pSQ0RqOEw5N3dOTHFuZlVO?=
+ =?utf-8?B?bCtkeXFuSGJhU3hNSXhWZm1ycUV4MUFPVEY3MHdHTHBDSVB0bGdySGMvcVI3?=
+ =?utf-8?B?eWRtU1h1eEV1Zk9wNUxSd1JFb2VNeW1jc3FxcVd5WjJmT3ZtRTE3aWlKVWdw?=
+ =?utf-8?B?TGJOK2RPcG1ZMGorNFk3TllmdDRGaUxXM2VDdkVRb2VXUE56YUNsOUxEZVpI?=
+ =?utf-8?B?MkVveWV4U0R6Z0RRbi9GK05ueDk5SjlvZDNvUHZYZlBXQTlSWVNkMVdVQnBy?=
+ =?utf-8?B?V2lISUZ4bnZRd2p2ZjNnazVhenZuRWNXQkd3emUvS1VrTSt3MkxIeWlXOW5p?=
+ =?utf-8?B?c2VaaEI1aGQ1UlEycXJEOG11Y2lIR1JmSnk2OGprdXlCbS9ZYnd6SDd2K0VQ?=
+ =?utf-8?B?ZW4xTm50eWlyODFxSGlCblhMaW96VnFDNUJEZ0wyVWY3b3hhcURxaVlPNjZF?=
+ =?utf-8?B?S1I1ODA4YmkzQzNrZ0hGeHlsM0p3NDhZNU83aUpGMklQRVkxME9pYUIzMjNj?=
+ =?utf-8?B?NFNoNFowcUd6ZjAvZEs2MTdvVmJmUzJrVGptQVdEcUhGQ3VXbHpVVDFmWldq?=
+ =?utf-8?B?YTlqT3MrVHQ4M0VkY2xKYTh6ZTlhb2I4YThSUDRpVzhDZE5YRGNvbEV0SmRK?=
+ =?utf-8?B?T0hhNkhHbUx5MEJWb3F3SHh2VkQ2UWlpYWF3REVJS09iVlltR2VwMStDL2lK?=
+ =?utf-8?B?YjdDWjZ6bXR4cEE2S1pZV0pIaTRKS3lUeUY1QUhER1E3RDRJMkxVVThselV4?=
+ =?utf-8?B?MFFhZk5ZVU4zVml0aVZRay9kVFdWQnd1cWdFZGNkYzZleVhtanpwK1hDcTRV?=
+ =?utf-8?B?Wm1MRUU1ZUlGRjdEOEtqcGZHeEJNNkVBeUZZdjh3ZjdVQzhjeFhwS25vQ1B4?=
+ =?utf-8?B?aFdab1AwQ1ZWNVBMYkFRbmZFUUdxUjJhU3YrN3R2eEdwdFJXY0R1WWRPQ1hF?=
+ =?utf-8?B?N1k5d0RlTk15TkJ5Q2ZHN0tnb3VUaWEvWnltdWdjcXJWMDlhenpKamdNUnV4?=
+ =?utf-8?B?a3VRTFNxKytSZWNQcTg4bTB5d1lDdHZ2U3ZyK2YvbU1hNmtJaGJlRmhDVGFY?=
+ =?utf-8?B?SkE9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB9161.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Q0pOWGRwOVRIMnNsQmhzdHVIUFg1VWE0dTUwS0pZS2ZxUlVDeWFVQmYzMXVa?=
+ =?utf-8?B?UzZQb2kwV2FwNVcrMk9GV25iSCtacjRGTDFKYlJ5SFVXN04zYy9HdUphNlRi?=
+ =?utf-8?B?Y1JkS3ZTK09Xam9Gc1FnU0dZR3MwaDNhM200dUtMdThTUDZLSHlJQ3pqSUtm?=
+ =?utf-8?B?SFNkenBMUkx1TytUTEc1WHg4VFRTVVRBcXNaNDY0SnBrRUlJRWx1RWJCNjlv?=
+ =?utf-8?B?cHBLTHdBM1dnTFhlS2dWTjBrNjljdXN6SktvQnVPOHdWMFVYOW9aVE9WUHdK?=
+ =?utf-8?B?bGJaWkRKS05MSWZjNVlTWnpQR21BWUUwT2wyYXJqbG1RYVQ5dUZWTER2SE9m?=
+ =?utf-8?B?T0hqVnpNUGNZNnUyMDBMRkFsQ0ZNMDlmbVBDWTJDaXo2Yno5Q2V0THpPeGM0?=
+ =?utf-8?B?LzZFbmgzaGdKai9FbG5JT1NnREVVVUZ6bkJjVTVNZlV0OGdJNnU3R2RPVTk3?=
+ =?utf-8?B?YzBNeGhieCtJVjZ1MUpuWVN5ZDNKSlZmSDFZOEFjQnNPUW8zRGxqU0pldnZi?=
+ =?utf-8?B?YlZqSWRJSURHL3hGaXVtaHowcWowRHg2TGwwQkFDVU81MnBiZmprZDZIMEJk?=
+ =?utf-8?B?NnFNY0ZLWlRvZFRxUFU3cEJhN1VBSzNLNDZqM29UUGo2alBkM3F3cG0zMkdk?=
+ =?utf-8?B?YUl4aEtFSTA4NGN0VlhjU0hETHFGc0pIOVFURUFKem9EZlVIT0o5ZCtOWVdQ?=
+ =?utf-8?B?b1NuNWw4UFA1TmJQOXZjTDg2SlNwWnYwdlRwdGZTUndXZVVlbjhoWG5sdmNZ?=
+ =?utf-8?B?bTNmYng0UlJKVGNzTHp6VjQzVS9xSlE3YkhwSVNNbW5QRzJWWVEyd1YyR1Jj?=
+ =?utf-8?B?UUFXaVZOa3BReEtqZ2dEcmtRL2VMeFltRVdjeXhzblFJNEdTUXQwb25haU9U?=
+ =?utf-8?B?UDZaUHlpcW1FUEg3Y2lFMzI4bXpkcmE3MVg0Y09CSXpuSFM1MWxrdE81UUl2?=
+ =?utf-8?B?eDRhSkoyd0JVd29YbjV4THFnVklHVERSazVmMXVqdmNEYXlUT2dRNWlWQTll?=
+ =?utf-8?B?dkI1UklJelhSWmh0TUZFOE5yZEs1UWs3bVhud0FVTkhqOGJXLzQ4dWVNaGhG?=
+ =?utf-8?B?QWZvSzFNNmdHeVZEbmlJWVBCaSs1YXU2K083VS9GdXZxMi9zcHZWSmxiV25Z?=
+ =?utf-8?B?RGNNUGxUU01NTWFyRmpxVVk4aTBYQWJHcFQ0MVVkZWZkVWdWU2RhQkQrMW44?=
+ =?utf-8?B?U3B0NldWaWZvMU83TDh5NzI1L1dralpvUUppMFpSeGdvWDV3TzZ3M3V4Y2ha?=
+ =?utf-8?B?T29BNWRQY0hXVnBRWFgzK0JXY0xpajcwZUZmdUhabGFINThWVzV6aXNIcmtF?=
+ =?utf-8?B?T1V4QzQyVlp2ZU12akd5eGgrK2xhY2J3Y0RvZG9STXp0QkdPYTBFTU9kWE9T?=
+ =?utf-8?B?SU5GN29vaS9PVURQT3Jvd2hUaG5sd2F0Mi9UK3RROHRxM0hiRTQrZWIyR0JE?=
+ =?utf-8?B?R0JEZTlQTU1qVXVpYWEzbFE1YTNHbExhM2E1VU93TlNyb25jR3loTklRazJv?=
+ =?utf-8?B?MGFZTGh3WjAvNDdJaHp6VExqR01OUWZlOGhmLzlPVzM5Unh5OEhIcXd2cDhH?=
+ =?utf-8?B?SnNicWRkK2tCNWlXeXllV2hKZzBYMjI3RWlxSDY0VDN1QkczZmtTWm51WXpF?=
+ =?utf-8?B?OEROY2tFczRkOFlwNnh0ZjFuY0h1ZmRLUzhUKzBubjFYZjVWTTVqcFN3Ym4x?=
+ =?utf-8?B?NGtkZ2p0MTJFZVdoTTRLS0s5UkhIbXd0VHd2aGdaYVZKZ0NjYVA0OUZsMlpN?=
+ =?utf-8?B?Y28velN4ZUhGRkI3aVlkSkRBZjFWTFlBVDFMVjN0YW14ek9yTzYyelkxb1A3?=
+ =?utf-8?B?d2FWNWxHczRRN3VaRUZIakJiQVpwSjRVYU1SaWVtUFI3TEdaR1BJRnlST1hT?=
+ =?utf-8?B?R3JNY1ByRFgzd3Y2WEZHSHhOUDg3Y0lMeWtyNkp6RXM1Q2N0VEk3QmhqcVFp?=
+ =?utf-8?B?TlpBTUM1MTFIL0xQUkN1SW5SZlR1VlNWaGdxaDhhRHUvZkkzZnV4YnIzd2tD?=
+ =?utf-8?B?c2VCY2dERmRNNW05OXBpNk9iajZiQW9vVnIxM25jdmNuaEJvd1VDN0tzcitw?=
+ =?utf-8?B?RFJYdXFnT1R6czd4d1Jxc3VIb3VQTWdhNWxQZkc3S3JZSldKTjJsZDVPZWlB?=
+ =?utf-8?B?aURpOHNidVkvQVpWbStnZGQvTjJSUWJCZCtHSHJJQkRBNnpPaXN5UHNSdjlB?=
+ =?utf-8?B?SVVaenlDQ0lDVVp2UEdHeUhOQ2gvR0swRWx1eGtTVE9FR0ZCVEd2SmhXbjc4?=
+ =?utf-8?B?Ui91U1BreXdVOEd2TGdoc2pOZXZRS0kyWGtzRTQ3LzdCYS9GVDBFQUdkMXlj?=
+ =?utf-8?B?MzM0bm5ZZGxPQnZmUmFmZ0M5NDM1U0hMM1VqampmbnZ6VnhoM1ZJZz09?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1ec0df3b-ebfd-4bff-9960-08de53fa972d
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB9161.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jan 2026 05:54:47.8026
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: TN1XbUWi5FCfGee/NnHcLPa5ChB80vjC2Nz+y+Os3XCdfnGTHLzky7T9e6IemoUTHew/E6YN6LgoPyhiD1AEgA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7562
 
-On Wednesday, January 14, 2026 4:26:36 AM CST Konrad Dybcio wrote:
-> On 1/14/26 4:54 AM, Alex G. wrote:
-> > On Tuesday, January 13, 2026 8:28:11 AM CST Konrad Dybcio wrote:
-> >> On 1/9/26 5:33 AM, Alexandru Gagniuc wrote:
-> >>> Support loading remoteproc firmware on IPQ9574 with the qcom_q6v5_wcss
-> >>> driver. This firmware is usually used to run ath11k firmware and enable
-> >>> wifi with chips such as QCN5024.
-> >>> 
-> >>> When submitting v1, I learned that the firmware can also be loaded by
-> >>> the trustzone firmware. Since TZ is not shipped with the kernel, it
-> >>> makes sense to have the option of a native init sequence, as not all
-> >>> devices come with the latest TZ firmware.
-> >>> 
-> >>> Qualcomm tries to assure us that the TZ firmware will always do the
-> >>> right thing (TM), but I am not fully convinced
-> >> 
-> >> Why else do you think it's there in the firmware? :(
-> > 
-> > A more relevant question is, why do some contributors sincerely believe
-> > that the TZ initialization of Q6 firmware is not a good idea for their
-> > use case?
-> > 
-> > To answer your question, I think the TZ initialization is an afterthought
-> > of the SoC design. I think it was only after ther the design stage that
-> > it was brought up that a remoteproc on AHB has out-of-band access to
-> > system memory, which poses security concerns to some customers. I think
-> > authentication was implemented in TZ to address that. I also think that
-> > in order to prevent clock glitching from bypassing such verification,
-> > they had to move the initialization sequence in TZ as well.
-> 
-> I wouldn't exactly call it an afterthought.. Image authentication (as in,
-> verifying the signature of the ELF) has always been part of TZ, because
-> doing so in a user-modifiable context would be absolutely nonsensical
-> 
-> qcom_scm_pas_auth_and_reset() which configures and powers up the rproc
-> has been there for a really long time too (at least since the 2012 SoCs
-> like MSM8974) and I would guesstimate it's been there for a reason - not
-> all clocks can or should be accessible from the OS (from a SW standpoint
-> it would be convenient to have a separate SECURE_CC block where all the
-> clocks we shouldn't care about are moved, but the HW design makes more
-> sense as-is, for the most part), plus there is additional access control
-> hardware on the platform that must be configured from a secure context
-> (by design) which I assume could be part of this sequence, based on
-> the specifics of a given SoC
+On Thursday, December 4, 2025 3:17=E2=80=AFPM Svyatoslav Ryhel wrote:
+> The tegra_dsi_prepare function performs hardware setup and should be
+> called before any register readings or there will be a risk of device
+> hangup on register access. To avoid this situation, tegra_dsi_prepare mus=
+t
+> be called at the beginning of tegra_dsi_encoder_enable.
+>=20
+> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> ---
+>  drivers/gpu/drm/tegra/dsi.c | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/tegra/dsi.c b/drivers/gpu/drm/tegra/dsi.c
+> index 278bf2c85524..8e80c7efe8b4 100644
+> --- a/drivers/gpu/drm/tegra/dsi.c
+> +++ b/drivers/gpu/drm/tegra/dsi.c
+> @@ -914,6 +914,12 @@ static void tegra_dsi_encoder_enable(struct drm_enco=
+der *encoder)
+>  	u32 value;
+>  	int err;
+> =20
+> +	err =3D tegra_dsi_prepare(dsi);
+> +	if (err < 0) {
+> +		dev_err(dsi->dev, "failed to prepare: %d\n", err);
+> +		return;
+> +	}
+> +
+>  	/* If the bootloader enabled DSI it needs to be disabled
+>  	 * in order for the panel initialization commands to be
+>  	 * properly sent.
+> @@ -923,12 +929,6 @@ static void tegra_dsi_encoder_enable(struct drm_enco=
+der *encoder)
+>  	if (value & DSI_POWER_CONTROL_ENABLE)
+>  		tegra_dsi_disable(dsi);
+> =20
+> -	err =3D tegra_dsi_prepare(dsi);
+> -	if (err < 0) {
+> -		dev_err(dsi->dev, "failed to prepare: %d\n", err);
+> -		return;
+> -	}
+> -
+>  	state =3D tegra_dsi_get_state(dsi);
+> =20
+>  	tegra_dsi_set_timeout(dsi, state->bclk, state->vrefresh);
+>=20
 
-What was the original use case for the Q6 remoteproc? I see today's use case 
-is as a conduit for ath11k firmware to control PCIe devices. Was that always 
-the case? I imagine a more modern design would treat the remoteproc as 
-untrusted by putting it under a bridge or IOMMU with more strict memory access 
-control, so that firmware couldn't access OS memory.
+The section of code before the tegra_dsi_prepare call was removed in 'Rever=
+t "drm/tegra: dsi: Clear enable register if powered by bootloader"', so thi=
+s patch should no longer be necessary.
 
-
-> Konrad
-
+Mikko
 
 
 
