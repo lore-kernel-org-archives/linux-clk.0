@@ -1,244 +1,138 @@
-Received: from mail-ej1-f68.google.com (mail-ej1-f68.google.com [209.85.218.68])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A354E32B9B4
-	for <linux-clk@vger.kernel.org>; Thu, 15 Jan 2026 13:55:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01E1C3A1CF8
+	for <linux-clk@vger.kernel.org>; Thu, 15 Jan 2026 14:18:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768485330; cv=none; b=n+3QFYXUjy+yihIVzXASv4wjtxlTihJZi4nfD0nX5ynwnFf4xwxZ11ELIiXXVGUcxMnlswrKGAJyJ77XzE9YlSwB/fPOGpYqeS7LPSHYzleGD6LmzNsAfe74mmpQ8mYkdGKiuA637kc/ANCW0TI4iLbzZGT900eN2trDcshtrCk=
+	t=1768486708; cv=none; b=o3Z4PTlLIP0as/7mgcvB8jUeBLEj4YzeqCumuByybq9Bafs8bZmBHRI/0U9L04DIM5SCmzyDJO7QhLZA7jtA31bRHZKn/HPTNDeqmbCXIX1syCusRVMB+GZuf86WAbpf08s7uPJagxU4C6fFUD3pnC+FWilI4eQ8ejjwLTojXU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768485330; c=relaxed/simple;
-	bh=rTcmnpef70Bd17FfMNPWpzLu6hWiJcl5FrvjG1iQ7kM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=skGIlNBt5z5A+m4qi2op2r7gIPowVnbNTm+dS/g7zo5NBBNHOVEz8PgNDwhXfVPORORlvnBYKXn9jBrVpyeRtzgE/mH0X1jULr6YC25JpYcA33LA5pc8y+M303th3Huu7SSss49os/eXaQ7cG/sNTsphuRhCukw5gm+auBcg/PY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=J+6zIyAL; arc=none smtp.client-ip=209.85.218.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+	s=arc-20240116; t=1768486708; c=relaxed/simple;
+	bh=Jtc9sSjyX7Ms9NttRrBA88Rr+IN45iedh99EFmfPrDk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HPR/9Oat7WoCXPTMZ8aduuN2dPZ3O21GhBhGPtfiVsKb9Y9FdBez39hLWl42XSvgVeQ2ZGMruAMJMrnVgGmcPHVAnrYfAEj+Je1UnYKmZS6IcBoScer3mO+LzhCLjacwGLS2jr/eTC+Ws1UALyBv70P3dckp2U76H/dLGkrww1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CEP6z5D+; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=MbJVVEoL; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="J+6zIyAL"
-Received: by mail-ej1-f68.google.com with SMTP id a640c23a62f3a-b870732cce2so150512666b.3
-        for <linux-clk@vger.kernel.org>; Thu, 15 Jan 2026 05:55:27 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CEP6z5D+";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="MbJVVEoL"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1768486705;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=t4RC+ObhpewYzGNMozpFt20pSaSgz2F7mC9Tp5X8J9U=;
+	b=CEP6z5D+ma2L/dytC1g9nIWwBPwfx//DIzKIsNwx2Z4ofXe75C9eZBm/+33+BCM8rekOAo
+	TUktvqH/MsC/gr9a3AwTs9WBmo0fEMXw9ZXKG59MzdsJ53/9SukgG1wxxLF2eOAda+gPJz
+	ru1m2w44nEdTSsKslEe0zRs/vITZI3M=
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
+ [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-356-YWoE2r2ZPl2iarQy-Qmqnw-1; Thu, 15 Jan 2026 09:18:24 -0500
+X-MC-Unique: YWoE2r2ZPl2iarQy-Qmqnw-1
+X-Mimecast-MFC-AGG-ID: YWoE2r2ZPl2iarQy-Qmqnw_1768486704
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-88a3929171bso21729346d6.3
+        for <linux-clk@vger.kernel.org>; Thu, 15 Jan 2026 06:18:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1768485326; x=1769090126; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=QrZ5+jQy92uNw0r2S0THSakmu7K1eDt7PKdDPiL1BxI=;
-        b=J+6zIyALzvkmmvHLhMbqdi5qXkwtAN+VC1tpHA0tEs+1bLX7ofpseQsFp3j1aZn/0Y
-         Kr8/6pSdIqSFRtq6dOCNTKNUW34pzyO11qlJkW5klukx7C24o3UZPn/a0QB38lbilq/5
-         6Zv1mAxaFszr5mQFlP6cXCc74pH9fDjTB1N9rF97cgEJMi2w/4RC+zelGesUPk0tQvQ0
-         lGHYm2HAvVHohvEU5POGQAznYFBVXlF1nkpfCmovGHWnA8W0LTn4jT5pmYnLODu6mMBL
-         dqkIuaFJsJST7e3se4wTS5NcuscSofSbaTZaNiAcDwMYpqzAAsVmf5sLf4UnKCd0VjfF
-         tzyg==
+        d=redhat.com; s=google; t=1768486704; x=1769091504; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=t4RC+ObhpewYzGNMozpFt20pSaSgz2F7mC9Tp5X8J9U=;
+        b=MbJVVEoLgGL7TN6KC1WmcsnrEJHrRhIqQDkSjILuI03hmmIu/lBSc68uzZwoCrckY4
+         QHOPzKqjMW7xwJnzAxZ67xNkBzhf2cOdR+ecdavVOTT0EDahplDgBICRNZXEbfPxkCV7
+         9uv7Xt6FTFJt7gTYWdRNOLX4u2BRhkdL1Zoz0Qx97i+5I4QGGOVe/JGpdiJ/AwdWPDMB
+         A/rYs5nmFkwd0th1a4EkHOCIwGpaToxdocmr2XPVgvVdXCfz8ZQrpm08iajq9IW6uO4j
+         pV7jeQG7W9/NHendqis08tGGQHx4ec4P93QrGoA+RzSkpjT3PZ2Wx17dshBwuB8jrXZw
+         6zLA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768485326; x=1769090126;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QrZ5+jQy92uNw0r2S0THSakmu7K1eDt7PKdDPiL1BxI=;
-        b=tH/0S+fKJTrR5YwfJNkAsVpWgde+XxBle5yl6SLV/ngnH/Gmnjwobv/ZWumCE6Mm+O
-         bO6iFcNT4WeOk1LcmRnTxtRXlvyekSkLkSNyfLqBDYz1bmA4nkkFKFgU+jgYZNmHf4pr
-         a+anhuscEMWEK42NUN7K3c0/bcbddR5Np22nc4+QP7iJkS12ZnI1VxhSOrjjiisnEU0C
-         u7yX3nkuc6KWDWKINkMALGJ0r65ewYUx6YcO0v5kfPpkvxrcQnF+3gwk2oidw21vHJRl
-         3pQalfz8Pmtd0V4C5Le4jpWtGiGyl9+ntVZzbuUnYpRPrM/eOSgkA1DSA26yLn4yzEOo
-         ScOg==
-X-Forwarded-Encrypted: i=1; AJvYcCV895UiucsJTN3DlZdRFKxnrPR8flfa3vHi0AO+MKkn0EZs59TgoRe3NfkaKFYK3Z9/4NJJF2AaKFM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCWrJWbqNDVDbUtnwal/lsmuDX+x2dL4xyOmdHGfH9JOoEfmMm
-	dHvyjjakDGZrC1sjAo1WHT8KVIrGnpxZY1bnen9SsbIE7vjHYnPepJ4bHMuvjf9VwuI=
-X-Gm-Gg: AY/fxX54VzP8VH75C3LnQghUm1Wj26Kr0rH+rx3L0i6TR9NGYTQoW9JK8JuCsRudz8g
-	dAqi9CnAk/ZndNG+VLXkEGYT2LiPm9F8N8sn5AGfAGTa0PWvWBoZO0tT8hHKYlVpgFYz7KoLkzW
-	0qCQ2v1RXJa1OYSivAVDWiFjHnSwb5PXTQqdySRfHeuyEUfwTzxlAyMyuwtqfyhccd/WoxSrqjr
-	oynX6XNbv7Xmg2GG3HV9wF6zJ1ID/HTDVUHdmyaH1Tks7UIVhr0CsUPIPlh7R4jrM4hOACMNIhs
-	81ZWjol//ERZym+KK+Iq9C6YFNCYsu5eb9JRdNp5J6JyU9fqjaZ0qb3wTpDkkMWBh84J+72xrwx
-	FbitmxiOGWWdSx0oe4Xf22PnCNMsVXwJBUx5DrNJm2wu39SRvSyY7et06ISjFA59D95260JkQik
-	gX62oWSrO/L2IDHsmmrSM=
-X-Received: by 2002:a17:907:3d42:b0:b76:f090:7779 with SMTP id a640c23a62f3a-b876113a251mr548317366b.33.1768485325766;
-        Thu, 15 Jan 2026 05:55:25 -0800 (PST)
-Received: from [10.78.104.246] ([46.97.176.64])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b87705a24f6sm365632466b.70.2026.01.15.05.55.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 15 Jan 2026 05:55:24 -0800 (PST)
-Message-ID: <6c87673a-32a7-490b-a365-096f3ae63c6f@tuxon.dev>
-Date: Thu, 15 Jan 2026 15:55:19 +0200
+        d=1e100.net; s=20230601; t=1768486704; x=1769091504;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=t4RC+ObhpewYzGNMozpFt20pSaSgz2F7mC9Tp5X8J9U=;
+        b=tXI3gQCmRR8dYivydi/DCttmJ2fTKX9rjiAR2smV7UmegZbGM4g84/XzPDgef3FFyH
+         yJgd1gPLYGgZJFn8IMO2WUfhDPwNotAs7nwuFeZ1zZXk5Vda0CEqV0wCQ7XWPfgPxpen
+         c/a/s1A+zmfZldZKsxXIX3dqf0AbFps67I++2KdNyAfiDoXtPcsSwhfxhm32XloLnL81
+         bmU6XvyJ1Lh5xVlFD9ff9lSzFF83F5Hr6Jd8cX2desUk2Gi1ltqNc3pz862iR4MPtnwg
+         OTBgmc2pIl/M58zeSjo/S14lL4OfMWj+uVg8tcSL7+fpDoayl3BNtkkkXRQbKbURRL3Y
+         Uo8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUUloQlEV8qyGlcLvLAizB5Z3k5+UijaFTltVugnMNN/DAW3b2xXA3fWSjz7K6ii6BAP40U1CVtG18=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzO/4J6CG8pPvAhngmQxYOQ/qFwR4AMmw8z26aUxUPEKnWEJD7r
+	gusY+rDc8peLJNN3qkl3FFkmbT7XiShDP3h/LBaYD6FGUploKrmpfkW10VJ5ADWzZYRkYA1YP+D
+	s32IdxmqOeP2ipBn07KyHsJG9wQ9g7BaO620iOpULepVR+o1McMXVkvrDIBHlzA==
+X-Gm-Gg: AY/fxX5QIce10uTSWaYmvYvQMF3Uf9ZTefo0Xe+eHZVWVt8LlKo85eESPqAURAwpZZz
+	PEfASYLq0S+F6LpksDA22ulLzJB35P0CKx/Gz+qJUpntLfi1zPhmQvtbnRazKjiHP8+PSzveDmQ
+	LvxmB2kYpu4o4zsQsM7jF2JvtqtvJPzIqtstVoZyUC/KaG7gEVMNHXjfGGuAXvRDe506BiZeEfO
+	hH/dQYv1xlMJ6yNtfihXm99JFQW5LWRH2m3ksBsH5nILngQohADppR2apF6q5DdCByEjnWpahxO
+	TjPYWTzsTsUwpzzoM62QxW/utiAeTpCBPORLSlulRjvswSU0onELMoZJVYTiggG04AgJVfRMagf
+	3zEi0aE0=
+X-Received: by 2002:a05:6214:508e:b0:880:38ba:a4d9 with SMTP id 6a1803df08f44-8927445deb6mr82449816d6.67.1768486703850;
+        Thu, 15 Jan 2026 06:18:23 -0800 (PST)
+X-Received: by 2002:a05:6214:508e:b0:880:38ba:a4d9 with SMTP id 6a1803df08f44-8927445deb6mr82449266d6.67.1768486703308;
+        Thu, 15 Jan 2026 06:18:23 -0800 (PST)
+Received: from redhat.com ([2600:382:8103:a511:9f9:74cd:13ab:4d59])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-890770e2a8fsm201085636d6.16.2026.01.15.06.18.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 Jan 2026 06:18:22 -0800 (PST)
+Date: Thu, 15 Jan 2026 09:18:20 -0500
+From: Brian Masney <bmasney@redhat.com>
+To: Vinod Koul <vkoul@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	linux-phy@lists.infradead.org
+Subject: Re: [PATCH 25/27] phy: ti: phy-j721e-wiz: convert from
+ divider_round_rate() to divider_determine_rate()
+Message-ID: <aWj3LPq37Dr9OLU6@redhat.com>
+References: <20260108-clk-divider-round-rate-v1-0-535a3ed73bf3@redhat.com>
+ <20260108-clk-divider-round-rate-v1-25-535a3ed73bf3@redhat.com>
+ <aWelbtaZjS4SZGQO@vaman>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 05/16] dt-bindings: PCI: renesas,r9a08g045s33-pcie:
- Document RZ/G3E SoC
-To: John Madieu <john.madieu.xa@bp.renesas.com>,
- claudiu.beznea.uj@bp.renesas.com, lpieralisi@kernel.org,
- kwilczynski@kernel.org, mani@kernel.org, geert+renesas@glider.be,
- krzk+dt@kernel.org
-Cc: robh@kernel.org, bhelgaas@google.com, conor+dt@kernel.org,
- magnus.damm@gmail.com, biju.das.jz@bp.renesas.com,
- linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-clk@vger.kernel.org, john.madieu@gmail.com
-References: <20260114153337.46765-1-john.madieu.xa@bp.renesas.com>
- <20260114153337.46765-6-john.madieu.xa@bp.renesas.com>
-Content-Language: en-US
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <20260114153337.46765-6-john.madieu.xa@bp.renesas.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aWelbtaZjS4SZGQO@vaman>
+User-Agent: Mutt/2.2.14 (2025-02-20)
 
-Hi, John,
+Hi Vinod,
 
-On 1/14/26 17:33, John Madieu wrote:
-> Extend the existing device tree bindings for Renesas RZ/G3S PCIe
-> controller to include support for the RZ/G3E (renesas,r9a09g047e57-pcie) PCIe
-> controller. The RZ/G3E PCIe controller is similar to RZ/G3S but has some key
-> differences:
+On Wed, Jan 14, 2026 at 07:47:18PM +0530, Vinod Koul wrote:
+> On 08-01-26, 16:16, Brian Masney wrote:
+> > The divider_round_rate() function is now deprecated, so let's migrate
+> > to divider_determine_rate() instead so that this deprecated API can be
+> > removed.
+> > 
+> > Note that when the main function itself was migrated to use
+> > determine_rate, this was mistakenly converted to:
+> > 
+> >     req->rate = divider_round_rate(...)
+> > 
+> > This is invalid in the case when an error occurs since it can set the
+> > rate to a negative value.
 > 
->   - Uses a different device ID
->   - Supports PCIe Gen3 (8.0 GT/s) link speeds
->   - Uses a different clock naming (clkpmu vs clkl1pm)
->   - Has a different set of interrupts, interrupt ordering, and reset signals
-> 
-> Add device tree bindings for renesas,r9a09g047e57-pcie compatible IPs.
-> 
-> Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
-> ---
->   .../bindings/pci/renesas,r9a08g045-pcie.yaml  | 243 +++++++++++++-----
->   1 file changed, 172 insertions(+), 71 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/pci/renesas,r9a08g045-pcie.yaml b/Documentation/devicetree/bindings/pci/renesas,r9a08g045-pcie.yaml
-> index d668782546a2..c68bc76af35d 100644
-> --- a/Documentation/devicetree/bindings/pci/renesas,r9a08g045-pcie.yaml
-> +++ b/Documentation/devicetree/bindings/pci/renesas,r9a08g045-pcie.yaml
-> @@ -10,85 +10,34 @@ maintainers:
->     - Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->   
->   description:
-> -  Renesas RZ/G3S PCIe host controller complies with PCIe Base Specification
-> -  4.0 and supports up to 5 GT/s (Gen2).
-> +  Renesas RZ/G3{E,S} PCIe host controllers comply with PCIe
-> +  Base Specification 4.0 and support up to 5 GT/s (Gen2) for RZ/G3S and
-> +  up to 8 GT/s (Gen3) for RZ/G3E.
->   
->   properties:
->     compatible:
-> -    const: renesas,r9a08g045-pcie # RZ/G3S
-> +    enum:
-> +      - renesas,r9a08g045-pcie # RZ/G3S
-> +      - renesas,r9a09g047-pcie # RZ/G3E
->   
->     reg:
->       maxItems: 1
->   
-> -  interrupts:
-> -    items:
-> -      - description: System error interrupt
-> -      - description: System error on correctable error interrupt
-> -      - description: System error on non-fatal error interrupt
-> -      - description: System error on fatal error interrupt
-> -      - description: AXI error interrupt
-> -      - description: INTA interrupt
-> -      - description: INTB interrupt
-> -      - description: INTC interrupt
-> -      - description: INTD interrupt
-> -      - description: MSI interrupt
-> -      - description: Link bandwidth interrupt
-> -      - description: PME interrupt
-> -      - description: DMA interrupt
-> -      - description: PCIe event interrupt
-> -      - description: Message interrupt
-> -      - description: All interrupts
-> -
-> -  interrupt-names:
-> -    items:
-> -      - description: serr
-> -      - description: ser_cor
-> -      - description: serr_nonfatal
-> -      - description: serr_fatal
-> -      - description: axi_err
-> -      - description: inta
-> -      - description: intb
-> -      - description: intc
-> -      - description: intd
-> -      - description: msi
-> -      - description: link_bandwidth
-> -      - description: pm_pme
-> -      - description: dma
-> -      - description: pcie_evt
-> -      - description: msg
-> -      - description: all
-> +  interrupts: true
-> +
-> +  interrupt-names: true
->   
->     interrupt-controller: true
->   
->     clocks:
-> -    items:
-> -      - description: System clock
-> -      - description: PM control clock
-> +    maxItems: 2
->   
->     clock-names:
-> -    items:
-> -      - description: aclk
-> -      - description: pm
-> -
-> -  resets:
-> -    items:
-> -      - description: AXI2PCIe Bridge reset
-> -      - description: Data link layer/transaction layer reset
-> -      - description: Transaction layer (ACLK domain) reset
-> -      - description: Transaction layer (PCLK domain) reset
-> -      - description: Physical layer reset
-> -      - description: Configuration register reset
-> -      - description: Configuration register reset
-> -
-> -  reset-names:
-> -    items:
-> -      - description: aresetn
-> -      - description: rst_b
-> -      - description: rst_gp_b
-> -      - description: rst_ps_b
-> -      - description: rst_rsm_b
-> -      - description: rst_cfg_b
-> -      - description: rst_load_b
-> +    maxItems: 2
-> +
-> +  resets: true
-> +
-> +  reset-names: true
->   
->     power-domains:
->       maxItems: 1
-> @@ -128,11 +77,12 @@ patternProperties:
->           const: 0x1912
->   
->         device-id:
-> -        const: 0x0033
-> +        enum:
-> +          - 0x0033
-> +          - 0x0039
->   
->         clocks:
-> -        items:
-> -          - description: Reference clock
-> +        maxItems: 1
+> Acked-by: Vinod Koul <vkoul@kernel.org>
 
-Can't this stay as is?
+Thanks for the Acked-by.
 
->   
->         clock-names:
->           items:
-> @@ -142,8 +92,6 @@ patternProperties:
->         - device_type
->         - vendor-id
->         - device-id
-> -      - clocks
-> -      - clock-names
+However, this patch depends on this other series of mine that's merged
+into your phy tree:
 
-Any reason this was dropped here? I see in patch 14/16 you are still using 
-clocks, clock-names for the PCIe port.
+https://lore.kernel.org/linux-clk/176661322399.4169.14248756511703978007@lazor/
 
-Thank you,
-Claudiu
+Stephen asked for an Acked-by for that series or an immutable branch.
+
+This will allow us to remove round_rate from the clk core.
+
+I also have a small series to post that's dependent on all of this that
+lets us get rid of the noop determine_rate implementations that only
+'return 0'. I haven't posted that because of the dependencies.
+
+Brian
+
