@@ -1,145 +1,89 @@
-Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DBF7274B35
-	for <linux-clk@vger.kernel.org>; Thu, 15 Jan 2026 04:50:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 818F426ED25;
+	Thu, 15 Jan 2026 04:55:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768452646; cv=none; b=Nshs4LA/FfJ3HUzpqm1XOH8jKbe0t1vjnVKyp8UDuFMRKYtUVVrYe9iiAt5WbCl0B0Vmy9zcPxDCwFQYJ/U/VA4vGH2uRhTZ+Ey7KulNXxyjVmZ3KOdWtGuw2n7N78gkaxu2nJ8AxIFBnUDn+ywS8jvq39b2teEPOTbtzd6lfYM=
+	t=1768452938; cv=none; b=r7BlqJAVRxgt4wWXu5hdCHCVEUpp5ALBUBmju2OqRx6+xtVgvmyzrqDwKDHorwRzFXwLud0x5jiKh4iz3Qs1rWfbCj9ZHGfC6wGRO3xa1jS4D87S0OXbcfjDPczO+Asu8epM4R7L3G42f8gZ3weWCPVCbUi/HmWATKz6dPAy3W8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768452646; c=relaxed/simple;
-	bh=bwH7TKQitdKzloCZTOTMKs7FMvbuDSsPsScuXO2XnSQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DYSU/evCCIqzkXKJnAHRgLQRFeX/zYRnA+rDv1fuYPuhEXfpHWsidBJgjpFzQKDyUoxVXgLbS9TiBro/dYepiWf2nQ+9C9FbAEfQ3v7WEmDb9DDd5qVF2L6rNPtBa7GhHE5bMfcXmKHoUVy/tLKn92S+5DsXKFLcwg502HT7NKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VAqV74t/; arc=none smtp.client-ip=209.85.160.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VAqV74t/"
-Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-40418578e28so194876fac.1
-        for <linux-clk@vger.kernel.org>; Wed, 14 Jan 2026 20:50:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1768452644; x=1769057444; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gaxkG3FjcBbVuAmcMeHgDVclONwI7K7qJ4Bb/eS73xU=;
-        b=VAqV74t/w3hqcpKjdurhyCLdERsArrjqT4Nh7ItvYgIORi1xyGz6fnccOymsJYnO4V
-         HUAAdkaLwnEOoDYkapMZEsrDOruvgYHBj8I0lDbmAAG+ddByUstdzjnmnLn1ycivhusD
-         sTKkUZ2N2+pDlinagoD5mNzDjZS2MVofA4Em1tE+0LY/PnV84xn7DDfZwqy2tM0RKue6
-         TOOTvICAZfFAnJm3hbjS+apTERfDw7KcFFJe/NxnamvrY1whsXqHLx0MucFIdKF2vX7O
-         QwLCuSRxYtRIoBhHxFjMyJy91QEtxTiVGUwEfVSnDeHodnz/YkAKeIg+oE0dTXmgEAPD
-         Z/XQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768452644; x=1769057444;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=gaxkG3FjcBbVuAmcMeHgDVclONwI7K7qJ4Bb/eS73xU=;
-        b=ofrap9UP0lWqhFZkYa2YlHza0NA7SteFbbtZymviH12qiOqfdoh5GRuizV0Clj54ql
-         2vGSklBpGGlmkuFgJd7twZUbfqGzaZQLyd9e4kBmgfwCMP+1xBKff+e5KXI/C0+oVwID
-         mL379bUjNl3QX4Wj+sjzL3WvdY54ZG8sqWimgFZL53MSU5Dywy1s1rJUW3mWnHsUQibk
-         3SsPqfuo5jKCZiuP8ifTf6mHeWCxJA4VqiKH5eDiJlJuAcg7KC4m73DIYdh0qzIbmcEP
-         BvuPtCdK9e0Wdyqs3VSU4YuhhsheWrgUdiSuwhC9XbMJqXGZf0JyBxS3gWoHo6gScows
-         fMZA==
-X-Forwarded-Encrypted: i=1; AJvYcCXpbnffk1Anz+nua36MP2Ff10tZdq6XHhM/8yEiiBPDs52D8nsH+Kw9pEaKkNE2aTvNB7a2nZDEAiA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxmGfJ4LOwsGw/eYXZ9RoZQDvRiNMBAa6Uk2zQa2vE+FqGTm+6g
-	y7JOgfMTAJ7663Gj0u719VPlSEeIKZewIaRB6uoU8NWnnCzBjFV0z47GoiZWyA==
-X-Gm-Gg: AY/fxX6QQ/DZTnMtysRb4jU4jkwQtrUP+Il+DHa9zgvqf0zAIqfnymK9ttugqCsH0G6
-	Nf/yUosbqnURRakRBHLFTKRgQsD8taX4xJcZ757lcGwqvMOpHhv5KNwk00oCrBUFhgR4qVTSoNc
-	SuYwvPv9Svlb0GAL8iCaOtWmUfDMi8UIFgA1esRGJeqn6qPhDHLdwppYYsYNQEgs0eHC4s3m81V
-	WkA54IIPXE845OO5hbZr27tE97eo88Y5ft+itSHhFtnXkYds0ClATqmzkzxExfp5emNOe2AMDr0
-	LM63z83swT8dU/Fupg36Dk0gIXVwkoaCU7Krryd3O8d430ogcrGui2iaeJxxGZjtQH3Mw/PPPuO
-	7MetB3bQF0J7wptfcJi+MT6tyjJxbQqVoxdnQqgcoD+keSnF3Lj/Lhn2MwqTv58CF6l5uRFnG/P
-	kfuzGsqtUN0XgCipFazrot27H3wr41/C0pQpO0Wm/iF4UUIICk6KLWhqSm6AzCtRIGxXPaTJ1cH
-	cDC9FnsIfISa7p4yjnPqm1qWypz3og=
-X-Received: by 2002:a05:6870:c0c3:b0:3ec:4266:13f7 with SMTP id 586e51a60fabf-40407197688mr3586919fac.29.1768452644055;
-        Wed, 14 Jan 2026 20:50:44 -0800 (PST)
-Received: from nukework.gtech (c-98-57-15-22.hsd1.tx.comcast.net. [98.57.15.22])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-3ffa4de8cbfsm17750746fac.3.2026.01.14.20.50.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Jan 2026 20:50:42 -0800 (PST)
-From: "Alex G." <mr.nuke.me@gmail.com>
-To: andersson@kernel.org, krzk+dt@kernel.org, mturquette@baylibre.com,
- linux-remoteproc@vger.kernel.org,
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- Vignesh Viswanathan <vignesh.viswanathan@oss.qualcomm.com>
-Cc: mathieu.poirier@linaro.org, robh@kernel.org, conor+dt@kernel.org,
- konradybcio@kernel.org, sboyd@kernel.org, p.zabel@pengutronix.de,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject:
- Re: [PATCH v2 0/9] remoteproc: qcom_q6v5_wcss: add native ipq9574 support
-Date: Wed, 14 Jan 2026 22:50:40 -0600
-Message-ID: <5206383.iZASKD2KPV@nukework.gtech>
-In-Reply-To: <cfa31127-2208-4c65-b8ef-3b5d534e050b@oss.qualcomm.com>
-References:
- <20260109043352.3072933-1-mr.nuke.me@gmail.com>
- <4814455.tdWV9SEqCh@nukework.gtech>
- <cfa31127-2208-4c65-b8ef-3b5d534e050b@oss.qualcomm.com>
+	s=arc-20240116; t=1768452938; c=relaxed/simple;
+	bh=M3vM7wuGXUDGMOm1gsHecMoC3vq28dry1w+H07aPvu4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bMdD5GAEDm+OawiM8TSgS428BYdIl01Bf6qMrJ3N4vzk0EnoPsel1zZ4SssLNDSBMr+Ai/IRLO2JP+PA3zNLQozACyttEoWVg7Oy1TlKScuDBe98Fxj8dRSJRrt3qgH1ViGXPL3QOdRX2/nId07Qyh+868OkIqt02U7PzEo4r0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=isrc.iscas.ac.cn; spf=pass smtp.mailfrom=isrc.iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=isrc.iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=isrc.iscas.ac.cn
+Received: from localhost.localdomain (unknown [36.112.3.223])
+	by APP-01 (Coremail) with SMTP id qwCowAAn0Gs9c2hpAMHBBA--.30272S2;
+	Thu, 15 Jan 2026 12:55:25 +0800 (CST)
+From: Haoxiang Li <lihaoxiang@isrc.iscas.ac.cn>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	bmasney@redhat.com,
+	mturquette@linaro.org,
+	pankaj.dev@st.com,
+	gabriel.fernandez@st.com
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Haoxiang Li <lihaoxiang@isrc.iscas.ac.cn>,
+	stable@vger.kernel.org
+Subject: [PATCH] clk: st: clkgen-pll: Fix a memory leak in clkgen_odf_register()
+Date: Thu, 15 Jan 2026 12:55:24 +0800
+Message-Id: <20260115045524.640427-1-lihaoxiang@isrc.iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qwCowAAn0Gs9c2hpAMHBBA--.30272S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrKFyftw4rGr45XF4rCF4xXrb_yoWfGFcEy3
+	y7X3sav34rCF43A3WUAw47ZryF93Wkurn3Wa1SyFW5K345XryUKrWFqrZ5Jr15WFWrGryD
+	Gws7Aw15Cr47AjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUb3xFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
+	Cr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr0_Gr
+	1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
+	jxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr
+	1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E8cxa
+	n2IY04v7MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4
+	AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE
+	17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMI
+	IF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4l
+	IxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvf
+	C2KfnxnUUI43ZEXa7VU13ku3UUUUU==
+X-CM-SenderInfo: 5olkt0x0ld0ww6lv2u4olvutnvoduhdfq/1tbiBwkIE2loPJu0FQAAsS
 
-On Tuesday, January 13, 2026 11:42:45 PM CST Vignesh Viswanathan wrote:
-> On 1/14/2026 9:24 AM, Alex G. wrote:
-> > On Tuesday, January 13, 2026 8:28:11 AM CST Konrad Dybcio wrote:
-> >> On 1/9/26 5:33 AM, Alexandru Gagniuc wrote:
-> >>> Support loading remoteproc firmware on IPQ9574 with the qcom_q6v5_wcss
-> >>> driver. This firmware is usually used to run ath11k firmware and enable
-> >>> wifi with chips such as QCN5024.
-> >>> 
-> >>> When submitting v1, I learned that the firmware can also be loaded by
-> >>> the trustzone firmware. Since TZ is not shipped with the kernel, it
-> >>> makes sense to have the option of a native init sequence, as not all
-> >>> devices come with the latest TZ firmware.
-> >>> 
-> >>> Qualcomm tries to assure us that the TZ firmware will always do the
-> >>> right thing (TM), but I am not fully convinced
-> >> 
-> >> Why else do you think it's there in the firmware? :(
-> > 
-> > A more relevant question is, why do some contributors sincerely believe
-> > that the TZ initialization of Q6 firmware is not a good idea for their
-> > use case?
-> > 
-> > To answer your question, I think the TZ initialization is an afterthought
-> > of the SoC design. I think it was only after ther the design stage that
-> > it was brought up that a remoteproc on AHB has out-of-band access to
-> > system memory, which poses security concerns to some customers. I think
-> > authentication was implemented in TZ to address that. I also think that
-> > in order to prevent clock glitching from bypassing such verification,
-> > they had to move the initialization sequence in TZ as well.
-> 
-> Exactly, the TZ interface is present to address the security concerns.
-> Also, as I mentioned in [1], on some platforms, TZ might access protect the
-> clocks and registers which might prevent the remoteproc bringup and throw
-> an access violation.
-> 
-> We can keep this support added for IPQ9574, as it is good to have, but can
-> we keep the default compatible in ipq9574 DTSI to use the TZ interface,
-> which has already picked up an R-b in this series [2].
+If clk_register_composite() fails, call kfree() to release
+div and gate.
 
-I think that's an acceptable plan. For the TZ case, we'd have to keep the 
-clock framework from disabling the "unused" remoteproc clocks. Do you think 
-"protected-clocks" property is the right way to do it? Which series should add 
-it?
+Fixes: b9b8e614b580 ("clk: st: Support for PLLs inside ClockGenA(s)")
+Cc: stable@vger.kernel.org
+Signed-off-by: Haoxiang Li <lihaoxiang@isrc.iscas.ac.cn>
+---
+ drivers/clk/st/clkgen-pll.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-Alex
-
-> 
-> [1]
-> https://lore.kernel.org/linux-remoteproc/21468f66-56df-43ea-99c2-7257d8d6bb
-> 7c@oss.qualcomm.com/T/#m688033ab79c63a8953e38f5575d1c0ff6b37b13a [2]
-> https://lore.kernel.org/linux-remoteproc/20260113092021.1887980-1-varadaraj
-> an.narayanan@oss.qualcomm.com/T/#t
-> > Alex
-
-
-
+diff --git a/drivers/clk/st/clkgen-pll.c b/drivers/clk/st/clkgen-pll.c
+index c258ff87a171..a7d605b52cf3 100644
+--- a/drivers/clk/st/clkgen-pll.c
++++ b/drivers/clk/st/clkgen-pll.c
+@@ -742,8 +742,11 @@ static struct clk * __init clkgen_odf_register(const char *parent_name,
+ 				     &div->hw, &clk_divider_ops,
+ 				     &gate->hw, &clk_gate_ops,
+ 				     flags);
+-	if (IS_ERR(clk))
++	if (IS_ERR(clk)) {
++		kfree(div);
++		kfree(gate);
+ 		return clk;
++	}
+ 
+ 	pr_debug("%s: parent %s rate %lu\n",
+ 			__clk_get_name(clk),
+-- 
+2.25.1
 
