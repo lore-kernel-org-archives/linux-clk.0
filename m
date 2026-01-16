@@ -1,38 +1,38 @@
 Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88F6D3A1D1A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08D9F34CFA8;
 	Fri, 16 Jan 2026 20:07:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768594046; cv=none; b=HFBrVt6NZFM3n/0Pi24TXiLStzq8D/3s3uYrpvwBwxCUg/Ez80noum7A2fL2QgePMg6jFdDdAUIDLDlPzNpoypRMi1IuRrNR3KSUlnGS4u4qrbStTzxBR4NSK0KSxSDQuMWyh2b6fcWOlFYFelLJRFcs90T/vncOdWkXyrbdK+Q=
+	t=1768594046; cv=none; b=ZNU2RqKiAdIvOfS6CFHtE/+yRl9g8DIolaeqDeNHXJEUfrr5YaCqawJ037dNXPC3Jpa+JI/c8ZbTequTlhoE3mggUqxFOHpXzX/4l8ydG/D8g/jzmgvcgdxJF46LsPqa/StepjDMZNpXrPwOKLNYNmMogcod58uQG/4RrG1XFCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1768594046; c=relaxed/simple;
-	bh=OTMXgJdF/7MTA4sJqHAQpMGm2af+yWIy+XmatDrrxP4=;
+	bh=i+HmjWJwmg1Ne8dMrp2TjmodU6BZus8Si32RJLHwbok=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mF8XSSN/WBdW4SFDxa86PP0C4C/YthUNAaDtcLOLXoZQEgh5SCQGYXqEvrz+RYJ3zL7JG0jnI9Qi/pPr73hGixP+S0xUps+OpM5Kor22s/R43dhJMPVq10iX6FmYOtCcvt7cDNRZa1/BfZ2D2Ofixhb1BzfsyTXnIiYAYdsAxeU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=VyNyGwAQ; arc=none smtp.client-ip=68.232.153.233
+	 MIME-Version:Content-Type; b=M/dONxs1gSVR+jVAkdsDWr9Bs04Sn/XC88ohO/NweoNIWOkWvb3HdZmafgZzxjjyjsQi0TWwI4bsZOYBaYTxsrjBilAj5wzucjwvpNCE9X4T1/V3VE3Xg0frV6b7O+7rOpJpiWSCwY+k2W+luc5BPGPiKWd+YwItfnvYBuzgywQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=0N6Yrbnh; arc=none smtp.client-ip=68.232.153.233
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="VyNyGwAQ"
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="0N6Yrbnh"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1768594044; x=1800130044;
+  t=1768594045; x=1800130045;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=OTMXgJdF/7MTA4sJqHAQpMGm2af+yWIy+XmatDrrxP4=;
-  b=VyNyGwAQ40/Rg7BQKdsQGeRyJ22bHI4kh1XKn0Ge9XOim2FPePHcCiKY
-   dK6rNs1xvLCpOB6srFza0TT4RmalRiVKIa1iknOZjyvVJz4E0Enfjwb79
-   vUkGxlhZRCQyF5rYv57R3v1Kgw1U26+UZ3z0zLgj1kM+74NYXWiLbI3hc
-   cdvYPgzmvj/UT+YEpnCECPpWxuj2rE/WGeghU6/cHH8MoWLuaZc4fIRXj
-   NzpJ2/aWaMRR6ByMt+S/6M8icOJLPED0rAdkO/awtJUJsVs2UJ1h4+uQ8
-   ISSwlU0z/mO2OER5qD+MoQI6qZ1vWRBBV5I54kIL2irU/9tHDAj3itlwn
+  bh=i+HmjWJwmg1Ne8dMrp2TjmodU6BZus8Si32RJLHwbok=;
+  b=0N6YrbnhurT3eh5778PONvKgPMKurF7MrolvMBbPq9PZeK/7WvMGP+vK
+   rd2KSZ/d83KVRLGshD/awNzDOPHeINs0tCLNUfIyUl3SNudDVO2J6wDXU
+   LefEZl6BU7xdLQkaFrNZp6P6BYnQFN9FuB9/b8i5kxX58pccO7n2CqVR/
+   J7iY9FJjpn20EMUbQKZlBUeEr6xzGATwpZ77wsdQC5We6k3i/uhA7Je/T
+   uy9RLV7IH8Byqd8TBZLxFKX4JY2aXPSZjDj18RMHdlSw2JLbsZjbW65eh
+   lEJ8mNdqpqu0wWqdt/Qcn1Rg73ieYEw9oOtGqH2VC4UM2+V2HXToAFzRk
    A==;
 X-CSE-ConnectionGUID: +9RSiAtvRY+RhxWEUm06Wg==
-X-CSE-MsgGUID: 5FgGJAS1SOCVS7wRgzOGOQ==
+X-CSE-MsgGUID: OLs2/IBpSlyI+ueSWyzIrg==
 X-IronPort-AV: E=Sophos;i="6.21,232,1763449200"; 
-   d="scan'208";a="283397048"
+   d="scan'208";a="283397049"
 X-Amp-Result: SKIPPED(no attachment in message)
 Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
   by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jan 2026 13:07:16 -0700
@@ -51,9 +51,9 @@ To: <mturquette@baylibre.com>, <sboyd@kernel.org>,
 CC: <cristian.birsan@microchip.com>,
 	<balamanikandan.gunasundar@microchip.com>, <linux-clk@vger.kernel.org>,
 	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v5 07/31] clk: at91: clk-utmi: use clk_parent_data
-Date: Fri, 16 Jan 2026 13:07:00 -0700
-Message-ID: <e7757e961b1ba514bcab3178ac65b4ee8040b80c.1768512290.git.ryan.wanner@microchip.com>
+Subject: [PATCH v5 08/31] clk: at91: clk-master: use clk_parent_data
+Date: Fri, 16 Jan 2026 13:07:01 -0700
+Message-ID: <548c567b5144e3556aee5e39a9c11ed13167a14a.1768512290.git.ryan.wanner@microchip.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1768512290.git.ryan.wanner@microchip.com>
 References: <cover.1768512290.git.ryan.wanner@microchip.com>
@@ -73,140 +73,292 @@ to less usage of __clk_get_hw() in SoC specific clock drivers and simpler
 conversion of existing SoC specific clock drivers from parent_names to
 modern clk_parent_data structures.
 
+__clk_get_hw will be removed in subsequent patches.
+
 Signed-off-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+[ryan.wanner@microchip.com: Add clk-master changes to SAM9X75 and
+SAMA7D65 SoCs. As well as add md_slck commit message.]
 Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
 ---
- drivers/clk/at91/clk-utmi.c | 16 ++++++++--------
- drivers/clk/at91/pmc.h      |  4 ++--
- drivers/clk/at91/sama7g5.c  | 19 ++++++++++++-------
- 3 files changed, 22 insertions(+), 17 deletions(-)
+ drivers/clk/at91/clk-master.c | 24 ++++++++++++------------
+ drivers/clk/at91/pmc.h        |  6 +++---
+ drivers/clk/at91/sam9x7.c     | 14 +++++++-------
+ drivers/clk/at91/sama7d65.c   | 17 +++++++----------
+ drivers/clk/at91/sama7g5.c    | 17 +++++++----------
+ 5 files changed, 36 insertions(+), 42 deletions(-)
 
-diff --git a/drivers/clk/at91/clk-utmi.c b/drivers/clk/at91/clk-utmi.c
-index b991180beea1..38ffe4d712a5 100644
---- a/drivers/clk/at91/clk-utmi.c
-+++ b/drivers/clk/at91/clk-utmi.c
-@@ -144,7 +144,7 @@ static struct clk_hw * __init
- at91_clk_register_utmi_internal(struct regmap *regmap_pmc,
- 				struct regmap *regmap_sfr,
- 				const char *name, const char *parent_name,
--				struct clk_hw *parent_hw,
-+				struct clk_parent_data *parent_data,
- 				const struct clk_ops *ops, unsigned long flags)
- {
- 	struct clk_utmi *utmi;
-@@ -152,7 +152,7 @@ at91_clk_register_utmi_internal(struct regmap *regmap_pmc,
- 	struct clk_init_data init = {};
+diff --git a/drivers/clk/at91/clk-master.c b/drivers/clk/at91/clk-master.c
+index d5ea2069ec83..b8d000b3b180 100644
+--- a/drivers/clk/at91/clk-master.c
++++ b/drivers/clk/at91/clk-master.c
+@@ -473,7 +473,7 @@ static struct clk_hw * __init
+ at91_clk_register_master_internal(struct regmap *regmap,
+ 		const char *name, int num_parents,
+ 		const char **parent_names,
+-		struct clk_hw **parent_hws,
++		struct clk_parent_data *parent_data,
+ 		const struct clk_master_layout *layout,
+ 		const struct clk_master_characteristics *characteristics,
+ 		const struct clk_ops *ops, spinlock_t *lock, u32 flags)
+@@ -485,7 +485,7 @@ at91_clk_register_master_internal(struct regmap *regmap,
+ 	unsigned long irqflags;
  	int ret;
  
--	if (!(parent_name || parent_hw))
-+	if (!(parent_name || parent_data))
+-	if (!name || !num_parents || !(parent_names || parent_hws) || !lock)
++	if (!name || !num_parents || !(parent_names || parent_data) || !lock)
  		return ERR_PTR(-EINVAL);
  
- 	utmi = kzalloc(sizeof(*utmi), GFP_KERNEL);
-@@ -161,8 +161,8 @@ at91_clk_register_utmi_internal(struct regmap *regmap_pmc,
+ 	master = kzalloc(sizeof(*master), GFP_KERNEL);
+@@ -494,8 +494,8 @@ at91_clk_register_master_internal(struct regmap *regmap,
  
  	init.name = name;
  	init.ops = ops;
--	if (parent_hw)
--		init.parent_hws = (const struct clk_hw **)&parent_hw;
+-	if (parent_hws)
+-		init.parent_hws = (const struct clk_hw **)parent_hws;
 +	if (parent_data)
 +		init.parent_data = (const struct clk_parent_data *)parent_data;
  	else
- 		init.parent_names = &parent_name;
- 	init.num_parents = 1;
-@@ -185,10 +185,10 @@ at91_clk_register_utmi_internal(struct regmap *regmap_pmc,
- struct clk_hw * __init
- at91_clk_register_utmi(struct regmap *regmap_pmc, struct regmap *regmap_sfr,
- 		       const char *name, const char *parent_name,
--		       struct clk_hw *parent_hw)
-+		       struct clk_parent_data *parent_data)
+ 		init.parent_names = parent_names;
+ 	init.num_parents = num_parents;
+@@ -531,13 +531,13 @@ struct clk_hw * __init
+ at91_clk_register_master_pres(struct regmap *regmap,
+ 		const char *name, int num_parents,
+ 		const char **parent_names,
+-		struct clk_hw **parent_hws,
++		struct clk_parent_data *parent_data,
+ 		const struct clk_master_layout *layout,
+ 		const struct clk_master_characteristics *characteristics,
+ 		spinlock_t *lock)
  {
- 	return at91_clk_register_utmi_internal(regmap_pmc, regmap_sfr, name,
--			parent_name, parent_hw, &utmi_ops, CLK_SET_RATE_GATE);
-+			parent_name, parent_data, &utmi_ops, CLK_SET_RATE_GATE);
- }
- 
- static int clk_utmi_sama7g5_prepare(struct clk_hw *hw)
-@@ -287,8 +287,8 @@ static const struct clk_ops sama7g5_utmi_ops = {
- 
+ 	return at91_clk_register_master_internal(regmap, name, num_parents,
+-						 parent_names, parent_hws, layout,
++						 parent_names, parent_data, layout,
+ 						 characteristics,
+ 						 &master_pres_ops,
+ 						 lock, CLK_SET_RATE_GATE);
+@@ -546,7 +546,7 @@ at91_clk_register_master_pres(struct regmap *regmap,
  struct clk_hw * __init
- at91_clk_sama7g5_register_utmi(struct regmap *regmap_pmc, const char *name,
--			       const char *parent_name, struct clk_hw *parent_hw)
-+			       const char *parent_name, struct clk_parent_data *parent_data)
+ at91_clk_register_master_div(struct regmap *regmap,
+ 		const char *name, const char *parent_name,
+-		struct clk_hw *parent_hw, const struct clk_master_layout *layout,
++		struct clk_parent_data *parent_data, const struct clk_master_layout *layout,
+ 		const struct clk_master_characteristics *characteristics,
+ 		spinlock_t *lock, u32 flags, u32 safe_div)
  {
- 	return at91_clk_register_utmi_internal(regmap_pmc, NULL, name,
--			parent_name, parent_hw, &sama7g5_utmi_ops, 0);
-+			parent_name, parent_data, &sama7g5_utmi_ops, 0);
- }
+@@ -560,7 +560,7 @@ at91_clk_register_master_div(struct regmap *regmap,
+ 
+ 	hw = at91_clk_register_master_internal(regmap, name, 1,
+ 					       parent_name ? &parent_name : NULL,
+-					       parent_hw ? &parent_hw : NULL, layout,
++					       parent_data, layout,
+ 					       characteristics, ops,
+ 					       lock, flags);
+ 
+@@ -815,7 +815,7 @@ struct clk_hw * __init
+ at91_clk_sama7g5_register_master(struct regmap *regmap,
+ 				 const char *name, int num_parents,
+ 				 const char **parent_names,
+-				 struct clk_hw **parent_hws,
++				 struct clk_parent_data *parent_data,
+ 				 u32 *mux_table,
+ 				 spinlock_t *lock, u8 id,
+ 				 bool critical, int chg_pid)
+@@ -827,7 +827,7 @@ at91_clk_sama7g5_register_master(struct regmap *regmap,
+ 	unsigned int val;
+ 	int ret;
+ 
+-	if (!name || !num_parents || !(parent_names || parent_hws) || !mux_table ||
++	if (!name || !num_parents || !(parent_names || parent_data) || !mux_table ||
+ 	    !lock || id > MASTER_MAX_ID)
+ 		return ERR_PTR(-EINVAL);
+ 
+@@ -837,8 +837,8 @@ at91_clk_sama7g5_register_master(struct regmap *regmap,
+ 
+ 	init.name = name;
+ 	init.ops = &sama7g5_master_ops;
+-	if (parent_hws)
+-		init.parent_hws = (const struct clk_hw **)parent_hws;
++	if (parent_data)
++		init.parent_data = (const struct clk_parent_data *)parent_data;
+ 	else
+ 		init.parent_names = parent_names;
+ 	init.num_parents = num_parents;
 diff --git a/drivers/clk/at91/pmc.h b/drivers/clk/at91/pmc.h
-index 2d2e7c20d72d..dcb678732471 100644
+index dcb678732471..24ef879c712c 100644
 --- a/drivers/clk/at91/pmc.h
 +++ b/drivers/clk/at91/pmc.h
-@@ -302,10 +302,10 @@ at91rm9200_clk_register_usb(struct regmap *regmap, const char *name,
+@@ -207,14 +207,14 @@ at91_clk_register_sam9x5_main(struct regmap *regmap, const char *name,
  struct clk_hw * __init
- at91_clk_register_utmi(struct regmap *regmap_pmc, struct regmap *regmap_sfr,
- 		       const char *name, const char *parent_name,
--		       struct clk_hw *parent_hw);
-+		       struct clk_parent_data *parent_data);
+ at91_clk_register_master_pres(struct regmap *regmap, const char *name,
+ 			      int num_parents, const char **parent_names,
+-			      struct clk_hw **parent_hws,
++			      struct clk_parent_data *parent_data,
+ 			      const struct clk_master_layout *layout,
+ 			      const struct clk_master_characteristics *characteristics,
+ 			      spinlock_t *lock);
  
  struct clk_hw * __init
- at91_clk_sama7g5_register_utmi(struct regmap *regmap, const char *name,
--			       const char *parent_name, struct clk_hw *parent_hw);
-+			       const char *parent_name, struct clk_parent_data *parent_data);
+ at91_clk_register_master_div(struct regmap *regmap, const char *name,
+-			     const char *parent_names, struct clk_hw *parent_hw,
++			     const char *parent_names, struct clk_parent_data *parent_data,
+ 			     const struct clk_master_layout *layout,
+ 			     const struct clk_master_characteristics *characteristics,
+ 			     spinlock_t *lock, u32 flags, u32 safe_div);
+@@ -223,7 +223,7 @@ struct clk_hw * __init
+ at91_clk_sama7g5_register_master(struct regmap *regmap,
+ 				 const char *name, int num_parents,
+ 				 const char **parent_names,
+-				 struct clk_hw **parent_hws, u32 *mux_table,
++				 struct clk_parent_data *parent_data, u32 *mux_table,
+ 				 spinlock_t *lock, u8 id, bool critical,
+ 				 int chg_pid);
  
- #endif /* __PMC_H_ */
-diff --git a/drivers/clk/at91/sama7g5.c b/drivers/clk/at91/sama7g5.c
-index d7fb42166a14..058004379ce9 100644
---- a/drivers/clk/at91/sama7g5.c
-+++ b/drivers/clk/at91/sama7g5.c
-@@ -976,7 +976,7 @@ static void __init sama7g5_pmc_setup(struct device_node *np)
- 	void **alloc_mem = NULL;
- 	int alloc_mem_size = 0;
+diff --git a/drivers/clk/at91/sam9x7.c b/drivers/clk/at91/sam9x7.c
+index aee1d60492aa..e8005b727a6b 100644
+--- a/drivers/clk/at91/sam9x7.c
++++ b/drivers/clk/at91/sam9x7.c
+@@ -752,7 +752,7 @@ static void __init sam9x7_pmc_setup(struct device_node *np)
  	struct regmap *regmap;
--	struct clk_hw *hw, *main_rc_hw, *main_osc_hw, *main_xtal_hw;
-+	struct clk_hw *hw, *main_rc_hw, *main_osc_hw;
- 	struct clk_hw *td_slck_hw, *md_slck_hw;
- 	struct clk_parent_data parent_data[2];
- 	struct clk_hw *parent_hws[10];
-@@ -1042,19 +1042,23 @@ static void __init sama7g5_pmc_setup(struct device_node *np)
- 			case PLL_TYPE_FRAC:
- 				switch (sama7g5_plls[i][j].p) {
- 				case SAMA7G5_PLL_PARENT_MAINCK:
--					parent_data = AT91_CLK_PD_NAME("mainck");
--					hw = sama7g5_pmc->chws[PMC_MAIN];
-+					parent_data[0] = AT91_CLK_PD_NAME("mainck");
-+					parent_rate = clk_hw_get_rate(sama7g5_pmc->chws[PMC_MAIN]);
- 					break;
- 				case SAMA7G5_PLL_PARENT_MAIN_XTAL:
--					parent_data = AT91_CLK_PD_NAME(main_xtal_name);
--					hw = main_xtal_hw;
-+					struct clk *main_xtal;
-+					main_xtal = of_clk_get_by_name(np, main_xtal_name);
-+					if (IS_ERR(main_xtal))
-+						goto err_free;
-+					parent_data[0] = AT91_CLK_PD_NAME(main_xtal_name);
-+					parent_rate = clk_get_rate(main_xtal);
-+					clk_put(main_xtal);
- 					break;
- 				default:
- 					/* Should not happen. */
- 					break;
- 				}
+ 	struct clk_hw *hw, *main_rc_hw, *main_osc_hw, *main_xtal_hw;
+ 	struct clk_hw *td_slck_hw, *md_slck_hw, *usbck_hw;
+-	struct clk_parent_data parent_data[2];
++	struct clk_parent_data parent_data[9];
+ 	struct clk_hw *parent_hws[9];
+ 	int i, j;
  
--				parent_rate = clk_hw_get_rate(hw);
- 				if (!parent_rate)
- 					return;
- 
-@@ -1138,7 +1142,8 @@ static void __init sama7g5_pmc_setup(struct device_node *np)
- 			sama7g5_pmc->chws[sama7g5_mckx[i].eid] = hw;
+@@ -862,18 +862,18 @@ static void __init sam9x7_pmc_setup(struct device_node *np)
+ 		}
  	}
  
--	hw = at91_clk_sama7g5_register_utmi(regmap, "utmick", NULL, main_xtal_hw);
-+	hw = at91_clk_sama7g5_register_utmi(regmap, "utmick", NULL,
-+					    &AT91_CLK_PD_NAME(main_xtal_name));
+-	parent_hws[0] = md_slck_hw;
+-	parent_hws[1] = sam9x7_pmc->chws[PMC_MAIN];
+-	parent_hws[2] = sam9x7_plls[PLL_ID_PLLA][PLL_COMPID_DIV0].hw;
+-	parent_hws[3] = sam9x7_plls[PLL_ID_UPLL][PLL_COMPID_DIV0].hw;
++	parent_data[0] = AT91_CLK_PD_NAME("md_slck");
++	parent_data[1] = AT91_CLK_PD_HW(sam9x7_pmc->chws[PMC_MAIN]);
++	parent_data[2] = AT91_CLK_PD_HW(sam9x7_plls[PLL_ID_PLLA][PLL_COMPID_DIV0].hw);
++	parent_data[3] = AT91_CLK_PD_HW(sam9x7_plls[PLL_ID_UPLL][PLL_COMPID_DIV0].hw);
+ 	hw = at91_clk_register_master_pres(regmap, "masterck_pres", 4,
+-					   NULL, parent_hws, &sam9x7_master_layout,
++					   NULL, parent_data, &sam9x7_master_layout,
+ 					   &mck_characteristics, &mck_lock);
  	if (IS_ERR(hw))
  		goto err_free;
  
+ 	hw = at91_clk_register_master_div(regmap, "masterck_div",
+-					  NULL, hw, &sam9x7_master_layout,
++					  NULL, &AT91_CLK_PD_HW(hw), &sam9x7_master_layout,
+ 					  &mck_characteristics, &mck_lock,
+ 					  CLK_SET_RATE_GATE, 0);
+ 	if (IS_ERR(hw))
+diff --git a/drivers/clk/at91/sama7d65.c b/drivers/clk/at91/sama7d65.c
+index 94e3fe78929d..ccbc459edd31 100644
+--- a/drivers/clk/at91/sama7d65.c
++++ b/drivers/clk/at91/sama7d65.c
+@@ -1101,7 +1101,7 @@ static void __init sama7d65_pmc_setup(struct device_node *np)
+ 	struct regmap *regmap;
+ 	struct clk_hw *hw, *main_rc_hw, *main_osc_hw, *main_xtal_hw;
+ 	struct clk_hw *td_slck_hw, *md_slck_hw;
+-	struct clk_parent_data parent_data[2];
++	struct clk_parent_data parent_data[10];
+ 	struct clk_hw *parent_hws[10];
+ 	bool bypass;
+ 	int i, j;
+@@ -1212,7 +1212,7 @@ static void __init sama7d65_pmc_setup(struct device_node *np)
+ 	}
+ 
+ 	hw = at91_clk_register_master_div(regmap, "mck0", NULL,
+-					  sama7d65_plls[PLL_ID_CPU][1].hw,
++					  &AT91_CLK_PD_HW(sama7d65_plls[PLL_ID_CPU][1].hw),
+ 					  &mck0_layout, &mck0_characteristics,
+ 					  &pmc_mck0_lock, CLK_GET_RATE_NOCACHE, 5);
+ 	if (IS_ERR(hw))
+@@ -1221,12 +1221,11 @@ static void __init sama7d65_pmc_setup(struct device_node *np)
+ 	sama7d65_pmc->chws[PMC_MCK] = hw;
+ 	sama7d65_mckx[PCK_PARENT_HW_MCK0].hw = hw;
+ 
+-	parent_hws[0] = md_slck_hw;
+-	parent_hws[1] = td_slck_hw;
+-	parent_hws[2] = sama7d65_pmc->chws[PMC_MAIN];
++	parent_data[0] = AT91_CLK_PD_NAME("md_slck");
++	parent_data[1] = AT91_CLK_PD_NAME("td_slck");
++	parent_data[2] = AT91_CLK_PD_HW(sama7d65_pmc->chws[PMC_MAIN]);
+ 	for (i = PCK_PARENT_HW_MCK1; i < ARRAY_SIZE(sama7d65_mckx); i++) {
+ 		u8 num_parents = 3 + sama7d65_mckx[i].ep_count;
+-		struct clk_hw *tmp_parent_hws[8];
+ 		u32 *mux_table;
+ 
+ 		mux_table = kmalloc_array(num_parents, sizeof(*mux_table),
+@@ -1243,13 +1242,11 @@ static void __init sama7d65_pmc_setup(struct device_node *np)
+ 			u8 pll_id = sama7d65_mckx[i].ep[j].pll_id;
+ 			u8 pll_compid = sama7d65_mckx[i].ep[j].pll_compid;
+ 
+-			tmp_parent_hws[j] = sama7d65_plls[pll_id][pll_compid].hw;
++			parent_data[3 + j] = AT91_CLK_PD_HW(sama7d65_plls[pll_id][pll_compid].hw);
+ 		}
+-		PMC_FILL_TABLE(&parent_hws[3], tmp_parent_hws,
+-			       sama7d65_mckx[i].ep_count);
+ 
+ 		hw = at91_clk_sama7g5_register_master(regmap, sama7d65_mckx[i].n,
+-						      num_parents, NULL, parent_hws,
++						      num_parents, NULL, parent_data,
+ 						      mux_table, &pmc_mckX_lock,
+ 						      sama7d65_mckx[i].id,
+ 						      sama7d65_mckx[i].c,
+diff --git a/drivers/clk/at91/sama7g5.c b/drivers/clk/at91/sama7g5.c
+index 058004379ce9..74cf712f2820 100644
+--- a/drivers/clk/at91/sama7g5.c
++++ b/drivers/clk/at91/sama7g5.c
+@@ -978,7 +978,7 @@ static void __init sama7g5_pmc_setup(struct device_node *np)
+ 	struct regmap *regmap;
+ 	struct clk_hw *hw, *main_rc_hw, *main_osc_hw;
+ 	struct clk_hw *td_slck_hw, *md_slck_hw;
+-	struct clk_parent_data parent_data[2];
++	struct clk_parent_data parent_data[10];
+ 	struct clk_hw *parent_hws[10];
+ 	bool bypass;
+ 	int i, j;
+@@ -1094,7 +1094,7 @@ static void __init sama7g5_pmc_setup(struct device_node *np)
+ 	}
+ 
+ 	hw = at91_clk_register_master_div(regmap, "mck0", NULL,
+-					  sama7g5_plls[PLL_ID_CPU][1].hw,
++					  &AT91_CLK_PD_HW(sama7g5_plls[PLL_ID_CPU][1].hw),
+ 					  &mck0_layout, &mck0_characteristics,
+ 					  &pmc_mck0_lock, CLK_GET_RATE_NOCACHE, 5);
+ 	if (IS_ERR(hw))
+@@ -1102,12 +1102,11 @@ static void __init sama7g5_pmc_setup(struct device_node *np)
+ 
+ 	sama7g5_mckx[PCK_PARENT_HW_MCK0].hw = sama7g5_pmc->chws[PMC_MCK] = hw;
+ 
+-	parent_hws[0] = md_slck_hw;
+-	parent_hws[1] = td_slck_hw;
+-	parent_hws[2] = sama7g5_pmc->chws[PMC_MAIN];
++	parent_data[0] = AT91_CLK_PD_NAME("md_slck");
++	parent_data[1] = AT91_CLK_PD_NAME("td_slck");
++	parent_data[2] = AT91_CLK_PD_HW(sama7g5_pmc->chws[PMC_MAIN]);
+ 	for (i = PCK_PARENT_HW_MCK1; i < ARRAY_SIZE(sama7g5_mckx); i++) {
+ 		u8 num_parents = 3 + sama7g5_mckx[i].ep_count;
+-		struct clk_hw *tmp_parent_hws[8];
+ 		u32 *mux_table;
+ 
+ 		mux_table = kmalloc_array(num_parents, sizeof(*mux_table),
+@@ -1122,13 +1121,11 @@ static void __init sama7g5_pmc_setup(struct device_node *np)
+ 			u8 pll_id = sama7g5_mckx[i].ep[j].pll_id;
+ 			u8 pll_compid = sama7g5_mckx[i].ep[j].pll_compid;
+ 
+-			tmp_parent_hws[j] = sama7g5_plls[pll_id][pll_compid].hw;
++			parent_data[3 + j] = AT91_CLK_PD_HW(sama7g5_plls[pll_id][pll_compid].hw);
+ 		}
+-		PMC_FILL_TABLE(&parent_hws[3], tmp_parent_hws,
+-			       sama7g5_mckx[i].ep_count);
+ 
+ 		hw = at91_clk_sama7g5_register_master(regmap, sama7g5_mckx[i].n,
+-				   num_parents, NULL, parent_hws, mux_table,
++				   num_parents, NULL, parent_data, mux_table,
+ 				   &pmc_mckX_lock, sama7g5_mckx[i].id,
+ 				   sama7g5_mckx[i].c,
+ 				   sama7g5_mckx[i].ep_chg_id);
 -- 
 2.43.0
 
