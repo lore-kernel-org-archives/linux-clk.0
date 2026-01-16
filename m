@@ -1,320 +1,110 @@
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6F36330D29
-	for <linux-clk@vger.kernel.org>; Thu, 15 Jan 2026 23:42:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E032E32D7FF
+	for <linux-clk@vger.kernel.org>; Fri, 16 Jan 2026 01:22:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768520585; cv=none; b=h/82O7Jk+l7wy1nmljjYHB6tjoEDfQOD1/BwgymND3z+zoNgW1kf3Ibe3y7Oqu+uc495PVF+VwvVsuSXBoBpl7nXfu6kYe6y3UlhiOJeLqGvuECx0do2y8Jg8+bOLl5s8TQ7s5UxDjQKIEmWd79877BJNfOKH2RUC2mG0a13+0U=
+	t=1768526550; cv=none; b=P1fjnbExv7ZqhymUap/c9L65mWuycrG58f3E1rtct7cIlLh7zZS6vyQfjmamWotBsh6bShbzkKKH3ldDIoKlAmrR6XAQZUBVC0UCZZHjhEpsi4Zoczmf+T1BUvynTREemJeCOrSdGAbTLo62WPn0SHws5heb/YCsxVyY6z1+j5o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768520585; c=relaxed/simple;
-	bh=qcaaZANCOEyqZ0KFVkNT48fIf3U6ZGNHU51PyrXz1GA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=hkJ/sfdsCBepjyG69zJBLvnqobbdmxbBnMM8x1XoK7mitgokjr0aL4j84nJA9nVQKqfo483vHGCUrXq+TgYYISJYH/1D9xVFAx4cLyqCzFyx7obT2vKXZduT69jVk3UZ6whXM2orBtehLsJIl8s2nM26C5B5siQNv/nl1rHZEIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oss.tenstorrent.com; spf=pass smtp.mailfrom=tenstorrent.com; dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b=PiqemR/Z; arc=none smtp.client-ip=209.85.128.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oss.tenstorrent.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tenstorrent.com
+	s=arc-20240116; t=1768526550; c=relaxed/simple;
+	bh=JmS6hXMultdM7kSpg6pUvdv6eOkt62ucLYun6fJOFVk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RI1zJeW3LK6KX9nKz9+k+wZmK92YMSarsj37pD1w3ZKMFY+wVw/2y/4UUHCmtcMuaOq5ViAmVCVeFSaZQ9BLqpHX6q2Tl5Jb47kO6ZhLEJuVI0yUhmNYtrKNHC9MDo01SPBusuXVoiShsGFGvd830UlKxuKXfy+5gY1W9m7SDZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=D3O+Lmbf; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=QPhHSctN; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b="PiqemR/Z"
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-78e7ba9fc29so14819687b3.2
-        for <linux-clk@vger.kernel.org>; Thu, 15 Jan 2026 15:42:52 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="D3O+Lmbf";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="QPhHSctN"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1768526534;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=I/7QQfPExfoLaF42b72uhslOlKfH5M9xECrEdJSFRnQ=;
+	b=D3O+Lmbfn5BMLtCvDvnvAuInalzKgcpCxFBk+hYLzm6TVn3iqF4wgNa1kEizFsQHXdhGrq
+	CuFyRrqrgJlXfy5Qh1WiLkrWhyW5QnuA6nE4bK056KvVuYAy0RD3DBrGRspmB3LSxT2521
+	Jh7rhy7Oq4kNimISBi25zwaFwTsosV0=
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
+ [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-689-HD4JUZuKM4StKBIPnYFe_w-1; Thu, 15 Jan 2026 20:22:13 -0500
+X-MC-Unique: HD4JUZuKM4StKBIPnYFe_w-1
+X-Mimecast-MFC-AGG-ID: HD4JUZuKM4StKBIPnYFe_w_1768526533
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-50143b67424so41981921cf.0
+        for <linux-clk@vger.kernel.org>; Thu, 15 Jan 2026 17:22:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tenstorrent.com; s=google; t=1768520572; x=1769125372; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YuXosatL7jUspS52kKMFA09e6GoDFcrqO+bX2qZbTEM=;
-        b=PiqemR/Z3CQgL9AoZBmnoOLSN8JoNuKLheviRkzkPdslJMJoUZVu09XQtUleD5MtJB
-         6d9Rv+k1pd6i3xO58KhZMEhVeTG9cRqCfE8iFc/B6RSLWgRZNmtaaB6eRJYQM+gZXcNr
-         OpswYjgJkHSZgStB+2qptpDqpk3Ts+syBVfKDfDDLALWFHT7O7+fYcoeMXxAFQvhjq1F
-         YEFRvycHJV2JX+UxHMwCLjm3eYRW3vAq3NHPT/9BAexW9JcZPYv39hcr1HWAL5eUS3KR
-         aBzy5zAxKFrjs3fPa0/M7Yg6u/gH5A7UT4p8hnGbtvWY7s/GogwHcditiFiZOysxr/Hl
-         Gufg==
+        d=redhat.com; s=google; t=1768526533; x=1769131333; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=I/7QQfPExfoLaF42b72uhslOlKfH5M9xECrEdJSFRnQ=;
+        b=QPhHSctNPh0zq6+b6NTKFI7bwJZcLf0srIPUKlG/RoeZas0fUbeDgk5dbWLGm43WF5
+         TDobeTjglupgpUr79wWK8j3Qr5jyAR8WmvOAcqOjHHdPCjVeAI85D/iXy0cRFzanpqwW
+         sIFKdvs+HaY0kcW61gfnA/BOHer1tWam6Bj5c/BuYqHDAyljXSMvGNSG3WQ6N68luADX
+         99Rd/jyBJjljMRyWh+oEK554iF2wt/ZVgai8xTAZI5/KHd+VPRuC/XN9Q0t//BqNB5jg
+         /mOJVvmwOdOiuT3TZhjFjYnZBNoVA0EsIdYW7MVEDfc7Qp+S2O88QWCBMYsxFrjv0tcs
+         IVBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768520572; x=1769125372;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=YuXosatL7jUspS52kKMFA09e6GoDFcrqO+bX2qZbTEM=;
-        b=wMAJgq6ThZdRo6yBBDQR/rTF1dJ4FimvSmrwkjpiv4Gz882ed34CK5pSLbM6F92M6u
-         qElFgBaZz2MyMK67V8B6p0U7Ba8baI0MYPsBIc5NhkbknpThNOILuCga8e9uNumM1LZB
-         MeFewBfEZT/zFxNu7RvwJ8vwC3oVcvjIbNZqbWvCI1+j0rFZPL1N6Njp5C7I9DbJkCBC
-         HeNGbfz1NjZhSQG271wBg15e4vCxF73ClMU02/oGf/F+cE0AjpHzmp8QVdxmDF3VPuPS
-         /AmZAizJu6hWHuOD3t813dZbWVjnZ2x/ghYtmjGkn+eodebzBl7wCRjC+haR9RAArLOw
-         V86g==
-X-Forwarded-Encrypted: i=1; AJvYcCUwX/q7CRdyrvx4aF37uVC2ksQZUwKUsktkQ1w0rUssIoGQG7LJ07RcyDnGQSCqCDgUM2CA4Sa0ngY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWlBGPOGeEH6dWkSrYYriNIhpWLKmgUd8ogcrgvkep4XrZv+UJ
-	ro1ChCXbla5pTrMf+0OY347eSTTDvWdZcHsAC0NFBFe8KL13vKu4faQVv3/RI/h+8HM=
-X-Gm-Gg: AY/fxX4NwisxvKT5N3G5b7lPMjdB9c/ePE6W0bewZqiBP1rtXWgT3pbr+NX4EHh5wS9
-	gPR03YfZazRuCrcjuVOlnsM3wzeVJpJeUHvaY2Lkii7QYajSTa2npIYTuFLQXOFpahFkRO5G7eD
-	lhTDl9/PtJC7hHyS1Nckn+gf8rx/vkPtZjppMAoY5dZ0vGDRe3O4SOHjIEtXvjQ36WSubpFtOkC
-	zaHdn0jlzrGYgSz5lb+rel2SVFRdsM8EyKahkjvMgxYFbLsSt2cdD2MGSJuUlfyIB2m24DlNvH1
-	ZG4Y185Hyvc7UjX9fQzrLlhHFlJoYe/l7HcP9dv+DTnLcAP8FjPsfdaw6dJkNYkr6n0nA5WPX/a
-	xPcVYurM7V6pTBXo6sPN6NcPYm5pWykpuitHP7LvDhhGdvM1q5QimU6WK+gwYHiWumjJDYl2IKh
-	B2GpMuq2/PSvG2mIseJQ7eKkK9xye+lhu4DCCiOoDMLF+lOtNC/1gPbeZjFwlNbjJ+ljK2WfA=
-X-Received: by 2002:a05:690c:e3e9:b0:792:7374:7ff4 with SMTP id 00721157ae682-793c66ac5e1mr8413757b3.11.1768520571893;
-        Thu, 15 Jan 2026 15:42:51 -0800 (PST)
-Received: from [192.168.5.15] ([68.95.197.245])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-793c66c72aesm3027117b3.11.2026.01.15.15.42.50
+        d=1e100.net; s=20230601; t=1768526533; x=1769131333;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=I/7QQfPExfoLaF42b72uhslOlKfH5M9xECrEdJSFRnQ=;
+        b=Afn30NQSfz6SkEktChCpFHgrKmzq5USvzfDmPm1xgfvMCpK0oZ4uKpZ2fZnQd7eIcq
+         JC64N8cHr9EysNUSJ0BEUQfGuD08SUhGzq6+XaSAAB85QEKl3TA6Yjgl+wzYdar4GfVM
+         21OnO+mk91pOvoVMfo+IPs/Qg07B9OceY8ZF6F9PuiiZCEdRFhiHhYIEG7zsZcgHPYbA
+         JdMfN768eXAffjPGeuCV6mMHY/peidexLYPMPNHwam8/Eb0S3jBGpwv8JhnPtsQVlnY3
+         /h4ETK6eC3LsJWOiDM93ba7akR1TgToT2QKd+7cK5GZ4fHRSIpBOtPmbgxunP0GyTj6M
+         rEjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVdVZ/uWIPjFqdR7GwRadgR4DTwcUzr962llb+b924QMqHyDBLiAi+El7SUXtvkoQMKu++qEuuMhIY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw80+Zv7zsprz3fPaovF9mBYw4ts+b0xJbf6WPfZ14l4FlxNVbR
+	WxE5yiSH+Vwu42iPr1fTlmSJJXYBGeQfNgdPwxY/0cMSeYCaJA2cXmlWVOpIahQdL7O0PgJgnX1
+	9vwPlC3ahZFHXM9CyMS3w9buRb78cNgBwyImlNLMkM0GWQ2oVAV+RA1SWrnuIIg==
+X-Gm-Gg: AY/fxX6e3JLxfQQlUz5WEv7/P/oJLqszgQk3itFq2Jd+nbfRHnbweB7T7+uB2DGbbNx
+	UKxVKRh4JExzZDD072JJenH60HNXbeC/btGmUkvmNt+y8gJyDleIUzCEzWUflObzI/QMQMB6xrH
+	7DjzKYKGrK42hmmJapbaWm8nPOkOior49XaeASYiYrfFDW9Il8hty1CQqLsiVKwycUhj3ZEaKbh
+	a7Sa7Js/RCT4KALB1p8CshbgkYmU1hnBUXVqnIihB3QMIIbPvA2XxY0i5/qge0/ZgzuL4ozbuQY
+	lL6SR27ccHqlwvOUX2vBLgQck+FBQEGJtIRQPmDav9J0lg9gs4yagx4K0+DGdQOyF7DBxCvKQOO
+	GD0zcYflBT6dk1VXczttVHO0E9wFovsCmuY1rysttRxz4
+X-Received: by 2002:a05:622a:95:b0:501:466b:5141 with SMTP id d75a77b69052e-502a164b881mr20881691cf.18.1768526532865;
+        Thu, 15 Jan 2026 17:22:12 -0800 (PST)
+X-Received: by 2002:a05:622a:95:b0:501:466b:5141 with SMTP id d75a77b69052e-502a164b881mr20881511cf.18.1768526532495;
+        Thu, 15 Jan 2026 17:22:12 -0800 (PST)
+Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-502a1d9f2a1sm9622621cf.10.2026.01.15.17.22.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Jan 2026 15:42:51 -0800 (PST)
-From: Anirudh Srinivasan <asrinivasan@oss.tenstorrent.com>
-Date: Thu, 15 Jan 2026 17:42:06 -0600
-Subject: [PATCH 7/8] reset: tenstorrent: Add reset controller for Atlantis
+        Thu, 15 Jan 2026 17:22:11 -0800 (PST)
+Date: Thu, 15 Jan 2026 20:22:09 -0500
+From: Brian Masney <bmasney@redhat.com>
+To: Haoxiang Li <lihaoxiang@isrc.iscas.ac.cn>
+Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mturquette@baylibre.com,
+	sboyd@kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com,
+	mperttunen@nvidia.com, tomeu@tomeuvizoso.net,
+	linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] clk: tegra: tegra124-emc: Fix potential memory leak in
+ tegra124_clk_register_emc()
+Message-ID: <aWmSwcza6Qv2aQBO@redhat.com>
+References: <20260115050542.647890-1-lihaoxiang@isrc.iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260115-atlantis-clocks-v1-7-7356e671f28b@oss.tenstorrent.com>
-References: <20260115-atlantis-clocks-v1-0-7356e671f28b@oss.tenstorrent.com>
-In-Reply-To: <20260115-atlantis-clocks-v1-0-7356e671f28b@oss.tenstorrent.com>
-To: Drew Fustini <dfustini@oss.tenstorrent.com>, 
- Joel Stanley <jms@oss.tenstorrent.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, 
- Anirudh Srinivasan <asrinivasan@oss.tenstorrent.com>, 
- Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, joel@jms.id.au, 
- fustini@kernel.org, mpe@kernel.org, mpe@oss.tenstorrent.com, 
- npiggin@oss.tenstorrent.com, agross@kernel.org, agross@oss.tenstorrent.com
-X-Mailer: b4 0.14.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260115050542.647890-1-lihaoxiang@isrc.iscas.ac.cn>
+User-Agent: Mutt/2.2.14 (2025-02-20)
 
-Implement reset controller as an auxiliary device of the clock
-controller, sharing the same regmap interface. This version of the
-driver covers resets from the RCPU syscon.
+On Thu, Jan 15, 2026 at 01:05:42PM +0800, Haoxiang Li wrote:
+> If clk_register() fails, call kfree to release "tegra".
+> 
+> Fixes: 2db04f16b589 ("clk: tegra: Add EMC clock driver")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Haoxiang Li <lihaoxiang@isrc.iscas.ac.cn>
 
-Signed-off-by: Anirudh Srinivasan <asrinivasan@oss.tenstorrent.com>
----
- MAINTAINERS                                |   1 +
- drivers/reset/Kconfig                      |  11 ++
- drivers/reset/Makefile                     |   1 +
- drivers/reset/reset-tenstorrent-atlantis.c | 164 +++++++++++++++++++++++++++++
- 4 files changed, 177 insertions(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 93d941d2886b..31c3e5bcb32d 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -22538,6 +22538,7 @@ F:	Documentation/devicetree/bindings/riscv/tenstorrent.yaml
- F:	Documentation/devicetree/bindings/soc/tenstorrent/tenstorrent,atlantis-syscon.yaml
- F:	arch/riscv/boot/dts/tenstorrent/
- F:	drivers/clk/tenstorrent/
-+F:	drivers/reset/reset-tenstorrent-atlantis.c
- F:	include/dt-bindings/clock/tenstorrent,atlantis-syscon.h
- F:	include/soc/tenstorrent/
- 
-diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-index 6e5d6deffa7d..cade77717492 100644
---- a/drivers/reset/Kconfig
-+++ b/drivers/reset/Kconfig
-@@ -324,6 +324,17 @@ config RESET_SUNXI
- 	help
- 	  This enables the reset driver for Allwinner SoCs.
- 
-+config RESET_TENSTORRENT_ATLANTIS
-+	tristate "Tenstorrent atlantis reset driver"
-+	depends on ARCH_TENSTORRENT || COMPILE_TEST
-+	select AUXILIARY_BUS
-+	default ARCH_TENSTORRENT
-+	help
-+	  This enables the driver for the reset controller
-+	  present in the Tenstorrent Atlantis SoC.
-+	  Enable this option to be able to use hardware
-+	  resets on Atalantis based systems.
-+
- config RESET_TH1520
- 	tristate "T-HEAD TH1520 reset controller"
- 	depends on ARCH_THEAD || COMPILE_TEST
-diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
-index 9c3e484dfd81..a31959da0a88 100644
---- a/drivers/reset/Makefile
-+++ b/drivers/reset/Makefile
-@@ -41,6 +41,7 @@ obj-$(CONFIG_RESET_SOCFPGA) += reset-socfpga.o
- obj-$(CONFIG_RESET_SPACEMIT) += reset-spacemit.o
- obj-$(CONFIG_RESET_SUNPLUS) += reset-sunplus.o
- obj-$(CONFIG_RESET_SUNXI) += reset-sunxi.o
-+obj-$(CONFIG_RESET_TENSTORRENT_ATLANTIS) += reset-tenstorrent-atlantis.o
- obj-$(CONFIG_RESET_TH1520) += reset-th1520.o
- obj-$(CONFIG_RESET_TI_SCI) += reset-ti-sci.o
- obj-$(CONFIG_RESET_TI_SYSCON) += reset-ti-syscon.o
-diff --git a/drivers/reset/reset-tenstorrent-atlantis.c b/drivers/reset/reset-tenstorrent-atlantis.c
-new file mode 100644
-index 000000000000..b1e934a5b054
---- /dev/null
-+++ b/drivers/reset/reset-tenstorrent-atlantis.c
-@@ -0,0 +1,164 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2026 Tenstorrent
-+ */
-+
-+#include <linux/auxiliary_bus.h>
-+#include <linux/device.h>
-+#include <linux/io.h>
-+#include <linux/of.h>
-+#include <linux/module.h>
-+#include <linux/reset-controller.h>
-+#include <linux/regmap.h>
-+
-+#include <soc/tenstorrent/atlantis-syscon.h>
-+#include <dt-bindings/clock/tenstorrent,atlantis-syscon.h>
-+
-+struct atlantis_reset_data {
-+	u8 bit;
-+	u16 reg;
-+	bool active_low;
-+};
-+
-+struct atlantis_reset_controller_data {
-+	const struct atlantis_reset_data *reset_data;
-+	size_t count;
-+};
-+
-+struct atlantis_reset_controller {
-+	struct reset_controller_dev rcdev;
-+	const struct atlantis_reset_controller_data *data;
-+	struct regmap *regmap;
-+};
-+
-+#define to_atlantis_reset_controller(_rcdev) \
-+	container_of((_rcdev), struct atlantis_reset_controller, rcdev)
-+
-+#define RESET_DATA(_reg, _bit, _active_low)                          \
-+	{                                                            \
-+		.bit = _bit, .reg = _reg, .active_low = _active_low, \
-+	}
-+
-+static const struct atlantis_reset_data atlantis_rcpu_resets[] = {
-+	[RST_SMNDMA0] = RESET_DATA(RCPU_BLK_RST_REG, 0, true),
-+	[RST_SMNDMA1] = RESET_DATA(RCPU_BLK_RST_REG, 1, true),
-+	[RST_WDT0] = RESET_DATA(RCPU_BLK_RST_REG, 2, true),
-+	[RST_WDT1] = RESET_DATA(RCPU_BLK_RST_REG, 3, true),
-+	[RST_TMR] = RESET_DATA(RCPU_BLK_RST_REG, 4, true),
-+	[RST_PVTC] = RESET_DATA(RCPU_BLK_RST_REG, 12, true),
-+	[RST_PMU] = RESET_DATA(RCPU_BLK_RST_REG, 13, true),
-+	[RST_MAILBOX] = RESET_DATA(RCPU_BLK_RST_REG, 14, true),
-+	[RST_SPACC] = RESET_DATA(RCPU_BLK_RST_REG, 26, true),
-+	[RST_OTP] = RESET_DATA(RCPU_BLK_RST_REG, 28, true),
-+	[RST_TRNG] = RESET_DATA(RCPU_BLK_RST_REG, 29, true),
-+	[RST_CRC] = RESET_DATA(RCPU_BLK_RST_REG, 30, true),
-+
-+	[RST_QSPI] = RESET_DATA(LSIO_BLK_RST_REG, 0, true),
-+	[RST_I2C0] = RESET_DATA(LSIO_BLK_RST_REG, 1, true),
-+	[RST_I2C1] = RESET_DATA(LSIO_BLK_RST_REG, 2, true),
-+	[RST_I2C2] = RESET_DATA(LSIO_BLK_RST_REG, 3, true),
-+	[RST_I2C3] = RESET_DATA(LSIO_BLK_RST_REG, 4, true),
-+	[RST_I2C4] = RESET_DATA(LSIO_BLK_RST_REG, 5, true),
-+	[RST_UART0] = RESET_DATA(LSIO_BLK_RST_REG, 6, true),
-+	[RST_UART1] = RESET_DATA(LSIO_BLK_RST_REG, 7, true),
-+	[RST_UART2] = RESET_DATA(LSIO_BLK_RST_REG, 8, true),
-+	[RST_UART3] = RESET_DATA(LSIO_BLK_RST_REG, 9, true),
-+	[RST_UART4] = RESET_DATA(LSIO_BLK_RST_REG, 10, true),
-+	[RST_SPI0] = RESET_DATA(LSIO_BLK_RST_REG, 11, true),
-+	[RST_SPI1] = RESET_DATA(LSIO_BLK_RST_REG, 12, true),
-+	[RST_SPI2] = RESET_DATA(LSIO_BLK_RST_REG, 13, true),
-+	[RST_SPI3] = RESET_DATA(LSIO_BLK_RST_REG, 14, true),
-+	[RST_GPIO] = RESET_DATA(LSIO_BLK_RST_REG, 15, true),
-+	[RST_CAN0] = RESET_DATA(LSIO_BLK_RST_REG, 17, true),
-+	[RST_CAN1] = RESET_DATA(LSIO_BLK_RST_REG, 18, true),
-+	[RST_I2S0] = RESET_DATA(LSIO_BLK_RST_REG, 19, true),
-+	[RST_I2S1] = RESET_DATA(LSIO_BLK_RST_REG, 20, true),
-+
-+};
-+
-+static const struct atlantis_reset_controller_data atlantis_rcpu_reset_data = {
-+	.reset_data = atlantis_rcpu_resets,
-+	.count = ARRAY_SIZE(atlantis_rcpu_resets),
-+};
-+
-+static int atlantis_reset_update(struct reset_controller_dev *rcdev,
-+				 unsigned long id, bool assert)
-+{
-+	unsigned int val;
-+	struct atlantis_reset_controller *rst =
-+		to_atlantis_reset_controller(rcdev);
-+	const struct atlantis_reset_data *data = &rst->data->reset_data[id];
-+	unsigned int mask = BIT(data->bit);
-+	struct regmap *regmap = rst->regmap;
-+
-+	if (data->active_low ^ assert)
-+		val = mask;
-+	else
-+		val = ~mask;
-+
-+	return regmap_update_bits(regmap, data->reg, mask, val);
-+}
-+
-+static int atlantis_reset_assert(struct reset_controller_dev *rcdev,
-+				 unsigned long id)
-+{
-+	return atlantis_reset_update(rcdev, id, true);
-+}
-+
-+static int atlantis_reset_deassert(struct reset_controller_dev *rcdev,
-+				   unsigned long id)
-+{
-+	return atlantis_reset_update(rcdev, id, false);
-+}
-+
-+static const struct reset_control_ops atlantis_reset_control_ops = {
-+	.assert = atlantis_reset_assert,
-+	.deassert = atlantis_reset_deassert,
-+};
-+
-+static int
-+atlantis_reset_controller_register(struct device *dev,
-+				   struct atlantis_reset_controller *controller)
-+{
-+	struct reset_controller_dev *rcdev = &controller->rcdev;
-+
-+	rcdev->ops = &atlantis_reset_control_ops;
-+	rcdev->owner = THIS_MODULE;
-+	rcdev->of_node = dev->of_node;
-+	rcdev->nr_resets = controller->data->count;
-+
-+	return devm_reset_controller_register(dev, &controller->rcdev);
-+}
-+static int atlantis_reset_probe(struct auxiliary_device *adev,
-+				const struct auxiliary_device_id *id)
-+{
-+	struct atlantis_ccu_adev *rdev = to_atlantis_ccu_adev(adev);
-+	struct atlantis_reset_controller *controller;
-+	struct device *dev = &adev->dev;
-+
-+	controller = devm_kzalloc(dev, sizeof(*controller), GFP_KERNEL);
-+	if (!controller)
-+		return -ENOMEM;
-+	controller->data =
-+		(const struct atlantis_reset_controller_data *)id->driver_data;
-+	controller->regmap = rdev->regmap;
-+
-+	return atlantis_reset_controller_register(dev, controller);
-+}
-+
-+static const struct auxiliary_device_id atlantis_reset_ids[] = {
-+	{ .name = "atlantis_ccu.rcpu-reset",
-+	  .driver_data = (kernel_ulong_t)&atlantis_rcpu_reset_data },
-+	{},
-+};
-+MODULE_DEVICE_TABLE(auxiliary, atlantis_reset_ids);
-+
-+static struct auxiliary_driver atlantis_reset_driver = {
-+	.probe = atlantis_reset_probe,
-+	.id_table = atlantis_reset_ids,
-+};
-+module_auxiliary_driver(atlantis_reset_driver);
-+
-+MODULE_AUTHOR("Anirudh Srinivasan <asrinivasan@oss.tenstorrent.com>");
-+MODULE_DESCRIPTION("Atlantis reset controller driver");
-+MODULE_LICENSE("GPL");
-
--- 
-2.43.0
+Reviewed-by: Brian Masney <bmasney@redhat.com>
 
