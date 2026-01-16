@@ -1,66 +1,66 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 812EB2F3618
-	for <linux-clk@vger.kernel.org>; Fri, 16 Jan 2026 06:53:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28F6534EF0C
+	for <linux-clk@vger.kernel.org>; Fri, 16 Jan 2026 06:53:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768546415; cv=none; b=UZKqzWWTO4Nq6qM3rAOaLN9yzqRsDRU7uKmVLngT7kWMx+2U10Jg4WkW5mKUHQ/xjxZeV/bzzEPrStgnmFC4d/eRFYW9CJywsxXi688nwaoau2VfqSYq4Vvdc/5c4s3URVwvzheSSXtZyVPErTLGj3ab72Leg8xSIsPocBDiaeE=
+	t=1768546442; cv=none; b=EG+UXls2oqRIk5DVz6d20Vzo6MF48raSEQwaiyp+sxBaChDRZbS09genysxC+DJEM2dQWo1O1Y+5RyzNhE8DU6KG1L4P1zrjdhyB3YpuiYJotZ3Z2Nf/RNWxfoTAJ5SFeT4AdWkTdPC2Jq/PYFZdhiHyhob7EU19YSkN/z1gb+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768546415; c=relaxed/simple;
-	bh=hAgJHcyKbjYCz79+sL72bdt5QiZ9LxAE0CgKB6p6C+k=;
+	s=arc-20240116; t=1768546442; c=relaxed/simple;
+	bh=5GF4e5BmVnyhOpc8HNFg+XjZiiGpnVltdOuIeaBKAbo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UCcGcNSgoRMQSvPfP1j3jJaXWJhRcnIlYDI7qIzscz1BgEfFqE7ubY87oL6Kp6r/u+eKhinsVK7YqapIdxZ9/KZejZVP4D/1EvsZkRb9xIySrD9CmA79RhI1j17+y9HM3HDV/PCTAulewZ+e4sAhGLAbaGSDd0pxPfqyaoPVrcE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=Om7Ocbu/; arc=none smtp.client-ip=209.85.128.49
+	 In-Reply-To:Content-Type; b=Sv+3TDAM7s7T0jsZoWgAMxU5repqNNlh0uMp9f+nkblS6RktzdE5Ff4+OnQg2AxPcaTyQutPNcJ6ZRhs/y5INk8c656xvnTcNHFPbyWEuDzgVP4o5uonOZ6mKh+3/7HVXaV+f1AJvR8QPnfGeXyl0MwsC4+jhulKAAjZ8dsj79E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=EeYSwEl3; arc=none smtp.client-ip=209.85.128.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="Om7Ocbu/"
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4801d7c72a5so5301835e9.0
-        for <linux-clk@vger.kernel.org>; Thu, 15 Jan 2026 22:53:32 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="EeYSwEl3"
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4801c2fae63so8091875e9.2
+        for <linux-clk@vger.kernel.org>; Thu, 15 Jan 2026 22:53:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1768546411; x=1769151211; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1768546438; x=1769151238; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=CZBgjJWFOo/Oc5syADkh6oxfyzw6Z60jrJfIeTvBdx0=;
-        b=Om7Ocbu/8znsfC3pCpoKhsW2aohj6zpczWcCJnqXLUl7A3N9w34iYvZhXfxCfKExEC
-         UdwJSrcTao6mSzpxbSTkWqDo+GFC5H1ZDYIUihutajxovz+BqFBiUx/bjAYxnuGVKaaH
-         1/VNOiez9hkwiHK20IbRSQzLB+gK5AvL1LYiiM3PEI798CaZ4o9BS5vblqiVrPw6r9vk
-         EtZfKKw5qzn9yXDlIdbuki0VvQ4WT3J4RMmR43GhEt759OsE6OifxhZZtoMasUxDodQ8
-         msXZb1NEYiomaGrTIcmW51q8lA8+wxLZ9z7FKuHkROZbWZ2YH66qa+Rwy29NUa+67QBX
-         6VDA==
+        bh=slZGbouLqbJpfaVGGnHBou19vIILt1Y3clst8iE34bA=;
+        b=EeYSwEl3cFJxr4GGrB/GEL2kbi3Md6qLFxgWOTjooDhp1M8AgysTu2x70uMHn05tos
+         2ydYmmtKRKKzy6UfEkNDPYpf9O4Uwqwwd1CxUWStTHX53pPuATTxS6jMO0AA6eBTopRY
+         3oJtFvJzTTIibkTwblm7TlPcuBhoZGUQBo4fC9myj/xkRslJ1YgppRvENsH7hg7FAGJY
+         oqP+QnVA05Las/4OOG+rrtioTermVHEQOKTECJMNdClMN+LU2hQ5QHaLjaHb2JoO36c8
+         MesbnSGO5oZadQwWILLa/DhvQzIzPF8IaYlSjJhnZ3IqTIq+GViWYNmKj1DzZELUAKei
+         qOxw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768546411; x=1769151211;
+        d=1e100.net; s=20230601; t=1768546438; x=1769151238;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=CZBgjJWFOo/Oc5syADkh6oxfyzw6Z60jrJfIeTvBdx0=;
-        b=Tfe36d+FmXTS9zUwLLE09yDl41P6nWjHDUyzdg8PFmz6OdxnkRE3LpJStj8XoAsyPf
-         w+iDrGtLk3nfKGGuG1sbnUdRJ7iJegUIlmgAp0J5EMb+Xz2TcXcayP5EElszhlVY6uok
-         s1UEEXYfKhPQL6fpxOBVA4Mdfwei+lyVgyoaHgwJ+rtB7T6xv0ijQe6i9PjcQ8Gg48cv
-         NE6z0xfPdkx767HpHYht8yAEkkyEAKBuAb2HS4hnKf+3YdlPClDAOksrjZCEyCoxAS7R
-         ZNTqddjgwSMAxQ09SXAv8R+/mOwdZxAK7iAIU0NGJVQJdsaYgpbiR2UGNI2vj9mF+W/N
-         CV+A==
-X-Forwarded-Encrypted: i=1; AJvYcCXo2rDy0uO6Z2fO7XjJVRxgxL9X5rC1dcLVeYjvh/Sw/kqmGjSbmIKezm0Y7B70dlgP/nIqmHEKDLE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsgcYVe/jCzYrbDo8UJ+3sLnJLBWfn3jiUcPQQNBUFiphLKwIy
-	dw4SG2JA1HCIS1qnCUBr9pEqfgnuClFDAEguai3QjtWThRHvdzH4EeRSvKQ8k5rhz9g=
-X-Gm-Gg: AY/fxX5lquReLZB8XNuFWvGHXramK+L6B7lz9ZMO3A1d2l+u2tC8VlMqTuuXNoSpWAe
-	k5XShRwYfKwREwNy1MXMDaPS0BGvltAwNGpA5YkhyYb11ORMisxnzvrOgaWE2c0CoVeRfl3MmOU
-	AHUlMV5pLacBdPkyMIfWKOHzKq9if8Qmc96amKefJjmXxNADgpGwZ5k4l6vbkHj/iL0IoJdpxKb
-	eKckleFM/WSje5S0uL/2M5dqg+N6IWoXbhmzXinoGvbF/JvkPsUsOY0yWZaIivCc97LwGz8rYPc
-	WwnRIPHjomltSYD5LmBAqC2Xx22NoHGNtAIGVWzN+JkXS1Li1Am7qylZUEKOIkHtZQnmRMosFwJ
-	OaIvYzipZBahLpELG2aBTPOvrXArFWlDIMC7QbXMXHZZA+0V0/3Y3/E03L5we2SzPNk6hy8BfVj
-	oZ8VovyC8e374W4bnDM36r/lclNV2t
-X-Received: by 2002:a05:600c:35c3:b0:47a:81b7:9a20 with SMTP id 5b1f17b1804b1-4801eac0617mr16897055e9.9.1768546410639;
-        Thu, 15 Jan 2026 22:53:30 -0800 (PST)
+        bh=slZGbouLqbJpfaVGGnHBou19vIILt1Y3clst8iE34bA=;
+        b=QcHtvz9mwwl+sdF6U0Fm9kbRG1OaekQWns1+X3jc28uDRly3Dh5muqAYnUWcj6WHX9
+         C98DWmWs55jPI24ULzOghmVswCS+jPMak2rk0swXoomdcnP3TJr0LKXYCONIgE9Ant0+
+         5tk4hjFMKv6DCGhTzGGXWriHsoaDVZdXpeUY4ozojZN2PJHRDEKrdsSbyZlqjDBW94Pr
+         u/gvZW6KWX6Y3kFLRRwAwn+MzXTbb8MkNix6gKWRo18yFkni+T36qs5ejexROHCkIK49
+         gW0WyCeFbmGmUlCbRWIpdouQDTdU+DHUYbB6L32tEtHvAY84qCLIKGTfbtjIoqifnLp4
+         Ff5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUsAYEtGBhorK75H6sgRJH+ElqIOxHIazCd3T6VRz+WdK0LCHaQ61bZxy6qMTUOdeUHY6vAojy1ayc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyyiFJwMUaQIA9X12sCZ+7ppVrMC0SZgksymEVMMVSlvTd81HMM
+	R6g03ZYmGBqsASlm7WjCEWCMmJad7U+ow+Z35XI90aJDbPgWnqNGMElHDwzMDVuwl54=
+X-Gm-Gg: AY/fxX5fpiNSCOfqx359j3Nadjlc+/jy0sDXw6axjwuhoaw9FJ829ca+YLeS5GITY08
+	+3hiNeuvBaZvKy7GN69sYDunsTmbldBGzKz+i/M7sbNUr4OCp3SyzsHGN00SrEzG7u0o6BCp2PT
+	B54YZlAnRO1Nnpy2vuWpZrKUF1G1jIeCPQzbb4qU0CicCknD/aj+M1xf8ZSXud6UM87B5q5Zonf
+	7+en0cmLHk4wIk3XrgwqaSJP44Je+bRiW69wONZWI3UZnUUpeJzNC1CLGXBdQhD4ql00vkGJ5OG
+	mMVViNgdQINRaCdlruy2jYcgK3n71euOWdSsr96pl0ElGcZK7YbBTfIl1hKTc0P9SqmwNOvs1Mn
+	6l9J0uSNWh/D5Z/eFfL0QoIAL6Ztrtjp7H/TBIRiSZgBJFFb7uoK9bUHZPRC6+tapP5+8CSKsWv
+	4uvv8hvbGy+maHj/8XZw==
+X-Received: by 2002:a05:600c:3ba8:b0:479:35e7:a0e3 with SMTP id 5b1f17b1804b1-4801e34651dmr21491475e9.30.1768546438260;
+        Thu, 15 Jan 2026 22:53:58 -0800 (PST)
 Received: from [10.31.13.216] ([82.77.28.160])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4801e8c0475sm33584445e9.10.2026.01.15.22.53.29
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4356992201csm3448860f8f.2.2026.01.15.22.53.57
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 15 Jan 2026 22:53:30 -0800 (PST)
-Message-ID: <6113b444-329e-455c-aeb9-71025746d44c@tuxon.dev>
-Date: Fri, 16 Jan 2026 08:53:27 +0200
+        Thu, 15 Jan 2026 22:53:57 -0800 (PST)
+Message-ID: <a35f22bb-efaf-42c1-9e14-1f9ba32a3a7b@tuxon.dev>
+Date: Fri, 16 Jan 2026 08:53:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -68,58 +68,29 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/3] dt-bindings: clock: mpfs-clkcfg: Add pic64gx
- compatibility
+Subject: Re: [PATCH v3 0/3] pic64gx clk kconfig/binding changes
 To: Conor Dooley <conor@kernel.org>, linux-kernel@vger.kernel.org
 Cc: Conor Dooley <conor.dooley@microchip.com>,
  Daire McNamara <daire.mcnamara@microchip.com>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
  <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-riscv@lists.infradead.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- Pierre-Henry Moussay <pierre-henry.moussay@microchip.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org
 References: <20260113-snagged-blemish-52af3d00d88e@spud>
- <20260113-glue-justifier-566ffab2ffd3@spud>
 Content-Language: en-US
 From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <20260113-glue-justifier-566ffab2ffd3@spud>
+In-Reply-To: <20260113-snagged-blemish-52af3d00d88e@spud>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Hi, Conor,
+
 
 On 1/14/26 00:11, Conor Dooley wrote:
-> From: Pierre-Henry Moussay <pierre-henry.moussay@microchip.com>
+> Conor Dooley (1):
+>    clk: microchip: drop POLARFIRE from ARCH_MICROCHIP_POLARFIRE
 > 
-> pic64gx has a clock controller compatible with mpfs-clkcfg. Don't permit
-> the deprecated configuration that was never supported for this SoC.
-> 
-> Signed-off-by: Pierre-Henry Moussay <pierre-henry.moussay@microchip.com>
-> Co-developed-by: Conor Dooley <conor.dooley@microchip.com>
+> Pierre-Henry Moussay (2):
+>    dt-bindings: clock: mpfs-ccc: Add pic64gx compatibility
+>    dt-bindings: clock: mpfs-clkcfg: Add pic64gx compatibility
 
- From Checkpatch:
-
-WARNING: Co-developed-by: must be immediately followed by Signed-off-by:
-
-I moved the Co-developed-by: tag before you SoB.
-
-> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-> Reviewed-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-
-Here.
-
-Now, the full chain of trust is as follows:
-
-     Signed-off-by: Pierre-Henry Moussay <pierre-henry.moussay@microchip.com>
-     Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-     Reviewed-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-     Co-developed-by: Conor Dooley <conor.dooley@microchip.com>
-     Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
-
-Let me know you have anything against.
-
-> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
-
-Thank you,
-Claudiu
+Applied to clk-microchip, thanks!
