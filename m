@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49EF2338916;
-	Fri, 16 Jan 2026 02:36:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 612A42EAB64;
+	Fri, 16 Jan 2026 02:50:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768531014; cv=none; b=Iy/WkSx/iFOjEYCCypeg0+ofyX5tJINEd02YsvUBLO1Z+pFht8wMFyPtBHz2QGaOTpymMi+FXRDGopW+Efa/vR3vaxsNu4khiCLARqDcp9zsVZUARLyAeglsq43X/gIkxFPYLyCNtqOBPHx4ZO7U4cNvD75pKZqp8JlkEmyxfpc=
+	t=1768531801; cv=none; b=ZgpCbY5Ys7/MgGoy3pjDSAx0iSItqRz1/h13lziFTJCTvHbLgjMvLFjtqE20+ptThgUlOPAKW0JU4Q8BvbkcBGjJjRuhheJ9DSHEBNK+7idErGDxcUTlQARVJxkGsuTtsISLusZna9ckjFYijCXyPBbswDcaQYMHDxpwTmMnttU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768531014; c=relaxed/simple;
-	bh=9PSVuZ3i4p6SOOLjxeLoGYrvLW2I91S5Yw031MXewM0=;
+	s=arc-20240116; t=1768531801; c=relaxed/simple;
+	bh=r3Jva90IEIEzzjSj6QCrxX8cTuh1SiHfpusgkKjtJRM=;
 	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=Edma4+kKynt9FKyEDlGGTaDsEoPqpROryGWvZxahf/qaL0QbVQJQzjdcZluvvX3phwln9u55D2oM2cN4tkHg4Pkt4kjvj7fOHqNIQTckpFgGMVdzPemrMVM34MFlLjFnmYPDiYRf+a3C/zDFpTGL30y9xiDq+d9QrdpHOkSHfPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K4ugeUP4; arc=none smtp.client-ip=10.30.226.201
+	 To:Date:Message-ID; b=nGTj+wTmHhPzatpVGH9T9wLy3G2Omus94SsriIxlNRac7Dg4JPRJdBZS/+y+3tkoR85/6fo5uGshtPlB+bKgCe7EF+4clknJeeELI9DgrEfFEPHfcw1WWwO9MsbonQj2rP/UVyeIaqMbULQJT6MtCUYEJd5lr7iMdhyEwFcmvSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O4Goxoen; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K4ugeUP4"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A91CCC116D0;
-	Fri, 16 Jan 2026 02:36:53 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O4Goxoen"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3F02C116D0;
+	Fri, 16 Jan 2026 02:50:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768531013;
-	bh=9PSVuZ3i4p6SOOLjxeLoGYrvLW2I91S5Yw031MXewM0=;
+	s=k20201202; t=1768531801;
+	bh=r3Jva90IEIEzzjSj6QCrxX8cTuh1SiHfpusgkKjtJRM=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=K4ugeUP4eP4/pJYO7jbJbwfWaFNpOE5/pkUWQZ2kZNXjk9eiW37viatzw215JSZly
-	 acBfZvTEP295WajNQMkO4on1p7WxozavUOtI+rXIU9O+EUO/3eLW0zEL0JtK9H6thx
-	 z2ldfwsqrfJIr8v8omibB/qu8dKkkqXQ1jV+xi+pV/PHg/cWek4X1S0hIcbK70bESS
-	 TIxbcv3RixvSy0H2pVzsElusGDnjh0tQVj02ISe/3+pXVR9UtCFVxOIQs3SJMvUjbu
-	 gj+CE3+hSzkKHZ1TJCYZGtPAHj0gji89kvakj9V90NxlF5slTGQ83+QFYwY/57N5HK
-	 dRqlQAFdRPcEw==
+	b=O4GoxoenZ0jdMpTJh6n7/FYxPjAWOmLfrcGOFYBneqioD8A+W4sLKprtKEQchq7K7
+	 CiZVtlGIZsN8Z5DX637gogpbP/s0xnw/lnt+qR04WBwPuMiI7vfV1tNGFtIKZu4mj5
+	 i99m4DTHozGgGbApSJDX4RUrwRBAzVM16T1ZZWHNpdTnp8BXa/8CYMZrDMcXEe3hdY
+	 thTNxLDKSTb79DqUVKPJxyUrWfohHjYfow5RFnIAHqg3nT3/1fwxWX/ieTwXP2NFBi
+	 b0aYrTafBR7hhsZulnrODUi6E1lhwdTc0kZQNq31/TbiQRvgggwKP9wf3trJMfO6nz
+	 KuaoypT/zu6TA==
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -34,34 +34,21 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <cover.1767628282.git.geert+renesas@glider.be>
-References: <cover.1767628282.git.geert+renesas@glider.be>
-Subject: Re: [GIT PULL] clk: renesas: Updates for v6.20
+In-Reply-To: <20251224112239.83735-6-krzysztof.kozlowski@oss.qualcomm.com>
+References: <20251224112239.83735-4-krzysztof.kozlowski@oss.qualcomm.com> <20251224112239.83735-6-krzysztof.kozlowski@oss.qualcomm.com>
+Subject: Re: [PATCH 3/3] clk: versatile: impd1: Simplify with scoped for each OF child loop
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
-To: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>
-Date: Thu, 15 Jan 2026 19:36:51 -0700
-Message-ID: <176853101190.4027.4476160254080292922@lazor>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+To: Cristian Marussi <cristian.marussi@arm.com>, Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>, Linus Walleij <linusw@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Sudeep Holla <sudeep.holla@arm.com>, arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Thu, 15 Jan 2026 19:49:59 -0700
+Message-ID: <176853179908.4027.13756853598348225764@lazor>
 User-Agent: alot/0.11
 
-Quoting Geert Uytterhoeven (2026-01-05 08:57:26)
->         Hi Mike, Stephen,
+Quoting Krzysztof Kozlowski (2025-12-24 04:22:42)
+> Use scoped for-each loop when iterating over device nodes to make code a
+> bit simpler.
 >=20
-> The following changes since commit 8f0b4cce4481fb22653697cced8d0d04027cb1=
-e8:
->=20
->   Linux 6.19-rc1 (2025-12-14 16:05:07 +1200)
->=20
-> are available in the Git repository at:
->=20
->   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git=
- tags/renesas-clk-for-v6.20-tag1
->=20
-> for you to fetch changes up to ebb3acf4d7c95b52265084168b59a565bf972883:
->=20
->   clk: renesas: r9a09g056: Add clock and reset entries for TSU (2025-12-2=
-9 11:43:22 +0100)
->=20
-> ----------------------------------------------------------------
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+> ---
 
-Thanks. Pulled into clk-next
+Applied to clk-next
