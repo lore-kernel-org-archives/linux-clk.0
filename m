@@ -1,40 +1,41 @@
 Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 480972F0C7F
-	for <linux-clk@vger.kernel.org>; Fri, 16 Jan 2026 20:19:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 088433939AE
+	for <linux-clk@vger.kernel.org>; Fri, 16 Jan 2026 20:20:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768594804; cv=none; b=hsUnoF2ob4exougrol2djzSY+mCcsHnhionkaZKoo8I35qKvW4aqKrfmT305dT91q9aoivZXndjN5H6ounp+6shrtebjh5/aKFyU6sJIqtjWlumhH3oHp7mmO86zcoZv9LERaQ2C2GOlcs0XVxnUiVh6EmShRIsbA4dq9qaSTIs=
+	t=1768594805; cv=none; b=DcV17ikhbXMXizSjzHGmFrc03c3IaJrrg0BtTLR+oGaPIgJ6E0QKk8lUGrHK9SkdivvYX/ToFjluBdR3zsBiY5snleZgafkwy/j2XiE7AStUnUbrvTdICgT+EaaKLNvM42kBLUybTCGsEN27hw3cf+AuijA5tlwfZwxtFhjWaQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768594804; c=relaxed/simple;
-	bh=7LO6dBysStjJCgGOxwLNnnvymrV1b0iyEoeH8+uq/HU=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Quwc70hXjux2omX1O8WfNE1bT/IQYoYujjjeZ+zM0IozqZnepeRA3ulzBQPWQqlXXw7xIVt4eiPmL/Tw9vlTKUM5I1gkoZatbEQMgpTiGBf0U4bpilsiZNP+CQA/uMJCumPJArP+A2u0Z+X0hGUEh+hWU/9IZrMIDHxaugLZlTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=gPZ/XnEf; arc=none smtp.client-ip=213.97.179.56
+	s=arc-20240116; t=1768594805; c=relaxed/simple;
+	bh=pfqnnx/OSqbvy5G09PmDtvuyBbM46kezu4CheUA33hE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=am9htdluhJVdppk4+n+6fNGExVyhieMS1eFuBj7MGyCrr9mo4Xt30McI0x74h22mVYS/X8gFHfY7qEfLk1TDvarrUirQ0J6tsQFI87dheA9b3mYFs9Fy6xt+8B+Dzu9FTBiz9FetXfvGoZRburdrAiSmQrafG3m/Aljk5CPRY+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=SpFVNgSG; arc=none smtp.client-ip=213.97.179.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="gPZ/XnEf"
+	dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="SpFVNgSG"
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Cc:To:Content-Transfer-Encoding:Content-Type:MIME-Version:
-	Message-Id:Date:Subject:From:Sender:Reply-To:Content-ID:Content-Description:
-	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=pi/RgB1Unl19HefTzRzEML+gH6nwxFlmQo0yAUtLu50=; b=gPZ/XnEfysgzVoe7cAHYKmaSM6
-	MnV3MbHFJstrlliwKK8D4lydxC3BNKdgBmmI+vlP33T2NpuQpSlnkIi2X3w6I1ymmTwEz/oBsNa7f
-	tfSUuXdjgCx4K7OtIQ5Kq2pWih4NfO+yw3fJxmlcoANr6JbfVVr/Hc282XZqbNlxQdsBiDVUeDyLq
-	1kRBQbNjykWiMnNvobOVRaWAN/3TyOY/IaPg7lhSfAR8LSEEuMvWE+nJlVPQStxb66psi4R/6wrdL
-	5ofbJeVpjtVyMsbgHLKyviNuyRLZ7O1zYf04VOCJvqc53ZlTu+czwwWU3ybuvRdinaQbwn43YfAtd
-	eNVbgJ7A==;
+	s=20170329; h=Cc:To:In-Reply-To:References:Message-Id:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:Date:From:Sender:
+	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+	:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=tq55ETnKQS6pz5m2sngYEY7BX4wcQsVteelEjlRt2a4=; b=SpFVNgSG7+a/0hdten17aTHg4I
+	lbYdXRn7HovcFxDsXe0NiQ1t3ICDbJ1dj+Dge8fiX7h+2DDjgjqac5b0imUB1qBP8Oqdak0O7aYs0
+	Kq7TLBW+QTAO6Hq0y/x9HGGdHPMtmzvY9eB/uQSRXFPEpoOdWPwqys41/cjf5hBzn6PBLC4qpyJjU
+	HTidb62xFwAOvEpdu3beGQQ4xd5zp9o1RZqYJH7rsbSCc7wa6cLGWK5qb1AYdITi1pqGfTuLKv3QD
+	7ziqUigafvjAjkJOuFQ1EOVJFvR5kcmSBfjmdyaPsdYUrIR+Z7wC9Fi8G3zTxTYNzX3CVWvWnc4NB
+	LpH+sYtw==;
 Received: from [187.36.210.68] (helo=1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.ip6.arpa)
 	by fanzine2.igalia.com with esmtpsa 
 	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1vgqIL-006Ixj-NB; Fri, 16 Jan 2026 21:19:45 +0100
+	id 1vgqIY-006Ixj-Vz; Fri, 16 Jan 2026 21:19:59 +0100
 From: =?utf-8?q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>
-Subject: [PATCH v3 0/4] Power Management for Raspberry Pi V3D GPU
-Date: Fri, 16 Jan 2026 17:19:21 -0300
-Message-Id: <20260116-v3d-power-management-v3-0-4e1874e81dd6@igalia.com>
+Date: Fri, 16 Jan 2026 17:19:24 -0300
+Subject: [PATCH v3 3/4] drm/v3d: Allocate all resources before enabling the
+ clock
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -43,11 +44,9 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-B4-Tracking: v=1; b=H4sIAEmdamkC/4XNzQ7CIAzA8VcxnMVA2acn38N4gNFtTdxYYEHNs
- neX7aQH4/HftL8uLKAnDOx8WJjHSIHcmEIdD6zp9dghJ5uagYBclFDxqCyf3AM9H/SoOxxwnDm
- iMWkjs01dsHQ6eWzpubPXW+qewuz8a/8S5Tb9A0bJBS8r0dYARoqsulCn76RPjRvYJkb4UJT8o
- UBShAKbF0bIusi+lHVd3/BRqc//AAAA
-X-Change-ID: 20250728-v3d-power-management-eebb2024dc96
+Message-Id: <20260116-v3d-power-management-v3-3-4e1874e81dd6@igalia.com>
+References: <20260116-v3d-power-management-v3-0-4e1874e81dd6@igalia.com>
+In-Reply-To: <20260116-v3d-power-management-v3-0-4e1874e81dd6@igalia.com>
 To: Michael Turquette <mturquette@baylibre.com>, 
  Stephen Boyd <sboyd@kernel.org>, Nicolas Saenz Julienne <nsaenz@kernel.org>, 
  Florian Fainelli <florian.fainelli@broadcom.com>, 
@@ -61,102 +60,269 @@ Cc: linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
  Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
  kernel-dev@igalia.com, =?utf-8?q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3820; i=mcanal@igalia.com;
- h=from:subject:message-id; bh=7LO6dBysStjJCgGOxwLNnnvymrV1b0iyEoeH8+uq/HU=;
- b=owEBbQGS/pANAwAIAT/zDop2iPqqAcsmYgBpap1XGa785xzblDV26B8st9hr/i9zDrBoX3wgT
- b/N4WHsEkCJATMEAAEIAB0WIQT45F19ARZ3Bymmd9E/8w6Kdoj6qgUCaWqdVwAKCRA/8w6Kdoj6
- qsIfCACTw1ugyC8RJ61VNgnGoOTjZFRX4EEkp3B0G6ZuumCDGEHD955np+TUPNOFFxmNpZL8rqE
- UTqzZKRnJWzC3twgvonI2geHhx34TYNufK+Q/khzBmFFtiOGQ09kelxiKPdDvoDEEItk24SDMoA
- 2ci4k56418zrWjSKBOR/d86t0h51fyj7Jmsi89SVdH4T+pU5CAEYnaYG5c0bwSiQj8d0xXCZTND
- tie3GjV26cDjZJzvV6wLSeIXKzq2+PyOtbyUTpsiOer0RTqKTaRv0W2NpUC5vGWuC+ITtQvM0MP
- zJNIhLh2mkoyjvjcWp2P+2PPnqHLDQoodu3IgrfN5/4AVAtw
+X-Developer-Signature: v=1; a=openpgp-sha256; l=7372; i=mcanal@igalia.com;
+ h=from:subject:message-id; bh=pfqnnx/OSqbvy5G09PmDtvuyBbM46kezu4CheUA33hE=;
+ b=owEBbQGS/pANAwAIAT/zDop2iPqqAcsmYgBpap1dd/tPc92jlDywbfU6sYBCyzK9mRKCsNH+n
+ yjhKHFuz3iJATMEAAEIAB0WIQT45F19ARZ3Bymmd9E/8w6Kdoj6qgUCaWqdXQAKCRA/8w6Kdoj6
+ qntqB/9CMD9X27mhuYQ217ZcsIO9WzuUT6Jj2izXFy7uE8nIPAS7GbjPQHqKP5KBYHdVAH/yRma
+ 1h/qSIJDo5ZsrdrCzq4xO52Ch7ireGYfxl76uf2LO9IapjsWyYbtppTRmy206XX+NXhAErw23Lt
+ +xITs2+1qZdLd1hoRmfpGotkMmWZ+j2vQcSTMXj/5dJA/OanJc74LZolOEz9P7gEJnSQdGSpPEx
+ pMaEAIJpW8fJM9FWOdgJk9MMQGouPaHxNsdfoJW/3EhAQTJKoKhfONMTOr8r0/CjF/6DLvHNjWh
+ sWYhHq23o4PavaiVE0r78Fp1RsvNwQru4tNZofLbY+71b8Vp
 X-Developer-Key: i=mcanal@igalia.com; a=openpgp;
  fpr=F8E45D7D0116770729A677D13FF30E8A7688FAAA
 
-This series introduces Runtime Power Management (PM) support for the
-Raspberry Pi V3D GPU.
+Move all resource allocation operations before actually enabling the
+clock, as those operations don't require the GPU to be powered on.
 
-Currently, the V3D clock remains enabled for the entire system uptime,
-even when the GPU is idle. With the introduction of Runtime PM, the
-clock can now be disabled during idle periods. For example, with this
-series applied on a Raspberry Pi 5, if we check `vcgencmd measure_clock
-v3d`, we get:
+While here, use devm_reset_control_get_optional_exclusive() instead of
+open-code it.
 
-(idle)
-
-$ vcgencmd measure_clock v3d
-frequency(0)=0
-
-(running glmark2)
-
-$ vcgencmd measure_clock v3d
-frequency(0)=960016128
-
-One particular change was required in this version to ensure a
-meaningful reduction in idle power consumption: the V3D clock rate must
-be explicitly set to the minimum rate during suspend. As explained in
-an inline comment, this is needed as some firmware versions may not
-fully power off the clock when its state is set to off. This issue can
-be mitigated by setting the clock rate to 0 during suspend. For this
-same reason, PATCH 1/4 has been added in this version.
-
-Apart from that, the v3d patches are mostly identical to v2, but rebased
-on top of drm-misc-next.
-
-To ease testing in Raspberry Pi 4 and 5, I prepared a downstream branch
-backporting this series to rpi-6.18.y [1].
-
-[1] https://github.com/mairacanal/linux-rpi/tree/v3d/downstream/power-management-6.18
-
-Best regards,
-- Maíra
-
+Signed-off-by: Maíra Canal <mcanal@igalia.com>
+Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
 ---
-v1 -> v2: https://lore.kernel.org/r/20250728-v3d-power-management-v1-0-780f922b1048@igalia.com
+ drivers/gpu/drm/v3d/v3d_drv.c | 93 +++++++++++++++++++++----------------------
+ drivers/gpu/drm/v3d/v3d_drv.h |  3 +-
+ drivers/gpu/drm/v3d/v3d_gem.c | 14 +++++--
+ drivers/gpu/drm/v3d/v3d_irq.c | 15 +++----
+ 4 files changed, 64 insertions(+), 61 deletions(-)
 
-- [1/5] NEW PATCH: "clk: bcm: rpi: Add missing logs if firmware fails" (Stefan Wahren)
-- [2/5] Remove the "Fixes:" tag (Stefan Wahren)
-- [2/5] dev_err_ratelimited() instead of dev_err() (Stefan Wahren)
-- [2/5] Instead of logging the clock ID, use clk_hw_get_name(hw) to log the name (Stefan Wahren)
-- [2/5] Add a newline character at the end of the log message (Stefan Wahren)
-- [2/5] Use CLK_IS_CRITICAL for all clocks that can't be disabled (Maxime Ripard)
-- [3/5] NEW PATCH: "clk: bcm: rpi: Maximize V3D clock"
-- [4/5] Use devm_reset_control_get_optional_exclusive() (Philipp Zabel)
-- [4/5] Make sure that resource are cleaned in the inverse order of allocation (Philipp Zabel)
+diff --git a/drivers/gpu/drm/v3d/v3d_drv.c b/drivers/gpu/drm/v3d/v3d_drv.c
+index a11ca276061a8462977ed3d837ffcc96b2f444f6..cb12d17cce2bf9e49432e3d3dddef1afdc4d93a0 100644
+--- a/drivers/gpu/drm/v3d/v3d_drv.c
++++ b/drivers/gpu/drm/v3d/v3d_drv.c
+@@ -360,14 +360,50 @@ static int v3d_platform_drm_probe(struct platform_device *pdev)
+ 			return ret;
+ 	}
+ 
++	if (v3d->ver < V3D_GEN_41) {
++		ret = map_regs(v3d, &v3d->gca_regs, "gca");
++		if (ret)
++			return ret;
++	}
++
++	v3d->reset = devm_reset_control_get_optional_exclusive(dev, NULL);
++	if (IS_ERR(v3d->reset))
++		return dev_err_probe(dev, PTR_ERR(v3d->reset),
++				     "Failed to get reset control\n");
++
++	if (!v3d->reset) {
++		ret = map_regs(v3d, &v3d->bridge_regs, "bridge");
++		if (ret) {
++			dev_err(dev, "Failed to get bridge registers\n");
++			return ret;
++		}
++	}
++
+ 	v3d->clk = devm_clk_get_optional(dev, NULL);
+ 	if (IS_ERR(v3d->clk))
+ 		return dev_err_probe(dev, PTR_ERR(v3d->clk), "Failed to get V3D clock\n");
+ 
++	ret = v3d_irq_init(v3d);
++	if (ret)
++		return ret;
++
++	v3d_perfmon_init(v3d);
++
++	v3d->mmu_scratch = dma_alloc_wc(dev, 4096, &v3d->mmu_scratch_paddr,
++					GFP_KERNEL | __GFP_NOWARN | __GFP_ZERO);
++	if (!v3d->mmu_scratch) {
++		dev_err(dev, "Failed to allocate MMU scratch page\n");
++		return -ENOMEM;
++	}
++
++	ret = v3d_gem_allocate(drm);
++	if (ret)
++		goto dma_free;
++
+ 	ret = clk_prepare_enable(v3d->clk);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "Couldn't enable the V3D clock\n");
+-		return ret;
++		goto gem_destroy;
+ 	}
+ 
+ 	v3d_idle_sms(v3d);
+@@ -396,45 +432,8 @@ static int v3d_platform_drm_probe(struct platform_device *pdev)
+ 	ident3 = V3D_READ(V3D_HUB_IDENT3);
+ 	v3d->rev = V3D_GET_FIELD(ident3, V3D_HUB_IDENT3_IPREV);
+ 
+-	v3d_perfmon_init(v3d);
+-
+-	v3d->reset = devm_reset_control_get_exclusive(dev, NULL);
+-	if (IS_ERR(v3d->reset)) {
+-		ret = PTR_ERR(v3d->reset);
+-
+-		if (ret == -EPROBE_DEFER)
+-			goto clk_disable;
+-
+-		v3d->reset = NULL;
+-		ret = map_regs(v3d, &v3d->bridge_regs, "bridge");
+-		if (ret) {
+-			dev_err(dev,
+-				"Failed to get reset control or bridge regs\n");
+-			goto clk_disable;
+-		}
+-	}
+-
+-	if (v3d->ver < V3D_GEN_41) {
+-		ret = map_regs(v3d, &v3d->gca_regs, "gca");
+-		if (ret)
+-			goto clk_disable;
+-	}
+-
+-	v3d->mmu_scratch = dma_alloc_wc(dev, 4096, &v3d->mmu_scratch_paddr,
+-					GFP_KERNEL | __GFP_NOWARN | __GFP_ZERO);
+-	if (!v3d->mmu_scratch) {
+-		dev_err(dev, "Failed to allocate MMU scratch page\n");
+-		ret = -ENOMEM;
+-		goto clk_disable;
+-	}
+-
+-	ret = v3d_gem_init(drm);
+-	if (ret)
+-		goto dma_free;
+-
+-	ret = v3d_irq_init(v3d);
+-	if (ret)
+-		goto gem_destroy;
++	v3d_gem_init(drm);
++	v3d_irq_enable(v3d);
+ 
+ 	ret = drm_dev_register(drm, 0);
+ 	if (ret)
+@@ -450,12 +449,13 @@ static int v3d_platform_drm_probe(struct platform_device *pdev)
+ 	drm_dev_unregister(drm);
+ irq_disable:
+ 	v3d_irq_disable(v3d);
++clk_disable:
++	v3d_power_off_sms(v3d);
++	clk_disable_unprepare(v3d->clk);
+ gem_destroy:
+ 	v3d_gem_destroy(drm);
+ dma_free:
+ 	dma_free_wc(dev, 4096, v3d->mmu_scratch, v3d->mmu_scratch_paddr);
+-clk_disable:
+-	clk_disable_unprepare(v3d->clk);
+ 	return ret;
+ }
+ 
+@@ -469,14 +469,13 @@ static void v3d_platform_drm_remove(struct platform_device *pdev)
+ 
+ 	drm_dev_unregister(drm);
+ 
+-	v3d_gem_destroy(drm);
+-
+-	dma_free_wc(v3d->drm.dev, 4096, v3d->mmu_scratch,
+-		    v3d->mmu_scratch_paddr);
+-
+ 	v3d_power_off_sms(v3d);
+ 
+ 	clk_disable_unprepare(v3d->clk);
++
++	v3d_gem_destroy(drm);
++
++	dma_free_wc(dev, 4096, v3d->mmu_scratch, v3d->mmu_scratch_paddr);
+ }
+ 
+ static struct platform_driver v3d_platform_driver = {
+diff --git a/drivers/gpu/drm/v3d/v3d_drv.h b/drivers/gpu/drm/v3d/v3d_drv.h
+index 99a39329bb85b10aec990ea1c7ad2a780a6dad07..738a09351c306db33078db1e053cd133d55d2138 100644
+--- a/drivers/gpu/drm/v3d/v3d_drv.h
++++ b/drivers/gpu/drm/v3d/v3d_drv.h
+@@ -565,7 +565,8 @@ struct dma_fence *v3d_fence_create(struct v3d_dev *v3d, enum v3d_queue q);
+ 
+ /* v3d_gem.c */
+ extern bool super_pages;
+-int v3d_gem_init(struct drm_device *dev);
++int v3d_gem_allocate(struct drm_device *dev);
++void v3d_gem_init(struct drm_device *dev);
+ void v3d_gem_destroy(struct drm_device *dev);
+ void v3d_reset_sms(struct v3d_dev *v3d);
+ void v3d_reset(struct v3d_dev *v3d);
+diff --git a/drivers/gpu/drm/v3d/v3d_gem.c b/drivers/gpu/drm/v3d/v3d_gem.c
+index 697b0b3ca92cf8f4cc7910a2a7b01ea43c79fe11..1f532030c3883257810877c75da38636bf25f58e 100644
+--- a/drivers/gpu/drm/v3d/v3d_gem.c
++++ b/drivers/gpu/drm/v3d/v3d_gem.c
+@@ -278,7 +278,7 @@ v3d_huge_mnt_init(struct v3d_dev *v3d)
+ }
+ 
+ int
+-v3d_gem_init(struct drm_device *dev)
++v3d_gem_allocate(struct drm_device *dev)
+ {
+ 	struct v3d_dev *v3d = to_v3d_dev(dev);
+ 	u32 pt_size = 4096 * 1024;
+@@ -325,9 +325,6 @@ v3d_gem_init(struct drm_device *dev)
+ 		return -ENOMEM;
+ 	}
+ 
+-	v3d_init_hw_state(v3d);
+-	v3d_mmu_set_page_table(v3d);
+-
+ 	v3d_huge_mnt_init(v3d);
+ 
+ 	ret = v3d_sched_init(v3d);
+@@ -341,6 +338,15 @@ v3d_gem_init(struct drm_device *dev)
+ 	return 0;
+ }
+ 
++void
++v3d_gem_init(struct drm_device *dev)
++{
++	struct v3d_dev *v3d = to_v3d_dev(dev);
++
++	v3d_init_hw_state(v3d);
++	v3d_mmu_set_page_table(v3d);
++}
++
+ void
+ v3d_gem_destroy(struct drm_device *dev)
+ {
+diff --git a/drivers/gpu/drm/v3d/v3d_irq.c b/drivers/gpu/drm/v3d/v3d_irq.c
+index b55880fd6c508bd47a27c15db3fd8d21ded2dbd1..b901d416c9d6145f7b162cdeadc40e67e75fdffb 100644
+--- a/drivers/gpu/drm/v3d/v3d_irq.c
++++ b/drivers/gpu/drm/v3d/v3d_irq.c
+@@ -248,17 +248,10 @@ v3d_hub_irq(int irq, void *arg)
+ int
+ v3d_irq_init(struct v3d_dev *v3d)
+ {
+-	int irq, ret, core;
++	int irq, ret;
+ 
+ 	INIT_WORK(&v3d->overflow_mem_work, v3d_overflow_mem_work);
+ 
+-	/* Clear any pending interrupts someone might have left around
+-	 * for us.
+-	 */
+-	for (core = 0; core < v3d->cores; core++)
+-		V3D_CORE_WRITE(core, V3D_CTL_INT_CLR, V3D_CORE_IRQS(v3d->ver));
+-	V3D_WRITE(V3D_HUB_INT_CLR, V3D_HUB_IRQS(v3d->ver));
+-
+ 	irq = platform_get_irq_optional(v3d_to_pdev(v3d), 1);
+ 	if (irq == -EPROBE_DEFER)
+ 		return irq;
+@@ -296,7 +289,6 @@ v3d_irq_init(struct v3d_dev *v3d)
+ 			goto fail;
+ 	}
+ 
+-	v3d_irq_enable(v3d);
+ 	return 0;
+ 
+ fail:
+@@ -310,6 +302,11 @@ v3d_irq_enable(struct v3d_dev *v3d)
+ {
+ 	int core;
+ 
++	/* Clear any pending interrupts someone might have left around for us. */
++	for (core = 0; core < v3d->cores; core++)
++		V3D_CORE_WRITE(core, V3D_CTL_INT_CLR, V3D_CORE_IRQS(v3d->ver));
++	V3D_WRITE(V3D_HUB_INT_CLR, V3D_HUB_IRQS(v3d->ver));
++
+ 	/* Enable our set of interrupts, masking out any others. */
+ 	for (core = 0; core < v3d->cores; core++) {
+ 		V3D_CORE_WRITE(core, V3D_CTL_INT_MSK_SET, ~V3D_CORE_IRQS(v3d->ver));
 
-v2 -> v3: https://lore.kernel.org/r/20250731-v3d-power-management-v2-0-032d56b01964@igalia.com
-
-- Rebased on top of drm-misc-next
-- Patches "[PATCH v2 1/5] clk: bcm: rpi: Add missing logs if firmware
-  fails", "[PATCH v2 2/5] clk: bcm: rpi: Turn firmware clock on/off when
-  preparing/unpreparing", and "[PATCH v2 3/5] clk: bcm: rpi: Maximize
-  V3D clock" were applied to clk-next.
-- [1/4] NEW PATCH: "clk: bcm: rpi: Let V3D consumers manage clock rate"
-- [2/4] NEW PATCH: "clk: bcm: rpi: Mark PIXEL_CLK and HEVC_CLK as CLK_IGNORE_UNUSED"
-- [3/4] Added Philipp's R-b (Philipp Zabel)
-- [4/4] s/drm_err/DRM_ERROR
-- [4/4] Set the clock rate to 0 during suspend and to the maximum rate
-  during resume
-
----
-Maíra Canal (4):
-      clk: bcm: rpi: Let V3D consumers manage clock rate
-      clk: bcm: rpi: Mark PIXEL_CLK and HEVC_CLK as CLK_IGNORE_UNUSED
-      drm/v3d: Allocate all resources before enabling the clock
-      drm/v3d: Introduce Runtime Power Management
-
- drivers/clk/bcm/clk-raspberrypi.c |   9 +--
- drivers/gpu/drm/v3d/Makefile      |   3 +-
- drivers/gpu/drm/v3d/v3d_debugfs.c |  23 +++++-
- drivers/gpu/drm/v3d/v3d_drv.c     | 163 ++++++++++++++++++--------------------
- drivers/gpu/drm/v3d/v3d_drv.h     |  23 +++++-
- drivers/gpu/drm/v3d/v3d_gem.c     |  21 ++++-
- drivers/gpu/drm/v3d/v3d_irq.c     |  15 ++--
- drivers/gpu/drm/v3d/v3d_mmu.c     |  12 ++-
- drivers/gpu/drm/v3d/v3d_power.c   |  96 ++++++++++++++++++++++
- drivers/gpu/drm/v3d/v3d_submit.c  |  19 ++++-
- 10 files changed, 270 insertions(+), 114 deletions(-)
----
-base-commit: 26b4309a3ab82a0697751cde52eb336c29c19035
-change-id: 20250728-v3d-power-management-eebb2024dc96
+-- 
+2.52.0
 
