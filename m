@@ -1,91 +1,91 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 968B423A9B0
-	for <linux-clk@vger.kernel.org>; Fri, 16 Jan 2026 15:45:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72D9F33C1A6
+	for <linux-clk@vger.kernel.org>; Fri, 16 Jan 2026 15:53:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768578338; cv=none; b=JdQO5u2G38rsObAoZ4d/sYUfTNbCHe6Z3fSjRt5iU2HnFVRcWEcLsJOhBpY++IWqu75G1aTEe6bpx4BHmY9kJ0+r8OnBzmSgRQ1IKab1nSr9akkrHBGTI2z6Okiel2rr/E4JgSGUk0hMtUVj18Wt7ii85kRE06vjVkj/LncdF9w=
+	t=1768578802; cv=none; b=GQc9GB/+WKgidhimbqj1GkxgKdb9JJOS7EiplK7Kqnl5lUrnN9gK9Doa26QBItY8lLTGHTv5z6VIntfx7McTGdUFNXVfSbru3Yz9+JUbKems/O7Ov/t+oJW9p1IBx8YdNhPWY8HEMlnEkARMV48trt0Cs7EayI6gfJ9PMj+82Fw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768578338; c=relaxed/simple;
-	bh=m8V7jwBijQtS08YYEltYUnPoXXqq8ew1kNntGy5zBzs=;
+	s=arc-20240116; t=1768578802; c=relaxed/simple;
+	bh=tUIzXBRcsa82Ow3akZ9yIu7FKEN2cx3y9Mw0/MZvzz8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dKXPUoczzFdX1h6Ztw8dJ4Tr2tL8msMV0HbGkNUvEPfkfuENVTszCFzYtBdbBTgUZm/qqKfp1NSkeKdcHN3knT7ZpoRSgeQplDvC0L+teKIngQd+7D+xJjyEz1q+8Z8WlM6fueHsyBX8fslPDy0f6yVWQxAg+wRzzoDOmfgEh2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UP1lxwX2; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=HUkM8t6h; arc=none smtp.client-ip=170.10.129.124
+	 Content-Type:Content-Disposition:In-Reply-To; b=iyZcYC+Z5XgljCaEeQjQB6vMCIW+XZOWKdPwLnEn+pcz0nxAWybFv3g9Sgl1+yP/C744oNPvhWZojTDF6KIMg4NKKn7bHu75ohf/WlMqr4FNhNE3DNgGGqQ6vsYbDrcNT34L4FnmYI9Bth2BwB/2q+Ea4xhZB7mZJulSGUo+cxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eLOpIHnQ; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=P2/u0iU9; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UP1lxwX2";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="HUkM8t6h"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eLOpIHnQ";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="P2/u0iU9"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1768578335;
+	s=mimecast20190719; t=1768578800;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=XSB+cxcaZrZ1NetwzSMbH46eQqHmMnkR9IPEQXFKA1c=;
-	b=UP1lxwX2V3XiDvqG6Mhcm7BdzewW+94vF3Xsfzhh1EzelZjmlaHgsbYWzTTlRCYFBSAvHH
-	z0y5Hn7GWrZKivcVAgj/aX/seqRT9TDE7AaRLP/7aBXs79OopW98hZubpNah6PS/k1XTWv
-	iYd0ZmHy0Bpib3lOYp8gq5q7/q5ReQw=
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
- [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=WU6nLWwBmoRVgJX2Z7FpKifeDQ1VOBSEjGQogfq6V+M=;
+	b=eLOpIHnQjlSh2W/SSN2OuSIRmkVb5J2+421sb/Hl7V4HBPjULXkLMYrT43rSNiSvX8Rj7B
+	h3jMsvP8bvnGAETktsJtVUK0pbL1WgthuftIBxWfieXE+rWm2HY92L7snxxq4rXzXyU6m7
+	/miYq3pu+YR+1mtzjmDIrAPUwLacr9k=
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
+ [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-231-RaKx8PQ3NCCgXlkJ3furzg-1; Fri, 16 Jan 2026 10:45:34 -0500
-X-MC-Unique: RaKx8PQ3NCCgXlkJ3furzg-1
-X-Mimecast-MFC-AGG-ID: RaKx8PQ3NCCgXlkJ3furzg_1768578334
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-8c52c921886so301230985a.2
-        for <linux-clk@vger.kernel.org>; Fri, 16 Jan 2026 07:45:34 -0800 (PST)
+ us-mta-38-y2iYngcYNSKEF06qo41jow-1; Fri, 16 Jan 2026 10:53:19 -0500
+X-MC-Unique: y2iYngcYNSKEF06qo41jow-1
+X-Mimecast-MFC-AGG-ID: y2iYngcYNSKEF06qo41jow_1768578798
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-8c6a291e7faso584648085a.3
+        for <linux-clk@vger.kernel.org>; Fri, 16 Jan 2026 07:53:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1768578334; x=1769183134; darn=vger.kernel.org;
+        d=redhat.com; s=google; t=1768578798; x=1769183598; darn=vger.kernel.org;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=XSB+cxcaZrZ1NetwzSMbH46eQqHmMnkR9IPEQXFKA1c=;
-        b=HUkM8t6hkZcKo00vbldH93Aq3vMJZIwpPxnWlgkViJvl0qbrEMiF/81xauWRLBW44g
-         CgQ00yVg09BD7t7U8x/TCHc3GaG+GYQqLFDegwoGb/vjvjWrfFQgpQnA/vZVtXZ+4jfD
-         /DkwlzDMhdvkAfjwygEtju9jhR1fAkuxRhBentJVWrN6fSPUqoEOBK8NRzncQDa2kqQz
-         ztQwac+fiyl1olH6Au1XjoPiVQZqLshS2Tl3TShJgQPLzA5Ulfnc8FZSC2bchdmLl30u
-         8u0R0Fma0elruWdrZoPxRT83g8u8mXdFUqSUFf1lFCdkNoGwHvYQO9MbxJDvFqR+K+Vb
-         AFmA==
+        bh=WU6nLWwBmoRVgJX2Z7FpKifeDQ1VOBSEjGQogfq6V+M=;
+        b=P2/u0iU93WQ6GTcz4EID7JzLZrnHvkl0Wa6qKZeXO2HRmp9bGk/Ez0yOnlF6knzQBk
+         M1yuNgVDIICnxsG6flZcaYhVeFT+vPCK6ONXtvYmkW1fA7LhUEfhDY7eFGfop+xkBrgH
+         MWLiipifB8ZbKqumWmtEOY4wSFCS8CYnXZ23a+QXjv/A7LhO9vTBJDCcUiYSy42kqiAL
+         NexSCMG8goNcpPb0G99MlikpUAooj7HBXkyAdgxYcG648s6TDjxxn4MmC1WOxySmxyuA
+         7lPIIt4HIV7Jk91sz8Uz65VRwsje6YIVIK6K5/L0nYiSYxxBc8E5+6TAS+F5ouk6kUVs
+         p5Uw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768578334; x=1769183134;
+        d=1e100.net; s=20230601; t=1768578798; x=1769183598;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=XSB+cxcaZrZ1NetwzSMbH46eQqHmMnkR9IPEQXFKA1c=;
-        b=hp/XyJazWTvNLHQIJjyxSbeFkfLCvu5sjNQ9DHcPOktBqDL19SUh4Nziqi8mt1JCEP
-         DNBI8eK4EkdLxAxNuoZlv2ncar91VQYGq4GinnFVf+hfRX846vZVDygDUGfKRb6XCukN
-         wmDcJhSt1yp9aSzgHlTCgyw1chTts7TvoDJLsUJ2I3Y9chDmCOByd9yXJO4Ml6uPCzrv
-         77TQAhhjHPGaRO7WuK5ggDzJtPHzGYxUVMlfYL5/aEUz8BAg7na8WKcPLIPxQzqIqFxF
-         4gphCcDAC053lHSCbTk7TdTlPEKaxG+0Ep8640BPBTPr2p+1zme4bTm2a3HKsegFxBXV
-         SfvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVrm7WnuMG2T95+RS0y+MCnxfqhXstF/9qpXvqNVlVbx2QYhiwnp//8WRbSasR4kUlO1rOX+w6NcmY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCL9bZIEXePzLH0i2JCXJCCL1y2bFWS2csL/nVmWuxpV/j8oex
-	G2UGBDO+okHN6E1n+u8q6ynaWJq/Aw6YEJop8zBLGokiSa1DZZlsKGXEAaOQSjvb0p0HvgDcEUp
-	tPiYoPkTEJIwmK/Sq1kITFU8xTV9+P1QhXPlnlYyjL17HAFGSOn5zPHkH2KxTUQ==
-X-Gm-Gg: AY/fxX45ZNG6DGRwiBXw5wWIe+3frbE0zmwKgXzqTHJ9R5qAloGWu3LCmWRO/32kx9B
-	o0+G3Qk57OGb16Xom6a2FC9bQAcbfGbbba4Ffi2zqc0KSLhhMbv1K7oXotgEZd8mtoRD43+U/Tj
-	pc+1jJ12IofGJDdwci7WKLvyo6E0Z/KDsZoE1kVRZt4rpjM0Cq4xitwN6wwIEEgk5b4z4WZAwVK
-	P+PE2iz6+PEGeexKd8upxAS1LZix+/339t+RBmX12qp02DR77s/X743k0jpg0G7F30KWpeSXhCh
-	vBdB1I5t2zOlqfeiejRjpabJd1G/vv6QDkIZnOXx3X9jV5OJvUd7IXDaRifVVU861FWLSyTao8Z
-	VDi9uUE1ncAEuIesEFHiEREaxd9rn2PPJdh7ztbXkn7Lp
-X-Received: by 2002:a05:620a:45a8:b0:88f:e620:21cd with SMTP id af79cd13be357-8c6a67b093emr447863485a.62.1768578333877;
-        Fri, 16 Jan 2026 07:45:33 -0800 (PST)
-X-Received: by 2002:a05:620a:45a8:b0:88f:e620:21cd with SMTP id af79cd13be357-8c6a67b093emr447857785a.62.1768578333307;
-        Fri, 16 Jan 2026 07:45:33 -0800 (PST)
+        bh=WU6nLWwBmoRVgJX2Z7FpKifeDQ1VOBSEjGQogfq6V+M=;
+        b=kKnJao66HMQO0dJff52Gk+y7jacXm55F8cWr3bBNppcDxpe1jp10g73nsYWnA3kaJw
+         Awrpyp0VvlrIJw1hAK6V8BU/54/XdnEQzYW7wSbOEjv6Pe9axEMf+aKspx0+RtCEuj4h
+         5wk3FxAIIMvvjYNV++U/NX19bxVHuzAyFdsHMvR0awIfoPerOcTUgXAKjUtz854iHQwc
+         +rzA4b8xPvAMfUdObxwPJpiwSDbNlLuRmp4vupezUizh+0hDHN9almT6PsAEETINwHxH
+         pfA8282iYsNvH0O/kySxAq3JxW55K94UIq67/P3rU/xRVRf0h2BqEoB0OgiWV6b8HaTf
+         eO6g==
+X-Forwarded-Encrypted: i=1; AJvYcCWlwdEynjQyP38PVUZDnN2uNULnVXmbKnVtd9VGNgTC3WmJkWP7rQTQEXAujzBK0vgWsymhvfag7H0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9I2RH0fs2saDX4lM8Pl9DxPod33bhgO7miraV8BJNzWNeoHqb
+	pi3xirZjeDADR9Aexl2hYlpETqUKsTPzpyVFiMM9wBYZRbrdpEFdaoFRF5kdXzdxBmT3FgKP9dC
+	vPPie3yf5CBAJSRh7kkjRdqF5Nf48AfUB8v4m4+h7ROkvYpsMA0CRkDWYuttGB9ZRYPcLTQ==
+X-Gm-Gg: AY/fxX7+z+YuIwMIs8gZ7zw8GBZ6W1dFfuzKia5XDMMxuzLT3KM1POxsVe918ev9JrX
+	bliNn2jHLu5uA+GyO7zXgya6AyEcTz9k7y2dvbTdsrpbluPpVgZO9NGh1F/pCy6SHbWgWxK1bfi
+	4sZTG0OwOc3/mdyr1M+s7wU8vyesMUSMjWJE1z+ek/Mr7Cn27lCy4Hiw0/xoZ+ImjnbXQGGbOYD
+	YBqdN1Hz7dKyXiJCtG16kcQa9MBziOHyTI+f57akvPnfi1XaJfqXa0/h0+h8sHYMAUs3F3DO5KL
+	HccbSBjTleT0vX1nNYo3hbF/nAX5faKwIS3uDYKtKAY0sbigb4Fh/jAbMiBIlBh+OHnBS1uParG
+	xwNehN68nDBxEmyxq11UP+tcmLe3BaEI6Uu9aWjUphPFI
+X-Received: by 2002:a05:620a:1a89:b0:8bb:a037:fd8f with SMTP id af79cd13be357-8c6a68155ccmr452317485a.0.1768578798496;
+        Fri, 16 Jan 2026 07:53:18 -0800 (PST)
+X-Received: by 2002:a05:620a:1a89:b0:8bb:a037:fd8f with SMTP id af79cd13be357-8c6a68155ccmr452314785a.0.1768578798104;
+        Fri, 16 Jan 2026 07:53:18 -0800 (PST)
 Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8942e6d8640sm25187086d6.50.2026.01.16.07.45.32
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8c6a71d8314sm256755585a.24.2026.01.16.07.53.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Jan 2026 07:45:32 -0800 (PST)
-Date: Fri, 16 Jan 2026 10:45:31 -0500
+        Fri, 16 Jan 2026 07:53:17 -0800 (PST)
+Date: Fri, 16 Jan 2026 10:53:16 -0500
 From: Brian Masney <bmasney@redhat.com>
 To: Haoxiang Li <lihaoxiang@isrc.iscas.ac.cn>
 Cc: mturquette@baylibre.com, sboyd@kernel.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 6/7] clk: st: clkgen-pll: Remove redundant kfree() in
- clkgen_c32_pll_setup()
-Message-ID: <aWpdG-wPDbe07yPu@redhat.com>
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH 7/7] clk: st: clkgen-pll: Add clk_unregister for odf_clk
+ in clkgen_c32_pll_setup()
+Message-ID: <aWpe7MWiJlduga23@redhat.com>
 References: <20260116113847.1827694-1-lihaoxiang@isrc.iscas.ac.cn>
- <20260116113847.1827694-7-lihaoxiang@isrc.iscas.ac.cn>
+ <20260116113847.1827694-8-lihaoxiang@isrc.iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -94,19 +94,76 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260116113847.1827694-7-lihaoxiang@isrc.iscas.ac.cn>
+In-Reply-To: <20260116113847.1827694-8-lihaoxiang@isrc.iscas.ac.cn>
 User-Agent: Mutt/2.2.14 (2025-02-20)
 
-On Fri, Jan 16, 2026 at 07:38:46PM +0800, Haoxiang Li wrote:
-> In clkgen_c32_pll_setup(), pll_name is actually pll_clk -> core->name.
-> This variable will be released in clk_unregister() -> __clk_release()
-> if some error occurs. Thus kfree(pll_name) will cause a double free.
-> Remove this redundant kfree().
+Hi Haoxiang,
+
+On Fri, Jan 16, 2026 at 07:38:47PM +0800, Haoxiang Li wrote:
+> In clkgen_c32_pll_setup(), clkgen_odf_register() allocated
+> clk_gate and clk_divider memory and registered a clk. Add
+> clk_unregister() and kfree() to release the memory if
+> error occurs. Initialize odf to zero for safe.
 > 
+> Fixes: b9b8e614b580 ("clk: st: Support for PLLs inside ClockGenA(s)")
+> Cc: stable@vger.kernel.org
 > Signed-off-by: Haoxiang Li <lihaoxiang@isrc.iscas.ac.cn>
+> ---
+>  drivers/clk/st/clkgen-pll.c | 16 +++++++++++++---
+>  1 file changed, 13 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/clk/st/clkgen-pll.c b/drivers/clk/st/clkgen-pll.c
+> index 89f0454fa72e..3fc0af4b77c6 100644
+> --- a/drivers/clk/st/clkgen-pll.c
+> +++ b/drivers/clk/st/clkgen-pll.c
+> @@ -761,10 +761,12 @@ static void __init clkgen_c32_pll_setup(struct device_node *np,
+>  	struct clk *pll_clk;
+>  	const char *parent_name, *pll_name;
+>  	void __iomem *pll_base;
+> -	int num_odfs, odf;
+> +	int num_odfs, odf = 0;
+>  	struct clk_onecell_data *clk_data;
+>  	unsigned long pll_flags = 0;
+>  	struct clkgen_pll *pll;
+> +	struct clk_gate *gate;
+> +	struct clk_divider *div;
+>  
+>  	parent_name = of_clk_get_parent_name(np, 0);
+>  	if (!parent_name)
+> @@ -808,7 +810,7 @@ static void __init clkgen_c32_pll_setup(struct device_node *np,
+>  			if (of_property_read_string_index(np,
+>  							  "clock-output-names",
+>  							  odf, &clk_name))
+> -				return;
+> +				goto err_odf_unregister;
+>  
+>  			of_clk_detect_critical(np, odf, &odf_flags);
+>  		}
+> @@ -816,8 +818,8 @@ static void __init clkgen_c32_pll_setup(struct device_node *np,
+>  		odf_clk = clkgen_odf_register(pll_name, pll_base, datac->data,
+>  				odf_flags, odf, &clkgena_c32_odf_lock,
+>  				clk_name);
+> -			goto err;
+>  		if (IS_ERR(odf_clk))
+> +			goto err_odf_unregister;
+>  
+>  		clk_data->clks[odf] = odf_clk;
+>  	}
+> @@ -825,6 +827,14 @@ static void __init clkgen_c32_pll_setup(struct device_node *np,
+>  	of_clk_add_provider(np, of_clk_src_onecell_get, clk_data);
+>  	return;
+>  
+> +err_odf_unregister:
+> +	while (--odf >= 0) {
 
-A fixes tag is definitely appropriate here.
+I think the prefix -- is not appropriate here. If clkgen_odf_register()
+fails for the first odf (ie odf=0), then when we jump to
+err_odf_unregister, odf will still be set to 0, --odf will set it to -1,
+the while loop will not run, and won't free anything.
 
-Fixes: b9b8e614b580 ("clk: st: Support for PLLs inside ClockGenA(s)")
-Reviewed-by: Brian Masney <bmasney@redhat.com>
+What do you think about using the postfix operator instead?
+
+	while (odf-- >= 0)
+
+Brian
 
