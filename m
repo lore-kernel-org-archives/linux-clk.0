@@ -1,38 +1,38 @@
 Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 915313A1D1D;
-	Fri, 16 Jan 2026 20:07:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8958346A05;
+	Fri, 16 Jan 2026 20:07:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768594050; cv=none; b=eY0UIIOuON6dUEBJqBVs68ktRH/XBvYSAJwoA8jCRdoiLdzdBIopnttYyh4Q3TYukhIk3L4MByB9cdKsIg2e7YGXQ2uvXHqDpJ0vWsNwwBAQHs29l/0l0qVFATp63gVek7Agz8Sy4SrgMZ2jxl9F25Oi+I/V7tAcc0ipN1WhvX4=
+	t=1768594051; cv=none; b=plIKwWs/UAKRJLPO2CcaSUaojIz3XPdhT02mFmfDYd7GfHme6OBZ4VSFwbnL7ysxm8zX/E2JscmmW8NH5mI+L/lNXyru4a0y8DUDf8ccrreHI2k9tStG2nMNOQTB6EZKWQ6lH6yKfspav8+BEUNyj83iX5tgtH8nHpoqog2+5vo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768594050; c=relaxed/simple;
-	bh=Aw/tGbpDi+/qWY26Y9sF33D9NnFYEfAjwfpj8Zdq7M8=;
+	s=arc-20240116; t=1768594051; c=relaxed/simple;
+	bh=BLTRwtz3YBs2pngVg5PWFf38tW2Rp+sMMO/EaDd4FZk=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bvouabeNkDkJ7WS9NPfO1EWoslEZFIaT07nPq+kHPI3gyuKNrW73S8zd+cq+AGfc/KdYfzpDjJCJpS3K8kD13Riqjf3dAbBTE7l1WLvs0sm6GVjPImwgzVRPGbSsXrcd2UM4p7GuI8sKe8gDF1PSGmSoC9e4dtm3FuDjggY96Bs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=kGBB8syi; arc=none smtp.client-ip=68.232.153.233
+	 MIME-Version:Content-Type; b=Y7lAcheINmacdvWWriizyGvmQWCUH2ca6LMqrsfuJGPNbjQdDMqjVKuX47TSqNUGR98CT4AsIKq53CxNStFC9eLUv9XCOTcvDqDpPjXg3MdzHDFTBTA8aPe0kkLDeniUeo4Qqp/kUIDKkzNakxpxiRemLtQJopUakJUtwxR3Tss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=zQYYf40y; arc=none smtp.client-ip=68.232.153.233
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="kGBB8syi"
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="zQYYf40y"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1768594046; x=1800130046;
+  t=1768594047; x=1800130047;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=Aw/tGbpDi+/qWY26Y9sF33D9NnFYEfAjwfpj8Zdq7M8=;
-  b=kGBB8syiA7Jkrg1bOZBPYnyLCi/In8xIDHad3jRcZJkrl28kWu9eIHzu
-   mY6FA1QcXQKwRzUcZ6HbSTLamz1w1YrdgOAVG/Ahn3X3MoG/QfKBGC+zx
-   bvLqu2NU+SbvruWU7kx7nhFpmlTH6mjlstGuICJK4/1/nnPA2XKCbbrDO
-   jnCHdzww4OqoqvVsyCbgObRt5h+kNM4g91CThi1azuOJsD0K5l+y7MuM5
-   N2jvC2T01ClZIXlr5KldnqWzE03czeYeDqQzHlaGoZu9dDJekXqI6o7gh
-   df2HLOTBLlxOuA7PkRKM6txRmsVuS1PvG9Q5hyFeQaUqL93/KKZUIpDC8
-   Q==;
+  bh=BLTRwtz3YBs2pngVg5PWFf38tW2Rp+sMMO/EaDd4FZk=;
+  b=zQYYf40yKw5S4PYSEMgxNYkx0fihho7UVVH4el82uK7+ZjqDg6KN1Lcy
+   226PpW64s7Qis6LqZfUK6A+f58Y+/qN7tqdAiIWKaVHdXz63r0k4ikFxP
+   9Av8VXYvHgUORoTdBBEuWH6Q3J3VKzYTDDRnoePV9Gdn6E3vHBMZ4m9yE
+   S0PF4exs5NuXjaqF/h+qGgLH7mZ8NCnoCK1mFVWVT5g8mlo+NQ9sE9/o/
+   JZfp9o6OZ7SNkxB/nQSrljD853GtFE9z9WLAXYbHwUD3wbrUCyjdgzsSp
+   7+DEKxWqyZyV7iwcfIaVHNdoaXr3javQKw4CP4+5Lh1ik8adRDiyxei00
+   g==;
 X-CSE-ConnectionGUID: OTooRcwrRNCxZBlF1StIPQ==
-X-CSE-MsgGUID: es4YwJhhRvuprFsOtjO9Cg==
+X-CSE-MsgGUID: RRO7qsQtQm61jURZdILAnw==
 X-IronPort-AV: E=Sophos;i="6.21,232,1763449200"; 
-   d="scan'208";a="59042231"
+   d="scan'208";a="59042233"
 X-Amp-Result: SKIPPED(no attachment in message)
 Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
   by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jan 2026 13:07:24 -0700
@@ -50,10 +50,11 @@ To: <mturquette@baylibre.com>, <sboyd@kernel.org>,
 	<alexander.sverdlin@gmail.com>, <varshini.rajendran@microchip.com>
 CC: <cristian.birsan@microchip.com>,
 	<balamanikandan.gunasundar@microchip.com>, <linux-clk@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v5 01/31] clk: at91: pmc: add macros for clk_parent_data
-Date: Fri, 16 Jan 2026 13:06:54 -0700
-Message-ID: <e89c803000d18109357f27bd17a86885652088dc.1768512290.git.ryan.wanner@microchip.com>
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>, "Ryan
+ Wanner" <Ryan.Wanner@microchip.com>
+Subject: [PATCH v5 02/31] clk: at91: pmc: Move macro to header file
+Date: Fri, 16 Jan 2026 13:06:55 -0700
+Message-ID: <ab320688cf0f527089254eeb242acbb87569c509.1768512290.git.ryan.wanner@microchip.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1768512290.git.ryan.wanner@microchip.com>
 References: <cover.1768512290.git.ryan.wanner@microchip.com>
@@ -66,36 +67,60 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+From: Ryan Wanner <Ryan.Wanner@microchip.com>
 
-Add helpers to set parent_data objects in platform specific drivers.
+Move this macro to the header file as it is used by more than one driver
+file.
 
-Signed-off-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-[ryan.wanner@microchip.com: enclose complex macro with parentheses.]
 Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
 ---
- drivers/clk/at91/pmc.h | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/clk/at91/pmc.h      | 3 +++
+ drivers/clk/at91/sama7d65.c | 3 ---
+ drivers/clk/at91/sama7g5.c  | 3 ---
+ 3 files changed, 3 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/clk/at91/pmc.h b/drivers/clk/at91/pmc.h
-index 5daa32c4cf25..1ac0f77a867a 100644
+index 1ac0f77a867a..63c028b7b54c 100644
 --- a/drivers/clk/at91/pmc.h
 +++ b/drivers/clk/at91/pmc.h
-@@ -15,6 +15,14 @@
+@@ -23,6 +23,9 @@
+ 	.hw = (h), .name = NULL, .fw_name = NULL, .index = -1, \
+ })
  
- #include <dt-bindings/clock/at91.h>
- 
-+#define AT91_CLK_PD_NAME(n) ((struct clk_parent_data){ \
-+	.hw = NULL, .name = (n), .fw_name = NULL, .index = -1, \
-+})
-+
-+#define AT91_CLK_PD_HW(h) ((struct clk_parent_data){ \
-+	.hw = (h), .name = NULL, .fw_name = NULL, .index = -1, \
-+})
++/* Used to create an array entry identifying a PLL by its components. */
++#define PLL_IDS_TO_ARR_ENTRY(_id, _comp) { PLL_ID_##_id, PLL_COMPID_##_comp}
 +
  extern spinlock_t pmc_pcr_lock;
  
  struct pmc_data {
+diff --git a/drivers/clk/at91/sama7d65.c b/drivers/clk/at91/sama7d65.c
+index 7dee2b160ffb..ec2ef1a0249a 100644
+--- a/drivers/clk/at91/sama7d65.c
++++ b/drivers/clk/at91/sama7d65.c
+@@ -432,9 +432,6 @@ static struct sama7d65_pll {
+ 	},
+ };
+ 
+-/* Used to create an array entry identifying a PLL by its components. */
+-#define PLL_IDS_TO_ARR_ENTRY(_id, _comp) { PLL_ID_##_id, PLL_COMPID_##_comp}
+-
+ /*
+  * Master clock (MCK[0..9]) description
+  * @n:			clock name
+diff --git a/drivers/clk/at91/sama7g5.c b/drivers/clk/at91/sama7g5.c
+index 1340c2b00619..713f5dfe7be2 100644
+--- a/drivers/clk/at91/sama7g5.c
++++ b/drivers/clk/at91/sama7g5.c
+@@ -343,9 +343,6 @@ static struct sama7g5_pll {
+ 	},
+ };
+ 
+-/* Used to create an array entry identifying a PLL by its components. */
+-#define PLL_IDS_TO_ARR_ENTRY(_id, _comp) { PLL_ID_##_id, PLL_COMPID_##_comp}
+-
+ /*
+  * Master clock (MCK[1..4]) description
+  * @n:			clock name
 -- 
 2.43.0
 
