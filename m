@@ -1,91 +1,100 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72D9F33C1A6
-	for <linux-clk@vger.kernel.org>; Fri, 16 Jan 2026 15:53:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5483236A036
+	for <linux-clk@vger.kernel.org>; Fri, 16 Jan 2026 16:31:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768578802; cv=none; b=GQc9GB/+WKgidhimbqj1GkxgKdb9JJOS7EiplK7Kqnl5lUrnN9gK9Doa26QBItY8lLTGHTv5z6VIntfx7McTGdUFNXVfSbru3Yz9+JUbKems/O7Ov/t+oJW9p1IBx8YdNhPWY8HEMlnEkARMV48trt0Cs7EayI6gfJ9PMj+82Fw=
+	t=1768581107; cv=none; b=B0+72KATIkaxDIfcLITbpZHiSe4xWnxZ+ixEmrJZapXrDDvpj6gUyAm/OVgf18zVJlywW9/8goFcoKdwpFoYmQ6Lzujnxd/iPpkFWkvrNRAGBITJWm4rErv0FCy4/FAXBRGio4MtjbiQgN+mrXe/qLPSPNOFTjLdwkEAqwIs2p4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768578802; c=relaxed/simple;
-	bh=tUIzXBRcsa82Ow3akZ9yIu7FKEN2cx3y9Mw0/MZvzz8=;
+	s=arc-20240116; t=1768581107; c=relaxed/simple;
+	bh=NIOTqi6bofcOy/4Bxp2+c3lrFeOrx1ZMerXKzoJftWc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iyZcYC+Z5XgljCaEeQjQB6vMCIW+XZOWKdPwLnEn+pcz0nxAWybFv3g9Sgl1+yP/C744oNPvhWZojTDF6KIMg4NKKn7bHu75ohf/WlMqr4FNhNE3DNgGGqQ6vsYbDrcNT34L4FnmYI9Bth2BwB/2q+Ea4xhZB7mZJulSGUo+cxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eLOpIHnQ; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=P2/u0iU9; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=TvIBbzEyQEBOIU5nUiWQlovxiYqhCEZj7RYTHS+gbvE2dtHpiP0eGfoB8xJgugBjPmYrDJ7DKDmN01FVxx9SjX7cs8EbAvsu/hRRQfHwMF8vWMx3WWr8EZSpMqcEWdcIO55USWST13kO6e0zODHOqYLN3fjR1708Fofamop47ns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=mJkbGys9; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=b8zKz8d5; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eLOpIHnQ";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="P2/u0iU9"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1768578800;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WU6nLWwBmoRVgJX2Z7FpKifeDQ1VOBSEjGQogfq6V+M=;
-	b=eLOpIHnQjlSh2W/SSN2OuSIRmkVb5J2+421sb/Hl7V4HBPjULXkLMYrT43rSNiSvX8Rj7B
-	h3jMsvP8bvnGAETktsJtVUK0pbL1WgthuftIBxWfieXE+rWm2HY92L7snxxq4rXzXyU6m7
-	/miYq3pu+YR+1mtzjmDIrAPUwLacr9k=
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
- [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-38-y2iYngcYNSKEF06qo41jow-1; Fri, 16 Jan 2026 10:53:19 -0500
-X-MC-Unique: y2iYngcYNSKEF06qo41jow-1
-X-Mimecast-MFC-AGG-ID: y2iYngcYNSKEF06qo41jow_1768578798
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-8c6a291e7faso584648085a.3
-        for <linux-clk@vger.kernel.org>; Fri, 16 Jan 2026 07:53:18 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="mJkbGys9";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="b8zKz8d5"
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 60GExHlv913268
+	for <linux-clk@vger.kernel.org>; Fri, 16 Jan 2026 16:31:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=v4bZnyJ/xEnoXZ7oHHzwCG7b
+	wxECqYG+sL+dq81P9rg=; b=mJkbGys95rXQrQDCexpDp4P6jNgFdnchI6T9bptH
+	UIFN2xn6/bOviLpyX0pn1FfHeWngCI95GrRf+U6mKNCTZKxWFxdBH/EBqrPrtxA/
+	Dci5qpDpFW5YFICxtuhE6aujoD6spNq3p46xnwS4vhNhhYF+pxs4nvKFbtjv1UBz
+	hTZKGu0P7uLJgYl/88KIInwLhSCEXC6az+iej+kJ/2nmUX12NxNLMn0M8jgMga6+
+	qe0GDalBOHRjewOa27rR8pFQAtEsEogaQxKQhF03L0MLiuz3WFwo0fJDweT9OIXS
+	Q/IyV2Tgr8r8y33Qkf7SdqUS6IAsxjcgA9knQUK04VIxWA==
+Received: from mail-ua1-f70.google.com (mail-ua1-f70.google.com [209.85.222.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4bqqjur9k7-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Fri, 16 Jan 2026 16:31:45 +0000 (GMT)
+Received: by mail-ua1-f70.google.com with SMTP id a1e0cc1a2514c-93f57cdeb11so2110610241.0
+        for <linux-clk@vger.kernel.org>; Fri, 16 Jan 2026 08:31:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1768578798; x=1769183598; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WU6nLWwBmoRVgJX2Z7FpKifeDQ1VOBSEjGQogfq6V+M=;
-        b=P2/u0iU93WQ6GTcz4EID7JzLZrnHvkl0Wa6qKZeXO2HRmp9bGk/Ez0yOnlF6knzQBk
-         M1yuNgVDIICnxsG6flZcaYhVeFT+vPCK6ONXtvYmkW1fA7LhUEfhDY7eFGfop+xkBrgH
-         MWLiipifB8ZbKqumWmtEOY4wSFCS8CYnXZ23a+QXjv/A7LhO9vTBJDCcUiYSy42kqiAL
-         NexSCMG8goNcpPb0G99MlikpUAooj7HBXkyAdgxYcG648s6TDjxxn4MmC1WOxySmxyuA
-         7lPIIt4HIV7Jk91sz8Uz65VRwsje6YIVIK6K5/L0nYiSYxxBc8E5+6TAS+F5ouk6kUVs
-         p5Uw==
+        d=oss.qualcomm.com; s=google; t=1768581104; x=1769185904; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=v4bZnyJ/xEnoXZ7oHHzwCG7bwxECqYG+sL+dq81P9rg=;
+        b=b8zKz8d5CYMrETA7pn7L6gQ8r3wCk77v8yuy3O0hF6l6Ha5jT01yNQRxUgm2YSWGms
+         j0KwarfnYyOkRbhvfidup5IKBbjT6t2LfGBzxNkuWs+5aJ2zqrkoJUy2cOzxyQOh37hJ
+         y5E4+GW6XRZwX0zEskQaWOlAQ5BxZjIjvwUqG/WsR0fGcnbXiBgOBxPDAjFpVcAuoWo2
+         MgXfBRO3k8YYGeZYDiv1yiyGJCzsU5/rxyykezhLwMoZaP9CrNvfs2aTl/ovWs1Q/BKI
+         3WaOce+V8/72t/9e5CGcvrmHmqPKX7Kh9WOFqjbOb3xRcI+HvRJvzQb7sWyDltmMGuZp
+         EXdQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768578798; x=1769183598;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=WU6nLWwBmoRVgJX2Z7FpKifeDQ1VOBSEjGQogfq6V+M=;
-        b=kKnJao66HMQO0dJff52Gk+y7jacXm55F8cWr3bBNppcDxpe1jp10g73nsYWnA3kaJw
-         Awrpyp0VvlrIJw1hAK6V8BU/54/XdnEQzYW7wSbOEjv6Pe9axEMf+aKspx0+RtCEuj4h
-         5wk3FxAIIMvvjYNV++U/NX19bxVHuzAyFdsHMvR0awIfoPerOcTUgXAKjUtz854iHQwc
-         +rzA4b8xPvAMfUdObxwPJpiwSDbNlLuRmp4vupezUizh+0hDHN9almT6PsAEETINwHxH
-         pfA8282iYsNvH0O/kySxAq3JxW55K94UIq67/P3rU/xRVRf0h2BqEoB0OgiWV6b8HaTf
-         eO6g==
-X-Forwarded-Encrypted: i=1; AJvYcCWlwdEynjQyP38PVUZDnN2uNULnVXmbKnVtd9VGNgTC3WmJkWP7rQTQEXAujzBK0vgWsymhvfag7H0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9I2RH0fs2saDX4lM8Pl9DxPod33bhgO7miraV8BJNzWNeoHqb
-	pi3xirZjeDADR9Aexl2hYlpETqUKsTPzpyVFiMM9wBYZRbrdpEFdaoFRF5kdXzdxBmT3FgKP9dC
-	vPPie3yf5CBAJSRh7kkjRdqF5Nf48AfUB8v4m4+h7ROkvYpsMA0CRkDWYuttGB9ZRYPcLTQ==
-X-Gm-Gg: AY/fxX7+z+YuIwMIs8gZ7zw8GBZ6W1dFfuzKia5XDMMxuzLT3KM1POxsVe918ev9JrX
-	bliNn2jHLu5uA+GyO7zXgya6AyEcTz9k7y2dvbTdsrpbluPpVgZO9NGh1F/pCy6SHbWgWxK1bfi
-	4sZTG0OwOc3/mdyr1M+s7wU8vyesMUSMjWJE1z+ek/Mr7Cn27lCy4Hiw0/xoZ+ImjnbXQGGbOYD
-	YBqdN1Hz7dKyXiJCtG16kcQa9MBziOHyTI+f57akvPnfi1XaJfqXa0/h0+h8sHYMAUs3F3DO5KL
-	HccbSBjTleT0vX1nNYo3hbF/nAX5faKwIS3uDYKtKAY0sbigb4Fh/jAbMiBIlBh+OHnBS1uParG
-	xwNehN68nDBxEmyxq11UP+tcmLe3BaEI6Uu9aWjUphPFI
-X-Received: by 2002:a05:620a:1a89:b0:8bb:a037:fd8f with SMTP id af79cd13be357-8c6a68155ccmr452317485a.0.1768578798496;
-        Fri, 16 Jan 2026 07:53:18 -0800 (PST)
-X-Received: by 2002:a05:620a:1a89:b0:8bb:a037:fd8f with SMTP id af79cd13be357-8c6a68155ccmr452314785a.0.1768578798104;
-        Fri, 16 Jan 2026 07:53:18 -0800 (PST)
-Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8c6a71d8314sm256755585a.24.2026.01.16.07.53.17
+        d=1e100.net; s=20230601; t=1768581104; x=1769185904;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=v4bZnyJ/xEnoXZ7oHHzwCG7bwxECqYG+sL+dq81P9rg=;
+        b=P5v/FpJhRZnOfO6hu1HYFzeECbdDcLOITZMyH/Q7tocgQO5NlAUqIBaTdpF13rEDUh
+         t4BTJ9HWPaaaqYCpllycLsw6gIhe1vNFdUUsOlPWwG09aORf9GLSQjVMtcyXYV0U6ULn
+         CxsuFGy9ZDos9V0NKL1/Flwn8yk8dumkxmUijnNZQjTulfw7D7EYb0Jt+fXMxhbvQcoe
+         0OU8VyLabdwCX24r9fgRZ4Qw+L3PxfOPMVEj8+n0wOKrWba59kU+x3MxxjFv9pQOx2bz
+         jdrRf4vYmFxbqJiru/zGFp91SjjALe+4e2vOFW647PAhjlBE8CSC28jVMmHEG5G1Pd3G
+         XUlw==
+X-Forwarded-Encrypted: i=1; AJvYcCVhFR0RtawTi1+PkZfbtxG5aYMA3JqUFA/YGIrMOMCz3xZPIeh4E7+KeqesJBM2l3+hDfeCWoUEBJ8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSf+bPshU5K5P+EjkrJX/RdYtRXBWhsC47AkXGoISAa/xeSbyA
+	CcsVUKReQ2u9F/xXvQ0xrEz8QOE+RCRrz/9uPNlXUOWZSuH9PszlroCJetJ5Sm2n3EqyA3k1Ib0
+	ft1x8YLAaEEFmlhFibVfhTPG5bbzkLIswRjDd5ec3T4xOmx+NjqRBBhU4KV+UrPx/B4VmJ0g=
+X-Gm-Gg: AY/fxX5r3UJk3RmFSwkL5xAesi1a9knMkdYEoqIK/rZ1IYWTxxFBc/uRrbD2GHzlSoo
+	zqFMv9RfMvLD9j4/mV0ul2GvnW9SQMK8YLK42g6mBFbzFky9pxWxByWQumwYDmccrnCWskXjhc4
+	t/oMsGx+KOlIuyeUWX9t5L+HdxHxo4W1TU4+9kuuDbk67+CU1S16lDAAWupOteh2mn8Ow9NSYaM
+	/GzWpbccpqHuADQwf/1+mymtLnX6zLQYwCDUldckRIxUYgOdKEZlrV1BxJq8twP0tYbQ//Nkg12
+	ner1kCttbjniOZwRm8pHVBeaN1Cmtzrd7TkSUkU0t58YPS/lkF7WDRwHSHSiE6d7P9807E9QDOy
+	6WxqKUeNAj9CLQrzzMzutfBE+MTZubv7Aj2rxoi1zN6YFKCzIore4n338MRyM2KddB3rDYFLPgE
+	uYeH6b8T1I9vMCznYsxDVn7mg=
+X-Received: by 2002:a05:6102:4429:b0:5de:93bb:c53f with SMTP id ada2fe7eead31-5f1a551fe82mr1128903137.25.1768581104334;
+        Fri, 16 Jan 2026 08:31:44 -0800 (PST)
+X-Received: by 2002:a05:6102:4429:b0:5de:93bb:c53f with SMTP id ada2fe7eead31-5f1a551fe82mr1128855137.25.1768581103913;
+        Fri, 16 Jan 2026 08:31:43 -0800 (PST)
+Received: from umbar.lan (2001-14ba-a073-af00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a073:af00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-38384d8dd5asm8375861fa.14.2026.01.16.08.31.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Jan 2026 07:53:17 -0800 (PST)
-Date: Fri, 16 Jan 2026 10:53:16 -0500
-From: Brian Masney <bmasney@redhat.com>
-To: Haoxiang Li <lihaoxiang@isrc.iscas.ac.cn>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH 7/7] clk: st: clkgen-pll: Add clk_unregister for odf_clk
- in clkgen_c32_pll_setup()
-Message-ID: <aWpe7MWiJlduga23@redhat.com>
-References: <20260116113847.1827694-1-lihaoxiang@isrc.iscas.ac.cn>
- <20260116113847.1827694-8-lihaoxiang@isrc.iscas.ac.cn>
+        Fri, 16 Jan 2026 08:31:43 -0800 (PST)
+Date: Fri, 16 Jan 2026 18:31:41 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Luca Weiss <luca.weiss@fairphone.com>
+Cc: Georgi Djakov <djakov@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/5] interconnect: Add devm_of_icc_get_by_index() as
+ exported API for users
+Message-ID: <ms355zigf5jkpgzqyq2dtqr6nl2kbcbv7engerqsblmgm4643a@avthixosdvlo>
+References: <20260116-milos-camcc-icc-v1-0-400b7fcd156a@fairphone.com>
+ <20260116-milos-camcc-icc-v1-1-400b7fcd156a@fairphone.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -94,76 +103,44 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260116113847.1827694-8-lihaoxiang@isrc.iscas.ac.cn>
-User-Agent: Mutt/2.2.14 (2025-02-20)
+In-Reply-To: <20260116-milos-camcc-icc-v1-1-400b7fcd156a@fairphone.com>
+X-Proofpoint-ORIG-GUID: DC0CdsDLfAJvgdhy8FwTA5NtXELaRV5-
+X-Proofpoint-GUID: DC0CdsDLfAJvgdhy8FwTA5NtXELaRV5-
+X-Authority-Analysis: v=2.4 cv=atu/yCZV c=1 sm=1 tr=0 ts=696a67f1 cx=c_pps
+ a=R6oCqFB+Yf/t2GF8e0/dFg==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=vUbySO9Y5rIA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=6H0WHjuAAAAA:8 a=EUspDBNiAAAA:8 a=a0Fvf8Pi2LMrmEsLjo0A:9 a=CjuIK1q_8ugA:10
+ a=TD8TdBvy0hsOASGTdmB-:22 a=Soq9LBFxuPC4vsCAQt-j:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTE2MDEyMCBTYWx0ZWRfXyatrSZ6iWKpS
+ TgyMXiPtakGb/sUT6JsPk0i66FzZJ2wSVnglxNDS7MtigkBpNA9JB1rEdm/o2+vdiFP/tPZtjdx
+ 4iMn4LXBWdCZ2WNaWsf7AwG+2WXRBvaxnpGg2l+8QB9pJNlKCpzEEdkSqJeRko6Vs+G7xTvwwtB
+ nv5J3TKYyBQfg/Lm+2D00O44S3Bu4YDUDs5mWC7bxY2/1+dNn5CdevOscaKZCIYW8zsTcayRhPH
+ 6+qr+IVt2p3lGlQO2bkn4vErcdXshSS3AG3tnudb2AMxAr4cfw4bFqirgqUFwIkbUKHGZlmq9Mp
+ VOxwxAq3kRSvBeHxfCHaMyCNTa89FE7h9Y4ZOIXS9/x1beve2gIwEy0gQvLU3ihHT20TpY9fNse
+ I9PSs3fL0sR5OEM5gjg1YM/iHUM7Xcyy/vLO+bxBJ3IPCg8g196jVnNrnmx/tQdZDCx6i5qhna9
+ 4OED9c0CUG14DYQf1jQ==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2026-01-16_06,2026-01-15_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 adultscore=0 clxscore=1015 lowpriorityscore=0 suspectscore=0
+ spamscore=0 impostorscore=0 phishscore=0 malwarescore=0 priorityscore=1501
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2512120000 definitions=main-2601160120
 
-Hi Haoxiang,
-
-On Fri, Jan 16, 2026 at 07:38:47PM +0800, Haoxiang Li wrote:
-> In clkgen_c32_pll_setup(), clkgen_odf_register() allocated
-> clk_gate and clk_divider memory and registered a clk. Add
-> clk_unregister() and kfree() to release the memory if
-> error occurs. Initialize odf to zero for safe.
+On Fri, Jan 16, 2026 at 02:17:20PM +0100, Luca Weiss wrote:
+> Users can use devm version of of_icc_get_by_index() to benefit from
+> automatic resource release.
 > 
-> Fixes: b9b8e614b580 ("clk: st: Support for PLLs inside ClockGenA(s)")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Haoxiang Li <lihaoxiang@isrc.iscas.ac.cn>
+> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
 > ---
->  drivers/clk/st/clkgen-pll.c | 16 +++++++++++++---
->  1 file changed, 13 insertions(+), 3 deletions(-)
+>  drivers/interconnect/core.c  | 20 ++++++++++++++++++++
+>  include/linux/interconnect.h |  6 ++++++
+>  2 files changed, 26 insertions(+)
+
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+
 > 
-> diff --git a/drivers/clk/st/clkgen-pll.c b/drivers/clk/st/clkgen-pll.c
-> index 89f0454fa72e..3fc0af4b77c6 100644
-> --- a/drivers/clk/st/clkgen-pll.c
-> +++ b/drivers/clk/st/clkgen-pll.c
-> @@ -761,10 +761,12 @@ static void __init clkgen_c32_pll_setup(struct device_node *np,
->  	struct clk *pll_clk;
->  	const char *parent_name, *pll_name;
->  	void __iomem *pll_base;
-> -	int num_odfs, odf;
-> +	int num_odfs, odf = 0;
->  	struct clk_onecell_data *clk_data;
->  	unsigned long pll_flags = 0;
->  	struct clkgen_pll *pll;
-> +	struct clk_gate *gate;
-> +	struct clk_divider *div;
->  
->  	parent_name = of_clk_get_parent_name(np, 0);
->  	if (!parent_name)
-> @@ -808,7 +810,7 @@ static void __init clkgen_c32_pll_setup(struct device_node *np,
->  			if (of_property_read_string_index(np,
->  							  "clock-output-names",
->  							  odf, &clk_name))
-> -				return;
-> +				goto err_odf_unregister;
->  
->  			of_clk_detect_critical(np, odf, &odf_flags);
->  		}
-> @@ -816,8 +818,8 @@ static void __init clkgen_c32_pll_setup(struct device_node *np,
->  		odf_clk = clkgen_odf_register(pll_name, pll_base, datac->data,
->  				odf_flags, odf, &clkgena_c32_odf_lock,
->  				clk_name);
-> -			goto err;
->  		if (IS_ERR(odf_clk))
-> +			goto err_odf_unregister;
->  
->  		clk_data->clks[odf] = odf_clk;
->  	}
-> @@ -825,6 +827,14 @@ static void __init clkgen_c32_pll_setup(struct device_node *np,
->  	of_clk_add_provider(np, of_clk_src_onecell_get, clk_data);
->  	return;
->  
-> +err_odf_unregister:
-> +	while (--odf >= 0) {
-
-I think the prefix -- is not appropriate here. If clkgen_odf_register()
-fails for the first odf (ie odf=0), then when we jump to
-err_odf_unregister, odf will still be set to 0, --odf will set it to -1,
-the while loop will not run, and won't free anything.
-
-What do you think about using the postfix operator instead?
-
-	while (odf-- >= 0)
-
-Brian
-
+-- 
+With best wishes
+Dmitry
