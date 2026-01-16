@@ -1,161 +1,179 @@
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from DM5PR21CU001.outbound.protection.outlook.com (mail-centralusazon11011006.outbound.protection.outlook.com [52.101.62.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A9B82F3618
-	for <linux-clk@vger.kernel.org>; Fri, 16 Jan 2026 19:06:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768590404; cv=none; b=V48rI/Kz3W9inTW8D6rU5IaVBl+qsHIdpbEMdk7gVYbxvfZ+gebwIMZxldV80qusSFr9oFNcMG4r9Z1N/KmSrzRZfs9KQEBiPxNEusJ/LnIYzsFEYvZAHGSBTkc63iC40/0lvU2mbj8h5mThBKqfVZKW9kxBBc/X3GKCcpF55ak=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768590404; c=relaxed/simple;
-	bh=nnEFCj8D60Q/Pd+jRhT3XAOSYc/qt6y9nDtXhDj9Hoo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EmrkESjA2KmkVP+U3vODjF1Bb+jcP+FMk12VwwVFXaNH6QKXLuqVcLRZR4Wu4/miJyTdfk+5kkCW/lMy5PApjaShiDT7UGY23AvxSBwdMbEhF0yPpGBstkj4cIloyDGnJ762Zw4NBmdUZQCse96dr823YOfhTPX2OoOVl5hqXX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dg0uFIyd; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DD2734CFB4;
+	Fri, 16 Jan 2026 19:27:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.62.6
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1768591663; cv=fail; b=UW2BQ6wkWhxLYqGXjoD8q/9ZTrpMHgk4bY8deIiB+mJnN7E1PUNnnSs0wIoXJgPDeVSRv3OUdsl7rZms171oqgrImvOquRBOIKqeQd4hyA/rHFkizDq9Tw7fiPlsWHadfbxpchY82oY1ZpkJKOn+pp32oxOANQ+FFN7gXnuELbo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1768591663; c=relaxed/simple;
+	bh=GN5QhWANprc0Ng1hD/PV9kFir2S0+5pfNstfKj5uRGc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=MC62SmvyQTXo9kL6S3UTr77cXeUw5C6AaOUmaXkMRD3Ec0QBPhYJZ0U5sn1CLtfRxqtubBJZ3WK2RdiUjKuFe2GBItlUU1Y8Ws1R21yslUW3r2VM7r8O7bydRg/D0y7gHAr8lDHe479lQmGujfu1jUmeUgork0SEhP8PJM+iLIU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ZZgx8W2L; arc=fail smtp.client-ip=52.101.62.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dg0uFIyd"
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-47ee807a4c5so17667625e9.2
-        for <linux-clk@vger.kernel.org>; Fri, 16 Jan 2026 11:06:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1768590401; x=1769195201; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LgyQv7aXTbcxBIKDlhEjQlYxX38fSitJW3AjGTyENGM=;
-        b=dg0uFIydHXYC0qIrtQaDLXe6ryJD3R3Ey6h7DwzCq/anPmK7wDHlMPIDsm1lAAWxRg
-         zMErEajrqTu4uFJO+3S1ZKI4O0HqOCC7rlAHudnlKd9lkwiQTPyHp8dFeMwUTDBr2QPI
-         dMUaU73WTfJXRyV74S0m3PNZxQKYgWmTAlwlDWmT7DP1HfB0jmQy6RQX7wRZzfdRDijk
-         ThVTaIgzh8Zv1/jQKUsI8R1Dq9AM30o6i07u9whZimeTsrxqwdwiZvy+dTfZa/pVfpMm
-         wBwiYMobvttPWAd03m8IHPxNKa2CJqXznVYuBXecssam5yMxCsNLti/PL+M8aGVon0kZ
-         g20g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768590401; x=1769195201;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=LgyQv7aXTbcxBIKDlhEjQlYxX38fSitJW3AjGTyENGM=;
-        b=gL0v3FkjpG1zKCY3jBbIaENo0pPuu8T+KvxG/vZH9/iqd9ox0oZ1naaoF4LMEImhRk
-         dksAunKKso3YumhWH0JWzULCx5urLclqb9n2kyf9/Q15Y9WbTVgY09L1VcckOE647+b2
-         LkTf1yIpXEZQJ7X50+0wFJakVPnt+ttDjYmNdojzc6kE9P6P2kFdDnE0EX9EeJe8Yemk
-         HaC/RnVVZgGBiHUEeD9OCoSUos/BzrYEwW9vcQW3DXOSwztnVS2d7eiJ7orzigKX0T/t
-         n6Xo42Qik3OOj0oPIFI+69eeJz61XTgoNb12Q5ulE3Jo2ogT/BYQkRSodZz4JKHzkbG5
-         8Y7g==
-X-Forwarded-Encrypted: i=1; AJvYcCXWRFMcgQlENDQxaslIYL3VQTrrxA62ONycr+izq98EGyyzqaHnTm3dFAn/kVGwUQcXUgwljXGQhZE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSEqWYsh+lqcKZCr7tl+YQvKIl8tLueVfKYiSIlJbNozihzceq
-	hV54Yy3vjCV8gVFEcHnr3NRTKfIIhnaoJXcWdm2S0dH7td3Rh0mV22Fn
-X-Gm-Gg: AY/fxX4tSqSr5DUTXakP+CmTdVBP8/qsDKsKbSlOsyrHqjIdxkMLeuzRz95VI2llq97
-	vmiAQwwJ45rUOwt3k8FhKZezNeVLc0tbl7wBvC91v39TeKqaVN+ycJu+hO57zLwXGn9DT8gFo+X
-	dhgdZVT9UpE7boJwDp84rKbp9faCnAPmnBYvxi4NId1y/d2lQH86LPgWf+6hSaQuUL2yIn1CQOF
-	0coWt5EhBhhpXq40NeC0qlrq7beyYRWK9COpqEJletEgVnJem61ehy1vM92tIPIl6hmYiE0ND+A
-	JfXXkdCFCn3ItbjpknkEBeEbDbeKSn19zyFhkhHntEtwQPubq/liSWmFcBTe/V/20/jLoqY2Iiv
-	P/wbLKxBGGBAsTudlQnJwiBUNJM4udW2/R0/4SeJp7HRby8E6+F3sb5SFcZGNvCNfFvCtRdUdHJ
-	nIU00OOxmL8bUuMRUfgX/kd9Zhz2aYPLGrrwGspc1lyW+FoZ/jVqUceG0DZs5miM/7O8C4FcWyQ
-	sS4tFg=
-X-Received: by 2002:a05:6000:26c8:b0:432:86e1:bd38 with SMTP id ffacd0b85a97d-4356a0773a3mr5064731f8f.39.1768590400554;
-        Fri, 16 Jan 2026 11:06:40 -0800 (PST)
-Received: from localhost (p200300e41f0ffa00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f0f:fa00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4356996cefdsm6657811f8f.24.2026.01.16.11.06.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Jan 2026 11:06:39 -0800 (PST)
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Jon Hunter <jonathanh@nvidia.com>,
-	Linux PM <linux-pm@vger.kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>
-Cc: linux-tegra@vger.kernel.org,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	linux-clk@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>,
-	Dmitry Osipenko <digetx@gmail.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH v2] clk: tegra: Adjust callbacks in tegra_clock_pm
-Date: Fri, 16 Jan 2026 20:06:37 +0100
-Message-ID: <176859039010.168755.11485202766941795981.b4-ty@nvidia.com>
-X-Mailer: git-send-email 2.52.0
-In-Reply-To: <5956349.DvuYhMxLoT@rafael.j.wysocki>
-References: <5088794.31r3eYUQgx@rafael.j.wysocki> <2d55ebec-1e42-4ddb-b0e2-529d3b2d7b85@nvidia.com> <CAJZ5v0i7Rbk5sWCo2Z1Y4j_ZFW7nCUr18H8i2JCM=aPpfZOQ4w@mail.gmail.com> <5956349.DvuYhMxLoT@rafael.j.wysocki>
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ZZgx8W2L"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=hDU5CdUYfvM779rqJhcbv7IcskVPcmlnksaOIJ1sLv5BR3HhR7SkpnxmmiuTn8GIqjDnIR4d6geyD8R2iWK0CvqEMtYflg1Uk65HKHWBgv+LCJN6d7itUNTgXb2SJTxace7mg0CjrrpvnrJsJRyCxR9W46UV+g4GzpWWUVJ/j+TOreiKZT4OQ1MpUAvwsZlV7HOzGIhfAC6Jn1M0DPrn9DA5jxGh69JOLXQwcnVeL0YC5Vn7KZgEcRHCntME5ofWMVJmCKY65FzJuM40KOS8F7CytUQixZZRHjTA8wbOXWMuifJlNF0FsGzUdPXS6aw2EAagmd0uytGpaMfhqbUYMQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=LOZsR9wD7hRY1wsccByStwxXmomHMxSESH5uMuO/bAQ=;
+ b=NWvgYPFYQYfFavcLdQwcjs6P205AmaE3gQxguO/5p+MDQ21Rue6fawf6YGRIHooHjBILWtvy2iIT1aITBwfS8uPatSsGPdgDGKsxxMhNf3ymtUGxXjCF8f1i5izR+dSsL7cgeOt0MsJLafymY17R6HZi3vpTSr+gkevu7Cix/5fmvNuctwURkQujzZ8tTOR9pR755F1za1PeqFwe56CPcDykRR1t9zJo9ipxMY5sy55X5/YHKP+UWunvc3OfBOiM41+sy5wFqt73GpJMUD+uLBBNdT0gquMRdvccAqlILEuit1o4ypREheFo111Gk8wyxrELvzvBiGMF9+N3sDERZA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=baylibre.com smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=LOZsR9wD7hRY1wsccByStwxXmomHMxSESH5uMuO/bAQ=;
+ b=ZZgx8W2L3yXeYcufjNSEBvfNdROnhpBazZVKs6lq0UsRm+qvRhh6yGAz7uOhvq9Ekbc6dc7+v4fBGRlzuba75FreofWdE3f+74kV+inIzPkVRuvyjwqFpD8wv9VlYia+xscuYZ1Dib2LQu2lnvCexNY998aXhQYqNFJ0mOrXX4Q=
+Received: from SJ0PR05CA0138.namprd05.prod.outlook.com (2603:10b6:a03:33d::23)
+ by IA1PR12MB9524.namprd12.prod.outlook.com (2603:10b6:208:596::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9520.8; Fri, 16 Jan
+ 2026 19:27:36 +0000
+Received: from SJ1PEPF00002314.namprd03.prod.outlook.com
+ (2603:10b6:a03:33d:cafe::76) by SJ0PR05CA0138.outlook.office365.com
+ (2603:10b6:a03:33d::23) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9542.4 via Frontend Transport; Fri,
+ 16 Jan 2026 19:27:31 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb08.amd.com; pr=C
+Received: from satlexmb08.amd.com (165.204.84.17) by
+ SJ1PEPF00002314.mail.protection.outlook.com (10.167.242.168) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9542.4 via Frontend Transport; Fri, 16 Jan 2026 19:27:36 +0000
+Received: from SATLEXMB03.amd.com (10.181.40.144) by satlexmb08.amd.com
+ (10.181.42.217) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.2562.17; Fri, 16 Jan
+ 2026 13:27:35 -0600
+Received: from satlexmb07.amd.com (10.181.42.216) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 16 Jan
+ 2026 13:27:34 -0600
+Received: from xhdsuragupt40.xilinx.com (10.180.168.240) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
+ Transport; Fri, 16 Jan 2026 11:27:30 -0800
+From: Suraj Gupta <suraj.gupta2@amd.com>
+To: <mturquette@baylibre.com>, <sboyd@kernel.org>,
+	<radhey.shyam.pandey@amd.com>, <andrew+netdev@lunn.ch>,
+	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <michal.simek@amd.com>
+CC: <sean.anderson@linux.dev>, <linux@armlinux.org.uk>,
+	<linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<netdev@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<bmasney@redhat.com>
+Subject: [PATCH V3 0/2] Add devm_clk_bulk_get_optional_enable() helper and use in AXI Ethernet driver
+Date: Sat, 17 Jan 2026 00:57:22 +0530
+Message-ID: <20260116192725.972966-1-suraj.gupta2@amd.com>
+X-Mailer: git-send-email 2.49.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+Received-SPF: None (SATLEXMB03.amd.com: suraj.gupta2@amd.com does not
+ designate permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF00002314:EE_|IA1PR12MB9524:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5f004987-2f8a-418d-4aa3-08de55354de6
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|82310400026|1800799024|7416014|376014|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?LLoUNtOVcIfGQ/hXHDQRXSirOfdOA5O6v7nWpDjj27w/VBT2T9qw1JHMsGuA?=
+ =?us-ascii?Q?lvM8YE4EMaujg8SrTeJDxXNoORjQJk+Fyv1qQcxr3gNWdZEEVELtxsZpM3PC?=
+ =?us-ascii?Q?D4rOPmdfH5RWo7fmAN3wlDfzzBwkt40RF+blZolkJNbHJfvVbYCFE3kxoSbS?=
+ =?us-ascii?Q?Gsqqn0omygO4h2Kh7o+s0TuAn12Mbefsih9lnRnUJnpVzIpRDAJhYBDQPqfT?=
+ =?us-ascii?Q?mg7JUOEVyIgJG5RofGXMN2PGfIocxg4pvjR/niNTUVqBcJI1bJPw/Y7rsat7?=
+ =?us-ascii?Q?r+DYE1f/eh4J/IUQggxAXWLSVSckV/aQgZljz27eICdStJ5bYjDuZwE+Rfmy?=
+ =?us-ascii?Q?mPvQHHZvpiAQ3ssD9t4KV40121pOLv3N3V4pAOl4SXy8tjEcOkZ7QxeOIpqe?=
+ =?us-ascii?Q?Bk/pv0veoMutLsf1LdKUt8aexK29DQGcbscXmJFGxwCRvmz/Wy2C5soPhOdK?=
+ =?us-ascii?Q?Oykh8tG4Xzem6FTFpwbmPlBXpkTidafOJe4u0nNmPNU6xsxx3XNM3qKtx87K?=
+ =?us-ascii?Q?nZwD4/3vx40PC/JtPUCts8v2sBs5a5+es6q2QTEatqoFokUouZcc1IIs7Rob?=
+ =?us-ascii?Q?m8/gP17mY8ehsPHpXvRHtBRwcW114yu8d7oZV2Emf190EcG/kSelQ+M6dVEW?=
+ =?us-ascii?Q?FjOCHH9F5tdLO8W+o+dOV1RM27yQEnrAOEWyKRKSZ7eb5s6qwafzpGgLYD7M?=
+ =?us-ascii?Q?Psxmp7IUJvmR6LWFDijeNV3RaMECnGy67YTzqx0J3BGCYaexR84MzvvHHD3R?=
+ =?us-ascii?Q?PjaTWyj0RZK8e8hJ3T83IlDPt1So8+auHf+OZeOL+dKshHuw8tGxqdYhKk7q?=
+ =?us-ascii?Q?Rls9imDnRpJMue/vtAeaTkahFSfOQm1I1jAxTcNEPToLn8zoob42bRns2nMO?=
+ =?us-ascii?Q?OLdpBk8WwNATF3vp1uM6XTCDj9Bl6AdpMDVEOonsFRA7Sx53UOrlhR+rKGdj?=
+ =?us-ascii?Q?XUbU3Xi/aWJvhTZK/9gHUzVp5lpUfFsSTt8RNYanfIJcEh3tn3ig5jwyD3v+?=
+ =?us-ascii?Q?l1OQ2AEIKsbA3bnz00YDzsQon3kfbBazxYzsEHDpKCfvp4rXrqNAZ0ehBMTp?=
+ =?us-ascii?Q?iOZGPjsju3sULRpAWgKkgyGB0Hxr9qBMhCBlnOUq/TKbxLowxEMbDgO3QST4?=
+ =?us-ascii?Q?x52vP3/SQ685xiKkC9JnC2xDG7JyrA4Q4Q+BAdpcFqDeD/EbND2ljaV3WYAh?=
+ =?us-ascii?Q?EIgV3OVxmiOodTETPfYNWp8pIrrmWRXRPQTu5DIAjfWka9g/wT4RzBZhehAI?=
+ =?us-ascii?Q?k8MKSVolYHTIRANM+YoCf02o5FDZmdcUeaThHB9vk8ti5zk74MFk46yJDHi+?=
+ =?us-ascii?Q?uWMDuVXH2NxUkYwQQgcrN8PvQ7NT+3MN33vBWmk2Y6XLJNhXvLcOWDf3aXL2?=
+ =?us-ascii?Q?sbXAyiFH68tz2xtZZvkm035U6eUUWFYGrR44xripKtpB8oV4/Dq/n8jIpOf0?=
+ =?us-ascii?Q?nnNbvMeOJWZ3Osi46xVBKwaf8V8Wifvgy+nwbP2AAgQdKYW+oJs+s9CscZTm?=
+ =?us-ascii?Q?vOXKXncHSP4nN6yJMg2byp98rlPjhJkp+uDsB2OENMXkcgZvEbRLtQYP6CbI?=
+ =?us-ascii?Q?+BYXABjwkd7JlTUwgC/ys/z1qkJ7wZUbYJQ1Wfz6VyVoXheSTOk3liMliXnC?=
+ =?us-ascii?Q?j/0jkRFctMQEKQyT+pNmYdi3mrwThlIs7+E0CNlHVvu2sGQGmt8copxwngaP?=
+ =?us-ascii?Q?ord/+GlJC/T9sWMhEmtdNBjfu+o=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:satlexmb08.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(1800799024)(7416014)(376014)(13003099007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jan 2026 19:27:36.0936
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5f004987-2f8a-418d-4aa3-08de55354de6
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb08.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ1PEPF00002314.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB9524
 
-From: Thierry Reding <treding@nvidia.com>
+This patch series introduces a new managed clock framework helper function
+and demonstrates its usage in AXI ethernet driver.
+
+Device drivers frequently need to get optional bulk clocks, prepare them,
+and enable them during probe, while ensuring automatic cleanup on device
+unbind. Currently, this requires three separate operations with manual
+cleanup handling.
+
+The new devm_clk_bulk_get_optional_enable() helper combines these
+operations into a single managed call, eliminating boilerplate code and
+following the established pattern of devm_clk_bulk_get_all_enabled().
+
+Changes in V3:
+- Correct 'Return' format in documentation of
+devm_clk_bulk_get_optional_enable() in patch 1/2.
+
+Changes in V2:
+- Modified commit descriptio and subject of patch 2/2
+
+Note:
+Prepared this series as per mainline discussion here:
+https://lore.kernel.org/all/540737b2-f155-4c55-ab95-b18f113e0031@linux.dev
+
+RFC patch link:
+https://lore.kernel.org/all/20260102085454.3439195-1-suraj.gupta2@amd.com/
 
 
-On Tue, 06 Jan 2026 13:19:47 +0100, Rafael J. Wysocki wrote:
-> On Tuesday, January 6, 2026 1:07:15 PM CET Rafael J. Wysocki wrote:
-> > Hi Jon,
-> >
-> > On Tue, Jan 6, 2026 at 11:36 AM Jon Hunter <jonathanh@nvidia.com> wrote:
-> > >
-> > > Hi Rafael,
-> > >
-> > > On 04/01/2026 11:53, Rafael J. Wysocki wrote:
-> > > > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > > >
-> > > > System suspend and resume callbacks run after the core has bumped
-> > > > up the runtime PM usage counters of all devices, so these callbacks
-> > > > need not worry about runtime PM reference counting.
-> > > >
-> > > > Accordingly, to eliminate useless overhead related to runtime PM
-> > > > usage counter manipulation, set the suspend callback pointer in
-> > > > tegra_clock_pm to pm_runtime_resume() and do not set the resume
-> > > > callback in it at all.
-> > > >
-> > > > This will also facilitate a planned change of the pm_runtime_put()
-> > > > return type to void in the future.
-> > > >
-> > > > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > > > ---
-> > > >
-> > > > This patch is requisite for converting pm_runtime_put() into a void
-> > > > function.
-> > > >
-> > > > If you decide to pick it up, please let me know.
-> > > >
-> > > > Otherwise, an ACK or equivalent will be appreciated, but also the lack
-> > > > of specific criticism will be eventually regarded as consent.
-> > > >
-> > > > ---
-> > > >   drivers/clk/tegra/clk-device.c |    2 +-
-> > > >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > > >
-> > > > --- a/drivers/clk/tegra/clk-device.c
-> > > > +++ b/drivers/clk/tegra/clk-device.c
-> > > > @@ -175,7 +175,7 @@ unreg_clk:
-> > > >    * perspective since voltage is kept at a nominal level during suspend anyways.
-> > > >    */
-> > > >   static const struct dev_pm_ops tegra_clock_pm = {
-> > > > -     SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_resume_and_get, pm_runtime_put)
-> > > > +     SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_resume, NULL)
-> > > >   };
-> > > >
-> > > >   static const struct of_device_id tegra_clock_match[] = {
-> > >
-> > >
-> > > I gave this a quick test and this is causing a suspend regression on
-> > > Tegra20 and Tegra30 that use this driver. Looking at the console log
-> > > on Tegra20 I see the following errors ...
-> > >
-> > >   tegra-clock tegra_clk_sclk: PM: dpm_run_callback(): pm_runtime_resume returns 1
-> >
-> > Of course, it needs a wrapper.
-> 
-> [...]
+Sean Anderson (1):
+  net: axienet: Fix resource release ordering
 
-Applied, thanks!
+Suraj Gupta (1):
+  clk: Add devm_clk_bulk_get_optional_enable() helper
 
-[1/1] clk: tegra: Adjust callbacks in tegra_clock_pm
-      commit: 53bf300fd4a73146882889020504e8e87cc86c7d
+ drivers/clk/clk-devres.c                      | 50 +++++++++++
+ .../net/ethernet/xilinx/xilinx_axienet_main.c | 83 ++++++-------------
+ include/linux/clk.h                           | 23 +++++
+ 3 files changed, 100 insertions(+), 56 deletions(-)
 
-Best regards,
 -- 
-Thierry Reding <treding@nvidia.com>
+2.25.1
+
