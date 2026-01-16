@@ -1,218 +1,147 @@
-Received: from sender4-pp-o92.zoho.com (sender4-pp-o92.zoho.com [136.143.188.92])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 133C326A0D5;
-	Fri, 16 Jan 2026 13:28:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.92
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768570129; cv=pass; b=nAZBus86aYC/Z/Uznf7LIaG1y9Uj7g1iFjMGPR/bh2nPZipsVZCUJxaeZ1sqX8obEalm5rgDZjT5Qx0OIqk4A1cjrE57jSrcRgvqnjr4Mo/eY2EGClcMOb1lpLTpDJnoEKMnp7VOKpRmelCwT5pWLMr7Ago9h3zcWl5djSpSgiI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768570129; c=relaxed/simple;
-	bh=0HKtlqHtld7EIAXot7qbi/hWBScjQ+iXc3sAYrngXHA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=eebFQQwa7FXBcItNmIYofVyxkW+DZB9RveZIa010tojBpNRzjGz4gaERpc4zRaFCCH8LltlB3Lo3t34jOxfCf4VDbwpJUKKdwv2BwEZ5+OAkAqMC2b9FKC5sqA3+w/4MFVCqQmCjmfFIQYhJpj8Lo5oM4Rz6qhcvZEtp30W57lA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b=epKbVe1A; arc=pass smtp.client-ip=136.143.188.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D0A8281376
+	for <linux-clk@vger.kernel.org>; Fri, 16 Jan 2026 15:29:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1768577369; cv=none; b=WXP32LHD7t5jhqTNmq0xyMO/FSY1RkrPuLrsBYjK0vJSH1OICpiIE6C/ak1YH06s12sLbUEH82uG9UMfmofiOkTReDCLKGrziQOFTpW/sVgUJR7e9j5+NlZwT5nexYl8b33dcWBpvwsyCDSfV1icD7tMWkBd8z2soigy7wEohCw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1768577369; c=relaxed/simple;
+	bh=sSSS54Xj0ShsXOZuK37+sEwwv3XAEF1W6I/qaNYc2oE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dkdn35pNWieTT1lMNIhwuIpCdRwEawec1CgSmrlgXIPWds/txMbstfClDHAMefoW7W6Lcggq5JuJGg4qhxbUChgJHtHr6W5lbvkjbZV4pn66OPp7L1BWFYol3rSn37eFHO6gUVSFzXBQl7sa8wf3VMPvRdNM3lL/+gpQe03+1Vo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=I4CReuRj; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=QWmDJhWi; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b="epKbVe1A"
-ARC-Seal: i=1; a=rsa-sha256; t=1768570070; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=WYrPqxsxmAojAqGgfA0mMOho9rCcvY0BHA7nKoEZOAu6W98JWDwRS/fI8R0TB5sCRaFZ64O+ikCaIBlQvnXDOwPonUE9E+r+b0pgEHZYlRS1+9vLdUr6FaJf3QiSeIyE5glbHGydnMYu37oLwEgjs/1tZStNU0lLXmviJKKVVSI=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1768570070; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=LTTxQ7LMKN7VTBR1jKjba6PWB38rJkXbGYL2G1nNBGI=; 
-	b=CAp3NF//xsXNwddJtNumrQReHNv2R6tzgMdP3/oyKigdQOvz7Ea9m4yRurgqXQ+HMxeEwPXDjwtky5N795qiMmKYWPxNElUpyxk9DNrM6DnHB/Tg77xOXsORAykaRajvEujR3W4nFkvmW2KvoMdUVu/pB/sQxOi4zLodCkE7mlE=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=zohomail.com;
-	spf=pass  smtp.mailfrom=kingxukai@zohomail.com;
-	dmarc=pass header.from=<kingxukai@zohomail.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1768570070;
-	s=zm2022; d=zohomail.com; i=kingxukai@zohomail.com;
-	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:References:In-Reply-To:To:To:Cc:Cc:Feedback-ID:Reply-To;
-	bh=LTTxQ7LMKN7VTBR1jKjba6PWB38rJkXbGYL2G1nNBGI=;
-	b=epKbVe1A0ipQXbEon0n7sKtjNV6Pcan/cemzdfBHiXXqRejZran6miaCeunk36z0
-	dehAAKMM3Q8gNGejvsUWjZzXMqwrkHlfKYKNFDcBRjzXfpKHOgs0XsUPDFJ/PvYHhsH
-	3zK6wajVpxAhk1GlSrrEvTPSGI99fANPbFYRAwKA=
-Received: by mx.zohomail.com with SMTPS id 1768570067872847.172166779672;
-	Fri, 16 Jan 2026 05:27:47 -0800 (PST)
-From: Xukai Wang <kingxukai@zohomail.com>
-Date: Fri, 16 Jan 2026 21:26:21 +0800
-Subject: [PATCH v10 3/3] riscv: dts: canaan: Add clock definition for K230
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="I4CReuRj";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="QWmDJhWi"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1768577367;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HcYNjtrM1tx5MNCL5NpuqMAZtAxO/Nx7W07L/efi2Ek=;
+	b=I4CReuRjzgSaiXRkNYZJmkNae0ZWwbaz6HBvMbwpWlVr4yMxoNDshnfMq+ENAIVpcO9NC0
+	4gVXVoHp+bfeJDvehoSxeAHub22cS1zYft43km0nQf8chxAOM/wY6KNNnI5zY2Q6lAaKio
+	D5r2DqXQ0b1jsAWEoqAaeKYoT6XTEMw=
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
+ [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-631-NFkBFIt9Pleu6N7R7sQUew-1; Fri, 16 Jan 2026 10:29:26 -0500
+X-MC-Unique: NFkBFIt9Pleu6N7R7sQUew-1
+X-Mimecast-MFC-AGG-ID: NFkBFIt9Pleu6N7R7sQUew_1768577366
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-88a316ddbacso52478216d6.2
+        for <linux-clk@vger.kernel.org>; Fri, 16 Jan 2026 07:29:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1768577366; x=1769182166; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HcYNjtrM1tx5MNCL5NpuqMAZtAxO/Nx7W07L/efi2Ek=;
+        b=QWmDJhWizZeQX7ThvA+HEBcNpD1udgrGnfEz/3IN/acHKmkPs1b2+ISDWgTqiDaPU5
+         zqCahOiL0M/eq6XLqxRXcVqKjkjPQcjk3IGhJppZHbQe/T9zzdPCvP4mPf/kLBwPdVPJ
+         z+Qom/dk5p78WgiYyyuFupRmpSopFcoolW5HayQ2amZ2X1KMNpt9bMO1BUN/DTFXVmDi
+         zX8W+01EnDd4L3uQ3asFML+5/U6jxueoWhLT4QugsZ2kNzEKrK9Al0fxQ5fV2L3bwAwK
+         OiwxWS8kwlVMhd1+9BmMVZ+EpWVIynBKLDC1963Kewt0ZT+vVvsbQhzQMKNd0LpUw72Y
+         R31Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1768577366; x=1769182166;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=HcYNjtrM1tx5MNCL5NpuqMAZtAxO/Nx7W07L/efi2Ek=;
+        b=aQv+5w/R5i/iBxFunyvXLeiwIV/rSzRslx/vJnKb4rtp5GTg4Vpem4eyzYlqw1G6Ke
+         JHSYhJBAscDahj+xBNzb2W/yoxII//JQHDN24Ljz5uMs5XjvvCG+i88gtTg54P19Pf2O
+         y87ClCMNCIO1QIgdIOVFWso3HYPcKZBlyGhfNTMhtTmmADS3djD7faLH0K52hH/uqN5j
+         tLh3CIQuEqTdSY2axweLnGnMoTfjm1XrM4eUvnLZqU5SvC6qjMWSoSvESPYL1nOHni9o
+         H9x3ijG4abT6chRLfqi78CwnLFYu7fgNttiEirzjMxe8zr16m8/LF6Q0pD8pbRXj1T0e
+         Jz1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUh2tIVXw2fBnc7hPj8QgdFvhWMMPpPswxZ1x2w3bR7rO+jSB2rfS6Cmhl6KdQPbg6xZktJ1Ub9Uf8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKLbeYmKX0xxXa9tmyzdHEeSodKqjNSacwSpdaUGqyIxae1QFX
+	qimn380LPc/MGR0xHcNzFxrN2YkcNbttxDWRtL/d49HOgltGwUwxnLNOsY8ozDfHe/Yp3Xn9aJU
+	wxj+Z7VbfcWjdhoS4uZ5ACnGs4H8bBzIiXeBLAFSvH4x2QxKf0fQJxeZwQHvHNg==
+X-Gm-Gg: AY/fxX7vgrecibQ20RIF2eyvMTnVwLPkIAaHfCCttinyWY4RxeY5TCJOGs3yybw65Vj
+	RiWlgExs8PKvtVbZLErLVH/TiCKi8bIhAE62330ZFdb9ZGpE0zToId2Ojv3wlZKPQTSuTSlZJeS
+	M6gqCQIh5z5zOOSlHBCJkXa1MqlHN5u33fZRYtXtmPQ46GFo36NLUej6V+TR9aMnFjRm4SH3xv5
+	dRCHX0UmuXaf0zGZ+FM1SxNa5wccrQ/acbwBl9t8cdL20rlueptsr6mkVqDCxqtOKTSXbJOcJQ0
+	2NOD8RkWVNqJNElNgBlRjl826fFRZE6R0sBCoczkq69iQ9r3pIOvonnpGhY4QwclBKQlIQbqjrL
+	7FGGCLXCLBr3CsVj+uInX+Qjufgyy6gDIgqcwdCojU0G0
+X-Received: by 2002:a05:6214:2305:b0:88a:589b:5dad with SMTP id 6a1803df08f44-8942dd07f96mr46350726d6.27.1768577365724;
+        Fri, 16 Jan 2026 07:29:25 -0800 (PST)
+X-Received: by 2002:a05:6214:2305:b0:88a:589b:5dad with SMTP id 6a1803df08f44-8942dd07f96mr46350456d6.27.1768577365381;
+        Fri, 16 Jan 2026 07:29:25 -0800 (PST)
+Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8942e6cd63esm24958956d6.49.2026.01.16.07.29.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 16 Jan 2026 07:29:24 -0800 (PST)
+Date: Fri, 16 Jan 2026 10:29:23 -0500
+From: Brian Masney <bmasney@redhat.com>
+To: Haoxiang Li <lihaoxiang@isrc.iscas.ac.cn>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH 1/7] clk: st: clkgen-pll: Fix a memory leak in
+ clkgen_odf_register()
+Message-ID: <aWpZUz46SQLGf8WX@redhat.com>
+References: <20260116113847.1827694-1-lihaoxiang@isrc.iscas.ac.cn>
+ <20260116113847.1827694-2-lihaoxiang@isrc.iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260116-b4-k230-clk-v10-3-de59033c5d30@zohomail.com>
-References: <20260116-b4-k230-clk-v10-0-de59033c5d30@zohomail.com>
-In-Reply-To: <20260116-b4-k230-clk-v10-0-de59033c5d30@zohomail.com>
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Xukai Wang <kingxukai@zohomail.com>, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- Conor Dooley <conor@kernel.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
- Samuel Holland <samuel.holland@sifive.com>, 
- Troy Mitchell <TroyMitchell988@gmail.com>
-X-Mailer: b4 0.14.2
-Feedback-ID: rr0801122755652d035447127a596c264700000ab2ecb4b181f084d451726eb1a5d3f6acc22c6f9eb32ceb06:zu080112272cc08f9d066e9252dfa6120c0000e08f7b20689d60c95de801b628d0a99bbdcab0910dfc776504:rf0801122c11a027cdae0de6ede47745270000c608f3fbbe86d7b63b72fdf8135d95eacd9fb94bb0e28994e0448a94a4cb:ZohoMail
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260116113847.1827694-2-lihaoxiang@isrc.iscas.ac.cn>
+User-Agent: Mutt/2.2.14 (2025-02-20)
 
-This patch describes the clock controller integrated in K230 SoC
-and replace dummy clocks with the real ones for UARTs.
+On Fri, Jan 16, 2026 at 07:38:41PM +0800, Haoxiang Li wrote:
+> If clk_register_composite() fails, call kfree() to release
+> div and gate.
+> 
+> Fixes: b9b8e614b580 ("clk: st: Support for PLLs inside ClockGenA(s)")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Haoxiang Li <lihaoxiang@isrc.iscas.ac.cn>
 
-For k230-canmv and k230-evb, they provide an additional external
-pulse input through a pin to serve as clock source.
+Reviewed-by: Brian Masney <bmasney@redhat.com>
 
-Co-developed-by: Troy Mitchell <TroyMitchell988@gmail.com>
-Signed-off-by: Troy Mitchell <TroyMitchell988@gmail.com>
-Signed-off-by: Xukai Wang <kingxukai@zohomail.com>
----
- arch/riscv/boot/dts/canaan/k230-canmv.dts | 11 +++++++++++
- arch/riscv/boot/dts/canaan/k230-evb.dts   | 11 +++++++++++
- arch/riscv/boot/dts/canaan/k230.dtsi      | 26 ++++++++++++++++++--------
- 3 files changed, 40 insertions(+), 8 deletions(-)
+Note for next time: I sent out a Reviewed-by tag on this patch on the
+previous version. Please include those tags on the future versions.
+The only time it's appropriate to not include the tag is if you make
+changes to the patch beyond a trivial change.
 
-diff --git a/arch/riscv/boot/dts/canaan/k230-canmv.dts b/arch/riscv/boot/dts/canaan/k230-canmv.dts
-index 9565915cead6ad2381ea8249b616e79575feb896..0a862a29aa877b8418968dd0c02b113b747a1de9 100644
---- a/arch/riscv/boot/dts/canaan/k230-canmv.dts
-+++ b/arch/riscv/boot/dts/canaan/k230-canmv.dts
-@@ -17,8 +17,19 @@ ddr: memory@0 {
- 		device_type = "memory";
- 		reg = <0x0 0x0 0x0 0x20000000>;
- 	};
-+
-+	timerx_pulse_in: clock-50000000 {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <50000000>;
-+	};
- };
- 
- &uart0 {
- 	status = "okay";
- };
-+
-+&sysclk {
-+	clocks = <&osc24m>, <&timerx_pulse_in>;
-+	clock-names = "osc24m", "timer-pulse-in";
-+};
-diff --git a/arch/riscv/boot/dts/canaan/k230-evb.dts b/arch/riscv/boot/dts/canaan/k230-evb.dts
-index f898b8e62368c3740d6795fd1e3cb0b261a460ac..c834e3cca751eb6b719d79bb225dd51866d3caf7 100644
---- a/arch/riscv/boot/dts/canaan/k230-evb.dts
-+++ b/arch/riscv/boot/dts/canaan/k230-evb.dts
-@@ -17,8 +17,19 @@ ddr: memory@0 {
- 		device_type = "memory";
- 		reg = <0x0 0x0 0x0 0x20000000>;
- 	};
-+
-+	timerx_pulse_in: clock-50000000 {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <50000000>;
-+	};
- };
- 
- &uart0 {
- 	status = "okay";
- };
-+
-+&sysclk {
-+	clocks = <&osc24m>, <&timerx_pulse_in>;
-+	clock-names = "osc24m", "timer-pulse-in";
-+};
-diff --git a/arch/riscv/boot/dts/canaan/k230.dtsi b/arch/riscv/boot/dts/canaan/k230.dtsi
-index 95c1a3d8fb1192e30113d96d3e96329545bc6ae7..d4bd27b2c1317dd8b5fc6e097ef559fef850dd41 100644
---- a/arch/riscv/boot/dts/canaan/k230.dtsi
-+++ b/arch/riscv/boot/dts/canaan/k230.dtsi
-@@ -3,6 +3,7 @@
-  * Copyright (C) 2024 Yangyu Chen <cyy@cyyself.name>
-  */
- 
-+#include <dt-bindings/clock/canaan,k230-clk.h>
- #include <dt-bindings/interrupt-controller/irq.h>
- 
- /dts-v1/;
-@@ -58,11 +59,11 @@ l2_cache: l2-cache {
- 		};
- 	};
- 
--	apb_clk: apb-clk-clock {
-+	osc24m: clock-24000000 {
- 		compatible = "fixed-clock";
--		clock-frequency = <50000000>;
--		clock-output-names = "apb_clk";
- 		#clock-cells = <0>;
-+		clock-frequency = <24000000>;
-+		clock-output-names = "osc24m";
- 	};
- 
- 	soc {
-@@ -89,10 +90,19 @@ clint: timer@f04000000 {
- 			interrupts-extended = <&cpu0_intc 3>, <&cpu0_intc 7>;
- 		};
- 
-+		sysclk: clock-controller@91102000 {
-+			compatible = "canaan,k230-clk";
-+			reg = <0x0 0x91102000 0x0 0x40>,
-+			      <0x0 0x91100000 0x0 0x108>;
-+			clocks = <&osc24m>;
-+			clock-names = "osc24m";
-+			#clock-cells = <1>;
-+		};
-+
- 		uart0: serial@91400000 {
- 			compatible = "snps,dw-apb-uart";
- 			reg = <0x0 0x91400000 0x0 0x1000>;
--			clocks = <&apb_clk>;
-+			clocks = <&sysclk K230_LS_UART0_RATE>;
- 			interrupts = <16 IRQ_TYPE_LEVEL_HIGH>;
- 			reg-io-width = <4>;
- 			reg-shift = <2>;
-@@ -102,7 +112,7 @@ uart0: serial@91400000 {
- 		uart1: serial@91401000 {
- 			compatible = "snps,dw-apb-uart";
- 			reg = <0x0 0x91401000 0x0 0x1000>;
--			clocks = <&apb_clk>;
-+			clocks = <&sysclk K230_LS_UART1_RATE>;
- 			interrupts = <17 IRQ_TYPE_LEVEL_HIGH>;
- 			reg-io-width = <4>;
- 			reg-shift = <2>;
-@@ -112,7 +122,7 @@ uart1: serial@91401000 {
- 		uart2: serial@91402000 {
- 			compatible = "snps,dw-apb-uart";
- 			reg = <0x0 0x91402000 0x0 0x1000>;
--			clocks = <&apb_clk>;
-+			clocks = <&sysclk K230_LS_UART2_RATE>;
- 			interrupts = <18 IRQ_TYPE_LEVEL_HIGH>;
- 			reg-io-width = <4>;
- 			reg-shift = <2>;
-@@ -122,7 +132,7 @@ uart2: serial@91402000 {
- 		uart3: serial@91403000 {
- 			compatible = "snps,dw-apb-uart";
- 			reg = <0x0 0x91403000 0x0 0x1000>;
--			clocks = <&apb_clk>;
-+			clocks = <&sysclk K230_LS_UART3_RATE>;
- 			interrupts = <19 IRQ_TYPE_LEVEL_HIGH>;
- 			reg-io-width = <4>;
- 			reg-shift = <2>;
-@@ -132,7 +142,7 @@ uart3: serial@91403000 {
- 		uart4: serial@91404000 {
- 			compatible = "snps,dw-apb-uart";
- 			reg = <0x0 0x91404000 0x0 0x1000>;
--			clocks = <&apb_clk>;
-+			clocks = <&sysclk K230_LS_UART4_RATE>;
- 			interrupts = <20 IRQ_TYPE_LEVEL_HIGH>;
- 			reg-io-width = <4>;
- 			reg-shift = <2>;
+Also you may want to consider using b4 for your workflow since it really
+simplifies your workflow. There's some documentation available at:
 
--- 
-2.34.1
+https://b4.docs.kernel.org/en/latest/
+
+Basically, here's a quick workflow of what I do:
+
+    # Start with a clean branch (say today's linux-next)
+    # Create a new b4-managed branch
+    b4 prep -n my-branch-name
+    # Apply your patches
+    b4 prep --edit-cover
+    b4 prep --auto-to-cc
+    b4 prep --check
+    b4 send --dry-run
+    # Send out your patch series for real
+    b4 send
+
+Later if you need to send out a new version, just use the same b4
+managed branch. It'll track the patch version number for you (the
+PATCH v2 in the subject).
+
+You can use 'b4 trailers'
+(https://b4.docs.kernel.org/en/latest/contributor/trailers.html) to pick
+up tags from the list.
+
+There's also a b4 web submission endpoint you can use instead of sending
+it through a SMTP server:
+
+https://b4.docs.kernel.org/en/latest/contributor/send.html
+
+Brian
 
