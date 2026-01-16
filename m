@@ -1,28 +1,32 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B32DE2D97AB;
-	Fri, 16 Jan 2026 10:51:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDBE9322B72;
+	Fri, 16 Jan 2026 11:38:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768560668; cv=none; b=P2TOVdiMStudTyxPHTgwftt4dYYwCmGgQstGQMDknLaCY0LMlgBpWcnIEL/lvceLZlJKobL6QpsPytv7bjtTxJRU+SJJ2L5H08t2UkK90vlJZYDxtv2IhemPViC4+3yMC6OeslwoN831F3xZeT5qOhMAUnV1Fp1X84Jvz8pkbeM=
+	t=1768563544; cv=none; b=LHw6pqQ6mNI6jbcPC4E9/QD7goJzSUnnPil8rm6lwIZODsEw3rLjW5MVDpwHTnZkGL4ltA/SBcsK3IeRMuhg8IMAuYjtk3ugJAUe7cg7PC9r08yBb7zZ+wuQ9CkoeGYZLpoBHhAoKS1Crew8NgJR9Dqs7wtofmGyowKxAqdZMHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768560668; c=relaxed/simple;
-	bh=KBpbA7Ryv1uTG1ceWsoOiLWATvIVPJhzUwj24hmQws8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AEDY3HLN19stfxGE/M7+rBGqWNlCEU11HqpG09x2IAg39+WdP7WQG5hqo4z/lwHSlI6sVoFsel96DHlRYfUa5gMxl9DC3EOcwFGbkUiOaLaJk2afVdfhmC109o4uDMXjQLQY4Z6l041Co1/hs6GL2o/5mdDyDmp238VubJVlfts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30573C116C6;
-	Fri, 16 Jan 2026 10:51:07 +0000 (UTC)
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
+	s=arc-20240116; t=1768563544; c=relaxed/simple;
+	bh=5N9dsDCyk6AYKilaQV9Vuwqeym8Zah6xULXUbAj3Ol4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XgATqc5UgSNH1v8Ta7pa6TVQPcn7JWqmEe67Bc8ezuflCqbsToVWdB713nWlTTzdUGb4VPy5imDc8CGbxjnwaFb5sSfUu1OGeYZB7zUx6wxSC7hI3FmQnoHj93kXZgVhpuI8x7oIVars8HeeZHWV5Ly54VvKV/m2efeb1HmfhoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=isrc.iscas.ac.cn; spf=pass smtp.mailfrom=isrc.iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=isrc.iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=isrc.iscas.ac.cn
+Received: from localhost.localdomain (unknown [36.112.3.223])
+	by APP-05 (Coremail) with SMTP id zQCowAC3TBBMI2ppZbMsBQ--.56400S2;
+	Fri, 16 Jan 2026 19:38:53 +0800 (CST)
+From: Haoxiang Li <lihaoxiang@isrc.iscas.ac.cn>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	bmasney@redhat.com
 Cc: linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [GIT PULL] clk: renesas: Updates for v6.20 (take two)
-Date: Fri, 16 Jan 2026 11:51:04 +0100
-Message-ID: <cover.1768559843.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.43.0
+	linux-kernel@vger.kernel.org,
+	Haoxiang Li <lihaoxiang@isrc.iscas.ac.cn>
+Subject: [PATCH 0/7] clk: st: clkgen-pll: Add cleanup in clkgen_c32_pll_setup() and clkgen_odf_register()
+Date: Fri, 16 Jan 2026 19:38:40 +0800
+Message-Id: <20260116113847.1827694-1-lihaoxiang@isrc.iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -30,75 +34,49 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:zQCowAC3TBBMI2ppZbMsBQ--.56400S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7JryfAF1UZw45GF17Jw4fXwb_yoWkGrcEyF
+	WxKryaqwn8WF43CF15Aw4Fy3y8Ka1DZF17WF1Ut3yIkw15JryUKr9Ykan2vr1SgF4fCFn5
+	tr1rGws3Ar1YkjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbcAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Jr0_
+	Gr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr0_Gr
+	1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
+	jxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr
+	1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkF7I0En4kS14v26r12
+	6r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI
+	0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y
+	0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxV
+	WUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1l
+	IxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjfUehL0UUUUU
+X-CM-SenderInfo: 5olkt0x0ld0ww6lv2u4olvutnvoduhdfq/1tbiCQ8JE2lp34rSlwAAsM
 
-	Hi Mike, Stephen,
+Patch 1 fixes a memory leak in clkgen_odf_register()
+Patches 2 to 7 improve the cleanup process for function errors:
+  - release the memory allocated by clkgen_get_register_base()
+  - release the memory allocated by clkgen_pll_register()
+  - release the memory allocated by clkgen_odf_register()
+and removed unnecessary handling.
 
-The following changes since commit ebb3acf4d7c95b52265084168b59a565bf972883:
+These works are carried out under the guidance of Brian Masney.
+Thanks, Brian!
 
-  clk: renesas: r9a09g056: Add clock and reset entries for TSU (2025-12-29 11:43:22 +0100)
+Haoxiang Li (7):
+  clk: st: clkgen-pll: Fix a memory leak in clkgen_odf_register()
+  clk: st: clkgen-pll: Rename some variables in clkgen_c32_pll_setup()
+  clk: st: clkgen-pll: Rename some variables in clkgen_c32_pll_setup()
+  clk: st: clkgen-pll: Add iounmap() in clkgen_c32_pll_setup()
+  clk: st: clkgen-pll: Add clk_unregister for pll_clk in
+    clkgen_c32_pll_setup()
+  clk: st: clkgen-pll: Remove redundant kfree() in
+    clkgen_c32_pll_setup()
+  clk: st: clkgen-pll: Add clk_unregister for odf_clk in
+    clkgen_c32_pll_setup()
 
-are available in the Git repository at:
+ drivers/clk/st/clkgen-pll.c | 53 +++++++++++++++++++++++++------------
+ 1 file changed, 36 insertions(+), 17 deletions(-)
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/renesas-clk-for-v6.20-tag2
+-- 
+2.25.1
 
-for you to fetch changes up to 4fef3fd633be4a1a18c490a63f4131284f6ee0f4:
-
-  clk: renesas: Add missing log message terminators (2026-01-16 10:48:33 +0100)
-
-----------------------------------------------------------------
-clk: renesas: Updates for v6.20 (take two)
-
-  - Fix s2ram on RZ/T2H and RZ/N2H,
-  - Add CAN-FD clocks and resets on RZ/T2H, RZ/N2H, RZ/V2H, and RZ/V2N,
-  - Miscellaneous fixes and improvements.
-
-Note that this includes DT binding definition updates for the RZ/T2H and
-RZ/N2H SoCs, which are shared by clock driver and DT source files.
-
-Thanks for pulling!
-
-----------------------------------------------------------------
-Biju Das (2):
-      clk: renesas: rzg2l: Deassert reset on assert timeout
-      clk: renesas: rzv2h: Deassert reset on assert timeout
-
-Chris Brandt (1):
-      clk: renesas: rzg2l: Remove DSI clock rate restrictions
-
-Cosmin Tanislav (2):
-      clk: renesas: cpg-mssr: Simplify pointer math in cpg_rzt2h_mstp_read()
-      clk: renesas: cpg-mssr: Handle RZ/T2H register layout in PM callbacks
-
-Geert Uytterhoeven (2):
-      Merge tag 'renesas-r9a09g077-dt-binding-defs-tag6' into renesas-clk-for-v6.20
-      clk: renesas: Add missing log message terminators
-
-Lad Prabhakar (5):
-      dt-bindings: clock: renesas,r9a09g077/87: Add PCLKCAN ID
-      clk: renesas: r9a09g077: Add CANFD clocks
-      clk: renesas: r9a09g057: Add entries for CANFD
-      clk: renesas: r9a09g056: Add entries for CANFD
-      clk: renesas: cpg-mssr: Unlock before reset verification
-
- drivers/clk/renesas/clk-vbattb.c                   |   4 +-
- drivers/clk/renesas/r9a09g056-cpg.c                |  10 ++
- drivers/clk/renesas/r9a09g057-cpg.c                |  10 ++
- drivers/clk/renesas/r9a09g077-cpg.c                |  13 +-
- drivers/clk/renesas/renesas-cpg-mssr.c             |  54 +++---
- drivers/clk/renesas/rzg2l-cpg.c                    | 189 ++++++++++++++++-----
- drivers/clk/renesas/rzv2h-cpg.c                    |  15 +-
- .../dt-bindings/clock/renesas,r9a09g077-cpg-mssr.h |   1 +
- .../dt-bindings/clock/renesas,r9a09g087-cpg-mssr.h |   1 +
- include/linux/clk/renesas.h                        |  11 ++
- 10 files changed, 237 insertions(+), 71 deletions(-)
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
