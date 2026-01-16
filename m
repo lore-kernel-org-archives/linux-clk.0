@@ -1,80 +1,80 @@
-Received: from mail-yx1-f46.google.com (mail-yx1-f46.google.com [74.125.224.46])
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C01411F9F70
-	for <linux-clk@vger.kernel.org>; Fri, 16 Jan 2026 21:25:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.224.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5A3E1E51EE
+	for <linux-clk@vger.kernel.org>; Fri, 16 Jan 2026 21:31:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.128.169
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768598715; cv=pass; b=hkEf84liXwpe+ZBLrsVu4nj4gwHOuEfUuEvzp8W7Y3IeHwrVRiKi2sVRKjLJFRfoGpN+5/a+E6ShxA97ojmEltdAQ9Kh/Gry2vCF/UuUcVlTtvlnhmLL+F2yDVLCwGp235+QPosAy6ja1ywEp6XPHQWwKbnjzJHhNqeO3QPx5pk=
+	t=1768599063; cv=pass; b=rolS4dnP0srr+NzTxMJXSyXbk/qWsNISbK4VlTg3Kt3kVT7tgNAtR+XUKhy5xHVG6loA4tlaCkgpPmQn3RSU1MFfZ+WpQwAA0pmXxsuFVJRlF5hmS45r9WpaMXjuQLUsGV7Mro+5HQevMw5BUEXPwp65gFJ6bIJWB46DG50BfTM=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768598715; c=relaxed/simple;
-	bh=mxbIo9HjWFsmyBKBsroE0HUQk3fFrXYb/WE89O0U/gI=;
+	s=arc-20240116; t=1768599063; c=relaxed/simple;
+	bh=vvBMNTtYjIdNhiUtcgxPXcGSrQ3zdfmugL08dxlZpp0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IvJPfemS8ED+958HRc4nHpmZeKSeMo8idHAA0OWRC15PQ9xJddA6P9tzsxuBeheaS6lpWSqcyLfeAwWT+NFCsGmzoNPInoiftd77iSXo3dxI7Mk66mVMsq6KQT/gnmgoGMHiVEp6wbAZP+i5UMfF6bno9x0+bHfPwuX8aVEgQPM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oss.tenstorrent.com; spf=pass smtp.mailfrom=tenstorrent.com; dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b=RuhkY6M3; arc=pass smtp.client-ip=74.125.224.46
+	 To:Cc:Content-Type; b=raHwA/IX5hSZStDXHk0DzIhwFXPy1NwEKoSC9QAYVYY6rOpMD3kwsCc1sXGMws/DevlK4p6djJVjZsQ3OO9K3wuhmrXDUp0HPuXYXmp2IaQ0MpPrb49X19FBrfwf6Ne0ORQfnfubklnBHQBNjff7c/F/IqlXRdu7EUW6t5OsuUQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oss.tenstorrent.com; spf=pass smtp.mailfrom=tenstorrent.com; dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b=Jn3jS/XT; arc=pass smtp.client-ip=209.85.128.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oss.tenstorrent.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tenstorrent.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b="RuhkY6M3"
-Received: by mail-yx1-f46.google.com with SMTP id 956f58d0204a3-647374e4cccso2183655d50.3
-        for <linux-clk@vger.kernel.org>; Fri, 16 Jan 2026 13:25:13 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1768598713; cv=none;
+	dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b="Jn3jS/XT"
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-78fc0f33998so24159797b3.0
+        for <linux-clk@vger.kernel.org>; Fri, 16 Jan 2026 13:31:01 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1768599061; cv=none;
         d=google.com; s=arc-20240605;
-        b=Gy7oYuD1XoZBlGBBkHr3IHLQkGb1qaZDn/0SV9iB8bveOZ+PT2vjRL3ItCYEyi+K5K
-         1UoCQMH3aPyxvNfa3X/NbjQH+4lIXPF+r6DChXaDztfcdWVj724BjYA3CYgfre1JKko0
-         PUuzRWldWQ9uCl/Cbl0BSOq6/ePMGCCz5MmcNxZTzHpXsUmslVXnm1g2VLMuisx3COsA
-         cjXPQ34ts79D15Kl4cWHz++R3vkjcxp4zGHBM5+GXM65zzypWz0jdLpyyDFMDblbeocY
-         NqT9Tsf4nb0aC7O4oQ+IqlQZ5J070+kq6i6GY7csrd/d0dacMpPC23l5tmsbgQqlYqPY
-         9llg==
+        b=QZrpPJClS4qXrlL2TipzzxrARZJ44AH54uBBCSfRVUY0ujK2g77DSYTN1l7TaN0gKx
+         xxtGbbu9xmsq3M+GyJMBxmDdZ0Pwb6sQrwaLSD4mSziAEJyRGblEbCis3dtwXmhXr8ou
+         rNr4A5MFW5Id8ZvmNxIi0bPrC6TYGzREMyUCec9pe4kgUM1ecNiurlmtcvNO13jiiEum
+         SnqLIeslGGd2q1z/1ZoIl7SxrcJvWht+ymj7KtMcI/vIAJq9GBdQLtlofPH9neSdJ1+I
+         hgvDN+6WhhmaAcL69euIjdd1nDdtP72rpjzreEYAhTgBLc4k3TLekFmWuQcm/H1tE1eF
+         /51A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=mxbIo9HjWFsmyBKBsroE0HUQk3fFrXYb/WE89O0U/gI=;
-        fh=+1e1Dwq3HiBMOymOxQRtRajQ7p5P9kpkdzhLGcwEJOo=;
-        b=PrDQ+U2pD99X3Cn6Y3jEIf/2Qr20tv4KTGJ5XLp5SGdGUPbtGAHnRGvwBPrR26iwtL
-         KFfc3lKpbYLrO5rPqp0KbVo+uDmm0KW8MZ1v2R76lnkHyI7D1GMeUq0bXd8jR1uPzjLE
-         h49WMgLZ4X9+N6k+/jUjjbEJchizXQ7fRsPNVfsV1JSnPdbeX/jYdbz59xBvckr33vWR
-         se3MbZWLKh9FffKTQfQWlJxd9aeUkWOS/pzicTHHqHAL9KMsPnk6z9Pc2OLadvxlLAyS
-         ZJ0wwT1TGmAZ+N0ZjKB40YDOsOsRfWfm4fmYRahXnJGklfvhR9IGgfAC6dijU/4vqhxG
-         F6RA==;
+        bh=vvBMNTtYjIdNhiUtcgxPXcGSrQ3zdfmugL08dxlZpp0=;
+        fh=uZp86ASRjuU3N7erv5M1M6v4ear1ZHIvdeET3WpqDCw=;
+        b=GPOQXxFfC0g5nX7588s7icvIFHRqUHVVrW90Zwxce0vZhsAieqAPDqgVB+XaMwfPF+
+         uC9vFTXt2ZuL3S0b+HirRuTLKr9oWFizHT/ydoGnnNpajdRMty2d7rPcIZ8MtS+VGFML
+         zjeNE93glaK1ol5j/9iX4rDsxiBXIS4KdBXuHZ+tyqLAjO0Zx5VHyEphGiCyrJmaIQVs
+         AsuMHDoOmukJDIXjRPPR5qZ9yjuiNtFQ0VzFU/+4id6iOvQY+qac1kF4Gtl2u6Y/RwBF
+         sGjx4aweYr2I9qEBTE71b4qgfIK+iH+JnRf4FUzX7U4htie1saZJ4EkdK+BBkyml53zs
+         i9ww==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tenstorrent.com; s=google; t=1768598713; x=1769203513; darn=vger.kernel.org;
+        d=tenstorrent.com; s=google; t=1768599061; x=1769203861; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=mxbIo9HjWFsmyBKBsroE0HUQk3fFrXYb/WE89O0U/gI=;
-        b=RuhkY6M3Lx5Sra0DA2oYqNhZo5gByRGrQ2lrZ3OwQOjkheaCWQ1sQqZGdpIqCRpbLg
-         zokuBeKMTkUNc8vvwB2bFe/j/bsmC3sdWTQs6LmRjRjLkzXDfXWQi66uRM2g2LyQWuHg
-         kcYsrAgCEdM/aiBGPWVCEQdN/vjn/BBIfz01m7t1CCFo3iolJF6upUgM2cqmKoNox2Tl
-         rKe+3kQSFdGzIMObHVliJ1zROULbR1BHggyG6xgiSL8ean3687ElE591XEpommXfsEpy
-         GNOHWJN6n1maql7gHGJLraSLy/L9AE5UFOiSpspDAPVyBukNLSpkRdrsFb6nYJt1Tl+o
-         cGag==
+        bh=vvBMNTtYjIdNhiUtcgxPXcGSrQ3zdfmugL08dxlZpp0=;
+        b=Jn3jS/XTRi8FuvKI4kzx5YKe1FRNz6EsTQTD9ZlsUztMXGVTSEK0APQMwgBLfbsANk
+         MMpY8hbd5Ag+HfyEv+gLtZQvBuLxOPtkxcJK3/7gNpdMCTyInww43Tskl04Wl1mm+5ep
+         jAQ7ZLtIVJwdOcOU7y5jzeeJaTbmrIcvxOnoY9pKCrg+TbZ8H7F0vKe8aip6VmsoZ79p
+         QF625iQlpqzxdaTZTjGgxHl7AER7uJoSQWwRZBs1k7frKjR+T+m0NEH9JdYHk/WpA296
+         8BBN8W8so1tpYd5ilRk6/vDVtBE1z9z9i6+nIuDgZx8Neepd7swpIdLbf/cWTLGNJIDp
+         zDTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768598713; x=1769203513;
+        d=1e100.net; s=20230601; t=1768599061; x=1769203861;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=mxbIo9HjWFsmyBKBsroE0HUQk3fFrXYb/WE89O0U/gI=;
-        b=W5uwVKnDJPO1iL8TLScOrH/ofMi8W8cGghVySkE0qdd5GDW75jichz2sw53u0P3Mfl
-         Z+yYqP01sdAQC9WLoYZs+hkLkSyVDBDq1OegPrSuzCJpNfDyLLtPf/DcXn8dDzLV946g
-         1j++4+ATGHTKCMFQp0XP7bqNba9kttfCiYv20wjRnwBSNwvnwDrXRIZLS01B1SNbYkRE
-         HBC6fczWEWEfUGv9+U0uff1sGmkzPaGzKSUDY3PQ8bB/PnXZLsBdRc/1lWhDag4G1rnG
-         Nyt98nHtO+tK3lGeJ7tH8AMCkofis8Pm13wL4BgEQnxcqmg8y1efXlsFPGuhlwV2zVdT
-         qdQA==
-X-Forwarded-Encrypted: i=1; AJvYcCW7Dd1olhv1wfCmUm/ouroVZkQ8aWHOJ4xnuFYuMmmz9ONGqIstb6uPcqPpyUp2FSglSTAqB9dgvnA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBmE6J5d9pTLh1qMhaaKzqjLa4gq1ItcCnZPAeJk1caBAx+5Ia
-	PWs8qmIxEhifqqGSsaZgW9bZbpdhKnOlecSyAjYfhy/RO9s1ABlJB2zUc3nAn1s/ZCaiQFiObkW
-	lfE/TfnCvnokY3yupr3s8MvQp9hN/C13T22KgTA6voA==
-X-Gm-Gg: AY/fxX5lbsXqMHSIiAGC3JACZQk3geGVnbxkouM2gVznX5wJOM1aLCbuvaNmoqt+F6L
-	vopm9yBGvu7tkrnzLEOdUjIuYCZ6MKnXGveL7FnzM/ZgcJ9WwbkJqRHU7IZnNZ/Tao8CXKJzJiZ
-	BXfydjcGQU8AeFiO2sVcC7rbYHrmTD98NFAT9l0ra7bxe0JbcD8swLLSQ0ZG1nf27kgEg9E1Ek4
-	FRuon5ZFp2oSHk7/jvomitz0OSRoZetGhJpnY8C/h0tZ/RRN7nLwCGhcrI/yBRLXqKnc0h+pU76
-	NiKWklglg+u7MOf4qEvwos8vXCfMaFLVBI8fdp8JKFa0nTOQxGGMOI0GHiX3
-X-Received: by 2002:a05:690e:1489:b0:644:28d2:a4a6 with SMTP id
- 956f58d0204a3-649164f76dbmr3642894d50.47.1768598712888; Fri, 16 Jan 2026
- 13:25:12 -0800 (PST)
+        bh=vvBMNTtYjIdNhiUtcgxPXcGSrQ3zdfmugL08dxlZpp0=;
+        b=sG8heyOsmSJTW5AW2WJvtC8jO5DU9DSTISVsmFE5hHC2YNsemq/M2cNc9d0TQ+dbF6
+         T+8n53LPyZzTYqvVwibwqtQncrm2lI4NokE6Dmk/LvG/0bDkgfihovx5iJ0TiuOOY2Zk
+         cB0DXK1B0focZpSUt6aytwvkgqB2dY/WpJA3TW1wlKhhiuXCbU9y7wrP81aZA1niJuer
+         plQsg408JFVct7NwIyx+Dnv6BupXdI7sMoyhXFbTAyk8/nfPPZ/IRH3Sa5WS8LRMQCqz
+         6hN56OfhP7wsNNrONwIByI+7YR3/Td5iSw6nK6IhlhQWfKeE8tyJ2Bxxs9FlCdcLOCuL
+         jfag==
+X-Forwarded-Encrypted: i=1; AJvYcCWhhB+RSI0Mksx6XXBcHgPZqAPy3ceSuPK7h+BaLkQ95zXR+ZXZoos6bNuer1IyjwAdbo7FyQl430g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0P3fpWymxBVyjxvm/NAzxHbZaOrNPYBD85DhrARg5kdUmDJP7
+	CGo39939ij9IVn5e86vpZdCDjaSDJc5Bos+rpO4kC000Yr825VAYgX+q08Ydf/q4Kbt7rUYqz9u
+	2sC/KrM6fnZiY5ncQlLQbthCJuARZZtUe+kX1vcFBsA==
+X-Gm-Gg: AY/fxX7Hd72XgoaBGTYMxo7AVeuzUVJF7MOdPcCfm5vLgUfW9OTLRg+wzb8Dp+8NLig
+	KsgkbkqRucvtdyysGUX2G82GVxPi0rVxQGmrUFFeGjNP/vHm+v2BOAkpt9y4XrWFvyQatU0dye8
+	Qpl3jse8KVUcL/jbaxx9X9jVLcomVJ7Tm5W8oybsnJVYpoxJcg4CQFJY48UoV0logBwpOtSUCPv
+	J8szIQlkh0/k1IKFuhWlCZlXKnXV11OcrRB6WzFbWSQThzvs6RBPHqWAg+EGmCkoYxv/xdZkvLr
+	QQTsqK80AaVXF6pqza6q7/5L5E9rT/FzGodl5jjW4bxvZ9A+6cPw6T7qiNFBRRxF+CLHGiY=
+X-Received: by 2002:a05:690c:e3cc:b0:78f:b820:f2f3 with SMTP id
+ 00721157ae682-793c523ce6dmr77707577b3.12.1768599060916; Fri, 16 Jan 2026
+ 13:31:00 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -82,14 +82,14 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20260115-atlantis-clocks-v1-0-7356e671f28b@oss.tenstorrent.com>
- <20260115-atlantis-clocks-v1-4-7356e671f28b@oss.tenstorrent.com>
- <20260116-unique-devious-elephant-e9de6d@quoll> <1ef5317a-93d0-4357-bfc3-ce780002734d@kernel.org>
-In-Reply-To: <1ef5317a-93d0-4357-bfc3-ce780002734d@kernel.org>
+ <20260115-atlantis-clocks-v1-8-7356e671f28b@oss.tenstorrent.com> <20260116-pretty-maize-cuscus-fd1cbf@quoll>
+In-Reply-To: <20260116-pretty-maize-cuscus-fd1cbf@quoll>
 From: Anirudh Srinivasan <asrinivasan@oss.tenstorrent.com>
-Date: Fri, 16 Jan 2026 15:25:02 -0600
-X-Gm-Features: AZwV_QidPk8Y4W8WRSMZEq2Ai2phZYkmta2y36cESHGQhYtUHli-ToYTUVaqpDk
-Message-ID: <CAEev2e8i_4Dud-OdghjN+1Sp7n_9yNThwgDbirkREBJHChwscw@mail.gmail.com>
-Subject: Re: [PATCH 4/8] dt-bindings: soc: tenstorrent: Add atlantis resets
+Date: Fri, 16 Jan 2026 15:30:48 -0600
+X-Gm-Features: AZwV_Qg_SKVdsBkEYiEsvS3rA5LuKeOql85INJDNfPf7p1rAcP7anRwsxzBwm-M
+Message-ID: <CAEev2e_LhhN2uZvQp4r92FLZNS7qYhC=Nn6NeFwqRw5OGjv4Lw@mail.gmail.com>
+Subject: Re: [PATCH 8/8] clk: tenstorrent: Add reset controller to Atlantis
+ clock controller probe
 To: Krzysztof Kozlowski <krzk@kernel.org>
 Cc: Drew Fustini <dfustini@oss.tenstorrent.com>, Joel Stanley <jms@oss.tenstorrent.com>, 
 	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
@@ -104,17 +104,19 @@ Content-Transfer-Encoding: quoted-printable
 
 Hi Krzysztof,
 
-On Fri, Jan 16, 2026 at 3:03=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.or=
+On Fri, Jan 16, 2026 at 3:08=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.or=
 g> wrote:
 >
-> On 16/01/2026 10:02, Krzysztof Kozlowski wrote:
-> Ah, because you just added it in other patch. Then obviously this must
-> be squashed. Why would you post an incomplete patch and fix it up
-> immediately?
+> Completely pointless. You do not have any user of this.
 >
-> Please read writing bindings document - it covers this case.
-> Why aren't you posting COMPLETE bindings on first posting? This is now
-> ABI break for no good reasons - you knew your device has resets.
+> Adding a few unused lines is not a logical change to the kernel. Why not
+> adding it member by member like one patch for empty struct, then second
+> patch for struct with adev, then third patch adding regmap?
+>
+>
+> You just added this file! Why are you adding incomplete or even buggy
+> code which immediately you fix?
 
-I will squash down the commits so that there is just one commit with bindin=
-gs.
+Regarding your comments from patches 5, 6 and 8, I will clean up the
+patches that add the auxdev and reset controller so that there are no
+more unnecessary commits.
