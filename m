@@ -1,148 +1,325 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBD703939BD
-	for <linux-clk@vger.kernel.org>; Fri, 16 Jan 2026 16:34:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE0E234A3CD
+	for <linux-clk@vger.kernel.org>; Fri, 16 Jan 2026 16:44:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768581289; cv=none; b=UelLP7ke49BuEVfOW/eBC8VhETu74DJAZdbK2c2N+AMZFeoXSMrfQLd/C+XfHjcj8dIsR4Gagp41TimxKhbvt6dV/jFdVmZDjhmq1mGwqWE3Sfw77kPdwopFP+FV6uCA0FzHg08qEPur4UA6zryJmqoyO2QE0UVPXeeyaaGTJN4=
+	t=1768581869; cv=none; b=uz8cWc1OO0IeG4IRjyJdCUsyCMdNiBLK87UnxpUlSgkx/kOtg6BHG1NVunnRIjBYTQTyTPN2A7TknYkxlakMn5vVyWdHg7Y9sWJv5B+gKX7J6WIwnO56fLbXuaOkDWQBV3cMnCbei5nnSMGesAvkgdqrvhhqF1nwRGCe3MuPfWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768581289; c=relaxed/simple;
-	bh=e8E2A+eo/KQwzZm9O+K51Cg+TzQHkK+jR1VYjq3CkS0=;
+	s=arc-20240116; t=1768581869; c=relaxed/simple;
+	bh=FCPpuR5pyXbwuEHy7hY3eKJRjE8DIkNpAA05+01sLW0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bUytTsRtF2Xqq/JVSkXn8awJYti4FLG/PwFNwHCKmKCLQg3kHVgLhaNITIo6Hpv8gytlTZaoldAdI80XA1jL8LdelqwojcOmDxjUSmHm3VPEE+5pmX/SvE2D8/9xKyLLea79UhOXWeaQ/JRL+gJoBbqqeBpOk7+RoBWRm0mL6n0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=l5oB5sKA; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=BQ8dWcvj; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=g+EK2q6NUJ9ySLnQu46vWjuniQ8eKW/Th3ktVVOnEt2QiiGrwhPs2PcTLGcTzmf9bsqCkSBLXTFVWJ9U3yaTCKzpWl9gokABNNITx4pEzF2RwcLEweEjv/iqlZSeoIqypFU1NQm+n0BDH5IdlxIR/XpPOVC1TG44cn4I+BO9WeE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UKQlHQJv; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=MGfCNwka; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="l5oB5sKA";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="BQ8dWcvj"
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 60GGNnPo3582540
-	for <linux-clk@vger.kernel.org>; Fri, 16 Jan 2026 16:34:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=fCYKQXs+T1JIIa5G6WnDladc
-	SFMG2v8SiIjUv68q0Fk=; b=l5oB5sKAR9ZIhK+VnnPwy86114P0A5VGO2r83cll
-	lBZKV+vb+UvyJ5Hm6AIWylcUc5oeLj8ZRg99D8LLmOXqXOZN7KV82Nks4fy8g6t4
-	3uNVPzXWlKlctOfT8gyEweBuhf/ji1TYedMlH6j7Zu8Iu1hIrGfZmV7nUeN1axbY
-	WAO7yBkoAtwCge+Kxfeu4gv+GzOIQ+0e8JSRVLBGH3Xqcfn2rua5pGbJs2dN9hm5
-	Y4ZfgEpovlfGLrsRpz4NBtNu2GVSMztuN8ba3QllXqFxnBN2SXnUqM6cV9LTUmyW
-	37CNu602zI0hQK7jL4yxtcqYMA2nNZtilJiTYnSEjYI64Q==
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4bq9ayttg7-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Fri, 16 Jan 2026 16:34:46 +0000 (GMT)
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-8c5297cfe68so421636485a.0
-        for <linux-clk@vger.kernel.org>; Fri, 16 Jan 2026 08:34:46 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UKQlHQJv";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="MGfCNwka"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1768581865;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pRCF+slWnms33snim/Zhjou6RcOl1iwqXMoZkaC/5tU=;
+	b=UKQlHQJvt8Hjp9D8AoeqLqirsGT/C7Uvem/PMgKCJ7kcvazGkG3+wAcCRMrYgJt9GVzOdO
+	VKFGUf/XKrDyyVNRZ/J8MrEOX0dR77xL7B+S8qntCYKPecwMSKwnkt8vjyBoD0K92mNabT
+	+CWUmJiFlYUnYXMd/UIUihyTbihAAD0=
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
+ [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-351--T5QVvuWN0Cb653bTLAz0A-1; Fri, 16 Jan 2026 11:44:24 -0500
+X-MC-Unique: -T5QVvuWN0Cb653bTLAz0A-1
+X-Mimecast-MFC-AGG-ID: -T5QVvuWN0Cb653bTLAz0A_1768581864
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-890587d4e87so61917126d6.0
+        for <linux-clk@vger.kernel.org>; Fri, 16 Jan 2026 08:44:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1768581286; x=1769186086; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=fCYKQXs+T1JIIa5G6WnDladcSFMG2v8SiIjUv68q0Fk=;
-        b=BQ8dWcvjcBd8DrNp2VbiErZL7WQSngBGF20hnHv1Mxth8DyTBegz8r//0GB+0CTqZX
-         pyoSQnWKtFkumvLWczVsqLYTTCQIeavx0PHfvxjQzGAi6YlqkXg//LtCoOhPM2BCBzyu
-         CYZDkZQc/Kddp9J9szZlxObx+zSh0ZcGKIktzmwyastURvtdvv6gJqzk/Wo1mdgMcAty
-         DhVixioWyGZYGfWmm7b6eFInJ+NnPnCsaePRDodZ2Y+6OpxEh5UL8J+9WIU2WCamPYsf
-         oCGR+WfBv+XYnNFA54ByEnthjouhzOJ/GGyYazb7sXrvGzCsrcEE/o8izChm9uv8ckqw
-         HslA==
+        d=redhat.com; s=google; t=1768581864; x=1769186664; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-transfer-encoding
+         :content-disposition:mime-version:references:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=pRCF+slWnms33snim/Zhjou6RcOl1iwqXMoZkaC/5tU=;
+        b=MGfCNwkaL9uZZh5W2vO5YU5oCmt2SLLx3oKsdWSP8CgyNrq25Y26LVdlEORGxDep2h
+         TmXVGS0ajq+olVa2ig2bq+aDu4mnNDns4J7/ataKHWR/58lJMuJaHYx0D0cbxpI0XhG+
+         BKzCPLv5KPnN9wbBrIr1i7Rvtw206Hf9GVV54+nAH6NheAu7DExeC8mRovOMnbXNUDge
+         P7wvS4XS+1pEmJ/TwUAZopSaroIVEbRF1O/gULfbNMbo4mmqEFYMiWxJLHO/gmKsHZbl
+         MqTdZ6bIivU6X4ucbkpLI5R+9iOp0zd1OjiRLdWlE3VH8FTqxbBGZjhUowczZbdhFOrM
+         Le8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768581286; x=1769186086;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fCYKQXs+T1JIIa5G6WnDladcSFMG2v8SiIjUv68q0Fk=;
-        b=b6t40ZAYOsPMITXatXYlYjweBd1LEw8ULHTT2zHR+Rc9yXl5e6p0Mpt+w3eFAqwT8t
-         rWGCh28ghuMD2rZtqnQpxRvIzY2B+IijW0vrmGjSW2KZPMMVzt1Lc/zSHqKqH1SQYbpy
-         yHiZhYHQray0BJ2Gv9hhquv6laGJM3T1lJIphX02E4eYNPcq5kzOFtmyTAGAAEd4Je/p
-         PnYdNa6AOsyoSvyrlJpT1o5if7EonMyRvO/SGdtvoAyXaHg1eLDN5lgmDIBdqXo69huh
-         P9Bsi8fA0UbjJ4+786nSLmRJ9iFwIgewpo6pdd2qA/VWUBKkxzDRPzH2Ql//4spPKVkk
-         Esyw==
-X-Forwarded-Encrypted: i=1; AJvYcCWIuXUQHv7UOq/MEJFgTA05ptjqiIwN9yBThGCvuULDYYNYk5QwrR561TZtKeGJNn54q1AkMRDj1kU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyY0lfgmHGE3BYLVkkUON/AwJVXejRROU0xUDqAyVwxfAWI6sFK
-	DVeeYfMWvVC4I7Em/m7hCYj+/r4pVKxfTQV6WacCbp4j6gfZYHDkb5B800eouV3ATSb7bQmJYbN
-	dOH5K77JptRcDEkF+bk0Ofz8A1EITnhdECu6EzvB/G2UTgu5vCJUg50s3wd9t5m0=
-X-Gm-Gg: AY/fxX6sVTbIFB+BOK0hwyFTS4xQyHX7CdWWK8KCfcyS4w5zxNi0i32wgtXkK3BWiYc
-	l27Q2Rd73+LhER0JmoK9n4otpW7uD7Yiob4MgmmSRbEkkejgek/Tfru+7cte9qyRLR6HfFU8lIz
-	fqvx2/JZJDt3cp8uoWQWbWXdearAWI6M1KKqUeVCTNW3hUJgDdvUbb03rhAxwZe7ydUT5OWb4lK
-	P0ZnIwypy/WkMe1PLm1nXOCTG+gvv5XDpNYotdGLBgIzxAu7/Lw7OX0qQCaXEsXrqZSuHy6sHgh
-	OGeM53tsOJYQ65z1U5NAZ7k66PTcojWsFT3iHGWoGAWpfcQtJM8PXcwPWqcKwjFshgAIerkySyi
-	62lpUpnoi6cyU/H4odLMz3YLzt0CQnh8yAboaoG+mKwM/2XYfa6eq8zIzo7rEPSu1ikwmNPG8pq
-	kezHnvHR2soMmC/yQ5O7Ik0qk=
-X-Received: by 2002:a05:620a:4801:b0:89e:67a9:fced with SMTP id af79cd13be357-8c6a6789e6bmr501564185a.66.1768581286226;
-        Fri, 16 Jan 2026 08:34:46 -0800 (PST)
-X-Received: by 2002:a05:620a:4801:b0:89e:67a9:fced with SMTP id af79cd13be357-8c6a6789e6bmr501559485a.66.1768581285613;
-        Fri, 16 Jan 2026 08:34:45 -0800 (PST)
-Received: from umbar.lan (2001-14ba-a073-af00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a073:af00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-59baf33ef74sm897580e87.17.2026.01.16.08.34.44
+        d=1e100.net; s=20230601; t=1768581864; x=1769186664;
+        h=user-agent:in-reply-to:content-transfer-encoding
+         :content-disposition:mime-version:references:message-id:subject:cc
+         :to:from:date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pRCF+slWnms33snim/Zhjou6RcOl1iwqXMoZkaC/5tU=;
+        b=ZYa+j7VFyQGFd30Q2QmVoba0ipV10RW6bdBZObiXPjdXPmTXiNateKKGIzG2Akiaji
+         j2Jv7F5VIvbAu2GM9cuZwQGUTv04SIApthYk0OfdP/gh/8qsAJqia0aCwliWrw3Pvjp4
+         YXOxARtUaolEZRoZhEeJkvNntJgIvYLyWWoBKxQPrZy72D37YxXNLW8IXL4wcbE/EXDm
+         vbXjUXNYpuJQZfcrv6gjzZcyHing3xt3G7PlLy+6CpM8EHee9UEi1+C6HWXCcUJSgsD/
+         1VUSNeaAxMq3WHLaSpYgCI9CXAXm5L/2qCyPc6MUwAp9vc7X5bUHo/MLCeFKg+ohUgDz
+         7caw==
+X-Forwarded-Encrypted: i=1; AJvYcCVDFa0LfRRAtnLkUrJNDb5WRuQkrgeOcy55o4Tf2tuwuoLOIr7ncVf5YQ58q5hY/zPdhtPAGVchoJY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4FX2vR3uyI40jCtfKQ+BiaU7ceYoMYkF5nrCbeGmdi9TrfcjU
+	2HMozS7mdJ+6OlGfKtOjhkEtkKoWwU1xp8/EiBoACxm6A+iZfp3UESFfkfNFoVh8cId9lTCwmgB
+	UemR3nHf5rFEyWzGXecCbUImVOd4Cb8zqJUNW2ZOS8lHpH8VMvFDyVfbx7p+MRQ==
+X-Gm-Gg: AY/fxX6Q5N3dBm3mUS44sbetGVlb4Rf3WxtVNz23l5hqBndvvzPs+H7nhi7IJD2JXsC
+	w9c3p1L1TEeW/oQmZ/kn/lkoDUUpwadophQ/c/rO757cjQxsrOnCS4jT298Z+3g9Pf2TsYHvPqJ
+	ovkY4E8EFeCCdtOuuzqePlcUs5rpa2mUVki7vMeWGA8ShY5kECm5KLh4DA19zFo583I/cAXOSG1
+	FpVb4QpSa0gX00BgEqrnyDYqzcQKLwk9Z6rveaPOfvBU6HrqVCeoIlLjQJoYVfzcQ8eHbQMk1T0
+	NmA95Rxnkjs7vtJyX/R9hgbt7PE45MJhAHQdzNjU14fMeYDvvGvnHWtWRDPdrN6M7UUXHlwGmQs
+	ni7CJXdRHxDLDlC2XkUNUjusLCCVdRQylEPmouJ+QkLPy
+X-Received: by 2002:a05:6214:242f:b0:88a:529a:a530 with SMTP id 6a1803df08f44-8942dd109a7mr50047436d6.23.1768581863885;
+        Fri, 16 Jan 2026 08:44:23 -0800 (PST)
+X-Received: by 2002:a05:6214:242f:b0:88a:529a:a530 with SMTP id 6a1803df08f44-8942dd109a7mr50042666d6.23.1768581858515;
+        Fri, 16 Jan 2026 08:44:18 -0800 (PST)
+Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8942e6c6605sm26555976d6.44.2026.01.16.08.44.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Jan 2026 08:34:44 -0800 (PST)
-Date: Fri, 16 Jan 2026 18:34:43 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Luca Weiss <luca.weiss@fairphone.com>
-Cc: Georgi Djakov <djakov@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH 5/5] arm64: dts: qcom: milos: Add interconnects to camcc
-Message-ID: <272itffci5xkelvykfijviarm6np22fvcofj4m4tud7l3fn7c5@n6p77vfid36u>
-References: <20260116-milos-camcc-icc-v1-0-400b7fcd156a@fairphone.com>
- <20260116-milos-camcc-icc-v1-5-400b7fcd156a@fairphone.com>
+        Fri, 16 Jan 2026 08:44:17 -0800 (PST)
+Date: Fri, 16 Jan 2026 11:44:16 -0500
+From: Brian Masney <bmasney@redhat.com>
+To: Chuan Liu <chuan.liu@amlogic.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: Ensure correct consumer's rate boundaries
+Message-ID: <aWpq4E4_zTIO8Phr@redhat.com>
+References: <20260109-fix_error_setting_clk_rate_range-v1-1-bae0b40e870f@amlogic.com>
+ <aWhDLNFtaoU7A-AN@redhat.com>
+ <fe437139-4c33-489f-90f9-44e3dd3b0f9e@amlogic.com>
+ <aWjlMrlCEbprgKg5@redhat.com>
+ <6a66f0f8-3fbf-46b7-9370-5768b1acd96b@amlogic.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/mixed; boundary="TfOEVYXj3aZnLEB/"
 Content-Disposition: inline
-In-Reply-To: <20260116-milos-camcc-icc-v1-5-400b7fcd156a@fairphone.com>
-X-Proofpoint-ORIG-GUID: dCcR90MtWa7LLS7ymayQdo27gKLhjgzt
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTE2MDEyMCBTYWx0ZWRfX6PHRQMNpySRH
- QkjE0V8+4OTEw1d9o8XmcbIw83ee4Y8Gf4QLf8UBBzgo2Iffs/wAfKmYCuJ3fUN0MIFtu+NLV2+
- cF2VhRZPvUpJNgUcpe3rAHruQW/0KP1AvQDy0/Kl8flLoeNBraqFyXxGzL/npV1n/6Gd+dkVs/H
- w6VHxiybPzs/gAb7cJqlfssSWL5hTi62EfozCv6dBTnVl8+NJDriYh+w/2rz/88M+6PEZVZmMjJ
- TSMM6Q2h0R+wrqu+8rP0POFRk090VZ/5qgqaHQ8KeNqVyzn31lVI2uY/QiawRdYx3tmVCqmt+BL
- xp86H80sIHHGht3qMe2Zxyo1Bk/Ya5bdEdgu82mPVj4yf5JL4eyC+WVRqRjGCuPyOE8D08Spsbz
- N/mF/uWF4kveM1VZvogMV/JFr2XA0QFUhiW0phoFOHOOZzH+Z8TV6JrfYN3bhoWsvoj3wEsTGkG
- dqOuEISCaswSy/eWCFg==
-X-Proofpoint-GUID: dCcR90MtWa7LLS7ymayQdo27gKLhjgzt
-X-Authority-Analysis: v=2.4 cv=NfDrFmD4 c=1 sm=1 tr=0 ts=696a68a6 cx=c_pps
- a=50t2pK5VMbmlHzFWWp8p/g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=vUbySO9Y5rIA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=6H0WHjuAAAAA:8 a=EUspDBNiAAAA:8 a=jeBussX95TUAqHeP4CEA:9 a=CjuIK1q_8ugA:10
- a=IoWCM6iH3mJn3m4BftBB:22 a=Soq9LBFxuPC4vsCAQt-j:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2026-01-16_06,2026-01-15_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 malwarescore=0 impostorscore=0 suspectscore=0 spamscore=0
- phishscore=0 clxscore=1015 priorityscore=1501 lowpriorityscore=0 adultscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2512120000 definitions=main-2601160120
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <6a66f0f8-3fbf-46b7-9370-5768b1acd96b@amlogic.com>
+User-Agent: Mutt/2.2.14 (2025-02-20)
 
-On Fri, Jan 16, 2026 at 02:17:24PM +0100, Luca Weiss wrote:
-> The CAMSS_TOP_GDSC inside camcc requires an interconnect path to be
-> enabled, otherwise the GDSC will be stuck on 'off' and can't be enabled.
+
+--TfOEVYXj3aZnLEB/
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+
+Hi Chuan,
+i
+On Fri, Jan 16, 2026 at 05:32:39PM +0800, Chuan Liu wrote:
+> On 1/15/2026 9:01 PM, Brian Masney wrote:
+> > On Thu, Jan 15, 2026 at 10:37:55AM +0800, Chuan Liu wrote:
+> > > On 1/15/2026 9:30 AM, Brian Masney wrote:
+> > > > On Fri, Jan 09, 2026 at 11:24:22AM +0800, Chuan Liu via B4 Relay wrote:
+> > > > > From: Chuan Liu <chuan.liu@amlogic.com>
+> > > > > 
+> > > > > If we were to have two users of the same clock, doing something like:
+> > > > > 
+> > > > > clk_set_rate_range(user1, 1000, 2000);
+> > > > > clk_set_rate_range(user2, 3000, 4000);
+> > > > > 
+> > > > > Even when user2's call returns -EINVAL, the min_rate and max_rate of
+> > > > > user2 are still incorrectly updated. This causes subsequent calls by
+> > > > > user1 to fail when setting the clock rate, as clk_core_get_boundaries()
+> > > > > returns corrupted boundaries (min_rate = 3000, max_rate = 2000).
+> > > > > 
+> > > > > To prevent this, clk_core_check_boundaries() now rollback to the old
+> > > > > boundaries when the check fails.
+> > > > > 
+> > > > > Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
+> > > > > ---
+> > > > >    drivers/clk/clk.c | 8 ++++++--
+> > > > >    1 file changed, 6 insertions(+), 2 deletions(-)
+> > > > > 
+> > > > > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> > > > > index 85d2f2481acf..0dfb16bf3f31 100644
+> > > > > --- a/drivers/clk/clk.c
+> > > > > +++ b/drivers/clk/clk.c
+> > > > > @@ -2710,13 +2710,17 @@ static int clk_set_rate_range_nolock(struct clk *clk,
+> > > > >          */
+> > > > >         rate = clamp(rate, min, max);
+> > > > >         ret = clk_core_set_rate_nolock(clk->core, rate);
+> > > > > +
+> > > > > +out:
+> > > > >         if (ret) {
+> > > > > -             /* rollback the changes */
+> > > > > +             /*
+> > > > > +              * Rollback the consumer’s old boundaries if check_boundaries or
+> > > > > +              * set_rate fails.
+> > > > > +              */
+> > > > >                 clk->min_rate = old_min;
+> > > > >                 clk->max_rate = old_max;
+> > > > >         }
+> > > > > 
+> > > > > -out:
+> > > > >         if (clk->exclusive_count)
+> > > > >                 clk_core_rate_protect(clk->core);
+> > > > 
+> > > > This looks correct to me. Just a quick question though to possibly
+> > > > simplify this further. Currently clk_set_rate_range_nolock() has the
+> > > > following code:
+> > > > 
+> > > >           /* Save the current values in case we need to rollback the change */
+> > > >           old_min = clk->min_rate;
+> > > >           old_max = clk->max_rate;
+> > > >           clk->min_rate = min;
+> > > >           clk->max_rate = max;
+> > > > 
+> > > >           if (!clk_core_check_boundaries(clk->core, min, max)) {
+> > > >                   ret = -EINVAL;
+> > > >                   goto out;
+> > > >           }
+> > > > 
+> > > > Since clk_core_check_boundaries() is a readonly operation, what do you
+> > > > think about moving clk_core_check_boundaries above the code that saves the
+> > > > previous values? That way we only need to rollback in the case where
+> > > > set_rate() fails.
+> > > > 
+> > > 
+> > > Perhaps it would be more appropriate to move the clk_core_check_boundaries()
+> > > check before saving the previous values, like this:
+> > > 
+> > >        if (!clk_core_check_boundaries(clk->core, min, max)) {
+> > >                ret = -EINVAL;
+> > >                goto out;
+> > >        }
+> > > 
+> > >        /* Save the current values in case we need to rollback the change */
+> > >        old_min = clk->min_rate;
+> > >        old_max = clk->max_rate;
+> > >        clk->min_rate = min;
+> > >        clk->max_rate = max;
+> > 
+> > Yes, that's what I had in mind.
+> > 
+> > > The changes in this patch are intended to avoid altering the original driver
+> > > execution flow, while making the minimal modification to fix the issue where
+> > > the range is incorrectly assigned.
+> > 
+> > It's ultimately up to Stephen what he wants to take. I personally have a
+> > slight preference to the approach above, however I don't have a strong
+> > opinion about it. I'm just calling this out to help with reviews.
+> > 
+> > The one thing that Stephen will want though is kunit tests for this
+> > since it changes the clk core. There's already a bunch of kunit tests in
+> > drivers/clk/clk_test.c. Feel free to reach out to me if you need help
+> > writing a new test.
+> > 
 > 
-> Add the interconnect path so that this requirement can be satisfied by
-> the kernel.
+> Thank you for the reminder. Stephen previously pointed out the need to
+> improve the kunit tests, and I will take this into account in future
+> submissions.
 > 
-> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
-> ---
->  arch/arm64/boot/dts/qcom/milos.dtsi | 3 +++
->  1 file changed, 3 insertions(+)
-> 
+> I would greatly appreciate it if you could help enhance the kunit tests for
+> this particular test case.:)
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+I attached a patch that adds a kunit test that you can apply with 'git
+am'. Try it with, and without your patch to see how it operates with
+and without your fix. If you like it, then feel free to include it in
+the next version of this patch series.
 
+Brian
 
+--TfOEVYXj3aZnLEB/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment;
+	filename=0001-clk-test-introduce-test-to-test-the-rollback-of-cons.patch
+
+From 2367a5e238f0d26ae38510fb0fa2eb33a43cc046 Mon Sep 17 00:00:00 2001
+From: Brian Masney <bmasney@redhat.com>
+Date: Fri, 16 Jan 2026 11:21:21 -0500
+Subject: [PATCH] clk: test: introduce test to test the rollback of consumer's
+ rate boundaries
+Content-type: text/plain
+
+Add a kunit test to ensure that when a second consumer requests an
+invalid rate range that the aggregated range is rolled back correctly,
+and the first consumer is not impacted.
+
+Signed-off-by: Brian Masney <bmasney@redhat.com>
+---
+ drivers/clk/clk_test.c | 53 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 53 insertions(+)
+
+diff --git a/drivers/clk/clk_test.c b/drivers/clk/clk_test.c
+index a268d7b5d4cb..afffa182559f 100644
+--- a/drivers/clk/clk_test.c
++++ b/drivers/clk/clk_test.c
+@@ -1500,6 +1500,58 @@ static void clk_range_test_multiple_disjoints_range(struct kunit *test)
+ 	clk_put(user1);
+ }
+ 
++static void clk_range_test_consumer_boundaries_rollback(struct kunit *test)
++{
++	struct clk_dummy_context *ctx = test->priv;
++	struct clk_hw *hw = &ctx->hw;
++	unsigned long rate, min, max;
++	struct clk *user1, *user2;
++	int ret;
++
++	user1 = clk_hw_get_clk(hw, NULL);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, user1);
++
++	user2 = clk_hw_get_clk(hw, NULL);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, user2);
++
++	/* user1 sets a range */
++	ret = clk_set_rate_range(user1, 1000, 2000);
++	KUNIT_ASSERT_EQ(test, ret, 0);
++
++	clk_hw_get_rate_range(hw, &min, &max);
++	KUNIT_ASSERT_EQ(test, min, 1000);
++	KUNIT_ASSERT_EQ(test, max, 2000);
++
++	/* Verify user1 can set a rate within its range */
++	ret = clk_set_rate(user1, 1500);
++	KUNIT_ASSERT_EQ(test, ret, 0);
++	rate = clk_get_rate(user1);
++	KUNIT_EXPECT_EQ(test, rate, 1500);
++
++	/* user2 attempts to set a disjoint range [3000, 4000] - should fail */
++	ret = clk_set_rate_range(user2, 3000, 4000);
++	KUNIT_EXPECT_EQ(test, ret, -EINVAL);
++
++	/*
++	 * After the failed call, user1 should still be able to set rates
++	 * within its original range. This verifies that user2's boundaries
++	 * were correctly rolled back and didn't corrupt the aggregated
++	 * boundaries.
++	 */
++
++	clk_hw_get_rate_range(hw, &min, &max);
++	KUNIT_EXPECT_EQ(test, min, 1000);
++	KUNIT_EXPECT_EQ(test, max, 2000);
++
++	ret = clk_set_rate(user1, 1800);
++	KUNIT_EXPECT_EQ(test, ret, 0);
++	rate = clk_get_rate(user1);
++	KUNIT_EXPECT_EQ(test, rate, 1800);
++
++	clk_put(user2);
++	clk_put(user1);
++}
++
+ /*
+  * Test that if our clock has some boundaries and we try to round a rate
+  * lower than the minimum, the returned rate will be within range.
+@@ -1738,6 +1790,7 @@ static struct kunit_case clk_range_test_cases[] = {
+ 	KUNIT_CASE(clk_range_test_set_range),
+ 	KUNIT_CASE(clk_range_test_set_range_invalid),
+ 	KUNIT_CASE(clk_range_test_multiple_disjoints_range),
++	KUNIT_CASE(clk_range_test_consumer_boundaries_rollback),
+ 	KUNIT_CASE(clk_range_test_set_range_round_rate_lower),
+ 	KUNIT_CASE(clk_range_test_set_range_set_rate_lower),
+ 	KUNIT_CASE(clk_range_test_set_range_set_round_rate_consistent_lower),
 -- 
-With best wishes
-Dmitry
+2.52.0
+
+
+--TfOEVYXj3aZnLEB/--
+
