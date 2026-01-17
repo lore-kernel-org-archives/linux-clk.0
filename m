@@ -1,298 +1,186 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB8D9286413;
-	Sat, 17 Jan 2026 18:31:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FA2D2571B8;
+	Sat, 17 Jan 2026 19:25:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768674680; cv=none; b=Zrkh1CcJdib5tjlRCIBffmLUwlr/u5oeLT+BYRaO3A1ZDGXxNwbB6UhbBJkbUNJbRLkOb791RnHzt0oK0UjSC7EC5nrokSrruoTijWetJbFUQ11KwNmiQ7/2hSRu4fu9OmcqgbLLt9qtq8/RqtEESLc+iLEgFevDz2RBTwep5aA=
+	t=1768677906; cv=none; b=Sg9RcxwYC99nTuTFcQG1HDbtzZwWMqkmTe/81Q4mc20Mq653FesFvUq1OogabXkS20XYBn1jdfaPt41msxYH2+TQUdtwJdXg08vY7uu8tO8yJz/0pWraQoyDlkpgje3yZgzaerSZyI1Hkgo8IfGB7WymXOESv3Z8quUvhzNuJ6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768674680; c=relaxed/simple;
-	bh=mO9HmmxW0mtzX9fJKfZURo/BVj/x5wMjEZDY6GI3kRk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d6i27efyU7J44d8pYryTbI1uHwuLPtQhXd78pEdr5+pHw2m4Vtm/lT7OP9BZVPPXUamW8FN9evM3lxszsEciEJWIBXi6kOL7jDT+hf1vnWlHrCClNM85c7sHwSYhdItNH5LZhbw0OWnET3q40onYgD6zFPx38hEywY+WL4BKpUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RHk20ZTf; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1768677906; c=relaxed/simple;
+	bh=tTZl9CX+1jUu6Qu7S8Vamek8DWf6OLGlE/QCQzYqkuI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pTFuLWFl/FC2skmE+L5W8Ew4P7ZYC1EZclAG+yMJn/FuYilwcsjKjGYvAeCEknvlx/fwCkdF1gYbav9hYTsK9o8eY+gR3Bf7V1VMRVzgRVAlLj1ka0W/JYlCgs82bSg5e908b6IQotB6NuWES0kEMveQVBirUpNONCEwO0ZS7oQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IySncHSi; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RHk20ZTf"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1768674677; x=1800210677;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=mO9HmmxW0mtzX9fJKfZURo/BVj/x5wMjEZDY6GI3kRk=;
-  b=RHk20ZTfX5lj3JBgO7uoXZAO/GM/tpWBQc1lREckegl3IjT0W4T6sBQq
-   bqGmKQ0bFbVM3Z301spVGxAeE2YI8EwbzPkSXF4DEOha8OWq9uXG996/n
-   wKXJx1vEJWN59/nrJYdZr/rlhG4VsD7HEAF5M1kzMwbBna3UX9MRopr+s
-   oF5W23aElBSk2K8UO0GnTtVEAO5M8RLXDflAEOdtgcm7XBH1FrUs3b51d
-   3REAsvr1D+bNq9JNmf2F7yneiMFBNYbzhrV1uiPeK8TG2s3I3mx4VzxTZ
-   zmvTqy3azUeRvCEScahr2W8eDScSElb2YPcVfFI4wTOsL28ZK4Ig046+2
-   Q==;
-X-CSE-ConnectionGUID: V9QJ0RrHTV+1+8i+DkzxeQ==
-X-CSE-MsgGUID: vXlbczYTR1yRb2XCv9xuJg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11674"; a="73584434"
-X-IronPort-AV: E=Sophos;i="6.21,234,1763452800"; 
-   d="scan'208";a="73584434"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jan 2026 10:31:16 -0800
-X-CSE-ConnectionGUID: X+PVpQx0QDGG/MG2zU/TdA==
-X-CSE-MsgGUID: NFjCovPHQtOU/pr3rRKRbA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,234,1763452800"; 
-   d="scan'208";a="210372574"
-Received: from lkp-server01.sh.intel.com (HELO 765f4a05e27f) ([10.239.97.150])
-  by fmviesa004.fm.intel.com with ESMTP; 17 Jan 2026 10:31:12 -0800
-Received: from kbuild by 765f4a05e27f with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1vhB4o-00000000M8K-07rm;
-	Sat, 17 Jan 2026 18:31:10 +0000
-Date: Sun, 18 Jan 2026 02:30:55 +0800
-From: kernel test robot <lkp@intel.com>
-To: ryan.wanner@microchip.com, mturquette@baylibre.com, sboyd@kernel.org,
-	nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
-	claudiu.beznea@tuxon.dev, bmasney@redhat.com,
-	alexander.sverdlin@gmail.com, varshini.rajendran@microchip.com
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	cristian.birsan@microchip.com,
-	balamanikandan.gunasundar@microchip.com, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 25/31] clk: at91: sama5d4: switch to parent_data and
- parent_hw
-Message-ID: <202601180222.Hbv6eIHq-lkp@intel.com>
-References: <67141a009da082eacfc2b1959750b479f8e03c63.1768512290.git.ryan.wanner@microchip.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IySncHSi"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BB18C4CEF7;
+	Sat, 17 Jan 2026 19:25:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1768677906;
+	bh=tTZl9CX+1jUu6Qu7S8Vamek8DWf6OLGlE/QCQzYqkuI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=IySncHSiD1lX4N21BoUm89LJXXfYt4r74HJN2+4Z1tEUa+I9QI978Cut9cJqp08qh
+	 aP+WScfwchF2f6SNtc4v/Q673kJ5rufRLHxPoZ72dnjK1qnLDEsGRG7cGgggqigvrB
+	 mXM+QLj0kI/77QoyCWld32kmWb1unpBTeikJFqWLWYYzSkm0XY+9/0fPaKXbSMmhzo
+	 3FYPaCqmdAkZQQrgmEwU62GHJanv4hWEF1BmdLivxQ+deyfM/sBInaIyLBRwB3D8uc
+	 eAvuKdLONkslXVQI/vWp0qeABKx4StvrknmjZ5+UT1CQYvaLj06inA+miPC/htdik5
+	 Dj2Dghtkkvxqw==
+Message-ID: <dfc3f6ee-08c8-4673-91c2-e9c863105753@kernel.org>
+Date: Sat, 17 Jan 2026 20:25:01 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] clk: samsung: allow runtime PM with auto clock gating
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: Peter Griffin <peter.griffin@linaro.org>,
+ Tudor Ambarus <tudor.ambarus@linaro.org>,
+ Will McVicker <willmcvicker@google.com>, Juan Yescas <jyescas@google.com>,
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20260109-clk-samsung-autoclk-updates-v1-0-2394dcf242a9@linaro.org>
+ <20260109-clk-samsung-autoclk-updates-v1-3-2394dcf242a9@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20260109-clk-samsung-autoclk-updates-v1-3-2394dcf242a9@linaro.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <67141a009da082eacfc2b1959750b479f8e03c63.1768512290.git.ryan.wanner@microchip.com>
 
-Hi,
+On 09/01/2026 18:27, André Draszik wrote:
+> When automatic clock gating is enabled, runtime PM (RPM) isn't entered
+> even if enabled for a CMU if a sysreg clock exists and is provided by
+> this CMU (as is generally the case).
+> 
+> The reason is that this driver acquires a CMU's sysreg registers using
+> syscon_regmap_lookup_by_phandle() which ends up preparing the sysreg
+> clock. Given the sysreg clock is provided by this CMU, this CMU's usage
+> count is therefore bumped and RPM can not be entered as this CMU never
+> becomes idle.
+> 
+> Switch to using device_node_to_regmap() which doesn't handle resources
+> (the clock), leaving the CMU's usage count unaffected.
+> 
+> Note1: sysreg clock handling is completely removed with this commit
 
-kernel test robot noticed the following build warnings:
+I miss where do you remove in this commit the sysreg clock handling?
 
-[auto build test WARNING on clk/clk-next]
-[also build test WARNING on linus/master v6.19-rc5 next-20260116]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> because sysreg register access is only required during suspend/resume.
+> In the runtime suspend case, we would have to enable the clock to read
+> the registers, but we can not do that as that would cause a resume of
+> this driver which is not allowed. This is not a problem because we
+> would only need to handle the clock manually if automatic clock gating
+> wasn't enabled in the first. This code is only relevant if automatic
+> clock gating is enabled, though.
+> 
+> Fixes: 298fac4f4b96 ("clk: samsung: Implement automatic clock gating mode for CMUs")
+> Signed-off-by: André Draszik <andre.draszik@linaro.org>
+> ---
+>  drivers/clk/samsung/clk.c | 92 +++++++++++++++++++++++++++++++++++------------
+>  drivers/clk/samsung/clk.h |  2 ++
+>  2 files changed, 71 insertions(+), 23 deletions(-)
+> 
+> diff --git a/drivers/clk/samsung/clk.c b/drivers/clk/samsung/clk.c
+> index 9f68f079fd552f8dfb6898dbfb47dec0e84c626c..6515df81fcbc79b90f5262843e67575f6a4e0dda 100644
+> --- a/drivers/clk/samsung/clk.c
+> +++ b/drivers/clk/samsung/clk.c
+> @@ -9,11 +9,13 @@
+>   */
+>  
+>  #include <linux/slab.h>
+> +#include <linux/clk.h>
+>  #include <linux/clkdev.h>
+>  #include <linux/clk-provider.h>
+>  #include <linux/io.h>
+>  #include <linux/mfd/syscon.h>
+>  #include <linux/mod_devicetable.h>
+> +#include <linux/of.h>
+>  #include <linux/of_address.h>
+>  #include <linux/regmap.h>
+>  #include <linux/syscore_ops.h>
+> @@ -489,6 +491,50 @@ void __init samsung_cmu_register_clocks(struct samsung_clk_provider *ctx,
+>  		samsung_clk_register_cpu(ctx, cmu->cpu_clks, cmu->nr_cpu_clks);
+>  }
+>  
+> +static int samsung_get_sysreg_regmap(struct device_node *np,
+> +				     struct samsung_clk_provider *ctx)
+> +{
+> +	struct device_node *sysreg_np;
+> +	struct clk *sysreg_clk;
+> +	struct regmap *regmap;
+> +	int ret;
+> +
+> +	sysreg_np = of_parse_phandle(np, "samsung,sysreg", 0);
+> +	if (!sysreg_np)
+> +		return -ENODEV;
+> +
+> +	sysreg_clk = of_clk_get(sysreg_np, 0);
 
-url:    https://github.com/intel-lab-lkp/linux/commits/ryan-wanner-microchip-com/clk-at91-pmc-add-macros-for-clk_parent_data/20260117-041915
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
-patch link:    https://lore.kernel.org/r/67141a009da082eacfc2b1959750b479f8e03c63.1768512290.git.ryan.wanner%40microchip.com
-patch subject: [PATCH v5 25/31] clk: at91: sama5d4: switch to parent_data and parent_hw
-config: arm-defconfig (https://download.01.org/0day-ci/archive/20260118/202601180222.Hbv6eIHq-lkp@intel.com/config)
-compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 9b8addffa70cee5b2acc5454712d9cf78ce45710)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260118/202601180222.Hbv6eIHq-lkp@intel.com/reproduce)
+I don't think you should be poking clock of some other device. This
+clearly breaks encapsulation. What sysreg is needs to do to access
+registers, is only business of sysreg. No other drivers should
+re-implement this.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202601180222.Hbv6eIHq-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/clk/at91/sama5d4.c:177:13: warning: variable 'hw' is uninitialized when used here [-Wuninitialized]
-     177 |         if (IS_ERR(hw))
-         |                    ^~
-   drivers/clk/at91/sama5d4.c:133:41: note: initialize the variable 'hw' to silence this warning
-     133 |         struct clk_hw *smdck_hw, *usbck_hw, *hw;
-         |                                                ^
-         |                                                 = NULL
-   1 warning generated.
+> +	if (IS_ERR(sysreg_clk)) {
+> +		ret = PTR_ERR(sysreg_clk);
+> +		/* clock is optional */
+> +		if (ret != -ENOENT) {
+> +			pr_warn("%pOF: Unable to get sysreg clock: %d\n", np,
+> +				ret);
+> +			goto put_sysreg_np;
+> +		}
+> +		sysreg_clk = NULL;
+> +	}
 
 
-vim +/hw +177 drivers/clk/at91/sama5d4.c
-
-084b696bb509d59 Alexandre Belloni 2018-10-16  128  
-084b696bb509d59 Alexandre Belloni 2018-10-16  129  static void __init sama5d4_pmc_setup(struct device_node *np)
-084b696bb509d59 Alexandre Belloni 2018-10-16  130  {
-0a39dac200eaef3 Claudiu Beznea    2026-01-16  131  	struct clk_hw *main_rc_hw, *main_osc_hw, *mainck_hw;
-084b696bb509d59 Alexandre Belloni 2018-10-16  132  	const char *slck_name, *mainxtal_name;
-0a39dac200eaef3 Claudiu Beznea    2026-01-16  133  	struct clk_hw *smdck_hw, *usbck_hw, *hw;
-0a39dac200eaef3 Claudiu Beznea    2026-01-16  134  	struct clk_range range = CLK_RANGE(0, 0);
-0a39dac200eaef3 Claudiu Beznea    2026-01-16  135  	struct clk_parent_data parent_data[5];
-084b696bb509d59 Alexandre Belloni 2018-10-16  136  	struct pmc_data *sama5d4_pmc;
-084b696bb509d59 Alexandre Belloni 2018-10-16  137  	struct regmap *regmap;
-084b696bb509d59 Alexandre Belloni 2018-10-16  138  	int i;
-084b696bb509d59 Alexandre Belloni 2018-10-16  139  	bool bypass;
-084b696bb509d59 Alexandre Belloni 2018-10-16  140  
-084b696bb509d59 Alexandre Belloni 2018-10-16  141  	i = of_property_match_string(np, "clock-names", "slow_clk");
-084b696bb509d59 Alexandre Belloni 2018-10-16  142  	if (i < 0)
-084b696bb509d59 Alexandre Belloni 2018-10-16  143  		return;
-084b696bb509d59 Alexandre Belloni 2018-10-16  144  
-084b696bb509d59 Alexandre Belloni 2018-10-16  145  	slck_name = of_clk_get_parent_name(np, i);
-084b696bb509d59 Alexandre Belloni 2018-10-16  146  
-084b696bb509d59 Alexandre Belloni 2018-10-16  147  	i = of_property_match_string(np, "clock-names", "main_xtal");
-084b696bb509d59 Alexandre Belloni 2018-10-16  148  	if (i < 0)
-084b696bb509d59 Alexandre Belloni 2018-10-16  149  		return;
-084b696bb509d59 Alexandre Belloni 2018-10-16  150  	mainxtal_name = of_clk_get_parent_name(np, i);
-084b696bb509d59 Alexandre Belloni 2018-10-16  151  
-6956eb33abb5dea Alexandre Belloni 2019-11-28  152  	regmap = device_node_to_regmap(np);
-084b696bb509d59 Alexandre Belloni 2018-10-16  153  	if (IS_ERR(regmap))
-084b696bb509d59 Alexandre Belloni 2018-10-16  154  		return;
-084b696bb509d59 Alexandre Belloni 2018-10-16  155  
-03a1ee1dad0e393 Michał Mirosław   2020-05-05  156  	sama5d4_pmc = pmc_data_allocate(PMC_PLLACK + 1,
-084b696bb509d59 Alexandre Belloni 2018-10-16  157  					nck(sama5d4_systemck),
-99767cd4406fd62 Michał Mirosław   2020-05-05  158  					nck(sama5d4_periph32ck), 0, 3);
-084b696bb509d59 Alexandre Belloni 2018-10-16  159  	if (!sama5d4_pmc)
-084b696bb509d59 Alexandre Belloni 2018-10-16  160  		return;
-084b696bb509d59 Alexandre Belloni 2018-10-16  161  
-0a39dac200eaef3 Claudiu Beznea    2026-01-16  162  	main_rc_hw = at91_clk_register_main_rc_osc(regmap, "main_rc_osc", 12000000,
-084b696bb509d59 Alexandre Belloni 2018-10-16  163  						   100000000);
-0a39dac200eaef3 Claudiu Beznea    2026-01-16  164  	if (IS_ERR(main_rc_hw))
-084b696bb509d59 Alexandre Belloni 2018-10-16  165  		goto err_free;
-084b696bb509d59 Alexandre Belloni 2018-10-16  166  
-084b696bb509d59 Alexandre Belloni 2018-10-16  167  	bypass = of_property_read_bool(np, "atmel,osc-bypass");
-084b696bb509d59 Alexandre Belloni 2018-10-16  168  
-0a39dac200eaef3 Claudiu Beznea    2026-01-16  169  	main_osc_hw = at91_clk_register_main_osc(regmap, "main_osc", NULL,
-0a39dac200eaef3 Claudiu Beznea    2026-01-16  170  						 &AT91_CLK_PD_NAME(mainxtal_name), bypass);
-0a39dac200eaef3 Claudiu Beznea    2026-01-16  171  	if (IS_ERR(main_osc_hw))
-084b696bb509d59 Alexandre Belloni 2018-10-16  172  		goto err_free;
-084b696bb509d59 Alexandre Belloni 2018-10-16  173  
-0a39dac200eaef3 Claudiu Beznea    2026-01-16  174  	parent_data[0] = AT91_CLK_PD_HW(main_rc_hw);
-0a39dac200eaef3 Claudiu Beznea    2026-01-16  175  	parent_data[1] = AT91_CLK_PD_HW(main_osc_hw);
-0a39dac200eaef3 Claudiu Beznea    2026-01-16  176  	mainck_hw = at91_clk_register_sam9x5_main(regmap, "mainck", NULL, parent_data, 2);
-084b696bb509d59 Alexandre Belloni 2018-10-16 @177  	if (IS_ERR(hw))
-084b696bb509d59 Alexandre Belloni 2018-10-16  178  		goto err_free;
-084b696bb509d59 Alexandre Belloni 2018-10-16  179  
-0a39dac200eaef3 Claudiu Beznea    2026-01-16  180  	hw = at91_clk_register_pll(regmap, "pllack", NULL, &AT91_CLK_PD_HW(mainck_hw), 0,
-084b696bb509d59 Alexandre Belloni 2018-10-16  181  				   &sama5d3_pll_layout, &plla_characteristics);
-084b696bb509d59 Alexandre Belloni 2018-10-16  182  	if (IS_ERR(hw))
-084b696bb509d59 Alexandre Belloni 2018-10-16  183  		goto err_free;
-084b696bb509d59 Alexandre Belloni 2018-10-16  184  
-0a39dac200eaef3 Claudiu Beznea    2026-01-16  185  	hw = at91_clk_register_plldiv(regmap, "plladivck", NULL, &AT91_CLK_PD_HW(hw));
-084b696bb509d59 Alexandre Belloni 2018-10-16  186  	if (IS_ERR(hw))
-084b696bb509d59 Alexandre Belloni 2018-10-16  187  		goto err_free;
-084b696bb509d59 Alexandre Belloni 2018-10-16  188  
-03a1ee1dad0e393 Michał Mirosław   2020-05-05  189  	sama5d4_pmc->chws[PMC_PLLACK] = hw;
-03a1ee1dad0e393 Michał Mirosław   2020-05-05  190  
-0a39dac200eaef3 Claudiu Beznea    2026-01-16  191  	hw = at91_clk_register_utmi(regmap, NULL, "utmick", NULL, &AT91_CLK_PD_HW(mainck_hw));
-084b696bb509d59 Alexandre Belloni 2018-10-16  192  	if (IS_ERR(hw))
-084b696bb509d59 Alexandre Belloni 2018-10-16  193  		goto err_free;
-084b696bb509d59 Alexandre Belloni 2018-10-16  194  
-084b696bb509d59 Alexandre Belloni 2018-10-16  195  	sama5d4_pmc->chws[PMC_UTMI] = hw;
-084b696bb509d59 Alexandre Belloni 2018-10-16  196  
-0a39dac200eaef3 Claudiu Beznea    2026-01-16  197  	parent_data[0] = AT91_CLK_PD_NAME(slck_name);
-0a39dac200eaef3 Claudiu Beznea    2026-01-16  198  	parent_data[1] = AT91_CLK_PD_HW(mainck_hw);
-0a39dac200eaef3 Claudiu Beznea    2026-01-16  199  	parent_data[2] = AT91_CLK_PD_HW(sama5d4_pmc->chws[PMC_PLLACK]);
-0a39dac200eaef3 Claudiu Beznea    2026-01-16  200  	parent_data[3] = AT91_CLK_PD_HW(sama5d4_pmc->chws[PMC_UTMI]);
-7a110b9107ed8fe Claudiu Beznea    2020-11-19  201  	hw = at91_clk_register_master_pres(regmap, "masterck_pres", 4,
-0a39dac200eaef3 Claudiu Beznea    2026-01-16  202  					   NULL, parent_data,
-7a110b9107ed8fe Claudiu Beznea    2020-11-19  203  					   &at91sam9x5_master_layout,
-8e842f02af7e2f6 Claudiu Beznea    2022-02-03  204  					   &mck_characteristics, &mck_lock);
-7a110b9107ed8fe Claudiu Beznea    2020-11-19  205  	if (IS_ERR(hw))
-7a110b9107ed8fe Claudiu Beznea    2020-11-19  206  		goto err_free;
-7a110b9107ed8fe Claudiu Beznea    2020-11-19  207  
-0a39dac200eaef3 Claudiu Beznea    2026-01-16  208  	hw = at91_clk_register_master_div(regmap, "masterck_div", NULL, &AT91_CLK_PD_HW(hw),
-084b696bb509d59 Alexandre Belloni 2018-10-16  209  					  &at91sam9x5_master_layout,
-7a110b9107ed8fe Claudiu Beznea    2020-11-19  210  					  &mck_characteristics, &mck_lock,
-7029db09b2025f8 Claudiu Beznea    2021-10-11  211  					  CLK_SET_RATE_GATE, 0);
-084b696bb509d59 Alexandre Belloni 2018-10-16  212  	if (IS_ERR(hw))
-084b696bb509d59 Alexandre Belloni 2018-10-16  213  		goto err_free;
-084b696bb509d59 Alexandre Belloni 2018-10-16  214  
-084b696bb509d59 Alexandre Belloni 2018-10-16  215  	sama5d4_pmc->chws[PMC_MCK] = hw;
-084b696bb509d59 Alexandre Belloni 2018-10-16  216  
-0a39dac200eaef3 Claudiu Beznea    2026-01-16  217  	hw = at91_clk_register_h32mx(regmap, "h32mxck", NULL,
-0a39dac200eaef3 Claudiu Beznea    2026-01-16  218  				     &AT91_CLK_PD_HW(sama5d4_pmc->chws[PMC_MCK]));
-084b696bb509d59 Alexandre Belloni 2018-10-16  219  	if (IS_ERR(hw))
-084b696bb509d59 Alexandre Belloni 2018-10-16  220  		goto err_free;
-084b696bb509d59 Alexandre Belloni 2018-10-16  221  
-084b696bb509d59 Alexandre Belloni 2018-10-16  222  	sama5d4_pmc->chws[PMC_MCK2] = hw;
-084b696bb509d59 Alexandre Belloni 2018-10-16  223  
-0a39dac200eaef3 Claudiu Beznea    2026-01-16  224  	parent_data[0] = AT91_CLK_PD_HW(sama5d4_pmc->chws[PMC_PLLACK]);
-0a39dac200eaef3 Claudiu Beznea    2026-01-16  225  	parent_data[1] = AT91_CLK_PD_HW(sama5d4_pmc->chws[PMC_UTMI]);
-0a39dac200eaef3 Claudiu Beznea    2026-01-16  226  	usbck_hw = at91sam9x5_clk_register_usb(regmap, "usbck", NULL, parent_data, 2);
-0a39dac200eaef3 Claudiu Beznea    2026-01-16  227  	if (IS_ERR(usbck_hw))
-084b696bb509d59 Alexandre Belloni 2018-10-16  228  		goto err_free;
-084b696bb509d59 Alexandre Belloni 2018-10-16  229  
-0a39dac200eaef3 Claudiu Beznea    2026-01-16  230  	smdck_hw = at91sam9x5_clk_register_smd(regmap, "smdclk", NULL, parent_data, 2);
-0a39dac200eaef3 Claudiu Beznea    2026-01-16  231  	if (IS_ERR(smdck_hw))
-084b696bb509d59 Alexandre Belloni 2018-10-16  232  		goto err_free;
-084b696bb509d59 Alexandre Belloni 2018-10-16  233  
-0a39dac200eaef3 Claudiu Beznea    2026-01-16  234  	parent_data[0] = AT91_CLK_PD_NAME(slck_name);
-0a39dac200eaef3 Claudiu Beznea    2026-01-16  235  	parent_data[1] = AT91_CLK_PD_HW(mainck_hw);
-0a39dac200eaef3 Claudiu Beznea    2026-01-16  236  	parent_data[2] = AT91_CLK_PD_HW(sama5d4_pmc->chws[PMC_PLLACK]);
-0a39dac200eaef3 Claudiu Beznea    2026-01-16  237  	parent_data[3] = AT91_CLK_PD_HW(sama5d4_pmc->chws[PMC_UTMI]);
-0a39dac200eaef3 Claudiu Beznea    2026-01-16  238  	parent_data[4] = AT91_CLK_PD_HW(sama5d4_pmc->chws[PMC_MCK]);
-084b696bb509d59 Alexandre Belloni 2018-10-16  239  	for (i = 0; i < 3; i++) {
-084b696bb509d59 Alexandre Belloni 2018-10-16  240  		char name[6];
-084b696bb509d59 Alexandre Belloni 2018-10-16  241  
-084b696bb509d59 Alexandre Belloni 2018-10-16  242  		snprintf(name, sizeof(name), "prog%d", i);
-084b696bb509d59 Alexandre Belloni 2018-10-16  243  
-084b696bb509d59 Alexandre Belloni 2018-10-16  244  		hw = at91_clk_register_programmable(regmap, name,
-0a39dac200eaef3 Claudiu Beznea    2026-01-16  245  						    NULL, parent_data, 5, i,
-c57aaaa28cf1a12 Claudiu Beznea    2020-07-22  246  						    &at91sam9x5_programmable_layout,
-c57aaaa28cf1a12 Claudiu Beznea    2020-07-22  247  						    NULL);
-084b696bb509d59 Alexandre Belloni 2018-10-16  248  		if (IS_ERR(hw))
-084b696bb509d59 Alexandre Belloni 2018-10-16  249  			goto err_free;
-99767cd4406fd62 Michał Mirosław   2020-05-05  250  
-99767cd4406fd62 Michał Mirosław   2020-05-05  251  		sama5d4_pmc->pchws[i] = hw;
-084b696bb509d59 Alexandre Belloni 2018-10-16  252  	}
-084b696bb509d59 Alexandre Belloni 2018-10-16  253  
-0a39dac200eaef3 Claudiu Beznea    2026-01-16  254  	/* Set systemck parent hws. */
-0a39dac200eaef3 Claudiu Beznea    2026-01-16  255  	sama5d4_systemck[0].parent_hw = sama5d4_pmc->chws[PMC_MCK];
-0a39dac200eaef3 Claudiu Beznea    2026-01-16  256  	sama5d4_systemck[1].parent_hw = sama5d4_pmc->chws[PMC_MCK];
-0a39dac200eaef3 Claudiu Beznea    2026-01-16  257  	sama5d4_systemck[2].parent_hw = smdck_hw;
-0a39dac200eaef3 Claudiu Beznea    2026-01-16  258  	sama5d4_systemck[3].parent_hw = usbck_hw;
-0a39dac200eaef3 Claudiu Beznea    2026-01-16  259  	sama5d4_systemck[4].parent_hw = usbck_hw;
-0a39dac200eaef3 Claudiu Beznea    2026-01-16  260  	sama5d4_systemck[5].parent_hw = sama5d4_pmc->pchws[0];
-0a39dac200eaef3 Claudiu Beznea    2026-01-16  261  	sama5d4_systemck[6].parent_hw = sama5d4_pmc->pchws[1];
-0a39dac200eaef3 Claudiu Beznea    2026-01-16  262  	sama5d4_systemck[7].parent_hw = sama5d4_pmc->pchws[2];
-084b696bb509d59 Alexandre Belloni 2018-10-16  263  	for (i = 0; i < ARRAY_SIZE(sama5d4_systemck); i++) {
-0a39dac200eaef3 Claudiu Beznea    2026-01-16  264  		hw = at91_clk_register_system(regmap, sama5d4_systemck[i].n, NULL,
-0a39dac200eaef3 Claudiu Beznea    2026-01-16  265  					      &AT91_CLK_PD_HW(sama5d4_systemck[i].parent_hw),
-68b3b6f1773d2d1 Claudiu Beznea    2022-12-08  266  					      sama5d4_systemck[i].id,
-68b3b6f1773d2d1 Claudiu Beznea    2022-12-08  267  					      sama5d4_systemck[i].flags);
-084b696bb509d59 Alexandre Belloni 2018-10-16  268  		if (IS_ERR(hw))
-084b696bb509d59 Alexandre Belloni 2018-10-16  269  			goto err_free;
-084b696bb509d59 Alexandre Belloni 2018-10-16  270  
-084b696bb509d59 Alexandre Belloni 2018-10-16  271  		sama5d4_pmc->shws[sama5d4_systemck[i].id] = hw;
-084b696bb509d59 Alexandre Belloni 2018-10-16  272  	}
-084b696bb509d59 Alexandre Belloni 2018-10-16  273  
-084b696bb509d59 Alexandre Belloni 2018-10-16  274  	for (i = 0; i < ARRAY_SIZE(sama5d4_periphck); i++) {
-084b696bb509d59 Alexandre Belloni 2018-10-16  275  		hw = at91_clk_register_sam9x5_peripheral(regmap, &pmc_pcr_lock,
-cb4f4949b1c76f2 Alexandre Belloni 2019-04-02  276  							 &sama5d4_pcr_layout,
-084b696bb509d59 Alexandre Belloni 2018-10-16  277  							 sama5d4_periphck[i].n,
-0a39dac200eaef3 Claudiu Beznea    2026-01-16  278  							 NULL,
-0a39dac200eaef3 Claudiu Beznea    2026-01-16  279  							 &AT91_CLK_PD_HW(sama5d4_pmc->chws[PMC_MCK]),
-084b696bb509d59 Alexandre Belloni 2018-10-16  280  							 sama5d4_periphck[i].id,
-68b3b6f1773d2d1 Claudiu Beznea    2022-12-08  281  							 &range, INT_MIN,
-68b3b6f1773d2d1 Claudiu Beznea    2022-12-08  282  							 sama5d4_periphck[i].flags);
-084b696bb509d59 Alexandre Belloni 2018-10-16  283  		if (IS_ERR(hw))
-084b696bb509d59 Alexandre Belloni 2018-10-16  284  			goto err_free;
-084b696bb509d59 Alexandre Belloni 2018-10-16  285  
-084b696bb509d59 Alexandre Belloni 2018-10-16  286  		sama5d4_pmc->phws[sama5d4_periphck[i].id] = hw;
-084b696bb509d59 Alexandre Belloni 2018-10-16  287  	}
-084b696bb509d59 Alexandre Belloni 2018-10-16  288  
-084b696bb509d59 Alexandre Belloni 2018-10-16  289  	for (i = 0; i < ARRAY_SIZE(sama5d4_periph32ck); i++) {
-084b696bb509d59 Alexandre Belloni 2018-10-16  290  		hw = at91_clk_register_sam9x5_peripheral(regmap, &pmc_pcr_lock,
-cb4f4949b1c76f2 Alexandre Belloni 2019-04-02  291  							 &sama5d4_pcr_layout,
-084b696bb509d59 Alexandre Belloni 2018-10-16  292  							 sama5d4_periph32ck[i].n,
-0a39dac200eaef3 Claudiu Beznea    2026-01-16  293  							 NULL,
-0a39dac200eaef3 Claudiu Beznea    2026-01-16  294  							 &AT91_CLK_PD_HW(sama5d4_pmc->chws[PMC_MCK2]),
-084b696bb509d59 Alexandre Belloni 2018-10-16  295  							 sama5d4_periph32ck[i].id,
-68b3b6f1773d2d1 Claudiu Beznea    2022-12-08  296  							 &range, INT_MIN, 0);
-084b696bb509d59 Alexandre Belloni 2018-10-16  297  		if (IS_ERR(hw))
-084b696bb509d59 Alexandre Belloni 2018-10-16  298  			goto err_free;
-084b696bb509d59 Alexandre Belloni 2018-10-16  299  
-084b696bb509d59 Alexandre Belloni 2018-10-16  300  		sama5d4_pmc->phws[sama5d4_periph32ck[i].id] = hw;
-084b696bb509d59 Alexandre Belloni 2018-10-16  301  	}
-084b696bb509d59 Alexandre Belloni 2018-10-16  302  
-084b696bb509d59 Alexandre Belloni 2018-10-16  303  	of_clk_add_hw_provider(np, of_clk_hw_pmc_get, sama5d4_pmc);
-084b696bb509d59 Alexandre Belloni 2018-10-16  304  
-084b696bb509d59 Alexandre Belloni 2018-10-16  305  	return;
-084b696bb509d59 Alexandre Belloni 2018-10-16  306  
-084b696bb509d59 Alexandre Belloni 2018-10-16  307  err_free:
-7425f246f725e51 Michał Mirosław   2020-05-05  308  	kfree(sama5d4_pmc);
-084b696bb509d59 Alexandre Belloni 2018-10-16  309  }
-428d97e18594bc2 Tudor Ambarus     2021-02-03  310  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Best regards,
+Krzysztof
