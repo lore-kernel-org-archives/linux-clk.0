@@ -1,61 +1,71 @@
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77D4818027;
-	Sun, 18 Jan 2026 02:58:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98CB142049
+	for <linux-clk@vger.kernel.org>; Sun, 18 Jan 2026 08:01:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768705095; cv=none; b=BQZmF5X7XUAtSbBD4oU+Y4UDwGudQmzcovSlwrgpgeavP13kYPYTB0BbY/nDM+jXabeoD4CerTCjpwm1i7JbUwEczyvREZVF+JeT9Xya5cxihXCMxG9nDraN2g7uzVdJszCX3VibSUAgc6JQPOVUSUWFA0w9BlycU6Cy/tt2ooI=
+	t=1768723308; cv=none; b=Q4d9mQ+U0SxbTzV3lU6J5GRKJpY5qJ1xSLpZYJsKRNtueY63wXnxKZz6EW2RFbdwoUISka2I8WhbASG8viyac8eRbDD2D9Z8Ya8wFpyipwKNODPaPErnCvaEeOxP7EWjQw5qeY8Hw6oEjkl6x/QVNm9mj7dRVcbndDPCm+vF8Zc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768705095; c=relaxed/simple;
-	bh=0D84M2FZ/eP13c8Lq1jhipRzuscAO6I+R0S74SpNAfU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XZ1LwEq0g4+64Vtysp+fojMZTTzKLV5w+TD257QSV/vdFqBqBiDDf5rAvAvTTlIuhIvDeu4byq4kQ5v/ssfi7cmmPKOC07Mr7pMQAXkZ1+eaoTqfjM0x2PWorKi3smCbi3MnhX5VuZpys9hNmhbVEUBzkWke3orEPv+4rcsXZ6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=P+vHeCKC; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=YLbU8e9v; arc=none smtp.client-ip=80.241.56.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+	s=arc-20240116; t=1768723308; c=relaxed/simple;
+	bh=i0TnZ1aoXb0Ga8elfzyeLZOHdqQbgEsJIWTTxkAsI4I=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=BOG5maned8RWOCWyzrkAhG3A5F08ZW+LNX8BY13hM/rJYngPsB56yL9njsXpfzyxG9XyEFAbkwzGQyS/Yfa0ruvgnJfN5DcwAC+8Zs9LrOEJBKsmh/REof/2LYk752Jz7qpd5JnC8Inb5+5Q2/K62yTwp3qq2riyKuXMrUurQaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JGwSWaI/; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="P+vHeCKC";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="YLbU8e9v"
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4dtyvJ2X2Yz9txg;
-	Sun, 18 Jan 2026 03:58:04 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1768705084;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=XBgeYyRcBFEHo3KdmapMBvk94SjyCGRmpPM8oaz9BZI=;
-	b=P+vHeCKCmGHbPDYIhu403/AnioFT4xGZa2ewdcumkJGIRbMCgDD7tpjaDKZCPJDj7pacdM
-	bLZ6/vyptVeTnlvfO3DHFeX2ldyz4Gp9TyqY6bz6XoAyN3RXY9pakeaVSJzNCPwYceKS5q
-	wZiVcvIfJcl1VCfblKxH0q/R71u6HT7ripS3/gOKpUIlQ6zFYIT8ZUckR08bT0DUI/8Tf8
-	4xFNlslhyoKCv34qkgkuVfuDUJFtjj85kaO1HyjOxvouFeuiypV2j+af4cDITTuwugaHt8
-	fzVoVc10cuyvyFcFzcQ0enLV9GckM5b2iuzjTNzIBmJ1CgeoWZ2pDjJZhpdz1A==
-From: Marek Vasut <marek.vasut+renesas@mailbox.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1768705082;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=XBgeYyRcBFEHo3KdmapMBvk94SjyCGRmpPM8oaz9BZI=;
-	b=YLbU8e9v2oItVfNiTrSbYe0thiJ6BqRLA1fUryT8wFuJt17DNr9FdvutLAr4EUPI/JbyPS
-	fWW8s+n7rhjGasJw3huhIWLQCbQkCpcMV7JvyrOw7CLg/W0MBxay/zf/sShLAXEslBrC8p
-	TqMBjUxNIomhR1OvVpa76xhpEqCvcweBNspTfTs8G1/HajndqlyLAtLL2/CMqROyTO+Rej
-	hNw2IbUtlzB5Oyl96m69exs+WWMYuK6ttCT4HsxKGtsXOe0IpvC7la+A4qGq/cbZG7Vtth
-	RjSIdPbYXBRHOy8wx1HCYZTD5wSG2IWHqPbc/xI6AOLkjTfB6WlgLsmiX+0j/Q==
-To: linux-clk@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
-	stable@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] clk: rs9: Reserve 8 struct clk_hw slots for for 9FGV0841
-Date: Sun, 18 Jan 2026 03:56:58 +0100
-Message-ID: <20260118025756.96377-1-marek.vasut+renesas@mailbox.org>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JGwSWaI/"
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-430f57cd471so1676445f8f.0
+        for <linux-clk@vger.kernel.org>; Sun, 18 Jan 2026 00:01:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1768723305; x=1769328105; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/l59X7gw84IvvPUFApyUS2QxbtG2L8cFXaBBO6JtN+4=;
+        b=JGwSWaI/e99QAWwk0a1rp8oJUtJvAjTU/wdBnYdrrxaeLwM3pW8mlOqCK0VpMAELTM
+         Y6tEkdLOh+IdCowY/DF2Ovs6CIby81m2SUeEfhbb30kno4w3IOEEVGN1bLJI51PqXnXS
+         +kZ6/x3LPDIbWEOGlxG+L85ycoYqVD59qBTQLPJqt3hOkWmzi+I/lnOLV0d+bbidULJQ
+         a36QOD90wPvDnnBz8dyrPVNh4qk7K9zcacA1U6XWhQka8cPTyQViW5CTBbWI8A8BKH1A
+         g2bf88B/lP9m5C53dla7Tjdk2dwBGeh2dkkFRAmIKvV0ftLYnFmFeFcH7GqEsTPXAq87
+         euIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1768723305; x=1769328105;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/l59X7gw84IvvPUFApyUS2QxbtG2L8cFXaBBO6JtN+4=;
+        b=wbV6sxWS/BD+d2SUIZW8cU0iETqJhoioDIIdUY+zaReIyaxLeUxBWlX3Hv6yO80M/z
+         hP3DwcLddv4FjXZ//dQ5m1B4uv6z54ZcacJBzVNlBDhq2Ty7DERvwVeHXEQkwo2RDAst
+         u1pxrSHyZPK5iFoG688hLvQwCH8WTZ751xJwdmJ0+Fr7m+X5sGnxupPLeYKsxisiJzj+
+         fITDkmaAOo3z85mzEznjOWJXaYp9TbMRZFw5CjgX2ZBDEOEvbURHyQexJmUAXQL8qb7W
+         p0bCAh/L5+j+3/h8BDKn4Fy7tMYBbco1j1x/jwixMVSJ4NHYJMVTSlc2ihp9iG2eaRSm
+         Yh1Q==
+X-Gm-Message-State: AOJu0Yy78UAB5T8tPQgbeM0f69/MpY8hVePD8mYg6sELUw1CdFzdY7nm
+	ZY/RomanS5dFg81tSRBveo6ireCt1EAyKryXZTSZO6YdlmSo2Mkr0XQH
+X-Gm-Gg: AY/fxX6AQIqrJTr+p9DVkvL7HXC8Nei1ZOIIGSxML9KB37KD610ggMW00nPHBEHI5TE
+	r6g2RsoibLBZLUnTzBu7HM2A6YA5LtVLBXDqydcg9ohwXWOPgNAvxhVAA+ivg4ZN7ZmN0Njwn3u
+	U5NDX2WCrqBu78akCpWfxLjW4IN5PMzVjJoYrl4WUSs5QpYx56n38O7m9+MjWgNTpA0SH35W/Tq
+	x8qN8+KywaWs5gnLktNMFfRr2EMFe5/1Vs6T6M3r4OlqAp5Jot1B7cCvPSl5+/5r4BcKHeLfraG
+	YA4FyqagsPppZaasr3RPDToFiGihtTlMOxKwbT07xp2ftIClhp0DBgiROXfOE34OdsRN35UbCBP
+	U4FMTFYyn1YOrd+CNZ8jk7lyKxjzdSAQAhBNKARhkP8ccvUwgR1rW0lFxEx0pQejFWX62C8o/Kv
+	CD7kn16JFBf17AKLL4eOXs0+Gl8HuHpKUxcwRVwfH//xPg8XN91dYlUpZhcjfILW1cWaiim1VAW
+	CNboOg=
+X-Received: by 2002:a05:6000:25c7:b0:430:fafd:f1d8 with SMTP id ffacd0b85a97d-4356a024c88mr8955054f8f.1.1768723304722;
+        Sun, 18 Jan 2026 00:01:44 -0800 (PST)
+Received: from localhost (p200300e41f0ffa00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f0f:fa00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43569926ffcsm15463299f8f.18.2026.01.18.00.01.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 18 Jan 2026 00:01:43 -0800 (PST)
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Subject: [GIT PULL] clk: tegra: Changes for v6.20-rc1
+Date: Sun, 18 Jan 2026 09:01:40 +0100
+Message-ID: <20260118080142.2632077-1-thierry.reding@gmail.com>
+X-Mailer: git-send-email 2.52.0
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -63,51 +73,52 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-MBO-RS-ID: 5e041f4a3df51f53915
-X-MBO-RS-META: a9agacgcgu59y9ahobcmmrs37mutbfmp
 
-The 9FGV0841 has 8 outputs and registers 8 struct clk_hw, make sure
-there are 8 slots for those newly registered clk_hw pointers, else
-there is going to be out of bounds write when pointers 4..7 are set
-into struct rs9_driver_data .clk_dif[4..7] field.
+Hi Mike, Stephen,
 
-Since there are other structure members past this struct clk_hw
-pointer array, writing to .clk_dif[4..7] fields only corrupts the
-struct rs9_driver_data content, without crashing the kernel. However,
-the kernel does crash when the driver is unbound or during suspend.
+The following changes since commit 8f0b4cce4481fb22653697cced8d0d04027cb1e8:
 
-Fix this, increase the struct clk_hw pointer array size to the
-maximum output count of 9FGV0841, which is the biggest chip that
-is supported by this driver.
+  Linux 6.19-rc1 (2025-12-14 16:05:07 +1200)
 
-Cc: stable@vger.kernel.org
-Fixes: f0e5e1800204 ("clk: rs9: Add support for 9FGV0841")
-Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
----
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
----
- drivers/clk/clk-renesas-pcie.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+are available in the Git repository at:
 
-diff --git a/drivers/clk/clk-renesas-pcie.c b/drivers/clk/clk-renesas-pcie.c
-index 4c3a5e4eb77ac..f94a9c4d0b670 100644
---- a/drivers/clk/clk-renesas-pcie.c
-+++ b/drivers/clk/clk-renesas-pcie.c
-@@ -64,7 +64,7 @@ struct rs9_driver_data {
- 	struct i2c_client	*client;
- 	struct regmap		*regmap;
- 	const struct rs9_chip_info *chip_info;
--	struct clk_hw		*clk_dif[4];
-+	struct clk_hw		*clk_dif[8];
- 	u8			pll_amplitude;
- 	u8			pll_ssc;
- 	u8			clk_dif_sr;
--- 
-2.51.0
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/for-6.20-clk
 
+for you to fetch changes up to e897e86711b28f815fbbe542fe87a66b39123d1e:
+
+  clk: tegra30: Add CSI pad clock gates (2026-01-17 01:33:18 +0100)
+
+Thanks,
+Thierry
+
+----------------------------------------------------------------
+clk: tegra: Changes for v6.20-rc1
+
+This series updates the Tegra clock driver to improve hardware support
+and code correctness. Key changes include fixing camera and display
+clock hierarchies for Tegra20/30 (adding CSI pad gates, reparenting
+DSI/CSUS), resolving a memory leak in the Tegra124 EMC driver, and
+optimizing system suspend/resume callbacks to remove redundant runtime
+PM overhead.
+
+----------------------------------------------------------------
+Haoxiang Li (1):
+      clk: tegra: tegra124-emc: Fix potential memory leak in tegra124_clk_register_emc()
+
+Krzysztof Kozlowski (1):
+      clk: tegra: tegra124-emc: Simplify with scoped for each OF child loop
+
+Rafael J. Wysocki (1):
+      clk: tegra: Adjust callbacks in tegra_clock_pm
+
+Svyatoslav Ryhel (3):
+      clk: tegra20: Reparent dsi clock to pll_d_out0
+      clk: tegra: Set CSUS as vi_sensor's gate for Tegra20, Tegra30 and Tegra114
+      clk: tegra30: Add CSI pad clock gates
+
+ drivers/clk/tegra/clk-device.c       | 13 ++++++++++++-
+ drivers/clk/tegra/clk-tegra114.c     |  7 ++++++-
+ drivers/clk/tegra/clk-tegra124-emc.c |  8 ++++----
+ drivers/clk/tegra/clk-tegra20.c      | 26 ++++++++++++++++----------
+ drivers/clk/tegra/clk-tegra30.c      | 20 ++++++++++++++++++--
+ 5 files changed, 56 insertions(+), 18 deletions(-)
