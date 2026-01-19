@@ -1,157 +1,217 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2760D31B130
-	for <linux-clk@vger.kernel.org>; Mon, 19 Jan 2026 15:21:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6974361DDC
+	for <linux-clk@vger.kernel.org>; Mon, 19 Jan 2026 15:22:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768836105; cv=none; b=UyHz5Foo864/R5CsRRAfpHtelXkkFOx3jHC1pjSmBXua9y0WPvyGnrc57X/XVoD42ahvQ/xC9mjqeC8gaDYfb/K2oO1RR4kzzB/+pVDctn0/2eIGjlifWMtRYLtKpak8ZPfTADUhuv7fVQoDGU2IkbJ29ykrB3pO8ILmC9aiqlg=
+	t=1768836144; cv=none; b=DiogxfVadELQkeqPHwrAKQ7Pg64LF5xMuwTr5+MEoPzaOtJgHg6zTzaTLng6qThlYdZVmgQ7Eglq8FrIe16ZqeoXaqXBZa6K4OfRSyUyxhH1+j0I4yrB2saF3x8meHLD6J3gotjY/cq7xXysBJYrQFwMr28GHFBtY1KTVXt9lKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768836105; c=relaxed/simple;
-	bh=wt2iQRvLcdM7i51XKgR7sbpRcQIOt/YnEmrjxz7bMZs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZFNqMrCBLLU7Fr/H/JpJXTvv4B8SSzedEoVn3gRO3C0JR85PDokCqr02Ah5a/Hh2n7AVa55oCATjxLzBYl7BAY0w0VnM/DLAZu/TL3XEskwqQOqmx12/2e4BmCY+80N8IXUZUexARKwI/uc4wc91viF5Dd8L2b/qsQsGI645YuA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ICG4Q3Vk; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=eUl+14+b; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1768836144; c=relaxed/simple;
+	bh=RcYbg4piou2Dj/1Hv9hwix15x8CDH6yXA6JynfZrRgo=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=SaNBUTyB7Pg1Y++xGlbWoh10nfUk68VsmKPmZBRgZnb8Tx9EI1mlBHbXy+cwpCQp3uZdduOvLOc8lRYBgLStFDdq20bkPhVbbOJgIepAfyG5h6XIdOauBisVGcr+jdM6NOqgevYl7YUBbQ5Z+ajuxLnYs4cZfs+ldsU62RIYFeA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=siwshHt3; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ICG4Q3Vk";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="eUl+14+b"
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 60J90mgF1904981
-	for <linux-clk@vger.kernel.org>; Mon, 19 Jan 2026 15:21:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=ap3tAgxenSiHNhV/Re8Z5pL7
-	juJCHNdQgIJ2sqs7hh4=; b=ICG4Q3VkTV13loRe4fmYE2ID3MBh/+5iaw9bhXN+
-	QdQ/qdlTjHs13ZNWP5jHV+93DWUujSPnzc/C1wOQ0eruhqbj52d7HUWlJSaxVNSz
-	DgCCCwPnoeLkMdUjvDiR3FHP2rXp5QFVQ5NHo0wHO5xzhYBn/R/auE13VqqrB4Ay
-	lJPBnlxyZfaFh4Q5T9l2yPbqCtww2uzxUxUW16+YOv1LZ3D4mtKwBLpH82E26JoS
-	TVt8OKFHN9C2Q4hEvdM7IIQrtLcHYYim9+6Zz1FegRoXtUVMgtDbRr040lTvLB4m
-	U/Z4BAOoHPNrOP0J8cxXid95osxywtYDsxb8ESVI4r+PEQ==
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4bsgmu9ckd-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Mon, 19 Jan 2026 15:21:43 +0000 (GMT)
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-8c6a87029b6so757987885a.1
-        for <linux-clk@vger.kernel.org>; Mon, 19 Jan 2026 07:21:42 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="siwshHt3"
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-81f3d6990d6so2552624b3a.3
+        for <linux-clk@vger.kernel.org>; Mon, 19 Jan 2026 07:22:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1768836102; x=1769440902; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ap3tAgxenSiHNhV/Re8Z5pL7juJCHNdQgIJ2sqs7hh4=;
-        b=eUl+14+bBEByYt0h5G/TLnWCMtsU25HtedR7YDD3a4G0CbCdcLOF22xyLHDS8Lpbw3
-         zXxNcGx1pzEAcmgNidgBk25qHQSbskyzezju+wQMDqBM6sy/OeBMdhThZbOx4RRd2pSX
-         vdsU6F1bpJg4wO5xCiSEClx4FQHTko+xgpbC69tHKRWeD2SRIubKe8kCGyn/4LTeWZxs
-         BsuJizQ7Uxo9QsPWgkEM9WB/LGhCE5HTNWdMlea5kZLxkW3z+61sjhDSL9iYLh8IZ+wb
-         4C6sL9vo+gkdR1epQ38gp2njaDCO1liATJ6aOf5EaQkWFFf4BgFGbr7U1AfD3Jm3Kt9b
-         Ldjw==
+        d=linaro.org; s=google; t=1768836142; x=1769440942; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=bOLfqWIhNexAHWIet0YvT9M8UoWng/1ht2LzlUGoS5k=;
+        b=siwshHt3qTu/sAsNqvVcQN6+nrbtKBmr8tVrQbPNU3xHzh940ttJKBPPgXlk8E/oPi
+         mcYIASkTEkMdz7VCXsrUyK7ie6bCpAJefidvtD+qlqvSDJ8JXBcbRBr2y3qsV8FAXfrk
+         tVnc4GZtwsAY4JQFmtIHg9pu+Jbmb9R1nyGzjUZTleYtcS8TpkKf+Qtk7oIqpNukCOKx
+         arPnDOS4LXyk7Ot0s/fi2ouVZnoBZKrnIpv71lv2QBfdzg2lB2aLnxycAVm2EZ1mAkux
+         ATeRkHanPU3QD1JAb6foub8O0YdvX+JeZqahrsx7n5ZgfU7BaJe5Arz0B+1JbzU9Q0oW
+         eOOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768836102; x=1769440902;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ap3tAgxenSiHNhV/Re8Z5pL7juJCHNdQgIJ2sqs7hh4=;
-        b=lb0EtOv9k1HHrEWhcsAXtjxljsHzt7rGNdN3VlMBKzBUdzy+kBECuVCZy8nfq+7fc5
-         inW7Hg8dU5ccO6v79TyVwLlFB5fTkX0yDJilpM6OEdlJwASmkOAPKlvD8q7wJqWy933a
-         5hnv1Zu1+NovP9ZYusr/UZEPZ0r7G22/gOINWGMrOnL3XuXwNU4aRN6lCQmplUYI6VyG
-         41HPyz9FGGb8XPP5DRlCmdtVAn/8L1QY4bZ6TBHYNQ7oxC0ekDkZsNE6eonGmqKWiPDN
-         4w25LtmlWV3uOid2AmpMfdxO/TF43/IlvD6sYF0HBzwuRKuU0Hx+jbge2OXJMhR8gzni
-         Hxdw==
-X-Forwarded-Encrypted: i=1; AJvYcCWa9NEnLKvStitvXLSs1YrXZF3PeUrZcDxoMLPA5rBmITUhFHq65GF5MMEZ+gLm0ftUbPr8zzxl+xc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwiAzI2x0k8UaYKXNRUfzSFn0UNRMK6izhDlkSjsPCVi5xckJgA
-	wqehAjBJqT9boSUgJ0ImUfJvA6ekZXSJH9o3rBEbqw1DDX57fKPJ+vVh/UNlpsKTPPxenDgyfiS
-	a42EBklA+3K+9mX+8MhUV9/1MfdVMQsnfJflYLFN7Pp2RdafKAlgpsBuNO7p1vnA=
-X-Gm-Gg: AY/fxX7wtcQwLQCanVqCQonV39B7PtdRBCL2hYHewtZ1U1DN0gvcn1tG8RjlDbn3OjD
-	iwmjW+zGAIPhr1lV03Qh3E/DEXdrX+rDinRQdDXgMynT5goioCBUblcVD9ESY1m+0rqB2Xqemqf
-	o0u0uVMdFJ8I5yioq2Q6O3FaHxtLlbnAWZAXzb5lLmbkPxCnsGpzlRxEBBYHf6stV+btDxhY+16
-	38loXcnhFzA7Fdm4yiKNoeKY0AuJDXgYS6hmz3RRRmof13+GdaaT0POrInHoKXeVUVnwBl9TXI8
-	wuOQWRr/zdIirtxFXN7b692NWc7lJ2OZwzEMCOP/l0ImtUQm6mnNA+c3fWPBGJ8h4nm/o0K3+/o
-	J3n++ttWK4UXdZ8Smbez5aILp
-X-Received: by 2002:a05:620a:29d3:b0:8b2:f090:b167 with SMTP id af79cd13be357-8c6a670434fmr1543095685a.24.1768836102276;
-        Mon, 19 Jan 2026 07:21:42 -0800 (PST)
-X-Received: by 2002:a05:620a:29d3:b0:8b2:f090:b167 with SMTP id af79cd13be357-8c6a670434fmr1543090785a.24.1768836101680;
-        Mon, 19 Jan 2026 07:21:41 -0800 (PST)
-Received: from oss.qualcomm.com ([86.121.163.152])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43569922032sm24757404f8f.8.2026.01.19.07.21.40
+        d=1e100.net; s=20230601; t=1768836142; x=1769440942;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bOLfqWIhNexAHWIet0YvT9M8UoWng/1ht2LzlUGoS5k=;
+        b=Qegra5CrwNWRjyevEiReTkV1JRrribp5ubgcYEj+OmZzWBpTC0KdDm0HnNjYYz1zrR
+         /jafeCSIiL9rxyMdnNxTwB6knS9OCXEJ5/hOhMV2rlnqcRfU7evKeyzF9GVel2R+OgEo
+         ASC9EkBuRBOY4WDFTs3uPVNQCu0MK84b2MT+WyJVyTQOkkkpcByPmmLb4IjDk+fYwpca
+         tAsJdV3trbKFtzFfQ8oo9eLwYWD1sejLSogXS8fUQcd1NIwYJGmWPcgKa7X6jMARK32C
+         vV2i2wK1vmd5nX41yotSVu/nOLgSw0Ox51xpGrNn4y6a14fnNhiTC7/aY0vFTW+w36Ox
+         pREw==
+X-Forwarded-Encrypted: i=1; AJvYcCU7y09ILedFAwcP7+DeQ33yTZxokxQx6GIws2wTcnwsZyQsAQd+kR3UTsuHKPewkb6uaJUUCnNIYmU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyqZ8X9dkKiyMiGSVGZ4UEL1EC5endskzb1esziQpHklI3IpEKz
+	f/PKoHbzejSP2pm/6/m5/2dtEJxDiGbJUY55dxMzfKIPea+bruJ+sz2L9rRMagfdAn4=
+X-Gm-Gg: AY/fxX7GgfzlUwOXhnqU/VPxRSD2s/i63RRgTfGBHNsOyh/I+9hUVZB4M306nGLs1bJ
+	CiiPO41rdhExoMQ3liWc4GzIFl8q3gpakDrTYt4j63lh2jwWQ7r0fnnAEqP+WoNFeJPbL9TwBd2
+	yEKqz/1IhOFqwOhqEJ0cZsJbbKQ/lBBlU2WRUUSCRg+Sr56jtqGQ6dd5Bk0llIOUGIv5maCnE4H
+	1+tFcm5esl8HFjvYUx+P2qi1/VW+5ovpN1r7W4B2Ko+ES8tc35sog7Ccz9011Kn4GnjxksQ+TIu
+	MUXvHMy78TO1qrYKHHDwKJ53/iOp33SaH3a+zGJr/h4EY3+FZG2Y0sAAoXlHhWH2dX09xPGFU2X
+	S5YY+jUF9vYbIjLpg42CNZpFx/OljPHnAJHYpMqWKLKUbeB6gnaLdOxbjDSVZDM521UKJCsS8bq
+	ysVAe/xFZikdNUGW7n3Q==
+X-Received: by 2002:a05:6a21:3397:b0:366:1926:1e1d with SMTP id adf61e73a8af0-38dfe590993mr13488970637.4.1768836141975;
+        Mon, 19 Jan 2026 07:22:21 -0800 (PST)
+Received: from draszik.lan ([212.129.73.116])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-c5edf232f00sm9691868a12.2.2026.01.19.07.22.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Jan 2026 07:21:41 -0800 (PST)
-Date: Mon, 19 Jan 2026 17:21:39 +0200
-From: Abel Vesa <abel.vesa@oss.qualcomm.com>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: qcom: gfx3d: add parent to parent request map
-Message-ID: <s7b4wjprfgeaif7rzjozilp3zktrqctltr5bpprae6z3t7kjqh@k343qdom6jfk>
-References: <20260117-db820-fix-gfx3d-v1-1-0f8894d71d63@oss.qualcomm.com>
+        Mon, 19 Jan 2026 07:22:21 -0800 (PST)
+Message-ID: <872f487ab2c5f6c2b1b2d7f7ee3cc26beec7970a.camel@linaro.org>
+Subject: Re: [PATCH 3/3] clk: samsung: allow runtime PM with auto clock
+ gating
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki	
+ <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar
+	 <alim.akhtar@samsung.com>, Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>
+Cc: Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus	
+ <tudor.ambarus@linaro.org>, Will McVicker <willmcvicker@google.com>, Juan
+ Yescas <jyescas@google.com>, linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, 	linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Date: Mon, 19 Jan 2026 15:22:16 +0000
+In-Reply-To: <6dde4f443be88d6fc412c08feb3e1f082c088118.camel@linaro.org>
+References: 
+	<20260109-clk-samsung-autoclk-updates-v1-0-2394dcf242a9@linaro.org>
+		 <20260109-clk-samsung-autoclk-updates-v1-3-2394dcf242a9@linaro.org>
+		 <dfc3f6ee-08c8-4673-91c2-e9c863105753@kernel.org>
+	 <6dde4f443be88d6fc412c08feb3e1f082c088118.camel@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2-2+build3 
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260117-db820-fix-gfx3d-v1-1-0f8894d71d63@oss.qualcomm.com>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTE5MDEyOCBTYWx0ZWRfX0XkxlkjrGCLv
- rPsXBz0Itrc8JhVibI3GeClUJJQGspa7mNoIYubJsYrhuSldv6Ug4TemeFaLQKVf4zfRN53eC/G
- zG1mkXSi16pK6O8/pD5sIWLY9MADMBJDSyVUS4il+far1W1HEhXvzG4XZE+573DVEU3/O69WMPt
- gdyYc6TXHobf9PPi6Ixk7y49wkF85ZYkfFxT8wnes1lQKHUtX8T2AVo40iSJZLQ6QCAC7Kmu+6B
- 9R+x6cpgDZEVkBdYbzidkyMUxHJDjwbkRYp5V/N7ZHyRM5cTbuYMmsFtMxgHkGzPGdL8nru4Cqw
- 2dbL1/AnEltemoBFth56dc+QFfAYa1pwlDqyIzvxoPiV+QU6qG7AAm2ptQb1XO6BK624asuTOX6
- h2RCUcBSCJ4eTiF5QN7xSyJBwVMwcKhKmam9cp8IKl2/tuLzyIfi/ebvifhv2ZTpQvCMf3oTriF
- BCtmcsV5IPmKwa+CwKA==
-X-Authority-Analysis: v=2.4 cv=Is4Tsb/g c=1 sm=1 tr=0 ts=696e4c07 cx=c_pps
- a=50t2pK5VMbmlHzFWWp8p/g==:117 a=RUlelSpolvTNyr7Sls5SJA==:17
- a=kj9zAlcOel0A:10 a=vUbySO9Y5rIA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=4zAq9UItTR4ueoMMHEYA:9
- a=CjuIK1q_8ugA:10 a=IoWCM6iH3mJn3m4BftBB:22
-X-Proofpoint-ORIG-GUID: 9wXVSuX6ibJ49ttpwlM44iEPhchVyt3p
-X-Proofpoint-GUID: 9wXVSuX6ibJ49ttpwlM44iEPhchVyt3p
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2026-01-19_03,2026-01-19_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 impostorscore=0 clxscore=1015 lowpriorityscore=0 suspectscore=0
- spamscore=0 bulkscore=0 malwarescore=0 priorityscore=1501 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2601150000 definitions=main-2601190128
 
-On 26-01-17 05:54:47, Dmitry Baryshkov wrote:
-> After commit d228ece36345 ("clk: divider: remove round_rate() in favor
-> of determine_rate()") determining GFX3D clock rate crashes, because the
-> passed parent map doesn't provide the expected best_parent_hw clock
-> (with the roundd_rate path before the offending commit the
-> best_parent_hw was ignored).
-> 
-> Set the field in parent_req in addition to setting it in the req,
-> fixing the crash.
-> 
->  clk_hw_round_rate (drivers/clk/clk.c:1764) (P)
->  clk_divider_bestdiv (drivers/clk/clk-divider.c:336)
->  divider_determine_rate (drivers/clk/clk-divider.c:358)
->  clk_alpha_pll_postdiv_determine_rate (drivers/clk/qcom/clk-alpha-pll.c:1275)
->  clk_core_determine_round_nolock (drivers/clk/clk.c:1606)
->  clk_core_round_rate_nolock (drivers/clk/clk.c:1701)
->  __clk_determine_rate (drivers/clk/clk.c:1741)
->  clk_gfx3d_determine_rate (drivers/clk/qcom/clk-rcg2.c:1268)
->  clk_core_determine_round_nolock (drivers/clk/clk.c:1606)
->  clk_core_round_rate_nolock (drivers/clk/clk.c:1701)
->  clk_core_round_rate_nolock (drivers/clk/clk.c:1710)
->  clk_round_rate (drivers/clk/clk.c:1804)
->  dev_pm_opp_set_rate (drivers/opp/core.c:1440 (discriminator 1))
->  msm_devfreq_target (drivers/gpu/drm/msm/msm_gpu_devfreq.c:51)
->  devfreq_set_target (drivers/devfreq/devfreq.c:360)
->  devfreq_update_target (drivers/devfreq/devfreq.c:426)
->  devfreq_monitor (drivers/devfreq/devfreq.c:458)
->  process_one_work (arch/arm64/include/asm/jump_label.h:36 include/trace/events/workqueue.h:110 kernel/workqueue.c:3284)
->  worker_thread (kernel/workqueue.c:3356 (discriminator 2) kernel/workqueue.c:3443 (discriminator 2))
->  kthread (kernel/kthread.c:467)
->  ret_from_fork (arch/arm64/kernel/entry.S:861)
-> 
-> Fixes: 55213e1acec9 ("clk: qcom: Add gfx3d ping-pong PLL frequency switching")
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+On Mon, 2026-01-19 at 15:00 +0000, Andr=C3=A9 Draszik wrote:
+> Hi Krzysztof,
+>=20
+> On Sat, 2026-01-17 at 20:25 +0100, Krzysztof Kozlowski wrote:
+> > On 09/01/2026 18:27, Andr=C3=A9 Draszik wrote:
+> > > When automatic clock gating is enabled, runtime PM (RPM) isn't entere=
+d
+> > > even if enabled for a CMU if a sysreg clock exists and is provided by
+> > > this CMU (as is generally the case).
+> > >=20
+> > > The reason is that this driver acquires a CMU's sysreg registers usin=
+g
+> > > syscon_regmap_lookup_by_phandle() which ends up preparing the sysreg
+> > > clock. Given the sysreg clock is provided by this CMU, this CMU's usa=
+ge
+> > > count is therefore bumped and RPM can not be entered as this CMU neve=
+r
+> > > becomes idle.
+> > >=20
+> > > Switch to using device_node_to_regmap() which doesn't handle resource=
+s
+> > > (the clock), leaving the CMU's usage count unaffected.
+> > >=20
+> > > Note1: sysreg clock handling is completely removed with this commit
+> >=20
+> > I miss where do you remove in this commit the sysreg clock handling?
+>=20
+> The CMU driver originally used syscon_regmap_lookup_by_phandle() for sysr=
+eg,
+> which does clk_get() and clk_prepare(), and then implicitly and for each
+> register access clk_enable()/disable() for the clock specified in DT for =
+the
+> (sysreg) node.
+>=20
+> This commit changes it to using device_node_to_regmap(), which does nothi=
+ng
+> with the clock (or any other resources). I opted to have the CMU driver s=
+till
+> do a clk_get(), so that the relationship is still visible, e.g. in
+> $debugfs/clk/clk_summary.
+>=20
+> > > because sysreg register access is only required during suspend/resume=
+.
+> > > In the runtime suspend case, we would have to enable the clock to rea=
+d
+> > > the registers, but we can not do that as that would cause a resume of
+> > > this driver which is not allowed. This is not a problem because we
+> > > would only need to handle the clock manually if automatic clock gatin=
+g
+> > > wasn't enabled in the first. This code is only relevant if automatic
+> > > clock gating is enabled, though.
+> > >=20
+> > > Fixes: 298fac4f4b96 ("clk: samsung: Implement automatic clock gating =
+mode for CMUs")
+> > > Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+> > > ---
+> > > =C2=A0drivers/clk/samsung/clk.c | 92 ++++++++++++++++++++++++++++++++=
++++------------
+> > > =C2=A0drivers/clk/samsung/clk.h |=C2=A0 2 ++
+> > > =C2=A02 files changed, 71 insertions(+), 23 deletions(-)
+> > >=20
+> > > diff --git a/drivers/clk/samsung/clk.c b/drivers/clk/samsung/clk.c
+> > > index 9f68f079fd552f8dfb6898dbfb47dec0e84c626c..6515df81fcbc79b90f526=
+2843e67575f6a4e0dda 100644
+> > > --- a/drivers/clk/samsung/clk.c
+> > > +++ b/drivers/clk/samsung/clk.c
+> > > @@ -9,11 +9,13 @@
+> > > =C2=A0 */
+> > > =C2=A0
+> > > =C2=A0#include <linux/slab.h>
+> > > +#include <linux/clk.h>
+> > > =C2=A0#include <linux/clkdev.h>
+> > > =C2=A0#include <linux/clk-provider.h>
+> > > =C2=A0#include <linux/io.h>
+> > > =C2=A0#include <linux/mfd/syscon.h>
+> > > =C2=A0#include <linux/mod_devicetable.h>
+> > > +#include <linux/of.h>
+> > > =C2=A0#include <linux/of_address.h>
+> > > =C2=A0#include <linux/regmap.h>
+> > > =C2=A0#include <linux/syscore_ops.h>
+> > > @@ -489,6 +491,50 @@ void __init samsung_cmu_register_clocks(struct s=
+amsung_clk_provider *ctx,
+> > > =C2=A0		samsung_clk_register_cpu(ctx, cmu->cpu_clks, cmu->nr_cpu_clks=
+);
+> > > =C2=A0}
+> > > =C2=A0
+> > > +static int samsung_get_sysreg_regmap(struct device_node *np,
+> > > +				=C2=A0=C2=A0=C2=A0=C2=A0 struct samsung_clk_provider *ctx)
+> > > +{
+> > > +	struct device_node *sysreg_np;
+> > > +	struct clk *sysreg_clk;
+> > > +	struct regmap *regmap;
+> > > +	int ret;
+> > > +
+> > > +	sysreg_np =3D of_parse_phandle(np, "samsung,sysreg", 0);
+> > > +	if (!sysreg_np)
+> > > +		return -ENODEV;
+> > > +
+> > > +	sysreg_clk =3D of_clk_get(sysreg_np, 0);
+> >=20
+> > I don't think you should be poking clock of some other device. This
+> > clearly breaks encapsulation. What sysreg is needs to do to access
+> > registers, is only business of sysreg. No other drivers should
+> > re-implement this.
+>=20
+> Similarly, to how other drivers (like UFS and peric/USI) also poke in
+> the sysreg region in a similar way, the CMU related parts of sysreg are
+> handled in this driver, though, as only the CMU driver knows how to
+> configure them based on the gating (auto vs. manual).
+>=20
+> No separate driver was sysreg was added when this code was introduced.
+> The clk_get() used to be part of syscon_regmap_lookup_by_phandle(), and
+> I chose to keep only that, as per above.
+>=20
+> I propose to add an actual sysreg driver once the need arises, then
+> this can also move, but for now keeping it here seems straight forward.
+>=20
+> Is that OK with you?
 
-Reviewed-by: Abel Vesa <abel.vesa@oss.qualcomm.com>
+Forgot to say, I can of course remove all clock related code (clk_get() etc=
+).
+
+What do you think? Is that acceptable?
+
+
+CHeers,
+Andre'
