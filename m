@@ -1,198 +1,199 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFE50313291;
-	Mon, 19 Jan 2026 14:48:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E39E3815D7
+	for <linux-clk@vger.kernel.org>; Mon, 19 Jan 2026 15:01:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768834129; cv=none; b=q1LYGEWklfMZPCvHOpUMncIhjSAZmZvIToY+hcacfzVb1MyYhxJTu7UYJ/8Ge0TnF7v3HxbHzi1i2cnDFa3QOPDSgf/YAM0/ruEAYAH367zk6QhYsZBC3+6NxxIjNGHSjvdlOC8gd9BEE0XCg6zk+xOOTpGPBInhitcpfToBbEg=
+	t=1768834862; cv=none; b=Yo6O0meGJx+tXHnQK4lht8xjYimRLloxdBP6bUeZddYiqXP/Jkm+WpuusNvg+cMleDT8thYi4sPy1ba96/Td8HnylHZB3wAjXq7jrU2/NYGltxqC+IrmRDY5icQ+MsNvu6lyhbMoVbZg/Z0BMEnkYKsgVNtVYnOvozj9kxMipGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768834129; c=relaxed/simple;
-	bh=1ATbY9s5yzxtnoP+yy0E0lx3gCwRzt0h+ETy1ner61s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s1AJNeWOtLjy6+uZStrMJrppn3GprOhIYMAFoUmQEIKFr6vCutUdWJLx5HwAqTFNwRyeK0LAHo9DBejgWRuEBIX44W3GwI1QL6R+IT5rvc0Rzf8CO8jbvBK7nN8l7MGEEtIkmiu6hOg2+xza0IrJ2lHboT/kC5PgzZp1rFYSNFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DO93/L8h; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1768834862; c=relaxed/simple;
+	bh=5wSZP/vmyBOxdNy+Q5ghdgNb3wVebVWpShAvVAYA4xY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=kgkhQmxBWKUiQeo0X5Hq1mmjC1B+XZBVwRWuAcVERp/zQIQbU2R+rV9TxIwxBLEYjmjJQut65VMtie/suAdH43kqVdwYjJPBwPGS/VcaPujdhjWCX7nNZjHxoe1jlFn21qvufvvHnvC8Hg8oFm+3TNF8ia9fJoM5WqDSA+F6QVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lBRWCCb6; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DO93/L8h"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3D98C116C6;
-	Mon, 19 Jan 2026 14:48:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768834129;
-	bh=1ATbY9s5yzxtnoP+yy0E0lx3gCwRzt0h+ETy1ner61s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DO93/L8hXUobAdfLQOXZWcQTerOyK2jCQCGzG3z+iaMEg+Hi0CMVWpQM6vja/7SHZ
-	 8Lk0hHOwTgD7bVIDKg1EdhBRmQsOlMZFbUr1fX4stxt7A+m/K1xKBrRWN3XjtWaHLl
-	 lJxAI89Ab5t2xWDsVoCoHJhN0CH3sZM3kVJexlviDbfuNhfVDPZKRz8Si9XUpKWfhF
-	 G+lSXq7BAuhhLtKRDaK2xtLUMla0N44echwGe5XtJSVj/0YNze9ASQbNjt+1fA9z95
-	 nghEsOakch41JuzIMakgeVqswhuydkOnLJX113Bb9gmw1S82HVw5ob8Y/jw+N9m7yQ
-	 FOtY7pnoaxitQ==
-Date: Mon, 19 Jan 2026 20:18:29 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Wen Gu <guwen@linux.alibaba.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, 
-	Richard Cochran <richardcochran@gmail.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, Jakub Kicinski <kuba@kernel.org>, 
-	Dust Li <dust.li@linux.alibaba.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
-	Andrew Lunn <andrew+netdev@lunn.ch>, David Woodhouse <dwmw2@infradead.org>, 
-	virtualization@lists.linux.dev, Nick Shi <nick.shi@broadcom.com>, 
-	Sven Schnelle <svens@linux.ibm.com>, Paolo Abeni <pabeni@redhat.com>, linux-clk@vger.kernel.org
-Subject: Re: [RFC] Defining a home/maintenance model for non-NIC PHC devices
- using the /dev/ptpX API
-Message-ID: <yg3ikpcwukvv6z6gf6zzkoxlgu37ihauqpm2pkhmxuz6hsxfcc@eaeqykdvkh5v>
-References: <0afe19db-9c7f-4228-9fc2-f7b34c4bc227@linux.alibaba.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lBRWCCb6"
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-81345800791so2744893b3a.0
+        for <linux-clk@vger.kernel.org>; Mon, 19 Jan 2026 07:01:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1768834860; x=1769439660; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=2IbXNhWIbZbrbqZXRIFNlWrdzKYdRYk3QnEEbv0798c=;
+        b=lBRWCCb6sMvcs4LD+jxBqFfLO9FkIZUEUWqeaDS7MkPKacE6hGFhNUiyGt4Xd4ZI77
+         FevWy8R+jpjXkFTaefPxKw7EtqM/RdOBdDRhZX27zm+aPyYKjPSPlY9eb5wHPhCzwLVD
+         CFy9LwbXzzaLAaywRtN3A83xjhIP6nQuAE800wdckc2lKLjvnHPTjJ64uy1Z5AUqDnTo
+         UrM94hfhC/YWklIjZMp2Oeaa9bKzamxXqkuraV29e5uotcSL/rnYLeoh1C/jLqH/jdk2
+         BNu+1ILgU/jf1tlwRUqpm+TMceqvFyrhOUJeUmls4h3M+EcUk5khDjtTosiIvi7eJlQ6
+         IQXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1768834860; x=1769439660;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2IbXNhWIbZbrbqZXRIFNlWrdzKYdRYk3QnEEbv0798c=;
+        b=AvvKImlj0lvTxF0gItgax+har78aaDP9ysH9AV8/ygXxlEO0OFT90sk3z5o/2dvlTf
+         6XAQlj6bO372x8nr1M7lmIM5E0nR5astynha3SdFSIf87X1k3/zGD7Nm2KbxIcaJbCo6
+         fbLyDRxOA/VH9Iub3hZinXAsQFv+ihdkoCXbzgfC0jGyvEjH+GmEAeLCGwnIMNhTfczn
+         aZrmP3zdCNtuVoF57+7Y60/hOrU/VrnVpMXcHYwV2+d5v5sJNCRRpmeLcXZLc9Qx1mVM
+         EEuEv+Jgbg9f+fRsmZcycv55hvh9IZbMIpAWC+uL8OPkjWI01GOCz3CgRa3xq0H5Y5cg
+         v5kw==
+X-Forwarded-Encrypted: i=1; AJvYcCWxjWjgHEBQYvcM2x1KJ5EJYOp7tl6APLnWH7ck1JBBe8kXx+L6x+QFDA5loQp02yYRWUC1hYdN6E8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywa+GRUbD0GS8d5O/2ajDE7Qa7aSohkdTzWOXgO5Kb8z+/fCSx1
+	Fjf7L/FNzo8IwVgnezFPNz6iNmnqdqA/+JoZEBiZWKhF6DSzg/JjjZ8/1D9n1xmK0R0=
+X-Gm-Gg: AY/fxX7WFhGn01e+f4ZwcPJ0M74yuI9yqAepzpspYufcuJTszlUMev/vh3SkNUf2OW7
+	4GFn22yJVnvoNpSEPa6+oeXVzGm0af+nsIkLsxDQMO61nvNUQjc/My5rHSMGbtyKsJsE4m5H9i9
+	IuLiHNh2xGFpEAwl+f9URWbm8q0wQGA9vaFHk0aWP51UN/Uwl/p/9Z5bPFLWEIRqhCa6ggTofs8
+	jxmcOdm+sXeeSxx9aoMPc/0hN3X8XfR95vswRv6s+rVKz7/n9SUYL/LJfwbz0FAz79Im9ZCq7Jl
+	LYxM5qvUUg2Gi+F6G7nk0ha7Xd7/0Gli0F/GBjgzyJMemaGNe5ilICqD3I5HAxogQXpkQDdTKmx
+	tO7uj8IBowGSCVr6j1QRx9GOX8bcZyKl+lUmPeYhymR1NBkXe/4Gu4IrUrBRASpycMK25KPfrzb
+	ah4a0MYjYV/MXLhfHwsw==
+X-Received: by 2002:a05:6a21:1505:b0:38d:fad1:cf2a with SMTP id adf61e73a8af0-38e00bb969bmr10563241637.13.1768834858332;
+        Mon, 19 Jan 2026 07:00:58 -0800 (PST)
+Received: from draszik.lan ([212.129.73.116])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-c5edf130f1csm9530167a12.0.2026.01.19.07.00.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Jan 2026 07:00:57 -0800 (PST)
+Message-ID: <6dde4f443be88d6fc412c08feb3e1f082c088118.camel@linaro.org>
+Subject: Re: [PATCH 3/3] clk: samsung: allow runtime PM with auto clock
+ gating
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki	
+ <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar
+	 <alim.akhtar@samsung.com>, Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>
+Cc: Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus	
+ <tudor.ambarus@linaro.org>, Will McVicker <willmcvicker@google.com>, Juan
+ Yescas <jyescas@google.com>, linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, 	linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Date: Mon, 19 Jan 2026 15:00:53 +0000
+In-Reply-To: <dfc3f6ee-08c8-4673-91c2-e9c863105753@kernel.org>
+References: 
+	<20260109-clk-samsung-autoclk-updates-v1-0-2394dcf242a9@linaro.org>
+	 <20260109-clk-samsung-autoclk-updates-v1-3-2394dcf242a9@linaro.org>
+	 <dfc3f6ee-08c8-4673-91c2-e9c863105753@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2-2+build3 
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <0afe19db-9c7f-4228-9fc2-f7b34c4bc227@linux.alibaba.com>
 
-Hi Wen,
+Hi Krzysztof,
 
-On Fri, Jan 09, 2026 at 10:56:56AM +0800, Wen Gu wrote:
-> 
-> Hi all,
-> 
-> This is an RFC to discuss the appropriate upstream home and maintenance
-> model for a class of devices/drivers which expose a high-precision clock
-> to userspace via the existing PHC interface (/dev/ptpX + standard PTP_*
-> ioctls), but are not tied to a traditional NIC/IEEE1588 packet
-> timestamping pipeline.
-> 
+On Sat, 2026-01-17 at 20:25 +0100, Krzysztof Kozlowski wrote:
+> On 09/01/2026 18:27, Andr=C3=A9 Draszik wrote:
+> > When automatic clock gating is enabled, runtime PM (RPM) isn't entered
+> > even if enabled for a CMU if a sysreg clock exists and is provided by
+> > this CMU (as is generally the case).
+> >=20
+> > The reason is that this driver acquires a CMU's sysreg registers using
+> > syscon_regmap_lookup_by_phandle() which ends up preparing the sysreg
+> > clock. Given the sysreg clock is provided by this CMU, this CMU's usage
+> > count is therefore bumped and RPM can not be entered as this CMU never
+> > becomes idle.
+> >=20
+> > Switch to using device_node_to_regmap() which doesn't handle resources
+> > (the clock), leaving the CMU's usage count unaffected.
+> >=20
+> > Note1: sysreg clock handling is completely removed with this commit
+>=20
+> I miss where do you remove in this commit the sysreg clock handling?
 
-Thanks for starting the discussion. I sent out an email just today on this
-topic [1] and learned about this thread afterwards.
+The CMU driver originally used syscon_regmap_lookup_by_phandle() for sysreg=
+,
+which does clk_get() and clk_prepare(), and then implicitly and for each
+register access clk_enable()/disable() for the clock specified in DT for th=
+e
+(sysreg) node.
 
-> Examples already in the tree include (non-exhaustive):
-> 
-> - drivers/ptp/ptp_kvm.c [1]
-> - drivers/ptp/ptp_vmw.c [2]
-> - drivers/ptp/ptp_s390.c [3]
-> 
-> There are also examples living in their respective subsystem (out of
-> scope for this RFC),
-> e.g. drivers/hv/hv_util.c [4] and drivers/virtio/virtio_rtc_ptp.c [5].
-> 
-> We (Alibaba Cloud) also posted a driver for a CIPU-provided high-precision
-> clock for review [6]. Based on existing in-tree precedent, we placed it
-> under drivers/ptp/ and sent it to the netdev list.
-> 
+This commit changes it to using device_node_to_regmap(), which does nothing
+with the clock (or any other resources). I opted to have the CMU driver sti=
+ll
+do a clk_get(), so that the relationship is still visible, e.g. in
+$debugfs/clk/clk_summary.
 
-Some Qcom MHI devices expose the high precision clock derived from GNSS/Cellular
-network over the MHI registers and we recently sent out a series exposing them
-as PHC [2]. Since this driver is closely tied with MHI bus, we added it as a
-part of drivers/bus/mhi/.
+> > because sysreg register access is only required during suspend/resume.
+> > In the runtime suspend case, we would have to enable the clock to read
+> > the registers, but we can not do that as that would cause a resume of
+> > this driver which is not allowed. This is not a problem because we
+> > would only need to handle the clock manually if automatic clock gating
+> > wasn't enabled in the first. This code is only relevant if automatic
+> > clock gating is enabled, though.
+> >=20
+> > Fixes: 298fac4f4b96 ("clk: samsung: Implement automatic clock gating mo=
+de for CMUs")
+> > Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+> > ---
+> > =C2=A0drivers/clk/samsung/clk.c | 92 ++++++++++++++++++++++++++++++++++=
++------------
+> > =C2=A0drivers/clk/samsung/clk.h |=C2=A0 2 ++
+> > =C2=A02 files changed, 71 insertions(+), 23 deletions(-)
+> >=20
+> > diff --git a/drivers/clk/samsung/clk.c b/drivers/clk/samsung/clk.c
+> > index 9f68f079fd552f8dfb6898dbfb47dec0e84c626c..6515df81fcbc79b90f52628=
+43e67575f6a4e0dda 100644
+> > --- a/drivers/clk/samsung/clk.c
+> > +++ b/drivers/clk/samsung/clk.c
+> > @@ -9,11 +9,13 @@
+> > =C2=A0 */
+> > =C2=A0
+> > =C2=A0#include <linux/slab.h>
+> > +#include <linux/clk.h>
+> > =C2=A0#include <linux/clkdev.h>
+> > =C2=A0#include <linux/clk-provider.h>
+> > =C2=A0#include <linux/io.h>
+> > =C2=A0#include <linux/mfd/syscon.h>
+> > =C2=A0#include <linux/mod_devicetable.h>
+> > +#include <linux/of.h>
+> > =C2=A0#include <linux/of_address.h>
+> > =C2=A0#include <linux/regmap.h>
+> > =C2=A0#include <linux/syscore_ops.h>
+> > @@ -489,6 +491,50 @@ void __init samsung_cmu_register_clocks(struct sam=
+sung_clk_provider *ctx,
+> > =C2=A0		samsung_clk_register_cpu(ctx, cmu->cpu_clks, cmu->nr_cpu_clks);
+> > =C2=A0}
+> > =C2=A0
+> > +static int samsung_get_sysreg_regmap(struct device_node *np,
+> > +				=C2=A0=C2=A0=C2=A0=C2=A0 struct samsung_clk_provider *ctx)
+> > +{
+> > +	struct device_node *sysreg_np;
+> > +	struct clk *sysreg_clk;
+> > +	struct regmap *regmap;
+> > +	int ret;
+> > +
+> > +	sysreg_np =3D of_parse_phandle(np, "samsung,sysreg", 0);
+> > +	if (!sysreg_np)
+> > +		return -ENODEV;
+> > +
+> > +	sysreg_clk =3D of_clk_get(sysreg_np, 0);
+>=20
+> I don't think you should be poking clock of some other device. This
+> clearly breaks encapsulation. What sysreg is needs to do to access
+> registers, is only business of sysreg. No other drivers should
+> re-implement this.
 
-> During review, concerns were raised that such "non-NIC / pure" PHC drivers
-> are not a good fit for netdev maintainership [7], since they are primarily
-> time/clock devices rather than networking protocol features.
-> 
-> As a result, I’m sending this RFC to align on a consistent upstream home
-> and maintainer model for this class of drivers, both for the existing ones
-> and future additions.
-> 
-> #
-> ## Observation 1: PHC core/API are already not bound to NIC/IEEE1588
-> #
-> 
-> Although PHC support is original associated with NIC-based IEEE 1588
-> timestamping, the kernel tree already contains multiple non-NIC PHC
-> implementations (examples above), including long-standing and recently
-> added drivers. This reflects the reality that the PHC interface is no
-> longer tightly bound to NIC/IEEE1588 implementations.
-> 
-> This is enabled by the PHC interface's clean design, it provides a
-> well-scoped, layered abstraction that separates the userspace access
-> mechanism (/dev/ptpX + standard ioctl semantics) from the underlying
-> clock implementation and discipline method (NIC/IEEE1588 packet timestamping
-> pipeline, virtualization-provided clocks, platform/firmware time services,
-> etc.). The interface defines only generic clock-operation semantics, without
-> baking in assumptions about how the clock is produced or synchronized.
-> 
-> Because of this elegant decoupling, the PHC API naturally fits
-> "pure time source" devices as long as they can provide a stable, precise
-> hardware clock. In practice, PHC has effectively become Linux’s common
-> API for high-precision device clocks, rather than inherently bound to
-> an IEEE1588 NIC implementation.
-> 
-> #
-> ## Observation 2: the PHC (/dev/ptpX) has an established userspace ecosystem
-> #
-> 
-> The PHC character device interface (/dev/ptpX + standard PTP_* ioctls) is
-> a mature, stable, and widely deployed userspace API for accessing
-> high-precision clocks on Linux. It is already the common interface consumed
-> by existing software stacks (e.g. chrony, and other applications built around
-> PHC devices)
-> 
-> Introducing a new clock type or a new userspace API (e.g. /dev/XXX) would
-> require widespread userspace changes, duplicated tooling, and long-term
-> fragmentation. This RFC is explicitly NOT proposing a new userspace API.
-> 
+Similarly, to how other drivers (like UFS and peric/USI) also poke in
+the sysreg region in a similar way, the CMU related parts of sysreg are
+handled in this driver, though, as only the CMU driver knows how to
+configure them based on the gating (auto vs. manual).
 
-+1
+No separate driver was sysreg was added when this code was introduced.
+The clk_get() used to be part of syscon_regmap_lookup_by_phandle(), and
+I chose to keep only that, as per above.
 
-> #
-> ## Goal
-> #
-> 
-> Establish an appropriate upstream home and maintainer model for "pure time
-> source" PHC drivers. If they are not suitable to be maintained under netdev,
-> we need a clear place and maintainer(s) for them, and a consistent policy
-> for accepting new ones.
-> 
-> #
-> ## Proposal
-> #
-> 
-> 1. Reorganize drivers/ptp/ to make the interface/implementation split
->    explicit,
-> 
->    * drivers/ptp/core      : PTP core infrastructure and API.
->                              (e.g. ptp_chardev.c, ptp_clock.c,
->                               ptp_sysfs.c, etc.)
-> 
->    * drivers/ptp/pure      : Non-network ("pure clock") implementation,
->                              they are typically platform/architecture/
->                              virtualization-provided time sources.
->                              (e.g. ptp_kvm, ptp_vmw, ptp_vmclock,
->                               ptp_s390, etc.)
-> 
->    * drivers/ptp/*         : Network timestamping oriented implementation,
->                              they primarily used together with IEEE1588
->                              over the network.
->                              (e.g. ptp_qoriq, ptp_pch, ptp_dp83640,
->                               ptp_idt82p33 etc.)
-> 
-> 2. Transition drivers/ptp/pure from netdev maintainership to
->    clock/time maintainership (with an appropriate MAINTAINERS entry,
->    e.g. PURE TIME PHC), since these PHC implementations are primarily
->    clock devices and not network-oriented. New similar drivers can be
->    added under drivers/ptp/pure as well.
-> 
-> 
-> Possible alternatives (please suggest others):
-> 
-> - Move/align "pure time source" PHC drivers under an existing
->   timekeeping/clocksource/virt area, without changing the userspace API.
-> 
-> 
-> I’d like to drive this discussion towards consensus, and I’m happy to
-> adapt our series to match whatever direction is agreed upon.
-> 
+I propose to add an actual sysreg driver once the need arises, then
+this can also move, but for now keeping it here seems straight forward.
 
-If we get a consensus to move forward with exposing the device clocks as PHC, we
-will respin the MHI driver and would love to get an ACK from the (new)
-maintainers.
+Is that OK with you?
 
-- Mani
-
-[1] https://lore.kernel.org/all/vmwwnl3zv26lmmuqp2vqltg2fudalpc5jrw7k6ifg6l5cwlk3j@i7jm62zcsl67/
-[2] https://lore.kernel.org/mhi/20250818-tsc_time_sync-v1-0-2747710693ba@oss.qualcomm.com/
-
--- 
-மணிவண்ணன் சதாசிவம்
+Cheers,
+Andre'
