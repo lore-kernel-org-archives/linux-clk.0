@@ -1,217 +1,115 @@
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8719D369215
-	for <linux-clk@vger.kernel.org>; Mon, 19 Jan 2026 13:27:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B542F36D4E1
+	for <linux-clk@vger.kernel.org>; Mon, 19 Jan 2026 13:56:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768829235; cv=none; b=aTl4S+fSCXpvuXSstittHFtQ98jJKbjS5ZQLuGrXM1KdAZPPszvYSa6hFPvUsZhnAEhJjoNAbON9aIQq/iDPWd+zPRMe2/3BUlaAhdK8MrBrLSKeXcdkOe6XP3Wr03cvPPjeef8BZMPN0qc19BdYyPsReTsGFehHTHSG8OlDRVk=
+	t=1768830970; cv=none; b=rZOqmnkNgad88B+0juC7DW7PVC+vZwJsSHJsytiuXJysL7nssXkWKnLLM2uPDKqTrxPGVYPE7Pn8eY4gjdJQXhK6kXJUg2bby22Iwoy2aJrARR5vDSzGT83ybqWtWfISv8zxgtd2IKTvRnKx1aw7ZEzObUHukQlNco0cIZEp5OM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768829235; c=relaxed/simple;
-	bh=y4ke/+OyygqynnXX/H59Fqon7GhU3naLqveuRutNem0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Fn+SJ8niUkxKNfyv/K5dGcDSKD7Y/BXnW0Fte3IMHZGQVm7EfeFNgtBuahb4vwpvOPNv1J9dJHH+GsTZGNGPSUFh+iT68NszqM+KtpL1NuDICAY707aysKDMPuVTxFjbV7KfimRMSqmHn5HEb/AOT9weB3Ssk5nN3QrTzL5wf/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=yvt1z8CN; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="yvt1z8CN"
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4801c731d0aso24176375e9.1
-        for <linux-clk@vger.kernel.org>; Mon, 19 Jan 2026 05:27:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1768829232; x=1769434032; darn=vger.kernel.org;
-        h=mime-version:message-id:date:user-agent:references:in-reply-to
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=eCbuiYjGuVvlbB4vqWDSqvvIfZr+F+0/4EzDwihuPK4=;
-        b=yvt1z8CNR9CgTzNnVsQj4D0zkhW44gI0GFU50nZ0SE5TC5A+slFsEQ+YuCQQRBsWcI
-         kDl4DQgJ1hNO8i9C7JoABsh+WIvh5llU/oGHHjVFy+bkpnXB7FP5We6yD/il93u5T0oD
-         TWWG8FkK+ECUfprzI618TP6l4QQXv9L50BD1454I2Orn5uxt9HL729rgFqZFvuC1E4MW
-         5lKNaGh/T2Se6H+aYP1hhxP0fmr4GH7DFy2xftheZiyk8paq9PSu48B9hKdwxv0DsdVP
-         eidoc8Ezrt+L0h6QIEF3VULgDdJF5Kvt5OBbtF6bMa8RXSMx7dyTxABrrR37PBYuadnP
-         /jNw==
+	s=arc-20240116; t=1768830970; c=relaxed/simple;
+	bh=USU2dfqEi8y03HM3f87V6O1i0tfjkLsCH5ivCaeDP4Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BjSNEJG7973I7yqd8z3uj4eAcGwwk/h/YGRgyNE8XAsjTyW8ZxrXTFPEVYm5b0+qTT1y4tJMRkbqh/1Ymaw4BY98Es9XpTE+tFYWooaz3z/n4YBJuJoBJLUFVbWCp+zgaXg7sQsUfYQuo1FPtqkReXvCF1yXYTXj6kTpPnVz/MM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-56367a388e5so1109964e0c.2
+        for <linux-clk@vger.kernel.org>; Mon, 19 Jan 2026 05:56:08 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768829232; x=1769434032;
-        h=mime-version:message-id:date:user-agent:references:in-reply-to
-         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=eCbuiYjGuVvlbB4vqWDSqvvIfZr+F+0/4EzDwihuPK4=;
-        b=mgxSaQsfDvSJs3+yeFtK+lxxH/99uyOAZq0zunYa4ondhIjs0FJMl9YmvuVPk/kwEZ
-         SdFsk7kPrhjFd6zEz8+kcsWjWGmmrRFxmUuykdxNDvPsCzc8tloD/Zc0m004qugObVgn
-         1XzGzjd6hWxTxjOsJSns5nqUKOpp+zEtP7NsZdOdMBLpvkmtXS06WkdMFbHpsHFiur+t
-         FLX7JRbAHxKL93hIaAfTYcTCdwdL5Ys80MtkAMozT0IiwGOPfqkEdmcet4JMeCWa/+S2
-         dDseflesUt+EZUWszfLFiuTlIagvAmbSMAoDywaBW99DNQpq6uvm4WfHyhZUFW11JG3A
-         t43g==
-X-Forwarded-Encrypted: i=1; AJvYcCUuPweR9O19Mh68CpJFjibqDVGr1mEhvplHlakpyQnjtz5BLlfInW9Cy8SBM5K9C0yzy93WUknAPI8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCbyEYvihTQrygLgZeTF/BD7o6xPCF7dk4V4eLVOSBZxToFd1g
-	n29nJoZHdGcmr2pGGbHQrG01MVgYZABw5tZlS23fYnwRLUzCFxJ0Pz+6fNeZblvGay4=
-X-Gm-Gg: AY/fxX7qtC6g9MlWwfjEKB7FfXSXwTb+UqOSr+NASfgOwJ4b7ksArwaiTjf7v15qiWY
-	BSDiaHv4UGmMOC4o1u9kk7N4JwUakNuUaS+GEgqAQ1CG+zBxrTHn378Cc54OgJn019rRXVDziXM
-	AheVH+prvdXW5+f2FFBhDwKO8yONqSjz3v+2kqsemOB3fTLy5ADasGv1JEcVoRLzJUaYKmAQJWZ
-	MegV6+Iz+nNNc82nwzrSKh92MS/AiBzjIM2voKbbmE0VIaJ7MhSLyqNUbtzsnFqwhkfp4tNAZYb
-	08gtle2MTHmhDOry9SRWFdiA134+2+u9ubDDm1AVK/5EFfBMyco91NDGSvVZxfVqdquwdCTwWsY
-	DBdc14/AJhV8zbwuCUGN00InRMPGk4Va3cQtjntWoSRRLYkaD+6hSbiu48MStjHEQWiryBZ6zGY
-	p/YCdTHlYeqg==
-X-Received: by 2002:a05:600c:8b67:b0:47d:3ffb:16c9 with SMTP id 5b1f17b1804b1-4801e342091mr114088625e9.23.1768829231748;
-        Mon, 19 Jan 2026 05:27:11 -0800 (PST)
-Received: from localhost ([2a01:e0a:3c5:5fb1:4154:6ad6:c781:df9c])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4801e8c0499sm197706815e9.9.2026.01.19.05.27.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Jan 2026 05:27:11 -0800 (PST)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Chuan Liu <chuan.liu@amlogic.com>
-Cc: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>,
-  Michael Turquette <mturquette@baylibre.com>,  Stephen Boyd
- <sboyd@kernel.org>,  Rob Herring <robh@kernel.org>,  Krzysztof Kozlowski
- <krzk+dt@kernel.org>,  Conor Dooley <conor+dt@kernel.org>,  Neil Armstrong
- <neil.armstrong@linaro.org>,  Xianwei Zhao <xianwei.zhao@amlogic.com>,
-  Kevin Hilman <khilman@baylibre.com>,  Martin Blumenstingl
- <martin.blumenstingl@googlemail.com>,  linux-kernel@vger.kernel.org,
-  linux-clk@vger.kernel.org,  devicetree@vger.kernel.org,
-  linux-amlogic@lists.infradead.org,  linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v5 5/8] clk: amlogic: Add A5 clock peripherals
- controller driver
-In-Reply-To: <ea7e209d-cd30-4d93-9deb-104aaf7c92eb@amlogic.com> (Chuan Liu's
-	message of "Mon, 19 Jan 2026 20:16:19 +0800")
-References: <20260108-a5-clk-v5-0-9a69fc1ef00a@amlogic.com>
-	<20260108-a5-clk-v5-5-9a69fc1ef00a@amlogic.com>
-	<1jecnsr1eg.fsf@starbuckisacylon.baylibre.com>
-	<ea7e209d-cd30-4d93-9deb-104aaf7c92eb@amlogic.com>
-User-Agent: mu4e 1.12.9; emacs 30.1
-Date: Mon, 19 Jan 2026 14:27:09 +0100
-Message-ID: <1jbjipviky.fsf@starbuckisacylon.baylibre.com>
+        d=1e100.net; s=20230601; t=1768830968; x=1769435768;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+r64VZF3kohfXXfdlR1Pb964pfqiX29JMKKPRtqCraU=;
+        b=kPb0+CQ4Uk+9QX4SYcCeTUPYRhxLflsZOxPw43muDaUYBKe3TgeuZdSuEbT84ZCtYB
+         Vooo7zTgjieBSgs5wYcjA5AkH4Owy1LD7vlHl7AjMpM09HCNQ5MN/6sep250fDyAdRuz
+         Kf4KrbBCdAh3hgubDxmpJ2t5YQxdYYr9dwRyKe0XDbnOg6/fARKkZIPsZ9y3dF7wk1oQ
+         pPvQ3m+Ebt7Q2IRPVO4Zkxh6jXdDmkDvfDvD9qGoy7mDTIvHLY4qv6LUfxtvufsF13O4
+         ycUPR4AFLQNVmmz/08XkIanFF1DFf/7RpdtPoEkJmLYX7jvyNAyB7NFAvpT5NEovdSJZ
+         z9TQ==
+X-Gm-Message-State: AOJu0YyY8ZwT1njg1dp7puncTkfrx4BJ2seSpDwCkUb847hNDbT4pak2
+	3FlfuBDZQGit5n7PZoTxFsxxWt3V8M7xfZL9DkrHvF27uFFcB3nb+p2CM2BXg64Y
+X-Gm-Gg: AY/fxX6YoYGasayeST3/QFH0wsfPnzZ+Yoew+NoUdaZNjx8yOGQW664Idbns+RrCll6
+	8ncpXuqFW64lplWFyD5q40OC77AmSyBW2jZPsxYtYFz8wWOEI9Yh/Xf8m1NhOCHq95r7ML99UBT
+	QbSFY4eh2XQR6Bn4WV0S5FsdVHigGOlU+sX7R11sgVlxqIgmVSBu1dfhB0LBkOCx1jvjGpMqj7N
+	W8Ialqxz4UxXXr6asSnKiB/EqsslzuuLhTGR6HRbE8h9juAJbPVo3Atkeb7VJfnTEYHDNrwgByw
+	ascvXXnwhEdox3nrtsKdS54iUKzEHxmDAsSwJOGEMWzmikYGFCiduFamrwaCFr2JblHTgG0R84c
+	Kal01zDRgp7lFdFzi5EZJyXQKL7UUIc9TlFzUQYgFlHysMHLtt6p6zy+ZUHmkyLE9sEXo6PA3xB
+	0Ek+qw36aKQdVesUCouw1YiBDgx141rsVw9puRW3ZL7Edrhcuw5bIBs9H8xMM5YiQ=
+X-Received: by 2002:a05:6122:3c91:b0:563:746c:a32b with SMTP id 71dfb90a1353d-563b738c3d4mr2579556e0c.15.1768830967651;
+        Mon, 19 Jan 2026 05:56:07 -0800 (PST)
+Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com. [209.85.221.182])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-947d0437f81sm3135782241.11.2026.01.19.05.56.05
+        for <linux-clk@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 19 Jan 2026 05:56:06 -0800 (PST)
+Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-5637886c92aso1040016e0c.0
+        for <linux-clk@vger.kernel.org>; Mon, 19 Jan 2026 05:56:05 -0800 (PST)
+X-Received: by 2002:a05:6122:3a10:b0:559:65d6:1674 with SMTP id
+ 71dfb90a1353d-563b738c18emr2498607e0c.14.1768830964978; Mon, 19 Jan 2026
+ 05:56:04 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20260118025756.96377-1-marek.vasut+renesas@mailbox.org>
+In-Reply-To: <20260118025756.96377-1-marek.vasut+renesas@mailbox.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 19 Jan 2026 14:55:53 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdVkYUwYHOCtFb==YJ=1TK9+Tz1X=teaoyoooxe42eBYFw@mail.gmail.com>
+X-Gm-Features: AZwV_QibGyBfaw9ULWtL_BEHCROa8nfd8JZ0JnZ6LzEfFQ4IkCqSKKVBJv4Vw8w
+Message-ID: <CAMuHMdVkYUwYHOCtFb==YJ=1TK9+Tz1X=teaoyoooxe42eBYFw@mail.gmail.com>
+Subject: Re: [PATCH] clk: rs9: Reserve 8 struct clk_hw slots for for 9FGV0841
+To: Marek Vasut <marek.vasut+renesas@mailbox.org>
+Cc: linux-clk@vger.kernel.org, stable@vger.kernel.org, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On lun. 19 janv. 2026 at 20:16, Chuan Liu <chuan.liu@amlogic.com> wrote:
+Hi Marek,
 
-> Hi Jerome,
+On Sun, 18 Jan 2026 at 03:58, Marek Vasut
+<marek.vasut+renesas@mailbox.org> wrote:
+> The 9FGV0841 has 8 outputs and registers 8 struct clk_hw, make sure
+> there are 8 slots for those newly registered clk_hw pointers, else
+> there is going to be out of bounds write when pointers 4..7 are set
+> into struct rs9_driver_data .clk_dif[4..7] field.
 >
-> On 1/14/2026 5:25 PM, Jerome Brunet wrote:
->> [ EXTERNAL EMAIL ]
->> On jeu. 08 janv. 2026 at 14:08, Chuan Liu via B4 Relay
->> <devnull+chuan.liu.amlogic.com@kernel.org> wrote:
->> 
->>> +static struct clk_regmap a5_rtc_clk = {
->>> +     .data = &(struct clk_regmap_mux_data) {
->>> +             .offset = RTC_CTRL,
->>> +             .mask = 0x3,
->>> +             .shift = 0,
->>> +     },
->>> +     .hw.init = &(struct clk_init_data) {
->>> +             .name = "rtc_clk",
->>> +             .ops = &clk_regmap_mux_ops,
->>> +             .parent_data = a5_rtc_clk_parents,
->>> +             .num_parents = ARRAY_SIZE(a5_rtc_clk_parents),
->>> +             .flags = CLK_SET_RATE_NO_REPARENT,
->>> +     },
->>> +};
->>> +
->>> +#define A5_PCLK(_name, _reg, _bit, _pdata, _flags)                   \
->>> +struct clk_regmap a5_##_name = {                                     \
->>> +     .data = &(struct clk_regmap_gate_data) {                        \
->>> +             .offset = (_reg),                                       \
->>> +             .bit_idx = (_bit),                                      \
->>> +     },                                                              \
->>> +     .hw.init = &(struct clk_init_data) {                            \
->>> +             .name = #_name,                                         \
->>> +             .ops = &clk_regmap_gate_ops,                            \
->>> +             .parent_data = (_pdata),                                \
->>> +             .num_parents = 1,                                       \
->>> +             .flags = (_flags),                                      \
->>> +     },                                                              \
->>> +}
->> I wonder why I bothered reviewing v4 ...
+> Since there are other structure members past this struct clk_hw
+> pointer array, writing to .clk_dif[4..7] fields only corrupts the
+> struct rs9_driver_data content, without crashing the kernel. However,
+
+I am not sure that is true. As the last 3 fields are just bytes, up to 3
+pointers may be written outside the structure, which is 32 or 64 bytes large.
+So any buffer overflow may corrupt another object from the 32-byte or
+64-byte slab.
+
+> the kernel does crash when the driver is unbound or during suspend.
 >
-> Regarding the comment you made on V4, my understanding is that you were
-> just teasing ...
-
-You are redefining the PCLK here, the *exact* type of pointless differences
-we've worked last year to remove. This is something you can't have
-missed since you've complained about it taking too long.
-
-And now, you've thought I was "just teasing" about it ?
-
-I'm bored with your botched submissions Chuan.
-
-> In the next revision, I will change this part to use a
-> unified macro.
-
-Yes please.
-
+> Fix this, increase the struct clk_hw pointer array size to the
+> maximum output count of 9FGV0841, which is the biggest chip that
+> is supported by this driver.
 >
-> We may also consider adjusting the "MESON_PCLK" macro later by removing the
-> SoC prefix from the clock name,
+> Cc: stable@vger.kernel.org
+> Fixes: f0e5e1800204 ("clk: rs9: Add support for 9FGV0841")
+> Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
 
-No
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-> so that it is consistent with the naming
-> style used by "MESON_COMP_SEL" / "MESON_COMP_DIV".
->
+The crash I saw is gone, so:
+Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Just do the same as c3 and t7.
+Gr{oetje,eeting}s,
 
->> 
->>> +
->>> +static const struct clk_parent_data a5_sys_pclk_parents = { .fw_name = "sysclk" };
->>> +
->>> +#define A5_SYS_PCLK(_name, _reg, _bit, _flags) \
->>> +     A5_PCLK(_name, _reg, _bit, &a5_sys_pclk_parents, _flags)
->>> +
->>> +static A5_SYS_PCLK(sys_reset_ctrl,   SYS_CLK_EN0_REG0, 1, 0);
->>> +static A5_SYS_PCLK(sys_pwr_ctrl,     SYS_CLK_EN0_REG0, 3, 0);
->>> +static A5_SYS_PCLK(sys_pad_ctrl,     SYS_CLK_EN0_REG0, 4, 0);
->>> +static A5_SYS_PCLK(sys_ctrl,         SYS_CLK_EN0_REG0, 5, 0);
->>> +static A5_SYS_PCLK(sys_ts_pll,               SYS_CLK_EN0_REG0, 6, 0);
->>> +
->>>
->> [...]
->> 
->>> +
->>> +static struct clk_regmap a5_gen = {
->>> +     .data = &(struct clk_regmap_gate_data) {
->>> +             .offset = GEN_CLK_CTRL,
->>> +             .bit_idx = 11,
->>> +     },
->>> +     .hw.init = &(struct clk_init_data) {
->>> +             .name = "gen",
->>> +             .ops = &clk_regmap_gate_ops,
->>> +             .parent_hws = (const struct clk_hw *[]) {
->>> +                     &a5_gen_div.hw
->>> +             },
->>> +             .num_parents = 1,
->>> +             .flags = CLK_SET_RATE_PARENT,
->>> +     },
->>> +};
->>> +
->>> +#define A5_COMP_SEL(_name, _reg, _shift, _mask, _pdata, _table) \
->>> +     MESON_COMP_SEL(a5_, _name, _reg, _shift, _mask, _pdata, _table, 0, 0)
->>> +
->>> +#define A5_COMP_DIV(_name, _reg, _shift, _width) \
->>> +     MESON_COMP_DIV(a5_, _name, _reg, _shift, _width, 0, CLK_SET_RATE_PARENT)
->>> +
->>> +#define A5_COMP_GATE(_name, _reg, _bit, _iflags) \
->>> +     MESON_COMP_GATE(a5_, _name, _reg, _bit, CLK_SET_RATE_PARENT | (_iflags))
->>> +
->> At the top. like C3 and T7
->
-> Except for A5_COMP_SEL, which differs slightly from T7 due to the
-> additional "_table" parameter, the other macros are consistent with T7.
->
-> I also asked for your feedback on this in V4 and received your
-> confirmation. Is there anything here that still needs to be updated?
-
-Reviewing these long patches takes time. I tend to stop reviewing when I
-noticed some feedback was ignored, especially when it is recurrent
-problem. I've told you that already. It is up to you to make sure you are
-not missing anything before re-submitting if you don't want to waste time.
-
->
-> [...]
+                        Geert
 
 -- 
-Jerome
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
