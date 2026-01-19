@@ -1,86 +1,123 @@
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C19D1DF987;
-	Mon, 19 Jan 2026 19:36:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0526529D26C
+	for <linux-clk@vger.kernel.org>; Mon, 19 Jan 2026 21:46:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768851417; cv=none; b=LDoXzyHOpVfNW67l7T4vE7H25kbt6ciBkzAmtfL2nr/jY5elNWHyfpFD4Uhl9VGMB3Uni7YcHKF3fDfoOt1+IImhgUwhEOl0mIMs70s8n/A07XqaaeEe/ips5y7s0Yw46/iQJ2Om0AStTsws1sy2LiK6WczrKR41pk985k7tE1w=
+	t=1768859164; cv=none; b=bU7S9dbbm8YRorJGjmFXfbSbr75gu4Kgb9ra9oM8iOaZZdiRdiKA9cI37tMZ2QqPwUgsFztrBxywtTq+BKBCqs0izAlwHGTU4Z0ssi1Vv+d4fN8yhFBgPxVUddmg88ezUKSLIfhMe4Y+Ctle0AlBfEScL3cR20wEZPGlyfwrM9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768851417; c=relaxed/simple;
-	bh=7eJs1js0kzkykoWC9UfncMbeJwi/Au6UVBsFkGUutdc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CiRw9j3MAIAfPAGr08Qlz55DI15ARBDzB8iCpQaPizdRFhm/lex4TeJ9p/L4ykGWrOLunPfvJ0y+pl5JOuBQLzEeEj0/AiMBwqBESmz3bzD7SR/ou4Efb9nwdfJfHt3qGzaed1msRJKbEv/tARp/VMHCbVwXJkYKdvTmn/c1NHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=IMSLc4o7; arc=none smtp.client-ip=80.241.56.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+	s=arc-20240116; t=1768859164; c=relaxed/simple;
+	bh=a8aoWOKowze8sjGeeHj9EglOtqbDd7Y5iPmk9raTN0E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=G/hmxE7cQnzyVS3SDu3mnNmrrVqlG0563zqkVdXbG+/b6CalqgAC3Iloz7oglPNH0F54o9SOIMiIHyS86wyd5c7vPoYVV1GZPuHURpmo6iErXkHad8npHarHsdiJ7tGU2W6Tm149KNnD8tDPEBQV6sTslO61Ooa7uY95JvKmckA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Q9Xf8fbQ; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="IMSLc4o7"
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4dw11H6w78z9ty2;
-	Mon, 19 Jan 2026 20:36:51 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1768851412;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Z1iSB+HjxfdTbn/qJazSyM/WPRoVcW0kk2zyYVSmsRw=;
-	b=IMSLc4o71oCuud3/mgU0vqtL2aGaucGMYe9ldiVOXDBvIysI1UwL8QpXHe+T8/cx9O0/dh
-	GaMbYmma77UIYQGVk3MvmFG5wsuRSZbZZmX58Oj6LrSIUBNeJ3/kDKmTzov/MNwmdMEjU3
-	uK0PJHjQ0ozp0TuAJEafXJgCSLKLBo0vZp6rz6cvfWiP30gYV6FzZ+ZPio8TZkJopoTHiV
-	+N8I2bn5mnlkc2JLlCfoH415gxCRD6xA0h6Ch4hI33TmJcCzi6a4nfqJjp1CxDnOWuTI8G
-	ZxuBrRzivHNazLkGdhLf4dsYyFIxbZ/8OOv/qYBwXLC4EREELABrqKuOFpFr7A==
-Message-ID: <d921ff48-caa3-4d79-80e8-35c4848258da@mailbox.org>
-Date: Mon, 19 Jan 2026 20:36:49 +0100
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Q9Xf8fbQ"
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20260119214559euoutp02f319bb399727ac80c5395b560bd29390~MQAiblQO52098620986euoutp02B
+	for <linux-clk@vger.kernel.org>; Mon, 19 Jan 2026 21:45:59 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20260119214559euoutp02f319bb399727ac80c5395b560bd29390~MQAiblQO52098620986euoutp02B
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1768859159;
+	bh=FiwIk5BBQQ9iPckGkn5Dt7hTifYvLcVxHD5dU0pMV5E=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=Q9Xf8fbQ6xVsysLFDwsjw9red5LNE/4dOsmM6sweOLApnZwCpBccB68wd3WMnXddC
+	 0sstwB7PMcjsb9GbEeeM3X8TzuvpDxJe9fT4KrkQ3dvNZa7JCTxLNeKutAEUPGONtT
+	 YvPWGiPdsR2VcrU0fvTXCArpfNsRUtHtHYRWY64g=
+Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20260119214557eucas1p2a32532504042480c2809f13589fc9127~MQAhG-1kc1870218702eucas1p2W;
+	Mon, 19 Jan 2026 21:45:57 +0000 (GMT)
+Received: from [192.168.1.44] (unknown [106.210.136.40]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20260119214556eusmtip2baec3b17eba8b350eca229f32831d134~MQAgH2fip0752007520eusmtip22;
+	Mon, 19 Jan 2026 21:45:56 +0000 (GMT)
+Message-ID: <90657b83-1cff-4c7d-adde-9b560c2be7c2@samsung.com>
+Date: Mon, 19 Jan 2026 22:45:56 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] clk: rs9: Convert to clk_hw_onecell_data and
- of_clk_hw_onecell_get()
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <a6dce17b15d29a257d09fe0edc199a14c297f1a8.1768836042.git.geert+renesas@glider.be>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 3/3] pwm: th1520: remove impl Send/Sync for
+ Th1520PwmDriverData
+To: Alice Ryhl <aliceryhl@google.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+	Drew Fustini <fustini@kernel.org>, Guo Ren <guoren@kernel.org>, Fu Wei
+	<wefu@redhat.com>, =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>, Miguel Ojeda <ojeda@kernel.org>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Benno Lossin
+	<lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross
+	<tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Daniel Almeida
+	<daniel.almeida@collabora.com>, linux-clk@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, linux-pwm@vger.kernel.org,
+	linux-riscv@lists.infradead.org
 Content-Language: en-US
-From: Marek Vasut <marek.vasut@mailbox.org>
-In-Reply-To: <a6dce17b15d29a257d09fe0edc199a14c297f1a8.1768836042.git.geert+renesas@glider.be>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Michal Wilczynski <m.wilczynski@samsung.com>
+In-Reply-To: <20260113-clk-send-sync-v4-3-712bc7d94a79@google.com>
 Content-Transfer-Encoding: 7bit
-X-MBO-RS-META: hroataoz38uemmwm6ipktpdnc3ty38xi
-X-MBO-RS-ID: 5c469c576e36adb1d1d
+X-CMS-MailID: 20260119214557eucas1p2a32532504042480c2809f13589fc9127
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20260113151335eucas1p157cd966c5f0f4e477fb11272810a0ae8
+X-EPHeader: CA
+X-CMS-RootMailID: 20260113151335eucas1p157cd966c5f0f4e477fb11272810a0ae8
+References: <20260113-clk-send-sync-v4-0-712bc7d94a79@google.com>
+	<CGME20260113151335eucas1p157cd966c5f0f4e477fb11272810a0ae8@eucas1p1.samsung.com>
+	<20260113-clk-send-sync-v4-3-712bc7d94a79@google.com>
 
-On 1/19/26 4:23 PM, Geert Uytterhoeven wrote:
-> rs9_of_clk_get() does not validate the clock index in the passed
-> DT clock specifier.  If DT specifies an incorrect and out-of-range
-> index, this may access memory beyond the end of the fixed-size clk_dif[]
-> array.
+
+
+On 1/13/26 16:12, Alice Ryhl wrote:
+> Now that clk implements Send and Sync, we no longer need to manually
+> implement these traits for Th1520PwmDriverData. Thus remove the
+> implementations.
 > 
-> Instead of fixing this by adding a range check to rs9_of_clk_get(),
-> convert the driver to use the of_clk_hw_onecell_get() helper, which
-> already contains such a check.  Embedding a clk_hw_onecell_data
-> structure in the rs9_driver_data structure has the added benefit that
-> the clock array always has the correct size, and thus can no longer
-> become out of sync when adding support for new rs9 variants.
-> 
-> Fixes: 892e0ddea1aa6f70 ("clk: rs9: Add Renesas 9-series PCIe clock generator driver")
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Reviewed-by: Gary Guo <gary@garyguo.net>
+> Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 > ---
-> While this patch applies on top of "[PATCH v2] clk: rs9: Reserve 8
-> struct clk_hw slots for for 9FGV0841", it can be applied or backported
-> without, by ignoring the change from "clk_dif[4]" to "clk_dif[8]".
+> Cc: linux-riscv@lists.infradead.org
+> ---
+>  drivers/pwm/pwm_th1520.rs | 15 ---------------
+>  1 file changed, 15 deletions(-)
+> 
+> diff --git a/drivers/pwm/pwm_th1520.rs b/drivers/pwm/pwm_th1520.rs
+> index e3b7e77356fc2492077c519073e861beb3e44df9..043dc4dbc6232020195c7b73fad302bbb69652df 100644
+> --- a/drivers/pwm/pwm_th1520.rs
+> +++ b/drivers/pwm/pwm_th1520.rs
+> @@ -97,21 +97,6 @@ struct Th1520PwmDriverData {
+>      clk: Clk,
+>  }
+>  
+> -// This `unsafe` implementation is a temporary necessity because the underlying `kernel::clk::Clk`
+> -// type does not yet expose `Send` and `Sync` implementations. This block should be removed
+> -// as soon as the clock abstraction provides these guarantees directly.
+> -// TODO: Remove those unsafe impl's when Clk will support them itself.
+> -
+> -// SAFETY: The `devres` framework requires the driver's private data to be `Send` and `Sync`.
+> -// We can guarantee this because the PWM core synchronizes all callbacks, preventing concurrent
+> -// access to the contained `iomem` and `clk` resources.
+> -unsafe impl Send for Th1520PwmDriverData {}
+> -
+> -// SAFETY: The same reasoning applies as for `Send`. The PWM core's synchronization
+> -// guarantees that it is safe for multiple threads to have shared access (`&self`)
+> -// to the driver data during callbacks.
+> -unsafe impl Sync for Th1520PwmDriverData {}
+> -
+>  impl pwm::PwmOps for Th1520PwmDriverData {
+>      type WfHw = Th1520WfHw;
+>  
+> 
 
-Since the 9FGV0841 is the biggest part in the 9FGV series, the one-liner 
-fix I posted is better suited as a stable backport. This rework 
-shouldn't have the Fixes tag, since it is only that, a rework.
+I thought this was already merged :-).
 
-With that fixed:
-
-Reviewed-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+Reviewed-by: Michal Wilczynski <m.wilczynski@samsung.com>
