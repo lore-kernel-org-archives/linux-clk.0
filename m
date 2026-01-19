@@ -1,115 +1,122 @@
-Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176])
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B542F36D4E1
-	for <linux-clk@vger.kernel.org>; Mon, 19 Jan 2026 13:56:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BFE636C596
+	for <linux-clk@vger.kernel.org>; Mon, 19 Jan 2026 14:03:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768830970; cv=none; b=rZOqmnkNgad88B+0juC7DW7PVC+vZwJsSHJsytiuXJysL7nssXkWKnLLM2uPDKqTrxPGVYPE7Pn8eY4gjdJQXhK6kXJUg2bby22Iwoy2aJrARR5vDSzGT83ybqWtWfISv8zxgtd2IKTvRnKx1aw7ZEzObUHukQlNco0cIZEp5OM=
+	t=1768831435; cv=none; b=Pl3gkVOjZQVabw4UQ8Yx2NDppDC0zGdyw9SnlOh961Hm+45+YPmCXaEp/41Vgf7A2gWLg5qXv8oUIDHnjb7g6h2TW1+FzmuSjV7Cm5XJ0W/mW4l8uXuxH6lo6MMPylI2G6XFWczawIkh+ywDuogSKvq1aimTCefQqIq7wfW+70c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768830970; c=relaxed/simple;
-	bh=USU2dfqEi8y03HM3f87V6O1i0tfjkLsCH5ivCaeDP4Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BjSNEJG7973I7yqd8z3uj4eAcGwwk/h/YGRgyNE8XAsjTyW8ZxrXTFPEVYm5b0+qTT1y4tJMRkbqh/1Ymaw4BY98Es9XpTE+tFYWooaz3z/n4YBJuJoBJLUFVbWCp+zgaXg7sQsUfYQuo1FPtqkReXvCF1yXYTXj6kTpPnVz/MM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-56367a388e5so1109964e0c.2
-        for <linux-clk@vger.kernel.org>; Mon, 19 Jan 2026 05:56:08 -0800 (PST)
+	s=arc-20240116; t=1768831435; c=relaxed/simple;
+	bh=mTAE+Uz1BGS1b5G0yeV0TYVfbfqnRu+U7F6kK79xBH4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uyhphTfc949Wh9GnDxkTeMMQQZrrjzBsVuVUu+Ke1uLWKcya+0vcPuxWYV35c5P6spbsnlyPxOo28hfPvGG19v5xqhtClYNFWP6wP3V8mhqtLsiKl0CHBGgVVBp1vGFK+8FXMOPvp6tY1NwIMaqLdEdt7aqWN1zmS0w1WWWOpmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=oijIVXgQ; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="oijIVXgQ"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-47ee9817a35so23466755e9.1
+        for <linux-clk@vger.kernel.org>; Mon, 19 Jan 2026 06:03:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1768831429; x=1769436229; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Qi0fMsnbGNNAqeW2KXFtzgi15jKwvRfrQtKC+NHQLH0=;
+        b=oijIVXgQ4xqiS2NrmPLq6TR0f50MbnFwamEvVEThd4u5/cgjFxI8Fpocc0jELJE8Un
+         wzvavK7XRcjYMvB11KowGsyzSBDjqwkxWPYeBGg3vb6zoCSfcvuvxqk4VvVngzLEblPe
+         Q62S41vvzGwYYP/wqJlp2PvMr6Uq10aOT4gO+2lj39uGKOsACT3+oBnNPeH9aB+gErew
+         6Km1zv/o/EhoBpzf+u273glZp17hZLZB+jjPOy/FEz2+x3P5WMpUaeehYmsWAK1SxkmZ
+         YTV1PyclP+6opjHTt9Y/AsH4McuFDDSi78LsqpYdLxP6EuyYphQB1hlB245BmCzbm8zu
+         gXpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768830968; x=1769435768;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+r64VZF3kohfXXfdlR1Pb964pfqiX29JMKKPRtqCraU=;
-        b=kPb0+CQ4Uk+9QX4SYcCeTUPYRhxLflsZOxPw43muDaUYBKe3TgeuZdSuEbT84ZCtYB
-         Vooo7zTgjieBSgs5wYcjA5AkH4Owy1LD7vlHl7AjMpM09HCNQ5MN/6sep250fDyAdRuz
-         Kf4KrbBCdAh3hgubDxmpJ2t5YQxdYYr9dwRyKe0XDbnOg6/fARKkZIPsZ9y3dF7wk1oQ
-         pPvQ3m+Ebt7Q2IRPVO4Zkxh6jXdDmkDvfDvD9qGoy7mDTIvHLY4qv6LUfxtvufsF13O4
-         ycUPR4AFLQNVmmz/08XkIanFF1DFf/7RpdtPoEkJmLYX7jvyNAyB7NFAvpT5NEovdSJZ
-         z9TQ==
-X-Gm-Message-State: AOJu0YyY8ZwT1njg1dp7puncTkfrx4BJ2seSpDwCkUb847hNDbT4pak2
-	3FlfuBDZQGit5n7PZoTxFsxxWt3V8M7xfZL9DkrHvF27uFFcB3nb+p2CM2BXg64Y
-X-Gm-Gg: AY/fxX6YoYGasayeST3/QFH0wsfPnzZ+Yoew+NoUdaZNjx8yOGQW664Idbns+RrCll6
-	8ncpXuqFW64lplWFyD5q40OC77AmSyBW2jZPsxYtYFz8wWOEI9Yh/Xf8m1NhOCHq95r7ML99UBT
-	QbSFY4eh2XQR6Bn4WV0S5FsdVHigGOlU+sX7R11sgVlxqIgmVSBu1dfhB0LBkOCx1jvjGpMqj7N
-	W8Ialqxz4UxXXr6asSnKiB/EqsslzuuLhTGR6HRbE8h9juAJbPVo3Atkeb7VJfnTEYHDNrwgByw
-	ascvXXnwhEdox3nrtsKdS54iUKzEHxmDAsSwJOGEMWzmikYGFCiduFamrwaCFr2JblHTgG0R84c
-	Kal01zDRgp7lFdFzi5EZJyXQKL7UUIc9TlFzUQYgFlHysMHLtt6p6zy+ZUHmkyLE9sEXo6PA3xB
-	0Ek+qw36aKQdVesUCouw1YiBDgx141rsVw9puRW3ZL7Edrhcuw5bIBs9H8xMM5YiQ=
-X-Received: by 2002:a05:6122:3c91:b0:563:746c:a32b with SMTP id 71dfb90a1353d-563b738c3d4mr2579556e0c.15.1768830967651;
-        Mon, 19 Jan 2026 05:56:07 -0800 (PST)
-Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com. [209.85.221.182])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-947d0437f81sm3135782241.11.2026.01.19.05.56.05
-        for <linux-clk@vger.kernel.org>
+        d=1e100.net; s=20230601; t=1768831429; x=1769436229;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Qi0fMsnbGNNAqeW2KXFtzgi15jKwvRfrQtKC+NHQLH0=;
+        b=LGQHkxAlzC8hKRChtmPBUMIg8mpzUQVgTc6JZFmnPgY6AdrpEtcL6DqW2L4h5ayxW8
+         3EOxwsJLBrmF0PMa6IayHY8pqXCSuWM6mCi2doKMYQuGN2hHWWMyjx5AfzTkDDwVi9eB
+         w4Ez6sWuFw2K9BOgbOxfovnY+hJJPxEWW/KXxSUHkkXyKJEK2jWxEsgMvB2BEU95Zt2q
+         xXS4G8YiK6R/Yq8cMXaLMjDSTiZumNyBtTlC1kEmT6w3uyzXlnZ8iaTztzND8e/VMC1n
+         zggfDPSQHxOI1eazQKz3FhL5BNW1AlwFuPIKUawBVaJYTCKjmDGVutPTg/k6mopr8def
+         sx9w==
+X-Forwarded-Encrypted: i=1; AJvYcCX4erfCpizle1INClbCvJnhUMkR1B4MBTk92UPPYpptEsVHuBdzm0F5XBRsVMVWHgytF+FiQr78QTk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdCsGTc8PiuEEFu+rqGw+Clr1DyHtAsJZsk86KJq9WKh/daUeQ
+	lNjtYR4lkMoP5zRRXdiZTnBbETKTqk9vR/vC00sQ7zsa0eEJOkM4xXkBAVvCQvVRXjI=
+X-Gm-Gg: AY/fxX6Att3VdgQjHVq7UO4Fg1FD+WxuaBSy9XTRs4psCmCea5NqwAQi/MQrgr6EYVH
+	3aJCOWsf4M8gAp0FDEdy+MW2XAolHTC9gvvLo/FUG7M14jmOozd4E6Gbun5XY0vXjpL8VZr7HJY
+	sguUlMEYwFfhF3OUS3cMsCrfPeRSRsYBfL5IvDsUJl7m1a6UIootQMM4fpa/k0+aT0Ir5iILUTc
+	dvZzDwuaxNTrHy8PfRgQnjqyCV2hkSihoDcsEcIuvVDfnkcbYUfO1Da5SrVZl+WL5AAiZ1CtDuO
+	OGWlymEjihRQ2nBSfzzpeT1/NvbTisSnToU2OQZDHXvFBCyYRYExzp57IbLnOfiKhpHbWN2iFXx
+	fPtK/HdqooTyGM2s5RTBq36VdnezkMkjBbFojb5XkbvC+LheukMsNsFvBZwwvvnCd9C5Y+hGki/
+	0bqgBffC/xbgmqigep0A==
+X-Received: by 2002:a05:600c:c48e:b0:47e:e970:b4e4 with SMTP id 5b1f17b1804b1-4801e3494b7mr155374755e9.29.1768831428511;
+        Mon, 19 Jan 2026 06:03:48 -0800 (PST)
+Received: from [192.168.50.4] ([82.78.167.31])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47f3b7a5f94sm266035795e9.0.2026.01.19.06.03.46
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 19 Jan 2026 05:56:06 -0800 (PST)
-Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-5637886c92aso1040016e0c.0
-        for <linux-clk@vger.kernel.org>; Mon, 19 Jan 2026 05:56:05 -0800 (PST)
-X-Received: by 2002:a05:6122:3a10:b0:559:65d6:1674 with SMTP id
- 71dfb90a1353d-563b738c18emr2498607e0c.14.1768830964978; Mon, 19 Jan 2026
- 05:56:04 -0800 (PST)
+        Mon, 19 Jan 2026 06:03:47 -0800 (PST)
+Message-ID: <fb7ec096-372b-48f4-b6ed-e224a05d55e2@tuxon.dev>
+Date: Mon, 19 Jan 2026 16:03:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260118025756.96377-1-marek.vasut+renesas@mailbox.org>
-In-Reply-To: <20260118025756.96377-1-marek.vasut+renesas@mailbox.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 19 Jan 2026 14:55:53 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdVkYUwYHOCtFb==YJ=1TK9+Tz1X=teaoyoooxe42eBYFw@mail.gmail.com>
-X-Gm-Features: AZwV_QibGyBfaw9ULWtL_BEHCROa8nfd8JZ0JnZ6LzEfFQ4IkCqSKKVBJv4Vw8w
-Message-ID: <CAMuHMdVkYUwYHOCtFb==YJ=1TK9+Tz1X=teaoyoooxe42eBYFw@mail.gmail.com>
-Subject: Re: [PATCH] clk: rs9: Reserve 8 struct clk_hw slots for for 9FGV0841
-To: Marek Vasut <marek.vasut+renesas@mailbox.org>
-Cc: linux-clk@vger.kernel.org, stable@vger.kernel.org, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 01/16] PCI: rzg3s-host: Fix reset handling in probe error
+ path
+To: John Madieu <john.madieu.xa@bp.renesas.com>,
+ claudiu.beznea.uj@bp.renesas.com, lpieralisi@kernel.org,
+ kwilczynski@kernel.org, mani@kernel.org, geert+renesas@glider.be,
+ krzk+dt@kernel.org
+Cc: robh@kernel.org, bhelgaas@google.com, conor+dt@kernel.org,
+ magnus.damm@gmail.com, biju.das.jz@bp.renesas.com,
+ linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-clk@vger.kernel.org, john.madieu@gmail.com
+References: <20260114153337.46765-1-john.madieu.xa@bp.renesas.com>
+ <20260114153337.46765-2-john.madieu.xa@bp.renesas.com>
+Content-Language: en-US
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <20260114153337.46765-2-john.madieu.xa@bp.renesas.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Marek,
+Hi, John,
 
-On Sun, 18 Jan 2026 at 03:58, Marek Vasut
-<marek.vasut+renesas@mailbox.org> wrote:
-> The 9FGV0841 has 8 outputs and registers 8 struct clk_hw, make sure
-> there are 8 slots for those newly registered clk_hw pointers, else
-> there is going to be out of bounds write when pointers 4..7 are set
-> into struct rs9_driver_data .clk_dif[4..7] field.
->
-> Since there are other structure members past this struct clk_hw
-> pointer array, writing to .clk_dif[4..7] fields only corrupts the
-> struct rs9_driver_data content, without crashing the kernel. However,
+On 1/14/26 17:33, John Madieu wrote:
+> Fix incorrect reset_control_bulk_deassert() call in the probe error
+> path. When unwinding from a failed pci_host_probe(), the configuration
+> resets should be asserted to restore the hardware to its initial state,
+> not deasserted again.
+> 
+> Fixes: 7ef502fb35b2 ("PCI: rzg3s-host: Add Renesas RZ/G3S SoC host driver")
 
-I am not sure that is true. As the last 3 fields are just bytes, up to 3
-pointers may be written outside the structure, which is 32 or 64 bytes large.
-So any buffer overflow may corrupt another object from the 32-byte or
-64-byte slab.
+The title of the commit with SHA1 7ef502fb35b2 is "PCI: Add Renesas RZ/G3S host 
+controller driver". With that addressed:
 
-> the kernel does crash when the driver is unbound or during suspend.
->
-> Fix this, increase the struct clk_hw pointer array size to the
-> maximum output count of 9FGV0841, which is the biggest chip that
-> is supported by this driver.
->
-> Cc: stable@vger.kernel.org
-> Fixes: f0e5e1800204 ("clk: rs9: Add support for 9FGV0841")
-> Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+Reviewed-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
+> ---
+>   drivers/pci/controller/pcie-rzg3s-host.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pci/controller/pcie-rzg3s-host.c b/drivers/pci/controller/pcie-rzg3s-host.c
+> index 5aa58638903f..c1053f95bc95 100644
+> --- a/drivers/pci/controller/pcie-rzg3s-host.c
+> +++ b/drivers/pci/controller/pcie-rzg3s-host.c
+> @@ -1588,7 +1588,7 @@ static int rzg3s_pcie_probe(struct platform_device *pdev)
+>   
+>   host_probe_teardown:
+>   	rzg3s_pcie_teardown_irqdomain(host);
+> -	reset_control_bulk_deassert(host->data->num_cfg_resets,
+> +	reset_control_bulk_assert(host->data->num_cfg_resets,
+>   				    host->cfg_resets);
+>   rpm_put:
+>   	pm_runtime_put_sync(dev);
 
-The crash I saw is gone, so:
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
