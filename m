@@ -1,168 +1,146 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B21933DEF3
-	for <linux-clk@vger.kernel.org>; Mon, 19 Jan 2026 10:28:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 096E230C625
+	for <linux-clk@vger.kernel.org>; Mon, 19 Jan 2026 10:41:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768818494; cv=none; b=fh1noJ5qezjy6p5Qx8ZQISdRsyClNim4CjzmDE6dda+OhMGZI2car1v++8Lr/eP5KrRx5xL1TDZDg9YLJmbS3oyNZi6QgJmjMrkrS4eox0GedCspNAA/yi5z5gDDdkmQCTKJ0eOwogYpo4/J5lKkMIpXBVfTnlftEY3orPO5SPs=
+	t=1768819277; cv=none; b=eL85zLN5R3/BfYk/os41Uqz6z8Jy3tTrmYiW7V7+HJBA78yOJnH2ugLxuoQn0Vsqs7bxod/I54k8ah8QQ81yld7XBpWZ/jiFvd2GHJmjioLsL6rLi4NfaswqKErOaJipTsEPGWw1QJ+7qd9hqBtcUz6pF6SG2CdmkG1ZsxAVTKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768818494; c=relaxed/simple;
-	bh=1TTWxLD//vavcXET3qSN3d3YFlnSmRQXg+2dMp5AMPw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fQOkSMiycKz/ATuXt5MfjZk0kZDkr/BrTYHGuf0Ye9p1UCxo7s94LzynpAUKwOQEsFp+GpW1sIU1rP4M5K0HVM8dOSU2BMn9pe0u0x2fiYuN+S6Cgioa+JDANjFK4thkdMs0oP03eQlADkphHvZu3BhNpL9gop6AVqhTEvgtQe0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=KJ6EYiIB; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=bneaf11M; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1768819277; c=relaxed/simple;
+	bh=M6Md/ZnKDENz5gO3yNGqGHP4CdV1B4Mkprugcxjh/co=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=MOHXEzt2SOdElahMK4+qfMFTCRLu6k74uhBzN0govl7lkdgQ6DeSe5UUEaq//wo6CpjpA+2ETdJryOpL02oe+ral6XXSLX1g9ZmLF6VchTSz9uxjaXsE3jVhcsmeHv+tgPFhM3nmMaHCWS8TvUNvhBXNtBZ7BbVmfSP8AB6rhdQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=BHiWIh0l; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="KJ6EYiIB";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="bneaf11M"
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 60J90mQI1904963
-	for <linux-clk@vger.kernel.org>; Mon, 19 Jan 2026 10:28:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	zgDTgsCTahWEZhB03zi/3mLe2SOyw+84BxrjADPSQeU=; b=KJ6EYiIBH9g/wBvf
-	blTbe9NYeUJNfqqFVn4I9dtUNpR7ceqayuliLQUyXH+o5DhTGup2z2bKdUyb7YUr
-	VQRF7Ji2GLwn4GyvBpQ/+IH1sw4NVSCHk7RqM++uUIsC511cuc3PEqodetbcst4N
-	Yjk+h7qvvlzqWndVNmdn2PHY2R1FtZNMN95i8gpeTCdejeWIcT93gkT3W+naKN4p
-	CdcN/Zn35rV0TtyHKHDqaFbJ89S6MS4XTJhut1/GMmLBOFTqONuoo27JCm2b5Pc1
-	aK65wS0t8JJAxmuecwsyznaWBnwe6hEzz/EtEBxOfY4702nikrlcLU/7ZoAA8FQ3
-	bskqtw==
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4bsgmu8hq8-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Mon, 19 Jan 2026 10:28:11 +0000 (GMT)
-Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-888881a1cf7so8121266d6.3
-        for <linux-clk@vger.kernel.org>; Mon, 19 Jan 2026 02:28:11 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="BHiWIh0l"
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-42fbc305914so3423495f8f.0
+        for <linux-clk@vger.kernel.org>; Mon, 19 Jan 2026 02:41:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1768818491; x=1769423291; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=zgDTgsCTahWEZhB03zi/3mLe2SOyw+84BxrjADPSQeU=;
-        b=bneaf11MsD4AxTKjXsR/L8WOZRHN5Kxpgq2iq76jzJdKuoY5rwHnj4HUOAO2OG+8Nr
-         8Os7eZjFGVbW0HeM3eDZHSAjMqiEvXVNbB3jcuYHgq97yjZhA2Z9+pwhwNmpdYkO6MNN
-         /8Uevkg4/rL4d4mhUYKCOotyoh5cZzjv3JpHsclS22W0c5KAdYFaX2/4adNQjuUHS4QI
-         +mBu49hsNJo5h+30m+ZQT6AJZfvu7H+CKWb3tG3Kc5LA6jTZilHG5/1LgVHoKpCEofF1
-         jPyAnjwZ8lqjPX5Qz3fiZWESjPaDCKAEjF29fga17t1rdvq2R61ofCw8pFqqyBIVgix8
-         VMYA==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1768819273; x=1769424073; darn=vger.kernel.org;
+        h=mime-version:message-id:date:user-agent:subject:cc:to:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=l9gn8n87XJ5T0VI7Qxiz0fxtpXeAFOD0jhdWC60Um7U=;
+        b=BHiWIh0lwUsHI9z9f3GqmL0mhtRY23Fxia2vsINW8Xyn8ZnSOblEPkSBrKIhrfwfEp
+         5Byhe/hszprDeAnGXp5Uf2jImdLb79VjtpUYeotoj2kQVyaOHUAGpJOv9iMU3OxrydO3
+         Zd9ZrwpCeHBe+VYgHETt5EdhaHl/nbjzLr2aekpEYyu/rddVGoh4MROnEKI/aVYJSV3R
+         JsU4MOq7FU2R2gmxQGhqikpq2TbUpUfEJtDY/oOrX2lsQcnZ7i3An8SejkV+tQPDTWd1
+         EtqhzZQLyVPuWDhf6MQqk5fWfp57kb93KcoNMOPwQXuy5+ORxUpijntkmB7Wrx8WI9ai
+         Hypg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768818491; x=1769423291;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zgDTgsCTahWEZhB03zi/3mLe2SOyw+84BxrjADPSQeU=;
-        b=eEjzq/mgHgIL+Aia/uDL/tXAlC1i2fcU/KObUHL0v7tmQbY5ot8419jJzP8Iak0NwH
-         Kq5hDHQbZ9uUmKBL29nOO6lxJp9hqfMgRUrNTlztHuQW0hUlu+o3iqVe1sK3RcvzlKrr
-         MWGqZwm9T/bqBQMvdrxYP64zGqsEfQPObp3wWhECUryMcZ3+ETBHgpwi8Hjp8w3j9Hyb
-         XnKUU6eQmxuayCP8gsMk0tHbbr2PmYPMYkdJbctvX9gUP8elL6rih5jXEVZ4aO1fU665
-         2fOHILR3stVMHP12zj6rR0LLO572aJN+lhMMHBHSQi6TJFBcv3TLIqCOSycX8X12Vnhm
-         32sQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV2IoISH4Ub5dMDlJcaox25p+fElkGd5BFR3vQ1yyiuC47kr1Z3X58vP3962BvL+GrVRa//nJ+GoRk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdQDwmU5UWV09yJ7JrnN1JromBolyiTRQlWgpgDhrcJuFr5Mvt
-	hKAvedH4XfFumFJr5d2T1M+q8k0JTS7BTBSdQuLspZYp0PvX4o+e0UzXozENJxNUIKSeJaSKCzq
-	xNjwM66eXQbD+KlYrjxkNlFpG5KR3oMt2pwBamL3d/n9NJK+ExYqVokyKDZ5YXqQ=
-X-Gm-Gg: AY/fxX79CvQc8sEREwmgfNCCenEq/rD3AY/6hKBfeR8AmvMr6w5sIVDJh9J0Rez/sZ/
-	Z8bQFOeBVX6qo3FqQIu94Y3mP5MKCtFEN15ZzEankFIQsKQ3DrJxdyz1KmeqOzC4tV8L5QD3nrF
-	Su3CAy0Z1P/CAXdlBQqJS/iGM+WJXfezdEUWa+ZU8bDVC3lPgOYb4vvDXySC+QqgSz23CALe69j
-	WrabLFhhsWzxYVZKmnTbvOxdFXqVFxRa0cGJ5FVDaRWUXGb+lKevf7I98gSiYIb1XYvl2HE/7oV
-	dyuuGStHkJQSR/Z8ulG3QvMu7dEw5tWzxyxpJpbbnwfR83MYcZPVJ8Zz4J/msgzePpq6ptMWuw8
-	B+XOtQ9ydJCKut1FoRqAnVTgqfD3tEJkt524lPeKh3zRdm0l+zQexHLvb0aS4mhKhXGI=
-X-Received: by 2002:a05:622a:1794:b0:4f4:b372:db38 with SMTP id d75a77b69052e-502a1603f71mr117659041cf.5.1768818491029;
-        Mon, 19 Jan 2026 02:28:11 -0800 (PST)
-X-Received: by 2002:a05:622a:1794:b0:4f4:b372:db38 with SMTP id d75a77b69052e-502a1603f71mr117658901cf.5.1768818490586;
-        Mon, 19 Jan 2026 02:28:10 -0800 (PST)
-Received: from [192.168.119.254] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-65452cdab55sm9920707a12.10.2026.01.19.02.28.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 19 Jan 2026 02:28:10 -0800 (PST)
-Message-ID: <9f8619d4-43ac-4bc0-9598-c498d59a27b8@oss.qualcomm.com>
-Date: Mon, 19 Jan 2026 11:28:07 +0100
+        d=1e100.net; s=20230601; t=1768819273; x=1769424073;
+        h=mime-version:message-id:date:user-agent:subject:cc:to:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=l9gn8n87XJ5T0VI7Qxiz0fxtpXeAFOD0jhdWC60Um7U=;
+        b=wclGqXnG9y2cTaaLfKPu6yqJu1xWbvj4vfMPdU5UGA+cki5QwtpayzKZD/AX8AHNuQ
+         h7Y7tb1xabS3OMYiIxO5YAWY8q1yEF9bzsDFfusaCfKiJAPW+T2UEX82C3zqgLQdsCUp
+         5VGnW4hL+vJAOTuflBlIK8TyP442c14pSMZzDw/Bd1DTHXQ0LXb295YnyP0twB1SgZ2f
+         2LalCvoDAyNjg2QChkSUP1Par/2L4yvgfpPoAGLQIB8CfvdUs/anPbsQrrHndbyjusFs
+         QnDCAPRfnNWlhO6tij4zuvc3NEGvoDVDFKWEkEcp65hKH+/CavqzZ9AqStBmwyHGwBNZ
+         Y8bw==
+X-Forwarded-Encrypted: i=1; AJvYcCUk+3YAi4Oz4wbPQSWcUCnpCVvnXXq66nVZWll+ltdHK0WvZXv8G4mBLIiysjbnMUgucUT9kefgPFA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyY9HAQITbBGqZ89sWNTRat2oMIKC8PzYJ0ycw4gFVbkxdt+Smg
+	8XeiO3jS1bmCNYqcsFeXNGOmmNh+v7vlu+lw5EYDTOZTAg9KUbbslfiTEZlRSc3qAQs=
+X-Gm-Gg: AY/fxX7gKQRpUn5Xz7JKC7dBX6Vh32OjeBGif1w0Pyfa8Io9tPvE4ozP0n6gfZiVXlb
+	+EEpZxLZDqyaRkfo88w3glN7HqBkZXDLlKs06XXM6f9QF/y1y0SolJCHXr1zK5J5MN7fnFkArzx
+	w4yzZV1UBcNHireH+bEU+NFCs1IO9dgYwHYOkQtpskQO9aOhnLTUNdzaN5/lZfmhRhgDO4cs4a5
+	CZe4hZzxROnD4qyvHC44Jf4E2y2nouyWDcKV3IxhDSR3UHf83WdaLSQR4yEUVpMVSNge67DZaoG
+	d/Sne9o2jMZAr5SmtBk6CZR+kBKiObm3t+7nBPZ86pZpsghnZgz8BsRbay2vSJe5l17nJ/4rCec
+	goB1Js796ZGRevBLEcl1GAd1B4JjZny37GiC1TAgPT+BsH04a9QIUQWBIM1o5vQgIFsvCj9/lQf
+	v383unLReX9/QufFqx5O1v
+X-Received: by 2002:a05:6000:186c:b0:42f:b9c6:c89a with SMTP id ffacd0b85a97d-43569bc5a34mr12693121f8f.49.1768819273243;
+        Mon, 19 Jan 2026 02:41:13 -0800 (PST)
+Received: from localhost ([2a01:e0a:3c5:5fb1:4154:6ad6:c781:df9c])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-4356997e79asm22422921f8f.33.2026.01.19.02.41.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Jan 2026 02:41:12 -0800 (PST)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman
+ <khilman@baylibre.com>, linux-clk <linux-clk@vger.kernel.org>,
+ linux-amlogic@lists.infradead.org
+Subject: [GIT PULL] clk: meson: amlogic clock updates for v6.20
+User-Agent: mu4e 1.12.9; emacs 30.1
+Date: Mon, 19 Jan 2026 11:41:11 +0100
+Message-ID: <1jjyxdvq9k.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/5] dt-bindings: clock: qcom,milos-camcc: Document
- interconnect path
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Luca Weiss
- <luca.weiss@fairphone.com>,
-        Taniya Das <taniya.das@oss.qualcomm.com>
-Cc: Georgi Djakov <djakov@kernel.org>, Bjorn Andersson
- <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org
-References: <20260116-milos-camcc-icc-v1-0-400b7fcd156a@fairphone.com>
- <20260116-milos-camcc-icc-v1-2-400b7fcd156a@fairphone.com>
- <20260117-efficient-fractal-sloth-aaf7c2@quoll>
- <59d9f7ff-4111-4304-a76c-40f4000545f5@oss.qualcomm.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <59d9f7ff-4111-4304-a76c-40f4000545f5@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTE5MDA4NSBTYWx0ZWRfX8JDB/+8e6Z3+
- vl+FBrB7uoNPEr6184M1Eyxw6K0RLtI1ZSaxujd+JlM6NdNn4yr8omQuy4wSZHdlWcXEGjpdlxI
- ub1/eQdExZHh9tF74w1Y28OOSln8qfa0IuygH6UzADKkjoxaWqcnYKAx3fW1tREmNNx4b9x2URS
- YV3hHmXTNyRbstvxrj0L/IH1YznD9yQdNusdB35Z1F4aPjD5t58M5jYX2P4xfkH3U5k/HxJW+IL
- GlG5B7j2/TMItseshtj0KH5vri6eOu11xwrls8zl4Eu47c47AuzmwUJujblZ+zgm/CPXUnU31ia
- p7z+DIY3tD33YI3LdO8suRO/GFWm/bVxcwEjb3JaGl16Uj4ZN+QfGtoV2thJkOmzDZjzUlsRnet
- abFeZJceiJVgSyBdZ1SIgJF6clAJqYZ6g6fmMwMyCegZTtBP6hVsyDmOfCMBv3PEXFrnuNrlBeX
- 0LpUKxoRo5YUzTdtQ1w==
-X-Authority-Analysis: v=2.4 cv=Is4Tsb/g c=1 sm=1 tr=0 ts=696e073b cx=c_pps
- a=UgVkIMxJMSkC9lv97toC5g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=vUbySO9Y5rIA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=RTbhy0NO0nWS4SIPpYQA:9 a=QEXdDO2ut3YA:10
- a=1HOtulTD9v-eNWfpl4qZ:22
-X-Proofpoint-ORIG-GUID: JC_3yMCXSFx6hJYjUqyvL92Rp2kav4S3
-X-Proofpoint-GUID: JC_3yMCXSFx6hJYjUqyvL92Rp2kav4S3
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2026-01-19_02,2026-01-19_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 impostorscore=0 clxscore=1015 lowpriorityscore=0 suspectscore=0
- spamscore=0 bulkscore=0 malwarescore=0 priorityscore=1501 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2601150000 definitions=main-2601190085
+Content-Type: text/plain
 
 
+Hi Stephen,
 
-On 1/19/26 11:20 AM, Konrad Dybcio wrote:
-> On 1/17/26 12:46 PM, Krzysztof Kozlowski wrote:
->> On Fri, Jan 16, 2026 at 02:17:21PM +0100, Luca Weiss wrote:
->>> Document an interconnect path for camcc that's required to enable
->>> the CAMSS_TOP_GDSC power domain.
->>
->> I find it confusing. Enabling GDSC power domains is done via power
->> domains, not via interconnects. Do not represent power domains as
->> interconnects, it's something completely different.
-> 
-> The name of the power domains is CAMSS_TOP_GDSC (seems you misread)
-> 
-> For the power domain to successfully turn on, the MNoC needs to be
-> turned on (empirical evidence). The way to do it is to request a
-> nonzero vote on this interconnect path
-> 
-> (presumably because the GDSC or its invisible providers require
-> something connected over that bus to carry out their enable sequences).
-> 
-> Taniya should be able to explain in more detail
+Here are the Amlogic clock updates for v6.20
 
-We'd have a better chance of her responding if I didn't forget to
-extend the recipient list, fixing that
+Just fairly usual stuff this time around, a new clock controller SoC
+support, a few clocks added and some fixups. Business as usual.
 
-Konrad
+Please pull
+Cheers
+
+Jerome
+
+The following changes since commit 8f0b4cce4481fb22653697cced8d0d04027cb1e8:
+
+  Linux 6.19-rc1 (2025-12-14 16:05:07 +1200)
+
+are available in the Git repository at:
+
+  https://github.com/BayLibre/clk-meson.git tags/clk-meson-v6.20-1
+
+for you to fetch changes up to 2fe1ef40b58c2256f4682594f48bfbd584501ec5:
+
+  clk: meson: gxbb: use the existing HHI_HDMI_PLL_CNTL3 macro (2026-01-06 09:52:21 +0100)
+
+----------------------------------------------------------------
+Amlogic clock updates for v6.20
+
+* Add support for t7 clock controllers
+* Add video clocks on s4
+* HDMI PLL post divider fixes on gx/g12 SoCs
+
+----------------------------------------------------------------
+Chuan Liu (3):
+      dt-bindings: clock: add video clock indices for Amlogic S4 SoC
+      clk: amlogic: add video-related clocks for S4 SoC
+      clk: amlogic: remove potentially unsafe flags from S4 video clocks
+
+Jian Hu (5):
+      dt-bindings: clock: add Amlogic T7 PLL clock controller
+      dt-bindings: clock: add Amlogic T7 SCMI clock controller
+      dt-bindings: clock: add Amlogic T7 peripherals clock controller
+      clk: meson: t7: add support for the T7 SoC PLL clock
+      clk: meson: t7: add t7 clock peripherals controller driver
+
+Martin Blumenstingl (3):
+      clk: meson: gxbb: Limit the HDMI PLL OD to /4 on GXL/GXM SoCs
+      clk: meson: g12a: Limit the HDMI PLL OD to /4
+      clk: meson: gxbb: use the existing HHI_HDMI_PLL_CNTL3 macro
+
+ .../clock/amlogic,t7-peripherals-clkc.yaml         |  116 ++
+ .../bindings/clock/amlogic,t7-pll-clkc.yaml        |  114 ++
+ drivers/clk/meson/Kconfig                          |   28 +
+ drivers/clk/meson/Makefile                         |    2 +
+ drivers/clk/meson/g12a.c                           |   17 +-
+ drivers/clk/meson/gxbb.c                           |   23 +-
+ drivers/clk/meson/s4-peripherals.c                 |  206 +++-
+ drivers/clk/meson/t7-peripherals.c                 | 1271 ++++++++++++++++++++
+ drivers/clk/meson/t7-pll.c                         | 1074 +++++++++++++++++
+ .../clock/amlogic,s4-peripherals-clkc.h            |   11 +
+ .../clock/amlogic,t7-peripherals-clkc.h            |  228 ++++
+ include/dt-bindings/clock/amlogic,t7-pll-clkc.h    |   56 +
+ include/dt-bindings/clock/amlogic,t7-scmi.h        |   47 +
+ 13 files changed, 3180 insertions(+), 13 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/amlogic,t7-peripherals-clkc.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/amlogic,t7-pll-clkc.yaml
+ create mode 100644 drivers/clk/meson/t7-peripherals.c
+ create mode 100644 drivers/clk/meson/t7-pll.c
+ create mode 100644 include/dt-bindings/clock/amlogic,t7-peripherals-clkc.h
+ create mode 100644 include/dt-bindings/clock/amlogic,t7-pll-clkc.h
+ create mode 100644 include/dt-bindings/clock/amlogic,t7-scmi.h
+
