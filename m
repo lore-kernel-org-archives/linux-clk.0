@@ -1,115 +1,124 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25E0F2BEC41;
-	Mon, 19 Jan 2026 15:39:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768837174; cv=none; b=M2VWM+m7IQdUi38+SIJ7CFtwy/nApjfurFa/7s6y52uc3JlkGzear4HhvyrmlvBB/7wciwU2Ea8VWj+yZYtW6cYU3c+A0fbiL1vzTxnrx2uK87Ml6AqYdfB01Xa8DluUrfyxqyesGj8VRxDm423WsF8i2aXbs82q1edw0uzC9vs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768837174; c=relaxed/simple;
-	bh=Z6RSsNUMp63J3RytT+Huq4TSmlNeegd84ZJvwexaTLw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OexS7sgJVsgiQUtzMdBVW3ybTzWq9/9JKW3P+U7/x7AvYZTWFF7julTb8yg6AhKJEwoOlQhLaDGSObIR/T1KL2KovfI5asl/XBCDt6FnTpAVNxSxIpKk2WWfezIO0lLAGekV/WnmCAPVZxHCfQlDmBlw5TNV9NB6GXOt675gwKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FKCL1yJ/; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58F3821CC43;
+	Mon, 19 Jan 2026 15:45:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1768837545; cv=pass; b=iO8H6izJqTtrp866lJ1+8NdbnDWHvyTqaZLruzpOMcMEk+aHlwvQDejTrZQbLwLDEJBiPVj1YXwqQmdeFXbCBNR8pUZyxtqE65r7NFKZgoXB7EbFf0hdfknWCwahG8v/MNpSQsnksnnIiLR8tJbL7GtZzHx8jp4yT3MEW21oL54=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1768837545; c=relaxed/simple;
+	bh=I4m0d5LlJpCw8UjWkkN7kmtQd5CkwvqsoHwUdWBBVCw=;
+	h=Content-Type:From:Mime-Version:Subject:Date:Message-Id:References:
+	 Cc:In-Reply-To:To; b=X5rewV7Sgom9kWlNDkzzypMGcrtsaHEIq+cCJUmT1qxRmVxxury0TAsVyUrIQx3ZScBLV36qPnkSST+rmJS+YpNyAmpuxyhtPParov5rfe9ksRfXoNPA8EG65+V9OOyhoFJ9uafAhTnNTWYat7z3TTHWypJ131y7frWa8wh4BRU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=KxW9bP5V; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FKCL1yJ/"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C98A7C116C6;
-	Mon, 19 Jan 2026 15:39:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768837173;
-	bh=Z6RSsNUMp63J3RytT+Huq4TSmlNeegd84ZJvwexaTLw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FKCL1yJ/9OH9r38bk7wJYrsP2yXH1TXQGfbSpnhe+kYzlnTph7DFKhyN8rf3MuKxh
-	 bPd2ivES2hdoxRDGV0eyZhfzlFhBvJueolK/XoWTqC+7hbfI0YFQBbELpn1RzwaHnA
-	 KAyJixdRdjj6Dfamm07eN8mnVcEUbUimLDc/FzzUrdImY1lE7Vqy2JZiRgfJzH52Nf
-	 oZyJ58U7F5tttyLbAVkSeQbS3gAWNoMLxVB/KGRimYrKdfDbkwADqvf/C+QN5MqwMv
-	 CF5sxNqMNBR2HEyHltId6SOQ2oic2z1IOStq89HtqGoYP1I8op/mpP1VlIEKMZHrix
-	 XPu4a/J/ThJUA==
-Date: Mon, 19 Jan 2026 09:39:30 -0600
-From: Bjorn Andersson <andersson@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
-	Brian Masney <bmasney@redhat.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: qcom: gfx3d: add parent to parent request map
-Message-ID: <vlvp4od6ykhneabgtpln7vpyyfpfuilasbmbfu222zgspc2ppl@iuuzldtoejaj>
-References: <20260117-db820-fix-gfx3d-v1-1-0f8894d71d63@oss.qualcomm.com>
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="KxW9bP5V"
+ARC-Seal: i=1; a=rsa-sha256; t=1768837515; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=eoL4anMNIFCNVXUGpwYCuMW8aapkcG8L+IAN470CthTc1LenglW7Ny9fZxnWHWiKXApg9J1X03jXK198PtsRp7WTLiW5hTKITq/A5+FU5Wpil4gKW19pBLelOvPuWUdMIZ8acK9XASygSL6pvbsOBH3aiVrNKhqCq66dYlHTd7E=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1768837515; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=+rU0eXeKg2yMjigsFoDJa3iuRWBFFdh53RB8m7idKP8=; 
+	b=XjETq4XwCFHKZ1llhEHi5oJL4mFU2YLBrair61IXJvP0gj8eNfOkXyF0QMFWqiEHMrtyC5vQWv5Q4Fw6NHicjcrEAaGC52/uslJDU43JBajfwG6/+PksXUnIcm9qNgp20AGfoodKOA5NlFH+tQAG914tKKJW1/+eGUk0KPYZLMg=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1768837515;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Content-Transfer-Encoding:From:From:Mime-Version:Subject:Subject:Date:Date:Message-Id:Message-Id:References:Cc:Cc:In-Reply-To:To:To:Reply-To;
+	bh=+rU0eXeKg2yMjigsFoDJa3iuRWBFFdh53RB8m7idKP8=;
+	b=KxW9bP5VDZNbOlWgvCNIH/cGiJvmdNzK4UwcL21DpmkPb7QV6BtrOn0kp1lVkNsY
+	STwHPCZUaLRxMtMaeVA2Q3m8lgTJ7jFoJ6Q4+0/Dl4AZ/cgNOeqeGeC4/YtzNf97hzh
+	3vgTkqwFsAyy24DslR8sohh6YqiG+mT5kZMXsWRM=
+Received: by mx.zohomail.com with SMTPS id 1768837512991874.9478843764485;
+	Mon, 19 Jan 2026 07:45:12 -0800 (PST)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+From: Daniel Almeida <daniel.almeida@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260117-db820-fix-gfx3d-v1-1-0f8894d71d63@oss.qualcomm.com>
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH v3 1/3] rust: clk: use the type-state pattern
+Date: Mon, 19 Jan 2026 12:44:47 -0300
+Message-Id: <533CE7C2-A42A-43DF-8D23-B7D6AE346C4E@collabora.com>
+References: <DFSMW4IERCOT.1QCQ4CAY8KJFK@garyguo.net>
+Cc: Maxime Ripard <mripard@kernel.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>, Danilo Krummrich <dakr@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Drew Fustini <fustini@kernel.org>,
+ Ren Guo <guoren@kernel.org>, Wei Fu <wefu@redhat.com>,
+ =?utf-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
+ Trevor Gross <tmgross@umich.edu>, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-riscv@lists.infradead.org, linux-pwm@vger.kernel.org,
+ linux-clk@vger.kernel.org, rust-for-linux@vger.kernel.org,
+ Gary Guo <gary@garyguo.net>
+In-Reply-To: <DFSMW4IERCOT.1QCQ4CAY8KJFK@garyguo.net>
+To: Gary Guo <gary@garyguo.net>
+X-Mailer: iPhone Mail (23C55)
+X-ZohoMailClient: External
 
-On Sat, Jan 17, 2026 at 05:54:47AM +0200, Dmitry Baryshkov wrote:
-> After commit d228ece36345 ("clk: divider: remove round_rate() in favor
-> of determine_rate()") determining GFX3D clock rate crashes, because the
-> passed parent map doesn't provide the expected best_parent_hw clock
-> (with the roundd_rate path before the offending commit the
-> best_parent_hw was ignored).
-> 
-> Set the field in parent_req in addition to setting it in the req,
-> fixing the crash.
-> 
->  clk_hw_round_rate (drivers/clk/clk.c:1764) (P)
->  clk_divider_bestdiv (drivers/clk/clk-divider.c:336)
->  divider_determine_rate (drivers/clk/clk-divider.c:358)
->  clk_alpha_pll_postdiv_determine_rate (drivers/clk/qcom/clk-alpha-pll.c:1275)
->  clk_core_determine_round_nolock (drivers/clk/clk.c:1606)
->  clk_core_round_rate_nolock (drivers/clk/clk.c:1701)
->  __clk_determine_rate (drivers/clk/clk.c:1741)
->  clk_gfx3d_determine_rate (drivers/clk/qcom/clk-rcg2.c:1268)
->  clk_core_determine_round_nolock (drivers/clk/clk.c:1606)
->  clk_core_round_rate_nolock (drivers/clk/clk.c:1701)
->  clk_core_round_rate_nolock (drivers/clk/clk.c:1710)
->  clk_round_rate (drivers/clk/clk.c:1804)
->  dev_pm_opp_set_rate (drivers/opp/core.c:1440 (discriminator 1))
->  msm_devfreq_target (drivers/gpu/drm/msm/msm_gpu_devfreq.c:51)
->  devfreq_set_target (drivers/devfreq/devfreq.c:360)
->  devfreq_update_target (drivers/devfreq/devfreq.c:426)
->  devfreq_monitor (drivers/devfreq/devfreq.c:458)
->  process_one_work (arch/arm64/include/asm/jump_label.h:36 include/trace/events/workqueue.h:110 kernel/workqueue.c:3284)
->  worker_thread (kernel/workqueue.c:3356 (discriminator 2) kernel/workqueue.c:3443 (discriminator 2))
->  kthread (kernel/kthread.c:467)
->  ret_from_fork (arch/arm64/kernel/entry.S:861)
-> 
-> Fixes: 55213e1acec9 ("clk: qcom: Add gfx3d ping-pong PLL frequency switching")
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
-Why didn't Brian get Cc'ed on this patch? I'd love to have his input.
+>> Yes, that would be great. I do wonder though if it wouldn't make sense
+>> to turn it the other way around. It creates a fair share of boilerplate
+>> for a number of drivers. Can't we keep Clk the way it is as a
+>> lower-level type, and crate a ManagedClk (or whatever name you prefer)
+>> that drivers can use, and would be returned by higher-level helpers, if
+>> they so choose?
+>>=20
+>> That way, we do have the typestate API for whoever wants to, without
+>> creating too much boilerplate for everybody else.
+>=20
+> One solution is to have a new typestate `Dynamic` which opts to track thin=
+gs
+> using variables.
+>=20
+> struct Dynamic {
+>    enabled: bool,
+>    prepared: bool,
+> }
+>=20
+> trait ClkState {
+>    // Change to methods
+>    fn disable_on_drop(&self) -> bool;
+> }
+>=20
+> struct Clk<State> {
+>    ...
+>    // Keep an instance, which is zero-sized for everything except `Dynamic=
+`
+>    state: State,
+> }
+>=20
+> this way we can have runtime-checked state conversions.
+>=20
+> Best,
+> Gary
 
-Regards,
-Bjorn
+There used to be a Dynamic state in the past in a similar setting. That was r=
+emoved after some thorough discussion. I=E2=80=99d say we should refrain fro=
+m going back to this. Specially considering that the current design works fi=
+ne.
 
-> ---
->  drivers/clk/qcom/clk-rcg2.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
-> index 2838d4cb2d58..d0a5847f9111 100644
-> --- a/drivers/clk/qcom/clk-rcg2.c
-> +++ b/drivers/clk/qcom/clk-rcg2.c
-> @@ -1264,6 +1264,7 @@ static int clk_gfx3d_determine_rate(struct clk_hw *hw,
->  	if (req->max_rate < parent_req.max_rate)
->  		parent_req.max_rate = req->max_rate;
->  
-> +	parent_req.best_parent_hw = req->best_parent_hw;
->  	ret = __clk_determine_rate(req->best_parent_hw, &parent_req);
->  	if (ret)
->  		return ret;
-> 
-> ---
-> base-commit: b775e489bec70895b7ef6b66927886bbac79598f
-> change-id: 20260117-db820-fix-gfx3d-e61329023c8a
-> 
-> Best regards,
-> -- 
-> With best wishes
-> Dmitry
-> 
-> 
+ I can remove the turbofish if you want, even though I think they=E2=80=99re=
+ useful so that we have the same API for all states.
+
+=E2=80=94 Daniel
+
+
+
