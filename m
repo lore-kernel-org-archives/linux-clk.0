@@ -1,66 +1,86 @@
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BFE636C596
-	for <linux-clk@vger.kernel.org>; Mon, 19 Jan 2026 14:03:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E3E8368294
+	for <linux-clk@vger.kernel.org>; Mon, 19 Jan 2026 14:04:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768831435; cv=none; b=Pl3gkVOjZQVabw4UQ8Yx2NDppDC0zGdyw9SnlOh961Hm+45+YPmCXaEp/41Vgf7A2gWLg5qXv8oUIDHnjb7g6h2TW1+FzmuSjV7Cm5XJ0W/mW4l8uXuxH6lo6MMPylI2G6XFWczawIkh+ywDuogSKvq1aimTCefQqIq7wfW+70c=
+	t=1768831452; cv=none; b=nS32YciRXqRmEOvJudCTf190aZRdW2QMnC5Co00vz3N0ygUv8oDk0cDPqJmhc8bEvQYBMetGJWt2DP0D5W99DSqcS6SMJ91h8Udt00B7+5PlO2D2c21MqHC69kFzZ10d1ItIqnaWZUydyniyVZ17XlBOlL0F7KvpsT+2xni6f18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768831435; c=relaxed/simple;
-	bh=mTAE+Uz1BGS1b5G0yeV0TYVfbfqnRu+U7F6kK79xBH4=;
+	s=arc-20240116; t=1768831452; c=relaxed/simple;
+	bh=cxGNhGwfKlrEd+GD/N+P4uyblcaubtTgID+p8bZfaik=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uyhphTfc949Wh9GnDxkTeMMQQZrrjzBsVuVUu+Ke1uLWKcya+0vcPuxWYV35c5P6spbsnlyPxOo28hfPvGG19v5xqhtClYNFWP6wP3V8mhqtLsiKl0CHBGgVVBp1vGFK+8FXMOPvp6tY1NwIMaqLdEdt7aqWN1zmS0w1WWWOpmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=oijIVXgQ; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+	 In-Reply-To:Content-Type; b=Hq7EgUaA3PCINMn1lVHAOvXQDtlzDMJqWf8PyUA0YhSfrTMkVuSeJORBSGtemNh5ogg/u8A4n3alB7qyc2OOV4Nq607NT/HSudIucHwJks7oQ3mQtrC/8gO2R8Y6b8yPOK14588FQFOzvzzwddGMoSixkNgK9mQdVpDyHwCGjXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=g5QyGKBg; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=Zxw4HJP3; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="oijIVXgQ"
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-47ee9817a35so23466755e9.1
-        for <linux-clk@vger.kernel.org>; Mon, 19 Jan 2026 06:03:50 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="g5QyGKBg";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="Zxw4HJP3"
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 60JDd5h01347293
+	for <linux-clk@vger.kernel.org>; Mon, 19 Jan 2026 14:04:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	/Gesf2CcadYT0OjZRyHyxnUhzPAg7xJTBsZqe55V8lM=; b=g5QyGKBgMJtYUrMj
+	CKbYS0Yrwl9IxTAzLuhk8aZo+iEpFMNh3JkctNZ6O/J18ho6e5xQyeSXS80mvSEn
+	wrJOUbmMdkOvT2NUGaDl8Mwg5NxnDs7wBGFl+JHAVtTc1anhXqjf0SgQHiGLk8ic
+	0GV6yP7D5k10IreQiGmaTVhvi0jkdaozPwQq+uWw0OJhrTq8io1YqeWJt66UWGry
+	1nF+GF2XZFPyxzSmvswsEE8fDzVO1Xs8Dtd4Ysr5mMIui6a71If9tJZXJns48p+5
+	m0iiY3+ZvCIr3sVnxcPNd2CIo0NQsABHBlwBbQd9ks/dlqILGOQCeXcEoHCh6DA+
+	v21Rsg==
+Received: from mail-ua1-f71.google.com (mail-ua1-f71.google.com [209.85.222.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4bsnpdg21s-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Mon, 19 Jan 2026 14:04:09 +0000 (GMT)
+Received: by mail-ua1-f71.google.com with SMTP id a1e0cc1a2514c-943c7db30f5so872960241.2
+        for <linux-clk@vger.kernel.org>; Mon, 19 Jan 2026 06:04:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1768831429; x=1769436229; darn=vger.kernel.org;
+        d=oss.qualcomm.com; s=google; t=1768831449; x=1769436249; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=Qi0fMsnbGNNAqeW2KXFtzgi15jKwvRfrQtKC+NHQLH0=;
-        b=oijIVXgQ4xqiS2NrmPLq6TR0f50MbnFwamEvVEThd4u5/cgjFxI8Fpocc0jELJE8Un
-         wzvavK7XRcjYMvB11KowGsyzSBDjqwkxWPYeBGg3vb6zoCSfcvuvxqk4VvVngzLEblPe
-         Q62S41vvzGwYYP/wqJlp2PvMr6Uq10aOT4gO+2lj39uGKOsACT3+oBnNPeH9aB+gErew
-         6Km1zv/o/EhoBpzf+u273glZp17hZLZB+jjPOy/FEz2+x3P5WMpUaeehYmsWAK1SxkmZ
-         YTV1PyclP+6opjHTt9Y/AsH4McuFDDSi78LsqpYdLxP6EuyYphQB1hlB245BmCzbm8zu
-         gXpQ==
+        bh=/Gesf2CcadYT0OjZRyHyxnUhzPAg7xJTBsZqe55V8lM=;
+        b=Zxw4HJP3PxJugzGEA/9chEZRcOKA2MMvy58xMrWW/LFZn6kJt4ucJ6S85+fAhcmai2
+         1F+/tZg01b7zb5BTzcoekJQtu/zqnnmyTyfW+f1dkEoRehWSIll6ervPVyLr/Z/BKEBJ
+         DFZqANe9/jK+Idu59sN25aXaWytGXAhqmcEey/Fdlqzq34Y4L21eQ7Tm5ZJRjOcN8FZ9
+         Y/EFmmU7Ne+7s4X2I3QbpT9IEcLpCZxGIjKq4X25hWwMmfqv/fSmrSMo/7tmfOREYm/y
+         fyElOhdkM7+i3fPKLphov45C315ExrQXI94xI/3B4svuOLR3VleLBSlFE6SMhDNiDAB/
+         NOuQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768831429; x=1769436229;
+        d=1e100.net; s=20230601; t=1768831449; x=1769436249;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Qi0fMsnbGNNAqeW2KXFtzgi15jKwvRfrQtKC+NHQLH0=;
-        b=LGQHkxAlzC8hKRChtmPBUMIg8mpzUQVgTc6JZFmnPgY6AdrpEtcL6DqW2L4h5ayxW8
-         3EOxwsJLBrmF0PMa6IayHY8pqXCSuWM6mCi2doKMYQuGN2hHWWMyjx5AfzTkDDwVi9eB
-         w4Ez6sWuFw2K9BOgbOxfovnY+hJJPxEWW/KXxSUHkkXyKJEK2jWxEsgMvB2BEU95Zt2q
-         xXS4G8YiK6R/Yq8cMXaLMjDSTiZumNyBtTlC1kEmT6w3uyzXlnZ8iaTztzND8e/VMC1n
-         zggfDPSQHxOI1eazQKz3FhL5BNW1AlwFuPIKUawBVaJYTCKjmDGVutPTg/k6mopr8def
-         sx9w==
-X-Forwarded-Encrypted: i=1; AJvYcCX4erfCpizle1INClbCvJnhUMkR1B4MBTk92UPPYpptEsVHuBdzm0F5XBRsVMVWHgytF+FiQr78QTk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdCsGTc8PiuEEFu+rqGw+Clr1DyHtAsJZsk86KJq9WKh/daUeQ
-	lNjtYR4lkMoP5zRRXdiZTnBbETKTqk9vR/vC00sQ7zsa0eEJOkM4xXkBAVvCQvVRXjI=
-X-Gm-Gg: AY/fxX6Att3VdgQjHVq7UO4Fg1FD+WxuaBSy9XTRs4psCmCea5NqwAQi/MQrgr6EYVH
-	3aJCOWsf4M8gAp0FDEdy+MW2XAolHTC9gvvLo/FUG7M14jmOozd4E6Gbun5XY0vXjpL8VZr7HJY
-	sguUlMEYwFfhF3OUS3cMsCrfPeRSRsYBfL5IvDsUJl7m1a6UIootQMM4fpa/k0+aT0Ir5iILUTc
-	dvZzDwuaxNTrHy8PfRgQnjqyCV2hkSihoDcsEcIuvVDfnkcbYUfO1Da5SrVZl+WL5AAiZ1CtDuO
-	OGWlymEjihRQ2nBSfzzpeT1/NvbTisSnToU2OQZDHXvFBCyYRYExzp57IbLnOfiKhpHbWN2iFXx
-	fPtK/HdqooTyGM2s5RTBq36VdnezkMkjBbFojb5XkbvC+LheukMsNsFvBZwwvvnCd9C5Y+hGki/
-	0bqgBffC/xbgmqigep0A==
-X-Received: by 2002:a05:600c:c48e:b0:47e:e970:b4e4 with SMTP id 5b1f17b1804b1-4801e3494b7mr155374755e9.29.1768831428511;
-        Mon, 19 Jan 2026 06:03:48 -0800 (PST)
-Received: from [192.168.50.4] ([82.78.167.31])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47f3b7a5f94sm266035795e9.0.2026.01.19.06.03.46
+        bh=/Gesf2CcadYT0OjZRyHyxnUhzPAg7xJTBsZqe55V8lM=;
+        b=OWo/HfE+sUfvRMXFjT9adpLX5XC2qgYfUusQbMb1itzcMxxae3xEG9dIb8PZbdc0+G
+         jigwFBTucpyxz2Uxz9v4yQfwzHjEyJXapRTdzgv6qzFoOgQFCXrKwjV/2hF6aivb1cxH
+         VVxFxp3HfZMpQSnux8FrpTGeH+BbISrHsMjaL6zL7LuwiojdWwpkICNn1VJa+jCH4L59
+         soXWzzOl2V73SZv+6PParHjsyf/fqSGIhok/nsPXJA4pFHqHJ0b7HTwEABBvj+IuMwIy
+         tokT3TD62RNTF4VMFPLlW+ZM3jR8MAwyZk3+THphrcOgOkfdjzw6585l29bRbnNQ4bYp
+         mttQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWUSMbfqV/blQ9PYcDoP2cRFY0WHB57dSWpLpdJSW4BLV4w1U0KYKNyQ8FGKsaBzbdMlDPZc8EMovw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yza7DhvT6yY9lN9d9gI62OZU8dFRNFvO24yt6O/CDDx2UmhwFl6
+	5g9rnLfNmtPbyLO8kXgC06dzNbfGL6qvoAGHhShNx00eoQCR0Y8tED/pwRBmjk84pG9yKEG9oX8
+	a4earAOYqePOtz52/UqdJwXAqyqfk8JmrItiU4+HSxPvrQALIby5n8K8R88Tcqr6XK6qb6RU=
+X-Gm-Gg: AY/fxX52lfxHLfiqFOvNpQmpqr2UKdVeEHMZwBt6ipPqvKJVbPtzy56zEjjLDCioMHT
+	kG9piEq9h91zVOo7r7okxiCP4fWn5jBvo7FHEEVPYC4qy9NGlilcJSNgiTxMDwSzXMRZ0yP+DJt
+	mu9fBJO//nvsSswBcShqyEHv0zYUEE4LLAytHYWMyec8tkZehf3ya7QEhSmFs4kgTG/v2AnvgzB
+	EkCBYD529O/0HAzG2XiC9/jJLtJNvABvWdh69BGb8agsshA49U+m10rT4qDzurkIUI0zGRpIasy
+	nVgda4g2fsl/y/zkLehxTXPBJV9HrqBrVeM+mLF99bpSEV3TpjCc3hM+leGzqwtwO0MTuFbyVlJ
+	pke4k9dEEu3SqABRqBa2KdMU96D0eueXExC29X05PKQoU9vBSpT9tmlhv6KNcONTNKy8=
+X-Received: by 2002:a05:6122:6d1a:b0:559:965e:f563 with SMTP id 71dfb90a1353d-563b5b6992cmr1848443e0c.1.1768831449097;
+        Mon, 19 Jan 2026 06:04:09 -0800 (PST)
+X-Received: by 2002:a05:6122:6d1a:b0:559:965e:f563 with SMTP id 71dfb90a1353d-563b5b6992cmr1848412e0c.1.1768831448644;
+        Mon, 19 Jan 2026 06:04:08 -0800 (PST)
+Received: from [192.168.119.254] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b879513e6d3sm1116835166b.4.2026.01.19.06.04.06
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 19 Jan 2026 06:03:47 -0800 (PST)
-Message-ID: <fb7ec096-372b-48f4-b6ed-e224a05d55e2@tuxon.dev>
-Date: Mon, 19 Jan 2026 16:03:45 +0200
+        Mon, 19 Jan 2026 06:04:07 -0800 (PST)
+Message-ID: <1f4e300d-b705-4973-bda9-0eb1be6059a3@oss.qualcomm.com>
+Date: Mon, 19 Jan 2026 15:04:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -68,55 +88,106 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 01/16] PCI: rzg3s-host: Fix reset handling in probe error
- path
-To: John Madieu <john.madieu.xa@bp.renesas.com>,
- claudiu.beznea.uj@bp.renesas.com, lpieralisi@kernel.org,
- kwilczynski@kernel.org, mani@kernel.org, geert+renesas@glider.be,
- krzk+dt@kernel.org
-Cc: robh@kernel.org, bhelgaas@google.com, conor+dt@kernel.org,
- magnus.damm@gmail.com, biju.das.jz@bp.renesas.com,
- linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-clk@vger.kernel.org, john.madieu@gmail.com
-References: <20260114153337.46765-1-john.madieu.xa@bp.renesas.com>
- <20260114153337.46765-2-john.madieu.xa@bp.renesas.com>
+Subject: Re: [PATCH] clk: qcom: gfx3d: add parent to parent request map
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20260117-db820-fix-gfx3d-v1-1-0f8894d71d63@oss.qualcomm.com>
 Content-Language: en-US
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <20260114153337.46765-2-john.madieu.xa@bp.renesas.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20260117-db820-fix-gfx3d-v1-1-0f8894d71d63@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=NtncssdJ c=1 sm=1 tr=0 ts=696e39d9 cx=c_pps
+ a=KB4UBwrhAZV1kjiGHFQexw==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=vUbySO9Y5rIA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=Cg7UkRfD2dEtGca3me8A:9
+ a=QEXdDO2ut3YA:10 a=o1xkdb1NAhiiM49bd1HK:22
+X-Proofpoint-GUID: xH3h5c3NUVmRaSReAD5ppoKio_oneWK3
+X-Proofpoint-ORIG-GUID: xH3h5c3NUVmRaSReAD5ppoKio_oneWK3
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTE5MDExNyBTYWx0ZWRfX+dgQLL3gNv19
+ Oto1Ggp69BoeZsZo/UEgPKa8jhZ9C3oUL0JGso0GUIvl4ZI2jziMolteI6/PBgnB2yu1Ok9/SD0
+ TLvAdU3vrJRKtX6sGrnCHxM2ZaaLU+WZ7PoyVS7R4bRCbZopUh/r0jpJNcxSy5DIz/sX4kYg2sP
+ D77uTkzX5tXFPRlcl9zSNy0LsCcYDHME7dDj/zI9hVI14iy/imT02DgrjGNabfzw+QR7jtPfjQw
+ 9PAqQFr/O6Txygl7oiAriGFWLuQmFns5FzgIIsYYyp8icNEkKgBDaxH9JuQhhgPtpIU7IuOKNdQ
+ lCwqk/xxEXqjP0qz9TIZlaFoc6sVGPYDdF2G1HMNHPH8Rw9Tk2XIX7b2hA8PEgrgRxQfJjsfUVX
+ WV+7MXo/77Ji7USWn7QbOUVIs7y3WxNaZEC3NKQxhF6U5Ev4dcP0+Bicg3TOp9glRGjj63kpLbB
+ L4pfL/E48puJcjHL8Sg==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2026-01-19_03,2026-01-19_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 clxscore=1015 lowpriorityscore=0 phishscore=0 suspectscore=0
+ priorityscore=1501 malwarescore=0 impostorscore=0 spamscore=0 adultscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2601150000 definitions=main-2601190117
 
-Hi, John,
-
-On 1/14/26 17:33, John Madieu wrote:
-> Fix incorrect reset_control_bulk_deassert() call in the probe error
-> path. When unwinding from a failed pci_host_probe(), the configuration
-> resets should be asserted to restore the hardware to its initial state,
-> not deasserted again.
+On 1/17/26 4:54 AM, Dmitry Baryshkov wrote:
+> After commit d228ece36345 ("clk: divider: remove round_rate() in favor
+> of determine_rate()") determining GFX3D clock rate crashes, because the
+> passed parent map doesn't provide the expected best_parent_hw clock
+> (with the roundd_rate path before the offending commit the
+> best_parent_hw was ignored).
 > 
-> Fixes: 7ef502fb35b2 ("PCI: rzg3s-host: Add Renesas RZ/G3S SoC host driver")
-
-The title of the commit with SHA1 7ef502fb35b2 is "PCI: Add Renesas RZ/G3S host 
-controller driver". With that addressed:
-
-Reviewed-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-
-> Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
+> Set the field in parent_req in addition to setting it in the req,
+> fixing the crash.
+> 
+>  clk_hw_round_rate (drivers/clk/clk.c:1764) (P)
+>  clk_divider_bestdiv (drivers/clk/clk-divider.c:336)
+>  divider_determine_rate (drivers/clk/clk-divider.c:358)
+>  clk_alpha_pll_postdiv_determine_rate (drivers/clk/qcom/clk-alpha-pll.c:1275)
+>  clk_core_determine_round_nolock (drivers/clk/clk.c:1606)
+>  clk_core_round_rate_nolock (drivers/clk/clk.c:1701)
+>  __clk_determine_rate (drivers/clk/clk.c:1741)
+>  clk_gfx3d_determine_rate (drivers/clk/qcom/clk-rcg2.c:1268)
+>  clk_core_determine_round_nolock (drivers/clk/clk.c:1606)
+>  clk_core_round_rate_nolock (drivers/clk/clk.c:1701)
+>  clk_core_round_rate_nolock (drivers/clk/clk.c:1710)
+>  clk_round_rate (drivers/clk/clk.c:1804)
+>  dev_pm_opp_set_rate (drivers/opp/core.c:1440 (discriminator 1))
+>  msm_devfreq_target (drivers/gpu/drm/msm/msm_gpu_devfreq.c:51)
+>  devfreq_set_target (drivers/devfreq/devfreq.c:360)
+>  devfreq_update_target (drivers/devfreq/devfreq.c:426)
+>  devfreq_monitor (drivers/devfreq/devfreq.c:458)
+>  process_one_work (arch/arm64/include/asm/jump_label.h:36 include/trace/events/workqueue.h:110 kernel/workqueue.c:3284)
+>  worker_thread (kernel/workqueue.c:3356 (discriminator 2) kernel/workqueue.c:3443 (discriminator 2))
+>  kthread (kernel/kthread.c:467)
+>  ret_from_fork (arch/arm64/kernel/entry.S:861)
+> 
+> Fixes: 55213e1acec9 ("clk: qcom: Add gfx3d ping-pong PLL frequency switching")
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 > ---
->   drivers/pci/controller/pcie-rzg3s-host.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/controller/pcie-rzg3s-host.c b/drivers/pci/controller/pcie-rzg3s-host.c
-> index 5aa58638903f..c1053f95bc95 100644
-> --- a/drivers/pci/controller/pcie-rzg3s-host.c
-> +++ b/drivers/pci/controller/pcie-rzg3s-host.c
-> @@ -1588,7 +1588,7 @@ static int rzg3s_pcie_probe(struct platform_device *pdev)
->   
->   host_probe_teardown:
->   	rzg3s_pcie_teardown_irqdomain(host);
-> -	reset_control_bulk_deassert(host->data->num_cfg_resets,
-> +	reset_control_bulk_assert(host->data->num_cfg_resets,
->   				    host->cfg_resets);
->   rpm_put:
->   	pm_runtime_put_sync(dev);
 
+I'm still not fully understanding the logic of this code, but I
+feel even less comfortable having a board crash on boot and I can
+attest to there being a dereference of best_parent_hw..
+
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+
+Konrad
+
+
+>  drivers/clk/qcom/clk-rcg2.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+> index 2838d4cb2d58..d0a5847f9111 100644
+> --- a/drivers/clk/qcom/clk-rcg2.c
+> +++ b/drivers/clk/qcom/clk-rcg2.c
+> @@ -1264,6 +1264,7 @@ static int clk_gfx3d_determine_rate(struct clk_hw *hw,
+>  	if (req->max_rate < parent_req.max_rate)
+>  		parent_req.max_rate = req->max_rate;
+>  
+> +	parent_req.best_parent_hw = req->best_parent_hw;
+>  	ret = __clk_determine_rate(req->best_parent_hw, &parent_req);
+>  	if (ret)
+>  		return ret;
+> 
+> ---
+> base-commit: b775e489bec70895b7ef6b66927886bbac79598f
+> change-id: 20260117-db820-fix-gfx3d-e61329023c8a
+> 
+> Best regards,
