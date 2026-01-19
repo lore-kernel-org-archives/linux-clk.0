@@ -1,181 +1,156 @@
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8717535B140
-	for <linux-clk@vger.kernel.org>; Mon, 19 Jan 2026 12:35:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9134835C1B1
+	for <linux-clk@vger.kernel.org>; Mon, 19 Jan 2026 12:52:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768826127; cv=none; b=SP+LMJgfFEMApQ7fA1jtLBUCQH0QfqaM246U7lehT0q7siS7jF0J2SZarTJVSTlXHj6wObiv/9Cs3IBdRBH5c9xIy8PzKZ4teUp6OE6YflRb+Fp2a3l3fSV9d6I8wLEhWRAeMCKmbLDPyV1epaAlYNnNSRF81SCa25FOSSuX/+8=
+	t=1768827154; cv=none; b=ksS7QD7djbjYsIyRtc8iNsWuDWreKe62BKX0WX9O0nLVPqmNhLK2EK2uB1jgljc4PfwhSrrhrZF1gPh892ve9lCwH9PzgZlqdwFvk2ll8wmeY/fp0Ay/xLb+M/PKnh7gdmmdtNQgx0KDRx5cUccbJppDeY+pi13tbXgD1QNAeV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768826127; c=relaxed/simple;
-	bh=QgtIrq2v5XTFNi5vlU8fw46Ar/tthUMJiTbRAMcagGQ=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=hMFtqDdlSToW5ZzUVqSDXx//TxREcpv/lBiS0XhEUJxB7k5hrfkPo5WDNu7N1zlVRcgMPwRJfuwfZVHHrkFmJLNNXujhsHhv2uX0nnwzVwUkZZz+Bi+JPpUqhz0NN6t3RWHiYjlq3qf/H+Q6hofIcXo2JvssoxK1oWweVb65vI0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=why3I2/c; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+	s=arc-20240116; t=1768827154; c=relaxed/simple;
+	bh=Y+vzfzwxV0X9I6ZUZ9qwoqvJfRIq2CCJXDS2bCFWcAU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tGRWxb/DSU3RRa8fQCkjC6xo91FOp22aJvKDZflwTJF1RjfM5WOh5LFMI6t5wIGVqsptxpbfDamXT17LT7kPHc9Hw8kcaSQCR6UjBU5sb9NroPwjyE5nnsju5zpUwkseBun87T0vCXJLu1xJB3mN9a/VH0ttQ0Z4KwyoTeqKcr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YQvxcYE2; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="why3I2/c"
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-4801e2e3532so15802635e9.2
-        for <linux-clk@vger.kernel.org>; Mon, 19 Jan 2026 04:35:24 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YQvxcYE2"
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-38305f05717so37334671fa.1
+        for <linux-clk@vger.kernel.org>; Mon, 19 Jan 2026 04:52:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1768826123; x=1769430923; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=L339R8Vsk/eWURHJ0AqPSpw3w1NFXPchbsihcVaLjUM=;
-        b=why3I2/cUVdJrdwiko+xycCbGMCLYBh6gO5rNTfm5HRilICJTdQb0UzM286OCmHZ5x
-         Az/ENk7+vDBcon8Fs2ADANebi5Z2KIMU2Tb7yeslwJT2ml3MHhxs4gKIa3A5beuB73qD
-         uyLz2olrXCOWO1KOWrf5KF/QPKnSKrpct6TjpprI8HB/YIe/jg0oudYl7fgKc6TwaeZa
-         kF2EMLOw3evT3kR2EmDPLipZ9Iva9cVEBp0OG2VuBliG8eaSmeRhx8SHY57GKckV8Dyn
-         X++SkN+bJhV+haiOBUz7tdjDWNsoONI+LJz+iPeAikjoqspaos6wWS+oCVY9PXVPc8oK
-         1b1g==
+        d=gmail.com; s=20230601; t=1768827150; x=1769431950; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ft1ti+lcNR6y5zU/XvAAKrTqWQ0ka9nXreLNeXyu1sA=;
+        b=YQvxcYE2QdoJO9ohCQcXU3tk/Srl4gHS/ScNi2GDn8ny6Q0rM2x+vu4uqbuI4/GO61
+         q517yaGqwMsT1DjuKYc7NJIJgRNr5DqqXCIvajhixxeqPZ4oSh0vf6IzTUkLn8fFY6Gk
+         9nDsqS2kniq1eNKRUaTf2BD2TwyWJlrayxI9oFdAaKCzlazHh0nlUqgbZG5iOYYLgB4X
+         0mynM8aYC5pSutwIivJHAq7yMjRtz/tpfp+W1ZkeqV2z47EwMIrYQMC6+YZsfpNHIszn
+         duIWoYjxQz4u3Fn1iTOW8QgLfCcYaQT87IQWSVbQ+QnRsF5muQ6CDP8SAX+E/6+S1G5e
+         2Wvg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768826123; x=1769430923;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=L339R8Vsk/eWURHJ0AqPSpw3w1NFXPchbsihcVaLjUM=;
-        b=RYiAWCcq11PoOwLjnq8SO9nspzORzMxzii0lt7sIl1ZD6S4XiiJWFUt0WMXcP4/bgv
-         QspMvwakdosLYPPE7/mdU2smXZ+DIRMy+9SnUd4YtTvqCRq77Q+r19lNlbnnDvbX2APu
-         jcioy6qAXXhEvBQnwyjH4jIRZn9y6KeTrv4GOumvNYuYuKZVC0NrMLVeJgcY8jt6ZXLj
-         gxI9HXPh04Mnqv8cjjnJeh+rZ+esOMycaDB6sG6L6AbK8P0MXgzP2Tn4iQj8JXp59vqN
-         WEZkuaEmzMVr/cTRwah19wRXPdkmdgzhzjAe+RylBcMhM40LmGurLUztrM5Q07WDFvrk
-         wO8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUB+ORdWS+BaS83luF4E/773AsBzp/a5u344nu/+eheiK/RjuvOrrhmOfcrYrPpHuto05vFzNPJRpQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEGFZ099IziP0+i4XOhUYejrPdioYwZqbP8E1nM84rGNSw889C
-	QrE3UB7g/a4PUaN9edOegpKDqCvk6AuL0QxDA/l8MD3E+6zlN6iQJKW2xYBI+z/KwyQ7P29VHWf
-	1uUlmbROYCH4nvETJTQ==
-X-Received: from wmbh20.prod.google.com ([2002:a05:600c:a114:b0:47d:586e:2b7b])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:811a:b0:480:1dc6:2686 with SMTP id 5b1f17b1804b1-4801eac0cfcmr114218055e9.13.1768826122871;
- Mon, 19 Jan 2026 04:35:22 -0800 (PST)
-Date: Mon, 19 Jan 2026 12:35:21 +0000
-In-Reply-To: <20260119-thundering-tested-robin-4be817@houat>
+        d=1e100.net; s=20230601; t=1768827150; x=1769431950;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=ft1ti+lcNR6y5zU/XvAAKrTqWQ0ka9nXreLNeXyu1sA=;
+        b=YgqG8l7144icy5Ye36fi5LPkI8h0jCNSxDTozqC1Mwgs54VuQJZFLlgGiRYZjTWuZ9
+         pJkAvzOfrI1RjyaR9gRvxEfIJ+engxJNKS4owLlIl68Gy1Wz85hMP4ohvVgOaSAOJ/q/
+         rCOBawQ+yZDHLLiS3lrtAyv+BFbARtOEk9StcOoIJPoU4qYsHrrClNN4LBj1wCMuKXut
+         s7ZnxiDCGv402SK/3A0gIZYEXsy7RIbzaqqb0K/w23x2ZL1I5OOzYiNMuBYIPCAtsUi2
+         XZwyhOQnVKuXLNcOXM+Il4KHjWKiZqglWBeuF57QeAcxipzU/neSB8QyXxtYw5b0479S
+         CsDA==
+X-Gm-Message-State: AOJu0YwvDOCaFrngaBzNW3bcQ0dHiTQ6y6ZFNgHBqQwSJKAjZvrvzCCF
+	jJsd+s7dG6d5efm+Wh4zeW5uJGSMHCIe9xrtsNAD7vUkP4BLXkZzvat1DcLaVsjw7lGp/YYm4L/
+	vXE8r6lHQYdXtM2AjCqPVd5knf96PGFk=
+X-Gm-Gg: AY/fxX6n92cULbz6S2rdsr6sXrdPZ848/7hsZwmKM38V/QYjjuNVKzE/VWPH3Rm1dS1
+	mYSVeqaZMUDGV8KvN93rozfhih0MS0W5DhQaU2Wc+cTr7fcTCgcxWItbi//Robppt7oKPY2GyKP
+	zTaZru4XjD3rJ69ZCoO5yoQRSDgltQQfpfTuv1jbYzRvTWP9yf2Qt5ONeMLKb8nuBkO8J2U3E/1
+	1sSit/6UTO2Wfs3iaT04hBVYAeejopS57gh/T197lRBG40xjkcbEkdnBZaqnBg/sj+H7NCS2ppu
+	YDBVHIaKhCU1MyrIFSR3RREbhWiz3wMpttA2hkzz8dPx5bo5YD+kLGNMt7pXaUILhgUAjtVitID
+	15WspFSjtSYjZPkjyEOBFaGcq+wBJb5wKmvEDCGPWS525pFavMc+4
+X-Received: by 2002:a2e:bc88:0:b0:37b:8d78:e4bf with SMTP id
+ 38308e7fff4ca-38384335558mr36408681fa.43.1768827149433; Mon, 19 Jan 2026
+ 04:52:29 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20260107-clk-type-state-v3-0-77d3e3ee59c2@collabora.com>
- <20260107-clk-type-state-v3-1-77d3e3ee59c2@collabora.com> <20260108-delectable-fennec-of-sunshine-ffca19@houat>
- <98CD0BF6-3350-40B9-B8A9-F569AE3E3220@collabora.com> <20260119-thundering-tested-robin-4be817@houat>
-Message-ID: <aW4lCfUyumOKRRJm@google.com>
-Subject: Re: [PATCH v3 1/3] rust: clk: use the type-state pattern
-From: Alice Ryhl <aliceryhl@google.com>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Daniel Almeida <daniel.almeida@collabora.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Viresh Kumar <viresh.kumar@linaro.org>, Danilo Krummrich <dakr@kernel.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Drew Fustini <fustini@kernel.org>, 
-	Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, 
-	"Uwe =?utf-8?Q?Kleine-K=C3=B6nig?=" <ukleinek@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	linux-riscv@lists.infradead.org, linux-pwm@vger.kernel.org, 
-	linux-clk@vger.kernel.org, rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+References: <20251222-cstr-clk-v1-1-ef0687717aa1@gmail.com> <CAJ-ks9mjBY7x1s_4wqMC8xqWsX2+aCM6NHn0j7yh_+daKiyS1Q@mail.gmail.com>
+In-Reply-To: <CAJ-ks9mjBY7x1s_4wqMC8xqWsX2+aCM6NHn0j7yh_+daKiyS1Q@mail.gmail.com>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Mon, 19 Jan 2026 07:51:53 -0500
+X-Gm-Features: AZwV_QgRogLIzoCwOASO5Jrp0CfBksLoemO-T3HosJSEe-KW0dyiqzYg-hWml10
+Message-ID: <CAJ-ks9kn=0Sm2_1WV4xyzunzcGG1VZDKy8L=_SCCWyV2OkJTDA@mail.gmail.com>
+Subject: Re: [PATCH] rust: clk: replace `kernel::c_str!` with C-Strings
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>
+Cc: linux-clk@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Viresh Kumar <viresh.kumar@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jan 19, 2026 at 11:45:57AM +0100, Maxime Ripard wrote:
-> On Thu, Jan 08, 2026 at 11:14:37AM -0300, Daniel Almeida wrote:
-> > > For example, it's quite typical to have (at least) one clock for the =
-bus
-> > > interface that drives the register, and one that drives the main
-> > > component logic. The former needs to be enabled only when you're
-> > > accessing the registers (and can be abstracted with
-> > > regmap_mmio_attach_clk for example), and the latter needs to be enabl=
-ed
-> > > only when the device actually starts operating.
-> > >=20
-> > > You have a similar thing for the prepare vs enable thing. The differe=
-nce
-> > > between the two is that enable can be called into atomic context but
-> > > prepare can't.
-> > >=20
-> > > So for drivers that would care about this, you would create your devi=
-ce
-> > > with an unprepared clock, and then at various times during the driver
-> > > lifetime, you would mutate that state.
+On Sat, Jan 3, 2026 at 9:29=E2=80=AFPM Tamir Duberstein <tamird@gmail.com> =
+wrote:
+>
+> On Mon, Dec 22, 2025 at 7:17=E2=80=AFAM Tamir Duberstein <tamird@kernel.o=
+rg> wrote:
+> >
+> > From: Tamir Duberstein <tamird@gmail.com>
+> >
+> > C-String literals were added in Rust 1.77. Replace instances of
+> > `kernel::c_str!` with C-String literals where possible.
+> >
+> > Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+> > Reviewed-by: Benno Lossin <lossin@kernel.org>
+> > Acked-by: Stephen Boyd <sboyd@kernel.org>
+> > Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+> > Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+> > ---
+> >  rust/kernel/clk.rs | 6 ++----
+> >  1 file changed, 2 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/rust/kernel/clk.rs b/rust/kernel/clk.rs
+> > index c1cfaeaa36a2..68a0c2f4e318 100644
+> > --- a/rust/kernel/clk.rs
+> > +++ b/rust/kernel/clk.rs
+> > @@ -104,13 +104,12 @@ mod common_clk {
+> >      /// The following example demonstrates how to obtain and configure=
+ a clock for a device.
+> >      ///
+> >      /// ```
+> > -    /// use kernel::c_str;
+> >      /// use kernel::clk::{Clk, Hertz};
+> >      /// use kernel::device::Device;
+> >      /// use kernel::error::Result;
+> >      ///
+> >      /// fn configure_clk(dev: &Device) -> Result {
+> > -    ///     let clk =3D Clk::get(dev, Some(c_str!("apb_clk")))?;
+> > +    ///     let clk =3D Clk::get(dev, Some(c"apb_clk"))?;
+> >      ///
+> >      ///     clk.prepare_enable()?;
+> >      ///
+> > @@ -272,13 +271,12 @@ fn drop(&mut self) {
+> >      /// device. The code functions correctly whether or not the clock =
+is available.
+> >      ///
+> >      /// ```
+> > -    /// use kernel::c_str;
+> >      /// use kernel::clk::{OptionalClk, Hertz};
+> >      /// use kernel::device::Device;
+> >      /// use kernel::error::Result;
+> >      ///
+> >      /// fn configure_clk(dev: &Device) -> Result {
+> > -    ///     let clk =3D OptionalClk::get(dev, Some(c_str!("apb_clk")))=
+?;
+> > +    ///     let clk =3D OptionalClk::get(dev, Some(c"apb_clk"))?;
+> >      ///
+> >      ///     clk.prepare_enable()?;
+> >      ///
+> >
+> > ---
+> > base-commit: 8f0b4cce4481fb22653697cced8d0d04027cb1e8
+> > change-id: 20251222-cstr-clk-122a1428b919
+> >
+> > Best regards,
+> > --
+> > Tamir Duberstein <tamird@gmail.com>
+> >
+>
+> @Stephen could you please have a look?
+>
+> Cheers.
+> Tamir
 
-The case where you're doing it only while accessing registers is
-interesting, because that means the Enable bit may be owned by a local
-variable. We may imagine an:
-
-    let enabled =3D self.prepared_clk.enable_scoped();
-    ... use registers
-    drop(enabled);
-
-Now ... this doesn't quite work with the current API - the current
-Enabled stated owns both a prepare and enable count, but the above keeps
-the prepare count in `self` and the enabled count in a local variable.
-But it could be done with a fourth state, or by a closure method:
-
-    self.prepared_clk.with_enabled(|| {
-        ... use registers
-    });
-
-All of this would work with an immutable variable of type Clk<Prepared>.
-
-> > > AFAIU, encoding the state of the clock into the Clk type (and thus
-> > > forcing the structure that holds it) prevents that mutation. If not, =
-we
-> > > should make it clearer (by expanding the doc maybe?) how such a patte=
-rn
-> > > can be supported.
-> > >=20
-> > > Maxime
-> >=20
-> > IIUC, your main point seems to be about mutating the state at runtime? =
-This is
-> > possible with this code. You can just have an enum, for example:
-> >=20
-> > enum MyClocks {
-> >     Unprepared(Clk<Unprepared>),
-> >     Prepared(Clk<Prepared>),
-> >     Enabled(Clk<Enabled>),=20
-> > }
-
-I believe you need an extra state if the state is not bound to the scope
-of a function:
-
-enum MyClocks {
-    Unprepared(Clk<Unprepared>),
-    Prepared(Clk<Prepared>),
-    Enabled(Clk<Enabled>),=20
-    Transitioning,
-}
-
-since mem::replace() needs a new value before you can take ownership of
-the existing Clk value.
-
-> > In fact, I specifically wanted to ensure that this was possible when wr=
-iting
-> > these patches, as it=E2=80=99s needed by drivers. If you want to, I can=
- cover that in
-> > the examples, no worries.
->=20
-> Yes, that would be great. I do wonder though if it wouldn't make sense
-> to turn it the other way around. It creates a fair share of boilerplate
-> for a number of drivers. Can't we keep Clk the way it is as a
-> lower-level type, and crate a ManagedClk (or whatever name you prefer)
-> that drivers can use, and would be returned by higher-level helpers, if
-> they so choose?
->=20
-> That way, we do have the typestate API for whoever wants to, without
-> creating too much boilerplate for everybody else.
-
-I think that if you still want an API where you just call enable/disable
-directly on it with no protection against unbalanced calls, then that
-should be the special API. Probably called RawClk and functions marked
-unsafe. Unbalanced calls seem really dangerous and use should not be
-encouraged.
-
-The current type-state based API is the least-boilerplate option for
-drivers that exist today.
-
-Alice
+Michael or Stephen: could you take this through clk or would you be ok
+with it going through rust-next?
