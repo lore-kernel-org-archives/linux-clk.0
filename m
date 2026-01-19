@@ -1,199 +1,123 @@
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E39E3815D7
-	for <linux-clk@vger.kernel.org>; Mon, 19 Jan 2026 15:01:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C12C1F4CBB;
+	Mon, 19 Jan 2026 15:02:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768834862; cv=none; b=Yo6O0meGJx+tXHnQK4lht8xjYimRLloxdBP6bUeZddYiqXP/Jkm+WpuusNvg+cMleDT8thYi4sPy1ba96/Td8HnylHZB3wAjXq7jrU2/NYGltxqC+IrmRDY5icQ+MsNvu6lyhbMoVbZg/Z0BMEnkYKsgVNtVYnOvozj9kxMipGc=
+	t=1768834977; cv=none; b=tmfGE4zI66xT8kbf3H1wMn4mi+ZCqmkByDAK0+NL3AGjbSnkIcH7+bUcuL1YGGS+w6RO96PFnTWSq8rjpOlRAdXQ5/00qCRkZ5HOhCAjI0DDkWrkWJtel4hbxjsdXUAHhk67JjXvUds7wXI/iSRj+HSd3z+7CkIJOIIGpQcgLaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768834862; c=relaxed/simple;
-	bh=5wSZP/vmyBOxdNy+Q5ghdgNb3wVebVWpShAvVAYA4xY=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=kgkhQmxBWKUiQeo0X5Hq1mmjC1B+XZBVwRWuAcVERp/zQIQbU2R+rV9TxIwxBLEYjmjJQut65VMtie/suAdH43kqVdwYjJPBwPGS/VcaPujdhjWCX7nNZjHxoe1jlFn21qvufvvHnvC8Hg8oFm+3TNF8ia9fJoM5WqDSA+F6QVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lBRWCCb6; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1768834977; c=relaxed/simple;
+	bh=XFex8+nsfxe7p/tz4vrunbSihbsFCkJGQgHTo246bSg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JZRWBn/6kojk46kHBJfKIFJm6t3q37KR72WnZnzTmv/YsvK8YSXUZ3pMaBFdLs6ckn2wgD+ssSjdFv1kUMlscrAFnL3QndRgv2m18SlxcFmaCFPR2EeBZ2R7Ex3y0MtcgjpGVFIC52uW35FpNfAnEhx0+9q8kjxxvWYo93wO/EY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=qg6fgEkk; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=DMjiVPmy; arc=none smtp.client-ip=80.241.56.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lBRWCCb6"
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-81345800791so2744893b3a.0
-        for <linux-clk@vger.kernel.org>; Mon, 19 Jan 2026 07:01:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1768834860; x=1769439660; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=2IbXNhWIbZbrbqZXRIFNlWrdzKYdRYk3QnEEbv0798c=;
-        b=lBRWCCb6sMvcs4LD+jxBqFfLO9FkIZUEUWqeaDS7MkPKacE6hGFhNUiyGt4Xd4ZI77
-         FevWy8R+jpjXkFTaefPxKw7EtqM/RdOBdDRhZX27zm+aPyYKjPSPlY9eb5wHPhCzwLVD
-         CFy9LwbXzzaLAaywRtN3A83xjhIP6nQuAE800wdckc2lKLjvnHPTjJ64uy1Z5AUqDnTo
-         UrM94hfhC/YWklIjZMp2Oeaa9bKzamxXqkuraV29e5uotcSL/rnYLeoh1C/jLqH/jdk2
-         BNu+1ILgU/jf1tlwRUqpm+TMceqvFyrhOUJeUmls4h3M+EcUk5khDjtTosiIvi7eJlQ6
-         IQXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768834860; x=1769439660;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2IbXNhWIbZbrbqZXRIFNlWrdzKYdRYk3QnEEbv0798c=;
-        b=AvvKImlj0lvTxF0gItgax+har78aaDP9ysH9AV8/ygXxlEO0OFT90sk3z5o/2dvlTf
-         6XAQlj6bO372x8nr1M7lmIM5E0nR5astynha3SdFSIf87X1k3/zGD7Nm2KbxIcaJbCo6
-         fbLyDRxOA/VH9Iub3hZinXAsQFv+ihdkoCXbzgfC0jGyvEjH+GmEAeLCGwnIMNhTfczn
-         aZrmP3zdCNtuVoF57+7Y60/hOrU/VrnVpMXcHYwV2+d5v5sJNCRRpmeLcXZLc9Qx1mVM
-         EEuEv+Jgbg9f+fRsmZcycv55hvh9IZbMIpAWC+uL8OPkjWI01GOCz3CgRa3xq0H5Y5cg
-         v5kw==
-X-Forwarded-Encrypted: i=1; AJvYcCWxjWjgHEBQYvcM2x1KJ5EJYOp7tl6APLnWH7ck1JBBe8kXx+L6x+QFDA5loQp02yYRWUC1hYdN6E8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywa+GRUbD0GS8d5O/2ajDE7Qa7aSohkdTzWOXgO5Kb8z+/fCSx1
-	Fjf7L/FNzo8IwVgnezFPNz6iNmnqdqA/+JoZEBiZWKhF6DSzg/JjjZ8/1D9n1xmK0R0=
-X-Gm-Gg: AY/fxX7WFhGn01e+f4ZwcPJ0M74yuI9yqAepzpspYufcuJTszlUMev/vh3SkNUf2OW7
-	4GFn22yJVnvoNpSEPa6+oeXVzGm0af+nsIkLsxDQMO61nvNUQjc/My5rHSMGbtyKsJsE4m5H9i9
-	IuLiHNh2xGFpEAwl+f9URWbm8q0wQGA9vaFHk0aWP51UN/Uwl/p/9Z5bPFLWEIRqhCa6ggTofs8
-	jxmcOdm+sXeeSxx9aoMPc/0hN3X8XfR95vswRv6s+rVKz7/n9SUYL/LJfwbz0FAz79Im9ZCq7Jl
-	LYxM5qvUUg2Gi+F6G7nk0ha7Xd7/0Gli0F/GBjgzyJMemaGNe5ilICqD3I5HAxogQXpkQDdTKmx
-	tO7uj8IBowGSCVr6j1QRx9GOX8bcZyKl+lUmPeYhymR1NBkXe/4Gu4IrUrBRASpycMK25KPfrzb
-	ah4a0MYjYV/MXLhfHwsw==
-X-Received: by 2002:a05:6a21:1505:b0:38d:fad1:cf2a with SMTP id adf61e73a8af0-38e00bb969bmr10563241637.13.1768834858332;
-        Mon, 19 Jan 2026 07:00:58 -0800 (PST)
-Received: from draszik.lan ([212.129.73.116])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-c5edf130f1csm9530167a12.0.2026.01.19.07.00.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Jan 2026 07:00:57 -0800 (PST)
-Message-ID: <6dde4f443be88d6fc412c08feb3e1f082c088118.camel@linaro.org>
-Subject: Re: [PATCH 3/3] clk: samsung: allow runtime PM with auto clock
- gating
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki	
- <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar
-	 <alim.akhtar@samsung.com>, Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>
-Cc: Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus	
- <tudor.ambarus@linaro.org>, Will McVicker <willmcvicker@google.com>, Juan
- Yescas <jyescas@google.com>, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, 	linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Date: Mon, 19 Jan 2026 15:00:53 +0000
-In-Reply-To: <dfc3f6ee-08c8-4673-91c2-e9c863105753@kernel.org>
-References: 
-	<20260109-clk-samsung-autoclk-updates-v1-0-2394dcf242a9@linaro.org>
-	 <20260109-clk-samsung-autoclk-updates-v1-3-2394dcf242a9@linaro.org>
-	 <dfc3f6ee-08c8-4673-91c2-e9c863105753@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-2+build3 
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="qg6fgEkk";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="DMjiVPmy"
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4dvtx35ByHz9tfv;
+	Mon, 19 Jan 2026 16:02:47 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1768834967;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=GfFz6r3zQlJSWMcpbIyPBFZDkNP4Kg4PwaTgozqldJ8=;
+	b=qg6fgEkkGvvAya/RsJKdGc9KDLiTNzFXWtcDDPzhST8ZmrX37ngsnP+uxBQPfY33WE0t2E
+	p/QU8XeigG9JVb392Kk7gKT7CUkPgfhmCZ5vPwM4hsmyFflbsXzQFG8rDpQNGydnf/RpLY
+	n9O+en2Hx/EoWZYql42r3i2pFGKEuaR9VSQhY61csUfcdh6IVl3d4syHxAN5qJK/xoKf9Y
+	G7MYyKQl9Jrn36zH35y7l0rgXStk2tFEBGeinXUF/GSC44A3ieqPS/wEKCR6J9K+mHcn4O
+	XRAGOdlRLf03FoYV3B3e/0ryGkbnhml/NCe79y2GLsAdhyS+BKtWYYosGAAIkA==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=pass header.d=mailbox.org header.s=mail20150812 header.b=DMjiVPmy;
+	spf=pass (outgoing_mbo_mout: domain of marek.vasut+renesas@mailbox.org designates 2001:67c:2050:b231:465::102 as permitted sender) smtp.mailfrom=marek.vasut+renesas@mailbox.org
+From: Marek Vasut <marek.vasut+renesas@mailbox.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1768834965;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=GfFz6r3zQlJSWMcpbIyPBFZDkNP4Kg4PwaTgozqldJ8=;
+	b=DMjiVPmyWD1QSdZ6UZ/hbrLf7xKPpB1Xxqsswgjb6DQolPwZjWRNhT4gDvmoky+niFuAzI
+	9XGoHMjlzpaOD8qiP3j8txbOa2BjH1pKQVpH3MMNecdJ5fkg0RBWvOiD9PkYdvSygFnE74
+	8DQRzrRTQ6f7RoUpCFyoRrCh4TbQKLsg2xth10GLz575v4J/YE9GFzxC/2I6lNGdZzrBC3
+	6zogFNwfxB6IUcq+6xI6TCVKAAeRzT05M8gGKKQpLmaAVDsDms8kOQLINW8D29zz+h7y68
+	AUqOQ4X3AijwkpN7QJJHMJAQsN6z/ohRejV58EuQHVtT9cuai6uoMkzYccIX4A==
+To: linux-clk@vger.kernel.org
+Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
+	stable@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v2] clk: rs9: Reserve 8 struct clk_hw slots for for 9FGV0841
+Date: Mon, 19 Jan 2026 16:01:52 +0100
+Message-ID: <20260119150242.29444-1-marek.vasut+renesas@mailbox.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-MBO-RS-META: ki9bnuwa9u48nbcmqfnmor6sphi63g7b
+X-MBO-RS-ID: a31dfa1462f39022612
+X-Rspamd-Queue-Id: 4dvtx35ByHz9tfv
 
-Hi Krzysztof,
+The 9FGV0841 has 8 outputs and registers 8 struct clk_hw, make sure
+there are 8 slots for those newly registered clk_hw pointers, else
+there is going to be out of bounds write when pointers 4..7 are set
+into struct rs9_driver_data .clk_dif[4..7] field.
 
-On Sat, 2026-01-17 at 20:25 +0100, Krzysztof Kozlowski wrote:
-> On 09/01/2026 18:27, Andr=C3=A9 Draszik wrote:
-> > When automatic clock gating is enabled, runtime PM (RPM) isn't entered
-> > even if enabled for a CMU if a sysreg clock exists and is provided by
-> > this CMU (as is generally the case).
-> >=20
-> > The reason is that this driver acquires a CMU's sysreg registers using
-> > syscon_regmap_lookup_by_phandle() which ends up preparing the sysreg
-> > clock. Given the sysreg clock is provided by this CMU, this CMU's usage
-> > count is therefore bumped and RPM can not be entered as this CMU never
-> > becomes idle.
-> >=20
-> > Switch to using device_node_to_regmap() which doesn't handle resources
-> > (the clock), leaving the CMU's usage count unaffected.
-> >=20
-> > Note1: sysreg clock handling is completely removed with this commit
->=20
-> I miss where do you remove in this commit the sysreg clock handling?
+Since there are other structure members past this struct clk_hw
+pointer array, writing to .clk_dif[4..7] fields corrupts both
+the struct rs9_driver_data content and data around it, sometimes
+without crashing the kernel. However, the kernel does surely
+crash when the driver is unbound or during suspend.
 
-The CMU driver originally used syscon_regmap_lookup_by_phandle() for sysreg=
-,
-which does clk_get() and clk_prepare(), and then implicitly and for each
-register access clk_enable()/disable() for the clock specified in DT for th=
-e
-(sysreg) node.
+Fix this, increase the struct clk_hw pointer array size to the
+maximum output count of 9FGV0841, which is the biggest chip that
+is supported by this driver.
 
-This commit changes it to using device_node_to_regmap(), which does nothing
-with the clock (or any other resources). I opted to have the CMU driver sti=
-ll
-do a clk_get(), so that the relationship is still visible, e.g. in
-$debugfs/clk/clk_summary.
+Cc: stable@vger.kernel.org
+Fixes: f0e5e1800204 ("clk: rs9: Add support for 9FGV0841")
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+---
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
+---
+V2: - Update the commit message crash paragraph
+    - Add RB/TB from Geert
+---
+ drivers/clk/clk-renesas-pcie.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> > because sysreg register access is only required during suspend/resume.
-> > In the runtime suspend case, we would have to enable the clock to read
-> > the registers, but we can not do that as that would cause a resume of
-> > this driver which is not allowed. This is not a problem because we
-> > would only need to handle the clock manually if automatic clock gating
-> > wasn't enabled in the first. This code is only relevant if automatic
-> > clock gating is enabled, though.
-> >=20
-> > Fixes: 298fac4f4b96 ("clk: samsung: Implement automatic clock gating mo=
-de for CMUs")
-> > Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
-> > ---
-> > =C2=A0drivers/clk/samsung/clk.c | 92 ++++++++++++++++++++++++++++++++++=
-+------------
-> > =C2=A0drivers/clk/samsung/clk.h |=C2=A0 2 ++
-> > =C2=A02 files changed, 71 insertions(+), 23 deletions(-)
-> >=20
-> > diff --git a/drivers/clk/samsung/clk.c b/drivers/clk/samsung/clk.c
-> > index 9f68f079fd552f8dfb6898dbfb47dec0e84c626c..6515df81fcbc79b90f52628=
-43e67575f6a4e0dda 100644
-> > --- a/drivers/clk/samsung/clk.c
-> > +++ b/drivers/clk/samsung/clk.c
-> > @@ -9,11 +9,13 @@
-> > =C2=A0 */
-> > =C2=A0
-> > =C2=A0#include <linux/slab.h>
-> > +#include <linux/clk.h>
-> > =C2=A0#include <linux/clkdev.h>
-> > =C2=A0#include <linux/clk-provider.h>
-> > =C2=A0#include <linux/io.h>
-> > =C2=A0#include <linux/mfd/syscon.h>
-> > =C2=A0#include <linux/mod_devicetable.h>
-> > +#include <linux/of.h>
-> > =C2=A0#include <linux/of_address.h>
-> > =C2=A0#include <linux/regmap.h>
-> > =C2=A0#include <linux/syscore_ops.h>
-> > @@ -489,6 +491,50 @@ void __init samsung_cmu_register_clocks(struct sam=
-sung_clk_provider *ctx,
-> > =C2=A0		samsung_clk_register_cpu(ctx, cmu->cpu_clks, cmu->nr_cpu_clks);
-> > =C2=A0}
-> > =C2=A0
-> > +static int samsung_get_sysreg_regmap(struct device_node *np,
-> > +				=C2=A0=C2=A0=C2=A0=C2=A0 struct samsung_clk_provider *ctx)
-> > +{
-> > +	struct device_node *sysreg_np;
-> > +	struct clk *sysreg_clk;
-> > +	struct regmap *regmap;
-> > +	int ret;
-> > +
-> > +	sysreg_np =3D of_parse_phandle(np, "samsung,sysreg", 0);
-> > +	if (!sysreg_np)
-> > +		return -ENODEV;
-> > +
-> > +	sysreg_clk =3D of_clk_get(sysreg_np, 0);
->=20
-> I don't think you should be poking clock of some other device. This
-> clearly breaks encapsulation. What sysreg is needs to do to access
-> registers, is only business of sysreg. No other drivers should
-> re-implement this.
+diff --git a/drivers/clk/clk-renesas-pcie.c b/drivers/clk/clk-renesas-pcie.c
+index 4c3a5e4eb77ac..f94a9c4d0b670 100644
+--- a/drivers/clk/clk-renesas-pcie.c
++++ b/drivers/clk/clk-renesas-pcie.c
+@@ -64,7 +64,7 @@ struct rs9_driver_data {
+ 	struct i2c_client	*client;
+ 	struct regmap		*regmap;
+ 	const struct rs9_chip_info *chip_info;
+-	struct clk_hw		*clk_dif[4];
++	struct clk_hw		*clk_dif[8];
+ 	u8			pll_amplitude;
+ 	u8			pll_ssc;
+ 	u8			clk_dif_sr;
+-- 
+2.51.0
 
-Similarly, to how other drivers (like UFS and peric/USI) also poke in
-the sysreg region in a similar way, the CMU related parts of sysreg are
-handled in this driver, though, as only the CMU driver knows how to
-configure them based on the gating (auto vs. manual).
-
-No separate driver was sysreg was added when this code was introduced.
-The clk_get() used to be part of syscon_regmap_lookup_by_phandle(), and
-I chose to keep only that, as per above.
-
-I propose to add an actual sysreg driver once the need arises, then
-this can also move, but for now keeping it here seems straight forward.
-
-Is that OK with you?
-
-Cheers,
-Andre'
