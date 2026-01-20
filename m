@@ -1,117 +1,111 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail.thorsis.com (mail.thorsis.com [217.92.40.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9F3A33BBB9;
-	Tue, 20 Jan 2026 16:30:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFB9933C1AC;
+	Tue, 20 Jan 2026 16:46:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.92.40.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768926629; cv=none; b=VNvAIlGPNWIZidLVnoa3274DQeVB31o+ynDQAXURzrZlfd54yZsEtcdtrDnNzX7iIa1c0sUt3yFQ9p5wru+u3KXMwKbggA5crcPMabSG1bVp/OAbx+NbhCiDlt6cCbHHKPpPdt+pxx4ScsRASuogpRsCZtYLIzpEYjbibxjYWlc=
+	t=1768927617; cv=none; b=JuCkOFVtKvhEkXpmfUfCkeMyFmUt+f9YscgGF9FzRwmXrkLcp353Bz3nlDZ5NO74N3/E6sZUvvRhYSdo8icFATed2Yfyjb6Tk39T4v95zbvHFXWo2Uwsx7FZd8nayc7cEAOeUo9PJnL5Kq4U0TiwssTh8q5pIN+wv/MDJj4cK/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768926629; c=relaxed/simple;
-	bh=vIjUCN1/aJjjc1ZkXHXSm+HKwMh8UJJEGjwRNhvFFBk=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=cE3AQu06hzF+XWmnHk4mpynxOm41JXC5bwHHp/IQUIjOiZ7+g/yhbdyyR3gjSek00MVFji59F3zoIrN1n+XsTEWOVQikY2UaTPxAAQ5yr11QNMPFMfK4cRSrsJKfLEGK4MGpJd99/C1u/HFFqcom+JC7CPi82kSzSV/BRB4+lcQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CjH6fBTc; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1768927617; c=relaxed/simple;
+	bh=0c3vh79p6gsm3uCGtnvAspS2ib7dhe2tFGNzDzCbccQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=GlLa95M0ikqHEdeqwAQTTWueiOBrp9gxwIr1J+0ZOpVI7cys0QwYBKTuhNjBEs/iIu6wBhMMl0fhIu/aKBEjn52C3U8hDsSa7U/cdQnOIIhcDAeG782NXcFc2Nsx/9RCJbI42syLNVOt4BJrYNW/Q1akaunhcqakqtPJ7xQ3/B8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com; spf=pass smtp.mailfrom=thorsis.com; dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b=lQSQpedZ; arc=none smtp.client-ip=217.92.40.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thorsis.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CjH6fBTc"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56429C16AAE;
-	Tue, 20 Jan 2026 16:30:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768926628;
-	bh=vIjUCN1/aJjjc1ZkXHXSm+HKwMh8UJJEGjwRNhvFFBk=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=CjH6fBTc42FQxOY9HdoBNAdfN8NKDkc1H93MOW7f5bsWRIHYYjgXXZo21KP3gSxYO
-	 kzoU/c5kNAbfkRiCjw+lfuiKzQtUa6of84HZ2qMWOSktnTg5SRR7bmQtN4LLB4wCvP
-	 s21jscC1TTHkzJRjtuIXOgRHlJlJH7y0dAnTQxsP8u4oMTiQYeZUFwi1VpotL0SR5g
-	 WFwZHdSGKwHUcJ8uirHGHI3o7L63YyFNwCU/X9YHBiAuB1xj4FonMNAPSnUJMN21/4
-	 9Az2m6ouu58iTf14pINtHyLCyUpsb8t4nIvp/X9wC+5jAfFoDB9aDP8GTWdx2JYHfm
-	 73Z9y5Ua/PwHw==
-Date: Tue, 20 Jan 2026 10:30:27 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b="lQSQpedZ"
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 886631488638;
+	Tue, 20 Jan 2026 17:46:52 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=thorsis.com; s=dkim;
+	t=1768927612; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=ulo77ylyJZMF+/aZjD30uG2oZc3o7QcUP3IHLM+BdQQ=;
+	b=lQSQpedZYGaCXUVdPKEo+JbBJSbufqszB6YbOEuq3DXKqeMQV7KK9GcbUzcxRD67j05RZq
+	FRDPg+GRczRx/4AXPhimI+R7nN8VpkEBdgoI4aEX9NbZiWyo6xu6mMQa4f49vm6dWnO0SV
+	iR+57Otsj6/GMGkaI5Po3YR7dPOTHhjqYhebsb5snBrhYfyiBEG18kj9P8jTZdLMF3VwSd
+	oGT0banOk3cEkTKBN+jPcF25sAQro2qzFTCJDKF1UD2sR17QCmNqX9bhrqHqbKCdSyNM3Y
+	DJ4HUcLbCZMxuODvlseWE4Jyi9ndIGSADRTru8r20hLNTzUtj6ewRy11EYlRxA==
+From: Alexander Dahl <ada@thorsis.com>
+To: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Cc: Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Ryan Wanner <ryan.wanner@microchip.com>,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Srinivas Kandagatla <srini@kernel.org>
+Subject: [PATCH v3 13/19] nvmem: microchip-otpc: Enable necessary clocks
+Date: Tue, 20 Jan 2026 16:44:47 +0100
+Message-ID: <20260120154502.1280938-7-ada@thorsis.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20260120154502.1280938-1-ada@thorsis.com>
+References: <20260120143759.904013-1-ada@thorsis.com>
+ <20260120154502.1280938-1-ada@thorsis.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
- Srinivas Kandagatla <srini@kernel.org>, 
- Alexandre Belloni <alexandre.belloni@bootlin.com>, 
- linux-kernel@vger.kernel.org, Nicolas Ferre <nicolas.ferre@microchip.com>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
- Ryan Wanner <ryan.wanner@microchip.com>, devicetree@vger.kernel.org, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>
-To: Alexander Dahl <ada@thorsis.com>
-In-Reply-To: <20260120154502.1280938-3-ada@thorsis.com>
-References: <20260120143759.904013-1-ada@thorsis.com>
- <20260120154502.1280938-1-ada@thorsis.com>
- <20260120154502.1280938-3-ada@thorsis.com>
-Message-Id: <176892662758.41946.5094529075263781406.robh@kernel.org>
-Subject: Re: [PATCH v3 09/19] dt-bindings: nvmem: microchip-otpc: Add
- required clocks
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
+Without enabling the main rc clock, initializing the packet list leads
+to a read timeout on the first packet, at least on sam9x60.
 
-On Tue, 20 Jan 2026 16:44:43 +0100, Alexander Dahl wrote:
-> The OTPC requires both the peripheral clock through PMC and the main RC
-> oscillator.  Seemed to work without explicitly enabling those clocks on
-> sama7g5 before, but did not on sam9x60.
-> 
-> Older datasheets were not clear and explicit about this, but recent are,
-> e.g. SAMA7G5 series datasheet (DS60001765B),
-> section 30.4.1 Power Management:
-> 
-> > The OTPC is clocked through the Power Management Controller (PMC).
-> > The user must power on the main RC oscillator and enable the
-> > peripheral clock of the OTPC prior to reading or writing the OTP
-> > memory.
-> 
-> Link: https://lore.kernel.org/linux-clk/ec34efc2-2051-4b8a-b5d8-6e2fd5e08c28@microchip.com/T/#u
-> Signed-off-by: Alexander Dahl <ada@thorsis.com>
-> ---
-> 
-> Notes:
->     v3:
->     - Removed clock-names (led to confusion, and not used by the driver anyways)
->     - Removed redundant example
-> 
->     v2:
->     - new patch, not present in v1
-> 
->  .../devicetree/bindings/nvmem/microchip,sama7g5-otpc.yaml | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
+According to SAM9X60 datasheet (DS60001579G) section "23.4 Product
+Dependencies" the clock must be enabled for reading and writing.
 
-My bot found errors running 'make dt_binding_check' on your patch:
+Tested on sam9x60-curiosity board.
 
-yamllint warnings/errors:
+Link: https://lore.kernel.org/linux-clk/ec34efc2-2051-4b8a-b5d8-6e2fd5e08c28@microchip.com/T/#u
+Signed-off-by: Alexander Dahl <ada@thorsis.com>
+---
 
-dtschema/dtc warnings/errors:
-Documentation/devicetree/bindings/nvmem/microchip,sama7g5-otpc.example.dts:19:18: fatal error: dt-bindings/clock/microchip,sama7g5-pmc.h: No such file or directory
-   19 |         #include <dt-bindings/clock/microchip,sama7g5-pmc.h>
-      |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-compilation terminated.
-make[2]: *** [scripts/Makefile.dtbs:141: Documentation/devicetree/bindings/nvmem/microchip,sama7g5-otpc.example.dtb] Error 1
-make[2]: *** Waiting for unfinished jobs....
-make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1559: dt_binding_check] Error 2
-make: *** [Makefile:248: __sub-make] Error 2
+Notes:
+    v3:
+    - Rewrap lines
+    
+    v2:
+    - Rewrite to enable _all_ clocks defined in dts
 
-doc reference errors (make refcheckdocs):
+ drivers/nvmem/microchip-otpc.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-See https://patchwork.kernel.org/project/devicetree/patch/20260120154502.1280938-3-ada@thorsis.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+diff --git a/drivers/nvmem/microchip-otpc.c b/drivers/nvmem/microchip-otpc.c
+index d39f2d57e5f5e..34c0d7611f3e4 100644
+--- a/drivers/nvmem/microchip-otpc.c
++++ b/drivers/nvmem/microchip-otpc.c
+@@ -8,6 +8,7 @@
+  */
+ 
+ #include <linux/bitfield.h>
++#include <linux/clk.h>
+ #include <linux/iopoll.h>
+ #include <linux/module.h>
+ #include <linux/nvmem-provider.h>
+@@ -241,6 +242,7 @@ static struct nvmem_config mchp_nvmem_config = {
+ static int mchp_otpc_probe(struct platform_device *pdev)
+ {
+ 	struct nvmem_device *nvmem;
++	struct clk_bulk_data *clks;
+ 	struct mchp_otpc *otpc;
+ 	u32 size;
+ 	int ret;
+@@ -253,6 +255,10 @@ static int mchp_otpc_probe(struct platform_device *pdev)
+ 	if (IS_ERR(otpc->base))
+ 		return PTR_ERR(otpc->base);
+ 
++	ret = devm_clk_bulk_get_all_enabled(&pdev->dev, &clks);
++	if (ret < 0)
++		return dev_err_probe(&pdev->dev, ret, "Error getting clocks!\n");
++
+ 	otpc->dev = &pdev->dev;
+ 	ret = mchp_otpc_init_packets_list(otpc, &size);
+ 	if (ret)
+-- 
+2.47.3
 
