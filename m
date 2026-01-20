@@ -1,45 +1,45 @@
-Received: from TYVP286CU001.outbound.protection.outlook.com (mail-japaneastazon11011059.outbound.protection.outlook.com [52.101.125.59])
+Received: from OS0P286CU011.outbound.protection.outlook.com (mail-japanwestazon11010027.outbound.protection.outlook.com [52.101.228.27])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2DE73BC4D2;
-	Tue, 20 Jan 2026 17:23:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.125.59
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85B8C243968;
+	Tue, 20 Jan 2026 17:23:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.228.27
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768929807; cv=fail; b=lUBT0fNHkAmqTl8TMqc065g+JZGR1WZAgLB1KbhMIKZvsYCIMVcLL3Xpz4W+iPAgcUo7yxI+HYCMGchl3DLsVK/QWfdAjIVAl2GWUjHnHSbhDQDv+f94UsKambcHyJCGi753Kp4j++e0xdXKpZmKxIBHETzDr5BYX54IXv/TCn4=
+	t=1768929840; cv=fail; b=BqiXJ3ocgXfNMOFDUbJzRgXiU4rCK3YDk6FjodeDHu9wNA29xpW9bOHz8wCbsOfL0zj8ETUda9wuAgXafEu2teaZIqu1Jut4nLG8wpYqOhRHy3W6MgQTSp20vMfLYkpMn4wzwSo0kop6rBy/06B4ufMI+W9iIR+LG4OevOq4TRw=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768929807; c=relaxed/simple;
-	bh=4QjpyFmhiCxKea0yGSsjOiYvxnP4PjMOl2xjjYMzzpI=;
+	s=arc-20240116; t=1768929840; c=relaxed/simple;
+	bh=LfzauN6hQFGbqQopYKmyAA3tgEukFaMLr16YD4XmN08=;
 	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=emiEslHdtYFjUwlmgUcLagkXa5VEiiGNLlythL7HCBhJ9m+BWWyXvm9izDkjNcuAAXMjC4f5ymGbTrSaJeJ4czLapdzsyI32E75lgYgz4lyUkeXYnoGOJo+CSiANdXHqVg50BYQRzEm+Q6fCdsY18Gso1MNNj4D4q/WFfChL8r4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b=FsMNEHS3; arc=fail smtp.client-ip=52.101.125.59
+	 Content-Type:MIME-Version; b=eWni3keucbGNW+5BnvvKVLLvf/EyhRNl4KYSMSasYtTGD0hlDZiRDv1VfxFpbG6TE+AkkQjzPi+FXp3pts827B0Z4ey81c0+bkE7azQswdnkLs2s1S1/G5+Nnz7D3LhXHFahK4VJvdIpM8i50lvq/6Xwn4w5stGlYs/VfurVmHo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b=JgOabS7t; arc=fail smtp.client-ip=52.101.228.27
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="FsMNEHS3"
+	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="JgOabS7t"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=oWs23LYFEh18+CjjpoOXAuIWtpoS8DqIPbS7nmF7MxJ38VHQvUW1cU3xsYh/h5Cb6ISVZtx/CcU8BHcILlAvc3Bw7VfXwhESLh416b2Ksrwz0GTgas+u4dx0KSPzObmTt3LBARAwHIQGSFKJiLBMJoME0Z3bAQJ4XrXBn9QzbxAJBvdtSO0a9fzmXgHnJqUaQH5W/WxHjPYbaCXYTRerc/9jCi2ibHuit1PFr46N4boGFwTlVgMi8PqErVJAuER5jK7d5rIyXM258IJheqmRCIpc+F650nIqfMfhgO+p8eky95bmiyRg7Yq/3Q7d68yFNQ9kEWzX3MmU3wYuAHdzTA==
+ b=lc8NqSbSzK3f1NxhqZY7U3f0jFvMBLVImTN+KwoYfDqJr81AbQudwZMKBmVEAAV2rG+myvLlZl0HYaMwqM2p4hBn4kzvmsRs8AJI+idkYr9pRg3tEjUJjgZHe+ylgn5KHh1823YhWp4IHIE8w+GpHXzR7S3BKvOEbgf+ksE2RPRaw6pNXrK8EguBB78dqxEbRuE0v3Vxa4IgSMEclwRvCT5JSKTk1O4+Yz4ktCXzUnCyKZ6/hfD9B2+AKKKGNUKP22YF42A8DCqL8sxNmQD3Qkf3hKQ1uVyJNHQFijUjwXaigzL+FTtoXc6e+09OhG/5tp7+sZaxK3FSFjXWZgB1sA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XPeb0ujRR9oL5HEs3JWm58EMvfJRD15BHQyf70SMIRQ=;
- b=LnXem5pB5HSwhX/y9slxMQN5fhfdCNoHwk9UhdS/lbSPDVmyW9RHBjBOlAUNGzAuGKFM5awuRmSVDYJaI++BRuscVJYochU/e2+Ap1avHBFMKXZ8UheCfr7rPin22NgIt2UWws8WURTO0ymrEMnm91X3kud/WyHXr6gh8ywKMPIULsL30fI6S7uMs217NqRGJfGiggJt7QeTHqnESFcDnAaS+s6S+UseLTa/1i7tecKOlqK84oHgQuNeKUEBawjQOMBXVZtQkeVl8G9zoYpn/Swkw9hSIbT064gAtwNJM2UbdvfZeD3JhFFLGH/4by/OkcDU18SvziPGeA7b+ssZMQ==
+ bh=RPGtLwM3eS4IXxODqmDNuB+qhCladCqyzyGEGI7nvZ8=;
+ b=pCfBxZvv5Fbw5h3+sbaI3hEpKYyuE1RnE7kCfBe9Die/ABbJSMG8WQU0sAvCX4xkbgSgam0j6JrnqJwqvHX6MPC4bgnqAVMgF5gBy8q1I2XFWuW5qQTXbc6DRO1ZI1nX/WSCn3OuUQjqNE11txHBO+mqbOrJPywDOViTgfZCzgjhuSpqfLrl3LuSqqzLZoJ4NtXPJ6eJCnyw1MF8fXVcnZBTSL9eHupEcLGgl0XxOKtwj6KcyJ4fLsxSC3c8TS1n0oS63+DaT5hncguMANXEuy/YE7DjkdcOg0WwhQwfQuNvVx/qfVAFhbVeQUxLig+jNvVAif/em/pRqDpKLweH3g==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
  dkim=pass header.d=renesas.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XPeb0ujRR9oL5HEs3JWm58EMvfJRD15BHQyf70SMIRQ=;
- b=FsMNEHS3Q12CBuFwV6nLS48aaCryHoQ5U1+Rhw5jEpObkI9RWGh4AxTHHMlTPz99rT0RiWj+DsRXRq5Zf2kCPMQs7GKlU7NzJVfGTF+dQjZwWneaDWle0usE9S8tZvhCts7b+aAjJ8VoFZqZC2pbNtKz3yuSYTBI/m9mFnzmQfo=
+ bh=RPGtLwM3eS4IXxODqmDNuB+qhCladCqyzyGEGI7nvZ8=;
+ b=JgOabS7t6HCrUKvKHIQs0ElSRaU2CaMojQRVvtYLnss1kAVDB15kilnCiT/s6TppCYu3rBpAT0jAWJxOZfDwxFEJhnlZKVCENYOPyucX8DA8QiMQjtNltHT988y8f58Hx9F04bYAJ6GggwpzzIGY+1mH7PPX3lD7a59MXHEy/lU=
 Received: from TYCPR01MB12093.jpnprd01.prod.outlook.com (2603:1096:400:448::7)
  by TYRPR01MB12140.jpnprd01.prod.outlook.com (2603:1096:405:104::5) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9520.12; Tue, 20 Jan
- 2026 17:23:22 +0000
+ 2026 17:23:56 +0000
 Received: from TYCPR01MB12093.jpnprd01.prod.outlook.com
  ([fe80::439:42dd:2bf:a430]) by TYCPR01MB12093.jpnprd01.prod.outlook.com
  ([fe80::439:42dd:2bf:a430%4]) with mapi id 15.20.9520.011; Tue, 20 Jan 2026
- 17:23:22 +0000
+ 17:23:56 +0000
 From: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
 To: Ovidiu Panait <ovidiu.panait.rb@renesas.com>, "geert+renesas@glider.be"
 	<geert+renesas@glider.be>, magnus.damm <magnus.damm@gmail.com>,
@@ -51,17 +51,17 @@ CC: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
 	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
 	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
 	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Subject: RE: [PATCH v2 3/5] clk: versaclock3: Add freerunning 32.768kHz clock
- support
-Thread-Topic: [PATCH v2 3/5] clk: versaclock3: Add freerunning 32.768kHz clock
- support
-Thread-Index: AQHcih5b82bJ+45qdEe0zF4VtdWSjbVbTqfw
-Date: Tue, 20 Jan 2026 17:23:22 +0000
+Subject: RE: [PATCH v2 4/5] arm64: dts: renesas: r9a09g057h44-rzv2h-evk: Add
+ versa3 clock generator node
+Thread-Topic: [PATCH v2 4/5] arm64: dts: renesas: r9a09g057h44-rzv2h-evk: Add
+ versa3 clock generator node
+Thread-Index: AQHcih5d2aBtSpVCZ0CNQ/H/tjeqdrVbTtCQ
+Date: Tue, 20 Jan 2026 17:23:56 +0000
 Message-ID:
- <TYCPR01MB12093A737BC3CD4DCC22A6F10C289A@TYCPR01MB12093.jpnprd01.prod.outlook.com>
+ <TYCPR01MB12093C5413ACF724B91F34B83C289A@TYCPR01MB12093.jpnprd01.prod.outlook.com>
 References: <20260120150606.7356-1-ovidiu.panait.rb@renesas.com>
- <20260120150606.7356-4-ovidiu.panait.rb@renesas.com>
-In-Reply-To: <20260120150606.7356-4-ovidiu.panait.rb@renesas.com>
+ <20260120150606.7356-5-ovidiu.panait.rb@renesas.com>
+In-Reply-To: <20260120150606.7356-5-ovidiu.panait.rb@renesas.com>
 Accept-Language: en-GB, en-US
 Content-Language: en-US
 X-MS-Has-Attach:
@@ -70,75 +70,75 @@ authentication-results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=renesas.com;
 x-ms-publictraffictype: Email
 x-ms-traffictypediagnostic: TYCPR01MB12093:EE_|TYRPR01MB12140:EE_
-x-ms-office365-filtering-correlation-id: ff7f1ddb-fcd3-47f2-a99c-08de58489cab
+x-ms-office365-filtering-correlation-id: 8268d41d-3be7-4672-10f5-08de5848b0f2
 x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam:
  BCL:0;ARA:13230040|1800799024|366016|7416014|376014|7053199007|38070700021;
 x-microsoft-antispam-message-info:
- =?us-ascii?Q?HaeuV0vnXBRetOPtx+fpJj+8y4LezACxFdfpRUCfX6OBDqbZyXQBcdjSM0Qs?=
- =?us-ascii?Q?WTrhwpZbw+CrlTlICmUQnFgNU6wpzx0z3N7j1Gc3G1hQjc630QmWCyF1gQK7?=
- =?us-ascii?Q?B3SV/PpMg7fN6ci98Tutdc3U5HtvpORRS7ImFeBWweVq3b4WShZk+/a7afQv?=
- =?us-ascii?Q?krlZCTMvfPMrMiyGvMCdi6CKC+vFSpzAbYVKbAp/5h1o8RXIt4Wh/LyfEq4C?=
- =?us-ascii?Q?FibvJfWop8C6pxxABcneVcRjQV1Ev/gpRMd7wwknpZoM9s2raoQ6Cutl/5ra?=
- =?us-ascii?Q?J+hMPoz+2ZI0wnZznYOsRMORmf8TWtBAYHQrAn4XiT+PRnUM+2gkpp1b2/xd?=
- =?us-ascii?Q?YstOiNTWtmJzLbJcbzftnrxQs1Qc4i51D1V4ilQScKI2GLrUTgkprwvO5Vk5?=
- =?us-ascii?Q?8y2ozXTgwNChAmu8xGd8Xj2Mpaay4eyzCQp+QX0vyDeyUvMaJ4sK4jweV/6X?=
- =?us-ascii?Q?ypIPpyBWqgb8Bbqn8M0clVJst86Gr+a5/zGfxbEUD3ZQzGKEadXZA32hrQ9i?=
- =?us-ascii?Q?Lbvx6APR+e1W3nRW6ix5xHGDhwta0IkfcwrHH6jJp30fRyZXGgSSBmyAdfhE?=
- =?us-ascii?Q?2MAb6OAT8AIkhXK5p5dQlDJfvrqiAaGQO8Y11bHSQ0jbprRGTDVrdKCVOiMY?=
- =?us-ascii?Q?vJpiwV7ZOeHatHHkZhv7i+ezxBvECy88UTnGt7QkyrRF94VzmlRQ/JgKuZJQ?=
- =?us-ascii?Q?b4PClXcTEs2bNict7aXcSKw8w7q2pOUmimX83ysWAki7LRnsEJmgW4+c/4tb?=
- =?us-ascii?Q?xcHr5jE+wZFwkGmasb/jr7kzDr0GkkjR3JcBGubwMtKZ5P5qM0gQKWwupfAz?=
- =?us-ascii?Q?sX0HN00cN8nHNMFcI7oojnW2o2CcFBRjOrRf5tGTwNch1Mj7Z1Ix2Nk56cX8?=
- =?us-ascii?Q?MrUD28t9IAJyN9CyIZuKFX/2dMZ+L/ejOJ9e/mjiwrXk7WLX5qbC0wV94bTb?=
- =?us-ascii?Q?71RWV5Jf3hrV2p3wsIKPUS6y8C33Gf7bVRigU6KimF0cBOm8ajknjWwBRav8?=
- =?us-ascii?Q?y0+rzzPPfpoRhlvGygVEybrL8FLlYyNTSjwkdlIkbOlOF8YLSIl5P+49b/4X?=
- =?us-ascii?Q?y8M6OZTfaOtRWUerEGct7qowmfg1tTDmngjBxX8dOS7V9ZDGkRSa8NiieWd8?=
- =?us-ascii?Q?FAay/H/EWjw1vHvMumBdShw5zh+geFfyvOelJ+qZKkIU+DiBhbkVe2SDEwUE?=
- =?us-ascii?Q?JY04di+5o0yCQmbGiF/zkTWLCGSuUuo/p37bN75tI7NEh9STyylEQ5DYAQMT?=
- =?us-ascii?Q?O498LGBhL7M6/fTgsbbW8JfNky4XOZ39VfnuKiY7rk3OQgFC77bzV9a5Grmw?=
- =?us-ascii?Q?dzecqomnGKd4ddgaH+CdR5u9GzFrjpYs9z1bYmbUra2/uDeafDeIj8tpdRKV?=
- =?us-ascii?Q?MZIGJGsUTkr7TRVt4fwosvxS0HBYQyGV0bPEpw6q2EQtrvNGHzjCtD5rEMhi?=
- =?us-ascii?Q?EH9qc+S14Mhf61a2Kf+VGNHB4TMDFkJfQCi8QmqXE6DZwtGqm0rRc+L91J01?=
- =?us-ascii?Q?RxZ8unIlHuF+wKQpVA7QsAKuGqf62DXmjT9Mf9QaJvWwHHlLv+4Kv7CA3t1d?=
- =?us-ascii?Q?E3brp8W51ZfRC7LczcMz5QLP+RDykbbDT7WhNBPWNPKp5ZSWPpSBvbimnxEu?=
- =?us-ascii?Q?WCyvTEZmLbd0h39BWJg+hjo=3D?=
+ =?us-ascii?Q?liGAfhHaQVRYyc8Ctby8RUPac8EA+kGmXS6/U+iJ3o4yDNBJ4YHm7J355iDL?=
+ =?us-ascii?Q?XiwKxMz2+R672V/kSTZ6PW8cWHuhvWVXmpCMNzAlDS/dP37VwHacdjcu7aZi?=
+ =?us-ascii?Q?HNSHNldd/cHSxUzIb4JlTwIxOYZUfFSPM2vgQY4lUHjLx73+2kmMHjFDzXEK?=
+ =?us-ascii?Q?MvpXRu19sLAEh/AxU1EB6wid31UhjYrJoUbVigxiULhma9ctzmckNsI8cT68?=
+ =?us-ascii?Q?BDo6b15VFFbIXCE1NcTg9LAmeHt4rEKQEhbzLnADz+5bVuEwOhDBDHJOdIU3?=
+ =?us-ascii?Q?oZXqbMv+xEj12dDiWK4B8eNnQUrg+dHoWVFCLpiXqNaZh3KuxFhiUfDi2eRl?=
+ =?us-ascii?Q?/4AdFVLh92fg0MN/avm7tUJvEVqgqoTbwdEmy2kgYYE1LejfJ7MOhKSuioTz?=
+ =?us-ascii?Q?Qlq1r77dPXpi+61W8JcMgZ2iBTT7Ca505bd6tUNn2+IxkvuwT5jU7q59DeGM?=
+ =?us-ascii?Q?ywQO8bRguAyUNUyAn3q1fJeYlJ3SMGMiaPorDmUIu8V6OrFLphsAHREnATHE?=
+ =?us-ascii?Q?jZi10Qra83PulFtUva32Wdj3JWERbXJuW4PZGYpbJLio6aIlHN6KlrWcatUQ?=
+ =?us-ascii?Q?ko/m4W5lCC+nnsy4lh1tgOxGMsuC4liBfHAB/KFik/2NR+WInzBr99ZTecRd?=
+ =?us-ascii?Q?C1+B9DSf2OMFicLatAl3FoiPwHCd8uJmdEg6F2AK5FvAOws6/N8tvC3cJudS?=
+ =?us-ascii?Q?OR1WM0nbqAv8ZN1+CvKlkEsSbiphN3d9YmqZi31wJEy/kYikIAaTZZz8dMiB?=
+ =?us-ascii?Q?uM5WrD0Saupizu8tR3yHuV7zwZxU+VDDRjRNBDpmQFnOse5Jof//K/BPrkhJ?=
+ =?us-ascii?Q?QoU4R+CVk9InwSSuQnUh2vjGDsnOwQulo5ygIyumWJHi9ftWtxMZ3PfjSbCX?=
+ =?us-ascii?Q?Td9XrXoHXeGsy4TRP34qahVJF1DVrpnK3uivc5iteFXaCT7uPFdR197CYAmC?=
+ =?us-ascii?Q?H/29pxHXtddCwl2PUhiH/tFTPbs5XmxcRQG1Y1xQ3T4D7gQJD4IkBvQFZqPN?=
+ =?us-ascii?Q?8Q9lI0mFOcN63Py1fzrSO3KhLfVMSn+mIBDLycEyoNZQn0F9RQAAKMeVvAJS?=
+ =?us-ascii?Q?uDCGgRcp1Tf4mgz/K052c6JmGVexF2rqKAmLfEu7rnHDm1qoefvx67h6hN1O?=
+ =?us-ascii?Q?S43bYIK2cRhL8Jgc2DGj4sKRh2sB5elCqHIaH43+wOm/XEtfmSGRfHzVIvrT?=
+ =?us-ascii?Q?dZk8Z6FU2T6Uqq7VHdMs7wck4P9/A0Gcuu1hCB95OR2z8LMEJi1Yz8ifFJ02?=
+ =?us-ascii?Q?IfW2rSiS7oSCeE2PTKpPqV6Ik1t2dhIB609bf0CTzZvs6/TIS/AClsced008?=
+ =?us-ascii?Q?uUqC2GoonNyq1XNOlvjxdP4MtDuJySiQQCRit5+r99f5NjEp5mVq0pVPWOep?=
+ =?us-ascii?Q?/BeFKVCzEQSmcmZ0sbE3v/a7pjQxKMNZ74Dg5n+t9GSHcAyes1ns/DQhU+J0?=
+ =?us-ascii?Q?gmVB83WPmDylhddkgajOKzkdVacOIVW8V1GGiYXI+2AQ6Dr3F662f7vYRguP?=
+ =?us-ascii?Q?uUeVUckahVIp6kSVspt+mcr3rk6GJD8RrEJ1Le7wlsOG6kOEozUd/Tiu7oIM?=
+ =?us-ascii?Q?SVVHpA2jc7HGvDSjYGeI9heJEycBOUs2aDmJm94/x5I0XhWzlotcqdyyht50?=
+ =?us-ascii?Q?bN9O4AuqNOkWaKjvyVNWViw=3D?=
 x-forefront-antispam-report:
  CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB12093.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(7053199007)(38070700021);DIR:OUT;SFP:1101;
 x-ms-exchange-antispam-messagedata-chunkcount: 1
 x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?Y5nRgHF8ESvlCJ0l8PssDUh5YRbRSHeh+TPyHIVFxT3FB+HWlpTvt/8dEYUA?=
- =?us-ascii?Q?ppnYxTaR6diFE3b/ViyrQyy1VmsKPxgJNYJrvHtjeaitmSkNHqupuAWA6vu5?=
- =?us-ascii?Q?dVIbJMI9VguXTTcSforBZR+VLURrPTUfDFlij1cv4/eDvdrkXvXDZPa0Ub2h?=
- =?us-ascii?Q?EfMC6MBpsY02qPtRCiUHuBUnaUAfhVdS2scBK2yOqHrh0XVwDNQEWsrdgADF?=
- =?us-ascii?Q?Bu+BpXfeFR8TpC6s968CAYYWNT6wSUoOaBDvCF+WzDXBPZUYMFIPtRLejNjF?=
- =?us-ascii?Q?57hiKGglpphIcTQiRe35Bp2r05m03BEuEmVzhs0S6zygxU3o1znULarHNTjS?=
- =?us-ascii?Q?ivmW3YLGxTovoDYVHSWuI1lkXWllUORogjzQjVt9QJxhVwp2l+5IstQv9YFA?=
- =?us-ascii?Q?aeL8DJ2ZVxrsH0SpmHqM6HuUKgYbFeBiSaGjB7bhkesbKQyP6XEFhwU/KELg?=
- =?us-ascii?Q?tfoklGNzF62Zp50lAdnIPlCfaVZiHZwe942cd7DYAOSISY1msVhc/Cs74W7y?=
- =?us-ascii?Q?57/QKol7CERphjM/EunGpNNayfndyUQ+GgcU2qq7PAipMUegKMAlXliSbWY/?=
- =?us-ascii?Q?8/EDc1+GObDEj/nPqwVmKZuLwHl4r8Ha/jIzkCHOiSgPpC82KIV30RJrjaZ3?=
- =?us-ascii?Q?PM/HsjCMPqNZDG70R1mo0JGrBTMewJ9Ga2XLoMuvTQK5QlpWudTtpKtgTGZd?=
- =?us-ascii?Q?2IzoUf5tPNB9SI5niHmFuW67vNjNIpFqrXiApo0436Gg6535jNLxMGwUVGwA?=
- =?us-ascii?Q?W15MaUoLkCAXl693qPlpNfYzCEFDSi1E6gB92fLFxnL3Sq5R9q4e52tRCO9P?=
- =?us-ascii?Q?OzBI/sadExUYCvhmG6Lu/laON6E6YW4oZ3Qm8IsMgWtHMFRlCQ/CdgtNmn88?=
- =?us-ascii?Q?MkWzmAEy4Ha+8r02qbygnmNDFnO08YUT4gxN6JcJqakWIjisS+dE///EYMJI?=
- =?us-ascii?Q?haieNggjFw3clZRypwwj6H+aN6vK8RTf4PYzUSt2FwFR3DtuVejsomnxHTmV?=
- =?us-ascii?Q?VLbCzPx7TRX9GpqSs99l1bgwrr67VXvpg5QFnZgRCLHOJMeAp7JFuD7HDIc3?=
- =?us-ascii?Q?DKoP2+uoLYJcpH9YIBRyhf9PYlbL2NNZZAhhktGfdDGYZysATFEpt+SxBH8W?=
- =?us-ascii?Q?vZW9dsgO4W9MU9mUGBHk9lV319x9VIB6dRFTGmBapBYefCZGSUzozlFR82Tl?=
- =?us-ascii?Q?C7Zlv462BSFZjqAdzpvobYAOP0CGQNrJXo1GRhDIYtQvSKbJMs4NELHArWgY?=
- =?us-ascii?Q?UFarwT7gV/whte2EiDH02dNWPJqQIFM2C6R4Ce0jKYuFH4ApXEedp9TZX0i6?=
- =?us-ascii?Q?V0UwdcsqefmrujMIFKvDqOHjwSiRvcwZLBt7QWge/fuxu4iUcnd/Vl9uKSX+?=
- =?us-ascii?Q?CXnhHZL/F3AGxnJ5HOlQM5ZsjFLNOftp6/JMipW0jO743b986sU7e1kAefv+?=
- =?us-ascii?Q?phXO4KcVYr3VRBhDEKpuak1LaAffCkTExJHgMFCrWjFPeHyVJE6MbGGqdyxh?=
- =?us-ascii?Q?ercu5gWvPpWHtslvXVXFdKWabFRRnhkRHsRb86yx0YccT2L/ymbQ9PLOOc/v?=
- =?us-ascii?Q?YhocRO144pUNkks8yHZdxda2cBgB4ckM4yWjA4CrVjD7tcCfJipdNS65gyhD?=
- =?us-ascii?Q?9e3eUQpu07QfEakVcyQ+ghLFedaGDgattOXzYHKu33iXx/n8CK9TJeNDMKcl?=
- =?us-ascii?Q?nmtd6jG+SWGfFotW5n2P54iiLiiz+Rla9FLofxdfm1wkkGEIouYkFMv0n+7+?=
- =?us-ascii?Q?Wtsw71o107DM4Vo9WFjoGuONWk2xh4s=3D?=
+ =?us-ascii?Q?7N06VmwJuLWx1yjfppO32mHB4sHTuFzfUwBCQRLWAUz2k2cW6wUnZopn4IWl?=
+ =?us-ascii?Q?h1U3551P9dEpsBjr4Zw3La8mqrnrk7XjDU+cbL83EFwaO2agsw2PgdgaRWI7?=
+ =?us-ascii?Q?H2m/hD48sTKSKxtdumDQ+m9jDo8GzI7sNz/k9FijxkciQjZpYRBhXXpVknqb?=
+ =?us-ascii?Q?oMbOvAhM1xvQeS6B1zJYjeUQ1LjQQfpvi/1pEJG6Dt9bD2i07S9/GimcHO9B?=
+ =?us-ascii?Q?I4VF6ElNtqgGKxBYSbs1YTjKIBmZhCfkweT6RFm1vamzGUYOK2Xa7qYXrukz?=
+ =?us-ascii?Q?T74p2HYjdnq6U91kO8v1yeq5GeiaqNf2RGualYfo2dxmoi1JzVts3N95gSqc?=
+ =?us-ascii?Q?iO4jyKXZJWcHtNwnhBVxTTr1Fd+S0hnqhH5U/Zk+KVQNHTRyWpVtgMDCwAMx?=
+ =?us-ascii?Q?wDq61oO+w9tCeGCT/turwrl4AFErz+droN7M3cLmFN3pjGxFcEVfWMi8EKqi?=
+ =?us-ascii?Q?N31BAMMdgJETP81ss60swRR99oy8ZJs+aRlYAZCd5YZv8jS1XBDc/X9yFDhU?=
+ =?us-ascii?Q?DSXaDcbwwDYnylNPUC666emSR0r+gAwJ0yeGmNWGsV4mxIEu2AiwGMBthBMY?=
+ =?us-ascii?Q?x21keCEFBDZ7SlsvLJejIKRAQxouK+WEXZjZ21s5WBJs1BnMAMbXi8eT+1cI?=
+ =?us-ascii?Q?rkOzd3iqVCEfKir5DkDf8uiyznNDzkz0TR0I3Jo2Cr4P5sWm/VGlfoTogNN2?=
+ =?us-ascii?Q?QXWg+en/V5WlqAmrQbl9mYQxLAf/+mlbYxkrk9YrBX6mQlkAYFRoAJ/V4gTN?=
+ =?us-ascii?Q?oe1DyBRaVzoimbC9EyfEZ6nWkrOpiu46nrHMbWdcoc4BM1UeJvkLHIVwG5vX?=
+ =?us-ascii?Q?mQQLNO1MaDNcjXZgmrX3nmNEe2LlOsVkcCeoF0fKkrQ9RoTlJaLK+hwoNN7f?=
+ =?us-ascii?Q?HYmgsiEn/4zzqeMiPHKwpS7uHXTy38eKToMxyXKsyFoB+v3NPIkfGN6+oHqf?=
+ =?us-ascii?Q?TrKpUe9HDlImdbKiJKXtVWyqH8nqSg4jf2LwsHdulAIKZ1gaN8qTy8tBmP4t?=
+ =?us-ascii?Q?XKxmIcRUNhVuge+Ix2F3Cy91HMO221KPTQvepgTc98AwRqT5dp+xIXz7MViA?=
+ =?us-ascii?Q?Ks0xf5imBigjftJszMnxmtpZo6TozOsYB9gXmvk4e3UoJN5C/oGU4fBa6uzr?=
+ =?us-ascii?Q?2jTR5LoLMO5Zdx78SKRximyvQXJgcd5/+ot9eQbDonX8SqFe8OLfvb2ShvFY?=
+ =?us-ascii?Q?sqt773ogfBgz/3yywJAVTKOS6NjS8RdcM5dgbpYvdK+Q+yHmmk24LoVzZb5M?=
+ =?us-ascii?Q?KlUtsz6hu7Vaw9axAvwQroMTEgY+sdMcxckeBJA2nWoDtPRVuS32W9fFkdK0?=
+ =?us-ascii?Q?6NuhiNWmfhf5Dls89Dq32oG8k4iEHBJi3kEUzEl5gChfU/unD40BnRLAYTU8?=
+ =?us-ascii?Q?zphVoPYX2IH9hvjaTDsbkDL1xOjdu8V+Hn5GrKz2h6m2ucm6BM0dxaGcVdAx?=
+ =?us-ascii?Q?sVnMlAMEm+TT71Offeb5utuwQoI/drrd0f5WVmjM5/yvpxn7AL5phinqz5rt?=
+ =?us-ascii?Q?mYZ+dNp1w/+XPH8VdryuaS/YGS2pWxq8RudaiMpWo5fD98sebGp3bfwzBkuv?=
+ =?us-ascii?Q?pSG/QPgiSPL8dgkF4s4E6ctJ0wePyDYr4ykn1oNN6lnVXWNxOEXbppwYDYgs?=
+ =?us-ascii?Q?L40/Qe1jjRxyWzvk7IJp3ByNXQvZ+GG2zPViNfUyittcc3rj6kJKRZeJosFu?=
+ =?us-ascii?Q?wX9u/P0uCJHk128RLfIs6pP+JYliQjUC2KrWM/dnuppBrLMKIcLu/DpfO5A/?=
+ =?us-ascii?Q?kC71UVQv1vmpm4rmZT21ucLArg2E6oc=3D?=
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
@@ -150,13 +150,13 @@ MIME-Version: 1.0
 X-OriginatorOrg: renesas.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
 X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB12093.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ff7f1ddb-fcd3-47f2-a99c-08de58489cab
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Jan 2026 17:23:22.2250
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8268d41d-3be7-4672-10f5-08de5848b0f2
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Jan 2026 17:23:56.2298
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: wEfBudaRgVPv62tixmeiAafUDw9NUF/zpvbd4gYP7iOZweyYY6h/jyH/W5Xfd9B6fqTJzkJFHmJVwLddHDQjvWF08bmdSmFK3KHG2pV2xuc=
+X-MS-Exchange-CrossTenant-userprincipalname: qjxNk0PouB+4VfOumX9zgW4/9hKnIpFKBt8rfr2AjLgm95+jIFzwlGKnX4JNZim/5uEZnR2SUuhfXKaRPNUeoxIfCAqlxjcchXxGQogsWHg=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYRPR01MB12140
 
 > From: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
@@ -169,28 +169,11 @@ rnel.org; krzk+dt@kernel.org;
 > Cc: linux-renesas-soc@vger.kernel.org; devicetree@vger.kernel.org; linux-=
 kernel@vger.kernel.org; linux-
 > clk@vger.kernel.org
-> Subject: [PATCH v2 3/5] clk: versaclock3: Add freerunning 32.768kHz clock=
- support
+> Subject: [PATCH v2 4/5] arm64: dts: renesas: r9a09g057h44-rzv2h-evk: Add =
+versa3 clock generator node
 >=20
-> The Versa 3 clock generator has an internal 32.768kHz oscillator that can
-> be routed to the SE1, SE2 and SE3 outputs. This patch exposes it as a
-> fixed-rate clock ("vc3-clk-32k") and makes it available as a parent for
-> the SE1/SE2/SE3 muxes.
->=20
-> The 32.768kHz clock is only intended to be used when explicitly requested
-> (i.e. when a rate of exactly 32768Hz is set). Selecting it as a fallback
-> for other rates can cause issues, for example in audio configurations.
->=20
-> To enforce this, introduce a new helper function,
-> _vc3_clk_mux_determine_rate() which rejects configurations where the
-> 32.768kHz parent would otherwise be chosen implicitly.
->=20
-> Two new fields are added to struct vc3_clk_data:
->   - clk_32k_bitmsk: bit mask for selecting the 32.768kHz oscillator
->   - clk_32k_index: index of the 32.768kHz clock in the mux parent list
->=20
-> They are used by clk_mux callbacks to select the appropriate parent clock=
-.
+> Add versa3 clock generator node. It provides clocks for the RTC, PCIe
+> and audio devices.
 >=20
 > Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 
@@ -199,227 +182,53 @@ Reviewed-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
 > ---
 > v2 changes: None.
 >=20
->  drivers/clk/clk-versaclock3.c | 85 +++++++++++++++++++++++++++++------
->  1 file changed, 71 insertions(+), 14 deletions(-)
+>  .../dts/renesas/r9a09g057h44-rzv2h-evk.dts    | 25 +++++++++++++++++++
+>  1 file changed, 25 insertions(+)
 >=20
-> diff --git a/drivers/clk/clk-versaclock3.c b/drivers/clk/clk-versaclock3.=
-c
-> index ebd9d75d7f55..b5df349f497d 100644
-> --- a/drivers/clk/clk-versaclock3.c
-> +++ b/drivers/clk/clk-versaclock3.c
-> @@ -61,8 +61,10 @@
->  #define VC3_OUTPUT_CTR_DIV4_SRC_SEL	BIT(3)
+> diff --git a/arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts
+> b/arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts
+> index dc4577ebf2e9..4a70e0707b38 100644
+> --- a/arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts
+> +++ b/arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts
+> @@ -108,6 +108,12 @@ vqmmc_sdhi1: regulator-vccq-sdhi1 {
+>  		states =3D <3300000 0>, <1800000 1>;
+>  	};
 >=20
->  #define VC3_SE2_CTRL_REG0		0x1f
-> +#define VC3_SE2_CTRL_REG0_SE2_FREERUN_32K	BIT(7)
->=20
->  #define VC3_SE3_DIFF1_CTRL_REG		0x21
-> +#define VC3_SE3_DIFF1_CTRL_REG_SE3_FREERUN_32K	BIT(7)
->  #define VC3_SE3_DIFF1_CTRL_REG_SE3_CLK_SEL	BIT(6)
->=20
->  #define VC3_DIFF1_CTRL_REG		0x22
-> @@ -72,6 +74,7 @@
->  #define VC3_DIFF2_CTRL_REG_DIFF2_CLK_SEL	BIT(7)
->=20
->  #define VC3_SE1_DIV4_CTRL		0x24
-> +#define VC3_SE1_DIV4_CTRL_SE1_FREERUN_32K	BIT(4)
->  #define VC3_SE1_DIV4_CTRL_SE1_CLK_SEL	BIT(3)
->=20
->  #define VC3_PLL1_VCO_MIN		300000000UL
-> @@ -83,6 +86,9 @@
->  #define VC3_2_POW_16			(U16_MAX + 1)
->  #define VC3_DIV_MASK(width)		((1 << (width)) - 1)
->=20
-> +#define VC3_CLK_32K_NAME		"vc3-clk-32k"
-> +#define VC3_CLK_32K_FREQ		32768
+> +	x1: x1-clock {
+> +		compatible =3D "fixed-clock";
+> +		#clock-cells =3D <0>;
+> +		clock-frequency =3D <24000000>;
+> +	};
 > +
->  enum vc3_pfd_mux {
->  	VC3_PFD2_MUX,
->  	VC3_PFD3_MUX,
-> @@ -134,6 +140,9 @@ enum vc3_clk_mux {
->  struct vc3_clk_data {
->  	u8 offs;
->  	u8 bitmsk;
+>  	/* 32.768kHz crystal */
+>  	x6: x6-clock {
+>  		compatible =3D "fixed-clock";
+> @@ -277,6 +283,25 @@ raa215300: pmic@12 {
+>  		clocks =3D <&x6>;
+>  		clock-names =3D "xin";
+>  	};
 > +
-> +	u8 clk_32k_bitmsk;
-> +	u8 clk_32k_index;
+> +	versa3: clock-generator@69 {
+> +		compatible =3D "renesas,5l35023";
+> +		reg =3D <0x69>;
+> +		clocks =3D <&x1>;
+> +		#clock-cells =3D <1>;
+> +		assigned-clocks =3D <&versa3 0>,
+> +				  <&versa3 1>,
+> +				  <&versa3 2>,
+> +				  <&versa3 3>,
+> +				  <&versa3 4>,
+> +				  <&versa3 5>;
+> +		assigned-clock-rates =3D <24000000>,
+> +				       <24576000>,
+> +				       <32768>,
+> +				       <22579200>,
+> +				       <100000000>,
+> +				       <100000000>;
+> +	};
 >  };
 >=20
->  struct vc3_pfd_data {
-> @@ -213,6 +222,7 @@ static const struct clk_div_table div3_divs[] =3D {
->  	{}
->  };
->=20
-> +static struct clk_hw *clk_32k;
->  static struct clk_hw *clk_out[6];
->=20
->  static u8 vc3_pfd_mux_get_parent(struct clk_hw *hw)
-> @@ -549,19 +559,40 @@ static const struct clk_ops vc3_div_ops =3D {
->  	.set_rate =3D vc3_div_set_rate,
->  };
->=20
-> +static int _vc3_clk_mux_determine_rate(struct clk_hw *hw,
-> +				       struct clk_rate_request *req)
-> +{
-> +	bool is_32k_req =3D (req->rate =3D=3D VC3_CLK_32K_FREQ);
-> +	struct clk_rate_request tmp_req;
-> +	int ret;
-> +
-> +	clk_hw_init_rate_request(hw, &tmp_req, req->rate);
-> +
-> +	ret =3D clk_mux_determine_rate_flags(hw, &tmp_req, CLK_SET_RATE_PARENT)=
-;
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Select the 32.768 kHz parent only when explicitly requested. */
-> +	if ((tmp_req.best_parent_rate =3D=3D VC3_CLK_32K_FREQ) && !is_32k_req)
-> +		return -EINVAL;
-> +
-> +	memcpy(req, &tmp_req, sizeof(*req));
-> +
-> +	return 0;
-> +}
-> +
->  static int vc3_clk_mux_determine_rate(struct clk_hw *hw,
->  				      struct clk_rate_request *req)
->  {
->  	int frc;
->=20
-> -	if (clk_mux_determine_rate_flags(hw, req, CLK_SET_RATE_PARENT)) {
-> +	if (_vc3_clk_mux_determine_rate(hw, req)) {
->  		/* The below check is equivalent to (best_parent_rate/rate) */
->  		if (req->best_parent_rate >=3D req->rate) {
->  			frc =3D DIV_ROUND_CLOSEST_ULL(req->best_parent_rate,
->  						    req->rate);
->  			req->rate *=3D frc;
-> -			return clk_mux_determine_rate_flags(hw, req,
-> -							    CLK_SET_RATE_PARENT);
-> +			return _vc3_clk_mux_determine_rate(hw, req);
->  		}
->  	}
->=20
-> @@ -576,6 +607,9 @@ static u8 vc3_clk_mux_get_parent(struct clk_hw *hw)
->=20
->  	regmap_read(vc3->regmap, clk_mux->offs, &val);
->=20
-> +	if (clk_mux->clk_32k_bitmsk && !(val & clk_mux->clk_32k_bitmsk))
-> +		return clk_mux->clk_32k_index;
-> +
->  	return !!(val & clk_mux->bitmsk);
->  }
->=20
-> @@ -583,9 +617,15 @@ static int vc3_clk_mux_set_parent(struct clk_hw *hw,=
- u8 index)
->  {
->  	struct vc3_hw_data *vc3 =3D container_of(hw, struct vc3_hw_data, hw);
->  	const struct vc3_clk_data *clk_mux =3D vc3->data;
-> +	unsigned int bitmsk =3D clk_mux->clk_32k_bitmsk;
-> +	unsigned int val =3D 0;
-> +
-> +	if (index !=3D clk_mux->clk_32k_index) {
-> +		bitmsk |=3D clk_mux->bitmsk;
-> +		val =3D clk_mux->clk_32k_bitmsk | (index ? clk_mux->bitmsk : 0);
-> +	}
->=20
-> -	return regmap_update_bits(vc3->regmap, clk_mux->offs, clk_mux->bitmsk,
-> -				  index ? clk_mux->bitmsk : 0);
-> +	return regmap_update_bits(vc3->regmap, clk_mux->offs, bitmsk, val);
->  }
->=20
->  static const struct clk_ops vc3_clk_mux_ops =3D {
-> @@ -900,18 +940,21 @@ static struct vc3_hw_data clk_div[] =3D {
->  	}
->  };
->=20
-> -static const struct clk_parent_data clk_mux_parent_data[][2] =3D {
-> +static const struct clk_parent_data clk_mux_parent_data[][3] =3D {
->  	[VC3_SE1_MUX] =3D {
->  		{ .hw =3D &clk_div[VC3_DIV5].hw },
-> -		{ .hw =3D &clk_div[VC3_DIV4].hw }
-> +		{ .hw =3D &clk_div[VC3_DIV4].hw },
-> +		{ .name =3D VC3_CLK_32K_NAME, .index =3D -1 }
->  	},
->  	[VC3_SE2_MUX] =3D {
->  		{ .hw =3D &clk_div[VC3_DIV5].hw },
-> -		{ .hw =3D &clk_div[VC3_DIV4].hw }
-> +		{ .hw =3D &clk_div[VC3_DIV4].hw },
-> +		{ .name =3D VC3_CLK_32K_NAME, .index =3D -1 }
->  	},
->  	[VC3_SE3_MUX] =3D {
->  		{ .hw =3D &clk_div[VC3_DIV2].hw },
-> -		{ .hw =3D &clk_div[VC3_DIV4].hw }
-> +		{ .hw =3D &clk_div[VC3_DIV4].hw },
-> +		{ .name =3D VC3_CLK_32K_NAME, .index =3D -1 }
->  	},
->  	[VC3_DIFF1_MUX] =3D {
->  		{ .hw =3D &clk_div[VC3_DIV1].hw },
-> @@ -927,38 +970,44 @@ static struct vc3_hw_data clk_mux[] =3D {
->  	[VC3_SE1_MUX] =3D {
->  		.data =3D &(struct vc3_clk_data) {
->  			.offs =3D VC3_SE1_DIV4_CTRL,
-> -			.bitmsk =3D VC3_SE1_DIV4_CTRL_SE1_CLK_SEL
-> +			.bitmsk =3D VC3_SE1_DIV4_CTRL_SE1_CLK_SEL,
-> +			.clk_32k_bitmsk =3D VC3_SE1_DIV4_CTRL_SE1_FREERUN_32K,
-> +			.clk_32k_index =3D 2
->  		},
->  		.hw.init =3D &(struct clk_init_data) {
->  			.name =3D "se1_mux",
->  			.ops =3D &vc3_clk_mux_ops,
->  			.parent_data =3D clk_mux_parent_data[VC3_SE1_MUX],
-> -			.num_parents =3D 2,
-> +			.num_parents =3D 3,
->  			.flags =3D CLK_SET_RATE_PARENT
->  		}
->  	},
->  	[VC3_SE2_MUX] =3D {
->  		.data =3D &(struct vc3_clk_data) {
->  			.offs =3D VC3_SE2_CTRL_REG0,
-> +			.clk_32k_bitmsk =3D VC3_SE2_CTRL_REG0_SE2_FREERUN_32K,
-> +			.clk_32k_index =3D 2
->  		},
->  		.hw.init =3D &(struct clk_init_data) {
->  			.name =3D "se2_mux",
->  			.ops =3D &vc3_clk_mux_ops,
->  			.parent_data =3D clk_mux_parent_data[VC3_SE2_MUX],
-> -			.num_parents =3D 2,
-> +			.num_parents =3D 3,
->  			.flags =3D CLK_SET_RATE_PARENT
->  		}
->  	},
->  	[VC3_SE3_MUX] =3D {
->  		.data =3D &(struct vc3_clk_data) {
->  			.offs =3D VC3_SE3_DIFF1_CTRL_REG,
-> -			.bitmsk =3D VC3_SE3_DIFF1_CTRL_REG_SE3_CLK_SEL
-> +			.bitmsk =3D VC3_SE3_DIFF1_CTRL_REG_SE3_CLK_SEL,
-> +			.clk_32k_bitmsk =3D VC3_SE3_DIFF1_CTRL_REG_SE3_FREERUN_32K,
-> +			.clk_32k_index =3D 2
->  		},
->  		.hw.init =3D &(struct clk_init_data) {
->  			.name =3D "se3_mux",
->  			.ops =3D &vc3_clk_mux_ops,
->  			.parent_data =3D clk_mux_parent_data[VC3_SE3_MUX],
-> -			.num_parents =3D 2,
-> +			.num_parents =3D 3,
->  			.flags =3D CLK_SET_RATE_PARENT
->  		}
->  	},
-> @@ -1038,6 +1087,14 @@ static int vc3_probe(struct i2c_client *client)
->  		return ret;
->  	}
->=20
-> +	/* Register fixed 32.768kHz clock */
-> +	clk_32k =3D devm_clk_hw_register_fixed_rate(dev, VC3_CLK_32K_NAME, NULL=
-,
-> +						  0, VC3_CLK_32K_FREQ);
-> +	if (IS_ERR(clk_32k))
-> +		return dev_err_probe(dev, PTR_ERR(clk_32k),
-> +				     "Failed to register %dHz fixed clock\n",
-> +				     VC3_CLK_32K_FREQ);
-> +
->  	/* Register pfd muxes */
->  	for (i =3D 0; i < ARRAY_SIZE(clk_pfd_mux); i++) {
->  		clk_pfd_mux[i].regmap =3D regmap;
+>  &mdio0 {
 > --
 > 2.51.0
 
