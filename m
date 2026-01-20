@@ -1,90 +1,97 @@
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C26F30DEA7;
-	Wed, 21 Jan 2026 01:22:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA18733C52F;
+	Wed, 21 Jan 2026 02:24:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768958579; cv=none; b=NQW7UR1noVaaMfTgKa82KQIS3Wqd0VARbDZlXrqICjjN8ft9UcbA7wZ7y1de1vZjNfM8QSZuKCOB1PjZDY8Wenzi5SKWa8ysF6OUbVejUsbr/nT93b2rDtWMcwdlE1xzHuiUN4CKvWZH9dJfl7IjDir00HbcGHNf42ut/qutbXQ=
+	t=1768962255; cv=none; b=u835DNwZ9mcGoSuXv7tuWvGkFf2YOgy6gam3fXWsD+jfZzuanmoq3bZoLQo0B48XZvSxUMUBBdsZ/xxEDT+tTOKJuM9r0Lc15AVoKSXn5rw8cfYhl1svFjVCd1iPM2QngFCDOOW+N+cwlXDEF2Z3sEB82niR44CwosOXk6KG5jU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768958579; c=relaxed/simple;
-	bh=B6kvndOuGcIDLEeK2haT6VFwiZMfgxKr5nxP7WS9dNs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=LAyjX7YLhmL5NuV83fdM4fMv4gT7dZ5xHGia5HePYOXScqVG7Sfgg0f38OIGKFHGoMlNWVjrQhV2k0YHfPeXMquXSob/v2NKMjel53mdhCa+kpXXJ5iaYUUTnlkRcvNFYcVdjoJZ0YiAAnAdHXVHa//oUJjFBWG/s2Og9tY3m3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=isrc.iscas.ac.cn; spf=pass smtp.mailfrom=isrc.iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=isrc.iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=isrc.iscas.ac.cn
-Received: from localhost.localdomain (unknown [36.112.3.108])
-	by APP-05 (Coremail) with SMTP id zQCowAB3zhFdKnBpw6_aBQ--.10840S3;
-	Wed, 21 Jan 2026 09:22:41 +0800 (CST)
-From: Haoxiang Li <lihaoxiang@isrc.iscas.ac.cn>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	bmasney@redhat.com
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Haoxiang Li <lihaoxiang@isrc.iscas.ac.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH v2 1/7] clk: st: clkgen-pll: Fix a memory leak in clkgen_odf_register()
-Date: Wed, 21 Jan 2026 09:22:17 +0800
-Message-Id: <20260121012223.186199-2-lihaoxiang@isrc.iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20260121012223.186199-1-lihaoxiang@isrc.iscas.ac.cn>
-References: <20260121012223.186199-1-lihaoxiang@isrc.iscas.ac.cn>
+	s=arc-20240116; t=1768962255; c=relaxed/simple;
+	bh=4GLe6D02h7Y6w9HcTTuruiGEGFiXvMgy+qOF590BKH4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fknViHkP23yThRjtfBsGs2v9aYqJYr2cAcmdRF609aJjAi2nsGWyxT+KmQM6ImrLdHKR/2FC660x3tJ1NAFX7s6weArkVn4DLx0nEuZIuK+jJSUgEAyAyd73mWiEW//6H1bJuB5ZEuIrZtBxQTYG1Fxq0Gpl21ngAH0sWs87XaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=jOQPJIMP; arc=none smtp.client-ip=80.241.56.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="jOQPJIMP"
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4dwp0f4jcxz9tqS;
+	Wed, 21 Jan 2026 03:24:02 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1768962242;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vJ5wBBW4dXw/ENsH5JVmW0ztfH6jgeQcz+gbMP/GI14=;
+	b=jOQPJIMPBVoBvtc8x8czLZBtCYWru3xpqlpI6W+AsVVgXfdkAf8g1QWgaP0KDwF62SiyW6
+	UQPiAnUsbkjPQUSDYzrjcFqmOfWex5f1eAd+rs1tPPRdXHKWdYJeaDjq4PSns74kZwyrVI
+	BV5vMrxWIHblNLr2jHFwwwTE4Mz9aSyrKfBgKTzX8NtjcvYvxWrz/4z3x8/lrhJgt3h7VB
+	mROykv+DNSx0KTgAoJQ2lE/GrP02Iqeh+/PDtEMAlDNMrDD1unJ+KK2l1X+dUcaKXnydu6
+	cEUXUBpCcix6wl93GibJGM3/vl24Cgvn80r28jcUpUxS4MfXXZqRaojTArH9aw==
+Message-ID: <10de432d-b38a-4fe2-959b-d9fa4e08e6c1@mailbox.org>
+Date: Wed, 21 Jan 2026 00:43:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowAB3zhFdKnBpw6_aBQ--.10840S3
-X-Coremail-Antispam: 1UD129KBjvdXoWrKFyftw4rJw4rXr13Gr1rJFb_yoWfCwbEyr
-	W2q3sav34rCF43A3WUAw47ZryF93Wkurn3Wa1ftrW5K34UXry8KrWFq395Jr15WFWrCryD
-	Gws7J3s8Cr47ZjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbhAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUGwA2048vs2IY02
-	0Ec7CjxVAFwI0_JFI_Gr1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28EF7xv
-	wVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwA2z4
-	x0Y4vEx4A2jsIE14v26r1j6r4UM28EF7xvwVC2z280aVCY1x0267AKxVW8JVW8Jr1le2I2
-	62IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcV
-	AFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG
-	0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7CjxVAaw2AFwI0_JF0_Jw1l42
-	xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWU
-	GwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI4
-	8JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4U
-	MIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I
-	8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUemhwUUUUU
-X-CM-SenderInfo: 5olkt0x0ld0ww6lv2u4olvutnvoduhdfq/1tbiDAYOE2lwF8I5OgAAsY
+Subject: Re: [PATCH v2] clk: rs9: Add clock index range check to
+ rs9_of_clk_get()
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <4cb63bd8b1e49407831431fbc88b218f720a74fd.1768899891.git.geert+renesas@glider.be>
+Content-Language: en-US
+From: Marek Vasut <marek.vasut@mailbox.org>
+In-Reply-To: <4cb63bd8b1e49407831431fbc88b218f720a74fd.1768899891.git.geert+renesas@glider.be>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-MBO-RS-META: x71cwywpd7c9757rqqom4pwkqmjz6wah
+X-MBO-RS-ID: 5653ca25e7f01fa4b6b
 
-If clk_register_composite() fails, call kfree() to release
-div and gate.
+On 1/20/26 10:05 AM, Geert Uytterhoeven wrote:
+> rs9_of_clk_get() does not validate the clock index in the passed
+> DT clock specifier.  If DT specifies an incorrect and out-of-range
+> index, this will access memory beyond the end of the clk_dif[] array.
+> 
+> Fix by this adding a range check to rs9_of_clk_get().
+> 
+> Fixes: 892e0ddea1aa6f70 ("clk: rs9: Add Renesas 9-series PCIe clock generator driver")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> This is v2 of "[PATCH] clk: rs9: Convert to clk_hw_onecell_data and
+> of_clk_hw_onecell_get()"
+> (https://lore.kernel.org/a6dce17b15d29a257d09fe0edc199a14c297f1a8.1768836042.git.geert+renesas@glider.be)
+> 
+> v2:
+>    - Just add the missing range check; the conversion to
+>      of_clk_hw_onecell_get() can be done later.
+> ---
+>   drivers/clk/clk-renesas-pcie.c | 3 +++
+>   1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/clk/clk-renesas-pcie.c b/drivers/clk/clk-renesas-pcie.c
+> index aa108df12e44fb9f..1adc5365ba1a3d59 100644
+> --- a/drivers/clk/clk-renesas-pcie.c
+> +++ b/drivers/clk/clk-renesas-pcie.c
+> @@ -277,6 +277,9 @@ rs9_of_clk_get(struct of_phandle_args *clkspec, void *data)
+>   	struct rs9_driver_data *rs9 = data;
+>   	unsigned int idx = clkspec->args[0];
+>   
+> +	if (idx >= rs9->chip_info->num_clks)
 
-Fixes: b9b8e614b580 ("clk: st: Support for PLLs inside ClockGenA(s)")
-Cc: stable@vger.kernel.org
-Signed-off-by: Haoxiang Li <lihaoxiang@isrc.iscas.ac.cn>
-Reviewed-by: Brian Masney <bmasney@redhat.com>
----
- drivers/clk/st/clkgen-pll.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+of_clk_src_onecell_get() does a pr_err("%s: invalid clock index %u\n", 
+__func__, idx); on error, should this function do the same ?
 
-diff --git a/drivers/clk/st/clkgen-pll.c b/drivers/clk/st/clkgen-pll.c
-index c258ff87a171..a7d605b52cf3 100644
---- a/drivers/clk/st/clkgen-pll.c
-+++ b/drivers/clk/st/clkgen-pll.c
-@@ -742,8 +742,11 @@ static struct clk * __init clkgen_odf_register(const char *parent_name,
- 				     &div->hw, &clk_divider_ops,
- 				     &gate->hw, &clk_gate_ops,
- 				     flags);
--	if (IS_ERR(clk))
-+	if (IS_ERR(clk)) {
-+		kfree(div);
-+		kfree(gate);
- 		return clk;
-+	}
- 
- 	pr_debug("%s: parent %s rate %lu\n",
- 			__clk_get_name(clk),
--- 
-2.25.1
+> +		return ERR_PTR(-EINVAL);
+> +
 
+Thanks !
