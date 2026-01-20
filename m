@@ -1,95 +1,108 @@
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com [209.85.221.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1B603BC4E4;
-	Tue, 20 Jan 2026 09:59:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 770DF3C1979
+	for <linux-clk@vger.kernel.org>; Tue, 20 Jan 2026 10:49:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768903162; cv=none; b=LFGXp0e50utqbDRlxfPuafZSlxkkTrj40ZfsN9Tg+6bw0RuS5xQGHz8YAvXg7D8z9M4r/+OfrAo9i2uMXF9xPTCQuXX+hZA2tb9689wZu0Ecq78r6WebBpLqJyr3bNwWbMklNBIyYWRGxauSpfbKtP2QENH0ZHa75T4pXZrq354=
+	t=1768906187; cv=none; b=aNKOE+UKA9fI31IyoXjTfCgTxnlWLP6N6+lzRIVUk0EF6SNdDRryDLiJJbnDEMTq+uk4RXtvjWOt4PsNDYW5o034HyHvH86fe4CTICTwpOBHtDUQ+INKKhvYw25MSsegLUoo73sqwpOpSo2aH00tyHuuadT4pmZZ0YN712IA5dw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768903162; c=relaxed/simple;
-	bh=KsXTxhw/FCt6iktKIcL9L2KBZh5XM5570tm4QHU4ZG8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IqEb5oeChH1RCsSnozfpy3a7IeWWBAat0dVKq4NOkUc9myvi6ORXAdhGI7rgrg3x8chotwcORziDNzSpb1HFzfFC2bTPfpEAeMrKcisXIwp74ijZVn8MPfQciUSkly6D3Y1LGS4OWNgPjJEedEYXHNSYWAJ1unUYcrs2KH3errM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=vyE0oalM; arc=none smtp.client-ip=80.241.56.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="vyE0oalM"
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4dwN8P1djBz9v4c;
-	Tue, 20 Jan 2026 10:59:17 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1768903157;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HqQ5oQ5ZE0vnjaJiWS061etez0QGOyLm2rhNRT0GO9M=;
-	b=vyE0oalMmMdTVQxyAErA66P/Te+6OdQJd11rm39F4k8g5/K0aTtu8+f4TAtL5MDiT5Od0f
-	dCnHGx1x8maN+7z6WKc9s0yo7SAAhEAnvCZvCQeN1/6rdhRMajrk7aMzCgrns+npytKfK+
-	LzQditNawinAcRWjYoPUnVXfkLozzy5tbLXOf4qN1sFk4n4tj0e1sz9QUcldix5RzFMc3u
-	4RHeOkhladesK8BZRRoUSiOvKPGV+6V91lIvK3xgLzBUmK1EVFGmEQOJXO8wLJ0H0mpqM+
-	Hw7igxlbWfnYrqZC63jl2NSl/FFPvKDEGPgnapnSE/mA00BKgme6dd0IOX/8qg==
-Message-ID: <6d7b4e5f-fb33-47f7-8600-4127d2eef069@mailbox.org>
-Date: Tue, 20 Jan 2026 10:59:15 +0100
+	s=arc-20240116; t=1768906187; c=relaxed/simple;
+	bh=Jo14SNVvgAvpmCa6sHx3d7iO2VYD3GagcaTjUOnITWw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tJ3vNGQoHdsEEuUN0vBv+Iyam3dXdN6MUGXTgk8IHX+5go35HPW//LCUjl8/ooXpSrF0IoP2Ak6DWa3Z3xahlnuwFUPtlPqd3BYztBsItbo4IqqUxWLrUp00HvAtrbEVyuE26JWRF4dACSKlq+/RaBHA7dtvgq+NYe/AsQIfsb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f172.google.com with SMTP id 71dfb90a1353d-5637b96211aso4529416e0c.2
+        for <linux-clk@vger.kernel.org>; Tue, 20 Jan 2026 02:49:46 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1768906185; x=1769510985;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EZ0wVYmrXY0w9NWoQKTsT/lFDBKGzH8gk5CbiyOvxNo=;
+        b=hdObK+0M57YTUHu/cU4oHtLAgmr5mQwEnsyXq7EHORqGmhzGxZq34YFZ50C6o/x7U9
+         TBWdgcXitFvZd6xWUtyGSCtYNlVcGWkfPtIRWHjNzd4yencFyIPg471oVnjLCsWhj9CK
+         cen5srwY1R6fP5UXz5BSFfOKNp8bUf3VRReAUItbL8peClanb4YakStmuYi8nMpX1xHX
+         Q/bNYxvaCCuqh3/n2ffD9Y1kcV6855rmUGqcdRrWVtSEjegU0nv9nGyTO1niVWkVfBCd
+         Ktk6AMmH1rOGnHCIg8NLH6irhDlg/MEWCOqBKlDz2I0evpJ9wGoqX4aqv7y3u8L8rBPz
+         PBIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVou7o49w60G4SNcw79q5NNxFTdMvRYMlihY2RY75z4TwvePCcvG8OftTwx7AC+sasUZIzYN0MAmHI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7dSuVDyH0n8TaCx9UCSyjEIwXqCpG7A1cky6XLHCDYonIWjn3
+	DpLhCPU9E5cA8pcKuowoD9VToXqOFzz+ZTNo0zRcTIiHLf5Nq2AEc2bHlW5KhJQJ
+X-Gm-Gg: AZuq6aI0AiP3j5N65YGu1XgpGKcOb95phABl0n0HFRFpZWllYAruxA0NdivGZknk11f
+	kFf/TvI1DF/rfp4MtdsXjWFRnX1U4e+m4k8Nt2dkt4LbyskOMcjHEPvnkFuOBwrchBViaqUfCc1
+	frPeh8gyBzLm8q+PVCwTvk1+MiUMMmJYbq5nBiOdlnHwpWgLT/GiG+IfnTeuVZ3eB4iAfRsaoEA
+	vjcZAzoa64nfX+1yXPm79FOhS8Cz2Bk0CCCrchLySe81IukURsrUP+gF25c47By9FVvB0/Nz/6Z
+	jgqDs5kgmlFjefjGVsPdMBUFu6tLlgyZgl/ULuhjwk2xEn3H9R5jkCyDfBQTRZVc7mNPYsLE5cT
+	hEuzdFT0rAONGtIQYJQ34ffdzLypLYzBM3xLpifdONMfPtH+F7rPzdn3a82X6A4rCdunpWVUlq1
+	H3R8VAFsKg7AKLcTf2T2movLucquADBW+/vyfhr8TTjEqDKgaEyr1aqzmibGQ=
+X-Received: by 2002:a05:6122:45a6:b0:55b:305b:4e41 with SMTP id 71dfb90a1353d-565e663aea3mr344076e0c.18.1768906185215;
+        Tue, 20 Jan 2026 02:49:45 -0800 (PST)
+Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com. [209.85.217.52])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-947d04377bfsm4078922241.10.2026.01.20.02.49.44
+        for <linux-clk@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 20 Jan 2026 02:49:44 -0800 (PST)
+Received: by mail-vs1-f52.google.com with SMTP id ada2fe7eead31-5ed0a9cbb3fso3309000137.3
+        for <linux-clk@vger.kernel.org>; Tue, 20 Jan 2026 02:49:44 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXZU4oJrv81qnJMlIww4lYcGSd7Q44VsbsmJTQLwat24y3Oigey8jWwQoVq4QOusat03xHagv0kCmI=@vger.kernel.org
+X-Received: by 2002:a05:6102:3f56:b0:5f1:4fb8:6b92 with SMTP id
+ ada2fe7eead31-5f50a9d3b46mr342934137.22.1768906183803; Tue, 20 Jan 2026
+ 02:49:43 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] clk: rs9: Convert to clk_hw_onecell_data and
- of_clk_hw_onecell_get()
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <a6dce17b15d29a257d09fe0edc199a14c297f1a8.1768836042.git.geert+renesas@glider.be>
- <d921ff48-caa3-4d79-80e8-35c4848258da@mailbox.org>
- <CAMuHMdWfEHcNwPCVPXeAO3Sk8U=p0nMVUksiwmMnnkf0LYmnjg@mail.gmail.com>
-Content-Language: en-US
-From: Marek Vasut <marek.vasut@mailbox.org>
-In-Reply-To: <CAMuHMdWfEHcNwPCVPXeAO3Sk8U=p0nMVUksiwmMnnkf0LYmnjg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-MBO-RS-META: pxxdzz4bjz6mgso4nq4yuu46ngpb81bz
-X-MBO-RS-ID: 5b57db8c2ba6a9c9a90
+References: <20260114153337.46765-1-john.madieu.xa@bp.renesas.com> <20260114153337.46765-4-john.madieu.xa@bp.renesas.com>
+In-Reply-To: <20260114153337.46765-4-john.madieu.xa@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 20 Jan 2026 11:49:32 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdXAAUe_0kboQ9C0AMPn5re-1kCagecp1fMCGramDpXGRA@mail.gmail.com>
+X-Gm-Features: AZwV_QiaybW_I-1gR5s_n3JOLx29V6BZF-xoPK94FskYw67mu-RW2omq6aWspo4
+Message-ID: <CAMuHMdXAAUe_0kboQ9C0AMPn5re-1kCagecp1fMCGramDpXGRA@mail.gmail.com>
+Subject: Re: [PATCH 03/16] clk: renesas: rzv2h-cpg: Add support for init_off clocks
+To: John Madieu <john.madieu.xa@bp.renesas.com>
+Cc: claudiu.beznea.uj@bp.renesas.com, lpieralisi@kernel.org, 
+	kwilczynski@kernel.org, mani@kernel.org, krzk+dt@kernel.org, robh@kernel.org, 
+	bhelgaas@google.com, conor+dt@kernel.org, magnus.damm@gmail.com, 
+	biju.das.jz@bp.renesas.com, linux-pci@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-clk@vger.kernel.org, john.madieu@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 1/20/26 10:12 AM, Geert Uytterhoeven wrote:
+Hi John,
 
-Hello Geert,
+On Wed, 14 Jan 2026 at 16:36, John Madieu <john.madieu.xa@bp.renesas.com> wrote:
+> Some peripherals may be left enabled by the bootloader but should be
+> explicitly disabled by the kernel to ensure a known initial state.
+> This is particularly important for PCIe which requires proper
+> initialization sequencing.
+>
+> Add new macros DEF_MOD_INIT_OFF() to declare module clocks that should be
+> turned off during CPG probe if found in the opposite state.
+>
+> Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
 
-> On Mon, 19 Jan 2026 at 20:36, Marek Vasut <marek.vasut@mailbox.org> wrote:
->> On 1/19/26 4:23 PM, Geert Uytterhoeven wrote:
->>> rs9_of_clk_get() does not validate the clock index in the passed
->>> DT clock specifier.  If DT specifies an incorrect and out-of-range
->>> index, this may access memory beyond the end of the fixed-size clk_dif[]
->>> array.
->>>
->>> Instead of fixing this by adding a range check to rs9_of_clk_get(),
->>> convert the driver to use the of_clk_hw_onecell_get() helper, which
->>> already contains such a check.  Embedding a clk_hw_onecell_data
->>> structure in the rs9_driver_data structure has the added benefit that
->>> the clock array always has the correct size, and thus can no longer
->>> become out of sync when adding support for new rs9 variants.
->>>
->>> Fixes: 892e0ddea1aa6f70 ("clk: rs9: Add Renesas 9-series PCIe clock generator driver")
->>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->>> ---
->>> While this patch applies on top of "[PATCH v2] clk: rs9: Reserve 8
->>> struct clk_hw slots for for 9FGV0841", it can be applied or backported
->>> without, by ignoring the change from "clk_dif[4]" to "clk_dif[8]".
->>
->> Since the 9FGV0841 is the biggest part in the 9FGV series, the one-liner
->> fix I posted is better suited as a stable backport. This rework
->> shouldn't have the Fixes tag, since it is only that, a rework.
-> 
-> This is not just a rework, as it also fixes a second issue.
-> But since you prefer simpler fixes, I have submitted a v2 that just
-> adds the missing range check[2].  We can revisit the conversion to
-> of_clk_hw_onecell_get() later, after all fixes have landed.
-This is nice, thank you !
+Thanks for your patch!
+
+LGTM, so
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+However, I am still wondering if there are any possible bad side effects
+of disabling the PCIe clocks, e.g. when PCIe is in use (network card,
+SATA card, ...)?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
