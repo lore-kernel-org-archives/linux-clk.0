@@ -1,130 +1,89 @@
-Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com [209.85.222.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37B6240FDBA
-	for <linux-clk@vger.kernel.org>; Tue, 20 Jan 2026 11:03:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D52F3A89AE;
+	Tue, 20 Jan 2026 11:19:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768907017; cv=none; b=GSj9Y3JG2HozUvu5qoBa/QW0ixlkRqvXVpheflSzXO79lPPxJ8pHERTLfVhWRUCeUjY2dRBCWdc5UW1w2wmx6e6/iWrlFAHW0DojGd5jiwL+id1foK/FgHhjtfcf+A2mKmUDYazyiXMtEMHmcriFPGcfT6Pn48+1vPdps9G1Sys=
+	t=1768907988; cv=none; b=rww+pO/bZz0UMo6C5YJ+s0STSczO0PxbOEi+U2Rr82vPE2NaDvKrcykKy0DlzIB+JcOagFa4HaNwRfk5y/RmedHOxbdNI7NZL9YRgdLgdLDYjvCexHB3SAJNjKaJHSVIRyT3SQjw9wDS3Pu/l8h4EQ3xx5NU8/5c0EStZIXslME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768907017; c=relaxed/simple;
-	bh=Yt74Pwf1lMdOPJDNa5I9rk37qMEnD4Vx9P4hWUTzXJI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JKb2OtsVpkRvS5GtNxa2TpJlkotH8ljVHcx5+c81vVk92rW0tnf9YWvf4iLLQmFODow3qu6hAiUBuxF9H09ZIjwnyvmSuIzJxkF9PYCtmmFqiaiAVTsbfXyYGtrH/K3JUvuXHgDLmrEJWAuXmqAZYcSlBL7GMteCO5K/IM7vIfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f49.google.com with SMTP id a1e0cc1a2514c-94124140e02so3344043241.1
-        for <linux-clk@vger.kernel.org>; Tue, 20 Jan 2026 03:03:35 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768907015; x=1769511815;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mc4ovVXcdd2t1CG9+kKl14hd1FxE21SIum3OHqj6bo8=;
-        b=ORMHYECkmPD0ReJWt8sEBWSLgYUuq9ciM3FS6Y/kyEN6I0qsmaxYx1IlrHc1R5wRrS
-         vV09zLBiLrMfm3w3cQUxVT8Mo4omE2Ib/dC2VtbrrD0Ity8/vYFPVbjXI4Yl3PnpdrSM
-         0wjjPvea4MKS2S/VSuQ/T/YfEu1a+SWrQrNsyFp20Op5k7VpCB62dvcRYwS0SOVUlVgD
-         Khd+QCZZ2Y9pacLsc/41GEQiD8mvNxgI5nAI0ZuvbUVLbftODMV/fV0Y35CfzXnn7S81
-         TVJIx3ojPVFomulfDjCBVDE5zMExuPNGbmLJu2OAxnTsPJqslaLOT+NTXUBXf2av3Zei
-         9Bqw==
-X-Forwarded-Encrypted: i=1; AJvYcCVixJL4LbyQLUXoWhxTmavj4KTC8E3yc2+MlnMm23y4MKC0Zg28gF9srx5ZU5+AUFKaZ8GPJw2Pe44=@vger.kernel.org
-X-Gm-Message-State: AOJu0YySDPUbmIwhq2cp/5XmKn3c3rxJ4lPmVXBzcCUkAiUwFfbTszT2
-	sHpdWtm00MnSa+xGSQM3gH2XgScDIpXxOT80Zk5NVNEB1aiWagXJhC6mfDqhqAEO
-X-Gm-Gg: AZuq6aIMCokaUglOAll5rxaizWAvYpxWSfEnFX4B8i3WivqW24aNndbIpO36OhZfwS3
-	EDGHJpHz3QXmbIph7vNaWVlEMBg3lgeKxIY6FWgz0OwpeXz8kXwxSOzwQlRjyK8KD7HwPBNddGp
-	c1XOMoeRASsn1+jNkrSL2Cj59WdfmmkBCCc5xSOohy0pa7aXgBHFUhU59ENGtqJcNLoPRcPpP2C
-	882s9zN1UIGDy5CwsoLN6w5grsTRBiOfHsU3/FSru+JVVt3SoXml6qFE8vkoDkejl4ccvgOHX/3
-	5Yn+IDUHmeph0un1OuDA0pS/c14GJtcpfNghC6BUQa+2UUHJ1mPs1EIMmXkoIn3QXnw+4EbPQ41
-	bMzT+smrDDMZQbJOt4b4evVmNVa3AMBdYbXjn+Ammv7kLFJYjtafPVA51r+jyajhsnh6Hm7Tu5U
-	3/NiTNXwS9IpIzdI5+HCa6H89arPCAxFtjwT92CzDgbyZ7Jac97Vn5ZyePeeM=
-X-Received: by 2002:a05:6102:3ec7:b0:5dd:b287:e5f4 with SMTP id ada2fe7eead31-5f50a45462dmr442236137.0.1768907014952;
-        Tue, 20 Jan 2026 03:03:34 -0800 (PST)
-Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com. [209.85.222.45])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-5f1a68fe9cdsm4210964137.2.2026.01.20.03.03.33
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 20 Jan 2026 03:03:34 -0800 (PST)
-Received: by mail-ua1-f45.google.com with SMTP id a1e0cc1a2514c-9413e5ee53eso3285798241.0
-        for <linux-clk@vger.kernel.org>; Tue, 20 Jan 2026 03:03:33 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWyoc3g+Gou0bZvD/h9RXhOVe3eYZtIFkEl25scDoQzLzm2k+vhSG3SZqiM4cv+HJQPR1aAAOBXE+U=@vger.kernel.org
-X-Received: by 2002:a05:6102:390b:b0:5ef:a59e:617a with SMTP id
- ada2fe7eead31-5f50a95f019mr413993137.21.1768907013323; Tue, 20 Jan 2026
- 03:03:33 -0800 (PST)
+	s=arc-20240116; t=1768907988; c=relaxed/simple;
+	bh=uOlfU+Hb7Bl4W3vmO/dAEHDKcQEbU1mp+CBkjGY54Hs=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=kHsj7lLt78hRh92OrQ0HAi5+JXhBYqBl93GVdmObnMp3lA7rfflpQMyYfc20It8m3Wmivf/kGNGJGMOrie2lTvvpqwQSU/6WbXglYayYC+G7pNUbHGYRR4uLOqIQLkpws+wNnGX+n4rf1n7FpFhaiICKXofXVUjoH9ldqSHvGe4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZnGt+DZ9; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZnGt+DZ9"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE7A3C16AAE;
+	Tue, 20 Jan 2026 11:19:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1768907987;
+	bh=uOlfU+Hb7Bl4W3vmO/dAEHDKcQEbU1mp+CBkjGY54Hs=;
+	h=From:Subject:Date:To:Cc:From;
+	b=ZnGt+DZ98/xLmQaAiCZECtrkbOEJNdLIuowooNcLUluIdg6qx+O2Qr2Tz0t7z/b4G
+	 F3KOMFhUG0gvPINJdGXe8lxFewyVstBZ3Xq9/nqOf6R5i5/rRKtEW1bhG/J2OkFHjz
+	 jmH1/hmeXks9gF75LnCMx2QXe2FtCcatu3NtGiVp/qIKusAWlorJx5eBaXqHziNoIv
+	 8AAFNKlGTgdYwuG4kVk/qkH51HJxVoFx7PTSbRgvjEWhSPoSeZ0ysQwYgJ0HjWt2Jk
+	 9OV8U5CqDDP9A/I4Q7Qx01RZbMOCxXUf/5KeDjWoQ9tdbzo9hw+c4yPI+dcyvbn1Bn
+	 kkut/fHudHXkA==
+From: Konrad Dybcio <konradybcio@kernel.org>
+Subject: [PATCH 0/3] SC7180 MDSS core reset
+Date: Tue, 20 Jan 2026 12:19:24 +0100
+Message-Id: <20260120-topic-7180_dispcc_bcr-v1-0-0b1b442156c3@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260114153337.46765-1-john.madieu.xa@bp.renesas.com> <20260114153337.46765-5-john.madieu.xa@bp.renesas.com>
-In-Reply-To: <20260114153337.46765-5-john.madieu.xa@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 20 Jan 2026 12:03:21 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdXKvfRr2us9YhXh5a_qtZcv8wCvz_EnVa4PEANocg_0_Q@mail.gmail.com>
-X-Gm-Features: AZwV_QgrKR7tnicz6yGCyKjhkngXRza_8zoEMe8PqpfHwLCDwwFyDmgdfB6vgIY
-Message-ID: <CAMuHMdXKvfRr2us9YhXh5a_qtZcv8wCvz_EnVa4PEANocg_0_Q@mail.gmail.com>
-Subject: Re: [PATCH 04/16] clk: renesas: r9a09g047: Add PCIe clocks and reset
-To: John Madieu <john.madieu.xa@bp.renesas.com>
-Cc: claudiu.beznea.uj@bp.renesas.com, lpieralisi@kernel.org, 
-	kwilczynski@kernel.org, mani@kernel.org, krzk+dt@kernel.org, robh@kernel.org, 
-	bhelgaas@google.com, conor+dt@kernel.org, magnus.damm@gmail.com, 
-	biju.das.jz@bp.renesas.com, linux-pci@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-clk@vger.kernel.org, john.madieu@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/x3MQQqAIBBA0avErBN0oKyuEiE1jjWbEo0IorsnL
+ d/i/wcyJ+EMQ/VA4kuyHHuBqSugbd5XVuKLATW22qBW5xGFlDWddl5yJHILJRXsTNgQmtD1UNq
+ YOMj9f8fpfT8NIjM0ZwAAAA==
+X-Change-ID: 20260120-topic-7180_dispcc_bcr-f7ac25c21f89
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Taniya Das <quic_tdas@quicinc.com>, 
+ cros-qcom-dts-watchers@chromium.org, Konrad Dybcio <konradybcio@kernel.org>, 
+ Kalyan Thota <quic_kalyant@quicinc.com>, 
+ Douglas Anderson <dianders@chromium.org>, 
+ Harigovindan P <harigovi@codeaurora.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
+ Val Packett <val@packett.cool>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1768907983; l=814;
+ i=konrad.dybcio@oss.qualcomm.com; s=20230215; h=from:subject:message-id;
+ bh=uOlfU+Hb7Bl4W3vmO/dAEHDKcQEbU1mp+CBkjGY54Hs=;
+ b=T7KQRiJd3SSpYij181J4ZmS1C9VHmYg6F7VNuZdC9dbGZC+3d1MP7fkUqj4w19bY7IVihg3vu
+ YMLisOS1+3UD7FtbpfEMnYoMLomtEAQEkYk+ptmAYEQSq6I/PdN2743
+X-Developer-Key: i=konrad.dybcio@oss.qualcomm.com; a=ed25519;
+ pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 
-Hi John,
+Add the missing reset for the display subsystem and wire it up, so that
+drivers can consume it.
 
-On Wed, 14 Jan 2026 at 16:36, John Madieu <john.madieu.xa@bp.renesas.com> wrote:
-> Add necessary clocks and reset entries for the PCIe controller
->
-> Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
+Compile-tested only.
 
-Thanks for your patch!
+Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+---
+Konrad Dybcio (3):
+      dt-bindings: clock: qcom,dispcc-sc7180: Define MDSS resets
+      clk: qcom: dispcc-sc7180: Add missing MDSS resets
+      arm64: dts: qcom: sc7180: Add missing MDSS core reset
 
-> --- a/drivers/clk/renesas/r9a09g047-cpg.c
-> +++ b/drivers/clk/renesas/r9a09g047-cpg.c
-> @@ -438,6 +438,10 @@ static const struct rzv2h_mod_clk r9a09g047_mod_clks[] __initconst = {
->                                                 BUS_MSTOP(3, BIT(4))),
->         DEF_MOD("tsu_1_pclk",                   CLK_QEXTAL, 16, 10, 8, 10,
->                                                 BUS_MSTOP(2, BIT(15))),
-> +       DEF_MOD_INIT_OFF("pcie_aclk",           CLK_PLLDTY_ACPU_DIV2, 12, 4, 6, 4,
+ arch/arm64/boot/dts/qcom/sc7180.dtsi           | 2 ++
+ drivers/clk/qcom/dispcc-sc7180.c               | 8 ++++++++
+ include/dt-bindings/clock/qcom,dispcc-sc7180.h | 7 ++++++-
+ 3 files changed, 16 insertions(+), 1 deletion(-)
+---
+base-commit: 46fe65a2c28ecf5df1a7475aba1f08ccf4c0ac1b
+change-id: 20260120-topic-7180_dispcc_bcr-f7ac25c21f89
 
-"pcie_0_aclk", to match the documentation.
-
-> +                                               BUS_MSTOP(1, BIT(15))),
-> +       DEF_MOD_INIT_OFF("pcie_clk_pmu",        CLK_PLLDTY_ACPU_DIV2, 12, 5, 6, 5,
-
-"pcie_0_clk_pmu"
-
-> +                                               BUS_MSTOP(1, BIT(15))),
-
-Do you need pcie_refclk_in and pcie_coreclkin?
-Especially the latter seems to be document sparsely.
-
->  };
->
->  static const struct rzv2h_reset r9a09g047_resets[] __initconst = {
-> @@ -503,6 +507,7 @@ static const struct rzv2h_reset r9a09g047_resets[] __initconst = {
->         DEF_RST(10, 15, 5, 0),          /* USB2_0_PRESETN */
->         DEF_RST(11, 0, 5, 1),           /* GBETH_0_ARESETN_I */
->         DEF_RST(11, 1, 5, 2),           /* GBETH_1_ARESETN_I */
-> +       DEF_RST(11, 2, 5, 3),           /* PCIE_ARESETN */
-
-PCIE_0_ARESETN
-
->         DEF_RST(12, 5, 5, 22),          /* CRU_0_PRESETN */
->         DEF_RST(12, 6, 5, 23),          /* CRU_0_ARESETN */
->         DEF_RST(12, 7, 5, 24),          /* CRU_0_S_RESETN */
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+Best regards,
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
