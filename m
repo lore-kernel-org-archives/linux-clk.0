@@ -1,24 +1,24 @@
 Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D0314657EA;
-	Tue, 20 Jan 2026 15:06:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 295DE466B44;
+	Tue, 20 Jan 2026 15:06:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768921590; cv=none; b=jXqs63zGZR/9EfuqIMgAY61F4i04+6UE4ZCusWvKXg2f6xnVLiVVGLgHE29ATXESG22GSWUCQ2jnN6ql8cKPE5kzKMuhlrbBqxpPWAVxmd43yHFQdw4hrAxS/juD0IEvNWD9vdINEbEBZyMfdLf5N6Rk40km2BBtAwwY1OvBoRk=
+	t=1768921593; cv=none; b=tG6N4JKcx4SXIeaVzsOB/o194UlyuUCII9YD5y3GH/NWFkfeVEXHFaU8YKvLo0ZbeiVWZk/CR/wUmkRO/P86t8aELVqI/LuDwF9tDkLEE4RgfzMwNpUkXK+2UiwpYeXwm/BR57j02cooTWUkH8nyVrxn/7EqnaenxZ+TKQK9Y70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768921590; c=relaxed/simple;
-	bh=X+Hf/miYtwn8mLMNSub6ZRCadjeTxEICFVNeXeYg1Uk=;
+	s=arc-20240116; t=1768921593; c=relaxed/simple;
+	bh=KZwTxLHxL1Doc3YxcrFYNw6yDZhRFqBpXb+jaGyw/bE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PUO/lfWv1upUhOzj3IlllHZ+xBlmILGC4ZEHA2b/ve2HcaoB+aZtmKmfjwqVHKGLJdVFNg76/hyVg/SBkDBz3q4vKbDA+TLtz7y5jFe9o/7ARWqDbOEQXfC9N5/eSORDkQjxXWYxHEJR2tZQa/AKBF4JFbiRFf9I4s2H8oojRrU=
+	 MIME-Version; b=Aj5zsycpfrnhBLZiPgsmW5v+7v35VT/x5U0ZF3Q/l0fyPI2KgcHpr4lavW7j3NOBi4Xp0pxtb9NTHo76I4QqikCtKP36u2ngHbsSaRW931CIkfZuxmjCK1rCUBUwO6MSnlSTkI6biXMJHYSpNf7uD+vDMz0yDBnnauKOOAbRo1g=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; arc=none smtp.client-ip=210.160.252.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
-X-CSE-ConnectionGUID: 6rtea5VQRTmKzgffk2w0sA==
-X-CSE-MsgGUID: V8VhoD5nQja+AnoRf8zdjw==
+X-CSE-ConnectionGUID: YUnI0gulSLa/BzAAMZY4hg==
+X-CSE-MsgGUID: vkMZCOxXR+anPv7ZJhBuAg==
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 21 Jan 2026 00:06:21 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 21 Jan 2026 00:06:26 +0900
 Received: from vm01.adwin.renesas.com (unknown [10.226.92.24])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 81016402261F;
-	Wed, 21 Jan 2026 00:06:17 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 3171D4022B00;
+	Wed, 21 Jan 2026 00:06:21 +0900 (JST)
 From: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 To: geert+renesas@glider.be,
 	magnus.damm@gmail.com,
@@ -33,9 +33,9 @@ Cc: linux-renesas-soc@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org
-Subject: [PATCH v2 2/5] clk: versaclock3: Use clk_parent_data arrays for clk_mux
-Date: Tue, 20 Jan 2026 15:06:03 +0000
-Message-ID: <20260120150606.7356-3-ovidiu.panait.rb@renesas.com>
+Subject: [PATCH v2 3/5] clk: versaclock3: Add freerunning 32.768kHz clock support
+Date: Tue, 20 Jan 2026 15:06:04 +0000
+Message-ID: <20260120150606.7356-4-ovidiu.panait.rb@renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260120150606.7356-1-ovidiu.panait.rb@renesas.com>
 References: <20260120150606.7356-1-ovidiu.panait.rb@renesas.com>
@@ -47,112 +47,246 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Replace the inline parent_hws initializers with static clk_parent_data
-arrays for the clk muxes. This provides more flexibility in how
-parents are described and will simplify extending the parent lists in
-the next commit.
+The Versa 3 clock generator has an internal 32.768kHz oscillator that can
+be routed to the SE1, SE2 and SE3 outputs. This patch exposes it as a
+fixed-rate clock ("vc3-clk-32k") and makes it available as a parent for
+the SE1/SE2/SE3 muxes.
+
+The 32.768kHz clock is only intended to be used when explicitly requested
+(i.e. when a rate of exactly 32768Hz is set). Selecting it as a fallback
+for other rates can cause issues, for example in audio configurations.
+
+To enforce this, introduce a new helper function,
+_vc3_clk_mux_determine_rate() which rejects configurations where the
+32.768kHz parent would otherwise be chosen implicitly.
+
+Two new fields are added to struct vc3_clk_data:
+  - clk_32k_bitmsk: bit mask for selecting the 32.768kHz oscillator
+  - clk_32k_index: index of the 32.768kHz clock in the mux parent list
+
+They are used by clk_mux callbacks to select the appropriate parent clock.
 
 Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 ---
 v2 changes: None.
 
- drivers/clk/clk-versaclock3.c | 48 ++++++++++++++++++++---------------
- 1 file changed, 28 insertions(+), 20 deletions(-)
+ drivers/clk/clk-versaclock3.c | 85 +++++++++++++++++++++++++++++------
+ 1 file changed, 71 insertions(+), 14 deletions(-)
 
 diff --git a/drivers/clk/clk-versaclock3.c b/drivers/clk/clk-versaclock3.c
-index f387cdb12f48..ebd9d75d7f55 100644
+index ebd9d75d7f55..b5df349f497d 100644
 --- a/drivers/clk/clk-versaclock3.c
 +++ b/drivers/clk/clk-versaclock3.c
-@@ -900,6 +900,29 @@ static struct vc3_hw_data clk_div[] = {
+@@ -61,8 +61,10 @@
+ #define VC3_OUTPUT_CTR_DIV4_SRC_SEL	BIT(3)
+ 
+ #define VC3_SE2_CTRL_REG0		0x1f
++#define VC3_SE2_CTRL_REG0_SE2_FREERUN_32K	BIT(7)
+ 
+ #define VC3_SE3_DIFF1_CTRL_REG		0x21
++#define VC3_SE3_DIFF1_CTRL_REG_SE3_FREERUN_32K	BIT(7)
+ #define VC3_SE3_DIFF1_CTRL_REG_SE3_CLK_SEL	BIT(6)
+ 
+ #define VC3_DIFF1_CTRL_REG		0x22
+@@ -72,6 +74,7 @@
+ #define VC3_DIFF2_CTRL_REG_DIFF2_CLK_SEL	BIT(7)
+ 
+ #define VC3_SE1_DIV4_CTRL		0x24
++#define VC3_SE1_DIV4_CTRL_SE1_FREERUN_32K	BIT(4)
+ #define VC3_SE1_DIV4_CTRL_SE1_CLK_SEL	BIT(3)
+ 
+ #define VC3_PLL1_VCO_MIN		300000000UL
+@@ -83,6 +86,9 @@
+ #define VC3_2_POW_16			(U16_MAX + 1)
+ #define VC3_DIV_MASK(width)		((1 << (width)) - 1)
+ 
++#define VC3_CLK_32K_NAME		"vc3-clk-32k"
++#define VC3_CLK_32K_FREQ		32768
++
+ enum vc3_pfd_mux {
+ 	VC3_PFD2_MUX,
+ 	VC3_PFD3_MUX,
+@@ -134,6 +140,9 @@ enum vc3_clk_mux {
+ struct vc3_clk_data {
+ 	u8 offs;
+ 	u8 bitmsk;
++
++	u8 clk_32k_bitmsk;
++	u8 clk_32k_index;
+ };
+ 
+ struct vc3_pfd_data {
+@@ -213,6 +222,7 @@ static const struct clk_div_table div3_divs[] = {
+ 	{}
+ };
+ 
++static struct clk_hw *clk_32k;
+ static struct clk_hw *clk_out[6];
+ 
+ static u8 vc3_pfd_mux_get_parent(struct clk_hw *hw)
+@@ -549,19 +559,40 @@ static const struct clk_ops vc3_div_ops = {
+ 	.set_rate = vc3_div_set_rate,
+ };
+ 
++static int _vc3_clk_mux_determine_rate(struct clk_hw *hw,
++				       struct clk_rate_request *req)
++{
++	bool is_32k_req = (req->rate == VC3_CLK_32K_FREQ);
++	struct clk_rate_request tmp_req;
++	int ret;
++
++	clk_hw_init_rate_request(hw, &tmp_req, req->rate);
++
++	ret = clk_mux_determine_rate_flags(hw, &tmp_req, CLK_SET_RATE_PARENT);
++	if (ret)
++		return ret;
++
++	/* Select the 32.768 kHz parent only when explicitly requested. */
++	if ((tmp_req.best_parent_rate == VC3_CLK_32K_FREQ) && !is_32k_req)
++		return -EINVAL;
++
++	memcpy(req, &tmp_req, sizeof(*req));
++
++	return 0;
++}
++
+ static int vc3_clk_mux_determine_rate(struct clk_hw *hw,
+ 				      struct clk_rate_request *req)
+ {
+ 	int frc;
+ 
+-	if (clk_mux_determine_rate_flags(hw, req, CLK_SET_RATE_PARENT)) {
++	if (_vc3_clk_mux_determine_rate(hw, req)) {
+ 		/* The below check is equivalent to (best_parent_rate/rate) */
+ 		if (req->best_parent_rate >= req->rate) {
+ 			frc = DIV_ROUND_CLOSEST_ULL(req->best_parent_rate,
+ 						    req->rate);
+ 			req->rate *= frc;
+-			return clk_mux_determine_rate_flags(hw, req,
+-							    CLK_SET_RATE_PARENT);
++			return _vc3_clk_mux_determine_rate(hw, req);
+ 		}
+ 	}
+ 
+@@ -576,6 +607,9 @@ static u8 vc3_clk_mux_get_parent(struct clk_hw *hw)
+ 
+ 	regmap_read(vc3->regmap, clk_mux->offs, &val);
+ 
++	if (clk_mux->clk_32k_bitmsk && !(val & clk_mux->clk_32k_bitmsk))
++		return clk_mux->clk_32k_index;
++
+ 	return !!(val & clk_mux->bitmsk);
+ }
+ 
+@@ -583,9 +617,15 @@ static int vc3_clk_mux_set_parent(struct clk_hw *hw, u8 index)
+ {
+ 	struct vc3_hw_data *vc3 = container_of(hw, struct vc3_hw_data, hw);
+ 	const struct vc3_clk_data *clk_mux = vc3->data;
++	unsigned int bitmsk = clk_mux->clk_32k_bitmsk;
++	unsigned int val = 0;
++
++	if (index != clk_mux->clk_32k_index) {
++		bitmsk |= clk_mux->bitmsk;
++		val = clk_mux->clk_32k_bitmsk | (index ? clk_mux->bitmsk : 0);
++	}
+ 
+-	return regmap_update_bits(vc3->regmap, clk_mux->offs, clk_mux->bitmsk,
+-				  index ? clk_mux->bitmsk : 0);
++	return regmap_update_bits(vc3->regmap, clk_mux->offs, bitmsk, val);
+ }
+ 
+ static const struct clk_ops vc3_clk_mux_ops = {
+@@ -900,18 +940,21 @@ static struct vc3_hw_data clk_div[] = {
  	}
  };
  
-+static const struct clk_parent_data clk_mux_parent_data[][2] = {
-+	[VC3_SE1_MUX] = {
-+		{ .hw = &clk_div[VC3_DIV5].hw },
-+		{ .hw = &clk_div[VC3_DIV4].hw }
-+	},
-+	[VC3_SE2_MUX] = {
-+		{ .hw = &clk_div[VC3_DIV5].hw },
-+		{ .hw = &clk_div[VC3_DIV4].hw }
-+	},
-+	[VC3_SE3_MUX] = {
-+		{ .hw = &clk_div[VC3_DIV2].hw },
-+		{ .hw = &clk_div[VC3_DIV4].hw }
-+	},
-+	[VC3_DIFF1_MUX] = {
-+		{ .hw = &clk_div[VC3_DIV1].hw },
-+		{ .hw = &clk_div[VC3_DIV3].hw }
-+	},
-+	[VC3_DIFF2_MUX] = {
-+		{ .hw = &clk_div[VC3_DIV1].hw },
-+		{ .hw = &clk_div[VC3_DIV3].hw }
-+	},
-+};
-+
- static struct vc3_hw_data clk_mux[] = {
+-static const struct clk_parent_data clk_mux_parent_data[][2] = {
++static const struct clk_parent_data clk_mux_parent_data[][3] = {
+ 	[VC3_SE1_MUX] = {
+ 		{ .hw = &clk_div[VC3_DIV5].hw },
+-		{ .hw = &clk_div[VC3_DIV4].hw }
++		{ .hw = &clk_div[VC3_DIV4].hw },
++		{ .name = VC3_CLK_32K_NAME, .index = -1 }
+ 	},
+ 	[VC3_SE2_MUX] = {
+ 		{ .hw = &clk_div[VC3_DIV5].hw },
+-		{ .hw = &clk_div[VC3_DIV4].hw }
++		{ .hw = &clk_div[VC3_DIV4].hw },
++		{ .name = VC3_CLK_32K_NAME, .index = -1 }
+ 	},
+ 	[VC3_SE3_MUX] = {
+ 		{ .hw = &clk_div[VC3_DIV2].hw },
+-		{ .hw = &clk_div[VC3_DIV4].hw }
++		{ .hw = &clk_div[VC3_DIV4].hw },
++		{ .name = VC3_CLK_32K_NAME, .index = -1 }
+ 	},
+ 	[VC3_DIFF1_MUX] = {
+ 		{ .hw = &clk_div[VC3_DIV1].hw },
+@@ -927,38 +970,44 @@ static struct vc3_hw_data clk_mux[] = {
  	[VC3_SE1_MUX] = {
  		.data = &(struct vc3_clk_data) {
-@@ -909,10 +932,7 @@ static struct vc3_hw_data clk_mux[] = {
+ 			.offs = VC3_SE1_DIV4_CTRL,
+-			.bitmsk = VC3_SE1_DIV4_CTRL_SE1_CLK_SEL
++			.bitmsk = VC3_SE1_DIV4_CTRL_SE1_CLK_SEL,
++			.clk_32k_bitmsk = VC3_SE1_DIV4_CTRL_SE1_FREERUN_32K,
++			.clk_32k_index = 2
+ 		},
  		.hw.init = &(struct clk_init_data) {
  			.name = "se1_mux",
  			.ops = &vc3_clk_mux_ops,
--			.parent_hws = (const struct clk_hw *[]) {
--				&clk_div[VC3_DIV5].hw,
--				&clk_div[VC3_DIV4].hw
--			},
-+			.parent_data = clk_mux_parent_data[VC3_SE1_MUX],
- 			.num_parents = 2,
+ 			.parent_data = clk_mux_parent_data[VC3_SE1_MUX],
+-			.num_parents = 2,
++			.num_parents = 3,
  			.flags = CLK_SET_RATE_PARENT
  		}
-@@ -924,10 +944,7 @@ static struct vc3_hw_data clk_mux[] = {
+ 	},
+ 	[VC3_SE2_MUX] = {
+ 		.data = &(struct vc3_clk_data) {
+ 			.offs = VC3_SE2_CTRL_REG0,
++			.clk_32k_bitmsk = VC3_SE2_CTRL_REG0_SE2_FREERUN_32K,
++			.clk_32k_index = 2
+ 		},
  		.hw.init = &(struct clk_init_data) {
  			.name = "se2_mux",
  			.ops = &vc3_clk_mux_ops,
--			.parent_hws = (const struct clk_hw *[]) {
--				&clk_div[VC3_DIV5].hw,
--				&clk_div[VC3_DIV4].hw
--			},
-+			.parent_data = clk_mux_parent_data[VC3_SE2_MUX],
- 			.num_parents = 2,
+ 			.parent_data = clk_mux_parent_data[VC3_SE2_MUX],
+-			.num_parents = 2,
++			.num_parents = 3,
  			.flags = CLK_SET_RATE_PARENT
  		}
-@@ -940,10 +957,7 @@ static struct vc3_hw_data clk_mux[] = {
+ 	},
+ 	[VC3_SE3_MUX] = {
+ 		.data = &(struct vc3_clk_data) {
+ 			.offs = VC3_SE3_DIFF1_CTRL_REG,
+-			.bitmsk = VC3_SE3_DIFF1_CTRL_REG_SE3_CLK_SEL
++			.bitmsk = VC3_SE3_DIFF1_CTRL_REG_SE3_CLK_SEL,
++			.clk_32k_bitmsk = VC3_SE3_DIFF1_CTRL_REG_SE3_FREERUN_32K,
++			.clk_32k_index = 2
+ 		},
  		.hw.init = &(struct clk_init_data) {
  			.name = "se3_mux",
  			.ops = &vc3_clk_mux_ops,
--			.parent_hws = (const struct clk_hw *[]) {
--				&clk_div[VC3_DIV2].hw,
--				&clk_div[VC3_DIV4].hw
--			},
-+			.parent_data = clk_mux_parent_data[VC3_SE3_MUX],
- 			.num_parents = 2,
+ 			.parent_data = clk_mux_parent_data[VC3_SE3_MUX],
+-			.num_parents = 2,
++			.num_parents = 3,
  			.flags = CLK_SET_RATE_PARENT
  		}
-@@ -956,10 +970,7 @@ static struct vc3_hw_data clk_mux[] = {
- 		.hw.init = &(struct clk_init_data) {
- 			.name = "diff1_mux",
- 			.ops = &vc3_clk_mux_ops,
--			.parent_hws = (const struct clk_hw *[]) {
--				&clk_div[VC3_DIV1].hw,
--				&clk_div[VC3_DIV3].hw
--			},
-+			.parent_data = clk_mux_parent_data[VC3_DIFF1_MUX],
- 			.num_parents = 2,
- 			.flags = CLK_SET_RATE_PARENT
- 		}
-@@ -972,10 +983,7 @@ static struct vc3_hw_data clk_mux[] = {
- 		.hw.init = &(struct clk_init_data) {
- 			.name = "diff2_mux",
- 			.ops = &vc3_clk_mux_ops,
--			.parent_hws = (const struct clk_hw *[]) {
--				&clk_div[VC3_DIV1].hw,
--				&clk_div[VC3_DIV3].hw
--			},
-+			.parent_data = clk_mux_parent_data[VC3_DIFF2_MUX],
- 			.num_parents = 2,
- 			.flags = CLK_SET_RATE_PARENT
- 		}
+ 	},
+@@ -1038,6 +1087,14 @@ static int vc3_probe(struct i2c_client *client)
+ 		return ret;
+ 	}
+ 
++	/* Register fixed 32.768kHz clock */
++	clk_32k = devm_clk_hw_register_fixed_rate(dev, VC3_CLK_32K_NAME, NULL,
++						  0, VC3_CLK_32K_FREQ);
++	if (IS_ERR(clk_32k))
++		return dev_err_probe(dev, PTR_ERR(clk_32k),
++				     "Failed to register %dHz fixed clock\n",
++				     VC3_CLK_32K_FREQ);
++
+ 	/* Register pfd muxes */
+ 	for (i = 0; i < ARRAY_SIZE(clk_pfd_mux); i++) {
+ 		clk_pfd_mux[i].regmap = regmap;
 -- 
 2.51.0
 
