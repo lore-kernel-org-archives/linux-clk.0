@@ -1,32 +1,32 @@
 Received: from mail.thorsis.com (mail.thorsis.com [217.92.40.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E17A644102A;
-	Tue, 20 Jan 2026 15:45:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96AFD441048;
+	Tue, 20 Jan 2026 15:45:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.92.40.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768923912; cv=none; b=tzkNC+/cpe2GYEi5Yn3ElH5tYPYsrG+zVEraF3vulR/MHhhcqZ9eAOF7+rUTi0k/LiDVXkI6KUcPWKHzgJAN5/HXBo+2FSUVYTuhD6a/LvIbESqsthEEV1GcRDMK3xcmbAeTQb0irpQ99+H3//6bCIXd8IMLzRCWmn61zeyUcJg=
+	t=1768923913; cv=none; b=jXiUJarJnwXLqot0xS7xS2sB6u9vYTJPaMnbKrpEdg5wZAuYAORNxAxiO474DSfC5HcLZsiQMOHH35Z53l5fmnt+4qqRKRDJshh2D4OoK9W5jPFWO8NOIKKoEfgtm52isGAJgv7tYnaakhgjzq+o7FkDGEIzoyb5F2dEzQREOic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768923912; c=relaxed/simple;
-	bh=ui3xuOp/MfVgZ2/XCFj0/3+zMBZ59P+F7pTxw9BJs6g=;
+	s=arc-20240116; t=1768923913; c=relaxed/simple;
+	bh=MrzdPhBUci1zYJK7hvuXCS+eCmE9nVICFETQlx7Jbys=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ueTUW2oWDuTLD9AF8PjT/yXAPCYPlwQV9tQsXQAsEcltoYCGakKroF8inlB4Fi5xSMPCQEPr3u5VUW+8BCWoSHXroaF2i89Lhg/73XvnvRvxMqx9lJugwhy5kit+nQYuGZ8RdAbYiZBsmvbHzLF1u9AmTIGdKyrU04ykYwu4YM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com; spf=pass smtp.mailfrom=thorsis.com; dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b=r7lb5MFe; arc=none smtp.client-ip=217.92.40.78
+	 MIME-Version; b=Uw69M1fJ6ezjI2iQ/A30VFjFLJ55ux3FXXiQpgBUNdeFVTMfhGs1C/bTbXb2UkpT6NO0+yRgWf8bOjY+6EDqswkwBw1AjufLS7AQJnV6KGwlHWhZ/+97Zz343efNe7P+Yzkkf5hsJhTFdEAorWGxrr+GNEkpj+rV98+pw3efKCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com; spf=pass smtp.mailfrom=thorsis.com; dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b=dqGuTuRt; arc=none smtp.client-ip=217.92.40.78
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thorsis.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b="r7lb5MFe"
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 6D6FC148AD59;
-	Tue, 20 Jan 2026 16:45:08 +0100 (CET)
+	dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b="dqGuTuRt"
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 21B44148AD5A;
+	Tue, 20 Jan 2026 16:45:09 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=thorsis.com; s=dkim;
-	t=1768923908; h=from:subject:date:message-id:to:cc:mime-version:
+	t=1768923909; h=from:subject:date:message-id:to:cc:mime-version:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=+Nzql5r62pcLSgpHhPzlIpwDJKN/eNaqMW1y6EcuY0I=;
-	b=r7lb5MFejvrhiSo2K5dptvovWuqrYR/wTxir21irifHGKPgSn/3FusOKSrqoTwPHmU6M6x
-	/1BLwjsDY+I4L9+9YgEJhyD5aCLPs6cI8O8MZE6W308/rrlP/Q4KnoM6OgcJosj7k2TWiu
-	+bZLELhhsYSCN3HEr8waErYoYsoyBtzfZnPVw9A+qUsca3iUe2EOHMPzoMOGN9v+R7W0hR
-	s3i3pwEB5f8AYnXONS6DxQs+C3BqESKq/gYUKeN+wZq6EPSwU+Xmcf6J1PzDVVMK8SfA9l
-	LtAZuHwJTWaF1Qu3G7tcABIfTdO0ikUxV3V06tjPzwBPvUG6om+5WOW1pO86KA==
+	bh=7NkEtjVarcSoHp8QOC/pznn28WeOYOUP6CtTrfas8ew=;
+	b=dqGuTuRtpVogREVnWV1N6aV6D2osb3MFMfy2v/X1Xr3m2zdJAD4/z9iFtK2xFiE4pYF6lf
+	H/JVPnqCQb2mU2Exirnxo9dU7jgjJd9Z0lW4HvwxKz8BbzcPKWtK3C4FmZvk8qDCwm7R3+
+	Hn1jo0x14Ibq7/V27iGrgRh6vEjCU5UpVLnfq2TzVqJ4X5CfncXEzcbi5bhwiRlIctD8LG
+	NmJO1cR5XmHgNLPxfQ2qmE8yCtpBr4aTvl9U615wTVKvVFrITfac6Hp2bNArnoSxIbs9+T
+	b/nR7kt4Qau/tNf7RUQ7k5F1SxBL/IIAa2qFJKH/UrQk/WyWTZWYPZOAk0SWvg==
 From: Alexander Dahl <ada@thorsis.com>
 To: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 Cc: Nicolas Ferre <nicolas.ferre@microchip.com>,
@@ -39,9 +39,9 @@ Cc: Nicolas Ferre <nicolas.ferre@microchip.com>,
 	stable@vger.kernel.org,
 	Srinivas Kandagatla <srini@kernel.org>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH v3 10/19] nvmem: microchip-otpc: Avoid reading a write-only register
-Date: Tue, 20 Jan 2026 16:44:44 +0100
-Message-ID: <20260120154502.1280938-4-ada@thorsis.com>
+Subject: [PATCH v3 11/19] nvmem: microchip-otpc: Fix swapped 'sleep' and 'timeout' parameters
+Date: Tue, 20 Jan 2026 16:44:45 +0100
+Message-ID: <20260120154502.1280938-5-ada@thorsis.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20260120154502.1280938-1-ada@thorsis.com>
 References: <20260120143759.904013-1-ada@thorsis.com>
@@ -55,12 +55,10 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Last-TLS-Session-Version: TLSv1.3
 
-The OTPC Control Register (OTPC_CR) has just write-only members.
-Reading from that register leads to a warning in OTPC Write Protection
-Status Register (OTPC_WPSR) in field Software Error Type (SWETYP) of
-type READ_WO (A write-only register has been read (warning).)
-
-Just create the register write content from scratch is sufficient here.
+Makes no sense to have a timeout shorter than the sleep time, it would
+run into timeout right after the first sleep already.
+While at it, use a more specific macro instead of the generic one, which
+does exactly the same, but needs less parameters.
 
 Fixes: 98830350d3fc ("nvmem: microchip-otpc: add support")
 Cc: stable@vger.kernel.org
@@ -74,27 +72,25 @@ Notes:
     
     v2:
     - Add Fixes tag
-    - Remove temporary variable usage
-    - Reword misleading subject (s/writing/reading/)
 
- drivers/nvmem/microchip-otpc.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/nvmem/microchip-otpc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/nvmem/microchip-otpc.c b/drivers/nvmem/microchip-otpc.c
-index df979e8549fdb..e2851c63cc0b4 100644
+index e2851c63cc0b4..bf7e5167152cb 100644
 --- a/drivers/nvmem/microchip-otpc.c
 +++ b/drivers/nvmem/microchip-otpc.c
-@@ -82,9 +82,7 @@ static int mchp_otpc_prepare_read(struct mchp_otpc *otpc,
- 	writel_relaxed(tmp, otpc->base + MCHP_OTPC_MR);
- 
- 	/* Set read. */
--	tmp = readl_relaxed(otpc->base + MCHP_OTPC_CR);
--	tmp |= MCHP_OTPC_CR_READ;
--	writel_relaxed(tmp, otpc->base + MCHP_OTPC_CR);
-+	writel_relaxed(MCHP_OTPC_CR_READ, otpc->base + MCHP_OTPC_CR);
+@@ -85,8 +85,8 @@ static int mchp_otpc_prepare_read(struct mchp_otpc *otpc,
+ 	writel_relaxed(MCHP_OTPC_CR_READ, otpc->base + MCHP_OTPC_CR);
  
  	/* Wait for packet to be transferred into temporary buffers. */
- 	return read_poll_timeout(readl_relaxed, tmp, !(tmp & MCHP_OTPC_SR_READ),
+-	return read_poll_timeout(readl_relaxed, tmp, !(tmp & MCHP_OTPC_SR_READ),
+-				 10000, 2000, false, otpc->base + MCHP_OTPC_SR);
++	return readl_relaxed_poll_timeout(otpc->base + MCHP_OTPC_SR, tmp,
++					  !(tmp & MCHP_OTPC_SR_READ), 2000, 10000);
+ }
+ 
+ /*
 -- 
 2.47.3
 
