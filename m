@@ -1,52 +1,76 @@
-Received: from mail.thorsis.com (mail.thorsis.com [217.92.40.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 563CB441041;
-	Tue, 20 Jan 2026 14:38:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.92.40.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9004643CEF8
+	for <linux-clk@vger.kernel.org>; Tue, 20 Jan 2026 14:44:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768919928; cv=none; b=ac3wXgwlOI314uIhEY3QNTXRDWdEPZt6KZ+GQqcA/iHzxtn9x9MpCtfiNPvt46rHk2SwU2NO6skiNFbd7i0P42UGOiYBMf+SXme9Q+rckhx/tzSOEUB2/uK3lZNG6Xkb0p10gT3E2foc3jbx8b4fII/YVLuQ1zpZ/OfIf/ptkx4=
+	t=1768920288; cv=none; b=H9njmg/nlgQO9ZLxLFAvcnOXhfsj6pk0f1YbmaSmA4BAGkP5jSaifVPklrReKJ5f5ILtP1w2SkDj7EpIFpUvx+MnVWgH1qZeGydJh5xmctSwVFVtvi92hOagdifjV5Dq3T8+F0k2dAScvKhaqk63p0unVILb9QIBlOzT+UVYHTY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768919928; c=relaxed/simple;
-	bh=2F3Ic8dnVXSZ6XAYCS0sMyqTJm6Qsx5CCLU3rhvRvQ4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=WzxV1t8fZXUd3mUpnGXCBo7gaUHO1G1pv45EmdcFd2SKPbfGiB2atepqFuNi3AOnWxUeuXCgYvW6ivJv5fDEpmgs29m0GUWRuuLUTPJ0w525qghcNIssorCz1uI+HawNScRotm68UXN1+BbTWnkiue12F6zcGUjQTzFTTY1MiYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com; spf=pass smtp.mailfrom=thorsis.com; dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b=oMyZMHrB; arc=none smtp.client-ip=217.92.40.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thorsis.com
+	s=arc-20240116; t=1768920288; c=relaxed/simple;
+	bh=M526PbpcNO4vmaQq8MPe6vQxFSn4weZJ2HuHxLtPUUQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LnwfiB9O5jKodsPVHFzdgXR/nmfj5jFOML9Tdc+jMpG5JTF8IHjv4dwMXqVtLlzTsdBCv64v8SNKfZDUlVs6bvHc4Nyl701jxB8MH1HDja3TFfU0khJ8+q56n0UU/FpZ9kMT2PMr2cw4dD8SvKZ1uy00RLUoHLw4yNXJoDl3BdY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LDfmMSph; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b="oMyZMHrB"
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id D702C148AD45;
-	Tue, 20 Jan 2026 15:38:43 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=thorsis.com; s=dkim;
-	t=1768919924; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=6XzkSDuDP0HfzejUTV5XzIVGv3/HCsAZ2kabQBiMoXc=;
-	b=oMyZMHrBI12VPCPL0yQIS0fjxoar0Ljo5pzPQ3ubhw8r5eYKbZm6j9O2804oOXaMg1m23X
-	6l7c2y2zCfnnUPtOYKMdaNXEXmqq+oTCndzwGhmS/SULtz7K6Jieivw7skL+M48hL0jWcm
-	f3DmEoHBVsFTc2KUC9MlX4GLNVjfgNPaJGvhcdgdSmd7Iwst4NH2pMSap5WQgHq/iwfXA9
-	fvoKK29N09ZsuXEJcyvHjJBkWWzopahom8M+WWiNZT9ss20z7j49XYECEcUpBsUXM8G6sp
-	lQKGhqFcqUytn9Zfj13/Snr4jE5N3+gB4CLi4KH/Q4mO4P0t+NPCZgIlq8n8LA==
-From: Alexander Dahl <ada@thorsis.com>
-To: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Cc: Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Ryan Wanner <ryan.wanner@microchip.com>,
-	linux-arm-kernel@lists.infradead.org,
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LDfmMSph"
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-29f2676bb21so54939195ad.0
+        for <linux-clk@vger.kernel.org>; Tue, 20 Jan 2026 06:44:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1768920286; x=1769525086; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=yBbL2689+Q4g+pczGHthfRPw4+vnyNvU6Kl1FAL+E3g=;
+        b=LDfmMSph5CbpOLkhLRZMsj03UpVLjet6ULEHmuuRsVrhNIh0caWG6fRjhVOYGYERIc
+         HsRZUhDze9vfurcke4m6Uh4VSnHhY/+Vb2/+ws/uuNSsWoX+2172gyvnK85ZNec9LfBO
+         DQMKj6ATiXccuxYi2mcuw6AuqS635wECPJj9GWWGUZmEFL3SXqsr7Gy10p/IvPd86y6d
+         +D5Vt2qbTtgMmixhBMynhDpFo5wfHE09S9ceIGmRe6Bzq4xL4FntJRCZJ+BOYkMu3+9n
+         PYVp50Kjay53W9VLYH2CYfopBdOps6vclGxqYsVUrbw/olIUjyLqXNF5pzFDrmieSMEt
+         7ErQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1768920286; x=1769525086;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yBbL2689+Q4g+pczGHthfRPw4+vnyNvU6Kl1FAL+E3g=;
+        b=XlAMRxnVcpGq96WcjT+ueeXPE7U2v+BQQFBvRewgnJwZCu/Br2Oael2RpyV69jdoWZ
+         94tIfQNrNRWhCa4yEBmk5DRdQ4i1Tf83AKpOWM9+UF/Ykq8H2FZgsuWXQeT+Vp2U5y6+
+         XY6VCdrfZF64dgVOqGiMd5IhBFx82MSao8IvoNlCKLw9ahLTnwctJtiFsGZ2rg1ZLBh7
+         g2RFi5oYlUMgyw/hVJpw4y7Tynt50ojNQ1QnuLibNKpqeMxDKA4chMXuvZFbWfa9M9rv
+         gWMwnfZorveWyACW9lFAt4YESPFcBeBxMw4+7bp/H0Z+6zyzwCOcRrTJYLqKCU24ABnG
+         AMjA==
+X-Gm-Message-State: AOJu0YwHR96nsgkl26xKGoWmKsH75NRPSQMpBRajebQeMS+wsqegBYju
+	hWfRCtfcnyfnL3nl3q9TMqmPd4CClSsMMCaA+E/2L5UzDZJUaOtmf0+M
+X-Gm-Gg: AZuq6aJgkNhbic5891COzz9nCLWL1cEJ4k7d5eoNQNcsHdxLzjk6huAXfbd4f/1Ng+i
+	eh+6xmSIsgDCJsduJV3Oy8JWfCYOkZognA3zRxCLh8HAg4KMe5uF08trfv0h86/nWKmPl01W1Zg
+	9+q6mLQUS5Pmb4BleSJZOQxjiuXTi39w5Lxo222gEj1HQ4Svz1DamVoLcs2fEwh39W+3YFuplKX
+	qyfv8VBGc/gvjqomGL2Mx6haP/oGXzXvYw0eotA5ZE9sUOZzKv7Xrwu/FVVv/1arD2cCTlgfDZu
+	bz1A2g6FHtP6TgOrXhm6tMF//hN3kUkh83BNVOaJJtX8iyA2ovF/TsGquzUtbE2Zb/X9j2I6tLw
+	9EhW6o2WkMtZYGW5ZViv4PnC4X9EWWjWWLqp42QfgwoGO8eC+3h5FeAw6XFUN17RP0g==
+X-Received: by 2002:a17:902:d48d:b0:2a0:98a2:3ccf with SMTP id d9443c01a7336-2a7189186b4mr123666175ad.40.1768920285693;
+        Tue, 20 Jan 2026 06:44:45 -0800 (PST)
+Received: from k.. ([223.74.152.156])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2a7190ab96fsm128243035ad.13.2026.01.20.06.44.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 Jan 2026 06:44:45 -0800 (PST)
+From: Nadi Ke <kanadenady@gmail.com>
+To: sboyd@kernel.org,
+	mturquette@baylibre.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	orsonzhai@gmail.com,
+	baolin.wang@linux.alibaba.com,
+	zhang.lyra@gmail.com
+Cc: linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Cristian Birsan <cristian.birsan@microchip.com>,
-	Balamanikandan Gunasundar <balamanikandan.gunasundar@microchip.com>,
-	Varshini Rajendran <varshini.rajendran@microchip.com>
-Subject: [PATCH v3 07/19] clk: at91: Add peripheral id for OTPC
-Date: Tue, 20 Jan 2026 15:37:28 +0100
-Message-ID: <20260120143759.904013-8-ada@thorsis.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260120143759.904013-1-ada@thorsis.com>
-References: <20260120143759.904013-1-ada@thorsis.com>
+	Nadi Ke <kanadenady@gmail.com>
+Subject: [PATCH v1 0/2] clk: sprd: Add support for Unisoc SC9832E clocks
+Date: Tue, 20 Jan 2026 22:44:34 +0800
+Message-Id: <20260120144436.233998-1-kanadenady@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -54,75 +78,34 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
 
-That peripheral clock is required for proper OTPC function.
+This series adds the clock controller support for the Unisoc SC9832E SoC.
+The SC9832E is a quad-core ARM Cortex-A53 SoC from Unisoc (formerly Spreadtrum),
+widely used in entry-level smartphones.
 
-Link: https://lore.kernel.org/linux-clk/ec34efc2-2051-4b8a-b5d8-6e2fd5e08c28@microchip.com/T/#u
-Signed-off-by: Alexander Dahl <ada@thorsis.com>
----
+This series includes:
+ 1. The device tree bindings in YAML format and its corresponding IDs.
+ 2. The clock driver implementation based on the existing sprd common clock framework.
 
-Notes:
-    v3:
-    - no changes
-    
-    v2:
-    - new patch in series, was not present in v1
+The driver supports the following clock controllers:
+ - PMU Gate, PLL, MPLL, DPLL, RPLL
+ - AP AHB Gate, AON APB Gate, AP APB Gate
+ - AP Clock, AON Clock
 
- drivers/clk/at91/sam9x60.c  | 1 +
- drivers/clk/at91/sam9x7.c   | 1 +
- drivers/clk/at91/sama7d65.c | 1 +
- drivers/clk/at91/sama7g5.c  | 1 +
- 4 files changed, 4 insertions(+)
+Nadi Ke (2):
+  dt-bindings: clock: sprd: Add SC9832E clock controller
+  clk: sprd: Add SC9832E clock driver
 
-diff --git a/drivers/clk/at91/sam9x60.c b/drivers/clk/at91/sam9x60.c
-index a9f293a8e3b26..11f16126ff9e9 100644
---- a/drivers/clk/at91/sam9x60.c
-+++ b/drivers/clk/at91/sam9x60.c
-@@ -146,6 +146,7 @@ static const struct {
- 	{ .n = "isi_clk",    .id = 43, },
- 	{ .n = "pioD_clk",   .id = 44, },
- 	{ .n = "tcb1_clk",   .id = 45, },
-+	{ .n = "otpc_clk",   .id = 46, },
- 	{ .n = "dbgu_clk",   .id = 47, },
- 	/*
- 	 * mpddr_clk feeds DDR controller and is enabled by bootloader thus we
-diff --git a/drivers/clk/at91/sam9x7.c b/drivers/clk/at91/sam9x7.c
-index 9a5afd258cb86..c4d2b022d9d07 100644
---- a/drivers/clk/at91/sam9x7.c
-+++ b/drivers/clk/at91/sam9x7.c
-@@ -407,6 +407,7 @@ static const struct {
- 	{ .n = "isi_clk",	.id = 43, },
- 	{ .n = "pioD_clk",	.id = 44, },
- 	{ .n = "tcb1_clk",	.id = 45, },
-+	{ .n = "otpc_clk",	.id = 46, },
- 	{ .n = "dbgu_clk",	.id = 47, },
- 	{ .n = "pmecc_clk",	.id = 48, },
- 	/*
-diff --git a/drivers/clk/at91/sama7d65.c b/drivers/clk/at91/sama7d65.c
-index 5d8973aa50a53..52467d629258f 100644
---- a/drivers/clk/at91/sama7d65.c
-+++ b/drivers/clk/at91/sama7d65.c
-@@ -641,6 +641,7 @@ static struct {
- 	{ .n = "mcan2_clk",	.p = PCK_PARENT_HW_MCK5, .id = 60, .r = { .max = 200000000, }, },
- 	{ .n = "mcan3_clk",	.p = PCK_PARENT_HW_MCK5, .id = 61, .r = { .max = 200000000, }, },
- 	{ .n = "mcan4_clk",	.p = PCK_PARENT_HW_MCK5, .id = 62, .r = { .max = 200000000, }, },
-+	{ .n = "otpc_clk",	.p = PCK_PARENT_HW_MCK0, .id = 63, },
- 	{ .n = "pdmc0_clk",	.p = PCK_PARENT_HW_MCK9, .id = 64, .r = { .max = 200000000, }, },
- 	{ .n = "pdmc1_clk",	.p = PCK_PARENT_HW_MCK9, .id = 65, .r = { .max = 200000000, }, },
- 	{ .n = "pit64b0_clk",	.p = PCK_PARENT_HW_MCK7, .id = 66, },
-diff --git a/drivers/clk/at91/sama7g5.c b/drivers/clk/at91/sama7g5.c
-index 9a6f0f30b2b7e..3e0cfd2613851 100644
---- a/drivers/clk/at91/sama7g5.c
-+++ b/drivers/clk/at91/sama7g5.c
-@@ -504,6 +504,7 @@ static struct {
- 	{ .n = "mcan3_clk",	.p = PCK_PARENT_HW_MCK1, .id = 64, .r = { .max = 200000000, }, },
- 	{ .n = "mcan4_clk",	.p = PCK_PARENT_HW_MCK1, .id = 65, .r = { .max = 200000000, }, },
- 	{ .n = "mcan5_clk",	.p = PCK_PARENT_HW_MCK1, .id = 66, .r = { .max = 200000000, }, },
-+	{ .n = "otpc_clk",	.p = PCK_PARENT_HW_MCK0, .id = 67, },
- 	{ .n = "pdmc0_clk",	.p = PCK_PARENT_HW_MCK1, .id = 68, .r = { .max = 200000000, }, },
- 	{ .n = "pdmc1_clk",	.p = PCK_PARENT_HW_MCK1, .id = 69, .r = { .max = 200000000, }, },
- 	{ .n = "pit64b0_clk",	.p = PCK_PARENT_HW_MCK1, .id = 70, },
+ .../bindings/clock/sprd,sc9832e-clk.yaml      |  129 ++
+ drivers/clk/sprd/Kconfig                      |   10 +
+ drivers/clk/sprd/Makefile                     |    1 +
+ drivers/clk/sprd/sc9832e-clk.c                | 1065 +++++++++++++++++
+ include/dt-bindings/clock/sprd,sc9832e-clk.h  |  187 +++
+ 5 files changed, 1392 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/sprd,sc9832e-clk.yaml
+ create mode 100644 drivers/clk/sprd/sc9832e-clk.c
+ create mode 100644 include/dt-bindings/clock/sprd,sc9832e-clk.h
+
 -- 
-2.47.3
+2.34.1
 
