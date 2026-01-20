@@ -1,467 +1,230 @@
-Received: from mail-ed1-f68.google.com (mail-ed1-f68.google.com [209.85.208.68])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from OS0P286CU010.outbound.protection.outlook.com (mail-japanwestazon11011022.outbound.protection.outlook.com [40.107.74.22])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF1E642EED1
-	for <linux-clk@vger.kernel.org>; Tue, 20 Jan 2026 12:52:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.68
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768913568; cv=none; b=ci7w/UzWd8CdJlB9v0Zbw7DJj/LBp1TgJ/LxHmtT2AMy/iZWnp1L8lL988mjdx9VkdrR3do95gkn5cke4DDcMpDVlRjfAaJvsE4BIcmCcA6gg10r/rBsdVbc1O882vlHJaS2cmwwA754hDy4Ml6qQqjDoPaLnbHXPyEJwrV9RGQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768913568; c=relaxed/simple;
-	bh=K4xSVjQ5mnK1kiszxhrkBfm7/qY+r2b2+frDRdsXQ8E=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SNeZtmRCrCJt1rrvlGlUBg3JidJKQ6f+al9hCEDKduZTrdXDB8TIiCgiDAXx0wiMCwUkKFa/EpR0hs0SjcA+dMoX6VhpyMKMUWWmiVm+0AyumSIIGyNta8aPydFmchHmYSKXTnue3twAqoIw3nKDUNsChLw+xXxGugwicoXqLKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C9W/hQip; arc=none smtp.client-ip=209.85.208.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73D323ECBC8;
+	Tue, 20 Jan 2026 14:04:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.74.22
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1768917903; cv=fail; b=HSx6JwV+gf19j3xYJCvSPgyH/QcADcG1MqxqHqKEL3c78XxQJ23eBrWBPUaJTMppJ7KSVX974BjE478/U5f4WhwQiikmapFDcAI1ANhrKpIDaTy0IPtlndO9THpMscUTIywVorFQP7Mz8qMzCMsGYKWVQynLqNjDadMt7PfwGnU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1768917903; c=relaxed/simple;
+	bh=JtuiP3sY6Yx3WJx8Up0QFyWC8MD/2BDTA2AjCnPV0BE=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=jbYsf4/7CsS0x6DyK8k0p4ZcxgKrx3X1gNZlkkP9SClHyPmHJO1sl4rAxeeVeatflrA2Hn6GB53OgkaoBbSa5re1UuBw6PebSW61M0DV6BqwhnFu3G31D7WWwFvGIryEfYJ7DenijKjrbFEGPuySLwmI8FeXaQMUYgfDS5eYQJg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=ZDI1b8EC; arc=fail smtp.client-ip=40.107.74.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C9W/hQip"
-Received: by mail-ed1-f68.google.com with SMTP id 4fb4d7f45d1cf-65089cebdb4so8389960a12.0
-        for <linux-clk@vger.kernel.org>; Tue, 20 Jan 2026 04:52:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1768913560; x=1769518360; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PIR2QLlr6qXxhSTAxff09jiUqxRcSNuLdPjV2JesBrY=;
-        b=C9W/hQipW0HOAZ52qSCvjSFaMkMeOvLAlw5QYRudRYoXCA9wFckwOIg0I/c1EKczZ8
-         J+9mIf6Q6bPGTLSyc3sbai8Gdpfxj9UjMJjc2LjpCLndkpIVVjSUoKSJMajLKmSN8tIo
-         MH54atm/XEikpQBLFwthA/LTot5MgmO7ZQTe8T8GnIZfsgDbwGU6hUce2xMRDCG+TJb/
-         SCc9twvS9L43+kUZeFtSOMA37YXp6g4Q4vVe+CNZ/Y7NbPCf5GOvrn40MPUN+490HcOu
-         Qb6zp7Nyu75KGjqFlkgM37WmxJjUNF71ZHONZAY9gmzO2pz8vX6SMfrl1FdRSN8vgXVx
-         +w4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768913560; x=1769518360;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=PIR2QLlr6qXxhSTAxff09jiUqxRcSNuLdPjV2JesBrY=;
-        b=VeKb0V+G7ezfgCgiYB8lWqV8WDbWmGj9fLtBNoeCrxwGBKTfVx8TwMHg7WRwBzBSvW
-         37hK4Yzk2gxSWD6SwPd7+Jce9iaJ43ZISDY4x9XyPDemucaRn/9PtJMGfQeSddfcKmtE
-         wjVIi6JHtaz+Ea9nbaz4S6ULJS4wK6IMkMkhOVoXn+1RNsTVTDGPi6MS661wRV+cdGHF
-         lfCnep0OQJ3u4vAydfv4hWrVPSUkhs8Gb7Mlgt5IM/nNCMN4An9N6rNMcghyUVc3r2AL
-         7zzFmJ3jNuG/yVTYV7pRzri5H4OcuwD0dPk/vP9TBWJKHXM+hWMEE1+UeU/W3EiEBIgY
-         a8YQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWhTdyXMSwGuOzS0Yjcr3GiyPzQY1hu2vjbfZehYVaoqujoiRKlO6g3nOzKHzUzX8ur9VuLzQR7ivU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwlnPhQoZsn9638JHOR1/tYAWrTNKFk+rWPAlrNeviJm59nlZXy
-	Ko3jvlq13e+lmNSpk3BE8ozC8WolA7OnmCLAer4gfXNe4fUUjBGCGIcL
-X-Gm-Gg: AZuq6aImzTXlZ1byz90Z4nESyPOlhRJ5EItHd5S1dvpE4TGtXWU3OYTkXh6WOXbE3dA
-	/tuycMnk2Kyhgnft94Cf+yVsvpTliCkzdtX0rUM2zLMg3pCun481Wp9CDU+x4K7tegwctPWy87O
-	gZodEy1bvFycRacU8JvDQxET4zG1FaYMLroRbs0RQwfzUkiHHCf4affN6uCK9KwLYKgu7+/1Rhx
-	mKAwGIMk5WDhuddi5SRZ9neeibpQFp/fubJPuS1ME3C2c/0rs9G7E3s/pGHwnx2m0ioMf61Yjuy
-	Z5dK2wpPXESZGfKzKxk7txs8HzhKulDVToAbjnUpc+cd3EQ9E2SGujQAfcPZKecqOpz/z+Jp1mJ
-	f5k41ouN4UVcccCT3JVUP8k6MDKgCVneV9qrHx1KZj3D1AJjnmDRBeAZXHITLprl2CvkfUqlV6t
-	lr02JuMndUI5+RSKFmJ4GlNgdXpm/T0S7jzds=
-X-Received: by 2002:a17:906:f5a2:b0:b87:b87:cdbf with SMTP id a640c23a62f3a-b8796b85d1bmr1241674966b.53.1768913559578;
-        Tue, 20 Jan 2026 04:52:39 -0800 (PST)
-Received: from localhost.localdomain ([2a00:23c4:a758:8a01:c8c7:2ef6:8ac5:5556])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b87959ca32esm1420626066b.41.2026.01.20.04.52.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Jan 2026 04:52:39 -0800 (PST)
-From: Biju <biju.das.au@gmail.com>
-X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH 07/12] dt-bindings: clock: Document RZ/G3L SoC
-Date: Tue, 20 Jan 2026 12:52:18 +0000
-Message-ID: <20260120125232.349708-8-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260120125232.349708-1-biju.das.jz@bp.renesas.com>
-References: <20260120125232.349708-1-biju.das.jz@bp.renesas.com>
+	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="ZDI1b8EC"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=HTc4EIA1mtjM/2Myl8e1ZHfA/x0kXXNpu5CmCfq3mmR9jSRT6rLqJ9hPzCQX5oaeiAmfr7CpchFyFeQCTQpvs1O0AGkzezWHM3L8dsq5oNCgshFP71UHAJfgoHfKal5I6gpcIJHofMN8Psw/acaGL8TNYh8Qyd9xm0V49Czc21fX4zJ5PTncuZdZ/U6zAdwhN5FcdEUwU78JoBYwM6VfA/HU9WLZGcX5wrJYp/hn30F+3WXiJQnX+wyaA48CDKQ36uo3WWTpqxGzC2scUAC2lpJnsP3qD6X7WVwn8j6Fgkg2tGNlzOlQXh2AWrcjuioZ2EhwzdRj1QXf9Kj7xMwA6w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=JtuiP3sY6Yx3WJx8Up0QFyWC8MD/2BDTA2AjCnPV0BE=;
+ b=QgQYKwVi0RQLmnEGnnOon0z6zPeOfO8RAR5ChF8lPWL9kEkZdYAneJpsdh6TlboOocDYhme8+bPP+la45/iLtEyIeVU+hWJ/UP4/9mJMDapzASaYtuqUKBi3G2MdsE9YWk6ckfee3THe+DoUb7DLgVr3/T+E9IZW1D6ODlrn6LTJE2OWOBiKcoU11uCSL7DP04kcs5I//gzV0/oZ+PfacpRpB1M5l4AsPzxzkE6YHblujM+yZ0GJgWe3S06jYI2KIZnQzJxV+FqgVibCF9SJBdkBb3OPEr+l+ZS3M8MBgY1YFhOHMzzjPiL/LVfvt1Y6Ho87HfXZHTG9uL+4uoGjZQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=JtuiP3sY6Yx3WJx8Up0QFyWC8MD/2BDTA2AjCnPV0BE=;
+ b=ZDI1b8ECqFhjh/7H5y9zaDNFCOzVqtLOFGxvKRWw3foB7hR8p4jB3AhtXlWshAdD2m9t5pWisCYIAGz9TAH9aYdciAoSbIeyHM9M+VGYxjhUoJxPHYm0tzlXjD++RBSVOaC2xNJIKAVeZ82in/PKvp10gWPHUlHVwShnEgiNwJ0=
+Received: from OS7PR01MB17371.jpnprd01.prod.outlook.com (2603:1096:604:43e::6)
+ by OSAPR01MB7278.jpnprd01.prod.outlook.com (2603:1096:604:11d::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9520.12; Tue, 20 Jan
+ 2026 14:04:56 +0000
+Received: from OS7PR01MB17371.jpnprd01.prod.outlook.com
+ ([fe80::7c48:4e26:72a5:7960]) by OS7PR01MB17371.jpnprd01.prod.outlook.com
+ ([fe80::7c48:4e26:72a5:7960%4]) with mapi id 15.20.9520.011; Tue, 20 Jan 2026
+ 14:04:56 +0000
+From: John Madieu <john.madieu.xa@bp.renesas.com>
+To: geert <geert@linux-m68k.org>
+CC: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, "lpieralisi@kernel.org"
+	<lpieralisi@kernel.org>, "kwilczynski@kernel.org" <kwilczynski@kernel.org>,
+	"mani@kernel.org" <mani@kernel.org>, "krzk+dt@kernel.org"
+	<krzk+dt@kernel.org>, "robh@kernel.org" <robh@kernel.org>,
+	"bhelgaas@google.com" <bhelgaas@google.com>, "conor+dt@kernel.org"
+	<conor+dt@kernel.org>, magnus.damm <magnus.damm@gmail.com>, Biju Das
+	<biju.das.jz@bp.renesas.com>, "linux-pci@vger.kernel.org"
+	<linux-pci@vger.kernel.org>, "linux-renesas-soc@vger.kernel.org"
+	<linux-renesas-soc@vger.kernel.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>, "john.madieu@gmail.com" <john.madieu@gmail.com>
+Subject: RE: [PATCH 04/16] clk: renesas: r9a09g047: Add PCIe clocks and reset
+Thread-Topic: [PATCH 04/16] clk: renesas: r9a09g047: Add PCIe clocks and reset
+Thread-Index: AQHchWt+zqpWdE/frUylSy2mj2bTkLVa7fCAgAAwYXA=
+Date: Tue, 20 Jan 2026 14:04:56 +0000
+Message-ID:
+ <OS7PR01MB1737172E89816B371830614E4FF89A@OS7PR01MB17371.jpnprd01.prod.outlook.com>
+References: <20260114153337.46765-1-john.madieu.xa@bp.renesas.com>
+ <20260114153337.46765-5-john.madieu.xa@bp.renesas.com>
+ <CAMuHMdXKvfRr2us9YhXh5a_qtZcv8wCvz_EnVa4PEANocg_0_Q@mail.gmail.com>
+In-Reply-To:
+ <CAMuHMdXKvfRr2us9YhXh5a_qtZcv8wCvz_EnVa4PEANocg_0_Q@mail.gmail.com>
+Accept-Language: en-US, en-GB
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=bp.renesas.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: OS7PR01MB17371:EE_|OSAPR01MB7278:EE_
+x-ms-office365-filtering-correlation-id: d34a26fc-ad09-42fb-f9ee-08de582ce437
+x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|366016|376014|7416014|38070700021;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?amlQeDNWS2t6TElFWGR4Z0Y2YzhRKzJiazYvS2lNN2dacUFlRHNSdjc1QUcv?=
+ =?utf-8?B?VGpVU3N6SFk4RGY5aEF4cmU2Rmk5bzI4bk90VnB6ZHliN2VzWmg5dlJLQ0t3?=
+ =?utf-8?B?L2ljN1JSOVR6ZzFEQ0xhSHFuK1FPZzY4WGVhdlMvM2xjbGF6RzczUjBnRlNl?=
+ =?utf-8?B?NVJkaHhOWDZhQkZPTG9wWkxYSFNadGFPSzRPQlByZzZJS3RsNm1NNWF3STRm?=
+ =?utf-8?B?dUJUdjZCbUt3QmJPTW9TSzVtb08rSDV0R2w0Z2sySURadzliWG04RmRYVTMx?=
+ =?utf-8?B?ZjNBYzFUR3ZEMXJPb3lhWnhORG8rUjNjZlVpWjJZU3p5WDE4R3NObGlreTFU?=
+ =?utf-8?B?N2REUiswbkEzR3AvQ2xMdlVXZjQ0ZmhYRExTTkZyUzFFbjhyaWVmR3dsaWNo?=
+ =?utf-8?B?dXNMckdrMTlOcGROMmtSbWxzcTZlNElYYVBXMUc4d2hDeVdNeExoUjBONDB1?=
+ =?utf-8?B?QVdOUFJrY2h0SVFKRTdwaTRqYllHdnZaQzdzWHRXSm43bkEvbzJJWVJ0dThm?=
+ =?utf-8?B?RTlSRVFHM2RNdExNUmVueUFnYnBTd3FETjRYZnhEN2tkdWFCb1hjY1N2YVEz?=
+ =?utf-8?B?OTVBT1pTbzZ3N1U1aU1JZGhVU0RxbmptODBoUDI2VDJyT2kvVkF5cGNuZzc4?=
+ =?utf-8?B?eEozeFlBMHdWcGJiMWxWdHJqcUZ1TjRnems5QmZIVnVIaUpvWG1UbjllWW02?=
+ =?utf-8?B?MWJSR1ZuWHpUWHJldEg0ekI3bnNPbC9VZE05ZGVneW5QRkVGTjlLNGZRWTFU?=
+ =?utf-8?B?Qm1KMUxGczhFcGlqUXpxbG1tWi9CdS94djludThhWFZaOWdMenZKdDhsVUg5?=
+ =?utf-8?B?a2k4WUVsTFpEOHppaTJCanp5MlJzWE5ncm03T1BYK1c5ZkF2UE1mbzFoRjdh?=
+ =?utf-8?B?VEI1aVFjbjJoeDJtOFBwdEU0UFNFSFBxVERIZGNFUDRCdEU5SEVRMmJrcUpJ?=
+ =?utf-8?B?UFpBeGtQK3VZY3h3VUtTTXZIaXFWTjVUUUp0V1dBWFpGZ2tFODZNU3hlWWVy?=
+ =?utf-8?B?ZVhoYUlTVFJISFhMN2d6RmJQZTV2bUJ4Y0lWR0lZY2dlb1hKNmpFYXZmZlhr?=
+ =?utf-8?B?cnFVaEo0SWlCU2JOamtsLzA5ellobFdXSkxSZ2ptR2hrRDNaWGJEUUpCR1Iz?=
+ =?utf-8?B?M0cvbXFNN2VWRVVGRU50bSsyRVJSY0tycm9WbE44M3Y3eDhhcXlFOC9OdFQ5?=
+ =?utf-8?B?anNrWkNhTWhZYzlIWnlTNnQ3TWI1RGx1RHV5MVhvNytqVGJLMUpEaFg3K0hx?=
+ =?utf-8?B?SVQzVjBMWm8vU1BuelIzTjNPc05pZ0RHRVZlN0VPamtEVlVLMVJ3VlkvSWRp?=
+ =?utf-8?B?cEpJNGZEYmVtTjBLUUdLM0NKL1BBdGRweE1UQXVTWk56ZHR1bW1yOXNDeWhL?=
+ =?utf-8?B?TVd0ZVRNdFQrMGpqdEVEMEY2bSszTW9uYjNRMytWbllSSkpTUFg4dVorT0Q5?=
+ =?utf-8?B?bU5JVHJvYVAyd05STzF3N1Fud2F2M24zcGdFSG1LbXdVZ0NWQkgxekw1VHpH?=
+ =?utf-8?B?V0ZUVUNwd29BVGxUbGticFNVOTM2L2dxbHVJMnEwYmlCZGtOM040aXI0eTRk?=
+ =?utf-8?B?VnA1cGJKUmQxbFlRNHpkT2lRemZpS0JhbXRyVkgzTnJXVEYxSGVXNm04Wk11?=
+ =?utf-8?B?MWtxUE1lcmM2UytQMVQ4NXY4L3RtWWYwbFZjNzR2TVZwbXFUM21lZmlZRGV1?=
+ =?utf-8?B?NmNDbmNabnVubEFuZmRSWUdTaGRHRDZ6MDVsaUMyRkl1UmRHU2ZOYTVQSWw4?=
+ =?utf-8?B?SkY2ZjB2WWhYTmlrWEJtTWRwSXBTREhtckF2blJMaWJRZWFBNjErNEsyQlVn?=
+ =?utf-8?B?azUvR01yYlZBN3Y0WHRLYldzNnVhVWc4VUFiMWZ6bmR2Y3RYSjhybXFyWXVp?=
+ =?utf-8?B?eXZYbWExOHpKeVYzV0prcUZtSUZxVXc5WjJ1emZzWTJLS0p2UkpzWUtTYmxq?=
+ =?utf-8?B?akZOTWhIcHczdHFaTlVDOVFCa01lekZTSlJxUk1QYVFjMFBEMWVuTVNPeWlK?=
+ =?utf-8?B?TmZYY1N5dzhtRkpLME1paTZLQmVhcmlRSkt4OGVpZmR0ZnZEUk5PMC9mNzhY?=
+ =?utf-8?B?UHB3a1IwdjFiVXpCUHZxM0tEMlhidVdSQjNCZjlYMmdWalR1ZUR4a1I0V3Bl?=
+ =?utf-8?B?bTNMNU1yZmEyWkJkZGVhL1EzQ3RVY0MwZGpZUVFFdmVEMmxIaXFrUWNNV1c0?=
+ =?utf-8?Q?3qokgMLMr6gGLYJJYA6yb/8=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS7PR01MB17371.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?N2x5dTA0L2ZwTnNEdndraWxlMEZqQ3JBYmlDbW5YeFR2cEl1bFNxcEZSYzla?=
+ =?utf-8?B?eWdCMW1rOHQxN01EOEVwbDBLMHBGdk1NdjZtdFdrUGZWamdKamJmdzJNUUpw?=
+ =?utf-8?B?LzUyRi9WQUliNC83ZUo4RWVIclFILzJTSXdTMFBmSmZIMnA0b3dBdmNJYThC?=
+ =?utf-8?B?TVZqN0RiMXNrdDdEN3hsM1p0N3lGWGN5bW9VUjlTTGkzeUFGTE42RjVsSXc3?=
+ =?utf-8?B?bllJNktUaW13VjN1SnY0UG95UnAwYXMyWmtocVR3Vjc3cFVvdDZCeWtSVWxG?=
+ =?utf-8?B?OG84aTBVOElaSWo4a2VwS0I3bVhnbGhqR0VLeWlEYzRaVFN1K1JRd0JSNk5k?=
+ =?utf-8?B?V1M0UW1OZ2U1dCtnK3VUeDNOZEZRSHBncmRQSjQxS25PUTNZTytNaFc2ZWR6?=
+ =?utf-8?B?a3NzMXlFVEN0SktCRzZOS3Q0cWY2ZEx4bDlwbmF6WDVpaVlNbHpDOHRqQjhP?=
+ =?utf-8?B?UnArczhBQURrcktJemNWbXk1VzdRTWxwVjhLUTY1WHpPMGVHWm4xMFdhS2xm?=
+ =?utf-8?B?Zjh5U2FCcFNBSW1YSlJqZDFVSG9qc0FscFJCYnF3NzdxdHluWmJOOU5sWHRX?=
+ =?utf-8?B?b3BtQzdwT3k5bXBBeUhoKzI1ZHFZRG9pdSthcDJpak5ZbjdaSStUTWNkUGEy?=
+ =?utf-8?B?NzQzN0tSTTZmTXhtOHBWUjlpWXZ1dkxDd3g1dU9EWFQ3dEV3ejZKaDdCTStV?=
+ =?utf-8?B?bjBidUp6RVFUNVliRlRkWkJvZ2hSZ0ZrWmFMRTcvYlY0bkdrMUh6UGMxOUlm?=
+ =?utf-8?B?VEQxYVVPdjJUa0tYSyt0QWtvbjdCV01oMWMzMW4wbE9SMlNsT1gwdGhab3JX?=
+ =?utf-8?B?STUzS3FXTDl4dFEvN3ZESHlIaFAxZUFkOW9UOE9RTysyek4wV2JJb2FOcGpa?=
+ =?utf-8?B?eTlrbUhaWUFuOXVyVTRwSjJib01YTnEveThNd0ROWCtWY2I2dGhOOTd5dGN0?=
+ =?utf-8?B?SDdHR1JDUFkvYmU2RWVzZUs5SGJXeU9IQXB5Ky9qNGdNQkphSGpQSDVtSmVs?=
+ =?utf-8?B?aUJFUGdJQ29Ia1BuV2VhWC81Q1I5TWJWNmgxZEdoMHZzZ0JtUGVoVHE3ME5X?=
+ =?utf-8?B?NmN2R2VlRVdRUlBCYkhrR0pkWHowSUxZRk53OHJkRFpjOEdic1MzdHdrSmFC?=
+ =?utf-8?B?ZXhTZjZKaFNTR3hXeHAwRnJFNDhvYm1sMDIrcWt5LzJ5dlBYNmgyenpOUWNr?=
+ =?utf-8?B?aVNTU1hKZGdhMHJHMU5rZ0Y4SVNoN1NwSWloMmJFQmhaMDZ3WGNqYTQwT2RS?=
+ =?utf-8?B?MW9XY1NFejlZMTVnb29PVEhOdHdOejc4Z3c3ZTk4bzRDbC92aVVpRk41akFX?=
+ =?utf-8?B?V3NhMHRscXBqbEhTcC9VNlVQMkc1VGxVSXlSNmMwbjU4NGNGVjJmcU44YjMr?=
+ =?utf-8?B?b1VDSm5QaElKdld2ZVcza2drNWNZZUlZanJZRjJGZkQzSUxhWDhGTHBYMGYz?=
+ =?utf-8?B?QlN0SEgzcVM4YTZzMFhMK0hrTGFKT3Z3V0UrU2svT0RLd1dEMGJmV0E5YVVY?=
+ =?utf-8?B?NllqU3ptQTlNb2lDc2ZZbDJxZHgzQTdZVXBPWXlZMXNkaGN5dlFKa05ObkVO?=
+ =?utf-8?B?cFc4aXBNRzJiUExsZzRmTStFUnlLcVAyQjR1M3ZBUHFPb1pRS1I0NTQ1WXYr?=
+ =?utf-8?B?c252Qjc0bkh3dE51U3dUak9Xa0tUc252TVdrbExFWmE2Vi9pdndUSnhVRzQ4?=
+ =?utf-8?B?OWlqVUYxTUpOd2tpSmxTYm9jLzBUc1FiajhWU3BFb0xNWHlQMFp4djdDaDN6?=
+ =?utf-8?B?eGJWN3RvckdGM2N0MFBFSFVJWmRDN3NKRlZrT0JLOFFNaml4QnFWSGgxd01p?=
+ =?utf-8?B?d2VYMTlBcWV3eEUrQkNSVEhmVjV0aFBUZkczSEwzU2RSaGhFeFR1SnFWWDRs?=
+ =?utf-8?B?WUFDbXowdGI0T0ZwSkZIZjJ1d0h6MStMSkloMVdNQ3V1MElUSDFOWjk1VFUz?=
+ =?utf-8?B?UWRoemw1enlDMUw0VXpydW0va1lIcmxCWGlsckNkZ2c2WnlpTEJLQVFNYUw3?=
+ =?utf-8?B?RmNYSmlqMi9STFBTTjFpbnREV1FPNWdDTURHYzVjd25vTHNPckJMTmFXd1pU?=
+ =?utf-8?B?dEdLTlBCM1lxZllHdEQvWVY2dUhRekRXMEdqMDMza0VkZ0YxSDFQSVl3bmFi?=
+ =?utf-8?B?YzB4VEFTdE9Xdnp0Zk1qTzRDSzFpMW9QeFNPR2puTFZnTUtBSHJFQlY1UDFY?=
+ =?utf-8?B?SXVOWXhFenBoenFTSkRtRjgrVklXSEF5bkhWVVUzeDBDL1F3cVhJSjg2U21t?=
+ =?utf-8?B?RGJtSEQ3SVlUTUgweEFHWTRvNmdSdlYxbzR1U0NJVGZIRnZKNHlHdi9rQWt0?=
+ =?utf-8?B?WVhXSTQrdTBGeGl1SXU5aWoyWENtM2xZenV4Q1ZiOGJEVXYxZkhnYXloTHh4?=
+ =?utf-8?Q?PgbmlEtha0ncShzg=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: OS7PR01MB17371.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d34a26fc-ad09-42fb-f9ee-08de582ce437
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Jan 2026 14:04:56.3739
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: g5DCe3cGkdosdVpjHJ/x7tULWtdIFSpTIhuwJ20Wcx1il2LuPc+c60XJKivOmb8VhNBnOZS4wYjNBujTCAYFfKvFATAcaDOWcZW9i3NGcnY=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSAPR01MB7278
 
-From: Biju Das <biju.das.jz@bp.renesas.com>
-
-Document the device tree bindings for the Renesas RZ/G3L SoC Clock Pulse
-Generator (CPG).
-
-Also define RZ/G3L (R9A08G046) Clock Pulse Generator Core Clock, module
-clock outputs, as listed in section 4.4.2 ("Clock List r1.00") and add
-Reset definitions referring to registers CPG_RST_* in Section 4.4.3
-("Register") of the RZ/G3L Hardware User's Manual (Rev.1.00 Oct, 2025).
-
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
- .../bindings/clock/renesas,rzg2l-cpg.yaml     |   1 +
- include/dt-bindings/clock/r9a08g046-cpg.h     | 339 ++++++++++++++++++
- 2 files changed, 340 insertions(+)
- create mode 100644 include/dt-bindings/clock/r9a08g046-cpg.h
-
-diff --git a/Documentation/devicetree/bindings/clock/renesas,rzg2l-cpg.yaml b/Documentation/devicetree/bindings/clock/renesas,rzg2l-cpg.yaml
-index 8c18616e5c4d..318fb91e4f5e 100644
---- a/Documentation/devicetree/bindings/clock/renesas,rzg2l-cpg.yaml
-+++ b/Documentation/devicetree/bindings/clock/renesas,rzg2l-cpg.yaml
-@@ -28,6 +28,7 @@ properties:
-       - renesas,r9a07g044-cpg # RZ/G2{L,LC}
-       - renesas,r9a07g054-cpg # RZ/V2L
-       - renesas,r9a08g045-cpg # RZ/G3S
-+      - renesas,r9a08g046-cpg # RZ/G3L
-       - renesas,r9a09g011-cpg # RZ/V2M
- 
-   reg:
-diff --git a/include/dt-bindings/clock/r9a08g046-cpg.h b/include/dt-bindings/clock/r9a08g046-cpg.h
-new file mode 100644
-index 000000000000..d8304a73efdf
---- /dev/null
-+++ b/include/dt-bindings/clock/r9a08g046-cpg.h
-@@ -0,0 +1,339 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+ *
-+ * Copyright (C) 2026 Renesas Electronics Corp.
-+ */
-+#ifndef __DT_BINDINGS_CLOCK_R9A08G046_CPG_H__
-+#define __DT_BINDINGS_CLOCK_R9A08G046_CPG_H__
-+
-+#include <dt-bindings/clock/renesas-cpg-mssr.h>
-+
-+/* R9A08G046 CPG Core Clocks */
-+#define R9A08G046_CLK_I			0
-+#define R9A08G046_CLK_IC0		1
-+#define R9A08G046_CLK_IC1		2
-+#define R9A08G046_CLK_IC2		3
-+#define R9A08G046_CLK_IC3		4
-+#define R9A08G046_CLK_P0		5
-+#define R9A08G046_CLK_P1		6
-+#define R9A08G046_CLK_P2		7
-+#define R9A08G046_CLK_P3		8
-+#define R9A08G046_CLK_P4		9
-+#define R9A08G046_CLK_P5		10
-+#define R9A08G046_CLK_P6		11
-+#define R9A08G046_CLK_P7		12
-+#define R9A08G046_CLK_P8		13
-+#define R9A08G046_CLK_P9		14
-+#define R9A08G046_CLK_P10		15
-+#define R9A08G046_CLK_P13		16
-+#define R9A08G046_CLK_P14		17
-+#define R9A08G046_CLK_P15		18
-+#define R9A08G046_CLK_P16		19
-+#define R9A08G046_CLK_P17		20
-+#define R9A08G046_CLK_P18		21
-+#define R9A08G046_CLK_P19		22
-+#define R9A08G046_CLK_P20		23
-+#define R9A08G046_CLK_M0		24
-+#define R9A08G046_CLK_M1		25
-+#define R9A08G046_CLK_M2		26
-+#define R9A08G046_CLK_M3		27
-+#define R9A08G046_CLK_M4		28
-+#define R9A08G046_CLK_M5		29
-+#define R9A08G046_CLK_M6		30
-+#define R9A08G046_CLK_AT		31
-+#define R9A08G046_CLK_B			32
-+#define R9A08G046_CLK_ETHTX01		33
-+#define R9A08G046_CLK_ETHTX02		34
-+#define R9A08G046_CLK_ETHRX01		35
-+#define R9A08G046_CLK_ETHRX02		36
-+#define R9A08G046_CLK_ETHRM0		37
-+#define R9A08G046_CLK_ETHTX11		38
-+#define R9A08G046_CLK_ETHTX12		39
-+#define R9A08G046_CLK_ETHRX11		40
-+#define R9A08G046_CLK_ETHRX12		41
-+#define R9A08G046_CLK_ETHRM1		42
-+#define R9A08G046_CLK_G			43
-+#define R9A08G046_CLK_HP		44
-+#define R9A08G046_CLK_SD0		45
-+#define R9A08G046_CLK_SD1		46
-+#define R9A08G046_CLK_SD2		47
-+#define R9A08G046_CLK_SPI0		48
-+#define R9A08G046_CLK_SPI1		49
-+#define R9A08G046_CLK_S0		50
-+#define R9A08G046_CLK_SWD		51
-+#define R9A08G046_OSCCLK		52
-+#define R9A08G046_OSCCLK2		53
-+#define R9A08G046_CLK_P4_DIV2		54
-+
-+/* R9A08G046 Module Clocks */
-+#define R9A08G046_CA55_SCLK		0
-+#define R9A08G046_CA55_PCLK		1
-+#define R9A08G046_CA55_ATCLK		2
-+#define R9A08G046_CA55_GICCLK		3
-+#define R9A08G046_CA55_PERICLK		4
-+#define R9A08G046_CA55_ACLK		5
-+#define R9A08G046_CA55_TSCLK		6
-+#define R9A08G046_CA55_CORECLK0		7
-+#define R9A08G046_CA55_CORECLK1		8
-+#define R9A08G046_CA55_CORECLK2		9
-+#define R9A08G046_CA55_CORECLK3		10
-+#define R9A08G046_SRAM_ACPU_ACLK0	11
-+#define R9A08G046_SRAM_ACPU_ACLK1	12
-+#define R9A08G046_SRAM_ACPU_ACLK2	13
-+#define R9A08G046_GIC600_GICCLK		14
-+#define R9A08G046_IA55_CLK		15
-+#define R9A08G046_IA55_PCLK		16
-+#define R9A08G046_MHU_PCLK		17
-+#define R9A08G046_SYC_CNT_CLK		18
-+#define R9A08G046_DMAC_ACLK		19
-+#define R9A08G046_DMAC_PCLK		20
-+#define R9A08G046_OSTM0_PCLK		21
-+#define R9A08G046_OSTM1_PCLK		22
-+#define R9A08G046_OSTM2_PCLK		23
-+#define R9A08G046_MTU_X_MCK_MTU3	24
-+#define R9A08G046_POE3_CLKM_POE		25
-+#define R9A08G046_GPT_PCLK		26
-+#define R9A08G046_POEG_A_CLKP		27
-+#define R9A08G046_POEG_B_CLKP		28
-+#define R9A08G046_POEG_C_CLKP		29
-+#define R9A08G046_POEG_D_CLKP		30
-+#define R9A08G046_WDT0_PCLK		31
-+#define R9A08G046_WDT0_CLK		32
-+#define R9A08G046_WDT1_PCLK		33
-+#define R9A08G046_WDT1_CLK		34
-+#define R9A08G046_WDT2_PCLK		35
-+#define R9A08G046_WDT2_CLK		36
-+#define R9A08G046_XSPI_HCLK		37
-+#define R9A08G046_XSPI_ACLK		38
-+#define R9A08G046_XSPI_CLK		39
-+#define R9A08G046_XSPI_CLKX2		40
-+#define R9A08G046_SDHI0_IMCLK		41
-+#define R9A08G046_SDHI0_IMCLK2		42
-+#define R9A08G046_SDHI0_CLK_HS		43
-+#define R9A08G046_SDHI0_IACLKS		44
-+#define R9A08G046_SDHI0_IACLKM		45
-+#define R9A08G046_SDHI1_IMCLK		46
-+#define R9A08G046_SDHI1_IMCLK2		47
-+#define R9A08G046_SDHI1_CLK_HS		48
-+#define R9A08G046_SDHI1_IACLKS		49
-+#define R9A08G046_SDHI1_IACLKM		50
-+#define R9A08G046_SDHI2_IMCLK		51
-+#define R9A08G046_SDHI2_IMCLK2		52
-+#define R9A08G046_SDHI2_CLK_HS		53
-+#define R9A08G046_SDHI2_IACLKS		54
-+#define R9A08G046_SDHI2_IACLKM		55
-+#define R9A08G046_GE3D_CLK		56
-+#define R9A08G046_GE3D_AXI_CLK		57
-+#define R9A08G046_GE3D_ACE_CLK		58
-+#define R9A08G046_ISU_ACLK		59
-+#define R9A08G046_ISU_PCLK		60
-+#define R9A08G046_H264_CLK_A		61
-+#define R9A08G046_H264_CLK_P		62
-+#define R9A08G046_CRU_SYSCLK		63
-+#define R9A08G046_CRU_VCLK		64
-+#define R9A08G046_CRU_PCLK		65
-+#define R9A08G046_CRU_ACLK		66
-+#define R9A08G046_MIPI_DSI_PLLCLK	67
-+#define R9A08G046_MIPI_DSI_SYSCLK	68
-+#define R9A08G046_MIPI_DSI_ACLK		69
-+#define R9A08G046_MIPI_DSI_PCLK		70
-+#define R9A08G046_MIPI_DSI_VCLK		71
-+#define R9A08G046_MIPI_DSI_LPCLK	72
-+#define R9A08G046_LVDS_PLLCLK		73
-+#define R9A08G046_LVDS_CLK_DOT0		74
-+#define R9A08G046_LVDS_PCLK		75
-+#define R9A08G046_LCDC_CLK_A		76
-+#define R9A08G046_LCDC_CLK_D		77
-+#define R9A08G046_LCDC_CLK_P		78
-+#define R9A08G046_SSI0_PCLK2		79
-+#define R9A08G046_SSI0_PCLK_SFR		80
-+#define R9A08G046_SSI1_PCLK2		81
-+#define R9A08G046_SSI1_PCLK_SFR		82
-+#define R9A08G046_SSI2_PCLK2		83
-+#define R9A08G046_SSI2_PCLK_SFR		84
-+#define R9A08G046_SSI3_PCLK2		85
-+#define R9A08G046_SSI3_PCLK_SFR		86
-+#define R9A08G046_USB_U2H0_HCLK		87
-+#define R9A08G046_USB_U2H1_HCLK		88
-+#define R9A08G046_USB_U2P0_EXR_CPUCLK	89
-+#define R9A08G046_USB_U2P1_EXR_CPUCLK	90
-+#define R9A08G046_USB_PCLK		91
-+#define R9A08G046_USB_SCLK		92
-+#define R9A08G046_ETH0_CLK_AXI		93
-+#define R9A08G046_ETH0_CLK_CHI		94
-+#define R9A08G046_ETH0_CLK_TX_I		95
-+#define R9A08G046_ETH0_CLK_RX_I		96
-+#define R9A08G046_ETH0_CLK_TX_180_I	97
-+#define R9A08G046_ETH0_CLK_RX_180_I	98
-+#define R9A08G046_ETH0_CLK_RMII_I	99
-+#define R9A08G046_ETH0_CLK_PTP_REF_I	100
-+#define R9A08G046_ETH1_CLK_AXI		101
-+#define R9A08G046_ETH1_CLK_CHI		102
-+#define R9A08G046_ETH1_CLK_TX_I		103
-+#define R9A08G046_ETH1_CLK_RX_I		104
-+#define R9A08G046_ETH1_CLK_TX_180_I	105
-+#define R9A08G046_ETH1_CLK_RX_180_I	106
-+#define R9A08G046_ETH1_CLK_RMII_I	107
-+#define R9A08G046_ETH1_CLK_PTP_REF_I	108
-+#define R9A08G046_I2C0_PCLK		109
-+#define R9A08G046_I2C1_PCLK		110
-+#define R9A08G046_I2C2_PCLK		111
-+#define R9A08G046_I2C3_PCLK		112
-+#define R9A08G046_SCIF0_CLK_PCK		113
-+#define R9A08G046_SCIF1_CLK_PCK		114
-+#define R9A08G046_SCIF2_CLK_PCK		115
-+#define R9A08G046_SCIF3_CLK_PCK		116
-+#define R9A08G046_SCIF4_CLK_PCK		117
-+#define R9A08G046_SCIF5_CLK_PCK		118
-+#define R9A08G046_RSCI0_PCLK		119
-+#define R9A08G046_RSCI0_TCLK		120
-+#define R9A08G046_RSCI1_PCLK		121
-+#define R9A08G046_RSCI1_TCLK		122
-+#define R9A08G046_RSCI2_PCLK		123
-+#define R9A08G046_RSCI2_TCLK		124
-+#define R9A08G046_RSCI3_PCLK		125
-+#define R9A08G046_RSCI3_TCLK		126
-+#define R9A08G046_RSPI0_PCLK		127
-+#define R9A08G046_RSPI0_TCLK		128
-+#define R9A08G046_RSPI1_PCLK		129
-+#define R9A08G046_RSPI1_TCLK		130
-+#define R9A08G046_RSPI2_PCLK		131
-+#define R9A08G046_RSPI2_TCLK		132
-+#define R9A08G046_CANFD_PCLK		133
-+#define R9A08G046_CANFD_CLK_RAM		134
-+#define R9A08G046_GPIO_HCLK		135
-+#define R9A08G046_ADC0_ADCLK		136
-+#define R9A08G046_ADC0_PCLK		137
-+#define R9A08G046_ADC1_ADCLK		138
-+#define R9A08G046_ADC1_PCLK		139
-+#define R9A08G046_TSU_PCLK		140
-+#define R9A08G046_PDM_PCLK		141
-+#define R9A08G046_PDM_CCLK		142
-+#define R9A08G046_PCI_ACLK		143
-+#define R9A08G046_PCI_CLKL1PM		144
-+#define R9A08G046_PCI_CLK_PMU		145
-+#define R9A08G046_SPDIF_PCLK		146
-+#define R9A08G046_I3C_TCLK		147
-+#define R9A08G046_I3C_PCLK		148
-+#define R9A08G046_VBAT_BCLK		149
-+#define R9A08G046_BSC_X_BCK_BSC		150
-+
-+/* R9A08G046 Resets */
-+#define R9A08G046_CA55_RST0_0		0
-+#define R9A08G046_CA55_RST0_1		1
-+#define R9A08G046_CA55_RST0_2		2
-+#define R9A08G046_CA55_RST0_3		3
-+#define R9A08G046_CA55_RST4_0		4
-+#define R9A08G046_CA55_RST4_1		5
-+#define R9A08G046_CA55_RST4_2		6
-+#define R9A08G046_CA55_RST4_3		7
-+#define R9A08G046_CA55_RST8		8
-+#define R9A08G046_CA55_RST9		9
-+#define R9A08G046_CA55_RST10		10
-+#define R9A08G046_CA55_RST11		11
-+#define R9A08G046_CA55_RST12		12
-+#define R9A08G046_CA55_RST13		13
-+#define R9A08G046_CA55_RST14		14
-+#define R9A08G046_CA55_RST15		15
-+#define R9A08G046_CA55_RST16		16
-+#define R9A08G046_SRAM_ACPU_ARESETN0	17
-+#define R9A08G046_SRAM_ACPU_ARESETN1	18
-+#define R9A08G046_SRAM_ACPU_ARESETN2	19
-+#define R9A08G046_GIC600_GICRESET_N	20
-+#define R9A08G046_GIC600_DBG_GICRESET_N	21
-+#define R9A08G046_IA55_RESETN		22
-+#define R9A08G046_MHU_RESETN		23
-+#define R9A08G046_SYC_RESETN		24
-+#define R9A08G046_DMAC_ARESETN		25
-+#define R9A08G046_DMAC_RST_ASYNC	26
-+#define R9A08G046_GTM0_PRESETZ		27
-+#define R9A08G046_GTM1_PRESETZ		28
-+#define R9A08G046_GTM2_PRESETZ		29
-+#define R9A08G046_MTU_X_PRESET_MTU3	30
-+#define R9A08G046_POE3_RST_M_REG	31
-+#define R9A08G046_GPT_RST_C		32
-+#define R9A08G046_POEG_A_RST		33
-+#define R9A08G046_POEG_B_RST		34
-+#define R9A08G046_POEG_C_RST		35
-+#define R9A08G046_POEG_D_RST		36
-+#define R9A08G046_WDT0_PRESETN		37
-+#define R9A08G046_WDT1_PRESETN		38
-+#define R9A08G046_WDT2_PRESETN		39
-+#define R9A08G046_XSPI_HRESETN		40
-+#define R9A08G046_XSPI_ARESETN		41
-+#define R9A08G046_SDHI0_IXRST		42
-+#define R9A08G046_SDHI1_IXRST		43
-+#define R9A08G046_SDHI2_IXRST		44
-+#define R9A08G046_SDHI0_IXRSTAXIM	45
-+#define R9A08G046_SDHI0_IXRSTAXIS	46
-+#define R9A08G046_SDHI1_IXRSTAXIM	47
-+#define R9A08G046_SDHI1_IXRSTAXIS	48
-+#define R9A08G046_SDHI2_IXRSTAXIM	49
-+#define R9A08G046_SDHI2_IXRSTAXIS	50
-+#define R9A08G046_GE3D_RESETN		51
-+#define R9A08G046_GE3D_AXI_RESETN	52
-+#define R9A08G046_GE3D_ACE_RESETN	53
-+#define R9A08G046_ISU_ARESETN		54
-+#define R9A08G046_ISU_PRESETN		55
-+#define R9A08G046_H264_X_RESET_VCP	56
-+#define R9A08G046_H264_CP_PRESET_P	57
-+#define R9A08G046_CRU_CMN_RSTB		58
-+#define R9A08G046_CRU_PRESETN		59
-+#define R9A08G046_CRU_ARESETN		60
-+#define R9A08G046_MIPI_DSI_CMN_RSTB	61
-+#define R9A08G046_MIPI_DSI_ARESET_N	62
-+#define R9A08G046_MIPI_DSI_PRESET_N	63
-+#define R9A08G046_LCDC_RESET_N		64
-+#define R9A08G046_SSI0_RST_M2_REG	65
-+#define R9A08G046_SSI1_RST_M2_REG	66
-+#define R9A08G046_SSI2_RST_M2_REG	67
-+#define R9A08G046_SSI3_RST_M2_REG	68
-+#define R9A08G046_USB_U2H0_HRESETN	69
-+#define R9A08G046_USB_U2H1_HRESETN	70
-+#define R9A08G046_USB_U2P0_EXL_SYSRST	71
-+#define R9A08G046_USB_PRESETN		72
-+#define R9A08G046_USB_U2P1_EXL_SYSRST	73
-+#define R9A08G046_ETH0_ARESET_N		74
-+#define R9A08G046_ETH1_ARESET_N		75
-+#define R9A08G046_I2C0_MRST		76
-+#define R9A08G046_I2C1_MRST		77
-+#define R9A08G046_I2C2_MRST		78
-+#define R9A08G046_I2C3_MRST		79
-+#define R9A08G046_SCIF0_RST_SYSTEM_N	80
-+#define R9A08G046_SCIF1_RST_SYSTEM_N	81
-+#define R9A08G046_SCIF2_RST_SYSTEM_N	82
-+#define R9A08G046_SCIF3_RST_SYSTEM_N	83
-+#define R9A08G046_SCIF4_RST_SYSTEM_N	84
-+#define R9A08G046_SCIF5_RST_SYSTEM_N	85
-+#define R9A08G046_RSPI0_PRESETN		86
-+#define R9A08G046_RSPI1_PRESETN		87
-+#define R9A08G046_RSPI2_PRESETN		88
-+#define R9A08G046_RSPI0_TRESETN		89
-+#define R9A08G046_RSPI1_TRESETN		90
-+#define R9A08G046_RSPI2_TRESETN		91
-+#define R9A08G046_CANFD_RSTP_N		92
-+#define R9A08G046_CANFD_RSTC_N		93
-+#define R9A08G046_GPIO_RSTN		94
-+#define R9A08G046_GPIO_PORT_RESETN	95
-+#define R9A08G046_GPIO_SPARE_RESETN	96
-+#define R9A08G046_ADC0_PRESETN		97
-+#define R9A08G046_ADC0_ADRST_N		98
-+#define R9A08G046_ADC1_PRESETN		99
-+#define R9A08G046_ADC1_ADRST_N		100
-+#define R9A08G046_TSU_PRESETN		101
-+#define R9A08G046_PDM_PRESETN		102
-+#define R9A08G046_PCI_ARESETN		103
-+#define R9A08G046_SPDIF_RST		104
-+#define R9A08G046_I3C_TRESETN		105
-+#define R9A08G046_I3C_PRESETN		106
-+#define R9A08G046_VBAT_BRESETN		107
-+#define R9A08G046_RSCI0_PRESETN		108
-+#define R9A08G046_RSCI1_PRESETN		109
-+#define R9A08G046_RSCI2_PRESETN		110
-+#define R9A08G046_RSCI3_PRESETN		111
-+#define R9A08G046_RSCI0_TRESETN		112
-+#define R9A08G046_RSCI1_TRESETN		113
-+#define R9A08G046_RSCI2_TRESETN		114
-+#define R9A08G046_RSCI3_TRESETN		115
-+#define R9A08G046_LVDS_RESET_N		116
-+
-+#endif /* __DT_BINDINGS_CLOCK_R9A08G046_CPG_H__ */
--- 
-2.43.0
-
+SGkgR2VlcnQsDQoNClRoYW5rcyBmb3IgeW91ciByZXZpZXcuDQoNCj4gLS0tLS1PcmlnaW5hbCBN
+ZXNzYWdlLS0tLS0NCj4gRnJvbTogR2VlcnQgVXl0dGVyaG9ldmVuIDxnZWVydEBsaW51eC1tNjhr
+Lm9yZz4NCj4gU2VudDogVHVlc2RheSwgSmFudWFyeSAyMCwgMjAyNiAxMjowMyBQTQ0KPiBUbzog
+Sm9obiBNYWRpZXUgPGpvaG4ubWFkaWV1LnhhQGJwLnJlbmVzYXMuY29tPg0KPiBTdWJqZWN0OiBS
+ZTogW1BBVENIIDA0LzE2XSBjbGs6IHJlbmVzYXM6IHI5YTA5ZzA0NzogQWRkIFBDSWUgY2xvY2tz
+IGFuZA0KPiByZXNldA0KPiANCj4gSGkgSm9obiwNCj4gDQo+IE9uIFdlZCwgMTQgSmFuIDIwMjYg
+YXQgMTY6MzYsIEpvaG4gTWFkaWV1IDxqb2huLm1hZGlldS54YUBicC5yZW5lc2FzLmNvbT4NCj4g
+d3JvdGU6DQo+ID4gQWRkIG5lY2Vzc2FyeSBjbG9ja3MgYW5kIHJlc2V0IGVudHJpZXMgZm9yIHRo
+ZSBQQ0llIGNvbnRyb2xsZXINCj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IEpvaG4gTWFkaWV1IDxq
+b2huLm1hZGlldS54YUBicC5yZW5lc2FzLmNvbT4NCj4gDQo+IFRoYW5rcyBmb3IgeW91ciBwYXRj
+aCENCj4gDQo+ID4gLS0tIGEvZHJpdmVycy9jbGsvcmVuZXNhcy9yOWEwOWcwNDctY3BnLmMNCj4g
+PiArKysgYi9kcml2ZXJzL2Nsay9yZW5lc2FzL3I5YTA5ZzA0Ny1jcGcuYw0KPiA+IEBAIC00Mzgs
+NiArNDM4LDEwIEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3Qgcnp2MmhfbW9kX2Nsaw0KPiByOWEwOWcw
+NDdfbW9kX2Nsa3NbXSBfX2luaXRjb25zdCA9IHsNCj4gPiAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICBCVVNfTVNUT1AoMywgQklUKDQpKSksDQo+ID4gICAg
+ICAgICBERUZfTU9EKCJ0c3VfMV9wY2xrIiwgICAgICAgICAgICAgICAgICAgQ0xLX1FFWFRBTCwg
+MTYsIDEwLCA4LA0KPiAxMCwNCj4gPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICBCVVNfTVNUT1AoMiwNCj4gPiBCSVQoMTUpKSksDQo+ID4gKyAgICAgICBE
+RUZfTU9EX0lOSVRfT0ZGKCJwY2llX2FjbGsiLCAgICAgICAgICAgQ0xLX1BMTERUWV9BQ1BVX0RJ
+VjIsDQo+IDEyLCA0LCA2LCA0LA0KPiANCj4gInBjaWVfMF9hY2xrIiwgdG8gbWF0Y2ggdGhlIGRv
+Y3VtZW50YXRpb24uDQoNCk5vdGVkIGZvciB2Mi4NCg0KPiANCj4gPiArICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBCVVNfTVNUT1AoMSwgQklUKDE1KSkpLA0K
+PiA+ICsgICAgICAgREVGX01PRF9JTklUX09GRigicGNpZV9jbGtfcG11IiwgICAgICAgIENMS19Q
+TExEVFlfQUNQVV9ESVYyLA0KPiAxMiwgNSwgNiwgNSwNCj4gDQo+ICJwY2llXzBfY2xrX3BtdSIN
+Cg0KTm90ZWQuDQoNCj4gDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgQlVTX01TVE9QKDEsDQo+ID4gKyBCSVQoMTUpKSksDQo+IA0KPiBEbyB5b3Ug
+bmVlZCBwY2llX3JlZmNsa19pbiBhbmQgcGNpZV9jb3JlY2xraW4/DQo+IEVzcGVjaWFsbHkgdGhl
+IGxhdHRlciBzZWVtcyB0byBiZSBkb2N1bWVudCBzcGFyc2VseS4NCj4gDQoNClRoZXNlIGNsb2Nr
+cyBhcmUgbm90IG5lZWRlZC4gVGhleSB3ZXJlIGRvY3VtZW50ZWQgYnkgbWlzdGFrZS4NCg0KPiA+
+ICB9Ow0KPiA+DQo+ID4gIHN0YXRpYyBjb25zdCBzdHJ1Y3Qgcnp2MmhfcmVzZXQgcjlhMDlnMDQ3
+X3Jlc2V0c1tdIF9faW5pdGNvbnN0ID0geyBAQA0KPiA+IC01MDMsNiArNTA3LDcgQEAgc3RhdGlj
+IGNvbnN0IHN0cnVjdCByenYyaF9yZXNldCByOWEwOWcwNDdfcmVzZXRzW10NCj4gX19pbml0Y29u
+c3QgPSB7DQo+ID4gICAgICAgICBERUZfUlNUKDEwLCAxNSwgNSwgMCksICAgICAgICAgIC8qIFVT
+QjJfMF9QUkVTRVROICovDQo+ID4gICAgICAgICBERUZfUlNUKDExLCAwLCA1LCAxKSwgICAgICAg
+ICAgIC8qIEdCRVRIXzBfQVJFU0VUTl9JICovDQo+ID4gICAgICAgICBERUZfUlNUKDExLCAxLCA1
+LCAyKSwgICAgICAgICAgIC8qIEdCRVRIXzFfQVJFU0VUTl9JICovDQo+ID4gKyAgICAgICBERUZf
+UlNUKDExLCAyLCA1LCAzKSwgICAgICAgICAgIC8qIFBDSUVfQVJFU0VUTiAqLw0KPiANCj4gUENJ
+RV8wX0FSRVNFVE4NCg0KTm90ZWQuDQoNClJlZ2FyZHMsDQpKb2huDQoNCj4gDQo+ID4gICAgICAg
+ICBERUZfUlNUKDEyLCA1LCA1LCAyMiksICAgICAgICAgIC8qIENSVV8wX1BSRVNFVE4gKi8NCj4g
+PiAgICAgICAgIERFRl9SU1QoMTIsIDYsIDUsIDIzKSwgICAgICAgICAgLyogQ1JVXzBfQVJFU0VU
+TiAqLw0KPiA+ICAgICAgICAgREVGX1JTVCgxMiwgNywgNSwgMjQpLCAgICAgICAgICAvKiBDUlVf
+MF9TX1JFU0VUTiAqLw0KPiANCj4gR3J7b2V0amUsZWV0aW5nfXMsDQo+IA0KPiAgICAgICAgICAg
+ICAgICAgICAgICAgICBHZWVydA0KPiANCj4gLS0NCj4gR2VlcnQgVXl0dGVyaG9ldmVuIC0tIFRo
+ZXJlJ3MgbG90cyBvZiBMaW51eCBiZXlvbmQgaWEzMiAtLSBnZWVydEBsaW51eC0NCj4gbTY4ay5v
+cmcNCj4gDQo+IEluIHBlcnNvbmFsIGNvbnZlcnNhdGlvbnMgd2l0aCB0ZWNobmljYWwgcGVvcGxl
+LCBJIGNhbGwgbXlzZWxmIGEgaGFja2VyLg0KPiBCdXQgd2hlbiBJJ20gdGFsa2luZyB0byBqb3Vy
+bmFsaXN0cyBJIGp1c3Qgc2F5ICJwcm9ncmFtbWVyIiBvciBzb21ldGhpbmcNCj4gbGlrZSB0aGF0
+Lg0KPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIC0tIExpbnVzIFRvcnZhbGRzDQo=
