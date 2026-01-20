@@ -1,279 +1,150 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28DC43BC4E6;
-	Tue, 20 Jan 2026 21:45:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D4CC3126DE
+	for <linux-clk@vger.kernel.org>; Tue, 20 Jan 2026 22:02:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768945520; cv=none; b=Bw+Wx9DIGZFITqAGngJwxlkP0bZQBJGsZcUyBteRmvhNc62JExgB1t/oDMjdwcOFMw/NMW0aaPLaxtWZF7/MsvTgLKd//oOKQT9iaiVmPDg77h83NUGWkcaaMkD3j9W7AMbWzXwlmYUMd2Se2BuyV4INc46IEI1+g7iXZm1GpVE=
+	t=1768946530; cv=none; b=HdM/4/ZlkNxQSojd6eTaRFOT7Fl9dp/qbdFJruip7XzRgDn8mYcUcV1NzeF1jaUsKiI0eJIV1ECWtSYPc7P35D8IH3SjQVF6N2j432ush0G7t3NJkZjRyeiLNTNeEtuL3140SgZ+a/u1LbejKjw3ceHzt5dZ7jQEetkLnKYQU1c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768945520; c=relaxed/simple;
-	bh=B/Jpd2h10wvWa+lrJ6oaIxQzQ53idOkFruEhSsWvmd4=;
-	h=From:Date:Content-Type:MIME-Version:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=f0293+sa7kWt9T7ytzk9NV8sSAY2LJSKQeH4mzlZONKPiF0wzIXOjrAi4k8/NAn3Ayjbbma0gH3bLtgTS0nGHjl0IChn8pfpQ5kuHujViNC7Swu3DAc0ENBPpcVXydBPDWK2lVfFeFw8FZtRy37Ydeb4Pk2BnBJ7cied1s5WOFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PNCvNBL3; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1768946530; c=relaxed/simple;
+	bh=VafLE2LsMSEMxe/8SoZIb+i5nLHEo+tX5wmA6Yii4yo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rBTHuhbEPDQz7aN76fXzqd/MhCCGF5i82J7SXFHM9hkhzdGKqw/xAQeJdWrIUZuCirZyhveq9OMhjKeYuKCsyeIFvJstTBq4Nz242Ro5HwCUi0uiPWgA6EVX79XkSSrlsrgWMwntuJB2r8f6Kyqnn+KhR5uHoNdwFEV6kO7OHSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=cgJOi1Mc; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=Ab7EQ3Lt; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PNCvNBL3"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DD51C19421;
-	Tue, 20 Jan 2026 21:45:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768945519;
-	bh=B/Jpd2h10wvWa+lrJ6oaIxQzQ53idOkFruEhSsWvmd4=;
-	h=From:Date:Cc:To:In-Reply-To:References:Subject:From;
-	b=PNCvNBL3rplmrx3H378LbvSJ7Cqd20YVOmWRxWmtxYOXkmKJo3oKdfynLXcvW78Ik
-	 cJ+tvz6pBkcaA1ZR7f3RLJ8MglXUnpBJZpsjJAHD2JdjDC3GLnbUrWNQlQjFBQr6G5
-	 XYWaoQDOIQSipph2yePrN4npMNrLYq0e2+ECZeYMugtNzSK6XpCC/8i1SHMSV45fpN
-	 KhvTLe6WphISgjyE4XEeYSsClVInCna6H38wcrgLmgYaK7xo51K3hoMOopAlbSeDNv
-	 S+l0COi8I2cRyv4NExoQyqv6A2NJhdEcSfHyLdJfVRXcWIz3YbMywA7K6nxkXpLAic
-	 QjpOAHza0SL8w==
-From: Rob Herring <robh@kernel.org>
-Date: Tue, 20 Jan 2026 15:45:17 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="cgJOi1Mc";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="Ab7EQ3Lt"
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 60KDxofi428970
+	for <linux-clk@vger.kernel.org>; Tue, 20 Jan 2026 22:02:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=9crKbumNaTveQ41rktS41EDf
+	zqAitvWbjmLVxdNQRjQ=; b=cgJOi1McE15BRnX/3Iqw+pmpEoef8WZ3PboUuFAv
+	7Z4gjsFQp+6e4KqkmJYDppx7dvKrPqinEvA7vUSsok0BzzZKdpBfXLwbnkHSivDD
+	Uv7FVyfHbXjeB7aC7jQSMDar+0zseL8fhxVWivARDvbpvyCVl4fEdlQKm1cRMo6r
+	aMCm67kmIuikB0yb+ujnSeSHH0rEhwKPV7iP/HDAbz4Bgec1HoWrOVnC3Cim46vW
+	Xw72jk6J598cW5txqC+hD/wHVVohB+aSAPp8VopuM1WEATi1qg7SRzxuR1Ub7meQ
+	Bytl5AaxaFQC+WedhNBYObOqRjyON8jE1l3H+Nu9k2fekw==
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4bt4ps2vgk-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Tue, 20 Jan 2026 22:02:05 +0000 (GMT)
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-8c6a341ac9fso180526185a.3
+        for <linux-clk@vger.kernel.org>; Tue, 20 Jan 2026 14:02:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1768946525; x=1769551325; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=9crKbumNaTveQ41rktS41EDfzqAitvWbjmLVxdNQRjQ=;
+        b=Ab7EQ3Lt4Iu/xOOlZ3dAFgTyfGnxeZNl3+Gxq/eWqcD7qbODx9uBplK8gX3R+aEXmu
+         ASlt1s+G1mftXO+qvNV/uSgdqmZp3hw9h5crrUSoYn8LwXrxcH3P/hVo1+TI5sQ3/Ojr
+         VXzaqAb5flDySmFGdHhIPIbpFr0TmOZrMiMxFN5o9YXvpo7ivX0INqtr6lkL12Ci4aJb
+         XrL0nI3Hk9n9vzojzjRoREd/3sr3VEPrukFlwY3p8Pq7yhv3RKKN8sHq/gfDUcofOtYJ
+         XLnqUxLnPFbkZ0nDGmohuN1cSx+RWj07yrvctA4DenjrdeWHQdFschww7tkQpep1uPSq
+         wWog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1768946525; x=1769551325;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9crKbumNaTveQ41rktS41EDfzqAitvWbjmLVxdNQRjQ=;
+        b=WvnTocsIwpq6M+k8Y/kxx+1QvwboIoB9AOQ4piGvVRJwdREOfMv/qhkJuEs72AhbLu
+         d3NidqPBz7TUw1d39BbKM63G+rVh2JRN1lE8hvjJ1v7tlD65sMlRAAfq2x61REhGXLn5
+         Z4V9WoF1jvrfrYGG2SLqI0eBrtpr8gXXC276qRX6jheR/NlwzclmU3Cdcip4RBN1/oRJ
+         2San4VisdtH0tqbrh1f2oS8iP/o7BPGD3tFggXuph9jblYLd/SZDI+yca907LmSthPXI
+         vJQ55aNL4olrsRni8bgZadQUN5L34OD1VnGyoztU/U9FyI/+jrDP3Ap4m5TpD32MYliK
+         ozfA==
+X-Forwarded-Encrypted: i=1; AJvYcCUOX9UQL02Jjbp2ObyO7jqNg7yIVpP4UyRxUmOcyLMkB39u8j8PM7MKd4LKvAw+SHx/fW4hhZ5Jkp4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCeLR22Ty6l26/ZQx3NNr3PTex90FuIdbiwhzcccbfYn5gEqCW
+	cteBDvq/mBLjESfUkE1ZLh8DfQAwB9RFDRN/TqVuxLN0w+1po/hVGeTd6oTCYdatI4WhkdnIhL9
+	LSgBHiN/wArlSKBRjcJn913fCfk4EL1lcbaI2gv3bpLo2cNWihVUOuRgN0FvOc7I=
+X-Gm-Gg: AY/fxX5IPAvueVsuBP30f7SfirWHzB3KtHOc4MFbSddq1vJ/hAioKmjijgYtUwaH/Fj
+	C4jwqFu3Pbrom1idbOYrVFkkugaeEXTFLbEZV1LT5y/jmVbvzxRtzNJRXr0u6u5PRhEAMSUUIXx
+	QXdqa3eTeMRp+FNPE63FioXbaTRH1y++jICEJlR56UucE/aqn2NPJdkgz8F6kGrlPZ31mHUz9tc
+	/SuJhdqvyV9f8YgCW2FS2gXM+ocw6OfFGsHuoh4aZ8G1rqWuUd7TRYIlES/iL8eP7VtMse4NauG
+	qb4NznaXFQYf/UlRhnLwGsewnNLhGYXO4V/L2dCgZNOuLLoFdxZ4VqqgxnC8CYb+D+8tiAeeiEH
+	kGdHEf7b+R0trOXG4x7wr0R1Z1k9dxs1b/DuSYY6ueMqxK7oO7dQ3HJEGadiY6k/lIFDP8O3q2T
+	OLhvy/l36TL7C7Gt2BUXzQ5cs=
+X-Received: by 2002:a05:620a:4723:b0:8be:64e5:52ab with SMTP id af79cd13be357-8c6cce3bafcmr409214185a.60.1768946524852;
+        Tue, 20 Jan 2026 14:02:04 -0800 (PST)
+X-Received: by 2002:a05:620a:4723:b0:8be:64e5:52ab with SMTP id af79cd13be357-8c6cce3bafcmr409207385a.60.1768946524180;
+        Tue, 20 Jan 2026 14:02:04 -0800 (PST)
+Received: from umbar.lan (2001-14ba-a073-af00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a073:af00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-38384bc471dsm40146081fa.0.2026.01.20.14.02.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 Jan 2026 14:02:03 -0800 (PST)
+Date: Wed, 21 Jan 2026 00:02:01 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Konrad Dybcio <konradybcio@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Taniya Das <quic_tdas@quicinc.com>,
+        cros-qcom-dts-watchers@chromium.org,
+        Kalyan Thota <quic_kalyant@quicinc.com>,
+        Douglas Anderson <dianders@chromium.org>,
+        Harigovindan P <harigovi@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH 2/3] clk: qcom: dispcc-sc7180: Add missing MDSS resets
+Message-ID: <b7yt62rylzcu43bu4k7haj56xltyg7ejj6nfloinmiyjfg5h5e@hhh6ewrslff6>
+References: <20260120-topic-7180_dispcc_bcr-v1-0-0b1b442156c3@oss.qualcomm.com>
+ <20260120-topic-7180_dispcc_bcr-v1-2-0b1b442156c3@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Cc: Taniya Das <quic_tdas@quicinc.com>, linux-kernel@vger.kernel.org, 
- Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, linux-clk@vger.kernel.org, 
- Kalyan Thota <quic_kalyant@quicinc.com>, linux-arm-msm@vger.kernel.org, 
- Val Packett <val@packett.cool>, cros-qcom-dts-watchers@chromium.org, 
- Michael Turquette <mturquette@baylibre.com>, devicetree@vger.kernel.org, 
- Conor Dooley <conor+dt@kernel.org>, 
- Harigovindan P <harigovi@codeaurora.org>, Stephen Boyd <sboyd@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Douglas Anderson <dianders@chromium.org>
-To: Konrad Dybcio <konradybcio@kernel.org>
-In-Reply-To: <20260120-topic-7180_dispcc_bcr-v1-0-0b1b442156c3@oss.qualcomm.com>
-References: <20260120-topic-7180_dispcc_bcr-v1-0-0b1b442156c3@oss.qualcomm.com>
-Message-Id: <176894531206.1201519.7083808409439106818.robh@kernel.org>
-Subject: Re: [PATCH 0/3] SC7180 MDSS core reset
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260120-topic-7180_dispcc_bcr-v1-2-0b1b442156c3@oss.qualcomm.com>
+X-Proofpoint-ORIG-GUID: niF1ZkXEFysU6_GwJP6jKzNIOBB-mJWz
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTIwMDE4MyBTYWx0ZWRfX6K1fCVdXpIBN
+ SSCpJbcywDtz8makocW0pNEbd+4vj7IDbmP9EmslswtamK/umu2Fyczi79KOygNeDvo88cvA9RG
+ 3sw4TceV1dIFGBHjU4SLSDDP5L1H5HbLF3FLlLaeRJVPRuHOtyWE5PAXBpvsNnctFoMVq4VPv2k
+ nDRpcW1QRWFCvroHFcYWnJqLocrR5R/RZWQIjN51plBpSYVPa0RdrEkCHRrhSSAByyXPlX+KX3U
+ Q/2b4iDA0+nmohQc01416lxbORO/EYENfaEvb+CdUbun96rnt3RvcK/hOMZpisW3sz7ZLofVA0Z
+ zr0j8e2MhqJ6i4hwYQ+WvtRvpJr8Gz2WuRFER4myfExJ8UGuwIb+oH+9kJ0oaetDJg/ihpWxpdq
+ eZV3vKk5XqShrOcbB2nYKUwUwsve6OVrO/PO6yb/NqBghEYoeKDdE3ERa5M5HjfICK7k0Ri32HM
+ 3W7xfE/ELzkVJoboLfA==
+X-Authority-Analysis: v=2.4 cv=PdfyRyhd c=1 sm=1 tr=0 ts=696ffb5d cx=c_pps
+ a=HLyN3IcIa5EE8TELMZ618Q==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=vUbySO9Y5rIA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=EUspDBNiAAAA:8 a=nZ5XTfsJM_D5RP7zCugA:9 a=CjuIK1q_8ugA:10
+ a=bTQJ7kPSJx9SKPbeHEYW:22
+X-Proofpoint-GUID: niF1ZkXEFysU6_GwJP6jKzNIOBB-mJWz
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.20,FMLib:17.12.100.49
+ definitions=2026-01-20_06,2026-01-20_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 suspectscore=0 adultscore=0 lowpriorityscore=0
+ clxscore=1015 bulkscore=0 spamscore=0 phishscore=0 malwarescore=0
+ impostorscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2601150000
+ definitions=main-2601200183
 
-
-On Tue, 20 Jan 2026 12:19:24 +0100, Konrad Dybcio wrote:
-> Add the missing reset for the display subsystem and wire it up, so that
-> drivers can consume it.
+On Tue, Jan 20, 2026 at 12:19:26PM +0100, Konrad Dybcio wrote:
+> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 > 
-> Compile-tested only.
+> The MDSS resets have so far been left undescribed. Fix that.
 > 
+> Fixes: dd3d06622138 ("clk: qcom: Add display clock controller driver for SC7180")
 > Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 > ---
-> Konrad Dybcio (3):
->       dt-bindings: clock: qcom,dispcc-sc7180: Define MDSS resets
->       clk: qcom: dispcc-sc7180: Add missing MDSS resets
->       arm64: dts: qcom: sc7180: Add missing MDSS core reset
-> 
->  arch/arm64/boot/dts/qcom/sc7180.dtsi           | 2 ++
->  drivers/clk/qcom/dispcc-sc7180.c               | 8 ++++++++
->  include/dt-bindings/clock/qcom,dispcc-sc7180.h | 7 ++++++-
->  3 files changed, 16 insertions(+), 1 deletion(-)
-> ---
-> base-commit: 46fe65a2c28ecf5df1a7475aba1f08ccf4c0ac1b
-> change-id: 20260120-topic-7180_dispcc_bcr-f7ac25c21f89
-> 
-> Best regards,
-> --
-> Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> 
-> 
+>  drivers/clk/qcom/dispcc-sc7180.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
 > 
 
-
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
-
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
-
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
-
-  pip3 install dtschema --upgrade
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
 
-This patch series was applied (using b4) to base:
- Base: 46fe65a2c28ecf5df1a7475aba1f08ccf4c0ac1b (use --merge-base to override)
-
-If this is not the correct base, please add 'base-commit' tag
-(or use b4 which does this automatically)
-
-
-Warnings in base: 429
-Warnings after series: 164
-
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/qcom/' for 20260120-topic-7180_dispcc_bcr-v1-0-0b1b442156c3@oss.qualcomm.com:
-
-Lexical error: arch/arm64/boot/dts/qcom/sc7180.dtsi:3224.22-42 Unexpected 'DISPCC_MDSS_CORE_BCR'
-Lexical error: arch/arm64/boot/dts/qcom/sc7180.dtsi:3224.22-42 Unexpected 'DISPCC_MDSS_CORE_BCR'
-FATAL ERROR: Syntax error parsing input tree
-Lexical error: arch/arm64/boot/dts/qcom/sc7180.dtsi:3224.22-42 Unexpected 'DISPCC_MDSS_CORE_BCR'
-Lexical error: arch/arm64/boot/dts/qcom/sc7180.dtsi:3224.22-42 Unexpected 'DISPCC_MDSS_CORE_BCR'
-FATAL ERROR: Syntax error parsing input tree
-make[5]: *** [scripts/Makefile.dtbs:142: arch/arm64/boot/dts/qcom/sc7180-acer-aspire1.dtb] Error 1
-make[5]: *** [scripts/Makefile.dtbs:142: arch/arm64/boot/dts/qcom/sc7180-idp.dtb] Error 1
-FATAL ERROR: Syntax error parsing input tree
-Lexical error: arch/arm64/boot/dts/qcom/sc7180.dtsi:3224.22-42 Unexpected 'DISPCC_MDSS_CORE_BCR'
-FATAL ERROR: Syntax error parsing input tree
-Lexical error: arch/arm64/boot/dts/qcom/sc7180.dtsi:3224.22-42 Unexpected 'DISPCC_MDSS_CORE_BCR'
-Lexical error: arch/arm64/boot/dts/qcom/sc7180.dtsi:3224.22-42 Unexpected 'DISPCC_MDSS_CORE_BCR'
-Lexical error: arch/arm64/boot/dts/qcom/sc7180.dtsi:3224.22-42 Unexpected 'DISPCC_MDSS_CORE_BCR'
-make[5]: *** [scripts/Makefile.dtbs:142: arch/arm64/boot/dts/qcom/sc7180-trogdor-coachz-r1.dtb] Error 1
-make[5]: *** [scripts/Makefile.dtbs:142: arch/arm64/boot/dts/qcom/sc7180-trogdor-coachz-r3.dtb] Error 1
-FATAL ERROR: Syntax error parsing input tree
-FATAL ERROR: Syntax error parsing input tree
-FATAL ERROR: Syntax error parsing input tree
-make[5]: *** [scripts/Makefile.dtbs:142: arch/arm64/boot/dts/qcom/sc7180-trogdor-homestar-r2.dtb] Error 1
-make[5]: *** [scripts/Makefile.dtbs:142: arch/arm64/boot/dts/qcom/sc7180-trogdor-homestar-r3.dtb] Error 1
-make[5]: *** [scripts/Makefile.dtbs:142: arch/arm64/boot/dts/qcom/sc7180-trogdor-homestar-r4.dtb] Error 1
-FATAL ERROR: Syntax error parsing input tree
-make[5]: *** [scripts/Makefile.dtbs:142: arch/arm64/boot/dts/qcom/sc7180-trogdor-kingoftown.dtb] Error 1
-Lexical error: arch/arm64/boot/dts/qcom/sc7180.dtsi:3224.22-42 Unexpected 'DISPCC_MDSS_CORE_BCR'
-FATAL ERROR: Syntax error parsing input tree
-make[5]: *** [scripts/Makefile.dtbs:142: arch/arm64/boot/dts/qcom/sc7180-trogdor-coachz-r3-lte.dtb] Error 1
-Lexical error: arch/arm64/boot/dts/qcom/sc7180.dtsi:3224.22-42 Unexpected 'DISPCC_MDSS_CORE_BCR'
-Lexical error: arch/arm64/boot/dts/qcom/sc7180.dtsi:3224.22-42 Unexpected 'DISPCC_MDSS_CORE_BCR'
-FATAL ERROR: Syntax error parsing input tree
-make[5]: *** [scripts/Makefile.dtbs:142: arch/arm64/boot/dts/qcom/sc7180-trogdor-lazor-r1.dtb] Error 1
-Lexical error: arch/arm64/boot/dts/qcom/sc7180.dtsi:3224.22-42 Unexpected 'DISPCC_MDSS_CORE_BCR'
-FATAL ERROR: Syntax error parsing input tree
-make[5]: *** [scripts/Makefile.dtbs:142: arch/arm64/boot/dts/qcom/sc7180-trogdor-coachz-r1-lte.dtb] Error 1
-Lexical error: arch/arm64/boot/dts/qcom/sc7180.dtsi:3224.22-42 Unexpected 'DISPCC_MDSS_CORE_BCR'
-Lexical error: arch/arm64/boot/dts/qcom/sc7180.dtsi:3224.22-42 Unexpected 'DISPCC_MDSS_CORE_BCR'
-FATAL ERROR: Syntax error parsing input tree
-FATAL ERROR: Syntax error parsing input tree
-make[5]: *** [scripts/Makefile.dtbs:142: arch/arm64/boot/dts/qcom/sc7180-trogdor-lazor-r1-lte.dtb] Error 1
-make[5]: *** [scripts/Makefile.dtbs:142: arch/arm64/boot/dts/qcom/sc7180-trogdor-lazor-r3.dtb] Error 1
-FATAL ERROR: Syntax error parsing input tree
-Lexical error: arch/arm64/boot/dts/qcom/sc7180.dtsi:3224.22-42 Unexpected 'DISPCC_MDSS_CORE_BCR'
-Lexical error: arch/arm64/boot/dts/qcom/sc7180.dtsi:3224.22-42 Unexpected 'DISPCC_MDSS_CORE_BCR'
-make[5]: *** [scripts/Makefile.dtbs:142: arch/arm64/boot/dts/qcom/sc7180-trogdor-lazor-r1-kb.dtb] Error 1
-Lexical error: arch/arm64/boot/dts/qcom/sc7180.dtsi:3224.22-42 Unexpected 'DISPCC_MDSS_CORE_BCR'
-FATAL ERROR: Syntax error parsing input tree
-Lexical error: arch/arm64/boot/dts/qcom/sc7180.dtsi:3224.22-42 Unexpected 'DISPCC_MDSS_CORE_BCR'
-FATAL ERROR: Syntax error parsing input tree
-make[5]: *** [scripts/Makefile.dtbs:142: arch/arm64/boot/dts/qcom/sc7180-trogdor-lazor-r9.dtb] Error 1
-FATAL ERROR: Syntax error parsing input tree
-make[5]: *** [scripts/Makefile.dtbs:142: arch/arm64/boot/dts/qcom/sc7180-trogdor-lazor-r3-lte.dtb] Error 1
-make[5]: *** [scripts/Makefile.dtbs:142: arch/arm64/boot/dts/qcom/sc7180-trogdor-lazor-r9-kb.dtb] Error 1
-FATAL ERROR: Syntax error parsing input tree
-make[5]: *** [scripts/Makefile.dtbs:142: arch/arm64/boot/dts/qcom/sc7180-trogdor-lazor-r9-lte.dtb] Error 1
-Lexical error: arch/arm64/boot/dts/qcom/sc7180.dtsi:3224.22-42 Unexpected 'DISPCC_MDSS_CORE_BCR'
-Lexical error: arch/arm64/boot/dts/qcom/sc7180.dtsi:3224.22-42 Unexpected 'DISPCC_MDSS_CORE_BCR'
-FATAL ERROR: Syntax error parsing input tree
-make[5]: *** [scripts/Makefile.dtbs:142: arch/arm64/boot/dts/qcom/sc7180-trogdor-lazor-r10.dtb] Error 1
-FATAL ERROR: Syntax error parsing input tree
-Lexical error: arch/arm64/boot/dts/qcom/sc7180.dtsi:3224.22-42 Unexpected 'DISPCC_MDSS_CORE_BCR'
-make[5]: *** [scripts/Makefile.dtbs:142: arch/arm64/boot/dts/qcom/sc7180-trogdor-lazor-r10-kb.dtb] Error 1
-Lexical error: arch/arm64/boot/dts/qcom/sc7180.dtsi:3224.22-42 Unexpected 'DISPCC_MDSS_CORE_BCR'
-Lexical error: arch/arm64/boot/dts/qcom/sc7180.dtsi:3224.22-42 Unexpected 'DISPCC_MDSS_CORE_BCR'
-FATAL ERROR: Syntax error parsing input tree
-make[5]: *** [scripts/Makefile.dtbs:142: arch/arm64/boot/dts/qcom/sc7180-trogdor-lazor-limozeen-r4.dtb] Error 1
-Lexical error: arch/arm64/boot/dts/qcom/sc7180.dtsi:3224.22-42 Unexpected 'DISPCC_MDSS_CORE_BCR'
-FATAL ERROR: Syntax error parsing input tree
-FATAL ERROR: Syntax error parsing input tree
-FATAL ERROR: Syntax error parsing input tree
-Lexical error: arch/arm64/boot/dts/qcom/sc7180.dtsi:3224.22-42 Unexpected 'DISPCC_MDSS_CORE_BCR'
-Lexical error: arch/arm64/boot/dts/qcom/sc7180.dtsi:3224.22-42 Unexpected 'DISPCC_MDSS_CORE_BCR'
-FATAL ERROR: Syntax error parsing input tree
-FATAL ERROR: Syntax error parsing input tree
-Lexical error: arch/arm64/boot/dts/qcom/sc7180.dtsi:3224.22-42 Unexpected 'DISPCC_MDSS_CORE_BCR'
-make[5]: *** [scripts/Makefile.dtbs:142: arch/arm64/boot/dts/qcom/sc7180-trogdor-lazor-r3-kb.dtb] Error 1
-make[5]: *** [scripts/Makefile.dtbs:142: arch/arm64/boot/dts/qcom/sc7180-trogdor-lazor-limozeen-r9.dtb] Error 1
-make[5]: *** [scripts/Makefile.dtbs:142: arch/arm64/boot/dts/qcom/sc7180-trogdor-lazor-limozeen-r10.dtb] Error 1
-make[5]: *** [scripts/Makefile.dtbs:142: arch/arm64/boot/dts/qcom/sc7180-trogdor-lazor-limozeen-nots-r4.dtb] Error 1
-Lexical error: arch/arm64/boot/dts/qcom/sc7180.dtsi:3224.22-42 Unexpected 'DISPCC_MDSS_CORE_BCR'
-Lexical error: arch/arm64/boot/dts/qcom/sc7180.dtsi:3224.22-42 Unexpected 'DISPCC_MDSS_CORE_BCR'
-FATAL ERROR: Syntax error parsing input tree
-make[5]: *** [scripts/Makefile.dtbs:142: arch/arm64/boot/dts/qcom/sc7180-trogdor-lazor-limozeen-nots-r5.dtb] Error 1
-make[5]: *** [scripts/Makefile.dtbs:142: arch/arm64/boot/dts/qcom/sc7180-trogdor-lazor-limozeen-nots-r10.dtb] Error 1
-FATAL ERROR: Syntax error parsing input tree
-FATAL ERROR: Syntax error parsing input tree
-Lexical error: arch/arm64/boot/dts/qcom/sc7180.dtsi:3224.22-42 Unexpected 'DISPCC_MDSS_CORE_BCR'
-make[5]: *** [scripts/Makefile.dtbs:142: arch/arm64/boot/dts/qcom/sc7180-trogdor-lazor-r10-lte.dtb] Error 1
-make[5]: *** [scripts/Makefile.dtbs:142: arch/arm64/boot/dts/qcom/sc7180-trogdor-lazor-limozeen-nots-r9.dtb] Error 1
-FATAL ERROR: Syntax error parsing input tree
-make[5]: *** [scripts/Makefile.dtbs:142: arch/arm64/boot/dts/qcom/sc7180-trogdor-pazquel-lte-parade.dtb] Error 1
-Lexical error: arch/arm64/boot/dts/qcom/sc7180.dtsi:3224.22-42 Unexpected 'DISPCC_MDSS_CORE_BCR'
-Lexical error: arch/arm64/boot/dts/qcom/sc7180.dtsi:3224.22-42 Lexical error: arch/arm64/boot/dts/qcom/sc7180.dtsi:3224.22-42 Unexpected 'DISPCC_MDSS_CORE_BCR'
-Unexpected 'DISPCC_MDSS_CORE_BCR'
-FATAL ERROR: Syntax error parsing input tree
-make[5]: *** [scripts/Makefile.dtbs:142: arch/arm64/boot/dts/qcom/sc7180-trogdor-pazquel-lte-ti.dtb] Error 1
-FATAL ERROR: FATAL ERROR: Syntax error parsing input tree
-Syntax error parsing input tree
-make[5]: *** [scripts/Makefile.dtbs:142: arch/arm64/boot/dts/qcom/sc7180-trogdor-pazquel-ti.dtb] Error 1
-Lexical error: arch/arm64/boot/dts/qcom/sc7180.dtsi:3224.22-42 Lexical error: arch/arm64/boot/dts/qcom/sc7180.dtsi:3224.22-42 Unexpected 'DISPCC_MDSS_CORE_BCR'
-Lexical error: arch/arm64/boot/dts/qcom/sc7180.dtsi:3224.22-42 Unexpected 'DISPCC_MDSS_CORE_BCR'
-Lexical error: arch/arm64/boot/dts/qcom/sc7180.dtsi:3224.22-42 Unexpected 'DISPCC_MDSS_CORE_BCR'
-make[5]: *** [scripts/Makefile.dtbs:142: arch/arm64/boot/dts/qcom/sc7180-trogdor-pazquel-parade.dtb] Error 1
-Unexpected 'DISPCC_MDSS_CORE_BCR'
-Lexical error: arch/arm64/boot/dts/qcom/sc7180.dtsi:3224.22-42 Unexpected 'DISPCC_MDSS_CORE_BCR'
-FATAL ERROR: Syntax error parsing input tree
-make[5]: *** [scripts/Makefile.dtbs:142: arch/arm64/boot/dts/qcom/sc7180-trogdor-pompom-r2.dtb] Error 1
-FATAL ERROR: Syntax error parsing input tree
-make[5]: *** [scripts/Makefile.dtbs:142: arch/arm64/boot/dts/qcom/sc7180-trogdor-pompom-r2-lte.dtb] Error 1
-FATAL ERROR: Syntax error parsing input tree
-FATAL ERROR: Syntax error parsing input tree
-Lexical error: arch/arm64/boot/dts/qcom/sc7180.dtsi:3224.22-42 Unexpected 'DISPCC_MDSS_CORE_BCR'
-make[5]: *** [scripts/Makefile.dtbs:142: arch/arm64/boot/dts/qcom/sc7180-trogdor-pompom-r1.dtb] Error 1
-make[5]: *** [scripts/Makefile.dtbs:142: arch/arm64/boot/dts/qcom/sc7180-trogdor-pompom-r1-lte.dtb] Error 1
-FATAL ERROR: Syntax error parsing input tree
-make[5]: *** [scripts/Makefile.dtbs:142: arch/arm64/boot/dts/qcom/sc7180-trogdor-pazquel360-lte.dtb] Error 1
-FATAL ERROR: Syntax error parsing input tree
-Lexical error: arch/arm64/boot/dts/qcom/sc7180.dtsi:3224.22-42 Unexpected 'DISPCC_MDSS_CORE_BCR'
-make[5]: *** [scripts/Makefile.dtbs:142: arch/arm64/boot/dts/qcom/sc7180-trogdor-pompom-r3.dtb] Error 1
-FATAL ERROR: Syntax error parsing input tree
-make[5]: *** [scripts/Makefile.dtbs:142: arch/arm64/boot/dts/qcom/sc7180-trogdor-pompom-r3-lte.dtb] Error 1
-Lexical error: arch/arm64/boot/dts/qcom/sc7180.dtsi:3224.22-42 Unexpected 'DISPCC_MDSS_CORE_BCR'
-Lexical error: arch/arm64/boot/dts/qcom/sc7180.dtsi:3224.22-42 Unexpected 'DISPCC_MDSS_CORE_BCR'
-FATAL ERROR: Syntax error parsing input tree
-make[5]: *** [scripts/Makefile.dtbs:142: arch/arm64/boot/dts/qcom/sc7180-trogdor-quackingstick-r0.dtb] Error 1
-Lexical error: arch/arm64/boot/dts/qcom/sc7180.dtsi:3224.22-42 Unexpected 'DISPCC_MDSS_CORE_BCR'
-Lexical error: arch/arm64/boot/dts/qcom/sc7180.dtsi:3224.22-42 Unexpected 'DISPCC_MDSS_CORE_BCR'
-FATAL ERROR: Syntax error parsing input tree
-make[5]: *** [scripts/Makefile.dtbs:142: arch/arm64/boot/dts/qcom/sc7180-trogdor-pazquel360-wifi.dtb] Error 1
-Lexical error: arch/arm64/boot/dts/qcom/sc7180.dtsi:3224.22-42 Unexpected 'DISPCC_MDSS_CORE_BCR'
-Lexical error: arch/arm64/boot/dts/qcom/sc7180.dtsi:3224.22-42 Unexpected 'DISPCC_MDSS_CORE_BCR'
-FATAL ERROR: Syntax error parsing input tree
-make[5]: *** [scripts/Makefile.dtbs:142: arch/arm64/boot/dts/qcom/sc7180-trogdor-wormdingler-rev1-boe.dtb] Error 1
-FATAL ERROR: Syntax error parsing input tree
-FATAL ERROR: Syntax error parsing input tree
-FATAL ERROR: Syntax error parsing input tree
-make[5]: *** [scripts/Makefile.dtbs:142: arch/arm64/boot/dts/qcom/sc7180-trogdor-quackingstick-r0-lte.dtb] Error 1
-make[5]: *** [scripts/Makefile.dtbs:142: arch/arm64/boot/dts/qcom/sc7180-trogdor-wormdingler-rev1-inx.dtb] Error 1
-make[5]: *** [scripts/Makefile.dtbs:142: arch/arm64/boot/dts/qcom/sc7180-trogdor-wormdingler-rev1-inx-rt5682s.dtb] Error 1
-Lexical error: arch/arm64/boot/dts/qcom/sc7180.dtsi:3224.22-42 Unexpected 'DISPCC_MDSS_CORE_BCR'
-FATAL ERROR: Syntax error parsing input tree
-make[5]: *** [scripts/Makefile.dtbs:142: arch/arm64/boot/dts/qcom/sc7180-trogdor-r1-lte.dtb] Error 1
-Lexical error: arch/arm64/boot/dts/qcom/sc7180.dtsi:3224.22-42 Unexpected 'DISPCC_MDSS_CORE_BCR'
-FATAL ERROR: Syntax error parsing input tree
-make[5]: *** [scripts/Makefile.dtbs:142: arch/arm64/boot/dts/qcom/sc7180-trogdor-r1.dtb] Error 1
-Lexical error: arch/arm64/boot/dts/qcom/sc7180.dtsi:3224.22-42 Unexpected 'DISPCC_MDSS_CORE_BCR'
-FATAL ERROR: Syntax error parsing input tree
-make[5]: *** [scripts/Makefile.dtbs:142: arch/arm64/boot/dts/qcom/sm7125-xiaomi-curtana.dtb] Error 1
-Lexical error: arch/arm64/boot/dts/qcom/sc7180.dtsi:3224.22-42 Unexpected 'DISPCC_MDSS_CORE_BCR'
-Lexical error: arch/arm64/boot/dts/qcom/sc7180.dtsi:3224.22-42 Unexpected 'DISPCC_MDSS_CORE_BCR'
-FATAL ERROR: Syntax error parsing input tree
-make[5]: *** [scripts/Makefile.dtbs:142: arch/arm64/boot/dts/qcom/sm7125-xiaomi-joyeuse.dtb] Error 1
-FATAL ERROR: Syntax error parsing input tree
-make[5]: *** [scripts/Makefile.dtbs:142: arch/arm64/boot/dts/qcom/sc7180-trogdor-wormdingler-rev1-boe-rt5682s.dtb] Error 1
-make[5]: Target 'arch/arm64/boot/dts/qcom/' not remade because of errors.
-make[4]: *** [scripts/Makefile.build:544: arch/arm64/boot/dts/qcom] Error 2
-make[4]: Target 'arch/arm64/boot/dts/qcom/' not remade because of errors.
-make[3]: *** [scripts/Makefile.build:544: arch/arm64/boot/dts] Error 2
-make[3]: Target 'arch/arm64/boot/dts/qcom/' not remade because of errors.
-make[2]: *** [scripts/Makefile.build:544: arch/arm64] Error 2
-make[2]: Target 'arch/arm64/boot/dts/qcom/' not remade because of errors.
-make[1]: *** [/home/rob/proj/linux-dt-testing/Makefile:2080: .] Error 2
-make[1]: Target 'arch/arm64/boot/dts/qcom/' not remade because of errors.
-make: *** [Makefile:248: __sub-make] Error 2
-make: Target 'arch/arm64/boot/dts/qcom/' not remade because of errors.
-
-
-
-
-
+-- 
+With best wishes
+Dmitry
