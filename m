@@ -1,148 +1,86 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A6642D5C8E;
-	Wed, 21 Jan 2026 00:54:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94F4E2E7F1C;
+	Wed, 21 Jan 2026 01:22:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768956859; cv=none; b=kyZq2DmBvz+v3rHDllueMKbMluTxoqE/E5HAGnuNNMUfrZVcjZEybueYAMNVUj2aLwKuMy808IYDWk7SElj/iQhqn8GLBCMdIi06+RY9j9gj+LFA+u83ofquRP5tiqD4l08NZiW0tIn2jnu5F83NG3KABbSm2+6zwuAXb4yVbEY=
+	t=1768958572; cv=none; b=nH97tooHdvLZJdiY5xbQYLRennSItvPOKAGxaH2SxajmiTzEDcMdjRIrkjjRHXIFzIJLTJEk+ay30+xuE7yA86D9LKFaD52OwSv+tOpTphtzw4UcSW3n3C33HV8fftyPtKD1oyX5f/MMNrRzcTzxicyMMzc0vieNrS2k74tjL6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768956859; c=relaxed/simple;
-	bh=9pWCVK3QXu7/JDN+Rupb0lJCx+tff8zsyZ4UxoK5qvc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TgCv0wjVHXezVwjnFBJ6yQnZebLm3IHhHZFZbN0rGRxvI+VBK8h4Zf/ww5qbtGpT/bgyvOY7JOkj8SyVBiEE6Tq1J3WCpGfgNdiw6gZ23jDD9nBvhnx9alXc61SHN2EEhMMF6EWJJu2cBbDKo/J1KPB9lLKOY3sSKep75iEcVzo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=d+NDeE4p; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="d+NDeE4p"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1768956858; x=1800492858;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=9pWCVK3QXu7/JDN+Rupb0lJCx+tff8zsyZ4UxoK5qvc=;
-  b=d+NDeE4pyO+YW4QhJZfW6MC9+01NPlrllgufYQ6obmVJisG5y3FV/0Ro
-   4xIzvsidUtRROUbKmH1bXSymGqAb7oC9C08nLfQ5OLd6J8Dj40/wbcXmo
-   wGzzz5sOF0m+GUlepCdZkRCj8msvM0K4Sc4PG4f0y6uO2GCJarknQewGN
-   6YEpvI5Y64BI8I5HaoWvO4RYiYeeI/66YFullq0dmHmqwP8DTMAeNMnCM
-   AthDQjaR8unoB/7a37xE/emMOoJIIjixn5pZbW332MqPuEFhTZOFyxKMR
-   aaHWjDmmyIJl8FoQUaF1k5GOP96MsKuKZTrEMmeWHriU9Wd/QmM61psAA
-   Q==;
-X-CSE-ConnectionGUID: wlJwax5YRKmQRhVbS2ZArw==
-X-CSE-MsgGUID: VNHYl46qRhORrJNsm/TU+Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11677"; a="70083913"
-X-IronPort-AV: E=Sophos;i="6.21,242,1763452800"; 
-   d="scan'208";a="70083913"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jan 2026 16:54:18 -0800
-X-CSE-ConnectionGUID: T6pXfileQh2Hvencj4ZGnw==
-X-CSE-MsgGUID: lutOVu1WRGa0QJvh1JHUjQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,242,1763452800"; 
-   d="scan'208";a="236942667"
-Received: from lkp-server01.sh.intel.com (HELO 765f4a05e27f) ([10.239.97.150])
-  by orviesa002.jf.intel.com with ESMTP; 20 Jan 2026 16:54:14 -0800
-Received: from kbuild by 765f4a05e27f with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1viMU7-00000000Pmx-2Jwl;
-	Wed, 21 Jan 2026 00:54:11 +0000
-Date: Wed, 21 Jan 2026 08:53:51 +0800
-From: kernel test robot <lkp@intel.com>
-To: Nadi Ke <kanadenady@gmail.com>, sboyd@kernel.org,
-	mturquette@baylibre.com, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, orsonzhai@gmail.com,
-	baolin.wang@linux.alibaba.com, zhang.lyra@gmail.com
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Nadi Ke <kanadenady@gmail.com>
-Subject: Re: [PATCH v1 2/2] clk: sprd: Add SC9832E clock driver
-Message-ID: <202601210710.tDbyuXMU-lkp@intel.com>
-References: <20260120144436.233998-3-kanadenady@gmail.com>
+	s=arc-20240116; t=1768958572; c=relaxed/simple;
+	bh=7fipKzYPSYUFZN7IjFkFaSAzdPWqGjg/pYSX4gM3KFs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SvT/y1cgQSzqZZJhyPQ/dlK+WCOLHHj7Xy7dhg/4gdSz0wv8Af2jSHTiksI0Nkpa3zI36tULjIpQZXIqSkFXxD7Hc4K2U4KcAKssIeUNUb5hy1GvqEKC131bcK2+QiVYuS2rK/APuglZPIPbV9oVFnm/GoyjFsbMyAWTZXNZ2jk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=isrc.iscas.ac.cn; spf=pass smtp.mailfrom=isrc.iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=isrc.iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=isrc.iscas.ac.cn
+Received: from localhost.localdomain (unknown [36.112.3.108])
+	by APP-05 (Coremail) with SMTP id zQCowAB3zhFdKnBpw6_aBQ--.10840S2;
+	Wed, 21 Jan 2026 09:22:38 +0800 (CST)
+From: Haoxiang Li <lihaoxiang@isrc.iscas.ac.cn>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	bmasney@redhat.com
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Haoxiang Li <lihaoxiang@isrc.iscas.ac.cn>
+Subject: [PATCH v2 0/7] clk: st: clkgen-pll: Add cleanup in clkgen_c32_pll_setup() and clkgen_odf_register()
+Date: Wed, 21 Jan 2026 09:22:16 +0800
+Message-Id: <20260121012223.186199-1-lihaoxiang@isrc.iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260120144436.233998-3-kanadenady@gmail.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:zQCowAB3zhFdKnBpw6_aBQ--.10840S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7JryfAF1UZw45GF17Jw4fXwb_yoWkurXEyF
+	WxK34aqwn8WF43CF15AwsYy348Ka1DZF17WF1UtrWIkw15JryUKryFkan2qr1agF4fCFn5
+	tr1rJws3Cr1YkjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbckFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Jr0_
+	Gr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Jr0_Gr
+	1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0
+	cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8Jw
+	ACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7CjxVAaw2AFwI0_JF0_
+	Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxV
+	WUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI
+	7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r
+	1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI
+	42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x0JUSNtxUUUUU=
+X-CM-SenderInfo: 5olkt0x0ld0ww6lv2u4olvutnvoduhdfq/1tbiCQ4OE2lwF7o5pgAAsx
 
-Hi Nadi,
+Patch 1 fixes a memory leak in clkgen_odf_register()
+Patches 2 to 7 improve the cleanup process for function errors:
+  - release the memory allocated by clkgen_get_register_base()
+  - release the memory allocated by clkgen_pll_register()
+  - release the memory allocated by clkgen_odf_register()
+and removed unnecessary handling.
 
-kernel test robot noticed the following build errors:
+These works are carried out under the guidance of Brian Masney.
+Thanks, Brian!
 
-[auto build test ERROR on clk/clk-next]
-[also build test ERROR on linus/master v6.19-rc6 next-20260120]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Changes in v2:
+- Rename the patch title for Patch 2 and 3
+- Add a Fixes tag in Patch 6
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Nadi-Ke/dt-bindings-clock-sprd-Add-SC9832E-clock-controller/20260121-001334
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
-patch link:    https://lore.kernel.org/r/20260120144436.233998-3-kanadenady%40gmail.com
-patch subject: [PATCH v1 2/2] clk: sprd: Add SC9832E clock driver
-config: sparc64-allmodconfig (https://download.01.org/0day-ci/archive/20260121/202601210710.tDbyuXMU-lkp@intel.com/config)
-compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 9b8addffa70cee5b2acc5454712d9cf78ce45710)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260121/202601210710.tDbyuXMU-lkp@intel.com/reproduce)
+Haoxiang Li (7):
+  clk: st: clkgen-pll: Fix a memory leak in clkgen_odf_register()
+  clk: st: clkgen-pll: Rename clk variable in clkgen_c32_pll_setup()
+  clk: st: clkgen-pll: Rename clk variable in clkgen_c32_pll_setup()
+  clk: st: clkgen-pll: Add iounmap() in clkgen_c32_pll_setup()
+  clk: st: clkgen-pll: Add clk_unregister for pll_clk in
+    clkgen_c32_pll_setup()
+  clk: st: clkgen-pll: Remove redundant kfree() in
+    clkgen_c32_pll_setup()
+  clk: st: clkgen-pll: Add clk_unregister for odf_clk in
+    clkgen_c32_pll_setup()
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202601210710.tDbyuXMU-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   drivers/clk/sprd/sc9832e-clk.c:1041:24: error: use of undeclared identifier 'sc9832e_clk_ids'; did you mean 'sc9832e_pll_hws'?
-    1041 |         match = of_match_node(sc9832e_clk_ids, pdev->dev.of_node);
-         |                               ^~~~~~~~~~~~~~~
-         |                               sc9832e_pll_hws
-   drivers/clk/sprd/sc9832e-clk.c:162:35: note: 'sc9832e_pll_hws' declared here
-     162 | static struct clk_hw_onecell_data sc9832e_pll_hws = {
-         |                                   ^
->> drivers/clk/sprd/sc9832e-clk.c:1041:24: error: passing 'struct clk_hw_onecell_data' to parameter of incompatible type 'const struct of_device_id *'
-    1041 |         match = of_match_node(sc9832e_clk_ids, pdev->dev.of_node);
-         |                               ^~~~~~~~~~~~~~~
-   include/linux/of.h:379:29: note: passing argument to parameter 'matches' here
-     379 |         const struct of_device_id *matches, const struct device_node *node);
-         |                                    ^
-   drivers/clk/sprd/sc9832e-clk.c:1058:21: error: use of undeclared identifier 'sc9832e_clk_ids'; did you mean 'sc9832e_pll_hws'?
-    1058 |                 .of_match_table = sc9832e_clk_ids,
-         |                                   ^~~~~~~~~~~~~~~
-         |                                   sc9832e_pll_hws
-   drivers/clk/sprd/sc9832e-clk.c:162:35: note: 'sc9832e_pll_hws' declared here
-     162 | static struct clk_hw_onecell_data sc9832e_pll_hws = {
-         |                                   ^
-   drivers/clk/sprd/sc9832e-clk.c:1058:21: error: initializing 'const struct of_device_id *' with an expression of incompatible type 'struct clk_hw_onecell_data'
-    1058 |                 .of_match_table = sc9832e_clk_ids,
-         |                                   ^~~~~~~~~~~~~~~
-   4 errors generated.
-
-
-vim +1041 drivers/clk/sprd/sc9832e-clk.c
-
-  1034	
-  1035	static int sc9832e_clk_probe(struct platform_device *pdev)
-  1036	{
-  1037		const struct of_device_id *match;
-  1038		const struct sprd_clk_desc *desc;
-  1039		int ret;
-  1040	
-> 1041		match = of_match_node(sc9832e_clk_ids, pdev->dev.of_node);
-  1042		if (!match)
-  1043			return -ENODEV;
-  1044	
-  1045		desc = match->data;
-  1046	
-  1047		ret = sprd_clk_regmap_init(pdev, desc);
-  1048		if (ret)
-  1049			return ret;
-  1050	
-  1051		return sprd_clk_probe(&pdev->dev, desc->hw_clks);
-  1052	}
-  1053	
+ drivers/clk/st/clkgen-pll.c | 53 +++++++++++++++++++++++++------------
+ 1 file changed, 36 insertions(+), 17 deletions(-)
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.25.1
+
