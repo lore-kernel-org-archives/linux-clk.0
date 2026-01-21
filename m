@@ -1,63 +1,68 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB8AA3D1CB3;
-	Wed, 21 Jan 2026 18:44:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74EF01684BE;
+	Wed, 21 Jan 2026 19:00:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769021090; cv=none; b=Ml1UuVtlhK8gwxBbek5muCLmYolF6Wegf/HQBteWkNRRGFpj0U6YhHYoQ1yyov81dVXamyhVhS4OniNl0Py6eTZ/+VwDGp6D/hkEfT/LD/xNPIxA7fWjsEJxMOsnAshH/8612mikUlaaMKCLXOJH23JFaSmTPWUgSqqEGfkPml0=
+	t=1769022028; cv=none; b=c2m+eixo60hYKbwbrkHKSIAtQKnARMgMFGZlpjNVI4dC7qm3s/kbnvX1uVJroEo+hrpvk2fINw3WWns7mwWFRc0tgcjRTjOLLSziQJaID2vynu9QqF69ykxJczP3KPStq2mPssXqYqSR4oB+OgWhPVM6PJiQzOL5DyZyIZy6d04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769021090; c=relaxed/simple;
-	bh=DFfruDUN0GCaBJxNrq8hR1q+b44uiIfw8LCXXTbIN78=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hwg2h0grwFSHtfsuDtcqfRrnWIQjjtZd5bweuS0so7ioU+v6iFujEy0RODOEJD40WhontjRel2u/BX3E0wSZ1ydoNhanIkuRuupUM0rd+/2pDlPC7156pOLUdD6YvihiUlxA2IrKKuV2IwRRgYe+OuWI3L6OdFo+88zOABUEljE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=beoogyAi; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1769022028; c=relaxed/simple;
+	bh=x/3j4fyrtJStNpcsn4FO4MbauQjE4z7GMicX4DhNUoU=;
+	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
+	 To:Date:Message-ID; b=rgILfAic545fWmUo8IZVjrSJguVaLE7R0QO3XCBd2yliKhCOHeWCe0F/JJ1nO6SmM5mtpPcZSNNnAzLETHoii2C4A6FTSTxmJaop4ACvl3lE0vkH1bMbimFgWh9h6tmYpYoebWIbnlVYc9j8p86YURTrrrCpaYvCuXw7oluGMRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nuMTEY+6; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="beoogyAi"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49FF1C4CEF1;
-	Wed, 21 Jan 2026 18:44:50 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nuMTEY+6"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E71A6C2BC87;
+	Wed, 21 Jan 2026 19:00:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769021090;
-	bh=DFfruDUN0GCaBJxNrq8hR1q+b44uiIfw8LCXXTbIN78=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=beoogyAianYQ4cEs9nVCQWnpaQVBpKTAoci6sihl7+xqJdmzLbuKK657djX4EvbD1
-	 IlBx7EPOXMKE3nzSGuM76osQNJfk+7gtHtifPWnRuLtFMdB9De1HrBQVgoiNf1/vCy
-	 2wGkbWwK2hgxVBNQGhwKdeXWRSgW140drEq4TDfv9h2hVd8JkpBjIvokIlgSrX2mZT
-	 k6w7IIPNMVZTz21hEb8pIXZrQ1pC88stCoio3FQfEbfKhZ0sxKhHFd4GJ9uCy2/7ym
-	 aCwDgsYUlIZH9MXq6E1rz7f2d56ouI3+CGShdPtoiQu2QuNFHDuX2A7jalbdOZilYx
-	 LMI55VtzFai0A==
-Date: Wed, 21 Jan 2026 12:44:48 -0600
-From: Rob Herring <robh@kernel.org>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: linux-mediatek@lists.infradead.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-	matthias.bgg@gmail.com, ulf.hansson@linaro.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-pm@vger.kernel.org, kernel@collabora.com
-Subject: Re: [PATCH 5/5] arm64: dts: mediatek: mt7622: Add missing power
- domain to afe
-Message-ID: <20260121184448.GC3842411-robh@kernel.org>
-References: <20260113110012.36984-1-angelogioacchino.delregno@collabora.com>
- <20260113110012.36984-6-angelogioacchino.delregno@collabora.com>
+	s=k20201202; t=1769022028;
+	bh=x/3j4fyrtJStNpcsn4FO4MbauQjE4z7GMicX4DhNUoU=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=nuMTEY+6CxGeNBac8vujIw7/EkXAmaka51JpalYKNfYVmwvKzZ8ceepIelL5axjUG
+	 3XFTytMWBfBl6oan8oCdvqn69gxaRUh328CifPbpZ2HSnDIe0uj28epchMKgvQ8g9Y
+	 L5Z+dqGIcSl81SnWiyaT+OVU+WFnAeZ6nO/TGzh9aiAq5PT2QU/4VTLoaanTBkMiyh
+	 XfXLwktn8lroqCh7nwUqRtl7AjlLs+tJPMfHCURRubLj6aR/f1fquLTpZs5NAbjI1Q
+	 AMVH2EdHGJ328RVEeK/C1YSDMGuHCmiLua1GsdSnuS2YTer7yC5xsAeidZlOMJGAMH
+	 WnsE8Z9k7PlxQ==
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260113110012.36984-6-angelogioacchino.delregno@collabora.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <cover.1768559843.git.geert+renesas@glider.be>
+References: <cover.1768559843.git.geert+renesas@glider.be>
+Subject: Re: [GIT PULL] clk: renesas: Updates for v6.20 (take two)
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
+To: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>
+Date: Wed, 21 Jan 2026 12:00:25 -0700
+Message-ID: <176902202598.4027.13205657073014309824@lazor>
+User-Agent: alot/0.11
 
-On Tue, Jan 13, 2026 at 12:00:12PM +0100, AngeloGioacchino Del Regno wrote:
-> Add the missing MT7622_POWER_DOMAIN_AUDIO to the audio controller
-> node to fix a dtbs_check warning and to make sure that the AFE is
-> indeed powered on when needed.
-> 
-> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> ---
->  arch/arm64/boot/dts/mediatek/mt7622.dtsi | 1 +
->  1 file changed, 1 insertion(+)
+Quoting Geert Uytterhoeven (2026-01-16 03:51:04)
+>         Hi Mike, Stephen,
+>=20
+> The following changes since commit ebb3acf4d7c95b52265084168b59a565bf9728=
+83:
+>=20
+>   clk: renesas: r9a09g056: Add clock and reset entries for TSU (2025-12-2=
+9 11:43:22 +0100)
+>=20
+> are available in the Git repository at:
+>=20
+>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git=
+ tags/renesas-clk-for-v6.20-tag2
+>=20
+> for you to fetch changes up to 4fef3fd633be4a1a18c490a63f4131284f6ee0f4:
+>=20
+>   clk: renesas: Add missing log message terminators (2026-01-16 10:48:33 =
++0100)
+>=20
+> ----------------------------------------------------------------
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+Thanks. Pulled into clk-next
