@@ -1,86 +1,125 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sender4-op-o16.zoho.com (sender4-op-o16.zoho.com [136.143.188.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E27B396B8C;
-	Wed, 21 Jan 2026 11:03:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768993398; cv=none; b=qMbzlPT5Lh5EI7YfWE1oUeJVK7pOGvHgt/Tkx9peuNiw5rajqn7GqBmSOoA46NakiJquD8DUyphNwDumck+sGwpvZHNLviygRpwqw1otNGLHBbhDaHotoYEYD5Tp611MtTwN2SZtIR2JOpNz+Ql0UN5ZtMx0dz5Zcceb4+xLcmQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768993398; c=relaxed/simple;
-	bh=99V2KEzM5M/6j9u/iDcwCKzEKyoaom7t9aOwjdEiDzw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RiXcHLmL/Q0cmcNvYVtL83oVp4seQeojVm86bD9JuKip6KdN/b+rjx3etep2DefmPIirzgo6YJpUZEliIkkq0WHzQjJCY/cRBA+OsyaB3+8EYD+jSG6FttuiAy2br2tNSykgUevhWitYkzC19cgCw2rEiZ7gTiMPhgTyJ9sIQyM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FFCCC116D0;
-	Wed, 21 Jan 2026 11:03:16 +0000 (UTC)
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Marek Vasut <marex@denx.de>
-Cc: linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH resend] clk: rs9: Convert to DEFINE_SIMPLE_DEV_PM_OPS()
-Date: Wed, 21 Jan 2026 12:03:11 +0100
-Message-ID: <15f24d006fc782d501922d6c88e836976d69c7cb.1768993373.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F17312ECEAC;
+	Wed, 21 Jan 2026 11:03:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.16
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1768993433; cv=pass; b=V13wyvNgyvQgnTYrGznOy8+gZylqEDIgybnVI5cy2QlvIRR7igO032eKbPtJAvsEnvT9/aslHW+W3QX16a0xt2EthaSgRBfcZfpXadwLA/gV4wJBVEx6p3viwPAAwhK/s2ap17gK7B2J7l4YJ/s348VfjylwcEul4p20MeHMBdk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1768993433; c=relaxed/simple;
+	bh=ChAE11uB2J9P96UiiuYNslcAUUgF4nuthjgSsDtHVF0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ELhyzqlaVfPWBK0iWok6AAe3iZiab11b3e0nrX7TKFbE5opRB6Pif3CyHlt9Vf4MNTiKYGGopONo3Ee0oklbwH3Ra7/674Kegejhm0FsEYWJn1wnZKeGFuAhJbrWsan8CGLy4+szd3nHKbe41LPtjCVMR/G87X8GbRXLAMUhtEc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech; spf=pass smtp.mailfrom=pigmoral.tech; dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b=CjTbgVW8; arc=pass smtp.client-ip=136.143.188.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pigmoral.tech
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b="CjTbgVW8"
+ARC-Seal: i=1; a=rsa-sha256; t=1768993399; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=NxKL92tnsCo6rQLAN9YJNpmmDqvjzt9U4JGe1g7aiwG6AjuvGgMM29zvZN/UuDwVNO4xTRmPvnlbr8Qto9c9vhvO2S5CC2UtaOih6qsYSsNfga1i9DNekZ2zxCTw1VhxEgDXimU0wk8IBBKBq/skYtAinjucySgx5SXuzqV0fgk=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1768993399; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=8lJlN0ug6yApIS1+JqeiBezclov7WidFA1UiDZN5V9U=; 
+	b=efPAjUeiloqUEzONBIcm104uCSYV+Jd7sosEuBvl055uP86GX+KZ5U5CcrcDoRu/hoalQGfjvTbIMHU+zQ2To0W6S39JMHRXpNRaJDepCFAkLjqTv5oP2XUAbgOFgszsV/8NKx3x5p5vn0VlM0++W/sWGd7TJrTcHOHnNaW4OAM=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=pigmoral.tech;
+	spf=pass  smtp.mailfrom=junhui.liu@pigmoral.tech;
+	dmarc=pass header.from=<junhui.liu@pigmoral.tech>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1768993399;
+	s=zmail; d=pigmoral.tech; i=junhui.liu@pigmoral.tech;
+	h=From:From:Subject:Subject:Date:Date:Message-Id:Message-Id:MIME-Version:Content-Type:Content-Transfer-Encoding:To:To:Cc:Cc:Reply-To;
+	bh=8lJlN0ug6yApIS1+JqeiBezclov7WidFA1UiDZN5V9U=;
+	b=CjTbgVW8EfrZNxEdESlIHMgnfutX4+6+3f+to8Kp/yx9l8lYvD0k/iIaEY7tKavc
+	pV1m/d6wIrZhRyffdyPIuS4bNTGdSuQuMaU8H68vrRDYsUXj08unjWBHyba0IwvLdBA
+	ce4qJoMXPMrfRcPX8j1hSk9KeAzGC4O7NGe9UNMg=
+Received: by mx.zohomail.com with SMTPS id 1768993396228245.11544303994697;
+	Wed, 21 Jan 2026 03:03:16 -0800 (PST)
+From: Junhui Liu <junhui.liu@pigmoral.tech>
+Subject: [PATCH 0/7] rtc: sun6i: Add support for Allwinner A733 SoC
+Date: Wed, 21 Jan 2026 18:59:06 +0800
+Message-Id: <20260121-a733-rtc-v1-0-d359437f23a7@pigmoral.tech>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1NDIyMz3URzY2PdopJk3WRTQzPzlDRDk1SzVCWg8oKi1LTMCrBR0bG1tQB
+ d2m3lWgAAAA==
+X-Change-ID: 20251226-a733-rtc-c5167df14e6e
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Chen-Yu Tsai <wens@kernel.org>, 
+ Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Samuel Holland <samuel@sholland.org>, 
+ Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Maxime Ripard <mripard@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
+ linux-rtc@vger.kernel.org, devicetree@vger.kernel.org, 
+ Junhui Liu <junhui.liu@pigmoral.tech>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1768993386; l=2495;
+ i=junhui.liu@pigmoral.tech; s=20251228; h=from:subject:message-id;
+ bh=ChAE11uB2J9P96UiiuYNslcAUUgF4nuthjgSsDtHVF0=;
+ b=bBFnSuz+/bl9OC2UgQWtIVt3n7YgeDUpeh8pSxTE8n661CU44HU8TTshZjDZ6+L6/JWiLFmCR
+ fqRC/Pat1bsAJ5yrD039wyRQNtfu1ddmLFoVDYojR9IhQvWwLmeUqQG
+X-Developer-Key: i=junhui.liu@pigmoral.tech; a=ed25519;
+ pk=3vU0qIPJAH8blXmLyqBhKx+nLOjcLwwYhZXelEpw7h4=
+X-ZohoMailClient: External
 
-Convert the Renesas 9-series PCIe clock generator driver from
-SIMPLE_DEV_PM_OPS() to DEFINE_SIMPLE_DEV_PM_OPS() and pm_sleep_ptr().
-This lets us drop the __maybe_unused annotations from its suspend and
-resume callbacks, and reduces kernel size in case CONFIG_PM or
-CONFIG_PM_SLEEP is disabled.
+Add support for the Allwinner A733 RTC and its internal Clock Control
+Unit (CCU). Reuse the rtc-sun6i rtc driver while introducing a new
+SoC-specific RTC CCU driver to handle the hardware's evolved clock
+structure.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+To facilitate this addition and improve driver modularity, transition
+the binding between the RTC and its internal CCU from direct
+cross-subsystem function calls to the auxiliary bus. Also extract shared
+IOSC and 32kHz clock logic into a standalone ccu_rtc module for reuse
+across newer SoC generations.
+
+The A733 implementation supports hardware detection of three external
+crystal frequencies (19.2MHz, 24MHz and 26MHz), which is represented in
+the driver via read-only mux operations. Implement logic to derive a
+normalized 32kHz reference from these DCXO sources using fixed
+pre-dividers. Additionally, provide several new DCXO gate clocks for
+peripherals, including SerDes, HDMI, and UFS.
+
 ---
- drivers/clk/clk-renesas-pcie.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Junhui Liu (7):
+      dt-bindings: rtc: sun6i: Add Allwinner A733 support
+      rtc: sun6i: Bind internal CCU via auxiliary bus
+      clk: sunxi-ng: sun6i-rtc: Add feature bit for IOSC calibration
+      clk: sunxi-ng: Extract common RTC CCU clock logic
+      clk: sunxi-ng: mux: Add mux read-only clock operations
+      rtc: sun6i: Add support for A733 RTC
+      clk: sunxi-ng: Add Allwinner A733 RTC CCU support
 
-diff --git a/drivers/clk/clk-renesas-pcie.c b/drivers/clk/clk-renesas-pcie.c
-index 6650e3440c7492cf..b9bee616afe8d4ef 100644
---- a/drivers/clk/clk-renesas-pcie.c
-+++ b/drivers/clk/clk-renesas-pcie.c
-@@ -359,7 +359,7 @@ static int rs9_probe(struct i2c_client *client)
- 	return ret;
- }
- 
--static int __maybe_unused rs9_suspend(struct device *dev)
-+static int rs9_suspend(struct device *dev)
- {
- 	struct rs9_driver_data *rs9 = dev_get_drvdata(dev);
- 
-@@ -369,7 +369,7 @@ static int __maybe_unused rs9_suspend(struct device *dev)
- 	return 0;
- }
- 
--static int __maybe_unused rs9_resume(struct device *dev)
-+static int rs9_resume(struct device *dev)
- {
- 	struct rs9_driver_data *rs9 = dev_get_drvdata(dev);
- 	int ret;
-@@ -415,12 +415,12 @@ static const struct of_device_id clk_rs9_of_match[] = {
- };
- MODULE_DEVICE_TABLE(of, clk_rs9_of_match);
- 
--static SIMPLE_DEV_PM_OPS(rs9_pm_ops, rs9_suspend, rs9_resume);
-+static DEFINE_SIMPLE_DEV_PM_OPS(rs9_pm_ops, rs9_suspend, rs9_resume);
- 
- static struct i2c_driver rs9_driver = {
- 	.driver = {
- 		.name = "clk-renesas-pcie-9series",
--		.pm	= &rs9_pm_ops,
-+		.pm	= pm_sleep_ptr(&rs9_pm_ops),
- 		.of_match_table = clk_rs9_of_match,
- 	},
- 	.probe		= rs9_probe,
+ .../bindings/rtc/allwinner,sun6i-a31-rtc.yaml      |  38 +++-
+ drivers/clk/sunxi-ng/Kconfig                       |   5 +
+ drivers/clk/sunxi-ng/Makefile                      |   5 +
+ drivers/clk/sunxi-ng/ccu-sun60i-a733-rtc.c         | 204 +++++++++++++++++++++
+ drivers/clk/sunxi-ng/ccu-sun60i-a733-rtc.h         |  18 ++
+ drivers/clk/sunxi-ng/ccu-sun6i-rtc.c               | 184 +++----------------
+ drivers/clk/sunxi-ng/ccu_common.h                  |   1 +
+ drivers/clk/sunxi-ng/ccu_mux.c                     |  11 ++
+ drivers/clk/sunxi-ng/ccu_mux.h                     |   1 +
+ drivers/clk/sunxi-ng/ccu_rtc.c                     | 136 ++++++++++++++
+ drivers/clk/sunxi-ng/ccu_rtc.h                     |  44 +++++
+ drivers/rtc/rtc-sun6i.c                            |  38 +++-
+ include/dt-bindings/clock/sun60i-a733-rtc.h        |  16 ++
+ include/linux/clk/sunxi-ng.h                       |   2 -
+ 14 files changed, 533 insertions(+), 170 deletions(-)
+---
+base-commit: 24d479d26b25bce5faea3ddd9fa8f3a6c3129ea7
+change-id: 20251226-a733-rtc-c5167df14e6e
+
+Best regards,
 -- 
-2.43.0
+Junhui Liu <junhui.liu@pigmoral.tech>
 
