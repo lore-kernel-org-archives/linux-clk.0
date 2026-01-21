@@ -1,97 +1,131 @@
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA18733C52F;
-	Wed, 21 Jan 2026 02:24:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48A87338907;
+	Wed, 21 Jan 2026 02:25:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768962255; cv=none; b=u835DNwZ9mcGoSuXv7tuWvGkFf2YOgy6gam3fXWsD+jfZzuanmoq3bZoLQo0B48XZvSxUMUBBdsZ/xxEDT+tTOKJuM9r0Lc15AVoKSXn5rw8cfYhl1svFjVCd1iPM2QngFCDOOW+N+cwlXDEF2Z3sEB82niR44CwosOXk6KG5jU=
+	t=1768962329; cv=none; b=GtEj4FnDnOdF+graRW1pBcoBhSH/rYMR1Siqre4p0PFVYVzFwe/1+Ty+Eb+ZAmnQTGSsNXTwc1x90MTyaGEze67Logvvz97/oQ/5X5dxc7+PtEWTdojUe4s+ds2c+BXeDTCWczFMR6/FsfNwiuag2/xdUgTnEHeR1EaKOT8qh0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768962255; c=relaxed/simple;
-	bh=4GLe6D02h7Y6w9HcTTuruiGEGFiXvMgy+qOF590BKH4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fknViHkP23yThRjtfBsGs2v9aYqJYr2cAcmdRF609aJjAi2nsGWyxT+KmQM6ImrLdHKR/2FC660x3tJ1NAFX7s6weArkVn4DLx0nEuZIuK+jJSUgEAyAyd73mWiEW//6H1bJuB5ZEuIrZtBxQTYG1Fxq0Gpl21ngAH0sWs87XaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=jOQPJIMP; arc=none smtp.client-ip=80.241.56.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+	s=arc-20240116; t=1768962329; c=relaxed/simple;
+	bh=V2HTeJVqkwNSJnme9iwz1gelf2rhYXmK44JSnSGuGfk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F46/p+1+MikNIeX62gzhI8UMBOMuAr2mbfDdB+B9AFXAhLPsjKUxndl4Xkr8hqDvWE7OKKF9JSf7GZINQon1n9y9bXkSb+PbX2Lr4ttd0iw1p269aio+xhtLy9mWW/ixXYuharS+96KH+kDVYyvrQsssnVH6M7SM1tVw/Z4wbAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i3u8CIt8; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="jOQPJIMP"
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4dwp0f4jcxz9tqS;
-	Wed, 21 Jan 2026 03:24:02 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1768962242;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vJ5wBBW4dXw/ENsH5JVmW0ztfH6jgeQcz+gbMP/GI14=;
-	b=jOQPJIMPBVoBvtc8x8czLZBtCYWru3xpqlpI6W+AsVVgXfdkAf8g1QWgaP0KDwF62SiyW6
-	UQPiAnUsbkjPQUSDYzrjcFqmOfWex5f1eAd+rs1tPPRdXHKWdYJeaDjq4PSns74kZwyrVI
-	BV5vMrxWIHblNLr2jHFwwwTE4Mz9aSyrKfBgKTzX8NtjcvYvxWrz/4z3x8/lrhJgt3h7VB
-	mROykv+DNSx0KTgAoJQ2lE/GrP02Iqeh+/PDtEMAlDNMrDD1unJ+KK2l1X+dUcaKXnydu6
-	cEUXUBpCcix6wl93GibJGM3/vl24Cgvn80r28jcUpUxS4MfXXZqRaojTArH9aw==
-Message-ID: <10de432d-b38a-4fe2-959b-d9fa4e08e6c1@mailbox.org>
-Date: Wed, 21 Jan 2026 00:43:37 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i3u8CIt8"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A667C16AAE;
+	Wed, 21 Jan 2026 02:25:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1768962329;
+	bh=V2HTeJVqkwNSJnme9iwz1gelf2rhYXmK44JSnSGuGfk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=i3u8CIt8Hsst3zKGX6zOh8NqYYZMwXGUB5b5mzaIqPT7dY2lH8Lg2xDoEjv/3KIfr
+	 Bp3CjTQhfUt62b9qUhwrhlIqJii/G4wQeq8Vca9mFtUTB5OHKH50wUEtZhIwgdGBBv
+	 bAIZeAaqHf33mlTiC2GvDZkJp//Haq2fnnZ9JAxRtgcc3qRtGcCnVnA99IajpR0lCg
+	 fS7d0vENDEtbLvglB4IU026PpCM6yMLLVaAFvddBTq0M7RT7Fk4YPHPlaH0m/JV/sI
+	 02Z93xkaZF16Lpdv7fdzbFiHz4d3hp/xS7oo29NGkT9wp2spdn/Ka8doX9UwMeEqk/
+	 bur1TF6Q6FJjg==
+Date: Tue, 20 Jan 2026 20:25:26 -0600
+From: Bjorn Andersson <andersson@kernel.org>
+To: Brian Masney <bmasney@redhat.com>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: qcom: gfx3d: add parent to parent request map
+Message-ID: <fee6fkqhhst6o6rchohp252tzvkfnv7hvro3z7ipv4o3zg5whi@ou6wjcpk74jn>
+References: <20260117-db820-fix-gfx3d-v1-1-0f8894d71d63@oss.qualcomm.com>
+ <vlvp4od6ykhneabgtpln7vpyyfpfuilasbmbfu222zgspc2ppl@iuuzldtoejaj>
+ <aW-b2EmynhZlp0mZ@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v2] clk: rs9: Add clock index range check to
- rs9_of_clk_get()
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <4cb63bd8b1e49407831431fbc88b218f720a74fd.1768899891.git.geert+renesas@glider.be>
-Content-Language: en-US
-From: Marek Vasut <marek.vasut@mailbox.org>
-In-Reply-To: <4cb63bd8b1e49407831431fbc88b218f720a74fd.1768899891.git.geert+renesas@glider.be>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-MBO-RS-META: x71cwywpd7c9757rqqom4pwkqmjz6wah
-X-MBO-RS-ID: 5653ca25e7f01fa4b6b
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aW-b2EmynhZlp0mZ@redhat.com>
 
-On 1/20/26 10:05 AM, Geert Uytterhoeven wrote:
-> rs9_of_clk_get() does not validate the clock index in the passed
-> DT clock specifier.  If DT specifies an incorrect and out-of-range
-> index, this will access memory beyond the end of the clk_dif[] array.
+On Tue, Jan 20, 2026 at 10:14:32AM -0500, Brian Masney wrote:
+> On Mon, Jan 19, 2026 at 09:39:30AM -0600, Bjorn Andersson wrote:
+> > On Sat, Jan 17, 2026 at 05:54:47AM +0200, Dmitry Baryshkov wrote:
+> > > After commit d228ece36345 ("clk: divider: remove round_rate() in favor
+> > > of determine_rate()") determining GFX3D clock rate crashes, because the
+> > > passed parent map doesn't provide the expected best_parent_hw clock
+> > > (with the roundd_rate path before the offending commit the
+> > > best_parent_hw was ignored).
+> > > 
+> > > Set the field in parent_req in addition to setting it in the req,
+> > > fixing the crash.
+> > > 
+> > >  clk_hw_round_rate (drivers/clk/clk.c:1764) (P)
+> > >  clk_divider_bestdiv (drivers/clk/clk-divider.c:336)
+> > >  divider_determine_rate (drivers/clk/clk-divider.c:358)
+> > >  clk_alpha_pll_postdiv_determine_rate (drivers/clk/qcom/clk-alpha-pll.c:1275)
+> > >  clk_core_determine_round_nolock (drivers/clk/clk.c:1606)
+> > >  clk_core_round_rate_nolock (drivers/clk/clk.c:1701)
+> > >  __clk_determine_rate (drivers/clk/clk.c:1741)
+> > >  clk_gfx3d_determine_rate (drivers/clk/qcom/clk-rcg2.c:1268)
+> > >  clk_core_determine_round_nolock (drivers/clk/clk.c:1606)
+> > >  clk_core_round_rate_nolock (drivers/clk/clk.c:1701)
+> > >  clk_core_round_rate_nolock (drivers/clk/clk.c:1710)
+> > >  clk_round_rate (drivers/clk/clk.c:1804)
+> > >  dev_pm_opp_set_rate (drivers/opp/core.c:1440 (discriminator 1))
+> > >  msm_devfreq_target (drivers/gpu/drm/msm/msm_gpu_devfreq.c:51)
+> > >  devfreq_set_target (drivers/devfreq/devfreq.c:360)
+> > >  devfreq_update_target (drivers/devfreq/devfreq.c:426)
+> > >  devfreq_monitor (drivers/devfreq/devfreq.c:458)
+> > >  process_one_work (arch/arm64/include/asm/jump_label.h:36 include/trace/events/workqueue.h:110 kernel/workqueue.c:3284)
+> > >  worker_thread (kernel/workqueue.c:3356 (discriminator 2) kernel/workqueue.c:3443 (discriminator 2))
+> > >  kthread (kernel/kthread.c:467)
+> > >  ret_from_fork (arch/arm64/kernel/entry.S:861)
+> > > 
+> > > Fixes: 55213e1acec9 ("clk: qcom: Add gfx3d ping-pong PLL frequency switching")
+> > > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> > 
+> > Why didn't Brian get Cc'ed on this patch? I'd love to have his input.
 > 
-> Fix by this adding a range check to rs9_of_clk_get().
+> Reviewed-by: Brian Masney <bmasney@redhat.com>
 > 
-> Fixes: 892e0ddea1aa6f70 ("clk: rs9: Add Renesas 9-series PCIe clock generator driver")
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> This is v2 of "[PATCH] clk: rs9: Convert to clk_hw_onecell_data and
-> of_clk_hw_onecell_get()"
-> (https://lore.kernel.org/a6dce17b15d29a257d09fe0edc199a14c297f1a8.1768836042.git.geert+renesas@glider.be)
+> clk_alpha_pll_postdiv_round_rate() previously had this code:
 > 
-> v2:
->    - Just add the missing range check; the conversion to
->      of_clk_hw_onecell_get() can be done later.
-> ---
->   drivers/clk/clk-renesas-pcie.c | 3 +++
->   1 file changed, 3 insertions(+)
+>         return divider_round_rate(hw, rate, prate, table,
+>                                   pll->width, CLK_DIVIDER_POWER_OF_TWO);
 > 
-> diff --git a/drivers/clk/clk-renesas-pcie.c b/drivers/clk/clk-renesas-pcie.c
-> index aa108df12e44fb9f..1adc5365ba1a3d59 100644
-> --- a/drivers/clk/clk-renesas-pcie.c
-> +++ b/drivers/clk/clk-renesas-pcie.c
-> @@ -277,6 +277,9 @@ rs9_of_clk_get(struct of_phandle_args *clkspec, void *data)
->   	struct rs9_driver_data *rs9 = data;
->   	unsigned int idx = clkspec->args[0];
->   
-> +	if (idx >= rs9->chip_info->num_clks)
+> divider_round_rate() called divider_round_rate_parent(), which had this
+> code that set the best_parent_hw:
+> 
+> long divider_round_rate_parent(struct clk_hw *hw, struct clk_hw *parent,
+>                                unsigned long rate, unsigned long *prate,
+>                                const struct clk_div_table *table,
+>                                u8 width, unsigned long flags)
+> {
+>         struct clk_rate_request req;
+>         int ret;
+> 
+>         clk_hw_init_rate_request(hw, &req, rate);
+>         req.best_parent_rate = *prate;
+>         req.best_parent_hw = parent;
+> 
+>         ret = divider_determine_rate(hw, &req, table, width, flags);
+>         if (ret)
+>                 return ret;
+> 
+>         *prate = req.best_parent_rate;
+> 
+>         return req.rate;
+> }
+> 
+> I coverted clk_alpha_pll_postdiv_round_rate() to
+> clk_alpha_pll_postdiv_determine_rate(), and that now directly calls
+> divider_determine_rate().
+> 
+> I'll look through the other cases where divider_round_rate_parent() was
+> called just to be sure there's no other cases of this.
+> 
 
-of_clk_src_onecell_get() does a pr_err("%s: invalid clock index %u\n", 
-__func__, idx); on error, should this function do the same ?
+Thank you, Brian!
 
-> +		return ERR_PTR(-EINVAL);
-> +
-
-Thanks !
+> Brian
+> 
