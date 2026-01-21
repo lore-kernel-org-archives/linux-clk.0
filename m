@@ -1,65 +1,143 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f65.google.com (mail-pj1-f65.google.com [209.85.216.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A546C271464;
-	Wed, 21 Jan 2026 03:50:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CDE644D033
+	for <linux-clk@vger.kernel.org>; Wed, 21 Jan 2026 07:14:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768967445; cv=none; b=cJGPO17HBpIxHEkx4CSNuCyMBNO5BqbOtDADx7NyaCX3whivZAxmKkcoaH/l39pCiagqm59sOWDCDOmUWpcMk5Lmq1aZGrPd0JIplVKO/SShMK7b94d9vB6hV+sIiHmEhE5lq7+G36cJf5fG/1HU3yO+Nadh4N4m4E45Mhsv/ww=
+	t=1768979703; cv=none; b=faqxcWa3cb4d/nVgLdclSX2EQAUfw2es9EfLqnfj0n9sVLBdBdNMyphmkq4dhUa6/IGWZsG9/dlzKKTVUVs731ofTEmgbrieLUdB5anRYIEeOzJb28Hr/Dwq4EUSTwPiHOZU0YHPXZVAQmpl4DyDFbPR1YjVW9ty2HyLt4oLtmE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768967445; c=relaxed/simple;
-	bh=ONIfixNSBed8y1//bhXBif3hMWFst2m9Ve4WEzHasQI=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=WyM7RcddAQcbPs/4TAxG3iaWisE/r3dzTTXeGvQEn3bry0miINQMXU1mXnIlxEBh3bho+fxhbjacmXB8UXKroYZDjA7gwsH01YVgFY8RWfb6EibqQCgXOBwin8hngw/hZUehmxVLcPlV6aY0QLp6CIz2xYY5hXRG6fyNbVr3PrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UocT9g05; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1768979703; c=relaxed/simple;
+	bh=ASVCGF+65gM4kzc00o/lzqdcVsxqI28Mzu1yeg3kP1o=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=NzDNwKGMqfq/yUFYLkFs09llk+ysvNUpdmqOijm8ufrmrijaHK8H1FRajwZA7wSl+FqcnP8SeOnGNJ5XnN7x/D/jciwOGUCouOWf/c9H98RzH+FVxqzStcs+rF8CVIY7pJUiuebNgo01JSJY5lohqrIT93l5H+zlApGtTLTecg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Cg/DxZ94; arc=none smtp.client-ip=209.85.216.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UocT9g05"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 436E1C116D0;
-	Wed, 21 Jan 2026 03:50:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768967445;
-	bh=ONIfixNSBed8y1//bhXBif3hMWFst2m9Ve4WEzHasQI=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=UocT9g05QmC669Vqn4jP22CvNPvxULzb8QwHvuVBqtICWTTwbZCZy6EM9fGLaj107
-	 Vrv7gB3Yek29Wh4LLZ0yvB/XWvehUE3cuHl4MVDXtyW8pYXyr6Xvf9Ja1mCU58+fdt
-	 kCjwteBJqieD6mrFZiItnxnaDNEMnTHYcdqLfOsxJ9up9nm1kfI3GiffprHS73U5SM
-	 AbhsqLB1PTJgBpUCNbkpsh9ngDiOTdy+n5cQM0N/2+9EaSofgEUStbObut4BppjxDQ
-	 3B0KxguUWCxbgoFH/pjMSez1KS5uhtzhzYq/+zINa+taivVOkpyVgHxIoxckIoi2v8
-	 fNZJYdBv7jg3g==
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cg/DxZ94"
+Received: by mail-pj1-f65.google.com with SMTP id 98e67ed59e1d1-34c718c5481so3009682a91.3
+        for <linux-clk@vger.kernel.org>; Tue, 20 Jan 2026 23:14:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1768979696; x=1769584496; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=F60LwWqAp1YKpLWFuVlWdTZRt79aXAUJCqZHEy/se+w=;
+        b=Cg/DxZ94NelATCcbKhCawKm1TeUpurvoPqtiF+4l5QyFM4nksZIjDmKgfqNqYGtbPK
+         8ZFgCq1lb2H7rduvF1AcoJQzLXAHSRJDEuyrtuvQajdN9SV4wIzI5PURO7TC4ccXzB4u
+         /2nbQllvvqXP5/aujcuj8ZUT+b9rJmZAtbS6qdg7Z4jOhuiEe7adHEjfzvpG0gdgJoQH
+         ApNnR+Mm2nMrfCp1ly5Ug5vkgI6iK8HQLtEkrD/Bj9tppd4QAh0aNFjL02kth8cGt3c8
+         0lTbf28yP/ph5Z+RF8EuiG/hoJT9L6OY75Rn0AJwJ5qVNijuEy/N/LJ5cA6IU73c5pC8
+         FsVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1768979696; x=1769584496;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=F60LwWqAp1YKpLWFuVlWdTZRt79aXAUJCqZHEy/se+w=;
+        b=tLRW78bZ2N3/spLJsmRL0abPBib3zl2qcw9koZVx6v+ufER9NH+SJ1dBJ0zEApQ6Kp
+         ngSx4kX8pweTT90ArnVSR7Jmrcp1G5n8L011iB/eyd6IqvKbNyF9QCSMCoM2YGWubt0S
+         5uAbQ6Onu1mE7QlkD0XJqJUrvgywTo36C1nWBb6F006L7Lcr5B8EmYUPqTVrLPg7MMxQ
+         8pCgpF1QWtGCYjAnwOzgk7E7rvewtNNggZp/K5YxLvtHBDKZJVIG6rh4HapnD7PcoTx/
+         pPEkq4G8O/MIo9adgwufiTlYPVCUU/Ka5UK5wWen8JpMdrEYLLePqOj8UwQI7gmWnO6F
+         CrYA==
+X-Forwarded-Encrypted: i=1; AJvYcCXEamqIwpA+wTkpsgERcicuG0XqqQRLpa/i4rtK+eDCJ9cknsfr3H+pY9CXqcOsfhKAyk5S8FAH38U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YybTNT387oKd7S0ZgWf0AnsILWEFfpNMhqrXYcYOs49nocjfs2G
+	912q1dt0X7hT5oaYRSkR+n+1sQd2Dq2vFI6vwmI9gskr4NYEsBF5BhcJ
+X-Gm-Gg: AZuq6aKZgWydf/L5X6/FVmyWZST0uOzmQOfz+noVStXH1K+buEL1O0tUdMrSEUJXgyD
+	80GcOiaEnHsPSsiTc1jfY//sl+SK5Ilr2L5hKXAegxGvS561NG5G2Xn2AvCqJM53UQqW/JlnaB4
+	OEn2IhoyIxWUHaa/kbCT1XFouD/MLQIQ8pVoksV12AsckSpdVtQO2m+gbHboOgRy0ZNxP5PXuq2
+	T0yuXRyuswJnF4opeBt461v52PzWHeM/gc7v4jfo0oBe7ARtHV3IcsaE/g9199bayMvWtOKP9Tj
+	RBgOY2sEqet3uzf0H7OIn7POH/LXSNcM8TPYTkVMECEpCrD0hjZa1HcDnc8CuuosRdSPzRRUy3B
+	zIz/DJAxWQscqDhWG6JK+qYaLcw7OiUjDpgS5ExXryXrMH33ekxmR7P7026edgbjIzq3AR32yt8
+	EyfwynAOzVkzVQlg==
+X-Received: by 2002:a17:90b:5864:b0:33b:b078:d6d3 with SMTP id 98e67ed59e1d1-3527323b4efmr14020472a91.23.1768979695646;
+        Tue, 20 Jan 2026 23:14:55 -0800 (PST)
+Received: from k.. ([223.74.152.156])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-352fb191a62sm507411a91.5.2026.01.20.23.14.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 Jan 2026 23:14:55 -0800 (PST)
+From: Nadi Ke <kenadicanady@gmail.com>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	orsonzhai@gmail.com,
+	baolin.wang@linux.alibaba.com
+Cc: zhang.lyra@gmail.com,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Nadi Ke <kenadicanady@gmail.com>
+Subject: [PATCH v2 0/2] clk: sprd: Add support for Unisoc SC9832E clocks
+Date: Wed, 21 Jan 2026 15:14:10 +0800
+Message-Id: <20260121071412.256215-1-kenadicanady@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20260116192725.972966-2-suraj.gupta2@amd.com>
-References: <20260116192725.972966-1-suraj.gupta2@amd.com> <20260116192725.972966-2-suraj.gupta2@amd.com>
-Subject: Re: [PATCH V3 1/2] clk: Add devm_clk_bulk_get_optional_enable() helper
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: sean.anderson@linux.dev, linux@armlinux.org.uk, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org, bmasney@redhat.com
-To: Suraj Gupta <suraj.gupta2@amd.com>, andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, kuba@kernel.org, michal.simek@amd.com, mturquette@baylibre.com, pabeni@redhat.com, radhey.shyam.pandey@amd.com
-Date: Tue, 20 Jan 2026 20:50:43 -0700
-Message-ID: <176896744341.4027.4548470924295153506@lazor>
-User-Agent: alot/0.11
+Content-Transfer-Encoding: 8bit
 
-Quoting Suraj Gupta (2026-01-16 12:27:23)
-> Add a new managed clock framework helper function that combines getting
-> optional bulk clocks and enabling them in a single operation.
->=20
-> The devm_clk_bulk_get_optional_enable() function simplifies the common
-> pattern where drivers need to get optional bulk clocks, prepare and enable
-> them, and have them automatically disabled/unprepared and freed when the
-> device is unbound.
->=20
-> This new API follows the established pattern of
-> devm_clk_bulk_get_all_enabled() and reduces boilerplate code in drivers
-> that manage multiple optional clocks.
->=20
-> Suggested-by: Andrew Lunn <andrew@lunn.ch>
-> Signed-off-by: Suraj Gupta <suraj.gupta2@amd.com>
-> Reviewed-by: Brian Masney <bmasney@redhat.com>
-> ---
+The SC9832E clock architecture involves several PLLs and gates. Some gate
+clocks are located within the PMU global register area.
 
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+** Author Email Change **
+Please note that my previous email address (kanadenady@gmail.com) is no
+longer accessible. I am submitting this version from my new address
+(kenadicanady@gmail.com). I am the same author as the previous submission.
+Please update your records accordingly.
+
+** Technical Details **
+Based on the review comments from v1, I have significantly refactored the
+handling of the PMU gate clocks. The hardware registers for these gates are
+scattered within the PMU global register space (interleaved with other
+system controls) and do not form a contiguous region.
+
+To correctly model this hardware:
+1. I removed the artificial child node (`sprd,sc9832e-pmu-gate`) which lacked
+   a valid `reg` property.
+2. The parent syscon node (`sprd,sc9832e-glbregs`) is now defined as the
+   clock provider.
+3. The driver has been updated to match the syscon compatible string directly.
+
+Verified on SC9832E hardware, clk_summary shows correct PLL rates and
+clock tree topology.
+
+Changes in v2:
+- dt-bindings:
+  - Removed the artificial 'sprd,sc9832e-pmu-gate' child node definition.
+  - Added '#clock-cells' to the 'sprd,sc9832e-glbregs' node definition.
+  - Removed 'simple-mfd' from the parent node in the example to reflect
+    that the child node (if present in dts) is logical and shares resources,
+    or that the parent acts as the provider.
+  - Simplified 'allOf' logic by merging similar conditions.
+  - Added mock clock definitions in the example to fix dt_binding_check warnings.
+  - Fixed 'compatible' array definition in the example to match schema.
+
+- clk driver:
+  - Updated the OF match table to match 'sprd,sc9832e-glbregs' instead of
+    the removed child node compatible string.
+  - Fixed a compilation error due to a typo in variable names.
+  - Updated Author email address.
+
+Nadi Ke (2):
+  Add device tree bindings for Spreadtrum/Unisoc SC9832E clock
+    controller.
+  Add clock driver for Spreadtrum/Unisoc SC9832E SoC.
+
+ .../bindings/clock/sprd,sc9832e-clk.yaml      |  182 +++
+ drivers/clk/sprd/Kconfig                      |   10 +
+ drivers/clk/sprd/Makefile                     |    1 +
+ drivers/clk/sprd/sc9832e-clk.c                | 1077 +++++++++++++++++
+ include/dt-bindings/clock/sprd,sc9832e-clk.h  |  177 +++
+ 5 files changed, 1447 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/sprd,sc9832e-clk.yaml
+ create mode 100644 drivers/clk/sprd/sc9832e-clk.c
+ create mode 100644 include/dt-bindings/clock/sprd,sc9832e-clk.h
+
+-- 
+2.34.1
+
