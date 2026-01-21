@@ -1,175 +1,82 @@
-Received: from mout.web.de (mout.web.de [212.227.15.3])
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C40E34EEF3;
-	Wed, 21 Jan 2026 10:03:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B3EE43C066;
+	Wed, 21 Jan 2026 10:06:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768989804; cv=none; b=REtFhQmCB5bRW4Kk5LVtg1TFmvWK5wRsOMO7s9urGqTw0or5A7X9wfDYFMgFsconYvCnAJvOEZcws5tpN1v6nWQDZZFlNJh8H+5SkaX6hAA1aRu+x0TIsjpVKHH1Fl2gB/xbO5lKXdO2an98HePW4Lh9q99XYH74I465sYvg10E=
+	t=1768990008; cv=none; b=dCstsvg79Xh7FDx4cwYz7vNgMgrFG6Wl6YMtaHOI+GIooFThbZAAun8qY30WK4U1g8B2Ocg/d1YotZiMZgea9yFeTAQMXRiA6gnRiMAId9F4lS6sCDWDGu/xiMVZEj3PxlDbffjm/dpZWFegzMX8Is4ZyMOP9HJt8iuV5nV07mQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768989804; c=relaxed/simple;
-	bh=FTO9/uzHNjNuNEN2VtUnN72iAI39TGwpTZSsqmbwvb4=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=MMRq/g/zDdxFqkobtMPmKyVCaJ5UUHHssZZeZQTJLCeU8dJBze1ZjOvSCgXdy85dtDXkwBU2ovX2dTOM/mmtTmlRhtLyTm9roa17NTacD4mdtyc+Cys4o8Mdpp5/LYl/YGmc+MObtDtz/BRkxNPUYS4eAGH79E6VBcuyuOnSUdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=UJmHLl9Z; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1768990008; c=relaxed/simple;
+	bh=EIr0H3QzcxeQI+iM14EZQvj7pqlo4qG/bQ5j6kH556Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sEbQBABhK1uegDWO/bjGilt6qaF9S+pS8wauUTnJAhgmwAjs+vWjK5tHoeejgnQ33mZPBdVjZwhEU0wbY3KUjS4L6rw6u32NOApa0vx+gDzQdhRqRMdHf7bexfW+a7B4JRSI21S4kXpz1Exh2fEiiE0eu0x/1pKBnNOXQgZ9HrQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=SZA7PsmK; arc=none smtp.client-ip=80.241.56.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="UJmHLl9Z"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1768989800; x=1769594600; i=markus.elfring@web.de;
-	bh=ZsWZBFVJo9bVgvjglTOcPeP7CI265mAlH3UOdBK2uDM=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=UJmHLl9ZibHgE97NP5IBn1olG6U1vwJChSVUcxzQZnY5Xafzu7eZSnnC77uF9xN0
-	 UIE0pV0SoKEYA0QinMgr21Fa/osmoAIj1M3lGJnumqupf7BxlpFDDB2gHYbuSDpCF
-	 WubXnZye9PHmbfDt0LpeJw8Hct51E9FNDjhh5FmmHa2415wmGrWkPuCX/jcjjRA97
-	 pum3oJIDr0Gd2bIrxU3d/7SepaavKJF+oDHMdVQGrVJjwH0Pk/QvU4DyHNs2Q+Jtu
-	 2ZhfoZrY/8Gq3HuGTdFcRkLxXf8E9HlRRz6qCtQdkKUoEYggCPxernt5yEhirRu/3
-	 wNFhd/UP6+dDJSPaQg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.92.226]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1N9cHJ-1voBZN0RV7-00rG86; Wed, 21
- Jan 2026 11:03:20 +0100
-Message-ID: <398b4dab-ee76-44f4-9bfd-4388af954808@web.de>
-Date: Wed, 21 Jan 2026 11:03:18 +0100
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="SZA7PsmK"
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4dx0GS2hCdz9tnv;
+	Wed, 21 Jan 2026 11:06:40 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1768990000;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0y6EFZTNf6M4KpxTP2xOAcMrDMy6ctYywtbB88AC34U=;
+	b=SZA7PsmKv+cs/d40OPKibpXpT5IVBVhPm2A+Xo0z7Gh6yHQKlx07XzAcvzj1vpKGZ6/HGp
+	yLASP7+HvBoWlqevaHK9nDiv9D+zJR/MK4NcfzvmA11/qSkB/26atzZVdHCkj4GX9xwauD
+	BcpZyBiUh0PZBzNWNS4ArYUSzIghnh9LBejEB+2/9rHlmtbuyQMSPgHOly1aUQVtSLD8Re
+	YBAxLfG4ry7meVxiA8GAogHm8fndLtOAMCXZwlbJVuTVU9LLlMdYFXBybugpvaWelDwrH/
+	Qw5VVQFFBuSG0DeAPZwTu7G5GJ5OlKRli8gyrxNw6464T+scnWDY3KxRWq8Qpw==
+Message-ID: <c0a83ab3-c9b7-48d9-9eb7-916e97c92ed5@mailbox.org>
+Date: Wed, 21 Jan 2026 11:06:38 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Haoxiang Li <lihaoxiang@isrc.iscas.ac.cn>, linux-clk@vger.kernel.org,
- Brian Masney <bmasney@redhat.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: stable@vger.kernel.org, kernel-janitors@vger.kernel.org,
- LKML <linux-kernel@vger.kernel.org>
-References: <20260121012223.186199-5-lihaoxiang@isrc.iscas.ac.cn>
-Subject: Re: [PATCH v2 4/7] clk: st: clkgen-pll: Add iounmap() in
- clkgen_c32_pll_setup()
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20260121012223.186199-5-lihaoxiang@isrc.iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:PBi0TVponyOI0FoKecOdSGrK6m2hflb5zk6sTYt+XLvXsHwKRCN
- A/uhhnw1wUv5pUrGieLCGgW/I9QgNbed37LHVYPQUDeyPoGiaU5eGUNLVgUCD0rq3aWxSK8
- Tho5ILN/IVVia+0BmePnsxOlG0DpKAGFZeCAVXjtbCjKy4dQD/E4lJ1DVtqCrWg0FTQ2T1K
- 41Hu8x3yBN2d+8nGz41Tw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:dxh2jFcCtJg=;XXfBi4TIpFByW6y5cz3bGC0exQt
- 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
- V0eYtacHLqfW6Uf+aWtXOkGZ5i5Rh
+Subject: Re: [PATCH v2] clk: rs9: Add clock index range check to
+ rs9_of_clk_get()
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <4cb63bd8b1e49407831431fbc88b218f720a74fd.1768899891.git.geert+renesas@glider.be>
+ <10de432d-b38a-4fe2-959b-d9fa4e08e6c1@mailbox.org>
+ <CAMuHMdVqRh5B3o5DA=5GU=HBcz-ZeQkCvRVtqOY4tE9H-FHN=Q@mail.gmail.com>
+Content-Language: en-US
+From: Marek Vasut <marek.vasut@mailbox.org>
+In-Reply-To: <CAMuHMdVqRh5B3o5DA=5GU=HBcz-ZeQkCvRVtqOY4tE9H-FHN=Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-MBO-RS-META: q9iuus158ciorc1uxtegmriz1sxjcn8m
+X-MBO-RS-ID: c42b6f00ac8d7ace3ae
 
-> Add a iounmap() to release the memory allocated by
+On 1/21/26 10:34 AM, Geert Uytterhoeven wrote:
 
-      an          call?
+Hello Geert,
 
-
-> clkgen_get_register_base() in error path.
-
-Was such an improvable implementation detail detected by any known source =
-code
-analysis approaches?
-
-
-=E2=80=A6
-> +++ b/drivers/clk/st/clkgen-pll.c
-=E2=80=A6
-> @@ -829,6 +829,9 @@ static void __init clkgen_c32_pll_setup(struct devic=
-e_node *np,
->  	kfree(pll_name);
->  	kfree(clk_data->clks);
->  	kfree(clk_data);
-> +err_unmap:
-> +	if (pll_base)
-> +		iounmap(pll_base);
-
-* I find this pointer check redundant because of a previous variable check=
-.
-  https://elixir.bootlin.com/linux/v6.19-rc5/source/drivers/clk/st/clkgen-=
-pll.c#L771-L773
-
-* I suggest to refine the goto chain a bit more.
-
-
->  }
-> =20
->  static void __init clkgen_c32_pll0_setup(struct device_node *np)
-
-Regards,
-Markus
+>>> diff --git a/drivers/clk/clk-renesas-pcie.c b/drivers/clk/clk-renesas-pcie.c
+>>> index aa108df12e44fb9f..1adc5365ba1a3d59 100644
+>>> --- a/drivers/clk/clk-renesas-pcie.c
+>>> +++ b/drivers/clk/clk-renesas-pcie.c
+>>> @@ -277,6 +277,9 @@ rs9_of_clk_get(struct of_phandle_args *clkspec, void *data)
+>>>        struct rs9_driver_data *rs9 = data;
+>>>        unsigned int idx = clkspec->args[0];
+>>>
+>>> +     if (idx >= rs9->chip_info->num_clks)
+>>
+>> of_clk_src_onecell_get() does a pr_err("%s: invalid clock index %u\n",
+>> __func__, idx); on error, should this function do the same ?
+> 
+> I can add it if you want. But this function will (hopefully) be
+> short-lived anyway.
+This will be backported to stable, the rewrite to onecell won't, so this 
+will be long lived in stable backports. Please add it. Thank you !
