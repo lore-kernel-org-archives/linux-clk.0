@@ -1,31 +1,31 @@
-Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
+Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 696E433D4EA;
-	Wed, 21 Jan 2026 14:20:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBAA530F553;
+	Wed, 21 Jan 2026 14:29:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769005244; cv=none; b=ii9EPAYtpDkIWrSsTRTuu6ANzCw5IMUXC7CW/vOEkg5TEDM7/QgmN6InHUfRSz6+CVBESnWqdcRb0z1S3YSET+qHXwm0nIZHXHa0L3ZNr3hXJJyxv/lnbync1LozDEj/Pu0hTcK70IlbnsvEVvis1I8AdLwC4w7HVrSsSXTTnjM=
+	t=1769005795; cv=none; b=WvFNfcyg4p372iYehbqRb25qDyHN+mExLK6M51Q2xGok5NIIh3WJqOlUlnzMMImErTg38nrPFTMZvILy6WF/8LkCFfKOnMP1rPMM3lp3YaYdSyx8GytOs8HwYK6p2LAG+SrwjVqWKJhNqEhzXdOKAyv3e4SEW2aXdrr+c+omnH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769005244; c=relaxed/simple;
-	bh=nECRXUddvBB6r882YwmQmC1NCKzawqob/o0ecaEnuoM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ChAbpKwIWYK/W/zlSKQoahO7k6aOVSFBXW/as16f1VpTZxssUGkKZcMP/8gRDyk9nxGTVpoLfp+xBhRkqOk3hwAIBhkWoP0JR4rGyoeNpw+dq/bnKHfFMofh3I2h15cMsydjf+uvRhO6S5UXwxjcQ/B8mSZyqKlW9fUPHQ3I8lg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=qKQqQLAt; arc=none smtp.client-ip=115.124.30.101
+	s=arc-20240116; t=1769005795; c=relaxed/simple;
+	bh=KagpBM1xhCXcwRRQAyfDGwB0x0YrZNc/aSqT1LfkuFk=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=ZOeQs2haCQdwdoHs4oz0cMNjl7GKgVO1HtXEgvFjLlq8tcPjaYAArVsWED4qcaAszTnSSXqmjSlUgo/26PwFRmbRHuTXLhRYRerYbxXTxODoJGFEWo2or6pDyAYeB4s3l3GGnzZwpACklDV/vqsojgMQIoF0t3oBwVOJV1YBwrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=EfPZW+Zy; arc=none smtp.client-ip=115.124.30.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="qKQqQLAt"
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="EfPZW+Zy"
 DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
 	d=linux.alibaba.com; s=default;
-	t=1769005231; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=4F4Z+wmFIYVbLHvWeOOQXSgEYrKMraRbThlYduC1oZ4=;
-	b=qKQqQLAtXK1GxNUN4qxzQ89TRCJgj9rRs7da7L+7dQXVRwKhp0cqVaGOxzOxHn548K0MICjJSbjFCw1YDre9cOdMeynVPMi1oQQI8ok/UFkKg+tvrmFWhmrECgVKQOaCpf70dlbYqOjMN5cngGFBwX+qybK7bdXjUROWg5bGouA=
-Received: from 30.221.145.201(mailfrom:guwen@linux.alibaba.com fp:SMTPD_---0WxYTFJ9_1769005228 cluster:ay36)
+	t=1769005783; h=Message-ID:Date:MIME-Version:Subject:From:To:Content-Type;
+	bh=k5BQxu6CMUOTbyhVOtJ/lDBq0GrbMvlHNo3WQj6zhqc=;
+	b=EfPZW+ZyWGl03Z6MoOTXOsE/0kIfJlbFBEjdEWoT7Sh9k8ZoJkaMdEjs5FlnY7W+z8qnqeOG+2ZOgb5JD3g6Hqo/ERcv3TnA5biEpZRzDOeeJnaQRt2B2Pybdu8jCdgZdRtzPZ+G1NK7v39YRgkmgCeE3m53828RmGvHJh8FY9E=
+Received: from 30.221.145.201(mailfrom:guwen@linux.alibaba.com fp:SMTPD_---0WxYU0Oi_1769005781 cluster:ay36)
           by smtp.aliyun-inc.com;
-          Wed, 21 Jan 2026 22:20:29 +0800
-Message-ID: <711e54ef-97db-4e01-b0d8-bcf2dea61fe6@linux.alibaba.com>
-Date: Wed, 21 Jan 2026 22:20:28 +0800
+          Wed, 21 Jan 2026 22:29:42 +0800
+Message-ID: <51e8d8ce-f291-4e31-a938-2c1a0e8684c2@linux.alibaba.com>
+Date: Wed, 21 Jan 2026 22:29:41 +0800
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,78 +35,91 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [RFC] Defining a home/maintenance model for non-NIC PHC devices
  using the /dev/ptpX API
-To: Manivannan Sadhasivam <mani@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
- Richard Cochran <richardcochran@gmail.com>,
- "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
- LKML <linux-kernel@vger.kernel.org>, Jakub Kicinski <kuba@kernel.org>,
- Dust Li <dust.li@linux.alibaba.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, David Woodhouse <dwmw2@infradead.org>,
- virtualization@lists.linux.dev, Nick Shi <nick.shi@broadcom.com>,
- Sven Schnelle <svens@linux.ibm.com>, Paolo Abeni <pabeni@redhat.com>,
- linux-clk@vger.kernel.org
-References: <0afe19db-9c7f-4228-9fc2-f7b34c4bc227@linux.alibaba.com>
- <yg3ikpcwukvv6z6gf6zzkoxlgu37ihauqpm2pkhmxuz6hsxfcc@eaeqykdvkh5v>
 From: Wen Gu <guwen@linux.alibaba.com>
-In-Reply-To: <yg3ikpcwukvv6z6gf6zzkoxlgu37ihauqpm2pkhmxuz6hsxfcc@eaeqykdvkh5v>
+To: Thomas Gleixner <tglx@linutronix.de>,
+ "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>,
+ Richard Cochran <richardcochran@gmail.com>
+Cc: Jakub Kicinski <kuba@kernel.org>, Dust Li <dust.li@linux.alibaba.com>,
+ Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ David Woodhouse <dwmw2@infradead.org>, virtualization@lists.linux.dev,
+ Nick Shi <nick.shi@broadcom.com>, Sven Schnelle <svens@linux.ibm.com>,
+ Paolo Abeni <pabeni@redhat.com>, linux-clk@vger.kernel.org
+References: <0afe19db-9c7f-4228-9fc2-f7b34c4bc227@linux.alibaba.com>
+In-Reply-To: <0afe19db-9c7f-4228-9fc2-f7b34c4bc227@linux.alibaba.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
 
 
-On 2026/1/19 22:48, Manivannan Sadhasivam wrote:
-> Hi Wen,
+On 2026/1/9 10:56, Wen Gu wrote:
 > 
-> On Fri, Jan 09, 2026 at 10:56:56AM +0800, Wen Gu wrote:
->>
->> Hi all,
->>
->> This is an RFC to discuss the appropriate upstream home and maintenance
->> model for a class of devices/drivers which expose a high-precision clock
->> to userspace via the existing PHC interface (/dev/ptpX + standard PTP_*
->> ioctls), but are not tied to a traditional NIC/IEEE1588 packet
->> timestamping pipeline.
->>
+> #
+> ## Proposal
+> #
 > 
-> Thanks for starting the discussion. I sent out an email just today on this
-> topic [1] and learned about this thread afterwards.
-
-[...]
-
+> 1. Reorganize drivers/ptp/ to make the interface/implementation split
+>     explicit,
 > 
-> Some Qcom MHI devices expose the high precision clock derived from GNSS/Cellular
-> network over the MHI registers and we recently sent out a series exposing them
-> as PHC [2]. Since this driver is closely tied with MHI bus, we added it as a
-> part of drivers/bus/mhi/.
+>     * drivers/ptp/core      : PTP core infrastructure and API.
+>                               (e.g. ptp_chardev.c, ptp_clock.c,
+>                                ptp_sysfs.c, etc.)
 > 
-Hi Manivannan,
-
-Thanks for the note and for sharing the MHI PHC use case.
-
-Yes, this is very similar to what motivated this RFC, there are more and
-more PHC providers which are not tied to NIC/IEEE 1588.
-
-[...]
-
->>
->> Introducing a new clock type or a new userspace API (e.g. /dev/XXX) would
->> require widespread userspace changes, duplicated tooling, and long-term
->> fragmentation. This RFC is explicitly NOT proposing a new userspace API.
->>
+>     * drivers/ptp/pure      : Non-network ("pure clock") implementation,
+>                               they are typically platform/architecture/
+>                               virtualization-provided time sources.
+>                               (e.g. ptp_kvm, ptp_vmw, ptp_vmclock,
+>                                ptp_s390, etc.)
 > 
-> +1
+>     * drivers/ptp/*         : Network timestamping oriented implementation,
+>                               they primarily used together with IEEE1588
+>                               over the network.
+>                               (e.g. ptp_qoriq, ptp_pch, ptp_dp83640,
+>                                ptp_idt82p33 etc.)
 > 
 
-[...]
+Thanks for the feedback so far. It seems we are close to consensus on
+the directory split, as [1] summarized:
 
-> 
-> If we get a consensus to move forward with exposing the device clocks as PHC, we
-> will respin the MHI driver and would love to get an ACK from the (new)
-> maintainers.
-> 
-> - Mani
-> 
-> [1] https://lore.kernel.org/all/vmwwnl3zv26lmmuqp2vqltg2fudalpc5jrw7k6ifg6l5cwlk3j@i7jm62zcsl67/
-> [2] https://lore.kernel.org/mhi/20250818-tsc_time_sync-v1-0-2747710693ba@oss.qualcomm.com/
-> 
+- drivers/ptp/core       : PTP core infrastructure and API
+- drivers/ptp/1588       : network/IEEE 1588 oriented PTP clocks
+- drivers/ptp/emulating  : platform/hardware/hypervisor-provided pure clocks
 
+For how the existing drivers in `drivers/ptp` are categorized into the
+directories above, please also refer to [1] and the follow-up replies.
+
+> 2. Transition drivers/ptp/pure from netdev maintainership to
+>     clock/time maintainership (with an appropriate MAINTAINERS entry,
+>     e.g. PURE TIME PHC), since these PHC implementations are primarily
+>     clock devices and not network-oriented. New similar drivers can be
+>     added under drivers/ptp/pure as well.
+
+
+Then the open item now is maintainership and the merge path.
+
+Based on previous guidance[2] and the current MAINTAINERS structure,
+it seems reasonable to have it maintained under the clock/timekeeping
+domain (following the existing timekeeping pull chain), with a
+dedicated MAINTAINERS entry.
+
+
+Hi Thomas and clock/timekeeping maintainers,
+
+Would you agree with this approach? If so, could you please advise on
+the appropriate maintainer/reviewer for this MAINTAINERS entry?
+
+Below is a strawman MAINTAINERS entry (happy to adjust):
+
+EMULATING PTP CLOCK SUPPORT
+L:     linux-kernel@vger.kernel.org
+S:     Maintained
+F:     drivers/ptp/emulating/*
+
+
+We (Alibaba) are also willing to be the maintainer for this entry as
+a fallback.
+
+[1] https://lore.kernel.org/netdev/b5a60753-85ed-4d61-a652-568393e0dff3@linux.alibaba.com/
+[2] https://lore.kernel.org/netdev/20251216135848.174e010f@kernel.org/
+
+Regards.
