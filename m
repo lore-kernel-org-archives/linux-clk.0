@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74EF01684BE;
-	Wed, 21 Jan 2026 19:00:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A98F03D5241;
+	Wed, 21 Jan 2026 19:09:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769022028; cv=none; b=c2m+eixo60hYKbwbrkHKSIAtQKnARMgMFGZlpjNVI4dC7qm3s/kbnvX1uVJroEo+hrpvk2fINw3WWns7mwWFRc0tgcjRTjOLLSziQJaID2vynu9QqF69ykxJczP3KPStq2mPssXqYqSR4oB+OgWhPVM6PJiQzOL5DyZyIZy6d04=
+	t=1769022577; cv=none; b=SJA5kUzbKLG4zlYCTbQKwjcdy0mj4vkVgJIBKifLVJhadjU4pz9jJHwofKKYpX/IL6WQHjca0+WXwuKQjSq0/7VhAR7Q8GIqUt3vK5u4wus9UNXYHkIRRykpK9GxkjSPE1V9PWWQDo43m9+KRzNbxROOPHRgZ8p8RUbsCRvq+Sc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769022028; c=relaxed/simple;
-	bh=x/3j4fyrtJStNpcsn4FO4MbauQjE4z7GMicX4DhNUoU=;
+	s=arc-20240116; t=1769022577; c=relaxed/simple;
+	bh=KL2Tnen2kIHUY1dDWeymZfKFuD7uZ9MVUAn4QAyYmQY=;
 	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=rgILfAic545fWmUo8IZVjrSJguVaLE7R0QO3XCBd2yliKhCOHeWCe0F/JJ1nO6SmM5mtpPcZSNNnAzLETHoii2C4A6FTSTxmJaop4ACvl3lE0vkH1bMbimFgWh9h6tmYpYoebWIbnlVYc9j8p86YURTrrrCpaYvCuXw7oluGMRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nuMTEY+6; arc=none smtp.client-ip=10.30.226.201
+	 To:Date:Message-ID; b=nDHmheWSEPkX9u/91jlwLY9ue/4Q5M+fF8CCLesqOv+DGh+BWfcFPJvR4Qo/pi6hKUcMRnzF/wi5ZlFNEzbBwWz4nksAYCckyqzmA+x+Bm5XYWOhPBB7vyEMpNogblURS0fV0xiGh2BiBjfJWnSj2zHgKeUrYqiCgDJtWBzZIew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=epqsfxKN; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nuMTEY+6"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E71A6C2BC87;
-	Wed, 21 Jan 2026 19:00:27 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="epqsfxKN"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0D7DC16AAE;
+	Wed, 21 Jan 2026 19:09:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769022028;
-	bh=x/3j4fyrtJStNpcsn4FO4MbauQjE4z7GMicX4DhNUoU=;
+	s=k20201202; t=1769022576;
+	bh=KL2Tnen2kIHUY1dDWeymZfKFuD7uZ9MVUAn4QAyYmQY=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=nuMTEY+6CxGeNBac8vujIw7/EkXAmaka51JpalYKNfYVmwvKzZ8ceepIelL5axjUG
-	 3XFTytMWBfBl6oan8oCdvqn69gxaRUh328CifPbpZ2HSnDIe0uj28epchMKgvQ8g9Y
-	 L5Z+dqGIcSl81SnWiyaT+OVU+WFnAeZ6nO/TGzh9aiAq5PT2QU/4VTLoaanTBkMiyh
-	 XfXLwktn8lroqCh7nwUqRtl7AjlLs+tJPMfHCURRubLj6aR/f1fquLTpZs5NAbjI1Q
-	 AMVH2EdHGJ328RVEeK/C1YSDMGuHCmiLua1GsdSnuS2YTer7yC5xsAeidZlOMJGAMH
-	 WnsE8Z9k7PlxQ==
+	b=epqsfxKNElJEjtN923mwMr2GHF1jdmCb4xW1reHHsNLfGSV3iEsHeW+4Ndg2Sz7LB
+	 yOoiA1vhsRPvQIQOWmIaQgjUA1IhkgbN22F/LiwkEA4QjmCTigAzjSHdBkZQRKwj3P
+	 Igdak/kw+aEpDoxoBtVoYkrnmy66QLEWk8es/oFDZCBBYOZu0DN5nGQD1Gbp+ebqKm
+	 kgXfezilIh2pTcS/lppl6gEjUJrnKc45JF/ZQAKYCdugQ98/YZWr0147OUOfE3Bkxf
+	 UW/CkXeKLKa/81bvmo43xU3GhzbWIeAQFldc+D2S3I5mTQGFejgW6J3MNYZPqua8hp
+	 3mcofaaw8JnHw==
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -34,34 +34,41 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <cover.1768559843.git.geert+renesas@glider.be>
-References: <cover.1768559843.git.geert+renesas@glider.be>
-Subject: Re: [GIT PULL] clk: renesas: Updates for v6.20 (take two)
+In-Reply-To: <20260114092742-GYC7933267@gentoo.org>
+References: <20260114092742-GYC7933267@gentoo.org>
+Subject: Re: [GIT PULL] clk: spacemit: Updates for v6.20
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
-To: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>
-Date: Wed, 21 Jan 2026 12:00:25 -0700
-Message-ID: <176902202598.4027.13205657073014309824@lazor>
+Cc: Yixun Lan <dlan@gentoo.org>, Michael Turquette <mturquette@baylibre.com>, Guodong Xu <guodong@riscstar.com>, linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org, spacemit@lists.linux.dev, linux-kernel@vger.kernel.org
+To: Yixun Lan <dlan@gentoo.org>
+Date: Wed, 21 Jan 2026 12:09:34 -0700
+Message-ID: <176902257445.4027.5972559722832621691@lazor>
 User-Agent: alot/0.11
 
-Quoting Geert Uytterhoeven (2026-01-16 03:51:04)
->         Hi Mike, Stephen,
+Quoting Yixun Lan (2026-01-13 18:43:33)
 >=20
-> The following changes since commit ebb3acf4d7c95b52265084168b59a565bf9728=
-83:
+> Hi Stephen,
 >=20
->   clk: renesas: r9a09g056: Add clock and reset entries for TSU (2025-12-2=
-9 11:43:22 +0100)
+>    Please pull SpacemiT's clock changes for v6.20, This PR basically adds
+> support for SpacemiT new K3 SoC, while doing this I've created an immutab=
+le
+> tag (spacemit-clkrst-v6.20-3) for reset driver in case it also needs to be
+> merged during same merge window, otherwise everything is normal.
+>=20
+> Yixun Lan
+>=20
+>=20
+> The following changes since commit 8f0b4cce4481fb22653697cced8d0d04027cb1=
+e8:
+>=20
+>   Linux 6.19-rc1 (2025-12-14 16:05:07 +1200)
 >=20
 > are available in the Git repository at:
 >=20
->   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git=
- tags/renesas-clk-for-v6.20-tag2
+>   https://github.com/spacemit-com/linux tags/spacemit-clk-for-6.20-1
 >=20
-> for you to fetch changes up to 4fef3fd633be4a1a18c490a63f4131284f6ee0f4:
+> for you to fetch changes up to e371a77255b837f5d64c9d2520f87e41ea5350b9:
 >=20
->   clk: renesas: Add missing log message terminators (2026-01-16 10:48:33 =
-+0100)
+>   clk: spacemit: k3: add the clock tree (2026-01-09 10:48:17 +0800)
 >=20
 > ----------------------------------------------------------------
 
