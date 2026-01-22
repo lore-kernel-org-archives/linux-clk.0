@@ -1,89 +1,149 @@
-Received: from mx.nabladev.com (mx.nabladev.com [178.251.229.89])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 705F9257448;
-	Thu, 22 Jan 2026 13:07:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.251.229.89
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60FEC26A0A7;
+	Thu, 22 Jan 2026 13:44:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769087230; cv=none; b=Ibxt8STDZQjhQeqclORba/7dyL5A8Rv8bW/Dg98MYPN9yeQAGR8iXlYOBKMqPPSo/qJXZ5sX5KIyK6I+1ndmB4AbYEEacsxAl8v5wFgKTFuLlmvxToM68esBT3go8TuxQ75gnPOOk3FqPV2y935F3ozEekdc+L4W2Tiy1W2a63A=
+	t=1769089492; cv=none; b=A7FhzhOB1NTTfL2F7mm2cdUuSyn1SBKMy/IaQQS2yABEjFpeubxD+Tgu9j2Rez3NkyG/zmlgaxmSxx8Ykk5LvbgPRdT2utMtPxunsV196nk5gBNrU/zbfrZsBEHc3zllSVlSLlwQqIcHTE55Zjsj8uBvuqsQ2+5P6+ItzRXaKqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769087230; c=relaxed/simple;
-	bh=KFevBUMoTVO19bT+uscP8l9cYsAVZOLUCYHSJHGhDHU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rXQZCswJYtw7k6EHn+8CfRZb+tmkgp8DIi8XXMuU3ZuWewCIaIKf1PfXHL7Ekqc5vDvY/6lYH9X5wpMNMEcZod/85EgfVF7XvQumreYUFBcscWO+8Y8O6TXy4J5+osu4VU5iA/udsJ62tDRUnB+rEtkoH8o4uTlEXzq//1e/sI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nabladev.com; spf=pass smtp.mailfrom=nabladev.com; dkim=pass (2048-bit key) header.d=nabladev.com header.i=@nabladev.com header.b=T660OUd8; arc=none smtp.client-ip=178.251.229.89
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nabladev.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nabladev.com
+	s=arc-20240116; t=1769089492; c=relaxed/simple;
+	bh=j8JEqlvIFnXt9gGEm0Oheoh75nKbbz8Bdg2iudx4Y8w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eAW7eew5ggT9JIpyjSfqUoSgtpc6bbJhLGct0kz6kUsdnqShdLQkV7OLVz22c5QVDkvn5MdrPq6+ZBgy1OPV7w8lzvh9B5TRbXrL3HOmzkMHVyJjIpJEDndHnN5/jZtxUCXHvoX4f996H3gqgantmq2fX/Om+NZBW5X2yOes/Xc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MiijZP2P; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nabladev.com header.i=@nabladev.com header.b="T660OUd8"
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 0F7A6100151;
-	Thu, 22 Jan 2026 14:07:02 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nabladev.com;
-	s=dkim; t=1769087226; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding; bh=eHlZeP2l22y+3oS6OgQo/4EpWW7DL9eFw1xliUsKTHQ=;
-	b=T660OUd8MYBP9SbKpg0SF1r6d2nxtwv3Lqb6/LpTHE6x2LB61qTAPyKIEUQWDjqnfdsjQz
-	3eDNdK224SvcheR4taJiPgNsdYiu29XTIzKwmwU7Cl4LvfdvU1/FIo6GGfCg3tV/+dLX6i
-	S0SEdjk1J9VzKrDAKMHKEppvtflDbaiDBchiqs2RSiwM67tSBKIUEM8AjLGE9I/kYqGFXe
-	Yhd1KOVU4LdwkCy7DTD3MXnUzLfDMXASelxPDpmUtFyudwbjLcwj196lGZasK1xypdz+Jr
-	kSoyBbVlFYZbppRMS3bGf8+iui6dLCeZfYcuDKolsicRj2676kcKYlYbFncVXA==
-From: Lukasz Majewski <lukma@nabladev.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Abel Vesa <abelvesa@kernel.org>,
-	Peng Fan <peng.fan@nxp.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>
-Cc: Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	linux-clk@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Lukasz Majewski <lukma@nabladev.com>
-Subject: [PATCH] clk: vf610: Add support for the Ethernet switch clocks
-Date: Thu, 22 Jan 2026 14:06:49 +0100
-Message-Id: <20260122130649.4150338-1-lukma@nabladev.com>
-X-Mailer: git-send-email 2.39.5
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MiijZP2P"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C125C116C6;
+	Thu, 22 Jan 2026 13:44:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1769089491;
+	bh=j8JEqlvIFnXt9gGEm0Oheoh75nKbbz8Bdg2iudx4Y8w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MiijZP2PgQ7cWwM/BrL4/aHqDuWgWt7buVDitzOLLgQdCeGQbRri9VRoWsknB6BOs
+	 MW4NXW6W74RdY0fAsK6Bdd8gp3rRRx5EUSq74/zd+Y3DQk3JDvoomz7nvfQXW4sYLt
+	 5NK4v3hzZ1ozM6HXvxIyYNRKjNtql6nEd8fORfMN3aJ57Fm0fNPpqIpF07lBZJNEqe
+	 bh1lrnUZrr3xfZB+VMQmhgzNd1DvOX4XxCozUKLJsUOQjxjF4TFLjOaa5sReHLH4/Q
+	 rdTHw5qscsZCtb4v7dlQUXKGr6CN30WBw/AIPOWvt9r6gzUfBUhamrC89amGEuE/MZ
+	 erbPngC11saWw==
+Date: Thu, 22 Jan 2026 14:44:49 +0100
+From: Maxime Ripard <mripard@kernel.org>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: Daniel Almeida <daniel.almeida@collabora.com>, 
+	Alice Ryhl <aliceryhl@google.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Viresh Kumar <viresh.kumar@linaro.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Drew Fustini <fustini@kernel.org>, Guo Ren <guoren@kernel.org>, 
+	Fu Wei <wefu@redhat.com>, Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-riscv@lists.infradead.org, 
+	linux-pwm@vger.kernel.org, linux-clk@vger.kernel.org, rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v3 1/3] rust: clk: use the type-state pattern
+Message-ID: <20260122-majestic-masterful-jaguarundi-d0abde@houat>
+References: <20260107-clk-type-state-v3-0-77d3e3ee59c2@collabora.com>
+ <20260107-clk-type-state-v3-1-77d3e3ee59c2@collabora.com>
+ <20260108-delectable-fennec-of-sunshine-ffca19@houat>
+ <98CD0BF6-3350-40B9-B8A9-F569AE3E3220@collabora.com>
+ <20260119-thundering-tested-robin-4be817@houat>
+ <aW4lCfUyumOKRRJm@google.com>
+ <518D8B09-B9A1-4DB4-85CD-37A2DD3D5FB1@collabora.com>
+ <DFSLCI9U4NCW.2HI2UPUI7G134@kernel.org>
+ <20260119-weightless-pelican-of-anger-190db0@houat>
+ <DFSN4FDCYHMW.3J3237PEBV2ZP@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="zgoq7kx6iu4jzgjw"
+Content-Disposition: inline
+In-Reply-To: <DFSN4FDCYHMW.3J3237PEBV2ZP@kernel.org>
 
-The vf610 device has built in the MoreThanIP L2 switch. For proper
-operation it is required to enable ESW and MAC table lookup
-clocks.
 
-The MAC table spans from 0x400E_C000 for 0x4000 and it is necessary
-to provide clocks for each AIPS1-"slot", which size is 0x1000
-(hence four separate entries).
+--zgoq7kx6iu4jzgjw
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v3 1/3] rust: clk: use the type-state pattern
+MIME-Version: 1.0
 
-Those can be enabled via clock gating CCM_CCGR10 register
-(0x4006_B068).
+On Mon, Jan 19, 2026 at 03:37:17PM +0100, Danilo Krummrich wrote:
+> On Mon Jan 19, 2026 at 3:18 PM CET, Maxime Ripard wrote:
+> > On Mon, Jan 19, 2026 at 02:13:48PM +0100, Danilo Krummrich wrote:
+> >> On Mon Jan 19, 2026 at 1:54 PM CET, Daniel Almeida wrote:
+> >> >> On 19 Jan 2026, at 09:35, Alice Ryhl <aliceryhl@google.com> wrote:
+> >> >> I think that if you still want an API where you just call enable/di=
+sable
+> >> >> directly on it with no protection against unbalanced calls, then th=
+at
+> >> >> should be the special API. Probably called RawClk and functions mar=
+ked
+> >> >> unsafe. Unbalanced calls seem really dangerous and use should not be
+> >> >> encouraged.
+> >>=20
+> >> +1; and unless there is a use-case that requires otherwise, it should =
+not even
+> >> be possible to do this at all -- at least for driver code.
+> >
+> > I mean, it's great, it's safe, etc. but it's also suboptimal from a PM
+> > perspective on many platforms. It's totally fine to provide nice, safe,
+> > ergonomic wrappers for the drivers that don't care (or can't, really),
+> > but treating a legitimate optimisation as something we should consider
+> > impossible to do is just weird to me.
+>=20
+> I said that an unsafe API with potentially unbalanced calls is something =
+we
+> should clearly avoid for drivers. This is *not* equivalent to "treating a
+> legitimate optimisation as something we should consider impossible".
+>=20
+> If we discover use-cases where the current API doesn't work well, we can
+> invenstigate further.
 
-Signed-off-by: Lukasz Majewski <lukma@nabladev.com>
----
- drivers/clk/imx/clk-vf610.c | 5 +++++
- 1 file changed, 5 insertions(+)
+I'm not sure I'm following what you're saying, sorry. I've pointed out
+such a use-case already.
 
-diff --git a/drivers/clk/imx/clk-vf610.c b/drivers/clk/imx/clk-vf610.c
-index 9e11f1c7c397..88c9b656f244 100644
---- a/drivers/clk/imx/clk-vf610.c
-+++ b/drivers/clk/imx/clk-vf610.c
-@@ -309,6 +309,11 @@ static void __init vf610_clocks_init(struct device_node *ccm_node)
- 	clk[VF610_CLK_ENET_TS] = imx_clk_gate("enet_ts", "enet_ts_sel", CCM_CSCDR1, 23);
- 	clk[VF610_CLK_ENET0] = imx_clk_gate2("enet0", "ipg_bus", CCM_CCGR9, CCM_CCGRx_CGn(0));
- 	clk[VF610_CLK_ENET1] = imx_clk_gate2("enet1", "ipg_bus", CCM_CCGR9, CCM_CCGRx_CGn(1));
-+	clk[VF610_CLK_ESW] = imx_clk_gate2("esw", "ipg_bus", CCM_CCGR10, CCM_CCGRx_CGn(8));
-+	clk[VF610_CLK_ESW_MAC_TAB0] = imx_clk_gate2("esw_tab0", "ipg_bus", CCM_CCGR10, CCM_CCGRx_CGn(12));
-+	clk[VF610_CLK_ESW_MAC_TAB1] = imx_clk_gate2("esw_tab1", "ipg_bus", CCM_CCGR10, CCM_CCGRx_CGn(13));
-+	clk[VF610_CLK_ESW_MAC_TAB2] = imx_clk_gate2("esw_tab2", "ipg_bus", CCM_CCGR10, CCM_CCGRx_CGn(14));
-+	clk[VF610_CLK_ESW_MAC_TAB3] = imx_clk_gate2("esw_tab3", "ipg_bus", CCM_CCGR10, CCM_CCGRx_CGn(15));
- 
- 	clk[VF610_CLK_PIT] = imx_clk_gate2("pit", "ipg_bus", CCM_CCGR1, CCM_CCGRx_CGn(7));
- 
--- 
-2.39.5
+> >> > I think we should discourage RawClk if at all possible. But if the c=
+onsensus
+> >> > is that we *really* need this easily-abused thing, I can provide a f=
+ollow-up.
+> >>=20
+> >> I think we should only do this if there are use-case with no alternati=
+ve, so far
+> >> there haven't been any AFAIK.
+> >
+> > I don't really care about which alternative we come up with, but look at
+> > devm_regmap_init_mmio_clk for example. It is a valid use-case that
+> > already exists today, and has had for more than a decade at this point.
+>=20
+> I don't see the issue with devm_regmap_init_mmio_clk()? It takes a refere=
+nce
+> count of the clock and prepares it when called and unprepares the clk in =
+drops
+> its reference in regmap_mmio_free_context() called from the devres callba=
+ck.
+>=20
+> That something we can easily do with the current API, no?
 
+The current one, yes. Doing that in the API suggested here would involve
+some boilerplate in all those drivers they don't have right now.
+
+Maxime
+
+--zgoq7kx6iu4jzgjw
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaXIp0AAKCRAnX84Zoj2+
+dv/rAX9htC+v4VP6TU5rtpJ5yxn/5pIK0gwosc19iO/daFXAUH7fxYosU1HBuveb
+KxjMgb8BgMuQtaOp2idk6EzXwAecWf/CAQ08Ci5MNA2QR6rNT2nYPbr8TNKaiLWq
+nIzGXz2HvQ==
+=cTWW
+-----END PGP SIGNATURE-----
+
+--zgoq7kx6iu4jzgjw--
