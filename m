@@ -1,42 +1,88 @@
-Received: from cstnet.cn (unknown [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 018EA48C3FD;
-	Thu, 22 Jan 2026 16:01:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FC4D37AA95
+	for <linux-clk@vger.kernel.org>; Thu, 22 Jan 2026 16:05:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769097716; cv=none; b=nX2VSNHiPhwvL7iNq0GKTUYXW3UhtCOz4gSXgAEaTl6P4RnAfOTvC7px1+3xxbLlNoGvC6QYFA+gfya/9/T1uySaY5m8HUKHuCNhqbVERX+QqVxS9dXMNZVdwJ2VYDQE/kADK2bSOzV3nucTKjMimRa4XdzXFITSic2323s4CuI=
+	t=1769097931; cv=none; b=Igk1N9rymmhwV6722Gh+fQTQqJNT3Jd+TmAHv0aQpbizqamE8aFpTYbbgWvUWksjP5g+Glw/KHJMAA6hEbK6/HJcH7tsNdP5vxoyXbqOTl4Q6gDorqbVzi62LEPlBbJaYTi9tTbV+ozO46H71FWNaQpTNVXhXA5u8bC1eGJtT1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769097716; c=relaxed/simple;
-	bh=MS7wBS31az3nY8BubQfwrrIXlXvQJt6kkKLP4ntO8jU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BNoasqgdOs8zyD8OvgNM3/wc4QiSYBD4OnCt5PdCV2A+MCJltnZ4Eoxk00wvloiqQ11BFceBK3DdAlW0xn47mEmPS4oNCNmc4Nsrxh23Ul8djidxIfYeK29/Yw21ZUGcj47XS6jntZ2tsaZ7moMntOZiNONYsSq+AsiOCKWTP7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=isrc.iscas.ac.cn; spf=pass smtp.mailfrom=isrc.iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=isrc.iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=isrc.iscas.ac.cn
-Received: from duge-virtual-machine (unknown [183.192.221.134])
-	by APP-01 (Coremail) with SMTP id qwCowACXP2vcSXJpCLXLBQ--.27565S2;
-	Fri, 23 Jan 2026 00:01:34 +0800 (CST)
-Date: Fri, 23 Jan 2026 00:01:32 +0800
-From: Jiayu Du <jiayu.riscv@isrc.iscas.ac.cn>
-To: Xukai Wang <kingxukai@zohomail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Troy Mitchell <TroyMitchell988@gmail.com>
-Subject: Re: [PATCH v10 2/3] clk: canaan: Add clock driver for Canaan K230
-Message-ID: <aXJJ3MjQSq8Rq084@duge-virtual-machine>
-References: <20260116-b4-k230-clk-v10-0-de59033c5d30@zohomail.com>
- <20260116-b4-k230-clk-v10-2-de59033c5d30@zohomail.com>
- <aW3o8xVziqb9iRBN@duge-virtual-machine>
- <bf39fdb8-6698-418b-bd4a-6d8d40ccc9a0@zohomail.com>
+	s=arc-20240116; t=1769097931; c=relaxed/simple;
+	bh=eZ7GtOnPnUjwFAMKpgZVqTk2gRTNJ6uuZdDIiOCCHzM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=jEYmNbVPYHGNPeMkdDS0CFti/CAA/R8Bnkp/ORiCbuHA7y1sqOSVdj21Ma7qd1cZ8tSKwjL1NsHurndybKihUgEUDPEETJEv+C7BGa5bqQgeEWhNbjXY3qcaDGGwWmpDS98XwEjI+SN+I2CcH74OG1LruslKlWa3YqozIOSkEzg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QVckfxsw; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=Z6ynEQvD; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QVckfxsw";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="Z6ynEQvD"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1769097922;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=8NmUi+JCIHLnFNZPL3W+AznGM/aqprY8hMKt/Ws5doM=;
+	b=QVckfxswxYdP60sOoBSubz5s30RBJdmYz42VXZq5R8VjmhRMg4lPYgeq0vLFEIJ9ZIMiLS
+	yLTzKyUuA5fdZWAafwl/rAFb7Ocxov7GDuKZvSaE3OGfQHsGUvyCEYyJW2oH3wP3QhnATC
+	fT8CAfMX5Pdzgt8AFILfy6iOiKMBAZo=
+Received: from mail-vs1-f71.google.com (mail-vs1-f71.google.com
+ [209.85.217.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-614-Ap7wrL27P4mfqVse0-MV4w-1; Thu, 22 Jan 2026 11:05:21 -0500
+X-MC-Unique: Ap7wrL27P4mfqVse0-MV4w-1
+X-Mimecast-MFC-AGG-ID: Ap7wrL27P4mfqVse0-MV4w_1769097920
+Received: by mail-vs1-f71.google.com with SMTP id ada2fe7eead31-5f536124e01so1914725137.2
+        for <linux-clk@vger.kernel.org>; Thu, 22 Jan 2026 08:05:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1769097920; x=1769702720; darn=vger.kernel.org;
+        h=user-agent:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=8NmUi+JCIHLnFNZPL3W+AznGM/aqprY8hMKt/Ws5doM=;
+        b=Z6ynEQvDFgSegzQzEV9uexolOM8WA9xMz+JGJJ82RbkVK45uk6Z/s8jCFjyx6zp2Tl
+         9ZoihutMqQvUmGODR8uCRnFA2haMMIdFtK3lHZ04pdI8/FOg5d3e6AWBeUEss7nzFcse
+         BgCXv5IWMuSC90uMaX/F9x+c33Qnh4nc3VbGqfloacyS/6mqIjkHlhbjYuAjqYrypZbp
+         A3R+Jmr4Qb0NsXKLFs0tylnQ3SLGVVVFYtBPdET3CSQHl1Yy6MdWHsFV7RwXCRx3bHk+
+         PxqmcYEwo9zRNiMPLehaKHMU7mO0ZM53cBYKJuybZjLffTnrhgd6/xnnfdv17+p3eTU/
+         z9Kw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1769097920; x=1769702720;
+        h=user-agent:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8NmUi+JCIHLnFNZPL3W+AznGM/aqprY8hMKt/Ws5doM=;
+        b=YBbTXheoqhkWF082UWrx/JoBFL6RwzO9OQGeiZhdmWYBI1d+xAflvm94ceo8XGOyuw
+         oo7ep/Xd3zoBRv2+kxedwncKE3L8TARX+rKZFW0mjLdy1Ke9WzotAfwrdUpUTCOO5MY+
+         lVRHFwOYvGyoQoiGvTn0yoW71jo93l11gv/ZJXQ93XLd5lsMnexo9XUEpDwUmeveXD76
+         bXCblVjVyKu5+BnthOdF9w0q1LLsd97hZswfCLhs5X0iRpG7bCUe+uexwEn+ps1400O0
+         B2ThLwM1EU21TJROb2MUf9TANG1rli4CV25yvpNrGDcyWej9KzVqeugQIdy8npuJEX7u
+         GXdw==
+X-Gm-Message-State: AOJu0Yxk6z3V2xB0aYY/Em4yNeISSfWp1vEafHLdLP2Rk5vIWZtoXie+
+	fRs5NKBGauyqksSspl45GMpDxtl3KZu+iuIOslTdTBUaftcqsb1++yyTb2LWMVAQH4eeFjHZLRX
+	BSllGfVM3DOLOKTNCTlqeiLddhr3BmfAbTQOUqtDSNc+wIuPdYtMd/Msx8/0dAg==
+X-Gm-Gg: AZuq6aKlAE46n2R6P+aEp+SqqFkuSptFxnkD13zuahvtLTS627M/d/DApHj+E+6GJi2
+	upkvrc2kmWlVK5++EyOybWNblzUR2YxoWAg6Qyf50Idc88TpjXn2QmpBJHIpHVmzi2zPlqbrPAi
+	Kn8JcWcGb5wDYLBAE5wM6T/lm1klssvacq4KjJXToaNAo0s8x+ZsE997Xk+bEMDM2+GgSioro46
+	HuzdkDC3v30/Pgq87AQBaFrwaPvwy7OYYe6LWs2ygZfaXlcIcUSAK/n5qz2HBHLpeaAjIO3Ob2m
+	JG+nO05/5zLb057GEBX2i1BbqpzV+eVnUxNeB6MAim3eDsNSoQQggQ5mLSGJq6UNFRN09Vqbx7e
+	cvquaU3/3rtb3fw/b5vv0kbv21UB07jtyCy2KjjQPYvxi
+X-Received: by 2002:a05:6102:2ac4:b0:5ef:a164:ebed with SMTP id ada2fe7eead31-5f54bd36d33mr49648137.43.1769097919967;
+        Thu, 22 Jan 2026 08:05:19 -0800 (PST)
+X-Received: by 2002:a05:6102:2ac4:b0:5ef:a164:ebed with SMTP id ada2fe7eead31-5f54bd36d33mr49576137.43.1769097919200;
+        Thu, 22 Jan 2026 08:05:19 -0800 (PST)
+Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8942e6c9defsm157919766d6.48.2026.01.22.08.05.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Jan 2026 08:05:18 -0800 (PST)
+Date: Thu, 22 Jan 2026 11:05:16 -0500
+From: Brian Masney <bmasney@redhat.com>
+To: Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	linux-rtc@vger.kernel.org
+Subject: [GIT PULL v2] clk: remove deprecated API divider_round_rate() and
+ friends for v6.20
+Message-ID: <aXJKvOJVrBIeCiny@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -45,59 +91,114 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <bf39fdb8-6698-418b-bd4a-6d8d40ccc9a0@zohomail.com>
-X-CM-TRANSID:qwCowACXP2vcSXJpCLXLBQ--.27565S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7KF4DKFWDKr43Gr13Xr43KFg_yoW8Wr1kp3
-	93uF18CFWDK34I9F1jvw4xCw1DtFs5ta18JFnav348Aw43Z34kZF1I9w42vayjvrnrCayU
-	Ar48Jwn8tFW2v3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvvb7Iv0xC_tr1lb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I2
-	0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
-	A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xII
-	jxv20xvEc7CjxVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4
-	A2jsIEc7CjxVAFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
-	64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8Jw
-	Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l
-	c7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr
-	1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE
-	14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7
-	IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E
-	87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73Uj
-	IFyTuYvjxU2wIDUUUUU
-X-CM-SenderInfo: 5mld534oul2uny6l223fol2u1dvotugofq/
+User-Agent: Mutt/2.2.14 (2025-02-20)
 
-On Thu, Jan 22, 2026 at 07:40:29PM +0800, Xukai Wang wrote:
-> 
-> On 2026/1/19 16:18, Jiayu Du wrote:
-> >> +
-> >> +K230_CLK_GATE_FORMAT(hs_hclk_src_gate,
-> >> +		     K230_HS_HCLK_SRC_GATE,
-> >> +		     0x18, 0, 0, 0,
-> >> +		     &hs_hclk_high_src_rate.clk.hw);
-> > Here, you replaced hs_hclk_high_gate(in v9) with hs_hclk_high_src_rate,
-> 
-> I'm a bit confused, as I don't recall making these specific changes.
-> Looking at the code below, the only difference between v9 and v10 is
-> within the K230_CLK_GATE_FORMAT(hs_hclk_src_gate, ...) definition, where
-> the second parameter changed from 1 to 0. Everything else appears
-> consistent. Could you clarify which change you were referring to?
+Hi Stephen,
 
-> > but after my board test, I find that when hs_hclk_high_gate is turned
-> > off, the mmc/sd and other high-speed subsystems can not work. So maybe
-> > you should not change the hs_hclk_high_gate to hs_hclk_high_src_rate.
-> 
-> Regarding the clock management, I recommend explicitly enabling
-> hs_hclk_high_gateas it will be closed by `close unused clocks`.
+Here's a PULL for this large series that continues the work to remove
+some deprecated round_rate APIs. I used the following b4 commands to
+collect up this series:
 
-Sorry, you are right. It was me who made the changes locally. And I
-saw your reply to this email[1], which you said According to the vendor's
-code, the parent clock of hs_hclk_src is hs_hclk_high_src.
+    b4 am --cherry-pick 1-2,4-13,17-23 \
+        20260108-clk-divider-round-rate-v1-0-535a3ed73bf3@redhat.com
+    b4 am 20260122-rtc-ac100-divider-round-rate-v2-1-044f8b493c35@redhat.com
 
-Indeed, the parent clock of hs_hclk_src is hs_hclk_high_src. but
-hs_hclk_high_gate is the gate of hs_hclk_high_src. So, what you mean is
-that you will add the CLK_IS_CRITICAL flag to the hs_hclk_high_gate?
+I skipped the patches that have already been picked up by others. The
+two patches that actually remove the deprecated functions from drivers/clk/
+will need to go in during the next dev cycle.
 
-Link: https://lore.kernel.org/all/159615d3-cc52-43be-bf6d-5fe717ef1cc4@zohomail.com/ [1]
+The only change since the v1 PULL is to drivers/rtc/rtc-ac100.c:
+- Fix two cases of brace inbalances around if/else
+- Picked up an Acked-by from Alexandre
 
-Regards,
-Jiayu Du
+Details are in the signed tag.
+
+Thanks!
+
+
+The following changes since commit 8f0b4cce4481fb22653697cced8d0d04027cb1e8:
+
+  Linux 6.19-rc1 (2025-12-14 16:05:07 +1200)
+
+are available in the Git repository at:
+
+  https://github.com/masneyb/linux tags/clk-divider-round-rate-v6.20-v2
+
+for you to fetch changes up to ed806240b8975f951c88ccb4bb75813f5fb949df:
+
+  rtc: ac100: convert from divider_round_rate() to divider_determine_rate() (2026-01-22 10:49:10 -0500)
+
+----------------------------------------------------------------
+clk: remove deprecated API divider_round_rate() and friends for v6.20
+
+Here's a series that lays the groundwork to rid of the deprecated APIs
+divider_round_rate(), divider_round_rate_parent(), and
+divider_ro_round_rate_parent() since these functions are just wrappers
+for the determine_rate variant.
+
+We need to wait for some other changes to land in Linus's tree via the
+phy tree before we can actually remove these functions. We should be
+able to do that during the next development cycle.
+
+Note that when I converted some of these drivers from round_rate to
+determine_rate, this was mistakenly converted to the following in some
+cases:
+
+    req->rate = divider_round_rate(...)
+
+This is invalid in the case when an error occurs since it can set the
+rate to a negative value. So this series fixes those bugs and removes
+the deprecated APIs all in one go.
+
+Note that this also contains a clk-specific change to
+drivers/rtc/rtc-ac100.c, and that patch carrys an Acked-by from
+Alexandre.
+
+----------------------------------------------------------------
+Brian Masney (20):
+      clk: sophgo: cv18xx-ip: convert from divider_round_rate() to divider_determine_rate()
+      clk: sunxi-ng: convert from divider_round_rate_parent() to divider_determine_rate()
+      clk: actions: owl-composite: convert from owl_divider_helper_round_rate() to divider_determine_rate()
+      clk: actions: owl-divider: convert from divider_round_rate() to divider_determine_rate()
+      clk: bm1880: convert from divider_ro_round_rate() to divider_ro_determine_rate()
+      clk: bm1880: convert from divider_round_rate() to divider_determine_rate()
+      clk: hisilicon: clkdivider-hi6220: convert from divider_round_rate() to divider_determine_rate()
+      clk: loongson1: convert from divider_round_rate() to divider_determine_rate()
+      clk: milbeaut: convert from divider_ro_round_rate() to divider_ro_determine_rate()
+      clk: milbeaut: convert from divider_round_rate() to divider_determine_rate()
+      clk: nuvoton: ma35d1-divider: convert from divider_round_rate() to divider_determine_rate()
+      clk: nxp: lpc32xx: convert from divider_round_rate() to divider_determine_rate()
+      clk: sophgo: sg2042-clkgen: convert from divider_round_rate() to divider_determine_rate()
+      clk: sprd: div: convert from divider_round_rate() to divider_determine_rate()
+      clk: stm32: stm32-core: convert from divider_ro_round_rate() to divider_ro_determine_rate()
+      clk: stm32: stm32-core: convert from divider_round_rate_parent() to divider_determine_rate()
+      clk: versaclock3: convert from divider_round_rate() to divider_determine_rate()
+      clk: x86: cgu: convert from divider_round_rate() to divider_determine_rate()
+      clk: zynqmp: divider: convert from divider_round_rate() to divider_determine_rate()
+      rtc: ac100: convert from divider_round_rate() to divider_determine_rate()
+
+ drivers/clk/actions/owl-composite.c       |  11 +--
+ drivers/clk/actions/owl-divider.c         |  17 +---
+ drivers/clk/actions/owl-divider.h         |   5 -
+ drivers/clk/clk-bm1880.c                  |  13 +--
+ drivers/clk/clk-loongson1.c               |   5 +-
+ drivers/clk/clk-milbeaut.c                |  15 +--
+ drivers/clk/clk-versaclock3.c             |   7 +-
+ drivers/clk/hisilicon/clkdivider-hi6220.c |   6 +-
+ drivers/clk/nuvoton/clk-ma35d1-divider.c  |   7 +-
+ drivers/clk/nxp/clk-lpc32xx.c             |   6 +-
+ drivers/clk/sophgo/clk-cv18xx-ip.c        | 154 +++++++++++++++++-------------
+ drivers/clk/sophgo/clk-sg2042-clkgen.c    |  15 +--
+ drivers/clk/sprd/div.c                    |   6 +-
+ drivers/clk/stm32/clk-stm32-core.c        |  42 +++-----
+ drivers/clk/sunxi-ng/ccu_div.c            |  25 +++--
+ drivers/clk/sunxi-ng/ccu_mp.c             |  26 ++---
+ drivers/clk/sunxi-ng/ccu_mult.c           |  16 ++--
+ drivers/clk/sunxi-ng/ccu_mux.c            |  49 ++++++----
+ drivers/clk/sunxi-ng/ccu_mux.h            |   8 +-
+ drivers/clk/sunxi-ng/ccu_nkm.c            |  25 ++---
+ drivers/clk/x86/clk-cgu.c                 |   6 +-
+ drivers/clk/zynqmp/divider.c              |   5 +-
+ drivers/rtc/rtc-ac100.c                   |  75 ++++++++-------
+ 23 files changed, 245 insertions(+), 299 deletions(-)
 
