@@ -1,392 +1,208 @@
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51E08481FBD
-	for <linux-clk@vger.kernel.org>; Thu, 22 Jan 2026 08:13:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.221.41
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769069615; cv=pass; b=XX8B8+cNGxnHUABv6WaDcSKdRiOP6Y4+qiXPQRerx5d9KSE0AVKRwWd0kBOLzQisgO7FfWTMNaR0aHS3iNXiO2nZwJ/70+nLAU8LwMnL7PirfveuxtMgsxqVjjBghvZcEzAthD2uoh/j/XYBgbVjBxJzdPuBwfHFYrfIkAa6ksk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769069615; c=relaxed/simple;
-	bh=gA1fM8gWC2kU1633RZk14++WjhCJz+9kYbXpn+DlmCU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tgX8vTWq2USZ4VbZnwyq3biOvyLYJe+ZKd01QMTKv8dpcFV8caS9c+XgWfLthIMl6hY+KeLy/AVDoSEevXRfKVmtjXgBrkSgUDdpO2jkVkOqN6Yq2G5t7IMqBxFJGCRWlEZWYBWoql3+ZTueuwaLX78HEbATBlSMFgw5KfVyJvA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xeg6eAo/; arc=pass smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 402AB2C86D;
+	Thu, 22 Jan 2026 08:39:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1769071168; cv=none; b=NWo/1AOjL9M4Fj+NXSAkpMCB1LLl0eBpsX/A84Cz2gJx/2/29ppNVn2FM/Fqem1Bg7f4UvkckmE0FuX2PKJQajv3C/TBazJIeV5AcYJddXZuTrayJjNaVwQ+dLpAEv4d2GE3NSLcm4/afa26QOOpWwNokL5jz4uar0FWlcVo140=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1769071168; c=relaxed/simple;
+	bh=lRf24S1QUTOdBwFZpSbeznEDb7qkdT3IRnLkaXjT6vw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TRTk4Hp4/yJNn0hI5WDDu997EcUzA+Hj95tx42M4ZK5TEF9D68DGOfwTulgxQKBXBmu+1yfmIcsfCrUF5VIgsDaBhlmmLnewqHgwcsfvyXNYkAH5a+AXysgsb+8V8dX8lu6qjcQzwAyRVVwVNr4kqMYgtiXEEkhtXQFkLRPQW3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EKcugwgd; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xeg6eAo/"
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-432d2c96215so543441f8f.3
-        for <linux-clk@vger.kernel.org>; Thu, 22 Jan 2026 00:13:32 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1769069611; cv=none;
-        d=google.com; s=arc-20240605;
-        b=i7VUV3r/kLf3N/8O1lUrP+aen0EnHXrQh9me1wzGzqTFhzKiuIjkWrpV/IWtAG2zZ4
-         dCBJdQHUD9HTNdl46lMmHoo7gVJK966HzqLjOFNSxtYgqTgSZNzJu7jvpQwLAzjYsLnE
-         Ur3upfQ+55mb4/eevaxhtzUqdpC1X5RzLPUE1iWxn+TE3OB9Sv2jITZOc6mojNGdjBjv
-         nzzXlGhmwGWl1Rc4RaGlAkFF3JHbYIQQOyD2oXNxi/T5zVKJCJYZ7P6qa15SQtwaPT3X
-         xSxw3hguf7Iq4legUMkU463dGvg9S/ZIAJvWi2ng9uJ2IVeyQBQFHzJyYBFsa9Qp8aY9
-         o5cw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=Pm4yqmeuRZmAlhNjrdm1JM1bh9K8XbD6fUz4NNp14yI=;
-        fh=bwUirQJAP23ANom9NafX5u8dq9Rbt0aqMhqKpEnACTo=;
-        b=hIwcCRY+X96t6JX5sQIuN1DcmRvBxNv7uQEInF2Y6oggzZMjXraC7mKopF6bDCZhj0
-         owksb6cVvLmEnaQtHkYiswyLDmBDFEPisLy00sBtYY70wm0UjYL9UcaDkej6o+wOADLP
-         v7gekDegChxMmlXZXY8Xm/octLjGUVf/PyqGcbwyLzp/B6LO76NN+Qs3vtB8D7vaXsKw
-         R+bYRu1A/sr6jF+V8xBfMVUNzVBzcC2Z4ZHgr5MAapiBt0HyTWNtGFgSBAcmdj0U/bDP
-         0G0BaXMQFuRL2Vnwouer8anAE5L0aYF/XK/CihRtGS7mOwmkjqQBGOfxv4LAQXBp47c8
-         lhpg==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1769069611; x=1769674411; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Pm4yqmeuRZmAlhNjrdm1JM1bh9K8XbD6fUz4NNp14yI=;
-        b=Xeg6eAo/e28n3E3Cs7X8BQHXCzPXKtmqkv4wYzIVicqWSSB5LfP9ZNXdqifhWyPH3r
-         D1PzZUeAwWRCfpXw4WVjpKHbDP9cAU4KoMFyQKGPbQ8UHesSZ/S0783dHQhENhBJxyGz
-         ocCCri/iibSfUJaJvaoLDXeMpYK/0YTWCrblWqKA5Y9tCBMuJOYX6fJyE7XZGmiL6cvk
-         MsmEBLzOwUhFIYBNsJBnWDSr2RZUYmv88C3IKW9JCuc7jD1O+JEGhIqA2E+zwNiAOFNP
-         i7F6k6oqjMgDv0pyTR0rXHoJhXWiuBLB61OmjOK6Vw1Og41j985zZSWy4kPPBWaUFoW0
-         IQ/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769069611; x=1769674411;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=Pm4yqmeuRZmAlhNjrdm1JM1bh9K8XbD6fUz4NNp14yI=;
-        b=gDXA4xRTVz6mvjGyG6GQFknnxNSC0XANm7vQ7dZTihOgVXmPpkqUWIlKMMw68V8GqN
-         FC9KUkqAQireXJxYJggvCNUZMExSWmBqPmRvp9ifK8DeU4vxGIJ4sdaQ4CqETtQdObPU
-         Q76FTNsbr7Phx2oCvkOopN2aDBV6SpkVJFI9NWcotCtmajYCQapr5lhh5NI57Zzlg1Rn
-         pf5gHiKWfGugb8wyILZdu+pPLuZY27A9cJ/nvzkgeZM5XFFqltnEjafqjy+yIpxykFZm
-         IoAIrEQ5lHHM5IfcmhMyuJY72bdEaCxZvVkJfQDi1asgo+jNHI8eKIDNEn1gUM0aBmwm
-         PWQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVZ5GmP0fkHE4wE3Tg1zn30afOPSNqSJyPIhrXkBVSEzKu6nn7TG7wykzBz7C6SB25DerLNRS5PQR4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDGh//2k8W+3HasymcfxFT7nE3CB7OjLZqRyrfwq11VNOWxhWc
-	siCm25etLvhlyZ7NqfidU6Gs3fiXNK+O6qbqZJcWtChp0HC3IrKx5tKmrim7Z7CFuYbk7rvzce/
-	6ki5YGsWnbutTGH+haOwP1Mr4e4cCBzk=
-X-Gm-Gg: AZuq6aKwBnRRv/8phPicmLPSER8SfMPLBEoqB6JFzYJnfWVdfVmpB/aDJWS7TecoT3D
-	qE/tDEX6AInktceDTWplO1C7L5epN6VoBYLJpnAMYg551o42Qk8hDztRTg2njMLd1vGiFF527hD
-	7g8p88hX1EI9IdvRgnEjPDV4CgQ9ywbDwRhEMKMic1F+F6mnpn+m3pn6RoheI2e5uRzz1LJmyo9
-	rSXzhuRAfi19LnNRlt4GhKjegZw/Pejp3/Ase+bcks9TiYfXoPYTsBBRo5UEWpUNab5pM/J
-X-Received: by 2002:a5d:584d:0:b0:432:84f9:8bea with SMTP id
- ffacd0b85a97d-43569bcf38emr30908185f8f.51.1769069610255; Thu, 22 Jan 2026
- 00:13:30 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EKcugwgd"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2CEEC16AAE;
+	Thu, 22 Jan 2026 08:39:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1769071168;
+	bh=lRf24S1QUTOdBwFZpSbeznEDb7qkdT3IRnLkaXjT6vw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=EKcugwgdnuFFowFhLOe2+rntBMhu2PIAiajDdqNrt9y0d0BgywfpcQ8/gunOqYa+2
+	 H4nKAaSWNvh+wpv1ltsKPgXkf+c7AfbJEv8ATm6ubbj2jYv7NfQgGHcYTFNSAwiSku
+	 i5qwUO+hz50bM5ONMvIAl7MZPRzP9skZBp97pnptSjsZotkLd3HTeYz8JLPM7Oef+y
+	 yrpT/0BqwMxvj2+8jQFLcsnN+ZyeV6mtoY/lxaqvARMisDpjchJjYzb6l7ApOhjIHf
+	 HBX51l1kbPBQfdQn294rRvb3g7UpZQegjWzXuG89vmg8LGS5o7yhlH8zLkEiUCpSFO
+	 Gf2sm5419qn7Q==
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	linux-clk@vger.kernel.org,
+	Sylwester Nawrocki <snawrocki@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] clk: samsung: clock for v6.20/v7.0
+Date: Thu, 22 Jan 2026 09:39:20 +0100
+Message-ID: <20260122083920.20271-2-krzk@kernel.org>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251125120559.158860-1-clamor95@gmail.com> <4370037.mvXUDI8C0e@senjougahara>
- <CAPVz0n1zqo1TyaV=+fc6YzOKH9TqOBEatruZTAVGg9hFEWmXsQ@mail.gmail.com> <7678982.MhkbZ0Pkbq@senjougahara>
-In-Reply-To: <7678982.MhkbZ0Pkbq@senjougahara>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Thu, 22 Jan 2026 10:13:18 +0200
-X-Gm-Features: AZwV_QiXpIIdakCNJ9P5cZK3YWY0HEe71dmYntpj4j8EfRxMZPhhzu-STz_bju4
-Message-ID: <CAPVz0n1F3tynph9e6+ts+N9etyGm6fAZGYixW0FCTwOsh==LRQ@mail.gmail.com>
-Subject: Re: [PATCH v4 11/12] ARM: tegra: Add EMC OPP and ICC properties to
- Tegra114 EMC and ACTMON device-tree nodes
-To: Mikko Perttunen <mperttunen@nvidia.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thierry Reding <treding@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Dmitry Osipenko <digetx@gmail.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, 
-	Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Developer-Signature: v=1; a=openpgp-sha256; l=8349; i=krzk@kernel.org; h=from:subject; bh=lRf24S1QUTOdBwFZpSbeznEDb7qkdT3IRnLkaXjT6vw=; b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBpceI4Knu8MKjUioyilO5JbxwypAmBfYoA+P/fj pTiucKA0P+JAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaXHiOAAKCRDBN2bmhouD 17mPD/9uUQv4LG4Ycc90XWQQmeNzXfQsWtKpXyb/+wACeSQohSEy6tEwbSmwAcn/wUtwrF8ekxe u4BiSiBkzd3XcVg/+eVXTEtTVQkwTKdRDv6cgu/Yk8AhxcMv+FZe7wivW59Zg4DyLW4ZZvml4V/ zrSAaM+XOAu/wZfM2odvmSu2H+fVci6heMgtp1NYvpljuwSgB07r2NKDCU5wWUIi9F9UHU6mpYI nB6PBQO+DnNDzSTq/qDYzaSgie/8maJJaS7MgsKBRRikcWNrhsLiLx8D/nHFA+IUAGqt+9I7W/D 9odAvuZ8dKOIG2RjR/vqn/ydJYmkUcDElqPsvggBEF/zNwEQPVdQ8KlNLHqyLGBladI4kK0+9EX p0jucKxJ0us9NrFcZoxc3bedtxNdHc8LwyOIVvVt3G4DmRvs6SlHhCSCVMsnCzgJHOb9n02kpQJ pxLP5UOs4zX/ZOlvM3aG1DI2aBYiKrd0ZQtYvfnlJV6u/NLQaZpEW0gznH114M9HxmFnB+9krbD HeQmra4EYltiS0WOmZkIvRDhl5EIX2LzHlBOCng0PGGQ1LuDxM5JzaDy5UEISc1BvtITCdJXlyb 0NtuzPixRQEW7VRBjB08yYzWl0iy8ojWwxO0ipoN3xRH7zLPdzw5cQ8w+aN00Hb8kdYPf01vJ9a 0Up4V/k6jt2Q0jA==
+X-Developer-Key: i=krzk@kernel.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-=D1=87=D1=82, 22 =D1=81=D1=96=D1=87. 2026=E2=80=AF=D1=80. =D0=BE 07:46 Mikk=
-o Perttunen <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
->
-> On Thursday, January 22, 2026 1:57=E2=80=AFAM Svyatoslav Ryhel wrote:
-> > =D1=81=D1=80, 21 =D1=81=D1=96=D1=87. 2026=E2=80=AF=D1=80. =D0=BE 09:56 =
-Mikko Perttunen <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
-> > >
-> > > On Tuesday, November 25, 2025 9:05=E2=80=AFPM Svyatoslav Ryhel wrote:
-> > > > Add EMC OPP tables and interconnect paths that will be used for
-> > > > dynamic memory bandwidth scaling based on memory utilization statis=
-tics.
-> > > >
-> > > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > > > ---
-> > > >  .../dts/nvidia/tegra114-peripherals-opp.dtsi  | 151 ++++++++++++++=
-++++
-> > > >  arch/arm/boot/dts/nvidia/tegra114.dtsi        |   9 ++
-> > > >  2 files changed, 160 insertions(+)
-> > > >  create mode 100644 arch/arm/boot/dts/nvidia/tegra114-peripherals-o=
-pp.dtsi
-> > > >
-> > > > diff --git a/arch/arm/boot/dts/nvidia/tegra114-peripherals-opp.dtsi=
- b/arch/arm/boot/dts/nvidia/tegra114-peripherals-opp.dtsi
-> > > > new file mode 100644
-> > > > index 000000000000..1a0e68f22039
-> > > > --- /dev/null
-> > > > +++ b/arch/arm/boot/dts/nvidia/tegra114-peripherals-opp.dtsi
-> > > > @@ -0,0 +1,151 @@
-> > > > +// SPDX-License-Identifier: GPL-2.0
-> > > > +
-> > > > +/ {
-> > > > +     emc_icc_dvfs_opp_table: opp-table-emc {
-> > > > +             compatible =3D "operating-points-v2";
-> > > > +
-> > > > +             opp-12750000-900 {
-> > > > +                     opp-microvolt =3D <900000 900000 1390000>;
-> > > > +                     opp-hz =3D /bits/ 64 <12750000>;
-> > > > +                     opp-supported-hw =3D <0x000F>;
-> > > > +             };
-> > >
-> > > What's the source of the opp data?
-> > >
-> >
-> > I have used tf701t (T40X) and tegratab (T40S) kernel sources, to be
-> > more specific board-*-memory.c files. Timing struct for each clock
-> > contains min voltage field which was used to compose these opps.
-> > 1390000 is the max core regulator voltage, taken from tegra11_dvfs.c
->
-> Thanks! I also looked through SHIELD Portable (roth, T40T) memory tables =
-and this appears to match except for the 528MHz opp.
->
-> The opp table here is setting the voltage for the 528MHz opp to 1050mV fo=
-r the high end SKUs (T40X and T40T)[1] and 1100mV for the lower end T40S, w=
-hich makes sense. However, the roth memory table (rel-roth branch) specifie=
-s 1100mV for the 528MHz opp. My understanding is T40T is supposed to be at =
-least as good silicon as T40X, so it doesn't make sense to me that it would=
- require a higher voltage, but memory timings are a dark art and I would er=
-r on the baseline side and keep the voltage at 1100mV. Let me know what you=
- think or if you have additional information.
+The following changes since commit 8f0b4cce4481fb22653697cced8d0d04027cb1e8:
 
-If roth requires 1100mV for 528MHz opp there should be a reason for
-that, maybe we are just not aware or it since it may be not
-documented/not public/empirical. I see no issue in setting it to
-1100mV for both T40X and T40T since they both can work with this
-voltage. I will add a comment in case there will be enough T40T users
-who can check if 1050mV for 528MHz work stable enough to lower voltage
-later on.
+  Linux 6.19-rc1 (2025-12-14 16:05:07 +1200)
 
->
-> FWIW, roth also specifies a 900MHz opp. I think in principle T40X/T40T in=
- general can reach this but it might only have been characterized for roth.
->
+are available in the Git repository at:
 
-Very nice, then I will include 900MHz opp in the next iteration. It is
-always better to have a wider coverage. Thank you!
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-clk-6.20
 
-Best regards,
-Svyatoslav R.
+for you to fetch changes up to 4b18a3ef2230e38439c9c3a0e3fa4a2b5edcc5cd:
 
-> [1] T40X is SKU 0x3 and T40T is SKU 0x4, and these are mapped to soc_spee=
-do_id=3D1 -> supported_hw BIT(1).
->
-> >
-> > I have converted an entire core_dvfs_table table from tegra11_dvfs.c
-> > and I am planning to submit those later on too along with
-> > powergates/domains configuration for tegra114, but that is for another
-> > time :)
->
-> Sounds good!
->
-> Thanks,
-> Mikko
->
-> >
-> > > Cheers,
-> > > Mikko
-> > >
-> > > > +
-> > > > +             opp-20400000-900 {
-> > > > +                     opp-microvolt =3D <900000 900000 1390000>;
-> > > > +                     opp-hz =3D /bits/ 64 <20400000>;
-> > > > +                     opp-supported-hw =3D <0x000F>;
-> > > > +             };
-> > > > +
-> > > > +             opp-40800000-900 {
-> > > > +                     opp-microvolt =3D <900000 900000 1390000>;
-> > > > +                     opp-hz =3D /bits/ 64 <40800000>;
-> > > > +                     opp-supported-hw =3D <0x000F>;
-> > > > +             };
-> > > > +
-> > > > +             opp-68000000-900 {
-> > > > +                     opp-microvolt =3D <900000 900000 1390000>;
-> > > > +                     opp-hz =3D /bits/ 64 <68000000>;
-> > > > +                     opp-supported-hw =3D <0x000F>;
-> > > > +             };
-> > > > +
-> > > > +             opp-102000000-900 {
-> > > > +                     opp-microvolt =3D <900000 900000 1390000>;
-> > > > +                     opp-hz =3D /bits/ 64 <102000000>;
-> > > > +                     opp-supported-hw =3D <0x000F>;
-> > > > +             };
-> > > > +
-> > > > +             opp-204000000-900 {
-> > > > +                     opp-microvolt =3D <900000 900000 1390000>;
-> > > > +                     opp-hz =3D /bits/ 64 <204000000>;
-> > > > +                     opp-supported-hw =3D <0x000F>;
-> > > > +                     opp-suspend;
-> > > > +             };
-> > > > +
-> > > > +             opp-312000000-1000 {
-> > > > +                     opp-microvolt =3D <1000000 1000000 1390000>;
-> > > > +                     opp-hz =3D /bits/ 64 <312000000>;
-> > > > +                     opp-supported-hw =3D <0x000F>;
-> > > > +             };
-> > > > +
-> > > > +             opp-408000000-1000 {
-> > > > +                     opp-microvolt =3D <1000000 1000000 1390000>;
-> > > > +                     opp-hz =3D /bits/ 64 <408000000>;
-> > > > +                     opp-supported-hw =3D <0x000F>;
-> > > > +             };
-> > > > +
-> > > > +             opp-528000000-1050 {
-> > > > +                     opp-microvolt =3D <1050000 1050000 1390000>;
-> > > > +                     opp-hz =3D /bits/ 64 <528000000>;
-> > > > +                     opp-supported-hw =3D <0x000E>;
-> > > > +             };
-> > > > +
-> > > > +             opp-528000000-1100 {
-> > > > +                     opp-microvolt =3D <1100000 1100000 1390000>;
-> > > > +                     opp-hz =3D /bits/ 64 <528000000>;
-> > > > +                     opp-supported-hw =3D <0x0001>;
-> > > > +             };
-> > > > +
-> > > > +             opp-624000000-1100 {
-> > > > +                     opp-microvolt =3D <1100000 1100000 1390000>;
-> > > > +                     opp-hz =3D /bits/ 64 <624000000>;
-> > > > +                     opp-supported-hw =3D <0x000F>;
-> > > > +             };
-> > > > +
-> > > > +             opp-792000000-1100 {
-> > > > +                     opp-microvolt =3D <1100000 1100000 1390000>;
-> > > > +                     opp-hz =3D /bits/ 64 <792000000>;
-> > > > +                     opp-supported-hw =3D <0x000F>;
-> > > > +             };
-> > > > +     };
-> > > > +
-> > > > +     emc_bw_dfs_opp_table: opp-table-actmon {
-> > > > +             compatible =3D "operating-points-v2";
-> > > > +
-> > > > +             opp-12750000 {
-> > > > +                     opp-hz =3D /bits/ 64 <12750000>;
-> > > > +                     opp-supported-hw =3D <0x000F>;
-> > > > +                     opp-peak-kBps =3D <204000>;
-> > > > +             };
-> > > > +
-> > > > +             opp-20400000 {
-> > > > +                     opp-hz =3D /bits/ 64 <20400000>;
-> > > > +                     opp-supported-hw =3D <0x000F>;
-> > > > +                     opp-peak-kBps =3D <326400>;
-> > > > +             };
-> > > > +
-> > > > +             opp-40800000 {
-> > > > +                     opp-hz =3D /bits/ 64 <40800000>;
-> > > > +                     opp-supported-hw =3D <0x000F>;
-> > > > +                     opp-peak-kBps =3D <652800>;
-> > > > +             };
-> > > > +
-> > > > +             opp-68000000 {
-> > > > +                     opp-hz =3D /bits/ 64 <68000000>;
-> > > > +                     opp-supported-hw =3D <0x000F>;
-> > > > +                     opp-peak-kBps =3D <1088000>;
-> > > > +             };
-> > > > +
-> > > > +             opp-102000000 {
-> > > > +                     opp-hz =3D /bits/ 64 <102000000>;
-> > > > +                     opp-supported-hw =3D <0x000F>;
-> > > > +                     opp-peak-kBps =3D <1632000>;
-> > > > +             };
-> > > > +
-> > > > +             opp-204000000 {
-> > > > +                     opp-hz =3D /bits/ 64 <204000000>;
-> > > > +                     opp-supported-hw =3D <0x000F>;
-> > > > +                     opp-peak-kBps =3D <3264000>;
-> > > > +                     opp-suspend;
-> > > > +             };
-> > > > +
-> > > > +             opp-312000000 {
-> > > > +                     opp-hz =3D /bits/ 64 <312000000>;
-> > > > +                     opp-supported-hw =3D <0x000F>;
-> > > > +                     opp-peak-kBps =3D <4992000>;
-> > > > +             };
-> > > > +
-> > > > +             opp-408000000 {
-> > > > +                     opp-hz =3D /bits/ 64 <408000000>;
-> > > > +                     opp-supported-hw =3D <0x000F>;
-> > > > +                     opp-peak-kBps =3D <6528000>;
-> > > > +             };
-> > > > +
-> > > > +             opp-528000000 {
-> > > > +                     opp-hz =3D /bits/ 64 <528000000>;
-> > > > +                     opp-supported-hw =3D <0x000F>;
-> > > > +                     opp-peak-kBps =3D <8448000>;
-> > > > +             };
-> > > > +
-> > > > +             opp-624000000 {
-> > > > +                     opp-hz =3D /bits/ 64 <624000000>;
-> > > > +                     opp-supported-hw =3D <0x000F>;
-> > > > +                     opp-peak-kBps =3D <9984000>;
-> > > > +             };
-> > > > +
-> > > > +             opp-792000000 {
-> > > > +                     opp-hz =3D /bits/ 64 <792000000>;
-> > > > +                     opp-supported-hw =3D <0x000F>;
-> > > > +                     opp-peak-kBps =3D <12672000>;
-> > > > +             };
-> > > > +     };
-> > > > +};
-> > > > diff --git a/arch/arm/boot/dts/nvidia/tegra114.dtsi b/arch/arm/boot=
-/dts/nvidia/tegra114.dtsi
-> > > > index a920ad041c14..6221423b81d1 100644
-> > > > --- a/arch/arm/boot/dts/nvidia/tegra114.dtsi
-> > > > +++ b/arch/arm/boot/dts/nvidia/tegra114.dtsi
-> > > > @@ -8,6 +8,8 @@
-> > > >  #include <dt-bindings/soc/tegra-pmc.h>
-> > > >  #include <dt-bindings/thermal/tegra114-soctherm.h>
-> > > >
-> > > > +#include "tegra114-peripherals-opp.dtsi"
-> > > > +
-> > > >  / {
-> > > >       compatible =3D "nvidia,tegra114";
-> > > >       interrupt-parent =3D <&lic>;
-> > > > @@ -323,6 +325,9 @@ actmon: actmon@6000c800 {
-> > > >               clock-names =3D "actmon", "emc";
-> > > >               resets =3D <&tegra_car TEGRA114_CLK_ACTMON>;
-> > > >               reset-names =3D "actmon";
-> > > > +             operating-points-v2 =3D <&emc_bw_dfs_opp_table>;
-> > > > +             interconnects =3D <&mc TEGRA114_MC_MPCORER &emc>;
-> > > > +             interconnect-names =3D "cpu-read";
-> > > >               #cooling-cells =3D <2>;
-> > > >       };
-> > > >
-> > > > @@ -655,6 +660,7 @@ mc: memory-controller@70019000 {
-> > > >
-> > > >               #reset-cells =3D <1>;
-> > > >               #iommu-cells =3D <1>;
-> > > > +             #interconnect-cells =3D <1>;
-> > > >       };
-> > > >
-> > > >       emc: external-memory-controller@7001b000 {
-> > > > @@ -665,6 +671,9 @@ emc: external-memory-controller@7001b000 {
-> > > >               clock-names =3D "emc";
-> > > >
-> > > >               nvidia,memory-controller =3D <&mc>;
-> > > > +             operating-points-v2 =3D <&emc_icc_dvfs_opp_table>;
-> > > > +
-> > > > +             #interconnect-cells =3D <0>;
-> > > >       };
-> > > >
-> > > >       hda@70030000 {
-> > > >
-> > >
-> > >
-> > >
-> > >
->
->
->
->
+  clk: samsung: gs101: add support for Display Process Unit (DPU) clocks (2026-01-17 20:30:38 +0100)
+
+----------------------------------------------------------------
+Samsung SoC clock drivers changes for v6.20
+
+1. Add new clock controllers:
+   - MFD for ExynosAutov920 SoC,
+   - Display Process Unit (DPU) for Google GS101 SoC.
+
+2. Implement automatic clock gating mode (HWACG) for Google GS101 SoC
+   clock controllers (but also used on almost all modern Exynos SoC),
+   opposed to currently used mode - manual mode.
+
+Background on HW automatic clock gating from Peter Griffin in cover letter:
+
+This series addresses an issue with Samsung Exynos based upstream clock driver
+whereby the upstream clock driver sets all the clock gates into "manual mode"
+(which uses a bit that is documented as reserved in the gate registers).
+
+Another issue with the current "manual clock gating" approach upstream is
+there are many bus/interconnect clocks whose relationships to the IPs
+are not well documented or defined in the specs. When adding a new CMU until
+now we have tried to label these clocks appropriately with CLK_IS_CRITICAL and
+CLK_IGNORE_UNUSED but doing so is both error prone and time consuming. If
+your lucky disabling a critical bus clock causes an immediate hang. Other
+clocks however aren't so obvious and show up through random instability
+some period of time later.
+
+Fortunately each CMU (at least on newer Exynos) provides a "hardware
+automatic clock gating" HWACG feature that is used by the downstream
+Samsung clock drivers. Hardware automatic clock gating uses a hardware
+interface between the CMU and IP to control all clocks required by the
+IP. This interface is called Q-channel, and is part of the Arm AMBA low
+power interface specification [1].
+
+The advantage of using this Qchannel hardware interface for
+enabling/disabling the clocks is that it takes care of all clocks
+(including bus/interconnect) ones for the IP automatically thereby reducing
+the dynamic power.
+
+Whilst each clock component (GATE, MUX, DIV, QCH etc) has a HWACG enable
+bit there are also some "global enable override" bits for the entire CMU in
+the CMU_CONTROLLER_OPTION register.
+
+This series makes use of those "global enable" override bits to enable auto
+clock mode for the entire CMU and every component within it. Through
+experimentation we can see that setting the "manual mode" reserved gate bit
+on a particular gate register overides the global enable bits. So the code
+is updated accordingly not to do that.
+
+Auto clock mode has been implemented as a "opt in" by setting a new
+auto_clock_gate flag in the CMU static data. The intention is existing
+platforms in manual mode should not be effected by any of these changes.
+
+If auto_clock_mode flag is set and the option_offset field is specified
+then the global enable override bits will be written for the
+CMU (to avoid relying on any prior bootstage configuration). Again if auto
+mode is enabled the code no longer sets MANUAL and clears HWACG bits on
+each gate register.
+
+To ensure compatibility with older DTs (that specified an incorrect CMU
+size) the resource size is checked and the driver falls back to manual
+clock gate mode in such cases. As the CLK_IGNORE_UNUSED and CLK_IS_CRITICAL
+flags are required for manual clock gate mode, the patch removing these
+flags has been dropped from v2. I tested with an old DT and we successfully
+switch to manual clock gate mode and the system correctly boots.
+
+To have dynamic root clock gating (drcg) of bus components and memclk
+enabled, it is required to set the bus_component_drcg and memclk registers
+in the correspondingly named sysreg controller. If auto clock mode is
+enabled the clock driver will now attempt to get the sysreg syscon via the
+samsung,sysreg property (as used by other Exynos drivers upstream) and set
+the registers accordingly. The suspend/resume code paths are also updated
+to handle saving/restoring registers using a regmap. Note cmu_top is an
+exception and does not have a corresondingly named sysreg_top.
+
+As all clock gates are currently exposed in the gs101 drivers and DT, we
+continue to register all of these gates in auto clock mode, but with some new
+samsung_auto_clk_gate_ops. As clk enable and clk disable are now handled by
+Q-channel interface the .enable and .disable implementations are
+no-ops. However by using some CMU qchannel debug registers we can report
+the current clock status (enabled or disabled) of every clock gate in the
+system. This has the nice effect of still being able to dump the entire
+clock tree from /sys/kernel/debug/clk/clk_summary and see a live view of
+every auto clock in the system.
+
+With the infrastructure in place, all the CMUs registered in clk-gs101 are
+now updated to enable auto clock mode. From dumping
+/sys/kernel/debug/clk/clk_summary it is possible to see that after enabling
+auto clock mode approximately 305 clocks are enabled, and 299 are now
+disabled. This number goes up and down a bit by 3-5 clocks just on a idle
+system sat at a console.
+
+With auto clock mode enabled it is now also possible to boot without the
+clk_ignore_unused kernel command line property for the first time!
+
+For future CMUs in gs101 I propose we continue to expose all gates, but
+register the CMU in "auto mode". For new device drivers or updates to
+existing dt bindings related to clocks to support gs101 I suggest we only
+use the "obviously correct" clock(s). By "obviously correct" I mean a clock
+has the IP name in the clock register name, but not try to deduce other
+obsucurely named bus/interconnect clocks which will now all be handled
+automatically. Note it is still possible to test whether the "obviously
+correct" clock is indeed correct by putting the individual gate in manual
+mode and disabling the clock (e.g. by using devmem).
+
+----------------------------------------------------------------
+André Draszik (2):
+      clk: samsung: avoid warning message on legacy Exynos (auto clock gating)
+      clk: samsung: fix sysreg save/restore when PM is enabled for CMU
+
+Krzysztof Kozlowski (1):
+      Merge branch 'for-v6.20/dt-bindings-clk' into next/clk
+
+Peter Griffin (7):
+      dt-bindings: clock: google,gs101-clock: add samsung,sysreg property as required
+      clk: samsung: Implement automatic clock gating mode for CMUs
+      clk: samsung: gs101: Enable auto_clock_gate mode for each gs101 CMU
+      dt-bindings: clock: google,gs101-clock: fix alphanumeric ordering
+      dt-bindings: clock: google,gs101-clock: Add DPU clock management unit
+      dt-bindings: samsung: exynos-sysreg: add gs101 dpu compatible
+      clk: samsung: gs101: add support for Display Process Unit (DPU) clocks
+
+Raghav Sharma (2):
+      dt-bindings: clock: exynosautov920: add MFD clock definitions
+      clk: samsung: exynosautov920: add clock support
+
+ .../bindings/clock/google,gs101-clock.yaml         |  40 ++-
+ .../clock/samsung,exynosautov920-clock.yaml        |  19 ++
+ .../soc/samsung/samsung,exynos-sysreg.yaml         |   2 +
+ drivers/clk/samsung/clk-exynos-arm64.c             |  92 +++++-
+ drivers/clk/samsung/clk-exynos4.c                  |  12 +-
+ drivers/clk/samsung/clk-exynos4412-isp.c           |   4 +-
+ drivers/clk/samsung/clk-exynos5250.c               |   2 +-
+ drivers/clk/samsung/clk-exynos5420.c               |   4 +-
+ drivers/clk/samsung/clk-exynosautov920.c           |  40 +++
+ drivers/clk/samsung/clk-gs101.c                    | 338 +++++++++++++++++++++
+ drivers/clk/samsung/clk-s3c64xx.c                  |   4 +-
+ drivers/clk/samsung/clk-s5pv210.c                  |   2 +-
+ drivers/clk/samsung/clk.c                          | 207 +++++++++++--
+ drivers/clk/samsung/clk.h                          |  56 +++-
+ include/dt-bindings/clock/google,gs101.h           |  36 +++
+ include/dt-bindings/clock/samsung,exynosautov920.h |   4 +
+ 16 files changed, 812 insertions(+), 50 deletions(-)
