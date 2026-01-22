@@ -1,125 +1,181 @@
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8089C200110;
-	Wed, 21 Jan 2026 23:27:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DA6B2BDC10
+	for <linux-clk@vger.kernel.org>; Thu, 22 Jan 2026 00:26:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769038028; cv=none; b=X4E9Y/HEQNfnDaBkoCtXtFf9mH3jMwLfZVvRRxB9CdP5RqDhpeLKOvba72jJzPDqo5FVBda3VbNU1ny3IR+mmAV6VL4OYOcCQRClagOXU9RX3ithkj5xHdJKhbiitwGQgjqyH7u2XVbzI2CoEaRUYNdH9v0dUogDBm16zwfwiH8=
+	t=1769041578; cv=none; b=ONfHeoRcBPCA1EuyEvRR+AhSKGEj7pIZUKb/0p8LzfKV+tzOvAft4WHJbwODKnf67XhJDfLRn4Y+valQBShnzsULY0SJOmySv5NLBbzWv7R+Bnrlhqeiim1fxK2BA4rqmma1mmy23cDlHAoRknz8Rw7E7UpmmQN+o+uINRfND+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769038028; c=relaxed/simple;
-	bh=Ie1Haw2WtnPvlbwL6gllW4suUIrjMIZAvmGVyCVImOU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JhgEjqUETviE+ylEvjvpdYc+l+UAZ6yUrHnEIEUlU/kafpNDfZ+oJuUl+kZ6gUh+fydYGuzW/gMfaX2UyvD66iTtZjnfdfvDRdOGET0WlWx+jkdRrr33huhxlh0H8IOsZn0HoWvrUB2R4z4L5PeIhUpgvvRsImb2vakS58BoG4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=hKPzsLD8; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=avQ2sYo5; arc=none smtp.client-ip=80.241.56.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+	s=arc-20240116; t=1769041578; c=relaxed/simple;
+	bh=hP+9fk7VaCo2SPT/AetIm7YfIJIqEA8BJRaRGX3vSrg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=beA7KNagwU/4j4sQliXdaQuL7IWXYFruvtk1L2Te/JQDskTONcR893IobqlGf70t948lOFYq4egSybwFnSlwDdh7rrrtnhFurQMeN2rTgwiP4czi++Zi/TmiVl0HRW2vxfEsLXL+rIem2xBb6dsgfojwGsaBszYjcAGIQjb7oMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=2eXjaZn+; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="hKPzsLD8";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="avQ2sYo5"
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4dxL204JGkz9t0F;
-	Thu, 22 Jan 2026 00:27:04 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1769038024;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=72c8DeUN47vTutVPJIuE6RFL458UWuddRpkcj6kDtFQ=;
-	b=hKPzsLD8DzyDAyangyxy9wKY4R+FSZr8TICDt+iRJibhPvJzKUKp2ES4kwM0sDutQ06hxQ
-	+dGDNOFk9ufivMzPrha3UMZgwcJaFUjDsCgYDUNTvGpoYngr6t9iP0xSbJ5Vssz9loLdY+
-	ixCn2sbm3sgFlkyaHPmcGhDll+VYMEA5wgOK4Utd3pcIFW/LSojeEEmI8WDO2Nm1SVvJPb
-	GIBqCgQzYQrXWeyT3mDQN0MeGyNvPGMF0fSU7PLLnXcXk8Tl6RWtMJp+hmXx9guu3iYOj7
-	dHQVL40cHH+g6L8q6BdSckJwQ/tx56aeXlOpZF30xsW4S6qR4M1x6tlinuFE3Q==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=pass header.d=mailbox.org header.s=mail20150812 header.b=avQ2sYo5;
-	spf=pass (outgoing_mbo_mout: domain of marek.vasut+renesas@mailbox.org designates 2001:67c:2050:b231:465::102 as permitted sender) smtp.mailfrom=marek.vasut+renesas@mailbox.org
-From: Marek Vasut <marek.vasut+renesas@mailbox.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1769038022;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=72c8DeUN47vTutVPJIuE6RFL458UWuddRpkcj6kDtFQ=;
-	b=avQ2sYo5yrnTLKEcNIg4qWrVa47RgXp5YWweVK+u2iBtNlUAnJaaqDX6ygcd2LgkfD42Iq
-	mQb8mMYAU2cIiFsLXacRR+GahsRhn6uU38icAppKkHepVouCXDNglquxXBZfExHrJz2Fkg
-	urFQZD+OlxHjxt5G/VI5NjFcHsWbdwUqOPjO1s1dQ2LXRd+68CklDP8beUP5TEYfY7+NvA
-	RznszVZb+V0jgCe1Q6S9lVZjgyxbg2jPPkK2M/sRI+q7dTQuCHmwqe0gxQKA+DqBVidIfE
-	Fl9jL3Iz/O4kwj54bBJ4CGhxl3Dy8NKO+H0r6BpefQtPxOsY/yJwAPrMRUQLRQ==
-To: linux-clk@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
-	stable@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v3] clk: rs9: Reserve 8 struct clk_hw slots for for 9FGV0841
-Date: Thu, 22 Jan 2026 00:26:38 +0100
-Message-ID: <20260121232657.155281-1-marek.vasut+renesas@mailbox.org>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="2eXjaZn+"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 3A92E1A29E9;
+	Thu, 22 Jan 2026 00:26:13 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 010EC60711;
+	Thu, 22 Jan 2026 00:26:12 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 0D39D102F0B74;
+	Thu, 22 Jan 2026 01:26:10 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1769041572; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=x4jg29QU41LLNzuVU5AM3L7b1Wlo+jm9c6ZZ5u4Zv4A=;
+	b=2eXjaZn+jaZCAHoQX8mXzr+COm0SdUn4VylHsLTEi0nPXCh+HiD9OdSCL17urswEnm1bPv
+	YICTmjXUKNQB6boklJvHme4rm+WRCTKf3v7PgoIVEr/7W3umx3E0sKLEmcf04TFCdokodY
+	PGmznMvhodZsSnsBu2x1dk2FpiAF4T62Hr4ZXR3q75VaAafPbgAfOVhmOA0Tx1tChHLHi2
+	KA7rD8wPRquZt4IuGB1Wa8owWlvKUaqyD3qTpa7/iqjnAUxY25kSHYJif+G/LAyM8bPwTG
+	sHICX4Igpx2fDePAbJLfnk8PrTM1QO20F7dZsnsI143NZi4Uf0KJT7gZWgxNIg==
+Date: Thu, 22 Jan 2026 01:26:09 +0100
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Brian Masney <bmasney@redhat.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org
+Subject: Re: [PATCH 03/27] rtc: ac100: convert from divider_round_rate() to
+ divider_determine_rate()
+Message-ID: <202601220026092a75a45e@mail.local>
+References: <20260108-clk-divider-round-rate-v1-0-535a3ed73bf3@redhat.com>
+ <20260108-clk-divider-round-rate-v1-3-535a3ed73bf3@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-MBO-RS-META: o4fiikg9hpk9rrnasrfk5ai4ews1gthk
-X-MBO-RS-ID: 7f6992ab9ce530ef4aa
-X-Rspamd-Queue-Id: 4dxL204JGkz9t0F
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260108-clk-divider-round-rate-v1-3-535a3ed73bf3@redhat.com>
+X-Last-TLS-Session-Version: TLSv1.3
 
-The 9FGV0841 has 8 outputs and registers 8 struct clk_hw, make sure
-there are 8 slots for those newly registered clk_hw pointers, else
-there is going to be out of bounds write when pointers 4..7 are set
-into struct rs9_driver_data .clk_dif[4..7] field.
+Hello,
 
-Since there are other structure members past this struct clk_hw
-pointer array, writing to .clk_dif[4..7] fields corrupts both
-the struct rs9_driver_data content and data around it, sometimes
-without crashing the kernel. However, the kernel does surely
-crash when the driver is unbound or during suspend.
+On 08/01/2026 16:16:21-0500, Brian Masney wrote:
+> The divider_round_rate() function is now deprecated, so let's migrate
+> to divider_determine_rate() instead so that this deprecated API can be
+> removed.
+> 
+> Signed-off-by: Brian Masney <bmasney@redhat.com>
+> 
+> ---
+> To: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> Cc: linux-rtc@vger.kernel.org
+> ---
+>  drivers/rtc/rtc-ac100.c | 75 +++++++++++++++++++++++++------------------------
+>  1 file changed, 38 insertions(+), 37 deletions(-)
+> 
+> diff --git a/drivers/rtc/rtc-ac100.c b/drivers/rtc/rtc-ac100.c
+> index 33626311fa781b5ce90dcc472f948dc933bbc897..16aca4431da8c029e6195d8a3c9fe75fa95d0bc0 100644
+> --- a/drivers/rtc/rtc-ac100.c
+> +++ b/drivers/rtc/rtc-ac100.c
+> @@ -140,42 +140,16 @@ static unsigned long ac100_clkout_recalc_rate(struct clk_hw *hw,
+>  				   AC100_CLKOUT_DIV_WIDTH);
+>  }
+>  
+> -static long ac100_clkout_round_rate(struct clk_hw *hw, unsigned long rate,
+> -				    unsigned long prate)
+> -{
+> -	unsigned long best_rate = 0, tmp_rate, tmp_prate;
+> -	int i;
+> -
+> -	if (prate == AC100_RTC_32K_RATE)
+> -		return divider_round_rate(hw, rate, &prate, NULL,
+> -					  AC100_CLKOUT_DIV_WIDTH,
+> -					  CLK_DIVIDER_POWER_OF_TWO);
+> -
+> -	for (i = 0; ac100_clkout_prediv[i].div; i++) {
+> -		tmp_prate = DIV_ROUND_UP(prate, ac100_clkout_prediv[i].val);
+> -		tmp_rate = divider_round_rate(hw, rate, &tmp_prate, NULL,
+> -					      AC100_CLKOUT_DIV_WIDTH,
+> -					      CLK_DIVIDER_POWER_OF_TWO);
+> -
+> -		if (tmp_rate > rate)
+> -			continue;
+> -		if (rate - tmp_rate < best_rate - tmp_rate)
+> -			best_rate = tmp_rate;
+> -	}
+> -
+> -	return best_rate;
+> -}
+> -
+>  static int ac100_clkout_determine_rate(struct clk_hw *hw,
+>  				       struct clk_rate_request *req)
+>  {
+> -	struct clk_hw *best_parent;
+> +	int i, ret, num_parents = clk_hw_get_num_parents(hw);
+> +	struct clk_hw *best_parent = NULL;
+>  	unsigned long best = 0;
+> -	int i, num_parents = clk_hw_get_num_parents(hw);
+>  
+>  	for (i = 0; i < num_parents; i++) {
+>  		struct clk_hw *parent = clk_hw_get_parent_by_index(hw, i);
+> -		unsigned long tmp, prate;
+> +		unsigned long prate;
+>  
+>  		/*
+>  		 * The clock has two parents, one is a fixed clock which is
+> @@ -199,13 +173,40 @@ static int ac100_clkout_determine_rate(struct clk_hw *hw,
+>  
+>  		prate = clk_hw_get_rate(parent);
+>  
+> -		tmp = ac100_clkout_round_rate(hw, req->rate, prate);
+> -
+> -		if (tmp > req->rate)
+> -			continue;
+> -		if (req->rate - tmp < req->rate - best) {
+> -			best = tmp;
+> -			best_parent = parent;
+> +		if (prate == AC100_RTC_32K_RATE) {
+> +			struct clk_rate_request div_req = *req;
+> +
+> +			div_req.best_parent_rate = prate;
+> +
+> +			ret = divider_determine_rate(hw, &div_req, NULL,
+> +						     AC100_CLKOUT_DIV_WIDTH,
+> +						     CLK_DIVIDER_POWER_OF_TWO);
+> +			if (ret != 0 || div_req.rate > req->rate)
+> +				continue;
 
-Fix this, increase the struct clk_hw pointer array size to the
-maximum output count of 9FGV0841, which is the biggest chip that
-is supported by this driver.
+This leaves a braces inbalance
 
-Cc: stable@vger.kernel.org
-Fixes: f0e5e1800204 ("clk: rs9: Add support for 9FGV0841")
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Closes: https://lore.kernel.org/CAMuHMdVyQpOBT+Ho+mXY07fndFN9bKJdaaWGn91WOFnnYErLyg@mail.gmail.com
-Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
----
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
----
-V2: - Update the commit message crash paragraph
-    - Add RB/TB from Geert
-V3: Add Closes:
----
- drivers/clk/clk-renesas-pcie.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> +			else if (req->rate - div_req.rate < req->rate - best) {
+> +				best = div_req.rate;
+> +				best_parent = parent;
+> +			}
+> +		} else {
+> +			int j;
+> +
+> +			for (j = 0; ac100_clkout_prediv[j].div; j++) {
+> +				struct clk_rate_request div_req = *req;
+> +				unsigned long tmp_prate;
+> +
+> +				tmp_prate = DIV_ROUND_UP(prate, ac100_clkout_prediv[j].div);
+> +				div_req.best_parent_rate = tmp_prate;
+> +
+> +				ret = divider_determine_rate(hw, &div_req, NULL,
+> +							     AC100_CLKOUT_DIV_WIDTH,
+> +							     CLK_DIVIDER_POWER_OF_TWO);
+> +				if (ret != 0 || div_req.rate > req->rate)
+> +					continue;
 
-diff --git a/drivers/clk/clk-renesas-pcie.c b/drivers/clk/clk-renesas-pcie.c
-index 4c3a5e4eb77ac..f94a9c4d0b670 100644
---- a/drivers/clk/clk-renesas-pcie.c
-+++ b/drivers/clk/clk-renesas-pcie.c
-@@ -64,7 +64,7 @@ struct rs9_driver_data {
- 	struct i2c_client	*client;
- 	struct regmap		*regmap;
- 	const struct rs9_chip_info *chip_info;
--	struct clk_hw		*clk_dif[4];
-+	struct clk_hw		*clk_dif[8];
- 	u8			pll_amplitude;
- 	u8			pll_ssc;
- 	u8			clk_dif_sr;
+Ditto.
+
+> +				else if (req->rate - div_req.rate < req->rate - best) {
+> +					best = div_req.rate;
+> +					best_parent = parent;
+> +				}
+> +			}
+>  		}
+>  	}
+
+
 -- 
-2.51.0
-
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
