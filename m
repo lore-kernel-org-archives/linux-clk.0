@@ -1,56 +1,57 @@
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D853355055
-	for <linux-clk@vger.kernel.org>; Thu, 22 Jan 2026 10:07:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43360332EAF;
+	Thu, 22 Jan 2026 11:09:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769076433; cv=none; b=oZJSDZs6ISLPnJ0TF8oZd2y2obSPz8Mz+/VCKbHXzXsd7tS9Cc6RmZqraK08i2HT86/GA8XbU2DzW43Ng+1EM5ETGAJ5c1RkzuMu8uksND+VQ0/WQEfqyXGEpQW7SSHakQECCOPhntUPuLZSHTzXOGO7pfd9Yx/5NguYz5N0WoY=
+	t=1769080158; cv=none; b=QgZBfs/3ZkecaqXTRk9yqBxQhq7900L8mTRZfwKpvpNghmHg008VyRTwcDlCt7hZ1zLwZivL1ybS2MRyqRcjUmTFFpZLoOiHqcJKHIC9TDndAUqF6csIbh0YK7xcRjeu5JSdq/YJo7mH+yYT1yGvM/LmHH/8PGgA0Uq4b6ee/dk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769076433; c=relaxed/simple;
-	bh=ZXanyz4Ijp0qwI3UKe+tITAKLJbGp6qi8vgJa0MeBvU=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:
-	 References; b=Vqg1ztc+m9zAmaKP7EeVyFPREOk9riR3luLLOvp6B0X6SS4I5tQUr3JIT9jCIjkFd8L3Cp0EH7LN+a9OalYxpaTI+m2kpVkw9duU/639Yxm6Mx9xIOlQBKOrEMTPy+Hkf5cgYjhzwSVSQ5tIc9YzmcVvbVgOSHjCITbv4ahfikk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=uSmJVgw5; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1769080158; c=relaxed/simple;
+	bh=cB5FCqLMYPosl//x4hFfDY7sLLOPq5OziY+AyOsIQHY=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=aJNYXPWL6S5q+sY+to6O0hWVdKbcJt4xB3vBp21bF1+hUViUrGhMSJsfAPIglet0rugQBkbyjHiAaddqkR5J3EvR5RjZRw+KJUdNEJdpnAuwCue4eCQasMJDRSot5sm6tr6/HrqYxy/eLis2GQHZ9zvacUaucLCaVD/MVLbPbB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=MuFpldoi; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="uSmJVgw5"
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20260122100703epoutp04bfc6b218db5c4845d84084194f77d8e0~NBaJwHNAK1144711447epoutp04X
-	for <linux-clk@vger.kernel.org>; Thu, 22 Jan 2026 10:07:03 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20260122100703epoutp04bfc6b218db5c4845d84084194f77d8e0~NBaJwHNAK1144711447epoutp04X
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1769076423;
-	bh=suqOXF0Dk5RHCwhp2hHWiiAgKOyYsijL543TvrgUsWo=;
-	h=From:To:Subject:Date:References:From;
-	b=uSmJVgw5rvw8jiWSQgjUHdcFQ0J2vYqnCzyOYgT9tMn5GC2PyXJQse/JI9P6hKNxq
-	 Y0t4/y0kN1f5zA/jpDAJbdmXj2QUXzxwYOuhTPJqTLquhRzAuw3eHHPEPgNnPqqNQC
-	 7G36NbQ7jGW5H4ACYTlrUhXLvJyqLC23PkcUWJUk=
-Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
-	20260122100703epcas5p48f43c8eee5daae912f21ff9eaba98d3f~NBaJdbGyT2178321783epcas5p4r;
-	Thu, 22 Jan 2026 10:07:03 +0000 (GMT)
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40]) by
-	epsnrtp02.localdomain (Postfix) with ESMTP id 4dxcDR3DPPz2SSKZ; Thu, 22 Jan
-	2026 10:07:03 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20260122100703epcas5p13f4647a5e62546abc3021383134e824a~NBaJOpz_h2483824838epcas5p1b;
-	Thu, 22 Jan 2026 10:07:03 +0000 (GMT)
-Received: from hzsscr.. (unknown [109.120.22.104]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20260122100702epsmtip2fb1de1df76d5fbf542ee329769587b0d~NBaIyY-N81408914089epsmtip2J;
-	Thu, 22 Jan 2026 10:07:02 +0000 (GMT)
-From: "ping.gao" <ping.gao@samsung.com>
-To: mturquette@baylibre.com, sboyd@kernel.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, hy50.seo@samsung.com,
-	kwangwon.min@samsung.com, ping.gao@samsung.com
-Subject: [PATCH]     drivers: clk: keystone: Fix parameter judgment in
- clk_prepare
-Date: Thu, 22 Jan 2026 18:11:24 +0800
-Message-ID: <20260122101124.2396139-1-ping.gao@samsung.com>
-X-Mailer: git-send-email 2.49.0
+	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="MuFpldoi"
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 60MB8wj36913370, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
+	t=1769080138; bh=C49V+bKpMIX5oRf9GDZOGvdktiUHOYIk5vTUR3yTe9c=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Transfer-Encoding:Content-Type;
+	b=MuFpldoiTPH8L+geYNG5mFQ0s3S6foTkZQu84fDuGUu6Q+b3QvHbC4EB1bb1yIM80
+	 6u//Nu/h0evgYqZBfAF5uQCsKNf6GfNQ9PJ+B+CoamZQlNWNi/Hb6TEmqz0ZTzstMP
+	 Xj5HHtC0DfOZU6TiWK4eRYhifbpBXN6Z1eR+awxtzjv99Y/Zwm9rvrf5lj5VmbX5cN
+	 /3mb3DtQzIg1FE237GVc17bXND54V0G5dbxuhQaWUaZ3sLhAHWQDqKPt4l5iMe/2c1
+	 b51IcEzH/KtSpsApbcJ5dqFBfTaE2zk5u8rDxGXeHi5t8fKbetW3y/FE++lOtqMAGn
+	 6hZy4P1mA9JZg==
+Received: from mail.realtek.com (rtkexhmbs04.realtek.com.tw[10.21.1.54])
+	by rtits2.realtek.com.tw (8.15.2/3.21/5.94) with ESMTPS id 60MB8wj36913370
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 22 Jan 2026 19:08:58 +0800
+Received: from RTKEXHMBS03.realtek.com.tw (10.21.1.53) by
+ RTKEXHMBS04.realtek.com.tw (10.21.1.54) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Thu, 22 Jan 2026 19:08:58 +0800
+Received: from cn1dhc-k02 (172.21.252.101) by RTKEXHMBS03.realtek.com.tw
+ (10.21.1.53) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
+ Transport; Thu, 22 Jan 2026 19:08:58 +0800
+From: Yu-Chun Lin <eleanor.lin@realtek.com>
+To: <mturquette@baylibre.com>, <sboyd@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <p.zabel@pengutronix.de>,
+        <cylee12@realtek.com>, <jyanchou@realtek.com>
+CC: <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <james.tai@realtek.com>,
+        <cy.huang@realtek.com>, <stanley_chang@realtek.com>,
+        <eleanor.lin@realtek.com>
+Subject: [PATCH v3 3/9] clk: realtek: Introduce a common probe()
+Date: Thu, 22 Jan 2026 19:08:51 +0800
+Message-ID: <20260122110857.12995-4-eleanor.lin@realtek.com>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <20260122110857.12995-1-eleanor.lin@realtek.com>
+References: <20260122110857.12995-1-eleanor.lin@realtek.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -58,72 +59,158 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20260122100703epcas5p13f4647a5e62546abc3021383134e824a
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-X-CMS-RootMailID: 20260122100703epcas5p13f4647a5e62546abc3021383134e824a
-References: <CGME20260122100703epcas5p13f4647a5e62546abc3021383134e824a@epcas5p1.samsung.com>
+Content-Type: text/plain
 
-    The clk may return NULL or an ERR_PTR. Don't
-    treat an ERR_PTR as valid.
+From: Cheng-Yu Lee <cylee12@realtek.com>
 
-    for example: biu_clk in dwmmc driver request fail, but it's ERR_PTR,
-    not null,it will panic when call clk_prepare
-    log is below:
-    [  438.400868] [7:   binder:436_2: 4998] Unable to handle kernel paging request at virtual address fffffffffffffffe
-    [  438.400877] [7:   binder:436_2: 4998] Mem abort info:
-    [  438.400881] [7:   binder:436_2: 4998]   ESR = 0x0000000096000005
-    [  438.400887] [7:   binder:436_2: 4998]   EC = 0x25: DABT (current EL), IL = 32 bits
-    [  438.400894] [7:   binder:436_2: 4998]   SET = 0, FnV = 0
-    [  438.400899] [7:   binder:436_2: 4998]   EA = 0, S1PTW = 0
-    [  438.400904] [7:   binder:436_2: 4998]   FSC = 0x05: level 1 translation fault
-    ...
-    [  438.409424] [7:   binder:436_2: 4998] Call trace:
-    [  438.409429] [7:   binder:436_2: 4998]  clk_prepare+0x10/0x24
-    [  438.409439] [7:   binder:436_2: 4998]  dw_mci_runtime_resume+0x50/0x2d8 [dw_mmc_samsung cd210e210975263404c28fc89778f369f8398f0c]
-    [  438.409471] [7:   binder:436_2: 4998]  dw_mci_exynos_runtime_resume+0x18/0x58 [dw_mmc_exynos_samsung 2735a594c7c9c9e8c65b0b87523fbf70dcaabfff]
-    [  438.409496] [7:   binder:436_2: 4998]  pm_generic_runtime_resume+0x40/0x58
-    [  438.409506] [7:   binder:436_2: 4998]  pm_runtime_force_resume+0x9c/0x134
-    [  438.409517] [7:   binder:436_2: 4998]  platform_pm_resume+0x40/0x8c
-    [  438.409529] [7:   binder:436_2: 4998]  dpm_run_callback+0x64/0x230
-    [  438.409540] [7:   binder:436_2: 4998]  __device_resume+0x1d8/0x394
-    [  438.409551] [7:   binder:436_2: 4998]  dpm_resume+0x110/0x2b8
-    [  438.409561] [7:   binder:436_2: 4998]  dpm_resume_end+0x1c/0x38
-    [  438.409570] [7:   binder:436_2: 4998]  suspend_devices_and_enter+0x828/0xab0
-    [  438.409582] [7:   binder:436_2: 4998]  pm_suspend+0x334/0x618
-    [  438.409592] [7:   binder:436_2: 4998]  state_store+0x104/0x144
-    [  438.409601] [7:   binder:436_2: 4998]  kobj_attr_store+0x30/0x48
-    [  438.409610] [7:   binder:436_2: 4998]  sysfs_kf_write+0x54/0x6c
-    [  438.409619] [7:   binder:436_2: 4998]  kernfs_fop_write_iter+0x104/0x1a8
-    [  438.409628] [7:   binder:436_2: 4998]  vfs_write+0x24c/0x2f4
-    [  438.409640] [7:   binder:436_2: 4998]  ksys_write+0x78/0xe8
-    [  438.409652] [7:   binder:436_2: 4998]  __arm64_sys_write+0x1c/0x2c
-    [  438.409664] [7:   binder:436_2: 4998]  invoke_syscall+0x58/0x114
-    [  438.409676] [7:   binder:436_2: 4998]  el0_svc_common+0xac/0xe0
-    [  438.409687] [7:   binder:436_2: 4998]  do_el0_svc+0x1c/0x28
-    [  438.409698] [7:   binder:436_2: 4998]  el0_svc+0x38/0x68
-    [  438.409705] [7:   binder:436_2: 4998]  el0t_64_sync_handler+0x68/0xbc
-    [  438.409712] [7:   binder:436_2: 4998]  el0t_64_sync+0x1a8/0x1ac
+Add rtk_clk_probe() to set up the shared regmap, register clock hardware,
+add the clock provider, and optionally register a reset controller when
+reset bank data is provided.
 
-Signed-off-by: ping.gao <ping.gao@samsung.com>
+Signed-off-by: Cheng-Yu Lee <cylee12@realtek.com>
+Co-developed-by: Yu-Chun Lin <eleanor.lin@realtek.com>
+Signed-off-by: Yu-Chun Lin <eleanor.lin@realtek.com>
 ---
- drivers/clk/clk.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes in v3:
+- Converted macro to static inline function.
+- Removed the redundant header.
+---
+ drivers/clk/realtek/Makefile |  1 +
+ drivers/clk/realtek/common.c | 64 ++++++++++++++++++++++++++++++++++++
+ drivers/clk/realtek/common.h | 43 ++++++++++++++++++++++++
+ 3 files changed, 108 insertions(+)
+ create mode 100644 drivers/clk/realtek/common.c
+ create mode 100644 drivers/clk/realtek/common.h
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 85d2f2481acf..6d62f69323b5 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -1171,7 +1171,7 @@ static int clk_core_prepare_lock(struct clk_core *core)
-  */
- int clk_prepare(struct clk *clk)
- {
--	if (!clk)
-+	if (IS_ERR_OR_NULL(clk))
- 		return 0;
+diff --git a/drivers/clk/realtek/Makefile b/drivers/clk/realtek/Makefile
+index 52267de2eef4..4041951b7c62 100644
+--- a/drivers/clk/realtek/Makefile
++++ b/drivers/clk/realtek/Makefile
+@@ -1,4 +1,5 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ obj-$(CONFIG_RTK_CLK_COMMON) += clk-rtk.o
  
- 	return clk_core_prepare_lock(clk->core);
++clk-rtk-y += common.o
+ clk-rtk-y += reset.o
+diff --git a/drivers/clk/realtek/common.c b/drivers/clk/realtek/common.c
+new file mode 100644
+index 000000000000..c6540d36560c
+--- /dev/null
++++ b/drivers/clk/realtek/common.c
+@@ -0,0 +1,64 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Copyright (C) 2019 Realtek Semiconductor Corporation
++ * Author: Cheng-Yu Lee <cylee12@realtek.com>
++ */
++
++#include <linux/device.h>
++#include <linux/module.h>
++#include <linux/mfd/syscon.h>
++#include <linux/platform_device.h>
++#include "common.h"
++
++int rtk_clk_probe(struct platform_device *pdev, const struct rtk_clk_desc *desc)
++{
++	int i, ret;
++	struct regmap *regmap;
++	struct device *dev = &pdev->dev;
++	struct rtk_reset_initdata reset_initdata = {0};
++
++	regmap = device_node_to_regmap(pdev->dev.of_node);
++	if (IS_ERR(regmap))
++		return dev_err_probe(dev, PTR_ERR(regmap), "failed to get regmap\n");
++
++	for (i = 0; i < desc->num_clks; i++)
++		desc->clks[i]->regmap = regmap;
++
++	for (i = 0; i < desc->clk_data->num; i++) {
++		struct clk_hw *hw = desc->clk_data->hws[i];
++
++		if (!hw)
++			continue;
++
++		ret = devm_clk_hw_register(dev, hw);
++
++		if (ret) {
++			dev_warn(dev, "failed to register hw of clk%d: %d\n", i,
++				 ret);
++			desc->clk_data->hws[i] = NULL;
++		}
++	}
++
++	ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
++					  desc->clk_data);
++	if (ret)
++		return dev_err_probe(dev, ret, "failed to add clock provider\n");
++
++	if (!desc->num_reset_banks)
++		return 0;
++
++	if (!desc->reset_banks)
++		return dev_err_probe(dev, -EINVAL,
++				     "Missing reset banks data though num_reset_banks is %zu\n",
++				     desc->num_reset_banks);
++
++	reset_initdata.regmap = regmap;
++	reset_initdata.num_banks = desc->num_reset_banks;
++	reset_initdata.banks = desc->reset_banks;
++
++	return rtk_reset_controller_add(dev, &reset_initdata);
++}
++EXPORT_SYMBOL_GPL(rtk_clk_probe);
++
++MODULE_DESCRIPTION("Realtek clock infrastructure");
++MODULE_LICENSE("GPL");
+diff --git a/drivers/clk/realtek/common.h b/drivers/clk/realtek/common.h
+new file mode 100644
+index 000000000000..4e2cc9650a23
+--- /dev/null
++++ b/drivers/clk/realtek/common.h
+@@ -0,0 +1,43 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * Copyright (C) 2016-2019 Realtek Semiconductor Corporation
++ * Author: Cheng-Yu Lee <cylee12@realtek.com>
++ */
++
++#ifndef __CLK_REALTEK_COMMON_H
++#define __CLK_REALTEK_COMMON_H
++
++#include <linux/clk-provider.h>
++#include <linux/device.h>
++#include <linux/io.h>
++#include <linux/of.h>
++#include <linux/regmap.h>
++#include "reset.h"
++
++#define __clk_regmap_hw(_p) ((_p)->hw)
++
++struct device;
++struct platform_device;
++
++struct clk_regmap {
++	struct clk_hw hw;
++	struct regmap *regmap;
++};
++
++struct rtk_clk_desc {
++	struct clk_hw_onecell_data *clk_data;
++	struct clk_regmap **clks;
++	size_t num_clks;
++	struct rtk_reset_bank *reset_banks;
++	size_t num_reset_banks;
++};
++
++static inline struct clk_regmap *to_clk_regmap(struct clk_hw *hw)
++{
++	return container_of(hw, struct clk_regmap, hw);
++}
++
++int rtk_clk_probe(struct platform_device *pdev,
++		  const struct rtk_clk_desc *desc);
++
++#endif /* __CLK_REALTEK_COMMON_H */
 -- 
-2.50.1
+2.34.1
 
