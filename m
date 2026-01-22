@@ -1,194 +1,81 @@
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+Received: from mx.nabladev.com (mx.nabladev.com [178.251.229.89])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 155B1344033;
-	Thu, 22 Jan 2026 12:56:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0C6A1F4611;
+	Thu, 22 Jan 2026 13:01:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.251.229.89
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769086602; cv=none; b=Q2F1yFAatGraCIBcCWHhrKSg0xHzX6044L+09eARb8VOXUZmleXhVLATAmmDQeM7uecVpFsvQlTivT8iK1837QSUa+aiu6tz7PmN6chW6hBMa0FKg+hrBKA3V0wFNyfe7XXhwP2VX3S7v1eJRWhQdqlq96Fy3p4jlWFr2A/PAKs=
+	t=1769086907; cv=none; b=DzhbBf3kR4i6ERxtI8n2Jc/9sOuE5Px5aJY8jxIaDK+39jMkY+XFAe5F4Z9cwkK8jUW6osoy7LxjBV0OuHbnL7PtwfwkSFZNx23AJAgEeFIQ8kr/4wx940Bwe7XHVzEpAhOOP4ttc1b/HkjxJ44VxSvPDhBi0YYDGMw75CWLO4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769086602; c=relaxed/simple;
-	bh=95Vb6bXYV6P6exbgY+x4IWfEduAVIIhcfQCUSjL/WHQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E+8cFm48FSYMDo3l8x+YcWRFnIM39NZ5V0u4/C1dBieQdaQe3qHtoI3HO7vM8lP7S3ZoFmVp0aiEukXkF8iFXIyCMu/1Ayzd2fxhrQYYCnIrgZafK22Up16Php3i5XZ2tyWYlAQRcMA/r8nVT6QsRwkjV8UkrNsMT1z8hKga3R8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=P6sJSXBt; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1769086907; c=relaxed/simple;
+	bh=jR9cLPDLfPw7p5+20RCKu5iKiJsotvJuM8XhwT6hWcI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Iw5GsTZ8wASv73RRA8HDmF+FqDcJGomUyyTpM2Xe7jM/HtslCG+ByE+ZZH5sxdp1dEBcdA/dL7UPIORSCA4Tn91NzU8pWGNrn2LrQKu/Pjr1wr4HWYamWnelvTTgtgXBrxJ+0rFf2wEUFHemH6zq/YcUC8CKnhOpjC+KuFXjmWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nabladev.com; spf=pass smtp.mailfrom=nabladev.com; dkim=pass (2048-bit key) header.d=nabladev.com header.i=@nabladev.com header.b=NfOoJwje; arc=none smtp.client-ip=178.251.229.89
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nabladev.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nabladev.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="P6sJSXBt"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 8606D1A2A68;
-	Thu, 22 Jan 2026 12:56:37 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 4FA4F606B6;
-	Thu, 22 Jan 2026 12:56:37 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 4E63B119B8081;
-	Thu, 22 Jan 2026 13:56:35 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1769086596; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=KLRZ1UZ71QZfMGd+E2qFHECed0RpdQ9EnSYXNGqErjc=;
-	b=P6sJSXBt9+4g4ONzpdqi3CrdYgZRuuGxC0vd0w+LtqNDEI7uGlC8UsCr3fBiLTMGT9zXf1
-	7LmdsMCnTHMTQNA0MsbVZ9qOBL+vDpdBx7VE8p8VAop4rOQuqVZtRBVt1PfxAiNN+J8gnJ
-	U/GgWpbul1NFJqg6VUFYZZZvQbaJ8UxD0i2+5N1IUxE5zS7wss1QIZ/noNmZWJBssmbdkR
-	xCBqHqIvcHUzYE9AI46iJmtZ6c66qBxc7//2DvEHnRD7M0MvC5hgYoJA116419H+0n1UHY
-	DPRvcPZJ9yVRTJr6jS4qfyo9vMDAykk5lj0QrQO9vv1976pdXx/hHGVEHT8E/w==
-Date: Thu, 22 Jan 2026 13:56:35 +0100
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Brian Masney <bmasney@redhat.com>
-Cc: Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-	linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] rtc: ac100: convert from divider_round_rate() to
- divider_determine_rate()
-Message-ID: <202601221256350b0ba153@mail.local>
-References: <20260122-rtc-ac100-divider-round-rate-v2-1-044f8b493c35@redhat.com>
+	dkim=pass (2048-bit key) header.d=nabladev.com header.i=@nabladev.com header.b="NfOoJwje"
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id C64CB10D75D;
+	Thu, 22 Jan 2026 14:01:34 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nabladev.com;
+	s=dkim; t=1769086899; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding; bh=XaOCDpAR29PtBiruM7d2TP2PDQpRGAd9xik7mTkDre4=;
+	b=NfOoJwjeRFnjwF5TU/DS8bspQmX2XefDEcZjItmzDxUDGkdIkYc1acJQpdYZGHaIp2lmRQ
+	5oPaYdgs8LTPdfKU5xrDTlCwfVGKjTtqBOlIirqyCjCFBLY3gJY2lY6NeETKdgVNhCB88H
+	ptmjsjCHTn10bHR2lfvnzBhbAiVJOcUuGGvGcRoEzBwXcnVDlAet7kwYa5yBV+OyTA67Pd
+	VrSsj/m8Vo/EAPxBTKrhpf5wB575jhZi/JAW8Vpa85pXD3ICB4aaVAUTqSVM/MwnBNN0Qs
+	ueFLipu4GiyI2WcDH4ib9BbBENC8hxxU9N1bxJ0/YjxDJgAhHh4JqNFi8L+mcw==
+From: Lukasz Majewski <lukma@nabladev.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lukasz Majewski <lukma@nabladev.com>
+Subject: [PATCH] dt-bindings: clock: vf610: Add definitions for MTIP L2 switch
+Date: Thu, 22 Jan 2026 13:58:38 +0100
+Message-Id: <20260122125838.4144700-1-lukma@nabladev.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260122-rtc-ac100-divider-round-rate-v2-1-044f8b493c35@redhat.com>
+Content-Transfer-Encoding: 8bit
 X-Last-TLS-Session-Version: TLSv1.3
 
-On 22/01/2026 07:47:16-0500, Brian Masney wrote:
-> The divider_round_rate() function is now deprecated, so let's migrate
-> to divider_determine_rate() instead so that this deprecated API can be
-> removed.
-> 
-> Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-> Signed-off-by: Brian Masney <bmasney@redhat.com>
-> ---
-> Changes since v1:
-> - Fix two cases of brace inbalances around if/else
-> 
-> Alexandre: Per v1 comments, I'll include this with my GIT PULL to Stephen.
+This patch adds VF610_CLK_ESW and VF610_CLK_ESW_MAC_TAB{0123}
+macros definitions for L2 switch.
 
-Sure, thanks!
+Those definitions describe clocks for MoreThanIP switch IP block;
+the switch itself and the MAC address lookup table clocks.
 
-> ---
->  drivers/rtc/rtc-ac100.c | 75 +++++++++++++++++++++++++------------------------
->  1 file changed, 38 insertions(+), 37 deletions(-)
-> 
-> diff --git a/drivers/rtc/rtc-ac100.c b/drivers/rtc/rtc-ac100.c
-> index 33626311fa781b5ce90dcc472f948dc933bbc897..bba7115ff3ad0f9a9b428784b49ba3fde0d18484 100644
-> --- a/drivers/rtc/rtc-ac100.c
-> +++ b/drivers/rtc/rtc-ac100.c
-> @@ -140,42 +140,16 @@ static unsigned long ac100_clkout_recalc_rate(struct clk_hw *hw,
->  				   AC100_CLKOUT_DIV_WIDTH);
->  }
->  
-> -static long ac100_clkout_round_rate(struct clk_hw *hw, unsigned long rate,
-> -				    unsigned long prate)
-> -{
-> -	unsigned long best_rate = 0, tmp_rate, tmp_prate;
-> -	int i;
-> -
-> -	if (prate == AC100_RTC_32K_RATE)
-> -		return divider_round_rate(hw, rate, &prate, NULL,
-> -					  AC100_CLKOUT_DIV_WIDTH,
-> -					  CLK_DIVIDER_POWER_OF_TWO);
-> -
-> -	for (i = 0; ac100_clkout_prediv[i].div; i++) {
-> -		tmp_prate = DIV_ROUND_UP(prate, ac100_clkout_prediv[i].val);
-> -		tmp_rate = divider_round_rate(hw, rate, &tmp_prate, NULL,
-> -					      AC100_CLKOUT_DIV_WIDTH,
-> -					      CLK_DIVIDER_POWER_OF_TWO);
-> -
-> -		if (tmp_rate > rate)
-> -			continue;
-> -		if (rate - tmp_rate < best_rate - tmp_rate)
-> -			best_rate = tmp_rate;
-> -	}
-> -
-> -	return best_rate;
-> -}
-> -
->  static int ac100_clkout_determine_rate(struct clk_hw *hw,
->  				       struct clk_rate_request *req)
->  {
-> -	struct clk_hw *best_parent;
-> +	int i, ret, num_parents = clk_hw_get_num_parents(hw);
-> +	struct clk_hw *best_parent = NULL;
->  	unsigned long best = 0;
-> -	int i, num_parents = clk_hw_get_num_parents(hw);
->  
->  	for (i = 0; i < num_parents; i++) {
->  		struct clk_hw *parent = clk_hw_get_parent_by_index(hw, i);
-> -		unsigned long tmp, prate;
-> +		unsigned long prate;
->  
->  		/*
->  		 * The clock has two parents, one is a fixed clock which is
-> @@ -199,13 +173,40 @@ static int ac100_clkout_determine_rate(struct clk_hw *hw,
->  
->  		prate = clk_hw_get_rate(parent);
->  
-> -		tmp = ac100_clkout_round_rate(hw, req->rate, prate);
-> -
-> -		if (tmp > req->rate)
-> -			continue;
-> -		if (req->rate - tmp < req->rate - best) {
-> -			best = tmp;
-> -			best_parent = parent;
-> +		if (prate == AC100_RTC_32K_RATE) {
-> +			struct clk_rate_request div_req = *req;
-> +
-> +			div_req.best_parent_rate = prate;
-> +
-> +			ret = divider_determine_rate(hw, &div_req, NULL,
-> +						     AC100_CLKOUT_DIV_WIDTH,
-> +						     CLK_DIVIDER_POWER_OF_TWO);
-> +			if (ret != 0 || div_req.rate > req->rate) {
-> +				continue;
-> +			} else if (req->rate - div_req.rate < req->rate - best) {
-> +				best = div_req.rate;
-> +				best_parent = parent;
-> +			}
-> +		} else {
-> +			int j;
-> +
-> +			for (j = 0; ac100_clkout_prediv[j].div; j++) {
-> +				struct clk_rate_request div_req = *req;
-> +				unsigned long tmp_prate;
-> +
-> +				tmp_prate = DIV_ROUND_UP(prate, ac100_clkout_prediv[j].div);
-> +				div_req.best_parent_rate = tmp_prate;
-> +
-> +				ret = divider_determine_rate(hw, &div_req, NULL,
-> +							     AC100_CLKOUT_DIV_WIDTH,
-> +							     CLK_DIVIDER_POWER_OF_TWO);
-> +				if (ret != 0 || div_req.rate > req->rate) {
-> +					continue;
-> +				} else if (req->rate - div_req.rate < req->rate - best) {
-> +					best = div_req.rate;
-> +					best_parent = parent;
-> +				}
-> +			}
->  		}
->  	}
->  
-> @@ -213,7 +214,7 @@ static int ac100_clkout_determine_rate(struct clk_hw *hw,
->  		return -EINVAL;
->  
->  	req->best_parent_hw = best_parent;
-> -	req->best_parent_rate = best;
-> +	req->best_parent_rate = clk_hw_get_rate(best_parent);
->  	req->rate = best;
->  
->  	return 0;
-> 
-> ---
-> base-commit: e3b32dcb9f23e3c3927ef3eec6a5842a988fb574
-> change-id: 20260122-rtc-ac100-divider-round-rate-bc2b8bf98338
-> 
-> Best regards,
-> -- 
-> Brian Masney <bmasney@redhat.com>
-> 
+Signed-off-by: Lukasz Majewski <lukma@nabladev.com>
+---
+ include/dt-bindings/clock/vf610-clock.h | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
+diff --git a/include/dt-bindings/clock/vf610-clock.h b/include/dt-bindings/clock/vf610-clock.h
+index 373644e46747..b6f7b1745cc2 100644
+--- a/include/dt-bindings/clock/vf610-clock.h
++++ b/include/dt-bindings/clock/vf610-clock.h
+@@ -197,6 +197,11 @@
+ #define VF610_CLK_TCON1			188
+ #define VF610_CLK_CAAM			189
+ #define VF610_CLK_CRC			190
+-#define VF610_CLK_END			191
++#define VF610_CLK_ESW			191
++#define VF610_CLK_ESW_MAC_TAB0		192
++#define VF610_CLK_ESW_MAC_TAB1		193
++#define VF610_CLK_ESW_MAC_TAB2		194
++#define VF610_CLK_ESW_MAC_TAB3		195
++#define VF610_CLK_END			196
+ 
+ #endif /* __DT_BINDINGS_CLOCK_VF610_H */
 -- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+2.39.5
+
