@@ -1,101 +1,103 @@
-Received: from mail-106118.protonmail.ch (mail-106118.protonmail.ch [79.135.106.118])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from cstnet.cn (unknown [159.226.251.21])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D8B038B7CB;
-	Thu, 22 Jan 2026 15:37:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.118
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 018EA48C3FD;
+	Thu, 22 Jan 2026 16:01:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769096257; cv=none; b=UDigbuWdWktWKfElWJBzMWqzAdw+n+/d4RcbD53HRMal+cOM1vK0/B6MF6SsDz6neSSlWYngHTRnuUl5nrVHdlPhspIP9DYMsuXmk0LdW+sW+LZEHSnoYaBtn+6p7oLwKlifQTtD3OXxPnXE4fMJlCOvb8bPGN1sOAxU3fFXimI=
+	t=1769097716; cv=none; b=nX2VSNHiPhwvL7iNq0GKTUYXW3UhtCOz4gSXgAEaTl6P4RnAfOTvC7px1+3xxbLlNoGvC6QYFA+gfya/9/T1uySaY5m8HUKHuCNhqbVERX+QqVxS9dXMNZVdwJ2VYDQE/kADK2bSOzV3nucTKjMimRa4XdzXFITSic2323s4CuI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769096257; c=relaxed/simple;
-	bh=S1BGqcMlASMvyYCKXlGf55t9i2UcSbu9BGB4Vbxmsjw=;
-	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=o8/afDQIb27Ci2pPwxBcpOYXXrdVWcLxJLTdQsqmLSSlAtKNT72j5JTzGVJvaSJnDPIV26AidvCfyYxu48NQiswymVgk9nfEzjsGgftG/U0yc6fa6ReRD4GQJETOnh2L9VXCkAK3BR/hpDhTPUhAblzEIh5T3IrrYkRQHmolWxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=OAShtVl8; arc=none smtp.client-ip=79.135.106.118
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="OAShtVl8"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-	s=protonmail3; t=1769096249; x=1769355449;
-	bh=S1BGqcMlASMvyYCKXlGf55t9i2UcSbu9BGB4Vbxmsjw=;
-	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
-	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
-	b=OAShtVl8spr+0GUWWivMvpCjCyV4nt7net/RqiDocSoRyc2xGILA5VY3XkzJCj5rN
-	 JBlHlnEg7Vc+q+W2pH00Kt/XkXvx/kl4CFvgkIuexUOB6S+hdAhnsISrVfJP6hEtXc
-	 cgoRwCNiDa59Pd7yCtj6KSqs5XR3JzrS7A46BRv7KCBCveSUeD4L3A2c8WwOTkWaq1
-	 X/9mfBKXG/p5ecgX44tQSC0rOp26QPaFpXV84SRN1WShlnz70Tz4swAIkbTukIVFhT
-	 OrDavFueoypp77UwkvbkXzUtgk4i8ug1Z6o3wQwrbCWhC8SJ5yFWNUintGE7vIWboE
-	 791SQUjO/0mZg==
-Date: Thu, 22 Jan 2026 15:37:23 +0000
-To: Krzysztof Kozlowski <krzk@kernel.org>
-From: Arturs Artamonovs <arturs.artamonovs@protonmail.com>
-Cc: arturs.artamonovs@analog.com, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Greg Malysa <greg.malysa@timesys.com>, Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Utsav Agarwal <Utsav.Agarwal@analog.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, Thomas Gleixner <tglx@linutronix.de>, Andi Shyti <andi.shyti@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, soc@kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, linux-serial@vger.kernel.org, adsp-linux@analog.com, Nathan Barrett-Morrison
-	<nathan.morrison@timesys.com>
-Subject: Re: [PATCH 00/21] Adding support of ADI ARMv8 ADSP-SC598 SoC.
-Message-ID: <D29814F7-69C2-4C64-AF05-87AE6019DE21@protonmail.com>
-Feedback-ID: 15175799:user:proton
-X-Pm-Message-ID: 645533fd368795d784bccb039ef9deb7ee99176c
+	s=arc-20240116; t=1769097716; c=relaxed/simple;
+	bh=MS7wBS31az3nY8BubQfwrrIXlXvQJt6kkKLP4ntO8jU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BNoasqgdOs8zyD8OvgNM3/wc4QiSYBD4OnCt5PdCV2A+MCJltnZ4Eoxk00wvloiqQ11BFceBK3DdAlW0xn47mEmPS4oNCNmc4Nsrxh23Ul8djidxIfYeK29/Yw21ZUGcj47XS6jntZ2tsaZ7moMntOZiNONYsSq+AsiOCKWTP7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=isrc.iscas.ac.cn; spf=pass smtp.mailfrom=isrc.iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=isrc.iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=isrc.iscas.ac.cn
+Received: from duge-virtual-machine (unknown [183.192.221.134])
+	by APP-01 (Coremail) with SMTP id qwCowACXP2vcSXJpCLXLBQ--.27565S2;
+	Fri, 23 Jan 2026 00:01:34 +0800 (CST)
+Date: Fri, 23 Jan 2026 00:01:32 +0800
+From: Jiayu Du <jiayu.riscv@isrc.iscas.ac.cn>
+To: Xukai Wang <kingxukai@zohomail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Troy Mitchell <TroyMitchell988@gmail.com>
+Subject: Re: [PATCH v10 2/3] clk: canaan: Add clock driver for Canaan K230
+Message-ID: <aXJJ3MjQSq8Rq084@duge-virtual-machine>
+References: <20260116-b4-k230-clk-v10-0-de59033c5d30@zohomail.com>
+ <20260116-b4-k230-clk-v10-2-de59033c5d30@zohomail.com>
+ <aW3o8xVziqb9iRBN@duge-virtual-machine>
+ <bf39fdb8-6698-418b-bd4a-6d8d40ccc9a0@zohomail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bf39fdb8-6698-418b-bd4a-6d8d40ccc9a0@zohomail.com>
+X-CM-TRANSID:qwCowACXP2vcSXJpCLXLBQ--.27565S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7KF4DKFWDKr43Gr13Xr43KFg_yoW8Wr1kp3
+	93uF18CFWDK34I9F1jvw4xCw1DtFs5ta18JFnav348Aw43Z34kZF1I9w42vayjvrnrCayU
+	Ar48Jwn8tFW2v3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvvb7Iv0xC_tr1lb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I2
+	0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
+	A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xII
+	jxv20xvEc7CjxVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4
+	A2jsIEc7CjxVAFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
+	64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8Jw
+	Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l
+	c7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr
+	1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE
+	14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7
+	IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E
+	87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73Uj
+	IFyTuYvjxU2wIDUUUUU
+X-CM-SenderInfo: 5mld534oul2uny6l223fol2u1dvotugofq/
 
-Hi, big thanks to Krysztof, Arnd, Rob and Linus Walleij for the reviewing f=
-irst set of patches that were sent some time ago. I have reviewed comments =
-few times since then and Im currently at last stage of internal review for =
-v2 series those are planned to be sent sometime in near future.=20
+On Thu, Jan 22, 2026 at 07:40:29PM +0800, Xukai Wang wrote:
+> 
+> On 2026/1/19 16:18, Jiayu Du wrote:
+> >> +
+> >> +K230_CLK_GATE_FORMAT(hs_hclk_src_gate,
+> >> +		     K230_HS_HCLK_SRC_GATE,
+> >> +		     0x18, 0, 0, 0,
+> >> +		     &hs_hclk_high_src_rate.clk.hw);
+> > Here, you replaced hs_hclk_high_gate(in v9) with hs_hclk_high_src_rate,
+> 
+> I'm a bit confused, as I don't recall making these specific changes.
+> Looking at the code below, the only difference between v9 and v10 is
+> within the K230_CLK_GATE_FORMAT(hs_hclk_src_gate, ...) definition, where
+> the second parameter changed from 1 to 0. Everything else appears
+> consistent. Could you clarify which change you were referring to?
 
-> On 16 Sep 2024, at 10:05, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->=20
-> On 12/09/2024 20:24, Arturs Artamonovs via B4 Relay wrote:
->> This set of patches based on ADI fork of Linux Kerenl that support famil=
-y of ADSP-SC5xx
->> SoC's and used by customers for some time . Patch series contains minima=
-l set
->> of changes to add ADSP-SC598 support to upstream kernel. This series inc=
-lude
->> UART,I2C,IRQCHIP,RCU drivers and device-tree to be able boot on EV-SC598=
--SOM
->> board into serial shell and able to reset the board. Current SOM board
->> requires I2C expander to enable UART output.
->>=20
->> UART,I2C and PINCTRL drivers are based on old Blackfin drivers with
->> ADSP-SC5xx related bug fixes and improvments.
->>=20
->> Signed-off-by: Arturs Artamonovs <arturs.artamonovs@analog.com>
->> ---
->=20
-> For new platform, be sure you have 0 warnings:
-> 1. Please run standard kernel tools for static analysis, like
-> coccinelle, smatch and sparse, and fix reported warnings.
->=20
-> 2. Also check for warnings when building with W=3D1. Most of these
-> commands (checks or W=3D1 build) can build specific targets, like some
-> directory, to narrow the scope to only your code. The code here looks
-> like it needs a fix. Feel free to get in touch if the warning is not clea=
-r.
->=20
-> 3. Fix all compile test warning reported by LKP and check for common
-> configs, regardless of reports.
->=20
-> 4. Please run `make dtbs_check W=3D1` (see
-> Documentation/devicetree/bindings/writing-schema.rst or
-> https://www.linaro.org/blog/tips-and-tricks-for-validating-devicetree-sou=
-rces-with-the-devicetree-schema/
-> for instructions).
->=20
-> 5. Please run scripts/checkpatch.pl and fix reported warnings. Then
-> please run `scripts/checkpatch.pl --strict` and (probably) fix more
-> warnings. Some warnings can be ignored, especially from --strict run.
->=20
->=20
-> Best regards,
-> Krzysztof
->=20
->=20
+> > but after my board test, I find that when hs_hclk_high_gate is turned
+> > off, the mmc/sd and other high-speed subsystems can not work. So maybe
+> > you should not change the hs_hclk_high_gate to hs_hclk_high_src_rate.
+> 
+> Regarding the clock management, I recommend explicitly enabling
+> hs_hclk_high_gateas it will be closed by `close unused clocks`.
 
+Sorry, you are right. It was me who made the changes locally. And I
+saw your reply to this email[1], which you said According to the vendor's
+code, the parent clock of hs_hclk_src is hs_hclk_high_src.
+
+Indeed, the parent clock of hs_hclk_src is hs_hclk_high_src. but
+hs_hclk_high_gate is the gate of hs_hclk_high_src. So, what you mean is
+that you will add the CLK_IS_CRITICAL flag to the hs_hclk_high_gate?
+
+Link: https://lore.kernel.org/all/159615d3-cc52-43be-bf6d-5fe717ef1cc4@zohomail.com/ [1]
+
+Regards,
+Jiayu Du
 
