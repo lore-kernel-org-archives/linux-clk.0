@@ -1,115 +1,239 @@
-Received: from mail-dl1-f53.google.com (mail-dl1-f53.google.com [74.125.82.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26F87407562
-	for <linux-clk@vger.kernel.org>; Thu, 22 Jan 2026 12:04:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.82.53
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769083452; cv=pass; b=gCs4axmP/FHSqD0ZTz1P7RB6GsZXJbq6TCE5bndwhgjssHRKTWWMSWBaLE1We7AOh09fyRo9rt/qSdyyziCRNtivv1mjL/svKM4HFORvmoLHMD2jg8fKGm37ThmFCU4yfllax9C02TCiKrmSY2Jz/1kQ0WBKx2pAH/fdcbJIXzw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769083452; c=relaxed/simple;
-	bh=X3hWCPtAHf66rCoHEjgzZZXz3d7jr9a0ZdE4RDvb9rA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GslQBGaN+QiYILe1mEs17EjYcj5aiP03iz0PT20cN6bHzmobKqjgtFVkL5cHHp55OF7s0fIyqEVlQJSck/r4JFaiuyRan4SvQWuS5yzI1rzEsbeAlWwwvlg1C5xJVgPCPcqIAv8BmoLw5i63eglNx9yJQarUkM5uWjHOYouE/ns=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mkUmpRiO; arc=pass smtp.client-ip=74.125.82.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D084C295DBD
+	for <linux-clk@vger.kernel.org>; Thu, 22 Jan 2026 12:47:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1769086058; cv=none; b=bRzKTWTlfLAuiGRTh7WV83ZkPNNvaGD7vBQDhqkPcUuzfWBJ3Uo2G8BplNLLkT1CB7DbYOq4RZ0eC3cWjgxLOcYGWOANYMblSXXfUdd38B5C9dIFrtQaz2s41g6NDds6PDdiHOdCLH9VW1AC1m+z2mbwjAo7r//oQzXw3wgY06Y=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1769086058; c=relaxed/simple;
+	bh=f02GzYx48kesQ7jeGELEbs6RFs9qvuIFf9axfxA+iKc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=k4HCffYQfbrn/PgZ/4eKBjWNjujpwHV1fdk7noRFLHOLB9YNCfgEoS4H9tYL/YaqlQBu0goMyC4O7h11zbXtaRy+MmbW/tPJZXEPRlDI2cL+X4dV/8HPGNKGpv+oDPBVWkvBVkWZV87l/Ve1Kvv4z/LywdtKGFUbYMeayTHcxMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FwqSVmsJ; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ol+NvhPk; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mkUmpRiO"
-Received: by mail-dl1-f53.google.com with SMTP id a92af1059eb24-1233b172f02so1365191c88.0
-        for <linux-clk@vger.kernel.org>; Thu, 22 Jan 2026 04:04:09 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1769083449; cv=none;
-        d=google.com; s=arc-20240605;
-        b=dKlC/Iyy241bxIjVJX2OlwcAmr+grDh4t5RCYeWmBVGQSHUHcm/vpuQNaETMGpjBud
-         7SsWpvcLsoFBbJTzsOEzYupGRVPfZCm+oCEgOCu6q5A7w51DD6kjLEyDFm0lVzPRpfJj
-         XccZlxXElCICKETlu1yEFWfzYlUHSrwe7aaEvcfOLEtrgSRd+JuFvp+xIl2wtu7hOsAQ
-         8/7zH1/+9TJdNAk6xb8VuFWJWomqb9mxKpWvvnDeL/wOoaQie6JuRsIXeZGyO0daMW9Q
-         zUwRJPQ7Ir0TLhh+7QK9pOyR3/midS2z0wZ5yk11QjiFBIQfEub9ithJyUgkCyIlUTR8
-         17pw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=ZNBdB7Lhd+f+BWkI5lcufgpivjRwqjcdh4wM3ExInI4=;
-        fh=kHZz/MpCm6w1ZiD+TxmpCXSB9yYDft2gMe+sSfHNPX4=;
-        b=c2VhQQ6gsmk0CBMXYILUCR853gKRn+JRPZ7887a8kQGdlTZPMyX/Txn9i65MkrV8vx
-         aVa9Cp4/OhxNwKRR3aIzpeDrLQAyBZBtmMC7EM7ST0epLR4Eaa9QkDKlUJCCGSs0nz2b
-         loG5GU87wjh08+F46+BIcOmWYaYtMxXUjbIV8SamUlsQT5bXEiA2Lb2yew4F3L8gOkQk
-         a8hNQcfH2SSH6bx7I/pifN5MGQd04oJGxdAC92U8WFHaktuWEFeaviZZOIm797ONkXNX
-         yzNeq5kvEa0qNmtXUHUneZgyRsy+T02Di9tbN949UqS38KZ914BhPDnUfR1pNzplDn0Q
-         SxJg==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FwqSVmsJ";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ol+NvhPk"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1769086055;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=/p/2bC3+sbtEKV34RBkBnld1uYguVdDfDr4y5ubycHk=;
+	b=FwqSVmsJz5qEt0wLRXVVy33ytCMHbYjOk3hUIza0Dy2Us0Opp4CYEwtUNqwpNxRTIPkHA7
+	3cfeKhoCHFIm+x1P++iN/RdiX137xfzQ18piKz92R4smznlWnLeb97BE8SR7s2PUys8Qn/
+	5ps4xfelQnmdBD4acx4WeMk0G+WmQK4=
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
+ [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-149-AZLDk1meMLaPPiII_cdxpA-1; Thu, 22 Jan 2026 07:47:34 -0500
+X-MC-Unique: AZLDk1meMLaPPiII_cdxpA-1
+X-Mimecast-MFC-AGG-ID: AZLDk1meMLaPPiII_cdxpA_1769086054
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-88fcbe2e351so54279986d6.1
+        for <linux-clk@vger.kernel.org>; Thu, 22 Jan 2026 04:47:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1769083449; x=1769688249; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZNBdB7Lhd+f+BWkI5lcufgpivjRwqjcdh4wM3ExInI4=;
-        b=mkUmpRiOhzVtLjZfgMO8+PTA51efjBa6+3mw3wVEd37Pt65d4OCJA0+IwYLz8+1BZ0
-         Na8fVkS3j5qKc8+OqZvuRW95g0g3i/Kf3gLCdCLJcPTSXd2ya3PwGt14oOb33KjPHS8/
-         5bhAPT0AOGLjTPPuOXA+6a+cBop6YTgwp++bD8MRuoIE2Ip0YYgK1hMYmT9sJ0l7xF0G
-         AdeYekAcRqAaIJbxP3R1tQnK/BC/rKlH19jjA37Xb9skdoxn/jm4JmTHfx77rnkZoI2S
-         oH2ufEUaO29AyREv/iQeX5Qebic8UMjXV0mPbjo+zO/881L8oNEyEl+VV4irRT2XIMUy
-         ksWA==
+        d=redhat.com; s=google; t=1769086054; x=1769690854; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/p/2bC3+sbtEKV34RBkBnld1uYguVdDfDr4y5ubycHk=;
+        b=Ol+NvhPkfAd5VxOl64kAJQopVvS6EBt++SPh73gQ7JlfoWSE30WCtAbETwJHFGdDOR
+         7iL/znHaSeInLtjt27IOtgGWLehDg3w8NTOi1xR+aLJz6UVlZPLZVtVc+VuYUw1/yucY
+         KkG1uLhNk753Gkct/1j4N4PLF0z+5Wl5Z0DuXMQGVyfXTyTz2wD0BeGoc1kT71WL0GRm
+         trM78VtcvInxDrC3dAH45bC9wDwngYLeaxAMtzFI5oy2MR6reUWk8RaqAXBjk9JyoSVr
+         2T7I1ktF8CDk1xdB+ke+D0xVUxQxiWg/LLfF2LMUz2TpRxYCTodXN4dS/LHS9NRtBnTy
+         /VeQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769083449; x=1769688249;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=ZNBdB7Lhd+f+BWkI5lcufgpivjRwqjcdh4wM3ExInI4=;
-        b=ukRSxKuPwW4RH0uTyTUkU/ie23ijPNci2FDqBffdjKCrXQvjNRWaSEgPUF5Loa/FdI
-         uP/riKI/XUvWSEBIS7xTS73/FynzpImI1NpMJgAzrQkNhH5A6kcgCP+IdrXtzXXc9vlj
-         yR03gey3YY+7iXaGtj8hObiYz9waYPGG5J+iPbpuDRdS8NRzJJZZY/YUxGrkOnLSecIX
-         Nan5aYbekXGs61n2mJFE9bJCye7PvF1okMnRHNpu/3wwDDQBzt9eliatByHrhDKfxO+A
-         JwswjClI9L6llbpjQZWKvxTdeUBvFXN22udaZ4ErksS6Civg1pSOCUXDNQkoaun5lp4Z
-         t8YQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWHtP4uosTcpRfTtJWqnooiTCeTlYK69p8bJOYr0au/nRWmO78TweofHr9djMe7JieznrxddDN208Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBfksLfvObVheBjnCD/Td/djj8Fm4MzyVueAXP+2bG/+4tlBCO
-	5U/RxoeA7wnMkw1P26ZsxDkhrkdN2YQpE6p4rEBm+CCDREqZD+55fYKW5ewWNBMuUQe7y3RpAfv
-	AT1MwOl5IwLZECs/5GDtgQnYWfjPCN1c=
-X-Gm-Gg: AZuq6aKYUXJlXYyLZDHdgO/tSZZczsmJkI8JMEfjkVkNIvnxIi3xBbtgeXvDMBx0rhF
-	RZ3S9oUEtq7ldBObHlawU52DV6p4BDQfXFMDI98AiaPJTpi31jUgQ4TNilXpp6I0XSn89OpnGTm
-	vz7gG0QeVetSzhX95gHyjvpZq8lvRSEBuP2mXc1UEi0zm9rkVTG9EM/W3RnL0WaO+lP9RuXXQTE
-	EruS3tAFP8dBLKiwa+rHLHGYFM7wyAEL5UcZS6nDru+NjvmCsuzQPvmNndYmwi7JTecRv1AS1u8
-	6B20q6yfjvnAO+2S62vM72xUhFJ5TZvYYoRafwMjpqyiSpB/2om63vFXg1znmwTV/qAg4LcpfuO
-	7+2az6JtImjXLDA==
-X-Received: by 2002:a05:7022:6986:b0:11b:b3a1:713c with SMTP id
- a92af1059eb24-1246a958283mr5461620c88.9.1769083448808; Thu, 22 Jan 2026
- 04:04:08 -0800 (PST)
+        d=1e100.net; s=20230601; t=1769086054; x=1769690854;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/p/2bC3+sbtEKV34RBkBnld1uYguVdDfDr4y5ubycHk=;
+        b=vMfc97sHenq+kodJZQUEciEKMXf2KJnd8MrVJgW55DwF8GZlqGjnqZlhtV3JCwof8j
+         0g5ye+PK4Zg8qEvdhK/+2obetzmwWeIbbSzqbSc7oKvxOpZiutJkjGQHEJCSyTRwGzYu
+         GJ+LlWpKV+tXE0hOU5XSWDktbsKmfyt193CrpnQqIAQC94GQyjFxQoWVIfXtA4C7OgtT
+         FwUKgcyLrDt1xq8yXu6gGsqmayjxcLko74YixyGYIdNF+IV3N4B/TwKdlH/iNBdRFHeL
+         HVYEBbPDJ4+0Rf366PFybe3lFxMp1/wEYJXdisukpBmT2N62lajWjAGHyuYeOF5/cAv3
+         QGZA==
+X-Forwarded-Encrypted: i=1; AJvYcCVpCWGvQnvpGkmHcT4Sy19BYK9XuJMpqprpOdmh0sUAcj4k0q2XI3xycUY8Nvn7xCoX5H79HUmDSAI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx41u9cGWvZktUeTGI4cftz/bvYuKO4nUUNwq2yvIR1p93lonVc
+	Fxy4HyAFbWmduqfelDXqDCo1nB5ouZt0OKZ97ukfNBQqCoDtcK8BKbUg0N6mdXpFhJ1nppu9X0a
+	DNmW4HbFCbDa/+9a8FG+759H7oOx7X03oZhMwt+3ToX3N8V1OAHZMHbO7U2fiYQ==
+X-Gm-Gg: AZuq6aItWldKAHxegwV4ShU/ECIqqbHnmdOjwJ+cIFVIgcupS603CwsSFCVyPestPdo
+	mBJdcDJ3miehifrqtM9BELt3E6Xhp0dxhonJsq8+o9cPvM8phfsn0LWEgS9YSzVflKg2U3jbs6u
+	qREQ5HNHd1GL8ZDvmDJC4jVo+WbadfWYCG6cdf9sCallt7ZLWTEpCkCszuni3XJtS49oXnDl6Uy
+	KfckWS6i1m0n7RfMXH1gCJpAWnlTTeJnngzmUk1pYjgBXE5qdPiyfDy5gQvcxMVAtGPjRgcA8Cu
+	tPYU/ckD+E8vxyESF1a8ZaWRQ4wVHSQWE5sru0ISXNysSuG7x/qTHAN8vQgoaKRe1NiV+DIiAG8
+	uJbadrGf4EAjeN7CAVSdDe7cUaB7919dUHZt1yreRlQ/0zYUKJw==
+X-Received: by 2002:a05:6214:2a87:b0:894:6531:d61c with SMTP id 6a1803df08f44-8947dfdc869mr37706376d6.19.1769086054144;
+        Thu, 22 Jan 2026 04:47:34 -0800 (PST)
+X-Received: by 2002:a05:6214:2a87:b0:894:6531:d61c with SMTP id 6a1803df08f44-8947dfdc869mr37706116d6.19.1769086053745;
+        Thu, 22 Jan 2026 04:47:33 -0800 (PST)
+Received: from [192.168.1.15] (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8942e6d6ea3sm152362716d6.54.2026.01.22.04.47.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Jan 2026 04:47:33 -0800 (PST)
+From: Brian Masney <bmasney@redhat.com>
+Date: Thu, 22 Jan 2026 07:47:16 -0500
+Subject: [PATCH v2] rtc: ac100: convert from divider_round_rate() to
+ divider_determine_rate()
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260121-ccm_dts-v3-0-820ce9b5fa38@nxp.com> <20260121-ccm_dts-v3-3-820ce9b5fa38@nxp.com>
-In-Reply-To: <20260121-ccm_dts-v3-3-820ce9b5fa38@nxp.com>
-From: Daniel Baluta <daniel.baluta@gmail.com>
-Date: Thu, 22 Jan 2026 14:06:47 +0200
-X-Gm-Features: AZwV_QjimaKd_p8jdtYQifLmLFybP2fWAwRE2czS_YKMQ7pErfdW-RzqTfHjkKk
-Message-ID: <CAEnQRZCR3oNgfuknUnm88P2Cc4=CYc+MEd-hPtdceRhGhNR-ag@mail.gmail.com>
-Subject: Re: [PATCH v3 3/3] ARM: dts: imx: add required clocks and clock-names
- for ccm
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, linux-clk@vger.kernel.org, 
-	imx@lists.linux.dev, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260122-rtc-ac100-divider-round-rate-v2-1-044f8b493c35@redhat.com>
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/x3MOwqAMAwA0KtIZgM1glSvIg79RM1SJVURxLtbH
+ N/yHsiswhmG6gHlS7JsqYDqCsLq0sIosRjIUGcaItQjoAuNMRjlksiKup0porqD0Qfy1s+9bVs
+ LpdiVZ7n/fpze9wO1QfEcbgAAAA==
+X-Change-ID: 20260122-rtc-ac100-divider-round-rate-bc2b8bf98338
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, 
+ linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Brian Masney <bmasney@redhat.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4044; i=bmasney@redhat.com;
+ s=20250903; h=from:subject:message-id;
+ bh=f02GzYx48kesQ7jeGELEbs6RFs9qvuIFf9axfxA+iKc=;
+ b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGDKLZFJiNTIOvcngcXj97XSFj8/WY98uuqkJWDQrrxJcN
+ f/ouWNGHaUsDGJcDLJiiixLco0KIlJX2d67o8kCM4eVCWQIAxenAEzEi4nhf2CxP19gYw2LavO9
+ wgX7plhbbZ24+CPTWr7NwTVc74zbljAy7J6w6O8T8zNq4tbB/M+D+iOEdwun9j6bls+3LrftU4o
+ 9CwA=
+X-Developer-Key: i=bmasney@redhat.com; a=openpgp;
+ fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
 
-On Wed, Jan 21, 2026 at 8:22=E2=80=AFPM Frank Li <Frank.Li@nxp.com> wrote:
->
-> Add required clocks and clock-names for ccm to fix below CHECK_DTBS
-> warnings:
->   arch/arm/boot/dts/nxp/imx/imx6dl-alti6p.dtb: clock-controller@20c4000 (=
-fsl,imx6q-ccm): clock-names:0: 'osc' was expected
->         from schema $id: http://devicetree.org/schemas/clock/imx6q-clock.=
-yaml#
->
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+The divider_round_rate() function is now deprecated, so let's migrate
+to divider_determine_rate() instead so that this deprecated API can be
+removed.
 
-Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
+Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Signed-off-by: Brian Masney <bmasney@redhat.com>
+---
+Changes since v1:
+- Fix two cases of brace inbalances around if/else
+
+Alexandre: Per v1 comments, I'll include this with my GIT PULL to Stephen.
+---
+ drivers/rtc/rtc-ac100.c | 75 +++++++++++++++++++++++++------------------------
+ 1 file changed, 38 insertions(+), 37 deletions(-)
+
+diff --git a/drivers/rtc/rtc-ac100.c b/drivers/rtc/rtc-ac100.c
+index 33626311fa781b5ce90dcc472f948dc933bbc897..bba7115ff3ad0f9a9b428784b49ba3fde0d18484 100644
+--- a/drivers/rtc/rtc-ac100.c
++++ b/drivers/rtc/rtc-ac100.c
+@@ -140,42 +140,16 @@ static unsigned long ac100_clkout_recalc_rate(struct clk_hw *hw,
+ 				   AC100_CLKOUT_DIV_WIDTH);
+ }
+ 
+-static long ac100_clkout_round_rate(struct clk_hw *hw, unsigned long rate,
+-				    unsigned long prate)
+-{
+-	unsigned long best_rate = 0, tmp_rate, tmp_prate;
+-	int i;
+-
+-	if (prate == AC100_RTC_32K_RATE)
+-		return divider_round_rate(hw, rate, &prate, NULL,
+-					  AC100_CLKOUT_DIV_WIDTH,
+-					  CLK_DIVIDER_POWER_OF_TWO);
+-
+-	for (i = 0; ac100_clkout_prediv[i].div; i++) {
+-		tmp_prate = DIV_ROUND_UP(prate, ac100_clkout_prediv[i].val);
+-		tmp_rate = divider_round_rate(hw, rate, &tmp_prate, NULL,
+-					      AC100_CLKOUT_DIV_WIDTH,
+-					      CLK_DIVIDER_POWER_OF_TWO);
+-
+-		if (tmp_rate > rate)
+-			continue;
+-		if (rate - tmp_rate < best_rate - tmp_rate)
+-			best_rate = tmp_rate;
+-	}
+-
+-	return best_rate;
+-}
+-
+ static int ac100_clkout_determine_rate(struct clk_hw *hw,
+ 				       struct clk_rate_request *req)
+ {
+-	struct clk_hw *best_parent;
++	int i, ret, num_parents = clk_hw_get_num_parents(hw);
++	struct clk_hw *best_parent = NULL;
+ 	unsigned long best = 0;
+-	int i, num_parents = clk_hw_get_num_parents(hw);
+ 
+ 	for (i = 0; i < num_parents; i++) {
+ 		struct clk_hw *parent = clk_hw_get_parent_by_index(hw, i);
+-		unsigned long tmp, prate;
++		unsigned long prate;
+ 
+ 		/*
+ 		 * The clock has two parents, one is a fixed clock which is
+@@ -199,13 +173,40 @@ static int ac100_clkout_determine_rate(struct clk_hw *hw,
+ 
+ 		prate = clk_hw_get_rate(parent);
+ 
+-		tmp = ac100_clkout_round_rate(hw, req->rate, prate);
+-
+-		if (tmp > req->rate)
+-			continue;
+-		if (req->rate - tmp < req->rate - best) {
+-			best = tmp;
+-			best_parent = parent;
++		if (prate == AC100_RTC_32K_RATE) {
++			struct clk_rate_request div_req = *req;
++
++			div_req.best_parent_rate = prate;
++
++			ret = divider_determine_rate(hw, &div_req, NULL,
++						     AC100_CLKOUT_DIV_WIDTH,
++						     CLK_DIVIDER_POWER_OF_TWO);
++			if (ret != 0 || div_req.rate > req->rate) {
++				continue;
++			} else if (req->rate - div_req.rate < req->rate - best) {
++				best = div_req.rate;
++				best_parent = parent;
++			}
++		} else {
++			int j;
++
++			for (j = 0; ac100_clkout_prediv[j].div; j++) {
++				struct clk_rate_request div_req = *req;
++				unsigned long tmp_prate;
++
++				tmp_prate = DIV_ROUND_UP(prate, ac100_clkout_prediv[j].div);
++				div_req.best_parent_rate = tmp_prate;
++
++				ret = divider_determine_rate(hw, &div_req, NULL,
++							     AC100_CLKOUT_DIV_WIDTH,
++							     CLK_DIVIDER_POWER_OF_TWO);
++				if (ret != 0 || div_req.rate > req->rate) {
++					continue;
++				} else if (req->rate - div_req.rate < req->rate - best) {
++					best = div_req.rate;
++					best_parent = parent;
++				}
++			}
+ 		}
+ 	}
+ 
+@@ -213,7 +214,7 @@ static int ac100_clkout_determine_rate(struct clk_hw *hw,
+ 		return -EINVAL;
+ 
+ 	req->best_parent_hw = best_parent;
+-	req->best_parent_rate = best;
++	req->best_parent_rate = clk_hw_get_rate(best_parent);
+ 	req->rate = best;
+ 
+ 	return 0;
+
+---
+base-commit: e3b32dcb9f23e3c3927ef3eec6a5842a988fb574
+change-id: 20260122-rtc-ac100-divider-round-rate-bc2b8bf98338
+
+Best regards,
+-- 
+Brian Masney <bmasney@redhat.com>
+
