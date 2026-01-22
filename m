@@ -1,156 +1,194 @@
-Received: from sender4-pp-o92.zoho.com (sender4-pp-o92.zoho.com [136.143.188.92])
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F6EA33A9E5;
-	Thu, 22 Jan 2026 11:41:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.92
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769082084; cv=pass; b=QNTuGAqoelzr81WwBCmyAEEep7d9Dfo0dMc9QUfSZRcc5B+Ulf8Jyh2+SVdHcZAqbjEdXVPCf+ksx6tqknDybS+f8+zM7CGMAcpAyZosJEJSkVp97THkPCRG35/hK4Wii7Z/Xdxo5sz9rZOEu8esgX26Tz53bozQ0sWrd3xAJUU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769082084; c=relaxed/simple;
-	bh=Rn5ETJg3JFh9/Aya73cchV97ZT+c0jzGg2d/Ng9LrXU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dZee0pJBBuDHLPcOckBF1unoY5iZj2aC7H779AwU0kve/W7t8bkVDxiGtqD2BOesziGN0YCYh1jWXXE/dD7hZSIvx1t70ZRJ4dkUanSbBxgzDEdl3kfOgFZfOY3O5yxzV2egeM4dcRId29q/Zv4ZPYmLkAdoEqGzH0iZpGo6LKg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b=BqgP/0+k; arc=pass smtp.client-ip=136.143.188.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A7BA3A9DAF
+	for <linux-clk@vger.kernel.org>; Thu, 22 Jan 2026 11:41:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1769082107; cv=none; b=G/PZtTVWU7UPyZJCkW2cFBog7AjlR8vSzkeW/unmpfyKvVBxCL9fI0ReA96mwKnkPa8vFlyq3Mrt/wjS4311Qe46y3qEuEMPxoqHwBJD/WpaV3alHT8uoFhtzfMONcV1K8/YKL5tXGPwhfRMHKeHxRaBY0LdYPC868gGmB/zicU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1769082107; c=relaxed/simple;
+	bh=NqQtXUERc3v4NzNZ99SDCcNfgBv7D/bmH0cyLocfDQo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JPPEDrcFhSzuDfHZISpTMzeEGZ6Mv5hNwHsvCiBhgT/wsdQL1KbJi2C3ySo++GknxaSA3y+p7dTWw9i5TMDPAmKQgIjf0C4EKp+YSB5TDUo5GecPDZJRfWkla/jDRaFvcD8xt02r/dyKonjGf3R44QkhhyhQYdSLat0SreYlN+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=UEFpYXOg; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b="BqgP/0+k"
-ARC-Seal: i=1; a=rsa-sha256; t=1769082054; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=Pb8wiJACOCATzEXc4PgWeHIX19E6c8dIl0diDlAgtpiB0IAwUMTZURj9rCubMT0CuzRWrb2BPGCqmrhgshV3wU+jAIfwilYbnYY9NjhFMNLLPXHi7Y3s3tB6cKDIy29ifBkwYWuvZYwnOj6XXaOZ8nTabaya4N+xCJCDWSHzxhE=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1769082054; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=kG2AIxIWH9YRnqrSVj4qktDyQAM1oSw/ZIFoeBq6s78=; 
-	b=Dj4aFJGUyrUKNT48CUlGd3wNqeM8ZFloOsQ90iuc4DIUrjrzDt3EV1ltEGMvJIRegNKk5apzWRMdelYfKACU5hIxhjUeJR/sOdGlyx9s/HrvvsSpZjuQnHabxf5u7eJfd7RUBbFQQRV6fUboqX1EqgRgu1UNWnS7Fvi/xTYbvbk=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=zohomail.com;
-	spf=pass  smtp.mailfrom=kingxukai@zohomail.com;
-	dmarc=pass header.from=<kingxukai@zohomail.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1769082054;
-	s=zm2022; d=zohomail.com; i=kingxukai@zohomail.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
-	bh=kG2AIxIWH9YRnqrSVj4qktDyQAM1oSw/ZIFoeBq6s78=;
-	b=BqgP/0+kjtY5+I2wZdBhES5UOLW9z1ic0VLtrQkGNlJ7QWvS9+jpKGeGORrH+7kB
-	eUHuZ79RxGH2zG0JY1ZMWSVqESzpwtdokYeP8JXMY0tzcC7Vjz2zjwiS8D66YXfaarc
-	/srXBXlWqzXyCep56oIBWOFMZ32N71mASZEWajLE=
-Received: by mx.zohomail.com with SMTPS id 176908204557861.379657628005475;
-	Thu, 22 Jan 2026 03:40:45 -0800 (PST)
-Message-ID: <bf39fdb8-6698-418b-bd4a-6d8d40ccc9a0@zohomail.com>
-Date: Thu, 22 Jan 2026 19:40:29 +0800
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="UEFpYXOg"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id EB8A31A2A53;
+	Thu, 22 Jan 2026 11:41:37 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id B573A606B6;
+	Thu, 22 Jan 2026 11:41:37 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id B0CD5119B0105;
+	Thu, 22 Jan 2026 12:41:16 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1769082094; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=Fl2SnsCgDRhlccmCWpsQ4CBlDuamahnW5kxpsohCwvo=;
+	b=UEFpYXOgJL+WIY89Mx/EpOyceBBILQiL0TxFQWpW01yiEySAJH2g1HcWGNeQm8jHeKv+xN
+	O2csc+HhLdo2gWFITsAzh6mTWYo9h+2QnQHxO2GdqZlsPvpTAG/XFqvOefokUsJca73PWu
+	919NjC9kftG/xECA0iNKY+BT7G6XeddTLl+YrGq6EFQ7innqv2Qzt9u7ZQzupbkT37WFhV
+	mgEsWUeGSzIj/19gb+Tq8BosxVfyi4TFbwa3Kmjo2kuM+uE7HxnX7idMvi9PAvs7Wiw+OR
+	Jl3h0x9NzvUaJ7inKLTNk1kZu+isqj/tgMXHTzscOm2flBtD/RFBursuZs9FuQ==
+Date: Thu, 22 Jan 2026 12:41:14 +0100
+From: Herve Codina <herve.codina@bootlin.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Matti Vaittinen <mazziesaccount@gmail.com>, Rob Herring
+ <robh@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Ulf Hansson
+ <ulf.hansson@linaro.org>, Kalle Niemi <kaleposti@gmail.com>,
+ linux-arm-kernel@lists.infradead.org, Andrew Lunn <andrew@lunn.ch>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Danilo Krummrich <dakr@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha
+ Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team
+ <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Michael
+ Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Andi
+ Shyti <andi.shyti@kernel.org>, Wolfram Sang
+ <wsa+renesas@sang-engineering.com>, Peter Rosin <peda@axentia.se>, Arnd
+ Bergmann <arnd@arndb.de>, Bjorn Helgaas <bhelgaas@google.com>, Charles
+ Keepax <ckeepax@opensource.cirrus.com>, Richard Fitzgerald
+ <rf@opensource.cirrus.com>, David Rhodes <david.rhodes@cirrus.com>, Linus
+ Walleij <linus.walleij@linaro.org>, Mark Brown <broonie@kernel.org>, Andy
+ Shevchenko <andriy.shevchenko@linux.intel.com>, Daniel Scally
+ <djrscally@gmail.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>, Len Brown <lenb@kernel.org>,
+ Davidlohr Bueso <dave@stgolabs.net>, Jonathan Cameron
+ <jonathan.cameron@huawei.com>, Dave Jiang <dave.jiang@intel.com>, Alison
+ Schofield <alison.schofield@intel.com>, Vishal Verma
+ <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, Dan Williams
+ <dan.j.williams@intel.com>, Wolfram Sang <wsa@kernel.org>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ imx@lists.linux.dev, linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org,
+ linux-pci@vger.kernel.org, linux-sound@vger.kernel.org,
+ patches@opensource.cirrus.com, linux-gpio@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-spi@vger.kernel.org,
+ linux-acpi@vger.kernel.org, linux-cxl@vger.kernel.org, Allan Nielsen
+ <allan.nielsen@microchip.com>, Horatiu Vultur
+ <horatiu.vultur@microchip.com>, Steen Hegelund
+ <steen.hegelund@microchip.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Saravana Kannan
+ <saravanak@kernel.org>
+Subject: Re: [PATCH v4 01/29] Revert "treewide: Fix probing of devices in DT
+ overlays"
+Message-ID: <20260122124114.44812cc7@bootlin.com>
+In-Reply-To: <CAMuHMdWGk5ig3v9tGy1cMOg1LmKu3KrxQq2HO1vcQeZPuRxWBQ@mail.gmail.com>
+References: <20251015071420.1173068-1-herve.codina@bootlin.com>
+	<5cf2a12a-7c66-4622-b4a9-14896c6df005@gmail.com>
+	<CAL_JsqJjm12LxpDg6LmpY=Ro_keHwnrWiYMLVnG=s_pSP4X2WQ@mail.gmail.com>
+	<072dde7c-a53c-4525-83ac-57ea38edc0b5@gmail.com>
+	<CAL_JsqKyG98pXGKpL=gxSc92izpzN7YCdq62ZJByhE6aFYs1fw@mail.gmail.com>
+	<55076f4b-d523-4f8c-8bd4-0645b790737e@gmail.com>
+	<20251202102619.5cd971cc@bootlin.com>
+	<088af3ff-bd04-4bc9-b304-85f6ed555f2a@gmail.com>
+	<20251202175836.747593c0@bootlin.com>
+	<dc813fc2-28d2-4f2c-a2a3-08e33eec8ec7@gmail.com>
+	<20251204083839.4fb8a4b1@bootlin.com>
+	<CAMuHMdXdwf7La1EYBWTJadsTAJG3nKQVW6wtBn-bUqshA=XHRw@mail.gmail.com>
+	<20251210132140.32dbc3d7@bootlin.com>
+	<c50c40cc-69f6-436c-a94e-94a3a10f6727@gmail.com>
+	<20251211132044.10f5b1ea@bootlin.com>
+	<1b9fa77b-d74a-4fa7-b2e7-8b389d59a5a0@gmail.com>
+	<20251211161902.11ef4248@bootlin.com>
+	<CAMuHMdWGk5ig3v9tGy1cMOg1LmKu3KrxQq2HO1vcQeZPuRxWBQ@mail.gmail.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 2/3] clk: canaan: Add clock driver for Canaan K230
-To: Jiayu Du <jiayu.riscv@isrc.iscas.ac.cn>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Conor Dooley <conor@kernel.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
- Samuel Holland <samuel.holland@sifive.com>,
- Troy Mitchell <TroyMitchell988@gmail.com>
-References: <20260116-b4-k230-clk-v10-0-de59033c5d30@zohomail.com>
- <20260116-b4-k230-clk-v10-2-de59033c5d30@zohomail.com>
- <aW3o8xVziqb9iRBN@duge-virtual-machine>
-From: Xukai Wang <kingxukai@zohomail.com>
-Content-Language: en-US
-In-Reply-To: <aW3o8xVziqb9iRBN@duge-virtual-machine>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Feedback-ID: rr080112278a99ca22fe3413b8502573b80000d112c6c8de0269d35716262045f3868d8834dff19452d12e59:zu080112270525b0f9423d0c1823811a910000b1028f03cb95fe0534d1fd2bc67e39b74b00cfd63973a25f42:rf0801122c843053e5f5fb5ac981c0487f000022c182bfb45a1df9df852c4ef67ed102773d21a27587345871b15b159e36:ZohoMail
-X-ZohoMailClient: External
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
+Hi Geert,
 
-On 2026/1/19 16:18, Jiayu Du wrote:
->> +
->> +K230_CLK_GATE_FORMAT(hs_hclk_src_gate,
->> +		     K230_HS_HCLK_SRC_GATE,
->> +		     0x18, 0, 0, 0,
->> +		     &hs_hclk_high_src_rate.clk.hw);
-> Here, you replaced hs_hclk_high_gate(in v9) with hs_hclk_high_src_rate,
+On Wed, 21 Jan 2026 13:59:26 +0100
+Geert Uytterhoeven <geert@linux-m68k.org> wrote:
 
-I'm a bit confused, as I don't recall making these specific changes.
-Looking at the code below, the only difference between v9 and v10 is
-within the K230_CLK_GATE_FORMAT(hs_hclk_src_gate, ...) definition, where
-the second parameter changed from 1 to 0. Everything else appears
-consistent. Could you clarify which change you were referring to?
+> Hi Hervé,
+> 
+> Revisiting his old thread (sorry for the delay)...
+> 
+> On Thu, 11 Dec 2025 at 16:19, Herve Codina <herve.codina@bootlin.com> wrote:
+> > On Thu, 11 Dec 2025 15:52:28 +0200
+> > Matti Vaittinen <mazziesaccount@gmail.com> wrote:  
+> > > On 11/12/2025 14:20, Herve Codina wrote:  
+> > > > On Thu, 11 Dec 2025 10:34:46 +0200
+> > > > Matti Vaittinen <mazziesaccount@gmail.com> wrote:
+> > > > Do you see the same trace with:
+> > > > - "pinctrl-0 = <&i2c1_pins>;" in your overlay
+> > > > - fragment0 removed from the overlay (i2c1_pins definition removed from
+> > > >    the overlay.
+> > > > - i2c1_pins node defined in your base DT.  
+> > >
+> > > Just tested. The i2c1 appears and the test-overlay probe gets called,
+> > > when the i2c1_pins is in the base-dt and not in the overlay.  
+> >
+> > Geert, do you expirement same results?  
+> 
+> Yes, after moving the pin control subnode from the overlay[1] to the
+> base DTS, the SPI bus and FLASH work after loading the overlay for
+> the first time.
 
-The code
+Ok. What I said for Matti's use-case is also valid for your use-case.
 
-in v8:
+> 
+> > > > In other word, is the issues related to adding a pinctrl sub-node (pinctrl
+> > > > pins definition) in the overlay or is it something else?  
+> > >
+> > > Seems to be related to the pinctrl.  
+> >
+> > I don't think that the issue is related to pinctrl itself.
+> >
+> > IMHO, I think the issue is related to overlays and fw_devlink.
+> > The distinction between "a new node is going to lead to a device" vs "a new
+> > node is just data and will never been attached to a new device" when an
+> > overlay is applied is broken.
+> >
+> > This is broken with the upstream "treewide: Fix probing of devices in DT
+> > overlays" commit I've tried to revert. Indeed, on the LAN966x PCI device
+> > use case devlinks created are not correct with this commit applied.
+> >
+> > I am not sure also that devlinks created with a more complex overlay will be
+> > correct. For instance, Matti, with your overlay not sure that a phandle from
+> > the oscillator node referencing the pmic node will lead to a correct
+> > provider/consumer devlink between the pmic device and the oscillator device.
+> >
+> > On the other hand, this is broken with "of: dynamic: Fix overlayed devices
+> > not probing because of fw_devlink" works for the LAN966x PCI device use case
+> > an lead to correct devlinks but breaks your use cases.  
+> 
+> Loading my overlay[1] causes the following changes under
+> /sys/class/devlink/:
+> 
+>     + genpd_provider:ca53-cpu0--platform:e6e90000.spi ->
+> ../../devices/virtual/devlink/genpd_provider:ca53-cpu0--platform:e6e90000.spi
+>     + platform:e6055000.gpio--platform:e6e90000.spi ->
+> ../../devices/virtual/devlink/platform:e6055000.gpio--platform:e6e90000.spi
+>     + platform:e6060000.pinctrl--platform:e6e90000.spi ->
+> ../../devices/virtual/devlink/platform:e6060000.pinctrl--platform:e6e90000.spi
+>     - platform:e6060000.pinctrl--platform:keys ->
+> ../../devices/virtual/devlink/platform:e6060000.pinctrl--platform:keys
+>     + platform:e6150000.clock-controller--platform:e6e90000.spi ->
+> ../../devices/virtual/devlink/platform:e6150000.clock-controller--platform:e6e90000.spi
+>     + platform:soc--platform:e6e90000.spi ->
+> ../../devices/virtual/devlink/platform:soc--platform:e6e90000.spi
+> 
+> Note that these changes are exactly the same in the working and the
+> non-working case.
+> 
+> Removing the overlay again removes all added links, but does not
+> restore the keys link:
 
-+K230_CLK_RATE_FORMAT(hs_hclk_high_src_rate, +
-K230_HS_HCLK_HIGH_SRC_RATE, + 1, 1, 0, 0, + 1, 8, 0, 0x7, + 0x1C, 31,
-div, 0x0, + false, 0, + &pll0_div4.hw); +
-+K230_CLK_GATE_FORMAT(hs_hclk_high_gate, + K230_HS_HCLK_HIGH_GATE, +
-0x18, 1, 0, 0, + &hs_hclk_high_src_rate.clk.hw); +
-+K230_CLK_GATE_FORMAT(hs_hclk_src_gate, + K230_HS_HCLK_SRC_GATE, + 0x18,
-1, 0, 0, + &hs_hclk_high_src_rate.clk.hw); +
-+K230_CLK_RATE_FORMAT(hs_hclk_src_rate, + K230_HS_HCLK_SRC_RATE, + 1, 1,
-0, 0, + 1, 8, 3, 0x7, + 0x1C, 31, div, 0x0, + false, 0, +
-&hs_hclk_src_gate.clk.hw);
+I think you should have the exact same behavior with and without my
+modification.
 
-in v9:
+Can you confirm?
 
-+K230_CLK_RATE_FORMAT(hs_hclk_high_src_rate, +
-K230_HS_HCLK_HIGH_SRC_RATE, + 1, 1, 0, 0, + 1, 8, 0, 0x7, + 0x1C, 31,
-div, 0x0, + false, 0, + &pll0_div4.hw); +
-+K230_CLK_GATE_FORMAT(hs_hclk_high_gate, + K230_HS_HCLK_HIGH_GATE, +
-0x18, 1, 0, 0, + &hs_hclk_high_src_rate.clk.hw); +
-+K230_CLK_GATE_FORMAT(hs_hclk_src_gate, + K230_HS_HCLK_SRC_GATE, + 0x18,
-1, 0, 0, + &hs_hclk_high_src_rate.clk.hw); +
-+K230_CLK_RATE_FORMAT(hs_hclk_src_rate, + K230_HS_HCLK_SRC_RATE, + 1, 1,
-0, 0, + 1, 8, 3, 0x7, + 0x1C, 31, div, 0x0, + false, 0, +
-&hs_hclk_src_gate.clk.hw); +
-
-in v10:
-
-+K230_CLK_RATE_FORMAT(hs_hclk_high_src_rate, +
-K230_HS_HCLK_HIGH_SRC_RATE, + 1, 1, 0, 0, + 1, 8, 0, 0x7, + 0x1C, 31,
-div, 0x0, + false, 0, + &pll0_div4.hw); +
-+K230_CLK_GATE_FORMAT(hs_hclk_high_gate, + K230_HS_HCLK_HIGH_GATE, +
-0x18, 1, 0, 0, + &hs_hclk_high_src_rate.clk.hw); +
-+K230_CLK_GATE_FORMAT(hs_hclk_src_gate, + K230_HS_HCLK_SRC_GATE, + 0x18,
-0, 0, 0, + &hs_hclk_high_src_rate.clk.hw); +
-+K230_CLK_RATE_FORMAT(hs_hclk_src_rate, + K230_HS_HCLK_SRC_RATE, + 1, 1,
-0, 0, + 1, 8, 3, 0x7, + 0x1C, 31, div, 0x0, + false, 0, +
-&hs_hclk_src_gate.clk.hw);
-
-> but after my board test, I find that when hs_hclk_high_gate is turned
-> off, the mmc/sd and other high-speed subsystems can not work. So maybe
-> you should not change the hs_hclk_high_gate to hs_hclk_high_src_rate.
-
-Regarding the clock management, I recommend explicitly enabling
-hs_hclk_high_gateas it will be closed by `close unused clocks`.
-
->
-> When I used clk_ignore_unused, I saw the log as follows, while the enable
-> and prepare count of hs_hclk_high_gate is zero. Here is the log:
->        pll0_div4                     5  5  0  400000000   0   0     50000      Y  deviceless   no_connection_id
->           hs_hclk_high_src_rate      1  1  0  400000000   0   0     50000      Y     deviceless   no_connection_id
->              hs_hclk_high_gate       0  0  0  400000000   0   0     50000      Y        deviceless   no_connection_id
->              hs_hclk_src_gate        1  1  0  400000000   0   0     50000      Y        deviceless   no_connection_id
->                 hs_hclk_src_rate     4  4  0  200000000   0   0     50000      Y           deviceless   no_connection_id
->                    hs_sd0_ahb_gate   1  1  0  200000000   0   0     50000      Y              91580000.mmc   ahb
->                                                                                             deviceless   no_connection_id
->                    hs_sd1_ahb_gate   1  1  0  200000000   0   0     50000      Y              91581000.mmc   ahb
->                                                                                             deviceless   no_connection_id
->                    hs_ssi1_ahb_gate  0  0  0  200000000   0   0     50000      Y              deviceless   no_connection_id
->                    hs_ssi2_ahb_gate  0  0  0  200000000   0   0     50000      Y              deviceless   no_connection_id
->                    hs_usb0_ahb_gate  1  1  0  200000000   0   0     50000      Y              91500000.usb   otg
->                                                                                             deviceless   no_connection_id
->                    hs_usb1_ahb_gate  1  1  0  200000000   0   0     50000      Y              91540000.usb   otg
->
-> Regards,
-> Jiayu Du
->> +
->> +K230_CLK_RATE_FORMAT(hs_hclk_src_rate,
->> +		     K230_HS_HCLK_SRC_RATE,
+Best regards,
+Hervé
