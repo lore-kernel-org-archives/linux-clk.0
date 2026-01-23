@@ -1,38 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F62139A815;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A207839CEE8;
 	Fri, 23 Jan 2026 05:55:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769147707; cv=none; b=XmI3OkO7WSTe721vL9+hu6FrnY3WEp/3y1eaL6DNfCqg9ja3Ixjz4qZIFd3c1Gl+OpZPx5WnpqyxNprst2pPeuHfvHgfxnhjT0QU2r4t6whnQaXIS4bVoRcUx2R/ihP7HBb0F6aQWCih+XuN142F60w2qfpG1FdsF2Fzx4LkhWQ=
+	t=1769147707; cv=none; b=W9raG5tGV4yT4jx6jufSsXqpfqSEXHRmyLhP2r0/tUl5AkDrNnt8ATEP+6ass+u0ctEMHikkrP5Ai8zQBObg2u+CzL4h091UDSdVO+6qqpURhdSMHQyGEtF385wXvixxRmZnB2ay7gMm16xKAlOR6KfzheMKMTkuWWqEX/v0BOs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1769147707; c=relaxed/simple;
-	bh=GDS2hOEC3ZDMsbfoCk7m1oWy+PAW91PnnU7hk34o6d0=;
+	bh=kj2bz78IILEIstewiqZHT9qts3FHFYfsPylDGJjB5eM=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=PSbu/c5cDmAKhWzU5nMMBO/yE/eb6TR0E8xqhe4aQuy5tyuklJt9t8pH6VT9SNSuz0DPbOZsnceoNLVHaNY/va7KtY7tfKSUdgk24BnkVBGMe3+pG2KhRrzAKwKRAH7pjKRgKSM6TyPJjISnV6QhJXKph4VmIwdFgdTLry7Eu70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lUPfANag; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=f38OY2g6ejieSZsm/7GcAL6xVWoy0DQmWAMx1TGNM1IrDti16AdQPbOg0SLnvRYqvx4vT/XzNpDKn6iKCLsiSryuc8qf+8uKA+tphBUH9xBL3kRPgbvsVpA7sazc1b3oe+9ziQsJT3mt+T6el4lRPf7lW+MkQIJ3tU+msGEL0Wo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NueTdGwU; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lUPfANag"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id EFF28C2BC86;
-	Fri, 23 Jan 2026 05:55:05 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NueTdGwU"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 10C56C19424;
+	Fri, 23 Jan 2026 05:55:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1769147706;
-	bh=GDS2hOEC3ZDMsbfoCk7m1oWy+PAW91PnnU7hk34o6d0=;
+	bh=kj2bz78IILEIstewiqZHT9qts3FHFYfsPylDGJjB5eM=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=lUPfANag5v5XJz3BTzz7+i+TFyaMYz0jgg0LQHxL/7jjLEuX/YmVSOQemAAH6ppM2
-	 Pb8m+ub7g5lyBAvc3OocTk/U8L+5nW3nAOdY2Wx7arkrnhJb4H01BOc0uM5T6PH/6B
-	 xnekjRA4lCv3Oe/jAzt6c73UjYfC+6tKamgoFxKdjckkZN3YzLS27n98+qp7etQ0Qz
-	 w+47H5IutHHXEnkOpYML5Ej9t4q6/b0lqWBhzBuS+PzIfmDpozmKb7iHO0tmS5guCr
-	 HIRMMx/jhgKWb8SkEO/e3c5tONOC82GxBtosT9u+GfxIlOKiikZ32pbHiALPB/TL0G
-	 BfkJCEyMMSeUQ==
+	b=NueTdGwUgDgNvBbI+D6L9aszaqPHSsjvsEzC5TzAflDWrORIB3sHhd/JOIiEQWEwT
+	 IGnuL9P/7s6ho2BGgJy6e+N/PJEL9fSf1UJTLGv+iy1E70BZs2U0q+sSxU89gqP/JF
+	 nxqoJPWCRyE8IOpXtCyOe1dIhf/+hNHD8U4udLe6X7chBKLxACmzpZRbpyooEeVJJo
+	 uEh97qaBTVy6Z0C8GjFmZSaoSMmyEYbAnTeBIJMDVhcPHiMx4/rJNABb4iuacgHaQn
+	 jJ6EDCDEW92RaqX8d5uYGTOR2CDkzuTShYHMobLS5tESASWB9bAryQFzq0YQ021q03
+	 +ZF6CRPOVdxDg==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4C39D6CFD8;
-	Fri, 23 Jan 2026 05:55:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0296DD6CFD5;
+	Fri, 23 Jan 2026 05:55:06 +0000 (UTC)
 From: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
-Date: Fri, 23 Jan 2026 13:54:56 +0800
-Subject: [PATCH v6 2/5] dt-bindings: clock: Add Amlogic A5 PLL clock
- controller
+Date: Fri, 23 Jan 2026 13:54:57 +0800
+Subject: [PATCH v6 3/5] dt-bindings: clock: Add Amlogic A5 peripherals
+ clock controller
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -41,7 +41,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260123-a5-clk-v6-2-6d3bbf0ec1ea@amlogic.com>
+Message-Id: <20260123-a5-clk-v6-3-6d3bbf0ec1ea@amlogic.com>
 References: <20260123-a5-clk-v6-0-6d3bbf0ec1ea@amlogic.com>
 In-Reply-To: <20260123-a5-clk-v6-0-6d3bbf0ec1ea@amlogic.com>
 To: Chuan Liu <chuan.liu@amlogic.com>, 
@@ -58,11 +58,11 @@ Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
  devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org, 
  linux-arm-kernel@lists.infradead.org
 X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1769147703; l=3306;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1769147703; l=9596;
  i=chuan.liu@amlogic.com; s=20240902; h=from:subject:message-id;
- bh=L2WtYBPXP83bh/la2DnEiOjTXuQi8+YFfWCWfb93CxI=;
- b=vuuPPxdyvw3/zMxfvz11tmF9q5N5+rflhGVlRniW+YnGvMOINyZN6wQr5joJJSjZqBj2EOHz5
- q1BGC4vd/v5ATT0aYIqeXQn9ZgyUX7bAHqgVBF9X7HVgdpg2YUP62Of
+ bh=hHd35yALxxbdvq1KX85En5uKgtIsw1h8WtM1CzHm1rY=;
+ b=DbxUPPY0xG64mCtB7Q3uyoK6YWH4F4kVf8wRZ6YhG9aDYx8luM3smG5q9KchEqkhlLaFr3Lh3
+ HfoahJd5u0dDhvHsOXQE6anhacS/FB0ttwwjz9jptnOHtoTpjH8uBYo
 X-Developer-Key: i=chuan.liu@amlogic.com; a=ed25519;
  pk=fnKDB+81SoWGKW2GJNFkKy/ULvsDmJZRGBE7pR5Xcpo=
 X-Endpoint-Received: by B4 Relay for chuan.liu@amlogic.com/20240902 with
@@ -72,55 +72,95 @@ Reply-To: chuan.liu@amlogic.com
 
 From: Chuan Liu <chuan.liu@amlogic.com>
 
-Add the PLL clock controller dt-bindings for the Amlogic A5 SoC
-family.
+Add the peripherals clock controller dt-bindings for the Amlogic A5
+SoC family.
 
 Co-developed-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
 Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
 Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
 Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 ---
- .../bindings/clock/amlogic,a5-pll-clkc.yaml        | 63 ++++++++++++++++++++++
- include/dt-bindings/clock/amlogic,a5-pll-clkc.h    | 24 +++++++++
- 2 files changed, 87 insertions(+)
+ .../clock/amlogic,a5-peripherals-clkc.yaml         | 134 +++++++++++++++++++++
+ .../clock/amlogic,a5-peripherals-clkc.h            | 132 ++++++++++++++++++++
+ 2 files changed, 266 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/amlogic,a5-pll-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,a5-pll-clkc.yaml
+diff --git a/Documentation/devicetree/bindings/clock/amlogic,a5-peripherals-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,a5-peripherals-clkc.yaml
 new file mode 100644
-index 000000000000..d74570a90926
+index 000000000000..88d71d9a72ea
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/amlogic,a5-pll-clkc.yaml
-@@ -0,0 +1,63 @@
++++ b/Documentation/devicetree/bindings/clock/amlogic,a5-peripherals-clkc.yaml
+@@ -0,0 +1,134 @@
 +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 +# Copyright (C) 2024 Amlogic, Inc. All rights reserved
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/clock/amlogic,a5-pll-clkc.yaml#
++$id: http://devicetree.org/schemas/clock/amlogic,a5-peripherals-clkc.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: Amlogic A5 series PLL Clock Controller
++title: Amlogic A5 series Peripheral Clock Controller
 +
 +maintainers:
-+  - Chuan Liu <chuan.liu@amlogic.com>
 +  - Xianwei Zhao <xianwei.zhao@amlogic.com>
++  - Chuan Liu <chuan.liu@amlogic.com>
 +
 +properties:
 +  compatible:
-+    const: amlogic,a5-pll-clkc
++    const: amlogic,a5-peripherals-clkc
 +
 +  reg:
 +    maxItems: 1
 +
 +  clocks:
++    minItems: 18
 +    items:
 +      - description: input oscillator
-+      - description: input fix pll dco
++      - description: input oscillators multiplexer
 +      - description: input fix pll
++      - description: input fclk div 2
++      - description: input fclk div 2p5
++      - description: input fclk div 3
++      - description: input fclk div 4
++      - description: input fclk div 5
++      - description: input fclk div 7
++      - description: input mpll2
++      - description: input mpll3
++      - description: input gp0 pll
++      - description: input gp1 pll
++      - description: input hifi pll
++      - description: input sys clk
++      - description: input axi clk
++      - description: input sys pll div 16
++      - description: input cpu clk div 16
++      - description: input pad clock for rtc clk (optional)
++      - description: input ddr pll (optional)
++      - description: input source from clk-measure (optional)
++      - description: input rtc pll (optional)
 +
 +  clock-names:
++    minItems: 18
 +    items:
 +      - const: xtal
-+      - const: fix_dco
++      - const: oscin
 +      - const: fix
++      - const: fdiv2
++      - const: fdiv2p5
++      - const: fdiv3
++      - const: fdiv4
++      - const: fdiv5
++      - const: fdiv7
++      - const: mpll2
++      - const: mpll3
++      - const: gp0
++      - const: gp1
++      - const: hifi
++      - const: sysclk
++      - const: axiclk
++      - const: sysplldiv16
++      - const: cpudiv16
++      - const: pad_osc
++      - const: ddr
++      - const: clkmsr
++      - const: rtc
 +
 +  "#clock-cells":
 +    const: 1
@@ -137,52 +177,191 @@ index 000000000000..d74570a90926
 +examples:
 +  - |
 +    #include <dt-bindings/clock/amlogic,a5-scmi-clkc.h>
++    #include <dt-bindings/clock/amlogic,a5-pll-clkc.h>
 +    apb {
 +        #address-cells = <2>;
 +        #size-cells = <2>;
 +
-+        clock-controller@8000 {
-+            compatible = "amlogic,a5-pll-clkc";
-+            reg = <0x0 0x8000 0x0 0x1a4>;
-+            clocks = <&xtal>,
-+                     <&scmi_clk CLKID_FIXED_PLL_DCO>,
-+                     <&scmi_clk CLKID_FIXED_PLL>;
-+            clock-names = "xtal",
-+                          "fix_dco",
-+                          "fix";
++        clock-controller@0 {
++            compatible = "amlogic,a5-peripherals-clkc";
++            reg = <0x0 0x0 0x0 0x224>;
 +            #clock-cells = <1>;
++            clocks = <&xtal>,
++                     <&scmi_clk CLKID_OSC>,
++                     <&scmi_clk CLKID_FIXED_PLL>,
++                     <&scmi_clk CLKID_FCLK_DIV2>,
++                     <&scmi_clk CLKID_FCLK_DIV2P5>,
++                     <&scmi_clk CLKID_FCLK_DIV3>,
++                     <&scmi_clk CLKID_FCLK_DIV4>,
++                     <&scmi_clk CLKID_FCLK_DIV5>,
++                     <&scmi_clk CLKID_FCLK_DIV7>,
++                     <&clkc_pll CLKID_MPLL2>,
++                     <&clkc_pll CLKID_MPLL3>,
++                     <&clkc_pll CLKID_GP0_PLL>,
++                     <&scmi_clk CLKID_GP1_PLL>,
++                     <&clkc_pll CLKID_HIFI_PLL>,
++                     <&scmi_clk CLKID_SYS_CLK>,
++                     <&scmi_clk CLKID_AXI_CLK>,
++                     <&scmi_clk CLKID_SYS_PLL_DIV16>,
++                     <&scmi_clk CLKID_CPU_CLK_DIV16>;
++            clock-names = "xtal",
++                          "oscin",
++                          "fix",
++                          "fdiv2",
++                          "fdiv2p5",
++                          "fdiv3",
++                          "fdiv4",
++                          "fdiv5",
++                          "fdiv7",
++                          "mpll2",
++                          "mpll3",
++                          "gp0",
++                          "gp1",
++                          "hifi",
++                          "sysclk",
++                          "axiclk",
++                          "sysplldiv16",
++                          "cpudiv16";
 +        };
 +    };
-diff --git a/include/dt-bindings/clock/amlogic,a5-pll-clkc.h b/include/dt-bindings/clock/amlogic,a5-pll-clkc.h
+diff --git a/include/dt-bindings/clock/amlogic,a5-peripherals-clkc.h b/include/dt-bindings/clock/amlogic,a5-peripherals-clkc.h
 new file mode 100644
-index 000000000000..a74c448a8d8a
+index 000000000000..b8a68b7f29dc
 --- /dev/null
-+++ b/include/dt-bindings/clock/amlogic,a5-pll-clkc.h
-@@ -0,0 +1,24 @@
++++ b/include/dt-bindings/clock/amlogic,a5-peripherals-clkc.h
+@@ -0,0 +1,132 @@
 +/* SPDX-License-Identifier: (GPL-2.0-only OR MIT) */
 +/*
 + * Copyright (c) 2024 Amlogic, Inc. All rights reserved.
 + * Author: Chuan Liu <chuan.liu@amlogic.com>
 + */
 +
-+#ifndef _DT_BINDINGS_CLOCK_AMLOGIC_A5_PLL_CLKC_H
-+#define _DT_BINDINGS_CLOCK_AMLOGIC_A5_PLL_CLKC_H
++#ifndef _DT_BINDINGS_CLOCK_AMLOGIC_A5_PERIPHERALS_CLKC_H
++#define _DT_BINDINGS_CLOCK_AMLOGIC_A5_PERIPHERALS_CLKC_H
 +
-+#define CLKID_MPLL_PREDIV			0
-+#define CLKID_MPLL0_DIV				1
-+#define CLKID_MPLL0				2
-+#define CLKID_MPLL1_DIV				3
-+#define CLKID_MPLL1				4
-+#define CLKID_MPLL2_DIV				5
-+#define CLKID_MPLL2				6
-+#define CLKID_MPLL3_DIV				7
-+#define CLKID_MPLL3				8
-+#define CLKID_GP0_PLL_DCO			9
-+#define CLKID_GP0_PLL				10
-+#define CLKID_HIFI_PLL_DCO			11
-+#define CLKID_HIFI_PLL				12
++#define CLKID_RTC_DUALDIV_CLKIN			0
++#define CLKID_RTC_DUALDIV			1
++#define CLKID_RTC_DUALDIV_SEL			2
++#define CLKID_RTC_DUALDIV_CLKOUT		3
++#define CLKID_RTC_CLK				4
++#define CLKID_SYS_RESET_CTRL			5
++#define CLKID_SYS_PWR_CTRL			6
++#define CLKID_SYS_PAD_CTRL			7
++#define CLKID_SYS_CTRL				8
++#define CLKID_SYS_TS_PLL			9
++#define CLKID_SYS_DEV_ARB			10
++#define CLKID_SYS_MAILBOX			11
++#define CLKID_SYS_JTAG_CTRL			12
++#define CLKID_SYS_IR_CTRL			13
++#define CLKID_SYS_MSR_CLK			14
++#define CLKID_SYS_ROM				15
++#define CLKID_SYS_CPU_ARB			16
++#define CLKID_SYS_RSA				17
++#define CLKID_SYS_SARADC			18
++#define CLKID_SYS_STARTUP			19
++#define CLKID_SYS_SECURE			20
++#define CLKID_SYS_SPIFC				21
++#define CLKID_SYS_DSPA				22
++#define CLKID_SYS_NNA				23
++#define CLKID_SYS_ETH_MAC			24
++#define CLKID_SYS_RAMA				25
++#define CLKID_SYS_RAMB				26
++#define CLKID_SYS_AUDIO_TOP			27
++#define CLKID_SYS_AUDIO_VAD			28
++#define CLKID_SYS_USB				29
++#define CLKID_SYS_SD_EMMC_A			30
++#define CLKID_SYS_SD_EMMC_C			31
++#define CLKID_SYS_PWM_AB			32
++#define CLKID_SYS_PWM_CD			33
++#define CLKID_SYS_PWM_EF			34
++#define CLKID_SYS_PWM_GH			35
++#define CLKID_SYS_SPICC_1			36
++#define CLKID_SYS_SPICC_0			37
++#define CLKID_SYS_UART_A			38
++#define CLKID_SYS_UART_B			39
++#define CLKID_SYS_UART_C			40
++#define CLKID_SYS_UART_D			41
++#define CLKID_SYS_UART_E			42
++#define CLKID_SYS_I2C_M_A			43
++#define CLKID_SYS_I2C_M_B			44
++#define CLKID_SYS_I2C_M_C			45
++#define CLKID_SYS_I2C_M_D			46
++#define CLKID_SYS_RTC				47
++#define CLKID_AXI_AUDIO_VAD			48
++#define CLKID_AXI_AUDIO_TOP			49
++#define CLKID_AXI_RAMB				50
++#define CLKID_AXI_RAMA				51
++#define CLKID_AXI_NNA				52
++#define CLKID_AXI_DEV1_DMC			53
++#define CLKID_AXI_DEV0_DMC			54
++#define CLKID_AXI_DSP_DMC			55
++#define CLKID_12_24M_IN				56
++#define CLKID_12M_24M				57
++#define CLKID_FCLK_25M_DIV			58
++#define CLKID_FCLK_25M				59
++#define CLKID_GEN_SEL				60
++#define CLKID_GEN_DIV				61
++#define CLKID_GEN				62
++#define CLKID_SARADC_SEL			63
++#define CLKID_SARADC_DIV			64
++#define CLKID_SARADC				65
++#define CLKID_PWM_A_SEL				66
++#define CLKID_PWM_A_DIV				67
++#define CLKID_PWM_A				68
++#define CLKID_PWM_B_SEL				69
++#define CLKID_PWM_B_DIV				70
++#define CLKID_PWM_B				71
++#define CLKID_PWM_C_SEL				72
++#define CLKID_PWM_C_DIV				73
++#define CLKID_PWM_C				74
++#define CLKID_PWM_D_SEL				75
++#define CLKID_PWM_D_DIV				76
++#define CLKID_PWM_D				77
++#define CLKID_PWM_E_SEL				78
++#define CLKID_PWM_E_DIV				79
++#define CLKID_PWM_E				80
++#define CLKID_PWM_F_SEL				81
++#define CLKID_PWM_F_DIV				82
++#define CLKID_PWM_F				83
++#define CLKID_PWM_G_SEL				84
++#define CLKID_PWM_G_DIV				85
++#define CLKID_PWM_G				86
++#define CLKID_PWM_H_SEL				87
++#define CLKID_PWM_H_DIV				88
++#define CLKID_PWM_H				89
++#define CLKID_SPICC_0_SEL			90
++#define CLKID_SPICC_0_DIV			91
++#define CLKID_SPICC_0				92
++#define CLKID_SPICC_1_SEL			93
++#define CLKID_SPICC_1_DIV			94
++#define CLKID_SPICC_1				95
++#define CLKID_SD_EMMC_A_SEL			96
++#define CLKID_SD_EMMC_A_DIV			97
++#define CLKID_SD_EMMC_A				98
++#define CLKID_SD_EMMC_C_SEL			99
++#define CLKID_SD_EMMC_C_DIV			100
++#define CLKID_SD_EMMC_C				101
++#define CLKID_TS_DIV				102
++#define CLKID_TS				103
++#define CLKID_ETH_125M_DIV			104
++#define CLKID_ETH_125M				105
++#define CLKID_ETH_RMII_DIV			106
++#define CLKID_ETH_RMII				107
++#define CLKID_DSPA_0_SEL			108
++#define CLKID_DSPA_0_DIV			109
++#define CLKID_DSPA_0				110
++#define CLKID_DSPA_1_SEL			111
++#define CLKID_DSPA_1_DIV			112
++#define CLKID_DSPA_1				113
++#define CLKID_DSPA				114
++#define CLKID_NNA_CORE_SEL			115
++#define CLKID_NNA_CORE_DIV			116
++#define CLKID_NNA_CORE				117
++#define CLKID_NNA_AXI_SEL			118
++#define CLKID_NNA_AXI_DIV			119
++#define CLKID_NNA_AXI				120
 +
-+#endif  /* _DT_BINDINGS_CLOCK_AMLOGIC_A5_PLL_CLKC_H */
++#endif  /* _DT_BINDINGS_CLOCK_AMLOGIC_A5_PERIPHERALS_CLKC_H */
 
 -- 
 2.42.0
