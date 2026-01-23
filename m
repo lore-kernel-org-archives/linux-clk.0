@@ -1,221 +1,141 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B48832741AB;
-	Fri, 23 Jan 2026 11:41:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3F46125D0
+	for <linux-clk@vger.kernel.org>; Fri, 23 Jan 2026 12:14:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769168520; cv=none; b=sLS7l9tAS5ejiJvSvlqzEKr1b12yITBPtZGxgjgpoWSuTOAc0kp9wYVR/s1BRbKGwNLz+r4k4tOMQQKXnLPfjAoB85AIzxiGrg85QzaPPU5yOyApnHOgMlP2FV7474YWcWVOGvTDUiAPLu1gLLJYBKUlh9LzjKndbVHrP66/fcw=
+	t=1769170495; cv=none; b=gikohHIj0rTxxhBU2mdeeKIAt5a+WouulsOm0iAQi+OYob8FFxDC5aDkPjmOzII6RGUEewwx9/2UMWQg2AhBq+l3xst/olLeKAsJPE+DnenMLllK4KULnubG8A9NNHIGj0r8CSIu0JGFYiBD2xmZjSX6YUP5Hiwa9YJ+QWhAE6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769168520; c=relaxed/simple;
-	bh=V4Mf94EcyIDXzX94gvCBbKbFzNKoA9nJp5TA6mm7760=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HJpEs4YuFaS0BJGIxDEvRB8PSPp6mrb3EvgdpLr2aazbV9guzk2m7fpY8g4gHRyg7E+LGPIvaGcfMAosU5p6ENyebmMYjVyIA41hljH12R7Cw77/esvarylRHSi0MmDhgXbt8RupGVPVtaGG1JTTto4x8l3VQ2Toen3nJyC7g8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hD/o+oIW; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1769170495; c=relaxed/simple;
+	bh=1VBKv2d4Kw/BVieQnuOG1OXfQo9tqr/j1oaUqqUaIi0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UUkiI1rggRn4g2W1Emlow9fA4rUpXs7hs6TmGPYIC6AZ4QgvtOtKRUqIh6dLLkpv2KTHqf1LM/X6L+vsPqSE3IVE0eotpwCiJnKWMS7f7wYXyhts+YvZKQQj0V45i/ZDXH6VApMgHi7SmjFq9ZsDwmcqs5DDRVZWyaFFwxcNhzk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=docilZlj; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=LDoiNAW+; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hD/o+oIW"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1769168519; x=1800704519;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=V4Mf94EcyIDXzX94gvCBbKbFzNKoA9nJp5TA6mm7760=;
-  b=hD/o+oIWEnXcTH+JgQzNqvNShvGI30jRUrmGDPxDINFaOSHFwsGVeAKS
-   m+8WS9Yb68i1uSABYfLSNrNt+wyB1o5/TXSZcPrYUkMP2gmabW2SZLXlL
-   SKLeJr3V8eIGQ6b0r+tiJ8EydYEto/XjFUWTj7gedAuStgcBtIP6l+dF9
-   5XKP9dydGXkMdkteQDLWytikBTU0zA8MQ4aQLoA0JL5kGcZHDG72i+gmI
-   101R5g7BZ24QiN2bhZuN1+8GrxkR4k3xdwQpzFpS5qAodl1YlKDO5dkwy
-   h87CrF6O0RvIp7MzP+u59zjRXGk6tOLIpwq6wtz8guZWBaYz+oPLG5jPc
-   Q==;
-X-CSE-ConnectionGUID: e7PbWnynTs2S0kYkKfMZAA==
-X-CSE-MsgGUID: f7lp4HQ4RMucuP/ES1X91A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11679"; a="70481953"
-X-IronPort-AV: E=Sophos;i="6.21,248,1763452800"; 
-   d="scan'208";a="70481953"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jan 2026 03:41:58 -0800
-X-CSE-ConnectionGUID: HfX8Xg9RSGi7be1Lr3RVNg==
-X-CSE-MsgGUID: /0HznFOTRbCyDXyBJf4gng==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,248,1763452800"; 
-   d="scan'208";a="211130239"
-Received: from lkp-server01.sh.intel.com (HELO 765f4a05e27f) ([10.239.97.150])
-  by orviesa003.jf.intel.com with ESMTP; 23 Jan 2026 03:41:52 -0800
-Received: from kbuild by 765f4a05e27f with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1vjFXy-00000000Tty-0dUd;
-	Fri, 23 Jan 2026 11:41:50 +0000
-Date: Fri, 23 Jan 2026 19:41:30 +0800
-From: kernel test robot <lkp@intel.com>
-To: Anirudh Srinivasan <asrinivasan@oss.tenstorrent.com>,
-	Drew Fustini <dfustini@oss.tenstorrent.com>,
-	Joel Stanley <jms@oss.tenstorrent.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	joel@jms.id.au, fustini@kernel.org, mpe@kernel.org,
-	mpe@oss.tenstorrent.com, npiggin@oss.tenstorrent.com,
-	agross@kernel.org, agross@oss.tenstorrent.com, bmasney@redhat.com
-Subject: Re: [PATCH v2 3/3] clk: tenstorrent: Add Atlantis clock controller
- driver
-Message-ID: <202601231918.PQTTcbRG-lkp@intel.com>
-References: <20260122-atlantis-clocks-v2-3-c66371639e66@oss.tenstorrent.com>
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="docilZlj";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="LDoiNAW+"
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 60N9p7OZ722631
+	for <linux-clk@vger.kernel.org>; Fri, 23 Jan 2026 12:14:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=BBFlJ/LfGtg3hOzrf7Xo/5L9Tz24VTUma/0
+	bRXqr9Gc=; b=docilZljk0zKm9bbHQN2nMhLSGiBiD+rt/DlMAov5D1AVQGqNXe
+	TaQTUihgGA/roCInhNvD5kTHECH0ktl0mrS6djO5xcmk8UlCdjxkWfavOMQ46OmL
+	NOpYolyD0yFDcZ9VO2Ye49djIz+Y1nBSg3YIAdhf7T2+haQnm2zEHTHS9c7MG4AT
+	MvLMXO1lj61ajEyxCe0dOADPRKSweMwQn8Rhd/uoOMfUB2zqcmXk6BXCjUP9pOGI
+	aVW7TJ+0XwgLpNRlZitSiHdZFkDngprX4dx4FSafjjH95L4eGiGlMREbAxsRmPBc
+	IchHDAuYbQpzLiS/oswzyzNoO15HKeLx/sw==
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4bv069j1ut-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Fri, 23 Jan 2026 12:14:52 +0000 (GMT)
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-8c6a5bc8c43so581107185a.2
+        for <linux-clk@vger.kernel.org>; Fri, 23 Jan 2026 04:14:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1769170492; x=1769775292; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=BBFlJ/LfGtg3hOzrf7Xo/5L9Tz24VTUma/0bRXqr9Gc=;
+        b=LDoiNAW+21ciSsgRgfGCfOtldYPjKNGHh1EW7ptf9Z0+NDV20FqBpl3YXu4FSVTuz0
+         fE457UJxRzZbH0GnquHAYt8S+uP1Ppp1L5h7aKspsJyvfqU1ThlUXRfUDGCIwXLz7FUe
+         O97te1HaelFdtV/s9OGa4/LBmaZYwDacceJ6szm7ixYdp8sKgFVBKEUhXFP4qwFVlUm+
+         6ogiJ92EPyAY1b7/2PDxAvJLZNAiE79FlBQyvlYCO9l/HjGgdO0UWqn13+ks0wyVMBKg
+         dtgi1GFSFGYuZhEuIJsnyeZE+V2shMyVEQoUNOTg6FHgbQs3uXbv1LSk31fdiK1hhv3g
+         IDZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1769170492; x=1769775292;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BBFlJ/LfGtg3hOzrf7Xo/5L9Tz24VTUma/0bRXqr9Gc=;
+        b=shW0v3EaA9W4o7SXzcGlx51imaxY4zR3qxRQ9Tq9OmtJRRlVrpviS4sP96EJhlhplR
+         Se1Iwnp7zdzU4vzPrXMpauw3NuCuBEuhmHv0FaUilpzrEbwYR5nySUnLt+r8UjFpyF6K
+         6ZhCy/vqFLYB9RiGfKF4DNTTBcTcnYBLO84UGAU84Ulo6zzZY/tiBnA4ZUDmSlx1CMly
+         31s7IQQHs2MZ4JpnUwHEe8XaNwozbDto4kejPDboyWws1Ffmw7UA8aZTl2A2MmGujASw
+         JTIADiMkSKNp8M5zYBUDdKGqCSHRGkknTyCuoaoJzYGrwm2/oOMnTyI7xHs/5KeoEWwB
+         cdzg==
+X-Forwarded-Encrypted: i=1; AJvYcCVqjO3NnVJNwvFBvbIcXVregzoWfajIyXLu6x/hzyb1GA2gDZEV7NdRgYBlPl1Cw8vgw4AulubOY8A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YysPc8zDqkV3bqXUhuBtKEaeCf5OnoozwLKEm35VBPO7StdMSJE
+	E6DjT5Kw07CKwyRM2SpNnGnhoeOu+yUyNGRNnSx4GGZ74fA6MlE98LnznCG0CXt/VtgichhiCi+
+	g0raXv1XDx8pRxHiEj2Wfg+GBy1v3Ypzs2zxCNQa27GD6VmBIBQXxsi7bbr2lVGk=
+X-Gm-Gg: AZuq6aIZiy+UfwYLzphbhOxvsDl8mNg2pj0egDjvY18XvoZS4l4OzMErIdxNLg9B6SU
+	Jk5NDPBkvPpeIKTd9+SsFYCD91eYHrtH4wK3STNZmeQ2JNMHXH1ObXD9SbBZjCfDFu1osXdySIu
+	UyOau6JIOYmcjjV6k34PePHQtPwNboAbid91nQaC6fnpVC0vazrkvMxhcly1wRlWeMIPLqD479A
+	1u1fr8RN85/X4ND2vV5CH0MD1OdrvSavCerRznUd+1jlNVH+SDf55/Rp1WhsbkJd909QkhKbPQi
+	ZLgLRx1C5U3EcnomDFsPuwIkZ046r2T9itMcWwpiIkH+aKvGlBtA+N3o3Mr3kofyhDfYicmOFQM
+	BnGj5lGVz+XofYI9oyA==
+X-Received: by 2002:a05:620a:4009:b0:8b2:d56a:f2f1 with SMTP id af79cd13be357-8c6e910a882mr103125785a.12.1769170492271;
+        Fri, 23 Jan 2026 04:14:52 -0800 (PST)
+X-Received: by 2002:a05:620a:4009:b0:8b2:d56a:f2f1 with SMTP id af79cd13be357-8c6e910a882mr103121985a.12.1769170491724;
+        Fri, 23 Jan 2026 04:14:51 -0800 (PST)
+Received: from hackbox.lan ([86.121.163.152])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-480470c1dc6sm126122285e9.10.2026.01.23.04.14.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 23 Jan 2026 04:14:51 -0800 (PST)
+From: Abel Vesa <abel.vesa@oss.qualcomm.com>
+To: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: imx@lists.linux.dev, NXP Linux Team <linux-imx@nxp.com>,
+        linux-clk@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] clk: imx: Updates for v6.20
+Date: Fri, 23 Jan 2026 14:14:43 +0200
+Message-ID: <20260123121443.4011649-1-abel.vesa@oss.qualcomm.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260122-atlantis-clocks-v2-3-c66371639e66@oss.tenstorrent.com>
+Content-Transfer-Encoding: 8bit
+X-Authority-Analysis: v=2.4 cv=eLUeTXp1 c=1 sm=1 tr=0 ts=6973663d cx=c_pps
+ a=HLyN3IcIa5EE8TELMZ618Q==:117 a=RUlelSpolvTNyr7Sls5SJA==:17
+ a=vUbySO9Y5rIA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=VwQbUJbxAAAA:8 a=TobBm0t3FEPbU2nNDSsA:9 a=bTQJ7kPSJx9SKPbeHEYW:22
+X-Proofpoint-GUID: yqtFGn_DLFmXCL-4hTJC2EWhcWWQqs1f
+X-Proofpoint-ORIG-GUID: yqtFGn_DLFmXCL-4hTJC2EWhcWWQqs1f
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTIzMDEwMCBTYWx0ZWRfXwdBfhEpUvGjL
+ 5nXVpG+FaxpTborSeqnAk3YAoNzUiNyaML8r3xK54TBMs25RA7ol85LNLgPFb2hkupVeDojNK8l
+ L9tFpegEYAdXScFyBWs7JHb3Pxv4Zc5jKg/rr475/aFxGo3KVBAYk5bH19ngo+ECo4HoC4JBEGT
+ X/S45UOEgPpsFAUAAg4ZtbUGIVLZJFGCUv0m+QfQf6fP7Wyn2+vzl/haTD2W9VVq3lcrt2e5MaL
+ uNtSIDiuR0ix1865RuEYcLBya1BfPJBGDrpDKnRqfb6iwIlt5Q6haKiAdd8ZZwCoB/RjRMh6BJr
+ UYsUGt7HU9/GyJ3qB8CMkAUuOWPFeAB6ChCBnr8Pqa6t8DuRQPOJqQhF/2mAA7f9oTGCtpAi6E1
+ 4r+tdOy+do0rB4+Q9Ywo84P6NwcnIycy6LlW/M7QgsKvz9abZ/tj2UqcEkPBX5F+VlGjYqpU8dj
+ GI+xTP815WkeNEHFd4A==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.20,FMLib:17.12.100.49
+ definitions=2026-01-23_02,2026-01-22_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 priorityscore=1501 adultscore=0 impostorscore=0 clxscore=1015
+ phishscore=0 lowpriorityscore=0 suspectscore=0 bulkscore=0 spamscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2601150000 definitions=main-2601230100
 
-Hi Anirudh,
+The following changes since commit 8f0b4cce4481fb22653697cced8d0d04027cb1e8:
 
-kernel test robot noticed the following build errors:
+  Linux 6.19-rc1 (2025-12-14 16:05:07 +1200)
 
-[auto build test ERROR on 9448598b22c50c8a5bb77a9103e2d49f134c9578]
+are available in the Git repository at:
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Anirudh-Srinivasan/dt-bindings-soc-tenstorrent-Add-tenstorrent-atlantis-syscon/20260123-064135
-base:   9448598b22c50c8a5bb77a9103e2d49f134c9578
-patch link:    https://lore.kernel.org/r/20260122-atlantis-clocks-v2-3-c66371639e66%40oss.tenstorrent.com
-patch subject: [PATCH v2 3/3] clk: tenstorrent: Add Atlantis clock controller driver
-config: um-allmodconfig (https://download.01.org/0day-ci/archive/20260123/202601231918.PQTTcbRG-lkp@intel.com/config)
-compiler: clang version 19.1.7 (https://github.com/llvm/llvm-project cd708029e0b2869e80abe31ddb175f7c35361f90)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260123/202601231918.PQTTcbRG-lkp@intel.com/reproduce)
+  git://git.kernel.org/pub/scm/linux/kernel/git/abelvesa/linux.git/ tags/clk-imx-6.20
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202601231918.PQTTcbRG-lkp@intel.com/
+for you to fetch changes up to 3e6b0227b93c708e93e33f6c3485bad077650766:
 
-All errors (new ones prefixed by >>):
+  clk: imx: fracn-gppll: Add 241.90 MHz Support (2026-01-17 22:17:10 +0200)
 
-   In file included from drivers/clk/tenstorrent/atlantis-ccu.c:12:
-   In file included from include/linux/regmap.h:20:
-   In file included from include/linux/iopoll.h:14:
-   In file included from include/linux/io.h:12:
-   In file included from arch/um/include/asm/io.h:24:
-   include/asm-generic/io.h:1209:55: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-    1209 |         return (port > MMIO_UPPER_LIMIT) ? NULL : PCI_IOBASE + port;
-         |                                                   ~~~~~~~~~~ ^
->> drivers/clk/tenstorrent/atlantis-ccu.c:832:2: error: call to undeclared function 'kfree'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-     832 |         kfree(to_atlantis_ccu_adev(adev));
-         |         ^
->> drivers/clk/tenstorrent/atlantis-ccu.c:852:10: error: call to undeclared function 'kzalloc'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-     852 |         cadev = kzalloc(sizeof(*cadev), GFP_KERNEL);
-         |                 ^
->> drivers/clk/tenstorrent/atlantis-ccu.c:852:8: error: incompatible integer to pointer conversion assigning to 'struct atlantis_ccu_adev *' from 'int' [-Wint-conversion]
-     852 |         cadev = kzalloc(sizeof(*cadev), GFP_KERNEL);
-         |               ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/clk/tenstorrent/atlantis-ccu.c:877:2: error: call to undeclared function 'kfree'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-     877 |         kfree(cadev);
-         |         ^
-   1 warning and 4 errors generated.
+----------------------------------------------------------------
+i.MX clocks changes for 6.20
 
+- Add support for 241.90 MHz and 332.60 MHz to the fractional-N
+  General-Purpose PLL (GPPLL).
 
-vim +/kfree +832 drivers/clk/tenstorrent/atlantis-ccu.c
+----------------------------------------------------------------
+Marco Felsch (2):
+      clk: imx: fracn-gppll: Add 332.60 MHz Support
+      clk: imx: fracn-gppll: Add 241.90 MHz Support
 
-   827	
-   828	static void atlantis_cadev_release(struct device *dev)
-   829	{
-   830		struct auxiliary_device *adev = to_auxiliary_dev(dev);
-   831	
- > 832		kfree(to_atlantis_ccu_adev(adev));
-   833	}
-   834	
-   835	static void atlantis_adev_unregister(void *data)
-   836	{
-   837		struct auxiliary_device *adev = data;
-   838	
-   839		auxiliary_device_delete(adev);
-   840		auxiliary_device_uninit(adev);
-   841	}
-   842	
-   843	static int atlantis_ccu_adev_register(struct device *dev,
-   844					      struct atlantis_ccu *ccu,
-   845					      const struct atlantis_ccu_data *data,
-   846					      const char *adev_name)
-   847	{
-   848		struct atlantis_ccu_adev *cadev;
-   849		struct auxiliary_device *adev;
-   850		int ret;
-   851	
- > 852		cadev = kzalloc(sizeof(*cadev), GFP_KERNEL);
-   853		if (!cadev)
-   854			return -ENOMEM;
-   855	
-   856		cadev->regmap = ccu->regmap;
-   857	
-   858		adev = &cadev->adev;
-   859		adev->name = adev_name;
-   860		adev->dev.parent = dev;
-   861		adev->dev.release = atlantis_cadev_release;
-   862		adev->dev.of_node = dev->of_node;
-   863	
-   864		ret = auxiliary_device_init(adev);
-   865		if (ret)
-   866			goto err_free_cadev;
-   867	
-   868		ret = auxiliary_device_add(adev);
-   869		if (ret) {
-   870			auxiliary_device_uninit(adev);
-   871			return ret;
-   872		}
-   873	
-   874		return devm_add_action_or_reset(dev, atlantis_adev_unregister, adev);
-   875	
-   876	err_free_cadev:
-   877		kfree(cadev);
-   878	
-   879		return ret;
-   880	}
-   881	static int atlantis_ccu_probe(struct platform_device *pdev)
-   882	{
-   883		const struct atlantis_ccu_data *data;
-   884		struct device *dev = &pdev->dev;
-   885		int ret;
-   886	
-   887		struct atlantis_ccu *ccu = devm_kzalloc(dev, sizeof(*ccu), GFP_KERNEL);
-   888	
-   889		if (!ccu)
-   890			return -ENOMEM;
-   891	
-   892		ccu->dev = dev;
-   893	
-   894		ccu->base = devm_platform_ioremap_resource(pdev, 0);
-   895		if (IS_ERR(ccu->base))
-   896			return dev_err_probe(dev, PTR_ERR(ccu->base),
-   897					     "Failed to map registers\n");
-   898	
-   899		ccu->regmap = devm_regmap_init_mmio(dev, ccu->base,
-   900						    &atlantis_ccu_regmap_config);
-   901		if (IS_ERR(ccu->regmap))
-   902			return dev_err_probe(dev, PTR_ERR(ccu->regmap),
-   903					     "Failed to init regmap\n");
-   904	
-   905		data = of_device_get_match_data(dev);
-   906	
-   907		ret = atlantis_ccu_clocks_register(dev, ccu, data);
-   908		if (ret)
-   909			return dev_err_probe(dev, ret, "failed to register clocks\n");
-   910	
-   911		ret = atlantis_ccu_adev_register(dev, ccu, data, data->reset_name);
-   912		if (ret)
-   913			return dev_err_probe(dev, ret, "failed to register resets\n");
-   914	
-   915		return 0;
-   916	}
-   917	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+ drivers/clk/imx/clk-fracn-gppll.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
