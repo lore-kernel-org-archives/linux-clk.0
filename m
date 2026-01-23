@@ -1,103 +1,122 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B01E27CCF0;
-	Fri, 23 Jan 2026 15:38:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A1F726CE11
+	for <linux-clk@vger.kernel.org>; Fri, 23 Jan 2026 15:44:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769182713; cv=none; b=HqCDG+zSadlJCuRn1IAeN5vsghmsf5d5bIM+nDYkcsgF9eWAKTyuzr4ELcEIZxrUBKoFPaKBeEmBzq1ycHh0TOE8hjZXSDWqNf1QYs3wdQHK+ZZvkB4uVf8MAXLBNnJjaGF/UK0qZUxfXnxAeyb5dYuzAou34vpb+B1xqa/JNHs=
+	t=1769183102; cv=none; b=S0PLMoJTCOojOOS8+bD4jXC+npDkYn/XqDRFXdrdnhvX+duuRZX4A3qe+ABjhWPVyzieKkfnJ4+YQvWmNAqCgjrjboSN0v4xfcSeq+mV/scrwQhgiX209LR8S5RuKFlhoQwEh1lT73OBrulWuI5EghIQxGPtt7dWyEAZUo6ocMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769182713; c=relaxed/simple;
-	bh=USnlgfT/ZGNTEXTWlzmQfKhta1kQIV4DdpxEHcZH41I=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=rm0vDSqsV+KCqchXEcwoHKS2qLbFXPnHx6bXshLwAS7U0HxcwnrEuNeig+fddyPylPKDyVljX3ZFnBqXoUmJYC4uXvSQdDtiGUIRXbJgnV8b0yAROAHxvYYFtvDdMXugGm5JA3Zy2/k+FbNbv0wkUBgcoqfGnuH+5kq2g51+6fI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GdI2exVD; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1769183102; c=relaxed/simple;
+	bh=rmrVutlv4IFhsoL1dEYQRQ1A+JNmwztdnll5fkSW1b8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uG4VzhtS9RLKxhH14ODFU8TVxn8qNuLzlJAImapTsNn15LQXy9erTakmMQ0GvwY19c4t/X3m2rR7oNCISuWb4BscdZo2DjxhUAcqt3M8DX78VzwzLBCjCk7zOsmGARK+Uq9aqLfyLZOFKB+JHcyNy/8vpbo3M3zDccvTGZ3uu34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=BPrfNPwX; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GdI2exVD"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BFFE1C4CEF1;
-	Fri, 23 Jan 2026 15:38:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769182712;
-	bh=USnlgfT/ZGNTEXTWlzmQfKhta1kQIV4DdpxEHcZH41I=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=GdI2exVDLt45OOmu3tLo20vyLFAUM1i0ZuPvouchQGcNnKp/iRfsrQBGOfmyUkayk
-	 03+3a8LkMCdLns4Lbw09XWbX5iFHuC4ShYkQQhYjEQjIOQywK6PXiII7QRYQrBhxL5
-	 ddBAOTzK3KPGvl77I2oYiWv7aMQv/ioIBtCsDT/UOnMkEPrs+3ztjjOegCdTnvKd87
-	 U0o/Cbj6Xm0VdTdQ9IVpHlDoTlZGKrvrjomxP2ziTGR9mqxCl4CfYubNCue7ABl4O6
-	 9CEwxNXCLyHASfE0jekDLsMCCdAidbSPcsMtctlulrwfTww5kOm5DaSjmH9Uv7pgSs
-	 +VF/oVAnSayKQ==
-Date: Fri, 23 Jan 2026 09:38:31 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="BPrfNPwX"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=EKIZGMQIyFIPLyCGSOYC7IbcvQsfF7qx2cMcNenv5mQ=; b=BPrfNPwXKh4u+9NJJm2EB9fgcd
+	nck8GtTefULPgGdXxo5a9Lst1ph9Oo8oHXlFr2G2L5mlo1B9405o1sHxThT+iHFiCzPNcQ+lybMo0
+	d4IwoyvwsXG0n6s7/RXUbysRpjZOHlL8+sh9OqUNWibJ/EPOACqoJAEZ/SYzSC8Lyr+do5WWGcVKX
+	QbW4E0yUHbJoUZDwqEp0P7566grUPXwUggUYas9QOJ2EkM4CidYQuCITue97mvk+F4v4B7j9btm4S
+	sX2RRIX8U/1ECP+orelcVg8netSV6iTIkyFMvhqoTmvBeM35ZWRIM/BykptDLwRqcuYuiCsNO7xSv
+	slFW2TgA==;
+Received: from [189.89.57.42] (helo=[192.168.18.14])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1vjJL3-008xSQ-Vv; Fri, 23 Jan 2026 16:44:46 +0100
+Message-ID: <c74a8884-9322-45c8-a960-a6bb1227f553@igalia.com>
+Date: Fri, 23 Jan 2026 12:44:39 -0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linux-clk@vger.kernel.org, biju.das.jz@bp.renesas.com, 
- john.madieu@gmail.com, linux-renesas-soc@vger.kernel.org, 
- kwilczynski@kernel.org, lpieralisi@kernel.org, mani@kernel.org, 
- bhelgaas@google.com, magnus.damm@gmail.com, devicetree@vger.kernel.org, 
- linux-pci@vger.kernel.org, geert+renesas@glider.be, 
- claudiu.beznea.uj@bp.renesas.com, krzk+dt@kernel.org, conor+dt@kernel.org
-To: John Madieu <john.madieu.xa@bp.renesas.com>
-In-Reply-To: <20260123140031.94752-7-john.madieu.xa@bp.renesas.com>
-References: <20260123140031.94752-1-john.madieu.xa@bp.renesas.com>
- <20260123140031.94752-7-john.madieu.xa@bp.renesas.com>
-Message-Id: <176918271191.2157131.3302295737226885391.robh@kernel.org>
-Subject: Re: [PATCH v2 06/15] dt-bindings: PCI: renesas,r9a08g045s33-pcie:
- Document RZ/G3E SoC
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/4] clk: bcm: rpi: Let V3D consumers manage clock rate
+To: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Nicolas Saenz Julienne <nsaenz@kernel.org>,
+ Florian Fainelli <florian.fainelli@broadcom.com>,
+ Stefan Wahren <wahrenst@gmx.net>, Maxime Ripard <mripard@kernel.org>,
+ Iago Toral Quiroga <itoral@igalia.com>,
+ Chema Casanova <jmcasanova@igalia.com>, Dom Cobley <popcornmix@gmail.com>,
+ Dave Stevenson <dave.stevenson@raspberrypi.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, kernel-dev@igalia.com
+References: <20260116-v3d-power-management-v3-0-4e1874e81dd6@igalia.com>
+ <20260116-v3d-power-management-v3-1-4e1874e81dd6@igalia.com>
+Content-Language: en-US
+From: Melissa Wen <mwen@igalia.com>
+In-Reply-To: <20260116-v3d-power-management-v3-1-4e1874e81dd6@igalia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
-On Fri, 23 Jan 2026 15:00:22 +0100, John Madieu wrote:
-> Extend the existing device tree bindings for Renesas RZ/G3S PCIe
-> controller to include support for the RZ/G3E (renesas,r9a09g047e57-pcie) PCIe
-> controller. The RZ/G3E PCIe controller is similar to RZ/G3S but has some key
-> differences:
-> 
->  - Uses a different device ID
->  - Supports PCIe Gen3 (8.0 GT/s) link speeds
->  - Uses a different clock naming (clkpmu vs clkl1pm)
->  - Has a different set of interrupts, interrupt ordering, and reset signals
-> 
-> Add device tree bindings for renesas,r9a09g047e57-pcie compatible IPs.
-> 
-> Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
+
+On 16/01/2026 17:19, Maíra Canal wrote:
+> Remove the `maximize` infrastructure and don't set `minimize` for the
+> V3D clock, giving consumers full control over its rate.
+>
+> On some firmware versions, RPI_FIRMWARE_SET_CLOCK_STATE doesn't
+> actually power off the clock. To achieve meaningful power consumption
+> reduction, consumers need to set the clock rate to minimum before
+> disabling it. Forcing the clock to maximum rate in the clock framework
+> prevents this, as consumers don't have any flexibility over the clock
+> rate.
+>
+> This change enables the v3d driver to control the clock rate directly
+> in its suspend/resume callbacks.
+
+Acked-by: Melissa Wen <mwen@igalia.com>
+
+>
+> Fixes: 6526402b9bac ("clk: bcm: rpi: Maximize V3D clock")
+> Signed-off-by: Maíra Canal <mcanal@igalia.com>
 > ---
-> 
-> Changes:
-> 
-> v2: Reuse G3S names
-> 
->  .../bindings/pci/renesas,r9a08g045-pcie.yaml  | 127 +++++++++++++-----
->  1 file changed, 96 insertions(+), 31 deletions(-)
-> 
-
-My bot found errors running 'make dt_binding_check' on your patch:
-
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pci/renesas,r9a08g045-pcie.yaml: properties:reset-names: {'minItems': 1, 'maxItems': 7, 'items': [{'const': 'aresetn'}, {'const': 'rst_b'}, {'const': 'rst_gp_b'}, {'const': 'rst_ps_b'}, {'const': 'rst_rsm_b'}, {'const': 'rst_cfg_b'}, {'const': 'rst_load_b'}]} should not be valid under {'required': ['maxItems']}
-	hint: "maxItems" is not needed with an "items" list
-	from schema $id: http://devicetree.org/meta-schemas/items.yaml
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.kernel.org/project/devicetree/patch/20260123140031.94752-7-john.madieu.xa@bp.renesas.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+>   drivers/clk/bcm/clk-raspberrypi.c | 5 -----
+>   1 file changed, 5 deletions(-)
+>
+> diff --git a/drivers/clk/bcm/clk-raspberrypi.c b/drivers/clk/bcm/clk-raspberrypi.c
+> index 1a9162f0ae31e330c46f6eafdd00350599b0eede..9783385d5859836898683209e320fcc928dfdc71 100644
+> --- a/drivers/clk/bcm/clk-raspberrypi.c
+> +++ b/drivers/clk/bcm/clk-raspberrypi.c
+> @@ -68,7 +68,6 @@ struct raspberrypi_clk_variant {
+>   	char		*clkdev;
+>   	unsigned long	min_rate;
+>   	bool		minimize;
+> -	bool		maximize;
+>   	u32		flags;
+>   };
+>   
+> @@ -136,7 +135,6 @@ raspberrypi_clk_variants[RPI_FIRMWARE_NUM_CLK_ID] = {
+>   	},
+>   	[RPI_FIRMWARE_V3D_CLK_ID] = {
+>   		.export = true,
+> -		.maximize = true,
+>   	},
+>   	[RPI_FIRMWARE_PIXEL_CLK_ID] = {
+>   		.export = true,
+> @@ -387,9 +385,6 @@ static struct clk_hw *raspberrypi_clk_register(struct raspberrypi_clk *rpi,
+>   		}
+>   	}
+>   
+> -	if (variant->maximize)
+> -		variant->min_rate = max_rate;
+> -
+>   	if (variant->min_rate) {
+>   		unsigned long rate;
+>   
+>
 
