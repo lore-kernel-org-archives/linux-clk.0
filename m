@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6AA72E8897;
-	Fri, 23 Jan 2026 01:41:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A286A2165EA;
+	Fri, 23 Jan 2026 01:43:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769132510; cv=none; b=P3aI6wkcbPInz9dfi1ZtCcegUHr1Qtnr76yOI349tu3MedpTqU+DzDDZDk7sJ4fOZM2UAH0STIAW3DAWc2za7RoIr/x9kGg85zsOvj+FxFfvhULYXG1y/Y0S9S/Sm2cn20FBcCdSfsJO61tIWMhx7NkKsb1yQek/Nx4n2yLB+yM=
+	t=1769132599; cv=none; b=kdmg56TTpmGxWRIbNX65jelLWhPy0vzhEsqwQ1OJaTlI2g7+yG0pPim5MtCnRncBquoBEqjIOEidJRikl7X0OBvYkIXoMZtf7SjVOyeiQ6T0gjkuCAj43062aaKFCjMv8E8Qw96q6nb0joDlji9cbup2AoUdJ7qvc9vmq/uhcIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769132510; c=relaxed/simple;
-	bh=oNjilOE/dRq5dq0Dva4SX0YHGlllIlzGlLtyxlIdKCM=;
+	s=arc-20240116; t=1769132599; c=relaxed/simple;
+	bh=tkthldLffXYVms3wxAD2lbP6j9gBgsHsKO89SXCZQ54=;
 	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=Yz5Jtd6UPKw+Y4LQyVoZvvxXgkmjetkz6+bwD3Gltsm8QI98NgAFjxXasTZwPQURsI8Uzl3wXeRjQ3RXCCNyawH9ImfiesFw+sKIFNL3yJ97m82pwXoHyY9MqEKyovM/S+92iebtchphI7hR9PzSCPmEAdTcHz5kLObIn18VXp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lv8co33U; arc=none smtp.client-ip=10.30.226.201
+	 To:Date:Message-ID; b=d+M6B2L3+IAtIqZa3WZhJi+igyGbgws16l7Y0g1i7A1GwI435iwg1mL4C/aBtYSJeSHnEYEUY/JrzS6q8+C04UM3pxqDeTLQ3xpZM45sUTAnKYmDIFW8mJycrv4pfIMj9oXrcnkMVpujyLMzWEMavOjw+wdBzQTho9aO7MxHRWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uLcTcLra; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lv8co33U"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EF42C116C6;
-	Fri, 23 Jan 2026 01:41:48 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uLcTcLra"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FFEDC116C6;
+	Fri, 23 Jan 2026 01:43:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769132508;
-	bh=oNjilOE/dRq5dq0Dva4SX0YHGlllIlzGlLtyxlIdKCM=;
+	s=k20201202; t=1769132598;
+	bh=tkthldLffXYVms3wxAD2lbP6j9gBgsHsKO89SXCZQ54=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=Lv8co33Usw8jQjJhAI69jkEwgk1TXkprRyXGxi6IsQzVsOJM/UkQBEre44uCo+Q1L
-	 S8/FAlHEtGwFFrocDD+T29+FJMlalvJwqWE+7vFSYOV/bFHp4t/jG3bZINgUpZ849u
-	 OEjNiIi5QhC/X4WGUgkGjHtMRPeURjwQJIpm9RN2pDBkCMeXMvLiBXaPxbCT8EZzVG
-	 ClABQnMnQT5kH4YKo50jcEYUg50g8DdyaREgllg2pAXszUN3M0OO38ql7EJGLJr8Gx
-	 kkp+MRy3IEP2boeXt6O8lUv+J/VzMqZk3xuJq8EYDkKjzDKEgLFUsAgjrwnEfmLCLX
-	 ZMgxc2RsOS8Ug==
+	b=uLcTcLran58oZgank16uYJiybGF0GSvNw1wlsmWRmd2bHG458ZEJRs/yn95lUTUKG
+	 jEgHvG9TzAM/JYI0kmiLz15iIoqy0S6sZ9z/ThLHQv7bczkT6fKcfvUI3QsbORTAb9
+	 A0Dk2RUgIfp49c65Fm9UqVoQ6Fv1uZeLhZUmXyRdVELn9iBbrRIwONnxLVpv5m1tRw
+	 GZMADfi3KLM8zVKcPRtppjOtsOluIS++kqv3uyPT2iqth1PCHtmU/u3H1QVBOXCHl2
+	 wfSLYrMb7yh+PQ5uKc7HTb7EC9qzbyDuHVlL54NKF6YfziHvdQy6oC8Lm2sKIEe+MH
+	 nUY4sL2MTrtWw==
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -34,30 +34,25 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20251121164003.13047-1-johan@kernel.org>
-References: <20251121164003.13047-1-johan@kernel.org>
-Subject: Re: [PATCH] clk: tegra: tegra124-emc: fix device leak on set_rate()
+In-Reply-To: <20251223-mtk-gate-v1-1-e4a489ab33de@collabora.com>
+References: <20251223-mtk-gate-v1-1-e4a489ab33de@collabora.com>
+Subject: Re: [PATCH] clk: mediatek: Drop __initconst from gates
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Mikko Perttunen <mperttunen@nvidia.com>, Miaoqian Lin <linmq006@gmail.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Johan Hovold <johan@kernel.org>, stable@vger.kernel.org
-To: Johan Hovold <johan@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>
-Date: Thu, 22 Jan 2026 18:41:46 -0700
-Message-ID: <176913250651.4027.13580353440284678626@lazor>
+Cc: kernel@collabora.com, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, stable@vger.kernel.org, Sjoerd Simons <sjoerd@collabora.com>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Chen-Yu Tsai <wenst@chromium.org>, Laura Nao <laura.nao@collabora.com>, Matthias Brugger <matthias.bgg@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Sjoerd Simons <sjoerd@collabora.com>
+Date: Thu, 22 Jan 2026 18:43:16 -0700
+Message-ID: <176913259630.4027.12058255654210765589@lazor>
 User-Agent: alot/0.11
 
-Quoting Johan Hovold (2025-11-21 09:40:03)
-> Make sure to drop the reference taken when looking up the EMC device and
-> its driver data on first set_rate().
+Quoting Sjoerd Simons (2025-12-23 04:05:17)
+> Since commit 8ceff24a754a ("clk: mediatek: clk-gate: Refactor
+> mtk_clk_register_gate to use mtk_gate struct") the mtk_gate structs
+> are no longer just used for initialization/registration, but also at
+> runtime. So drop __initconst annotations.
 >=20
-> Note that holding a reference to a device does not prevent its driver
-> data from going away so there is no point in keeping the reference.
->=20
-> Fixes: 2db04f16b589 ("clk: tegra: Add EMC clock driver")
-> Fixes: 6d6ef58c2470 ("clk: tegra: tegra124-emc: Fix missing put_device() =
-call in emc_ensure_emc_driver")
-> Cc: stable@vger.kernel.org      # 4.2: 6d6ef58c2470
-> Cc: Mikko Perttunen <mperttunen@nvidia.com>
-> Cc: Miaoqian Lin <linmq006@gmail.com>
-> Signed-off-by: Johan Hovold <johan@kernel.org>
+> Fixes: 8ceff24a754a ("clk: mediatek: clk-gate: Refactor mtk_clk_register_=
+gate to use mtk_gate struct")
+> Signed-off-by: Sjoerd Simons <sjoerd@collabora.com>
 > ---
 
 Applied to clk-next
