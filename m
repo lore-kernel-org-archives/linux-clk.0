@@ -1,37 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F53A399A79;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4A5639DB05;
 	Fri, 23 Jan 2026 05:55:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769147707; cv=none; b=tdLV9ls8bcrWdTWvhzVafxpgW327CdbXHoWIaE9Ixmd2+uWJN5Q6S+c/EA/LNsZnm8mwWAavmxjwZif/js+ohBL/NgmAjm4iPHZ3LwPR2YP9t8pTJjt/TBnZV6RRnY9cr07oQdMh7XRooxi6V5gG22e+WZD1mlD+mFvvnIqS1v8=
+	t=1769147707; cv=none; b=uWP8Bj0aIi+38JNCcdL4D8OFqYHxdw7zrgYBvW8Jx725l6zI4n5zrcjRgV84EvB/CUXdlXva1RMfRwF9Q6R3syDwGOxb0iSqVnNdIGlaugpWF2SMrY9mpaTV8+mIHN4KS9miKgWulv9uqjlB3WeD4Fu8JhXrsJCzMKkhAzTBMTY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1769147707; c=relaxed/simple;
-	bh=OPAHxT6L/YpmGwvol3LU5y1OXcTWZ7UYnACapgWOtRw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=J3VxRFO54lOLRfqYWcHyk9SxI8l0wHInpMZsu+eW/hzH4HBXelIapkIy7Bk6BrH+Mh3bPcYPUzGffSsfIolFrqrEckTdyshUY0sqKsXfZtKSsGmgNgt1N5hebVAA3uitI6osTK/Vx8DRK2Lr5Wld09zUIHx1APh5+lIBRpup1eM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kg+ZP0jt; arc=none smtp.client-ip=10.30.226.201
+	bh=zHQ4wCU8bGYwasn2b503Clo2bqnsQewMVrK57mvYXGM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=HptiO8NIBsAF0stxsDLq7Ns8gArP2+tEL7iOiGharL27+sXe2LHSskAv472fEfgG3fw1J+zccwX6jyy2M2KxtrUkCr2J3lWqjKefLbm8noWoAFmUaJ1EsuRjTpP7GY+GBr38lEhRglkCIYzBZl6l1146iujtJnSE2WFwe4cveEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YjKoG/WC; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kg+ZP0jt"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 1F6ADC2BCB2;
-	Fri, 23 Jan 2026 05:55:06 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YjKoG/WC"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id CC7DBC19422;
+	Fri, 23 Jan 2026 05:55:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769147706;
-	bh=OPAHxT6L/YpmGwvol3LU5y1OXcTWZ7UYnACapgWOtRw=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=Kg+ZP0jtbTXJ+MnVoa2LR3fjBpqTJSrMhmliORXvxxKvZYLdV7QJyKpo7VVEWlHn0
-	 0Trl9zDBZgxI7D1Dyv04xleOAbKK5lSylzEZ+Cm9Cd2I831OIfoN4956f2B40QZEhC
-	 ocqVED8ywECKP98OP/G9sJaNa+A7djEg3b2aGWKcSsIYhJLSeWwEVeB5w4QbXyoGi+
-	 KLHujTDG9YSANuGmT8WrJwK0ODZufOR59KMvPM/o2Fo7zdjki0kj+xWFM1IlZNADvd
-	 nwtRVxvr6oE5K9gaDCiIWpqwpXRHLBaHUVVmLrMNOFVnTnKO5R8s2KQZLku63q9oCP
-	 7z4ANHCNQnuBQ==
+	s=k20201202; t=1769147705;
+	bh=zHQ4wCU8bGYwasn2b503Clo2bqnsQewMVrK57mvYXGM=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=YjKoG/WCa9QqRsjcCOyjCOBIKYLaYaRZPAR1b+Z8suyQZktMU17LeTj9ed7QK6nGI
+	 diNr/1960EhDV37KaeefTtG0YJq706242mgLQQzQwDsHJ9rGRcIdxuValSkGLLJ2Fc
+	 BlrvtpP8n/V+uCzokJdqXbD9O26/xrwdgjqMznvhSPnFFCypEz0mH5I9APuJKxKPwZ
+	 A6UDQJGIxTwqedEy68PtRvQ9DoYxv8bCpFNRkcVRM3yhSgkiHDZemjhY+iCU52PrNA
+	 HHnCo8DXbf7GiTJRJDcNN0xAIAaaiZJ+4PwBNfxFVSuQBl4ugkf0/zPs9BrcFGaNrU
+	 MQnfKQrSRQ5Bw==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 140E5D6CFBD;
-	Fri, 23 Jan 2026 05:55:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C08CCD6CFBD;
+	Fri, 23 Jan 2026 05:55:05 +0000 (UTC)
 From: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
-Date: Fri, 23 Jan 2026 13:54:58 +0800
-Subject: [PATCH v6 4/5] clk: amlogic: Add A5 PLL clock controller driver
+Subject: [PATCH v6 0/5] clk: amlogic: Add A5 SoC PLLs and Peripheral clock
+Date: Fri, 23 Jan 2026 13:54:54 +0800
+Message-Id: <20260123-a5-clk-v6-0-6d3bbf0ec1ea@amlogic.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -39,10 +39,11 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260123-a5-clk-v6-4-6d3bbf0ec1ea@amlogic.com>
-References: <20260123-a5-clk-v6-0-6d3bbf0ec1ea@amlogic.com>
-In-Reply-To: <20260123-a5-clk-v6-0-6d3bbf0ec1ea@amlogic.com>
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAC4Nc2kC/2XM3QrCMAyG4VuRHltJsrasHnkf4kHMsln8mWwyF
+ Nm9W4VNxMMv5HmfptcuaW/Wi6fpdEh9ai95hOXCyIEvjdpU5W0IyEFEtOytnI628OIiy75wiiY
+ /Xzut0/0T2u7yPqT+1naPT3fA93VKuCkxoAXrVUlcjXsoZcPnU9skWUl7Nu/IQDNEJJghZZh3G
+ Qg1Bqz+oZugR6Byhi5DDSQMzEqu+Id+ggEQvtBnGDnEWlBrAP6F4zi+AMeM3k1JAQAA
 To: Chuan Liu <chuan.liu@amlogic.com>, 
  Michael Turquette <mturquette@baylibre.com>, 
  Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
@@ -57,11 +58,11 @@ Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
  devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org, 
  linux-arm-kernel@lists.infradead.org
 X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1769147703; l=13618;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1769147703; l=3892;
  i=chuan.liu@amlogic.com; s=20240902; h=from:subject:message-id;
- bh=6qot9jHTh2G8KC0NAvSqOCQ3iNxhCRriWk4X3hP70qQ=;
- b=qeuoYFzd+JglH+iKd4LNwf6BNfOjODz8BHxw+b+sf3NIjqVovibxyk3hyt4xIYZ9YjMkM6YHP
- VI0V3pcF7IsC1o3Xo/17CooIZaYUC9taRnpNcIbQqEBfr1uZUzu2J5U
+ bh=zHQ4wCU8bGYwasn2b503Clo2bqnsQewMVrK57mvYXGM=;
+ b=rLw2OixInyvP6GpRqMjLEO0pWPScYdXXlias5U6jFnZ0M8x6/3iQvZ6SGzvJJKfZeloPaBhtB
+ UYtpJtH9qK7D4DyOypRNPByMZoAmm6ithjyi14DvXVS9RqRLfCY5Zse
 X-Developer-Key: i=chuan.liu@amlogic.com; a=ed25519;
  pk=fnKDB+81SoWGKW2GJNFkKy/ULvsDmJZRGBE7pR5Xcpo=
 X-Endpoint-Received: by B4 Relay for chuan.liu@amlogic.com/20240902 with
@@ -69,542 +70,89 @@ X-Endpoint-Received: by B4 Relay for chuan.liu@amlogic.com/20240902 with
 X-Original-From: Chuan Liu <chuan.liu@amlogic.com>
 Reply-To: chuan.liu@amlogic.com
 
-From: Chuan Liu <chuan.liu@amlogic.com>
+The patchset adds support for the peripheral and PLL clock controller
+on the Amlogic A5 SoC family, such as A113X2.
 
-Add the PLL clock controller driver for the Amlogic A5 SoC family.
+To make it easier for the maintainer to manage the patches, the
+DTS-related commits have been removed from this version of the
+patchset.
+
+For the convenience of the maintainer and reviewers, the DTS patches
+have been pushed to github separately for reference [1], [2], [3], and
+they will be submitted upstream separately after this patchset is
+merged. I hope this does not cause any additional inconvenience.
+
+[1] https://github.com/chuan-aml/linux/commit/edb8fa5e13ca35b37363fe08d8067511613968cd
+[2] https://github.com/chuan-aml/linux/commit/c600dadb45f581e200991dd0beacf3575ff971f1
+[3] https://github.com/chuan-aml/linux/commit/7d373cf78e22ee767a5232010d0a0568e7228086
 
 Co-developed-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
 Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
 Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
+
 ---
- drivers/clk/meson/Kconfig  |  14 ++
- drivers/clk/meson/Makefile |   1 +
- drivers/clk/meson/a5-pll.c | 478 +++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 493 insertions(+)
+Changes in v6:
+- Use unified macros for sys_clk/axi_clk.
+- Remove DTS changes to ease maintainer patch management.
+- Link to v5: https://lore.kernel.org/r/20260108-a5-clk-v5-0-9a69fc1ef00a@amlogic.com
 
-diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
-index 71481607a6d5..b627821da081 100644
---- a/drivers/clk/meson/Kconfig
-+++ b/drivers/clk/meson/Kconfig
-@@ -132,6 +132,20 @@ config COMMON_CLK_A1_PERIPHERALS
- 	  device, A1 SoC Family. Say Y if you want A1 Peripherals clock
- 	  controller to work.
- 
-+config COMMON_CLK_A5_PLL
-+	tristate "Amlogic A5 PLL clock controller"
-+	depends on ARM64
-+	default ARCH_MESON
-+	select COMMON_CLK_MESON_REGMAP
-+	select COMMON_CLK_MESON_PLL
-+	select COMMON_CLK_MESON_MPLL
-+	select COMMON_CLK_MESON_CLKC_UTILS
-+	imply COMMON_CLK_SCMI
-+	help
-+	  Support for the PLL clock controller on Amlogic  A113X2 device, AKA A5.
-+	  Say Y if you want the board to work, because PLLs are the parent
-+	  of most peripherals.
-+
- config COMMON_CLK_C3_PLL
- 	tristate "Amlogic C3 PLL clock controller"
- 	depends on ARM64
-diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
-index c6998e752c68..a074aa7e187f 100644
---- a/drivers/clk/meson/Makefile
-+++ b/drivers/clk/meson/Makefile
-@@ -19,6 +19,7 @@ obj-$(CONFIG_COMMON_CLK_AXG) += axg.o axg-aoclk.o
- obj-$(CONFIG_COMMON_CLK_AXG_AUDIO) += axg-audio.o
- obj-$(CONFIG_COMMON_CLK_A1_PLL) += a1-pll.o
- obj-$(CONFIG_COMMON_CLK_A1_PERIPHERALS) += a1-peripherals.o
-+obj-$(CONFIG_COMMON_CLK_A5_PLL) += a5-pll.o
- obj-$(CONFIG_COMMON_CLK_C3_PLL) += c3-pll.o
- obj-$(CONFIG_COMMON_CLK_C3_PERIPHERALS) += c3-peripherals.o
- obj-$(CONFIG_COMMON_CLK_GXBB) += gxbb.o gxbb-aoclk.o
-diff --git a/drivers/clk/meson/a5-pll.c b/drivers/clk/meson/a5-pll.c
-new file mode 100644
-index 000000000000..fd9a0e92ba1e
---- /dev/null
-+++ b/drivers/clk/meson/a5-pll.c
-@@ -0,0 +1,478 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Amlogic A5 PLL Controller Driver
-+ *
-+ * Copyright (c) 2024-2025 Amlogic, inc.
-+ * Author: Chuan Liu <chuan.liu@amlogic.com>
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/platform_device.h>
-+#include "clk-regmap.h"
-+#include "clk-pll.h"
-+#include "clk-mpll.h"
-+#include "meson-clkc-utils.h"
-+#include <dt-bindings/clock/amlogic,a5-pll-clkc.h>
-+
-+#define GP0PLL_CTRL0			0x80
-+#define GP0PLL_CTRL1			0x84
-+#define GP0PLL_CTRL2			0x88
-+#define GP0PLL_CTRL3			0x8c
-+#define GP0PLL_CTRL4			0x90
-+#define GP0PLL_CTRL5			0x94
-+#define GP0PLL_CTRL6			0x98
-+
-+#define HIFIPLL_CTRL0			0x100
-+#define HIFIPLL_CTRL1			0x104
-+#define HIFIPLL_CTRL2			0x108
-+#define HIFIPLL_CTRL3			0x10c
-+#define HIFIPLL_CTRL4			0x110
-+#define HIFIPLL_CTRL5			0x114
-+#define HIFIPLL_CTRL6			0x118
-+
-+#define MPLL_CTRL0			0x180
-+#define MPLL_CTRL1			0x184
-+#define MPLL_CTRL2			0x188
-+#define MPLL_CTRL3			0x18c
-+#define MPLL_CTRL4			0x190
-+#define MPLL_CTRL5			0x194
-+#define MPLL_CTRL6			0x198
-+#define MPLL_CTRL7			0x19c
-+#define MPLL_CTRL8			0x1a0
-+
-+static struct clk_fixed_factor a5_mpll_prediv = {
-+	.mult = 1,
-+	.div = 2,
-+	.hw.init = &(struct clk_init_data){
-+		.name = "mpll_prediv",
-+		.ops = &clk_fixed_factor_ops,
-+		.parent_data = &(const struct clk_parent_data) {
-+			.fw_name = "fix_dco"
-+		},
-+		.num_parents = 1,
-+	},
-+};
-+
-+static const struct reg_sequence a5_mpll0_init_regs[] = {
-+	{ .reg = MPLL_CTRL2,	.def = 0x40000033 },
-+};
-+
-+static struct clk_regmap a5_mpll0_div = {
-+	.data = &(struct meson_clk_mpll_data){
-+		.sdm = {
-+			.reg_off = MPLL_CTRL1,
-+			.shift   = 0,
-+			.width   = 14,
-+		},
-+		.sdm_en = {
-+			.reg_off = MPLL_CTRL1,
-+			.shift   = 30,
-+			.width	 = 1,
-+		},
-+		.n2 = {
-+			.reg_off = MPLL_CTRL1,
-+			.shift   = 20,
-+			.width   = 9,
-+		},
-+		.ssen = {
-+			.reg_off = MPLL_CTRL1,
-+			.shift   = 29,
-+			.width	 = 1,
-+		},
-+		.init_regs = a5_mpll0_init_regs,
-+		.init_count = ARRAY_SIZE(a5_mpll0_init_regs),
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "mpll0_div",
-+		.ops = &meson_clk_mpll_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&a5_mpll_prediv.hw
-+		},
-+		.num_parents = 1,
-+	},
-+};
-+
-+static struct clk_regmap a5_mpll0 = {
-+	.data = &(struct clk_regmap_gate_data){
-+		.offset = MPLL_CTRL1,
-+		.bit_idx = 31,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "mpll0",
-+		.ops = &clk_regmap_gate_ops,
-+		.parent_hws = (const struct clk_hw *[]) { &a5_mpll0_div.hw },
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static const struct reg_sequence a5_mpll1_init_regs[] = {
-+	{ .reg = MPLL_CTRL4,	.def = 0x40000033 },
-+};
-+
-+static struct clk_regmap a5_mpll1_div = {
-+	.data = &(struct meson_clk_mpll_data){
-+		.sdm = {
-+			.reg_off = MPLL_CTRL3,
-+			.shift   = 0,
-+			.width   = 14,
-+		},
-+		.sdm_en = {
-+			.reg_off = MPLL_CTRL3,
-+			.shift   = 30,
-+			.width	 = 1,
-+		},
-+		.n2 = {
-+			.reg_off = MPLL_CTRL3,
-+			.shift   = 20,
-+			.width   = 9,
-+		},
-+		.ssen = {
-+			.reg_off = MPLL_CTRL3,
-+			.shift   = 29,
-+			.width	 = 1,
-+		},
-+		.init_regs = a5_mpll1_init_regs,
-+		.init_count = ARRAY_SIZE(a5_mpll1_init_regs),
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "mpll1_div",
-+		.ops = &meson_clk_mpll_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&a5_mpll_prediv.hw
-+		},
-+		.num_parents = 1,
-+	},
-+};
-+
-+static struct clk_regmap a5_mpll1 = {
-+	.data = &(struct clk_regmap_gate_data){
-+		.offset = MPLL_CTRL3,
-+		.bit_idx = 31,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "a5_mpll1",
-+		.ops = &clk_regmap_gate_ops,
-+		.parent_hws = (const struct clk_hw *[]) { &a5_mpll1_div.hw },
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static const struct reg_sequence a5_mpll2_init_regs[] = {
-+	{ .reg = MPLL_CTRL6,	.def = 0x40000033 },
-+};
-+
-+static struct clk_regmap a5_mpll2_div = {
-+	.data = &(struct meson_clk_mpll_data){
-+		.sdm = {
-+			.reg_off = MPLL_CTRL5,
-+			.shift   = 0,
-+			.width   = 14,
-+		},
-+		.sdm_en = {
-+			.reg_off = MPLL_CTRL5,
-+			.shift   = 30,
-+			.width	 = 1,
-+		},
-+		.n2 = {
-+			.reg_off = MPLL_CTRL5,
-+			.shift   = 20,
-+			.width   = 9,
-+		},
-+		.ssen = {
-+			.reg_off = MPLL_CTRL5,
-+			.shift   = 29,
-+			.width	 = 1,
-+		},
-+		.init_regs = a5_mpll2_init_regs,
-+		.init_count = ARRAY_SIZE(a5_mpll2_init_regs),
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "mpll2_div",
-+		.ops = &meson_clk_mpll_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&a5_mpll_prediv.hw
-+		},
-+		.num_parents = 1,
-+	},
-+};
-+
-+static struct clk_regmap a5_mpll2 = {
-+	.data = &(struct clk_regmap_gate_data){
-+		.offset = MPLL_CTRL5,
-+		.bit_idx = 31,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "mpll2",
-+		.ops = &clk_regmap_gate_ops,
-+		.parent_hws = (const struct clk_hw *[]) { &a5_mpll2_div.hw },
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static const struct reg_sequence a5_mpll3_init_regs[] = {
-+	{ .reg = MPLL_CTRL8,	.def = 0x40000033 },
-+};
-+
-+static struct clk_regmap a5_mpll3_div = {
-+	.data = &(struct meson_clk_mpll_data){
-+		.sdm = {
-+			.reg_off = MPLL_CTRL7,
-+			.shift   = 0,
-+			.width   = 14,
-+		},
-+		.sdm_en = {
-+			.reg_off = MPLL_CTRL7,
-+			.shift   = 30,
-+			.width	 = 1,
-+		},
-+		.n2 = {
-+			.reg_off = MPLL_CTRL7,
-+			.shift   = 20,
-+			.width   = 9,
-+		},
-+		.ssen = {
-+			.reg_off = MPLL_CTRL7,
-+			.shift   = 29,
-+			.width	 = 1,
-+		},
-+		.init_regs = a5_mpll3_init_regs,
-+		.init_count = ARRAY_SIZE(a5_mpll3_init_regs),
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "mpll3_div",
-+		.ops = &meson_clk_mpll_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&a5_mpll_prediv.hw
-+		},
-+		.num_parents = 1,
-+	},
-+};
-+
-+static struct clk_regmap a5_mpll3 = {
-+	.data = &(struct clk_regmap_gate_data){
-+		.offset = MPLL_CTRL7,
-+		.bit_idx = 31,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "mpll3",
-+		.ops = &clk_regmap_gate_ops,
-+		.parent_hws = (const struct clk_hw *[]) { &a5_mpll3_div.hw },
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static const struct reg_sequence a5_gp0_init_regs[] = {
-+	{ .reg = GP0PLL_CTRL3, .def = 0x6a295c00 },
-+	{ .reg = GP0PLL_CTRL4, .def = 0x65771290 },
-+	{ .reg = GP0PLL_CTRL5, .def = 0x3927200a },
-+	{ .reg = GP0PLL_CTRL6, .def = 0x54540000 }
-+};
-+
-+static const struct pll_mult_range a5_gp0_pll_mult_range = {
-+	.min = 125,
-+	.max = 250,
-+};
-+
-+static struct clk_regmap a5_gp0_pll_dco = {
-+	.data = &(struct meson_clk_pll_data) {
-+		.en = {
-+			.reg_off = GP0PLL_CTRL0,
-+			.shift   = 28,
-+			.width   = 1,
-+		},
-+		.m = {
-+			.reg_off = GP0PLL_CTRL0,
-+			.shift   = 0,
-+			.width   = 8,
-+		},
-+		.frac = {
-+			.reg_off = GP0PLL_CTRL1,
-+			.shift   = 0,
-+			.width   = 17,
-+		},
-+		.n = {
-+			.reg_off = GP0PLL_CTRL0,
-+			.shift   = 10,
-+			.width   = 5,
-+		},
-+		.l = {
-+			.reg_off = GP0PLL_CTRL0,
-+			.shift   = 31,
-+			.width   = 1,
-+		},
-+		.rst = {
-+			.reg_off = GP0PLL_CTRL0,
-+			.shift   = 29,
-+			.width   = 1,
-+		},
-+		.range = &a5_gp0_pll_mult_range,
-+		.init_regs = a5_gp0_init_regs,
-+		.init_count = ARRAY_SIZE(a5_gp0_init_regs),
-+		.frac_max = 100000,
-+	},
-+	.hw.init = &(struct clk_init_data) {
-+		.name = "gp0_pll_dco",
-+		.ops = &meson_clk_pll_ops,
-+		.parent_data = &(const struct clk_parent_data) {
-+			.fw_name = "xtal",
-+		},
-+		.num_parents = 1,
-+	},
-+};
-+
-+/* The maximum frequency divider supports is 32, not 128(2^7) */
-+static const struct clk_div_table a5_gp0_pll_od_table[] = {
-+	{ 0,  1 },
-+	{ 1,  2 },
-+	{ 2,  4 },
-+	{ 3,  8 },
-+	{ 4, 16 },
-+	{ 5, 32 },
-+	{ /* sentinel */ }
-+};
-+
-+static struct clk_regmap a5_gp0_pll = {
-+	.data = &(struct clk_regmap_div_data) {
-+		.offset = GP0PLL_CTRL0,
-+		.shift = 16,
-+		.width = 3,
-+		.table = a5_gp0_pll_od_table,
-+	},
-+	.hw.init = &(struct clk_init_data) {
-+		.name = "gp0_pll",
-+		.ops = &clk_regmap_divider_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&a5_gp0_pll_dco.hw
-+		},
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static const struct reg_sequence a5_hifi_init_regs[] = {
-+	{ .reg = HIFIPLL_CTRL3, .def = 0x6a285c00 },
-+	{ .reg = HIFIPLL_CTRL4, .def = 0x65771290 },
-+	{ .reg = HIFIPLL_CTRL5, .def = 0x3927200a },
-+	{ .reg = HIFIPLL_CTRL6, .def = 0x56540000 }
-+};
-+
-+static const struct pll_mult_range a5_hifi_pll_mult_range = {
-+	.min = 125,
-+	.max = 250,
-+};
-+
-+static struct clk_regmap a5_hifi_pll_dco = {
-+	.data = &(struct meson_clk_pll_data) {
-+		.en = {
-+			.reg_off = HIFIPLL_CTRL0,
-+			.shift   = 28,
-+			.width   = 1,
-+		},
-+		.m = {
-+			.reg_off = HIFIPLL_CTRL0,
-+			.shift   = 0,
-+			.width   = 8,
-+		},
-+		.frac = {
-+			.reg_off = HIFIPLL_CTRL1,
-+			.shift   = 0,
-+			.width   = 17,
-+		},
-+		.n = {
-+			.reg_off = HIFIPLL_CTRL0,
-+			.shift   = 10,
-+			.width   = 5,
-+		},
-+		.l = {
-+			.reg_off = HIFIPLL_CTRL0,
-+			.shift   = 31,
-+			.width   = 1,
-+		},
-+		.rst = {
-+			.reg_off = HIFIPLL_CTRL0,
-+			.shift   = 29,
-+			.width   = 1,
-+		},
-+		.range = &a5_hifi_pll_mult_range,
-+		.init_regs = a5_hifi_init_regs,
-+		.init_count = ARRAY_SIZE(a5_hifi_init_regs),
-+		.frac_max = 100000,
-+		.flags = CLK_MESON_PLL_ROUND_CLOSEST,
-+	},
-+	.hw.init = &(struct clk_init_data) {
-+		.name = "hifi_pll_dco",
-+		.ops = &meson_clk_pll_ops,
-+		.parent_data = &(const struct clk_parent_data) {
-+			.fw_name = "xtal",
-+		},
-+		.num_parents = 1,
-+	},
-+};
-+
-+static struct clk_regmap a5_hifi_pll = {
-+	.data = &(struct clk_regmap_div_data) {
-+		.offset = HIFIPLL_CTRL0,
-+		.shift = 16,
-+		.width = 2,
-+		.flags = CLK_DIVIDER_POWER_OF_TWO,
-+	},
-+	.hw.init = &(struct clk_init_data) {
-+		.name = "hifi_pll",
-+		.ops = &clk_regmap_divider_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&a5_hifi_pll_dco.hw
-+		},
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static struct clk_hw *a5_pll_hw_clks[] = {
-+	[CLKID_MPLL_PREDIV]	= &a5_mpll_prediv.hw,
-+	[CLKID_MPLL0_DIV]	= &a5_mpll0_div.hw,
-+	[CLKID_MPLL0]		= &a5_mpll0.hw,
-+	[CLKID_MPLL1_DIV]	= &a5_mpll1_div.hw,
-+	[CLKID_MPLL1]		= &a5_mpll1.hw,
-+	[CLKID_MPLL2_DIV]	= &a5_mpll2_div.hw,
-+	[CLKID_MPLL2]		= &a5_mpll2.hw,
-+	[CLKID_MPLL3_DIV]	= &a5_mpll3_div.hw,
-+	[CLKID_MPLL3]		= &a5_mpll3.hw,
-+	[CLKID_GP0_PLL_DCO]	= &a5_gp0_pll_dco.hw,
-+	[CLKID_GP0_PLL]		= &a5_gp0_pll.hw,
-+	[CLKID_HIFI_PLL_DCO]	= &a5_hifi_pll_dco.hw,
-+	[CLKID_HIFI_PLL]	= &a5_hifi_pll.hw
-+};
-+
-+static const struct meson_clkc_data a5_pll_clkc_data = {
-+	.hw_clks = {
-+		.hws = a5_pll_hw_clks,
-+		.num = ARRAY_SIZE(a5_pll_hw_clks),
-+	},
-+};
-+
-+static const struct of_device_id a5_pll_clkc_match_table[] = {
-+	{
-+		.compatible = "amlogic,a5-pll-clkc",
-+		.data = &a5_pll_clkc_data,
-+	},
-+	{}
-+};
-+MODULE_DEVICE_TABLE(of, a5_pll_clkc_match_table);
-+
-+static struct platform_driver a5_pll_clkc_driver = {
-+	.probe = meson_clkc_mmio_probe,
-+	.driver = {
-+		.name = "a5-pll-clkc",
-+		.of_match_table = a5_pll_clkc_match_table,
-+	},
-+};
-+module_platform_driver(a5_pll_clkc_driver);
-+
-+MODULE_DESCRIPTION("Amlogic A5 PLL Clock Controller driver");
-+MODULE_AUTHOR("Chuan Liu <chuan.liu@amlogic.com>");
-+MODULE_LICENSE("GPL");
-+MODULE_IMPORT_NS("CLK_MESON");
+Changes in v5:
+- Add “Co-developed-by” tag for Xianwei.
+- Change rtc_clk flags to CLK_SET_RATE_NO_REPARENT.
+- Optimize the macro definitions for clock configuration.
+- Unified naming of clock parent related variables.
+- Link to v4: https://lore.kernel.org/r/20251028-a5-clk-v4-0-e62ca0aae243@amlogic.com
 
+Changes in v4:
+- dt-binding for peripheral clocks (kept Rob’s 'Reviewed-by' here):
+  - Added optional clock source rtc pll.
+  - Renamed rtc_clk’s clkid to better reflect its function.
+- PLL/Clock driver:
+  - Adapted to Jerome’s refactored driver interface, naming
+conventions, and macros.
+  - Updated related CONFIG entries in Kconfig.
+- Added dts patch of PLL/Clock.
+- Link to v3: https://lore.kernel.org/r/20250103-a5-clk-v3-0-a207ce83b9e9@amlogic.com
+
+Changes in v3:
+- Rename xtal_24m to xtal, and modify some description of Kconfig.
+- Drop some comment of PLL source code.
+- Move definition of A5_CLK_GATE_FW frome common code into A5 peripheral source code.
+- Use hw instead of name to describe parent_data.
+- Making SCMI binding the first to submit.
+- Link to v2: https://lore.kernel.org/r/20241120-a5-clk-v2-0-1208621e961d@amlogic.com
+
+Changes in v2:
+- Move some sys clock and axi clock from peripheral to scmi impletement.
+- Remove  ARM_SCMI_PROTOCOL in Kconfig and correct name A5 but not A4.
+- Add two optional clock inputs for the peripheral(ddr pll and clk-measure)
+- Make some changes and adjustments according to suggestions.
+- Link to v1: https://lore.kernel.org/r/20240914-a5-clk-v1-0-5ee2c4f1b08c@amlogic.com
+
+---
+Chuan Liu (5):
+      dt-bindings: clock: Add Amlogic A5 SCMI clock controller support
+      dt-bindings: clock: Add Amlogic A5 PLL clock controller
+      dt-bindings: clock: Add Amlogic A5 peripherals clock controller
+      clk: amlogic: Add A5 PLL clock controller driver
+      clk: amlogic: Add A5 clock peripherals controller driver
+
+ .../clock/amlogic,a5-peripherals-clkc.yaml         | 134 ++++
+ .../bindings/clock/amlogic,a5-pll-clkc.yaml        |  63 ++
+ drivers/clk/meson/Kconfig                          |  27 +
+ drivers/clk/meson/Makefile                         |   2 +
+ drivers/clk/meson/a5-peripherals.c                 | 781 +++++++++++++++++++++
+ drivers/clk/meson/a5-pll.c                         | 478 +++++++++++++
+ .../clock/amlogic,a5-peripherals-clkc.h            | 132 ++++
+ include/dt-bindings/clock/amlogic,a5-pll-clkc.h    |  24 +
+ include/dt-bindings/clock/amlogic,a5-scmi-clkc.h   |  44 ++
+ 9 files changed, 1685 insertions(+)
+---
+base-commit: f0b9d8eb98dfee8d00419aa07543bdc2c1a44fb1
+change-id: 20240911-a5-clk-35c49acb34e1
+
+Best regards,
 -- 
-2.42.0
+Chuan Liu <chuan.liu@amlogic.com>
 
 
