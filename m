@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1FF53033E2;
-	Fri, 23 Jan 2026 01:44:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78B7B37BE94;
+	Fri, 23 Jan 2026 01:45:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769132645; cv=none; b=SV6sQ5OQp/mFO6A9EOTkz1Ob90whaeb+abLOpqBgfSiLGhudpXkF3DTcWqFn8Rhm5c95XOf3VQpmNhM4STKYcKj8mvM8xcBFDvsADW86ht6d+o5J6ql2QIQfuIEwuMhmdCFzb6Pc8soPtD+MumJI4a7Jp9NArhLycQ9fUW0pbTE=
+	t=1769132710; cv=none; b=fyFgqYB8kAz6wkYby9IA6n1v4obOKJPOz46xFR9MBWgCrTBuV9Li7C3X3fnoj922Q7d1rzdU6grmy/v9tD6PxQZKrbx1edXargREQ62f9y8CHd4IzOv5NctqLVfvTwIzXyxCoEXT6plDpkAsADAD9MchdLWGMFJgypxvBmPIztg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769132645; c=relaxed/simple;
-	bh=5hbyjhex9kITqfDLBxrxOd0hxO79EBXto59nVbh5+k0=;
+	s=arc-20240116; t=1769132710; c=relaxed/simple;
+	bh=kJpuTBCMY5uDHfr6gvM7scy0Tk2x9TA88Qz/tAbzNCk=;
 	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=lfGavWoFc7REA/sNV+em+4cpaWm0pi3/yiuBKHV8mXt8oKH7kJhQtcFVLkyytvlNdT9XvJ/21XcG+67Ogxh2gYFytEcriJMPpTCC2yfiQIKg0dYCmra3bbbrbVAlb7OLNP7ofdjvt4OIUQNm56v6QLvhj44hBvepJBS2pcDciQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ev7ziae6; arc=none smtp.client-ip=10.30.226.201
+	 To:Date:Message-ID; b=FzRCIuV8wtwuihrdT9TcvRJjhAXwD6efwI/DQE9UtWNPlNVaOeYQ792RnVzA/6f4lhuy94WMuI/TFY36rQpPPMBi0xtsvsRe081+an6qgsU6s2c4UBP2UHbnwZK1Bg01NZWEHZGq8kff1S4udgebsyt7jnD5z2Qcek0Gn026CgI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fyk/ZZZW; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ev7ziae6"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB159C116C6;
-	Fri, 23 Jan 2026 01:44:02 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fyk/ZZZW"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02BE2C116C6;
+	Fri, 23 Jan 2026 01:45:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769132644;
-	bh=5hbyjhex9kITqfDLBxrxOd0hxO79EBXto59nVbh5+k0=;
+	s=k20201202; t=1769132707;
+	bh=kJpuTBCMY5uDHfr6gvM7scy0Tk2x9TA88Qz/tAbzNCk=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=ev7ziae6QynBpEoXuTw+tKhHXcIE6jAWIJ8Qr4jlrhkDwCxQ23DuGDiS8KR5RkSBO
-	 XJJKpRuEQMSyjtyKqowRIVTALbgQikLe5jDmniZRcVpmFPaW3AcmIyqXFk4IfLj6Sj
-	 d6njx51cvVSdwerUkssiTHBc178UZXFXkMNbtl+QFgQTAlNrfDESTq4wVDotoeMcEb
-	 bRjoVzHnuNazboD8Eux2r9CZ7wFAKlyfBZECNF9YwGmZt9Ho1RYi3tHx6Gp9VVm7Fm
-	 vMgE+1xnKi7d0Z/CrKlixDgaoCxuRtSxaREDd+af4Ps1QYHHJG/+Il6LKx/Ms0pCCS
-	 R2oB6e7BPXgNA==
+	b=Fyk/ZZZWIwUIDcTd3ClMks6Axr5hpQsNq9suw+391dlR/NAgAHG1HRIukWEpNt1YP
+	 Pc9WvEQI/DP1Sb1oUYoW40/Fdv+ogmd/+9VlAkgqpzXN9Zn3LlbrhdQof1/DUT8h54
+	 XO48fRmwhjeqG8GQ+ZaidxDSuNF0sIoNwYWDQ+qclfGqi2e7PuG2bG/XUW/musCtvt
+	 krpSGG/1TgLD/UbNuXbaOqvpHQZeW5ndPzryplofZPzOPjbgTNJC3UUMjn4DWO3Urr
+	 MVxscEhC4ePHQURdUZpVF8Nm488k1vzc5urro3khPGhpD/qcH8UcZz0TuItNh3qzLY
+	 Q35UPRe9qgTqg==
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -34,27 +34,36 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20260113110012.36984-2-angelogioacchino.delregno@collabora.com>
-References: <20260113110012.36984-1-angelogioacchino.delregno@collabora.com> <20260113110012.36984-2-angelogioacchino.delregno@collabora.com>
-Subject: Re: [PATCH 1/5] dt-bindings: clock: mediatek,mt7622-pciesys: Remove syscon compatible
+In-Reply-To: <20251215-mtk-pll-rpm-v3-5-5afb3191e869@collabora.com>
+References: <20251215-mtk-pll-rpm-v3-0-5afb3191e869@collabora.com> <20251215-mtk-pll-rpm-v3-5-5afb3191e869@collabora.com>
+Subject: Re: [PATCH RESEND v3 5/5] clk: mediatek: Add mfg_eb as parent to mt8196 mfgpll clocks
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, mturquette@baylibre.com, matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com, ulf.hansson@linaro.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, kernel@collabora.com
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, linux-mediatek@lists.infradead.org
-Date: Thu, 22 Jan 2026 18:44:00 -0700
-Message-ID: <176913264088.4027.8181442365263055794@lazor>
+Cc: kernel@collabora.com, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Chen-Yu Tsai <wenst@chromium.org>, Chia-I Wu <olvaffe@gmail.com>, Dong Aisheng <aisheng.dong@nxp.com>, Laura Nao <laura.nao@collabora.com>, Matthias Brugger <matthias.bgg@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Nicolas Frattaroli <nicolas.frattaroli@collabora.com>, =?utf-8?q?N=C3=ADcolas?= F. R. A. Prado <nfraprado@collabora.com>, Yassine Oudjana <y.oudjana@protonmail.com>
+Date: Thu, 22 Jan 2026 18:45:05 -0700
+Message-ID: <176913270525.4027.13703640991573141787@lazor>
 User-Agent: alot/0.11
 
-Quoting AngeloGioacchino Del Regno (2026-01-13 04:00:08)
-> The PCIESYS register space contains a pure clock controller, which
-> has no system controller register, so this definitely doesn't need
-> any "syscon" compatible.
+Quoting Nicolas Frattaroli (2025-12-15 03:24:02)
+> All the MFGPLL require MFG_EB to be on for any operation on them, and
+> they only tick when MFG_EB is on as well, therefore making this a
+> parent-child relationship.
 >=20
-> As a side note, luckily no devicetree ever added the syscon string
-> to PCIESYS clock controller node compatibles, so this also resolves
-> a dtbs_check warning for mt7622.
+> This dependency wasn't clear during the initial upstreaming of these
+> clock controllers, as it only made itself known when I could observe
+> the effects of the clock by bringing up a different piece of hardware.
 >=20
-> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@coll=
-abora.com>
+> Add a new PLL_PARENT_EN flag to mediatek's clk-pll.h, and check for it
+> when initialising the pll to then translate it into the actual
+> CLK_OPS_PARENT_ENABLE flag.
+>=20
+> Then add the mfg_eb parent to the mfgpll clocks, and set the new
+> PLL_PARENT_EN flag.
+>=20
+> Fixes: 03dc02f8c7dc ("clk: mediatek: Add MT8196 mfg clock support")
+> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collab=
+ora.com>
+> Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
 > ---
 
 Applied to clk-next
