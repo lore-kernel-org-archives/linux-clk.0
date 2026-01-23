@@ -1,154 +1,117 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+Received: from mx.nabladev.com (mx.nabladev.com [178.251.229.89])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1285F1BD9C9
-	for <linux-clk@vger.kernel.org>; Fri, 23 Jan 2026 13:00:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 708A52F39B4;
+	Fri, 23 Jan 2026 13:13:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.251.229.89
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769173242; cv=none; b=lTrh5B7lNJwRgitK2OYpK1ek5amom0ls0hzCbqGMNV0dDkRPgra4I71B7IA6wBQNzbjSmVqyX1H3Gj3R2XC16LLfioWyCB8+PM2XqAuTgTMEIfVq/4g4fPxP5h+EhKf9zQpAOqiJPvDGNm3k5q7RmY/EVC8GyXjlNCy0Kst/5JA=
+	t=1769173991; cv=none; b=FY1c4hl4QXzXlOppI6gLIOXvH+vYyxSloHUvesn3cerbjYURKtYPUqP8Zz/45NkBtELubgdzDf+8nFutU0ctDMDBx5WaVJoXBBm5tiqQ3s7ucl1oh7PnwPjxz1GDGwiIlxDvhRs8muo9nNcgKGnybSkdzyP5F2deQA01uxaA2qI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769173242; c=relaxed/simple;
-	bh=qnQwqbTUxVnMDQDZEIWRUxRmayLu0yin8Pp+G+H9hqM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=KUJrIh8YMaZF8aZFb6x1VoqZLGynYlpf0UJ/WnJ5qCy0+Fk6fMqIugqwQin/sSxfmqFggr7yJTOX2uyo5H7f/8VE1mI9HWKKT/OQqfUcW9uiqzn5iAB3iG6hfcBNXj1OZxKB5DfQZ6hyjMKCCAUvLqH893hMQvEujKHEINUIfXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1vjGmA-0001AG-1F; Fri, 23 Jan 2026 14:00:34 +0100
-Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1vjGm8-0025tQ-1d;
-	Fri, 23 Jan 2026 14:00:31 +0100
-Received: from pza by lupine with local (Exim 4.98.2)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1vjGm7-000000006dr-38JD;
-	Fri, 23 Jan 2026 14:00:31 +0100
-Message-ID: <1adc068bbf1a15b1b10651f6ad9385415f6d4227.camel@pengutronix.de>
-Subject: Re: [PATCH v2 2/3] reset: tenstorrent: Add reset controller for
- Atlantis
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Anirudh Srinivasan <asrinivasan@oss.tenstorrent.com>, Drew Fustini	
- <dfustini@oss.tenstorrent.com>, Joel Stanley <jms@oss.tenstorrent.com>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley	 <conor+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>
-Cc: linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, joel@jms.id.au, 
-	fustini@kernel.org, mpe@kernel.org, mpe@oss.tenstorrent.com, 
-	npiggin@oss.tenstorrent.com, agross@kernel.org, agross@oss.tenstorrent.com,
- 	bmasney@redhat.com
-Date: Fri, 23 Jan 2026 14:00:31 +0100
-In-Reply-To: <20260122-atlantis-clocks-v2-2-c66371639e66@oss.tenstorrent.com>
-References: <20260122-atlantis-clocks-v2-0-c66371639e66@oss.tenstorrent.com>
-	 <20260122-atlantis-clocks-v2-2-c66371639e66@oss.tenstorrent.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-0+deb13u1 
+	s=arc-20240116; t=1769173991; c=relaxed/simple;
+	bh=Y9CZ9eMlhp/kFD10KukTiQf1yHbH1ObA37arceDpi5w=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JDB9+4hd0DRTfceSCNdhXzkyZvwNne3YGC5WKjooU9M4TpZjc14+j9KVGf70zr+l4Bt5jr2WNejI9Q8RvUzamc8IwKA+o9Kxhuo8wDDt04GCgcpzbSbKPVudwi2lVbJRLnFHl6RicNEOBPHRhYhe5Th8UgK9K7baIkdX0BSTkxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nabladev.com; spf=pass smtp.mailfrom=nabladev.com; dkim=pass (2048-bit key) header.d=nabladev.com header.i=@nabladev.com header.b=hUtloW+W; arc=none smtp.client-ip=178.251.229.89
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nabladev.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nabladev.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=nabladev.com header.i=@nabladev.com header.b="hUtloW+W"
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 5595A10D866;
+	Fri, 23 Jan 2026 14:12:56 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nabladev.com;
+	s=dkim; t=1769173980;
+	h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=Zm5lrGHaaf9sNfErhKfvyH2cd0YHIcDO1gth+1spoB8=;
+	b=hUtloW+WnY7BFkUDr92urRQbAcA7J4PpX5I9S4Eoma7Ay03UJloEK0eMhdL1lDPcaJNfr7
+	F8meKfTSGHPtqe+RwEi8uV5TenWQEl3QJPZTDP4VX1pe/2o1ikjqXj0RsT3GA5MY/aSJqL
+	HDRhOBLq2lqx4SUw7WU5dVdEzwWbhFYQEAwoKQeIws6qyJVR/avVzSvj7VvcCfum/SGAtX
+	ePXjmzukNk/CMSo0souoGEgm7DjQpe5JAsMM5URo5/pDNs4MP1s6ovqYxxA/mvYMHFisJL
+	e6L/t9yp7n3VzN2Q2wPLNY5hWQZwHLSJ2M6P3EHXzsYQBeBQKpUPLL/UZPyy0Q==
+Date: Fri, 23 Jan 2026 14:12:52 +0100
+From: =?UTF-8?B?xYF1a2Fzeg==?= Majewski <lukma@nabladev.com>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Michael Turquette <mturquette@baylibre.com>, Abel Vesa
+ <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>, Stephen Boyd
+ <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
+ <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, linux-clk@vger.kernel.org,
+ imx@lists.linux.dev, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, Jakub Kicinski <kuba@kernel.org>
+Subject: Re: [PATCH] clk: vf610: Add support for the Ethernet switch clocks
+Message-ID: <20260123141252.3250c6ce@wsk>
+In-Reply-To: <20260122200514.3cdb6fb6@wsk>
+References: <20260122130649.4150338-1-lukma@nabladev.com>
+	<4a593537-e848-4ed2-b6c9-fd2e6b165f73@lunn.ch>
+	<20260122200514.3cdb6fb6@wsk>
+Organization: Nabla
+X-Mailer: Claws Mail 3.19.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Do, 2026-01-22 at 16:36 -0600, Anirudh Srinivasan wrote:
-> Adds Atlantis Reset Controller and auxiliary device definitions for
-> reset to share same regmap interface as clock controller.
->=20
-> This version of the reset controller driver covers resets from the RCPU
-> syscon.
->=20
-> Signed-off-by: Anirudh Srinivasan <asrinivasan@oss.tenstorrent.com>
-> ---
->  MAINTAINERS                                |   2 +
->  drivers/reset/Kconfig                      |  11 ++
->  drivers/reset/Makefile                     |   1 +
->  drivers/reset/reset-tenstorrent-atlantis.c | 158 +++++++++++++++++++++++=
-++++++
->  include/soc/tenstorrent/atlantis-syscon.h  |  26 +++++
->  5 files changed, 198 insertions(+)
->=20
-[...]
-> diff --git a/drivers/reset/reset-tenstorrent-atlantis.c b/drivers/reset/r=
-eset-tenstorrent-atlantis.c
-> new file mode 100644
-> index 000000000000..2e7f09409f79
-> --- /dev/null
-> +++ b/drivers/reset/reset-tenstorrent-atlantis.c
-> @@ -0,0 +1,158 @@
-[...]
-> +static int atlantis_reset_update(struct reset_controller_dev *rcdev,
-> +				 unsigned long id, bool assert)
-> +{
-> +	unsigned int val;
-> +	struct atlantis_reset_controller *rst =3D
-> +		to_atlantis_reset_controller(rcdev);
-> +	const struct atlantis_reset_data *data =3D &rst->data->reset_data[id];
-> +	unsigned int mask =3D BIT(data->bit);
-> +	struct regmap *regmap =3D rst->regmap;
-> +
-> +	if (data->active_low ^ assert)
-> +		val =3D mask;
-> +	else
-> +		val =3D ~mask;
+Hi Andrew,
 
-		val =3D 0;
+> Hi Andrew,
+> 
+> > On Thu, Jan 22, 2026 at 02:06:49PM +0100, Lukasz Majewski wrote:  
+> > > The vf610 device has built in the MoreThanIP L2 switch. For proper
+> > > operation it is required to enable ESW and MAC table lookup
+> > > clocks.
+> > > 
+> > > The MAC table spans from 0x400E_C000 for 0x4000 and it is
+> > > necessary to provide clocks for each AIPS1-"slot", which size is
+> > > 0x1000 (hence four separate entries).
+> > > 
+> > > Those can be enabled via clock gating CCM_CCGR10 register
+> > > (0x4006_B068).    
+> > 
+> > Sorry, i lost track of the state of the switch driver.  
+> 
+> New year, new MTIP L2 switch patches in preparation :-)
+> 
 
-The ~mask bits will be ignored anyway.
+Just to share:
+https://github.com/lmajewski/linux-imx28-l2switch/commits/vf610-linux-6.6.y-mtipl2sw
 
-[...]
-> diff --git a/include/soc/tenstorrent/atlantis-syscon.h b/include/soc/tens=
-torrent/atlantis-syscon.h
-> new file mode 100644
-> index 000000000000..2c6387e5c21a
-> --- /dev/null
-> +++ b/include/soc/tenstorrent/atlantis-syscon.h
-> @@ -0,0 +1,26 @@
-> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-> +/*
-> + * Copyright (c) 2026 Tenstorrent
-> + */
-> +#ifndef __SOC_ATLANTIS_SYSCON_H__
-> +#define __SOC_ATLANTIS_SYSCON_H__
-> +
-> +#include <linux/bits.h>
-> +#include <linux/types.h>
+The driver has been tested (after backporting) on v6.6 LTS with
+PREEMPT_RT.
 
-#include <linux/auxiliary_bus.h>
+Moreover, I've added support for switchdev.
 
-struct regmap;
+> > Is there also a
+> > patch to add consumers of these clocks?  
+> 
+> In short - this patch set is a preparatory one for vf610 SoC support
+> of the MTIP L2 switch.
+> 
+> Those changes describe more thoroughly the clock subsystem of this
+> SoC.
+> 
+> >   
+> > > Signed-off-by: Lukasz Majewski <lukma@nabladev.com>    
+> > 
+> > Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+> > 
+> >     Andrew  
+> 
 
-> +
-> +struct atlantis_ccu_adev {
-> +	struct auxiliary_device adev;
-> +	struct regmap *regmap;
-> +};
-> +
-> +#define to_atlantis_ccu_adev(_adev) \
-> +	container_of((_adev), struct atlantis_ccu_adev, adev)
 
-Please use an inline function instead of a macro.
 
-> +
-> +/* RCPU Reset Register Offsets */
-> +#define RCPU_BLK_RST_REG	0x001c
-> +#define LSIO_BLK_RST_REG	0x0020
-> +#define HSIO_BLK_RST_REG	0x000c
-> +#define PCIE_SUBS_RST_REG	0x0000
-> +#define MM_RSTN_REG		0x0014
+-- 
+Best regards,
 
-Why not move these into reset-tenstorrent-atlantis.c, they are not part
-of the interface between clock and reset drivers.
+Lukasz Majewski
 
-regards
-Philipp
+--
+Nabla Software Engineering GmbH
+HRB 40522 Augsburg
+Phone: +49 821 45592596
+E-Mail: office@nabladev.com
+Managing Director : Stefano Babic
