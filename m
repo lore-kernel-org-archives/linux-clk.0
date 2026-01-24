@@ -1,179 +1,162 @@
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3949E25A33F
-	for <linux-clk@vger.kernel.org>; Sat, 24 Jan 2026 20:20:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.221.50
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769286007; cv=pass; b=NikGSadU8SKGqc8TV0RiGkNpAGF8LGSuDa5RN89UvtGk2gkHuqOmttSMaJ8BrzTe37yDC7V5nSL815oc8v0NlRaOB92fwekAr0cZAvZzqPbjObBHjAT5x7zpjIBkCcmOkE8PrhHuVZfL5vmotwD38OeDSLTrm+6SzpLTdcyjh8w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769286007; c=relaxed/simple;
-	bh=zbChyElac1UwgTP0SJZj1q6AbqL+QWSoCe8JC/abZcQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DM7hDmhAxPDf0y6as9uSqSW1p8WwsCLgtH/nnne8Ur3mSZukntp79DvhHtBAfoJ+0jBYrDTpWJR+m7zY3ja2RporLDtwrsT8MZTieBwDHueI1HpV5xvDHL8nrylhBe0idTLEfLw9ghBphWwNY0xJjkplC1BSi177+YSL4Yzxf3M=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y4Q94oLU; arc=pass smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BD3A20F067
+	for <linux-clk@vger.kernel.org>; Sat, 24 Jan 2026 20:20:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1769286050; cv=none; b=lPtbUuIsCHi9rEgMEudZcj+tRuM4ftrCLKMMIxngUVe83ZhhJQeWb02175RslbcMLSpBW038rR8/AUPkKwkuAom1tCjszTADXd+Bre5StpjvobW8w5ujoQnIXR1q+IaZ8v5i3zwF8qJk+GiujywIe99koaeM2xpg56/TLLIdpUQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1769286050; c=relaxed/simple;
+	bh=R8JNUZrxughMFlK1tUpGsMThTWnlGlQO6jgIt5A84iI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Korq24E9/kzpqnBYzM+uXfcrMDey8jhgV75BdQm0c8P+/dSVKcEJgYS3W4BWtEvLVwiozcf9VznpCFkPGoNmCiUn63wX1xHkNyYdJ3PBfVx/7k+4JgwfcsaamqVS3dbxT5LZdIukm49cpl/GaI1SsSNqGnyTkmGAAFweGmpQJA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=IhrlXF0A; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=MMjg5hzC; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y4Q94oLU"
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-42fbc305882so1968115f8f.0
-        for <linux-clk@vger.kernel.org>; Sat, 24 Jan 2026 12:20:04 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1769286003; cv=none;
-        d=google.com; s=arc-20240605;
-        b=kYLhcYU+EI7DZstVFX58IHRUMpZYV5HYyG5h1EO+LMhGsBz4CAHFcRlttly7oXVTjo
-         TKjevfT4f2ZI47QhBm8W81qHPtFTRDjlt5tdCLxxcljeYR+K9CYGqNUYahdGR5MbhixT
-         k3PSEphGxZUeQDbgk8KiDWv42gjxYEgspjGPSA7sU6fZIJu1sItmySledpOgh33ljYtF
-         NilzJqyUI75BchOFopWEY/2Dbwwjxt217lSVLvfefUuQTdnNk+64GvfqxosjBZ1bVV89
-         dKYpqGvPBSCZE2YjjUfugdSFrwNk/jy+Tkt+doFPLiKvkFHl16TjK4UNpQHG9f3Htu25
-         Zxhg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=5IvQvVO47AehbyLG9Cg7wRdRPasY+7er+DvV1ut13R4=;
-        fh=QKY2tYDRaVi/nhYQUHkZQ42bfayhdeLyU2w6wyo1jg8=;
-        b=KnKisFT2zqfDSYUmP3Eo0LjERLAmqHKdlov5JPLmdoj7qglN6sNMhEAAexFzdHkqyT
-         dTCEMCjFzDa0cSf2b7ML3EjJPm74LqhTDsZpq1i9jhMrzeM3s3kfNIRBdpmZXu8Qwj/Z
-         wVs4/8ZG+IEINSOpgEtE+ORfdLXRiynjCfiLZUheAAK01pgviLneqf5l4JFWMaMU/qtW
-         6o4XPw+RQ200k3pKufSjaqG6VsoHRg2dSxBubhpidGzpoJS5Q//S+FxFRFuQmgnZ7ePP
-         5M4aj9EQpV1rEsvjMqW5CvtR534EkSiJnQ9r2kNUq6+jqCl608rLcdj4kffppcpYNG79
-         KIjg==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="IhrlXF0A";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="MMjg5hzC"
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 60O4dpuY1660040
+	for <linux-clk@vger.kernel.org>; Sat, 24 Jan 2026 20:20:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=a2yYpxtKqPktlJWPHN0dsbO8
+	FH8x+ZVgQuXzvQSS3eU=; b=IhrlXF0A+/PqUooOK9oDhMdx8zgrsWmnnP5vTLCS
+	nQkQ0EOflxWnXxyPzZfpeO/gsP/UCImdbbukUnIEnyzHs2QfGUZUjcbDYfTA6HQh
+	0mwExYBZw5IXc7EiertwdOOYib4J6n96cv1YS3XgWdoDt2G7zEJjil/OtuQf9Z3n
+	ccFmi5P3GptbqhTQEjQ2qHh5Ae/XfNjVqy1DlvhrcCcvcDz6AIG8JzALStvoUJ9l
+	bQNT10yHv2qqhJ81lVHrgp7o2w+F8P+eaMPlab35udl1N1JIPKbxBI7gwV3tDDT3
+	f4Pfn4g1sD8VIv1ji9SsIcIzKqqqaiEFuiS1M919Wu0acg==
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4bvq8dh49u-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Sat, 24 Jan 2026 20:20:47 +0000 (GMT)
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-8bb9f029f31so1178751285a.2
+        for <linux-clk@vger.kernel.org>; Sat, 24 Jan 2026 12:20:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1769286003; x=1769890803; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5IvQvVO47AehbyLG9Cg7wRdRPasY+7er+DvV1ut13R4=;
-        b=Y4Q94oLUupXmlLchLUI7rcyaX/eHch73XeNMif5OHqYgMjCyzUzQ4zwvoRRdsEKHkc
-         I17sFJgX3F9urlyFfXZfA7DcHGT5TEiu4zyIJDmqWrnOawbv9/HIvy0OWjeROFD7BH7h
-         Y0MpPSqP3HNkYPP5vc1eeljfq6bgJNOy9W3OpkwLTibM/H10BFpK34uOZ5z25X0Nye1Q
-         vuny9yj2AH3KGteVRbIY5iyLedvFODpw4pMshIjUyzKULqJOeYfsIIf24ygZ5NkBnToo
-         uKe7Ib3J9HUNhRBKRJx4GdnAbgFK2rcLLTLM/3Kj1v7FUKpLnzHRXrfl+klA/3z6Q+7E
-         5+Aw==
+        d=oss.qualcomm.com; s=google; t=1769286047; x=1769890847; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=a2yYpxtKqPktlJWPHN0dsbO8FH8x+ZVgQuXzvQSS3eU=;
+        b=MMjg5hzCEdwtB99j7xi5cft3g/B/j8yBZTyCh+sWu4mkgoJiQvHbRMTj3vg1B0DqwL
+         bRKmUlu0xPrUuS3t7myrQh5QKBvECO8BB/MPOaweUaqspLphZQtPSIoljra1RM5LQlXh
+         rGdzhxIRNRqIWckVLjGYLd/JVjMSOBXjv4/zGsl4wnJFSHDMkg5bW5HmUWso4BHmCVRw
+         wynKqPnqP517WVze2Wn+olKRvQP7PjsFqAirsRIoFdT3aWR1KL7bO5DPdnr0xb0K8wg1
+         LEzlfcBTgZ91CYDkC9Q3oCKdJLtcCC9+KTXQyj7w0i26+bThbOoOK1Du22F1jKKBbTdJ
+         Ab7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769286003; x=1769890803;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=5IvQvVO47AehbyLG9Cg7wRdRPasY+7er+DvV1ut13R4=;
-        b=lWhAP9PNTOmFQ3HZeoBN81fUxLzUdFe/nM1Ar0HbrlnrKzI34x3LBxCrTaU3RivuNq
-         Elc58c3TKbgNm3qJkWiMUz7wr7Lc74L1lw8Zha5wwINYXRxZGepwYcowfp8xAxcaRZG+
-         3m4MXw8WUh7vSm95nQ8uo9OBGjydr/mvn1udZGQMh4owZbVW8mzhkEzCxPEFI1jJX3VX
-         NplGj33mE8lMYJDXynpNOHiBMCRzuYbXL9I3b4bT2kEfsEeToi12OuFaodduUbQqGOxK
-         DkkeuWmeFaSVcd3qNTq1pQ/1g6XSdLcAOPSqMPYv2GwurABpD+FVLZg8ZsA+MQGRNARV
-         ZQVw==
-X-Forwarded-Encrypted: i=1; AJvYcCWaNVplpoaVUY9kXdhk7iQvEe2bI/A+pm41Ljb/va5qwingrZeDua9srt5gOihZ3se9Q09449ChAxI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YygKFSEHxhiUlSYEPIf9x1ajnwIlppcwCGQxq4VQxoR9adQpMKm
-	7Pkz21LMEs/deutHJYqjHWg7GPTW5g5ZydagmM/K34KIN1b3dz/AfqkzbcoeBRH3g9hVPNdn5ps
-	HByKBZdBFKArxafpD+g3V/55f75jYEIo=
-X-Gm-Gg: AZuq6aI5luRpaurBp68coTu9vlKQI/8XWiybyxRfD2RBRUyF56TqMTSDVppuxITfxyX
-	sfZZn7mKGAbP7baDDxdc5kG3u+hWkbDudpybg1fxztrJq+XQTC/gtgTozhDRe9wolKM2nwswol1
-	Mitco7Ep8ZFmXUfYBGGiOXpQlRVeG4KcnSxmf1HP+Ogv59f9elB3HGMF0E7QIbsU6z0/r5SD3X5
-	v/BlXa3piaORqejqXMzWo20pSt2pNiOk3oxPZTaxJHDIRXqZ/K+vJCtkR2Z0p1+tLwICyPj
-X-Received: by 2002:a05:6000:288e:b0:431:752:672b with SMTP id
- ffacd0b85a97d-435b159556dmr11734663f8f.14.1769286002389; Sat, 24 Jan 2026
- 12:20:02 -0800 (PST)
+        d=1e100.net; s=20230601; t=1769286047; x=1769890847;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=a2yYpxtKqPktlJWPHN0dsbO8FH8x+ZVgQuXzvQSS3eU=;
+        b=DlvD3CctWS7TR5rOG1yk0KEbK32zCgmx0YiNaQuTiKjkiiLSVYxnXza55/CHTc6lSa
+         m9TRphQP1Wow+eOqzYqHCv1illu6YRB/tdDhuVL1y2TiyLeZoSN3NgFLEr2xkad9ivid
+         6o9ja3YW1fPHUNzWsc+wauQvWFS+a3OWbi64ho0DEwepwybHe5sRmj/lLq6snYF9tLaP
+         EF3Tk6EoNjecSXmzEejTGDFabvxZezzTOKCBuz/vEnveONl2ld9TdgTlRHEWHndntd4I
+         ss6PSBvMdvqWlE9eqiA+801nPoPNUxEQsfSeNof1AlsUq6oRuUmU6OtBCp7RYU2Yv6S9
+         l81A==
+X-Forwarded-Encrypted: i=1; AJvYcCXAyi5JYzarNgqcH0y80oCoSjBnFWMKvDAH8ZDP9Js0itOG3FWUScWAEn87MYiXbkVPDjSnCZ68rDo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1nmP/UkRTv4DDOlADY9P6EmdxL7k9iHKdeH+0otrkaEMVEc4L
+	hGLoGa6+IzTvBTCUI1zN1JT6BBVaJV0vSLXt1JlPjMe1OqDdfvu/8oLtonKKLqD2nCxy27ZmCTJ
+	AqenEivHgO8l3bYPNPcYQZ8h3CmowN1YJbWtuBAWDTp7KfMv650v/fcxo3ZrQ+lQ=
+X-Gm-Gg: AZuq6aKqS+gRrQ5IgXZBCT1gRMhyqYjeAye/KDIJoYeD4aQHi7M6ptqZ5boWqShSqej
+	u0aR0yDsA3ypXKqCw/mzsasDV6/vcpCDynS0cqN8ISpaari+IpVfjVBnHn6zTVW2KBcRuILNL5i
+	2QAtPB9yIfVECOcF2t4d4bshRBk3RRd+szujngJrkZAww4CoEYJqf4wtZpgr0gFt9WfaCZhdtk4
+	EAziSacZfCBoh9cUXCDCdVZozCakoti3DTCbmSPswTKlreBKleUGqZyBOZhNb8Xwe8Pqp+Vpuys
+	5z910Kdk5Qp5h+Uo9ATS6kJii0eJEgbOo/BuQIKVHeybdvU+bvu62pWFgdQoZ0rUKmRrTv4LHLj
+	DrfhoKefBGgiQlz8IKERZkNF1td0vMTlP0bOxnUmLrVYZONLJDo6guOjIGJ1YyuA5fxCA16mSnC
+	J1h2qSP6ociIDmtaGlN8S4wV8=
+X-Received: by 2002:a05:620a:28ce:b0:8c6:ac96:f5e5 with SMTP id af79cd13be357-8c6e2e5a599mr712597485a.83.1769286046735;
+        Sat, 24 Jan 2026 12:20:46 -0800 (PST)
+X-Received: by 2002:a05:620a:28ce:b0:8c6:ac96:f5e5 with SMTP id af79cd13be357-8c6e2e5a599mr712595485a.83.1769286046303;
+        Sat, 24 Jan 2026 12:20:46 -0800 (PST)
+Received: from umbar.lan (2001-14ba-a073-af00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a073:af00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-59de492d04esm1530905e87.102.2026.01.24.12.20.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 24 Jan 2026 12:20:44 -0800 (PST)
+Date: Sat, 24 Jan 2026 22:20:42 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Taniya Das <taniya.das@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>,
+        Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
+        Imran Shaik <imran.shaik@oss.qualcomm.com>,
+        Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: clock: qcom: Add video clock controller
+ on Glymur SoC
+Message-ID: <gxbzaayts6esoje4kwak3iey2pj7wu4focdgd3vmu7qr2qqrld@wlaf5kclbvmv>
+References: <20260124-glymur_videocc-v1-0-668f8b9c63be@oss.qualcomm.com>
+ <20260124-glymur_videocc-v1-1-668f8b9c63be@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251204061703.5579-1-clamor95@gmail.com> <20251204061703.5579-3-clamor95@gmail.com>
- <7012249.lOV4Wx5bFT@senjougahara> <CAPVz0n3JEHtUOq4qaZbqPu97NXdYxx_=5im4rxoEWi8EbKmKEw@mail.gmail.com>
-In-Reply-To: <CAPVz0n3JEHtUOq4qaZbqPu97NXdYxx_=5im4rxoEWi8EbKmKEw@mail.gmail.com>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Sat, 24 Jan 2026 22:19:51 +0200
-X-Gm-Features: AZwV_QiGF7B_Re4bWRTdgXNS-XzkdDJdBkm2AnW07YovL950WfU-W10tVO3KO9M
-Message-ID: <CAPVz0n2PZRSLyKNBAA+nfH66ujbvmQVQbG=6Ai_5sBe3U_dyPg@mail.gmail.com>
-Subject: Re: [PATCH v2 2/4 RESEND] gpu/drm: tegra: dsi: move prepare function
- to the top of encoder enable
-To: Mikko Perttunen <mperttunen@nvidia.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
-	Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Dmitry Osipenko <digetx@gmail.com>, Charan Pedumuru <charan.pedumuru@gmail.com>, devicetree@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260124-glymur_videocc-v1-1-668f8b9c63be@oss.qualcomm.com>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTI0MDE2NSBTYWx0ZWRfX+k0l+t85R22v
+ 6vbKnbwbX8W5bOHKJK5+o9bIjUtELwCNkFZdqdY48qerWvxgrHqty9pQOE35TpNlY3GNldww4Bl
+ QDTaAvF7RU3yvfC2q/bn1lQh7yXgp69c8MldKJj63svCgETz+LQi+W1ODDZw1QBxqEgvmj9Gq/Q
+ 7XkGO3o4euAm1I8ehDadQXmA4/N3rwBVF6FSW1t/2UGbDbCpS0VK8IW4Grt6cjqddKCr2BpbPBG
+ Two5/OKz6QXsBDBgtjdi8Jh79zwImryooy7OEKYGpAd2Y71L6WwTUa1q17iLBs1vxhcFwy1+x/n
+ 2Ouh4EKC0VXHJ2VmDz9QeCVqZon4d8+1zhns6g53aJTx+qZ3kQqcm3WdjBcTSJnoh1MOP6yJ09Q
+ IvZAZC+lPWWKjIWQO/BNYToJMon7fWjJ1I5vWAxYFdbQet2Woh69VHc7T9rbRZQFO92Za0c4WLG
+ 2JyEEMt6KPFCZNO8NGQ==
+X-Authority-Analysis: v=2.4 cv=RIq+3oi+ c=1 sm=1 tr=0 ts=6975299f cx=c_pps
+ a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=vUbySO9Y5rIA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=EUspDBNiAAAA:8 a=0zoNdEbV9BZt45G0VZ4A:9 a=CjuIK1q_8ugA:10
+ a=PEH46H7Ffwr30OY-TuGO:22
+X-Proofpoint-ORIG-GUID: UGpD31YMLx09C-3f_aiEDKHYEUmaSWjI
+X-Proofpoint-GUID: UGpD31YMLx09C-3f_aiEDKHYEUmaSWjI
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.20,FMLib:17.12.100.49
+ definitions=2026-01-24_03,2026-01-22_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 malwarescore=0 adultscore=0 clxscore=1015 phishscore=0
+ impostorscore=0 lowpriorityscore=0 spamscore=0 suspectscore=0 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2601150000 definitions=main-2601240165
 
-=D1=87=D1=82, 15 =D1=81=D1=96=D1=87. 2026=E2=80=AF=D1=80. =D0=BE 09:49 Svya=
-toslav Ryhel <clamor95@gmail.com> =D0=BF=D0=B8=D1=88=D0=B5:
->
-> =D1=87=D1=82, 15 =D1=81=D1=96=D1=87. 2026=E2=80=AF=D1=80. =D0=BE 07:54 Mi=
-kko Perttunen <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
-> >
-> > On Thursday, December 4, 2025 3:17=E2=80=AFPM Svyatoslav Ryhel wrote:
-> > > The tegra_dsi_prepare function performs hardware setup and should be
-> > > called before any register readings or there will be a risk of device
-> > > hangup on register access. To avoid this situation, tegra_dsi_prepare=
- must
-> > > be called at the beginning of tegra_dsi_encoder_enable.
-> > >
-> > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > > ---
-> > >  drivers/gpu/drm/tegra/dsi.c | 12 ++++++------
-> > >  1 file changed, 6 insertions(+), 6 deletions(-)
-> > >
-> > > diff --git a/drivers/gpu/drm/tegra/dsi.c b/drivers/gpu/drm/tegra/dsi.=
-c
-> > > index 278bf2c85524..8e80c7efe8b4 100644
-> > > --- a/drivers/gpu/drm/tegra/dsi.c
-> > > +++ b/drivers/gpu/drm/tegra/dsi.c
-> > > @@ -914,6 +914,12 @@ static void tegra_dsi_encoder_enable(struct drm_=
-encoder *encoder)
-> > >       u32 value;
-> > >       int err;
-> > >
-> > > +     err =3D tegra_dsi_prepare(dsi);
-> > > +     if (err < 0) {
-> > > +             dev_err(dsi->dev, "failed to prepare: %d\n", err);
-> > > +             return;
-> > > +     }
-> > > +
-> > >       /* If the bootloader enabled DSI it needs to be disabled
-> > >        * in order for the panel initialization commands to be
-> > >        * properly sent.
-> > > @@ -923,12 +929,6 @@ static void tegra_dsi_encoder_enable(struct drm_=
-encoder *encoder)
-> > >       if (value & DSI_POWER_CONTROL_ENABLE)
-> > >               tegra_dsi_disable(dsi);
-> > >
-> > > -     err =3D tegra_dsi_prepare(dsi);
-> > > -     if (err < 0) {
-> > > -             dev_err(dsi->dev, "failed to prepare: %d\n", err);
-> > > -             return;
-> > > -     }
-> > > -
-> > >       state =3D tegra_dsi_get_state(dsi);
-> > >
-> > >       tegra_dsi_set_timeout(dsi, state->bclk, state->vrefresh);
-> > >
-> >
-> > The section of code before the tegra_dsi_prepare call was removed in 'R=
-evert "drm/tegra: dsi: Clear enable register if powered by bootloader"', so=
- this patch should no longer be necessary.
-> >
-> > Mikko
-> >
->
-> You are correct. I have found this when rebasing onto v6.18 which was
-> much later then this series was resent. Obviously, this patch would be
-> dropped on the next resend/v3. Sorry for inconvenience.
->
+On Sat, Jan 24, 2026 at 11:05:02PM +0530, Taniya Das wrote:
+> Add compatible string for Glymur video clock controller and the bindings
+> for Glymur Qualcomm SoC. Add the clock resets required from the GCC
+> clock controller for Video.
+> 
+> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
+> ---
+>  .../bindings/clock/qcom,sm8450-videocc.yaml        |  3 ++
+>  include/dt-bindings/clock/qcom,glymur-gcc.h        |  1 +
+>  include/dt-bindings/clock/qcom,glymur-videocc.h    | 45 ++++++++++++++++++++++
+>  3 files changed, 49 insertions(+)
+> 
+> diff --git a/include/dt-bindings/clock/qcom,glymur-gcc.h b/include/dt-bindings/clock/qcom,glymur-gcc.h
+> index 10c12b8c51c34c5931c34b4437be03aea098ba53..6907653c79927f0ff32c98c75d830b719ce14d51 100644
+> --- a/include/dt-bindings/clock/qcom,glymur-gcc.h
+> +++ b/include/dt-bindings/clock/qcom,glymur-gcc.h
+> @@ -574,5 +574,6 @@
+>  #define GCC_VIDEO_AXI0_CLK_ARES					89
+>  #define GCC_VIDEO_AXI1_CLK_ARES					90
+>  #define GCC_VIDEO_BCR						91
+> +#define GCC_VIDEO_AXI0C_CLK_ARES				92
 
-Actually, "Revert "drm/tegra: dsi: Clear enable register if powered by
-bootloader"" causes a  regression for me (DSI on Tegra20 device,
-Motorola Atrix 4G). DSI initiated by bootloader will be stuck if not
-disabled pre reconfiguration, Dmitry was right by bringing that
-change, but he did not take into account that if DSI is accessed from
-cold state (not configured by bootloader), device will hang. This
-patch addresses this behavior of Dmitry's patch and prevents
-regression introduced by reverting it.
+I think this one should be split to a separate patch and paired with the
+corresponding driver change.
 
-> >
-> >
+>  
+>  #endif
+
+-- 
+With best wishes
+Dmitry
