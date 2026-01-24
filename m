@@ -1,41 +1,41 @@
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D3C73EBF31
-	for <linux-clk@vger.kernel.org>; Sat, 24 Jan 2026 13:24:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 398E73EBF26
+	for <linux-clk@vger.kernel.org>; Sat, 24 Jan 2026 13:32:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769261076; cv=none; b=sp+msjbD7irAUYjVl0OwtIxJvPpPppoQ6OpP5Hgy1p3oSI1xOTKnMJhY42oa9N9ndP4Yb1+m70x40IYjoKeihhrDnPPgOgW5+2ZHzATWR3ErQWmzkHBlXQhYoSUPAEyZ703GxWD73Vr/srxDHrJmkl+VHdNumaTpHA45MmCNoZQ=
+	t=1769261556; cv=none; b=CABrO4gvJdepeFkFZQGmXvGJrKJG0JkdK157NzgafcYXaWCTE7jd81zxEUOE9YCeVR9P02u4pWv7xouLVX8Q0LsjkJSmiKDIebo7ojv1vnOgRw5CRHd3YFkwxcN1Csna8jiVhXYH2n9VVxgUyNqNyiBWYnJeazJMR9YTsWtzTLg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769261076; c=relaxed/simple;
-	bh=DuMl8mcuvngT0omwKO/EuwKbJkNQl6fUAY/OOSkbyR0=;
+	s=arc-20240116; t=1769261556; c=relaxed/simple;
+	bh=Y4G9MVhOxej2u9n2lGIIuHLqIN9naxKqNEi8higlo4g=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=r+wnF6QaRjFUdsTQgTWHFTsCWatzzkROEirP4GLCygRxVELA24iy06KI8++vh1/e75Gm2MSu76xGc60jYgtX4RIof+euDDvnG+txK/RjZH4PaOXfyRpsqClhXu8fprA+hW3SRUjsb6zPvDNuY76KlCrAb5eVDoQjCHtHQZONJXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=kD5LdK3Y; arc=none smtp.client-ip=212.227.17.21
+	 In-Reply-To:Content-Type; b=sMGPLZebv/3YF08cD1VpAXTjWyEjdiZFBIjtXkLaHTixklvMefg1p88aMRlktgWGk2Kb9MLnOsHuQ0yMKLdfVzxmigtaNqONfs0T49g3P+xMabJu70bv29zA5G7FfHM+oEct7Ns3xjD+rB6tB0fn0gezqICLPzZCMRATqQPeAdc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=og/phbew; arc=none smtp.client-ip=212.227.17.20
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="kD5LdK3Y"
+	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="og/phbew"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
-	s=s31663417; t=1769261069; x=1769865869; i=wahrenst@gmx.net;
-	bh=LyRTE7okq9QLOOTSDvR0cMP+/RA6BDupI57gtIpwVRA=;
+	s=s31663417; t=1769261548; x=1769866348; i=wahrenst@gmx.net;
+	bh=Y4G9MVhOxej2u9n2lGIIuHLqIN9naxKqNEi8higlo4g=;
 	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
 	 References:From:In-Reply-To:Content-Type:
 	 Content-Transfer-Encoding:cc:content-transfer-encoding:
 	 content-type:date:from:message-id:mime-version:reply-to:subject:
 	 to;
-	b=kD5LdK3YouCW0+1zcwddNUg8buOS9BgpXzH+geWjlT8WK4E7L8mB5PZVttncmmXr
-	 lQcPjT9QWfvJhRqmPpzhZJDQcHTMNxcd7Zon1RrrCYTg0mZ9/ls1lXdKd3shVBlY9
-	 ffAs7BPE7A7/hzlKQaEeKZZ2N/8r8zmGjwoa08sHY3xlzJWaD6ou9QF2l1/G8+UM5
-	 GzkEHcXWqcIrNlopTe2YdxTTtKB5DlrOwvB+2AGKAxFileXQucSg0Z/WzyBh8pvuz
-	 B531yiw+11PPLcRRLVLVGDaLGgNFUiLy3+vHC+AwTMrEdMC6+bhS3Mdr7gYBGjVhU
-	 GutQ1DgWfjykhhRrdg==
+	b=og/phbewYd81Ifmn2sULazawrU4buKhGdRnuejIGGtikrr/tr5SRXRw3xNjnsczj
+	 AoXeFappuCgNyzduz+pd9d+cWBrQTZ+2dPSqoj3L7NUMntogLSugSgZIM3isbnqgV
+	 mCj+GcNKfGQ/fVuXSARyaYQb8NBD1P5+3bmH1cXwnBZW1xmUzW4a61rFfut6Q5/GX
+	 JG5QA4y2MPhjk+oomLym4KGYLtonv55rW9HPR6dLa0cd77WmyDWvQdmZ38QCEazhS
+	 ydZWzld4bMQzRwvgy0mi9kBAbvc+vYJ34Ars0GAMQ8aNy7Yu97hcBI+vTX1NGXAvA
+	 vIc+GBI+a7Szj7EyQA==
 X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
 Received: from [192.168.1.156] ([91.41.209.202]) by mail.gmx.net (mrgmx104
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MKsnF-1vTLI81g2n-00IuJ9; Sat, 24
- Jan 2026 14:24:29 +0100
-Message-ID: <a3e4972d-c9d0-4121-9a11-6c6b30b8f798@gmx.net>
-Date: Sat, 24 Jan 2026 14:24:28 +0100
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MNbox-1vQbhP059P-00MmEi; Sat, 24
+ Jan 2026 14:32:28 +0100
+Message-ID: <826c5f19-4ccd-499a-8d35-2aecf43c373b@gmx.net>
+Date: Sat, 24 Jan 2026 14:32:27 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -43,13 +43,13 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/4] clk: bcm: rpi: Let V3D consumers manage clock rate
-To: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Nicolas Saenz Julienne <nsaenz@kernel.org>,
+Subject: Re: [PATCH v3 2/4] clk: bcm: rpi: Mark PIXEL_CLK and HEVC_CLK as
+ CLK_IGNORE_UNUSED
+To: Melissa Wen <mwen@igalia.com>, =?UTF-8?Q?Ma=C3=ADra_Canal?=
+ <mcanal@igalia.com>, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Nicolas Saenz Julienne <nsaenz@kernel.org>,
  Florian Fainelli <florian.fainelli@broadcom.com>,
- Maxime Ripard <mripard@kernel.org>, Melissa Wen <mwen@igalia.com>,
- Iago Toral Quiroga <itoral@igalia.com>,
+ Maxime Ripard <mripard@kernel.org>, Iago Toral Quiroga <itoral@igalia.com>,
  Chema Casanova <jmcasanova@igalia.com>, Dom Cobley <popcornmix@gmail.com>,
  Dave Stevenson <dave.stevenson@raspberrypi.com>,
  Philipp Zabel <p.zabel@pengutronix.de>
@@ -58,7 +58,8 @@ Cc: linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
  Broadcom internal kernel review list
  <bcm-kernel-feedback-list@broadcom.com>, kernel-dev@igalia.com
 References: <20260116-v3d-power-management-v3-0-4e1874e81dd6@igalia.com>
- <20260116-v3d-power-management-v3-1-4e1874e81dd6@igalia.com>
+ <20260116-v3d-power-management-v3-2-4e1874e81dd6@igalia.com>
+ <3cf75fc2-1a20-40ba-9d7e-f3ef50a95d0c@igalia.com>
 Content-Language: en-US
 From: Stefan Wahren <wahrenst@gmx.net>
 Autocrypt: addr=wahrenst@gmx.net; keydata=
@@ -70,148 +71,149 @@ Autocrypt: addr=wahrenst@gmx.net; keydata=
  f5QR/BrEK0hs3bLT6Hb9WgMBCAfCfgQYFggAJhYhBPcVeD4Cmw6E8M000W7C8svCIDCKBQJn
  V04kBQkHhM4AAhsMAAoJEG7C8svCIDCKJxoA/i+kqD5bphZEucrJHw77ujnOQbiKY2rLb0pE
  aHMQoiECAQDVbj827W1Yai/0XEABIr8Ci6a+/qZ8Vz6MZzL5GJosAA==
-In-Reply-To: <20260116-v3d-power-management-v3-1-4e1874e81dd6@igalia.com>
+In-Reply-To: <3cf75fc2-1a20-40ba-9d7e-f3ef50a95d0c@igalia.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:2CoNgnS1QXyNkjmUn48A98WCovsAz9HkyW5Ac9DY3lqHrbJrBKY
- 1rp+WzDgDZcjmUpSraU8g09EExwXTIp4bCnDzkfRfn4xyXy6oswf9cEWQcVuIZGaZ8RXPPS
- PH/FnHbxI4guSe9DGWdrilpWu2jSU5s/g50gM1MxZnc+4Q/j0nQ4wQZo16VUbNgkBD2mXyn
- tBjGUa7hTx9i4Bnt9/UTQ==
+X-Provags-ID: V03:K1:Ka4SfT5h1qx9mc5wfQ7aWdkh24W05yWlrWKsGkcNd7x1s0c7cia
+ GTFLF9UfK1t38qn64BqiCy7lzjsZXEbNHNKzqNK21KtiZya8FX5BeL4gkAat4nRyUF1l+ZQ
+ r8cXJ03CY5v3mE9yRjQ2PibCSFERDG9+WAE49OltK13F4C0/X6BEV4rcFAjMjAj+xNp331l
+ 7yxqNnzPjfnUYVyGsry0g==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:YeGbiL4MQ+U=;sxvzDXKCJwiRlqCogqkLN0LjMRc
- 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
+UI-OutboundReport: notjunk:1;M01:P0:bQal5H3HUM4=;VQsz4P08+dIyMFs5NDkFEnXD6ui
+ 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
 
-Hi Ma=C3=ADra,
+Hi,
 
-Am 16.01.26 um 21:19 schrieb Ma=C3=ADra Canal:
-> Remove the `maximize` infrastructure and don't set `minimize` for the
-> V3D clock, giving consumers full control over its rate.
+Am 23.01.26 um 16:47 schrieb Melissa Wen:
 >
-> On some firmware versions, RPI_FIRMWARE_SET_CLOCK_STATE doesn't
-> actually power off the clock. To achieve meaningful power consumption
-> reduction, consumers need to set the clock rate to minimum before
-> disabling it. Forcing the clock to maximum rate in the clock framework
-> prevents this, as consumers don't have any flexibility over the clock
-> rate.
-not sure, if it's worth to document this important paragraph as a=20
-comment in the driver?
+>
+> On 16/01/2026 17:19, Ma=C3=ADra Canal wrote:
+>> If PIXEL_CLK or HEVC_CLK is disabled during boot, the firmware will ski=
+p
+>> HSM initialization, which would result in a bus lockup. However, those
+>> clocks are consumed by drivers (vc4 and HEVC decoder drivers,
+>> respectively), which means that they can be enabled/disabled by the
+>> drivers.
+>>
+>> Mark those clocks as CLK_IGNORE_UNUSED to allow them to be disabled by
+>> drivers when appropriate.
+> Acked-by: Melissa Wen <mwen@igalia.com>
+>
+> But it'd be better if Stefan or Dave could check if we're missing=20
+> anything in the firmware perspective.
+sorry, I don't have any insight to the firmware or the clocks. As long=20
+it has been tested with a Raspberry Pi 3 & 4 generation, i'm fine.
 
 Best regards
-> This change enables the v3d driver to control the clock rate directly
-> in its suspend/resume callbacks.
->
-> Fixes: 6526402b9bac ("clk: bcm: rpi: Maximize V3D clock")
-> Signed-off-by: Ma=C3=ADra Canal <mcanal@igalia.com>
-> ---
->   drivers/clk/bcm/clk-raspberrypi.c | 5 -----
->   1 file changed, 5 deletions(-)
->
-> diff --git a/drivers/clk/bcm/clk-raspberrypi.c b/drivers/clk/bcm/clk-ras=
-pberrypi.c
-> index 1a9162f0ae31e330c46f6eafdd00350599b0eede..9783385d5859836898683209=
-e320fcc928dfdc71 100644
-> --- a/drivers/clk/bcm/clk-raspberrypi.c
-> +++ b/drivers/clk/bcm/clk-raspberrypi.c
-> @@ -68,7 +68,6 @@ struct raspberrypi_clk_variant {
->   	char		*clkdev;
->   	unsigned long	min_rate;
->   	bool		minimize;
-> -	bool		maximize;
->   	u32		flags;
->   };
->  =20
-> @@ -136,7 +135,6 @@ raspberrypi_clk_variants[RPI_FIRMWARE_NUM_CLK_ID] =
-=3D {
->   	},
->   	[RPI_FIRMWARE_V3D_CLK_ID] =3D {
->   		.export =3D true,
-> -		.maximize =3D true,
->   	},
->   	[RPI_FIRMWARE_PIXEL_CLK_ID] =3D {
->   		.export =3D true,
-> @@ -387,9 +385,6 @@ static struct clk_hw *raspberrypi_clk_register(struc=
-t raspberrypi_clk *rpi,
->   		}
->   	}
->  =20
-> -	if (variant->maximize)
-> -		variant->min_rate =3D max_rate;
-> -
->   	if (variant->min_rate) {
->   		unsigned long rate;
->  =20
+>>
+>> Signed-off-by: Ma=C3=ADra Canal <mcanal@igalia.com>
+>> ---
+>> =C2=A0 drivers/clk/bcm/clk-raspberrypi.c | 4 ++--
+>> =C2=A0 1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/clk/bcm/clk-raspberrypi.c=20
+>> b/drivers/clk/bcm/clk-raspberrypi.c
+>> index=20
+>> 9783385d5859836898683209e320fcc928dfdc71..41f058bf44e8a5257e4b2a90389b5=
+e9525f2fffb=20
+>> 100644
+>> --- a/drivers/clk/bcm/clk-raspberrypi.c
+>> +++ b/drivers/clk/bcm/clk-raspberrypi.c
+>> @@ -139,12 +139,12 @@=20
+>> raspberrypi_clk_variants[RPI_FIRMWARE_NUM_CLK_ID] =3D {
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 [RPI_FIRMWARE_PIXEL_CLK_ID] =3D {
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .export =3D true=
+,
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .minimize =3D tr=
+ue,
+>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .flags =3D CLK_IS_CRITICAL,
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .flags =3D CLK_IGNORE_UNUSE=
+D,
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 },
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 [RPI_FIRMWARE_HEVC_CLK_ID] =3D {
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .export =3D true=
+,
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .minimize =3D tr=
+ue,
+>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .flags =3D CLK_IS_CRITICAL,
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .flags =3D CLK_IGNORE_UNUSE=
+D,
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 },
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 [RPI_FIRMWARE_ISP_CLK_ID] =3D {
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .export =3D true=
+,
+>>
 >
 
