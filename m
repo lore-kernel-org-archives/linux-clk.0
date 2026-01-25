@@ -1,155 +1,111 @@
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1304D31062C;
-	Sun, 25 Jan 2026 05:51:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769320287; cv=pass; b=szugmd+y6aGnvuC6dQjhh662EZZAug3N12wkpRaSBRLV7TKK4ybN0DhOctOsLujA5g/cLPsfIQ7KNxHo6v1QWmtD4fmVQ+jtI+eP4CLroTtdO1hOJy62Vl5J9qdyC4UjK6yXWOqKF3voeSuU5K6VrgG5Cr/JN/i4FSbxY3LRbhk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769320287; c=relaxed/simple;
-	bh=vNRFz3rpr1i9Y/8CHvWTW67haKPfB44QKas58pkzPWI=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=DhDCa+xgDIQ5h4Zb8+E0uj9jSFeWLW1V7LXG4amDJgijUTfI9VT3xcsTTDPWrXifXezbUNqe9r3h8SuoJ38w8DW+p6IMNWdxFMmIPu3iHYt1BTqMyp6YWY+N86KiSppAiA/RBZs2yFiOIe49/VDpdiwfDmMOAi7v8k6htSi10e4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech; spf=pass smtp.mailfrom=pigmoral.tech; dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b=rTR69koY; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pigmoral.tech
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b="rTR69koY"
-ARC-Seal: i=1; a=rsa-sha256; t=1769320254; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=dSTluIUg1ZvuNQajf3SJQZtFC47qgOiCluuPmretAnaYy3qEXXAfw12l1SuinrIkuTIRZfJR31MmYz5r6spPsJxZMoLbjXd+1xdkmxQeHJWZoCwxSDGaUYuXq3kOF7qo9PWdPFRCQ4/6JBiHaTov22Gkxan2PROLvfDtNTd0P3I=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1769320254; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=7kmusx+MqkhmDeC3UAb227ZvWFfKqkuZrPt4RmzV95Y=; 
-	b=WBLo2GPooj7hxieZJGDM1Qex0g3hZOSEzMm4I2tFp1ukYCmfFnuM3DqSt27sKBwWn2TV32I6s/OLlyXB2DY6U2/hhhUGqi82QbSx6QFm0LctY+SpVlAX5ZxYla4X7m+X1IT29Njx9sdNitezJuoLhqo/4o9PN3DJ7+ZocAo4ctQ=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=pigmoral.tech;
-	spf=pass  smtp.mailfrom=junhui.liu@pigmoral.tech;
-	dmarc=pass header.from=<junhui.liu@pigmoral.tech>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1769320254;
-	s=zmail; d=pigmoral.tech; i=junhui.liu@pigmoral.tech;
-	h=Mime-Version:Content-Transfer-Encoding:Content-Type:Date:Date:Message-Id:Message-Id:Cc:Cc:Subject:Subject:From:From:To:To:References:In-Reply-To:Reply-To;
-	bh=7kmusx+MqkhmDeC3UAb227ZvWFfKqkuZrPt4RmzV95Y=;
-	b=rTR69koYL0NpAmYBkVdfpkSYUbKGJBrLW085gQX2D96GmcI/dgw7ortSTm9m6V3k
-	PT91fEUpMbG+8Dqv0q3hbWPewgHn/Vtexj28VcJV8gL/4bu+ozd4NNXgzLh7FwyAlmd
-	sgb05Ra7AgqhnAaPKb8koZaqEd2KKBmDE0tK9YPw=
-Received: by mx.zohomail.com with SMTPS id 1769320251684256.61624132047143;
-	Sat, 24 Jan 2026 21:50:51 -0800 (PST)
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBCA4223323;
+	Sun, 25 Jan 2026 19:03:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1769367808; cv=none; b=Y9sI7Evm3nHm+QvHXaX70tN9K9BPq853ol5SNn+UmEkeIIpq600hOGlKyZgCwCnVWPI6gGAl2NxGrsP8iyjcYAOjfiSxO+62O+qg6TzW/kA2XOLasAJGleQAmWm1Lq7GjIiMXgSHXfNw4JO5WQ35ekQkGP7WeemTzZsZLS0dOGU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1769367808; c=relaxed/simple;
+	bh=PfOGeA0P6Mmy416VcisXwcbkWxPDJeL/9GAFax4cBoI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CJ/6cu4Rq9ZCrK2DOgy1gmNg71No61Z/XmF3or4YHKQgfhWb6/mZHBW9FjCnCxFjRsP6Sta7L5EMGdAVJneqwrdxHxIN2AgbqGDfxYSUju1Ls7ePqIKTeOcPYMEAXqLbC/s09JmiJAAO3n19ckbWcW3mQfI1sxOSwfv2iuQVKEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; arc=none smtp.client-ip=210.160.252.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
+X-CSE-ConnectionGUID: Jik4qdw8QB+2QUVeFq/xDg==
+X-CSE-MsgGUID: 6/dgqCt5SDeT+qV7F6nbcA==
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 26 Jan 2026 04:03:17 +0900
+Received: from vm01.adwin.renesas.com (unknown [10.226.92.19])
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 6B20E4032E06;
+	Mon, 26 Jan 2026 04:03:15 +0900 (JST)
+From: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
+To: geert+renesas@glider.be,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	prabhakar.mahadev-lad.rj@bp.renesas.com
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/1] clk: renesas: r9a09g057: Fix ordering of module clocks array
+Date: Sun, 25 Jan 2026 19:03:14 +0000
+Message-ID: <20260125190314.26729-1-ovidiu.panait.rb@renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Sun, 25 Jan 2026 13:50:41 +0800
-Message-Id: <DFXFOHVB1GAV.3L3EL4FVWFWDC@pigmoral.tech>
-Cc: "Michael Turquette" <mturquette@baylibre.com>, "Stephen Boyd"
- <sboyd@kernel.org>, "Jernej Skrabec" <jernej.skrabec@gmail.com>, "Samuel
- Holland" <samuel@sholland.org>, "Alexandre Belloni"
- <alexandre.belloni@bootlin.com>, "Rob Herring" <robh@kernel.org>,
- "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley"
- <conor+dt@kernel.org>, "Maxime Ripard" <mripard@kernel.org>,
- <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
- <linux-sunxi@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
- <linux-rtc@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: Re: [PATCH 4/7] clk: sunxi-ng: Extract common RTC CCU clock logic
-From: "Junhui Liu" <junhui.liu@pigmoral.tech>
-To: <wens@kernel.org>, "Junhui Liu" <junhui.liu@pigmoral.tech>
-X-Mailer: aerc 0.21.0-0-g5549850facc2
-References: <20260121-a733-rtc-v1-0-d359437f23a7@pigmoral.tech>
- <20260121-a733-rtc-v1-4-d359437f23a7@pigmoral.tech>
- <CAGb2v65aMMVu8W1PW+6NZM+YM72YFV9_FWVWtj6QHJ1CgetEsA@mail.gmail.com>
-In-Reply-To: <CAGb2v65aMMVu8W1PW+6NZM+YM72YFV9_FWVWtj6QHJ1CgetEsA@mail.gmail.com>
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Sun Jan 25, 2026 at 12:32 PM CST, Chen-Yu Tsai wrote:
-> On Wed, Jan 21, 2026 at 7:04=E2=80=AFPM Junhui Liu <junhui.liu@pigmoral.t=
-ech> wrote:
->>
->> Extract the IOSC and 32k clock logic from ccu-sun6i-rtc into a shared
->> module to simplify adding RTC CCU support for new SoCs. This is needed
->> because newer Allwinner SoCs introduce additional DCXO/HOSC logic that
->> prevents direct reuse of the existing driver.
->>
->> Signed-off-by: Junhui Liu <junhui.liu@pigmoral.tech>
->> ---
->>  drivers/clk/sunxi-ng/Makefile        |   3 +
->>  drivers/clk/sunxi-ng/ccu-sun6i-rtc.c | 152 +---------------------------=
--------
->>  drivers/clk/sunxi-ng/ccu_rtc.c       | 136 ++++++++++++++++++++++++++++=
-+++
->>  drivers/clk/sunxi-ng/ccu_rtc.h       |  37 +++++++++
->>  4 files changed, 177 insertions(+), 151 deletions(-)
->>
+The r9a09g057_mod_clks array is sorted by CPG_CLKON register number and
+bit position. Move the RTC and RSPI module clock entries to their correct
+position to restore the array sort order.
 
-[...]
+Fixes: 2efea3b35cc9 ("clk: renesas: r9a09g057: Add entries for RSCIs")
+Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
+---
+ drivers/clk/renesas/r9a09g057-cpg.c | 40 ++++++++++++++---------------
+ 1 file changed, 20 insertions(+), 20 deletions(-)
 
->> +
->> +const struct clk_ops ccu_iosc_ops =3D {
->> +       .enable                 =3D ccu_iosc_enable,
->> +       .disable                =3D ccu_iosc_disable,
->> +       .is_enabled             =3D ccu_iosc_is_enabled,
->> +       .recalc_rate            =3D ccu_iosc_recalc_rate,
->> +       .recalc_accuracy        =3D ccu_iosc_recalc_accuracy,
->> +};
->
-> You need to export the symbol.
-
-Thanks, I will export them.
-
-[...]
-
->> diff --git a/drivers/clk/sunxi-ng/ccu_rtc.h b/drivers/clk/sunxi-ng/ccu_r=
-tc.h
->> new file mode 100644
->> index 000000000000..1c44c2206a25
->> --- /dev/null
->> +++ b/drivers/clk/sunxi-ng/ccu_rtc.h
->> @@ -0,0 +1,37 @@
->> +/* SPDX-License-Identifier: GPL-2.0-only */
->> +/*
->> + * Copyright (c) 2021 Samuel Holland <samuel@sholland.org>
->> + */
->> +
->> +#ifndef _CCU_RTC_H_
->> +#define _CCU_RTC_H_
->> +
->> +#define IOSC_ACCURACY                  300000000 /* 30% */
->> +#define IOSC_RATE                      16000000
->> +
->> +#define LOSC_RATE                      32768
->> +#define LOSC_RATE_SHIFT                        15
->> +
->> +#define LOSC_CTRL_REG                  0x0
->> +#define LOSC_CTRL_KEY                  0x16aa0000
->> +
->> +#define IOSC_32K_CLK_DIV_REG           0x8
->> +#define IOSC_32K_CLK_DIV               GENMASK(4, 0)
->> +#define IOSC_32K_PRE_DIV               32
->> +
->> +#define IOSC_CLK_CALI_REG              0xc
->> +#define IOSC_CLK_CALI_DIV_ONES         22
->> +#define IOSC_CLK_CALI_EN               BIT(1)
->> +#define IOSC_CLK_CALI_SRC_SEL          BIT(0)
->> +
->> +#define LOSC_OUT_GATING_REG            0x60
->> +
->> +#define DCXO_CTRL_REG                  0x160
->> +#define DCXO_CTRL_CLK16M_RC_EN         BIT(0)
->
-> Please keep all internals in the .c file.
-
-My original thought was to reuse these for the A733. But since doing
-so is not appropriate, I will put them in the .c files separately.
-
->
-> ChenYu
->
-
---=20
-Best regards,
-Junhui Liu
+diff --git a/drivers/clk/renesas/r9a09g057-cpg.c b/drivers/clk/renesas/r9a09g057-cpg.c
+index 6943cad318b5..b0e43e5e50dd 100644
+--- a/drivers/clk/renesas/r9a09g057-cpg.c
++++ b/drivers/clk/renesas/r9a09g057-cpg.c
+@@ -296,6 +296,26 @@ static const struct rzv2h_mod_clk r9a09g057_mod_clks[] __initconst = {
+ 						BUS_MSTOP(5, BIT(13))),
+ 	DEF_MOD("wdt_3_clk_loco",		CLK_QEXTAL, 5, 2, 2, 18,
+ 						BUS_MSTOP(5, BIT(13))),
++	DEF_MOD("rtc_0_clk_rtc",		CLK_PLLCM33_DIV16, 5, 3, 2, 19,
++						BUS_MSTOP(3, BIT(11) | BIT(12))),
++	DEF_MOD("rspi_0_pclk",			CLK_PLLCLN_DIV8, 5, 4, 2, 20,
++						BUS_MSTOP(11, BIT(0))),
++	DEF_MOD("rspi_0_pclk_sfr",		CLK_PLLCLN_DIV8, 5, 5, 2, 21,
++						BUS_MSTOP(11, BIT(0))),
++	DEF_MOD("rspi_0_tclk",			CLK_PLLCLN_DIV8, 5, 6, 2, 22,
++						BUS_MSTOP(11, BIT(0))),
++	DEF_MOD("rspi_1_pclk",			CLK_PLLCLN_DIV8, 5, 7, 2, 23,
++						BUS_MSTOP(11, BIT(1))),
++	DEF_MOD("rspi_1_pclk_sfr",		CLK_PLLCLN_DIV8, 5, 8, 2, 24,
++						BUS_MSTOP(11, BIT(1))),
++	DEF_MOD("rspi_1_tclk",			CLK_PLLCLN_DIV8, 5, 9, 2, 25,
++						BUS_MSTOP(11, BIT(1))),
++	DEF_MOD("rspi_2_pclk",			CLK_PLLCLN_DIV8, 5, 10, 2, 26,
++						BUS_MSTOP(11, BIT(2))),
++	DEF_MOD("rspi_2_pclk_sfr",		CLK_PLLCLN_DIV8, 5, 11, 2, 27,
++						BUS_MSTOP(11, BIT(2))),
++	DEF_MOD("rspi_2_tclk",			CLK_PLLCLN_DIV8, 5, 12, 2, 28,
++						BUS_MSTOP(11, BIT(2))),
+ 	DEF_MOD("rsci0_pclk",			CLK_PLLCLN_DIV16, 5, 13, 2, 29,
+ 						BUS_MSTOP(11, BIT(3))),
+ 	DEF_MOD("rsci0_tclk",			CLK_PLLCLN_DIV16, 5, 14, 2, 30,
+@@ -396,26 +416,6 @@ static const struct rzv2h_mod_clk r9a09g057_mod_clks[] __initconst = {
+ 						BUS_MSTOP(11, BIT(12))),
+ 	DEF_MOD("rsci9_ps_ps1_n",		CLK_PLLCLN_DIV64, 8, 14, 4, 14,
+ 						BUS_MSTOP(11, BIT(12))),
+-	DEF_MOD("rtc_0_clk_rtc",		CLK_PLLCM33_DIV16, 5, 3, 2, 19,
+-						BUS_MSTOP(3, BIT(11) | BIT(12))),
+-	DEF_MOD("rspi_0_pclk",			CLK_PLLCLN_DIV8, 5, 4, 2, 20,
+-						BUS_MSTOP(11, BIT(0))),
+-	DEF_MOD("rspi_0_pclk_sfr",		CLK_PLLCLN_DIV8, 5, 5, 2, 21,
+-						BUS_MSTOP(11, BIT(0))),
+-	DEF_MOD("rspi_0_tclk",			CLK_PLLCLN_DIV8, 5, 6, 2, 22,
+-						BUS_MSTOP(11, BIT(0))),
+-	DEF_MOD("rspi_1_pclk",			CLK_PLLCLN_DIV8, 5, 7, 2, 23,
+-						BUS_MSTOP(11, BIT(1))),
+-	DEF_MOD("rspi_1_pclk_sfr",		CLK_PLLCLN_DIV8, 5, 8, 2, 24,
+-						BUS_MSTOP(11, BIT(1))),
+-	DEF_MOD("rspi_1_tclk",			CLK_PLLCLN_DIV8, 5, 9, 2, 25,
+-						BUS_MSTOP(11, BIT(1))),
+-	DEF_MOD("rspi_2_pclk",			CLK_PLLCLN_DIV8, 5, 10, 2, 26,
+-						BUS_MSTOP(11, BIT(2))),
+-	DEF_MOD("rspi_2_pclk_sfr",		CLK_PLLCLN_DIV8, 5, 11, 2, 27,
+-						BUS_MSTOP(11, BIT(2))),
+-	DEF_MOD("rspi_2_tclk",			CLK_PLLCLN_DIV8, 5, 12, 2, 28,
+-						BUS_MSTOP(11, BIT(2))),
+ 	DEF_MOD("scif_0_clk_pck",		CLK_PLLCM33_DIV16, 8, 15, 4, 15,
+ 						BUS_MSTOP(3, BIT(14))),
+ 	DEF_MOD("i3c_0_pclkrw",			CLK_PLLCLN_DIV16, 9, 0, 4, 16,
+-- 
+2.51.0
 
