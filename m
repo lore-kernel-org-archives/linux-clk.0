@@ -1,119 +1,122 @@
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com [209.85.217.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1046B13DDAE
-	for <linux-clk@vger.kernel.org>; Mon, 26 Jan 2026 11:05:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28346304BBC
+	for <linux-clk@vger.kernel.org>; Mon, 26 Jan 2026 11:06:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769425553; cv=none; b=Wya5wtv8HFD+Mmd1ZV+Yb/9bib9LDCCQ+gqBc/xpZqB/J6p/27CC6gnIDheUthoJyTKp49604d4QB/fUgAkRxP62ZnKEIf5llbVduLZnvVCeTWKX9pdseh85C6hobkgw+u9kapD5nJy4oJUrOIKDF14bjrO8lYdBZMTAOiz3Y1o=
+	t=1769425589; cv=none; b=YjtqS1gKx0GZwHTJhkm6N/BURa0V/AAfQ/15CtOEMdHcZ2BOsZKk4frW36Udjj4eFd4sHCuC7H5/T+XcyGAQBoVoTYzm9VowypWhnJvq3huxjKSTQsnj/nW+O2r9Aa4bXUkMO31AtxfPS88GrpbOHvKRubjQgIGpVB0YXnzjvNM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769425553; c=relaxed/simple;
-	bh=svsHx86gCXHOt9lDm9UaiD2VqEcy9P0nDBdnqYDH7fs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ojCXctPNG+XrjCJiA2gokAsLhPDQrfGvdPbGtvY41v6RGM/HV+IoKs/rl+MxZYxExSTWwAI1AFXqoABhjdFwFCDnR4hdgb99tgu9zXlaKOAcUoyXhodD8fqWdzxSD4f/YCnnuFIlLw2elu3zEnCYGKf8KUb3IUMjaZUyjPD8DJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=DSJXpNiv; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="DSJXpNiv"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=ZuODv4byBDoO7r5ORDZZKB4tCzJ8s4CMikv3WI8hr/Y=; b=DSJXpNivAlcWV1w9ugI0E425/J
-	kXYNh+EOtBME+oBjgHiDyVQ8WB+b7+X3Vbl91kXX6p4aY8QSY5ax2S2V8JTT2v4Fid9/suotJvhI3
-	sb3/WgcwAW3bzibDOyQrncYSBkXVPJiU8TjNKc2Q2XBky730iUAQ7G4i+kK12aPMLsY0J/b1JNaoD
-	vhCcWvfBz3TFKMskx23Y4s2Bl4NDGcQDfZngO59bOpIWhxd9B9IbNyryFYl2bxWC+mH4ZVPYnY4sq
-	zdfr0I89VW3ohxuB/nzTCPtw3YqniJK/VDLVMFY9QVH66fVpKTdS97MDtJxmIcVHwRRLtYFIxyzrf
-	5byoU4gg==;
-Received: from [189.89.57.42] (helo=[192.168.18.14])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1vkKPZ-00A0Ol-V5; Mon, 26 Jan 2026 12:05:38 +0100
-Message-ID: <9ee3b7f0-9262-4f6f-bec6-6fd9978e3754@igalia.com>
-Date: Mon, 26 Jan 2026 08:05:30 -0300
+	s=arc-20240116; t=1769425589; c=relaxed/simple;
+	bh=2H0McNSW14YeB8QNJBi9kKZne48lu2V8yMUat775eL0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Z3RPdo06FhxL6TSDHf5PBy6BlkLh0rpZ7SqS5RbkJBbOD03Vzac9guHMpokpSxNxavF/j/KWNBjnrjQDaOfyWCz622Vp2bpE5OkZUNmgOr+UVMkZXmbrhk3rUId0XSG8mo829N4sZxRYw9Dp09FTvLMVMwQ2Pcw1TZpiLsrHAJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f43.google.com with SMTP id ada2fe7eead31-5f1b9fe06b8so3871838137.0
+        for <linux-clk@vger.kernel.org>; Mon, 26 Jan 2026 03:06:28 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1769425587; x=1770030387;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6aS98Qbf9sAOaU61dqPi/K2l5V6UxS+EUsC0EMiIZcM=;
+        b=WbDRAVgolMEnqNzSPukCLqLk+Hme5ymMUWZ9FY+ITe2+3Z/eZqHHkPhk16JKbd21Jl
+         K5s6bmkGlT3yHGXdvB3+0NLHCgsydsgpGaytiFaImqQxJBng5IRKvCx0O0vJBf6PwTd2
+         y2XiZw2JKE6CGPhj0DZ8ytm4JwIf56HsnTzQxbLea9GKdmSm2ZabUuhR+MXBq0B5YEYF
+         M3nft+tkiaTWAYdAzoMMMXOAf3Q1WF8OJlppQbP+xtPBMzpxpM1IF8f3BA8UZpIeYNdz
+         cI4D/77Dknincn55Wweg84FzpXIR2i+Ncm4uqqzlOy0Pb48iMqigxcvsNXhFqorNeb3R
+         H9uQ==
+X-Gm-Message-State: AOJu0Yydtd8KKv7aMhvr4aAb2Cei39AjNQq7lL/ncLMDX9yOzvQal3La
+	+HGyj6OjGMVvM3pzqtp6AALwRK2cfxoj7+QSVFieZ+FLI+qQ6wC48nQwRb6SDxw4
+X-Gm-Gg: AZuq6aLOSoTuZ1damAG6rLKnbrzJPstG59ap7LmJShALwSanMr2SWiAhAtOvVcwmLIV
+	dL13nvVPSLkTK59zPSc/4e9CNR1UjfIKanJnP64JNoRLzW7dQm5BiG3438AYC/MKS5wO9RyClzX
+	ugRqFRq1DlhYsGIg/XcpKEGe021PzNQHwoxSLTDb/BR+u56Xxs/TCO3I/2gY0P/hQqa7iefJf2I
+	IQ2Amq5e4WT8lV+xW8CvmWTJUvhhfX0/pV2vTjnFP71sAitV2paYmPO0MimbBp0LSzUVIctQPdA
+	t+heyuvjR+9uGs4E/qi5fYwI3TwcU6gSmFSbOfSLYuu0EXF7jgrlh+ZsK5CeB5p8qe6sgGYZ9Zs
+	lXxOUgRd44SCVEs/utEvo5pytN+rMCt1hPIBTzclc/x1rGiJCkum2nJsjjVZJTtQ/17HajgXeEJ
+	LVNniwLBddhaARXsRg7X4Ya3MY6iIIZuOYqu25NSv8VCFuEpyt
+X-Received: by 2002:a05:6102:dce:b0:5df:bd66:7b76 with SMTP id ada2fe7eead31-5f57635667amr1141220137.17.1769425587092;
+        Mon, 26 Jan 2026 03:06:27 -0800 (PST)
+Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com. [209.85.217.42])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-948369daf5esm1400432241.14.2026.01.26.03.06.26
+        for <linux-clk@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 26 Jan 2026 03:06:26 -0800 (PST)
+Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-5f53505f012so4700483137.3
+        for <linux-clk@vger.kernel.org>; Mon, 26 Jan 2026 03:06:26 -0800 (PST)
+X-Received: by 2002:a05:6102:953:b0:5ef:a8da:8b26 with SMTP id
+ ada2fe7eead31-5f576492b87mr1267237137.27.1769425586050; Mon, 26 Jan 2026
+ 03:06:26 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/4] drm/v3d: Allocate all resources before enabling
- the clock
-To: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Nicolas Saenz Julienne <nsaenz@kernel.org>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Stefan Wahren <wahrenst@gmx.net>, Maxime Ripard <mripard@kernel.org>,
- Iago Toral Quiroga <itoral@igalia.com>,
- Chema Casanova <jmcasanova@igalia.com>, Dom Cobley <popcornmix@gmail.com>,
- Dave Stevenson <dave.stevenson@raspberrypi.com>,
- Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, kernel-dev@igalia.com
-References: <20260116-v3d-power-management-v3-0-4e1874e81dd6@igalia.com>
- <20260116-v3d-power-management-v3-3-4e1874e81dd6@igalia.com>
- <b652e476-af2f-4af7-aa95-3b987f6e1bde@igalia.com>
- <dbd3c9e7-c60f-4223-8ca6-c55d2398cc3c@igalia.com>
-Content-Language: en-US
-From: Melissa Wen <mwen@igalia.com>
-In-Reply-To: <dbd3c9e7-c60f-4223-8ca6-c55d2398cc3c@igalia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20260121232657.155281-1-marek.vasut+renesas@mailbox.org>
+In-Reply-To: <20260121232657.155281-1-marek.vasut+renesas@mailbox.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 26 Jan 2026 12:06:13 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdVa5_Ad9fssBqQkM2MYevwebowmNZbFJ64AXirn0KfrRA@mail.gmail.com>
+X-Gm-Features: AZwV_Qj5vhAcK_cpdHEhBGKru4FfHXAD4S81A5Q270vbDRN7RD5_nDM_1mnBenA
+Message-ID: <CAMuHMdVa5_Ad9fssBqQkM2MYevwebowmNZbFJ64AXirn0KfrRA@mail.gmail.com>
+Subject: Re: [PATCH v3] clk: rs9: Reserve 8 struct clk_hw slots for for 9FGV0841
+To: Marek Vasut <marek.vasut+renesas@mailbox.org>
+Cc: linux-clk@vger.kernel.org, stable@vger.kernel.org, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-
-
-On 24/01/2026 14:48, Maíra Canal wrote:
-> Hi Melissa,
+On Thu, 22 Jan 2026 at 00:27, Marek Vasut
+<marek.vasut+renesas@mailbox.org> wrote:
+> The 9FGV0841 has 8 outputs and registers 8 struct clk_hw, make sure
+> there are 8 slots for those newly registered clk_hw pointers, else
+> there is going to be out of bounds write when pointers 4..7 are set
+> into struct rs9_driver_data .clk_dif[4..7] field.
 >
-> On 23/01/26 12:53, Melissa Wen wrote:
->>
->>
->> On 16/01/2026 17:19, Maíra Canal wrote:
->>> Move all resource allocation operations before actually enabling the
->>> clock, as those operations don't require the GPU to be powered on.
->> What are the benefits of doing it?
+> Since there are other structure members past this struct clk_hw
+> pointer array, writing to .clk_dif[4..7] fields corrupts both
+> the struct rs9_driver_data content and data around it, sometimes
+> without crashing the kernel. However, the kernel does surely
+> crash when the driver is unbound or during suspend.
 >
-> This is mostly a preparation for the next patch. In the next patch, I'll
-> move all code related to powering on and preparing the GPU into the
-> resume() hook. Since resource allocation must occur before resume(),
-> this patch prepares the necessary groundwork for that.
-
-Can you include this explanation to the commit message?
-
+> Fix this, increase the struct clk_hw pointer array size to the
+> maximum output count of 9FGV0841, which is the biggest chip that
+> is supported by this driver.
 >
->>>
->>> While here, use devm_reset_control_get_optional_exclusive() instead of
->>> open-code it.
->> Overall LGTM. But I think this patch could be split into smaller units.
->> Maybe something like:
->> 1. remove open-coded part
->> 2. split gem resource allocation from initialization
->> 3. move all resource allocation
->
-> I can certainly do that. My initial thinking was to keep these changes
-> together, since they are closely related and all serve the same
-> preparatory goal for the upcoming resume() refactoring. From my
-> perspective, keeping them together helps preserve that context.
+> Cc: stable@vger.kernel.org
+> Fixes: f0e5e1800204 ("clk: rs9: Add support for 9FGV0841")
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Closes: https://lore.kernel.org/CAMuHMdVyQpOBT+Ho+mXY07fndFN9bKJdaaWGn91WOFnnYErLyg@mail.gmail.com
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+> ---
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: linux-clk@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-renesas-soc@vger.kernel.org
+> ---
+> V2: - Update the commit message crash paragraph
+>     - Add RB/TB from Geert
+> V3: Add Closes:
 
-As a reviewer, splitting these changes into separate patches would make 
-review simpler.
-I think the open-coded improvement isn't super attached to the resource 
-allocation, right?
-And you can preserve context in the commit message.
+It would be good if this would make v6.19 or v6.20-rc1, as it is a
+hard dependency for adding 9FGV0841 device nodes to DT in v6.21.
 
-Melissa
+Thank you!
 
->
-> Best regards,
-> - Maíra
->
->>
->> Melissa
->>
+Gr{oetje,eeting}s,
 
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
