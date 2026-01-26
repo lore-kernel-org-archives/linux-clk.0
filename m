@@ -1,657 +1,830 @@
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+Received: from TYPPR03CU001.outbound.protection.outlook.com (mail-japaneastazon11022079.outbound.protection.outlook.com [52.101.126.79])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F3EF192B90
-	for <linux-clk@vger.kernel.org>; Mon, 26 Jan 2026 13:17:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769433436; cv=none; b=b8SIyiPGHKf6b/aUC3gjsvK/M/POtNYXBKZQLM9eFudZ8xenyFmPuHiy9pzGTEYxyGs1R03CJQthE3ndShAoStQSzeRQtmye3CDFY04ncLHgK9ILrQheXIA9u8L78UlWsERxwsKoDNOk2DyyeyKfPA0IKSJ/5zNxBEldOEk/70w=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769433436; c=relaxed/simple;
-	bh=RbyQAcf10GHw/lregTouNtxsGBdMD2UyvnqeAXY4UjI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BFP1ojWs3YIZOKHvcACpwUKT9shS4Sfe6PlTsoCD6zsCLT4qxg8nNafL3IwadeEW6C02s1Ydr5RWOyl1rgH2VRIOw6reUx6M0/4fiiY+9YdyHilts0hFXj63dnV5+mp2qrQ7si9SivxhlQiossRNJ3iJNRfNa1m4OzpeDsDXyDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=HAxPnanM; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38D8F33065C;
+	Mon, 26 Jan 2026 13:21:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.126.79
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1769433707; cv=fail; b=baDP7Ct8MooOxY6jEGaiJiG0yyOSgUY6FOZFFcOZh8GNr0sWP5Et0l7bKDsW/gLj2MCCEGFuvTbARwrvsrPX/14YJaKWBbvSMV1aPXCndUlL5qe7KiE7s3/OFW5fIl6AEAsMXWnmDa5loSA3Q0Ii1XKsd1lm1ew3yV9uYcQZ9pI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1769433707; c=relaxed/simple;
+	bh=4cMSI/oAPx/DydLqfsRS/oEvvx+w+fXW0hFJzqe2wMI=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=jtW4T5r85bN1BKWhfTqriDD+of3muo0uNPTP0naRspf41paNtX9HBw5br0mRHnYaiPoyu1TQs5QNHFUHeCNga6ipnEPF7WKsVZlU/4a+q6BiMHFxDTO693EJiZIS6anvud6vgl28iTyas2drZxHq80nQGC1z9pIsLRu3z/v6CfY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b=D2GIrksi; arc=fail smtp.client-ip=52.101.126.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amlogic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="HAxPnanM"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=fYrUYIeJEVFmy4FEXHExmtEjO6PJiqjGBDlTX9sDdOs=; b=HAxPnanMsVzMHwD5o/QRbwd1oh
-	uCzXTDKzKFFRhBYFV/mAzkkPDpTuCTjnogk9nULIBGtTg5l58IINHvbnh3JkeAKRzdwFGt/739h8e
-	b6MSB+PxL3fW4LlzNr9SLOpdbJ/DDa2adfbqmCqvS5pLX4QOvsrs0imEPsLGuWw/HY+3PysWIN81s
-	pUB2Y6ACMqufhR38bqqMeMQrzKJn4WhhLJXJED9Z4MKzvYOLD0CW4SD9XBwG9AvShimYlMjOH9yIT
-	YK6VJOPJwR16trm5fCDDwsS5jlCuBRYlBP1eg6CPNpwAKiqZmR3IBIuZ5ic2TcRSzcmv5tH2UroVs
-	4DHroAZw==;
-Received: from [189.89.57.42] (helo=[192.168.18.14])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1vkMSX-00A3Rn-DM; Mon, 26 Jan 2026 14:16:49 +0100
-Message-ID: <c9cbf372-3ca6-4fd3-b5ec-3c97a31e096e@igalia.com>
-Date: Mon, 26 Jan 2026 10:16:41 -0300
+	dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b="D2GIrksi"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=dtFo3rVmEn2cYOjqZne/E67vd9sXe6AlAbMsJT1yZsdXDScmgKdPw8AJe6kViIIEblCIYHTE5mPTJk9s1x6QzH/cRaM5MyG725bf5Axl50dsEy/RE1/RrwBNZMtpn+U9DTZjAAaLPOhAJuyb414jc8eap92W54TfoAQANS1ktDQqeifG8qtf50BZmWWG7mund3GVfWkHDydvqxWHi/oxdihHdaMwak6LnS9AdI+sQO2zaw4RpA0SLm2x9xUbQj3kAaFubJ7aqNNBcsT3Wp26499u//mKrx+UtiL/7SFTROOuw/+FHgP7691mAOgMjG8DUZm7cwNzfN2GjrsLkgPwtw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=PK5PDdsD4xjHsrM0Hu/1YNtaeKTbnjPBpcLnD7UL7rw=;
+ b=PQJrHoX39q5tCFEpdjaq1DA7nzQCEntlBMyiA7sJZ1z/6/NS6xwvo/vHm4XbN/hyAqAO50JB7WK/Ln7r6UJpTXyz1BW3E18QlU9rv2KaUqPjiqNZkHUVvX2lEcQcRjYnuLSBCpmjY1T6RgSTqzx89NKm59/HUyB06KLA2oLMBuvDDRXAMDe/rDg4CXOkIckCS5jv8I2sEfCZ8VV+5Z3AQzUCn8dT13rWcm1p4csEb2Byw9V2TYHab/aEsN7/6KFxJ6z7ONRFKR31X5gx++MKuSIMXo+rR0khGJS/EOlKcHOHcs3fCM9FNS90O6Ief8yL4GOFiYROCWS/dCqu8CJSag==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
+ dkim=pass header.d=amlogic.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amlogic.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=PK5PDdsD4xjHsrM0Hu/1YNtaeKTbnjPBpcLnD7UL7rw=;
+ b=D2GIrksij8EAsjplkHV/yJ4etJXTk4BcFcXDsooGmZqUr/qcJ3ic8bhI9afSnG6SLtdYU2KtiWcW2bOOGFh4ri6Qfoz3PXL3LW9D2fTIM2O7qVxAFwHT2z3Py3K3l5fprOMXCDowc7N208htB3BJFz75+0qWDwgFNZ2pWZHRqHwsH99/PDprbO3VygGrl3CZ+ChaSBoUAwGKIfN4DMK49rV8veDmPupKUack8TNpOvSbEcsU0AyMdEjK/fD/6WEHWgpFjCO3uLyv0c2qsTOlJQ806mZw5YVM1xFpuR8JDl1+FN/LPE6foeD/AZZBcjoyIRwrGfytNmSmfiTyc1vfuA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amlogic.com;
+Received: from PUZPR03MB7135.apcprd03.prod.outlook.com (2603:1096:301:113::15)
+ by SEYPR03MB7316.apcprd03.prod.outlook.com (2603:1096:101:13b::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9542.15; Mon, 26 Jan
+ 2026 13:21:41 +0000
+Received: from PUZPR03MB7135.apcprd03.prod.outlook.com
+ ([fe80::ecac:a387:36d8:144d]) by PUZPR03MB7135.apcprd03.prod.outlook.com
+ ([fe80::ecac:a387:36d8:144d%4]) with mapi id 15.20.9542.010; Mon, 26 Jan 2026
+ 13:21:40 +0000
+Message-ID: <d403bf7d-6e73-460c-b2db-8019d9d44a67@amlogic.com>
+Date: Mon, 26 Jan 2026 21:20:52 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 5/5] arm64: dts: amlogic: Add Amlogic S4 Audio
+To: Jerome Brunet <jbrunet@baylibre.com>,
+ Jiebing Chen via B4 Relay <devnull+jiebing.chen.amlogic.com@kernel.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>, Neil Armstrong <neil.armstrong@linaro.org>,
+ Kevin Hilman <khilman@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+ jian.xu@amlogic.com, shuai.li@amlogic.com, zhe.wang@amlogic.com
+References: <20260126-audio_drvier-v6-0-99e350855bc2@amlogic.com>
+ <20260126-audio_drvier-v6-5-99e350855bc2@amlogic.com>
+ <1jcy2whb9k.fsf@starbuckisacylon.baylibre.com>
+From: Jiebing Chen <jiebing.chen@amlogic.com>
+In-Reply-To: <1jcy2whb9k.fsf@starbuckisacylon.baylibre.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SI2PR01CA0033.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:192::23) To PUZPR03MB7135.apcprd03.prod.outlook.com
+ (2603:1096:301:113::15)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 4/4] drm/v3d: Introduce Runtime Power Management
-To: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Nicolas Saenz Julienne <nsaenz@kernel.org>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Stefan Wahren <wahrenst@gmx.net>, Maxime Ripard <mripard@kernel.org>,
- Iago Toral Quiroga <itoral@igalia.com>,
- Chema Casanova <jmcasanova@igalia.com>, Dom Cobley <popcornmix@gmail.com>,
- Dave Stevenson <dave.stevenson@raspberrypi.com>,
- Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, kernel-dev@igalia.com
-References: <20260116-v3d-power-management-v3-0-4e1874e81dd6@igalia.com>
- <20260116-v3d-power-management-v3-4-4e1874e81dd6@igalia.com>
-Content-Language: en-US
-From: Melissa Wen <mwen@igalia.com>
-In-Reply-To: <20260116-v3d-power-management-v3-4-4e1874e81dd6@igalia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PUZPR03MB7135:EE_|SEYPR03MB7316:EE_
+X-MS-Office365-Filtering-Correlation-Id: bed8b5ed-2188-40f1-3a83-08de5cddd76d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Ti9UbFBHZHkrZzlLdks2VWJzV0d3WTlibzhDNWtBT1g4OTBvWVZVN056a3Fp?=
+ =?utf-8?B?SUlTWVA4UjhpUXBCYzFPWUFHL0dhaU5oeGplRmxaWjZDTTY1Y3pQZXc4UUhK?=
+ =?utf-8?B?d1lMRE9yMy9lZVAzYUxYUVpybzl6MGI4amsxSUgzNUtUeWZ2YlhTa3lwQ3Rn?=
+ =?utf-8?B?ZXNuYm1IL2ExazRrVUJ3VkdqaVZwM01GL3NIU2grNnRXck1OTTVvNDBhWE1x?=
+ =?utf-8?B?ZFJnWXlIMUVlaGVpZXZBcWFPR1VSMHl0RmpWS1oySlV0dmR1WHUzcHRRRHV0?=
+ =?utf-8?B?NllPQ0UxbmVUaGdIbHJqQS96T2ZKa2pDOVg4ZjNyL0xOcEZxbW5JMVE0SlBP?=
+ =?utf-8?B?cEtwSDh3OTgrOU5ZOS9qN3h1UTNJSmxaNG8xNVhCQ0Y4c1grdXpabitiMG9B?=
+ =?utf-8?B?RDNobmlaclBBUWE5QkhJRVZFZ1lYTlRhc3p5VC85YktGNFY2VnF5UlJzcm4y?=
+ =?utf-8?B?cjUydlUwcHZPc2tkamo0bE44ejJNTnNIU1laK3lWaUxzdnY3UHoyZkpDamRF?=
+ =?utf-8?B?bTlxMkRtSFBLOXA3eXptdHJnYmJtYXlsd0NxWVp6U2J6aFJ1WllKU1l0WTNs?=
+ =?utf-8?B?Zm9yY0IrQm9laTBzM3lXWk1tRmNDNENjclU3cHc1MkNRN1hhQ0VWanJ2dU5C?=
+ =?utf-8?B?alczdEZ4aFliU1N4ZGUyS3RZV1ZXQkRPYWJHV01sNjlqT0JtM1ZHc2JMQXBj?=
+ =?utf-8?B?T3YxY3ZtRjlOYnkxbTc5bCsvZlJ2c2U1TkU4K1dzdStRSW5TeUlSaFFwOEhx?=
+ =?utf-8?B?RkxaZFJ1UVpFMlR0RnZsZDFuZVN3WXE0bm5ZQ1lBMzBmOGt5RlMxa2V6dnVz?=
+ =?utf-8?B?QzNOUEU5d2lLbHdQVzBZYzBVbTRtTXpsY2FaOXJQSEIxZGowbEdhUEdla3BV?=
+ =?utf-8?B?d1VrbjQxd0tPc2grK2RoUmVBTC9JM2UwN0U4elNGOTd5cE02b0ZwRjU2MHFq?=
+ =?utf-8?B?Rk10ZzdwZ3l0Vmh0K053UUFSU0ErMit6ZXptSzVtSFZjaFAzbzdCRGdnMXlL?=
+ =?utf-8?B?eEs4TWs2NUg0OFMzbUpIZldxTXhkZktpMTc4NVEzRVZscDZoZ3NPSzlzdUVj?=
+ =?utf-8?B?ZFhwMFQ3dkZyMjNXNVR1bks1Q3pMTEd1M1d6MndaUzZsMzhQR2FSQUI4NkM5?=
+ =?utf-8?B?ZytHQlY3NFFmNTBRMlBOcmFvQUZVeE96N0MrV09pNE1iVFJHRndvSGdsenNv?=
+ =?utf-8?B?VXpSNTZKNGNvUkpRK25ZOWZhMWlDQlpQYTdwVFpaditpSm83STFLUXlpSktx?=
+ =?utf-8?B?YzZyZWtIam1CNk1XWTdhdUpWaUVPMHFKbDh6UjV6OHEvWWw5OHYrVWZ5R0lW?=
+ =?utf-8?B?SnYzdTk4QnY0WnprNzdENlRHSXE0Ym01R3ByeTFhejZaN2pCQjBhT29HNndm?=
+ =?utf-8?B?Vi8waEN5VDBCNFFhSG1ZL3Vsc1AvQ0EreEpMdXoyMnh4Q01udHpMLzVYQXZo?=
+ =?utf-8?B?UjgrMHJ2VVB2bWNaODg2eWtaY2RoSGxUaExaREJRaHRwM2c3Z3c2N1VUNEsy?=
+ =?utf-8?B?TElwKzdqU0twL0pNL093blJHalBrejNUWlpjRThLTTRaRzVqLzRMcTc4NEs3?=
+ =?utf-8?B?dE14ZmRYblEvcWlCMFJCMVB6U2RXNDhpRFM2U2dsRXV3V3YvTElUYTBnVXFx?=
+ =?utf-8?B?MHBodmNER3JpVmx5QTJFaEIrOTQ4YkdadmFqWVVUZTRMQ2c4Vis3Y0t5MFh6?=
+ =?utf-8?B?TzgxclZjc1dPa0hVTzZTUG5kN2gzWnJlb0ZPOW9USWRwS0dlR2hmMVJ3ME5y?=
+ =?utf-8?B?VXdoT0c3OU1OQzdaaFpoaTJwOCtxYVdTNlovQ1BVRi90WWl5TjVMcVd2RnRS?=
+ =?utf-8?B?OWlIOGRwcUZtMEwwY0VvNWx0TGJVTXdzdHJkQlBlcGxFSHdpUVJuRjBZellK?=
+ =?utf-8?B?NjM0WGFSdi9vajlNNTFqUzVPbE5TZHVZYkdaNWxuUE9yaUV0TUMxNTh6cFNG?=
+ =?utf-8?B?OXQxYWJLcEJKc1dOM01VcmIzQ1VHRkNRTWlqZlE2ZEtGd3hENnkrWm15U3ZE?=
+ =?utf-8?B?WkJFaVl3SGRYM2l6MzZqQk9mN2ZUbHNIYUNtWmJ4WmhKYjFhK05nbkdKdFZL?=
+ =?utf-8?B?ajBsYkNBaGtKd1hOc2ZzelVzTmtLTXppaGxCTTFMU2xPMDAwRHVvNUpCWVFB?=
+ =?utf-8?Q?Ux50=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PUZPR03MB7135.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?NHNWWnZOdmg2NmdKdlRDT2FDaG9jY1VrUFkwOUJtcDh5OE4wVTRiSVZrWDJX?=
+ =?utf-8?B?K0VXNXRlZ092bE91RnNTQUV6VmdqL1p6U1VLcUtKcHBlM1JSYTRmNFMybEYr?=
+ =?utf-8?B?NEtyUTlwVjlFaDFJSzkwd1R5ZGlna0I2NDJIenJTTnpGVUJqOEdCcVFXd3VL?=
+ =?utf-8?B?UmZhVmFtZWRiOTNONE9DbEJWMktTTFBkbmtYemxpN2pFSzBvZC9OUXFHUmJ1?=
+ =?utf-8?B?MDEvNWRoOUlDVWNMa09zS2pCK05OQ3BlTE93SVNYeTM1bFZrZHNNQVhJMDRG?=
+ =?utf-8?B?NERLVjhvdDV0aXRKdTZ0YThqTGFwQ3NGeTZHZFIvamRXVUI2VHVLQlVaZjll?=
+ =?utf-8?B?NGlUbVFsdm9VMW1VZXpBdEVuNDFtM3VOZ0RVQTFEbVRwNmpvVnBuZUpXKzZy?=
+ =?utf-8?B?TkZud1FLbWJNemhDSXhXRS9tM2JCdGpKSTZtcWtpbXZLUTN0cVd2bU9sT1Va?=
+ =?utf-8?B?VWpNR0cvTHZwOVVoR0U1enJPNmpLSjdlUlZxQXNSL0VHZFZRZ2NKQlU2VkFP?=
+ =?utf-8?B?UTVYbDdOOHJDeS8vS1ErczFGR04waXJpZXBVYWVqa3Q4ZVdwekdScTBaYmhM?=
+ =?utf-8?B?am5aY1M0UFJ6RFBkY21VOTJCVlFwVm5FcnViVndKNnhzKzRKL3FyYUUzL2ZS?=
+ =?utf-8?B?cksrRFdUWk8yTEFwN0V3Wm45YXVGeTRrQVRiU1c0WTlwbW4zN0ZZSU45YUJW?=
+ =?utf-8?B?YlZxdXNJU3RXY1h5YjNZUXVHYzI5a2sxVlp6RWNJWTk5c01FUXl1azZwYmIw?=
+ =?utf-8?B?dnVPVE9MZURHYlByNk45bXoyd2V0cnNlYXNzV21VNGgrU08yNUdqSkpNUllJ?=
+ =?utf-8?B?dG1aT01LOVJlSlovam1BbXBMYW00WnJ6T1ArZjk0Uit4NUhTd3ljZ0FONkpP?=
+ =?utf-8?B?S3V1d0k2RDFxanRMVll0RnEzRzl0V2JRbVNpNEQ3S2IwU3N6dkpNeExwVWRX?=
+ =?utf-8?B?T0c4NzZJTWFzbE5LWWNrb05zaGRsRm1Eb25JSHhCM3A5aFZ5MzR0NGE4RzlI?=
+ =?utf-8?B?WHdLcUdITnJlcGdHZXJtZ3V5UGNCMWlHQUc4SnZLZkxwdEJFRUNDcHYyOXhv?=
+ =?utf-8?B?ekNKK1NIc1hFVTA5L1dkL2ErQVFaMlZMalR2V0tFdlpyaHE0VWJuVDBZWmFz?=
+ =?utf-8?B?Zy96YW5IMGdVNUJjaktqWFRzLzVoUGN1QkdUOHRtYjVXS09INWJ4SzZXY3p3?=
+ =?utf-8?B?ZmEyODNFalFWdlIrQmZWVDlaK0l6RmJEMmF4a2l6M1hTK0FWc0FOWjBBU2xQ?=
+ =?utf-8?B?S21ROWEzT1ZaRHJkaFRRSlc4S3pjd2FDK0JtZjY5aVZldDdhZitQcTFxQzB1?=
+ =?utf-8?B?MExZSTZiS1Iydk84TllDSmtxdXJaZ3BQbWFCWC9LQit2QUh3UWVLeE9UaGJW?=
+ =?utf-8?B?cFc3bUhrb2R0ZmtidmpuOExYVEk1K2JPNFpITUl5QUNLQkprdmtSKzRKTGU3?=
+ =?utf-8?B?Mzk5UGdCRmtPdXA1TmhDQlJ6dk15amhEa3dRRnVud2lkN3VxWndRZTN6VjIy?=
+ =?utf-8?B?b0JVTEhaVmVHUC9tdklNTU9lS2ZmTVlsRWw1YldJOTk0L1l3SEdoaVZSVVdU?=
+ =?utf-8?B?d2lZNUVlbHUwVVo0aUZ2d0xQN09rME0wQ2pQYWNYSm9HR3pQNE8vRU9QMEli?=
+ =?utf-8?B?WGNhU3hXeTJxVGhlVDFBdERyZmhESjdmWEp3SXZYR3R0ZDR0TVRFMU9WOVFN?=
+ =?utf-8?B?V1JqbW11VHUya3l5M0hoaUFiU0k1R09xZzZsc05sMXNYZnNwL3hvZFplSVVx?=
+ =?utf-8?B?N0VVUlpNa3djT01yanhsZGFscG84Y1IzUVBxWjVCNlBmc3hTQUJkYVFZMDZV?=
+ =?utf-8?B?TnhvMVFVWEVuRjZ6TXJxMnd2VnZQQ2dwa3dRTnJWbHdMVW5DWXB0TEhWVDJX?=
+ =?utf-8?B?d056cHRKdDE5ZXJCU0U2SU5meWsreVJPQTRteHQ1ZjNoZHJ1bnRDbHJSeG40?=
+ =?utf-8?B?Ynp0VXp6WWpBVjhuTlE1ZHpGZVZSc3lPRlNLbVdZY0xOUm5IbEdYemZZQVFp?=
+ =?utf-8?B?QmFEQ3Vud1NMZEQ5Tkt4ME5mNDZmNXpGRE02OVp4QWZKYXc2OXZteWdqL3d1?=
+ =?utf-8?B?WFVQUGdRWjY2djRCa05BVFJ5VkxieVVHZ3dsQXU1QU5VTjEyOTNWRjliSC9v?=
+ =?utf-8?B?THB3ZFZmaFF3Z1dQM2RGNkcrRUtJOGdjc05ycS9GcG1BMHdyMm9zMXZBeDFB?=
+ =?utf-8?B?SGJSS0tDaGZLOWtGNkFObThWbXE3bXNpOEVxUEsxQndYanVFeVJHcjBRU3Az?=
+ =?utf-8?B?b2xwT1Z3S2RFcS8xYkRQZlE5TkdLVjJ6OVcyRTlzamFGa2JRcTc4bHpjOG8w?=
+ =?utf-8?B?c3dIdHY2d2tTbnIrdGhwV0phdWlHMVlCM3E4b2FlQkkzeW5VSUdmTUFRRjk3?=
+ =?utf-8?Q?khabbHQi0DXQV1Y0=3D?=
+X-OriginatorOrg: amlogic.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bed8b5ed-2188-40f1-3a83-08de5cddd76d
+X-MS-Exchange-CrossTenant-AuthSource: PUZPR03MB7135.apcprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jan 2026 13:21:40.9137
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Dd4jZVsuYK//9+qWWDGnreoEIH5+1ebyG4XSnr7iV0sgYncDEVxeSpp2ipika+AP8uV05vLZjbIEieMYCghTXuzD+drQEKTUpPpCVzgp7lc=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR03MB7316
 
 
-
-On 16/01/2026 17:19, Maíra Canal wrote:
-> Commit 90a64adb0876 ("drm/v3d: Get rid of pm code") removed the last
-> bits of power management code that V3D had, which were actually never
-> hooked. Therefore, currently, the GPU clock is enabled during probe
-> and only disabled when removing the driver.
+在 2026/1/26 19:19, Jerome Brunet 写道:
+> [ EXTERNAL EMAIL ]
 >
-> Implement proper power management using the kernel's Runtime PM
-> framework.
-Hi Maíra,
-
-Overall LGTM. It's a very nice work, thanks for taking this forward!
-
-I have a vague recollection that there was some MMU warnings/instability 
-in the
-previous attempt to add PM runtime support. But looking at your series, 
-I guess
-it might be addressed by your previous patch moving resource allocation.
-
-Please, find some comments inline.
-
-Nit: this patch can't be applied to drm-misc-next anymore due to minor 
-conflicts with:
-- f5520a1a84434 ("drm/v3d: Convert v3d logging to device-based DRM helpers")
-
+> On lun. 26 janv. 2026 at 06:01, Jiebing Chen via B4 Relay <devnull+jiebing.chen.amlogic.com@kernel.org> wrote:
 >
-> Signed-off-by: Maíra Canal <mcanal@igalia.com>
-> ---
->   drivers/gpu/drm/v3d/Makefile      |  3 +-
->   drivers/gpu/drm/v3d/v3d_debugfs.c | 23 +++++++++-
->   drivers/gpu/drm/v3d/v3d_drv.c     | 86 +++++++++++++++++------------------
->   drivers/gpu/drm/v3d/v3d_drv.h     | 20 ++++++++
->   drivers/gpu/drm/v3d/v3d_gem.c     |  9 +++-
->   drivers/gpu/drm/v3d/v3d_mmu.c     | 12 ++++-
->   drivers/gpu/drm/v3d/v3d_power.c   | 96 +++++++++++++++++++++++++++++++++++++++
->   drivers/gpu/drm/v3d/v3d_submit.c  | 19 ++++++--
->   8 files changed, 213 insertions(+), 55 deletions(-)
+>> From: Jiebing Chen <jiebing.chen@amlogic.com>
+>>
+>> Add basic audio driver support for the Amlogic S4 based
+>> Amlogic AQ222 board.
+>>
+>> Signed-off-by: Jiebing Chen <jiebing.chen@amlogic.com>
+>> ---
+>>   .../boot/dts/amlogic/meson-s4-s805x2-aq222.dts     | 222 +++++++++++++
+>>   arch/arm64/boot/dts/amlogic/meson-s4.dtsi          | 361 +++++++++++++++++++++
+>>   2 files changed, 583 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/amlogic/meson-s4-s805x2-aq222.dts b/arch/arm64/boot/dts/amlogic/meson-s4-s805x2-aq222.dts
+>> index 0a3f81ea0fb0..43493bc9da46 100644
+>> --- a/arch/arm64/boot/dts/amlogic/meson-s4-s805x2-aq222.dts
+>> +++ b/arch/arm64/boot/dts/amlogic/meson-s4-s805x2-aq222.dts
+>> @@ -75,6 +75,19 @@ vddio_ao1v8: regulator-vddio-ao1v8 {
+>>               regulator-always-on;
+>>        };
+>>
+>> +     vcc5v_reg: regulator-vcc-5v {
+>> +             compatible = "regulator-fixed";
+>> +             vin-supply = <&main_12v>;
+>> +             regulator-name = "VCC5V";
+>> +             regulator-min-microvolt = <5000000>;
+>> +             regulator-max-microvolt = <5000000>;
+>> +             gpio = <&gpio GPIOH_7 GPIO_ACTIVE_HIGH>;
+>> +             startup-delay-us = <7000>;
+>> +             enable-active-high;
+>> +             regulator-boot-on;
+>> +             regulator-always-on;
+>> +     };
+>> +
+>>        /* SY8120B1ABC DC/DC Regulator. */
+>>        vddcpu: regulator-vddcpu {
+>>                compatible = "pwm-regulator";
+>> @@ -129,6 +142,215 @@ vddcpu: regulator-vddcpu {
+>>                                <699000 98>,
+>>                                <689000 100>;
+>>        };
+>> +
+>> +     dmics: audio-codec-1 {
+>> +             compatible = "dmic-codec";
+>> +             #sound-dai-cells = <0>;
+>> +             num-channels = <2>;
+>> +             wakeup-delay-ms = <50>;
+>> +             sound-name-prefix = "MIC";
+>> +     };
+>> +
+>> +     dioo2133: audio-amplifier-0 {
+>> +             compatible = "simple-audio-amplifier";
+>> +             enable-gpios = <&gpio GPIOH_8 GPIO_ACTIVE_HIGH>;
+>> +             VCC-supply = <&vcc5v_reg>;
+>> +             sound-name-prefix = "10U2";
+>> +     };
+>> +
+>> +     spdif_dir: audio-spdif-in {
+>> +             compatible = "linux,spdif-dir";
+>> +             #sound-dai-cells = <0>;
+>> +             sound-name-prefix = "DIR";
+>> +     };
+>> +
+>> +     spdif_dit: audio-spdif-out {
+>> +             compatible = "linux,spdif-dit";
+>> +             #sound-dai-cells = <0>;
+>> +             sound-name-prefix = "DIT";
+>> +     };
+>> +
+>> +     sound {
+>> +             compatible = "amlogic,axg-sound-card";
+>> +             model = "aq222";
+>> +             audio-widgets = "Line", "Lineout";
+>> +             audio-aux-devs = <&tdmout_a>, <&tdmout_b>, <&tdmout_c>,
+>> +                              <&tdmin_a>, <&tdmin_b>, <&tdmin_c>,
+>> +                              <&tdmin_lb>, <&dioo2133>;
+>> +             audio-routing = "TDMOUT_A IN 0", "FRDDR_A OUT 0",
+>> +                             "TDMOUT_A IN 1", "FRDDR_B OUT 0",
+>> +                             "TDMOUT_A IN 2", "FRDDR_C OUT 0",
+>> +                             "TDM_A Playback", "TDMOUT_A OUT",
+>> +                             "TDMOUT_B IN 0", "FRDDR_A OUT 1",
+>> +                             "TDMOUT_B IN 1", "FRDDR_B OUT 1",
+>> +                             "TDMOUT_B IN 2", "FRDDR_C OUT 1",
+>> +                             "TDM_B Playback", "TDMOUT_B OUT",
+>> +                             "TDMOUT_C IN 0", "FRDDR_A OUT 2",
+>> +                             "TDMOUT_C IN 1", "FRDDR_B OUT 2",
+>> +                             "TDMOUT_C IN 2", "FRDDR_C OUT 2",
+>> +                             "TDM_C Playback", "TDMOUT_C OUT",
+>> +                             "SPDIFOUT_A IN 0", "FRDDR_A OUT 3",
+>> +                             "SPDIFOUT_A IN 1", "FRDDR_B OUT 3",
+>> +                             "SPDIFOUT_A IN 2", "FRDDR_C OUT 3",
+>> +                             "SPDIFOUT_B IN 0", "FRDDR_A OUT 4",
+>> +                             "SPDIFOUT_B IN 1", "FRDDR_B OUT 4",
+>> +                             "SPDIFOUT_B IN 2", "FRDDR_C OUT 4",
+>> +                             "TDMIN_A IN 0", "TDM_A Capture",
+>> +                             "TDMIN_A IN 1", "TDM_B Capture",
+>> +                             "TDMIN_A IN 2", "TDM_C Capture",
+>> +                             "TDMIN_A IN 3", "TDM_A Loopback",
+>> +                             "TDMIN_A IN 4", "TDM_B Loopback",
+>> +                             "TDMIN_A IN 5", "TDM_C Loopback",
+>> +                             "TDMIN_B IN 0", "TDM_A Capture",
+>> +                             "TDMIN_B IN 1", "TDM_B Capture",
+>> +                             "TDMIN_B IN 2", "TDM_C Capture",
+>> +                             "TDMIN_B IN 3", "TDM_A Loopback",
+>> +                             "TDMIN_B IN 4", "TDM_B Loopback",
+>> +                             "TDMIN_B IN 5", "TDM_C Loopback",
+>> +                             "TDMIN_C IN 0", "TDM_A Capture",
+>> +                             "TDMIN_C IN 1", "TDM_B Capture",
+>> +                             "TDMIN_C IN 2", "TDM_C Capture",
+>> +                             "TDMIN_C IN 3", "TDM_A Loopback",
+>> +                             "TDMIN_C IN 4", "TDM_B Loopback",
+>> +                             "TDMIN_C IN 5", "TDM_C Loopback",
+>> +                             "TDMIN_LB IN 3", "TDM_A Capture",
+>> +                             "TDMIN_LB IN 4", "TDM_B Capture",
+>> +                             "TDMIN_LB IN 5", "TDM_C Capture",
+>> +                             "TDMIN_LB IN 0", "TDM_A Loopback",
+>> +                             "TDMIN_LB IN 1", "TDM_B Loopback",
+>> +                             "TDMIN_LB IN 2", "TDM_C Loopback",
+>> +                             "TODDR_A IN 0", "TDMIN_A OUT",
+>> +                             "TODDR_B IN 0", "TDMIN_A OUT",
+>> +                             "TODDR_C IN 0", "TDMIN_A OUT",
+>> +                             "TODDR_A IN 1", "TDMIN_B OUT",
+>> +                             "TODDR_B IN 1", "TDMIN_B OUT",
+>> +                             "TODDR_C IN 1", "TDMIN_B OUT",
+>> +                             "TODDR_A IN 2", "TDMIN_C OUT",
+>> +                             "TODDR_B IN 2", "TDMIN_C OUT",
+>> +                             "TODDR_C IN 2", "TDMIN_C OUT",
+>> +                             "TODDR_A IN 3", "SPDIFIN Capture",
+>> +                             "TODDR_B IN 3", "SPDIFIN Capture",
+>> +                             "TODDR_C IN 3", "SPDIFIN Capture",
+>> +                             "TODDR_A IN 6", "TDMIN_LB OUT",
+>> +                             "TODDR_B IN 6", "TDMIN_LB OUT",
+>> +                             "TODDR_C IN 6", "TDMIN_LB OUT",
+>> +                             "10U2 INL", "ACODEC LOLP",
+>> +                             "10U2 INR", "ACODEC LORP",
+>> +                             "Lineout", "10U2 OUTL",
+>> +                             "Lineout", "10U2 OUTR";
+>> +             clocks = <&clkc_pll CLKID_HIFI_PLL>,
+>> +                             <&clkc_pll CLKID_MPLL0>,
+>> +                             <&clkc_pll CLKID_MPLL1>;
+>> +             assigned-clocks = <&clkc_pll CLKID_HIFI_PLL>,
+>> +                               <&clkc_pll CLKID_MPLL0>,
+>> +                               <&clkc_pll CLKID_MPLL1>;
+>> +             assigned-clock-rates = <1179648000>,
+>> +                                    <270950400>,
+>> +                                    <338688000>;
+> Seems like you've got the 2 last PLLs serving the 44.1kHz rate family.
+> Why is this needed ?
+
+Hi, jermoe
+
+Considering that the sample rate is up to 176.4K
+
+PLL0 270.950400M max support 24bit *176.4k, 32ch for tdm mode
+
+Perhaps PLL1 PLL1 calculation error , it should be set up 361.2672M for 
+32bit * 176.4k * 32ch.
+
+In fact, most situations are limited by the speed of the IO pin.
+
+Can we remove MPLL1 here and keep MPLL0?
+
+>> +
+>> +             dai-link-0 {
+>> +                     sound-dai = <&frddr_a>;
+>> +             };
+>> +
+>> +             dai-link-1 {
+>> +                     sound-dai = <&frddr_b>;
+>> +             };
+>> +
+>> +             dai-link-2 {
+>> +                     sound-dai = <&frddr_c>;
+>> +             };
+>> +
+>> +             dai-link-3 {
+>> +                     sound-dai = <&toddr_a>;
+>> +             };
+>> +
+>> +             dai-link-4 {
+>> +                     sound-dai = <&toddr_b>;
+>> +             };
+>> +
+>> +             dai-link-5 {
+>> +                     sound-dai = <&toddr_c>;
+>> +             };
+>> +
+>> +             dai-link-6 {
+>> +                     sound-dai = <&tdmif_a>;
+>> +                     dai-format = "i2s";
+>> +                     dai-tdm-slot-tx-mask-0 = <1 1>;
+>> +                     mclk-fs = <256>;
+>> +                     codec-0 {
+>> +                             sound-dai = <&tohdmitx TOHDMITX_I2S_IN_A>;
+>> +                     };
+>> +                     codec-1 {
+>> +                             sound-dai = <&toacodec TOACODEC_IN_A>;
+>> +                     };
+>> +             };
+>> +
+>> +             dai-link-7 {
+>> +                     sound-dai = <&tdmif_b>;
+>> +                     dai-format = "i2s";
+>> +                     dai-tdm-slot-tx-mask-0 = <1 1>;
+>> +                     mclk-fs = <256>;
+>> +                     codec-0 {
+>> +                             sound-dai = <&toacodec TOACODEC_IN_B>;
+>> +                     };
+>> +                     codec-1 {
+>> +                             sound-dai = <&tohdmitx TOHDMITX_I2S_IN_B>;
+>> +                     };
+>> +             };
+>> +
+>> +             /* 8ch HDMI interface */
+>> +             dai-link-8 {
+>> +                     sound-dai = <&tdmif_c>;
+>> +                     dai-format = "i2s";
+>> +                     dai-tdm-slot-tx-mask-0 = <1 1>;
+>> +                     dai-tdm-slot-tx-mask-1 = <1 1>;
+>> +                     dai-tdm-slot-tx-mask-2 = <1 1>;
+>> +                     dai-tdm-slot-tx-mask-3 = <1 1>;
+>> +                     mclk-fs = <256>;
+>> +                     codec-0 {
+>> +                             sound-dai = <&tohdmitx TOHDMITX_I2S_IN_C>;
+>> +                     };
+>> +             };
+>> +
+>> +             /* spdif hdmi and coax output */
+>> +             dai-link-9 {
+>> +                     sound-dai = <&spdifout_a>;
+>> +
+>> +                     codec-0 {
+>> +                             sound-dai = <&spdif_dit>;
+>> +                     };
+>> +
+>> +                     codec-1 {
+>> +                             sound-dai = <&tohdmitx TOHDMITX_SPDIF_IN_A>;
+>> +                     };
+>> +             };
+>> +
+>> +             /* spdif hdmi interface */
+>> +             dai-link-10 {
+>> +                     sound-dai = <&spdifout_b>;
+>> +
+>> +                     codec {
+>> +                             sound-dai = <&tohdmitx TOHDMITX_SPDIF_IN_B>;
+>> +                     };
+>> +             };
+>> +
+>> +             /* spdif coax input */
+>> +             dai-link-11 {
+>> +                     sound-dai = <&spdifin>;
+>> +
+>> +                     codec {
+>> +                             sound-dai = <&spdif_dir>;
+>> +                     };
+>> +             };
+>> +
+>> +             dai-link-12 {
+>> +                     sound-dai = <&toacodec TOACODEC_OUT>;
+>> +
+>> +                     codec {
+>> +                             sound-dai = <&acodec>;
+>> +                     };
+>> +             };
+>> +     };
+>>   };
+>>
+>>   &pwm_ef {
+>> diff --git a/arch/arm64/boot/dts/amlogic/meson-s4.dtsi b/arch/arm64/boot/dts/amlogic/meson-s4.dtsi
+>> index dfc0a30a6e61..a6c2c83eea16 100644
+>> --- a/arch/arm64/boot/dts/amlogic/meson-s4.dtsi
+>> +++ b/arch/arm64/boot/dts/amlogic/meson-s4.dtsi
+>> @@ -11,6 +11,11 @@
+>>   #include <dt-bindings/clock/amlogic,s4-peripherals-clkc.h>
+>>   #include <dt-bindings/power/meson-s4-power.h>
+>>   #include <dt-bindings/reset/amlogic,meson-s4-reset.h>
+>> +#include <dt-bindings/clock/axg-audio-clkc.h>
+>> +#include <dt-bindings/reset/amlogic,meson-axg-audio-arb.h>
+>> +#include <dt-bindings/reset/amlogic,meson-g12a-audio-reset.h>
+>> +#include <dt-bindings/sound/meson-g12a-toacodec.h>
+>> +#include <dt-bindings/sound/meson-g12a-tohdmitx.h>
+>>
+>>   / {
+>>        cpus {
+>> @@ -863,4 +868,360 @@ emmc: mmc@fe08c000 {
+>>                        assigned-clock-rates = <24000000>;
+>>                };
+>>        };
+>> +
+>> +     tdmif_a: audio-controller-0 {
+>> +             compatible = "amlogic,axg-tdm-iface";
+>> +             #sound-dai-cells = <0>;
+>> +             sound-name-prefix = "TDM_A";
+>> +             clocks = <&clkc_audio AUD_CLKID_MST_A_SCLK>,
+>> +                      <&clkc_audio AUD_CLKID_MST_A_LRCLK>,
+>> +                      <&clkc_audio AUD_CLKID_MST_A_MCLK>;
+>> +             clock-names = "sclk", "lrclk","mclk";
+>> +     };
+>> +
+>> +     tdmif_b: audio-controller-1 {
+>> +             compatible = "amlogic,axg-tdm-iface";
+>> +             #sound-dai-cells = <0>;
+>> +             sound-name-prefix = "TDM_B";
+>> +             clocks = <&clkc_audio AUD_CLKID_MST_A_SCLK>,
+>> +                      <&clkc_audio AUD_CLKID_MST_B_LRCLK>,
+>> +                      <&clkc_audio AUD_CLKID_MST_B_MCLK>;
+>> +             clock-names = "sclk", "lrclk","mclk";
+>> +     };
+>> +
+>> +     tdmif_c: audio-controller-2 {
+>> +             compatible = "amlogic,axg-tdm-iface";
+>> +             #sound-dai-cells = <0>;
+>> +             sound-name-prefix = "TDM_C";
+>> +             clocks = <&clkc_audio AUD_CLKID_MST_C_SCLK>,
+>> +                      <&clkc_audio AUD_CLKID_MST_C_LRCLK>,
+>> +                      <&clkc_audio AUD_CLKID_MST_C_MCLK>;
+>> +             clock-names = "sclk", "lrclk","mclk";
+>> +     };
+>> +};
+>> +
+>> +&apb4 {
+>> +     acodec: audio-controller@1a000 {
+>> +             compatible = "amlogic,t9015";
+>> +             reg = <0x0 0x1a000 0x0 0x14>;
+>> +             #sound-dai-cells = <0>;
+>> +             sound-name-prefix = "ACODEC";
+>> +             clocks = <&clkc_periphs CLKID_ACODEC>;
+>> +             clock-names = "pclk";
+>> +             resets = <&reset RESET_ACODEC>;
+>> +             AVDD-supply = <&vddio_ao1v8>;
+>> +     };
+>> +
+>> +     clkc_audio: clock-controller@330000 {
+>> +             compatible = "amlogic,s4-audio-clkc";
+>> +             reg = <0x0 0x330000 0x0 0xd8>,
+>> +                       <0x0 0x330e80 0x0 0x10>;
+>> +             #clock-cells = <1>;
+>> +             #reset-cells = <1>;
+>> +             power-domains = <&pwrc PWRC_S4_AUDIO_ID>;
+>> +             clocks = <&clkc_periphs CLKID_AUDIO>,
+>> +                      <&clkc_pll CLKID_MPLL0>,
+>> +                      <&clkc_pll CLKID_MPLL1>,
+>> +                      <&clkc_pll CLKID_MPLL2>,
+>> +                      <&clkc_pll CLKID_MPLL3>,
+>> +                      <&clkc_pll CLKID_HIFI_PLL>,
+>> +                      <&clkc_pll CLKID_FCLK_DIV3>,
+>> +                      <&clkc_pll CLKID_FCLK_DIV4>,
+>> +                      <&clkc_pll CLKID_FCLK_DIV5>;
+>> +             clock-names = "pclk",
+>> +                               "mst_in0",
+>> +                               "mst_in1",
+>> +                               "mst_in2",
+>> +                               "mst_in3",
+>> +                               "mst_in4",
+>> +                               "mst_in5",
+>> +                               "mst_in6",
+>> +                               "mst_in7";
+>> +             resets = <&reset RESET_AUDIO>;
+>> +     };
+>> +
+>> +     toddr_a: audio-controller@330100 {
+>> +             compatible = "amlogic,sm1-toddr",
+>> +                              "amlogic,axg-toddr";
+> no s4 compat ?
 >
-> diff --git a/drivers/gpu/drm/v3d/Makefile b/drivers/gpu/drm/v3d/Makefile
-> index b7d673f1153bef16db3800e50b2bfaf36bf8871b..9cb1fd4e4091dbb56e6a73e2b8a51fa0d242698b 100644
-> --- a/drivers/gpu/drm/v3d/Makefile
-> +++ b/drivers/gpu/drm/v3d/Makefile
-> @@ -13,7 +13,8 @@ v3d-y := \
->   	v3d_trace_points.o \
->   	v3d_sched.o \
->   	v3d_sysfs.o \
-> -	v3d_submit.o
-> +	v3d_submit.o \
-> +	v3d_power.o
->   
->   v3d-$(CONFIG_DEBUG_FS) += v3d_debugfs.o
->   
-> diff --git a/drivers/gpu/drm/v3d/v3d_debugfs.c b/drivers/gpu/drm/v3d/v3d_debugfs.c
-> index 89f24eec62a74ec49b28f0b22dbf626ba7a35206..634cc796ba2324dc497694c070f2cfffcc4424c9 100644
-> --- a/drivers/gpu/drm/v3d/v3d_debugfs.c
-> +++ b/drivers/gpu/drm/v3d/v3d_debugfs.c
-> @@ -97,7 +97,11 @@ static int v3d_v3d_debugfs_regs(struct seq_file *m, void *unused)
->   	struct drm_debugfs_entry *entry = m->private;
->   	struct drm_device *dev = entry->dev;
->   	struct v3d_dev *v3d = to_v3d_dev(dev);
-> -	int i, core;
-> +	int i, core, ret;
-> +
-> +	ret = v3d_pm_runtime_get(v3d);
-> +	if (ret)
-> +		return ret;
->   
->   	for (i = 0; i < ARRAY_SIZE(v3d_hub_reg_defs); i++) {
->   		const struct v3d_reg_def *def = &v3d_hub_reg_defs[i];
-> @@ -139,6 +143,8 @@ static int v3d_v3d_debugfs_regs(struct seq_file *m, void *unused)
->   		}
->   	}
->   
-> +	v3d_pm_runtime_put(v3d);
-> +
->   	return 0;
->   }
->   
-> @@ -148,7 +154,11 @@ static int v3d_v3d_debugfs_ident(struct seq_file *m, void *unused)
->   	struct drm_device *dev = entry->dev;
->   	struct v3d_dev *v3d = to_v3d_dev(dev);
->   	u32 ident0, ident1, ident2, ident3, cores;
-> -	int core;
-> +	int core, ret;
-> +
-> +	ret = v3d_pm_runtime_get(v3d);
-> +	if (ret)
-> +		return ret;
->   
->   	ident0 = V3D_READ(V3D_HUB_IDENT0);
->   	ident1 = V3D_READ(V3D_HUB_IDENT1);
-> @@ -207,6 +217,8 @@ static int v3d_v3d_debugfs_ident(struct seq_file *m, void *unused)
->   		}
->   	}
->   
-> +	v3d_pm_runtime_put(v3d);
-> +
->   	return 0;
->   }
->   
-> @@ -234,6 +246,11 @@ static int v3d_measure_clock(struct seq_file *m, void *unused)
->   	uint32_t cycles;
->   	int core = 0;
->   	int measure_ms = 1000;
-> +	int ret;
-> +
-> +	ret = v3d_pm_runtime_get(v3d);
-> +	if (ret)
-> +		return ret;
->   
->   	if (v3d->ver >= V3D_GEN_41) {
->   		int cycle_count_reg = V3D_PCTR_CYCLE_COUNT(v3d->ver);
-> @@ -253,6 +270,8 @@ static int v3d_measure_clock(struct seq_file *m, void *unused)
->   	msleep(measure_ms);
->   	cycles = V3D_CORE_READ(core, V3D_PCTR_0_PCTR0);
->   
-> +	v3d_pm_runtime_put(v3d);
-> +
->   	seq_printf(m, "cycles: %d (%d.%d Mhz)\n",
->   		   cycles,
->   		   cycles / (measure_ms * 1000),
-> diff --git a/drivers/gpu/drm/v3d/v3d_drv.c b/drivers/gpu/drm/v3d/v3d_drv.c
-> index cb12d17cce2bf9e49432e3d3dddef1afdc4d93a0..022fbdff4ab973c60c29e2aa6c4e449da0cfaaf3 100644
-> --- a/drivers/gpu/drm/v3d/v3d_drv.c
-> +++ b/drivers/gpu/drm/v3d/v3d_drv.c
-> @@ -59,6 +59,7 @@ static int v3d_get_param_ioctl(struct drm_device *dev, void *data,
->   		[DRM_V3D_PARAM_V3D_CORE0_IDENT1] = V3D_CTL_IDENT1,
->   		[DRM_V3D_PARAM_V3D_CORE0_IDENT2] = V3D_CTL_IDENT2,
->   	};
-> +	int ret;
->   
->   	if (args->pad != 0)
->   		return -EINVAL;
-> @@ -75,12 +76,19 @@ static int v3d_get_param_ioctl(struct drm_device *dev, void *data,
->   		if (args->value != 0)
->   			return -EINVAL;
->   
-> +		ret = v3d_pm_runtime_get(v3d);
-> +		if (ret)
-> +			return ret;
-> +
->   		if (args->param >= DRM_V3D_PARAM_V3D_CORE0_IDENT0 &&
->   		    args->param <= DRM_V3D_PARAM_V3D_CORE0_IDENT2) {
->   			args->value = V3D_CORE_READ(0, offset);
->   		} else {
->   			args->value = V3D_READ(offset);
->   		}
-> +
-> +		v3d_pm_runtime_put(v3d);
-> +
->   		return 0;
->   	}
->   
-> @@ -287,36 +295,6 @@ static const struct of_device_id v3d_of_match[] = {
->   };
->   MODULE_DEVICE_TABLE(of, v3d_of_match);
->   
-> -static void
-> -v3d_idle_sms(struct v3d_dev *v3d)
-> -{
-> -	if (v3d->ver < V3D_GEN_71)
-> -		return;
-> -
-> -	V3D_SMS_WRITE(V3D_SMS_TEE_CS, V3D_SMS_CLEAR_POWER_OFF);
-> -
-> -	if (wait_for((V3D_GET_FIELD(V3D_SMS_READ(V3D_SMS_TEE_CS),
-> -				    V3D_SMS_STATE) == V3D_SMS_IDLE), 100)) {
-> -		DRM_ERROR("Failed to power up SMS\n");
-> -	}
-> -
-> -	v3d_reset_sms(v3d);
-> -}
-> -
-> -static void
-> -v3d_power_off_sms(struct v3d_dev *v3d)
-> -{
-> -	if (v3d->ver < V3D_GEN_71)
-> -		return;
-> -
-> -	V3D_SMS_WRITE(V3D_SMS_TEE_CS, V3D_SMS_POWER_OFF);
-> -
-> -	if (wait_for((V3D_GET_FIELD(V3D_SMS_READ(V3D_SMS_TEE_CS),
-> -				    V3D_SMS_STATE) == V3D_SMS_POWER_OFF_STATE), 100)) {
-> -		DRM_ERROR("Failed to power off SMS\n");
-> -	}
-> -}
-> -
->   static int
->   map_regs(struct v3d_dev *v3d, void __iomem **regs, const char *name)
->   {
-> @@ -383,6 +361,9 @@ static int v3d_platform_drm_probe(struct platform_device *pdev)
->   	if (IS_ERR(v3d->clk))
->   		return dev_err_probe(dev, PTR_ERR(v3d->clk), "Failed to get V3D clock\n");
->   
-> +	if (v3d->clk)
-> +		v3d->max_clk_rate = clk_round_rate(v3d->clk, ULONG_MAX);
-> +
->   	ret = v3d_irq_init(v3d);
->   	if (ret)
->   		return ret;
-> @@ -400,19 +381,26 @@ static int v3d_platform_drm_probe(struct platform_device *pdev)
->   	if (ret)
->   		goto dma_free;
->   
-> -	ret = clk_prepare_enable(v3d->clk);
-> -	if (ret) {
-> -		dev_err(&pdev->dev, "Couldn't enable the V3D clock\n");
-> +	ret = devm_pm_runtime_enable(dev);
-> +	if (ret)
->   		goto gem_destroy;
-> -	}
->   
-> -	v3d_idle_sms(v3d);
-> +	ret = pm_runtime_resume_and_get(dev);
-> +	if (ret)
-> +		goto gem_destroy;
-> +
-> +	/* If PM is disabled, we need to call v3d_power_resume() manually. */
-> +	if (!IS_ENABLED(CONFIG_PM)) {
-> +		ret = v3d_power_resume(dev);
-> +		if (ret)
-> +			goto gem_destroy;
-> +	}
-
-Curious, I expected that previous pm_runtime attempts to enable and 
-resume would trigger a -ENOSYS if no CONFIG_PM.
-
->   
->   	mmu_debug = V3D_READ(V3D_MMU_DEBUG_INFO);
->   	mask = DMA_BIT_MASK(30 + V3D_GET_FIELD(mmu_debug, V3D_MMU_PA_WIDTH));
->   	ret = dma_set_mask_and_coherent(dev, mask);
->   	if (ret)
-> -		goto clk_disable;
-> +		goto runtime_pm_put;
->   
->   	dma_set_max_seg_size(&pdev->dev, UINT_MAX);
->   
-> @@ -433,25 +421,27 @@ static int v3d_platform_drm_probe(struct platform_device *pdev)
->   	v3d->rev = V3D_GET_FIELD(ident3, V3D_HUB_IDENT3_IPREV);
->   
->   	v3d_gem_init(drm);
-> -	v3d_irq_enable(v3d);
-> +
-> +	pm_runtime_set_autosuspend_delay(dev, 50);
-> +	pm_runtime_use_autosuspend(dev);
->   
->   	ret = drm_dev_register(drm, 0);
->   	if (ret)
-> -		goto irq_disable;
-> +		goto runtime_pm_put;
->   
->   	ret = v3d_sysfs_init(dev);
->   	if (ret)
->   		goto drm_unregister;
->   
-> +	pm_runtime_mark_last_busy(dev);
-> +	pm_runtime_put_autosuspend(dev);
-> +
->   	return 0;
->   
->   drm_unregister:
->   	drm_dev_unregister(drm);
-> -irq_disable:
-> -	v3d_irq_disable(v3d);
-> -clk_disable:
-> -	v3d_power_off_sms(v3d);
-> -	clk_disable_unprepare(v3d->clk);
-> +runtime_pm_put:
-> +	pm_runtime_put_sync_suspend(dev);
->   gem_destroy:
->   	v3d_gem_destroy(drm);
->   dma_free:
-> @@ -469,21 +459,27 @@ static void v3d_platform_drm_remove(struct platform_device *pdev)
->   
->   	drm_dev_unregister(drm);
->   
-> -	v3d_power_off_sms(v3d);
-> +	pm_runtime_suspend(dev);
->   
-> -	clk_disable_unprepare(v3d->clk);
-> +	/* If PM is disabled, we need to call v3d_power_suspend() manually. */
-> +	if (!IS_ENABLED(CONFIG_PM))
-> +		v3d_power_suspend(dev);
->   
->   	v3d_gem_destroy(drm);
->   
->   	dma_free_wc(dev, 4096, v3d->mmu_scratch, v3d->mmu_scratch_paddr);
->   }
->   
-> +static DEFINE_RUNTIME_DEV_PM_OPS(v3d_pm_ops, v3d_power_suspend,
-> +				 v3d_power_resume, NULL);
-> +
->   static struct platform_driver v3d_platform_driver = {
->   	.probe		= v3d_platform_drm_probe,
->   	.remove		= v3d_platform_drm_remove,
->   	.driver		= {
->   		.name	= "v3d",
->   		.of_match_table = v3d_of_match,
-> +		.pm = pm_ptr(&v3d_pm_ops),
->   	},
->   };
->   
-> diff --git a/drivers/gpu/drm/v3d/v3d_drv.h b/drivers/gpu/drm/v3d/v3d_drv.h
-> index 738a09351c306db33078db1e053cd133d55d2138..32835b83caf0309a9e316d6882f63685f58bb6e3 100644
-> --- a/drivers/gpu/drm/v3d/v3d_drv.h
-> +++ b/drivers/gpu/drm/v3d/v3d_drv.h
-> @@ -3,6 +3,7 @@
->   
->   #include <linux/delay.h>
->   #include <linux/mutex.h>
-> +#include <linux/pm_runtime.h>
->   #include <linux/spinlock_types.h>
->   #include <linux/workqueue.h>
->   
-> @@ -134,6 +135,8 @@ struct v3d_dev {
->   	void __iomem *gca_regs;
->   	void __iomem *sms_regs;
->   	struct clk *clk;
-> +	unsigned long max_clk_rate;
-> +
->   	struct reset_control *reset;
->   
->   	/* Virtual and DMA addresses of the single shared page table. */
-> @@ -324,6 +327,8 @@ struct v3d_job {
->   
->   	/* Callback for the freeing of the job on refcount going to 0. */
->   	void (*free)(struct kref *ref);
-> +
-> +	bool has_pm_ref;
->   };
->   
->   struct v3d_bin_job {
-> @@ -597,6 +602,21 @@ int v3d_mmu_set_page_table(struct v3d_dev *v3d);
->   void v3d_mmu_insert_ptes(struct v3d_bo *bo);
->   void v3d_mmu_remove_ptes(struct v3d_bo *bo);
->   
-> +/* v3d_power.c */
-> +int v3d_power_suspend(struct device *dev);
-> +int v3d_power_resume(struct device *dev);
-> +
-> +static __always_inline int v3d_pm_runtime_get(struct v3d_dev *v3d)
-> +{
-> +	return pm_runtime_resume_and_get(v3d->drm.dev);
-> +}
-> +
-> +static __always_inline int v3d_pm_runtime_put(struct v3d_dev *v3d)
-> +{
-> +	pm_runtime_mark_last_busy(v3d->drm.dev);
-> +	return pm_runtime_put_autosuspend(v3d->drm.dev);
-> +}
-> +
->   /* v3d_sched.c */
->   void v3d_timestamp_query_info_free(struct v3d_timestamp_query_info *query_info,
->   				   unsigned int count);
-> diff --git a/drivers/gpu/drm/v3d/v3d_gem.c b/drivers/gpu/drm/v3d/v3d_gem.c
-> index 1f532030c3883257810877c75da38636bf25f58e..70e488180c4684db3415201f19586099914afb15 100644
-> --- a/drivers/gpu/drm/v3d/v3d_gem.c
-> +++ b/drivers/gpu/drm/v3d/v3d_gem.c
-> @@ -125,10 +125,16 @@ void
->   v3d_reset(struct v3d_dev *v3d)
->   {
->   	struct drm_device *dev = &v3d->drm;
-> +	int ret;
-> +
-> +	ret = v3d_pm_runtime_get(v3d);
-> +	if (ret)
-> +		return;
->   
->   	DRM_DEV_ERROR(dev->dev, "Resetting GPU for hang.\n");
->   	DRM_DEV_ERROR(dev->dev, "V3D_ERR_STAT: 0x%08x\n",
->   		      V3D_CORE_READ(0, V3D_ERR_STAT));
-> +
->   	trace_v3d_reset_begin(dev);
->   
->   	/* XXX: only needed for safe powerdown, not reset. */
-> @@ -147,6 +153,8 @@ v3d_reset(struct v3d_dev *v3d)
->   	v3d_perfmon_stop(v3d, v3d->active_perfmon, false);
->   
->   	trace_v3d_reset_end(dev);
-> +
-> +	v3d_pm_runtime_put(v3d);
->   }
->   
->   static void
-> @@ -344,7 +352,6 @@ v3d_gem_init(struct drm_device *dev)
->   	struct v3d_dev *v3d = to_v3d_dev(dev);
->   
->   	v3d_init_hw_state(v3d);
-> -	v3d_mmu_set_page_table(v3d);
-
-Do we still need v3d_gem_init() only wrapping v3d_init_hw_state() ?
-
->   }
->   
->   void
-> diff --git a/drivers/gpu/drm/v3d/v3d_mmu.c b/drivers/gpu/drm/v3d/v3d_mmu.c
-> index a25d25a8ae617bf68e133e1793cd0bb930bb07f6..1699819756aadfc40f7d41ff19847d42ddf10dce 100644
-> --- a/drivers/gpu/drm/v3d/v3d_mmu.c
-> +++ b/drivers/gpu/drm/v3d/v3d_mmu.c
-> @@ -37,7 +37,13 @@ static bool v3d_mmu_is_aligned(u32 page, u32 page_address, size_t alignment)
->   
->   int v3d_mmu_flush_all(struct v3d_dev *v3d)
->   {
-> -	int ret;
-> +	int ret = 0;
-> +
-> +	pm_runtime_get_noresume(v3d->drm.dev);
-> +
-> +	/* Flush the PTs only if we're already awake */
-> +	if (!pm_runtime_active(v3d->drm.dev))
-> +		goto pm_put;
->   
->   	V3D_WRITE(V3D_MMUC_CONTROL, V3D_MMUC_CONTROL_FLUSH |
->   		  V3D_MMUC_CONTROL_ENABLE);
-> @@ -46,7 +52,7 @@ int v3d_mmu_flush_all(struct v3d_dev *v3d)
->   			 V3D_MMUC_CONTROL_FLUSHING), 100);
->   	if (ret) {
->   		dev_err(v3d->drm.dev, "MMUC flush wait idle failed\n");
-> -		return ret;
-> +		goto pm_put;
->   	}
->   
->   	V3D_WRITE(V3D_MMU_CTL, V3D_READ(V3D_MMU_CTL) |
-> @@ -57,6 +63,8 @@ int v3d_mmu_flush_all(struct v3d_dev *v3d)
->   	if (ret)
->   		dev_err(v3d->drm.dev, "MMU TLB clear wait idle failed\n");
->   
-> +pm_put:
-> +	pm_runtime_put_autosuspend(v3d->drm.dev);
->   	return ret;
->   }
->   
-> diff --git a/drivers/gpu/drm/v3d/v3d_power.c b/drivers/gpu/drm/v3d/v3d_power.c
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..285f56acf544bbfd3d9848253e788a138aacf2af
-> --- /dev/null
-> +++ b/drivers/gpu/drm/v3d/v3d_power.c
-> @@ -0,0 +1,96 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +/* Copyright (C) 2026 Raspberry Pi */
-> +
-> +#include <linux/clk.h>
-> +#include <linux/reset.h>
-> +
-> +#include <drm/drm_print.h>
-> +
-> +#include "v3d_drv.h"
-> +#include "v3d_regs.h"
-> +
-> +static void
-> +v3d_resume_sms(struct v3d_dev *v3d)
-> +{
-> +	if (v3d->ver < V3D_GEN_71)
-> +		return;
-> +
-> +	V3D_SMS_WRITE(V3D_SMS_TEE_CS, V3D_SMS_CLEAR_POWER_OFF);
-> +
-> +	if (wait_for((V3D_GET_FIELD(V3D_SMS_READ(V3D_SMS_TEE_CS),
-> +				    V3D_SMS_STATE) == V3D_SMS_IDLE), 100)) {
-> +		drm_err(&v3d->drm, "Failed to power up SMS\n");
-> +	}
-> +
-> +	v3d_reset_sms(v3d);
-> +}
-> +
-> +static void
-> +v3d_suspend_sms(struct v3d_dev *v3d)
-> +{
-> +	if (v3d->ver < V3D_GEN_71)
-> +		return;
-> +
-> +	V3D_SMS_WRITE(V3D_SMS_TEE_CS, V3D_SMS_POWER_OFF);
-> +
-> +	if (wait_for((V3D_GET_FIELD(V3D_SMS_READ(V3D_SMS_TEE_CS),
-> +				    V3D_SMS_STATE) == V3D_SMS_POWER_OFF_STATE), 100)) {
-> +		drm_err(&v3d->drm, "Failed to power off SMS\n");
-> +	}
-> +}
-> +
-> +int v3d_power_suspend(struct device *dev)
-> +{
-> +	struct drm_device *drm = dev_get_drvdata(dev);
-> +	struct v3d_dev *v3d = to_v3d_dev(drm);
-> +
-> +	v3d_irq_disable(v3d);
-> +	v3d_suspend_sms(v3d);
-> +
-> +	if (v3d->reset)
-> +		reset_control_assert(v3d->reset);
-> +
-> +	/* Some firmware versions might not actually power off the clock
-> +	 * when we set the clock state to off. Therefore, set the clock
-> +	 * rate to 0 to ensure it is running in the minimum rate.
-> +	 */
-> +	if (v3d->clk)
-> +		clk_set_rate(v3d->clk, 0);
-> +
-> +	clk_disable_unprepare(v3d->clk);
-> +
-> +	return 0;
-> +}
-> +
-> +int v3d_power_resume(struct device *dev)
-> +{
-> +	struct drm_device *drm = dev_get_drvdata(dev);
-> +	struct v3d_dev *v3d = to_v3d_dev(drm);
-> +	int ret;
-> +
-> +	ret = clk_prepare_enable(v3d->clk);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Set the clock to the maximum rate and let the firmware decide
-> +	 * if we can actually keep it.
-> +	 */
-> +	if (v3d->clk)
-> +		clk_set_rate(v3d->clk, v3d->max_clk_rate);
-> +
-> +	if (v3d->reset) {
-> +		ret = reset_control_deassert(v3d->reset);
-> +		if (ret)
-> +			goto clk_disable;
-> +	}
-> +
-> +	v3d_resume_sms(v3d);
-> +	v3d_mmu_set_page_table(v3d);
-> +	v3d_irq_enable(v3d);
-> +
-> +	return 0;
-> +
-> +clk_disable:
-> +	clk_disable_unprepare(v3d->clk);
-> +	return ret;
-> +}
-> diff --git a/drivers/gpu/drm/v3d/v3d_submit.c b/drivers/gpu/drm/v3d/v3d_submit.c
-> index 7de5a95ee7ca92d480af1f2996c12f2cefa56f34..7487aff499f4587b2887a886c366d735952cee95 100644
-> --- a/drivers/gpu/drm/v3d/v3d_submit.c
-> +++ b/drivers/gpu/drm/v3d/v3d_submit.c
-> @@ -103,6 +103,9 @@ v3d_job_free(struct kref *ref)
->   	if (job->perfmon)
->   		v3d_perfmon_put(job->perfmon);
->   
-> +	if (job->has_pm_ref)
-> +		v3d_pm_runtime_put(job->v3d);
-> +
->   	kfree(job);
->   }
->   
-> @@ -184,13 +187,13 @@ v3d_job_init(struct v3d_dev *v3d, struct drm_file *file_priv,
->   				if (copy_from_user(&in, handle++, sizeof(in))) {
->   					ret = -EFAULT;
->   					DRM_DEBUG("Failed to copy wait dep handle.\n");
-> -					goto fail_deps;
-> +					goto fail_job_init;
->   				}
->   				ret = drm_sched_job_add_syncobj_dependency(&job->base, file_priv, in.handle, 0);
->   
->   				// TODO: Investigate why this was filtered out for the IOCTL.
->   				if (ret && ret != -ENOENT)
-> -					goto fail_deps;
-> +					goto fail_job_init;
->   			}
->   		}
->   	} else {
-> @@ -198,14 +201,22 @@ v3d_job_init(struct v3d_dev *v3d, struct drm_file *file_priv,
->   
->   		// TODO: Investigate why this was filtered out for the IOCTL.
->   		if (ret && ret != -ENOENT)
-> -			goto fail_deps;
-> +			goto fail_job_init;
-> +	}
-> +
-> +	/* CPU jobs don't require hardware resources */
-> +	if (queue != V3D_CPU) {
-> +		ret = v3d_pm_runtime_get(v3d);
-> +		if (ret)
-> +			goto fail_job_init;
-> +		job->has_pm_ref = true;
->   	}
->   
->   	kref_init(&job->refcount);
->   
->   	return 0;
->   
-> -fail_deps:
-> +fail_job_init:
->   	drm_sched_job_cleanup(&job->base);
->   	return ret;
->   }
->
-
+>> +             reg = <0x0 0x330100 0x0 0x2c>;
+>> +             #sound-dai-cells = <0>;
+>> +             sound-name-prefix = "TODDR_A";
+>> +             interrupts = <GIC_SPI 32 IRQ_TYPE_EDGE_RISING>;
+>> +             clocks = <&clkc_audio AUD_CLKID_TODDR_A>;
+>> +             resets = <&arb AXG_ARB_TODDR_A>,
+>> +                      <&clkc_audio AUD_RESET_TODDR_A>;
+>> +             reset-names = "arb", "rst";
+>> +             amlogic,fifo-depth = <8192>;
+>> +     };
+>> +
+>> +     toddr_b: audio-controller@330140 {
+>> +             compatible = "amlogic,sm1-toddr",
+>> +                              "amlogic,axg-toddr";
+>> +             reg = <0x0 0x330140 0x0 0x2c>;
+>> +             #sound-dai-cells = <0>;
+>> +             sound-name-prefix = "TODDR_B";
+>> +             interrupts = <GIC_SPI 33 IRQ_TYPE_EDGE_RISING>;
+>> +             clocks = <&clkc_audio AUD_CLKID_TODDR_B>;
+>> +             resets = <&arb AXG_ARB_TODDR_B>,
+>> +                      <&clkc_audio AUD_RESET_TODDR_B>;
+>> +             reset-names = "arb", "rst";
+>> +             amlogic,fifo-depth = <256>;
+>> +     };
+>> +
+>> +     toddr_c: audio-controller@330180 {
+>> +             compatible = "amlogic,sm1-toddr",
+>> +                              "amlogic,axg-toddr";
+>> +             reg = <0x0 0x330180 0x0 0x2c>;
+>> +             #sound-dai-cells = <0>;
+>> +             sound-name-prefix = "TODDR_C";
+>> +             interrupts = <GIC_SPI 34 IRQ_TYPE_EDGE_RISING>;
+>> +             clocks = <&clkc_audio AUD_CLKID_TODDR_C>;
+>> +             resets = <&arb AXG_ARB_TODDR_C>,
+>> +                      <&clkc_audio AUD_RESET_TODDR_C>;
+>> +             reset-names = "arb", "rst";
+>> +             amlogic,fifo-depth = <256>;
+>> +     };
+>> +
+>> +     frddr_a: audio-controller@3301c0 {
+>> +             compatible = "amlogic,sm1-frddr",
+>> +                              "amlogic,axg-frddr";
+>> +             reg = <0x0 0x3301c0 0x0 0x2c>;
+>> +             #sound-dai-cells = <0>;
+>> +             sound-name-prefix = "FRDDR_A";
+>> +             interrupts = <GIC_SPI 36 IRQ_TYPE_EDGE_RISING>;
+>> +             clocks = <&clkc_audio AUD_CLKID_FRDDR_A>;
+>> +             resets = <&arb AXG_ARB_FRDDR_A>,
+>> +                      <&clkc_audio AUD_RESET_FRDDR_A>;
+>> +             reset-names = "arb", "rst";
+>> +             amlogic,fifo-depth = <512>;
+>> +     };
+>> +
+>> +     frddr_b: audio-controller@330200 {
+>> +             compatible = "amlogic,sm1-frddr",
+>> +                              "amlogic,axg-frddr";
+>> +             reg = <0x0 0x330200 0x0 0x2c>;
+>> +             #sound-dai-cells = <0>;
+>> +             sound-name-prefix = "FRDDR_B";
+>> +             interrupts = <GIC_SPI 37 IRQ_TYPE_EDGE_RISING>;
+>> +             clocks = <&clkc_audio AUD_CLKID_FRDDR_B>;
+>> +             resets = <&arb AXG_ARB_FRDDR_B>,
+>> +                      <&clkc_audio AUD_RESET_FRDDR_B>;
+>> +             reset-names = "arb", "rst";
+>> +             amlogic,fifo-depth = <256>;
+>> +     };
+>> +
+>> +     frddr_c: audio-controller@330240 {
+>> +             compatible = "amlogic,sm1-frddr",
+>> +                              "amlogic,axg-frddr";
+>> +             reg = <0x0 0x330240 0x0 0x2c>;
+>> +             #sound-dai-cells = <0>;
+>> +             sound-name-prefix = "FRDDR_C";
+>> +             interrupts = <GIC_SPI 38 IRQ_TYPE_EDGE_RISING>;
+>> +             clocks = <&clkc_audio AUD_CLKID_FRDDR_C>;
+>> +             resets = <&arb AXG_ARB_FRDDR_C>,
+>> +                      <&clkc_audio AUD_RESET_FRDDR_C>;
+>> +             reset-names = "arb", "rst";
+>> +             amlogic,fifo-depth = <256>;
+>> +     };
+>> +
+>> +     arb: reset-controller@330280 {
+>> +             compatible = "amlogic,meson-sm1-audio-arb";
+>> +             reg = <0x0 0x330280 0x0 0x4>;
+>> +             #reset-cells = <1>;
+>> +             clocks = <&clkc_audio AUD_CLKID_DDR_ARB>;
+>> +     };
+>> +
+>> +     tdmin_a: audio-controller@330300 {
+>> +             compatible = "amlogic,sm1-tdmin";
+>> +             reg = <0x0 0x330300 0x0 0x40>;
+>> +             sound-name-prefix = "TDMIN_A";
+>> +             resets = <&clkc_audio AUD_RESET_TDMIN_A>;
+>> +             clocks = <&clkc_audio AUD_CLKID_TDMIN_A>,
+>> +                      <&clkc_audio AUD_CLKID_TDMIN_A_SCLK>,
+>> +                      <&clkc_audio AUD_CLKID_TDMIN_A_SCLK_SEL>,
+>> +                      <&clkc_audio AUD_CLKID_TDMIN_A_LRCLK>,
+>> +                      <&clkc_audio AUD_CLKID_TDMIN_A_LRCLK>;
+>> +             clock-names = "pclk", "sclk", "sclk_sel",
+>> +                               "lrclk", "lrclk_sel";
+>> +     };
+>> +
+>> +     tdmin_b: audio-controller@330340 {
+>> +             compatible = "amlogic,sm1-tdmin";
+>> +             reg = <0x0 0x330340 0x0 0x40>;
+>> +             sound-name-prefix = "TDMIN_B";
+>> +             resets = <&clkc_audio AUD_RESET_TDMIN_B>;
+>> +             clocks = <&clkc_audio AUD_CLKID_TDMIN_B>,
+>> +                      <&clkc_audio AUD_CLKID_TDMIN_B_SCLK>,
+>> +                      <&clkc_audio AUD_CLKID_TDMIN_B_SCLK_SEL>,
+>> +                      <&clkc_audio AUD_CLKID_TDMIN_B_LRCLK>,
+>> +                      <&clkc_audio AUD_CLKID_TDMIN_B_LRCLK>;
+>> +             clock-names = "pclk", "sclk", "sclk_sel",
+>> +                               "lrclk", "lrclk_sel";
+>> +     };
+>> +
+>> +     tdmin_c: audio-controller@330380 {
+>> +             compatible = "amlogic,sm1-tdmin";
+>> +             reg = <0x0 0x330380 0x0 0x40>;
+>> +             sound-name-prefix = "TDMIN_C";
+>> +             resets = <&clkc_audio AUD_RESET_TDMIN_C>;
+>> +             clocks = <&clkc_audio AUD_CLKID_TDMIN_C>,
+>> +                      <&clkc_audio AUD_CLKID_TDMIN_C_SCLK>,
+>> +                      <&clkc_audio AUD_CLKID_TDMIN_C_SCLK_SEL>,
+>> +                      <&clkc_audio AUD_CLKID_TDMIN_C_LRCLK>,
+>> +                      <&clkc_audio AUD_CLKID_TDMIN_C_LRCLK>;
+>> +             clock-names = "pclk", "sclk", "sclk_sel",
+>> +                               "lrclk", "lrclk_sel";
+>> +     };
+>> +
+>> +     tdmin_lb: audio-controller@3303c0 {
+>> +             compatible = "amlogic,sm1-tdmin";
+>> +             reg = <0x0 0x3303c0 0x0 0x40>;
+>> +             sound-name-prefix = "TDMIN_LB";
+>> +             resets = <&clkc_audio AUD_RESET_TDMIN_LB>;
+>> +             clocks = <&clkc_audio AUD_CLKID_TDMIN_LB>,
+>> +                      <&clkc_audio AUD_CLKID_TDMIN_LB_SCLK>,
+>> +                      <&clkc_audio AUD_CLKID_TDMIN_LB_SCLK_SEL>,
+>> +                      <&clkc_audio AUD_CLKID_TDMIN_LB_LRCLK>,
+>> +                      <&clkc_audio AUD_CLKID_TDMIN_LB_LRCLK>;
+>> +             clock-names = "pclk", "sclk", "sclk_sel",
+>> +                               "lrclk", "lrclk_sel";
+>> +     };
+>> +
+>> +     spdifin: audio-controller@330400 {
+>> +             compatible = "amlogic,g12a-spdifin",
+>> +                              "amlogic,axg-spdifin";
+>> +             reg = <0x0 0x330400 0x0 0x30>;
+>> +             #sound-dai-cells = <0>;
+>> +             sound-name-prefix = "SPDIFIN";
+>> +             interrupts = <GIC_SPI 151 IRQ_TYPE_EDGE_RISING>;
+>> +             clocks = <&clkc_audio AUD_CLKID_SPDIFIN>,
+>> +             <&clkc_audio AUD_CLKID_SPDIFIN_CLK>;
+>> +             clock-names = "pclk", "refclk";
+>> +             resets = <&clkc_audio AUD_RESET_SPDIFIN>;
+>> +     };
+>> +
+>> +     spdifout_a: audio-controller@330480 {
+>> +             compatible = "amlogic,g12a-spdifout",
+>> +                              "amlogic,axg-spdifout";
+>> +             reg = <0x0 0x330480 0x0 0x50>;
+>> +             #sound-dai-cells = <0>;
+>> +             sound-name-prefix = "SPDIFOUT_A";
+>> +             clocks = <&clkc_audio AUD_CLKID_SPDIFOUT>,
+>> +             <&clkc_audio AUD_CLKID_SPDIFOUT_CLK>;
+>> +             clock-names = "pclk", "mclk";
+>> +             resets = <&clkc_audio AUD_RESET_SPDIFOUT>;
+>> +     };
+>> +
+>> +     tdmout_a: audio-controller@330500 {
+>> +             compatible = "amlogic,sm1-tdmout";
+>> +             reg = <0x0 0x330500 0x0 0x40>;
+>> +             sound-name-prefix = "TDMOUT_A";
+>> +             resets = <&clkc_audio AUD_RESET_TDMOUT_A>;
+>> +             clocks = <&clkc_audio AUD_CLKID_TDMOUT_A>,
+>> +                      <&clkc_audio AUD_CLKID_TDMOUT_A_SCLK>,
+>> +                      <&clkc_audio AUD_CLKID_TDMOUT_A_SCLK_SEL>,
+>> +                      <&clkc_audio AUD_CLKID_TDMOUT_A_LRCLK>,
+>> +                      <&clkc_audio AUD_CLKID_TDMOUT_A_LRCLK>;
+>> +             clock-names = "pclk", "sclk", "sclk_sel",
+>> +                               "lrclk", "lrclk_sel";
+>> +     };
+>> +
+>> +     tdmout_b: audio-controller@330540 {
+>> +             compatible = "amlogic,sm1-tdmout";
+>> +             reg = <0x0 0x330540 0x0 0x40>;
+>> +             sound-name-prefix = "TDMOUT_B";
+>> +             resets = <&clkc_audio AUD_RESET_TDMOUT_B>;
+>> +             clocks = <&clkc_audio AUD_CLKID_TDMOUT_B>,
+>> +                      <&clkc_audio AUD_CLKID_TDMOUT_B_SCLK>,
+>> +                      <&clkc_audio AUD_CLKID_TDMOUT_B_SCLK_SEL>,
+>> +                      <&clkc_audio AUD_CLKID_TDMOUT_B_LRCLK>,
+>> +                      <&clkc_audio AUD_CLKID_TDMOUT_B_LRCLK>;
+>> +             clock-names = "pclk", "sclk", "sclk_sel",
+>> +                               "lrclk", "lrclk_sel";
+>> +     };
+>> +
+>> +     tdmout_c: audio-controller@330580 {
+>> +             compatible = "amlogic,sm1-tdmout";
+>> +             reg = <0x0 0x330580 0x0 0x40>;
+>> +             sound-name-prefix = "TDMOUT_C";
+>> +             resets = <&clkc_audio AUD_RESET_TDMOUT_C>;
+>> +             clocks = <&clkc_audio AUD_CLKID_TDMOUT_C>,
+>> +                      <&clkc_audio AUD_CLKID_TDMOUT_C_SCLK>,
+>> +                      <&clkc_audio AUD_CLKID_TDMOUT_C_SCLK_SEL>,
+>> +                      <&clkc_audio AUD_CLKID_TDMOUT_C_LRCLK>,
+>> +                      <&clkc_audio AUD_CLKID_TDMOUT_C_LRCLK>;
+>> +             clock-names = "pclk", "sclk", "sclk_sel",
+>> +                               "lrclk", "lrclk_sel";
+>> +     };
+>> +
+>> +     spdifout_b: audio-controller@330680 {
+>> +             compatible = "amlogic,g12a-spdifout",
+>> +                              "amlogic,axg-spdifout";
+>> +             reg = <0x0 0x330680 0x0 0x50>;
+>> +             #sound-dai-cells = <0>;
+>> +             sound-name-prefix = "SPDIFOUT_B";
+>> +             clocks = <&clkc_audio AUD_CLKID_SPDIFOUT_B>,
+>> +                      <&clkc_audio AUD_CLKID_SPDIFOUT_B_CLK>;
+>> +             clock-names = "pclk", "mclk";
+>> +             resets = <&clkc_audio AUD_RESET_SPDIFOUT_B>;
+>> +     };
+>> +
+>> +     toacodec: audio-controller@330740 {
+>> +             compatible = "amlogic,s4-toacodec",
+>> +                              "amlogic,g12a-toacodec";
+>> +             reg = <0x0 0x330740 0x0 0x4>;
+>> +             sound-name-prefix = "TOACODEC";
+>> +             #sound-dai-cells = <1>;
+>> +             resets = <&clkc_audio AUD_RESET_TOACODEC>;
+>> +     };
+>> +
+>> +     tohdmitx: audio-controller@330744 {
+>> +             compatible = "amlogic,sm1-tohdmitx",
+>> +                              "amlogic,g12a-tohdmitx";
+>> +             reg = <0x0 0x330744 0x0 0x4>;
+>> +             #sound-dai-cells = <1>;
+>> +             sound-name-prefix = "TOHDMITX";
+>> +             resets = <&clkc_audio AUD_RESET_TOHDMITX>;
+>> +     };
+>> +
+>> +     toddr_d: audio-controller@330840 {
+>> +             compatible = "amlogic,sm1-toddr",
+>> +                              "amlogic,axg-toddr";
+>> +             reg = <0x0 0x330840 0x0 0x2c>;
+>> +             #sound-dai-cells = <0>;
+>> +             sound-name-prefix = "TODDR_D";
+>> +             interrupts = <GIC_SPI 45 IRQ_TYPE_EDGE_RISING>;
+>> +             clocks = <&clkc_audio AUD_CLKID_TODDR_D>;
+>> +             resets = <&arb AXG_ARB_TODDR_D>,
+>> +                      <&clkc_audio AUD_RESET_TODDR_D>;
+>> +             reset-names = "arb", "rst";
+>> +             amlogic,fifo-depth = <256>;
+>> +     };
+>> +
+>> +     frddr_d: audio-controller@330880 {
+>> +              compatible = "amlogic,sm1-frddr",
+>> +                               "amlogic,axg-frddr";
+>> +             reg = <0x0 0x330880 0x0 0x2c>;
+>> +             #sound-dai-cells = <0>;
+>> +             sound-name-prefix = "FRDDR_D";
+>> +             interrupts = <GIC_SPI 46 IRQ_TYPE_EDGE_RISING>;
+>> +             clocks = <&clkc_audio AUD_CLKID_FRDDR_D>;
+>> +             resets = <&arb AXG_ARB_FRDDR_D>,
+>> +                      <&clkc_audio AUD_RESET_FRDDR_D>;
+>> +             reset-names = "arb", "rst";
+>> +             amlogic,fifo-depth = <256>;
+>> +     };
+>> +
+>> +     pdm: audio-controller@331000 {
+>> +             compatible = "amlogic,sm1-pdm",
+>> +                          "amlogic,axg-pdm";
+>> +             reg = <0x0 0x331000 0x0 0x34>;
+>> +             #sound-dai-cells = <0>;
+>> +             sound-name-prefix = "PDM";
+>> +             clocks = <&clkc_audio AUD_CLKID_PDM>,
+>> +                      <&clkc_audio AUD_CLKID_PDM_DCLK>,
+>> +                      <&clkc_audio AUD_CLKID_PDM_SYSCLK>;
+>> +             clock-names = "pclk", "dclk", "sysclk";
+>> +             resets = <&clkc_audio AUD_RESET_PDM>;
+>> +     };
+>>   };
+> --
+> Jerome
