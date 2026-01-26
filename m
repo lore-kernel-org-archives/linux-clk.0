@@ -1,89 +1,133 @@
-Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
+Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com [209.85.221.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1962340D93
-	for <linux-clk@vger.kernel.org>; Mon, 26 Jan 2026 15:57:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E8E42D7DD5
+	for <linux-clk@vger.kernel.org>; Mon, 26 Jan 2026 16:12:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769443050; cv=none; b=Gr6Itlio4A8TC9d7to8zsO2WxCnLmEtguMjAN0gZfjPP1wMKGKETA4jWeQ9xrir7IWjJ6WfhpVPeKYsAu2S1nVTgYkYXW1lX5p+mXslE6bgm2iqwysn+r6JzAoC1lY387vQYmfJoSLzheQE2sKTTCOZQ8gg4c+TZtQYIwCadPyc=
+	t=1769443959; cv=none; b=hgOcgUaAmTNzXbMg7pDn19/Fo7Z8Ant5IBcsnHcYpOQRCxJmpfue3B31v4K0jTvnKNT1QyMgTcleigF2KyKSF8JSup4wjCrmc+1eJWwsqmVuapJZLAg5BNlGZDvq0ehb9//Tju/PvTlAbnh4rHHnWeHh3+uo+ycX92SXjxXX8K0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769443050; c=relaxed/simple;
-	bh=bXHAel1NwLDuPGwtU7+OMOyzgPqVLj6MKMo+sEVl6lY=;
+	s=arc-20240116; t=1769443959; c=relaxed/simple;
+	bh=ZVEYPIdz79RWr1ln7aRsRkIDCN/em83Z6vA1u5GyPPI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Qc8TsRWhim+L87vvCBm9aw7aB+gt9bPqQANbTEZnaQkHSZBq535UM63I+xM06VFPpvBe0OP6uAiHedcZG1peod/LLhn6qC3cMfRIsHmmQ4klS0DUERcAyNmK096SA1Xca7tVNKWcAdSsdjGV++I0q3DLNQIk4u0D16itVGbSmcQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.178
+	 To:Cc:Content-Type; b=QMoMtbYTia+RSeXAD5Ag69QQKL3DwRKVZgBr3vHXc5qX7RefWlUwZeG6rxQJtTcLiMhzwF9Mzvsz4CLN9fM18VR/BnXHSgeVcO1tmbat7+BK9QmYXxCyk1HelNawT1gbAIf8QnkXmBuBdOc0f3Qho4cOA59IdGW88hnSxha3TYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-56376c3e866so4480523e0c.3
-        for <linux-clk@vger.kernel.org>; Mon, 26 Jan 2026 07:57:28 -0800 (PST)
+Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-56373f07265so3649266e0c.0
+        for <linux-clk@vger.kernel.org>; Mon, 26 Jan 2026 08:12:38 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769443048; x=1770047848;
+        d=1e100.net; s=20230601; t=1769443957; x=1770048757;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=QWlsYApapvL5A9IWANUoDMRFQZN+NsL2oKDWoPXwI+E=;
-        b=QUKL7EusuXuiNbVeZi3O7XZcNBrXIEpwmzR5n+eFWuX1d3ytlAg0VXk+Dgi+O3iELG
-         B/Nyn2hp5D9Z7T+MplPiXSaVK+tAKFmEi9uNwBBHNHvE/84zhWyQ1GGSuJ3gY2nDKVBH
-         lOEwV1snNt3a72RTyGXgCRxmhEVlVvysmM+Y04n9jCAOIMzU6JRKAtxj+YaySbt97zUR
-         EX/97IdxrqddykJl++h1kyySvMY1r0Xn0VsnlZR+yaAEbkiKc8v5IUqDLzgCJbiiCMW8
-         eJiHj6YuYIZR9zUmlKccEBy8xO8/buGOjL6rkP2FAY8Jc7m0YcVlhft84eXuUTQKplBn
-         NDeQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVYbKb+Lc20lI60zgKieG09miJeUeYaSd8gur7ddCFMWJO1jW2O7HIkx5bBHIwCImOMsLiPrg08EoQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4b7YFCEm7C9oVY/K5mP1aCD/lpS2uKIkRNwkuxGCsGmv26FLV
-	7dkBdheTaN7tiUYjtaGtOjFTjrqwyC62v9vhc5PXp8HSbzfSiTIUQ77qtLoODO7W
-X-Gm-Gg: AZuq6aJ6TI+LyFa5I0gT9Dn+UG1WWq1lG005qxQjzRT8bA8zPbQ9YFzUKnlfkLu1hsm
-	2Sq0B0qu3R2EAGRAtImBv5fL5BQNJIGkVJHPn0F9/uSY4pHzoJi7MyH0u+1NTHYuwJDd9oWiCTQ
-	vyO5SYRvaGi2/73F2fWaMW2kUb7WArzdLZ1FkyrfD1uQs1TwPFa9eRkU5Hki0xkUBbtWcVPoQYi
-	UZcOsWggABnLqkHP1d62FPowqfCq6Ew120p7WV6aDJox5QGUZtWQsXRZr4qPMyH/UfKZ6S+6i+X
-	Db38OL7+K+s2E6i6iEO6wAB4p4wd+CugYt7Fdmr/8J71y1D84sF65ThSRzbrJ+2zvQl56jrXdPz
-	YUJbt6MjT+YKoxJViAAHcXAq9gXJuvTYxwcnu4ya0cG9sNb2kkIUOehC62/Thd73SRiAWRvkK8Y
-	LyxvpUta/j9WsWTm/N1E8pZCxUAxtUtIv+6fw+8asjJ2fzETZj
-X-Received: by 2002:a05:6122:e211:b0:564:f4ef:d805 with SMTP id 71dfb90a1353d-5665c964d61mr1420213e0c.8.1769443047749;
-        Mon, 26 Jan 2026 07:57:27 -0800 (PST)
-Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com. [209.85.217.50])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5663fa632e3sm1812335e0c.4.2026.01.26.07.57.26
+        bh=qznwophNIFvx/Vkp694TKOz6iGJDGxAq1XnuuR3raPY=;
+        b=RAuNz5eVAb0/YXSW8UFaDe1BTE8QvsVNDezUKp9Jztzd1R47CohoJEW46MqMQCp4UB
+         3UgNj2Fy8s4XdurX5EzSBdNaZOBsKlsdBMkyx3yXeTxaYr2LDesvXzv/JQXgYBu5ijHJ
+         LvvFs6e17r67UQZVUaejefFaNWc7cycsHA0IAps3B1jJjkl6aiyDG88h4yWMfbMvqfsn
+         FunhrYRvCOr5GQZIQBKp1a6CT7frFNdo9vci8WleWZ7G9FFGm/yoXMbPwKuJbCJZEH+1
+         mg70TbThjpFl6xGWdo+W//yym2xilntkp/Hp/9JMks3dtzq3WxwDI1abdDD0KEWrRahN
+         Wk2w==
+X-Forwarded-Encrypted: i=1; AJvYcCWUyoBqav6j+4IvHYi+AM3vcL0C9eggmaxSjknf0zHMkMYuoe8RT0fozMjvbo1jYytVZ+mdT1cXA1Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCyM79H1EpuSTbXoWtIsRhwX9eUXoh3wunxm0l1wxWTLBaN71y
+	bCB7znmIa2GTLQbJS3kYZqwtSBoOm41KRnjd9kqYGLkSd5TR6ihBMUeaTYRaq+N7
+X-Gm-Gg: AZuq6aIaVbRZMW/VZVXmtQutf8X2cgbClJONPmdaIjmz0citSkjh/3xFg3y5f0ttypa
+	Q6OBPB6K5h7Q7Dgf/VAiJGpwRANutktnZWLaRfxR8+LXSo/3UmiINFoixpTxMxam8Dd1whEKDkp
+	IqV9KgI/LVYjGjKi/khI4y04W3D4BK93RMZJMxWeJQMg1x0z6FOqw9c/nTZkgzVSt/B0JXfUyv9
+	z9/u8TvXPP1B5gnCaBv3o+8pfr8+Kjh2QKnB+nFcCOOj1rCwsvSIkjthoMexC+fNsUmWdge27QF
+	LSUzJ1kwnFvaM9zxj+3sTDkmqQkwPnAlTtn25N95ak+1RCMDuJDeKBrFiS9TjJtwCSuSl0EPbHr
+	XZNsrPjyjKFLeQAGtvRR34g1Rd06lZDKr5RvueUi+D/rMOTb4M89xiRSqrcE3dIst93zcz1iV+q
+	b1p3MjN7M7xIskFfUzymhwjFrYHvG//gf2I9k7nkWxcEeBbZKk
+X-Received: by 2002:a05:6122:1d03:b0:559:79d8:27a5 with SMTP id 71dfb90a1353d-5665c6dd713mr1511192e0c.0.1769443957235;
+        Mon, 26 Jan 2026 08:12:37 -0800 (PST)
+Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com. [209.85.217.46])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5663fa632e3sm1821114e0c.4.2026.01.26.08.12.36
         for <linux-clk@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 26 Jan 2026 07:57:26 -0800 (PST)
-Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-5f526c39718so4175340137.2
-        for <linux-clk@vger.kernel.org>; Mon, 26 Jan 2026 07:57:26 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVsr/4kJTVBpz9MmiTVeYmDrI384Ut5Gq5gEaFnu9jHX139gTYC4O4IE7RzH+7/cZi2iyNrpBDyYfI=@vger.kernel.org
-X-Received: by 2002:a05:6102:2920:b0:5f5:2ab7:cefc with SMTP id
- ada2fe7eead31-5f576514c47mr1614515137.41.1769443045773; Mon, 26 Jan 2026
- 07:57:25 -0800 (PST)
+        Mon, 26 Jan 2026 08:12:36 -0800 (PST)
+Received: by mail-vs1-f46.google.com with SMTP id ada2fe7eead31-5f548b7ab61so2182958137.3
+        for <linux-clk@vger.kernel.org>; Mon, 26 Jan 2026 08:12:36 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWu0UEVPRh5kFu1qoj2JCHz85KnWKrfqDOW2hZbpONzhSkc8iS8grCON1xRpbS20szcVwAPZET90io=@vger.kernel.org
+X-Received: by 2002:a05:6102:ccc:b0:5f5:3f97:58df with SMTP id
+ ada2fe7eead31-5f5764a857fmr1465004137.27.1769443955874; Mon, 26 Jan 2026
+ 08:12:35 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260125192706.27099-1-ovidiu.panait.rb@renesas.com> <20260125192706.27099-6-ovidiu.panait.rb@renesas.com>
-In-Reply-To: <20260125192706.27099-6-ovidiu.panait.rb@renesas.com>
+References: <20260120150606.7356-1-ovidiu.panait.rb@renesas.com> <20260120150606.7356-4-ovidiu.panait.rb@renesas.com>
+In-Reply-To: <20260120150606.7356-4-ovidiu.panait.rb@renesas.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 26 Jan 2026 16:57:14 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdVgn_hViAO13HE_AY7KG-guAwSMTMOdHwzzK+K=kUstkQ@mail.gmail.com>
-X-Gm-Features: AZwV_QgRCwoHhziZOmAhSnKes9efiAhzVMELZ9SF4N6lYcHkaUa7uPK8VSG_D2s
-Message-ID: <CAMuHMdVgn_hViAO13HE_AY7KG-guAwSMTMOdHwzzK+K=kUstkQ@mail.gmail.com>
-Subject: Re: [PATCH 5/5] arm64: dts: renesas: r9a09g056n48-rzv2n-evk: Enable RTC
+Date: Mon, 26 Jan 2026 17:12:24 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdVB490OOVY6B2Y6DORnWoc0LYvafLKAoRSOqFFP_nybOg@mail.gmail.com>
+X-Gm-Features: AZwV_QjuRevvHvM3o_QLjPDxA4Vw5PVnFEn2Vv2g6csusKMTyFdOTWDc-v6Wjt4
+Message-ID: <CAMuHMdVB490OOVY6B2Y6DORnWoc0LYvafLKAoRSOqFFP_nybOg@mail.gmail.com>
+Subject: Re: [PATCH v2 3/5] clk: versaclock3: Add freerunning 32.768kHz clock support
 To: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
-Cc: claudiu.beznea.uj@bp.renesas.com, alexandre.belloni@bootlin.com, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	magnus.damm@gmail.com, mturquette@baylibre.com, sboyd@kernel.org, 
-	prabhakar.mahadev-lad.rj@bp.renesas.com, linux-rtc@vger.kernel.org, 
+Cc: magnus.damm@gmail.com, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, 
+	biju.das.jz@bp.renesas.com, fabrizio.castro.jz@renesas.com, 
 	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
 	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-On Sun, 25 Jan 2026 at 20:27, Ovidiu Panait
+Hi Ovidiu,
+
+On Tue, 20 Jan 2026 at 16:06, Ovidiu Panait
 <ovidiu.panait.rb@renesas.com> wrote:
-> Enable RTC.
+> The Versa 3 clock generator has an internal 32.768kHz oscillator that can
+> be routed to the SE1, SE2 and SE3 outputs. This patch exposes it as a
+> fixed-rate clock ("vc3-clk-32k") and makes it available as a parent for
+> the SE1/SE2/SE3 muxes.
+>
+> The 32.768kHz clock is only intended to be used when explicitly requested
+> (i.e. when a rate of exactly 32768Hz is set). Selecting it as a fallback
+> for other rates can cause issues, for example in audio configurations.
+>
+> To enforce this, introduce a new helper function,
+> _vc3_clk_mux_determine_rate() which rejects configurations where the
+> 32.768kHz parent would otherwise be chosen implicitly.
+>
+> Two new fields are added to struct vc3_clk_data:
+>   - clk_32k_bitmsk: bit mask for selecting the 32.768kHz oscillator
+>   - clk_32k_index: index of the 32.768kHz clock in the mux parent list
+>
+> They are used by clk_mux callbacks to select the appropriate parent clock.
 >
 > Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-devel for v6.21.
+Thanks for your patch!
 
-Gr{oetje,eeting}s,
+> --- a/drivers/clk/clk-versaclock3.c
+> +++ b/drivers/clk/clk-versaclock3.c
+
+> @@ -1038,6 +1087,14 @@ static int vc3_probe(struct i2c_client *client)
+>                 return ret;
+>         }
+>
+> +       /* Register fixed 32.768kHz clock */
+> +       clk_32k = devm_clk_hw_register_fixed_rate(dev, VC3_CLK_32K_NAME, NULL,
+> +                                                 0, VC3_CLK_32K_FREQ);
+
+If you have a system with multiple versaclock3 instances, I believe
+this will fail for all but the first instance, as clock names must
+be globally unique.  Upon closer look, this is the case for all
+other clock names in this driver.  See e.g. commit f491276a51685987
+("clk: vc5: Allow Versaclock driver to support multiple instances")
+(and subsequent fixes) for how to solve this.
+
+> +       if (IS_ERR(clk_32k))
+> +               return dev_err_probe(dev, PTR_ERR(clk_32k),
+> +                                    "Failed to register %dHz fixed clock\n",
+> +                                    VC3_CLK_32K_FREQ);
+> +
+>         /* Register pfd muxes */
+>         for (i = 0; i < ARRAY_SIZE(clk_pfd_mux); i++) {
+>                 clk_pfd_mux[i].regmap = regmap;
+
+ Gr{oetje,eeting}s,
 
                         Geert
 
