@@ -1,705 +1,209 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazon11013034.outbound.protection.outlook.com [52.101.72.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46CC723D7C7;
-	Mon, 26 Jan 2026 06:02:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769407329; cv=none; b=Iw+qHY3t4ZrWgLSeYGYQVJOq+1tRYgrtsNlhSEUjPvTtKdey4fATJuCWWAXMZDLVWaTh93AEMfArAka31Dd8xfSU0ltWsRUAZHOTETHeZcT0PPFExax7RYFN2q/7XFCPB+rwYc18wPqsDRT1unAdj0Y7NH/qD2yFspLEU17jy6Q=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769407329; c=relaxed/simple;
-	bh=RNX/bmqCGE2a200nsDecIqUeeA0SNcfB5msd7pUswHI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=CRgXH/zPoRKj09Vbv88UDe9HsXn4/E6VgOH6lm+eaNDruZ+bc5ANtqYCcSPOozXkt5wFzDQnrYN3ywUEoD6XGgYPWZCavDXs8blQXp0WeCw3IMxKKg6WJSqYGWT0RStC0g9RNFM/hQTuPpUghNJemAihB8nOtH5t7UHV4qQdK/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HHQuVeq6; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5ED827CB04;
+	Mon, 26 Jan 2026 06:34:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.72.34
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1769409279; cv=fail; b=bEDwMRf4FmQn+WFQgdF7Uq+RFpI25z8EOGnsf+aM8yfFo4BPLIa60lAY6WPtRRNePry65XRXUFD8XkgAGSSw9P2gByLdslhSuCqJUBgQQE1nh07z0a5Qy2M1Th/N1tm3VT9IZh67vWDz0/CnpiSbhK1qXvJ/hZASuBOQaaPhOPY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1769409279; c=relaxed/simple;
+	bh=CaZI5jTlEC69CNiZ4mdk86r2Jw7gMRti8zfYI1FjSD8=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=cJozgraFq+F5hZt1hiI3g7S99t2tzRCBmUN0osD9sNBqm+iehtoEtVA/cQpFwUydW+ppTej7+bkSXgzxqmewMMRqklLxskqtEZv6lGP4RxrOiHe6guwqlnh0lBQE2Bslb1gi1Z1iSD92B4AuI3Qz3uS2fjkYozZxcseBO2R5mBg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=GET0xCft; arc=fail smtp.client-ip=52.101.72.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HHQuVeq6"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 142ECC2BCC6;
-	Mon, 26 Jan 2026 06:02:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769407329;
-	bh=RNX/bmqCGE2a200nsDecIqUeeA0SNcfB5msd7pUswHI=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=HHQuVeq6EjsfnEeLLIOCkV8ISzYFdGpibKEf/zhS+LspHbgArv8PFuW02BqdZcvyK
-	 B7SbFp6AtWJk2rWcNi2t6L+fuaa5lDRj3d40YLyetkzAHb4gJ/Gb5q0dpkR6p0v+C0
-	 iJM18HlgGj/v+ryqa9m2JpRNkJgbG7rC7614/lC83N9Qsoaz/yorlq+thT4lRp0dqk
-	 3Odqf3He+WWdh6xfxU63h0Yz31KD5DkHfB3IxrNfqmHe8VWrtZsFpUZBQydeMw8GbR
-	 Vs1veuucFxXRrgEHqtlBta2uMwQNXzNgzCwDB1F8aHtrsFRDlDqb876x2hN/RYth3Y
-	 17fLx9lpGy2Lg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05B9AC88E4A;
-	Mon, 26 Jan 2026 06:02:09 +0000 (UTC)
-From: Jiebing Chen via B4 Relay <devnull+jiebing.chen.amlogic.com@kernel.org>
-Date: Mon, 26 Jan 2026 06:01:46 +0000
-Subject: [PATCH v6 5/5] arm64: dts: amlogic: Add Amlogic S4 Audio
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="GET0xCft"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Hl2fCS5zf3UwheDwyOBhOIWc7596FG6dTSbV3Z/Wth/flRQoFYBmu4uZJDpTDqv1Km4UEVK7B9M1XrmLgqigYN+fRc+2gmYOqnFCWQznO3dw8KkhyASUCUqM5hE57wMnVnEkNvNZdUoCH1+wjymnHAx+KIHYDuwLHahHgvWjx0uLiJPcs1sU6VDPDziSzy0Kw0pLy7DlM96Z3dpBxTF7lcPbhzubSp/zlaKNMtMrd3+g7fAKYFQ/DQY7UJMtjhXTadpADCaHMoxoGpEeagEn+d3NDWs507k7xV4kKBuRmEMPdNs816mOuFsJyACqmtIAxAgFGoe3FAdjuqv46suY8w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=EsCVTgnRX6zlzuE5f3q/Y3qlT4AflOBvfWof7pdwat0=;
+ b=YsmOZIqU31FS99W9NsfhJVJqAIIFCcBEdntwzDQVCVa1gnheYdPKFAoOl6RUBNmzX05kMqgFYgIN3SeNLbmUMTO9pqJ+4SaM5lAbEAOIKXBvHZSsx6CfXHx/EAeIkeUe0i0YeWCDFwGOcVKlsh065Brw5dNSEgoqc0gqRW3N0iWEP/Q3xi0ZYrfx6r6hOyrZWPsNdtfTOsgSCv9DTZdakKAz9fR3qDspty/shSDKyjoEBz+8yRyK5pefjgkyaTm7tAEuxVZ0vTaGca0TBL+McjNKkcpKRpuCbiAS0IcFIPfEgCyxq2mg0ZXgl+quGpAEvazda8UjL1V5nJMqOtCisg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=EsCVTgnRX6zlzuE5f3q/Y3qlT4AflOBvfWof7pdwat0=;
+ b=GET0xCftHafUV534zT6IO++hpJSylNDYRGEKqYFNkJ+QnBPxRAhpr+h4ul1jlYUwK0670uv9hai5TS0CzJ141itot5MRycs+FnTQe+R3TCqcyaOFnxxZQGeMjgvNNtWBTdHHm+wX7kdNXUcEJTobNQf3JCM2aN9Fp1Okui0VybJHjAwjrc3+rrOXksFomRZOeMnLzx97NV7KCC0LJZJaWuHcb86Tzh5mgPiPl2VcDG3pWkykpLcOGKL0Xm3Qabf5yia9+z1fA95vWHQz29/D0Bl1EWfKBSZg6bOZNrgHClf8SRlgxYo3ubh5qHvGogmUvpwMwyoqBV/C/YZ6Wg80/w==
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
+ by GV4PR04MB11974.eurprd04.prod.outlook.com (2603:10a6:150:2e8::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9542.9; Mon, 26 Jan
+ 2026 06:34:34 +0000
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::4972:7eaa:b9f6:7b5e]) by PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::4972:7eaa:b9f6:7b5e%5]) with mapi id 15.20.9542.010; Mon, 26 Jan 2026
+ 06:34:34 +0000
+From: Peng Fan <peng.fan@nxp.com>
+To: Lukasz Majewski <lukma@nabladev.com>, Michael Turquette
+	<mturquette@baylibre.com>, Abel Vesa <abelvesa@kernel.org>, Stephen Boyd
+	<sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
+	<s.hauer@pengutronix.de>
+CC: Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam
+	<festevam@gmail.com>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Subject: RE: [PATCH] clk: vf610: Add support for the Ethernet switch clocks
+Thread-Topic: [PATCH] clk: vf610: Add support for the Ethernet switch clocks
+Thread-Index: AQHci6AKjykLDAXxdUSpRkHNbtLt57VkA/ag
+Date: Mon, 26 Jan 2026 06:34:33 +0000
+Message-ID:
+ <PAXPR04MB8459D29C90848DB101F726DE8893A@PAXPR04MB8459.eurprd04.prod.outlook.com>
+References: <20260122130649.4150338-1-lukma@nabladev.com>
+In-Reply-To: <20260122130649.4150338-1-lukma@nabladev.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PAXPR04MB8459:EE_|GV4PR04MB11974:EE_
+x-ms-office365-filtering-correlation-id: b94f6b80-7588-4055-ecf5-08de5ca4f81d
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|7416014|376014|19092799006|366016|1800799024|38070700021;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?U169Zr7jep8dt+aWuB9V83RMbGfKWO4/GcbZg5QmzNNvOEQmkZyd/oYXwtxN?=
+ =?us-ascii?Q?hq0Ne5f/3B/L8BKy/YSRkDC3tSMRwvcMv955W42gae0OBxMmajgFz9FU6hMu?=
+ =?us-ascii?Q?5Z2I8Ihu6FHCB3weDzJry0b59bb8d20HlPwGp+RzXSoj3bzwkIPXWX7ODLWv?=
+ =?us-ascii?Q?ldkhybFD+gjrhY4cNRzA9sHiobcEIOG1OOfYdh+H3HD0pyLD9jieT+g2+Ln7?=
+ =?us-ascii?Q?p48qZQIeFO3gAkG9ct9O/AatGtPhgF8cKKfGbqXUG5IY0amN93J/7y4MyNzX?=
+ =?us-ascii?Q?7SN+Adhf8y6cSLVBsQS+rvt6XkqV7ZnHOfkHCWv0SlOYQ9btp1PCkrUPistv?=
+ =?us-ascii?Q?eTQv2V0vyQyXxKRcNe1KCfir5CDxx+vwW7XDZ99KF/JPtvBaGS7XjmydlqGu?=
+ =?us-ascii?Q?Ut/X+xVCh7pQRf9KZsEUssrOBPBUm1YkWsdj7H0mgBsn1St46gEi0idJlqYr?=
+ =?us-ascii?Q?lEPZ+J4GgZIDzuz7rfdRE9Eby7kGIalKhmQaTS+5x1xm3xkIbEFIMYk1EolN?=
+ =?us-ascii?Q?YGbUXkSZrB4ObgZEosBeKkQ/KtH71rh+Q5Td2MOJZrVy9QS46/QGV0/TsscT?=
+ =?us-ascii?Q?4tqhKpe/fUQbY1hl9tKv/VFafAN7W7T4skODOL+BQi6fiOCfyddsbhUplvJB?=
+ =?us-ascii?Q?SmSxcoffrEaALUoBib4pqk1Qc9DutZlwJH3JFSvFYxpUQB4ezW9zbQJcNBZV?=
+ =?us-ascii?Q?ZT2GAPthQkUDZncU1/yny0ygWWYi0trwnsTu6+RsrgpS68SuspSb3XrW6/md?=
+ =?us-ascii?Q?eCAXLyShlhuHiDx0QbyCyk7KFTvmjtLIrsyd6G02M82kt7Ka6vDmjDRBl/l2?=
+ =?us-ascii?Q?L9e4nn4v7GtM6aClok5LRgUwPcGM5ylB7bt2KsD93rU09YYM2UCTYAoYEqgb?=
+ =?us-ascii?Q?Ut7hgBfrMUKR5btrG9U3zqd7ltRUUNBINmbOy4QyyJWG88RSlTFE3LU1+c7O?=
+ =?us-ascii?Q?vdNknl+LWo6HmWmAYdhHxzUUpVF/syIj39iz33EWxMj/hfd0a5UIXWpCZtRg?=
+ =?us-ascii?Q?0ZgcgUi2o71DKymjt/RlDAZ2fgBt+J9EvnQ5SP6xQTg6yaTIyfHzKt48fnuF?=
+ =?us-ascii?Q?Z4tbvz6BiLslW4x3tUasDizmkRvfkNZlXY3WoxZGsRlkLy8rEat63ibNhc4d?=
+ =?us-ascii?Q?sG2mkyLuzvDDIlPZLgZpAr7z3zkhEYyHuvmtANBucO+c+4XWXAOVM4DV9QyH?=
+ =?us-ascii?Q?eZmfhVoLYmsRbXRtHNsOc+uJYm6xjZhMsdDLkM3xcC31dBLGUF5Kh8YNll/o?=
+ =?us-ascii?Q?ecxsuJhXPhuth5jo95viCgrt+lP83vllguMEhjn3PFwBqrSyto3CD6vBoPgk?=
+ =?us-ascii?Q?BWpKcRUrQkqEA2B0ux6TBRtPZrbughAGnagifpGS2kPwv1H4D+UxK9+2ujFL?=
+ =?us-ascii?Q?EbUQat6wKL3EubPh6ifBqtA1519mi4OBQkgHWAh4hVZT74nqLECrwg6O0xBG?=
+ =?us-ascii?Q?0XXoaazbQsSY7vJH/pqv36qHZbsE/gZC9Rm/Fk76X4b3ZTwS3+TMd3rIJj4h?=
+ =?us-ascii?Q?jqrGlCjDKXxiVMA0hPosiGx/lv5EGyja6MI9lzlzsWzi9OSspMR9pH2LNcMj?=
+ =?us-ascii?Q?hkFgX7ptiVYVgrjNQ12W3uVPCoOjzhgEc7ezPb+dT9t3O3JgQbQ8eAM91w6k?=
+ =?us-ascii?Q?BRgKRuYhbUchiENn0rEJMgs=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(19092799006)(366016)(1800799024)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?BEGFn//3bhtUIAPgsAqDSPttA6Xc7Z8xxehmaaanoKY+FXr9ATcB3fVv3PEE?=
+ =?us-ascii?Q?7xiwfST8rCQaQHlOblo83y2k6MRq7R9uD8eTZPlJgP4ily99JYSVKuWkOaGs?=
+ =?us-ascii?Q?Rs/Scx4zaqJb9JhvZnNxTHkZyadQ85bSggspGrM1x5xHT1tEdPXPxwaYwXtR?=
+ =?us-ascii?Q?WSX/v3EXpfuuVguwJF3ZfNwmKz06SvqH+iCTOSTtaTQHzfvw5MKj0RqrsPpM?=
+ =?us-ascii?Q?2dfhL3/xB0xNXp53+HqyQ0tQHMGlm8GNYq14zOoM3uuD/+pKzq0n+K02wdAL?=
+ =?us-ascii?Q?m6ehGOz2RnE+0rB4ntIqf1+bk6QHwIv/rQZfzy9m8WHcD2RftZzeXaDN3uMd?=
+ =?us-ascii?Q?MXUvvTdTqvd+SlUQxo9+CTQJDP3TN3WhwEMYPmICGfq75VSFRtLTqeLz/09L?=
+ =?us-ascii?Q?ZOYuwKP5a/U+SpGFA9K7lyWpAatDruWSgM4KhnpkQRKhs4SUt3zFQmvlM6vt?=
+ =?us-ascii?Q?O4HuywMZ7Qbmy0MRw9Bo2ANF3htnJsb1iPx4de2INvoNfbgVASZ71ec9xZ9/?=
+ =?us-ascii?Q?ieNoJT5k/sd8hN+xVBgml2oJS1rF91LQqrgHmE9xGBjMpc7wNgwJ800/G3FX?=
+ =?us-ascii?Q?lKM1juVLj84RkBZXgknNT8NOmJYuLze4r5KpRuJ6X940pT4z+xFqxLMyYNI8?=
+ =?us-ascii?Q?HHJWUvVV8/Gon8Efdcx1whipmJC7cDqG7GhXsLis/pDV7yeZnJM4g7Ajfacr?=
+ =?us-ascii?Q?8Voidi+3KMsxbbTl/23NMA7znwsbQT3ZqFUBJRluDgzn/cSlJyU4qKZJLbpl?=
+ =?us-ascii?Q?LczhKDkENmjW0QIS+Ol9n+XB/EH703y09i4sk6Wfu0DJ4qcSgR6xYgiiXb6/?=
+ =?us-ascii?Q?kqgUqJgKLS66mLSxWDhhrkbV3glrd7BJ0Xjd+8bIMv5t369q0HRZySkPBQpJ?=
+ =?us-ascii?Q?4L5Bla+9h4O5qpt19qoALfZK9q8H5VE/uSpj/npFoMdD4NoqBj/x/6SPqAeZ?=
+ =?us-ascii?Q?kJ/+om/fVu1XS3T7vLrEFHrudcnPvdO9dvATlde5le1tomtouGOi/jApmdfu?=
+ =?us-ascii?Q?jw5QoCtlVGPtqjaVCo8ilyOUh12o5ALiHoTk+2nP6n6zzfexVuv+1/jflaZq?=
+ =?us-ascii?Q?Xqzs+OwKFQm4/lDvz4czZCNwy9wKKeBOEh5s9TjZun61UMEfbDLGWdTYJxli?=
+ =?us-ascii?Q?gJLU7WDLcycYsfZtwnB6LeZRw7kqlRWbbMvDsZUVjqUA98+/tTc6ndV4v5B/?=
+ =?us-ascii?Q?jOnbDPRFpvh6uub4ULSCDPBJAfLwl5dCYQK/WkHLypFXrrasPKQ1cFRU5S+y?=
+ =?us-ascii?Q?1K6IRdjNZlxmhngif+aNT+A7Nf9+l18AnTrarZe3duhVT4W1RQ2BIR/15HaY?=
+ =?us-ascii?Q?QOPqFXAlibPzjN4n8aWKmlR88zanWPlRnJimZWI/3bFnGqynRnHiHH9c4oUx?=
+ =?us-ascii?Q?6oq1T6R9IpgZ3I3XDD3TEsU98lW43DJHrLAPEkKXUZ5cZ8vM8pEaq2SaB8tO?=
+ =?us-ascii?Q?+N/ummL4zuED3Hy8x+6kdYPF7Np5sibFiTOdh8otNSoyS0p4z434Jj7VVlCy?=
+ =?us-ascii?Q?P/f5Ueh5+0idBMnb60YiaePgS2slRLi5Iaq7UbQHJ+Fp4BoVW7ZtqH+Dcf7O?=
+ =?us-ascii?Q?Vu8gd2gswmPGienUx5ITgmBfP+Hbe9GLDayNVHT0x42loWFVq+WyGhZmnHXA?=
+ =?us-ascii?Q?DhExYff0wy8YxXcfr9FqXesVER3CyNYnyPJVrrOYy+9Xq+Q9gMUQwwfaB7Vo?=
+ =?us-ascii?Q?QJEYyxKSM1IhcHtPL0mNqaVOhqlb0WQ0sDtXDQqodF05LK+I?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260126-audio_drvier-v6-5-99e350855bc2@amlogic.com>
-References: <20260126-audio_drvier-v6-0-99e350855bc2@amlogic.com>
-In-Reply-To: <20260126-audio_drvier-v6-0-99e350855bc2@amlogic.com>
-To: Jerome Brunet <jbrunet@baylibre.com>, 
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
- Kevin Hilman <khilman@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>
-Cc: linux-sound@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, 
- jian.xu@amlogic.com, shuai.li@amlogic.com, zhe.wang@amlogic.com, 
- jiebing chen <jiebing.chen@amlogic.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1769407326; l=19268;
- i=jiebing.chen@amlogic.com; s=20250110; h=from:subject:message-id;
- bh=2Sz1jfgAtQUW+rfI9cts5YI8oJ87WKYokkV583Nf6cc=;
- b=IX4YL0s2ni9Q+pNgttawvGQTsqOncjOFCWdnIvW+0eNV+M4LKIGagvNbuNNKPMuyaI5ahgPBt
- 8Iekg6JV+e9AUik2fDfNdd+OL4rn/jUSMHOG1Y1/J5oiNneLbmBBkqK
-X-Developer-Key: i=jiebing.chen@amlogic.com; a=ed25519;
- pk=6rFvvF45A84pLNRy03hfUHeROxHCnZ+1KAGw/DoqKic=
-X-Endpoint-Received: by B4 Relay for jiebing.chen@amlogic.com/20250110 with
- auth_id=316
-X-Original-From: Jiebing Chen <jiebing.chen@amlogic.com>
-Reply-To: jiebing.chen@amlogic.com
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b94f6b80-7588-4055-ecf5-08de5ca4f81d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Jan 2026 06:34:34.0058
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: jEK1u9ek8WjRE25AG3ikwXxp9pNZwjfbykfw4f+3kFNKCT6o+isDx1MI/aEVRq1ezluhPaqCVnoOcoY6TD5GAQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV4PR04MB11974
 
-From: Jiebing Chen <jiebing.chen@amlogic.com>
+Hi Lukasz,
 
-Add basic audio driver support for the Amlogic S4 based
-Amlogic AQ222 board.
+> Subject: [PATCH] clk: vf610: Add support for the Ethernet switch clocks
+>=20
+> The vf610 device has built in the MoreThanIP L2 switch. For proper
+> operation it is required to enable ESW and MAC table lookup clocks.
+>=20
+> The MAC table spans from 0x400E_C000 for 0x4000 and it is necessary
+> to provide clocks for each AIPS1-"slot", which size is 0x1000 (hence
+> four separate entries).
+>=20
+> Those can be enabled via clock gating CCM_CCGR10 register
+> (0x4006_B068).
+>=20
+> Signed-off-by: Lukasz Majewski <lukma@nabladev.com>
+> ---
+>  drivers/clk/imx/clk-vf610.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+>=20
+> diff --git a/drivers/clk/imx/clk-vf610.c b/drivers/clk/imx/clk-vf610.c
+> index 9e11f1c7c397..88c9b656f244 100644
+> --- a/drivers/clk/imx/clk-vf610.c
+> +++ b/drivers/clk/imx/clk-vf610.c
+> @@ -309,6 +309,11 @@ static void __init vf610_clocks_init(struct
+> device_node *ccm_node)
+>         clk[VF610_CLK_ENET_TS] =3D imx_clk_gate("enet_ts", "enet_ts_sel",
+> CCM_CSCDR1, 23);
+>         clk[VF610_CLK_ENET0] =3D imx_clk_gate2("enet0", "ipg_bus",
+> CCM_CCGR9, CCM_CCGRx_CGn(0));
+>         clk[VF610_CLK_ENET1] =3D imx_clk_gate2("enet1", "ipg_bus",
+> CCM_CCGR9, CCM_CCGRx_CGn(1));
+> +       clk[VF610_CLK_ESW] =3D imx_clk_gate2("esw", "ipg_bus",
+> CCM_CCGR10, CCM_CCGRx_CGn(8));
+> +       clk[VF610_CLK_ESW_MAC_TAB0] =3D imx_clk_gate2("esw_tab0",
+> "ipg_bus", CCM_CCGR10, CCM_CCGRx_CGn(12));
+> +       clk[VF610_CLK_ESW_MAC_TAB1] =3D imx_clk_gate2("esw_tab1",
+> "ipg_bus", CCM_CCGR10, CCM_CCGRx_CGn(13));
+> +       clk[VF610_CLK_ESW_MAC_TAB2] =3D imx_clk_gate2("esw_tab2",
+> "ipg_bus", CCM_CCGR10, CCM_CCGRx_CGn(14));
+> +       clk[VF610_CLK_ESW_MAC_TAB3] =3D imx_clk_gate2("esw_tab3",
+> + "ipg_bus", CCM_CCGR10, CCM_CCGRx_CGn(15));
 
-Signed-off-by: Jiebing Chen <jiebing.chen@amlogic.com>
----
- .../boot/dts/amlogic/meson-s4-s805x2-aq222.dts     | 222 +++++++++++++
- arch/arm64/boot/dts/amlogic/meson-s4.dtsi          | 361 +++++++++++++++++++++
- 2 files changed, 583 insertions(+)
+Seems you post dt-binding in a separate patch. It is better to
+put in one patchset.
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-s4-s805x2-aq222.dts b/arch/arm64/boot/dts/amlogic/meson-s4-s805x2-aq222.dts
-index 0a3f81ea0fb0..43493bc9da46 100644
---- a/arch/arm64/boot/dts/amlogic/meson-s4-s805x2-aq222.dts
-+++ b/arch/arm64/boot/dts/amlogic/meson-s4-s805x2-aq222.dts
-@@ -75,6 +75,19 @@ vddio_ao1v8: regulator-vddio-ao1v8 {
- 	       regulator-always-on;
- 	};
- 
-+	vcc5v_reg: regulator-vcc-5v {
-+		compatible = "regulator-fixed";
-+		vin-supply = <&main_12v>;
-+		regulator-name = "VCC5V";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		gpio = <&gpio GPIOH_7 GPIO_ACTIVE_HIGH>;
-+		startup-delay-us = <7000>;
-+		enable-active-high;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+
- 	/* SY8120B1ABC DC/DC Regulator. */
- 	vddcpu: regulator-vddcpu {
- 		compatible = "pwm-regulator";
-@@ -129,6 +142,215 @@ vddcpu: regulator-vddcpu {
- 				<699000 98>,
- 				<689000 100>;
- 	};
-+
-+	dmics: audio-codec-1 {
-+		compatible = "dmic-codec";
-+		#sound-dai-cells = <0>;
-+		num-channels = <2>;
-+		wakeup-delay-ms = <50>;
-+		sound-name-prefix = "MIC";
-+	};
-+
-+	dioo2133: audio-amplifier-0 {
-+		compatible = "simple-audio-amplifier";
-+		enable-gpios = <&gpio GPIOH_8 GPIO_ACTIVE_HIGH>;
-+		VCC-supply = <&vcc5v_reg>;
-+		sound-name-prefix = "10U2";
-+	};
-+
-+	spdif_dir: audio-spdif-in {
-+		compatible = "linux,spdif-dir";
-+		#sound-dai-cells = <0>;
-+		sound-name-prefix = "DIR";
-+	};
-+
-+	spdif_dit: audio-spdif-out {
-+		compatible = "linux,spdif-dit";
-+		#sound-dai-cells = <0>;
-+		sound-name-prefix = "DIT";
-+	};
-+
-+	sound {
-+		compatible = "amlogic,axg-sound-card";
-+		model = "aq222";
-+		audio-widgets = "Line", "Lineout";
-+		audio-aux-devs = <&tdmout_a>, <&tdmout_b>, <&tdmout_c>,
-+				 <&tdmin_a>, <&tdmin_b>, <&tdmin_c>,
-+				 <&tdmin_lb>, <&dioo2133>;
-+		audio-routing = "TDMOUT_A IN 0", "FRDDR_A OUT 0",
-+				"TDMOUT_A IN 1", "FRDDR_B OUT 0",
-+				"TDMOUT_A IN 2", "FRDDR_C OUT 0",
-+				"TDM_A Playback", "TDMOUT_A OUT",
-+				"TDMOUT_B IN 0", "FRDDR_A OUT 1",
-+				"TDMOUT_B IN 1", "FRDDR_B OUT 1",
-+				"TDMOUT_B IN 2", "FRDDR_C OUT 1",
-+				"TDM_B Playback", "TDMOUT_B OUT",
-+				"TDMOUT_C IN 0", "FRDDR_A OUT 2",
-+				"TDMOUT_C IN 1", "FRDDR_B OUT 2",
-+				"TDMOUT_C IN 2", "FRDDR_C OUT 2",
-+				"TDM_C Playback", "TDMOUT_C OUT",
-+				"SPDIFOUT_A IN 0", "FRDDR_A OUT 3",
-+				"SPDIFOUT_A IN 1", "FRDDR_B OUT 3",
-+				"SPDIFOUT_A IN 2", "FRDDR_C OUT 3",
-+				"SPDIFOUT_B IN 0", "FRDDR_A OUT 4",
-+				"SPDIFOUT_B IN 1", "FRDDR_B OUT 4",
-+				"SPDIFOUT_B IN 2", "FRDDR_C OUT 4",
-+				"TDMIN_A IN 0", "TDM_A Capture",
-+				"TDMIN_A IN 1", "TDM_B Capture",
-+				"TDMIN_A IN 2", "TDM_C Capture",
-+				"TDMIN_A IN 3", "TDM_A Loopback",
-+				"TDMIN_A IN 4", "TDM_B Loopback",
-+				"TDMIN_A IN 5", "TDM_C Loopback",
-+				"TDMIN_B IN 0", "TDM_A Capture",
-+				"TDMIN_B IN 1", "TDM_B Capture",
-+				"TDMIN_B IN 2", "TDM_C Capture",
-+				"TDMIN_B IN 3", "TDM_A Loopback",
-+				"TDMIN_B IN 4", "TDM_B Loopback",
-+				"TDMIN_B IN 5", "TDM_C Loopback",
-+				"TDMIN_C IN 0", "TDM_A Capture",
-+				"TDMIN_C IN 1", "TDM_B Capture",
-+				"TDMIN_C IN 2", "TDM_C Capture",
-+				"TDMIN_C IN 3", "TDM_A Loopback",
-+				"TDMIN_C IN 4", "TDM_B Loopback",
-+				"TDMIN_C IN 5", "TDM_C Loopback",
-+				"TDMIN_LB IN 3", "TDM_A Capture",
-+				"TDMIN_LB IN 4", "TDM_B Capture",
-+				"TDMIN_LB IN 5", "TDM_C Capture",
-+				"TDMIN_LB IN 0", "TDM_A Loopback",
-+				"TDMIN_LB IN 1", "TDM_B Loopback",
-+				"TDMIN_LB IN 2", "TDM_C Loopback",
-+				"TODDR_A IN 0", "TDMIN_A OUT",
-+				"TODDR_B IN 0", "TDMIN_A OUT",
-+				"TODDR_C IN 0", "TDMIN_A OUT",
-+				"TODDR_A IN 1", "TDMIN_B OUT",
-+				"TODDR_B IN 1", "TDMIN_B OUT",
-+				"TODDR_C IN 1", "TDMIN_B OUT",
-+				"TODDR_A IN 2", "TDMIN_C OUT",
-+				"TODDR_B IN 2", "TDMIN_C OUT",
-+				"TODDR_C IN 2", "TDMIN_C OUT",
-+				"TODDR_A IN 3", "SPDIFIN Capture",
-+				"TODDR_B IN 3", "SPDIFIN Capture",
-+				"TODDR_C IN 3", "SPDIFIN Capture",
-+				"TODDR_A IN 6", "TDMIN_LB OUT",
-+				"TODDR_B IN 6", "TDMIN_LB OUT",
-+				"TODDR_C IN 6", "TDMIN_LB OUT",
-+				"10U2 INL", "ACODEC LOLP",
-+				"10U2 INR", "ACODEC LORP",
-+				"Lineout", "10U2 OUTL",
-+				"Lineout", "10U2 OUTR";
-+		clocks = <&clkc_pll CLKID_HIFI_PLL>,
-+				<&clkc_pll CLKID_MPLL0>,
-+				<&clkc_pll CLKID_MPLL1>;
-+		assigned-clocks = <&clkc_pll CLKID_HIFI_PLL>,
-+				  <&clkc_pll CLKID_MPLL0>,
-+				  <&clkc_pll CLKID_MPLL1>;
-+		assigned-clock-rates = <1179648000>,
-+				       <270950400>,
-+				       <338688000>;
-+
-+		dai-link-0 {
-+			sound-dai = <&frddr_a>;
-+		};
-+
-+		dai-link-1 {
-+			sound-dai = <&frddr_b>;
-+		};
-+
-+		dai-link-2 {
-+			sound-dai = <&frddr_c>;
-+		};
-+
-+		dai-link-3 {
-+			sound-dai = <&toddr_a>;
-+		};
-+
-+		dai-link-4 {
-+			sound-dai = <&toddr_b>;
-+		};
-+
-+		dai-link-5 {
-+			sound-dai = <&toddr_c>;
-+		};
-+
-+		dai-link-6 {
-+			sound-dai = <&tdmif_a>;
-+			dai-format = "i2s";
-+			dai-tdm-slot-tx-mask-0 = <1 1>;
-+			mclk-fs = <256>;
-+			codec-0 {
-+				sound-dai = <&tohdmitx TOHDMITX_I2S_IN_A>;
-+			};
-+			codec-1 {
-+				sound-dai = <&toacodec TOACODEC_IN_A>;
-+			};
-+		};
-+
-+		dai-link-7 {
-+			sound-dai = <&tdmif_b>;
-+			dai-format = "i2s";
-+			dai-tdm-slot-tx-mask-0 = <1 1>;
-+			mclk-fs = <256>;
-+			codec-0 {
-+				sound-dai = <&toacodec TOACODEC_IN_B>;
-+			};
-+			codec-1 {
-+				sound-dai = <&tohdmitx TOHDMITX_I2S_IN_B>;
-+			};
-+		};
-+
-+		/* 8ch HDMI interface */
-+		dai-link-8 {
-+			sound-dai = <&tdmif_c>;
-+			dai-format = "i2s";
-+			dai-tdm-slot-tx-mask-0 = <1 1>;
-+			dai-tdm-slot-tx-mask-1 = <1 1>;
-+			dai-tdm-slot-tx-mask-2 = <1 1>;
-+			dai-tdm-slot-tx-mask-3 = <1 1>;
-+			mclk-fs = <256>;
-+			codec-0 {
-+				sound-dai = <&tohdmitx TOHDMITX_I2S_IN_C>;
-+			};
-+		};
-+
-+		/* spdif hdmi and coax output */
-+		dai-link-9 {
-+			sound-dai = <&spdifout_a>;
-+
-+			codec-0 {
-+				sound-dai = <&spdif_dit>;
-+			};
-+
-+			codec-1 {
-+				sound-dai = <&tohdmitx TOHDMITX_SPDIF_IN_A>;
-+			};
-+		};
-+
-+		/* spdif hdmi interface */
-+		dai-link-10 {
-+			sound-dai = <&spdifout_b>;
-+
-+			codec {
-+				sound-dai = <&tohdmitx TOHDMITX_SPDIF_IN_B>;
-+			};
-+		};
-+
-+		/* spdif coax input */
-+		dai-link-11 {
-+			sound-dai = <&spdifin>;
-+
-+			codec {
-+				sound-dai = <&spdif_dir>;
-+			};
-+		};
-+
-+		dai-link-12 {
-+			sound-dai = <&toacodec TOACODEC_OUT>;
-+
-+			codec {
-+				sound-dai = <&acodec>;
-+			};
-+		};
-+	};
- };
- 
- &pwm_ef {
-diff --git a/arch/arm64/boot/dts/amlogic/meson-s4.dtsi b/arch/arm64/boot/dts/amlogic/meson-s4.dtsi
-index dfc0a30a6e61..a6c2c83eea16 100644
---- a/arch/arm64/boot/dts/amlogic/meson-s4.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-s4.dtsi
-@@ -11,6 +11,11 @@
- #include <dt-bindings/clock/amlogic,s4-peripherals-clkc.h>
- #include <dt-bindings/power/meson-s4-power.h>
- #include <dt-bindings/reset/amlogic,meson-s4-reset.h>
-+#include <dt-bindings/clock/axg-audio-clkc.h>
-+#include <dt-bindings/reset/amlogic,meson-axg-audio-arb.h>
-+#include <dt-bindings/reset/amlogic,meson-g12a-audio-reset.h>
-+#include <dt-bindings/sound/meson-g12a-toacodec.h>
-+#include <dt-bindings/sound/meson-g12a-tohdmitx.h>
- 
- / {
- 	cpus {
-@@ -863,4 +868,360 @@ emmc: mmc@fe08c000 {
- 			assigned-clock-rates = <24000000>;
- 		};
- 	};
-+
-+	tdmif_a: audio-controller-0 {
-+		compatible = "amlogic,axg-tdm-iface";
-+		#sound-dai-cells = <0>;
-+		sound-name-prefix = "TDM_A";
-+		clocks = <&clkc_audio AUD_CLKID_MST_A_SCLK>,
-+			 <&clkc_audio AUD_CLKID_MST_A_LRCLK>,
-+			 <&clkc_audio AUD_CLKID_MST_A_MCLK>;
-+		clock-names = "sclk", "lrclk","mclk";
-+	};
-+
-+	tdmif_b: audio-controller-1 {
-+		compatible = "amlogic,axg-tdm-iface";
-+		#sound-dai-cells = <0>;
-+		sound-name-prefix = "TDM_B";
-+		clocks = <&clkc_audio AUD_CLKID_MST_A_SCLK>,
-+			 <&clkc_audio AUD_CLKID_MST_B_LRCLK>,
-+			 <&clkc_audio AUD_CLKID_MST_B_MCLK>;
-+		clock-names = "sclk", "lrclk","mclk";
-+	};
-+
-+	tdmif_c: audio-controller-2 {
-+		compatible = "amlogic,axg-tdm-iface";
-+		#sound-dai-cells = <0>;
-+		sound-name-prefix = "TDM_C";
-+		clocks = <&clkc_audio AUD_CLKID_MST_C_SCLK>,
-+			 <&clkc_audio AUD_CLKID_MST_C_LRCLK>,
-+			 <&clkc_audio AUD_CLKID_MST_C_MCLK>;
-+		clock-names = "sclk", "lrclk","mclk";
-+	};
-+};
-+
-+&apb4 {
-+	acodec: audio-controller@1a000 {
-+		compatible = "amlogic,t9015";
-+		reg = <0x0 0x1a000 0x0 0x14>;
-+		#sound-dai-cells = <0>;
-+		sound-name-prefix = "ACODEC";
-+		clocks = <&clkc_periphs CLKID_ACODEC>;
-+		clock-names = "pclk";
-+		resets = <&reset RESET_ACODEC>;
-+		AVDD-supply = <&vddio_ao1v8>;
-+	};
-+
-+	clkc_audio: clock-controller@330000 {
-+		compatible = "amlogic,s4-audio-clkc";
-+		reg = <0x0 0x330000 0x0 0xd8>,
-+			  <0x0 0x330e80 0x0 0x10>;
-+		#clock-cells = <1>;
-+		#reset-cells = <1>;
-+		power-domains = <&pwrc PWRC_S4_AUDIO_ID>;
-+		clocks = <&clkc_periphs CLKID_AUDIO>,
-+			 <&clkc_pll CLKID_MPLL0>,
-+			 <&clkc_pll CLKID_MPLL1>,
-+			 <&clkc_pll CLKID_MPLL2>,
-+			 <&clkc_pll CLKID_MPLL3>,
-+			 <&clkc_pll CLKID_HIFI_PLL>,
-+			 <&clkc_pll CLKID_FCLK_DIV3>,
-+			 <&clkc_pll CLKID_FCLK_DIV4>,
-+			 <&clkc_pll CLKID_FCLK_DIV5>;
-+		clock-names = "pclk",
-+				  "mst_in0",
-+				  "mst_in1",
-+				  "mst_in2",
-+				  "mst_in3",
-+				  "mst_in4",
-+				  "mst_in5",
-+				  "mst_in6",
-+				  "mst_in7";
-+		resets = <&reset RESET_AUDIO>;
-+	};
-+
-+	toddr_a: audio-controller@330100 {
-+		compatible = "amlogic,sm1-toddr",
-+				 "amlogic,axg-toddr";
-+		reg = <0x0 0x330100 0x0 0x2c>;
-+		#sound-dai-cells = <0>;
-+		sound-name-prefix = "TODDR_A";
-+		interrupts = <GIC_SPI 32 IRQ_TYPE_EDGE_RISING>;
-+		clocks = <&clkc_audio AUD_CLKID_TODDR_A>;
-+		resets = <&arb AXG_ARB_TODDR_A>,
-+			 <&clkc_audio AUD_RESET_TODDR_A>;
-+		reset-names = "arb", "rst";
-+		amlogic,fifo-depth = <8192>;
-+	};
-+
-+	toddr_b: audio-controller@330140 {
-+		compatible = "amlogic,sm1-toddr",
-+				 "amlogic,axg-toddr";
-+		reg = <0x0 0x330140 0x0 0x2c>;
-+		#sound-dai-cells = <0>;
-+		sound-name-prefix = "TODDR_B";
-+		interrupts = <GIC_SPI 33 IRQ_TYPE_EDGE_RISING>;
-+		clocks = <&clkc_audio AUD_CLKID_TODDR_B>;
-+		resets = <&arb AXG_ARB_TODDR_B>,
-+			 <&clkc_audio AUD_RESET_TODDR_B>;
-+		reset-names = "arb", "rst";
-+		amlogic,fifo-depth = <256>;
-+	};
-+
-+	toddr_c: audio-controller@330180 {
-+		compatible = "amlogic,sm1-toddr",
-+				 "amlogic,axg-toddr";
-+		reg = <0x0 0x330180 0x0 0x2c>;
-+		#sound-dai-cells = <0>;
-+		sound-name-prefix = "TODDR_C";
-+		interrupts = <GIC_SPI 34 IRQ_TYPE_EDGE_RISING>;
-+		clocks = <&clkc_audio AUD_CLKID_TODDR_C>;
-+		resets = <&arb AXG_ARB_TODDR_C>,
-+			 <&clkc_audio AUD_RESET_TODDR_C>;
-+		reset-names = "arb", "rst";
-+		amlogic,fifo-depth = <256>;
-+	};
-+
-+	frddr_a: audio-controller@3301c0 {
-+		compatible = "amlogic,sm1-frddr",
-+				 "amlogic,axg-frddr";
-+		reg = <0x0 0x3301c0 0x0 0x2c>;
-+		#sound-dai-cells = <0>;
-+		sound-name-prefix = "FRDDR_A";
-+		interrupts = <GIC_SPI 36 IRQ_TYPE_EDGE_RISING>;
-+		clocks = <&clkc_audio AUD_CLKID_FRDDR_A>;
-+		resets = <&arb AXG_ARB_FRDDR_A>,
-+			 <&clkc_audio AUD_RESET_FRDDR_A>;
-+		reset-names = "arb", "rst";
-+		amlogic,fifo-depth = <512>;
-+	};
-+
-+	frddr_b: audio-controller@330200 {
-+		compatible = "amlogic,sm1-frddr",
-+				 "amlogic,axg-frddr";
-+		reg = <0x0 0x330200 0x0 0x2c>;
-+		#sound-dai-cells = <0>;
-+		sound-name-prefix = "FRDDR_B";
-+		interrupts = <GIC_SPI 37 IRQ_TYPE_EDGE_RISING>;
-+		clocks = <&clkc_audio AUD_CLKID_FRDDR_B>;
-+		resets = <&arb AXG_ARB_FRDDR_B>,
-+			 <&clkc_audio AUD_RESET_FRDDR_B>;
-+		reset-names = "arb", "rst";
-+		amlogic,fifo-depth = <256>;
-+	};
-+
-+	frddr_c: audio-controller@330240 {
-+		compatible = "amlogic,sm1-frddr",
-+				 "amlogic,axg-frddr";
-+		reg = <0x0 0x330240 0x0 0x2c>;
-+		#sound-dai-cells = <0>;
-+		sound-name-prefix = "FRDDR_C";
-+		interrupts = <GIC_SPI 38 IRQ_TYPE_EDGE_RISING>;
-+		clocks = <&clkc_audio AUD_CLKID_FRDDR_C>;
-+		resets = <&arb AXG_ARB_FRDDR_C>,
-+			 <&clkc_audio AUD_RESET_FRDDR_C>;
-+		reset-names = "arb", "rst";
-+		amlogic,fifo-depth = <256>;
-+	};
-+
-+	arb: reset-controller@330280 {
-+		compatible = "amlogic,meson-sm1-audio-arb";
-+		reg = <0x0 0x330280 0x0 0x4>;
-+		#reset-cells = <1>;
-+		clocks = <&clkc_audio AUD_CLKID_DDR_ARB>;
-+	};
-+
-+	tdmin_a: audio-controller@330300 {
-+		compatible = "amlogic,sm1-tdmin";
-+		reg = <0x0 0x330300 0x0 0x40>;
-+		sound-name-prefix = "TDMIN_A";
-+		resets = <&clkc_audio AUD_RESET_TDMIN_A>;
-+		clocks = <&clkc_audio AUD_CLKID_TDMIN_A>,
-+			 <&clkc_audio AUD_CLKID_TDMIN_A_SCLK>,
-+			 <&clkc_audio AUD_CLKID_TDMIN_A_SCLK_SEL>,
-+			 <&clkc_audio AUD_CLKID_TDMIN_A_LRCLK>,
-+			 <&clkc_audio AUD_CLKID_TDMIN_A_LRCLK>;
-+		clock-names = "pclk", "sclk", "sclk_sel",
-+				  "lrclk", "lrclk_sel";
-+	};
-+
-+	tdmin_b: audio-controller@330340 {
-+		compatible = "amlogic,sm1-tdmin";
-+		reg = <0x0 0x330340 0x0 0x40>;
-+		sound-name-prefix = "TDMIN_B";
-+		resets = <&clkc_audio AUD_RESET_TDMIN_B>;
-+		clocks = <&clkc_audio AUD_CLKID_TDMIN_B>,
-+			 <&clkc_audio AUD_CLKID_TDMIN_B_SCLK>,
-+			 <&clkc_audio AUD_CLKID_TDMIN_B_SCLK_SEL>,
-+			 <&clkc_audio AUD_CLKID_TDMIN_B_LRCLK>,
-+			 <&clkc_audio AUD_CLKID_TDMIN_B_LRCLK>;
-+		clock-names = "pclk", "sclk", "sclk_sel",
-+				  "lrclk", "lrclk_sel";
-+	};
-+
-+	tdmin_c: audio-controller@330380 {
-+		compatible = "amlogic,sm1-tdmin";
-+		reg = <0x0 0x330380 0x0 0x40>;
-+		sound-name-prefix = "TDMIN_C";
-+		resets = <&clkc_audio AUD_RESET_TDMIN_C>;
-+		clocks = <&clkc_audio AUD_CLKID_TDMIN_C>,
-+			 <&clkc_audio AUD_CLKID_TDMIN_C_SCLK>,
-+			 <&clkc_audio AUD_CLKID_TDMIN_C_SCLK_SEL>,
-+			 <&clkc_audio AUD_CLKID_TDMIN_C_LRCLK>,
-+			 <&clkc_audio AUD_CLKID_TDMIN_C_LRCLK>;
-+		clock-names = "pclk", "sclk", "sclk_sel",
-+				  "lrclk", "lrclk_sel";
-+	};
-+
-+	tdmin_lb: audio-controller@3303c0 {
-+		compatible = "amlogic,sm1-tdmin";
-+		reg = <0x0 0x3303c0 0x0 0x40>;
-+		sound-name-prefix = "TDMIN_LB";
-+		resets = <&clkc_audio AUD_RESET_TDMIN_LB>;
-+		clocks = <&clkc_audio AUD_CLKID_TDMIN_LB>,
-+			 <&clkc_audio AUD_CLKID_TDMIN_LB_SCLK>,
-+			 <&clkc_audio AUD_CLKID_TDMIN_LB_SCLK_SEL>,
-+			 <&clkc_audio AUD_CLKID_TDMIN_LB_LRCLK>,
-+			 <&clkc_audio AUD_CLKID_TDMIN_LB_LRCLK>;
-+		clock-names = "pclk", "sclk", "sclk_sel",
-+				  "lrclk", "lrclk_sel";
-+	};
-+
-+	spdifin: audio-controller@330400 {
-+		compatible = "amlogic,g12a-spdifin",
-+				 "amlogic,axg-spdifin";
-+		reg = <0x0 0x330400 0x0 0x30>;
-+		#sound-dai-cells = <0>;
-+		sound-name-prefix = "SPDIFIN";
-+		interrupts = <GIC_SPI 151 IRQ_TYPE_EDGE_RISING>;
-+		clocks = <&clkc_audio AUD_CLKID_SPDIFIN>,
-+		<&clkc_audio AUD_CLKID_SPDIFIN_CLK>;
-+		clock-names = "pclk", "refclk";
-+		resets = <&clkc_audio AUD_RESET_SPDIFIN>;
-+	};
-+
-+	spdifout_a: audio-controller@330480 {
-+		compatible = "amlogic,g12a-spdifout",
-+				 "amlogic,axg-spdifout";
-+		reg = <0x0 0x330480 0x0 0x50>;
-+		#sound-dai-cells = <0>;
-+		sound-name-prefix = "SPDIFOUT_A";
-+		clocks = <&clkc_audio AUD_CLKID_SPDIFOUT>,
-+		<&clkc_audio AUD_CLKID_SPDIFOUT_CLK>;
-+		clock-names = "pclk", "mclk";
-+		resets = <&clkc_audio AUD_RESET_SPDIFOUT>;
-+	};
-+
-+	tdmout_a: audio-controller@330500 {
-+		compatible = "amlogic,sm1-tdmout";
-+		reg = <0x0 0x330500 0x0 0x40>;
-+		sound-name-prefix = "TDMOUT_A";
-+		resets = <&clkc_audio AUD_RESET_TDMOUT_A>;
-+		clocks = <&clkc_audio AUD_CLKID_TDMOUT_A>,
-+			 <&clkc_audio AUD_CLKID_TDMOUT_A_SCLK>,
-+			 <&clkc_audio AUD_CLKID_TDMOUT_A_SCLK_SEL>,
-+			 <&clkc_audio AUD_CLKID_TDMOUT_A_LRCLK>,
-+			 <&clkc_audio AUD_CLKID_TDMOUT_A_LRCLK>;
-+		clock-names = "pclk", "sclk", "sclk_sel",
-+				  "lrclk", "lrclk_sel";
-+	};
-+
-+	tdmout_b: audio-controller@330540 {
-+		compatible = "amlogic,sm1-tdmout";
-+		reg = <0x0 0x330540 0x0 0x40>;
-+		sound-name-prefix = "TDMOUT_B";
-+		resets = <&clkc_audio AUD_RESET_TDMOUT_B>;
-+		clocks = <&clkc_audio AUD_CLKID_TDMOUT_B>,
-+			 <&clkc_audio AUD_CLKID_TDMOUT_B_SCLK>,
-+			 <&clkc_audio AUD_CLKID_TDMOUT_B_SCLK_SEL>,
-+			 <&clkc_audio AUD_CLKID_TDMOUT_B_LRCLK>,
-+			 <&clkc_audio AUD_CLKID_TDMOUT_B_LRCLK>;
-+		clock-names = "pclk", "sclk", "sclk_sel",
-+				  "lrclk", "lrclk_sel";
-+	};
-+
-+	tdmout_c: audio-controller@330580 {
-+		compatible = "amlogic,sm1-tdmout";
-+		reg = <0x0 0x330580 0x0 0x40>;
-+		sound-name-prefix = "TDMOUT_C";
-+		resets = <&clkc_audio AUD_RESET_TDMOUT_C>;
-+		clocks = <&clkc_audio AUD_CLKID_TDMOUT_C>,
-+			 <&clkc_audio AUD_CLKID_TDMOUT_C_SCLK>,
-+			 <&clkc_audio AUD_CLKID_TDMOUT_C_SCLK_SEL>,
-+			 <&clkc_audio AUD_CLKID_TDMOUT_C_LRCLK>,
-+			 <&clkc_audio AUD_CLKID_TDMOUT_C_LRCLK>;
-+		clock-names = "pclk", "sclk", "sclk_sel",
-+				  "lrclk", "lrclk_sel";
-+	};
-+
-+	spdifout_b: audio-controller@330680 {
-+		compatible = "amlogic,g12a-spdifout",
-+				 "amlogic,axg-spdifout";
-+		reg = <0x0 0x330680 0x0 0x50>;
-+		#sound-dai-cells = <0>;
-+		sound-name-prefix = "SPDIFOUT_B";
-+		clocks = <&clkc_audio AUD_CLKID_SPDIFOUT_B>,
-+			 <&clkc_audio AUD_CLKID_SPDIFOUT_B_CLK>;
-+		clock-names = "pclk", "mclk";
-+		resets = <&clkc_audio AUD_RESET_SPDIFOUT_B>;
-+	};
-+
-+	toacodec: audio-controller@330740 {
-+		compatible = "amlogic,s4-toacodec",
-+				 "amlogic,g12a-toacodec";
-+		reg = <0x0 0x330740 0x0 0x4>;
-+		sound-name-prefix = "TOACODEC";
-+		#sound-dai-cells = <1>;
-+		resets = <&clkc_audio AUD_RESET_TOACODEC>;
-+	};
-+
-+	tohdmitx: audio-controller@330744 {
-+		compatible = "amlogic,sm1-tohdmitx",
-+				 "amlogic,g12a-tohdmitx";
-+		reg = <0x0 0x330744 0x0 0x4>;
-+		#sound-dai-cells = <1>;
-+		sound-name-prefix = "TOHDMITX";
-+		resets = <&clkc_audio AUD_RESET_TOHDMITX>;
-+	};
-+
-+	toddr_d: audio-controller@330840 {
-+		compatible = "amlogic,sm1-toddr",
-+				 "amlogic,axg-toddr";
-+		reg = <0x0 0x330840 0x0 0x2c>;
-+		#sound-dai-cells = <0>;
-+		sound-name-prefix = "TODDR_D";
-+		interrupts = <GIC_SPI 45 IRQ_TYPE_EDGE_RISING>;
-+		clocks = <&clkc_audio AUD_CLKID_TODDR_D>;
-+		resets = <&arb AXG_ARB_TODDR_D>,
-+			 <&clkc_audio AUD_RESET_TODDR_D>;
-+		reset-names = "arb", "rst";
-+		amlogic,fifo-depth = <256>;
-+	};
-+
-+	frddr_d: audio-controller@330880 {
-+		 compatible = "amlogic,sm1-frddr",
-+				  "amlogic,axg-frddr";
-+		reg = <0x0 0x330880 0x0 0x2c>;
-+		#sound-dai-cells = <0>;
-+		sound-name-prefix = "FRDDR_D";
-+		interrupts = <GIC_SPI 46 IRQ_TYPE_EDGE_RISING>;
-+		clocks = <&clkc_audio AUD_CLKID_FRDDR_D>;
-+		resets = <&arb AXG_ARB_FRDDR_D>,
-+			 <&clkc_audio AUD_RESET_FRDDR_D>;
-+		reset-names = "arb", "rst";
-+		amlogic,fifo-depth = <256>;
-+	};
-+
-+	pdm: audio-controller@331000 {
-+		compatible = "amlogic,sm1-pdm",
-+			     "amlogic,axg-pdm";
-+		reg = <0x0 0x331000 0x0 0x34>;
-+		#sound-dai-cells = <0>;
-+		sound-name-prefix = "PDM";
-+		clocks = <&clkc_audio AUD_CLKID_PDM>,
-+			 <&clkc_audio AUD_CLKID_PDM_DCLK>,
-+			 <&clkc_audio AUD_CLKID_PDM_SYSCLK>;
-+		clock-names = "pclk", "dclk", "sysclk";
-+		resets = <&clkc_audio AUD_RESET_PDM>;
-+	};
- };
+Regards
+Peng
 
--- 
-2.52.0
-
+>=20
+>         clk[VF610_CLK_PIT] =3D imx_clk_gate2("pit", "ipg_bus", CCM_CCGR1,
+> CCM_CCGRx_CGn(7));
+>=20
+> --
+> 2.39.5
 
