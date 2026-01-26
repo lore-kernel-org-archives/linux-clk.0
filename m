@@ -1,81 +1,127 @@
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C82534B42B
-	for <linux-clk@vger.kernel.org>; Mon, 26 Jan 2026 17:19:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF31F3164A5
+	for <linux-clk@vger.kernel.org>; Mon, 26 Jan 2026 17:27:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769447963; cv=none; b=IUqcswsaGal5l6RB88mcxngfAN6BGOlAGlKKoZBwdB7chQW8+qcwnzCFHfigmJhybKhbW5B+7AbaZGz1EoKYltQwy19CtFKlgepCe8voFheRAQmcvqwN6x480lJQHDwkfsUw1WnhElGrGzdcvlsIOquaDKAe7Mj4Okse+r0M7gc=
+	t=1769448440; cv=none; b=heomfFxbzju6WM7IaIH87R2z1GkwWtz+UupjcM8ZcnPZEByIWs4iZfAYbt2xiZuJ0vzX+lMn54AljLV7wdb4wGtuMAuLBLKQ8hK7SpDvkiFA6zoZg2tD5UiDaRpwkj06OTxAEjeSHHrOzr3QPs7JJwn1iX6Wn5OTKCgRO0cV7bY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769447963; c=relaxed/simple;
-	bh=x0RvoBMAUnwM/VXsmTioUskHKOz1AVN+dR13eiUuiAs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=U9Yh3LIb5ZeFxbct4f0CuRaxJIVVMaaOTkmaz809YuVevNE/QFb7vBZ5U+AqwMfUDdZJoSjP4c5Wkwg6znDv2zvfGtkePiJY5NCfGzWITuBQxDIkfU9+mxa75tw2KMjXmnELaW1w5xcAZlOyF9EEZ835I77OnO3cO6IG3jTQ3s4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=RRg2jnm3; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+	s=arc-20240116; t=1769448440; c=relaxed/simple;
+	bh=VVOb/XUviLeT12jZtnMIPJt73eqnYgRxcBkulCeWd3s=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=r5UM153fYxXlkbM/JjzVJgNbMopR0LCS9gzTkUSpTLNhTG1DlLLC/n4TaIEQxb3dhUDV3MF2mkpjCAwYRgvei6lWItcXv/jgWsDYIVjI6q89uj3NlX46d8Pro+unxXiqfnRcd3gGiT035oF86Gn7DL/zLVvMQYnCz4VvvReXPgE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=l2RBPZJ/; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="RRg2jnm3"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	Message-ID:Date:Subject:Cc:To:From:Reply-To:In-Reply-To:References;
-	bh=koghH/SniiQSDSU30WJkK9pvALB/u5D7ZgRPTcePyXQ=; b=RRg2jnm3qQB3aMasEsRDk7yfnW
-	xUKv4mLw0TbQ8lKMqdQhG2Pu/Tl1m79oy41ILTvvTijOfuGLM4iTQeRd7jcwOGaaN15dlNJl6Ts7w
-	H6U7lNRgXA+KoTpQoc5ugW2iMsrggDQEN7fF521Mhs8m/RRQsM0NYv+b2jeXGtjEZ+/GkoSha5xgT
-	IZTuE9K/Kqc5S/0l8PD3s0FNB6V6LlqjtJ1V7DDPAJBx/fUNw4qoywxS65D6J98+3D96UOo+RV32k
-	i+7aFDsQPOqnMpqjbsNgf5Wi20g1jcAhRrzrON+I20XIanbp8lYIABi6+YZLTaLTbwSg4yWbV4A1b
-	N6WaD64g==;
-Received: from i53875a0f.versanet.de ([83.135.90.15] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1vkQFA-004eYX-MK; Mon, 26 Jan 2026 18:19:17 +0100
-From: Heiko Stuebner <heiko@sntech.de>
-To: mturquette@baylibre.com, Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
-Subject: [GIT PULL] Rockchip clock changes for 6.20 #1
-Date: Mon, 26 Jan 2026 18:19:16 +0100
-Message-ID: <5742396.ejJDZkT8p0@diego>
+	dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="l2RBPZJ/"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Cc:To:In-Reply-To:References:Message-Id:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:Date:From:Sender:
+	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+	:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=CQFK7fNypXqHYahd2jW/2UtLh5zyB5BpeUAqJ0QJCwo=; b=l2RBPZJ/EpQtAZgPYwsJ3Pyp8d
+	Hn5UpGY8YZmK/U32R9hmiiXnjPfXDrgF00l3kEq4zOQm1e5glL0ZcID6AazaLzaO8lFeS48xAMKNt
+	hBKu+i04EWuq1lwgQPGw8TMWyb1epfDXhbwHUI85DbTdTeyC0Pqx0NEo5FV8G6CLCLGV3tOZ8WydI
+	PkuWkJxq8mKQvPhnOvc33di0FkR4MZdAXCP7WscwSeN6jSELvYkG2htVAvd6y+wouqUJw6b0nK6Ap
+	0Qcz3edDRwrMjfwQ5mvXA6dhy0dGrAYZVgR4BF8bZWSQL5ofznkSxn+YdvmkHXZY++Y/cusXHUZKk
+	GKozkR8g==;
+Received: from [187.36.210.68] (helo=1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.ip6.arpa)
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1vkQMl-00A8mi-Bo; Mon, 26 Jan 2026 18:27:07 +0100
+From: =?utf-8?q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>
+Date: Mon, 26 Jan 2026 14:26:37 -0300
+Subject: [PATCH v4 1/6] clk: bcm: rpi: Let V3D consumers manage clock rate
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20260126-v3d-power-management-v4-1-caf2df16d4e2@igalia.com>
+References: <20260126-v3d-power-management-v4-0-caf2df16d4e2@igalia.com>
+In-Reply-To: <20260126-v3d-power-management-v4-0-caf2df16d4e2@igalia.com>
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Nicolas Saenz Julienne <nsaenz@kernel.org>, 
+ Florian Fainelli <florian.fainelli@broadcom.com>, 
+ Stefan Wahren <wahrenst@gmx.net>, Maxime Ripard <mripard@kernel.org>, 
+ Melissa Wen <mwen@igalia.com>, Iago Toral Quiroga <itoral@igalia.com>, 
+ Chema Casanova <jmcasanova@igalia.com>, Dom Cobley <popcornmix@gmail.com>, 
+ Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+ Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, 
+ linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+ kernel-dev@igalia.com, =?utf-8?q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1709; i=mcanal@igalia.com;
+ h=from:subject:message-id; bh=VVOb/XUviLeT12jZtnMIPJt73eqnYgRxcBkulCeWd3s=;
+ b=owEBbQGS/pANAwAIAT/zDop2iPqqAcsmYgBpd6PdQM6ie3ORxqLCsGrw2lcE9HC0hd22hoT2D
+ swCR+YbagyJATMEAAEIAB0WIQT45F19ARZ3Bymmd9E/8w6Kdoj6qgUCaXej3QAKCRA/8w6Kdoj6
+ qsfzB/0QVvbEjtD0ABXOU2wghUnkO3usz0RNDp4AjYPON8AZ0uNB5cLXdw1rK8rnVyo1ivc6iFw
+ VaKRX/ayVU720wfVu4R9Cz4YsWLEs0qcAX+1FeuvzjRJCCkbgEn32+qaBMLz5Po1v8q8ZvG+cpO
+ M3VdWwfKwbcXGndvLWNR9LAZcOFrbNBGMz4YOWxvlrMDYR6YXQmffBnknvBjrIpXAoLJuybP+KN
+ 94T9odB/lDZbvKXnCo3UxV4WOf33BBEXTIbRvZEmgy7YmQWa9TEwOsRX3Q1xS8j1w3aA2ybCUTJ
+ RRLwTQEUKk+Oi0D7rTc4Bnd0NR9fsNKsGUNegecupW3AYZ8W
+X-Developer-Key: i=mcanal@igalia.com; a=openpgp;
+ fpr=F8E45D7D0116770729A677D13FF30E8A7688FAAA
 
-Hi Mike, Stephen,
+Remove the `maximize` infrastructure and don't set `minimize` for the
+V3D clock, giving consumers full control over its rate.
 
-please find below a pull-request with a Rockchip clock change for 6.20
+On some firmware versions, RPI_FIRMWARE_SET_CLOCK_STATE doesn't
+actually power off the clock. To achieve meaningful power consumption
+reduction, consumers need to set the clock rate to minimum before
+disabling it. Forcing the clock to maximum rate in the clock framework
+prevents this, as consumers don't have any flexibility over the clock
+rate.
 
-Please pull.
+This change enables the v3d driver to control the clock rate directly
+in its suspend/resume callbacks.
 
-Thanks
-Heiko
+Fixes: 6526402b9bac ("clk: bcm: rpi: Maximize V3D clock")
+Acked-by: Melissa Wen <mwen@igalia.com>
+Signed-off-by: Maíra Canal <mcanal@igalia.com>
+---
+ drivers/clk/bcm/clk-raspberrypi.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
+diff --git a/drivers/clk/bcm/clk-raspberrypi.c b/drivers/clk/bcm/clk-raspberrypi.c
+index 1a9162f0ae31e330c46f6eafdd00350599b0eede..9783385d5859836898683209e320fcc928dfdc71 100644
+--- a/drivers/clk/bcm/clk-raspberrypi.c
++++ b/drivers/clk/bcm/clk-raspberrypi.c
+@@ -68,7 +68,6 @@ struct raspberrypi_clk_variant {
+ 	char		*clkdev;
+ 	unsigned long	min_rate;
+ 	bool		minimize;
+-	bool		maximize;
+ 	u32		flags;
+ };
+ 
+@@ -136,7 +135,6 @@ raspberrypi_clk_variants[RPI_FIRMWARE_NUM_CLK_ID] = {
+ 	},
+ 	[RPI_FIRMWARE_V3D_CLK_ID] = {
+ 		.export = true,
+-		.maximize = true,
+ 	},
+ 	[RPI_FIRMWARE_PIXEL_CLK_ID] = {
+ 		.export = true,
+@@ -387,9 +385,6 @@ static struct clk_hw *raspberrypi_clk_register(struct raspberrypi_clk *rpi,
+ 		}
+ 	}
+ 
+-	if (variant->maximize)
+-		variant->min_rate = max_rate;
+-
+ 	if (variant->min_rate) {
+ 		unsigned long rate;
+ 
 
-The following changes since commit 8f0b4cce4481fb22653697cced8d0d04027cb1e8:
-
-  Linux 6.19-rc1 (2025-12-14 16:05:07 +1200)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git tags/v6.20-rockchip-clk-1
-
-for you to fetch changes up to a8d722f03923b1c6166d39482c6df8f017e185d9:
-
-  clk: rockchip: Fix error pointer check after rockchip_clk_register_gate_link() (2026-01-09 21:16:20 +0100)
-
-----------------------------------------------------------------
-Additional check for an error pointer and not only for NULL when a
-gatelink is added.
-
-----------------------------------------------------------------
-Miaoqian Lin (1):
-      clk: rockchip: Fix error pointer check after rockchip_clk_register_gate_link()
-
- drivers/clk/rockchip/clk.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-
+-- 
+2.52.0
 
