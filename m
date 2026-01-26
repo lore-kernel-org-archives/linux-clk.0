@@ -1,99 +1,87 @@
-Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com [209.85.217.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B92333506D
-	for <linux-clk@vger.kernel.org>; Mon, 26 Jan 2026 15:28:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D930244694;
+	Mon, 26 Jan 2026 15:51:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769441294; cv=none; b=VKBj+P9gVQRxga+1+uCcLHdbXOGZtyIFFLzEUR+SwWFjmTzv/zxLJHA+uOaMX1AmDcVvEEsFc/m55asePD3pFEebTydEVAt2nFVs9k3Ccyp2YTlrGGXm5kEFiAb1Omkr1CTLXlE+D87uxly2a5kW/IiKTYF2M2bldDLgJX6/sNY=
+	t=1769442693; cv=none; b=RgaQPnmlYxHKDVYYvAEM4b6esY6nht0FXf/SE0CCnWGoqoW/mfV14dc026A8CX8NUbKnEqjeUB45PknCRltksxXoyka573SVn2qTUdfZwgQHK2kfBPeePbeWVDKr9jxLSxYLRdDk88r1lmxpoIa00oc1fa+zs9701rtbR0QDlTI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769441294; c=relaxed/simple;
-	bh=nTZYFAn4zz6jIv7uFk83h22IU8Xvf0ATPw3U8GxauAE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=D0mMfNQCVR2QEZxGSTY7dBS1Kp12bKyQin5SqPzlFR+7JWONltvZxSQAUb4SqmezUv+kum7lFTezYH6btbv+8APvlBQY1mk6kurOa5v9UnkRmlEbAvYlANvkuY6p2bQsq4kZl3/f7lXfovovGtdzGzCfu1mBja/j5SD9OladaQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f41.google.com with SMTP id ada2fe7eead31-5f52b3d98cfso1661559137.2
-        for <linux-clk@vger.kernel.org>; Mon, 26 Jan 2026 07:28:12 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769441292; x=1770046092;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BqPSDhihrPdf4Khj2S8qKHDF644mb07LvFd5WqEIjGc=;
-        b=k0z77wGXZwIB5XSDFwRoRbC5rIKQxn4nJ0mG4xrdDhwokWCt9yIo0T3ZmGrSGsOHuz
-         0cElUl1xX0BkvOoz/9VmBujKeYmKEk10MpRbpW2x08Ju8wiQ9EVSREjHLWRVoPF6FeNQ
-         sk+GpRHv7+b+cdrAUTYZsugpmYKvEUmWHUPEnhOeDEkezZMbFxsQvKpS8EuQ5cCvPMPE
-         JYZp/2x+svuScVCBSfHkLrgmjwIEXJtxScbm7g3wyDIAob42XfNOdcWagJ0Gvda3Huqj
-         BIIA2wJKrWPnqx5oLqtjLpe7x2S1eA2DzHxeXEiEV68QKwLafrleU1M7yXP8XDp93EyE
-         Q31w==
-X-Forwarded-Encrypted: i=1; AJvYcCUwcWXQQuaUV4EEl4vdl7i1HEkvHYzGNlaGLWaPlWuhLy0QW5Q04U3HsDT7E+aOa1r+0dArWvId0Oc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/mIs/z7VtQ7184nP3SOUwg/iMwhQ/EnRk9SO0LnCY4YYiQDzM
-	iIe7JiIETtrc5hdQ1zQ5SUphEjy1zQBI05WsiMzDZFanVtr3Z9ycGdCd5v1vSwL+
-X-Gm-Gg: AZuq6aJg8e9XFR1B1iATp9DtDcy+Ub1VBBDzaMwSpr3s2I0rT/UpwGTQ5Um5Ww1DVAA
-	aY/Yjpgk/26vrMT91abACj7acqhTsUqhldZk6HA8aFSGwSUUsU9LRixE15EL/NSeBYV0X+yDj3m
-	p31mA9nHScOkBv3sil5qO4i0o+n/mKhzy7Mmi7GCeo/XaeiHvl1ghphsNWyX55fekkPhxXLvDiV
-	4B75xpMsS2ejmhDKT7+4/QvF5F4gaFXDG2C0m+w2Jo0kDY9tEsPBrV6OWHqdE1/JVP6fm4KdlDk
-	QJ9XytuHDR+bt6iMXDxtR/bwinu1RmhajIb/hukChhFw7PB2bTt5I1NHeYydjbQZuZx0/96yjYw
-	lwTmZ9CpnWq2Foipm4Zdu2IH8SOLlW091TY3Txht7e3Y87u24qq0C0R8BnebpU+vnBsTLHwW12N
-	fgzExS/VMa6JFhc41TsQzDUuzOlK85jMNroq9WmCLtqAK9OrdM/ONEaV/THKs=
-X-Received: by 2002:a05:6102:390c:b0:5f3:67e7:4f94 with SMTP id ada2fe7eead31-5f57635666emr1227001137.15.1769441292029;
-        Mon, 26 Jan 2026 07:28:12 -0800 (PST)
-Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com. [209.85.217.51])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-9482e3728edsm1908239241.9.2026.01.26.07.28.09
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 26 Jan 2026 07:28:10 -0800 (PST)
-Received: by mail-vs1-f51.google.com with SMTP id ada2fe7eead31-5f52b3d98cfso1661539137.2
-        for <linux-clk@vger.kernel.org>; Mon, 26 Jan 2026 07:28:09 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVkrAtP7SzkIbmui0jtXikgRO+yi8jUajZRaASpG9W5r1OCqiMXKp2eSWwoUEgxO6Jo+zz5wQmm1oY=@vger.kernel.org
-X-Received: by 2002:a05:6102:e11:b0:5d5:f544:a88e with SMTP id
- ada2fe7eead31-5f5764f908amr1370657137.35.1769441289411; Mon, 26 Jan 2026
- 07:28:09 -0800 (PST)
+	s=arc-20240116; t=1769442693; c=relaxed/simple;
+	bh=79ymqkrUgULFdA4N33ltiBtFQqKmWQ7wWRxV5gDqFkU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jRM6LgwXth/Ho/6KPVnrDRJPjKc4M3Y2oJNyIm9gxmDpzFQeydwIJJKE+/PPdDD+iHONozuLvX7yvu1Jiij8BN1DufHXLB6ve/ugVVQYiyckH0pBFUUZN6f89h5MadIcMP1cF95CA2u7jQnpycxuY6E1HLIae4UJlRFWB7HfS94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=UWtxI+Nq; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="UWtxI+Nq"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=9bxk/uEW0KP9Vda/3cxHnt1EEylgRwLtuxYT78ZkzzY=; b=UWtxI+NqF4QX3O6jvd5PPFrtDN
+	K+ZF4VGYEsIYqw8+VZzdlv4Uo7iX7Ey7HGGCQoLuIPOxjXTVTXylucK0Hf0vLG1OmU4FajWSnOvfI
+	KOmsEKJtkYs301A7+C/V2d+9VrwYD3leQ8nX7rvukWWq9VC5VihVczGeiHjBhHFlYoPg=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1vkOs4-004oFs-Hw; Mon, 26 Jan 2026 16:51:20 +0100
+Date: Mon, 26 Jan 2026 16:51:20 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Lukasz Majewski <lukma@nabladev.com>
+Cc: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	Lukasz Majewski <lukma@denx.de>
+Subject: Re: [PATCH v2] clk: vf610: Add support for the Ethernet switch clocks
+Message-ID: <7671b833-f823-44cd-b5af-0b473a8ae23e@lunn.ch>
+References: <20260126115349.1750578-1-lukma@nabladev.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260125192706.27099-1-ovidiu.panait.rb@renesas.com> <20260125192706.27099-2-ovidiu.panait.rb@renesas.com>
-In-Reply-To: <20260125192706.27099-2-ovidiu.panait.rb@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 26 Jan 2026 16:27:58 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdWZKUjptQCqe_DK3C_g5d9Zhp3r3j6+dAfE1g==NH+ofw@mail.gmail.com>
-X-Gm-Features: AZwV_QiV_Vg-viwqsMsGeXuhl8oqSRausfwmVq5_XCglJk6EVp0gGv8dhCY1AvE
-Message-ID: <CAMuHMdWZKUjptQCqe_DK3C_g5d9Zhp3r3j6+dAfE1g==NH+ofw@mail.gmail.com>
-Subject: Re: [PATCH 1/5] clk: renesas: r9a09g056: Fix ordering of module
- clocks array
-To: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
-Cc: claudiu.beznea.uj@bp.renesas.com, alexandre.belloni@bootlin.com, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	magnus.damm@gmail.com, mturquette@baylibre.com, sboyd@kernel.org, 
-	prabhakar.mahadev-lad.rj@bp.renesas.com, linux-rtc@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260126115349.1750578-1-lukma@nabladev.com>
 
-On Sun, 25 Jan 2026 at 20:27, Ovidiu Panait
-<ovidiu.panait.rb@renesas.com> wrote:
-> The r9a09g056_mod_clks array is sorted by CPG_CLKON register number and
-> bit position. Move the RSPI 0/1/2 module clock entries to their correct
-> position to restore the array sort order.
->
-> Fixes: 1f76689d1715 ("clk: renesas: r9a09g056: Add entries for RSCIs")
-> Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
+On Mon, Jan 26, 2026 at 12:53:49PM +0100, Lukasz Majewski wrote:
+> From: Lukasz Majewski <lukma@denx.de>
+> 
+> The vf610 device has built in the MoreThanIP L2 switch. For proper
+> operation it is required to enable ESW and MAC table lookup clocks.
+> 
+> The MAC table spans from 0x400E_C000 for 0x4000 and it is necessary
+> to provide clocks for each AIPS1-"slot", which size is 0x1000
+> (hence four separate entries).
+> 
+> Those can be enabled via clock gating CCM_CCGR10 register (0x4006_B068).
+> 
+> This patch also adds VF610_CLK_ESW and VF610_CLK_ESW_MAC_TAB{0123}
+> macros definitions for L2 switch.
+> 
+> The VF610_CLK_END has been removed as its number had to be increased
+> when MTIP L2 switch clocks were added.
+> 
+> Signed-off-by: Lukasz Majewski <lukma@nabladev.com>
+> ---
+> Changes for v2:
+> - Squash clock DT bindings to this single patch
+> - Replace VF610_CLK_END with VF610_CLK_ESW_MAC_TAB3 + 1
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-clk for v6.21.
+I'm not sure this is the correct thing to do. Normally these _END
+values are there so you don't need to change any code when new things
+are added to the list. 
 
-Gr{oetje,eeting}s,
+Why not just keep VF610_CLK_END at the end, with the value of 196?
 
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+    Andrew
