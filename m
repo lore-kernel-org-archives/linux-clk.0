@@ -1,37 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D8B922E406;
-	Mon, 26 Jan 2026 06:02:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DA0722F74A;
+	Mon, 26 Jan 2026 06:02:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769407329; cv=none; b=i4lQE1UTKsZ7foP44hgksSs3l3+7ZPi39gEywfXpJquVrgj9pnOoWtyjP4puFYeiADlxmbtGiMkDqIyj432zya9ZG2Co5UEfOo71pX+dHr5dl21PeX0yq23EAl/jb/Q33NOj3J8Zg7m+ti89dBekXqxmUOET2th5w3viROezcjQ=
+	t=1769407329; cv=none; b=WVNyJWT/iuUTOFUfmhCReDoMDgBOgAsXfHJ8ZqIOCGh5sjG8LVnhfsHwW7+5v7x14PhPxp3696Sov9mMWzoJyR413n6vyNc3HIsEWX+FF5lNZ90ljWTTwxg3vk7fz2yPKNAdseNXZh9woar73GTqowYXt3Xoio3Mj3jyfrg7Bfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1769407329; c=relaxed/simple;
-	bh=jxtcZmmXRvFxetXecCwlHePQ5WuC4F2aOTgTeR++Brg=;
+	bh=BrhkKB6HmcoErJBgY91N9xBBRXQmOjBv4hptw7osCQA=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=qTOEaZUPsL5pfCjULRtcJGA3zoc3X2wIaPoSO2zfl7qG9/pZdepYmuliifcFEF0Bt6dHNcgGgq0GikoTH1oOQ+VsHahOpDuZqaNL9p0D9Pmw1ye4fzVvUcQ9WAXg15OwWl4KaUT1cFoWWMqQCW7Ne/SqMpoM2/fQCdwG/OFxR0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YxgsoX77; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=QQt/0g0Ww1332nj0JwMkeazjR9Wctci/XXZW59DY/WRhpAdxo+JCyyNwf94w9phaHCwHbcUzeqXvBD79OzUYgSOqtynCU2LN9L6kqHSlUfSYVUg3PnccENa7ppWwyNFbVIaDivaXYlInEVfb83PSWAM+BKwwjLQ0BltEiW/R/Vc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XjGHUeOA; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YxgsoX77"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id C2DFDC2BC86;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XjGHUeOA"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id AB2F6C19425;
 	Mon, 26 Jan 2026 06:02:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1769407328;
-	bh=jxtcZmmXRvFxetXecCwlHePQ5WuC4F2aOTgTeR++Brg=;
+	bh=BrhkKB6HmcoErJBgY91N9xBBRXQmOjBv4hptw7osCQA=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=YxgsoX77H8JrFiEv4HyznXewixZZYEthN5QB3NpihQU/WDWHNI+1AvX1XT3ApCu3P
-	 HuFqEhDlYIX0mwD/79WXioq+/BCgHw1hiGN2ticv3wKBrHnpBzhG6X5Fq72bRlO3oA
-	 SNA2ohUBLfZZVQorgVPTtrwyxFg09pNm0H8Hri+HHvda4ZXezePitgrVIPQTfvC+sr
-	 sIXmaSxTdVDffEnP42qt2g5i/eMn9mFfLtzf/3PX9HaU86wUevPSSP/QCz8KdfSuYd
-	 fmFbxkUt6vaBJ2CmTE4WWW7rCLEgJ3CpajYOAtFSICU8JGLc3v3S6zucIEDs3VQfly
-	 3bAxvm95VTw7w==
+	b=XjGHUeOAuJBndy5IA2twsmAdEhN6c8RZhnyAtidCEEatGKrhIMuv4NSO4ANlNGSEi
+	 OFTtPcS14hy7XfXBKhp5iTq2ezBPIZDkL3nHPPzo/Vtkp9Si/h4I33ITYVYkbKXXbm
+	 sxVU0IhBUzzHm27jjXaijzGxM7QphqDgifvGehicgcD4MJKZkUHwUKZzWKkuA62SMw
+	 A+q2sqOUXJ9rFxAyJ7M/+rEB+iSPT+UtQ3zf/XbI+CZe9lAlwvsDs0m5S1V0llQg/N
+	 JTBMEDpn/F3nJr9+WEBazuzZmFLauN7o2PiSl1HIaZ5VuTYusbROYD5ZnlDmVogyh/
+	 9SXg+xIU6tJtg==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7FE5C88E4F;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CA66C88E4A;
 	Mon, 26 Jan 2026 06:02:08 +0000 (UTC)
 From: Jiebing Chen via B4 Relay <devnull+jiebing.chen.amlogic.com@kernel.org>
-Date: Mon, 26 Jan 2026 06:01:43 +0000
-Subject: [PATCH v6 2/5] dt-bindings: Asoc: axg-audio: Add S4 audio tocodec
+Date: Mon, 26 Jan 2026 06:01:42 +0000
+Subject: [PATCH v6 1/5] dt-bindings: clock: meson: Add audio power domain
+ for S4 soc
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -40,7 +41,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260126-audio_drvier-v6-2-99e350855bc2@amlogic.com>
+Message-Id: <20260126-audio_drvier-v6-1-99e350855bc2@amlogic.com>
 References: <20260126-audio_drvier-v6-0-99e350855bc2@amlogic.com>
 In-Reply-To: <20260126-audio_drvier-v6-0-99e350855bc2@amlogic.com>
 To: Jerome Brunet <jbrunet@baylibre.com>, 
@@ -58,11 +59,11 @@ Cc: linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
  jian.xu@amlogic.com, shuai.li@amlogic.com, zhe.wang@amlogic.com, 
  jiebing chen <jiebing.chen@amlogic.com>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1769407326; l=804;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1769407326; l=1646;
  i=jiebing.chen@amlogic.com; s=20250110; h=from:subject:message-id;
- bh=6X1OSzRQHl389xrmv+iMGiIJqB/VbuISTBq7YBeGWCI=;
- b=m56U7HCt3M+4P+Y4dUx5wcdFcKrpEn4aqCpLtgvJ1trxe9jKFWPOOwHZdBb+9Lf6P3ClibiDB
- NFo35KoQ4oDAqMI5WhI4qAIKDRyOyZqcZvhWLON8aRCHYpaUSqYc6eD
+ bh=6xMGlQVRnvNr+HsMV5CJO4QIQGLb0IjOxYc1JtOCi88=;
+ b=w8tEvILb0hHB/6DvWewpbF1lzzl0s7YS496kAxyxmfxGSiLWpA8TEOwgYiX+oaT3sHOyHQEfo
+ ziTCp0wYllVCkqezBVVqun/ZpuK7kJv535HAsHQpnC7jEPf/SH22Uc+
 X-Developer-Key: i=jiebing.chen@amlogic.com; a=ed25519;
  pk=6rFvvF45A84pLNRy03hfUHeROxHCnZ+1KAGw/DoqKic=
 X-Endpoint-Received: by B4 Relay for jiebing.chen@amlogic.com/20250110 with
@@ -72,25 +73,64 @@ Reply-To: jiebing.chen@amlogic.com
 
 From: Jiebing Chen <jiebing.chen@amlogic.com>
 
-Add S4 SoC tocodec compatibility support.
+The audio power domain has been found on S4 device.
+It must be enabled prior to audio operations.
 
 Signed-off-by: Jiebing Chen <jiebing.chen@amlogic.com>
 ---
- Documentation/devicetree/bindings/sound/amlogic,g12a-toacodec.yaml | 1 +
- 1 file changed, 1 insertion(+)
+ .../bindings/clock/amlogic,axg-audio-clkc.yaml         | 18 ++++++++++++++++--
+ 1 file changed, 16 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/sound/amlogic,g12a-toacodec.yaml b/Documentation/devicetree/bindings/sound/amlogic,g12a-toacodec.yaml
-index 23f82bb89750..7e053aaa0f59 100644
---- a/Documentation/devicetree/bindings/sound/amlogic,g12a-toacodec.yaml
-+++ b/Documentation/devicetree/bindings/sound/amlogic,g12a-toacodec.yaml
-@@ -25,6 +25,7 @@ properties:
-           - const: amlogic,g12a-toacodec
-       - items:
-           - enum:
-+              - amlogic,s4-toacodec
-               - amlogic,sm1-toacodec
-           - const: amlogic,g12a-toacodec
+diff --git a/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml
+index fd7982dd4cea..1cd9a99e5ff3 100644
+--- a/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml
++++ b/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml
+@@ -20,6 +20,7 @@ properties:
+     enum:
+       - amlogic,axg-audio-clkc
+       - amlogic,g12a-audio-clkc
++      - amlogic,s4-audio-clkc
+       - amlogic,sm1-audio-clkc
  
+   '#clock-cells':
+@@ -99,7 +100,8 @@ properties:
+ 
+   resets:
+     description: internal reset line
+-
++  power-domains:
++    maxItems: 1
+ required:
+   - compatible
+   - '#clock-cells'
+@@ -115,6 +117,7 @@ allOf:
+           contains:
+             enum:
+               - amlogic,g12a-audio-clkc
++              - amlogic,s4-audio-clkc
+               - amlogic,sm1-audio-clkc
+     then:
+       required:
+@@ -122,7 +125,18 @@ allOf:
+     else:
+       properties:
+         '#reset-cells': false
+-
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - amlogic,s4-audio-clkc
++    then:
++      required:
++        - power-domains
++    else:
++      properties:
++        power-domains: false
+ additionalProperties: false
+ 
+ examples:
 
 -- 
 2.52.0
