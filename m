@@ -1,84 +1,87 @@
-Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com [209.85.217.44])
+Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com [209.85.217.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 551493375A7
-	for <linux-clk@vger.kernel.org>; Mon, 26 Jan 2026 15:25:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B92333506D
+	for <linux-clk@vger.kernel.org>; Mon, 26 Jan 2026 15:28:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769441157; cv=none; b=WbxF93j76a/+sAkvsxZSBcqM8Mdou1N2nSoHqQ+3uYSFtpSpsmcP3WIr0YWIo+HrOfoxsqpBdYebZgKfTxVsTL7tpSVhj3iaQO/gH7IrdTlVhKrJv/8KVTc2Fcsqvte7QvvtRRAdtGi9AmRzk/UiCKC++E3JHmnVb/OkEKDAzSU=
+	t=1769441294; cv=none; b=VKBj+P9gVQRxga+1+uCcLHdbXOGZtyIFFLzEUR+SwWFjmTzv/zxLJHA+uOaMX1AmDcVvEEsFc/m55asePD3pFEebTydEVAt2nFVs9k3Ccyp2YTlrGGXm5kEFiAb1Omkr1CTLXlE+D87uxly2a5kW/IiKTYF2M2bldDLgJX6/sNY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769441157; c=relaxed/simple;
-	bh=+chqUlgxIxAqqfIFc9NZvOU+i2zlOs4sKoE2dKWsVnI=;
+	s=arc-20240116; t=1769441294; c=relaxed/simple;
+	bh=nTZYFAn4zz6jIv7uFk83h22IU8Xvf0ATPw3U8GxauAE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=E1+Yc2Qxc9XNRifTuxyFL8I0K8mvMbAgU3xt428VQbHbvNnpMXSn3PQwq/o1Qz4W59fppWhlkCiSDlLgz8xIJ7Fj6h9C7nUwqObJtMpXeTets/aSpbcv3dQQ506zFr4ICo1AHaiqloR1yg8HY1B028JlvjMkgrK13FAIH3W1B5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.44
+	 To:Cc:Content-Type; b=D0mMfNQCVR2QEZxGSTY7dBS1Kp12bKyQin5SqPzlFR+7JWONltvZxSQAUb4SqmezUv+kum7lFTezYH6btbv+8APvlBQY1mk6kurOa5v9UnkRmlEbAvYlANvkuY6p2bQsq4kZl3/f7lXfovovGtdzGzCfu1mBja/j5SD9OladaQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f44.google.com with SMTP id ada2fe7eead31-5ef5c04151dso1453958137.3
-        for <linux-clk@vger.kernel.org>; Mon, 26 Jan 2026 07:25:56 -0800 (PST)
+Received: by mail-vs1-f41.google.com with SMTP id ada2fe7eead31-5f52b3d98cfso1661559137.2
+        for <linux-clk@vger.kernel.org>; Mon, 26 Jan 2026 07:28:12 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769441155; x=1770045955;
+        d=1e100.net; s=20230601; t=1769441292; x=1770046092;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Mh7PNCBulLknV4S/MmUqHcjYzn9tSl2obqvDW9AgL/U=;
-        b=HV6yzqIOYKqUGGi5rttj3RUzcPuLxs7Oj88wQV3JD5z6S1xyFPw2gJa9H9G6lw9xwE
-         qc1UU+dHYkf4eu0jrZll3uu728Izz5ke+pEXATm7Hb6Aekr3etpzRnBNh/AYDrV/h5aj
-         9VhoKO+8obcyqkNuOUvDGbVz6PSqsxMV6RRZndOX+KuANUlr8KlU+gnTZ7+ew9soF77m
-         4RV7oSaYxJUl1ncZeLzInBmLcrECueLCfr9/CQZliHePSFNgDq0hBIpmZyJWyZwkMcO2
-         nBs1Cv+yh0DY/XQOzM37RDXqKfT0mpun+POuwehg21B/DZD8VuR4t+q3r5c18klMqIL1
-         W1pA==
-X-Forwarded-Encrypted: i=1; AJvYcCVyfQSmDIU5GeN9ZYl06GtfPvYInFperNb/1ok0l1M1E5b6wOIWM2b1OKEmUm8O7uKzSBGRZTDiLbY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YybcwQM2ge8U3QY5dKnpihr5JnAZvwu0ycmzHpbLViqgVkQ9C7Q
-	QWzeCa1cdlS3hak4rEcckJHARe7VYH3LQeVGralWOY3B+cDhW2RR62Hm6PCzcDzP
-X-Gm-Gg: AZuq6aLoUsW+cRgbLm+aTd8jVHSm32Oh0Ot9wIuDnPurWg/GpbYHuxYLMtI40tGT9em
-	ifIKSaR5xBbxU8BS4P1Qhc8teuRJbwcwl9XBeG3pAXmxNgZjz5w1Pv/9Vb8UJEugXuj1IGH7nc2
-	4waceh0JKt1q6GQpkfhElSdgA/eGupVxDKshYnkzK0GPWkVpkFsxgSKHum+M0DuMhJsZo7gKK4Q
-	nKaY/88E5kbIHj0TjruXEmFiVgBjHM3pi2hAvB8yV52o6v5tVLMMy4u+l/D/BzX5P507gNTLGxV
-	RTbLMmzDmhAC/k2CcV1yrDZ+E53tTgZvAq17pcDBV0dul1r9DPoXtdgo/cauIZcKPh0zroqFUBr
-	at5Tjvi+68d8nxp/eM5I+tGTkfd4koCUipsN5CKXq1ndeo4O+hl30bA1Sy+X2WH4br4KlPaxUTS
-	/6OInCQ6YhdTVtKSQr6G1jUSsr1g7kB9524+3FwpSZN2k/EJLsOdLACFVqiqQ=
-X-Received: by 2002:a05:6102:2920:b0:5ee:a1e5:6504 with SMTP id ada2fe7eead31-5f57651d74bmr1235999137.36.1769441155122;
-        Mon, 26 Jan 2026 07:25:55 -0800 (PST)
-Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com. [209.85.222.42])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-5f54d62dde1sm1824957137.11.2026.01.26.07.25.54
+        bh=BqPSDhihrPdf4Khj2S8qKHDF644mb07LvFd5WqEIjGc=;
+        b=k0z77wGXZwIB5XSDFwRoRbC5rIKQxn4nJ0mG4xrdDhwokWCt9yIo0T3ZmGrSGsOHuz
+         0cElUl1xX0BkvOoz/9VmBujKeYmKEk10MpRbpW2x08Ju8wiQ9EVSREjHLWRVoPF6FeNQ
+         sk+GpRHv7+b+cdrAUTYZsugpmYKvEUmWHUPEnhOeDEkezZMbFxsQvKpS8EuQ5cCvPMPE
+         JYZp/2x+svuScVCBSfHkLrgmjwIEXJtxScbm7g3wyDIAob42XfNOdcWagJ0Gvda3Huqj
+         BIIA2wJKrWPnqx5oLqtjLpe7x2S1eA2DzHxeXEiEV68QKwLafrleU1M7yXP8XDp93EyE
+         Q31w==
+X-Forwarded-Encrypted: i=1; AJvYcCUwcWXQQuaUV4EEl4vdl7i1HEkvHYzGNlaGLWaPlWuhLy0QW5Q04U3HsDT7E+aOa1r+0dArWvId0Oc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/mIs/z7VtQ7184nP3SOUwg/iMwhQ/EnRk9SO0LnCY4YYiQDzM
+	iIe7JiIETtrc5hdQ1zQ5SUphEjy1zQBI05WsiMzDZFanVtr3Z9ycGdCd5v1vSwL+
+X-Gm-Gg: AZuq6aJg8e9XFR1B1iATp9DtDcy+Ub1VBBDzaMwSpr3s2I0rT/UpwGTQ5Um5Ww1DVAA
+	aY/Yjpgk/26vrMT91abACj7acqhTsUqhldZk6HA8aFSGwSUUsU9LRixE15EL/NSeBYV0X+yDj3m
+	p31mA9nHScOkBv3sil5qO4i0o+n/mKhzy7Mmi7GCeo/XaeiHvl1ghphsNWyX55fekkPhxXLvDiV
+	4B75xpMsS2ejmhDKT7+4/QvF5F4gaFXDG2C0m+w2Jo0kDY9tEsPBrV6OWHqdE1/JVP6fm4KdlDk
+	QJ9XytuHDR+bt6iMXDxtR/bwinu1RmhajIb/hukChhFw7PB2bTt5I1NHeYydjbQZuZx0/96yjYw
+	lwTmZ9CpnWq2Foipm4Zdu2IH8SOLlW091TY3Txht7e3Y87u24qq0C0R8BnebpU+vnBsTLHwW12N
+	fgzExS/VMa6JFhc41TsQzDUuzOlK85jMNroq9WmCLtqAK9OrdM/ONEaV/THKs=
+X-Received: by 2002:a05:6102:390c:b0:5f3:67e7:4f94 with SMTP id ada2fe7eead31-5f57635666emr1227001137.15.1769441292029;
+        Mon, 26 Jan 2026 07:28:12 -0800 (PST)
+Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com. [209.85.217.51])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-9482e3728edsm1908239241.9.2026.01.26.07.28.09
         for <linux-clk@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 26 Jan 2026 07:25:54 -0800 (PST)
-Received: by mail-ua1-f42.google.com with SMTP id a1e0cc1a2514c-94240659ceaso1275191241.3
-        for <linux-clk@vger.kernel.org>; Mon, 26 Jan 2026 07:25:54 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVugshAv39eVNh8dvuMuInezatiwPnNNgtFfcvnPC0VPI5UzkzHKyCFhrO/PLMRcBcprstTLB14PIM=@vger.kernel.org
-X-Received: by 2002:a05:6102:a49:b0:5ea:67f4:c1ad with SMTP id
- ada2fe7eead31-5f5764c2db4mr1193845137.21.1769441154202; Mon, 26 Jan 2026
- 07:25:54 -0800 (PST)
+        Mon, 26 Jan 2026 07:28:10 -0800 (PST)
+Received: by mail-vs1-f51.google.com with SMTP id ada2fe7eead31-5f52b3d98cfso1661539137.2
+        for <linux-clk@vger.kernel.org>; Mon, 26 Jan 2026 07:28:09 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVkrAtP7SzkIbmui0jtXikgRO+yi8jUajZRaASpG9W5r1OCqiMXKp2eSWwoUEgxO6Jo+zz5wQmm1oY=@vger.kernel.org
+X-Received: by 2002:a05:6102:e11:b0:5d5:f544:a88e with SMTP id
+ ada2fe7eead31-5f5764f908amr1370657137.35.1769441289411; Mon, 26 Jan 2026
+ 07:28:09 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260125190314.26729-1-ovidiu.panait.rb@renesas.com>
-In-Reply-To: <20260125190314.26729-1-ovidiu.panait.rb@renesas.com>
+References: <20260125192706.27099-1-ovidiu.panait.rb@renesas.com> <20260125192706.27099-2-ovidiu.panait.rb@renesas.com>
+In-Reply-To: <20260125192706.27099-2-ovidiu.panait.rb@renesas.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 26 Jan 2026 16:25:42 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdUtZqu6xTEena3VXB1_5vdFM1Pu+n9aS_bXXw3cekgY3g@mail.gmail.com>
-X-Gm-Features: AZwV_QhokrFly-7I2CTc5dF9CXKTabpeUPSd_ieTfoc7CEZrMJ0H3Q5Y5ctzmCY
-Message-ID: <CAMuHMdUtZqu6xTEena3VXB1_5vdFM1Pu+n9aS_bXXw3cekgY3g@mail.gmail.com>
-Subject: Re: [PATCH 1/1] clk: renesas: r9a09g057: Fix ordering of module
+Date: Mon, 26 Jan 2026 16:27:58 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdWZKUjptQCqe_DK3C_g5d9Zhp3r3j6+dAfE1g==NH+ofw@mail.gmail.com>
+X-Gm-Features: AZwV_QiV_Vg-viwqsMsGeXuhl8oqSRausfwmVq5_XCglJk6EVp0gGv8dhCY1AvE
+Message-ID: <CAMuHMdWZKUjptQCqe_DK3C_g5d9Zhp3r3j6+dAfE1g==NH+ofw@mail.gmail.com>
+Subject: Re: [PATCH 1/5] clk: renesas: r9a09g056: Fix ordering of module
  clocks array
 To: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, 
-	prabhakar.mahadev-lad.rj@bp.renesas.com, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: claudiu.beznea.uj@bp.renesas.com, alexandre.belloni@bootlin.com, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	magnus.damm@gmail.com, mturquette@baylibre.com, sboyd@kernel.org, 
+	prabhakar.mahadev-lad.rj@bp.renesas.com, linux-rtc@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-On Sun, 25 Jan 2026 at 20:03, Ovidiu Panait
+On Sun, 25 Jan 2026 at 20:27, Ovidiu Panait
 <ovidiu.panait.rb@renesas.com> wrote:
-> The r9a09g057_mod_clks array is sorted by CPG_CLKON register number and
-> bit position. Move the RTC and RSPI module clock entries to their correct
+> The r9a09g056_mod_clks array is sorted by CPG_CLKON register number and
+> bit position. Move the RSPI 0/1/2 module clock entries to their correct
 > position to restore the array sort order.
 >
-> Fixes: 2efea3b35cc9 ("clk: renesas: r9a09g057: Add entries for RSCIs")
+> Fixes: 1f76689d1715 ("clk: renesas: r9a09g056: Add entries for RSCIs")
 > Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
