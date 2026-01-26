@@ -1,40 +1,41 @@
 Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D8F722425B
-	for <linux-clk@vger.kernel.org>; Mon, 26 Jan 2026 17:27:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5920E22425B
+	for <linux-clk@vger.kernel.org>; Mon, 26 Jan 2026 17:27:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769448440; cv=none; b=n7/+8DKc3V3VtsXrwf3/rkLBs/ALIMI7B3osdoz7DgfWEh28fmquETq+xAy+Re8dMQF7J8Y8tWyzDzPquZGONw8IH5GGINgNXstd+RD0fZG+jFdja5tfCb6IRMKFphQHBNKP+voVkp4VIPtnh85mrrA8ren4Kat9qXCBw1id3lw=
+	t=1769448443; cv=none; b=EqYqAEA21g4YCj0L4cYq9RbJw52fevQWxiaD/fTtspMO9W5Q4a10e9yu52OBZCwvRqa6lW2NJUGVV2z9f4Va3H3n+Mjn6ts0W1gdeyXwqtzmk1RpzeqZQA8YIyKewOrmfYL4Ij9iJRcimiD9HlZ65DPs5qt3UWLwQrW9oOfNzAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769448440; c=relaxed/simple;
-	bh=hj+uwXXOqjjow7+1ZQCGFkYOlTxy8CW72WoLmBX2f1Q=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=U2hDgB+FYSCKf9Tf89P5eJLpBkfEohLZJrd4+Kkq8bNP50KxXFYm6q2Wm1JtHfVCI6UJWxwLiS83mnU8btUZbp2+3BSOXhw9VoS+K0gKZy7LvoTKlAxcuwJdutB0EBB6I5u3SpY/kHfJ0BQkVczoQKV64fe13AgQSHIYkj6QEq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=FqZV7D8x; arc=none smtp.client-ip=213.97.179.56
+	s=arc-20240116; t=1769448443; c=relaxed/simple;
+	bh=Ipw/QvXlOZd12wv1pGCquJWsD6OU8kKbhT5EbVPlBU4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=Bv5BaniqYQbwpAlJaDMLAAohGMVhKiuHNHlJdO6wNP5KEa8Ik5RPDSnwdCdUbWcm71A5rh9pow5Qt0GC9KuZ7IQay+kCJY/J7jPL4u8oxM8wf2CISD7Zsed9Uko/j/rrd4U1EJTA6So9/4aoYvGEr25k01HpaBOLddsYZoB+tLo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=cEIwAccb; arc=none smtp.client-ip=213.97.179.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="FqZV7D8x"
+	dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="cEIwAccb"
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Cc:To:Content-Transfer-Encoding:Content-Type:MIME-Version:
-	Message-Id:Date:Subject:From:Sender:Reply-To:Content-ID:Content-Description:
-	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=h2l2VsX/8R5W80Gwmwfk77TtbOOheZyGre7BqV1n0/g=; b=FqZV7D8x3C0Zo1qP6Iios/U9Ul
-	zpuLSVD5VXh2huooyiLrAAOEkPIU84Wicthc7ngLajJLPWEiqQSz1+IQM0x2bJLfdCJ9GTMMCAQPo
-	uolxjmMM0GcZrRAechgcfg6QIBAxNmlTwsM5iU8SKS5slhhY4hrcuueZIJH6/L6MU/O7dYl3l8cvX
-	TtoVEyrbKMveL9zDY05db//ZQAuvnvpjhESRMWA4RZ7V/jQGwms+GdVksrD1iMH54qPZbxDOnenf9
-	AcKmqWQwo6SscPKAr1U6zcCxkBK+h74DNOFd9KXb90b9aJSYb0k/b4r6pApSUZg3bMHY+R4IdAAe5
-	Wfp9RBpA==;
+	s=20170329; h=Cc:To:In-Reply-To:References:Message-Id:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:Date:From:Sender:
+	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+	:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=0De7nRlzZgKoNpc7KMRM94XZgm+NHhYXZrrxI/qWjOs=; b=cEIwAccbSRPA7QLojMwx5/yuEI
+	TG4qFGSPFjZ5wIfJDB7GeoQfvmyssvUX6dxsG6kaxS1yxnKp30onIrxG7wgGf+HhoXHv+owTdEWGd
+	8qHHgwz/a2HMIHxJjt+ozENMgJuPkgJz0MvjoWLiTwwofY3RtnzcbCXDqcqep4zvGC6n80PSF9RYk
+	iFNb5/Ro2y4K0+eKSVjWWOAV5cBmlS9iZ/qfCiyI0HcSI75WOuVWuBS/XskmK1vvPgptFNISt1ilk
+	LfZH7MY3CVQAZUcrHWwtrt3+ujHuqRyXYWE1KdnCQzWvkvffPD5W/M515MvS4HEv5jJ1VXh3sD52i
+	DiqaffJw==;
 Received: from [187.36.210.68] (helo=1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.ip6.arpa)
 	by fanzine2.igalia.com with esmtpsa 
 	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1vkQMf-00A8mi-Aw; Mon, 26 Jan 2026 18:27:01 +0100
+	id 1vkQMr-00A8mi-36; Mon, 26 Jan 2026 18:27:13 +0100
 From: =?utf-8?q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>
-Subject: [PATCH v4 0/6] Power Management for Raspberry Pi V3D GPU
-Date: Mon, 26 Jan 2026 14:26:36 -0300
-Message-Id: <20260126-v3d-power-management-v4-0-caf2df16d4e2@igalia.com>
+Date: Mon, 26 Jan 2026 14:26:38 -0300
+Subject: [PATCH v4 2/6] clk: bcm: rpi: Add a comment about
+ RPI_FIRMWARE_SET_CLOCK_STATE behavior
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -43,11 +44,9 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-B4-Tracking: v=1; b=H4sIAMyjd2kC/4XNSwqDMBCA4atI1k3JJDHGrnqP0kU0owbqgyhpi
- 3j3RqHQUqTLf5j5ZiYjeocjOSUz8Rjc6PouhjwkpGxMVyN1NjbhjKcs45oGYenQ39HT1nSmxha
- 7iSIWRdyQtswViaeDx8o9NvZyjd24cer9c/sSYJ3+AQNQRjPNqpzzApjUZ1ebmzPHsm/JKgb+o
- QjYUXhUmOA2VQWDXMkfRbwVxQDUjiKiIhF0JlGDtepLWZblBSo28u5FAQAA
-X-Change-ID: 20250728-v3d-power-management-eebb2024dc96
+Message-Id: <20260126-v3d-power-management-v4-2-caf2df16d4e2@igalia.com>
+References: <20260126-v3d-power-management-v4-0-caf2df16d4e2@igalia.com>
+In-Reply-To: <20260126-v3d-power-management-v4-0-caf2df16d4e2@igalia.com>
 To: Michael Turquette <mturquette@baylibre.com>, 
  Stephen Boyd <sboyd@kernel.org>, Nicolas Saenz Julienne <nsaenz@kernel.org>, 
  Florian Fainelli <florian.fainelli@broadcom.com>, 
@@ -61,115 +60,47 @@ Cc: linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
  Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
  kernel-dev@igalia.com, =?utf-8?q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4539; i=mcanal@igalia.com;
- h=from:subject:message-id; bh=hj+uwXXOqjjow7+1ZQCGFkYOlTxy8CW72WoLmBX2f1Q=;
- b=owEBbQGS/pANAwAIAT/zDop2iPqqAcsmYgBpd6Pdq8j28y2sNkGyeMvtHL3stY7GXNKttpCcw
- 92V+yJdh/+JATMEAAEIAB0WIQT45F19ARZ3Bymmd9E/8w6Kdoj6qgUCaXej3QAKCRA/8w6Kdoj6
- qnGJB/0Y/llrEvbqFYIGw7eAd8tTTt0agIGxoEyTeEdttPxU1lgXF/Vf8PeppXIOX9Enwgiic6t
- mI6vVpojECcaIYjVmwUKt3v3NkVD0GyIjFwPQ7wPueM0tAhQPToNmX9HtFN+D5CgAjaetgkm0BX
- wYXfKNIxN9Y/BpQ9/HPlJwvo61fuIWKAsOnO/8K35Re4alqGUJwrG1ph7PtvJ6lf4/OVqRvHQ38
- T+w7DEgLEtUzc8JigsIjp9tvtSDrqwTdEGsgxgxKto/65IoUA0iQypJVqHJ5VZVvoJg9a0JrkVt
- vq7ZPLuZeE2N7XztoA4WRZ0jLlWopGSG3r5qKJO6EeNX9Ykm
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1187; i=mcanal@igalia.com;
+ h=from:subject:message-id; bh=Ipw/QvXlOZd12wv1pGCquJWsD6OU8kKbhT5EbVPlBU4=;
+ b=owEBbQGS/pANAwAIAT/zDop2iPqqAcsmYgBpd6PdWIgLKW7phUhvdJ6R6PyWSq8aZ3XXhx641
+ 0jiwpVaNPCJATMEAAEIAB0WIQT45F19ARZ3Bymmd9E/8w6Kdoj6qgUCaXej3QAKCRA/8w6Kdoj6
+ qj5NB/9KNeLucl/rs8gnnkCbdgPqf0KzP76O/NvCzxKtwAvVviFqV31M8NuvkQrvSdKqQLAdTQN
+ kpSJsVtmzk3kQuL3fkJretPiXS+yYWYYbMsDil+9J0Fu7oU4SK3kyXA+71rS7n0FhkxX3WAEQ+E
+ 7JqM8qaxbKD5YDRWfbHRpxTWVChbMbayQC9id0uLIhTz7FjdodAvQ7olzipqwcLpZBTOEh5RZdn
+ 4lqEDzPmFH7tkx3VJq8xB8rMP+tgB6J0WtIHCynlAkPjOs0wA1y9BKHMrJwDBycIBRvMrnuq1ns
+ 0uWBh5wwmCXjXy8iwPIK2P5LMKaeP4NoIaKwj9Ac0I6qk8/3
 X-Developer-Key: i=mcanal@igalia.com; a=openpgp;
  fpr=F8E45D7D0116770729A677D13FF30E8A7688FAAA
 
-This series introduces Runtime Power Management (PM) support for the
-Raspberry Pi V3D GPU.
+On some firmware versions, RPI_FIRMWARE_SET_CLOCK_STATE doesn't
+actually power off the clock. Document this behavior so that clock
+consumers understand they may need to set the rate to minimum before
+disabling for meaningful power savings.
 
-Currently, the V3D clock remains enabled for the entire system uptime,
-even when the GPU is idle. With the introduction of Runtime PM, the
-clock can now be disabled during idle periods. For example, with this
-series applied on a Raspberry Pi 5, if we check `vcgencmd measure_clock
-v3d`, we get:
-
-(idle)
-
-$ vcgencmd measure_clock v3d
-frequency(0)=0
-
-(running glmark2)
-
-$ vcgencmd measure_clock v3d
-frequency(0)=960016128
-
-One particular change was required in v3 to ensure a meaningful
-reduction in idle power consumption: the V3D clock rate must be
-explicitly set to the minimum rate during suspend. As explained in an
-inline comment, this is needed as some firmware versions may not fully
-power off the clock when its state is set to off. This issue can be
-mitigated by setting the clock rate to 0 during suspend. For this same
-reason, PATCH 1/6 has been added in v3.
-
-Apart from that, the v3d patches are mostly identical to v2, but rebased
-on top of drm-misc-next.
-
-To ease testing in Raspberry Pi 4 and 5, I prepared a downstream branch
-backporting this series to rpi-6.18.y [1].
-
-[1] https://github.com/mairacanal/linux-rpi/tree/v3d/downstream/power-management-6.18
-
-Best regards,
-- Maíra
-
+Suggested-by: Stefan Wahren <wahrenst@gmx.net>
+Signed-off-by: Maíra Canal <mcanal@igalia.com>
 ---
-v1 -> v2: https://lore.kernel.org/r/20250728-v3d-power-management-v1-0-780f922b1048@igalia.com
+ drivers/clk/bcm/clk-raspberrypi.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-- [1/5] NEW PATCH: "clk: bcm: rpi: Add missing logs if firmware fails" (Stefan Wahren)
-- [2/5] Remove the "Fixes:" tag (Stefan Wahren)
-- [2/5] dev_err_ratelimited() instead of dev_err() (Stefan Wahren)
-- [2/5] Instead of logging the clock ID, use clk_hw_get_name(hw) to log the name (Stefan Wahren)
-- [2/5] Add a newline character at the end of the log message (Stefan Wahren)
-- [2/5] Use CLK_IS_CRITICAL for all clocks that can't be disabled (Maxime Ripard)
-- [3/5] NEW PATCH: "clk: bcm: rpi: Maximize V3D clock"
-- [4/5] Use devm_reset_control_get_optional_exclusive() (Philipp Zabel)
-- [4/5] Make sure that resource are cleaned in the inverse order of allocation (Philipp Zabel)
+diff --git a/drivers/clk/bcm/clk-raspberrypi.c b/drivers/clk/bcm/clk-raspberrypi.c
+index 9783385d5859836898683209e320fcc928dfdc71..2e63121af0900ac9b4874b666cf6d02baa8be11c 100644
+--- a/drivers/clk/bcm/clk-raspberrypi.c
++++ b/drivers/clk/bcm/clk-raspberrypi.c
+@@ -308,6 +308,12 @@ static void raspberrypi_fw_unprepare(struct clk_hw *hw)
+ 	u32 state = 0;
+ 	int ret;
+ 
++	/*
++	 * On some firmware versions, RPI_FIRMWARE_SET_CLOCK_STATE doesn't
++	 * actually power off the clock. To achieve meaningful power consumption
++	 * reduction, consumers need to set the clock rate to minimum before
++	 * disabling it.
++	 */
+ 	ret = raspberrypi_clock_property(rpi->firmware, data,
+ 					 RPI_FIRMWARE_SET_CLOCK_STATE, &state);
+ 	if (ret)
 
-v2 -> v3: https://lore.kernel.org/r/20250731-v3d-power-management-v2-0-032d56b01964@igalia.com
-
-- Rebased on top of drm-misc-next
-- Patches "[PATCH v2 1/5] clk: bcm: rpi: Add missing logs if firmware
-  fails", "[PATCH v2 2/5] clk: bcm: rpi: Turn firmware clock on/off when
-  preparing/unpreparing", and "[PATCH v2 3/5] clk: bcm: rpi: Maximize
-  V3D clock" were applied to clk-next.
-- [1/4] NEW PATCH: "clk: bcm: rpi: Let V3D consumers manage clock rate"
-- [2/4] NEW PATCH: "clk: bcm: rpi: Mark PIXEL_CLK and HEVC_CLK as CLK_IGNORE_UNUSED"
-- [3/4] Added Philipp's R-b (Philipp Zabel)
-- [4/4] s/drm_err/DRM_ERROR
-- [4/4] Set the clock rate to 0 during suspend and to the maximum rate
-  during resume
-
-v3 -> v4: https://lore.kernel.org/r/20260116-v3d-power-management-v3-0-4e1874e81dd6@igalia.com
-
-- Rebased on top of drm-misc-next
-- [1/6, 3/6] Add Melissa's A-b (Melissa Wen)
-- [2/6] NEW PATCH: "clk: bcm: rpi: Add a comment about RPI_FIRMWARE_SET_CLOCK_STATE
-  behavior" (Stefan Wahren)
-- [4/6] NEW PATCH: "drm/v3d: Use devm_reset_control_get_optional_exclusive()" (Melissa Wen)
-- [5/6] Include more context to the commit message (Melissa Wen)
-- [5/6, 6/6] Instead of creating the function v3d_gem_allocate(), use v3d_gem_init()
-  and move HW initialization out of it (Melissa Wen)
-
----
-Maíra Canal (6):
-      clk: bcm: rpi: Let V3D consumers manage clock rate
-      clk: bcm: rpi: Add a comment about RPI_FIRMWARE_SET_CLOCK_STATE behavior
-      clk: bcm: rpi: Mark PIXEL_CLK and HEVC_CLK as CLK_IGNORE_UNUSED
-      drm/v3d: Use devm_reset_control_get_optional_exclusive()
-      drm/v3d: Allocate all resources before enabling the clock
-      drm/v3d: Introduce Runtime Power Management
-
- drivers/clk/bcm/clk-raspberrypi.c |  15 ++--
- drivers/gpu/drm/v3d/Makefile      |   3 +-
- drivers/gpu/drm/v3d/v3d_debugfs.c |  23 +++++-
- drivers/gpu/drm/v3d/v3d_drv.c     | 163 ++++++++++++++++++--------------------
- drivers/gpu/drm/v3d/v3d_drv.h     |  21 +++++
- drivers/gpu/drm/v3d/v3d_gem.c     |  25 +++---
- drivers/gpu/drm/v3d/v3d_irq.c     |  15 ++--
- drivers/gpu/drm/v3d/v3d_mmu.c     |  12 ++-
- drivers/gpu/drm/v3d/v3d_power.c   |  96 ++++++++++++++++++++++
- drivers/gpu/drm/v3d/v3d_submit.c  |  19 ++++-
- 10 files changed, 273 insertions(+), 119 deletions(-)
----
-base-commit: 68e28facbc8ab3e701e1814323d397a75b400865
-change-id: 20250728-v3d-power-management-eebb2024dc96
+-- 
+2.52.0
 
