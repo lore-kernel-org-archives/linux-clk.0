@@ -1,95 +1,107 @@
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx.nabladev.com (mx.nabladev.com [178.251.229.89])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 526A82C0F7A
-	for <linux-clk@vger.kernel.org>; Mon, 26 Jan 2026 20:44:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61FA01A3178;
+	Mon, 26 Jan 2026 20:51:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.251.229.89
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769460265; cv=none; b=Xc98ZwCZLX3nrLB3qTyBVti9xNIIdxTvO5NvLvtojh/QsgXAbnL2eu6PR1aQ9aJhb1yYnLw0LQ67qsG1emG12lUhlI83ibds6Gq0nbBlCbqPQN7auZsu+eNIbM4PVNiKPqE1GkUSHQek4BKh34ozB6+uLBTabEpYeNR97fq+j7g=
+	t=1769460706; cv=none; b=YEEEL89NhL7/6bemaPZnIwX4AIQ2rm1NuVIaKhV9kJa+Vapqdv4Pw7s7t27se/KSnjusCM3gjwSzFXrGzVrUN2kRFoE4sTD58GyZhYa1yHt90JU2pKWiOL4Rvq6Vtn9A7YzESNwochYNV1XNqnEGN630di5KBx2Z5x55zHivD+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769460265; c=relaxed/simple;
-	bh=L9AP7K7IS/BQIX048gXZafEbvq5i3LmZ5GjfHPcHmZY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cHCY0ZIpHRoaQEmrU5+lyM6/jOeldoxlsCJFeFweYVzbfoWrlFv57GH2+cHdtrDYYQjlbUq9B9ZMmq39TwQHtwJQsCfPyaYQ8o8QlxKlzNmDrsU9rKuIsus7j9NzPiuSBjOuAW0V6iNmmZBKIQ0pyolFRJeBqPfKwWrxHmlUE5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VkR7ZIch; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1769460706; c=relaxed/simple;
+	bh=TWe4EIKg5oFjDmJePJWeSe0PN9sAlqIqtHbuajMROGI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=oRNnMojYIrTgFLIvgtQ5UR9rfFAlNbaWpoTAXjNy0y790kbo0grCEH5hwJqYQrxUFySHrs/l52+IuxvS5g30ieyV4g914Fcz8KsNglT4Ee3z3FSg+kNFGqeKCtfj79RFOW75YkXO/7a8Tg44kKHXpJsJj8mtIvvtc8fz1wchbyM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nabladev.com; spf=pass smtp.mailfrom=nabladev.com; dkim=pass (2048-bit key) header.d=nabladev.com header.i=@nabladev.com header.b=XOxuYDiG; arc=none smtp.client-ip=178.251.229.89
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nabladev.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nabladev.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VkR7ZIch"
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-6505cac9879so7664507a12.1
-        for <linux-clk@vger.kernel.org>; Mon, 26 Jan 2026 12:44:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1769460263; x=1770065063; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=YVQeX6F69iLnc7u2WDbtyBci9ESFJbN+KlbTGvK+NNU=;
-        b=VkR7ZIchUzw2IvxinDF+djOkvPENIRLYvgiBNtjI2F2z+7icPREl4+kobjooPMYQjC
-         jhe4RXucN1zf8wQSU0mFbiqh3Q9ZyQzVTD4NhCgYSMiCisWMw7fwqKk+gwZ3Wh1Yk+7s
-         WkVY4VNUi13N4zEKwBR9FCiMl/7L1S3sZFS4WY6vhilvVRnhLoq3rXMp+oQRTEdJ1N/5
-         aboqkPCYDkSeN8BPhCPgt6tYj9kasHjchJyQ7tCpRaM5RgcW32odjMFIU4cJ9oA1mPpk
-         X78sKcMucTI5/0kVA4i8H/Agrs0fxRu3+ba9mPllbUfO2DjgTiFni8SXxlyfc7tRRAJS
-         YmtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769460263; x=1770065063;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YVQeX6F69iLnc7u2WDbtyBci9ESFJbN+KlbTGvK+NNU=;
-        b=uEj8tAeAJ01nkPMgU/U/xqloQOVY13QOP32jWtIdnfbANHZQZiOhI8Hos2o9OdXrG8
-         gOta64QHdA9pH8aMfurf9CuIcz03keZox1eln88AnE0pb3/BusDbvGOCXn8KN30QvzXu
-         BO/KmiqUikt99aJ/ENd+TI/m1cg3PIeb8gb3aWhYuSsqUJEG/QL/fDPHaqIFSSemXA05
-         keEmIhMF6JExdPqI6iQe3GRbi9Ia8xd+lj0PMyMb3ay3+5ja29D9mGyIdD3RFXqS5Rqz
-         WK7t8b5IYwWWNvWmY3wGFxzP4qWmRUr9Lw9yy1RPCGTrcWwX2spgW2vokIFeWYhIR3Zh
-         nJ+Q==
-X-Gm-Message-State: AOJu0YzGm4eq0K0fzeTKzJ+sAfzbNvY5C8tnbV+mE1aAUD9qF8jpZTha
-	jBboVWj4GmdcwLzkWjCHVAjJuYIj4EBuLwLMhPXlyXhb9gIi2kiLSszS
-X-Gm-Gg: AZuq6aKwddK9W9/addGdbOEOXB5ZS7poWK2O1rAp9elXF7ebw3pqIma4QuxNX74/nJV
-	HIXixCIXStDgKS7Hj0NgarH5I21zxYT83KnYUbknRWc/4AYGtXb9WXjmKD9gqwzymm6UPCwWAla
-	+ZCx0kQXo/f7WBZrupivhLuxAdSsvcjwwgp6YZSOnyg/Jr9qN+EHNaxCcnW18mC5+/CA9F+PEXC
-	PoZrI4jSnmMk5c5CkujxLoAaQlZ2ajUK8UynPuY6n2TxCll+pSFM97GQf09ZBnfXxEZ4TLsoA0E
-	sCVmlIOF6sbOgWA4MwR2VAuzN1C8S9JYdzRSb56MwBYjUiGUe72GNwTf5OvkLSY+/wjFnG59V1g
-	4gy0d6TA8DBvbGqR6athCOho7Oovulw/hqJ2XKcLkj8Jgu8YtasNWiJvclVpSL6hBFJi69huqBx
-	Tw
-X-Received: by 2002:a05:600c:4689:b0:477:55c9:c3ea with SMTP id 5b1f17b1804b1-4805d0690c7mr104124775e9.35.1769453909695;
-        Mon, 26 Jan 2026 10:58:29 -0800 (PST)
-Received: from xeon ([188.163.112.49])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48066c3732dsm7296265e9.11.2026.01.26.10.58.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Jan 2026 10:58:29 -0800 (PST)
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 0/1] clk: tegra: set up proper EMC clock implementation for Tegra114
-Date: Mon, 26 Jan 2026 20:58:17 +0200
-Message-ID: <20260126185818.78003-1-clamor95@gmail.com>
-X-Mailer: git-send-email 2.51.0
+	dkim=pass (2048-bit key) header.d=nabladev.com header.i=@nabladev.com header.b="XOxuYDiG"
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id B50F710DE37;
+	Mon, 26 Jan 2026 21:51:38 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nabladev.com;
+	s=dkim; t=1769460702;
+	h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=ais5eYTz0FEi4g7TDPCp4ZvDHB2QcWvVDHizRUb54QY=;
+	b=XOxuYDiGvcqMOW/E7Noo5Lvjsb5ixgU7wvCfIyaTR6SPE6tjRdsX5oTW1FIb0Ck1eAaW3x
+	U0BxklQgpYosP6GAlcC9ZhmyygmtsIHoT5gzGYSclaIymmiY67NjL9Wa2/dYMSOJryKYVB
+	dH91XMYPLuH7Ez+JbG8V2Sf0f7n+qu79lpxJEAj9+cAZYwm6CMtIxBLS6jCGTiGHX9zxXw
+	8FqCw28u1t/NzMgiDU56KTH8/QJ641XWIlyz8yvIK6Cb0GI576X7g2B4756QDuyZqWfM/d
+	5N21V6b/TE/KdyWisEgC8q7F3VOF74qVJvpMbduoPoFdSOVTIGKXxK5W1iIIDQ==
+Date: Mon, 26 Jan 2026 21:51:34 +0100
+From: =?UTF-8?B?xYF1a2Fzeg==?= Majewski <lukma@nabladev.com>
+To: Fabio Estevam <festevam@gmail.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Conor Dooley <conor+dt@kernel.org>, Abel
+ Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Shawn Guo
+ <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix
+ Kernel Team <kernel@pengutronix.de>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2] clk: vf610: Add support for the Ethernet switch
+ clocks
+Message-ID: <20260126215134.25814c5a@wsk>
+In-Reply-To: <CAOMZO5C2Hg06wb08cRDLCXGDS_rmUAq3fC7Jm++kSumjukyuXA@mail.gmail.com>
+References: <20260126115349.1750578-1-lukma@nabladev.com>
+	<7671b833-f823-44cd-b5af-0b473a8ae23e@lunn.ch>
+	<20260126203307.6076ba9c@wsk>
+	<CAOMZO5C2Hg06wb08cRDLCXGDS_rmUAq3fC7Jm++kSumjukyuXA@mail.gmail.com>
+Organization: Nabla
+X-Mailer: Claws Mail 3.19.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Last-TLS-Session-Version: TLSv1.3
 
-Remove current emc and emc_mux clocks and replace them with the proper EMC
-clock implementation for correct EMC driver support.
+Hi Fabio,
 
-Part of previous patchset: https://lore.kernel.org/lkml/20251125120559.158860-1-clamor95@gmail.com/
+> Hi =C5=81ukasz,
+>=20
+> On Mon, Jan 26, 2026 at 4:33=E2=80=AFPM =C5=81ukasz Majewski <lukma@nabla=
+dev.com>
+> wrote:
+>=20
+> > Conor (on CC) explicitly asked to remove VF610_CLK_END:
+> > "[PATCH] dt-bindings: clock: vf610: Add definitions for MTIP L2
+> > switch"=20
+> > ------>8------------
+> > > -#define VF610_CLK_END                        191 =20
+> >
+> > If end is modifiable, it is removable. If you need the define for
+> > the driver, please move it there.
+> > ------8<------------
+> >
+> > I just follow what he asked. =20
+>=20
+> You should still use VF610_CLK_END. Just define it inside the clk
+> driver instead of in the dt-bindings.
+>=20
+> Please check these two i.MX93 patches that explain the rationale:
+>=20
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit=
+/?h=3Dv6.19-rc7&id=3Dc0813ce2e5b0d1174782aff30d366509377abc7b
+>=20
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit=
+/?h=3Dv6.19-rc7&id=3D0af18ba60752e8a4ba34404c1d9a4a799da690f5
 
-Svyatoslav Ryhel (1):
-  clk: tegra: set up proper EMC clock implementation for Tegra114
+Ok, if this is the agreed approach, I'm going to use it.
 
- drivers/clk/tegra/clk-tegra114.c | 39 ++++++++++++++++++++------------
- 1 file changed, 25 insertions(+), 14 deletions(-)
+Thanks for pointing this out.
 
--- 
-2.51.0
+--=20
+Best regards,
 
+Lukasz Majewski
+
+--
+Nabla Software Engineering GmbH
+HRB 40522 Augsburg
+Phone: +49 821 45592596
+E-Mail: office@nabladev.com
+Managing Director : Stefano Babic
