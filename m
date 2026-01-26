@@ -1,235 +1,148 @@
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57C54307AF0
-	for <linux-clk@vger.kernel.org>; Mon, 26 Jan 2026 08:53:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FFE3330327
+	for <linux-clk@vger.kernel.org>; Mon, 26 Jan 2026 10:14:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769417599; cv=none; b=mqFX2UdhekCcjV0scII6fQ1czRNW8PEoJ1g2Sh4iL111aO8oZb8nQ5J4pU0xDrEwNAWGsCoZYlwBQZfQSgj8Uq9unuQF4dE0sc5kQnVXcb8pWKr0IFkm0wK++pbj6Cg1Fn8WCYPrG54qtyTozc7vfOFZggV1RzAYxBntDCtjvYQ=
+	t=1769422488; cv=none; b=jq7rmLRzqQzHkQvx90v5DQH5HD+4WWj7RHxQvjjXzwGnOrp6RRdG48TM49UAYeoPSSpYEcllnBHAwFq0UPFntNnM82heX9zBrboDcnspB9yNOl8Jk7qwU5dxx+qcn+uXAmItjoh26DvbA55fDqUInu3Nbg7grbGBXJjdITKcHLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769417599; c=relaxed/simple;
-	bh=5GaxyRid/6UN76AwEN9W/dXZHZXAFKBL6iggrikDE3Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rqVq+4RpuTlTi67OWWNg7LNbfJYfwJsF6C6OEiNtFs4Z2+eOwOTgS2zUyb2rvHfD7+uMmtRA23vv6XzSaEyAEHpOLgvjfLrLxWMkih447cYZexpk7ctrTbY3kND00+8Ex1V5yTr/DBK2EeTUdaJPm/pe9/x/ww8vUAZKI/aT3ME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=lUZWGI8f; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+	s=arc-20240116; t=1769422488; c=relaxed/simple;
+	bh=nxEhAbzUXqWnF3GtEIE6Wfar4AmH3DAFLdLk3kB3Zw8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b+Mi5ty/TrqIPAEfDdw8JQQfwGEcbbYfr2MccRUeoeyfkEA6Ex8a8ZvGt3p+2mRd9CGWtN2ckJkYXO36kaojP39j5k9L3l8V5aaMjGX1Tqs2Fa2V5KouMb8tdv94Npyc1T+smqZmch+aaibIKkZ4FE5nRAZCPM+0vgL5ZvYuouA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=TEVY4r2p; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=AOoNM07G; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="lUZWGI8f"
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-47ee807a4c5so44547265e9.2
-        for <linux-clk@vger.kernel.org>; Mon, 26 Jan 2026 00:53:17 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="TEVY4r2p";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="AOoNM07G"
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 60Q82gwI3677927
+	for <linux-clk@vger.kernel.org>; Mon, 26 Jan 2026 10:14:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=5yhpcFu8m2C4OmsSHPsRpoVJ
+	XKRoa1siTRePuREnYoo=; b=TEVY4r2p1d2thn9eDmOkpbYvk6tfeFPh1u1Gst51
+	tBkqv5uz1+CeuEMKpP6cUHl+Hpjn+CXwfp1RJD1sJUWIAQp1CfUVByHLM8GotX04
+	Uxk5ZosIAh3wtFuuVjmiBhnQx70ZMaMXr6ja7AJwfLCxBEVDqtumVcyxi6V9XjFm
+	tI6OWfTqKIOUzUNfzEpswoX0xu1mlh8wIypa7N5CjwUeFrEedFWyfxQ8Wpjuv5jb
+	Ntrvyg/sFW8YUpsopwp9/plNdXpRJMX8PXXgfFq1m8IVLBihjIpOy8mOedtAemy9
+	H4/0un9b958F2Khng5QOHBMeyT1BBEkGPS+vPjLHYT2fqg==
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4bvq24m5yg-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Mon, 26 Jan 2026 10:14:46 +0000 (GMT)
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-8c6a2ef071dso241474885a.0
+        for <linux-clk@vger.kernel.org>; Mon, 26 Jan 2026 02:14:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1769417595; x=1770022395; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=EvYQf7JJrtOhol9ZYgmnQUIWUs56jpdOGUSqYs3GLGU=;
-        b=lUZWGI8fe+5amW/ow9fibkG5+ry36CT3OC1sfi5FsWPEBi2YUchjtdwBlGlXhuMAhr
-         fj0dCXVEaQ1pacCCEOOFFOX2X3CSUmTF9MklA8tUlSryUUIuT+QLZYjhCLs3EwhC9XUa
-         oeRFHhdQGdpXyt81XLLVSa6X1U5Cr382vL8H+2ZJfJT2AsGqliPNAdcW86oI0/nqeqD+
-         Ax6dU1X2U5SUhcpbqNcJRbOFp0cJT/9xfOY0wEq4PNgAVCFprnzfMTb23L+kn+uKZTm8
-         ZzhLtEqYLXXZsax3Cesv0pGc884czQH/rk5gtJl7GZr52sB//GjO6/IovVZtl3pNCO8/
-         CxFg==
+        d=oss.qualcomm.com; s=google; t=1769422485; x=1770027285; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=5yhpcFu8m2C4OmsSHPsRpoVJXKRoa1siTRePuREnYoo=;
+        b=AOoNM07G3wP03aQ3jGVYW0TlF6vRaMSERQl1No2warLJhnfUwZhfHKJaC0RMg7Zn9j
+         0qEheroaWg8YlPtn1vKioIaMpi9oEzZOOU61YJUay8gJ47AkqDg0z9yfPlhdAKIqxmYA
+         iq5GR8G+i7igijfFUFR/ahua4JkT2H4npLmsgB+L+gwPmFZ7k+r6MVVsCy6gB4u16THH
+         UAMHnbJM9mhc7bl0lGdHWxSgLwZdISq9QM7bfVjuhM40ub65rBm3i9p1U9y6SVl79NBz
+         wofLs5mW2ywobo7S67Ns86CYDo9JuMO4KCHt7OHALydRQbZ3bNpetlMwPGdHk1MdSAzc
+         MtFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769417595; x=1770022395;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EvYQf7JJrtOhol9ZYgmnQUIWUs56jpdOGUSqYs3GLGU=;
-        b=Ch6PsZ3WY6tJ/DHeIDNsHBm5TnUCmVegohBFrab83bjpmApUS1J5VhqKSU+5IaxwXG
-         7imo3DRBw6TxNjVQUp8/5SYsrv1BwIwzwnTf6WZOGIU6NxbBGjBEsPGXpK1f8I7dIEHU
-         bHdJ7sul71HdkVdN4LeiR1lRtK+7YAbcgS8ssqBrtmbL21JnsKHZnVqhsMNK/Zl8y+ly
-         dM0aFBqrNl21/+DYGuGMQ2V8beRKrjOm8yPnLOLl7BKidU2UEcgD2s4CktgwH4LEUck/
-         vKGjYBuED61mPj21iXATOUi1XPCpnX0f5kF1yosT+tDJGC2Ut4NgN1TTgiqwXssGXRTm
-         WL6g==
-X-Forwarded-Encrypted: i=1; AJvYcCUq5ya6z0bYqEnIFuL3rj20qjLTSic7rryGseosGSL+Do6VvXFx2Y8O6K8DPF4+vLdIlpfuoDoyJ+I=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6SglcnVjt3/Fi8AkpzSj3NV6E6Ps7gHL7kFnWX2rTvcvwc1zV
-	I1uwEy6tQY2WvcN+JzFBNtoWWD6lOP7tLM5xOqVJHAJNWJyY0Zk7UCxkDchuFptoqZw=
-X-Gm-Gg: AZuq6aJs2E+tS5CEh7c1bP69TorXilJEZJFfptmFHj9tMzxkVUnq+58Y+pRsrgnwPen
-	7ifZ/mxKmHaKZrxXu7pjK/HMgan07UfnBD4Sx/dxMJOF4oZ4PRg1rMgGccOL52nSDKIuKuG3trY
-	5TRIWTLOkuIXDcGCULAG+CBRlSsm+R3MW4luyOC+vWEKB63UUsBOesW9XJpKB8VGw9rVkafxhs1
-	ttmqM+YR+O2Rwhx6YxVBCiDAvYqqzbgNfWk0s2EwKpxNs/OXlPKcdgd0wSYtkD2NFAA6gKSgG0s
-	GVHiO5EBV3Lt3uIQ35Y0Ordwu7xTGpHvhaR5Gl0fK68tfBkMFjAquO+iXgh7LXCQx+Oih17oqrd
-	t7CNWOWXqEqU9bGDV63b9XwU6GtzRQciI1Djnx+QE32pr6nxQBx9oDkUFWeUW7+yvXYvJzf+46e
-	7APN22Aa/ZPoWJd4f0AA==
-X-Received: by 2002:a05:600c:4ed2:b0:480:462e:d640 with SMTP id 5b1f17b1804b1-4805d06c8ddmr60345005e9.36.1769417595430;
-        Mon, 26 Jan 2026 00:53:15 -0800 (PST)
-Received: from [192.168.50.4] ([82.78.167.31])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-435b1f7c269sm28608403f8f.43.2026.01.26.00.53.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 26 Jan 2026 00:53:15 -0800 (PST)
-Message-ID: <4cd2b42d-f49d-4f21-8677-928cb3d75fd7@tuxon.dev>
-Date: Mon, 26 Jan 2026 10:53:13 +0200
+        d=1e100.net; s=20230601; t=1769422485; x=1770027285;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5yhpcFu8m2C4OmsSHPsRpoVJXKRoa1siTRePuREnYoo=;
+        b=t/luUKwDg/p2d8fcCYyDHemSZlVdgFiWCWhzI7ykTtgZ3kp2tQLDiHe4oH2csZO7u0
+         Npfe0v08WJQ1mcbhMtZm9zjVc7IHSO1i9T8dlnEwyfhw/9eVT3L5QlwicIFA+cdAdU9f
+         aiiwjv8XHh9DGDbFG41Lv/t0SsVjYjDN9cVBSeTRWjMMK7yU5hlM1okmd1A2bxZb0EMB
+         X2GkEn4s8tXhQdICww3IaoFgWFBnAkyF+RSjpRNnGrA3hnKo9s7KvVekuIUHri0WU7YK
+         KcIrunSh614ySHoHMvp8zxt48RmcuX6CPTEYgxywUc4iDTs+tetIEgWA3ZfSkESYXgK3
+         wDpg==
+X-Forwarded-Encrypted: i=1; AJvYcCXXDObDw3pDn4DzTmVVJcDLB7RrdAeyehGeDLBzF4W9gD9T9gZ5DH7Jz1mZUVBgIO0SQjeydccRZ8k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxI0LgSrkcu0u799QAsMQmUHcPAue9o19Y2gtiJCUtMs4qbFFi+
+	QlagOkY+a4PggDm4QWf3Uoko834YfT0qs6g03wizer4gxCXNc2t2BajQJ3n3YXp8USvReOgpbuH
+	YEWJB41UqYCvCzsL/xOFxFP/6gRMP8Mv07LBwfDcyF0t/NnfHJOiBVeuaswHMvGI=
+X-Gm-Gg: AZuq6aK2E7TNciiQT0sujMovbzJ1sTge+TT9ZhCznzIQ/yGMi3PSv+w615TMIVW+BM5
+	23OZtZM6qKo/iMywzDJrTiUP5gL00ZTzwGEU6ZtVqgxP90HGWm7O4B6RuZdKZ2j1e1TYhYv9m1o
+	cLElQzLbU3W1UoHzOmDEFVH2UPh3Y8j/0tIowgwwW5cyua1Ug67JkSvNkfuA4N/JbllZ5SZBZoQ
+	WkTutsU/Ll4wDoWw8+mgIji0gTOZYqcQVePJmme4+BG7ssqjOaQpkjnK8Exuo2eIJ9OLZA01uJI
+	fpkxKq0v9/HFtcWhLJiXTEqFopgQfUzsBYLXH2VSXPjVq/4jIXP0oo/qGeFHDkZ9TGUWXJTwFo7
+	PoMuoxMmdtBmEeKMBcUzIo7qa
+X-Received: by 2002:a05:620a:1911:b0:8bb:18fe:d1c5 with SMTP id af79cd13be357-8c6f9572c3amr418713985a.9.1769422485498;
+        Mon, 26 Jan 2026 02:14:45 -0800 (PST)
+X-Received: by 2002:a05:620a:1911:b0:8bb:18fe:d1c5 with SMTP id af79cd13be357-8c6f9572c3amr418711485a.9.1769422485002;
+        Mon, 26 Jan 2026 02:14:45 -0800 (PST)
+Received: from oss.qualcomm.com ([86.121.162.109])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4804d85206fsm266606285e9.6.2026.01.26.02.14.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Jan 2026 02:14:44 -0800 (PST)
+Date: Mon, 26 Jan 2026 12:14:42 +0200
+From: Abel Vesa <abel.vesa@oss.qualcomm.com>
+To: Frank Li <Frank.li@nxp.com>
+Cc: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>, linux-clk@vger.kernel.org,
+        imx@lists.linux.dev, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Conor Dooley <conor.dooley@microchip.com>
+Subject: Re: [PATCH v2 1/3] dt-bindings: clock: imx6q[ul]-clock: add optional
+ clock enet[1]_ref_pad
+Message-ID: <uilxikzky53j7sg2barmsu6fkco2fiwgak3fh6eqc65iggmbge@7oogboikthae>
+References: <20251106-ccm_dts-v2-0-12fa4c51fde7@nxp.com>
+ <20251106-ccm_dts-v2-1-12fa4c51fde7@nxp.com>
+ <aVwV8/rg2h2x4OwN@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 04/31] clk: at91: clk-sam9x60-pll: use clk_parent_data
-To: ryan.wanner@microchip.com, mturquette@baylibre.com, sboyd@kernel.org,
- nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
- bmasney@redhat.com, alexander.sverdlin@gmail.com,
- varshini.rajendran@microchip.com
-Cc: cristian.birsan@microchip.com, balamanikandan.gunasundar@microchip.com,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <cover.1768512290.git.ryan.wanner@microchip.com>
- <ca2a4b7196e1c8a479577ca4673f2125ff41292e.1768512290.git.ryan.wanner@microchip.com>
-Content-Language: en-US
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <ca2a4b7196e1c8a479577ca4673f2125ff41292e.1768512290.git.ryan.wanner@microchip.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aVwV8/rg2h2x4OwN@lizhi-Precision-Tower-5810>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTI2MDA4NyBTYWx0ZWRfX8ysX73n74iSf
+ G1ZQ05yATODy63U3exmQ/whZm5DQ+ZOcPF4WVUlhWQsEfler+cI3osW/Ojuwq4kd7SduxVpHy80
+ YmKeT485XKBVgFJbyiAJmmF621Y9qk1K5zay3KTErVU6ew3k8JJVRe6xVVhqfmnupjA7jryl4sj
+ ItLzflviIp/t2HdFLn78+to4GXFD+svh1oF1kzF0NoRgsOmYs6E1U/nt8m+dJoZKCQrUScPV8qC
+ dEIwAeMsImpkiDwJznsVhSd9kYaV2wzC8ni+IRgEYbv6S3RL3crWNNgYArMs5iY8QzNIvfPkMia
+ +sjjxrw1PieHOq0AdBdkuc8ZnGhiGa6OfEStkTTp5V9hdYUAr9vdUu1UeVluJhMi0UNYGRLGr40
+ rUVRB99Efn7QyMR6AwW6sb40wGXDPW6nbQ4z+5OHxHG2sZPm1XObW3aIqlPob5uDCxD2n4CKWKG
+ KZaxwoJIGo+WacAyS9Q==
+X-Authority-Analysis: v=2.4 cv=EsXfbCcA c=1 sm=1 tr=0 ts=69773e96 cx=c_pps
+ a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=oauzzCmhM186DRC0Y2yWPg==:17
+ a=kj9zAlcOel0A:10 a=vUbySO9Y5rIA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=XYAwZIGsAAAA:8 a=8AirrxEcAAAA:8
+ a=7OV0ED95LoZXi-xfo7wA:9 a=CjuIK1q_8ugA:10 a=QYH75iMubAgA:10
+ a=PEH46H7Ffwr30OY-TuGO:22 a=E8ToXWR_bxluHZ7gmE-Z:22 a=ST-jHhOKWsTCqRlWije3:22
+X-Proofpoint-GUID: VWxG-Vv3n61ZcuuECb9TzT8Bzba1e8FE
+X-Proofpoint-ORIG-GUID: VWxG-Vv3n61ZcuuECb9TzT8Bzba1e8FE
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.20,FMLib:17.12.100.49
+ definitions=2026-01-26_02,2026-01-22_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 phishscore=0 lowpriorityscore=0 bulkscore=0 priorityscore=1501
+ suspectscore=0 impostorscore=0 adultscore=0 clxscore=1015 spamscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2601150000 definitions=main-2601260087
 
-
-
-On 1/16/26 22:06, ryan.wanner@microchip.com wrote:
-> From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+On 26-01-05 14:50:11, Frank Li wrote:
+> On Thu, Nov 06, 2025 at 02:57:21PM -0500, Frank Li wrote:
+> > Add optional clock source enet_ref_pad for imx6q, enet1_ref_pad for imx6ul,
+> > which input from ENET ref pad.
+> >
+> > Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> > Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> > ---
 > 
-> Use struct clk_parent_data instead of struct parent_hw as this leads
-> to less usage of __clk_get_hw() in SoC specific clock drivers and simpler
-> conversion of existing SoC specific clock drivers from parent_names to
-> modern clk_parent_data structures. As clk-sam9x60-pll need to know
-> parent's rate at initialization we pass it now from SoC specific drivers.
-> This will lead in the end at removing __clk_get_hw() in SoC specific
-> drivers (that will be solved by subsequent commits).
+> Who will pick this patch? Abel or rob?
 > 
-> Get the main_xtal name via of_clk_get_parent_name() to consistently get
-> the correct name for the main_xtal.
-> 
-> Signed-off-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-> [ryan.wanner@microchip.com: Add SAMA7D65 and SAM9X75 SoCs to the change set.]
-> Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
-> ---
+> Frank
 
-[ ... ]
+Missed this one. Sorry.
 
-> @@ -1137,10 +1141,8 @@ static void __init sama7d65_pmc_setup(struct device_node *np)
->   
->   	bypass = of_property_read_bool(np, "atmel,osc-bypass");
->   
-> -	parent_data.name = main_xtal_name;
-> -	parent_data.fw_name = main_xtal_name;
->   	main_osc_hw = at91_clk_register_main_osc(regmap, "main_osc", NULL,
-> -						 &parent_data, bypass);
-> +						 &AT91_CLK_PD_NAME(main_xtal_name), bypass);
->   	if (IS_ERR(main_osc_hw))
->   		goto err_free;
->   
-> @@ -1154,7 +1156,7 @@ static void __init sama7d65_pmc_setup(struct device_node *np)
->   
->   	for (i = 0; i < PLL_ID_MAX; i++) {
->   		for (j = 0; j < PLL_COMPID_MAX; j++) {
-> -			struct clk_hw *parent_hw;
-> +			unsigned long parent_rate;
->   
->   			if (!sama7d65_plls[i][j].n)
->   				continue;
-> @@ -1163,20 +1165,24 @@ static void __init sama7d65_pmc_setup(struct device_node *np)
->   			case PLL_TYPE_FRAC:
->   				switch (sama7d65_plls[i][j].p) {
->   				case SAMA7D65_PLL_PARENT_MAINCK:
-> -					parent_hw = sama7d65_pmc->chws[PMC_MAIN];
-> +					parent_data = AT91_CLK_PD_NAME("mainck");
-> +					hw = sama7d65_pmc->chws[PMC_MAIN];
->   					break;
->   				case SAMA7D65_PLL_PARENT_MAIN_XTAL:
-> -					parent_hw = main_xtal_hw;
-> +					parent_data = AT91_CLK_PD_NAME(main_xtal_name);
-> +					hw = main_xtal_hw;
-
-main_xtal_hw is not initialized. You should be able to do something similar to 
-what was done in patch 7/31 for sama7g5.
-
->   					break;
->   				default:
->   					/* Should not happen. */
-> -					parent_hw = NULL;
->   					break;
->   				}
-> +				parent_rate = clk_hw_get_rate(hw);
-> +				if (!parent_rate)
-> +					return;
->   
->   				hw = sam9x60_clk_register_frac_pll(regmap,
->   					&pmc_pll_lock, sama7d65_plls[i][j].n,
-> -					NULL, parent_hw, i,
-> +					&parent_data, parent_rate, i,
->   					sama7d65_plls[i][j].c,
->   					sama7d65_plls[i][j].l,
->   					sama7d65_plls[i][j].f);
-> diff --git a/drivers/clk/at91/sama7g5.c b/drivers/clk/at91/sama7g5.c
-> index 713f5dfe7be2..c6550044cba1 100644
-> --- a/drivers/clk/at91/sama7g5.c
-> +++ b/drivers/clk/at91/sama7g5.c
-> @@ -971,7 +971,7 @@ static const struct clk_pcr_layout sama7g5_pcr_layout = {
->   
->   static void __init sama7g5_pmc_setup(struct device_node *np)
->   {
-> -	const char *main_xtal_name = "main_xtal";
-> +	const char *main_xtal_name;
->   	struct pmc_data *sama7g5_pmc;
->   	void **alloc_mem = NULL;
->   	int alloc_mem_size = 0;
-> @@ -983,11 +983,15 @@ static void __init sama7g5_pmc_setup(struct device_node *np)
->   	bool bypass;
->   	int i, j;
->   
-> +	i = of_property_match_string(np, "clock-names", "main_xtal");
-> +	if (i < 0)
-> +		return;
-> +	main_xtal_name = of_clk_get_parent_name(np, i);
-> +
->   	td_slck_hw = __clk_get_hw(of_clk_get_by_name(np, "td_slck"));
->   	md_slck_hw = __clk_get_hw(of_clk_get_by_name(np, "md_slck"));
-> -	main_xtal_hw = __clk_get_hw(of_clk_get_by_name(np, main_xtal_name));
->   
-> -	if (!td_slck_hw || !md_slck_hw || !main_xtal_hw)
-> +	if (!td_slck_hw || !md_slck_hw)
->   		return;
->   
->   	regmap = device_node_to_regmap(np);
-> @@ -1014,10 +1018,8 @@ static void __init sama7g5_pmc_setup(struct device_node *np)
->   
->   	bypass = of_property_read_bool(np, "atmel,osc-bypass");
->   
-> -	parent_data.name = main_xtal_name;
-> -	parent_data.fw_name = main_xtal_name;
->   	main_osc_hw = at91_clk_register_main_osc(regmap, "main_osc", NULL,
-> -						 &parent_data, bypass);
-> +						 &AT91_CLK_PD_NAME(main_xtal_name), bypass);
->   	if (IS_ERR(main_osc_hw))
->   		goto err_free;
->   
-> @@ -1031,7 +1033,7 @@ static void __init sama7g5_pmc_setup(struct device_node *np)
->   
->   	for (i = 0; i < PLL_ID_MAX; i++) {
->   		for (j = 0; j < PLL_COMPID_MAX; j++) {
-> -			struct clk_hw *parent_hw;
-> +			unsigned long parent_rate;
->   
->   			if (!sama7g5_plls[i][j].n)
->   				continue;
-> @@ -1040,20 +1042,25 @@ static void __init sama7g5_pmc_setup(struct device_node *np)
->   			case PLL_TYPE_FRAC:
->   				switch (sama7g5_plls[i][j].p) {
->   				case SAMA7G5_PLL_PARENT_MAINCK:
-> -					parent_hw = sama7g5_pmc->chws[PMC_MAIN];
-> +					parent_data = AT91_CLK_PD_NAME("mainck");
-> +					hw = sama7g5_pmc->chws[PMC_MAIN];
->   					break;
->   				case SAMA7G5_PLL_PARENT_MAIN_XTAL:
-> -					parent_hw = main_xtal_hw;
-> +					parent_data = AT91_CLK_PD_NAME(main_xtal_name);
-> +					hw = main_xtal_hw;
-
-main_xtal_hw is not initialized. You should be able to do something similar to 
-what was done in patch 7/31 for sama7g5.
-
-The rest LGTM.
-
-Thank you,
-Claudiu
+Will apply.
