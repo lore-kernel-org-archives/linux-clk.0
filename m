@@ -1,43 +1,86 @@
-Received: from sender4-pp-o92.zoho.com (sender4-pp-o92.zoho.com [136.143.188.92])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B25D30B51F;
-	Tue, 27 Jan 2026 11:04:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.92
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769511886; cv=pass; b=bIE4faOrkBbgIQaiQSBsRzio1yUMAMypbhTaXcJA0bgjqSjq3buHx29VeWt6vPBJHvxRD63/Fiar0rwlWLEQdIXwxGfTG8DdkjmCejuewXdklgw60WHKK8rIyio2ymgg0R5FujrIqYiElAj3EhHR00E+W9npcsekcQQDQTainxc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769511886; c=relaxed/simple;
-	bh=FG6HFQL/cV3+5iYVYIgLIOwsbcYD6bxgBJ/bMY+o10k=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4386E221DB6
+	for <linux-clk@vger.kernel.org>; Tue, 27 Jan 2026 11:31:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1769513477; cv=none; b=n6JY5bvo6l4KbFXUui+oB7+f7bXv27aCdcZo6OKjl7umBHSRiilGbKK9BxSXMyM4TbnqBwhk8w5Wa+J7AwN+eKUjaWDeLpFY4XGrl81FWjwP1+/pU+NJ/gX0glAgFyYiZuTijXcePpvwNyt8qzjmai9H8P6e8AT0zDysAF/sUCs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1769513477; c=relaxed/simple;
+	bh=Urol0pYuPxPGC2lQX1EPUImulHMLveUGZZQ3278uW6A=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HhSiCZTjBCuhEv8ghEFTOyVd+k0BwIFntoPSJRDDRFD+yKiW9qPYz4Lzum1Pz6naCri0FR0lVEs2r+5qm92SpgIWmBZ2A9mvKF2OfZd16nQ791MeOWVuTwgIfO2CbVyg8Bd/oB+t/B0s91oQ0XuUotP8nSPeYF1vg4bR79KQr+E=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b=Yssn+2Mq; arc=pass smtp.client-ip=136.143.188.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
+	 In-Reply-To:Content-Type; b=O+iRLfWr2iuWQsAov/RFdLPx6VUjl+x2dDaOPfrNf+TcL+1trmDifztdIwNPYA2GhhFFz4kADZR5E4acWbdWpy9NNL8KDzuPGptRjFCV8RXt6xPUFIFZCQH9pxC7tUZ0vdkd1BhhQGijQmXsk0+wBj+96bVKoz8WzUSU5H6vNkg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=P9C+DKUG; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=YEgZ6MIR; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b="Yssn+2Mq"
-ARC-Seal: i=1; a=rsa-sha256; t=1769511863; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=Qg9X3pcoJnoqViWAtoWu+1abukl8Fw5lGIAyAv5BWD3vf2Qt+Y2HBJoSm6lHZzgY07f9QhbdgMnisC8fVRFzFp4CUU5HhGtDUJfPfY89ioVwpqdt8hXeZ0xpvyx1oZiwhLKIIUkrWK40ABNm/4+axHkf/jSJsjLFuS134r3jGpg=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1769511863; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=zIZv98xexLqGPRXaRA7uJoEdTPOCRvLcc++itdaM4UI=; 
-	b=D+E2caX5GVBGRR0A8rjCa2P57YJRm8gJTwfYBgJFz0Ffg43w0VLJZCQlCoRDdYKahcNa2xnx/CjuKY4KGhPHfFZDFyGeBox2Arze2ad1Ac9ED0AluOZlgXXxzaFxBpMAyRREUfl2ctsmkp2W3p69mhQkCho4FIvzkjS4wB0Z6tU=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=zohomail.com;
-	spf=pass  smtp.mailfrom=kingxukai@zohomail.com;
-	dmarc=pass header.from=<kingxukai@zohomail.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1769511863;
-	s=zm2022; d=zohomail.com; i=kingxukai@zohomail.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
-	bh=zIZv98xexLqGPRXaRA7uJoEdTPOCRvLcc++itdaM4UI=;
-	b=Yssn+2MqnT1qoMPXr6YSK96CPNXVriKXqEsW0mq/UEwfSKYG4Bu+HG8e/oaAAkno
-	jMBGI1Um3eAiMZeBuuNH1jma14j1gOEaS7iIUZ9ASMOb7tW3WyXclPRjU0cgrzHPAsw
-	HnfbuposIAuRXBDIRp+LCc2H8kJFktwrdXwklJWU=
-Received: by mx.zohomail.com with SMTPS id 1769511855331786.2569087782504;
-	Tue, 27 Jan 2026 03:04:15 -0800 (PST)
-Message-ID: <0af969a7-3579-4303-b302-f171ef02a163@zohomail.com>
-Date: Tue, 27 Jan 2026 19:03:59 +0800
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="P9C+DKUG";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="YEgZ6MIR"
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 60R86n6Z620693
+	for <linux-clk@vger.kernel.org>; Tue, 27 Jan 2026 11:31:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	hGZRYHdhTWMe6g6Ra+PVr8tG4M/ZgyWo32nxuKBhByY=; b=P9C+DKUGbD1/hbbr
+	V06HODOPKujtUIiUx3QZEiL2v/BSdYRRo48jOW221M499xib8v5zVrdvy0WJ2nG/
+	vxNal+012g6ZAIP+NfBgSFN3FrGdUc2WEKrgAvv7/OvhEPGt4g6uwUtRzRPjy7o6
+	mWF4KhDe54/CXHbBnIO+UvaSwBVEjOKnbJ22Iq8gN/cqdLw5Y1Px7ag3Q/6olTq9
+	CQXh89YwP/J5MtZO6sUjvEEp4m0j5sYT+7mb5qHCKWAYK0EZxwT4D2HV0c69DEHp
+	GaogkTWyNMIYNmX0OftgbZYYuUhDp5y8Sr7AaKYKEMze7PPKlc3fGhATfpCY8Rtp
+	1yv84w==
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4bxsjegn8k-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Tue, 27 Jan 2026 11:31:15 +0000 (GMT)
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-8c53892a195so117397785a.3
+        for <linux-clk@vger.kernel.org>; Tue, 27 Jan 2026 03:31:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1769513474; x=1770118274; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=hGZRYHdhTWMe6g6Ra+PVr8tG4M/ZgyWo32nxuKBhByY=;
+        b=YEgZ6MIRctDsb53bgpWIeFFO/6QjirXLdsT555WDtNLbJD1JcDvlPCUZHgTLamYrYT
+         CZhkIK6r6PKV2/+FAotlNZxxq2Zj7fXYuBuMOM88QJbwC+fv+LZlBEiqPYgBe5Zf7o86
+         SH6g/wwZY9wmjO7ddSmXPE1H2URptnp6Gfj/3SoX1tEk2ru4QqhkHK5gzKbA4i6ClsiD
+         jwq5YRZsO+ISu8FjbhG9pzUAaa6+UxT5Hi2eTGFXFsxE/8TZWboQ2PYzRWmGo+jfj7ke
+         H4ueQUTHwUL5SiyamxxV3w0Uoz53H8z2Xu6TE7iJAd1TzFV0bYATN+6WwJCctRfuXhA9
+         4KcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1769513474; x=1770118274;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hGZRYHdhTWMe6g6Ra+PVr8tG4M/ZgyWo32nxuKBhByY=;
+        b=OwAN0Q88gjA+YhRjZX1nuVzJQrF/+Pg2FRhwZOE6hVCDv3M2prvoSAeMrwXtpj1JeK
+         O1D37bAX1ORYsOLBwGniDJuxLH81x8uDtfTb/A/42+sagAqEAm5x22fkdnrcOkxZAKYP
+         vx2F4h2xrJrE1Y0lG2OADRdMMNB/Z5x5lKWdTL3iDrOyVItHyw2ziELgpM8lpwnC4YvG
+         6L1vTl7Unj6p/QAdorPg+AZeftMXk9qis5SaefudTo16Ms/NL2FrTEzEIbV6Lp7XXZ1d
+         OTX1zUeEoBXxM6V9YtU4RmvF93s4VV0/bVuHPpip8VSsV+bhR3dIqt6V1XjGDLfMvLo/
+         IIew==
+X-Forwarded-Encrypted: i=1; AJvYcCWyEt/dddXhdxXNhu1XAlePJRcQ9yhi/5rGlAdnyLlPECGBrFdo4KR/qLSj3LFvW1WredKk+Hql/bE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxfUeDGowjWNCnA/cfcrHaeZC9lJqP9o3AC7HxJScg+cIHBKnPT
+	PSlpyhJtjh8rffWNUjeKo8gTYPz/PbyoB/Bohg62g3dkLTDPpPlr2/aAYdHEXHbuM6o4nSWCJkX
+	KqoqTLzPG8gTuRNeZEc7WDRf58GVOc1tymT/JgKw/XzabBWWzJiwyTAmvvFDspcZocr0yO2E=
+X-Gm-Gg: AZuq6aIq47lvr5lqpLwseVACcbE8G3ke+jLiKT6VxNk8+XRLgx8ljK4bVTElr7XLLBg
+	kKIaJ7lk5XgDTJjykId3a/9ZOp70rzYbXrwFaM4jnmEPM3Wiqr8WsrJihUw5RIXbb3/pyULgMwF
+	4S23RAlDcuN05A+DBS9Zb7fNAA6A4WqNGEFqIY8AcFPQlEkYHCoCP1mt5Ne6jdMf+IcqcNtGfPV
+	iHeiUgI/qBkLnp1ZSjoHJxaS6bOj8w4PF8mKsGcpLkG2ona5Twj91DyL0LFWrKcGoyPxPKzDqPp
+	rU5UcQ9ZRT8ICHDTNrEYBC0rE6ESg0saUCQdjc4BQolU5V5x5wpdtSwwPt2QpGT1IAu+B/8gQQY
+	Lle4o26lpZ6JcHw/iCU5SOIxOPWf6mHRF6qs3HUMa91zdfAc/E+q6+zIOaisUlghH9AU=
+X-Received: by 2002:a05:620a:f12:b0:8c6:d3a7:3d1e with SMTP id af79cd13be357-8c70b7413acmr114751685a.0.1769513474365;
+        Tue, 27 Jan 2026 03:31:14 -0800 (PST)
+X-Received: by 2002:a05:620a:f12:b0:8c6:d3a7:3d1e with SMTP id af79cd13be357-8c70b7413acmr114749085a.0.1769513473873;
+        Tue, 27 Jan 2026 03:31:13 -0800 (PST)
+Received: from [192.168.119.254] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b8877581a03sm634706866b.43.2026.01.27.03.31.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 27 Jan 2026 03:31:13 -0800 (PST)
+Message-ID: <df4f1934-7366-4ded-bc8d-73189769d967@oss.qualcomm.com>
+Date: Tue, 27 Jan 2026 12:31:10 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -45,83 +88,78 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 2/3] clk: canaan: Add clock driver for Canaan K230
-To: Jiayu Du <jiayu.riscv@isrc.iscas.ac.cn>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+Subject: Re: [PATCH 2/2] clk: qcom: Add support for GPUCC and GXCLK for Glymur
+To: Taniya Das <taniya.das@oss.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
  <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Conor Dooley <conor@kernel.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
- Samuel Holland <samuel.holland@sifive.com>,
- Troy Mitchell <TroyMitchell988@gmail.com>
-References: <20260116-b4-k230-clk-v10-0-de59033c5d30@zohomail.com>
- <20260116-b4-k230-clk-v10-2-de59033c5d30@zohomail.com>
- <aW3o8xVziqb9iRBN@duge-virtual-machine>
- <bf39fdb8-6698-418b-bd4a-6d8d40ccc9a0@zohomail.com>
- <aXJJ3MjQSq8Rq084@duge-virtual-machine>
-From: Xukai Wang <kingxukai@zohomail.com>
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Cc: Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
+        Imran Shaik <imran.shaik@oss.qualcomm.com>,
+        Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20260127-glymur_gpucc-v1-0-547334c81ba2@oss.qualcomm.com>
+ <20260127-glymur_gpucc-v1-2-547334c81ba2@oss.qualcomm.com>
 Content-Language: en-US
-In-Reply-To: <aXJJ3MjQSq8Rq084@duge-virtual-machine>
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20260127-glymur_gpucc-v1-2-547334c81ba2@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Feedback-ID: rr08011227a510c0fba220186bba5f362e000053b54e7061a9cbdd371d5284c83a55924f9557a426366cbb14:zu080112272a5276332e1090ec5d5ceed40000b2c296e870bfa7ef506b33ce0394521dd45f1929333996b33b:rf0801122cc4400f0c83132b1947518dc60000c8bd395d79c79d723ff8939ceba3fa55336a182f4efa95f61dab38722347:ZohoMail
-X-ZohoMailClient: External
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTI3MDA5NCBTYWx0ZWRfXxdb6jtFK26LA
+ REccgehI9qCZzxvqV4BqclRUvBE/7yeDh7R+Lt3SAk65scPnHqfGYzugTE8VOpIShYwrJtSiMSF
+ kC0V36wEvAG1j8KXU/MQpMPTcloIrzFp2OJcjPPj4FUa6gW7sRm2ENUNCko6IVHeXelx8YpaVGx
+ RwLW5UkYpT0pRh5lZVbNybQ/KfdlRoFqWaqsuzxHP70xwXHl8SOpEgNdmGDIF9tV3p/weZ4Ztk9
+ 5bcpIlBPkn6Lol8hohQ3ctQ11EPt7djeLWP6VzCpSwiCXhZqtLs1PVcV3cgpRDU7JSwIrmPrdtA
+ 8Cku3SMyC0tzGeAyF6xU6l2KxA0UgJwej8lCMdnj7r5hFgkskuSZU1SaSCYQ4Kh94vwoKTYvak7
+ wDbf1cJog1RMrH28ssSNP7O3bIxCObDP/RPyuHR2OHIMiFmkLkKKNQeSTdVqXka8t/ai8sNE3Em
+ fd+RG5mwTsr88J8VwHA==
+X-Authority-Analysis: v=2.4 cv=Qelrf8bv c=1 sm=1 tr=0 ts=6978a203 cx=c_pps
+ a=HLyN3IcIa5EE8TELMZ618Q==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=vUbySO9Y5rIA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=91OgtvA7_0Jf-gwRHFQA:9
+ a=QEXdDO2ut3YA:10 a=bTQJ7kPSJx9SKPbeHEYW:22
+X-Proofpoint-ORIG-GUID: gyZjHfO1iKVo5L_EY8r_ygwuey_nILko
+X-Proofpoint-GUID: gyZjHfO1iKVo5L_EY8r_ygwuey_nILko
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.20,FMLib:17.12.100.49
+ definitions=2026-01-27_02,2026-01-26_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 malwarescore=0 adultscore=0 phishscore=0 priorityscore=1501
+ impostorscore=0 lowpriorityscore=0 clxscore=1015 bulkscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2601150000 definitions=main-2601270094
 
+On 1/27/26 8:15 AM, Taniya Das wrote:
+> Support the graphics clock controller for Glymur for Graphics SW
+> driver to use the clocks. GXCLKCTL (Graphics GX Clock Controller) is a
+> block dedicated to managing clocks for the GPU subsystem on GX power
+> domain. The GX clock controller driver manages only the GX GDSC and the
+> rest of the resources of the controller are managed by the firmware.
+> 
+> Update the compatible for Graphics GX Clock Controller for Glymur as the
+> GX clock controller is a reuse of the Kaanapali driver.
+> 
+> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
+> ---
 
-On 2026/1/23 00:01, Jiayu Du wrote:
-> On Thu, Jan 22, 2026 at 07:40:29PM +0800, Xukai Wang wrote:
->> On 2026/1/19 16:18, Jiayu Du wrote:
->>>> +
->>>> +K230_CLK_GATE_FORMAT(hs_hclk_src_gate,
->>>> +		     K230_HS_HCLK_SRC_GATE,
->>>> +		     0x18, 0, 0, 0,
->>>> +		     &hs_hclk_high_src_rate.clk.hw);
->>> Here, you replaced hs_hclk_high_gate(in v9) with hs_hclk_high_src_rate,
->> I'm a bit confused, as I don't recall making these specific changes.
->> Looking at the code below, the only difference between v9 and v10 is
->> within the K230_CLK_GATE_FORMAT(hs_hclk_src_gate, ...) definition, where
->> the second parameter changed from 1 to 0. Everything else appears
->> consistent. Could you clarify which change you were referring to?
->>> but after my board test, I find that when hs_hclk_high_gate is turned
->>> off, the mmc/sd and other high-speed subsystems can not work. So maybe
->>> you should not change the hs_hclk_high_gate to hs_hclk_high_src_rate.
->> Regarding the clock management, I recommend explicitly enabling
->> hs_hclk_high_gateas it will be closed by `close unused clocks`.
-> Sorry, you are right. It was me who made the changes locally. And I
-> saw your reply to this email[1], which you said According to the vendor's
-> code, the parent clock of hs_hclk_src is hs_hclk_high_src.
->
-> Indeed, the parent clock of hs_hclk_src is hs_hclk_high_src. 
+[...]
 
-> but hs_hclk_high_gate is the gate of hs_hclk_high_src. 
+> diff --git a/drivers/clk/qcom/gxclkctl-kaanapali.c b/drivers/clk/qcom/gxclkctl-kaanapali.c
+> index c209ce5fe4f003aabefd4421eb4f5662e257912a..3ee512f34967f1b165fdc5481bb28e1dadee133d 100644
+> --- a/drivers/clk/qcom/gxclkctl-kaanapali.c
+> +++ b/drivers/clk/qcom/gxclkctl-kaanapali.c
+> @@ -52,6 +52,7 @@ static const struct qcom_cc_desc gx_clkctl_kaanapali_desc = {
+>  };
+>  
+>  static const struct of_device_id gx_clkctl_kaanapali_match_table[] = {
+> +	{ .compatible = "qcom,glymur-gxclkctl" },
+>  	{ .compatible = "qcom,kaanapali-gxclkctl" },
 
-No. It seems there is some confusion. The hs_hclk_high_src does not have
-a gate.
+I'm not sure this is correct - there's an extra GDSC on one of them
 
-The clock tree is as follow:
-
-       pll0_div4
-          hs_hclk_high_src_rate
-             hs_hclk_high_gate
-             hs_hclk_src_gate
-                hs_hclk_src_rate
-                   hs_sd0_ahb_gate
-                   hs_sd1_ahb_gate
-                   hs_ssi1_ahb_gate
-                   hs_ssi2_ahb_gate
-                   hs_usb0_ahb_gate
-                   hs_usb1_ahb_gate
-
-> So, what you mean is
-> that you will add the CLK_IS_CRITICAL flag to the hs_hclk_high_gate?
-No, I don't intend to add CLK_IS_CRITICAL flag. Instead, I recommend you
-to explicitly enable the clock by using clk_prepare_enable in your driver.
->
-> Link: https://lore.kernel.org/all/159615d3-cc52-43be-bf6d-5fe717ef1cc4@zohomail.com/ [1]
->
-> Regards,
-> Jiayu Du
->
+Konrad
