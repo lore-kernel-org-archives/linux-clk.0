@@ -1,165 +1,150 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from mx-relay49-hz3.antispameurope.com (mx-relay49-hz3.antispameurope.com [94.100.134.238])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EADA346FB8
-	for <linux-clk@vger.kernel.org>; Tue, 27 Jan 2026 14:51:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769525509; cv=none; b=c5YP9355Dafm4PICPlpNIsOhEZu72mpz9bIT3EPaTaLmLXh+Fc0JBsbKohxRpqPIwBez5IpADWx/z7EB6snl9FNdfYKN0MZgGi4pybokS1QQLJ+jNRUhy3hl3Jc2BJQjFJoqbaNrodnyiYpptc7Uww+mm5uerg2B9IiSUw9z1JM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769525509; c=relaxed/simple;
-	bh=U+38FF6aEMgZeOpbDPv4WqDn8gpMxTsQuXNhCUp6Utc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=vDJAweeEyWqHOebe2UjmtGgitVZF3SPormtaG53Y6ergH23moaee2ZwaRxTEtUI4fvqejPPcJDwO0yioGqs9AdLUZ7JKH5VBtug7/MIaUstSoelZ2WF8qJ4UviMCUNyf1uiOO0YsoonM/Qdp3WwENEOKI8au3AHkkGy7jFTvAho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=CCuADkyw; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=MLkqnPKs; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EF3E35CB81
+	for <linux-clk@vger.kernel.org>; Tue, 27 Jan 2026 14:56:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=94.100.134.238
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1769525801; cv=pass; b=h9RQt9tEd8idHksd9MqLw5napCYkI74W86jMzUs12chpmA7PYwhN52lCzwjQDnAI4ouf4GFqDakReRqsVNafpr42n2E0A6jVrGDAeU96IQBcUYx1RqL+eNs3icSxS2+UFFELaNh4ZV+SkT2Ukt9ytEt7ZprEmKcg6faKcaKYZvI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1769525801; c=relaxed/simple;
+	bh=K5D44knLTrOhtj/OI+qMe0vr7jncUSszg0HQNob44sQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ie/bhNigS8UEvwMNWB7CEoQW37wh1zdbQHun0ZiseuV2zYjJR7z25hZNtOgLa1cI/C9S91599DoJ60VdCcuhnDz7v1VmojpzR0ed8q41vvvu6i0PUffCUv7J5piWyDn0qtgJGtOvO/voBhhBZQjSUHMuP2noER1oNWvdfls1Vxg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=UyUsH77Z; arc=pass smtp.client-ip=94.100.134.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="CCuADkyw";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="MLkqnPKs"
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 60R87IPB2379234
-	for <linux-clk@vger.kernel.org>; Tue, 27 Jan 2026 14:51:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=3f3IK4MOfniqkAkGkyLgogaC
-	73+XOhuDYsdZ5+Cky8Y=; b=CCuADkywl5ikDoVanG3M8TUuNGVNchLUXloIYwfX
-	8G7bksXhVJINjzlccOaFPD6CfVWs6cyCMI8g5jQKvuz121Uz8m9kO3+t4zaXegiU
-	/deium0poeRt8W0VejetG+rqXN1iXIdfx5GfqCVN1hlL26Fce7mKN9A7bPlCDqeD
-	1+J4cvzP67Up07z8gzxuWYRIyfK74FttEwr6A5LxbMT3ZzD9vwbVN6lDOG9PE4M8
-	pUA9k56BLLi9e6cO5uUpgFthUAWBbnACY0DZRanCyTDe+6z2O3yCe0ixaoQssYzE
-	z9vG52EFSqz0LEidz1fl9d398avCkvjYILjil70PzoEOew==
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4bxsjr9912-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Tue, 27 Jan 2026 14:51:46 +0000 (GMT)
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-5014c9ee70bso158192711cf.1
-        for <linux-clk@vger.kernel.org>; Tue, 27 Jan 2026 06:51:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1769525506; x=1770130306; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3f3IK4MOfniqkAkGkyLgogaC73+XOhuDYsdZ5+Cky8Y=;
-        b=MLkqnPKsVfrg8m8S2GJpLurYggGGPY6LYtGVRypuOymOgjvpjWzwSM9T7gZ1xGz8mT
-         k39afxtm/fW/xke9EFNBh7T++cve8EW9a0spHn9RU9h/bssV+Tx8zk9e5b5Ms/LTKs39
-         ss/S8kGAHDFdg3VFVHLfnwmR1Ju7S/52xrVGUluUn4zlMTDd1THw1UM1mQ5L8SWHwH7w
-         CKawdQYzb/egUY9aXG9GB+za3uJvYGQ3nP0F+fybHwliwBeFk2k6Rv7wl4JQ/dHaBKgb
-         bXL0lkFJGdKfPycsgdYdrFdXzBgqFrqTiIw5T6/R+wx8JKvFTW2NvJNbFrtpNSDHj8Ix
-         uWIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769525506; x=1770130306;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3f3IK4MOfniqkAkGkyLgogaC73+XOhuDYsdZ5+Cky8Y=;
-        b=RhAipF/Lrhom3G1VjEgY+p2WF6sYvIXrnGE3+WgRE8l5VwdEvzJit1nvLV0GApPBs1
-         l2xSC0FNTY7oDtVUqQjlUsdea3Sp4VvrTDh27BKJyWfq1VIJE0Rt4oIPLlRp0ni/PNx3
-         Wf9Al7Jci/3goL279R/pGVcrqQrjWU/BLlxYDZdo5EZI9m9Zs8YnOkDjINa9/ycHJDuk
-         ENvMMJoaPou9Tp3EySR0WN5QbyZ99GBbSnYzmfr+4JmRJbUVhEofG5NpDjNj9lCgt0sB
-         NlGeWd2dbOs/sxmvLFUsfrE0s9MEL6QfYlZzzgwOBw25zTheD0Jg310L06apJT08i5TB
-         bNGg==
-X-Forwarded-Encrypted: i=1; AJvYcCV1Bhe/sW8jJpzJ1VBUBbLxckFxb200eRQf7OQ6q0czV+VgDP1/p1rTwDzruGnoZFGPFmfY7N4pyJc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzbQBsS9NCQQHnnxK3VRU3tHZ70yyuWMItKbh8VddDJQGhAT116
-	xf6RC8M25e5IO616pL8hT1zWn+vwrRsbZDPHQuINtz230bxRzKh2b/Dxp2IuG9o9UUME2ybyi9i
-	R2aQZdfHIvckaLnzUfwY1IHU4Sa7P9R2/irHHiXSZ7M+RAJl9iVt/0eOF+DByhYA=
-X-Gm-Gg: AZuq6aLrDE99oAgL38b/fGTdbaeQlrvEaPzjq3QvyVEYzgCopO9CPJnptG1BuMOb3U5
-	HbqnijLnbuNrGQwZgN/NtMocutwDenCmGxmBwEwXYfDrzW5kMzD4kOAXsLFX3g3MO12yzb0GV+K
-	/ZqCKt1y+LzkcFuQqCkc0PFI0hDbNoxg09cF84sJVmTmK3GcyfrxGQicFMs5x6lXkEPbNBz2cwo
-	S5S+KuMD1h//uEt4Xnnvh7m5kq9dPBK0vp2VhWDNX33ipIDyBGfcPJLYo/35dYOaR4L3y5HN1r1
-	gUxVu4Umc72naLFqMS+fq8T7ZUyyVl3kfH3fYm/if3xeM6+NOBdqnerZNAR6+IB6eIvzHvHsdGe
-	ctj+noOttVdh8VRKOHUJrTIBg
-X-Received: by 2002:a05:620a:46a9:b0:8c5:390b:6eb4 with SMTP id af79cd13be357-8c70b8e5f84mr208881485a.42.1769525505636;
-        Tue, 27 Jan 2026 06:51:45 -0800 (PST)
-X-Received: by 2002:a05:620a:46a9:b0:8c5:390b:6eb4 with SMTP id af79cd13be357-8c70b8e5f84mr208876685a.42.1769525505004;
-        Tue, 27 Jan 2026 06:51:45 -0800 (PST)
-Received: from oss.qualcomm.com ([86.121.162.109])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4804d61f1f8sm133530425e9.5.2026.01.27.06.51.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Jan 2026 06:51:44 -0800 (PST)
-Date: Tue, 27 Jan 2026 16:51:42 +0200
-From: Abel Vesa <abel.vesa@oss.qualcomm.com>
-To: Peng Fan <peng.fan@nxp.com>
-Cc: Frank Li <frank.li@nxp.com>, Abel Vesa <abelvesa@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "imx@lists.linux.dev" <imx@lists.linux.dev>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Conor Dooley <conor.dooley@microchip.com>
-Subject: Re: [PATCH v2 1/3] dt-bindings: clock: imx6q[ul]-clock: add optional
- clock enet[1]_ref_pad
-Message-ID: <b3bv7uevrk7c2argbhyxohhbcn6xtxvrj5fa4jwjdp5ymtinza@k57crjsa4yn2>
-References: <20251106-ccm_dts-v2-0-12fa4c51fde7@nxp.com>
- <20251106-ccm_dts-v2-1-12fa4c51fde7@nxp.com>
- <aVwV8/rg2h2x4OwN@lizhi-Precision-Tower-5810>
- <uilxikzky53j7sg2barmsu6fkco2fiwgak3fh6eqc65iggmbge@7oogboikthae>
- <PAXPR04MB84593733B9B971529DB368F58893A@PAXPR04MB8459.eurprd04.prod.outlook.com>
+	dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="UyUsH77Z"
+ARC-Authentication-Results: i=1; mx-gate49-hz3.hornetsecurity.com 1; spf=pass
+ reason=mailfrom (ip=94.100.132.6, headerfrom=ew.tq-group.com)
+ smtp.mailfrom=ew.tq-group.com
+ smtp.helo=hmail-p-smtp01-out03-hz1.hornetsecurity.com; dmarc=pass
+ header.from=ew.tq-group.com orig.disposition=pass
+ARC-Message-Signature: a=rsa-sha256;
+ bh=KXLHhSC3baWFHNZu1Qcd0OlNW50IsuJlgqvgKTVshG0=; c=relaxed/relaxed;
+ d=hornetsecurity.com; h=from:to:date:subject:mime-version:; i=1; s=hse1;
+ t=1769525779;
+ b=i5Vs3t3u8FD45c7DiIRA4ktXg6fFgQJs3QQJlY5UH+92jzHFVqbBhHq9O0lsBzIM7ejj3rf0
+ 9Rxj1JUpTqrsK9gdprPyq0CSAE03OZO3QKe8z81rK7JzNhzaphgpiuFWt2nEUWLfzTa1eT0kZxW
+ cPTi1+3peGhhfZ4h8ecmLmSkcGh8Q4rdTwHgqev1DfJ1XzPM5JFmgWwXteEjtbviQRyx/YTQ0n7
+ zRCVCuPwlysh6KbvgXzVZOeBm4P0dSkGbVCQ8CcrfP8ZFRpD8Th09+enWeke3BlR3kC+6MligLr
+ Fv8xL7q3yz2h7F/E89CyoUzgEWkRIGOKTK7wZpOcT7XGw==
+ARC-Seal: a=rsa-sha256; cv=none; d=hornetsecurity.com; i=1; s=hse1;
+ t=1769525779;
+ b=pHaxbErRIoncCyM1i9FTbgBN0bSLqB2gl/NLQKGOp9NCRPXrEBy6z+ZVqJ2TaFfVU3GETEpQ
+ mjKOTBI3uYeBpobO3re9v0HmSLTxdwaZ6CzHDHfgGBimJnTu1Jlygt0lAS2XQv6xrjU3Fmcs3Y6
+ PTq0NwuViUCQx8MnMPq17RzZhAhwsDAdJvkSt/GXfHLC+6IX12tog2nbLAoTMYipYILx28MTONp
+ IuSWz1aYEVeKtaqI9GzCqMSCeQ4EK7B8NqgA7Pb1N6MOrVQpSxb3IzoLI8AWpT6bbnwKgUhFEAP
+ msX0ikGZHvhvuKDMe/SXq7Q98fQlJitXruL7bzwe3br1Q==
+Received: from he-nlb01-hz1.hornetsecurity.com ([94.100.132.6]) by mx-relay49-hz3.antispameurope.com;
+ Tue, 27 Jan 2026 15:56:18 +0100
+Received: from steina-w.localnet (host-82-135-125-110.customer.m-online.net [82.135.125.110])
+	(Authenticated sender: alexander.stein@ew.tq-group.com)
+	by hmail-p-smtp01-out03-hz1.hornetsecurity.com (Postfix) with ESMTPSA id 9FBF6CC0A1D;
+	Tue, 27 Jan 2026 15:56:05 +0100 (CET)
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Chen-Yu Tsai <wenst@chromium.org>, Chia-I Wu <olvaffe@gmail.com>,
+ Dong Aisheng <aisheng.dong@nxp.com>, Laura Nao <laura.nao@collabora.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
+ =?ISO-8859-1?Q?N=EDcolas_F=2E__R=2E__A=2E?= Prado <nfraprado@collabora.com>,
+ Yassine Oudjana <y.oudjana@protonmail.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: kernel@collabora.com, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org,
+ Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Subject:
+ Re: [PATCH RESEND v3 1/5] clk: Respect CLK_OPS_PARENT_ENABLE during recalc
+Date: Tue, 27 Jan 2026 15:55:29 +0100
+Message-ID: <6239343.lOV4Wx5bFT@steina-w>
+Organization: TQ-Systems GmbH
+In-Reply-To: <176913273374.4027.10690199843699119944@lazor>
+References:
+ <20251215-mtk-pll-rpm-v3-0-5afb3191e869@collabora.com>
+ <20251215-mtk-pll-rpm-v3-1-5afb3191e869@collabora.com>
+ <176913273374.4027.10690199843699119944@lazor>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <PAXPR04MB84593733B9B971529DB368F58893A@PAXPR04MB8459.eurprd04.prod.outlook.com>
-X-Proofpoint-GUID: o9irBD_Jzteq2It8doL3J7NMBTBgnWfR
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTI3MDEyMSBTYWx0ZWRfXw4ToU/O6oWnm
- QspmVL9fJU4gIl/DEyu/PsK/OJ1cEF5If0/UlsTDqBd0X5m5XOd5x41jCxTW6VdZXpnvSv5r/fJ
- WR/LfU/9AUahA6KR5imCirnEa3eIgN+1njzAer6RJJPMuf4pnJxymfrv5bYnf+f2YwkhOkeQ9sL
- 5s5xGgCQcTntWskDuMHdR8go8cqi2BegKgoNxwJbxDhdUVsPTmy5qpI7OMuOMflXODf+ltV01yO
- itUqS+k3Qr5kMhhbgIg9Lq0M1ScbH7sdnvBUGbelvrwg9ovao7SKEQtcfe1vievJjI3cGfOOjbK
- sRSBvI7HVhenm3kJbFGT8UnOUxmCb9/SMcNHcLPL6snkR6mlWgwe626jtSFusNCq7xuWu161y/x
- qKjVoVGDOg/oCqr46wSFfLZEitkFpaixzjM1utuVSkCD7y3Hc+Ugf1U+CKvh5sAnWaUNG3Rh+vb
- R8zyrNdZeM4qMEEbeWQ==
-X-Authority-Analysis: v=2.4 cv=b+i/I9Gx c=1 sm=1 tr=0 ts=6978d102 cx=c_pps
- a=JbAStetqSzwMeJznSMzCyw==:117 a=oauzzCmhM186DRC0Y2yWPg==:17
- a=kj9zAlcOel0A:10 a=vUbySO9Y5rIA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=8AirrxEcAAAA:8 a=XYAwZIGsAAAA:8
- a=uB1rFwlgQs9gonznhjAA:9 a=CjuIK1q_8ugA:10 a=uxP6HrT_eTzRwkO_Te1X:22
- a=ST-jHhOKWsTCqRlWije3:22 a=E8ToXWR_bxluHZ7gmE-Z:22
-X-Proofpoint-ORIG-GUID: o9irBD_Jzteq2It8doL3J7NMBTBgnWfR
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-01-27_03,2026-01-27_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 adultscore=0 lowpriorityscore=0 clxscore=1015 phishscore=0
- impostorscore=0 bulkscore=0 spamscore=0 priorityscore=1501 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2601150000 definitions=main-2601270121
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
+X-cloud-security-sender:alexander.stein@ew.tq-group.com
+X-cloud-security-recipient:linux-clk@vger.kernel.org
+X-cloud-security-crypt: load encryption module
+X-cloud-security-Mailarchiv: E-Mail archived for: alexander.stein@ew.tq-group.com
+X-cloud-security-Mailarchivtype:outbound
+X-cloud-security-Virusscan:CLEAN
+X-cloud-security-disclaimer: This E-Mail was scanned by E-Mailservice on mx-relay49-hz3.antispameurope.com with 4f0pPf56qSz3yXl8
+X-cloud-security-connect: he-nlb01-hz1.hornetsecurity.com[94.100.132.6], TLS=1, IP=94.100.132.6
+X-cloud-security-Digest:488e984b4919a202955d5ac62586d299
+X-cloud-security:scantime:1.885
+DKIM-Signature: a=rsa-sha256;
+ bh=KXLHhSC3baWFHNZu1Qcd0OlNW50IsuJlgqvgKTVshG0=; c=relaxed/relaxed;
+ d=ew.tq-group.com;
+ h=content-type:mime-version:subject:from:to:message-id:date; s=hse1;
+ t=1769525778; v=1;
+ b=UyUsH77ZOqLIgnG9R1gR+V41xsvOksmsQWnyBPqUWfI1GOLXOPeEBnKDaXqYp5mTbxZN8waz
+ v8Bc0SSAB3Gs1TI144JYfDd2NHkKShxOtgQHukhMjEjo8mIztNqoDvlmu05JoCTAr4PsueNxd30
+ +w3UztCTM/MZWuqZffkA2NGUyduXUw9reLJb7PytIeMnF2RSnd6FmTHB3k26hVF7/F60Qsz6KKb
+ YrGwnTu0IYADUMhMIjTpTwAAsZefNfkumqUgKQSUvR5v1Q97zKestkq2YB0J0ogqGoPKbs8JJ1l
+ FDNRHAbwJB/jxiMAooifoFYl53Gvz7hjkbbDziI3UWWdQ==
 
-On 26-01-26 23:31:12, Peng Fan wrote:
-> Hi Abel,
-> 
-> > Subject: Re: [PATCH v2 1/3] dt-bindings: clock: imx6q[ul]-clock: add
-> > optional clock enet[1]_ref_pad
-> > 
-> > On 26-01-05 14:50:11, Frank Li wrote:
-> > > On Thu, Nov 06, 2025 at 02:57:21PM -0500, Frank Li wrote:
-> > > > Add optional clock source enet_ref_pad for imx6q, enet1_ref_pad
-> > for
-> > > > imx6ul, which input from ENET ref pad.
-> > > >
-> > > > Acked-by: Conor Dooley <conor.dooley@microchip.com>
-> > > > Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> > > > ---
-> > >
-> > > Who will pick this patch? Abel or rob?
-> > >
-> > > Frank
-> > 
-> > Missed this one. Sorry.
-> 
-> Just see that there is V3
-> https://lore.kernel.org/imx/20260121-ccm_dts-v3-1-820ce9b5fa38@nxp.com/
+Hello,
 
-b4 will pick the last version automatically.
+Am Freitag, 23. Januar 2026, 02:45:33 CET schrieb Stephen Boyd:
+> Quoting Nicolas Frattaroli (2025-12-15 03:23:58)
+> > When CLK_OPS_PARENT_ENABLE was introduced, it guarded various clock
+> > operations, such as setting the rate or switching parents. However,
+> > another operation that can and often does touch actual hardware state is
+> > recalc_rate, which may also be affected by such a dependency.
+> >=20
+> > Add parent enables/disables where the recalc_rate op is called directly.
+> >=20
+> > Fixes: fc8726a2c021 ("clk: core: support clocks which requires parents =
+enable (part 2)")
+> > Fixes: a4b3518d146f ("clk: core: support clocks which requires parents =
+enable (part 1)")
+> > Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@coll=
+abora.com>
+> > Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
+> > Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+> > ---
+>=20
+> Applied to clk-next
 
-Thanks.
+Unfortunately this breaks my board TQMa8MPxL+MBa8MPxL on next-20260126.
+Last lines on bootlog (earlycon is necessary)
+> [    1.175639] Initialise system trusted keyrings
+> [    1.178907] workingset: timestamp_bits=3D42 max_order=3D19 bucket_orde=
+r=3D0
+> [    1.185822] NFS: Registering the id_resolver key type
+> [    1.190295] Key type id_resolver registered
+> [    1.194473] Key type id_legacy registered
+> [    1.198515] nfs4filelayout_init: NFSv4 File Layout Driver Registering.=
+=2E.
+> [    1.205235] nfs4flexfilelayout_init: NFSv4 Flexfile Layout Driver
+> Registering... [    1.213235] cryptd: max_cpu_qlen set to 1000
+> [    1.274689] Key type asymmetric registered
+> [    1.275939] Asymmetric key parser 'x509' registered
+> [    1.280896] Block layer SCSI generic (bsg) driver version 0.4 loaded
+> (major 242) [    1.288278] io scheduler mq-deadline registered
+> [    1.292840] io scheduler kyber registered
+> [    1.299245] ledtrig-cpu: registered to indicate activity on CPUs
+
+Reverting commit 669917676e93fca5ea3c66fc9539830312bec58e fixes the problem.
+
+Best regards,
+Alexander
+=2D-=20
+TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
+Amtsgericht M=FCnchen, HRB 105018
+Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
+http://www.tq-group.com/
+
+
