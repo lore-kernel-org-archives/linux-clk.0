@@ -1,131 +1,156 @@
-Received: from mx.nabladev.com (mx.nabladev.com [178.251.229.89])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A76329D289;
-	Tue, 27 Jan 2026 08:52:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.251.229.89
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2F1126CE39
+	for <linux-clk@vger.kernel.org>; Tue, 27 Jan 2026 09:20:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769503942; cv=none; b=bax0+il/1x55nBjyAo434Y/RRseD7h+frLm/1TTTqFbet0t74HrSx2buOFfju2OUbWKOj5iDqK2XioCYnYMWPjpvlugbK3HvlMZXO8tymsLnLFkQ6IG67igEMBm8+jSjZfPK3oo645LH9NvsoMFUm2brydqdXuBknr+zUabwVbk=
+	t=1769505622; cv=none; b=m6LjN6Jrmf23wCjw6sAdhrHJz9fC22h0Wlxt4AaSCl2rBjVxnuFTvkjSztt+FPfrfAoX1QpJAAvlbojDQkIJdJwvJIPjVO9gcvl5LC4/YcYyDdXGDJ9/CYKZbI8LZSEY94q+NDyTB6BV+w8dAbtwzXlERqOgg+oMBLyobLK0+JI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769503942; c=relaxed/simple;
-	bh=2ea+F2HgYspw3KxUmdCxvMhQZTw7GnkmsekWDoaP1NA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=NNZFftuxLyFhYvzoDxeOqHZtpv83a81roOm3HatkK+PHHr4L3/j9pkRf/h6K6ogaRjX1ZYctX0tc8F9/7/LwBoSuCIwepy1uoDsCOY7nzW/J6KCs3t43JMlccW/e0xqY4VjAJxStzETBtCQUal4RWoqzSeA6h2KoEb69ymaYTHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nabladev.com; spf=pass smtp.mailfrom=nabladev.com; dkim=pass (2048-bit key) header.d=nabladev.com header.i=@nabladev.com header.b=HGyqJwHO; arc=none smtp.client-ip=178.251.229.89
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nabladev.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nabladev.com
+	s=arc-20240116; t=1769505622; c=relaxed/simple;
+	bh=NRaJIBsOgwkV+eg1RM+W3L4+CnbMHXTkmYHk3spsKPM=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=r1+R6+jYJXmk6XjCPuxYH2B6tDQLVfbl/OXPqdFpGJ9wEMekW38FPbx2H+t/eh4l93y9o8k4j1uk5GnkiVlcSES0OVb3+5X/Q46feDSO7k0lP65jaq4i2e13OC8G6sl27rWurtPrbnr1VuSCD1wF1XfA9AxtbZ9vsZklWNqIv08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UXEzkjDm; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nabladev.com header.i=@nabladev.com header.b="HGyqJwHO"
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id CD25210E85E;
-	Tue, 27 Jan 2026 09:52:10 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nabladev.com;
-	s=dkim; t=1769503933; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding; bh=f89ewW6tpVskll2Ea+OWCGnSGwJ/WSvnGk6eazoxSU8=;
-	b=HGyqJwHOfVd3/DyRJPn30XO56GQ1LSuNETmXNtjrkWzcJLgzFa2Z03tMWqY8H3sKjLT+3D
-	bIOiGFqxgHeyRd0GUQfrixLP3kATurTJyobQH6JIJ7M51QYnPpjlulRZBu1QskMfyP/cgy
-	UeyGAEmLoPemsloA/1vaasZlqfiLFVkrK2Fi7if5e8Gy/iu8Rnz87zHO78n0Az9xr4kVU4
-	xyH4BOVhYW4FBrCzcj3boH316GCEFwmNKkXjP+NzpiwojGMbhPJWG0gKGTcmBllNC5hQF/
-	SXkdu+23wvG+42xbi46ChZOqGC+c9OOfVPL/lsVF39Qj5DHy8e8qpxHk04RC7Q==
-From: Lukasz Majewski <lukma@nabladev.com>
-To: Abel Vesa <abelvesa@kernel.org>,
-	Peng Fan <peng.fan@nxp.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	Lukasz Majewski <lukma@nabladev.com>
-Subject: [PATCH v3] clk: vf610: Add support for the Ethernet switch clocks
-Date: Tue, 27 Jan 2026 09:51:50 +0100
-Message-Id: <20260127085150.3040586-1-lukma@nabladev.com>
-X-Mailer: git-send-email 2.39.5
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UXEzkjDm"
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b8863db032dso635708966b.0
+        for <linux-clk@vger.kernel.org>; Tue, 27 Jan 2026 01:20:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1769505619; x=1770110419; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NRaJIBsOgwkV+eg1RM+W3L4+CnbMHXTkmYHk3spsKPM=;
+        b=UXEzkjDm6qwK1BqyIrUwDRCx/k+zmjBTxPxSbmozC/Tklkhc1tiNOBK3lC+UOXQEkR
+         TqocH+sDDld736nY/D1Osoz4iNDo6/nayIILqksJKNPefHaVqWKuWgoMI/1CCOONWyNJ
+         rFj+6LpEoEx2VpnPzwz1aN4fdYdcp7lhyO4i1dtE86qw8VLbZtPSmRPX9Io6RbGw91IK
+         dboawPT3z2Tev8GLTA0g3e1vW+5ZmoG1Uo3gs4VHny+6M3yrjEuTpRWrLZ6rNtuzFRBs
+         5J5jufiQ5lLQLOGLhdVX7Z7ykMv4OYWvIJtepSqWGHkng05C1crl3vceAKOWvJDnACRl
+         VfLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1769505619; x=1770110419;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-gg:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=NRaJIBsOgwkV+eg1RM+W3L4+CnbMHXTkmYHk3spsKPM=;
+        b=Aj8wMI8UDG/eZwyp7/yYRKS7bPhkjbxKsnewYOeC82SxH04Z2gPv99zK8vIEoNUmfi
+         GcHtU69Q29LGZoTnqfC6KshbzGuY6/RCwTcJpkp8LpWN+HoA55ZxGWRuRV4O8coIVnyK
+         GPD0XYpu7GEsZyCCqEluSynDf9g4P3xyrtLMQ9YUbv1UDabsHqvpzOPE9wVu4q767PFF
+         tmNWPJrElLYkPZGPMdAWagVg7GSPHcoAidsjlW+hESV2sdzsU14TiRj1gyZQn4ZrENaR
+         S3kmDIjOH7z0zmI5ooPCDdS1S6c3STuQThLR52dTtISbwhNGiJVWSpKHq1WY35owHaYJ
+         UZqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUvQ2zCPjIgUsNVDpfVOVFxrplKLClTjyDIYxrercP290uQHK370RN2rJ4ebta0mGsbmshDSleYGGc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxa9JM51AkT6B/Ha/IkutqLjvm45TgEqYAccnBchpQLptGk/zZA
+	FWCjtMZGDjkfay1ov99ZhMiLyWUPf+YEw5ZlMeNQIRJa6+EMNQgSmaPW
+X-Gm-Gg: AZuq6aLox2v2izMpg/eixG7zg6Djq7iBV2IXKDABoKBdjlBkLqhupXJRShLtGmxAXDt
+	HpPE7qm3mfLh+gZDoWESzDYsqYxSunSVbyjp53DqEQQUppPLz4Yb53Sqq/jTP+A+CP3m6rIrw49
+	RE+/4wsfYXgygo0ghmHiUJL//npgwoTK43+VRpdH0gmuiNSt53rCOdPjuDZnv/zdOCwIOIgA+9p
+	1+j4odCTh1NH9eUO5B05ggmEyTfsgo8isXGL59C5G7tjiEzO1YeOnsysUFOZ5yOQDukjlz3hC7k
+	Q8mDCELD57A6aLfnq3LZeneBeOvqI4gYuFQaPtGCxY56AqtvAKbIV0KSGEGAg89YWBpv3A5Sf94
+	clMTxCrFlzTpIWn0L1wri8dGwMd46RQhFbHlOgl7B2Yjcq15oNm5FQ6BZS+6FCz0CYeZKF6IGp5
+	zE9/dcw7QZPvwmKOEshZ3I1nXX1VyROTTiRJPzX0ks87LChJerR5ZfXJgaZWNioh2N
+X-Received: by 2002:a17:907:7287:b0:b88:5b35:914b with SMTP id a640c23a62f3a-b8dab3d056bmr95912366b.59.1769505619057;
+        Tue, 27 Jan 2026 01:20:19 -0800 (PST)
+Received: from smtpclient.apple (89-66-237-154.dynamic.play.pl. [89.66.237.154])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b885b700d43sm776257066b.41.2026.01.27.01.20.17
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 27 Jan 2026 01:20:18 -0800 (PST)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81.1.4\))
+Subject: Re: [PATCH v6 0/5] Add support for S4 audio
+From: Piotr Oniszczuk <piotr.oniszczuk@gmail.com>
+In-Reply-To: <20260126-audio_drvier-v6-0-99e350855bc2@amlogic.com>
+Date: Tue, 27 Jan 2026 10:20:03 +0100
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+ Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>,
+ Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Kevin Hilman <khilman@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>,
+ linux-sound@vger.kernel.org,
+ devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org,
+ linux-amlogic@lists.infradead.org,
+ linux-clk@vger.kernel.org,
+ jian.xu@amlogic.com,
+ shuai.li@amlogic.com,
+ zhe.wang@amlogic.com
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <35CAE0E9-4C3F-4B41-BA1A-19761671F392@gmail.com>
+References: <20260126-audio_drvier-v6-0-99e350855bc2@amlogic.com>
+To: jiebing.chen@amlogic.com
+X-Mailer: Apple Mail (2.3826.700.81.1.4)
 
-The vf610 device has built in the MoreThanIP L2 switch. For proper
-operation it is required to enable ESW and MAC table lookup clocks.
 
-The MAC table spans from 0x400E_C000 for 0x4000 and it is necessary
-to provide clocks for each AIPS1-"slot", which size is 0x1000
-(hence four separate entries).
 
-Those can be enabled via clock gating CCM_CCGR10 register (0x4006_B068).
+> Wiadomo=C5=9B=C4=87 napisana przez Jiebing Chen via B4 Relay =
+<devnull+jiebing.chen.amlogic.com@kernel.org> w dniu 26 sty 2026, o =
+godz. 07:01:
+>=20
+> This series completes the end-to-end audio support
+> for S4 SoC from hardware bindings to driver implementation
+> and system integration.
+>=20
+> 1 Device Tree Bindings Updates=20
+> Added audio power domain and S4 audio clock support for S4 SoC.
+> Added S4 audio tocodec binding support.
+>=20
+> 2 Driver Implementation
+> Implemented S4 tocodec driver for G12A architecture.
+> Added S4 audio clock support in AXG audio clock=20
+>=20
+> 3 Device Tree Integration
+> Add Amlogic S4 audio subsystem support in arm64 DTS.
+>=20
+> Signed-off-by: jiebing chen <jiebing.chen@amlogic.com>
+> ---
+> Changes in v6:
+> - Fix the problem of string for =
+Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml
+> - Remove clock pad register, and it will be submitted as an =
+independent patch.
+> - Redescribe sound/soc/meson/g12a-toacodec.c
+> - Link to v5: =
+https://lore.kernel.org/r/20250710-audio_drvier-v5-0-d4155f1e7464@amlogic.=
+com
+>=20
 
-This patch also adds VF610_CLK_ESW and VF610_CLK_ESW_MAC_TAB{0123}
-macros definitions for L2 switch.
+Jiebing,
 
-The VF610_CLK_END has been removed from dt-bindings, as its number had to
-be increased when MTIP L2 switch clocks were added, and defined locally
-in clk-vf610.c driver.
+FYI
 
-Signed-off-by: Lukasz Majewski <lukma@nabladev.com>
----
-Changes for v2:
-- Squash clock DT bindings to this single patch
-- Replace VF610_CLK_END with VF610_CLK_ESW_MAC_TAB3 + 1
+I applied this series over 6.18.7 and tested on s905w2 device.
 
-Changes for v3:
-- Re-define VF610_CLK_END and move it to clk-vf610.c file
----
- drivers/clk/imx/clk-vf610.c             | 7 +++++++
- include/dt-bindings/clock/vf610-clock.h | 6 +++++-
- 2 files changed, 12 insertions(+), 1 deletion(-)
+With audio routing like this:
 
-diff --git a/drivers/clk/imx/clk-vf610.c b/drivers/clk/imx/clk-vf610.c
-index 41eb38552a9c..84a6f907e213 100644
---- a/drivers/clk/imx/clk-vf610.c
-+++ b/drivers/clk/imx/clk-vf610.c
-@@ -11,6 +11,8 @@
- 
- #include "clk.h"
- 
-+#define VF610_CLK_END 196
-+
- #define CCM_CCR			(ccm_base + 0x00)
- #define CCM_CSR			(ccm_base + 0x04)
- #define CCM_CCSR		(ccm_base + 0x08)
-@@ -313,6 +315,11 @@ static void __init vf610_clocks_init(struct device_node *ccm_node)
- 	clk[VF610_CLK_ENET_TS] = imx_clk_gate("enet_ts", "enet_ts_sel", CCM_CSCDR1, 23);
- 	clk[VF610_CLK_ENET0] = imx_clk_gate2("enet0", "ipg_bus", CCM_CCGR9, CCM_CCGRx_CGn(0));
- 	clk[VF610_CLK_ENET1] = imx_clk_gate2("enet1", "ipg_bus", CCM_CCGR9, CCM_CCGRx_CGn(1));
-+	clk[VF610_CLK_ESW] = imx_clk_gate2("esw", "ipg_bus", CCM_CCGR10, CCM_CCGRx_CGn(8));
-+	clk[VF610_CLK_ESW_MAC_TAB0] = imx_clk_gate2("esw_tab0", "ipg_bus", CCM_CCGR10, CCM_CCGRx_CGn(12));
-+	clk[VF610_CLK_ESW_MAC_TAB1] = imx_clk_gate2("esw_tab1", "ipg_bus", CCM_CCGR10, CCM_CCGRx_CGn(13));
-+	clk[VF610_CLK_ESW_MAC_TAB2] = imx_clk_gate2("esw_tab2", "ipg_bus", CCM_CCGR10, CCM_CCGRx_CGn(14));
-+	clk[VF610_CLK_ESW_MAC_TAB3] = imx_clk_gate2("esw_tab3", "ipg_bus", CCM_CCGR10, CCM_CCGRx_CGn(15));
- 
- 	clk[VF610_CLK_PIT] = imx_clk_gate2("pit", "ipg_bus", CCM_CCGR1, CCM_CCGRx_CGn(7));
- 
-diff --git a/include/dt-bindings/clock/vf610-clock.h b/include/dt-bindings/clock/vf610-clock.h
-index 373644e46747..5d94bd561a2e 100644
---- a/include/dt-bindings/clock/vf610-clock.h
-+++ b/include/dt-bindings/clock/vf610-clock.h
-@@ -197,6 +197,10 @@
- #define VF610_CLK_TCON1			188
- #define VF610_CLK_CAAM			189
- #define VF610_CLK_CRC			190
--#define VF610_CLK_END			191
-+#define VF610_CLK_ESW			191
-+#define VF610_CLK_ESW_MAC_TAB0		192
-+#define VF610_CLK_ESW_MAC_TAB1		193
-+#define VF610_CLK_ESW_MAC_TAB2		194
-+#define VF610_CLK_ESW_MAC_TAB3		195
- 
- #endif /* __DT_BINDINGS_CLOCK_VF610_H */
--- 
-2.39.5
+amixer cset numid=3D40,iface=3DMIXER,name=3D'FRDDR_A SINK 1 SEL' 0
+amixer cset numid=3D73,iface=3DMIXER,name=3D'TDMOUT_A SRC SEL' 0
+amixer cset numid=3D37,iface=3DMIXER,name=3D'FRDDR_A SRC 1 EN Switch' 1
+amixer cset numid=3D61,iface=3DMIXER,name=3D'TOACODEC SRC' 0
+amixer cset numid=3D1,iface=3DMIXER,name=3D'TOACODEC Lane Select' 0
+amixer cset numid=3D62,iface=3DMIXER,name=3D'TOACODEC OUT EN Switch' 1
+amixer cset numid=3D17,iface=3DMIXER,name=3D'ACODEC Playback Volume' 251 =
+251
+
+i'm getting working audio on analog headset.
+
+Great work!
+
 
