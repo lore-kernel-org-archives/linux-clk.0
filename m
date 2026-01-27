@@ -1,85 +1,127 @@
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7644831062C;
-	Tue, 27 Jan 2026 14:08:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769522913; cv=none; b=OYg5J3t+WT9NQJGpajVKTYh8bH55frjBkXTb02XftLINPHv46kLKktnr/LRii9dcwIW/UYrf1ja8J5Y6gsZ7L/C61/TCO9lYlY8y0NJc/ePkeEe1v7SNDbr2v2ImROosLRiFterk5mzwSgkbg0qBAPLm2mM5ElZoRTmIjd5axaI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769522913; c=relaxed/simple;
-	bh=nqpzeb2202jrK9ZEgJJDYC78q8Ydl4acN6oBCg7d+7A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cYqydyP0OhA+cuzockvjyZ4KWT0HDLkla8fyl/uxfvM3Vw38GlVDxcvhqqZthVrFCrzH4JVIqE3m44b2LAs0oFNDiqzQQPwVJ157ziQkbm9Ia0CFWsLWJTFHMasOggdzS5qXUIVFn0Qi3uNML0BRGu3hHJgm5oBUqw3qu7XvYdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=vujvGTdy; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D3AD346ACF
+	for <linux-clk@vger.kernel.org>; Tue, 27 Jan 2026 14:14:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.176
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1769523283; cv=pass; b=C8jPD9yC7mriqQfSba0beHiUDBhKKe9dZ6H5coDZa6fjaiX8XvfNQUsTsNMpeiPfk7b+NCxbr4E7IO4bh3Sg/979NJYrb76W0NRcvpMv0jOsHU175UZdFf9m8kMp2qD6ZCDaLctV/RDjSKQHD8Ka8UDen/GYL5hq3NZkD0kZWBE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1769523283; c=relaxed/simple;
+	bh=KUBW9RZ6XUkvKx3qs7FVOF9Kte5loY/oG1ToIEJFoEY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EUIr8RO7TPCFYAlRsBzcOAWqC2pVUgQAOsCIOss5kfcbV7+ly5FO7EQD15BQZ6tAEWLZZO7Fx35YoxQ+pPQmMeBhFOpwFybhIqt08DQ+/MOvJTfD+YdRmeaOMIbJirFif6eGgyXrLQtXkk8vCe6AfbfDH9m3w1LAJ1JSVCPicck=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xkkz4ZmB; arc=pass smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="vujvGTdy"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=iLpcUMzrfi1cf21OsQRIeFglEgABcn83FXe046wtc6w=; b=vujvGTdyKGu+sOwB9NiLH6Yx+9
-	pZMjRz6QtgTMxR4KwCmFI6SiPV+n5BAM09uStkt/juZ9MEtngpAnJPV/BR0HPiQSoYbgQVlMR5iiD
-	qLq0IDkER5aKog+Fg9/QoQ0ieMfsHB8+S7/2pKsz5Y7Q+wkp7U7Md/YFkYKvVZGs/PGA=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1vkjjw-004xlG-0i; Tue, 27 Jan 2026 15:08:20 +0100
-Date: Tue, 27 Jan 2026 15:08:20 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Lukasz Majewski <lukma@nabladev.com>
-Cc: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3] clk: vf610: Add support for the Ethernet switch clocks
-Message-ID: <2ce32d04-ac62-4e66-bf76-9d99b94c1a4b@lunn.ch>
-References: <20260127085150.3040586-1-lukma@nabladev.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xkkz4ZmB"
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-382fd45a1feso59193051fa.0
+        for <linux-clk@vger.kernel.org>; Tue, 27 Jan 2026 06:14:41 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1769523279; cv=none;
+        d=google.com; s=arc-20240605;
+        b=jU2h8qNEBRZz8IJRw9nFYx6lhK1Pc8buCx8Zi0XYk8jP1TctbzomS7DTT2N+Qcwqfe
+         lRJv0K3xhTRv43IQHcyyblxHaJjOxY6/pnI9N2rQf08jA0Rt3fu4Wlngu48nXvWtqSJj
+         JERF7PRnFTqG1dsYIkffLTi3VJlVswAmU46+qcbhQc1qHi+QHvQi9XA7D0JrACNcXA5H
+         woRAr606Ir26KD7cEJAFoMxRyIJCQLovGmNaiYRvVNd8kHWoUV4CsyMUHSK9iQrU5ifJ
+         Y2NLlqaGENGoKSEaUH06lnxxkqJf0erJQ46F3YnE7MdmgBNZeYR0IwL85tirJcYQbiil
+         m9sg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=94DdoxzibB+TbibiDMK+NQAtSkvBwbDxE5T+cBWz8o0=;
+        fh=XQ3le4zzWX4YUal+G+AXtzkZGLirL+W2Z986B1uh5sU=;
+        b=DyE5h7SGOxs+1CepiMuMiRsfrZGOFS+TTHBEHZkHpqyr+j9VGf74vNf4ERZIPe8Ck/
+         Fjb63Tev0O9B4L0xX123SqheD9Yr0/EHICDB23pRu3/RWMwFIFAoe+UBCJtaJvmpej6A
+         aH6+Ok4jgzosqwW56CDRz2iCRJhxjMhI6zFO+J+wLzhjaZNynM/LcOfRGCSNIR9ErEKL
+         dpJA2RJg5aQD2PyVfrYRD1ABxh0T8FgERIVEkvWi0QA/xYEJbzdL5xWr/PJTzW65TIMh
+         wuU06u8aNU9mli41JQoRd+DWVM19Z25+ahruIvkHraRsIgJTyIN+OzgjDRtL8HQtJ7mQ
+         MutQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1769523279; x=1770128079; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=94DdoxzibB+TbibiDMK+NQAtSkvBwbDxE5T+cBWz8o0=;
+        b=Xkkz4ZmBFsO0cI7kgEekbXLzy50aCkkhU+71B1ELWrWBe4CCN0B1sRSktXrWTuxgji
+         HbwvTeHUQTrfV5tSBD8se3cceUJlOhENYL5Uzb3qQr9Si/2dozRLeXNsOxv2aWACVkXX
+         A7vPgyjYTI2Bq7mWovZLCdAmk9da5sx1F7AehKvY293a4NEwFP8plZ35GBJZSrnWEY2d
+         LvqkXY1CXVye5aMVEUE/VC20nw3ELzcO8mRZGg41HB+zhojIC3eHzLfTUbOtfXP3oFEl
+         HXu4stz3myyuPQ+4CqtiEC5zrLQbee35MbbVJthsP86DFRxA0Yaq/XyNgh9NgLLkYr2o
+         UYaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1769523279; x=1770128079;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=94DdoxzibB+TbibiDMK+NQAtSkvBwbDxE5T+cBWz8o0=;
+        b=DweWl4lzH8B1m/KtB9tva0+V+njVFf5yzQcJSO/xAP3iMlTYQgcgkaaWwUWp6RwT+D
+         OMw5nnuibV2YniFCSKyPR88yHVjD86H/BliKmX9XvWwwJeUD/Gmj4R7Xq0y/RVgIv1SI
+         LdFfrKJ28KDk528bpu689S0M25tzgQ1xmklqbuOcWxHvq5h1+03GiaG7HXrUff3xKIHt
+         qUHKRSSU8nQPy4lR1DzKNUEbIHEl9J1O+JGykSXNSJJw1JyMTWLernL6EFPyNCZ43SHT
+         v6JhavCbqfQq6Xy2cwb/3IzRw7bxiehkc+DN08iGXhvS0hVFa7kWQow6rR0TLdGYy/nE
+         SF2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWmdTO4278o31HLYGtaJisrFVKhigMXccqK48L64QC+WhukIIn4/W+21XDNXG7wD9YcqnKVieJavGE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwpF3FFTKeNqWLj5NNaYSX4XswzqHFYP67Yy16yCYz58qXr30pB
+	3PUhRQYQp7W24CrHPbkKUH4k7AiFK17NLrmmyC2FBcw2ZeGMB+Ndu17ecT76PKQVoeAEP0E4Trp
+	C2kJdn6n9Z6cbyc5bw7juEjOuu3ROB7A=
+X-Gm-Gg: AZuq6aJWWTQUGjo4FpsvsnNpyPUBYQPWPvpeP7/8rqfupYDjNwlYfkquNBAxSUEBIiK
+	Kzl/ZS2wPeXESPyBg7Jf/edMu7PFfzqw7Vd5f5IxXag3vfwJypBPY1REqoLLWp1VBtxCrT3BuAD
+	4MQjNbroqkmdVKxXif7iypy80qVRHRFr6ah3YZ56XWGiRC/j66Lvxlfid50LnGnf//vHTraRWUm
+	Ah/WxRqpfBjnsHLWx3KisSUYDs7Yy7VITdDOgDUBFmpCt9XTowkK6f8/c0uHjVUGRwNxjFrUTku
+	w96ZNUBBiwRA0tR+Swg+Vhv0qnykwuJbX4x9fY3BbH8f8d7yQmL2lm/Gt6m6b26cu5OrPpWkKqt
+	5JAaQWTwp
+X-Received: by 2002:a05:651c:4392:20b0:383:86c:547b with SMTP id
+ 38308e7fff4ca-3861cf11ae1mr7238561fa.14.1769523279214; Tue, 27 Jan 2026
+ 06:14:39 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260127085150.3040586-1-lukma@nabladev.com>
+References: <20251222-cstr-clk-v1-1-ef0687717aa1@gmail.com>
+ <CAJ-ks9mjBY7x1s_4wqMC8xqWsX2+aCM6NHn0j7yh_+daKiyS1Q@mail.gmail.com>
+ <CAJ-ks9kn=0Sm2_1WV4xyzunzcGG1VZDKy8L=_SCCWyV2OkJTDA@mail.gmail.com> <CANiq72krt9De1+WgMh0y8XX5K9RrU-_1FuSp+sKO1Ya8EaVoUg@mail.gmail.com>
+In-Reply-To: <CANiq72krt9De1+WgMh0y8XX5K9RrU-_1FuSp+sKO1Ya8EaVoUg@mail.gmail.com>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Tue, 27 Jan 2026 09:14:02 -0500
+X-Gm-Features: AZwV_Qh_QLxn5ei1IIusA7bhY1TdtP-oqorpAeBjx6PIE0AdqLry5Qsp04FSMso
+Message-ID: <CAJ-ks9m-0C=hOdYC_z9mNH54fXjnaWpYgZSPaWoJC8rnQ4Kgkw@mail.gmail.com>
+Subject: Re: [PATCH] rust: clk: replace `kernel::c_str!` with C-Strings
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, linux-clk@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Viresh Kumar <viresh.kumar@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jan 27, 2026 at 09:51:50AM +0100, Lukasz Majewski wrote:
-> The vf610 device has built in the MoreThanIP L2 switch. For proper
-> operation it is required to enable ESW and MAC table lookup clocks.
-> 
-> The MAC table spans from 0x400E_C000 for 0x4000 and it is necessary
-> to provide clocks for each AIPS1-"slot", which size is 0x1000
-> (hence four separate entries).
-> 
-> Those can be enabled via clock gating CCM_CCGR10 register (0x4006_B068).
-> 
-> This patch also adds VF610_CLK_ESW and VF610_CLK_ESW_MAC_TAB{0123}
-> macros definitions for L2 switch.
-> 
-> The VF610_CLK_END has been removed from dt-bindings, as its number had to
-> be increased when MTIP L2 switch clocks were added, and defined locally
-> in clk-vf610.c driver.
+On Mon, Jan 19, 2026 at 1:00=E2=80=AFPM Miguel Ojeda
+<miguel.ojeda.sandonis@gmail.com> wrote:
+>
+> On Mon, Jan 19, 2026 at 1:52=E2=80=AFPM Tamir Duberstein <tamird@gmail.co=
+m> wrote:
+> >
+> > Michael or Stephen: could you take this through clk or would you be ok
+> > with it going through rust-next?
+>
+> Either seems good to me, thanks!
+>
+> For context, this is part of a long migration:
+>
+>     https://github.com/Rust-for-Linux/linux/issues/1075
+>     https://lore.kernel.org/all/20250704-core-cstr-prepare-v1-0-a91524037=
+783@gmail.com/
+>
+> Cheers,
+> Miguel
 
-The nice thing about having it in vf610-clock.h was that it was clear
-that whenever a new clock is added, the value needed to change. It is
-now hidden away. It could well be more clocks are added, the value
-does not get updated, and in use we go passed the end of the clk[]
-array, and probably corrupt the struct clk_onecell_data clk_data.
-
-I would probably add a comment in vf610-clock.h about this.
-
-Apart from that:
-
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-
-    Andrew
+Another ping here, folks! Miguel, what can we do if we do not hear
+from the clk maintainers?
