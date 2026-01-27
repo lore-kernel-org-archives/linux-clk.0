@@ -1,156 +1,127 @@
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from sender4-pp-o92.zoho.com (sender4-pp-o92.zoho.com [136.143.188.92])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2F1126CE39
-	for <linux-clk@vger.kernel.org>; Tue, 27 Jan 2026 09:20:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769505622; cv=none; b=m6LjN6Jrmf23wCjw6sAdhrHJz9fC22h0Wlxt4AaSCl2rBjVxnuFTvkjSztt+FPfrfAoX1QpJAAvlbojDQkIJdJwvJIPjVO9gcvl5LC4/YcYyDdXGDJ9/CYKZbI8LZSEY94q+NDyTB6BV+w8dAbtwzXlERqOgg+oMBLyobLK0+JI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769505622; c=relaxed/simple;
-	bh=NRaJIBsOgwkV+eg1RM+W3L4+CnbMHXTkmYHk3spsKPM=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=r1+R6+jYJXmk6XjCPuxYH2B6tDQLVfbl/OXPqdFpGJ9wEMekW38FPbx2H+t/eh4l93y9o8k4j1uk5GnkiVlcSES0OVb3+5X/Q46feDSO7k0lP65jaq4i2e13OC8G6sl27rWurtPrbnr1VuSCD1wF1XfA9AxtbZ9vsZklWNqIv08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UXEzkjDm; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B25D30B51F;
+	Tue, 27 Jan 2026 11:04:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.92
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1769511886; cv=pass; b=bIE4faOrkBbgIQaiQSBsRzio1yUMAMypbhTaXcJA0bgjqSjq3buHx29VeWt6vPBJHvxRD63/Fiar0rwlWLEQdIXwxGfTG8DdkjmCejuewXdklgw60WHKK8rIyio2ymgg0R5FujrIqYiElAj3EhHR00E+W9npcsekcQQDQTainxc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1769511886; c=relaxed/simple;
+	bh=FG6HFQL/cV3+5iYVYIgLIOwsbcYD6bxgBJ/bMY+o10k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HhSiCZTjBCuhEv8ghEFTOyVd+k0BwIFntoPSJRDDRFD+yKiW9qPYz4Lzum1Pz6naCri0FR0lVEs2r+5qm92SpgIWmBZ2A9mvKF2OfZd16nQ791MeOWVuTwgIfO2CbVyg8Bd/oB+t/B0s91oQ0XuUotP8nSPeYF1vg4bR79KQr+E=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b=Yssn+2Mq; arc=pass smtp.client-ip=136.143.188.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UXEzkjDm"
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b8863db032dso635708966b.0
-        for <linux-clk@vger.kernel.org>; Tue, 27 Jan 2026 01:20:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1769505619; x=1770110419; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NRaJIBsOgwkV+eg1RM+W3L4+CnbMHXTkmYHk3spsKPM=;
-        b=UXEzkjDm6qwK1BqyIrUwDRCx/k+zmjBTxPxSbmozC/Tklkhc1tiNOBK3lC+UOXQEkR
-         TqocH+sDDld736nY/D1Osoz4iNDo6/nayIILqksJKNPefHaVqWKuWgoMI/1CCOONWyNJ
-         rFj+6LpEoEx2VpnPzwz1aN4fdYdcp7lhyO4i1dtE86qw8VLbZtPSmRPX9Io6RbGw91IK
-         dboawPT3z2Tev8GLTA0g3e1vW+5ZmoG1Uo3gs4VHny+6M3yrjEuTpRWrLZ6rNtuzFRBs
-         5J5jufiQ5lLQLOGLhdVX7Z7ykMv4OYWvIJtepSqWGHkng05C1crl3vceAKOWvJDnACRl
-         VfLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769505619; x=1770110419;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-gg:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=NRaJIBsOgwkV+eg1RM+W3L4+CnbMHXTkmYHk3spsKPM=;
-        b=Aj8wMI8UDG/eZwyp7/yYRKS7bPhkjbxKsnewYOeC82SxH04Z2gPv99zK8vIEoNUmfi
-         GcHtU69Q29LGZoTnqfC6KshbzGuY6/RCwTcJpkp8LpWN+HoA55ZxGWRuRV4O8coIVnyK
-         GPD0XYpu7GEsZyCCqEluSynDf9g4P3xyrtLMQ9YUbv1UDabsHqvpzOPE9wVu4q767PFF
-         tmNWPJrElLYkPZGPMdAWagVg7GSPHcoAidsjlW+hESV2sdzsU14TiRj1gyZQn4ZrENaR
-         S3kmDIjOH7z0zmI5ooPCDdS1S6c3STuQThLR52dTtISbwhNGiJVWSpKHq1WY35owHaYJ
-         UZqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUvQ2zCPjIgUsNVDpfVOVFxrplKLClTjyDIYxrercP290uQHK370RN2rJ4ebta0mGsbmshDSleYGGc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxa9JM51AkT6B/Ha/IkutqLjvm45TgEqYAccnBchpQLptGk/zZA
-	FWCjtMZGDjkfay1ov99ZhMiLyWUPf+YEw5ZlMeNQIRJa6+EMNQgSmaPW
-X-Gm-Gg: AZuq6aLox2v2izMpg/eixG7zg6Djq7iBV2IXKDABoKBdjlBkLqhupXJRShLtGmxAXDt
-	HpPE7qm3mfLh+gZDoWESzDYsqYxSunSVbyjp53DqEQQUppPLz4Yb53Sqq/jTP+A+CP3m6rIrw49
-	RE+/4wsfYXgygo0ghmHiUJL//npgwoTK43+VRpdH0gmuiNSt53rCOdPjuDZnv/zdOCwIOIgA+9p
-	1+j4odCTh1NH9eUO5B05ggmEyTfsgo8isXGL59C5G7tjiEzO1YeOnsysUFOZ5yOQDukjlz3hC7k
-	Q8mDCELD57A6aLfnq3LZeneBeOvqI4gYuFQaPtGCxY56AqtvAKbIV0KSGEGAg89YWBpv3A5Sf94
-	clMTxCrFlzTpIWn0L1wri8dGwMd46RQhFbHlOgl7B2Yjcq15oNm5FQ6BZS+6FCz0CYeZKF6IGp5
-	zE9/dcw7QZPvwmKOEshZ3I1nXX1VyROTTiRJPzX0ks87LChJerR5ZfXJgaZWNioh2N
-X-Received: by 2002:a17:907:7287:b0:b88:5b35:914b with SMTP id a640c23a62f3a-b8dab3d056bmr95912366b.59.1769505619057;
-        Tue, 27 Jan 2026 01:20:19 -0800 (PST)
-Received: from smtpclient.apple (89-66-237-154.dynamic.play.pl. [89.66.237.154])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b885b700d43sm776257066b.41.2026.01.27.01.20.17
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 27 Jan 2026 01:20:18 -0800 (PST)
-Content-Type: text/plain;
-	charset=utf-8
+	dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b="Yssn+2Mq"
+ARC-Seal: i=1; a=rsa-sha256; t=1769511863; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=Qg9X3pcoJnoqViWAtoWu+1abukl8Fw5lGIAyAv5BWD3vf2Qt+Y2HBJoSm6lHZzgY07f9QhbdgMnisC8fVRFzFp4CUU5HhGtDUJfPfY89ioVwpqdt8hXeZ0xpvyx1oZiwhLKIIUkrWK40ABNm/4+axHkf/jSJsjLFuS134r3jGpg=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1769511863; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=zIZv98xexLqGPRXaRA7uJoEdTPOCRvLcc++itdaM4UI=; 
+	b=D+E2caX5GVBGRR0A8rjCa2P57YJRm8gJTwfYBgJFz0Ffg43w0VLJZCQlCoRDdYKahcNa2xnx/CjuKY4KGhPHfFZDFyGeBox2Arze2ad1Ac9ED0AluOZlgXXxzaFxBpMAyRREUfl2ctsmkp2W3p69mhQkCho4FIvzkjS4wB0Z6tU=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=zohomail.com;
+	spf=pass  smtp.mailfrom=kingxukai@zohomail.com;
+	dmarc=pass header.from=<kingxukai@zohomail.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1769511863;
+	s=zm2022; d=zohomail.com; i=kingxukai@zohomail.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
+	bh=zIZv98xexLqGPRXaRA7uJoEdTPOCRvLcc++itdaM4UI=;
+	b=Yssn+2MqnT1qoMPXr6YSK96CPNXVriKXqEsW0mq/UEwfSKYG4Bu+HG8e/oaAAkno
+	jMBGI1Um3eAiMZeBuuNH1jma14j1gOEaS7iIUZ9ASMOb7tW3WyXclPRjU0cgrzHPAsw
+	HnfbuposIAuRXBDIRp+LCc2H8kJFktwrdXwklJWU=
+Received: by mx.zohomail.com with SMTPS id 1769511855331786.2569087782504;
+	Tue, 27 Jan 2026 03:04:15 -0800 (PST)
+Message-ID: <0af969a7-3579-4303-b302-f171ef02a163@zohomail.com>
+Date: Tue, 27 Jan 2026 19:03:59 +0800
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81.1.4\))
-Subject: Re: [PATCH v6 0/5] Add support for S4 audio
-From: Piotr Oniszczuk <piotr.oniszczuk@gmail.com>
-In-Reply-To: <20260126-audio_drvier-v6-0-99e350855bc2@amlogic.com>
-Date: Tue, 27 Jan 2026 10:20:03 +0100
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
- Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>,
- Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Kevin Hilman <khilman@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>,
- linux-sound@vger.kernel.org,
- devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,
- linux-amlogic@lists.infradead.org,
- linux-clk@vger.kernel.org,
- jian.xu@amlogic.com,
- shuai.li@amlogic.com,
- zhe.wang@amlogic.com
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <35CAE0E9-4C3F-4B41-BA1A-19761671F392@gmail.com>
-References: <20260126-audio_drvier-v6-0-99e350855bc2@amlogic.com>
-To: jiebing.chen@amlogic.com
-X-Mailer: Apple Mail (2.3826.700.81.1.4)
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v10 2/3] clk: canaan: Add clock driver for Canaan K230
+To: Jiayu Du <jiayu.riscv@isrc.iscas.ac.cn>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Conor Dooley <conor@kernel.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+ Samuel Holland <samuel.holland@sifive.com>,
+ Troy Mitchell <TroyMitchell988@gmail.com>
+References: <20260116-b4-k230-clk-v10-0-de59033c5d30@zohomail.com>
+ <20260116-b4-k230-clk-v10-2-de59033c5d30@zohomail.com>
+ <aW3o8xVziqb9iRBN@duge-virtual-machine>
+ <bf39fdb8-6698-418b-bd4a-6d8d40ccc9a0@zohomail.com>
+ <aXJJ3MjQSq8Rq084@duge-virtual-machine>
+From: Xukai Wang <kingxukai@zohomail.com>
+Content-Language: en-US
+In-Reply-To: <aXJJ3MjQSq8Rq084@duge-virtual-machine>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Feedback-ID: rr08011227a510c0fba220186bba5f362e000053b54e7061a9cbdd371d5284c83a55924f9557a426366cbb14:zu080112272a5276332e1090ec5d5ceed40000b2c296e870bfa7ef506b33ce0394521dd45f1929333996b33b:rf0801122cc4400f0c83132b1947518dc60000c8bd395d79c79d723ff8939ceba3fa55336a182f4efa95f61dab38722347:ZohoMail
+X-ZohoMailClient: External
 
 
+On 2026/1/23 00:01, Jiayu Du wrote:
+> On Thu, Jan 22, 2026 at 07:40:29PM +0800, Xukai Wang wrote:
+>> On 2026/1/19 16:18, Jiayu Du wrote:
+>>>> +
+>>>> +K230_CLK_GATE_FORMAT(hs_hclk_src_gate,
+>>>> +		     K230_HS_HCLK_SRC_GATE,
+>>>> +		     0x18, 0, 0, 0,
+>>>> +		     &hs_hclk_high_src_rate.clk.hw);
+>>> Here, you replaced hs_hclk_high_gate(in v9) with hs_hclk_high_src_rate,
+>> I'm a bit confused, as I don't recall making these specific changes.
+>> Looking at the code below, the only difference between v9 and v10 is
+>> within the K230_CLK_GATE_FORMAT(hs_hclk_src_gate, ...) definition, where
+>> the second parameter changed from 1 to 0. Everything else appears
+>> consistent. Could you clarify which change you were referring to?
+>>> but after my board test, I find that when hs_hclk_high_gate is turned
+>>> off, the mmc/sd and other high-speed subsystems can not work. So maybe
+>>> you should not change the hs_hclk_high_gate to hs_hclk_high_src_rate.
+>> Regarding the clock management, I recommend explicitly enabling
+>> hs_hclk_high_gateas it will be closed by `close unused clocks`.
+> Sorry, you are right. It was me who made the changes locally. And I
+> saw your reply to this email[1], which you said According to the vendor's
+> code, the parent clock of hs_hclk_src is hs_hclk_high_src.
+>
+> Indeed, the parent clock of hs_hclk_src is hs_hclk_high_src. 
 
-> Wiadomo=C5=9B=C4=87 napisana przez Jiebing Chen via B4 Relay =
-<devnull+jiebing.chen.amlogic.com@kernel.org> w dniu 26 sty 2026, o =
-godz. 07:01:
->=20
-> This series completes the end-to-end audio support
-> for S4 SoC from hardware bindings to driver implementation
-> and system integration.
->=20
-> 1 Device Tree Bindings Updates=20
-> Added audio power domain and S4 audio clock support for S4 SoC.
-> Added S4 audio tocodec binding support.
->=20
-> 2 Driver Implementation
-> Implemented S4 tocodec driver for G12A architecture.
-> Added S4 audio clock support in AXG audio clock=20
->=20
-> 3 Device Tree Integration
-> Add Amlogic S4 audio subsystem support in arm64 DTS.
->=20
-> Signed-off-by: jiebing chen <jiebing.chen@amlogic.com>
-> ---
-> Changes in v6:
-> - Fix the problem of string for =
-Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml
-> - Remove clock pad register, and it will be submitted as an =
-independent patch.
-> - Redescribe sound/soc/meson/g12a-toacodec.c
-> - Link to v5: =
-https://lore.kernel.org/r/20250710-audio_drvier-v5-0-d4155f1e7464@amlogic.=
-com
->=20
+> but hs_hclk_high_gate is the gate of hs_hclk_high_src. 
 
-Jiebing,
+No. It seems there is some confusion. The hs_hclk_high_src does not have
+a gate.
 
-FYI
+The clock tree is as follow:
 
-I applied this series over 6.18.7 and tested on s905w2 device.
+       pll0_div4
+          hs_hclk_high_src_rate
+             hs_hclk_high_gate
+             hs_hclk_src_gate
+                hs_hclk_src_rate
+                   hs_sd0_ahb_gate
+                   hs_sd1_ahb_gate
+                   hs_ssi1_ahb_gate
+                   hs_ssi2_ahb_gate
+                   hs_usb0_ahb_gate
+                   hs_usb1_ahb_gate
 
-With audio routing like this:
-
-amixer cset numid=3D40,iface=3DMIXER,name=3D'FRDDR_A SINK 1 SEL' 0
-amixer cset numid=3D73,iface=3DMIXER,name=3D'TDMOUT_A SRC SEL' 0
-amixer cset numid=3D37,iface=3DMIXER,name=3D'FRDDR_A SRC 1 EN Switch' 1
-amixer cset numid=3D61,iface=3DMIXER,name=3D'TOACODEC SRC' 0
-amixer cset numid=3D1,iface=3DMIXER,name=3D'TOACODEC Lane Select' 0
-amixer cset numid=3D62,iface=3DMIXER,name=3D'TOACODEC OUT EN Switch' 1
-amixer cset numid=3D17,iface=3DMIXER,name=3D'ACODEC Playback Volume' 251 =
-251
-
-i'm getting working audio on analog headset.
-
-Great work!
-
-
+> So, what you mean is
+> that you will add the CLK_IS_CRITICAL flag to the hs_hclk_high_gate?
+No, I don't intend to add CLK_IS_CRITICAL flag. Instead, I recommend you
+to explicitly enable the clock by using clk_prepare_enable in your driver.
+>
+> Link: https://lore.kernel.org/all/159615d3-cc52-43be-bf6d-5fe717ef1cc4@zohomail.com/ [1]
+>
+> Regards,
+> Jiayu Du
+>
