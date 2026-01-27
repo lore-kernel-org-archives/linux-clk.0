@@ -1,205 +1,200 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C590627E06C
-	for <linux-clk@vger.kernel.org>; Tue, 27 Jan 2026 20:34:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BC603570C8
+	for <linux-clk@vger.kernel.org>; Tue, 27 Jan 2026 22:26:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769546079; cv=none; b=Fd7JGKvq6kdaKIwFZp8GiV6wNfTwxa5Tn5wu75zJCtLmyszb2VxyYACBPcekdS4sfaa6Fy6RrvreCSBZpvegsuPgbZ7JnGmCDa8P4SojfinHk84MKrsWNHVP14Ov9b5mQsQRSGDGczeUyu5dgRp3kWnms6TO4QCwPkb2Fiw0SR4=
+	t=1769552769; cv=none; b=KGQYoYMOtRuyhEDrmRmRl+wMKZK/+K7Aw1RJTlxeP9faMFG88W4GZqxiZezzfWkDn3ueASh6abTONGXhznrprnD98CpHJaoCw8DEb5Cuwu8d9ZQrGJFFW3qwi+t9INsR9g9F1j9kuVNXpMqlTswz0eSU68q1Wy0alImUtQ4En1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769546079; c=relaxed/simple;
-	bh=6+ryrk2sOHsrrR6dzdlUojweXI/Wmse5brKS8Yn6kj4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gtHcvZz77d9KxO1qv9Src/GeD8MZN8TBS9n80VmYSvVwnPy9z37Axi33CCxmzA4PQzAV8QS7M7N2hkQZU1MQCiib4I8KSI6mc+FjV6VzDEekgq2R/szoBEb95gAjms24EJfusANuvWEgvdoDVSPzt1VstFKmXMNFUBP0LpIYMIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=UudBGvq9; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=ZwThI1hw; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1769552769; c=relaxed/simple;
+	bh=tuSMukXJSbPnemxeOAyoCOFeYGwA9TAC3Ka4b2eHMPQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=O2o9plUNfp35UUJfmdp6cOJfw9GDaCudrXB/gpVB8b8MtbfBiTyQcwf+lPKAD0b68Y8n2dCyQbEhpSN9D1neHP/tx4BZWLf1BVpT9yOT66brkNYTbnKoU+xg/KiNhU8DAlDc3E/KkDzS8hBCo058O5jeaNDoO1qOYolsUNxEkmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Y+sMq+QE; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="UudBGvq9";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="ZwThI1hw"
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 60RHhS8h2476684
-	for <linux-clk@vger.kernel.org>; Tue, 27 Jan 2026 20:34:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=UBW4/O8y41IiXvNQNSJZRU7z
-	a95y2QvJwR9+W+NL1uI=; b=UudBGvq9T2geyT8U02x2HD1Gcdh00M+1zBsi61ls
-	eKOX9gKovpBvfhS6lNo4fV8evD0MiLGnz7Du0UGR95M991t9EgnOchJGGYUaIQpv
-	4oAEdjr0DoPXsNpDyq5aQy4zE9UOKsFwGyl5k2dBX8Xl55eIV+2YMySYhesfXcpi
-	EzwKKQOyEPa1afK5O5GalwZPYiSI9TEOg0O3i6d/+RMq3pNTxE7D91zsW0AOW1ks
-	UgwmnkS75cdj9ZD7cJDAb7XAnk2g8zpdB1OWpEmBC5tOepwGheRwL4DVfoEs2Cyk
-	/WYfvZmEd5+7fHzf591btouapnqMFt4fG1XrreSEDw8azg==
-Received: from mail-ua1-f70.google.com (mail-ua1-f70.google.com [209.85.222.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4by20y0jc6-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Tue, 27 Jan 2026 20:34:36 +0000 (GMT)
-Received: by mail-ua1-f70.google.com with SMTP id a1e0cc1a2514c-94838cc73bdso6205944241.0
-        for <linux-clk@vger.kernel.org>; Tue, 27 Jan 2026 12:34:36 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Y+sMq+QE"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4806ce0f97bso2761725e9.0
+        for <linux-clk@vger.kernel.org>; Tue, 27 Jan 2026 14:26:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1769546076; x=1770150876; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=UBW4/O8y41IiXvNQNSJZRU7za95y2QvJwR9+W+NL1uI=;
-        b=ZwThI1hwkLsWSOnN0LV7RUtNH1/vtQZTxf+9+5dGxMtglRyiRkkia43VQxK3z/sApJ
-         U5TG3vmoIoPnRy0gkm0wiv0YfMkpk6Dw9bIizbjF4RaG7U97CWYwK9x9G0RGMUl9JViU
-         klzyDqsGF5qpXelOpLuy7ndv5V1uimkVQRXPn9W36xd5P+oLEGODi6XmVC/cJO1TCQHN
-         Mcg7fI7sfFvczfW+1VWXp909VDSm8TxflmSG10J6y+WwnfDYEgVcDrC+XXyGic9pfhTZ
-         UJHkKosa+yACpZHwKu/gxkSMbsGLNueBnWDwEvrjwdFp17LizEBN2p5M4541ZJJKNy1/
-         L0fQ==
+        d=linaro.org; s=google; t=1769552766; x=1770157566; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=3V2tn2mHvRqtIreRC+Gc5m2OsCJCgqMxstJvF4HcVy0=;
+        b=Y+sMq+QECAoGne7Gc9l7bd7b8Leh+mph7ybArv5MztU858+L5JghkA8oGB50FIuExV
+         yQBQg5/7fiXvuxqVNOeUg5vtAleZtqnhxCqcPziBdGpVECTafLg3c3K1uPyzO082vQDh
+         1di/47yj6yAwelrOxXoJy05VbxuBP/niCB0lePqaHM48ZGuGgn2yVufBtfXSc9N6XeoC
+         +XLCapGp4Q8V/r2apIrU1xOO1my35JgBPTvj+49qzvjUq0s2s21Y8pbcweQO5IlbNRCr
+         8cn73FQqglbC0KCsSg/ExhrOSem8Na4b2SfUl3dkHakDLuWtUjjACcZsLTROnpp4dpHM
+         eqvg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769546076; x=1770150876;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UBW4/O8y41IiXvNQNSJZRU7za95y2QvJwR9+W+NL1uI=;
-        b=wSBtoD0l2G57EbJ6wJmCjLyBkHpLFXpmFWO6wPeQIwXW0cE9CRzNTi/bf6GU3ezhl1
-         mElKDX9XkpXFitSo/BoptWLn59npgTx/GBcaOE3vJbv04zgZMubD7ZCpH9mc1Tt3fFYv
-         C1YvAJtsDrEnQG6Bq4U5VZdNLNsTuCpHHqclmudbRvvWHAbFcs8f31wwQIFantTUGVT+
-         K+CmL2Mka5IDTj23159ZMpu7ZhbLSf1IjMLjQmc6UOiMACMDhr7iLlhviOnQY7alCnx6
-         RADaxhOLflRsPtKOwYyuFLxTVGJRERNWDRJbOdK6qctHTjS1+eQQdHDltyohxEe7HI3+
-         qIzA==
-X-Forwarded-Encrypted: i=1; AJvYcCWTOXooqTomjHK3ozGGczDrlgD9cBeMRVXxt9hVn0ttjlLbYs5spSoFAlZ73ZUHXAtLzAsLDfxBVOc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVTy0/tm4CZ1nzNxl2OOict2NCpVJA46+jP6uGe9HGxxTfkdL1
-	4i3d5cofymUdZKHaZIt2lag+MZCmYUJZApJitSq7P73CkbEKBBtxyhi7bTX2ELqNUgmp5I6MNvE
-	2HKg/WiCMo18BsQosp4iJZceDfmggpY5JvE8Mpg5CgV5ANL8CUfoTTmNdsaqP2Cq3O86qL6A=
-X-Gm-Gg: AZuq6aKErrq7+wjhupwwv9HCIj720dQWedTM5yiKvsdvRq+ZsB46SHPj98CCkByuWn4
-	JHJcx4nPkywUdVVC28Q2h4eIUyEhaOWT4zIZgl86E0yln3yIcFHz0Gisq+rhsW31u/Z3K/yjTes
-	cWztMAu5b1yKhHh2cLM+7PM38vR+bCtzdyUeS6WwXgigYoHf+idnP8N4AUqPpfVUDTlBuOH3p/u
-	flttapOHUYKrMwK0GKS4+I2n9mdZRdtlN2zvnU3++aC9QkvYmY8zB9aDBaFjujq64x6ZMm5dxDW
-	YhM9mMGotGR9riRf/kM4/MYlOyrVG70OUIatvhqPI91Qg7RJNF34cL55UJTNpjODDIbRfKB2peS
-	FYXBccAGVe1g9EvctRA/nW31TCAsSs30H08Orh3OYjR8C+f426PQpr98YkBXF/1GJEHFOmIt+i2
-	7Llr+uuTC5EH0OK8SUfeLx9RI=
-X-Received: by 2002:a05:6102:3054:b0:5f5:7721:569c with SMTP id ada2fe7eead31-5f7235eeda4mr1075931137.4.1769546075559;
-        Tue, 27 Jan 2026 12:34:35 -0800 (PST)
-X-Received: by 2002:a05:6102:3054:b0:5f5:7721:569c with SMTP id ada2fe7eead31-5f7235eeda4mr1075919137.4.1769546074969;
-        Tue, 27 Jan 2026 12:34:34 -0800 (PST)
-Received: from umbar.lan (2001-14ba-a073-af00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a073:af00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-59e074b2c09sm140097e87.65.2026.01.27.12.34.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Jan 2026 12:34:34 -0800 (PST)
-Date: Tue, 27 Jan 2026 22:34:32 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
-        Imran Shaik <imran.shaik@oss.qualcomm.com>,
-        Taniya Das <taniya.das@oss.qualcomm.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/8] dt-bindings: clock: qcom: Add X1P42100 video clock
- controller
-Message-ID: <fxzm4767ged6hikpblsnh3xzec4qm7dzyfnds7m2ljedhj6n46@zkm7zxz3oo73>
-References: <20260128-purwa-videocc-camcc-v1-0-b23de57df5ba@oss.qualcomm.com>
- <20260128-purwa-videocc-camcc-v1-1-b23de57df5ba@oss.qualcomm.com>
+        d=1e100.net; s=20230601; t=1769552766; x=1770157566;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3V2tn2mHvRqtIreRC+Gc5m2OsCJCgqMxstJvF4HcVy0=;
+        b=oPTbLHNQGzn1Pu4PgiI/bgCxT5vGp5Xe4+nWkW7V1YV5SmNXmoJR0HwFo7P6wVB5Ja
+         U/yy3i/cp27R0REf/ekUrDSaFaFMeKTL8MNaNlj3I2sf7hiOWxGB1pkoemAP2+oTZ8BC
+         CgPpWUsmynoaTfxMvxpQ3GQXQhHBCsHAnKeinhagg2CKFxyFuFpH8phJWSItgIs23x4Q
+         YdRVhFi1TKDmQX5wMpvCPYuHl5GVPVbpQZdAhnRjg1fQQksXP5T0KNJw5ALUgFDh7tx1
+         tRS8+iagtAl/52NyEewaHEQTMseJ8KA81uFuoEmHERPEe6f9GpfTqHVb2+n71gcYQHOx
+         Bpog==
+X-Forwarded-Encrypted: i=1; AJvYcCWjARP5YUcyru42Ml3R+I0givwYtx3JNXF5u3oJEgLkO4CW/oWuQ2sBwQfGbiVuC+W1JSMh2zFkkCA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YziBh4u6e0QAaAp7Ckc+7+hLTT1L6MFn69P1nppz3ro55bduJNQ
+	x4mmHcsfWstVjd06j1C9bb9sUzFsrdpyWtAwgVqdddxboyjmpvSC11Q7WLl+IzdUj44=
+X-Gm-Gg: AZuq6aJ2TleqOKJGzdiwraWZ/ekaq4bdadKCyVpX/9fzf0erNutYEBS31czn/BBQP35
+	vu5GQokFxBAXJFRDfesugM2pXISrK6jb4OBNa+coITOSC2T4dh/msmev6NfCv2i4G4X01KQ2TXh
+	lwgCO+Tfe5y/9++ZsyEt8e+MP3tpcP9Qw1rDcjYsdA30k0XEo22V5RrLkczhtIfJ1ojOtcwkuqX
+	HUJ64IcNYse195JJqL+YJ98LIlCLQ9qWmk0xIkYpt9C20+jOVfedxOVFxQ62YG5o8zz8v42VrBW
+	nw3j9t/79fMjT6dtlGLbMvGRhgMBFdHFd9+fpzGmQcENInpmHkQTAQXnv1ry6ix9K//iHzUvlwY
+	fTlIjufvcmBLF7Y8Q6s2Mpa5mOx7dsy3W/XM8zOJtPQQiMoHU4l7nlUwys7yvicDWnVEzYcLaiD
+	ZlmMPurmiWZWaGsofvBm1FpdfXPrY7ttq7EV2XDNqqyJM5871vk4yt
+X-Received: by 2002:a05:600c:1c13:b0:477:7925:f7fb with SMTP id 5b1f17b1804b1-48069c26ad2mr51439765e9.10.1769552765787;
+        Tue, 27 Jan 2026 14:26:05 -0800 (PST)
+Received: from [192.168.0.40] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4806cdeafffsm19705125e9.7.2026.01.27.14.26.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 27 Jan 2026 14:26:05 -0800 (PST)
+Message-ID: <e43a2b67-4f58-4a8c-b153-d9e2ba303b83@linaro.org>
+Date: Tue, 27 Jan 2026 22:26:03 +0000
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260128-purwa-videocc-camcc-v1-1-b23de57df5ba@oss.qualcomm.com>
-X-Proofpoint-ORIG-GUID: 2R2btfuRl_NkNC2X8YzaK3BPXcVHcxzN
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTI3MDE2NyBTYWx0ZWRfXxajKpqMrAuAQ
- JWGLEnp6KUr82RSr/bfB02Ur5p0fThLJs2SOxPmkZR2ESLGtuJjxcEdonEwQxrhQD3qAYDTs0J6
- AZ25bV0/Y9AatxJMnoaxWwTj0jdGgWfkgbpgjorwT1V+E1bDxj4JX41FJ+jUtdwwc/clOCYHEih
- +TtlbgY/DZhz1Gd43HHXXeyflDl9E02t9ZpPzXcgVtum8DTRTE6iE7TSaRKa4ev5o/GgPqLCNzc
- 5UIX0ByMW6UOKioEWxUAhXOVCu1Y1wD0pl1D2jrWIqfZWs3M3Ri0IuS8386bcX884EK6qIbZxzt
- h1AUZpx9tJOPjKgkM3uf/dpRQHpymCDSWvUPw41bz9WhQdpD5VWuFxJkbBux591sP29H6KdN9cx
- lTMoOrFqWcAbOnrPtEn/73jfYn7T0QPVog1GF7HK0WmCeTvX+qGFDfjZGhpND8uuaz7Ot55fI7A
- /IK0EgwBsm2yXOeTZXA==
-X-Proofpoint-GUID: 2R2btfuRl_NkNC2X8YzaK3BPXcVHcxzN
-X-Authority-Analysis: v=2.4 cv=IKgPywvG c=1 sm=1 tr=0 ts=6979215c cx=c_pps
- a=R6oCqFB+Yf/t2GF8e0/dFg==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=vUbySO9Y5rIA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=EUspDBNiAAAA:8 a=lIQNSvCfeu_oATqTbLoA:9 a=CjuIK1q_8ugA:10
- a=TD8TdBvy0hsOASGTdmB-:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-01-27_04,2026-01-27_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 priorityscore=1501 clxscore=1015 suspectscore=0 impostorscore=0
- phishscore=0 bulkscore=0 malwarescore=0 lowpriorityscore=0 spamscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2601150000 definitions=main-2601270167
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/8] clk: qcom: camcc-x1e80100: Add support for camera
+ QDSS debug clocks
+To: Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jagadeesh Kona <quic_jkona@quicinc.com>,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
+ Imran Shaik <imran.shaik@oss.qualcomm.com>,
+ Taniya Das <taniya.das@oss.qualcomm.com>, linux-arm-msm@vger.kernel.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20260128-purwa-videocc-camcc-v1-0-b23de57df5ba@oss.qualcomm.com>
+ <20260128-purwa-videocc-camcc-v1-4-b23de57df5ba@oss.qualcomm.com>
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Content-Language: en-US
+In-Reply-To: <20260128-purwa-videocc-camcc-v1-4-b23de57df5ba@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jan 28, 2026 at 12:56:32AM +0530, Jagadeesh Kona wrote:
-> X1P42100 video clock controller has most clocks same as SM8650,
-> but it also has few additional clocks and resets. Add device
-> tree bindings for the video clock controller on Qualcomm
-> X1P42100 platform by defining these additional clocks and resets
-> on top of SM8650.
+On 27/01/2026 19:26, Jagadeesh Kona wrote:
+> Add support for camera QDSS debug clocks on X1E80100 platform.
 > 
+
+A little more detail here please :)
+
 > Signed-off-by: Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>
 > ---
->  .../bindings/clock/qcom,sm8450-videocc.yaml         |  2 ++
->  include/dt-bindings/clock/qcom,x1p42100-videocc.h   | 21 +++++++++++++++++++++
->  2 files changed, 23 insertions(+)
+>   drivers/clk/qcom/camcc-x1e80100.c | 64 +++++++++++++++++++++++++++++++++++++++
+>   1 file changed, 64 insertions(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
-> index e6beebd6a36ee1ce213a816f60df8a76fa5c44d6..e8bf3fcad3fabc4f3b7e8e692c6c634d1aed9605 100644
-> --- a/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
-> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
-> @@ -30,6 +30,7 @@ properties:
->        - qcom,sm8650-videocc
->        - qcom,sm8750-videocc
->        - qcom,x1e80100-videocc
-> +      - qcom,x1p42100-videocc
->  
->    clocks:
->      items:
-> @@ -67,6 +68,7 @@ allOf:
->                - qcom,sm8450-videocc
->                - qcom,sm8550-videocc
->                - qcom,sm8750-videocc
-> +              - qcom,x1p42100-videocc
->      then:
->        required:
->          - required-opps
-> diff --git a/include/dt-bindings/clock/qcom,x1p42100-videocc.h b/include/dt-bindings/clock/qcom,x1p42100-videocc.h
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..eb6c9b7264f8cbced7cfa0001903238ffa168431
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/qcom,x1p42100-videocc.h
-> @@ -0,0 +1,21 @@
-> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-> +/*
-> + * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
-> + */
+> diff --git a/drivers/clk/qcom/camcc-x1e80100.c b/drivers/clk/qcom/camcc-x1e80100.c
+> index cbcc1c9fcb341e51272f5595f574f9cb7ef2b52e..7e3fc7aee854eee841176a1330f97dc91af91670 100644
+> --- a/drivers/clk/qcom/camcc-x1e80100.c
+> +++ b/drivers/clk/qcom/camcc-x1e80100.c
+> @@ -1052,6 +1052,31 @@ static struct clk_rcg2 cam_cc_mclk7_clk_src = {
+>   	},
+>   };
+>   
+> +static const struct freq_tbl ftbl_cam_cc_qdss_debug_clk_src[] = {
+> +	F(19200000, P_BI_TCXO, 1, 0, 0),
+> +	F(60000000, P_CAM_CC_PLL8_OUT_EVEN, 8, 0, 0),
+> +	F(75000000, P_CAM_CC_PLL0_OUT_EVEN, 8, 0, 0),
+> +	F(150000000, P_CAM_CC_PLL0_OUT_EVEN, 4, 0, 0),
+> +	F(300000000, P_CAM_CC_PLL0_OUT_MAIN, 4, 0, 0),
+> +	{ }
+> +};
 > +
-> +#ifndef _DT_BINDINGS_CLK_QCOM_VIDEO_CC_X1P42100_H
-> +#define _DT_BINDINGS_CLK_QCOM_VIDEO_CC_X1P42100_H
+> +static struct clk_rcg2 cam_cc_qdss_debug_clk_src = {
+> +	.cmd_rcgr = 0x13938,
+> +	.mnd_width = 0,
+> +	.hid_width = 5,
+> +	.parent_map = cam_cc_parent_map_0,
+> +	.freq_tbl = ftbl_cam_cc_qdss_debug_clk_src,
+> +	.hw_clk_ctrl = true,
+> +	.clkr.hw.init = &(const struct clk_init_data) {
+> +		.name = "cam_cc_qdss_debug_clk_src",
+> +		.parent_data = cam_cc_parent_data_0,
+> +		.num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
+> +		.flags = CLK_SET_RATE_PARENT,
+> +		.ops = &clk_rcg2_shared_ops,
+> +	},
+> +};
 > +
-> +#include "qcom,sm8650-videocc.h"
+>   static const struct freq_tbl ftbl_cam_cc_sfe_0_clk_src[] = {
+>   	F(345600000, P_CAM_CC_PLL6_OUT_EVEN, 1, 0, 0),
+>   	F(432000000, P_CAM_CC_PLL6_OUT_EVEN, 1, 0, 0),
+> @@ -2182,6 +2207,42 @@ static struct clk_branch cam_cc_mclk7_clk = {
+>   	},
+>   };
+>   
+> +static struct clk_branch cam_cc_qdss_debug_clk = {
+> +	.halt_reg = 0x13a64,
+> +	.halt_check = BRANCH_HALT,
+> +	.clkr = {
+> +		.enable_reg = 0x13a64,
+> +		.enable_mask = BIT(0),
+> +		.hw.init = &(const struct clk_init_data) {
+> +			.name = "cam_cc_qdss_debug_clk",
+> +			.parent_hws = (const struct clk_hw*[]) {
+> +				&cam_cc_qdss_debug_clk_src.clkr.hw,
+> +			},
+> +			.num_parents = 1,
+> +			.flags = CLK_SET_RATE_PARENT,
+> +			.ops = &clk_branch2_ops,
+> +		},
+> +	},
+> +};
 > +
-> +/* X1P42100 introduces below new clocks and resets compared to SM8650 */
-
-And then someone introduces new clocks or resets into SM8650 bindings
-and this gets busted. Please extend the existing header.
-
+> +static struct clk_branch cam_cc_qdss_debug_xo_clk = {
+> +	.halt_reg = 0x13a68,
+> +	.halt_check = BRANCH_HALT,
+> +	.clkr = {
+> +		.enable_reg = 0x13a68,
+> +		.enable_mask = BIT(0),
+> +		.hw.init = &(const struct clk_init_data) {
+> +			.name = "cam_cc_qdss_debug_xo_clk",
+> +			.parent_hws = (const struct clk_hw*[]) {
+> +				&cam_cc_xo_clk_src.clkr.hw,
+> +			},
+> +			.num_parents = 1,
+> +			.flags = CLK_SET_RATE_PARENT,
+> +			.ops = &clk_branch2_ops,
+> +		},
+> +	},
+> +};
 > +
-> +/* VIDEO_CC clocks */
-> +#define VIDEO_CC_MVS0_BSE_CLK					17
-> +#define VIDEO_CC_MVS0_BSE_CLK_SRC				18
-> +#define VIDEO_CC_MVS0_BSE_DIV4_DIV_CLK_SRC			19
-> +
-> +/* VIDEO_CC resets */
-> +#define VIDEO_CC_MVS0_BSE_BCR					8
-> +
-> +#endif
+>   static struct clk_branch cam_cc_sfe_0_clk = {
+>   	.halt_reg = 0x133c0,
+>   	.halt_check = BRANCH_HALT,
+> @@ -2398,6 +2459,9 @@ static struct clk_regmap *cam_cc_x1e80100_clocks[] = {
+>   	[CAM_CC_PLL6_OUT_EVEN] = &cam_cc_pll6_out_even.clkr,
+>   	[CAM_CC_PLL8] = &cam_cc_pll8.clkr,
+>   	[CAM_CC_PLL8_OUT_EVEN] = &cam_cc_pll8_out_even.clkr,
+> +	[CAM_CC_QDSS_DEBUG_CLK] = &cam_cc_qdss_debug_clk.clkr,
+> +	[CAM_CC_QDSS_DEBUG_CLK_SRC] = &cam_cc_qdss_debug_clk_src.clkr,
+> +	[CAM_CC_QDSS_DEBUG_XO_CLK] = &cam_cc_qdss_debug_xo_clk.clkr,
+>   	[CAM_CC_SFE_0_CLK] = &cam_cc_sfe_0_clk.clkr,
+>   	[CAM_CC_SFE_0_CLK_SRC] = &cam_cc_sfe_0_clk_src.clkr,
+>   	[CAM_CC_SFE_0_FAST_AHB_CLK] = &cam_cc_sfe_0_fast_ahb_clk.clkr,
 > 
-> -- 
-> 2.34.1
-> 
 
--- 
-With best wishes
-Dmitry
+Once the commit log is fixed.
+
+Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+
+---
+bod
