@@ -1,150 +1,97 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DB7B3624B9
-	for <linux-clk@vger.kernel.org>; Tue, 27 Jan 2026 17:10:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A05D52D060B;
+	Tue, 27 Jan 2026 17:25:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769533829; cv=none; b=NLCu4QFvPQrnH4MJbZKTgctsPrlnLBqs1zSvsxWiA5U8uXeDwsmEdCdfRcscYtOU/52PzjHamnwbNc27tGMKhVJHHUutA3/Ovj/Ajilt9gob43u9mAYfqeoetmQVkIa/DlfEmK7imNMpOP4cSn6VHScFOjr+ua7mgoZjmsSu/CE=
+	t=1769534729; cv=none; b=JHJMsejY0UIjk+m1NLkLooE1dWQklhWo8/4RAJe5+a6BMm7oH7JiC9S85dKbZQxxy6n2/rJK52pcs4hgptn2MojavxBzdPXXUHiqQ/R2wwx/TD5Umqquf+5L+KYPS5Nsf3QZWx755USP1dm1ApLqYSYbd/s5JS67fQwDM99QD5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769533829; c=relaxed/simple;
-	bh=2t1Vf6UpwTpD+0yC35m+4bzwOPrmuwtJstpwaHE5UVk=;
+	s=arc-20240116; t=1769534729; c=relaxed/simple;
+	bh=rW38RPoI3oC7pNCyY0rJv3O6uYwRPEMNoNEw8/xECFw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W/0QiTZ3RRyFV6vUJ1JemLxEOY9CbEDoXA+5WnRU1dnWTjDHhkAXuqAPfQqlSf/gbDe8Ekv+uhpIA2+/8pUTlesh5qz7ZSFNCijQiuICtc0g/uMoYFhh1/ZpxHBig4utG0VYva6k77iDj4kbF6XLP0lpOkfHwdbHz4RsVR2T+L0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=K6n2kADB; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=WCrXuTsD; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=O2FDfj+LiKEyUst/udz1BG4CXgYkvfgRdslu6E3aeNYf/2LIwvbomvTo/ZXl6C4Ul8CYFu/gV24RXCBfk4lufn/HCoNLnLmrnC9cgK/Bkw+jMgFJC+HXkZ4SE5LHTDzJ5PwBigW0maFc74i1zUYQVAfeRtMTFXIl1olb3eSkD6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=broqQYSU; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="K6n2kADB";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="WCrXuTsD"
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 60RH5jLr171374
-	for <linux-clk@vger.kernel.org>; Tue, 27 Jan 2026 17:10:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=/yMpzSpDxVs8Dh/5bLKNN0uh
-	ExC8+G7Y0mffS21qSd4=; b=K6n2kADBvWEbbY3qfHQzc3TXO6nTFmIANR6lkle1
-	som8Zx9h8VUNn8nT/CDgUBEf3qBqw9lUmBikghudNIvEHhlOKndEwPFz0/yzmdGG
-	Gnwgthf5phgSjsqOzKDgK3abjT/eCjWyzBAOKLpkp0NWKjw3LuDQqkdQdhMtCbCx
-	j7BAz5VsWZFWNg3L1eeRx9YXCz+mus+v+BuU5KBDD6bwhzSQwNqyHGUZA6nIeo6x
-	1W6z5YWTt95LkQJUCuTqd73Z43fhcsmfGkLbodwmpzgBeCPY+EL3LB+hH+t5xW+I
-	CkFAbT6mCmROKovjoc6My9LO9ai4nXT/vWd6Y1XerXml5Q==
-Received: from mail-vs1-f69.google.com (mail-vs1-f69.google.com [209.85.217.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4bxf3a3spk-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Tue, 27 Jan 2026 17:10:27 +0000 (GMT)
-Received: by mail-vs1-f69.google.com with SMTP id ada2fe7eead31-5f5492d5959so16747141137.2
-        for <linux-clk@vger.kernel.org>; Tue, 27 Jan 2026 09:10:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1769533826; x=1770138626; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=/yMpzSpDxVs8Dh/5bLKNN0uhExC8+G7Y0mffS21qSd4=;
-        b=WCrXuTsDzZTZr18/Tzga8rXgKDH20EMd8dLfFmeFH7VhT1sRcYnF7w6o+iJJkyEpn9
-         1vnhzY8P4FXQnqkxt/7DEPqYdu1oqPIK6R5bHC7EIRyuUOAWu+o7+D2wLqNb6EbloJhW
-         BATys/j2V/ROkWlA+4XC9Z57lgcclzpCkL9tUYnN5Pea1VqgL+92MgT3mYPnF/QQdUZ6
-         oR3+dvmYgxIuRbfdGx3Cy0hCmeQzKANOSqEQ01XGLANGBEcUlKU0ai6dpjrn2YNfYlaP
-         XyjN6A9bX2TdI4by4oIrn2APnWspUk55b9ORRTB6c4RJj1vKDQaXdMRWw/R5vH58uN3e
-         geOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769533826; x=1770138626;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/yMpzSpDxVs8Dh/5bLKNN0uhExC8+G7Y0mffS21qSd4=;
-        b=EMwad7KNVhAyx08B25JQpYoor90a19LV1S62ilGn4PSXwKcIJaJWakXBrwN7gJeSOq
-         1xuLBWq+WNAZDjOSU6ymkc4kFWGtyYaIjNUm/B6/xqSTMLIctjSNg9RTuORX91RlC1Cl
-         1bXgCqn8BDUtbanpDKvi2mv6txpt1eO8s1awABFbiVndmVgBw5z44oc5faK8TpBXs2KH
-         7LqnETWcIAlYsEpSiQozxWc2IZw/xF1vUv33sPw9URJ0tYVDzAg9e9WIIGeQyjc7VlPt
-         01VY7ZjTSLtQuTFopnZs1GiAKFnrplfNoislJNDltAv/Qj9aBzB+cktOWxw7yJbygTZB
-         Ag1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWYWUgOROD1tHjz2tw7QvQj6cUhtw/94+Ws1sUV8d27i6+dsD0CHRtucqa7nhOPJbR7djAT65L5SDE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqVMWhlCGE9xvk5zNT4l6z4BULmJ04ux7LRuyBk6qRb01MUgXA
-	X8seNm8UwXZ5KAXyv6wkyq69ACuxGu88VeuY/CPzQ7VMgO7+p4QgY++2PN0KaOqwFKAvdR7U79L
-	9rDauKr28RnNAOQHy/bofMxFDkInGTsk4bpLw6LUuPCOa7Ghoao/Y7syppJg4JAaZvzWH+QM=
-X-Gm-Gg: AZuq6aJaknfGigCsovebg7TorWeAY7S1b4OG5o83xmwXrZ/Oa7n0XlPkrydn8nVQN36
-	NkagHht6sl15frjlo+r5H6c+/Egku3LV+IuRyaQson7u41Yoiw2BpXEvUKx9Q8odGgiSkPiAqvh
-	zG0VIuaAL7mQJZrasz6S0hWNoQFr0GmF3AnJUgGvfC9EZEAreKpFSqYV+16D4wFZT/V5mwOZCCc
-	x0cMWEwLNedP31EwIGgFG0yWlRAd0rvgwn+vlOFMoauQeRtvjzndVFI47nvIG+EvPdky879zUxW
-	V58Aruyj40mIeLvvkkJFAGOhOZg/uKRk4sQTE8bU9VYc7AFXa+W+EL5wNhuhFz7gbA0GJ5cR1ch
-	mYKcS5xah+KDljDO7Xe8CEnk3Q/QrG7E9DPzaPR+LbPxq1wIxf7RCrtmAPMujtjfC/ggRQVMm5M
-	qMt7xL54WAL6zwNvnbMt1AeQY=
-X-Received: by 2002:a05:6102:2911:b0:5f5:2b1c:7551 with SMTP id ada2fe7eead31-5f7236f8f1emr1322129137.19.1769533826127;
-        Tue, 27 Jan 2026 09:10:26 -0800 (PST)
-X-Received: by 2002:a05:6102:2911:b0:5f5:2b1c:7551 with SMTP id ada2fe7eead31-5f7236f8f1emr1322121137.19.1769533825707;
-        Tue, 27 Jan 2026 09:10:25 -0800 (PST)
-Received: from umbar.lan (2001-14ba-a073-af00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a073:af00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-59e074bdca0sm49577e87.94.2026.01.27.09.10.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Jan 2026 09:10:24 -0800 (PST)
-Date: Tue, 27 Jan 2026 19:10:23 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Abel Vesa <abel.vesa@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Luca Weiss <luca.weiss@fairphone.com>,
-        Taniya Das <taniya.das@oss.qualcomm.com>,
-        Taniya Das <quic_tdas@quicinc.com>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 5/6] clk: qcom: Add support for Global clock
- controller on Eliza
-Message-ID: <snwge2tfgbn5l7nvaez5v6h334hfhsaeh2piz56zuponxkxypo@73ar5opadfjb>
-References: <20260127-eliza-clocks-v2-0-ccee9438b5c8@oss.qualcomm.com>
- <20260127-eliza-clocks-v2-5-ccee9438b5c8@oss.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="broqQYSU"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EEAA8C116C6;
+	Tue, 27 Jan 2026 17:25:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1769534729;
+	bh=rW38RPoI3oC7pNCyY0rJv3O6uYwRPEMNoNEw8/xECFw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=broqQYSUyCZFqhUBVTkrR+dH3UsWbklfnhuW3B0HJf/2US/ZGqbFoSwMfI9QS1+AU
+	 irWM9QESApcK+/HViaWyDz080JoEFiS0H+7X2Yim/C5wv1xUlffScWUGE/g8LVxGIV
+	 TVN+um2U/fSPVvxp2GsbZgXoVXkLUd6HMzxhYuAeiu0e69LTvhBCvSO8gVgSXU6hjC
+	 Dab1HZsAECYGVgpU0E+i1X6hDDlJp680ohEBrUC3Il2mZdg3kKCYf6oqZsIBefj5Eb
+	 qbpJC/mdaHmzKFtpfLnH58a+cPtH8mXxN6l0b8KiaQUE9PipMMwAYCJZXz82bLnZVB
+	 d0oMLucv9S9uw==
+Date: Tue, 27 Jan 2026 17:25:04 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Dong Aisheng <aisheng.dong@nxp.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Yassine Oudjana <y.oudjana@protonmail.com>,
+	Laura Nao <laura.nao@collabora.com>,
+	=?iso-8859-1?Q?N=EDcolas_F=2E_R=2E_A=2E?= Prado <nfraprado@collabora.com>,
+	Chia-I Wu <olvaffe@gmail.com>, Chen-Yu Tsai <wenst@chromium.org>,
+	kernel@collabora.com, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH v3 1/5] clk: Respect CLK_OPS_PARENT_ENABLE during recalc
+Message-ID: <4ea31b0d-af6e-44f7-86e4-35a43b8c71e7@sirena.org.uk>
+References: <20251010-mtk-pll-rpm-v3-0-fb1bd15d734a@collabora.com>
+ <20251010-mtk-pll-rpm-v3-1-fb1bd15d734a@collabora.com>
+ <036da7ce-6487-4a6e-9b15-97c6d3bcdcec@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="RF8mwgvq6/WUQAl0"
+Content-Disposition: inline
+In-Reply-To: <036da7ce-6487-4a6e-9b15-97c6d3bcdcec@sirena.org.uk>
+X-Cookie: I brake for chezlogs!
+
+
+--RF8mwgvq6/WUQAl0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260127-eliza-clocks-v2-5-ccee9438b5c8@oss.qualcomm.com>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTI3MDE0MCBTYWx0ZWRfXyFaKKGRxxhrL
- 8DIPbUyXeTFZY2txIHzqnWVKfdSHKJCVCbon0kufpLppEM7H8jm8nM1gXwrTz4pKXOPv0pJ84H1
- FKAZffLFUJdKrECPf3DVVLK7WmFTyX4qtClat6g49b1qLvuM/Ujj9pyn9AhM+vt5CUFIa7NTS9Q
- TCVGR5+iLKuPh7KRD8wzmpLRxxAOCbJhauiBwfi3kG7oUUGbGCkUxdBAMc1MYJK1qJHPR+DoExO
- Med506zCt69KSWKrPKdQf1WL4ZxoZSSUaf/ROR2q8R47Q1B+BkH+nn+kVeVcvrRBLwY+H+6RpQv
- fhnmB1Nl+zptUt/1r+qKRfZ9ghWpyQ4Zn2kA0vkW9vLH6XrbsBMt/rWzEP2r/IcYMiz+43Dh1EX
- wGJweMEwISthevfQ7YKmo3r+dfaz2Lerf5OIrxWV9DmCUQzGHF/ZR7iV0NLpQLTIX9Qys6OBxMZ
- IgyMQubo3fBExuGzXdw==
-X-Proofpoint-ORIG-GUID: JpN09uCafm5G_s2nK_JLcZtmPvlzXBR4
-X-Proofpoint-GUID: JpN09uCafm5G_s2nK_JLcZtmPvlzXBR4
-X-Authority-Analysis: v=2.4 cv=a6k9NESF c=1 sm=1 tr=0 ts=6978f183 cx=c_pps
- a=5HAIKLe1ejAbszaTRHs9Ug==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=vUbySO9Y5rIA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=EUspDBNiAAAA:8 a=F7eGajQwVCTwq7oO_cwA:9 a=CjuIK1q_8ugA:10
- a=gYDTvv6II1OnSo0itH1n:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-01-27_04,2026-01-27_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 spamscore=0 phishscore=0 lowpriorityscore=0 adultscore=0
- priorityscore=1501 bulkscore=0 suspectscore=0 clxscore=1015 impostorscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2601150000 definitions=main-2601270140
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jan 27, 2026 at 05:03:23PM +0200, Abel Vesa wrote:
-> From: Taniya Das <taniya.das@oss.qualcomm.com>
-> 
-> Add support for Global clock controller for Eliza Qualcomm SoC.
-> 
-> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
-> Signed-off-by: Abel Vesa <abel.vesa@oss.qualcomm.com>
-> ---
->  drivers/clk/qcom/Kconfig     |    9 +
->  drivers/clk/qcom/Makefile    |    1 +
->  drivers/clk/qcom/gcc-eliza.c | 3160 ++++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 3170 insertions(+)
-> 
+On Tue, Jan 27, 2026 at 05:01:35PM +0000, Mark Brown wrote:
+> On Fri, Oct 10, 2025 at 10:47:09PM +0200, Nicolas Frattaroli wrote:
+> > When CLK_OPS_PARENT_ENABLE was introduced, it guarded various clock
+> > operations, such as setting the rate or switching parents. However,
+> > another operation that can and often does touch actual hardware state is
+> > recalc_rate, which may also be affected by such a dependency.
+>=20
+> I'm seeing boot regressions in -next on the Avenger96 which bisect to
+> this patch in -next.  The board resets during startup:
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+I am also seeing some similar regressions even earlier on i.MX8MP
+platforms, though they're resetting even earlier before any output is
+produced (even with earlycon).  Didn't confirm yet with a revert or
+anything though.
 
+--RF8mwgvq6/WUQAl0
+Content-Type: application/pgp-signature; name="signature.asc"
 
--- 
-With best wishes
-Dmitry
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAml49O8ACgkQJNaLcl1U
+h9DWogf/Z6f+ynVN93YYO78VeYBg+sDQozhRTPncQpjvglNt8Mq+zTZKAzdWU8fo
+jwbjNVtpH6kamkMp5b/tIVaFzuD8cHU0B0AdnVcnueJXNJ49AxUy9oIZlKCJTS6f
+bMFQoiJ6nniK04tIBXw7KUjIOqetkXLva4CtzYO7Lp/CHsp6nJF6ExXMxodiy9R9
+EFOwyOMcWNtVg+C/ekXKzvtoYWOWBZ7ug39ftHJwnpUYLLX4tqj4e2F3UWTT6zd6
+4BiaA6euXIAGpX+ndLto43Ecm2QwSMrZ+r3KGQelFMY3G7GnGkzZxAgb1G1dlE4I
+wUCqqcDUxVEXsebEpYs7GbyDTI+Mhw==
+=uEAl
+-----END PGP SIGNATURE-----
+
+--RF8mwgvq6/WUQAl0--
