@@ -1,165 +1,122 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B67235D60B;
-	Tue, 27 Jan 2026 15:56:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769529400; cv=none; b=R0SjHteoKWKwg6ZvIVQakRTL5nvEoH7eJimvKlwnZiqg+depU3m2iylfY8sGsBbxyARjtx+3zBBoypMQ0RMjmQe8XPrrOw7eLNC3iXrUdhgndG+1qIO+GdSUGoMPg4kk5FOrEBkgA/wodYCK2Cz3p3HUqVy/FeYySPknvEdnyDA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769529400; c=relaxed/simple;
-	bh=pyesTGZkOMY1CDLH595pytnp+a/HTRbOucVfk8mO0ZE=;
-	h=From:Date:Content-Type:MIME-Version:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=mqNrqxxcLv7WZn4QbIZZmFWFJ6xAFPFjH6HrttcSK8nFA8Opv8Q6TjyorwNoFXPID1hSm1zG9QGFkSxdI7ApJBsVl3WxoSDrthGn0BFaoBmmhJpsI3jcW1zUqEKHnzEeNByMhd2G2xvzHvxE//4taJVrBbvV1QFJFypwqVKdMk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ljxMjaQU; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DD6334A77F
+	for <linux-clk@vger.kernel.org>; Tue, 27 Jan 2026 16:16:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.176
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1769530596; cv=pass; b=cRjXzr7uOAW1ZcEQos4zEztKBcqJ6gMKWxyAUGNyBqYBiai0H2YmTpfAXUrqRcfI0s6fiGebtqfbcM3OcvFcBRbmuoNpqI4+HJFdOKVZi8KqQAluV9QcIBUvs2KckLFhnXACe0LEWrD2Pd8UrlwQYhDHlO+93zf7XiW67Du7ItY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1769530596; c=relaxed/simple;
+	bh=aLECeGHvb/kzZnkA2H6Ej9ucGaNpds/MHozGNmB8154=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XjnJrGdhzUJdDLeIJnEGX9G3KiNkq5bs1lcmWiEpKAWnXmFecl+aulsz0ZVBCKJ+k8SIWJQnAqNrRki/5IngQY5rrXwghlRDqZ2JVV/GnMvz5cNyrN9jCoyIPAlOah0uJCLcLhxxZO68wEofTSloEH1WqqAPyi5WFZAAwkL6Ls8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K2v7QqXA; arc=pass smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ljxMjaQU"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CED1C116C6;
-	Tue, 27 Jan 2026 15:56:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769529400;
-	bh=pyesTGZkOMY1CDLH595pytnp+a/HTRbOucVfk8mO0ZE=;
-	h=From:Date:Cc:To:In-Reply-To:References:Subject:From;
-	b=ljxMjaQUO+xIXWR2kM5tAeDfxymnyk4/q4shrBM0f5GeTIT0DmYoM63aLv7+lQcCy
-	 Rk7IYQtD1bOoEL0oQEWsZBhaCCEXDj4NLcqQYJQxNV1sXXqEs/2rRpnRnRMR6KyYRo
-	 buTfxs1BbBY+zuVAYwZD0matwCs7Looq6cbtnepQqI7Eq0owiAxLkgGkHmulB4I+GP
-	 1ti7KFgGBbQspUdPV6iBN6kp/6PFtkyA3D252xhb5n0H5rVunUEgP++7niqXUr2eAd
-	 K60jcWQ3eZZbSf6vQT4KkJdCCletNodCaJzokJuwQN97yc0spPtBp6VjXxUASch5Tm
-	 sgmxNsvhOULWw==
-From: Rob Herring <robh@kernel.org>
-Date: Tue, 27 Jan 2026 09:56:39 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K2v7QqXA"
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-385bdc72422so48720271fa.1
+        for <linux-clk@vger.kernel.org>; Tue, 27 Jan 2026 08:16:34 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1769530593; cv=none;
+        d=google.com; s=arc-20240605;
+        b=YxyjqMJ7tHurUmkQ3biAOcqmMYdhrM7JbdMW0hXxlGzRQLh+QFQY7Y0B2i1tXP6Q9J
+         PYIvWTuOq8I4oQnZJcj5otaCiwDDevgBUuDktRzOG+vkf4Ccl4cEQpjF9OYaOHZFr312
+         FUDws8dZvI0Sncxf+kUFz0Q5B8CcPtOqMmfsahpoCk0TfkGKrlUwlIoBG8qVY6N30FMp
+         60THpKQakmjI06G3YKb0uZkd1Lf7DjvQCcfc9N2+OZD5f71ax26BxexPtpSikLwreKV6
+         GsODa6+jN8+vX4U73a64MCtlXsnyJJC1OWHPM+d+cgX7en4oC6RuhtSDpAzvaWNO6XlS
+         kufg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=aLECeGHvb/kzZnkA2H6Ej9ucGaNpds/MHozGNmB8154=;
+        fh=J6Cl4Lw1uDxEpOUSL8JTYh9LfOSHbHd0Vdsv4nJrTg0=;
+        b=XotJA/E8ZoECCt5Y9Cd5xBxs3PlK1P5WEGVSj4eS1g/u6m+BRU1N6els6tqSrn0ZZX
+         9OjyFVe0Xv8PncIxwz+Ce3llpogkr0r5coMHCMmKq89wumG7Go24Th2q/qkEGx5GsCR6
+         lKzgfegp1AQJ+2HxmneVVCPT8wHqODrcAtdom+/EingdtfP/mWKGHMqoHGAyU5/Egc/L
+         HviTvZxelUeCzuxDdBb6OP3bq4CTVMrE5SEc0dnXq4uiTnkh6AGEdssPGNLVaR0b6WJ+
+         781D2NigTnZ7icxDTKdXZypjXCvSdX67ar5gi6H6FHTdM/fU9Mu3msnaXv4vhYQaSBQm
+         dtvQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1769530593; x=1770135393; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aLECeGHvb/kzZnkA2H6Ej9ucGaNpds/MHozGNmB8154=;
+        b=K2v7QqXAB+oZsRnfDsJP0eI4E5ny6xbdW4SPQNM5dLYILJllHXVqFNHTf4ibWUZiLk
+         AQzCtXXo4p43ktK32IGk6Nl48oh73ltu1JqdeR0cE07qiGxhf/RU2DuceiBydKZtMvhf
+         Yy0YDkvTOYGW8TM+58DtZk71f/VKAJCOBgz2MRrDn7cKMs8TUCpU4DTieZX5GwZxlZS9
+         GYjdW8u27igT2Cmr6mRyOeLW9sEgS/OtG4Lo2IBX46XIQMpcR8QhyJht+n1RbAMX8blz
+         xw8wOQtfz1jMFD96LRFcAInrkivK6B4HxFWxvMBVAZjAHpdWLCsu5D8dKDV0YLMlF2Mw
+         GcAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1769530593; x=1770135393;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=aLECeGHvb/kzZnkA2H6Ej9ucGaNpds/MHozGNmB8154=;
+        b=r0Rm7WVVGd2y7qiv6JS8IqWzfh0hC1nJ7rfZ4yHcsBJ+PqsSwPZo602FROUKddZM2N
+         AGiPscXQQXlPH8jc7OEbxIXKewCeNHdXsKEYLJzw+alOBHek4um07h+h9HQgKst+p9O1
+         qTaSieyqi9iaC7u4OmO3Yc+As60OCfcdF9eZ9c3NAfIuD4DSN6EStcz7ob/EWY6vXJpx
+         Ra50JVd9A0yH65Qv0d4dQns+tMwXyuHRzZn6W216k4USP1NKWX7Yno4lR2rVGPKWrvg5
+         6hlpboMqUmUyhqjzwQTYn0Sz1u6/t6c5m57ucFeuPXVXi2WEYAvfPvkyq85FRNgiWrpY
+         TZVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXkv23UQBneckTLcNMRDs36ayXEMlldWdTgrfta/Koxg0ve8+ahb9ROrCOhnPWJZtH4rE/HCIScCqY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxh1XFYKxhAN9kGgHnvhhyW735C1wM9LcCp2wY5I6Ka3GEqBtcD
+	NjI+Do35n6Mr9ppBJjaLxdDx40SrerbSBl413l+NdKJdroaXo2f4XZh4b6ESB5CglKCa5akPDhs
+	bPIxwd/5QC/k0Xvot073BDFhL/V73Fnc=
+X-Gm-Gg: AZuq6aJJeoMfMWZS8TPYX32QOKJ9SKjUieDzsRi4DL7Zh3YnUCG72LaQXA9BvWaen2E
+	Smw5d+cVnznOG+qdkqmfiIkTs0gXzz9lsLTzN+n4CO+sOohQ+s5EXPLPs0TMYysLlaWi7hEwF0W
+	5PmdG9cC4nbJ52rsNDhnN29P0PO18eYvyFAiveWg5/Rz/x1oAWAlpjLFlK3dIMEomqs7lWW1Fvl
+	QMT4e4XZ468aPkOR/hdJ4WfEmRJB2WlUra3ehV0i8TPyt8P6Zm16jlcb5C141/QMPdxlWbF5Ood
+	EdHucuWPzY599PPTOrBPX+rAaD7+63bPyDNZ1KAYtfxgNlrTm0PzVSqsfCv50aOlKIT/gxC/49u
+	3VA54/g==
+X-Received: by 2002:a2e:be9d:0:b0:37b:a664:acde with SMTP id
+ 38308e7fff4ca-3861c9e6cf2mr12292251fa.32.1769530592979; Tue, 27 Jan 2026
+ 08:16:32 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, 
- Kevin Hilman <khilman@baylibre.com>, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>, 
- Liam Girdwood <lgirdwood@gmail.com>, linux-amlogic@lists.infradead.org, 
- Conor Dooley <conor+dt@kernel.org>, Jerome Brunet <jbrunet@baylibre.com>, 
- linux-clk@vger.kernel.org, shuai.li@amlogic.com, 
- linux-arm-kernel@lists.infradead.org, 
- Michael Turquette <mturquette@baylibre.com>, jian.xu@amlogic.com, 
- linux-sound@vger.kernel.org, zhe.wang@amlogic.com, 
- Takashi Iwai <tiwai@suse.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
- Jaroslav Kysela <perex@perex.cz>, Mark Brown <broonie@kernel.org>
-To: Jiebing Chen <jiebing.chen@amlogic.com>
-In-Reply-To: <20260126-audio_drvier-v6-0-99e350855bc2@amlogic.com>
-References: <20260126-audio_drvier-v6-0-99e350855bc2@amlogic.com>
-Message-Id: <176952925847.1904460.11456869237043173749.robh@kernel.org>
-Subject: Re: [PATCH v6 0/5] Add support for S4 audio
+References: <20251222-cstr-clk-v1-1-ef0687717aa1@gmail.com>
+ <CAJ-ks9mjBY7x1s_4wqMC8xqWsX2+aCM6NHn0j7yh_+daKiyS1Q@mail.gmail.com>
+ <CAJ-ks9kn=0Sm2_1WV4xyzunzcGG1VZDKy8L=_SCCWyV2OkJTDA@mail.gmail.com>
+ <CANiq72krt9De1+WgMh0y8XX5K9RrU-_1FuSp+sKO1Ya8EaVoUg@mail.gmail.com>
+ <CAJ-ks9m-0C=hOdYC_z9mNH54fXjnaWpYgZSPaWoJC8rnQ4Kgkw@mail.gmail.com> <CANiq72m0TCPTEn=HkMg19Et7JFeRc-fqP+MxP1gaDosSF42iww@mail.gmail.com>
+In-Reply-To: <CANiq72m0TCPTEn=HkMg19Et7JFeRc-fqP+MxP1gaDosSF42iww@mail.gmail.com>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Tue, 27 Jan 2026 11:15:56 -0500
+X-Gm-Features: AZwV_QjkJfUNNVNZl-mxPXC6CrfK9BzaT2kQwlk_AQVc_ZUxCIBEA3TeQf56sIk
+Message-ID: <CAJ-ks9nimp4WEOOQcMEK1JULgqrM1hugO5s=PxsP54n-nShCWQ@mail.gmail.com>
+Subject: Re: [PATCH] rust: clk: replace `kernel::c_str!` with C-Strings
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, linux-clk@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Viresh Kumar <viresh.kumar@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Jan 27, 2026 at 9:27=E2=80=AFAM Miguel Ojeda
+<miguel.ojeda.sandonis@gmail.com> wrote:
+>
+> On Tue, Jan 27, 2026 at 3:14=E2=80=AFPM Tamir Duberstein <tamird@gmail.co=
+m> wrote:
+> >
+> > Another ping here, folks! Miguel, what can we do if we do not hear
+> > from the clk maintainers?
+>
+> Stephen already Acked-by this one, right?
+>
+> So I assume they were OK with me taking it -- I will do that unless
+> someone shouts.
 
-On Mon, 26 Jan 2026 06:01:41 +0000, Jiebing Chen wrote:
-> This series completes the end-to-end audio support
-> for S4 SoC from hardware bindings to driver implementation
-> and system integration.
-> 
-> 1 Device Tree Bindings Updates
-> Added audio power domain and S4 audio clock support for S4 SoC.
-> Added S4 audio tocodec binding support.
-> 
-> 2 Driver Implementation
-> Implemented S4 tocodec driver for G12A architecture.
-> Added S4 audio clock support in AXG audio clock
-> 
-> 3 Device Tree Integration
-> Add Amlogic S4 audio subsystem support in arm64 DTS.
-> 
-> Signed-off-by: jiebing chen <jiebing.chen@amlogic.com>
-> ---
-> Changes in v6:
-> - Fix the problem of string for Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml
-> - Remove clock pad register, and it will be submitted as an independent patch.
-> - Redescribe sound/soc/meson/g12a-toacodec.c
-> - Link to v5: https://lore.kernel.org/r/20250710-audio_drvier-v5-0-d4155f1e7464@amlogic.com
-> 
-> Changes in v5:
-> - Fix warning Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yam when make dt_binding_check
-> - The audio reg is mounted below the APB bus in dts file.
-> - Deal with pad clock in a distinct controller.
-> - Fix warning for sound/soc/meson/g12a-toacodec.c
-> - Link to v4: https://lore.kernel.org/r/20250319-audio_drvier-v4-0-686867fad719@amlogic.com
-> 
-> Changes in v4:
-> - fix dtb check warning
-> - add maxItems of power domain for dt-bindings
-> - fixed audio clock pads regmap base and reg offset
-> - use dapm widget to control tocodec bclk and mclk enable
-> - Link to v3: https://lore.kernel.org/r/20250228-audio_drvier-v3-0-dbfd30507e4c@amlogic.com
-> 
-> Changes in v3:
-> - remove g12a tocodec switch event
-> - Modify the incorrect title for dt-bindings
-> - Link to v2: https://lore.kernel.org/r/20250214-audio_drvier-v2-0-37881fa37c9e@amlogic.com
-> 
-> Changes in v2:
-> - remove tdm pad control and change tocodec base on g12a
-> - change hifipll rate to support 24bit
-> - add s4 audio clock
-> - Link to v1: https://lore.kernel.org/r/20250113-audio_drvier-v1-0-8c14770f38a0@amlogic.com
-> 
-> ---
-> Jiebing Chen (5):
->       dt-bindings: clock: meson: Add audio power domain for S4 soc
->       dt-bindings: Asoc: axg-audio: Add S4 audio tocodec
->       ASoC: meson: g12a-toacodec: Add S4 tocodec driver
->       clk: meson: axg_audio: add S4 support
->       arm64: dts: amlogic: Add Amlogic S4 Audio
-> 
->  .../bindings/clock/amlogic,axg-audio-clkc.yaml     |  18 +-
->  .../bindings/sound/amlogic,g12a-toacodec.yaml      |   1 +
->  .../boot/dts/amlogic/meson-s4-s805x2-aq222.dts     | 222 +++++++++++++
->  arch/arm64/boot/dts/amlogic/meson-s4.dtsi          | 361 +++++++++++++++++++++
->  drivers/clk/meson/axg-audio.c                      | 165 ++++++++++
->  sound/soc/meson/g12a-toacodec.c                    |  36 ++
->  6 files changed, 801 insertions(+), 2 deletions(-)
-> ---
-> base-commit: a0c666c25aeefd16f4b088c6549a6fb6b65a8a1d
-> change-id: 20250110-audio_drvier-07a5381c494b
-> 
-> Best regards,
-> --
-> jiebing chen <jiebing.chen@amlogic.com>
-> 
-> 
-> 
-
-
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
-
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
-
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
-
-  pip3 install dtschema --upgrade
-
-
-This patch series was applied (using b4) to base:
- Base: a0c666c25aeefd16f4b088c6549a6fb6b65a8a1d (use --merge-base to override)
-
-If this is not the correct base, please add 'base-commit' tag
-(or use b4 which does this automatically)
-
-
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/amlogic/' for 20260126-audio_drvier-v6-0-99e350855bc2@amlogic.com:
-
-arch/arm64/boot/dts/amlogic/meson-s4-s905y4-khadas-vim1s.dtb: clock-controller@330000 (amlogic,s4-audio-clkc): reg: [[0, 3342336, 0, 216], [0, 3346048, 0, 16]] is too long
-	from schema $id: http://devicetree.org/schemas/clock/amlogic,axg-audio-clkc.yaml
-arch/arm64/boot/dts/amlogic/meson-s4-s805x2-aq222.dtb: clock-controller@330000 (amlogic,s4-audio-clkc): reg: [[0, 3342336, 0, 216], [0, 3346048, 0, 16]] is too long
-	from schema $id: http://devicetree.org/schemas/clock/amlogic,axg-audio-clkc.yaml
-
-
-
-
-
+Great, thanks!
