@@ -1,42 +1,41 @@
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF60336214C;
-	Tue, 27 Jan 2026 17:09:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D689B364035
+	for <linux-clk@vger.kernel.org>; Tue, 27 Jan 2026 17:09:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769533782; cv=none; b=jnnFxpgJnQEY8L6kvcLWY44k9bCKzutQ2x/V3CPbBYKCGSld/LHdOFuH3onnaildLucuRjnEzXtK2khSm4nGDQtO3PCtWaEUsK3y1fV+kCR3jR4yeG91+Z+j+748WHhsbRfsqr7tiwvnOieUlqaEHbMSOQO6kAE/TGSPHnm2C4E=
+	t=1769533784; cv=none; b=OUECW/JA/yMCNJWe+h41Oa0Y7elDb2xbC1pQwxZKJ2mFxk5r6R8DNIj8HYkucJ90gy/h/OHpZqn/DLA+cyI8PRIckbIKMyg3gnbWGk+1xDBSv495hBFO/63egtuBrct+6q1vjqLITT7jkh/z3dWTgrDA/zoH82/+648Oao51Rvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769533782; c=relaxed/simple;
-	bh=QXUiS85EIUUd867FAX8BQt+rIZ5D4JQIHmers4hf4as=;
+	s=arc-20240116; t=1769533784; c=relaxed/simple;
+	bh=1vi+Msl5R79qBzAfUzeesTByl0ELGftsvbDJ0vXY03E=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=V168/YJFTsBkmOfSUOqyyeLYyhyScjK5V5Rf8tSV8X0yf/muE0xu84F9FozU4vi9YrSJM6DWJf06Nu/1ydmhVyA0/d7G2BYSY6BIRT+e4c98d2EnLNtsStKgbzgEvRi007Ii96VHlkemmkRAkkeK0+WADgPoRuHTSSXpmvpRbSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=UA8NiG/2; arc=none smtp.client-ip=185.171.202.116
+	 In-Reply-To:To:Cc; b=UEwSLgtThzL5SxA7d7jcMbSdPuaEkIXC8V8ylvAi2O0B7GSpLg68AvGip8aX6b+3kt4Xal61RbmtreWWjasOBF1wK2mmT6dqIIPBDy2PAh4Q7rgSe0Jl5LfT2oikmbWF4RH7wcXkufWhNB3p5jjdZvlbR4WLHOh0wJUvoOVIx6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=dhbVaD2N; arc=none smtp.client-ip=185.246.84.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="UA8NiG/2"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="dhbVaD2N"
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 6D221C211C8;
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 506AC1A2A9C;
 	Tue, 27 Jan 2026 17:09:41 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 4A6A7606F5;
-	Tue, 27 Jan 2026 17:09:39 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id EDBB4119A8697;
-	Tue, 27 Jan 2026 18:09:35 +0100 (CET)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 2655B606F5;
+	Tue, 27 Jan 2026 17:09:41 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 7AE6D119A8699;
+	Tue, 27 Jan 2026 18:09:38 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1769533777; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1769533780; h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=PcFyLKn28tM/nd0u7JbcHwSmBDJOiHSl2uY1fJ6Cd+w=;
-	b=UA8NiG/2mFd7o8K88FkQdpuWfkiXQ0P5MQUNTAyPGh7CLIeCg44o8FZI0+bMR9IDUELhJ+
-	FF+XKhRM1WxcG2TVjJBal1AYMtSMKi2S7dVKoYaW9kJzxnAD97ObnRBXzDrsq02c8YXkdF
-	eXqHB4MBF6R3XJFs7ord1o+kO9LV5UWUvjews19v1UdY1Gp5zbqT6L4uwkmRu0iJo/K7eL
-	ZWr5dZoUs5hP46vXiHJFKp/yjXEl2NYBwQbQJvhuG6oDNG5jqV83ATROuLVmNfxwJaaxji
-	ZyLhbSCsz38lOTfFGG4zxN0K2uRWazs9L0Y2gaIrw2nawYvcfj2xY1NzzC3k+Q==
+	bh=w1odAlmEkx+GduKelnjex71vq0A+kOfMC2EKAhxZ2Dk=;
+	b=dhbVaD2N4fMAcH5gjf2sNIhFQahpWNk3cJY1d11xExAXjrKgUTUF72o6LKv2b13D27/92I
+	MGRqnmEc/xAgEvvbjchv38L/0h2n0l7udPRKWQS+W//Bej0OJ+I7uN66kihlU4uvILRAjE
+	ADCAstHbQA7jdTI0R6rcjx+X0ntFmsP5WD0vR3TL2Te173+0uqn7GgicKxx+h3X33JVUu9
+	j+4IctmT1WpssDKErjCCqHnWVPUUbiBnDth2bgQU9K4lkB6OVWsYzdQ4WYTh0T+B0kBFX3
+	HuQoBP9J9ablpodhsYGSQ/eT2IkJcmAkZkrAGAetH4tmCYgA6GrjmYXeat1byQ==
 From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-Date: Tue, 27 Jan 2026 18:09:29 +0100
-Subject: [PATCH v6 1/8] dt-bindings: soc: mobileye: OLB is an Ethernet PHY
- provider on EyeQ5
+Date: Tue, 27 Jan 2026 18:09:30 +0100
+Subject: [PATCH v6 2/8] phy: sort Kconfig and Makefile
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -45,7 +44,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20260127-macb-phy-v6-1-cdd840588188@bootlin.com>
+Message-Id: <20260127-macb-phy-v6-2-cdd840588188@bootlin.com>
 References: <20260127-macb-phy-v6-0-cdd840588188@bootlin.com>
 In-Reply-To: <20260127-macb-phy-v6-0-cdd840588188@bootlin.com>
 To: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
@@ -64,53 +63,133 @@ Cc: linux-mips@vger.kernel.org, devicetree@vger.kernel.org,
  Tawfik Bayouk <tawfik.bayouk@mobileye.com>, 
  Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
  Luca Ceresoli <luca.ceresoli@bootlin.com>, 
- =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>, 
- Conor Dooley <conor.dooley@microchip.com>
+ =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
 X-Mailer: b4 0.14.3
 X-Last-TLS-Session-Version: TLSv1.3
 
-OLB on EyeQ5 ("mobileye,eyeq5-olb" compatible) is now declared as a
-generic PHY provider. Under the hood, it provides Ethernet RGMII/SGMII
-PHY support for both MAC instances.
+Neither Kconfig nor Makefile are sorted; reorder them.
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+$ diff -U100 <(grep ^config drivers/phy/Kconfig) \
+             <(grep ^config drivers/phy/Kconfig | sort)
+
+$ diff -U100 <(grep ^obj-\\$ drivers/phy/Makefile) \
+             <(grep ^obj-\\$ drivers/phy/Makefile | sort)
+
 Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
 ---
- .../devicetree/bindings/soc/mobileye/mobileye,eyeq5-olb.yaml       | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/phy/Kconfig  | 62 ++++++++++++++++++++++++++--------------------------
+ drivers/phy/Makefile |  6 ++---
+ 2 files changed, 34 insertions(+), 34 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/soc/mobileye/mobileye,eyeq5-olb.yaml b/Documentation/devicetree/bindings/soc/mobileye/mobileye,eyeq5-olb.yaml
-index 6d11472ba5a7..56401d76a9b5 100644
---- a/Documentation/devicetree/bindings/soc/mobileye/mobileye,eyeq5-olb.yaml
-+++ b/Documentation/devicetree/bindings/soc/mobileye/mobileye,eyeq5-olb.yaml
-@@ -51,6 +51,9 @@ properties:
-   clock-names:
-     const: ref
+diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
+index 678dd0452f0a..4f1b1d7f5d20 100644
+--- a/drivers/phy/Kconfig
++++ b/drivers/phy/Kconfig
+@@ -25,6 +25,26 @@ config GENERIC_PHY_MIPI_DPHY
+ 	  Provides a number of helpers a core functions for MIPI D-PHY
+ 	  drivers to us.
  
-+  '#phy-cells':
-+    const: 1
++config PHY_AIROHA_PCIE
++	tristate "Airoha PCIe-PHY Driver"
++	depends on ARCH_AIROHA || COMPILE_TEST
++	depends on OF
++	select GENERIC_PHY
++	help
++	  Say Y here to add support for Airoha PCIe PHY driver.
++	  This driver create the basic PHY instance and provides initialize
++	  callback for PCIe GEN3 port.
 +
- patternProperties:
-   '-pins?$':
-     type: object
-@@ -310,7 +313,7 @@ allOf:
-       properties:
-         '#reset-cells': false
++config PHY_CAN_TRANSCEIVER
++	tristate "CAN transceiver PHY"
++	select GENERIC_PHY
++	select MULTIPLEXER
++	help
++	  This option enables support for CAN transceivers as a PHY. This
++	  driver provides function for putting the transceivers in various
++	  functional modes using gpios and sets the attribute max link
++	  rate, for CAN drivers.
++
+ config PHY_LPC18XX_USB_OTG
+ 	tristate "NXP LPC18xx/43xx SoC USB OTG PHY driver"
+ 	depends on OF && (ARCH_LPC18XX || COMPILE_TEST)
+@@ -36,6 +56,17 @@ config PHY_LPC18XX_USB_OTG
+ 	  This driver is need for USB0 support on LPC18xx/43xx and takes
+ 	  care of enabling and clock setup.
  
--    # Only EyeQ5 has pinctrl in OLB.
-+    # Only EyeQ5 has pinctrl and PHY in OLB.
-   - if:
-       not:
-         properties:
-@@ -320,6 +323,8 @@ allOf:
-     then:
-       patternProperties:
-         '-pins?$': false
-+      properties:
-+        '#phy-cells': false
++config PHY_NXP_PTN3222
++	tristate "NXP PTN3222 1-port eUSB2 to USB2 redriver"
++	depends on I2C
++	depends on OF
++	select GENERIC_PHY
++	help
++	  Enable this to support NXP PTN3222 1-port eUSB2 to USB2 Redriver.
++	  This redriver performs translation between eUSB2 and USB2 signalling
++	  schemes. It supports all three USB 2.0 data rates: Low Speed, Full
++	  Speed and High Speed.
++
+ config PHY_PISTACHIO_USB
+ 	tristate "IMG Pistachio USB2.0 PHY driver"
+ 	depends on MIPS || COMPILE_TEST
+@@ -70,37 +101,6 @@ config USB_LGM_PHY
+ 	  interface to interact with USB GEN-II and USB 3.x PHY that is part
+ 	  of the Intel network SOC.
  
- examples:
-   - |
+-config PHY_CAN_TRANSCEIVER
+-	tristate "CAN transceiver PHY"
+-	select GENERIC_PHY
+-	select MULTIPLEXER
+-	help
+-	  This option enables support for CAN transceivers as a PHY. This
+-	  driver provides function for putting the transceivers in various
+-	  functional modes using gpios and sets the attribute max link
+-	  rate, for CAN drivers.
+-
+-config PHY_AIROHA_PCIE
+-	tristate "Airoha PCIe-PHY Driver"
+-	depends on ARCH_AIROHA || COMPILE_TEST
+-	depends on OF
+-	select GENERIC_PHY
+-	help
+-	  Say Y here to add support for Airoha PCIe PHY driver.
+-	  This driver create the basic PHY instance and provides initialize
+-	  callback for PCIe GEN3 port.
+-
+-config PHY_NXP_PTN3222
+-	tristate "NXP PTN3222 1-port eUSB2 to USB2 redriver"
+-	depends on I2C
+-	depends on OF
+-	select GENERIC_PHY
+-	help
+-	  Enable this to support NXP PTN3222 1-port eUSB2 to USB2 Redriver.
+-	  This redriver performs translation between eUSB2 and USB2 signalling
+-	  schemes. It supports all three USB 2.0 data rates: Low Speed, Full
+-	  Speed and High Speed.
+-
+ source "drivers/phy/allwinner/Kconfig"
+ source "drivers/phy/amlogic/Kconfig"
+ source "drivers/phy/broadcom/Kconfig"
+diff --git a/drivers/phy/Makefile b/drivers/phy/Makefile
+index bfb27fb5a494..9943d742571d 100644
+--- a/drivers/phy/Makefile
++++ b/drivers/phy/Makefile
+@@ -5,14 +5,14 @@
+ 
+ obj-$(CONFIG_GENERIC_PHY)		+= phy-core.o
+ obj-$(CONFIG_GENERIC_PHY_MIPI_DPHY)	+= phy-core-mipi-dphy.o
++obj-$(CONFIG_PHY_AIROHA_PCIE)		+= phy-airoha-pcie.o
+ obj-$(CONFIG_PHY_CAN_TRANSCEIVER)	+= phy-can-transceiver.o
+ obj-$(CONFIG_PHY_LPC18XX_USB_OTG)	+= phy-lpc18xx-usb-otg.o
+-obj-$(CONFIG_PHY_XGENE)			+= phy-xgene.o
++obj-$(CONFIG_PHY_NXP_PTN3222)		+= phy-nxp-ptn3222.o
+ obj-$(CONFIG_PHY_PISTACHIO_USB)		+= phy-pistachio-usb.o
+ obj-$(CONFIG_PHY_SNPS_EUSB2)		+= phy-snps-eusb2.o
++obj-$(CONFIG_PHY_XGENE)			+= phy-xgene.o
+ obj-$(CONFIG_USB_LGM_PHY)		+= phy-lgm-usb.o
+-obj-$(CONFIG_PHY_AIROHA_PCIE)		+= phy-airoha-pcie.o
+-obj-$(CONFIG_PHY_NXP_PTN3222)		+= phy-nxp-ptn3222.o
+ obj-y					+= allwinner/	\
+ 					   amlogic/	\
+ 					   broadcom/	\
 
 -- 
 2.52.0
