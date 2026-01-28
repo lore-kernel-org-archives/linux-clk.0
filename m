@@ -1,117 +1,101 @@
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9785737105F;
-	Wed, 28 Jan 2026 18:40:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769625612; cv=pass; b=suJTf9Iq7chIYyVORWVsp1vnzOaaof63DqHRpq/c/0Ufx7PNhIaJYNc5P59pxq2R7VIkHBM+4dR0Qka+f8x0JwPBRyUgRWo9rx8gNMia1CxzFbgEcLKEsrGqufhByPofKZ2/iSRYfSu/s8fVi39gSG7JbOvB9TxwKTHVnxlecq8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769625612; c=relaxed/simple;
-	bh=OAdFrquKGDp7XiFTYgdbCRkM6pgcnhMKBE/waj03ZcY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=UBKUaLmmeys2PrbpuoqxBY2clYV/erEG5TG9bWwfBlbbJDwpg6B5VJZBM4Z4/UbgXN8dHYlNsOr1LNqZ5LogV9HDAUdIB7WenBsSfW9ktU9vMnGXAOrrTHJ05c4GLhpdXCiz6Fw4M1ET6fhDfLgv0U2m3wrYK5PtU/kUTXKOfAc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=IrlW0Kai; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C13D53321A3;
+	Wed, 28 Jan 2026 19:01:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1769626884; cv=none; b=cjkol4AcVXaZ/BUH37TZx+L79TG1UDjuWJOJ4uNczS4SffYqG7ZwGDKF45GVqyoarSCKjfER449dJKw93IRZA6A+L0087RBKc9Ar8BrAldwbT51stjp7AzRiPtHmWanMSS742BrHxRiNfnu6dYlRQmTd2yI34f0p6lQ1Fo/eWGA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1769626884; c=relaxed/simple;
+	bh=n34TAjuaUJNq368XZLmuh46Sjt4jj9OJ3xPmOcHju38=;
+	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
+	 To:Date:Message-ID; b=d9NATccxw2ovCrv/DkFAuR9MKA1o5zIXoJRm+26zai8XWUokD7GLY0KXgoqNctSgD2eyxmIyIouFy9ZE9RE5kw8obXj1zSRz04m307HCWXZy/dSXP+9TRDuoJCGFtPhHAjM51G65Lcz6LheJsvN1CWpJc/EU+tGQREAvArZzD7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C8w2mvSq; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="IrlW0Kai"
-ARC-Seal: i=1; a=rsa-sha256; t=1769625579; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=KbAx9IzY0rH4cAFTkoJqpMnfyC15wZ/HtckXt5ZSLOIywlF6f4efzb70C42alVDrV8KfiK3A0GftAwqlvY2BLZXXC14TWsP80rD/32IaC6au2J6T8/Tg5K44RQdNrfBmlVF5uv+noJCIOosA9JkNFWzxRpapGK6zZNjMJ52EDog=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1769625579; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=ZkPh6rEGGj5EfY6a9YgmvYuB+fZaCezIbVUYx4CZTr4=; 
-	b=RwQYRfKeJrKWZC5OiVk2X5cu16M9KcM7e0R1NcUs6np2RzQOtruFFnoxTb2a/BcZnn9ZaBTv1MhHHIykB2xvyu7U4B+JdYHSdzzqDoPsY4K+8wmxUj5rhwyWqHckZyDlpLvXTKcEZpX2zv3f5T9Z1Tb1RZrk2WlzTVYRUuGQ72k=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
-	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1769625579;
-	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
-	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:References:In-Reply-To:To:To:Cc:Cc:Reply-To;
-	bh=ZkPh6rEGGj5EfY6a9YgmvYuB+fZaCezIbVUYx4CZTr4=;
-	b=IrlW0KairsALp3RcHiCJWnsIOZrLuPIuFBPhO04FIYnIXIwStOza0Rcyxl8D59ZX
-	0xerhfmizOxka/AQcywYOvnnG8egqgwb6M5obCLhAMQImhYSoL/RjpbftK5fENTXAoN
-	qEXyTP8XeyEXWXXtUoIJ8Bielo/N5jyBzfa6cfeI=
-Received: by mx.zohomail.com with SMTPS id 176962557768244.502411600919686;
-	Wed, 28 Jan 2026 10:39:37 -0800 (PST)
-From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Date: Wed, 28 Jan 2026 19:38:50 +0100
-Subject: [PATCH 1/2] clk: Disable CLK_OPS_PARENT_ENABLED parent only after
- CRITICAL check
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C8w2mvSq"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26C71C4CEF1;
+	Wed, 28 Jan 2026 19:01:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1769626884;
+	bh=n34TAjuaUJNq368XZLmuh46Sjt4jj9OJ3xPmOcHju38=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=C8w2mvSqqOv6CNJooWdWwnMODpl641zH6FL4vTpgMjRx34EvM9qL//KZoVYqmVwQr
+	 V6V0P5e1YDea3DWFmUsl+x1oMwNTe2zUS6dKUAWeT7RixPfgiCU/7di9qvJCBGXTJC
+	 hpAr6nOsVvFDkue6E7q7/axgb0P3PEIg16XjCW7/A6o/XeXlAaF3W0C1C8RPk1sb+t
+	 FHNmfFEyooZOZ9bvKOLJgTJXss8jw0JMDsG1rx/N/A2MaegXoGs4GVqb0Ak6e0bdUJ
+	 e3D3ST4S/1fPQtZLjzAblj7sTvVRxPR67coMBhPVIHX64yhlEwQV5lOkEp0LSkQf3O
+	 YRbj1SwAQFH5w==
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260128-ops-parent-enable-fix-v1-1-ff39cc37f98d@collabora.com>
-References: <20260128-ops-parent-enable-fix-v1-0-ff39cc37f98d@collabora.com>
-In-Reply-To: <20260128-ops-parent-enable-fix-v1-0-ff39cc37f98d@collabora.com>
-To: Mark Brown <broonie@kernel.org>, 
- Alexander Stein <alexander.stein@ew.tq-group.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Chen-Yu Tsai <wenst@chromium.org>, Abel Vesa <abelvesa@kernel.org>, 
- Peng Fan <peng.fan@nxp.com>, Shawn Guo <shawnguo@kernel.org>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
- kernel@collabora.com, imx@lists.linux.dev, 
- linux-arm-kernel@lists.infradead.org, 
- Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-X-Mailer: b4 0.14.3
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <3745487.e9J7NaK4W3@workhorse>
+References: <20251010-mtk-pll-rpm-v3-0-fb1bd15d734a@collabora.com> <6678782.DvuYhMxLoT@workhorse> <daa1906b-a112-4158-aec2-ad1d29b4fe35@sirena.org.uk> <3745487.e9J7NaK4W3@workhorse>
+Subject: Re: [PATCH v3 1/5] clk: Respect CLK_OPS_PARENT_ENABLE during recalc
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Michael Turquette <mturquette@baylibre.com>, Dong Aisheng <aisheng.dong@nxp.com>, Matthias Brugger <matthias.bgg@gmail.com>, Yassine Oudjana <y.oudjana@protonmail.com>, Laura Nao <laura.nao@collabora.com>, =?utf-8?q?N=C3=ADcolas?= F. R. A. Prado <nfraprado@collabora.com>, Chia-I Wu <olvaffe@gmail.com>, Chen-Yu Tsai <wenst@chromium.org>, kernel@collabora.com, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+To: Mark Brown <broonie@kernel.org>, Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Date: Wed, 28 Jan 2026 12:01:22 -0700
+Message-ID: <176962688200.4027.9869545980331892869@lazor>
+User-Agent: alot/0.11
 
-The call to clk_core_enable_lock done by __clk_core_init after checking
-the clock flags for CLK_IS_CRITICAL enables the parent clock.
+Quoting Nicolas Frattaroli (2026-01-28 09:04:55)
+> On Wednesday, 28 January 2026 15:47:08 Central European Standard Time Mar=
+k Brown wrote:
+> >=20
+> > For the Avenger96 that says:
+> >=20
+> > [    0.347816] __clk_core_init: enabling parent ck_hse for ck_per
+> > [    0.352230] __clk_core_init: disabling parent ck_hse for ck_per
+> > [    0.358207] __clk_core_init: enabling parent pll1_p for ck_mpu
+> > [    0.364005] __clk_core_init: disabling parent pll1_p for ck_mpu
+> >=20
+> > https://lava.sirena.org.uk/scheduler/job/2412562#L563
+> >=20
+>=20
+> Okay, on this one, there may be a problem in the clock tree.
+> ck_mpu is marked CLK_IS_CRITICAL, but its parent, pll1_p, is not. Clock
+> core doesn't seem to check whether any children of a clock are marked as
+> critical before disabling it.
+>=20
+> I'm not super familiar with the intended semantics of critical clocks.
+> If we need to manually mark all parents of critical clocks as critical
+> as well, then a (potentially partial) fix for the Avenger96 might be:
+>=20
 
-In Commit 669917676e93 ("clk: Respect CLK_OPS_PARENT_ENABLE during
-recalc"), the parent gets disabled before this check, if the flag
-CLK_OPS_PARENT_ENABLED is set on the clock. This results in a situation
-where critical clocks have their parent briefly disabled, which kills
-the system.
+Marking parents critical hasn't been strictly necessary so far because
+we've been relying on the prepare/enable count on a critical child to
+keep the parent prepared/enabled.
 
-Fix this by moving the balancing operation to after the CLK_IS_CRITICAL
-check, which should resolve the problem.
+>=20
+> I just looked for CLK_IS_CRITICAL clocks in that file that have the
+> CLK_OPS_PARENT_ENABLE flag, and marked their PLL parents as critical
+> as well.
+>=20
+> An alternate approach would be to skip the parent enable/disable pair
+> in the problematic patch in __clk_core_init for clocks that are marked
+> as critical, because if the parent wasn't on for a critical clock then
+> we wouldn't be in that function, we would be dead.
 
-Fixes: 669917676e93 ("clk: Respect CLK_OPS_PARENT_ENABLE during recalc")
-Reported-by: Mark Brown <broonie@kernel.org>
-Closes: https://lore.kernel.org/r/036da7ce-6487-4a6e-9b15-97c6d3bcdcec@sirena.org.uk/
-Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
----
- drivers/clk/clk.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+The parent may not be known yet in __clk_core_init() because we lazily
+find parents. Putting it another way, we can get to the recalc_rate()
+call in __clk_core_init() for a clk with CLK_OPS_PARENT_ENABLE when the
+parent pointer is NULL. This hasn't been a problem because when we adopt
+the orphan clk the rate is recalculated (see
+clk_core_reparent_orphans_nolock()).
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 1b0f9d567f48..8f5ef9ce77d2 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -4056,9 +4056,6 @@ static int __clk_core_init(struct clk_core *core)
- 		rate = 0;
- 	core->rate = core->req_rate = rate;
- 
--	if (core->flags & CLK_OPS_PARENT_ENABLE)
--		clk_core_disable_unprepare(core->parent);
--
- 	/*
- 	 * Enable CLK_IS_CRITICAL clocks so newly added critical clocks
- 	 * don't get accidentally disabled when walking the orphan tree and
-@@ -4081,6 +4078,9 @@ static int __clk_core_init(struct clk_core *core)
- 		}
- 	}
- 
-+	if (core->flags & CLK_OPS_PARENT_ENABLE)
-+		clk_core_disable_unprepare(core->parent);
-+
- 	clk_core_reparent_orphans_nolock();
- out:
- 	clk_pm_runtime_put(core);
+I don't see an easy way out of this problem because in general we need
+to know a clk with CLK_OPS_PARENT_ENABLE is parented enough to be able
+to read the registers when calling clk_ops like recalc_rate() (and
+probably get_parent() as well meaning that clk_op can't touch
+hardware?). Maybe the simplest approach is to skip any sort of hardware
+access when this flag is set during setup and reparenting.
 
--- 
-2.52.0
-
+BTW, I don't know what this patch is actually fixing, so I'm going to
+revert it. When it is resubmitted please describe the problem you're
+seeing.
