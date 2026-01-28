@@ -1,69 +1,71 @@
-Received: from mx-relay47-hz3.antispameurope.com (mx-relay47-hz3.antispameurope.com [94.100.134.236])
+Received: from mx-relay49-hz1.antispameurope.com (mx-relay49-hz1.antispameurope.com [94.100.132.225])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35558364051
-	for <linux-clk@vger.kernel.org>; Wed, 28 Jan 2026 14:57:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=94.100.134.236
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66ED33644BC
+	for <linux-clk@vger.kernel.org>; Wed, 28 Jan 2026 14:58:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=94.100.132.225
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769612228; cv=pass; b=q63DaCL5I/89uRkQEVZO3t5qr9Zc8UNNZ/hKVTmpIl/JjQms7eflpAawNnRt4vAdyPKtzJcNdCYSWicJaLFcJ+jHuFOnU/oziguujAI2s3V08IdXO3u3OVzcd3XBoGvRU6AfkgjOqAlEnIE2b0fQO39YozO/cOb1skV/Qf5MM/s=
+	t=1769612291; cv=pass; b=CdAoQbBrI85CMcH9EHocNWnMlhIgY8h6rv0AP8wEfaIDhoWjCdiA3j4Xvfs652RARsJXes6sirQSq/CY708ay4ACJt5tZkwgKf8lys13i9JWsD1dqsc4lX3JMRfbErgwZiEgr03UhijgenaVirXSVG0bahANDwt6bB9C6bqLm+g=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769612228; c=relaxed/simple;
-	bh=8gIX7OblAwnW0RbeSziylcMgrxsoDkHMTIyiMBiHlgQ=;
+	s=arc-20240116; t=1769612291; c=relaxed/simple;
+	bh=YBAIi7V/c3JHaAKdykP4Yq2lWyyXCj0OGyBjgzyQLtI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EMIRTwUIDmqDoQFNbldKFjVR1MQlX/YpFTqS1MiwP6JwdSj60AE0XRbjU6Vs61uGZRNhXSEwimiDhWPBzsLqTQh9MsPzdXSVUkDOvSA7pK7VPFqg/uP9548bBDAXHesk039tgDW1Fe97kPXbBGn7kRKPx6g24K9SkGfWDAyZQJA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=K4RFU6Lj; arc=pass smtp.client-ip=94.100.134.236
+	 MIME-Version:Content-Type; b=GTch3nGOMcbllJ42rZEcvUkQdMFOngUg75CX4DZBIEQJ7y76tBdUSPfM9iKkrfZWIB/urNX1Q51F5B4kJtj0enKq+9mHbXqkaU8HFsM/KjvkjIl7MEZjqyRgMnaQ4RBoJvkf7EjE8lMrQraliXjGGF2p+PHVnjX4st637zPaU28=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=LKErPGXs; arc=pass smtp.client-ip=94.100.132.225
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ew.tq-group.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="K4RFU6Lj"
-ARC-Authentication-Results: i=1; mx-gate47-hz3.hornetsecurity.com 1; spf=pass
+	dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="LKErPGXs"
+ARC-Authentication-Results: i=1; mx-gate49-hz1.hornetsecurity.com 1; spf=pass
  reason=mailfrom (ip=94.100.132.6, headerfrom=ew.tq-group.com)
  smtp.mailfrom=ew.tq-group.com
  smtp.helo=hmail-p-smtp01-out03-hz1.hornetsecurity.com; dmarc=pass
  header.from=ew.tq-group.com orig.disposition=pass
 ARC-Message-Signature: a=rsa-sha256;
- bh=JCdegKDDMfDXAfXqsR2Uvxu0kBnW9fcc8iY6+4cJYno=; c=relaxed/relaxed;
+ bh=ONpXfF3lQToQjK7rRSj7gTOlaNKqcczWPw9kZFHHahw=; c=relaxed/relaxed;
  d=hornetsecurity.com; h=from:to:date:subject:mime-version:; i=1; s=hse1;
- t=1769612179;
- b=YMKvjTGpdEVluEjCQlXlOPvhH3yaCXMYMM/boD6e+clIqI+uZpHyX6VfSkwV9MjSts2tFExZ
- nZMt0lHUNVTB4c6DYqDNEj44EaKAVAZJnR+ShEd+UpgBAYEgz7UhzjFbtRKX5PSH/Ju9OqCgeKm
- TUUJ7IfPphdVuOaBIS9HfjfUFJQ5F3KHZ/JjBaaJE4q5eSpdMKRb5J1kNRp6uRq1AJC/D225zmj
- lZ9lOoXLMiKMC8LtwgWOe1sVW72/ohXiGkjqIEXf/cTLfHGXhuDtVk0pp3ud+mI3gS6egMCcBHj
- Xmf0fS6dLaIYUs9cQAI003MRFP/h1g2tMQEtIBFXQsDLQ==
+ t=1769612205;
+ b=PFVHtB3N5G3e5IaUg7FCA6YDsn8KhI2SdQO1/U8FSjArPoH/o6Y2YlxARQzABGHfhEiOPW5S
+ h1CP1hCR6u+R6d/Q7xsoQTSgSExdGZlg/njqsepQrGDZ8GouEQxH9lsclH7HEAATXN3rYg/EGmz
+ y5Qd9QHOAh9uuPPC6mwquDCPZ8RW6CDaiQtnCKSo1dlX9//J1M1q92LAUtfhq+tGWedWrCcJV2i
+ Cx7tHOA/I1oNP5TnqM2jRKVt19ay0KtM8rgOV1NND66/p9L8CxsqRqnHa/o1O8PS0C0v3N61gmc
+ Qg8DehVlu8PkBS6buVtzbGNveieQnFc6+m/8TCVO946iQ==
 ARC-Seal: a=rsa-sha256; cv=none; d=hornetsecurity.com; i=1; s=hse1;
- t=1769612179;
- b=coKwZTtNnfBQk9UsqsRF8A4qyVYE4hLRUwluJfFeUyZylGUD+MNecvPKegwsQc2XC80LSZQV
- A/unS2EZH0tnlq0cLc/+ZcHAt1cXMG9UTsz2UXg9Ioq9Ty2hk2Wrwv54uBQhwPoivD0LNp2mIpB
- yEk4qPxSz8hF1qe/5y8TxHe3zJ0T08V2WPKnt7dTU+UOe3ZsOz+LlGR7KUWP78nwTLcp/hPR58c
- sBmVdUMK1um8I2Wmw0fqcE6fh2pUIXVO1STQX2dHYOQ8wfO4pf/85v+/BZsO6GxzpityjsbEH1L
- fn7d38G/3n5y87L4WCCBPs2gMe61b4hda7IQywm7ji7nQ==
-Received: from he-nlb01-hz1.hornetsecurity.com ([94.100.132.6]) by mx-relay47-hz3.antispameurope.com;
- Wed, 28 Jan 2026 15:56:19 +0100
+ t=1769612205;
+ b=d4I5YxpFuWU7N9zkb4BVqYnN1A75W/BJFG2e9Ood/4QiLsf5kC0Hw1wFMUlQs5sTK7XEBtbB
+ j4gR+UsjtOYAu/evVoE1+QbM156U0uQXK9lfWckH0Jyv5E3afbM4vcX3YbFvu9BxtnpKxPYOpg8
+ eOr+4WB3hsSfXYViOlXzNEiqDLgfBYEgxwC+ScUulQBuozOmAN+3Ie71Ex/Eo0qmeN5gMe0bB5H
+ upNxK/W+XnULUgs46IOGBxUPhV0avLJR5cL4jRLgMG+LSED+NnkQX0za+2J4eqbAm9utCGQE9Nf
+ bmFM6AjzckgfZ7wbej5T7CDEhL/OZsaFwW5SZoEx4zn5A==
+Received: from he-nlb01-hz1.hornetsecurity.com ([94.100.132.6]) by mx-relay49-hz1.antispameurope.com;
+ Wed, 28 Jan 2026 15:56:45 +0100
 Received: from steina-w.localnet (host-82-135-125-110.customer.m-online.net [82.135.125.110])
 	(Authenticated sender: alexander.stein@ew.tq-group.com)
-	by hmail-p-smtp01-out03-hz1.hornetsecurity.com (Postfix) with ESMTPSA id 63D9FCC0E8A;
-	Wed, 28 Jan 2026 15:56:04 +0100 (CET)
+	by hmail-p-smtp01-out03-hz1.hornetsecurity.com (Postfix) with ESMTPSA id 1625ECC0CB8;
+	Wed, 28 Jan 2026 15:56:31 +0100 (CET)
 From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Chen-Yu Tsai <wenst@chromium.org>, Chia-I Wu <olvaffe@gmail.com>,
- Dong Aisheng <aisheng.dong@nxp.com>, Laura Nao <laura.nao@collabora.com>,
+To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
+ Mark Brown <broonie@kernel.org>
+Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+ Dong Aisheng <aisheng.dong@nxp.com>,
  Matthias Brugger <matthias.bgg@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- =?ISO-8859-1?Q?N=EDcolas_F=2E__R=2E__A=2E?= Prado <nfraprado@collabora.com>,
- Yassine Oudjana <y.oudjana@protonmail.com>, Stephen Boyd <sboyd@kernel.org>,
- Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Cc: kernel@collabora.com, linux-clk@vger.kernel.org,
+ Yassine Oudjana <y.oudjana@protonmail.com>,
+ Laura Nao <laura.nao@collabora.com>,
+ =?ISO-8859-1?Q?N=EDcolas_F=2E_R=2E_A=2E?= Prado <nfraprado@collabora.com>,
+ Chia-I Wu <olvaffe@gmail.com>, Chen-Yu Tsai <wenst@chromium.org>,
+ kernel@collabora.com, linux-clk@vger.kernel.org,
  linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-mediatek@lists.infradead.org
-Subject:
- Re: [PATCH RESEND v3 1/5] clk: Respect CLK_OPS_PARENT_ENABLE during recalc
-Date: Wed, 28 Jan 2026 15:55:27 +0100
-Message-ID: <2403222.ElGaqSPkdT@steina-w>
+Subject: Re: [PATCH v3 1/5] clk: Respect CLK_OPS_PARENT_ENABLE during recalc
+Date: Wed, 28 Jan 2026 15:55:54 +0100
+Message-ID: <5050249.GXAFRqVoOG@steina-w>
 Organization: TQ-Systems GmbH
-In-Reply-To: <5791016.31r3eYUQgx@workhorse>
+In-Reply-To: <daa1906b-a112-4158-aec2-ad1d29b4fe35@sirena.org.uk>
 References:
- <20251215-mtk-pll-rpm-v3-0-5afb3191e869@collabora.com>
- <6239343.lOV4Wx5bFT@steina-w> <5791016.31r3eYUQgx@workhorse>
+ <20251010-mtk-pll-rpm-v3-0-fb1bd15d734a@collabora.com>
+ <6678782.DvuYhMxLoT@workhorse>
+ <daa1906b-a112-4158-aec2-ad1d29b4fe35@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -78,163 +80,63 @@ X-cloud-security-crypt: load encryption module
 X-cloud-security-Mailarchiv: E-Mail archived for: alexander.stein@ew.tq-group.com
 X-cloud-security-Mailarchivtype:outbound
 X-cloud-security-Virusscan:CLEAN
-X-cloud-security-disclaimer: This E-Mail was scanned by E-Mailservice on mx-relay47-hz3.antispameurope.com with 4f1QM92RwJz4MM95
+X-cloud-security-disclaimer: This E-Mail was scanned by E-Mailservice on mx-relay49-hz1.antispameurope.com with 4f1QMg6GcFz28ym5
 X-cloud-security-connect: he-nlb01-hz1.hornetsecurity.com[94.100.132.6], TLS=1, IP=94.100.132.6
-X-cloud-security-Digest:35114e83581fa19bd9a5fa78e3850a51
-X-cloud-security:scantime:2.290
+X-cloud-security-Digest:3cf64e51d346abca35efec810fea2612
+X-cloud-security:scantime:1.873
 DKIM-Signature: a=rsa-sha256;
- bh=JCdegKDDMfDXAfXqsR2Uvxu0kBnW9fcc8iY6+4cJYno=; c=relaxed/relaxed;
+ bh=ONpXfF3lQToQjK7rRSj7gTOlaNKqcczWPw9kZFHHahw=; c=relaxed/relaxed;
  d=ew.tq-group.com;
  h=content-type:mime-version:subject:from:to:message-id:date; s=hse1;
- t=1769612178; v=1;
- b=K4RFU6LjfIK/z7PB6lRmMSfCsDpheaXps4UsX++rO/mVbqfw97XYDCRk7A3ZkTWwuSg4+5/O
- 9pJkpuXWVXNRVKqge4qBlr/cjYjuqkOu8hZrnh3v/NcmFV7Vy36HjZa3dL4+VD6x88lhLgOSkQa
- ldzECdYOqR3z9g6YCmgrsdhulLD1cpKtnlvwQWdWtRO5SU4B3TgvQzAVi0beKvAYZbJ0kOtvWFZ
- i4fvPVUYu8K7TAWab3ruhtNk1FotSmbdVAvyAbjsv9i4vbX6J7Jxk9AJNWKsO5Du1SJwsvvlvey
- re2gzCb3X9Ni0418wSET3tzyB5t74Qiq+XObpeZnY07Hw==
+ t=1769612205; v=1;
+ b=LKErPGXsuTRRg8pE0nqdyBvRrsczNiWbml4LUxgT6iXpy1klbn5/R8UjYWbk2oaO/U0UX+V+
+ YWe+chYSsqvchKsegBBOC881KG1sxt3i0ASRZcBt2ihzxjusvmCbQL/qBLkEt4Zcno8YedWPCxv
+ SOAPE8iKuzzOHsS696wUfPPYGZslHp7utWu/NwbGDyt8kBartS2vMhk9ydSYpED/YNhrumXNTRv
+ +tjRKHvFBYQNgwGopqlAkfQEof4Xf1dpcZBukaVfC4w/KcOogWmcoWkqfvU9EZoL1YFE3cc3qRd
+ T/HOKb5vQCCXi+GVpN9X9/EDzzd8Gug+bSFZOx9WhHi2A==
 
-Hi Nicolas,
+Hi everyone,
 
-Am Mittwoch, 28. Januar 2026, 15:11:33 CET schrieb Nicolas Frattaroli:
-> On Tuesday, 27 January 2026 15:55:29 Central European Standard Time Alexa=
-nder Stein wrote:
-> > Hello,
-> >=20
-> > Am Freitag, 23. Januar 2026, 02:45:33 CET schrieb Stephen Boyd:
-> > > Quoting Nicolas Frattaroli (2025-12-15 03:23:58)
-> > > > When CLK_OPS_PARENT_ENABLE was introduced, it guarded various clock
-> > > > operations, such as setting the rate or switching parents. However,
-> > > > another operation that can and often does touch actual hardware sta=
-te is
-> > > > recalc_rate, which may also be affected by such a dependency.
-> > > >=20
-> > > > Add parent enables/disables where the recalc_rate op is called dire=
-ctly.
-> > > >=20
-> > > > Fixes: fc8726a2c021 ("clk: core: support clocks which requires pare=
-nts enable (part 2)")
-> > > > Fixes: a4b3518d146f ("clk: core: support clocks which requires pare=
-nts enable (part 1)")
-> > > > Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@=
-collabora.com>
-> > > > Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
-> > > > Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-> > > > ---
-> > >=20
-> > > Applied to clk-next
-> >=20
-> > Unfortunately this breaks my board TQMa8MPxL+MBa8MPxL on next-20260126.
-> > Last lines on bootlog (earlycon is necessary)
-> > > [    1.175639] Initialise system trusted keyrings
-> > > [    1.178907] workingset: timestamp_bits=3D42 max_order=3D19 bucket_=
-order=3D0
-> > > [    1.185822] NFS: Registering the id_resolver key type
-> > > [    1.190295] Key type id_resolver registered
-> > > [    1.194473] Key type id_legacy registered
-> > > [    1.198515] nfs4filelayout_init: NFSv4 File Layout Driver Register=
-ing...
-> > > [    1.205235] nfs4flexfilelayout_init: NFSv4 Flexfile Layout Driver
-> > > Registering... [    1.213235] cryptd: max_cpu_qlen set to 1000
-> > > [    1.274689] Key type asymmetric registered
-> > > [    1.275939] Asymmetric key parser 'x509' registered
-> > > [    1.280896] Block layer SCSI generic (bsg) driver version 0.4 load=
-ed
-> > > (major 242) [    1.288278] io scheduler mq-deadline registered
-> > > [    1.292840] io scheduler kyber registered
-> > > [    1.299245] ledtrig-cpu: registered to indicate activity on CPUs
-> >=20
-> > Reverting commit 669917676e93fca5ea3c66fc9539830312bec58e fixes the pro=
-blem.
+Am Mittwoch, 28. Januar 2026, 15:47:08 CET schrieb Mark Brown:
+> On Wed, Jan 28, 2026 at 03:09:46PM +0100, Nicolas Frattaroli wrote:
+> > On Wednesday, 28 January 2026 00:14:29 Central European Standard Time M=
+ark Brown wrote:
 >=20
-> Hi Alexander,
+> > > Do you have a debugging patch we could run which would say which cloc=
+ks
+> > > are impacted?  I guess it's more of an issue for the platforms that g=
+ive
+> > > no output but for at least Avenger96 I was getting earlycon output.
 >=20
-> sorry for breaking -next.
+> > Try this one
 >=20
-> Can you try the following patch to print which clock+parent is causing
-> the hang on your platform?
+> For the Avenger96 that says:
 >=20
-> ---
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index 1b0f9d567f48..fa1443517768 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -1921,13 +1921,21 @@ static unsigned long clk_recalc(struct clk_core *=
-core,
->  	unsigned long rate =3D parent_rate;
-> =20
->  	if (core->ops->recalc_rate && !clk_pm_runtime_get(core)) {
-> -		if (core->flags & CLK_OPS_PARENT_ENABLE)
-> +		if (core->flags & CLK_OPS_PARENT_ENABLE) {
-> +			pr_info("%s: enabling parent %s for %s\n", __func__,
-> +				core->parent ? core->parent->name : "(null)",
-> +				core->name);
->  			clk_core_prepare_enable(core->parent);
-> +		}
-> =20
->  		rate =3D core->ops->recalc_rate(core->hw, parent_rate);
-> =20
-> -		if (core->flags & CLK_OPS_PARENT_ENABLE)
-> +		if (core->flags & CLK_OPS_PARENT_ENABLE) {
-> +			pr_info("%s: disabling parent %s for %s\n", __func__,
-> +				core->parent ? core->parent->name : "(null)",
-> +				core->name);
->  			clk_core_disable_unprepare(core->parent);
-> +		}
-> =20
->  		clk_pm_runtime_put(core);
->  	}
-> @@ -4038,8 +4046,12 @@ static int __clk_core_init(struct clk_core *core)
->  	 */
->  	clk_core_update_duty_cycle_nolock(core);
-> =20
-> -	if (core->flags & CLK_OPS_PARENT_ENABLE)
-> +	if (core->flags & CLK_OPS_PARENT_ENABLE) {
-> +		pr_info("%s: enabling parent %s for %s\n", __func__,
-> +			core->parent ? core->parent->name : "(null)",
-> +			core->name);
->  		clk_core_prepare_enable(core->parent);
-> +	}
-> =20
->  	/*
->  	 * Set clk's rate.  The preferred method is to use .recalc_rate.  For
-> @@ -4056,8 +4068,12 @@ static int __clk_core_init(struct clk_core *core)
->  		rate =3D 0;
->  	core->rate =3D core->req_rate =3D rate;
-> =20
-> -	if (core->flags & CLK_OPS_PARENT_ENABLE)
-> +	if (core->flags & CLK_OPS_PARENT_ENABLE) {
-> +		pr_info("%s: disabling parent %s for %s\n", __func__,
-> +			core->parent ? core->parent->name : "(null)",
-> +			core->name);
->  		clk_core_disable_unprepare(core->parent);
-> +	}
-> =20
->  	/*
->  	 * Enable CLK_IS_CRITICAL clocks so newly added critical clocks
-> ---
+> [    0.347816] __clk_core_init: enabling parent ck_hse for ck_per
+> [    0.352230] __clk_core_init: disabling parent ck_hse for ck_per
+> [    0.358207] __clk_core_init: enabling parent pll1_p for ck_mpu
+> [    0.364005] __clk_core_init: disabling parent pll1_p for ck_mpu
 >=20
-> Thanks for reporting this.
+> https://lava.sirena.org.uk/scheduler/job/2412562#L563
+>=20
 
-thanks for the debugging patch. I'll respond to the other thread where
-Mark is active as well.
+This is for TQMa8MPxL/MBa8MPxL:
+
+[    1.452788] __clk_core_init: enabling parent audio_pll1_out for clkout1_=
+sel
+[    1.457677] __clk_core_init: disabling parent audio_pll1_out for clkout1=
+_sel
+[    1.464270] __clk_core_init: enabling parent audio_pll1_out for clkout2_=
+sel
+[    1.471760] __clk_core_init: disabling parent audio_pll1_out for clkout2=
+_sel
+[    1.478360] __clk_core_init: enabling parent sys_pll2_500m for arm_a53_d=
+iv
+[    1.485259] __clk_core_init: disabling parent sys_pll2_500m for arm_a53_=
+div
 
 Best regards,
 Alexander
-
-> Kind regards,
-> Nicolas Frattaroli
->=20
-> >=20
-> > Best regards,
-> > Alexander
-> >=20
->=20
->=20
->=20
->=20
->=20
->=20
-
 
 =2D-=20
 TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
