@@ -1,189 +1,174 @@
-Received: from mail-yx1-f46.google.com (mail-yx1-f46.google.com [74.125.224.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D478830C378
-	for <linux-clk@vger.kernel.org>; Wed, 28 Jan 2026 15:42:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.224.46
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769614979; cv=pass; b=sL8A7UcBj/VrbuGfMM91R2pdK245acCHySL5lK8haukUoB57mVcx1O4adJD0B42CcvfGlTcvg/qQcJ+BpIb44sbRDNu/KuwZJ0metLtbBP0nDYcQA8zr8SBVGNENk51cwjQM4FzYPrGKalK7Om/dVmH/PinzAJ17dyeNPwZiohI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769614979; c=relaxed/simple;
-	bh=yr7VieMCX6D3WLrE35b3fqXI7IBsFPaH+PdpaLXKVfE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=F3F2eWpgX+sRtRe1E99MNRDQacfVI/f1d55l6V9xOMFvKy9PThz3wBZiaQcBaHAEHu1kMlB1L+13ILMZMvpWR2SYSvlvAQbx7QK0pxdzuV2PGVxQwPxxpNBInwoB4CKxSvhZlrbbvW1reBSsLT/oObDkTtyIZUFScVSxKUgV2uo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oss.tenstorrent.com; spf=pass smtp.mailfrom=tenstorrent.com; dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b=O0nuKrLR; arc=pass smtp.client-ip=74.125.224.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oss.tenstorrent.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tenstorrent.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 265723033ED
+	for <linux-clk@vger.kernel.org>; Wed, 28 Jan 2026 15:43:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1769615000; cv=none; b=QKPSdLv8c/6AbSvbt0c7Jkw8FVvah/iGrJV9XoTNOw/gKsXLyvs43QIpqI9oedVAm1owhX3FPT6hhnSkOKDNwLhEvnJjvH08hyXq4461+ptNlvoYTZrgn/FqxZdZY/R2XRiRlfEh3zmtn1tAeUNN6arQNC/xMPLwiTkLG8G6opw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1769615000; c=relaxed/simple;
+	bh=uAdUi2PcEKOUBFsGcYGabugs1F7YktxD7G4E6g/mjeY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mjmzUlgSGZZI6aCNfxVeCCEZsgtyrw9u5jP6AMQuBH1Ck2Pd3/GkmGOc3mRu7kTTbFqw2IUV4HEfuhM39q0cTdnvXjlwhnoJASkdMHaxdbfSD9LYoSpBzxTQJGcKiOoUcHoSD92Fievn8bHlqAtWBDOp38tPFgbOKCaU/Cl1ZK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=pI5MwmJI; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=fEC3ju4H; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b="O0nuKrLR"
-Received: by mail-yx1-f46.google.com with SMTP id 956f58d0204a3-6495d592b58so6154595d50.2
-        for <linux-clk@vger.kernel.org>; Wed, 28 Jan 2026 07:42:55 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1769614974; cv=none;
-        d=google.com; s=arc-20240605;
-        b=aDnshopMIycTj6X3edwpsN9vQ59aK/iBQLwMzhbgEgdl1LnrOTeBRJ/RNc3GnpbGks
-         HgEQ4i3Ie4vBxXK+luJHKyvRh4UWUJNeXyeso4Z8WzSqrWrBHL8ZNR0zq8w9KZjYN9RU
-         Rxs+Ac+7k17j9CR584jiBHphkvCEDJJpeCRsweknm7sZUAjnCG4f8xgL8eQ71eu4Js4E
-         esOnkPWqDYeW1Pug3JRbR7FXVsI/cj3ACqvdgnbqnR9Q5LxC5tM1l76nv8YQiEscYEV/
-         FuoucCBrCysIj2RicyN/XuM/P3goWc0/aW7W8QUY/nQb1ORIgKl+giTjXb/M41Xprh/J
-         qkew==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=8HL0HkET+dj1w35XFDXNOqZl3z1k2yF2PBoeKmcws1E=;
-        fh=ZFWITOBC3vBrcKW6Lox7+ImVJ8ZKPpcS7Ht8z2GYqbg=;
-        b=OksGq6T8ZAWzBYcke/snRrk1/iILxwxv68aBSSaK9VtOCucmCKmtATlVbo8OSqr7mH
-         PU5lPWtg8c1gkghPWmIozNIBn0wCy870xDM2O+FoPMqoLJWhEMSZqBLBKpxlyiNEp7Ov
-         MLRGL1XTk9VrjruHhTdSVd0C9Jas1d+Pvu5/fJzyAJqGwqKaKVG+F8DvCIkvGQ1KrVGF
-         bFz8KC2rVmzh0R6oGUxPDbo5HyL5XQoL2ap43mEayvXTbuvvVp4KsTXZ+HFgsqWh3Wmg
-         FK2qU14ZTZLzHjEKsBeOQjCiLAfSkeJ7mdgGGe2woZCtvf3DncqoAtlRefryGj1/wRY4
-         CFxw==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="pI5MwmJI";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="fEC3ju4H"
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 60S92WP2254579
+	for <linux-clk@vger.kernel.org>; Wed, 28 Jan 2026 15:43:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=z3yfVqchQWMJHTTJ91dDeCW7/cxzdTD+XvS
+	cNCLq/go=; b=pI5MwmJIgCsNpLQMgIKMm77mkOWsaYQ8K1qX8GIeyLq7rkfQ8lp
+	WC2zilQEJ8qk07yht+8SPVwfGZSt54mO0wC9cc7nPbR+Jy9FJtgrCTA06CdiYyLU
+	lozTWufwmQBAatB9iXrXZBMkIdJI2xQ4RZPakz9i2izUURmKOmP3X2yawMkALrVd
+	YGCec5XpK9Wk5QuK9o+t3Tk/Cft092gofZptDFguVgkabJnPxysFaNocv9r1mJYl
+	Xyg2NP23edokFNyxLAYu4FPi2UHimGlLf0yv1BlnwM4tEutYWpE2q62tme1Wfpnd
+	lObeRG77Sdi5XW2FzKzUnxXtHEAUxTuascA==
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4by20y40ds-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Wed, 28 Jan 2026 15:43:15 +0000 (GMT)
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-8c52d3be24cso3476485a.0
+        for <linux-clk@vger.kernel.org>; Wed, 28 Jan 2026 07:43:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tenstorrent.com; s=google; t=1769614974; x=1770219774; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8HL0HkET+dj1w35XFDXNOqZl3z1k2yF2PBoeKmcws1E=;
-        b=O0nuKrLRTgMfQoXmwJaEAaxzjRyNfQtng/Xs/HNPZI2kjQnGIUmkO8NCpya0rark3i
-         H5oZWqMJFx/450TONcR9JnwRc0B+ZLG1lpthsMKePSPaOLfA1RVORg/9U1kxu9nw240V
-         OwY7atQGR6VkdtNXd4wAuOyw7lUYZ3GJjcbciYJIu1ZLp3BgK/FyS8K8Gto+jRyFZbY3
-         ty4DoVhP04CgopcyLFarlijW1FWaW34fgeFAT+U0WQcAXIN5eGsp6QZpZoV2gOFGk49H
-         H/dUKEc0aEX/nKiPQVqegzQ1NRBD63/SURisn9i0Yvc9yz1tY5QlfTYJ0kpZLT4qIi/6
-         jXJQ==
+        d=oss.qualcomm.com; s=google; t=1769614995; x=1770219795; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=z3yfVqchQWMJHTTJ91dDeCW7/cxzdTD+XvScNCLq/go=;
+        b=fEC3ju4HO3KJbzVhydapg4DtjQPHiQ7YMduXWXyE58LhsHQhEZ6HHQyOYC1nJeEDOq
+         sW57UVXQg2konbv7TLYGb6fEUl1yWLtGhoAMIcUmUDlI5aY9RT0EZk/GObdbeSGc62Az
+         h2nPAQq3h6Xpmsx6ZIA78Uh5IO4cDnV7+2Aa3X1UHxDy6ajIKYPZDgGCniAlKP+VZi7T
+         o3FFRpLjknEu5nm3AwzmYF+2Z8QDCd/OtwaRwrn/QVPAJThKClpH9+LcfsvobKZaKfen
+         xoRqN+NLvqYRfSaToaVlq0XakIfe4+vx9V7sxDU6P1ZShkSajipnBbdw1JXmk8/u9uRY
+         SqBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769614974; x=1770219774;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=8HL0HkET+dj1w35XFDXNOqZl3z1k2yF2PBoeKmcws1E=;
-        b=huFpZOV1MzSzLIYxOI8R+2mgoF7jXtushrjEAeyhYJ8OTIFNGGRu6mVpgldwivk+S3
-         m6OsyTe6O2n5yOkpHT0kBkzDXAfgqmOiNHqKirb1rJC4xiTe4NyZVBFkXYNmLEM4XZiv
-         u90P63R852ZK+a2qunJ16WRD7r95iTvI5I3DTV8g6vgiKP0NmrKOseRxyKMv4C2BLIJq
-         KyJcS2uFr6p41598ZFazbTcSJX/6ILAcbGhON22dI52FatgLRQeGDB+pwFwhLtbTPme1
-         6ob9vIlK/oeRiOsYEcQyF0IjkPD3lmksTzZZ89D7IBs2nHR+RMjdNoYiAcu5jPSNJdKQ
-         hQgA==
-X-Forwarded-Encrypted: i=1; AJvYcCVcNPDpmERt6enfluDxDvuYvNUp8MQpVcdJISN2hV4w4UxsqiA6mupOVHm6vMj3vF+Wrp09uNOe5Z8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxP2HbALP+CA5N2NokgnYZeGTG1iHjjWTOeE9+iMdR7xt5xTj4u
-	ysnW8eEuwLmWs0Hmx0Wd8h2BNcOqkx+C0oGv1qMpHXh8ytAV43fccuK72B+g0QjELAZYQgwbRn9
-	1lOZ+OkLwcmZ25uNXMuOP4PQsKQMjzeN18mqwlF9Spg==
-X-Gm-Gg: AZuq6aK5b/IpI7wQf+xKnvoCYn07M5jTv5fdvFu1xZT9WBBAWIwoKI/TAabjBeKwm0L
-	xt0EN7Mo6lyQ6sqeuuj8PEiK2m56rCjf9AFOz37NqX5N9JT6a0b09Wm5Zef6dtxIAMIAo8FSyMA
-	p6mZCdqxubvPbXmA42ReypYNs3+KZXEzpUq9kVHbSRIFrYIr4o1BUxPlAayBMzX6lklUh/UhpWP
-	G3K/3rKAhpJVftF+UuwzszuT8hQkZ9VDrEnNsC5u/ugPhNSwlVGJwLw5fyElTYf1ijKKPasFIY0
-	7i9dWke3jgU6LuNLA5NlIi3nLA0VKdyIe3LBbo/dDeM403OQoeO/yDYh+7pk
-X-Received: by 2002:a05:690e:1481:b0:647:108c:146 with SMTP id
- 956f58d0204a3-6498fc469cdmr4118109d50.57.1769614973756; Wed, 28 Jan 2026
- 07:42:53 -0800 (PST)
+        d=1e100.net; s=20230601; t=1769614995; x=1770219795;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=z3yfVqchQWMJHTTJ91dDeCW7/cxzdTD+XvScNCLq/go=;
+        b=kWCesDIAT+9p6sDKerF/oo61TBjh9g4mKpC7XUJr234YtouQfeX3cZjjLZoBb/GT6W
+         i5V+Tumumu9gj9OyGDo36Vxtk10JO4NKM02V7z0Cr6bQGcN4BzJugh4cFVDKI981LmBF
+         x3xR1iue974DovFzyk167Vu/2qxYHsIp8hJH39+8BMd+S/z4FCyVBMEtHUnkEoYSk1c0
+         3+jMfW5BIggmCONqXoolQ7yCJuM7DzOE0ZH3Sug8S1Q0IS8Me+jJxGS0uuI/eL/mmlOr
+         3Pc6t9UEsbFfyt/4IvDK+M034ZipJCP4yF0OCE07MQ9oeYbME3Lz8EKqnnxDzuv+GuO+
+         yntQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXNid7tnWCyi73IsJqNhMWm867xHu7g0W/X1VFskRlhcPjJDm47LEcxDWsj4xROijn7vPLWgj6f1Uk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwovhAojKz/ROOloWYEPy2on2UYb9G9XeXqPLbMgL5+ofegxcfl
+	He6ZQ8QuxHJi2zjc5BQSOEZCudjtab+e/vMdVdmb+3DH8YADmfo+zr6uIrWBZnLzO/IGdzZZjzj
+	7ofFDZ01qs/MTfoH7srV7QzUZpj0xwrgrxCr2uxTFDcrFkVIJaepm/8j+dGJxEDA=
+X-Gm-Gg: AZuq6aINpfXKuTutUghKXMlHChljbB8eJqJ9wYFDJoWYsR82DqjzW3WSEt3IjksTdwY
+	5wGiV0/KBkeksTB/I8FdoXhO7sQCfTfPHwL0l1diE8D+OB/htpt6LyItcOGnFf4tIXiy//pnAhE
+	7gUmHVVFw8HI5MPb3I8AMhH5L228FKUZe2z1va2HqxvfO99OY2ZVBgGrOtq6hcq8t88/5N2okfL
+	mEJmLpBhy9W/MexVrVzhk+yRUt4j+W09frDAZ+vvMwaCHAhz1ZmjMyBC9Qd5etXXMYjTHtLLAHL
+	5ZSRqsNclIy+2GiVW8KgMNSr3CRzXxHYSO/R/Ti3nesmExSiJSR1UZJ4Az8B9aqVFvMsqVb6pfD
+	eTx4Q5jvDkNPBgFQiUwWsHG+Qbw==
+X-Received: by 2002:a05:620a:f10:b0:8c1:ab1c:f2da with SMTP id af79cd13be357-8c70b90f77dmr676222385a.70.1769614993359;
+        Wed, 28 Jan 2026 07:43:13 -0800 (PST)
+X-Received: by 2002:a05:620a:f10:b0:8c1:ab1c:f2da with SMTP id af79cd13be357-8c70b90f77dmr676206585a.70.1769614991262;
+        Wed, 28 Jan 2026 07:43:11 -0800 (PST)
+Received: from quoll ([178.197.218.229])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-435e1354205sm8003551f8f.41.2026.01.28.07.43.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Jan 2026 07:43:10 -0800 (PST)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Subject: [PATCH] clk: qcom: sm8750: Constify 'qcom_cc_desc' in SM8750 camcc
+Date: Wed, 28 Jan 2026 16:43:07 +0100
+Message-ID: <20260128154306.133047-2-krzysztof.kozlowski@oss.qualcomm.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260126-atlantis-clocks-v3-0-b016135551b7@oss.tenstorrent.com>
- <20260126-atlantis-clocks-v3-1-b016135551b7@oss.tenstorrent.com>
- <20260127-mystify-carmaker-150aa3fcd6c6@spud> <CAEev2e-p28J_H2oWdrtgGJ0Z=2iGn8FjFBN8ggU0t_Wtbi62rA@mail.gmail.com>
- <20260128-duckling-confess-88e64fabe752@spud>
-In-Reply-To: <20260128-duckling-confess-88e64fabe752@spud>
-From: Anirudh Srinivasan <asrinivasan@oss.tenstorrent.com>
-Date: Wed, 28 Jan 2026 09:42:42 -0600
-X-Gm-Features: AZwV_Qi-uXOx5p8xPeM0zhwGXZ9arE9COUg5t7UOd-tNyeJsiugC1O9p5HwMOKM
-Message-ID: <CAEev2e9Y95bYDdvhJQ2954K2q5yMrGA3UF2U=QN83ZNbZ5LJBw@mail.gmail.com>
-Subject: Re: [PATCH v3 1/3] dt-bindings: clk: tenstorrent: Add tenstorrent,atlantis-prcm
-To: Conor Dooley <conor@kernel.org>
-Cc: Drew Fustini <dfustini@oss.tenstorrent.com>, Joel Stanley <jms@oss.tenstorrent.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, linux-riscv@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-clk@vger.kernel.org, joel@jms.id.au, fustini@kernel.org, mpe@kernel.org, 
-	mpe@oss.tenstorrent.com, npiggin@oss.tenstorrent.com, agross@kernel.org, 
-	agross@oss.tenstorrent.com, bmasney@redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1670; i=krzysztof.kozlowski@oss.qualcomm.com;
+ h=from:subject; bh=uAdUi2PcEKOUBFsGcYGabugs1F7YktxD7G4E6g/mjeY=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBpei6K6nwUOJpgDl7kWWIEgfjSRExvZiycp4pGw
+ WfIx5JujLyJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaXouigAKCRDBN2bmhouD
+ 11PBD/0ZygzFDBZ9XPkkHolSm/vx7daUl7dBNJxgRosngJmB203l5VWqsZXQ/g4yv8v8/rB/H7I
+ VzabTmmP4kzKBzfVQ0WL1ww92RpfDkZ29rJea7Zq6MC7UiMnO+b8O0mkszoghxJdjwCo/uvLUWW
+ aRW1oP8QlTD9XP2xUfeNqLjOt95WzAq6zjCqwYrJz/GltGbgdTr7K1rtjfnafvsE1w86wiL60Xf
+ MCN4atase69g18LHCtU1Br4YP5BxluqTT8XlUhd2L9Xvbq5Cg4GMno/uBXfuSdIDWUATz4Ay1Xl
+ gnPF6WAC0UdsktUYcxUEH/XrXekTzCOWOvTl0cy0VaGXQc3tkmM145rLWPptxIW3vKpbRu+v2TC
+ NFsCbL2RW9IAeCfVF0kQcFBldmWdoNNDS1/Xr59vg09eRR/LqhFkpIez1Q8OBLV7VqtJgJE201F
+ z8KXLnIuWLhu65H8X39TBy88FsfNjUxu0pHucFIOq8sy8sLVokM1xSd7ibHNvUevoF2vb7lSBUy
+ sl5q8WWctr/ZkbRaxh/UukLybUgKnNbn+0nYc2ErpR0cKQWrNMJZ4IjpmOoRH6wipwqIn4MSb1M
+ wiYvnA7e2dQ2yLa1nuMuKQEAVPytnLnrNaZGisqLxoiKMF2u6vVPr5En5bihzfrwyQOQbu34kmN kSoH2O7xd0PyLwA==
+X-Developer-Key: i=krzysztof.kozlowski@oss.qualcomm.com; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-ORIG-GUID: WzC5NrF-27HM1ZclMstbP7avkIR5lHqi
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTI4MDEzMCBTYWx0ZWRfX/ZbVgct41IwL
+ G+OeDuWnc0639x1tM1VR8bplMGo/+2s25/PF/vR17XKgzi/0g9JBPu7EhpzQ/koFM/Rn4d86S6t
+ pgRtGjoqKdqtmHdXEviMPJfctpAX4b0vXmITekozdyDhbYbIHNsc4XVwr30rlJqVmPKVReBqeYi
+ 049S2eNcRrFSpTuqZcx/9aflG0sUjEgqjI33f9R5L436Yd6Gy38sn+LRX/FlDjB+HCP6SqdDaxa
+ n5mSFWZlVaF9nwxO96gRnC183obe4ZTxDT0I6PZ0UStVn6CXly1VwOY2kub8bwCjI9TWWcnBmQG
+ k3i+fYJxgasL/14ivIlb67RQg9OAfTYb9yICwC2wgqDlAEZRpUHXRyrbM5ZYwHdi0s1L8WYrFR7
+ qK+SLfItwQfDT72hVJ0y8bU/dVhpItTaiZL6TKhxZ5ZftZKKNWEhOnmQAV8sJUtRQiYhJGe0Lad
+ 0YaoBqBCFba/0Rr1yqA==
+X-Proofpoint-GUID: WzC5NrF-27HM1ZclMstbP7avkIR5lHqi
+X-Authority-Analysis: v=2.4 cv=IKgPywvG c=1 sm=1 tr=0 ts=697a2e93 cx=c_pps
+ a=50t2pK5VMbmlHzFWWp8p/g==:117 a=Eb9f15NH/cHKzfGOmZSO4Q==:17
+ a=vUbySO9Y5rIA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=EUspDBNiAAAA:8 a=euIjOI2ikgTaeCi9kv0A:9 a=IoWCM6iH3mJn3m4BftBB:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-01-28_03,2026-01-28_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 priorityscore=1501 clxscore=1015 suspectscore=0 impostorscore=0
+ phishscore=0 bulkscore=0 malwarescore=0 lowpriorityscore=0 spamscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2601150000 definitions=main-2601280130
 
-Hi Conor,
+'struct qcom_cc_desc' is passed to qcom_cc_map() and
+qcom_cc_really_probe() only as pointer to const, so make the memory
+const for safety.
 
-On Wed, Jan 28, 2026 at 9:02=E2=80=AFAM Conor Dooley <conor@kernel.org> wro=
-te:
->
-> On Tue, Jan 27, 2026 at 05:39:33PM -0600, Anirudh Srinivasan wrote:
-> > Hi Conor,
-> >
-> > On Tue, Jan 27, 2026 at 1:58=E2=80=AFPM Conor Dooley <conor@kernel.org>=
- wrote:
-> > >
-> > > On Mon, Jan 26, 2026 at 03:07:14PM -0600, Anirudh Srinivasan wrote:
-> > > > Document bindings for Tenstorrent Atlantis PRCM that manages clocks
-> > > > and resets. This block is instantiated 4 times in the SoC.
-> > > > This commit documents the clocks from the RCPU PRCM block.
-> > > >
-> > > > Signed-off-by: Anirudh Srinivasan <asrinivasan@oss.tenstorrent.com>
-> > > > ---
-> > > This is pretty suspect sounding, if the PLLs for !rcpu are controlled=
- in
-> > > the rcpu register region, why is it not a clock parent for the !rcpu
-> > > prcms?
-> >
-> > I saw another clock driver doing it in the manner I did [1], and
->
-> The example is using it just to check lock status, which I think is
-> different than what you've got here? What you wrote implies that the
-> whole configuration for these PLLs is in that register region.
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+---
+ drivers/clk/qcom/cambistmclkcc-sm8750.c | 2 +-
+ drivers/clk/qcom/camcc-sm8750.c         | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-Yes, it seems like that example actually needs one regmap for
-configuring and another for checking lock status of the PLL, but in
-our case only one is enough.
-
-> > thought that it would make writing the bindings and the clock driver
-> > simpler. Each prcm node would have a single input clock (otherwise
-> > there would be a differing number of input clocks for each prcm node).
-> >
-> > What would you suggest that I do?
->
-> I suggest that you model the clock tree correctly in devicetree, even if
-> that makes things more complicated. One prcm node having more input
-> clocks isn't something to be afraid of, it should be pretty
-> straightforward to handle in both devicetree and driver, and is not any
-> more complicated than having to deal with the syscon phandle that you
-> use at the moment.
-
-Understood.
-
->
-> btw, where is the code for the !rcpu clock controllers? AFAICT, this
-> series only has the rcpu portion and I can't find the code that actually
-> uses the phandle. Why is the patch documenting stuff that has no user?
-
-I haven't been able to completely test the clock driver for the other
-subsystems yet, so that hasn't been posted yet. One of the comments on
-the previous versions of this series was to document the complete
-bindings, so I've tried to document all the 4 PRCMs.
-
->
-> > This would also avoid having the clock tree in the driver contain
-> > multiple entries for some of the PLLs (one in the rcpu subsystem where
-> > it is defined and another where the same clock is referred with {
-> > .index =3D 0 }) which could become confusing.
->
-> I don't really understand what you mean by this. Can you elaborate?
-> If you mean that multiple clocks produced by the prcm would all use
-> index =3D 0 as their parent, that does not sound abnormal to me. Without
-> being able to see the !rcpu driver implementations, I can't even make
-> guesses as to what the clock tree looks like.
-
-In the clock driver, you'd end up having something like this
-
-static const struct clk_parent_data osc_24m_clk[] =3D {
-        { .index =3D 0 },
+diff --git a/drivers/clk/qcom/cambistmclkcc-sm8750.c b/drivers/clk/qcom/cambistmclkcc-sm8750.c
+index 952581f86db5..d889a8f6561d 100644
+--- a/drivers/clk/qcom/cambistmclkcc-sm8750.c
++++ b/drivers/clk/qcom/cambistmclkcc-sm8750.c
+@@ -421,7 +421,7 @@ static struct qcom_cc_driver_data cam_bist_mclk_cc_sm8750_driver_data = {
+ 	.num_clk_cbcrs = ARRAY_SIZE(cam_bist_mclk_cc_sm8750_critical_cbcrs),
  };
-.
-.
-static const struct clk_parent_data pcie_pll[] =3D {
-        { .index =3D 0 },
-};
+ 
+-static struct qcom_cc_desc cam_bist_mclk_cc_sm8750_desc = {
++static const struct qcom_cc_desc cam_bist_mclk_cc_sm8750_desc = {
+ 	.config = &cam_bist_mclk_cc_sm8750_regmap_config,
+ 	.clks = cam_bist_mclk_cc_sm8750_clocks,
+ 	.num_clks = ARRAY_SIZE(cam_bist_mclk_cc_sm8750_clocks),
+diff --git a/drivers/clk/qcom/camcc-sm8750.c b/drivers/clk/qcom/camcc-sm8750.c
+index c09fa75be457..a797b783d4a9 100644
+--- a/drivers/clk/qcom/camcc-sm8750.c
++++ b/drivers/clk/qcom/camcc-sm8750.c
+@@ -2673,7 +2673,7 @@ static struct qcom_cc_driver_data cam_cc_sm8750_driver_data = {
+ 	.num_clk_cbcrs = ARRAY_SIZE(cam_cc_sm8750_critical_cbcrs),
+ };
+ 
+-static struct qcom_cc_desc cam_cc_sm8750_desc = {
++static const struct qcom_cc_desc cam_cc_sm8750_desc = {
+ 	.config = &cam_cc_sm8750_regmap_config,
+ 	.clks = cam_cc_sm8750_clocks,
+ 	.num_clks = ARRAY_SIZE(cam_cc_sm8750_clocks),
+-- 
+2.51.0
 
-Both point to index 0, but one is for the rcpu prcm and another is for
-the pcie prcm. To me, this felt like it might confuse someone looking
-at the driver. But it doesn't affect functionality in any manner.
