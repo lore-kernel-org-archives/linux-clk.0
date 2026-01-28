@@ -1,62 +1,61 @@
-Received: from sender4-pp-e104.zoho.com (sender4-pp-e104.zoho.com [136.143.188.104])
+Received: from sender4-pp-f119.zoho.com (sender4-pp-f119.zoho.com [136.143.188.119])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50EFC265606;
-	Wed, 28 Jan 2026 14:10:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.104
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D60D34FF75;
+	Wed, 28 Jan 2026 14:12:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.119
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769609421; cv=pass; b=eXslue9ansR7ZfNE1v6hUHn+4l6TvWjTe2dNfHE8ZxnYTDtxkasWbL8eD9F2us81exbNclcpq5rZ5lBPxFfRWfpk3EKvbOpwlfFONLFB7oDafHG74M10aJOjGhAz+FtwJ+f2dbBa8l7Uv1wZiXXerGeE7ZNacCXOF0l32/DASqA=
+	t=1769609535; cv=pass; b=sNlvT/6FV5/tr9zLMVYyrsDwMGEIfm10hgbzIDfQjJeJRv9iKRtlLh9aR82yZXzzDRwuuEISQR9G/qqeiYVTMj8fE3OW4QLApCrKoxUG32zBWR3cjnywfGH4b+i7L5lKupp18qxpACb9fjwC86WULXeAlkWVG3gMNQbK1+uelNM=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769609421; c=relaxed/simple;
-	bh=yA4E3oHosK0rOR8Cf8hfCIB846D+gigYdVo/UR+sZqE=;
+	s=arc-20240116; t=1769609535; c=relaxed/simple;
+	bh=IVMZB9Tk9NiTAUjmRFIl99L8zNhrABXDdDcTizSXmiw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DThBF0lsVGf20Q0Cz8FJRsVZyzdPygTp7MD7nnZccVhPnY6Ybrv0FuqjYHdPYYMTE2uBSOEuretb3zqnDW7en3FMaYNAfA4g8vU44BwTJ5lzwQorp/GcgkJf/FPMLbjnoXVReOL9XHtdqQGCfD1A6ghcEiCVV+8iiFA3Akznfkg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=B43akB57; arc=pass smtp.client-ip=136.143.188.104
+	 MIME-Version:Content-Type; b=GLxGlGgRcJQOCjpUlue4alfvuFrcrEToUfZQsL+SEAbVyDsQXIeP9iVx/kUcj+eXi7Xk0t7uPW5JCfsg+NJZSCBa+Fz6cY2oz8f/obHPVidDOC0+R6/1IGdKy9/ZlWuTkg8lEtmkgi0v3CCgc34nASIIomo0VM0M4f+5NyDoXH8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=K6YN9xrt; arc=pass smtp.client-ip=136.143.188.119
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="B43akB57"
-ARC-Seal: i=1; a=rsa-sha256; t=1769609393; cv=none; 
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="K6YN9xrt"
+ARC-Seal: i=1; a=rsa-sha256; t=1769609502; cv=none; 
 	d=zohomail.com; s=zohoarc; 
-	b=M7VdwtgmLpTPD+XdXfAf+6/rDXlXHTkaHk8YL0Auv/F2RuipqxBlAJ31ELa36PQ+t4p73lVxahc52mnyLF+7srM5BPdrnCm0ynwJAMEvOEfcp1/49ovY4Bnp6gYfDyr0NYKT4dqSrdbqKMOzG1FeuSiphcSNkUsBl1xRLOmOX1A=
+	b=C2e+E4pPdtRU0uXKZqe0nGXZf0SD6zxByFcRW+JwfXGQnTkXetHKuYPcnJ0MqYB60iGKY+Kuq8UEkdD8kelCKUfOZ0M4ghaLWTq7FOBrpzOZYFlEb8NKF2r56PYF+XvCqiyux3DLMH8lFfyKjEf1sEM0mdGSf5S02U6XEf6krTc=
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1769609393; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=iMbNGVhll/+ocb6IszXEkRjXM+PIU7cVCloG+GE0bCE=; 
-	b=MWOOlFCaUyXrxPZMAOBIfrhN/FQJDiVgqAqSMyRF+3xs5klTI/bFtsFOveZNuwMH/7hmYhi0I1dMNRoKq9Q1jkleac2FnuZvl0Vao66E0P/sXRzxOdUzYSFUGnc2AdMDok2HtC8VpZTJD0lu6HqzzGmWO4nx2nDpfsF019CVAXk=
+	t=1769609502; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=06r3ry7I70lRQ3WUitTO3gPI56HJOgQVtCUV6n6r200=; 
+	b=XeiaJatdZKx0rA2QFkUb/OdlU4exgFCcrssdGOQzKfxH3TlKLmXRqrqOSO4joicpbyRdOy2RH6BF9OJfjVPqBNpKgIJeQKhsAEconTVJZEcGmVC/QQqObSezSKErn49tqmx9X934TdB99Vefa7S8geJIbVlyDV7KZOmWbshr8Aw=
 ARC-Authentication-Results: i=1; mx.zohomail.com;
 	dkim=pass  header.i=collabora.com;
 	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
 	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1769609393;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1769609502;
 	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
 	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
-	bh=iMbNGVhll/+ocb6IszXEkRjXM+PIU7cVCloG+GE0bCE=;
-	b=B43akB57UtMcwBr7dl7RHCuCsG3P3RQGAVC/tABf/zQYJvfRjaMNoaWI961T2kbA
-	YuU2PM3d66dd34nIdJz0c35AXc1xTFTiB6vtX7vBxnLS6kFxjW8ut8tPnvcSWJzw3be
-	B6dEp0ovW7aeWBLdlpj2LrHhT050r/awgXydzx2A=
-Received: by mx.zohomail.com with SMTPS id 1769609392312198.3122843443805;
-	Wed, 28 Jan 2026 06:09:52 -0800 (PST)
+	bh=06r3ry7I70lRQ3WUitTO3gPI56HJOgQVtCUV6n6r200=;
+	b=K6YN9xrtYa7BF8aF2GW5pAk0tIphh5M/0YPNQ9IsjnU6gA1m723rjekaC2ThSrBC
+	BsNFXBL3E7Jka14k//5dnNQ0Q3uDKylIbgVlgfVdqEjZhlJNfH/In6iCjaRcU0imMkp
+	0dxE03fCnQ+EkKwmThtp26djyKpcWOL+IgvZt454=
+Received: by mx.zohomail.com with SMTPS id 1769609499860744.4033332740098;
+	Wed, 28 Jan 2026 06:11:39 -0800 (PST)
 From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
- Dong Aisheng <aisheng.dong@nxp.com>,
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Chen-Yu Tsai <wenst@chromium.org>, Chia-I Wu <olvaffe@gmail.com>,
+ Dong Aisheng <aisheng.dong@nxp.com>, Laura Nao <laura.nao@collabora.com>,
  Matthias Brugger <matthias.bgg@gmail.com>,
- Yassine Oudjana <y.oudjana@protonmail.com>,
- Laura Nao <laura.nao@collabora.com>,
- =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <nfraprado@collabora.com>,
- Chia-I Wu <olvaffe@gmail.com>, Chen-Yu Tsai <wenst@chromium.org>,
- kernel@collabora.com, linux-clk@vger.kernel.org,
+ Michael Turquette <mturquette@baylibre.com>,
+ =?UTF-8?B?TsOtY29sYXMgRi4gIFIuICBBLg==?= Prado <nfraprado@collabora.com>,
+ Yassine Oudjana <y.oudjana@protonmail.com>, Stephen Boyd <sboyd@kernel.org>,
+ Alexander Stein <alexander.stein@ew.tq-group.com>
+Cc: kernel@collabora.com, linux-clk@vger.kernel.org,
  linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH v3 1/5] clk: Respect CLK_OPS_PARENT_ENABLE during recalc
-Date: Wed, 28 Jan 2026 15:09:46 +0100
-Message-ID: <6678782.DvuYhMxLoT@workhorse>
-In-Reply-To: <1cbf0f37-13de-46a5-a3c0-0509048c519e@sirena.org.uk>
+Subject:
+ Re: [PATCH RESEND v3 1/5] clk: Respect CLK_OPS_PARENT_ENABLE during recalc
+Date: Wed, 28 Jan 2026 15:11:33 +0100
+Message-ID: <5791016.31r3eYUQgx@workhorse>
+In-Reply-To: <6239343.lOV4Wx5bFT@steina-w>
 References:
- <20251010-mtk-pll-rpm-v3-0-fb1bd15d734a@collabora.com>
- <6800096.lOV4Wx5bFT@workhorse>
- <1cbf0f37-13de-46a5-a3c0-0509048c519e@sirena.org.uk>
+ <20251215-mtk-pll-rpm-v3-0-5afb3191e869@collabora.com>
+ <176913273374.4027.10690199843699119944@lazor> <6239343.lOV4Wx5bFT@steina-w>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -66,19 +65,53 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
 
-On Wednesday, 28 January 2026 00:14:29 Central European Standard Time Mark Brown wrote:
-> On Tue, Jan 27, 2026 at 07:18:02PM +0100, Nicolas Frattaroli wrote:
+On Tuesday, 27 January 2026 15:55:29 Central European Standard Time Alexander Stein wrote:
+> Hello,
 > 
-> > Can someone let me know which clocks (with which parent) in those
-> > affected devices is causing this? I'm wondering if this change
-> > unmasked some undeclared dependency that it's now stumbling over
-> > because it's enabling the parent earlier than ever.
+> Am Freitag, 23. Januar 2026, 02:45:33 CET schrieb Stephen Boyd:
+> > Quoting Nicolas Frattaroli (2025-12-15 03:23:58)
+> > > When CLK_OPS_PARENT_ENABLE was introduced, it guarded various clock
+> > > operations, such as setting the rate or switching parents. However,
+> > > another operation that can and often does touch actual hardware state is
+> > > recalc_rate, which may also be affected by such a dependency.
+> > > 
+> > > Add parent enables/disables where the recalc_rate op is called directly.
+> > > 
+> > > Fixes: fc8726a2c021 ("clk: core: support clocks which requires parents enable (part 2)")
+> > > Fixes: a4b3518d146f ("clk: core: support clocks which requires parents enable (part 1)")
+> > > Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> > > Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
+> > > Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+> > > ---
+> > 
+> > Applied to clk-next
 > 
-> Do you have a debugging patch we could run which would say which clocks
-> are impacted?  I guess it's more of an issue for the platforms that give
-> no output but for at least Avenger96 I was getting earlycon output.
+> Unfortunately this breaks my board TQMa8MPxL+MBa8MPxL on next-20260126.
+> Last lines on bootlog (earlycon is necessary)
+> > [    1.175639] Initialise system trusted keyrings
+> > [    1.178907] workingset: timestamp_bits=42 max_order=19 bucket_order=0
+> > [    1.185822] NFS: Registering the id_resolver key type
+> > [    1.190295] Key type id_resolver registered
+> > [    1.194473] Key type id_legacy registered
+> > [    1.198515] nfs4filelayout_init: NFSv4 File Layout Driver Registering...
+> > [    1.205235] nfs4flexfilelayout_init: NFSv4 Flexfile Layout Driver
+> > Registering... [    1.213235] cryptd: max_cpu_qlen set to 1000
+> > [    1.274689] Key type asymmetric registered
+> > [    1.275939] Asymmetric key parser 'x509' registered
+> > [    1.280896] Block layer SCSI generic (bsg) driver version 0.4 loaded
+> > (major 242) [    1.288278] io scheduler mq-deadline registered
+> > [    1.292840] io scheduler kyber registered
+> > [    1.299245] ledtrig-cpu: registered to indicate activity on CPUs
+> 
+> Reverting commit 669917676e93fca5ea3c66fc9539830312bec58e fixes the problem.
 
-Try this one
+Hi Alexander,
+
+sorry for breaking -next.
+
+Can you try the following patch to print which clock+parent is causing
+the hang on your platform?
+
 ---
 diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
 index 1b0f9d567f48..fa1443517768 100644
@@ -138,23 +171,16 @@ index 1b0f9d567f48..fa1443517768 100644
  	 * Enable CLK_IS_CRITICAL clocks so newly added critical clocks
 ---
 
-I don't remember if printk buffers are flushed after each invocation and
-couldn't quickly find a kernel parameter to control this, but from
-experience I think these prints should show up if it then hangs the SoC
-on the very next line.
-
-> > To not have me break everyone's -next for days on end, feel free
-> > to drop this patch. MT8196, which this was added for, doesn't boot
-> > with mainline yet anyway.
-> 
-> Please, this is making my test lab miserable.
-> 
-
-The good news is that the rest of the series can stay without doing
-any harm if this single patch gets dropped, and I can re-attempt
-this in the next cycle.
+Thanks for reporting this.
 
 Kind regards,
 Nicolas Frattaroli
+
+> 
+> Best regards,
+> Alexander
+> 
+
+
 
 
